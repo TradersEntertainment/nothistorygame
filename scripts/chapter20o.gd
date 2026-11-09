@@ -393,6 +393,19 @@ func _cool_step() -> void:
 			_tape_band(-2.6 + _taped_now * 0.9)
 			await hud.say("SPK_TOLGA", "D20O_T_TAPE")
 			_urban_tap(-2.6 + _taped_now * 0.9)      # "(Vurur, dinler.)"
+			# Urban namlunun öbür yanında, kuyruk tarafında: Tolga namlu boyunca kuyruğun ardına çekilir, ustayı görür
+			# (bant sarılan yerden konuşunca usta namlunun ardında kalıyordu)
+			if pv:
+				var ax := pv.global_basis.z
+				ax.y = 0.0
+				ax = ax.normalized()
+				var rel := urban.global_position - pv.global_position
+				var along := rel.dot(ax)
+				var lat := ax.cross(Vector3.UP)
+				var ls := signf((player.global_position - pv.global_position).dot(lat))
+				var back := pv.global_position + ax * (along + signf(along) * 1.2) + lat * (ls if ls != 0.0 else 1.0) * 0.9
+				back.y = player.global_position.y
+				await Stage.walk_player(player, back, 0.0, urban.global_position + Vector3(0, 1.5, 0), 3.0)
 			# Şeridi bu bölümde zaten gördüyse "yapışkan bir şerit mi bu?" demez
 			await hud.say("SPK_URBAN", "D20O_U_TAPE_NEW" if _taped_now == 1 and not _tape_held else "D20O_U_TAPE_AGAIN")
 			return

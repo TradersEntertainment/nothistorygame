@@ -674,3 +674,18 @@ Her bölüm denetiminde ve her düzeltmede bu listeyi baştan uygula. Yeni bir h
   da aynı sorun vardı. Konuşan biri yürüyen oyuncudan geri kalıyorsa repliğin önüne
   Stage.approach + Stage.settle konur; bir bölüme dokunduktan sonra o bölümün bütün varyantları koşturulur
   (tests/run_tests.sh'taki satırlar, quick.txt'teki tek satır değil).
+- Gösterilen eşya el hareketini yutar (v0.99.93). show_prop eldeki eşyayı cebe indirir; hand_gesture ise görünür bir
+  el ister. 8'de önce kart gösterilip sonra "ear" çağrılıyordu: el gizli olduğu için hareket hiç oynamadı, arama elde
+  hiçbir şey yokken sürdü. Artık tezgâhtaki ahize kalkar ("handset" prop'u kulakta, ekranın sağ kenarında), arama
+  bitince drop_prop ile yerine iner. Bir eylemin "görünür" kanıtı el hareketine değil, elde görülen nesneye bağlanmalı.
+- Eylem anı gösterilmeli, sonuç değil: 36B'de E'ye basınca kalkan kendiliğinden yanıyordu (meşale artık uzanır),
+  29'da kova ateşe varınca kayboluyordu (artık öne eğilip boşalır), 39O'da sancak demetten eksilip kapıda beliriyordu
+  (artık demetten çekilip halkaya uzanır), 24'te sendeleme yalnız ekran sarsıntısıydı (Tolga yalpalar, ikona sallanır).
+- Hızlı takım (CI) her bölümün yalnız ana koşusunu oynatır; dokunulan bölümlerin öteki varyantları yerelde ayrıca
+  koşturulmalı (v0.99.93'te 89 ek koşu). Bulunanlar:
+  - 20 "hit": hücum başlarken Giustiniani gedikte sendeleyen Tolga'nın arkasından bağırıyordu, tüfeği de arkadan
+    uzatıyordu. Artık Tolga komutana döner; tüfeği veren önce yanına gelir.
+  - 20O "hot_tape": 0.99.90'da bant için namluya yürütülen Tolga, namlunun öbür yanındaki Urban'ı göremiyordu. Bant
+    sarılınca Tolga namlunun kuyruğuna çekilir. Oyuncuyu bir yere yürütmek, oradan kimin görüneceğini de değiştirir.
+  - 26O (CI, 0.99.92): Kadri 6 m öteden konuşurken dalganın askerleri aradan geçti (VISAUDIT personhidden). Konuşmadan
+    önce tek seferlik Unclip.clear_line yetmez: yürüyen kalabalık bir kare sonra çizgiye girer. Konuşan yanına gelir.

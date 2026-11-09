@@ -287,6 +287,8 @@ func _kadri_water() -> void:
 	boy.carry("barrel")
 	squads[0][0].set_meta("served1", true)
 	water += 1
+	# Kadri yanına gelir (6 m öteden konuşurken dalganın askerleri aradan geçiyordu; CI'da görüşü kapattı)
+	await Stage.approach(kadri, player.global_position, 1.7, 1.8)
 	player.face(kadri.global_position + Vector3(0, 1.5, 0))
 	# Dalganın askerleri oyuncunun dibinden geçerken Kadri'nin yüzünü kapatmasın (kartta asker sırtı)
 	Unclip.clear_line(self, player.camera.global_position, [kadri], [player])

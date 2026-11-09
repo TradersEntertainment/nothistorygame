@@ -439,6 +439,7 @@ func _on_interact(id: String) -> void:
 	elif id.begins_with("fire_") and carrying == "water" and _fires.has(id):
 		# Güverte sallanırken koşan kovanın suyunu döker (Carry dengesi): iki kez taşan kova yangına yetmez, yeniden doldurulur
 		var empty := is_instance_valid(_carry_c) and _carry_c.fill < 0.4
+		_pour((_fires[id]["node"] as Node3D).global_position + Vector3(0, 0.3, 0), empty)
 		_drop()
 		if empty:
 			Audio.sfx("splash", -14.0, 1.6)
@@ -470,6 +471,20 @@ func _pick() -> void:
 	Props.strip_outlines(_carry)
 	Audio.sfx("splash", -14.0, 1.6)
 	hud.set_prompt("")
+
+
+## Kova ateşe boşaltılır: öne eğilir, su ateşe dökülür, sonra elden bırakılır (kova anında kayboluyordu).
+func _pour(at: Vector3, little: bool) -> void:
+	if not is_instance_valid(_carry):
+		return
+	var b := _carry
+	_carry = null          # _drop silmesin: döküldükten sonra kendisi silinir
+	var t := 0.05 if Stage.fast() else 0.25
+	var tw := b.create_tween()
+	tw.tween_property(b, "rotation_degrees:x", -80.0, t).set_trans(Tween.TRANS_SINE)
+	tw.tween_callback(Vfx.splash.bind(self, at, 0.25 if little else 0.8))
+	tw.tween_interval(t)
+	tw.tween_callback(b.queue_free)
 
 
 func _drop() -> void:

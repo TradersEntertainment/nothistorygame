@@ -368,6 +368,22 @@ func _on_interact(id: String) -> void:
 func _plant_mine(idx: int) -> void:
 	_planting = true
 	player.frozen = true
+	# Sancak demetten çekilir, kapının halkasına uzatılır (demetten biri eksiliyor, kapıda beliriyordu)
+	var dp := city.door_pos(idx)
+	var nb := _flag_bundle.get_child_count()
+	for c in [nb - 1, nb - 2]:
+		if c >= 0:
+			(_flag_bundle.get_child(c) as Node3D).visible = false
+	var pole := Node3D.new()
+	add_child(pole)
+	pole.global_transform = _flag_bundle.global_transform
+	Props.cyl(pole, 0.012, 0.6, Vector3(0, 0.08, 0), Color("6a4a2c"), Vector3(-25, 0, 0), 4)
+	Props.cyl(pole, 0.03, 0.2, Vector3(0, 0.22, -0.07), Color("b3262d"), Vector3(-25, 0, 0), 6)
+	Props.strip_outlines(pole)
+	player.hand_gesture("reach")
+	var pt := pole.create_tween()
+	pt.tween_property(pole, "global_position", Vector3(dp.x - signf(dp.x) * 0.15, 2.4, dp.z + 0.7), 0.05 if Handover.instant() else 0.45).set_trans(Tween.TRANS_SINE)
+	pt.tween_callback(pole.queue_free)
 	# 1 sn: direği kapı halkasına geçirip iki avuçla sıkıştırır
 	Audio.sfx("pick_tap", -6.0, 1.2)
 	await get_tree().create_timer(0.5, false).timeout

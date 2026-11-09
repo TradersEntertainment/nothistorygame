@@ -26,6 +26,20 @@ const CLIPS := [
 		"cap": ["SONSUZ KUŞATMA: İKİ TARAF", "ENDLESS SIEGE: BOTH SIDES"]},
 ]
 
+## Hissiyat fragmanı ("-- set=feel"): v0.99.90-93'ün oynanış anları (Blakherna kulesi, ok altında taşıma, yakın atış)
+const FEEL_CLIPS := [
+	{"id": "ladder_arrows", "ch": "30o", "v": "", "when": "sv('phase') == 'carry' and after(4.0)", "lead": 2.5, "dur": 6.0,
+		"cap": ["MERDİVENİ TAŞI. OKLAR YAĞIYOR.", "CARRY THE LADDER. ARROWS INCOMING."]},
+	{"id": "pole", "ch": "30", "v": "", "when": "sv('phase') == 'ladders' and shown('_pole')", "lead": 0.0, "dur": 5.0,
+		"cap": ["MERDİVENİ SURDAN İT", "PUSH THE LADDER OFF THE WALL"]},
+	{"id": "wall_duel", "ch": "30o", "v": "", "when": "sv('phase') == 'fight' and on('Duel', 'active')", "lead": 0.6, "dur": 6.5,
+		"cap": ["SURDA İLK RAKİP", "FIRST BLADE ON THE WALL"]},
+	{"id": "tower_gunner", "ch": "30o", "v": "", "when": "sv('phase') == 'tower' and on('Gunner', 'state', 'aim')", "lead": 0.0, "dur": 5.0,
+		"cap": ["TÜFEK DOLU. YANA ATLA.", "HIS GUN IS LOADED. DODGE."]},
+	{"id": "wounded", "ch": "30o", "v": "", "when": "sv('carried') == true", "lead": 1.2, "dur": 6.0,
+		"cap": ["YARALIYI OMZUNA AL", "SHOULDER THE WOUNDED"]},
+]
+
 ## Dikey kısalar için konuşmalı kesitler ("-- set=shorts clean"): test botu tempo modunda (seslendirme süresince) oynar,
 ## pencere ilk replikle açılır (said), son replik bitince (done) tail saniye sonra kapanır. Kanca yazıları cut.py'de.
 const SHORT_CLIPS := [
@@ -273,13 +287,17 @@ func _run() -> void:
 	# Açılış kartı (kara zemin, yazı): kayıtta tutulur
 	_mark("in")
 	Audio.music("tension", 0.0)
-	await _card(_tx(["1453.", "1453."]), _tx(["Oynanış", "Gameplay"]), 2.2)
+	if _set == "feel":
+		await _card(_tx(["1453. Surlar.", "1453. The walls."]), _tx(["Oynanış", "Gameplay"]), 2.2)
+	else:
+		await _card(_tx(["1453.", "1453."]), _tx(["Oynanış", "Gameplay"]), 2.2)
 	_mark("out")
 	_seg += 1
-	for i in CLIPS.size():
+	var clips: Array = FEEL_CLIPS if _set == "feel" else CLIPS
+	for i in clips.size():
 		if not _only.is_empty() and not (i in _only):
 			continue
-		await _clip(CLIPS[i])
+		await _clip(clips[i])
 		_seg += 1
 	# Kapanış kartı: bölüm kaldırılır (sesi sussun), başlık ve istek listesi
 	_skipping = true
@@ -517,6 +535,12 @@ func flyable() -> bool:
 func sv(name: String) -> Variant:
 	var s := get_tree().current_scene
 	return s.get(name) if s else null
+
+
+## Bölüm betiğindeki bir düğüm sahnede ve görünür mü (ör. shown('_pole'))
+func shown(name: String) -> bool:
+	var n: Variant = sv(name)
+	return n is Node3D and is_instance_valid(n) and (n as Node3D).is_visible_in_tree()
 
 
 func ladder() -> bool:

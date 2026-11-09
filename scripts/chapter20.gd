@@ -343,6 +343,8 @@ func _start_assault() -> void:
 	if carrying != "":
 		_drop()
 	Audio.sfx("crowd_camp", -2.0)
+	# "Hücum!" diye bağıran komutana dönülür (gedikte sendeleyen Tolga'nın arkasından bağırıyordu)
+	player.face(giust.global_position + Vector3(0, 1.5, 0))
 	hud.say("SPK_GIUST", "D20_G_ASSAULT")
 	_update_objective()
 	# Ordu görünür: ovadan koşanlar, merdivenler, arkada ateş eden bataryalar
@@ -487,6 +489,9 @@ func _gun_phase() -> void:
 	# Tüfek sahnesinde gece saati durur (yoksa gedik onarımı sabaha yetişmeyebilir)
 	var was := phase
 	phase = "gun"
+	# Tüfeği veren önce yanına gelir, sonra konuşur (arkadan "Tut şunu" diyordu)
+	await Stage.approach(giust, player.global_position, 1.8, 2.4, Vector3.ZERO, _rubble_y)
+	player.face(giust.global_position + Vector3(0, 1.5, 0))
 	await hud.say("SPK_GIUST", "D20_G_GUN")
 	await Handover.hand_rifle(self, player, giust)
 	await hud.fade_to(1.0, 0.35)

@@ -457,6 +457,17 @@ func _burn_mantlet(i: int) -> void:
 	_burned[i] = true
 	burned += 1
 	var m := _mantlets[i]
+	if is_instance_valid(_torch):
+		# Meşale kalkana uzatılır, alev değince geri çekilir (E'ye basınca kalkan kendiliğinden yanıyordu)
+		var home := _torch.position
+		var hold := player.free_hold
+		var fast := 0.05 if Handover.instant() else 0.0
+		var tw := _torch.create_tween()
+		tw.tween_property(_torch, "position", home + Vector3(0.2, 0.1, -0.45), fast if fast > 0.0 else 0.22).set_trans(Tween.TRANS_SINE)
+		tw.parallel().tween_property(player, "free_hold", hold + Vector3(0.2, 0.1, -0.45), fast if fast > 0.0 else 0.22).set_trans(Tween.TRANS_SINE)
+		tw.tween_interval(fast if fast > 0.0 else 0.3)
+		tw.tween_property(_torch, "position", home, fast if fast > 0.0 else 0.35).set_trans(Tween.TRANS_SINE)
+		tw.parallel().tween_property(player, "free_hold", hold, fast if fast > 0.0 else 0.35).set_trans(Tween.TRANS_SINE)
 	Audio.sfx("fire_crackle", -4.0, 0.9 + i * 0.05)
 	Vfx.fire(m, Vector3(0, 0.4, 0.1), 1.1)
 	for c in m.get_children():

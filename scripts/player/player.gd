@@ -1807,6 +1807,12 @@ func show_prop(kind: String, hold := 2.4) -> void:
 			fl.position = Vector3(0, 0.25, 0)
 			item.add_child(fl)
 			target = Vector3(0.07, -0.12, -0.4)
+		"handset":
+			# Sabit hattın ahizesi (8): kulağa götürülür, ekranın sağ kenarında dik durur
+			Props.box(item, Vector3(0.045, 0.2, 0.035), Vector3.ZERO, Color("a82a30"))
+			Props.box(item, Vector3(0.055, 0.05, 0.055), Vector3(0, 0.085, -0.02), Color("a82a30"))
+			Props.box(item, Vector3(0.055, 0.05, 0.055), Vector3(0, -0.085, -0.02), Color("a82a30"))
+			target = Vector3(0.27, 0.0, -0.22)
 		"hammer":
 			# Tokmak (kazık çakmak, 28O): sap ve ahşap baş
 			Props.cyl(item, 0.014, 0.32, Vector3(0, -0.06, 0), Color("6a4a2c"), Vector3.ZERO, 6)

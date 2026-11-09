@@ -588,6 +588,15 @@ func _process(delta: float) -> void:
 				stumbles += 1
 				_balance = signf(_balance) * 0.5
 				player.shake(0.4)
+				# Sedye sarsılır: Tolga yalpalar, ikona çerçevesinde sallanır (yalnız ekran sarsıntısıydı)
+				player.stagger(0.5)
+				player.flail(0.4)
+				Audio.sfx("crowd_gasp", -12.0, 1.1)
+				if is_instance_valid(icon):
+					var it := icon.create_tween()
+					it.tween_property(icon, "rotation:z", signf(_balance) * 0.22, 0.12).set_trans(Tween.TRANS_SINE)
+					it.tween_property(icon, "rotation:z", -signf(_balance) * 0.1, 0.25).set_trans(Tween.TRANS_SINE)
+					it.tween_property(icon, "rotation:z", 0.0, 0.3).set_trans(Tween.TRANS_SINE)
 				hud.bark("SPK_MONK", "D24_M_STUMBLE", 2.0)
 			if _route >= SLIP_AT:
 				phase = "slip"

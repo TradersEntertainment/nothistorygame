@@ -572,7 +572,11 @@ func _phone(auto_pick := -1) -> void:
 		return
 	_called = true
 	player.show_prop("card", 1.6)          # Nihat'ın kartvizitindeki numara
-	player.hand_gesture("ear", 6.0)       # ahize kulakta
+	# Tezgâhtaki ahize kalkar, kulağa gider (el boştu, ahize tezgâhta duruyordu; kart elde olunca el hareketi de çıkmıyordu)
+	var hs: Node3D = ph.get_child(1) as Node3D if ph and ph.get_child_count() > 1 else null
+	if hs:
+		hs.visible = false
+	player.show_prop("handset", 60.0)
 	Audio.sfx("radio_beep", -14.0, 0.7)   # çevir sesi
 	GameState.flags["ch8_called"] = true
 	GameState.flags["hn_rel"] = mini(2, int(GameState.flags.get("hn_rel", 0)) + 1)
@@ -605,6 +609,10 @@ func _phone(auto_pick := -1) -> void:
 	else:
 		await _say("SPK_NIHAT", "D8_N_HINT")
 		await _h("D8_H_CALL_END")
+	player.drop_prop()                     # ahize yerine
+	if is_instance_valid(hs):
+		hs.visible = true
+	Audio.sfx("land_pot", -16.0, 1.6)
 	hud.set_prompt("")         # arama bitince "telefon" istemi kalıyordu
 	player.frozen = false
 	_busy = false
