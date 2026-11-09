@@ -815,3 +815,35 @@ Her bölüm denetiminde ve her düzeltmede bu listeyi baştan uygula. Yeni bir h
   Yakın plan karesi (tests/_tmp/bureau_shot.gd 36-38) olmadan "havada" olduğu görülmüyordu.
 - 27: Galata'da yürüyen kalabalık (Person._clear_way) tezgâh başındaki balıkçıyı itip tezgâhın köşesine soktu
   (insolid). Yerinde durması gereken konuşmacılar "no_yield".
+
+## v0.99.101 — Büro'nun dünya tarihi, kendi aralarında konuşan figürler, uzaktaki parçaları çizmemek
+
+- Betikle dosya yeniden yazarken bitiş işaretini benzersiz seçin: `_BUR_VOICE` tablosunu yeniden üreten betik tablonun
+  sonunu `s.index("\n]\n")` ile aradı; eski tablo `...]]` ile aynı satırda bittiği için bir sonraki dizinin (_FG) sonunu
+  buldu ve bureau.gd'nin ~3.200 satırını sildi. Son commit'teki sürümden yeniden kuruldu. Kural: yazmadan önce satır
+  sayısı farkını kontrol et (beklenmedik büyük fark = dur), değiştirilecek bölgenin başını VE sonunu birlikte doğrula.
+- Duvara asılan levha duvarın iç yüzüne konmalı, ortasına değil: "Ceza köşesi" levhası x -8,66'daydı, duvar -8,7..-8,5;
+  levha duvarın içinde kalıp hiç görünmüyordu. Duvarın kalınlığını hesaba kat (iç yüz = merkez ± kalınlık/2).
+- Konuşuyor gibi duran ama sesi olmayan figür boş vaattir: Büro'da gruplar oyuncu ~6,5 m yaklaşınca kendi aralarında
+  atışır (3B ses, baş üstünde balon, konuşan karşısındakine döner); konuşma kutusu açılınca, figürle konuşulunca ya da
+  uzaklaşınca keser. Test botunda kapalı (bot konuşma beklemesin).
+- Kare yükü ölçümü: `RINFO=1 ... --hitchaudit` iki saniyede bir çizim çağrısı, kameradaki nesne ve üçgen sayısını basar
+  (Xvfb'de yazılım çizimiyle kare süresi anlamsız ama sayılar doğru). `RINFO=noshadow` güneş gölgesini kapatıp farkı
+  gösterir. Bölüm 2 (gemiler karadan): kare başına ~10.900 çizim, 8,4 milyon üçgen; gölge payı yalnız ~%20, asıl yük
+  görünme mesafesi olmayan binlerce parça.
+- Props.cull_small (her bölümde sahne kurulunca, Hud): küçük parça gölge düşürmez ve 40 m, orta boy 90/200/400 m ötede
+  çizilmez (kalite ayarıyla ölçeklenir); karakterlerin gölgesine dokunulmaz, yalnız göz/düğme 25 m, gövde 160 m ötede
+  çizilmez. Props.bake_static: durağan dekoru malzeme ayarına göre gruplayıp tek ağ örgüsünde birleştirir (renk köşe
+  rengine yazılır, dış hat korunur); dönen (ırgat), gizlenip açılan, çarpışması mesh'in altında olan ve karakterler
+  birleşmez. Bölüm 2: 10.900 → 7.200 çizim (başlangıç), 28O: 4.800 → 3.600.
+- Seslendirme kotası bitmeden önce ölç: yeni 119 replik TR+EN ~17.900 karakter, kalan kota ~5.300. Öncelik oyuncunun
+  duyacağı yeni sistemde (atışmalar) ve metni değişmiş repliklerde: eski ses yeni metni okumaz, eski EN sesleri silindi
+  (yanlış ses, sessizlikten kötü).
+- Elde tutulan eşya tutana bağlanmalı: Sabri'nin gazetesi dünyaya ayrı konmuştu; Person._ambient_chat onu yandaki
+  Kolomb'a döndürünce gazete başının arkasında havada kaldı (oyuncu fotoğrafı). Gazete artık Sabri'nin çocuğu, eller
+  "hold_paper" duruşunda. Yerinde sahne kuran figüre "no_chat".
+- Sessiz ortam sohbeti (_ambient_chat) yakından bakınca "konuşuyorlar ama ses yok" demek: Büro figürlerinde kapalı,
+  konuşma yalnız sesli atışmada. Primitiflerden kukla (uyuyan memur) karakterlerin yanında kötü durur: Person + "doze".
+- Birleştirmeden (bake_static) sonra o sahnenin bütün varyantları koşulmalı: Bölüm 2'nin deniz dibini birleştirmek
+  yüzerek kıyıya çıkma botunu (--autotest=swimshore) zaman aşımına soktu; görünümde fark yoktu. İkiye bölerek bulundu
+  (yalnız birleştirme kapalı: geçti), deniz dibi birleştirilmiyor.

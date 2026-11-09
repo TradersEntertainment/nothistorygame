@@ -432,8 +432,13 @@ func _build_agency() -> void:
 	fan.position = c + Vector3(0, 2.9, -0.3)
 	add_child(fan)
 	Props.cyl(fan, 0.08, 0.15, Vector3.ZERO, Color("3a3a40"), Vector3.ZERO, 8)
+	# tavana inen çubuk (vantilatör tavandan 12 cm aşağıda havada dönüyordu)
+	Props.cyl(fan, 0.015, 0.16, Vector3(0, 0.145, 0), Color("3a3a40"), Vector3.ZERO, 6)
 	for k in 3:
 		Props.box(fan, Vector3(0.7, 0.01, 0.12), Vector3(0.38, -0.05, 0).rotated(Vector3.UP, TAU * k / 3.0), Color("6a4a30"), Vector3(0, -rad_to_deg(TAU * k / 3.0), 0))
+	# Vantilatör lambanın 20 cm üstünde döner: gölgesi tavanda tırtıklı, dönen lekeler yapıyordu
+	for m in fan.find_children("*", "MeshInstance3D", true, false):
+		(m as MeshInstance3D).cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
 	var ftw := fan.create_tween().set_loops()
 	ftw.tween_property(fan, "rotation:y", TAU, 2.4).from(0.0)
 	# Ferit Bey'in masası: kapıya dönük; telefon, kül tablası, dosyalar, isimlik

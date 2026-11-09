@@ -12,6 +12,8 @@ var _scene := ""
 var _samples: Array[float] = []
 var _lines := 0
 var _t := 0.0
+var _rinfo := OS.get_environment("RINFO") != ""
+var _rinfo_next := 0.0
 var _win := 0
 var _nodes := 0
 
@@ -61,9 +63,22 @@ func _process_body(delta: float) -> void:
 		_last_us = 0
 		_scene = sname
 		_t = 0.0
+		_rinfo_next = 0.0
 	_t += delta
 	if _t < 0.5:
 		return                       # sahne kurulumu ayrı ölçülür (yükleme ekranı); oynanış takılmaları aranıyor
+	# RINFO=1: iki saniyede bir çizim çağrısı, kameradaki nesne, üçgen, ışık ve süreç süresi (görüntülü koşuda anlamlı)
+	if _rinfo and _t >= _rinfo_next:
+		_rinfo_next = _t + 2.0
+		if OS.get_environment("RINFO") == "noshadow":     # karşılaştırma: güneş gölgesi kapalıyken çizim yükü
+			for l in get_tree().current_scene.find_children("*", "DirectionalLight3D", true, false):
+				(l as DirectionalLight3D).shadow_enabled = false
+		print("RINFO scene=%s t=%.0f draws=%d objs=%d prims=%dk nodes=%d proc=%.1fms phys=%.1fms" % [_scene, _t,
+			RenderingServer.get_rendering_info(RenderingServer.RENDERING_INFO_TOTAL_DRAW_CALLS_IN_FRAME),
+			RenderingServer.get_rendering_info(RenderingServer.RENDERING_INFO_TOTAL_OBJECTS_IN_FRAME),
+			RenderingServer.get_rendering_info(RenderingServer.RENDERING_INFO_TOTAL_PRIMITIVES_IN_FRAME) / 1000,
+			int(Performance.get_monitor(Performance.OBJECT_NODE_COUNT)),
+			Performance.get_monitor(Performance.TIME_PROCESS) * 1000.0, Performance.get_monitor(Performance.TIME_PHYSICS_PROCESS) * 1000.0])
 	var now := Time.get_ticks_usec()
 	var nn := int(Performance.get_monitor(Performance.OBJECT_NODE_COUNT))
 	var dn := nn - _nodes

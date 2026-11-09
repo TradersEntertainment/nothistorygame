@@ -16,6 +16,7 @@ var _mustache: MeshInstance3D
 var _body: Node3D
 var _t := 0.0
 var _busy := false
+var _kick_anim := false
 var _kick_leg: Node3D
 var _slipper: MeshInstance3D
 var _leg_l: Node3D
@@ -98,7 +99,9 @@ func _process(delta: float) -> void:
 	# Hafif sallanma; nefes, yürüme, bakınma, jestler Rig'de
 	if not _busy:
 		_body.rotation.z = sin(_t * 0.9) * 0.02
-	rig.update(delta, talking, _busy)
+	# Tekmeye yürürken iskelet adım atar; yalnız tekmenin kendisi (_kick_anim) jestleri durdurur (eskiden bütün tekme
+	# boyunca "meşgul" sayılıp adım atmadan panele kayıyor, dönüşte geri geri kayıyordu)
+	rig.update(delta, talking, _kick_anim)
 	# Konuşurken bıyık oynar
 	var open := LipSync.mouth(_t, delta) if talking else 0.0
 	_mustache.position.y = -0.1 + open * 0.03
@@ -134,7 +137,11 @@ func kick(target: Vector3, stand := Vector3.INF) -> void:
 	var secs := clampf(walk.length() / 1.5, 0.35, 2.5)
 	var tw := create_tween()
 	tw.tween_property(self, "global_position", mid, secs).set_trans(Tween.TRANS_SINE)
-	tw.tween_property(self, "rotation:y", atan2(face.x, face.z), 0.2)
+	# Açılar kısa yoldan döner (atan2 farkı 180'i aşınca karakter kendi etrafında tam tur atıyordu)
+	var yaw_walk := rotation.y
+	var yaw_face := yaw_walk + wrapf(atan2(face.x, face.z) - yaw_walk, -PI, PI)
+	tw.tween_property(self, "rotation:y", yaw_face, 0.2)
+	tw.tween_callback(func(): _kick_anim = true)
 	# Geri çekiş: gövde geriye yatar, bacak arkaya
 	tw.tween_property(_kick_leg, "rotation:x", deg_to_rad(40), 0.35).set_ease(Tween.EASE_OUT)
 	tw.parallel().tween_property(_body, "rotation:x", -0.12, 0.35)
@@ -147,8 +154,14 @@ func kick(target: Vector3, stand := Vector3.INF) -> void:
 	tw.tween_property(_kick_leg, "rotation:x", 0.0, 0.3)
 	tw.parallel().tween_property(_body, "rotation:x", 0.0, 0.3)
 	tw.tween_interval(0.2)
+	tw.tween_callback(func(): _kick_anim = false)
+	# Dönüş: geri geri kaymaz, döner ve yürüyerek yerine gider
+	var back := start - mid
+	if back.length() > 0.05:
+		tw.tween_property(self, "rotation:y", yaw_face + wrapf(atan2(back.x, back.z) - yaw_face, -PI, PI), 0.3)
 	tw.tween_property(self, "global_position", start, secs).set_trans(Tween.TRANS_SINE)
 	await tw.finished
+	_kick_anim = false
 	_busy = false
 
 

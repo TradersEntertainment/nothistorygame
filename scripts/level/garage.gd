@@ -173,7 +173,10 @@ func _build_lights() -> void:
 
 	# Floresan tüp
 	fluoro_tube = Props.cyl(self, 0.04, 1.6, Vector3(0, H - 0.12, 0.3), Color("e8f4ff"), Vector3(0, 0, 90), 6, -1.0, 2.5)
-	Props.box(self, Vector3(1.7, 0.05, 0.14), Vector3(0, H - 0.05, 0.3), C_METAL)
+	var housing := Props.box(self, Vector3(1.7, 0.05, 0.14), Vector3(0, H - 0.05, 0.3), C_METAL)
+	# Lambanın kendi tüpü ve gövdesi gölge atmaz: ışığın 15-20 cm üstündeler, tavana tırtıklı gölge düşürüyorlardı
+	fluoro_tube.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
+	housing.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
 	fluoro_light = OmniLight3D.new()
 	fluoro_light.position = Vector3(0, H - 0.3, 0.3)
 	fluoro_light.omni_range = 9.0

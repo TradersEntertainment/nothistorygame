@@ -177,9 +177,21 @@ func _ready() -> void:
 			Props.ring(_head, 0.034, 0.043, Vector3(sx * gx, gy, 0.205), Color("222222"), Vector3(90, 0, 0))
 		Props.box(_head, Vector3(gx * 2.0 - 0.07, 0.008, 0.008), Vector3(0, gy + 0.008, 0.21), Color("222222"))
 	# Saç ve şapka (şapkalılarda ense ve favoriler görünür)
-	if hat in ["fez", "fedora", "cook", "helm", "plume", "turban", "bork", "azap", "cicak", "sultan", "condottiero", "kalpak", "vizier", "galero", "berretta", "bicorne", "soft_beret", "mongol", "robot"]:
+	if hat in ["fez", "fedora", "cook", "helm", "plume", "turban", "bork", "azap", "cicak", "sultan", "condottiero", "kalpak", "vizier", "galero", "berretta", "bicorne", "soft_beret", "mongol", "robot", "courier"]:
 		CharKit.hair_under_hat(_head, hair, 0.2, face_spec.get("head", Vector3(1.0, 1.06, 0.98)))
 	match hat:
+		"courier":
+			# Zaman kuryesi kaskı (Büro, Kurye Zeki): sarı bisiklet kaskı, siyah siperlik, tepede turuncu döner
+			# ikaz lambası ve sol yanda dikiz aynası. Fes yalnız Tolga'nın.
+			Props.ball(_head, 0.215, Vector3(0, 0.12, -0.01), Color("f0c020"), Vector3(1.0, 0.62, 1.08), 12)
+			for vx: float in [-0.07, 0.0, 0.07]:
+				Props.box(_head, Vector3(0.025, 0.02, 0.26), Vector3(vx, 0.25, -0.02), Color("2a2a2e"))
+			Props.box(_head, Vector3(0.26, 0.018, 0.07), Vector3(0, 0.13, 0.215), Color("1a1a1e"), Vector3(-14, 0, 0))
+			Props.cyl(_head, 0.03, 0.03, Vector3(0, 0.265, 0), Color("2a2a2e"), Vector3.ZERO, 8)
+			var bc := Props.cyl(_head, 0.04, 0.07, Vector3(0, 0.31, 0), Color("ff8a1a"), Vector3.ZERO, 10, 0.034, 1.4)
+			bc.name = "Beacon"
+			Props.cyl(_head, 0.006, 0.12, Vector3(-0.2, 0.12, 0.1), Color("2a2a2e"), Vector3(-40, 0, 30), 4)
+			Props.cyl(_head, 0.035, 0.008, Vector3(-0.24, 0.17, 0.17), Color("c8d8e0"), Vector3(90, 0, 0), 10)
 		"fez":
 			Props.cyl(_head, 0.15, 0.2, Vector3(0, 0.25, 0), Color("b3262d"), Vector3.ZERO, 8, 0.12)
 			Props.cyl(_head, 0.008, 0.16, Vector3(0.08, 0.28, -0.06), Color("141414"), Vector3(0, 0, 30), 4)

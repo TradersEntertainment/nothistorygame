@@ -549,6 +549,122 @@ static func label(parent: Node3D, text: String, pos: Vector3, size := 48, color 
 	return l
 
 
+## Uzaktaki küçük parçaları çizme, küçük parçalara gölge düşürtme (v0.99.101). Kullanıcı: "gemileri karadan yürütme
+## kısmında aşırı kastı, başka yerlerde de". Bölüm 2'de kare başına ~10.900 çizim çağrısı, 8,4 milyon üçgen: sahnenin
+## 3.300 küçük parçası (kızak makaraları, askerlerin düğmeleri...) güneş gölgesine de ayrıca çiziliyordu ve hiçbirinde
+## görünme mesafesi yoktu. En büyük boyutu `small` altındaki mesh gölge düşürmez ve `small_range` ötesinde çizilmez;
+## `mid` altındaki `mid_range` ötesinde çizilmez. Karakterlerin (Person, Soldier, Hikmet) gölgesine dokunmaz (gölgesiz
+## karakter havada durur gibi görünür), yalnız uzakta çizilmezler; oyuncuya hiç dokunmaz. Mesafesi önceden ayarlanmış
+## mesh'e de dokunmaz. Sahne kurulunca bir kez (Hud).
+static func cull_small(root: Node, q := 2) -> int:
+	var k := 1.6 if q >= 3 else (1.0 if q >= 1 else 0.75)
+	var small := 0.3
+	var mid := 1.0
+	var small_range := 40.0 * k
+	var mid_range := 90.0 * k
+	var changed := 0
+	var st: Array = [[root, false]]
+	while st.size() > 0:
+		var e: Array = st.pop_back()
+		var n: Node = e[0]
+		var ch: bool = e[1]
+		if n is CharacterBody3D or n is Camera3D or n.has_meta("no_cull"):
+			continue
+		if n is Person or n is Soldier or n is Hikmet:
+			ch = true
+		for c in n.get_children():
+			st.append([c, ch])
+		var mi := n as MeshInstance3D
+		if mi == null or mi.mesh == null or mi.visibility_range_end > 0.0 or not mi.is_inside_tree():
+			continue
+		var sz := mi.mesh.get_aabb().size * mi.global_transform.basis.get_scale()
+		var d := maxf(absf(sz.x), maxf(absf(sz.y), absf(sz.z)))
+		if ch:
+			# Karakter parçası: gölgesine dokunulmaz; göz, düğme gibi çok küçükler 25 m, gerisi 160 m ötede çizilmez
+			# (surlardaki yüzlerce askerin her biri ~35 parça)
+			mi.visibility_range_end = (25.0 if d < 0.12 else 160.0) * k
+			changed += 1
+		elif d < small:
+			mi.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
+			mi.visibility_range_end = small_range
+			changed += 1
+		elif d < mid:
+			mi.visibility_range_end = mid_range
+			changed += 1
+		elif d < 3.0:          # çadır, araba, çit parçası: 200 m ötesi birkaç piksel
+			mi.visibility_range_end = 200.0 * k
+			changed += 1
+		elif d < 8.0:          # ev, kule gövdesi: 400 m (sis ve ufuk silueti zaten daha büyük parçalarla)
+			mi.visibility_range_end = 400.0 * k
+			changed += 1
+	return changed
+
+
+## Durağan, uzak dekoru tek ağ örgüsünde birleştirir (v0.99.101): Bölüm 2'nin karşı kıyısı (150 ev, surun her 3 m'deki
+## dişi, kiliseler, Ayasofya, selviler) ~800 ayrı mesh'ti, her biri ayrı çizim çağrısı. Mesh'ler malzeme ayarlarına göre
+## (desen, dış hat, gölge) gruplanır; her parçanın rengi köşe rengine yazılır (grup başına tek malzeme, dış hat korunur).
+## Yarı saydam, ışıyan ve gizli mesh'lere dokunmaz. nodes: birleştirilecek düğümler (alt ağaçlarıyla); hepsi `root`
+## altında ve ağaçta olmalı. Döndürür: birleştirilen mesh sayısı.
+static func bake_static(root: Node3D, nodes: Array) -> int:
+	var groups := {}
+	var victims: Array = []
+	var inv := root.global_transform.affine_inverse()
+	var st: Array = nodes.duplicate()
+	while st.size() > 0:
+		var n: Node = st.pop_back()
+		# Karakterler (canlandırılır), dönen/hareket eden işaretliler ve çarpışması mesh'in altında olanlar birleşmez
+		if n.has_meta("no_bake") or n is Person or n is Soldier or n is Hikmet or n is CharacterBody3D:
+			continue
+		st.append_array(n.get_children())
+		var mi := n as MeshInstance3D
+		if mi == null or mi.mesh == null or not mi.is_visible_in_tree() or mi.mesh.get_surface_count() != 1 or mi.get_child_count() > 0:
+			continue
+		var mat := mi.material_override as StandardMaterial3D
+		if mat == null:
+			mat = mi.mesh.surface_get_material(0) as StandardMaterial3D
+		if mat == null or mat.transparency != BaseMaterial3D.TRANSPARENCY_DISABLED or mat.emission_enabled:
+			continue
+		var key := "%s|%s|%s|%d|%s|%s" % [mat.albedo_texture, mat.next_pass, mat.uv1_scale, mi.cast_shadow, mat.diffuse_mode, mat.shading_mode]
+		if not groups.has(key):
+			var m2 := mat.duplicate() as StandardMaterial3D
+			m2.albedo_color = Color.WHITE
+			m2.vertex_color_use_as_albedo = true
+			var s := SurfaceTool.new()
+			s.begin(Mesh.PRIMITIVE_TRIANGLES)
+			groups[key] = [m2, s, mi.cast_shadow]
+		var xf := inv * mi.global_transform
+		var arr := mi.mesh.surface_get_arrays(0)
+		var verts: PackedVector3Array = arr[Mesh.ARRAY_VERTEX]
+		var norms = arr[Mesh.ARRAY_NORMAL]
+		var cols = arr[Mesh.ARRAY_COLOR]
+		var idx = arr[Mesh.ARRAY_INDEX]
+		var s2: SurfaceTool = groups[key][1]
+		var nb := xf.basis.inverse().transposed()
+		var count: int = idx.size() if idx != null and idx.size() > 0 else verts.size()
+		for j in count:
+			var i: int = idx[j] if idx != null and idx.size() > 0 else j
+			s2.set_color(mat.albedo_color * (cols[i] if cols != null and cols.size() > i else Color.WHITE))
+			if norms != null and norms.size() > i:
+				s2.set_normal((nb * norms[i]).normalized())
+			s2.add_vertex(xf * verts[i])
+		victims.append(mi)
+	for k in groups:
+		var g: Array = groups[k]
+		var out := MeshInstance3D.new()
+		out.name = "Baked"
+		out.mesh = (g[1] as SurfaceTool).commit()
+		out.material_override = g[0]
+		out.cast_shadow = g[2]
+		# WorldWalk birleşik ağdan çarpışma kurmasın: parçalar tek tek oyun alanının içinde kaldığı için atlanıyordu,
+		# birleşince 200 m'yi aşan tek ağ oyun alanında görünmez duvarlar oldu (Bölüm 2: yüzerek kıyıya çıkılamadı)
+		out.set_meta("no_walk", true)
+		root.add_child(out)
+	for v in victims:
+		(v as Node).get_parent().remove_child(v)
+		(v as Node).queue_free()
+	return victims.size()
+
+
 static var _sign_font: Font
 
 

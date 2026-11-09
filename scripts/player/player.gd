@@ -171,8 +171,48 @@ func _ready() -> void:
 		get_tree().root.add_child.call_deferred(ec)
 
 
+## Birinci şahıs eller, taşınan eşya, fener vb. oyuncu kamerasına bağlı. Ara sahne kamerası (1'in açılışında sokaktan
+## garaja süzülen kamera) etkinken bunlar dünyada oyuncunun durduğu yerde havada görünüyordu ("biz oraya gitmeden
+## garajda bizim kolumuz var"). Oyuncu kamerası etkin değilken kameraya bağlı görüntüler ayrı bir katmana alınır ve
+## etkin kamera o katmanı çizmez; oyuncu kamerasına dönülünce eski katmanlarına döner.
+const VM_LAYER := 1 << 18
+var _vm_hidden: Array = []
+var _vm_was_current := true
+var _vm_t := 0.0
+func _vm_sync(delta: float) -> void:
+	if camera == null:
+		return
+	var cur := camera.current
+	if cur:
+		if not _vm_was_current:
+			for w in _vm_hidden:
+				var g = (w as WeakRef).get_ref()
+				if g is GeometryInstance3D and (g as Node).has_meta("vm_layers"):
+					(g as GeometryInstance3D).layers = int((g as Node).get_meta("vm_layers"))
+					(g as Node).remove_meta("vm_layers")
+			_vm_hidden.clear()
+		_vm_was_current = true
+		return
+	var other := get_viewport().get_camera_3d() if is_inside_tree() else null
+	if other == null or other == camera:
+		return
+	if other.cull_mask & VM_LAYER:
+		other.cull_mask &= ~VM_LAYER
+	_vm_t -= delta
+	if _vm_was_current or _vm_t <= 0.0:
+		_vm_t = 0.25
+		for n in camera.find_children("*", "GeometryInstance3D", true, false):
+			var gi := n as GeometryInstance3D
+			if not gi.has_meta("vm_layers"):
+				gi.set_meta("vm_layers", gi.layers)
+				_vm_hidden.append(weakref(gi))
+			gi.layers = VM_LAYER
+	_vm_was_current = false
+
+
 func _process(_delta: float) -> void:
 	_interpolate_camera()
+	_vm_sync(_delta)
 	if _cam != null and not _cam_pocket and (combat or ladder != null or is_down \
 			or (pinned and not _cam_up and Time.get_ticks_msec() > _cam_keep_ms)):
 		_cam_stow(true)                      # dövüşte, merdivende, yerdeyken makine cepte; kürekteyken yalnız kadrajda

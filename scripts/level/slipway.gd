@@ -60,11 +60,15 @@ func _ready() -> void:
 	add_child(track)
 	water_y = end_point().y - 0.8
 	_build_slope()
+	# Yokuşun iki yanı durağan: birkaç ağ örgüsüne birleşir (Props.bake_static; Bölüm 2'de kare başına ~10 bin çizim
+	# çağrısı vardı). Dönen ırgatlar ve askerler birleşmez.
+	var first := get_child_count()
 	_build_terrain()
 	_build_sides()
+	Props.bake_static(self, get_children().slice(first))
 	_build_ship()
 	_build_obstacles()
-	_build_bottom()
+	_build_bottom()      # deniz dibi birleştirilmez: yüzerek kıyıya çıkma botu takılıyordu (--autotest=swimshore)
 	if not in_world:
 		_build_far_shore()
 	_build_chain_and_boat()
@@ -389,6 +393,7 @@ func _build_sides() -> void:
 					var deck := Props.cyl(self, 2.3, deck_h, Vector3(xz3.x, hi + 0.05 - deck_h * 0.5, xz3.y), Color("6f5a3e").darkened(0.1), Vector3.ZERO, 14)
 					Props.make_solid(deck)
 					cap.position = Vector3(xz3.x, hi + 0.05, xz3.y)
+					cap.set_meta("no_bake", true)
 					add_child(cap)
 					_capstans.append(cap)
 					var edge := s_to_world(s3, side * (WIDTH / 2.0 + 0.3), 0.15)
@@ -725,6 +730,7 @@ func _build_bottom() -> void:
 
 
 func _build_far_shore() -> void:
+	var first := get_child_count()
 	var end := end_point()
 	var base_y := water_y
 	var far_z := end.z - 150.0
@@ -824,6 +830,8 @@ func _build_far_shore() -> void:
 	Props.cyl(self, 4.7, 2.0, gt + Vector3(0, 32, 0), C_STONE_DARK, Vector3.ZERO, 12)
 	Props.cyl(self, 4.6, 9.0, gt + Vector3(0, 37.5, 0), Color("6d7f8f"), Vector3.ZERO, 12, 0.2)
 
+	# Karşı kıyı durağan: ~800 parça birkaç ağ örgüsüne birleşir (Props.bake_static; Bölüm 2 kare başına ~10 bin çizim)
+	Props.bake_static(self, get_children().slice(first))
 
 func _build_chain_and_boat() -> void:
 	# Haliç zinciri: yüzen kütükler ve halkalar (tek haritada dünyanın zinciri ağızdadır; burada kurulmaz)

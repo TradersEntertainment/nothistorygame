@@ -1,4 +1,82 @@
 anahtar,bolum,konusmaci,ton,ton_elle,tr,en,kaynak
+BUR_AMB_G10_1_1,,SPK_LEONARDO,,0,Dünya tarihi maketimi bir metreye sığdırdım. Hepsi tek masada.,I fitted my model of world history into one metre. All of it on one table.,kod
+BUR_AMB_G10_1_2,,SPK_EINSTEIN,,0,"Benim en ünlü denklemim tek satır: E eşittir m c kare. Herkes biliyor, kimse anlamıyor.","My most famous equation is one line: E equals m c squared. Everyone knows it, nobody gets it.",kod
+BUR_AMB_G10_1_3,,SPK_LEONARDO,,0,"Benim defterlerim aynada okunur, tersten yazdım. Burada ayna kullanmak dilekçeye tabi.","My notebooks are read in a mirror, I wrote them backwards. Here, using a mirror requires a petition.",kod
+BUR_AMB_G10_2_1,,SPK_EINSTEIN,,0,Milano Dükü'ne başvuru yazarken neyi öne çıkardın?,"When you wrote to the Duke of Milan, what did you put first?",kod
+BUR_AMB_G10_2_2,,SPK_LEONARDO,,0,Mühendisliği. Resim en sondaydı.,Engineering. Painting came last.,kod
+BUR_AMB_G10_2_3,,SPK_EINSTEIN,,0,Bugün seni resimle tanıyorlar.,Today they know you for the painting.,kod
+BUR_AMB_G10_2_4,,SPK_LEONARDO,,0,Özgeçmişi hiçbir zaman sonuna kadar okumazlar.,Nobody ever reads a CV to the end.,kod
+BUR_AMB_G11_1_1,,SPK_GUIDE,,0,Sağ tarafta Tarihe İtiraz Birimi. Oturanların hepsi tarihin kendilerini yanlış yazdığını düşünüyor.,"On your right, the History Appeals Unit. Everyone seated there believes history got them wrong.",kod
+BUR_AMB_G11_1_2,,SPK_GUIDE,,0,Bir kısmı haklı. Bir kısmı sandalyenin üstünde. Fotoğraf çekerken lütfen ikisini karıştırmayın.,"Some of them are right. One of them is standing on a chair. When taking photos, please do not confuse the two.",kod
+BUR_AMB_G11_2_1,,SPK_GUIDE,,0,Hediyelik eşya köşesinde bir yıllık mühürlü bekleme fişi satıyoruz.,At the gift corner we sell stamped one-year waiting tickets.,kod
+BUR_AMB_G11_2_2,,SPK_GUIDE,,0,"Fişler iade edilemez. İade için başka bir sıra gerekir, o da bu sıra.","Tickets are non-refundable. A refund needs another queue, and that queue is this one.",kod
+BUR_AMB_G12_1_1,,SPK_ARCHAEOLOGIST,,0,Elimde ağır bir bronz nesne var. Üzerinde 'ONAYLANDI' yazıyor. Muhtemelen bir tanrının imzası.,I am holding a heavy object. It says 'APPROVED' on it. Most likely the signature of a god.,kod
+BUR_AMB_G12_1_2,,SPK_ARCHAEOLOGIST,,0,Yanında 'RED' yazan bir tane daha var. Demek ki tanrı iki yüzlüymüş. İkisi de mürekkep yastığında dinleniyor.,Next to it is another reading 'REJECTED'. So the god was two-faced. Both rest on an ink pad.,kod
+BUR_AMB_G12_2_1,,SPK_ARCHAEOLOGIST,,0,"Bu kutu kâğıdı yutuyor, ışık saçıyor ve bir ses çıkarıyor. Adı 'fotokopi'.","This box swallows paper, gives off light and makes a sound. It is called a 'photocopier'.",kod
+BUR_AMB_G12_2_2,,SPK_ARCHAEOLOGIST,,0,Ses hep aynı: 'kâğıt sıkıştı'. Bilim insanları bunu o devrin ilahisi sayıyor.,The sound is always the same: 'paper jam'. Scholars consider it the hymn of that era.,kod
+BUR_AMB_G1_1_1,,SPK_NAPOLEON,,0,"Avrupa'nın yarısını fethettim, Cengiz.","I conquered half of Europe, Genghis.",kod
+BUR_AMB_G1_1_2,,SPK_GENGHIS,,0,Ben bir kıtayı. Sen son günlerini bir adada geçirdin.,I took a continent. You spent your last days on an island.,kod
+BUR_AMB_G1_2_1,,SPK_NAPOLEON,,0,Numaram 311. Seninki?,My number is 311. Yours?,kod
+BUR_AMB_G1_2_2,,SPK_GENGHIS,,0,312. Yani senden sonra.,"312. So, after you.",kod
+BUR_AMB_G1_2_3,,SPK_NAPOLEON,,0,Sonunda bir yarışı kazandım.,"At last, a contest I have won.",kod
+BUR_AMB_G1_2_4,,SPK_GENGHIS,,0,Kuşatma sürüyor. Numaratör henüz teslim olmadı.,The siege continues. The ticket machine has not surrendered yet.,kod
+BUR_AMB_G1_3_1,,SPK_GENGHIS,,0,"Boyun kaç, Napolyon?","How tall are you, Napoleon?",kod
+BUR_AMB_G1_3_2,,SPK_NAPOLEON,,0,Fransız ölçüsüyle beş ayak iki parmak. Yani bir altmış dokuz. Hesabı yanlış yapıyorlar.,"By French measure, five feet two. That's five foot seven in yours. They got the sums wrong.",kod
+BUR_AMB_G1_3_3,,SPK_GENGHIS,,0,Atlarım küçüktü. Ben yine de dünyaya yukarıdan baktım.,My horses were small. I still looked down on the world.,kod
+BUR_AMB_G2_1_1,,SPK_ROBOT,,0,Lütfen duvara bakmaya devam edin.,Please keep facing the wall.,kod
+BUR_AMB_G2_1_2,,SPK_HITLER,,0,Ne kadar daha?,For how much longer?,kod
+BUR_AMB_G2_1_3,,SPK_ROBOT,,0,Talimatta süre yok. Hesaplamaya göre sonsuz. Sorduğunuz için teşekkürler.,"The instruction gives no duration. By my calculation, forever. Thank you for asking.",kod
+BUR_AMB_G2_2_1,,SPK_NAPOLEON,,0,Ben sürgünde en azından deniz manzarasına bakıyordum.,"In exile, at least I had a sea view.",kod
+BUR_AMB_G2_2_2,,SPK_HITLER,[shouting],0,Bu haksızlık! Şikâyet etmek istiyorum!,This is unfair! I want to file a complaint!,kod
+BUR_AMB_G2_2_3,,SPK_ROBOT,,0,Şikâyet formunu doldurmak için dönmeniz gerekir. Dönmeniz yasak. Dosya kapandı.,To fill in the complaint form you must turn round. Turning round is forbidden. File closed.,kod
+BUR_AMB_G2_3_1,,SPK_HITLER,,0,Sırtımda ne yazıyor?,What does it say on my back?,kod
+BUR_AMB_G2_3_2,,SPK_ROBOT,,0,"'Reddedildi, beslemeyin.' Ben de talimata uyuyor, sizi beslemiyorum.","'Rejected, do not feed.' I am following the instruction and not feeding you.",kod
+BUR_AMB_G2_3_3,,SPK_HITLER,[excited],0,Zaten aç değilim!,I am not even hungry!,kod
+BUR_AMB_G2_3_4,,SPK_ROBOT,,0,Talimat yine de geçerli.,The instruction remains valid regardless.,kod
+BUR_AMB_G3_1_1,,SPK_MARCOPOLO,,0,Kitabıma 'Milyon' lakabı takıldı. Anlattıklarım abartı sayıldı.,My book got the nickname 'The Million'. They thought my stories were exaggerated.,kod
+BUR_AMB_G3_1_2,,SPK_GALILEO,,0,Ben gördüğümü olduğu gibi anlattım. Ev hapsi verdiler.,I described what I saw exactly as it was. They gave me house arrest.,kod
+BUR_AMB_G3_1_3,,SPK_MARCOPOLO,,0,Bence abartmak daha az cezalı.,I think exaggerating carries a lighter sentence.,kod
+BUR_AMB_G3_2_1,,SPK_GALILEO,,0,Teleskobumu Venedik Senatosu'na Aziz Markos çan kulesinden gösterdim.,I showed my telescope to the Venetian Senate from the bell tower of St Mark's.,kod
+BUR_AMB_G3_2_2,,SPK_MARCOPOLO,,0,Biz uzağı görmek için yürüyerek giderdik.,We used to walk there to see the far away.,kod
+BUR_AMB_G3_2_3,,SPK_GALILEO,,0,"Yirmi dört yılda sen, bir akşamda ben. Verimlilik ortada.","Twenty-four years for you, one evening for me. Efficiency speaks for itself.",kod
+BUR_AMB_G4_1_1,,SPK_MOZART,,0,Altı yüzden fazla eser yazdım ama hep borç istemek zorunda kaldım.,"I wrote over six hundred works, yet I was always asking for loans.",kod
+BUR_AMB_G4_1_2,,SPK_CURIE,,0,Ben iki Nobel aldım ama laboratuvarın faturasını hâlâ düşünüyorum.,I won two Nobels and I still worry about the laboratory bills.,kod
+BUR_AMB_G4_1_3,,SPK_MOZART,,0,"Demek ki dehaya verilen ödül, fatura ödemeye yetmiyor.",So a prize for genius does not cover the bills.,kod
+BUR_AMB_G4_2_1,,SPK_CURIE,,0,Radyum şişeleri geceleri karanlıkta hafifçe parlardı. Yorulunca onlara bakardım.,"The radium vials glowed faintly in the dark at night. When I was tired, I would look at them.",kod
+BUR_AMB_G4_2_2,,SPK_MOZART,,0,Don Giovanni'nin uvertürünü prömiyerden önceki gece yazdığım anlatılır.,They say I wrote the Don Giovanni overture the night before the premiere.,kod
+BUR_AMB_G4_2_3,,SPK_CURIE,,0,"Bu büronun teslim tarihleri sizden etkilenmemiş, görüyorum.",I see this office's deadlines have not learned anything from you.,kod
+BUR_AMB_G5_1_1,,SPK_SINAN,,0,Süleymaniye'de kandil isi özel bir odada toplanıp mürekkep oldu. Hiçbir şey boşa gitmedi.,"In the Süleymaniye, lamp soot was gathered in a special chamber and made into ink. Nothing was wasted.",kod
+BUR_AMB_G5_1_2,,SPK_NASREDDIN,,0,"Burada da öyle usta. Bütün bekleme boşa gitmiyor, evraka dönüşüyor.","Same here, master. None of the waiting is wasted. It turns into paperwork.",kod
+BUR_AMB_G5_2_1,,SPK_NASREDDIN,,0,"Usta, bana bir eşek ahırı yapsan, buraya yine ters otururum.","Master, if you built me a donkey stable, I would still sit backwards in here.",kod
+BUR_AMB_G5_2_2,,SPK_SINAN,,0,Ahır için önce dilekçe lazım Hocam.,"For a stable you need a petition first, Hodja.",kod
+BUR_AMB_G5_2_3,,SPK_NASREDDIN,,0,Dilekçeyi eşeğe yazdırırım. O benden sabırlı.,I will have the donkey write the petition. He is more patient than me.,kod
+BUR_AMB_G6_1_1,,SPK_GALILEO,,0,"Dünya gerçekten yuvarlak mı, Yuri?","Is the Earth really round, Yuri?",kod
+BUR_AMB_G6_1_2,,SPK_GAGARIN,,0,"Yuvarlak ve mavi. Pencereden baktım, bitti.",Round and blue. I looked out of the window and that was that.,kod
+BUR_AMB_G6_1_3,,SPK_GALILEO,,0,Ben bir ömür kanıt aradım. Sen pencereye baktın. Haksızlık.,I spent a lifetime searching for proof. You looked out of a window. Unfair.,kod
+BUR_AMB_G6_2_1,,SPK_GAGARIN,,0,"Teleskopsuz gördüm, Galileo. Dünya pencereye tamamen sığdı.","I saw it without a telescope, Galileo. The whole Earth fitted in the window.",kod
+BUR_AMB_G6_2_2,,SPK_GALILEO,,0,Ben yıllarca mercek cilaladım.,I spent years polishing lenses.,kod
+BUR_AMB_G6_2_3,,SPK_GAGARIN,,0,Roketle yukarı çıkınca cila gerekmiyor.,"When you go up in a rocket, you do not need to polish anything.",kod
+BUR_AMB_G7_1_1,,SPK_CAESAR,,0,"Oyunun adı benim, ama ben üçüncü perdede ölüyorum.","The play is named after me, but I die in the third act.",kod
+BUR_AMB_G7_1_2,,SPK_SHAKESPEARE,,0,Başlık sende kaldı. Reklam bunu gerektirdi.,You kept the title. Marketing required it.,kod
+BUR_AMB_G7_1_3,,SPK_CAESAR,,0,Kalan iki perdeyi Brütüs kazandı. Başrol karşılığı bile ödenmedi.,Brutus took the remaining acts. I was not even paid for a lead role.,kod
+BUR_AMB_G7_2_1,,SPK_CAESAR,,0,"Menüde 'Sezar salatası' görüp ısmarladım. Yeşillik geldi, fetih yok.","I saw 'Caesar salad' on a menu and ordered it. Lettuce came, no conquest.",kod
+BUR_AMB_G7_2_2,,SPK_SHAKESPEARE,,0,"Onu 1920'lerde Cardini adlı bir aşçı icat etti, Meksika'da.","A cook named Cardini invented it in the 1920s, in Mexico.",kod
+BUR_AMB_G7_2_3,,SPK_CAESAR,,0,Yani iki bin yıl sonra adım bir tabağa da kaldı.,So two thousand years later my name ended up on a plate.,kod
+BUR_AMB_G7_3_1,,SPK_CAESAR,,0,Roma'da şarabı suyla karıştırırdık. Buranın çayı da bir şeyle karışık mı?,In Rome we mixed wine with water. Is the tea here mixed with something too?,kod
+BUR_AMB_G7_3_2,,SPK_NECMI,,0,"Hayır efendim, sadece zamanla demlendi. Hem de çok demlendi.","No, sir, only with time. It has been brewing for a very long time.",kod
+BUR_AMB_G8_1_1,,SPK_COLUMBUS,,0,Kayıp kıta bildirmeye geldim.,I have come to report a lost continent.,kod
+BUR_AMB_G8_1_2,,SPK_SABRI,,0,Gazeteyi indirmeden soruyorum: Kaç tane?,Without lowering the newspaper: how many?,kod
+BUR_AMB_G8_1_3,,SPK_COLUMBUS,,0,İki. Kuzey ve güney.,Two. North and south.,kod
+BUR_AMB_G8_1_4,,SPK_SABRI,,0,Formda 'bir kıta' yazıyor. İkincisi için ayrı dilekçe.,The form says 'one continent'. The second needs a separate petition.,kod
+BUR_AMB_G8_2_1,,SPK_COLUMBUS,,0,Orada yaşayanlara 'Hintli' dedim. Hindistan'a vardığımı sanıyordum.,I called the people living there 'Indians'. I thought I had reached India.,kod
+BUR_AMB_G8_2_2,,SPK_SABRI,,0,Hâlâ öyle mi diyorlar?,Do they still call them that?,kod
+BUR_AMB_G8_2_3,,SPK_COLUMBUS,,0,"Bazıları öyle diyor, beş yüz yıldır.","Some do, for five hundred years now.",kod
+BUR_AMB_G8_2_4,,SPK_SABRI,,0,Yanlış bir ad beş yüz yıl durursa artık doğrudur. Biz öyle çalışırız.,A wrong name that lasts five hundred years becomes correct. That is how we work.,kod
+BUR_AMB_G9_1_1,,SPK_CLEOPATRA,,0,Şikâyet masasında yüz yirmi dilekçe var. Hepsi 'şikâyet masası çok yavaş' diyor.,There are a hundred and twenty petitions at the complaints desk. All of them say 'the complaints desk is too slow'.,kod
+BUR_AMB_G9_1_2,,SPK_SULEYMAN,,0,Haklılar mı?,Are they right?,kod
+BUR_AMB_G9_1_3,,SPK_CLEOPATRA,,0,"Haklılar. O yüzden hepsini reddediyorum, kendime dava açmak istemem.",They are. That is why I reject them all. I do not want to sue myself.,kod
+BUR_AMB_G9_2_1,,SPK_SULEYMAN,,0,"Bir maddede 'istisna yoktur' yazıyor, ertesi maddede 'istisnalar ek üçtedir'.","One article says 'there are no exceptions', the next says 'exceptions are listed in annex three'.",kod
+BUR_AMB_G9_2_2,,SPK_CLEOPATRA,,0,Bizde istisnaya 'hükümdarın keyfi' derlerdi. Daha dürüsttü.,In our day an exception was called 'the ruler's whim'. It was more honest.,kod
 BUR_ARCHDRAWER,,SPK_NIHAT,,0,Çekmeceyi çektim; içinde bir çekmece daha var. Arşivin kendi arşivi.,I pulled the drawer. Inside: a smaller drawer. The archive's own archive.,kod
 BUR_ARCHDRAWER_2,,SPK_NIHAT,,0,Küçük çekmecenin etiketinde şu yazıyor: 'Bu çekmecenin içeriği için 4-b numaralı çekmeceye bakınız.',"The small drawer's label reads: 'For the contents of this drawer, see drawer 4-b.'",kod
 BUR_ATRIUMWIN,,SPK_NIHAT,,0,"Bu pencere dışarıyı değil, zamanı gösteriyor. Manzara akıyor, çağlar kayıyor.","This window shows time, not the outdoors. The scenery flows and the centuries slide by.",kod
@@ -25,49 +103,61 @@ BUR_DIRECTOR_2,,SPK_NIHAT,,0,Müdür mesaide. Ya da mesai Müdür'de. Hangisi ol
 BUR_DIRECTOR_3,,SPK_NIHAT,,0,Kapının altı bu kez parlıyor. Sanki içeride biri geçen saniyeleri sayıyor.,The light under the door glows now. As if someone inside is counting the seconds.,kod
 BUR_DISPLAY,,SPK_NIHAT,,0,"Sıradaki 1453. Bu numarayı daha önce bir yerde görmüştüm, sur dibinde miydi?",Now serving 1453. I've seen that number before. Was it by some city walls?,kod
 BUR_DISPLAY_2,,SPK_NIHAT,,0,Ekran yanıp sönüyor ama sayı hiç değişmiyor. İstikrar dediğin bu.,The screen blinks but the number never changes. That's what stability looks like.,kod
-BUR_DOOR_1071_1,,SPK_NIHAT,,0,1071. Malazgirt. Bizans İmparatoru Romanos Diogenes esir düştü. O gün kimsede esir devir formu yoktu.,1071. Manzikert. Emperor Romanos Diogenes was captured. Nobody had the prisoner transfer form that day.,kod
-BUR_DOOR_1071_2,,SPK_NIHAT,,0,"1071, 26 Ağustos. Malazgirt Savaşı. Bu tarih kayıtlarda hâlâ doğru. Nadir bir durum.","1071, August 26. The Battle of Manzikert. The date is still correct in the records. A rare case.",kod
-BUR_DOOR_1071_3,,SPK_NIHAT,,0,1071. Alp Arslan esir imparatoru serbest bıraktı ve bir anlaşma yapıldı. Evrak tamam. Sonrası başka dairenin işi.,1071. Alp Arslan released the captive emperor after a treaty. Paperwork complete. The aftermath is another department's job.,kod
-BUR_DOOR_1204_1,,SPK_NIHAT,,0,1204. Dördüncü Haçlı Seferi yolunu şaşırıp İstanbul'u yağmaladı. Yönlendirme tabelası eksikti herhalde.,1204. The Fourth Crusade lost its way and sacked Constantinople. Probably a missing signpost.,kod
-BUR_DOOR_1204_2,,SPK_NIHAT,,0,"1204. İstanbul yağmalandı, Latin İmparatorluğu kuruldu. Yetki devri yok, yazılı onay yok.","1204. Constantinople was sacked and the Latin Empire was set up. No transfer of authority, no written approval.",kod
-BUR_DOOR_1204_3,,SPK_NIHAT,,0,"1204. Haçlılar Venedik'e nakliye ücretini ödeyemedi, rota değişti. Bürokrasi tam olarak böyle işler.","1204. The Crusaders could not pay Venice for transport, so the route changed. This is exactly how bureaucracy works.",kod
-BUR_DOOR_1299_1,,SPK_NIHAT,,0,1299. Osmanlı'nın kuruluşu için geleneksel tarih. Kuruluş belgesi yok. Tutanağı tarihçiler kendileri yazdı.,1299. The traditional date for the Ottoman founding. No founding certificate exists. Historians drafted the minutes themselves.,kod
-BUR_DOOR_1299_2,,SPK_NIHAT,,0,"1299. Osman Bey, Söğüt çevresinde küçük bir beylik yönetiyor. Bütçesi tek sayfaya sığar.",1299. Osman Bey runs a small principality around Söğüt. Its budget fits on a single page.,kod
-BUR_DOOR_1299_3,,SPK_NIHAT,,0,"1299. Kesin bir kuruluş günü yok. Tarih, sonradan uygun görülmüş yuvarlak bir sayı. Ben de öyle yaparım.",1299. There is no exact founding day. The date is a round number chosen later. I would have done the same.,kod
+BUR_DOOR_1215_1,,SPK_NIHAT,,0,"1215. Kral John, Runnymede'de Magna Carta'yı mühürledi. İmza değil, mühür. Farkı bilirim.","1215. King John sealed the Magna Carta at Runnymede. A seal, not a signature. I know the difference.",kod
+BUR_DOOR_1215_2,,SPK_NIHAT,,0,1215. Magna Carta kralı da yasanın altına koydu. Papa birkaç ay sonra iptal etti. Hızlı bir itiraz.,1215. The Magna Carta put even the king under the law. The Pope annulled it a few months later. A fast appeal.,kod
+BUR_DOOR_1215_3,,SPK_NIHAT,,0,1215. Magna Carta'nın maddelerinin çoğu sonradan kalktı. Birkaçı hâlâ yürürlükte. Yönetmeliklerde makul bir oran.,1215. Most clauses of the Magna Carta were later repealed. A few are still in force. A reasonable ratio for regulations.,kod
+BUR_DOOR_1347_1,,SPK_NIHAT,,0,"1347. Veba, Mesina limanına gelen gemilerle Avrupa'ya girdi. Gümrükte kimse bagajı açtırmamış.",1347. The plague entered Europe on ships docking at Messina. Nobody at customs opened the luggage.,kod
+BUR_DOOR_1347_2,,SPK_NIHAT,,0,"1347. Kara Ölüm, Avrupa nüfusunun en az üçte birini götürdü. Bu kapıdan geçmek için sağlık raporu şart.",1347. The Black Death took at least a third of Europe's population. A health certificate is required to pass this door.,kod
+BUR_DOOR_1347_3,,SPK_NIHAT,,0,"1347. Karantina kelimesi 'kırk gün' anlamına gelir. Bürokraside kırk gün, ancak ilk inceleme süresidir.","1347. The word quarantine comes from 'forty days'. In bureaucracy, forty days is only the first review period.",kod
 BUR_DOOR_1453_1,,SPK_NIHAT,,0,1453. Gemilerin karadan yürütüldüğü anlatılır. Güzergâh izni alındığına dair bir belge yok.,1453. They say the ships were dragged overland. There is no record of a route permit.,kod
 BUR_DOOR_1453_2,,SPK_NIHAT,,0,"1453. Surlar bin yıldan fazla dayandı, sonra bir top geldi. Bakım yönetmeliği güncellenmemişti.","1453. The walls held for over a thousand years, then a cannon arrived. The maintenance regulation had not been updated.",kod
 BUR_DOOR_1453_3,,SPK_NIHAT,,0,"1453. Üç kapı, üç ayrı kuşatma raporu. Hangisi doğru? Hepsi mühürlü.","1453. Three doors, three separate siege reports. Which is correct? All of them are stamped.",kod
 BUR_DOOR_1453_4,,SPK_NIHAT,,0,"1453, 29 Mayıs. Fetih tarihi kesin. Ama aynı tarih için üç kapı fazla.","1453, May 29. The date of the conquest is certain. Three doors for one date is still too many.",kod
+BUR_DOOR_1455_1,,SPK_NIHAT,,0,"1455. Gutenberg İncili basıldı. Yaklaşık yüz seksen nüsha, hepsi birbirinin aynı. Fotokopi dairesinin atası.","1455. The Gutenberg Bible was printed. About 180 copies, all identical. The ancestor of the photocopy department.",kod
+BUR_DOOR_1455_2,,SPK_NIHAT,,0,"1455. Aynı yıl Gutenberg'in borcu yüzünden matbaasına el kondu. Yani ilk basım, ilk icra.","1455. That same year Gutenberg's press was seized over a debt. So: first print run, first foreclosure.",kod
+BUR_DOOR_1455_3,,SPK_NIHAT,,0,1455. Bir Kutsal Kitap'ı elle kopyalamak aylar sürebilirdi. Mühür dairemiz hâlâ elle çalışıyor.,1455. Copying a Bible by hand could take months. Our stamp office still works by hand.,kod
 BUR_DOOR_1492_1,,SPK_NIHAT,,0,1492. Kolomb Hindistan'a vardığını sandı. Ona doğru adres formunu kimse vermemiş.,1492. Columbus thought he had reached India. Nobody gave him the correct address form.,kod
 BUR_DOOR_1492_2,,SPK_NIHAT,,0,"1492. Gırnata teslim oldu, Reconquista tamamlandı. Aynı yıl Kolomb yola çıktı. Mesai yoğundu.",1492. Granada surrendered and the Reconquista was complete. The same year Columbus set sail. Heavy workload.,kod
 BUR_DOOR_1492_3,,SPK_NIHAT,,0,"1492. Kolomb üç gemiyle yola çıktı. Yolcu listesi eksik, varış noktası yanlış.","1492. Columbus set out with three ships. Passenger list incomplete, destination wrong.",kod
-BUR_DOOR_1517_1,,SPK_NIHAT,,0,"1517. Yavuz Selim Mısır'ı aldı, Memlük Devleti sona erdi. Devir teslim tutanağı çok uzundu.",1517. Selim I took Egypt and the Mamluk state came to an end. The handover report was very long.,kod
+BUR_DOOR_1517_1,,SPK_NIHAT,,0,1517. Luther'in tezleri matbaa sayesinde haftalar içinde Almanya'ya yayıldı. Çoğaltma dairesi hiç bu kadar verimli çalışmadı.,"1517. Thanks to the printing press, Luther's theses spread across Germany within weeks. No copying department has ever been so efficient.",kod
 BUR_DOOR_1517_2,,SPK_NIHAT,,0,1517. Luther doksan beş maddelik itirazını yazdı. Dilekçe usulüne uygun değil ama etkili oldu.,"1517. Luther wrote his ninety-five theses. Not in proper petition format, but effective.",kod
 BUR_DOOR_1517_3,,SPK_NIHAT,,0,1517. Tezlerin kilise kapısına çivilendiği anlatılır. Tarihçiler pek emin değil. Ben de değilim.,1517. The theses are said to have been nailed to a church door. Historians are not very sure. Neither am I.,kod
-BUR_DOOR_1683_1,,SPK_NIHAT,,0,1683. İkinci Viyana Kuşatması. Kara Mustafa Paşa'nın planı kâğıt üzerinde güzeldi. Sahada ek protokol eksikti.,1683. The Second Siege of Vienna. Kara Mustafa Pasha's plan looked good on paper. The field lacked an additional protocol.,kod
-BUR_DOOR_1683_2,,SPK_NIHAT,,0,1683. Kruvasanın bu kuşatmadan çıktığı söylenir. Efsane. Kayıtlarda böyle bir talimat yok.,1683. The croissant is said to come from this siege. A myth. There is no such instruction in the records.,kod
-BUR_DOOR_1683_3,,SPK_NIHAT,,0,"1683. Kral Sobieski yardıma yetişti, kuşatma bozuldu. Zamanında gelen yardım. Başka dosyada görmedim.",1683. King Sobieski arrived in time and the siege broke. Help that came on schedule. I have not seen that in any other file.,kod
+BUR_DOOR_1687_1,,SPK_NIHAT,,0,1687. Newton'un Principia'sı yayımlandı. Basım masrafını arkadaşı Halley karşıladı. Böyle bir başvuru sahibi nadir.,1687. Newton's Principia was published. His friend Halley paid for the printing. A rare kind of applicant.,kod
+BUR_DOOR_1687_2,,SPK_NIHAT,,0,"1687. Hareketin üç yasası, kısa ve net. Ek yok, genelge yok, tebliğ yok. Kıskanıyorum.","1687. Three laws of motion, short and clear. No annex, no circular, no notice. I am envious.",kod
+BUR_DOOR_1687_3,,SPK_NIHAT,,0,1687. Newton ile Leibniz hesabın kime ait olduğu konusunda yıllarca tartıştı. O dosya hâlâ açık.,1687. Newton and Leibniz argued for years over who owned calculus. That file is still open.,kod
+BUR_DOOR_1769_1,,SPK_NIHAT,,0,"1769. Watt, ayrı yoğuşturuculu buhar makinesinin patentini aldı. Güç birimi onun adını taşıyor. Benim adım hiçbir formda yok.",1769. Watt patented his steam engine with a separate condenser. The unit of power carries his name. My name is on no form at all.,kod
+BUR_DOOR_1769_2,,SPK_NIHAT,,0,1769. Watt makinelerin gücünü atla ölçmeyi önerdi. Hâlâ ruhsatlarda beygir yazıyor. Eski sistemi severim.,1769. Watt suggested measuring engine power in horses. Licences still say horsepower. I like old systems.,kod
+BUR_DOOR_1769_3,,SPK_NIHAT,,0,"1769. Buhar makinesi sanayi devrimini ilerletti. Ondan önce de mesai vardı, ama vardiya yoktu.","1769. The steam engine drove the Industrial Revolution. There was work before, but there were no shifts.",kod
 BUR_DOOR_1789_1,,SPK_NIHAT,,0,1789. Bastille alındığında içeride yalnızca yedi mahkûm vardı. Bu kadar gürültü için küçük bir dosya.,"1789. When the Bastille fell, only seven prisoners were inside. A small file for so much noise.",kod
 BUR_DOOR_1789_2,,SPK_NIHAT,,0,1789. İnsan ve Yurttaş Hakları Bildirisi yayımlandı. On yedi madde. Benim yönetmeliğim bundan uzun.,1789. The Declaration of the Rights of Man and of the Citizen was issued. Seventeen articles. My regulation is longer.,kod
 BUR_DOOR_1789_3,,SPK_NIHAT,,0,1789. Fransa Genel Meclisi'ni toplantıya çağırdı. Sebep bütçe açığıydı. Sonrasını biliyoruz.,1789. France convened the Estates General. The reason was a budget deficit. We know the rest.,kod
-BUR_DOOR_1826_1,,SPK_NIHAT,,0,"1826. Yeniçeri Ocağı kaldırıldı. Kâğıt üzerinde tek cümle, sahada çok daha fazlası.","1826. The Janissary Corps was abolished. One sentence on paper, much more in the field.",kod
-BUR_DOOR_1826_2,,SPK_NIHAT,,0,1826 ya da 1827. Niépce penceresinden ilk kalıcı fotoğrafı çekti. Pozlama saatler sürdü. Vesikalık için fazla.,1826 or 1827. Niépce took the first lasting photograph from his window. The exposure took hours. Too long for an ID photo.,kod
-BUR_DOOR_1826_3,,SPK_NIHAT,,0,"1826. Ocağın kaldırılmasına 'Vaka-i Hayriye', yani Hayırlı Olay denmiş. Resmî dil böyle bir şey.","1826. The abolition was called 'Vaka-i Hayriye', the Auspicious Event. That is official language for you.",kod
-BUR_DOOR_1908_1,,SPK_NIHAT,,0,1908. İkinci Meşrutiyet ilan edildi. Anayasa otuz iki yıl sonra raftan indirildi. Uzun süre bekleyen bir dosya.,1908. The Second Constitutional Era was declared. The constitution came off the shelf after thirty-two years. A long-pending file.,kod
-BUR_DOOR_1908_2,,SPK_NIHAT,,0,"1908. Ford Model T piyasaya çıktı. Araba ucuzladı, trafik formları çoğaldı.","1908. The Ford Model T went on sale. Cars got cheaper, traffic forms multiplied.",kod
-BUR_DOOR_1908_3,,SPK_NIHAT,,0,"1908. Selanik'te örgütlenen Jön Türkler harekete geçti. Dilekçe yok, doğrudan askerî harekât.","1908. The Young Turks, organized in Salonica, took action. No petition, straight to a military move.",kod
-BUR_DOOR_1923_1,,SPK_NIHAT,,0,1923. Ankara başkent ilan edildi. Eski başkentin dosyalarını taşıyan kamyon hâlâ yolda olabilir.,1923. Ankara was declared the capital. The truck carrying the old capital's files may still be on the road.,kod
-BUR_DOOR_1923_2,,SPK_NIHAT,,0,"1923. Lozan Antlaşması imzalandı, Cumhuriyet ilan edildi. Aynı yıl iki büyük dosya. Mesai uzamış olmalı.","1923. The Treaty of Lausanne was signed and the Republic was declared. Two big files in one year. Overtime, surely.",kod
-BUR_DOOR_1923_3,,SPK_NIHAT,,0,"1923, 29 Ekim. Cumhuriyet ilan edildi, tarih bayram oldu. Bayram da bir tür resmî tatil formudur.","1923, October 29. The Republic was declared and the date became a holiday. A holiday is a kind of official leave form.",kod
+BUR_DOOR_1815_1,,SPK_NIHAT,,0,"1815. Waterloo. Napolyon toprağın kurumasını bekleyip saldırıyı geciktirdi. Beklemeyi öğrenmişti, yanlış gün.","1815. Waterloo. Napoleon waited for the ground to dry and delayed his attack. He had learned to wait, on the wrong day.",kod
+BUR_DOOR_1815_2,,SPK_NIHAT,,0,1815. Napolyon Elba'dan döndü ve yüz gün yönetti. Bekleme salonundaki bey bu süreyi hâlâ az buluyor.,1815. Napoleon came back from Elba and ruled for a hundred days. The gentleman in our waiting room still finds it too short.,kod
+BUR_DOOR_1815_3,,SPK_NIHAT,,0,"1815. Waterloo'dan sonra Napolyon Saint Helena'ya gönderildi. Zorunlu sürgün, ama en azından adres belliydi.","1815. After Waterloo, Napoleon was sent to Saint Helena. Compulsory exile, but at least the address was clear.",kod
+BUR_DOOR_1903_1,,SPK_NIHAT,,0,"1903, 17 Aralık. Wright Kardeşler uçtu. On iki saniye, otuz yedi metre. Rapor yazmak daha uzun sürdü.","1903, December 17. The Wright brothers flew. Twelve seconds, thirty-seven metres. Writing the report took longer.",kod
+BUR_DOOR_1903_2,,SPK_NIHAT,,0,1903. O gün dört uçuş yapıldı. En uzunu elli dokuz saniye sürdü. Beklemekten şikâyet edene tavsiye ederim.,1903. Four flights were made that day. The longest lasted fifty-nine seconds. I recommend it to anyone who complains about waiting.,kod
+BUR_DOOR_1903_3,,SPK_NIHAT,,0,1903. Wright Kardeşler bisiklet tamircisiydi. Bugün aynı iş için en az on belge isterler.,1903. The Wright brothers were bicycle mechanics. Today the same job would need at least ten documents.,kod
+BUR_DOOR_1914_1,,SPK_NIHAT,,0,1914. Saraybosna. Araba yanlış sokağa saptı ve bir savaşın kapısı açıldı. Rota değişikliği bildirimi yapılmamış.,1914. Sarajevo. The car took a wrong turn and a war began. No notice of route change was filed.,kod
+BUR_DOOR_1914_2,,SPK_NIHAT,,0,1914. Yanlış sokağa giren araba Princip'in tam önünde durdu. Bende buna 'dikkatsizlik' denir. Burada 'dünya savaşı'.,1914. The car that took the wrong street stopped right in front of Princip. In my files that is called 'carelessness'. Here it is 'world war'.,kod
+BUR_DOOR_1914_3,,SPK_NIHAT,,0,1914. Savaşın Noel'e kadar biteceği söylenmişti. Dört yıldan fazla sürdü. Tahmin formunu yeniden yazdırmak gerek.,1914. They said the war would be over by Christmas. It lasted over four years. The forecast form needs rewriting.,kod
+BUR_DOOR_1945_1,,SPK_NIHAT,,0,"1945. İkinci Dünya Savaşı sona erdi. Dosya kapandı. Köşedeki bir bey hariç, o hâlâ duvara bakıyor.","1945. The Second World War ended. File closed. Except for one gentleman in the corner, who is still facing the wall.",kod
+BUR_DOOR_1945_2,,SPK_NIHAT,,0,1945. Japonya'nın teslim belgesi 2 Eylül'de Missouri zırhlısında imzalandı. Savaş bile imzayla bitiyor.,1945. Japan's surrender was signed on 2 September aboard the USS Missouri. Even a war ends with a signature.,kod
+BUR_DOOR_1945_3,,SPK_NIHAT,,0,1945. Birleşmiş Milletler kuruldu. Dünya için bir şikâyet masası. Kleopatra'nınki kadar hızlı çalışıp çalışmadığını zaman gösterir.,"1945. The United Nations was founded. A complaints desk for the world. Whether it works as fast as Cleopatra's, time will tell.",kod
 BUR_DOOR_1969_1,,SPK_NIHAT,,0,1969. Apollo 11 mürettebatı dönüşte gümrük beyannamesi doldurdu. Sahiden. Ay'dan gelen numuneler yazıldı.,1969. The Apollo 11 crew filled in a customs declaration on return. Really. Samples from the Moon were listed.,kod
 BUR_DOOR_1969_2,,SPK_NIHAT,,0,"1969. ARPANET'teki ilk mesaj 'LO' oldu, sistem 'LOGIN' yazılırken çöktü. İlk ağ arızası da kayıtlı.","1969. The first ARPANET message was 'LO', as the system crashed while typing 'LOGIN'. The first network outage is on record too.",kod
 BUR_DOOR_1969_3,,SPK_NIHAT,,0,1969. Ay'a iniş canlı yayınlandı. Yüz milyonlarca kişi izledi. Benim raporumu kimse izlemedi.,1969. The Moon landing was broadcast live. Hundreds of millions watched. Nobody watched my report.,kod
+BUR_DOOR_1989_1,,SPK_NIHAT,,0,"1989, 9 Kasım. Berlin Duvarı açıldı. Bir sözcü notunu yanlış okudu, 'derhal' dedi. Yirmi sekiz yıllık dosya kapandı.","1989, November 9. The Berlin Wall opened. A spokesman misread his note and said 'immediately'. A twenty-eight-year file was closed.",kod
+BUR_DOOR_1989_2,,SPK_NIHAT,,0,"1989. Duvar yirmi sekiz yıl durdu, bir basın toplantısıyla yıkıldı. Ben notlarımı iki kez okurum.",1989. The Wall stood for twenty-eight years and fell to a press conference. I read my notes twice.,kod
+BUR_DOOR_1989_3,,SPK_NIHAT,,0,1989. İnsanlar çekiç ve keskiyle duvardan parça kopardı. Resmî izin yoktu. Bu sefer kimse form sormadı.,1989. People chipped pieces off the wall with hammers and chisels. There was no official permission. This time nobody asked for a form.,kod
 BUR_DOOR_2026_1,,SPK_NIHAT,,0,"2026. Dünya Kupası ABD, Kanada ve Meksika'da. Üç ülke, bir turnuva, sayısız form.","2026. The World Cup in the USA, Canada and Mexico. Three countries, one tournament, countless forms.",kod
 BUR_DOOR_2026_2,,SPK_NIHAT,,0,2026. Zaman Bürosu kayıtlarına göre bugün. Tarih kitaplarına göre henüz yazılmadı.,"2026. Today, according to the Time Bureau's records. According to the history books, not yet written.",kod
 BUR_DOOR_2026_3,,SPK_NIHAT,,0,"2026. Kırk sekiz takımlı ilk Dünya Kupası. Fikstür uzadı, mesai uzadı. Benimki de.","2026. The first 48-team World Cup. The fixture list got longer, so did the overtime. Mine too.",kod
 BUR_DOOR_2150_1,,SPK_NIHAT,,0,"2150. Ofis yok, her şey bulutta. Ama onay yine bir imza bekliyor.","2150. No offices, everything is in the cloud. But approval still waits for a signature.",kod
 BUR_DOOR_2150_2,,SPK_NIHAT,,0,2150. Gelecek. Bu kapı henüz yetkilendirilmedi. Taslak halinde.,2150. The future. This door has not been authorized yet. Draft status.,kod
 BUR_DOOR_2150_3,,SPK_NIHAT,,0,"2150. Robotlar form dolduruyor. Onaylayacak kimse yok. Bu bir sorun değil, bir aşama.","2150. Robots are filling in forms. Nobody is left to approve them. It is not a problem, it is a stage.",kod
+BUR_DOOR_MO2560_1,,SPK_NIHAT,,0,MÖ 2560. Büyük Piramit tamamlandı. Yaklaşık yirmi yıl sürdü. Benim ruhsat işlemlerim de bu kadar sürer.,2560 BC. The Great Pyramid is complete. It took about twenty years. My permit applications take just as long.,kod
+BUR_DOOR_MO2560_2,,SPK_NIHAT,,0,MÖ 2560. Üç bin sekiz yüz yıl boyunca dünyanın en yüksek yapısı kaldı. Kat artırım talebi hiç gelmemiş.,"2560 BC. It stayed the tallest structure in the world for 3,800 years. Not a single request to add a floor.",kod
+BUR_DOOR_MO2560_3,,SPK_NIHAT,,0,MÖ 2560. İşçilere düzenli ekmek ve bira verildiği biliniyor. Yani yemek kartının atası burada.,2560 BC. The workers are known to have received regular bread and beer. So the meal voucher starts here.,kod
 BUR_DOOR_MO44_1,,SPK_NIHAT,,0,MÖ 44. Sezar'a Mart'ın on beşinde suikast düzenlendi. Uyarıldığı anlatılır ama kimse gündeme almamış.,"44 BC. Caesar was assassinated on the Ides of March. He is said to have been warned, but nobody put it on the agenda.",kod
 BUR_DOOR_MO44_2,,SPK_NIHAT,,0,MÖ 44. Antik kaynaklara göre Sezar'da yirmi üç yara vardı. Tek imzayla çözülemeyen bir toplantı.,"44 BC. According to ancient sources, Caesar had twenty-three wounds. A meeting that no single signature could resolve.",kod
 BUR_DOOR_MO44_3,,SPK_NIHAT,,0,MÖ 44. Suikastçılar altmış kadar senatördü. Toplantı yeter sayısı rahatça aşılmış.,44 BC. The conspirators were around sixty senators. The meeting quorum was comfortably exceeded.,kod
@@ -139,7 +229,7 @@ BUR_FG_GUI_V2_2,,SPK_GUIDE,,0,Benim zamanımda kâğıt müzede durur. Bu büro 
 BUR_FG_GUI_V3_1,,SPK_GUIDE,,0,"Turda 'Napolyon'la fotoğraf' var. Sandalyeden inmediği için fotoğraflar hep aşağıdan çekiliyor. Uzun çıkıyor, çok memnun.","The tour includes 'photo with Napoleon'. He won't get off the chair, so every photo is taken from below. He looks taller. He's delighted.",kod
 BUR_FG_GUI_V3_2,,SPK_GUIDE,,0,"Sizin yılınız kaçtı, 2026 mı? O yılın da turu var: 'Pazartesi Toplantıları ve Diğer Antik Ritüeller'.","What's your year, 2026? We run a tour of that one too: 'Monday Meetings and Other Ancient Rituals'.",kod
 BUR_FG_HIT_1,,SPK_HITLER,,0,"Başvurum yine reddedildi. Gerekçe: 'Viyana Güzel Sanatlar Akademisi de iki kez reddetmiş, emsal var.'",Application rejected again. Grounds: 'The Vienna Academy of Fine Arts rejected you twice. There is precedent.',kod
-BUR_FG_HIT_2,,SPK_HITLER,,0,Beni köşeye oturttular. Başvurum incelenene kadar. Yani sonsuza kadar.,"They've sat me in the corner. Until my application is reviewed. So, forever.",kod
+BUR_FG_HIT_2,,SPK_HITLER,,0,Beni köşeye diktiler. Başvurum incelenene kadar. Yani sonsuza kadar.,"They stood me in the corner. Until my application is reviewed. So, forever.",kod
 BUR_FG_HIT_R,,SPK_HITLER,,0,Ben... okumadım.,I... didn't read it.,kod
 BUR_FG_HIT_V2_1,,SPK_HITLER,,0,"Bana 'boyacı' derlerdi. Burada gerçekten duvar boyatıyorlar: düz, tek renk.","They used to call me 'the house painter'. Here they actually make me paint walls: flat, one colour.",kod
 BUR_FG_HIT_V2_2,,SPK_HITLER,,0,Dilekçe yazdım: 'Köşeden çıkmak istiyorum.' Cevap: 'Talebiniz köşede değerlendirilecektir.',I wrote a petition: 'I wish to leave the corner.' The reply: 'Your request will be considered in the corner.',kod
@@ -148,7 +238,7 @@ BUR_FG_HIT_V3_2,,SPK_HITLER,,0,"Napolyon her gün aynı dersi veriyor: Rusya, k�
 BUR_FG_LEO_1,,SPK_LEONARDO,,0,"Formu doldurdum, ayna yazısıyla. Memur ayna bulana kadar bir şey daha icat ederim.","I filled in the form. In mirror writing. By the time the clerk finds a mirror, I'll have invented something else.",kod
 BUR_FG_LEO_2,,SPK_LEONARDO,,0,Bu dişlileri görünce aklıma bir uçan makine geldi. Yönetmelikte 'kanat' maddesi yok. Yani yasak da değil.,"These gears have given me an idea for a flying machine. There's no clause about wings in the regulations. So it isn't forbidden, either.",kod
 BUR_FG_LEO_3,,SPK_LEONARDO,,0,Mona Lisa'yı on altı yıl bitiremedim. Bu sıra beni korkutmaz.,I spent sixteen years not finishing the Mona Lisa. This queue doesn't scare me.,kod
-BUR_FG_LEO_V2_1,,SPK_LEONARDO,,0,"Zaman nehri maketini inceledim. Su gibi akıyor ama hep aynı yere dönüyor. Defterime çizdim, tersinden.","I've studied the river-of-time model. It flows like water but always comes back to the same spot. I drew it in my notebook, back to front.",kod
+BUR_FG_LEO_V2_1,,SPK_LEONARDO,,0,"Sarmal maketi inceledim. Tren her turda başa dönüyor, hiçbir yere varmıyor. Defterime çizdim, tersinden.","I've studied the spiral model. The train goes back to the start every lap and never arrives anywhere. I drew it in my notebook, back to front.",kod
 BUR_FG_LEO_V2_2,,SPK_LEONARDO,,0,"Şu sarkaca bir dişli eklesem saat olur. Saat olursa zaman olur. Büro buna izin vermez, biliyorum.","Add one gear to that pendulum and you'd have a clock. A clock means time. The Bureau won't allow it, I know.",kod
 BUR_FG_LEO_V3_1,,SPK_LEONARDO,,0,"Bir helikopter çizmiştim, adına hava vidası demiştim. Gelecekten gelen rehber onunla tur yaptıklarını söyledi. Çizimlerimden biri ilk kez bitmiş.",I once drew a helicopter; I called it the aerial screw. The guide from the future says they run tours in it. The first drawing of mine anyone ever finished.,kod
 BUR_FG_LEO_V3_2,,SPK_LEONARDO,,0,"Kralın kollarında öldüğümü anlatırlar. Söylenti. Ama bu salonda ölmeyeceğim kesin: burada kimse ölmüyor, sadece bekliyor.","They say I died in the King's arms. A rumour. But I certainly won't die here: nobody dies here, they just wait.",kod
@@ -254,8 +344,8 @@ BUR_TEAPOT_2,,SPK_NIHAT,,0,"Kapağın altında altın bir saniye parlıyor. Deml
 BUR_TICKET,,SPK_NIHAT,,0,Numara çektim. Önümde yalnızca iki bin yıllık bir kuyruk var.,I took a ticket. Only a two-thousand-year queue ahead of me.,kod
 BUR_TICKET_2,,SPK_NIHAT,,0,Numaram saatimden büyük. Tahmini bekleme süresi: tarihî.,My number is bigger than my watch. Estimated wait: historic.,kod
 BUR_TICKET_3,,SPK_NIHAT,,0,Bilet her çekişte bir artıyor. Demek hâlâ gelen var.,The ticket goes up by one every pull. So people are still arriving.,kod
-BUR_TIMELINE,,SPK_NIHAT,,0,"Zaman nehri maketi. Amber gibi parlıyor, iki kola ayrılıyor, bir kolu kırmızı bantlı.","A model of the river of time, glowing amber. It forks in two, and one fork is taped off in red.",kod
-BUR_TIMELINE_2,,SPK_NIHAT,,0,"Bantlı kol 1453'te kesilmiş. Minare, roket, garaj... Kimin garajı bu?","The taped fork is cut at 1453. A minaret, a rocket, a garage... whose garage is that?",kod
+BUR_TIMELINE,,SPK_NIHAT,,0,"Dünya tarihinin sarmal maketi. Piramitlerden bugüne yirmi durak, tepede dönen bir dünya. Minik bir tren hepsini sırayla geziyor.","A spiral model of world history. Twenty stops from the pyramids to today, a spinning globe on top. A tiny train visits them all in order.",kod
+BUR_TIMELINE_2,,SPK_NIHAT,,0,Tren 1453'te hep biraz bekliyor. Rayın üstünde kırmızı bant var. Bu maket de bizden haberdar.,The train always waits a little at 1453. There's red tape across the track. Even this model knows about us.,kod
 BUR_TOLGA_FILE,,SPK_NIHAT,,0,"Kırmızı bantlı tek dosya. Üstünde 1453-T yazıyor. T, Tolga'nın T'si mi, tehlikenin mi?","One file, red tape all round. '1453-T'. T for Tolga, or for trouble?",kod
 BUR_TOLGA_FILE_2,,SPK_NIHAT,,0,"Bandın altında ince, parlak bir şey var, tam bir saniye büyüklüğünde. Bu dosya fazla mesai yapıyor.","Something thin and shiny under the tape, about one second in size. This file is working overtime.",kod
 BUR_TROLLEY,,SPK_ZEKI,,0,"Çay, simit, bir de dosya. Hangisi acil?","Tea, simit and a file. Which one is urgent?",kod
@@ -264,6 +354,9 @@ BUR_TUBE,,SPK_NIHAT,,0,Fwump. 'Fwump' iyiye işaret değildir ama bu kez tüp bo
 BUR_TUBE_2,,SPK_NIHAT,,0,Tüpe 'Tüp çalışıyor mu?' yazdım. Cevap: 'Evet.' Kimden?,Sent the tube 'Is the tube working?' Reply: 'Yes.' From whom?,kod
 BUR_TYPEWRITER,,SPK_NIHAT,,0,Daktilo. Z tuşu aşınmış. Hep aynı form.,The typewriter. The Z key is worn smooth. Always the same form.,kod
 BUR_TYPEWRITER_2,,SPK_NIHAT,,0,Tak tak tak. Daha yazmadan evrakta yazılı çıkıyor.,Tap tap tap. What I type is already on file tomorrow.,kod
+BUR_WAIT_N_1,,SPK_NIHAT,,0,"Buradakilerin hepsi tarihte yanlış hatırlandığını düşünüyor. İtiraz için numara aldılar. Sıra ilerlemiyor, itirazlar da bekliyor.","Everyone here believes history remembers them wrongly. They took numbers to appeal. The queue does not move, so the appeals wait too.",kod
+BUR_WAIT_N_2,,SPK_NIHAT,,0,Burası Tarihe İtiraz Birimi. Dosyalar inceleniyor. Hangi yüzyılda biteceği henüz belli değil.,This is the History Appeals Unit. The files are under review. In which century that will finish has not been determined.,kod
+BUR_WAIT_N_3,,SPK_NIHAT,,0,"Bu kişiler tarihe itiraz ediyor. Başvurular alındı. Cevap, yönetmeliğe göre, 'incelenmektedir'.","These people are appealing against history. Applications were received. The answer, per regulation, is 'under review'.",kod
 CL_BARK_BREAD,,SPK_TOWNSMAN,[shouting],0,"Ekmek, sıcak ekmek! Kuşatmada bile fırın yanıyor!","Bread, warm bread! The ovens burn even in a siege!",şehir
 CL_BARK_CLOTH,,SPK_TOWNSMAN,[excited],0,"Bursa ipeği, Venedik çuhası, gel bak!","Bursa silk, Venetian wool, come and look!",şehir
 CL_BARK_CURFEW,,SPK_PATROL,,0,"Gece sokakta dolaşılmaz. Evine git, kapını sürgüle.",No wandering the streets at night. Go home and bar your door.,şehir
@@ -1160,7 +1253,6 @@ D3_N_CHICKEN,3,SPK_NIHAT,,0,Sen buraya ait değilsin. Ben de değilim ama benim 
 D3_N_CLUE_LOST,3,SPK_NIHAT,,0,Delil karartıldı. Kanıt eksik kalacak. Madde 12: delil karartana... not düşülür.,The evidence has been tampered with. The proof will be incomplete. Article 12: the tamperer... receives a note.,kod
 D3_N_DOOR,3,SPK_NIHAT,,0,Her kapı bir yıl. Hepsinin arkasında bir vaka. Hepsi 'acil'.,"Every door, a year. Behind every one, a case. Every one 'urgent'.",kod
 D3_N_DOOR_1453,3,SPK_NIHAT,,0,1453 kapısı. Yine. Bu koridorda üç tane 1453 kapısı var. Hiçbiri kapanmıyor.,The 1453 door. Again. There are three 1453 doors in this corridor. None of them will stay shut.,kod
-D3_N_DOOR_1923,3,SPK_NIHAT,,0,1923. Buranın kapısı hep gıcırdar. Kimse yağlamaya cesaret edemez.,1923. This door always creaks. Nobody dares oil it.,kod
 D3_N_DOOR_2026,3,SPK_NIHAT,,0,2026. Oradan hep 'belgesel izledim' diyenler çıkar.,2026. That's where all the 'I've seen a documentary' people come from.,kod
 D3_N_EAVES,3,SPK_NIHAT,,0,Kurutma makinesi. Not ettim.,A tumble dryer. Noted.,kod
 D3_N_EAVES_CALL,3,SPK_NIHAT,,0,Kurutma makinesi diyeceğinizi biliyordum. Az önce kendi kendinize söylediniz. Ben oradaydım. Görünmez olarak.,I knew you'd say tumble dryer. You said it to yourself a moment ago. I was there. Invisibly.,ad

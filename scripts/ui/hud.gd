@@ -169,6 +169,14 @@ func _ready() -> void:
 	layer = 10
 	process_mode = Node.PROCESS_MODE_ALWAYS
 	add_to_group("hud")
+	# Sahne kurulduktan sonra (açılış kararmasında) uzak küçük parçaları ayıkla: Props.cull_small
+	get_tree().create_timer(0.25, true).timeout.connect(func():
+		var sc := get_tree().current_scene if is_inside_tree() else null
+		if sc:
+			var t0 := Time.get_ticks_usec()
+			var c := Props.cull_small(sc, int(GameState.settings.get("quality", 2)))
+			if OS.get_environment("RINFO") != "":
+				print("CULLSMALL scene=%s changed=%d %.1fms" % [sc.name, c, (Time.get_ticks_usec() - t0) / 1000.0]))
 	GameState.bag_changed.connect(_on_bag_changed)
 	if GameState.autotest:
 		var at := Timer.new()
@@ -1610,6 +1618,7 @@ func say(speaker_key: String, text_key: String, _from_chain := false) -> void:
 		_dialog_shot(text_key)
 	if GameState.autotest:
 		_vis_audit(speaker_key, text_key)
+		_layout_audit()
 		_say_staging(speaker_key, text_key)
 		_ground_audit()
 		_portrait_audit(speaker_key, text_key)
@@ -2238,6 +2247,19 @@ func _say_staging(speaker_key: String, text_key: String) -> void:
 		fwd.y = 0.0
 		if to.length() > 0.3 and fwd.length() > 0.01 and fwd.normalized().dot(to.normalized()) < -0.3:
 			print("SAYFACE key=%s scene=%s speaker=%s d=%.1f dot=%.2f" % [text_key, scene, speaker_key, d, fwd.normalized().dot(to.normalized())])
+
+
+## Yerleşim denetimi (LAYOUTAUDIT=1, yalnız testte): tests/layout_audit.gd yalnız o zaman yüklenir (tests/ dışa
+## aktarılmaz). Havada asılı eşya, tabeladan taşan yazı, ardı duvar açık kapı, duvara yapışık oturan, koridor ortasında
+## duran kişi, testere dişi gölge.
+static var _layout_script: Script = null
+func _layout_audit() -> void:
+	if not OS.has_environment("LAYOUTAUDIT"):
+		return
+	if _layout_script == null:
+		_layout_script = load("res://tests/layout_audit.gd")
+	if _layout_script:
+		_layout_script.call("maybe_scan", get_tree())
 
 
 ## Görünürlük denetimi (otomatik testte, her replikte): konuşan duvarın arkasında mı, oyuncu duvara mı bakıyor,

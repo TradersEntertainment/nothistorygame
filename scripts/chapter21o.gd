@@ -140,6 +140,11 @@ func _segment(i: int) -> void:
 		add_child(l)
 		_lights.append(l)
 		Props.cyl(self, 0.03, 0.18, Vector3(0.95, 1.1, z), Color("f4ecd0"), Vector3.ZERO, 5)
+		# Mum duvara çakılı küçük rafta, ucunda alev (duvardan 15 cm açıkta havada duruyordu)
+		Props.box(self, Vector3(0.22, 0.03, 0.12), Vector3(1.0, 0.995, z), Color("5a3e26"))
+		Props.box(self, Vector3(0.03, 0.1, 0.08), Vector3(1.085, 0.93, z), Color("5a3e26"))
+		var fl := Props.ball(self, 0.03, Vector3(0.95, 1.22, z), Color("ffc860"), Vector3(1, 1.6, 1), 5, 3.0)
+		fl.material_override = Props.mat(Color("ffc860"), 3.0, false, "", false)
 
 
 ## Yeni destek: kazılmış bölümün tavanına direk

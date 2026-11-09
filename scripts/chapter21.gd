@@ -138,6 +138,10 @@ func _build_tunnel() -> void:
 	for i in 4:
 		var cp := t + Vector3(-0.95 if i % 2 == 0 else 0.95, 1.2, -1.5 - i * 4.0)
 		Props.cyl(self, 0.03, 0.18, cp, Color("f4ecd0"), Vector3.ZERO, 5)
+		# Mum duvara çakılı küçük bir rafın üstünde (duvardan 15 cm açıkta havada duruyordu)
+		var sx := signf(cp.x - t.x)
+		Props.box(self, Vector3(0.22, 0.03, 0.12), Vector3(t.x + sx * 1.0, cp.y - 0.105, cp.z), Color("5a3e26"))
+		Props.box(self, Vector3(0.03, 0.1, 0.08), Vector3(t.x + sx * 1.085, cp.y - 0.17, cp.z), Color("5a3e26"))
 		var fl := Props.ball(self, 0.03, cp + Vector3(0, 0.12, 0), Color("ffc860"), Vector3(1, 1.6, 1), 5, 3.0)
 		fl.material_override = Props.mat(Color("ffc860"), 3.0, false, "", false)
 		var l := OmniLight3D.new()
