@@ -228,6 +228,8 @@ func _pole_show(p: float) -> void:
 		return
 	if not is_instance_valid(_pole):
 		_pole = Node3D.new()
+		_pole.visible = false          # aşağıdaki "eller sırıkta" dalı ilk itişte de çalışsın (yeni düğüm görünür doğar:
+		                               # ilk merdivende kumanda sağ elde kalıyordu)
 		_pole.set_meta("transient", true)
 		player.camera.add_child(_pole)
 		Props.cyl(_pole, 0.035, 2.4, Vector3(0, 0, -1.0), Color("7a5a3a"), Vector3(-90, 0, 0), 6)

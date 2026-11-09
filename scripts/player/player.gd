@@ -84,7 +84,11 @@ var free_hold := Vector3.INF:  # sol el kameranın yerelindeki bu noktayı tutar
 	set(v):
 		free_hold = v
 		if v != Vector3.INF and not _kept.is_empty():
-			sheathe_blade.call_deferred()        # yük ya da sap iki el ister: kılıç kınına
+			sheathe_blade.call_deferred()
+		# Yeni bir tutuş, süren uzanmayı (reach_grab) bırakır: 30O'da yaralıyı kaldırırken uzanan sol el bırakılmıyor,
+		# taşırken ekranın ortasında havada kalıyordu (yükü tutması gerekirken)
+		if v != Vector3.INF:
+			_grab = false        # yük ya da sap iki el ister: kılıç kınına
 var eye_rest := EYE          # eğilince dönülen göz yüksekliği (Bölüm 16'da tavuk: eğilince insan boyuna çıkıyordu)
 var step_voice := ""          # boş değilse adım sesi bundan (Bölüm 16'da tavuk); el ve kıyafet hand_style'da kalır
 ## Göz yüksekliği ve hız çarpanı (Bölüm 16: tavuk yüksekliğinde kamera)

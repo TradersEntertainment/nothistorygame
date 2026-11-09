@@ -2342,6 +2342,10 @@ func _held_audit(scene: Node) -> void:
 		if c is Node3D and (c as Node3D).visible and not c.is_queued_for_deletion() and not (c is Light3D or c is RayCast3D or c is Camera3D) \
 				and c != (pl as Player).leg and c != (pl as Player).hand and c != (pl as Player).free_hand and not c.has_meta("transient"):
 			left.append(str(c.name))
+	# Bırakılmayan uzanma (reach_grab → release_grab yok): sol el bölüm sonuna dek bir noktaya uzanık kalır (v0.99.94;
+	# 30O'da yaralıyı taşırken el ekranın ortasında havadaydı, 1'de kumandayı alan el, 35O'da ipi tutan el kalıyordu)
+	if bool((pl as Player).get("_grab")):
+		left.append("free_hand_grab")
 	if not left.is_empty():
 		print("HELDAUDIT scene=%s left=%s" % [scene.scene_file_path.get_file(), ",".join(left)])
 

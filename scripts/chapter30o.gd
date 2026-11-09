@@ -208,7 +208,9 @@ func _carry_ladder() -> void:
 		if GameState.autotest:
 			var to := PLANT - player.global_position
 			to.y = 0.0
-			player.global_position += to.normalized() * minf(to.length(), 6.0 * dt)
+			# Fragman çekiminde bot yürüme hızında taşır (6 m/sn'de pencere açılmadan merdiven surun dibindeydi)
+			var bot_v := 2.4 if GameState.flags.get("trailer", false) else 6.0
+			player.global_position += to.normalized() * minf(to.length(), bot_v * dt)
 			player.global_position.y = Blachernae.slope_y(player.global_position.z) + 0.05
 		_carry_pose()
 		_slow_t = maxf(0.0, _slow_t - dt)
@@ -257,6 +259,7 @@ func _carry_ladder() -> void:
 
 
 var _carry_lad: Node3D
+var _wounded_hand_back := false
 var _slow_t := 0.0
 var arrow_hits := 0
 
@@ -603,6 +606,8 @@ func _tower_assault(gn: Gunner) -> void:
 		gn.state = "done"
 		if is_instance_valid(gn.soldier):
 			gn.soldier.set_meta("spk", "SPK_DEFENDER")
+			# Tolga namluya bakar (kuleye çıkınca kamera yere bakıyordu: tüfekçi kadrajda değildi)
+			player.face(gn.soldier.global_position + Vector3(0, 1.5, 0))
 	await hud.say("SPK_DEFENDER", "D30O_D_GUNNER")
 	# Tüfek dolu: ateşler. Tolga yana atlarsa ıskalar, atlamazsa omzundan yaralanır (eskiden "Bu tüfek dolu!" deyip hiç
 	# ateş etmeden tüfeği yere atıyordu). Boşalan tüfeği atıp kılıca davranmak artık mantıklı.
@@ -827,7 +832,7 @@ func _retreat() -> void:
 			continue
 		var dt := get_process_delta_time()
 		if GameState.autotest:
-			player.global_position += Vector3(0, 0, 5.0 * dt)
+			player.global_position += Vector3(0, 0, (2.2 if GameState.flags.get("trailer", false) else 5.0) * dt)
 			player.global_position.y = Blachernae.slope_y(player.global_position.z) + 0.05
 		_slow_t = maxf(0.0, _slow_t - dt)
 		player.speed_mult = 0.35 if _slow_t > 0.0 else 0.6
@@ -843,6 +848,8 @@ func _retreat() -> void:
 		_carry.queue_free()
 	player.free_hold = Vector3.INF
 	player.speed_mult = 1.0
+	if _wounded_hand_back:
+		player.show_remote(true)
 	await hud.say("SPK_SOLDIER", "D30O_S_THANKS")
 	# Paşa yamaçtan inip yanına gelir (9 m öteden konuşuyordu); yürürken yamaca basar
 	await Stage.approach(zaganos, player.global_position, 2.4, 1.6, Vector3.ZERO, func(_x: float, z: float) -> float: return Blachernae.slope_y(z))
@@ -1580,12 +1587,18 @@ func _on_interact(id: String) -> void:
 		_carry = Node3D.new()
 		player.camera.add_child(_carry)
 		Props.box(_carry, Vector3(0.36, 0.26, 0.6), Vector3(0.38, -0.12, 0.05), Color("b3262d"), Vector3(0, 0, -20))
-		var leg := Props.cyl(_carry, 0.065, 0.62, Vector3(-0.18, -0.42, -0.36), Color("e8e0d0"), Vector3(-35, 0, -25), 6)
+		# Bacaklar omuzdan göğsün önüne sarkar, sol kol onları sarar (bacak ekranın ortasından dimdik kalkıyordu, el
+		# bacağı tutmuyordu; sağ el boşta yükün yanında duruyordu)
+		var leg_r := Vector3(20, 0, 30)
+		var leg_at := Vector3(0.06, -0.46, -0.36)
+		var leg := Props.cyl(_carry, 0.065, 0.62, leg_at, Color("e8e0d0"), leg_r, 6)
 		leg.name = "Leg"
-		Props.box(_carry, Vector3(0.1, 0.08, 0.2), Vector3(-0.32, -0.66, -0.52), Color("3a2a22"))
+		Props.box(_carry, Vector3(0.1, 0.08, 0.2), leg_at + Basis.from_euler(leg_r * PI / 180.0) * Vector3(0, -0.31, 0), Color("3a2a22"))
 		Props.cyl(_carry, 0.05, 0.5, Vector3(0.5, -0.5, -0.32), Color("b3262d"), Vector3(-15, 0, 10), 6)   # sarkan kol
 		Props.strip_outlines(_carry)
-		player.free_hold = Vector3(-0.22, -0.5, -0.42)
+		_wounded_hand_back = player._hand_shown
+		player.show_remote(false)
+		player.free_hold = Vector3(-0.04, -0.38, -0.38)
 		player.speed_mult = 0.6
 		Carry.attach(player, _carry, {"weight": 1.0})       # omuzdaki adamın ağırlığı: dönüşte gecikir, adımda iner
 		Audio.sfx("land_pot", -10.0, 0.6)

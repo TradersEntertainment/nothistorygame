@@ -161,6 +161,7 @@ func _run() -> void:
 	player.reach_grab(hikmet.global_position + Vector3(0, 1.1, 0))
 	player.hand_gesture("reach")
 	await Handover.wait(self, 0.6)
+	player.release_grab()         # kumandayı alan el çekilir (sol el bölüm boyunca Hikmet'e uzanık kalıyordu)
 	remote_given = true
 	player.show_remote(true)
 	hud.set_signal(GameState.telsiz_bag)

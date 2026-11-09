@@ -689,3 +689,16 @@ Her bölüm denetiminde ve her düzeltmede bu listeyi baştan uygula. Yeni bir h
     sarılınca Tolga namlunun kuyruğuna çekilir. Oyuncuyu bir yere yürütmek, oradan kimin görüneceğini de değiştirir.
   - 26O (CI, 0.99.92): Kadri 6 m öteden konuşurken dalganın askerleri aradan geçti (VISAUDIT personhidden). Konuşmadan
     önce tek seferlik Unclip.clear_line yetmez: yürüyen kalabalık bir kare sonra çizgiye girer. Konuşan yanına gelir.
+- Fragman önizlemesi bir denetimdir (v0.99.94). Hissiyat fragmanının (tools/trailer/montage.gd set=feel) karelerinde,
+  bütün testlerden geçmiş üç hata göründü:
+  - 30: ilk merdivende sırıkla iterken kumanda sağ elde kalıyordu. Sırık düğümü yeni oluşturulunca görünür doğar;
+    "if not _pole.visible:" ile kurulan ilk-gösterim dalı (eli boşalt, sol el sırıkta) ilk itişte hiç çalışmadı.
+    Görünürlükle "ilk kez mi" anlamak için yeni düğüm gizli kurulur.
+  - 30O: yaralıyı taşırken sol el ekranın ortasında havada duruyordu. Kaldırırken çağrılan reach_grab hiç
+    bırakılmamıştı; _grab, free_hold'dan önce geldiği için el yükü değil uzanılan noktayı tuttu. Artık yeni bir
+    free_hold süren uzanmayı bırakır; 1 (kumanda), 8 (çifte) ve 35O'da (ip) da bırakma eksikti. Bölüm sonu denetimi
+    (Hud._held_audit) bırakılmayan uzanmayı "HELDAUDIT … free_hand_grab" diye yakalar.
+  - 30O kulesi: tüfekçi nişan alırken kamera yere bakıyordu; Tolga artık önce namluya döner.
+  Testler oyunun kurallarını denetler; "ekranda ne görünüyor" sorusunu en iyi gerçek kareler yanıtlar.
+- Melee._arm_audit yerde yatan oyuncuyu (donmuş ve göz hizası düşük: 30O kayıp dalında surdan düşüp bacağı kırılan
+  Tolga) saymaz; 30O "lose" ve 26 "hold_lose"daki seyrek ARMAUDIT buydu.

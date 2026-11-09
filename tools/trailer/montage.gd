@@ -28,7 +28,7 @@ const CLIPS := [
 
 ## Hissiyat fragmanı ("-- set=feel"): v0.99.90-93'ün oynanış anları (Blakherna kulesi, ok altında taşıma, yakın atış)
 const FEEL_CLIPS := [
-	{"id": "ladder_arrows", "ch": "30o", "v": "", "when": "sv('phase') == 'carry' and after(4.0)", "lead": 2.5, "dur": 6.0,
+	{"id": "ladder_arrows", "ch": "30o", "v": "", "when": "sv('phase') == 'carry'", "lead": 0.8, "dur": 6.0,
 		"cap": ["MERDİVENİ TAŞI. OKLAR YAĞIYOR.", "CARRY THE LADDER. ARROWS INCOMING."]},
 	{"id": "pole", "ch": "30", "v": "", "when": "sv('phase') == 'ladders' and shown('_pole')", "lead": 0.0, "dur": 5.0,
 		"cap": ["MERDİVENİ SURDAN İT", "PUSH THE LADDER OFF THE WALL"]},
@@ -36,7 +36,7 @@ const FEEL_CLIPS := [
 		"cap": ["SURDA İLK RAKİP", "FIRST BLADE ON THE WALL"]},
 	{"id": "tower_gunner", "ch": "30o", "v": "", "when": "sv('phase') == 'tower' and on('Gunner', 'state', 'aim')", "lead": 0.0, "dur": 5.0,
 		"cap": ["TÜFEK DOLU. YANA ATLA.", "HIS GUN IS LOADED. DODGE."]},
-	{"id": "wounded", "ch": "30o", "v": "", "when": "sv('carried') == true", "lead": 1.2, "dur": 6.0,
+	{"id": "wounded", "ch": "30o", "v": "", "when": "sv('carried') == true", "lead": 1.2, "drive": "level", "dur": 6.0,
 		"cap": ["YARALIYI OMZUNA AL", "SHOULDER THE WOUNDED"]},
 ]
 
@@ -87,6 +87,7 @@ var _drive_y0 := INF
 ## Yazısız kayıt ("clean"): HUD ve üst yazı çizilmez, replikler ve başlık kare numarasıyla stdout'a yazılır
 ## (tools/trailer/cut.py dikey kısaları ve 16:9 kurguyu kendi yazılarıyla basar)
 var _clean := false
+var _nohud := false            # "nohud": arayüz gizlenir, üst başlık kalır (hissiyat fragmanı)
 var _set := "trailer"
 var _hud: Node
 var _seen := {}              # gösterilen replik anahtarı → kare
@@ -110,6 +111,8 @@ func _ready() -> void:
 			_en = true
 		elif a == "clean":
 			_clean = true
+		elif a == "nohud":
+			_nohud = true
 		elif a.begins_with("set="):
 			_set = a.trim_prefix("set=")
 		elif a.begins_with("only="):
@@ -241,8 +244,8 @@ func _track_hud() -> void:
 				col.to_html(false), name, txt.replace("\n", " ")])
 	_line_on = on
 	_line_txt = txt
-	if _clean and _in_window:
-		for n in HUD_HIDE:
+	if (_clean or _nohud) and _in_window:
+		for n in HUD_HIDE + (["minimap"] if _nohud else []):
 			var c = _hud.get(n)
 			if c != null and is_instance_valid(c) and c is CanvasItem:
 				(c as CanvasItem).modulate.a = 0.0
@@ -478,6 +481,9 @@ func _drive_step(p: Player, delta: float) -> void:
 	elif _drive == "look_up":
 		# Merdivende kamera yukarı: surun tepesi, düşen taş ve kaynar yağ kadrajda (botun bakışı duvara dönüktü)
 		p.camera.rotation.x = lerpf(p.camera.rotation.x, 0.75, clampf(delta * 3.0, 0.0, 1.0))
+	elif _drive == "level":
+		# Bot yokuş inerken yere bakıyordu: kamera ufka (biraz aşağı) gelir, taşınan yük ve yol kadrajda
+		p.camera.rotation.x = lerpf(p.camera.rotation.x, -0.12, clampf(delta * 3.0, 0.0, 1.0))
 
 
 func _end_drive() -> void:

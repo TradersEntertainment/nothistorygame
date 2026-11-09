@@ -1116,6 +1116,7 @@ func _night() -> void:
 						break
 	balance.visible = false
 	_hold = {}
+	player.release_grab()
 	hud.set_prompt("")
 	for r: Dictionary in _runners:
 		if r["state"] != "calm":
@@ -1231,12 +1232,14 @@ func _hold_tick(dt: float) -> void:
 		hud.bark("SPK_TOLGA", calm_lines.get(str(_hold.get("name", "")), "D35O_T_CALM"), 3.0)
 		balance.visible = false
 		_hold = {}
+		player.release_grab()         # el ipi bırakır (uzanan sol el bölüm sonuna dek havada kalıyordu)
 		player.frozen = false
 		return
 	if balance.value > 0.95:
 		# Fazla gevşek: ip elden çıkar
 		_hold["state"] = "run"
 		_hold = {}
+		player.release_grab()         # el ipi bırakır (uzanan sol el bölüm sonuna dek havada kalıyordu)
 		balance.visible = false
 		player.frozen = false
 		Audio.sfx("ship_haul", -6.0, 1.5)
@@ -1244,6 +1247,7 @@ func _hold_tick(dt: float) -> void:
 		# Fazla sert: yüzüstü çamura
 		_hold["state"] = "run"
 		_hold = {}
+		player.release_grab()         # el ipi bırakır (uzanan sol el bölüm sonuna dek havada kalıyordu)
 		balance.visible = false
 		player.hurt(10.0, Vector3.INF, true)
 		Vfx.dust(self, player.global_position, 0.6)

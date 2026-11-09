@@ -752,6 +752,7 @@ func _take_gun() -> void:
 	var tw := create_tween()
 	tw.tween_property(_wall_gun, "global_position", player.global_position + Vector3(0, 1.25, 0) + (_wall_gun.global_position - player.global_position).normalized() * 0.6, 0.7 if not GameState.autotest else 0.05)
 	await tw.finished
+	player.release_grab()         # çifte elde: uzanan sol el çekilir
 	await _h("D8_H_GUN_2")
 	# Çifte Hikmet'in elinde kalır (siliniyordu), makineye onunla biner; yedek terlik de elde görünür
 	var gt := _wall_gun.global_transform
