@@ -194,6 +194,9 @@ func _run() -> void:
 	_make_night()
 	player.global_position = Vector3(0.0, WALK_Y + 0.05, 15.0)
 	player.face(BARRELS + Vector3(0, 0.6, 0))
+	# Gece emri yanında verir: 6 m öteden, sırtı dönük (rotation PI/2) konuşuyordu (sahneleme raporu)
+	giust.position = Vector3(-2.2, WALK_Y, 15.0)
+	giust.face_toward(player.global_position)
 	await hud.fade_to(0.0, 1.0)
 	await hud.say("SPK_GIUST", "D22_G_03")
 	await hud.say("SPK_GIUST", "D22_G_04")
@@ -451,6 +454,7 @@ func _finale() -> void:
 	cam.stop()
 	player.frozen = true
 	hud.set_objective("")
+	await Stage.walk_player(player, giust.global_position, 2.0, giust.global_position + Vector3(0, 1.5, 0), 4.0)   # son söz yanında
 	await hud.say("SPK_GIUST", "D22_G_END")
 	await hud.say("SPK_NIHAT", "D22_N_END" if singed else "D22_N_END_PLAIN")      # kaş şakası yalnız alev yaladıysa
 	_outcome = "22.3" if hits == 0 else ("22.2" if singed else "22.1")

@@ -851,6 +851,7 @@ func _ladders() -> void:
 	await hud.fade_to(1.0, 0.5)
 	player.global_position = BENCH + Vector3(0.4, 0.05, 4.0)
 	player.face(usta.global_position + Vector3(0, 1.5, 0))
+	usta.face_toward(player.global_position)      # tezgâha dönük, sırtı Tolga'ya konuşuyordu
 	await hud.fade_to(0.0, 0.5)
 	await hud.say("SPK_USTA", "D32O_U_01")
 	await hud.say("SPK_TOLGA", "D32O_T_U1")
@@ -1002,7 +1003,9 @@ func _guns() -> void:
 	walls.make_dawn(0.01)
 	if is_instance_valid(_back_bar):
 		_back_bar.queue_free()
-	player.global_position = gun.position + Vector3(1.8, 0.05, 9.2)
+	# Topçunun 3.4 m önü: 5.7 m öteden, sırtı dönük konuşuyordu (sahneleme raporu). Namlu araya girmez.
+	player.global_position = gun.position + Vector3(3.2, 0.05, 7.4)
+	topcu.face_toward(player.global_position)
 	player.face(topcu.global_position + Vector3(0, 1.5, 0))
 	await hud.fade_to(0.0, 0.6)
 	# Bölüm 17o: Koco'nun fustasını Tolga'nın güllesi vurduysa Ali onu nişancısı olarak hatırlar
@@ -1039,6 +1042,7 @@ func _guns() -> void:
 		await _fire()
 		if shot < SHOTS - 1:
 			await _cool_step()
+	await Stage.approach(topcu, player.global_position, 2.2, 1.6)
 	await hud.say("SPK_TOPCU", "D32O_TP_END_OK" if hits >= 2 else "D32O_TP_END_BAD")
 	await hud.say("SPK_TOLGA", "D32O_T_GUNS")
 
@@ -1069,6 +1073,7 @@ func _cool_step() -> void:
 	_cool = 0.0
 	player.frozen = false
 	hud.set_objective(tr("UI_OBJ32O_COOL"), gun.global_position + Vector3(0, 2.4, 0))
+	Stage.approach(topcu, player.global_position, 2.2, 1.8)      # "soğut" emrini Tolga'nın yanına gelirken verir (6.5 m öteden)
 	await hud.say("SPK_TOPCU", "D32O_TP_COOL")
 	var t := 0.0
 	while _cool < COOL_TIME and t < 10.0:

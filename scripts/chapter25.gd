@@ -488,7 +488,8 @@ func _emperor_to_tolga() -> void:
 	emperor.look_target = player
 	player.face(emperor.global_position + Vector3(0, 1.6, 0))
 	emperor.talking = true
-	await hud.say("SPK_EMPEROR", "D25_K_PASS_SOFT" if GameState.chapter_outcomes.get(23, "") == "23.2" else "D25_K_PASS")
+	# "Sözlerimi yumuşattın" yalnız İmparator'un kendi cevabı değiştirildiyse (şaka eklemek ya da susmak değil)
+	await hud.say("SPK_EMPEROR", "D25_K_PASS_SOFT" if GameState.flags.get("ch23_soft_emperor", false) else "D25_K_PASS")
 	emperor.talking = false
 	await hud.say("SPK_TOLGA", "D25_T_PASS")
 	emperor.look_target = null
@@ -615,6 +616,7 @@ func _liturgy() -> void:
 	var tw := create_tween()
 	tw.tween_property(emperor, "position", AYA + Vector3(0, 0, 4.0), 5.0)
 	await tw.finished
+	emperor.face_toward(player.global_position)      # cemaate (Tolga'nın durduğu yana) döner; sırtı dönük konuşuyordu
 	player.face(emperor.global_position + Vector3(0, 1.6, 0))
 	emperor.talking = true
 	await hud.say("SPK_EMPEROR", "D25_K_1")

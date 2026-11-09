@@ -132,6 +132,9 @@ func _run() -> void:
 	await hud.fade_to(0.0, 1.0)
 	await hud.say("SPK_NIHAT", "D35O_N_01")
 	await hud.say("SPK_TOLGA", "D35O_T_01")
+	# Dülger işi anlatmaya Tolga'nın yanına gelir (7.2 m öteden konuşuyordu; sahneleme raporu SAYDIST)
+	await Stage.approach(carpenters[0], player.global_position, 2.0, 1.6, Vector3.ZERO,
+		func(x: float, z: float) -> float: return _gy(Vector3(x, 0, z)).y)
 	await hud.say("SPK_DULGER", "D35O_D_01")
 	Lore.scatter(self, "35o", [_gy(Vector3(-5.0, 0, -12.0)) + Vector3(0, 0.3, 0), _gy(Vector3(7.0, 0, 16.0)) + Vector3(0, 0.3, 0),
 		_gy(Vector3(-8.0, 0, 132.0)) + Vector3(0, 0.3, 0)])
@@ -1285,6 +1288,7 @@ func _photo_gun() -> void:
 	urban.look_target = player
 	await Stage.approach(urban, _gy(player.global_position + Vector3(-1.8, 0, -1.2)), 0.0, 1.8, Vector3.ZERO,
 		func(x: float, z: float) -> float: return _gy(Vector3(x, 0, z)).y)      # yürüyerek gelir (ışınlanıyordu)
+	urban.face_toward(player.global_position)      # yan noktaya varınca yürüdüğü yöne bakıyordu (sırtı dönük)
 	await hud.say("SPK_URBAN", "D35O_U_DAY")
 	await hud.say("SPK_TOLGA", "D35O_T_DAY")
 	await hud.say("SPK_URBAN", "D35O_U_END_OK" if _outcome == "35O.1" else "D35O_U_END_BAD")

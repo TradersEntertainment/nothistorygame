@@ -189,11 +189,13 @@ func _build_ceremony() -> void:
 	zaganos = Person.new({"coat": Color("2f4a6a"), "pants": Color("2a2a30"), "hat": "turban", "beard": true, "mustache": true, "robe": Color("2f4a6a"),
 		"skin": Color("d9a07a"), "face": {"nose": "hook", "brow": 1.3, "brow_tilt": 8.0, "beard": "short", "head": Vector3(0.98, 1.08, 0.98)}})
 	zaganos.set_meta("spk", "SPK_ZAGANOS")
+	zaganos.set_meta("afar", true)      # meydanda ilan okur (resmî tören: meydana dönük, bilerek uzakta)
 	zaganos.position = CER + Vector3(-0.6, 0, -1.5)
 	extra.add_child(zaganos)
 	podesta = Person.new({"coat": Color("6a1a2a"), "pants": Color("2a2a30"), "hat": "none", "beard": true, "hair": Color("8a8a8a"),
 		"robe": Color("6a1a2a"), "skin": Color("e8c0a0"), "n": 91})
 	podesta.set_meta("spk", "SPK_PODESTA")
+	podesta.set_meta("afar", true)      # paşaya cevap verir (tören)
 	podesta.position = CER + Vector3(1.5, 0, -0.2)
 	extra.add_child(podesta)
 	# Zağanos yüzünü meydana, podesta paşaya döner
@@ -297,6 +299,8 @@ func _talk(id: String) -> void:
 	var p: Person = {"isidore": isidore, "brig": brig, "genoese": genoese}.get(id, null)
 	if p == null:
 		p = galata.npcs[id]
+	if GameState.autotest:      # oyunda konuşma yakından başlar (etkileşim menzili); test botu yerinden çağırıyordu
+		await Stage.walk_player(player, p.global_position, 1.4, p.global_position + Vector3(0, 1.5, 0), 3.0)
 	player.face(p.global_position + Vector3(0, 1.5, 0))
 	var spk: String = SPEAKERS.get(id, "")
 	if id in UNDECIDED and not _advised.has(id):
@@ -441,6 +445,7 @@ func _epilogue() -> void:
 			Props.label(board, tr("PROP17_WIKI_CN"), Vector3(0.46, y, 0.036), 13, Color("cc2a2a"), Vector3.ZERO)
 	player.global_position = Bureau.SPAWN_POS + Vector3(0, 0.05, 0)
 	player.face(nihat.global_position + Vector3(0, 1.5, 0))
+	nihat.face_toward(player.global_position)      # kararma açılınca sırtı dönük konuşmasın
 	await hud.card([[tr("UI_CH26_WED"), 26, Color("f2e6c9")]], 2.0)
 	hud.clear_card()
 	await hud.fade_to(0.0, 1.0)

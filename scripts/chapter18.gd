@@ -674,6 +674,8 @@ func _finish_bridge() -> void:
 	Audio.sfx("cannon", -2.0)
 	Vfx.explosion(self, cannon.global_position + Vector3(0, 1.0, 2.2), 0.8)
 	player.shake(0.4)
+	# Usta'nın yanına yürünür: son söz 8 m öteden, köprü başından söyleniyordu (sahneleme raporu SAYDIST)
+	await Stage.walk_player(player, usta.global_position, 2.2, usta.global_position + Vector3(0, 1.5, 0), 3.0)
 	await hud.say("SPK_USTA", "D18_U_END")
 	await hud.say("SPK_TOLGA", "D18_T_END_CAPTIVE" if _captive else "D18_T_END")
 	await hud.say("SPK_NIHAT", "D18_N_END_CAPTIVE" if _captive else "D18_N_END")

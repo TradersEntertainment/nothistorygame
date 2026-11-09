@@ -775,6 +775,8 @@ func _retreat() -> void:
 	player.free_hold = Vector3.INF
 	player.speed_mult = 1.0
 	await hud.say("SPK_SOLDIER", "D30O_S_THANKS")
+	# Paşa yamaçtan inip yanına gelir (9 m öteden konuşuyordu); yürürken yamaca basar
+	await Stage.approach(zaganos, player.global_position, 2.4, 1.6, Vector3.ZERO, func(_x: float, z: float) -> float: return Blachernae.slope_y(z))
 	await hud.say("SPK_ZAGANOS", "D30O_Z_END")
 	await hud.say("SPK_NIHAT", "D30O_N_END")
 	_outcome = "30O.1"

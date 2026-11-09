@@ -653,7 +653,9 @@ func _run_4b() -> void:
 	# Niko surun tepesinden seslenir: ona bakılır, sonra kapıya
 	player.face(walls.niko.global_position + Vector3(0, 1.4, 0))
 	await hud.fade_to(0.0, 0.4)
+	walls.niko.set_meta("afar", true)
 	await _say("SPK_NIKO", "D4B_N_03" if GameState.flags.get("fez", true) else "D4B_N_03_NOFEZ")
+	walls.niko.remove_meta("afar")
 	player.face(Vector3(SeaWalls.GATE_X, 1.8, -1.5))
 	Lore.scatter(self, "4")
 	player.frozen = false
@@ -967,6 +969,7 @@ func _fell() -> void:
 	player.gravity_on = true
 	player.global_position = cell.position + Vector3(0, 0.05, -0.6)
 	player.face(walls.niko.global_position + Vector3(0, 1.4, 0))
+	walls.niko.face_toward(player.global_position)      # kararma açılınca sırtı dönük konuşmasın
 	player.camera.rotation.z = 0.0
 	GameState.flags["wet"] = true
 	await hud.fade_to(0.0, 0.6)

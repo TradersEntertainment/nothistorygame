@@ -604,3 +604,22 @@ Her bölüm denetiminde ve her düzeltmede bu listeyi baştan uygula. Yeni bir h
   0.05 sn'lik tween'le yürütüyordu. Zemin eğimli kıyıda (Bölüm 2) asker ara karede ayağının altındaki zeminden
   yüksekte kaldı; CI VISAUDIT float verdi, yerelde geçiyordu (31O'daki çocukla aynı ders). Yeni seslendirilen
   replikler için voice_consistency.py ve voice_gain.py çalıştırılır, yoksa VOICEGAIN uyarısı çıkar.
+- Konuşma sahnelemesi 3. tur (v0.99.89): SAYDIST/SAYFACE raporunun ~300 satırı dört ajanla ayıklandı.
+  - Sırtı dönük konuşmanın çoğu tek kuralla çözüldü (Hud._turn_speaker). Konuşan 4.5 m içindeyse ve sırtı
+    oyuncuya dönükse gövdesiyle döner. Dönmeyenler:
+    - başka birine bakanlar (look_target: padişaha, baltacıya);
+    - iş yapanlar (activity), oturanlar ve çömelenler (pose);
+    - "no_turn" ya da "afar" işaretliler.
+    Gözü oyuncudaysa oyunda zaten döner; otomatik testte kararma anı kısa olduğundan hemen döndürülür. Bilerek
+    sırtı dönük söylenen söz no_turn ile işaretlenir (21: madenci yalanı kendi lağımına bağırır).
+  - Uzaktan konuşmanın (SAYDIST) üç düzeltme yolu var:
+    - Konuşan yürüyerek yaklaşır: Stage.approach. Eğimde ya da molozda zemin callable'ı verilir, yoksa gömülür.
+    - Oyuncu yürür: Stage.walk_player. Fizikle yürür, duvardan geçmez. Oyuncu başka kattaysa (kule, sur tepesi)
+      yürünmez.
+    - Kararma sırasında yerleştirilir.
+    Konuşurken yürüyen kişi için approach beklenmeden başlatılır. Asıl söz Stage.settle ile varışı bekler;
+    aynı kişiye iki yürüyüş üst üste binmez.
+  - Uzaktan seslenme yerindeyse (surdan, kayıktan, tahttan) konuşan "afar" ile işaretlenir ya da sahne notu
+    "(Güverteden)" gibi -dan/-den ekiyle yazılır. Rapor bunları saymaz.
+  - Talim hocası (Drill.teacher_near) her dersten önce oyuncunun yanına gelir, ders arasında perde kapanınca
+    yerine döner.

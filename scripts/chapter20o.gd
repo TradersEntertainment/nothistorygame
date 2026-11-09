@@ -136,7 +136,8 @@ func _run() -> void:
 	hud.set_fade(1.0)
 	await hud.card([[tr("UI_CH20O_TITLE"), 44, Color("f2e6c9")], [tr("UI_CH20O_SUB"), 20, Color(1, 1, 1, 0.7)]], 2.8)
 	hud.clear_card()
-	player.global_position = gun.position + Vector3(1.8, 0.05, 9.2)
+	# Urban'ın 3.4 m önü (5.7 m öteden tanışıyorlardı; sahneleme raporu SAYDIST). Namlu ikisinin arasına girmez.
+	player.global_position = gun.position + Vector3(3.2, 0.05, 7.4)
 	player.face(urban.global_position + Vector3(0, 1.5, 0))
 	player.show_remote(true)             # Tolga'nın eli açık, elde eşya (kuşatma bölümlerinde el hiç açılmıyordu)
 	_capture_mouse()
@@ -390,6 +391,7 @@ func _cool_step() -> void:
 		await hud.say("SPK_URBAN", "D20O_U_CRACK")
 		await hud.say("SPK_URBAN", "D20O_U_LESS")
 	else:
+		await Stage.walk_player(player, urban.global_position, 2.2, urban.global_position + Vector3(0, 1.5, 0), 3.0)
 		await hud.say("SPK_URBAN", "D20O_U_COOLED")
 
 
@@ -440,6 +442,7 @@ func _evening() -> void:
 	player.frozen = true
 	hud.set_objective("")
 	var opened := hits >= 2
+	await Stage.walk_player(player, urban.global_position, 2.2, urban.global_position + Vector3(0, 1.5, 0), 4.0)    # son söz yanında
 	await hud.say("SPK_URBAN", "D20O_U_END_OPEN" if opened else "D20O_U_END_HOLD")
 	await hud.say("SPK_TOLGA", "D20O_T_END")
 	await hud.say("SPK_NIHAT", "D20O_N_END")

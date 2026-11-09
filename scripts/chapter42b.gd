@@ -160,9 +160,11 @@ func _run() -> void:
 	await hud.fade_to(0.0, 1.2)
 	giust.look_target = player
 	await hud.say("SPK_NIHAT", "D42B_N_01")
+	await drill.teacher_near()      # selamı yanına gelip verir (SAYDIST)
 	await hud.say("SPK_GIUST", "D42B_H_HELLO")
 	await hud.say("SPK_TOLGA", "D42B_T_01")
 	await hud.say("SPK_GIUST", "D42B_H_02")
+	await Stage.approach(leon, player.global_position, 2.0, 1.6)      # talim arkadaşı halkadan gelip tanışır (8.5 m)
 	await hud.say("SPK_LEON", "D42B_P_HELLO")
 	await hud.say("SPK_TOLGA", "D42B_T_02")
 	await hud.say("SPK_GIUST", "D42B_H_03")

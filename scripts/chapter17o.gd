@@ -668,6 +668,16 @@ func _start_brigade() -> void:
 		_kadri_arrives()
 
 
+## Kovalarla koşup gelir: varış noktasının 9 m gerisinden (mutfak tarafı) koşar.
+func _run_in(p: Person, to: Vector3) -> void:
+	p.position = to - Vector3(sin(p.rotation.y), 0, cos(p.rotation.y)) * 9.0
+	if Stage.fast():
+		p.position = to
+		return
+	var tw := p.create_tween()
+	tw.tween_property(p, "position", to, 2.6)
+
+
 ## Kadri ve iki yamağı mutfaktan kovalarla koşar: kıyının kenarında dururlar, zincir onlarla hızlanır.
 func _kadri_arrives() -> void:
 	kadri = Person.new({"face": "kadri", "coat": Color("f3efe4"), "pants": Color("6a5a48"), "hat": "cook", "mustache": true,
@@ -675,17 +685,17 @@ func _kadri_arrives() -> void:
 	kadri.set_meta("spk", "SPK_KADRI")
 	kadri.set_meta("no_talk", true)
 	add_child(kadri)
-	kadri.position = KADRI_AT
 	kadri.rotation.y = PI * 0.5
 	kadri.set_activity("carry")
+	_run_in(kadri, KADRI_AT)       # mutfaktan koşarak gelir (kıyıda tek karede beliriyordu)
 	for k in 2:
 		var y := Person.new({"coat": Color("e8e2d4"), "pants": Color("6a5a48"), "hat": "none", "apron": Color("d8d0c0"),
 			"hair": [Color("3a2a1e"), Color("5a3a1e")][k], "n": 170 + k})
 		y.set_meta("no_talk", true)
 		add_child(y)
-		y.position = KADRI_AT + Vector3(1.3 + k * 1.3, 0, -0.05 - k * 0.1)
 		y.rotation.y = PI * 0.5
 		y.set_activity("carry")
+		_run_in(y, KADRI_AT + Vector3(1.3 + k * 1.3, 0, -0.05 - k * 0.1))
 		_kadri_crew.append(y)
 	hud.bark("SPK_KADRI", "D17O_K_COME", 3.5)
 

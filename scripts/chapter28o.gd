@@ -516,6 +516,8 @@ func _first_shot() -> void:
 	player.frozen = true
 	hud.set_objective("")
 	await hud.say("SPK_FATIH", "D28O_F_02")
+	# "Günde yedi atış"ı topun öbür ucundan değil yanında anlatır (6.5 m; sahneleme raporu SAYDIST)
+	await Stage.walk_player(player, urban.global_position, 2.0, urban.global_position + Vector3(0, 1.5, 0), 3.0)
 	await hud.say("SPK_URBAN", "D28O_U_SEVEN")
 	await hud.say("SPK_TOLGA", "D28O_T_END")
 	await hud.say("SPK_NIHAT", "D28O_N_END")

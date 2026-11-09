@@ -643,6 +643,7 @@ func _shore_guards(at: Vector3, look_at_p: Vector3) -> Array[Node3D]:
 	for k: float in [-1.0, 1.0]:
 		var p := at + fwd * 6.5 + side * (k * 1.6)
 		var g := Soldier.new(Color("b3262d") if k < 0.0 else Color("2f5fa8"), "point", "bork" if k < 0.0 else "turban")
+		g.set_meta("speaker", "SPK_SOLDIER")       # "Yakalayın!" diyen bu: portre ve sahneleme denetimi onu bulsun
 		level.add_child(g)
 		g.global_position = Vector3(p.x, _ground_y(p.x, p.z), p.z)
 		g.face_toward(at)

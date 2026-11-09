@@ -205,6 +205,11 @@ func _build_walls_scene() -> void:
 
 # ================================================================ akış
 
+## Stage.approach için zemin: gedik yamacında moloz yüzeyi.
+func _rubble_y(x: float, z: float) -> float:
+	return LandWalls.on_rubble(Vector3(x, 0.0, z)).y
+
+
 func _run() -> void:
 	hud.set_fade(1.0)
 	await hud.card([[tr("UI_CH26_TITLE"), 44, Color("f2e6c9")], [tr("UI_CH26_SUB"), 20, Color(1, 1, 1, 0.7)]], 3.0)
@@ -214,9 +219,14 @@ func _run() -> void:
 	player.show_remote(true)             # Tolga'nın eli açık (ok demeti, çakmak, tezkire elsiz duruyordu)
 	_capture_mouse()
 	await hud.fade_to(0.0, 1.2)
+	# Komutan gedikten Tolga'yı karşılamaya iner, "Hazır ol" deyip yerine döner (15 m öteden konuşuyordu; SAYDIST)
+	var g_post := giust.global_position
+	Stage.approach(giust, player.global_position, 2.2, 2.4, Vector3.ZERO, _rubble_y)
 	await hud.say("SPK_NIHAT", "D26_N_01")
 	await hud.say("SPK_TOLGA", "D26_T_01")
+	await Stage.settle(giust)
 	await hud.say("SPK_GIUST", "D26_G_01")
+	Stage.approach(giust, g_post, 0.0, 2.0, Vector3.ZERO, _rubble_y)
 	await _council_memory()
 	await _wave1()
 	await _wave2()
@@ -484,6 +494,9 @@ func _repelled(key: String) -> void:
 		tw.tween_method(step, z0, z0 + 40.0, 3.0)
 	# Komutana döner; aradaki onarımcılar görüşten çekilir (taş dizen biri tam araya düşüyordu)
 	player.face(giust.global_position + Vector3(0, 1.5, 0))
+	# Aynı zemindeyse (surun tepesinde değilse) komutanın yanına yürünür: 15 m öteden konuşuyordu (SAYDIST)
+	if absf(player.global_position.y - giust.global_position.y) < 0.8:
+		await Stage.walk_player(player, giust.global_position, 2.0, giust.global_position + Vector3(0, 1.5, 0), 4.0)
 	_clear_line(player.camera.global_position, [giust])
 	await hud.say("SPK_GIUST", key)
 
@@ -568,7 +581,9 @@ func _wave3() -> void:
 	player.face(giust.global_position + Vector3(0, 1.5, 0))
 	await hud.fade_to(0.0, 0.8)
 	_wave_start(3)
+	giust.set_meta("afar", true)      # son dalga: bütün savunucu sırasına seslenir
 	await hud.say("SPK_GIUST", "D26_G_WAVE3")
+	giust.remove_meta("afar")
 	# Şafak: hendeği geçen yeniçerilere surdan tüfekle (vurulamayanlar gedik dövüşünün son bölüğüne katılır)
 	await _gun_dawn()
 	# Yeniçeriler gediğin moloz yamacını tırmanıp içeri dalar: göğüs göğüse (StoryDuel: ölüm yok)

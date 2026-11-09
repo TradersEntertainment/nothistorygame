@@ -342,6 +342,7 @@ func _nihat_arrives() -> void:
 	await get_tree().create_timer(_d(0.25), false).timeout
 	nihat.visible = true
 	nihat.position = at
+	nihat.face_toward(player.global_position)      # ışıktan çıkınca yüzü Tolga'ya dönük (sırtı dönük çıkıyordu)
 	nihat.look_target = player
 	if fx.is_running():
 		await fx.finished
@@ -355,6 +356,7 @@ func _nihat_arrives() -> void:
 	await _n("D10A_N_01")
 	# Tolga Nihat'ı ilk kez görüyor (Bölüm 7'de onu yalnız uzaktan izledi): önce adını öğrenir
 	await _t("D10A_T_N_02_NEW")
+	await Stage.approach(nihat, player.global_position, 2.0)      # tanışma 6.6 m öteden olmasın: Tolga'nın yanına gelir
 	await _n("D10A_N_INTRO")
 	await _n("D10A_N_03")
 	# Yürürken gittiği yere bakar (Tolga'ya bakarak yan yana kayıyordu)
@@ -369,6 +371,9 @@ func _nihat_arrives() -> void:
 	await _wait(1.0)
 	await _n("D10A_N_FORM_2")
 	nihat.look_target = player
+	# Soru doğrudan Tolga'ya: Tolga çerçevenin önündeki Nihat'ın yanına gider (7.7 m öteden soruluyordu)
+	await Stage.walk_player(player, nihat.global_position, 2.2, nihat.global_position + Vector3(0, 1.5, 0), 4.0)
+	nihat.face_toward(player.global_position)
 	player.face(nihat.global_position + Vector3(0, 1.5, 0))
 	await _n("D10A_N_FORM_3")
 	await _t("D10A_T_FORM_4")

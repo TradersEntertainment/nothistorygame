@@ -269,6 +269,8 @@ func _private() -> void:
 	# Heyet yürüyerek çıkar (eskiden olduğu yerde kayboluyordu)
 	lutfi.leave(player.global_position, 6.0, 2.5, true)
 	envoy.leave(player.global_position, 6.0, 2.5, true)
+	# "Bir an alıkoyar": İmparator tahtın önünden Frenk'in yanına iner, alçak sesle konuşur (7 m öteden diyordu)
+	await Stage.approach(city.emperor, player.global_position, 1.8, 1.3)
 	await _say("SPK_EMPEROR", "D10H_K_STAY")
 	var confess := 0 if v in ["save", "save1", "honest"] else 1
 	var c := await hud.choose(["UI_CH10H_CONFESS", "UI_CH10H_SAFE"], 8.0, confess)

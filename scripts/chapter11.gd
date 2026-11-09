@@ -466,7 +466,8 @@ func _tolga_released() -> void:
 
 
 func _tolga_helped() -> void:
-	await _say("SPK_NIHAT", "D11_N_HELP_1" if _to_sultan() else "D11_N_HELP_1_ALT")
+	# Surların içine giden (12B) Tolga'nın yanında Nihat yok: "yanınızdayım" demez
+	await _say("SPK_NIHAT", "D11_N_HELP_1" if _to_sultan() else ("D11_N_HELP_1_WALLS" if int(GameState.flags.get("direnc", 0)) >= 1 else "D11_N_HELP_1_ALT"))
 	# Nihat formu uzatır, Tolga alır (yardım dalında hiçbir şey el değiştirmiyordu)
 	await Handover.take_from(self, player, nihat_npc, Handover.form_model(), "form", 2.2)
 	await _t("D11_T_HELP_2")

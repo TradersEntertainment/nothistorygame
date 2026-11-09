@@ -181,6 +181,7 @@ func _build_patrol() -> void:
 		OarGrip.attach(rower, pair)
 	patrol_reis = Soldier.new(Color("2f5fa8"), "stand", "bork")
 	patrol_reis.set_meta("spk", "SPK_PATROL")
+	patrol_reis.set_meta("afar", true)      # devriye kayığından gemiye seslenir (borda borda yanaşmaz)
 	patrol_reis.position = Vector3(0, 0.6, -1.5)
 	patrol.add_child(patrol_reis)
 	var lamp := OmniLight3D.new()
@@ -348,7 +349,8 @@ func _aegean() -> void:
 	ship.global_position = Vector3(0, 0, 0)
 	ship.rotation = Vector3.ZERO
 	player.pinned = false
-	player.global_position = ship.to_global(Vector3(0.0, DECK_Y + 0.05, -5.0))
+	# Kaptanın 2.8 m önünde, direğin (z 2.2) görüşü kesmediği yanda: boş denizi 8.8 m öteden anlatıyordu (SAYDIST)
+	player.global_position = ship.to_global(Vector3(0.9, DECK_Y + 0.05, 1.0))
 	player.face(Vector3(0, 1.0, -200.0))
 	for key in ["UI_CH19_DAY_1", "UI_CH19_DAY_2", "UI_CH19_DAY_3"]:
 		await hud.card([[tr(key), 26, Color("f2e6c9")]], 1.6)

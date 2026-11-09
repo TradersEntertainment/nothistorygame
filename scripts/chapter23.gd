@@ -92,6 +92,7 @@ func _build() -> void:
 		p.look_at_from_position(p.position, city.emperor.global_position, Vector3.UP)
 		p.rotate_y(PI)
 	theodoros.look_target = player
+	city.emperor.set_meta("afar", true)      # tahttan resmî hitap: tercüman heyetle tahtın arasında, 8 m (bilerek)
 	# Heyetin yürüdüğü yol: altın bordürlü kırmızı halı (İmparator'un önüne kadar), iki yanında uzun şamdanlar
 	var ep := city.emperor.global_position
 	var run := Props.box(self, Vector3(9.0, 0.02, 1.6), Vector3((ep.x + c.x + 8.0) * 0.5 + 0.4, 0.012, ep.z), Color("8a1c22"))
@@ -273,10 +274,12 @@ func _run() -> void:
 			await _say("SPK_ISMAIL", "D23_I_2_TRUE")
 		1:
 			_deviate(1)
+			GameState.flags["ch23_soft_emperor"] = true      # İmparator'un sözü yumuşatıldı (25'te "affettim")
 			await _t("D23_T_2_SOFT")
 			await _say("SPK_ISMAIL", "D23_I_2_SOFT")
 		2:
 			_deviate(2)
+			GameState.flags["ch23_soft_emperor"] = true
 			await _t("D23_T_2_ADD")
 			await _say("SPK_ISMAIL", "D23_I_2_ADD")
 	# 3. Elçinin tercümana söylediği: Sultan kararlı

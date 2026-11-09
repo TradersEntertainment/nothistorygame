@@ -160,6 +160,11 @@ func _build() -> void:
 
 # ================================================================ akış
 
+## Stage.approach için zemin: gedik yamacında moloz yüzeyi.
+func _rubble_y(x: float, z: float) -> float:
+	return LandWalls.on_rubble(Vector3(x, 0.0, z)).y
+
+
 func _run() -> void:
 	hud.set_fade(1.0)
 	await hud.card([[tr("UI_CH20_TITLE"), 44, Color("f2e6c9")], [tr("UI_CH20_SUB"), 20, Color(1, 1, 1, 0.7)]], 2.8)
@@ -169,7 +174,11 @@ func _run() -> void:
 	player.show_remote(true)             # Tolga'nın eli açık, elde eşya (kuşatma bölümlerinde el hiç açılmıyordu)
 	_capture_mouse()
 	await hud.fade_to(0.0, 1.0)
+	# Komutan gedikten Tolga'yı karşılamaya iner (14 m öteden "eli boş gelmişsin" diyordu; sahneleme raporu SAYDIST).
+	# Nihat konuşurken yürür (beklenmez); yamaçta yürürken moloza gömülmesin diye zemin yüksekliği on_rubble'dan.
+	Stage.approach(giust, player.global_position, 2.2, 2.4, Vector3.ZERO, _rubble_y)
 	await hud.say("SPK_NIHAT", "D20_N_01")
+	await Stage.settle(giust)
 	await hud.say("SPK_GIUST", "D20_G_01_KNOWN" if GameState.has_met("giustiniani") else "D20_G_01")   # Perde II'de tanıştılarsa
 	await hud.say("SPK_TOLGA", "D20_T_01")
 	await hud.say("SPK_GIUST", "D20_G_02")
@@ -649,6 +658,7 @@ func _dawn() -> void:
 	cam.stop()
 	player.frozen = true
 	hud.set_objective("")
+	await Stage.approach(giust, player.global_position, 2.0, 1.8, Vector3.ZERO, _rubble_y)     # son söz yanına gelip (7 m öteden)
 	Unclip.clear_line(self, player.global_position, [giust], [player])
 	await hud.say("SPK_GIUST", "D20_G_END")
 	await hud.say("SPK_TOLGA", "D20_T_END")

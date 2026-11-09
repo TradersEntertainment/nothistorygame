@@ -205,7 +205,8 @@ func _run() -> void:
 	hud.set_fade(1.0)
 	await hud.card([[tr("UI_CH37O_TITLE"), 44, Color("f2e6c9")], [tr("UI_CH37O_SUB"), 20, Color(1, 1, 1, 0.7)]], 3.0)
 	hud.clear_card()
-	player.global_position = gun.position + Vector3(1.8, 0.05, 9.2)
+	player.global_position = gun.position + Vector3(3.2, 0.05, 7.4)      # Urban'ın 3.4 m önü (5.7 m öteden konuşuyordu)
+	urban.face_toward(player.global_position)
 	player.face(urban.global_position + Vector3(0, 1.5, 0))
 	player.show_remote(true)             # Tolga'nın eli açık (bölüm boyunca kapalıydı); ziller gelince iki el zillere geçer
 	_capture_mouse()
@@ -954,7 +955,8 @@ func _dawn() -> void:
 	if is_instance_valid(_rope):
 		_rope.queue_free()
 	walls.make_dawn(0.01)
-	player.global_position = gun.position + Vector3(1.8, 0.05, 9.2)
+	player.global_position = gun.position + Vector3(3.2, 0.05, 7.4)      # Urban'ın 3.4 m önü (5.7 m öteden konuşuyordu)
+	urban.face_toward(player.global_position)
 	player.face(urban.global_position + Vector3(0, 1.5, 0))
 	await hud.fade_to(0.0, 0.8)
 	var ok := barrels_down >= 3

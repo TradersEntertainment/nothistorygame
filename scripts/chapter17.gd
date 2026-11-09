@@ -711,10 +711,18 @@ func _cattaneo_memory() -> void:
 			for spec: Array in [[Vector3(0.95, 0.0, -0.5), Color("8a2a2a"), 1801], [Vector3(-0.95, 0.0, -0.2), Color("2a4a6a"), 1802]]:
 				var g := Person.new({"coat": spec[1], "pants": Color("3a3028"), "hat": "berretta", "mustache": true, "n": spec[2]})
 				g.set_meta("spk", "SPK_GENOESE")
-				g.position = (spec[0] as Vector3) + Vector3(0, DECK_Y, 0)
+				var g_to: Vector3 = (spec[0] as Vector3) + Vector3(0, DECK_Y, 0)
+				# Bordadan tırmanıp güverteye atlarlar (oyuncunun yanında tek karede beliriyorlardı)
+				g.position = g_to * Vector3(2.4, 1, 1) + Vector3(0, -0.9, 0)
 				boat.add_child(g)
 				g.look_target = player
 				_genoese.append(g)
+				if Stage.fast():
+					g.position = g_to
+				else:
+					var gtw := g.create_tween()
+					gtw.tween_property(g, "position", g_to + Vector3(0, 0.35, 0), 0.4).set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_OUT)
+					gtw.tween_property(g, "position", g_to, 0.25).set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_IN)
 			player.face(_genoese[0].global_position + Vector3(0, 1.5, 0))
 			await hud.say("SPK_GENOESE", "D17_G_HELP")
 			for g in _genoese:
@@ -853,6 +861,14 @@ func _dawn() -> void:
 	player.face(boat.global_position + Vector3(0, 1.2, 0))
 	for sw in swimmers:
 		(sw["node"] as Node3D).visible = sw["saved"]
+	# Trevisano karanlıkta kayıktan rıhtıma çıkmış, Tolga'nın yanında: teşekkür ve Coco haberi kıç güvertesinden
+	# (6-7 m öteden, kürekçilerin üstünden) söyleniyordu (sahneleme raporu SAYDIST)
+	if is_instance_valid(trevisano):
+		trevisano.reparent(self)
+		trevisano.global_position = Vector3(player.global_position.x + 1.7, SeaWalls.QUAY_Y, -0.9)
+		trevisano.face_toward(player.global_position)
+		trevisano.look_target = player
+		player.face(trevisano.global_position + Vector3(0, 1.5, 0))
 	await hud.fade_to(0.0, 1.0)
 	if _saved > 0:
 		await hud.say("SPK_TREVISANO", "D17_TR_THANKS")

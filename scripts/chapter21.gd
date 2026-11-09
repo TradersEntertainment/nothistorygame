@@ -23,6 +23,7 @@ extends Node3D
 
 const MINE := Vector3(-9.0, 0.0, 7.0)
 ## Kaza rotası: Blakherna'da yakalanan Osmanlı kâtibi, Grant'in esir tercümanı (Siege.captive)
+var _door_guards: Array = []      # kapıdaki iki asker: Kasım'ı onlar götürür
 var _captive := false
 const BOWLS := 4
 const FOUND_R := 2.6
@@ -362,7 +363,7 @@ func _tunnel() -> void:
 	player.global_position = TUN + Vector3(0, 0.05, 1.5)
 	player.face(TUN + Vector3(0, 1.2, -TUN_LEN))
 	grant.global_position = TUN + Vector3(0.5, 0, -0.7)    # yan-önde, oyuncuya dönük ("sonuna kadar yürü" arkadan geliyordu)
-	grant.rotation.y = PI
+	grant.face_toward(player.global_position)       # rotation.y = PI onu lağımın içine, sırtı Tolga'ya çeviriyordu
 	grant.look_target = player
 	_give_candle()
 	_build_tunnel_life()
@@ -431,7 +432,9 @@ func _tunnel_peace(leb: bool) -> void:
 	await hud.say("SPK_TOLGA", "D21_T_HUSH")
 	await hud.say("SPK_NOVOMINER", "D21_M_HUSH")
 	miner.face_toward(miner.global_position + Vector3(0, 0, -4.0))     # kendi lağımına döner, bağırır
+	miner.set_meta("no_turn", true)     # konuşan oyuncuya dönme kuralı (Hud._turn_speaker) bu yalanda devreye girmesin
 	await hud.say("SPK_NOVOMINER", "D21_M_LIE")
+	miner.remove_meta("no_turn")
 	await hud.say("SPK_JANISSARY", "D21_J_OK")
 	var jl := create_tween()
 	jl.tween_property(_jan_lamp, "light_energy", 0.0, _d(1.6))
@@ -527,6 +530,7 @@ func _build_capture_room() -> void:
 		g.position = c + Vector3(-2.6 + i * 1.6, 0, -2.6)
 		add_child(g)
 		g.equip("spear")
+		_door_guards.append(g)
 	# Masa: harita (surun krokisi), kandil, kalem
 	Props.solid(self, Vector3(1.6, 0.08, 0.9), c + Vector3(1.6, 0.78, 0.4), Color("6b4428"))
 	for sx: float in [-0.7, 0.7]:
@@ -666,8 +670,21 @@ func _capture() -> void:
 		kasim.position.z += 0.45        # taburenin önüne kalkar (taburenin içinde ayakta kalmasın: VISAUDIT sunk)
 		await _w(0.4)
 		_bind_kasim()
-		var drag := create_tween()
-		drag.tween_property(kasim, "global_position", CAP + Vector3(-1.8, 0, -3.0), _d(2.2))
+		# Kapıdaki iki asker gelip kollarından tutar, onu kapıya birlikte götürürler (kendi kendine kayıyordu)
+		for k in _door_guards.size():
+			var gd: Person = _door_guards[k]
+			if is_instance_valid(gd):
+				Stage.approach(gd, kasim.global_position, 0.7, 2.0, gd.global_transform.basis.x * (0.5 if k == 0 else -0.5))
+		await _w(0.9)
+		for gd: Person in _door_guards:
+			if is_instance_valid(gd):
+				Stage.reach(gd, kasim.global_position + Vector3(0, 1.2, 0), 1.2)
+		var drag := create_tween().set_parallel()
+		var door := CAP + Vector3(-1.8, 0, -3.0)
+		drag.tween_property(kasim, "global_position", door, _d(2.2))
+		for k in _door_guards.size():
+			if is_instance_valid(_door_guards[k]):
+				drag.tween_property(_door_guards[k], "global_position", door + Vector3(-0.6 if k == 0 else 0.6, 0, 0.3), _d(2.2))
 		await _w(1.4)
 		await hud.fade_to(1.0, 0.8)
 		Audio.sfx("door_metal", -6.0, 0.6)

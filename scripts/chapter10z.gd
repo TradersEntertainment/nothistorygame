@@ -193,6 +193,8 @@ func _cooking() -> void:
 	var v := GameState.autotest_variant
 	for i in 3:
 		var stove: Vector3 = STOVES[i]
+		# Tolga ocağın başına yürür (3 m öteden karıştırıp tadıyordu)
+		await Stage.walk_player(player, stove, 1.0, stove + Vector3(0, 1.1, 0), 3.0)
 		Audio.sfx("fire_crackle", -10.0)          # ocak harlanır, kazan karıştırılır
 		Audio.sfx("tea_stir", -12.0, 0.6)
 		player.face(stove + Vector3(0, 1.1, 0))

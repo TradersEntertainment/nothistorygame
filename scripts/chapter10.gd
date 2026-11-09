@@ -293,6 +293,7 @@ func _queue_talk(who: String) -> void:
 	_busy = true
 	player.frozen = true
 	var node := _npc(who)
+	await Stage.walk_player(player, node.global_position, 1.8, node.global_position + Vector3(0, 1.4, 0), 3.0)   # sıradakiyle yanına gidip konuşulur
 	player.face(node.global_position + Vector3(0, 1.4, 0))
 	var up := who.to_upper()
 	if _talked.has(who):
@@ -318,6 +319,7 @@ func _trial() -> void:
 		return
 	_busy = true
 	player.frozen = true
+	await Stage.walk_player(player, aga.global_position, 2.4, aga.global_position + Vector3(0, 1.7, 0), 3.0)   # Ağa'nın önüne gelinir (14 m öteden sınav olmasın)
 	player.face(aga.global_position + Vector3(0, 1.7, 0))
 	await _say("SPK_AGA", "D10O_A_INTRO" if _tries == 0 else "D10O_A_AGAIN")
 	# Eşyalar önceden (elden) gösterildiyse de geçerlidir
@@ -574,7 +576,9 @@ func _ceremony() -> void:
 	Audio.sfx("drum_boom", -4.0)
 	await _t("D10O_T_ENVOY")
 	_twins_bump()          # "(Hasan ile Hüseyin birbirine çarpar)": ikisi aynı anda selama koşup çarpışır
+	hasan.set_meta("afar", true)      # kapıdan bütün kervana bağırır
 	await _say("SPK_HASAN", "D10O_G_ENVOY")
+	hasan.remove_meta("afar")
 	player.frozen = true
 	# Ağa kenara çekilir (kapının önünde durur), kapı açılır; Tolga önce kapının önüne, sonra içinden yürür.
 	# Hedef otağ çadırının dışında (eskiden çadır duvarının içinde bitiyordu)

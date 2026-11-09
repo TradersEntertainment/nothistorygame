@@ -413,8 +413,9 @@ func _truce() -> void:
 	GameState.meet("grant")              # yüz yüze tanıştılar: kuşatmada (Bölüm 21) onu tanır (geri çekilmede değil)
 	Handover.release(grant)
 	# Sofra Tolga'nın önünde; Dragan ve Grant iki yanında, ikisi de kadrajda (ayak dibindeydi, Dragan arkada kalıyordu)
-	dragan.position = Vector3(1.3, 0, -SEG * GOAL - 2.3)
+	# Dragan arkadan, Tolga'nın yanından dolaşarak sofraya gelir (tek karede öne sıçrıyordu)
 	dragan.visible = true
+	await Stage.approach(dragan, dragan.get_parent().to_global(Vector3(1.3, 0, -SEG * GOAL - 2.3)), 0.0, 1.6)
 	dragan.look_target = grant
 	grant.look_target = dragan
 	_spread()

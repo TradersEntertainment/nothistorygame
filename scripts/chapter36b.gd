@@ -702,6 +702,7 @@ func _back_inside() -> void:
 	if _outcome == "36.1":
 		await hud.say("SPK_GIUST", "D36_G_ALL")
 		player.face(leon.global_position + Vector3(0, 1.0, 0))      # teşekkür eden Leon kadrajda olsun
+		leon.face_toward(player.global_position)      # oturduğu yerde Tolga'ya döner (sırtı dönük teşekkür ediyordu)
 		await hud.say("SPK_LEON", "D36_L_THANKS")
 	else:
 		await hud.say("SPK_GIUST", "D36_G_LEON")

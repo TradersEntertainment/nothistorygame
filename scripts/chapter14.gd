@@ -347,6 +347,10 @@ func _desk() -> void:
 		var sp := Vector3(-0.05, 0.835, 4.05)        # raporun üstünde, daktilonun yanında (daktilonun altında kalıyordu)
 		Props.label(bureau, "1453-T", sp, 34, Color("c8262f"), Vector3(-90, 180 - 12, 0), 0.4)       # okunur boyda (neredeyse görünmüyordu)
 		player.hand_gesture("reach")
+	# Müfide raporu masada okur: kapıdan masaya gelir (hüküm kapı eşiğinden veriliyordu; sahneleme raporu SAYDIST)
+	# Masanın önüne (masa z 3.8-4.8; Tolga arkasında oturuyor): Tolga'ya doğru yürüyünce masanın içinde duruyordu (VISAUDIT insolid)
+	await Stage.approach(bureau.mufide, bureau.mufide.get_parent().to_global(Vector3(0.1, 0, 3.3)), 0.0, 1.3)
+	bureau.mufide.face_toward(player.global_position)
 	player.face(bureau.mufide.global_position + Vector3(0, 1.5, 0))
 	match pick:
 		"fixed":

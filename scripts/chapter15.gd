@@ -390,7 +390,7 @@ func _scene_garage() -> void:
 		Props.ball(garage, 0.16, fp + Vector3(0.05, 0.25, 0), Color("f4f1ea"), Vector3(0.3, 1, 1), 8)
 		Props.box(garage, Vector3(0.02, 0.35, 0.3), fp + Vector3(0.05, -0.15, 0), Color("c8323a"))
 		if key == "D15_G_H1":
-			key = "D15_G_W4"
+			key = _peas_key("D15_G_W4")
 			if hikmet:
 				hikmet.look_target = null
 				hikmet.face_toward(fp)            # "(Duvardaki portreye bakar)"
@@ -1577,6 +1577,9 @@ func _final_sub_key() -> String:
 
 ## Leblebili dünya izleri yalnız leblebi gerçekten 1453'e girdiyse: Kadri'nin pilavı (Bölüm 6/10Z), tüneldeki leblebi (10L).
 func _peas_key(key: String) -> String:
+	# W4'e Mühendisler Meclisi'yle (12.6) gelindiyse Hikmet de onarımdaydı: "benden iyi tamir etmiş" denmez
+	if key in ["D15_G_W4", "D15_S_W4"] and str(GameState.chapter_outcomes.get(12, "")) == "12.6":
+		return key + "_MECLIS"
 	if key in ["D15_G_W7", "D15_S_W7"] and not GameState.flags.get("leblebi_given", false):
 		return key + "_PLAIN"
 	if key == "D15_G_W13" and not GameState.flags.get("tunnel_leblebi", false):

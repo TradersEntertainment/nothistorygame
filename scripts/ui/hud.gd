@@ -1602,6 +1602,7 @@ func say(speaker_key: String, text_key: String, _from_chain := false) -> void:
 	# Durum varyantı (fessiz, gün batımı penceresi): eşya/jest tabloları asıl anahtarla bakılır
 	var base_key := text_key
 	text_key = GameState.line_variant(text_key)
+	_turn_speaker(speaker_key)
 	_audit(speaker_key, text_key)
 	_clear_sightline(speaker_key)
 	if GameState.dialog_shots_dir != "":
@@ -2130,21 +2131,10 @@ func _portrait_speaker(speaker_key: String) -> Node3D:
 	return who
 
 
-## Sahneleme raporu (animasyon denetimi 2. tur; testi düşürmez): konuşan oyuncudan 4.5-20 m uzaktaysa SAYDIST, 8 m
-## içinde sırtı dönükse SAYFACE basar. Bağıran (ünlemli) ve "afar"/"cameo" işaretli konuşanlar SAYDIST'e girmez.
-## Bölüm 4 şikâyeti: "her şey uzaktan konuşuluyor".
-func _say_staging(speaker_key: String, text_key: String) -> void:
-	if _fade.color.a > 0.9 or "RADIO" in text_key or text_key.contains("_T_"):
-		return
-	var sc := get_tree().current_scene
-	var pl = sc.get("player") if sc else null
-	if not (pl is Player) or (pl as Player).camera == null or not (pl as Player).camera.current:
-		return
-	if _SPEAKER_STYLE.get(speaker_key, "") == (pl as Player).hand_style:
-		return
-	var eye := (pl as Player).camera.global_position
-	# Aynı konuşan anahtarını taşıyan kişi (persons) ve askerlerden (soldiers) kameraya en yakını: find_speaker yalnız
-	# kişilere bakıyor, yanına gelen asker yerine kıyıdaki uzak bir "asker" ölçülüyordu
+## Konuşanın gövdesi: aynı konuşan anahtarını taşıyan kişi (persons) ve askerlerden (soldiers) kameraya en yakını.
+## find_speaker yalnız kişilere bakıyor; yanına gelen asker yerine kıyıdaki uzak bir "asker" bulunuyordu.
+func _speaker_body(speaker_key: String, pl: Player) -> Node3D:
+	var eye := pl.camera.global_position
 	var who: Node3D = null
 	var best := INF
 	for g in ["persons", "soldiers"]:
@@ -2160,12 +2150,85 @@ func _say_staging(speaker_key: String, text_key: String) -> void:
 				who = c
 	if who == null:
 		who = _portrait_speaker(speaker_key)
-	if who == null or who == pl:
+	return null if who == pl else who
+
+
+## Konuşan oyuncuya sırtını dönüp konuşmasın (animasyon denetimi 3. tur; SAYFACE raporunun çoğu buydu): yakındaki
+## (4.5 m içi) konuşan sırtı dönükse ve başka birine bakmıyorsa gövdesiyle oyuncuya döner. Gözü oyuncudaysa
+## (look_target) oyunda zaten döner; otomatik testte ışınlanma/kararma anı kısa olduğundan orada hemen döndürülür.
+## İş yapan (activity), oturan/çömelen (pose), sahne hareketindeki (_busy) ve "no_turn"/"afar" işaretli olan dönmez.
+func _turn_speaker(speaker_key: String) -> void:
+	var sc := get_tree().current_scene
+	var pl = sc.get("player") if sc else null
+	if not (pl is Player) or (pl as Player).camera == null or not (pl as Player).camera.current:
+		return
+	var p := pl as Player
+	if _SPEAKER_STYLE.get(speaker_key, "") == p.hand_style:
+		return
+	var who := _speaker_body(speaker_key, p)
+	if who == null or who.get_meta("no_turn", false) or who.has_meta("afar") or not who.has_method("face_toward"):
+		return
+	var act = who.get("activity")
+	var pose = who.get("pose")
+	var busy = who.get("_busy")
+	if (busy is bool and busy) or (act is String and act != "") or (pose is String and pose != "stand"):
+		return
+	var lt = who.get("look_target")
+	if lt != null and lt != p:
+		return      # bilerek başka birine bakıyor (padişaha, baltacıya)
+	var to := p.global_position - who.global_position
+	to.y = 0.0
+	if to.length() < 0.3 or to.length() > (8.0 if lt == p else 4.5):
+		return
+	var fwd := who.global_transform.basis.z
+	fwd.y = 0.0
+	if fwd.length() < 0.01:
+		return
+	var dot := fwd.normalized().dot(to.normalized())
+	if lt == p:
+		if _fast() and dot < 0.7:
+			who.call("face_toward", p.global_position)
+		return
+	if dot > -0.3:
+		return
+	if _fast():
+		who.call("face_toward", p.global_position)
+		return
+	var r0 := who.rotation
+	who.call("face_toward", p.global_position)
+	var r1 := who.rotation
+	who.rotation = r0
+	var tw := who.create_tween()
+	tw.tween_property(who, "rotation", Vector3(r1.x, r0.y + wrapf(r1.y - r0.y, -PI, PI), r1.z), 0.45).set_trans(Tween.TRANS_SINE)
+
+
+## Sahneleme raporu (animasyon denetimi 2. tur; testi düşürmez): konuşan oyuncudan 4.5-20 m uzaktaysa SAYDIST, 8 m
+## içinde sırtı dönükse SAYFACE basar. Bağıran (ünlemli) ve "afar"/"cameo" işaretli konuşanlar SAYDIST'e girmez.
+## Bölüm 4 şikâyeti: "her şey uzaktan konuşuluyor".
+func _say_staging(speaker_key: String, text_key: String) -> void:
+	if _fade.color.a > 0.9 or "RADIO" in text_key or text_key.contains("_T_"):
+		return
+	var sc := get_tree().current_scene
+	var pl = sc.get("player") if sc else null
+	if not (pl is Player) or (pl as Player).camera == null or not (pl as Player).camera.current:
+		return
+	if _SPEAKER_STYLE.get(speaker_key, "") == (pl as Player).hand_style:
+		return
+	var eye := (pl as Player).camera.global_position
+	var who := _speaker_body(speaker_key, pl as Player)
+	if who == null:
 		return
 	var scene := sc.scene_file_path.get_file()
 	var d := eye.distance_to(who.global_position + Vector3(0, 1.5 * who.scale.y, 0))
 	var txt := tr(text_key)
 	var shout := txt.strip_edges().ends_with("!") or "(Bağır" in txt or "(Seslen" in txt or "(Uzaktan" in txt
+	# "(Güverteden)", "(Surun tepesinden)": yerini söyleyen sahne notu uzaktan konuşulduğunu zaten bildirir
+	var st := txt.strip_edges()
+	if st.begins_with("(") and st.find(")") > 0:
+		var note := st.substr(1, st.find(")") - 1).strip_edges()
+		for suf in ["dan", "den", "tan", "ten"]:
+			if note.ends_with(suf):
+				shout = true
 	if d > 4.5 and d <= 20.0 and not shout and not who.has_meta("afar") and not who.has_meta("cameo"):
 		print("SAYDIST key=%s scene=%s speaker=%s d=%.1f" % [text_key, scene, speaker_key, d])
 	if d <= 8.0:

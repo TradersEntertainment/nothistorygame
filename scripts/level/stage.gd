@@ -30,9 +30,18 @@ static func approach(who: Node3D, target: Vector3, stop := 1.3, speed := 1.6, si
 	var t := clampf(from.distance_to(to) / maxf(speed, 0.1), 0.25, 6.0)
 	var tw := who.create_tween()
 	tw.tween_property(who, "global_position", to, t)
+	who.set_meta("stage_walk", true)
 	await tw.finished
 	if is_instance_valid(who):
+		who.remove_meta("stage_walk")
 		face(who, target)
+
+
+## Beklenmeden başlatılmış bir approach (konuşurken yürür) bitene kadar bekler: aynı kişiye ikinci yürüyüş
+## verilmeden ya da "yanına gelince" söylenecek söz başlamadan önce.
+static func settle(who: Node3D) -> void:
+	while is_instance_valid(who) and who.is_inside_tree() and who.get_meta("stage_walk", false):
+		await who.get_tree().process_frame
 
 
 ## Yalnız yatay dönüş (karakter öne/arkaya yatmaz).

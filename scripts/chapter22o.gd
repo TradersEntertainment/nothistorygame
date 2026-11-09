@@ -821,6 +821,14 @@ func _volley_tick(delta: float) -> void:
 		hud.bark("SPK_HASAN", "D22O_H_VOLLEY", _warn_time)
 
 
+## Hasan'la konuşmadan önce yanına yürünür (7-11 m öteden konuşuyordu; sahneleme raporu SAYDIST). Tolga kulenin
+## üst katındaysa (Hasan yerde) yürünmez: merdiveni fizikle inemez, söz yukarıdan aşağı seslenme olarak kalır.
+func _to_hasan() -> void:
+	if not is_instance_valid(hasan) or absf(player.global_position.y - hasan.global_position.y) > 0.8:
+		return
+	await Stage.walk_player(player, hasan.global_position, 2.0, hasan.global_position + Vector3(0, 1.5, 0), 4.0)
+
+
 func _dawn() -> void:
 	player.frozen = true
 	player.zone_focus = ""
@@ -829,6 +837,7 @@ func _dawn() -> void:
 		c.visible = false
 	for p in carpenters:
 		p.set_activity("")
+	await _to_hasan()
 	await hud.say("SPK_HASAN", "D22O_H_DONE")
 	await hud.fade_to(1.0, 0.8)
 	await hud.card([[tr("UI_CH22O_DAWN"), 26, Color("f2e6c9")]], 1.8)
@@ -864,6 +873,7 @@ func _dawn() -> void:
 	cam.stop()
 	player.frozen = true
 	hud.set_objective("")
+	await _to_hasan()
 	await hud.say("SPK_HASAN", "D22O_H_WALL")
 	await _tower_gun()
 
@@ -1014,6 +1024,7 @@ func _fire_night() -> void:
 		await _carry_down(hasan, carpenters[2], TOWER + Vector3(0.4, 0, 5.4), TOWER + Vector3(1.8 + 2 * 0.6, 0, 4.2))
 		await hud.say("SPK_HASAN", "D22O_H_CARRY")
 	else:
+		await _to_hasan()
 		await hud.say("SPK_HASAN", "D22O_H_ALL")
 	# Kule çöker. Yukarıda kalan usta (düello kaybı) tozun içinde kaybolur: devrilen platformun içine gömülmesin
 	Audio.sfx("land_thud", 0.0, 0.5)

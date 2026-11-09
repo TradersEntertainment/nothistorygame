@@ -743,6 +743,8 @@ func _h3_version() -> void:
 	player.show_remote(true)
 	_capture_mouse()
 	await hud.fade_to(0.0, 1.0)
+	if _place in ["city", "galata"]:
+		await _say("SPK_HIKMET", "D13_H3_00_CITY")      # surlardan Urban'ın topunun başına geçiş açıklanır (geçiş yoktu)
 	await _say("SPK_HIKMET", "D13_H3_01")
 	await _t("D13_T3_02")
 	await _say("SPK_URBAN", "D13_U3_03")

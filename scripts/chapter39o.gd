@@ -444,6 +444,7 @@ func _church_door() -> void:
 	await hud.fade_to(0.0, 0.4)
 	await hud.say("SPK_PRIEST", "D39O_PR_01")
 	await hud.say("SPK_TOLGA", "D39O_T_03")
+	sailors[0].face_toward(player.global_position)      # kapıya dönük, sırtı Tolga'ya konuşuyordu
 	await hud.say("SPK_SAILOR", "D39O_SA_01")
 	_axes.assign(sailors)
 	await _sailor_memory()
@@ -869,6 +870,12 @@ func _fire() -> void:
 	old_man.set_activity("sit_ground")
 	old_man.global_position = Vector3(-1.5, 0.0, fh.z + 3.0)
 	player.global_position = Vector3(0.6, 0.05, fh.z + 4.0)
+	# Papaz karanlıkta yangın yerine, Tolga'nın yanına gelmiş: 14.5 m öteden, kilise kapısından konuşuyordu (SAYDIST)
+	var pv := priest.global_position - player.global_position
+	pv.y = 0.0
+	if pv.length() > 3.0:
+		priest.global_position = Vector3(player.global_position.x, 0.0, player.global_position.z) + pv.normalized() * 2.2
+	priest.face_toward(player.global_position)
 	player.face(priest.global_position + Vector3(0, 1.5, 0))
 	await hud.fade_to(0.0, 0.5)
 	await hud.say("SPK_PRIEST", "D39O_PR_03")
@@ -938,6 +945,9 @@ func _watch() -> void:
 	player.eye_height = 0.95
 	player.face(jan.global_position + Vector3(0, 1.0, 0))
 	await hud.say("SPK_JANISSARY", "D39O_J_01")
+	# Gemici de ateşin başında (kilise kapısında, 5.4 m öteden konuşuyordu)
+	sailors[0].global_position = fire_at + Vector3(0.4, 0.0, 1.6)
+	sailors[0].face_toward(player.global_position)
 	await hud.say("SPK_SAILOR", "D39O_SA_03")
 	var pick := await hud.choose(["UI_C39O_KNOW", "UI_C39O_WALL", "UI_C39O_WRITE"], 0.0, 2)
 	emperor_answer = ["know", "wall", "write"][clampi(pick, 0, 2)]

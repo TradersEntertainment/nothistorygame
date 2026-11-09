@@ -123,7 +123,32 @@ func _key(k: String) -> String:
 
 
 func _say_h(k: String) -> void:
+	await teacher_near()
 	await hud.say(teacher_spk, _key("h_" + k))
+
+
+## Hoca dersi halkanın kenarından (5-9 m) değil, oyuncunun yanına gelip anlatır (sahneleme raporu SAYDIST).
+## Düello sürerken yürümez. Ders arası perde kapanınca (place_player) yerine döner.
+var _teacher_home := Vector3.INF
+
+
+func teacher_near() -> void:
+	if teacher == null or not is_instance_valid(teacher) or not teacher.is_inside_tree() or duel.active:
+		return
+	var to := player.global_position - teacher.global_position
+	to.y = 0.0
+	if to.length() <= 4.0:
+		return
+	if _teacher_home == Vector3.INF:
+		_teacher_home = teacher.global_position
+	await Stage.approach(teacher, player.global_position, 2.2, 2.2)
+
+
+func _home_teacher() -> void:
+	if _teacher_home == Vector3.INF or teacher == null or not is_instance_valid(teacher):
+		return
+	teacher.global_position = _teacher_home
+	_teacher_home = Vector3.INF
 
 
 func _bark_h(k: String, secs := 2.6) -> void:
@@ -149,6 +174,7 @@ func place_player(local: Vector3, look: Node3D) -> void:
 		hud.set_fade(0.0)
 		await hud.fade_to(1.0, 0.25)
 		_home_partner()
+		_home_teacher()
 		player.global_position = to
 		player.velocity = Vector3.ZERO
 		if look:
@@ -156,6 +182,8 @@ func place_player(local: Vector3, look: Node3D) -> void:
 		await hud.fade_to(0.0, 0.3)
 	else:
 		_home_partner()
+		if GameState.autotest:
+			_home_teacher()
 		player.global_position = to
 		if look:
 			player.face(look.global_position + Vector3(0, 1.45, 0))

@@ -1229,7 +1229,7 @@ D9_URBAN_TRIAL,Önce hesap. Senin cin kutun hesap yapıyor. Surlara kaç derece?
 D9_URBAN_TRIAL_NOPH,"Önce hesap. Uzaktan geldin, hesap bilirsin. Surlara kaç derece?","Numbers first. You've come from far away, you know your sums. What angle for the walls?"
 UI_CH9_URBAN_T1,📱 '45 derece. Klasik.',📱 '45 degrees. A classic.'
 UI_CH9_URBAN_T2,📱 '1453 derece.',📱 '1453 degrees.'
-UI_CH9_URBAN_T3,📱 'Hesap makinesi donmuş. Yüzde on dörtte donmuş.',📱 'The calculator's frozen. Frozen at fourteen percent.'
+UI_CH9_URBAN_T3,📱 'Hesap makinesi donmuş. Pil yüzde bire inmiş.',📱 'The calculator's frozen. The battery's dropped to one percent.'
 UI_CH9_URBAN_T1_NOPH,'45 derece. Klasik.','45 degrees. A classic.'
 UI_CH9_URBAN_T2_NOPH,'1453 derece.','1453 degrees.'
 UI_CH9_URBAN_T3_NOPH,'Hesap makinem evde kaldı. ...Parmakla olmaz bu.','My calculator stayed at home. ...Fingers won't do this.'
@@ -1732,6 +1732,7 @@ D13_H_CARD,(Kartı uzatır) Ajan H. Yönetmelik 7/c.,(Hands over the card) Agent
 D13_R_CARD_OK,(Uzun uzun bakar) ...Fotoğrafta pijama var. Ama laminasyon kusursuz. Geçin. Laminasyona saygım var.,(Looks at it for a long time) ...There are pyjamas in the photo. But the lamination is flawless. Go through. I respect lamination.
 D13_H_FOUND,"İşte orada. Makinem. Bir rafa konmuş, üstüne üç etiket yapıştırılmış. Kırk dokuz yılın emeği, üç etiket.","There it is. My machine. On a shelf, with three labels stuck on it. Forty-nine years of work, three labels."
 D13_H3_01,"Evlât, Urban'ın topu. Bir de senin Telsiz-Kumanda. Topun gücünü kumandaya verirsek pencereyi buradan açarız.","Son, Urban's cannon. And your Radio-Remote. If we feed the cannon's power into the remote, we can open the window from here."
+D13_H3_00_CITY,"Evlât! Kumanda seni surlardan buraya çekti; korkma. Burası Urban'ın topunun başı, ordugâh. Kimse seni sormuyor; ben yanındayım.","Son! The remote pulled you here from the walls; don't be scared. This is Urban's cannon, the camp. Nobody's asking about you; I'm with you."
 D13_T3_02,Topun gücünü mü? Topun gücü... patlama değil mi?,The cannon's power? Isn't the cannon's power... an explosion?
 D13_U3_03,Patlama güçtür! Güç pencere açar! Bu Macar mantığıdır!,An explosion is power! Power opens windows! That's Hungarian logic!
 D13_U3_SMALL,"(Küçük topu gösterir) Büyüğü patladı, evet. Bu onun yavrusu. Pencereyi o da açar!","(Points to the small cannon) The big one burst, yes. This is its cub. It can open a window too!"
@@ -1818,6 +1819,7 @@ UI_CH15_S2,Nihat'ın masası,Nihat's desk
 UI_CH15_S3,Pazartesi sabahı,Monday morning
 D15_G_H1,(Çayını karıştırır) Evlât servise yetişti. Kimse bir şey fark etmedi. Ben fark ettim. Hep ben fark ederim.,(Stirring his tea) The lad made the bus. Nobody noticed a thing. I noticed. I always notice.
 D15_G_W4,(Duvardaki portreye bakar) ...Benden iyi tamir etmiş. Kimse duymasın.,(Looking at the portrait on the wall) ...He repaired it better than I did. Don't tell anyone.
+D15_G_W4_MECLIS,(Duvardaki portreye bakar) Kayış dişliden iyiymiş. Meclis'e fahri üye olmak fena değil. Kimse duymasın.,"(Looking at the portrait on the wall) The belt beats the gears. Honorary member of the Council, not bad. Don't tell anyone."
 D15_G_H2,Makineyi aldılar. Olsun. Yedek parçam var. Zamanatör 3001. Bu sefer kayışlı.,They took the machine. Never mind. I've got spare parts. The Chrono-matic 3001. This time with a belt.
 D15_G_H3,(Garaj boş. Radyo açık. Çayın buharı yok.),(The garage is empty. The radio is on. There is no steam from the tea.)
 D15_G_TWO,"(Garaj boş. Masada iki boş çay bardağı. 1453'te, Urban'ın atölyesinde, iki adam koli bandı üzerine tartışıyor.)","(The garage is empty. Two empty tea glasses on the table. In 1453, in Urban's workshop, two men are arguing about duct tape.)"
@@ -1833,6 +1835,7 @@ D15_N_T4,"Bay Tolga, gece mesainiz 23:00'te başlıyor. Bugün Form Z-9: kaçan 
 D15_S_W1,Servis. 07:30. Dakik. Dünya aynı. Ben de aynıyım. Sanırım.,The bus. 07:30. On time. The world's the same. So am I. I think.
 D15_S_W2,Leblebipolis Merkez. ...Hep böyle miydi? Hep böyleydi herhalde. (Kulaklıklarını takar),Leblebipolis Central. ...Was it always like this? It must have been. (Puts his earphones in)
 D15_S_W4,Servis. 07:30. Manşette Fatih'in makine çizimleri. ...Benden iyi tamir etmiş. Kimseye söylemem.,The bus. 07:30. The headline: Mehmed's machine drawings. ...He fixed it better than I would have. I won't tell anyone.
+D15_S_W4_MECLIS,Servis. 07:30. Manşette Mühendisler Meclisi'nin çizimleri. Hikmet Amca fahri üye. Kimseye söylemem.,The bus. 07:30. The headline: the Council of Engineers' drawings. Uncle Hikmet is an honorary member. I won't tell anyone.
 D15_S_W3,"Tavuk Sigorta. Kuruluş: Galata, 1453. Rakip firma. Logoları çok tanıdık.","Chicken Insurance. Founded: Galata, 1453. A rival firm. Their logo looks very familiar."
 D15_S_FIXED,Her şey normal. ...Şu tabela hariç. Neyse. Servis geldi.,Everything's normal. ...Except that sign. Never mind. The bus is here.
 D15_S_T2,(Servis bekledi. Kimse binmedi. Şoför omuz silkti ve gitti.),(The bus waited. Nobody got on. The driver shrugged and left.)
@@ -2202,6 +2205,7 @@ D11_T_BYZ,Sadece bir barikatı bantladım.,I only taped a barricade.
 UI_CH12B_TITLE,BÖLÜM 12 — SON AKŞAM,CHAPTER 12 — THE LAST EVENING
 UI_CH12B_SUB,"Tolga · 26 Nisan 1453, surlarda gün batımı","Tolga · 26 April 1453, sunset on the walls"
 D12B_K_01,Frenk. Gelmişsin. Theodoros seni yine beyaz bayrakla içeri aldı. Bu şehirde kurallar senin için esniyor.,Frank. You came. Theodoros brought you in under the white flag again. This city bends its rules for you.
+D12B_K_LETTER,"Mektubumu hâlâ taşıyorsun. Sultan'a gitmeyecek belli ki. Yanında kalsın, Frenk; belki bir gün okunur.","You still carry my letter. Clearly it won't reach the Sultan. Keep it, Frank; perhaps one day it will be read."
 D12B_T_02,"Çağırdınız, Majeste.","You sent for me, Your Majesty."
 D12B_K_DONE_1,Theodoros bana dün gece surdaki gediği yapışkan bezle sağlamlaştırdığını söyledi. Garip bir hediye. Ama bir hediye.,Theodoros told me that last night you reinforced the breach in our wall with sticky cloth. A strange gift. But a gift.
 D12B_K_DONE_2,"Bir gedik kapanmış, bir komutanın omzu ısınmış. Garip hediyeler, Frenk. Ama hediyeler.","A breach closed, a commander's shoulder warmed. Strange gifts, Frank. But gifts."
@@ -7153,6 +7157,7 @@ D11_T_04_SINERJI,Sinerji mi? ...O benim tavuğum. Yani benim değil. Kendini evl
 D11_T_EAVES_ALT,"(Kendi kendine) Biri bana 'şehir alınacak mı' diye sorarsa ne diyeceğim... 'Evet, ama sigortası yok' mu?","(To himself) If someone asks me whether the city will fall, what do I say... 'Yes, but it's not insured'?"
 D11_N_RELEASE_ALT,"Sizi bırakıyorum, Bay Tolga. Raporuma 'şüpheli yerinde, tehlikesiz, fesli' yazacağım. Nereye gidecekseniz gidin. Formu sonra doldurursunuz.","I'm letting you go, Mr Tolga. My report will say 'suspect located, harmless, wearing a fez'. Go wherever you're going. You can fill in the form afterwards."
 D11_N_HELP_1_ALT,"Size yardım edeceğim, Bay Tolga. Bundan sonra yanınızdayım. Resmî denetim refakati. Formları ben doldururum.","I'm going to help you, Mr Tolga. From now on I'm at your side. An official inspection escort. I'll fill in the forms."
+D11_N_HELP_1_WALLS,"Size yardım edeceğim, Bay Tolga. Surların içinde ne yapacaksanız yapın; ben dışarıda, ateşlerin başında bekliyorum. Formları ben doldururum.","I'm going to help you, Mr Tolga. Do whatever you must inside the walls; I'll be waiting outside, by the fires. I'll fill in the forms."
 D11_T_HELP_4_ALT,Bir Denetçi ve bir sigortacı 1453'te. Bu fıkra gibi başlıyor.,An inspector and an insurance man in 1453. This sounds like the start of a joke.
 D12_F_ITEMS_B,Frenk değilsin. Yanında getirdiklerini göster; ne olduğunu onlar söylesin.,You are no Frank. Show me what you've brought; let them tell me what you are.
 D12_F_FRANK,(Eşyaları bırakır) Bunların hiçbiri bir Frenk diyarından gelmedi. Sen başka bir zamandansın. ...Bonjour.,(Sets the things down) None of these came from any Frankish land. You are from another time. ...Bonjour.

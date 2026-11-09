@@ -176,6 +176,7 @@ func _run() -> void:
 	await hud.fade_to(0.0, 1.2)
 	turgut.look_target = player
 	await hud.say("SPK_NIHAT", "D41O_N_01")
+	await drill.teacher_near()      # selamı halkanın kenarından değil, yanına gelip verir (5.5 m; SAYDIST)
 	await hud.say("SPK_AZAPBASI", "D41O_H_HELLO")
 	await hud.say("SPK_TOLGA", "D41O_T_01")
 	await hud.say("SPK_AZAPBASI", "D41O_H_02")
@@ -199,6 +200,7 @@ func _run() -> void:
 func _after_spar(won: bool) -> void:
 	phase = "after"
 	if won:
+		await Stage.approach(hizir, player.global_position, 2.0, 1.6)     # yenilen arkadaş gülerek yanına gelir (6 m)
 		hizir.body.emote("laugh")
 		await hud.say("SPK_AZAP", "D41O_P_SPAR_WIN")
 		await hud.say("SPK_AZAPBASI", "D41O_H_SPAR_WIN")
@@ -218,6 +220,7 @@ func _ladder_drill() -> void:
 	player.face(yard.ladder.point_at(2.4))
 	player.frozen = true
 	turgut.look_target = player
+	await drill.teacher_near()      # merdivenin dibine gelir (12 m öteden anlatıyordu)
 	await hud.say("SPK_AZAPBASI", "D41O_H_LADDER_1")
 	await hud.say("SPK_AZAPBASI", "D41O_H_LADDER_2")
 	await hud.say("SPK_TOLGA", "D41O_T_LADDER")

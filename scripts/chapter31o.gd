@@ -700,7 +700,8 @@ func _eyup_phase() -> void:
 	aksem.look_target = null
 	var tw := aksem.create_tween()
 	tw.tween_property(aksem, "global_position", DIG + Vector3(-1.2, 0, 1.0), 2.0)
-	await get_tree().create_timer(1.0, false).timeout
+	# Tolga da kazı yerine yürür: "Burası. Kaz" 7.7 m öteden, son işaretin yanından söyleniyordu (SAYDIST)
+	await Stage.walk_player(player, DIG + Vector3(1.6, 0, 0.8), 0.0, DIG + Vector3(0, 0.3, 0), 3.0)
 	aksem.look_target = player
 	await hud.say("SPK_AKSEMSEDDIN", "D31O_AK_03")
 	# Kazı: üç katman, her katmanda bir kök (Space ile kes)
@@ -1124,6 +1125,12 @@ func _mats_phase() -> void:
 	dervish.look_target = player
 	player.global_position = a + Vector3(2.0, 0.05, 13.0)
 	player.face(rope_c + Vector3(0, 1.0, 0))
+	# Derviş karanlıkta Tolga'nın 2 m yanına gelmiş: 11.7 m öteden konuşuyordu (sahneleme raporu SAYDIST)
+	var dv := dervish.global_position - player.global_position
+	dv.y = 0.0
+	if dv.length() > 2.5:
+		dervish.global_position = player.global_position + dv.normalized() * 2.0 - Vector3(0, 0.05, 0)
+	dervish.face_toward(player.global_position)
 	await hud.fade_to(0.0, 0.8)
 	Audio.ambience("amb_church")
 	await hud.say("SPK_DERVISH", "D31O_DV_02")

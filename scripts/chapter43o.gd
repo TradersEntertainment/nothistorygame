@@ -339,6 +339,7 @@ func _sultan_learns() -> void:
 	# Devir oyuncunun gözünden görünür: Tolga kumandayı uzatır, Sultan alır ve göğsünün önünde tutup ekranına bakar
 	_view_drone(false)
 	player.face(fatih.global_position + Vector3(0, 1.3, 0))
+	await _close_gap()
 	fatih.face_toward(player.global_position)
 	await hud.say("SPK_FATIH", "D43O_F_GIVE")
 	await _give_remote(true)
@@ -650,8 +651,9 @@ func _remote_model() -> Node3D:
 
 ## Kumanda el değiştirir: to_fatih ise Tolga uzatır ve Sultan alır (göğsünün önünde, ekranına eğik); değilse Sultan
 ## geri verir ve kumanda yeniden Tolga'nın elindedir.
-func _give_remote(to_fatih: bool) -> void:
-	# Kumanda el değiştirmeden Tolga Sultan'a kol boyuna yürür (5,7 m öteden uçuyordu, WARN_FLY_ITEM)
+## Kumanda el değiştirmeden Tolga Sultan'a kol boyuna yürür (5,7 m öteden uçuyordu, WARN_FLY_ITEM). "Ver kumandayı"
+## sözünden önce de çağrılır: söz 6.6 m öteden söyleniyordu (sahneleme raporu SAYDIST).
+func _close_gap() -> void:
 	var gap := Vector2(fatih.global_position.x - player.global_position.x, fatih.global_position.z - player.global_position.z).length()
 	if gap > 1.8:
 		var to := _gy(player.global_position.move_toward(fatih.global_position, gap - 1.4)) + Vector3(0, 0.05, 0)
@@ -659,6 +661,10 @@ func _give_remote(to_fatih: bool) -> void:
 		wt.tween_property(player, "global_position", to, 0.05 if Handover.instant() else minf(2.4, (gap - 1.4) / 1.4))
 		await wt.finished
 		player.face(fatih.global_position + Vector3(0, 1.3, 0))
+
+
+func _give_remote(to_fatih: bool) -> void:
+	await _close_gap()
 	if to_fatih:
 		# Tolga uzatır, kumanda Sultan'ın eline geçer (eskiden Tolga'nın elinde silinip Sultan'ın elinde beliriyordu)
 		_hold_remote(false)

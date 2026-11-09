@@ -334,6 +334,9 @@ func _breach() -> void:
 	player.frozen = true
 	hud.set_objective("")
 	hud.set_prompt("")
+	# Dragan "dinle" der: duvar dibinden (6.8 m, sırtı dönük) değil, Tolga'nın yanına gelip (sahneleme raporu)
+	await Stage.approach(dragan, player.global_position, 1.5, 1.4)
+	dragan.look_target = player
 	# Bölüm 10L: Tolga toprağı dinlemeyi Nisan'da Dragan'ın yanında öğrendi (ch10l_heard): sesi ondan önce duyar
 	if GameState.flags.get("ch10l_heard", false):
 		_heard_first = true

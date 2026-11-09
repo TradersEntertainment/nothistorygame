@@ -334,6 +334,9 @@ func _fatih_arrives() -> void:
 		g.face_toward(CANNON)
 	fatih.look_target = player
 	player.face(fatih.global_position + Vector3(0, 1.6, 0))
+	# Urban Sultan'ın önüne yürür, eğilir; sonra konuşur (9 m öteden sesleniyordu)
+	await Stage.approach(urban, FATIH_AT, 1.8, 1.4)
+	urban.emote("bow")
 	await _say("SPK_URBAN", "D10B_U_BOW")
 	await _say("SPK_FATIH", "D10B_F_01")
 	await _say("SPK_URBAN", "D10B_U_TAPED" if _taped else "D10B_U_UNTAPED")
@@ -364,7 +367,10 @@ func _prepare() -> void:
 			# Yerine döner; Fatih'i oradan görür (çatlağın dibinde gülle yığını Fatih'in yüzünü kapatıyordu)
 			await Stage.walk_player(player, TOLGA_AT, 0.0, FATIH_AT + Vector3(0, 1.6, 0))
 			await _say("SPK_FATIH", "D10B_F_TAPE")
-	# Barut
+	# Barut. Urban Sultan'ın önünden Tolga'nın yanına gelir: barut, açı ve fitil soruları çırağına (7.6 m öteden
+	# soruluyordu; sahneleme raporu SAYDIST). Tolga ile Fatih'in arasına girmez.
+	await Stage.approach(urban, TOLGA_AT + Vector3(1.2, 0, -1.6), 0.0, 1.6)
+	urban.face_toward(player.global_position)
 	await _say("SPK_URBAN", "D10B_U_POWDER")
 	if not _taped:
 		await hud.say_gone("tape")         # bant bittiyse çatlak bantsız kalır: Tolga sonuncusunu nereye sardığını söyler
@@ -508,6 +514,7 @@ func _galata_shot() -> void:
 	await _fly_ball(_muzzle() + _cannon_dir() * 260.0 + Vector3(90, -10, 0), 70.0, 3.0)
 	_ball.visible = false
 	await _t("D10B_T_B1_1")
+	await Stage.approach(urban, player.global_position, 2.0, 1.6)     # fitilden Tolga'nın yanına döner
 	player.face(urban.global_position + Vector3(0, 1.6, 0))
 	await _say("SPK_URBAN", "D10B_U_B1_2")
 	await _t("D10B_T_B1_3")

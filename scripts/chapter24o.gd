@@ -98,6 +98,11 @@ func _ready() -> void:
 		_run()
 
 
+## Stage.approach için zemin yüksekliği (ordugâh yamacı).
+func _ground_y(x: float, z: float) -> float:
+	return CampDay.height(x, z)
+
+
 func _gy(p: Vector3) -> Vector3:
 	return Vector3(p.x, CampDay.height(p.x, p.z), p.z)
 
@@ -238,6 +243,8 @@ func _run() -> void:
 	if GameState.flags.get("eclipse_seen", false):
 		_eclipse_again = true
 		await hud.say("SPK_TOLGA", "D24O_T_ECLIPSE_AGAIN")
+	# Derviş öğüdünü Tolga'nın yanına gelip verir (13 m öteden "evlât" diyordu; sahneleme raporu SAYDIST)
+	await Stage.approach(dervish, player.global_position, 1.8, 1.3, Vector3.ZERO, _ground_y)
 	await hud.say("SPK_DERVISH", "D24O_D_01")
 	# Tespit: kanlı ay
 	Lore.scatter(self, "24o")
@@ -277,6 +284,7 @@ func _run() -> void:
 	_bowls.clear()
 	if moon:
 		moon.eclipse(false, 6.0)
+	await Stage.approach(dervish, player.global_position, 1.8, 1.3, Vector3.ZERO, _ground_y)
 	player.face(dervish.global_position + Vector3(0, 1.5, 0))
 	if calmed.count(true) < 3:
 		await hud.say("SPK_DERVISH", "D24O_D_REST")
@@ -346,6 +354,7 @@ func _talk(i: int) -> void:
 	hud.set_prompt("")
 	var g: Array = groups[i]
 	player.face((g[0] as Node3D).global_position + Vector3(0, 1.0, 0))
+	_turn(g[0], player.global_position)      # ateşe bakarken sırtı dönük konuşuyordu: önce Tolga'ya döner
 	Audio.sfx("land_pot", -10.0, 1.1)
 	await hud.say("SPK_SOLDIER", "D24O_S_%d" % (i + 1))
 	# Çantada termos varsa dördüncü yol: bir bardak çay (bardak harcanır; biterse seçenek de kalkar)

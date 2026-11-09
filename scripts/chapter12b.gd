@@ -225,6 +225,8 @@ func _run() -> void:
 	city.emperor.look_target = player
 	await _k("D12B_K_01")
 	await _t("D12B_T_02")
+	if GameState.flags.get("byz_letter", false):
+		await _k("D12B_K_LETTER")       # 10H'de verdiği mektup Sultan'a gitmedi: İmparator anar (hiç söz edilmiyordu)
 	# Gece yapılanları İmparator biliyor
 	var f := GameState.flags
 	# Cümle, o gece gerçekten yapılanlara göre parça parça kurulur (eski: yalnız Direniş sayısı)

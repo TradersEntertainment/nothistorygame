@@ -214,8 +214,10 @@ func _enter_store() -> void:
 	_busy = true
 	player.frozen = true
 	hud.set_objective("")          # içerideyken "Nöbetçi Hırdavat'a gir" kalıyordu
-	player.face(store.cemil.global_position + Vector3(0, 1.5, 0))
 	store.cemil.look_target = player
+	# Kapı eşiğinden 6 m öteden sohbet edilmesin: tezgâhın önüne kadar yürünür (sahneleme raporu SAYDIST)
+	await Stage.walk_player(player, store.cemil.global_position, 2.2, store.cemil.global_position + Vector3(0, 1.5, 0), 4.0)
+	player.face(store.cemil.global_position + Vector3(0, 1.5, 0))
 	await _say("SPK_CEMIL", "D8_C_01")
 	await _h("D8_H_C_02")
 	await _say("SPK_CEMIL", "D8_C_03")
@@ -233,9 +235,12 @@ func _enter_store() -> void:
 	# Kapıdan içeri girerler ("bandı bu beyler aldı" derken hâlâ dışarıda, camın arkasındaydılar)
 	Audio.sfx("door_open", -10.0)
 	var walk_in := create_tween().set_parallel(true)
-	for a in _agents:
+	# İkincisi bir adım geride durur: Tolga tezgâhın önünden bakınca ikisi aynı hizada kalıp konuşanı örtüyordu
+	# (VISAUDIT personhidden)
+	for i in _agents.size():
+		var a: Node3D = _agents[i]
 		if is_instance_valid(a):
-			walk_in.tween_property(a, "position:z", -0.9, 0.05 if GameState.autotest and not GameState.pace else 1.4)
+			walk_in.tween_property(a, "position:z", -0.9 if i == 0 else -0.1, 0.05 if GameState.autotest and not GameState.pace else 1.4)
 	await walk_in.finished
 	await _wait(0.3)
 	await _say("SPK_AGENT1", "D8_A1_ENTER")
@@ -768,6 +773,7 @@ func _fail(reason: String) -> void:
 	else:
 		_clock = END_MIN
 		_update_objective()
+		await Stage.walk_player(player, store.cemil.global_position, 2.2, store.cemil.global_position + Vector3(0, 1.5, 0), 3.0)
 		await _say("SPK_CEMIL", "D8_C_LATE")
 		if machine == "confiscated":
 			await _h("D8_H_FAIL_LATE_HEIST")      # soygun yolunda makine yarım değil, Büro deposunda
