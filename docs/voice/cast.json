@@ -1041,5 +1041,33 @@
   "model": "eleven_v3",
   "v3_stability": 0.5,
   "kaynak": "kütüphane (v0.99.100 bekleme salonu figürleri)"
+ },
+ "SPK_TESLA": {
+  "tarif": "Nikola Tesla; tutkulu, aksanlı, biraz kibirli",
+  "same_as": "SPK_URBAN"
+ },
+ "SPK_EDISON": {
+  "tarif": "Thomas Edison; kendinden emin, iş adamı",
+  "same_as": "SPK_GIUST"
+ },
+ "SPK_SOCRATES": {
+  "tarif": "Sokrates; yaşlı, ironik, hep soru soran",
+  "same_as": "SPK_THEODOROS"
+ },
+ "SPK_DIOGENES": {
+  "tarif": "Diyojen; huysuz, gür, laf sokan",
+  "same_as": "SPK_KADRI"
+ },
+ "SPK_NEWTON": {
+  "tarif": "Isaac Newton; kuru, titiz, alıngan",
+  "same_as": "SPK_GRANT"
+ },
+ "SPK_EVLIYA": {
+  "tarif": "Evliya Çelebi; hevesli anlatıcı, abartır",
+  "same_as": "SPK_LUTFI"
+ },
+ "SPK_MERCHANT": {
+  "tarif": "Pazar tüccarı; konuşkan, pazarlıkçı",
+  "same_as": "SPK_GENOESE"
  }
 }

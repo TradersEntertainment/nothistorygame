@@ -303,7 +303,7 @@ func _update_core(delta: float, talking: bool, busy: bool) -> void:
 	if lock > 0 or busy:
 		return
 	# Oturan ya da suda olan (kayıkta taşınan kürekçi, yüzen) yürümez: taşınmak adım sayılmaz
-	if speed > 0.35 and not activity in ["sit", "sit_ground", "write", "row", "swim", "ride", "halay", "halay_lead", "fly", "hover", "whittle", "read_ground", "doze"]:
+	if speed > 0.35 and not activity in ["sit", "sit_ground", "write", "row", "swim", "ride", "halay", "halay_lead", "fly", "hover", "whittle", "read_ground", "doze", "write_desk", "sit_astride"]:
 		_walk_phase += delta * (3.0 + speed * 1.6)
 		var amp := clampf(speed / 3.0, 0.35, 1.0)
 		var run := clampf((speed - 3.2) / 2.0, 0.0, 1.0)
@@ -339,7 +339,7 @@ func _update_core(delta: float, talking: bool, busy: bool) -> void:
 	if activity != "" and _activity(delta, talking, k):
 		return
 	# Durunca bacaklar toplanır, beden dikleşir; nefes (oturanlarda oturuş korunur)
-	if not activity in ["sit", "sit_ground", "write", "row", "ride", "whittle", "read_ground", "doze"]:
+	if not activity in ["sit", "sit_ground", "write", "row", "ride", "whittle", "read_ground", "doze", "write_desk", "sit_astride"]:
 		# Ağırlık aktarma: yavaşça bir bacağa yüklenir, öbür diz hafif bükülür
 		var shift := sin(_t * 0.45) + 0.35 * sin(_t * 0.17 + 1.3)      # iki ritim: aynı salınım tekrar etmesin
 		if leg_l:
@@ -381,12 +381,17 @@ func _update_core(delta: float, talking: bool, busy: bool) -> void:
 				_: _gesture = Vector4(-0.2, 0.15, -0.2, -0.15)
 		var bob := sin(_t * 6.0) * 0.08
 		var g := clampf(delta * 5.0, 0.0, 1.0)
+		var ge := _gesture
+		if activity in SEATED:
+			# Oturan konuşurken kolu aşağı sarkıtınca eli koltuğa, yandaki koltuğa ya da yanındakine giriyordu
+			# (Büro bekleme salonu: sohbet hiç durmuyor). Jest dizlerin üstünde, önde ve gövdeye yakın kalır.
+			ge = Vector4(minf(ge.x, -0.6), clampf(ge.y, -0.2, 0.22), minf(ge.z, -0.6), clampf(ge.w, -0.22, 0.2))
 		if not beam_arm:
-			_set_xz(arm_r, lerpf(arm_r.rotation.x, _gesture.x + bob, g), lerpf(arm_r.rotation.z, _gesture.y, g))
+			_set_xz(arm_r, lerpf(arm_r.rotation.x, ge.x + bob, g), lerpf(arm_r.rotation.z, ge.y, g))
 			# Jestte dirsek: kol öne gidince önkol kalkar (açıklayan bir el)
-			_elbow(elbow_r, -0.35 + _gesture.x * 0.6 + bob, g)
-		_set_xz(arm_l, lerpf(arm_l.rotation.x, _gesture.z - bob, g), lerpf(arm_l.rotation.z, _gesture.w, g))
-		_elbow(elbow_l, -0.35 + _gesture.z * 0.6 - bob, g)
+			_elbow(elbow_r, -0.35 + ge.x * 0.6 + bob, g)
+		_set_xz(arm_l, lerpf(arm_l.rotation.x, ge.z - bob, g), lerpf(arm_l.rotation.z, ge.w, g))
+		_elbow(elbow_l, -0.35 + ge.z * 0.6 - bob, g)
 	else:
 		var sway := sin(_t * 1.8) * 0.05
 		var fg := _fidget(delta)            # arada kıpırdanma: Vector4(sağ x, sağ z, sol x, sol z) + dirsekler
@@ -488,6 +493,13 @@ func _beam_arm(k: float) -> void:
 
 
 ## İş hareketi; true dönerse normal boşta/konuşma animasyonu atlanır.
+## Konuşurken de kolları iş duruşunda kalanlar: gazeteyi tutan (Sabri), arabayı iten (Zeki), elleri arkada ceza
+## köşesindeki (Hitler; konuşma jestiyle kolları önündeki duvara giriyordu)
+## Oturuş etkinlikleri (konuşma jesti bunlarda kısıtlanır: el koltuğa/banka girmesin)
+const SEATED := ["sit", "sit_ground", "write", "row", "whittle", "read_ground", "doze", "write_desk", "sit_astride"]
+const HOLD_WHILE_TALKING := ["hold_paper", "push", "hands_behind", "doze", "sit_astride"]
+
+
 func _activity(delta: float, talking: bool, k: float) -> bool:
 	if activity == "ride":
 		# Eyerde: bacaklar iki yana açık ve aşağıda, dizler hafif bükük; atın adımıyla gövde hafifçe sallanır
@@ -499,27 +511,27 @@ func _activity(delta: float, talking: bool, k: float) -> bool:
 			leg_r.rotation = leg_r.rotation.lerp(Vector3(-0.85, 0, 0.5), k)
 		_knee(knee_l, 1.1, k)
 		_knee(knee_r, 1.1, k)
-	var sitting := activity in ["sit", "sit_ground", "write", "row", "whittle", "read_ground", "doze"]
+	var sitting := activity in SEATED
 	if sitting:
-		var drop := -0.22 if activity in ["sit", "row", "whittle", "doze"] else -0.56
+		var drop := -0.22 if activity in ["sit", "row", "whittle", "doze", "write_desk", "sit_astride"] else -0.56
 		body.position.y = lerpf(body.position.y, drop, k)
 		# "doze": masaya kapanıp uyuklar (gövde öne yatık, nefesle hafif kalkıp iner). Gövdenin dönme noktası
 		# ayaklardaydı: öne yatınca bütün gövde tabureden kayıp masanın içine giriyordu; kalça (0,69) çevresinde döner.
-		var lean := 0.08 if activity in ["write", "read_ground"] else (0.95 + sin(_t * 0.8) * 0.025 if activity == "doze" else 0.0)
+		var lean := 0.08 if activity in ["write", "read_ground", "write_desk", "sit_astride"] else (0.95 + sin(_t * 0.8) * 0.025 if activity == "doze" else 0.0)
 		body.rotation.x = lerpf(body.rotation.x, lean, k)
 		if activity == "doze":
 			body.position.y = lerpf(body.position.y, drop + 0.69 * (1.0 - cos(lean)), k)
 			body.position.z = lerpf(body.position.z, -0.69 * sin(lean), k)
 		if leg_l:
-			leg_l.rotation = leg_l.rotation.lerp(Vector3(-1.45, 0, -0.18 if not activity in ["sit", "whittle", "doze"] else -0.1), k)
+			leg_l.rotation = leg_l.rotation.lerp(Vector3(-1.45, 0, -0.6 if activity == "sit_astride" else (-0.18 if not activity in ["sit", "whittle", "doze", "write_desk"] else -0.1)), k)
 		if leg_r:
-			leg_r.rotation = leg_r.rotation.lerp(Vector3(-1.45, 0, 0.18 if not activity in ["sit", "whittle", "doze"] else 0.1), k)
+			leg_r.rotation = leg_r.rotation.lerp(Vector3(-1.45, 0, 0.6 if activity == "sit_astride" else (0.18 if not activity in ["sit", "whittle", "doze", "write_desk"] else 0.1)), k)
 		# Taburede baldırlar aşağı sarkar; yerde bağdaş: dizler katlanır
-		var kb := 1.45 if activity in ["sit", "row", "whittle", "doze"] else 2.3
+		var kb := 1.45 if activity in ["sit", "row", "whittle", "doze", "write_desk", "sit_astride"] else 2.3
 		_knee(knee_l, kb, k)
 		_knee(knee_r, kb, k)
-	if talking or arm_l == null or arm_r == null:
-		# Konuşurken oturuş sürer, kollar ve baş normal konuşma jestine döner
+	if (talking and not activity in HOLD_WHILE_TALKING) or arm_l == null or arm_r == null:
+		# Konuşurken oturuş sürer, kollar ve baş normal konuşma jestine döner (elindekini bırakamayanlar hariç)
 		return false
 	var t := _t
 	# Hücum pozları (Crowd ile pişirilir; merdivendekiler canlı): run_a/run_b koşu adımının iki ucu, leap siperden
@@ -666,13 +678,36 @@ func _activity(delta: float, talking: bool, k: float) -> bool:
 			if head:
 				head.rotation = head.rotation.lerp(Vector3(-0.35, 0.0, 0.45), k)
 		"hold_paper":
-			# Gazeteyi iki eliyle yüzünün önünde tutar (Kayıp Eşya'nın Sabri'si)
-			arm_r.rotation = arm_r.rotation.lerp(Vector3(-0.85, -0.25, 0.05), k)
-			arm_l.rotation = arm_l.rotation.lerp(Vector3(-0.85, 0.25, -0.05), k)
-			_elbow(elbow_r, -1.35, k)
-			_elbow(elbow_l, -1.35, k)
-			if head:
-				head.rotation = head.rotation.lerp(Vector3(0.12, sin(t * 0.3) * 0.05, 0), k)
+			# Gazeteyi iki eliyle yüzünün önünde tutar (Kayıp Eşya'nın Sabri'si); konuşurken göğsüne indirir, üstünden bakar
+			# (gazete Bureau'da bu iki yüksekliğe göre iner/kalkar)
+			if talking:
+				arm_r.rotation = arm_r.rotation.lerp(Vector3(-0.55, -0.3, 0.05), k)
+				arm_l.rotation = arm_l.rotation.lerp(Vector3(-0.55, 0.3, -0.05), k)
+				_elbow(elbow_r, -1.05, k)
+				_elbow(elbow_l, -1.05, k)
+			else:
+				arm_r.rotation = arm_r.rotation.lerp(Vector3(-0.85, -0.25, 0.05), k)
+				arm_l.rotation = arm_l.rotation.lerp(Vector3(-0.85, 0.25, -0.05), k)
+				_elbow(elbow_r, -1.35, k)
+				_elbow(elbow_l, -1.35, k)
+				if head:
+					head.rotation = head.rotation.lerp(Vector3(0.12, sin(t * 0.3) * 0.05, 0), k)
+		"sit_astride":
+			# Sandalyeye ters, ata biner gibi oturur (Nasreddin Hoca): bacaklar sırtlığın iki yanında, kollar sırtlığın
+			# üstünde kavuşuk; konuşurken de bu duruş korunur (kol sallarsa sırtlığa girer)
+			arm_r.rotation = arm_r.rotation.lerp(Vector3(-0.95, -0.45, -0.1), k)
+			arm_l.rotation = arm_l.rotation.lerp(Vector3(-0.95, 0.45, 0.1), k)
+			_elbow(elbow_r, -0.75, k)
+			_elbow(elbow_l, -0.75, k)
+			return _hold_head(delta, talking)
+		"hands_behind":
+			# Eller arkada kavuşuk (ceza köşesi): kollar geriye ve içe, dirsekler hafif bükük
+			arm_r.rotation = arm_r.rotation.lerp(Vector3(0.38, 0.5, -0.12), k)
+			arm_l.rotation = arm_l.rotation.lerp(Vector3(0.38, -0.5, 0.12), k)
+			_elbow(elbow_r, -0.55, k)
+			_elbow(elbow_l, -0.55, k)
+			body.position.y = lerpf(body.position.y, sin(t * 1.6) * 0.008, k)
+			return _hold_head(delta, talking)
 		"arms_folded":
 			# Kollar göğüste kavuşuk, kendinden emin duruş (Büro: Cengiz Han). Göğüs nefesle hafif kalkar.
 			arm_r.rotation = arm_r.rotation.lerp(Vector3(-0.4, -0.6, -0.3), k)
@@ -693,7 +728,7 @@ func _activity(delta: float, talking: bool, k: float) -> bool:
 			_push_arms(k)
 			body.rotation.x = lerpf(body.rotation.x, 0.08, k)
 			return false if head == null else _idle_head(delta)
-		"write":
+		"write", "write_desk":
 			arm_r.rotation = arm_r.rotation.lerp(Vector3(-1.05 + sin(t * 11.0) * 0.04, 0, 0.12 + sin(t * 2.3) * 0.08), k)
 			arm_l.rotation = arm_l.rotation.lerp(Vector3(-0.9, 0, -0.1), k)
 			_elbow(elbow_r, -0.5 + sin(t * 11.0) * 0.08, k)
@@ -833,6 +868,17 @@ func _player_glance() -> Vector3:
 		return Vector3.INF               # arkasında: dönüp bakmaz
 	var pitch := -atan2(d.y, flat)
 	return Vector3(clampf(pitch, -0.35, 0.3), clampf(yaw, -0.9, 0.9), 0.0)
+
+
+## Kolları bir duruşta tutulan etkinlikler (eller arkada, sandalyeye ters): konuşurken de kollar yerinde kalır, yalnız
+## baş konuşur. false dönerse genel kod konuşma jestini kollara uygulayıp duruşu bozuyordu (Hitler'in kolları duvara).
+func _hold_head(delta: float, talking: bool) -> bool:
+	if head == null:
+		return true
+	if not talking:
+		return _idle_head(delta)
+	head.rotation = head.rotation.lerp(Vector3(sin(_t * 5.2) * 0.07, sin(_t * 1.3) * 0.12, sin(_t * 2.1) * 0.04), clampf(delta * 4.0, 0.0, 1.0))
+	return true
 
 
 func _idle_head(delta: float) -> bool:

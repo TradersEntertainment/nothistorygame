@@ -668,6 +668,11 @@ def cmd_fix(args):
     skipped = []
     for i, k in enumerate(todo, 1):
         r = rows[k]
+        v = resolve(cast, r["konusmaci"])
+        if not v.get("voice_id") and not v.get("skip"):
+            # Sesi seçilmemiş konuşmacı ('?' ya da kadroda yok): eskiden tek replikte KeyError ile bütün iş dururdu
+            print(f"  [{i}/{len(todo)}] {k}  ATLANDI ({r['konusmaci']} için ses seçilmemiş)")
+            continue
         try:
             n = speak(r, args.lang, os.path.join(ROOT, "assets/audio/voice", args.lang, k + ".mp3"), args.model, cast, tone_of(r, cast))
         except Blocked as e:

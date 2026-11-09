@@ -114,6 +114,11 @@ for key in text:
         speaker[key] = "SPK_NIKO"; source[key] = "tablo"; continue
     if key.startswith("D7_EAVES_OTHER_"):
         speaker[key] = "SPK_SOLDIER"; source[key] = "tablo"; continue
+    # Kulak misafiri: chapter7 anahtarı "D7_EAVES_" + npc.to_upper() diye kurar, konuşan kendi sesiyle (SPEAKERS)
+    a = re.match(r"^D7_EAVES_([A-Z]+)$", key)
+    if a and (a.group(1) == "GIUSTINIANI" or a.group(1) in REACT_SPK):
+        speaker[key] = "SPK_GIUST" if a.group(1) == "GIUSTINIANI" else REACT_SPK[a.group(1)]
+        source[key] = "tablo"; continue
     if key.startswith("D_DOWNED_N_"):
         speaker[key] = "SPK_NIHAT"; source[key] = "tablo"; continue
     # Anahtarı kodda biçimlenen anlık sözler (v0.99.9): doğrudan çağrı taraması bunları görmüyordu, oyunda mırıltıyla

@@ -40,6 +40,18 @@ static func dress(id: String, p: Person) -> void:
 			_galileo(p)
 		"ein":
 			_einstein(p)
+		"tes":
+			_tesla(p)
+		"edi":
+			_edison(p)
+		"sok":
+			_socrates(p)
+		"dio":
+			_diogenes(p)
+		"new":
+			_newton(p)
+		"evl":
+			_evliya(p)
 
 
 static func _knee(p: Person, side: int) -> Node3D:
@@ -350,3 +362,90 @@ static func _einstein(p: Person) -> void:
 	# Dağınık beyaz saç
 	for q in [Vector3(-0.19, 0.09, -0.04), Vector3(0.19, 0.09, -0.04), Vector3(-0.12, 0.17, -0.1), Vector3(0.12, 0.17, -0.1), Vector3(0, 0.2, -0.05), Vector3(0, 0.1, -0.19)]:
 		Props.ball(h, 0.085, q, Color("f2f0ea"), Vector3(1.0, 0.8, 1.0), 8)
+
+
+# ---------------------------------------------------------------- v0.99.105: yeni figürler
+
+static func _tesla(p: Person) -> void:
+	# Koyu takım, beyaz yaka ve papyon; elinde kablosuz yanan mavi-mor gaz tüpü (meşhur fotoğrafındaki gibi)
+	var b: Node3D = p._body
+	Props.box(b, Vector3(0.1, 0.05, 0.03), Vector3(0, 1.31, 0.215), Color("1a1a1e"))
+	Props.box(b, Vector3(0.16, 0.06, 0.02), Vector3(0, 1.22, 0.225), Color("f0f0ec"))
+	var el := _elbow(p, 1)
+	if el:
+		Props.cyl(el, 0.025, 0.36, Vector3(0, -0.3, 0.08), Color("b8a0ff"), Vector3(70, 0, 0), 10, -1.0, 2.2)
+		Props.cyl(el, 0.03, 0.05, Vector3(0, -0.27, 0.0), Color("3a3a40"), Vector3(70, 0, 0), 8)
+
+
+static func _edison(p: Person) -> void:
+	# Gri yelekli takım, papyon; elinde sarı ışıyan akkor ampul
+	var b: Node3D = p._body
+	Props.box(b, Vector3(0.1, 0.05, 0.03), Vector3(0, 1.31, 0.215), Color("2a2a30"))
+	for k in 3:
+		Props.ball(b, 0.012, Vector3(0, 1.1 - k * 0.09, 0.23), Color("b8a060"), Vector3.ONE, 5)
+	var el := _elbow(p, 1)
+	if el:
+		Props.ball(el, 0.055, Vector3(0, -0.33, 0.06), Color("ffe08a"), Vector3(1, 1.25, 1), 10, 2.0)
+		Props.cyl(el, 0.03, 0.05, Vector3(0, -0.27, 0.06), Color("9a8a6a"), Vector3.ZERO, 8)
+
+
+static func _socrates(p: Person) -> void:
+	# Kaba yünden beyaz himation (bir omuzdan dolanır), yalınayak sandalet, dolaşan filozof asası
+	var b: Node3D = p._body
+	Props.box(b, Vector3(0.1, 0.72, 0.5), Vector3(0.0, 0.95, 0.0), Color("e8e0cc"), Vector3(0, 90, 32))
+	for side: int in [-1, 1]:
+		var kn := _knee(p, side)
+		if kn:
+			for k in 2:
+				Props.cyl(kn, 0.086, 0.018, Vector3(0, -0.3 - k * 0.1, 0), Color("7a5a3a"), Vector3.ZERO, 8)
+	var el := _elbow(p, -1)
+	if el:
+		Props.cyl(el, 0.018, 1.5, Vector3(0, -0.28, 0.06), Color("6a4a2a"), Vector3.ZERO, 6)
+
+
+static func _diogenes(p: Person) -> void:
+	# Fıçısında (pithos: yatık değil, dik duran büyük küp) bele kadar; elinde gündüz yanan fener, yamalı kahverengi pelerin
+	var jar := Node3D.new()
+	jar.name = "Pithos"
+	p.add_child(jar)
+	var clay := Color("b8683a")
+	Props.cyl(jar, 0.42, 0.95, Vector3(0, 0.475, 0), clay, Vector3.ZERO, 16, 0.36)
+	Props.cyl(jar, 0.37, 0.07, Vector3(0, 0.97, 0), clay.darkened(0.15), Vector3.ZERO, 16)
+	for k in 2:
+		Props.cyl(jar, 0.425 - k * 0.02, 0.03, Vector3(0, 0.3 + k * 0.35, 0), clay.darkened(0.25), Vector3.ZERO, 16)
+	var b: Node3D = p._body
+	Props.box(b, Vector3(0.48, 0.3, 0.06), Vector3(0, 1.15, -0.2), Color("6a4a30"), Vector3(-8, 0, 0))
+	Props.box(b, Vector3(0.1, 0.1, 0.02), Vector3(-0.1, 1.05, 0.225), Color("8a6a40"))
+	var el := _elbow(p, 1)
+	if el:
+		Props.cyl(el, 0.008, 0.12, Vector3(0, -0.3, 0.06), Color("3a3a3a"), Vector3.ZERO, 4)
+		Props.cyl(el, 0.05, 0.12, Vector3(0, -0.42, 0.06), Color("ffd27a"), Vector3.ZERO, 8, 0.04, 1.6)
+		Props.cyl(el, 0.055, 0.02, Vector3(0, -0.35, 0.06), Color("4a3a2a"), Vector3.ZERO, 8)
+
+
+static func _newton(p: Person) -> void:
+	# Uzun gri kıvırcık saç (omuzlara iner), boyunbağı (jabot); elinde kırmızı elma
+	var h: Node3D = p._head
+	var grey := Color("cfc8bc")
+	for sx: float in [-1.0, 1.0]:
+		for k in 3:
+			Props.ball(h, 0.085, Vector3(sx * 0.19, -0.05 - k * 0.1, -0.03), grey, Vector3(0.8, 1.0, 1.0), 8)
+	Props.ball(h, 0.21, Vector3(0, 0.07, -0.03), grey, Vector3(1.05, 0.9, 1.05), 10)
+	var b: Node3D = p._body
+	Props.box(b, Vector3(0.1, 0.16, 0.03), Vector3(0, 1.2, 0.225), Color("f4f0e6"))
+	var el := _elbow(p, 1)
+	if el:
+		Props.ball(el, 0.045, Vector3(0, -0.31, 0.07), Color("c42a22"), Vector3(1, 0.95, 1), 8)
+		Props.cyl(el, 0.005, 0.03, Vector3(0, -0.26, 0.07), Color("4a3020"), Vector3.ZERO, 4)
+
+
+static func _evliya(p: Person) -> void:
+	# Seyyah: kalın kuşak, omzunda heybe, elinde Seyahatname (deri ciltli kalın defter)
+	var b: Node3D = p._body
+	Props.cyl(b, 0.245, 0.07, Vector3(0, 0.84, 0), Color("b8322a"), Vector3.ZERO, 16)
+	Props.box(b, Vector3(0.05, 0.62, 0.05), Vector3(0.05, 1.05, 0.0), Color("6a4a2a"), Vector3(0, 0, -34))
+	Props.box(b, Vector3(0.26, 0.24, 0.12), Vector3(0.24, 0.78, -0.16), Color("8a5a3a"))
+	var el := _elbow(p, -1)
+	if el:
+		Props.box(el, Vector3(0.05, 0.22, 0.17), Vector3(0, -0.27, 0.08), Color("5a2a1a"))
+		Props.box(el, Vector3(0.052, 0.2, 0.155), Vector3(0.002, -0.27, 0.08), Color("efe6cc"))

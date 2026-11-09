@@ -90,6 +90,90 @@ const ERA_COLORS := {"MÖ 2560": Color("e8c070"), "MÖ 776": Color("ffe090"), "M
 ## memurlar yine konuşur.
 ## Seslendirme eşlemesi (tools/voice_map.py okur): _say(anahtar, sn, konuşan) çağrıları desenle yakalanmıyor
 const _BUR_VOICE := [
+	["SPK_NAPOLEON", "BUR_AMB_G1_4_1"], ["SPK_GENGHIS", "BUR_AMB_G1_4_2"], ["SPK_NAPOLEON", "BUR_AMB_G1_4_3"], ["SPK_GENGHIS", "BUR_AMB_G1_5_1"],
+	["SPK_NAPOLEON", "BUR_AMB_G1_5_2"], ["SPK_GENGHIS", "BUR_AMB_G1_5_3"], ["SPK_NAPOLEON", "BUR_AMB_G1_6_1"], ["SPK_GENGHIS", "BUR_AMB_G1_6_2"],
+	["SPK_NAPOLEON", "BUR_AMB_G1_6_3"], ["SPK_GENGHIS", "BUR_AMB_G1_7_1"], ["SPK_NAPOLEON", "BUR_AMB_G1_7_2"], ["SPK_GENGHIS", "BUR_AMB_G1_7_3"],
+	["SPK_NAPOLEON", "BUR_AMB_G1_8_1"], ["SPK_GENGHIS", "BUR_AMB_G1_8_2"], ["SPK_NAPOLEON", "BUR_AMB_G1_8_3"], ["SPK_GENGHIS", "BUR_AMB_G1_9_1"],
+	["SPK_NAPOLEON", "BUR_AMB_G1_9_2"], ["SPK_GENGHIS", "BUR_AMB_G1_9_3"], ["SPK_NAPOLEON", "BUR_AMB_G1_9_4"], ["SPK_ROBOT", "BUR_AMB_G2_4_1"],
+	["SPK_HITLER", "BUR_AMB_G2_4_2"], ["SPK_ROBOT", "BUR_AMB_G2_4_3"], ["SPK_NAPOLEON", "BUR_AMB_G2_5_1"], ["SPK_ROBOT", "BUR_AMB_G2_5_2"],
+	["SPK_HITLER", "BUR_AMB_G2_5_3"], ["SPK_HITLER", "BUR_AMB_G2_6_1"], ["SPK_ROBOT", "BUR_AMB_G2_6_2"], ["SPK_HITLER", "BUR_AMB_G2_6_3"],
+	["SPK_ROBOT", "BUR_AMB_G2_6_4"], ["SPK_ROBOT", "BUR_AMB_G2_7_1"], ["SPK_HITLER", "BUR_AMB_G2_7_2"], ["SPK_ROBOT", "BUR_AMB_G2_7_3"],
+	["SPK_NAPOLEON", "BUR_AMB_G2_8_1"], ["SPK_HITLER", "BUR_AMB_G2_8_2"], ["SPK_ROBOT", "BUR_AMB_G2_8_3"], ["SPK_ROBOT", "BUR_AMB_G2_9_1"],
+	["SPK_HITLER", "BUR_AMB_G2_9_2"], ["SPK_ROBOT", "BUR_AMB_G2_9_3"], ["SPK_MARCOPOLO", "BUR_AMB_G3_3_1"], ["SPK_GALILEO", "BUR_AMB_G3_3_2"],
+	["SPK_MARCOPOLO", "BUR_AMB_G3_3_3"], ["SPK_MARCOPOLO", "BUR_AMB_G3_4_1"], ["SPK_GALILEO", "BUR_AMB_G3_4_2"], ["SPK_MARCOPOLO", "BUR_AMB_G3_4_3"],
+	["SPK_MARCOPOLO", "BUR_AMB_G3_5_1"], ["SPK_GALILEO", "BUR_AMB_G3_5_2"], ["SPK_MARCOPOLO", "BUR_AMB_G3_5_3"], ["SPK_GALILEO", "BUR_AMB_G3_6_1"],
+	["SPK_MARCOPOLO", "BUR_AMB_G3_6_2"], ["SPK_GALILEO", "BUR_AMB_G3_6_3"], ["SPK_GALILEO", "BUR_AMB_G3_7_1"], ["SPK_MARCOPOLO", "BUR_AMB_G3_7_2"],
+	["SPK_GALILEO", "BUR_AMB_G3_7_3"], ["SPK_MARCOPOLO", "BUR_AMB_G3_8_1"], ["SPK_GALILEO", "BUR_AMB_G3_8_2"], ["SPK_MARCOPOLO", "BUR_AMB_G3_8_3"],
+	["SPK_MOZART", "BUR_AMB_G4_3_1"], ["SPK_CURIE", "BUR_AMB_G4_3_2"], ["SPK_MOZART", "BUR_AMB_G4_3_3"], ["SPK_CURIE", "BUR_AMB_G4_4_1"],
+	["SPK_MOZART", "BUR_AMB_G4_4_2"], ["SPK_CURIE", "BUR_AMB_G4_4_3"], ["SPK_MOZART", "BUR_AMB_G4_5_1"], ["SPK_CURIE", "BUR_AMB_G4_5_2"],
+	["SPK_MOZART", "BUR_AMB_G4_5_3"], ["SPK_CURIE", "BUR_AMB_G4_6_1"], ["SPK_MOZART", "BUR_AMB_G4_6_2"], ["SPK_CURIE", "BUR_AMB_G4_6_3"],
+	["SPK_MOZART", "BUR_AMB_G4_7_1"], ["SPK_CURIE", "BUR_AMB_G4_7_2"], ["SPK_MOZART", "BUR_AMB_G4_7_3"], ["SPK_MOZART", "BUR_AMB_G4_8_1"],
+	["SPK_CURIE", "BUR_AMB_G4_8_2"], ["SPK_MOZART", "BUR_AMB_G4_8_3"], ["SPK_SINAN", "BUR_AMB_G5_3_1"], ["SPK_NASREDDIN", "BUR_AMB_G5_3_2"],
+	["SPK_SINAN", "BUR_AMB_G5_3_3"], ["SPK_NASREDDIN", "BUR_AMB_G5_3_4"], ["SPK_NASREDDIN", "BUR_AMB_G5_4_1"], ["SPK_SINAN", "BUR_AMB_G5_4_2"],
+	["SPK_NASREDDIN", "BUR_AMB_G5_4_3"], ["SPK_SINAN", "BUR_AMB_G5_4_4"], ["SPK_SINAN", "BUR_AMB_G5_5_1"], ["SPK_NASREDDIN", "BUR_AMB_G5_5_2"],
+	["SPK_SINAN", "BUR_AMB_G5_5_3"], ["SPK_NASREDDIN", "BUR_AMB_G5_6_1"], ["SPK_SINAN", "BUR_AMB_G5_6_2"], ["SPK_NASREDDIN", "BUR_AMB_G5_6_3"],
+	["SPK_SINAN", "BUR_AMB_G5_7_1"], ["SPK_NASREDDIN", "BUR_AMB_G5_7_2"], ["SPK_SINAN", "BUR_AMB_G5_7_3"], ["SPK_NASREDDIN", "BUR_AMB_G5_8_1"],
+	["SPK_SINAN", "BUR_AMB_G5_8_2"], ["SPK_NASREDDIN", "BUR_AMB_G5_8_3"], ["SPK_GAGARIN", "BUR_AMB_G6_3_1"], ["SPK_GALILEO", "BUR_AMB_G6_3_2"],
+	["SPK_GAGARIN", "BUR_AMB_G6_3_3"], ["SPK_GAGARIN", "BUR_AMB_G6_4_1"], ["SPK_GALILEO", "BUR_AMB_G6_4_2"], ["SPK_GAGARIN", "BUR_AMB_G6_4_3"],
+	["SPK_GALILEO", "BUR_AMB_G6_4_4"], ["SPK_GALILEO", "BUR_AMB_G6_5_1"], ["SPK_GAGARIN", "BUR_AMB_G6_5_2"], ["SPK_GALILEO", "BUR_AMB_G6_5_3"],
+	["SPK_GAGARIN", "BUR_AMB_G6_5_4"], ["SPK_GALILEO", "BUR_AMB_G6_6_1"], ["SPK_GAGARIN", "BUR_AMB_G6_6_2"], ["SPK_GALILEO", "BUR_AMB_G6_6_3"],
+	["SPK_GAGARIN", "BUR_AMB_G6_7_1"], ["SPK_GALILEO", "BUR_AMB_G6_7_2"], ["SPK_GAGARIN", "BUR_AMB_G6_7_3"], ["SPK_GALILEO", "BUR_AMB_G6_8_1"],
+	["SPK_GAGARIN", "BUR_AMB_G6_8_2"], ["SPK_GALILEO", "BUR_AMB_G6_8_3"], ["SPK_GAGARIN", "BUR_AMB_G6_9_1"], ["SPK_GALILEO", "BUR_AMB_G6_9_2"],
+	["SPK_GAGARIN", "BUR_AMB_G6_9_3"], ["SPK_CAESAR", "BUR_AMB_G7_4_1"], ["SPK_SHAKESPEARE", "BUR_AMB_G7_4_2"], ["SPK_CAESAR", "BUR_AMB_G7_4_3"],
+	["SPK_CAESAR", "BUR_AMB_G7_5_1"], ["SPK_SHAKESPEARE", "BUR_AMB_G7_5_2"], ["SPK_NECMI", "BUR_AMB_G7_5_3"], ["SPK_SHAKESPEARE", "BUR_AMB_G7_6_1"],
+	["SPK_NECMI", "BUR_AMB_G7_6_2"], ["SPK_CAESAR", "BUR_AMB_G7_6_3"], ["SPK_CAESAR", "BUR_AMB_G7_7_1"], ["SPK_SHAKESPEARE", "BUR_AMB_G7_7_2"],
+	["SPK_CAESAR", "BUR_AMB_G7_7_3"], ["SPK_NECMI", "BUR_AMB_G7_7_4"], ["SPK_SHAKESPEARE", "BUR_AMB_G7_8_1"], ["SPK_CAESAR", "BUR_AMB_G7_8_2"],
+	["SPK_SHAKESPEARE", "BUR_AMB_G7_8_3"], ["SPK_NECMI", "BUR_AMB_G7_8_4"], ["SPK_SHAKESPEARE", "BUR_AMB_G7_9_1"], ["SPK_CAESAR", "BUR_AMB_G7_9_2"],
+	["SPK_NECMI", "BUR_AMB_G7_9_3"], ["SPK_COLUMBUS", "BUR_AMB_G8_3_1"], ["SPK_SABRI", "BUR_AMB_G8_3_2"], ["SPK_COLUMBUS", "BUR_AMB_G8_3_3"],
+	["SPK_SABRI", "BUR_AMB_G8_3_4"], ["SPK_COLUMBUS", "BUR_AMB_G8_4_1"], ["SPK_SABRI", "BUR_AMB_G8_4_2"], ["SPK_COLUMBUS", "BUR_AMB_G8_4_3"],
+	["SPK_SABRI", "BUR_AMB_G8_4_4"], ["SPK_COLUMBUS", "BUR_AMB_G8_5_1"], ["SPK_SABRI", "BUR_AMB_G8_5_2"], ["SPK_COLUMBUS", "BUR_AMB_G8_5_3"],
+	["SPK_SABRI", "BUR_AMB_G8_5_4"], ["SPK_COLUMBUS", "BUR_AMB_G8_6_1"], ["SPK_SABRI", "BUR_AMB_G8_6_2"], ["SPK_COLUMBUS", "BUR_AMB_G8_6_3"],
+	["SPK_SABRI", "BUR_AMB_G8_6_4"], ["SPK_COLUMBUS", "BUR_AMB_G8_7_1"], ["SPK_SABRI", "BUR_AMB_G8_7_2"], ["SPK_COLUMBUS", "BUR_AMB_G8_7_3"],
+	["SPK_SABRI", "BUR_AMB_G8_7_4"], ["SPK_COLUMBUS", "BUR_AMB_G8_8_1"], ["SPK_SABRI", "BUR_AMB_G8_8_2"], ["SPK_COLUMBUS", "BUR_AMB_G8_8_3"],
+	["SPK_SABRI", "BUR_AMB_G8_8_4"], ["SPK_CLEOPATRA", "BUR_AMB_G9_3_1"], ["SPK_SULEYMAN", "BUR_AMB_G9_3_2"], ["SPK_CLEOPATRA", "BUR_AMB_G9_3_3"],
+	["SPK_CLEOPATRA", "BUR_AMB_G9_4_1"], ["SPK_SULEYMAN", "BUR_AMB_G9_4_2"], ["SPK_CLEOPATRA", "BUR_AMB_G9_4_3"], ["SPK_SULEYMAN", "BUR_AMB_G9_5_1"],
+	["SPK_CLEOPATRA", "BUR_AMB_G9_5_2"], ["SPK_SULEYMAN", "BUR_AMB_G9_5_3"], ["SPK_CLEOPATRA", "BUR_AMB_G9_6_1"], ["SPK_CLEOPATRA", "BUR_AMB_G9_6_2"],
+	["SPK_SULEYMAN", "BUR_AMB_G9_6_3"], ["SPK_SULEYMAN", "BUR_AMB_G9_7_1"], ["SPK_CLEOPATRA", "BUR_AMB_G9_7_2"], ["SPK_SULEYMAN", "BUR_AMB_G9_7_3"],
+	["SPK_CLEOPATRA", "BUR_AMB_G9_8_1"], ["SPK_SULEYMAN", "BUR_AMB_G9_8_2"], ["SPK_CLEOPATRA", "BUR_AMB_G9_8_3"], ["SPK_LEONARDO", "BUR_AMB_G10_3_1"],
+	["SPK_EINSTEIN", "BUR_AMB_G10_3_2"], ["SPK_LEONARDO", "BUR_AMB_G10_3_3"], ["SPK_EINSTEIN", "BUR_AMB_G10_4_1"], ["SPK_LEONARDO", "BUR_AMB_G10_4_2"],
+	["SPK_EINSTEIN", "BUR_AMB_G10_4_3"], ["SPK_EINSTEIN", "BUR_AMB_G10_5_1"], ["SPK_LEONARDO", "BUR_AMB_G10_5_2"], ["SPK_EINSTEIN", "BUR_AMB_G10_5_3"],
+	["SPK_LEONARDO", "BUR_AMB_G10_6_1"], ["SPK_EINSTEIN", "BUR_AMB_G10_6_2"], ["SPK_LEONARDO", "BUR_AMB_G10_6_3"], ["SPK_EINSTEIN", "BUR_AMB_G10_7_1"],
+	["SPK_LEONARDO", "BUR_AMB_G10_7_2"], ["SPK_EINSTEIN", "BUR_AMB_G10_7_3"], ["SPK_LEONARDO", "BUR_AMB_G10_7_4"], ["SPK_LEONARDO", "BUR_AMB_G10_8_1"],
+	["SPK_EINSTEIN", "BUR_AMB_G10_8_2"], ["SPK_LEONARDO", "BUR_AMB_G10_8_3"], ["SPK_GUIDE", "BUR_AMB_G11_3_1"], ["SPK_GUIDE", "BUR_AMB_G11_3_2"],
+	["SPK_GUIDE", "BUR_AMB_G11_4_1"], ["SPK_GUIDE", "BUR_AMB_G11_4_2"], ["SPK_GUIDE", "BUR_AMB_G11_5_1"], ["SPK_GUIDE", "BUR_AMB_G11_5_2"],
+	["SPK_GUIDE", "BUR_AMB_G11_6_1"], ["SPK_GUIDE", "BUR_AMB_G11_6_2"], ["SPK_GUIDE", "BUR_AMB_G11_7_1"], ["SPK_GUIDE", "BUR_AMB_G11_7_2"],
+	["SPK_GUIDE", "BUR_AMB_G11_8_1"], ["SPK_GUIDE", "BUR_AMB_G11_8_2"], ["SPK_ARCHAEOLOGIST", "BUR_AMB_G12_3_1"], ["SPK_ARCHAEOLOGIST", "BUR_AMB_G12_3_2"],
+	["SPK_ARCHAEOLOGIST", "BUR_AMB_G12_4_1"], ["SPK_ARCHAEOLOGIST", "BUR_AMB_G12_4_2"], ["SPK_ARCHAEOLOGIST", "BUR_AMB_G12_5_1"], ["SPK_ARCHAEOLOGIST", "BUR_AMB_G12_5_2"],
+	["SPK_ARCHAEOLOGIST", "BUR_AMB_G12_6_1"], ["SPK_ARCHAEOLOGIST", "BUR_AMB_G12_6_2"], ["SPK_ARCHAEOLOGIST", "BUR_AMB_G12_7_1"], ["SPK_ARCHAEOLOGIST", "BUR_AMB_G12_7_2"],
+	["SPK_ARCHAEOLOGIST", "BUR_AMB_G12_8_1"], ["SPK_ARCHAEOLOGIST", "BUR_AMB_G12_8_2"], ["SPK_TESLA", "BUR_AMB_G13_1_1"], ["SPK_EDISON", "BUR_AMB_G13_1_2"],
+	["SPK_TESLA", "BUR_AMB_G13_1_3"], ["SPK_EDISON", "BUR_AMB_G13_2_1"], ["SPK_TESLA", "BUR_AMB_G13_2_2"], ["SPK_EDISON", "BUR_AMB_G13_2_3"],
+	["SPK_TESLA", "BUR_AMB_G13_2_4"], ["SPK_TESLA", "BUR_AMB_G13_3_1"], ["SPK_EDISON", "BUR_AMB_G13_3_2"], ["SPK_TESLA", "BUR_AMB_G13_3_3"],
+	["SPK_TESLA", "BUR_AMB_G13_4_1"], ["SPK_EDISON", "BUR_AMB_G13_4_2"], ["SPK_TESLA", "BUR_AMB_G13_4_3"], ["SPK_EDISON", "BUR_AMB_G13_5_1"],
+	["SPK_TESLA", "BUR_AMB_G13_5_2"], ["SPK_EDISON", "BUR_AMB_G13_5_3"], ["SPK_EINSTEIN", "BUR_AMB_G13_6_1"], ["SPK_TESLA", "BUR_AMB_G13_6_2"],
+	["SPK_EDISON", "BUR_AMB_G13_6_3"], ["SPK_TESLA", "BUR_AMB_G13_7_1"], ["SPK_EDISON", "BUR_AMB_G13_7_2"], ["SPK_TESLA", "BUR_AMB_G13_7_3"],
+	["SPK_EDISON", "BUR_AMB_G13_7_4"], ["SPK_SOCRATES", "BUR_AMB_G14_1_1"], ["SPK_DIOGENES", "BUR_AMB_G14_1_2"], ["SPK_SOCRATES", "BUR_AMB_G14_1_3"],
+	["SPK_DIOGENES", "BUR_AMB_G14_1_4"], ["SPK_DIOGENES", "BUR_AMB_G14_2_1"], ["SPK_SOCRATES", "BUR_AMB_G14_2_2"], ["SPK_DIOGENES", "BUR_AMB_G14_2_3"],
+	["SPK_SOCRATES", "BUR_AMB_G14_3_1"], ["SPK_DIOGENES", "BUR_AMB_G14_3_2"], ["SPK_SOCRATES", "BUR_AMB_G14_3_3"], ["SPK_DIOGENES", "BUR_AMB_G14_4_1"],
+	["SPK_SOCRATES", "BUR_AMB_G14_4_2"], ["SPK_DIOGENES", "BUR_AMB_G14_4_3"], ["SPK_SOCRATES", "BUR_AMB_G14_5_1"], ["SPK_DIOGENES", "BUR_AMB_G14_5_2"],
+	["SPK_SOCRATES", "BUR_AMB_G14_5_3"], ["SPK_SOCRATES", "BUR_AMB_G14_6_1"], ["SPK_DIOGENES", "BUR_AMB_G14_6_2"], ["SPK_SOCRATES", "BUR_AMB_G14_6_3"],
+	["SPK_ARCHAEOLOGIST", "BUR_AMB_G14_7_1"], ["SPK_SOCRATES", "BUR_AMB_G14_7_2"], ["SPK_DIOGENES", "BUR_AMB_G14_7_3"], ["SPK_NEWTON", "BUR_AMB_G15_1_1"],
+	["SPK_EINSTEIN", "BUR_AMB_G15_1_2"], ["SPK_NEWTON", "BUR_AMB_G15_1_3"], ["SPK_NEWTON", "BUR_AMB_G15_2_1"], ["SPK_EINSTEIN", "BUR_AMB_G15_2_2"],
+	["SPK_LEONARDO", "BUR_AMB_G15_2_3"], ["SPK_NEWTON", "BUR_AMB_G15_3_1"], ["SPK_EINSTEIN", "BUR_AMB_G15_3_2"], ["SPK_NEWTON", "BUR_AMB_G15_3_3"],
+	["SPK_NEWTON", "BUR_AMB_G15_4_1"], ["SPK_EINSTEIN", "BUR_AMB_G15_4_2"], ["SPK_LEONARDO", "BUR_AMB_G15_4_3"], ["SPK_NEWTON", "BUR_AMB_G15_5_1"],
+	["SPK_EINSTEIN", "BUR_AMB_G15_5_2"], ["SPK_NEWTON", "BUR_AMB_G15_5_3"], ["SPK_NEWTON", "BUR_AMB_G15_6_1"], ["SPK_EINSTEIN", "BUR_AMB_G15_6_2"],
+	["SPK_NEWTON", "BUR_AMB_G15_6_3"], ["SPK_EINSTEIN", "BUR_AMB_G15_6_4"], ["SPK_LEONARDO", "BUR_AMB_G15_7_1"], ["SPK_NEWTON", "BUR_AMB_G15_7_2"],
+	["SPK_LEONARDO", "BUR_AMB_G15_7_3"], ["SPK_SABRI", "BUR_AMB_G16_1_1"], ["SPK_EVLIYA", "BUR_AMB_G16_1_2"], ["SPK_SABRI", "BUR_AMB_G16_1_3"],
+	["SPK_EVLIYA", "BUR_AMB_G16_2_1"], ["SPK_SABRI", "BUR_AMB_G16_2_2"], ["SPK_EVLIYA", "BUR_AMB_G16_2_3"], ["SPK_COLUMBUS", "BUR_AMB_G16_3_1"],
+	["SPK_EVLIYA", "BUR_AMB_G16_3_2"], ["SPK_SABRI", "BUR_AMB_G16_3_3"], ["SPK_EVLIYA", "BUR_AMB_G16_4_1"], ["SPK_COLUMBUS", "BUR_AMB_G16_4_2"],
+	["SPK_SABRI", "BUR_AMB_G16_4_3"], ["SPK_EVLIYA", "BUR_AMB_G16_5_1"], ["SPK_SABRI", "BUR_AMB_G16_5_2"], ["SPK_COLUMBUS", "BUR_AMB_G16_5_3"],
+	["SPK_SABRI", "BUR_AMB_G16_5_4"], ["SPK_SABRI", "BUR_AMB_G16_6_1"], ["SPK_EVLIYA", "BUR_AMB_G16_6_2"], ["SPK_SABRI", "BUR_AMB_G16_6_3"],
+	["SPK_COLUMBUS", "BUR_AMB_G16_6_4"], ["SPK_COLUMBUS", "BUR_AMB_G16_7_1"], ["SPK_EVLIYA", "BUR_AMB_G16_7_2"], ["SPK_SABRI", "BUR_AMB_G16_7_3"],
+	["SPK_TESLA", "BUR_FG_TES_1"], ["SPK_TESLA", "BUR_FG_TES_2"], ["SPK_TESLA", "BUR_FG_TES_3"], ["SPK_EDISON", "BUR_FG_EDI_1"],
+	["SPK_EDISON", "BUR_FG_EDI_2"], ["SPK_EDISON", "BUR_FG_EDI_3"], ["SPK_SOCRATES", "BUR_FG_SOK_1"], ["SPK_SOCRATES", "BUR_FG_SOK_2"],
+	["SPK_SOCRATES", "BUR_FG_SOK_3"], ["SPK_DIOGENES", "BUR_FG_DIO_1"], ["SPK_DIOGENES", "BUR_FG_DIO_2"], ["SPK_DIOGENES", "BUR_FG_DIO_3"],
+	["SPK_NEWTON", "BUR_FG_NEW_1"], ["SPK_NEWTON", "BUR_FG_NEW_2"], ["SPK_NEWTON", "BUR_FG_NEW_3"], ["SPK_EVLIYA", "BUR_FG_EVL_1"],
+	["SPK_EVLIYA", "BUR_FG_EVL_2"], ["SPK_EVLIYA", "BUR_FG_EVL_3"],
+	["SPK_NIHAT", "BUR_ORNITHOPTER"], ["SPK_NIHAT", "BUR_ORNITHOPTER_2"], ["SPK_NIHAT", "BUR_COIL"], ["SPK_NIHAT", "BUR_COIL_2"], ["SPK_NIHAT", "BUR_PHONO"], ["SPK_NIHAT", "BUR_PHONO_2"], ["SPK_NIHAT", "BUR_APPLETREE"], ["SPK_NIHAT", "BUR_APPLETREE_2"], ["SPK_NIHAT", "BUR_HOURGLASS"], ["SPK_NIHAT", "BUR_HOURGLASS_2"], ["SPK_NIHAT", "BUR_CLOCKS"], ["SPK_NIHAT", "BUR_CLOCKS_2"],
 	["SPK_NIHAT", "BUR_APPEALS_1"], ["SPK_NIHAT", "BUR_APPEALS_2"], ["SPK_NIHAT", "BUR_APPEALS_3"], ["SPK_NIHAT", "BUR_APPEALS_4"],
 	["SPK_NIHAT", "D3_N_DOOR_1453"], ["SPK_NIHAT", "D3_N_DOOR_2026"], ["SPK_MARCOPOLO", "BUR_FG_POL_1"],
 	["SPK_MARCOPOLO", "BUR_FG_POL_2"], ["SPK_MARCOPOLO", "BUR_FG_POL_V2_1"], ["SPK_MARCOPOLO", "BUR_FG_POL_V2_2"],
@@ -418,6 +502,12 @@ func _process(delta: float) -> void:
 		if is_instance_valid(n):
 			n.position.y = float(b[1]) + sin(_fog_t * float(b[3]) + float(b[4])) * float(b[2])
 	_amb_tick(delta)
+	_coil_tick(delta)
+	# Sabri konuşurken gazeteyi göğsüne indirir, susunca yine yüzünün önüne kaldırır (eller "hold_paper" duruşunda)
+	if is_instance_valid(_rb_paper) and is_instance_valid(_rb_sabri_p):
+		var py := 1.1 if _rb_sabri_p.talking else 1.42
+		_rb_paper.position.y = lerpf(_rb_paper.position.y, py, clampf(delta * 6.0, 0.0, 1.0))
+		_rb_paper.position.z = lerpf(_rb_paper.position.z, 0.4 if _rb_sabri_p.talking else 0.36, clampf(delta * 6.0, 0.0, 1.0))
 
 
 func _ready() -> void:
@@ -2089,6 +2179,12 @@ func _ld_clerks() -> void:
 	Props.box(self, Vector3(0.22, 0.2, 0.01), Vector3(-1.2, 0.98, -2.12), C_PAPER, Vector3(-12, 90, 0))
 	Props.box(self, Vector3(0.22, 0.12, 0.2), Vector3(-1.1, 0.86, -2.65), C_PAPER)
 	_lbl(self, "KAYIT", "REGISTRY", Vector3(-0.895, 0.6, -2.3), 26, Color("e8d8a8"), Vector3(0, 90, 0), 0.8)
+	# Cemal'in sandalyesi (sırtı duvara yakın)
+	Props.box(self, Vector3(0.42, 0.04, 0.42), Vector3(-1.7, 0.45, -2.3), C_WOOD)
+	Props.box(self, Vector3(0.04, 0.42, 0.4), Vector3(-1.9, 0.7, -2.3), C_WOOD_DARK)
+	for clx: float in [-1.88, -1.52]:
+		for clz: float in [-2.48, -2.12]:
+			Props.box(self, Vector3(0.035, 0.43, 0.035), Vector3(clx, 0.215, clz), C_WOOD_DARK)
 	_ld_cemal = Person.new({"coat": Color("5a5048"), "pants": Color("2a2a30"), "hair": Color("3a3a3a"), "hat": "none",
 		"glasses": true, "mustache": true, "skin": Color("e0b090")})
 	_ld_cemal.set_meta("spk", "SPK_CEMAL")
@@ -2096,7 +2192,7 @@ func _ld_clerks() -> void:
 	_ld_cemal.position = Vector3(-1.68, 0.0, -2.3)
 	_ld_cemal.rotation_degrees.y = 90
 	add_child(_ld_cemal)
-	_ld_cemal.set_activity("write")
+	_ld_cemal.set_activity("write_desk")      # sandalyede, masada yazar ("write" yere bağdaş kurmuş yazandır: yerde oturuyordu)
 	_reg("bur_cemal", Vector3(0.9, 1.8, 1.0), Vector3(-1.4, 0.9, -2.3), "UI_BUR_TALK", _ld_cemal_talk, null, false)
 	# Kurye Zeki + servis arabası
 	_ld_zeki = Person.new({"coat": Color("2f5f8a"), "pants": Color("4a4038"), "hair": Color("2a1a10"), "hat": "courier",
@@ -2455,7 +2551,13 @@ func _rb_wait() -> void:
 		Props.box(self, Vector3(0.08, 0.08, 3.0), Vector3(x, 0.32, -7.9), steel)
 		Props.box(self, Vector3(0.06, 0.32, 0.06), Vector3(x, 0.16, -6.6), steel)
 		Props.box(self, Vector3(0.06, 0.32, 0.06), Vector3(x, 0.16, -9.2), steel)
-		Props.box(self, Vector3(0.05, 0.34, 2.8), Vector3(x - 0.22, 0.68, -7.9), orange)
+		if r == 2:
+			# Son sıranın ilk koltuğunda Nasreddin Hoca ters oturur (ata biner gibi, kolları sırtlıkta): onun sırtlığı
+			# ayrı ve dar, bacakları iki yanından geçsin; sıranın sürekli sırtlığı bacaklarını içine alıyordu
+			Props.box(self, Vector3(0.05, 0.34, 2.22), Vector3(x - 0.22, 0.68, -8.19), orange)
+			Props.box(self, Vector3(0.05, 0.34, 0.28), Vector3(x - 0.22, 0.68, -6.8), orange)
+		else:
+			Props.box(self, Vector3(0.05, 0.34, 2.8), Vector3(x - 0.22, 0.68, -7.9), orange)
 		for i in 5:
 			Props.box(self, Vector3(0.4, 0.06, 0.46), Vector3(x, 0.45, -6.8 - 0.55 * i), orange)
 	# sıra numarası makinesi
@@ -2694,11 +2796,7 @@ func _rb_bell() -> void:
 	_rb_talk(_rb_sabri_p, 3.5)
 	if is_instance_valid(_rb_paper) and not _rb_paper_busy:
 		_rb_paper_busy = true
-		var tw := create_tween()
-		tw.tween_property(_rb_paper, "position:y", 0.98, 0.25)
-		tw.tween_interval(0.1 if GameState.autotest else 2.0)
-		tw.tween_property(_rb_paper, "position:y", 1.42, 0.35)
-		tw.tween_callback(func(): _rb_paper_busy = false)
+		_rb_paper_busy = false      # gazete Sabri konuşurken kendiliğinden iner (_process)
 
 
 func _rb_nokia() -> void:
@@ -3106,6 +3204,176 @@ const SPIRAL_TURNS := 2.0
 var _train: Node3D
 
 
+## Atriumun eğlencesi (v0.99.105; kullanıcı: "bu odayı daha da doldur, eğlenceli bir oda olacak"): tavanda Leonardo'nun
+## kanat çırpan uçan makinesi, Tesla'nın çatırdayan bobini ile Edison'un gramofonu (AC/DC), Newton'un elma düşüren ağacı,
+## dolunca ters dönen dev kum saati, çağların duvar saatleri, sarmal maketin çevresinde müze ipi.
+var _coil_arcs: Array = []
+var _coil_t := 0.0
+
+
+func _rc_atrium_fun() -> void:
+	var brass := C_BRASS
+	# --- Uçan makine (ornitopter): tavandan zincirle asılı, kanatları ağır ağır çırpar
+	var orn := Node3D.new()
+	orn.position = Vector3(9.5, 4.6, -41.5)
+	orn.rotation_degrees.y = 25.0
+	orn.scale = Vector3.ONE * 1.5
+	add_child(orn)
+	Props.box(orn, Vector3(0.22, 0.18, 1.6), Vector3.ZERO, C_WOOD)
+	Props.box(orn, Vector3(0.9, 0.04, 0.5), Vector3(0, 0.0, -0.9), Color("e8dcc0"))            # kuyruk
+	for sx: float in [-1.0, 1.0]:
+		var hinge := Node3D.new()
+		hinge.position = Vector3(sx * 0.1, 0.05, 0.1)
+		orn.add_child(hinge)
+		for k in 4:     # kaburgalı yarasa kanadı: ahşap çıta ve keten
+			Props.box(hinge, Vector3(1.9 - k * 0.3, 0.03, 0.04), Vector3(sx * (0.95 - k * 0.15), 0.0, 0.3 - k * 0.22), C_WOOD.darkened(0.2), Vector3(0, sx * (8.0 + k * 6.0), 0))
+		Props.box(hinge, Vector3(1.8, 0.012, 0.85), Vector3(sx * 0.92, -0.01, -0.05), Color("efe6cc"))
+		var tw := hinge.create_tween().set_loops()
+		tw.tween_property(hinge, "rotation_degrees:z", sx * 22.0, 1.1).from(sx * -14.0).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_IN_OUT)
+		tw.tween_property(hinge, "rotation_degrees:z", sx * -14.0, 1.1).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_IN_OUT)
+	for cz: float in [-0.6, 0.6]:
+		Props.cyl(orn, 0.008, 2.4, Vector3(0, 1.2, cz), C_METAL, Vector3.ZERO, 4)
+	_reg("bur_ornithopter", Vector3(4.0, 2.0, 3.0), Vector3(9.5, 3.4, -41.5), "UI_BUR_LOOK", _rc_look.bind("bur_ornithopter", "BUR_ORNITHOPTER", 2))
+	# --- Tesla bobini: bakır sargılı direk, tepede küre, ondan çatırdayan mor şimşek kolları
+	var cp := Vector3(12.2, 0.0, -53.0)
+	Props.cyl(self, 0.32, 0.25, cp + Vector3(0, 0.125, 0), Color("2a2a30"), Vector3.ZERO, 12)
+	Props.cyl(self, 0.12, 1.4, cp + Vector3(0, 0.95, 0), Color("b8743a"), Vector3.ZERO, 12)
+	for k in 7:
+		Props.cyl(self, 0.125, 0.02, cp + Vector3(0, 0.4 + k * 0.18, 0), Color("8a4a1a"), Vector3.ZERO, 12)
+	Props.ring(self, 0.14, 0.34, cp + Vector3(0, 1.72, 0), C_METAL, Vector3.ZERO, 0.2)
+	Props.ball(self, 0.2, cp + Vector3(0, 1.85, 0), Color("c8ccd4"), Vector3.ONE, 12, 0.3)
+	for k in 6:
+		var arc := Props.box(self, Vector3(0.025, 0.025, 0.6 + (k % 3) * 0.15), cp + Vector3(0, 1.85, 0), Color("c8a8ff"), Vector3(randf_range(-40, 40), k * 60.0, 0), 3.0)
+		arc.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
+		_coil_arcs.append(arc)
+	Props.box(self, Vector3(0.42, 0.3, 0.04), cp + Vector3(0.0, 1.0, 0.55), Color("2a2a30"))      # levha odaya (+z) bakar
+	_lbl(self, "AC", "AC", cp + Vector3(0.0, 1.0, 0.575), 40, Color("c8a8ff"))
+	Props.cyl(self, 0.02, 0.85, cp + Vector3(0.0, 0.42, 0.55), C_METAL, Vector3.ZERO, 6)
+	_reg("bur_coil", Vector3(0.9, 2.2, 0.9), cp + Vector3(0, 1.1, 0), "UI_BUR_LOOK", _rc_look.bind("bur_coil", "BUR_COIL", 2))
+	# --- Edison'un gramofonu (küçük masada, borusu parlak) ve DC tabelası
+	var gp := Vector3(14.8, 0.0, -54.4)
+	Props.box(self, Vector3(0.6, 0.04, 0.5), gp + Vector3(0, 0.74, 0), C_WOOD)
+	for gx: float in [-0.26, 0.26]:
+		for gz: float in [-0.21, 0.21]:
+			Props.box(self, Vector3(0.04, 0.72, 0.04), gp + Vector3(gx, 0.36, gz), C_WOOD_DARK)
+	Props.box(self, Vector3(0.36, 0.14, 0.36), gp + Vector3(0, 0.83, 0), C_WALNUT)
+	var disc := Props.cyl(self, 0.15, 0.012, gp + Vector3(0, 0.91, 0), Color("1a1a1a"), Vector3.ZERO, 16)
+	_spinners.append([disc, Vector3.UP, 3.5])
+	Props.cyl(self, 0.012, 0.3, gp + Vector3(0.1, 1.05, 0.05), brass, Vector3(0, 0, -30), 6)
+	Props.cyl(self, 0.04, 0.4, gp + Vector3(0.18, 1.3, 0.12), brass, Vector3(-30, 0, -40), 12, 0.26)
+	Props.box(self, Vector3(0.04, 0.3, 0.42), gp + Vector3(-0.45, 1.0, 0.3), Color("2a2a30"))     # levha odaya (-x) bakar
+	_lbl(self, "DC", "DC", gp + Vector3(-0.475, 1.0, 0.3), 40, Color("ffd27a"), Vector3(0, -90, 0))
+	Props.cyl(self, 0.02, 0.85, gp + Vector3(-0.45, 0.42, 0.3), C_METAL, Vector3.ZERO, 6)
+	_reg("bur_phono", Vector3(0.8, 1.2, 0.8), gp + Vector3(0, 1.0, 0), "UI_BUR_LOOK", _rc_look.bind("bur_phono", "BUR_PHONO", 2))
+	# --- Newton'un elma ağacı: büyük saksı, gövde, yapraklı taç; ara ara bir elma düşüp yerde yuvarlanır
+	var tp := Vector3(15.05, 0.0, -37.45)
+	Props.cyl(self, 0.42, 0.55, tp + Vector3(0, 0.275, 0), Color("a8583a"), Vector3.ZERO, 14, 0.5)
+	Props.cyl(self, 0.47, 0.06, tp + Vector3(0, 0.55, 0), Color("8a4a2a"), Vector3.ZERO, 14)
+	Props.cyl(self, 0.09, 1.7, tp + Vector3(0, 1.4, 0), Color("6a4a2a"), Vector3(0, 0, 4), 8, 0.06)
+	for k in 5:
+		var a := k * 1.26
+		Props.ball(self, 0.5 - (k % 2) * 0.1, tp + Vector3(cos(a) * 0.35, 2.4 + (k % 3) * 0.18, sin(a) * 0.35), Color("3f7a3a").lerp(Color("5a9a3a"), (k % 3) * 0.3), Vector3(1, 0.8, 1), 10)
+	for k in 6:
+		var a2 := k * 1.05 + 0.4
+		Props.ball(self, 0.055, tp + Vector3(cos(a2) * 0.55, 2.15 + (k % 2) * 0.35, sin(a2) * 0.55), Color("c42a22"), Vector3.ONE, 8)
+	var apple := Props.ball(self, 0.055, tp + Vector3(-0.5, 2.1, 0.2), Color("c42a22"), Vector3.ONE, 8)
+	if not GameState.autotest:
+		var at := apple.create_tween().set_loops()
+		at.tween_interval(6.0)
+		at.tween_property(apple, "position:y", 0.055, 0.62).from(2.1).set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_IN)
+		at.tween_callback(Audio.sfx.bind("land_thud", -26.0, 2.2))
+		at.tween_property(apple, "position:x", tp.x - 1.1, 0.9).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_OUT)
+		at.tween_interval(2.5)
+		at.tween_property(apple, "scale", Vector3.ZERO, 0.3)
+		at.tween_callback(func():
+			apple.position = tp + Vector3(-0.5, 2.1, 0.2)
+			apple.scale = Vector3.ONE)
+	_reg("bur_appletree", Vector3(1.4, 2.6, 1.4), tp + Vector3(0, 1.3, 0), "UI_BUR_LOOK", _rc_look.bind("bur_appletree", "BUR_APPLETREE", 2))
+	# --- Dev kum saati: üst hazne boşalır, alt dolar; dolunca ters döner
+	var hp := Vector3(4.0, 0.0, -53.6)
+	var hg := Node3D.new()
+	hg.position = hp + Vector3(0, 1.15, 0)
+	add_child(hg)
+	Props.cyl(self, 0.5, 0.1, hp + Vector3(0, 0.05, 0), C_WALNUT, Vector3.ZERO, 12)
+	for k in 3:
+		var a3 := TAU * k / 3.0
+		Props.cyl(self, 0.03, 2.2, hp + Vector3(cos(a3) * 0.42, 1.15, sin(a3) * 0.42), C_WALNUT, Vector3.ZERO, 6)
+	Props.cyl(self, 0.5, 0.1, hp + Vector3(0, 2.25, 0), C_WALNUT, Vector3.ZERO, 12)
+	var glass := Color(0.8, 0.92, 1.0, 0.25)
+	Props.cyl(hg, 0.34, 0.95, Vector3(0, 0.5, 0), glass, Vector3.ZERO, 14, 0.04)
+	Props.cyl(hg, 0.04, 0.95, Vector3(0, -0.5, 0), glass, Vector3.ZERO, 14, 0.34)
+	var sand_top := Node3D.new()
+	sand_top.position = Vector3(0, 0.08, 0)
+	hg.add_child(sand_top)
+	Props.cyl(sand_top, 0.28, 0.7, Vector3(0, 0.35, 0), Color("e8c070"), Vector3.ZERO, 12, 0.02)
+	var sand_bot := Node3D.new()
+	sand_bot.position = Vector3(0, -0.96, 0)
+	hg.add_child(sand_bot)
+	Props.cyl(sand_bot, 0.3, 0.6, Vector3(0, 0.3, 0), Color("e8c070"), Vector3.ZERO, 12, 0.02)
+	Props.cyl(hg, 0.008, 0.9, Vector3(0, -0.45, 0), Color("e8c070"), Vector3.ZERO, 4)
+	if not GameState.autotest:
+		var ht := hg.create_tween().set_loops()
+		ht.tween_method(func(v: float):
+			sand_top.scale = Vector3(1, maxf(1.0 - v, 0.02), 1)
+			sand_bot.scale = Vector3(1, maxf(v, 0.02), 1), 0.0, 1.0, 24.0)
+		ht.tween_property(hg, "rotation:z", PI, 1.2).from(0.0).set_trans(Tween.TRANS_BACK)
+		ht.tween_callback(func():
+			hg.rotation.z = 0.0
+			sand_top.scale = Vector3.ONE
+			sand_bot.scale = Vector3(1, 0.02, 1))
+	_reg("bur_hourglass", Vector3(1.2, 2.4, 1.2), hp + Vector3(0, 1.2, 0), "UI_BUR_LOOK", _rc_look.bind("bur_hourglass", "BUR_HOURGLASS", 2))
+	# --- Çağların saatleri (güney duvarı): her biri başka çağın saatini gösterir, Büro'nunki geriye koşar
+	var cities := [["Roma · MÖ 44", "Rome · 44 BC"], ["Kostantiniyye · 1453", "Constantinople · 1453"], ["Paris · 1789", "Paris · 1789"],
+		["Ay · 1969", "Moon · 1969"], ["Büro · ?", "Bureau · ?"]]
+	for k in cities.size():
+		var cxk := 4.8 + k * 2.2
+		var cpos := Vector3(cxk, 4.25, -55.42)     # aplikler (y 3.0-3.24) altta kalsın, saat yüzü onlara değmesin
+		Props.cyl(self, 0.5, 0.06, cpos, Color("f4efe2"), Vector3(90, 0, 0), 24)
+		Props.ring(self, 0.5, 0.57, cpos + Vector3(0, 0, 0.01), brass, Vector3(90, 0, 0))
+		var hand := Node3D.new()
+		hand.position = cpos + Vector3(0, 0, 0.05)
+		hand.rotation.z = randf() * TAU
+		add_child(hand)
+		Props.box(hand, Vector3(0.03, 0.38, 0.01), Vector3(0, 0.16, 0), Color("1a1a1a"))
+		Props.box(hand, Vector3(0.045, 0.24, 0.01), Vector3(0, 0.1, 0.008), Color("1a1a1a"), Vector3(0, 0, 120))
+		_spinners.append([hand, Vector3.BACK, (2.5 if k == cities.size() - 1 else -0.06 - k * 0.02)])
+		_lbl(self, cities[k][0], cities[k][1], cpos + Vector3(0, -0.78, 0.02), 24, Color("e8d8a8"), Vector3.ZERO, 2.0)
+	_reg("bur_clocks", Vector3(11.0, 2.6, 0.8), Vector3(9.2, 3.6, -55.0), "UI_BUR_LOOK", _rc_look.bind("bur_clocks", "BUR_CLOCKS", 2))
+	# --- Sarmal maketin çevresinde müze ipi ve levha
+	var c := SPIRAL_C
+	var posts: Array = []
+	for deg: float in [45.0, 105.0, 165.0, 225.0, 285.0, 345.0]:
+		var a4 := deg_to_rad(deg)
+		var pp := c + Vector3(cos(a4) * 2.35, 0, sin(a4) * 2.35)
+		posts.append(pp)
+		Props.cyl(self, 0.16, 0.04, pp + Vector3(0, 0.02, 0), brass, Vector3.ZERO, 10)
+		Props.cyl(self, 0.025, 0.95, pp + Vector3(0, 0.5, 0), brass, Vector3.ZERO, 8)
+		Props.ball(self, 0.045, pp + Vector3(0, 0.98, 0), brass, Vector3.ONE, 8)
+	for k in posts.size():
+		if k == 0:
+			continue          # Leonardo'nun durduğu yer (doğu): ip yok, maketi anlatır
+		var p0: Vector3 = posts[k - 1]
+		var p1: Vector3 = posts[k]
+		var mid := (p0 + p1) * 0.5 + Vector3(0, 0.82, 0)
+		var d := p1 - p0
+		Props.cyl(self, 0.02, d.length(), mid, Color("9a1a2a"), Vector3(90, rad_to_deg(atan2(d.x, d.z)), 0), 6)
+	var sp := c + Vector3(cos(deg_to_rad(135.0)) * 2.6, 0, sin(deg_to_rad(135.0)) * 2.6)
+	Props.cyl(self, 0.02, 1.0, sp + Vector3(0, 0.5, 0), brass, Vector3.ZERO, 6)
+	Props.box(self, Vector3(0.5, 0.32, 0.03), sp + Vector3(0, 1.1, 0), Color("1d3f5a"), Vector3(-15, 135.0 - 90.0, 0))
+	_lbl(self, "DÜNYA TARİHİ\nÖlçek 1:∞ · Dokunmayın", "WORLD HISTORY\nScale 1:∞ · Do not touch", sp + Vector3(0.012, 1.1, 0.012), 14, Color("f4ecd4"), Vector3(-15, 45.0, 0), 0.46)
+
+
+func _coil_tick(delta: float) -> void:
+	_coil_t -= delta
+	if _coil_t > 0.0 or _coil_arcs.is_empty():
+		return
+	_coil_t = randf_range(0.06, 0.2)
+	for arc: Node3D in _coil_arcs:
+		if is_instance_valid(arc):
+			arc.visible = randf() < 0.55
+			arc.rotation_degrees = Vector3(randf_range(-55, 35), randf() * 360.0, randf_range(-20, 20))
+
+
 func _sp_point(u: float) -> Vector3:
 	var ang := 0.6 - u * SPIRAL_TURNS * TAU
 	var r := lerpf(1.36, 0.42, u)
@@ -3313,6 +3581,7 @@ func _rc_atrium() -> void:
 	_lbl(self, "±0 sn", "±0 s", Vector3(12.0, 0.03, -37.6), 26, Color("e8d8a8"), Vector3(-90, 0, 0), 1.0)
 	_reg("bur_pendulum", Vector3(3.0, 2.0, 1.4), Vector3(12.0, 1.2, -38.5), "UI_BUR_LOOK", _rc_pendulum)
 	_rc_spiral()
+	_rc_atrium_fun()
 
 
 func _rc_atriumwin() -> void:
@@ -3384,7 +3653,7 @@ var _fg_busy := false
 
 ## Bekleme salonunun koltuklarında oturanlar; koltuklar girişteki LED'e döner, Nasreddin Hoca ters oturur (yüzü duvara)
 const _FG_SIT := ["pol", "gal", "cur", "moz", "sin", "nas"]
-const _FG_POSE := {"gen": "arms_folded", "nap": "hand_in_coat"}
+const _FG_POSE := {"gen": "arms_folded", "nap": "hand_in_coat", "hit": "hands_behind", "nas": "sit_astride"}
 ## [kimlik, konuşan, konum, bakış, görünüş, isim TR, isim EN]
 const _FG := [
 	["nap", "SPK_NAPOLEON", Vector3(-4.6, 0.48, -6.8), 90.0, {"coat": Color("24365e"), "pants": Color("efe9dc"), "hair": Color("2a2018"), "hair_style": "short", "face": {"chin": 0.4, "brow_tilt": 6.0}, "skin": Color("e8c0a0")}, "NAPOLYON", "NAPOLEON"],
@@ -3392,12 +3661,12 @@ const _FG := [
 	["cae", "SPK_CAESAR", Vector3(2.55, 0, -3.95), -158.0, {"coat": Color("f2ede0"), "pants": Color("f2ede0"), "robe": Color("f2ede0"), "hat": "laurel", "hair": Color("4a3e34"), "hair_style": "short", "face": {"nose": "hook", "nose_s": 1.15, "chin": 0.55, "head": Vector3(0.93, 1.1, 0.98), "brow_tilt": 4.0}, "skin": Color("d9a07a")}, "SEZAR", "CAESAR"],
 	["leo", "SPK_LEONARDO", Vector3(9.1, 0, -45.5), -90.0, {"coat": Color("5a2030"), "pants": Color("3a1a20"), "robe": Color("5a2030"), "hat": "soft_beret", "hair": Color("e6e2da"), "hair_style": "long", "beard": true, "mustache": true, "skin": Color("e8b894")}, "LEONARDO", "LEONARDO"],
 	["ein", "SPK_EINSTEIN", Vector3(11.0, 0, -40.0), -45.0, {"coat": Color("7a7468"), "pants": Color("4a4a48"), "hair": Color("f2f0ea"), "hair_style": "curly", "mustache": true, "face": {"mustache": "walrus", "bags": true, "wrinkles": true}, "skin": Color("ecc0a0")}, "EINSTEIN", "EINSTEIN"],
-	["hit", "SPK_HITLER", Vector3(-8.3, 0, -7.9), -90.0, {"coat": Color("5a5040"), "pants": Color("3a3630"), "hair": Color("2a2018"), "hair_style": "swept", "mustache": true, "face": {"mustache": "toothbrush", "brow_tilt": 10.0}, "skin": Color("e8c0a0")}, "HITLER", "HITLER"],
+	["hit", "SPK_HITLER", Vector3(-8.0, 0, -7.9), -90.0, {"coat": Color("5a5040"), "pants": Color("3a3630"), "hair": Color("2a2018"), "hair_style": "swept", "mustache": true, "face": {"mustache": "toothbrush", "brow_tilt": 10.0}, "skin": Color("e8c0a0")}, "HITLER", "HITLER"],
 	["gen", "SPK_GENGHIS", Vector3(-3.4, 0, -5.45), 41.0, {"coat": Color("223050"), "pants": Color("2a2420"), "hair": Color("1a1410"), "hair_style": "short", "beard": true, "face": {"beard": "goatee", "brow_tilt": 13.0, "chin": 0.45, "lid": 0.35}, "skin": Color("d9a07a")}, "CENGİZ HAN", "GENGHIS KHAN"],
 	["col", "SPK_COLUMBUS", Vector3(5.6, 0, -20.1), -105.0, {"coat": Color("2a4a3a"), "pants": Color("3a3a30"), "hat": "soft_beret", "hair": Color("d8d4c8"), "hair_style": "long", "skin": Color("e8b894")}, "KOLOMB", "COLUMBUS"],
 	["sul", "SPK_SULEYMAN", Vector3(1.62, 0, -33.0), 60.0, {"coat": Color("c9a24a"), "pants": Color("3a2a1a"), "robe": Color("c9a24a"), "hair_style": "short", "beard": true, "mustache": true, "hair": Color("3a2a1e"), "skin": Color("e0b08a"), "face": {"beard": "full", "nose": "hook"}}, "SÜLEYMAN", "SULEIMAN"],
 	["gui", "SPK_GUIDE", Vector3(8.5, 0, -52.3), -30.0, {"coat": Color("c8ccd4"), "pants": Color("2a8a8a"), "skirt": true, "hair": Color("d84a8a"), "hair_style": "short", "skin": Color("e0a882")}, "REHBER", "GUIDE"],
-	["rob", "SPK_ROBOT", Vector3(-7.6, 0, -8.95), -34.0, {"coat": Color("9aa4ae"), "pants": Color("7a848e"), "hat": "robot", "hair": Color("8a949e"), "skin": Color("b8c2cc")}, "STAJYER", "INTERN"],
+	["rob", "SPK_ROBOT", Vector3(-7.9, 0, -4.4), 135.0, {"coat": Color("9aa4ae"), "pants": Color("7a848e"), "hat": "robot", "hair": Color("8a949e"), "skin": Color("b8c2cc")}, "STAJYER", "INTERN"],
 	["arc", "SPK_ARCHAEOLOGIST", Vector3(-5.2, 0, -20.6), -100.0, {"coat": Color("b89a6a"), "pants": Color("5a4a3a"), "hat": "fedora", "glasses": true, "hair": Color("3a2a1e"), "skin": Color("c98e6a")}, "ARKEOLOG", "ARCHAEOLOGIST"],
 	["pol", "SPK_MARCOPOLO", Vector3(-4.6, 0, -7.9), 90.0, {"coat": Color("8a2a2a"), "pants": Color("3a2a20"), "hat": "soft_beret", "beard": true, "hair": Color("6a4a30"), "skin": Color("e0b08a")}, "MARCO POLO", "MARCO POLO"],
 	["gal", "SPK_GALILEO", Vector3(-4.6, 0, -9.0), 90.0, {"coat": Color("2a2a30"), "pants": Color("2a2a30"), "robe": Color("2a2a30"), "beard": true, "mustache": true, "hair": Color("c8b8a0"), "hair_style": "receding", "skin": Color("e8b894")}, "GALİLEO", "GALILEO"],
@@ -3407,6 +3676,12 @@ const _FG := [
 	["nas", "SPK_NASREDDIN", Vector3(-7.2, 0, -6.8), -90.0, {"coat": Color("4a7a3a"), "pants": Color("6a5a3a"), "robe": Color("4a7a3a"), "hat": "turban", "beard": true, "mustache": true, "hair": Color("efeae0"), "skin": Color("d9a07a")}, "NASREDDİN", "NASREDDIN"],
 	["gag", "SPK_GAGARIN", Vector3(-4.1, 0, -10.5), -40.0, {"coat": Color("e06a2a"), "pants": Color("e06a2a"), "hair": Color("5a4030"), "hair_style": "short", "face": {"mouth_w": 1.25, "eye_s": 1.05}, "skin": Color("ecc0a0")}, "GAGARİN", "GAGARIN"],
 	["shk", "SPK_SHAKESPEARE", Vector3(2.55, 0, -5.35), -22.0, {"coat": Color("1e1e22"), "pants": Color("1e1e22"), "hair": Color("6a4a30"), "hair_style": "receding", "mustache": true, "beard": true, "face": {"mustache": "pencil", "beard": "goatee"}, "skin": Color("ecc0a0")}, "SHAKESPEARE", "SHAKESPEARE"],
+	["tes", "SPK_TESLA", Vector3(13.0, 0, -51.4), 135.0, {"coat": Color("1e1e24"), "pants": Color("1e1e24"), "hair": Color("1a1410"), "hair_style": "swept", "mustache": true, "face": {"mustache": "pencil", "head": Vector3(0.94, 1.12, 0.98)}, "skin": Color("e8c0a0")}, "TESLA", "TESLA"],
+	["edi", "SPK_EDISON", Vector3(14.2, 0, -52.6), -45.0, {"coat": Color("6a6a70"), "pants": Color("3a3a40"), "hair": Color("e8e4dc"), "hair_style": "short", "face": {"brow_tilt": -4.0, "chin": 0.5}, "skin": Color("ecc0a0")}, "EDISON", "EDISON"],
+	["new", "SPK_NEWTON", Vector3(13.9, 0, -39.6), -98.0, {"coat": Color("5a3a2a"), "pants": Color("3a2a20"), "hair": Color("cfc8bc"), "hair_style": "long", "face": {"nose": "long"}, "skin": Color("ecc8b0")}, "NEWTON", "NEWTON"],
+	["sok", "SPK_SOCRATES", Vector3(-5.0, 0, -22.9), 90.0, {"coat": Color("e8e0cc"), "pants": Color("e8e0cc"), "robe": Color("e8e0cc"), "hair": Color("e0dcd4"), "hair_style": "bald", "beard": true, "mustache": true, "face": {"nose": "potato", "beard": "full"}, "skin": Color("d9a07a")}, "SOKRATES", "SOCRATES"],
+	["dio", "SPK_DIOGENES", Vector3(-3.6, 0, -23.0), -90.0, {"coat": Color("6a5a40"), "pants": Color("6a5a40"), "hair": Color("c8c0b0"), "hair_style": "long", "beard": true, "mustache": true, "face": {"beard": "full"}, "skin": Color("d9a07a")}, "DİYOJEN", "DIOGENES"],
+	["evl", "SPK_EVLIYA", Vector3(6.2, 0, -21.6), -22.0, {"coat": Color("2a5a8a"), "pants": Color("3a2a1a"), "robe": Color("2a5a8a"), "hat": "turban", "beard": true, "mustache": true, "hair": Color("3a2a1e"), "face": {"beard": "full"}, "skin": Color("d9a07a")}, "EVLİYA ÇELEBİ", "EVLIYA CELEBI"],
 ]
 
 
@@ -3474,7 +3749,7 @@ func _fg_build() -> void:
 		_lbl(tb, f[5], f[6], Vector3(-0.09, 1.19, bz + 0.006), 7, Color("1a1a1a"), Vector3(0, -12, 0), 0.13)
 		var sits: bool = id in _FG_SIT
 		if sits:
-			p.set_activity("sit")
+			p.set_activity(_FG_POSE.get(id, "sit"))
 		elif _FG_POSE.has(id):
 			p.set_activity(_FG_POSE[id])   # imza duruşu: Cengiz Han kollar kavuşuk, Napolyon eli yeleğinde
 		_reg("bur_fg_" + id, Vector3(0.5, 1.4, 0.5) if sits else Vector3(0.7, 1.8, 0.7), f[2] + Vector3(0, 0.7 if sits else 0.9, 0), "UI_PROMPT3_TALK", _fg_talk.bind(id), null, false)
@@ -3544,36 +3819,139 @@ func _fg_spk(id: String) -> String:
 const _AMB := {
 	"G1": [[["BUR_AMB_G1_1_1", "NAPOLEON"], ["BUR_AMB_G1_1_2", "GENGHIS"]],
 		[["BUR_AMB_G1_2_1", "NAPOLEON"], ["BUR_AMB_G1_2_2", "GENGHIS"], ["BUR_AMB_G1_2_3", "NAPOLEON"], ["BUR_AMB_G1_2_4", "GENGHIS"]],
-		[["BUR_AMB_G1_3_1", "GENGHIS"], ["BUR_AMB_G1_3_2", "NAPOLEON"], ["BUR_AMB_G1_3_3", "GENGHIS"]]],
+		[["BUR_AMB_G1_3_1", "GENGHIS"], ["BUR_AMB_G1_3_2", "NAPOLEON"], ["BUR_AMB_G1_3_3", "GENGHIS"]],
+		[["BUR_AMB_G1_4_1", "NAPOLEON"], ["BUR_AMB_G1_4_2", "GENGHIS"], ["BUR_AMB_G1_4_3", "NAPOLEON"]],
+		[["BUR_AMB_G1_5_1", "GENGHIS"], ["BUR_AMB_G1_5_2", "NAPOLEON"], ["BUR_AMB_G1_5_3", "GENGHIS"]],
+		[["BUR_AMB_G1_6_1", "NAPOLEON"], ["BUR_AMB_G1_6_2", "GENGHIS"], ["BUR_AMB_G1_6_3", "NAPOLEON"]],
+		[["BUR_AMB_G1_7_1", "GENGHIS"], ["BUR_AMB_G1_7_2", "NAPOLEON"], ["BUR_AMB_G1_7_3", "GENGHIS"]],
+		[["BUR_AMB_G1_8_1", "NAPOLEON"], ["BUR_AMB_G1_8_2", "GENGHIS"], ["BUR_AMB_G1_8_3", "NAPOLEON"]],
+		[["BUR_AMB_G1_9_1", "GENGHIS"], ["BUR_AMB_G1_9_2", "NAPOLEON"], ["BUR_AMB_G1_9_3", "GENGHIS"], ["BUR_AMB_G1_9_4", "NAPOLEON"]]],
 	"G2": [[["BUR_AMB_G2_1_1", "ROBOT"], ["BUR_AMB_G2_1_2", "HITLER"], ["BUR_AMB_G2_1_3", "ROBOT"]],
 		[["BUR_AMB_G2_2_1", "NAPOLEON"], ["BUR_AMB_G2_2_2", "HITLER"], ["BUR_AMB_G2_2_3", "ROBOT"]],
-		[["BUR_AMB_G2_3_1", "HITLER"], ["BUR_AMB_G2_3_2", "ROBOT"], ["BUR_AMB_G2_3_3", "HITLER"], ["BUR_AMB_G2_3_4", "ROBOT"]]],
+		[["BUR_AMB_G2_3_1", "HITLER"], ["BUR_AMB_G2_3_2", "ROBOT"], ["BUR_AMB_G2_3_3", "HITLER"], ["BUR_AMB_G2_3_4", "ROBOT"]],
+		[["BUR_AMB_G2_4_1", "ROBOT"], ["BUR_AMB_G2_4_2", "HITLER"], ["BUR_AMB_G2_4_3", "ROBOT"]],
+		[["BUR_AMB_G2_5_1", "NAPOLEON"], ["BUR_AMB_G2_5_2", "ROBOT"], ["BUR_AMB_G2_5_3", "HITLER"]],
+		[["BUR_AMB_G2_6_1", "HITLER"], ["BUR_AMB_G2_6_2", "ROBOT"], ["BUR_AMB_G2_6_3", "HITLER"], ["BUR_AMB_G2_6_4", "ROBOT"]],
+		[["BUR_AMB_G2_7_1", "ROBOT"], ["BUR_AMB_G2_7_2", "HITLER"], ["BUR_AMB_G2_7_3", "ROBOT"]],
+		[["BUR_AMB_G2_8_1", "NAPOLEON"], ["BUR_AMB_G2_8_2", "HITLER"], ["BUR_AMB_G2_8_3", "ROBOT"]],
+		[["BUR_AMB_G2_9_1", "ROBOT"], ["BUR_AMB_G2_9_2", "HITLER"], ["BUR_AMB_G2_9_3", "ROBOT"]]],
 	"G3": [[["BUR_AMB_G3_1_1", "MARCOPOLO"], ["BUR_AMB_G3_1_2", "GALILEO"], ["BUR_AMB_G3_1_3", "MARCOPOLO"]],
-		[["BUR_AMB_G3_2_1", "GALILEO"], ["BUR_AMB_G3_2_2", "MARCOPOLO"], ["BUR_AMB_G3_2_3", "GALILEO"]]],
+		[["BUR_AMB_G3_2_1", "GALILEO"], ["BUR_AMB_G3_2_2", "MARCOPOLO"], ["BUR_AMB_G3_2_3", "GALILEO"]],
+		[["BUR_AMB_G3_3_1", "MARCOPOLO"], ["BUR_AMB_G3_3_2", "GALILEO"], ["BUR_AMB_G3_3_3", "MARCOPOLO"]],
+		[["BUR_AMB_G3_4_1", "MARCOPOLO"], ["BUR_AMB_G3_4_2", "GALILEO"], ["BUR_AMB_G3_4_3", "MARCOPOLO"]],
+		[["BUR_AMB_G3_5_1", "MARCOPOLO"], ["BUR_AMB_G3_5_2", "GALILEO"], ["BUR_AMB_G3_5_3", "MARCOPOLO"]],
+		[["BUR_AMB_G3_6_1", "GALILEO"], ["BUR_AMB_G3_6_2", "MARCOPOLO"], ["BUR_AMB_G3_6_3", "GALILEO"]],
+		[["BUR_AMB_G3_7_1", "GALILEO"], ["BUR_AMB_G3_7_2", "MARCOPOLO"], ["BUR_AMB_G3_7_3", "GALILEO"]],
+		[["BUR_AMB_G3_8_1", "MARCOPOLO"], ["BUR_AMB_G3_8_2", "GALILEO"], ["BUR_AMB_G3_8_3", "MARCOPOLO"]]],
 	"G4": [[["BUR_AMB_G4_1_1", "MOZART"], ["BUR_AMB_G4_1_2", "CURIE"], ["BUR_AMB_G4_1_3", "MOZART"]],
-		[["BUR_AMB_G4_2_1", "CURIE"], ["BUR_AMB_G4_2_2", "MOZART"], ["BUR_AMB_G4_2_3", "CURIE"]]],
+		[["BUR_AMB_G4_2_1", "CURIE"], ["BUR_AMB_G4_2_2", "MOZART"], ["BUR_AMB_G4_2_3", "CURIE"]],
+		[["BUR_AMB_G4_3_1", "MOZART"], ["BUR_AMB_G4_3_2", "CURIE"], ["BUR_AMB_G4_3_3", "MOZART"]],
+		[["BUR_AMB_G4_4_1", "CURIE"], ["BUR_AMB_G4_4_2", "MOZART"], ["BUR_AMB_G4_4_3", "CURIE"]],
+		[["BUR_AMB_G4_5_1", "MOZART"], ["BUR_AMB_G4_5_2", "CURIE"], ["BUR_AMB_G4_5_3", "MOZART"]],
+		[["BUR_AMB_G4_6_1", "CURIE"], ["BUR_AMB_G4_6_2", "MOZART"], ["BUR_AMB_G4_6_3", "CURIE"]],
+		[["BUR_AMB_G4_7_1", "MOZART"], ["BUR_AMB_G4_7_2", "CURIE"], ["BUR_AMB_G4_7_3", "MOZART"]],
+		[["BUR_AMB_G4_8_1", "MOZART"], ["BUR_AMB_G4_8_2", "CURIE"], ["BUR_AMB_G4_8_3", "MOZART"]]],
 	"G5": [[["BUR_AMB_G5_1_1", "SINAN"], ["BUR_AMB_G5_1_2", "NASREDDIN"]],
-		[["BUR_AMB_G5_2_1", "NASREDDIN"], ["BUR_AMB_G5_2_2", "SINAN"], ["BUR_AMB_G5_2_3", "NASREDDIN"]]],
+		[["BUR_AMB_G5_2_1", "NASREDDIN"], ["BUR_AMB_G5_2_2", "SINAN"], ["BUR_AMB_G5_2_3", "NASREDDIN"]],
+		[["BUR_AMB_G5_3_1", "SINAN"], ["BUR_AMB_G5_3_2", "NASREDDIN"], ["BUR_AMB_G5_3_3", "SINAN"], ["BUR_AMB_G5_3_4", "NASREDDIN"]],
+		[["BUR_AMB_G5_4_1", "NASREDDIN"], ["BUR_AMB_G5_4_2", "SINAN"], ["BUR_AMB_G5_4_3", "NASREDDIN"], ["BUR_AMB_G5_4_4", "SINAN"]],
+		[["BUR_AMB_G5_5_1", "SINAN"], ["BUR_AMB_G5_5_2", "NASREDDIN"], ["BUR_AMB_G5_5_3", "SINAN"]],
+		[["BUR_AMB_G5_6_1", "NASREDDIN"], ["BUR_AMB_G5_6_2", "SINAN"], ["BUR_AMB_G5_6_3", "NASREDDIN"]],
+		[["BUR_AMB_G5_7_1", "SINAN"], ["BUR_AMB_G5_7_2", "NASREDDIN"], ["BUR_AMB_G5_7_3", "SINAN"]],
+		[["BUR_AMB_G5_8_1", "NASREDDIN"], ["BUR_AMB_G5_8_2", "SINAN"], ["BUR_AMB_G5_8_3", "NASREDDIN"]]],
 	"G6": [[["BUR_AMB_G6_1_1", "GALILEO"], ["BUR_AMB_G6_1_2", "GAGARIN"], ["BUR_AMB_G6_1_3", "GALILEO"]],
-		[["BUR_AMB_G6_2_1", "GAGARIN"], ["BUR_AMB_G6_2_2", "GALILEO"], ["BUR_AMB_G6_2_3", "GAGARIN"]]],
+		[["BUR_AMB_G6_2_1", "GAGARIN"], ["BUR_AMB_G6_2_2", "GALILEO"], ["BUR_AMB_G6_2_3", "GAGARIN"]],
+		[["BUR_AMB_G6_3_1", "GAGARIN"], ["BUR_AMB_G6_3_2", "GALILEO"], ["BUR_AMB_G6_3_3", "GAGARIN"]],
+		[["BUR_AMB_G6_4_1", "GAGARIN"], ["BUR_AMB_G6_4_2", "GALILEO"], ["BUR_AMB_G6_4_3", "GAGARIN"], ["BUR_AMB_G6_4_4", "GALILEO"]],
+		[["BUR_AMB_G6_5_1", "GALILEO"], ["BUR_AMB_G6_5_2", "GAGARIN"], ["BUR_AMB_G6_5_3", "GALILEO"], ["BUR_AMB_G6_5_4", "GAGARIN"]],
+		[["BUR_AMB_G6_6_1", "GALILEO"], ["BUR_AMB_G6_6_2", "GAGARIN"], ["BUR_AMB_G6_6_3", "GALILEO"]],
+		[["BUR_AMB_G6_7_1", "GAGARIN"], ["BUR_AMB_G6_7_2", "GALILEO"], ["BUR_AMB_G6_7_3", "GAGARIN"]],
+		[["BUR_AMB_G6_8_1", "GALILEO"], ["BUR_AMB_G6_8_2", "GAGARIN"], ["BUR_AMB_G6_8_3", "GALILEO"]],
+		[["BUR_AMB_G6_9_1", "GAGARIN"], ["BUR_AMB_G6_9_2", "GALILEO"], ["BUR_AMB_G6_9_3", "GAGARIN"]]],
 	"G7": [[["BUR_AMB_G7_1_1", "CAESAR"], ["BUR_AMB_G7_1_2", "SHAKESPEARE"], ["BUR_AMB_G7_1_3", "CAESAR"]],
 		[["BUR_AMB_G7_2_1", "CAESAR"], ["BUR_AMB_G7_2_2", "SHAKESPEARE"], ["BUR_AMB_G7_2_3", "CAESAR"]],
-		[["BUR_AMB_G7_3_1", "CAESAR"], ["BUR_AMB_G7_3_2", "NECMI"]]],
+		[["BUR_AMB_G7_3_1", "CAESAR"], ["BUR_AMB_G7_3_2", "NECMI"]],
+		[["BUR_AMB_G7_4_1", "CAESAR"], ["BUR_AMB_G7_4_2", "SHAKESPEARE"], ["BUR_AMB_G7_4_3", "CAESAR"]],
+		[["BUR_AMB_G7_5_1", "CAESAR"], ["BUR_AMB_G7_5_2", "SHAKESPEARE"], ["BUR_AMB_G7_5_3", "NECMI"]],
+		[["BUR_AMB_G7_6_1", "SHAKESPEARE"], ["BUR_AMB_G7_6_2", "NECMI"], ["BUR_AMB_G7_6_3", "CAESAR"]],
+		[["BUR_AMB_G7_7_1", "CAESAR"], ["BUR_AMB_G7_7_2", "SHAKESPEARE"], ["BUR_AMB_G7_7_3", "CAESAR"], ["BUR_AMB_G7_7_4", "NECMI"]],
+		[["BUR_AMB_G7_8_1", "SHAKESPEARE"], ["BUR_AMB_G7_8_2", "CAESAR"], ["BUR_AMB_G7_8_3", "SHAKESPEARE"], ["BUR_AMB_G7_8_4", "NECMI"]],
+		[["BUR_AMB_G7_9_1", "SHAKESPEARE"], ["BUR_AMB_G7_9_2", "CAESAR"], ["BUR_AMB_G7_9_3", "NECMI"]]],
 	"G8": [[["BUR_AMB_G8_1_1", "COLUMBUS"], ["BUR_AMB_G8_1_2", "SABRI"], ["BUR_AMB_G8_1_3", "COLUMBUS"], ["BUR_AMB_G8_1_4", "SABRI"]],
-		[["BUR_AMB_G8_2_1", "COLUMBUS"], ["BUR_AMB_G8_2_2", "SABRI"], ["BUR_AMB_G8_2_3", "COLUMBUS"], ["BUR_AMB_G8_2_4", "SABRI"]]],
+		[["BUR_AMB_G8_2_1", "COLUMBUS"], ["BUR_AMB_G8_2_2", "SABRI"], ["BUR_AMB_G8_2_3", "COLUMBUS"], ["BUR_AMB_G8_2_4", "SABRI"]],
+		[["BUR_AMB_G8_3_1", "COLUMBUS"], ["BUR_AMB_G8_3_2", "SABRI"], ["BUR_AMB_G8_3_3", "COLUMBUS"], ["BUR_AMB_G8_3_4", "SABRI"]],
+		[["BUR_AMB_G8_4_1", "COLUMBUS"], ["BUR_AMB_G8_4_2", "SABRI"], ["BUR_AMB_G8_4_3", "COLUMBUS"], ["BUR_AMB_G8_4_4", "SABRI"]],
+		[["BUR_AMB_G8_5_1", "COLUMBUS"], ["BUR_AMB_G8_5_2", "SABRI"], ["BUR_AMB_G8_5_3", "COLUMBUS"], ["BUR_AMB_G8_5_4", "SABRI"]],
+		[["BUR_AMB_G8_6_1", "COLUMBUS"], ["BUR_AMB_G8_6_2", "SABRI"], ["BUR_AMB_G8_6_3", "COLUMBUS"], ["BUR_AMB_G8_6_4", "SABRI"]],
+		[["BUR_AMB_G8_7_1", "COLUMBUS"], ["BUR_AMB_G8_7_2", "SABRI"], ["BUR_AMB_G8_7_3", "COLUMBUS"], ["BUR_AMB_G8_7_4", "SABRI"]],
+		[["BUR_AMB_G8_8_1", "COLUMBUS"], ["BUR_AMB_G8_8_2", "SABRI"], ["BUR_AMB_G8_8_3", "COLUMBUS"], ["BUR_AMB_G8_8_4", "SABRI"]]],
 	"G9": [[["BUR_AMB_G9_1_1", "CLEOPATRA"], ["BUR_AMB_G9_1_2", "SULEYMAN"], ["BUR_AMB_G9_1_3", "CLEOPATRA"]],
-		[["BUR_AMB_G9_2_1", "SULEYMAN"], ["BUR_AMB_G9_2_2", "CLEOPATRA"]]],
+		[["BUR_AMB_G9_2_1", "SULEYMAN"], ["BUR_AMB_G9_2_2", "CLEOPATRA"]],
+		[["BUR_AMB_G9_3_1", "CLEOPATRA"], ["BUR_AMB_G9_3_2", "SULEYMAN"], ["BUR_AMB_G9_3_3", "CLEOPATRA"]],
+		[["BUR_AMB_G9_4_1", "CLEOPATRA"], ["BUR_AMB_G9_4_2", "SULEYMAN"], ["BUR_AMB_G9_4_3", "CLEOPATRA"]],
+		[["BUR_AMB_G9_5_1", "SULEYMAN"], ["BUR_AMB_G9_5_2", "CLEOPATRA"], ["BUR_AMB_G9_5_3", "SULEYMAN"]],
+		[["BUR_AMB_G9_6_1", "CLEOPATRA"], ["BUR_AMB_G9_6_2", "CLEOPATRA"], ["BUR_AMB_G9_6_3", "SULEYMAN"]],
+		[["BUR_AMB_G9_7_1", "SULEYMAN"], ["BUR_AMB_G9_7_2", "CLEOPATRA"], ["BUR_AMB_G9_7_3", "SULEYMAN"]],
+		[["BUR_AMB_G9_8_1", "CLEOPATRA"], ["BUR_AMB_G9_8_2", "SULEYMAN"], ["BUR_AMB_G9_8_3", "CLEOPATRA"]]],
 	"G10": [[["BUR_AMB_G10_1_1", "LEONARDO"], ["BUR_AMB_G10_1_2", "EINSTEIN"], ["BUR_AMB_G10_1_3", "LEONARDO"]],
-		[["BUR_AMB_G10_2_1", "EINSTEIN"], ["BUR_AMB_G10_2_2", "LEONARDO"], ["BUR_AMB_G10_2_3", "EINSTEIN"], ["BUR_AMB_G10_2_4", "LEONARDO"]]],
+		[["BUR_AMB_G10_2_1", "EINSTEIN"], ["BUR_AMB_G10_2_2", "LEONARDO"], ["BUR_AMB_G10_2_3", "EINSTEIN"], ["BUR_AMB_G10_2_4", "LEONARDO"]],
+		[["BUR_AMB_G10_3_1", "LEONARDO"], ["BUR_AMB_G10_3_2", "EINSTEIN"], ["BUR_AMB_G10_3_3", "LEONARDO"]],
+		[["BUR_AMB_G10_4_1", "EINSTEIN"], ["BUR_AMB_G10_4_2", "LEONARDO"], ["BUR_AMB_G10_4_3", "EINSTEIN"]],
+		[["BUR_AMB_G10_5_1", "EINSTEIN"], ["BUR_AMB_G10_5_2", "LEONARDO"], ["BUR_AMB_G10_5_3", "EINSTEIN"]],
+		[["BUR_AMB_G10_6_1", "LEONARDO"], ["BUR_AMB_G10_6_2", "EINSTEIN"], ["BUR_AMB_G10_6_3", "LEONARDO"]],
+		[["BUR_AMB_G10_7_1", "EINSTEIN"], ["BUR_AMB_G10_7_2", "LEONARDO"], ["BUR_AMB_G10_7_3", "EINSTEIN"], ["BUR_AMB_G10_7_4", "LEONARDO"]],
+		[["BUR_AMB_G10_8_1", "LEONARDO"], ["BUR_AMB_G10_8_2", "EINSTEIN"], ["BUR_AMB_G10_8_3", "LEONARDO"]]],
 	"G11": [[["BUR_AMB_G11_1_1", "GUIDE"], ["BUR_AMB_G11_1_2", "GUIDE"]],
-		[["BUR_AMB_G11_2_1", "GUIDE"], ["BUR_AMB_G11_2_2", "GUIDE"]]],
+		[["BUR_AMB_G11_2_1", "GUIDE"], ["BUR_AMB_G11_2_2", "GUIDE"]],
+		[["BUR_AMB_G11_3_1", "GUIDE"], ["BUR_AMB_G11_3_2", "GUIDE"]],
+		[["BUR_AMB_G11_4_1", "GUIDE"], ["BUR_AMB_G11_4_2", "GUIDE"]],
+		[["BUR_AMB_G11_5_1", "GUIDE"], ["BUR_AMB_G11_5_2", "GUIDE"]],
+		[["BUR_AMB_G11_6_1", "GUIDE"], ["BUR_AMB_G11_6_2", "GUIDE"]],
+		[["BUR_AMB_G11_7_1", "GUIDE"], ["BUR_AMB_G11_7_2", "GUIDE"]],
+		[["BUR_AMB_G11_8_1", "GUIDE"], ["BUR_AMB_G11_8_2", "GUIDE"]]],
 	"G12": [[["BUR_AMB_G12_1_1", "ARCHAEOLOGIST"], ["BUR_AMB_G12_1_2", "ARCHAEOLOGIST"]],
-		[["BUR_AMB_G12_2_1", "ARCHAEOLOGIST"], ["BUR_AMB_G12_2_2", "ARCHAEOLOGIST"]]],
+		[["BUR_AMB_G12_2_1", "ARCHAEOLOGIST"], ["BUR_AMB_G12_2_2", "ARCHAEOLOGIST"]],
+		[["BUR_AMB_G12_3_1", "ARCHAEOLOGIST"], ["BUR_AMB_G12_3_2", "ARCHAEOLOGIST"]],
+		[["BUR_AMB_G12_4_1", "ARCHAEOLOGIST"], ["BUR_AMB_G12_4_2", "ARCHAEOLOGIST"]],
+		[["BUR_AMB_G12_5_1", "ARCHAEOLOGIST"], ["BUR_AMB_G12_5_2", "ARCHAEOLOGIST"]],
+		[["BUR_AMB_G12_6_1", "ARCHAEOLOGIST"], ["BUR_AMB_G12_6_2", "ARCHAEOLOGIST"]],
+		[["BUR_AMB_G12_7_1", "ARCHAEOLOGIST"], ["BUR_AMB_G12_7_2", "ARCHAEOLOGIST"]],
+		[["BUR_AMB_G12_8_1", "ARCHAEOLOGIST"], ["BUR_AMB_G12_8_2", "ARCHAEOLOGIST"]]],
+	"G13": [[["BUR_AMB_G13_1_1", "TESLA"], ["BUR_AMB_G13_1_2", "EDISON"], ["BUR_AMB_G13_1_3", "TESLA"]],
+		[["BUR_AMB_G13_2_1", "EDISON"], ["BUR_AMB_G13_2_2", "TESLA"], ["BUR_AMB_G13_2_3", "EDISON"], ["BUR_AMB_G13_2_4", "TESLA"]],
+		[["BUR_AMB_G13_3_1", "TESLA"], ["BUR_AMB_G13_3_2", "EDISON"], ["BUR_AMB_G13_3_3", "TESLA"]],
+		[["BUR_AMB_G13_4_1", "TESLA"], ["BUR_AMB_G13_4_2", "EDISON"], ["BUR_AMB_G13_4_3", "TESLA"]],
+		[["BUR_AMB_G13_5_1", "EDISON"], ["BUR_AMB_G13_5_2", "TESLA"], ["BUR_AMB_G13_5_3", "EDISON"]],
+		[["BUR_AMB_G13_6_1", "EINSTEIN"], ["BUR_AMB_G13_6_2", "TESLA"], ["BUR_AMB_G13_6_3", "EDISON"]],
+		[["BUR_AMB_G13_7_1", "TESLA"], ["BUR_AMB_G13_7_2", "EDISON"], ["BUR_AMB_G13_7_3", "TESLA"], ["BUR_AMB_G13_7_4", "EDISON"]]],
+	"G14": [[["BUR_AMB_G14_1_1", "SOCRATES"], ["BUR_AMB_G14_1_2", "DIOGENES"], ["BUR_AMB_G14_1_3", "SOCRATES"], ["BUR_AMB_G14_1_4", "DIOGENES"]],
+		[["BUR_AMB_G14_2_1", "DIOGENES"], ["BUR_AMB_G14_2_2", "SOCRATES"], ["BUR_AMB_G14_2_3", "DIOGENES"]],
+		[["BUR_AMB_G14_3_1", "SOCRATES"], ["BUR_AMB_G14_3_2", "DIOGENES"], ["BUR_AMB_G14_3_3", "SOCRATES"]],
+		[["BUR_AMB_G14_4_1", "DIOGENES"], ["BUR_AMB_G14_4_2", "SOCRATES"], ["BUR_AMB_G14_4_3", "DIOGENES"]],
+		[["BUR_AMB_G14_5_1", "SOCRATES"], ["BUR_AMB_G14_5_2", "DIOGENES"], ["BUR_AMB_G14_5_3", "SOCRATES"]],
+		[["BUR_AMB_G14_6_1", "SOCRATES"], ["BUR_AMB_G14_6_2", "DIOGENES"], ["BUR_AMB_G14_6_3", "SOCRATES"]],
+		[["BUR_AMB_G14_7_1", "ARCHAEOLOGIST"], ["BUR_AMB_G14_7_2", "SOCRATES"], ["BUR_AMB_G14_7_3", "DIOGENES"]]],
+	"G15": [[["BUR_AMB_G15_1_1", "NEWTON"], ["BUR_AMB_G15_1_2", "EINSTEIN"], ["BUR_AMB_G15_1_3", "NEWTON"]],
+		[["BUR_AMB_G15_2_1", "NEWTON"], ["BUR_AMB_G15_2_2", "EINSTEIN"], ["BUR_AMB_G15_2_3", "LEONARDO"]],
+		[["BUR_AMB_G15_3_1", "NEWTON"], ["BUR_AMB_G15_3_2", "EINSTEIN"], ["BUR_AMB_G15_3_3", "NEWTON"]],
+		[["BUR_AMB_G15_4_1", "NEWTON"], ["BUR_AMB_G15_4_2", "EINSTEIN"], ["BUR_AMB_G15_4_3", "LEONARDO"]],
+		[["BUR_AMB_G15_5_1", "NEWTON"], ["BUR_AMB_G15_5_2", "EINSTEIN"], ["BUR_AMB_G15_5_3", "NEWTON"]],
+		[["BUR_AMB_G15_6_1", "NEWTON"], ["BUR_AMB_G15_6_2", "EINSTEIN"], ["BUR_AMB_G15_6_3", "NEWTON"], ["BUR_AMB_G15_6_4", "EINSTEIN"]],
+		[["BUR_AMB_G15_7_1", "LEONARDO"], ["BUR_AMB_G15_7_2", "NEWTON"], ["BUR_AMB_G15_7_3", "LEONARDO"]]],
+	"G16": [[["BUR_AMB_G16_1_1", "SABRI"], ["BUR_AMB_G16_1_2", "EVLIYA"], ["BUR_AMB_G16_1_3", "SABRI"]],
+		[["BUR_AMB_G16_2_1", "EVLIYA"], ["BUR_AMB_G16_2_2", "SABRI"], ["BUR_AMB_G16_2_3", "EVLIYA"]],
+		[["BUR_AMB_G16_3_1", "COLUMBUS"], ["BUR_AMB_G16_3_2", "EVLIYA"], ["BUR_AMB_G16_3_3", "SABRI"]],
+		[["BUR_AMB_G16_4_1", "EVLIYA"], ["BUR_AMB_G16_4_2", "COLUMBUS"], ["BUR_AMB_G16_4_3", "SABRI"]],
+		[["BUR_AMB_G16_5_1", "EVLIYA"], ["BUR_AMB_G16_5_2", "SABRI"], ["BUR_AMB_G16_5_3", "COLUMBUS"], ["BUR_AMB_G16_5_4", "SABRI"]],
+		[["BUR_AMB_G16_6_1", "SABRI"], ["BUR_AMB_G16_6_2", "EVLIYA"], ["BUR_AMB_G16_6_3", "SABRI"], ["BUR_AMB_G16_6_4", "COLUMBUS"]],
+		[["BUR_AMB_G16_7_1", "COLUMBUS"], ["BUR_AMB_G16_7_2", "EVLIYA"], ["BUR_AMB_G16_7_3", "SABRI"]]],
 }
+
 const _AMB_SPK := {"NAPOLEON": "nap", "GENGHIS": "gen", "ROBOT": "rob", "HITLER": "hit", "MARCOPOLO": "pol",
 	"GALILEO": "gal", "MOZART": "moz", "CURIE": "cur", "SINAN": "sin", "NASREDDIN": "nas", "GAGARIN": "gag",
 	"CAESAR": "cae", "SHAKESPEARE": "shk", "COLUMBUS": "col", "CLEOPATRA": "cle", "SULEYMAN": "sul",
-	"LEONARDO": "leo", "EINSTEIN": "ein", "GUIDE": "gui", "ARCHAEOLOGIST": "arc"}
+	"LEONARDO": "leo", "EINSTEIN": "ein", "GUIDE": "gui", "ARCHAEOLOGIST": "arc", "TESLA": "tes", "EDISON": "edi",
+	"SOCRATES": "sok", "DIOGENES": "dio", "NEWTON": "new", "EVLIYA": "evl"}
 const _AMB_NEAR := 6.5
 const _AMB_FAR := 10.0
 var _amb_on := false
@@ -3690,7 +4068,7 @@ func _amb_play(g: String) -> void:
 		await get_tree().create_timer(secs + 0.45).timeout
 	if tok != _amb_tok:
 		return
-	_amb_cool[g] = _fog_t + 22.0
+	_amb_cool[g] = _fog_t + 4.0      # yakında durdukça konuşma sürer (kullanıcı: "hep devam etmeli"); sıradaki atışmaya geçer
 	_amb_quiet()
 	_amb_run = ""
 
@@ -3721,7 +4099,7 @@ func _amb_say(who: Person, key: String, other: Person) -> float:
 func _amb_stop() -> void:
 	_amb_tok += 1
 	if _amb_run != "":
-		_amb_cool[_amb_run] = _fog_t + 6.0
+		_amb_cool[_amb_run] = _fog_t + 2.0
 	_amb_quiet()
 	_amb_run = ""
 

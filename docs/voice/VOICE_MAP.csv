@@ -6,14 +6,147 @@ BUR_AMB_G10_2_1,,SPK_EINSTEIN,,0,Milano Dükü'ne başvuru yazarken neyi öne ç
 BUR_AMB_G10_2_2,,SPK_LEONARDO,,0,Mühendisliği. Resim en sondaydı.,Engineering. Painting came last.,kod
 BUR_AMB_G10_2_3,,SPK_EINSTEIN,,0,Bugün seni resimle tanıyorlar.,Today they know you for the painting.,kod
 BUR_AMB_G10_2_4,,SPK_LEONARDO,,0,Özgeçmişi hiçbir zaman sonuna kadar okumazlar.,Nobody ever reads a CV to the end.,kod
+BUR_AMB_G10_3_1,,SPK_LEONARDO,,0,Mona Lisa'yı sipariş eden almadı. Ben ölene kadar yanımda tuttum.,The man who ordered the Mona Lisa never got it. I kept it with me until I died.,kod
+BUR_AMB_G10_3_2,,SPK_EINSTEIN,,0,Ben teslim tarihini kaçırmam. 1905'te dört makale.,I do not miss deadlines. Four papers in 1905.,kod
+BUR_AMB_G10_3_3,,SPK_LEONARDO,,0,Ben hâlâ 'bitmedi' diyorum.,I still say 'not finished'.,kod
+BUR_AMB_G10_4_1,,SPK_EINSTEIN,,0,Bern Patent Bürosu'nda memurdum. Başkalarının icadını inceledim. Şimdi ben inceleniyorum.,I was a clerk at the Bern Patent Office. I examined others' inventions. Now I am the one being examined.,kod
+BUR_AMB_G10_4_2,,SPK_LEONARDO,,0,Havada dönen vida çizdim. Patent almadım.,I drew an aerial screw. I never took out a patent.,kod
+BUR_AMB_G10_4_3,,SPK_EINSTEIN,,0,Eksik evrak.,Missing documents.,kod
+BUR_AMB_G10_5_1,,SPK_EINSTEIN,,0,Hız arttıkça zaman yavaşlar. Bunu ben buldum.,"As speed increases, time slows. I worked that out.",kod
+BUR_AMB_G10_5_2,,SPK_LEONARDO,,0,O zaman bu sarkaç neden bu kadar ağır?,Then why is this pendulum so slow?,kod
+BUR_AMB_G10_5_3,,SPK_EINSTEIN,,0,Burada zaman yok. Yalnızca sıra var.,There is no time here. Only a queue.,kod
+BUR_AMB_G10_6_1,,SPK_LEONARDO,,0,Sforza'nın sarayına gümüşten at başı biçimli bir lir çalarak girdim.,I entered the Sforza court playing a silver lyre shaped like a horse's head.,kod
+BUR_AMB_G10_6_2,,SPK_EINSTEIN,,0,Ben keman çalardım. Mozart'ı çok severdim.,I played the violin. I loved Mozart.,kod
+BUR_AMB_G10_6_3,,SPK_LEONARDO,,0,"Müzik açılış, mühendislik asıl iş.","Music is the opening act, engineering the real job.",kod
+BUR_AMB_G10_7_1,,SPK_EINSTEIN,,0,Nobel'i görelilik için almadım. Fotoelektrik etki için aldım.,I did not win the Nobel for relativity. I won it for the photoelectric effect.,kod
+BUR_AMB_G10_7_2,,SPK_LEONARDO,,0,Neden?,Why?,kod
+BUR_AMB_G10_7_3,,SPK_EINSTEIN,,0,Komite görelilik konusunda emin değildi.,The committee was not sure about relativity.,kod
+BUR_AMB_G10_7_4,,SPK_LEONARDO,,0,"Komiteler hep emin olmaz, hep sonra emin olur.",Committees are never sure. They are always sure later.,kod
+BUR_AMB_G10_8_1,,SPK_LEONARDO,,0,Son Akşam Yemeği'ni kuru sıvaya denedim. Birkaç on yıl sonra dökülmeye başladı.,I tried a new technique on dry plaster for the Last Supper. Within a few decades it began to flake.,kod
+BUR_AMB_G10_8_2,,SPK_EINSTEIN,,0,Denklemlerim yüz yıldır dökülmedi.,My equations have not flaked in a hundred years.,kod
+BUR_AMB_G10_8_3,,SPK_LEONARDO,,0,Matematik restorasyon istemez. Boya ister.,Mathematics needs no restoration. Paint does.,kod
 BUR_AMB_G11_1_1,,SPK_GUIDE,,0,Sağ tarafta Tarihe İtiraz Birimi. Oturanların hepsi tarihin kendilerini yanlış yazdığını düşünüyor.,"On your right, the History Appeals Unit. Everyone seated there believes history got them wrong.",kod
 BUR_AMB_G11_1_2,,SPK_GUIDE,,0,Bir kısmı haklı. Bir kısmı sandalyenin üstünde. Fotoğraf çekerken lütfen ikisini karıştırmayın.,"Some of them are right. One of them is standing on a chair. When taking photos, please do not confuse the two.",kod
 BUR_AMB_G11_2_1,,SPK_GUIDE,,0,Hediyelik eşya köşesinde bir yıllık mühürlü bekleme fişi satıyoruz.,At the gift corner we sell stamped one-year waiting tickets.,kod
 BUR_AMB_G11_2_2,,SPK_GUIDE,,0,"Fişler iade edilemez. İade için başka bir sıra gerekir, o da bu sıra.","Tickets are non-refundable. A refund needs another queue, and that queue is this one.",kod
+BUR_AMB_G11_3_1,,SPK_GUIDE,,0,Solunuzda Kayıp Zaman Bürosu. Saatinizi kaybettiyseniz buraya gelin.,"On your left, the Lost Time Office. If you have lost your watch, come here.",kod
+BUR_AMB_G11_3_2,,SPK_GUIDE,,0,"Bulunan zaman, geç teslim edilmiş sayılır. Gecikme zammı uygulanır.",Found time counts as late delivery. A late fee applies.,kod
+BUR_AMB_G11_4_1,,SPK_GUIDE,,0,Duvardaki saat durmuş görünüyor. Durmadı. Tüm zamanları aynı anda gösteriyor.,The clock on the wall seems stopped. It is not. It shows all times at once.,kod
+BUR_AMB_G11_4_2,,SPK_GUIDE,,0,Teknik terimle buna 'meşgul' denir.,The technical term for this is 'busy'.,kod
+BUR_AMB_G11_5_1,,SPK_GUIDE,,0,"Gezi kuralları: eşyalara dokunmayın, tarihe dokunmayın, kuyruktakilere sıra sormayın.","Tour rules: do not touch the objects, do not touch history, do not ask anyone in the queue about their number.",kod
+BUR_AMB_G11_5_2,,SPK_GUIDE,,0,"Sormayın, çünkü cevap verirlerse tur uzar.","Do not ask, because if they answer the tour will run long.",kod
+BUR_AMB_G11_6_1,,SPK_GUIDE,,0,Kuyruktaki herkese 2187 ders kitaplarında üç satır ayırdık.,In our 2187 textbooks each person in the queue gets three lines.,kod
+BUR_AMB_G11_6_2,,SPK_GUIDE,,0,"Sıranın uzunluğuna bakın. Bu, üç satırın sığdırabildiği hayat sayısı.",Look at the length of the queue. That is how many lives three lines can hold.,kod
+BUR_AMB_G11_7_1,,SPK_GUIDE,,0,Mola yerimiz çay ocağı. Çay ücretsiz.,Our rest stop is the tea stand. The tea is free.,kod
+BUR_AMB_G11_7_2,,SPK_GUIDE,,0,Bekleme ücretli.,Waiting costs extra.,kod
+BUR_AMB_G11_8_1,,SPK_GUIDE,,0,"Gruptan ayrılırsanız en yakın yüzyıla yaslanıp bekleyin, sizi buluruz.","If you leave the group, lean on the nearest century and wait. We will find you.",kod
+BUR_AMB_G11_8_2,,SPK_GUIDE,,0,Ücret yüzyıl başına hesaplanır.,Charges are calculated per century.,kod
 BUR_AMB_G12_1_1,,SPK_ARCHAEOLOGIST,,0,Elimde ağır bir bronz nesne var. Üzerinde 'ONAYLANDI' yazıyor. Muhtemelen bir tanrının imzası.,I am holding a heavy object. It says 'APPROVED' on it. Most likely the signature of a god.,kod
 BUR_AMB_G12_1_2,,SPK_ARCHAEOLOGIST,,0,Yanında 'RED' yazan bir tane daha var. Demek ki tanrı iki yüzlüymüş. İkisi de mürekkep yastığında dinleniyor.,Next to it is another reading 'REJECTED'. So the god was two-faced. Both rest on an ink pad.,kod
 BUR_AMB_G12_2_1,,SPK_ARCHAEOLOGIST,,0,"Bu kutu kâğıdı yutuyor, ışık saçıyor ve bir ses çıkarıyor. Adı 'fotokopi'.","This box swallows paper, gives off light and makes a sound. It is called a 'photocopier'.",kod
 BUR_AMB_G12_2_2,,SPK_ARCHAEOLOGIST,,0,Ses hep aynı: 'kâğıt sıkıştı'. Bilim insanları bunu o devrin ilahisi sayıyor.,The sound is always the same: 'paper jam'. Scholars consider it the hymn of that era.,kod
+BUR_AMB_G12_3_1,,SPK_ARCHAEOLOGIST,,0,"Metal ağızlı bir alet, yüz sayfayı tek ısırıkta tutuyor. Büyük ihtimalle bir tanrının dişi.",A metal-jawed tool that holds a hundred pages in one bite. Most likely the tooth of a god.,kod
+BUR_AMB_G12_3_2,,SPK_ARCHAEOLOGIST,,0,"Adı 'zımba'. Tapınakta, kâğıtların kaçmasını önleyen bir muhafız.",It is called a 'stapler'. A temple guard that stops papers from escaping.,kod
+BUR_AMB_G12_4_1,,SPK_ARCHAEOLOGIST,,0,"Duvarda yuvarlak bir levha, iki çubukla zaman sayıyor. Bir güneş kültü olmalı.",A round plate on the wall counts time with two rods. It must be a sun cult.,kod
+BUR_AMB_G12_4_2,,SPK_ARCHAEOLOGIST,,0,Çubuklar on iki otuzda sabit. Ritüel tamamlanmış.,The rods are fixed at twelve thirty. The ritual is complete.,kod
+BUR_AMB_G12_5_1,,SPK_ARCHAEOLOGIST,,0,"Kulplu bir seramik kap, dibinde kurumuş siyah sıvı. Altında şeker kalıntısı. Adak.","A handled ceramic vessel with dried black liquid in the bottom, and sugar residue beneath. An offering.",kod
+BUR_AMB_G12_5_2,,SPK_ARCHAEOLOGIST,,0,Bardak yüzlercesi var. Demek ki tanrı çok susuzmuş.,There are hundreds of these cups. The god must have been very thirsty.,kod
+BUR_AMB_G12_6_1,,SPK_ARCHAEOLOGIST,,0,"Masalarda toz tutmuş, üstünde harfler yazılı levhalar var. Klavye.",The desks hold dusty tablets with letters on them. Keyboards.,kod
+BUR_AMB_G12_6_2,,SPK_ARCHAEOLOGIST,,0,"Basınca hep 'yetkiniz yok' diyor. Bir sunak, içeri kimse alınmıyor.","When pressed they always say 'you are not authorised'. An altar, no one admitted.",kod
+BUR_AMB_G12_7_1,,SPK_ARCHAEOLOGIST,,0,Kapıda 'ÇEKİNİZ' yazıyor. Kapıda itme izleri var.,The door says 'PULL'. The door shows marks of pushing.,kod
+BUR_AMB_G12_7_2,,SPK_ARCHAEOLOGIST,,0,Bu halk yazıya güvenmiyormuş. Ben buna 'protest uygarlık' diyorum.,This people did not trust writing. I call it a 'protest civilisation'.,kod
+BUR_AMB_G12_8_1,,SPK_ARCHAEOLOGIST,,0,"Uzun bir masa, yirmi sandalye, duvarda renkli şekiller. Bir sunum töreni.","A long table, twenty chairs, coloured shapes on the wall. A presentation ceremony.",kod
+BUR_AMB_G12_8_2,,SPK_ARCHAEOLOGIST,,0,Katılanların hepsi gözleri açık uyuyormuş. Büyük bir odaklanma ritüeli.,All attendees slept with their eyes open. An impressive ritual of concentration.,kod
+BUR_AMB_G13_1_1,,SPK_TESLA,,0,"Bana 50.000 dolar vaat ettin, Edison.","You promised me fifty thousand dollars, Edison.",kod
+BUR_AMB_G13_1_2,,SPK_EDISON,,0,Şaka yapmıştım. Amerikan mizahı.,I was joking. American humour.,kod
+BUR_AMB_G13_1_3,,SPK_TESLA,,0,Şakayı 1884'te anladım. Fatura hâlâ bekliyor.,I got the joke in 1884. The bill is still waiting.,kod
+BUR_AMB_G13_2_1,,SPK_EDISON,,0,Amerika'da 1.093 patentim var. Rekor.,"I hold 1,093 patents in America. A record.",kod
+BUR_AMB_G13_2_2,,SPK_TESLA,,0,"Benimki üç yüz civarı. Ama alternatif akım bir tane, evinizi ışıtan o.","Mine are around three hundred. But there is only one alternating current, and it lights your house.",kod
+BUR_AMB_G13_2_3,,SPK_EDISON,,0,Sayı niceliktir.,Numbers are quantity.,kod
+BUR_AMB_G13_2_4,,SPK_TESLA,,0,"Prize tak da say, kaç tanesi çalışıyor.",Plug it in and count how many of them work.,kod
+BUR_AMB_G13_3_1,,SPK_TESLA,,0,Doğru akımla her mile bir santral kuracaktın.,With direct current you would have had to build a power station every mile.,kod
+BUR_AMB_G13_3_2,,SPK_EDISON,,0,İş çıkardı.,It created jobs.,kod
+BUR_AMB_G13_3_3,,SPK_TESLA,,0,Fatura da çıkardı.,It created bills too.,kod
+BUR_AMB_G13_4_1,,SPK_TESLA,,0,Bir güvercine âşık olduğumu söyledim. Gazeteler 'garip' yazdı.,I said I loved a pigeon. The newspapers wrote 'strange'.,kod
+BUR_AMB_G13_4_2,,SPK_EDISON,,0,Ben iki kez evlendim. Basın hiçbir şey yazmadı.,I married twice. The press wrote nothing.,kod
+BUR_AMB_G13_4_3,,SPK_TESLA,,0,Güvercin hiç dilekçe vermedi. Uçup geldi.,The pigeon never filed a petition. She just flew in.,kod
+BUR_AMB_G13_5_1,,SPK_EDISON,,0,İlk deneme ampulüm on üç buçuk saat yandı.,My first test bulb burned for thirteen and a half hours.,kod
+BUR_AMB_G13_5_2,,SPK_TESLA,,0,"Bu bürodaki lambalar da öyle, yanıyor ama kimse aydınlanmıyor.","The lamps in this office are the same. They burn, but nobody gets enlightened.",kod
+BUR_AMB_G13_5_3,,SPK_EDISON,,0,"Ampulü ilk ben icat etmedim, ama ilk işe yarayanı yaptım.","I did not invent the bulb first, but I made the first practical one.",kod
+BUR_AMB_G13_6_1,,SPK_EINSTEIN,,0,"1915'te Nobel'i ikinize birden verecekler diye haber çıktı, biliyor musunuz?",In 1915 a rumour said the Nobel would go to both of you. Did you know?,kod
+BUR_AMB_G13_6_2,,SPK_TESLA,,0,"Haber çıktı, ödül çıkmadı.",The news came out. The prize did not.,kod
+BUR_AMB_G13_6_3,,SPK_EDISON,,0,İkimiz de almadık. Söylentiler Nobel'den uzun yaşıyor.,Neither of us got one. Rumours outlive Nobels.,kod
+BUR_AMB_G13_7_1,,SPK_TESLA,,0,Manyetik akı yoğunluğunun birimi benim adım: tesla.,The unit of magnetic flux density is my name: the tesla.,kod
+BUR_AMB_G13_7_2,,SPK_EDISON,,0,Ben bir şirketin kökü oldum: General Electric.,I became the root of a company: General Electric.,kod
+BUR_AMB_G13_7_3,,SPK_TESLA,,0,Bir de adımı kullanan otomobil şirketi var. Hissesi bende değil.,There is also a car company using my name. I own no shares.,kod
+BUR_AMB_G13_7_4,,SPK_EDISON,,0,"Bende şirket, sende birim. İkimiz de fatura bekliyoruz.","I got a company, you got a unit. Both of us are waiting for the bill.",kod
+BUR_AMB_G14_1_1,,SPK_SOCRATES,,0,Bir soru sorabilir miyim?,May I ask a question?,kod
+BUR_AMB_G14_1_2,,SPK_DIOGENES,,0,Hayır.,No.,kod
+BUR_AMB_G14_1_3,,SPK_SOCRATES,,0,Peki neden hayır?,And why not?,kod
+BUR_AMB_G14_1_4,,SPK_DIOGENES,,0,İşte bu yüzden.,That is why.,kod
+BUR_AMB_G14_2_1,,SPK_DIOGENES,,0,"Platon 'insan iki ayaklı, tüysüz hayvandır' demişti. Ben bir tavuk yolup 'Platon'un insanı' diye getirdim.",Plato said 'man is a featherless two-legged animal'. I plucked a chicken and brought 'Plato's man'.,kod
+BUR_AMB_G14_2_2,,SPK_SOCRATES,,0,Platon bana bunu anlatmamış.,Plato never told me that.,kod
+BUR_AMB_G14_2_3,,SPK_DIOGENES,,0,Tanıma sonra 'geniş tırnaklı' diye eklediler.,They later added 'with broad nails' to the definition.,kod
+BUR_AMB_G14_3_1,,SPK_SOCRATES,,0,"Şölende herkes uykuya yenildi. Ben sabaha kadar ayaktaydım, sonra yürüyüşe çıktım.",At the symposium everyone fell asleep. I stayed up all night and then went for a walk.,kod
+BUR_AMB_G14_3_2,,SPK_DIOGENES,,0,"Bilge uykusuz olur, demek.",So a sage is a sleepless man.,kod
+BUR_AMB_G14_3_3,,SPK_SOCRATES,,0,"Hayır. Hâlâ bilmediğimi biliyorum, uykuyu da.","No. I still know that I do not know, sleep included.",kod
+BUR_AMB_G14_4_1,,SPK_DIOGENES,,0,"İskender 'dile benden ne dilersen' dedi. Ben 'gölge etme, başka ihsan istemem' dedim.",Alexander said 'ask of me what you wish'. I said 'stand out of my sunlight'.,kod
+BUR_AMB_G14_4_2,,SPK_SOCRATES,,0,Tarihin en kısa dilekçesi.,The shortest petition in history.,kod
+BUR_AMB_G14_4_3,,SPK_DIOGENES,,0,Burada ona ek on form isterlerdi.,Here they would want ten more forms.,kod
+BUR_AMB_G14_5_1,,SPK_SOCRATES,,0,Gündüz fenerle insan aradığın söylenir. Buldun mu?,They say you searched for an honest man with a lamp in daylight. Did you find one?,kod
+BUR_AMB_G14_5_2,,SPK_DIOGENES,,0,Bu kuyrukta bir tane bulmak için fener yetmez. Bir de arama dilekçesi gerek.,A lamp is not enough to find one in this queue. You need a search petition too.,kod
+BUR_AMB_G14_5_3,,SPK_SOCRATES,,0,Dilekçe dürüst mü?,Is the petition honest?,kod
+BUR_AMB_G14_6_1,,SPK_SOCRATES,,0,Mahkeme cezamı sorunca 'Prytaneion'da bedava yemek' önerdim.,When the court asked my penalty I proposed free meals at the Prytaneion.,kod
+BUR_AMB_G14_6_2,,SPK_DIOGENES,,0,Jüri teklifi beğenmedi mi?,The jury did not like the offer?,kod
+BUR_AMB_G14_6_3,,SPK_SOCRATES,,0,Yemek bedavaydı. Teklif fazlaydı.,The meal was free. The offer was too much.,kod
+BUR_AMB_G14_7_1,,SPK_ARCHAEOLOGIST,,0,Sokrates hiç yazı yazmamış. Her şeyi öğrencisi Platon yazmış.,Socrates wrote nothing. His student Plato wrote everything.,kod
+BUR_AMB_G14_7_2,,SPK_SOCRATES,,0,Yazı hafızayı tembelleştirir derdim.,I used to say writing makes memory lazy.,kod
+BUR_AMB_G14_7_3,,SPK_DIOGENES,,0,Bu söz bile yazıyla bize ulaştı.,Even that remark reached us in writing.,kod
+BUR_AMB_G15_1_1,,SPK_NEWTON,,0,Elma kafama düşmedi. Düşerken gördüm. Yaralanma tutanağı yok.,The apple did not hit my head. I saw it fall. There is no injury report.,kod
+BUR_AMB_G15_1_2,,SPK_EINSTEIN,,0,Hikâyeyi sonradan Voltaire yaydı.,Voltaire spread the story later.,kod
+BUR_AMB_G15_1_3,,SPK_NEWTON,,0,Elma suçsuz.,The apple is innocent.,kod
+BUR_AMB_G15_2_1,,SPK_NEWTON,,0,Darphanede meyhanelerde kılık değiştirip sahtekâr kovaladım.,At the Mint I chased counterfeiters in disguise in taverns.,kod
+BUR_AMB_G15_2_2,,SPK_EINSTEIN,,0,"Ben patent bürosundaydım. Sahtekâr yoktu, yalnızca bekleyen icatlar.","I was in the patent office. No counterfeiters, only inventions waiting.",kod
+BUR_AMB_G15_2_3,,SPK_LEONARDO,,0,"Benim eserlerim hâlâ sahte çıkıyor. Hangisi gerçek, karar verilemiyor.",My works still turn out fake. It is hard to decide which is real.,kod
+BUR_AMB_G15_3_1,,SPK_NEWTON,,0,Simya üzerine yazdıklarım fiziğimden çok.,I wrote more on alchemy than on physics.,kod
+BUR_AMB_G15_3_2,,SPK_EINSTEIN,,0,Altın buldun mu?,Did you find gold?,kod
+BUR_AMB_G15_3_3,,SPK_NEWTON,,0,"Altını bulamadım, yer çekimini buldum. Takas.","No gold, but I found gravity. A trade.",kod
+BUR_AMB_G15_4_1,,SPK_NEWTON,,0,"Veba yüzünden üniversite kapandı. Evde iki yılda hesabı, ışığı, çekimi çözdüm.","The plague closed the university. At home in two years I solved calculus, light and gravity.",kod
+BUR_AMB_G15_4_2,,SPK_EINSTEIN,,0,Bana bir yıl yetti. 1905.,One year was enough for me. 1905.,kod
+BUR_AMB_G15_4_3,,SPK_LEONARDO,,0,Ben on yıl bir resme baktım.,I stared at one painting for ten years.,kod
+BUR_AMB_G15_5_1,,SPK_NEWTON,,0,Güney Denizi hisselerinde servet kaybettim.,I lost a fortune in South Sea shares.,kod
+BUR_AMB_G15_5_2,,SPK_EINSTEIN,,0,"Sana şu söz atfedilir: 'Gök cisimlerini hesaplarım, insan çılgınlığını hesaplayamam.'","They attribute to you: 'I can calculate the motion of the stars, but not the madness of men.'",kod
+BUR_AMB_G15_5_3,,SPK_NEWTON,,0,"Kaynağı yok. Atfedilen sözler hisse gibi, değer kaybeder.",No source. Attributed quotes are like shares: they lose value.,kod
+BUR_AMB_G15_6_1,,SPK_NEWTON,,0,Hooke'a mektupta 'devlerin omuzlarında durdum' yazdım.,"In a letter to Hooke I wrote, 'I stood on the shoulders of giants.'",kod
+BUR_AMB_G15_6_2,,SPK_EINSTEIN,,0,Ben de senin omuzlarında durdum.,I stood on your shoulders.,kod
+BUR_AMB_G15_6_3,,SPK_NEWTON,,0,Rahat mıydı?,Was it comfortable?,kod
+BUR_AMB_G15_6_4,,SPK_EINSTEIN,,0,Rahat. Yalnız arada yer çekimini biraz eğdim.,Comfortable. I did bend gravity a little now and then.,kod
+BUR_AMB_G15_7_1,,SPK_LEONARDO,,0,Gökkuşağında neden yedi renk dedin?,Why did you say seven colours in the rainbow?,kod
+BUR_AMB_G15_7_2,,SPK_NEWTON,,0,"Önce beş saydım. Yedi nota vardı, turuncu ile çivit eklendi.","I counted five first. There were seven notes, so orange and indigo were added.",kod
+BUR_AMB_G15_7_3,,SPK_LEONARDO,,0,Ressam için bu hile.,"For a painter, that is cheating.",kod
+BUR_AMB_G16_1_1,,SPK_SABRI,,0,Seyahat belgesi?,Travel document?,kod
+BUR_AMB_G16_1_2,,SPK_EVLIYA,,0,Kırk yıl geziyorum. Hiç belge sormadılar.,I travelled for forty years. Nobody ever asked for one.,kod
+BUR_AMB_G16_1_3,,SPK_SABRI,,0,Şimdi sorarlar. Kırk yılın dosyası eksik.,Now they will. Forty years of files are missing.,kod
+BUR_AMB_G16_2_1,,SPK_EVLIYA,,0,Hezarfen Ahmed Çelebi'nin Galata'dan uçtuğunu yalnız ben yazdım.,Only I wrote that Hezarfen Ahmed Çelebi flew from Galata.,kod
+BUR_AMB_G16_2_2,,SPK_SABRI,,0,Tek kaynak. Teyit formu yok. Doğrulanmamış.,A single source. No verification form. Unconfirmed.,kod
+BUR_AMB_G16_2_3,,SPK_EVLIYA,,0,Kanat yazılı.,The wings are written down.,kod
+BUR_AMB_G16_3_1,,SPK_COLUMBUS,,0,Orijinal seyir defterim kayıp. Las Casas'ın özeti kaldı.,My original logbook is lost. Las Casas's summary is what remains.,kod
+BUR_AMB_G16_3_2,,SPK_EVLIYA,,0,"Seyahatnamem on cilt. İlk basım 1896'da, yüzyıllar sonra.","My Seyahatname has ten volumes. First printed in 1896, centuries later.",kod
+BUR_AMB_G16_3_3,,SPK_SABRI,,0,İkiniz de 'kayıp' dosyadasınız. Kayıp sırası bu sıra.,You are both in the 'lost' file. The lost queue is this queue.,kod
+BUR_AMB_G16_4_1,,SPK_EVLIYA,,0,Kırk yıl yolda geçti. Viyana'ya bile heyetle gittim.,Forty years went on the road. I even went to Vienna with a delegation.,kod
+BUR_AMB_G16_4_2,,SPK_COLUMBUS,,0,Ben bir yolculuk için yıllarca izin bekledim.,I waited years for permission for a single voyage.,kod
+BUR_AMB_G16_4_3,,SPK_SABRI,,0,Bekleyen kazanır. Yola çıkan fazladan evrak doldurur.,He who waits wins. He who sets out fills in extra forms.,kod
+BUR_AMB_G16_5_1,,SPK_EVLIYA,,0,"İstanbul'un esnaf alaylarını tek tek yazdım: kaç dükkân, kaç usta, kaç çırak.","I wrote down Istanbul's guild processions one by one: how many shops, masters, apprentices.",kod
+BUR_AMB_G16_5_2,,SPK_SABRI,,0,Rapor böyle yazılır. Ek tablolu.,That is how a report is written. With annex tables.,kod
+BUR_AMB_G16_5_3,,SPK_COLUMBUS,,0,Benim raporum: 'Çok güzel bir ada.',My report said: 'A very beautiful island.',kod
+BUR_AMB_G16_5_4,,SPK_SABRI,,0,Yetersiz.,Insufficient.,kod
+BUR_AMB_G16_6_1,,SPK_SABRI,,0,Anlattıkların yalansa ceza var.,"If your stories are false, there is a penalty.",kod
+BUR_AMB_G16_6_2,,SPK_EVLIYA,,0,Bazı şeyleri abartmış olabilirim. Yanımda kimse yoktu.,I may have exaggerated some things. Nobody was with me.,kod
+BUR_AMB_G16_6_3,,SPK_SABRI,,0,Yanında kimse yoksa buna 'kişisel beyan' denir.,"If nobody was with you, it is called a 'personal statement'.",kod
+BUR_AMB_G16_6_4,,SPK_COLUMBUS,,0,Benimki 'kısmen doğru beyan'.,Mine is a 'partially correct statement'.,kod
+BUR_AMB_G16_7_1,,SPK_COLUMBUS,,0,İlk seferden altın yerine papağan getirdim.,From the first voyage I brought parrots instead of gold.,kod
+BUR_AMB_G16_7_2,,SPK_EVLIYA,,0,Ben hikâye getirdim.,I brought stories.,kod
+BUR_AMB_G16_7_3,,SPK_SABRI,,0,"İkiniz de nakit getirmediniz. Kayıt: gider var, gelir yok.","Neither of you brought cash. Record: expenses, no income.",kod
 BUR_AMB_G1_1_1,,SPK_NAPOLEON,,0,"Avrupa'nın yarısını fethettim, Cengiz.","I conquered half of Europe, Genghis.",kod
 BUR_AMB_G1_1_2,,SPK_GENGHIS,,0,Ben bir kıtayı. Sen son günlerini bir adada geçirdin.,I took a continent. You spent your last days on an island.,kod
 BUR_AMB_G1_2_1,,SPK_NAPOLEON,,0,Numaram 311. Seninki?,My number is 311. Yours?,kod
@@ -23,6 +156,25 @@ BUR_AMB_G1_2_4,,SPK_GENGHIS,,0,Kuşatma sürüyor. Numaratör henüz teslim olma
 BUR_AMB_G1_3_1,,SPK_GENGHIS,,0,"Boyun kaç, Napolyon?","How tall are you, Napoleon?",kod
 BUR_AMB_G1_3_2,,SPK_NAPOLEON,,0,Fransız ölçüsüyle beş ayak iki parmak. Yani bir altmış dokuz. Hesabı yanlış yapıyorlar.,"By French measure, five feet two. That's five foot seven in yours. They got the sums wrong.",kod
 BUR_AMB_G1_3_3,,SPK_GENGHIS,,0,Atlarım küçüktü. Ben yine de dünyaya yukarıdan baktım.,My horses were small. I still looked down on the world.,kod
+BUR_AMB_G1_4_1,,SPK_NAPOLEON,,0,Medeni Kanun'u ben yazdırdım. 1804'ten beri hâlâ ders kitaplarında.,I had the Civil Code drawn up. Since 1804 it has still been in the textbooks.,kod
+BUR_AMB_G1_4_2,,SPK_GENGHIS,,0,"Ben Yasa çıkardım. Elçiye dokunana ceza, postacıya selam.",I issued the Yassa. Touch an envoy and be punished; salute the postman.,kod
+BUR_AMB_G1_4_3,,SPK_NAPOLEON,,0,"Postacı bu kuyrukta yok, o yüzden hiçbir şey ulaşmıyor.","There are no postmen in this queue, which is why nothing ever arrives.",kod
+BUR_AMB_G1_5_1,,SPK_GENGHIS,,0,"Torunum Batu, Rus nehirlerinin buzu üstünden kışın ilerledi.",My grandson Batu advanced in winter over the ice of the Russian rivers.,kod
+BUR_AMB_G1_5_2,,SPK_NAPOLEON,,0,"Ben Rusya'ya haziranda girdim, kışa yakalandım. Takvimde hata var.",I entered Russia in June and winter caught me. There is an error in the calendar.,kod
+BUR_AMB_G1_5_3,,SPK_GENGHIS,,0,"Kış takvimde hata değil, hesaba katılacak bir ordudur.",Winter is not a calendar error. It is an army you must count.,kod
+BUR_AMB_G1_6_1,,SPK_NAPOLEON,,0,Ordu midesiyle yürür derler. Konserve icadının ödülünü 1810'da Appert'e ben verdirdim.,They say an army marches on its stomach. In 1810 I had the canning prize paid to Appert.,kod
+BUR_AMB_G1_6_2,,SPK_GENGHIS,,0,Biz kurutulmuş etle yürüdük. Açacak da gerekmedi.,We marched on dried meat. No can opener needed either.,kod
+BUR_AMB_G1_6_3,,SPK_NAPOLEON,,0,"Konserveyi buldurdum, açacak yarım asır sonra geldi.",I got the can invented. The can opener came half a century later.,kod
+BUR_AMB_G1_7_1,,SPK_GENGHIS,,0,Asıl adım Temüçin. Cengiz sonradan verilen bir unvan.,My real name is Temujin. Genghis was a title given later.,kod
+BUR_AMB_G1_7_2,,SPK_NAPOLEON,,0,Ben Napoleone di Buonaparte doğdum. Fransızcaya sonradan çevirdim.,I was born Napoleone di Buonaparte. I translated it into French later.,kod
+BUR_AMB_G1_7_3,,SPK_GENGHIS,,0,İkimizin de adı bu formlarda yanlış. Ad değişikliği dilekçesi lazım.,Both our names are wrong on these forms. We need a name-change petition.,kod
+BUR_AMB_G1_8_1,,SPK_NAPOLEON,,0,Mısır seferimde askerlerim Rosetta Taşı'nı buldu. 1799.,On my Egypt campaign my soldiers found the Rosetta Stone. 1799.,kod
+BUR_AMB_G1_8_2,,SPK_GENGHIS,,0,Taş sende mi kaldı?,Did you keep the stone?,kod
+BUR_AMB_G1_8_3,,SPK_NAPOLEON,,0,İngilizler aldı. Bende yalnızca bulduğuma dair belge var.,The British took it. All I have is a document saying I found it.,kod
+BUR_AMB_G1_9_1,,SPK_GENGHIS,,0,Mezarımın yeri hâlâ bilinmiyor. Gizli kaldı.,My tomb has still never been found. It stayed secret.,kod
+BUR_AMB_G1_9_2,,SPK_NAPOLEON,,0,Benimki Invalides'te. Turist kuyruğu bile var.,Mine is at Les Invalides. There is even a tourist queue.,kod
+BUR_AMB_G1_9_3,,SPK_GENGHIS,,0,Demek ölünce kuyruk ilerliyor.,So once you are dead the queue moves.,kod
+BUR_AMB_G1_9_4,,SPK_NAPOLEON,,0,Yalnızca başkaları için.,Only for other people.,kod
 BUR_AMB_G2_1_1,,SPK_ROBOT,,0,Lütfen duvara bakmaya devam edin.,Please keep facing the wall.,kod
 BUR_AMB_G2_1_2,,SPK_HITLER,,0,Ne kadar daha?,For how much longer?,kod
 BUR_AMB_G2_1_3,,SPK_ROBOT,,0,Talimatta süre yok. Hesaplamaya göre sonsuz. Sorduğunuz için teşekkürler.,"The instruction gives no duration. By my calculation, forever. Thank you for asking.",kod
@@ -33,29 +185,127 @@ BUR_AMB_G2_3_1,,SPK_HITLER,,0,Sırtımda ne yazıyor?,What does it say on my bac
 BUR_AMB_G2_3_2,,SPK_ROBOT,,0,"'Reddedildi, beslemeyin.' Ben de talimata uyuyor, sizi beslemiyorum.","'Rejected, do not feed.' I am following the instruction and not feeding you.",kod
 BUR_AMB_G2_3_3,,SPK_HITLER,[excited],0,Zaten aç değilim!,I am not even hungry!,kod
 BUR_AMB_G2_3_4,,SPK_ROBOT,,0,Talimat yine de geçerli.,The instruction remains valid regardless.,kod
+BUR_AMB_G2_4_1,,SPK_ROBOT,,0,Duvarda 4.212 tuğla var. Saymak vakit geçirir.,"There are 4,212 bricks on the wall. Counting helps pass the time.",kod
+BUR_AMB_G2_4_2,,SPK_HITLER,,0,Saydım. Hepsini.,I counted. All of them.,kod
+BUR_AMB_G2_4_3,,SPK_ROBOT,,0,Yanlış saydınız. Baştan.,You counted wrong. From the start.,kod
+BUR_AMB_G2_5_1,,SPK_NAPOLEON,,0,Rusya'ya kışın yürüyenin sonu kötü biter. Bunu ben öğrendim.,Marching into Russia ends badly. I learned that the hard way.,kod
+BUR_AMB_G2_5_2,,SPK_ROBOT,,0,Kayıtlara göre ikinci kez öğrenen çıkmadı.,"According to the records, nobody learned it the second time either.",kod
+BUR_AMB_G2_5_3,,SPK_HITLER,,0,Beni konuşturmayın.,Do not make me talk.,kod
+BUR_AMB_G2_6_1,,SPK_HITLER,,0,Bir sandalye istiyorum.,I want a chair.,kod
+BUR_AMB_G2_6_2,,SPK_ROBOT,,0,Sandalye talebi reddedildi. Gerekçe: oturursanız rahatlarsınız.,"Chair request rejected. Reason: if you sit, you might get comfortable.",kod
+BUR_AMB_G2_6_3,,SPK_HITLER,,0,Ne var bunda?,What is wrong with that?,kod
+BUR_AMB_G2_6_4,,SPK_ROBOT,,0,Düşünme Köşesi'nde rahatlık hizmeti kayıtlı değil.,Comfort is not a registered service in the Thinking Corner.,kod
+BUR_AMB_G2_7_1,,SPK_ROBOT,,0,"Duvar rengi seçebilirsiniz: beyaz, krem ya da kırık beyaz.","You may choose the wall colour: white, cream or off-white.",kod
+BUR_AMB_G2_7_2,,SPK_HITLER,,0,Fark ne?,What is the difference?,kod
+BUR_AMB_G2_7_3,,SPK_ROBOT,,0,Üç yüz yıl bakarsanız anlarsınız.,Look at it for three hundred years and you will see.,kod
+BUR_AMB_G2_8_1,,SPK_NAPOLEON,,0,Ben sürgünde anılarımı yazdırdım.,In exile I dictated my memoirs.,kod
+BUR_AMB_G2_8_2,,SPK_HITLER,,0,Bir kalem istiyorum.,I want a pen.,kod
+BUR_AMB_G2_8_3,,SPK_ROBOT,,0,Kalem talebi reddedildi. Duvara yazı yazmak kirlilik sayılır.,Pen request rejected. Writing on the wall counts as pollution.,kod
+BUR_AMB_G2_9_1,,SPK_ROBOT,,0,Memnuniyet anketi: Bir ile beş arası puan verin.,Satisfaction survey: please give a score from one to five.,kod
+BUR_AMB_G2_9_2,,SPK_HITLER,[excited],0,Sıfır!,Zero!,kod
+BUR_AMB_G2_9_3,,SPK_ROBOT,,0,Ölçekte sıfır yok. Bir yazıldı. Bu bile cömertlik.,There is no zero on the scale. Recorded as one. Even that is generous.,kod
 BUR_AMB_G3_1_1,,SPK_MARCOPOLO,,0,Kitabıma 'Milyon' lakabı takıldı. Anlattıklarım abartı sayıldı.,My book got the nickname 'The Million'. They thought my stories were exaggerated.,kod
 BUR_AMB_G3_1_2,,SPK_GALILEO,,0,Ben gördüğümü olduğu gibi anlattım. Ev hapsi verdiler.,I described what I saw exactly as it was. They gave me house arrest.,kod
 BUR_AMB_G3_1_3,,SPK_MARCOPOLO,,0,Bence abartmak daha az cezalı.,I think exaggerating carries a lighter sentence.,kod
 BUR_AMB_G3_2_1,,SPK_GALILEO,,0,Teleskobumu Venedik Senatosu'na Aziz Markos çan kulesinden gösterdim.,I showed my telescope to the Venetian Senate from the bell tower of St Mark's.,kod
 BUR_AMB_G3_2_2,,SPK_MARCOPOLO,,0,Biz uzağı görmek için yürüyerek giderdik.,We used to walk there to see the far away.,kod
 BUR_AMB_G3_2_3,,SPK_GALILEO,,0,"Yirmi dört yılda sen, bir akşamda ben. Verimlilik ortada.","Twenty-four years for you, one evening for me. Efficiency speaks for itself.",kod
+BUR_AMB_G3_3_1,,SPK_MARCOPOLO,,0,"Kitabı Genova'da hapisteyken Rustichello'ya anlattım, o yazdı.",I dictated my book to Rustichello while in prison in Genoa. He wrote it down.,kod
+BUR_AMB_G3_3_2,,SPK_GALILEO,,0,Ben ev hapsinde yazdım. İki Yeni Bilim'i 1638'de bitirdim.,I wrote under house arrest. I finished Two New Sciences in 1638.,kod
+BUR_AMB_G3_3_3,,SPK_MARCOPOLO,,0,Ev hapsi hapse göre lüks. Mutfak yakın.,House arrest beats prison. The kitchen is close.,kod
+BUR_AMB_G3_4_1,,SPK_MARCOPOLO,,0,"Çin'de kâğıt paraya baktım, kimse inanmadı bana.",In China I saw paper money. Nobody believed me.,kod
+BUR_AMB_G3_4_2,,SPK_GALILEO,,0,Şimdi herkes cüzdanında taşıyor.,Now everybody carries it in their wallet.,kod
+BUR_AMB_G3_4_3,,SPK_MARCOPOLO,,0,Ve hâlâ kimse değerine inanmıyor.,And still nobody believes it is worth anything.,kod
+BUR_AMB_G3_5_1,,SPK_MARCOPOLO,,0,Ölürken 'gördüklerimin yarısını bile anlatmadım' dediğim söylenir.,"On my deathbed I am said to have said, 'I have not told half of what I saw.'",kod
+BUR_AMB_G3_5_2,,SPK_GALILEO,,0,Ben de 'Yine de dönüyor' dediğim söylenir.,"I am said to have said, 'And yet it moves.'",kod
+BUR_AMB_G3_5_3,,SPK_MARCOPOLO,,0,İkimizin de kaynakçası zayıf.,Both our bibliographies are weak.,kod
+BUR_AMB_G3_6_1,,SPK_GALILEO,,0,Jüpiter'in dört uydusunu buldum. Medici ailesinin adını verdim.,I found four moons of Jupiter. I named them after the Medici family.,kod
+BUR_AMB_G3_6_2,,SPK_MARCOPOLO,,0,Sponsor adı. Bende sponsor aileydi: babam ve amcam.,A sponsor's name. My sponsors were family: my father and uncle.,kod
+BUR_AMB_G3_6_3,,SPK_GALILEO,,0,Bana maaş bağladılar. Ev hapsi ek paket çıktı.,They gave me a salary. House arrest came later as an add-on.,kod
+BUR_AMB_G3_7_1,,SPK_GALILEO,,0,Pisa Katedrali'nde sallanan kandile bakıp sarkacı anladığım söylenir.,They say I understood the pendulum watching a swinging lamp in Pisa Cathedral.,kod
+BUR_AMB_G3_7_2,,SPK_MARCOPOLO,,0,Söylenir mi?,They say?,kod
+BUR_AMB_G3_7_3,,SPK_GALILEO,,0,"Hikâyeyi öğrencim Viviani, ben öldükten sonra yazdı.",My student Viviani wrote the story down after I died.,kod
+BUR_AMB_G3_8_1,,SPK_MARCOPOLO,,0,Kubilay Han bana altın bir levha verdi. Her kapı açıldı.,Kublai Khan gave me a golden tablet. Every door opened.,kod
+BUR_AMB_G3_8_2,,SPK_GALILEO,,0,Bana Engizisyon'dan celp geldi. Kapı kapandı.,I got a summons from the Inquisition. A door closed.,kod
+BUR_AMB_G3_8_3,,SPK_MARCOPOLO,,0,"Levha kapı açar, celp kapı kapatır. İkisi de aynı kâğıt işi.","A tablet opens doors, a summons closes them. Same paperwork either way.",kod
 BUR_AMB_G4_1_1,,SPK_MOZART,,0,Altı yüzden fazla eser yazdım ama hep borç istemek zorunda kaldım.,"I wrote over six hundred works, yet I was always asking for loans.",kod
 BUR_AMB_G4_1_2,,SPK_CURIE,,0,Ben iki Nobel aldım ama laboratuvarın faturasını hâlâ düşünüyorum.,I won two Nobels and I still worry about the laboratory bills.,kod
 BUR_AMB_G4_1_3,,SPK_MOZART,,0,"Demek ki dehaya verilen ödül, fatura ödemeye yetmiyor.",So a prize for genius does not cover the bills.,kod
 BUR_AMB_G4_2_1,,SPK_CURIE,,0,Radyum şişeleri geceleri karanlıkta hafifçe parlardı. Yorulunca onlara bakardım.,"The radium vials glowed faintly in the dark at night. When I was tired, I would look at them.",kod
 BUR_AMB_G4_2_2,,SPK_MOZART,,0,Don Giovanni'nin uvertürünü prömiyerden önceki gece yazdığım anlatılır.,They say I wrote the Don Giovanni overture the night before the premiere.,kod
 BUR_AMB_G4_2_3,,SPK_CURIE,,0,"Bu büronun teslim tarihleri sizden etkilenmemiş, görüyorum.",I see this office's deadlines have not learned anything from you.,kod
+BUR_AMB_G4_3_1,,SPK_MOZART,,0,Requiem'i yarım bıraktım. Öğrencim Süssmayr bitirdi.,I left the Requiem unfinished. My student Süssmayr completed it.,kod
+BUR_AMB_G4_3_2,,SPK_CURIE,,0,Benim defterlerim hâlâ radyoaktif. Kurşun kutuda duruyorlar.,My notebooks are still radioactive. They sit in lead boxes.,kod
+BUR_AMB_G4_3_3,,SPK_MOZART,,0,İkimizin dosyası da kimseye verilmiyor.,Neither of our files is handed to anyone.,kod
+BUR_AMB_G4_4_1,,SPK_CURIE,,0,Polonyum'u ülkem Polonya'ya adadım. O zaman haritada yoktu.,"I named polonium after my country, Poland. It was not on the map then.",kod
+BUR_AMB_G4_4_2,,SPK_MOZART,,0,Ben Salzburg'dan istifa ettim. Kabul edildi. Tekmeyle.,I resigned from Salzburg. It was accepted. With a kick.,kod
+BUR_AMB_G4_4_3,,SPK_CURIE,,0,"Burada istifalar da sıra bekliyor, hem de tekmesiz.","Here resignations queue too, and without the kick.",kod
+BUR_AMB_G4_5_1,,SPK_MOZART,,0,Altı yaşında saraylarda çaldım.,At six years old I played in palaces.,kod
+BUR_AMB_G4_5_2,,SPK_CURIE,,0,Ben yirmi dört yaşında Paris'e gittim. Çatı katında suyum donardı.,I went to Paris at twenty-four. The water froze in my attic room.,kod
+BUR_AMB_G4_5_3,,SPK_MOZART,,0,"Bende erken dâhi, sende geç dâhi. İkimiz de bütçesiz.","I was an early genius, you a late one. Neither of us had a budget.",kod
+BUR_AMB_G4_6_1,,SPK_CURIE,,0,Savaşta röntgen araçları yaptım. Askerler onlara 'küçük Curie' dedi.,In the war I built X-ray vehicles. The soldiers called them 'little Curies'.,kod
+BUR_AMB_G4_6_2,,SPK_MOZART,,0,Araçlara adın verilmiş. Benim mezarımın yeri bile belli değil.,They named vehicles after you. My grave's location is not even known.,kod
+BUR_AMB_G4_6_3,,SPK_CURIE,,0,Ben Panthéon'dayım. Kendi başarısıyla yatan ilk kadın.,I am in the Panthéon. The first woman laid there on her own merit.,kod
+BUR_AMB_G4_7_1,,SPK_MOZART,,0,Rondo alla Turca'yı yazdım. Türkiye'ye hiç gitmedim.,I wrote the Rondo alla Turca. I never went to Turkey.,kod
+BUR_AMB_G4_7_2,,SPK_CURIE,,0,Uzaktan çalışmanın erken bir örneği.,An early example of remote work.,kod
+BUR_AMB_G4_7_3,,SPK_MOZART,,0,"Yine de en çok çalınan parçam o oldu, bu kuyrukta da çalıyor.",It is still one of my most played pieces. It plays in this queue too.,kod
+BUR_AMB_G4_8_1,,SPK_MOZART,,0,Ablam Nannerl de benim kadar yetenekliydi.,My sister Nannerl was just as gifted as me.,kod
+BUR_AMB_G4_8_2,,SPK_CURIE,,0,Kızım Irène 1935'te Nobel aldı.,My daughter Irène won a Nobel in 1935.,kod
+BUR_AMB_G4_8_3,,SPK_MOZART,,0,Ailede ödül de fatura da kalıtsal.,"In the family, prizes and bills are both hereditary.",kod
 BUR_AMB_G5_1_1,,SPK_SINAN,,0,Süleymaniye'de kandil isi özel bir odada toplanıp mürekkep oldu. Hiçbir şey boşa gitmedi.,"In the Süleymaniye, lamp soot was gathered in a special chamber and made into ink. Nothing was wasted.",kod
 BUR_AMB_G5_1_2,,SPK_NASREDDIN,,0,"Burada da öyle usta. Bütün bekleme boşa gitmiyor, evraka dönüşüyor.","Same here, master. None of the waiting is wasted. It turns into paperwork.",kod
 BUR_AMB_G5_2_1,,SPK_NASREDDIN,,0,"Usta, bana bir eşek ahırı yapsan, buraya yine ters otururum.","Master, if you built me a donkey stable, I would still sit backwards in here.",kod
 BUR_AMB_G5_2_2,,SPK_SINAN,,0,Ahır için önce dilekçe lazım Hocam.,"For a stable you need a petition first, Hodja.",kod
 BUR_AMB_G5_2_3,,SPK_NASREDDIN,,0,Dilekçeyi eşeğe yazdırırım. O benden sabırlı.,I will have the donkey write the petition. He is more patient than me.,kod
+BUR_AMB_G5_3_1,,SPK_SINAN,,0,"Şehzade'ye çıraklık, Süleymaniye'ye kalfalık, Selimiye'ye ustalık eserim dedim.","I called the Şehzade my apprentice work, the Süleymaniye my journeyman work, the Selimiye my master work.",kod
+BUR_AMB_G5_3_2,,SPK_NASREDDIN,,0,Ben hâlâ çırağım. Buradan terfi çıkmadı.,I am still an apprentice. No promotion has come from here.,kod
+BUR_AMB_G5_3_3,,SPK_SINAN,,0,Bana üç eserde çıktı.,Mine came after three works.,kod
+BUR_AMB_G5_3_4,,SPK_NASREDDIN,,0,"Sende eser, bende dilekçe.","You have works, I have petitions.",kod
+BUR_AMB_G5_4_1,,SPK_NASREDDIN,,0,"Komşudan kazan aldım, geri verirken küçüğünü ekledim. 'Kazan doğurdu' dedim.","I borrowed a pot and returned it with a small one. I said, 'The pot gave birth.'",kod
+BUR_AMB_G5_4_2,,SPK_SINAN,,0,Komşu inandı mı?,Did the neighbour believe it?,kod
+BUR_AMB_G5_4_3,,SPK_NASREDDIN,,0,Doğuma inandı. Kazan ölünce inanmadı.,He believed the birth. He did not believe it when the pot died.,kod
+BUR_AMB_G5_4_4,,SPK_SINAN,,0,Bürokraside buna 'çelişkili beyan' denir.,In bureaucracy that is called a 'contradictory statement'.,kod
+BUR_AMB_G5_5_1,,SPK_SINAN,,0,Süleymaniye'yi yedi yılda bitirdik.,We finished the Süleymaniye in seven years.,kod
+BUR_AMB_G5_5_2,,SPK_NASREDDIN,,0,Bu kuyrukta yedi yılda ilk beş kişi hâlâ yerinde.,"In this queue, after seven years the first five people are still in place.",kod
+BUR_AMB_G5_5_3,,SPK_SINAN,,0,Demek kuyruk yapıdan sağlam.,So the queue is sturdier than the building.,kod
+BUR_AMB_G5_6_1,,SPK_NASREDDIN,,0,Ziyafette eski kıyafetle itibar görmedim. Kürkle gidince kürküme yemek ikram ettim.,"At a feast nobody honoured my old clothes. Wearing a fur coat, I fed the coat.",kod
+BUR_AMB_G5_6_2,,SPK_SINAN,,0,Burada kürk de numara alır mı?,Would a fur coat take a number here?,kod
+BUR_AMB_G5_6_3,,SPK_NASREDDIN,,0,Alır. Kürk sırada benden önce geçti bile.,It would. The coat has already passed me in the queue.,kod
+BUR_AMB_G5_7_1,,SPK_SINAN,,0,Hayatımı Sâî Mustafa Çelebi'ye anlattım. Adı Tezkiretü'l-Bünyan.,I told my life story to Sâî Mustafa Çelebi. It is called Tezkiretü'l-Bünyan.,kod
+BUR_AMB_G5_7_2,,SPK_NASREDDIN,,0,Benim fıkralarımı başkaları anlattı. Yarısını ben bile bilmiyorum.,Others told my stories. I do not even know half of them.,kod
+BUR_AMB_G5_7_3,,SPK_SINAN,,0,İkimiz de başkaları sayesinde biliniyoruz.,We are both known thanks to other people.,kod
+BUR_AMB_G5_8_1,,SPK_NASREDDIN,,0,"Anahtarı evde kaybettim, ışık burada diye sokakta arıyorum.","I lost the key at home, but I search in the street because the light is better.",kod
+BUR_AMB_G5_8_2,,SPK_SINAN,,0,İtiraz birimi de dosyayı aydınlık odada arıyor.,The appeals unit also looks for the file in the lit room.,kod
+BUR_AMB_G5_8_3,,SPK_NASREDDIN,,0,"Dosya karanlıkta, kuyruk aydınlıkta.","The file is in the dark, the queue is in the light.",kod
 BUR_AMB_G6_1_1,,SPK_GALILEO,,0,"Dünya gerçekten yuvarlak mı, Yuri?","Is the Earth really round, Yuri?",kod
 BUR_AMB_G6_1_2,,SPK_GAGARIN,,0,"Yuvarlak ve mavi. Pencereden baktım, bitti.",Round and blue. I looked out of the window and that was that.,kod
 BUR_AMB_G6_1_3,,SPK_GALILEO,,0,Ben bir ömür kanıt aradım. Sen pencereye baktın. Haksızlık.,I spent a lifetime searching for proof. You looked out of a window. Unfair.,kod
 BUR_AMB_G6_2_1,,SPK_GAGARIN,,0,"Teleskopsuz gördüm, Galileo. Dünya pencereye tamamen sığdı.","I saw it without a telescope, Galileo. The whole Earth fitted in the window.",kod
 BUR_AMB_G6_2_2,,SPK_GALILEO,,0,Ben yıllarca mercek cilaladım.,I spent years polishing lenses.,kod
 BUR_AMB_G6_2_3,,SPK_GAGARIN,,0,Roketle yukarı çıkınca cila gerekmiyor.,"When you go up in a rocket, you do not need to polish anything.",kod
+BUR_AMB_G6_3_1,,SPK_GAGARIN,,0,Dünyanın etrafını yüz sekiz dakikada döndüm.,I went round the Earth in one hundred and eight minutes.,kod
+BUR_AMB_G6_3_2,,SPK_GALILEO,,0,Ben Dünya dönüyor dedim diye 1633'te sorgulandım.,I said the Earth moves and was put on trial in 1633.,kod
+BUR_AMB_G6_3_3,,SPK_GAGARIN,,0,"Sen dönüyor dedin, ben döndüm. Madalya bende, mahkeme sende.","You said it moves, I went round it. The medal is mine, the trial is yours.",kod
+BUR_AMB_G6_4_1,,SPK_GAGARIN,,0,Kalkışta 'Poyekhali' dedim. 'Hadi gidelim' demek.,At liftoff I said 'Poyekhali'. It means 'Let's go'.,kod
+BUR_AMB_G6_4_2,,SPK_GALILEO,,0,Senin sözün radyoda kayıtlı. Benimkini yıllar sonra uydurmuşlar.,Your words are on the radio record. Mine were made up years later.,kod
+BUR_AMB_G6_4_3,,SPK_GAGARIN,,0,Teyp olsaydı sen de ispat ederdin.,"If there had been a tape recorder, you would have proved it too.",kod
+BUR_AMB_G6_4_4,,SPK_GALILEO,,0,Ben ispat ettim. Teyp yoktu.,I did prove it. There was no tape.,kod
+BUR_AMB_G6_5_1,,SPK_GALILEO,,0,Kapsülle mi indin?,Did you land in the capsule?,kod
+BUR_AMB_G6_5_2,,SPK_GAGARIN,,0,"Hayır. Yaklaşık yedi kilometrede dışarı atladım, kapsül ayrı indi.","No. At about seven kilometres up I ejected, and the capsule came down separately.",kod
+BUR_AMB_G6_5_3,,SPK_GALILEO,,0,Dönüş formunda ikiniz de 'indi' yazar mı?,On the return form do both of you read 'landed'?,kod
+BUR_AMB_G6_5_4,,SPK_GAGARIN,,0,"Evet. Tek satır, iki ayrı iniş.","Yes. One line, two separate landings.",kod
+BUR_AMB_G6_6_1,,SPK_GALILEO,,0,Ay'da dağ ve krater var dedim. 'Ay mükemmel küredir' diyenler kızdı.,I said the Moon has mountains and craters. Those who said it was a perfect sphere got angry.,kod
+BUR_AMB_G6_6_2,,SPK_GAGARIN,,0,1959'da bizim Luna 3 arka yüzünü fotoğrafladı.,In 1959 our Luna 3 photographed its far side.,kod
+BUR_AMB_G6_6_3,,SPK_GALILEO,,0,Arka yüz! Ben ön yüz için ömür harcadım.,The far side! I spent a lifetime on the near side.,kod
+BUR_AMB_G6_7_1,,SPK_GAGARIN,,0,Uçuşum sürerken binbaşılığa terfi ettim. Yüzbaşılığı atladım.,During my flight I was promoted to major. I skipped captain.,kod
+BUR_AMB_G6_7_2,,SPK_GALILEO,,0,Burada terfi dosyası bir yüzyıl sürer.,Here a promotion file takes a century.,kod
+BUR_AMB_G6_7_3,,SPK_GAGARIN,,0,Ben yüz sekiz dakikada hallettim.,I sorted mine in one hundred and eight minutes.,kod
+BUR_AMB_G6_8_1,,SPK_GALILEO,,0,"Bir parmağım Floransa'da müzede. Cam fanusta, kimse el sıkmıyor.","One of my fingers is in a museum in Florence. In a glass case, nobody shakes it.",kod
+BUR_AMB_G6_8_2,,SPK_GAGARIN,,0,Kapsülüm Moskova yakınlarında müzede.,My capsule is in a museum near Moscow.,kod
+BUR_AMB_G6_8_3,,SPK_GALILEO,,0,"İkimiz de müzede sergileniyoruz. Ben parmakla, sen kapsülle.","We are both on display in museums. Me with a finger, you with a capsule.",kod
+BUR_AMB_G6_9_1,,SPK_GAGARIN,,0,"Numaram 1961. Seçmedim, makine verdi.","My number is 1961. I did not choose it, the machine gave it.",kod
+BUR_AMB_G6_9_2,,SPK_GALILEO,,0,Benimki 1633. Sıra bana yakın olmalı.,Mine is 1633. My turn should be closer.,kod
+BUR_AMB_G6_9_3,,SPK_GAGARIN,,0,Tarihe bakarsan öyle. Kuyruğa bakarsan ikimiz de aynı yerdeyiz.,"By the calendar, yes. By the queue, we are both in the same place.",kod
 BUR_AMB_G7_1_1,,SPK_CAESAR,,0,"Oyunun adı benim, ama ben üçüncü perdede ölüyorum.","The play is named after me, but I die in the third act.",kod
 BUR_AMB_G7_1_2,,SPK_SHAKESPEARE,,0,Başlık sende kaldı. Reklam bunu gerektirdi.,You kept the title. Marketing required it.,kod
 BUR_AMB_G7_1_3,,SPK_CAESAR,,0,Kalan iki perdeyi Brütüs kazandı. Başrol karşılığı bile ödenmedi.,Brutus took the remaining acts. I was not even paid for a lead role.,kod
@@ -64,6 +314,26 @@ BUR_AMB_G7_2_2,,SPK_SHAKESPEARE,,0,"Onu 1920'lerde Cardini adlı bir aşçı ica
 BUR_AMB_G7_2_3,,SPK_CAESAR,,0,Yani iki bin yıl sonra adım bir tabağa da kaldı.,So two thousand years later my name ended up on a plate.,kod
 BUR_AMB_G7_3_1,,SPK_CAESAR,,0,Roma'da şarabı suyla karıştırırdık. Buranın çayı da bir şeyle karışık mı?,In Rome we mixed wine with water. Is the tea here mixed with something too?,kod
 BUR_AMB_G7_3_2,,SPK_NECMI,,0,"Hayır efendim, sadece zamanla demlendi. Hem de çok demlendi.","No, sir, only with time. It has been brewing for a very long time.",kod
+BUR_AMB_G7_4_1,,SPK_CAESAR,,0,'Sen de mi Brütüs' demedim. Suetonius bazılarına göre 'sen de mi evlat' dediğimi yazar.,"I never said 'Et tu, Brute'. Suetonius says some report I said 'you too, child'.",kod
+BUR_AMB_G7_4_2,,SPK_SHAKESPEARE,,0,Latince daha vurucuydu. Tiyatro bunu gerektiriyor.,The Latin hit harder. Theatre demands it.,kod
+BUR_AMB_G7_4_3,,SPK_CAESAR,,0,"Gerçek sözlerim için telif almadım, uydurulanlar için de.","I got no royalty for my real words, nor for the invented ones.",kod
+BUR_AMB_G7_5_1,,SPK_CAESAR,,0,Bir ay bana adandı: Temmuz.,A month was named after me: July.,kod
+BUR_AMB_G7_5_2,,SPK_SHAKESPEARE,,0,"Ben 23 Nisan'da doğdum, 23 Nisan'da öldüm sayılır. Ay yok.",I was born on 23 April and traditionally died on 23 April. No month.,kod
+BUR_AMB_G7_5_3,,SPK_NECMI,,0,Bizde her ay 'Dosya Ayı' efendim.,"Here every month is File Month, sir.",kod
+BUR_AMB_G7_6_1,,SPK_SHAKESPEARE,,0,"Altı imzam kaldı, hiçbirinde adım aynı yazılmamış.","Six signatures of mine survive, and no two spell my name the same.",kod
+BUR_AMB_G7_6_2,,SPK_NECMI,,0,Burada ad yanlış olsa da mühür vurulur efendim.,"Here, even with a wrong name, the stamp is applied, sir.",kod
+BUR_AMB_G7_6_3,,SPK_CAESAR,,0,Bu da bir hüküm.,That is also a ruling.,kod
+BUR_AMB_G7_7_1,,SPK_CAESAR,,0,"Gençken korsanlar beni kaçırdı. Yirmi talent dediler, ben elli dedim.","As a young man pirates kidnapped me. They said twenty talents, I said fifty.",kod
+BUR_AMB_G7_7_2,,SPK_SHAKESPEARE,,0,Fidyeyi sen mi yükselttin?,You raised the ransom yourself?,kod
+BUR_AMB_G7_7_3,,SPK_CAESAR,,0,Ucuz kalmak aşağılayıcıydı.,Being cheap was insulting.,kod
+BUR_AMB_G7_7_4,,SPK_NECMI,,0,Bizde fiyat hep indirimli. Alan çıkmıyor.,Here prices are always discounted. Nobody buys.,kod
+BUR_AMB_G7_8_1,,SPK_SHAKESPEARE,,0,Globe Tiyatrosu 1613'te yandı. Sahne topu çatıyı tutuşturdu.,The Globe burned down in 1613. A stage cannon set the roof alight.,kod
+BUR_AMB_G7_8_2,,SPK_CAESAR,,0,Seyirci kurtuldu mu?,Did the audience escape?,kod
+BUR_AMB_G7_8_3,,SPK_SHAKESPEARE,,0,"Evet. Yalnız bir beyefendinin pantolonu yandı, birayla söndürdüler.","Yes. Only one man's breeches caught fire, put out with ale.",kod
+BUR_AMB_G7_8_4,,SPK_NECMI,,0,Çayla olsaydı daha geç sönerdi.,With tea it would have burned longer.,kod
+BUR_AMB_G7_9_1,,SPK_SHAKESPEARE,,0,Oyunda falcı 'Mart'ın İdleri'ne dikkat et' diyor.,In the play the soothsayer says 'Beware the Ides of March'.,kod
+BUR_AMB_G7_9_2,,SPK_CAESAR,,0,Takvime kırmızı daire çizmeliydim.,I should have drawn a red circle on the calendar.,kod
+BUR_AMB_G7_9_3,,SPK_NECMI,,0,Bizde takvim yok efendim. Daire için kalem de yok.,"We have no calendar here, sir. No pen for circles either.",kod
 BUR_AMB_G8_1_1,,SPK_COLUMBUS,,0,Kayıp kıta bildirmeye geldim.,I have come to report a lost continent.,kod
 BUR_AMB_G8_1_2,,SPK_SABRI,,0,Gazeteyi indirmeden soruyorum: Kaç tane?,Without lowering the newspaper: how many?,kod
 BUR_AMB_G8_1_3,,SPK_COLUMBUS,,0,İki. Kuzey ve güney.,Two. North and south.,kod
@@ -72,15 +342,59 @@ BUR_AMB_G8_2_1,,SPK_COLUMBUS,,0,Orada yaşayanlara 'Hintli' dedim. Hindistan'a v
 BUR_AMB_G8_2_2,,SPK_SABRI,,0,Hâlâ öyle mi diyorlar?,Do they still call them that?,kod
 BUR_AMB_G8_2_3,,SPK_COLUMBUS,,0,"Bazıları öyle diyor, beş yüz yıldır.","Some do, for five hundred years now.",kod
 BUR_AMB_G8_2_4,,SPK_SABRI,,0,Yanlış bir ad beş yüz yıl durursa artık doğrudur. Biz öyle çalışırız.,A wrong name that lasts five hundred years becomes correct. That is how we work.,kod
+BUR_AMB_G8_3_1,,SPK_COLUMBUS,,0,Karayı ilk Rodrigo de Triana gördü. Ödülü ben aldım.,Rodrigo de Triana saw land first. I collected the reward.,kod
+BUR_AMB_G8_3_2,,SPK_SABRI,,0,Nasıl oldu?,How did that happen?,kod
+BUR_AMB_G8_3_3,,SPK_COLUMBUS,,0,Bir gece önce ışık gördüğümü söyledim.,I said I had seen a light the night before.,kod
+BUR_AMB_G8_3_4,,SPK_SABRI,,0,İlk imza ödülü alır. Biz de öyleyiz.,First signature takes the reward. Same here.,kod
+BUR_AMB_G8_4_1,,SPK_COLUMBUS,,0,Kıtaya adım verilmedi. Amerigo Vespucci'nin adı verildi.,The continent was not given my name. It got Amerigo Vespucci's.,kod
+BUR_AMB_G8_4_2,,SPK_SABRI,,0,"Kayıt 1507, Waldseemüller haritası. İtiraz süresi beş asır önce bitmiş.","Record says 1507, Waldseemüller's map. The appeal period expired five centuries ago.",kod
+BUR_AMB_G8_4_3,,SPK_COLUMBUS,,0,Haritacı sonra vazgeçti ama ad kaldı.,"The mapmaker later dropped it, but the name stayed.",kod
+BUR_AMB_G8_4_4,,SPK_SABRI,,0,Kalan ad geçerlidir.,A name that stays is valid.,kod
+BUR_AMB_G8_5_1,,SPK_COLUMBUS,,0,Üçüncü seferden sonra zincirle geri gönderildim. Zincirleri sakladım.,After my third voyage I was sent home in chains. I kept the chains.,kod
+BUR_AMB_G8_5_2,,SPK_SABRI,,0,Zincirli teslimat için ayrı form gerekir.,Delivery in chains needs a separate form.,kod
+BUR_AMB_G8_5_3,,SPK_COLUMBUS,,0,Zincir hâlâ benim.,The chains are still mine.,kod
+BUR_AMB_G8_5_4,,SPK_SABRI,,0,Demirbaş kaydı yok. Zincir sahipsiz.,No inventory record. The chains are ownerless.,kod
+BUR_AMB_G8_6_1,,SPK_COLUMBUS,,0,Jamaika'da ay tutulmasını önceden bildirdim. Yiyecek getirdiler.,In Jamaica I predicted a lunar eclipse. They brought food.,kod
+BUR_AMB_G8_6_2,,SPK_SABRI,,0,Hesabı nereden aldın?,Where did you get the calculation?,kod
+BUR_AMB_G8_6_3,,SPK_COLUMBUS,,0,Regiomontanus'un takviminden.,From Regiomontanus's almanac.,kod
+BUR_AMB_G8_6_4,,SPK_SABRI,,0,Alıntı. Kaynak göster.,A quotation. Cite your source.,kod
+BUR_AMB_G8_7_1,,SPK_COLUMBUS,,0,Portekiz Kralı beni reddetti. İspanya'ya gittim.,The King of Portugal rejected me. I went to Spain.,kod
+BUR_AMB_G8_7_2,,SPK_SABRI,,0,"Ret, başka daireye başvuru hakkıdır. Biz de böyle yaparız.",A rejection gives you the right to apply elsewhere. That is how we work.,kod
+BUR_AMB_G8_7_3,,SPK_COLUMBUS,,0,Yıllarca beklettiler.,They kept me waiting for years.,kod
+BUR_AMB_G8_7_4,,SPK_SABRI,,0,Yıllarca makul süredir.,Years is a reasonable period.,kod
+BUR_AMB_G8_8_1,,SPK_COLUMBUS,,0,Dünya'nın çevresini olduğundan küçük hesapladım.,I calculated the Earth's size smaller than it is.,kod
+BUR_AMB_G8_8_2,,SPK_SABRI,,0,Yuvarlak olduğu zaten biliniyordu.,That it was round was already known.,kod
+BUR_AMB_G8_8_3,,SPK_COLUMBUS,,0,Eratosthenes MÖ 3. yüzyılda çevreyi hesaplamıştı. Ben yanlış sayıyı seçtim.,Eratosthenes calculated the circumference in the 3rd century BC. I chose the wrong number.,kod
+BUR_AMB_G8_8_4,,SPK_SABRI,,0,Ölçü hatası keşif sayılır. Form 7B.,A measuring error counts as a discovery. Form 7B.,kod
 BUR_AMB_G9_1_1,,SPK_CLEOPATRA,,0,Şikâyet masasında yüz yirmi dilekçe var. Hepsi 'şikâyet masası çok yavaş' diyor.,There are a hundred and twenty petitions at the complaints desk. All of them say 'the complaints desk is too slow'.,kod
 BUR_AMB_G9_1_2,,SPK_SULEYMAN,,0,Haklılar mı?,Are they right?,kod
 BUR_AMB_G9_1_3,,SPK_CLEOPATRA,,0,"Haklılar. O yüzden hepsini reddediyorum, kendime dava açmak istemem.",They are. That is why I reject them all. I do not want to sue myself.,kod
 BUR_AMB_G9_2_1,,SPK_SULEYMAN,,0,"Bir maddede 'istisna yoktur' yazıyor, ertesi maddede 'istisnalar ek üçtedir'.","One article says 'there are no exceptions', the next says 'exceptions are listed in annex three'.",kod
 BUR_AMB_G9_2_2,,SPK_CLEOPATRA,,0,Bizde istisnaya 'hükümdarın keyfi' derlerdi. Daha dürüsttü.,In our day an exception was called 'the ruler's whim'. It was more honest.,kod
+BUR_AMB_G9_3_1,,SPK_CLEOPATRA,,0,Plutarkhos çok dil bildiğimi yazar. Mısırca öğrenen ilk Ptolemaios benim.,Plutarch writes that I knew many languages. I was the first Ptolemy to learn Egyptian.,kod
+BUR_AMB_G9_3_2,,SPK_SULEYMAN,,0,Burada tek dil geçerli: 'Eksik evrak'.,Only one language counts here: 'Missing documents'.,kod
+BUR_AMB_G9_3_3,,SPK_CLEOPATRA,,0,Onun da çevirmeni yok.,It has no translator either.,kod
+BUR_AMB_G9_4_1,,SPK_CLEOPATRA,,0,"Ben Piramit'in yapıldığı döneme değil, Ay'a iniş zamanına daha yakın yaşadım.",I lived closer in time to the Moon landing than to the building of the Great Pyramid.,kod
+BUR_AMB_G9_4_2,,SPK_SULEYMAN,,0,Yani Piramit sana bile eskiydi.,So the Pyramid was ancient even to you.,kod
+BUR_AMB_G9_4_3,,SPK_CLEOPATRA,,0,Bana müzeydi.,To me it was a museum.,kod
+BUR_AMB_G9_5_1,,SPK_SULEYMAN,,0,"Batı bana 'Muhteşem' dedi. Biz 'Kanuni' dedik, çünkü yasa yaptım.","The West called me 'the Magnificent'. We called me 'the Lawgiver', because I made laws.",kod
+BUR_AMB_G9_5_2,,SPK_CLEOPATRA,,0,Bana 'Mısır'ın son hükümdarı' dediler. Kimse ilk saymadı.,They called me 'Egypt's last ruler'. Nobody ever counted me first.,kod
+BUR_AMB_G9_5_3,,SPK_SULEYMAN,,0,"Kuyrukta unvan geçmiyor, yalnız numara.","Titles do not count in a queue, only numbers.",kod
+BUR_AMB_G9_6_1,,SPK_CLEOPATRA,,0,Sezar'a gizlice girmek için halıya sarıldım denir.,They say I was wrapped in a carpet to reach Caesar in secret.,kod
+BUR_AMB_G9_6_2,,SPK_CLEOPATRA,,0,"Plutarkhos 'yatak çuvalı' der. Hangisi olursa olsun, bu kuyruktan hızlıydı.","Plutarch says 'bed sack'. Either way, it was faster than this queue.",kod
+BUR_AMB_G9_6_3,,SPK_SULEYMAN,,0,Ben dilekçeyi zarfa koydurmak yeterli sanırdım.,I thought putting a petition in an envelope was enough.,kod
+BUR_AMB_G9_7_1,,SPK_SULEYMAN,,0,Kırk altı yıl tahtta kaldım.,I stayed on the throne for forty-six years.,kod
+BUR_AMB_G9_7_2,,SPK_CLEOPATRA,,0,Ben yirmi bir. Burada ikimizin de kıdemi sıfır.,I managed twenty-one. Here neither of us has any seniority.,kod
+BUR_AMB_G9_7_3,,SPK_SULEYMAN,,0,"Kıdem değil, numara önemli.","Not seniority, the number matters.",kod
+BUR_AMB_G9_8_1,,SPK_CLEOPATRA,,0,1963 filminde beni Elizabeth Taylor oynadı. Ben Makedon asıllıyım.,In the 1963 film I was played by Elizabeth Taylor. I was of Macedonian descent.,kod
+BUR_AMB_G9_8_2,,SPK_SULEYMAN,,0,Benim hakkımda dizi çektiler. Kanun yapma sahnelerini kesmişler.,They made a TV series about me. They cut the lawmaking scenes.,kod
+BUR_AMB_G9_8_3,,SPK_CLEOPATRA,,0,Dilekçe sahneleri hiç çekilmez.,Petition scenes are never filmed.,kod
 BUR_APPEALS_1,,SPK_NIHAT,,0,"Bir dilekçe: ""Kolomb'dan önce ben gittim, kayıtlara geçsin."" İmza: Leif Erikson. Bin yılından beri sırada.","A petition: ""I got there before Columbus; put it on record."" Signed: Leif Erikson. In the queue since the year 1000.",kod
 BUR_APPEALS_2,,SPK_NIHAT,,0,"Marie Antoinette: ""Pasta lafını ben söylemedim."" Haklı, söylemedi. Dilekçe yine de incelemede.","Marie Antoinette: ""I never said the thing about cake."" She's right, she didn't. The petition is still under review.",kod
 BUR_APPEALS_3,,SPK_NIHAT,,0,"""Atlantis batmadı, taşındı. Yeni adresimiz ekte."" Ekte hiçbir şey yok.","""Atlantis did not sink, it moved. Our new address is attached."" Nothing is attached.",kod
 BUR_APPEALS_4,,SPK_NIHAT,,0,"""Pisa Kulesi eğik değil, dünya eğik. Düzeltilsin."" İmza: bir mimar. Altına biri 'ret' yazmış, o da eğik.","""The Tower of Pisa isn't leaning; the world is. Please correct."" Signed: an architect. Someone has written 'rejected' underneath, at a slant.",kod
+BUR_APPLETREE,,SPK_NIHAT,,0,"Newton'un elma ağacı. Elma düşüyor, Newton not alıyor. Kırk yıldır aynı not.","Newton's apple tree. An apple falls, Newton takes a note. The same note for forty years.",kod
+BUR_APPLETREE_2,,SPK_NIHAT,,0,Kafasına düştüğü hikâyesi efsane. Ama Büro sigortası yine de kask takmasını istiyor.,The bit about it hitting his head is a legend. The Bureau's insurance still wants him in a helmet.,kod
 BUR_ARCHDRAWER,,SPK_NIHAT,,0,Çekmeceyi çektim; içinde bir çekmece daha var. Arşivin kendi arşivi.,I pulled the drawer. Inside: a smaller drawer. The archive's own archive.,kod
 BUR_ARCHDRAWER_2,,SPK_NIHAT,,0,Küçük çekmecenin etiketinde şu yazıyor: 'Bu çekmecenin içeriği için 4-b numaralı çekmeceye bakınız.',"The small drawer's label reads: 'For the contents of this drawer, see drawer 4-b.'",kod
 BUR_ATRIUMWIN,,SPK_NIHAT,,0,"Bu pencere dışarıyı değil, zamanı gösteriyor. Manzara akıyor, çağlar kayıyor.","This window shows time, not the outdoors. The scenery flows and the centuries slide by.",kod
@@ -100,6 +414,10 @@ BUR_CEMAL,,SPK_CEMAL,,0,Dosya 1453-T mi? Sıra numaranız?,File 1453-T? Your que
 BUR_CEMAL_2,,SPK_CEMAL,,0,Daktilo bozuk değil çağ bozuk. Sıraya girin.,The typewriter is not broken the era is. Please join the queue.,kod
 BUR_CLOCKKNOB,,SPK_NIHAT,,0,Akrebi yok ama kadran dönüyor. Saat kaç? Kadranın fikri yok.,"No hands, but the dial turns. What time is it? The dial has no opinion.",kod
 BUR_CLOCKKNOB_2,,SPK_NIHAT,,0,Çevirdim. Saat kaç olduysa şimdi o.,"Turned it. Whatever time it is, it is now.",kod
+BUR_CLOCKS,,SPK_NIHAT,,0,"Çağların saatleri: Roma, Kostantiniyye, Paris, Ay. Büro'nunki geriye gidiyor. Kimse şaşırmıyor.","Clocks of the ages: Rome, Constantinople, Paris, the Moon. The Bureau's runs backwards. Nobody is surprised.",kod
+BUR_CLOCKS_2,,SPK_NIHAT,,0,Ay'daki saat hep 1969'u gösteriyor. Kimse kurmaya gitmemiş.,The Moon clock always shows 1969. Nobody went back up to wind it.,kod
+BUR_COIL,,SPK_NIHAT,,0,"Tesla bobini. Bir milyon volt, sıfır izin belgesi. Saçlarım kalkıyor, imzalı onay bekliyor.","A Tesla coil. A million volts, zero permits. My hair is standing on end, pending signed approval.",kod
+BUR_COIL_2,,SPK_NIHAT,,0,"Üstüne 'AC' yazmışlar. Karşı köşede Edison 'DC' yazmış. Akım savaşları hâlâ sürüyor, kibarca.","Someone wrote 'AC' on it. Across the room, Edison wrote 'DC'. The war of the currents goes on, politely.",kod
 BUR_COOLER,,SPK_NIHAT,,0,Su soğutucusu. Bardak yok ama şikâyet bol.,A water cooler. No cups but plenty of complaints.,kod
 BUR_COOLER_2,,SPK_NIHAT,,0,Baloncuk yükseliyor. Her baloncuk bir kayıp saniye olsaydı bu büro zengin olurdu.,A bubble rises. If every bubble were a lost second this bureau would be rich.,kod
 BUR_DIRECTOR,,SPK_NIHAT,,0,Kapıya vurdum. Cevap gelmedi ama kapının altı uğuldadı.,"I knocked. No answer, but the gap under the door hums.",kod
@@ -202,12 +520,21 @@ BUR_FG_CUR_V2_1,,SPK_CURIE,,0,Polonyum ve radyumu keşfettim. Ama 1453 yazan ekr
 BUR_FG_CUR_V2_2,,SPK_CURIE,,0,"Kuşatmadan döndün, üstünde hâlâ barut kokusu var. Neyse ki sayacım bir şey göstermiyor.",You came back from the siege and still smell of gunpowder. Luckily my counter shows nothing.,kod
 BUR_FG_CUR_V3_1,,SPK_CURIE,,0,Büro'nun formları beni korkutmaz. Ben kurşun kutuya saklanmış defterlerle yaşadım.,The Bureau's forms don't scare me. I lived with notebooks stored in lead-lined boxes.,kod
 BUR_FG_CUR_V3_2,,SPK_CURIE,,0,Cleopatra'nın şikayet masasında kuyruk büyüyor. Radyoaktiviteden daha hızlı yayılıyor.,The line at Cleopatra's complaints desk keeps growing. It spreads faster than radioactivity.,kod
+BUR_FG_DIO_1,,SPK_DIOGENES,,0,"Beni fıçıda yaşayan deli yazdılar. Fıçı benimdi: kira yok, vergi yok. Kim daha akıllı?","They wrote me down as the madman who lived in a jar. The jar was mine: no rent, no tax. Who is smarter?",kod
+BUR_FG_DIO_2,,SPK_DIOGENES,,0,Gündüz fenerle dürüst adam aradım. Tarih bana 'deli' dedi. Hâlâ bulamadım. Bu kuyrukta da yok.,I searched for an honest man with a lamp in daylight. History called me mad. I still have not found one. Not in this queue either.,kod
+BUR_FG_DIO_3,,SPK_DIOGENES,,0,"Platon'un insan tanımına tavuk getirdim, tarih buna küstahlık dedi. Ben buna bilimsel kanıt diyorum.",I brought a chicken to Plato's definition of man. History called it insolence. I call it scientific evidence.,kod
+BUR_FG_EDI_1,,SPK_EDISON,,0,"Nihat Bey, ampulü ben icat etmedim diyorlar. Doğru, ama ilk işe yarayanı yaptım. Tarih ya 'her şey' diyor ya 'hiçbir şey'.","Mr Nihat, they say I did not invent the bulb. True, but I made the first practical one. History says either 'everything' or 'nothing'.",kod
+BUR_FG_EDI_2,,SPK_EDISON,,0,"Bana 'Menlo Park Büyücüsü' dediler. Büyü değildi, ekip çalışmasıydı. Ekibin adı hiçbir yerde yok.","They called me the 'Wizard of Menlo Park'. It was no magic, it was teamwork. The team's names are nowhere.",kod
+BUR_FG_EDI_3,,SPK_EDISON,,0,"Bin küsur patent aldım. Hafızada üç satır kaldı: ampul, Tesla, kavga. İtirazım bu özete.","I took out over a thousand patents. Three lines remain in memory: bulb, Tesla, fight. My appeal is against that summary.",kod
 BUR_FG_EIN_1,,SPK_EINSTEIN,,0,"Sarkaç sıfır sapma gösteriyor ama bu binada zaman yine de yavaş akıyor. Bu görelilik değil, devlet dairesi.","The pendulum shows zero deviation, yet time still runs slow in this building. That isn't relativity. That's a government office.",kod
 BUR_FG_EIN_2,,SPK_EINSTEIN,,0,Ben de Bern'de patent ofisinde memurdum. Gişenin bu tarafı hiç hoş değilmiş.,I was a clerk at the patent office in Bern myself. This side of the counter is not nice at all.,kod
 BUR_FG_EIN_V2_1,,SPK_EINSTEIN,,0,Işık hızında yolculuk eden ikiz daha genç döner. Bu büroda bekleyen ikiz daha yaşlı döner. Ölçtüm.,The twin who travels at the speed of light comes back younger. The twin who waits in this office comes back older. I measured it.,kod
 BUR_FG_EIN_V2_2,,SPK_EINSTEIN,,0,Tanrı zar atmaz demiştim. Bu büro atıyor: sıra numaraları rastgele.,I said God does not play dice. This office does: the ticket numbers are random.,kod
 BUR_FG_EIN_V3_1,,SPK_EINSTEIN,,0,"Bir sigortacı 1453'e gidip gelmiş. Kâğıt üstünde imkânsız. Ama kâğıt bu büroda, o yüzden mümkün.","An insurance man went to 1453 and back. Impossible on paper. But the paper is in this office, so it's possible.",kod
 BUR_FG_EIN_V3_2,,SPK_EINSTEIN,,0,"Nobel'i bana görelilik için değil, fotoelektrik etki için verdiler. Burada da formumu yanlış dosyaya koymuşlar. Alışığım.","They gave me the Nobel for the photoelectric effect, not relativity. Here they've filed my form in the wrong drawer too. I'm used to it.",kod
+BUR_FG_EVL_1,,SPK_EVLIYA,,0,"Kırk yıl gezdim, tarih beni 'abartılı' yazdı. Abartmadan gerçeği nasıl anlatırsınız, Nihat Bey?","I travelled forty years and history wrote me down as 'exaggerating'. How do you tell the truth without exaggeration, Mr Nihat?",kod
+BUR_FG_EVL_2,,SPK_EVLIYA,,0,"Seyahatname'yi yazdım, iki yüz yıldan fazla basılmadı. Şimdi sıra bana da geç geliyor, alışığım.",I wrote the Seyahatname and it was not printed for over two hundred years. Now my turn comes late too. I am used to it.,kod
+BUR_FG_EVL_3,,SPK_EVLIYA,,0,"Bir şehre girince hamam, çeşme, esnaf sayarım. Tarih yalnız masallarımı alıyor. İtirazım: önce sayımlarımı okusunlar.","When I enter a city I count baths, fountains, guilds. History takes only my tall tales. My appeal: let them read my counts first.",kod
 BUR_FG_GAG_1,,SPK_GAGARIN,,0,12 Nisan 1961'de Vostok 1 ile 108 dakikada Dünya'yı dolaştım. Burada 108 dakikada bir sıra bile atlamadım.,On 12 April 1961 I orbited Earth in 108 minutes on Vostok 1. Here in 108 minutes I haven't moved up one place.,kod
 BUR_FG_GAG_2,,SPK_GAGARIN,,0,"Kalkışta Poyekhali dedim, yani haydi gidelim. Büro'da bu söz hiç işe yaramıyor.","At launch I said Poyekhali, meaning let's go. At the Bureau that word is useless.",kod
 BUR_FG_GAG_V2_1,,SPK_GAGARIN,,0,"Uzay giysimi çıkarmadım, çünkü sıra bana gelince hemen gitmek isterim. Gelirse tabii.","I haven't taken off my spacesuit, because when my turn comes I want to leave at once. If it comes.",kod
@@ -266,6 +593,9 @@ BUR_FG_NAS_V2_1,,SPK_NASREDDIN,,0,"Ziyafette sade giyindim, kimse bakmadı. Kür
 BUR_FG_NAS_V2_2,,SPK_NASREDDIN,,0,"Kuşatmadan geldin diyorsun. İnanırsan ben de Akşehir'den geldim, yani bu salona.","You say you came from the siege. If you believe it, I came to this hall from Akşehir.",kod
 BUR_FG_NAS_V3_1,,SPK_NASREDDIN,,0,Gölü mayalamak için bir kaşık yoğurt attım. Tutmadı. Tıpkı şu sıranın ilerlemesi gibi.,I tossed a spoon of yogurt into the lake to ferment it. It didn't take. Just like this queue moving.,kod
 BUR_FG_NAS_V3_2,,SPK_NASREDDIN,,0,"Bu kadar beklemeyi anlatan bir fıkram yok. Çünkü hâlâ sonu gelmedi, anlatamıyorum.","I have no anecdote about waiting this long, because it hasn't ended yet, so I can't tell it.",kod
+BUR_FG_NEW_1,,SPK_NEWTON,,0,"Müfettiş, elma kafama düşmedi. Düşerken gördüm. Tarih beni elmayla yaralanmış sanıyor.","Inspector, the apple did not hit my head. I saw it fall. History thinks I was injured by an apple.",kod
+BUR_FG_NEW_2,,SPK_NEWTON,,0,Beni yalnızca fizikçi sanıyorlar. Çoğu zamanımı simyada geçirdim. Kurşunu altına çevirmedim ama emek yazılsın.,"They think I was only a physicist. I spent much of my time on alchemy. I never turned lead into gold, but note the effort.",kod
+BUR_FG_NEW_3,,SPK_NEWTON,,0,"Büyük Yeniden Basım'ı ben yönettim. Tarih elmayı yazıyor, Darphane'yi atlıyor. Elma kimin umurunda?",I oversaw the Great Recoinage. History writes the apple and skips the Mint. Who cares about the apple?,kod
 BUR_FG_POL_1,,SPK_MARCOPOLO,,0,Çin'den Venedik'e 24 yılda döndüm. Bu salonda 1453'ü beklemek onun yanında kısa kalır.,I got from China back to Venice in 24 years. Waiting for 1453 in this room is shorter than that.,kod
 BUR_FG_POL_2,,SPK_MARCOPOLO,,0,"Makarnayı Çin'den ben getirmişim, diyorlar. Efsane! Ben sadece bir hapishanede kitap yazdırdım.",They say I brought pasta from China. A myth! I only dictated a book in a prison.,kod
 BUR_FG_POL_V2_1,,SPK_MARCOPOLO,,0,"Fetih'ten döndüğünü duydum. Ben seyahat anlatırım, bu salonda ise tek yolculuk sıra numarası.","I heard you came back from the siege. I tell travel stories, but here the only journey is the queue number.",kod
@@ -291,6 +621,9 @@ BUR_FG_SIN_V2_1,,SPK_SINAN,,0,"Kuşatmadan geldin. Ayasofya'ya bakıp ilham ald�
 BUR_FG_SIN_V2_2,,SPK_SINAN,,0,"Kanuni yönetmelik duvarında bekliyor, ben de buradayım. İkimiz de onaylanmış planlar bekliyoruz.",Suleiman waits at the regulations wall and I wait here. We are both waiting for approved plans.,kod
 BUR_FG_SIN_V3_1,,SPK_SINAN,,0,Selimiye'ye ustalık eserim dedim. Bu bekleme salonuna ise yalnızca bir mimari kusur diyebilirim.,I called the Selimiye my masterpiece. This waiting room I can only call an architectural flaw.,kod
 BUR_FG_SIN_V3_2,,SPK_SINAN,,0,"Kubbem yüzyıllardır ayakta. Bu LED ekran ise sadece bir sayıyı tutuyor, bu da hiç sağlam değil.","My dome has stood for centuries. This LED screen holds just one number, and not very solidly.",kod
+BUR_FG_SOK_1,,SPK_SOCRATES,,0,"Müfettiş, tarih beni 'soru soran adam' diye anıyor. Soru sormak suç mu? Cevap alamadığım için sordum.","Inspector, history remembers me as 'the man who asks questions'. Is asking a crime? I asked because I got no answers.",kod
+BUR_FG_SOK_2,,SPK_SOCRATES,,0,"Hiç yazı yazmadım. Sözlerimi Platon yazdı. Telif kimde? Ben mi, o mu, yoksa kuyruk mu?","I never wrote anything. Plato wrote my words. Who holds the copyright? Me, him or the queue?",kod
+BUR_FG_SOK_3,,SPK_SOCRATES,,0,"Karım Ksantippe huysuz yazıldı. Hakkını yiyorlar. Ona tahammül eden bendim, itiraz onun adına.","My wife Xanthippe is written down as a shrew. It is unfair to her. I was the one who put up with it, and I appeal in her name.",kod
 BUR_FG_SUL_1,,SPK_SULEYMAN,,0,"Kanun koymak benim işimdi. Şu yönetmeliği okudum: 'Madde 31 Şubat.' Şubatın otuz biri yok. Düzelttim, mühürledim; kimse bakmadı.","Lawmaking was my trade. I read these regulations: 'Article 31 February.' February has no thirty-first. I corrected it, sealed it; nobody looked.",kod
 BUR_FG_SUL_2,,SPK_SULEYMAN,,0,"Bana 'Muhteşem' derlerdi; burada 'sıradaki' diyorlar. Kırk altı yıl tahtta oturdum, bu bürokrasi beni daha uzun oturtacak.",They called me 'the Magnificent'. Here they call me 'next'. I sat on the throne for forty-six years; this bureaucracy will keep me sitting longer.,kod
 BUR_FG_SUL_3,,SPK_SULEYMAN,,0,"Şiir de yazardım, mahlasım Muhibbî. Dilekçemi beyitle yazdım; memur 'aruz vezni kabul edilmez' dedi.","I wrote poetry too, under the pen name Muhibbi. I wrote my petition in couplets; the clerk said 'metre is not accepted'.",kod
@@ -298,6 +631,9 @@ BUR_FG_SUL_V2_1,,SPK_SULEYMAN,,0,"On üç sefere çıktım: Belgrad, Rodos, Moha
 BUR_FG_SUL_V2_2,,SPK_SULEYMAN,,0,Mimar Sinan'ı tanırdım. Bu binayı görse önce temelini sorardı. Temeli yok; bina zamanın dışında duruyor.,I knew Sinan the architect. If he saw this building he'd ask about the foundations first. There aren't any; it stands outside time.,kod
 BUR_FG_SUL_V3_1,,SPK_SULEYMAN,,0,"Hürrem bana mektuplarında 'sultanım, gönlüm' diye yazardı. Bu büro bana 'sayın başvuru sahibi' diye yazıyor.","Hürrem used to write to me 'my sultan, my heart'. This office writes to me 'dear applicant'.",kod
 BUR_FG_SUL_V3_2,,SPK_SULEYMAN,,0,"Muhteşem dediler, Kanuni dediler. Burada bir ad daha verdiler: 'dosya 1520-S'. En az sevdiğim bu.","They called me the Magnificent, the Lawgiver. Here they've given me one more name: 'file 1520-S'. That one I like least.",kod
+BUR_FG_TES_1,,SPK_TESLA,,0,"Müfettiş, evinizdeki elektrik benim alternatif akımım. Ama fişe bakınca herkes Edison diyor.","Inspector, the electricity in your home is my alternating current. Yet everyone looks at the plug and says Edison.",kod
+BUR_FG_TES_2,,SPK_TESLA,,0,"Edison bana 50.000 dolar vaat etti, sonra 'şakaydı' dedi. Burada da 'incelemede' diyorlar. Aynı mizah.","Edison promised me fifty thousand dollars, then said 'it was a joke'. Here they say 'under review'. Same humour.",kod
+BUR_FG_TES_3,,SPK_TESLA,,0,"Bir güvercine âşık oldum diye tarih beni 'garip adam' yazdı. Üç yüz patent, bir güvercin. Hangisi manşet oldu?","Because I loved a pigeon, history wrote me down as 'the strange man'. Three hundred patents, one pigeon. Which made the headline?",kod
 BUR_FOUNDER,,SPK_NIHAT,,0,Kurucunun fotoğrafı. Fotoğraf yok; yalnızca daha az solmuş bir dikdörtgen.,The founder's portrait. No portrait; just a less-faded rectangle.,kod
 BUR_FOUNDER_2,,SPK_NIHAT,,0,Altyazı: 'T.' Başka bilgi yok. Kadro cetvelinde de yok.,Caption: 'T.' Nothing else. Not on the staffing roll either.,kod
 BUR_GHOST,,SPK_NIHAT,,0,Kuyruktakilerin hepsi başka bir çağdan. Hepsi de aynı dilekçeyi tutuyor.,Everyone in the queue is from another era. All of them hold the same petition.,kod
@@ -308,6 +644,8 @@ BUR_GLOBE_2,,SPK_NIHAT,,0,Küre 'Bütçe Yok' yazan bölgede durdu.,It stopped o
 BUR_GLOBE_3,,SPK_NIHAT,,0,"Küre döndü, durdu. Hangi çağ olursa olsun, evrakı ben dolduracağım.","The globe spun and stopped. Whatever era it is, I'll be doing the paperwork.",kod
 BUR_HATICE,,SPK_HATICE,,0,"Dosya mı arıyorsunuz? Önce dün gelen dosyayı bulun, sonra yarın gelecek olanı.","Looking for a file? First find the one that arrived yesterday, then the one arriving tomorrow.",kod
 BUR_HATICE_2,,SPK_HATICE,,0,"Merdiven raylı, arşiv rayından çıkmış. İkisini de ben çalıştırıyorum.",The ladder is on rails; the archive is off them. I keep both running.,kod
+BUR_HOURGLASS,,SPK_NIHAT,,0,Dev kum saati. Dolunca kendi kendine dönüyor. Büro'da kendiliğinden işleyen tek şey.,"A giant hourglass. When it runs out, it turns itself over. The only thing in the Bureau that works on its own.",kod
+BUR_HOURGLASS_2,,SPK_NIHAT,,0,"Kumu Mısır'dan getirmişler, MÖ 2560 yılından. Piramit inşaatından artan.","They brought the sand from Egypt, from 2560 BC. Left over from the pyramid works.",kod
 BUR_LOSTSHELF,,SPK_NIHAT,,0,Raflar yıl etiketli koliyle dolu. Hepsi 'bulundu' damgalı ama sahibi yok.,"Shelves full of boxes tagged by year. All stamped 'found', none claimed.",kod
 BUR_LOSTSHELF_2,,SPK_NIHAT,,0,"Tavuk kafesi 1204 etiketli. Tavuk içeride, yumurta henüz gelecekte.","The chicken cage is tagged 1204. The chicken is inside, the egg is still in the future.",kod
 BUR_LOSTSHELF_3,,SPK_NIHAT,,0,Selfie çubuğu Otağ-ı Hümayun'da bulunmuş. Padişah poz vermeyi reddetmiş.,A selfie stick found at the imperial tent. The sultan refused to pose.,kod
@@ -324,6 +662,8 @@ BUR_NOTICE_A_2,,SPK_NIHAT,,0,"Bir not daha: ""Yarın dün yapılacak."" Net bir 
 BUR_NOTICE_B,,SPK_NIHAT,,0,Kayıp ilanı: bir öğle arası. Bulana bir öğle arası ödül.,Lost notice: one lunch break. Finder gets one lunch break.,kod
 BUR_NOTICE_C,,SPK_NIHAT,,0,Kayıp saniye ilanları. Biri bende olabilir ama kimseye söylemeyin.,Lost-second notices. I may have one on me but do not tell anyone.,kod
 BUR_NOTICE_D,,SPK_NIHAT,,0,İhale ilanı: bin yetmiş bir için sağlam bir ordu aranıyor. Teklif yok.,Tender notice: a sturdy army wanted for the year ten seventy-one. No bids.,kod
+BUR_ORNITHOPTER,,SPK_NIHAT,,0,"Leonardo'nun uçan makinesi. 1480'lerde çizmiş, kimse yapmamış. Büro yapmış, uçurmamış. Yönetmelik.",Leonardo's flying machine. He drew it in the 1480s and nobody built it. The Bureau built it and won't let it fly. Regulations.,kod
+BUR_ORNITHOPTER_2,,SPK_NIHAT,,0,Kanatlarını çırpıyor ama bir yere gitmiyor. Büro'nun en iyi çalışanı bu olabilir.,It flaps its wings but goes nowhere. It might be the Bureau's best employee.,kod
 BUR_PALM,,SPK_NIHAT,,0,Areka palmiyesi. Büronun tek canlı memuru ve o da sulanmıyor.,An areca palm. The bureau's only living clerk and it never gets watered.,kod
 BUR_PALM_2,,SPK_NIHAT,,0,Yaprağı sararmış. Bir dilekçe yazsam mı?,Its leaf has yellowed. Should I file a petition?,kod
 BUR_PARADOKS,,SPK_NURAN,,0,"Şikâyetiniz alındı. Henüz yapmadığınız şikâyet de alındı, içiniz rahat olsun.",Your complaint is received. So is the one you haven't made yet. Rest easy.,kod
@@ -331,6 +671,8 @@ BUR_PARADOKS_2,,SPK_NURAN,,0,"Dün şikâyet ettiniz, yarın vazgeçtiniz. Bu h�
 BUR_PARADOKS_3,,SPK_NURAN,,0,"Form yedi nüsha. Bir nüsha geçmişe, bir nüsha geleceğe, kalanı bana.","Seven copies, please: one to the past, one to the future, the rest to me.",kod
 BUR_PENDULUM,,SPK_NIHAT,,0,"Sarkaç sallanıyor, zemindeki yazıda '±0 sn'. Hata payı sıfır; hata yapan da yok.","The pendulum swings; the floor says '±0 s'. Zero margin of error, and nobody left to make one.",kod
 BUR_PENDULUM_2,,SPK_NIHAT,,0,Altın top her gidişte bir şeyi biraz geride bırakıyor gibi. Bir an parıldadı.,With every swing the golden bob seems to leave a little something behind. It glinted.,kod
+BUR_PHONO,,SPK_NIHAT,,0,Edison'un fonografı. 1877'de ilk kaydettiği şarkı 'Mary Had a Little Lamb'miş. Burada sadece bekleme müziği çalıyor.,Edison's phonograph. The first song he recorded in 1877 was 'Mary Had a Little Lamb'. Here it only plays hold music.,kod
+BUR_PHONO_2,,SPK_NIHAT,,0,"Plak dönüyor, iğne iniyor, ses yok. Edison 'işitme sorunum vardı, fark etmezdim' diyor.","The record spins, the needle drops, no sound. Edison says he was hard of hearing anyway.",kod
 BUR_REGWALL,,SPK_NIHAT,,0,Yönetmelik duvarı. Madde 31 Şubat'a göre bu duvarı okumak da izne tabi.,"The regulation wall. Per Article 31 February, reading it requires a permit.",kod
 BUR_REGWALL_2,,SPK_NIHAT,,0,"On iki madde, on iki çelişki. Pirince işlenmiş, yani değişmez; ancak yorumlanır.","Twelve articles, twelve contradictions. Engraved in brass, so unamendable, only interpretable.",kod
 BUR_SANDAL,,SPK_NIHAT,,0,Beyaz spor çoraplı Roma sandaleti. Demek lejyonlar rahatlığa düşkünmüş.,A Roman sandal with a white sports sock. So the legions liked their comfort.,kod
@@ -1690,20 +2032,20 @@ D7_AWE_THEODOROS,7,SPK_THEODOROS,,0,Uçan bir memur. Arşivde bunun formu yok. O
 D7_AWE_URBAN,7,SPK_URBAN,,0,Uçuyordunuz! Barut mu? Hangi oran? ...Söylemezsiniz. Siz de bir mühendissiniz.,You were flying! Is it powder? What ratio? ...You won't tell me. You're an engineer too.,tablo
 D7_CLERK_QUEUE,7,SPK_CLERK,,0,[Yunanca] Sıra var. Önce Form Ζ-9.,[Greek] There's a queue. Form Ζ-9 first.,kod
 D7_C_NOBODY,7,SPK_CANDARLI,,0,Kimseyim. Kimseyle konuşmuyorum. Sen de kimsesin.,I am nobody. I'm not talking to anybody. You are nobody too.,kod
-D7_EAVES_EMPEROR,7,?,,0,"[Yunanca] (Kendi kendine) Bir mektup yazdım. Okunur mu, bilmem. Okunsun, yeter.","[Greek] (To himself) I wrote a letter. Will it be read? I don't know. Let it be read, that's all.",bulunamadı
-D7_EAVES_GIUSTINIANI,7,?,,0,(Kendi kendine) Sur tutar. Tutmalı. Ceneviz taşı sözünü tutar.,(To himself) The wall will hold. It must. Genoese stone keeps its word.,bulunamadı
+D7_EAVES_EMPEROR,7,SPK_EMPEROR,,0,"[Yunanca] (Kendi kendine) Bir mektup yazdım. Okunur mu, bilmem. Okunsun, yeter.","[Greek] (To himself) I wrote a letter. Will it be read? I don't know. Let it be read, that's all.",tablo
+D7_EAVES_GIUSTINIANI,7,SPK_GIUST,,0,(Kendi kendine) Sur tutar. Tutmalı. Ceneviz taşı sözünü tutar.,(To himself) The wall will hold. It must. Genoese stone keeps its word.,tablo
 D7_EAVES_GUARDS,7,SPK_HASAN,[whispers],0,(Fısıltıyla) Fesli dostu soracaklar. Söylemeyelim.,(Whispering) They'll ask about our friend in the fez. Let's not tell.,kod
 D7_EAVES_GUARDS_2_ARTILLERY,7,SPK_HUSEYIN,[whispers],0,"(Fısıltıyla) Tamam. Ama o topçu alanında, Urban'ın yanında. Unutma, biz bilmiyoruz.","(Whispering) Fine. But he's at the artillery, with Urban. Remember, we don't know.",tablo
 D7_EAVES_GUARDS_2_KITCHEN,7,SPK_HUSEYIN,[whispers],0,"(Fısıltıyla) Tamam. Ama o mutfakta, Kadri'nin kazanının başında. Unutma, biz bilmiyoruz.","(Whispering) Fine. But he's in the kitchen, by Kadri's cauldron. Remember, we don't know.",tablo
 D7_EAVES_GUARDS_2_MARKET,7,SPK_HUSEYIN,[whispers],0,"(Fısıltıyla) Tamam. Ama o pazarda, keçinin peşinde. Unutma, biz bilmiyoruz.","(Whispering) Fine. But he's at the market, chasing the goat. Remember, we don't know.",tablo
 D7_EAVES_GUARDS_2_TENT,7,SPK_HUSEYIN,[whispers],0,"(Fısıltıyla) Tamam. Ama o tercüman çadırında. Unutma, biz bilmiyoruz.","(Whispering) Fine. But he's in the interpreter's tent. Remember, we don't know.",tablo
 D7_EAVES_GUARDS_NOFEZ,7,SPK_HASAN,[whispers],0,(Fısıltıyla) Redingotlu dostu soracaklar. Söylemeyelim.,(Whispering) They'll ask about our friend in the frock coat. Let's not tell.,varyant
-D7_EAVES_KADRI,7,?,,0,(Kendi kendine) Leblebi bitti mi? Bitmedi. Saklarım. Sultan sorarsa yok derim.,"(To himself) Out of leblebi? Not yet. I'll hide it. If the Sultan asks, there's none.",bulunamadı
-D7_EAVES_LUTFI,7,?,[hesitant],0,(Kendi kendine) Frenkçe 'evet' neydi... Ya da 'hayır'... İkisini de aynı yüzle söylüyorlar.,(To himself) What was 'yes' in Frankish... or 'no'... They say both with the same face.,bulunamadı
+D7_EAVES_KADRI,7,SPK_KADRI,,0,(Kendi kendine) Leblebi bitti mi? Bitmedi. Saklarım. Sultan sorarsa yok derim.,"(To himself) Out of leblebi? Not yet. I'll hide it. If the Sultan asks, there's none.",tablo
+D7_EAVES_LUTFI,7,SPK_LUTFI,[hesitant],0,(Kendi kendine) Frenkçe 'evet' neydi... Ya da 'hayır'... İkisini de aynı yüzle söylüyorlar.,(To himself) What was 'yes' in Frankish... or 'no'... They say both with the same face.,tablo
 D7_EAVES_NIKO_CELL_CASUS,7,SPK_NIKO,,0,"(Kendi kendine) Zavallı casus, zindanda... Denetçi sorarsa sarayda derim.","(To himself) Poor spy, stuck in the dungeon... If the inspector asks, I'll say the palace.",kod
 D7_EAVES_NIKO_OUTSIDE_CASUS,7,SPK_NIKO,,0,(Kendi kendine) Casus surların dışına çıktı... Denetçi sorarsa sarayda derim.,"(To himself) The spy's gone outside the walls... If the inspector asks, I'll say the palace.",kod
-D7_EAVES_THEODOROS,7,?,,0,"[Yunanca] (Kendi kendine) Yedi nüsha, yedi mühür... Yortu bitti. Yine yedi.","[Greek] (To himself) Seven copies, seven seals... The feast is over. Seven again.",bulunamadı
-D7_EAVES_URBAN,7,?,,0,"(Kendi kendine) Top çatlak, para yok, Sultan sabırsız. ...Yine de güzel top.","(To himself) The gun's cracked, no money, the Sultan's impatient. ...Still a beautiful gun.",bulunamadı
+D7_EAVES_THEODOROS,7,SPK_THEODOROS,,0,"[Yunanca] (Kendi kendine) Yedi nüsha, yedi mühür... Yortu bitti. Yine yedi.","[Greek] (To himself) Seven copies, seven seals... The feast is over. Seven again.",tablo
+D7_EAVES_URBAN,7,SPK_URBAN,,0,"(Kendi kendine) Top çatlak, para yok, Sultan sabırsız. ...Yine de güzel top.","(To himself) The gun's cracked, no money, the Sultan's impatient. ...Still a beautiful gun.",tablo
 D7_EMPEROR_AGAIN,7,SPK_EMPEROR,,0,"[Yunanca] Yeterince konuştuk, yabancı.","[Greek] We have spoken enough, stranger.",ad
 D7_EMP_FORM,7,SPK_EMPEROR,,0,[Yunanca] (Formu nazikçe geri verir) İmparatorlar form doldurmaz. Formlar imparatorları doldurur.,[Greek] (Gently hands the form back) Emperors do not fill in forms. Forms fill in emperors.,kod
 D7_EMP_HELLO,7,SPK_EMPEROR,,0,[Yunanca] Bir yabancı daha. Bu şehir yabancılarla doldu. Sen kimsin?,[Greek] Another stranger. This city is full of strangers. Who are you?,kod

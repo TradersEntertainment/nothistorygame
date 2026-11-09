@@ -864,3 +864,15 @@ Her bölüm denetiminde ve her düzeltmede bu listeyi baştan uygula. Yeni bir h
 - v0.99.104: oturan/yatan insan figürü (uyuyan memur) iki denemede de iyi görünmedi; sahibi "silip başka bir şey
   koyalım" dedi. Eşya, insan figüründen çok daha kolay temiz görünür: yerine taşan itiraz kutusu (dilekçeler
   yarıktan taşar, yere dökülür) ve Nihat'ın okuduğu dört dilekçe. Salonun neden ilerlemediğini de anlatır.
+- v0.99.105: sohbet sürekli olunca nadir pozlar sık görünür. Oturan figürün konuşma jestlerinden biri kolu dümdüz
+  sarkıtıyordu: eli koltuğa, yandaki koltuğa ya da yanındakine giriyordu (kullanıcı: "bankların içinden el kol
+  geçiyor"). Oturanlarda jest artık dizlerin üstünde ve gövdeye yakın (Rig.SEATED). Duruş tutan etkinlikler
+  (eller arkada, sandalyeye ters) konuşurken _activity'den false dönünce genel jest kolları ele geçiriyordu: Hitler
+  konuşunca kolları yine duvara gidiyordu. Konuşurken de yalnız baş oynar (_hold_head). Ders: konuşan figürü
+  konuşurken çek (talking=true, birkaç farklı anda üç kare); boştaki kare jesti göstermez.
+- Yeni figür yerleştirirken odanın geometrisine bak: Diyojen çekmece duvarının arkasına, Sokrates kayan merdivenin
+  rayına konmuştu (merdiven z -16 → -22 gidip geliyor). Hareketli eşyaların yolunu da engel say. Bekleme salonunun
+  sırtlığı sıra boyunca tek parçaydı: ters oturan Nasreddin'in bacakları içinden geçiyordu (artık ayrı, dar sırtlık
+  ve "sit_astride").
+- Seslendirme listesinde sesi olmayan konuşmacı ('?' gibi) tek replikte bütün işi KeyError ile durdurur: listeyi
+  üretirken her konuşmacıyı resolve() ile çöz, voice_id yoksa listeye alma.
