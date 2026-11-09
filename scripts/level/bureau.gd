@@ -25,7 +25,10 @@ const LIFT_FRONT := Vector3(0.4, 0.0, -34.0)
 const LIFT_OUT := Vector3(-0.55, 0.0, -34.15)
 const PANEL_POS := Vector3(-1.9, 1.32, -32.75)
 const NIHAT_OFFICE_POS := Vector3(1.5, 0.0, 3.3)   # ofiste Nihat: masanın sağ önü, kapıdan girenin karşısında
-const MUFIDE_POS := Vector3(0.0, 0.0, DESK_Z - 1.0)
+const DESK_X := 4.4          # Başdenetçi masası artık koridorun doğusundaki odasında (koridorun ortasındaydı)
+const MUFIDE_POS := Vector3(DESK_X + 1.0, 0.0, DESK_Z)
+## Ziyaretçinin durduğu yer: masanın önü (masa koridora, -x'e bakar; ortadaki kâğıt yığınları alçak)
+const VISITOR_POS := Vector3(DESK_X - 1.1, 0.0, DESK_Z)
 const RIZA_POS := Vector3(4.3, 0.0, -14.0)
 
 const C_WALL := Color("7d8a78")
@@ -69,7 +72,7 @@ const C_WALNUT := Color("3a2218")
 const C_CEIL := Color("e8e0c8")
 ## Koridorun açıklıkları (oda kapıları): [z_üst, z_alt] (z_üst > z_alt). Batı (-x) ve doğu (+x) duvarları buralarda açık.
 const OPEN_W := [[-4.2, -8.6], [-15.3, -18.7], [-27.3, -31.2], [-33.0, -35.0]]       # bekleme, arşiv, şikâyet, asansör
-const OPEN_E := [[-2.2, -7.0], [-10.5, -17.5], [-19.0, -23.4], [-29.2, -31.2], [-36.5, -55.5]]   # çay, depo, kayıp, müdür, atrium
+const OPEN_E := [[-2.2, -7.0], [-10.5, -17.5], [-19.0, -23.4], [-25.0, -28.5], [-29.2, -31.2], [-36.5, -55.5]]   # çay, depo, kayıp, başdenetçi, müdür, atrium
 ## Yıllı kapılar: [taraf, z, yıl]. 1492 doğuda z -8.5'te kalır (Bölüm 13 önüne birini koyar); 1453, 1923, 2026 şart (Bölüm 3).
 const DOORS := [[-1, -12.25, "1071"], [-1, -25.5, "1204"], [-1, -38.0, "1299"], [-1, -42.5, "1517"], [-1, -47.0, "1683"],
 	[-1, -51.5, "1789"], [-1, -56.0, "1826"], [-1, -60.5, "1908"], [-1, -65.0, "1923"], [-1, -69.5, "1969"], [-1, -74.0, "2026"],
@@ -84,6 +87,38 @@ const ERA_COLORS := {"1071": Color("e8c060"), "1204": Color("9a5ad8"), "1299": C
 ## memurlar yine konuşur.
 ## Seslendirme eşlemesi (tools/voice_map.py okur): _say(anahtar, sn, konuşan) çağrıları desenle yakalanmıyor
 const _BUR_VOICE := [
+	["SPK_NIHAT", "D3_N_DOOR_1453"], ["SPK_NIHAT", "D3_N_DOOR_2026"], ["SPK_NIHAT", "D3_N_DOOR_1923"],
+	["SPK_MARCOPOLO", "BUR_FG_POL_1"], ["SPK_MARCOPOLO", "BUR_FG_POL_2"], ["SPK_MARCOPOLO", "BUR_FG_POL_V2_1"],
+	["SPK_MARCOPOLO", "BUR_FG_POL_V2_2"], ["SPK_MARCOPOLO", "BUR_FG_POL_V3_1"], ["SPK_MARCOPOLO", "BUR_FG_POL_V3_2"],
+	["SPK_GALILEO", "BUR_FG_GAL_1"], ["SPK_GALILEO", "BUR_FG_GAL_2"], ["SPK_GALILEO", "BUR_FG_GAL_V2_1"],
+	["SPK_GALILEO", "BUR_FG_GAL_V2_2"], ["SPK_GALILEO", "BUR_FG_GAL_V3_1"], ["SPK_GALILEO", "BUR_FG_GAL_V3_2"],
+	["SPK_CURIE", "BUR_FG_CUR_1"], ["SPK_CURIE", "BUR_FG_CUR_2"], ["SPK_CURIE", "BUR_FG_CUR_V2_1"],
+	["SPK_CURIE", "BUR_FG_CUR_V2_2"], ["SPK_CURIE", "BUR_FG_CUR_V3_1"], ["SPK_CURIE", "BUR_FG_CUR_V3_2"],
+	["SPK_MOZART", "BUR_FG_MOZ_1"], ["SPK_MOZART", "BUR_FG_MOZ_2"], ["SPK_MOZART", "BUR_FG_MOZ_V2_1"],
+	["SPK_MOZART", "BUR_FG_MOZ_V2_2"], ["SPK_MOZART", "BUR_FG_MOZ_V3_1"], ["SPK_MOZART", "BUR_FG_MOZ_V3_2"],
+	["SPK_SINAN", "BUR_FG_SIN_1"], ["SPK_SINAN", "BUR_FG_SIN_2"], ["SPK_SINAN", "BUR_FG_SIN_V2_1"],
+	["SPK_SINAN", "BUR_FG_SIN_V2_2"], ["SPK_SINAN", "BUR_FG_SIN_V3_1"], ["SPK_SINAN", "BUR_FG_SIN_V3_2"],
+	["SPK_NASREDDIN", "BUR_FG_NAS_1"], ["SPK_NASREDDIN", "BUR_FG_NAS_2"], ["SPK_NASREDDIN", "BUR_FG_NAS_V2_1"],
+	["SPK_NASREDDIN", "BUR_FG_NAS_V2_2"], ["SPK_NASREDDIN", "BUR_FG_NAS_V3_1"], ["SPK_NASREDDIN", "BUR_FG_NAS_V3_2"],
+	["SPK_GAGARIN", "BUR_FG_GAG_1"], ["SPK_GAGARIN", "BUR_FG_GAG_2"], ["SPK_GAGARIN", "BUR_FG_GAG_V2_1"],
+	["SPK_GAGARIN", "BUR_FG_GAG_V2_2"], ["SPK_GAGARIN", "BUR_FG_GAG_V3_1"], ["SPK_GAGARIN", "BUR_FG_GAG_V3_2"],
+	["SPK_NIHAT", "BUR_DOOR_1071_1"], ["SPK_NIHAT", "BUR_DOOR_1071_2"], ["SPK_NIHAT", "BUR_DOOR_1071_3"],
+	["SPK_NIHAT", "BUR_DOOR_1204_1"], ["SPK_NIHAT", "BUR_DOOR_1204_2"], ["SPK_NIHAT", "BUR_DOOR_1204_3"],
+	["SPK_NIHAT", "BUR_DOOR_1299_1"], ["SPK_NIHAT", "BUR_DOOR_1299_2"], ["SPK_NIHAT", "BUR_DOOR_1299_3"],
+	["SPK_NIHAT", "BUR_DOOR_1453_1"], ["SPK_NIHAT", "BUR_DOOR_1453_2"], ["SPK_NIHAT", "BUR_DOOR_1453_3"],
+	["SPK_NIHAT", "BUR_DOOR_1453_4"], ["SPK_NIHAT", "BUR_DOOR_1492_1"], ["SPK_NIHAT", "BUR_DOOR_1492_2"],
+	["SPK_NIHAT", "BUR_DOOR_1492_3"], ["SPK_NIHAT", "BUR_DOOR_1517_1"], ["SPK_NIHAT", "BUR_DOOR_1517_2"],
+	["SPK_NIHAT", "BUR_DOOR_1517_3"], ["SPK_NIHAT", "BUR_DOOR_1683_1"], ["SPK_NIHAT", "BUR_DOOR_1683_2"],
+	["SPK_NIHAT", "BUR_DOOR_1683_3"], ["SPK_NIHAT", "BUR_DOOR_1789_1"], ["SPK_NIHAT", "BUR_DOOR_1789_2"],
+	["SPK_NIHAT", "BUR_DOOR_1789_3"], ["SPK_NIHAT", "BUR_DOOR_1826_1"], ["SPK_NIHAT", "BUR_DOOR_1826_2"],
+	["SPK_NIHAT", "BUR_DOOR_1826_3"], ["SPK_NIHAT", "BUR_DOOR_1908_1"], ["SPK_NIHAT", "BUR_DOOR_1908_2"],
+	["SPK_NIHAT", "BUR_DOOR_1908_3"], ["SPK_NIHAT", "BUR_DOOR_1923_1"], ["SPK_NIHAT", "BUR_DOOR_1923_2"],
+	["SPK_NIHAT", "BUR_DOOR_1923_3"], ["SPK_NIHAT", "BUR_DOOR_1969_1"], ["SPK_NIHAT", "BUR_DOOR_1969_2"],
+	["SPK_NIHAT", "BUR_DOOR_1969_3"], ["SPK_NIHAT", "BUR_DOOR_2026_1"], ["SPK_NIHAT", "BUR_DOOR_2026_2"],
+	["SPK_NIHAT", "BUR_DOOR_2026_3"], ["SPK_NIHAT", "BUR_DOOR_2150_1"], ["SPK_NIHAT", "BUR_DOOR_2150_2"],
+	["SPK_NIHAT", "BUR_DOOR_2150_3"], ["SPK_NIHAT", "BUR_DOOR_MO44_1"], ["SPK_NIHAT", "BUR_DOOR_MO44_2"],
+	["SPK_NIHAT", "BUR_DOOR_MO44_3"], ["SPK_NIHAT", "BUR_DOOR_MO776_1"], ["SPK_NIHAT", "BUR_DOOR_MO776_2"],
+	["SPK_NIHAT", "BUR_DOOR_MO776_3"],
 	["SPK_NAPOLEON", "BUR_FG_NAP_V2_1"], ["SPK_NAPOLEON", "BUR_FG_NAP_V2_2"], ["SPK_NAPOLEON", "BUR_FG_NAP_V3_1"],
 	["SPK_NAPOLEON", "BUR_FG_NAP_V3_2"], ["SPK_HITLER", "BUR_FG_HIT_V2_1"], ["SPK_HITLER", "BUR_FG_HIT_V2_2"],
 	["SPK_HITLER", "BUR_FG_HIT_V3_1"], ["SPK_HITLER", "BUR_FG_HIT_V3_2"], ["SPK_CLEOPATRA", "BUR_FG_CLE_V2_1"],
@@ -359,6 +394,7 @@ func _ready() -> void:
 	_build_lift()
 	_build_rooms()
 	_build_life()
+	_defight()
 	_lod_pass()
 	_attach.call_deferred()
 
@@ -392,6 +428,164 @@ func _lod_pass() -> void:
 				ol.distance_fade_enabled = true
 				ol.distance_fade_begin = 24.0
 				ol.distance_fade_length = 8.0
+
+
+## Aynı düzlemde üst üste binen farklı renkli yüzeyler titrer (kullanıcı: "duvar köşeleri, kenarlar yanıp sönüyor").
+## Kural: bir kutunun ucu (yüz normali en uzun ekseninde) diğerinin geniş yüzüyle aynı düzlemdeyse uç 8 mm kısalır
+## (oda duvarının ucu koridor duvarının yüzünde); iki geniş yüz aynı düzlemdeyse küçük olan 8 mm öne çıkar
+## (pano lambrinin, levha duvarın önünde), büyük yapı yerinde kalır. Yüzün önü başka bir katının içindeyse (görünmez)
+## dokunulmaz. tests/_tmp/zfight.gd aynı taramayı rapor olarak yapar.
+func _defight() -> void:
+	const EPS := 0.004
+	const NUDGE := 0.008
+	var meshes: Array = []
+	var st: Array = [self]
+	while st.size() > 0:
+		var n: Node = st.pop_back()
+		if n is Person:
+			continue
+		for c in n.get_children():
+			st.push_front(c)
+		if n is MeshInstance3D and (n as MeshInstance3D).mesh and (n as MeshInstance3D).is_visible_in_tree():
+			var mi := n as MeshInstance3D
+			var bs := mi.global_basis
+			var ok := true
+			for col in [bs.x.normalized(), bs.y.normalized(), bs.z.normalized()]:
+				if maxf(absf(col.x), maxf(absf(col.y), absf(col.z))) < 0.999:
+					ok = false
+			if not ok:
+				continue
+			var m = mi.material_override
+			if m == null and mi.mesh.get_surface_count() > 0:
+				m = mi.mesh.surface_get_material(0)
+			var c: Color = (m as StandardMaterial3D).albedo_color if m is StandardMaterial3D else Color(0.123, 0.456, 0.789)
+			meshes.append([mi, c])
+	# Bir kaydırma yeni bir çakışma doğurabilir (paspas yukarı kayınca üstündeki ışık lekesine değer): en çok 5 tur
+	var focus := {}
+	for _pass in 5:
+		var all: Array = []
+		for e in meshes:
+			var mi: MeshInstance3D = e[0]
+			all.append([mi.global_transform * mi.mesh.get_aabb(), mi, e[1]])
+		var buckets := {}
+		for it in all:
+			var ab: AABB = it[0]
+			if ab.size[ab.size.min_axis_index()] >= 0.015:
+				for bz in range(floori(ab.position.z), floori(ab.end.z) + 1):
+					if not buckets.has(bz):
+						buckets[bz] = []
+					buckets[bz].append(ab.grow(-0.001))
+		# 2. turdan sonra yalnız bir önceki turda oynayanlar ve onlara değenler yeniden taranır
+		var items: Array = all
+		if _pass > 0:
+			items = []
+			var fb: Array = []
+			for it in all:
+				if focus.has((it[1] as Node).get_instance_id()):
+					fb.append((it[0] as AABB).grow(0.02))
+			for it in all:
+				for g in fb:
+					if (g as AABB).intersects(it[0]):
+						items.append(it)
+						break
+		# Koridor z boyunca 84 m uzun, x'te dar: z'ye göre sıralı süpürme ve 1 m'lik z kovaları
+		items.sort_custom(func(p, q): return (p[0] as AABB).position.z < (q[0] as AABB).position.z)
+		focus = {}
+		var moved := {}
+		var count := 0
+		for i in items.size():
+			var a: AABB = items[i][0]
+			for j in range(i + 1, items.size()):
+				var c: AABB = items[j][0]
+				if c.position.z > a.end.z + EPS:
+					break
+				if (items[i][2] as Color).is_equal_approx(items[j][2]):
+					continue
+				for ax in 3:
+					var o1 := (ax + 1) % 3
+					var o2 := (ax + 2) % 3
+					if minf(a.end[o1], c.end[o1]) - maxf(a.position[o1], c.position[o1]) <= 0.01:
+						continue
+					if minf(a.end[o2], c.end[o2]) - maxf(a.position[o2], c.position[o2]) <= 0.01:
+						continue
+					for sd in [1, -1]:
+						var fa: float = a.end[ax] if sd > 0 else a.position[ax]
+						var fc: float = c.end[ax] if sd > 0 else c.position[ax]
+						if absf(fa - fc) >= EPS:
+							continue
+						# Ortak yüzün 1 cm önü başka bir katının içindeyse ya da zeminin altındaysa görünmez: dokunma.
+						# Ortası ve dört yanı yoklanır: ortadaki bir eşya ışık lekesinin yalnız ortasını örter
+						var lo1 := maxf(a.position[o1], c.position[o1])
+						var hi1 := minf(a.end[o1], c.end[o1])
+						var lo2 := maxf(a.position[o2], c.position[o2])
+						var hi2 := minf(a.end[o2], c.end[o2])
+						var ga := a.grow(-0.001)
+						var gc := c.grow(-0.001)
+						var hidden := true
+						for f in [Vector2(0.5, 0.5), Vector2(0.15, 0.15), Vector2(0.85, 0.15), Vector2(0.15, 0.85), Vector2(0.85, 0.85)]:
+							var p := Vector3.ZERO
+							p[o1] = lerpf(lo1, hi1, f.x)
+							p[o2] = lerpf(lo2, hi2, f.y)
+							p[ax] = fa + 0.01 * sd
+							if p.y < 0.0:
+								continue
+							var cover := false
+							for h in buckets.get(floori(p.z), []):
+								if (h as AABB).has_point(p) and h != ga and h != gc:
+									cover = true
+									break
+							if not cover:
+								hidden = false
+								break
+						if hidden:
+							continue
+						var cap_a := a.size.max_axis_index() == ax and a.size[ax] > 0.05
+						var cap_c := c.size.max_axis_index() == ax and c.size[ax] > 0.05
+						var pick: int
+						var dir := float(sd)
+						if cap_a != cap_c:
+							pick = i if cap_a else j        # uç geri çekilir
+							dir = -dir
+						elif cap_a:
+							# iki uç aynı düzlemde (iki odanın ortak duvarı koridorda bitiyor): küçüğü geri çekilir
+							pick = i if a.size[o1] * a.size[o2] < c.size[o1] * c.size[o2] else j
+							dir = -dir
+						else:
+							# küçük olan öne çıkar; koridor duvarı, tavan gibi büyükler yerinde kalır
+							pick = i if a.size[o1] * a.size[o2] < c.size[o1] * c.size[o2] else j
+						var mi: MeshInstance3D = items[pick][1]
+						var box := mi.mesh is BoxMesh
+						var key := "%d_%d_%d" % [mi.get_instance_id(), ax, sd if box else 0]
+						if moved.has(key):
+							continue
+						moved[key] = true
+						focus[mi.get_instance_id()] = true
+						count += 1
+						var pb: AABB = items[pick][0]
+						if not box and pb.size[ax] < 0.001:
+							# ince düzlem (QuadMesh): baktığı yöne çıkar, yoksa büyüğün arkasına gömülür
+							var nz := mi.global_basis.z[ax]
+							if absf(nz) > 0.5:
+								dir = signf(nz)
+						var off := Vector3.ZERO
+						off[ax] = dir * NUDGE
+						if box:
+							# Kutunun yalnız o yüzü oynar (uç kısalır ya da yüz öne uzar), karşı yüz yerinde kalır:
+							# bütün kutu kaysa karşı yüz başka bir yüzle çakışır ya da kıl payı yarık açılırdı
+							var bs := mi.global_basis
+							for k in 3:
+								if absf(bs[k].normalized()[ax]) > 0.999:
+									var bm := (mi.mesh as BoxMesh).duplicate() as BoxMesh
+									var sz := bm.size
+									sz[k] = maxf(0.01, sz[k] + dir * float(sd) * NUDGE / bs[k].length())
+									bm.size = sz
+									mi.mesh = bm
+									break
+							mi.global_position += off * 0.5
+						else:
+							mi.global_position += off
+		if count == 0:
+			break
 
 
 ## Odalar (v0.99.96): her biri kendi duvarı, ışığı, yazısı ve etkileşimiyle
@@ -552,10 +746,14 @@ func _of_wain(pos: Vector3, size: Vector3) -> void:
 
 ## Kaset tavan kirişleri + sarkıt lamba (gölgeli tungsten) -- floresan yok
 func _of_ceiling(w: float, d: float, h: float) -> void:
+	# Kirişler gölge atmaz: lambanın üstünde kalırlar, tavana ve duvar başına düşen gölgeleri (düşük çözünürlüklü
+	# küp gölge haritası) testere dişi gibi tırtıklı görünüyordu
 	for z in [1.5, 4.5]:
-		Props.box(self, Vector3(w - 0.2, 0.14, 0.22), Vector3(0, h - 0.07, z), C_WOOD_DARK)
+		var bm := Props.box(self, Vector3(w - 0.2, 0.14, 0.22), Vector3(0, h - 0.07, z), C_WOOD_DARK)
+		bm.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
 	for x in [-1.5, 1.5]:
-		Props.box(self, Vector3(0.22, 0.14, d - 0.2), Vector3(x, h - 0.07, d / 2), C_WOOD_DARK)
+		var bm := Props.box(self, Vector3(0.22, 0.14, d - 0.2), Vector3(x, h - 0.07, d / 2), C_WOOD_DARK)
+		bm.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
 	# Sarkıt: ip, abajur (gölge atmaz), ampul
 	Props.cyl(self, 0.008, 0.3, Vector3(0, h - 0.15, 3.0), Color("222222"), Vector3.ZERO, 4)
 	var shade := Props.cyl(self, 0.3, 0.2, Vector3(0, 2.72, 3.0), Color("2f5a4a"), Vector3.ZERO, 12, 0.07)
@@ -947,16 +1145,87 @@ func _of_calendar_done() -> void:
 	_of_cal_busy = false
 
 
+## Portmanto (v0.99.100): kullanıcı "şapkayı astığı tahta şey çok kötü, şapka ceket havada duruyor". Palto direkten
+## 5 cm açıkta asılıydı, şapka direğin tepesinde disk gibiydi. Şimdi: ağır ayaklık, tornalı direk, uçları pirinç toplu
+## dört kanca; palto yakasından kancaya asılı (hafifçe direğe yaslanır), fötr kancanın ucuna geçmiş, atkı öbür kancada,
+## şemsiye direğe yaslı. Yerel +z odanın ortasına bakar.
+func _of_coat_rack() -> void:
+	var r := Node3D.new()
+	r.position = Vector3(2.45, 0.0, 0.45)
+	r.rotation_degrees.y = -50.0
+	add_child(r)
+	var wd := C_WOOD_DARK
+	# ayaklık: geniş disk + basamak, direk, ortada bilezik, tepede topuz
+	Props.cyl(r, 0.2, 0.035, Vector3(0, 0.0175, 0), wd, Vector3.ZERO, 14)
+	Props.cyl(r, 0.12, 0.05, Vector3(0, 0.06, 0), wd, Vector3.ZERO, 12)
+	Props.cyl(r, 0.03, 1.66, Vector3(0, 0.915, 0), wd, Vector3.ZERO, 8)
+	Props.cyl(r, 0.045, 0.04, Vector3(0, 1.05, 0), C_BRASS, Vector3.ZERO, 10)
+	Props.cyl(r, 0.05, 0.06, Vector3(0, 1.64, 0), wd, Vector3.ZERO, 10)
+	Props.ball(r, 0.05, Vector3(0, 1.78, 0), wd, Vector3.ONE, 10)
+	# kancalar: 40 derece yukarı kalkık kol + pirinç uç
+	var tips := {}
+	for d in [Vector3(0, 0, 1), Vector3(1, 0, 0), Vector3(-1, 0, 0), Vector3(0, 0, -1)]:
+		var dir: Vector3 = d
+		var mid := Vector3(0, 1.64, 0) + dir * (0.03 + 0.11 * cos(deg_to_rad(40.0))) + Vector3(0, 0.11 * sin(deg_to_rad(40.0)), 0)
+		var rot := Vector3(50.0 * dir.z, 0, -50.0 * dir.x)
+		Props.cyl(r, 0.012, 0.22, mid, wd, rot, 6)
+		var tip := Vector3(0, 1.64, 0) + dir * (0.03 + 0.22 * cos(deg_to_rad(40.0))) + Vector3(0, 0.22 * sin(deg_to_rad(40.0)), 0)
+		Props.ball(r, 0.018, tip, C_BRASS, Vector3.ONE, 8)
+		tips[dir] = tip
+	# palto (+z kancası, odaya bakar): yakasından asılı, eteği direğe doğru hafifçe yaslanır
+	var coat := Node3D.new()
+	coat.position = tips[Vector3(0, 0, 1)] + Vector3(0, -0.01, 0.016)
+	coat.rotation_degrees.x = 6.0
+	r.add_child(coat)
+	var cc := Color("8c7a58")
+	var cd := Color("6e5f44")
+	# Askıdaki palto kutu gibi durmasın: yassılaştırılmış koni (yakada dar, etekte geniş), yanlarda sarkan kollar
+	Props.ball(coat, 0.06, Vector3(0, -0.03, 0), cd, Vector3(1.2, 0.8, 0.9), 8)          # yakada toplanan kumaş
+	var body := Props.cyl(coat, 0.21, 0.82, Vector3(0, -0.47, 0), cc, Vector3.ZERO, 12, 0.1)
+	body.scale = Vector3(1.0, 1.0, 0.42)
+	for sx: float in [-1.0, 1.0]:
+		var sl := Props.cyl(coat, 0.05, 0.6, Vector3(sx * 0.15, -0.42, 0.01), cc, Vector3(0, 0, sx * 6.0), 8, 0.04)
+		sl.scale = Vector3(1.0, 1.0, 0.9)
+		Props.cyl(coat, 0.052, 0.05, Vector3(sx * 0.18, -0.72, 0.01), cd, Vector3(0, 0, sx * 6.0), 8)     # kol ağzı
+		Props.box(coat, Vector3(0.04, 0.26, 0.006), Vector3(sx * 0.035, -0.2, 0.05), cd, Vector3(0, 0, sx * 12.0))   # devrik yaka
+	# düğmeler (koni yüzeyine oturur: aşağı indikçe palto genişler, yüzey öne gelir)
+	for by: float in [-0.36, -0.5, -0.64]:
+		Props.ball(coat, 0.011, Vector3(0.0, by, (0.1 + 0.11 * (-0.06 - by) / 0.82) * 0.42 + 0.002), Color("2e2620"), Vector3(1, 1, 0.5), 6)
+	# fötr (+x kancası): kancanın ucu tepeliğin içinde, şapka dışa doğru yatık
+	var hat := Node3D.new()
+	hat.position = tips[Vector3(1, 0, 0)]
+	hat.rotation_degrees.z = -18.0
+	r.add_child(hat)
+	var hc := Color("2e2a28")
+	Props.cyl(hat, 0.08, 0.1, Vector3(0.0, -0.028, 0), hc, Vector3.ZERO, 10, 0.07)
+	Props.cyl(hat, 0.082, 0.022, Vector3(0.0, -0.064, 0), Color("6a2a24"), Vector3.ZERO, 10)
+	Props.cyl(hat, 0.13, 0.012, Vector3(0.0, -0.079, 0), hc, Vector3.ZERO, 14)
+	# atkı (-x kancası): kancanın üstünden iki yana sarkar, hardal çizgili
+	var sc := Vector3(tips[Vector3(-1, 0, 0)])
+	Props.box(r, Vector3(0.085, 0.03, 0.07), sc + Vector3(0, 0.022, 0), Color("8a2a2a"))
+	for sz: float in [-1.0, 1.0]:
+		Props.box(r, Vector3(0.085, 0.5, 0.014), sc + Vector3(0, -0.23, sz * 0.03), Color("8a2a2a"))
+		for sy: float in [-0.3, -0.36]:
+			Props.box(r, Vector3(0.087, 0.022, 0.016), sc + Vector3(0, sy, sz * 0.03), Color("d4a640"))
+		for fx: float in [-0.03, 0.0, 0.03]:
+			Props.box(r, Vector3(0.008, 0.05, 0.008), sc + Vector3(fx, -0.505, sz * 0.03), Color("8a2a2a"))
+	# şemsiye (+x yanı, odadan görünür): ucu yerde, sapı direğe yaslı
+	var u := Node3D.new()
+	u.position = Vector3(0.27, 0.0, -0.02)
+	u.rotation_degrees.z = 14.1
+	r.add_child(u)
+	Props.cyl(u, 0.005, 0.06, Vector3(0, 0.03, 0), C_METAL, Vector3.ZERO, 6)
+	Props.cyl(u, 0.012, 0.55, Vector3(0, 0.335, 0), Color("2a3446"), Vector3.ZERO, 8, 0.04)
+	Props.cyl(u, 0.04, 0.06, Vector3(0, 0.64, 0), Color("2a3446"), Vector3.ZERO, 8, 0.015)
+	Props.cyl(u, 0.032, 0.02, Vector3(0, 0.42, 0), Color("3a4a64"), Vector3.ZERO, 8)
+	Props.cyl(u, 0.008, 0.14, Vector3(0, 0.74, 0), C_METAL, Vector3.ZERO, 6)
+	Props.cyl(u, 0.016, 0.1, Vector3(0, 0.85, 0), C_WOOD, Vector3.ZERO, 8)
+	Props.ball(u, 0.02, Vector3(0, 0.9, 0), C_WOOD, Vector3.ONE, 8)
+
+
 ## Portmanto (kapının doğusunda) ve çağlar küresi
 func _of_corner_props() -> void:
-	# Portmanto: ayak, direk, kollar, palto, fötr şapka
-	Props.cyl(self, 0.22, 0.03, Vector3(2.45, 0.015, 0.45), C_WOOD_DARK, Vector3.ZERO, 8)
-	Props.cyl(self, 0.025, 1.8, Vector3(2.45, 0.9, 0.45), C_WOOD_DARK, Vector3.ZERO, 6)
-	Props.box(self, Vector3(0.3, 0.02, 0.02), Vector3(2.45, 1.7, 0.45), C_WOOD_DARK)
-	Props.box(self, Vector3(0.02, 0.02, 0.3), Vector3(2.45, 1.7, 0.45), C_WOOD_DARK)
-	Props.box(self, Vector3(0.32, 0.7, 0.1), Vector3(2.45, 1.3, 0.32), Color("5a4a3a"))
-	Props.cyl(self, 0.17, 0.015, Vector3(2.45, 1.84, 0.45), Color("2e2a28"), Vector3.ZERO, 10)
-	Props.cyl(self, 0.09, 0.09, Vector3(2.45, 1.89, 0.45), Color("2e2a28"), Vector3.ZERO, 8)
+	_of_coat_rack()
 	# Çağlar küresi: ayaklık, direk, bakır meridyen, dönen küre + kıtalar
 	Props.cyl(self, 0.16, 0.03, Vector3(2.3, 0.015, 1.5), C_WOOD_DARK, Vector3.ZERO, 8)
 	Props.cyl(self, 0.025, 0.8, Vector3(2.3, 0.45, 1.5), C_WOOD, Vector3.ZERO, 6)
@@ -1024,7 +1293,14 @@ func _build_corridor() -> void:
 	# Duvarlar yalnız odaların açıklıkları dışında; açıklıkların üstünde lento (kapı ağzı)
 	for side in [-1, 1]:
 		var opens: Array = OPEN_W if side < 0 else OPEN_E
-		for seg in _solid_ranges(0.0, z1, opens):
+		# Kapılar gerçek açıklık: ardında çağın girintisi var (eskiden duvara yapışık parlak bir levhaydı)
+		var gaps: Array = opens.duplicate()
+		for d in DOORS:
+			if int(d[0]) == side:
+				gaps.append([float(d[1]) + 0.52, float(d[1]) - 0.52])
+				_wall(Vector3(0.2, COR_H - 2.34, 1.04), Vector3(side * (COR_W / 2 + 0.1), 2.34 + (COR_H - 2.34) / 2.0, float(d[1])), C_COR_WALL)
+		gaps.sort_custom(func(a, b): return float(a[0]) > float(b[0]))
+		for seg in _solid_ranges(0.0, z1, gaps):
 			_cor_wall(side, seg[0], seg[1])
 		for o in opens:
 			var za: float = o[0]
@@ -1079,28 +1355,111 @@ func _cor_wall(side: int, za: float, zb: float) -> void:
 	Props.box(self, Vector3(0.05, 0.12, length), Vector3(xi, 0.06, zc), C_WOOD_DARK)
 
 
+## Kapı yılı → zaman penceresinin odaklandığı çağ (0 Mısır 1 Roma 2 Konstantiniyye 3 1453 4 kalyon 5 1970'ler 6 modern 7 roket)
+const DOOR_ERA := {"MÖ 776": 0, "MÖ 44": 1, "1071": 2, "1204": 2, "1299": 2, "1453": 3, "1492": 4, "1517": 4, "1683": 4,
+	"1789": 4, "1826": 4, "1908": 5, "1923": 5, "1969": 7, "2026": 6, "2150": 7}
+
+
 func _door(side: int, z: float, year: String) -> void:
 	var x := side * (COR_W / 2 - 0.02)
 	var col: Color = ERA_COLORS.get(year, Color("e8d8b0"))
 	var rot := Vector3(0, -90 * side, 0)
-	# Kasa (ceviz) ve kapının ardındaki aydınlık: duvarda çağ renginde parlayan boşluk (kanat aralık durur)
+	# Kasa (ceviz)
 	Props.box(self, Vector3(0.06, 2.3, 0.08), Vector3(x, 1.15, z - 0.54), C_WALNUT)
 	Props.box(self, Vector3(0.06, 2.3, 0.08), Vector3(x, 1.15, z + 0.54), C_WALNUT)
 	Props.box(self, Vector3(0.06, 0.08, 1.16), Vector3(x, 2.3, z), C_WALNUT)
-	Props.box(self, Vector3(0.02, 2.2, 1.0), Vector3(side * (COR_W / 2 + 0.0), 1.1, z), col.darkened(0.35), Vector3.ZERO, 0.9)
-	# Kanat: menteşe z+0,5'te, 14° koridora açık
+	_door_alcove(side, z, year, col)
+	# Kanat: menteşe z+0,5'te, 30° koridora açık (aralıktan içerisi görünür)
 	var hinge := Node3D.new()
 	hinge.position = Vector3(x - side * 0.03, 0.0, z + 0.5)
-	hinge.rotation_degrees.y = side * 14.0
+	hinge.rotation_degrees.y = side * 30.0
 	add_child(hinge)
 	Props.box(hinge, Vector3(0.05, 2.2, 1.0), Vector3(0, 1.1, -0.5), Color("5f4630"))
 	Props.box(hinge, Vector3(0.055, 0.5, 0.6), Vector3(0, 1.7, -0.5), col.lerp(Color("dfe8e0"), 0.55), Vector3.ZERO, 0.45)
 	Props.ball(hinge, 0.04, Vector3(-side * 0.04, 1.05, -0.85), C_BRASS, Vector3.ONE, 6)
 	Props.label(hinge, year, Vector3(-side * 0.035, 1.7, -0.5), 48, Color("2a2a2a"), rot, 0.5)
-	# Aralıktan sızan ışık: zeminde yelpaze, kanadın kenarında ince parlak şerit
-	_glow(self, Vector3(x - side * 0.45, 0.015, z - 0.35), Vector2(1.3, 1.1), col, Vector3(-90, 0, 0), 0.55)
-	Props.box(self, Vector3(0.03, 2.05, 0.04), Vector3(x - side * 0.02, 1.05, z - 0.47), col, Vector3.ZERO, 2.2)
+	# Aralıktan sızan ışık: zeminde yelpaze
+	_glow(self, Vector3(x - side * 0.45, 0.02, z - 0.3), Vector2(1.3, 1.1), col, Vector3(-90, 0, 0), 0.55)
 	Props.interactable(self, "door:" + year, Vector3(0.4, 2.0, 1.0), Vector3(x - side * 0.2, 1.1, z))
+	_handlers["door:" + year] = _door_talk.bind(year)
+	_prompts["door:" + year] = "UI_BUR_LOOK"
+	_nihat_only["door:" + year] = true
+
+
+## Kapının ardındaki girinti: 0,8 m derin; dipte o çağa odaklı zaman penceresi, çağın zemini, ışığı ve bir iki eşyası
+func _door_alcove(side: int, z: float, year: String, col: Color) -> void:
+	var x0 := side * (COR_W / 2 + 0.2)          # koridor duvarının dış yüzü
+	var x1 := side * (COR_W / 2 + 1.0)          # girintinin dibi
+	var xm := (x0 + x1) / 2.0
+	var floor_col := col.darkened(0.55)
+	Props.box(self, Vector3(1.0, 0.02, 1.04), Vector3(xm, 0.01, z), floor_col)
+	Props.box(self, Vector3(1.0, 0.04, 1.04), Vector3(xm, 2.36, z), col.darkened(0.7))
+	for sz: float in [-1.0, 1.0]:
+		Props.box(self, Vector3(1.0, 2.36, 0.04), Vector3(xm, 1.18, z + sz * 0.54), col.darkened(0.6))
+	var m := _rc_window_quad(self, Vector2(1.04, 2.34), Vector3(x1 - side * 0.01, 1.17, z), Vector3(0, -90 * side, 0), 0.9)
+	if m:
+		m.set_shader_parameter("focus_era", int(DOOR_ERA.get(year, 2)))
+		m.set_shader_parameter("era_focus", 1.0)
+		m.set_shader_parameter("sky_horizon", col)
+	if year != "1969":       # 1969'da zemin ay tozu, ışık lekesi tozun altında kalıp kenarlarda titrerdi
+		_glow(self, Vector3(xm, 0.03, z), Vector2(1.0, 1.0), col, Vector3(-90, 0, 0), 0.6)
+	# Çağın eşyası (girintinin önünde, kapının aralığından görünür)
+	var px := x0 + side * 0.3
+	match year:
+		"MÖ 776":       # amfora ve defne dalı
+			Props.ball(self, 0.16, Vector3(px, 0.22, z - 0.2), Color("b8643a"), Vector3(1, 1.4, 1), 10)
+			Props.cyl(self, 0.05, 0.14, Vector3(px, 0.5, z - 0.2), Color("b8643a"), Vector3.ZERO, 8)
+		"MÖ 44":        # mermer sütun başlığı, yere düşmüş kırmızı pelerin
+			Props.cyl(self, 0.18, 0.7, Vector3(px, 0.35, z - 0.15), Color("e8e4d8"), Vector3.ZERO, 12)
+			Props.box(self, Vector3(0.5, 0.03, 0.4), Vector3(px, 0.02, z + 0.2), Color("a01c24"), Vector3(0, 20, 0))
+		"1071", "1204", "1299":   # kalkan ve mızrak
+			Props.cyl(self, 0.28, 0.04, Vector3(px + side * 0.25, 0.45, z - 0.2), Color("8a2b22"), Vector3(0, 0, 80 * side), 14)
+			Props.cyl(self, 0.015, 2.0, Vector3(px + side * 0.3, 1.0, z + 0.25), C_WOOD_DARK, Vector3(8, 0, 0), 6)
+		"1453":         # top güllesi yığını, ateş ışığı
+			for k in 3:
+				Props.ball(self, 0.13, Vector3(px + side * (k % 2) * 0.12, 0.13 + (k / 2) * 0.2, z - 0.25 + k * 0.17), Color("3a3a3a"), Vector3.ONE, 10)
+			_glow(self, Vector3(x1 - side * 0.05, 0.9, z), Vector2(1.0, 1.6), Color("ff6a1a"), Vector3(0, -90 * side, 0), 0.5)
+		"1492", "1683", "1517":   # fıçı ve halat
+			Props.cyl(self, 0.22, 0.6, Vector3(px, 0.3, z - 0.15), C_WOOD, Vector3.ZERO, 12, 0.24)
+			Props.ring(self, 0.12, 0.2, Vector3(px, 0.03, z + 0.28), Color("c8a870"))
+		"1789":         # devrim kokardası ve devrilmiş sandalye
+			Props.box(self, Vector3(0.42, 0.05, 0.42), Vector3(px, 0.2, z), C_WOOD, Vector3(70, 0, 20))
+			Props.cyl(self, 0.09, 0.02, Vector3(px + side * 0.2, 0.9, z - 0.3), Color("2a4ab0"), Vector3(0, 0, 90), 10)
+		"1826":         # ilk fotoğraf makinesi: sehpada kutu
+			Props.box(self, Vector3(0.3, 0.25, 0.25), Vector3(px, 1.25, z), C_WOOD_DARK)
+			for k in 3:
+				Props.cyl(self, 0.012, 1.2, Vector3(px, 0.6, z), C_WOOD, Vector3(18 * cos(k * 2.1), 0, 18 * sin(k * 2.1)), 4)
+		"1908", "1923": # daktilo masası ve radyo
+			Props.box(self, Vector3(0.45, 0.04, 0.6), Vector3(px, 0.75, z), C_WOOD)
+			Props.box(self, Vector3(0.3, 0.2, 0.18), Vector3(px, 0.87, z), Color("6a4a2a"))
+		"1969":         # ay tozu, ayak izi, küçük bayrak direği
+			Props.box(self, Vector3(0.9, 0.03, 1.0), Vector3(xm, 0.025, z), Color("8a8a90"))
+			Props.box(self, Vector3(0.12, 0.01, 0.28), Vector3(px, 0.045, z + 0.1), Color("5a5a60"), Vector3(0, 15, 0))
+			Props.cyl(self, 0.01, 1.1, Vector3(px + side * 0.3, 0.55, z - 0.3), C_METAL, Vector3.ZERO, 5)
+		"2026":         # trafik konisi, parlayan telefon
+			Props.cyl(self, 0.15, 0.45, Vector3(px, 0.225, z - 0.2), Color("ff6a1a"), Vector3.ZERO, 10, 0.03)
+			Props.box(self, Vector3(0.08, 0.01, 0.15), Vector3(px, 0.03, z + 0.25), Color("9ae0ff"), Vector3.ZERO, 1.5)
+		"2150":         # süzülen küp, neon şeritler
+			var cube := Props.box(self, Vector3(0.22, 0.22, 0.22), Vector3(px, 1.0, z), Color("40f0ff"), Vector3(30, 40, 0), 1.6)
+			_bobbers.append([cube, 1.0, 0.08, 1.4, z])
+			Props.box(self, Vector3(0.02, 0.04, 1.0), Vector3(x1 - side * 0.03, 0.4, z), Color("ff40d0"), Vector3.ZERO, 2.0)
+
+
+## Nihat kapıyı inceler: her yılın kendi lafları, sırayla (aynı laf art arda gelmez)
+func _door_talk(year: String) -> void:
+	var yk := year.replace("MÖ ", "MO")
+	var keys: Array = []
+	var old := "D3_N_DOOR_" + yk
+	if tr(old) != old:
+		keys.append(old)
+	for i in range(1, 5):
+		var k := "BUR_DOOR_%s_%d" % [yk, i]
+		if tr(k) != k:
+			keys.append(k)
+	if keys.is_empty():
+		keys.append("D3_N_DOOR")
+	Audio.sfx("wood_creak", -12.0)
+	_say(_next("door:" + year, keys), 4.5)
 
 
 # ---------------------------------------------------------------- kostüm deposu
@@ -1174,10 +1533,45 @@ func _build_depot() -> void:
 
 # ---------------------------------------------------------------- Başdenetçi'nin masası
 
+var _desk_root: Node3D
+
+
+## Başdenetçilik: koridorun doğusunda kendi odası (masası koridorun tam ortasındaydı)
+func _build_desk_room() -> void:
+	var wc := Color("d8caa0")
+	_floor(Vector2(4.4, 3.9), Vector3(4.2, 0, -26.75), Color("7a5a3a"), Color("6a4c30"), 1.2)
+	Props.solid(self, Vector3(4.6, 0.2, 4.3), Vector3(4.3, COR_H + 0.1, -26.75), C_CEIL)
+	_wall(Vector3(4.6, COR_H, 0.2), Vector3(4.3, COR_H / 2, -28.9), wc)
+	_wall(Vector3(0.2, COR_H, 4.4), Vector3(6.5, COR_H / 2, -26.75), wc)
+	_of_wain(Vector3(4.3, 0.5, -28.78), Vector3(4.36, 1.0, 0.04))
+	_of_wain(Vector3(6.38, 0.5, -26.75), Vector3(0.04, 1.0, 4.1))
+	_of_wain(Vector3(4.3, 0.5, -24.62), Vector3(4.36, 1.0, 0.04))
+	# Teşkilat şeması: bütün oklar tek bir soru işaretine çıkar
+	Props.box(self, Vector3(0.04, 1.1, 1.6), Vector3(6.37, 1.9, -25.6), C_WALNUT)
+	Props.box(self, Vector3(0.03, 1.0, 1.5), Vector3(6.35, 1.9, -25.6), C_PAPER)
+	_lbl(self, "TEŞKİLAT ŞEMASI", "ORGANISATION CHART", Vector3(6.33, 2.32, -25.6), 18, Color("2a2a2a"), Vector3(0, -90, 0), 1.4)
+	for k in 6:
+		var bx := Vector3(6.33, 1.5 + (k / 3) * 0.32, -26.1 + (k % 3) * 0.5)
+		Props.box(self, Vector3(0.01, 0.16, 0.3), bx, Color("c9d8e8"))
+		Props.box(self, Vector3(0.01, 0.6 - (k / 3) * 0.3, 0.012), bx + Vector3(0, 0.25, 0), Color("3a3a3a"))
+	_lbl(self, "?", "?", Vector3(6.32, 2.12, -25.6), 40, Color("a8242a"), Vector3(0, -90, 0))
+	# Dosya dolabı ve ficus
+	Props.set_pattern(Props.solid(self, Vector3(0.6, 1.4, 0.6), Vector3(6.05, 0.7, -28.35), Color("6f7a70")), Color("6f7a70"), "wall")
+	Props.cyl(self, 0.18, 0.35, Vector3(2.6, 0.17, -28.4), Color("8a5a3a"), Vector3.ZERO, 8, 0.22)
+	Props.ball(self, 0.3, Vector3(2.6, 0.75, -28.4), Color("3a6a34"), Vector3(1, 1.3, 1), 8)
+
+
 func _build_desk() -> void:
-	var z := DESK_Z
-	Props.set_pattern(Props.solid(self, Vector3(2.4, 0.08, 1.1), Vector3(0, 0.8, z), C_WOOD), C_WOOD, "wood")
-	Props.set_pattern(Props.solid(self, Vector3(2.3, 0.76, 0.1), Vector3(0, 0.38, z + 0.5), C_WOOD_DARK), C_WOOD_DARK, "wood")
+	_build_desk_room()
+	# Masa düzeni yerel çerçevede kurulur: +z koridora (ziyaretçiye) bakar, Başdenetçi -z'de oturur
+	_desk_root = Node3D.new()
+	_desk_root.position = Vector3(DESK_X, 0.0, DESK_Z)
+	_desk_root.rotation_degrees.y = -90.0
+	add_child(_desk_root)
+	var dr := _desk_root
+	var z := 0.0
+	Props.set_pattern(Props.solid(dr, Vector3(2.4, 0.08, 1.1), Vector3(0, 0.8, z), C_WOOD), C_WOOD, "wood")
+	Props.set_pattern(Props.solid(dr, Vector3(2.3, 0.76, 0.1), Vector3(0, 0.38, z + 0.5), C_WOOD_DARK), C_WOOD_DARK, "wood")
 	# Kâğıt dağları: tavana kadar
 	var rng := RandomNumberGenerator.new()
 	rng.seed = 7
@@ -1191,28 +1585,32 @@ func _build_desk() -> void:
 		var li := k
 		while yy < 0.84 + hgt - 0.05:
 			var lh := minf(rng.randf_range(0.18, 0.42), 0.84 + hgt - yy)
-			Props.box(self, Vector3(0.34 + rng.randf_range(-0.03, 0.03), lh, 0.26 + rng.randf_range(-0.02, 0.02)), Vector3(px + rng.randf_range(-0.025, 0.025), yy + lh / 2, pz), layer_cols[li % layer_cols.size()], Vector3(0, rng.randf_range(-9, 9), 0))
+			Props.box(dr, Vector3(0.34 + rng.randf_range(-0.03, 0.03), lh, 0.26 + rng.randf_range(-0.02, 0.02)), Vector3(px + rng.randf_range(-0.025, 0.025), yy + lh / 2, pz), layer_cols[li % layer_cols.size()], Vector3(0, rng.randf_range(-9, 9), 0))
 			yy += lh
 			li += 1
 		if hgt > 1.0:
-			Props.box(self, Vector3(0.05, 0.012, 0.28), Vector3(px, 0.84 + hgt * 0.62, pz), Color("b8323a"))     # kırmızı bant
-	Props.box(self, Vector3(0.3, 0.02, 0.22), Vector3(0.9, 0.85, z + 0.25), Color("b8323a"))
-	Props.label(self, "BAŞDENETÇİ", Vector3(0, 1.0, z + 0.56), 28, Color("f2e6c9"), Vector3.ZERO, 1.0)
-	Props.label(self, "M. ZAMANOVA", Vector3(0, 0.88, z + 0.56), 22, Color("d8d0b8"), Vector3.ZERO, 1.0)
+			Props.box(dr, Vector3(0.05, 0.012, 0.28), Vector3(px, 0.84 + hgt * 0.62, pz), Color("b8323a"))     # kırmızı bant
+	Props.box(dr, Vector3(0.3, 0.02, 0.22), Vector3(0.9, 0.85, z + 0.25), Color("b8323a"))
+	# İsim levhası masanın önünde, koyu zeminde (masa üstü kenarına ve kâğıt yığınlarına biniyordu, okunmuyordu)
+	Props.box(dr, Vector3(1.1, 0.3, 0.02), Vector3(0, 0.6, z + 0.565), Color("2a3a2e"))
+	Props.box(dr, Vector3(1.16, 0.02, 0.025), Vector3(0, 0.76, z + 0.565), C_BRASS)
+	Props.label(dr, "BAŞDENETÇİ", Vector3(0, 0.66, z + 0.58), 26, Color("f2e6c9"), Vector3.ZERO, 1.0)
+	Props.label(dr, "M. ZAMANOVA", Vector3(0, 0.54, z + 0.58), 20, Color("d8c890"), Vector3.ZERO, 0.8)
 	# Tepede 'SIRA NUMARANIZ' tabelası
-	Props.box(self, Vector3(1.0, 0.35, 0.05), Vector3(0, 3.0, z + 0.2), Color("1a1f1a"))
-	Props.label(self, "SIRA: 1453", Vector3(0, 3.0, z + 0.23), 40, Color("ff5a4a"), Vector3.ZERO, 0.9)
+	Props.box(dr, Vector3(1.0, 0.35, 0.05), Vector3(0, 3.0, z + 0.2), Color("1a1f1a"))
+	Props.label(dr, "SIRA: 1453", Vector3(0, 3.0, z + 0.23), 40, Color("ff5a4a"), Vector3.ZERO, 0.9)
 	var l := OmniLight3D.new()
-	l.position = Vector3(0, 2.5, z + 1.5)
+	l.position = Vector3(0, 2.5, z + 1.2)
 	l.light_color = Color("fff4d8")
 	l.light_energy = 1.2
 	l.omni_range = 5.0
-	add_child(l)
+	dr.add_child(l)
 	mufide = Person.new({"coat": Color("6b3a4a"), "pants": Color("3a2a30"), "hair": Color("9a9a9a"), "hat": "bun", "glasses": true, "skirt": true, "skin": Color("e8b894")})
 	mufide.set_meta("spk", "SPK_MUFIDE")
 	mufide.position = MUFIDE_POS
+	mufide.rotation_degrees.y = -90.0
 	add_child(mufide)
-	Props.interactable(self, "mufide", Vector3(2.4, 2.0, 1.6), Vector3(0, 1.0, z + 0.2))
+	Props.interactable(dr, "mufide", Vector3(2.4, 2.0, 1.6), Vector3(0, 1.0, z + 0.2))
 
 
 # ---------------------------------------------------------------- saha asansörü
@@ -1546,10 +1944,10 @@ func _ld_boards() -> void:
 	var pd := [[-0.3, 0.0, 0.25, 0.34, 1, -2.0], [-0.02, 0.03, 0.28, 0.3, 4, 3.0], [0.3, -0.01, 0.24, 0.32, 3, -5.0], [0.0, -0.23, 0.7, 0.1, 5, 0.0]]
 	_ld_board("bur_noticeA", 1, -1.1, 1.6, "DUYURU", "NOTICE", pa, ["BUR_NOTICE_A", "BUR_NOTICE_A_2"])
 	_ld_board("bur_noticeB", -1, -23.0, 1.6, "KAYIP İLANI", "LOST NOTICE", pb, ["BUR_NOTICE_B"])
-	_ld_board("bur_noticeC", 1, -25.8, 1.6, "SANİYE AVI", "SECOND HUNT", pc, ["BUR_NOTICE_C"])
+	_ld_board("bur_noticeC", 1, -24.2, 1.6, "SANİYE AVI", "SECOND HUNT", pc, ["BUR_NOTICE_C"])
 	_ld_board("bur_noticeD", -1, -40.0, 1.6, "İHALE", "TENDER", pd, ["BUR_NOTICE_D"])
 	# Pano C'deki sayaç: n/5 (bölme işareti var, düz tamsayı değil)
-	_ld_counter = Props.label(self, _ld_counter_text(seconds_found()), Vector3(1.932, 1.6 - 0.23, -25.8), 17, Color("6a1a1a"), Vector3(0, -90, 0), 0.8)
+	_ld_counter = Props.label(self, _ld_counter_text(seconds_found()), Vector3(1.932, 1.6 - 0.23, -24.2), 17, Color("6a1a1a"), Vector3(0, -90, 0), 0.8)
 	if not seconds_changed.is_connected(_ld_on_seconds):
 		seconds_changed.connect(_ld_on_seconds)
 
@@ -1609,7 +2007,7 @@ func _ld_furniture() -> void:
 	for i in pzs.size():
 		_ld_portrait(float(pzs[i]), eras[i], bgs[i])
 	# Duvar lambaları (kehribar parlak kutular; gerçek ışık yok)
-	for s in [[-1, -9.9], [-1, -14.0], [-1, -20.3], [1, -24.5], [1, -33.5], [-1, -44.75]]:
+	for s in [[-1, -9.9], [-1, -14.0], [-1, -20.3], [1, -36.2], [-1, -44.75]]:
 		var se: int = s[0]
 		Props.box(self, Vector3(0.08, 0.16, 0.1), Vector3(se * 1.96, 2.05, float(s[1])), Color("ffb040"), Vector3.ZERO, 1.5)
 
@@ -1667,22 +2065,24 @@ func _ld_talk(p: Person, secs: float) -> void:
 
 
 func _ld_clerks() -> void:
-	# Katip Cemal: batı duvarına yaslı küçük masada daktilo; sırtı koridorda
-	Props.box(self, Vector3(0.4, 0.04, 0.9), Vector3(-1.8, 0.8, -2.2), C_WOOD)
-	Props.box(self, Vector3(0.36, 0.78, 0.05), Vector3(-1.8, 0.39, -2.6), C_WOOD_DARK)
-	Props.box(self, Vector3(0.36, 0.78, 0.05), Vector3(-1.8, 0.39, -1.8), C_WOOD_DARK)
-	Props.box(self, Vector3(0.26, 0.1, 0.3), Vector3(-1.78, 0.87, -2.1), Color("1f2426"))
-	Props.box(self, Vector3(0.01, 0.2, 0.22), Vector3(-1.9, 1.0, -2.1), C_PAPER, Vector3(0, 0, -12))
-	Props.box(self, Vector3(0.2, 0.12, 0.22), Vector3(-1.82, 0.88, -2.45), C_PAPER)
+	# Katip Cemal: sırtı duvarda, masası ve daktilosu koridora dönük kayıt masası (yüzü duvara dönüktü)
+	Props.box(self, Vector3(0.5, 0.04, 1.0), Vector3(-1.15, 0.78, -2.3), C_WOOD)
+	Props.box(self, Vector3(0.04, 0.76, 0.96), Vector3(-0.92, 0.38, -2.3), C_WOOD_DARK)
+	for mz: float in [-2.75, -1.85]:
+		Props.box(self, Vector3(0.46, 0.76, 0.04), Vector3(-1.15, 0.38, mz), C_WOOD_DARK)
+	Props.box(self, Vector3(0.3, 0.1, 0.26), Vector3(-1.2, 0.85, -2.25), Color("1f2426"))
+	Props.box(self, Vector3(0.22, 0.2, 0.01), Vector3(-1.2, 0.98, -2.12), C_PAPER, Vector3(-12, 90, 0))
+	Props.box(self, Vector3(0.22, 0.12, 0.2), Vector3(-1.1, 0.86, -2.65), C_PAPER)
+	_lbl(self, "KAYIT", "REGISTRY", Vector3(-0.895, 0.6, -2.3), 26, Color("e8d8a8"), Vector3(0, 90, 0), 0.8)
 	_ld_cemal = Person.new({"coat": Color("5a5048"), "pants": Color("2a2a30"), "hair": Color("3a3a3a"), "hat": "none",
 		"glasses": true, "mustache": true, "skin": Color("e0b090")})
 	_ld_cemal.set_meta("spk", "SPK_CEMAL")
 	_ld_cemal.set_meta("no_yield", true)
-	_ld_cemal.position = Vector3(-1.5, 0.0, -2.2)
-	_ld_cemal.rotation_degrees.y = -90
+	_ld_cemal.position = Vector3(-1.68, 0.0, -2.3)
+	_ld_cemal.rotation_degrees.y = 90
 	add_child(_ld_cemal)
 	_ld_cemal.set_activity("write")
-	_reg("bur_cemal", Vector3(0.9, 1.8, 1.0), Vector3(-1.6, 0.9, -2.2), "UI_BUR_TALK", _ld_cemal_talk, null, false)
+	_reg("bur_cemal", Vector3(0.9, 1.8, 1.0), Vector3(-1.4, 0.9, -2.3), "UI_BUR_TALK", _ld_cemal_talk, null, false)
 	# Kurye Zeki + servis arabası
 	_ld_zeki = Person.new({"coat": Color("2f5f8a"), "pants": Color("4a4038"), "hair": Color("2a1a10"), "hat": "fez",
 		"mustache": true, "skin": Color("d9a07a"), "scarf": Color("b8323a")})
@@ -1748,15 +2148,16 @@ func _ld_zeki_talk() -> void:
 # ---------------------------------------------------------------- Başdenetçi'nin masası: süsler
 
 func _ld_desk_extras() -> void:
-	var z := DESK_Z
+	var z := 0.0
+	var dr := _desk_root
 	# Yeşil bankacı lambası
-	Props.cyl(self, 0.06, 0.025, Vector3(-0.8, 0.8525, z + 0.2), C_BRASS, Vector3.ZERO, 10)
-	Props.cyl(self, 0.01, 0.22, Vector3(-0.8, 0.965, z + 0.2), C_BRASS, Vector3.ZERO, 6)
-	Props.cyl(self, 0.06, 0.2, Vector3(-0.8, 1.09, z + 0.2), Color("2a7a4a"), Vector3(0, 0, 90), 10, -1.0, 0.25)
-	_glow(self, Vector3(-0.8, 0.85, z + 0.3), Vector2(0.8, 0.6), Color("ffc870"), Vector3(-90, 0, 0), 0.35)
+	Props.cyl(dr, 0.06, 0.025, Vector3(-0.8, 0.8525, z + 0.2), C_BRASS, Vector3.ZERO, 10)
+	Props.cyl(dr, 0.01, 0.22, Vector3(-0.8, 0.965, z + 0.2), C_BRASS, Vector3.ZERO, 6)
+	Props.cyl(dr, 0.06, 0.2, Vector3(-0.8, 1.09, z + 0.2), Color("2a7a4a"), Vector3(0, 0, 90), 10, -1.0, 0.25)
+	_glow(dr, Vector3(-0.8, 0.85, z + 0.3), Vector2(0.8, 0.6), Color("ffc870"), Vector3(-90, 0, 0), 0.35)
 	# Pirinç isim plakası: masa ön kenarında, hafif geriye yaslı
-	Props.box(self, Vector3(0.46, 0.1, 0.03), Vector3(-0.35, 0.9, z + 0.5), C_BRASS, Vector3(-20, 0, 0))
-	Props.label(self, "M. ZAMANOVA", Vector3(-0.35, 0.906, z + 0.516), 16, Color("2a1a10"), Vector3(-20, 0, 0), 0.42)
+	Props.box(dr, Vector3(0.46, 0.1, 0.03), Vector3(-0.35, 0.9, z + 0.5), C_BRASS, Vector3(-20, 0, 0))
+	Props.label(dr, "M. ZAMANOVA", Vector3(-0.35, 0.906, z + 0.516), 16, Color("2a1a10"), Vector3(-20, 0, 0), 0.42)
 	if GameState.autotest:
 		return
 	# Kâğıt dağlarından süzülen sayfalar
@@ -1766,7 +2167,7 @@ func _ld_desk_extras() -> void:
 	for i in 5:
 		var start := Vector3(sx[i], 2.6, z - 0.1 + rng.randf_range(-0.1, 0.25))
 		var end := Vector3(sx[i] + rng.randf_range(-0.5, 0.5), 0.02, z + rng.randf_range(-0.2, 1.0))
-		var sheet := Props.box(self, Vector3(0.2, 0.004, 0.28), start, C_PAPER, Vector3(rng.randf_range(-20, 20), rng.randf_range(0, 90), 0))
+		var sheet := Props.box(dr, Vector3(0.2, 0.004, 0.28), start, C_PAPER, Vector3(rng.randf_range(-20, 20), rng.randf_range(0, 90), 0))
 		_ld_paper_fall(sheet, start, end, 12.0, float(i) / 5.0)
 
 
@@ -1968,7 +2369,7 @@ func _rb_tea() -> void:
 	Props.box(self, Vector3(0.04, 0.8, 1.9), Vector3(6.96, 2.1, -4.6), Color("2b4a3a"))
 	_lbl(self, "ÇAY 1 LİRA", "TEA 1 LIRA", Vector3(6.93, 2.3, -4.6), 52, Color("f0e8d0"), Vector3(0, -90, 0))
 	Props.box(self, Vector3(0.02, 0.05, 1.5), Vector3(6.94, 2.3, -4.6), Color("d8281c"), Vector3(6, 0, 0))
-	_lbl(self, "ÜCRETSİZ (SONSUZA DEK)", "FREE (FOREVER)", Vector3(6.93, 1.93, -4.6), 30, Color("ffd24a"), Vector3(0, -90, 0), 1.8)
+	_lbl(self, "ÜCRETSİZ (SONSUZA DEK)", "FREE (FOREVER)", Vector3(6.93, 1.93, -4.6), 30, Color("ffd24a"), Vector3(0, -90, 0), 1.6)
 	# sıcak ışık
 	_bulb(Vector3(4.5, 2.6, -4.6), Color("ffb866"), 1.3, 6.5)
 	Props.ball(self, 0.07, Vector3(4.5, 2.72, -4.6), Color("ffd89a"), Vector3.ONE, 6, 3.0)
@@ -2028,7 +2429,7 @@ func _rb_wait() -> void:
 		Props.box(self, Vector3(0.08, 0.08, 3.0), Vector3(x, 0.32, -7.9), steel)
 		Props.box(self, Vector3(0.06, 0.32, 0.06), Vector3(x, 0.16, -6.6), steel)
 		Props.box(self, Vector3(0.06, 0.32, 0.06), Vector3(x, 0.16, -9.2), steel)
-		Props.box(self, Vector3(0.05, 0.34, 2.8), Vector3(x + 0.22, 0.68, -7.9), orange)
+		Props.box(self, Vector3(0.05, 0.34, 2.8), Vector3(x - 0.22, 0.68, -7.9), orange)
 		for i in 5:
 			Props.box(self, Vector3(0.4, 0.06, 0.46), Vector3(x, 0.45, -6.8 - 0.55 * i), orange)
 	# sıra numarası makinesi
@@ -2038,13 +2439,16 @@ func _rb_wait() -> void:
 	Props.box(self, Vector3(0.02, 0.22, 0.1), Vector3(-2.49, 1.0, -4.6), C_PAPER, Vector3(0, 0, -8))
 	_reg("bur_ticket", Vector3(0.6, 1.2, 0.7), Vector3(-2.7, 0.9, -4.6), "UI_BUR_PULL", _rb_ticket)
 	# kırmızı LED ekran (arka duvar), yanıp söner
-	Props.box(self, Vector3(0.06, 0.8, 3.2), Vector3(-8.47, 2.45, -7.5), Color("1a1a1a"))
-	_glow(self, Vector3(-8.35, 2.45, -7.5), Vector2(3.8, 1.4), Color("ff2a1a"), Vector3(0, 90, 0), 0.4)
-	var led := _lbl(self, "SIRADAKİ: 1453", "NOW SERVING: 1453", Vector3(-8.4, 2.45, -7.5), 64, Color("ff4a3a"), Vector3(0, 90, 0), 2.9)
+	# LED ekran girişin üstünde asılı, salona bakar: koltuklar ona (girişe) döner, oturanların yüzü görünür
+	Props.box(self, Vector3(0.06, 0.62, 2.6), Vector3(-3.05, 2.6, -6.4), Color("1a1a1a"))
+	for hz: float in [-7.4, -5.4]:
+		Props.cyl(self, 0.01, 0.8, Vector3(-3.05, 3.1, hz), C_METAL, Vector3.ZERO, 4)
+	_glow(self, Vector3(-3.12, 2.6, -6.4), Vector2(3.0, 1.1), Color("ff2a1a"), Vector3(0, -90, 0), 0.4)
+	var led := _lbl(self, "SIRADAKİ: 1453", "NOW SERVING: 1453", Vector3(-3.09, 2.6, -6.4), 52, Color("ff4a3a"), Vector3(0, -90, 0), 2.4)
 	var tw := led.create_tween().set_loops()
 	tw.tween_property(led, "modulate:a", 0.3, 0.6)
 	tw.tween_property(led, "modulate:a", 1.0, 0.6)
-	_reg("bur_display", Vector3(0.4, 0.9, 3.2), Vector3(-8.3, 2.45, -7.5), "UI_BUR_LOOK", _rb_display)
+	_reg("bur_display", Vector3(0.4, 0.8, 2.6), Vector3(-3.15, 2.6, -6.4), "UI_BUR_LOOK", _rb_display)
 	# kauçuk bitkisi
 	Props.cyl(self, 0.18, 0.3, Vector3(-3.0, 0.15, -10.8), Color("8a4a2a"), Vector3.ZERO, 8, 0.22)
 	Props.ball(self, 0.18, Vector3(-3.0, 0.6, -10.8), Color("2f6a34"), Vector3(1, 1.4, 0.4))
@@ -2062,14 +2466,7 @@ func _rb_wait() -> void:
 	var blue_t := Color("a8d4ff")
 	var green_t := Color("b4ffe0")
 	var warm_t := Color("ffe4b8")
-	_rb_ghost("toga", Vector3(-4.6, 0, -7.35), true, -90.0, blue_t, 0.0)
-	_rb_ghost("legion", Vector3(-4.6, 0, -8.45), true, -90.0, warm_t, 1.3)
-	_rb_ghost("bork", Vector3(-5.9, 0, -7.9), true, -90.0, green_t, 2.1)
-	_rb_ghost("fedora", Vector3(-5.9, 0, -9.0), true, -90.0, blue_t, 3.0)
-	_rb_ghost("byz", Vector3(-7.2, 0, -6.8), true, -90.0, warm_t, 4.2)
 	# ayakta bekleyenler
-	_rb_ghost("astro", Vector3(-6.6, 0.0, -10.4), false, -60.0, blue_t, 0.7)
-	_reg("bur_ghost", Vector3(3.4, 1.4, 2.9), Vector3(-5.9, 0.7, -7.9), "UI_BUR_LOOK", _rb_ghost_talk)
 
 
 ## Başka çağlardan bekleyenler (yarı saydam hayaletlerdi; yer tutucu gibi duruyordu): Romalı senatör, lejyoner,
@@ -2165,6 +2562,16 @@ func _rb_lost() -> void:
 	_rb_sabri_p.rotation_degrees.y = -90
 	add_child(_rb_sabri_p)
 	_rb_paper = Props.box(self, Vector3(0.03, 0.5, 0.4), Vector3(3.55, 1.5, -21.2), Color("d8d0b8"))
+	# Gazetenin tezgâha bakan yüzü: başlık, manşet, sütunlar (yakından boş kâğıt kutusu gibi duruyordu)
+	Props.box(_rb_paper, Vector3(0.004, 0.07, 0.37), Vector3(-0.017, 0.19, 0.0), Color("2a2622"))
+	_lbl(_rb_paper, "ZAMAN POSTASI", "THE TIME POST", Vector3(-0.021, 0.19, 0.0), 9, Color("f0e8d0"), Vector3(0, -90, 0))
+	_lbl(_rb_paper, "YARIN ERTELENDİ", "TOMORROW POSTPONED", Vector3(-0.019, 0.105, 0.0), 8, Color("1a1a1a"), Vector3(0, -90, 0))
+	Props.box(_rb_paper, Vector3(0.003, 0.12, 0.15), Vector3(-0.0165, -0.02, 0.09), Color("8a8478"))
+	for cz: float in [-0.13, -0.03]:
+		for ry: float in [0.02, -0.04, -0.1, -0.16]:
+			Props.box(_rb_paper, Vector3(0.003, 0.012, 0.08), Vector3(-0.0165, ry, cz), Color("6a665e"))
+	for ry2: float in [-0.12, -0.18]:
+		Props.box(_rb_paper, Vector3(0.003, 0.012, 0.15), Vector3(-0.0165, ry2, 0.09), Color("6a665e"))
 	# çelik raflar + etiketli koliler (arka duvar)
 	var steel := Color("7f8a8c")
 	var tags := {"0_1_0": "Yıl: 1071", "1_0_1": "Yıl: 1299", "1_2_0": "Yıl: 1920", "2_1_0": "Yıl: 2031"}
@@ -2688,6 +3095,18 @@ func _rc_atrium() -> void:
 	Props.box(self, Vector3(0.5, 0.1, 10.6), Vector3(15.7, 0.5, -46.0), C_RUG)
 	_glow(self, Vector3(13.5, 0.03, -46.0), Vector2(6.0, 9.0), Color("9a8cff"), Vector3(-90, 0, 0), 0.25)
 	_reg("bur_atriumwin", Vector3(0.5, 4.8, 11.0), Vector3(15.5, 3.4, -46.0), "UI_BUR_LOOK", _rc_atriumwin)
+	# Görünmez cam: sedirin önünden yukarı (oyuncu sedire çıkıp pencereden dışarı yürüyordu)
+	var gb := StaticBody3D.new()
+	gb.position = Vector3(15.35, 3.0, -46.0)
+	var gcs := CollisionShape3D.new()
+	var gbs := BoxShape3D.new()
+	gbs.size = Vector3(0.3, 6.0, 11.2)
+	gcs.shape = gbs
+	gb.add_child(gcs)
+	add_child(gb)
+	# Camın önünde ince parlak yansıma çizgileri (cam olduğunu söyler; yaklaşınca da yüzey gibi durur)
+	for k in 3:
+		_glow(self, Vector3(15.85, 3.6 - k * 0.7, -43.0 - k * 2.6), Vector2(0.12, 2.2), Color("cfe0ff"), Vector3(0, -90, 25), 0.12)
 	# pencereye bakan bankolar
 	for bz: float in [-43.2, -48.8]:
 		Props.solid(self, Vector3(0.4, 0.42, 2.8), Vector3(11.8, 0.21, bz), C_WOOD_DARK)
@@ -2796,16 +3215,30 @@ func _rc_pendulum() -> void:
 
 func _rc_end_window() -> void:
 	_rc_window_quad(self, Vector2(3.0, 2.0), Vector3(0, 1.7, -83.88), Vector3.ZERO, 1.4)
+	# Pirinç korkuluk + görünmez cam: pencerenin dibine girilmesin
+	for kx: float in [-1.4, 0.0, 1.4]:
+		Props.cyl(self, 0.03, 0.95, Vector3(kx, 0.475, -83.35), C_BRASS, Vector3.ZERO, 8)
+	Props.cyl(self, 0.035, 3.0, Vector3(0, 0.95, -83.35), C_BRASS, Vector3(0, 0, 90), 8)
+	var eb := StaticBody3D.new()
+	eb.position = Vector3(0, 1.5, -83.55)
+	var ecs := CollisionShape3D.new()
+	var ebs := BoxShape3D.new()
+	ebs.size = Vector3(COR_W, 3.0, 0.4)
+	ecs.shape = ebs
+	eb.add_child(ecs)
+	add_child(eb)
 	# pirinç çerçeve
 	Props.box(self, Vector3(3.2, 0.1, 0.1), Vector3(0, 0.72, -83.85), C_BRASS)
 	Props.box(self, Vector3(0.1, 2.0, 0.1), Vector3(-1.55, 1.7, -83.85), C_BRASS)
 	Props.box(self, Vector3(0.1, 2.0, 0.1), Vector3(1.55, 1.7, -83.85), C_BRASS)
-	Props.box(self, Vector3(1.4, 0.08, 0.1), Vector3(0, 2.66, -83.85), C_BRASS)
-	# üst köşeleri basamaklı duvar parçalarıyla yuvarlayarak kemer biçimi
+	# Üst kenar: düz pirinç kasa ve köşelerde çeyrek daire pirinç kavisler (basamaklı duvar parçaları manzaranın
+	# köşelerine yama gibi biniyordu)
+	Props.box(self, Vector3(3.2, 0.1, 0.1), Vector3(0, 2.68, -83.85), C_BRASS)
 	for sx: float in [-1.0, 1.0]:
-		Props.box(self, Vector3(0.8, 0.15, 0.04), Vector3(sx * 1.1, 2.625, -83.86), C_COR_WALL)
-		Props.box(self, Vector3(0.5, 0.2, 0.04), Vector3(sx * 1.25, 2.45, -83.86), C_COR_WALL)
-		Props.box(self, Vector3(0.2, 0.25, 0.04), Vector3(sx * 1.4, 2.225, -83.86), C_COR_WALL)
+		for k in 5:
+			var a := deg_to_rad(9.0 + 18.0 * k)
+			Props.box(self, Vector3(0.05, 0.12, 0.06), Vector3(sx * (1.5 - 0.35 + 0.35 * cos(a)), 2.63 - 0.35 + 0.35 * sin(a), -83.84),
+				C_BRASS, Vector3(0, 0, sx * rad_to_deg(a)))
 	_glow(self, Vector3(0, 0.03, -82.6), Vector2(3.2, 3.5), Color("a8c8ff"), Vector3(-90, 0, 0), 0.25)
 
 
@@ -2819,6 +3252,8 @@ var _fg: Dictionary = {}          # kimlik → Person
 var _fg_yaw: Dictionary = {}      # kimlik → asıl bakış (derece)
 var _fg_busy := false
 
+## Bekleme salonunun koltuklarında oturanlar; koltuklar girişteki LED'e döner, Nasreddin Hoca ters oturur (yüzü duvara)
+const _FG_SIT := ["pol", "gal", "cur", "moz", "sin", "nas"]
 ## [kimlik, konuşan, konum, bakış, görünüş, isim TR, isim EN]
 const _FG := [
 	["nap", "SPK_NAPOLEON", Vector3(-4.6, 0.48, -6.8), 90.0, {"coat": Color("24365e"), "pants": Color("efe9dc"), "hat": "bicorne", "hair": Color("2a2018"), "hair_style": "short", "skin": Color("e8c0a0")}, "NAPOLYON", "NAPOLEON"],
@@ -2831,8 +3266,15 @@ const _FG := [
 	["col", "SPK_COLUMBUS", Vector3(5.6, 0, -20.1), -105.0, {"coat": Color("2a4a3a"), "pants": Color("3a3a30"), "hat": "berretta", "hair": Color("d8d4c8"), "hair_style": "long", "skin": Color("e8b894")}, "KOLOMB", "COLUMBUS"],
 	["sul", "SPK_SULEYMAN", Vector3(1.62, 0, -33.0), 60.0, {"coat": Color("2f6a4a"), "pants": Color("3a2a1a"), "robe": Color("c9a24a"), "hat": "sultan", "beard": true, "mustache": true, "hair": Color("3a2a1e"), "skin": Color("e0b08a"), "face": {"beard": "full", "nose": "hook"}}, "SÜLEYMAN", "SULEIMAN"],
 	["gui", "SPK_GUIDE", Vector3(8.5, 0, -52.3), -30.0, {"coat": Color("c8ccd4"), "pants": Color("2a8a8a"), "skirt": true, "hair": Color("d84a8a"), "hair_style": "short", "skin": Color("e0a882")}, "REHBER", "GUIDE"],
-	["rob", "SPK_ROBOT", Vector3(-7.95, 0, -6.0), -120.0, {"coat": Color("9aa4ae"), "pants": Color("7a848e"), "hat": "robot", "hair": Color("8a949e"), "skin": Color("b8c2cc")}, "STAJYER", "INTERN"],
+	["rob", "SPK_ROBOT", Vector3(-7.95, 0, -6.0), 75.0, {"coat": Color("9aa4ae"), "pants": Color("7a848e"), "hat": "robot", "hair": Color("8a949e"), "skin": Color("b8c2cc")}, "STAJYER", "INTERN"],
 	["arc", "SPK_ARCHAEOLOGIST", Vector3(-5.2, 0, -20.6), -100.0, {"coat": Color("b89a6a"), "pants": Color("5a4a3a"), "hat": "fedora", "glasses": true, "hair": Color("3a2a1e"), "skin": Color("c98e6a")}, "ARKEOLOG", "ARCHAEOLOGIST"],
+	["pol", "SPK_MARCOPOLO", Vector3(-4.6, 0, -7.9), 90.0, {"coat": Color("8a2a2a"), "pants": Color("3a2a20"), "hat": "soft_beret", "beard": true, "hair": Color("6a4a30"), "skin": Color("e0b08a")}, "MARCO POLO", "MARCO POLO"],
+	["gal", "SPK_GALILEO", Vector3(-4.6, 0, -9.0), 90.0, {"coat": Color("2a2a30"), "pants": Color("2a2a30"), "robe": Color("2a2a30"), "beard": true, "mustache": true, "hair": Color("c8b8a0"), "hair_style": "receding", "skin": Color("e8b894")}, "GALİLEO", "GALILEO"],
+	["cur", "SPK_CURIE", Vector3(-5.9, 0, -7.35), 90.0, {"coat": Color("1e1e22"), "pants": Color("1e1e22"), "skirt": true, "hat": "bun", "hair": Color("8a8478"), "skin": Color("ecc0a0")}, "CURIE", "CURIE"],
+	["moz", "SPK_MOZART", Vector3(-5.9, 0, -8.45), 90.0, {"coat": Color("b8322a"), "pants": Color("efe9dc"), "hair": Color("f0ece4"), "hair_style": "swept", "skin": Color("ecc0a0")}, "MOZART", "MOZART"],
+	["sin", "SPK_SINAN", Vector3(-7.2, 0, -7.9), 90.0, {"coat": Color("3a6a5a"), "pants": Color("3a2a1a"), "robe": Color("3a6a5a"), "hat": "turban", "beard": true, "mustache": true, "hair": Color("d8d4c8"), "skin": Color("d9a07a")}, "SİNAN", "SINAN"],
+	["nas", "SPK_NASREDDIN", Vector3(-7.2, 0, -6.8), -90.0, {"coat": Color("4a7a3a"), "pants": Color("6a5a3a"), "robe": Color("4a7a3a"), "hat": "turban", "beard": true, "mustache": true, "hair": Color("efeae0"), "skin": Color("d9a07a")}, "NASREDDİN", "NASREDDIN"],
+	["gag", "SPK_GAGARIN", Vector3(-6.6, 0, -10.4), 60.0, {"coat": Color("e06a2a"), "pants": Color("e06a2a"), "hat": "astro", "skin": Color("ecc0a0")}, "GAGARİN", "GAGARIN"],
 	["shk", "SPK_SHAKESPEARE", Vector3(2.55, 0, -5.35), -22.0, {"coat": Color("1e1e22"), "pants": Color("1e1e22"), "hair": Color("6a4a30"), "hair_style": "receding", "mustache": true, "beard": true, "face": {"mustache": "pencil", "beard": "goatee"}, "skin": Color("ecc0a0")}, "SHAKESPEARE", "SHAKESPEARE"],
 ]
 
@@ -2883,11 +3325,18 @@ func _fg_build() -> void:
 			"shk":     # kırma yaka (fırfır), altın küpe
 				Props.cyl(p, 0.24, 0.07, Vector3(0, 1.38, 0.0), Color("f4f2ec"), Vector3.ZERO, 14)
 				Props.ball(hd, 0.014, Vector3(0.2, -0.06, 0.0), gold, Vector3.ONE, 6)
-		# İsim kartı (göğüste, sol): Büro herkese takar
-		Props.box(p, Vector3(0.17, 0.11, 0.008), Vector3(-0.09, 1.2, 0.2), Color("f6f2e6"))
-		Props.box(p, Vector3(0.17, 0.028, 0.009), Vector3(-0.09, 1.245, 0.2), Color("b8323a"))
-		_lbl(p, f[5], f[6], Vector3(-0.09, 1.19, 0.206), 7, Color("1a1a1a"))
-		_reg("bur_fg_" + id, Vector3(0.7, 1.8, 0.7), f[2] + Vector3(0, 0.9, 0), "UI_PROMPT3_TALK", _fg_talk.bind(id), null, false)
+		# İsim kartı (göğüste, sol): Büro herkese takar. Gövdeye takılır: oturan kişinin gövdesi çöker, kişiye
+		# takılı kart ayakta göğüs yüksekliğinde kalıp çeneye biniyordu (Marco Polo, Mozart)
+		var bz := 0.27 if not f[4].has("robe") else 0.3
+		var tb: Node3D = p._body
+		Props.box(tb, Vector3(0.15, 0.1, 0.008), Vector3(-0.09, 1.2, bz), Color("f6f2e6"), Vector3(0, -12, 0))
+		Props.box(tb, Vector3(0.15, 0.026, 0.009), Vector3(-0.09, 1.243, bz + 0.001), Color("b8323a"), Vector3(0, -12, 0))
+		# Yazı kartın içine sığar (0,15 m kart, 0,13 m yazı): "Marco Polo", "Leonardo da Vinci" kartın dışına taşıyordu
+		_lbl(tb, f[5], f[6], Vector3(-0.09, 1.19, bz + 0.006), 7, Color("1a1a1a"), Vector3(0, -12, 0), 0.13)
+		var sits: bool = id in _FG_SIT
+		if sits:
+			p.set_activity("sit")
+		_reg("bur_fg_" + id, Vector3(0.5, 1.4, 0.5) if sits else Vector3(0.7, 1.8, 0.7), f[2] + Vector3(0, 0.7 if sits else 0.9, 0), "UI_PROMPT3_TALK", _fg_talk.bind(id), null, false)
 		_prompt_args["bur_fg_" + id] = f[1]
 		# Uzaktan çizilmez: yalnız bekleme salonundan ve koridorun başından görünürler
 		var st: Array = [p]

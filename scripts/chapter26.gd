@@ -840,6 +840,10 @@ func _bureau_alarm() -> void:
 	var o := b.global_position
 	player.global_position = o + Vector3(0, 0.05, -24.0)
 	player.face(o + Vector3(0, 1.5, -4.0))
+	# Alarmda Müfide odasından koridora çıkar (masası koridorun doğusundaki odasında; duvarın ardından bağırıyordu)
+	if b.mufide:
+		b.mufide.position = Vector3(1.3, 0.0, -25.7)
+		b.mufide.face_toward(player.global_position)
 	# Kırmızı çakarlar; tavan lambaları söner
 	var lights: Array[OmniLight3D] = []
 	for z in [-2.0, -8.0, -14.0, -20.0, -26.0, -32.0]:

@@ -240,8 +240,9 @@ func _step(id: String, handler: Callable) -> void:
 			player.global_position = Vector3(1.2, 0, -12.6)
 		if id == "mufide" and bureau and bureau.mufide:
 			# Testte de Saniye'nin yanında konuşulur (kareler koridorun ucundan çekiliyordu)
+			# Masanın önünde (masa artık doğudaki odasında, koridora bakıyor)
 			var mp: Vector3 = bureau.mufide.global_position
-			player.global_position = Vector3(mp.x, 0.0, mp.z + 1.6)
+			player.global_position = bureau.to_global(Bureau.VISITOR_POS)
 			player.face(mp + Vector3(0, 1.4, 0))
 		if id == "hikmet" and GameState.autotest_variant != "lie":
 			for c in ["clue:shells", "clue:fez", "clue:tape"]:
@@ -1284,7 +1285,7 @@ func _on_focus(id: String) -> void:
 			p = tr("UI_PROMPT3_SCAN")
 		elif id == "hikmet" and phase == "garage":
 			p = tr("UI_PROMPT3_INTERRO")
-		elif id in ["formz1", "clock", "window", "plant", "fezshelf", "bchicken"] or id.begins_with("door:"):
+		elif id in ["formz1", "clock", "window", "plant", "fezshelf", "bchicken"]:
 			p = tr("UI_PROMPT3_LOOK")
 	hud.set_prompt(p)
 
@@ -1313,12 +1314,6 @@ func _on_interact(id: String) -> void:
 		_interrogation()
 	elif id == "bchicken":
 		hud.bark("SPK_NIHAT", "D3_N_CHICKEN", 3.5)
-	elif id.begins_with("door:"):
-		var key := "D3_N_DOOR_" + id.trim_prefix("door:").replace(" ", "_")
-		if tr(key) == key:
-			key = "D3_N_DOOR"
-		Audio.sfx("wood_creak", -10.0)        # kapılar kilitli: kol döner, kapı gıcırdar ama açılmaz
-		hud.bark("SPK_NIHAT", key, 3.5)
 	elif id in ["formz1", "clock", "window", "plant", "fezshelf"]:
 		hud.bark("SPK_NIHAT", "D3_N_LOOK_" + id.to_upper(), 4.5)
 		if id == "formz1":
@@ -1416,7 +1411,7 @@ func _run_shots() -> void:
 	hud.bark("SPK_NIHAT", "D3_N_DOOR", 30.0)
 	await _shot("c3_02_koridor.png")
 	# 3. Başdenetçi
-	player.global_position = Vector3(0.3, 0, Bureau.DESK_Z + 2.6)
+	player.global_position = Vector3(1.2, 0, Bureau.DESK_Z - 0.6)
 	player.face(bureau.mufide.global_position + Vector3(0, 1.3, 0))
 	hud.bark("SPK_MUFIDE", "D3_M_05", 30.0)
 	await _shot("c3_03_mufide.png")

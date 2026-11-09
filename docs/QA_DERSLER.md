@@ -769,3 +769,49 @@ Her bölüm denetiminde ve her düzeltmede bu listeyi baştan uygula. Yeni bir h
     (Bölüm 3; 13-14; 15 ve sonrası). Her figüre sonraki iki ziyaret için ikişer replik (52 replik): önce o ziyaretin
     yenileri, sonra eskiler (Bureau._fg_tier, _fg_lines). Replikler birbirine ve hikâyeye bağlanır (robot Hitler'e
     beklemeyi öğretir, Cengiz Han Kanuni'yle sırayı tartışır, rehberin "Pazartesi Toplantıları" turu).
+- Titreyen kenarlar (v0.99.100). Kullanıcı: "duvar köşeleri, kenarları yanıp sönüyor; açı değiştikçe farklı
+  görüyorum" ve "her yerde var bu ışıkların oynaması". Aynı düzlemde, aynı yöne bakan iki farklı renkli yüz derinlik
+  tamponunda yarışır (z-fighting); açı değişince kazanan değişir. 1250 parçalık bir sahnede kod okuyarak bulunmaz:
+  tests/_tmp/zfight.gd eksene hizalı her kutu çiftini tarar (ortak düzlem, iki eksende >1 cm örtüşme, yüzün 1 cm
+  önü başka bir katının içinde değilse görünür). İlk tarama 156 görünür çift: oda duvarlarının uçları koridor
+  duvarının yüzünde, kapı kasaları, koridor tavanı ile atrium lentosu, Yönetmelik panosu ile lambri.
+  - Tek tek elle düzeltmek yerine Bureau._defight kurulumdan sonra aynı taramayı yapıp düzeltir: uç (yüz normali
+    kutunun en uzun ekseninde) 8 mm kısalır; iki geniş yüzde küçük olan 8 mm öne uzar, büyük yapı yerinde kalır;
+    QuadMesh baktığı yöne kayar. Yalnız o yüz oynar: bütün kutuyu kaydırmak karşı yüzü başka bir yüzle çakıştırdı
+    (230 → 121 → 53). Bir düzeltme yenisini doğurabilir; oynayanlar ve komşuları yeniden taranır (en çok 5 tur).
+    Sonuç 0 çift, kurulum +~0,1 sn (koridor z'de 84 m: x'e göre süpürme her şeyi komşu sayıyordu; z'ye göre süpürme
+    ve 1 m'lik z kovaları).
+  - Denetim ile düzeltici aynı tanımı kullanmalı: düzeltici yalnız material_override'a bakıp yüzey malzemeli
+    duvarları "aynı renk" sayarak atladı, denetim saydı.
+  - Görünmezlik tek noktayla yoklanmaz: ortadaki eşya (1969 nişinin ay tozu) ışık lekesinin ortasını örter, kenarlar
+    yine titrer. Ortası ve dört yanı yoklanır.
+- Cam ve pencere (v0.99.100). "Dibine giriyoruz, dışarı atlayabiliyoruz." Görsel cam çarpışma değildir: atrium
+  camına görünmez bir çarpışma kutusu, cama da parlama lekeleri (yaklaşınca camın orada olduğu görünür); koridor
+  sonundaki pencerenin önüne pirinç korkuluk ve çarpışma.
+- Aralık kapının arkası düz duvarsa kapı sahte görünür ("kapılar açık gibi ama arkasında duvar var"). Her kapı
+  0,8 m derinliğinde bir niş: zemin, tavan, yan duvarlar, arka yüzde o çağın zaman penceresi ve çağa uygun eşyalar.
+  Nihat her yıl için 3-4 ayrı replik söyler, sırayla (49 replik); tek replik ikinci kapıda eskir.
+- Yerleşim: Başdenetçi koridorun ortasındaydı, kendi odasına geçti; Cemal duvara bakıp oturuyordu, koridora bakan
+  bir kayıt masası aldı. İsim kartları gövdeye giriyordu: kart göğüs yüzeyinin önünde (z 0,27; pelerinli figürde
+  0,3). Bekleme salonunun sıraları girişe arkasını dönüyordu, oturanların yalnız sırtı görünüyordu: sıralar girişe
+  döndü, LED ekran karşı duvara geçti. Hayaletlerin yerine yedi ünlü oturuyor (Marco Polo, Galileo, Marie Curie,
+  Mozart, Mimar Sinan, Nasreddin Hoca, Gagarin); hepsinin PortraitLooks görünüşü var (portrait_check).
+  - İki Haiku ajanı son kareleri inceledi; doğrulanan bulgular: oturan figürün isim kartı çenesindeydi (kart kişiye
+    takılıydı, oturunca gövde 0,22 m çöker; kart artık gövdeye takılı), Sabri'nin gazetesi yakından boş bir kutuydu
+    (başlık, manşet, sütunlar), ofis tavanında kirişlerin gölgesi testere dişi gibi tırtıklıydı (lamba kirişlerin
+    altında; kirişler gölge atmaz), koridor sonu penceresinin köşelerindeki basamaklı duvar parçaları manzaraya yama
+    gibi biniyordu (düz pirinç kasa, köşelerde kavis). Ajan bulgusu önce kareye bakılarak doğrulanır: "ışık
+    şeridi", "uçan halka" gibi bulguların bir kısmı kasıtlı (sarkaç, zaman penceresi gölgelendiricisi).
+- "İsim kartından isimler taşmış." Kart 0,15 m, yazı sabit boyda: "Marco Polo", "Leonardo da Vinci" kartın dışına
+  çıkıyordu. Kartın yazısı kart genişliğine sığdırılır (Props.label max_width). Kartı ya da tabelayı çizen her yerde
+  yazının en uzun ismiyle sığdığı kontrol edilir; render'da kısa isimler ("Curie") sorunu göstermez.
+- Odaya taşınan konuşmacı, onu eski yerinde varsayan sahneleri bozar: Müfide masasıyla doğudaki odaya geçince
+  3'ün testi oyuncuyu eski hesapla (Müfide'nin 1,6 m "önü") duvarın içine koydu, 26'nın alarmında Müfide duvarın
+  ardından bağırdı (VISAUDIT). Yer değiştiren her karakter için grep: konumunu kullanan bütün bölümler (Bureau.
+  VISITOR_POS; 26'da alarmda koridora çıkar).
+- "Nihat'ın şapkasını astığı tahta şey çok kötü, şapka ceket havada duruyor." Palto direkten 5 cm açıkta düz bir
+  kutuydu, şapka direğin tepesinde. Asılı bir şey asıldığı yere değmeli: palto yakasından kancaya asılı, eteği
+  direğe yaslanır (yassı koni: yakada dar, etekte geniş); fötrün tepeliği kancanın ucuna geçer; şemsiye direğe yaslı.
+  Yakın plan karesi (tests/_tmp/bureau_shot.gd 36-38) olmadan "havada" olduğu görülmüyordu.
+- 27: Galata'da yürüyen kalabalık (Person._clear_way) tezgâh başındaki balıkçıyı itip tezgâhın köşesine soktu
+  (insolid). Yerinde durması gereken konuşmacılar "no_yield".

@@ -559,5 +559,61 @@
   "similarity": 0.8,
   "style": 0.35,
   "tarif": "3024'ten arkeolog; meraklı, akademik, ciddi"
+ },
+ "SPK_MARCOPOLO": {
+  "voice_id": "sp6F311QRVXR53QPGIgK",
+  "voice_name": "Luca – Clear Neutral Narration",
+  "stability": 0.45,
+  "similarity": 0.8,
+  "style": 0.35,
+  "tarif": "Marco Polo; anlatıcı, hevesli, abartmayı sever"
+ },
+ "SPK_GALILEO": {
+  "voice_id": "V2bPluzT7MuirpucVAKH",
+  "voice_name": "Frank - Wise, Deep and Motivational",
+  "stability": 0.45,
+  "similarity": 0.8,
+  "style": 0.35,
+  "tarif": "Galileo; yaşlı, iğneleyici, sabırlı"
+ },
+ "SPK_CURIE": {
+  "voice_id": "19STyYD15bswVz51nqLf",
+  "voice_name": "Samara X - Smooth Classy British",
+  "stability": 0.45,
+  "similarity": 0.8,
+  "style": 0.35,
+  "tarif": "Marie Curie; kararlı, kuru mizah, bilimsel"
+ },
+ "SPK_MOZART": {
+  "voice_id": "nzFihrBIvB34imQBuxub",
+  "voice_name": "Josh - Teacher for Kids",
+  "stability": 0.45,
+  "similarity": 0.8,
+  "style": 0.35,
+  "tarif": "Mozart; genç, yaramaz, hızlı konuşur"
+ },
+ "SPK_SINAN": {
+  "voice_id": "6d7aC7it7gEDGZJmTrhq",
+  "voice_name": "AI Kojie - Deep, Steady, and Calm",
+  "stability": 0.45,
+  "similarity": 0.8,
+  "style": 0.35,
+  "tarif": "Mimar Sinan; yaşlı usta, sakin, gururlu"
+ },
+ "SPK_NASREDDIN": {
+  "voice_id": "uDsPstFWFBUXjIBimV7s",
+  "voice_name": "Mr. Claus - The Classic Jolly Santa",
+  "stability": 0.45,
+  "similarity": 0.8,
+  "style": 0.35,
+  "tarif": "Nasreddin Hoca; hazırcevap, babacan, nükteli"
+ },
+ "SPK_GAGARIN": {
+  "voice_id": "s3TPKV1kjDlVtZbl4Ksh",
+  "voice_name": "Adam - Engaging, Friendly and Bright",
+  "stability": 0.45,
+  "similarity": 0.8,
+  "style": 0.35,
+  "tarif": "Yuri Gagarin; neşeli, kendinden emin, gülümseyen"
  }
 }
