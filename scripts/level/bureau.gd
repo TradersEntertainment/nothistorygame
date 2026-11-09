@@ -2813,13 +2813,13 @@ var _fg_busy := false
 
 ## [kimlik, konuşan, konum, bakış, görünüş, isim TR, isim EN]
 const _FG := [
-	["nap", "SPK_NAPOLEON", Vector3(-3.45, 0, -4.55), 90.0, {"coat": Color("24365e"), "pants": Color("efe9dc"), "hair": Color("2a2018"), "hair_style": "short", "skin": Color("e8c0a0")}, "NAPOLYON", "NAPOLEON"],
-	["cle", "SPK_CLEOPATRA", Vector3(-4.35, 0, -4.55), 90.0, {"coat": Color("efe6d0"), "pants": Color("efe6d0"), "skirt": true, "hair": Color("121010"), "hair_style": "long", "skin": Color("c98e6a")}, "KLEOPATRA", "CLEOPATRA"],
-	["cae", "SPK_CAESAR", Vector3(-5.25, 0, -4.55), 90.0, {"coat": Color("efe9dc"), "pants": Color("efe9dc"), "robe": Color("efe9dc"), "hair": Color("8a8478"), "hair_style": "receding", "skin": Color("e0a882")}, "SEZAR", "CAESAR"],
-	["leo", "SPK_LEONARDO", Vector3(-6.15, 0, -4.55), 90.0, {"coat": Color("5a2030"), "pants": Color("3a1a20"), "robe": Color("5a2030"), "hair": Color("e6e2da"), "hair_style": "long", "beard": true, "mustache": true, "skin": Color("e8b894")}, "LEONARDO", "LEONARDO"],
+	["nap", "SPK_NAPOLEON", Vector3(-3.45, 0, -4.55), 90.0, {"coat": Color("24365e"), "pants": Color("efe9dc"), "hat": "bicorne", "hair": Color("2a2018"), "hair_style": "short", "skin": Color("e8c0a0")}, "NAPOLYON", "NAPOLEON"],
+	["cle", "SPK_CLEOPATRA", Vector3(-4.35, 0, -4.55), 90.0, {"coat": Color("efe6d0"), "pants": Color("efe6d0"), "skirt": true, "hat": "uraeus", "hair": Color("121010"), "hair_style": "long", "skin": Color("c98e6a")}, "KLEOPATRA", "CLEOPATRA"],
+	["cae", "SPK_CAESAR", Vector3(-5.25, 0, -4.55), 90.0, {"coat": Color("efe9dc"), "pants": Color("efe9dc"), "robe": Color("efe9dc"), "hat": "laurel", "hair": Color("8a8478"), "hair_style": "receding", "skin": Color("e0a882")}, "SEZAR", "CAESAR"],
+	["leo", "SPK_LEONARDO", Vector3(-6.15, 0, -4.55), 90.0, {"coat": Color("5a2030"), "pants": Color("3a1a20"), "robe": Color("5a2030"), "hat": "soft_beret", "hair": Color("e6e2da"), "hair_style": "long", "beard": true, "mustache": true, "skin": Color("e8b894")}, "LEONARDO", "LEONARDO"],
 	["ein", "SPK_EINSTEIN", Vector3(-7.05, 0, -4.55), 90.0, {"coat": Color("7a7468"), "pants": Color("4a4a48"), "hair": Color("f2f0ea"), "hair_style": "curly", "mustache": true, "face": {"mustache": "walrus", "bags": true, "wrinkles": true}, "skin": Color("ecc0a0")}, "EINSTEIN", "EINSTEIN"],
 	["hit", "SPK_HITLER", Vector3(-8.05, 0, -4.7), 75.0, {"coat": Color("5a5040"), "pants": Color("3a3630"), "hair": Color("2a2018"), "hair_style": "swept", "mustache": true, "face": {"mustache": "toothbrush", "brow_tilt": 10.0}, "skin": Color("e8c0a0")}, "HITLER", "HITLER"],
-	["gen", "SPK_GENGHIS", Vector3(-6.3, 0, -10.25), 30.0, {"coat": Color("7a3a22"), "pants": Color("3a2a1a"), "hair": Color("1a1410"), "mustache": true, "beard": true, "face": {"mustache": "chevron", "beard": "goatee"}, "skin": Color("d9a07a")}, "CENGİZ HAN", "GENGHIS KHAN"],
+	["gen", "SPK_GENGHIS", Vector3(-6.3, 0, -10.25), 30.0, {"coat": Color("7a3a22"), "pants": Color("3a2a1a"), "hat": "mongol", "hair": Color("1a1410"), "mustache": true, "beard": true, "face": {"mustache": "chevron", "beard": "goatee"}, "skin": Color("d9a07a")}, "CENGİZ HAN", "GENGHIS KHAN"],
 	["col", "SPK_COLUMBUS", Vector3(-5.2, 0, -10.4), 15.0, {"coat": Color("2a4a3a"), "pants": Color("3a3a30"), "hat": "berretta", "hair": Color("d8d4c8"), "hair_style": "long", "skin": Color("e8b894")}, "KOLOMB", "COLUMBUS"],
 	["shk", "SPK_SHAKESPEARE", Vector3(-4.1, 0, -10.2), -10.0, {"coat": Color("1e1e22"), "pants": Color("1e1e22"), "hair": Color("6a4a30"), "hair_style": "receding", "mustache": true, "beard": true, "face": {"mustache": "pencil", "beard": "goatee"}, "skin": Color("ecc0a0")}, "SHAKESPEARE", "SHAKESPEARE"],
 ]
@@ -2839,29 +2839,13 @@ func _fg_build() -> void:
 		_fg_yaw[id] = f[3]
 		var hd := p._head
 		match id:
-			"nap":     # yan giyilen iki köşeli şapka + kokart
-				Props.ball(hd, 0.1, Vector3(0, 0.27, -0.01), Color("15151a"), Vector3(2.7, 0.95, 0.55), 10)
-				Props.cyl(hd, 0.035, 0.012, Vector3(0.14, 0.29, 0.05), Color("2a4ab0"), Vector3(90, 0, 0), 8)
-				Props.cyl(hd, 0.02, 0.014, Vector3(0.14, 0.29, 0.056), Color("c42a22"), Vector3(90, 0, 0), 8)
-			"cle":     # altın taç bandı, alında yılan, altın gerdanlık
-				Props.ring(hd, 0.2, 0.225, Vector3(0, 0.1, 0), gold)
-				Props.cyl(hd, 0.018, 0.07, Vector3(0, 0.15, 0.2), gold, Vector3(-15, 0, 0), 6)
+			"cle":     # altın gerdanlık (taç bandı: Person "uraeus")
 				Props.cyl(p, 0.2, 0.03, Vector3(0, 1.4, 0.0), gold, Vector3.ZERO, 12)
-			"cae":     # defne çelengi, omuzdan kırmızı kuşak
-				Props.ring(hd, 0.19, 0.225, Vector3(0, 0.12, 0), Color("4a7a2a"))
-				for k in 6:
-					var a := TAU * k / 6.0
-					Props.ball(hd, 0.035, Vector3(sin(a) * 0.21, 0.13, cos(a) * 0.21), Color("5a8a32"), Vector3(1, 0.5, 1.6), 6)
+			"cae":     # omuzdan kırmızı kuşak (defne: Person "laurel")
 				Props.box(p, Vector3(0.08, 0.7, 0.36), Vector3(0.0, 1.1, 0.0), Color("9a1f24"), Vector3(0, 90, 32))
-			"leo":     # yumuşak bere
-				Props.cyl(hd, 0.2, 0.06, Vector3(0, 0.2, -0.01), Color("2a1a20"), Vector3(-6, 0, 0), 12, 0.24)
 			"ein":     # dağınık beyaz saç
 				for q in [Vector3(-0.19, 0.09, -0.04), Vector3(0.19, 0.09, -0.04), Vector3(-0.12, 0.17, -0.1), Vector3(0.12, 0.17, -0.1), Vector3(0, 0.2, -0.05), Vector3(0, 0.1, -0.19)]:
 					Props.ball(hd, 0.085, q, Color("f2f0ea"), Vector3(1.0, 0.8, 1.0), 8)
-			"gen":     # kürk kenarlı, sivri tepeli Moğol başlığı
-				Props.cyl(hd, 0.23, 0.08, Vector3(0, 0.15, 0), Color("3a2a1e"), Vector3.ZERO, 12, 0.22)
-				Props.cyl(hd, 0.19, 0.26, Vector3(0, 0.3, 0), Color("a8322a"), Vector3.ZERO, 10, 0.05)
-				Props.ball(hd, 0.03, Vector3(0, 0.44, 0), Color("d4a640"), Vector3.ONE, 6)
 			"shk":     # kırma yaka (fırfır), altın küpe
 				Props.cyl(p, 0.24, 0.07, Vector3(0, 1.38, 0.0), Color("f4f2ec"), Vector3.ZERO, 14)
 				Props.ball(hd, 0.014, Vector3(0.2, -0.06, 0.0), gold, Vector3.ONE, 6)

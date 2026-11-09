@@ -177,7 +177,7 @@ func _ready() -> void:
 			Props.ring(_head, 0.034, 0.043, Vector3(sx * gx, gy, 0.205), Color("222222"), Vector3(90, 0, 0))
 		Props.box(_head, Vector3(gx * 2.0 - 0.07, 0.008, 0.008), Vector3(0, gy + 0.008, 0.21), Color("222222"))
 	# Saç ve şapka (şapkalılarda ense ve favoriler görünür)
-	if hat in ["fez", "fedora", "cook", "helm", "plume", "turban", "bork", "azap", "cicak", "sultan", "condottiero", "kalpak", "vizier", "galero", "berretta"]:
+	if hat in ["fez", "fedora", "cook", "helm", "plume", "turban", "bork", "azap", "cicak", "sultan", "condottiero", "kalpak", "vizier", "galero", "berretta", "bicorne", "soft_beret", "mongol"]:
 		CharKit.hair_under_hat(_head, hair, 0.2, face_spec.get("head", Vector3(1.0, 1.06, 0.98)))
 	match hat:
 		"fez":
@@ -260,6 +260,31 @@ func _ready() -> void:
 			# Cenevizli komutan: miğfer ve kırmızı sorguç
 			Props.cyl(_head, 0.235, 0.22, Vector3(0, 0.22, -0.01), Color("a8aeb6"), Vector3.ZERO, 8, 0.18)
 			Props.box(_head, Vector3(0.05, 0.3, 0.2), Vector3(0, 0.44, -0.02), Color("c8262f"), Vector3(-15, 0, 0))
+		"bicorne":
+			# Yan giyilen iki köşeli şapka + üç renkli kokart (Napolyon)
+			Props.ball(_head, 0.1, Vector3(0, 0.27, -0.01), Color("15151a"), Vector3(2.7, 1.2, 0.55), 10)
+			Props.cyl(_head, 0.035, 0.012, Vector3(0.14, 0.29, 0.05), Color("2a4ab0"), Vector3(90, 0, 0), 8)
+			Props.cyl(_head, 0.02, 0.014, Vector3(0.14, 0.29, 0.056), Color("c42a22"), Vector3(90, 0, 0), 8)
+		"laurel":
+			# Defne çelengi (Sezar)
+			CharKit.hair(_head, hair, hair_style, face_spec.get("head", Vector3(1.0, 1.06, 0.98)))     # bant saçın üstünde
+			Props.ring(_head, 0.19, 0.225, Vector3(0, 0.12, 0), Color("4a7a2a"))
+			for k in 6:
+				var a := TAU * k / 6.0
+				Props.ball(_head, 0.035, Vector3(sin(a) * 0.21, 0.13, cos(a) * 0.21), Color("5a8a32"), Vector3(1, 0.5, 1.6), 6)
+		"soft_beret":
+			# Yumuşak Rönesans beresi (Leonardo)
+			Props.cyl(_head, 0.2, 0.06, Vector3(0, 0.2, -0.01), Color("2a1a20"), Vector3(-6, 0, 0), 12, 0.24)
+		"mongol":
+			# Kürk kenarlı, sivri tepeli Moğol başlığı (Cengiz Han)
+			Props.cyl(_head, 0.23, 0.08, Vector3(0, 0.15, 0), Color("3a2a1e"), Vector3.ZERO, 12, 0.22)
+			Props.cyl(_head, 0.19, 0.26, Vector3(0, 0.3, 0), Color("a8322a"), Vector3.ZERO, 10, 0.05)
+			Props.ball(_head, 0.03, Vector3(0, 0.44, 0), Color("d4a640"), Vector3.ONE, 6)
+		"uraeus":
+			# Altın taç bandı ve alında yılan (Kleopatra)
+			CharKit.hair(_head, hair, hair_style, face_spec.get("head", Vector3(1.0, 1.06, 0.98)))     # bant saçın üstünde
+			Props.ring(_head, 0.2, 0.225, Vector3(0, 0.1, 0), Color("d4a640"))
+			Props.cyl(_head, 0.018, 0.07, Vector3(0, 0.15, 0.2), Color("d4a640"), Vector3(-15, 0, 0), 6)
 		"bun":
 			Props.ball(_head, 0.215, Vector3(0, 0.05, -0.02), hair, Vector3(1.02, 1.0, 1.02), 10)
 			Props.ball(_head, 0.1, Vector3(0, 0.2, -0.16), hair, Vector3.ONE, 8)

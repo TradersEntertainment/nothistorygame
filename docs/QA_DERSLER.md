@@ -746,3 +746,9 @@ Her bölüm denetiminde ve her düzeltmede bu listeyi baştan uygula. Yeni bir h
   - queue_free kare sonunda siler: 15'te Büro silinip aynı karede Pazartesi sahnesi kurulunca, bekleme salonundaki
     Hitler bir karelik Pazartesi duvarının içinde kaldı (VISAUDIT insolid). Bir sahneyi söküp yerine başkasını aynı
     karede kuran yerde önce ağaçtan çıkar (remove_child), sonra queue_free (3: garaj, 13, 15).
+- CI 0.99.96 kırmızı: PORTRAITCHECK, yeni Büro memurlarının (Cemal, Zeki, Necmi, Sabri, Hatice, Nuran) konuşma
+  portresi için görünüşü tanımsız (PortraitLooks.LOOKS). Yerelde yalnız bölüm koşularını çalıştırmıştım; run_tests.sh
+  bölüm dışında yirmi denetim sahnesi daha koşar (portre, kamera, UI sığma, rota, harita...). Yeni konuşmacı ekleyen
+  her sürümde tests/portrait_check.tscn ve diğer denetim sahneleri de yerelde koşulur (v0.99.98).
+  - Figür başlıkları (iki köşeli şapka, defne, bere, Moğol başlığı, taç bandı) Person'a şapka türü olarak taşındı;
+    Büro'da ve konuşma kartının portresinde aynı görünürler. Bant türü şapkalar (laurel, uraeus) saçı da çizer.
