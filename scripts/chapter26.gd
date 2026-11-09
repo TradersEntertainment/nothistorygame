@@ -685,36 +685,7 @@ func _wave3() -> void:
 		await get_tree().process_frame
 	player.frozen = true
 	hud.set_objective("")
-	# Kaldırırlar (kollar önde, yük tutar gibi) ve poternaya taşırlar: ön adam geri geri yürür, arka adam ayaklardan
-	for b: Person in bearers:
-		b.set_activity("carry")
-		b.set_meta("no_audit", true)      # poternadan içeri girer (kapı surun yüzünde)
-	var lift := create_tween()
-	lift.tween_method(func(h: float): _carry_pose(dir, h, 1.0), 0.15, 0.85, 0.8).set_ease(Tween.EASE_OUT)
-	await lift.finished
-	var from := _carry_at
-	var to := Vector3(POSTERN.x, 0.0, POSTERN.z) - dir * 0.2
-	# Taşıma yolu açılır: yolda duran (dövüşten sonra nefeslenen dost, savunucu) kenara çekilir. Eskiden taşıyıcılar
-	# poternanın önünde birinin içinden geçiyordu (sur yüzüne yakın yerde yana itilemiyordu)
-	var mark := Node3D.new()
-	add_child(mark)
-	mark.global_position = to
-	var keep_out: Array = [mark]
-	keep_out.append_array(bearers)
-	_clear_line(from, keep_out)
-	mark.queue_free()
-	var carry := create_tween()
-	carry.tween_method(func(k: float):
-		_carry_at = from.lerp(to, k)
-		_carry_pose(dir, 0.85, 1.0), 0.0, 1.0, from.distance_to(to) / 1.3)
-	# Komutanın götürüldüğünü gören Cenevizliler ve ardından ötekiler dağılır (bozgun): sur içi iç sura, kapılara kaçar
-	if chaos:
-		chaos.rout()
-	await hud.say("SPK_DEFENDER", "D26_S_SHIP")
-	if carry.is_running():   # replik uzun okunduysa hareket çoktan bitmiştir (bitmiş tweeni beklemek sonsuza dek takılır)
-		await carry.finished
-	for n: Node3D in [giust] + bearers:
-		n.visible = false
+	await _carry_giust(dir)
 	await hud.say("SPK_TOLGA", "D26_T_GONE")
 	# Burçta sancak
 	banner.visible = true
@@ -1081,6 +1052,113 @@ func _hold() -> void:
 var _carry_at := Vector3.ZERO
 
 
+## Komutanı poternaya Tolga taşır (v0.99.95; eskiden iki savunucu taşırken Tolga bakıyordu): ayak ucundaki savunucunun
+## yerini alır, baş ucundaki geri geri yürür. Tolga yürür, sedyesiz taşıma: koşmak ya da sert dönmek yarayı sarsar
+## (gösterge; uca varınca Giustiniani inler, Tolga sendeler, bir an durulur). Arkada yeniçeriler gediğe doluşur.
+var giust_jolts := 0
+var _carrying_giust := false
+
+
+func _carry_giust(dir: Vector3) -> void:
+	# Ayak ucundaki savunucu yana çekilir; Tolga onun yerini alır
+	var helper: Person = bearers[1]
+	bearers.remove_at(1)
+	helper.set_activity("")
+	var feet_spot := _carry_at - dir * 1.35
+	var side := dir.cross(Vector3.UP).normalized()
+	Stage.approach(helper, helper.global_position + side * 1.4, 0.0, 1.6, Vector3.ZERO, _rubble_y)
+	await Stage.walk_player(player, feet_spot, 0.0, giust.global_position + Vector3(0, 0.4, 0), 4.0)
+	player.face(giust.global_position + dir * 0.6 + Vector3(0, 0.3, 0))
+	bearers[0].set_activity("carry")
+	bearers[0].set_meta("no_audit", true)      # poternadan içeri girer (kapı surun yüzünde)
+	player.duck(0.5, 0.7)
+	await hud.say("SPK_TOLGA", "D26_T_LIFT")
+	# Kaldırırlar: Tolga ayaklardan (iki el bileklerde), savunucu koltuk altlarından
+	var hand_back := player._hand_shown
+	player.show_remote(false)
+	player.free_hold = Vector3(-0.16, -0.5, -0.5)
+	Audio.sfx("heave_shout", -10.0, 0.9)
+	var lift := create_tween()
+	lift.tween_method(func(h: float): _carry_pose(dir, h, 1.0), 0.15, 0.85, 0.05 if GameState.autotest else 0.8).set_ease(Tween.EASE_OUT)
+	await lift.finished
+	if chaos:
+		chaos.rout()     # komutanın götürüldüğünü gören Cenevizliler ve ardından ötekiler dağılır (bozgun)
+	hud.bark("SPK_DEFENDER", "D26_S_SHIP", 3.0)
+	player.speed_mult = 0.5
+	player.frozen = false
+	hud.set_objective(tr("UI_OBJ26_CARRY"), POSTERN + Vector3(0, 1.2, 0))
+	var meter := BalanceMeter.new()
+	meter.label_text = tr("UI_CH26_JOLT")
+	hud.add_child(meter)
+	meter.place_bottom()
+	meter.visible = false
+	var cdir := dir
+	var jolt := 0.0
+	var stop_t := 0.0
+	var arrive := Vector3(POSTERN.x, 0.0, POSTERN.z) - dir * 1.6
+	_carrying_giust = true
+	while Vector2(player.global_position.x - arrive.x, player.global_position.z - arrive.z).length() > 1.2:
+		await get_tree().process_frame
+		if get_tree().paused:      # duraklatmada sayaç akmaz
+			continue
+		var dt := get_process_delta_time()
+		if GameState.autotest:
+			var to := arrive - player.global_position
+			to.y = 0.0
+			player.global_position += to.normalized() * minf(to.length(), (2.0 if GameState.flags.get("trailer", false) else 5.0) * dt)
+			var fy := _visible_floor(player.global_position)
+			if not is_nan(fy):
+				player.global_position.y = fy + 0.05
+			player.face(player.global_position + to.normalized() * 4.0 + Vector3(0, 1.2, 0))
+		# Gövde Tolga'nın önünde, bakışın yönüne gecikmeyle döner (sedye dümen gibi)
+		var fwd := -player.camera.global_basis.z
+		fwd.y = 0.0
+		if fwd.length() > 0.01:
+			fwd = fwd.normalized()
+			var turn := absf(cdir.signed_angle_to(fwd, Vector3.UP))
+			cdir = cdir.slerp(fwd, clampf(dt * 2.2, 0.0, 1.0)).normalized()
+			# Sarsıntı: koşu (yük altındaki yürüyüşe göre), sert dönüş
+			var spd := Vector2(player.velocity.x, player.velocity.z).length()
+			var walk := Player.WALK * player.speed_mult
+			if not GameState.autotest:
+				jolt += (maxf(0.0, spd - walk * 1.1) * 0.5 + maxf(0.0, turn - 0.5) * 1.2) * dt
+		jolt = move_toward(jolt, 0.0, 0.3 * dt)
+		meter.visible = jolt > 0.3
+		meter.value = clampf(jolt, 0.0, 1.0)
+		if jolt >= 1.0:
+			giust_jolts += 1
+			jolt = 0.35
+			stop_t = 1.2
+			Audio.stinger("hurt", -10.0)
+			hud.bark("SPK_GIUST", "D26_G_JOLT_%d" % mini(giust_jolts, 2), 2.6)
+			player.stagger(0.6)
+		if stop_t > 0.0:
+			stop_t -= dt
+			player.speed_mult = 0.15
+		else:
+			player.speed_mult = 0.5
+		_carry_at = player.global_position + cdir * 1.35
+		_carry_pose(cdir, 0.85, 1.0)
+	meter.queue_free()
+	_carrying_giust = false
+	player.frozen = true
+	player.speed_mult = 1.0
+	hud.set_objective("")
+	# Poternanın eşiği: savunucu komutanı içeri çeker, Tolga ayaklarını bırakır
+	var from := _carry_at
+	var to := Vector3(POSTERN.x, 0.0, POSTERN.z) - dir * 0.2
+	var last := create_tween()
+	last.tween_method(func(k: float):
+		_carry_at = from.lerp(to, k)
+		_carry_pose(cdir.slerp(dir, k).normalized(), 0.85, 1.0), 0.0, 1.0, 0.05 if GameState.autotest else 1.0)
+	await last.finished
+	player.free_hold = Vector3.INF
+	if hand_back:
+		player.show_remote(true)
+	for n: Node3D in [giust] + bearers:
+		n.visible = false
+
+
 func _carry_pose(dir: Vector3, h: float, k: float) -> void:
 	var feet := _carry_at - dir * 0.9
 	var head := _carry_at + dir * 0.9
@@ -1104,8 +1182,8 @@ func _carry_pose(dir: Vector3, h: float, k: float) -> void:
 	face = x.cross(up).normalized()
 	var base := feet + Vector3.UP * lerpf(0.0, h, k)
 	giust.global_transform = Transform3D(Basis(x, up, face), base)
-	if bearers.size() == 2 and k >= 1.0:
-		for i in 2:
+	if k >= 1.0:
+		for i in bearers.size():
 			var b: Person = bearers[i]
 			b.global_position = _bearer_spot(dir, i)
 			b.rotation.y = atan2(dir.x, dir.z) + (0.0 if i == 1 else PI)

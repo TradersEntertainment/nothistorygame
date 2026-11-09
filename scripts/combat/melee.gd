@@ -113,6 +113,9 @@ func _arm_audit(delta: float) -> void:
 	# Yerde yatan (surdan düşüp bacağı kırılan, 30O kayıp dalı) dövüşemez: kılıcı yoktur, rakip yakında olsa da hata değil
 	if player.frozen and player.eye_height < Player.EYE * 0.6:
 		return
+	# İki eli yükte (yaralı komutanı taşırken, merdivende, kürekte): kılıç tutamaz, rakip yakında olsa da hata değil
+	if player._hands_busy:
+		return
 	_arm_t = 0.25
 	var armed := duel.sword_pivot != null and is_instance_valid(duel.sword_pivot) and duel.sword_pivot.is_visible_in_tree()
 	armed = armed or player.has_kept_blade()      # dövüş bitti ama kılıç elde (Player.keep_drawn_blade)

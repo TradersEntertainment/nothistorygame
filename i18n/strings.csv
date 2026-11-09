@@ -1764,6 +1764,9 @@ UI_CH14_SUB,"Nihat · Zaman Bürosu, zamanın dışında","Nihat · The Time Bur
 UI_CH14_SUB_NEW,"Yeni model Nihat · Zaman Bürosu, ilk gün","New-model Nihat · The Time Bureau, first day"
 UI_CH14_WAITING,Bekleme Salonu · Sıra: 4.582.119,"The Waiting Room · Number: 4,582,119"
 UI_CH14_REPORT_HEAD,VAKA 1453-T · SON RAPOR · Denetçi N. Zamanoğlu,CASE 1453-T · FINAL REPORT · Inspector N. Zamanoğlu
+UI_TYPE_HINT,Raporu yaz: tuşlara bas,Type the report: press any keys
+UI_PROMPT14_STAMP,Raporu mühürle (E),Stamp the report (E)
+UI_PROMPT14_BADGE,Rozeti masaya bırak (E),Put the badge on the desk (E)
 UI_CH14_R_FIXED_OPT,'Tarih düzeltildi.','History has been corrected.'
 UI_CH14_R_FORGE_OPT,'Rapor tahrifatı.' (her şey olduğu gibi kalsın),'Report falsification.' (leave everything as it is)
 UI_CH14_R_RECRUIT_OPT,'Tolga Bey'in Büro'ya alınmasını öneririm.','I recommend that Mr Tolga be recruited to the Bureau.'
@@ -2222,6 +2225,8 @@ D12B_K_Q,"Söyle bana, gelecekten gelen. Yaptığın şey yetecek mi?","Tell me,
 UI_CH12B_CANT_SAY,⏱ 'Bunu size söyleyemem.',⏱ 'I can't tell you that.'
 UI_CH12B_LIE,"'Yetecek, Majeste. Şehriniz kurtulacak.'","'It will, Your Majesty. Your city will be saved.'"
 UI_CH12B_YEAR,'Belki size bir yıl kazandırır.','Perhaps it will buy you a year.'
+UI_OBJ12B_TORCHES,Surun meşalelerini yak · %d/%d,Light the torches along the wall · %d/%d
+UI_PROMPT12B_TORCH,Meşaleyi yak (E),Light the torch (E)
 D12B_T_CANT_SAY,"Bunu size söyleyemem, Majeste.","I can't tell you that, Your Majesty."
 D12B_K_CANT_SAY,(Başını sallar) Doğru cevap. Bilip susmak bazen en büyük lütuftur.,(Nods) The right answer. Sometimes knowing and keeping silent is the greatest mercy.
 D12B_T_LIE,"Yetecek, Majeste. Şehriniz kurtulacak.","It will, Your Majesty. Your city will be saved."
@@ -4138,11 +4143,16 @@ UI_C26_WOUND_NONE,Adamlarına bırak,Leave it to his men
 D26_G_WOUND_COLOGNE,"Ah! Yakıyor, Frenk! ...Cenova'da bunu yaraya dökmezler. Belki dökmeliler.","Ah! It burns, Frank! ...In Genoa we don't pour that on wounds. Maybe we should."
 D26_G_WOUND_TAPE,Bu bant... bir hekimden iyi tutuyor. Gemiye dönerken çıkarma.,This tape... holds better than a physician. Don't take it off while they carry me to the ship.
 D26_T_HURT,"Poterna! Yolu açmam lazım, fıçılar kapatıyor!","The postern! I need to clear the way, the barrels are blocking it!"
+D26_T_LIFT,"Ayaklarından ben tutuyorum. Bir, iki... kaldır!","I've got his feet. One, two... lift!"
 UI_OBJ26_CLEAR,Poterna yolundaki fıçıları çek (%d/%d),Clear the barrels from the postern path (%d/%d)
+UI_OBJ26_CARRY,"Giustiniani'yi poternaya taşı · koşma, sert dönme","Carry Giustiniani to the postern · don't run, don't turn sharply"
+UI_CH26_JOLT,Yara,Wound
 UI_PROMPT26_BLOCK,"[E] Fıçıyı devir, yolu aç","[E] Tip the barrel, clear the path"
 D26_S_CLEAR_1,"Bir tane daha! Omuz ver, devir!","One more! Shoulder it, tip it over!"
 D26_S_CLEAR_2,Yol açık! Kapı açık! Kaldırın komutanı!,The way is clear! The door is open! Lift the commander!
 D26_S_SHIP,Açıldı! Komutanı gemiye! Çabuk!,It's clear! The Commander to the ship! Quick!
+D26_G_JOLT_1,"(İnler) Yavaş, Frenk... yavaş.","(Groans) Slowly, Frank... slowly."
+D26_G_JOLT_2,"Ah! ...Beni gemiye götür, Frenk. Mezara değil.","Ah! ...Take me to the ship, Frank. Not to my grave."
 D26_T_GONE,Gitti. Adamları arkasından bakıyor. Bir şeyin koptuğunu herkes hissediyor.,He's gone. His men are staring after him. Everyone can feel something has broken.
 D26_L_BANNER,Burçta sancak! Kulenin tepesinde... bir sancak!,A banner on the tower! On top of the tower... a banner!
 D26_N_BANNER,Ulubatlı Hasan. Sancağı ilk diken. Kaynaklar orada düştüğünü yazar. Sancak kaldı.,Hasan of Ulubat. The first to plant the banner. The sources say he fell there. The banner stayed.
@@ -4423,6 +4433,9 @@ D19_N_01,"Kayıt: on iki kişilik bir gemi, Türk kılığında, Venedik donanma
 D19_C_01,"Sarıklar tamam, sancak tamam. Sen Türkçe biliyorsun, değil mi? Biri sorarsa sen konuşacaksın.","Turbans ready, banner ready. You speak Turkish, don't you? If anyone asks, you'll do the talking."
 D19_T_01,Türkçe biliyorum. Ama 'kılık' konusunda deneyimim fes ile sınırlı.,I speak Turkish. But my experience with disguises stops at the fez.
 D19_C_02,Fes yeter. Zincirin ucundan çıkıyoruz. Sessiz.,The fez will do. We slip out at the end of the chain. Quietly.
+D19_C_SHEET,"Çırak, şu halatı tut. Rüzgâr döndükçe sal ya da çek. Yelken çırpınırsa surdaki fener bize döner.","Apprentice, hold this sheet. Ease it or haul it as the wind turns. If the sail flaps, the lantern on the wall turns our way."
+D19_C_LUFF_1,(Fısıltıyla) Çek şunu! Çırpınıyor!,(Whispering) Haul it in! It's flapping!
+D19_C_LUFF_2,(Fısıltıyla) Sessiz... Fener bize döndü.,(Whispering) Quiet... The lantern's turned our way.
 D19_P_01,Hey! Kimsiniz? Bu saatte nereye?,Hey! Who are you? Where to at this hour?
 D19_C_WHISPER,"(fısıltıyla) Konuş, Büro adamı. Şimdi.","(whispering) Talk, Bureau man. Now."
 UI_C19_SALAM,"Selamün aleyküm! Gelibolu'ya, erzak almaya!","Peace be upon you! To Gallipoli, for supplies!"
@@ -4485,6 +4498,8 @@ D_CLIMB_TIRED_2,Bu duvar poliçede yoktu.,This wall wasn't in the policy.
 D_CLIMB_TIRED_3,"Kollarım kalem tutmak için yapılmış, duvar için değil.","My arms were built for holding pens, not walls."
 D_NIHAT_NO_CLIMB,"Yönetmelik 7/c, ek fıkra: denetçi tırmanmaz.","Regulation 7/c, sub-clause: inspectors do not climb."
 UI_OBJ19_SAIL,Zincirin ucundan sessizce çık; etrafı gözle,Slip out past the end of the chain; keep watch
+UI_OBJ19_SHEET,Yelken halatını tut: rüzgâra göre sal ya da çek (A/D) · yelken çırpınmasın,Hold the sheet: ease or haul with the wind (A/D) · don't let the sail flap
+UI_CH19_SAIL,Yelken,Sail
 UI_OBJ19_SAIL2,Marmara'ya açıl,Head out into the Marmara
 D17_N_ARREST,"Tutuklusunuz, biliyorum. Formu imzalarsanız bir aylığına tanık statüsüne geçersiniz. Bürokrasi her kapıyı açar, önce kendi kapısını.","You are under arrest, I know. If you sign the form, you become a witness for one month. Bureaucracy opens every door, starting with its own."
 D17_T_WINDOW,"Bir ay mı? Nihat Bey, Hikmet Amca pencereyi açacak! Servis kaçacak!","A month? Mr Nihat, Uncle Hikmet is about to open the window! I'll miss the bus!"

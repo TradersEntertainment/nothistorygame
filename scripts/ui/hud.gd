@@ -3191,6 +3191,13 @@ func _keypad_joy(event: InputEvent) -> void:
 
 func _input(event: InputEvent) -> void:
 	_title_key(event)
+	if _typing and event.is_pressed() and not event.is_echo() \
+			and (event is InputEventKey or event is InputEventMouseButton or event is InputEventJoypadButton):
+		if event is InputEventKey and (event as InputEventKey).keycode == KEY_ESCAPE:
+			return       # duraklatma menüsü açılabilsin
+		_type_hits += 1
+		get_viewport().set_input_as_handled()
+		return
 	if _keypad_active and (event is InputEventJoypadButton or event is InputEventJoypadMotion):
 		_keypad_joy(event)
 		return
@@ -3354,6 +3361,74 @@ func typewriter(text: String, per_char := 0.08) -> void:
 		if text[i] != " ":
 			Audio.sfx("typewriter", -8.0, randf_range(0.92, 1.08))
 		await get_tree().create_timer(per_char, false).timeout
+	Audio.sfx("typewriter_bell", -8.0)
+	await get_tree().create_timer(1.6, false).timeout
+	var tw := _tw()
+	tw.tween_property(l, "modulate:a", 0.0, 0.6)
+	await tw.finished
+	l.queue_free()
+	if _crosshair and cross_was:
+		_crosshair.visible = true
+
+
+## Daktiloyu oyuncu yazar (v0.99.95; 14'te Nihat'ın raporu kendiliğinden diziliyordu): her tuş vuruşu 3-5 harf, satır
+## bitince zil. Dört saniye dokunulmazsa kendisi yavaşça yazmaya devam eder (takılıp kalınmaz). Otomatik testte anında.
+var _typing := false
+var _type_hits := 0
+
+func typewriter_keys(text: String) -> void:
+	if _fast():
+		await typewriter(text, 0.0)
+		return
+	var l := _label("", 34, Color("f2e6c9"))
+	_outline(l, 8)
+	l.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	var vs := get_viewport().get_visible_rect().size
+	l.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+	l.position = Vector2(vs.x * 0.1, vs.y * 0.24)
+	l.size = Vector2(vs.x * 0.8, 60)
+	add_child(l)
+	var hint := _label(tr("UI_TYPE_HINT"), 20, Color(1, 1, 1, 0.7))
+	_outline(hint, 6)
+	hint.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	hint.position = Vector2(vs.x * 0.1, vs.y * 0.82)
+	hint.size = Vector2(vs.x * 0.8, 30)
+	add_child(hint)
+	var cross_was := _crosshair != null and _crosshair.visible
+	if _crosshair:
+		_crosshair.visible = false
+	_type_hits = 0
+	_typing = true
+	var i := 0
+	var idle := 0.0
+	var auto_t := 0.0
+	while i < text.length():
+		await get_tree().process_frame
+		if get_tree().paused:
+			continue
+		var dt := get_process_delta_time()
+		var add := 0
+		if _type_hits > 0:
+			add = _type_hits * randi_range(3, 5)
+			_type_hits = 0
+			idle = 0.0
+		else:
+			idle += dt
+			if idle > 4.0:
+				auto_t += dt
+				if auto_t >= 0.07:
+					auto_t = 0.0
+					add = 1
+		if add > 0:
+			var was := i
+			i = mini(text.length(), i + add)
+			l.text = text.substr(0, i)
+			if text.substr(was, i - was).strip_edges() != "":
+				Audio.sfx("typewriter", -8.0, randf_range(0.92, 1.08))
+			if hint.modulate.a > 0.0 and idle == 0.0:
+				hint.modulate.a = maxf(0.0, hint.modulate.a - 0.25)
+	_typing = false
+	hint.queue_free()
 	Audio.sfx("typewriter_bell", -8.0)
 	await get_tree().create_timer(1.6, false).timeout
 	var tw := _tw()

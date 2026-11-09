@@ -3149,9 +3149,12 @@ D19_C_BROKEN,19,SPK_BRIG,[nervous],1,Biz... Türk. Çok Türk. Balık.,We... Tur
 D19_C_DECIDED,19,SPK_BRIG,,0,"Çoğunluk dönüyor. Tayfa, yelkenleri çevirin. Şehre.","The majority returns. Crew, bring the sails round. To the city.",kod
 D19_C_EMPTY,19,SPK_BRIG,[tired],1,"On yedi gün. Ne Venedik, ne Papa'nın gemileri, ne bir haber.","Seventeen days. No Venetians, no papal ships, not a word.",kod
 D19_C_GRAIN_HALF,19,SPK_BRIG,,0,"Tayfa senin oyunu yarım sayıyor, Büro adamı. Ben yine de tam yazdım.","The crew counts your vote as half, Bureau man. I've written it down as a whole one anyway.",kod
+D19_C_LUFF_1,19,SPK_BRIG,[whispers],0,(Fısıltıyla) Çek şunu! Çırpınıyor!,(Whispering) Haul it in! It's flapping!,kod
+D19_C_LUFF_2,19,SPK_BRIG,[whispers],0,(Fısıltıyla) Sessiz... Fener bize döndü.,(Whispering) Quiet... The lantern's turned our way.,kod
 D19_C_PASSED,19,SPK_BRIG,,0,"Geçtik. Nefes alın. Önümüz Marmara, sonra Ege.","We're through. Breathe. Ahead is the Marmara, then the Aegean.",kod
 D19_C_REPORT,19,SPK_BRIG,[tired],1,"Donanma yok, Niko. Hiçbir yerde. Bunu söylemek için döndük.","There is no fleet, Niko. Nowhere. We came back to say so.",kod
 D19_C_REPORT_TEZKIRE,19,SPK_BRIG,,0,"Bir de... Devriyeyi bu Frenk'in kâğıdıyla geçtik, Niko. Sultan'ın tuğrası.","And... we got past the patrol on this Frank's paper, Niko. The Sultan's tughra.",kod
+D19_C_SHEET,19,SPK_BRIG,,0,"Çırak, şu halatı tut. Rüzgâr döndükçe sal ya da çek. Yelken çırpınırsa surdaki fener bize döner.","Apprentice, hold this sheet. Ease it or haul it as the wind turns. If the sail flaps, the lantern on the wall turns our way.",kod
 D19_C_TEZKIRE,19,SPK_BRIG,,0,"(Dişlerinin arasından) Venedik gemisinde Sultan'ın kâğıdı. Kimin adamısın sen, Büro adamı?","(Through his teeth) The Sultan's paper, on a Venetian ship. Whose man are you, Bureau man?",kod
 D19_C_TEZKIRE_2,19,SPK_BRIG,,0,Ek teminat. Tayfa gördü. Oylamada unutmazlar.,Supplementary cover. The crew saw it. They won't forget it at the vote.,kod
 D19_C_VOTE,19,SPK_BRIG,,0,Karar vakti. Donanma yok. Şehre dönersek belki ölürüz. Dönmezsek... kimse bizi suçlamaz.,"Time to decide. There is no fleet. If we go back to the city, we may die. If we don't... no one will blame us.",kod
@@ -3694,6 +3697,8 @@ D26_G_HURT,26,SPK_GIUST,[hesitant],0,Zırhı deldi... Beni... beni gemiye götü
 D26_G_HURT_GBOOK,26,SPK_GIUST,[hesitant],0,Zırhı deldi... Kitabın haklıymış. Beni... beni gemiye götürün.,It went through the breastplate... Your book was right. Take me... take me to the ship.,varyant
 D26_G_HURT_WARNED,26,SPK_GIUST,,0,"Sağ omzum... Nisan'da söylemiştin, Frenk. Dinlemedim. Beni gemiye götürün; sardırıp dönerim.","My right shoulder... You told me in April, Frank. I didn't listen. Take me to the ship; I'll have it bound and come back.",varyant
 D26_G_HURT_WARNED6B,26,SPK_GIUST,,0,"Zırhı deldi... Yirmi dokuz Mayıs dedin, Frenk. Dinlemedim. Beni gemiye götürün; sardırıp dönerim.","It went through the breastplate... You said the twenty-ninth of May, Frank. I didn't listen. Take me to the ship; I'll have it bound and come back.",ad
+D26_G_JOLT_1,26,SPK_GIUST,,0,"(İnler) Yavaş, Frenk... yavaş.","(Groans) Slowly, Frank... slowly.",kod
+D26_G_JOLT_2,26,SPK_GIUST,,0,"Ah! ...Beni gemiye götür, Frenk. Mezara değil.","Ah! ...Take me to the ship, Frank. Not to my grave.",kod
 D26_G_LADDER,26,SPK_GIUST,[shouting],0,"Merdivenden çıktılar! Tolga, kılıcı al!","They're over the ladder! Tolga, take a sword!",kod
 D26_G_LAST_WAVE,26,SPK_GIUST,[shouting],0,"Son bölük bu! Sultan'ın kendi adamları. Dayan, Tolga, dayan!","This is the last company! The Sultan's own men. Hold, Tolga, hold!",kod
 D26_G_LIGHTER_BACK,26,SPK_GIUST,[scared],0,(Titreyen elini açar; avucunda Tolga'nın çakmağı) Al. Topçularım bir hafta ödemedi. Ben de ödemedim. ...Sende kalsın.,(He opens a trembling hand; Tolga's lighter lies in his palm) Take it. My gunners never paid their week. Neither did I. ...Keep it.,kod
@@ -3799,6 +3804,7 @@ D26_T_INSURER,26,SPK_TOLGA,,0,"Hasar tespitteydim. Büyük bir dosya. Toplam ziy
 D26_T_ISI,26,SPK_TOLGA,,0,"Şu kafiledeki yaşlı adam... Isidoros! Ayindeki kardinal. Kırmızısı yok, yırtık bir cüppe giymiş. Bana baktı.","That old man in the column... Isidore! The cardinal from the liturgy. No red on him, just a torn cassock. He looked at me.",kod
 D26_T_ISI_O,26,SPK_TOLGA,,0,"Kafiledeki şu yaşlı adam bana baktı, Nihat Bey. Esir gibi yürüyor ama duruşu başka.","That old man in the column looked at me, Mr Nihat. He walks like a captive, but he carries himself differently.",kod
 D26_T_KASIM_ASK,26,SPK_TOLGA,,0,"Kasım, kafiledeki şu ak sakallı... benim kâtibim. Bir söz de sen tut.","Kasım, that white-bearded man in the column... he's my clerk. Now you keep a word.",kod
+D26_T_LIFT,26,SPK_TOLGA,[excited],0,"Ayaklarından ben tutuyorum. Bir, iki... kaldır!","I've got his feet. One, two... lift!",kod
 D26_T_LIGHTER_BACK,26,SPK_TOLGA,,0,Çakmak hâlâ ılık. Kırk gün bir Cenovalının cebinde durmuş.,The lighter's still warm. Forty days in a Genoese pocket.,kod
 D26_T_LIGHTER_KEEP,26,SPK_TOLGA,,0,Çantada yer yok. Sende kalsın; gemide fitil yakarsın.,No room in the bag. You keep it; you'll light a match on the ship.,kod
 D26_T_LOST,26,SPK_TOLGA,[tired],1,"Yere serildim. Kılıç elimden gitti, onlar da gitti. Ama ben hâlâ... yerdeyim.","Knocked flat. The sword's gone, and so are they. But I'm still... on the ground.",kod

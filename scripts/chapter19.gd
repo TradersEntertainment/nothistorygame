@@ -219,7 +219,9 @@ func _run() -> void:
 		await hud.say("SPK_BRIG", "D19_C_01")
 		await hud.say("SPK_TOLGA", "D19_T_01")
 	await hud.say("SPK_BRIG", "D19_C_02")
-	hud.set_objective(tr("UI_OBJ19_SAIL"))
+	await hud.say("SPK_BRIG", "D19_C_SHEET")
+	_take_sheet()
+	hud.set_objective(tr("UI_OBJ19_SHEET"))
 	player.frozen = false
 	phase = "sail"
 	while _d < _total * PATROL_AT:
@@ -243,6 +245,9 @@ func _seat() -> void:
 func _patrol_scene() -> void:
 	phase = "patrol"
 	player.frozen = true
+	# Zincirden çıkarken iki kez çırpınan yelken devriyenin dikkatini çekmişti
+	if _luff_pre >= 2:
+		_suspicion += 1
 	hud.set_objective("")
 	patrol.visible = true
 	# Devriye kayığı oyuncunun oturduğu bordaya (sola) yanaşır; kaptan oyuncunun yanına geçer (araya girmesin),
@@ -336,6 +341,7 @@ func _show_tezkire() -> void:
 func _aegean() -> void:
 	phase = "aegean"
 	hud.set_objective("")
+	_drop_sheet()
 	await hud.fade_to(1.0, 1.0)
 	walls.queue_free()
 	walls = null
@@ -522,9 +528,11 @@ func _process(delta: float) -> void:
 		return
 	match phase:
 		"sail", "sail2", "brief":
-			_d = minf(_d + delta * (7.0 if GameState.autotest else 3.6), _total)
+			_slow_t = maxf(0.0, _slow_t - delta)
+			_d = minf(_d + delta * (7.0 if GameState.autotest else 3.6) * (0.45 if _slow_t > 0.0 else 1.0), _total)
 			_place_ship(_d)
 			_seat()
+			_sheet_step(delta)
 		"patrol":
 			_seat()
 		"aegean":
@@ -584,6 +592,90 @@ func _capture_mouse() -> void:
 
 ## Kaza rotasından dönüş (siege_captive_18): kaptan Tolga'yı Türklerin köprüsünden tanır
 var _captive_back := false
+
+# ---------------------------------------------------------------- yelken halatı (v0.99.95)
+# Zincirden kaçış eskiden seyirdi: gemi kendi gidiyor, oyuncu güvertede bekliyordu. Artık Tolga yelkenin halatını tutar;
+# rüzgâr döndükçe A/D ile salar ya da çeker. Yelken çırpınırsa ses çıkar: gemi yavaşlar, kaptan fısıldar; devriyeden
+# önce iki kez çırpınan yelken devriyenin şüphesini artırır (_suspicion).
+var sheet_meter: BalanceMeter
+var _sheet_rope: Node3D
+var _wind := 0.0
+var _wind_to := 0.0
+var _wind_t := 0.0
+var _trim := 0.0
+var _off_t := 0.0
+var _luffs := 0
+var _luff_pre := 0
+var _slow_t := 0.0
+
+
+func _take_sheet() -> void:
+	_sheet_rope = Node3D.new()
+	_sheet_rope.set_meta("transient", true)
+	player.camera.add_child(_sheet_rope)
+	# Halat sol elden yukarı, kıç yelkenin alt köşesine uzanır
+	Props.cyl(_sheet_rope, 0.012, 1.8, Vector3(0, 0.9, 0), Color("c8b48a"), Vector3.ZERO, 5)
+	Props.strip_outlines(_sheet_rope)
+	_sheet_rope.position = Vector3(-0.2, -0.42, -0.5)
+	_sheet_rope.rotation_degrees = Vector3(-38, 0, 15)
+	player.free_hold = Vector3(-0.2, -0.42, -0.5)
+	Audio.sfx("cloth", -10.0, 0.9)
+	sheet_meter = BalanceMeter.new()
+	sheet_meter.label_text = tr("UI_CH19_SAIL")
+	sheet_meter.show_keys = true
+	hud.add_child(sheet_meter)
+	sheet_meter.place_bottom(220.0)          # güvertedeki tayfanın yüz hizasının altında (ortada yüzleri örtüyordu)
+
+
+func _drop_sheet() -> void:
+	if is_instance_valid(_sheet_rope):
+		_sheet_rope.queue_free()
+	_sheet_rope = null
+	if is_instance_valid(sheet_meter):
+		sheet_meter.queue_free()
+	sheet_meter = null
+	player.free_hold = Vector3.INF
+
+
+func _sheet_step(dt: float) -> void:
+	if sheet_meter == null:
+		return
+	sheet_meter.visible = not player.frozen
+	if player.frozen or get_tree().paused:
+		return
+	_wind_t -= dt
+	if _wind_t <= 0.0:
+		_wind_t = randf_range(2.0, 4.0)
+		_wind_to = randf_range(-0.9, 0.9)
+	_wind = move_toward(_wind, _wind_to, dt * 0.35)
+	if GameState.autotest:
+		_trim = _wind
+	else:
+		_trim = clampf(_trim + Input.get_axis("move_left", "move_right") * dt * 0.9, -1.0, 1.0)
+	var err := _trim - _wind
+	sheet_meter.value = clampf(err, -1.0, 1.0)
+	if is_instance_valid(_sheet_rope):
+		_sheet_rope.rotation_degrees.z = 15.0 + _trim * 14.0     # çekince halat elde gerilir, salınca gevşer
+		_sheet_rope.position.z = -0.5 + _trim * 0.05
+		player.free_hold = _sheet_rope.position
+	if absf(err) > 0.55:
+		_off_t += dt
+	else:
+		_off_t = maxf(0.0, _off_t - dt * 2.0)
+	if _off_t > 1.2:
+		_luff()
+
+
+func _luff() -> void:
+	_off_t = 0.0
+	_luffs += 1
+	if phase == "sail":
+		_luff_pre += 1
+	_slow_t = 2.0
+	Audio.sfx("cloth", -2.0, 0.7)
+	Audio.sfx("wood_creak", -8.0, 0.9)
+	player.shake(0.15)
+	hud.bark("SPK_BRIG", "D19_C_LUFF_1" if _luffs % 2 == 1 else "D19_C_LUFF_2", 2.6)
 
 
 func _autotest_report() -> void:

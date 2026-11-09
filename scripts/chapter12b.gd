@@ -294,9 +294,7 @@ func _run() -> void:
 	tw.tween_property(city.emperor, "position", DOOR + Vector3(0.35, 0, -0.9), _d(3.2))
 	tw.tween_property(sphrantzes, "position", DOOR + Vector3(-0.35, 0, -1.3), _d(2.8))
 	player.face(DOOR + Vector3(0, 1.5, 0))
-	if "lighter" in GameState.bag:
-		await _tolga_lights_torch()
-	_light_torches()
+	# Meşaleleri onlar gidince Tolga kendisi yakar (aşağıda): çakmağıyla, çakmak yoksa nöbetçinin bıraktığı yanan meşaleyle
 	# Taş üstünde iki kişinin adımları (adımsız kayıyorlardı)
 	for k in 10:
 		get_tree().create_timer(k * 0.3, false).timeout.connect(func():
@@ -314,6 +312,7 @@ func _run() -> void:
 	await _wait(1.3)
 	city.emperor.visible = false
 	sphrantzes.visible = false
+	await _light_torches_yourself()
 	player.face(Vector3(90.0, 7.0, -10.0))
 	await _wait(2.2)
 	await hud.fade_to(1.0, 1.4)
@@ -348,29 +347,64 @@ func _light_fires(dur: float) -> void:
 		t.tween_property(fire, "scale", Vector3.ONE, _d(0.6))
 
 
-## Çakmağı olan Tolga en yakın meşaleyi kendisi yakar (eşya kullanımı: meşaleler yalnız nöbetçinin işiydi).
-func _tolga_lights_torch() -> void:
-	var t := _torches[0]
-	for c in _torches:
-		if c.global_position.distance_to(player.global_position) < t.global_position.distance_to(player.global_position):
-			t = c
-	player.hold_now("lighter", 4.0)      # meşale yanınca çakmak cebe döner (elde kalıyordu)
-	var to := t.global_position + (player.global_position - t.global_position).normalized() * 0.9
-	to.y = player.global_position.y
-	player.face(t.global_position + Vector3(0, 1.8, 0))
-	var mv := create_tween()
-	mv.tween_property(player, "global_position", to, _d(1.2))
-	for k in 4:
-		get_tree().create_timer(k * 0.3, false).timeout.connect(Audio.sfx.bind("footstep_stone_%d" % (k + 1), -10.0))
-	await mv.finished
-	player.face(t.global_position + Vector3(0, 1.9, 0))
-	player.hand_gesture("reach")
-	Audio.sfx("fuse_burn", -14.0, 1.6)
-	await _wait(0.5)
-	(t.get_node("Flame") as Node3D).visible = true
-	(t.get_node("Light") as OmniLight3D).light_energy = 1.4
-	Audio.sfx("fire_crackle", -12.0, 1.2)
-	await _wait(0.6)
+## İmparator gitti, sur kararıyor: Tolga meşaleleri kendisi yakar (v0.99.95; çakmakla ya da elde yanan meşaleyle). Eskiden konuşma baştan sona
+## seyirdi; en yakın meşaleyi sahne yakıyor, ötekileri görünmez bir nöbetçi yakıyordu. Oyuncu sur yolunda yürür, her
+## meşalenin dibinde E. Yerçekimi kapalı bölümde sur yolunun dışına (iç kenar boşluk) çıkılmaz.
+func _light_torches_yourself() -> void:
+	var left: Array[Node3D] = []
+	for t in _torches:
+		if not (t.get_node("Flame") as Node3D).visible:
+			left.append(t)
+	if left.is_empty():
+		return
+	var total := left.size()
+	var with_lighter := "lighter" in GameState.bag
+	if with_lighter:
+		player.hold_now("lighter", 0.0)
+	else:
+		player.show_prop("torch", 120.0)     # nöbetçinin bıraktığı yanan meşale (çakmak 10B'de harcandıysa)
+	hud.set_objective(tr("UI_OBJ12B_TORCHES") % [0, total], left[0].global_position + Vector3(0, 2.0, 0))
+	player.frozen = false
+	var t0 := 0.0
+	while not left.is_empty() and t0 < 90.0:
+		await get_tree().process_frame
+		if get_tree().paused:      # duraklatmada sayaç akmaz
+			continue
+		t0 += get_process_delta_time()
+		var gp := player.global_position
+		player.global_position = Vector3(clampf(gp.x, 32.3, 34.9), gp.y, clampf(gp.z, -14.9, -5.7))
+		var near: Node3D = null
+		for t in left:
+			if Vector2(t.global_position.x - gp.x, t.global_position.z - gp.z).length() < 1.6:
+				near = t
+		if GameState.autotest and near == null:
+			player.global_position = Vector3(33.4, gp.y, left[0].global_position.z)
+			continue
+		hud.set_prompt(tr("UI_PROMPT12B_TORCH") if near else "")
+		if near and (Input.is_action_just_pressed("interact") or GameState.autotest):
+			hud.set_prompt("")
+			player.frozen = true
+			player.face(near.global_position + Vector3(0, 1.9, 0))
+			player.hand_gesture("reach")
+			Audio.sfx("fuse_burn", -14.0, 1.6)
+			await _wait(0.5)
+			(near.get_node("Flame") as Node3D).visible = true
+			var lt := create_tween()
+			lt.tween_property(near.get_node("Light"), "light_energy", 2.2, _d(0.5))
+			Audio.sfx("fire_crackle", -12.0, 1.2)
+			left.erase(near)
+			hud.set_objective(tr("UI_OBJ12B_TORCHES") % [total - left.size(), total],
+				left[0].global_position + Vector3(0, 2.0, 0) if not left.is_empty() else null)
+			player.frozen = false
+	if not left.is_empty():
+		_light_torches()       # süre doldu: kalanları nöbetçi yakar
+	hud.set_prompt("")
+	hud.set_objective("")
+	player.frozen = true
+	if with_lighter:
+		player.hold_default()
+	else:
+		player.drop_prop()
 
 
 ## Surdaki meşaleler: bir nöbetçi sırayla yakıyormuş gibi, arka arkaya (Tolga'nın yaktığı atlanır).

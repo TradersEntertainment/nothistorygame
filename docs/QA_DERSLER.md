@@ -702,3 +702,14 @@ Her bölüm denetiminde ve her düzeltmede bu listeyi baştan uygula. Yeni bir h
   Testler oyunun kurallarını denetler; "ekranda ne görünüyor" sorusunu en iyi gerçek kareler yanıtlar.
 - Melee._arm_audit yerde yatan oyuncuyu (donmuş ve göz hizası düşük: 30O kayıp dalında surdan düşüp bacağı kırılan
   Tolga) saymaz; 30O "lose" ve 26 "hold_lose"daki seyrek ARMAUDIT buydu.
+- Seyir sahnesine iş (v0.99.95). Hissiyat denetiminin "büyük önerileri":
+  - 26: Giustiniani'yi iki savunucu taşırken Tolga bakıyordu. Artık ayak ucundan Tolga tutar (Chapter26._carry_giust):
+    oyuncu yürür, gövde önünde gecikmeyle döner; koşmak ya da sert dönmek yarayı sarsar (gösterge, inleme, sendeleme).
+  - 19: zincirden kaçış seyirdi. Tolga yelken halatını tutar (A/D, rüzgâr döner); çırpınan yelken gemiyi yavaşlatır,
+    devriyeden önce iki çırpınma devriyenin şüphesini artırır (_suspicion).
+  - 12B: sonda meşaleleri görünmez bir nöbetçi yakıyordu; çakmağı olan Tolga sur yolunda yürüyüp kendisi yakar.
+    Yerçekimi kapalı bölümde oyuncu serbest bırakılınca sur yolunun dikdörtgeninde tutulur (iç kenar boşluk).
+  - 14: rapor kendiliğinden diziliyordu; artık oyuncu tuşlara basarak yazar (Hud.typewriter_keys), mührü E ile basar.
+    Dokunulmazsa kendisi yavaşça devam eder: etkileşim hiçbir zaman ilerlemeyi kilitlememeli.
+- Melee._arm_audit iki eli yükteyken (Player._hands_busy) saymaz: 26 kayıp dalında yaralıyı taşıyan Tolga'nın
+  yanından geçen asker "silahsız" hatası veriyordu.

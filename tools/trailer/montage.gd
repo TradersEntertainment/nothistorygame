@@ -28,6 +28,8 @@ const CLIPS := [
 
 ## Hissiyat fragmanı ("-- set=feel"): v0.99.90-93'ün oynanış anları (Blakherna kulesi, ok altında taşıma, yakın atış)
 const FEEL_CLIPS := [
+	{"id": "sheet", "ch": "19", "v": "", "when": "shown('_sheet_rope') and after(6.0)", "lead": 0.0, "dur": 5.0,
+		"cap": ["YELKEN HALATI SENDE", "THE SHEET IS IN YOUR HANDS"]},
 	{"id": "ladder_arrows", "ch": "30o", "v": "", "when": "sv('phase') == 'carry'", "lead": 0.8, "dur": 6.0,
 		"cap": ["MERDİVENİ TAŞI. OKLAR YAĞIYOR.", "CARRY THE LADDER. ARROWS INCOMING."]},
 	{"id": "pole", "ch": "30", "v": "", "when": "sv('phase') == 'ladders' and shown('_pole')", "lead": 0.0, "dur": 5.0,
@@ -38,6 +40,8 @@ const FEEL_CLIPS := [
 		"cap": ["TÜFEK DOLU. YANA ATLA.", "HIS GUN IS LOADED. DODGE."]},
 	{"id": "wounded", "ch": "30o", "v": "", "when": "sv('carried') == true", "lead": 1.2, "drive": "level", "dur": 6.0,
 		"cap": ["YARALIYI OMZUNA AL", "SHOULDER THE WOUNDED"]},
+	{"id": "giust_carry", "ch": "26", "v": "", "when": "sv('_carrying_giust') == true", "lead": 0.8, "dur": 6.0, "drive": "level", "wait": 2400.0,
+		"cap": ["KOMUTANI SEN TAŞI. SARSMA.", "CARRY THE COMMANDER. DON'T JOLT HIM."]},
 ]
 
 ## Dikey kısalar için konuşmalı kesitler ("-- set=shorts clean"): test botu tempo modunda (seslendirme süresince) oynar,

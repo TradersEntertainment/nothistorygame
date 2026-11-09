@@ -28,7 +28,8 @@
 ## 🎬 Fragman
 
 <p align="center"><a href="https://tradersentertainment.github.io/nothistorygamedemo/#trailer"><img src="docs/readme/teaser.gif" width="560" alt="Fragmandan: Tolga ve Urban'ın topu"></a><br>
-<a href="https://tradersentertainment.github.io/nothistorygamedemo/#trailer"><b>▶️ Fragmanın tamamı (1:40) / Full trailer</b></a></p>
+<a href="https://tradersentertainment.github.io/nothistorygamedemo/#trailer"><b>▶️ Fragmanın tamamı (1:40) / Full trailer</b></a><br>
+<a href="https://tradersentertainment.github.io/nothistorygamedemo/#trailer"><b>▶️ Oynanış: surlarda (0:34) / Gameplay: on the walls</b></a> — merdiven ve ok yağmuru, sur düellosu, kule tüfekçisi, yaralı taşıma</p>
 
 ## 📸 Oyundan kareler
 
@@ -148,6 +149,7 @@ Her eşyanın bir görevi var (garajda eşyaya bakınca yazar): *Tarih Albümü*
 ### Steam, fragman ve macOS
 - Steam başarımları GodotSteam eklentisiyle kendiliğinden bağlanır. Kurulum, App ID, yükleme ve Steam Deck notları: [docs/STEAM.md](docs/STEAM.md).
 - Fragman kaydı: `godot --path . --write-movie fragman.avi --fixed-fps 30 --resolution 1920x1080 res://tools/trailer/trailer.tscn`
+- Oynanış videosu (surlarda): `godot --path . --write-movie ham.avi --fixed-fps 30 --resolution 1280x720 res://tools/trailer/gameplay.tscn -- set=feel nohud > ham.log`, sonra `python3 tools/trailer/gameplay_cut.py ham.avi ham.log oynanis_surlar.mp4`
 - Sürümler artık Windows, Linux ve macOS (universal, Intel ve Apple Silicon) için çıkıyor.
 
 ### Kol (gamepad) desteği

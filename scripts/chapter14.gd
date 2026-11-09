@@ -339,10 +339,11 @@ func _desk() -> void:
 	await hud.card([[tr("UI_CH14_REPORT_HEAD"), 24, Color("f2e6c9")]], 0.1)
 	if text_key == "UI_CH14_R_FORGE" and not "chickpeas" in GameState.bag:
 		text_key = "UI_CH14_R_FORGE_NOLEB"
-	await hud.typewriter(tr(text_key), 0.04)
+	await hud.typewriter_keys(tr(text_key))     # raporu oyuncu yazar (v0.99.95; kendiliğinden diziliyordu)
 	hud.clear_card()
 	if pick != "resign":
-		# Mühür: raporun altına, bir kez, sert
+		# Mühür: raporun altına, bir kez, sert. Oyuncu basar
+		await _press_e("UI_PROMPT14_STAMP")
 		Audio.sfx("stamp", -4.0)
 		var sp := Vector3(-0.05, 0.835, 4.05)        # raporun üstünde, daktilonun yanında (daktilonun altında kalıyordu)
 		Props.label(bureau, "1453-T", sp, 34, Color("c8262f"), Vector3(-90, 180 - 12, 0), 0.4)       # okunur boyda (neredeyse görünmüyordu)
@@ -375,6 +376,7 @@ func _desk() -> void:
 			var bp := Vector3(-0.2, 0.83, 4.0)
 			Props.cyl(bureau, 0.05, 0.012, bp, Color("c49a45"), Vector3.ZERO, 6)
 			Props.cyl(bureau, 0.03, 0.014, bp + Vector3(0, 0.002, 0), Color("8a6a2a"), Vector3.ZERO, 12)
+			await _press_e("UI_PROMPT14_BADGE")
 			player.hand_gesture("reach")
 			Audio.sfx("kick_metal", -16.0, 1.8)          # rozet masaya bırakılır
 			player.face(bp + Vector3(0, 0.3, 0.2))
@@ -384,6 +386,22 @@ func _desk() -> void:
 			await _n("D14_N_RESIGN_2")
 			GameState.flags["nihat_fate"] = "N4"
 			_outcome = "14.4"
+
+
+## Oyuncunun eli: istem görünür, E beklenir (mühür, rozet). Dokunulmazsa 8 sn sonra kendiliğinden (takılıp kalınmaz).
+func _press_e(prompt_key: String) -> void:
+	if GameState.autotest:
+		return
+	hud.set_prompt(tr(prompt_key))
+	var t := 0.0
+	while t < 8.0:
+		await get_tree().process_frame
+		if get_tree().paused:
+			continue
+		t += get_process_delta_time()
+		if Input.is_action_just_pressed("interact"):
+			break
+	hud.set_prompt("")
 
 
 ## Saniye tanığın Hasar Tespit Dosyası'nı bırakır: kartta iyi ve kötü iş sayısı, Nihat kademesine göre yorumlar.
