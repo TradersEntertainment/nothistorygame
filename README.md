@@ -25,20 +25,25 @@
 | ⚔️ **Kuşatma iki taraftan** · Bizans surları ya da Osmanlı ordugâhı | 📚 **56 bölüm** · garajdan otağa, Büro'dan kuşatmanın iki tarafına |
 | 🎮 Klavye-fare ya da **gamepad** | 🪟 Windows · 🍎 macOS · 🐧 Linux / Steam Deck |
 
+## 🎬 Fragman
+
+<p align="center"><a href="https://tradersentertainment.github.io/nothistorygamedemo/#trailer"><img src="docs/readme/teaser.gif" width="560" alt="Fragmandan: Tolga ve Urban'ın topu"></a><br>
+<a href="https://tradersentertainment.github.io/nothistorygamedemo/#trailer"><b>▶️ Fragmanın tamamı (1:40) / Full trailer</b></a></p>
+
 ## 📸 Oyundan kareler
 
 | | |
 |:--:|:--:|
-| <img src="docs/readme/kosu.jpg" alt=""> | <img src="docs/readme/donan_kare.jpg" alt=""> |
-| 29 Mayıs 1453, gece 01.30: kalkanın altında ok yağmuru | Kare donar. *Evet, bu benim.* |
-| <img src="docs/readme/yatak_oda.jpg" alt=""> | <img src="docs/readme/garaj.jpg" alt=""> |
-| Gece 03.00. Telefon çalıyor: Hikmet Amca | *"Takıldı! Tekme lazım!"* Zamanatör 3000 |
-| <img src="docs/readme/otag_kitap.jpg" alt=""> | <img src="docs/readme/patlama.jpg" alt=""> |
-| *"Bu şehir alınacak mı?"* Otağda tarih kitabı | Urban'ın topu… biraz fazla barut |
-| <img src="docs/readme/gozcu.jpg" alt=""> | <img src="docs/readme/hucum.jpg" alt=""> |
-| Surda gözcü: *"Duman! Büyük top! Siper!"* | Son hücum: gedikte top ateşi |
-| <img src="docs/readme/ordugah.jpg" alt=""> | <img src="docs/readme/ayasofya.jpg" alt=""> |
-| Surların önünde Osmanlı ordugâhı | Ayasofya ve Konstantinopolis'in çatıları |
+| <img src="docs/readme/gece_oklar.jpg" alt=""> | <img src="docs/readme/donan_kare.jpg" alt=""> |
+| 29 Mayıs 1453, gece 01.30: *"Bu işi her gece mi yapıyorsunuz?"* | Kare donar. *Evet, bu benim. Havada olan. Fesli olan.* |
+| <img src="docs/readme/garaj_tekme.jpg" alt=""> | <img src="docs/readme/fatih_soru.jpg" alt=""> |
+| *"Hay Allah, takıldı! Bir tekme lazım!"* Zamanatör 3000 | Fatih: *"Madem gelecektensin, söyle bakalım. Bu şehir alınacak mı?"* |
+| <img src="docs/readme/catilar_ucus.jpg" alt=""> | <img src="docs/readme/sur_kule.jpg" alt=""> |
+| Konstantinopolis'in üstünde: *"Yerçekimi, formunu doldurmayanlar içindir."* | *"Bu dün burada yoktu. Bir gecede kule mi dikmişler?"* |
+| <img src="docs/readme/kule_yaniyor.jpg" alt=""> | <img src="docs/readme/sur_patlama.jpg" alt=""> |
+| Bir gecede kuruldu, bir gecede yandı | Kuşatma: surda patlama, mazgalda merdivenler |
+| <img src="docs/readme/ordugah_patlama.jpg" alt=""> | <img src="docs/readme/tavuk.jpg" alt=""> |
+| Urban'ın topu… biraz fazla barut | *"Tavuk! Hüseyin, tavuk kaçıyor!"* |
 
 ## 🗂️ Bölümler
 

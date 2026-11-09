@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://mv1lpfn3ce3f"
-path="res://.godot/imported/garaj.jpg-e7ed1f68ab8b8aefd5c7780dcbbbd2d0.ctex"
+uid="uid://c2rx5e20a7r6"
+path="res://.godot/imported/garaj_tekme.jpg-761bf25f08f9023a243af9fd5506e5e2.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://docs/readme/garaj.jpg"
-dest_files=["res://.godot/imported/garaj.jpg-e7ed1f68ab8b8aefd5c7780dcbbbd2d0.ctex"]
+source_file="res://docs/readme/garaj_tekme.jpg"
+dest_files=["res://.godot/imported/garaj_tekme.jpg-761bf25f08f9023a243af9fd5506e5e2.ctex"]
 
 [params]
 

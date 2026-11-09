@@ -112,6 +112,7 @@ func _arm_audit(delta: float) -> void:
 		return
 	_arm_t = 0.25
 	var armed := duel.sword_pivot != null and is_instance_valid(duel.sword_pivot) and duel.sword_pivot.is_visible_in_tree()
+	armed = armed or player.has_kept_blade()      # dövüş bitti ama kılıç elde (Player.keep_drawn_blade)
 	if armed:
 		return
 	for d in _live(foes):

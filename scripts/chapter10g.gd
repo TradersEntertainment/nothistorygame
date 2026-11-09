@@ -341,7 +341,7 @@ func _end_chapter() -> void:
 		return
 	match result:
 		"next":
-			get_tree().change_scene_to_file(_next_scene())
+			GameState.change_scene(_next_scene())
 		"replay":
 			GameState.replay_scene()
 		_:

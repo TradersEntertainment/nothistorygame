@@ -194,9 +194,12 @@ func _carry_ladder() -> void:
 		if c.rig:
 			c.rig.activity = "carry"
 	player.speed_mult = 0.7
+	# Sol el merdivenin sol dikmesini önden kavrar (merdiven sağ omuzda; el boştu, sağ elde kumanda duruyordu)
+	player.free_hold = Vector3(0.36, -0.14, -0.55)
 	player.frozen = false
 	hud.set_objective(tr("UI_OBJ30O_CARRY"), PLANT + Vector3(0, 1.0, 0))
-	var arrows := 0.0
+	var arrows := 1.5
+	_slow_t = 0.0
 	while Vector2(player.global_position.x - PLANT.x, player.global_position.z - PLANT.z).length() > 2.2:
 		await get_tree().process_frame
 		if get_tree().paused:      # duraklatmada sayaç akmaz
@@ -208,15 +211,20 @@ func _carry_ladder() -> void:
 			player.global_position += to.normalized() * minf(to.length(), 6.0 * dt)
 			player.global_position.y = Blachernae.slope_y(player.global_position.z) + 0.05
 		_carry_pose()
+		_slow_t = maxf(0.0, _slow_t - dt)
+		player.speed_mult = 0.42 if _slow_t > 0.0 else 0.7
 		arrows -= dt
 		if arrows <= 0.0:
-			arrows = randf_range(2.0, 3.4)
-			var at := player.global_position + Vector3(randf_range(-6.0, 6.0), 0, randf_range(-4.0, 4.0))
+			# Surdan ok yağar: düşeceği yer bir an önce kızarır (yana çekilen kurtulur). Çoğu ekibin yolunun üstüne
+			# düşer; isabet eden oyuncuyu sendeletir, ekip yavaşlar (eskiden yalnız toz ve ses vardı, sonuçsuzdu)
+			arrows = randf_range(1.6, 2.8)
+			var ahead := _carry_fwd() * randf_range(1.5, 4.0)
+			var at := player.global_position + ahead + _carry_fwd().cross(Vector3.UP) * randf_range(-2.2, 2.2)
 			at.y = Blachernae.slope_y(at.z)
-			Vfx.dust(self, at, 0.3)
-			Audio.sfx("whoosh_fly", -14.0, 1.6)
+			_arrow_volley(at)
 	player.frozen = true
 	hud.set_objective("")
+	player.free_hold = Vector3.INF
 	player.speed_mult = 1.0
 	# Merdiven kaldırılır: ayağı sur dibine, ucu mazgala (taşıyanlar iter); sonra gerçek (tırmanılan) merdiven
 	var fwd := _carry_fwd()
@@ -249,6 +257,33 @@ func _carry_ladder() -> void:
 
 
 var _carry_lad: Node3D
+var _slow_t := 0.0
+var arrow_hits := 0
+
+
+## Ok yağmuru: hedef yer 0,8 sn kırmızı yanar, sonra oklar saplanır. 1,1 m içindeki oyuncu sendeler, merdiven ekibi
+## 1,3 sn yavaşlar.
+func _arrow_volley(at: Vector3) -> void:
+	var mark := Props.cyl(self, 0.75, 0.02, at + Vector3(0, 0.03, 0), Color(0.85, 0.15, 0.1, 0.55), Vector3.ZERO, 16, -1.0, 0.8)
+	mark.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
+	Audio.sfx("whoosh_fly", -12.0, 1.3)
+	await get_tree().create_timer(0.8, false).timeout
+	if not is_instance_valid(mark):
+		return
+	mark.queue_free()
+	Vfx.dust(self, at, 0.4)
+	Audio.sfx("pick_tap", -6.0, 1.8)
+	for i in 3:
+		var a := Props.cyl(self, 0.012, 0.7, at + Vector3(randf_range(-0.5, 0.5), 0.3, randf_range(-0.5, 0.5)), Color("6a4a2c"),
+			Vector3(randf_range(-20, 20), 0, randf_range(-20, 20)), 4)
+		get_tree().create_timer(6.0, false).timeout.connect(a.queue_free)
+	var d := Vector2(player.global_position.x - at.x, player.global_position.z - at.z).length()
+	if d < 1.1 and phase == "carry":
+		arrow_hits += 1
+		_slow_t = 1.3
+		player.hurt(6.0, at + Vector3(0, 1.0, 0), true)
+		player.shake(0.25)
+		hud.bark("SPK_TOLGA", "D30O_T_ARROW", 2.0)
 
 
 ## Taşınan merdivenin görüntüsü (gerçek merdivenle aynı: dikmeler, 0,36 m arayla basamaklar; çarpışması yok)
@@ -560,6 +595,15 @@ func _tower_assault(gn: Gunner) -> void:
 		if is_instance_valid(gn.soldier):
 			gn.soldier.set_meta("spk", "SPK_DEFENDER")
 	await hud.say("SPK_DEFENDER", "D30O_D_GUNNER")
+	# Tüfek dolu: ateşler. Tolga yana atlarsa ıskalar, atlamazsa omzundan yaralanır (eskiden "Bu tüfek dolu!" deyip hiç
+	# ateş etmeden tüfeği yere atıyordu). Boşalan tüfeği atıp kılıca davranmak artık mantıklı.
+	if is_instance_valid(gn) and is_instance_valid(gn.soldier):
+		hud.set_objective(tr("UI_OBJ30O_DODGE"))
+		player.frozen = false
+		var pb_hit := await gn.point_blank(GameState.diff("gun_aim"))
+		player.frozen = true
+		hud.set_objective("")
+		await hud.say("SPK_TOLGA", "D30O_T_PB_HIT" if pb_hit else "D30O_T_PB_MISS")
 	# Tüfeği yere atar, yerdeki kılıcı alır: aynı adam (eskiden silinip yerine başka kıyafetli biri geliyordu)
 	var foe: Duelist = null
 	if is_instance_valid(gn):
@@ -576,6 +620,8 @@ func _tower_assault(gn: Gunner) -> void:
 	tower_won = r["won"]
 	_duel_won = tower_won
 	if tower_won:
+		# Kuleden sur yoluna doğru bakar (yana atlayıp dövüşünce mazgala dönük kalabiliyordu: VISAUDIT wall)
+		player.face(player.global_position + Vector3(-10.0, 1.9, 0.0))
 		await hud.say("SPK_TOLGA", "D30O_T_TOWER_WON")
 		# Merdivenden sur yoluna iner: İmparator sur yolunda görünür
 		await hud.fade_to(1.0, 0.4)

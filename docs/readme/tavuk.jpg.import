@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://b4om1hyf4lrhs"
-path="res://.godot/imported/ordugah.jpg-20ef5b8bd38c87092826bc41027043a9.ctex"
+uid="uid://y2fw0mmdmkon"
+path="res://.godot/imported/tavuk.jpg-f3e3810674ae03cf3c85becf49b35a02.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://docs/readme/ordugah.jpg"
-dest_files=["res://.godot/imported/ordugah.jpg-20ef5b8bd38c87092826bc41027043a9.ctex"]
+source_file="res://docs/readme/tavuk.jpg"
+dest_files=["res://.godot/imported/tavuk.jpg-f3e3810674ae03cf3c85becf49b35a02.ctex"]
 
 [params]
 

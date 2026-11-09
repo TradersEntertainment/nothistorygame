@@ -117,6 +117,53 @@ func _init(path: String) -> void:
 	_bar_bg.add_child(_bar_fill)
 
 
+## Yükleme perdesi açıkken bölüm kurulumunda pencereyi canlı tutar. Sahne dosyası iş parçacığında yüklenir ama seviye
+## kurucuları (LandWalls, ByzCity, CampDay...) _ready içinde ana iş parçacığında 3-6 sn binlerce parça kurar; bu
+## sürede pencere işletim sisteminin iletilerine cevap vermiyor, Windows "yanıt vermiyor" diyordu (tests/load_time).
+## Props her parçada pump() çağırır: 150 ms'de bir pencere iletileri işlenir (giriş bu arada yutulur), perde ve
+## saat çarkı ilerler, bir kare çizilir (perdeye tıklama yutulur). Perde yokken (oyun içi, otomatik test) hiçbir şey
+## yapmaz.
+static var current: LoadingScreen = null
+static var _last_pump := 0
+
+
+static func pump() -> void:
+	if current == null:
+		return
+	var now := Time.get_ticks_msec()
+	if _last_pump == 0:
+		_last_pump = now
+		return
+	if now - _last_pump < 150:
+		return
+	if not is_instance_valid(current) or not current.is_inside_tree():
+		current = null
+		return
+	current._process(minf((now - _last_pump) / 1000.0, 0.25))
+	var root := current.get_tree().root
+	var was := root.gui_disable_input
+	root.gui_disable_input = true
+	DisplayServer.process_events()
+	root.gui_disable_input = was
+	# Yalnız perde çizilir: arkadaki yarım kurulmuş 3B sahne (opak perdenin altında görünmez) çizilseydi her pompada
+	# yeni malzemelerin gölgelendiricileri derlenirdi (yazılımla çizimde kare başına 50 sn)
+	var d3 := root.disable_3d
+	root.disable_3d = true
+	RenderingServer.force_draw(true, 0.0)
+	root.disable_3d = d3
+	_last_pump = Time.get_ticks_msec()
+
+
+func _enter_tree() -> void:
+	current = self
+	_last_pump = 0
+
+
+func _exit_tree() -> void:
+	if current == self:
+		current = null
+
+
 ## Gerçek yükleme ilerlemesi (0–1): ResourceLoader.load_threaded_get_status'tan
 func set_progress(p: float) -> void:
 	_progress = clampf(maxf(_progress, p), 0.0, 1.0)

@@ -418,6 +418,7 @@ static func picture(parent: Node3D, path: String, width: float, pos: Vector3, ro
 
 
 static func _place(parent: Node3D, mesh: Mesh, pos: Vector3, color: Color, rot_deg := Vector3.ZERO, emission := 0.0) -> MeshInstance3D:
+	LoadingScreen.pump()        # bölüm kurulurken pencere donmasın (yükleme perdesi açıksa)
 	var mi := MeshInstance3D.new()
 	mi.mesh = mesh
 	# Çok küçük parçalarda (gözlük, tuş) dış hat şekli boğar: kapatılır.

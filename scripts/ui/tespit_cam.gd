@@ -39,6 +39,8 @@ func _ready() -> void:
 func start() -> void:
 	active = true
 	done = false
+	if player and is_instance_valid(player):
+		player.sheathe_blade(true)       # fotoğraf iki el ister: savaştan elde kalan kılıç kınına
 	if GameState.autotest:
 		_audit_frame()
 		_shoot.call_deferred()

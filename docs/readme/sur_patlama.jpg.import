@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://dgk0f0gird6qb"
-path="res://.godot/imported/ayasofya.jpg-982326048e86b4a21cd0d8908ad47b2b.ctex"
+uid="uid://5bwuleh7jhlw"
+path="res://.godot/imported/sur_patlama.jpg-eac5630a248ae7c774e888975c274df4.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://docs/readme/ayasofya.jpg"
-dest_files=["res://.godot/imported/ayasofya.jpg-982326048e86b4a21cd0d8908ad47b2b.ctex"]
+source_file="res://docs/readme/sur_patlama.jpg"
+dest_files=["res://.godot/imported/sur_patlama.jpg-eac5630a248ae7c774e888975c274df4.ctex"]
 
 [params]
 

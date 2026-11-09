@@ -898,8 +898,17 @@ func change_scene(path: String, jump := true) -> void:
 	Audio.voice_space("outdoor")
 	if autotest or shots_dir != "" or DisplayServer.get_name() == "headless" or not ResourceLoader.exists(path):
 		get_tree().change_scene_to_file.call_deferred(path)
+		_unlock_after_change()
 	else:
 		_change_with_loader(path)
+
+
+## Perdesiz değişimde (test, çekim) bayrak iki kare sonra iner: Godot 4.4'te scene_changed sinyali yok, bayrak
+## inmezse aynı süreçte sonraki her change_scene yutuluyordu (zincirli testte 13 → 16 → ...).
+func _unlock_after_change() -> void:
+	await get_tree().process_frame
+	await get_tree().process_frame
+	changing = false
 
 
 ## Oyuncunun gördüğü sahne değişimi (devam et, bölümün başına dön, kayıt yükle, bölüm geçişleri): önce kararır ve

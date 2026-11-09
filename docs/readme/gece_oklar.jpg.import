@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://cdaya8awl5aic"
-path="res://.godot/imported/kosu.jpg-83a98f0d198c62c9fd747cc0170d3b13.ctex"
+uid="uid://cxjoya31lg4ry"
+path="res://.godot/imported/gece_oklar.jpg-fe8f82149c65b09c531b976025229199.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://docs/readme/kosu.jpg"
-dest_files=["res://.godot/imported/kosu.jpg-83a98f0d198c62c9fd747cc0170d3b13.ctex"]
+source_file="res://docs/readme/gece_oklar.jpg"
+dest_files=["res://.godot/imported/gece_oklar.jpg-fe8f82149c65b09c531b976025229199.ctex"]
 
 [params]
 

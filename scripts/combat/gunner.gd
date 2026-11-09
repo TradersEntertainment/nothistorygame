@@ -142,6 +142,35 @@ func _pose() -> void:
 
 ## Tüfeği bırakıp kılıca davranır: tüfek yana savrulup yere düşer (orada kalır), eğilip yerdeki kılıcı alır; aynı kişi
 ## (aynı görünüş, yer, yön) düellocu olur. Döner: sahnedeki Duelist (Duel'e eklenmemiş). opts: "skill", "hp", "name".
+## Yakın atış (30o: kulenin tepesine çıkan oyuncu). Tüfek doludur: tüfekçi döner, nişan alır (fitil, "TÜFEKÇİ!"
+## uyarısı), aim sn sonra ateşler. Oyuncu nişan aldığı yerden yana çekilirse (SIDE_DIST) ya da uzaklaşırsa
+## (DODGE_DIST) ıskalar; vurulursa can gider, sendeler. Sonra boş tüfeği atıp kılıca davranmak mantıklıdır
+## (draw_sword). Eskiden "Bu tüfek dolu!" deyip hiç ateş etmeden tüfeği yere atıyordu. Döner: vurdu mu.
+func point_blank(aim := 1.2) -> bool:
+	if not is_inside_tree() or not is_instance_valid(soldier) or soldier.has_meta("gun_down") or engaged:
+		return false
+	var s0 := shots
+	var h0 := hits
+	state = "aim"
+	_t = aim
+	_aim_from = player.global_position
+	_spark.visible = true
+	Audio.stinger("warn", -6.0)
+	Audio.sfx("fuse_burn", -10.0, 1.6)
+	if GameState.autotest and not GameState.autotest_variant.ends_with("lose"):
+		_bot_dodge()
+	var wt := 0.0
+	while shots == s0 and alive() and wt < aim + 4.0:
+		await get_tree().process_frame
+		if get_tree().paused:      # duraklatmada sayaç akmaz
+			continue
+		wt += get_process_delta_time()
+	state = "done"
+	_spark.visible = false
+	_fuse.light_energy = 0.0
+	return hits > h0
+
+
 func draw_sword(opts := {}) -> Duelist:
 	if duelist:
 		return duelist
@@ -192,12 +221,19 @@ func draw_sword(opts := {}) -> Duelist:
 	return d
 
 
-## Çarpışma sürerken oyuncu dibine geldi: kılıca davranıp o çarpışmaya rakip olarak katılır
+## Çarpışma sürerken oyuncu dibine geldi: kılıca davranıp o çarpışmaya rakip olarak katılır. Nişandaysa önce
+## ateşler (dolu tüfeği ateşlemeden yere atıyordu): nişan aldığı yerden uzaklaşarak gelen ıskalanır.
 func _engage() -> void:
 	var duel := get_tree().get_first_node_in_group("active_duel") as Duel
 	if duel == null or not duel.active:
 		return
 	engaged = true
+	if state == "aim":
+		_fire()
+		state = "wait"
+		await get_tree().create_timer(0.35, false).timeout
+		if not is_instance_valid(duel) or not duel.active or not alive():
+			return
 	var d := await draw_sword()
 	if d == null or not is_instance_valid(duel) or not duel.active:
 		return

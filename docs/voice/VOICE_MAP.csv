@@ -3959,6 +3959,7 @@ D30O_N_END,30,SPK_NIHAT,,0,"Kayıtta da öyle Tolga Bey: hücum püskürtüldü.
 D30O_S_THANKS,30,SPK_SOLDIER,,0,Allah razı olsun kâtip. Kalem efendisisin ama sırtın sağlammış.,"God bless you, clerk. You have a strong back.",kod
 D30O_S_WOUNDED,30,SPK_SOLDIER,[hesitant],0,Kâtip... bacağım... Allah rızası için bırakma beni...,Clerk… my leg… don't leave me…,kod
 D30O_T_01,30,SPK_TOLGA,,0,"Paşam, ben sabah dokuzda ofisin ışığını yakan bir sigortacıyım. Ama merdiveni taşırım; merdiven taşımak bilinen bir risk.","Pasha, I'm an insurance man who switches lights on at nine in the morning. But I'll carry the ladder, carrying a ladder is a known risk.",kod
+D30O_T_ARROW,30,SPK_TOLGA,[shouting],0,Ay! Ok! Merdiveni bırakmayın!,Ow! Arrow! Don't drop the ladder!,kod
 D30O_T_CAPTIVE,30,SPK_TOLGA,,0,Kâtiplikten esirliğe terfi. Maaşta ve yan haklarda bir değişiklik var mı?,Promoted from scribe to prisoner. Any change in pay?,kod
 D30O_T_CLIMB,30,SPK_TOLGA,,0,"On iki metre, kırk bir basamak. Saymayacağım... Tamam, saydım.",Twelve metres. Forty-one rungs. I won't count. I counted.,kod
 D30O_T_DONTLOOK,30,SPK_TOLGA,,0,Aşağı bakma. Aşağı bakma. …Baktım.,Don't look down. Don't look down. …Looked.,kod
@@ -3971,6 +3972,8 @@ D30O_T_LEG,30,SPK_TOLGA,,0,Kalkamıyorum. Bacağım bu gece mesaiyi bıraktı.,I
 D30O_T_LOST,30,SPK_TOLGA,,0,Sur yolundan uçtum. Çalı düşüşü yumuşattı ama bacağımı kurtaramadı. Kalkamıyorum.,I fell. The bush softened the fall but it couldn't save my leg. I can't get up.,kod
 D30O_T_LOST_TOWER,30,SPK_TOLGA,,0,"Kuleden düştüm... Önce çalıya, sonra taşa. Bacağımı hissetmiyorum.","I fell off the tower. First a bush, then a stone. I can't feel my leg.",kod
 D30O_T_PANIC,30,SPK_TOLGA,[shouting],0,"Tamam, kahramanlık bitti. Merdiven nerede?!","Right, heroics are over. Where's the ladder?!",kod
+D30O_T_PB_HIT,30,SPK_TOLGA,,0,Vurdu! Omzum yanıyor... Ama o tüfek artık boş. Bundan sonrası kılıçla.,He got me! My shoulder's on fire... but that gun is empty now. The rest is swords.,kod
+D30O_T_PB_MISS,30,SPK_TOLGA,,0,Iskaladı! Kurşun kulağımın dibinden geçti. Doldurana kadar bir dakika var; o bir dakika benim.,"Missed! That ball went right past my ear. Reloading takes a minute, and that minute is mine.",kod
 D30O_T_RIDE,30,SPK_TOLGA,,0,"Merdiveni ben indirmedim, merdiven beni indirdi. Bir de çalı vardı, Allah razı olsun.",I didn't bring the ladder down; the ladder brought me down. And there was a bush. Bless that bush.,kod
 D30O_T_SHOVED,30,SPK_TOLGA,,0,Biri beni omzuyla surdan attı. Çalı tuttu. Bu gece insanlardan çok çalılara güveniyorum.,Someone shouldered me off the wall. A bush caught me. Tonight I trust bushes more than people.,kod
 D30O_T_TOWER,30,SPK_TOLGA,,0,Tüfekçi hâlâ kulede. Kulenin yanında da bir merdiven duruyor. Kimse kaldırmamış; kullanmasak ayıp olur.,The gunner's still on the tower. And there's a ladder up the side. Nobody took it away; it would be rude not to use it.,kod

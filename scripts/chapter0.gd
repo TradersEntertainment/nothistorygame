@@ -376,7 +376,7 @@ func _rewind() -> void:
 	GameState.skip_title = true
 	GameState.after_prologue = true
 	Engine.time_scale = 1.0
-	get_tree().change_scene_to_file("res://scenes/chapter1.tscn")
+	GameState.change_scene("res://scenes/chapter1.tscn", false)
 
 
 ## Donan karenin ismi: sol altta büyük "TOLGA", altında meslek ve zaman (film açılışlarındaki karakter kartı gibi).

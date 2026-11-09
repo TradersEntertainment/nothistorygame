@@ -1243,7 +1243,7 @@ func _end_chapter() -> void:
 		return
 	match result:
 		"next":
-			get_tree().change_scene_to_file("res://scenes/chapter7.tscn")
+			GameState.change_scene("res://scenes/chapter7.tscn")
 		"replay":
 			GameState.replay_scene()
 		_:

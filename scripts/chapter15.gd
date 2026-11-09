@@ -727,7 +727,7 @@ func _finish() -> void:
 	if GameState.autotest:
 		_autotest_report()
 		return
-	get_tree().change_scene_to_file("res://scenes/main.tscn")
+	GameState.change_scene("res://scenes/main.tscn", false)
 
 
 # ================================================================ T3: 1977

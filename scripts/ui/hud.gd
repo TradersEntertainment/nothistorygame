@@ -3687,6 +3687,9 @@ func show_flowchart(chart: Flowchart, can_continue := false) -> String:
 	Audio.music("flowchart")
 	Audio.ambience("none")
 	var scene := get_tree().current_scene
+	var pl = scene.get("player") if scene else null
+	if pl is Player:
+		(pl as Player).sheathe_blade(true)      # bölüm bitti: savaşta elde kalan kılıç kınına
 	_held_audit(scene)
 	if chart.strip == null and scene != null:
 		var digits := scene.scene_file_path.get_file().get_basename().trim_prefix("chapter").to_int()

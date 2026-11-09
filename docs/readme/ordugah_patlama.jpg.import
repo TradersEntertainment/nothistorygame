@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://cc33r8lljmybr"
-path="res://.godot/imported/yatak_oda.jpg-891db1ee4436a200de55087cfc65a577.ctex"
+uid="uid://d0vul4fk70ttg"
+path="res://.godot/imported/ordugah_patlama.jpg-26ac50e2fa40ce4194d3559ea73451d0.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://docs/readme/yatak_oda.jpg"
-dest_files=["res://.godot/imported/yatak_oda.jpg-891db1ee4436a200de55087cfc65a577.ctex"]
+source_file="res://docs/readme/ordugah_patlama.jpg"
+dest_files=["res://.godot/imported/ordugah_patlama.jpg-26ac50e2fa40ce4194d3559ea73451d0.ctex"]
 
 [params]
 

@@ -80,7 +80,11 @@ var _prop_item: Node3D
 var leg: Node3D
 ## Birinci şahıs el görünümü: "tolga" (redingot) ya da "hikmet" (çizgili pijama).
 var hand_style := "tolga"
-var free_hold := Vector3.INF  # sol el kameranın yerelindeki bu noktayı tutar (kürek sapı); INF: tutmaz
+var free_hold := Vector3.INF:  # sol el kameranın yerelindeki bu noktayı tutar (kürek sapı); INF: tutmaz
+	set(v):
+		free_hold = v
+		if v != Vector3.INF and not _kept.is_empty():
+			sheathe_blade.call_deferred()        # yük ya da sap iki el ister: kılıç kınına
 var eye_rest := EYE          # eğilince dönülen göz yüksekliği (Bölüm 16'da tavuk: eğilince insan boyuna çıkıyordu)
 var step_voice := ""          # boş değilse adım sesi bundan (Bölüm 16'da tavuk); el ve kıyafet hand_style'da kalır
 ## Göz yüksekliği ve hız çarpanı (Bölüm 16: tavuk yüksekliğinde kamera)
@@ -754,8 +758,22 @@ func _after_move(delta: float) -> void:
 ## Elin kendi hareketi (eskiden yalnız yürürken hafifçe iniyordu, "dimdik duran bir çubuk" gibiydi): nefes; yürürken
 ## sekiz çizen salınım, koşarken kol çekişi; bakış dönünce el biraz geride kalır; havada kalkar; suda dalgayla iner kalkar
 ## ve kulaç atar; düşerken / tökezlerken savrulur. Sol el (free_hand) suda kulaç, savrulma ve tutunmada görünür.
+## Eller meşgulken (merdiven, yüzme, denge, yük ya da kürek sapı: free_hold) sağ eldeki eşya ve kumanda cebe girer,
+## iş bitince geri çıkar. Eskiden merdivende, yük taşırken ve kürek çekerken sağ elde Büro kumandası ya da bant
+## duruyordu; 1453'te tırmanırken kumanda görünüyordu (oynanış hissiyatı denetimi).
+var _hands_busy := false
+
+
+func _sync_busy_hands() -> void:
+	var busy := ladder != null or floating or _balance != INF or free_hold != Vector3.INF
+	if busy != _hands_busy:
+		_hands_busy = busy
+		_stow(busy)
+
+
 func _animate_hands(delta: float, horiz: float) -> void:
 	_hand_t += delta
+	_sync_busy_hands()
 	var gp := global_position
 	var moved := Vector2(gp.x - _last_hand_pos.x, gp.z - _last_hand_pos.z).length() / maxf(delta, 0.0001)
 	_last_hand_pos = gp
@@ -937,7 +955,71 @@ func balance_arms(v: float) -> void:
 
 
 ## Bölümün kendi kurduğu bir modeli sol elde taşıtır (taşınan makine parçası): kamera önünde, el onu tutar.
+## Savaşta kılıç elde kalır (v0.99.90). Eskiden her dövüş bitince (Duel.stop) kılıç siliniyor, elde Büro kumandası ya
+## da bölümün eşyası (bant, kitap) beliriyor, sonraki dövüşte kılıç yeniden çıkıyordu (Blakherna: "arada elimizden
+## kılıç gidip telefon geliyor"). Duel.stop kılıcı ve kalkanı buraya bırakır; indirilmiş tutulur, sonraki dövüş aynı
+## kılıcı devralır (Duel.start). El başka işe gerekince kınına girer: fotoğraf (camera_hold), kâğıt ve eşya gösterme
+## (show_prop, hold_model), eşya seçme (select_item), el gösterme (show_remote), yük ya da sap (free_hold).
+var keep_blade := true
+var _kept: Dictionary = {}
+
+
+func keep_drawn_blade(sword: Node3D, shield: Node3D, stowed: Array, hand_back: bool) -> void:
+	sheathe_blade(true)
+	_kept = {"sword": sword, "shield": shield, "stowed": stowed, "hand_back": hand_back}
+	var f := _instant()
+	# Kılıç aşağıda, ucu öne; kalkan sol altta: dövüş duruşu değil, yürürken tutuş
+	for pr: Array in [[sword, Vector3(0.3, -0.24, -0.55), Vector3(-108, 10, -14)], [shield, Vector3(-0.46, -0.64, -0.55), Vector3(-10, 0, 8)]]:
+		var n := pr[0] as Node3D
+		if n == null or not is_instance_valid(n):
+			continue
+		n.visible = true
+		if f:
+			n.position = pr[1]
+			n.rotation_degrees = pr[2]
+		else:
+			var tw := n.create_tween().set_parallel()
+			tw.tween_property(n, "position", pr[1], 0.35).set_trans(Tween.TRANS_SINE)
+			tw.tween_property(n, "rotation_degrees", pr[2], 0.35).set_trans(Tween.TRANS_SINE)
+
+
+func has_kept_blade() -> bool:
+	return not _kept.is_empty() and is_instance_valid(_kept.get("sword"))
+
+
+## Sonraki dövüş elde tutulan kılıcı alır (Duel.start). Boş sözlük: elde kılıç yok.
+func take_kept_blade() -> Dictionary:
+	var k := _kept
+	_kept = {}
+	return k
+
+
+## Kılıç kınına: aşağı iner ve kaybolur, saklanan eşyalar geri çıkar, el (dövüşten önce açıksa) geri gelir.
+func sheathe_blade(instant := false) -> void:
+	if _kept.is_empty():
+		return
+	var k := _kept
+	_kept = {}
+	for key in ["sword", "shield"]:
+		var n = k.get(key)
+		if n == null or not is_instance_valid(n):
+			continue
+		if instant or _instant() or not is_inside_tree():
+			(n as Node3D).visible = false      # kare sonuna dek ağaçta kalır: bölüm sonu denetimi görmesin
+			(n as Node3D).queue_free()
+		else:
+			var tw := (n as Node3D).create_tween()
+			tw.tween_property(n, "position", (n as Node3D).position + Vector3(0, -0.5, 0.1), 0.25).set_ease(Tween.EASE_IN)
+			tw.tween_callback((n as Node3D).queue_free)
+	for n in k.get("stowed", []):
+		if is_instance_valid(n):
+			(n as Node3D).visible = true
+	if k.get("hand_back", false):
+		show_remote(true)
+
+
 func hold_model(model: Node3D) -> void:
+	sheathe_blade(true)
 	if model.get_parent():
 		model.get_parent().remove_child(model)
 	camera.add_child(model)
@@ -1366,6 +1448,8 @@ func set_scanner(v: float) -> void:
 
 
 func show_remote(on: bool) -> void:
+	if on:
+		sheathe_blade(true)
 	if on == _hand_shown:
 		return
 	_hand_shown = on
@@ -1583,6 +1667,7 @@ func show_badge(hold := 2.6) -> void:
 ## "letter" (mühürlü mektup), "cube" (Rubik küpü), "pole" (selfie çubuğu), "tea" (ince belli bardakta çay; yudumlanır),
 ## ya da başka bir çanta eşyası (Items.IDS: kendi modeli).
 func show_prop(kind: String, hold := 2.4) -> void:
+	sheathe_blade(true)
 	if kind == "badge":
 		show_badge(hold)
 		return
@@ -1787,6 +1872,8 @@ const CAM_LOOK_ROT := Vector3(20, 168, 0)
 func camera_hold(on: bool, model: Node3D = null) -> void:
 	if not is_inside_tree() or camera == null:
 		return
+	if on:
+		sheathe_blade(true)
 	if on:
 		if _cam != null and _cam_pocket:
 			_cam_stow(false)
@@ -2018,6 +2105,7 @@ func selfie_shot(hud: Hud, who: String) -> void:
 func select_item(i: int, take := true) -> void:
 	if hand_style != "tolga" or _remote_model == null:
 		return
+	sheathe_blade(true)
 	_cam_yield_hand()
 	var n := GameState.bag.size()
 	held = clampi(i, 0, n)

@@ -5835,6 +5835,7 @@ UI_PROMPT30O_LIFT,E: sırtına al,E: lift him onto your back
 UI_PROMPT30O_RISE,E: kalkmayı dene,E: try to get up
 UI_OBJ30O_BACK,Ateşlerin hizasına geri çekil,Fall back to the line of the fires
 UI_OBJ30O_TOWER,Kuleye tırman (W) · tüfekçiyi sustur,Climb the tower (W) · silence the gunner
+UI_OBJ30O_DODGE,Tüfek dolu! Yana atla (A/D),The gun is loaded! Dodge sideways (A/D)
 UI_CH30O_STATS,Kaçılan taş: %d/%d   ·   Dosya: %d/%d sayfa,Stones dodged: %d/%d   ·   File: %d/%d pages
 UI_CH30O_CAPTIVE,Gece yarısından sonra · surun dibi: bölük çekildi; ölüler toplanırken bir Rum çıkışı yerde yatan kâtibi buldu,"After midnight · the foot of the wall: the company has pulled back; gathering the dead, a Greek sally finds the scribe lying there"
 FLOW30O_LADDER,Zağanos'un merdivenleri,Zaganos's ladders
@@ -5850,6 +5851,7 @@ D30O_N_01,"Tolga Bey, 12 Mayıs gece yarısı. Kayıtta 'saray önündeki surlar
 D30O_Z_01,"Kâtip! Benim merdivenimi sen taşıyacaksın. Bak, sarayın ışıkları yanıyor. Sabaha o ışıkları biz yakacağız!","Clerk! You'll carry my ladder. The palace is there, its lights are on. By morning we'll be the ones lighting them."
 D30O_T_01,"Paşam, ben sabah dokuzda ofisin ışığını yakan bir sigortacıyım. Ama merdiveni taşırım; merdiven taşımak bilinen bir risk.","Pasha, I'm an insurance man who switches lights on at nine in the morning. But I'll carry the ladder, carrying a ladder is a known risk."
 D30O_Z_PLANT,"Dayayın merdivenleri! Çıkın, yukarı!",Ladder to the wall! Climb! Up!
+D30O_T_ARROW,Ay! Ok! Merdiveni bırakmayın!,Ow! Arrow! Don't drop the ladder!
 D30O_T_CLIMB,"On iki metre, kırk bir basamak. Saymayacağım... Tamam, saydım.",Twelve metres. Forty-one rungs. I won't count. I counted.
 D30O_T_WALL,"Yukarıdayım! Sur yolu dar, karşımdaki adamlar geniş.","I'm up. The wall-walk is narrow, the men are wide."
 D30O_D_EMPEROR,İmparator geliyor! İmparator sura çıkıyor!,The Emperor is coming! The Emperor is coming up to the wall!
@@ -5857,6 +5859,8 @@ D30O_T_DUEL,Tuttuk! Yani biraz... Bir dakika kadar tuttuk.,We held it. A bit. We
 D30O_T_LOST,Sur yolundan uçtum. Çalı düşüşü yumuşattı ama bacağımı kurtaramadı. Kalkamıyorum.,I fell. The bush softened the fall but it couldn't save my leg. I can't get up.
 D30O_T_TOWER,Tüfekçi hâlâ kulede. Kulenin yanında da bir merdiven duruyor. Kimse kaldırmamış; kullanmasak ayıp olur.,The gunner's still on the tower. And there's a ladder up the side. Nobody took it away; it would be rude not to use it.
 D30O_D_GUNNER,Bir adım daha atma! Bu tüfek dolu!,Stay back! This gun is loaded!
+D30O_T_PB_MISS,Iskaladı! Kurşun kulağımın dibinden geçti. Doldurana kadar bir dakika var; o bir dakika benim.,"Missed! That ball went right past my ear. Reloading takes a minute, and that minute is mine."
+D30O_T_PB_HIT,Vurdu! Omzum yanıyor... Ama o tüfek artık boş. Bundan sonrası kılıçla.,He got me! My shoulder's on fire... but that gun is empty now. The rest is swords.
 D30O_T_TOWER_WON,"Tüfek aşağıda, tüfekçi oturdu kaldı. Kule bizim! Beş dakikalığına belki, ama bizim.","The gun's over the side and the gunner's sitting down. The tower is ours. For five minutes, but ours."
 D30O_T_LOST_TOWER,"Kuleden düştüm... Önce çalıya, sonra taşa. Bacağımı hissetmiyorum.","I fell off the tower. First a bush, then a stone. I can't feel my leg."
 D30O_T_LEFT,"Adamları bırakmayın, dedi. Herkes gitti. Ben adam sayılmıyorum demek. Kâtibim ya.","'Don't leave the men,' he said. Everyone's gone. So I don't count. I'm a clerk, after all."

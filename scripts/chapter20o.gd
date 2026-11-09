@@ -380,8 +380,16 @@ func _cool_step() -> void:
 		if use_tape:
 			GameState.spend("tape", "cannon_20o")
 			_taped_now += 1
-			_tape_band(-2.6 + _taped_now * 0.9)
+			# Tolga namlunun yanına yürür, bandı sarar (bant 5 m öteden kendiliğinden belirip namluya sarılıyordu)
+			var pv := gun.find_child("Pivot", true, false) as Node3D
+			if pv:
+				var band_at := pv.global_transform * Vector3(0, 0, -2.6 + _taped_now * 0.9)
+				await Stage.walk_player(player, band_at, 1.6, band_at, 3.0)
 			player.show_prop("tape", 2.2)
+			player.hand_gesture("reach")
+			Audio.sfx("paper_tear", -6.0, 0.8)
+			await get_tree().create_timer(0.6, false).timeout
+			_tape_band(-2.6 + _taped_now * 0.9)
 			await hud.say("SPK_TOLGA", "D20O_T_TAPE")
 			_urban_tap(-2.6 + _taped_now * 0.9)      # "(Vurur, dinler.)"
 			# Şeridi bu bölümde zaten gördüyse "yapışkan bir şerit mi bu?" demez

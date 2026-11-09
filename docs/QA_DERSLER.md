@@ -623,3 +623,20 @@ Her bölüm denetiminde ve her düzeltmede bu listeyi baştan uygula. Yeni bir h
     "(Güverteden)" gibi -dan/-den ekiyle yazılır. Rapor bunları saymaz.
   - Talim hocası (Drill.teacher_near) her dersten önce oyuncunun yanına gelir, ders arasında perde kapanınca
     yerine döner.
+- Bölüm açılışında "yanıt vermiyor" (v0.99.90). Sahne dosyası iş parçacığında yüklenir, ama seviye kurucuları
+  (LandWalls, ByzCity, CampDay...) _ready içinde ana iş parçacığında 3-6 sn çalışır; Windows 5 sn cevapsız pencereye
+  "yanıt vermiyor" der. Ölçüm: tests/load_time.tscn.
+  - Çözüm: yükleme perdesi açıkken Props her parçada LoadingScreen.pump() çağırır. 150 ms'de bir pencere iletileri
+    işlenir, perde ve çark ilerler, kare çizilir. Pompa sırasında 3B çizim kapalıdır (disable_3d): yarım kurulmuş sahneyi
+    çizmek yazılımla çizimde kare başına 50 sn sürüyordu. En uzun boşluk 1,2 sn, ek maliyet %4.
+  - 52 bölüm geçişi perdesiz, doğrudan change_scene_to_file ile yapılıyordu (bölüm sonu "sonraki"). Oyuncunun gördüğü
+    her geçiş GameState.change_scene'den geçer. Perdesiz (test) yolda changing bayrağı iki kare sonra iner.
+- Oynanış hissiyatı denetimi (3 Sonnet ajanı, ~85 bulgu): elde ne var, o an mantıklı mı?
+  - Dövüş bitince Duel.stop kılıcı siliyor, el varsayılan eşyaya (kumanda, bant, kitap) dönüyordu. Blakherna: "arada
+    elimizden kılıç gidip telefon geliyor". Kılıç artık indirilip elde kalır (Player.keep_drawn_blade), sonraki dövüş
+    devralır. El başka işe gerekince kınına girer: fotoğraf, kâğıt, eşya seçimi, yük, bölüm sonu.
+  - Merdiven, yüzme, denge, yük ya da kürek sapı (free_hold) sırasında sağ eldeki eşya cebe girer.
+  - Düşman tüfekçisi "Bu tüfek dolu!" deyip ateş etmeden tüfeği yere atıyordu. Artık önce ateşler (Gunner.point_blank,
+    yana atlayan kurtulur), boş tüfeği sonra atar. Dibine gelinince de nişandaysa önce ateşler.
+  - Sonuçsuz tehlike sıkıcıdır: 30O merdiven taşımada oklar yalnız toz ve sesti. Artık düşeceği yer kızarır, isabet
+    sendeletir ve ekibi yavaşlatır.

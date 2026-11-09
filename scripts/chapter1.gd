@@ -64,7 +64,7 @@ func _run() -> void:
 	# Yeni oyun: önce soğuk açılış (29 Mayıs 1453 gecesi, gedik; Bölüm 0), oradan "Beş hafta önce" garaja dönülür.
 	# (Eskiden burada kararlar ve sonlar üstüne bir yazı ekranı vardı; oyunun ilk dakikası artık oynanır.)
 	if jump == 0 and fresh and not GameState.autotest and GameState.shots_dir == "":
-		get_tree().change_scene_to_file("res://scenes/chapter0.tscn")
+		GameState.change_scene("res://scenes/chapter0.tscn", false)
 		return
 	GameState.snapshot(1)
 	if jump >= 99:
@@ -72,16 +72,16 @@ func _run() -> void:
 		GameState.ensure_defaults_for(12)
 		GameState.flags["siege_return"] = "res://scenes/chapter13.tscn"
 		if jump == 99:
-			get_tree().change_scene_to_file(Siege.PROLOGUE)
+			GameState.change_scene(Siege.PROLOGUE, false)
 			return
 		GameState.flags["siege_side"] = "O" if jump >= 200 else "B"
 		GameState.flags["siege_bureau_done"] = true
-		get_tree().change_scene_to_file(Siege.scene_path(jump % 100))
+		GameState.change_scene(Siege.scene_path(jump % 100), false)
 		return
 	if jump > 1:
 		# Gizli Yaratıcı Menüsü: doğrudan seçilen bölüme (varsayılan çanta ve sonuçlarla)
 		GameState.ensure_defaults_for(jump)
-		get_tree().change_scene_to_file("res://scenes/chapter%d.tscn" % jump)
+		GameState.change_scene("res://scenes/chapter%d.tscn" % jump, false)
 		return
 	hud.set_fade(1.0)
 	var card := [[tr("UI_CH1_TITLE"), 44, Color("f2e6c9")], [tr("UI_CH1_SUB"), 20, Color(1, 1, 1, 0.7)]]
@@ -712,7 +712,7 @@ func _end_chapter() -> void:
 		return
 	match result:
 		"next":
-			get_tree().change_scene_to_file("res://scenes/chapter2.tscn")
+			GameState.change_scene("res://scenes/chapter2.tscn")
 		"replay":
 			GameState.replay_scene()
 		_:

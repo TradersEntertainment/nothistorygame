@@ -259,6 +259,7 @@ func _take_file() -> void:
 	bureau.file_node.visible = false
 	(bureau.file_node.get_child(bureau.file_node.get_child_count() - 1) as StaticBody3D).collision_layer = 0
 	Audio.sfx("newspaper", -12.0, 1.2)
+	player.show_prop("form", 3.0)        # alınan dosya bir süre elde görünür (yalnız masadan kayboluyordu)
 	# Dosya elde: hedef hemen sonraki adıma geçer (alarm ve replikler boyunca "dosyayı al" kalıyordu)
 	_objective("UI_OBJ3_MUFIDE", hud.spot("mufide"), 0.9)
 	await _n("D3_N_03")
@@ -1213,7 +1214,7 @@ func _end_chapter() -> void:
 		return
 	match result:
 		"next":
-			get_tree().change_scene_to_file("res://scenes/chapter4.tscn")
+			GameState.change_scene("res://scenes/chapter4.tscn")
 		"replay":
 			GameState.replay_scene()
 		_:

@@ -314,6 +314,7 @@ func _light() -> void:
 	# Fıçı oluğa konur (elde kalsaydı ekranın ortasını, kuleyi ve göstergeyi örtüyordu)
 	if _carry:
 		_carry.visible = false
+	player.free_hold = Vector3.INF        # fıçı olukta: sol el boşta havayı kavrayıp kalmasın
 	_chute_barrel = Node3D.new()
 	add_child(_chute_barrel)
 	_powder_barrel(_chute_barrel)

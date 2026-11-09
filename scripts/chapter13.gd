@@ -973,7 +973,7 @@ func _end_chapter() -> void:
 		if GameState.autotest:
 			print("AUTOTEST chapter=13 -> 16 outcome=%s" % _outcome)
 			GameState.autotest_variant = ""
-		get_tree().change_scene_to_file("res://scenes/chapter16.tscn")
+		GameState.change_scene("res://scenes/chapter16.tscn")
 		return
 	GameState.set_outcome(13, _outcome)
 	await hud.fade_to(1.0, 0.8)
@@ -991,7 +991,7 @@ func _end_chapter() -> void:
 		return
 	match result:
 		"next":
-			get_tree().change_scene_to_file("res://scenes/chapter14.tscn")
+			GameState.change_scene("res://scenes/chapter14.tscn")
 		"replay":
 			GameState.replay_scene()
 		_:

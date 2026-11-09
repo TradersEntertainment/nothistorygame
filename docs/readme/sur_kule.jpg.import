@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://ctwh4geedmy8w"
-path="res://.godot/imported/otag_kitap.jpg-ab965b06c855599485811ec738bb88ce.ctex"
+uid="uid://r55es3wfeb2c"
+path="res://.godot/imported/sur_kule.jpg-d9457bd30ad3d91bb1a85c52554e72f9.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://docs/readme/otag_kitap.jpg"
-dest_files=["res://.godot/imported/otag_kitap.jpg-ab965b06c855599485811ec738bb88ce.ctex"]
+source_file="res://docs/readme/sur_kule.jpg"
+dest_files=["res://.godot/imported/sur_kule.jpg-d9457bd30ad3d91bb1a85c52554e72f9.ctex"]
 
 [params]
 

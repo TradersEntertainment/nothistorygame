@@ -415,7 +415,7 @@ func _end_chapter() -> void:
 		return
 	match result:
 		"next":
-			get_tree().change_scene_to_file(Siege.gate("res://scenes/chapter13.tscn", "walls"))
+			GameState.change_scene(Siege.gate("res://scenes/chapter13.tscn", "walls"))
 		"replay":
 			GameState.replay_scene()
 		_:

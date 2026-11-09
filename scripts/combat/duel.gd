@@ -126,6 +126,7 @@ func start(p: Player, list: Array[Duelist], p_blade := "kilij") -> void:
 	player.combat = true
 	if player._hand_shown:
 		_hand_back = true
+	_adopt_kept()
 	player.show_remote(false)
 	_bot_home = player.global_position
 	add_to_group("active_duel")
@@ -143,9 +144,33 @@ func draw_blade(p: Player, p_blade := "kilij") -> void:
 	## Dövüş başlamadan kılıcı çek (WaveRunner: rakipler koşup gelirken, giriş repliği sürerken el boş kalmasın)
 	player = p
 	blade = p_blade
+	_adopt_kept()
 	_stow_held()
 	if not (sword_pivot and is_instance_valid(sword_pivot) and sword_pivot.get_meta("blade", "") == blade + str(wooden)):
 		_build_sword()
+
+
+## Önceki dövüşten elde kalan kılıç (Player.keep_drawn_blade) bu dövüşe geçer: silinip yenisi kurulmaz. Saklanan
+## eşyalar ve "el geri gelsin" bilgisi de devralınır (son dövüş bitince hepsi geri çıkar).
+func _adopt_kept() -> void:
+	if player == null or not is_instance_valid(player):
+		return
+	var kept := player.take_kept_blade()
+	if kept.is_empty():
+		return
+	_hand_back = _hand_back or bool(kept.get("hand_back", false))
+	for n in kept.get("stowed", []):
+		if is_instance_valid(n) and not _stowed.has(n):
+			_stowed.append(n)
+	var ks = kept.get("sword")
+	var kh = kept.get("shield")
+	if is_instance_valid(ks) and (ks as Node3D).get_meta("blade", "") == blade + str(wooden) and not is_instance_valid(sword_pivot):
+		sword_pivot = ks
+		shield_pivot = kh if is_instance_valid(kh) else null
+		return
+	for n in [ks, kh]:
+		if is_instance_valid(n):
+			(n as Node3D).queue_free()
 
 
 func stop(keep_drawn := false) -> void:
@@ -169,6 +194,20 @@ func stop(keep_drawn := false) -> void:
 		sword_pivot.visible = true
 		if shield_pivot and is_instance_valid(shield_pivot):
 			shield_pivot.visible = true
+		return
+	# Savaş sürüyor: kılıç silinmez, indirilip elde kalır (Player.keep_drawn_blade); el başka işe gerekince kınına
+	if player and is_instance_valid(player) and player.keep_blade and player.hp > 0.0 and not player.is_down \
+			and sword_pivot and is_instance_valid(sword_pivot):
+		# Sol eldekiler (fener, yük) eskisi gibi hemen geri çıkar; yalnız sağ el kılıçta kalır
+		for n in _stowed:
+			if is_instance_valid(n):
+				n.visible = true
+		_stowed.clear()
+		player.keep_drawn_blade(sword_pivot, shield_pivot if shield_pivot and is_instance_valid(shield_pivot) else null,
+			[], _hand_back)
+		sword_pivot = null
+		shield_pivot = null
+		_hand_back = false
 		return
 	if sword_pivot:
 		sword_pivot.queue_free()
