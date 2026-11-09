@@ -85,3 +85,32 @@ Sahibinin isteği: evren, ileride aynı evrende ikinci oyun yapılabilecek özen
   visual_run, audio_run, soak, hitch/still denetçileri, smooth_check). Bölüme özgü kod (chapter*.gd) çekirdeğe
   bağımlı olabilir, çekirdek bölümlere bağımlı olmamalı. Oyun bitince çekirdek ayrı bir klasöre/eklentiye ayrılır.
 - Karar bekleyen: ikinci oyunun hangi finali kanon kabul edeceği (EVREN.md'de seçenekler).
+
+## Kaçak ünlüler: Büro figürleri 1453'e düşer (2026-11-09, co-op'a saklandı)
+
+Sahibinin fikri: Büro'daki tarihî figürlerden biri, oyuncunun bir seçimi yüzünden 1453'e ışınlansın, onu oradan
+çıkarmaya çalışalım. Sahibi "co-op yapmaya başladığımız zamana saklayalım" dedi; co-op çerçevesi
+docs/BYZANTINE_MIRROR.md §2'de.
+
+Karışmaması için üç kural:
+- **Bir oyunda tek kaçak.** Aynı anda birden fazla ünlü ana hikâyeyi (Tolga, Nihat, Hikmet, kuşatma) gölgede
+  bırakır. Tekrar oynayan başka birini görür.
+- **Neden görünür olsun.** Hazır kanca: bekleme salonunun LED ekranı "SIRADAKİ: 1453" der. Oyuncu sıra makinesiyle
+  ya da İtiraz Kutusu'yla oynarsa Büro yanlış kişiyi 1453'e çağırır; salona dönünce o koltuk boştur.
+- **Yan görev, ana yolu değiştirmez.** Geri getirilirse kayıp yok; getirilemezse gizli Paradoks artar, Vikipedi
+  tartışma sayfasında bir şaka çıkar.
+
+Güçlü eşleşmeler (kuşatma bölümlerinde):
+- Napolyon ve Urban: Napolyon topçu subayıydı, Urban'ın topuna akıl verir; ikna edilip geri götürülür (ilk pilot adayı).
+- Galileo ve ay tutulması: tutulma oyunda erkene alınmış bir alamet (CHAPTERS.md); Galileo surlarda "sadece gölge"
+  derse alamet bozulur, ondan önce yakalanmalı.
+- Edison ve Tesla: surları aydınlatmaya kalkarlar (Rum ateşine karşı elektrik).
+- Evliya Çelebi: kuşatmayı yanlış yazmaya başlar; defter kayda geçmeden durdurulmalı.
+- Nasreddin Hoca: eşeğine ters binmiş halde Osmanlı ordugâhına girer.
+- Hitler gönderilmez: köşede duvara bakan hali şaka olarak yerinde; kuşatmada gezen bir Hitler tonu bozar.
+
+Co-op'a uyumu: iki Tolga iki ayrı nüshada (Osmanlı / Bizans); kaçak bir tarafta görünür, öbür oyuncunun da yardım
+etmesi gerekir (ör. Napolyon iki ordugâh arasında gidip gelir). Ayrıntı co-op tasarlanırken yazılacak.
+
+Maliyet: figürler, kostümler ve sesleri hazır; iş her kaçak için kuşatma bölümüne bir sahne, birkaç diyalog
+(seslendirme) ve test. Önce tek pilot, oyun testi kitiyle eğlencesi ölçülür.
