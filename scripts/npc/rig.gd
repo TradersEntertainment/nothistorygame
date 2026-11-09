@@ -503,9 +503,13 @@ func _activity(delta: float, talking: bool, k: float) -> bool:
 	if sitting:
 		var drop := -0.22 if activity in ["sit", "row", "whittle", "doze"] else -0.56
 		body.position.y = lerpf(body.position.y, drop, k)
-		# "doze": masaya kapanıp uyuklar (gövde öne yatık, nefesle hafif kalkıp iner)
-		var lean := 0.08 if activity in ["write", "read_ground"] else (0.62 + sin(_t * 0.8) * 0.03 if activity == "doze" else 0.0)
+		# "doze": masaya kapanıp uyuklar (gövde öne yatık, nefesle hafif kalkıp iner). Gövdenin dönme noktası
+		# ayaklardaydı: öne yatınca bütün gövde tabureden kayıp masanın içine giriyordu; kalça (0,69) çevresinde döner.
+		var lean := 0.08 if activity in ["write", "read_ground"] else (0.95 + sin(_t * 0.8) * 0.025 if activity == "doze" else 0.0)
 		body.rotation.x = lerpf(body.rotation.x, lean, k)
+		if activity == "doze":
+			body.position.y = lerpf(body.position.y, drop + 0.69 * (1.0 - cos(lean)), k)
+			body.position.z = lerpf(body.position.z, -0.69 * sin(lean), k)
 		if leg_l:
 			leg_l.rotation = leg_l.rotation.lerp(Vector3(-1.45, 0, -0.18 if not activity in ["sit", "whittle", "doze"] else -0.1), k)
 		if leg_r:
@@ -653,13 +657,14 @@ func _activity(delta: float, talking: bool, k: float) -> bool:
 			if head:
 				head.rotation = head.rotation.lerp(Vector3(sin(t * 0.5) * 0.05, sin(t * 0.37) * 0.3, 0), clampf(delta * 2.0, 0.0, 1.0))
 		"doze":
-			# Kollar masada üst üste, alın kolların üstünde
-			arm_r.rotation = arm_r.rotation.lerp(Vector3(-1.05, -0.55, -0.25), k)
-			arm_l.rotation = arm_l.rotation.lerp(Vector3(-1.1, 0.55, 0.25), k)
-			_elbow(elbow_r, -1.5, k)
-			_elbow(elbow_l, -1.5, k)
+			# Kollar masanın üstünde öne uzanık, baş ikisinin arasında yanağı üstünde (gövde 0,95 rad öne yatık: kolun
+			# gövdeye göre -2,5 rad'ı dünyada masaya paralel)
+			arm_r.rotation = arm_r.rotation.lerp(Vector3(-2.45, 0, 0.32), k)
+			arm_l.rotation = arm_l.rotation.lerp(Vector3(-2.45, 0, -0.32), k)
+			_elbow(elbow_r, -0.35, k)
+			_elbow(elbow_l, -0.35, k)
 			if head:
-				head.rotation = head.rotation.lerp(Vector3(0.55, 0.0, 0.25), k)
+				head.rotation = head.rotation.lerp(Vector3(-0.35, 0.0, 0.45), k)
 		"hold_paper":
 			# Gazeteyi iki eliyle yüzünün önünde tutar (Kayıp Eşya'nın Sabri'si)
 			arm_r.rotation = arm_r.rotation.lerp(Vector3(-0.85, -0.25, 0.05), k)

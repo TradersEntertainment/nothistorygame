@@ -847,3 +847,8 @@ Her bölüm denetiminde ve her düzeltmede bu listeyi baştan uygula. Yeni bir h
 - Birleştirmeden (bake_static) sonra o sahnenin bütün varyantları koşulmalı: Bölüm 2'nin deniz dibini birleştirmek
   yüzerek kıyıya çıkma botunu (--autotest=swimshore) zaman aşımına soktu; görünümde fark yoktu. İkiye bölerek bulundu
   (yalnız birleştirme kapalı: geçti), deniz dibi birleştirilmiyor.
+- Kendi karene "olmuş" deme (v0.99.102): uyuyan memurun ilk düzeltmesi karede de kötüydü (tabure arkada kalmış,
+  dizler masanın içinde, masa koyu bir sandık); kullanıcı aynı kareyi gösterip sordu. Gövde ayaktaki noktadan döndüğü
+  için öne yatınca tabureden kayıyordu: yatma kalça (0,69 m) çevresinde (gövdeyi geri ve yukarı kaydırarak). Masa
+  ayaklı, diz boşluğu açık; çarpışma görünmez kutu. Kareyi bakarak değerlendir: oturan tabureye değiyor mu, masa
+  masaya benziyor mu, yanında başka biri dibinde mi duruyor.

@@ -2480,20 +2480,34 @@ func _rb_wait() -> void:
 	Props.ball(self, 0.17, Vector3(-2.9, 0.85, -10.8), Color("3a7a3a"), Vector3(0.5, 1.4, 1))
 	Props.ball(self, 0.16, Vector3(-3.1, 0.78, -10.7), Color("2a5a2e"), Vector3(1, 1.3, 0.5))
 	# Uyuyan memur: taburesinde masaya kapanmış uyukluyor (eskiden kutu ve topten bir kukla, kolu dümdüz dışarıdaydı)
-	Props.solid(self, Vector3(0.7, 0.85, 1.8), Vector3(-8.0, 0.425, -10.3), C_WOOD_DARK)
-	Props.box(self, Vector3(0.36, 0.04, 0.36), Vector3(-7.05, 0.45, -10.4), steel)
-	for lx: float in [-7.2, -6.9]:
-		for lz: float in [-10.55, -10.25]:
+	# Masa: ayaklı, diz boşluğu açık (eskiden yere oturan koyu bir sandıktı); çarpışması görünmez kutu
+	var desk := Props.solid(self, Vector3(0.7, 0.76, 1.6), Vector3(-8.0, 0.38, -10.3), C_WOOD_DARK)
+	desk.get_child(0).visible = false
+	Props.box(self, Vector3(0.74, 0.04, 1.64), Vector3(-8.0, 0.74, -10.3), C_WOOD)
+	for dx: float in [-8.31, -7.69]:
+		for dz: float in [-11.06, -9.54]:
+			Props.box(self, Vector3(0.05, 0.72, 0.05), Vector3(dx, 0.36, dz), C_WOOD_DARK)
+	Props.box(self, Vector3(0.03, 0.45, 1.5), Vector3(-8.3, 0.47, -10.3), C_WOOD_DARK)      # arka panel
+	# masada dosya yığını, soğumuş çay, damga
+	for k in 4:
+		Props.box(self, Vector3(0.3, 0.035, 0.22), Vector3(-8.1, 0.78 + k * 0.036, -10.85), [C_PAPER, Color("e8d8a8"), C_PAPER, Color("c8d8e8")][k], Vector3(0, k * 7.0 - 9.0, 0))
+	Props.cyl(self, 0.035, 0.08, Vector3(-8.15, 0.8, -9.75), Color("f4f0e6"), Vector3.ZERO, 10)
+	Props.cyl(self, 0.03, 0.005, Vector3(-8.15, 0.835, -9.75), Color("8a4a1a"), Vector3.ZERO, 10)
+	Props.box(self, Vector3(0.06, 0.08, 0.06), Vector3(-8.2, 0.8, -10.05), Color("5a3a22"))
+	# Tabure (kalçanın altında) ve memur
+	Props.box(self, Vector3(0.36, 0.04, 0.36), Vector3(-7.3, 0.45, -10.3), steel)
+	for lx: float in [-7.45, -7.15]:
+		for lz: float in [-10.45, -10.15]:
 			Props.box(self, Vector3(0.03, 0.43, 0.03), Vector3(lx, 0.215, lz), steel.darkened(0.2))
 	var sleeper := Person.new({"coat": Color("4a5a3a"), "pants": Color("3a3a40"), "hair": Color("3a3028"), "hair_style": "receding",
 		"mustache": true, "skin": Color("e8b894")})
-	sleeper.position = Vector3(-7.02, 0, -10.4)
+	sleeper.position = Vector3(-7.3, 0, -10.3)
 	sleeper.rotation_degrees.y = -90
 	sleeper.set_meta("no_chat", true)
 	sleeper.set_meta("no_yield", true)
 	add_child(sleeper)
 	sleeper.set_activity("doze")
-	var zzz := Props.label(self, "Zzz", Vector3(-7.6, 1.5, -10.4), 48, Color("e8e0c8"), Vector3(0, 90, 0))
+	var zzz := Props.label(self, "Zzz", Vector3(-7.75, 1.45, -10.3), 48, Color("e8e0c8"), Vector3(0, 90, 0))
 	_bobbers.append([zzz, 1.5, 0.08, 1.5, 0.0])
 	# hayaletler: oturanlar
 	var blue_t := Color("a8d4ff")
@@ -3390,7 +3404,7 @@ const _FG := [
 	["moz", "SPK_MOZART", Vector3(-5.9, 0, -8.45), 90.0, {"coat": Color("b8322a"), "pants": Color("efe9dc"), "hair": Color("f0ece4"), "hair_style": "swept", "skin": Color("ecc0a0")}, "MOZART", "MOZART"],
 	["sin", "SPK_SINAN", Vector3(-7.2, 0, -7.9), 90.0, {"coat": Color("3a6a5a"), "pants": Color("3a2a1a"), "robe": Color("3a6a5a"), "hat": "turban", "beard": true, "mustache": true, "hair": Color("d8d4c8"), "skin": Color("d9a07a")}, "SİNAN", "SINAN"],
 	["nas", "SPK_NASREDDIN", Vector3(-7.2, 0, -6.8), -90.0, {"coat": Color("4a7a3a"), "pants": Color("6a5a3a"), "robe": Color("4a7a3a"), "hat": "turban", "beard": true, "mustache": true, "hair": Color("efeae0"), "skin": Color("d9a07a")}, "NASREDDİN", "NASREDDIN"],
-	["gag", "SPK_GAGARIN", Vector3(-6.6, 0, -10.4), 60.0, {"coat": Color("e06a2a"), "pants": Color("e06a2a"), "hair": Color("5a4030"), "hair_style": "short", "face": {"mouth_w": 1.25, "eye_s": 1.05}, "skin": Color("ecc0a0")}, "GAGARİN", "GAGARIN"],
+	["gag", "SPK_GAGARIN", Vector3(-4.1, 0, -10.5), -40.0, {"coat": Color("e06a2a"), "pants": Color("e06a2a"), "hair": Color("5a4030"), "hair_style": "short", "face": {"mouth_w": 1.25, "eye_s": 1.05}, "skin": Color("ecc0a0")}, "GAGARİN", "GAGARIN"],
 	["shk", "SPK_SHAKESPEARE", Vector3(2.55, 0, -5.35), -22.0, {"coat": Color("1e1e22"), "pants": Color("1e1e22"), "hair": Color("6a4a30"), "hair_style": "receding", "mustache": true, "beard": true, "face": {"mustache": "pencil", "beard": "goatee"}, "skin": Color("ecc0a0")}, "SHAKESPEARE", "SHAKESPEARE"],
 ]
 
