@@ -898,5 +898,57 @@
   "model": "eleven_v3",
   "v3_stability": 0.5,
   "kaynak": "kütüphane (v0.99.97 bekleme salonu figürleri)"
+ },
+ "SPK_SULEYMAN": {
+  "tarif": "Kanuni Sultan Süleyman; ağırbaşlı, vakur, ince alaycı",
+  "gender": "male",
+  "age": "old",
+  "voice_id": "cnssGWqE7kJax1MvsjA8",
+  "voice_name": "Erman - Professional Storyteller",
+  "stability": 0.45,
+  "similarity": 0.8,
+  "style": 0.35,
+  "model": "eleven_v3",
+  "v3_stability": 0.5,
+  "kaynak": "kütüphane (v0.99.99 Büro figürleri)"
+ },
+ "SPK_GUIDE": {
+  "tarif": "2187'den zaman turu rehberi; neşeli, profesyonel, hızlı",
+  "gender": "female",
+  "age": "young",
+  "voice_id": "oPC5I9GKjMReiaM29gjY",
+  "voice_name": "Gökçe Deniz - Joyful, Friendly and Warm",
+  "stability": 0.45,
+  "similarity": 0.8,
+  "style": 0.35,
+  "model": "eleven_v3",
+  "v3_stability": 0.5,
+  "kaynak": "kütüphane (v0.99.99 Büro figürleri)"
+ },
+ "SPK_ROBOT": {
+  "tarif": "2150'den robot stajyer; düz, kibar, meraklı",
+  "gender": "male",
+  "age": "",
+  "voice_id": "DpEiQMnL9WxMsymCsjPY",
+  "voice_name": "Emrullah Uzun - Storyteller",
+  "stability": 0.45,
+  "similarity": 0.8,
+  "style": 0.35,
+  "model": "eleven_v3",
+  "v3_stability": 0.5,
+  "kaynak": "kütüphane (v0.99.99 Büro figürleri)"
+ },
+ "SPK_ARCHAEOLOGIST": {
+  "tarif": "3024'ten arkeolog; meraklı, akademik, ciddi",
+  "gender": "female",
+  "age": "middle_aged",
+  "voice_id": "jk1pqab9OzEmS07w0u2T",
+  "voice_name": "Aura",
+  "stability": 0.45,
+  "similarity": 0.8,
+  "style": 0.35,
+  "model": "eleven_v3",
+  "v3_stability": 0.5,
+  "kaynak": "kütüphane (v0.99.99 Büro figürleri)"
  }
 }

@@ -527,5 +527,37 @@
   "similarity": 0.8,
   "style": 0.35,
   "tarif": "Shakespeare; tiyatral, nüktedan"
+ },
+ "SPK_SULEYMAN": {
+  "voice_id": "ppLqTilh7rH7fbUVlXsf",
+  "voice_name": "David - Documentary ",
+  "stability": 0.45,
+  "similarity": 0.8,
+  "style": 0.35,
+  "tarif": "Kanuni Sultan Süleyman; ağırbaşlı, vakur, ince alaycı"
+ },
+ "SPK_GUIDE": {
+  "voice_id": "ocZQ262SsZb9RIxcQBOj",
+  "voice_name": "Lulu Lolipop - High-Pitched and Bubbly",
+  "stability": 0.45,
+  "similarity": 0.8,
+  "style": 0.35,
+  "tarif": "2187'den zaman turu rehberi; neşeli, profesyonel, hızlı"
+ },
+ "SPK_ROBOT": {
+  "voice_id": "NNl6r8mD7vthiJatiJt1",
+  "voice_name": "Bradford - Expressive and Articulate",
+  "stability": 0.45,
+  "similarity": 0.8,
+  "style": 0.35,
+  "tarif": "2150'den robot stajyer; düz, kibar, meraklı"
+ },
+ "SPK_ARCHAEOLOGIST": {
+  "voice_id": "NFFZBoF6tNodi008z7VH",
+  "voice_name": "Jane - Articulate, Natural and Clear",
+  "stability": 0.45,
+  "similarity": 0.8,
+  "style": 0.35,
+  "tarif": "3024'ten arkeolog; meraklı, akademik, ciddi"
  }
 }

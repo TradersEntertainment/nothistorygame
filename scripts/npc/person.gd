@@ -177,7 +177,7 @@ func _ready() -> void:
 			Props.ring(_head, 0.034, 0.043, Vector3(sx * gx, gy, 0.205), Color("222222"), Vector3(90, 0, 0))
 		Props.box(_head, Vector3(gx * 2.0 - 0.07, 0.008, 0.008), Vector3(0, gy + 0.008, 0.21), Color("222222"))
 	# Saç ve şapka (şapkalılarda ense ve favoriler görünür)
-	if hat in ["fez", "fedora", "cook", "helm", "plume", "turban", "bork", "azap", "cicak", "sultan", "condottiero", "kalpak", "vizier", "galero", "berretta", "bicorne", "soft_beret", "mongol"]:
+	if hat in ["fez", "fedora", "cook", "helm", "plume", "turban", "bork", "azap", "cicak", "sultan", "condottiero", "kalpak", "vizier", "galero", "berretta", "bicorne", "soft_beret", "mongol", "robot"]:
 		CharKit.hair_under_hat(_head, hair, 0.2, face_spec.get("head", Vector3(1.0, 1.06, 0.98)))
 	match hat:
 		"fez":
@@ -280,6 +280,16 @@ func _ready() -> void:
 			Props.cyl(_head, 0.23, 0.08, Vector3(0, 0.15, 0), Color("3a2a1e"), Vector3.ZERO, 12, 0.22)
 			Props.cyl(_head, 0.19, 0.26, Vector3(0, 0.3, 0), Color("a8322a"), Vector3.ZERO, 10, 0.05)
 			Props.ball(_head, 0.03, Vector3(0, 0.44, 0), Color("d4a640"), Vector3.ONE, 6)
+		"astro":
+			# Astronot kaskı: beyaz küre, koyu altın vizör
+			Props.ball(_head, 0.27, Vector3(0, 0.03, -0.01), Color("eceae4"), Vector3.ONE, 12)
+			Props.ball(_head, 0.2, Vector3(0, 0.04, 0.1), Color("6a5420"), Vector3(1.0, 0.75, 0.6), 10, 0.3)
+		"robot":
+			# 2150'den robot stajyer: gümüş kubbe, anten, parlayan vizör
+			Props.ball(_head, 0.215, Vector3(0, 0.04, -0.01), Color("b8c2cc"), Vector3(1.0, 1.05, 1.0), 10)
+			Props.box(_head, Vector3(0.3, 0.07, 0.06), Vector3(0, 0.02, 0.19), Color("3ae0e8"), Vector3.ZERO, 2.0)
+			Props.cyl(_head, 0.008, 0.2, Vector3(0.08, 0.3, -0.02), Color("8a949e"), Vector3(0, 0, -12), 5)
+			Props.ball(_head, 0.025, Vector3(0.1, 0.4, -0.02), Color("ff4a3a"), Vector3.ONE, 6, 1.5)
 		"uraeus":
 			# Altın taç bandı ve alında yılan (Kleopatra)
 			CharKit.hair(_head, hair, hair_style, face_spec.get("head", Vector3(1.0, 1.06, 0.98)))     # bant saçın üstünde

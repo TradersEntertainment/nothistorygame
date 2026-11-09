@@ -752,3 +752,20 @@ Her bölüm denetiminde ve her düzeltmede bu listeyi baştan uygula. Yeni bir h
   her sürümde tests/portrait_check.tscn ve diğer denetim sahneleri de yerelde koşulur (v0.99.98).
   - Figür başlıkları (iki köşeli şapka, defne, bere, Moğol başlığı, taç bandı) Person'a şapka türü olarak taşındı;
     Büro'da ve konuşma kartının portresinde aynı görünürler. Bant türü şapkalar (laurel, uraeus) saçı da çizer.
+- Figürler odalara (v0.99.99). Kullanıcı: "dar bir alanda sıraya dizilmişler, pek olmamış; yeni odalara koysaydın."
+  Tek sıra hem göze sıkıcı hem de yeni odaları boş bıraktı. Her figür bir odaya ve oraya uyan bir işe: Napolyon
+  sandalyenin üstünde (boy şakasıyla), Hitler köşede yüzü duvara, Sezar ile Shakespeare çay ocağında, Kolomb Kayıp
+  Zaman Bürosu'nda, Kleopatra şikâyet masasında, Einstein sarkacın, Leonardo dişlilerin başında, Kanuni Yönetmelik
+  duvarında. Yer değişince replik de değişir (yedi replik yeniden yazıldı).
+  - "O hayalet gibi duranlar ne?" Açıklama isteyen şey okunmuyor demektir: yarı saydam çağ hayaletleri yer tutucu
+    gibi duruyordu; gerçek, oturan insanlar oldular (senatör, lejyoner, yeniçeri, 1920'ler, Bizanslı, astronot).
+  - Oturan kişinin dizleri ~0,5 m öne uzanır: köşeye bakan oturan figür duvarın içine giriyordu; baktığı yönde
+    duvardan en az 0,9 m.
+  - Üçüncü konuşmaya saklanan atışmayı kimse görmedi ("hani Napolyon'la konuşacaktı"): atışma ikinci konuşmada ve iki
+    taraftan da başlar; konuşanlar birbirine döner (Bureau._fg_seq dördüncü öğe).
+  - "var g := f[2] + Vector3(...)" (tipsiz dizi öğesi) bütün betik zincirini düşürdü; xvfb'li kare koşusu çıktısız
+    asılı kaldı. Kare koşusunun çıktısında da SCRIPT ERROR / Parse Error aranır.
+  - "Hep aynı replikleri söylemeyecekler, değil mi? Büro'ya 2-3 kez gidiyoruz." Büro'ya üç ayrı zamanda gelinir
+    (Bölüm 3; 13-14; 15 ve sonrası). Her figüre sonraki iki ziyaret için ikişer replik (52 replik): önce o ziyaretin
+    yenileri, sonra eskiler (Bureau._fg_tier, _fg_lines). Replikler birbirine ve hikâyeye bağlanır (robot Hitler'e
+    beklemeyi öğretir, Cengiz Han Kanuni'yle sırayı tartışır, rehberin "Pazartesi Toplantıları" turu).

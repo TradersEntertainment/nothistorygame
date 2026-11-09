@@ -84,6 +84,27 @@ const ERA_COLORS := {"1071": Color("e8c060"), "1204": Color("9a5ad8"), "1299": C
 ## memurlar yine konuşur.
 ## Seslendirme eşlemesi (tools/voice_map.py okur): _say(anahtar, sn, konuşan) çağrıları desenle yakalanmıyor
 const _BUR_VOICE := [
+	["SPK_NAPOLEON", "BUR_FG_NAP_V2_1"], ["SPK_NAPOLEON", "BUR_FG_NAP_V2_2"], ["SPK_NAPOLEON", "BUR_FG_NAP_V3_1"],
+	["SPK_NAPOLEON", "BUR_FG_NAP_V3_2"], ["SPK_HITLER", "BUR_FG_HIT_V2_1"], ["SPK_HITLER", "BUR_FG_HIT_V2_2"],
+	["SPK_HITLER", "BUR_FG_HIT_V3_1"], ["SPK_HITLER", "BUR_FG_HIT_V3_2"], ["SPK_CLEOPATRA", "BUR_FG_CLE_V2_1"],
+	["SPK_CLEOPATRA", "BUR_FG_CLE_V2_2"], ["SPK_CLEOPATRA", "BUR_FG_CLE_V3_1"], ["SPK_CLEOPATRA", "BUR_FG_CLE_V3_2"],
+	["SPK_CAESAR", "BUR_FG_CAE_V2_1"], ["SPK_CAESAR", "BUR_FG_CAE_V2_2"], ["SPK_CAESAR", "BUR_FG_CAE_V3_1"],
+	["SPK_CAESAR", "BUR_FG_CAE_V3_2"], ["SPK_SHAKESPEARE", "BUR_FG_SHK_V2_1"], ["SPK_SHAKESPEARE", "BUR_FG_SHK_V2_2"],
+	["SPK_SHAKESPEARE", "BUR_FG_SHK_V3_1"], ["SPK_SHAKESPEARE", "BUR_FG_SHK_V3_2"], ["SPK_LEONARDO", "BUR_FG_LEO_V2_1"],
+	["SPK_LEONARDO", "BUR_FG_LEO_V2_2"], ["SPK_LEONARDO", "BUR_FG_LEO_V3_1"], ["SPK_LEONARDO", "BUR_FG_LEO_V3_2"],
+	["SPK_EINSTEIN", "BUR_FG_EIN_V2_1"], ["SPK_EINSTEIN", "BUR_FG_EIN_V2_2"], ["SPK_EINSTEIN", "BUR_FG_EIN_V3_1"],
+	["SPK_EINSTEIN", "BUR_FG_EIN_V3_2"], ["SPK_GENGHIS", "BUR_FG_GEN_V2_1"], ["SPK_GENGHIS", "BUR_FG_GEN_V2_2"],
+	["SPK_GENGHIS", "BUR_FG_GEN_V3_1"], ["SPK_GENGHIS", "BUR_FG_GEN_V3_2"], ["SPK_COLUMBUS", "BUR_FG_COL_V2_1"],
+	["SPK_COLUMBUS", "BUR_FG_COL_V2_2"], ["SPK_COLUMBUS", "BUR_FG_COL_V3_1"], ["SPK_COLUMBUS", "BUR_FG_COL_V3_2"],
+	["SPK_SULEYMAN", "BUR_FG_SUL_V2_1"], ["SPK_SULEYMAN", "BUR_FG_SUL_V2_2"], ["SPK_SULEYMAN", "BUR_FG_SUL_V3_1"],
+	["SPK_SULEYMAN", "BUR_FG_SUL_V3_2"], ["SPK_GUIDE", "BUR_FG_GUI_V2_1"], ["SPK_GUIDE", "BUR_FG_GUI_V2_2"],
+	["SPK_GUIDE", "BUR_FG_GUI_V3_1"], ["SPK_GUIDE", "BUR_FG_GUI_V3_2"], ["SPK_ROBOT", "BUR_FG_ROB_V2_1"],
+	["SPK_ROBOT", "BUR_FG_ROB_V2_2"], ["SPK_ROBOT", "BUR_FG_ROB_V3_1"], ["SPK_ROBOT", "BUR_FG_ROB_V3_2"],
+	["SPK_ARCHAEOLOGIST", "BUR_FG_ARC_V2_1"], ["SPK_ARCHAEOLOGIST", "BUR_FG_ARC_V2_2"],
+	["SPK_ARCHAEOLOGIST", "BUR_FG_ARC_V3_1"], ["SPK_ARCHAEOLOGIST", "BUR_FG_ARC_V3_2"],
+	["SPK_SULEYMAN", "BUR_FG_SUL_1"], ["SPK_SULEYMAN", "BUR_FG_SUL_2"], ["SPK_SULEYMAN", "BUR_FG_SUL_3"],
+	["SPK_GUIDE", "BUR_FG_GUI_1"], ["SPK_GUIDE", "BUR_FG_GUI_2"], ["SPK_ROBOT", "BUR_FG_ROB_1"],
+	["SPK_ROBOT", "BUR_FG_ROB_2"], ["SPK_ARCHAEOLOGIST", "BUR_FG_ARC_1"], ["SPK_ARCHAEOLOGIST", "BUR_FG_ARC_2"],
 	["SPK_NAPOLEON", "BUR_FG_NAP_1"], ["SPK_NAPOLEON", "BUR_FG_NAP_2"], ["SPK_NAPOLEON", "BUR_FG_NAP_3"],
 	["SPK_HITLER", "BUR_FG_HIT_R"], ["SPK_NAPOLEON", "BUR_FG_NAP_4"], ["SPK_HITLER", "BUR_FG_HIT_1"],
 	["SPK_HITLER", "BUR_FG_HIT_2"], ["SPK_CLEOPATRA", "BUR_FG_CLE_1"], ["SPK_CLEOPATRA", "BUR_FG_CLE_2"],
@@ -2047,51 +2068,36 @@ func _rb_wait() -> void:
 	_rb_ghost("fedora", Vector3(-5.9, 0, -9.0), true, -90.0, blue_t, 3.0)
 	_rb_ghost("byz", Vector3(-7.2, 0, -6.8), true, -90.0, warm_t, 4.2)
 	# ayakta bekleyenler
-	_rb_ghost("astro", Vector3(-7.7, 0.1, -9.9), false, -90.0, blue_t, 0.7)
+	_rb_ghost("astro", Vector3(-6.6, 0.0, -10.4), false, -60.0, blue_t, 0.7)
 	_reg("bur_ghost", Vector3(3.4, 1.4, 2.9), Vector3(-5.9, 0.7, -7.9), "UI_BUR_LOOK", _rb_ghost_talk)
 
 
-## Tek hayalet: gövde (otururken kalça+uyluk, ayaktayken sivri sis), kafa ve çağına özgü aksesuar.
-func _rb_ghost(kind: String, pos: Vector3, sit: bool, yaw: float, tint: Color, phase: float) -> void:
-	var g := Node3D.new()
-	g.position = pos
-	g.rotation_degrees.y = yaw
-	add_child(g)
-	var m := _rb_mat(tint, 0.45, 1.0, true)
-	var hy := 1.15
-	var zf := 0.18
+## Başka çağlardan bekleyenler (yarı saydam hayaletlerdi; yer tutucu gibi duruyordu): Romalı senatör, lejyoner,
+## yeniçeri, 1920'lerden bir memur, Bizanslı soylu, astronot. Koltuktakiler LED ekrana bakar.
+const _RB_ERA := {
+	"toga": {"coat": Color("efe9dc"), "pants": Color("efe9dc"), "robe": Color("efe9dc"), "hair": Color("9a9a90"), "hair_style": "receding", "skin": Color("e0a882")},
+	"legion": {"coat": Color("8a2b22"), "pants": Color("4a3a2a"), "hat": "helm", "armor": "mail", "skin": Color("d9a07a")},
+	"bork": {"coat": Color("2f5f8a"), "pants": Color("e8e0c8"), "hat": "bork", "mustache": true, "skin": Color("d9a07a")},
+	"fedora": {"coat": Color("5a5a62"), "pants": Color("3a3a42"), "hat": "fedora", "mustache": true, "skin": Color("ecc0a0")},
+	"byz": {"coat": Color("5a2a6a"), "pants": Color("3a2a30"), "robe": Color("5a2a6a"), "hat": "skiadion", "beard": true, "skin": Color("e0b08a")},
+	"astro": {"coat": Color("eceae4"), "pants": Color("eceae4"), "hat": "astro", "skin": Color("e8b894")},
+}
+
+
+func _rb_ghost(kind: String, pos: Vector3, sit: bool, yaw: float, _tint: Color, _phase: float) -> void:
+	var p := Person.new(_RB_ERA[kind])
+	p.set_meta("no_unclip", true)
+	add_child(p)
+	p.position = Vector3(pos.x, 0.0, pos.z)
+	p.rotation_degrees.y = yaw
 	if sit:
-		_rb_t(Props.cyl(g, 0.17, 0.5, Vector3(0, 0.78, 0), tint, Vector3.ZERO, 8, 0.15), m)
-		_rb_t(Props.box(g, Vector3(0.28, 0.12, 0.42), Vector3(0, 0.55, 0.2), tint), m)
-	else:
-		_rb_t(Props.cyl(g, 0.24, 1.15, Vector3(0, 0.65, 0), tint, Vector3.ZERO, 8, 0.14), m)
-		hy = 1.38
-		zf = 0.2
-	_rb_t(Props.ball(g, 0.12, Vector3(0, hy, 0), tint), m)
-	match kind:
-		"toga":      # defne çelengi + omuz atkısı
-			_rb_t(Props.ring(g, 0.08, 0.13, Vector3(0, hy + 0.1, 0), tint), m)
-			_rb_t(Props.box(g, Vector3(0.4, 0.09, 0.3), Vector3(0, hy - 0.22, 0), tint, Vector3(0, 0, 35)), m)
-		"legion":    # Roma miğferi
-			_rb_t(Props.ball(g, 0.14, Vector3(0, hy + 0.06, 0), tint, Vector3(1, 0.7, 1)), m)
-			_rb_t(Props.box(g, Vector3(0.03, 0.1, 0.26), Vector3(0, hy + 0.2, 0), tint), m)
-		"bork":      # yeniçeri börkü + sarkan kuyruk
-			_rb_t(Props.cyl(g, 0.08, 0.3, Vector3(0, hy + 0.22, 0), tint, Vector3(-12, 0, 0), 8, 0.11), m)
-			_rb_t(Props.box(g, Vector3(0.1, 0.3, 0.03), Vector3(0, hy + 0.08, -0.15), tint), m)
-		"fedora":    # 1920'ler fötr şapka
-			_rb_t(Props.cyl(g, 0.2, 0.02, Vector3(0, hy + 0.09, 0), tint, Vector3.ZERO, 10), m)
-			_rb_t(Props.cyl(g, 0.1, 0.13, Vector3(0, hy + 0.16, 0), tint, Vector3.ZERO, 8), m)
-		"seventies": # 70'ler bıyık + geniş kravat
-			_rb_t(Props.box(g, Vector3(0.14, 0.025, 0.03), Vector3(0, hy - 0.04, 0.115), tint), m)
-			_rb_t(Props.box(g, Vector3(0.07, 0.4, 0.02), Vector3(0, 0.95, zf + 0.04), tint), m)
-		"astro":     # astronot miğferi + sırt çantası
-			_rb_t(Props.ball(g, 0.2, Vector3(0, hy, 0), tint), m)
-			_rb_t(Props.box(g, Vector3(0.3, 0.4, 0.15), Vector3(0, hy - 0.4, -0.22), tint), m)
-		"byz":       # Bizans tacı + uzun cüppe şeridi
-			_rb_t(Props.cyl(g, 0.11, 0.07, Vector3(0, hy + 0.13, 0), tint, Vector3.ZERO, 8), m)
-			_rb_t(Props.box(g, Vector3(0.1, 0.7, 0.02), Vector3(0, 0.8, zf + 0.01), tint), m)
-	Props.strip_outlines(g)
-	_bobbers.append([g, pos.y, 0.04, 1.1, phase])
+		p.set_activity("sit")
+	var st: Array = [p]
+	while st.size() > 0:
+		var n: Node = st.pop_back()
+		st.append_array(n.get_children())
+		if n is GeometryInstance3D:
+			(n as GeometryInstance3D).visibility_range_end = 24.0
 
 
 func _rb_ticket() -> void:
@@ -2804,8 +2810,10 @@ func _rc_end_window() -> void:
 
 
 # ---------------------------------------------------------------- Bekleme salonunda tarihî figürler (v0.99.97)
-## Sıra numarası makinesine dizilen ve arkada ayakta bekleyen ünlüler; her biri isim kartı takar (Büro'nun kuralı).
-## Konuşulunca oyuncuya döner; bazıları birbirine laf yetiştirir (Napolyon ile Hitler, Sezar ile Shakespeare).
+## Ünlüler Büro'nun odalarına dağılmış, her biri orada bir işte: bekleme salonunda Napolyon sandalyeye çıkmış, Cengiz Han
+## numaratörü kolluyor, Hitler köşede yüzü duvara oturtulmuş; Sezar ile Shakespeare çay ocağında, Kolomb Kayıp Zaman
+## Bürosu'nda, Kleopatra şikâyet masasında, Einstein sarkacın, Leonardo zaman nehri maketinin başında. Her biri isim
+## kartı takar (Büro'nun kuralı); konuşulunca oyuncuya döner; yan yana olanlar laf yetiştirir.
 
 var _fg: Dictionary = {}          # kimlik → Person
 var _fg_yaw: Dictionary = {}      # kimlik → asıl bakış (derece)
@@ -2813,15 +2821,19 @@ var _fg_busy := false
 
 ## [kimlik, konuşan, konum, bakış, görünüş, isim TR, isim EN]
 const _FG := [
-	["nap", "SPK_NAPOLEON", Vector3(-3.45, 0, -4.55), 90.0, {"coat": Color("24365e"), "pants": Color("efe9dc"), "hat": "bicorne", "hair": Color("2a2018"), "hair_style": "short", "skin": Color("e8c0a0")}, "NAPOLYON", "NAPOLEON"],
-	["cle", "SPK_CLEOPATRA", Vector3(-4.35, 0, -4.55), 90.0, {"coat": Color("efe6d0"), "pants": Color("efe6d0"), "skirt": true, "hat": "uraeus", "hair": Color("121010"), "hair_style": "long", "skin": Color("c98e6a")}, "KLEOPATRA", "CLEOPATRA"],
-	["cae", "SPK_CAESAR", Vector3(-5.25, 0, -4.55), 90.0, {"coat": Color("efe9dc"), "pants": Color("efe9dc"), "robe": Color("efe9dc"), "hat": "laurel", "hair": Color("8a8478"), "hair_style": "receding", "skin": Color("e0a882")}, "SEZAR", "CAESAR"],
-	["leo", "SPK_LEONARDO", Vector3(-6.15, 0, -4.55), 90.0, {"coat": Color("5a2030"), "pants": Color("3a1a20"), "robe": Color("5a2030"), "hat": "soft_beret", "hair": Color("e6e2da"), "hair_style": "long", "beard": true, "mustache": true, "skin": Color("e8b894")}, "LEONARDO", "LEONARDO"],
-	["ein", "SPK_EINSTEIN", Vector3(-7.05, 0, -4.55), 90.0, {"coat": Color("7a7468"), "pants": Color("4a4a48"), "hair": Color("f2f0ea"), "hair_style": "curly", "mustache": true, "face": {"mustache": "walrus", "bags": true, "wrinkles": true}, "skin": Color("ecc0a0")}, "EINSTEIN", "EINSTEIN"],
-	["hit", "SPK_HITLER", Vector3(-8.05, 0, -4.7), 75.0, {"coat": Color("5a5040"), "pants": Color("3a3630"), "hair": Color("2a2018"), "hair_style": "swept", "mustache": true, "face": {"mustache": "toothbrush", "brow_tilt": 10.0}, "skin": Color("e8c0a0")}, "HITLER", "HITLER"],
-	["gen", "SPK_GENGHIS", Vector3(-6.3, 0, -10.25), 30.0, {"coat": Color("7a3a22"), "pants": Color("3a2a1a"), "hat": "mongol", "hair": Color("1a1410"), "mustache": true, "beard": true, "face": {"mustache": "chevron", "beard": "goatee"}, "skin": Color("d9a07a")}, "CENGİZ HAN", "GENGHIS KHAN"],
-	["col", "SPK_COLUMBUS", Vector3(-5.2, 0, -10.4), 15.0, {"coat": Color("2a4a3a"), "pants": Color("3a3a30"), "hat": "berretta", "hair": Color("d8d4c8"), "hair_style": "long", "skin": Color("e8b894")}, "KOLOMB", "COLUMBUS"],
-	["shk", "SPK_SHAKESPEARE", Vector3(-4.1, 0, -10.2), -10.0, {"coat": Color("1e1e22"), "pants": Color("1e1e22"), "hair": Color("6a4a30"), "hair_style": "receding", "mustache": true, "beard": true, "face": {"mustache": "pencil", "beard": "goatee"}, "skin": Color("ecc0a0")}, "SHAKESPEARE", "SHAKESPEARE"],
+	["nap", "SPK_NAPOLEON", Vector3(-4.6, 0.48, -6.8), 90.0, {"coat": Color("24365e"), "pants": Color("efe9dc"), "hat": "bicorne", "hair": Color("2a2018"), "hair_style": "short", "skin": Color("e8c0a0")}, "NAPOLYON", "NAPOLEON"],
+	["cle", "SPK_CLEOPATRA", Vector3(-1.72, 0, -28.7), -60.0, {"coat": Color("efe6d0"), "pants": Color("efe6d0"), "skirt": true, "hat": "uraeus", "hair": Color("121010"), "hair_style": "long", "skin": Color("c98e6a")}, "KLEOPATRA", "CLEOPATRA"],
+	["cae", "SPK_CAESAR", Vector3(2.55, 0, -3.95), -158.0, {"coat": Color("efe9dc"), "pants": Color("efe9dc"), "robe": Color("efe9dc"), "hat": "laurel", "hair": Color("8a8478"), "hair_style": "receding", "skin": Color("e0a882")}, "SEZAR", "CAESAR"],
+	["leo", "SPK_LEONARDO", Vector3(9.1, 0, -45.5), -90.0, {"coat": Color("5a2030"), "pants": Color("3a1a20"), "robe": Color("5a2030"), "hat": "soft_beret", "hair": Color("e6e2da"), "hair_style": "long", "beard": true, "mustache": true, "skin": Color("e8b894")}, "LEONARDO", "LEONARDO"],
+	["ein", "SPK_EINSTEIN", Vector3(11.0, 0, -40.0), -45.0, {"coat": Color("7a7468"), "pants": Color("4a4a48"), "hair": Color("f2f0ea"), "hair_style": "curly", "mustache": true, "face": {"mustache": "walrus", "bags": true, "wrinkles": true}, "skin": Color("ecc0a0")}, "EINSTEIN", "EINSTEIN"],
+	["hit", "SPK_HITLER", Vector3(-7.55, 0, -4.65), -45.0, {"coat": Color("5a5040"), "pants": Color("3a3630"), "hair": Color("2a2018"), "hair_style": "swept", "mustache": true, "face": {"mustache": "toothbrush", "brow_tilt": 10.0}, "skin": Color("e8c0a0")}, "HITLER", "HITLER"],
+	["gen", "SPK_GENGHIS", Vector3(-3.4, 0, -5.45), 41.0, {"coat": Color("7a3a22"), "pants": Color("3a2a1a"), "hat": "mongol", "hair": Color("1a1410"), "mustache": true, "beard": true, "face": {"mustache": "chevron", "beard": "goatee"}, "skin": Color("d9a07a")}, "CENGİZ HAN", "GENGHIS KHAN"],
+	["col", "SPK_COLUMBUS", Vector3(5.6, 0, -20.1), -105.0, {"coat": Color("2a4a3a"), "pants": Color("3a3a30"), "hat": "berretta", "hair": Color("d8d4c8"), "hair_style": "long", "skin": Color("e8b894")}, "KOLOMB", "COLUMBUS"],
+	["sul", "SPK_SULEYMAN", Vector3(1.62, 0, -33.0), 60.0, {"coat": Color("2f6a4a"), "pants": Color("3a2a1a"), "robe": Color("c9a24a"), "hat": "sultan", "beard": true, "mustache": true, "hair": Color("3a2a1e"), "skin": Color("e0b08a"), "face": {"beard": "full", "nose": "hook"}}, "SÜLEYMAN", "SULEIMAN"],
+	["gui", "SPK_GUIDE", Vector3(8.5, 0, -52.3), -30.0, {"coat": Color("c8ccd4"), "pants": Color("2a8a8a"), "skirt": true, "hair": Color("d84a8a"), "hair_style": "short", "skin": Color("e0a882")}, "REHBER", "GUIDE"],
+	["rob", "SPK_ROBOT", Vector3(-7.95, 0, -6.0), -120.0, {"coat": Color("9aa4ae"), "pants": Color("7a848e"), "hat": "robot", "hair": Color("8a949e"), "skin": Color("b8c2cc")}, "STAJYER", "INTERN"],
+	["arc", "SPK_ARCHAEOLOGIST", Vector3(-5.2, 0, -20.6), -100.0, {"coat": Color("b89a6a"), "pants": Color("5a4a3a"), "hat": "fedora", "glasses": true, "hair": Color("3a2a1e"), "skin": Color("c98e6a")}, "ARKEOLOG", "ARCHAEOLOGIST"],
+	["shk", "SPK_SHAKESPEARE", Vector3(2.55, 0, -5.35), -22.0, {"coat": Color("1e1e22"), "pants": Color("1e1e22"), "hair": Color("6a4a30"), "hair_style": "receding", "mustache": true, "beard": true, "face": {"mustache": "pencil", "beard": "goatee"}, "skin": Color("ecc0a0")}, "SHAKESPEARE", "SHAKESPEARE"],
 ]
 
 
@@ -2832,6 +2844,7 @@ func _fg_build() -> void:
 		var p := Person.new(f[4])
 		p.set_meta("spk", f[1])
 		p.set_meta("no_talk", true)
+		p.set_meta("no_unclip", true)      # sandalyenin üstündeki Napolyon zemine indirilmesin
 		add_child(p)
 		p.position = f[2]
 		p.rotation_degrees.y = f[3]
@@ -2839,6 +2852,27 @@ func _fg_build() -> void:
 		_fg_yaw[id] = f[3]
 		var hd := p._head
 		match id:
+			"hit":     # köşede tek sandalye, yüzü duvara
+				var ch := Node3D.new()
+				ch.position = f[2]
+				ch.rotation_degrees.y = f[3]
+				add_child(ch)
+				Props.box(ch, Vector3(0.42, 0.05, 0.42), Vector3(0, 0.45, 0), C_WOOD)
+				Props.box(ch, Vector3(0.42, 0.45, 0.05), Vector3(0, 0.7, -0.2), C_WOOD_DARK)
+				for lx: float in [-0.18, 0.18]:
+					for lz: float in [-0.18, 0.18]:
+						Props.box(ch, Vector3(0.04, 0.43, 0.04), Vector3(lx, 0.215, lz), C_WOOD_DARK)
+				p.set_activity("sit")
+			"cae", "shk":     # çay ocağının tezgâhında ince belli bardak
+				var g: Vector3 = f[2] + Vector3(0.62, 1.1, -0.1 if id == "cae" else 0.1)
+				Props.cyl(self, 0.03, 0.09, g, Color("a8381c"), Vector3.ZERO, 8, 0.036)
+				Props.cyl(self, 0.045, 0.006, g - Vector3(0, 0.048, 0), Color("e8e4dc"), Vector3.ZERO, 10)
+			"gui":     # sopanın ucunda tur bayrağı (2187)
+				Props.cyl(p, 0.012, 1.5, Vector3(0.3, 1.25, 0.12), C_METAL, Vector3.ZERO, 6)
+				Props.box(p, Vector3(0.02, 0.24, 0.36), Vector3(0.3, 1.88, 0.3), Color("ff6a2a"), Vector3.ZERO, 0.6)
+			"arc":     # elinde fırça
+				Props.cyl(p, 0.012, 0.22, Vector3(0.3, 0.86, 0.16), C_WOOD, Vector3(40, 0, 0), 6)
+				Props.box(p, Vector3(0.05, 0.06, 0.03), Vector3(0.3, 0.95, 0.25), Color("e8d8b0"), Vector3(40, 0, 0))
 			"cle":     # altın gerdanlık (taç bandı: Person "uraeus")
 				Props.cyl(p, 0.2, 0.03, Vector3(0, 1.4, 0.0), gold, Vector3.ZERO, 12)
 			"cae":     # omuzdan kırmızı kuşak (defne: Person "laurel")
@@ -2897,6 +2931,8 @@ func _fg_seq(lines: Array) -> void:
 			return
 		_say(l[1], secs, _fg_spk(id))
 		_fg_face(id, secs + 0.4)
+		if l.size() > 3 and _fg.has(l[3]):
+			(_fg[id] as Person).look_target = _fg[l[3]]       # atışmada karşısındakine döner
 		await get_tree().create_timer(secs + 0.2).timeout
 	_fg_busy = false
 
@@ -2908,24 +2944,45 @@ func _fg_spk(id: String) -> String:
 	return bark_speaker
 
 
+## Büro'ya üç ayrı zamanda gelinir: Bölüm 3 (ilk gün), 13-14 (kuşatmadan dönüş), 15 ve sonrası (17, 26, 27, final).
+## Figür önce o ziyaretin repliklerini söyler (yenisi önce), sonra eskileri; aynı replik art arda gelmez.
+func _fg_tier() -> int:
+	var c := GameState.current_chapter
+	return 1 if c <= 12 else (2 if c <= 14 else 3)
+
+
+## İlk ziyaretin listesi: "@" = atışma (Napolyon ile Hitler, Sezar ile Shakespeare)
+const _FG_T1 := {"nap": ["BUR_FG_NAP_1", "@", "BUR_FG_NAP_2"], "hit": ["BUR_FG_HIT_1", "@"],
+	"cae": ["BUR_FG_CAE_1", "@", "BUR_FG_CAE_2"], "shk": ["BUR_FG_SHK_1", "@", "BUR_FG_SHK_2"]}
+
+
+func _fg_lines(id: String) -> Array:
+	var up := id.to_upper()
+	var t1: Array = _FG_T1.get(id, [])
+	if t1.is_empty():
+		for i in range(1, 4):
+			var k := "BUR_FG_%s_%d" % [up, i]
+			if tr(k) != k:
+				t1.append(k)
+	var out: Array = []
+	for t in range(_fg_tier(), 1, -1):
+		for i in range(1, 3):
+			out.append("BUR_FG_%s_V%d_%d" % [up, t, i])
+	return out + t1
+
+
 func _fg_talk(id: String) -> void:
 	if _fg_busy:
 		return
 	var n := _count("bur_fg_" + id) + 1
 	_cycles["bur_fg_" + id] = n
-	match id:
-		"nap":
-			if n % 3 == 0:
-				_fg_seq([["nap", "BUR_FG_NAP_3", 5.0], ["hit", "BUR_FG_HIT_R", 2.0], ["nap", "BUR_FG_NAP_4", 1.6]])
-			else:
-				_fg_seq([["nap", "BUR_FG_NAP_1" if n % 3 == 1 else "BUR_FG_NAP_2", 5.0]])
-		"cae":
-			if n % 3 == 0:
-				_fg_seq([["cae", "BUR_FG_CAE_3", 5.5], ["shk", "BUR_FG_SHK_R", 4.5]])
-			else:
-				_fg_seq([["cae", "BUR_FG_CAE_1" if n % 3 == 1 else "BUR_FG_CAE_2", 5.0]])
-		"leo":
-			_fg_seq([["leo", ["BUR_FG_LEO_1", "BUR_FG_LEO_2", "BUR_FG_LEO_3"][(n - 1) % 3], 5.0]])
-		_:
-			var up := id.to_upper()
-			_fg_seq([[id, "BUR_FG_%s_%d" % [up, 1 + (n - 1) % 2], 5.0]])
+	var lines := _fg_lines(id)
+	var item: String = lines[(n - 1) % lines.size()]
+	if item != "@":
+		_fg_seq([[id, item, 5.5]])
+	elif id == "nap":
+		_fg_seq([["nap", "BUR_FG_NAP_3", 5.0, "hit"], ["hit", "BUR_FG_HIT_R", 2.0, "nap"], ["nap", "BUR_FG_NAP_4", 1.6, "hit"]])
+	elif id == "hit":
+		_fg_seq([["hit", "BUR_FG_HIT_2", 4.0], ["nap", "BUR_FG_NAP_3", 5.0, "hit"], ["hit", "BUR_FG_HIT_R", 2.0, "nap"], ["nap", "BUR_FG_NAP_4", 1.6, "hit"]])
+	else:
+		_fg_seq([["cae", "BUR_FG_CAE_3", 5.5, "shk"], ["shk", "BUR_FG_SHK_R", 4.5, "cae"]])
