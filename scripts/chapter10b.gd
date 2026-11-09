@@ -390,6 +390,8 @@ func _prepare() -> void:
 	await _say("SPK_URBAN", powder_key)
 	# Barut torbası namluya boşaltılır: Tolga ağza yürür, boşaltır, yerine döner (8 m öteden boşaltıyordu)
 	await _go(Vector3(0.9, 0, 4.3), Vector3(0, 1.3, 3.2))
+	if _powder != 2:
+		player.show_prop("powder", 1.6)       # barut torbası elde, namluya boşaltılır (yalnız el uzanıyordu)
 	player.hand_gesture("reach")
 	Audio.sfx("land_thud", -14.0, 0.7)
 	if _powder == 2:
@@ -452,6 +454,7 @@ func _fire() -> void:
 	elif how == "torch":
 		# Meşale: Urban uzattırır (seçenek vardı ama hiçbir tepki yoktu)
 		await _go(Vector3(1.75, 0, -2.9), Vector3(0.1, 2.1, -3.0))
+		player.show_prop("torch", 2.2)        # meşale elde, fitile uzanır (elde hiçbir şey yoktu)
 		player.hand_gesture("reach")
 		await _say("SPK_URBAN", "D10B_U_FUSE_TORCH")
 	elif how == "urban":

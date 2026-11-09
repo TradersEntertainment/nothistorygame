@@ -622,9 +622,10 @@ func _on_interact(id: String) -> void:
 					return
 				h.set_meta("done", true)
 				_drop()
-				Props.cyl(h, 0.09, 2.2, Vector3(0, 0.9, 0.15), Color("8a6a44"), Vector3(-18, 0, 0), 6, 0.02)
-				Audio.sfx("pick_tap", -4.0, 0.8)
+				# Kazık deliğe dikilir, tokmakla üç vuruşta çakılır (eskiden E'ye basınca bir anda çakılı beliriyordu)
+				var st := Props.cyl(h, 0.09, 2.2, Vector3(0, 1.5, 0.15), Color("8a6a44"), Vector3(-18, 0, 0), 6, 0.02)
 				stakes += 1
+				await _hammer_in(st, 0.6)
 				_update_objective()
 		"haul":
 			if id == "roller_back" and need_roller and not roller_held and _free_roller:
@@ -648,6 +649,32 @@ func _on_interact(id: String) -> void:
 				_update_objective()
 
 
+## Tokmak elde (kameranın sağ altında), üç kez kalkıp iner; her vuruşta kazık bir parça gömülür, toz ve tok ses.
+func _hammer_in(st: Node3D, depth: float) -> void:
+	var was := player.frozen
+	player.frozen = true
+	var hm := Node3D.new()
+	hm.set_meta("transient", true)
+	player.camera.add_child(hm)
+	hm.position = Vector3(0.22, -0.3, -0.55)
+	Props.cyl(hm, 0.014, 0.32, Vector3(0, -0.06, 0), Color("6a4a2c"), Vector3.ZERO, 6)
+	Props.cyl(hm, 0.045, 0.14, Vector3(0, 0.1, 0), Color("8a6a44"), Vector3(0, 0, 90), 8)
+	Props.strip_outlines(hm)
+	var f := Stage.fast()
+	for k in 3:
+		var tw := hm.create_tween()
+		tw.tween_property(hm, "rotation_degrees", Vector3(55, 0, -10), 0.03 if f else 0.18).set_trans(Tween.TRANS_SINE)
+		tw.tween_property(hm, "rotation_degrees", Vector3(-40, 0, -10), 0.03 if f else 0.1).set_ease(Tween.EASE_IN)
+		await tw.finished
+		if is_instance_valid(st):
+			st.position.y -= depth / 3.0
+			Vfx.dust(self, st.global_position + Vector3(0, -0.4, 0), 0.25)
+		Audio.sfx("pick_tap", -4.0, 0.75 + k * 0.08)
+		player.shake(0.04)
+	hm.queue_free()
+	player.frozen = was
+
+
 func _pick(what: String) -> void:
 	carrying = what
 	_carry = Node3D.new()
@@ -663,6 +690,7 @@ func _pick(what: String) -> void:
 		player.free_hold = Vector3(-0.45, -0.5, -0.9)      # kütüğün sol ucu sol elde
 		player.speed_mult = 0.65
 	Props.strip_outlines(_carry)
+	Carry.attach(player, _carry, {"weight": 0.55 if what == "stake" else 0.95})
 	Audio.sfx("land_pot", -10.0, 0.7)
 	hud.set_prompt("")
 	_update_objective()

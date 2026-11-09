@@ -39,6 +39,7 @@ var boarders := 0
 var _duel_won := true
 var fires_left := 0
 var _hooks: Dictionary = {}          # id -> {"node", "life", "spot"}
+var _carry_c: Carry
 var _fires: Dictionary = {}          # id -> {"node", "need"}
 var _focus := ""
 var _hold := 0.0
@@ -436,7 +437,14 @@ func _on_interact(id: String) -> void:
 	if id == "barrel" and carrying == "":
 		_pick()
 	elif id.begins_with("fire_") and carrying == "water" and _fires.has(id):
+		# Güverte sallanırken koşan kovanın suyunu döker (Carry dengesi): iki kez taşan kova yangına yetmez, yeniden doldurulur
+		var empty := is_instance_valid(_carry_c) and _carry_c.fill < 0.4
 		_drop()
+		if empty:
+			Audio.sfx("splash", -14.0, 1.6)
+			hud.bark("SPK_TOLGA", "D_CARRY_EMPTY", 2.4)
+			_update_objective()
+			return
 		Audio.sfx("splash", -6.0, 1.2)
 		var f: Dictionary = _fires[id]
 		var n: Node3D = f["node"]
@@ -456,6 +464,7 @@ func _pick() -> void:
 	_carry.position = Vector3(-0.32, -0.6, -0.72)
 	player.camera.add_child(_carry)
 	player.free_hold = Vector3(-0.32, -0.38, -0.72)       # sol el kovanın kenarında (kova havada asılıydı)
+	_carry_c = Carry.attach(player, _carry, {"weight": 0.6, "balance": true})
 	Props.cyl(_carry, 0.16, 0.3, Vector3.ZERO, Color("6a4a2c"), Vector3.ZERO, 8, 0.19)
 	Props.cyl(_carry, 0.15, 0.02, Vector3(0, 0.14, 0), Color("4a7aa8"), Vector3.ZERO, 8)
 	Props.strip_outlines(_carry)
@@ -475,6 +484,8 @@ func _process(delta: float) -> void:
 	_t += delta
 	if phase == "hooks" and not player.frozen:
 		if _focus.begins_with("hook_") and _hooks.has(_focus) and Input.is_action_pressed("interact"):
+			if _hold <= 0.0:
+				player.show_prop("knife", CUT_NEED + 0.4)      # ip bıçakla kesilir (elde kumanda varken kesiliyordu)
 			_hold += delta
 			hud.set_chase(tr("UI_CH29_CUT"), _hold / CUT_NEED)
 			if _hold >= CUT_NEED:

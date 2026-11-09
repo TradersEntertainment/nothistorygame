@@ -714,6 +714,7 @@ func _take(kind: String) -> void:
 	Props.strip_outlines(_carry)
 	player.free_hold = _carry.position + Vector3(-0.14, 0.14, 0.06)    # sol el yükü tutar
 	player.speed_mult = _carry_mult
+	Carry.attach(player, _carry, {"weight": 0.75, "balance": kind == "bucket"})
 	Audio.sfx("land_pot", -10.0, 0.8)
 	_update_objective()
 

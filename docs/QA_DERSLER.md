@@ -640,3 +640,26 @@ Her bölüm denetiminde ve her düzeltmede bu listeyi baştan uygula. Yeni bir h
     yana atlayan kurtulur), boş tüfeği sonra atar. Dibine gelinince de nişandaysa önce ateşler.
   - Sonuçsuz tehlike sıkıcıdır: 30O merdiven taşımada oklar yalnız toz ve sesti. Artık düşeceği yer kızarır, isabet
     sendeletir ve ekibi yavaşlatır.
+- Taşıma hissi (v0.99.91, Player/Carry). Eskiden yük kameraya çivi gibi asılıydı: yukarı bakınca kova yüze kalkıyor,
+  dönünce kameraya yapışık dönüyor, yürürken hiç sallanmıyordu. Carry.attach yükü bir pivota alır:
+  - dönüşte ağırlığıyla gecikir; adımda iner, kalkar;
+  - bakışın yalnız %45'ini izler;
+  - sol el (free_hold) yükle birlikte gider.
+  Sıvı ve tepside denge vardır:
+  - koşu (yük altındaki yürüme hızına göre), sert dönüş, ani duruş ve havada olmak çalkalar;
+  - yavaş yürümek durultur;
+  - gösterge uca varırsa taşar (fill azalır).
+  Sonuç bölüme bağlıdır: 29'da iki kez taşan kova yangına yetmez, 17O'da söndürme kovadaki suyla orantılıdır.
+  Otomatik testte denge birikmez (bot yürüyüşü ışınlanmadır); tests/_tmp/carry_test ile ölçüldü:
+  - yürürken 0 taşma;
+  - düz koşuda ~3-4 sn'de bir taşma.
+- Tehlikesiz görev sıkıcıdır, sonuçsuz tehlike de öyle. 30O'da merdiven ve yaralı taşırken ok yağar: kızaran yere
+  düşer, isabet sendeletir, yavaşlatır.
+- Anlatılan iş elde görünür:
+  - 29'da ip bıçakla kesilir;
+  - 10B'de barut torbası ve meşale görünür;
+  - 28O'da kazık tokmakla üç vuruşta çakılır;
+  - 30O'da yağı döken savunucu kılıcını çekip ilk rakip olur.
+- Bir dize değiştirme betiğinde yeni metin satır sonuyla bitmezse sonraki satır yorumun içine kayar. 22'de
+  "_chute_barrel = Node3D.new()" yorumun içinde kaldı; tek bölüm koşusu SCRIPT ERROR verdi. Değişiklikten sonra o
+  bölüm mutlaka bir kez koşturulur.

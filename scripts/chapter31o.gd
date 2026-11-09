@@ -1400,6 +1400,7 @@ func _on_interact(id: String) -> void:
 				player.camera.add_child(_carry_mat)
 				_carry_mat.position = Vector3(-0.1, -0.55, -0.6)
 				player.free_hold = Vector3(-0.42, -0.5, -0.6)      # hasırın sol ucu sol elde (havada asılıydı)
+				Carry.attach(player, _carry_mat, {"weight": 0.4})
 				Props.cyl(_carry_mat, 0.16, 1.1, Vector3.ZERO, Color("b8a060"), Vector3(0, 90, 90), 8)
 				Props.strip_outlines(_carry_mat)
 			elif id.begins_with("slot_") and _carry_mat and not _active_mat:
@@ -1491,6 +1492,7 @@ func _arms_child(on: bool) -> void:
 		Props.ball(_arms, 0.088, Vector3(0.02, 0.135, 0.04), Color("3a2a1e"), Vector3(1, 0.6, 1))
 		Props.strip_outlines(_arms)
 		player.free_hold = Vector3(-0.12, -0.62, -0.48)
+		Carry.attach(player, _arms, {"weight": 0.5})
 	elif not on and _arms != null:
 		_arms.queue_free()
 		_arms = null

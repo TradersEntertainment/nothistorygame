@@ -2330,9 +2330,17 @@ func _held_audit(scene: Node) -> void:
 	if not (pl is Player) or (pl as Player).camera == null:
 		return
 	var left: Array[String] = []
+	var cands: Array[Node] = []
 	for c in (pl as Player).camera.get_children():
-		if c is Node3D and (c as Node3D).visible and not (c is Light3D or c is RayCast3D or c is Camera3D) and c != (pl as Player).leg \
-				and c != (pl as Player).hand and c != (pl as Player).free_hand and not c.has_meta("transient"):
+		# Taşıma pivotu (Carry) yükü bir kat aşağıda tutar: pivot değil, yükün kendisi denetlenir
+		if c.has_meta("carry_pivot"):
+			if (c as Node3D).visible:
+				cands.append_array(c.get_children())
+		else:
+			cands.append(c)
+	for c in cands:
+		if c is Node3D and (c as Node3D).visible and not c.is_queued_for_deletion() and not (c is Light3D or c is RayCast3D or c is Camera3D) \
+				and c != (pl as Player).leg and c != (pl as Player).hand and c != (pl as Player).free_hand and not c.has_meta("transient"):
 			left.append(str(c.name))
 	if not left.is_empty():
 		print("HELDAUDIT scene=%s left=%s" % [scene.scene_file_path.get_file(), ",".join(left)])

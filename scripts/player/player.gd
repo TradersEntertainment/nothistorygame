@@ -765,7 +765,8 @@ var _hands_busy := false
 
 
 func _sync_busy_hands() -> void:
-	var busy := ladder != null or floating or _balance != INF or free_hold != Vector3.INF
+	var busy := ladder != null or floating or _balance != INF or free_hold != Vector3.INF \
+			or (traversal != null and traversal.state != "")       # duvara tutunurken / tırmanırken iki el duvarda
 	if busy != _hands_busy:
 		_hands_busy = busy
 		_stow(busy)
@@ -1782,6 +1783,35 @@ func show_prop(kind: String, hold := 2.4) -> void:
 			for k in 6:
 				Props.box(item, Vector3(0.1, 0.003, 0.004), Vector3(-0.005, 0.04 - k * 0.018, 0.0005), Color("8a8f98"))
 			target = Vector3(0.07, -0.09, -0.34)      # sağ altta: ortada karşıdakini (Nihat, Tolga) örtüyordu
+		"knife":
+			# Bıçak (kanca iplerini kesmek, 29): ahşap sap, çelik namlu; ucu ileri
+			Props.cyl(item, 0.013, 0.1, Vector3(0, -0.04, 0), Color("5a3a22"), Vector3.ZERO, 6)
+			Props.box(item, Vector3(0.022, 0.15, 0.004), Vector3(0, 0.08, 0), Color("c8ccd4"))
+			item.rotation_degrees = Vector3(-60, 10, -10)
+			target = Vector3(0.06, -0.12, -0.34)
+		"powder":
+			# Barut torbası (10B namluya): ağzı bağlı kaba bez kese, kenarından siyah barut taşar
+			Props.ball(item, 0.07, Vector3.ZERO, Color("b8a078"), Vector3(1.0, 1.25, 0.9), 8)
+			Props.cyl(item, 0.022, 0.03, Vector3(0, 0.09, 0), Color("6a4a2c"), Vector3.ZERO, 6)
+			Props.ball(item, 0.02, Vector3(0.02, 0.1, 0.01), Color("2a2a2a"), Vector3.ONE, 5)
+			target = Vector3(0.04, -0.1, -0.34)
+		"torch":
+			# Meşale (fitili yakmak): sap, yağlı bez, alev ve ışık
+			Props.cyl(item, 0.016, 0.42, Vector3(0, -0.1, 0), Color("6a4a2c"), Vector3.ZERO, 6)
+			Props.cyl(item, 0.03, 0.08, Vector3(0, 0.13, 0), Color("3a2a1c"), Vector3.ZERO, 6)
+			Props.ball(item, 0.05, Vector3(0, 0.2, 0), Color("ffb040"), Vector3(1.0, 1.6, 1.0), 6, 3.0)
+			var fl := OmniLight3D.new()
+			fl.light_color = Color("ff9a40")
+			fl.omni_range = 4.0
+			fl.light_energy = 1.6
+			fl.position = Vector3(0, 0.25, 0)
+			item.add_child(fl)
+			target = Vector3(0.07, -0.12, -0.4)
+		"hammer":
+			# Tokmak (kazık çakmak, 28O): sap ve ahşap baş
+			Props.cyl(item, 0.014, 0.32, Vector3(0, -0.06, 0), Color("6a4a2c"), Vector3.ZERO, 6)
+			Props.cyl(item, 0.04, 0.13, Vector3(0, 0.1, 0), Color("8a6a44"), Vector3(0, 0, 90), 8)
+			target = Vector3(0.07, -0.12, -0.36)
 		"slipper":
 			# Yedek terlik (Hikmet'in): kahverengi taban, üstte kayış
 			Props.box(item, Vector3(0.1, 0.02, 0.24), Vector3.ZERO, Color("6a4a30"), Vector3(70, 0, 0))

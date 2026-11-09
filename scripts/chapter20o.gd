@@ -338,6 +338,7 @@ func _cool_step() -> void:
 	Props.cyl(jug, 0.025, 0.06, Vector3(0, 0.1, 0), Color("8a5430"), Vector3.ZERO, 6)
 	Props.strip_outlines(jug)
 	player.free_hold = jug.position + Vector3(-0.06, 0.0, 0.04)
+	Carry.attach(player, jug, {"weight": 0.3})
 	var t := 0.0
 	var limit := 10.0
 	while _cool < COOL_TIME and t < limit:

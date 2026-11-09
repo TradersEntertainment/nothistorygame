@@ -542,6 +542,7 @@ func _pick(kind: String) -> void:
 	Props.strip_outlines(_carry_node)
 	player.free_hold = Vector3(0.1, -0.5, -0.82)        # sol el yükü tutar (kameraya asılı duruyordu)
 	player.speed_mult = 0.75
+	Carry.attach(player, _carry_node, {"weight": 0.8 if kind in ["barrel", "plank"] else 0.6})     # ağırlığıyla sallanır
 	Audio.sfx("land_pot", -10.0, 0.8)
 	_update_objective()
 

@@ -56,6 +56,7 @@ var _spotted := false
 var _water := 0
 var _carry: Node3D
 var carrying := false
+var _carry_c: Carry
 var _fire_t := 0.0
 var _t := 0.0
 var _approach := 0.0
@@ -889,17 +890,19 @@ func _on_interact(id: String) -> void:
 			Props.box(_carry, Vector3(0.13, 0.5, 0.13), Vector3(0.05, 0.75, 0.12), Color("23262d"), Vector3(-20, 0, -12))
 			Props.strip_outlines(_carry)
 			player.speed_mult = 0.8
+			_carry_c = Carry.attach(player, _carry, {"weight": 0.6, "balance": true})
 			Audio.sfx("splash", -12.0, 1.2)
 			_update_fire_objective()
 		"galley_fire":
 			if not carrying:
 				return
+			var fill := _carry_c.fill if is_instance_valid(_carry_c) else 1.0     # yolda dökülen su söndürmez
 			_drop()
 			_water += 1
 			var aim := FIRE_GALLEY + Vector3(randf_range(-1.5, 1.5), 2.0, -0.4)
 			_water_arc(player.camera.global_position + Vector3(0, -0.3, 0) - player.camera.global_basis.z * 0.6, aim)
 			Audio.sfx("splash", -2.0, 0.9)
-			_extinguish(1.0, aim)
+			_extinguish(fill, aim)
 			# Yalnız yangın gerçekten söndüğünde "Söndü!"; 3. kovadan sonra nötr replik (sayı sabitlenmesin)
 			var line := "D17O_T_POUR_OUT" if _pours >= POUR_GOAL else ("D17O_T_POUR_%d" % _water if _water <= 2 else "D17O_T_POUR_MORE")
 			hud.bark("SPK_TOLGA", line, 2.2)

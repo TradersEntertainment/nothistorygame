@@ -302,6 +302,7 @@ func _take() -> void:
 	Props.strip_outlines(_carry)
 	player.free_hold = Vector3(0.2, -0.52, -0.72)        # sol el fıçıyı tutar (havada süzülüyordu)
 	player.speed_mult = 0.7
+	Carry.attach(player, _carry, {"weight": 0.85})
 	_update_objective()
 
 

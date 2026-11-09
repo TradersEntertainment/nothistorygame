@@ -5836,6 +5836,7 @@ UI_PROMPT30O_RISE,E: kalkmayı dene,E: try to get up
 UI_OBJ30O_BACK,Ateşlerin hizasına geri çekil,Fall back to the line of the fires
 UI_OBJ30O_TOWER,Kuleye tırman (W) · tüfekçiyi sustur,Climb the tower (W) · silence the gunner
 UI_OBJ30O_DODGE,Tüfek dolu! Yana atla (A/D),The gun is loaded! Dodge sideways (A/D)
+UI_CARRY_STEADY,"Dengede tut: koşma, sert dönme","Keep it steady: don't run, don't turn sharply"
 UI_CH30O_STATS,Kaçılan taş: %d/%d   ·   Dosya: %d/%d sayfa,Stones dodged: %d/%d   ·   File: %d/%d pages
 UI_CH30O_CAPTIVE,Gece yarısından sonra · surun dibi: bölük çekildi; ölüler toplanırken bir Rum çıkışı yerde yatan kâtibi buldu,"After midnight · the foot of the wall: the company has pulled back; gathering the dead, a Greek sally finds the scribe lying there"
 FLOW30O_LADDER,Zağanos'un merdivenleri,Zaganos's ladders
@@ -5852,6 +5853,10 @@ D30O_Z_01,"Kâtip! Benim merdivenimi sen taşıyacaksın. Bak, sarayın ışıkl
 D30O_T_01,"Paşam, ben sabah dokuzda ofisin ışığını yakan bir sigortacıyım. Ama merdiveni taşırım; merdiven taşımak bilinen bir risk.","Pasha, I'm an insurance man who switches lights on at nine in the morning. But I'll carry the ladder, carrying a ladder is a known risk."
 D30O_Z_PLANT,"Dayayın merdivenleri! Çıkın, yukarı!",Ladder to the wall! Climb! Up!
 D30O_T_ARROW,Ay! Ok! Merdiveni bırakmayın!,Ow! Arrow! Don't drop the ladder!
+D_CARRY_SPILL_1,"Ay, dökülüyor!","Whoa, it's spilling!"
+D_CARRY_SPILL_2,Yavaş... yavaş. Bununla koşulmuyor.,Easy... easy. You can't run with this.
+D_CARRY_SPILL_3,Yarısı yolda kaldı.,Half of it stayed on the road.
+D_CARRY_EMPTY,Kova boş geldi. Bir daha doldurmam lazım.,The bucket arrived empty. I'll have to fill it again.
 D30O_T_CLIMB,"On iki metre, kırk bir basamak. Saymayacağım... Tamam, saydım.",Twelve metres. Forty-one rungs. I won't count. I counted.
 D30O_T_WALL,"Yukarıdayım! Sur yolu dar, karşımdaki adamlar geniş.","I'm up. The wall-walk is narrow, the men are wide."
 D30O_D_EMPEROR,İmparator geliyor! İmparator sura çıkıyor!,The Emperor is coming! The Emperor is coming up to the wall!

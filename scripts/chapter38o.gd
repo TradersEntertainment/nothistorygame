@@ -1514,6 +1514,7 @@ func _on_interact(id: String) -> void:
 				_carry.position = Vector3(-0.3, -0.62, -0.8)
 				player.camera.add_child(_carry)
 				player.free_hold = Vector3(-0.3, -0.32, -0.8)       # sol el kovanın kulpunda
+				Carry.attach(player, _carry, {"weight": 0.55, "balance": true})
 				_sand.visible = false                                # güvertedeki kova alındı (iki kez görünmesin)
 				Props.cyl(_carry, 0.17, 0.3, Vector3.ZERO, Color("6a4a2c"), Vector3.ZERO, 10, 0.85)
 				Props.cyl(_carry, 0.15, 0.02, Vector3(0, 0.14, 0), Color("d8c08a"), Vector3.ZERO, 10)

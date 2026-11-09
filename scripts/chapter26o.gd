@@ -720,6 +720,7 @@ func _pick(kind: String) -> void:
 	_carry.position = Vector3(-0.3, -0.62, -0.8)
 	player.camera.add_child(_carry)
 	player.free_hold = Vector3(-0.3, -0.32, -0.8)       # sol el kovanın kulpunda
+	Carry.attach(player, _carry, {"weight": 0.6, "balance": true})
 	Props.cyl(_carry, 0.17, 0.32, Vector3.ZERO, Color("6a4a2c"), Vector3.ZERO, 10, 0.2)
 	for y: float in [-0.1, 0.1]:
 		Props.cyl(_carry, 0.185, 0.03, Vector3(0, y, 0), Color("3a3a40"), Vector3.ZERO, 10)
@@ -739,6 +740,7 @@ func _pick_ladder() -> void:
 	_carry.position = Vector3(0.1, -0.6, -1.4)
 	player.camera.add_child(_carry)
 	player.free_hold = Vector3(-0.2, -0.6, -0.5)        # sol el merdivenin sol sırığında
+	Carry.attach(player, _carry, {"weight": 0.95})
 	for sx: float in [-0.3, 0.3]:
 		Props.cyl(_carry, 0.04, 3.0, Vector3(sx, 0, 0), Color("6a4a2c"), Vector3(90, 0, 0), 5)
 	Props.strip_outlines(_carry)

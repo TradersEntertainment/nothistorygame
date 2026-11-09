@@ -129,6 +129,10 @@ D_ARENA_N_O,,SPK_NIHAT,,0,"Tolga Bey, bu kayıt Büro'nun tatbikatıdır. Tarihe
 D_AYA_CLERK,,SPK_CLERK,[shouting],0,"[Yunanca] İn oradan! Orası çatı, seyir terası değil! Tamirci misin? Form getir!","[Greek] Get down from there! That's a roof, not a viewing deck! Are you a repairman? Bring a form!",kod
 D_AYA_TOP,,SPK_TOLGA,,0,"Ayasofya'nın çatısı! Surlar, Haliç, karşıda Fatih'in otağı... Buradan her şey küçücük. Ben dahil.","The roof of Hagia Sophia! The walls, the Golden Horn, the Sultan's tent across the way... Everything's tiny from here. Me included.",kod
 D_AYA_TOP_AFTER,,SPK_TOLGA,,0,"Ayasofya'nın çatısı! Surlar, Haliç, burçlarda yeni sancaklar... Buradan her şey küçücük. Ben dahil.","The roof of Hagia Sophia! The walls, the Golden Horn, new banners on the towers... Everything's tiny from up here. Me included.",kod
+D_CARRY_EMPTY,,SPK_TOLGA,,0,Kova boş geldi. Bir daha doldurmam lazım.,The bucket arrived empty. I'll have to fill it again.,kod
+D_CARRY_SPILL_1,,SPK_TOLGA,[excited],0,"Ay, dökülüyor!","Whoa, it's spilling!",kod
+D_CARRY_SPILL_2,,SPK_TOLGA,,0,Yavaş... yavaş. Bununla koşulmuyor.,Easy... easy. You can't run with this.,kod
+D_CARRY_SPILL_3,,SPK_TOLGA,,0,Yarısı yolda kaldı.,Half of it stayed on the road.,kod
 D_CAT_FOUND,,SPK_TOLGA,,0,Turuncu bir kedi! Gato sen misin? ...Peşime takıldı. Sanırım evet.,An orange cat! Are you Gato? ...He's following me. I guess so.,kod
 D_CHICKEN_CATCH_1,,SPK_TOLGA,,0,Yakaladım! ...Kaçtı. Ama yakaladım.,Got it! ...It escaped. But I got it.,kod
 D_CHICKEN_CATCH_2,,SPK_TOLGA,,0,İkinci tavuk! Kadri görse çorba sanır.,Second hen! Kadri would think it's soup.,kod

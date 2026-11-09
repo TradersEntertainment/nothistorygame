@@ -278,7 +278,7 @@ func _arrow_volley(at: Vector3) -> void:
 			Vector3(randf_range(-20, 20), 0, randf_range(-20, 20)), 4)
 		get_tree().create_timer(6.0, false).timeout.connect(a.queue_free)
 	var d := Vector2(player.global_position.x - at.x, player.global_position.z - at.z).length()
-	if d < 1.1 and phase == "carry":
+	if d < 1.1 and (phase == "carry" or (phase == "retreat" and carried)):
 		arrow_hits += 1
 		_slow_t = 1.3
 		player.hurt(6.0, at + Vector3(0, 1.0, 0), true)
@@ -436,16 +436,20 @@ var _top_man: Soldier
 
 
 ## Merdivenin tepesindeki savunucu sur yolunda doğuya yürüyüp uzaklaşır (oyuncu çıkınca kılıç dalgası başlar)
+## Yağı döken savunucu merdiven başından iki adım geri çekilir, kılıcını çeker ve Tolga'yı bekler: sur yolundaki ilk
+## dalganın ilk rakibi odur (aynı kıyafet). Eskiden 4 m yürüyüp kayboluyordu, tırmanışın karşılığı yoktu.
 func _top_leave() -> void:
 	var m := _top_man
 	if m.rig:
 		m.rig.activity = ""
 	m.rotation.y = PI * 0.5
 	var tw := m.create_tween()
-	tw.tween_property(m, "global_position", m.global_position + Vector3(4.0, 0, 0.2), 1.4)
+	tw.tween_property(m, "global_position", m.global_position + Vector3(2.6, 0, 0.3), 0.9)
 	tw.tween_callback(func():
 		if is_instance_valid(m):
-			m.visible = false)
+			m.equip("sword_shield", Color("7a2a24"))
+			m.face_toward(ladder.top_exit())
+			Audio.sfx("sword_clash", -14.0, 1.6))
 
 
 ## 3. Sur yolu: iki dalga, kuleden tüfekçi. Sonra İmparator meşalelerle gelir (tespit karesi).
@@ -453,12 +457,17 @@ func _wall_fight() -> void:
 	phase = "fight"
 	# Merdiven başındaki savunucu hâlâ oradaysa (oyuncu taşlarla düşüp yukarı varmadan çıkıldıysa) dövüşenlerin
 	# arasında kalmasın: sur yolundan çekilmiş sayılır
-	if is_instance_valid(_top_man) and not _top_man.has_meta("left"):
+	var top_at := Vector3.INF
+	if is_instance_valid(_top_man):
+		if _top_man.visible and _top_man.has_meta("left"):
+			top_at = _top_man.global_position      # kılıcını çekmiş bekliyor: ilk rakip onun yerinden çıkar
 		_top_man.set_meta("left", true)
 		_top_man.visible = false
 	var y := Blachernae.WALK_Y
 	var zc := (Blachernae.WALL_Z0 + Blachernae.WALL_Z1) * 0.5
 	var east := [Vector3(CLIMB_X + 3.6, y, zc), Vector3(CLIMB_X + 2.4, y, zc - 0.6)]
+	if top_at != Vector3.INF:
+		east[0] = Vector3(top_at.x, y, top_at.z)
 	var west := [Vector3(CLIMB_X - 3.6, y, zc), Vector3(CLIMB_X - 2.4, y, zc + 0.4)]
 	var specs := []
 	for k in 2:
@@ -809,11 +818,25 @@ func _retreat() -> void:
 		if GameState.autotest:
 			_on_interact("wounded")
 	hud.set_objective(tr("UI_OBJ30O_BACK"), Vector3(CLIMB_X, 1.0, SAFE_Z))
+	# Surdan hâlâ ok atılıyor: yaralıyla dönüş boş bir yürüyüş değil (kızaran yere ok düşer; isabet sendeletir, yavaşlatır)
+	var volley := 1.2
+	_slow_t = 0.0
 	while player.global_position.z < SAFE_Z:
 		await get_tree().process_frame
+		if get_tree().paused:
+			continue
+		var dt := get_process_delta_time()
 		if GameState.autotest:
-			player.global_position += Vector3(0, 0, 5.0 * get_process_delta_time())
+			player.global_position += Vector3(0, 0, 5.0 * dt)
 			player.global_position.y = Blachernae.slope_y(player.global_position.z) + 0.05
+		_slow_t = maxf(0.0, _slow_t - dt)
+		player.speed_mult = 0.35 if _slow_t > 0.0 else 0.6
+		volley -= dt
+		if volley <= 0.0 and player.global_position.z < SAFE_Z - 4.0:
+			volley = randf_range(1.8, 3.0)
+			var at := player.global_position + Vector3(randf_range(-2.0, 2.0), 0, randf_range(1.5, 4.0))
+			at.y = Blachernae.slope_y(at.z)
+			_arrow_volley(at)
 	player.frozen = true
 	hud.set_objective("")
 	if is_instance_valid(_carry):
@@ -1564,6 +1587,7 @@ func _on_interact(id: String) -> void:
 		Props.strip_outlines(_carry)
 		player.free_hold = Vector3(-0.22, -0.5, -0.42)
 		player.speed_mult = 0.6
+		Carry.attach(player, _carry, {"weight": 1.0})       # omuzdaki adamın ağırlığı: dönüşte gecikir, adımda iner
 		Audio.sfx("land_pot", -10.0, 0.6)
 
 

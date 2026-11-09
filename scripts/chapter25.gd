@@ -262,6 +262,7 @@ func _give_tray() -> void:
 	tray.position = Vector3(0.0, -0.5, -0.75)
 	player.camera.add_child(tray)
 	player.free_hold = Vector3(-0.28, -0.5, -0.72)       # sol el tepsinin kenarında
+	Carry.attach(player, tray, {"weight": 0.35, "balance": true})      # dört bardak: koşan döker
 	Props.cyl(tray, 0.32, 0.03, Vector3.ZERO, Color("c8a040"), Vector3.ZERO, 16)
 	for k in 4:
 		Props.cyl(tray, 0.05, 0.1, Vector3(-0.15 + k * 0.1, 0.06, 0.05 * (k % 2)), Color("c8e0f0"), Vector3.ZERO, 8)

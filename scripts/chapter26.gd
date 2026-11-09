@@ -1901,6 +1901,7 @@ func _pick(kind: String) -> void:
 		Props.cyl(_carry, 0.3, 0.8, Vector3.ZERO, LandWalls.C_WOOD, Vector3(90, 0, 0), 10)
 	Props.strip_outlines(_carry)
 	player.speed_mult = 0.8
+	Carry.attach(player, _carry, {"weight": 0.45 if kind == "water" else 0.85})
 	Audio.sfx("land_thud" if kind == "water" else "land_pot", -12.0, 1.2)
 	_update_objective()
 
