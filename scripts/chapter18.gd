@@ -576,6 +576,7 @@ func _do_planks() -> void:
 	var s := sections[built]
 	var deck: Node3D = s.get_node("Deck")
 	deck.visible = true
+	Stage.hammer_swings(player, 4)        # kalaslar tokmakla çakılır (elde alet yokken "tık" diye oturuyordu)
 	# Kalaslar tek tek inip yerine oturur
 	var k := 0
 	for p in deck.get_children():

@@ -255,6 +255,13 @@ func _place_bowl(at: Vector3) -> void:
 	var d := Vector2(at.x - MINE.x, at.z - MINE.z).length()
 	var strength := clampf(1.0 - d / 10.0, 0.0, 1.0)
 	bowls.append({"node": b, "water": water, "ripple": ripple, "strength": strength})
+	# Kâse elden yere indirilir: Tolga eğilir, kâse elinin önünden zemine iner (yerde kendiliğinden beliriyordu)
+	if not Stage.fast():
+		var end := b.position
+		b.global_position = player.camera.global_position - player.camera.global_basis.z * 0.55 + Vector3(0, -0.45, 0)
+		player.duck(0.5, 0.6)
+		var bt := b.create_tween()
+		bt.tween_property(b, "position", end, 0.45).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_OUT)
 	player.hand_gesture("reach")
 	Audio.sfx("splash", -18.0, 1.6)
 	if d <= FOUND_R:

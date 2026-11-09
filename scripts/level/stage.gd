@@ -125,3 +125,32 @@ static func walk_player(player: Player, target: Vector3, stop := 0.9, look := Ve
 		player.move_mode = mode
 		player.frozen = was_frozen
 		player.face(lk)
+
+
+## Elde tokmak, n kez kalkıp iner (kalas, kazık, direk çakarken): kameranın sağ altında geçici bir tokmak. Her inişte
+## on_hit (varsa) çağrılır. Otomatik testte hızlı. Beklenebilir; beklenmeden de çalışır.
+static func hammer_swings(player: Player, n := 3, on_hit := Callable()) -> void:
+	if player == null or player.camera == null or not player.is_inside_tree():
+		return
+	var hm := Node3D.new()
+	hm.set_meta("transient", true)
+	player.camera.add_child(hm)
+	hm.position = Vector3(0.22, -0.3, -0.55)
+	hm.rotation_degrees = Vector3(-40, 0, -10)
+	Props.cyl(hm, 0.014, 0.32, Vector3(0, -0.06, 0), Color("6a4a2c"), Vector3.ZERO, 6)
+	Props.cyl(hm, 0.045, 0.14, Vector3(0, 0.1, 0), Color("8a6a44"), Vector3(0, 0, 90), 8)
+	Props.strip_outlines(hm)
+	var f := fast()
+	for k in n:
+		if not is_instance_valid(hm):
+			return
+		var tw := hm.create_tween()
+		tw.tween_property(hm, "rotation_degrees", Vector3(55, 0, -10), 0.03 if f else 0.16).set_trans(Tween.TRANS_SINE)
+		tw.tween_property(hm, "rotation_degrees", Vector3(-40, 0, -10), 0.03 if f else 0.09).set_ease(Tween.EASE_IN)
+		await tw.finished
+		if on_hit.is_valid():
+			on_hit.call(k)
+		if is_instance_valid(player):
+			player.shake(0.03)
+	if is_instance_valid(hm):
+		hm.queue_free()

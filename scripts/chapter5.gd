@@ -410,6 +410,7 @@ func _seal() -> void:
 	await _h("D5_H_SEAL")
 	var m := garage.get_node("Zamanator") as Node3D
 	# Mührün tam üstüne, çapraz koli bandı: mühür bozulmadı, sadece "askıya alındı"
+	player.show_prop("tape", 1.8)          # bant elde (el boşken sarılıyordu)
 	player.hand_gesture("rub")
 	Audio.sfx("paper_tear", -8.0, 0.8)
 	for a in [-35.0, 35.0]:

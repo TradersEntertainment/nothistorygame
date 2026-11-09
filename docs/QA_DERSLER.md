@@ -663,3 +663,14 @@ Her bölüm denetiminde ve her düzeltmede bu listeyi baştan uygula. Yeni bir h
 - Bir dize değiştirme betiğinde yeni metin satır sonuyla bitmezse sonraki satır yorumun içine kayar. 22'de
   "_chute_barrel = Node3D.new()" yorumun içinde kaldı; tek bölüm koşusu SCRIPT ERROR verdi. Değişiklikten sonra o
   bölüm mutlaka bir kez koşturulur.
+- Anlatılan alet elde görünmeli, verilen eşya karşıya gitmeli (v0.99.92):
+  - 0'da ok demetleri teslimde elden siliniyordu; artık gedikteki savunucunun göğsüne uzanır, sonra kaybolur;
+  - 30'da merdiven itmek çatallı sırıkla, 21'de kâse elden yere, 5'te bant elde, 18'de tahta tokmakla
+    (Stage.hammer_swings);
+  - 21O'da "destek koy" tek tuştu; artık direk yığından taşınır (Carry), kazı yüzüne dikilir.
+- Bir sahnenin bir dalını düzeltmek, aynı sahnenin öteki dallarını kurtarmaz. 0.99.89'da Urban'ı Tolga'nın yanına
+  getirdik ama fitil dallarında Tolga topun yanına yürüyor, Urban eski yerde kalıyordu; CI'da (çakmak dalı)
+  kamp eşyasının ardından konuştu (VISAUDIT meshhidden). Yerelde yalnız varsayılan koşu geçmişti; ulighter dalında
+  da aynı sorun vardı. Konuşan biri yürüyen oyuncudan geri kalıyorsa repliğin önüne
+  Stage.approach + Stage.settle konur; bir bölüme dokunduktan sonra o bölümün bütün varyantları koşturulur
+  (tests/run_tests.sh'taki satırlar, quick.txt'teki tek satır değil).

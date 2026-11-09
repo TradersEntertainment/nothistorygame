@@ -236,7 +236,9 @@ func _run() -> void:
 func _update_objective() -> void:
 	if phase != "dig":
 		return
-	if need_support:
+	if need_support and is_instance_valid(_beam):
+		hud.set_objective(tr("UI_OBJ21O_SUPPORT_CARRY") % [dug, GOAL], face.global_position + Vector3(0, 1.2, 0))
+	elif need_support:
 		hud.set_objective(tr("UI_OBJ21O_SUPPORT") % [dug, GOAL], Vector3(1.0, 1.0, 2.4))
 	else:
 		hud.set_objective(tr("UI_OBJ21O_DIG") % [dug, GOAL], face.global_position + Vector3(0, 1.2, 0))
@@ -543,20 +545,59 @@ func _drop_pick() -> void:
 func _on_focus(id: String) -> void:
 	match id:
 		"face":
-			hud.set_prompt(tr("UI_PROMPT21O_DIG") if phase == "dig" and not need_support else "")
+			if is_instance_valid(_beam):
+				hud.set_prompt(tr("UI_PROMPT21O_SUPPORT"))
+			else:
+				hud.set_prompt(tr("UI_PROMPT21O_DIG") if phase == "dig" and not need_support else "")
 		"supports":
 			hud.set_prompt(tr("UI_PROMPT21O_SUPPORT") if phase == "dig" and need_support else "")
 		_:
 			hud.set_prompt("")
 
 
+## Direk girişteki yığından alınır, omuzda kazı yüzüne taşınır, orada tavana dikilir. Eskiden girişte E'ye basınca
+## direk 10-20 m ötedeki kazı yüzünde kendiliğinden beliriyordu (taşıyan da, çakan da yoktu).
+var _beam: Node3D
+
+
 func _on_interact(id: String) -> void:
-	if id == "supports" and phase == "dig" and need_support:
-		need_support = false
-		_support(dug - 1)
-		Audio.sfx("land_pot", -8.0, 0.8)
-		hud.bark("SPK_MINER", "D21O_D_SUPPORT", 2.0)
+	if id == "supports" and phase == "dig" and need_support and not is_instance_valid(_beam):
+		if is_instance_valid(_pick):
+			_pick.visible = false             # kazma bele: iki el direkte
+		_beam = Node3D.new()
+		player.camera.add_child(_beam)
+		_beam.position = Vector3(0.3, -0.42, -0.9)
+		Props.cyl(_beam, 0.08, 2.0, Vector3.ZERO, Color("6a4a2c"), Vector3(80, 25, 0), 6)
+		Props.strip_outlines(_beam)
+		player.free_hold = Vector3(-0.05, -0.36, -0.7)
+		player.speed_mult = 0.75
+		Carry.attach(player, _beam, {"weight": 0.8})
+		Audio.sfx("land_pot", -10.0, 0.8)
 		_update_objective()
+		if GameState.autotest:
+			_place_beam()
+	elif id == "face" and is_instance_valid(_beam):
+		_place_beam()
+
+
+func _place_beam() -> void:
+	if not is_instance_valid(_beam):
+		return
+	if not GameState.autotest:
+		await Stage.walk_player(player, face.global_position, 1.6, face.global_position + Vector3(0, 1.6, 0), 2.0)
+	_beam.queue_free()
+	_beam = null
+	player.free_hold = Vector3.INF
+	if is_instance_valid(_pick):
+		_pick.visible = true
+		player.free_hold = _pick.position
+	player.speed_mult = 1.0
+	need_support = false
+	_support(dug - 1)
+	player.hand_gesture("reach")
+	Audio.sfx("land_pot", -8.0, 0.8)
+	hud.bark("SPK_MINER", "D21O_D_SUPPORT", 2.0)
+	_update_objective()
 
 
 # ================================================================ bölüm sonu

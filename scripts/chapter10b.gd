@@ -446,16 +446,20 @@ func _fire() -> void:
 	var how: String = "urban" if c < 0 else String(ids[c])
 	if how == "lighter":
 		await _go(Vector3(1.75, 0, -2.9), Vector3(0.1, 2.1, -3.0))      # fitilin yanına (5 m öteden yakıyordu)
+		Stage.approach(urban, player.global_position, 2.0, 1.8)     # Urban yanına gelir (kamp eşyalarının ardında kalıyordu)
 		player.show_prop("lighter", 1.4)       # çakmak çakılır, fitile uzatılır
 		player.hand_gesture("reach")
 		await _wait(0.8)
 		GameState.spend("lighter", "fuse_10b")
+		await Stage.settle(urban)
 		await _say("SPK_URBAN", "D10B_U_FUSE_LIGHTER")
 	elif how == "torch":
 		# Meşale: Urban uzattırır (seçenek vardı ama hiçbir tepki yoktu)
 		await _go(Vector3(1.75, 0, -2.9), Vector3(0.1, 2.1, -3.0))
+		Stage.approach(urban, player.global_position, 2.0, 1.8)     # Urban yanına gelir
 		player.show_prop("torch", 2.2)        # meşale elde, fitile uzanır (elde hiçbir şey yoktu)
 		player.hand_gesture("reach")
+		await Stage.settle(urban)
 		await _say("SPK_URBAN", "D10B_U_FUSE_TORCH")
 	elif how == "urban":
 		# Çakmak 6a'dan beri Urban'da: fitili Tolga'nın ateş kutusuyla kendisi yakar (replik _ULIGHTER sürümü)
@@ -473,6 +477,9 @@ func _fire() -> void:
 	# Fitil yandı: Tolga topun yanından geri çekilir (ateşlenirken namlunun dibinde durmasın)
 	if how != "urban":
 		Stage.walk_player(player, TOLGA_AT, 0.0, CANNON + Vector3(0, 1.4, 0))
+	# Urban da yanan fitilden çekilir, Tolga'nın yanına gelir (topun dibinde, kamp eşyalarının ardından bağırıyordu)
+	Stage.approach(urban, TOLGA_AT + Vector3(1.2, 0, -1.6), 0.0, 1.8)
+	await Stage.settle(urban)
 	await _say("SPK_URBAN", "D10B_U_EARS")
 	await _wait(1.0)
 	if _risk >= 2:

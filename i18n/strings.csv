@@ -4598,6 +4598,7 @@ UI_OBJ21O_PHOTO,Tespit et: iş başındaki madenciler,Record: the miners at work
 PHOTO_SIEGE21O,Novo Brdo'lu madenciler,The miners from Novo Brdo
 UI_OBJ21O_DIG,Kazı yüzünü kaz (E basılı) · %d/%d,Dig the face (hold E) · %d/%d
 UI_OBJ21O_SUPPORT,Tavanı destekle: girişteki direklerden al (E) · %d/%d,Prop up the roof: take a beam from the entrance (E) · %d/%d
+UI_OBJ21O_SUPPORT_CARRY,"Direği kazı yüzüne taşı, tavana dik (E) · %d/%d",Carry the beam to the tunnel face and prop the roof (E) · %d/%d
 UI_PROMPT21O_DIG,[E basılı] Kaz,[Hold E] Dig
 UI_PROMPT21O_SUPPORT,[E] Direk al ve tavana koy,[E] Take a beam and prop the roof
 UI_CH21O_DIG,Kazılıyor,Digging

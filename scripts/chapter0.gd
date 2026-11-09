@@ -235,7 +235,19 @@ func _hit() -> void:
 	player.frozen = true
 	hud.set_objective("")
 	if _carry:
-		_carry.queue_free()
+		# Demetler gedikteki savunucuya uzatılır: kolun altından onun göğsüne gider (eskiden elden siliniyordu)
+		var who := hud.find_speaker("SPK_DEFENDER")
+		var to := player.camera.global_position - player.camera.global_basis.z * 1.3 + Vector3(0, -0.45, 0)
+		if who and who.global_position.distance_to(player.global_position) < 6.0:
+			to = who.global_position + Vector3(0, 1.1, 0)
+		var xf := _carry.global_transform
+		_carry.get_parent().remove_child(_carry)
+		add_child(_carry)
+		_carry.global_transform = xf
+		player.hand_gesture("reach")
+		var ht := _carry.create_tween()
+		ht.tween_property(_carry, "global_position", to, 0.05 if Stage.fast() else 0.4).set_trans(Tween.TRANS_SINE)
+		ht.tween_callback(_carry.queue_free)
 		_carry = null
 	Audio.sfx("land_thud", -10.0)
 	hud.bark("SPK_DEFENDER", "D0_S_ARROWS", 2.0)
