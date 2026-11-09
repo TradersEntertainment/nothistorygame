@@ -219,12 +219,14 @@ func _run() -> void:
 	await _th("D10A_TH_03")
 	player.face(theodoros.global_position + Vector3(0, 1.5, 0))
 	var cube := "cube" in GameState.bag
-	await _t("D10A_T_04_CUBE" if cube else "D10A_T_04")
-	await _th("D10A_TH_05")
+	# Son iki replik oyuncu serbestken, hedef ekrandayken söylenir (34 sn donuk giriş; iş en sonda söyleniyordu)
 	phase = "free"
 	player.frozen = false
 	_update_objective()
+	hud.say_chain([["SPK_TOLGA", "D10A_T_04_CUBE" if cube else "D10A_T_04"], ["SPK_THEODOROS", "D10A_TH_05"]])
 	if GameState.autotest:
+		while hud.chain_busy():      # test botu ışınlanır: konuşan görüşten çıkmasın
+			await get_tree().process_frame
 		await _auto_sort()
 	while phase == "free":
 		await get_tree().process_frame

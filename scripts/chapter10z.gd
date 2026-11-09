@@ -206,12 +206,14 @@ func _cooking() -> void:
 		var val := 0.0
 		var auto_at := 0.93 if (v in ["fire", "thermos"] and i < 2) else 0.7
 		var steam := Vfx.steam(self, stove + Vector3(0, 1.2, 0))
+		var since := 0.0      # ilk yarım saniyede tuş sayılmaz: aynı tuş repliği de geçiyor, çubuk 0'da duruyordu
 		while true:
 			if get_tree().paused:      # duraklatma menüsünde ateş çubuğu durur
 				await get_tree().process_frame
 				continue
 			var prev_val := val
 			t += get_process_delta_time()
+			since += get_process_delta_time()
 			_stir(t)
 			val = pingpong(t * (0.6 + i * 0.2), 1.0)
 			# Otomatik test: hedef değerin geçildiği kare yakalanır, değer tam hedefe sabitlenir (düşük FPS'te kare
@@ -221,7 +223,7 @@ func _cooking() -> void:
 			meter.value = val
 			if GameState.autotest and val == auto_at:
 				break
-			if Input.is_action_just_pressed("interact") or Input.is_action_just_pressed("kick"):
+			if since > 0.5 and (Input.is_action_just_pressed("interact") or Input.is_action_just_pressed("kick")):
 				break
 			await get_tree().process_frame
 		meter.flash = 1.0

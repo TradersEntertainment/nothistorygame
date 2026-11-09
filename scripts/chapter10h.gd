@@ -175,7 +175,9 @@ func _run() -> void:
 	await hud.fade_to(1.0, 0.6)
 	_place_audience()
 	await hud.fade_to(0.0, 0.8)
+	hud.set_objective(tr("UI_OBJ10H_AUDIENCE"))      # huzurda ne yapılacağı hiç söylenmiyordu
 	await _audience()
+	hud.set_objective("")
 	await _private()
 	if _helping:
 		await _night()
@@ -326,14 +328,16 @@ func _night() -> void:
 
 func _update_objective() -> void:
 	var lines := PackedStringArray([tr("UI_OBJ10H_NIGHT")])
+	# Eşyası çantada olmayan iş yapılamaz: listede "✗", işareti yok (olmayan bantla gediğe yollanıyordu)
+	var cant := {"gedik": not GameState.has_item("tape"), "niko": not GameState.has_item("chickpeas")}
 	for id in ["gedik", "giustiniani", "niko"]:
-		lines.append(("✓ " if _done.has(id) else "· ") + tr("UI_OBJ10H_" + id.to_upper()))
+		lines.append(("✓ " if _done.has(id) else ("✗ " if cant.get(id, false) else "· ")) + tr("UI_OBJ10H_" + id.to_upper()))
 	lines.append(tr("UI_OBJ10H_EXIT"))
 	# Kapı (çıkış) altın; yapılmamış işlerin hepsi kendi renginde, adlarıyla (eskiden yalnız en yakını gösteriliyordu)
 	var names := {}
 	for id in ["gedik", "giustiniani", "niko"]:
 		names[id] = tr("UI_OBJ10H_" + id.to_upper()).split(":")[0].trim_prefix("📦 ").trim_prefix("🔋 ").trim_prefix("🥜 ")
-	var tasks := hud.spots(["gedik", "giustiniani", "niko"], func(id): return _done.has(id), names, 0.9)
+	var tasks := hud.spots(["gedik", "giustiniani", "niko"], func(id): return _done.has(id) or cant.get(str(id), false), names, 0.9)
 	hud.set_objective("\n".join(lines), hud.spot("exit"), 0.9, tasks, tr("UI_OBJ10H_EXIT").get_slice(":", 1).strip_edges())
 
 

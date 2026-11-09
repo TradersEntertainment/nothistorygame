@@ -115,10 +115,20 @@ func _loyalty() -> float:
 	return float(GameState.flags.get("sadakat", 60))
 
 
+var _seek_range := 45.0     # tarayıcının menzili: başlangıç uzaklığından az olmaz (47 m'den başlayınca gösterge 0'dı)
+var _seek_t := 0.0
+var _seek_marked := false
+
+
 func _process(_delta: float) -> void:
 	if phase == "seek" and tolga_npc:
 		var d := player.global_position.distance_to(tolga_npc.global_position)
-		var v := clampf(1.0 - d / 45.0, 0.0, 1.0)
+		var v := clampf(1.0 - d / _seek_range, 0.0, 1.0)
+		# Tarayıcı yön göstermez: 45 sn'de bulunamadıysa hedef işareti de çıkar
+		_seek_t += _delta
+		if _seek_t > 45.0 and not _seek_marked and not hud.chain_busy():
+			_seek_marked = true
+			hud.set_objective(tr("UI_OBJ11"), tolga_npc, 1.9)
 		hud.set_chase(tr("UI_SCANNER"), v, true, false)      # tarayıcı göstergesi kovalamaca müziği çalmaz
 		player.set_scanner(v)
 		# Tarayıcı bipi: yaklaştıkça sıklaşır (sessizdi)
@@ -183,24 +193,32 @@ func _run() -> void:
 	player.shake(0.15)
 	await hud.fade_to(0.0, 1.0)
 	await _n("D11_N_ARRIVE")
-	# Şenlik ateşleri: tarihte 26 Mayıs gecesi; burada bir ay erken (Büro bunu anomali olarak kaydeder)
-	await _n("D11_N_ILLUM")
-	await _say("SPK_MUFIDE", "D11_M_ILLUM")
-	await _n("D11_N_ILLUM_2")
-	# Bölüm 7'de görünürken uçtuysa ordugâh bu gece "fötr şapkalı cin"i konuşuyor
-	if GameState.flags.get("flying_legend", false):
-		await _say("SPK_WITNESS", "D11_RUMOR_1")
-		await _say("SPK_WITNESS", "D11_RUMOR_2")
-		await _n("D11_N_RUMOR")
+	var legend: bool = GameState.flags.get("flying_legend", false)
 	if not _found:
+		# Şenlik ateşleri: tarihte 26 Mayıs gecesi; burada bir ay erken (Büro bunu anomali olarak kaydeder)
+		await _n("D11_N_ILLUM")
+		await _say("SPK_MUFIDE", "D11_M_ILLUM")
+		await _n("D11_N_ILLUM_2")
+		# Bölüm 7'de görünürken uçtuysa ordugâh bu gece "fötr şapkalı cin"i konuşuyor
+		if legend:
+			await _say("SPK_WITNESS", "D11_RUMOR_1")
+			await _say("SPK_WITNESS", "D11_RUMOR_2")
+			await _n("D11_N_RUMOR")
 		await _lost()
 	else:
-		await _say("SPK_MUFIDE", "D11_M_FOUND")
-		await _n("D11_N_FOUND")
+		# Arama hemen başlar: ateşler, telsiz ve söylenti oyuncu yürürken konuşulur (35-50 sn donuktu)
+		var lines: Array = [["SPK_NIHAT", "D11_N_ILLUM"], ["SPK_MUFIDE", "D11_M_ILLUM"], ["SPK_NIHAT", "D11_N_ILLUM_2"]]
+		if legend:
+			lines.append_array([["SPK_WITNESS", "D11_RUMOR_1"], ["SPK_WITNESS", "D11_RUMOR_2"], ["SPK_NIHAT", "D11_N_RUMOR"]])
+		lines.append_array([["SPK_MUFIDE", "D11_M_FOUND"], ["SPK_NIHAT", "D11_N_FOUND"]])
 		phase = "seek"
+		_seek_range = maxf(45.0, player.global_position.distance_to(tolga_npc.global_position) * 1.15) if tolga_npc else 45.0
 		hud.set_objective(tr("UI_OBJ11"))
 		player.frozen = false
+		hud.say_chain(lines)
 		if GameState.autotest:
+			while hud.chain_busy():      # test botu ışınlanır: konuşan görüşten çıkmasın
+				await get_tree().process_frame
 			await _confront()
 	while _outcome == "":
 		await get_tree().process_frame

@@ -918,3 +918,22 @@ Her bölüm denetiminde ve her düzeltmede bu listeyi baştan uygula. Yeni bir h
   kaldırıldı. Ders: ödülü gevşetirken ödülün dayandığı sahneye bak (hangi ipucu hangi repliği besliyor).
   Seslendirilmiş replik uzarsa donuk süre de uzar: yeni D3_N_04 oyuncu serbestken çalar.
 - docs/EGLENCE.md niyet sütunu artık "(taslak)" önerilerle dolu (Opus, kod ve senaryo başlıklarından); sahibi onaylar.
+- v0.99.110, akış incelemesinin bütün oyuna yayılması (Bölüm 4-14; 10 grup denetçi, grup başına bir rapor):
+  - Açılan yolun işareti o yolda kalır: Bölüm 6'da "A: Kadri ✓" bitti sanılıyordu, işaret başka kapıya kayıyordu; oysa
+    fesi değiştirip aynı kişiyle bir kez daha konuşmak gerekiyordu. "✓" yerine ne eksikse o yazılır.
+  - Şartı tutmayan konuşma menü açmaz, repliğini bir kez söyler (fes repliği iki kez, arada boş bir eşya menüsü).
+  - Sinematik HUD'da serbest iş varsa `hud.marker_in_cinematic = true` (12b meşaleleri: bölümün tek işi işaretsizdi).
+  - Sıcak-soğuk gösterge başlangıç uzaklığını kapsamalı (Bölüm 11: 47 m'den başlayıp 45 m menzille 0 gösteriyordu);
+    yön vermeyen gösterge bir süre sonra işaretle desteklenir.
+  - Süre sayacı `_busy` iken işlemez (10g çanı, 8 çay molası): Bölüm 3 asansöründeki dersin aynısı, üç bölümde daha vardı.
+  - Söz ile gösterge aynı anı göstermeli (10b: "kalıp dolunca dur" denirken kalıp kırmızının sonunda doluyordu).
+  - Süreli çubukta ilk yarım saniye tuş sayılmaz: replik geçme tuşu ile durdurma tuşu aynı (10z).
+  - Yapılamayan iş listede "✗" ve işaretsiz (10h: çantada bant yokken gedik işaretliydi).
+  - Uygulanmayanlar: oyuncuyu sahne ortasında serbest bırakan öneriler, düşme sınırı ya da sahnelenmiş yürüyüş varsa
+    (4b tutulma, 10a Nihat, 10b Fatih); denge değişiklikleri (13 kırmızı düğme penceresi, 10z çubuk hızı) sahibine.
+- Yayın denetimi (Opus): ayar ve meta dosyaları kayıtlar gibi yedekli yazılır (`_save_cfg`/`_load_cfg`); eski kayıt olmayan
+  sahneyi gösteriyorsa bölümün sahnesine düşülür; paketli oyunda durum kuran test bayrakları kayıt ve başarım yazdırmaz.
+  Kalanlar docs/LAUNCH_CHECKLIST.md "0.99.110 denetimi" başlığında. Release bekçisi: GitHub tarafında iş başlamadan düşen
+  koşuyu yeniden başlatır, testte düşeni başlatmaz (.github/workflows/release-watchdog.yml).
+- Büro yazı denetimi (Sonnet): olgu ve çeviri düzeltmeleri seslendirmeyle birlikte yapılır; tekrar eden espriler ve zayıf
+  atışmalar sahibine listelenir, kendiliğinden yeniden yazılmaz.

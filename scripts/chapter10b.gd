@@ -250,7 +250,9 @@ func _cast() -> void:
 			meter.value = v
 			# Bronz kalıbın ağzında görünür: kapalı silindirin içinde kalıyordu; dolum arttıkça ağız dolar
 			mold.position.y = FOUNDRY.y + 0.905
-			var sc := 0.15 + 0.85 * v
+			# Kalıp, çubuğun yeşil bölgesinin ortasında (0,7) dolu görünür: "kalıp dolunca dur" sözü çubukla aynı anı
+			# göstersin (kalıp ancak kırmızının sonunda doluyordu, söze uyan döküyordu)
+			var sc := 0.15 + 0.85 * minf(1.0, v / 0.7)
 			mold.scale = Vector3(sc, 1.0, sc)
 			# Otomatik testte kare adımı pencereden büyükse hedef yakalanmaz: tolerans adıma göre
 			if GameState.autotest and absf(v - auto_at) < maxf(0.05, get_process_delta_time() * POUR_SPEED * (1.0 + i * 0.25) * 1.5):

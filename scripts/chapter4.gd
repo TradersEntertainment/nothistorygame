@@ -186,10 +186,10 @@ func _run_4a() -> void:
 	# Kaçış hemen başlar: Hikmet'le konuşma telsizden, oyuncu sinsice ilerlerken akar (eskiden üç replik donuk)
 	_guard_t = WATCH_TIME - 1.0
 	hud.set_objective(tr("UI_OBJ4A_ESCAPE"), Vector3(0, 1.2, Camp.ESCAPE_Z))
-	_flash_prompt(tr("UI_HINT4A"), 7.0)
 	Lore.scatter(self, "4")
 	player.frozen = false
 	phase = "sneak"
+	_hint_4a()
 	hud.say_chain([["SPK_HIKMET", "D4A_H_02"], ["SPK_TOLGA", "D4A_T_03"], ["SPK_TOLGA", "D4A_T_04"]])
 	if GameState.autotest and GameState.autotest_variant in ["item", "caught", "fez", "wet"]:
 		_confront()
@@ -197,6 +197,18 @@ func _run_4a() -> void:
 		await get_tree().process_frame
 	while _busy:
 		await get_tree().process_frame
+
+
+## Nasıl geçileceği ipucu ilk tartışma başlayana dek ekranda kalır: telsiz konuşması sürerken (~17 sn) nöbetçiler
+## tartışmaz, hep bakar; 7 saniyede silinen ipucu tam o sırada gerekiyordu.
+func _hint_4a() -> void:
+	hud.set_prompt(tr("UI_HINT4A"))
+	var shown: String = hud._prompt.text
+	while phase == "sneak" and not _arguing and _outcome == "" and catches == 0 and not _busy:
+		await get_tree().process_frame
+	await _wait(4.0)
+	if hud and hud._prompt.text == shown:
+		hud.set_prompt("")
 
 
 func _sneak_step(delta: float) -> void:
@@ -403,6 +415,8 @@ func _confront() -> void:
 		return
 	await _say("SPK_HUSEYIN", "D4A_HU_CAUGHT_M" if start == "market" else "D4A_HU_CAUGHT")
 	await _back_to_start(true)
+	# İkinci yakalanış bölümü başka sona götürür: sınır oyuncuya söylenir (gizliydi)
+	hud.set_objective(tr("UI_OBJ4A_ESCAPE2"), Vector3(0, 1.2, Camp.ESCAPE_Z))
 	_busy = false
 	if GameState.autotest and GameState.autotest_variant == "caught":
 		_confront.call_deferred()

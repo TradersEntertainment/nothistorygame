@@ -1,0 +1,41 @@
+# Release bekçisi: VERSION'daki sürüm yayınlanmamışsa ve Release koşusu GitHub tarafında iş başlamadan düştüyse
+# ("Internal server error", hiç adım koşmadan biten koşu) yayını yeniden başlatır. Testlerin gerçekten düştüğü
+# koşuya dokunmaz; bir commit için en çok üç deneme yapılır.
+name: Release bekçisi
+
+on:
+  schedule:
+    - cron: "17 * * * *"
+  workflow_dispatch:
+
+permissions:
+  actions: write
+  contents: read
+
+jobs:
+  watch:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Yayınlanmamış sürüm var mı
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          V=$(tr -d ' \n\r' < VERSION)
+          if gh release view "v$V" >/dev/null 2>&1; then echo "v$V yayında"; exit 0; fi
+          busy=$(gh run list --workflow release.yml --limit 20 --json status --jq '[.[] | select(.status != "completed")] | length')
+          if [ "$busy" != "0" ]; then echo "Release koşusu sürüyor ya da sırada"; exit 0; fi
+          sha=$(git rev-parse HEAD)
+          runs=$(gh run list --workflow release.yml --limit 50 --json databaseId,headSha,conclusion --jq "[.[] | select(.headSha == \"$sha\")]")
+          tries=$(echo "$runs" | jq length)
+          if [ "$tries" -ge 3 ]; then echo "::warning::v$V üç kez denendi, yayınlanamadı; elle bakılmalı"; exit 0; fi
+          if [ "$tries" -gt 0 ]; then
+            last=$(echo "$runs" | jq -r '.[0].databaseId')
+            # Kaç adım başarıyla bitti? Testlere kadar gelmiş bir koşu gerçek bir hatadır: yeniden deneme çözmez.
+            ok=$(gh run view "$last" --json jobs --jq '[.jobs[].steps[]? | select(.conclusion == "success")] | length' 2>/dev/null || echo 0)
+            if [ "${ok:-0}" -ge 3 ]; then echo "::warning::v$V koşusu ($last) testlerde düşmüş; yeniden denenmiyor"; exit 0; fi
+          fi
+          echo "v$V yayınlanmamış ($tries deneme): Release yeniden başlatılıyor"
+          gh workflow run release.yml -f version="$V"

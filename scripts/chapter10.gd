@@ -246,7 +246,15 @@ func _update_objective() -> void:
 	var hints := PackedStringArray()
 	for q in _know:
 		hints.append("✓ " + tr("UI_CH10O_KNOW_" + String(q).to_upper()))
-	hud.set_objective(head + ("\n" + "   ".join(hints) if not hints.is_empty() else ""), hud.spot("aga"), 0.9)
+	# Sıradaki üç kişi üçüncü sorunun cevabını bilir: konuşulmamış olanlar adlarıyla işaretli (hiçbir şey göstermiyordu)
+	var names := {}
+	for id in ["cameleer", "dervish", "tailor"]:
+		names[id] = tr(SPEAKERS[id])
+	var queue: Array = hud.spots(["cameleer", "dervish", "tailor"], func(id): return _talked.has(str(id)), names, 1.9)
+	if _talked.size() >= 3:
+		queue = []
+	hud.set_objective(head + ("\n" + "   ".join(hints) if not hints.is_empty() else ""), hud.spot("aga"), 0.9, queue,
+		tr("SPK_AGA") if not queue.is_empty() else "")
 
 
 # ---------------------------------------------------------------- sıradakiler

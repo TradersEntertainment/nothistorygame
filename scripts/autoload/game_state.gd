@@ -42,6 +42,7 @@ var lore: Dictionary = {}              # Tarih Defteri: bulunan sayfalar (oyunla
 var discovered: Dictionary = {}        # Yaşayan İstanbul: keşfedilen tarihî yapılar (Landmarks1453 anahtarı -> true)
 var locale := "tr"
 var _lang_override := ""
+var _cli_tamper := false         # paketli oyunda --flag/--bag/--outcome/--chaos: kayıt ve başarım yazılmaz
 
 ## Kayıt: bölüm başları (snapshot) dosyaya yazılır. Oynama süresi ve ayarlar.
 var current_chapter := 1
@@ -120,6 +121,7 @@ func _ready() -> void:
 			if not v.is_valid_int():
 				start_scene = "res://scenes/chapter%s.tscn" % v
 		elif arg.begins_with("--chaos"):
+			_cli_tamper = not OS.is_debug_build()
 			# Kaos botu (Chaos): --chaos=TOHUM; tohum yoksa 1
 			add_child.call_deferred(Chaos.new(int(arg.split("=")[1]) if "=" in arg else 1))
 		elif arg.begins_with("--audioaudit="):
@@ -134,10 +136,12 @@ func _ready() -> void:
 			# Görsel denetim: bölüm oynarken eldeki eşya 3 sn'de bir sıradakine geçer (tests/visual_run.sh ile tutuşlar
 			# gerçek sahne ışığında çekilir)
 			# tests/ dışa aktarılmaz: sınıf adıyla değil yolla, çalışırken yüklenir (sınıf adı paketli oyunda betiği derletmiyordu)
-			add_child.call_deferred(load("res://tests/held_cycle.gd").new())
+			if ResourceLoader.exists("res://tests/held_cycle.gd"):
+				add_child.call_deferred(load("res://tests/held_cycle.gd").new())
 		elif arg == "--flowtrace":
 			# Akış dökümü (tests/flow_trace.gd): hedef, istem, replik, donuk/serbest süreler; PACE ile gerçek süreler
-			add_child.call_deferred(load("res://tests/flow_trace.gd").new())
+			if ResourceLoader.exists("res://tests/flow_trace.gd"):
+				add_child.call_deferred(load("res://tests/flow_trace.gd").new())
 		elif arg == "--exitcheck":
 			exitcheck = true
 		elif arg.begins_with("--dialogshots="):
@@ -152,12 +156,14 @@ func _ready() -> void:
 			_diff_override = int(arg.trim_prefix("--difficulty="))
 		elif arg.begins_with("--bag="):
 			# Test/görüntü için çanta: --bag=tape,cube (boş: --bag=none)
+			_cli_tamper = not OS.is_debug_build()
 			for id in arg.trim_prefix("--bag=").split(",", false):
 				if id != "none":
 					bag.append(id)
 			flags["bag_override"] = true
 		elif arg.begins_with("--flag="):
 			# Test için bayrak: --flag=fez:false, --flag=direnc:2, --flag=bureau_from:walls
+			_cli_tamper = not OS.is_debug_build()
 			var fv := arg.trim_prefix("--flag=").split(":")
 			if fv.size() == 2:
 				var val: Variant = fv[1]
@@ -171,6 +177,7 @@ func _ready() -> void:
 			_lang_override = arg.trim_prefix("--lang=")
 		elif arg.begins_with("--outcome="):
 			# Test/görüntü için önceki bölüm sonucu: --outcome=2:2.3
+			_cli_tamper = not OS.is_debug_build()
 			var kv := arg.trim_prefix("--outcome=").split(":")
 			if kv.size() == 2:
 				chapter_outcomes[int(kv[0])] = kv[1]
@@ -814,8 +821,10 @@ func _toggle_hold(event: InputEvent) -> void:
 			Input.action_release(a)
 
 
+## Test koşusu, görüntü çekimi ya da (paketli oyunda) durumu elle kuran bir test bayrağı: kayıt, ayar ve başarım
+## dosyalarına dokunulmaz.
 func _saving_disabled() -> bool:
-	return autotest or shots_dir != ""
+	return autotest or shots_dir != "" or _cli_tamper
 
 
 func _autosave(chapter: int) -> void:
@@ -1014,6 +1023,12 @@ func prepare_load(data: Dictionary, chapter := -1) -> String:
 	var path: String = _snapshots[chapter].get("scene", "")
 	if path == "":
 		path = Siege.PROLOGUE if chapter == Siege.BUREAU else "res://scenes/chapter%d.tscn" % chapter
+	if not ResourceLoader.exists(path):
+		# Eski kayıt, adı değişmiş ya da kaldırılmış bir sahneyi gösteriyor: bölümün kendi sahnesine, o da yoksa başa dön
+		path = "res://scenes/chapter%d.tscn" % chapter
+		if not ResourceLoader.exists(path):
+			skip_title = true
+			path = "res://scenes/chapter1.tscn"
 	return path
 
 
@@ -1082,8 +1097,8 @@ func _setup_buses() -> void:
 
 
 func _load_settings() -> void:
-	var cfg := ConfigFile.new()
-	if not _saving_disabled() and cfg.load(SETTINGS_PATH) == OK:
+	var cfg: ConfigFile = null if _saving_disabled() else _load_cfg(SETTINGS_PATH)
+	if cfg != null:
 		for k in settings.keys():
 			settings[k] = cfg.get_value("settings", k, settings[k])
 	apply_settings.call_deferred()
@@ -1097,7 +1112,7 @@ func set_setting(key: String, value: Variant) -> void:
 	var cfg := ConfigFile.new()
 	for k in settings.keys():
 		cfg.set_value("settings", k, settings[k])
-	cfg.save(SETTINGS_PATH)
+	_save_cfg(cfg, SETTINGS_PATH)
 
 
 ## Yeniden atanmış tuşlar: eylemin ilk klavye tuşu değiştirilir (ok tuşları, kol ve fare atamaları kalır).
@@ -1508,10 +1523,10 @@ func toggle_locale() -> void:
 
 
 func _load_meta() -> void:
-	if autotest or shots_dir != "":
+	if _saving_disabled():
 		return
-	var cfg := ConfigFile.new()
-	if cfg.load(META_PATH) == OK:
+	var cfg := _load_cfg(META_PATH)
+	if cfg != null:
 		seen_outcomes = cfg.get_value("meta", "seen", {})
 		locale = cfg.get_value("meta", "locale", "tr")
 		last_final = cfg.get_value("meta", "last_final", "")
@@ -1524,7 +1539,7 @@ func _load_meta() -> void:
 
 
 func _save_meta() -> void:
-	if autotest or shots_dir != "":
+	if _saving_disabled():
 		return
 	var cfg := ConfigFile.new()
 	cfg.set_value("meta", "seen", seen_outcomes)
@@ -1536,7 +1551,27 @@ func _save_meta() -> void:
 	cfg.set_value("meta", "finals", finals_seen)
 	cfg.set_value("meta", "lore", lore)
 	cfg.set_value("meta", "discovered", discovered)
-	cfg.save(META_PATH)
+	_save_cfg(cfg, META_PATH)
+
+
+## Ayar ve meta dosyaları da kayıtlar gibi yazılır: önce .tmp, sonra yerine; eskisi .bak kalır. Yazım ortasında
+## oyun kapanırsa başarımlar, finaller ve ayarlar sıfırlanmasın: _load_cfg bozuk ya da boş dosyada yedeğe döner.
+func _save_cfg(cfg: ConfigFile, path: String) -> void:
+	var tmp := path + ".tmp"
+	if cfg.save(tmp) != OK:
+		return
+	if FileAccess.file_exists(path):
+		DirAccess.rename_absolute(path, path + ".bak")
+	if DirAccess.rename_absolute(tmp, path) != OK and FileAccess.file_exists(path + ".bak"):
+		DirAccess.rename_absolute(path + ".bak", path)
+
+
+func _load_cfg(path: String) -> ConfigFile:
+	for p in [path, path + ".bak"]:
+		var cfg := ConfigFile.new()
+		if FileAccess.file_exists(p) and cfg.load(p) == OK and not cfg.get_sections().is_empty():
+			return cfg
+	return null
 
 
 func _setup_inputs() -> void:

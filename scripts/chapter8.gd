@@ -263,6 +263,7 @@ func _enter_store() -> void:
 		await _say("SPK_AGENT2", "D8_A2_UNKNOWN")
 	await _h("D8_H_AGENTS")
 	phase = "store"
+	hud.marker.hide_near = 1.5     # dar reyonlarda küçük parçalar: işaret son 4 m'de kayboluyordu
 	_update_objective()
 	player.frozen = false
 	_busy = false
@@ -550,6 +551,7 @@ func _tea_break() -> void:
 		if is_instance_valid(a):
 			_state[k]["tea"] = HardwareStore.path(a.position, HardwareStore.COUNTER_POS + Vector3(-1.4, 0, -0.5 + k * 1.0))
 	await hud.say("SPK_HIKMET", "D8_H_TEA")      # bark'ken uzun İngilizce kaydı bir sonraki replik kesiyordu
+	_tea_left = TEA_SECONDS        # süre oyuncu serbest kalınca başlar (replik sürerken 4-6 sn'si gidiyordu)
 
 
 ## Sabit hattan Nihat'ı ara (kartvizit Bölüm 3'te bırakıldıysa).

@@ -1,5 +1,21 @@
 # CREDITS — Görsel ve İşitsel Varlıklar
 
+## Güncel durum (0.99.110): önce bunu okuyun
+
+Aşağıdaki eski bölümler ilk üretim turlarını anlatır ve yer yer eskidir. Oyunun bugün gerçekten kullandığı kaynaklar:
+
+| Ne | Kaynak | Lisans / not |
+|---|---|---|
+| Müzik (`assets/audio/music/*.mp3`, 34 parça) | ElevenLabs Music ile üretildi (`tools/music_gen.py`). Oyun önce `.mp3`'ü çalar; eski `.ogg` dosyaları (numpy ile prosedürel sentez) yalnızca yedektir (`scripts/autoload/audio.gd`). | Yapay zekâ üretimi; ticari kullanım hakkı ElevenLabs aboneliğine bağlıdır. |
+| Seslendirme (`assets/audio/voice/`, Türkçe ve İngilizce) | ElevenLabs ses sentezi (`tools/voice_gen.py`); metinler oyunun kendi replikleri. | Yapay zekâ üretimi; gerçek bir kişinin sesi taklit edilmedi. |
+| Ortam sesleri ve bir kısım ses efekti (`assets/audio/sfx/`) | ElevenLabs Sound Effects (`tools/amb_gen.py`, `tools/sfx_gen.py`) ve numpy ile prosedürel sentez. | Yapay zekâ üretimi + özgün sentez; üçüncü taraf kayıt yok. |
+| 3B köy, eşya, hayvan ve yiyecek modelleri (`assets/models/village`, `props`, `animals`, `food`) | Quaternius (quaternius.com): Medieval Village MegaKit, Fantasy Props MegaKit, Farm Animals Pack, Ultimate Food Pack. | CC0 1.0 (kamu malı); ayrıntı `assets/models/CREDITS_QUATERNIUS.txt`. |
+| Yazı tipleri (`assets/fonts/`) | Comfortaa (`ui_regular`, `ui_bold`), Alfa Slab One (`title`), DejaVu (`ui_symbols`), Noto Color Emoji (`ui_emoji`). | SIL OFL 1.1 (Comfortaa, Alfa Slab One, Noto Color Emoji); DejaVu kendi serbest lisansı (Bitstream Vera türevi). Lisans metinleri `assets/fonts/LICENSE_*.txt`. |
+| Oyun motoru | Godot Engine 4.4 (godotengine.org) | MIT. Godot ve içerdiği üçüncü taraf kitaplıkların bildirimleri dağıtımla birlikte verilmelidir (bkz. docs/LAUNCH_CHECKLIST.md). |
+| Karakterler, sahneler, arayüz, kod | Bu proje için üretildi (kodla kurulan prosedürel modeller dahil); bir kısmı yapay zekâ destekli araçlarla geliştirildi ve ekipçe gözden geçirildi. | Proje sahibine ait. |
+
+Oyunda çalışma anında içerik üreten bir yapay zekâ yoktur.
+
 Bu dosya, `assets/` altındaki tüm sanat ve ses varlıklarının üretim bilgisini ve lisanslarını listeler.
 Tüm içerik "Gerçek Tarih Bu Değil" projesi için özgün olarak üretilmiştir; ticari dağıtıma uygundur.
 Aksi belirtilmedikçe tüm çizimler, modeller ve sesler proje için sıfırdan üretilmiş özgün çalışmalardır (üçüncü taraf kaynak kullanılmamıştır).

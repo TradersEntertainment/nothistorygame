@@ -808,6 +808,7 @@ func _on_stroke(good: bool) -> void:
 func _heave(good: bool) -> void:
 	if _whip_t >= 0.0:
 		return
+	player.hand_gesture("reach", 0.3)     # her asılışta el halata uzanır
 	if _bundles_set < _bundles_needed or not good:
 		# Demetsiz ya da kırmızıda: geri kayar; kırmızıda halat gerilir
 		slips += 1

@@ -121,10 +121,12 @@ func _run() -> void:
 		await _t("D12_T_SEE_HIKMET")
 		await _say("SPK_HIKMET", "D12_H_ALREADY")
 	await _f(_opening_key())
+	hud.set_objective(tr("UI_OBJ12"))       # bölümde hedef yoktu: gösterge neyi ölçüyor, ne yapılacak
 	_show_persuade()
 	await _companions()
 	while _outcome == "":
 		await _audience()
+	hud.set_objective("")
 	await _ending()
 	await _end_chapter()
 

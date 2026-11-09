@@ -25,6 +25,12 @@ on:
 permissions:
   contents: write
 
+# Aynı commit iki kez tetiklenirse (etiket + main, ya da bekçinin yeniden denemesi) koşular sıraya girer, yarışmaz.
+# Grup commit başına: art arda gelen sürümler birbirini bekletmez, sıradaki koşu iptal edilmez.
+concurrency:
+  group: release-${{ github.sha }}
+  cancel-in-progress: false
+
 env:
   GODOT_VERSION: "4.4.1"
   # Açık indirme deposu için token tanımlıysa "true" (secret'lar if içinde doğrudan kullanılamaz)
@@ -33,16 +39,17 @@ env:
 jobs:
   build:
     runs-on: ubuntu-latest
+    timeout-minutes: 240
     steps:
       - uses: actions/checkout@v4
 
       - name: Godot, dışa aktarım şablonları ve NSIS
         run: |
           base=https://github.com/godotengine/godot/releases/download/${GODOT_VERSION}-stable
-          wget -q "$base/Godot_v${GODOT_VERSION}-stable_linux.x86_64.zip"
+          wget -q --tries=3 --waitretry=10 "$base/Godot_v${GODOT_VERSION}-stable_linux.x86_64.zip"
           unzip -q "Godot_v${GODOT_VERSION}-stable_linux.x86_64.zip"
           mv "Godot_v${GODOT_VERSION}-stable_linux.x86_64" godot
-          wget -q "$base/Godot_v${GODOT_VERSION}-stable_export_templates.tpz"
+          wget -q --tries=3 --waitretry=10 "$base/Godot_v${GODOT_VERSION}-stable_export_templates.tpz"
           T="$HOME/.local/share/godot/export_templates/${GODOT_VERSION}.stable"
           mkdir -p "$T"
           unzip -qj "Godot_v${GODOT_VERSION}-stable_export_templates.tpz" \
@@ -96,6 +103,10 @@ jobs:
           ./godot --headless --path . --export-release "macOS" build/macos/GercekTarihBuDegil.zip
           test -s build/macos/GercekTarihBuDegil.zip
           cp build/macos/GercekTarihBuDegil.zip "dist/GercekTarihBuDegil-macOS-$VERSION.zip"
+
+      - name: macOS paketi çıktı mı
+        run: |
+          ls dist/GercekTarihBuDegil-macOS-*.zip >/dev/null 2>&1 || echo "::warning::macOS paketi üretilemedi; bu sürüm macOS'suz yayınlanıyor"
 
       - name: GitHub Releases'e yükle
         if: env.PUBLISH == '1'

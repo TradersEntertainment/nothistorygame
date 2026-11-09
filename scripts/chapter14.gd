@@ -94,6 +94,7 @@ func _run() -> void:
 		if GameState.flags.get("tolga_arrested", false):
 			await _waiting_room()
 		await _desk()
+		hud.set_objective("")
 	await _end_chapter()
 
 
@@ -278,6 +279,7 @@ func _waiting_crowd() -> void:
 
 
 func _desk() -> void:
+	hud.set_objective(tr("UI_OBJ14"))
 	# Saniye Hanım kapıda belirir; Nihat döner
 	_mufide_at_door()
 	player.face(bureau.mufide.global_position + Vector3(0, 1.5, 0))

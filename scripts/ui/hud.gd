@@ -3595,7 +3595,7 @@ func intro_notice() -> void:
 	var head := add_card_line(tr("UI_INTRO_HEAD"), 34, Color("ffd24a"))
 	if _title_font:
 		head.add_theme_font_override("font", _title_font)
-	add_card_line(tr("UI_INTRO_COUNTS") % [17, 80, 91, 24], 22, Color("f2e6c9"))
+	add_card_line(tr("UI_INTRO_COUNTS") % [17, 80, 91, Achievements.FINALS_TOTAL], 22, Color("f2e6c9"))
 	add_card_line("", 8)
 	for k in INTRO_EXAMPLES:
 		add_card_line("· " + tr(k), 18, Color(1, 1, 1, 0.85))

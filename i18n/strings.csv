@@ -389,6 +389,7 @@ UI_CH4_TITLE,BÖLÜM 4 — İLK GECE,CHAPTER 4 — THE FIRST NIGHT
 UI_CH4_SUB_4A,"Tolga · 22 Nisan 1453, gece · Ordugâh","Tolga · 22 April 1453, night · The Ottoman camp"
 UI_CH4_SUB_4B,"Tolga · 22 Nisan 1453, gece · Deniz surları","Tolga · 22 April 1453, night · The sea walls"
 UI_OBJ4A_ESCAPE,Çıkıştaki nöbetçileri atlat,Get past the guards at the exit
+UI_OBJ4A_ESCAPE2,Nöbetçileri atlat · bir daha yakalanma,Get past the guards · do not get caught again
 UI_HINT4A,Tartışırken birbirlerine bakarlar. Sandıkların arkasından geç. [E] ile yanlarına gidip bir eşya da gösterebilirsin.,When they argue they face each other. Move from crate to crate. Or walk up and show them something with [E].
 UI_PROMPT4_GUARDS,[E] Nöbetçilerle konuş,[E] Talk to the guards
 UI_CH4A_BLUFF,'Ben... Frenk elçisiyim!','I am... a Frankish envoy!'
@@ -550,6 +551,7 @@ UI_PROMPT5_HATCH,[E] Bodrum kapağı,[E] Cellar hatch
 UI_PROMPT5_SEARCH,[E] Burada olabilir mi?,[E] Could it be here?
 UI_PROMPT5_RADIO,[E] Telsiz,[E] Radio
 UI_TUNER,⏱ TELSİZ FREKANSI — TOLGA'YA ULAŞ,⏱ RADIO FREQUENCY — REACH TOLGA
+UI_TUNER_RETRY,⏱ SİNYAL KAÇTI — BİR KEZ DAHA DENE,⏱ SIGNAL LOST — TRY ONCE MORE
 UI_TUNER_HINT,A / D: kadranı çevir · Sinyal güçlenince E'yi basılı tut,"A / D: turn the dial · When the signal is strong, hold E"
 UI_TUNER_HINT_PAD,Sol çubuk: kadranı çevir · Sinyal güçlenince X'i basılı tut,"Left stick: turn the dial · When the signal is strong, hold X"
 UI_CH5_CALL,Kartvizitteki numarayı ara (kartta numara yok),Call the number on the card (there's no number on the card)
@@ -820,6 +822,7 @@ D6B_NIHAT_CAMEO,"(Fötr şapkalı bir adam, kançılaryanın koridorunda) Yortud
 UI_CH7_TITLE,BÖLÜM 7 — SAHA ÇALIŞMASI,CHAPTER 7 — FIELDWORK
 UI_CH7_SUB,"Denetçi Nihat · 24 Nisan 1453, öğle","Inspector Nihat · 24 April 1453, noon"
 UI_OBJ7,"Tolga'nın Paradoks İzlerini bul, konumunu raporla · Saat %s (gün batımı 17:00) · taranan iz: %d",Find Tolga's Paradox Traces and report his location · Time %s (sunset 17:00) · traces scanned: %d
+UI_OBJ7_REPORT_SPOT,Rapor: daktilo,Report: the typewriter
 UI_SCANNER,📡 Paradoks Tarayıcı,📡 Paradox Scanner
 UI_PROMPT7_SCAN,[E] İzi tara,[E] Scan the trace
 UI_PROMPT7_REPORT,[E] Daktilo: raporu yaz,[E] Typewriter: write the report
@@ -1973,7 +1976,7 @@ UI_MENU_H_DONE,Yine mi? Makine daha soğumadı evlât.,"Again? The machine hasn'
 SPK_RIDER,Ulak,Messenger
 UI_CH10B_TITLE,BÖLÜM 10 — BÜYÜK ATIŞ,CHAPTER 10 — THE GREAT SHOT
 UI_CH10B_SUB,"Tolga · 25 Nisan 1453, topçu sahası","Tolga · 25 April 1453, the artillery field"
-UI_OBJ10B_CAST,Bronzu kalıplara dök (3 kalıp): kalıp dolunca dur,Pour the bronze into the moulds (3): stop when each is full
+UI_OBJ10B_CAST,Bronzu kalıplara dök (3 kalıp): kalıp dolunca dur (çubuk yeşilde),Pour the bronze into the moulds (3): stop when each is full (bar in the green)
 UI_CH10B_POUR,Kalıp %d/3 · E ya da sol tık: dökmeyi durdur (yeşilde),Mould %d/3 · E or left click: stop pouring (in the green)
 UI_CH10B_POUR_PAD,Kalıp %d/3 · X: dökmeyi durdur (yeşilde),Mould %d/3 · X: stop pouring (in the green)
 D10B_U_01,"Çırak! Geldin mi? Bugün dünyanın en büyük topunu döküyoruz. Öğleden sonra Sultan gelecek, eski topla deneme atışı yapacağız.","Apprentice! You came? Today we cast the biggest cannon in the world. This afternoon the Sultan comes, and we'll make a trial shot with the old cannon."
@@ -2162,6 +2165,9 @@ D10H_K_HELP,"Bir Frenk, bir fes ve... o yapışkan bez. (Hafifçe gülümser) Pe
 D10H_TH_HELP,"Bu gece. Şehir uyurken. Ne yapacaksan yap, sonra beyaz bayrakla çık. Kimse seni görmesin.","Tonight. While the city sleeps. Do what you must, then leave under the white flag. Let no one see you."
 UI_CH10H_NIGHT,"O gece, surların içinde","That night, inside the walls"
 UI_CH10H_NIGHT_SUB,"Tolga'nın ""belgesellerden"" bildiği üç şey var.","Tolga knows three things ""from documentaries""."
+UI_OBJ10H_AUDIENCE,Huzurda: Lütfi yanlış çevirirse düzelt,In audience: correct Lütfi when he mistranslates
+UI_OBJ12,Sultan'ın merakını canlı tut,Keep the Sultan curious
+UI_OBJ14,Son raporu yaz,Write the final report
 UI_OBJ10H_NIGHT,Bizans'ı Kurtar (ya da en azından biraz oyala):,Save Byzantium (or at least stall it a bit):
 UI_OBJ10H_GIUSTINIANI,🔋 Giustiniani: omzuna dikkat,🔋 Giustiniani: mind his shoulder
 UI_OBJ10H_NIKO,🥜 Zincir nöbetçileri uyumasın (Niko),🥜 The chain guards mustn't fall asleep (Niko)
@@ -5518,7 +5524,7 @@ D8_H_FAIL_CAUGHT_TAPE,Sepetime el koydular. Son koli bandı da gitti. Kırk yıl
 D8_H_FAIL_CAUGHT_CUTTER,Sepetime el koydular. Cıvata makası da gitti. Kırk yıllık müşteriyim. Formları iki nüshaydı.,They confiscated my basket. The bolt cutters and all. Forty years a customer. Their forms were in duplicate.
 D8_H_FAIL_CAUGHT_LAMINATOR,Sepetime el koydular. Laminasyon makinesi de gitti. Kırk yıllık müşteriyim. Formları iki nüshaydı.,They confiscated my basket. The laminator and all. Forty years a customer. Their forms were in duplicate.
 D8_H_FAIL_CAUGHT_RAINCOAT,Sepetime el koydular. Yağmurluk da gitti. Kırk yıllık müşteriyim. Formları iki nüshaydı.,They confiscated my basket. The raincoat and all. Forty years a customer. Their forms were in duplicate.
-UI_CH8_TEA,"☕ 'Cemil, beylere birer çay koy.'","☕ 'Cemil, pour these gentlemen a tea.'"
+UI_CH8_TEA,"☕ 'Cemil, beylere birer çay koy.' (ajanları oyalar)","☕ 'Cemil, pour these gentlemen a tea.' (keeps the agents busy)"
 UI_CH8_HINT,'Neyin nerede olduğunu bir daha söyle.','Tell me again where everything is.'
 D8_C_TEA_OFFER,"Beyler! Bu saatte fener yakılmaz, çay demlenir. Tezgâha buyurun, taze demledim.","Gentlemen! At this hour you don't light torches, you brew tea. Come to the counter, it's freshly brewed."
 D8_A1_TEA,...Görev başında çay yönetmeliğe aykırı değil. Tek bardak.,...Tea on duty isn't against regulations. One glass.
@@ -8512,6 +8518,18 @@ D6A_M_JOBS,"Keçim kaçtı, yüzüğüm tozda kaldı. İkisini ve bir askerin me
 D6A_M_KAFTAN,"Keçim geri geldi, yüzüğümü buldun. Teşekkür ederim! Al bu kaftanı, otağa yakışır.","My goat's back, and you found my ring. Thank you! Take this kaftan, it suits the tent."
 UI_OBJ6A_Y,Pazar: tüccarın üç işi %d/3,Market: the merchant's three jobs %d/3
 UI_OBJ6A_Y_BACK,Pazar: tüccara dön,Market: back to the merchant
+UI_OBJ6A_GO_A,Kadri'yle konuş · mutfak yolu açık,Talk to Kadri · the kitchen route is open
+UI_OBJ6A_GO_A_FEZ,"Fesi çıkar [H], sonra Kadri'yle konuş","Take the fez off [H], then talk to Kadri"
+UI_OBJ6A_GO_A_FEZ_PAD,"Fesi çıkar [Select], sonra Kadri'yle konuş","Take the fez off [Select], then talk to Kadri"
+UI_OBJ6A_GO_B,Lütfi'yle konuş · tercüman yolu açık,Talk to Lütfi · the interpreter route is open
+UI_OBJ6A_GO_B_FEZ,"Fesi tak [H], sonra Lütfi'yle konuş","Put the fez on [H], then talk to Lütfi"
+UI_OBJ6A_GO_B_FEZ_PAD,"Fesi tak [Select], sonra Lütfi'yle konuş","Put the fez on [Select], then talk to Lütfi"
+UI_OBJ6A_GO_C,Urban'la konuş · topçu yolu açık,Talk to Urban · the gunners' route is open
+UI_OBJ6A_M_MAIN,"Kadri, Lütfi ya da Urban","Kadri, Lütfi or Urban"
+UI_OBJ6A_M_MERCHANT,Pazar: tüccar,Market: the merchant
+UI_OBJ6A_M_GOAT,Tüccarın keçisi,The merchant's goat
+UI_OBJ6A_M_RING,Tüccarın yüzüğü,The merchant's ring
+UI_OBJ6A_M_LETTER,Mektup isteyen asker,The soldier who wants a letter
 D9_P_LETTER_1,"Mektubum sende, sigortacı. Kukuletalı adamdan aldın, otağa götürmedin. Asıl adres Galata. Beni tanıyor musun?","You still have my letter, insurance man. You took it from the hooded man and never carried it to the tent. Its real address is Galata. Do you know who I am?"
 D9_P_LETTER_3,Çandarlı Halil. Sadrazam. Kuşatmaya karşı olan tek kişi. O mektup Galata'daki Cenevizlilere. Barış demek. Ya da en azından daha az kuşatma.,Çandarlı Halil. Grand Vizier. The only man against the siege. That letter is for the Genoese in Galata. It means peace. Or at least rather less siege.
 D9_P_AGAIN_LETTER,Mektubum hâlâ sende. Galata hâlâ orada. Sen hâlâ görünmezsin.,You still have my letter. Galata is still there. You are still invisible.
@@ -8823,7 +8841,7 @@ BUR_FG_LEO_V2_1,"Sarmal maketi inceledim. Tren her turda başa dönüyor, hiçbi
 BUR_FG_LEO_V2_2,"Şu sarkaca bir dişli eklesem saat olur. Saat olursa zaman olur. Büro buna izin vermez, biliyorum.","Add one gear to that pendulum and you'd have a clock. A clock means time. The Bureau won't allow it, I know."
 BUR_FG_LEO_V3_1,"Bir helikopter çizmiştim, adına hava vidası demiştim. Gelecekten gelen rehber onunla tur yaptıklarını söyledi. Çizimlerimden biri ilk kez bitmiş.",I once drew a helicopter; I called it the aerial screw. The guide from the future says they run tours in it. The first drawing of mine anyone ever finished.
 BUR_FG_LEO_V3_2,"Kralın kollarında öldüğümü anlatırlar. Söylenti. Ama bu salonda ölmeyeceğim kesin: burada kimse ölmüyor, sadece bekliyor.","They say I died in the King's arms. A rumour. But I certainly won't die here: nobody dies here, they just wait."
-BUR_FG_EIN_V2_1,Işık hızında yolculuk eden ikiz daha genç döner. Bu büroda bekleyen ikiz daha yaşlı döner. Ölçtüm.,The twin who travels at the speed of light comes back younger. The twin who waits in this office comes back older. I measured it.
+BUR_FG_EIN_V2_1,Işık hızına yakın yolculuk eden ikiz daha genç döner. Bu büroda bekleyen ikiz daha yaşlı döner. Ölçtüm.,The twin who travels near the speed of light comes back younger. The twin who waits in this office comes back older. I measured it.
 BUR_FG_EIN_V2_2,Tanrı zar atmaz demiştim. Bu büro atıyor: sıra numaraları rastgele.,I said God does not play dice. This office does: the ticket numbers are random.
 BUR_FG_EIN_V3_1,"Bir sigortacı 1453'e gidip gelmiş. Kâğıt üstünde imkânsız. Ama kâğıt bu büroda, o yüzden mümkün.","An insurance man went to 1453 and back. Impossible on paper. But the paper is in this office, so it's possible."
 BUR_FG_EIN_V3_2,"Nobel'i bana görelilik için değil, fotoelektrik etki için verdiler. Burada da formumu yanlış dosyaya koymuşlar. Alışığım.","They gave me the Nobel for the photoelectric effect, not relativity. Here they've filed my form in the wrong drawer too. I'm used to it."
@@ -8847,11 +8865,11 @@ BUR_FG_ROB_V2_1,Beklemede ilerledim: bir saat hiçbir şey yapmadan durabiliyoru
 BUR_FG_ROB_V2_2,Benim zamanımda 'ıslak imza' bir efsane. Bugün bir tane gördüm. Fotoğrafını çektim. Islaktı.,In my time the 'wet signature' is a legend. Today I saw one. I took a photo. It was wet.
 BUR_FG_ROB_V3_1,"Hata raporu: bu salonda zaman ileri akmıyor. Düzeltme önerisi: yok. Hata değil, özellikmiş.","Bug report: time in this room does not move forward. Suggested fix: none. It's not a bug, it's a feature."
 BUR_FG_ROB_V3_2,Stajım bitince döneceğim. Raporuma şunu yazacağım: 'İnsanlar beklemeyi icat etmiş. Biz unutmuşuz.',When my internship ends I'll go back. My report will say: 'Humans invented waiting. We forgot it.'
-BUR_FG_ARC_V2_1,Yeni bulgu: 'zımba' denen bir alet. Kâğıda aynı anda iki delik açıyor. Neden iki? Ekip üç gündür tartışıyor.,New find: a device called a 'hole punch'. It makes two holes at once. Why two? The team has been arguing for three days.
+BUR_FG_ARC_V2_1,Yeni bulgu: 'delgeç' denen bir alet. Kâğıda aynı anda iki delik açıyor. Neden iki? Ekip üç gündür tartışıyor.,New find: a device called a 'hole punch'. It makes two holes at once. Why two? The team has been arguing for three days.
 BUR_FG_ARC_V2_2,"Salondaki herkes başka bir çağdan. Teorimiz şu: bekleme salonu ilk zaman makinesiymiş, sadece çok yavaş.",Everyone in the waiting room is from a different era. Our theory: the waiting room was the first time machine. Just very slow.
 BUR_FG_ARC_V3_1,İnce belli bir çay bardağı bulduk. Belinin neden ince olduğunu çözdük: tutulsun diye. İlk kesin bulgumuz.,We've found a tea glass with a narrow waist. We've worked out why: so you can hold it. Our first solid finding.
 BUR_FG_ARC_V3_2,"Bir mesai kartı bulduk. Giriş saati var, çıkış saati yok. Ya kimse çıkmamış ya da kimse hiç girmemiş.","We've found a time card. It has a clock-in time but no clock-out. Either nobody ever left, or nobody ever came in."
-BUR_FG_POL_1,Çin'den Venedik'e 24 yılda döndüm. Bu salonda 1453'ü beklemek onun yanında kısa kalır.,I got from China back to Venice in 24 years. Waiting for 1453 in this room is shorter than that.
+BUR_FG_POL_1,Venedik'ten Çin'e gidip dönmem 24 yıl sürdü. Bu salonda 1453'ü beklemek onun yanında kısa kalır.,Venice to China and back took me 24 years. Waiting for 1453 in this room is shorter than that.
 BUR_FG_POL_2,"Makarnayı Çin'den ben getirmişim, diyorlar. Efsane! Ben sadece bir hapishanede kitap yazdırdım.",They say I brought pasta from China. A myth! I only dictated a book in a prison.
 BUR_FG_POL_V2_1,"Fetih'ten döndüğünü duydum. Ben seyahat anlatırım, bu salonda ise tek yolculuk sıra numarası.","I heard you came back from the siege. I tell travel stories, but here the only journey is the queue number."
 BUR_FG_POL_V2_2,Cengiz'in numaratöre kuşatma kurması beni Kubilay Han'ın sarayına döndürdü. Orada da sıra vardı.,"Genghis besieging the ticket machine took me back to Kublai Khan's court. They had queues there, too."
@@ -8868,7 +8886,7 @@ BUR_FG_CUR_2,"Defterlerim hâlâ radyoaktif, kurşun kutularda saklanıyor. Bura
 BUR_FG_CUR_V2_1,Polonyum ve radyumu keşfettim. Ama 1453 yazan ekranı parlatan şeyi bir türlü bulamadım.,I discovered polonium and radium. But I can't find what makes that 1453 screen glow.
 BUR_FG_CUR_V2_2,"Kuşatmadan döndün, üstünde hâlâ barut kokusu var. Neyse ki sayacım bir şey göstermiyor.",You came back from the siege and still smell of gunpowder. Luckily my counter shows nothing.
 BUR_FG_CUR_V3_1,Büro'nun formları beni korkutmaz. Ben kurşun kutuya saklanmış defterlerle yaşadım.,The Bureau's forms don't scare me. I lived with notebooks stored in lead-lined boxes.
-BUR_FG_CUR_V3_2,Cleopatra'nın şikayet masasında kuyruk büyüyor. Radyoaktiviteden daha hızlı yayılıyor.,The line at Cleopatra's complaints desk keeps growing. It spreads faster than radioactivity.
+BUR_FG_CUR_V3_2,Kleopatra'nın şikâyet masasında kuyruk büyüyor. Radyoaktiviteden daha hızlı yayılıyor.,The line at Cleopatra's complaints desk keeps growing. It spreads faster than radioactivity.
 BUR_FG_MOZ_1,"Beş yaşımda beste yapıyordum, altı yüzden fazla eser yazdım. Şimdi ise sadece bir numara bekliyorum.",I composed from age five and wrote over six hundred works. Now I just wait for a number.
 BUR_FG_MOZ_2,Requiem'im yarım kaldı. Büro bu yarım işler konusunda beni çok iyi anlıyor.,My Requiem was left unfinished. The Bureau understands unfinished business very well.
 BUR_FG_MOZ_V2_1,"Napolyon sandalyede bağırıyor, Cengiz numaratöre saldırıyor. Bu salon neredeyse bir opera, kimse bestelemese de.","Napoleon yells on a chair, Genghis charges the ticket machine. This room is nearly an opera, though nobody composed it."
@@ -8972,7 +8990,7 @@ BUR_AMB_G2_2_1,Ben sürgünde en azından deniz manzarasına bakıyordum.,"In ex
 BUR_AMB_G2_2_2,Bu haksızlık! Şikâyet etmek istiyorum!,This is unfair! I want to file a complaint!
 BUR_AMB_G2_2_3,Şikâyet formunu doldurmak için dönmeniz gerekir. Dönmeniz yasak. Dosya kapandı.,To fill in the complaint form you must turn round. Turning round is forbidden. File closed.
 BUR_AMB_G2_3_1,Sırtımda ne yazıyor?,What does it say on my back?
-BUR_AMB_G2_3_2,"'Reddedildi, beslemeyin.' Ben de talimata uyuyor, sizi beslemiyorum.","'Rejected, do not feed.' I am following the instruction and not feeding you."
+BUR_AMB_G2_3_2,"'Reddedildi. Lütfen beslemeyin.' Ben de talimata uyuyor, sizi beslemiyorum.",'Rejected. Please do not feed.' I am following the instruction and not feeding you.
 BUR_AMB_G2_3_3,Zaten aç değilim!,I am not even hungry!
 BUR_AMB_G2_3_4,Talimat yine de geçerli.,The instruction remains valid regardless.
 BUR_AMB_G3_1_1,Kitabıma 'Milyon' lakabı takıldı. Anlattıklarım abartı sayıldı.,My book got the nickname 'The Million'. They thought my stories were exaggerated.
@@ -9073,7 +9091,7 @@ BUR_AMB_G2_9_1,Memnuniyet anketi: Bir ile beş arası puan verin.,Satisfaction s
 BUR_AMB_G2_9_2,Sıfır!,Zero!
 BUR_AMB_G2_9_3,Ölçekte sıfır yok. Bir yazıldı. Bu bile cömertlik.,There is no zero on the scale. Recorded as one. Even that is generous.
 BUR_AMB_G3_3_1,"Kitabı Genova'da hapisteyken Rustichello'ya anlattım, o yazdı.",I dictated my book to Rustichello while in prison in Genoa. He wrote it down.
-BUR_AMB_G3_3_2,Ben ev hapsinde yazdım. İki Yeni Bilim'i 1638'de bitirdim.,I wrote under house arrest. I finished Two New Sciences in 1638.
+BUR_AMB_G3_3_2,Ben ev hapsinde yazdım. İki Yeni Bilim'i 1638'de yayımladım.,I wrote under house arrest. I published Two New Sciences in 1638.
 BUR_AMB_G3_3_3,Ev hapsi hapse göre lüks. Mutfak yakın.,House arrest beats prison. The kitchen is close.
 BUR_AMB_G3_4_1,"Çin'de kâğıt paraya baktım, kimse inanmadı bana.",In China I saw paper money. Nobody believed me.
 BUR_AMB_G3_4_2,Şimdi herkes cüzdanında taşıyor.,Now everybody carries it in their wallet.
@@ -9170,7 +9188,7 @@ BUR_AMB_G7_8_3,"Evet. Yalnız bir beyefendinin pantolonu yandı, birayla söndü
 BUR_AMB_G7_8_4,Çayla olsaydı daha geç sönerdi.,With tea it would have burned longer.
 BUR_AMB_G7_9_1,Oyunda falcı 'Mart'ın İdleri'ne dikkat et' diyor.,In the play the soothsayer says 'Beware the Ides of March'.
 BUR_AMB_G7_9_2,Takvime kırmızı daire çizmeliydim.,I should have drawn a red circle on the calendar.
-BUR_AMB_G7_9_3,Bizde takvim yok efendim. Daire için kalem de yok.,"We have no calendar here, sir. No pen for circles either."
+BUR_AMB_G7_9_3,Bizde takvim tek yapraklı efendim. Daire için kalem de yok.,"Our calendar has only one leaf, sir. No pen for circles either."
 BUR_AMB_G8_3_1,Karayı ilk Rodrigo de Triana gördü. Ödülü ben aldım.,Rodrigo de Triana saw land first. I collected the reward.
 BUR_AMB_G8_3_2,Nasıl oldu?,How did that happen?
 BUR_AMB_G8_3_3,Bir gece önce ışık gördüğümü söyledim.,I said I had seen a light the night before.
@@ -9201,7 +9219,7 @@ BUR_AMB_G9_3_3,Onun da çevirmeni yok.,It has no translator either.
 BUR_AMB_G9_4_1,"Ben Piramit'in yapıldığı döneme değil, Ay'a iniş zamanına daha yakın yaşadım.",I lived closer in time to the Moon landing than to the building of the Great Pyramid.
 BUR_AMB_G9_4_2,Yani Piramit sana bile eskiydi.,So the Pyramid was ancient even to you.
 BUR_AMB_G9_4_3,Bana müzeydi.,To me it was a museum.
-BUR_AMB_G9_5_1,"Batı bana 'Muhteşem' dedi. Biz 'Kanuni' dedik, çünkü yasa yaptım.","The West called me 'the Magnificent'. We called me 'the Lawgiver', because I made laws."
+BUR_AMB_G9_5_1,"Batı bana 'Muhteşem' dedi. Biz 'Kanuni' dedik, çünkü yasa yaptım.","The West called me 'the Magnificent'. At home I was 'the Lawgiver', because I made laws."
 BUR_AMB_G9_5_2,Bana 'Mısır'ın son hükümdarı' dediler. Kimse ilk saymadı.,They called me 'Egypt's last ruler'. Nobody ever counted me first.
 BUR_AMB_G9_5_3,"Kuyrukta unvan geçmiyor, yalnız numara.","Titles do not count in a queue, only numbers."
 BUR_AMB_G9_6_1,Sezar'a gizlice girmek için halıya sarıldım denir.,They say I was wrapped in a carpet to reach Caesar in secret.
@@ -9312,7 +9330,7 @@ BUR_AMB_G15_3_2,Altın buldun mu?,Did you find gold?
 BUR_AMB_G15_3_3,"Altını bulamadım, yer çekimini buldum. Takas.","No gold, but I found gravity. A trade."
 BUR_AMB_G15_4_1,"Veba yüzünden üniversite kapandı. Evde iki yılda hesabı, ışığı, çekimi çözdüm.","The plague closed the university. At home in two years I solved calculus, light and gravity."
 BUR_AMB_G15_4_2,Bana bir yıl yetti. 1905.,One year was enough for me. 1905.
-BUR_AMB_G15_4_3,Ben on yıl bir resme baktım.,I stared at one painting for ten years.
+BUR_AMB_G15_4_3,Ben on altı yıl bir resme baktım.,I stared at one painting for sixteen years.
 BUR_AMB_G15_5_1,Güney Denizi hisselerinde servet kaybettim.,I lost a fortune in South Sea shares.
 BUR_AMB_G15_5_2,"Sana şu söz atfedilir: 'Gök cisimlerini hesaplarım, insan çılgınlığını hesaplayamam.'","They attribute to you: 'I can calculate the motion of the stars, but not the madness of men.'"
 BUR_AMB_G15_5_3,"Kaynağı yok. Atfedilen sözler hisse gibi, değer kaybeder.",No source. Attributed quotes are like shares: they lose value.

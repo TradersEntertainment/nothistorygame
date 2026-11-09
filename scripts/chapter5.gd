@@ -314,9 +314,17 @@ func _update_objective() -> void:
 			if not _done.has("seal"):
 				hud.set_objective(tr("UI_OBJ5_SEAL"), hud.spot("machine"), 0.4)
 			else:
-				hud.set_objective(tr("UI_OBJ5_HIDE") % _hidden_parts, null, 0.4, _part_spots())
+				_hide_objective()
 		_:
-			hud.set_objective(tr("UI_OBJ5_HIDE") % _hidden_parts, null, 0.4, _part_spots())
+			_hide_objective()
+
+
+## Makine sökülmeden parçalar sahnede yoktur: o zamana dek işaret makinenin kendisinde (ilk adımda işaret yoktu)
+func _hide_objective() -> void:
+	if not _done.has("dismantled"):
+		hud.set_objective(tr("UI_OBJ5_HIDE") % _hidden_parts, hud.spot("machine"), 0.4)
+	else:
+		hud.set_objective(tr("UI_OBJ5_HIDE") % _hidden_parts, null, 0.4, _part_spots())
 
 
 # ---------------------------------------------------------------- projektör
@@ -635,6 +643,9 @@ func _auto_protect() -> void:
 
 # ---------------------------------------------------------------- ⏱ telsiz frekansı
 
+var _tune_retried := false
+
+
 func _start_tuning() -> void:
 	if _busy or _done.has("radio"):
 		return
@@ -689,6 +700,13 @@ func _tune_step(delta: float) -> void:
 		Audio.sfx("radio_beep", -8.0)
 		player.release_grab()
 		phase = "tuned"
+	elif left <= 0.0 and not _tune_retried:
+		# Süre doldu: sessizce kaybetmek yerine bir kez daha, daha kısa süreyle (başarısızlık hiç söylenmiyordu)
+		_tune_retried = true
+		_tuner.set_meta("left", TUNE_TIME * 0.6)
+		_tuner.label_text = tr("UI_TUNER_RETRY")
+		_tuner.queue_redraw()
+		Audio.sfx("radio_static", -10.0)
 	elif left <= 0.0:
 		_tuned = false
 		player.release_grab()

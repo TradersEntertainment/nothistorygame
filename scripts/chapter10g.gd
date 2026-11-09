@@ -64,7 +64,8 @@ func _apply_autotest_setup() -> void:
 
 
 func _process(delta: float) -> void:
-	if _bell >= 0.0 and phase == "free":
+	# Çan sayacı yalnız oyuncu serbestken işler (barutçuyla konuşurken 45 sn'nin 15'i gidiyordu)
+	if _bell >= 0.0 and phase == "free" and not _busy:
 		_bell -= delta
 		hud.set_chase(tr("UI_CH10G_BELL") % maxi(0, int(ceil(_bell))), 1.0 - _bell / BELL_TIME)
 		if _bell <= 0.0:

@@ -3,7 +3,8 @@
 # çizim çağrısı ve üçgen sayısını (ana görüntü ve gölge geçişi ayrı) yazar (RINFO). tools/perf_report.py bunlardan
 # docs/PERF.md tablosunu kurar: sahne başına ortanca ve en yüksek değer, bütçeyi (6.000 çizim, 5 M üçgen) aşanlar.
 # Sayılar ekran kartından bağımsızdır (kaç nesne, kaç üçgen çizildiği); kare süresi yazılımla çizimde anlamsızdır.
-# Kullanım: GODOT=... tests/perf_run.sh [paralel=2] [bölüm...]   (xvfb-run gerekir)
+# Kullanım: GODOT=... [PERF_TIMEOUT=sn] tests/perf_run.sh [paralel=2] [bölüm...]   (xvfb-run gerekir). PERF_TIMEOUT: bölüm başına
+# süre sınırı (varsayılan 1500); yazılımla çizimde ağır sahneler çok yavaş, kısa sınırla sahnenin ilk bölümü ölçülür.
 cd "$(dirname "$0")/.."
 GODOT="${GODOT:-godot}"
 PAR="${1:-2}"; shift 2>/dev/null
@@ -15,7 +16,7 @@ fi
 OUT=tests/out/perf; mkdir -p "$OUT"
 one() {
   local c=$1
-  RINFO=1 timeout 1500 xvfb-run -a -s "-screen 0 1280x720x24" "$GODOT" --path . --resolution 1280x720 --max-fps 60 -- \
+  RINFO=1 timeout "${PERF_TIMEOUT:-1500}" xvfb-run -a -s "-screen 0 1280x720x24" "$GODOT" --path . --resolution 1280x720 --max-fps 60 -- \
     --chapter="$c" --autotest --hitchaudit 2>&1 | grep -E "^RINFO|AUTOTEST PASS" > "$OUT/$c.txt"
   echo "bitti $c: $(grep -c '^RINFO' "$OUT/$c.txt") ölçüm"
 }

@@ -49,6 +49,8 @@ var _busy := false
 var _met: Dictionary = {}
 var _open: Dictionary = {}          # açılan yollar: "A", "B", "C"
 var _favors: Dictionary = {}        # goat, ring, letter
+var _fez_blocked := false          # _try_complete: yol açık ama fes şartı tutmadı
+var _jobs_told := false            # tüccar üç işi saydı (işaretler ondan sonra)
 var _mistakes := 0
 var _permit := false
 var _giust_done := false
@@ -195,6 +197,9 @@ func _route_spot() -> Callable:
 	return func():
 		if _favors.size() >= 3:
 			return day.merchant
+		var open := _open_route()
+		if open != "":
+			return _npc_node(ROUTE_NPC[open])
 		var best: Node3D = null
 		var bd := INF
 		for pair in [["A", "kadri"], ["B", "lutfi"], ["C", "urban"]]:
@@ -209,8 +214,47 @@ func _route_spot() -> Callable:
 		return best
 
 
+const ROUTE_NPC := {"A": "kadri", "B": "lutfi", "C": "urban"}
+
+
+## Açılmış ama tamamlanmamış yol (A, B, C): hedef o kişiye döner. Birden çoksa en yakını.
+func _open_route() -> String:
+	var best := ""
+	var bd := INF
+	for r in ["A", "B", "C"]:
+		var n := _npc_node(ROUTE_NPC[r]) if _open.has(r) else null
+		if n and is_instance_valid(n):
+			var d := player.global_position.distance_to(n.global_position)
+			if d < bd:
+				bd = d
+				best = r
+	return best
+
+
+## Pazarın işleri: tüccar işleri saymadan önce yalnız tüccar, sonra kalan üç iş (keçi, yüzük, mektup) adlı işaretle.
+func _market_spots() -> Array:
+	if _favors.size() >= 3:
+		return []
+	if not _jobs_told:
+		return [[func(): return day.merchant, tr("UI_OBJ6A_M_MERCHANT"), 1.6]]
+	return [
+		[func(): return null if _favors.has("goat") else day.goat, tr("UI_OBJ6A_M_GOAT"), 0.9],
+		[func(): return null if _favors.has("ring") else day.ring_node, tr("UI_OBJ6A_M_RING"), 0.3],
+		[func(): return null if _favors.has("letter") else day.letter_soldier, tr("UI_OBJ6A_M_LETTER"), 1.6]]
+
+
 func _update_objective() -> void:
 	if branch == "6a":
+		# Bir yol açıldıysa hedef o kişiye döner ve ne eksikse onu söyler (eskiden işaret başka kapıya kayıyor, "✓" bitti
+		# sanılıyordu; oysa fes şartı sağlanıp o kişiyle bir kez daha konuşmak gerekiyordu)
+		var open := _open_route()
+		if open != "" and _favors.size() < 3:
+			var fez_on: bool = GameState.flags.get("fez", true)
+			var key := "UI_OBJ6A_GO_" + open
+			if (open == "A" and fez_on) or (open == "B" and not fez_on):
+				key += "_FEZ"
+			hud.set_objective(GameState.tr_pad(key), _route_spot())
+			return
 		var parts: Array = []
 		for r in ["A", "B", "C"]:
 			parts.append(tr("UI_OBJ6A_" + r) + (" ✓" if _open.has(r) else ""))      # "A Kadri ✓": ✓ = yol açık
@@ -218,7 +262,9 @@ func _update_objective() -> void:
 			parts.append(tr("UI_OBJ6A_Y_BACK"))
 		else:
 			parts.append(tr("UI_OBJ6A_Y") % _favors.size())
-		hud.set_objective(tr("UI_OBJ6A") % "  ·  ".join(parts), _route_spot())
+		var market := _market_spots()
+		hud.set_objective(tr("UI_OBJ6A") % "  ·  ".join(parts), _route_spot(), 1.6, market,
+			tr("UI_OBJ6A_M_MAIN") if not market.is_empty() else "")
 		return
 	if not _permit and not _met.has("niko"):
 		# İlk iş: Niko. Hedef ve işaret olmadan oyuncu şehirde ne yapacağını bilmiyordu.
@@ -261,7 +307,14 @@ func _talk(npc: String, auto_pick := -1) -> void:
 		GameState.meet(npc)
 		await _say(spk, "D6_%s_HELLO" % key)
 	# Açık yolu tamamlama kontrolü (fes şartı)
+	_fez_blocked = false
 	if await _try_complete(npc):
+		_busy = false
+		return
+	if _fez_blocked:
+		# Fes şartı tutmadı: eşya menüsü açılmaz, replik ikinci kez söylenmez; oyuncu fesi değiştirip yeniden konuşur
+		_update_objective()
+		player.frozen = false
 		_busy = false
 		return
 	var keys: Array = []
@@ -435,6 +488,7 @@ func _try_complete(npc: String) -> bool:
 			if _open.has("A"):
 				if fez_on:
 					await _say("SPK_KADRI", "D6_KADRI_FEZ_OFF")
+					_fez_blocked = true
 					return false
 				await _say("SPK_KADRI", _kadri_done_key())
 				# "Önlüğü giy, tepsiyi al": önlük elden geçer, tepsi Tolga'nın elinde otağ yoluna gider
@@ -446,6 +500,7 @@ func _try_complete(npc: String) -> bool:
 			if _open.has("B"):
 				if not fez_on:
 					await _say("SPK_LUTFI", "D6_LUTFI_FEZ_ON")
+					_fez_blocked = true
 					return false
 				await _say("SPK_LUTFI", "D6_LUTFI_DONE")
 				await _complete("B")
@@ -477,6 +532,8 @@ func _merchant() -> void:
 	player.face(day.merchant.global_position + Vector3(0, 1.45, 0))
 	if _favors.size() < 3:
 		await _say("SPK_MERCHANT", "D6A_M_JOBS")
+		_jobs_told = true
+		_update_objective()
 	else:
 		await _say("SPK_MERCHANT", "D6A_M_KAFTAN")
 		GameState.flags["kaftan_src"] = "merchant"

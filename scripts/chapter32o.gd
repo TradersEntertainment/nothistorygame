@@ -589,6 +589,7 @@ func _drop_carry() -> void:
 
 ## Hendeğe atılan demet/toprak: kıyıdan aşağı yuvarlanır, dipte kalır (hendek görünür biçimde dolar)
 func _throw_in(kind: String) -> void:
+	player.hand_gesture("throw")
 	var x := clampf(player.global_position.x, -12.0, 12.0)
 	var from := Vector3(x, 1.0, EDGE_Z - 0.4)
 	var layer := (bundles + earth) / 6

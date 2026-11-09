@@ -24,7 +24,7 @@ Kimlikler oyundakiyle birebir aynı olmalı. Oyunda daha önce açılmış başa
 1. Steamworks SDK'yı indir, `tools/ContentBuilder/` klasörünü kullan.
 2. GitHub Releases'teki Windows, Linux ve macOS zip'lerini aç: `content/windows`, `content/linux`, `content/macos`.
 3. `tools/steam/app_build.vdf` ve `depot_*.vdf` dosyalarındaki `APPID` / `DEPOTID` değerlerini kendi numaralarınla değiştir.
-4. `steamcmd +login <kullanıcı> +run_app_build ../scripts/app_build.vdf +quit`
+4. `steamcmd +login <kullanıcı> +run_app_build <depo yolu>/tools/steam/app_build.vdf +quit` (tam yol verilir)
 5. Steamworks → Builds: yüklenen yapıyı "default" dalına al.
 
 ## 5. Fragman ve dikey kısalar (Instagram Reels, TikTok, YouTube Shorts)

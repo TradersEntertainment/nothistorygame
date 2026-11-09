@@ -413,14 +413,14 @@ func _run() -> void:
 	_capture_mouse()
 	await hud.fade_to(0.0, 1.0)
 	await _n("D7_N_ARRIVE")
-	await _say("SPK_MUFIDE", "D7_M_BRIEF")
-	await _n("D7_N_BRIEF")
-	await _say("SPK_MUFIDE", "D7_M_BUDGET")
-	await _n("D7_N_SCANNER")
+	# Müfide'nin telsiz talimatı oyuncu yürürken akar (31 sn donuktu). Saat yalnız tarama ve konuşmayla ilerler;
+	# bu sırada başlatılan tarama, talimat bitene dek bekler (hud.say sıraya girer).
 	phase = "free"
 	Lore.scatter(self, "7")
 	player.frozen = false
 	_update_objective()
+	hud.say_chain([["SPK_MUFIDE", "D7_M_BRIEF"], ["SPK_NIHAT", "D7_N_BRIEF"], ["SPK_MUFIDE", "D7_M_BUDGET"],
+		["SPK_NIHAT", "D7_N_SCANNER"]])
 	if GameState.autotest:
 		await _auto()
 	while _outcome == "":
@@ -437,9 +437,10 @@ func _update_objective() -> void:
 	var ids: Array = []
 	for loc in _traces:
 		ids.append("trace:" + loc)
-	if _scanned.size() >= _traces.size() or _hour >= SUNSET - 1.0:
-		ids.append("report")      # izler bitti (ya da gün bitiyor): rapor kapısı da işaretli (işaretçi yalnız izleri gösteriyordu)
-	hud.set_objective(tr("UI_OBJ7") % [clock, _scanned.size()], null, 0.3, hud.spots(ids, func(id): return _scanned.has(str(id).trim_prefix("trace:")), {}, 0.3))
+	if _scanned.size() >= 1 or _hour >= SUNSET - 1.0:
+		ids.append("report")      # ilk izden sonra rapor kapısı da adıyla işaretli (sıcak izi erken bulan dönüş yolunu arıyordu)
+	hud.set_objective(tr("UI_OBJ7") % [clock, _scanned.size()], null, 0.3, hud.spots(ids,
+		func(id): return _scanned.has(str(id).trim_prefix("trace:")), {"report": tr("UI_OBJ7_REPORT_SPOT")}, 0.3))
 
 
 ## Saat harcar. Güneş batarsa rapor zorunlu olur.
@@ -897,7 +898,18 @@ func _report() -> void:
 	var keys: Array = []
 	for l in locs:
 		keys.append("LOC7_" + String(l).to_upper())
+	# Gün batmadıysa vazgeçilebilir: daktilo başlangıç noktasının yanında, yanlışlıkla açılan rapor geri alınamıyordu
+	var can_wait := _time_left()
+	if can_wait:
+		keys.append("UI_CH9_NOT_YET")
 	var c := await hud.choose(keys, 0.0, locs.find(_auto_answer()))
+	if can_wait and c == locs.size():
+		_reporting = false
+		phase = "free"
+		player.frozen = false
+		_update_objective()
+		_busy = false
+		return
 	var loc: String = locs[clampi(c, 0, locs.size() - 1)]
 	GameState.flags["ch7_report"] = loc
 	if loc == _truth:

@@ -363,6 +363,10 @@ func _light_torches_yourself() -> void:
 		player.hold_now("lighter", 0.0)
 	else:
 		player.show_prop("torch", 120.0)     # nöbetçinin bıraktığı yanan meşale (çakmak 10B'de harcandıysa)
+	# Bölüm sinematik HUD'da oynar: hedef işareti burada özellikle açılır (bölümün tek serbest işi işaretsizdi) ve
+	# meşaleler 3 m aralıklı olduğundan yakında da görünür kalır
+	hud.marker_in_cinematic = true
+	hud.marker.hide_near = 1.2
 	hud.set_objective(tr("UI_OBJ12B_TORCHES") % [0, total], left[0].global_position + Vector3(0, 2.0, 0))
 	player.frozen = false
 	var t0 := 0.0
@@ -400,6 +404,7 @@ func _light_torches_yourself() -> void:
 		_light_torches()       # süre doldu: kalanları nöbetçi yakar
 	hud.set_prompt("")
 	hud.set_objective("")
+	hud.marker_in_cinematic = false
 	player.frozen = true
 	if with_lighter:
 		player.hold_default()

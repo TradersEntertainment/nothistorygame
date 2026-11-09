@@ -759,6 +759,7 @@ func _interrogation() -> void:
 			_set_persuade(_persuade + 20)
 			_add_loyalty(-15)
 			await _n("D3_N_TEA")
+			player.show_prop("tea", 2.2)      # çay konuşulurken bardak elde (bardak sahnede vardı, elde hiç görünmüyordu)
 			await _h("D3_H_TEA_1")
 			await _h("D3_H_TEA_2")
 			await _h("D3_H_TEA_3")
