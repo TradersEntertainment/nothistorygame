@@ -601,11 +601,10 @@ static func bake(root: Node3D, pivots: Array, keep: Array = [], no_outline: Arra
 		arrays[Mesh.ARRAY_NORMAL] = norms
 		arrays[Mesh.ARRAY_COLOR] = cols
 		arrays[Mesh.ARRAY_INDEX] = idx
-		var am := ArrayMesh.new()
-		am.add_surface_from_arrays(Mesh.PRIMITIVE_TRIANGLES, arrays)
 		var out := MeshInstance3D.new()
 		out.name = "Baked"
-		out.mesh = am
+		out.lod_bias = LOD_BIAS
+		_lod_assign(out, arrays)
 		out.material_override = vc_mat(not (p in no_outline))
 		(p as Node3D).add_child(out)
 	var more := true
@@ -626,6 +625,135 @@ static func bake(root: Node3D, pivots: Array, keep: Array = [], no_outline: Arra
 			if par != piv and par.get_class() == "Node3D":
 				emptied[par] = piv
 			more = true
+
+
+## Ayrıntı katmanları (LOD): pişirilen ağ uzaklaştıkça daha az üçgenle çizilir (Crowd figürüyle aynı ayar). Godot katmanı
+## ekranda ~1 pikselden küçük sapmaya göre seçer; LOD_BIAS bu uzaklığı 12 kat uzatır: 6 m'ye kadar hep tam ağ (konuşma
+## mesafesinde kare birebir aynı), 12 m'de ~%5, 40 m'de ~%45, 70 m'de ~%64 daha az üçgen. Gölge geçişi de aynı katmanı
+## kullanır (land-walls sahnelerinde gölgedeki üçgenlerin çoğu karakterlerdi). lods = false: hiç katman yok.
+## Katman üretimi pahalı (~10 ms / parça; bir bölümde 700-900 ayrı biçim): bölüm açılışını uzatmasın diye
+##  · katmanlar biçime (köşe yeri + indeks) bağlı, renge değil: aynı biçimli parça bir kez hesaplanır (bellek önbelleği),
+##  · user://charkit_lod altına yazılır, sonraki açılışta diskten okunur,
+##  · önbellekte yoksa parça önce katmansız (tam ağ, aynı görüntü) konur, katmanlar arka iş parçacığında üretilip
+##    hazır olunca ağ değiştirilir.
+## Başsız koşuda (çizim yok) üretilmez.
+static var lods := true
+const LOD_BIAS := 12.0
+const LOD_MIN_TRIS := 64
+const LOD_VERSION := 1
+const LOD_DIR := "user://charkit_lod"
+static var _lod_cache := {}      # biçim anahtarı -> {edge_length: indeksler}
+static var _lod_wait := {}       # biçim anahtarı -> [[weakref(MeshInstance3D), arrays], ...] (katman bekleyenler)
+static var _lod_queue: Array = []        # üretilecek [anahtar, arrays] (iş parçacığı sırayla alır; _lod_mx ile)
+static var _lod_done := {}       # anahtar -> üretilen katmanlar (iş parçacığı yazar; _lod_mx ile)
+static var _lod_worker := -1     # WorkerThreadPool görevi (kuyruk boşalana dek çalışır)
+static var _lod_mx: Mutex
+static var _lod_pumping := false
+static var lod_stats := [0, 0, 0, 0]  # [bellekten, diskten, arka planda üretilen, katmansız]
+
+
+static func _plain(arrays: Array, lod := {}) -> ArrayMesh:
+	var am := ArrayMesh.new()
+	am.add_surface_from_arrays(Mesh.PRIMITIVE_TRIANGLES, arrays, [], lod)
+	return am
+
+
+static func _lod_assign(mi: MeshInstance3D, arrays: Array) -> void:
+	var ix: PackedInt32Array = arrays[Mesh.ARRAY_INDEX]
+	if not lods or ix.size() < LOD_MIN_TRIS * 3 or DisplayServer.get_name() == "headless":
+		lod_stats[3] += 1
+		mi.mesh = _plain(arrays)
+		return
+	var verts: PackedVector3Array = arrays[Mesh.ARRAY_VERTEX]
+	var key := "%d|%d|%d|%d|%d" % [LOD_VERSION, verts.size(), ix.size(), hash(verts), hash(ix)]
+	if _lod_cache.has(key):
+		lod_stats[0] += 1
+		mi.mesh = _plain(arrays, _lod_cache[key])
+		return
+	var path := LOD_DIR.path_join(key.md5_text() + ".lod")
+	if FileAccess.file_exists(path):
+		var f := FileAccess.open(path, FileAccess.READ)
+		var d = f.get_var() if f else null
+		if d is Dictionary:
+			_lod_cache[key] = d
+			lod_stats[1] += 1
+			mi.mesh = _plain(arrays, d)
+			return
+	# Önce tam ağ (görüntü aynı); katmanlar gelince ağ değişir
+	mi.mesh = _plain(arrays)
+	if _lod_mx == null:
+		_lod_mx = Mutex.new()
+	if not _lod_wait.has(key):
+		_lod_wait[key] = []
+		_lod_mx.lock()
+		_lod_queue.append([key, arrays])
+		_lod_mx.unlock()
+	(_lod_wait[key] as Array).append([weakref(mi), arrays])
+	if not _lod_pumping:
+		_lod_pumping = true
+		(Engine.get_main_loop() as SceneTree).process_frame.connect(_lod_pump)
+
+
+## İş parçacığında: kuyruk boşalana dek biçimden katman üretir (sahne ağacına ve çiziciye dokunmaz)
+static func _lod_work() -> void:
+	while true:
+		_lod_mx.lock()
+		var job: Array = _lod_queue.pop_front() if not _lod_queue.is_empty() else []
+		_lod_mx.unlock()
+		if job.is_empty():
+			return
+		var arrays: Array = job[1]
+		var im := ImporterMesh.new()
+		im.add_surface(Mesh.PRIMITIVE_TRIANGLES, arrays)
+		im.generate_lods(25.0, 60.0, [])
+		var lod := {}
+		# Köşeler değiştiyse (beklenmez) indeksler bizim köşelerimize uymaz: katmansız kalır
+		if (im.get_surface_arrays(0)[Mesh.ARRAY_VERTEX] as PackedVector3Array).size() == (arrays[Mesh.ARRAY_VERTEX] as PackedVector3Array).size():
+			for l in im.get_surface_lod_count(0):
+				lod[im.get_surface_lod_size(0, l)] = im.get_surface_lod_indices(0, l)
+		_lod_mx.lock()
+		_lod_done[job[0]] = lod
+		_lod_mx.unlock()
+
+
+## Her kare (ana iş parçacığı): biten katmanlar bekleyen parçalara takılır, diske yazılır; iş parçacığı gerekirse başlar
+static func _lod_pump() -> void:
+	_lod_mx.lock()
+	var done := _lod_done
+	_lod_done = {}
+	var queued := not _lod_queue.is_empty()
+	_lod_mx.unlock()
+	for key: String in done:
+		var lod: Dictionary = done[key]
+		_lod_cache[key] = lod
+		lod_stats[2] += 1
+		for it: Array in _lod_wait.get(key, []):
+			var mi = (it[0] as WeakRef).get_ref()
+			if mi is MeshInstance3D and not lod.is_empty():
+				(mi as MeshInstance3D).mesh = _plain(it[1], lod)
+		_lod_wait.erase(key)
+		if not lod.is_empty():
+			DirAccess.make_dir_recursive_absolute(LOD_DIR)
+			var path := LOD_DIR.path_join(key.md5_text() + ".lod")
+			# Önce geçici dosyaya, sonra yerine (aynı anda koşan iki oyun yarım dosya okumasın)
+			var tmp := path + ".%d.tmp" % OS.get_process_id()
+			var f := FileAccess.open(tmp, FileAccess.WRITE)
+			if f:
+				f.store_var(lod)
+				f.close()
+				DirAccess.rename_absolute(tmp, path)
+	if _lod_worker >= 0 and WorkerThreadPool.is_task_completed(_lod_worker):
+		WorkerThreadPool.wait_for_task_completion(_lod_worker)
+		_lod_worker = -1
+	if _lod_worker < 0 and queued:
+		_lod_worker = WorkerThreadPool.add_task(_lod_work, false, "CharKit LOD")
+	elif _lod_worker < 0 and done.is_empty():
+		_lod_mx.lock()
+		var idle := _lod_queue.is_empty() and _lod_done.is_empty()
+		_lod_mx.unlock()
+		if idle:
+			(Engine.get_main_loop() as SceneTree).process_frame.disconnect(_lod_pump)
+			_lod_pumping = false
 
 
 static func _collect(pivot: Node, n: Node, pivots: Array, keep: Array, out: Array) -> void:

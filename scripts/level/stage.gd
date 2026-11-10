@@ -154,3 +154,307 @@ static func hammer_swings(player: Player, n := 3, on_hit := Callable()) -> void:
 			player.shake(0.03)
 	if is_instance_valid(hm):
 		hm.queue_free()
+
+
+# ---------------------------------------------------------------- ortak parçalar (Bölüm 2, tur 2; bütün oyuna yayılır)
+# Eller nesneye, ayaklar zemine, halatın iki ucu bir yere bağlı: havada iş yapan, havada duran, havada gerili ip kalmasın.
+
+static var _rope_mat: StandardMaterial3D
+
+
+## Eli nesneye oturt: who'nun (rig'li Soldier/Person) eli frame'in yerelindeki noktaya uzanır (Rig.reach). Bir nokta: ona
+## yakın el; iki nokta: iki el, kollar çaprazlanmadan. Kişinin kendi pozu yazıldıktan SONRA çağrılır (yüksek
+## process_priority'li bir _process'te ya da grip_hold ile). Döner: avucun hedefe kalan en büyük uzaklığı (m).
+## Örnek: Stage.grip(asker, kirik_kol, [Vector3(0, 1, 1.1), Vector3(0, 1, 1.6)]) — ırgat kolu, kürek, halat, kıç aynası.
+static func grip(who: Node3D, frame: Node3D, pts: Array) -> float:
+	var rg := Handover.rig_of(who)
+	if rg == null or rg.arm_l == null or rg.arm_r == null or rg.elbow_l == null or rg.elbow_r == null or pts.is_empty():
+		return INF
+	var w: Array = []
+	for p: Vector3 in pts:
+		w.append(frame.to_global(p) if frame else p)
+	var al := rg.arm_l
+	var ar := rg.arm_r
+	var pairs: Array = []
+	if w.size() == 1:
+		var left: bool = al.global_position.distance_to(w[0]) < ar.global_position.distance_to(w[0])
+		pairs.append([al if left else ar, rg.elbow_l if left else rg.elbow_r, w[0]])
+	else:
+		var straight: bool = al.global_position.distance_to(w[0]) + ar.global_position.distance_to(w[1]) <= \
+			al.global_position.distance_to(w[1]) + ar.global_position.distance_to(w[0])
+		pairs.append([al, rg.elbow_l, w[0] if straight else w[1]])
+		pairs.append([ar, rg.elbow_r, w[1] if straight else w[0]])
+	var err := 0.0
+	for pr: Array in pairs:
+		var arm: Node3D = pr[0]
+		var out := arm.global_position - who.global_position
+		out.y = 0.0
+		err = maxf(err, Rig.reach(arm, pr[1], pr[2], Vector3.DOWN + (out.normalized() * 0.6 if out.length() > 0.01 else Vector3.ZERO)))
+	return err
+
+
+## grip'i her karede, kişinin kendi pozundan sonra uygular (bir Tween'le: Tween'ler düğümlerin _process'inden sonra
+## işler). seconds < 0: grip_release(who) çağrılana ya da kişi silinene dek. Yakalayan asker, halatı tutan, kürekçi.
+## Örnek: Stage.grip_hold(muhafiz, oyuncu.hand, [Vector3(0, 0.035, 0.07)], 4.0) — oyuncunun görünen bileğinden tutar.
+## lean: tutarken gövde öne eğilir (radyan; kol boyu yetmeyen yakına uzanır).
+static func grip_hold(who: Node3D, frame: Node3D, pts: Array, seconds := -1.0, lean := 0.0) -> void:
+	if not is_instance_valid(who) or not who.is_inside_tree():
+		return
+	grip_release(who)
+	var rg := Handover.rig_of(who)
+	if rg:
+		rg.lock += 1      # rig'in kendi kol jesti (konuşma, işaret) araya girmesin
+	var tw := who.create_tween()
+	var apply := func(_t: float) -> void:
+		if is_instance_valid(who) and (frame == null or is_instance_valid(frame)):
+			if lean != 0.0 and rg and rg.body:
+				rg.body.rotation.x = lean
+			grip(who, frame, pts)
+	if seconds < 0.0:
+		tw.set_loops()
+		tw.tween_method(apply, 0.0, 1.0, 1.0)
+	else:
+		tw.tween_method(apply, 0.0, 1.0, maxf(seconds, 0.05))
+		tw.tween_callback(func(): grip_release(who))
+	who.set_meta("grip_tw", tw)
+
+
+## grip_hold'u bırakır (kol kişinin kendi pozuna döner).
+static func grip_release(who: Node3D) -> void:
+	if not is_instance_valid(who) or not who.has_meta("grip_tw"):
+		return
+	var tw = who.get_meta("grip_tw")
+	who.remove_meta("grip_tw")
+	if tw is Tween and (tw as Tween).is_valid():
+		(tw as Tween).kill()
+	var rg := Handover.rig_of(who)
+	if rg:
+		rg.lock = maxi(0, rg.lock - 1)
+
+
+## Ayağı zemine oturt: kişinin iki tabanından alçak olanı zemine değecek kadar kök dikine kayar (yalnız y). ground:
+## (x, z) -> dünya y; verilmezse aşağı ışın (kişinin kendi gövdesi sayılmaz). Pozu (öne yatma, adım) yazıldıktan sonra
+## her karede çağrılır; kendini düzeltir (taban zemindeyse kayma 0). İten, çeken, yokuşta ya da güvertede çalışan herkes.
+## Örnek: Stage.plant_feet(itici, func(x, z): return yol.y_at(x, z)). Döner: uygulanan kayma (m).
+static func plant_feet(who: Node3D, ground := Callable(), max_shift := 0.45) -> float:
+	var rg := Handover.rig_of(who)
+	if rg == null or rg.knee_l == null or rg.knee_r == null or not who.is_inside_tree():
+		return 0.0
+	var low := Vector3.INF
+	var gy := 0.0
+	for kn: Node3D in [rg.knee_l, rg.knee_r]:
+		var an := CharKit.ankle_of(kn)
+		var sole := an.to_global(Vector3(0, -0.075, 0.05))
+		var g := _ground_under(who, sole, ground)
+		if low == Vector3.INF or sole.y - g < low.y - gy:
+			low = sole
+			gy = g
+	var d := clampf(gy - low.y, -max_shift, max_shift)
+	who.global_position += Vector3(0, d, 0)
+	return d
+
+
+static func _ground_under(who: Node3D, p: Vector3, ground: Callable) -> float:
+	if ground.is_valid():
+		return float(ground.call(p.x, p.z))
+	var q := PhysicsRayQueryParameters3D.create(p + Vector3(0, 0.9, 0), p + Vector3(0, -1.2, 0))
+	var ex: Array[RID] = []
+	for c in who.find_children("*", "CollisionObject3D", true, false):
+		ex.append((c as CollisionObject3D).get_rid())
+	q.exclude = ex
+	var hit := who.get_world_3d().direct_space_state.intersect_ray(q)
+	return (hit["position"] as Vector3).y if not hit.is_empty() else p.y
+
+
+## Halat: iki ucu bağlı (a, b parent'ın yerelinde), sag kadar sarkan, burgulu kalın ip: tek ağ, köşe rengi şeritleri
+## (bir koyu bir açık, sarmal) ve dış çizgi. Ucu bir şeye bağlı olmayan, havada gerili ip kurmayın.
+## Örnek: var r := Stage.rope(gemi, baba, kazik, 0.2, 0.04); hareket edince Stage.rope_to(r, [baba, ..., kazik]).
+## Kullanım: fren halatı, çekme halatı, kayık bağı, vinç, çan ipi, zincir (koyu renk).
+static func rope(parent: Node3D, a: Vector3, b: Vector3, sag := 0.0, r := 0.03, col := Color("b89a6a"), n := 8) -> MeshInstance3D:
+	var mi := MeshInstance3D.new()
+	mi.set_meta("rope", [r, col])
+	mi.set_meta("no_walk", true)       # WorldWalk: ip zemin değildir
+	mi.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
+	mi.material_override = rope_material()
+	parent.add_child(mi)
+	rope_to(mi, sag_points(a, b, sag, n if sag > 0.0 else 1))
+	return mi
+
+
+## Halatı yeni noktalardan geçirir (parent'ın yerelinde). Noktalar 5 mm'den az değiştiyse ağ yeniden kurulmaz.
+static func rope_to(mi: MeshInstance3D, pts: Array) -> void:
+	if not is_instance_valid(mi) or pts.size() < 2:
+		return
+	var last: Array = mi.get_meta("rope_pts", [])
+	if last.size() == pts.size():
+		var same := true
+		for i in pts.size():
+			if (last[i] as Vector3).distance_squared_to(pts[i]) > 0.000025:
+				same = false
+				break
+		if same:
+			return
+	mi.set_meta("rope_pts", pts.duplicate())
+	var spec: Array = mi.get_meta("rope", [0.03, Color("b89a6a")])
+	mi.mesh = rope_mesh(pts, float(spec[0]), spec[1])
+
+
+## Sarkan ipin noktaları: a'dan b'ye, ortası sag kadar aşağıda (n parça için n+1 nokta; zincir eğrisine yakın parabol).
+static func sag_points(a: Vector3, b: Vector3, sag: float, n := 8) -> Array:
+	var pts: Array = []
+	n = maxi(1, n)
+	for i in n + 1:
+		var t := float(i) / n
+		pts.append(a.lerp(b, t) + Vector3.DOWN * sag * 4.0 * t * (1.0 - t))
+	return pts
+
+
+## Yerde kangal: düz sarmal (dıştan içe turns tur), merkez p (parent'ın yerelinde), r dış yarıçap. Üstte ip ucu.
+## Örnek: Stage.rope_coil(iskele, Vector3(1, 0, 2), 0.3) — kazığın dibinde, güvertede, kayıkta.
+static func rope_coil(parent: Node3D, p: Vector3, r := 0.3, turns := 3.5, thick := 0.03, col := Color("b89a6a")) -> MeshInstance3D:
+	var pts: Array = []
+	var steps := int(turns * 14.0)
+	for i in steps + 1:
+		var t := float(i) / steps
+		var a := t * turns * TAU
+		var rr := lerpf(r, r * 0.35, t)
+		pts.append(p + Vector3(cos(a) * rr, thick + t * thick * 1.6, sin(a) * rr))
+	var mi := MeshInstance3D.new()
+	mi.set_meta("no_walk", true)
+	mi.mesh = rope_mesh(pts, thick, col)
+	mi.material_override = rope_material()
+	parent.add_child(mi)
+	return mi
+
+
+## Bir direğe/kazığa sarılmış ip turları: center (parent yerelinde) dikey eksen, y0'dan y1'e turns tur. Dönüş: sarımın
+## son noktası (ip oradan devam eder).
+static func rope_wrap(parent: Node3D, center: Vector3, radius: float, y0: float, y1: float, turns := 3.0, thick := 0.032,
+		col := Color("b89a6a"), phase := 0.0) -> MeshInstance3D:
+	var pts: Array = []
+	var steps := int(turns * 12.0)
+	for i in steps + 1:
+		var t := float(i) / steps
+		var a := phase + t * turns * TAU
+		pts.append(center + Vector3(cos(a) * radius, lerpf(y0, y1, t), sin(a) * radius))
+	var mi := MeshInstance3D.new()
+	mi.set_meta("no_walk", true)
+	mi.set_meta("end", pts[-1])
+	mi.mesh = rope_mesh(pts, thick, col)
+	mi.material_override = rope_material()
+	parent.add_child(mi)
+	return mi
+
+
+## Burgulu ip ağı: noktalardan geçen 6 yüzlü boru; ~9 cm'de bir halka, yüzler bir açık bir koyu (sarmal şerit).
+static func rope_mesh(pts: Array, r: float, col: Color) -> ArrayMesh:
+	const SIDES := 6
+	var ring_pts: Array = []
+	var ring_t: Array = []
+	for i in pts.size() - 1:
+		var a: Vector3 = pts[i]
+		var b: Vector3 = pts[i + 1]
+		var m := maxi(1, int(ceil(a.distance_to(b) / 0.09)))
+		for k in m:
+			ring_pts.append(a.lerp(b, float(k) / m))
+	ring_pts.append(pts[-1])
+	var n := ring_pts.size()
+	var dark := col.darkened(0.3)
+	var light := col.lightened(0.08)
+	var verts := PackedVector3Array()
+	var norms := PackedVector3Array()
+	var cols := PackedColorArray()
+	var rings: Array = []
+	var prev_side := Vector3.ZERO
+	for i in n:
+		var p: Vector3 = ring_pts[i]
+		var tan: Vector3 = ((ring_pts[mini(i + 1, n - 1)] as Vector3) - (ring_pts[maxi(i - 1, 0)] as Vector3))
+		tan = tan.normalized() if tan.length() > 0.0001 else Vector3.UP
+		var side := prev_side - tan * prev_side.dot(tan) if prev_side != Vector3.ZERO else Vector3.ZERO
+		if side.length() < 0.001:
+			side = tan.cross(Vector3.UP if absf(tan.y) < 0.95 else Vector3.RIGHT)
+		side = side.normalized()
+		prev_side = side
+		var up := side.cross(tan).normalized()
+		var ring: Array = []
+		for k in SIDES:
+			var ang := TAU * k / SIDES
+			ring.append(side * cos(ang) + up * sin(ang))
+		rings.append([p, ring])
+	for i in n - 1:
+		var p0: Vector3 = rings[i][0]
+		var p1: Vector3 = rings[i + 1][0]
+		var r0: Array = rings[i][1]
+		var r1: Array = rings[i + 1][1]
+		for k in SIDES:
+			var k2 := (k + 1) % SIDES
+			var c := light if (k + i) % 2 == 0 else dark      # her halkada bir yüz kayar: sarmal burgu
+			var q := [p0 + (r0[k] as Vector3) * r, p0 + (r0[k2] as Vector3) * r, p1 + (r1[k2] as Vector3) * r, p1 + (r1[k] as Vector3) * r]
+			var qn := [r0[k], r0[k2], r1[k2], r1[k]]
+			for j: int in [0, 1, 2, 0, 2, 3]:      # Godot'da ön yüz saat yönünde
+				verts.append(q[j])
+				norms.append(qn[j])
+				cols.append(c)
+	# Uçlar kapalı ve yuvarlatılmış (tur 3: açık uçlu ip yerde sert kenarlı boru gibi görünüyordu)
+	if n >= 2:
+		for e in 2:
+			var ri: int = 0 if e == 0 else n - 1
+			var rp: Vector3 = rings[ri][0]
+			var rr: Array = rings[ri][1]
+			var tdir: Vector3 = ((ring_pts[ri] as Vector3) - (ring_pts[1 if e == 0 else n - 2] as Vector3))
+			tdir = tdir.normalized() if tdir.length() > 0.0001 else Vector3.UP
+			var tip := rp + tdir * r * 0.7
+			for k in SIDES:
+				var k2 := (k + 1) % SIDES
+				var tri := [rp + (rr[k] as Vector3) * r, tip, rp + (rr[k2] as Vector3) * r]
+				for j: int in [0, 1, 2, 2, 1, 0]:      # iki yüzlü: sarım yönünden bağımsız görünür
+					verts.append(tri[j])
+					norms.append(((tri[j] as Vector3) - rp + tdir * r * 0.3).normalized())
+					cols.append(dark)
+	var arr := []
+	arr.resize(Mesh.ARRAY_MAX)
+	arr[Mesh.ARRAY_VERTEX] = verts
+	arr[Mesh.ARRAY_NORMAL] = norms
+	arr[Mesh.ARRAY_COLOR] = cols
+	var am := ArrayMesh.new()
+	if verts.size() > 0:
+		am.add_surface_from_arrays(Mesh.PRIMITIVE_TRIANGLES, arr)
+	return am
+
+
+## İp malzemesi: köşe rengi, çizgi film gölgesi, dış çizgi (Props malzemesinin köşe renkli kopyası).
+static func rope_material() -> StandardMaterial3D:
+	if _rope_mat == null:
+		_rope_mat = Props.mat(Color.WHITE).duplicate() as StandardMaterial3D
+		_rope_mat.vertex_color_use_as_albedo = true
+		_rope_mat.vertex_color_is_srgb = true
+	return _rope_mat
+
+
+## approach'un zemini izleyen hâli: who target'a (tam o noktaya) yürür, her adımda ayağı ground(x, z)'ye basar (eğimde,
+## kumda doğrusal tween karakteri havada ya da gömülü yürütüyordu: VISAUDIT float). Varınca face_at'e döner (verilmezse
+## yürüdüğü yöne bakar). Otomatik testte (PACE dışı) hemen varır. settle() ile beklenebilir ("stage_walk").
+## Örnek: await Stage.walk_on_ground(asker, oyuncu_onu, _ground_y, 3.2, oyuncu.global_position)
+static func walk_on_ground(who: Node3D, target: Vector3, ground: Callable, speed := 1.6, face_at := Vector3.INF) -> void:
+	if not is_instance_valid(who) or not who.is_inside_tree():
+		return
+	var from := who.global_position
+	var to := Vector3(target.x, float(ground.call(target.x, target.z)), target.z)
+	face(who, to)
+	if fast() or Vector2(to.x - from.x, to.z - from.z).length() < 0.05:
+		who.global_position = to
+		if face_at != Vector3.INF:
+			face(who, face_at)
+		return
+	var t := clampf(Vector2(to.x - from.x, to.z - from.z).length() / maxf(speed, 0.1), 0.25, 8.0)
+	who.set_meta("stage_walk", true)
+	var tw := who.create_tween()
+	tw.tween_method(func(k: float) -> void:
+		if is_instance_valid(who):
+			var q := from.lerp(to, k)
+			who.global_position = Vector3(q.x, float(ground.call(q.x, q.z)), q.z), 0.0, 1.0, t)
+	await tw.finished
+	if is_instance_valid(who):
+		who.remove_meta("stage_walk")
+		if face_at != Vector3.INF:
+			face(who, face_at)

@@ -59,3 +59,27 @@ Birkaç bölümde (23, 24, 26o, 31o, 38o) oyuncuyu şehrin 5 noktasına ışınl
 - sokak düğümlerinin %95'i evlerden boş;
 - tüm Landmarks1453 yapıları kurulmuş;
 - karede ortalama süre.
+
+## 4. Sokak insanı: herkesle konuşma ve "tuhaflığa bakan halk"
+- **Konuşma** (`scripts/side_events.gd`, `street_*`): sokakta, ordugâhta görünen her kişi "E · Konuş: <rol>" ile konuşur.
+  Rol (BYZSOL, GENMERC, OSMSOL, JAN, AZAP, VENDB, VENDO, PORTER, WORKER, PRIEST, MONK, DERV, WOMB, CHILDB, FISHER,
+  TOWNB) "street_role" işaretinden ya da görünüşten çıkar. Replikler `DST_<ROL>_IDLE/FEZ/NIGHT/CONQ/GAL_n`; aynı kişiye
+  3., 4., 5.+ gidişte `DST_<GRUP>_AGAIN_1/_2/AGAIN`. Hikâye karakterleri ve 1452 bölümleri eski davranışta kalır.
+- **Sokak gözü** (`scripts/street_eye.gd`, Hud kurar): zıplama, koşup çarpma, eşyalar, dönme, dik bakma, kılıç, fes,
+  eğilme → çevredekiler sırayla baş çevirir, döner, durur, jest yapar, söylenir (`DST_ODD_*`); ilgi birikirse nöbetçi
+  uyarır (`DST_WARN_*`). Gizlilik bölümlerinde (4, 16, 25, 5, 8, 21o, Trespass) yalnız baş çevrilir. CityLife'ın yakın
+  (4 m) gövdelerine ve yakındaki askerlere konuşma alanını da o açar. Test: `tests/street_check.tscn` (STREETCHECK).
+- **Konuşan = görünen** (v0.99.x): sokak sözünü her zaman ekranda görünen, ağzı oynayan bir kişi söyler.
+  - Tepki sözü (`StreetEye._bark`): önce konuşacak kişi seçilir (tepki veren, jest aşamasını geçmiş, oyuncunun kamera
+    kadrajında ve arası açık: `_in_view`; tetikleyen ilk, sonra en yakınlar); satır o kişinin KENDİ rolünün
+    konuşmacısından (yoksa aynı öbekten: `SPK_GROUP`) seçilir (`_line_for`, `_pick_line`). O kişi için o tuhaflıkta satır
+    yoksa aynı taraftan sıradaki aday denenir; hiçbiri yoksa söz yok, yalnız jest. Nöbetçi uyarısı da yalnız görünen,
+    rolüne uyan nöbetçiden gelir. Eski "kalabalıktan uyan biri söyler, ağız oynamaz" yolu kalktı.
+  - Kart (`Hud.street_bark`, `SideEvents.street_talk`, `Hud.show_reaction`): ad kişinin rol etiketi (`SideEvents.role_label`,
+    istemdeki adla aynı; satır metni ve ses anahtarı değişmez). Portre kişinin kendi canlı kafasıdır (LivePortrait: başlık,
+    saç, sakal, ten, giysi aynen). Yüzü kameraya açılamıyorsa ya da kişi 40 m'den uzaksa portre GİZLENİR; stüdyoda
+    kurulan başka bir yüz asla gösterilmez. Konuşan, altyazı göründüğü anda konuşmaya başlar (`street_hold`), altyazı başka
+    bir satıra geçince susar (`street_release`): aynı anda tek konuşan.
+  - Kapı (`Hud.street_busy`): altyazı, replik, zincirleme konuşma, seçim, ara sahne, çalan ses, duraklatma varken tepki
+    sözü söylenmez; "E · Konuş" cevabı öncelikli (çalan tepki sözünü keser).
+  - Test: STREETCHECK (f) 100 rastgele olayda konuşan kadrajda/rol uyumlu, (g) kart kişiyle uyumlu, tek konuşan, kapı.

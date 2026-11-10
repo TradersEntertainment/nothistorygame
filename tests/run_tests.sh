@@ -247,6 +247,10 @@ echo "$out" | grep -q "CREATORCHECK PASS" || fail=1
 out=$(timeout 900 "$GODOT" --headless --path . res://tests/city_check.tscn 2>&1)
 echo "$out" | grep -E "CITYCHECK|SCRIPT ERROR|Parse Error"
 echo "$out" | grep -q "CITYCHECK PASS" || fail=1
+# Sokak insanı: herkesle konuşma (her rol, tırmanan cevaplar), tuhaflığa kademeli tepki, gizlilik kipi, kare süresi
+out=$(timeout 900 "$GODOT" --headless --path . res://tests/street_check.tscn 2>&1)
+echo "$out" | grep -E "STREETCHECK (PASS|FAIL|hata)|SCRIPT ERROR|Parse Error"
+echo "$out" | grep -q "STREETCHECK PASS" || fail=1
 # Hareket: tırmanma, kenardan çıkma, atlama, nefes, sınır
 out=$(timeout 300 "$GODOT" --headless --path . res://tests/traversal_test.tscn -- --autotest 2>&1)
 echo "$out" | grep -E "AUTOTEST|SCRIPT ERROR|Parse Error"

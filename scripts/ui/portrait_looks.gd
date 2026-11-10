@@ -97,7 +97,13 @@ const LOOKS := {
 	"SPK_PATROL": {"coat": Color("3a5a78"), "pants": Color("e8e0d0"), "hat": "turban", "mustache": true, "beard": true, "skin": Color("c89070")},
 	"SPK_ROWER": {"coat": Color("8a6a4a"), "pants": Color("e8e0d0"), "hat": "bork", "mustache": true, "skin": Color("c89070")},
 	"SPK_WOMAN": {"coat": Color("6a3a5a"), "pants": Color("3a2a30"), "skirt": true, "hat": "scarf", "scarf": Color("c8a070"), "skin": Color("d9a07a")},
+	"SPK_WORKER": {"coat": Color("7a6040"), "pants": Color("e8e0d0"), "hat": "turban", "mustache": true, "skin": Color("c08868")},
+	"SPK_SUTLER": {"coat": Color("8a6a3a"), "pants": Color("3a2a1e"), "hat": "turban", "beard": true, "apron": Color("e8dcc0"), "hair": Color("a8a49c"), "skin": Color("c89070")},
 	# Şehir, Galata, Venedik ve Ceneviz
+	"SPK_WOMAN_BYZ": {"coat": Color("3a6a8a"), "pants": Color("4a3a30"), "skirt": true, "hat": "scarf", "scarf": Color("e8e0d0"), "skin": Color("e0b08a")},
+	"SPK_CHILD_BYZ": {"coat": Color("a84a3a"), "pants": Color("3a3a5a"), "hair": Color("4a3020"), "skin": Color("f0c8a0"), "child": true},
+	"SPK_PORTER": {"coat": Color("8a7050"), "pants": Color("4a3a2a"), "mustache": true, "skin": Color("c89070")},
+	"SPK_STREET_MONK": {"coat": Color("2a2226"), "pants": Color("2a2226"), "robe": Color("2a2226"), "hat": "hood", "beard": true, "skin": Color("d8b090")},
 	"SPK_NIKO": {"face": "niko", "coat": Color("8a2b22"), "pants": Color("4a3a2a"), "hair": Color("2a1e14"), "hat": "helm", "mustache": true, "beard": true, "skin": Color("d9a07a")},
 	"SPK_GIUST": {"face": "giustiniani", "coat": Color("a8aeb6"), "pants": Color("6a2a2a"), "hat": "condottiero", "beard": true, "mustache": true, "hair": Color("5a3a1e"), "skin": Color("e8b894")},
 	"SPK_EMPEROR": {"face": "emperor", "coat": Color("5a2a6a"), "pants": Color("3a1a4a"), "hat": "stemma", "beard": true, "mustache": true, "hair": Color("6a6a6a"), "robe": Color("5a2a6a")},

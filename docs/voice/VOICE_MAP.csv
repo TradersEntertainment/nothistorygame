@@ -828,6 +828,202 @@ DSET_T_VSYNC_OFF_1,,SPK_TOLGA,,0,"Senkron kapalı. Kareler özgür. Ben değilim
 DSET_T_VSYNC_OFF_2,,SPK_TOLGA,,0,"Ekran yırtılırsa poliçe karşılamaz, baştan söyleyeyim.","If the screen tears, the policy won't cover it. Just saying.",ayarlar
 DSET_T_VSYNC_ON_1,,SPK_TOLGA,,0,"Dikey eşitleme açık. Her şey senkron: ekran, monitör, benim kalp atışım.","V-sync on. Everything's in sync: the screen, the monitor, my heartbeat.",ayarlar
 DSET_T_VSYNC_ON_2,,SPK_TOLGA,,0,Ekran yırtılması bitti. Artık yırtılan tek şey formlarım.,No more screen tearing. The only thing tearing now is my paperwork.,ayarlar
+DST_AZAP_IDLE_1,,SPK_AZAP,,0,"Biz azabız, önden gideriz. Arkadakiler ""ne cesur"" der. Biz ""ne acele"" deriz.","We're azabs. We go first. The ones behind say ""how brave"". We say ""what's the rush"".",sokak
+DST_AZAP_IDLE_2,,SPK_AZAP,,0,"Kalkanım hasırdan. Ok gelince ben dua ediyorum, hasır da benimle.","My shield is wicker. When arrows come I pray, and the wicker prays with me.",sokak
+DST_AZAP_IDLE_3,,SPK_AZAP,,0,"Yeniçeriye pilav, bize bulgur. Bulgur da doyurur. Kıskanmıyoruz. Azıcık.","Janissaries get pilaf, we get bulgur. Bulgur fills you up. We're not jealous. Barely.",sokak
+DST_AZAP_IDLE_4,,SPK_AZAP,,0,"Hendeğe taş taşıyoruz. Hendek doluyor, sırtım boşalıyor.","We haul stones to the moat. The moat fills up, my back empties out.",sokak
+DST_AZAP_IDLE_5,,SPK_AZAP,,0,"Köye dönünce ""İstanbul'u gördüm"" diyeceğim. Surlarını yani. Dışarıdan.","When I get home I'll say I've seen Istanbul. Its walls, I mean. From outside.",sokak
+DST_BYZSOL_AGAIN,,SPK_CITY_GUARD,,0,Git artık. Lütfen. Rica ediyorum. Mızrakla rica ediyorum.,Go now. Please. I'm asking nicely. With a spear.,sokak
+DST_BYZSOL_AGAIN_1,,SPK_CITY_GUARD,,0,Yine mi sen? Seni de nöbet listesine yazayım mı?,You again? Shall I put you on the watch roster?,sokak
+DST_BYZSOL_AGAIN_2,,SPK_CITY_GUARD,,0,Dördüncü kez. Komutana söyleyeceğim: surda bir hayranımız var.,Fourth time. I'll tell the captain we have an admirer on the wall.,sokak
+DST_BYZSOL_FEZ_1,,SPK_CITY_GUARD,,0,O kırmızı külah ne? Türk casusuysan çok kötü bir casussun.,"What's that red cap? If you're a Turkish spy, you're a terrible one.",sokak
+DST_BYZSOL_FEZ_2,,SPK_CITY_GUARD,,0,"Külahını çıkar da yüzünü göreyim. ...Yok, tak. Böylesi daha iyiymiş.","Take that cap off so I can see your face. ...No, put it back. That's better.",sokak
+DST_BYZSOL_FEZ_3,,SPK_CITY_GUARD,,0,Casus böyle göze batmaz. Demek ki casus değilsin. Ya da çok akıllısın.,Spies don't stand out like that. So you're not a spy. Or you're very clever.,sokak
+DST_BYZSOL_IDLE_1,,SPK_CITY_GUARD,,0,"Mızrağım dün kırıldı, bugün süpürge sapı taşıyorum. Belli etme.",My spear broke yesterday. Today I'm carrying a broom handle. Act natural.,sokak
+DST_BYZSOL_IDLE_2,,SPK_CITY_GUARD,,0,"Üç gecedir uyumadım. Sen gerçek misin, yoksa yine mi rüya?","I haven't slept in three nights. Are you real, or another dream?",sokak
+DST_BYZSOL_IDLE_3,,SPK_CITY_GUARD,,0,"Maaşı Cenevizliler alıyor, nöbeti biz tutuyoruz. Adalet bu.","The Genoese get the pay, we get the night watch. That's justice.",sokak
+DST_BYZSOL_IDLE_4,,SPK_CITY_GUARD,,0,Kalkanımda bir ok izi var. Hatıra. Başkasının kalkanında olsa daha güzel hatıra olurdu.,There's an arrow mark on my shield. A keepsake. Would've been a nicer keepsake on someone else's.,sokak
+DST_BYZSOL_IDLE_5,,SPK_CITY_GUARD,,0,"Annem her sabah ""kafanı surdan uzatma"" diyor. Uzatmıyorum. Yalnız mızrağı uzatıyorum.","Every morning Mother says ""don't stick your head over the wall."" I don't. Just the spear.",sokak
+DST_BYZSOL_IDLE_6,,SPK_CITY_GUARD,,0,Surdan bakınca Türk çadırları deniz gibi. Ben yüzme bilmem.,From the wall the Turkish tents look like a sea. I can't swim.,sokak
+DST_BYZSOL_IDLE_7,,SPK_CITY_GUARD,,0,"Dur bakalım. ...Tamam, geç. Yüzün tanıdık değil, ayakkabın hiç değil.","Hold on. ...Fine, go. I don't know your face, and I know your shoes even less.",sokak
+DST_BYZSOL_IDLE_8,,SPK_CITY_GUARD,,0,Ekmek tayınını yarıya indirdiler. Ben de sesimi yarıya indirdim. Bağıracak kuvvet kalmadı.,They halved the bread ration. So I halved my voice. No strength left for shouting.,sokak
+DST_BYZSOL_NIGHT_1,,SPK_CITY_GUARD,,0,Gece sokakta dolaşan ya hırsızdır ya şair. Bir şiir oku bakalım.,Anyone out at night is a thief or a poet. Recite something.,sokak
+DST_BYZSOL_NIGHT_2,,SPK_CITY_GUARD,,0,Fenerimin yağı azaldı. Kısa konuş.,My lamp's running low on oil. Keep it short.,sokak
+DST_CHILDB_AGAIN,,SPK_CHILD_BYZ,[shouting],0,Anneee! Tuhaf adam yine geldi!,Muuum! The strange man's back!,sokak
+DST_CHILDB_AGAIN_1,,SPK_CHILD_BYZ,[shouting],0,Yine geldin! Saklambaç mı oynuyoruz? Sen ebesin!,You're back! Are we playing hide-and-seek? You're it!,sokak
+DST_CHILDB_FEZ_1,,SPK_CHILD_BYZ,,0,Şapkan neden kırmızı? Benim şapkam yok. Bana verir misin?,Why's your hat red? I haven't got one. Can I have it?,sokak
+DST_CHILDB_IDLE_1,,SPK_CHILD_BYZ,,0,Büyüyünce surda nöbet tutacağım. Ama gündüz. Gece korkuyorum.,When I grow up I'll keep watch on the wall. In the daytime. Night is scary.,sokak
+DST_CHILDB_IDLE_2,,SPK_CHILD_BYZ,,0,Annem yabancılarla konuşma dedi. Sen yabancı mısın? ...O zaman konuşmadık.,Mum said don't talk to strangers. Are you a stranger? ...Then we didn't talk.,sokak
+DST_CHILDB_IDLE_3,,SPK_CHILD_BYZ,,0,Topun sesini yapabiliyorum. Bum! ...Gerçeği daha büyük.,I can do the cannon. BOOM! ...The real one's bigger.,sokak
+DST_CHILDB_IDLE_4,,SPK_CHILD_BYZ,,0,"Kedi gördün mü? Hangisi olduğu fark etmez, hepsini seviyorum.",Seen a cat? Doesn't matter which one. I love all of them.,sokak
+DST_CHILDB_IDLE_5,,SPK_CHILD_BYZ,,0,Ayakkabın neden bağcıklı? Ayakların kaçmasın diye mi?,Why do your shoes have laces? So your feet don't run away?,sokak
+DST_CHILD_COPY_1,,SPK_CHILD_BYZ,[shouting],0,"Bak anne, ben de zıplıyorum! Ben de tuhafım!","Look Mum, I'm jumping too! I'm strange too!",kod
+DST_CHILD_COPY_2,,SPK_CHILD_BYZ,,0,Ben de dönerim! ...Başım döndü. Çok güzel.,I can spin too! ...I'm dizzy. It's lovely.,kod
+DST_CHILD_COPY_3,,SPK_CHILD_BYZ,[shouting],0,Bana da ışık yap! Bana da! Bana da!,Make a light for me! Me! Me too!,kod
+DST_CIVB_AGAIN,,SPK_TOWNSMAN,,0,Ne istiyorsun? ...Bilmiyor musun? Ben de bilmiyorum. Hoşça kal.,What do you want? ...You don't know? Neither do I. Goodbye.,sokak
+DST_CIVB_AGAIN_1,,SPK_TOWNSMAN,,0,Bir şey mi satıyorsun? Almam. Bir şey mi alacaksın? Satmam.,Selling something? Not buying. Buying something? Not selling.,sokak
+DST_CIVB_AGAIN_2,,SPK_TOWNSMAN,,0,Komşular bakmaya başladı. Biz artık dedikoduyuz.,The neighbours are staring. We're gossip now.,sokak
+DST_DERV_AGAIN,,SPK_DERVISH,,0,"Üçüncü kez geldin. Tekkede buna ""arayış"" deriz. Çarşıda ""oyalanma"".",Third time. In the lodge we call that seeking. In the bazaar we call it loitering.,sokak
+DST_DERV_FEZ_1,,SPK_DERVISH,,0,"Kırmızı külahın güzel. Bizde yeşili olur. Renk değil, niyet önemli.","A fine red cap. Ours come in green. It's not the colour, it's the intention.",sokak
+DST_DERV_IDLE_1,,SPK_DERVISH,,0,"Bu ordugâhta herkes bir şey arıyor. Sen ne arıyorsun, yolcu? ...Ben de onu arıyordum.","Everyone in this camp is looking for something. What are you looking for, traveller? ...So was I.",sokak
+DST_DERV_IDLE_2,,SPK_DERVISH,,0,"Top da konuşur, gönül de. Topu herkes duyar.","The cannon speaks, and so does the heart. Everyone hears the cannon.",sokak
+DST_DERV_IDLE_3,,SPK_DERVISH,,0,Acele etme. Sur bin yıldır orada. Öğlene kadar da durur.,Don't rush. The wall's been there a thousand years. It'll last till noon.,sokak
+DST_DERV_IDLE_4,,SPK_DERVISH,,0,"İkram edecek bir şeyim yok, sohbetim var. O da soğumaz.",I have nothing to offer but conversation. That doesn't go cold.,sokak
+DST_FISHER_IDLE_1,,SPK_FISHMONGER,,0,"Zincir Haliç'i kapattı, balıklar içeride kaldı. Bana iyi, balıklara kötü.","The chain closed the Horn and the fish are stuck inside. Good for me, bad for the fish.",sokak
+DST_FISHER_IDLE_2,,SPK_FISHMONGER,,0,Olta atarken Türk gemilerini sayıyorum. Balıktan çoklar.,"While I cast, I count the Turkish ships. There are more of them than fish.",sokak
+DST_FISHER_IDLE_3,,SPK_FISHMONGER,,0,"Uskumru sabah, lüfer akşam, dedikodu bütün gün.","Mackerel in the morning, bluefish at dusk, gossip all day.",sokak
+DST_FISHER_IDLE_4,,SPK_FISHMONGER,,0,"Sana bir balık versem ne verirsin? ...O parlak şey ne? Neyse, balık bende kalsın.","If I gave you a fish, what would you give me? ...What's that shiny thing? Never mind, I'll keep the fish.",sokak
+DST_FISHER_IDLE_5,,SPK_FISHMONGER,,0,"Denizde fırtına, karada top. Ben ortada olta tutuyorum.","Storm at sea, cannon on land. I'm in the middle holding a rod.",sokak
+DST_GENMERC_CONQ_1,,SPK_GENOESE,,0,Ahitname mühürlendi diyorlar. Okumadım ama mühür güzeldi.,"They say the treaty's sealed. I didn't read it, but it was a lovely seal.",sokak
+DST_GENMERC_FEZ_1,,SPK_GENOESE,,0,Kırmızı şapka mı? Cenova'da bunu satardım. Burada seni satarlar.,A red hat? In Genoa I'd sell that. Here they'd sell you.,sokak
+DST_GENMERC_IDLE_1,,SPK_GENOESE,,0,Cenova'dan para için geldik. Neden kaldığımızı... henüz hesaplamadım.,We came from Genoa for the money. Why we're staying... I haven't done the sums yet.,sokak
+DST_GENMERC_IDLE_2,,SPK_GENOESE,,0,Zırhım Milano işi. Taksidi bitmedi. Lütfen kimse ok atmasın.,"My armour's Milanese. Still paying it off. Please, nobody shoot at it.",sokak
+DST_GENMERC_IDLE_3,,SPK_GENOESE,,0,"Rumlar bize ""Latin"" diyor, biz onlara ""Rum"". Aynı sur, ayrı ekmek.","The Greeks call us Latins, we call them Greeks. Same wall, different bread.",sokak
+DST_GENMERC_IDLE_4,,SPK_GENOESE,,0,"Bu şehirde şarap ucuz, ok pahalı. Normalde tersi olur.",In this city wine is cheap and arrows are dear. Usually it's the other way round.,sokak
+DST_GENMERC_IDLE_5,,SPK_GENOESE,,0,"Sözleşmede ""kuşatma"" yazıyordu. ""Uzun kuşatma"" yazmıyordu.","The contract said ""siege"". It didn't say ""long siege"".",sokak
+DST_GENMERC_IDLE_6,,SPK_GENOESE,,0,Komutanın yanından hiç ayrılmam. Kazan da orada.,I never leave the commander's side. That's where the pot is.,sokak
+DST_JAN_AGAIN,,SPK_JANISSARY,,0,"Nöbetçiye bu kadar bakılmaz. Nöbetçi de insandır, utanır.",You don't stare at a sentry this much. Sentries are people too. We get shy.,sokak
+DST_JAN_AGAIN_1,,SPK_JANISSARY,,0,Bir daha gelirsen seni talime yazarım. Talim gün doğmadan.,Come once more and I'll sign you up for drill. Drill starts before sunrise.,sokak
+DST_JAN_CONQ_1,,SPK_JANISSARY,,0,"Şehir Sultan'ındır. Sokak sakin olsun, sen de sakin ol.",The city is the Sultan's. Let the street be calm. You too.,sokak
+DST_JAN_CONQ_2,,SPK_JANISSARY,,0,Nöbet bitti sanıyordum. Şimdi başka nöbet başladı. Nöbetin sonu yok.,I thought the watch was over. Now another one starts. Watches never end.,sokak
+DST_JAN_CONQ_3,,SPK_JANISSARY,,0,Yolunu mu kaybettin? Ben de. Beraber buluruz.,Lost your way? Me too. We'll find it together.,sokak
+DST_JAN_FEZ_1,,SPK_JANISSARY,,0,Kırmızı külahlı Frenk! Elçiysen çadır şu tarafta. Değilsen... yine şu tarafta.,"Red-capped Frank! If you're an envoy, the tent's that way. If not... also that way.",sokak
+DST_JAN_FEZ_2,,SPK_JANISSARY,,0,Börkün mü çekti? Sıcak suyla yıkanmaz bu.,Did your börk shrink? You don't wash those in hot water.,sokak
+DST_JAN_IDLE_1,,SPK_JANISSARY,,0,Kazanımıza dokunma. Kazan bizim sancağımızdır.,Don't touch our cauldron. The cauldron is our banner.,sokak
+DST_JAN_IDLE_2,,SPK_JANISSARY,,0,"Talimde yay germekten kolum uzadı. Ölçtüm, bir parmak.",My arm's grown from drawing the bow at drill. I measured. One finger.,sokak
+DST_JAN_IDLE_3,,SPK_JANISSARY,,0,Ağamız sert ama adildir. Herkese aynı sertlikte.,Our Agha is harsh but fair. Equally harsh to everyone.,sokak
+DST_JAN_IDLE_4,,SPK_JANISSARY,,0,Börkünü düz tut diyorlar. Rüzgâr başka türlü düşünüyor.,They tell me to keep my börk straight. The wind disagrees.,sokak
+DST_JAN_IDLE_5,,SPK_JANISSARY,,0,Sen ocaktan değilsin. Yürüyüşünden belli. Biz böyle sallanmayız.,You're not from the Corps. It shows in your walk. We don't wobble.,sokak
+DST_JAN_IDLE_6,,SPK_JANISSARY,,0,"Nöbetteyim, konuşmam yasak. ...Bu konuşma sayılmaz.",I'm on duty. Talking's forbidden. ...This doesn't count.,sokak
+DST_MONK_IDLE_1,,SPK_STREET_MONK,,0,"Sessizlik yemini ettim. ...Kuşatmada geçerli değilmiş, sordum.",I took a vow of silence. ...Doesn't apply during a siege. I asked.,sokak
+DST_MONK_IDLE_2,,SPK_STREET_MONK,,0,Kırk yıldır aynı kitabı kopyalıyorum. Son sayfada başa dönüyorum. Huzur bu.,I've copied the same book for forty years. At the last page I start again. That's peace.,sokak
+DST_MONK_IDLE_3,,SPK_STREET_MONK,,0,Senin için bir mum yakarım. Mum az ama sana lazım gibi duruyor.,"I'll light a candle for you. Candles are scarce, but you look like you need one.",sokak
+DST_ODD_BUMP_B_1,,SPK_TOWNSMAN,,0,Hey! Gözün nerede? Türkler mi kovalıyor?,Hey! Watch it! Are the Turks chasing you?,kod
+DST_ODD_BUMP_B_2,,SPK_PORTER,[shouting],0,Yavaş! Sepetim! ...Tamam. Sepetim yerde.,Slow down! My basket! ...Right. My basket's on the ground.,kod
+DST_ODD_BUMP_O_1,,SPK_SOLDIER,[shouting],0,"Dur be adam! Burası ordugâh, at meydanı değil!","Stop, man! This is a camp, not a racecourse!",kod
+DST_ODD_BUMP_O_2,,SPK_WORKER,,0,"Çarpıp kaçmak ayıptır. Bari bir ""kusura bakma"" de.",Bumping and running is rude. At least say sorry.,kod
+DST_ODD_CHICK_B_1,,SPK_TOWNSMAN,,0,Havaya yemek atıp ağzıyla tutuyor! Kuşatmada yemekle oyun mu oynanır?,"He throws food in the air and catches it! Playing with food, in a siege?",kod
+DST_ODD_CHICK_O_1,,SPK_SOLDIER,[shouting],0,Bir tane de bana at! ...Ağzımla tutamadım. Bir daha!,Throw me one! ...Missed it. Again!,kod
+DST_ODD_CLIMB_B_1,,SPK_TOWNSMAN,[shouting],0,"İn oradan! O tezgâh ekmek için, çizme için değil!","Get down! That stall's for bread, not boots!",kod
+DST_ODD_CLIMB_B_2,,SPK_WOMAN_BYZ,,0,"Yukarıdan ne görünüyor? Türkler mi? ...Söyleme, bilmek istemiyorum.",What can you see from up there? The Turks? ...Don't tell me.,kod
+DST_ODD_CLIMB_O_1,,SPK_SOLDIER,[shouting],0,Çadır direğine tırmanma! O direk sancak için!,Don't climb the tent pole! That pole's for the banner!,kod
+DST_ODD_CLIMB_O_2,,SPK_WORKER,,0,"Yukarıdan sur küçük mü görünüyor? Söyle, ağaya müjde vereyim.","Does the wall look smaller from up there? Tell me, I'll take the good news to the Agha.",kod
+DST_ODD_COLOGNE_B_1,,SPK_WOMAN_BYZ,,0,Bu koku ne? Limon bahçesi mi yürüyor?,What's that smell? Is a lemon grove walking past?,kod
+DST_ODD_COLOGNE_O_1,,SPK_SOLDIER,,0,"Bana da sür o kokudan! ...Gitti. Neyse, ben bir şey demedim.",Put some of that on me! ...He's gone. Never mind.,kod
+DST_ODD_CROUCH_B_1,,SPK_CITY_GUARD,,0,"Neden eğilerek yürüyorsun? Ok yağmuru yok. ...Yok, değil mi?",Why are you walking bent double? There are no arrows. ...Are there?,kod
+DST_ODD_CROUCH_O_1,,SPK_JANISSARY,,0,Eğilip yürüyen ya casustur ya beli tutulmuştur. Sen hangisisin?,A man who walks hunched is either a spy or has a bad back. Which are you?,kod
+DST_ODD_CUBE_B_1,,SPK_TOWNSMAN,,0,"Renkli kutuyu çeviriyor, çeviriyor... Büyü mü bu, hesap mı?",He turns the coloured box and turns it... Is that magic or arithmetic?,kod
+DST_ODD_CUBE_O_1,,SPK_SOLDIER,,0,Zarı mı bozdun? Altı yüzü de birbirine karışmış.,Did you break the dice? All six faces are muddled.,kod
+DST_ODD_FEZ_B_1,,SPK_TOWNSMAN,,0,"Külahını bir takıyor bir çıkarıyor. Selam mı veriyor, işaret mi?","He keeps putting his cap on and taking it off. A greeting, or a signal?",kod
+DST_ODD_FEZ_O_1,,SPK_SOLDIER,,0,"Başlığını çıkarma, güneş çarpar. ...Taktı. Çıkardı. Bu bir oyun mu?","Keep your cap on, the sun will get you. ...On. Off. Is this a game?",kod
+DST_ODD_JUMP_B_1,,SPK_TOWNSMAN,,0,Ayağına ne oldu? Yer mi yakıyor?,What's wrong with your feet? Is the ground hot?,kod
+DST_ODD_JUMP_B_2,,SPK_CITY_GUARD,,0,Zıplama! Surun öbür tarafından seni görecekler.,Stop jumping! They'll see you from the other side of the wall.,kod
+DST_ODD_JUMP_O_1,,SPK_SOLDIER,,0,Bu hangi talim? Bizim bölükte yok bu.,What drill is that? Our company doesn't do that one.,kod
+DST_ODD_JUMP_O_2,,SPK_AZAP,,0,"Cin çarptı bunu, cin! Biri hocayı çağırsın.",Something's got into him! Someone fetch the hodja.,kod
+DST_ODD_LIGHTER_B_1,,SPK_PRIEST,,0,Cebinden ateş çıkardı! Gel bari kilisenin mumlarını yak.,"Fire out of his pocket! Come and light the church candles, then.",kod
+DST_ODD_LIGHTER_O_1,,SPK_JANISSARY,[shouting],0,Ateşi cebinde taşıyor! Barut çadırından uzak dur!,He carries fire in his pocket! Keep away from the powder tent!,kod
+DST_ODD_PHONE_B_1,,SPK_CITY_GUARD,,0,"O ışığı söndür! Gece sur dibinde ışık yakılmaz, ok gelir.",Put that light out! No lights by the wall at night. Arrows come.,kod
+DST_ODD_PHONE_B_2,,SPK_WOMAN_BYZ,,0,Avucunda küçük bir pencere var. İçindeki... senin yüzün mü?,There's a tiny window in your palm. Is that... your own face?,kod
+DST_ODD_PHONE_O_1,,SPK_SOLDIER,,0,"Ateşsiz ışık! Topçular görmesin, isterler.","Light without fire! Don't let the gunners see, they'll want it.",kod
+DST_ODD_PHONE_O_2,,SPK_AZAP,,0,"Ona öyle bakma, büyülenirsin. Bak, büyülendin bile.","Don't stare at it like that, you'll be bewitched. Look, you already are.",kod
+DST_ODD_SELFIE_B_1,,SPK_TOWNSMAN,,0,Sopanın ucundaki aynaya mı gülümsüyorsun? Ayna da sana gülüyor mu?,Smiling at a mirror on a stick? Is it smiling back?,kod
+DST_ODD_SELFIE_B_2,,SPK_WOMAN_BYZ,,0,Beni de koy oraya! ...Neresiyse orası.,"Put me in there too! ...Wherever ""there"" is.",kod
+DST_ODD_SELFIE_O_1,,SPK_SOLDIER,,0,Sopayla kendine mi nişan alıyorsun? Okçu bile böyle yapmaz.,Aiming a stick at yourself? Not even an archer does that.,kod
+DST_ODD_SELFIE_O_2,,SPK_AZAP,,0,Sağ yanımdan çiz. Sol yanım bıyığı taşımıyor.,Get my right side. My left side doesn't do the moustache justice.,kod
+DST_ODD_SPIN_B_1,,SPK_TOWNSMAN,,0,"Kendi etrafında dönüyor. Başı dönecek, sonra üstümüze düşecek.",He's spinning on the spot. He'll get dizzy and fall on us.,kod
+DST_ODD_SPIN_O_1,,SPK_SOLDIER,,0,Kendi etrafında dönen adam! Rüzgârgülü mü oldun?,A man spinning on the spot! Turned into a weathervane?,kod
+DST_ODD_SPIN_O_2,,SPK_AZAP,,0,Dur! Sana bakarken benim başım döndü.,Stop! I'm getting dizzy just watching you.,kod
+DST_ODD_STARE_B_1,,SPK_TOWNSMAN,,0,Neye bakıyorsun? Yüzümde bir şey mi var? ...Ekmek kırıntısı mı?,What are you looking at? Something on my face? ...Breadcrumbs?,kod
+DST_ODD_STARE_B_2,,SPK_WOMAN_BYZ,,0,Öyle bakma. Göz değecek.,Stop staring. You'll put the evil eye on me.,kod
+DST_ODD_STARE_O_1,,SPK_SOLDIER,,0,Sana borcum mu var? Öyle bakıyorsun da.,Do I owe you money? That's the look you're giving me.,kod
+DST_ODD_STARE_O_2,,SPK_JANISSARY,,0,Bakışın keskin. Gel okçu ol.,Sharp stare. Come and be an archer.,kod
+DST_ODD_SWORD_B_1,,SPK_CITY_GUARD,,0,Kılıcını kınına sok! Çarşıda kılıç gezdirilmez.,Sheathe that sword! No blades in the market.,kod
+DST_ODD_SWORD_O_1,,SPK_JANISSARY,,0,O kılıcı kimden aldın? Ağa biliyor mu?,Where did you get that sword? Does the Agha know?,kod
+DST_ODD_SWORD_O_2,,SPK_SOLDIER,,0,"Öyle tutarsan kendi bacağını kesersin. Bak, böyle tutulur.","Hold it like that and you'll cut your own leg. Look, like this.",kod
+DST_OSMSOL_AGAIN,,SPK_SOLDIER,,0,"Tamam, tamam. Adın ne? ...Söyleme, bilmeyeyim. Git.","All right, all right. What's your name? ...Don't tell me. Go.",sokak
+DST_OSMSOL_AGAIN_1,,SPK_SOLDIER,,0,"Kardeşim, bir şey mi kaybettin? Her seferinde bana geliyorsun.","Brother, lost something? You keep coming back to me.",sokak
+DST_OSMSOL_AGAIN_2,,SPK_SOLDIER,,0,Çavuş görürse ikimizi de kazan yıkamaya verir.,"If the sergeant sees us, we're both on cauldron duty.",sokak
+DST_OSMSOL_FEZ_1,,SPK_SOLDIER,,0,Frenk elçisi misin? Elçiler atla gelir. Sen yürüyorsun. Fakir bir krallık.,Are you a Frankish envoy? Envoys come on horseback. You're walking. Poor kingdom.,sokak
+DST_OSMSOL_FEZ_2,,SPK_SOLDIER,,0,O kırmızı başlık hangi bölüğün? Bizimkiler beyaz. Seninki... tuhaf.,Which company wears a red cap like that? Ours are white. Yours is... odd.,sokak
+DST_OSMSOL_IDLE_1,,SPK_SOLDIER,,0,"Köyde harman vakti geliyor. Burada tek harman, taş harmanı.",Back home it's nearly threshing time. Here the only harvest is stones.,sokak
+DST_OSMSOL_IDLE_2,,SPK_SOLDIER,,0,"Annem ""sıcak tut kendini"" dedi. Nisan'da yün şalvar. Terledim, ona söyleme.",Mother said keep warm. Wool trousers in April. I'm sweating. Don't tell her.,sokak
+DST_OSMSOL_IDLE_3,,SPK_SOLDIER,,0,"Kılıcımı her sabah bilerim. Kesmesi için değil, ağa bakınca parlasın diye.",I sharpen my sword every morning. Not to cut. So it shines when the Agha looks.,sokak
+DST_OSMSOL_IDLE_4,,SPK_SOLDIER,,0,Top atılınca kulağıma pamuk tıkıyorum. Sonra çavuşu duymuyorum. Çifte kazanç.,When the cannon fires I stuff cotton in my ears. Then I can't hear the sergeant either. Double win.,sokak
+DST_OSMSOL_IDLE_5,,SPK_SOLDIER,,0,"Hangi bölüktensin? ...Hiçbiri mi? Bizimkine gel, kazanımız büyük.",Which company are you? ...None? Join ours. Our cauldron's big.,sokak
+DST_OSMSOL_IDLE_6,,SPK_SOLDIER,,0,"Bu sabah üç kere davul, beş kere top, bir kere çorba. Sayıyorum.","This morning: three drums, five cannon shots, one soup. I'm keeping count.",sokak
+DST_OSMSOL_IDLE_7,,SPK_SOLDIER,,0,"Uykumda bile halat çekiyorum. Yanımdakinin yorganını çekmişim, küstü.",I pull ropes in my sleep now. Pulled my tentmate's blanket off. He's not speaking to me.,sokak
+DST_PORTER_IDLE_1,,SPK_PORTER,,0,Sırtımdaki surun taşı. Surun kendisi ne ağırdır? Merak etmiyorum.,This is a stone for the wall. How much does the whole wall weigh? I don't want to know.,sokak
+DST_PORTER_IDLE_2,,SPK_PORTER,,0,"Yol ver kardeşim. Yüküm durursa ben de dururum, bir daha kalkmam.","Make way, brother. If my load stops, so do I, and I won't get up again.",sokak
+DST_PORTER_IDLE_3,,SPK_PORTER,,0,"Hamalın kuralı basit: yük ağırsa şarkı söyle. Ben üç şarkı biliyorum, yük dört.","The porter's rule: heavy load, sing. I know three songs. This load is a four.",sokak
+DST_PORTER_IDLE_4,,SPK_PORTER,,0,Bu sepette ne var biliyor musun? Ben de bilmiyorum. Bilsem bırakırdım.,"Know what's in this basket? Neither do I. If I knew, I'd put it down.",sokak
+DST_PORTER_IDLE_5,,SPK_PORTER,,0,Dinlen diyorlar. Ben dinlenince yük kaçmıyor ki.,They tell me to rest. The load doesn't run off while I rest.,sokak
+DST_PRIEST_AGAIN,,SPK_PRIEST,,0,"Evladım, sabır bir erdemdir. Benimki şu an sınanıyor.","My son, patience is a virtue. Mine is being tested right now.",sokak
+DST_PRIEST_CONQ_1,,SPK_PRIEST,,0,"Dua etmeye devam ediyorum. Başka ne yapılır, bilmiyorum.",I keep praying. I don't know what else one does.,sokak
+DST_PRIEST_IDLE_1,,SPK_PRIEST,,0,"Tanrı seni korusun, evladım. Ayakkabılarını da.","God keep you, my son. And your shoes.",sokak
+DST_PRIEST_IDLE_2,,SPK_PRIEST,,0,Kandillerimiz duayla yanıyor. Biraz da zeytinyağı olsa fena olmazdı.,Our lamps burn on prayer. A little olive oil wouldn't hurt.,sokak
+DST_PRIEST_IDLE_3,,SPK_PRIEST,,0,Günah çıkaracaksan sıraya gir. Sıra uzun; kuşatma herkesi düşündürdü.,"If you want to confess, get in line. It's long. The siege has everyone thinking.",sokak
+DST_PRIEST_IDLE_4,,SPK_PRIEST,,0,"Latin mi, Rum mu diye sorma. Bugün herkes aynı şey için dua ediyor: ekmek.",Don't ask me Latin or Greek. Today everyone prays for the same thing: bread.,sokak
+DST_TOWNB_CONQ_1,,SPK_TOWNSMAN,,0,"Kapımızı kapattık. Sen de evine git, yabancı.","We've shut our door. Go home too, stranger.",sokak
+DST_TOWNB_CONQ_2,,SPK_TOWNSMAN,,0,Kiliseden ses gelmiyor. Alışmak zor.,No sound from the church. It's hard to get used to.,sokak
+DST_TOWNB_IDLE_1,,SPK_TOWNSMAN,,0,Hipodromda yarış kalmadı. Şimdi taş yarışı yapıyoruz: sura ilk kim taşıyacak.,No more races at the Hippodrome. Now we race stones: who gets one to the wall first.,sokak
+DST_TOWNB_IDLE_2,,SPK_TOWNSMAN,,0,"Yunanca bilmiyor musun? O zaman yavaş yavaş, ellerimle anlatayım.","You don't speak Greek? Then I'll say it slowly, with my hands.",sokak
+DST_TOWNB_IDLE_3,,SPK_TOWNSMAN,,0,"Dedem her sabah ""bu şehir yarın düşer"" derdi. Doksan yaşına kadar her sabah.",Every morning my grandfather said the city would fall tomorrow. Every morning till he was ninety.,sokak
+DST_TOWNB_IDLE_4,,SPK_TOWNSMAN,,0,Mese'de yürüyorsan ortadan yürü. Kenardaki evlerden saksı düşüyor.,"If you walk the Mese, keep to the middle. Flowerpots fall from the houses.",sokak
+DST_TOWNB_IDLE_5,,SPK_TOWNSMAN,,0,"Venedikliler limanda, Cenevizliler surda, biz evde. Herkes bir yerde.","Venetians at the harbour, Genoese on the wall, us at home. Everyone's somewhere.",sokak
+DST_TOWNB_IDLE_6,,SPK_TOWNSMAN,,0,Sen bu mahalleden değilsin. Bu mahallede herkes bana borçlu.,You're not from round here. Everyone round here owes me money.,sokak
+DST_T_ODD_1,,SPK_TOLGA,,0,"Herkes bakıyor. Sakin ol Tolga, viral olmaya beş yüz yıl var.","Everyone's staring. Relax, Tolga. Going viral is five hundred years away.",sokak
+DST_T_ODD_2,,SPK_TOLGA,,0,"Tamam, anladım. Burada zıplamak ""kültürel fark.""","Okay, got it. Jumping here counts as a ""cultural difference"".",sokak
+DST_T_ODD_3,,SPK_TOLGA,,0,Kimse bir şey görmedi. ...Herkes gördü.,Nobody saw anything. ...Everybody saw.,sokak
+DST_T_ODD_4,,SPK_TOLGA,,0,Selfie çekerken izlenmek ayrı bir duygu. Pek iyi değil.,Being watched while taking a selfie is a whole feeling. Not a good one.,sokak
+DST_T_ODD_5,,SPK_TOLGA,,0,"Uyarı aldım. Sicilim temiz, bir uyarıyla.","I've been warned. Clean record, plus one warning.",sokak
+DST_T_REPLY_1,,SPK_TOLGA,,0,Not aldım. Dosyanıza işliyorum.,Noted. I'll add it to your file.,sokak
+DST_T_REPLY_2,,SPK_TOLGA,,0,"Çok değerli bir geri bildirim, teşekkürler.","Very valuable feedback, thank you.",sokak
+DST_T_REPLY_3,,SPK_TOLGA,,0,Anladım. Yani hayır.,"Got it. So, no.",sokak
+DST_T_REPLY_4,,SPK_TOLGA,,0,Kapsam dışı ama dinledim.,"Out of scope, but I listened.",sokak
+DST_T_REPLY_5,,SPK_TOLGA,,0,Bu mahallenin müşteri memnuniyeti biraz düşük.,This neighbourhood's customer satisfaction is a bit low.,sokak
+DST_T_REPLY_6,,SPK_TOLGA,,0,Belgeselde bunu anlatmamışlardı.,The documentary never mentioned this.,sokak
+DST_T_REPLY_7,,SPK_TOLGA,,0,"Tamam, bir dahaki sefere randevu alırım.","Fine, next time I'll book an appointment.",sokak
+DST_T_REPLY_8,,SPK_TOLGA,,0,Beş yıldız. Değerlendirme sistemi yok ama beş yıldız.,"Five stars. There's no rating system, but five stars.",sokak
+DST_VENDB_IDLE_1,,SPK_TOWNSMAN,,0,"Erik var, kiraz yok. Kiraz Türk tarafında kaldı. Bahçemle birlikte.","Plums, yes. Cherries, no. The cherries stayed on the Turkish side. With my orchard.",sokak
+DST_VENDB_IDLE_2,,SPK_TOWNSMAN,,0,"Fiyatlar her top atışında biraz artıyor. Erken geldin, şanslısın.",Prices go up with every cannon shot. You came early. Lucky you.,sokak
+DST_VENDB_IDLE_3,,SPK_TOWNSMAN,,0,"Ekmek undur, un buğdaydır, buğday gemidir. Gemi yok. Ekmek de az.","Bread is flour, flour is wheat, wheat is ships. No ships. Not much bread.",sokak
+DST_VENDB_IDLE_4,,SPK_TOWNSMAN,,0,"Al, tadına bak. Bedava. Beğenirsen iki katı.","Here, have a taste. Free. If you like it, double price.",sokak
+DST_VENDB_IDLE_5,,SPK_TOWNSMAN,,0,Tezgâhı kilisenin önüne kurdum. Çıkanın eli hep açık olur.,I set up my stall by the church. People coming out are always generous.,sokak
+DST_VENDB_IDLE_6,,SPK_TOWNSMAN,,0,Senin gibi tuhaf giyinen biri dün de geldi. Sendin galiba.,Someone as oddly dressed as you came by yesterday. Might've been you.,sokak
+DST_VENDO_IDLE_1,,SPK_SUTLER,,0,"Ordu yürür, pazar peşinden yürür. Ben yirmi yıldır yürüyorum.","The army marches, the market follows. I've been marching twenty years.",sokak
+DST_VENDO_IDLE_2,,SPK_SUTLER,,0,"Nal, ip, kandil yağı, kuru üzüm. Hepsi aynı fiyat. Hesabı kolay.","Horseshoes, rope, lamp oil, raisins. All one price. Easy sums.",sokak
+DST_VENDO_IDLE_3,,SPK_SUTLER,,0,Leblebi mi? O ne? ...Getirirsen ortak oluruz.,Roasted chickpeas? What's that? ...Bring me some and we're partners.,sokak
+DST_VENDO_IDLE_4,,SPK_SUTLER,,0,Akçen yoksa takas yaparız. Ayakkabın güzelmiş.,No akçe? Then we trade. Nice shoes.,sokak
+DST_VENDO_IDLE_5,,SPK_SUTLER,,0,Kuşatma uzarsa kâr artar diyorlar. Yalan. Kuşatma uzarsa veresiye artar.,They say a long siege means profit. Lies. A long siege means tabs.,sokak
+DST_VEND_AGAIN,,SPK_TOWNSMAN,,0,"Üç kez geldin, bir şey almadın. Artık arkadaşız, veresiye bile veririm.","Three visits, nothing bought. We're friends now. I'll even give you credit.",sokak
+DST_WARN_B_1,,SPK_CITY_GUARD,,0,Sen! Bu tuhaflıkları bırak. Halk zaten korkuyor.,You! Stop this nonsense. People are frightened enough.,kod
+DST_WARN_B_2,,SPK_CITY_GUARD,,0,Bir daha görürsem seni Logothetes'in kâtiplerine götürürüm. Yedi nüsha dilekçe yazarsın.,Next time I'll take you to the Logothete's clerks. You'll write petitions in seven copies.,kod
+DST_WARN_B_3,,SPK_CITY_GUARD,,0,Yürü. Ama düzgün yürü. Zıplamadan.,Move along. Properly. No hopping.,kod
+DST_WARN_G_1,,SPK_GENOESE,,0,"Dostum, burada tuhaflık serbest ama ücretli. Kesmezsen fatura keserim.","Friend, strangeness is allowed here, but it costs. Stop, or I'll bill you.",kod
+DST_WARN_O_1,,SPK_JANISSARY,,0,"Ordugâhta gösteri yapılmaz! Çavuşa söylerim, bütün gece nöbet tutarsın.",No shows in the camp! I'll tell the sergeant and you'll stand watch all night.,kod
+DST_WARN_O_2,,SPK_JANISSARY,,0,"Frenk misin, deli misin? İkisiysen çadırına git.","Are you a Frank or a madman? If you're both, go to your tent.",kod
+DST_WARN_O_3,,SPK_JANISSARY,,0,Son kez söylüyorum: düzgün dur. Ordunun düzeni bozulmaz.,Last time I'm saying it: behave. The army's order isn't to be broken.,kod
+DST_WHISPER_B_1,,SPK_WOMAN_BYZ,[hesitant],0,"Bak, bak... Hayır, bakma. ...Şimdi bak.","Look, look... No, don't look. ...Now look.",kod
+DST_WHISPER_B_2,,SPK_TOWNSMAN,,0,Cenevizli mi bu? Değil. Venedikli mi? Hiç değil. Bu başka bir şey.,Genoese? No. Venetian? Not at all. This is something else.,kod
+DST_WHISPER_O_1,,SPK_SOLDIER,,0,"Sen de gördün mü? Ben gördüm demem, sen de deme.",Did you see that too? I won't say I saw it. Don't you either.,kod
+DST_WHISPER_O_2,,SPK_AZAP,,0,Frenkler hep böyle mi? ...Bilmem. İlk Frenkimi görüyorum.,Are all Franks like that? ...No idea. He's my first Frank.,kod
+DST_WOMB_AGAIN,,SPK_WOMAN_BYZ,,0,"Git artık, yoksa sana da hamur yoğurturum.","Off you go, or I'll have you kneading dough too.",sokak
+DST_WOMB_AGAIN_1,,SPK_WOMAN_BYZ,,0,Yine mi? Kocam görse ne der?,Again? What would my husband say?,sokak
+DST_WOMB_CONQ_1,,SPK_WOMAN_BYZ,,0,Bugün söyleyecek sözüm yok.,I have nothing to say today.,sokak
+DST_WOMB_FEZ_1,,SPK_WOMAN_BYZ,,0,"Külahın güzel. Kökboyayla mı boyadın? Bana da öğret, kumaşlarım soldu.","Nice cap. Madder dye? Teach me, all my cloth has faded.",sokak
+DST_WOMB_GAL_1,,SPK_WOMAN_BYZ,,0,"Galata'da herkes tarafsız. Ben de tarafsızım. Kocam değil, o borçlu.",Everyone in Galata is neutral. So am I. Not my husband. He's in debt.,sokak
+DST_WOMB_GAL_2,,SPK_WOMAN_BYZ,,0,"Pazarda Cenevizce, evde Rumca, kapıda Türkçe. Üç dilde pazarlık ederim.","Genoese at market, Greek at home, Turkish at the gate. I haggle in three languages.",sokak
+DST_WOMB_IDLE_1,,SPK_WOMAN_BYZ,,0,"Kocam surda, oğlum surda, ben fırında. Bu şehri biz ayakta tutuyoruz, haberleri olsun.","My husband's on the wall, my son's on the wall, I'm at the oven. We hold this city up, tell them.",sokak
+DST_WOMB_IDLE_2,,SPK_WOMAN_BYZ,,0,Sen kimin nesisin? Annen biliyor mu buralarda dolaştığını?,Whose son are you? Does your mother know you're wandering about?,sokak
+DST_WOMB_IDLE_3,,SPK_WOMAN_BYZ,,0,Bu ayakkabılarla çarşıya çıkılır mı? Çamur seni yer.,Market in those shoes? The mud will swallow you.,sokak
+DST_WOMB_IDLE_4,,SPK_WOMAN_BYZ,,0,"Komşu ""Türkler yarın girer"" dedi. Dün de dedi. Ben çamaşırımı asıyorum.",The neighbour says the Turks get in tomorrow. She said it yesterday too. I'm hanging the washing.,sokak
+DST_WOMB_IDLE_5,,SPK_WOMAN_BYZ,,0,"Su sırası uzun. Sarnıçlar dolu, sabrımız boş.","The water queue is long. The cisterns are full, our patience is empty.",sokak
+DST_WOMB_IDLE_6,,SPK_WOMAN_BYZ,,0,Ekmek dağıtıyorlarmış. Koşmuyorum. Koşanı iki kez sıraya girdi sanıyorlar.,They're handing out bread. I'm not running. Runners get accused of queuing twice.,sokak
+DST_WORKER_IDLE_1,,SPK_WORKER,,0,"Hendek kazıyoruz, sonra dolduruyoruz, sonra yine kazıyoruz. Sonunda hepsi toprak.","We dig the trench, then fill it, then dig it again. In the end it's all dirt.",sokak
+DST_WORKER_IDLE_2,,SPK_WORKER,,0,Kızağa iç yağı sürdüm. Şimdi ben kayıyorum.,I greased the slipway. Now I'm the one slipping.,sokak
+DST_WORKER_IDLE_3,,SPK_WORKER,,0,"Usta ""dikkat"" dedi. Ben baktım, kütük de ayağıma baktı.","The foreman said ""careful"". I looked. The log looked back, at my foot.",sokak
+DST_WORKER_IDLE_4,,SPK_WORKER,,0,"Ben tahta biçerim, kalem tutmam. Kâtip misin? Bir arzuhal yaz: ""yorgunum.""","I saw planks, I don't hold pens. Are you a scribe? Write a petition: ""I'm tired.""",sokak
+DST_WORKER_IDLE_5,,SPK_WORKER,,0,Gemileri tepeden yürütecekmişiz. Ben kendimi zor yürütüyorum.,They say we'll walk ships over the hill. I can barely walk myself.,sokak
 D_ARENA_N_B,,SPK_NIHAT,,0,"Tolga Bey, bu kayıt Büro'nun tatbikatıdır. Tarihe sayılmaz. Gediği tutabildiğiniz kadar tutun.","Mr Tolga, this entry is a Bureau drill. It doesn't count towards history. Hold the breach as long as you can.",uçuş
 D_ARENA_N_O,,SPK_NIHAT,,0,"Tolga Bey, bu kayıt Büro'nun tatbikatıdır. Tarihe sayılmaz. Yamaçta durabildiğiniz kadar durun.","Mr Tolga, this entry is a Bureau drill. It doesn't count towards history. Hold the slope as long as you can.",uçuş
 D_AYA_CLERK,,SPK_CLERK,[shouting],0,"[Yunanca] İn oradan! Orası çatı, seyir terası değil! Tamirci misin? Form getir!","[Greek] Get down from there! That's a roof, not a viewing deck! Are you a repairman? Bring a form!",kod

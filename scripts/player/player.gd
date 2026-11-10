@@ -2743,3 +2743,11 @@ func _on_released() -> void:
 			best = d
 			best_a = a
 	rotation.y = best_a
+
+
+
+## Sahne iki eli boş ister (fırlayış, dalış, yüzme): eldeki eşya ve Telsiz-Kumanda cebe girer; on = false geri çıkar.
+## İç içe çağrılar sayılır (kâğıt gösterme, merdiven gibi öbür gizlemelerle karışmaz). Bölüm 2: suya düşerken kumanda
+## elde kalıyordu.
+func stow_hands(on: bool) -> void:
+	_stow(on)

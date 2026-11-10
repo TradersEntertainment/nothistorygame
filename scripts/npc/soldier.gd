@@ -106,7 +106,7 @@ func _ready() -> void:
 		Props.cyl(head, 0.225, 0.34, Vector3(0, 0.27, -0.01), steel, Vector3.ZERO, 12, 0.03)
 		Props.cyl(head, 0.232, 0.06, Vector3(0, 0.12, -0.01), Color("c8a040"), Vector3.ZERO, 12)
 		Props.cyl(head, 0.015, 0.14, Vector3(0, 0.5, -0.01), steel.darkened(0.2), Vector3.ZERO, 5)
-		Props.box(head, Vector3(0.03, 0.16, 0.02), Vector3(0, 0.02, 0.215), steel.darkened(0.1))
+		Props.box(head, Vector3(0.03, 0.16, 0.05), Vector3(0, 0.03, 0.25), steel.darkened(0.1))      # burnun önünde
 		Props.cyl(head, 0.25, 0.24, Vector3(0, -0.03, -0.1), Color("6e737a"), Vector3(-8, 0, 0), 12, 0.21)
 	elif hat == "azap":
 		# Azap börkü (Person ile aynı): kırmızı keçe, sırmasız, enseye düşen yatırtma. Soldier eskiden tanımıyordu: bütün
@@ -120,10 +120,10 @@ func _ready() -> void:
 		var steel := Color("7e848c")
 		var dark := Color("555a62")
 		Props.ball(head, 0.245, Vector3(0, 0.16, -0.01), steel, Vector3(1.0, 0.8, 1.0), 12)
-		Props.cyl(head, 0.37, 0.025, Vector3(0, 0.12, -0.01), steel, Vector3.ZERO, 16, 0.31)
-		Props.cyl(head, 0.375, 0.012, Vector3(0, 0.107, -0.01), dark, Vector3.ZERO, 16)
+		Props.cyl(head, 0.34, 0.025, Vector3(0, 0.12, -0.01), steel, Vector3.ZERO, 16, 0.285)       # eskiden 0.37
+		Props.cyl(head, 0.345, 0.012, Vector3(0, 0.107, -0.01), dark, Vector3.ZERO, 16)
 		Props.box(head, Vector3(0.025, 0.03, 0.45), Vector3(0, 0.33, -0.01), dark)
-		Props.ball(head, 0.23, Vector3(0, -0.1, -0.08), Color("5e646c"), Vector3(1.0, 0.75, 0.8), 10)
+		Props.ball(head, 0.205, Vector3(0, -0.06, -0.09), Color("5e646c"), Vector3(1.0, 0.75, 0.8), 10)
 	else:
 		Props.ball(head, 0.24, Vector3(0, 0.16, 0), Color("f3efe4"), Vector3(1.1, 0.7, 1.1), 8)
 	_legs = legs
@@ -332,11 +332,13 @@ func equip(kind: String, shield_color := Color("8a2b22")) -> void:
 	if _elbow_r == null:
 		ready.connect(func(): equip(kind, shield_color), CONNECT_ONE_SHOT)
 		return
+	set_meta("armed", true)     # Rig: elinde eşya varken boşta kıpırdanma kolları gövdeye/başa sokmaz
 	match kind:
 		"spear":
 			var sp := Node3D.new()
 			_elbow_r.add_child(sp)
 			sp.position = Vector3(0, -0.28, 0.06)
+			sp.rotation_degrees = Vector3(0, 0, -7)      # üst uç dışa yatık (başlığa girmez)
 			Props.cyl(sp, 0.025, 2.7, Vector3(0, 0.95, 0), Color("6a4a2c"), Vector3.ZERO, 5)
 			Props.cyl(sp, 0.05, 0.28, Vector3(0, 2.4, 0), Color("c8ccd4"), Vector3.ZERO, 5, 0.0)
 		"sword":
