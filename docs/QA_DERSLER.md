@@ -963,3 +963,13 @@ Her bölüm denetiminde ve her düzeltmede bu listeyi baştan uygula. Yeni bir h
   - Uygulanmayanlar (sahibine): açılışları serbest bırakmanın kalanı (19, 20, 20o, 21, 22, 22o, 23, 24o, 25, 26, 27,
     29, 29o, 33o-39o, 41o, 42b: her biri 30-70 sn), 17'nin Büro önsözü, gizli süre ve sayaçlar (39o 180 sn, 43o bahane
     sayacı, 20 gece saati), 33o vinç ve gümrük ipuçları, 34o kızak çocukları.
+- v0.99.112, çizim bütçesi (Opus tasarımı: docs/denetim/2026-11/performans_tasarimi.md):
+  - Dış çizgi (ters gövde, `next_pass`) her nesneyi ikinci kez çizdiriyordu, gölge ve derinlik geçişlerinde de.
+    `depth_draw_mode = DEPTH_DRAW_DISABLED` ile dış çizgi yalnız renk geçişinde kalır: Bölüm 0'da 13.000 → 9.950,
+    Bölüm 20'de 10.400 → 8.250 çizim (%17-25 az). Üçgen sayısı değişmedi. Üç bölümde önce/sonra kareler yan yana
+    bakıldı (ordugâh gündüz, Büro iç mekân, gece surları): çizgiler yerinde, fark yalnız animasyon zamanlaması.
+  - Tahmin ölçümle sınanır: "gizli koşan örneklerini çizme" (her poz ağında yalnız o pozdakiler) tasarımda 1,6-2,3 M
+    üçgen kazandıracak diye yazıyordu; uygulandı, RINFO'da fark çıkmadı, geri alındı. Önce `bisect_probe` ile koşanların
+    karedeki payı ölçülmeli.
+  - Görüntü karşılaştırması için iki koşunun kareleri piksel piksel aynı çıkmaz (sallanan püskül, toz, hologram):
+    fark sayısı değil, yan yana bakış karar verir.

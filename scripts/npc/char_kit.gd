@@ -37,6 +37,7 @@ static func _outline() -> StandardMaterial3D:
 		_ol.cull_mode = BaseMaterial3D.CULL_FRONT
 		_ol.grow = true
 		_ol.grow_amount = Props.OUTLINE_WIDTH * 0.7
+		_ol.depth_draw_mode = BaseMaterial3D.DEPTH_DRAW_DISABLED      # gölge geçişine girmez (bkz. Props._outline_mat)
 	return _ol
 
 

@@ -94,6 +94,10 @@ static func _outline_mat() -> StandardMaterial3D:
 		_outline.cull_mode = BaseMaterial3D.CULL_FRONT
 		_outline.grow = true
 		_outline.grow_amount = OUTLINE_WIDTH
+		# Dış çizgi gölge haritasına çizilmez: derinlik yazmayan malzeme gölge ve derinlik geçişine girmez. Gölgede
+		# yalnızca gövdenin 1,2 cm büyütülmüş bir kopyasıydı (gölge dokusunun bir pikselinden küçük), ama her gölge
+		# diliminde her nesne için ikinci bir çizimdi.
+		_outline.depth_draw_mode = BaseMaterial3D.DEPTH_DRAW_DISABLED
 	return _outline
 
 
