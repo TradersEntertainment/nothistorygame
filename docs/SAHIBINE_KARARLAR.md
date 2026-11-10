@@ -43,3 +43,9 @@
 
 Denetçi raporlarının tamamı: `docs/denetim/2026-11/` (akis_A…J: bölüm bölüm akış; yayin_denetimi; buro_metin; his_kalanlar;
 performans_tasarimi).
+
+## 0.99.113'ten sonra
+- Tanıtım kartı artık "39 bölüm" diyor (bir oyunda oynanan bölüm sayısı, uzun taraf). Mağaza taslağı "56 bölüm" diyor
+  (iki tarafın toplamı). Hangisi söylenecekse ikisi aynı olmalı.
+- Ana menü ve duraklatma menüsü 720p'de ekrandan taşıyor (eskiden beri): düğme sırası ya da boyutu için karar.
+- Açılışı hâlâ donuk kalan bölümler: 20o, 26, 26o, 29, 35o, 36b, 41o, 42b (nedenleri docs/QA_DERSLER.md'de).

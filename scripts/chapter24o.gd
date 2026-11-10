@@ -214,20 +214,27 @@ func _run() -> void:
 	player.item_handler = _on_item
 	_capture_mouse()
 	await hud.fade_to(0.0, 1.0)
-	await hud.say("SPK_NIHAT", "D24O_N_01")
-	await hud.say("SPK_KADRI", "D24O_K_01")
+	# İlk sözler oyuncu serbestken söylenir; tutulma sahnesi (kamera dönüşü, ışınlanma) donuk kalır
+	var lines: Array = [["SPK_NIHAT", "D24O_N_01"], ["SPK_KADRI", "D24O_K_01"]]
 	# Bölüm 10Z: Sultan'ın ziyafetine Tolga'nın seçtiği çorba (ch10z_menu[0]: 1 tarhana, 2 mercimek) bu kazanda
 	var menu: Array = GameState.flags.get("ch10z_menu", [])
 	if not menu.is_empty():
 		_menu_line = true
 		if str(GameState.chapter_outcomes.get(10, "")) == "10Z.2":
-			await hud.say("SPK_KADRI", "D24O_K_MENU_BURNED")
+			lines.append(["SPK_KADRI", "D24O_K_MENU_BURNED"])
 		else:
-			await hud.say("SPK_KADRI", "D24O_K_MENU_%d" % clampi(int(menu[0]), 1, 2))
-	await hud.say("SPK_TOLGA", "D24O_T_01")
+			lines.append(["SPK_KADRI", "D24O_K_MENU_%d" % clampi(int(menu[0]), 1, 2)])
+	lines.append(["SPK_TOLGA", "D24O_T_01"])
 	var thermos_kadri := GameState.given_to("thermos") == "kadri"
 	if thermos_kadri:
-		await hud.say("SPK_KADRI", "D24O_K_THERMOS")
+		lines.append(["SPK_KADRI", "D24O_K_THERMOS"])
+	player.frozen = false
+	hud.set_objective(tr("UI_OBJ_LISTEN_TO") % tr("SPK_KADRI"), day.kadri, 1.9)
+	hud.say_chain(lines)
+	while hud.chain_busy():
+		await get_tree().process_frame
+	player.frozen = true
+	hud.set_objective("")
 	# Tutulma başlar
 	if moon:
 		# Tolga tentenin altından çıkar: ayı görebileceği ilk açık yere (tentenin iç yüzüne bakmasın)

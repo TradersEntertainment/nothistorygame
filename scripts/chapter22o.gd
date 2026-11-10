@@ -596,34 +596,39 @@ func _run() -> void:
 	player.show_remote(true)             # Tolga'nın eli açık, elde eşya (kuşatma bölümlerinde el hiç açılmıyordu)
 	_capture_mouse()
 	await hud.fade_to(0.0, 1.0)
-	await hud.say("SPK_NIHAT", "D22O_N_01")
-	await hud.say("SPK_HASAN", "D22O_H_01_KNOWN" if GameState.has_met("guards") else "D22O_H_01")   # kapıdaki nöbetçi (4a, 10O)
-	await hud.say("SPK_TOLGA", "D22O_T_01")
+	# Açılış sözleri oyuncu serbestken söylenir (iş ekranda; Hasan oyuncuyu izler)
+	var lines: Array = [["SPK_NIHAT", "D22O_N_01"],
+		["SPK_HASAN", "D22O_H_01_KNOWN" if GameState.has_met("guards") else "D22O_H_01"],   # kapıdaki nöbetçi (4a, 10O)
+		["SPK_TOLGA", "D22O_T_01"]]
 	# Önce kâtibin geçmişi, sonra görev (eskiden Hasan işi anlatıp sonra "Rumların tercümanıymışsın, sorgusu sonra"
 	# diyordu: sıra ters). Kaza rotasından dönüş (30O.2 → 21): Rumların elinden dönen, topallayan kâtip
 	if GameState.flags.get("siege_captive_21", false):
 		_captive_back = true
 		if Siege.outcome(30) == "30O.2":
 			_carry_mult = 0.6
-		await hud.say("SPK_HASAN", "D22O_H_CAPTIVE")
-		await hud.say("SPK_TOLGA", "D22O_T_CAPTIVE")
+		lines.append(["SPK_HASAN", "D22O_H_CAPTIVE"])
+		lines.append(["SPK_TOLGA", "D22O_T_CAPTIVE"])
 	else:
 		# Blakherna (30o): surda Rum'u yenen kâtibi bölük konuşuyor; surdan atılan kâtip topallıyor
 		match Siege.outcome(30):
 			"30O.1":
 				_warn_time = 5.0
-				await hud.say("SPK_HASAN", "D22O_H_BLAKH_OK")
+				lines.append(["SPK_HASAN", "D22O_H_BLAKH_OK"])
 			"30O.2":
 				_carry_mult = 0.6
-				await hud.say("SPK_HASAN", "D22O_H_BLAKH_BAD")
-	await hud.say("SPK_HASAN", "D22O_H_02")
+				lines.append(["SPK_HASAN", "D22O_H_BLAKH_BAD"])
+	lines.append(["SPK_HASAN", "D22O_H_02"])
 	if huseyin:
-		player.face(huseyin.global_position + Vector3(0, 1.5, 0))
-		await hud.say("SPK_HUSEYIN", "D22O_HU_01")
+		lines.append(["SPK_HUSEYIN", "D22O_HU_01"])
+	player.face(hasan.global_position + Vector3(0, 1.5, 0))
 	player.frozen = false
 	phase = "build"
 	Lore.scatter(self, "22o")
 	_update_objective()
+	hud.say_chain(lines)
+	if GameState.autotest:
+		while hud.chain_busy():
+			await get_tree().process_frame
 	if GameState.autotest:
 		_auto_build()
 	while phase == "build":
@@ -796,6 +801,8 @@ func _covered() -> bool:
 func _volley_tick(delta: float) -> void:
 	if GameState.autotest:
 		return
+	if hud.chain_busy():
+		return                       # açılış sözleri sürerken yaylım başlamaz (uyarı sözleri keser)
 	for ch in chains:
 		ch.duck = _warn >= 0.0
 	if _warn >= 0.0:

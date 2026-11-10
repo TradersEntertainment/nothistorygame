@@ -218,12 +218,16 @@ func _run() -> void:
 	else:
 		await hud.say("SPK_BRIG", "D19_C_01")
 		await hud.say("SPK_TOLGA", "D19_T_01")
-	await hud.say("SPK_BRIG", "D19_C_02")
-	await hud.say("SPK_BRIG", "D19_C_SHEET")
+	# Kalan açılış sözleri oyuncu yelken halatını tutarken söylenir (gemi pinned: düşme yok)
 	_take_sheet()
 	hud.set_objective(tr("UI_OBJ19_SHEET"))
 	player.frozen = false
 	phase = "sail"
+	player.face(captain.global_position + Vector3(0, 1.6, 0))      # konuşan kaptan kadrajda başlasın
+	hud.say_chain([["SPK_BRIG", "D19_C_02"], ["SPK_BRIG", "D19_C_SHEET"]])
+	if GameState.autotest:
+		while hud.chain_busy():
+			await get_tree().process_frame
 	while _d < _total * PATROL_AT:
 		await get_tree().process_frame
 	await _patrol_scene()
@@ -243,6 +247,8 @@ func _seat() -> void:
 
 
 func _patrol_scene() -> void:
+	while hud.chain_busy():          # açılış sözleri bitmeden devriye başlamasın
+		await get_tree().process_frame
 	phase = "patrol"
 	player.frozen = true
 	# Zincirden çıkarken iki kez çırpınan yelken devriyenin dikkatini çekmişti

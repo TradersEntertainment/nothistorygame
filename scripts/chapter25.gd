@@ -187,16 +187,17 @@ func _run() -> void:
 	Audio.step_surface = "grass"         # ordugâh toprağı (taş adımı çalıyordu)
 	_capture_mouse()
 	await hud.fade_to(0.0, 1.0)
-	await hud.say("SPK_NIHAT", "D25O_N_01" if not byz else "D25_N_01")
-	await hud.say("SPK_KADRI", "D25_K_01")
-	await hud.say("SPK_TOLGA", "D25_T_01" if "chickpeas" in GameState.bag else "D25_T_01_NOLEB")
-	await hud.say("SPK_KADRI", "D25_K_02")
+	# Açılış sözleri oyuncu serbestken söylenir (tepsi elde, hedef ekranda)
 	_give_tray()
 	Lore.scatter(self, "25")
 	player.frozen = false
 	phase = "tray"
 	hud.set_objective(tr("UI_OBJ25_TRAY"), door_guard, 2.1)
+	hud.say_chain([["SPK_NIHAT", "D25O_N_01" if not byz else "D25_N_01"], ["SPK_KADRI", "D25_K_01"],
+		["SPK_TOLGA", "D25_T_01" if "chickpeas" in GameState.bag else "D25_T_01_NOLEB"], ["SPK_KADRI", "D25_K_02"]])
 	if GameState.autotest:
+		while hud.chain_busy():      # test botu ışınlanır: konuşan görüşten çıkmasın
+			await get_tree().process_frame
 		# Oyuncu nöbetçinin önüne gelir (gerçek oyunda yürüyerek), ona bakar, tepsiyi uzatır
 		var gp := door_guard.global_position
 		var to_p := player.global_position - gp

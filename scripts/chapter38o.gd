@@ -320,12 +320,16 @@ func _run() -> void:
 	_capture_mouse()
 	await hud.fade_to(0.0, 1.0)
 	await hud.say("SPK_NIHAT", "D38O_N_01")
-	await hud.say("SPK_TOLGA", "D38O_T_01")
-	# 19o'da Tolga brigantinin sarıklarının ters olduğunu reise söylediyse (19O.1, inanmamıştı) reis bunu hatırlar
-	await hud.say("SPK_PATROL", "D38O_R_01_TOLD" if str(GameState.chapter_outcomes.get(19, "")) == "19O.1" else "D38O_R_01")
-	await hud.say("SPK_TOLGA", "D38O_T_R1")
-	await hud.say("SPK_NIHAT", "D38O_N_BRIEF")
-	await hud.say("SPK_PATROL", "D38O_R_02")
+	# Kalan açılış sözleri oyuncu serbestken söylenir (oyuncu kayıkta oturuyor/pinned: düşmez)
+	player.frozen = false
+	hud.set_objective(tr("UI_OBJ_LISTEN_TO") % tr("SPK_PATROL"), reis, 1.9)
+	if GameState.autotest:
+		player.face(reis.global_position + Vector3(0, 1.2, 0))      # test botu bakmaz: konuşan reis görüşte kalsın
+	hud.say_chain([["SPK_TOLGA", "D38O_T_01"],
+		["SPK_PATROL", "D38O_R_01_TOLD" if str(GameState.chapter_outcomes.get(19, "")) == "19O.1" else "D38O_R_01"],
+		["SPK_TOLGA", "D38O_T_R1"], ["SPK_NIHAT", "D38O_N_BRIEF"], ["SPK_PATROL", "D38O_R_02"]])
+	while hud.chain_busy():
+		await get_tree().process_frame
 	_phase_banner("UI_B38O_ROW_T", "UI_B38O_ROW")
 	await _row()
 	await _ladder_phase()

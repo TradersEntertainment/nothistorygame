@@ -214,22 +214,30 @@ func _run() -> void:
 		await hud.say("SPK_GRANT", "D21_G_01_KNOWN" if GameState.has_met("grant") else "D21_G_01")   # tünelin öbür ucu (10L)
 		await hud.say("SPK_TOLGA", "D21_T_01_KNOWN" if GameState.has_met("grant") else "D21_T_01")
 	await hud.say("SPK_GRANT", "D21_G_02")
+	# Kalan açılış sözleri oyuncu serbestken söylenir; kap koyma (phase "bowls") sözler bitince başlar
+	var lines: Array = []
 	# Deprem ölçeri telefonda; telefon çantada değilse (1. bölümde alınmadıysa) Büro kendi göstergesini ödünç verir
 	if not GameState.has_item("phone"):
-		await hud.say("SPK_NIHAT", "D21_N_01_NOPH")
+		lines.append(["SPK_NIHAT", "D21_N_01_NOPH"])
 	else:
-		await hud.say("SPK_NIHAT", "D21_N_01" if "powerbank" in GameState.bag else "D21_N_01_NOPB")
+		lines.append(["SPK_NIHAT", "D21_N_01" if "powerbank" in GameState.bag else "D21_N_01_NOPB"])
 	if GameState.has_item("phone") and not GameState.spend("powerbank", "quake_21"):
-		await hud.say_gone("powerbank")      # powerbank Giustiniani'de ya da bitti: Tolga nereye gittiğini söyler
-	phase = "bowls"
-	_meter.visible = true
+		var gone := GameState.gone_text("powerbank")      # powerbank Giustiniani'de ya da bitti: Tolga nereye gittiğini söyler
+		if gone != "":
+			lines.append(["SPK_TOLGA", gone])
 	# Bölüm 10L: Nisan'da toprağın altında dinlemeyi öğrenen Tolga'nın kulağı da bir kaptır
 	if GameState.flags.get("ch10l_heard", false):
 		_ear = true
 		bowls_left += 1
-		await hud.say("SPK_TOLGA", "D21_T_EAR")
+		lines.append(["SPK_TOLGA", "D21_T_EAR"])
 	Lore.scatter(self, "21")
 	player.frozen = false
+	hud.set_objective(tr("UI_OBJ_LISTEN_TO") % tr("SPK_GRANT"), grant, 1.9)
+	hud.say_chain(lines)
+	while hud.chain_busy():
+		await get_tree().process_frame
+	phase = "bowls"
+	_meter.visible = true
 	_update_objective()
 	if GameState.autotest:
 		_auto_bowls()

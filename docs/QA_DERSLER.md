@@ -973,3 +973,17 @@ Her bölüm denetiminde ve her düzeltmede bu listeyi baştan uygula. Yeni bir h
     karedeki payı ölçülmeli.
   - Görüntü karşılaştırması için iki koşunun kareleri piksel piksel aynı çıkmaz (sallanan püskül, toz, hologram):
     fark sayısı değil, yan yana bakış karar verir.
+- v0.99.113 (iş ajanlara dağıtıldı: 3 Sonnet açılışlar, 1 Opus yayın öncesi kod; yönetmen yalnız birleştirir ve test eder):
+  - Açılışlar serbestken: 17 (Büro önsözünün ilk bloğu, ~40 sn), 19, 20, 21, 22, 22o, 23, 24o, 25, 27, 28o, 29o, 33o,
+    34o, 37o, 38o, 39o (bölüm başına 12-45 sn). Ortak hedef metni `UI_OBJ_LISTEN_TO` ("Dinle: %s").
+  - Atlananlar ve neden: 20o (her atışta oyuncu ışınlanıyor), 26 (komutan oyuncuya yürüyor, replikler sahnelemeyle
+    iç içe), 26o (replikten hemen sonra dalga başlıyor), 29 (güvertede düşme riski ve kanca sayacı), 35o (taşkın suyu),
+    36b (korkuluksuz köprü), 41o ve 42b (talim oyuncuyu ışınlıyor; `drill.gd` iki bölümü birden etkiler).
+  - Serbest bırakınca yan etkiye bak: sözler sürerken tehlike ve sayaç beklemeye alınır (22o yaylım uyarısı, 28o surdan
+    düşen gülle `hud.chain_busy()` iken çalışmaz); test botu konuşana dönük tutulur (yoksa VISAUDIT offview).
+  - Plan modu alt ajanlara da geçer: plan modundayken başlatılan ajanlar yalnız okur, düzenleyemez.
+  - Yayın öncesi: menüde sürüm etiketi, künye sayfası (Godot MIT metni, yazı tipleri, Quaternius, ElevenLabs), odak
+    kaybında duraklatma (testte ve başlık akışında kapalı), ana ses kaydırıcısı, tanıtım kartında bir oyundaki bölüm
+    sayısı koddan (39: uzun taraf).
+  - Açık kalan: ana menü ve duraklatma menüsünün kök sayfaları 720p'de taşıyor (839 ve 909 px); `ui_fit_check` kök
+    sayfaları denetlemiyor.

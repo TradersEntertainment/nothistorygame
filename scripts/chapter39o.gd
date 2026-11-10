@@ -144,13 +144,16 @@ func _run() -> void:
 	_capture_mouse()
 	await hud.fade_to(0.0, 1.0)
 	await hud.say("SPK_NIHAT", "D39O_N_01")
-	await hud.say("SPK_TOLGA", "D39O_T_01")
-	await hud.say("SPK_CAVUS", "D39O_C_01")
+	# Kalan açılış sözleri oyuncu serbestken söylenir (tırmanma _flags'te açılır; kapı önü düz)
+	var lines: Array = [["SPK_TOLGA", "D39O_T_01"], ["SPK_CAVUS", "D39O_C_01"]]
 	if GameState.flags.get("petrion_word", "") == "add":
-		await hud.say("SPK_CAVUS", "D39O_C_01_ADD")
-	await hud.say("SPK_CAVUS", "D39O_C_02")
-	await hud.say("SPK_TOWNSMAN", "D39O_TW_01")
-	await hud.say("SPK_TOLGA", "D39O_T_02")
+		lines.append(["SPK_CAVUS", "D39O_C_01_ADD"])
+	lines.append_array([["SPK_CAVUS", "D39O_C_02"], ["SPK_TOWNSMAN", "D39O_TW_01"], ["SPK_TOLGA", "D39O_T_02"]])
+	player.frozen = false
+	hud.set_objective(tr("UI_OBJ_LISTEN_TO") % tr("SPK_CAVUS"), cavus, 1.9)
+	hud.say_chain(lines)
+	while hud.chain_busy():
+		await get_tree().process_frame
 	await _flags()
 	await _church_door()
 	await _fire()

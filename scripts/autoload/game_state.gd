@@ -62,7 +62,7 @@ var finals_seen: Dictionary = {}  # görülen final id -> true
 ## Vaka Dosyası'ndan bir finale gitmek için geri dönüldü: {"final": id, "step": "Bölüm 9 · ..."}; bölüm başında
 ## hatırlatılır, o final (ya da başka biri) görülünce silinir. Oyun sıfırlanınca da kalır (geri dönüş sıfırlar).
 var review_goal: Dictionary = {}
-var settings := {"music": 0.8, "sfx": 0.9, "voice": 1.0, "mouse": 1.0, "fullscreen": false,
+var settings := {"master": 1.0, "music": 0.8, "sfx": 0.9, "voice": 1.0, "mouse": 1.0, "fullscreen": false,
 	# Görüntü: quality 0 düşük (gölge yok, kontur yok, %70 çözünürlük, az kalabalık) · 1 orta · 2 yüksek
 	"quality": 2, "fov": 72.0, "vsync": true, "fps": false, "subs": 1.0, "markers": true, "minimap": true,
 	# Diyalog: ses (ya da okuma süresi) bitince kendiliğinden ilerler · kararlar varsayılan süresiz (oyuncu seçene kadar)
@@ -1219,6 +1219,13 @@ func voice_len(vs: AudioStream) -> float:
 	return vs.get_length() / voice_speed() if vs else 0.0
 
 
+## Oyunun sürümü (res://VERSION, ör. "0.99.112"); dosya yoksa "" (menülerdeki sürüm etiketi gösterilmez).
+static func version_text() -> String:
+	if not FileAccess.file_exists("res://VERSION"):
+		return ""
+	return FileAccess.get_file_as_string("res://VERSION").strip_edges()
+
+
 func apply_settings() -> void:
 	# Oyun testi açıkken pencere kapatma beklenir (çıkış kartı); kapalıyken motor her zamanki gibi hemen kapatır
 	if is_inside_tree():
@@ -1229,7 +1236,8 @@ func apply_settings() -> void:
 		if e is AudioEffectPitchShift:
 			(e as AudioEffectPitchShift).pitch_scale = 1.0 / voice_speed()
 			AudioServer.set_bus_effect_enabled(vbus, i, absf(voice_speed() - 1.0) > 0.001)
-	for pair in [["Music", "music"], ["SFX", "sfx"], ["Voice", "voice"]]:
+	# Ana ses (Master) kaydırıcısı: öbür kanalların hepsini birlikte kısar
+	for pair in [["Master", "master"], ["Music", "music"], ["SFX", "sfx"], ["Voice", "voice"]]:
 		var idx := AudioServer.get_bus_index(pair[0])
 		var v: float = settings[pair[1]]
 		AudioServer.set_bus_volume_db(idx, linear_to_db(maxf(v, 0.0001)))

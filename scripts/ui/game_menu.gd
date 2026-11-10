@@ -73,6 +73,10 @@ func _ready() -> void:
 	_box = VBoxContainer.new()
 	_box.add_theme_constant_override("separation", 10)
 	_panel.add_child(_box)
+	# Sağ alt köşede soluk sürüm etiketi (ana menü ve duraklatma)
+	var ver := version_label()
+	if ver != null:
+		add_child(ver)
 	get_viewport().size_changed.connect(_layout)
 	if mode == "main":
 		_auto = GameState.read_auto()
@@ -138,6 +142,26 @@ func _input(event: InputEvent) -> void:
 
 
 # ---------------------------------------------------------------- yapı taşları
+
+## Köşe için küçük, soluk "v0.99.112" etiketi (sağ alt; ana menü, duraklatma ve başlık ekranı). VERSION yoksa null.
+static func version_label() -> Label:
+	var v := GameState.version_text()
+	if v == "":
+		return null
+	var l := Label.new()
+	l.text = "v" + v
+	l.add_theme_font_size_override("font_size", 13)
+	l.add_theme_color_override("font_color", Color(1, 1, 1, 0.35))
+	l.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	l.set_anchors_preset(Control.PRESET_BOTTOM_RIGHT)
+	l.grow_horizontal = Control.GROW_DIRECTION_BEGIN
+	l.grow_vertical = Control.GROW_DIRECTION_BEGIN
+	l.offset_left = -14.0
+	l.offset_right = -14.0
+	l.offset_top = -10.0
+	l.offset_bottom = -10.0
+	return l
+
 
 func _clear(root: bool) -> void:
 	_on_root = root
@@ -292,7 +316,7 @@ func show_root() -> void:
 		_button(tr("UI_MENU_LOAD"), func(): show_slots(false), _any_slot())
 		_button(tr("UI_MENU_QUESTS") + "   ·   %d/%d" % [GameState.quests_ever.size(), Quests.LIST.size()], show_quests)
 		_button(tr("UI_MENU_ACH") + "   ·   %d/%d" % [Achievements.unlocked_count(), Achievements.LIST.size()], show_achievements)
-		_button(tr("UI_MENU_SETTINGS"), show_settings)
+		_settings_row()
 		_button(tr("UI_MENU_QUIT"), func(): picked.emit("quit", 0))
 		_spacer(18)
 		_label(tr("SPK_HIKMET") + ": " + tr(_hikmet_line()), 18, Color("ffc98a"))
@@ -311,13 +335,24 @@ func show_root() -> void:
 		_button(tr("UI_MENU_LOAD"), func(): show_slots(false), _any_slot())
 		_button(tr("UI_MENU_QUESTS") + "   ·   %d/%d" % [Quests.done_count(), Quests.LIST.size()], show_quests)
 		_button(tr("UI_MENU_ACH") + "   ·   %d/%d" % [Achievements.unlocked_count(), Achievements.LIST.size()], show_achievements)
-		_button(tr("UI_MENU_SETTINGS"), show_settings)
+		_settings_row()
 		_button(tr("UI_MENU_MAIN"), func(): _confirm(tr("UI_MENU_MAIN_CONFIRM"), func(): picked.emit("main_menu", 0)))
 		_button(tr("UI_MENU_QUIT"), func(): picked.emit("quit", 0))
 		_spacer(8)
 		var c := _label(tr("UI_CONTROLS"), 14, C_DIM)
 		c.custom_minimum_size = Vector2(420, 0)
 	_finish_page()
+
+
+## "Ayarlar" ve yanında küçük "Künye" düğmesi tek satırda (kök sayfa 720p'de zaten uzun: bir satır daha eklenmesin).
+func _settings_row() -> void:
+	var row := HBoxContainer.new()
+	row.add_theme_constant_override("separation", 10)
+	_box.add_child(row)
+	_button(tr("UI_MENU_SETTINGS"), show_settings, true, row)
+	var b := _button(tr("UI_MENU_CREDITS"), show_credits, true, row, 18)
+	b.custom_minimum_size = Vector2(0, 0)
+	b.size_flags_vertical = Control.SIZE_FILL
 
 
 static func _scene_of(data: Dictionary, n: int) -> String:
@@ -560,6 +595,69 @@ func show_achievements() -> void:
 	_finish_page()
 
 
+## Godot'nun MIT lisans bildirimi (motorun lisansı her dağıtımda gösterilmeli; hukuki metin çevrilmez).
+const GODOT_MIT := "Copyright (c) 2014-present Godot Engine contributors (see AUTHORS.md).\n" + \
+	"Copyright (c) 2007-2014 Juan Linietsky, Ariel Manzur.\n\n" + \
+	"Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated " + \
+	"documentation files (the \"Software\"), to deal in the Software without restriction, including without limitation " + \
+	"the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to " + \
+	"permit persons to whom the Software is furnished to do so, subject to the following conditions:\n\n" + \
+	"The above copyright notice and this permission notice shall be included in all copies or substantial portions of " + \
+	"the Software.\n\n" + \
+	"THE SOFTWARE IS PROVIDED \"AS IS\", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO " + \
+	"THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE " + \
+	"AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF " + \
+	"CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER " + \
+	"DEALINGS IN THE SOFTWARE."
+
+
+## Künye: oyun, motor (Godot, MIT), yazı tipleri, modeller, ses ve yapay zekâ notu (assets/CREDITS.md "Güncel durum").
+## Kaydırılan liste; her paragraf odak alır, kolla aşağı inildikçe liste kayar (follow_focus). Esc / B geri döner.
+func show_credits() -> void:
+	_clear(false)
+	_label(tr("UI_MENU_CREDITS"), 34, C_CREAM, title_font)
+	var scroll := ScrollContainer.new()
+	scroll.horizontal_scroll_mode = ScrollContainer.SCROLL_MODE_DISABLED
+	scroll.follow_focus = true
+	scroll.custom_minimum_size = Vector2(760, minf(get_viewport().get_visible_rect().size.y * 0.62, 600.0))
+	_box.add_child(scroll)
+	var col := VBoxContainer.new()
+	col.add_theme_constant_override("separation", 6)
+	col.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	scroll.add_child(col)
+	var ver := GameState.version_text()
+	_credit(col, tr("UI_TITLE") + ("   ·   v" + ver if ver != "" else ""), 24, C_ACCENT)
+	_set_header(col, "UI_CREDITS_ENGINE")
+	_credit(col, "Godot Engine (godotengine.org) · " + tr("UI_CREDITS_GODOT_USES"), 17, C_CREAM)
+	_credit(col, GODOT_MIT, 12, C_DIM)
+	_credit(col, tr("UI_CREDITS_GODOT_THIRD"), 15, C_CREAM)
+	_set_header(col, "UI_CREDITS_FONTS")
+	_credit(col, tr("UI_CREDITS_FONTS_TEXT"), 16, C_CREAM)
+	_set_header(col, "UI_CREDITS_MODELS")
+	_credit(col, tr("UI_CREDITS_MODELS_TEXT"), 16, C_CREAM)
+	_set_header(col, "UI_CREDITS_AUDIO")
+	_credit(col, tr("UI_CREDITS_AUDIO_TEXT"), 16, C_CREAM)
+	_set_header(col, "UI_CREDITS_AI_HEAD")
+	_credit(col, tr("UI_CREDITS_AI"), 16, C_CREAM)
+	_spacer(6)
+	_button(tr("UI_MENU_BACK"), show_root)
+	_finish_page()
+
+
+## Künye paragrafı: odak alabilir (kolla gezinirken liste kayar); odaktayken biraz parlar.
+func _credit(col: VBoxContainer, text: String, size: int, color: Color) -> void:
+	var l := Label.new()
+	l.text = text
+	l.add_theme_font_size_override("font_size", size)
+	l.add_theme_color_override("font_color", color)
+	l.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+	l.custom_minimum_size = Vector2(720, 0)
+	l.focus_mode = Control.FOCUS_ALL
+	l.focus_entered.connect(func(): l.modulate = Color(1.25, 1.25, 1.25))
+	l.focus_exited.connect(func(): l.modulate = Color.WHITE)
+	col.add_child(l)
+
+
 func show_settings() -> void:
 	_clear(false)
 	_label(tr("UI_MENU_SETTINGS"), 34, C_CREAM, title_font)
@@ -573,6 +671,7 @@ func show_settings() -> void:
 	col.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	scroll.add_child(col)
 	_set_header(col, "UI_SET_H_SOUND")
+	_set_slider(col, "UI_SET_MASTER", "master", 0.0, 1.0, 0.05)
 	_set_slider(col, "UI_SET_MUSIC", "music", 0.0, 1.0, 0.05)
 	_set_slider(col, "UI_SET_SFX", "sfx", 0.0, 1.0, 0.05)
 	_set_slider(col, "UI_SET_VOICE", "voice", 0.0, 1.0, 0.05)

@@ -26,9 +26,10 @@ func _ready() -> void:
 		await _said(q, 1)
 		_expect(q, 0, "DSET_T_OPEN_")
 		# Kaydırıcı: müzik 0,4 sonra 0 (aynı karede): tek yorum, MUSIC_OFF
+		# Kaydırıcı sırası: 0 ana ses (v0.99.113, yorumu yok), 1 müzik
 		var sl: Array = menu.find_children("*", "HSlider", true, false)
-		(sl[0] as HSlider).value = 0.4
-		(sl[0] as HSlider).value = 0.0
+		(sl[1] as HSlider).value = 0.4
+		(sl[1] as HSlider).value = 0.0
 		await _said(q, 2)
 		_expect(q, 1, "DSET_T_MUSIC_OFF_")
 		# Ters eksen

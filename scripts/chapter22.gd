@@ -186,10 +186,15 @@ func _run() -> void:
 	_capture_mouse()
 	await hud.fade_to(0.0, 1.2)
 	await hud.say("SPK_TOLGA", "D22_T_01")
-	await hud.say("SPK_GIUST", "D22_G_01")
-	await hud.say("SPK_TOLGA", "D22_T_02")
-	await hud.say("SPK_GIUST", "D22_G_02")
-	await hud.say("SPK_NIHAT", "D22_N_01")
+	# Şafak sözleri oyuncu serbestken söylenir (sur yolunun dış kenarında korkuluk var)
+	player.face(giust.global_position + Vector3(0, 1.5, 0))      # konuşan komutan kadrajda başlasın
+	player.frozen = false
+	hud.set_objective(tr("UI_OBJ_LISTEN_TO") % tr("SPK_GIUST"), giust, 1.9)
+	hud.say_chain([["SPK_GIUST", "D22_G_01"], ["SPK_TOLGA", "D22_T_02"], ["SPK_GIUST", "D22_G_02"], ["SPK_NIHAT", "D22_N_01"]])
+	while hud.chain_busy():
+		await get_tree().process_frame
+	player.frozen = true
+	hud.set_objective("")
 	await hud.fade_to(1.0, 0.8)
 	await hud.card([[tr("UI_CH22_NIGHT"), 26, Color("f2e6c9")]], 2.0)
 	hud.clear_card()
@@ -200,19 +205,25 @@ func _run() -> void:
 	giust.position = Vector3(-2.2, WALK_Y, 15.0)
 	giust.face_toward(player.global_position)
 	await hud.fade_to(0.0, 1.0)
-	await hud.say("SPK_GIUST", "D22_G_03")
-	await hud.say("SPK_GIUST", "D22_G_04")
-	await hud.say("SPK_TOLGA", "D22_T_03")
+	# Gece sözleri oyuncu serbestken söylenir; fıçı işi (phase "barrels") sözler bitince başlar
+	var lines: Array = [["SPK_GIUST", "D22_G_03"], ["SPK_GIUST", "D22_G_04"], ["SPK_TOLGA", "D22_T_03"]]
 	# Blakherna (30): sur yolu tutulduysa İmparator fitilleri kendi topçusuna kestirir; sura çıkıldıysa fitil aceleyle kesilir
 	match Siege.outcome(30):
 		"30.1":
 			_win_a = 0.36
 			_win_b = 0.74
-			await hud.say("SPK_GIUST", "D22_G_BLAKH_OK")
+			lines.append(["SPK_GIUST", "D22_G_BLAKH_OK"])
 		"30.2":
 			_win_a = 0.46
 			_win_b = 0.64
-			await hud.say("SPK_GIUST", "D22_G_BLAKH_BAD")
+			lines.append(["SPK_GIUST", "D22_G_BLAKH_BAD"])
+	player.face(giust.global_position + Vector3(0, 1.5, 0))      # konuşan komutan kadrajda başlasın
+	player.frozen = false
+	hud.set_objective(tr("UI_OBJ_LISTEN_TO") % tr("SPK_GIUST"), giust, 1.9)
+	hud.say_chain(lines)
+	while hud.chain_busy():
+		await get_tree().process_frame
+	player.frozen = true
 	# Kolonya çantadaysa fıçıların kapağına dökülür: ıslak deri ateş almaz ama seksen derece limon kolonyası alır.
 	# Erken bırakılan fıçıyı aşağıdakiler tekmeleyemez; yanarak yuvarlanır, kulenin dibindeki çalıyı tutuşturur.
 	if GameState.has_item("cologne"):
@@ -478,6 +489,8 @@ func _on_focus(id: String) -> void:
 
 
 func _on_interact(id: String) -> void:
+	if phase != "barrels":
+		return
 	match id:
 		"powder":
 			_take()

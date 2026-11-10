@@ -161,13 +161,18 @@ func _run() -> void:
 	_capture_mouse()
 	await hud.fade_to(0.0, 1.0)
 	await hud.say("SPK_NIHAT", "D34O_N_01")
-	await hud.say("SPK_TOLGA", "D34O_T_01")
 	# Gemiyi "ikinci top" ancak Tolga'nın büyük güllesi kaçtıysa batırdı (33O.2'de büyük gülle isabet edebilir)
 	var lost33: bool = String(GameState.chapter_outcomes.get(33, "")) == "33O.2" and not GameState.flags.get("toll_big", false)
-	await hud.say("SPK_URBAN", "D34O_U_01_ALT" if lost33 else "D34O_U_01")
-	await hud.say("SPK_URBAN", "D34O_U_02")
+	# Kalan açılış sözleri oyuncu serbestken söylenir; kalıp kırma bitince başlar
+	player.frozen = false
+	hud.set_objective(tr("UI_OBJ_LISTEN_TO") % tr("SPK_URBAN"), urban, 1.9)
+	if GameState.autotest:
+		player.face(urban.global_position + Vector3(0, 1.5, 0))      # test botu bakmaz: konuşan Urban görüşte kalsın
+	hud.say_chain([["SPK_TOLGA", "D34O_T_01"], ["SPK_URBAN", "D34O_U_01_ALT" if lost33 else "D34O_U_01"], ["SPK_URBAN", "D34O_U_02"]])
 	Lore.scatter(self, "34o", [_gy(Vector3(-6.0, 0, -6.0)) + Vector3(0, 0.3, 0), _gy(Vector3(-24.0, 0, -6.0)) + Vector3(0, 0.3, 0),
 		_gy(Vector3(10.0, 0, -11.0)) + Vector3(0, 0.3, 0)])
+	while hud.chain_busy():
+		await get_tree().process_frame
 	await _break_mould()
 	await _crank()
 	await _balls()

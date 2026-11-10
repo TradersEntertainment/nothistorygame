@@ -3506,11 +3506,23 @@ func _apply_fonts() -> void:
 ## Gizli kod: başlık ekranında "yarat" yazmak. Kodun başı yazılıp bırakılırsa oyun yine başlar.
 const CREATOR_CODE := "yarat"
 var _title_active := false
+## Başlık akışı sürüyor (uyarı kartı, başlık, ana menü): pencere odağı kaybedince duraklatma menüsü açılmaz
+var _in_title := false
+var _ver_label: Label            # başlık ekranının köşesindeki sürüm etiketi
 var _typed := ""
 var _typed_t := 0.0
 
 
 func title_screen() -> int:
+	_in_title = true
+	var r := await _title_flow()
+	if is_instance_valid(_ver_label):
+		_ver_label.queue_free()
+	_in_title = false
+	return r
+
+
+func _title_flow() -> int:
 	set_fade(1.0)
 	# Başlığın ve menünün arkasında canlı kuşatma (siyah ekran değil): uyarı yazısı okunurken arkada kurulur
 	var bd: CanvasLayer = null
@@ -3536,6 +3548,10 @@ func title_screen() -> int:
 	var t := add_card_line(tr("UI_TITLE"), 64, Color("f2e6c9"))
 	var hint := add_card_line(tr("UI_PRESS_ANY"), 20, Color(1, 1, 1, 0.7))
 	var lang := add_card_line(tr("UI_LANG_HINT"), 16, C_ACCENT)
+	if not is_instance_valid(_ver_label):
+		_ver_label = GameMenu.version_label()      # sağ alt köşede soluk "v…" (VERSION yoksa yok)
+		if _ver_label != null:
+			add_child(_ver_label)
 	if GameState.autotest:
 		# Testte tuşa basan yok: hızlı testte hemen, PACE/ses denetiminde de (eskiden burada sonsuza dek bekliyordu)
 		if not _fast():
@@ -3560,7 +3576,7 @@ func title_screen() -> int:
 				return -1
 			if is_instance_valid(bd):
 				bd.queue_free()
-			return await title_screen()
+			return await _title_flow()
 		if _typed != "":
 			# Kodun başı yazıldı ama devam edilmedi: normal başla
 			_typed_t += get_process_delta_time()
@@ -3576,6 +3592,8 @@ func title_screen() -> int:
 			start = true
 	_title_active = false
 	clear_card()
+	if is_instance_valid(_ver_label):
+		_ver_label.queue_free()          # ana menü kendi sürüm etiketini gösterir
 	var r := await main_menu()
 	# Yeni oyun: soğuk açılış (Bölüm 0) zaten aynı gecede başlar; kuşatma arkadan kalkar
 	if is_instance_valid(bd):
@@ -3587,6 +3605,14 @@ func title_screen() -> int:
 const INTRO_EXAMPLES := ["UI_INTRO_EX_1", "UI_INTRO_EX_2", "UI_INTRO_EX_3", "UI_INTRO_EX_4", "UI_INTRO_EX_5"]
 
 
+## Bir oyunda oynanan bölüm sayısı: son ana hikâye bölümünün ekran numarası (Perde I–III'ün 12 bölümü + kuşatmanın
+## o taraftaki sayfaları + kuşatmadan sonraki 13–15). Taraflar farklı uzunlukta olduğundan uzun olan taraf sayılır.
+## Gizli Bölüm 16 (G), Büro önsözü ve soğuk açılış sayılmaz.
+static func _chapters_in_run() -> int:
+	var last: int = Siege.AFTER[Siege.AFTER.size() - 1]
+	return maxi(Siege.number_of(last, "B"), Siege.number_of(last, "O"))
+
+
 func intro_notice() -> void:
 	if _fast():
 		return
@@ -3595,7 +3621,7 @@ func intro_notice() -> void:
 	var head := add_card_line(tr("UI_INTRO_HEAD"), 34, Color("ffd24a"))
 	if _title_font:
 		head.add_theme_font_override("font", _title_font)
-	add_card_line(tr("UI_INTRO_COUNTS") % [17, 80, 91, Achievements.FINALS_TOTAL], 22, Color("f2e6c9"))
+	add_card_line(tr("UI_INTRO_COUNTS") % [_chapters_in_run(), 80, 91, Achievements.FINALS_TOTAL], 22, Color("f2e6c9"))
 	add_card_line("", 8)
 	for k in INTRO_EXAMPLES:
 		add_card_line("· " + tr(k), 18, Color(1, 1, 1, 0.85))
@@ -3873,6 +3899,22 @@ func _unhandled_input(event: InputEvent) -> void:
 
 
 var _mouse_before_pause := Input.MOUSE_MODE_CAPTURED
+
+
+## Pencere odağı kaybedilince (Alt+Tab, Steam katmanı) oynanıştaysa duraklatma menüsü açılır. Testlerde, ekran
+## görüntüsü modunda, başlık akışında, akış şemasında ve Vaka Dosyası'nda açılmaz; Esc'nin koşulları da aranır.
+func _notification(what: int) -> void:
+	if what != NOTIFICATION_APPLICATION_FOCUS_OUT or not is_inside_tree():
+		return
+	if GameState.autotest or GameState.shots_dir != "" or GameState.dialog_shots_dir != "" or GameState.changing:
+		return
+	if get_tree().paused or _in_title or _title_active or _keypad_active or _menu != null or _photo != null \
+			or _world_map != null or get_node_or_null("PlaytestSurvey") != null:
+		return
+	for c in get_children():
+		if (c is Flowchart or c is FinalReview) and not c.is_queued_for_deletion():
+			return
+	_set_paused(true)
 
 
 func _set_paused(on: bool) -> void:

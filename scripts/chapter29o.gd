@@ -185,16 +185,20 @@ func _run() -> void:
 	player.face(carrack.global_position + Vector3(0, 8.0, 0))
 	_capture_mouse()
 	await hud.fade_to(0.0, 1.0)
-	await hud.say("SPK_NIHAT", "D29O_N_01")
-	await hud.say("SPK_BALTA", "D29O_B_01")
-	await hud.say("SPK_TOLGA", "D29O_T_01")
-	await hud.say("SPK_BALTA", "D29O_B_02")
-	# 1. Kürek
+	# 1. Kürek: açılış sözleri oyuncu kürek çekerken (serbest) söylenir
 	phase = "row"
 	player.frozen = false
 	meter.enabled = true
 	hud.set_objective(tr("UI_OBJ29O_ROW"), carrack.global_position + Vector3(0, 6, 0))
+	hud.say_chain([["SPK_NIHAT", "D29O_N_01"], ["SPK_BALTA", "D29O_B_01"], ["SPK_TOLGA", "D29O_T_01"], ["SPK_BALTA", "D29O_B_02"]])
+	if GameState.autotest:
+		player.frozen = true         # test botu bakmaz: konuşan görüşte kalsın diye sözler bitene dek donuk
+		while hud.chain_busy():
+			await get_tree().process_frame
+		player.frozen = false
 	while _d < _total - 0.2:
+		await get_tree().process_frame
+	while hud.chain_busy():          # kürek sözler bitmeden biterse sonraki replik üst üste binmesin
 		await get_tree().process_frame
 	meter.enabled = false
 	hud.set_objective("")

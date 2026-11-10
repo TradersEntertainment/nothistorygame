@@ -212,10 +212,13 @@ func _run() -> void:
 	_capture_mouse()
 	await hud.fade_to(0.0, 1.0)
 	await hud.say("SPK_NIHAT", "D37O_N_01")
-	await hud.say("SPK_TOLGA", "D37O_T_01")
-	await hud.say("SPK_URBAN", "D37O_U_01")
-	await hud.say("SPK_TOLGA", "D37O_T_U1")
-	await hud.say("SPK_URBAN", "D37O_U_02")
+	# Urban'ın sözleri oyuncu serbestken söylenir (bataryada, düşme yok)
+	player.frozen = false
+	hud.set_objective(tr("UI_OBJ_LISTEN_TO") % tr("SPK_URBAN"), urban, 1.9)
+	hud.say_chain([["SPK_TOLGA", "D37O_T_01"], ["SPK_URBAN", "D37O_U_01"], ["SPK_TOLGA", "D37O_T_U1"], ["SPK_URBAN", "D37O_U_02"]])
+	while hud.chain_busy():
+		await get_tree().process_frame
+	player.frozen = true
 	await _cymbal_take()
 	await _march()
 	await _plank_phase()

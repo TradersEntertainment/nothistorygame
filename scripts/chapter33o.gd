@@ -137,10 +137,13 @@ func _run() -> void:
 	await hud.fade_to(0.0, 1.0)
 	await hud.say("SPK_NIHAT", "D33O_N_01")
 	await hud.say("SPK_TOLGA", "D33O_T_01")
-	await hud.say("SPK_MASON", "D33O_M_01")
-	await hud.say("SPK_TOLGA", "D33O_T_02")
-	await hud.say("SPK_MASON", "D33O_M_02")
+	# Kalan açılış sözleri oyuncu rıhtımda serbestken söylenir; iskele (kule/kalas) konuşma bitince başlar
+	player.frozen = false
+	hud.set_objective(tr("UI_OBJ_LISTEN_TO") % tr("SPK_MASON"), mason, 1.9)
+	hud.say_chain([["SPK_MASON", "D33O_M_01"], ["SPK_TOLGA", "D33O_T_02"], ["SPK_MASON", "D33O_M_02"]])
 	Lore.scatter(self, "33o", [Vector3(-14.0, Bogaz.QUAY_Y + 0.3, -9.0), Vector3(-9.0, Bogaz.DECK2_Y + 0.3, -21.0), Vector3(14.0, Bogaz.QUAY_Y + 0.3, -3.0)])
+	while hud.chain_busy():
+		await get_tree().process_frame
 	await _scaffold()
 	await _crane()
 	await _toll()

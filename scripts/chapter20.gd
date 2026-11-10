@@ -181,16 +181,20 @@ func _run() -> void:
 	await Stage.settle(giust)
 	await hud.say("SPK_GIUST", "D20_G_01_KNOWN" if GameState.has_met("giustiniani") else "D20_G_01")   # Perde II'de tanıştılarsa
 	await hud.say("SPK_TOLGA", "D20_T_01")
-	await hud.say("SPK_GIUST", "D20_G_02")
-	await hud.say("SPK_GIUST", "D20_G_03")
+	# Kalan açılış sözleri oyuncu serbestken söylenir; iş (phase "work") sözler bitince başlar
+	var lines: Array = [["SPK_GIUST", "D20_G_02"], ["SPK_GIUST", "D20_G_03"]]
 	# Huruçun (36, 9 Nisan) izi: omzunda dönen okçu Leon gedikte; dışarıda kalan Leon'un yeri boş
 	match Siege.outcome(36):
 		"36.1":
-			await hud.say("SPK_GIUST", "D20_G_LEON_OK")
+			lines.append(["SPK_GIUST", "D20_G_LEON_OK"])
 		"36.2":
-			await hud.say("SPK_GIUST", "D20_G_LEON_LOST")
+			lines.append(["SPK_GIUST", "D20_G_LEON_LOST"])
 	Lore.scatter(self, "20")
 	player.frozen = false
+	hud.set_objective(tr("UI_OBJ_LISTEN_TO") % tr("SPK_GIUST"), giust, 1.9)
+	hud.say_chain(lines)
+	while hud.chain_busy():
+		await get_tree().process_frame
 	phase = "work"
 	_set_crew(true)
 	_update_objective()

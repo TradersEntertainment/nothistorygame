@@ -201,13 +201,22 @@ func _run() -> void:
 	player.show_remote(true)             # Tolga'nın eli açık, elde eşya (kuşatma bölümlerinde el hiç açılmıyordu)
 	_capture_mouse()
 	await hud.fade_to(0.0, 1.0)
+	# İlk sözler oyuncu serbestken söylenir; geçit/izin sahnesi ve seçimler donuk kalır
+	var lines: Array = []
 	if osm:
-		await hud.say("SPK_NIHAT", "D23O_N_01")
-		await _say("SPK_ISMAIL", "D23O_I_01")
+		lines.append(["SPK_NIHAT", "D23O_N_01"])
+		lines.append(["SPK_ISMAIL", "D23O_I_01"])
 	else:
-		await hud.say("SPK_NIHAT", "D23_N_01")
-	await _say("SPK_THEODOROS", "D23_TH_01")
-	await _t("D23_T_01")
+		lines.append(["SPK_NIHAT", "D23_N_01"])
+	lines.append(["SPK_THEODOROS", "D23_TH_01"])
+	lines.append(["SPK_TOLGA", "D23_T_01"])
+	player.frozen = false
+	hud.set_objective(tr("UI_OBJ_LISTEN_TO") % tr("SPK_THEODOROS"), theodoros, 1.9)
+	hud.say_chain(lines)
+	while hud.chain_busy():
+		await get_tree().process_frame
+	player.frozen = true
+	hud.set_objective("")
 	# Bölüm 22: kule yanarken Tolga'nın kaşları da yandı. Theodoros fark eder
 	if not osm and GameState.flags.get("tolga_singed", false):
 		_singed = true

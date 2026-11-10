@@ -243,19 +243,23 @@ func _run() -> void:
 	_capture_mouse()
 	await hud.fade_to(0.0, 1.0)
 	# Osmanlı yolunda 31o (aynı gün öğlen Ayasofya) bundan önce oynandı: açılış ona bağlanır
-	await hud.say("SPK_NIHAT", "D27O_N_01" if Siege.side() == "O" and Siege._plays(31) else "D27_N_01")
-	await _t("D27_T_01" if _known_galata() else "D27_T_01_NEW")
-	await hud.say("SPK_NIHAT", "D27_N_02" if _known_galata() else "D27_N_02_NEW")
+	var lines: Array = [["SPK_NIHAT", "D27O_N_01" if Siege.side() == "O" and Siege._plays(31) else "D27_N_01"],
+		["SPK_TOLGA", "D27_T_01" if _known_galata() else "D27_T_01_NEW"],
+		["SPK_NIHAT", "D27_N_02" if _known_galata() else "D27_N_02_NEW"]]
 	if isidore:
-		await hud.say("SPK_NIHAT", "D27_N_ISI")         # gemi kuyruğunda tanıdık bir ak sakal
+		lines.append(["SPK_NIHAT", "D27_N_ISI"])         # gemi kuyruğunda tanıdık bir ak sakal
 	if brig:
-		await hud.say("SPK_NIHAT", "D27_N_BRIG")        # yirmi gün aynı güvertede olunan kaptan
+		lines.append(["SPK_NIHAT", "D27_N_BRIG"])        # yirmi gün aynı güvertede olunan kaptan
 	if genoese:
-		await hud.say("SPK_NIHAT", "D27_N_GENOESE")     # Boğazkesen'in gümrüğünden geçen tüccar
+		lines.append(["SPK_NIHAT", "D27_N_GENOESE"])     # Boğazkesen'in gümrüğünden geçen tüccar
+	# Açılış sözleri oyuncu serbestken söylenir; sohbetler zincir bitince açılır
 	phase = "free"
 	Lore.scatter(self, "27")
 	player.frozen = false
 	_update_objective()
+	hud.say_chain(lines)
+	while hud.chain_busy():
+		await get_tree().process_frame
 	if GameState.autotest:
 		for id in UNDECIDED:
 			await _talk(id)

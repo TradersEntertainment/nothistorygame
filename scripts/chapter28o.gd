@@ -234,9 +234,11 @@ func _run() -> void:
 	player.show_remote(true)             # Tolga'nın eli açık (kazık ve kütük elsiz havada duruyordu)
 	_capture_mouse()
 	await hud.fade_to(0.0, 1.0)
-	await hud.say("SPK_NIHAT", "D28O_N_01")
-	await hud.say("SPK_URBAN", "D28O_U_01")
-	await hud.say("SPK_TOLGA", "D28O_T_01")
+	# Açılış sözleri oyuncu serbestken söylenir (kazık işi ekranda)
+	hud.say_chain([["SPK_NIHAT", "D28O_N_01"], ["SPK_URBAN", "D28O_U_01"], ["SPK_TOLGA", "D28O_T_01"]])
+	if GameState.autotest:
+		while hud.chain_busy():      # test botu ışınlanır: konuşan görüşten çıkmasın
+			await get_tree().process_frame
 	await _stakes_phase()
 	await _haul_phase()
 	await _first_shot()
@@ -725,7 +727,7 @@ func _drop() -> void:
 func _process(delta: float) -> void:
 	_t += delta
 	# 6 Nisan: surdaki Bizans topları arada bir atar; gülle siperin önüne ya da ardına düşer
-	if phase in ["stakes", "haul"] and not player.frozen:
+	if phase in ["stakes", "haul"] and not player.frozen and not hud.chain_busy():
 		_ball_t -= delta
 		if _ball_t <= 0.0:
 			_ball_t = randf_range(6.0, 9.0)

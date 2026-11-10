@@ -474,23 +474,30 @@ func _prologue_intro() -> void:
 	hud.clear_card()
 	await hud.fade_to(0.0, 0.8)
 	_capture_mouse()
+	var lines: Array = []
 	if _met_nihat():
 		# "Huzurdan çıktınız" yalnız huzurdan gelene; 12B'de surlardan, tutuklanan ya da dal bölümünü kapatan için "yine"
 		var from := str(GameState.flags.get("bureau_from", "audience"))
-		await hud.say("SPK_NIHAT", {"audience": "D17_N_01", "walls": "D17_N_01_WALLS"}.get(from, "D17_N_01_NOAUD"))
+		lines.append(["SPK_NIHAT", {"audience": "D17_N_01", "walls": "D17_N_01_WALLS"}.get(from, "D17_N_01_NOAUD")])
 	else:
 		# Bu oyunda Tolga Nihat'la hiç karşılaşmadı (Yüzleşmede iz kaybedildi ya da o bölüm atlandı): önce tanışma
-		await hud.say("SPK_NIHAT", "D17_N_INTRO_1")
-		await hud.say("SPK_TOLGA", "D17_T_INTRO")
-		await hud.say("SPK_NIHAT", "D17_N_INTRO_2")
+		lines.append(["SPK_NIHAT", "D17_N_INTRO_1"])
+		lines.append(["SPK_TOLGA", "D17_T_INTRO"])
+		lines.append(["SPK_NIHAT", "D17_N_INTRO_2"])
 	if GameState.flags.get("tolga_arrested", false) or GameState.chapter_outcomes.get(11, "") == "11.1":
-		await hud.say("SPK_NIHAT", "D17_N_ARREST")
-	await hud.say("SPK_NIHAT", "D17_N_02")
-	await hud.say("SPK_TOLGA", "D17_T_PRO_1" if "chickpeas" in GameState.bag else "D17_T_PRO_1_NOLEB")
-	await hud.say("SPK_NIHAT", "D17_N_03")
-	await hud.say("SPK_NIHAT", "D17_N_04")
-	await hud.say("SPK_TOLGA", "D17_T_WINDOW")
-	await hud.say("SPK_NIHAT", "D17_N_BACK")
+		lines.append(["SPK_NIHAT", "D17_N_ARREST"])
+	lines.append_array([["SPK_NIHAT", "D17_N_02"],
+		["SPK_TOLGA", "D17_T_PRO_1" if "chickpeas" in GameState.bag else "D17_T_PRO_1_NOLEB"],
+		["SPK_NIHAT", "D17_N_03"], ["SPK_NIHAT", "D17_N_04"], ["SPK_TOLGA", "D17_T_WINDOW"], ["SPK_NIHAT", "D17_N_BACK"]])
+	# Büro konuşması oyuncu serbestken dinlenir; seçimden önce yeniden donar ve Nihat'a döner
+	player.frozen = false
+	hud.set_objective(tr("UI_OBJ_LISTEN_TO") % tr("SPK_NIHAT"), nihat, 1.9)
+	hud.say_chain(lines)
+	while hud.chain_busy():
+		await get_tree().process_frame
+	hud.set_objective("")
+	player.frozen = true
+	player.face(nihat.global_position + Vector3(0, 1.5, 0))
 	var pick := await hud.choose(["UI_C17_SIGN", "UI_C17_READ", "UI_C17_POLICY"], 0.0, 0)
 	match pick:
 		1:
