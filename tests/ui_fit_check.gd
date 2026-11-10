@@ -28,6 +28,7 @@ func _ready() -> void:
 		TranslationServer.set_locale(loc)
 		await _check_hud(loc)
 		await _check_menu(loc)
+		await _check_roots(loc)
 	print("UIFIT %s" % ("PASS" if ok else "FAIL"))
 	get_tree().quit(0 if ok else 1)
 
@@ -155,3 +156,22 @@ func _check_menu(loc: String) -> void:
 	await _frames()
 	for path in tmp:
 		DirAccess.remove_absolute(path)
+
+
+## Ana menü ve duraklatma menüsünün kök sayfaları 1280x720'de tam sığmalı (alttaki düğmeler kesiliyordu).
+## Ana menüde en uzun hal denenir: "Devam" düğmesi için sahte otomatik kayıt verilir.
+func _check_roots(loc: String) -> void:
+	for mode in ["main", "pause"]:
+		var m := GameMenu.new()
+		m.mode = mode
+		add_child(m)
+		await _frames()
+		if mode == "main":
+			m._auto = {"chapter": 5, "snapshots": {}}
+			m.show_root()
+		await _frames(3)
+		var panel: Control = m._panel
+		print("UIFIT kök %s %s: panel %s" % [mode, loc, panel.get_global_rect()])
+		_inside(m, "%s %s kök sayfa" % [loc, mode])
+		m.queue_free()
+		await _frames()

@@ -437,6 +437,7 @@ func _dismantle() -> void:
 	await _h("D5_H_DISMANTLE")
 	var m := garage.get_node("Zamanator") as Node3D
 	player.face(Garage.PLATFORM_POS + Vector3(0, 1.0, 0))
+	player.show_prop("screwdriver", 30.0)      # tornavida elde: parçalar elle sökülür (yalnız el uzanıyordu)
 	# Söküm görünsün: parçalar tek tek sökülür (vida sesi, kıvılcım, toz), kararmadan
 	for i in m.get_child_count():
 		if i < 3:
@@ -459,6 +460,7 @@ func _dismantle() -> void:
 				await tw0.finished
 		else:
 			part.visible = false
+	player.drop_prop()                         # tornavida iner
 	Audio.sfx("paper_tear", -10.0, 0.7)
 	_no_collide(m)
 	garage.panel_node.visible = false

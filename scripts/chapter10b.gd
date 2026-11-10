@@ -225,6 +225,8 @@ func _cast() -> void:
 		var mold := _molds[i]
 		player.face(mold.global_position + Vector3(0, 0.5, 0))
 		mold.visible = true
+		player.show_prop("ladle", 30.0)          # döküm kepçesi elde (yalnız pota eğiliyordu, el boştu)
+		player.hand_gesture("pour")
 		# Pota kalıbın tam üstüne gelir (eskiden ocak önünde kalıyordu: akış kalıba değmeden havada asılıydı)
 		var home := FOUNDRY + Vector3(0, 1.5, -0.4)
 		var above := Vector3(mold.position.x, home.y, mold.position.z)
@@ -262,6 +264,7 @@ func _cast() -> void:
 			await get_tree().process_frame
 		meter.flash = 1.0
 		_stream.visible = false
+		player.drop_prop()                       # kepçe iner
 		var back := create_tween().set_parallel(true)
 		back.tween_property(_crucible, "rotation:z", 0.0, _d(0.3))
 		back.tween_property(_crucible, "position", home, _d(0.3))

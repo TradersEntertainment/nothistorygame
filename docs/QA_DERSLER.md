@@ -987,3 +987,17 @@ Her bölüm denetiminde ve her düzeltmede bu listeyi baştan uygula. Yeni bir h
     sayısı koddan (39: uzun taraf).
   - Açık kalan: ana menü ve duraklatma menüsünün kök sayfaları 720p'de taşıyor (839 ve 909 px); `ui_fit_check` kök
     sayfaları denetlemiyor.
+- v0.99.114 (menü, el eşyaları; Sonnet ajanları, performans ölçümü Opus):
+  - Menü kök sayfaları 720p'de sığıyor: düğme yazısı 24→20, boşluklar kısıldı, liste odakla kayan `ScrollContainer`
+    içinde (ana 839→562, duraklatma 889→605 px). `ui_fit_check` artık kök sayfaları da ölçüyor (`_check_roots`).
+  - El eşyaları: `show_prop` türleri "ladle" (10b), "screwdriver" (5), "plank" (10h, çekiçle); 37o kanca atışında
+    "throw", kızak çekerken `free_hold` ile ip elde ve ipin ucu ele bağlı; 20'de gülle devirince yük düşüyor
+    (`_drop(true)` → `_fall_load`, `transient`).
+  - Ajan raporunu dosyayla karşılaştır: ajan "10b'ye kepçe eklendi" dedi, `git diff` içinde 10b yoktu (düzenleme
+    yazılmamış). Rapor değil fark okunur.
+  - Otomatik test 20'de `knocks=0` veriyor: düşen yük yolu testte çalışmaz, elle bakılmalı.
+  - 0.99.113 CI'da düştü (yayınlanmadı): 38o'da iki şehirli zeminin 0,4-0,5 m üstünde (`VISAUDIT float`), yerelde
+    çıkmıyordu. Neden: `CityLife._side` (oyuncuya yol verme) kişiyi yolun 1 m yanına kaydırıyor, yüksekliği yoldan
+    alıyordu; 1:2 eğimli yamaçta havada kalıyordu. Düzeltme: yürüyenin yüksekliği bastığı noktadan (`_place`),
+    `_spot_open` toleransı 0,6 → 0,3 (denetimin 0,35 eşiğinin altında). Denetimden gevşek tolerans = ara sıra düşen test.
+  - CI günlüğünü bağlama dökme: `get_job_logs return_content=false` adres verir, `curl` ile indirip `grep` yeter.

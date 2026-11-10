@@ -1710,6 +1710,7 @@ func show_badge(hold := 2.6) -> void:
 ## Elde bir eşya göster (kameraya uzatılır, bekler, geri çekilir): replikte geçen eşya gerçekten görünsün.
 ## kind: "badge" (Büro kimliği), "card" (kartvizit), "book" (tarih kitabı, 29 Mayıs sayfası),
 ## "letter" (mühürlü mektup), "cube" (Rubik küpü), "pole" (selfie çubuğu), "tea" (ince belli bardakta çay; yudumlanır),
+## "ladle" (döküm kepçesi), "screwdriver" (tornavida), "plank" (kalas),
 ## ya da başka bir çanta eşyası (Items.IDS: kendi modeli).
 func show_prop(kind: String, hold := 2.4) -> void:
 	sheathe_blade(true)
@@ -1862,6 +1863,29 @@ func show_prop(kind: String, hold := 2.4) -> void:
 			Props.cyl(item, 0.014, 0.32, Vector3(0, -0.06, 0), Color("6a4a2c"), Vector3.ZERO, 6)
 			Props.cyl(item, 0.04, 0.13, Vector3(0, 0.1, 0), Color("8a6a44"), Vector3(0, 0, 90), 8)
 			target = Vector3(0.07, -0.12, -0.36)
+		"ladle":
+			# Döküm kepçesi (10B): uzun demir sap ileri uzanır, ucunda küçük çanak ve içinde parlayan bronz
+			Props.cyl(item, 0.011, 0.5, Vector3(0, -0.05, 0), Color("4a4a52"), Vector3(-70, 0, 0), 6)
+			Props.cyl(item, 0.05, 0.05, Vector3(0, 0.04, -0.24), Color("3a3a40"), Vector3.ZERO, 10, 0.035)
+			Props.cyl(item, 0.042, 0.008, Vector3(0, 0.066, -0.24), Color("ffb040"), Vector3.ZERO, 10)
+			target = Vector3(0.1, -0.13, -0.3)
+		"screwdriver":
+			# Tornavida (5 söküm): sarı sap, çelik gövde, yassı uç; kendi ekseninde öne yatık tutulur
+			var sg := Node3D.new()
+			item.add_child(sg)
+			sg.rotation_degrees = Vector3(-65, 0, 0)
+			Props.cyl(sg, 0.016, 0.09, Vector3(0, -0.08, 0), Color("e0a82a"), Vector3.ZERO, 8)
+			Props.cyl(sg, 0.006, 0.12, Vector3(0, 0.025, 0), Color("c8ccd4"), Vector3.ZERO, 6)
+			Props.box(sg, Vector3(0.012, 0.012, 0.003), Vector3(0, 0.09, 0), Color("a8acb4"))
+			target = Vector3(0.07, -0.08, -0.32)
+		"plank":
+			# Kalas (10H gedik): kaba biçilmiş ahşap, bir ucu koyu; uzun ucu ileri
+			var pg := Node3D.new()
+			item.add_child(pg)
+			pg.rotation_degrees = Vector3(-8, 25, 6)
+			Props.box(pg, Vector3(0.09, 0.025, 0.5), Vector3.ZERO, Color("8a6440"))
+			Props.box(pg, Vector3(0.09, 0.027, 0.04), Vector3(0, 0, -0.23), Color("6a4a2c"))
+			target = Vector3(0.12, -0.12, -0.34)
 		"slipper":
 			# Yedek terlik (Hikmet'in): kahverengi taban, üstte kayış
 			Props.box(item, Vector3(0.1, 0.02, 0.24), Vector3.ZERO, Color("6a4a30"), Vector3(70, 0, 0))

@@ -647,6 +647,7 @@ func _throw_hook() -> void:
 	var from := player.global_position + Vector3(0, 1.1, 0) + player.camera.global_transform.basis.x * 0.4
 	var at: Vector3 = (_barrels[best].global_position + Vector3(0, 0.9, 0)) if best >= 0 else from + fwd * 9.0
 	at.y = maxf(at.y, 0.2)
+	player.hand_gesture("throw")        # kanca savrulur
 	Audio.sfx("whoosh_fly", -6.0, 1.1)
 	_hook = SeaBattle.hook(self, at, from)
 	_hook_target = best
@@ -825,6 +826,7 @@ func _drag() -> void:
 	await hud.say("SPK_AZAPBASI", "D37O_AB_05")
 	await hud.say("SPK_AZAP", ("D37O_HZ_01_T1" if Siege.outcome(41) == "41O.1" else "D37O_HZ_01") if _hizir else "D37O_AZ_01")
 	player.frozen = false
+	player.free_hold = Vector3(-0.3, -0.42, -0.6)      # sol el ipin ucunu tutar (varsayılan eşya gösterilmez)
 	hud.set_objective(tr("UI_OBJ37O_DRAG"), DRAG_TO + Vector3(0, 1.4, 0))
 	var t := 0.0
 	var pot_t := 3.0
@@ -865,7 +867,7 @@ func _drag() -> void:
 		if away.length() > 3.2:
 			var fixp := _sled.position + away.normalized() * 3.2
 			player.global_position = Vector3(fixp.x, player.global_position.y, fixp.z)
-		var hand := player.global_position + Vector3(0, 0.9, 0)
+		var hand := (player.camera.global_transform * player.free_hold) if player.free_hold != Vector3.INF else player.global_position + Vector3(0, 0.9, 0)
 		var tgt := Vector3(player.global_position.x, 0.0, player.global_position.z - 2.4)
 		if _slipping < 0.0 and _sled.position.distance_to(tgt) > 0.2:
 			_sled.position = _sled.position.move_toward(tgt, dt * 1.4)
@@ -900,6 +902,7 @@ func _drag() -> void:
 			hud.bark("SPK_TOLGA", "D37O_T_DRAG", 3.0)
 	hud.set_prompt("")
 	hud.set_objective("")
+	player.free_hold = Vector3.INF           # ip bırakılır
 	player.frozen = true
 	if _hizir:
 		# Hızır'ın akıbeti: ip üç kez kaydıysa ya da çekiş uzadıysa (ateş birikintilerinde oyalanıldı) yetişmez

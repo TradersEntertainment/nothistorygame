@@ -18,6 +18,9 @@ var title_font: Font
 var _panel: PanelContainer
 var _box: VBoxContainer
 var _on_root := true
+## Kök sayfalar (ana menü, duraklatma) 720p'ye sığsın diye sıkı düzen: küçük düğme yazısı/dolgusu ve dar aralık.
+## Diğer sayfalar eski ölçülerde kalır; _clear her sayfa değişiminde bunu kapatır, show_root açar.
+var _compact := false
 var _auto: Dictionary = {}
 ## Ayarlarda Tolga'nın yorumları (v0.92): ayarlar sayfası ilk açılınca kurulur, sayfalar arasında kalır
 var _quips: TolgaQuips
@@ -85,6 +88,11 @@ func _ready() -> void:
 
 func _layout() -> void:
 	var vs := get_viewport().get_visible_rect().size
+	# Kök sayfadaki düğme listesi önce kendi doğal boyunda açılır; sığmıyorsa aşağıda kısalıp kaydırılır
+	# (en büyük arayüz ölçeğinde de düğmeler kesilmez, odak kaydırır)
+	for c in _box.get_children():
+		if c is ScrollContainer and c.has_meta("fit_list"):
+			c.custom_minimum_size.y = (c.get_child(0) as Control).get_combined_minimum_size().y
 	_panel.reset_size()
 	var ps := _panel.get_combined_minimum_size()
 	# Sayfa ekrana sığmazsa (720p'de albümünde fotoğraf olan yan görevler sayfası: "Geri" ekranın altında kalıyordu)
@@ -167,6 +175,9 @@ func _clear(root: bool) -> void:
 	_on_root = root
 	_waiting_action = ""          # sayfa değişince bekleyen tuş atama iptal olur (sonraki tuş yanlış eyleme gitmesin)
 	_waiting_button = null
+	_compact = false
+	_box.add_theme_constant_override("separation", 10)
+	(_panel.get_theme_stylebox("panel") as StyleBoxFlat).set_content_margin_all(28)
 	if root and _quips:
 		_quips.hush()
 	for c in _box.get_children():
@@ -194,14 +205,16 @@ func _style(bg: Color, border: Color) -> StyleBoxFlat:
 	s.set_corner_radius_all(8)
 	s.content_margin_left = 18
 	s.content_margin_right = 18
-	s.content_margin_top = 8
-	s.content_margin_bottom = 8
+	s.content_margin_top = 4 if _compact else 8
+	s.content_margin_bottom = 4 if _compact else 8
 	s.border_width_left = 4
 	s.border_color = border
 	return s
 
 
-func _button(text: String, cb: Callable, enabled := true, parent: Control = null, size := 24) -> Button:
+func _button(text: String, cb: Callable, enabled := true, parent: Control = null, size := -1) -> Button:
+	if size < 0:
+		size = 20 if _compact else 24
 	var b := Button.new()
 	b.text = text
 	b.alignment = HORIZONTAL_ALIGNMENT_LEFT
@@ -294,15 +307,20 @@ static func _time_text(sec: float) -> String:
 
 func show_root() -> void:
 	_clear(true)
+	_compact = true
+	_box.add_theme_constant_override("separation", 4)
+	(_panel.get_theme_stylebox("panel") as StyleBoxFlat).set_content_margin_all(16)
+	var first_btn := -1       # düğme listesinin başladığı çocuk sırası (kaydırılan listeye taşınır)
 	if mode == "main":
 		var logo := TextureRect.new()
 		logo.texture = load("res://assets/art/posters/fez.svg")
-		logo.custom_minimum_size = Vector2(0, 90)
+		logo.custom_minimum_size = Vector2(0, 64)
 		logo.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
 		logo.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT
 		_box.add_child(logo)
-		_label(tr("UI_TITLE"), 44, C_CREAM, title_font).autowrap_mode = TextServer.AUTOWRAP_OFF
-		_spacer(14)
+		_label(tr("UI_TITLE"), 40, C_CREAM, title_font).autowrap_mode = TextServer.AUTOWRAP_OFF
+		_spacer(4)
+		first_btn = _box.get_child_count()
 		if not _auto.is_empty():
 			var n := int(_auto["chapter"])
 			_button(tr("UI_MENU_CONTINUE") + "   ·   " + chapter_title(n, _scene_of(_auto, n)), func(): picked.emit("continue", 0))
@@ -318,13 +336,15 @@ func show_root() -> void:
 		_button(tr("UI_MENU_ACH") + "   ·   %d/%d" % [Achievements.unlocked_count(), Achievements.LIST.size()], show_achievements)
 		_settings_row()
 		_button(tr("UI_MENU_QUIT"), func(): picked.emit("quit", 0))
-		_spacer(18)
+		_wrap_list(first_btn)
+		_spacer(6)
 		_label(tr("SPK_HIKMET") + ": " + tr(_hikmet_line()), 18, Color("ffc98a"))
 		_label(tr("UI_MENU_KEYS"), 14, C_DIM)
 	else:
 		_label(tr("UI_PAUSE"), 36, C_ACCENT, title_font)
 		_label(chapter_title(GameState.current_chapter, _scene_of(GameState.run_data(), GameState.current_chapter)) + "   ·   " + _time_text(GameState.play_time), 16, C_DIM)
-		_spacer(6)
+		_spacer(2)
+		first_btn = _box.get_child_count()
 		_button(tr("UI_MENU_RESUME"), func(): picked.emit("resume", 0))
 		_button(tr("UI_MENU_PHOTO"), func(): picked.emit("photo", 0))
 		_button(tr("UI_MENU_BUG"), func(): picked.emit("bug", 0))
@@ -338,10 +358,30 @@ func show_root() -> void:
 		_settings_row()
 		_button(tr("UI_MENU_MAIN"), func(): _confirm(tr("UI_MENU_MAIN_CONFIRM"), func(): picked.emit("main_menu", 0)))
 		_button(tr("UI_MENU_QUIT"), func(): picked.emit("quit", 0))
-		_spacer(8)
+		_wrap_list(first_btn)
+		_spacer(4)
 		var c := _label(tr("UI_CONTROLS"), 14, C_DIM)
 		c.custom_minimum_size = Vector2(420, 0)
 	_finish_page()
+
+
+## Kök sayfanın düğmelerini (çocuk sırası from'dan sona) kaydırılan bir listeye taşır. Sığıyorsa kaydırma çubuğu
+## görünmez ve sayfa eskisi gibi durur; sığmazsa (çok büyük arayüz ölçeği) _layout listeyi kısaltır, odak kaydırır.
+func _wrap_list(from: int) -> void:
+	var sc := ScrollContainer.new()
+	sc.horizontal_scroll_mode = ScrollContainer.SCROLL_MODE_DISABLED
+	sc.follow_focus = true
+	sc.set_meta("fit_list", true)
+	var list := VBoxContainer.new()
+	list.add_theme_constant_override("separation", 4)
+	list.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	sc.add_child(list)
+	var kids := _box.get_children().slice(from)
+	for k in kids:
+		_box.remove_child(k)
+		list.add_child(k)
+	_box.add_child(sc)
+	_box.move_child(sc, from)
 
 
 ## "Ayarlar" ve yanında küçük "Künye" düğmesi tek satırda (kök sayfa 720p'de zaten uzun: bir satır daha eklenmesin).

@@ -417,7 +417,7 @@ func _spot_open(p: Vector3) -> bool:
 	if hit.is_empty():
 		return false
 	var hy2: float = (world.global_transform.affine_inverse() * (hit["position"] as Vector3)).y
-	return absf(hy2 - p.y) < 0.6
+	return absf(hy2 - p.y) < 0.3     # denetimin (Hud float, 0,35 m) altında
 
 
 func _node_open(i: int) -> bool:
@@ -1591,6 +1591,13 @@ func _walk(ag: Agent, delta: float) -> void:
 ## Gövdeyi yerine koyar, yalnız değiştiyse. Gövdenin konumunu yazmak bütün parçalarına yayılır: CityLife karesinin en
 ## pahalı işiydi (kişi başına ~9 µs, her kare); duran satıcı, sohbet eden ikili, dönüşünü bitiren artık yazılmaz.
 func _place(ag: Agent) -> void:
+	# Yürüyen kişinin yüksekliği ayak bastığı noktadan okunur: yana çekilme (_side) yolun 1 m yanına kaydırır, ara noktalar
+	# 4 m arayla (doğrusal ara değer); 38o'nun 1:2 eğimli yamacında bu 0,4-0,5 m havada kalmaktı (VISAUDIT float).
+	# Yalnız yatayda yer değiştirenlerde ve yerleştirme anında (kare başına bir ışın değil, bir analitik yükseklik).
+	var mx := ag.pos.x - ag.shown_pos.x
+	var mz := ag.pos.z - ag.shown_pos.z
+	if mx * mx + mz * mz > 0.0001:
+		ag.pos.y = _surf(ag.pos.x, ag.pos.z)
 	if ag.pos.distance_squared_to(ag.shown_pos) > 0.000001:      # 1 mm
 		ag.shown_pos = ag.pos
 		ag.body.position = ag.pos

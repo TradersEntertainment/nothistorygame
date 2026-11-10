@@ -342,7 +342,7 @@ func _knock() -> void:
 	player.hurt(40.0, LandWalls.BREACH + Vector3(0, 2.0, 30.0))
 	Audio.sfx("land_thud", 0.0)
 	if carrying != "":
-		_drop()
+		_drop(true)
 	_time -= 5.0
 	hud.bark("SPK_TOLGA", "D20_T_KNOCK_%d" % mini(_knocks, 3), 3.0)
 
@@ -568,14 +568,35 @@ func _pick(kind: String) -> void:
 	_update_objective()
 
 
-func _drop() -> void:
+## fall: top oyuncuyu devirdiğinde yük sessizce silinmez; elden fırlar, yere düşer, "güm" diye yatar, birkaç sn sonra kalkar.
+func _drop(fall := false) -> void:
 	carrying = ""
 	player.free_hold = Vector3.INF
 	if _carry_node:
-		_carry_node.queue_free()
+		if fall and is_instance_valid(_carry_node) and _carry_node.is_inside_tree():
+			_fall_load(_carry_node)
+		else:
+			_carry_node.queue_free()
 		_carry_node = null
 	player.speed_mult = 1.0
 	_update_objective()
+
+
+func _fall_load(n: Node3D) -> void:
+	var gt := n.global_transform
+	n.get_parent().remove_child(n)
+	add_child(n)
+	n.set_meta("transient", true)
+	n.remove_meta("carry")
+	n.global_transform = gt
+	n.global_rotation = Vector3(0.0, n.global_rotation.y, 0.0)      # yerde dik/yan yatar, kamera eğimini taşımaz
+	var floor_y := player.global_position.y + 0.25
+	var fast := GameState.autotest and not GameState.pace
+	var tw := create_tween()
+	tw.tween_property(n, "global_position:y", floor_y, 0.05 if fast else 0.4).set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_IN)
+	tw.tween_callback(Audio.sfx.bind("land_thud", -4.0, 0.8))
+	tw.tween_interval(0.05 if fast else 3.0)
+	tw.tween_callback(n.queue_free)
 
 
 func _deliver() -> void:

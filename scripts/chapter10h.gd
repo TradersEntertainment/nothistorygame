@@ -355,7 +355,9 @@ func _gedik() -> void:
 	if c != 0:
 		return
 	player.show_prop("tape", 1.4)             # bant elde, gedikteki kazıklara sarılır
+	player.show_prop("plank", 1.4)            # kalas da elde, gedikteki kazıklara dayanır
 	player.hand_gesture("reach")
+	Stage.hammer_swings(player, 3)            # kalas tokmakla çakılır (beklenmez: karartmayla birlikte akar)
 	Audio.sfx("paper_tear", -6.0)
 	await hud.fade_to(0.7, _d(0.4))
 	_stockade.visible = true
