@@ -803,6 +803,7 @@ func _volley_tick(delta: float) -> void:
 		if _warn >= _warn_time:
 			_warn = -1.0
 			_volley = VOLLEY_EVERY
+			_update_objective()
 			Audio.sfx("whoosh_fly", -4.0)
 			for i in 10:
 				var a := Props.cyl(self, 0.015, 0.8, Vector3(randf_range(-14, 12), 0.35, randf_range(38, 58)), Color("5a4a30"), Vector3(randf_range(-30, 30), 0, randf_range(-30, 30)), 4)
@@ -819,7 +820,15 @@ func _volley_tick(delta: float) -> void:
 	_volley -= delta
 	if _volley <= 0.0:
 		_warn = 0.0
-		hud.bark("SPK_HASAN", "D22O_H_VOLLEY", _warn_time)
+		# Uyarı öteki sözleri keser (süren bir sözün arkasında bekleyip geç kalıyor ya da hiç söylenmiyordu) ve açıktaki
+		# oyuncuya en yakın siper işaretlenir; yaylım geçince hedef geri kurulur
+		hud.bark("SPK_HASAN", "D22O_H_VOLLEY", _warn_time, true)
+		if not _covered():
+			var best: Vector3 = TOWER + Vector3(0, 0, 2.0)
+			for c: Vector3 in COVERS:
+				if player.global_position.distance_to(c) < player.global_position.distance_to(best):
+					best = c
+			hud.set_objective(tr("UI_OBJ22O_COVER"), best + Vector3(0, 1.4, 0))
 
 
 ## Hasan'la konuşmadan önce yanına yürünür (7-11 m öteden konuşuyordu; sahneleme raporu SAYDIST). Tolga kulenin

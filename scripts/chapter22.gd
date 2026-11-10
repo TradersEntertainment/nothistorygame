@@ -487,7 +487,8 @@ func _on_interact(id: String) -> void:
 
 func _unhandled_input(event: InputEvent) -> void:
 	# Fitil yanarken oyuncu donuk: bırakma tuşu buradan gelir
-	if _fuse >= 0.0 and event.is_action_pressed("interact"):
+	# Fitil yeni yakılmışken gelen ikinci basış sayılmaz: çift tık fıçıyı fitil 0'da bırakıp üç fıçıdan birini harcıyordu
+	if _fuse >= 0.06 and event.is_action_pressed("interact"):
 		_release()
 		get_viewport().set_input_as_handled()
 

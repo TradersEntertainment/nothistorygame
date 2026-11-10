@@ -4236,7 +4236,9 @@ UI_PROMPT25_TRAY,[E] Tepsiyi ver,[E] Hand over the tray
 D25_G_TRAY,"Tamam, yamak. Şimdi git. Kapıda kimse durmaz bu gece.","All right, boy. Now go. No one loiters at the door tonight."
 D25_T_LISTEN,"Arka taraf... Çadır bezi incedir. Duyarım. Nöbetçiler dönüyor, arkalarına denk gelmeliyim.",The back... tent cloth is thin. I'd hear it. The guards are circling; I have to stay behind them.
 UI_OBJ25_LISTEN,Otağın arkasında meclisi dinle; nöbetçilere görünme,Listen to the council behind the tent; don't let the guards see you
-UI_PROMPT25_LISTEN,Dinliyor... kıpırdama,Listening... stay still
+UI_PROMPT25_LISTEN,Dinliyor... nöbetçinin önüne çıkma,Listening... stay out of the guards' sight
+UI_PROMPT25_GUARD,"Nöbetçi geliyor: arkasında kal, önüne çıkma","A guard is coming: stay behind him, not in front"
+UI_OBJ25_LISTEN2,Meclisi dinle; bir daha görünürsen kovulursun,Listen to the council; get seen once more and you are sent off
 UI_CH25_LISTEN,Meclis,The council
 D25_H_1,"Sultanım, elli gündür surların önündeyiz. Macar ordusu yolda, Venedik donanması denizde, derler. Haraca razı olalım, dönelim.","My Sultan, we have been before these walls for fifty days. They say a Hungarian army is on the road and a Venetian fleet at sea. Let us accept tribute and go home."
 D25_Z_1,"Hangi donanma? Gözcüler bir yelken görmedi. Frenkler kendi aralarında bölük pörçük. Surlar yıkılıyor, askerin yüreği sağlam.","What fleet? The lookouts have not seen a single sail. The Franks are divided among themselves. The walls are crumbling, the army's heart is strong."
@@ -4554,6 +4556,7 @@ D17O_T_01,"Öğrenirim, Topçubaşı. Ben hızlı öğrenirim. Sigortada her ay 
 D17O_A_02,"Bu gece gözünü sudan ayırma. Frenkler donanmayı yakmaya gelecekmiş, haber geldi. Nereden geldi, sorma.","Tonight, keep your eyes on the water. Word came that the Franks will try to burn the fleet. Don't ask where the word came from."
 D17O_A_LIGHT,İşte! Galata'da bir ışık. Kimin elinde olduğunu bilen yok. Ama bu gece geliyorlar.,There! A light at Galata. No one knows whose hand holds it. But they're coming tonight.
 D17O_T_MISSED,Kaçırdım... Nihat Bey not düşer herhalde.,"Missed it... Mr Nihat will make a note, I suppose."
+UI_OBJ17O_LISTEN,Topçubaşı'nı dinle,Listen to the master gunner
 UI_OBJ17O_WATCH,Karanlıkta yaklaşan gemiyi gör (bak ve E),Spot the ship approaching in the dark (look and press E)
 UI_OBJ17O_WATCH_PAD,Karanlıkta yaklaşan gemiyi gör (bak ve X),Spot the ship approaching in the dark (look and press X)
 D17O_A_WATCH,"Fenersiz gelirler. Sudaki bir gölge, küreğin şapırtısı. Gördüğün an bağır.","They'll come without lanterns. A shadow on the water, the splash of an oar. Shout the moment you see it."
@@ -4668,6 +4671,7 @@ D22O_H_02,"Önce hendek: şu sepetleri kıyıya taşı, toprağı aşağı dök.
 D22O_H_BLAKH_OK,"Blakherna'da surda Rum'u yenen kâtip sensin, değil mi? Bölük seni konuşuyor. Bu gece ok gelirken ""Siper!""i erken bağırırım; sen de erken koş.","You're the clerk who beat the Greek on the wall at Blachernae, aren't you? The company's talking about you. Tonight I'll shout ""Cover!"" early when the arrows come; you run early too."
 D22O_H_BLAKH_BAD,"Blakherna'da surdan atıldığından beri topallıyorsun, kâtip. Sepeti yavaş taşırsın; ok gelince siperden uzak kalma.","You've been limping since they threw you off the wall at Blachernae, clerk. You'll carry the basket slowly; when the arrows come, don't be far from cover."
 UI_OBJ22O_BASKET,Sepet al: toprak yığını · hendek %d/%d,Take a basket from the earth pile · moat %d/%d
+UI_OBJ22O_COVER,OK YAĞMURU! Sipere gir,ARROWS! Get to cover
 UI_OBJ22O_DROP,Sepeti hendeğin kıyısına dök · %d/%d,Tip the basket into the moat · %d/%d
 UI_OBJ22O_HIDE,"Deriyi kulenin önüne götür: ustalar gersin, sen çak (E basılı) · %d/%d","Take the hide to the tower front: the craftsmen stretch it, you nail (hold E) · %d/%d"
 UI_OBJ22O_TAKEHIDE,Deri yığınından bir deri al · deri %d/%d,Take a hide from the pile · hides %d/%d
@@ -5999,6 +6003,7 @@ UI_OBJ32O_MANTLET_PAD,Mantoyu hendeğin kıyısındaki işarete it (X basılı),
 UI_OBJ32O_LOAD,Topu doldur ve barikata nişan al (atış %d/%d),Load the gun and aim at the stockade (shot %d/%d)
 UI_OBJ32O_COOL,Namluyu zeytinyağıyla soğut (E basılı) · tüfekçiye dikkat,Cool the barrel with olive oil (hold E) · watch the gunner
 UI_OBJ32O_IFTAR,Kadri'nin kazanının başına git: oruç açılıyor,Go to Kadri's pot: the fast is being broken
+UI_OBJ32O_RELIGHT,Rüzgâr meşaleyi söndürdü: Kadri'nin kazanından yeniden yak,The wind blew the torch out: relight it at Kadri's pot
 UI_OBJ32O_FIRES,Meşaleyle hattın ateşlerini yak · %d/%d · Sultan gelmeden,Light the fires along the line with your torch · %d/%d · before the Sultan comes
 UI_OBJ32O_PHOTO,Tespit et: ateşlerin arasında Sultan,Record: the Sultan among the fires
 UI_OBJ32O_HASAN,Hasan'ın ateşine git,Go to Hasan's fire
@@ -6128,6 +6133,7 @@ UI_CH37O_TITLE,BÖLÜM {N} — İLK HÜCUM,CHAPTER {N} — THE FIRST ASSAULT
 UI_CH37O_SUB,"18 Nisan 1453 · Mesoteichion, barikatın önü · gece","18 April 1453 · The Mesoteichion, before the stockade · night"
 UI_FLOW37O_TITLE,AKIŞ ŞEMASI — BÖLÜM {N}: İLK HÜCUM,FLOWCHART — CHAPTER {N}: THE FIRST ASSAULT
 UI_OBJ37O_URBAN,Urban'ın bataryasına git,Go to Urban's battery
+UI_OBJ37O_CYMBAL,Turgut'tan zilleri al (E),Take the cymbals from Turgut (E)
 UI_OBJ37O_BEAT,Davulla birlikte zili çal (işaret yeşilken Space) · %d/%d,Strike the cymbal with the drum (Space on the green) · %d/%d
 UI_OBJ37O_SHIELD,"Ok! Kalkanı kaldır (C basılı), ritmi bırakma","Arrows! Raise your shield (hold C), keep the rhythm"
 UI_OBJ37O_PLANK,"Kalası ekiple hendeğe taşı, kıyıda indir (E)","Carry the plank to the moat with your squad, lower it at the edge (E)"
@@ -6523,7 +6529,9 @@ UI_OBJ31O_MAT,Hasırları nefe taşı ve ser · %d/%d,Carry the mats into the na
 UI_OBJ31O_TURN,"Hasırı kıble ipine paralel çevir (A/D), E ile sabitle","Turn the mat parallel to the qibla line (A/D), fix it with E"
 UI_OBJ31O_PHOTO,Tespit et: kubbenin altında saflar (kametten önce),Record: the rows beneath the dome (before the call to stand)
 UI_OBJ31O_SIT,Kapının yanına otur,Sit down by the door
-UI_PROMPT31O_LIFT,E basılı: kirişe yüklen,Hold E: put your weight under the beam
+UI_PROMPT31O_LIFT,E: kirişe yüklen,E: put your weight under the beam
+UI_QTE31O_LIFT,Boşluk: gösterge yeşildeyken kirişe yüklen,Space: heave on the beam when the gauge is green
+UI_OBJ31O_TAKE,"Çocuğu kucağına al (E), pencereye götür","Pick up the child (E) and carry it to the window"
 UI_PROMPT31O_ROPE,E basılı: ipi sal,Hold E: pay out the rope
 UI_PROMPT31O_CHILD,E: çocuğu kucağına al,E: pick up the child
 UI_PROMPT31O_CHILD_PAD,X: çocuğu kucağına al,X: pick up the child
@@ -7143,7 +7151,7 @@ D15_Y_H_RADIO_CALL,"(Telsiz, bu sefer net) EVLÂT! Duyuyor musun? Frekansı tutt
 D15_Y_H_RADIO_CALL_DRIFT,"(Telsiz, cızırtılı ama anlaşılır) EVLÂT! Frekans kayıyor ama bir pencere açıldı! Kırmızı düğme! Kısa sürer, çabuk ol!","(Radio, crackly but clear enough) SON! The frequency's drifting, but a window's open! The red button! It won't last, be quick!"
 D15_Y_F_RADIO,Bu ses nereden geliyor? Radyo mu bu? ...Cebinden mi?,Where's that voice coming from? Is that a radio? ...In your pocket?
 D15_Y_T_RADIO,"Bir müşteri, Ferit Bey. Eski bir müşteri. Yani... gelecekten bir müşteri.","A client, Mr Ferit. An old client. Well... a client from the future."
-UI_CH15_C_RECALL,Kırmızı düğmeye bas: 2026'ya dön,Press the red button: go back to 2026
+UI_CH15_C_RECALL,Kırmızı düğmeye bas ve basılı tut: 2026'ya dön,Press and hold the red button: go back to 2026
 UI_CH15_C_STAY,"Telsizi kapat: 1977'de kal, işe başla",Switch off the radio: stay in 1977 and take the job
 D15_Y_H_HOLD,"(Telsiz) Tutuyorum! Bas evlât, bas! Kırk dokuz yıl ağır!","(Radio) I've got it! Press it, son, press it! Forty-nine years is heavy!"
 D15_R_T_GO,"Ferit Bey, teşekkürler. İlk günümde istifa ediyorum. Binayı sigortalatmayı unutmayın.","Thank you, Mr Ferit. I'm resigning on my first day. Don't forget to insure the building."
@@ -7957,6 +7965,8 @@ D36_D_RIDERS,Davullar! Atlılar geliyor!,Drums! Horsemen coming!
 D36_G_BACK,Geri! Hepiniz köprüye! Surdakiler sizi örter!,Back! Everyone to the bridge! The men on the wall will cover you!
 D36_L_HELP,Tercüman! Bacağım... ok yedim! Kalkamıyorum!,Interpreter! My leg... an arrow! I can't get up!
 UI_OBJ36_BACK,Poternaya dön,Get back to the postern
+UI_OBJ36_LEON,Yaralı Leon (E: omuzla),Wounded Leon (E: carry him)
+UI_OBJ36_POSTERN,Poterna,The postern
 UI_CH36_RIDERS,Sipahiler,Sipahis
 D36_D_LEON_TAKEN,Leon'u aldılar!,They've taken Leon!
 UI_PROMPT36_LEON,E: Leon'u kaldır (yavaş yürürsün),E: Lift Leon (you'll walk slowly)
@@ -7984,6 +7994,7 @@ UI_CH42_STATS,Karşılama: %d   ·   İtilen merdiven: %d   ·   Serbest talimde
 UI_OBJ42_UP,"İskeleye çık (arkadaki rampa), merdivenin başına geç",Climb onto the platform (the ramp at the back) and stand at the head of the ladder
 UI_PROMPT42_PUSH,E basılı tut: merdiveni it,Hold E: push the ladder
 UI_PROMPT42_PUSH_PAD,X basılı tut: merdiveni it,Hold X: push the ladder
+UI_OBJ42_PUSH,Tırmanan tepeye varmadan merdiveni it (E basılı),Push the ladder off before the climber reaches the top (hold E)
 UI_CH42_PUSH,İtiliyor,Pushing
 UI_OBJ42_PHOTO,Tespit karesi: talimi izleyen Giustiniani,Record frame: Giustiniani watching the drill
 PHOTO_SIEGE42,Talim meydanında Giustiniani,Giustiniani at the drill ground

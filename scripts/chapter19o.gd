@@ -276,11 +276,15 @@ func _run() -> void:
 	if GameState.autotest:
 		_spot()
 	var wt := 0.0
+	var marked := false
 	while not _spotted:
 		await get_tree().process_frame
 		if get_tree().paused:      # duraklatmada sayaç akmaz
 			continue
 		wt += get_process_delta_time()
+		if wt > 12.0 and not marked:
+			marked = true          # 12 sn'de bulunamadıysa gölge işaretlenir (25 sn'de gözcü kendisi görür)
+			hud.set_objective(GameState.tr_pad("UI_OBJ19O_WATCH"), ship, 3.0)
 		if (Input.is_action_just_pressed("interact") and _looking_at(ship.global_position + Vector3(0, 3, 0), 12.0)) or wt > 25.0:
 			_spot()
 	hud.set_objective("")

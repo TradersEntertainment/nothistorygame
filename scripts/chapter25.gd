@@ -347,6 +347,9 @@ func _caught_once() -> void:
 	await hud.fade_to(0.0, 0.6)
 	if caught >= 2:
 		phase = "listened"
+	else:
+		# İkinci yakalanış dinlemeyi bitirir: sınır söylenir (gizliydi)
+		hud.set_objective(tr("UI_OBJ25_LISTEN2"), _gy(OTAG + Vector3(0, 0, -LISTEN_R)) + Vector3(0, 1.4, 0))
 
 
 func _lights() -> void:
@@ -681,7 +684,12 @@ func _process(delta: float) -> void:
 	if _cool > 0.0:
 		return       # yakalanma ve karartma sürerken meclis ilerlemez (karartmada da dinleniyordu)
 	var near := _at_wall()
-	hud.set_prompt(tr("UI_PROMPT25_LISTEN") if near else "")
+	# Nöbetçi yaklaşırken uyarı: görüş kuralı ekranda yoktu, istem "kıpırdama" diyordu; oysa duran oyuncu yakalanıyor
+	var guard_near := false
+	for g in guards:
+		if g.global_position.distance_to(player.global_position) < 7.0:
+			guard_near = true
+	hud.set_prompt(tr("UI_PROMPT25_GUARD" if guard_near else "UI_PROMPT25_LISTEN") if near else "")
 	if near:
 		_listen += delta
 		hud.set_chase(tr("UI_CH25_LISTEN"), _listen / _listen_total)

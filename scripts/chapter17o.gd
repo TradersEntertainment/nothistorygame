@@ -421,9 +421,12 @@ func _run() -> void:
 	player.show_remote(true)             # Tolga'nın eli açık, elde eşya (kuşatma bölümlerinde el hiç açılmıyordu)
 	_capture_mouse()
 	await hud.fade_to(0.0, 1.0)
-	await hud.say("SPK_TOPCU", "D17O_A_01")
-	await hud.say("SPK_TOLGA", "D17O_T_01")
-	await hud.say("SPK_TOPCU", "D17O_A_02")
+	# Topçubaşı'nın sözleri oyuncu serbestken (30 sn donuk açılış); ışık ancak söz bitince görünür
+	player.frozen = false
+	hud.set_objective(tr("UI_OBJ17O_LISTEN"), topcu, 1.9)
+	hud.say_chain([["SPK_TOPCU", "D17O_A_01"], ["SPK_TOLGA", "D17O_T_01"], ["SPK_TOPCU", "D17O_A_02"]])
+	while hud.chain_busy():
+		await get_tree().process_frame
 	# Galata'da ışık: tespit
 	lantern.visible = true
 	Audio.sfx("radio_beep", -10.0)
@@ -454,8 +457,20 @@ func _run() -> void:
 	await hud.say("SPK_TOPCU", "D17O_A_WATCH")
 	if GameState.autotest:
 		_spot()
+	# Karanlıkta gemiyi göremeyen oyuncu burada sonsuza dek kalıyordu (işaret, hatırlatma, süre yoktu): 25 sn'de işaret
+	# belirir, 60 sn'de gözcü kendisi görür
+	var wt := 0.0
+	var marked := false
 	while not _spotted:
 		await get_tree().process_frame
+		if get_tree().paused:
+			continue
+		wt += get_process_delta_time()
+		if wt > 25.0 and not marked:
+			marked = true
+			hud.set_objective(GameState.tr_pad("UI_OBJ17O_WATCH"), coco_boat, 2.0)
+		if wt > 60.0:
+			_spot()
 		if Input.is_action_just_pressed("interact") and _looking_at(coco_boat.global_position + Vector3(0, 1, 0), 10.0):
 			_spot()
 	hud.set_objective("")

@@ -525,6 +525,7 @@ func _retreat() -> void:
 	player.frozen = true
 	await hud.say("SPK_GIUST", "D36_G_BACK")
 	await hud.say("SPK_LEON", "D36_L_HELP")
+	player.face(leon.global_position + Vector3(0, 0.6, 0))      # yardım isteyen Leon kadrajda (kamera ona dönmüyordu)
 	player.frozen = false
 	for i in men.size():
 		if men[i] != leon:
@@ -532,7 +533,10 @@ func _retreat() -> void:
 			# Şerit hedefin tarafında: sol şeritten inip sağa dönen, sağ şeritten inenin yolunu kesip içine giriyordu
 			_walk_bridge(men[i], RETURN + Vector3(2.4 + (i % 3) * 1.0, 0, -0.3 + (i / 3) * 0.8), 0.8 * i, true, 0.45)
 	_walk_bridge(giust, RETURN + Vector3(-2.6, 0, 0.5), 4.2, true, -0.45)
-	hud.set_objective(tr("UI_OBJ36_BACK"), RETURN + Vector3(0, 1.6, 0))
+	# Leon bölümün asıl kararı: adıyla işaretlenir (hedef yalnız "Poternaya dön" diyordu; kapıya varınca bölüm bitiyordu)
+	hud.set_objective(tr("UI_OBJ36_BACK"), RETURN + Vector3(0, 1.6, 0), 1.6,
+		[[func(): return leon if not _leon_follow and is_instance_valid(leon) and leon.visible else null, tr("UI_OBJ36_LEON"), 1.0]],
+		tr("UI_OBJ36_POSTERN"))
 	_ride_t = 0.0
 	if GameState.autotest:
 		if GameState.autotest_variant != "leave":
@@ -576,7 +580,30 @@ func _spawn_riders() -> void:
 		riders.append(h)
 
 
+var _fall_t := 0.0
+var _fall_busy := false
+
+
+## Korkuluksuz köprüden hendeğe düşen oyuncu köprünün başına geri alınır (bu bölümde tırmanma yok; çıkış 40 m ötedeki
+## rampaydı, geçiş ve dönüş döngüleri sonsuza dek bekliyordu)
+func _fall_rescue(delta: float) -> void:
+	if not phase in ["cross", "retreat"] or _fall_busy or player.frozen or player.global_position.y > -1.5:
+		_fall_t = 0.0
+		return
+	_fall_t += delta
+	if _fall_t < 1.5:
+		return
+	_fall_busy = true
+	await hud.fade_to(1.0, 0.3)
+	player.velocity = Vector3.ZERO
+	player.global_position = Vector3(LANE_X, BRIDGE_Y + 0.15, BRIDGE_Z1 - 1.5 if phase == "retreat" else BRIDGE_Z0 + 1.5)
+	await hud.fade_to(0.0, 0.3)
+	_fall_t = 0.0
+	_fall_busy = false
+
+
 func _process(delta: float) -> void:
+	_fall_rescue(delta)
 	if phase == "retreat":
 		_ride_t += delta
 		var k := clampf(_ride_t / RIDE_TIME, 0.0, 1.0)

@@ -220,7 +220,7 @@ func _push_drill() -> void:
 		t += get_process_delta_time()
 	if not _on_head():
 		await drill.place_player(yard.ladder_head(), null)
-	hud.set_objective("")
+	hud.set_objective(GameState.tr_pad("UI_OBJ42_PUSH"), yard.ladder_head() + Vector3(0, 1.2, 0))      # talim boyunca hedef boştu
 	player.face(yard.ladder.point_at(1.0))
 	for round_i in 2:
 		var spd := 0.55 if round_i == 0 else 0.85

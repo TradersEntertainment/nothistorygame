@@ -418,40 +418,40 @@ func _run() -> void:
 	player.show_remote(true)             # Tolga'nın eli açık, elde eşya (kuşatma bölümlerinde el hiç açılmıyordu)
 	_capture_mouse()
 	await hud.fade_to(0.0, 1.0)
-	if _captive:
-		await hud.say("SPK_NIHAT", "D18_N_01_CAPTIVE")
-		player.face(usta.global_position + Vector3(0, 1.5, 0))
-		await hud.say("SPK_USTA", "D18_U_01_CAPTIVE")
-		await hud.say("SPK_TOLGA", "D18_T_01_CAPTIVE")
-		await hud.say("SPK_USTA", "D18_U_02_CAPTIVE")
-	else:
-		await hud.say("SPK_NIHAT", "D18_N_01")
-		player.face(usta.global_position + Vector3(0, 1.5, 0))      # usta konuşurken kadrajda (fıçılara bakılıyordu)
-		await hud.say("SPK_USTA", "D18_U_01")
-		await hud.say("SPK_TOLGA", "D18_T_01")
-		await hud.say("SPK_USTA", "D18_U_02")
+	# Açılış sözleri oyuncu serbestken, iş ekrandayken söylenir (35-53 sn donuktu)
+	var sfx := "_CAPTIVE" if _captive else ""
+	var lines: Array = [["SPK_NIHAT", "D18_N_01" + sfx], ["SPK_USTA", "D18_U_01" + sfx], ["SPK_TOLGA", "D18_T_01" + sfx],
+		["SPK_USTA", "D18_U_02" + sfx]]
+	player.face(usta.global_position + Vector3(0, 1.5, 0))      # usta konuşurken kadrajda (fıçılara bakılıyordu)
 	if hasan:
 		hasan.look_target = player
 		huseyin.look_target = player
-		player.face(hasan.global_position + Vector3(0, 1.5, 0))
-		await hud.say("SPK_HASAN", "D18_HA_01" if GameState.flags.get("fez", true) else "D18_HA_01_NOFEZ")
-		player.face(huseyin.global_position + Vector3(0, 1.5, 0))
-		await hud.say("SPK_HUSEYIN", "D18_HU_01")
-		player.face(usta.global_position + Vector3(0, 1.5, 0))
-		await hud.say("SPK_USTA", "D18_U_TWINS")
-		hasan.look_target = null
-		huseyin.look_target = null
+		lines.append_array([["SPK_HASAN", "D18_HA_01" if GameState.flags.get("fez", true) else "D18_HA_01_NOFEZ"],
+			["SPK_HUSEYIN", "D18_HU_01"], ["SPK_USTA", "D18_U_TWINS"]])
 	Lore.scatter(self, "18")
 	player.frozen = false
 	phase = "build"
 	step = "barrels"
 	_update_objective()
+	hud.say_chain(lines)
+	_after_intro()
 	if GameState.autotest:
+		while hud.chain_busy():      # test botu ışınlanır: konuşan görüşten çıkmasın
+			await get_tree().process_frame
 		_auto()
 	while built < SECTIONS:
 		await get_tree().process_frame
 	await _finish_bridge()
 	await _end_chapter()
+
+
+## Açılış sözleri bitince ikizler oyuncuyu izlemeyi bırakır
+func _after_intro() -> void:
+	while hud.chain_busy():
+		await get_tree().process_frame
+	if hasan:
+		hasan.look_target = null
+		huseyin.look_target = null
 
 
 func _update_objective() -> void:

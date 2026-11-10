@@ -493,11 +493,14 @@ func _update_objective() -> void:
 		"rungs":
 			hud.set_objective(tr("UI_OBJ32O_RUNG") % [rungs, RUNGS], BENCH + Vector3(0, 1.4, 0))
 		"mantlet":
-			hud.set_objective(GameState.tr_pad("UI_OBJ32O_MANTLET"), mantlet.global_position + Vector3(0, 2.2, 0))
+			hud.set_objective(GameState.tr_pad("UI_OBJ32O_MANTLET"), mantlet, 2.2)      # manto yürür: işaret onunla gider
 		"fires":
 			if torch_lit:
 				var nxt := _next_fire()
 				hud.set_objective(tr("UI_OBJ32O_FIRES") % [fires_lit, FIRES], nxt.global_position + Vector3(0, 1.0, 0) if nxt else Vector3.INF)
+			elif fires_lit >= 3:
+				# Rüzgâr meşaleyi söndürdü: ne olduğu ve ne yapılacağı söylenir (eski iftar hedefi geri geliyordu)
+				hud.set_objective(tr("UI_OBJ32O_RELIGHT"), KADRI_POT + Vector3(0, 1.8, 0))
 			else:
 				hud.set_objective(tr("UI_OBJ32O_IFTAR"), KADRI_POT + Vector3(0, 1.8, 0))
 
@@ -736,7 +739,8 @@ func _process(delta: float) -> void:
 		return
 	if _fire_t >= 0.0:
 		_fire_t += delta
-		hud.set_qte(tr("UI_QTE32O_FIRE") % ceili(GREEK_TIME - _fire_t))
+		if _vwarn < 0.0:      # ok uyarısı sürerken geri sayım onun üstüne yazmaz
+			hud.set_qte(tr("UI_QTE32O_FIRE") % ceili(GREEK_TIME - _fire_t))
 		if _fire_t >= GREEK_TIME:
 			_greek_fire_end(false)
 	# Ok yaylımı: uyarı → oklar oyuncunun çevresine iner; mantonun arkasında değilse yaralanır

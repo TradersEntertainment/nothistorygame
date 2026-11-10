@@ -72,6 +72,7 @@ var _genoese: Array[Person] = []       # 29.1: Cattaneo'nun kadırgaya gelen iki
 
 var _last_press := -100.0
 var _idle_warned := false
+var _idle_warn_t := 0.0
 
 func _ready() -> void:
 	Siege.snapshot_scene17()
@@ -619,6 +620,7 @@ func _light() -> void:
 func _coco_hit() -> void:
 	phase = "hit"
 	meter.enabled = false
+	hud.set_objective("")          # "Kürek çek" hedefi vuruş sahnesinde ekranda kalıyordu (tuş artık bir şey yapmıyor)
 	var hitp := coco_boat.global_position
 	Audio.sfx("cannon", 2.0)
 	Vfx.explosion(self, hitp + Vector3(0, 0.6, 0), 1.2)
@@ -683,9 +685,10 @@ func _rescue() -> void:
 		await hud.say("SPK_LOOKOUT", "D17_L_CHAIN")
 		await hud.say("SPK_TOLGA", "D17_T_CHAIN")
 	await _cattaneo_memory()
-	hud.set_objective(tr("UI_OBJ17_RESCUE") % [_saved, swimmers.size()])
+	hud.set_objective(tr("UI_OBJ17_RESCUE") % [_saved, swimmers.size()], _nearest_swimmer, 0.6)
 	hud.bark("SPK_TOLGA", "D17_HINT_RESCUE", 4.0)
 	_rescue_t = _rescue_total
+	_rescue_live = true
 	if GameState.autotest:
 		_auto_rescue()
 	while _rescue_t > 0.0 and _saved < swimmers.size():
@@ -814,7 +817,7 @@ func _pull(i: int) -> void:
 		s.reparent(boat, true)      # kayığa bağlanır: _dawn kayığı yola taşıyınca kurtarılanlar da gelir
 		s.set_activity("sit")
 		s.emote("nod"))
-	hud.set_objective(tr("UI_OBJ17_RESCUE") % [_saved, swimmers.size()])
+	hud.set_objective(tr("UI_OBJ17_RESCUE") % [_saved, swimmers.size()], _nearest_swimmer, 0.6)
 	hud.bark("SPK_TOLGA", "D17_T_PULL_%d" % _saved, 2.5)
 
 
@@ -982,8 +985,10 @@ func _process(delta: float) -> void:
 			# Kayığı gerçekten oyuncunun kürek ritmi yürütür: basmayı bırakınca tayfa da durur, kayık süzülüp yavaşlar
 			var rowing := meter.enabled and _t - _last_press < RowMeter.PERIOD * 1.3
 			var target := (0.9 + 5.2 * meter.speed_factor()) if rowing else 0.25
-			if meter.enabled and not rowing and not _idle_warned and _t > 4.0 and not hud.is_talking():
+			# Hiç basmayan oyuncuya 12 sn'de bir yinelenir (tek hatırlatmadan sonra kayık 0,25 m/sn süzülüyordu)
+			if meter.enabled and not rowing and (not _idle_warned or _t - _idle_warn_t > 12.0) and _t > 4.0 and not hud.is_talking():
 				_idle_warned = true
+				_idle_warn_t = _t
 				hud.bark("SPK_TREVISANO", "D17_TR_IDLE", 3.0)
 			_speed = move_toward(_speed, target, delta * 1.5)
 			boat_d = minf(boat_d + _speed * delta, _total - REST_BACK)
@@ -1075,9 +1080,27 @@ func _splash(p: Vector3) -> void:
 		player.shake(0.25)
 
 
+## Sudaki, henüz çekilmemiş en yakın denizci (hedef işareti; denizcilerin işareti yoktu, süre işliyordu)
+func _nearest_swimmer() -> Node3D:
+	var best: Node3D = null
+	var bd := INF
+	for sw in swimmers:
+		var s: Node3D = sw["node"]
+		if not sw["saved"] and is_instance_valid(s):
+			var d := player.global_position.distance_to(s.global_position)
+			if d < bd:
+				bd = d
+				best = s
+	return best
+
+
+var _rescue_live := false     # süre, giriş replikleri bitince başlar (o sırada ekranda "0 sn" ve dolu çubuk duruyordu)
+
+
 func _rescue_tick(delta: float) -> void:
-	_rescue_t -= delta
-	hud.set_chase(tr("UI_CH17_TIME") % maxi(0, int(ceil(_rescue_t))), 1.0 - _rescue_t / _rescue_total)
+	if _rescue_live:
+		_rescue_t -= delta
+		hud.set_chase(tr("UI_CH17_TIME") % maxi(0, int(ceil(_rescue_t))), 1.0 - _rescue_t / _rescue_total)
 	for sw in swimmers:
 		if not sw["saved"]:
 			var s: Person = sw["node"]

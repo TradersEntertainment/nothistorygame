@@ -937,3 +937,29 @@ Her bölüm denetiminde ve her düzeltmede bu listeyi baştan uygula. Yeni bir h
   koşuyu yeniden başlatır, testte düşeni başlatmaz (.github/workflows/release-watchdog.yml).
 - Büro yazı denetimi (Sonnet): olgu ve çeviri düzeltmeleri seslendirmeyle birlikte yapılır; tekrar eden espriler ve zayıf
   atışmalar sahibine listelenir, kendiliğinden yeniden yazılmaz.
+- v0.99.111, akış incelemesinin ikinci yarısı (Bölüm 15-43o):
+  - Donuk oyuncunun E'si etkileşime gitmez (`Player._unhandled_input` donukken döner). Oyuncuyu dondurup "E ile sabitle"
+    diyen adım gerçek oyuncuda çalışmaz: 31o'da hasır hiç sabitlenemiyordu. Test botu işlevi doğrudan çağırdığı için
+    testler geçiyordu. Donukken beklenen tuş döngüde `Input.is_action_just_pressed` ile okunur. Kural: botun doğrudan
+    çağırdığı her adım için "gerçek tuş bu işleve ulaşıyor mu" diye bakılır.
+  - Sonsuz bekleyen adım olmaz: 17o'da karanlıktaki gemiyi göremeyen oyuncu için işaret, hatırlatma ya da süre yoktu
+    (25 sn'de işaret, 60 sn'de kendiliğinden). 19o'da 12 sn'de işaret.
+  - Elde yük varken sıra değişebilir (20: top bir sırayı yıkar, Niko bir sıra getirir): yanlış yük ne teslim
+    edilebiliyor ne bırakılabiliyordu. Yanlış yığın baştan geri çevrilir, yanlış teslimde yük yere bırakılır.
+  - Hedef, o an yapılabilecek işi gösterir: 26o'da kova boşken "Hasan'a su ver" (önce fıçı), 29'da hep ateş (boşken
+    fıçı), 28o'da sıradaki numaralı çukur (en yakın boş çukur), 31o'da "iple indir" (önce kucağa al), 37o'da "bataryaya
+    git" (iş zili almak).
+  - Uyarı sözü tek başına yetmez: "sipere gir" denirken siper işaretlenir (20, 22o, 26o), uyarı öteki sözleri keser
+    (`hud.bark(..., true)`), bir gösterge ötekinin üstüne her karede yazmaz (32o Rum ateşi sayacı ok uyarısını siliyordu).
+  - İstem, kuralın tersini söylemez: 25'te "kıpırdama" denirken duran oyuncu yakalanıyordu; 37o'da "kalkanı kaldır,
+    ritmi bırakma" denirken kalkan altındaki her vuruş kötü sayılıyordu; 31o'da "E basılı" denirken tuş Boşluk'tu.
+  - Oyuncunun elinden bir şey gelmezken ceza yok: 35o'da ip aktarılırken fren tutulamıyor ama ibre kırmızıya girip günü
+    kaybettiriyordu; 31o'da kiriş kaldırırken (donuk) köz düşüyordu; 21o'da kaçış, çıkışa sırtı dönük ve duman iki
+    saniye uzaktayken başlıyordu.
+  - Bekleyen eşzamanlı iş bitmeden kapanış başlamaz (28o: son tokmak, kapanış repliklerinin ortasında oyuncuyu yeniden
+    serbest bırakıyordu).
+  - Düşülebilen yerde çıkış ya da kurtarma olur (36b korkuluksuz köprü: geri alma; 37o: tırmanma kalastan önce açık).
+  - Okunacak kâğıt süreyle değil tuşla geçer (15: on satırlık kâğıt 9 sn sabitti).
+  - Uygulanmayanlar (sahibine): açılışları serbest bırakmanın kalanı (19, 20, 20o, 21, 22, 22o, 23, 24o, 25, 26, 27,
+    29, 29o, 33o-39o, 41o, 42b: her biri 30-70 sn), 17'nin Büro önsözü, gizli süre ve sayaçlar (39o 180 sn, 43o bahane
+    sayacı, 20 gece saati), 33o vinç ve gümrük ipuçları, 34o kızak çocukları.

@@ -399,7 +399,10 @@ func _escape() -> void:
 	player.frozen = false
 	_escape_t = ESCAPE_TIME
 	hud.set_objective(tr("UI_OBJ21O_ESCAPE"), Vector3(0, 1.5, 2.5))
-	var smoke_z := face.position.z
+	# Oyuncu çıkışa dönük başlar ve duman iki metre geriden gelir: karşıdaki adama bakarken serbest kalan oyuncuyu
+	# görünmeyen duman iki saniyede yakalıyordu (ekranda 14 sn yazarken)
+	player.face(Vector3(0, 1.5, 2.5))
+	var smoke_z := face.position.z - 2.0
 	# Madenciler de kaçar: kazan adam kazmayı bırakıp önden koşar, Dragan oyuncunun yanında kalır. Eskiden ikisi de kazı
 	# yüzünde dikili kalıyordu; Dragan sonra kuyuda "ikimiz de çıktık" diyordu.
 	digger.set_activity("")

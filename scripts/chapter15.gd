@@ -1238,7 +1238,34 @@ func _paper(rows: Array, hold: float, width := 580.0) -> void:
 	var tw := create_tween()
 	tw.tween_property(root, "scale", Vector2.ONE * fit, 0.05 if GameState.autotest else 0.45).set_trans(Tween.TRANS_BACK).set_ease(Tween.EASE_OUT)
 	await tw.finished
-	await _wait(hold)
+	if GameState.autotest:
+		await _wait(hold)
+	else:
+		# En az 3 sn ekranda; sonra tuşla geçilir. Kendiliğinden kapanma satır sayısına göre uzar (on satırlık kâğıt 9 sn'de
+		# okunmuyor, geçilemiyor, uzatılamıyordu)
+		var limit := maxf(hold, rows.size() * 1.6)
+		var t := 0.0
+		var hint: Label = null
+		while t < limit:
+			await get_tree().process_frame
+			if get_tree().paused:
+				continue
+			t += get_process_delta_time()
+			if t >= 3.0:
+				if hint == null:
+					hint = Label.new()
+					hint.text = GameState.tr_pad("UI_CONTINUE")
+					hint.add_theme_font_size_override("font_size", 18)
+					hint.add_theme_color_override("font_color", Color(1, 1, 1, 0.85))
+					hint.add_theme_color_override("font_outline_color", Color(0, 0, 0, 0.9))
+					hint.add_theme_constant_override("outline_size", 6)
+					hud.add_child(hint)
+					hint.position = Vector2((vs.x - hint.get_combined_minimum_size().x) * 0.5, vs.y - 34.0)
+				if Input.is_action_just_pressed("interact") or Input.is_action_just_pressed("jump") \
+						or Input.is_action_just_pressed("ui_accept"):
+					break
+		if hint:
+			hint.queue_free()
 	var out := create_tween()
 	out.tween_property(root, "modulate:a", 0.0, 0.05 if GameState.autotest else 0.4)
 	await out.finished

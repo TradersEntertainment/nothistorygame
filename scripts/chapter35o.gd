@@ -920,8 +920,11 @@ func _slope() -> void:
 		if GameState.autotest:
 			holding = balance.value > 0.0
 		if transfer_t >= 0.0:
+			# Aktarma sırasında fren tutulamaz: ibre kırmızıya girmez (oyuncu ipi taşırken, elinden bir şey gelmezken
+			# kayıp günü kaybediyordu)
 			holding = false
-			balance.value += 0.18 * dt
+			balance.value = minf(balance.value + 0.18 * dt, 0.7)
+			bump_t = maxf(bump_t, 1.0)
 		else:
 			balance.value += (0.22 + randf_range(-0.1, 0.1)) * dt
 			if holding:

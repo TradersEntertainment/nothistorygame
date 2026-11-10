@@ -201,8 +201,11 @@ func _update_objective() -> void:
 			look = (_hooks[_hooks.keys()[0]]["node"] as Node3D).global_position
 		hud.set_objective(tr("UI_OBJ29_HOOKS") % [cut, HOOKS], look if look != Vector3.INF else null)
 	elif phase == "fire":
+		# Kova boşken işaret su fıçısında, doluyken ateşte (hep ateşi gösteriyordu, fıçı işaretsizdi)
 		var look2: Variant = null
-		if not _fires.is_empty():
+		if carrying != "water":
+			look2 = hud.spot("barrel")
+		elif not _fires.is_empty():
 			look2 = (_fires[_fires.keys()[0]]["node"] as Node3D).global_position
 		hud.set_objective(tr("UI_OBJ29_FIRE") % fires_left, look2)
 
@@ -471,6 +474,7 @@ func _pick() -> void:
 	Props.strip_outlines(_carry)
 	Audio.sfx("splash", -14.0, 1.6)
 	hud.set_prompt("")
+	_update_objective()
 
 
 ## Kova ateşe boşaltılır: öne eğilir, su ateşe dökülür, sonra elden bırakılır (kova anında kayboluyordu).

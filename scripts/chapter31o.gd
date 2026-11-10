@@ -494,7 +494,7 @@ func _house_loop() -> bool:
 					player.face(_fallen_beam.global_position + Vector3(0, 0.5, 0))
 					_strokes.clear()
 					meter.enabled = true
-					hud.set_qte(tr("UI_PROMPT31O_LIFT"))
+					hud.set_qte(tr("UI_QTE31O_LIFT"))       # tuş Boşluk (gösterge); istem "E basılı" diyordu
 					if azap.rig:
 						azap.rig.lock += 1
 						azap.rig.arm_r.rotation = Vector3(-2.2, 0, 0.2)
@@ -535,7 +535,11 @@ func _house_loop() -> bool:
 					stage = "child"
 					player.frozen = false
 			"child":
-				hud.set_objective(_lower_obj(), WINDOW + Vector3(0, 1.0, 0))
+				# Önce çocuk kucağa alınır: hedef onu söyler ve gösterir (ipi anlatıp pencereyi gösteriyordu)
+				if not _child_taken and is_instance_valid(child):
+					hud.set_objective(GameState.tr_pad("UI_OBJ31O_TAKE"), child, 0.9)
+				else:
+					hud.set_objective(_lower_obj(), WINDOW + Vector3(0, 1.0, 0))
 				if p.distance_to(WINDOW + Vector3(0.9, 0, 0)) < 1.8 and (_child_taken or GameState.autotest):
 					stage = "lower"
 					lower = 0.0
@@ -601,7 +605,8 @@ func _house_loop() -> bool:
 						ctw.tween_callback(func(): if is_instance_valid(child): child.remove_meta("no_audit"))
 					return true
 		# Köz yağmuru: odada ve kirişte, önce kızıl gölge
-		if stage in ["room", "lift", "child", "beam"]:
+		# Kiriş kaldırılırken oyuncu donuk: o sırada köz düşmez (kaçamayacağı közden can gidiyordu)
+		if stage in ["room", "child", "beam"]:
 			ember_t -= dt
 			if ember_t <= 0.0:
 				ember_t = randf_range(3.0, 5.0)
@@ -1139,6 +1144,7 @@ func _mats_phase() -> void:
 	var left := MAT_TIME
 	var bot_t := 0.0
 	var walkers_t := 2.0
+	var _mat_qte := false
 	while mats_done < MATS and left > 0.0:
 		await get_tree().process_frame
 		if get_tree().paused:      # duraklatmada sayaç akmaz
@@ -1164,7 +1170,17 @@ func _mats_phase() -> void:
 			rope.material_override = Props.mat(Color("3ac85a") if ok else Color("c8262f"), 0.5, false, "", false)
 			if GameState.autotest and absf(_mat_yaw - (10.0 if _late() else 0.0)) < 1.0:
 				_fix_mat()
+			# Hasır serilince oyuncu donuk: donuk oyuncunun E'si etkileşime gitmez (Player._unhandled_input), tuş burada
+			# okunur. Eskiden hasır gerçek oyuncuda hiç sabitlenemiyor, aşama 150 sn'de 0 hasırla bitiyordu (test botu
+			# _fix_mat'i doğrudan çağırdığı için görünmüyordu).
+			elif _active_mat and Input.is_action_just_pressed("interact"):
+				_fix_mat()
+			_mat_qte = _active_mat != null
+			hud.set_qte(GameState.tr_pad("UI_PROMPT31O_FIX") if _mat_qte else "")
 			continue
+		if _mat_qte:
+			_mat_qte = false
+			hud.set_qte("")
 		if GameState.autotest and not (_late() and mats_done >= 5):
 			bot_t += dt
 			if bot_t > 0.8:
@@ -1177,6 +1193,7 @@ func _mats_phase() -> void:
 					player.global_position = (_mat_slots[sl][0] as Vector3) + Vector3(0, 0.05, 1.6)
 					_on_interact("slot_%d" % sl)
 	hud.set_objective("")
+	hud.set_qte("")
 	mats_ok = mats_done >= MATS
 	if is_instance_valid(_carry_mat):
 		_carry_mat.queue_free()

@@ -584,7 +584,7 @@ func _o_wave3() -> void:
 		await hud.say("SPK_TOLGA", "D26O_T_TAPE")
 		await hud.say("SPK_NIHAT", "D26O_N_TAPE")
 	player.frozen = false
-	hud.set_objective(tr("UI_OBJ26O_HASAN"), hasan.global_position + Vector3(0, 1.8, 0))
+	_update_objective()        # kova boşken "Hasan'a su ver" deniyor, işaret Hasan'da duruyordu: önce su fıçısı
 	if GameState.autotest:
 		_on_interact("o_water")
 		_on_interact("hasan")
@@ -695,6 +695,8 @@ func _process(delta: float) -> void:
 			if _vwarn >= VOLLEY_WARN:
 				_vwarn = -1.0
 				_volley = VOLLEY_EVERY
+				hud.set_qte("")
+				_update_objective()
 				Audio.sfx("whoosh_fly", -4.0)
 				if not _covered():
 					arrows += 1
@@ -705,7 +707,15 @@ func _process(delta: float) -> void:
 			_volley -= delta
 			if _volley <= 0.0:
 				_vwarn = 0.0
-				hud.bark("SPK_SOLDIER", "D26O_S_VOLLEY", VOLLEY_WARN)
+				hud.bark("SPK_SOLDIER", "D26O_S_VOLLEY", VOLLEY_WARN, true)
+				# Yaylım uyarısı ekranda da yazar ve açıktaki oyuncuya en yakın siper işaretlenir (yalnız bir söz vardı)
+				hud.set_qte(tr("UI_OBJ22O_COVER"))
+				if not _covered():
+					var best: Vector3 = O_COVERS[0]
+					for c: Vector3 in O_COVERS:
+						if player.global_position.distance_to(c) < player.global_position.distance_to(best):
+							best = c
+					hud.set_objective(tr("UI_OBJ22O_COVER"), best + Vector3(0, 1.4, 0))
 
 
 ## Saka: elde su kovası (Bölüm 26'daki "water" taşıma Bizans tarafında ok demetidir; burada gerçekten su)

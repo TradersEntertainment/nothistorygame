@@ -255,6 +255,10 @@ func _stakes_phase() -> void:
 				_on_interact("stakes")
 			else:
 				_on_interact("hole_%d" % stakes)
+	# Son tokmak bitmeden kapanış başlamasın: tokmak 0,8 sn sonra oyuncuyu yeniden serbest bırakıyordu (replikler
+	# sürerken hedefsiz serbest oyuncu)
+	while _hammering:
+		await get_tree().process_frame
 	player.frozen = true
 	_drop()
 	hud.set_objective("")
@@ -581,7 +585,15 @@ func _update_objective() -> void:
 			if carrying == "" :
 				look = Vector3(18.0, gy(18.0, 120.5) + 1.0, 120.5)
 			elif stakes < STAKES:
-				look = _holes[stakes].global_position + Vector3(0, 1.0, 0)
+				# Henüz çakılmamış en yakın çukur (sıra numarasına göre gösteriliyordu: yakından başlayan oyuncuda işaret
+				# bitmiş çukurda kalıyordu)
+				var bd := INF
+				for h: Node3D in _holes:
+					if not h.has_meta("done"):
+						var d := player.global_position.distance_to(h.global_position)
+						if d < bd:
+							bd = d
+							look = h.global_position + Vector3(0, 1.0, 0)
 			hud.set_objective(tr("UI_OBJ28O_STAKES") % [stakes, STAKES], look)
 		"haul":
 			if need_roller and roller_held:
@@ -600,7 +612,7 @@ func _on_focus(id: String) -> void:
 		"stakes":
 			if id == "stakes" and carrying == "":
 				k = "UI_PROMPT28O_TAKE"
-			elif id.begins_with("hole_") and carrying == "stake":
+			elif id.begins_with("hole_") and carrying == "stake" and not _holes[int(id.trim_prefix("hole_"))].has_meta("done"):
 				k = "UI_PROMPT28O_PLANT"
 		"haul":
 			if id == "roller_back" and need_roller and not roller_held and _free_roller:
@@ -650,9 +662,13 @@ func _on_interact(id: String) -> void:
 
 
 ## Tokmak elde (kameranın sağ altında), üç kez kalkıp iner; her vuruşta kazık bir parça gömülür, toz ve tok ses.
+var _hammering := false
+
+
 func _hammer_in(st: Node3D, depth: float) -> void:
 	var was := player.frozen
 	player.frozen = true
+	_hammering = true
 	var hm := Node3D.new()
 	hm.set_meta("transient", true)
 	player.camera.add_child(hm)
@@ -673,6 +689,7 @@ func _hammer_in(st: Node3D, depth: float) -> void:
 		player.shake(0.04)
 	hm.queue_free()
 	player.frozen = was
+	_hammering = false
 
 
 func _pick(what: String) -> void:

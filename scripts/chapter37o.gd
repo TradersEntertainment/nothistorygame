@@ -237,7 +237,7 @@ func _cymbal_take() -> void:
 	await hud.say("SPK_AZAPBASI", "D37O_AB_01_T1" if o41 == "41O.1" else ("D37O_AB_01_T2" if o41 == "41O.2" else "D37O_AB_01"))
 	await hud.say("SPK_TOLGA", "D37O_T_02")
 	player.frozen = false
-	hud.set_objective(tr("UI_OBJ37O_URBAN"), turgut.global_position + Vector3(0, 2.0, 0))
+	hud.set_objective(tr("UI_OBJ37O_CYMBAL"), turgut.global_position + Vector3(0, 2.0, 0))      # iş zili almak; hedef "Urban'ın bataryasına git" diyordu
 	while not _took_cymbal:
 		await get_tree().process_frame
 		if GameState.autotest:
@@ -307,7 +307,8 @@ func _march() -> void:
 			_cym_l.position.y = lerpf(_cym_l.position.y, -0.75 if shield_up else 0.0, minf(1.0, dt * 12.0))
 		# Sol el: kalkan kalkınca kalkanı, inince sol zili tutar (zil ve kalkan elsizdi)
 		player.free_hold = (_shield.position + Vector3(-0.12, -0.12, 0.06)) if shield_up else Vector3(-0.2, -0.4, -0.66)
-		if Input.is_action_just_pressed("jump"):
+		# Kalkan havadayken vuruş sayılmaz (38O'daki gibi): "kalkanı kaldır" denirken her vuruş kötü sayılıp azar yiyordu
+		if Input.is_action_just_pressed("jump") and not shield_up:
 			meter.press()
 		_shield_up = shield_up
 		if _strokes.size() > 0:
@@ -408,6 +409,8 @@ func _plank_phase() -> void:
 	phase = "plank"
 	await hud.say("SPK_AZAPBASI", "D37O_AB_03")
 	player.frozen = false
+	# Kalas inmeden hendeğe düşen de tırmanıp çıkabilsin (tırmanma ancak kalastan sonra açılıyordu)
+	player.enable_climb([Rect2(-32.0, 14.0, 64.0, 98.0)])
 	hud.set_objective(tr("UI_OBJ37O_PLANK"), PLANK_PILE + Vector3(0, 1.2, 0))
 	var t := 0.0
 	while not _plank_down:

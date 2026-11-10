@@ -256,6 +256,14 @@ func _process(delta: float) -> void:
 			Audio.stinger("warn", -9.0)
 			Audio.sfx("church_bell", -10.0, 1.6)
 			hud.set_qte(tr("UI_QTE20_COVER"))
+			# Açıktaysa en yakın siper işaretlenir ("siperin arkasına geç" deniyor, siper gösterilmiyordu); atıştan sonra
+			# _fire hedefi geri kurar
+			if _exposed():
+				var best: Vector3 = LandWalls.MANTLETS[0]
+				for m: Vector3 in LandWalls.MANTLETS:
+					if player.global_position.distance_to(m) < player.global_position.distance_to(best):
+						best = m
+				hud.set_objective(tr("UI_QTE20_COVER"), best + Vector3(0, 1.2, -0.8))
 			# Siper koşusu ağır çekimde: gülle gelene dek zaman yavaşlar (uyarıdan ateşe ~4 sn gerçek, daha uzun hissedilir)
 			if _exposed():
 				Fx.slowmo(0.55, 2.2, 0.6)
@@ -529,6 +537,10 @@ func _pick(kind: String) -> void:
 		return
 	if phase == "work" and kind == "arrows":
 		return
+	# Yanlış yığın baştan geri çevrilir (yanlış yük gediğe kadar taşınıyor, orada da bırakılamıyordu)
+	if phase == "work" and kind != needed() and repair < LandWalls.STAGES:
+		hud.bark("SPK_GIUST", "D20_G_WRONG_" + needed().to_upper(), 3.0)
+		return
 	carrying = kind
 	_carry_node = Node3D.new()
 	_carry_node.position = Vector3(0.3, -0.78, -1.05)
@@ -568,7 +580,11 @@ func _deliver() -> void:
 	if repair >= LandWalls.STAGES:
 		return
 	if carrying != needed():
+		# Sıra, yük taşınırken değişebilir (top bir sırayı yıkar, Niko bir sıra getirir): eldeki yük yere bırakılır.
+		# Eskiden ne teslim edilebiliyor ne bırakılabiliyordu; oyuncu yanlış yükle kalıyordu.
 		hud.bark("SPK_GIUST", "D20_G_WRONG_" + needed().to_upper(), 3.0)
+		Audio.sfx("land_thud", -10.0, 0.9)
+		_drop()
 		return
 	# Yük elden gediğe iner (anında siliniyordu); barikat o inince bir sıra yükselir
 	if _carry_node:
