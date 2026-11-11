@@ -183,8 +183,8 @@ func _stone_loop(p: Person) -> void:
 				st.global_position = from.lerp(land, k * k) + Vector3(0, sin(k * PI) * 0.35, 0), 0.0, 1.0, 0.75)
 		tw.tween_callback(func():
 			if is_instance_valid(st):
-				Vfx.dust(self, st.global_position, 0.2)
-				st.queue_free())
+				Audio.sfx("land_thud", -16.0, 1.3)
+				get_tree().create_timer(5.0, false).timeout.connect(st.queue_free))      # güvertede kalır, sonra silinir
 		await get_tree().create_timer(randf_range(1.2, 2.0), false).timeout
 
 

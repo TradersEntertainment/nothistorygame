@@ -113,6 +113,9 @@ static func carrack(parent: Node3D, pos: Vector3, yaw: float, crew_n := 8, seed 
 	Props.solid(g, Vector3(6.0, 1.7, 0.2), Vector3(0, CARRACK_DECK + 0.85, -7.9), C_HULL.lightened(0.05))
 	Props.solid(g, Vector3(6.0, 2.4, 0.2), Vector3(0, CARRACK_DECK + 1.2, 7.2), C_HULL.lightened(0.05))
 	var rails: Array = []
+	# Küpeşte kalkanları tek ağda (yayma P3: 12 ayrı halka + dış çizgi = gemi başına 24 çizimdi; tayfanın iş eşyasının
+	# çizimini karşılar). Halka yerine boyalı yuvarlak kalkan.
+	var shields := Dressing.new(seed + 77)
 	for sx: float in [-1.0, 1.0]:
 		var r := Props.solid(g, Vector3(0.22, 1.15, 15.2), Vector3(sx * RAIL_X, CARRACK_DECK + 0.58, -0.3), C_HULL.lightened(0.12))
 		r.set_meta("rail", true)
@@ -121,7 +124,9 @@ static func carrack(parent: Node3D, pos: Vector3, yaw: float, crew_n := 8, seed 
 		# Küpeştenin iç yanında savaş basamağı: tayfa bunun üstünde, göğsü küpeştenin üstünde (aşağıdan görünür)
 		Props.solid(g, Vector3(0.7, STEP_H, 14.6), Vector3(sx * (RAIL_X - 0.46), CARRACK_DECK + STEP_H * 0.5, -0.3), C_HULL.lightened(0.2))
 		for k in 6:
-			Props.ring(g, 0.32, 0.4, Vector3(sx * (RAIL_X + 0.12), CARRACK_DECK + 0.6, -5.5 + k * 2.2), [C_GENOA, Color("e8e0d0")][k % 2], Vector3(0, 0, 90))
+			shields.cyl(0.4, 0.05, Vector3(sx * (RAIL_X + 0.13), CARRACK_DECK + 0.6, -5.5 + k * 2.2), [C_GENOA, Color("e8e0d0")][k % 2], Vector3(0, 0, 90), 12)
+			shields.cyl(0.1, 0.07, Vector3(sx * (RAIL_X + 0.15), CARRACK_DECK + 0.6, -5.5 + k * 2.2), Color("8a8478"), Vector3(0, 0, 90), 8)
+	shields.build(g)
 	g.set_meta("rails", rails)
 	# Direkler ve kare yelkenler (Cenova'nın kırmızı haçı)
 	var sails: Array = []

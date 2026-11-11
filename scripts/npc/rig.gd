@@ -897,6 +897,8 @@ var _glance_on := false
 func _player_glance() -> Vector3:
 	if head == null or owner == null or not owner.is_inside_tree():
 		return Vector3.INF
+	if activity in ["sleep", "lie", "doze", "swim"]:
+		return Vector3.INF      # uyuyan oyuncuya bakmaz
 	if _player_ref == null or not is_instance_valid(_player_ref) or not _player_ref.is_inside_tree():
 		_player_ref = owner.get_tree().get_first_node_in_group("player") as Node3D
 		if _player_ref == null:

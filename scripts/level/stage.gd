@@ -157,6 +157,57 @@ static func hammer_swings(player: Player, n := 3, on_hit := Callable()) -> void:
 
 
 # ---------------------------------------------------------------- ortak parçalar (Bölüm 2, tur 2; bütün oyuna yayılır)
+# ---------------------------------------------------------------- bakış / iş ayrımı
+# İskelette bel eklemi yok: look_target verilen kişinin BÜTÜN gövdesi hedefe döner. İş yapan (sürgü kaldıran, yük
+# taşıyan, aletle çalışan, yürüyen) kişi oyuncuya bakarken işini sırtında bırakıyordu (8y kapı nöbetçisi). gaze_dir,
+# Person ve Soldier'ın look_target dönüşünü işe göre yönlendirir: konuşma bakışlarına dokunmaz.
+
+## Bu etkinliklerde (boşta, yük taşıma, oturuş) look_target gövdeyi çevirebilir; öbürlerinde (alet işi, kürek, uyku...) çevirmez.
+const GAZE_FREE_ACT := ["", "carry", "sit", "sit_ground", "write", "write_desk", "sit_astride", "read_ground"]
+
+
+## İş odağı aç/kapa (grip_hold dışındaki işler için: kapı kanadı çekmek, kol çevirmek): açıkken look_target gövdeyi
+## çevirmez, gövde at'a (dünya noktası; verilmezse olduğu yerde) döner. Her work_begin için bir work_end.
+static func work_begin(who: Node3D, at := Vector3.INF) -> void:
+	if is_instance_valid(who) and "work_focus" in who:
+		who.work_focus += 1
+		if at != Vector3.INF:
+			who.work_at = at
+
+
+static func work_end(who: Node3D) -> void:
+	if is_instance_valid(who) and "work_focus" in who:
+		who.work_focus = maxi(0, who.work_focus - 1)
+		if who.work_focus == 0:
+			who.work_at = Vector3.INF
+
+
+## look_target'in gövdeyi çevireceği yatay yön (kişinin ebeveyn çerçevesinde). Vector3.ZERO: çevirme.
+## to: hedefe yön (yerel, yatay); mv: bu karedeki yerel yer değişimi; act: iş hareketi; talking: kişi konuşuyor.
+##  1) Yürüyen (>0.6 m/s) kişi (konuşurken de) gittiği yöne bakar (geri geri yürüyecekse meta "walk_back").
+##  2) work_focus > 0 (grip_hold): gövde işin noktasına (work_at) döner; noktası yoksa olduğu yerde kalır.
+##  3) Alet işi yapan ve konuşmayan kişi gövdesini çevirmez (konuşurken döner).
+##  4) Öbürleri: hedefe döner (konuşma bakışı, değişmedi).
+static func gaze_dir(who: Node3D, act: String, talking: bool, to: Vector3, mv: Vector3, delta: float) -> Vector3:
+	if delta > 0.0 and not who.has_meta("walk_back"):
+		var hv := Vector3(mv.x, 0.0, mv.z)
+		if hv.length() / delta > 0.6 and hv.length() < 2.0:
+			return hv
+	if int(who.get("work_focus")) > 0:
+		var wa = who.get("work_at")
+		if wa is Vector3 and wa != Vector3.INF:
+			var d: Vector3 = wa - who.global_position
+			var par := who.get_parent() as Node3D
+			if par:
+				d = par.global_transform.basis.inverse() * d
+			d.y = 0.0
+			return d if d.length() > 0.25 else Vector3.ZERO
+		return Vector3.ZERO
+	if not talking and not act in GAZE_FREE_ACT:
+		return Vector3.ZERO
+	return to
+
+
 # Eller nesneye, ayaklar zemine, halatın iki ucu bir yere bağlı: havada iş yapan, havada duran, havada gerili ip kalmasın.
 
 static var _rope_mat: StandardMaterial3D
@@ -204,11 +255,18 @@ static func grip_hold(who: Node3D, frame: Node3D, pts: Array, seconds := -1.0, l
 	var rg := Handover.rig_of(who)
 	if rg:
 		rg.lock += 1      # rig'in kendi kol jesti (konuşma, işaret) araya girmesin
+	if "work_focus" in who:
+		who.work_focus += 1      # iş sürerken look_target gövdeyi çevirmez (gaze_dir)
 	var tw := who.create_tween()
 	var apply := func(_t: float) -> void:
 		if is_instance_valid(who) and (frame == null or is_instance_valid(frame)):
 			if lean != 0.0 and rg and rg.body:
 				rg.body.rotation.x = lean
+			if "work_at" in who and not pts.is_empty():
+				var c := Vector3.ZERO
+				for q: Vector3 in pts:
+					c += frame.to_global(q) if frame else q
+				who.work_at = c / float(pts.size())
 			grip(who, frame, pts)
 	if seconds < 0.0:
 		tw.set_loops()
@@ -230,6 +288,10 @@ static func grip_release(who: Node3D) -> void:
 	var rg := Handover.rig_of(who)
 	if rg:
 		rg.lock = maxi(0, rg.lock - 1)
+	if "work_focus" in who:
+		who.work_focus = maxi(0, who.work_focus - 1)
+		if who.work_focus == 0:
+			who.work_at = Vector3.INF
 
 
 ## Ayağı zemine oturt: kişinin iki tabanından alçak olanı zemine değecek kadar kök dikine kayar (yalnız y). ground:

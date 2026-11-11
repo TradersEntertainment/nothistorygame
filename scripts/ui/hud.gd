@@ -1239,7 +1239,82 @@ func street_bark(who: Node3D, role: String, text_key: String, seconds := 4.0, in
 	var vs := voice_stream(_street_tk)
 	if vs:
 		_street_secs = maxf(seconds, GameState.voice_len(vs) + 0.3)
+	_bark_srcs[_street_tk] = who          # ses konuşan kişinin olduğu yerden gelir (uzaklık, sağ/sol)
 	bark(SideEvents.street_speaker(text_key), text_key, seconds, interrupt)
+
+
+## Tanık sözü: Nihat'ı gören KİŞİ söyler (altyazıda adı `name_key`, portresi kendi yüzü, ağzı oynar); konuşmacıyı (ses) çağıran
+## seçer. Ses kişinin olduğu yerden gelir: uzaklaştıkça kısılır (30 m'de ~12 dB), sağ/sol yönü olur.
+func witness_bark(who: Node3D, name_key: String, speaker_key: String, text_key: String, seconds := 2.6) -> void:
+	if who == null or not is_instance_valid(who) or not who.is_inside_tree():
+		return
+	_street_who = who
+	_street_name = name_key
+	_street_tk = GameState.line_variant(text_key)
+	_street_secs = seconds
+	var vs := voice_stream(_street_tk)
+	if vs:
+		_street_secs = maxf(seconds, GameState.voice_len(vs) + 0.3)
+	_bark_srcs[_street_tk] = who
+	bark(speaker_key, text_key, seconds)
+
+
+## Ayak üstü sözün ses kaynağı (söz anahtarı -> konuşan düğüm); bark çalmaya başlarken tüketir
+var _bark_srcs := {}
+var _voice_panner: AudioEffectPanner
+const SRC_NEAR := 3.0
+const SRC_FAR := 30.0
+const SRC_FAR_DB := -12.0
+
+
+## Kaynak düğümün dinleyiciye göre kısılma (dB) ve sağ/sol değeri
+func _src_mix(src: Node3D) -> Vector2:
+	var cam := get_viewport().get_camera_3d()
+	if cam == null or not cam.is_inside_tree():
+		return Vector2.ZERO
+	var at := src.global_position + Vector3(0, 1.4, 0)
+	var d := cam.global_position.distance_to(at)
+	var db := SRC_FAR_DB * smoothstep(SRC_NEAR, SRC_FAR, d)
+	var loc := cam.global_transform.affine_inverse() * at
+	var side := loc.x / maxf(0.001, Vector2(loc.x, loc.z).length())
+	return Vector2(db, clampf(side * 0.8 * smoothstep(1.0, 8.0, d), -0.8, 0.8))
+
+
+func _set_voice_pan(v: float) -> void:
+	if _voice_panner == null:
+		if absf(v) < 0.001:
+			return
+		var bi := AudioServer.get_bus_index("Voice")
+		if bi < 0:
+			return
+		_voice_panner = AudioEffectPanner.new()
+		AudioServer.add_bus_effect(bi, _voice_panner)
+	_voice_panner.pan = v
+
+
+## bark çalmadan hemen önce: kaynak varsa ses kısılır/yönlenir ve söz sürerken izlenir; yoksa yön ortaya döner.
+## (say yolu da aynı oynatıcıyı kullanır: oynatıcı başka sese geçince ya da susunca yön ortaya döner.)
+func _voice_follow(text_key: String) -> void:
+	var src = _bark_srcs.get(text_key)
+	_bark_srcs.erase(text_key)
+	if not (src is Node3D) or not is_instance_valid(src) or not (src as Node3D).is_inside_tree():
+		_set_voice_pan(0.0)
+		return
+	var node := src as Node3D
+	var base := _voice.volume_db
+	var stream := _voice.stream
+	var m := _src_mix(node)
+	_voice.volume_db = base + m.x
+	_set_voice_pan(m.y)
+	await get_tree().process_frame
+	while _voice.playing and _voice.stream == stream and is_instance_valid(node) and node.is_inside_tree():
+		m = _src_mix(node)
+		_voice.volume_db = base + m.x
+		_set_voice_pan(m.y)
+		await get_tree().process_frame
+	if _voice.stream == stream:
+		_voice.volume_db = base
+	_set_voice_pan(0.0)
 
 
 ## Sokak sözü için hud meşgul mü (ayak üstü tepki sözü ancak sessizken söylenir)
@@ -2995,6 +3070,7 @@ func bark(speaker_key: String, text_key: String, seconds := 4.0, interrupt := fa
 			_voice.stream = vs
 			_voice.volume_db = VoiceGain.db(text_key)
 			_voice.pitch_scale = GameState.voice_speed()
+			_voice_follow(text_key)
 			_voice.play()
 			# Ses süreden uzunsa altyazı sesin sonuna kadar kalır
 			seconds = maxf(seconds, GameState.voice_len(vs) + 0.3) if seconds < 20.0 else seconds

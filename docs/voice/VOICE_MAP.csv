@@ -5766,3 +5766,40 @@ D8Y_HASAN_STOP,8,SPK_HASAN,,0,Dur orada! Olduğun yerde salla şu bezi!,Stop rig
 D8Y_HUSEYIN_COME,8,SPK_HUSEYIN,,0,"Tamam, gördük. Gel. Yavaş gel.","All right, we've seen it. Come on. Slowly.",oyun
 D17_N_HALIC,17,SPK_NIHAT,,0,"Tolga Bey, 28 Nisan, Haliç, şafaktan iki saat önce. Trevisano'nun kadırgasında bir kürekçi eksik; kayıtta o eksik sizsiniz.","Mr Tolga, 28 April, the Golden Horn, two hours before dawn. Trevisano's galley is one oarsman short; in the record, that oarsman is you.",kod
 D17O_N_01,17,SPK_NIHAT,,0,"Tolga Bey, 28 Nisan. Baltaoğlu azledildi, kürekçileri dağıtıldı; siz kıyı toplarına düştünüz. Kâtip olarak değil; yamak olarak.","Mr Tolga, 28 April. Baltaoğlu has been dismissed and his oarsmen scattered; you've landed with the shore guns. Not as a clerk, as a gun lad.",kod
+D_WIT_SOL_1,,SPK_SOLDIER,[shouting],1,Cin! Fötr şapkalı cin!,A djinn! A djinn in a fedora!,tanık
+D_WIT_SOL_2,,SPK_SOLDIER,[shouting],1,"Alamet bu, alamet!","It's an omen, an omen!",tanık
+D_WIT_SOL_3,,SPK_SOLDIER,[shouting],1,Anne! Gökte bir adam evrak saçıyor!,Mother! There's a man in the sky scattering paperwork!,tanık
+D_WIT_SOL_4,,SPK_SOLDIER,[astonished],1,"Yemin ederim, çorbadan başka bir şey içmedim!","I swear, I've had nothing but soup!",tanık
+D_WIT_SOL_5,,SPK_SOLDIER,[astonished],1,Bölükbaşına bildirin: gökte kayıtsız bir adam var!,Report to the captain: there's an unregistered man in the sky!,tanık
+D_WIT_AZ_1,,SPK_AZAP,[shouting],1,"Allah Allah! Bacağım ağrıyordu, şimdi sustu!","Good grief! My leg was aching, and now it's gone quiet!",tanık
+D_WIT_AZ_2,,SPK_AZAP,[shouting],1,Bu hangi sancağa bağlı? Soran olursa ben görmedim!,"Which banner does this one belong to? If anyone asks, I saw nothing!",tanık
+D_WIT_AZ_3,,SPK_AZAP,[shouting],1,Uçan bir Frenk! Kimse inanmayacak!,A flying Frank! No one's going to believe this!,tanık
+D_WIT_AZ_4,,SPK_AZAP,[astonished],1,O... o bir kuş değil. Kuşlar kravat takmaz.,That... that's not a bird. Birds don't wear ties.,tanık
+D_WIT_TWN_1,,SPK_TOWNSMAN,[shouting],1,Tanrım! Vergi memuru uçuyor!,Good Lord! The tax collector can fly!,tanık
+D_WIT_TWN_2,,SPK_TOWNSMAN,[astonished],1,Melek mi o? Neden şapkası var?,Is that an angel? Why is it wearing a hat?,tanık
+D_WIT_TWN_3,,SPK_TOWNSMAN,[whispering],1,Kimse bir şey demesin. Sadece yüzüne bakmayın.,Nobody say anything. Just don't look at its face.,tanık
+D_WIT_TWN_4,,SPK_TOWNSMAN,[astonished],1,"Aziz Yorgi, bu ay hiç içki içmedim, yemin ederim!","Saint George, I haven't touched a drop this month, I swear!",tanık
+D_WIT_TWN_5,,SPK_TOWNSMAN,[dry],1,"Uçan memur mu? Önce vergiyi uçurdular, şimdi memuru.","A flying official? First they made the taxes fly, now the clerk.",tanık
+D_WIT_WMN_1,,SPK_WOMAN_BYZ,[astonished],1,Melek mi o? Neden şapkası var?,Is that an angel? Why is it wearing a hat?,tanık
+D_WIT_WMN_2,,SPK_WOMAN_BYZ,[astonished],1,O... o bir kuş değil. Kuşlar kravat takmaz.,That... that's not a bird. Birds don't wear ties.,tanık
+D_WIT_WMN_3,,SPK_WOMAN_BYZ,[shouting],1,"Panagia'm! Çamaşırı şimdi serdim, şimdi mi geçiyor!","Holy Mother! I just hung the washing, and now he flies over it!",tanık
+D_WIT_WMN_4,,SPK_WOMAN_BYZ,[shouting],1,"Yannis, çocukları içeri al! Gökte şapkalı bir şey var!","Yannis, get the children inside! There's something in a hat in the sky!",tanık
+D_WIT_GRD_1,,SPK_CITY_GUARD,[shouting],1,Dur! Uçmak için izin belgen var mı?,Halt! Have you a permit to fly?,tanık
+D_WIT_GRD_2,,SPK_CITY_GUARD,[dry],1,"Nöbet defterine ne yazacağım şimdi? ""Gökte adam""?","What do I write in the watch log now? ""Man in sky""?",tanık
+D_WIT_GRD_3,,SPK_CITY_GUARD,[shouting],1,Tanrım! Vergi memuru uçuyor!,Good Lord! The tax collector can fly!,tanık
+D_WIT_GRD_4,,SPK_CITY_GUARD,[stern],1,Kimse kıpırdamasın. Bu bizim yetkimizin dışında.,Nobody move. This is beyond our authority.,tanık
+D_WIT_GEN_1,,SPK_GENOESE,[astonished],1,Uçan adam? Bunu hangi sigorta öder?,A flying man? Which insurance pays for that?,tanık
+D_WIT_GEN_2,,SPK_GENOESE,[shouting],1,Gümrük beyannamesi var mı? Havadan geçen de vergiye tabi!,Any customs declaration? Whatever crosses the air is taxable too!,tanık
+D_WIT_GEN_3,,SPK_GENOESE,[dry],1,"Gökten adam geçiyor. Limanda fiyatlar düşer mi, çıkar mı?","A man crossing the sky. Will prices at the harbour fall, or rise?",tanık
+D_WIT_GEN_4,,SPK_GENOESE,[astonished],1,O... o bir kuş değil. Kuşlar kravat takmaz.,That... that's not a bird. Birds don't wear ties.,tanık
+D_WIT_MNK_1,,SPK_STREET_MONK,[astonished],1,Kyrie eleison! Şapkalı bir melek!,Kyrie eleison! An angel in a hat!,tanık
+D_WIT_MNK_2,,SPK_STREET_MONK,[astonished],1,Melek mi o? Neden şapkası var?,Is that an angel? Why is it wearing a hat?,tanık
+D_WIT_MNK_3,,SPK_STREET_MONK,[dry],1,"Tanrım, dua ettim, sen gökten bir memur mu yolladın?","Lord, I prayed, and you send me a clerk from the sky?",tanık
+D_WIT_MNK_4,,SPK_STREET_MONK,[calm],1,"Bu ne mucize, ne şeytan. Bu... bir tür bürokrat.",This is neither a miracle nor a devil. This is... some kind of bureaucrat.,tanık
+D_WIT_CHD_1,,SPK_CHILD_BYZ,[excited],1,Anne! Gökte bir adam evrak saçıyor!,Mother! There's a man in the sky scattering paperwork!,tanık
+D_WIT_CHD_2,,SPK_CHILD_BYZ,[excited],1,Ben de uçabilir miyim? Şapkam yok ama!,"Can I fly too? I haven't got a hat, though!",tanık
+D_WIT_CHD_3,,SPK_CHILD_BYZ,[excited],1,"Anne, şu adam bize el sallıyor!","Mum, that man is waving at us!",tanık
+D_WIT_RIZ_1,,SPK_RIZA,[dry],1,"Müfettiş Bey, uçarken de iş güvenliği yönetmeliği geçerli.","Inspector, the workplace safety regulation applies while flying, too.",tanık
+D_WIT_RIZ_2,,SPK_RIZA,[dry],1,Kaldırma Formu'nu ben verdim. Demek ki kaza benim zimmetime yazılır.,I issued the Lift Form. So any accident goes on my account.,tanık
+D_WIT_MUF_1,,SPK_MUFIDE,[stern],1,"Nihat Bey, tavan lambasına dikkat. Demirbaş kaydında.","Mr. Nihat, mind the ceiling lamp. It's on the inventory.",tanık
+D_WIT_MUF_2,,SPK_MUFIDE,[stern],1,"Uçmak serbest, ama koridorda değil.","Flying is permitted, but not in the corridor.",tanık

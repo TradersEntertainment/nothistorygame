@@ -9717,3 +9717,40 @@ D8Y_HASAN_STOP,Dur orada! Olduğun yerde salla şu bezi!,Stop right there! Wave 
 D8Y_HUSEYIN_COME,"Tamam, gördük. Gel. Yavaş gel.","All right, we've seen it. Come on. Slowly."
 D17_N_HALIC,"Tolga Bey, 28 Nisan, Haliç, şafaktan iki saat önce. Trevisano'nun kadırgasında bir kürekçi eksik; kayıtta o eksik sizsiniz.","Mr Tolga, 28 April, the Golden Horn, two hours before dawn. Trevisano's galley is one oarsman short; in the record, that oarsman is you."
 D17O_N_01,"Tolga Bey, 28 Nisan. Baltaoğlu azledildi, kürekçileri dağıtıldı; siz kıyı toplarına düştünüz. Kâtip olarak değil; yamak olarak.","Mr Tolga, 28 April. Baltaoğlu has been dismissed and his oarsmen scattered; you've landed with the shore guns. Not as a clerk, as a gun lad."
+D_WIT_SOL_1,Cin! Fötr şapkalı cin!,A djinn! A djinn in a fedora!
+D_WIT_SOL_2,"Alamet bu, alamet!","It's an omen, an omen!"
+D_WIT_SOL_3,Anne! Gökte bir adam evrak saçıyor!,Mother! There's a man in the sky scattering paperwork!
+D_WIT_SOL_4,"Yemin ederim, çorbadan başka bir şey içmedim!","I swear, I've had nothing but soup!"
+D_WIT_SOL_5,Bölükbaşına bildirin: gökte kayıtsız bir adam var!,Report to the captain: there's an unregistered man in the sky!
+D_WIT_AZ_1,"Allah Allah! Bacağım ağrıyordu, şimdi sustu!","Good grief! My leg was aching, and now it's gone quiet!"
+D_WIT_AZ_2,Bu hangi sancağa bağlı? Soran olursa ben görmedim!,"Which banner does this one belong to? If anyone asks, I saw nothing!"
+D_WIT_AZ_3,Uçan bir Frenk! Kimse inanmayacak!,A flying Frank! No one's going to believe this!
+D_WIT_AZ_4,O... o bir kuş değil. Kuşlar kravat takmaz.,That... that's not a bird. Birds don't wear ties.
+D_WIT_TWN_1,Tanrım! Vergi memuru uçuyor!,Good Lord! The tax collector can fly!
+D_WIT_TWN_2,Melek mi o? Neden şapkası var?,Is that an angel? Why is it wearing a hat?
+D_WIT_TWN_3,Kimse bir şey demesin. Sadece yüzüne bakmayın.,Nobody say anything. Just don't look at its face.
+D_WIT_TWN_4,"Aziz Yorgi, bu ay hiç içki içmedim, yemin ederim!","Saint George, I haven't touched a drop this month, I swear!"
+D_WIT_TWN_5,"Uçan memur mu? Önce vergiyi uçurdular, şimdi memuru.","A flying official? First they made the taxes fly, now the clerk."
+D_WIT_WMN_1,Melek mi o? Neden şapkası var?,Is that an angel? Why is it wearing a hat?
+D_WIT_WMN_2,O... o bir kuş değil. Kuşlar kravat takmaz.,That... that's not a bird. Birds don't wear ties.
+D_WIT_WMN_3,"Panagia'm! Çamaşırı şimdi serdim, şimdi mi geçiyor!","Holy Mother! I just hung the washing, and now he flies over it!"
+D_WIT_WMN_4,"Yannis, çocukları içeri al! Gökte şapkalı bir şey var!","Yannis, get the children inside! There's something in a hat in the sky!"
+D_WIT_GRD_1,Dur! Uçmak için izin belgen var mı?,Halt! Have you a permit to fly?
+D_WIT_GRD_2,"Nöbet defterine ne yazacağım şimdi? ""Gökte adam""?","What do I write in the watch log now? ""Man in sky""?"
+D_WIT_GRD_3,Tanrım! Vergi memuru uçuyor!,Good Lord! The tax collector can fly!
+D_WIT_GRD_4,Kimse kıpırdamasın. Bu bizim yetkimizin dışında.,Nobody move. This is beyond our authority.
+D_WIT_GEN_1,Uçan adam? Bunu hangi sigorta öder?,A flying man? Which insurance pays for that?
+D_WIT_GEN_2,Gümrük beyannamesi var mı? Havadan geçen de vergiye tabi!,Any customs declaration? Whatever crosses the air is taxable too!
+D_WIT_GEN_3,"Gökten adam geçiyor. Limanda fiyatlar düşer mi, çıkar mı?","A man crossing the sky. Will prices at the harbour fall, or rise?"
+D_WIT_GEN_4,O... o bir kuş değil. Kuşlar kravat takmaz.,That... that's not a bird. Birds don't wear ties.
+D_WIT_MNK_1,Kyrie eleison! Şapkalı bir melek!,Kyrie eleison! An angel in a hat!
+D_WIT_MNK_2,Melek mi o? Neden şapkası var?,Is that an angel? Why is it wearing a hat?
+D_WIT_MNK_3,"Tanrım, dua ettim, sen gökten bir memur mu yolladın?","Lord, I prayed, and you send me a clerk from the sky?"
+D_WIT_MNK_4,"Bu ne mucize, ne şeytan. Bu... bir tür bürokrat.",This is neither a miracle nor a devil. This is... some kind of bureaucrat.
+D_WIT_CHD_1,Anne! Gökte bir adam evrak saçıyor!,Mother! There's a man in the sky scattering paperwork!
+D_WIT_CHD_2,Ben de uçabilir miyim? Şapkam yok ama!,"Can I fly too? I haven't got a hat, though!"
+D_WIT_CHD_3,"Anne, şu adam bize el sallıyor!","Mum, that man is waving at us!"
+D_WIT_RIZ_1,"Müfettiş Bey, uçarken de iş güvenliği yönetmeliği geçerli.","Inspector, the workplace safety regulation applies while flying, too."
+D_WIT_RIZ_2,Kaldırma Formu'nu ben verdim. Demek ki kaza benim zimmetime yazılır.,I issued the Lift Form. So any accident goes on my account.
+D_WIT_MUF_1,"Nihat Bey, tavan lambasına dikkat. Demirbaş kaydında.","Mr. Nihat, mind the ceiling lamp. It's on the inventory."
+D_WIT_MUF_2,"Uçmak serbest, ama koridorda değil.","Flying is permitted, but not in the corridor."

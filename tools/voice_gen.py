@@ -225,7 +225,10 @@ def tr_lower(w):
 #   v3: konuşma tanıma düz "poliçe"yi çoğunlukla "polise" yazdı, ama kulakla dinlenince düz hâli doğruydu (tanıma
 #   yanılıyor); "po-li-çe" gibi yazımlar heceleyerek okutuyor. v3'te kelime olduğu gibi gider.
 TR_RESPELL = [(r"(?i)\b(p)oliçe", r"\1olliçe")]
-TR_RESPELL_V3 = []
+# v3 yalın "ok" kelimesini (yay oku) cümle başında ve ünlemde İngilizce "okay" diye okuyor (dil zorlansa da:
+# D8Y_T_WARN_2 "Ok ayağımın dibine saplandı" beş denemede beş kez "okey", D30O_T_ARROW "Ay! Ok!" → "Ay okey";
+# oyuncu notu, 0.99.119). Konuşma tanımayla denendi: "Okk" ve "Ôk" 4/4 doğru, "Ohk" h ile okunuyor. Altyazı değişmez.
+TR_RESPELL_V3 = [(r"\b([Oo])k\b(?!['’])", r"\1kk")]
 
 
 def tr_respell(text, model=""):

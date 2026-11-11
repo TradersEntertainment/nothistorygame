@@ -24,6 +24,9 @@ var robe := Color(0, 0, 0, 0)
 var child := false
 var talking := false
 var look_target: Node3D
+## İş odağı (Stage.grip_hold): >0 iken look_target gövdeyi çevirmez; work_at işin dünya noktasıdır (yoksa Vector3.INF).
+var work_focus := 0
+var work_at := Vector3.INF
 
 var _body: Node3D
 var activity := ""
@@ -848,6 +851,7 @@ func _process(delta: float) -> void:
 		if get_parent() is Node3D:   # taşıyıcının (kayık, gemi) dönüşüne göre yerel yön
 			to = (get_parent() as Node3D).global_transform.basis.inverse() * to
 		to.y = 0.0
+		to = Stage.gaze_dir(self, activity, talking, to, mv, delta)      # iş/yürüyüş sürerken gövde işine döner
 		if to.length() > 0.1:
 			rotation.y = lerp_angle(rotation.y, atan2(to.x, to.z), clampf(delta * 4.0, 0.0, 1.0))
 	rig.update(delta, talking or chatting, _busy)

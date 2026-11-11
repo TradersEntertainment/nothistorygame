@@ -108,8 +108,6 @@ func _build() -> void:
 	_path = [along - back * 60.0 + side * 6.0, along - back * 24.0 + side * 9.0, along + back * 14.0 + side * 3.0, along]
 	_total = _length(_path)
 	galley = SeaBattle.war_galley(self, _path[0], yaw)
-	# Kadırganın izi: kıçta halkalar, pruvada V (yayma P3)
-	Vfx.wake(galley, 0.0, {"stern": Vector3(0, 0, 9.5), "bow": Vector3(0, 0, -12.5), "width": 3.6})
 	# Tolga'nın oturduğu ve kanca attığı yerin (sancak tarafı) kürekçileri: kameranın dibinde durmasınlar.
 	# Koltuk z 4.0'da, pruvaya bakar: önündeki sancak kürekçileri (z -3.5 / -6.5) de göz hizasında kalıyordu.
 	var keep: Array = []

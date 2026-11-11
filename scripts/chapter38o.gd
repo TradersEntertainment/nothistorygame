@@ -236,7 +236,6 @@ const VIEW_BENCH := -1.5       # oturulan yerin bakış yönündeki ilk sıra (t
 
 func _build_boat() -> void:
 	galley = SeaBattle.war_galley(self, ROW_FROM, PI)
-	Vfx.wake(galley, 0.0, {"stern": Vector3(0, 0, 9.5), "bow": Vector3(0, 0, -12.5), "width": 3.6})      # yayma P3
 	# Oyuncunun oturduğu yerin çevresindeki kürekçi çıkarılır
 	var seat := Vector3(1.0, DECK, 4.0)
 	var keep: Array = []
@@ -306,9 +305,6 @@ func _build_ships() -> void:
 		ships.append(g)
 	for s in ships:
 		s.visible = false
-	# Kaçan gemilerin izi (öğlen kovalamasında görünürler; uzakta seyrek)
-	for i in 2:
-		Vfx.wake(ships[i], 0.0, {"stern": Vector3(0, 0, 11.0), "bow": Vector3(0, 0, -12.0), "width": 5.0, "far": 140.0})
 
 
 # ================================================================ akış
@@ -569,7 +565,13 @@ func _ladder_grip(on: bool) -> void:
 		if _both_on:
 			_both_on = false
 			player.release_both()
+			if is_instance_valid(world):
+				world.visible = true
 		return
+	if not _both_on and is_instance_valid(world):
+		# Merdivenin dibinden sura bakarken surun ardındaki şehir görünmez (sur kapatır) ama alçak bakışta görüş
+		# konisine girip çiziliyordu (RINFO: bu evrede çizim ×2): tutuş boyunca gizli, el bırakınca geri
+		world.visible = false
 	_both_on = true
 	var right := ladder.global_transform.basis.x.normalized()
 	var mid := ladder.point_at(BRACE_HANDS) + ladder.front_dir() * 0.04

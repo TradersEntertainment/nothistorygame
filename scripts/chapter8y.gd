@@ -1115,9 +1115,11 @@ func _gate_scene() -> void:
 	_busy = false
 
 
-## Nöbetçi sürgüye yürür, kaldırır ve kenara yere bırakır; kanatlar peribolosa doğru açılır.
+## Nöbetçi sürgüye yürür, kaldırır ve kenara yere bırakır; kapının ortasına geçip iki kanadı kendine doğru çeker, sonra
+## yan çekilip Tolga'ya döner. İş boyunca oyuncuya bakmaz (look_target bırakılır): sürgüye, yürüdüğü yöne, kapıya döner.
 func _open_gate() -> void:
 	var gy := Callable(self, "_gy")
+	guard.look_target = null
 	await Stage.walk_on_ground(guard, Vector3(-0.9, 0, 12.6), gy, 1.6, BAR_AT)
 	# İki elle sürgüyü yuvalarından kaldırır (eller sürgüde), sürgüyü taşıyarak kulenin dibine götürür, dikine yaslar
 	# Eller sürgünün kendi yerelinde (Stage.grip_hold her karede izler): kaldırırken ve taşırken sürgüde kalır
@@ -1137,13 +1139,48 @@ func _open_gate() -> void:
 	guard.remove_meta("stage_walk")
 	Stage.grip_release(guard)
 	Audio.sfx("land_thud", -12.0, 0.8)
-	await Stage.walk_on_ground(guard, GUARD_AT, gy, 1.6, Vector3(0, 0, 8.0))
+	# Kapının ortasına, kanatlara dönük gelir; iki kanadı halkalarından tutup kendine çeker
+	await Stage.walk_on_ground(guard, Vector3(0.0, 0.0, GATE_Z - 0.9), gy, 1.6, Vector3(0.0, 0.0, GATE_Z))
+	await _pull_leaves()
+	# Açılan kanatlar yolu keser: kenara çekilir, Tolga'ya dönüp yol verir
+	var open2 := create_tween().set_parallel()
+	open2.tween_property(_leaf_l, "rotation:y", deg_to_rad(95.0), _d(1.2)).set_trans(Tween.TRANS_SINE)
+	open2.tween_property(_leaf_r, "rotation:y", deg_to_rad(-95.0), _d(1.2)).set_trans(Tween.TRANS_SINE)
+	Stage.walk_on_ground(guard, GUARD_AT, gy, 1.6, Vector3(0, 0, 8.0))      # beklenmez: kanatlarla birlikte
+	await open2.finished
+	await Stage.settle(guard)
+	guard.look_target = player
+
+
+## Nöbetçi iki kanadın içteki halkalarını tutar ve geri geri yürüyerek ~35 dereceye kadar çeker (eller her karede kanatta).
+func _pull_leaves() -> void:
+	var rg := guard.rig
+	var gc := Vector3(0.0, 1.3, GATE_Z)
+	Stage.work_begin(guard, gc)       # gövde kapıya dönük kalır
+	guard.set_meta("no_turn", true)   # geri geri yürürken yürüdüğü yöne dönmesin
+	guard.set_meta("walk_back", true)
+	if rg:
+		rg.lock += 1
 	Audio.sfx("door_open", -6.0, 0.8)
 	Audio.sfx("wood_creak", -10.0, 0.7)
-	var tw2 := create_tween().set_parallel()
-	tw2.tween_property(_leaf_l, "rotation:y", deg_to_rad(95.0), _d(1.6)).set_trans(Tween.TRANS_SINE)
-	tw2.tween_property(_leaf_r, "rotation:y", deg_to_rad(-95.0), _d(1.6)).set_trans(Tween.TRANS_SINE)
-	await tw2.finished
+	var pl := Vector3(HINGE_X - 0.18, 1.3, -0.2)       # sol kanat yereli: iç kenar +x
+	var pr := Vector3(-(HINGE_X - 0.18), 1.3, -0.2)
+	var z0 := guard.global_position.z
+	var tw := create_tween().set_parallel()
+	tw.tween_property(_leaf_l, "rotation:y", deg_to_rad(35.0), _d(1.0)).set_trans(Tween.TRANS_SINE)
+	tw.tween_property(_leaf_r, "rotation:y", deg_to_rad(-35.0), _d(1.0)).set_trans(Tween.TRANS_SINE)
+	tw.tween_method(func(k: float) -> void:
+		if not is_instance_valid(guard):
+			return
+		var gz := lerpf(z0, z0 - 1.7, k)
+		guard.global_position = Vector3(0.0, _gy(0.0, gz), gz)
+		Stage.grip(guard, null, [_leaf_l.to_global(pl), _leaf_r.to_global(pr)]), 0.0, 1.0, _d(1.0))
+	await tw.finished
+	if rg:
+		rg.lock = maxi(0, rg.lock - 1)
+	guard.remove_meta("walk_back")
+	guard.remove_meta("no_turn")
+	Stage.work_end(guard)
 
 
 # ---------------------------------------------------------------- hendek köprüsü ve ölü bölge
