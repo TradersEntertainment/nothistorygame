@@ -3749,9 +3749,9 @@ func _fg_corner(p: Person) -> void:
 	# önkollar belde V çizip kâğıdın yarısını örtüyordu ve tek satıra sıkışan yazı V'nin içinden taşıyordu. Kâğıt
 	# omuz hizasına çıktı (kolların üstünde), iki satıra bölünmüş yazı kâğıdın içinde, gövdeden bir parmak dışarıda.
 	var bd: Node3D = p._body
-	Props.box(bd, Vector3(0.36, 0.4, 0.006), Vector3(0, 1.19, -0.246), Color("f6f2e6"), Vector3(0, 0, 3))
-	Props.box(bd, Vector3(0.09, 0.022, 0.008), Vector3(-0.11, 1.395, -0.25), Color("d8d0a0"), Vector3(0, 0, -20))
-	Props.box(bd, Vector3(0.09, 0.022, 0.008), Vector3(0.11, 1.395, -0.25), Color("d8d0a0"), Vector3(0, 0, 20))
+	Props.box(bd, Vector3(0.42, 0.44, 0.006), Vector3(0, 1.2, -0.246), Color("f6f2e6"), Vector3(0, 0, 3))
+	Props.box(bd, Vector3(0.09, 0.022, 0.008), Vector3(-0.12, 1.42, -0.25), Color("d8d0a0"), Vector3(0, 0, -20))
+	Props.box(bd, Vector3(0.09, 0.022, 0.008), Vector3(0.12, 1.42, -0.25), Color("d8d0a0"), Vector3(0, 0, 20))
 	# Yazı üç satır: ilk cümle bir satır, kalanı ortadan ikiye bölünür (kâğıdı doldurur, 2-3 m'den okunur)
 	var sg: String = tr("BUR_HIT_SIGN")
 	var cut := sg.find(". ")
@@ -3762,7 +3762,7 @@ func _fg_corner(p: Person) -> void:
 	var sgn := l1
 	if rest != "":
 		sgn += "\n" + " ".join(words.slice(0, half)) + "\n" + " ".join(words.slice(half))
-	Props.label(bd, sgn, Vector3(0, 1.19, -0.252), 24, Color("120c0c"), Vector3(0, 180, 3), 0.32)
+	Props.label(bd, sgn, Vector3(0, 1.2, -0.252), 24, Color("120c0c"), Vector3(0, 180, 3), 0.37)
 
 
 func _fg_build() -> void:

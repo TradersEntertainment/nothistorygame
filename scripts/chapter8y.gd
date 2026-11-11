@@ -91,6 +91,7 @@ var _run_t := 0.0
 var _down_t := 0.0
 var _warn_cd := 0.0
 var _bot_running := false
+var _t_start := Time.get_ticks_msec()
 var _radio_done := false
 var _prompt := ""
 var _fired := {}
@@ -920,6 +921,7 @@ func _dust(at: Vector3) -> void:
 # ================================================================ ana akış
 
 func _run() -> void:
+	_t_start = Time.get_ticks_msec()
 	hud.set_fade(1.0)
 	await hud.card([[tr("UI_CH8Y_TITLE"), 44, Color("f2e6c9")], [tr("UI_CH8Y_SUB"), 20, Color(1, 1, 1, 0.7)]], 2.6)
 	hud.clear_card()
@@ -1587,6 +1589,7 @@ func _auto() -> void:
 
 func _autotest_report() -> void:
 	var v := GameState.autotest_variant
+	print("SURE8Y %.0f s (sahne açılışından rapora; PACE'te gerçek süre)" % ((Time.get_ticks_msec() - _t_start) / 1000.0))
 	var expected: String = {"warn": "8Y.2", "dep": "8Y.3"}.get(v, "8Y.1")
 	var ok: bool = _outcome == expected and str(GameState.chapter_outcomes.get(NO, "")) == _outcome
 	match v:
