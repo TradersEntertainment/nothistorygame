@@ -100,6 +100,8 @@ var _leaf_r: Node3D
 var _bar: Node3D
 var _seat: Node3D
 var _archers: Array[Soldier] = []
+## Sinerji (4b'den beri Tolga'nın peşindeki tavuk; bayrak "sinerji"): kapıdan pazara kadar yanında yürür
+var sinerji: Chicken
 
 
 func _ready() -> void:
@@ -156,6 +158,9 @@ func _apply_autotest_setup() -> void:
 		"hikmet":
 			GameState.chapter_outcomes[6] = "6b.1"
 			GameState.chapter_outcomes[8] = "8.4"
+		"sinerji":
+			GameState.chapter_outcomes[6] = "6b.1"
+			GameState.flags["sinerji"] = true
 		_:
 			GameState.chapter_outcomes[6] = "6b.1"
 
@@ -636,6 +641,36 @@ func _towel_tick(delta: float) -> void:
 		hud.set_prompt(pr)
 
 
+## Sinerji oyuncunun arkasında yanından yürür (Chicken.follow); burada yalnız yürünen yerde tutulur: hendek geçidinden
+## (x ±3,5) taşıp hendeğin üstünde havada kalmasın, kapı ve peribolos duvarlarına girmesin; ayağı görünen zeminde.
+func _keep_sinerji() -> void:
+	if not is_instance_valid(sinerji):
+		return
+	var p := sinerji.global_position
+	var lim := 13.5
+	if p.z < -4.0:
+		lim = 8.0
+	elif p.z < 14.5:
+		lim = 3.0 if p.z > -4.6 and p.z < 0.0 else 5.5
+	elif p.z < 36.6:
+		lim = 3.0
+	p.x = clampf(p.x, -lim, lim)
+	p.z = minf(p.z, 151.0)
+	p.y = _gy(p.x, p.z)
+	sinerji.global_position = p
+
+
+## Uyarı okunda tavuk ürker: bir an kanat çırpar
+func _scare_sinerji() -> void:
+	if not is_instance_valid(sinerji):
+		return
+	sinerji.flapping = true
+	Audio.sfx_at("chicken", sinerji, -8.0)
+	await _wait(1.2)
+	if is_instance_valid(sinerji):
+		sinerji.flapping = false
+
+
 ## Uyarı oku: ayağının bir adım önüne saplanır (surdan ya da siperden), o taraf bağırır, Tolga söylenir.
 func _warn(reason: String) -> void:
 	_warn_cd = WARN_GAP
@@ -650,6 +685,7 @@ func _warn(reason: String) -> void:
 	var from_wall := pp.z < 70.0
 	var src := Vector3(land.x * 0.5 + (2.0 if _warnings % 2 == 0 else -2.0), 9.5, 15.0) if from_wall else Vector3(land.x + 1.5, 2.6, 110.0)
 	_shoot_arrow(src, land)
+	_scare_sinerji()
 	var line: Array = (WARN_WALL if from_wall else WARN_TRENCH)[1 if reason == "run" else 0]
 	_warn_lines(line, WARN_TOLGA[(_warnings - 1) % WARN_TOLGA.size()])
 
@@ -691,6 +727,13 @@ func _run() -> void:
 	player.face(NIKO_AT + Vector3(0, 1.5, 0))
 	if _deported:
 		player.sit_view(true)
+	if GameState.flags.get("sinerji", false):
+		sinerji = Chicken.new()
+		add_child(sinerji)
+		sinerji.process_priority = -10      # önce tavuk yürür, sonra bölüm onu koridorda ve zeminde tutar (_keep_sinerji)
+		sinerji.global_position = player.global_position + Vector3(0.8, 0, 1.0)
+		sinerji.global_position.y = _gy(sinerji.global_position.x, sinerji.global_position.z)
+		sinerji.follow = player
 	_capture_mouse()
 	await hud.fade_to(0.0, 1.0)
 	if _deported:
@@ -711,6 +754,8 @@ func _run() -> void:
 		else:
 			await _say("SPK_NIKO", "D8Y_NIKO_LETTER")
 			await _t("D8Y_T_LETTER")
+	if is_instance_valid(sinerji):
+		await _say("SPK_NIKO", "D8Y_NIKO_SINERJI")
 	GameState.meet("niko")
 	# Niko önden dış sur kapısına yürür; Tolga peşinden
 	Stage.walk_on_ground(niko, NIKO_GATE, Callable(self, "_gy"), 1.6, Vector3(0, 0, 13.0))
@@ -742,6 +787,7 @@ func _hand_towel() -> void:
 func _process(delta: float) -> void:
 	if hud == null or player == null or GameState.shots_dir != "":
 		return
+	_keep_sinerji()
 	var pz := player.global_position.z
 	match phase:
 		"peri":
@@ -989,6 +1035,9 @@ func _finale() -> void:
 	# Son kare Bölüm 9'un ilk karesi: BYZ_SPAWN'da, ordugâhın içine (tezgâhlara, sancağa) bakarak
 	await Stage.walk_player(player, END_AT, 0.05, END_AT + Vector3(0, 1.6, 10.0))
 	player.face(END_AT + Vector3(0, 1.6, 10.0))
+	if is_instance_valid(sinerji):
+		sinerji.global_position = END_AT + Vector3(0.9, _gy(0.9, END_AT.z + 1.2), 1.2)
+		sinerji.rotation.y = 0.0
 	await _t("D8Y_T_END_DEP" if _deported else "D8Y_T_END")
 	if _deported:
 		_outcome = "8Y.3"
@@ -1164,6 +1213,8 @@ func _autotest_report() -> void:
 			ok = ok and _id == "honest"
 		"hikmet":
 			ok = ok and not _radio_done
+		"sinerji":
+			ok = ok and is_instance_valid(sinerji) and sinerji.global_position.distance_to(player.global_position) < 3.0
 	# Havlu bırakıldı (sırık elde kalmadı), bayrak yazıldı
 	if is_instance_valid(_pole) or not GameState.flags.get("ch8y_done", false):
 		ok = false

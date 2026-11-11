@@ -89,8 +89,8 @@ for v in "" "=call" "=confiscated" "=sealed" "=noradio"; do run --chapter=5 --au
 for v in "" "=b" "=c" "=y" "=letter" "=byz" "=byzmistake" "=byzfail" "=byzclimb" "=byzgive"; do run --chapter=6 --autotest$v; done
 for v in "" "=tea" "=lost" "=form" "=wall" "=wallkeep" "=byz" "=byzniko" "=byzcell" "=fez"; do run --chapter=7 --autotest$v; done
 for v in "" "=ride" "=caught" "=late" "=heist" "=call" "=rulefree" "=tea" "=known" "=unknown"; do run --chapter=8 --autotest$v; done
-# Ara Bölüm "Beyaz Havlu" (8y; yalnız Bizans yolu, 8 ile 9 arasında): uyarısız/uyarılı/sınır dışı, açılmış mühür, doğru söz, 8.4
-for v in "" "=warn" "=dep" "=opened" "=honest" "=hikmet"; do run --chapter=8y --autotest$v; done
+# Ara Bölüm "Beyaz Havlu" (8y; yalnız Bizans yolu, 8 ile 9 arasında): uyarısız/uyarılı/sınır dışı, açılmış mühür, doğru söz, 8.4, Sinerji (tavuk)
+for v in "" "=warn" "=dep" "=opened" "=honest" "=hikmet" "=sinerji"; do run --chapter=8y --autotest$v; done
 for v in "" "=b" "=c" "=y" "=arch" "=none" "=fatih" "=cell" "=hikmet" "=lagim" "=cube" "=gifts"; do run --chapter=9 --autotest$v; done
 for v in "" "=fail" "=honest" "=selfie" "=byz" "=retry" "=fez"; do run --chapter=10 --autotest$v; done
 for v in "" "=arrest" "=escape" "=persuade" "=help" "=helpwall" "=lost" "=fired" "=hikmet" "=niko"; do run --chapter=11 --autotest$v; done
