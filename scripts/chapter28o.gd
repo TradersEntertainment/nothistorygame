@@ -252,7 +252,7 @@ func _lay_ropes() -> void:
 	for i in 2:
 		var side := -1.0 if i == 0 else 1.0
 		var a := sled.to_global(Vector3(4.45, 0.82, side * 1.05))
-		var b := sled.to_global(Vector3(17.8, 1.0, side * 1.75))
+		var b := sled.to_global(Vector3(17.8, 0.92, side * 1.75))
 		var coil := sled.to_global(Vector3(19.4, 0, side * 2.4))
 		coil.y = gy(coil.x, coil.z)
 		_coils[i].global_position = coil
@@ -310,7 +310,7 @@ func _stakes_phase() -> void:
 	_update_objective()
 	while stakes < STAKES:
 		await get_tree().process_frame
-		if GameState.autotest:
+		if GameState.autotest and not _hammering:      # bot tokmak inerken yeni kazık almaz
 			if carrying == "":
 				_on_interact("stakes")
 			else:
@@ -346,7 +346,7 @@ func _haul_phase() -> void:
 	# "Altmış öküz bunu Edirne'den getirdi": bakış replik boyunca öküzlere (kızak yolunun gerisinde, takımlar çekerek
 	# gelir, ötede çiftler dinlenir); Urban o yanda konuşur. Replikten sonra bakış kızağa döner.
 	urban.global_position = Vector3(haul_x + 1.0, gy(haul_x + 1.0, HAUL_Z + 6.0), HAUL_Z + 6.0)
-	player.face(Vector3(-8.0, 0.8, HAUL_Z + 13.0))
+	player.face(Vector3(-6.0, 0.5, HAUL_Z + 15.0))
 	await hud.fade_to(0.0, 0.8)
 	await hud.say("SPK_URBAN", "D28O_U_HAUL")
 	player.face(Vector3(haul_x + 5.5, 1.0, HAUL_Z))
@@ -741,31 +741,46 @@ func _hammer_in(st: Node3D, depth: float) -> void:
 	var was := player.frozen
 	player.frozen = true
 	_hammering = true
-	# Kazık tokmağı (yayma P4, 2. tur): gerçek ölçüde (sap 90 cm, baş 18x12 cm), iki el sapın ucunda. Tokmak her karede
-	# iki yumruğun içinden geçecek biçimde konur (sağ yumruk sapın ucunda, sol yumruk 25 cm yukarıda); vuruş elleri
-	# kaldırıp indirir, tokmak onlarla gelir. Eldeki eşya cebe. Eskiden kameranın sağ altında elsiz küçük bir çekiç,
-	# 1. turda da eller sapa oturmayan, başı adam boyunda bir tokmak vardı.
+	# Kazık tokmağı (3. tur): önce kazığın başına yürünür (1 m), bakış kazığın tepesine. Tokmak gerçek ölçüde (sap
+	# ~90 cm, baş 18x12 cm), sağ yumruk sapın ucunda, sol yumruk 28 cm yukarıda. Her vuruşta tokmağın başı kazığın
+	# tepesine iner (eksen sağ yumruktan tepeye kurulur), kazık görünür biçimde gömülür, değme anında toz ve yonga.
+	# Eskiden vuruş havayaydı: kazık metrelerce ötedeydi, baş hiçbir şeye değmiyordu.
+	var top := st.to_global(Vector3(0, 0.9, 0))
+	await Stage.walk_player(player, Vector3(top.x, player.global_position.y, top.z), 0.95, top + Vector3(0, -0.15, 0), 3.0)
+	player.face(top + Vector3(0, -0.15, 0))
 	var hm := Node3D.new()
 	hm.set_meta("transient", true)
 	player.camera.add_child(hm)
-	Props.cyl(hm, 0.016, 0.9, Vector3(0, 0.33, 0), Color("6a4a2c"), Vector3.ZERO, 6)
-	Props.cyl(hm, 0.06, 0.18, Vector3(0, 0.8, 0), Color("8a6a44"), Vector3(0, 0, 90), 9)
+	var handle := Props.cyl(hm, 0.016, 1.0, Vector3(0, 0.5, 0), Color("6a4a2c"), Vector3.ZERO, 6)
+	var head := Node3D.new()
+	hm.add_child(head)
+	Props.cyl(head, 0.06, 0.18, Vector3.ZERO, Color("8a6a44"), Vector3(0, 0, 90), 9)
 	for sx: float in [-0.08, 0.08]:
-		Props.cyl(hm, 0.062, 0.02, Vector3(sx, 0.8, 0), Color("3a3634"), Vector3(0, 0, 90), 9)
+		Props.cyl(head, 0.062, 0.02, Vector3(sx, 0, 0), Color("3a3634"), Vector3(0, 0, 90), 9)
 	Props.strip_outlines(hm)
+	hm.set_meta("handle", handle)
+	hm.set_meta("head", head)
 	player.stow_hands(true)
-	_maul_pose(hm, 0.0)
+	_maul_pose(hm, 1.0, st)
 	var f := Stage.fast()
 	for k in 3:
 		var tw := hm.create_tween()
-		tw.tween_method(func(v: float): _maul_pose(hm, v), 0.0, 1.0, 0.03 if f else 0.3).set_trans(Tween.TRANS_SINE)
-		tw.tween_method(func(v: float): _maul_pose(hm, v), 1.0, 0.0, 0.03 if f else 0.14).set_ease(Tween.EASE_IN)
+		tw.tween_method(func(v: float): _maul_pose(hm, v, st), 0.0, 1.0, 0.03 if f else 0.32).set_trans(Tween.TRANS_SINE)
+		tw.tween_method(func(v: float): _maul_pose(hm, v, st), 1.0, 0.0, 0.03 if f else 0.14).set_ease(Tween.EASE_IN)
 		await tw.finished
+		_maul_pose(hm, 0.0, st)
 		if is_instance_valid(st):
 			st.position.y -= depth / 3.0
-			Vfx.dust(self, st.global_position + Vector3(0, 0.9, 0), 0.25)
+			var tp := st.to_global(Vector3(0, 0.9, 0))
+			Vfx.dust(self, tp, 0.18)                                   # değme: tepeden yonga tozu
+			Vfx.dust(self, Vector3(tp.x, gy(tp.x, tp.z), tp.z), 0.3)   # dipte kabaran toprak
 		Audio.sfx("pick_tap", -4.0, 0.75 + k * 0.08)
 		player.shake(0.04)
+		# Değme anında kısa duraklama (tokmak kazığın başında görünür)
+		if not f:
+			for n in 6:
+				_maul_pose(hm, 0.0, st)
+				await get_tree().process_frame
 	player.release_both()
 	player.stow_hands(false)
 	hm.queue_free()
@@ -773,15 +788,51 @@ func _hammer_in(st: Node3D, depth: float) -> void:
 	_hammering = false
 
 
-## Tokmağın duruşu: v = 0 vuruş (baş önde aşağıda, kazığın başında), v = 1 kalkık (baş başın üstünde). Eller
-## kameranın yerelinde bu iki duruş arasında; tokmak iki yumruğun içinden geçer (sağ yumruk sap ucunda).
-func _maul_pose(hm: Node3D, v: float) -> void:
-	if not is_instance_valid(hm):
+## Tokmağın duruşu: v = 0 vuruş (baş kazığın tepesinde), v = 1 kalkık (baş omzun üstünde, geride). Sağ yumruk
+## kameranın yerelinde iner kalkar; tokmak ekseni sağ yumruktan kazığın tepesine (vuruşta) ya da yukarı-geriye
+## (kalkıkta) kurulur, sol yumruk sapın 28 cm yukarısına konur; sap boyu başı tam tepeye getirecek kadar.
+func _maul_pose(hm: Node3D, v: float, st: Node3D) -> void:
+	if not is_instance_valid(hm) or not is_instance_valid(st):
 		return
-	var r := Vector3(0.11, -0.2, -0.42).lerp(Vector3(0.1, -0.02, -0.38), v)
-	var l := Vector3(0.1, -0.25, -0.62).lerp(Vector3(0.1, 0.04, -0.46), v)
-	player.hold_both(l, r)
-	_fit_fists(hm)
+	var cam := player.camera
+	var rc := Vector3(0.1, -0.24, -0.38).lerp(Vector3(0.1, -0.02, -0.34), v)
+	var rw := player.rig.socket.global_position + cam.global_transform.basis.y * 0.035 if player.rig else cam.to_global(rc)
+	var top := st.to_global(Vector3(0, 0.96, 0))
+	var strike := top - rw
+	var d := clampf(strike.length(), 0.5, 1.0)
+	var raised := (cam.global_transform.basis * Vector3(0.05, 0.8, 0.55)).normalized()
+	var ax := strike.normalized().slerp(raised, clampf(v, 0.0, 1.0)).normalized()
+	var lw := rw + ax * 0.28
+	player.hold_both(cam.to_local(lw), rc)
+	var x := ax.cross(Vector3.UP if absf(ax.y) < 0.95 else Vector3.FORWARD).normalized()
+	hm.global_transform = Transform3D(Basis(x, ax, x.cross(ax)), rw)
+	var handle: Node3D = hm.get_meta("handle")
+	var head: Node3D = hm.get_meta("head")
+	var dl := lerpf(d, 0.85, v)
+	handle.scale = Vector3(1, dl + 0.1, 1)
+	handle.position = Vector3(0, (dl - 0.1) * 0.5, 0)
+	head.position = Vector3(0, dl, 0)
+
+
+var _stake_sway := Vector3.ZERO
+var _stake_yaw := INF
+
+
+## Kazık taşıma (3. tur): sağ omuzda, iki el önde; Carry.attach'in ağırlık hissinin eşdeğeri (Carry sol eli free_hold
+## ile yönettiği için iki elli tutuşla çakışıyordu): dönüşte yük geride kalıp yana yatar, adımda iner kalkar; eller
+## bu salınımla birlikte gider, kazık her karede iki yumruğun içinden geçer.
+func _stake_hold(delta: float) -> void:
+	var yaw := player.camera.global_rotation.y
+	if _stake_yaw == INF:
+		_stake_yaw = yaw
+	var dyaw := wrapf(yaw - _stake_yaw, -PI, PI)
+	_stake_yaw = yaw
+	var hv := Vector2(player.velocity.x, player.velocity.z).length()
+	var bob := sin(_t * 9.0) * 0.012 * clampf(hv / 3.0, 0.0, 1.0)
+	var want := Vector3(clampf(-dyaw / maxf(delta, 0.001) * 0.02, -0.06, 0.06), bob - 0.01 * clampf(hv / 3.0, 0.0, 1.0), 0)
+	_stake_sway = _stake_sway.lerp(want, clampf(delta * 6.0, 0.0, 1.0)) if delta > 0.0 else want
+	player.hold_both(Vector3(0.22, -0.16, -0.72) + _stake_sway * 0.7, Vector3(0.26, -0.24, -0.5) + _stake_sway)
+	_fit_fists(_carry)
 
 
 ## Düğümün +Y eksenini sağ yumruktan sol yumruğa çevirir, kökü sağ yumruğa koyar (sap, kazık iki elin içinden geçer)
@@ -811,9 +862,11 @@ func _pick(what: String) -> void:
 		# Kazık iki elde, göğsün önünde çapraz (yayma P4: sol elde kazık, sağ elde koli bandı duruyordu)
 		# 2. tur: kazık (1,8 m, çap 10 cm) sağ omuzda, iki el önde tutar; arka ucu omzun ardında, ön ucu sağ kenarda
 		# hafif yukarı (ekranı boydan boya kesmez)
-		Props.cyl(_carry, 0.05, 1.8, Vector3(0, 0.35, 0), Color("8a6a44"), Vector3.ZERO, 6, 0.03)
+		Props.cyl(_carry, 0.05, 1.8, Vector3(0, 0.62, 0), Color("8a6a44"), Vector3.ZERO, 6, 0.03)
 		player.stow_hands(true)
-		player.hold_both(Vector3(0.22, -0.12, -0.62), Vector3(0.25, -0.2, -0.4))
+		_stake_sway = Vector3.ZERO
+		_stake_yaw = INF
+		_stake_hold(0.0)
 		_fit_fists(_carry)
 		player.speed_mult = 0.85
 	else:
@@ -846,7 +899,7 @@ func _process(delta: float) -> void:
 	_tick_haulers(delta)
 	_tick_oxen(delta)
 	if carrying == "stake" and is_instance_valid(_carry):
-		_fit_fists(_carry)
+		_stake_hold(delta)
 	# 6 Nisan: surdaki Bizans topları arada bir atar; gülle siperin önüne ya da ardına düşer
 	if phase in ["stakes", "haul"] and not player.frozen and not hud.chain_busy():
 		_ball_t -= delta
@@ -898,12 +951,10 @@ func _rope_tick(_dt: float) -> void:
 	var spot := _rope_spot()
 	var pp := player.global_position
 	var d := Vector2(pp.x - spot.x, pp.z - spot.z).length()
-	if _on_rope:
-		if carrying != "" or d > 1.5:
-			_on_rope = false
-			player.release_both()
-		elif _rope_hx != INF and absf(haul_x - _rope_hx) > 0.0001:
-			player.global_position = pp + Vector3(haul_x - _rope_hx, 0, 0)
+	# 3. tur: oyuncuyu halatla birlikte kaydıran (kare kare ışınlayan) kısım kaldırıldı; halat ucunda tutma yok
+	if _on_rope and (carrying != "" or d > 1.5):
+		_on_rope = false
+		player.release_both()
 	_rope_hx = haul_x
 	_lay_ropes()
 
@@ -981,8 +1032,8 @@ func _build_oxen() -> void:
 		herder.set_meta("no_talk", true)
 		add_child(herder)
 		_goad(herder)
-		var x0 := -11.0 - i * 5.0
-		var z := HAUL_Z + 9.0 + i * 3.8
+		var x0 := -9.0 - i * 4.0
+		var z := HAUL_Z + 8.5 + i * 3.6
 		_ox_teams.append({"team": team, "oxen": oxen, "herder": herder, "x": x0, "z": z, "end": -3.0 - i * 4.0, "bellow": randf_range(3.0, 9.0)})
 		_place_team(_ox_teams[-1])
 	# Uzak sıralar: 28 çift (56 öküz) boyundurukta dinlenir; tek çoklu ağ (öküz) + tek çoklu ağ (boyunduruk)
@@ -1002,7 +1053,7 @@ func _build_oxen() -> void:
 	for i in 28:
 		var row := i / 7
 		var col := i % 7
-		var c := Vector3(-13.0 - col * 4.6 + rng.randf_range(-1.0, 1.0), 0, HAUL_Z + 18.0 + row * 4.2 + rng.randf_range(-0.8, 0.8))
+		var c := Vector3(-6.0 - col * 3.8 + rng.randf_range(-0.6, 0.6), 0, HAUL_Z + 17.0 + row * 3.6 + rng.randf_range(-0.5, 0.5))
 		var yaw := PI * 0.5 + rng.randf_range(-0.7, 0.7) + (PI if row % 2 == 1 and rng.randf() < 0.3 else 0.0)
 		var b := Basis(Vector3.UP, yaw)
 		for sx: float in [-0.75, 0.75]:

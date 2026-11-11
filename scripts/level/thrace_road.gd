@@ -457,7 +457,7 @@ func _slope() -> void:
 		var y := ground_y(pp.x, pp.z)
 		Props.cyl(self, 0.24, 1.6, Vector3(pp.x, y + 0.7, pp.z), Color("4a3424"), Vector3.ZERO, 10)
 		# Kazığa iki buçuk tur sarılı ip (volta): fren ipi buradan arabaya ve oyuncunun eline gider (eskiden üç düz halka)
-		Stage.rope_wrap(self, Vector3(pp.x, y, pp.z), 0.255, 0.56, 0.84, 2.5, 0.034, Color("c8b080"))
+		Stage.rope_wrap(self, Vector3(pp.x, y, pp.z), 0.255, 0.95, 1.25, 2.5, 0.03, Color("c8b080"))
 		# Kazığın dibinde ipin sürtünmesiyle kazınmış toprak
 		Props.cyl(self, 0.42, 0.06, Vector3(pp.x, y + 0.01, pp.z), Color("4a3a28"), Vector3.ZERO, 9)
 	# Yol kenarında taşlar: _details
@@ -631,8 +631,10 @@ func _details() -> void:
 	Nature.ground_detail(self, Rect2(-3.0, -24.0, 6.0, 164.0), "mud", 0.12, 3511, hf, off_bridge)
 	Nature.ground_detail(self, Rect2(-9.0, MUD_Z - 9.0, 18.0, 18.0), "camp_mud", 0.2, 3512, hf,
 		func(x: float, z: float) -> bool: return Vector2(x, z - MUD_Z).length() < 8.5)
-	for rx: float in [-0.6, 0.6]:
-		Nature.trail(self, [Vector3(rx, 0, 10.2), Vector3(rx, 0, 70.0)], "wheel_ruts", hf, 1.0, 3516 + int(rx * 10.0), 0.1)
+	# Tekerlek izi (3. tur): trail'in "wheel_ruts" şeridi yolda tekrarlı koyu dikdörtgenler diziyordu; yerine iki
+	# tekerlek hattında dar, rastgele dönük çamur lekeleri
+	for rx: float in [-1.25, 1.25]:
+		Nature.ground_detail(self, Rect2(rx - 0.22, 10.4, 0.44, 60.0), "mud", 1.6, 3516 + int(rx * 10.0), hf)
 	Nature.trail(self, [Vector3(0, 0, 14.0), Vector3(0, 0, 60.0)], "hoofprint", hf, 0.9, 3519, 0.9)
 	# Yokuş kenarı taşları (eskiden 30 ayrı top)
 	Nature.ground_detail(self, Rect2(-7.6, SLOPE_Z0, 15.2, SLOPE_Z1 - SLOPE_Z0), "stone", 0.05, 3502, hf,
@@ -682,10 +684,7 @@ func update_convoy(s: float, tilt := 0.0) -> void:
 				n.position = Vector3(x, y, z)
 				# İp tutan adam yürüdüğü yöne bakar, gövdesi arabaya (ipe) hafif dönük
 				n.rotation = Vector3(0, -signf(x) * 0.45 if absf(x) > 1.5 and n != drover else 0.0, 0)
-	_lay_chain()
-	for i in men.size():
-		if i < _man_ropes.size():
-			_man_rope(i)
+	_lay_chain()          # adamların ipleri _process'te (karede bir kez)
 
 
 func spin_wheels(delta_m: float) -> void:

@@ -220,8 +220,9 @@ func _tracks() -> void:
 	var hf := func(x: float, z: float) -> float: return ground_y(x, z)
 	var out_pit := func(x: float, z: float) -> bool: return absf(x) > PIT_HX + 0.4 or absf(z) > PIT_HZ + 0.4
 	Nature.ground_detail(self, Rect2(-8.0, -12.0, 16.0, 24.0), "snow_print", 0.9, 3401, hf, out_pit)
-	Nature.ground_detail(self, Rect2(-7.0, -10.0, 14.0, 20.0), "camp_mud", 0.25, 3402, hf, out_pit)
-	Nature.ground_detail(self, Rect2(FURNACE.x - 4.0, FURNACE.z - 3.0, 18.0, 8.0), "ash", 0.8, 3403, hf)
+	# 3. tur: karda çamur yaması kirli leke gibiydi; yerine sık kar izi. Kül yalnız ocak ağızlarının önünde, seyrek
+	Nature.ground_detail(self, Rect2(-7.0, -10.0, 14.0, 20.0), "snow_print", 0.7, 3402, hf, out_pit)
+	Nature.ground_detail(self, Rect2(FURNACE.x - 3.0, FURNACE.z + 1.0, 14.0, 2.5), "ash", 0.5, 3403, hf)
 	Nature.trail(self, [FURNACE + Vector3(-3.0, 0, 3.0), Vector3(3.0, 0, -6.0), Vector3(0, 0, -6.0)], "snow_print", hf, 0.6, 3404, 0.5)
 	Nature.trail(self, [CHUTE_BOT + Vector3(2.0, 0, 0), Vector3(-6.0, 0, -1.0), Vector3(-3.0, 0, 0)], "snow_print", hf, 0.6, 3405, 0.6)
 	Nature.trail(self, [WIND_REAR + Vector3(1.6, 0, 0), WIND_FRONT + Vector3(1.6, 0, 0)], "snow_print", hf, 0.6, 3406, 0.4)

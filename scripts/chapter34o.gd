@@ -220,6 +220,10 @@ func _break_mould() -> void:
 	player.camera.add_child(_mallet)
 	_mallet.position = Vector3(-0.3, -0.4, -0.75)        # tokmak sol elde (havada süzülüyordu)
 	player.free_hold = Vector3(-0.3, -0.42, -0.7)
+	player.stow_hands(true)          # yayma P4: sağ elde kumanda kalmasın
+	# yayma P4: sol el kameraya yakın; güneş gölgesi karda el biçimli gri leke bırakıyordu (bırakılırken de)
+	for g in player.free_hand.find_children("*", "GeometryInstance3D", true, false):
+		(g as GeometryInstance3D).cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
 	Props.cyl(_mallet, 0.03, 0.8, Vector3(0, 0.0, 0), Color("6a4a2c"), Vector3(-60, 0, 0), 6)
 	Props.cyl(_mallet, 0.11, 0.32, Vector3(0, 0.36, -0.2), Color("8a6a44"), Vector3(0, 0, 90), 8)
 	Props.strip_outlines(_mallet)
@@ -262,6 +266,8 @@ func _break_mould() -> void:
 			await get_tree().create_timer(0.12, false).timeout
 	_mallet.queue_free()
 	player.free_hold = Vector3.INF
+	player.free_hand.visible = false   # el aşağı inerken karda gölgesi kalmasın: anında gizlenir
+	player.stow_hands(false)
 	player.frozen = true
 
 

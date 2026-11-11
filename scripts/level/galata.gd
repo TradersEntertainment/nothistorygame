@@ -674,8 +674,20 @@ func _build_rowboat() -> void:
 	Props.box(boat, Vector3(1.2, 0.08, 0.4), Vector3(0, 0.3, 0.8), Color("8a6a44"))
 	var kurekci := Person.new({"coat": Color("3a5a6a"), "pants": Color("3a3a3a"), "hat": "none", "mustache": true, "skin": Color("c89070")})
 	kurekci.position = Vector3(0.0, 0.2, 0.2)
-	kurekci.rotation.y = PI * 0.5
+	kurekci.rotation.y = 0.0          # kıça dönük, kürek başında (yayma P2: yan oturuyordu, küreksizdi)
 	boat.add_child(kurekci)
+	kurekci.set_activity("row")
+	kurekci.rig.row_phase = Rig.ROW_REST
+	var pair: Array = []
+	for sx: float in [-1.0, 1.0]:
+		pair.append([OarGrip.make_oar(boat, Vector3(sx * 0.66, 0.55, 0.7), sx, 0.6, 1.7, 0.03, Vector2(0.45, 0.16), 0.12), "auto"])
+	OarGrip.attach(kurekci, pair, WATER_Y)
+	# Rıhtıma bağlı: baştan babaya halat (babada sargı); suda durgun kayığın çevresinde seyrek halka
+	var bol := Vector3(-16.0, 0.0, 0.9)
+	var bow := boat.position + Vector3(0, 0.45, -1.75)
+	Stage.rope_wrap(self, bol, 0.24, 0.35, 0.6, 3.0)
+	Stage.rope(self, bol + Vector3(0, 0.5, 0.15), bow, 0.35, 0.022)
+	Vfx.wake(boat, WATER_Y, {"stern": Vector3(0, 0, 1.8), "bow": Vector3(0, 0, -1.8), "width": 1.1, "far": 35.0})
 
 
 ## Fatih'in durduğu burun (kıyıdan Haliç'e uzanan dil) ve üstünde birkaç servi
@@ -686,6 +698,22 @@ func _fatih_point() -> void:
 		return maxf(0.3, hc.y + sqrt(maxf(0.0, 196.0 - d2)))
 	Scenery.trees(self, hc * Vector3(1, 0, 1), 4.0, 16.0, 14, [Rect2(-64.0, 28.0, 12.0, 14.0)], west_h, 77)
 	Props.ball(self, 14.0, hc, Color("7a7a5a"), Vector3(1.4, 1.0, 1.0), 10)
+	# Burun karaya bağlı (yayma P2): uzaktan Haliç'in ortasında ağaçlı adacık gibi duruyordu. Burundan Galata'nın batı
+	# kıyısına (−z) alçalan bir dil: yan yana yassı tümsekler, üstünde çimen ve birkaç ağaç (görüntü; yürünen yüzey aynı)
+	var neck: Array = []
+	for k in 5:
+		var t := (k + 1) / 5.0
+		var c := hc.lerp(Vector3(hc.x + 5.0, -12.5, 0.0), t)
+		neck.append(c)
+		Props.ball(self, 13.0, c, Color("7a7a5a").lerp(Color("6a7a4a"), t), Vector3(1.25, 1.0, 1.0), 10)
+	var neck_h := func(x: float, zz: float) -> float:
+		var best := 0.3
+		for c: Vector3 in neck:
+			var d2 := pow((x - c.x) / 1.25, 2.0) + pow(zz - c.z, 2.0)
+			best = maxf(best, c.y + sqrt(maxf(0.0, 169.0 - d2)))
+		return best
+	var mid: Vector3 = neck[2]
+	Scenery.trees(self, mid * Vector3(1, 0, 1), 3.0, 18.0, 10, [Rect2(-64.0, 28.0, 12.0, 14.0)], neck_h, 78)
 	# Fatih'in bastığı düzlük katı (eskiden yalnız görüntüydü: Fatih ve muhafızları çarpışmasız bir kutunun üstünde havadaydı)
 	Props.solid(self, Vector3(8, 0.6, 6), FATIH_POINT + Vector3(0, -0.3, 0), Color("8a8060"))
 
