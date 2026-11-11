@@ -152,8 +152,9 @@ func _hold_ladle() -> void:
 func _spoon_model() -> Node3D:
 	var n := Node3D.new()
 	# Sap avuçta, ön kolun uzantısında; kâse parmakların ötesinde (tadarken ağza gelir)
-	Props.cyl(n, 0.013, 0.26, Vector3(0, -0.1, 0), Color("a07a4e"), Vector3.ZERO, 6)
-	Props.ball(n, 0.045, Vector3(0, -0.25, 0.01), Color("c09a64"), Vector3(1.0, 1.35, 0.5), 8)
+	# Tur 2: aşçının tahta kepçe-kaşığı ~36 cm (eskiden 26 cm; oyuncunun yerinden minikti)
+	Props.cyl(n, 0.017, 0.32, Vector3(0, -0.13, 0), Color("a07a4e"), Vector3.ZERO, 6)
+	Props.ball(n, 0.06, Vector3(0, -0.32, 0.012), Color("c09a64"), Vector3(1.0, 1.3, 0.5), 8)
 	Props.strip_outlines(n)
 	return n
 

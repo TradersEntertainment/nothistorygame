@@ -233,17 +233,22 @@ func _cast() -> void:
 		# Potanın yolunun dışında, kalıbın dış yanında durur (pota ocaktan kalıba gelirken gövdesinin içinden geçmesin)
 		var mp := mold.global_position
 		# Batıdaki iki kalıpta batı yanı (Tolga'nın güneybatıdan baktığı yerden potanın yanında görünür), doğudakinde doğu
-		var side := 1.0 if mp.x > FOUNDRY.x + 0.5 else -1.0
-		await Stage.approach(urban, Vector3(mp.x + side * 0.62, urban.global_position.y, mp.z - 0.25), 0.0, 1.8)
+		# Tur 2: hep batı yanda (Tolga güneybatıdan bakar: Urban potanın yanında görünür); pota L yolunda gelir
+		var side := -1.0
+		await Stage.approach(urban, Vector3(mp.x + side * 0.62, urban.global_position.y, mp.z - 0.2), 0.0, 1.8)
 		Stage.face(urban, Vector3(mp.x, urban.global_position.y, mp.z))
-		Stage.grip_hold(urban, _crucible, [Vector3(side * 0.3, 0.06, -0.16), Vector3(side * 0.3, 0.06, 0.16)], -1.0, 0.12)
 		# Pota kalıbın tam üstüne gelir (eskiden ocak önünde kalıyordu: akış kalıba değmeden havada asılıydı)
 		var home := FOUNDRY + Vector3(0, 1.5, -0.4)
 		var above := Vector3(mold.position.x, home.y, mold.position.z)
-		var tilt := create_tween().set_parallel(true)
-		tilt.tween_property(_crucible, "position", above, _d(0.4))
-		tilt.tween_property(_crucible, "rotation:z", -0.9, _d(0.4))
+		# Ocak direklerinden öne çıkar, kalıbın hizasına kayar, kalıbın üstüne gelir; sonra eğilir
+		var tilt := create_tween()
+		tilt.tween_property(_crucible, "position", Vector3(home.x, home.y, home.z + 0.7), _d(0.15))
+		tilt.tween_property(_crucible, "position", Vector3(above.x, home.y, home.z + 0.7), _d(0.15))
+		tilt.tween_property(_crucible, "position", above, _d(0.15))
+		tilt.tween_property(_crucible, "rotation:z", -0.9, _d(0.25))
 		await tilt.finished
+		_p1_shot("10B_POUR_%d" % i, 0.05)
+		Stage.grip_hold(urban, _crucible, [Vector3(side * 0.3, 0.06, -0.16), Vector3(side * 0.3, 0.06, 0.16)], -1.0, 0.12)
 		_stream.visible = true
 		var top := _crucible.global_position + Vector3(0, 0.1, 0)
 		var bottom := mold.global_position
@@ -975,3 +980,33 @@ func _run_shots() -> void:
 	await _shot("c10b_03_patlama.png")
 	get_tree().paused = false
 	get_tree().quit()
+
+
+## yayma P1 tur 2 kare kancası: yalnız --dialogshots ile; delay sn sonra oyuncu kamerasından (aux verilirse o noktaya
+## bakan yardımcı kameradan) tam boy kare kaydeder. Oyun akışını beklemez, değiştirmez.
+func _p1_shot(n: String, delay := 0.0, aux := Vector3.INF) -> void:
+	if GameState.dialog_shots_dir == "":
+		return
+	if delay > 0.0:
+		await get_tree().create_timer(delay, false).timeout
+	var vp := get_viewport()
+	var old := vp.get_camera_3d()
+	var cam: Camera3D = null
+	if aux != Vector3.INF and old:
+		cam = Camera3D.new()
+		add_child(cam)
+		cam.fov = 40.0
+		cam.global_position = old.global_position
+		cam.look_at(aux, Vector3.UP)
+		cam.current = true
+	await RenderingServer.frame_post_draw
+	if cam:
+		await RenderingServer.frame_post_draw
+	var img := vp.get_texture().get_image()
+	if cam:
+		cam.queue_free()
+		if is_instance_valid(old):
+			old.current = true
+	if img and not img.is_empty():
+		DirAccess.make_dir_recursive_absolute(GameState.dialog_shots_dir)
+		img.save_jpg(GameState.dialog_shots_dir.path_join("P1_" + n + ".jpg"), 0.88)

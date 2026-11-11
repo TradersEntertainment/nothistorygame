@@ -36,6 +36,8 @@ var _rope_peg: Array[Vector3] = []
 var _rope_loose: Array[Node3D] = []
 var _rope_taut: Array[Node3D] = []
 var _rope_knot: Array[Node3D] = []
+var _puddles: Array = []
+var _drip_t := 0.0
 var _gust: Array[float] = [0.0, 0.0, 0.0]
 var _storm_t := 0.0
 var rain: CPUParticles3D
@@ -160,18 +162,18 @@ func _build() -> void:
 		add_child(loose)
 		loose.global_position = top
 		loose.set_meta("base", 0.0)
-		var lr := Stage.rope(loose, Vector3.ZERO, Vector3(0, -0.3, 0), 0.0, 0.028, Color("9a7448"))
+		var lr := Stage.rope(loose, Vector3.ZERO, Vector3(0, -0.3, 0), 0.0, 0.045, Color("c09a68"))      # tur 2: kalın, açık kenevir
 		lr.name = "Rope"
 		_rope_loose.append(loose)
 		_loose_rope_pts(i, 0.0)
 		# Gergin ip: çadırın tepesinden elde/kazıkta (sarkan, burgulu Stage halatı)
-		var taut := Stage.rope(self, to_local(top), to_local(peg + Vector3(0, 0.5, 0)), 0.1, 0.028, Color("9a7448"))
+		var taut := Stage.rope(self, to_local(top), to_local(peg + Vector3(0, 0.5, 0)), 0.1, 0.045, Color("c09a68"))
 		taut.visible = false
 		_rope_taut.append(taut)
 		# Bağlanınca: kazığa sarılmış üç tur ip ve düğüm (kazıkla birlikte çakılır: kazığın çocuğu)
 		var knot := Node3D.new()
 		stake.add_child(knot)
-		var wrap := Stage.rope_wrap(knot, Vector3(0, 0.08, 0), 0.075, 0.0, 0.16, 3.0, 0.026, Color("9a7448"))
+		var wrap := Stage.rope_wrap(knot, Vector3(0, 0.08, 0), 0.085, 0.0, 0.2, 3.0, 0.04, Color("c09a68"))
 		Props.ball(knot, 0.045, (wrap.get_meta("end") as Vector3) + Vector3(0.02, 0.0, 0.0), Color("7a5a34"), Vector3(1.3, 1.0, 1.0), 6)
 		knot.set_meta("end", wrap.get_meta("end"))
 		knot.visible = false
@@ -503,9 +505,13 @@ func _storm() -> void:
 
 
 func _auto_ropes() -> void:
+	_p1_shot("24O_LOOSE")
 	for i in 3:
+		_rope(i, 0.6)                 # ip çekilirken (yalnız görüntü; bağlama yine _tie)
+		_p1_shot("24O_PULL_%d" % i, 0.1)
 		await get_tree().create_timer(0.3, false).timeout
 		_tie(i)
+		_p1_shot("24O_TIED_%d" % i, 0.25)
 
 
 func _world_env() -> WorldEnvironment:
@@ -660,6 +666,12 @@ func _ending() -> void:
 
 func _process(delta: float) -> void:
 	_t += delta
+	if phase == "storm" and not _puddles.is_empty():
+		_drip_t -= delta
+		if _drip_t <= 0.0:
+			_drip_t = 0.12
+			var pp: Vector3 = _puddles[randi() % _puddles.size()] + Vector3(randf_range(-0.4, 0.4), 0, randf_range(-0.3, 0.3))
+			Vfx.water_ring(self, pp, pp.y, 0.03, 0.28, 0.8, 0.5)
 	if phase == "storm":
 		var worst := 0.0
 		for i in 3:
@@ -709,6 +721,16 @@ func _wet_ground() -> void:
 	Nature.ground_detail(self, area, "camp_mud", 0.22, 2431, _ground_y)
 	Nature.ground_detail(self, area, "grease", 0.05, 2432, _ground_y)
 	Nature.ground_detail(self, area, "footprint", 0.12, 2433, _ground_y)
+	# Parlak ince su birikintileri (Tolga'nın baktığı yerde, çadırla arası) ve üstlerine düşen damlaların halkaları (_process)
+	var rng := RandomNumberGenerator.new()
+	rng.seed = 2434
+	_puddles.clear()
+	for k in 9:
+		var p := _gy(Vector3(rng.randf_range(-32.5, -27.0), 0, rng.randf_range(-12.0, -6.5)))
+		if Vector2(p.x - TENTS[0].x, p.z - TENTS[0].z).length() < 2.2:
+			continue
+		Vfx.wet_mark(self, p + Vector3(0, 0.02, 0), rng.randf() * TAU, false, 9999.0, rng.randf_range(1.6, 2.8), true)
+		_puddles.append(p + Vector3(0, 0.03, 0))
 
 
 ## Tolga konuşacağı kişinin dibine yürür (eşya elden ele geçsin; 1 m'ye).
@@ -880,3 +902,33 @@ func _run_shots() -> void:
 	await get_tree().create_timer(0.3, false).timeout
 	await _shot_png("c24o_cover.png")
 	get_tree().quit()
+
+
+## yayma P1 tur 2 kare kancası: yalnız --dialogshots ile; delay sn sonra oyuncu kamerasından (aux verilirse o noktaya
+## bakan yardımcı kameradan) tam boy kare kaydeder. Oyun akışını beklemez, değiştirmez.
+func _p1_shot(n: String, delay := 0.0, aux := Vector3.INF) -> void:
+	if GameState.dialog_shots_dir == "":
+		return
+	if delay > 0.0:
+		await get_tree().create_timer(delay, false).timeout
+	var vp := get_viewport()
+	var old := vp.get_camera_3d()
+	var cam: Camera3D = null
+	if aux != Vector3.INF and old:
+		cam = Camera3D.new()
+		add_child(cam)
+		cam.fov = 40.0
+		cam.global_position = old.global_position
+		cam.look_at(aux, Vector3.UP)
+		cam.current = true
+	await RenderingServer.frame_post_draw
+	if cam:
+		await RenderingServer.frame_post_draw
+	var img := vp.get_texture().get_image()
+	if cam:
+		cam.queue_free()
+		if is_instance_valid(old):
+			old.current = true
+	if img and not img.is_empty():
+		DirAccess.make_dir_recursive_absolute(GameState.dialog_shots_dir)
+		img.save_jpg(GameState.dialog_shots_dir.path_join("P1_" + n + ".jpg"), 0.88)

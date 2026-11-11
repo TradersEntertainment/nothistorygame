@@ -266,40 +266,48 @@ func _illuminate() -> void:
 		# Hale alevin boyunu pek aşmaz: çadırların ardındaki ateşin halesi gökte asılı top gibi görünmesin
 		halos.append(Transform3D(Basis().scaled(Vector3.ONE * h * 0.95), p3 + Vector3(0, h * 0.35, 0)))
 		embers.append(Transform3D(Basis().scaled(Vector3(k3, 1, k3)), p3 + Vector3(0, 0.12, 0)))
-	# Ateş yatağı (yayma P1): taş halka, kül yatağı ve ortada kor yığını (eskiden yerde parlayan düz turuncu bir disk,
-	# yakından bakınca ateşin altında levha gibiydi). Her biri tek çoklu ağ.
-	var ember := CylinderMesh.new()
-	ember.top_radius = 0.16
-	ember.bottom_radius = 0.55
-	ember.height = 0.24
-	ember.radial_segments = 8
-	var em := StandardMaterial3D.new()
-	em.albedo_color = Color("2a1a12")
-	em.emission_enabled = true
-	em.emission = Color("ff4a10")
-	em.emission_energy_multiplier = 0.9
-	Scenery.scatter(self, ember, embers, [], em).cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
-	var bed := CylinderMesh.new()
-	bed.top_radius = 0.9
-	bed.bottom_radius = 1.0
-	bed.height = 0.05
-	bed.radial_segments = 10
-	var beds: Array = []
-	var bed_c: Array = []
+	# Ateş yatağı (yayma P1 tur 2): yumuşak kenarlı kül yatağı, üstünde üç boyutlu kömür yığını (koyu, ışımaz), aralarına
+	# gömülü küçük kor parçaları (loş), çevresinde yarı gömülü taş halka. Parlaklık alevin kendisinden gelir. (Eskiden yerde
+	# parlayan düz turuncu bir disk vardı: yakından lav gölü gibiydi.) Her tür tek çoklu ağ.
+	var ash: Array = []
+	var ash_c: Array = []
+	var coals: Array = []
+	var coal_c: Array = []
+	var kor: Array = []
 	var stones: Array = []
 	var stone_c: Array = []
 	for x: Transform3D in embers:
 		var k3 := x.basis.get_scale().x
-		var o := x.origin - Vector3(0, 0.1, 0)
-		beds.append(Transform3D(Basis().scaled(Vector3(k3, 1.0, k3)), o))
-		bed_c.append(Color("3a3632").lerp(Color("5a5450"), rng.randf()))
-		for s in 9:
-			var a4 := s * TAU / 9.0 + rng.randf_range(-0.15, 0.15)
-			var ss := rng.randf_range(0.16, 0.24) * k3
-			stones.append(Transform3D(Basis(Vector3.UP, rng.randf() * TAU).scaled(Vector3(ss * 1.3, ss, ss)),
-				o + Vector3(cos(a4), 0, sin(a4)) * 1.0 * k3 + Vector3(0, ss * 0.25, 0)))
+		var o := x.origin - Vector3(0, 0.12, 0)
+		ash.append(Transform3D(Basis(Vector3.UP, rng.randf() * TAU).scaled(Vector3(2.0 * k3, 1.0, 2.0 * k3)), o + Vector3(0, 0.02, 0)))
+		ash_c.append(Color("4a4642").lerp(Color("6e6a64"), rng.randf()))
+		for c in 16:
+			var ra := sqrt(rng.randf()) * 0.5 * k3
+			var aa := rng.randf() * TAU
+			var cs := rng.randf_range(0.16, 0.3) * k3
+			coals.append(Transform3D(Basis.from_euler(Vector3(rng.randf() * TAU, rng.randf() * TAU, rng.randf() * TAU)).scaled(Vector3(cs * 1.4, cs * 0.8, cs)),
+				o + Vector3(cos(aa) * ra, 0.03 + (0.22 * k3) * (1.0 - ra / (0.5 * k3)) * rng.randf_range(0.5, 1.0), sin(aa) * ra)))
+			coal_c.append(Color("1c1916").lerp(Color("3a332c"), rng.randf()))
+		for c in 6:
+			var ra2 := sqrt(rng.randf()) * 0.4 * k3
+			var aa2 := rng.randf() * TAU
+			var ks := rng.randf_range(0.1, 0.17) * k3
+			kor.append(Transform3D(Basis(Vector3.UP, rng.randf() * TAU).scaled(Vector3(ks, ks * 0.7, ks)),
+				o + Vector3(cos(aa2) * ra2, 0.03 + 0.06 * k3, sin(aa2) * ra2)))
+		for st in 10:
+			var a4 := st * TAU / 10.0 + rng.randf_range(-0.12, 0.12)
+			var ss := rng.randf_range(0.22, 0.32) * k3
+			stones.append(Transform3D(Basis.from_euler(Vector3(rng.randf_range(-0.3, 0.3), rng.randf() * TAU, rng.randf_range(-0.3, 0.3))).scaled(Vector3(ss * 1.3, ss, ss)),
+				o + Vector3(cos(a4), 0, sin(a4)) * 0.85 * k3 + Vector3(0, ss * 0.3, 0)))
 			stone_c.append(Color("6a6660").lerp(Color("8e8a82"), rng.randf()))
-	Scenery.scatter(self, bed, beds, bed_c, Nature._detail()).cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
+	Scenery.scatter(self, Nature.detail_mesh("ash"), ash, ash_c, Nature._soft(false)).cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
+	Scenery.scatter(self, Nature.rock(2), coals, coal_c, Nature.rock_material()).cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
+	var km := StandardMaterial3D.new()
+	km.albedo_color = Color("3a1a0e")
+	km.emission_enabled = true
+	km.emission = Color("ff5a18")
+	km.emission_energy_multiplier = 0.55
+	Scenery.scatter(self, Nature.rock(0), kor, [], km).cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
 	Scenery.scatter(self, Nature.rock(1), stones, stone_c, Nature.rock_material()).cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
 	Flame.scatter_flames(self, flames, 1.7)
 	Flame.scatter_glows(self, halos, 0.32, Color("ffc070"), Color("ff6a18"))
@@ -498,12 +506,16 @@ func _build_kitchen() -> void:
 	if Kit.has_food():
 		# Hazır yiyecekler (Quaternius Ultimate Food, CC0): ekmek, patlıcan, şalgam, tavuk budu, tabaklar, bıçak
 		var goods := ["Bread", "Bread", "Eggplant", "Eggplant", "Turnip", "Carrot", "Mushroom", "Turnip"]
+		# Kadri'nin önü (kesme tahtası, tezgâhın ortası) açık kalır: mallar iki yana (yayma P1 tur 2: tahta önündeki
+		# patlıcanların ardında kalıyordu)
+		var gx := [-1.38, -1.08, -0.78, 0.48, 0.76, 1.04, -1.23, 0.62]
 		for i in 8:
-			Kit.food(self, goods[i], c + Vector3(-1.3 + i * 0.36, 0.9, 1.35 + (i % 2) * 0.12), i * 0.7)
+			Kit.food(self, goods[i], c + Vector3(gx[i], 0.9, 1.35 + (i % 2) * 0.12), i * 0.7)
 		Kit.food(self, "Knife", c + Vector3(1.3, 0.9, 1.6), 0.4)
 		for i in 3:
-			Kit.food(self, "Plate", c + Vector3(-1.0 + i * 0.5, 0.9, 1.72), 0.0)
-			Kit.food(self, ["ChickenLeg", "Bread_Slice", "Fish"][i], c + Vector3(-1.0 + i * 0.5, 0.92, 1.72), i * 1.3)
+			var px: float = [-1.05, -0.6, 0.6][i]
+			Kit.food(self, "Plate", c + Vector3(px, 0.9, 1.72), 0.0)
+			Kit.food(self, ["ChickenLeg", "Bread_Slice", "Fish"][i], c + Vector3(px, 0.92, 1.72), i * 1.3)
 		# Ocak başında tencereler ve tava
 		Kit.food(self, "CookingPot2_Soup", c + Vector3(2.1, 0, 0.3), 0.3)
 		Kit.food(self, "CookingPot", c + Vector3(2.25, 0, 0.85), 1.1)
@@ -528,7 +540,8 @@ func _build_kitchen() -> void:
 	add_child(kadri)
 	kadri.set_activity("chop")
 	# Satır elde, önünde tezgâhta kesme tahtası ve doğranan soğan (eskiden eli boş havayı doğruyordu; yayma P1)
-	kadri.give_tool("cleaver")
+	# Satır: kasap satırı (31 cm; ağzın en alt noktası tahta yüzünün ~5 cm altına iner: doğrarken tahtaya gömülür)
+	kadri.give_tool("cleaver", {"scale": 1.1})
 	# (Tahta, soğan, kütük ve odunlar tek birleşik ağ: Dressing; çizim sayısı artmasın)
 	var dk := Dressing.new(458)
 	dk.at(Vector3.ZERO, 0.0)
@@ -663,21 +676,21 @@ func _build_artillery() -> void:
 	urban.scale = Vector3(1.2, 1.1, 1.2)
 	add_child(urban)
 	urban.set_activity("hammer")
-	urban.give_tool("hammer")
+	urban.give_tool("hammer", {"scale": 1.35})        # demirci çekici (~45 cm sap)
 	# Önünde örs (kütük üstünde): kalıbın demir kuşağını döver; örsün üstünde kızgın demir şerit (eskiden çekiçsiz,
 	# önü boştu: havayı dövüyordu; yayma P1)
 	# Çekicin indiği yer (sonda: başın en alt noktası Urban'ın 0,47 m sağında, 0,97 m önünde, 1,10 m'de; Urban iri):
 	# kalın kütüğün üstünde örs, yüzü 1,08 m'de
-	var anvil := urban.position + Vector3(0.45, 0, 0.95)
+	var anvil := urban.position + Vector3(0.43, 0, 1.1)      # tur 2: büyük çekiçle başın indiği yer 1,29 m
 	var da := Dressing.new(617)
 	da.at(Vector3.ZERO, 0.0)
-	da.cyl(0.3, 0.84, anvil + Vector3(0, 0.42, 0), Color("5a3e26"), Vector3.ZERO, 9)      # katı değil: yol değişmesin
-	da.cyl(0.28, 0.02, anvil + Vector3(0, 0.845, 0), Color("a88660"), Vector3.ZERO, 9)
-	da.box(Vector3(0.42, 0.16, 0.2), anvil + Vector3(0, 0.92, 0), Color("3a3a3e"))
-	da.box(Vector3(0.3, 0.07, 0.14), anvil + Vector3(0, 1.035, 0), Color("4a4a50"))
-	da.prism(Vector3(0.12, 0.1, 0.14), anvil + Vector3(0.27, 1.02, 0), Color("4a4a50"), Vector3(0, 0, -90))
+	da.cyl(0.3, 1.03, anvil + Vector3(0, 0.515, 0), Color("5a3e26"), Vector3.ZERO, 9)      # katı değil: yol değişmesin
+	da.cyl(0.28, 0.02, anvil + Vector3(0, 1.035, 0), Color("a88660"), Vector3.ZERO, 9)
+	da.box(Vector3(0.42, 0.16, 0.2), anvil + Vector3(0, 1.11, 0), Color("3a3a3e"))
+	da.box(Vector3(0.3, 0.07, 0.14), anvil + Vector3(0, 1.225, 0), Color("4a4a50"))
+	da.prism(Vector3(0.12, 0.1, 0.14), anvil + Vector3(0.27, 1.21, 0), Color("4a4a50"), Vector3(0, 0, -90))
 	da.build(self)
-	var bar := Props.box(self, Vector3(0.36, 0.025, 0.05), anvil + Vector3(-0.02, 1.083, 0.01), Color("ff7a2a"), Vector3(0, 12, 0))
+	var bar := Props.box(self, Vector3(0.36, 0.025, 0.05), anvil + Vector3(-0.02, 1.273, 0.01), Color("ff7a2a"), Vector3(0, 12, 0))
 	bar.material_override = Props.mat(Color("ff6a1a"), 1.8, false, "", false)
 	urban.set_meta("spk", "SPK_URBAN")
 	# Macar elçisi ve Topçubaşı Saruca (yan sahne)
@@ -1047,83 +1060,102 @@ func _build_mud() -> void:
 	var hf := func(x: float, z: float) -> float: return CampDay.height(x, z)
 	var area := Rect2(-38.0, -64.0, 76.0, 98.0)
 	var seed := 611
-	for kd: Array in [["camp_mud", 0.11], ["footprint", 0.32], ["straw", 0.5], ["ash", 0.6], ["coal", 1.6], ["chips", 0.6]]:
+	for kd: Array in [["camp_mud", 0.08], ["footprint", 0.2], ["straw", 0.5], ["ash", 0.6], ["coal", 1.6], ["chips", 0.6]]:
 		var kind: String = kd[0]
 		var dmax: float = kd[1]
 		var keep := func(x: float, z: float) -> bool: return CampDay._wear_pick(x, z, kind, dmax)
 		Nature.ground_detail(self, area, kind, dmax, seed, hf, keep, 6000)
 		seed += 1
-	# Otağ yolu: iki tekerlek izi (erzak arabaları mutfağa iner) ve atlıların izi
-	Nature.trail(self, [Vector3(0.2, 0, -59.0), Vector3(0.2, 0, -27.0), Vector3(-1.5, 0, -14.0), Vector3(-6.0, 0, -4.2),
-		Vector3(-10.5, 0, -2.6)], "wheel_ruts", hf, 1.0, 621)
+	# Atlıların izi (yönlü, seyrek)
 	Nature.trail(self, [Vector3(-0.9, 0, -60.0), Vector3(-0.9, 0, -26.0), Vector3(1.2, 0, -12.0), Vector3(4.5, 0, 2.0),
-		Vector3(8.5, 0, 14.0), Vector3(12.0, 0, 24.0)], "hoofprint", hf, 0.75, 622, 0.4)
+		Vector3(8.5, 0, 14.0), Vector3(12.0, 0, 24.0)], "hoofprint", hf, 1.1, 622, 0.55)
 	_far_wear()
 
 
-## Kuşbakışı ölçeği (43o drone, 30 m): bütün ordugâh ızgarasında (±88 m) 2,5-6 m'lik koyu çiğnenmiş toprak yamaları:
-## yollar, meydan ve çadır araları boyunca yoğun, açık arazide seyrek (gürültüyle öbek öbek). Yamaç eğimine yatık, tek
-## çoklu ağ. Eskiden yukarıdan bütün ordugâh tek renk düz yeşil düzlüktü.
+## Yol ağı ve tekerlek izleri (yayma P1 tur 2; tek ağ, tek çizim): otağdan güneye inen ana yol, doğu-batı yolu, ordugâhın
+## çevre yolu ve dışarı açılan dört çapraz yol: düzensiz genişlikte (3-7 m), kenarı zemine karışan açık renkli çiğnenmiş
+## toprak; kuşbakışında (43o) çadır denizinin içinden geçen yollar olarak okunur. Erzak arabalarının otağ yolundan mutfağa
+## inen iki tekerlek izi sürekli, kenarı yumuşak koyu şerit (eskiden noktalı iki dizi). Noktalar arazinin kendisinden
+## (CampDay.height) alınır, 1 m'de bir: yamaçta yüzeye oturur. (Eskiden 4-8 m'lik koyu yamalar düzenli serpiliyordu.)
 func _far_wear() -> void:
-	var rng := RandomNumberGenerator.new()
-	rng.seed = 631
+	var st := SurfaceTool.new()
+	st.begin(Mesh.PRIMITIVE_TRIANGLES)
 	var nz := FastNoiseLite.new()
 	nz.seed = 632
-	nz.frequency = 0.035
-	var xs: Array = []
-	var cs: Array = []
-	var c0 := Color("3e3022")
-	var c1 := Color("5e4a34")
-	for i in 2600:
-		var x := rng.randf_range(GRID_X0 + 2.0, GRID_X0 + GRID_N * GRID_STEP - 2.0)
-		var z := rng.randf_range(GRID_Z0 + 2.0, GRID_Z0 + GRID_N * GRID_STEP - 2.0)
-		var w := _wear_w(x, z, "far_mud") * 12.0 + clampf(nz.get_noise_2d(x, z) * 1.6, 0.0, 0.8)
-		# Çadır sıraları arasındaki ana yollar (otağdan dört yöne ve çevre yolu)
-		var ring := absf(Vector2(x, z + 10.0).length() - 46.0) < 3.0
-		if ring or absf(x) < 3.5 or absf(z + 4.0) < 3.0:
-			w = maxf(w, 0.75)
-		if absf(x) < 36.0 and z > -64.0 and z < 32.0:
-			w *= 0.35             # yakın ayrıntının olduğu yerde (meydan, yollar) iri yama az: yerden bakınca kaba durmasın
-		if rng.randf() > w:
-			continue
-		var y := CampDay.height(x, z)
-		var dx := CampDay.height(x + 1.5, z) - CampDay.height(x - 1.5, z)
-		var dz := CampDay.height(x, z + 1.5) - CampDay.height(x, z - 1.5)
-		if absf(dx) > 1.2 or absf(dz) > 1.2:
-			continue                 # dik yamaç: yama kenarı havada kalmasın
-		var nrm := Vector3(-dx / 3.0, 1.0, -dz / 3.0).normalized()
-		var b := Basis(Vector3.UP, rng.randf() * TAU)
-		var ax := Vector3.UP.cross(nrm)
-		if ax.length() > 0.0001:
-			b = Basis(ax.normalized(), Vector3.UP.angle_to(nrm)) * b
-		var sz := rng.randf_range(2.5, 6.0)
-		xs.append(Transform3D(b * Basis.from_scale(Vector3(sz * rng.randf_range(0.8, 1.3), 1.0, sz)), Vector3(x, y + 0.03, z)))
-		cs.append(c0.lerp(c1, rng.randf()))
-	# Izgaranın ötesi (dünyanın ordugâhı, uçuşta görünen geniş çadır denizi): seyrek, daha büyük öbekler
-	for i in 3000:
-		var x := rng.randf_range(-230.0, 230.0)
-		var z := rng.randf_range(-300.0, 150.0)
-		if x > GRID_X0 and x < GRID_X0 + GRID_N * GRID_STEP and z > GRID_Z0 and z < GRID_Z0 + GRID_N * GRID_STEP:
-			continue
-		if rng.randf() > clampf(nz.get_noise_2d(x * 0.6, z * 0.6) * 1.8 + 0.15, 0.0, 0.8):
-			continue
-		var y := CampDay.height(x, z)
-		var dx := CampDay.height(x + 2.0, z) - CampDay.height(x - 2.0, z)
-		var dz := CampDay.height(x, z + 2.0) - CampDay.height(x, z - 2.0)
-		if absf(dx) > 1.0 or absf(dz) > 1.0:
-			continue
-		var nrm := Vector3(-dx / 4.0, 1.0, -dz / 4.0).normalized()
-		var b := Basis(Vector3.UP, rng.randf() * TAU)
-		var ax := Vector3.UP.cross(nrm)
-		if ax.length() > 0.0001:
-			b = Basis(ax.normalized(), Vector3.UP.angle_to(nrm)) * b
-		var sz := rng.randf_range(4.0, 8.0)
-		xs.append(Transform3D(b * Basis.from_scale(Vector3(sz * rng.randf_range(0.8, 1.4), 1.0, sz)), Vector3(x, y + 0.05, z)))
-		cs.append(c0.lerp(c1, rng.randf()).lerp(Color("6a5a3a"), 0.3))
-	var mi := Scenery.scatter(self, Nature.detail_mesh("camp_mud"), xs, cs, Nature._soft(false))
+	nz.frequency = 0.05
+	var road := Color("a08a62")
+	var ring: Array = []
+	for k in 33:
+		var a := TAU * k / 32.0
+		ring.append(Vector3(sin(a) * 46.0, 0, cos(a) * 46.0 - 10.0))
+	var roads: Array = [
+		[[Vector3(0, 0, -150), Vector3(-3, 0, -105), Vector3(0, 0, -70)], 4.0],
+		[[Vector3(0, 0, -56), Vector3(0, 0, -26), Vector3(0, 0, 4), Vector3(1, 0, 20), Vector3(3, 0, 60), Vector3(-2, 0, 100), Vector3(4, 0, 145)], 5.5],
+		[[Vector3(-4, 0, -4), Vector3(-30, 0, -2), Vector3(-62, 0, 5), Vector3(-110, 0, 0), Vector3(-160, 0, 9), Vector3(-215, 0, 4)], 4.5],
+		[[Vector3(4, 0, -4), Vector3(30, 0, -7), Vector3(66, 0, -1), Vector3(118, 0, 7), Vector3(165, 0, -2), Vector3(215, 0, 3)], 4.5],
+		[ring, 3.6],
+		[[Vector3(-33, 0, -42), Vector3(-70, 0, -88), Vector3(-118, 0, -140), Vector3(-160, 0, -200)], 3.4],
+		[[Vector3(33, 0, -42), Vector3(72, 0, -86), Vector3(115, 0, -142), Vector3(158, 0, -205)], 3.4],
+		[[Vector3(-33, 0, 22), Vector3(-66, 0, 58), Vector3(-104, 0, 100)], 3.2],
+		[[Vector3(33, 0, 22), Vector3(68, 0, 56), Vector3(100, 0, 104)], 3.2],
+	]
+	var i := 0
+	for rd: Array in roads:
+		_ribbon(st, rd[0], float(rd[1]), road, 0.7, nz, 1.0, Vector3.ZERO, 640 + i * 17)
+		i += 1
+	# Tekerlek izleri: otağ yolundan mutfağa
+	var cart := [Vector3(0.2, 0, -59.0), Vector3(0.2, 0, -27.0), Vector3(-1.5, 0, -14.0), Vector3(-6.0, 0, -4.2), Vector3(-10.5, 0, -2.6)]
+	for sx: float in [-0.65, 0.65]:
+		_ribbon(st, cart, 0.32, Color("4a3826"), 0.55, nz, 0.4, Vector3(sx, 0, 0), 700 + int(sx * 10.0))
+	var mi := MeshInstance3D.new()
+	mi.name = "Roads"
+	mi.mesh = st.commit()
+	mi.material_override = Nature._soft(false)
+	mi.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
 	mi.set_meta("no_walk", true)
 	mi.set_meta("soft", true)
-	mi.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
+	add_child(mi)
+
+
+## Şerit: path (yerel, y yok sayılır) boyunca step m'de bir örnek; genişlik w (gürültüyle 0,6-1,4 kat), yanlara savrulma;
+## orta çizgi alfa a (yakın ayrıntı alanında daha az), iki kenar 0. side: yolun soluna göre kaydırma (x: yan, tekerlek izi).
+func _ribbon(st: SurfaceTool, path: Array, w: float, col: Color, a: float, nz: FastNoiseLite, step: float, side: Vector3, seed: int) -> void:
+	var pts: Array = []
+	for k in path.size() - 1:
+		var p0: Vector3 = path[k]
+		var p1: Vector3 = path[k + 1]
+		var n := maxi(1, int(Vector2(p1.x - p0.x, p1.z - p0.z).length() / step))
+		for j in n:
+			pts.append(p0.lerp(p1, float(j) / n))
+	pts.append(path[path.size() - 1])
+	var prev: Array = []
+	for k in pts.size():
+		var p: Vector3 = pts[k]
+		var q: Vector3 = pts[mini(k + 1, pts.size() - 1)]
+		var o: Vector3 = pts[maxi(k - 1, 0)]
+		var d := Vector3(q.x - o.x, 0, q.z - o.z).normalized()
+		var lat := Vector3(-d.z, 0, d.x)
+		var t := float(seed) * 13.1
+		var c := p + lat * (side.x + nz.get_noise_2d(p.x * 0.7 + t, p.z * 0.7) * (0.06 if w < 1.0 else w * 0.35))
+		var hw := w * 0.5 * clampf(1.0 + nz.get_noise_2d(p.x * 1.3, p.z * 1.3 + t) * 0.8, 0.55, 1.45)
+		var near := absf(c.x) < 36.0 and c.z > -64.0 and c.z < 32.0 and w > 1.0
+		var ca := a * (0.4 if near else 1.0) * (1.0 if k > 0 and k < pts.size() - 1 else 0.0)
+		var cc := col.lerp(col.darkened(0.12), nz.get_noise_2d(p.x * 3.0, p.z * 3.0 + t) * 0.5 + 0.5)
+		var lift := 0.05 if w > 1.0 else 0.06
+		var row: Array = []
+		for f: float in [-1.0, -0.45, 0.0, 0.45, 1.0]:
+			var v := c + lat * (hw * f)
+			v.y = CampDay.height(v.x, v.z) + lift
+			var al := ca * (1.0 - absf(f)) * (1.0 if absf(f) < 0.9 else 0.0)
+			row.append([v, Color(cc.r, cc.g, cc.b, clampf(al * 1.3, 0.0, 1.0))])
+		if not prev.is_empty():
+			for f in 4:
+				for tri: Array in [[prev[f], prev[f + 1], row[f]], [prev[f + 1], row[f + 1], row[f]]]:
+					for vv: Array in tri:
+						st.set_color(vv[1])
+						st.set_normal(Vector3.UP)
+						st.add_vertex(vv[0])
+		prev = row
 
 
 ## Zemin aşınmasının yere göre yoğunluğu (adet/m²): ground_detail'in keep'i, dmax ile seyreltir (her tür tek çağrı).

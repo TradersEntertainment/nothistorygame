@@ -151,11 +151,17 @@ func _build() -> void:
 		dd.box(Vector3(0.6, 0.12, 0.14), Vector3(cos(a) * 0.5, 0.08, sin(a) * 0.5), Color("4a3020"), Vector3(0, -rad_to_deg(a), 0))
 	dd.build(self)
 	Scenery.smoke_column(self, Vector3(-15.0, 0.8, -22.0), false)
-	var men: Array = []
-	for spec in [[Vector3(12.8, 0.3, -21.2), PI], [Vector3(-13.8, 0.3, -21.0), PI * 0.2], [Vector3(15.2, 0.3, -9.4), -1.2],
-			[Vector3(-12.4, 0.3, -10.8), 0.8], [Vector3(-10.5, 0.3, -18.0), 2.4]]:
-		men.append([Transform3D(Basis(Vector3.UP, spec[1]), spec[0]), [Color("8a6a4a"), Color("6a4a3a"), Color("7a5a3a")][men.size() % 3]])
-	Horn.figures(self, men, true)      # çalışma alanının içindeki işçiler: içlerinden geçilmesin
+	# Çalışma alanının içindeki işçiler: her biri malzemesinin başında işinde (yayma P2: donuk dikilen figürlerdi).
+	# Yerleri ve engelleri aynı (içlerinden geçilmez: eski Crowd katısı boyunda görünmez kutu).
+	var flat := func(_x: float, _z: float) -> float: return GROUND_Y
+	for spec in [[Vector3(12.8, 0.3, -21.2), Vector3(-0.3, 0, -1), "hammer_log"], [Vector3(-13.8, 0.3, -21.0), Vector3(-0.6, 0, -1), "coil_rope"],
+			[Vector3(15.2, 0.3, -9.4), Vector3(-1, 0, 0.2), "saw_log"], [Vector3(-12.4, 0.3, -10.8), Vector3(-0.5, 0, 1), "hammer_log"],
+			[Vector3(-10.5, 0.3, -18.0), Vector3(0.6, 0, -1), "carry_barrel"]]:
+		Stage.station(self, spec[2], spec[0], spec[1], {"ground": flat, "coat": [Color("8a6a4a"), Color("6a4a3a"), Color("7a5a3a")][int(absf(spec[0].x)) % 3],
+			"hat": "turban", "person": false, "live": spec[2] in ["coil_rope", "carry_barrel"]})      # tokmak/testere: donuk figür (çizim bütçesi)
+		var sb := Props.solid(self, Vector3(0.5, 1.8, 0.44), spec[0] + Vector3(0, 0.9, 0), Color.WHITE)
+		sb.get_child(0).visible = false
+		sb.set_meta("no_climb", true)
 	# Alanın iki yanı (x 27..60, kıyı düzlüğü): köprü malzemesi yığınları ve başında işçiler, fıçı taşıyan sıralar,
 	# kıyıda seyreden sancaklı bölükler. Kıyı ordugâhı (Horn) buradan sonra başlar; arası boş kalmasın.
 	var sd := Dressing.new(1803)
@@ -335,11 +341,39 @@ func _build() -> void:
 	Props.cyl(cannon, 0.42, 0.3, Vector3(0, 0.85, 1.65), Color("7a4e1e"), Vector3(90, 0, 0), 12)
 	for sx: float in [-0.75, 0.75]:
 		Props.cyl(cannon, 0.35, 0.12, Vector3(sx, 0.35, -0.9), Color("3a2a1c"), Vector3(0, 0, 90), 10)
+	# Kundağın kuyruğunda itme sırığı (yayma P2): işçilerin elleri buna dayanır (havaya itiyorlardı)
+	Props.cyl(cannon, 0.055, 2.2, Vector3(0, 0.98, -1.95), Color("6a4a2c"), Vector3(0, 0, 90), 7)
+	for sx: float in [-0.45, 0.45]:
+		Props.box(cannon, Vector3(0.1, 0.12, 0.6), Vector3(sx, 0.92, -1.68), Color("5a3e26"), Vector3(-40, 0, 0))
+	_build_shore()
 	_gauge = Control.new()
 	_gauge.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
 	_gauge.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	_gauge.draw.connect(_draw_gauge)
 	hud.add_child(_gauge)
+
+
+## Kıyı (yayma P2): toprak şev suya keskin bir kenarla iniyordu, çalışma alanı tek renk düz topraktı. Şevin su
+## yüzünde ıslak koyu bant, yosun ve köpük çizgisi (quay_band: dik kenar); şevin üstünde ıslak leke, kıyıya vurmuş
+## yosun, çakıl; çalışma alanında çiğnenmiş çamur, ayak izi, talaş, köprü yolunda tekerlek izi. Hepsi çarpışmasız.
+func _build_shore() -> void:
+	var edge := SHORE_Z + 3.2         # şev kutusunun su yüzü (z), su yerelde y 0
+	var keep_path := func(x: float, z: float) -> bool: return absf(x) > 2.8 or z < SHORE_Z - 3.2
+	Nature.quay_band(self, Vector3(-60.0, 0, edge), Vector3(60.0, 0, edge), Vector3(0, 0, 1), 0.0, 1811, 0.3)
+	# Şevin üstü (y ≈ 0,27 su kenarında; içeride kıyı zemininin altına iner): su kenarına yakın ıslak bant
+	var bank := func(_x: float, z: float) -> float:
+		return -0.3 + 0.297 + (z - (SHORE_Z + 1.2)) * 0.139 + 0.012
+	var on_bank := func(x: float, z: float) -> bool: return absf(x) > 2.8 and z > SHORE_Z + 1.4
+	Nature.ground_detail(self, Rect2(-58.0, SHORE_Z + 1.4, 116.0, 1.7), "wet", 0.5, 1813, bank, on_bank)
+	Nature.ground_detail(self, Rect2(-58.0, SHORE_Z + 2.3, 116.0, 0.8), "wrack", 0.35, 1814, bank, on_bank)
+	Nature.ground_detail(self, Rect2(-58.0, SHORE_Z + 1.4, 116.0, 1.7), "pebble", 0.8, 1815, bank, on_bank)
+	# Kıyı zemini (y 0,3): şeve yakın çakıl ve ıslak lekeler, çalışma alanında çamur, iz, talaş
+	var flat := func(_x: float, _z: float) -> float: return GROUND_Y
+	var area := Rect2(-24.0, -30.0, 48.0, 29.6)
+	Nature.ground_detail(self, area, "mud", 0.05, 1816, flat, keep_path)
+	Nature.ground_detail(self, area, "footprint", 0.12, 1817, flat, keep_path)
+	Nature.ground_detail(self, Rect2(8.0, -24.0, 12.0, 18.0), "chips", 0.6, 1818, flat)
+	Nature.trail(self, [Vector3(6.0, 0, SHORE_Z - 4.0), Vector3(2.0, 0, SHORE_Z - 3.6), Vector3(0.0, 0, SHORE_Z - 3.2)], "wheel_ruts", flat)
 
 
 ## Yığınlar ve bağ noktası: köprünün ucuna taşınır. İlk yerleşimden sonra her bölümde yürüyerek/taşınarak gelirler
@@ -352,6 +386,13 @@ func _glide(n: Node3D, to: Vector3) -> void:
 		n.position = to
 		return
 	var tw := n.create_tween()
+	if n is Person or n is Soldier:
+		# Kişiler rampadan iskeleye yürür: her adımda ayak rampanın üstünde (düz çizgide rampaya gömülüyordu)
+		var from := n.position
+		tw.tween_method(func(t: float):
+			var q := from.lerp(to, t)
+			n.position = Vector3(q.x, _deck_y(q.z) if absf(q.x) < 2.3 else q.y, q.z), 0.0, 1.0, 1.3).set_trans(Tween.TRANS_SINE)
+		return
 	tw.tween_property(n, "position", to, 1.3).set_trans(Tween.TRANS_SINE)
 
 
@@ -474,22 +515,100 @@ func _hand_work(at: Vector3, secs := 0.7) -> void:
 
 
 func _do_barrels() -> void:
-	_hand_work(_pile_barrel.global_position + Vector3(0, 0.6, 0))
 	var s := sections[built]
 	var b: Node3D = s.get_node("Barrels")
-	b.visible = true
 	var end := b.position
-	b.position = end + Vector3(0, 1.2, -2.0)
-	var tw := create_tween()
-	tw.tween_property(b, "position", end, 0.6).set_ease(Tween.EASE_IN)
-	# Fıçılar kıyıdan yuvarlanır, sonra suya düşer (sıçrama yuvarlanmanın başında çalıyordu)
+	# Fıçı oyuncunun iki elinin altında yuvarlanır: yığından alınır, iki elle köprü ucuna itilir, kenardan suya düşer
+	# (yayma P2: yumruk havada kalıyor, fıçı kadrajda görünmüyordu). Çift suya düşünce bölümün fıçıları yüzer.
+	if GameState.autotest and not GameState.pace:
+		b.visible = true
+		b.position = end
+		Vfx.water_entry(self, s.global_position, 0.0, 1.5)
+	else:
+		_roll_barrel(s, b, end)
 	Audio.sfx("wood_creak", -8.0, 0.7)
 	Audio.sfx("land_thud", -12.0, 0.6)
-	get_tree().create_timer(0.05 if (GameState.autotest and not GameState.pace) else 0.55, false).timeout.connect(func(): Audio.sfx("splash", -4.0))
 	step = "lash"
 	lashes = 0
 	hud.bark("SPK_USTA", "D18_U_BARRELS", 2.5)
 	_update_objective()
+
+
+## Yığından alınan fıçı oyuncunun önünde yere iner, iki el üstünde (hold_both) köprü ucuna doğru itilir, ellerden
+## çıkınca yuvarlanmayı sürdürür, kenardan suya düşer (Vfx.water_entry); bölümün fıçı çifti sudan yüzeye çıkıp oturur.
+## Oynanış aynı: adım hemen "lash"a geçer, oyuncu donmaz.
+func _roll_barrel(s: Node3D, b: Node3D, end: Vector3) -> void:
+	var head_z := SHORE_Z + 2.0 + SEC_LEN * built
+	# Fıçı oyuncunun önüne, köprü ucuna doğru iner; oyuncu o yöne döner (tur 2: kameranın baktığı yöne indiğinde ustanın
+	# ya da yığının gövdesinin içine düşüyor, kamera fıçının dibinde kalıyordu)
+	var fwd := Vector3(clampf(player.global_position.x, -1.3, 1.3), 0, head_z + 0.5) - player.global_position
+	fwd.y = 0.0
+	fwd = fwd.normalized() if fwd.length() > 0.3 else Vector3.BACK
+	var yaw_to := atan2(-fwd.x, -fwd.z)
+	var turn := create_tween()
+	turn.tween_method(func(t: float): player.rotation.y = lerp_angle(player.rotation.y, yaw_to, t), 0.0, 1.0, 0.3)
+	var r := 0.4
+	var p0 := player.global_position + fwd * 1.05
+	p0 = _on_ground(p0) + Vector3(0, r, 0)
+	var edge := Vector3(clampf(p0.x, -1.3, 1.3), DECK_Y + r, head_z + 0.2)
+	if edge.z < p0.z + 0.5:
+		edge.z = p0.z + 0.5
+	var drop := Vector3(edge.x, 0.05, s.global_position.z - 0.4)
+	var carrier := Node3D.new()
+	carrier.name = "BarrelRoll"
+	add_child(carrier)
+	carrier.global_position = p0
+	var dir := edge - p0
+	dir.y = 0.0
+	carrier.rotation.y = atan2(dir.x, dir.z)
+	var spin := Node3D.new()
+	carrier.add_child(spin)
+	Props.cyl(spin, r, 1.3, Vector3.ZERO, Color("7a5634"), Vector3(0, 0, 90), 12)
+	for xx: float in [-0.42, 0.42]:
+		Props.cyl(spin, r + 0.012, 0.07, Vector3(xx, 0, 0), Color("3a3634"), Vector3(0, 0, 90), 12)
+	Props.box(spin, Vector3(1.32, 0.05, 0.06), Vector3(0, r - 0.02, 0), Color("5a3e26"))      # dönüşü okunsun: çıta
+	# Yığından ellerin önüne iner, sonra iki el üstünde itilir
+	carrier.global_position = p0 + Vector3(0, 0.5, 0) - fwd * 0.12
+	player.hold_both(Vector3(-0.24, 0.3, -0.2), Vector3(0.24, 0.3, -0.2), carrier)
+	# Bakış ellere iner (fıçı göz hizasının çok altında: ekranın dışında kalıyordu), itiş bitince geri kalkar
+	var pitch0 := player.camera.rotation.x
+	var look := create_tween()
+	look.tween_property(player.camera, "rotation:x", minf(pitch0, -0.5), 0.3).set_trans(Tween.TRANS_SINE)
+	look.tween_interval(1.0)
+	look.tween_property(player.camera, "rotation:x", pitch0, 0.5).set_trans(Tween.TRANS_SINE)
+	var tw := create_tween()
+	tw.tween_property(carrier, "global_position", p0, 0.25).set_ease(Tween.EASE_IN)
+	tw.tween_callback(func(): Audio.sfx("land_thud", -14.0, 0.8))
+	var dist := p0.distance_to(edge)
+	var push := minf(1.0, dist * 0.45)
+	var roll_to := func(t: float, a: Vector3, bb: Vector3) -> void:
+		var q := a.lerp(bb, t)
+		q.y = maxf(q.y, _deck_y(q.z) + r) if absf(q.x) < 2.3 else q.y
+		carrier.global_position = q
+		spin.rotation.x = carrier.global_position.distance_to(p0) / r
+	var mid := p0.lerp(edge, push / maxf(dist, 0.01))
+	tw.tween_method(func(t: float): roll_to.call(t, p0, mid), 0.0, 1.0, 0.9).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_IN)
+	tw.tween_callback(player.release_both)
+	tw.tween_method(func(t: float): roll_to.call(t, mid, edge), 0.0, 1.0, maxf(0.35, (dist - push) / 2.4))
+	# Kenardan devrilip suya: kısa yay
+	var spin0 := [0.0]
+	tw.tween_callback(func(): spin0[0] = spin.rotation.x)
+	tw.tween_method(func(t: float):
+		var q := edge.lerp(drop, t)
+		q.y = lerpf(edge.y, drop.y, t * t) + sin(t * PI) * 0.15
+		carrier.global_position = q
+		spin.rotation.x = spin0[0] + t * 1.6, 0.0, 1.0, 0.42)
+	tw.tween_callback(func():
+		Vfx.water_entry(self, drop, 0.0, 1.5)
+		carrier.queue_free()
+		# Çift sudan çıkıp yüzer (yuvarlanan fıçı suya girdi; öteki zaten oradaymış gibi değil: ikisi birlikte yükselir)
+		b.visible = true
+		b.position = end + Vector3(0, -0.7, 0)
+		var up := create_tween()
+		up.tween_property(b, "position", end + Vector3(0, 0.08, 0), 0.45).set_ease(Tween.EASE_OUT).set_trans(Tween.TRANS_BACK)
+		up.tween_property(b, "position", end, 0.4).set_trans(Tween.TRANS_SINE)
+		for sx: float in [-1.3, 1.3]:
+			Vfx.water_ring(self, s.global_position + Vector3(sx, 0, 0), 0.0, 0.5, 1.8, 1.5, 0.4))
 
 
 func _start_lash() -> void:
@@ -639,8 +758,15 @@ func _finish_bridge() -> void:
 		w.reparent(cannon, true)          # topla birlikte gider; önce arkasına yürür
 		w.pose = "push"
 		# Yalnız yatayda yürür; yükseklik her karede altındaki zeminden (_ground_pushers)
-		walk.tween_property(w, "position:x", -0.9 + i * 0.9, 2.0 if not GameState.autotest else 0.05)
-		walk.tween_property(w, "position:z", -2.4, 2.0 if not GameState.autotest else 0.05)
+		walk.tween_property(w, "position:x", -0.75 + i * 0.75, 2.0 if not GameState.autotest else 0.05)
+		walk.tween_property(w, "position:z", -2.45, 2.0 if not GameState.autotest else 0.05)
+		walk.tween_property(w, "rotation:y", 0.0, 0.5 if not GameState.autotest else 0.05)
+	# Arkaya varınca iki el kuyruktaki sırıkta (topun yerelinde), gövde öne yatık
+	walk.finished.connect(func():
+		for i in _pushers.size():
+			var gx := -0.75 + i * 0.75
+			if is_instance_valid(_pushers[i]) and phase == "done" and _pushers[i].pose == "push":
+				Stage.grip_hold(_pushers[i], cannon, [Vector3(gx - 0.22, 0.98, -1.97), Vector3(gx + 0.22, 0.98, -1.97)], -1.0, 0.25))
 	_ground_pushers(tw)
 	player.global_position = Vector3(-3.0, 0.05, SHORE_Z - 2.0)     # top kıyıdan geçerken oyuncunun üstüne gelmesin
 	player.face(head + Vector3(0, 1.0, 0))        # top köprü başından geçerken kadrajda (işçilerin arkasında kayboluyordu)
@@ -649,6 +775,7 @@ func _finish_bridge() -> void:
 		await tw.finished
 	for i in _pushers.size():
 		var w := _pushers[i]
+		Stage.grip_release(w)
 		w.pose = "stand"              # top durdu: işçiler bırakır, yanlara çekilir (tespit karesinde topu örtüyorlardı)
 		create_tween().tween_property(w, "position", Vector3(1.5, 0.0, -0.6 - i * 0.9), 0.05 if GameState.autotest else 1.0)
 	Lore.scatter(self, "18")
@@ -685,20 +812,68 @@ func _finish_bridge() -> void:
 
 
 var _swimming_back := false
+var _ring_t := 0.0
 
-## Suya düşen Tolga: sıçrama, boğuk su altı, kısa karartma, kıyıda ıslak (anında ışınlanıyordu)
+## Suya düşen Tolga (yayma P2: kararma + ışınlamaydı): suyun yüzünde sıçrama ve halkalar, kısa dalış (boğuk ses),
+## yüzeye çıkış, kıyıya yüzüş (köprünün yanından, iskele başının yanındaki şeve), şevden çıkış; sonra damlayan giysi ve
+## ıslak ayak izleri. Kesme yok. Varış yeri ve oynanış aynı (kıyıda, iskele başının yanında, oyuncu yeniden serbest).
 func _swim_back() -> void:
 	_swimming_back = true
-	Audio.sfx("splash", 0.0)
-	player.flail(1.0)
-	hud.set_underwater(true)
 	var was := player.frozen
 	player.frozen = true
-	await hud.fade_to(1.0, 0.3)
-	hud.set_underwater(false)
-	player.global_position = Vector3(0.8, 0.4, SHORE_Z - 3.5)
+	player.pinned = true
 	player.velocity = Vector3.ZERO
-	await hud.fade_to(0.0, 0.4)
+	player.stow_hands(true)
+	player.flail(1.2)
+	var fall := player.global_position
+	var at := Vector3(fall.x, 0.0, fall.z)
+	Vfx.water_entry(self, at, 0.0, 1.0)
+	player.shake(0.5)
+	var eye := Player.EYE
+	var surf := Vector3(fall.x, -eye + 0.22, fall.z)
+	var fast := GameState.autotest and not GameState.pace
+	hud.set_underwater(true)
+	var tw := create_tween()
+	tw.tween_property(player, "global_position", Vector3(fall.x, -eye - 1.0, fall.z), 0.05 if fast else 0.35).set_ease(Tween.EASE_OUT)
+	tw.tween_interval(0.05 if fast else 0.35)
+	tw.tween_property(player, "global_position", surf, 0.05 if fast else 0.5).set_trans(Tween.TRANS_SINE)
+	await tw.finished
+	hud.set_underwater(false)
+	Vfx.water_ring(self, at, 0.0, 0.4, 2.2, 1.6, 0.5)
+	Vfx.water_drops(self, at, 0.0, 8)
+	Audio.sfx("splash", -10.0, 1.3)
+	player.floating = true
+	# Kıyıya: iskele başının yanındaki şevin dibi (köprü korkuluklu; fıçıların yanından yüzülür)
+	var sx := -1.0 if fall.x < 0.0 else 1.0
+	var bank := Vector3(sx * 3.4, -eye + 0.22, SHORE_Z + 3.7)
+	var mid := Vector3(sx * maxf(absf(fall.x), 3.4), -eye + 0.22, fall.z)      # önce yana: köprünün altından geçilmez
+	var path: Array = [mid, bank]
+	for q: Vector3 in path:
+		player.face(Vector3(q.x, 0.8, q.z))
+		var d := player.global_position.distance_to(q)
+		if d < 0.05:
+			continue
+		var sw := create_tween()
+		sw.tween_property(player, "global_position", q, 0.05 if fast else clampf(d / 3.2, 0.3, 1.6)).set_trans(Tween.TRANS_SINE)
+		var strokes := int(d / 1.1)
+		for k in strokes:
+			get_tree().create_timer(0.05 if fast else (k + 0.5) * clampf(d / 3.2, 0.3, 1.6) / maxf(1.0, strokes), false).timeout.connect(func():
+				var p := player.global_position
+				Vfx.water_ring(self, Vector3(p.x, 0, p.z), 0.0, 0.3, 1.3, 1.1, 0.35)
+				Vfx.water_drops(self, Vector3(p.x, 0, p.z) - player.global_transform.basis.z * 0.5, 0.0, 4))
+		await sw.finished
+	# Şevden tırmanıp kıyıya çıkar (şevin üstü suyun 27 cm üstünde; ötesi kıyı zemini)
+	player.floating = false
+	var out := Vector3(sx * 3.4, GROUND_Y + 0.05, SHORE_Z - 0.6)
+	player.face(Vector3(out.x, 0.7, out.z - 4.0))
+	var cl := create_tween()
+	cl.tween_property(player, "global_position", Vector3(bank.x, 0.3, SHORE_Z + 2.6), 0.05 if fast else 0.45).set_trans(Tween.TRANS_SINE)
+	cl.tween_property(player, "global_position", out, 0.05 if fast else 0.5).set_trans(Tween.TRANS_SINE)
+	await cl.finished
+	Vfx.water_exit(player, func(_x: float, _z: float) -> float: return GROUND_Y, 6.0, player.camera)
+	player.velocity = Vector3.ZERO
+	player.pinned = false
+	player.stow_hands(false)
 	player.frozen = was
 	_swimming_back = false
 
@@ -706,8 +881,14 @@ func _swim_back() -> void:
 func _process(delta: float) -> void:
 	_t += delta
 	# Suya düşen oyuncu kıyıya döner (boşluğa düşmesin)
-	if player and player.global_position.y < -2.5 and not _swimming_back:
+	if player and player.global_position.y < -0.5 and not _swimming_back and not player.is_on_floor():
 		_swim_back()
+	# Yüzen fıçıların çevresinde seyrek halka (su onlara değsin)
+	_ring_t -= delta
+	if _ring_t <= 0.0 and built > 0:
+		_ring_t = randf_range(0.7, 1.4)
+		var sec := sections[randi() % built]
+		Vfx.water_ring(self, sec.global_position + Vector3(-1.3 if randf() < 0.5 else 1.3, 0, randf_range(-0.9, 0.9)), 0.0, 0.55, 1.1, 2.0, 0.22)
 	if _g >= 0.0:
 		_g += _g_dir * delta * 1.1
 		if _g >= 1.0:

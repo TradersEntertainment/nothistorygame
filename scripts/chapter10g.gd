@@ -93,12 +93,10 @@ func _run() -> void:
 	await hud.card([[tr("UI_CH10G_TITLE"), 44, Color("f2e6c9")], [tr("UI_CH10G_SUB"), 20, Color(1, 1, 1, 0.7)]], 2.6)
 	hud.clear_card()
 	player.global_position = Galata.SPAWN + Vector3(0, 0.1, 0)
-	# Teşekkür kayıkçıya: rıhtımın önündeki kayığa dönük açılır (yayma P2: kayıkçı oyuncunun arkasında kalıyordu)
-	player.face(Vector3(Galata.SPAWN.x + 3.0, Galata.WATER_Y + 0.9, 2.8))
+	player.face(Vector3(0, 1.6, -6.0))
 	_capture_mouse()
 	await hud.fade_to(0.0, 1.0)
 	await _t("D10G_T_01" if "chickpeas" in GameState.bag else "D10G_T_01_CARD")
-	player.face(Vector3(0, 1.6, -6.0))
 	await _t("D10G_T_02")
 	phase = "free"
 	Lore.scatter(self, "10g")

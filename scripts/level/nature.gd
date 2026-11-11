@@ -119,7 +119,7 @@ const DETAIL := {
 	"chips": [0.35, 0.7, Color("b89a6a"), Color("d8c090"), true, ""],
 	"mud": [0.7, 1.9, Color("57442f"), Color("735d43"), true, ""],
 	"grease": [0.5, 1.2, Color("241808"), Color("3a2810"), true, "gloss"],
-	"footprint": [0.9, 1.1, Color("2e2216"), Color("443222"), true, ""],
+	"footprint": [0.9, 1.1, Color("3e2e1e"), Color("54402c"), true, ""],      # yayma P1 tur 2: biraz açık (kara delik gibiydi)
 	"bush": [0.6, 1.4, Color("2f4f22"), Color("587a34"), false, ""],
 	"log": [0.7, 1.3, Color("7a5434"), Color("a07a50"), false, ""],
 	"plank": [0.7, 1.3, Color("7a6a54"), Color("a8957a"), true, ""],
@@ -127,7 +127,7 @@ const DETAIL := {
 	"foam": [0.3, 0.8, Color("cfe2e4"), Color("eef6f6"), true, ""],
 	"wet": [0.6, 1.3, Color("7e6e50"), Color("8e7e5e"), true, ""],
 	# yayma P0: ordugâh, şehir, sur dibi
-	"camp_mud": [0.8, 2.2, Color("3e3022"), Color("5a4630"), true, ""],
+	"camp_mud": [0.8, 2.2, Color("4e3c2a"), Color("66523c"), true, ""],      # yayma P1 tur 2: zeminin biraz koyusu
 	"hoofprint": [0.9, 1.1, Color("33261a"), Color("4a3826"), true, ""],
 	"straw": [0.5, 1.0, Color("c8a858"), Color("e8d088"), true, ""],
 	"ash": [0.5, 1.2, Color("4a4846"), Color("8a8682"), true, ""],
@@ -286,7 +286,15 @@ static func detail_mesh(kind: String) -> Mesh:
 	var rng := RandomNumberGenerator.new()
 	rng.seed = hash(kind)
 	match kind:
-		"mud", "grease", "foam", "wet", "camp_mud", "ash":
+		"camp_mud":
+			# yayma P1 tur 2: dişli, kenara doğru incelen çamur yaması: ortası yarı saydam, orta halka daha saydam, dış
+			# kenar sıfır; çevresinde birkaç sıçramış küçük çamur. (Eskiden opak çekirdekli yassı leke "yağ lekesi" gibiydi.)
+			_soft_blob(st, rng, Vector2.ZERO, 0.5, 22, 0.62)
+			for k in 4:
+				var a := rng.randf() * TAU
+				var d := rng.randf_range(0.5, 0.68)
+				_soft_blob(st, rng, Vector2(cos(a) * d, sin(a) * d * 0.75), rng.randf_range(0.07, 0.14), 9, 0.4)
+		"mud", "grease", "foam", "wet", "ash":
 			# Düzensiz yassı leke (yarıçap ~0,5), ortası biraz kabarık; kenarı köşe rengiyle saydamlaşır (tur 3: eskiden
 			# keskin kenarlı düz turuncu/bej çokgen, zeminde levha gibi duruyordu)
 			var n := 13
@@ -501,6 +509,37 @@ static func _soft(gloss := false) -> StandardMaterial3D:
 		m.albedo_color = Color(1, 1, 1, 0.85)
 		_soft_mats[gloss] = m
 	return _soft_mats[gloss]
+
+
+## Yumuşak kenarlı düzensiz yassı leke (yayma P1 tur 2, camp_mud): merkez alfa a0, orta halka (yarıçapın %55'i) a0 * 0,6,
+## dişli dış kenar 0. r: ortalama yarıçap, n: kenar noktası.
+static func _soft_blob(st: SurfaceTool, rng: RandomNumberGenerator, c: Vector2, r: float, n: int, a0: float) -> void:
+	var ph := rng.randf() * TAU
+	var outer: Array[Vector2] = []
+	for i in n:
+		var a := TAU * i / n
+		var rr := r * rng.randf_range(0.68, 1.12) * (1.0 + 0.16 * sin(a * 3.0 + ph))
+		outer.append(c + Vector2(cos(a) * rr, sin(a) * rr * 0.78))
+	var cv := Vector3(c.x, 0.006, c.y)
+	var ca := Color(1, 1, 1, a0)
+	var ma := Color(1, 1, 1, a0 * 0.6)
+	var oa := Color(1, 1, 1, 0.0)
+	var mid: Array[Vector2] = []
+	for o: Vector2 in outer:
+		mid.append(c + (o - c) * rng.randf_range(0.45, 0.6))
+	for i in n:
+		var o0: Vector2 = outer[i]
+		var o1: Vector2 = outer[(i + 1) % n]
+		var m0: Vector2 = mid[i]
+		var m1: Vector2 = mid[(i + 1) % n]
+		var v0 := Vector3(o0.x, 0, o0.y)
+		var v1 := Vector3(o1.x, 0, o1.y)
+		var w0 := Vector3(m0.x, 0.003, m0.y)
+		var w1 := Vector3(m1.x, 0.003, m1.y)
+		for v: Array in [[cv, ca], [w1, ma], [w0, ma], [w0, ma], [w1, ma], [v1, oa], [w0, ma], [v1, oa], [v0, oa]]:
+			st.set_color(v[1])
+			st.set_normal(Vector3.UP)
+			st.add_vertex(v[0])
 
 
 ## Köşe rengi (alfa) korunarak ağ eklenir (ayak izi ağı).

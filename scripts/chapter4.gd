@@ -580,6 +580,7 @@ func _escaped_4a() -> void:
 func _escape_lines() -> void:
 	hud.set_objective("")
 	player.face(Vector3(3.2, 2.0, Camp.GATE_Z + 7.0))
+	_p1_ates()
 	await _t("D4A_T_OTAG")
 	# "Gidiyoruz": tabelaya doğru birkaç adım (replik bitince doğrudan kesiliyordu)
 	await _walk_to(Vector3(2.4, 0.05, Camp.GATE_Z + 5.0))
@@ -953,7 +954,7 @@ func _eclipse() -> void:
 func _fell() -> void:
 	# Suya giriş: sıçrama, iki halka, damlalar ve ses (yayma P1; eskiden yalnız ses ve kararma)
 	var fwd := -player.camera.global_transform.basis.z
-	var wp := player.global_position + Vector3(fwd.x, 0, fwd.z).normalized() * 0.4
+	var wp := player.global_position + Vector3(fwd.x, 0, fwd.z).normalized() * 1.6      # tur 2: halka kadrajda
 	Vfx.water_entry(self, Vector3(wp.x, SeaWalls.WATER_Y, wp.z), SeaWalls.WATER_Y, 1.0)
 	player.flail(0.8)
 	player.shake(1.5)
@@ -1404,3 +1405,51 @@ func _light_suffix() -> String:
 	if "phone" in GameState.bag:
 		return ""
 	return "_LIGHTER" if "lighter" in GameState.bag else "_REMOTE"
+
+
+## yayma P1 tur 2 kare kancası: yalnız --dialogshots ile; delay sn sonra oyuncu kamerasından (aux verilirse o noktaya
+## bakan yardımcı kameradan) tam boy kare kaydeder. Oyun akışını beklemez, değiştirmez.
+func _p1_shot(n: String, delay := 0.0, aux := Vector3.INF) -> void:
+	if GameState.dialog_shots_dir == "":
+		return
+	if delay > 0.0:
+		await get_tree().create_timer(delay, false).timeout
+	var vp := get_viewport()
+	var old := vp.get_camera_3d()
+	var cam: Camera3D = null
+	if aux != Vector3.INF and old:
+		cam = Camera3D.new()
+		add_child(cam)
+		cam.fov = 40.0
+		cam.global_position = old.global_position
+		cam.look_at(aux, Vector3.UP)
+		cam.current = true
+	await RenderingServer.frame_post_draw
+	if cam:
+		await RenderingServer.frame_post_draw
+	var img := vp.get_texture().get_image()
+	if cam:
+		cam.queue_free()
+		if is_instance_valid(old):
+			old.current = true
+	if img and not img.is_empty():
+		DirAccess.make_dir_recursive_absolute(GameState.dialog_shots_dir)
+		img.save_jpg(GameState.dialog_shots_dir.path_join("P1_" + n + ".jpg"), 0.88)
+
+
+## Ordugâhın en yakın ateş başı (çitin dışı): oyuncunun gözünden ona dönük yardımcı kare
+func _p1_ates() -> void:
+	if GameState.dialog_shots_dir == "" or camp == null:
+		return
+	var best := Vector3.INF
+	for l in camp.lights:
+		var f := (l as Node3D).get_parent() as Node3D
+		if f == null or f == camp:
+			continue
+		var fp := f.global_position
+		if fp.z < Camp.GATE_Z + 8.0:
+			continue
+		if best == Vector3.INF or fp.distance_to(player.global_position) < best.distance_to(player.global_position):
+			best = fp
+	if best != Vector3.INF:
+		_p1_shot("4_ATES", 0.0, best + Vector3(0, 0.6, 0))
