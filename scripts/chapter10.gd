@@ -183,10 +183,6 @@ func _build_gate() -> void:
 	add_child(tailor)
 	Props.box(tailor, Vector3(0.02, 0.02, 0.9), Vector3(0.35, 1.0, 0.3), Color("d8c040"))
 	Props.interactable(self, "tailor", Vector3(1.2, 2.0, 1.2), tailor.position + Vector3(0, 1.0, 0))
-	# Sıradakiler kıpırdar: ağırlık verir, kol kavuşturur, iç çeker, boynunu uzatıp öne bakar (yayma P1; eskiden kıpırtısız
-	# dikiliyorlardı). Kapıdaki nöbetçiler de.
-	Crowd.idle_vary([cameleer, tailor, hasan, huseyin], {"every": Vector2(2.0, 5.0),
-		"emotes": ["nod", "arms_cross", "think", "sigh", "shrug", "lean"]})
 	# Otağın içinde, perde arkasında: gölge
 	fatih = Person.new({"coat": Color("b3262d"), "pants": Color("6a1a1a"), "hat": "sultan", "face": "fatih", "mustache": true, "robe": Color("c8323a"),
 		"hair": Color("2a1e14"), "skin": Color("e0b08a")})
@@ -230,7 +226,6 @@ func _run() -> void:
 		await _ceremony()
 	else:
 		await _t("D10O_T_01")
-		Crowd.look_at_event([cameleer, tailor, hasan, huseyin], aga, 3.5, 0.8)     # bağırınca sıra Ağa'ya döner
 		_p1_shot("10_SHOUT", 1.0)
 		await _say("SPK_AGA", "D10O_A_SHOUT")
 		await _t("D10O_T_02")

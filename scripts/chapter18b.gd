@@ -267,11 +267,11 @@ func _fire(big: bool) -> void:
 		tw.tween_property(s, "position:y", -0.8, 1.0)          # 27 m'den okunsun: daha çok çöker ve yatar
 		tw.parallel().tween_property(s, "rotation:z", 0.28 * (1 if hits % 2 == 0 else -1), 1.0)
 		Vfx.dust(self, s.global_position + Vector3(0, 0.5, 0), 1.2)
-		Vfx.water_entry(self, s.global_position, 0.0, 1.5)        # çöken bölüm suya oturur: sıçrama, halka (yayma P2)
+		Audio.sfx("splash", -6.0, 0.8)
 		await hud.say("SPK_DEFENDER", "D18B_G_HIT_%d" % mini(hits, 2))
 	else:
 		if not drill.physical:
-			Vfx.water_entry(self, at, 0.0, 1.5)        # gülle suya düşer: sıçrama, iki halka, damla (toz bulutuydu; yayma P2)
+			Vfx.dust(self, at, 0.8)
 			Audio.sfx("splash", -2.0, 0.7)
 		# Kısa kaldıysa (köprüye varmadan suya) "az yol", yoksa "yanından geçti"
 		var short := not big

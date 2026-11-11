@@ -3995,9 +3995,19 @@ func _notification(what: int) -> void:
 	_focus_lost.call_deferred()
 
 
+## Denetim sahnesi (tests/focus_check) pencereyi "odaksız" sayar: başsız çalışmada pencere hep odaklı görünür
+var focus_test_unfocused := false
+
+
 func _focus_lost() -> void:
 	if not is_inside_tree():
 		return
+	# Anlık odak titremesi (bildirim balonu, sınıf yönetim yazılımı, pencere kipi değişimi) oyunu duraklatmasın:
+	# kısa bir süre sonra pencere hâlâ odaksızsa duraklat. Gerçek Alt+Tab'da pencere odaksız kalır.
+	await get_tree().create_timer(0.4, true, false, true).timeout
+	if not is_inside_tree() or (DisplayServer.window_is_focused() and not focus_test_unfocused):
+		return
+	print("ODAK: pencere odağı kaybedildi, oyun duraklatıldı (menü açık)")
 	if GameState.autotest or GameState.shots_dir != "" or GameState.dialog_shots_dir != "" or GameState.changing:
 		return
 	if get_tree().paused or _in_title or _title_active or _keypad_active or _menu != null or _photo != null \

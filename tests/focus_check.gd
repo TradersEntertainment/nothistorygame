@@ -13,10 +13,16 @@ func _ready() -> void:
 	world.add_child(hud)
 	for i in 5:
 		await get_tree().process_frame
-	# Motorun yaptığı gibi: bildirim kökten bütün ağaca yayılır
+	# Anlık odak titremesi (pencere kısa sürede yeniden odaklı): oyun duraklamaz
 	get_tree().root.propagate_notification(NOTIFICATION_APPLICATION_FOCUS_OUT)
-	for i in 5:
-		await get_tree().process_frame
+	await get_tree().create_timer(0.8, true, false, true).timeout
+	if get_tree().paused or hud.get("_menu") != null:
+		errs.append("anlık odak titremesi oyunu duraklattı")
+		get_tree().paused = false
+	# Gerçek odak kaybı. Motorun yaptığı gibi: bildirim kökten bütün ağaca yayılır
+	hud.set("focus_test_unfocused", true)
+	get_tree().root.propagate_notification(NOTIFICATION_APPLICATION_FOCUS_OUT)
+	await get_tree().create_timer(0.8, true, false, true).timeout
 	var menu: Node = hud.get("_menu")
 	if not get_tree().paused:
 		errs.append("odak kaybında oyun duraklamadı")
@@ -27,8 +33,7 @@ func _ready() -> void:
 	else:
 		# İkinci odak kaybı ikinci menü açmaz
 		get_tree().root.propagate_notification(NOTIFICATION_APPLICATION_FOCUS_OUT)
-		for i in 3:
-			await get_tree().process_frame
+		await get_tree().create_timer(0.8, true, false, true).timeout
 		var n := 0
 		for c in hud.get_children():
 			if c is GameMenu:
