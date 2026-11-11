@@ -253,6 +253,11 @@ echo "$out" | grep -q "CITYCHECK PASS" || fail=1
 out=$(timeout 900 "$GODOT" --headless --path . res://tests/street_check.tscn 2>&1)
 echo "$out" | grep -E "STREETCHECK (PASS|FAIL|hata)|SCRIPT ERROR|Parse Error"
 echo "$out" | grep -q "STREETCHECK PASS" || fail=1
+# Odak kaybı (Alt+Tab, bildirim): duraklatma menüsü gerçekten açılır, "devam" ile oyun sürer (v0.99.116'ya kadar menü
+# ağaca giremiyor, oyun menüsüz duraklı kalıyordu)
+out=$(timeout 300 "$GODOT" --headless --path . res://tests/focus_check.tscn 2>&1)
+echo "$out" | grep -E "FOCUSCHECK|SCRIPT ERROR|Parse Error|busy setting up children"
+echo "$out" | grep -q "FOCUSCHECK PASS" || fail=1
 # Hareket: tırmanma, kenardan çıkma, atlama, nefes, sınır
 out=$(timeout 300 "$GODOT" --headless --path . res://tests/traversal_test.tscn -- --autotest 2>&1)
 echo "$out" | grep -E "AUTOTEST|SCRIPT ERROR|Parse Error"
