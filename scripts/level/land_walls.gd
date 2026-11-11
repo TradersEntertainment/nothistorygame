@@ -615,16 +615,18 @@ func _build_rubble() -> void:
 	Vfx.smolder(self, Vector3(-11.0, OUTER_H + 0.4, zc), 0.6, false)
 
 
-## Zeminin yıpranması (yayma P6): peribolos, sur dibi seti, hendek dibi ve yakın ova düz boyalı levhaydı. Seyrek ve
-## düzensiz serpilmiş ayrıntı: surdan kopmuş taş ve moloz kırıntısı, çiğnenmiş çamur, yere düşmüş oklar, barikat
-## işinden yonga, depodan gediğe giden çiğnenmiş yol. Tür başına tek çoklu ağ, gölgesiz, çarpışmasız (oynanış yolu
-## değişmez). 28o (gun_gate: bataryanın zemini bölümün kendi yaması, bütçe dar) ve menünün hafif sahnesi atlanır.
+## Zeminin yıpranması (yayma P6, 2. tur): peribolos, sur dibi seti, hendek dibi ve yakın ova düz boyalı levhaydı.
+## Seyrek ve düzensiz serpilmiş ayrıntı: surdan kopmuş (irili ufaklı, koyu) taşlar ve moloz yığınları, sur diplerinde
+## kırıntı, çiğnenmiş çamur, yere saplı oklar, gerçek boyda kalaslar (2–3 m) ve kırık kirişler, kırık merdiven
+## parçaları, sedye, devrik kova, düşmüş kalkanlar; depodan gediğe giden çiğnenmiş yol ve gedik önünde yonga.
+## Hepsi İKİ ağda pişirilir (opak + yumuşak kenarlı lekeler): çizim yükü iki çağrı. Gölgesiz, çarpışmasız (oynanış
+## yolu değişmez). 28o (gun_gate: bataryanın zemini bölümün kendi yaması, bütçe dar) ve menünün hafif sahnesi atlanır.
 func _ground_wear() -> void:
 	if gun_gate or lite:
 		return
 	var gy := func(x: float, z: float) -> float: return 0.0 if z < OUTER_Z0 else outside_y(x, z)
-	# Yoğunluk kuşaklara göre (tür başına tek çoklu ağ: alanın tamamına en yüksek yoğunlukla serpilir, kuşağın payı
-	# kadarı kalır). Kuşaklar: peribolos (z < 14), set (16–20), hendek (20–36), yakın ova (36–60), uzak ova.
+	# Yoğunluk kuşaklara göre: alanın tamamına en yüksek yoğunlukla serpilir, kuşağın payı kadarı kalır.
+	# Kuşaklar: peribolos (z < 14), set (16–20), hendek (20–36), yakın ova (36–60), uzak ova.
 	var band := func(z: float, w: Array) -> float:
 		if z < OUTER_Z0:
 			return w[0]
@@ -633,51 +635,208 @@ func _ground_wear() -> void:
 		if z < 35.9:
 			return w[2]
 		return w[3] if z < 60.0 else w[4]
-	var put := func(kind: String, w: Array, seed: int, x0: float = -47.0, x1: float = 47.0) -> MultiMeshInstance3D:
+	var put := func(kind: String, w: Array, seed: int) -> MultiMeshInstance3D:
 		var top := 0.0
 		for v: float in w:
 			top = maxf(top, v)
 		var keep := func(x: float, z: float) -> bool:
-			if z > OUTER_Z0 - 0.1 and z < OUTER_Z1 + 0.1:
-				return false       # sur gövdesi
-			# gediğin moloz yamacı ve dili kendi taşlarıyla örülü; depo ve peribolos çiti boş
-			if absf(x - BREACH.x) < BREACH_W * 0.5 + EDGE_W + 0.6 and z > OUTER_Z0 - 4.6 and z < TONGUE_Z1 + 0.5:
-				return false
-			if z < OUTER_Z0 and (Vector2(x - DEPOT.x, z - DEPOT.z).length() < 4.6 or absf(absf(x) - 32.0) < 1.2):
-				return false
-			var h := fposmod(sin(x * 12.9898 + z * 78.233 + seed) * 43758.5453, 1.0)
-			return h < float(band.call(z, w)) / top
-		return Nature.ground_detail(self, Rect2(x0, INNER_Z1 + 0.5, x1 - x0, 82.0 - INNER_Z1), kind, top, seed, gy, keep)
-	# Surdan kopmuş taşlar, sur diplerinde moloz kırıntısı, çiğnenmiş çamur, surdan atılmış (yerde ve hendekte) oklar
-	put.call("stone", [0.05, 0.05, 0.065, 0.025, 0.01], 6201)
-	put.call("arrows", [0.015, 0.06, 0.05, 0.04, 0.015], 6202, -46.0, 46.0)
-	# Çamur yamaları zeminin kendi renginin biraz koyusu/açığı (kara leke değil): peribolos açık toprak, hendek dibi koyu
-	_tint(put.call("camp_mud", [0.012, 0.0, 0.028, 0.012, 0.004], 6203), [Color("5c5242"), Color("5c5242"), Color("302e26"), Color("3e3828"), Color("3e3828")])
-	# Hendekte ve önünde kırık kirişler, çalı demetleri (fascine) ve kalaslar: duvarın tepesinden de okunur boyda
-	put.call("log", [0.0, 0.0, 0.014, 0.004, 0.0], 6207)
-	put.call("plank", [0.004, 0.0, 0.012, 0.004, 0.0], 6208)
+			return _wear_free(x, z) and fposmod(sin(x * 12.9898 + z * 78.233 + seed) * 43758.5453, 1.0) < float(band.call(z, w)) / top
+		return Nature.ground_detail(self, Rect2(-47.0, INNER_Z1 + 0.5, 94.0, 82.0 - INNER_Z1), kind, top, seed, gy, keep)
+	var dark_stone := [Color("4c483f"), Color("4c483f"), Color("47443c"), Color("4a463c"), Color("4a463c")]
+	var hard := SurfaceTool.new()
+	hard.begin(Mesh.PRIMITIVE_TRIANGLES)
+	var soft := SurfaceTool.new()
+	soft.begin(Mesh.PRIMITIVE_TRIANGLES)
+	# Taşlar: ufak ve iri (iri olanlar yarı gömülü); koyu, gece ışığında parlamaz
+	bake_detail(hard, put.call("stone", [0.05, 0.05, 0.05, 0.02, 0.008], 6201), dark_stone)
+	bake_detail(hard, put.call("stone", [0.008, 0.006, 0.01, 0.004, 0.0], 6211), dark_stone, Vector3(2.6, 1.7, 2.4))
+	bake_detail(hard, put.call("arrows", [0.015, 0.06, 0.05, 0.04, 0.015], 6202), [Color("6a5234")])
+	# Kırık kirişler (kütük) ve kalaslar: gerçek boyda (kalas 2–3 m, 15–25 cm en)
+	bake_detail(hard, put.call("log", [0.0, 0.0, 0.01, 0.003, 0.0], 6207), [Color("4a3826")], Vector3(1.0, 1.0, 1.0))
+	bake_detail(hard, put.call("plank", [0.003, 0.0, 0.008, 0.003, 0.0], 6208), [Color("5a4832")], Vector3(2.1, 1.0, 1.15))
 	# Sur dipleri: dış surun iki yüzünün dibinde kırıntı şeridi
 	var foot := func(x: float, z: float) -> bool:
-		return (absf(z - (OUTER_Z0 - 1.2)) < 0.9 or absf(z - (OUTER_Z1 + 1.4)) < 1.1) and absf(x - BREACH.x) > BREACH_W * 0.5 + EDGE_W + 0.6
-	Nature.ground_detail(self, Rect2(-47.0, OUTER_Z0 - 2.1, 94.0, 6.0), "rubble", 0.12, 6206, gy, foot)
-	# Depodan gediğe yük taşıyanların çiğnediği yol (yöne dönük ayak izleri) ve gedik önünde barikat yongası
+		return (absf(z - (OUTER_Z0 - 1.2)) < 0.9 or absf(z - (OUTER_Z1 + 1.4)) < 1.1) and _wear_free(x, z)
+	bake_detail(hard, Nature.ground_detail(self, Rect2(-47.0, OUTER_Z0 - 2.1, 94.0, 6.0), "rubble", 0.12, 6206, gy, foot), [Color("6a645a")])
 	var flat0 := func(_x: float, _z: float) -> float: return 0.0
-	_tint(Nature.trail(self, [DEPOT + Vector3(-2.0, 0, 2.4), Vector3(5.0, 0, 8.4), BREACH + Vector3(1.0, 0, -4.4)], "footprint", flat0, 1.5, 6204, 0.7),
-		[Color("564c3c")])
-	Nature.ground_detail(self, Rect2(-9.0, OUTER_Z0 - 6.0, 18.0, 1.6), "chips", 0.12, 6205, flat0)
+	bake_detail(hard, Nature.ground_detail(self, Rect2(-9.0, OUTER_Z0 - 6.0, 18.0, 1.6), "chips", 0.12, 6205, flat0), [Color("8a7450")])
+	_wear_props(hard, gy)
+	# Yumuşak kenarlı: çamur yamaları (zeminin kendi renginin koyusu; kara leke değil) ve depodan gediğe ayak izleri
+	bake_detail(soft, put.call("camp_mud", [0.03, 0.0, 0.04, 0.014, 0.004], 6203),
+		[Color("524a3c"), Color("524a3c"), Color("2c2a23"), Color("3a3426"), Color("3a3426")])
+	bake_detail(soft, Nature.trail(self, [DEPOT + Vector3(-2.0, 0, 2.4), Vector3(5.0, 0, 8.4), BREACH + Vector3(1.0, 0, -4.4)], "footprint", flat0, 1.5, 6204, 0.7),
+		[Color("5a5040")])
+	for pair: Array in [[hard, Nature._detail()], [soft, Nature._soft(false)]]:
+		var mesh := (pair[0] as SurfaceTool).commit()
+		if mesh.get_surface_count() == 0:
+			continue
+		var mi := MeshInstance3D.new()
+		mi.name = "GroundWear"
+		mi.mesh = mesh
+		mi.material_override = pair[1]
+		mi.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
+		mi.set_meta("no_walk", true)        # WorldWalk: dekor, zemin değil
+		mi.set_meta("soft", true)
+		add_child(mi)
 
 
-## Ayrıntı örneklerinin rengi kuşağına göre (z: peribolos, set, hendek, yakın ova, uzak ova; tek renk verilirse hepsi),
-## ±%8 ton oynamasıyla: kara leke gibi durmasın, zeminin rengine yakın kalsın.
-func _tint(mi: MultiMeshInstance3D, cols: Array) -> void:
-	if mi == null or mi.multimesh == null or not mi.multimesh.use_colors:
+## Ayrıntının konamayacağı yerler: sur gövdesi, gediğin moloz yamacı ve dili (kendi taşlarıyla örülü), depo,
+## peribolos çiti.
+func _wear_free(x: float, z: float) -> bool:
+	if z > OUTER_Z0 - 0.1 and z < OUTER_Z1 + 0.1:
+		return false
+	if absf(x - BREACH.x) < BREACH_W * 0.5 + EDGE_W + 0.6 and z > OUTER_Z0 - 4.6 and z < TONGUE_Z1 + 0.5:
+		return false
+	if z < OUTER_Z0 and (Vector2(x - DEPOT.x, z - DEPOT.z).length() < 4.6 or absf(absf(x) - 32.0) < 1.2):
+		return false
+	return true
+
+
+## Çoklu ağı (Nature.ground_detail / trail) tek ağa pişirir ve siler: örnek başına ağın köşeleri dönüşümle,
+## renk kuşağına göre (cols: peribolos, set, hendek, yakın ova, uzak ova; tek renk verilirse hepsi; ±%8 ton) ve
+## ağın köşe rengi (yumuşak kenar saydamlığı) korunarak. sc: örnek ölçeğine ek çarpan. Bölümler de kullanır (22o).
+static func bake_detail(st: SurfaceTool, mi: MultiMeshInstance3D, cols: Array, sc := Vector3.ONE) -> void:
+	if mi == null or mi.multimesh == null or mi.multimesh.mesh == null:
 		return
-	var mm := mi.multimesh
-	for i in mm.instance_count:
-		var z := mm.get_instance_transform(i).origin.z
-		var k := 0 if cols.size() == 1 or z < OUTER_Z0 else (1 if z < 20.2 else (2 if z < 35.9 else (3 if z < 60.0 else 4)))
-		var c: Color = cols[mini(k, cols.size() - 1)]
-		mm.set_instance_color(i, c.lightened(fposmod(z * 7.31 + i * 0.37, 1.0) * 0.08))
+	var xs: Array = mi.get_meta("xforms", [])
+	var mesh := mi.multimesh.mesh
+	for s in mesh.get_surface_count():
+		var a := mesh.surface_get_arrays(s)
+		var v: PackedVector3Array = a[Mesh.ARRAY_VERTEX]
+		var n: PackedVector3Array = a[Mesh.ARRAY_NORMAL] if a[Mesh.ARRAY_NORMAL] != null else PackedVector3Array()
+		var c: PackedColorArray = a[Mesh.ARRAY_COLOR] if a[Mesh.ARRAY_COLOR] != null else PackedColorArray()
+		var order := PackedInt32Array()
+		if a[Mesh.ARRAY_INDEX] != null and (a[Mesh.ARRAY_INDEX] as PackedInt32Array).size() > 0:
+			order = a[Mesh.ARRAY_INDEX]
+		else:
+			order.resize(v.size())
+			for k in v.size():
+				order[k] = k
+		for i in xs.size():
+			var xf: Transform3D = xs[i]
+			xf.basis = xf.basis * Basis.from_scale(sc)
+			var z := xf.origin.z
+			var b := 0 if cols.size() == 1 or z < OUTER_Z0 else (1 if z < 20.2 else (2 if z < 35.9 else (3 if z < 60.0 else 4)))
+			var col := (cols[mini(b, cols.size() - 1)] as Color).lightened(fposmod(z * 7.31 + i * 0.37, 1.0) * 0.08)
+			var nb := xf.basis.inverse().transposed()
+			for k in order:
+				var vc: Color = c[k] if k < c.size() else Color.WHITE
+				st.set_color(Color(col.r * vc.r, col.g * vc.g, col.b * vc.b, vc.a))
+				if k < n.size():
+					st.set_normal((nb * n[k]).normalized())
+				st.add_vertex(xf * v[k])
+	var par := mi.get_parent()
+	if par:
+		par.remove_child(mi)
+	mi.free()
+
+
+## İlkel ağı (kutu, silindir) dönüşüm ve renkle ağa ekler.
+static func _prim(st: SurfaceTool, m: PrimitiveMesh, xf: Transform3D, col: Color) -> void:
+	var a := m.get_mesh_arrays()
+	var v: PackedVector3Array = a[Mesh.ARRAY_VERTEX]
+	var n: PackedVector3Array = a[Mesh.ARRAY_NORMAL]
+	var idx: PackedInt32Array = a[Mesh.ARRAY_INDEX]
+	var nb := xf.basis.inverse().transposed()
+	for k in idx:
+		st.set_color(col)
+		st.set_normal((nb * n[k]).normalized())
+		st.add_vertex(xf * v[k])
+
+
+## Yerde görünen enkaz: moloz yığınları, kırık merdiven parçaları, sedye, devrik kova, düşmüş kalkan. Peribolosta
+## yalnız iki surun dibine yakın (yürünen orta şerit, depo yolu açık), hendekte ve yakın ovada dağınık.
+func _wear_props(st: SurfaceTool, gy: Callable) -> void:
+	var rng := RandomNumberGenerator.new()
+	rng.seed = 6230
+	var box := BoxMesh.new()
+	var cyl := CylinderMesh.new()
+	cyl.radial_segments = 10
+	cyl.rings = 0
+	var stone := Color("4c483f")
+	var wood := Color("5a4630")
+	var spot := func(zone: int) -> Vector3:
+		for tries in 30:
+			var x := rng.randf_range(-45.0, 45.0)
+			var z: float
+			match zone:
+				0:
+					z = rng.randf_range(0.2, 1.4) if rng.randf() < 0.5 else rng.randf_range(11.9, 13.3)
+				1:
+					z = rng.randf_range(21.0, 35.0)
+				_:
+					z = rng.randf_range(36.8, 52.0)
+			if _wear_free(x, z) and absf(x - BREACH.x) > BREACH_W * 0.5 + EDGE_W + 1.5:
+				return Vector3(x, float(gy.call(x, z)), z)
+		return Vector3.INF
+	var counts := [[12, 3, 2, 4, 5], [9, 3, 1, 3, 6], [6, 2, 0, 1, 4]]      # yığın, merdiven, sedye, kova, kalkan
+	for zone in 3:
+		var cn: Array = counts[zone]
+		for i in int(cn[0]):
+			var p: Vector3 = spot.call(zone)
+			if p == Vector3.INF:
+				continue
+			# Moloz yığını: yarı gömülü irili ufaklı kesme taş
+			for k in rng.randi_range(4, 7):
+				var sz := Vector3(rng.randf_range(0.25, 0.6), rng.randf_range(0.18, 0.4), rng.randf_range(0.22, 0.5))
+				var q := p + Vector3(rng.randf_range(-0.7, 0.7), 0, rng.randf_range(-0.6, 0.6))
+				q.y = float(gy.call(q.x, q.z)) + sz.y * 0.25 + (0.12 if k == 0 else 0.0)
+				var b := Basis.from_euler(Vector3(rng.randf_range(-0.3, 0.3), rng.randf() * TAU, rng.randf_range(-0.3, 0.3)))
+				_prim(st, box, Transform3D(b * Basis.from_scale(sz), q), stone.lightened(rng.randf_range(0.0, 0.14)))
+		for i in int(cn[1]):
+			var p: Vector3 = spot.call(zone)
+			if p == Vector3.INF:
+				continue
+			# Kırık merdiven parçası: iki direk (biri kısa, kırık) ve basamaklar, yerde yatık
+			var b := Basis(Vector3.UP, rng.randf() * TAU)
+			var ln := rng.randf_range(1.8, 2.6)
+			for sx: float in [-0.22, 0.22]:
+				var l := ln if sx < 0.0 else ln * rng.randf_range(0.55, 0.85)
+				_prim(st, box, Transform3D(b * Basis.from_scale(Vector3(0.07, 0.06, l)), p + b * Vector3(sx, 0.04, (l - ln) * 0.5)), wood)
+			for r in int(ln / 0.42):
+				_prim(st, box, Transform3D(b * Basis.from_scale(Vector3(0.44, 0.04, 0.05)), p + b * Vector3(0, 0.06, -ln * 0.5 + 0.25 + r * 0.42)), wood.lightened(0.08))
+		for i in int(cn[2]):
+			var p: Vector3 = spot.call(zone)
+			if p == Vector3.INF:
+				continue
+			# Sedye: iki sırık, arası kenevir bez
+			var b := Basis(Vector3.UP, rng.randf() * TAU)
+			for sx: float in [-0.28, 0.28]:
+				_prim(st, box, Transform3D(b * Basis.from_scale(Vector3(0.05, 0.05, 2.1)), p + b * Vector3(sx, 0.04, 0)), wood)
+			_prim(st, box, Transform3D(b * Basis.from_scale(Vector3(0.52, 0.02, 1.5)), p + b * Vector3(0, 0.06, 0)), Color("9a8a68"))
+		for i in int(cn[3]):
+			var p: Vector3 = spot.call(zone)
+			if p == Vector3.INF:
+				continue
+			# Devrik kova: yan yatmış
+			cyl.top_radius = 0.14
+			cyl.bottom_radius = 0.11
+			cyl.height = 0.26
+			var b := Basis(Vector3.UP, rng.randf() * TAU) * Basis(Vector3.FORWARD, PI * 0.5)
+			_prim(st, cyl, Transform3D(b, p + Vector3(0, 0.12, 0)), Color("6a4a2c"))
+		for i in int(cn[4]):
+			var p: Vector3 = spot.call(zone)
+			if p == Vector3.INF:
+				continue
+			# Düşmüş yuvarlak kalkan: yere yatık, hafif eğik
+			cyl.top_radius = 0.36
+			cyl.bottom_radius = 0.36
+			cyl.height = 0.04
+			var b := Basis(Vector3.UP, rng.randf() * TAU) * Basis(Vector3.RIGHT, rng.randf_range(-0.12, 0.12))
+			_prim(st, cyl, Transform3D(b, p + Vector3(0, 0.04, 0)), [Color("7a2a24"), Color("6a4a2c"), Color("2f4a6a")][i % 3])
+
+
+static var _hemp: StandardMaterial3D
+
+
+## Yakın plan ip malzemesi: ThraceRoad'un yuvarlak, dış çizgisiz, yüz ayıklamalı boru malzemesi; gece ışığında kenevir
+## rengi okunsun diye biraz daha kendinden aydınlık (gri şerit gibi duruyordu)
+static func hemp_material() -> StandardMaterial3D:
+	if _hemp == null:
+		_hemp = ThraceRoad.tube_material().duplicate() as StandardMaterial3D
+		_hemp.emission = Color("b89a64")
+		_hemp.emission_energy_multiplier = 0.4
+	return _hemp
 
 
 ## Malzeme deposu: fıçılar, toprak yığını ve sepetler, kalaslar. Oyuncu buradan yük alır.

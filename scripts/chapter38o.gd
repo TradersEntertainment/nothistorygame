@@ -1242,17 +1242,23 @@ var _coil: MeshInstance3D
 
 
 func _rope_hands(tension: float, pulling: bool) -> void:
+	# İp iki yumruktan bir çizgide geçer: öndeki el hedefe doğru, arkadaki el geride (eller ipe dik bir çubuk tutar
+	# gibi yan yana durmasın)
 	var back := 0.06 if pulling else 0.0
-	player.hold_both(Vector3(-0.13, -0.24 - back * 0.4, -0.56 + back), Vector3(0.1, -0.27 - back * 0.4, -0.5 + back))
+	var c := player.camera
+	var d := c.to_local(BOLLARD + Vector3(0, 0.4, 0))
+	d = (d / maxf(d.length(), 0.01))
+	var base := Vector3(-0.02 + 0.0, -0.25 - back * 0.4, -0.52 + back)
+	player.hold_both(base - d * 0.11 + Vector3(-0.04, 0, 0), base + d * 0.11 + Vector3(0.04, 0, 0))
 	var l: Vector3 = player.free_rig.socket.global_position if player.free_rig and player.free_rig.socket else player.camera.to_global(Vector3(-0.13, -0.24, -0.56))
 	var r: Vector3 = player.rig.socket.global_position if player.rig and player.rig.socket else player.camera.to_global(Vector3(0.1, -0.27, -0.5))
 	var up := player.camera.global_transform.basis.y * 0.035
 	l += up
 	r += up
 	var b := BOLLARD + Vector3(0, 0.4, 0)
-	var pts: Array = Stage.sag_points(b, l, (1.0 - clampf(tension, 0.0, 1.0)) * 0.22, 8)
-	pts.append(r)
-	var below := r + (r - l).normalized() * 0.08 + Vector3(0, -0.3, 0)
+	var pts: Array = Stage.sag_points(b, r, (1.0 - clampf(tension, 0.0, 1.0)) * 0.22, 8)
+	pts.append(l)
+	var below := l + (l - r).normalized() * 0.08 + Vector3(0, -0.3, 0)
 	pts.append(below)
 	pts.append_array(Stage.sag_points(below, _coil.global_position + Vector3(0, 0.08, 0), 0.0, 1).slice(1))
 	# Uçlar 5 mm'den az oynadıysa ağ yeniden kurulmaz

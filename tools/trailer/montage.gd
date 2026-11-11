@@ -87,14 +87,14 @@ const STORY_CLIPS := [
 			{"t": 0.4, "do": "sv('bureau')._fg_seq([['nap', 'BUR_FG_NAP_3', 8.0, 'hit'], ['hit', 'BUR_FG_HIT_R', 1.2, 'nap'], ['nap', 'BUR_FG_NAP_4', 0.8, 'hit']])"},
 			{"t": 0.0, "on": "said('BUR_FG_HIT_R')", "pan": [Vector3(-8.15, 1.3, -7.95), 0.8]},
 		]},
-	# Büro: Napolyon ile Cengiz Han sıra numarası yarışı
-	{"id": "buro_numara", "ch": "3", "v": "", "bot": false, "when": "loose() and after(3.0)", "lead": 0.3, "dur": 10.0,
-		"until": "done('BUR_AMB_G1_2_3')", "tail": 0.5, "drive": "steps", "nohands": true, "cap": ["", ""], "steps": [
+	# Büro: Hitler sırtındaki kâğıdı soruyor, robot stajyer okuyor
+	{"id": "buro_robot", "ch": "3", "v": "", "bot": false, "when": "loose() and after(3.0)", "lead": 0.3, "dur": 11.0,
+		"until": "done('BUR_AMB_G2_3_3')", "tail": 0.5, "drive": "steps", "nohands": true, "cap": ["", ""], "steps": [
 			{"t": 0.0, "do": "sv('bureau').set('_amb_on', false)"},
 			{"t": 0.0, "do": "sv('bureau').set('_wait_said', true)"},
-			{"t": 0.0, "pos": Vector3(-2.5, 0.05, -8.6), "look": Vector3(-3.9, 1.75, -6.1)},
-			{"t": 0.0, "do": "_player().camera.set('fov', 62.0)"},
-			{"t": 0.4, "do": "sv('bureau')._fg_seq([['nap', 'BUR_AMB_G1_2_1', 1.9, 'gen'], ['gen', 'BUR_AMB_G1_2_2', 2.9, 'nap'], ['nap', 'BUR_AMB_G1_2_3', 1.6, 'gen']])"},
+			{"t": 0.0, "pos": Vector3(-6.3, 0.05, -5.3), "look": Vector3(-8.0, 1.45, -6.0)},
+			{"t": 0.0, "do": "_player().camera.set('fov', 66.0)"},
+			{"t": 0.4, "do": "sv('bureau')._fg_seq([['hit', 'BUR_AMB_G2_3_1', 1.1, 'rob'], ['rob', 'BUR_AMB_G2_3_2', 5.1, 'hit'], ['hit', 'BUR_AMB_G2_3_3', 1.2, 'rob']])"},
 		]},
 	# Edirne 1444: genç Vlad'a kale sigortası ("Kazık." / "Hayır, poliçe.")
 	{"id": "vlad_kazik", "ch": "17", "v": "edirne_policy", "pace": true, "pace_key": "D17E_R_03", "when": "said('D17E_T_POL_2')",

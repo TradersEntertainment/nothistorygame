@@ -78,6 +78,9 @@ var _haulers: Array[Soldier] = []
 var _haul_far: MeshInstance3D
 var _haul_near: MeshInstance3D
 var _haul_held := false
+## Ellerdeki yakın ip kameranın çerçevesinde kurulur (baş sallanınca ağ yeniden kurulmaz); uzak parçanın son ucu
+var _near_root: Node3D
+var _far_join := Vector3.INF
 
 
 func _ready() -> void:
@@ -88,6 +91,7 @@ func _ready() -> void:
 	player = Player.new()
 	add_child(player)
 	player.frozen = true
+	player.hands_free = true      # açılışta el boş (yayma P6: elde koli bandı/leblebi dikiliyordu); çantadan seçilebilir
 	player.focus_changed.connect(_on_focus)
 	player.interacted.connect(_on_interact)
 	hud.set_fez(GameState.flags.get("fez", true))
@@ -727,9 +731,8 @@ func _haul_place(i: int, now: bool) -> void:
 ## Kanca takıldı: azaplar ipi kavrar, oyuncunun iki eli ipte (eşya cebe)
 func _haul_on(at: Vector3) -> void:
 	for s in _haulers:
-		s.pose = "haul"
-		s.rope = [at, at]
 		s.heave = 0.0
+	_far_join = Vector3.INF
 	_haul_make()
 	_haul_held = true
 	player.hold_both(Vector3(-0.05, -0.14, -0.52), Vector3(0.05, -0.3, -0.45))
@@ -742,11 +745,15 @@ func _haul_on(at: Vector3) -> void:
 func _haul_make() -> void:
 	if _haul_far == null:
 		_haul_far = Bogaz.make_rope(self, Color("b89a6a"), 0.018)
+		_near_root = Node3D.new()
+		add_child(_near_root)
 		_haul_near = MeshInstance3D.new()
 		_haul_near.set_meta("no_walk", true)
 		_haul_near.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
-		_haul_near.material_override = ThraceRoad.tube_material()
-		add_child(_haul_near)
+		_haul_near.material_override = LandWalls.hemp_material()
+		_near_root.add_child(_haul_near)
+
+
 
 
 func _haul_off() -> void:
@@ -768,27 +775,56 @@ func _haul_tick() -> void:
 	if not _haul_held or _haul_far == null:
 		return
 	var at: Vector3 = _haul_far.get_meta("at")
-	var cb := player.camera.global_basis
-	var l: Vector3 = player.free_rig.socket.global_position if player.free_rig and player.free_rig.socket else player.camera.to_global(Vector3(-0.05, -0.14, -0.52))
-	var r: Vector3 = player.rig.socket.global_position if player.rig and player.rig.socket else player.camera.to_global(Vector3(0.05, -0.3, -0.45))
+	var cam := player.camera
+	var cb := cam.global_basis
+	_near_root.global_transform = cam.global_transform
+	var l: Vector3 = player.free_rig.socket.global_position if player.free_rig and player.free_rig.socket else cam.to_global(Vector3(-0.05, -0.14, -0.52))
+	var r: Vector3 = player.rig.socket.global_position if player.rig and player.rig.socket else cam.to_global(Vector3(0.05, -0.3, -0.45))
 	var hi := l + cb.y * 0.03
 	var lo := r + cb.y * 0.03
 	if hi.distance_to(at) > lo.distance_to(at):
 		var sw := hi
 		hi = lo
 		lo = sw
-	var join := hi + (at - hi).normalized() * 0.9
-	Bogaz.rope(_haul_far, at, join, 0.0)
-	for s in _haulers:
-		s.rope = [at, hi]
-	var foot := player.global_position - cb.z.slide(Vector3.UP).normalized() * 0.5
-	foot.y = LandWalls.outside_y(foot.x, foot.z) + 0.03
-	var pts: Array = [join, hi, lo]
-	pts.append_array(Stage.sag_points(lo, foot, 0.06, 4).slice(1))
+	# Yakın parça kameranın çerçevesinde: üstteki yumruğun 0,9 m ötesinden yumruklardan geçip ucu aşağı sarkar.
+	# Noktalar 1,5 cm'den az oynadıysa ağ yeniden kurulmaz (baş sallanması eşiği aşmaz).
+	var hl := cam.to_local(hi)
+	var ll := cam.to_local(lo)
+	var dl := (cb.inverse() * (at - hi)).normalized()
+	var down := cb.inverse() * Vector3.DOWN
+	var pts: Array = [hl + dl * 1.0, hl, ll, ll + down * 0.25 + dl * 0.05, ll + down * 0.6]
 	var last: Array = _haul_near.get_meta("pts", [])
-	if last.size() != pts.size() or (last[1] as Vector3).distance_to(hi) > 0.005 or (last[0] as Vector3).distance_to(join) > 0.005:
+	var moved := last.size() != pts.size()
+	if not moved:
+		for i in pts.size():
+			if (last[i] as Vector3).distance_to(pts[i]) > 0.015:
+				moved = true
+				break
+	if moved:
 		_haul_near.set_meta("pts", pts)
-		_haul_near.mesh = ThraceRoad.tube_mesh(pts, 0.014, Color("c8b080"))
+		_haul_near.mesh = ThraceRoad.tube_mesh(pts, 0.009, Color("c8b080"))
+	# Uzak parça fıçıdan yakın parçanın ucuna (üst üste 10 cm biner, aralık görünmez); 2 cm'den az oynadıysa kurulmaz
+	var join := cam.to_global(hl + dl * 0.9)
+	if _far_join.distance_to(join) > 0.02:
+		_far_join = join
+		Bogaz.rope(_haul_far, at, join, 0.0)
+	# Azaplar: her biri yerindeyse ve elleri serbestse (dövüşe kalkıp dönmüş, irkilme jesti sürmüyor) iki eli ipin
+	# üstünde; yerinde değilse önce yürüyerek yerine geçer. İpi tutmayan azap havaya çekmez, ayakta bekler.
+	var sp := _haul_spots(_hook_target)
+	for k in _haulers.size():
+		var s := _haulers[k]
+		var spot: Vector3 = sp[k][0]
+		var ready := s.visible and s.process_mode != Node.PROCESS_MODE_DISABLED and s.get_parent() == self and (s.rig == null or s.rig.lock == 0)
+		var walking := s.has_meta("stage_walk")
+		var there := Vector2(s.global_position.x - spot.x, s.global_position.z - spot.z).length() < 0.45
+		if ready and not walking and there:
+			s.pose = "haul"
+			s.rope = [at, hi]
+		else:
+			s.pose = "stand"
+			s.rope = []
+			if ready and not walking and not there:
+				Stage.walk_on_ground(s, spot, LandWalls.outside_y, 1.6, spot + Vector3(sin(sp[k][1]), 0.4, cos(sp[k][1])) * 3.0)
 
 
 ## Bir "hey": arkadaki azaplar geriye yaslanır; iyi çekişte fıçı sallanır, üçüncüde devrilir. Kaçan çekişte savunan
@@ -960,7 +996,7 @@ func _drag() -> void:
 	_drag_near = MeshInstance3D.new()
 	_drag_near.set_meta("no_walk", true)
 	_drag_near.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
-	_drag_near.material_override = ThraceRoad.tube_material()
+	_drag_near.material_override = LandWalls.hemp_material()
 	add_child(_drag_near)
 	await hud.fade_to(0.0, 0.6)
 	await hud.say("SPK_AZAPBASI", "D37O_AB_05")
@@ -1018,9 +1054,9 @@ func _drag() -> void:
 		Bogaz.rope(_rope, a, join, clampf((3.4 - a.distance_to(hand)) * 0.12, 0.0, 0.18))
 		var hp: Array = [join, hand]
 		var lastp: Array = _drag_near.get_meta("pts", [])
-		if lastp.size() != 2 or (lastp[0] as Vector3).distance_to(join) > 0.005 or (lastp[1] as Vector3).distance_to(hand) > 0.005:
+		if lastp.size() != 2 or (lastp[0] as Vector3).distance_to(join) > 0.015 or (lastp[1] as Vector3).distance_to(hand) > 0.015:
 			_drag_near.set_meta("pts", hp)
-			_drag_near.mesh = ThraceRoad.tube_mesh(hp, 0.014, Color("c8b080"))
+			_drag_near.mesh = ThraceRoad.tube_mesh(hp, 0.009, Color("c8b080"))
 		if fmod(t, 0.5) < dt:
 			Props.box(self, Vector3(0.6, 0.01, 0.4), _sled.position + Vector3(0, 0.01, 0), Color("4a3a26"))      # toprakta iz
 		# Ateş çömlekleri: ıslık + gölge, sonra 2 m'lik yanan birikinti (8 sn)
