@@ -78,6 +78,7 @@ var _haulers: Array[Soldier] = []
 var _haul_far: MeshInstance3D
 var _haul_near: MeshInstance3D
 var _haul_held := false
+var _sallying := false
 ## Ellerdeki yakın ip kameranın çerçevesinde kurulur (baş sallanınca ağ yeniden kurulmaz); uzak parçanın son ucu
 var _near_root: Node3D
 var _far_join := Vector3.INF
@@ -728,6 +729,25 @@ func _haul_place(i: int, now: bool) -> void:
 			Stage.walk_on_ground(s, tgt, LandWalls.outside_y, 1.4, tgt + Vector3(sin(sp[k][1]), 0.4, cos(sp[k][1])) * 3.0)
 
 
+## Düellodan sonra (kararmada): çıkışta dövüşe kalkan (Melee.rally) azaplar kılıçlı, irkilme jestinde ya da dönüş
+## yolunda kalıyordu; ikinci çekişte ipi tutmadan kolları havada duruyordu. Aynı kılıkta taze üç azap yerlerine geçer
+## (kazanınca ipin yanındaki yerlerine, yenilince oyuncunun arkasında bekler).
+func _fresh_haulers(to_rope: bool) -> void:
+	var sp := _haul_spots(_next_barrel())
+	for k in _haulers.size():
+		var old := _haulers[k]
+		var s := Soldier.new(old.coat, "stand", old.hat)
+		add_child(s)
+		var at: Vector3 = sp[k][0] if to_rope and _next_barrel() >= 0 else Vector3(-1.6 + k * 1.6, 0, 24.0)
+		s.global_position = Vector3(at.x, LandWalls.outside_y(at.x, at.z), at.z)
+		s.rotation.y = float(sp[k][1]) if to_rope else PI
+		var i := squad.find(old)
+		if i >= 0:
+			squad[i] = s
+		_haulers[k] = s
+		old.queue_free()
+
+
 ## Kanca takıldı: azaplar ipi kavrar, oyuncunun iki eli ipte (eşya cebe)
 func _haul_on(at: Vector3) -> void:
 	for s in _haulers:
@@ -879,7 +899,7 @@ func _topple(i: int) -> void:
 	Fx.trauma(0.3)
 	if _next_barrel() >= 0 and not _haulers.is_empty():
 		get_tree().create_timer(0.8, false).timeout.connect(func():
-			if phase == "stockade" and _hook == null and _next_barrel() >= 0:
+			if phase == "stockade" and _hook == null and _next_barrel() >= 0 and not _sallying:
 				_haul_place(_next_barrel(), false))
 	if barrels_down == 1:
 		hud.bark("SPK_AZAPBASI", "D37O_AB_PULL_1", 2.5)
@@ -927,6 +947,7 @@ func _drop_stone() -> void:
 
 ## 3b. Gedikten çıkan Cenevizliler: bölükbaşı ve iki azap yanında
 func _sally() -> void:
+	_sallying = true      # devrilen fıçının ardından azapları ipe yürüten zamanlayıcı çıkışta onları düellocuların yoluna sokmasın
 	_clear_hook()
 	# Azaplar ipi bırakıp oyuncunun arkasına çekilir (çıkan Cenevizlilerin yolu açık kalsın)
 	for k in _haulers.size():
@@ -951,6 +972,7 @@ func _sally() -> void:
 		# bölükbaşına döndü (düello bitti); bu gece yeniden kılıç yok: geri çekilme borusu çalar.
 		await hud.say("SPK_TOLGA", "D37O_T_SALLY_LOST")
 		await hud.fade_to(1.0, 0.4)
+		_fresh_haulers(false)
 		player.global_position = _stockade_spot()
 		player.face(LandWalls.BREACH + Vector3(0, 2.0, 1.6))
 		await hud.card([[tr("UI_CH37O_SALLY_LOST"), 22, Color("f2e6c9")]], 2.6 if not GameState.autotest else 0.3)
@@ -959,11 +981,11 @@ func _sally() -> void:
 	else:
 		# Düellodan sonra kanca atılan yere dön (gediğin molozunun içinde kalınmasın)
 		await hud.fade_to(1.0, 0.25)
+		_fresh_haulers(true)
 		player.global_position = _stockade_spot()
 		player.face(LandWalls.BREACH + Vector3(0, 2.0, 1.6))
 		await hud.fade_to(0.0, 0.25)
-	if _duel_won and _next_barrel() >= 0:
-		_haul_place(_next_barrel(), false)      # yenilgide Cenevizliler gediğin önünde kalır: azaplar geride bekler
+	_sallying = false
 	player.frozen = false
 
 

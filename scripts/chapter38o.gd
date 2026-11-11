@@ -550,6 +550,19 @@ func _brace() -> void:
 	player.face(ladder.point_at(BRACE_LOOK))
 
 
+## Merdiven tutuşunda bakış: up true iken merdivenin tepesine (çatal), değilse ayağın üstüne (BRACE_LOOK) yumuşakça döner.
+## Döner: bakış aşağıda mı (eller dikmeye uzanabilir mi).
+func _brace_look(delta: float, up: bool) -> bool:
+	if not is_instance_valid(ladder) or not _holding or not balance.visible:
+		return true
+	var tgt := ladder.point_at(ladder.height * 0.85 if up else BRACE_LOOK)
+	var to := tgt - player.camera.global_position
+	var pitch := atan2(to.y, Vector2(to.x, to.z).length())
+	var k := clampf(delta * 4.0, 0.0, 1.0)
+	player.camera.rotation.x = lerpf(player.camera.rotation.x, pitch, k)
+	return not up and absf(player.camera.rotation.x - pitch) < deg_to_rad(4.0)
+
+
 ## İki el iki dikmede (her kare: merdiven dalgayla yatar); false: bırakır
 func _ladder_grip(on: bool) -> void:
 	if not on or not is_instance_valid(ladder):
@@ -1638,7 +1651,11 @@ func _process(delta: float) -> void:
 		player.free_hold = Vector3.INF
 	# Merdivenin ayağını tutarken sol el sol sırıkta (26O ile aynı); ateşe koşarken bırakır, kova alınca kovada
 	if phase == "ladder" and not _has_sand:
-		_ladder_grip(_holding and balance.visible)      # iki el dikmelerde (yayma P3; sol el havadaydı)
+		# İki el dikmelerde (yayma P3; sol el havadaydı). Çatal mazgaldan uzanınca bakış yumuşakça merdivenin tepesine
+		# kalkar (eller dikmede kalamaz: bırakır), çatal gidince ayağa iner ve eller yeniden dikmeye
+		var up := is_instance_valid(_fork) and _holding and balance.visible
+		var low_ok := _brace_look(delta, up)
+		_ladder_grip(_holding and balance.visible and low_ok)
 	elif phase == "climb" and _ladder_hand:
 		_ladder_hand = false
 		player.free_hold = Vector3.INF

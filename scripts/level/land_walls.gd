@@ -174,6 +174,8 @@ func _build_ground() -> void:
 	Props.set_pattern(Props.solid(self, Vector3(100, 0.4, 40), Vector3(0, -0.2, -24.0), Color.WHITE), Color("8a7a60"), "cobble")
 	var peri := Props.solid(self, Vector3(100, 0.4, OUTER_Z0 - INNER_Z1 + 0.2), Vector3(0, -0.2, (INNER_Z1 + OUTER_Z0) * 0.5), Color("6e6452"))
 	peri.name = "Peribolos"
+	# Toprak deseni (yayma P6): düz boyalı peribolos ve hendek dibi gece ışığında tek renk levha gibi duruyordu
+	Props.set_pattern(peri, Color("6e6452"), "dirt")
 	# Dış taraf: korkuluklu set, hendek (çukur), ova
 	# Set ve hendek dibi katı: dışarıda dövüşen ya da yürüyen (20o gedik hücumu) boşluğa düşmesin
 	# Kalın (1,2 m): surdan ya da merdivenden düşen oyuncu ince zeminin içinden geçmesin
@@ -197,7 +199,7 @@ func _build_ground() -> void:
 			Props.box(self, Vector3(bw, 1.6, 0.8), Vector3(sx * (TONGUE_W * 0.5 + bw * 0.5), 0.6, 19.2), C_STONE.darkened(0.1))
 	# Hendek dibi kalın (üstü -2,9): merdivenden 11 m düşen oyuncu 20 cm'lik dibin içinden geçip haritanın altına
 	# düşüyordu (Bölüm 26o)
-	Props.solid(self, Vector3(100, 1.2, 17.0), Vector3(0, -3.5, 27.5), Color("3a3a30"))
+	Props.set_pattern(Props.solid(self, Vector3(100, 1.2, 17.0), Vector3(0, -3.5, 27.5), Color.WHITE), Color("3a3a30"), "dirt")
 	if ditch_filled:
 		_build_fill()
 	# Hendeğin iki yüzü katı (eskiden yalnız görüntüydü: dış yüzün içinden geçip hendek dibinin bittiği yerde
@@ -642,14 +644,14 @@ func _ground_wear() -> void:
 		var keep := func(x: float, z: float) -> bool:
 			return _wear_free(x, z) and fposmod(sin(x * 12.9898 + z * 78.233 + seed) * 43758.5453, 1.0) < float(band.call(z, w)) / top
 		return Nature.ground_detail(self, Rect2(-47.0, INNER_Z1 + 0.5, 94.0, 82.0 - INNER_Z1), kind, top, seed, gy, keep)
-	var dark_stone := [Color("4c483f"), Color("4c483f"), Color("47443c"), Color("4a463c"), Color("4a463c")]
+	var dark_stone := [Color("6e685c"), Color("6e685c"), Color("5c584e"), Color("645f54"), Color("645f54")]
 	var hard := SurfaceTool.new()
 	hard.begin(Mesh.PRIMITIVE_TRIANGLES)
 	var soft := SurfaceTool.new()
 	soft.begin(Mesh.PRIMITIVE_TRIANGLES)
 	# Taşlar: ufak ve iri (iri olanlar yarı gömülü); koyu, gece ışığında parlamaz
 	bake_detail(hard, put.call("stone", [0.05, 0.05, 0.05, 0.02, 0.008], 6201), dark_stone)
-	bake_detail(hard, put.call("stone", [0.008, 0.006, 0.01, 0.004, 0.0], 6211), dark_stone, Vector3(2.6, 1.7, 2.4))
+	bake_detail(hard, put.call("stone", [0.008, 0.006, 0.01, 0.004, 0.0], 6211), dark_stone, Vector3(1.9, 1.4, 1.8))
 	bake_detail(hard, put.call("arrows", [0.015, 0.06, 0.05, 0.04, 0.015], 6202), [Color("6a5234")])
 	# Kırık kirişler (kütük) ve kalaslar: gerçek boyda (kalas 2–3 m, 15–25 cm en)
 	bake_detail(hard, put.call("log", [0.0, 0.0, 0.01, 0.003, 0.0], 6207), [Color("4a3826")], Vector3(1.0, 1.0, 1.0))
@@ -753,7 +755,7 @@ func _wear_props(st: SurfaceTool, gy: Callable) -> void:
 	var cyl := CylinderMesh.new()
 	cyl.radial_segments = 10
 	cyl.rings = 0
-	var stone := Color("4c483f")
+	var stone := Color("6a6458")
 	var wood := Color("5a4630")
 	var spot := func(zone: int) -> Vector3:
 		for tries in 30:
