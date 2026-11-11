@@ -779,7 +779,7 @@ func _maul_pose(hm: Node3D, v: float) -> void:
 	if not is_instance_valid(hm):
 		return
 	var r := Vector3(0.11, -0.2, -0.42).lerp(Vector3(0.1, -0.02, -0.38), v)
-	var l := Vector3(0.02, -0.25, -0.62).lerp(Vector3(0.03, 0.04, -0.46), v)
+	var l := Vector3(0.1, -0.25, -0.62).lerp(Vector3(0.1, 0.04, -0.46), v)
 	player.hold_both(l, r)
 	_fit_fists(hm)
 
@@ -809,10 +809,11 @@ func _pick(what: String) -> void:
 	player.camera.add_child(_carry)
 	if what == "stake":
 		# Kazık iki elde, göğsün önünde çapraz (yayma P4: sol elde kazık, sağ elde koli bandı duruyordu)
-		# 2. tur: kazık 1,8 m, çap 12 cm, iki yumruğun içinden geçer; ucu önde yere doğru (mızrak gibi), ekranı kesmez
-		Props.cyl(_carry, 0.06, 1.8, Vector3(0, 0.62, 0), Color("8a6a44"), Vector3.ZERO, 6, 0.02)
+		# 2. tur: kazık (1,8 m, çap 10 cm) sağ omuzda, iki el önde tutar; arka ucu omzun ardında, ön ucu sağ kenarda
+		# hafif yukarı (ekranı boydan boya kesmez)
+		Props.cyl(_carry, 0.05, 1.8, Vector3(0, 0.35, 0), Color("8a6a44"), Vector3.ZERO, 6, 0.03)
 		player.stow_hands(true)
-		player.hold_both(Vector3(0.0, -0.25, -0.62), Vector3(0.12, -0.22, -0.4))
+		player.hold_both(Vector3(0.22, -0.12, -0.62), Vector3(0.25, -0.2, -0.4))
 		_fit_fists(_carry)
 		player.speed_mult = 0.85
 	else:

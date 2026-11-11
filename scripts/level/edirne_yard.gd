@@ -225,6 +225,11 @@ func _tracks() -> void:
 	Nature.trail(self, [FURNACE + Vector3(-3.0, 0, 3.0), Vector3(3.0, 0, -6.0), Vector3(0, 0, -6.0)], "snow_print", hf, 0.6, 3404, 0.5)
 	Nature.trail(self, [CHUTE_BOT + Vector3(2.0, 0, 0), Vector3(-6.0, 0, -1.0), Vector3(-3.0, 0, 0)], "snow_print", hf, 0.6, 3405, 0.6)
 	Nature.trail(self, [WIND_REAR + Vector3(1.6, 0, 0), WIND_FRONT + Vector3(1.6, 0, 0)], "snow_print", hf, 0.6, 3406, 0.4)
+	# Avlunun geri kalanı: ip hattı boyunca, oluğun dibinde ve gülle ölçülen yerde seyrek iz ve çiğnenmiş kar
+	Nature.ground_detail(self, Rect2(-34.0, -24.0, 62.0, 52.0), "snow_print", 0.16, 3407, hf, out_pit)
+	Nature.ground_detail(self, Rect2(CHUTE_BOT.x - 6.0, CHUTE_BOT.z - 4.0, 12.0, 12.0), "snow_print", 0.8, 3408, hf)
+	Nature.trail(self, [Vector3(ROPE_X0, 0, ROPE_Z + 1.2), Vector3(ROPE_X1, 0, ROPE_Z + 1.2)], "snow_print", hf, 0.55, 3409, 0.5)
+	Nature.trail(self, [CHUTE_TOP + Vector3(2.0, 0, 0), CHUTE_BOT + Vector3(2.0, 0, 0), Vector3(-PIT_HX - 1.0, 0, 0)], "snow_print", hf, 0.6, 3410, 0.4)
 
 
 func _height_body(x0: float, x1: float, z0: float, z1: float, step: float) -> void:

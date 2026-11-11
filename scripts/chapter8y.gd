@@ -31,7 +31,8 @@ const NIKO_AT := Vector3(1.3, 0.0, -8.6)
 const NIKO_GATE := Vector3(2.2, 0.0, 9.8)
 const GUARD_AT := Vector3(-2.6, 0.0, 9.6)
 const BAR_AT := Vector3(0.0, 1.55, 13.62)
-const BAR_DOWN := Vector3(-5.2, 0.07, 9.5)
+## Sürgü kaldırılınca sol kulenin peribolosa bakan yüzüne dikine yaslanır (alt ucu yerde, üstü taşa değer)
+const BAR_DOWN := Vector3(-4.6, 2.72, 12.45)
 const HINGE_X := 3.45
 const GATE_Z := 13.85
 const GATE_TRIGGER_Z := 8.4
@@ -324,16 +325,19 @@ func _build_people() -> void:
 	# Dış surun üstünde okçular ve gözcü (ovaya bakar). Sur yolunun çarpışması karelere yayılarak kurulur: ayaklarının
 	# altında küçük görünmez döşeme (Unclip onları sur dibine indirmesin)
 	for i in 4:
-		var x: float = [-7.6, -9.8, 7.6, 9.8][i]
+		# Mazgal aralıklarında (dünyanın dış sur mazgalları 1,8 m arayla): köprüden bakınca mazgal taşının ardında kalmasınlar
+		var x: float = [-6.8, -8.6, 7.6, 9.4][i]
 		var s := Soldier.new([Color("6a2a2a"), Color("3a4a6a"), Color("5a3a2a"), Color("6a2a2a")][i], "stand", "helm")
-		s.position = Vector3(x, 8.0, 14.55)
+		s.position = Vector3(x, 8.0, 15.0)
+		s.set_meta("climber", true)        # mazgalda: Unclip yere indirmesin (sur yolunun çarpışması sonradan kurulur)
+		s.set_meta("no_unclip", true)
 		add_child(s)
 		s.equip("spear" if i == 2 else "bow")
 		if i == 1 or i == 3:
 			# Okçular yayı kaldırmış, ovaya nişanlı (kapı açılınca çıkan Tolga'ya döner); gözcünün sözüyle indirir
 			s.pose = "aim"
 			_archers.append(s)
-		var slab := Props.solid(self, Vector3(1.0, 0.3, 0.9), Vector3(x, 7.85, 14.55), Color.WHITE)
+		var slab := Props.solid(self, Vector3(1.0, 0.3, 0.7), Vector3(x, 7.85, 14.85), Color.WHITE)
 		slab.get_child(0).visible = false
 		if i == 0:
 			lookout = s
@@ -371,7 +375,7 @@ func _build_field() -> void:
 		var y := _gy(c.x, c.z) + 0.005
 		craters.append(Scenery._t(Vector3(c.x, y, c.z), Vector3(0, c.z * 0.37, 0), Vector3(c.y, 1.0, c.y * 0.9)))
 		cols.append(Color("262219").lerp(Color("3a3326"), fmod(c.z * 0.13, 1.0)))
-		rims.append(Scenery._t(Vector3(c.x, y - 0.02, c.z), Vector3(0, c.z * 0.37, 0), Vector3(c.y * 1.15, 1.0, c.y * 1.04)))
+		rims.append(Scenery._t(Vector3(c.x, y - 0.1, c.z), Vector3(0, c.z * 0.37, 0), Vector3(c.y * 1.15, 1.0, c.y * 1.04)))
 	Scenery.scatter(self, Scenery._cyl(1.0, 0.05, 0.85, 10), craters, cols)
 	Scenery.scatter(self, Scenery._cyl(1.0, 0.16, 0.8, 10), rims, [], Props.mat(Color("4a4230")))
 	# Gülleler (yarı gömülü) ve saplı oklar (uç toprakta, sura doğru eğik)
@@ -451,6 +455,13 @@ func _build_lines() -> void:
 	add_child(gunner)
 	gunner.look_target = player
 	gunner.give_tool("bucket")
+	# Tokmakçı: namlunun ağzının önünde (mazgalın açıklığında), iki elle tokmağı namluya sürer
+	var muzzle := p + Basis(Vector3.UP, yaw) * Vector3(0, 1.2, -2.81)
+	var rammer := Soldier.new(Color("b3262d"), "stand", "azap")
+	rammer.position = p + Basis(Vector3.UP, yaw) * Vector3(-0.6, 0, -3.6)
+	add_child(rammer)
+	Stage.face(rammer, muzzle)
+	rammer.give_tool("rammer", {"aim": muzzle, "aim_world": true})
 	Stage.station(self, "coil_rope", BATTERY + Vector3(3.2, 0, 4.4), Vector3(-1, 0, 0.2), {"ground": gy, "person": false})
 	# Setin ardında: kazı (siperi derinleştiren), kazan başında aşçı (ateşli), su içen, halat saran
 	Stage.station(self, "dig", Vector3(-8.5, 0, 119.5), Vector3(0.6, 0, -1), {"ground": gy, "hat": "azap"})
@@ -781,13 +792,24 @@ func _gate_scene() -> void:
 func _open_gate() -> void:
 	var gy := Callable(self, "_gy")
 	await Stage.walk_on_ground(guard, Vector3(-0.9, 0, 12.6), gy, 1.6, BAR_AT)
-	await Stage.reach(guard, BAR_AT + Vector3(-0.9, 0.0, -0.1), 0.4)
+	# İki elle sürgüyü yuvalarından kaldırır (eller sürgüde), sürgüyü taşıyarak kulenin dibine götürür, dikine yaslar
+	# Eller sürgünün kendi yerelinde (Stage.grip_hold her karede izler): kaldırırken ve taşırken sürgüde kalır
+	Stage.grip_hold(guard, _bar, [Vector3(-1.25, 0.0, -0.1), Vector3(-0.55, 0.0, -0.1)], -1.0, 0.1)
+	await _wait(0.35)
 	Audio.sfx("wood_creak", -8.0, 1.2)
-	var t := _d(0.7)
-	var tw := create_tween().set_parallel()
-	tw.tween_property(_bar, "position", BAR_DOWN, t).set_trans(Tween.TRANS_SINE)
-	tw.tween_property(_bar, "rotation_degrees", Vector3(0, 84, 0), t)
-	await tw.finished
+	var lift := create_tween()
+	lift.tween_property(_bar, "position", BAR_AT + Vector3(0, 0.3, -0.25), _d(0.4)).set_trans(Tween.TRANS_SINE)
+	await lift.finished
+	var walk_t := _d(1.4)
+	var carry := create_tween().set_parallel()
+	carry.tween_property(guard, "global_position", Vector3(-3.95, _gy(-3.95, 11.95), 11.95), walk_t)
+	carry.tween_property(_bar, "position", BAR_DOWN, walk_t).set_trans(Tween.TRANS_SINE)
+	carry.tween_property(_bar, "rotation_degrees", Vector3(10, 0, 90), walk_t).set_trans(Tween.TRANS_SINE)
+	guard.set_meta("stage_walk", true)
+	await carry.finished
+	guard.remove_meta("stage_walk")
+	Stage.grip_release(guard)
+	Audio.sfx("land_thud", -12.0, 0.8)
 	await Stage.walk_on_ground(guard, GUARD_AT, gy, 1.6, Vector3(0, 0, 8.0))
 	Audio.sfx("door_open", -6.0, 0.8)
 	Audio.sfx("wood_creak", -10.0, 0.7)

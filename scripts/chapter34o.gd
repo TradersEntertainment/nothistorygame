@@ -340,6 +340,10 @@ func _crank() -> void:
 	# pozunda kollar havada sallanıyordu
 	Stage.grip_hold(foreman, level.drums[1], [Vector3(0.14, 0.58, 0.0), Vector3(0.14, 0.0, 0.58)])
 	hud.bark("SPK_SOLDIER", "D34O_S_CRANK", 3.0)
+	# Ustabaşı karşı çıkrıkta seslenirken bakış ona döner (eli çarkta), sonra kendi çıkrığına (ustabaşı kadraj dışındaydı)
+	player.face(foreman.global_position + Vector3(0, 1.1, 0))
+	await get_tree().create_timer(2.5, false).timeout
+	player.face(EdirneYard.WIND_REAR + Vector3(0, 1.1, 0))
 	player.frozen = true
 	meter.enabled = true
 	balance.visible = true

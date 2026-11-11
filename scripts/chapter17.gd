@@ -812,6 +812,7 @@ func _pull(i: int) -> void:
 	_saved += 1
 	var s: Person = sw["node"]
 	# Sol el denizciyi kolundan yakalar ("Tuttum!": el kapalıydı, jest oynamıyordu)
+	player.face(s.global_position + Vector3(0, 0.9, 0))      # küpeşteden aşağı, tutulan denizciye bakar
 	player.reach_grab(s.global_position + Vector3(0, 1.0, 0))
 	get_tree().create_timer(0.05 if GameState.autotest and not GameState.pace else 0.9, false).timeout.connect(player.release_grab)
 	s.set_activity("")
@@ -1183,8 +1184,10 @@ func _haul_back() -> void:
 	var p0 := player.global_position
 	var lp := boat.to_local(p0)
 	var side := 1.0 if lp.x >= 0.0 else -1.0
-	var rail := boat.to_global(Vector3(side * 1.25, DECK_Y + 0.5, clampf(lp.z, -4.0, 4.0)))
-	var deck := boat.to_global(Vector3(0.0, DECK_Y + 0.1, 0.0))
+	# Küpeştenin kürekçi sıraları arasındaki boşluğundan (z 0: sıralar ±1,6'da) çekilir: kürekçinin başı kameranın
+	# dibine girmesin (yayma P2 tur 2)
+	var rail := boat.to_global(Vector3(side * 1.3, DECK_Y + 0.5, 0.0))
+	var deck := boat.to_global(Vector3(side * 0.25, DECK_Y + 0.1, 0.0))
 	var tw := create_tween()
 	player.face(rail + Vector3(0, 0.2, 0))
 	tw.tween_property(player, "global_position", rail + Vector3(0, -Player.EYE + 0.3, 0), 0.05 if fast else 0.55).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_OUT)

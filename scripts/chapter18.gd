@@ -538,12 +538,17 @@ func _do_barrels() -> void:
 ## çıkınca yuvarlanmayı sürdürür, kenardan suya düşer (Vfx.water_entry); bölümün fıçı çifti sudan yüzeye çıkıp oturur.
 ## Oynanış aynı: adım hemen "lash"a geçer, oyuncu donmaz.
 func _roll_barrel(s: Node3D, b: Node3D, end: Vector3) -> void:
-	var fwd := -player.global_transform.basis.z
-	fwd.y = 0.0
-	fwd = fwd.normalized() if fwd.length() > 0.1 else Vector3.BACK
 	var head_z := SHORE_Z + 2.0 + SEC_LEN * built
+	# Fıçı oyuncunun önüne, köprü ucuna doğru iner; oyuncu o yöne döner (tur 2: kameranın baktığı yöne indiğinde ustanın
+	# ya da yığının gövdesinin içine düşüyor, kamera fıçının dibinde kalıyordu)
+	var fwd := Vector3(clampf(player.global_position.x, -1.3, 1.3), 0, head_z + 0.5) - player.global_position
+	fwd.y = 0.0
+	fwd = fwd.normalized() if fwd.length() > 0.3 else Vector3.BACK
+	var yaw_to := atan2(-fwd.x, -fwd.z)
+	var turn := create_tween()
+	turn.tween_method(func(t: float): player.rotation.y = lerp_angle(player.rotation.y, yaw_to, t), 0.0, 1.0, 0.3)
 	var r := 0.4
-	var p0 := player.global_position + fwd * 0.62
+	var p0 := player.global_position + fwd * 0.85
 	p0 = _on_ground(p0) + Vector3(0, r, 0)
 	var edge := Vector3(clampf(p0.x, -1.3, 1.3), DECK_Y + r, head_z + 0.2)
 	if edge.z < p0.z + 0.5:
