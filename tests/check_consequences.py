@@ -10,6 +10,8 @@ import glob, os, re, sys
 ALLOW = {
     # Bölüm sonucunun kopyası: sonraki bölümler sonucu (chapter_outcomes) okur
     "ch2_sneaked": "2.2",
+    "ch8y_warnings": "8Y.2 (uyarı oku > 0)",
+    "ch8y_id": "ara bölümün akış şeması düğümü (mühür / eşya / doğru söz); sonraki bölümlere sonuç bağlanmadı",
     "fell_quay": "4b.3",
     "depot_plan": "8.3",
     "ch23_deviation": "23.2 (sapma > 0)",
