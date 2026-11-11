@@ -3,7 +3,7 @@
 oyunun replik kayıtlarından (MONTAGE line on/off) altyazıyı, üst yazıları (MONTAGE cap) ASS ile basar; oyunun müzik yolu
 kayıtta susturulduğu için alta tek parça müzik yatırır (replik sırasında kısılır), sesi -14 LUFS'a getirir.
 
-  python3 tools/trailer/story_cut.py CIKTI.mp4 HAM.avi:HAM.log:çekim_id[:baş_kırp[:son_kırp[:sessiz[:üst yazı]]]] ... [--music theme.ogg]
+  python3 tools/trailer/story_cut.py CIKTI.mp4 HAM.avi:HAM.log:çekim_id[:baş_kırp[:son_kırp[:sessiz[:üst yazı[:ANAHTAR=metin¦...]]]]] ... [--music theme.ogg]
 
 "sessiz": çekimin oyun sesi atılır, yalnız alttaki müzik kalır (ör. pencereye taşan, yarıda kalacak bir telsiz repliği;
 altyazısı da yazılmaz).
@@ -97,8 +97,9 @@ def main():
         k1 = float(f[4]) if len(f) > 4 and f[4] else 0.0
         mute = len(f) > 5 and f[5] == "sessiz"
         own = f[6] if len(f) > 6 else ""     # kurgunun üst yazısı (oyundaki bir replikten alıntı; | satır sonu)
-        # ANAHTAR=metin: replik nefes yerinde kesildiyse altyazı da oraya kadar (sesle aynı metin)
-        trim_txt = dict(x.split("=", 1) for x in f[7].split(";")) if len(f) > 7 and f[7] else {}
+        # ANAHTAR=metin: replik nefes yerinde kesildiyse altyazı da oraya kadar (sesle aynı metin). Birden çok anahtar
+        # "¦" ile ayrılır (";" replik metninde geçebiliyor: "döndüm; ayaklarımla yazdım!")
+        trim_txt = dict(x.split("=", 1) for x in f[7].split("¦")) if len(f) > 7 and f[7] else {}
         if log not in cache:
             cache[log] = parse(log)
         segs, lines, caps = cache[log]
@@ -107,6 +108,10 @@ def main():
         s0, s1 = segs[sid]
         r0 = s0 + (LEAD if sid != "card" else 0.0) + k0
         r1 = s1 - k1
+        # Kare sınırına yuvarlanır: parça süreleri kare sayısıyla kesilmezse her kesimde 1-2 kare birikiyor, altyazı
+        # ve üst yazı bir önceki çekimin son karelerine taşıyordu
+        r0 = round(r0 * FPS) / FPS
+        r1 = r0 + round((r1 - r0) * FPS) / FPS
         sh = t - r0
         print("%-18s %6.2f-%6.2f  %.2f sn  (kurguda %.2f)" % (sid, r0, r1, r1 - r0, t))
         for L in ([] if mute else lines):
@@ -147,11 +152,13 @@ def main():
     ins, fc = [], ""
     n = len(parts)
     for i, (raw, r0, r1, mute) in enumerate(parts):
-        ins += ["-ss", "%.3f" % r0, "-t", "%.3f" % (r1 - r0), "-i", raw]
-        # Kesimde tık olmasın: parça uçlarında çok kısa ses geçişi; sessiz çekimde oyun sesi sıfırlanır
-        fc += ("[%d:v]fps=30,setpts=PTS-STARTPTS[v%d];[%d:a]aresample=48000,asetpts=PTS-STARTPTS,%s"
-               "afade=t=in:d=0.04,afade=t=out:st=%.3f:d=0.05[a%d];") % (i, i, i, "volume=0," if mute else "",
-                                                                     max(r1 - r0 - 0.05, 0.0), i)
+        nf = int(round((r1 - r0) * FPS))
+        ins += ["-ss", "%.4f" % (r0 + 0.25 / FPS), "-t", "%.3f" % (r1 - r0 + 0.5), "-i", raw]
+        # Kare-kesin: görüntü tam nf kare, ses aynı süre (fazlası atılır). Kesimde tık olmasın: parça uçlarında çok kısa
+        # ses geçişi; sessiz çekimde oyun sesi sıfırlanır
+        fc += ("[%d:v]fps=30,trim=end_frame=%d,setpts=PTS-STARTPTS[v%d];[%d:a]aresample=48000,atrim=0:%.4f,"
+               "asetpts=PTS-STARTPTS,%safade=t=in:d=0.04,afade=t=out:st=%.3f:d=0.05[a%d];") % (
+                   i, nf, i, i, nf / FPS, "volume=0," if mute else "", max(nf / FPS - 0.05, 0.0), i)
     fc += "".join("[v%d][a%d]" % (i, i) for i in range(n)) + "concat=n=%d:v=1:a=1[cv][ca];" % n
     fc += "[cv]subtitles='%s':fontsdir='%s',format=yuv420p[vout];" % (esc_path(ass), esc_path(FONTS))
     # Tek parça müzik: baştan sona, replik/efekt sesi geldikçe kısılır (sidechain), sonda söner

@@ -154,7 +154,9 @@ const STORY2_CLIPS := [
 			{"t": 0.0, "do": "sv('bureau').set('_wait_said', true)"},
 			{"t": 0.0, "pos": Vector3(-7.4, 0.05, -9.4), "look": Vector3(-4.7, 2.15, -6.9)},
 			{"t": 0.0, "do": "_player().camera.set('fov', 40.0)"},
-			{"t": 0.4, "do": "sv('bureau')._fg_seq([['nap', 'BUR_FG_NAP_3', 8.0, 'hit'], ['hit', 'BUR_FG_HIT_R', 1.2, 'nap'], ['nap', 'BUR_FG_NAP_4', 0.8, 'hit']])"},
+			# 0,7: pencere (lead 0,3) açıldıktan sonra; aynı karede başlayınca açılıştaki "yarıda kalan ses" temizliği
+			# Napolyon'un sesini susturuyordu
+			{"t": 0.7, "do": "sv('bureau')._fg_seq([['nap', 'BUR_FG_NAP_3', 8.0, 'hit'], ['hit', 'BUR_FG_HIT_R', 1.2, 'nap'], ['nap', 'BUR_FG_NAP_4', 0.8, 'hit']])"},
 			{"t": 0.0, "on": "said('BUR_FG_HIT_R')", "pos": Vector3(-6.6, 0.05, -6.9), "look": Vector3(-8.05, 1.3, -7.95)},
 			{"t": 0.0, "on": "said('BUR_FG_HIT_R')", "do": "_player().camera.set('fov', 40.0)"},
 		]},
@@ -176,6 +178,29 @@ const STORY2_CLIPS := [
 		"wait": 600.0, "drive": "steps", "cap": ["", ""], "steps": [
 			{"t": 0.0, "look": Vector3(-0.6, 1.3, 11.4)},
 			{"t": 0.05, "glide_rel": [12.0, 2.6]},
+		]},
+	# 12 Büyük Patlama (10B.3): Urban "...Hmm." → Tolga "Bu 'hmm' iyi bir 'hmm' mi?" → top patlar; oyunun kendi
+	# ağır çekimli geniş planı (yalnız bot kapalıyken: manual() bot bayrağını pencere açılırken indirir), herkes
+	# uçar, Tolga havada: "Hikmet Amca... garanti hâlâ geçerli mi?". Tempo modu: replikler seslendirme süresince.
+	{"id": "patlama", "ch": "10b", "v": "boom", "pace": true, "pace_key": "D10B_U_B3_1",
+		"when": "manual_after('D10B_U_B3_1')", "lead": 0.0, "dur": 16.0, "until": "done('D10B_T_B3_AIR')",
+		"tail": 0.6, "wait": 3000.0, "drive": "steps", "nohands": true, "cap": ["", ""], "steps": [
+			{"t": 0.0, "yaw_rel": 0.2},      # Urban'ın kolu sağ kenara giriyordu: bakış biraz sola, top kadrajda
+		]},
+	# 13 Kızak (uzun pencere): kurguda arkaya ani bakıştan sonrası alınır; "Garanti bitti. Artık sadece koş." tam kalsın
+	{"id": "kizak_kayis_uzun", "ch": "2", "v": "perfect", "pace": true, "when": "sv('phase') == 'run' and sv('level').world_to_s(_player().global_position) > 20.0",
+		"lead": 0.0, "dur": 10.0, "until": "done('D2_H_WARRANTY_END')", "tail": 0.6, "wait": 2000.0, "cap": ["", ""]},
+	# 14 Beyaz havlu (v3): ilerleyiş bütün pencere boyunca sürer (v2'de 2 sn'de bitip 5 sn durağan kalıyordu); yavaş
+	# yürüyüş Hüseyin'in "Yavaş gel!" sözüne de uyar
+	{"id": "havlu_ok3", "ch": "8y", "v": "", "pace": true,
+		"when": "sv('phase') == 'field' and sv('_radio_done') == true and sv('_fired').get('radio_live', false) == false and not sv('_busy') and quiet()",
+		"lead": 0.3, "dur": 10.0, "until": "done('D8Y_T_WARN_3')", "tail": 0.5, "wait": 2400.0, "drive": "steps", "cap": ["", ""], "steps": [
+			{"t": 0.0, "do": "sc().set('_busy', true)"},
+			{"t": 0.0, "do": "sc().set('_warn_cd', 60.0)"},
+			{"t": 0.0, "do": "sc().set('_warnings', 2)"},
+			{"t": 0.0, "pitch": -0.2, "do": "pace_on()"},
+			{"t": 0.05, "glide_rel": [10.0, 1.3]},
+			{"t": 1.5, "do": "sc()._warn('run')"},
 		]},
 ]
 
@@ -375,8 +400,14 @@ func _track_hud() -> void:
 		if _set.begins_with("story"):       # bölümlerin HUD'a eklediği göstergeler (kürek/hey-yap ibresi, denge çubuğu)
 			for ch in _hud.get_children():
 				var sc2: Script = ch.get_script()
-				if ch is CanvasItem and sc2 and sc2.get_global_name() in ["RowMeter", "BalanceMeter"]:
+				if ch is CanvasItem and sc2 and sc2.get_global_name() in ["RowMeter", "BalanceMeter", "KickMeter"]:
 					(ch as CanvasItem).modulate.a = 0.0
+			# Sağ üstteki bildirim rozetleri (ör. "Başarım: Fötr Şapkalı Cin" uçuş penceresine düşüyordu)
+			var toasts = _hud.get("_toasts")
+			if toasts is Array:
+				for t in toasts:
+					if is_instance_valid(t) and t is CanvasItem:
+						(t as CanvasItem).visible = false
 		for n in HUD_HIDE + (["minimap"] if _nohud else []) + (["marker", "meters", "_legend", "_sub_hint"] if _set.begins_with("story") else []):
 			var c = _hud.get(n)
 			if c != null and is_instance_valid(c) and c is CanvasItem:
@@ -638,8 +669,14 @@ func _drive_step(p: Player, delta: float) -> void:
 	_drive_t += delta
 	if _nohands:
 		for n in [p.hand, p.free_hand, p.get("_prop_item"), p.get("_held_model"), p.get("_remote_model")]:
-			if n is Node3D and is_instance_valid(n):
+			if is_instance_valid(n) and n is Node3D:      # önce geçerlilik: bırakılan eşya silinmiş olabilir
 				(n as Node3D).visible = false
+		# Gösterilen eşyalar kameranın çocuğu: eller gizliyken havada asılı kalıyordu (10B'de telefon ekranı ve
+		# powerbank; _prop_item yalnız sonuncuyu tutar). Kameradaki bütün görünür 3B çocuklar gizlenir.
+		if p.camera:
+			for ch in p.camera.get_children():
+				if ch is GeometryInstance3D or (ch is Node3D and not ch is Camera3D and not ch is Light3D and not ch is RayCast3D):
+					(ch as Node3D).visible = false
 	if _set.begins_with("story") and p.powers and p.powers.get("_layer") is CanvasLayer:
 		(p.powers.get("_layer") as CanvasLayer).visible = false     # uçuş göstergesi, yer işaretleri (arayüz)
 	if _drive == "fly" and p.powers:
@@ -717,6 +754,8 @@ func _steps_tick(p: Player, delta: float) -> void:
 					var at: Vector3 = (n as Node3D).global_position + Vector3(0, float(s["aim"][1]), 0)
 					var yp := _yaw_pitch(p, at)
 					_pan = {"y0": p.rotation.y, "p0": p.camera.rotation.x, "y1": yp.x, "p1": yp.y, "t": 0.0, "d": float(s["aim"][2])}
+		if s.has("yaw_rel"):     # bakışı olduğu yerden sola (+) / sağa (-) çevirir (radyan), anında
+			p.rotation.y += float(s["yaw_rel"])
 		if s.has("pitch"):       # bakışın yukarı/aşağı açısı (radyan), anında
 			p.camera.rotation.x = float(s["pitch"])
 		if s.has("glide_rel"):   # [m, m/sn]: baktığı yönde sabit hızla düz ilerler (konumla; bot gibi zemin yüksekliği sabit)
@@ -778,6 +817,17 @@ func quiet() -> bool:
 
 func unbag(id: String) -> bool:
 	GameState.bag.erase(id)
+	return true
+
+
+## key repliği gösterildiyse botu kapatır ve true döner (bölümün yalnız oyuncuya gösterdiği sahneleme: ör. 10B'nin
+## ağır çekimi). Tempo modu açık kalır: replikler seslendirme süresince kendiliğinden ilerler. Tek işlevde: Expression
+## "and"i kısa devre etmiyor, "said(k) and manual()" botu ilk yoklamada kapatıyordu (döküm oyunu girdi bekleyip kaldı).
+func manual_after(key: String) -> bool:
+	if not said(key):
+		return false
+	GameState.autotest = false
+	GameState.pace = true
 	return true
 
 
