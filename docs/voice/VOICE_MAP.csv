@@ -5722,14 +5722,14 @@ D8Y_NIKO_RULES,8,SPK_NIKO,,0,"Dümdüz yürü. Havluyu indirme, koşma. Koşan a
 D8Y_T_BYE,8,SPK_TOLGA,,0,"Sağ ol, Niko. Bir gün sana bir poliçe yapacağım.","Thanks, Niko. One day I'll write you a policy.",oyun
 D8Y_NIKO_BYE,8,SPK_NIKO,,0,Yapma.,Please don't.,oyun
 D8Y_WALL_1,8,SPK_LOOKOUT,,0,Yayları indirin! Bayrak var. ...Havlu ama bayrak.,"Bows down! He's got a flag. ...It's a towel, but it's a flag.",oyun
-D8Y_WALL_2,8,SPK_LOOKOUT,,0,"Hey, Frenk! Karşıda kahvaltı varsa bize de getir!","Oi, Frank! If they're serving breakfast over there, bring us some!",oyun
+D8Y_WALL_2,8,SPK_LOOKOUT,,0,"Hey, Latin! Karşıda kahvaltı varsa bize de getir!","Oi, Latin! If they're serving breakfast over there, bring us some!",oyun
 D8Y_T_BRIDGE,8,SPK_TOLGA,,0,"Arkamda bir şehir, önümde bir ordu. Ortada ben ve bir hamam havlusu.","A city behind me, an army ahead. In between: me and a bathhouse towel.",oyun
 D8Y_T_ARROWS,8,SPK_TOLGA,,0,"Yerde ok tarlası. Bunun hasar tespitini yapsam form yetmez, defter lazım.","A whole field of arrows. If I had to assess this, I'd need a ledger, not a form.",oyun
 D8Y_T_LADDER,8,SPK_TOLGA,,0,"Terk edilmiş bir merdiven. Biri surlara çıkmaya çalışmış, merdiven vazgeçmiş.",An abandoned ladder. Someone tried to climb the walls. The ladder gave up.,oyun
 D8Y_T_GOAT,8,SPK_TOLGA,,0,İki ordunun ortasında bir keçi. Buradaki en tarafsız canlı o.,"A goat, right between two armies. The most neutral creature out here.",oyun
 D8Y_T_CRATER,8,SPK_TOLGA,,0,Gülle çukuru. Poliçelerde buna doğal afet denir. Değil.,A cannonball crater. Policies call this an act of God. It isn't.,oyun
 D8Y_WALL_WARN_1,8,SPK_LOOKOUT,,0,Havlu yukarı! Bir dahaki ok uyarı olmaz!,Towel up! The next arrow won't be a warning!,oyun
-D8Y_WALL_WARN_2,8,SPK_LOOKOUT,,0,"Koşma, Frenk! Koşanı düşman sayarız!","No running, Frank! Runners count as enemies!",oyun
+D8Y_WALL_WARN_2,8,SPK_LOOKOUT,,0,"Yavaşla, Latin! Bizim okçular hızlı hedefi sever!","Slow down, Latin! Our archers love a fast target!",oyun
 D8Y_HASAN_WARN_1,8,SPK_HASAN,,0,Bayrağı kaldır! Biz de görmek istiyoruz!,Get that flag up! We want to see it too!,oyun
 D8Y_HUSEYIN_WARN_2,8,SPK_HUSEYIN,,0,Yavaş gel! Teslim olmaya kimse koşmaz!,Slow down! Nobody runs to surrender!,oyun
 D8Y_T_WARN_1,8,SPK_TOLGA,,0,"Tamam! Yukarıda! Bakın, yukarıda!","Okay! It's up! Look, it's up!",oyun
@@ -5746,14 +5746,21 @@ D8Y_HUSEYIN_2,8,SPK_HUSEYIN,,0,Kim olduğunu göster. Ya bir şey göster ya da 
 D8Y_HASAN_SEAL,8,SPK_HASAN,,0,"Kartal! İki başlı! Hüseyin, bunun iki başı var.","An eagle! With two heads! Hüseyin, this one's got two heads.",oyun
 D8Y_HUSEYIN_SEAL,8,SPK_HUSEYIN,,0,"İki başlı kuşun mektubuna dokunulmaz. Sultan'a gidiyorsa geç, efendi.","You don't touch a two-headed bird's post. If it's for the Sultan, go on through, sir.",oyun
 D8Y_HUSEYIN_SEAL_OPEN,8,SPK_HUSEYIN,,0,Mührü yamuk ama. ...Yamuk mühür de mühürdür. Geç.,"The seal's crooked, though. ...A crooked seal is still a seal. Go on.",oyun
-D8Y_HASAN_ITEM,8,SPK_HASAN,,0,"Tamam, tamam. Casus böyle tuhaf şeyler taşımaz. Geç.","All right, all right. No spy carries stuff this odd. Go on.",oyun
-D8Y_T_HONEST,8,SPK_TOLGA,,0,"Sigortacıyım. Bizans'tan geliyorum, cebimde İmparator'un mektubu var, Sultan'a götürüyorum. Havlu hamamın.",I'm in insurance. I've come from Byzantium with the Emperor's letter for the Sultan. The towel belongs to a bathhouse.,oyun
+D8Y_HASAN_ITEM,8,SPK_HASAN,,0,"Tamam, yeter! Bunu taşıyan casus olmaz, çerçi olur. Geç.","All right, enough! Whoever carries that isn't a spy, he's a pedlar. Go on.",oyun
+D8Y_T_HONEST,8,SPK_TOLGA,,0,Sigortacıyım. Cebimde Sultan'a bir mektup var. Havlu da hamamın.,I'm in insurance. There's a letter for the Sultan in my pocket. The towel belongs to a bathhouse.,oyun
 D8Y_T_HONEST_DEP,8,SPK_TOLGA,,0,Sigortacıyım. Bizans beni sınır dışı etti. Bu havludan başka hiçbir şeyim yok.,I'm in insurance. Byzantium deported me. This towel is all I own.,oyun
-D8Y_HASAN_HONEST,8,SPK_HASAN,,0,Böyle bir yalanı kimse uyduramaz. Doğrudur. Geç.,Nobody could make that up. Must be true. Go on.,oyun
+D8Y_HASAN_HONEST,8,SPK_HASAN,,0,Sigorta nedir bilmem ama bu kadar saçma bir yalanı ben bile söylemem. Geç.,"No idea what insurance is, but even I couldn't lie that badly. Go on.",oyun
 D8Y_HUSEYIN_END,8,SPK_HUSEYIN,,0,"Biz öğleden önce otağ kapısındayız, onur muhafızı. Orada görürsen tanımazlıktan gel, nöbet ciddi iş.","Later this morning we're at the imperial tent, guard of honour. If you see us there, pretend you don't know us. Guard duty is serious business.",oyun
 D8Y_HASAN_END,8,SPK_HASAN,,0,Havluyu indirebilirsin artık. Burada kimse sana ok atmaz. Ben atmam. Hüseyin'i bilemem.,You can put the towel down now. Nobody here's going to shoot you. I won't. Can't speak for Hüseyin.,oyun
 D8Y_T_BATTERY,8,SPK_TOLGA,,0,"Topun ağzının önünden geçmem. Poliçede gülle hasarı istisnadır, o maddeyi ben yazdım.",I'm not walking in front of that cannon. Cannonball damage is an exclusion. I wrote that clause myself.,oyun
 D8Y_HASAN_MARKET,8,SPK_HASAN,,0,"Pazar ileride, çadırların arasında. Keçilere dikkat et, her şeyi yerler. Havlu dahil.","The market's up ahead, between the tents. Watch out for the goats, they eat everything. Towels included.",oyun
-D8Y_T_END,8,SPK_TOLGA,,0,"Ordugâh. Bir şafakta iki imparatorluğun arasından yürüdüm. Elimde bir havlu, cebimde bir mektup.","The camp. One dawn, two empires, and I walked right between them. A towel in my hand, a letter in my pocket.",oyun
+D8Y_T_END,8,SPK_TOLGA,,0,"Ordugâh. Bir şafakta iki imparatorluğun arasından yürüdüm, elimde bir havluyla. Mektup hâlâ cebimde.","The camp. One dawn, two empires, and I walked right between them holding a towel. The letter's still in my pocket.",oyun
 D8Y_T_END_DEP,8,SPK_TOLGA,,0,"Ordugâh. Bir şehirden kovuldum, bir orduya havluyla girdim. Özgeçmişim zenginleşiyor.","The camp. Thrown out of a city, walked into an army with a towel. My CV is really coming along.",oyun
 D8Y_NIKO_SINERJI,8,SPK_NIKO,,0,Tavuk da mı geliyor? ...İyi. Bu şehirden sınır dışı edilen bir tek sen değilsin.,The chicken's coming too? ...Good. You're not the only one this city is getting rid of.,oyun
+D8Y_NIKO_SINERJI_N,8,SPK_NIKO,,0,"Tavuk da mı geliyor? ...Peki. Sultan'a bir tavuk da götür, eli boş geldi demesinler.",The chicken's coming too? ...Fine. Take the Sultan a chicken as well. Nobody can say you came empty-handed.,oyun
+D8Y_HUSEYIN_WHO,8,SPK_HUSEYIN,,0,Bana mı soruyorsun? Ben Hüseyin'im. Sabahtan beri öyle.,Are you asking me? I'm Hüseyin. Have been all morning.,oyun
+D8Y_HASAN_WHO,8,SPK_HASAN,,0,"Sana değil, ona! ...Hem dün akşam Hasan sendin.","Not you, him! ...And last night you were Hasan.",oyun
+D8Y_T_DEP_NOFEZ,8,SPK_TOLGA,,0,"Mektup yok, izin yok, fes bile yok. Elimde hiçbir şey yok.","No letter, no permit, not even a fez. I've got nothing.",oyun
+D8Y_T_MANTLET,8,SPK_TOLGA,,0,Tekerlekli ahşap perdeler. Okçular arkasına saklanmış. Ben havluya saklanıyorum.,Wooden screens on wheels. The archers hid behind them. I'm hiding behind a towel.,oyun
+D8Y_HASAN_STOP,8,SPK_HASAN,,0,Dur orada! Olduğun yerde salla şu bezi!,Stop right there! Wave that rag where you stand!,oyun
+D8Y_HUSEYIN_COME,8,SPK_HUSEYIN,,0,"Tamam, gördük. Gel. Yavaş gel.","All right, we've seen it. Come on. Slowly.",oyun

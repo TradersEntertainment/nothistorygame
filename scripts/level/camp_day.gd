@@ -266,7 +266,7 @@ func _illuminate() -> void:
 		# Hale alevin boyunu pek aşmaz: çadırların ardındaki ateşin halesi gökte asılı top gibi görünmesin
 		halos.append(Transform3D(Basis().scaled(Vector3.ONE * h * 0.95), p3 + Vector3(0, h * 0.35, 0)))
 		embers.append(Transform3D(Basis().scaled(Vector3(k3, 1, k3)), p3 + Vector3(0, 0.12, 0)))
-	# Ateş yatağı (yayma P1 tur 2): yumuşak kenarlı kül yatağı, üstünde üç boyutlu kömür yığını (koyu, ışımaz), aralarına
+	# Ateş yatağı (tur 2): yumuşak kenarlı kül yatağı, üstünde üç boyutlu kömür yığını (koyu, ışımaz), aralarına
 	# gömülü küçük kor parçaları (loş), çevresinde yarı gömülü taş halka. Parlaklık alevin kendisinden gelir. (Eskiden yerde
 	# parlayan düz turuncu bir disk vardı: yakından lav gölü gibiydi.) Her tür tek çoklu ağ.
 	var ash: Array = []
@@ -506,7 +506,7 @@ func _build_kitchen() -> void:
 	if Kit.has_food():
 		# Hazır yiyecekler (Quaternius Ultimate Food, CC0): ekmek, patlıcan, şalgam, tavuk budu, tabaklar, bıçak
 		var goods := ["Bread", "Bread", "Eggplant", "Eggplant", "Turnip", "Carrot", "Mushroom", "Turnip"]
-		# Kadri'nin önü (kesme tahtası, tezgâhın ortası) açık kalır: mallar iki yana (yayma P1 tur 2: tahta önündeki
+		# Kadri'nin önü (kesme tahtası, tezgâhın ortası) açık kalır: mallar iki yana (tahta önündeki
 		# patlıcanların ardında kalıyordu)
 		var gx := [-1.38, -1.08, -0.78, 0.48, 0.76, 1.04, -1.23, 0.62]
 		for i in 8:
@@ -539,7 +539,7 @@ func _build_kitchen() -> void:
 	kadri.scale = Vector3(1.12, 1.0, 1.12)
 	add_child(kadri)
 	kadri.set_activity("chop")
-	# Satır elde, önünde tezgâhta kesme tahtası ve doğranan soğan (eskiden eli boş havayı doğruyordu; yayma P1)
+	# Satır elde, önünde tezgâhta kesme tahtası ve doğranan soğan (eskiden eli boş havayı doğruyordu)
 	# Satır: kasap satırı (31 cm; ağzın en alt noktası tahta yüzünün ~5 cm altına iner: doğrarken tahtaya gömülür)
 	kadri.give_tool("cleaver", {"scale": 1.1})
 	# (Tahta, soğan, kütük ve odunlar tek birleşik ağ: Dressing; çizim sayısı artmasın)
@@ -678,7 +678,7 @@ func _build_artillery() -> void:
 	urban.set_activity("hammer")
 	urban.give_tool("hammer", {"scale": 1.35})        # demirci çekici (~45 cm sap)
 	# Önünde örs (kütük üstünde): kalıbın demir kuşağını döver; örsün üstünde kızgın demir şerit (eskiden çekiçsiz,
-	# önü boştu: havayı dövüyordu; yayma P1)
+	# önü boştu: havayı dövüyordu)
 	# Çekicin indiği yer (sonda: başın en alt noktası Urban'ın 0,47 m sağında, 0,97 m önünde, 1,10 m'de; Urban iri):
 	# kalın kütüğün üstünde örs, yüzü 1,08 m'de
 	var anvil := urban.position + Vector3(0.43, 0, 1.1)      # tur 2: büyük çekiçle başın indiği yer 1,29 m
@@ -827,7 +827,7 @@ func _build_market() -> void:
 	_sign(Vector3(-2.5, 0, 7.2), "PAZAR", 0.0)
 	# Tente bezi: bitki boyalı keten (kök boya, çivit, cehri, zeytin) ve boyasız ham bez
 	var awning := [Color("8a4a3a"), Color("56627a"), Color("a0804e"), Color("64704e"), Color("b8ab8e")]
-	var dm := Dressing.new(748)      # direkler ve tenteler tek birleşik ağ (eskiden 25 ayrı çizim; yayma P1)
+	var dm := Dressing.new(748)      # direkler ve tenteler tek birleşik ağ (eskiden 25 ayrı çizim)
 	dm.at(Vector3.ZERO, 0.0)
 	for i in 5:
 		var p := Vector3(-8.0 + i * 4.0, 0, 17.0)
@@ -921,7 +921,7 @@ func _build_otag() -> void:
 	var gold := Color("e0b848")
 	var cream := Color("f4e8cc")
 	var navy := Color("28366a")
-	# Panolar tek birleşik ağ (Dressing; eskiden 96 ayrı parça = 96 çizim çağrısı; yayma P1 çizim bütçesi)
+	# Panolar tek birleşik ağ (Dressing; eskiden 96 ayrı parça = 96 çizim çağrısı; çizim bütçesi)
 	var dp := Dressing.new(819)
 	for i in 16:
 		var a := TAU * (i + 0.5) / 16.0
@@ -1052,7 +1052,7 @@ func world_landmarks() -> Array:
 	return out
 
 
-## Çiğnenmiş ordugâh zemini (yayma P1; Nature.ground_detail / trail, her tür tek çoklu ağ, çarpışmasız): meydanda ve
+## Çiğnenmiş ordugâh zemini (Nature.ground_detail / trail, her tür tek çoklu ağ, çarpışmasız): meydanda ve
 ## yollarda koyu çamur yamaları, ayak ve at izleri, otağ yolunda tekerlek izi; mutfakta ve tavuk avlusunda saman, ocak
 ## diplerinde kül ve kömür; topçu ocağının önünde kömür tozu. Kuşbakışında (43o) yollar ve çiğnenmiş alanlar büyük ölçekli
 ## çamur yamalarıyla seçilir. Eskiden: tek renk zemin, üstünde gökyüzü mavisi yansıtan parlak düz elips "birikintiler".
@@ -1069,46 +1069,23 @@ func _build_mud() -> void:
 	# Atlıların izi (yönlü, seyrek)
 	Nature.trail(self, [Vector3(-0.9, 0, -60.0), Vector3(-0.9, 0, -26.0), Vector3(1.2, 0, -12.0), Vector3(4.5, 0, 2.0),
 		Vector3(8.5, 0, 14.0), Vector3(12.0, 0, 24.0)], "hoofprint", hf, 1.1, 622, 0.55)
-	_far_wear()
+	_build_ruts()
 
 
-## Yol ağı ve tekerlek izleri (yayma P1 tur 2; tek ağ, tek çizim): otağdan güneye inen ana yol, doğu-batı yolu, ordugâhın
-## çevre yolu ve dışarı açılan dört çapraz yol: düzensiz genişlikte (3-7 m), kenarı zemine karışan açık renkli çiğnenmiş
-## toprak; kuşbakışında (43o) çadır denizinin içinden geçen yollar olarak okunur. Erzak arabalarının otağ yolundan mutfağa
-## inen iki tekerlek izi sürekli, kenarı yumuşak koyu şerit (eskiden noktalı iki dizi). Noktalar arazinin kendisinden
-## (CampDay.height) alınır, 1 m'de bir: yamaçta yüzeye oturur. (Eskiden 4-8 m'lik koyu yamalar düzenli serpiliyordu.)
-func _far_wear() -> void:
+## Erzak arabalarının otağ yolundan mutfağa inen iki tekerlek izi: sürekli, kenarı yumuşak koyu şerit (tek ağ, tek
+## çizim; noktalar arazinin kendisinden, 0,4 m'de bir). Eskiden noktalı iki diziydi.
+func _build_ruts() -> void:
 	var st := SurfaceTool.new()
 	st.begin(Mesh.PRIMITIVE_TRIANGLES)
 	var nz := FastNoiseLite.new()
 	nz.seed = 632
 	nz.frequency = 0.05
-	var road := Color("c4ae84")       # tur 2: kuşbakışında okunsun (a08a62 zeminle karışıyordu)
-	var ring: Array = []
-	for k in 33:
-		var a := TAU * k / 32.0
-		ring.append(Vector3(sin(a) * 46.0, 0, cos(a) * 46.0 - 10.0))
-	var roads: Array = [
-		[[Vector3(0, 0, -150), Vector3(-3, 0, -105), Vector3(0, 0, -70)], 4.0],
-		[[Vector3(0, 0, -56), Vector3(0, 0, -26), Vector3(0, 0, 4), Vector3(1, 0, 20), Vector3(3, 0, 60), Vector3(-2, 0, 100), Vector3(4, 0, 145)], 5.5],
-		[[Vector3(-4, 0, -4), Vector3(-30, 0, -2), Vector3(-62, 0, 5), Vector3(-110, 0, 0), Vector3(-160, 0, 9), Vector3(-215, 0, 4)], 4.5],
-		[[Vector3(4, 0, -4), Vector3(30, 0, -7), Vector3(66, 0, -1), Vector3(118, 0, 7), Vector3(165, 0, -2), Vector3(215, 0, 3)], 4.5],
-		[ring, 3.6],
-		[[Vector3(-33, 0, -42), Vector3(-70, 0, -88), Vector3(-118, 0, -140), Vector3(-160, 0, -200)], 3.4],
-		[[Vector3(33, 0, -42), Vector3(72, 0, -86), Vector3(115, 0, -142), Vector3(158, 0, -205)], 3.4],
-		[[Vector3(-33, 0, 22), Vector3(-66, 0, 58), Vector3(-104, 0, 100)], 3.2],
-		[[Vector3(33, 0, 22), Vector3(68, 0, 56), Vector3(100, 0, 104)], 3.2],
-	]
-	var i := 0
-	for rd: Array in roads:
-		_ribbon(st, rd[0], float(rd[1]), road, 0.9, nz, 1.0, Vector3.ZERO, 640 + i * 17)
-		i += 1
 	# Tekerlek izleri: otağ yolundan mutfağa
 	var cart := [Vector3(0.2, 0, -59.0), Vector3(0.2, 0, -27.0), Vector3(-1.5, 0, -14.0), Vector3(-6.0, 0, -4.2), Vector3(-10.5, 0, -2.6)]
 	for sx: float in [-0.65, 0.65]:
 		_ribbon(st, cart, 0.32, Color("4a3826"), 0.55, nz, 0.4, Vector3(sx, 0, 0), 700 + int(sx * 10.0))
 	var mi := MeshInstance3D.new()
-	mi.name = "Roads"
+	mi.name = "Ruts"
 	mi.mesh = st.commit()
 	mi.material_override = Nature._soft(false)
 	mi.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
@@ -1212,10 +1189,6 @@ static func _wear_w(x: float, z: float, kind: String) -> float:
 			return 0.0
 		"pebble":
 			return 0.05 if (sq or lane < 2.0) else 0.0
-		"far_mud":
-			if road or lane < 2.5 or sq:
-				return 0.06
-			return 0.025 if not tent_ring else 0.01
 	return 0.0
 
 

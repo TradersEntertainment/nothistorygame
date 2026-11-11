@@ -55,7 +55,7 @@ func _ready() -> void:
 	kadri = day.kadri
 	kadri.position = KADRI_AT
 	kadri.look_target = player
-	kadri.set_activity("")          # bu bölümde doğramaz, Tolga'yı yönetir (satır elinden kalkar; yayma P1)
+	kadri.set_activity("")          # bu bölümde doğramaz, Tolga'yı yönetir (satır elinden kalkar)
 	fatih = Person.new({"coat": Color("b3262d"), "pants": Color("6a1a1a"), "hat": "sultan", "face": "fatih", "mustache": true, "robe": Color("c8323a"),
 		"hair": Color("2a1e14"), "skin": Color("e0b08a")})
 	fatih.scale = Vector3(1.06, 1.06, 1.06)
@@ -269,7 +269,7 @@ func _cooking() -> void:
 					await _k("D10Z_K_TASTE_BURNT" if _burnt == 1 else "D10Z_K_TASTE_BURNT2")
 		if _burnt >= 2:
 			break
-		# Kadri'nin denetimi: her tadımda fikir değiştirir. Tadar: tahta kaşık elinde, ağzına götürür (yayma P1; eskiden
+		# Kadri'nin denetimi: her tadımda fikir değiştirir. Tadar: tahta kaşık elinde, ağzına götürür (eskiden
 		# eli boş "tadıyordu")
 		kadri.hold_item(_spoon_model(), false, false)
 		kadri.emote("eat")

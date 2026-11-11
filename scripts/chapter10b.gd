@@ -71,7 +71,7 @@ func _ready() -> void:
 	urban = day.urban
 	urban.position = URBAN_AT
 	urban.look_target = player
-	urban.set_activity("")          # bu bölümde örste dövmez: çekiç elinden kalkar (CampDay ona çekiç veriyor; yayma P1)
+	urban.set_activity("")          # bu bölümde örste dövmez: çekiç elinden kalkar (CampDay ona çekiç veriyor)
 	day.goat.chase = null
 	day.goat.caught = true
 	day.goat.position = CANNON + Vector3(-2.5, 0, -3.5)
@@ -228,7 +228,7 @@ func _cast() -> void:
 		mold.visible = true
 		player.show_prop("ladle", 30.0)          # döküm kepçesi elde (yalnız pota eğiliyordu, el boştu)
 		player.hand_gesture("pour")
-		# Urban kalıbın öbür yanına geçer, potayı iki elinden kavrayıp eğer (yayma P1: pota kendi kendine eğiliyordu,
+		# Urban kalıbın öbür yanına geçer, potayı iki elinden kavrayıp eğer (pota kendi kendine eğiliyordu,
 		# Urban'ın eli kalıba ve potaya değmiyordu)
 		# Potanın yolunun dışında, kalıbın dış yanında durur (pota ocaktan kalıba gelirken gövdesinin içinden geçmesin)
 		var mp := mold.global_position
@@ -247,7 +247,6 @@ func _cast() -> void:
 		tilt.tween_property(_crucible, "position", above, _d(0.15))
 		tilt.tween_property(_crucible, "rotation:z", -0.9, _d(0.25))
 		await tilt.finished
-		_p1_shot("10B_POUR_%d" % i, 0.0, _crucible.global_position)
 		Stage.grip_hold(urban, _crucible, [Vector3(side * 0.3, 0.06, -0.16), Vector3(side * 0.3, 0.06, 0.16)], -1.0, 0.12)
 		_stream.visible = true
 		var top := _crucible.global_position + Vector3(0, 0.1, 0)
@@ -980,33 +979,3 @@ func _run_shots() -> void:
 	await _shot("c10b_03_patlama.png")
 	get_tree().paused = false
 	get_tree().quit()
-
-
-## yayma P1 tur 2 kare kancası: yalnız --dialogshots ile; delay sn sonra oyuncu kamerasından (aux verilirse o noktaya
-## bakan yardımcı kameradan) tam boy kare kaydeder. Oyun akışını beklemez, değiştirmez.
-func _p1_shot(n: String, delay := 0.0, aux := Vector3.INF) -> void:
-	if GameState.dialog_shots_dir == "":
-		return
-	if delay > 0.0:
-		await get_tree().create_timer(delay, false).timeout
-	var vp := get_viewport()
-	var old := vp.get_camera_3d()
-	var cam: Camera3D = null
-	if aux != Vector3.INF and old:
-		cam = Camera3D.new()
-		add_child(cam)
-		cam.fov = 40.0
-		cam.global_position = old.global_position
-		cam.look_at(aux, Vector3.UP)
-		cam.current = true
-	await RenderingServer.frame_post_draw
-	if cam:
-		await RenderingServer.frame_post_draw
-	var img := vp.get_texture().get_image()
-	if cam:
-		cam.queue_free()
-		if is_instance_valid(old):
-			old.current = true
-	if img and not img.is_empty():
-		DirAccess.make_dir_recursive_absolute(GameState.dialog_shots_dir)
-		img.save_jpg(GameState.dialog_shots_dir.path_join("P1_" + n + ".jpg"), 0.88)

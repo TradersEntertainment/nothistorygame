@@ -707,7 +707,8 @@ func _on_interact(id: String) -> void:
 				h.set_meta("done", true)
 				_drop()
 				# Kazık deliğe dikilir, tokmakla üç vuruşta çakılır (eskiden E'ye basınca bir anda çakılı beliriyordu)
-				var st := Props.cyl(h, 0.06, 1.8, Vector3(0, 1.0, 0.15), Color("8a6a44"), Vector3(-18, 0, 0), 6, 0.02)
+				# Kazık 1,8 m: tepesi bel hizasında (1,3 m) başlar, üç vuruşta 0,6 m gömülür (tokmak aşağı iner, vuruş seçilir)
+				var st := Props.cyl(h, 0.06, 1.8, Vector3(0, 0.45, 0.15), Color("8a6a44"), Vector3(-18, 0, 0), 6, 0.02)
 				stakes += 1
 				await _hammer_in(st, 0.6)
 				_update_objective()
@@ -746,7 +747,7 @@ func _hammer_in(st: Node3D, depth: float) -> void:
 	# tepesine iner (eksen sağ yumruktan tepeye kurulur), kazık görünür biçimde gömülür, değme anında toz ve yonga.
 	# Eskiden vuruş havayaydı: kazık metrelerce ötedeydi, baş hiçbir şeye değmiyordu.
 	var top := st.to_global(Vector3(0, 0.9, 0))
-	await Stage.walk_player(player, Vector3(top.x, player.global_position.y, top.z), 0.95, top + Vector3(0, -0.15, 0), 3.0)
+	await Stage.walk_player(player, Vector3(top.x, player.global_position.y, top.z), 0.8, top + Vector3(0, -0.15, 0), 3.0)
 	player.face(top + Vector3(0, -0.15, 0))
 	var hm := Node3D.new()
 	hm.set_meta("transient", true)
@@ -778,7 +779,7 @@ func _hammer_in(st: Node3D, depth: float) -> void:
 		player.shake(0.04)
 		# Değme anında kısa duraklama (tokmak kazığın başında görünür)
 		if not f:
-			for n in 6:
+			for n in 10:
 				_maul_pose(hm, 0.0, st)
 				await get_tree().process_frame
 	player.release_both()
@@ -799,7 +800,7 @@ func _maul_pose(hm: Node3D, v: float, st: Node3D) -> void:
 	var rw := player.rig.socket.global_position + cam.global_transform.basis.y * 0.035 if player.rig else cam.to_global(rc)
 	var top := st.to_global(Vector3(0, 0.96, 0))
 	var strike := top - rw
-	var d := clampf(strike.length(), 0.5, 1.0)
+	var d := clampf(strike.length(), 0.5, 1.4)
 	var raised := (cam.global_transform.basis * Vector3(0.05, 0.8, 0.55)).normalized()
 	var ax := strike.normalized().slerp(raised, clampf(v, 0.0, 1.0)).normalized()
 	var lw := rw + ax * 0.28

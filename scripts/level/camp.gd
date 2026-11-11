@@ -61,7 +61,7 @@ func _build_ground() -> void:
 	add_child(floor_body)
 
 
-## Gece ordugâhının zemini (yayma P1; Nature.ground_detail, her tür tek çoklu ağ, çarpışmasız): esir alanında ve kapı
+## Gece ordugâhının zemini (Nature.ground_detail, her tür tek çoklu ağ, çarpışmasız): esir alanında ve kapı
 ## önünde çiğnenmiş çamur, ayak izleri (çadırdan kapıya), saman (çadır ve saman yığını çevresi), ateş diplerinde kül ve
 ## kömür; çitin dışında at izleri, ot öbekleri ve taş. Eskiden tek renk koyu düz levhaydı.
 func _ground_wear(hf: Callable) -> void:
@@ -217,7 +217,7 @@ func _build_camp() -> void:
 			p.x += 12.0
 		lights.append(Night.campfire(self, p, 1.0))
 		# Ateş başında üç kişi: biri ayakta ısınır (ara sıra kıpırdanır), biri bağdaş kurmuş oturur, üçüncüsü (her ikinci
-		# ateşte) ateşin üstündeki kazanı kepçeyle karıştırır (yayma P1: eskiden üçü de kıpırtısız dikiliyordu)
+		# ateşte) ateşin üstündeki kazanı kepçeyle karıştırır (eskiden üçü de kıpırtısız dikiliyordu)
 		var standing: Array = []
 		for k in 3:
 			var a := TAU * k / 3.0 + 0.4

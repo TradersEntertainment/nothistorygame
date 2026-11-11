@@ -36,8 +36,7 @@ var _rope_peg: Array[Vector3] = []
 var _rope_loose: Array[Node3D] = []
 var _rope_taut: Array[Node3D] = []
 var _rope_knot: Array[Node3D] = []
-var _puddles: Array = []
-var _drip_t := 0.0
+
 var _gust: Array[float] = [0.0, 0.0, 0.0]
 var _storm_t := 0.0
 var rain: CPUParticles3D
@@ -157,7 +156,7 @@ func _build() -> void:
 		_rope_top.append(top)
 		_rope_peg.append(peg + Vector3(0, 0.5, 0))
 		# Gevşek ip: çadırın tepesinden (bağlı ucu) yere sarkar, yerde kazığa doğru kıvrılarak uzanır; rüzgârda savrulur
-		# (yayma P1: eskiden kazığın dibinde yatan üç düz çubuktu, çadıra bağlı değildi)
+		# (eskiden kazığın dibinde yatan üç düz çubuktu, çadıra bağlı değildi)
 		var loose := Node3D.new()
 		add_child(loose)
 		loose.global_position = top
@@ -505,15 +504,9 @@ func _storm() -> void:
 
 
 func _auto_ropes() -> void:
-	_p1_shot("24O_LOOSE", 0.0, _rope_peg[0] - Vector3(0, 0.3, 0))
-	for f in 3:
-		await get_tree().process_frame
 	for i in 3:
-		_rope(i, 0.6)                 # ip çekilirken (yalnız görüntü; bağlama yine _tie)
-		_p1_shot("24O_PULL_%d" % i, 0.1)
 		await get_tree().create_timer(0.3, false).timeout
 		_tie(i)
-		_p1_shot("24O_TIED_%d" % i, 0.25, _rope_peg[i] - Vector3(0, 0.2, 0))
 
 
 func _world_env() -> WorldEnvironment:
@@ -578,7 +571,7 @@ func _morning_sky() -> void:
 
 
 ## İpi çekmek: k (0…1). Çekerken ip çadırın tepesinden Tolga'nın eline gider (k arttıkça gerilir, sarkma azalır);
-## bağlanınca (k = 1) kazığa sarılı düğüme. (Eskiden ucu havada, kazığa doğru uzayan düz bir çubuktu; yayma P1.)
+## bağlanınca (k = 1) kazığa sarılı düğüme. (Eskiden ucu havada, kazığa doğru uzayan düz bir çubuktu.)
 func _rope(i: int, k: float) -> void:
 	var a: Vector3 = _rope_top[i]
 	var r := _rope_taut[i] as MeshInstance3D
@@ -668,12 +661,6 @@ func _ending() -> void:
 
 func _process(delta: float) -> void:
 	_t += delta
-	if phase == "storm" and not _puddles.is_empty():
-		_drip_t -= delta
-		if _drip_t <= 0.0:
-			_drip_t = 0.12
-			var pp: Vector3 = _puddles[randi() % _puddles.size()] + Vector3(randf_range(-0.4, 0.4), 0, randf_range(-0.3, 0.3))
-			Vfx.water_ring(self, pp, pp.y, 0.03, 0.28, 0.8, 0.5)
 	if phase == "storm":
 		var worst := 0.0
 		for i in 3:
@@ -716,23 +703,21 @@ func _on_item(target: String, item: String) -> bool:
 	return false
 
 
-## Fırtınada zemin ıslanır: çadırların çevresinde koyu çamur yamaları ve parlak su birikintileri (yayma P1; eskiden
+## Fırtınada zemin ıslanır: çadırların çevresinde koyu çamur yamaları ve parlak su birikintileri (eskiden
 ## dolu yağarken zemin kupkuruydu). Fırtına sonrası sabah da ıslak kalır.
 func _wet_ground() -> void:
 	var area := Rect2(-41.0, -19.0, 18.0, 27.0)
 	Nature.ground_detail(self, area, "camp_mud", 0.22, 2431, _ground_y)
 	Nature.ground_detail(self, area, "grease", 0.05, 2432, _ground_y)
 	Nature.ground_detail(self, area, "footprint", 0.12, 2433, _ground_y)
-	# Parlak ince su birikintileri (Tolga'nın baktığı yerde, çadırla arası) ve üstlerine düşen damlaların halkaları (_process)
+	# Parlak ince su birikintileri (Tolga'nın baktığı yerde, çadırla arası)
 	var rng := RandomNumberGenerator.new()
 	rng.seed = 2434
-	_puddles.clear()
 	for k in 9:
 		var p := _gy(Vector3(rng.randf_range(-32.5, -27.0), 0, rng.randf_range(-12.0, -6.5)))
 		if Vector2(p.x - TENTS[0].x, p.z - TENTS[0].z).length() < 2.2:
 			continue
 		Vfx.wet_mark(self, p + Vector3(0, 0.02, 0), rng.randf() * TAU, false, 9999.0, rng.randf_range(1.6, 2.8), true)
-		_puddles.append(p + Vector3(0, 0.03, 0))
 
 
 ## Tolga konuşacağı kişinin dibine yürür (eşya elden ele geçsin; 1 m'ye).
@@ -904,33 +889,3 @@ func _run_shots() -> void:
 	await get_tree().create_timer(0.3, false).timeout
 	await _shot_png("c24o_cover.png")
 	get_tree().quit()
-
-
-## yayma P1 tur 2 kare kancası: yalnız --dialogshots ile; delay sn sonra oyuncu kamerasından (aux verilirse o noktaya
-## bakan yardımcı kameradan) tam boy kare kaydeder. Oyun akışını beklemez, değiştirmez.
-func _p1_shot(n: String, delay := 0.0, aux := Vector3.INF) -> void:
-	if GameState.dialog_shots_dir == "":
-		return
-	if delay > 0.0:
-		await get_tree().create_timer(delay, false).timeout
-	var vp := get_viewport()
-	var old := vp.get_camera_3d()
-	var cam: Camera3D = null
-	if aux != Vector3.INF and old:
-		cam = Camera3D.new()
-		add_child(cam)
-		cam.fov = 40.0
-		cam.global_position = old.global_position
-		cam.look_at(aux, Vector3.UP)
-		cam.current = true
-	await RenderingServer.frame_post_draw
-	if cam:
-		await RenderingServer.frame_post_draw
-	var img := vp.get_texture().get_image()
-	if cam:
-		cam.queue_free()
-		if is_instance_valid(old):
-			old.current = true
-	if img and not img.is_empty():
-		DirAccess.make_dir_recursive_absolute(GameState.dialog_shots_dir)
-		img.save_jpg(GameState.dialog_shots_dir.path_join("P1_" + n + ".jpg"), 0.88)

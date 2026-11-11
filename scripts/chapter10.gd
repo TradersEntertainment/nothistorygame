@@ -183,7 +183,7 @@ func _build_gate() -> void:
 	add_child(tailor)
 	Props.box(tailor, Vector3(0.02, 0.02, 0.9), Vector3(0.35, 1.0, 0.3), Color("d8c040"))
 	Props.interactable(self, "tailor", Vector3(1.2, 2.0, 1.2), tailor.position + Vector3(0, 1.0, 0))
-	# Sıradakiler kıpırdar: ağırlık verir, kol kavuşturur, iç çeker, boynunu uzatıp öne bakar (yayma P1; eskiden kıpırtısız
+	# Sıradakiler kıpırdar: ağırlık verir, kol kavuşturur, iç çeker, boynunu uzatıp öne bakar (eskiden kıpırtısız
 	# dikiliyorlardı). Kapıdaki nöbetçiler de.
 	Crowd.idle_vary([cameleer, tailor, hasan, huseyin], {"every": Vector2(2.0, 5.0),
 		"emotes": ["nod", "arms_cross", "think", "sigh", "shrug", "lean"]})
@@ -231,7 +231,6 @@ func _run() -> void:
 	else:
 		await _t("D10O_T_01")
 		Crowd.look_at_event([cameleer, tailor, hasan, huseyin], aga, 3.5, 0.8)     # bağırınca sıra Ağa'ya döner
-		_p1_shot("10_SHOUT", 0.5)
 		await _say("SPK_AGA", "D10O_A_SHOUT")
 		await _t("D10O_T_02")
 		phase = "free"
@@ -862,33 +861,3 @@ func _run_shots() -> void:
 	await get_tree().create_timer(0.4, false).timeout
 	await _shot("c10_04_otag.png")
 	get_tree().quit()
-
-
-## yayma P1 tur 2 kare kancası: yalnız --dialogshots ile; delay sn sonra oyuncu kamerasından (aux verilirse o noktaya
-## bakan yardımcı kameradan) tam boy kare kaydeder. Oyun akışını beklemez, değiştirmez.
-func _p1_shot(n: String, delay := 0.0, aux := Vector3.INF) -> void:
-	if GameState.dialog_shots_dir == "":
-		return
-	if delay > 0.0:
-		await get_tree().create_timer(delay, false).timeout
-	var vp := get_viewport()
-	var old := vp.get_camera_3d()
-	var cam: Camera3D = null
-	if aux != Vector3.INF and old:
-		cam = Camera3D.new()
-		add_child(cam)
-		cam.fov = 40.0
-		cam.global_position = old.global_position
-		cam.look_at(aux, Vector3.UP)
-		cam.current = true
-	await RenderingServer.frame_post_draw
-	if cam:
-		await RenderingServer.frame_post_draw
-	var img := vp.get_texture().get_image()
-	if cam:
-		cam.queue_free()
-		if is_instance_valid(old):
-			old.current = true
-	if img and not img.is_empty():
-		DirAccess.make_dir_recursive_absolute(GameState.dialog_shots_dir)
-		img.save_jpg(GameState.dialog_shots_dir.path_join("P1_" + n + ".jpg"), 0.88)

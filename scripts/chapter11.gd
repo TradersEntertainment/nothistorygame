@@ -169,7 +169,7 @@ func _build() -> void:
 		var fire_at := _tolga_at + Vector3(-2.0, 0.0, 1.4)
 		day.lights.append(Night.campfire(day, fire_at, 0.8))
 		tolga_npc.rotation.y = atan2(fire_at.x - _tolga_at.x, fire_at.z - _tolga_at.z)
-	# Ateşin dibinde kül ve dökülmüş kömür (yayma P1)
+	# Ateşin dibinde kül ve dökülmüş kömür
 	var fire_here: Vector3 = {KITCHEN_TOLGA: KITCHEN_TOLGA + Vector3(1.6, 0.0, -1.2), TOLGA_POS: FIRE_POS,
 		CANNON_TOLGA: CANNON_TOLGA + Vector3(-2.0, 0.0, 1.4)}.get(_tolga_at, Vector3.INF)
 	if fire_here != Vector3.INF:

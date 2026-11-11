@@ -119,7 +119,7 @@ const DETAIL := {
 	"chips": [0.35, 0.7, Color("b89a6a"), Color("d8c090"), true, ""],
 	"mud": [0.7, 1.9, Color("57442f"), Color("735d43"), true, ""],
 	"grease": [0.5, 1.2, Color("241808"), Color("3a2810"), true, "gloss"],
-	"footprint": [0.9, 1.1, Color("3e2e1e"), Color("54402c"), true, ""],      # yayma P1 tur 2: biraz açık (kara delik gibiydi)
+	"footprint": [0.9, 1.1, Color("3e2e1e"), Color("54402c"), true, ""],      # biraz açık (kara delik gibiydi)
 	"bush": [0.6, 1.4, Color("2f4f22"), Color("587a34"), false, ""],
 	"log": [0.7, 1.3, Color("7a5434"), Color("a07a50"), false, ""],
 	"plank": [0.7, 1.3, Color("7a6a54"), Color("a8957a"), true, ""],
@@ -127,7 +127,7 @@ const DETAIL := {
 	"foam": [0.3, 0.8, Color("cfe2e4"), Color("eef6f6"), true, ""],
 	"wet": [0.6, 1.3, Color("7e6e50"), Color("8e7e5e"), true, ""],
 	# yayma P0: ordugâh, şehir, sur dibi
-	"camp_mud": [0.8, 2.2, Color("4e3c2a"), Color("66523c"), true, ""],      # yayma P1 tur 2: zeminin biraz koyusu
+	"camp_mud": [0.8, 2.2, Color("4e3c2a"), Color("66523c"), true, ""],      # zeminin biraz koyusu
 	"hoofprint": [0.9, 1.1, Color("33261a"), Color("4a3826"), true, ""],
 	"straw": [0.5, 1.0, Color("c8a858"), Color("e8d088"), true, ""],
 	"ash": [0.5, 1.2, Color("4a4846"), Color("8a8682"), true, ""],
@@ -287,7 +287,7 @@ static func detail_mesh(kind: String) -> Mesh:
 	rng.seed = hash(kind)
 	match kind:
 		"camp_mud":
-			# yayma P1 tur 2: dişli, kenara doğru incelen çamur yaması: ortası yarı saydam, orta halka daha saydam, dış
+			# dişli, kenara doğru incelen çamur yaması: ortası yarı saydam, orta halka daha saydam, dış
 			# kenar sıfır; çevresinde birkaç sıçramış küçük çamur. (Eskiden opak çekirdekli yassı leke "yağ lekesi" gibiydi.)
 			_soft_blob(st, rng, Vector2.ZERO, 0.5, 22, 0.62)
 			for k in 4:
@@ -511,7 +511,7 @@ static func _soft(gloss := false) -> StandardMaterial3D:
 	return _soft_mats[gloss]
 
 
-## Yumuşak kenarlı düzensiz yassı leke (yayma P1 tur 2, camp_mud): merkez alfa a0, orta halka (yarıçapın %55'i) a0 * 0,6,
+## Yumuşak kenarlı düzensiz yassı leke (camp_mud): merkez alfa a0, orta halka (yarıçapın %55'i) a0 * 0,6,
 ## dişli dış kenar 0. r: ortalama yarıçap, n: kenar noktası.
 static func _soft_blob(st: SurfaceTool, rng: RandomNumberGenerator, c: Vector2, r: float, n: int, a0: float) -> void:
 	var ph := rng.randf() * TAU

@@ -843,8 +843,8 @@ func _warn(reason: String) -> void:
 	fwd.y = 0.0
 	fwd = fwd.normalized() if fwd.length() > 0.01 else Vector3.BACK
 	var side := fwd.cross(Vector3.UP)
-	# 4,5 m önü, sırığın karşı yanı: bakışın alt yarısında, altyazının üstünde görünür
-	var land := pp + fwd * 4.5 + side * -1.3
+	# 8 m önü, sırığın karşı yanı: altyazı kutusunun üstünde, ufka yakın görünür
+	var land := pp + fwd * 8.0 + side * -1.6
 	land.y = _gy(land.x, land.z)
 	var from_wall := pp.z < 70.0
 	var src := Vector3(land.x * 0.5 + (2.0 if _warnings % 2 == 0 else -2.0), 9.5, 15.0) if from_wall else Vector3(land.x + 1.5, 2.6, 110.0)
@@ -866,7 +866,7 @@ func _shoot_arrow(from: Vector3, to: Vector3) -> void:
 	a.mesh = Assault.arrow_mesh()
 	a.material_override = Scenery._vc_mat()
 	add_child(a)
-	a.scale = Vector3.ONE * 1.25
+	a.scale = Vector3.ONE * 1.7
 	var dir := (to - from).normalized()
 	# Okun ucu yerel +Z'de: ok gidiş yönüne bakar; saplanınca ucu toprağın içinde
 	a.global_transform = Transform3D(Basis.looking_at(-dir, Vector3.UP), from)

@@ -155,7 +155,7 @@ func _build() -> void:
 	# Yerleri ve engelleri aynı (içlerinden geçilmez: eski Crowd katısı boyunda görünmez kutu).
 	var flat := func(_x: float, _z: float) -> float: return GROUND_Y
 	for spec in [[Vector3(12.8, 0.3, -21.2), Vector3(-0.3, 0, -1), "hammer_log"], [Vector3(-13.8, 0.3, -21.0), Vector3(-0.6, 0, -1), "coil_rope"],
-			[Vector3(15.2, 0.3, -9.4), Vector3(-1, 0, 0.2), "saw_log"], [Vector3(-12.4, 0.3, -10.8), Vector3(-0.5, 0, 1), "hammer_log"],
+			[Vector3(15.2, 0.3, -9.4), Vector3(-1, 0, 0.2), "saw_log"], [Vector3(-12.4, 0.3, -10.8), Vector3(1, 0, 0.25), "hammer_log"],
 			[Vector3(-10.5, 0.3, -18.0), Vector3(0.6, 0, -1), "carry_barrel"]]:
 		Stage.station(self, spec[2], spec[0], spec[1], {"ground": flat, "coat": [Color("8a6a4a"), Color("6a4a3a"), Color("7a5a3a")][int(absf(spec[0].x)) % 3],
 			"hat": "turban", "person": false, "live": spec[2] in ["coil_rope", "carry_barrel"]})      # tokmak/testere: donuk figür (çizim bütçesi)
