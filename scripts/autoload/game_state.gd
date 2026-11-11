@@ -1493,7 +1493,9 @@ func _notification(what: int) -> void:
 			_pt_close("quit")           # kart açıkken ikinci kapatma: beklemeden çık
 			get_tree().quit()
 		else:
-			quit_game()
+			# Bildirim kökten yayılırken köke çocuk eklenemez: gönderim kartı yayılma bitince açılır (eskiden kart
+			# ağaca giremiyor, oyun duraklı kalıyor, pencere ancak ikinci kapatmada kapanıyordu)
+			quit_game.call_deferred()
 
 
 func playtest_folder() -> void:

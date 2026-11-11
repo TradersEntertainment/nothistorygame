@@ -3989,6 +3989,15 @@ var _mouse_before_pause := Input.MOUSE_MODE_CAPTURED
 func _notification(what: int) -> void:
 	if what != NOTIFICATION_APPLICATION_FOCUS_OUT or not is_inside_tree():
 		return
+	# Bildirim kökten yayılırken bu düğüm ve ataları çocuk eklemeye kapalıdır: menü burada eklenirse ağaca giremez
+	# ("Parent node is busy setting up children"), oyun duraklamış, menüsüz ve çıkışsız kalır (v0.99.116'ya kadar
+	# her odak kaybında böyleydi; bölüm açılışındaki kararmada "siyah ekran"). Menü yayılma bitince açılır.
+	_focus_lost.call_deferred()
+
+
+func _focus_lost() -> void:
+	if not is_inside_tree():
+		return
 	if GameState.autotest or GameState.shots_dir != "" or GameState.dialog_shots_dir != "" or GameState.changing:
 		return
 	if get_tree().paused or _in_title or _title_active or _keypad_active or _menu != null or _photo != null \
@@ -4011,6 +4020,13 @@ func _set_paused(on: bool) -> void:
 		m.title_font = _title_font
 		_menu = m
 		add_child(m)
+		if not m.is_inside_tree():
+			# Menü eklenemediyse (ağaç meşgul) oyun menüsüz duraklı kalmasın
+			_menu = null
+			m.free()
+			get_tree().paused = false
+			Audio.hold(false)
+			return
 		Input.mouse_mode = Input.MOUSE_MODE_VISIBLE
 		var res: Array = await m.picked
 		_menu = null

@@ -1019,3 +1019,15 @@ Her bölüm denetiminde ve her düzeltmede bu listeyi baştan uygula. Yeni bir h
   - `get_meta("x", null)` motor hatası basar (varsayılan null = yok sayılır); `has_meta` ile oku.
   - Makine yeniden başlayabilir: kaydedilmemiş iş tek yeniden başlatmada gidebilir. Her ajan turundan sonra
     `wip/…` dalına yedek; uzun iş ilerleme dosyası tutar (`$S/b2/tur3_liste.md` gibi).
+- v0.99.116 (acil düzeltme; sahibi okul bilgisayarında "yarat"tan bölüm seçti, siyah ekranda kaldı):
+  - Kök neden: odak kaybında duraklatma (`Hud._notification`, `NOTIFICATION_APPLICATION_FOCUS_OUT`) menüyü bildirimin
+    yayılması SIRASINDA ekliyordu. Motor yayılma boyunca düğümü ve atalarını çocuk eklemeye kapatır
+    (`propagate_notification` → `data.blocked`): `add_child` "Parent node is busy setting up children" ile düşüyor,
+    oyun duraklamış, menüsüz ve çıkışsız kalıyordu. Bölüm açılışındaki kararmada bu "siyah ekran" demek. Özellik
+    eklendiğinden beri her Alt+Tab'da böyleydi; testler yakalamadı çünkü odak duraklatması testte kapalı.
+  - Kural: `_notification` içinde (yayılan bildirimler: odak, kapatma isteği, dil değişimi) ağaca düğüm ekleme;
+    işi `call_deferred` ile yayılma bitince yap. Aynı kusur pencere kapatılırken oyun testi gönderim kartında da vardı
+    (`GameState._notification` → `quit_game`).
+  - "Testte kapalı" olan her özellik ayrı bir denetim sahnesi ister: `tests/focus_check.tscn` bildirimi motorun
+    yaptığı gibi kökten yayar, menünün ağaca girdiğine ve "devam"ın oyunu sürdürdüğüne bakar.
+  - Oyuncunun `godot.log` dosyasındaki ilk hata satırı çoğu zaman kök nedendir; sondaki "leaked" satırları sonuçtur.
