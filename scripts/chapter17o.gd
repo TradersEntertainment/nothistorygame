@@ -187,8 +187,6 @@ func _build() -> void:
 		s.position = GUN + Vector3([-4.9, -3.1, 3.1, 4.9][i], 0, -0.2)
 		add_child(s)
 		crew.append(s)
-		# Öbür topların başında aletleriyle (yayma P2: elleri boş dikiliyorlardı): tokmak, barut kepçesi, manivela
-		s.give_tool(["rammer", "powder_ladle", "handspike", "rammer"][i])
 	_build_valley_camp(lf)
 	# Demirli donanma: kıçları kıyıya, başları denize; ateş hattının (sol-ön) dışında, sağda sıra sıra
 	var rng := RandomNumberGenerator.new()
@@ -689,7 +687,12 @@ func _start_brigade() -> void:
 
 ## Kovalarla koşup gelir: varış noktasının 9 m gerisinden (mutfak tarafı) koşar.
 func _run_in(p: Person, to: Vector3) -> void:
-	p.position = to - Vector3(sin(p.rotation.y), 0, cos(p.rotation.y)) * 9.0
+	# Koşu topların önündeki toprak siperin (x −6..6, z 0..1,6; satır 145) içinden başlamasın: başlangıç siperin doğu
+	# ucunun ötesinde (Kadri x 4'ten koşuyor, siperin içinden geçiyordu: PACE VISAUDIT insolid)
+	var back := 9.0
+	if absf(to.z - (GUN.z + 1.8)) < 1.3:
+		back = minf(back, maxf(to.x - 6.6, 0.5))
+	p.position = to - Vector3(sin(p.rotation.y), 0, cos(p.rotation.y)) * back
 	if Stage.fast():
 		p.position = to
 		return

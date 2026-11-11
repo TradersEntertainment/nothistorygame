@@ -370,7 +370,7 @@ func _build_shore() -> void:
 	# Kıyı zemini (y 0,3): şeve yakın çakıl ve ıslak lekeler, çalışma alanında çamur, iz, talaş
 	var flat := func(_x: float, _z: float) -> float: return GROUND_Y
 	var area := Rect2(-24.0, -30.0, 48.0, 29.6)
-	Nature.ground_detail(self, area, "mud", 0.05, 1816, flat, keep_path)
+	Nature.ground_detail(self, area, "mud", 0.02, 1816, flat, keep_path)      # seyrek: koyu leke gibi okunmasın
 	Nature.ground_detail(self, area, "footprint", 0.12, 1817, flat, keep_path)
 	Nature.ground_detail(self, Rect2(8.0, -24.0, 12.0, 18.0), "chips", 0.6, 1818, flat)
 	Nature.trail(self, [Vector3(6.0, 0, SHORE_Z - 4.0), Vector3(2.0, 0, SHORE_Z - 3.6), Vector3(0.0, 0, SHORE_Z - 3.2)], "wheel_ruts", flat)
@@ -538,6 +538,7 @@ func _do_barrels() -> void:
 ## çıkınca yuvarlanmayı sürdürür, kenardan suya düşer (Vfx.water_entry); bölümün fıçı çifti sudan yüzeye çıkıp oturur.
 ## Oynanış aynı: adım hemen "lash"a geçer, oyuncu donmaz.
 var _look_tw: Tween
+var _roll_tws: Array[Tween] = []
 
 
 func _roll_barrel(s: Node3D, b: Node3D, end: Vector3) -> void:
@@ -583,6 +584,7 @@ func _roll_barrel(s: Node3D, b: Node3D, end: Vector3) -> void:
 	look.tween_interval(1.0)
 	look.tween_property(player.camera, "rotation:x", pitch0, 0.5).set_trans(Tween.TRANS_SINE)
 	var tw := create_tween()
+	_roll_tws.append(tw)
 	tw.tween_property(carrier, "global_position", p0, 0.25).set_ease(Tween.EASE_IN)
 	tw.tween_callback(func(): Audio.sfx("land_thud", -14.0, 0.8))
 	var dist := p0.distance_to(edge)
@@ -735,6 +737,18 @@ func _finish_bridge() -> void:
 	phase = "done"
 	if _look_tw and _look_tw.is_valid():
 		_look_tw.kill()           # son fıçının bakış inişi top sahnesinin bakışını ezmesin
+	for t in _roll_tws:
+		if t.is_valid():
+			t.kill()                  # son fıçı hâlâ yuvarlanıyorsa top sahnesinde kıyıda kalmasın
+	_roll_tws.clear()
+	for i in built:
+		var bb: Node3D = sections[i].get_node("Barrels")
+		bb.visible = true
+		bb.position = Vector3.ZERO
+	for c in get_children():
+		if "BarrelRoll" in String(c.name):
+			c.queue_free()
+	player.release_both()
 	player.frozen = true
 	hud.set_objective("")
 	await hud.say("SPK_USTA", ("D18_U_DONE" if misses == 0 else "D18_U_DONE_LOOSE") if misses <= 2 else "D18_U_CROOKED")
