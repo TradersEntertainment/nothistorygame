@@ -843,8 +843,11 @@ func _warn(reason: String) -> void:
 	fwd.y = 0.0
 	fwd = fwd.normalized() if fwd.length() > 0.01 else Vector3.BACK
 	var side := fwd.cross(Vector3.UP)
-	# 8 m önü, sırığın karşı yanı: altyazı kutusunun üstünde, ufka yakın görünür
-	var land := pp + fwd * 8.0 + side * -1.6
+	# Bakış yönünde 6 m önü, sırığın karşı yanı (altyazı kutusunun üstünde, ufka yakın). Oyuncu yürüyor/koşuyorsa ok
+	# uçarken aldığı yol da eklenir: ok saplandığında yine ayağının 3-8 m önünde, bakışın içinde olur.
+	var hv := Vector3(player.velocity.x, 0.0, player.velocity.z)
+	var lead := hv * 0.8 if hv.dot(fwd) > 0.0 else Vector3.ZERO
+	var land := pp + fwd * 6.0 + lead.limit_length(4.0) + side * -1.4
 	land.y = _gy(land.x, land.z)
 	var from_wall := pp.z < 70.0
 	var src := Vector3(land.x * 0.5 + (2.0 if _warnings % 2 == 0 else -2.0), 9.5, 15.0) if from_wall else Vector3(land.x + 1.5, 2.6, 110.0)
@@ -887,7 +890,7 @@ func _shoot_arrow(from: Vector3, to: Vector3) -> void:
 		var amp := deg_to_rad(5.0) * (1.0 - k / 5.0) * (1.0 if k % 2 == 0 else -1.0)
 		qt.tween_property(a, "rotation:x", r0 + amp, 0.06)
 	qt.tween_property(a, "rotation:x", r0, 0.06)
-	_cshot("ok_%d" % _warnings, 0.15)
+	_cshot("ok_%d" % _warnings, 0.05)
 
 
 ## Saplanan okun tozu: küçük, yarı saydam, çabuk dağılan birkaç zerre (ok seçilsin; Vfx.dust bu yakınlıkta ekranı örtüyordu)
@@ -1353,27 +1356,30 @@ func _trench() -> void:
 ## Mühürlü mektup: sol el cepten çıkarıp mühür nöbetçilere görünecek biçimde göğüs altında tutar (sağ el sırıkta);
 ## Hasan'ın sözünden sonra cebe geri girer. El Player'ın gösterilen eşya tutuşu (hold_model: sol el kâğıdın köşesinde).
 var _letter_node: Node3D
+## Gösterme yeri (kamera yereli): ortanın biraz altı, iki nöbetçinin arasında, altyazının üstünde; Hasan'a uzatılmış
+const LETTER_SHOW := Vector3(-0.01, -0.12, -0.5)
 
 
 func _show_letter(on: bool) -> void:
 	if on:
-		_letter_node = Handover.letter_model()
-		player.hold_model(_letter_node)
-		_letter_node.scale = Vector3.ONE * 0.75
-		_letter_node.position = Vector3(-0.1, -0.5, -0.4)
-		_letter_node.rotation_degrees = Vector3(-14, 8, 3)
+		_letter_node = Towel.letter_model()
+		player.hold_model(_letter_node)          # sol (boş) el kâğıdın sol alt köşesinden tutar; sırık sağ elde omuzda
+		_letter_node.position = Vector3(-0.08, -0.42, -0.42)
+		_letter_node.rotation_degrees = Vector3(-10, 6, 4)
 		Audio.sfx("paper_tear", -16.0, 1.4)
-		var tw := create_tween()
-		tw.tween_property(_letter_node, "position", Vector3(-0.2, -0.13, -0.44), 0.3).set_trans(Tween.TRANS_BACK).set_ease(Tween.EASE_OUT)
+		var tw := create_tween().set_parallel()
+		tw.tween_property(_letter_node, "position", LETTER_SHOW, 0.05 if Stage.fast() else 0.45).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_OUT)
+		tw.tween_property(_letter_node, "rotation_degrees", Vector3(-22, 4, 3), 0.05 if Stage.fast() else 0.45)
 		await tw.finished
-		_cshot("muhur")
+		_cshot("muhur", 0.3)
 		return
 	if not is_instance_valid(_letter_node):
 		return
 	var n := _letter_node
 	_letter_node = null
 	var tw2 := create_tween()
-	tw2.tween_property(n, "position", Vector3(-0.12, -0.6, -0.4), 0.3).set_trans(Tween.TRANS_SINE)
+	tw2.tween_property(n, "position", Vector3(-0.12, -0.5, -0.36), 0.05 if Stage.fast() else 0.5).set_trans(Tween.TRANS_SINE)
+	_cshot("muhur_iner", 0.25)
 	tw2.tween_callback(n.queue_free)
 	await tw2.finished
 
@@ -1573,6 +1579,7 @@ func _auto() -> void:
 			_bot_running = true
 			await _wait_until(func() -> bool: return _warnings >= 2, 20.0)
 			_bot_running = false
+			await get_tree().create_timer(1.6, false).timeout        # okun saplandığı yerde durur (gerçek oyuncu gibi): ok bakışta saplanır, karesi alınır
 	await _bot_to(Vector3(0.0, 0.0, 105.0))
 	await _wait_until(func() -> bool: return phase in ["lines", "done"] and not _busy)
 	await _bot_to(Vector3(0.6, 0.0, 139.0))

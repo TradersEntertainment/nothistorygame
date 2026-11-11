@@ -14,7 +14,7 @@ const POLE_R := 0.017
 const CLOTH_W := 0.62
 const CLOTH_H := 0.44
 const LEFT_GRIP := Vector3(0.0, 0.3, 0.0)
-const RIGHT_GRIP := Vector3(0.0, 0.0, 0.0)
+const RIGHT_GRIP := Vector3(0.0, -0.36, 0.0)      # alt el sırığın dibinde: kadrajın altında kalır (kesik kol görünmesin)
 const C_POLE := Color("7a5634")
 const C_ROPE := Color("b89a6a")
 const C_CLOTH := Color("eee8da")
@@ -131,3 +131,29 @@ void fragment() {
 	ROUGHNESS = 1.0;
 }"""
 	return _shader
+
+
+## Mühürlü mektup, gerçek ölçüde: katlanmış kâğıt 14x9 cm, kırmızı balmumu mühür (2,8 cm) üstünde koyu çift başlı
+## kartal kabartması. Kök kâğıdın ortası; mühürlü yüz yerel +Z. (Handover.letter_model 22x14 cm, elde dev görünüyordu.)
+static func letter_model() -> Node3D:
+	var n := Node3D.new()
+	n.name = "SealedLetter"
+	var paper := Color("e9dcbc")
+	Props.box(n, Vector3(0.14, 0.09, 0.004), Vector3.ZERO, paper)
+	# Katlanmış kapak: üstten inen üçgen yerine ince, koyuca bir şerit ve kat çizgisi
+	Props.box(n, Vector3(0.14, 0.032, 0.0015), Vector3(0, 0.026, 0.0025), paper.darkened(0.07))
+	Props.box(n, Vector3(0.14, 0.002, 0.001), Vector3(0, 0.0095, 0.0035), paper.darkened(0.28))
+	# Mühür: kırmızı balmumu, kenarı taşkın; üstünde koyu kartal (gövde, açık kanatlar, iki yana bakan iki baş)
+	var wax := Color("a8182a")
+	Props.cyl(n, 0.016, 0.004, Vector3(0, 0.006, 0.004), wax.darkened(0.15), Vector3(90, 0, 0), 12)
+	Props.cyl(n, 0.014, 0.003, Vector3(0, 0.006, 0.0065), wax, Vector3(90, 0, 0), 12)
+	var ink := Color("4a0a12")
+	var z := 0.0085
+	Props.box(n, Vector3(0.0045, 0.012, 0.0012), Vector3(0, 0.004, z), ink)
+	for sx: float in [-1.0, 1.0]:
+		Props.box(n, Vector3(0.009, 0.0035, 0.0012), Vector3(sx * 0.0055, 0.0075, z), ink, Vector3(0, 0, sx * 22.0))
+		Props.box(n, Vector3(0.003, 0.0045, 0.0012), Vector3(sx * 0.003, 0.0125, z), ink, Vector3(0, 0, sx * -25.0))
+		Props.box(n, Vector3(0.0035, 0.0018, 0.0012), Vector3(sx * 0.0052, 0.0148, z), ink)
+	Props.box(n, Vector3(0.0075, 0.003, 0.0012), Vector3(0, -0.0028, z), ink)
+	Props.strip_outlines(n)
+	return n
