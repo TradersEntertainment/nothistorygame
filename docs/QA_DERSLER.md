@@ -1031,3 +1031,10 @@ Her bölüm denetiminde ve her düzeltmede bu listeyi baştan uygula. Yeni bir h
   - "Testte kapalı" olan her özellik ayrı bir denetim sahnesi ister: `tests/focus_check.tscn` bildirimi motorun
     yaptığı gibi kökten yayar, menünün ağaca girdiğine ve "devam"ın oyunu sürdürdüğüne bakar.
   - Oyuncunun `godot.log` dosyasındaki ilk hata satırı çoğu zaman kök nedendir; sondaki "leaked" satırları sonuçtur.
+- v0.99.117 (ikinci acil düzeltme; sahibi aynı okul bilgisayarında soğuk açılışın top atışında da dondu):
+  - Aynı oturumda iki kez, Alt+Tab yapılmayan anlarda (bölüm açılışı, ara sahne) odak kaybı: o bilgisayarda odak
+    kendiliğinden gidip geliyor olabilir (bildirim, sınıf yönetim yazılımı). Odak duraklatması artık 0,4 sn bekler;
+    pencere yeniden odaklıysa duraklatmaz. Gerçek Alt+Tab'da pencere odaksız kalır ve menü açılır.
+  - Duraklatınca günlüğe `ODAK: pencere odağı kaybedildi` satırı yazılır: bir sonraki `godot.log` nedeni kesin gösterir.
+  - Belirti okuma: "dünya dondu ama fesin püskülü sallanıyor ve fare imleci göründü" = ağaç duraklı (HUD her zaman
+    işler); motor donması ya da çökme değil.
