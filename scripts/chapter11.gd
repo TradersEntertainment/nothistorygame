@@ -138,6 +138,17 @@ func _process(_delta: float) -> void:
 			Audio.sfx("radio_beep", -22.0 + v * 8.0, 1.6 + v * 0.6)
 
 
+## Ateş yatağının çevresi: kül halkası, kömür parçaları, yarı yanmış odun (her tür tek çoklu ağ, çarpışmasız)
+func _hearth(c: Vector3) -> void:
+	var hy := func(x: float, z: float) -> float: return CampDay.height(x, z)
+	var ring := func(x: float, z: float) -> bool:
+		var d := Vector2(x - c.x, z - c.z).length()
+		return d > 0.45 and d < 1.25
+	var area := Rect2(c.x - 1.3, c.z - 1.3, 2.6, 2.6)
+	Nature.ground_detail(self, area, "ash", 2.2, 1101, hy, ring)
+	Nature.ground_detail(self, area, "coal", 6.0, 1102, hy, ring)
+
+
 func _build() -> void:
 	# Tolga: ateşin başında, yarını bekliyor
 	# Fes kapalıysa Tolga başı açık (her yolda fesliydi)
@@ -158,6 +169,11 @@ func _build() -> void:
 		var fire_at := _tolga_at + Vector3(-2.0, 0.0, 1.4)
 		day.lights.append(Night.campfire(day, fire_at, 0.8))
 		tolga_npc.rotation.y = atan2(fire_at.x - _tolga_at.x, fire_at.z - _tolga_at.z)
+	# Ateşin dibinde kül ve dökülmüş kömür
+	var fire_here: Vector3 = {KITCHEN_TOLGA: KITCHEN_TOLGA + Vector3(1.6, 0.0, -1.2), TOLGA_POS: FIRE_POS,
+		CANNON_TOLGA: CANNON_TOLGA + Vector3(-2.0, 0.0, 1.4)}.get(_tolga_at, Vector3.INF)
+	if fire_here != Vector3.INF:
+		_hearth(fire_here)
 	Props.interactable(self, "tolga", Vector3(1.4, 2.0, 1.4), _tolga_at + Vector3(0, 1.0, 0))
 	tolga_npc.set_activity("sit_ground")       # ateşin başında oturur, yarını bekler (ayakta duruyordu)
 	# Ordugâh yolunda (6a) keçi Tolga'nın peşinde: yanında yatar ("beni kendisi takip ediyordu"; 55 m ötedeydi)
@@ -239,6 +255,8 @@ func _lost() -> void:
 		await _n("D11_N_FIRED")
 		await hud.card([[tr("UI_CH11_FIRED"), 30, Color("f2e6c9")], [tr("UI_CH11_FIRED_SUB"), 20, Color(1, 1, 1, 0.7)]], 2.6)
 		hud.clear_card()
+		# Görevden alınan Nihat kuşatma boyunca Büro'yu yine yönetiyor (17-27): yeni model gelene kadar dosya onda
+		await _n("D11_N_FIRED_LAST")
 		GameState.flags["nihat_dismissed"] = true
 	else:
 		await _n("D11_N_LOST_2")

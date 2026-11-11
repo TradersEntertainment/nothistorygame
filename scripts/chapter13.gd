@@ -96,6 +96,11 @@ func _apply_autotest_setup() -> void:
 			GameState.chapter_outcomes[12] = "12.5"
 		"gidak":
 			GameState.chapter_outcomes[12] = "12.5"     # Gıdak yalnız mutfakta açılır (aşağıda)
+		"galata":                                       # 10G.1: Venedik gemisinden Büro'ya, oradan Galata'ya
+			GameState.chapter_outcomes.erase(12)
+			GameState.chapter_outcomes[10] = "10G.1"
+			GameState.flags["cur_scene"] = "chapter10g"
+			_place = "galata"
 
 
 # ================================================================ ana akış
@@ -245,6 +250,10 @@ func _tolga_moment() -> void:
 	await hud.card([[tr("UI_CH13_SWITCH"), 26, Color("2a2a30")], [tr("UI_CH13_SWITCH_SUB"), 18, Color(0.2, 0.2, 0.25, 0.85)]], 2.4)
 	hud.clear_card()
 	await hud.fade_to(0.0, 0.4, Color.WHITE)
+	# 10G.1: Tolga Venedik gemisiyle yola çıkmıştı. Galata limanı zincirin içinde: gemi zincire kadar gidip döndü
+	# (Galata'da belirmesin)
+	if place == "galata" and str(GameState.chapter_outcomes.get(10, "")) == "10G.1":
+		await _t("D13_T_GALATA_SHIP")
 	# "(Telsiz) EVLÂT! BAS!": telsizden gelir (bark yolunda bip ve cızırtı çalmıyordu)
 	Audio.sfx("radio_beep", -8.0)
 	Audio.sfx("radio_static", -16.0, 1.2)
@@ -746,6 +755,9 @@ func _h3_version() -> void:
 	await hud.fade_to(0.0, 1.0)
 	if _place in ["city", "galata"]:
 		await _say("SPK_HIKMET", "D13_H3_00_CITY")      # surlardan Urban'ın topunun başına geçiş açıklanır (geçiş yoktu)
+	elif GameState.chapter_outcomes.has(12) or str(GameState.chapter_outcomes.get(10, "")).begins_with("10Z"):
+		# Otağdan (12.1-12.4) ya da mutfaktan (12.5, 10Z) gelen Tolga da topun başına çekilir: o geçiş de söylenir
+		await _say("SPK_HIKMET", "D13_H3_00_CAMP")
 	await _say("SPK_HIKMET", "D13_H3_01")
 	await _t("D13_T3_02")
 	await _say("SPK_URBAN", "D13_U3_03")
@@ -1153,7 +1165,7 @@ func _capture_mouse() -> void:
 
 func _autotest_report() -> void:
 	var expected: String = {"": "13.1", "miss": "13.2", "wrong": "13.3", "depot": "13.1", "together": "13.4",
-		"stay": "13.5", "w4": "13.1", "meclis": "13.4", "kitchen": "13.1", "city": "13.2", "next": "13.1"}[GameState.autotest_variant]
+		"stay": "13.5", "w4": "13.1", "meclis": "13.4", "kitchen": "13.1", "city": "13.2", "next": "13.1", "galata": "13.1"}[GameState.autotest_variant]
 	var ok := _outcome == expected
 	if GameState.chapter_outcomes.get(13, "") != _outcome:
 		ok = false

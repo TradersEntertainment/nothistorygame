@@ -289,6 +289,8 @@ func _near(p: Vector3, r: float) -> bool:
 
 
 func _process(delta: float) -> void:
+	if not crew.is_empty():
+		_crew_tick()
 	if _feedback_t > 0.0:
 		_feedback_t -= delta
 		if _feedback_t <= 0.0:
@@ -988,3 +990,142 @@ func _spawn_supply(kind: String, p: Vector3) -> void:
 		"ball":
 			for k in 6:
 				Props.ball(b, 0.2, Vector3(-0.22 + (k % 3) * 0.22, 0.2 + (k / 3) * 0.3, (k / 3) * 0.1), Color("4e4c4a"), Vector3.ONE, 8)
+
+
+# ---------------------------------------------------------------- yardımcı tayfa (yayma P0)
+var crew: Array = []          # [{"who": Node3D, "role": String, "ball": Node3D}]
+var _crew_ground: Callable
+var _crew_state := "-"
+
+
+## Yardımcı tayfa: NPC topçular oyuncu topu doldururken boş dikilmez. Roller sırayla dağıtılır:
+##   "kepçe" (men[0]): namlunun yanında barut kepçesi; barut ve tapa adımında kepçe namluya uzanır, sonra dik tutulur.
+##   "gülle" (men[1]): gülle yığınından bir sonraki gülleyi iki elle getirir, namlunun yanında bekler, nişanda yere koyar.
+##   "manivela" (men[2]): topun kuyruğunda; nişanda manivelayla kuyruğu çevirir (iki el sırıkta, sırık topa dayalı).
+##   men[3..] rollerin tekrarı. Ateşte herkes geri çekilir, sevinir.
+## men: sahnede kurulu Person/Soldier'lar. ground: Callable(x, z) -> y (verilmezse topun zemin ışını).
+## Örnek: top.add_crew([topcu1, topcu2, topcu3]) — setup()'tan sonra (muzzle, pivot kurulu olmalı).
+func add_crew(men: Array, ground := Callable()) -> void:
+	_crew_ground = ground if ground.is_valid() else func(x: float, z: float) -> float:
+		return _floor_y(Vector3(x, muzzle.global_position.y + 1.0, z))
+	var roles := ["kepçe", "gülle", "manivela"]
+	for i in men.size():
+		var w: Node3D = men[i]
+		if w == null or not is_instance_valid(w):
+			continue
+		crew.append({"who": w, "role": roles[i % 3], "ball": null, "i": i})
+	_crew_state = "-"
+	_crew_tick()
+
+
+## Tayfanın topa göre yerleri (dünya): [kepçe, gülle bekleme, manivela, gülle yığını].
+func _crew_spots() -> Dictionary:
+	var fwd := -muzzle.global_basis.z
+	fwd.y = 0.0
+	fwd = fwd.normalized() if fwd.length() > 0.01 else Vector3.FORWARD
+	var side := fwd.cross(Vector3.UP).normalized()
+	var m := muzzle.global_position
+	var bp := pivot.global_position if pivot else m - fwd * 1.5
+	# Kepçeci namlu ağzının yanında, kepçe boyu (2 m) kadar ötede: kepçenin ucu ağızda, sapı elinde (gövdesine girmez)
+	return {"kepçe": m - fwd * 0.3 + side * 1.85, "gülle": m - fwd * 1.0 - side * 1.15, "manivela": bp - fwd * 2.1 + side * 0.25,
+		"pile": supplies.get("ball", bp - side * 2.2), "fwd": fwd, "side": side, "m": m, "bp": bp}
+
+
+func _crew_tick() -> void:
+	if state == _crew_state:
+		return
+	var prev := _crew_state
+	_crew_state = state
+	var sp := _crew_spots()
+	var k := 0
+	for c: Dictionary in crew:
+		var w: Node3D = c["who"]
+		if not is_instance_valid(w) or not w.is_inside_tree():
+			continue
+		var role: String = c["role"]
+		var extra: Vector3 = (sp["side"] as Vector3) * 0.9 * int(int(c["i"]) / 3)      # tekrar eden roller yan yana
+		k += 1
+		match state:
+			"powder", "wad", "ball":
+				if role == "kepçe":
+					_crew_go(w, (sp["kepçe"] as Vector3) + extra, sp["m"])
+					var aim: Vector3 = (sp["m"] as Vector3) + (sp["fwd"] as Vector3) * 0.05 if state != "ball" else Vector3(0.25, 3.0, 0.6)
+					_crew_tool(w, "powder_ladle", aim, state != "ball")
+				elif role == "gülle":
+					if prev in ["-", "idle", "done", "fly"]:
+						_crew_fetch_ball(c, sp, extra)
+				else:
+					_crew_go(w, (sp["manivela"] as Vector3) + extra, sp["bp"])
+					_crew_tool(w, "handspike", Vector3(0.0, 2.6, 0.8), false)
+			"ram":
+				if role == "kepçe":
+					_crew_tool(w, "powder_ladle", Vector3(0.25, 3.0, 0.6), false)
+			"aim":
+				if role == "gülle" and c["ball"] != null:
+					_crew_put_ball(c)
+				elif role == "manivela":
+					var tip: Vector3 = (sp["bp"] as Vector3) - (sp["fwd"] as Vector3) * 1.0 + Vector3(0, 0.25, 0)
+					_crew_tool(w, "handspike", tip, true)
+			"fly", "done":
+				if role == "kepçe":
+					_crew_tool(w, "powder_ladle", Vector3(0.25, 3.0, 0.6), false)
+				if state == "fly":
+					var em := "surprise" if k % 2 == 0 else "cheer"
+					w.get_tree().create_timer(0.6 + 0.15 * k, false).timeout.connect(func():
+						if is_instance_valid(w) and w.has_method("emote"):
+							w.call("emote", em))
+
+
+## Yürüyerek yerine gider, bakacağı yere döner.
+func _crew_go(w: Node3D, to: Vector3, look: Vector3) -> void:
+	if Vector2(w.global_position.x - to.x, w.global_position.z - to.z).length() > 0.3:
+		Stage.walk_on_ground(w, to, _crew_ground, 1.6, look)
+	else:
+		Stage.face(w, look)
+
+
+## Aleti ver (yoksa) ve iş noktasını ayarla: world true ise aim dünya noktası, değilse kişinin yerelinde (dik tutuş).
+func _crew_tool(w: Node3D, kind: String, aim: Vector3, world: bool) -> void:
+	var t: Node3D = null
+	for c in w.find_children("Tool_" + kind, "Node3D", true, false):
+		t = c
+	if t == null and w.has_method("give_tool"):
+		t = w.call("give_tool", kind, {"activity": "", "aim": aim, "aim_world": world})
+	if t == null:
+		return
+	t.set_meta("tool_aim", aim)
+	if world:
+		t.set_meta("tool_aim_world", true)
+	elif t.has_meta("tool_aim_world"):
+		t.remove_meta("tool_aim_world")
+
+
+## Gülle yığınına yürür, bir gülleyi iki elle göğsünün önüne alır (Stage.grip_hold), topun yanına gelip bekler.
+func _crew_fetch_ball(c: Dictionary, sp: Dictionary, extra: Vector3) -> void:
+	var w: Node3D = c["who"]
+	var pile: Vector3 = sp["pile"]
+	await Stage.walk_on_ground(w, pile + (sp["side"] as Vector3) * 0.7, _crew_ground, 1.5, pile)
+	if not is_instance_valid(w) or not w.is_inside_tree():
+		return
+	var b := Node3D.new()
+	b.name = "CrewBall"
+	w.add_child(b)
+	b.position = Vector3(0, 1.0, 0.36)
+	Props.ball(b, 0.13, Vector3.ZERO, Color("3a3a3e"), Vector3.ONE, 10)
+	c["ball"] = b
+	Stage.grip_hold(w, b, [Vector3(-0.13, 0.0, 0.0), Vector3(0.13, 0.0, 0.0)], -1.0, 0.05)
+	if state in ["powder", "wad", "ball", "ram"]:
+		await Stage.walk_on_ground(w, (sp["gülle"] as Vector3) + extra, _crew_ground, 1.2, sp["m"])
+
+
+## Getirdiği gülleyi topun yanına, yere bırakır (sonraki atış için).
+func _crew_put_ball(c: Dictionary) -> void:
+	var w: Node3D = c["who"]
+	var b: Node3D = c["ball"]
+	c["ball"] = null
+	if not is_instance_valid(b):
+		return
+	Stage.grip_release(w)
+	var gp := b.global_position
+	b.reparent(get_parent())
+	b.global_position = Vector3(gp.x, float(_crew_ground.call(gp.x, gp.z)) + 0.13, gp.z)

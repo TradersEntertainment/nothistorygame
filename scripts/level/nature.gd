@@ -119,16 +119,26 @@ const DETAIL := {
 	"chips": [0.35, 0.7, Color("b89a6a"), Color("d8c090"), true, ""],
 	"mud": [0.7, 1.9, Color("57442f"), Color("735d43"), true, ""],
 	"grease": [0.5, 1.2, Color("241808"), Color("3a2810"), true, "gloss"],
-	"footprint": [0.9, 1.1, Color("2e2216"), Color("443222"), true, ""],
+	"footprint": [0.9, 1.1, Color("3e2e1e"), Color("54402c"), true, ""],      # biraz açık (kara delik gibiydi)
 	"bush": [0.6, 1.4, Color("2f4f22"), Color("587a34"), false, ""],
 	"log": [0.7, 1.3, Color("7a5434"), Color("a07a50"), false, ""],
 	"plank": [0.7, 1.3, Color("7a6a54"), Color("a8957a"), true, ""],
 	"wrack": [0.4, 0.9, Color("3a3a22"), Color("525030"), true, ""],
 	"foam": [0.3, 0.8, Color("cfe2e4"), Color("eef6f6"), true, ""],
 	"wet": [0.6, 1.3, Color("7e6e50"), Color("8e7e5e"), true, ""],
+	# yayma P0: ordugâh, şehir, sur dibi
+	"camp_mud": [0.8, 2.2, Color("4e3c2a"), Color("66523c"), true, ""],      # zeminin biraz koyusu
+	"hoofprint": [0.9, 1.1, Color("33261a"), Color("4a3826"), true, ""],
+	"straw": [0.5, 1.0, Color("c8a858"), Color("e8d088"), true, ""],
+	"ash": [0.5, 1.2, Color("4a4846"), Color("8a8682"), true, ""],
+	"coal": [0.04, 0.1, Color("1a1816"), Color("3a3430"), false, "rock"],
+	"cobble_weed": [0.16, 0.32, Color("4a6a2c"), Color("7e8a48"), false, "grass"],
+	"rubble": [0.1, 0.38, Color("9a9080"), Color("c8bca8"), false, "rock"],
+	"arrows": [0.85, 1.1, Color("8a6a40"), Color("a88a5a"), false, ""],
+	"snow_print": [0.9, 1.1, Color("8a98a4"), Color("a4b0ba"), true, ""],
 }
 ## Kenarı yumuşak (köşe rengi saydam) yassı türler: zemine geçişli yamalar (tur 3)
-const SOFT := ["mud", "grease", "wet", "footprint"]
+const SOFT := ["mud", "grease", "wet", "footprint", "camp_mud", "hoofprint", "ash", "snow_print"]
 
 
 ## Zemin ayrıntısı saçıcı: area (dünya x-z dikdörtgeni) içine yoğunluk (adet / m²) kadar kind türünden parça; her tür
@@ -276,7 +286,15 @@ static func detail_mesh(kind: String) -> Mesh:
 	var rng := RandomNumberGenerator.new()
 	rng.seed = hash(kind)
 	match kind:
-		"mud", "grease", "foam", "wet":
+		"camp_mud":
+			# dişli, kenara doğru incelen çamur yaması: ortası yarı saydam, orta halka daha saydam, dış
+			# kenar sıfır; çevresinde birkaç sıçramış küçük çamur. (Eskiden opak çekirdekli yassı leke "yağ lekesi" gibiydi.)
+			_soft_blob(st, rng, Vector2.ZERO, 0.5, 22, 0.62)
+			for k in 4:
+				var a := rng.randf() * TAU
+				var d := rng.randf_range(0.5, 0.68)
+				_soft_blob(st, rng, Vector2(cos(a) * d, sin(a) * d * 0.75), rng.randf_range(0.07, 0.14), 9, 0.4)
+		"mud", "grease", "foam", "wet", "ash":
 			# Düzensiz yassı leke (yarıçap ~0,5), ortası biraz kabarık; kenarı köşe rengiyle saydamlaşır (tur 3: eskiden
 			# keskin kenarlı düz turuncu/bej çokgen, zeminde levha gibi duruyordu)
 			var n := 13
@@ -286,7 +304,7 @@ static func detail_mesh(kind: String) -> Mesh:
 				var r := rng.randf_range(0.36, 0.55) * (1.0 if kind != "foam" else rng.randf_range(0.5, 1.0))
 				ring.append(Vector2(cos(a) * r, sin(a) * r * (0.7 if kind != "foam" else 0.35)))
 			Vfx._soft_poly(st, Vector2.ZERO, ring, 0.5, 0.0, 0.012)
-		"footprint":
+		"footprint", "snow_print":
 			# Bir çift çıplak ayak / çizme izi (sol-sağ, yürüyüş yönünde, adım arası): ortak ayak izi biçimi, kenarı yumuşak
 			var foot: ArrayMesh = Vfx._footprint_mesh()
 			for side: float in [-1.0, 1.0]:
@@ -338,6 +356,41 @@ static func detail_mesh(kind: String) -> Mesh:
 					_tri(st, prev - side, nx + side, nx - side, Color.WHITE)
 					_tri(st, prev - side, prev + side, nx + side, Color.WHITE)
 					prev = nx
+		"hoofprint":
+			# At izi (yayma P0): dört küçük yuvarlak nal izi, yürüyüş düzeninde (ön-arka, sol-sağ), kenarı yumuşak
+			for q: Vector2 in [Vector2(-0.1, 0.42), Vector2(0.1, 0.12), Vector2(-0.1, -0.2), Vector2(0.1, -0.48)]:
+				var ring: Array[Vector2] = []
+				for i in 9:
+					var a := TAU * i / 9
+					ring.append(q + Vector2(cos(a) * 0.065, sin(a) * 0.08))
+				Vfx._soft_poly(st, q, ring, 0.55, 0.0, -0.006)
+		"straw":
+			# Saman: yere dağılmış ince sarı çöpler
+			for k in 12:
+				var c := Vector3(rng.randf_range(-0.3, 0.3), 0.006 + k * 0.0015, rng.randf_range(-0.3, 0.3))
+				var a := rng.randf() * TAU
+				var u := Vector3(cos(a), 0, sin(a)) * rng.randf_range(0.08, 0.16)
+				var v := Vector3(-sin(a), 0, cos(a)) * 0.008
+				_tri(st, c - u - v, c + u - v, c + u + v, Color.WHITE)
+				_tri(st, c - u - v, c + u + v, c - u + v, Color.WHITE)
+		"arrows":
+			# Yere saplı kırık ok: eğik sap, ucunda tüy (biri kırık, kısa)
+			for k in 2:
+				var len := 0.55 if k == 0 else 0.3
+				var base := Vector3(k * 0.12 - 0.06, 0, k * 0.05)
+				var dir := Vector3(rng.randf_range(-0.35, 0.35), 1.0, rng.randf_range(-0.35, 0.35)).normalized()
+				var cm := CylinderMesh.new()
+				cm.top_radius = 0.008
+				cm.bottom_radius = 0.008
+				cm.height = len
+				cm.radial_segments = 4
+				var x := dir.cross(Vector3.FORWARD).normalized()
+				var b := Basis(x, dir, x.cross(dir).normalized())
+				_append(st, cm, Transform3D(b, base + dir * len * 0.5), Color.WHITE)
+				if k == 0:
+					var tip := base + dir * len
+					_tri(st, tip - dir * 0.12, tip + x * 0.035, tip, Color(1.6, 1.6, 1.55))
+					_tri(st, tip - dir * 0.12, tip - x * 0.035, tip, Color(1.6, 1.6, 1.55))
 		_:
 			var bm2 := BoxMesh.new()
 			bm2.size = Vector3(0.3, 0.1, 0.3)
@@ -458,6 +511,37 @@ static func _soft(gloss := false) -> StandardMaterial3D:
 	return _soft_mats[gloss]
 
 
+## Yumuşak kenarlı düzensiz yassı leke (camp_mud): merkez alfa a0, orta halka (yarıçapın %55'i) a0 * 0,6,
+## dişli dış kenar 0. r: ortalama yarıçap, n: kenar noktası.
+static func _soft_blob(st: SurfaceTool, rng: RandomNumberGenerator, c: Vector2, r: float, n: int, a0: float) -> void:
+	var ph := rng.randf() * TAU
+	var outer: Array[Vector2] = []
+	for i in n:
+		var a := TAU * i / n
+		var rr := r * rng.randf_range(0.68, 1.12) * (1.0 + 0.16 * sin(a * 3.0 + ph))
+		outer.append(c + Vector2(cos(a) * rr, sin(a) * rr * 0.78))
+	var cv := Vector3(c.x, 0.006, c.y)
+	var ca := Color(1, 1, 1, a0)
+	var ma := Color(1, 1, 1, a0 * 0.6)
+	var oa := Color(1, 1, 1, 0.0)
+	var mid: Array[Vector2] = []
+	for o: Vector2 in outer:
+		mid.append(c + (o - c) * rng.randf_range(0.45, 0.6))
+	for i in n:
+		var o0: Vector2 = outer[i]
+		var o1: Vector2 = outer[(i + 1) % n]
+		var m0: Vector2 = mid[i]
+		var m1: Vector2 = mid[(i + 1) % n]
+		var v0 := Vector3(o0.x, 0, o0.y)
+		var v1 := Vector3(o1.x, 0, o1.y)
+		var w0 := Vector3(m0.x, 0.003, m0.y)
+		var w1 := Vector3(m1.x, 0.003, m1.y)
+		for v: Array in [[cv, ca], [w1, ma], [w0, ma], [w0, ma], [w1, ma], [v1, oa], [w0, ma], [v1, oa], [v0, oa]]:
+			st.set_color(v[1])
+			st.set_normal(Vector3.UP)
+			st.add_vertex(v[0])
+
+
 ## Köşe rengi (alfa) korunarak ağ eklenir (ayak izi ağı).
 static func _append_soft(st: SurfaceTool, mesh: Mesh, xf: Transform3D) -> void:
 	var arr: Array = mesh.surface_get_arrays(0)
@@ -467,3 +551,134 @@ static func _append_soft(st: SurfaceTool, mesh: Mesh, xf: Transform3D) -> void:
 		st.set_color(cl[i] if cl != null and cl.size() > i else Color.WHITE)
 		st.set_normal(Vector3.UP)
 		st.add_vertex(xf * v[i])
+
+
+# ---------------------------------------------------------------- rıhtım dibi ve iz çizgisi (yayma P0)
+
+## Rıhtım dibi: dikey taş rıhtımın / sur duvarının su kenarı (from→to, duvar yüzü çizgisi; to_water: duvardan suya
+## yön). Duvarın dibinde su çizgisinin üstünde koyu ıslak taş bandı (yukarı doğru saydamlaşır), su çizgisinde düzensiz
+## yeşil yosun lekeleri, suyun üstünde duvar boyunca köpük ve arada yüzen yosun. Tek ağ (bant + yosun) + iki çoklu ağ.
+## Döner: kurulan düğümler. shore_band eğimli kumsal içindir; bu dik duvar içindir.
+## Örnek: Nature.quay_band(self, Vector3(-30, 0, 12.4), Vector3(30, 0, 12.4), Vector3(0, 0, 1), SU_Y)
+## Galata rıhtımı (10g, 27), Haliç surları (4b, 17o), Petrion (38o), Boğaz hisarı iskelesi.
+static func quay_band(parent: Node3D, from: Vector3, to: Vector3, to_water: Vector3, water_y: float, seed := 7,
+		wet_h := 0.7) -> Array:
+	var out: Array = []
+	var tw := Vector3(to_water.x, 0, to_water.z).normalized()
+	var along := Vector3(to.x - from.x, 0, to.z - from.z)
+	var ln := along.length()
+	if ln < 0.2 or tw.length() < 0.5:
+		return out
+	along /= ln
+	var rng := RandomNumberGenerator.new()
+	rng.seed = seed
+	var st := SurfaceTool.new()
+	st.begin(Mesh.PRIMITIVE_TRIANGLES)
+	var base := Vector3(from.x, water_y, from.z) + tw * 0.015
+	var wet := Color("2a2a22")
+	var steps := maxi(2, int(ln / 0.5))
+	# Islak bant: alt kenar su altında (dolu), üst kenar dalgalı ve saydam
+	var prev_top := 0.0
+	for i in steps + 1:
+		var top := wet_h * rng.randf_range(0.6, 1.0)
+		if i > 0:
+			var a := base + along * (ln * (i - 1) / steps)
+			var b := base + along * (ln * i / steps)
+			var q := [a + Vector3(0, -0.15, 0), b + Vector3(0, -0.15, 0), b + Vector3(0, top, 0), a + Vector3(0, prev_top, 0)]
+			var al := [0.85, 0.85, 0.0, 0.0]
+			for j: int in [0, 2, 1, 0, 3, 2]:
+				st.set_color(Color(wet.r, wet.g, wet.b, al[j]))
+				st.set_normal(tw)
+				st.add_vertex(q[j])
+		prev_top = top
+	# Yosun lekeleri: su çizgisinde, duvara yapışık (biraz önde), yeşilden kahveye
+	var moss_n := int(ln * 1.4)
+	for k in moss_n:
+		var c := base + tw * 0.01 + along * rng.randf_range(0.0, ln) + Vector3(0, rng.randf_range(-0.05, 0.12), 0)
+		var w := rng.randf_range(0.18, 0.55)
+		var h := rng.randf_range(0.08, 0.22)
+		var col := Color("2e4a1e").lerp(Color("5a5a28"), rng.randf())
+		var n := 8
+		var ctr := c
+		for i in n:
+			var a0 := TAU * i / n
+			var a1 := TAU * (i + 1) / n
+			var p0 := c + along * cos(a0) * w * 0.5 + Vector3(0, sin(a0) * h * 0.5 * (1.4 if sin(a0) < 0 else 1.0), 0)
+			var p1 := c + along * cos(a1) * w * 0.5 + Vector3(0, sin(a1) * h * 0.5 * (1.4 if sin(a1) < 0 else 1.0), 0)
+			for v: Array in [[ctr, 0.95], [p1, 0.0], [p0, 0.0]]:
+				st.set_color(Color(col.r, col.g, col.b, v[1]))
+				st.set_normal(tw)
+				st.add_vertex(v[0])
+	var mi := MeshInstance3D.new()
+	mi.mesh = st.commit()
+	var m := _soft(false).duplicate() as StandardMaterial3D
+	m.cull_mode = BaseMaterial3D.CULL_DISABLED
+	mi.material_override = m
+	mi.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
+	mi.set_meta("no_walk", true)
+	parent.add_child(mi)
+	if parent.is_inside_tree():
+		mi.global_transform = Transform3D.IDENTITY
+	out.append(mi)
+	# Köpük ve yüzen yosun: suyun üstünde, duvarın dibinde
+	var foam: Array = []
+	var wrack: Array = []
+	var fs := maxi(2, int(ln / 0.45))
+	for i in fs:
+		var p := Vector3(from.x, water_y, from.z) + along * (ln * (i + rng.randf()) / fs)
+		foam.append(p + tw * rng.randf_range(0.08, 0.45))
+		if rng.randf() < 0.12:
+			wrack.append(p + tw * rng.randf_range(0.3, 1.2))
+	var hf := func(_x: float, _z: float) -> float: return water_y
+	var f := _scatter_at(parent, "foam", foam, rng.randi(), hf)
+	if f:
+		out.append(f)
+	if not wrack.is_empty():
+		var wr := _scatter_at(parent, "wrack", wrack, rng.randi(), func(_x: float, _z: float) -> float: return water_y - 0.015)
+		if wr:
+			out.append(wr)
+	return out
+
+
+## İz çizgisi: bir yol boyunca (path: dünya noktaları) yürüyüş yönüne dönük izler: "footprint", "hoofprint",
+## "snow_print" ya da "wheel_ruts" (iki paralel tekerlek izi şeridi, aks 1,3 m). spacing: izler arası (m). Tek çoklu ağ.
+## Örnek: Nature.trail(self, [Vector3(0, 0, 0), Vector3(4, 0, 12), Vector3(5, 0, 30)], "hoofprint", arazi_y, 1.4)
+## Ordugâh yolu (35o tekerlek izi), at izi, kar izi (34o), çamurlu meydan.
+static func trail(parent: Node3D, path: Array, kind: String, height: Callable, spacing := 1.2, seed := 3, jitter := 0.25) -> MultiMeshInstance3D:
+	if path.size() < 2:
+		return null
+	var rng := RandomNumberGenerator.new()
+	rng.seed = seed
+	var xs: Array = []
+	var cs: Array = []
+	var ruts := kind == "wheel_ruts"
+	var spec: Array = DETAIL.get("footprint" if ruts else kind, DETAIL["footprint"])
+	for i in path.size() - 1:
+		var a: Vector3 = path[i]
+		var b: Vector3 = path[i + 1]
+		var d := Vector3(b.x - a.x, 0, b.z - a.z)
+		var ln := d.length()
+		if ln < 0.01:
+			continue
+		d /= ln
+		var side := Vector3(-d.z, 0, d.x)
+		var step := spacing if not ruts else 0.9
+		var n := maxi(1, int(ln / step))
+		for k in n:
+			var p := a.lerp(b, (k + 0.5) / n) + side * rng.randf_range(-jitter, jitter) * (0.3 if ruts else 1.0)
+			var yaw := atan2(d.x, d.z) + rng.randf_range(-0.15, 0.15) * (0.2 if ruts else 1.0)
+			var offs: Array = [Vector3.ZERO] if not ruts else [side * 0.65, -side * 0.65]
+			for o: Vector3 in offs:
+				var q := p + o
+				var y := float(height.call(q.x, q.z)) + 0.025
+				var sc := Vector3(0.22, 1.0, 1.45) if ruts else Vector3.ONE * rng.randf_range(float(spec[0]), float(spec[1]))
+				xs.append(Transform3D(Basis(Vector3.UP, yaw) * Basis.from_scale(sc), Vector3(q.x, y, q.z)))
+				cs.append((spec[2] as Color).lerp(spec[3], rng.randf()))
+	if xs.is_empty():
+		return null
+	var mesh: Mesh = detail_mesh("mud") if ruts else detail_mesh(kind)
+	var mi := Scenery.scatter(parent, mesh, xs, cs, _soft(false))
+	mi.set_meta("no_walk", true)
+	mi.set_meta("soft", true)
+	mi.visibility_range_end = 120.0
+	return mi

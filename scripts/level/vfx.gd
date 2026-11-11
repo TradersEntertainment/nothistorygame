@@ -958,13 +958,14 @@ static func drip(who: Node3D, seconds := 6.0, head: Node3D = null) -> void:
 			hair.emitting = true
 			parts.append(hair)
 	who.get_tree().create_timer(seconds, false).timeout.connect(func():
-		for p: CPUParticles3D in parts:
+		# Türsüz döngü: bölüm değişince damlalar sahneyle silinmiş olabilir; türlü değişkene silinmiş nesne atanamaz
+		for p in parts:
 			if is_instance_valid(p):
-				p.emitting = false)
+				(p as CPUParticles3D).emitting = false)
 	who.get_tree().create_timer(seconds + 1.2, false).timeout.connect(func():
-		for p: CPUParticles3D in parts:
+		for p in parts:
 			if is_instance_valid(p):
-				p.queue_free())
+				(p as Node).queue_free())
 
 
 static func _drop_particles(parent: Node, n: int, r: float) -> CPUParticles3D:
@@ -1226,3 +1227,134 @@ static func motes(who: Node3D, extents := Vector3(6, 2, 8), amount := 60, color 
 	who.add_child(p)
 	p.emitting = true
 	return p
+
+
+# ---------------------------------------------------------------- su teması (yayma P0)
+
+## Kameradan uzaksa (bütçe) su efekti atlanır.
+static func _far_from_cam(node: Node, p: Vector3, limit := 45.0) -> bool:
+	var vp := node.get_viewport() if node and node.is_inside_tree() else null
+	var cam := vp.get_camera_3d() if vp else null
+	return cam != null and cam.global_position.distance_to(p) > limit
+
+
+static func _fx_root(node: Node) -> Node:
+	if node == null or not node.is_inside_tree():
+		return null
+	var cs := node.get_tree().current_scene
+	return cs if cs else node.get_tree().root
+
+
+## Tekne izi: teknenin (kayık, kadırga, gemi) hızından kıçta aralıklı genişleyen köpük halkaları, pruvanın iki
+## yanında V çizen küçük halkalar, pruvada ince köpük; tekne durunca seyrek, sönük halkalar (yalpa). Döner: tekneye
+## bağlı "Wake" düğümü (tekneyle silinir; queue_free ile durur). opts: "stern" / "bow" (teknenin yerelinde, varsayılan
+## (0,0,-2) / (0,0,2)), "width" (1.2), "parent" (halkaların düğümü; varsayılan sahne kökü), "far" (45 m'den uzakta
+## üretmez). Örnek: Vfx.wake(kayik, SU_Y, {"stern": Vector3(0, 0, -1.6), "bow": Vector3(0, 0, 1.8), "width": 0.9})
+static func wake(boat: Node3D, water_y: float, opts := {}) -> Node3D:
+	var w := Node3D.new()
+	w.name = "Wake"
+	boat.add_child(w)
+	var stern: Vector3 = opts.get("stern", Vector3(0, 0, -2))
+	var bow: Vector3 = opts.get("bow", Vector3(0, 0, 2))
+	var width: float = opts.get("width", 1.2)
+	var far: float = opts.get("far", 45.0)
+	var st := {"last": Vector3.INF, "t_stern": 0.0, "t_v": 0.0, "t_idle": randf() * 2.0, "spd": 0.0, "n": 0}
+	w.set_meta("wake", st)
+	var tw := w.create_tween().set_loops()
+	tw.tween_interval(0.1)
+	tw.tween_callback(func():
+		if not is_instance_valid(boat) or not boat.is_inside_tree() or not boat.is_visible_in_tree():
+			return
+		var dt := 0.1
+		var gp := boat.global_position
+		if st["last"] == Vector3.INF:
+			st["last"] = gp
+		var v: Vector3 = (gp - (st["last"] as Vector3)) / dt
+		st["last"] = gp
+		v.y = 0.0
+		if v.length() > 40.0:
+			v = Vector3.ZERO        # ışınlanma
+		st["spd"] = lerpf(float(st["spd"]), v.length(), 0.5)
+		var spd: float = st["spd"]
+		if _far_from_cam(boat, gp, far):
+			return
+		var par := opts.get("parent", _fx_root(boat)) as Node
+		var sp := boat.to_global(stern)
+		var bp := boat.to_global(bow)
+		var side := boat.global_transform.basis.x.normalized()
+		if spd > 0.25:
+			st["t_stern"] = float(st["t_stern"]) - dt * clampf(spd, 0.6, 4.0)
+			if float(st["t_stern"]) <= 0.0:
+				st["t_stern"] = 0.55
+				var k := clampf(spd / 3.0, 0.25, 1.0)
+				water_ring(par, sp, water_y, width * 0.35, width * (1.2 + k * 0.9), 1.5 + k * 0.6, 0.32 + k * 0.2)
+				st["n"] = int(st["n"]) + 1
+			if spd > 0.6:
+				st["t_v"] = float(st["t_v"]) - dt
+				if float(st["t_v"]) <= 0.0:
+					st["t_v"] = clampf(0.9 - spd * 0.12, 0.35, 0.8)
+					for sg: float in [-1.0, 1.0]:
+						water_ring(par, bp + side * sg * width * 0.45 - v.normalized() * 0.3, water_y, 0.12, width * 0.7, 0.9, 0.38)
+					water_ring(par, bp, water_y, 0.08, width * 0.35, 0.5, 0.45)
+					st["n"] = int(st["n"]) + 3
+		else:
+			# Durgun: yalpada gövdenin çevresinde seyrek, sönük halka
+			st["t_idle"] = float(st["t_idle"]) - dt
+			if float(st["t_idle"]) <= 0.0:
+				st["t_idle"] = randf_range(2.2, 3.6)
+				water_ring(par, (sp + bp) * 0.5, water_y, width * 0.6, width * 1.3, 2.4, 0.18)
+				st["n"] = int(st["n"]) + 1)
+	return w
+
+
+## Suya giriş (insan, fıçı, gülle, ok): köpüklü sıçrama, iki genişleyen halka (ikincisi gecikmeli), damlalar, ses.
+## size: 0,3 ok/taş, 1 insan, 1,5 fıçı/gülle. Yumuşak, yuvarlak parçacıklar (levha yok). parent: sahne kökü ya da bölüm.
+## Örnek: Vfx.water_entry(self, oyuncu.global_position, SU_Y, 1.0)
+static func water_entry(parent: Node, at: Vector3, water_y: float, size := 1.0) -> void:
+	if parent == null or not parent.is_inside_tree():
+		return
+	var p := Vector3(at.x, water_y, at.z)
+	splash(parent, p + Vector3(0, 0.05, 0), 0.55 * size)
+	water_ring(parent, p, water_y, 0.25 * size, 1.6 * size, 1.4, 0.55)
+	water_drops(parent, p, water_y, int(6 + 6 * size), 1.6 + size, 0.02 + 0.01 * size)
+	parent.get_tree().create_timer(0.35, false).timeout.connect(func():
+		if is_instance_valid(parent) and parent.is_inside_tree():
+			water_ring(parent, p, water_y, 0.5 * size, 2.6 * size, 1.9, 0.35))
+	var snd := Node3D.new()
+	parent.add_child(snd)
+	snd.global_position = p
+	Audio.sfx_at("splash", snd, -10.0 + 4.0 * clampf(size - 1.0, -1.0, 1.0))
+	parent.get_tree().create_timer(3.0, false).timeout.connect(func():
+		if is_instance_valid(snd):
+			snd.queue_free())
+
+
+## Sudan çıkış: kişinin (oyuncu ya da NPC) giysisinden damla (drip), ayağının altında birikinti, sonraki adımlarında
+## kuruyan ıslak ayak izleri (seconds boyunca, 0,45 m'de bir). ground: Callable(x, z) -> y (verilmezse kişinin y'si).
+## head: saçtan da damlasın (oyuncuda kamera değil, başın yanında). Örnek: Vfx.water_exit(oyuncu, _ground_y, 6.0)
+static func water_exit(who: Node3D, ground := Callable(), seconds := 6.0, head: Node3D = null) -> void:
+	if who == null or not who.is_inside_tree():
+		return
+	drip(who, seconds, head)
+	var root := _fx_root(who)
+	var gy := func(q: Vector3) -> float:
+		return float(ground.call(q.x, q.z)) if ground.is_valid() else q.y
+	var p0 := who.global_position
+	wet_mark(root, Vector3(p0.x, gy.call(p0) + 0.01, p0.z), who.global_rotation.y, false, seconds * 6.0, 0.8, true)
+	var st := {"last": p0, "left": false, "left_t": seconds}
+	var tw := who.create_tween().set_loops(int(seconds / 0.15) + 1)
+	tw.tween_interval(0.15)
+	tw.tween_callback(func():
+		if not is_instance_valid(who) or not who.is_inside_tree():
+			return
+		var q := who.global_position
+		var d := q - (st["last"] as Vector3)
+		d.y = 0.0
+		if d.length() < 0.45:
+			return
+		st["last"] = q
+		st["left"] = not st["left"]
+		var yaw := atan2(d.x, d.z)
+		var off := Vector3(cos(yaw), 0, -sin(yaw)) * (0.1 if st["left"] else -0.1)
+		var fp := q + off
+		wet_mark(root, Vector3(fp.x, gy.call(fp) + 0.01, fp.z), yaw, st["left"], seconds * 4.0, 1.0))

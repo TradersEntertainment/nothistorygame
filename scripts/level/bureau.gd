@@ -1,5 +1,47 @@
 class_name Bureau
 extends Node3D
+
+
+## Oturanın katmanlı dönüşü. Rig'de ayrı bel eklemi yok (bacaklar, kaftan ve baş tek _body düğümünün çocuğu) ve
+## Person.look_target bütün kişiyi çevirir: oturan konuşana dönünce kalçası ve bacakları bankın içinden geçiyordu.
+## Burada kişi kökü sabit kalır (kalça bankta); gövde (_body) belirgin döner, bacaklar gövdeye ters yönde kısmen
+## karşılanır (dizler azıcık kayar), baş kalan açıyı tamamlar. Person._process'ten SONRA çalışır (çocuk düğüm).
+class SeatTwist extends Node:
+	var target: Node3D
+	var rest_yaw := 0.0         # kökün (kalçanın) bakışı, radyan
+	var max_torso := 0.75       # gövdenin en çok dönüşü (~43 derece)
+	var max_head := 1.2         # başın gövdeye göre en çok dönüşü
+	var astride := false        # ters oturan: önünde sırtlık var, dönerken gövde biraz geri çekilir
+	var _torso := 0.0
+	var _head := 0.0
+
+	func _process(delta: float) -> void:
+		var p := get_parent() as Person
+		if p == null or p._body == null or p._head == null:
+			return
+		var tt := 0.0
+		var ht := 0.0
+		if is_instance_valid(target):
+			var to := target.global_position - p.global_position
+			if p.get_parent() is Node3D:
+				to = (p.get_parent() as Node3D).global_transform.basis.inverse() * to
+			if Vector2(to.x, to.z).length() > 0.1:
+				var rel := wrapf(atan2(to.x, to.z) - rest_yaw, -PI, PI)
+				tt = clampf(rel * 0.7, -max_torso, max_torso)
+				ht = clampf(rel - tt, -max_head, max_head)
+		elif absf(_torso) < 0.01 and absf(_head) < 0.01:
+			_torso = 0.0
+			_head = 0.0
+			return
+		var k := 1.0 - exp(-3.2 * delta)
+		_torso = lerpf(_torso, tt, k)
+		_head = lerpf(_head, ht, k)
+		p._body.rotation.y = _torso
+		p._body.position.z = (-0.09 if astride else 0.06) * absf(_torso) / max_torso
+		p._head.rotation.y = _head
+		for leg: Node3D in [p._leg_l, p._leg_r]:
+			if leg:
+				leg.rotation.y = -_torso * 0.8
 ## Zaman Bürosu: zamanın dışında duran bir devlet dairesi (CHAPTERS §3.2, Bölüm 3).
 ## Nihat'ın odası (Form Z-1, akrepsiz saat, hiçliğe bakan pencere), sise gömülüp
 ## sonsuza uzanan koridor (her kapıda bir yıl), kostüm deposu, Başdenetçi'nin
@@ -2554,8 +2596,10 @@ func _rb_wait() -> void:
 		if r == 2:
 			# Son sıranın ilk koltuğunda Nasreddin Hoca ters oturur (ata biner gibi, kolları sırtlıkta): onun sırtlığı
 			# ayrı ve dar, bacakları iki yanından geçsin; sıranın sürekli sırtlığı bacaklarını içine alıyordu
-			Props.box(self, Vector3(0.05, 0.34, 2.22), Vector3(x - 0.22, 0.68, -8.19), orange)
-			Props.box(self, Vector3(0.05, 0.34, 0.28), Vector3(x - 0.22, 0.68, -6.8), orange)
+			Props.box(self, Vector3(0.05, 0.34, 2.12), Vector3(x - 0.22, 0.68, -8.24), orange)
+			# Hoca'nın sırtlığı: kaftan (yarıçap 0,32) sırtlığı kesiyordu; plaka kaftanın dışına, kendi ayağıyla durur
+			Props.box(self, Vector3(0.05, 0.34, 0.3), Vector3(x - 0.4, 0.74, -6.8), orange)
+			Props.box(self, Vector3(0.05, 0.57, 0.05), Vector3(x - 0.4, 0.285, -6.8), steel)
 		else:
 			Props.box(self, Vector3(0.05, 0.34, 2.8), Vector3(x - 0.22, 0.68, -7.9), orange)
 		for i in 5:
@@ -3701,12 +3745,24 @@ func _fg_corner(p: Person) -> void:
 	Props.label(self, tr("BUR_HIT_CORNER"), Vector3(-8.455, 2.35, c.z), 40, Color("f6eedc"), Vector3(0, 90, 0), 1.2)
 	_glow(self, Vector3(-8.47, 1.6, c.z), Vector2(1.4, 2.2), Color("fff0c0"), Vector3(0, 90, 0), 0.35)
 	_glow(self, Vector3(c.x, 0.012, c.z), Vector2(1.1, 1.1), Color("fff0c0"), Vector3(-90, 0, 0), 0.3)
-	# Sırtına yapıştırılmış kâğıt (gövdeye takılı: kıpırdayınca onunla gider)
+	# Sırtına yapıştırılmış kâğıt (gövdeye takılı: kıpırdayınca onunla gider). Eller arkada kavuşuk (hands_behind):
+	# önkollar belde V çizip kâğıdın yarısını örtüyordu ve tek satıra sıkışan yazı V'nin içinden taşıyordu. Kâğıt
+	# omuz hizasına çıktı (kolların üstünde), iki satıra bölünmüş yazı kâğıdın içinde, gövdeden bir parmak dışarıda.
 	var bd: Node3D = p._body
-	Props.box(bd, Vector3(0.26, 0.32, 0.006), Vector3(0, 1.08, -0.232), Color("f6f2e6"), Vector3(0, 0, 3))
-	Props.box(bd, Vector3(0.08, 0.02, 0.008), Vector3(-0.08, 1.235, -0.234), Color("d8d0a0"), Vector3(0, 0, -20))
-	Props.box(bd, Vector3(0.08, 0.02, 0.008), Vector3(0.08, 1.235, -0.234), Color("d8d0a0"), Vector3(0, 0, 20))
-	Props.label(bd, tr("BUR_HIT_SIGN"), Vector3(0, 1.08, -0.237), 11, Color("1a1a1a"), Vector3(0, 180, 3), 0.23)
+	Props.box(bd, Vector3(0.42, 0.44, 0.006), Vector3(0, 1.2, -0.246), Color("f6f2e6"), Vector3(0, 0, 3))
+	Props.box(bd, Vector3(0.09, 0.022, 0.008), Vector3(-0.12, 1.42, -0.25), Color("d8d0a0"), Vector3(0, 0, -20))
+	Props.box(bd, Vector3(0.09, 0.022, 0.008), Vector3(0.12, 1.42, -0.25), Color("d8d0a0"), Vector3(0, 0, 20))
+	# Yazı üç satır: ilk cümle bir satır, kalanı ortadan ikiye bölünür (kâğıdı doldurur, 2-3 m'den okunur)
+	var sg: String = tr("BUR_HIT_SIGN")
+	var cut := sg.find(". ")
+	var l1 := sg.substr(0, cut + 1) if cut >= 0 else sg
+	var rest := sg.substr(cut + 2) if cut >= 0 else ""
+	var words := rest.split(" ")
+	var half := ceili(words.size() / 2.0)
+	var sgn := l1
+	if rest != "":
+		sgn += "\n" + " ".join(words.slice(0, half)) + "\n" + " ".join(words.slice(half))
+	Props.label(bd, sgn, Vector3(0, 1.2, -0.252), 24, Color("120c0c"), Vector3(0, 180, 3), 0.37)
 
 
 func _fg_build() -> void:
@@ -3725,6 +3781,14 @@ func _fg_build() -> void:
 		p.rotation_degrees.y = f[3]
 		_fg[id] = p
 		_fg_yaw[id] = f[3]
+		if id in _FG_SIT:
+			var stw := SeatTwist.new()
+			stw.name = "SeatTwist"
+			stw.rest_yaw = deg_to_rad(float(f[3]))
+			stw.astride = _FG_POSE.get(id, "") == "sit_astride"
+			stw.max_torso = 0.6 if stw.astride else 0.75
+			stw.max_head = 1.3 if stw.astride else 1.2
+			p.add_child(stw)
 		match id:
 			"hit":     # ceza köşesi: girişin tam karşısında, arka duvara dönük ayakta; yerde bantlı kare, sırtında kâğıt
 				_fg_corner(p)
@@ -3767,12 +3831,21 @@ func _fg_build() -> void:
 
 
 ## Konuşulan figür oyuncuya döner, birkaç saniye sonra yine sıraya bakar
+## Oturanlar (_FG_SIT) için kök sabit, yalnız SeatTwist döner; ayaktakiler eskisi gibi look_target ile bütün gövdeyle
+func _look(p: Person, t: Node3D) -> void:
+	var st := p.get_node_or_null("SeatTwist") as SeatTwist
+	if st != null:
+		st.target = t
+	else:
+		p.look_target = t
+
+
 func _fg_face(id: String, secs: float) -> void:
 	var p: Person = _fg.get(id)
 	if not is_instance_valid(p) or player == null:
 		return
 	if id != "hit":
-		p.look_target = player       # Hitler ceza köşesinde: konuşurken de duvara bakar (omzunun üstünden konuşur)
+		_look(p, player)       # Hitler ceza köşesinde: konuşurken de duvara bakar (omzunun üstünden konuşur)
 	p.talking = true
 	get_tree().create_timer(secs).timeout.connect(_fg_unface.bind(id))
 
@@ -3781,8 +3854,10 @@ func _fg_unface(id: String) -> void:
 	var p: Person = _fg.get(id)
 	if not is_instance_valid(p):
 		return
-	p.look_target = null
+	_look(p, null)
 	p.talking = false
+	if p.get_node_or_null("SeatTwist") != null:
+		return      # oturanın kökü hiç dönmedi; SeatTwist kendiliğinden geri sarar
 	var tw := p.create_tween()
 	tw.tween_property(p, "rotation:y", deg_to_rad(float(_fg_yaw[id])), 0.6).set_trans(Tween.TRANS_SINE)
 
@@ -3798,7 +3873,7 @@ func _fg_seq(lines: Array) -> void:
 		_say(l[1], secs, _fg_spk(id))
 		_fg_face(id, secs + 0.4)
 		if l.size() > 3 and _fg.has(l[3]) and id != "hit":
-			(_fg[id] as Person).look_target = _fg[l[3]]       # atışmada karşısındakine döner (Hitler duvara bakmaya devam)
+			_look(_fg[id] as Person, _fg[l[3]])       # atışmada karşısındakine döner (Hitler duvara bakmaya devam)
 		await get_tree().create_timer(secs + 0.2).timeout
 	_fg_busy = false
 
@@ -4090,7 +4165,7 @@ func _amb_say(who: Person, key: String, other: Person) -> float:
 	_amb_who = who
 	who.talking = true
 	if is_instance_valid(other) and who != _fg.get("hit"):
-		who.look_target = other
+		_look(who, other)
 		if not who in _amb_looked:
 			_amb_looked.append(who)
 	return secs
@@ -4114,7 +4189,7 @@ func _amb_quiet() -> void:
 	_amb_who = null
 	for p in _amb_looked:
 		if is_instance_valid(p):
-			(p as Person).look_target = null
+			_look(p as Person, null)
 	_amb_looked.clear()
 
 

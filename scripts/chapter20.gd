@@ -179,7 +179,13 @@ func _run() -> void:
 	Stage.approach(giust, player.global_position, 2.2, 2.4, Vector3.ZERO, _rubble_y)
 	await hud.say("SPK_NIHAT", "D20_N_01")
 	await Stage.settle(giust)
-	await hud.say("SPK_GIUST", "D20_G_01_KNOWN" if GameState.has_met("giustiniani") else "D20_G_01")   # Perde II'de tanıştılarsa
+	# Perde II'de tanıştılarsa _KNOWN; tanışmadılarsa ama talimde (42b) ya da huruçta (36b) birlikteydilerse _DRILL
+	var g01 := "D20_G_01"
+	if GameState.has_met("giustiniani"):
+		g01 = "D20_G_01_KNOWN"
+	elif Siege.outcome(42) != "" or Siege.outcome(36) != "":
+		g01 = "D20_G_01_DRILL"
+	await hud.say("SPK_GIUST", g01)
 	await hud.say("SPK_TOLGA", "D20_T_01")
 	# Kalan açılış sözleri oyuncu serbestken söylenir; iş (phase "work") sözler bitince başlar
 	var lines: Array = [["SPK_GIUST", "D20_G_02"], ["SPK_GIUST", "D20_G_03"]]

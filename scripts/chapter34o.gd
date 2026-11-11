@@ -65,6 +65,14 @@ func _ready() -> void:
 	player = Player.new()
 	add_child(player)
 	player.frozen = true
+	# yayma P4 (3. tur): alçak kış güneşinde kameradaki ellerin (kumanda, tokmak) gölgesi karda el biçimli gri leke
+	# bırakıyordu: kameraya bağlı her şey gölge düşürmez (eşya değişince de, saniyede bir yeniden uygulanır)
+	var shade_t := Timer.new()
+	shade_t.wait_time = 1.0
+	shade_t.autostart = true
+	shade_t.timeout.connect(_no_hand_shadow)
+	add_child(shade_t)
+	_no_hand_shadow.call_deferred()
 	hud.set_fez(GameState.flags.get("fez", true))
 	hud.set_signal(0)
 	meter = RowMeter.new()
@@ -92,6 +100,12 @@ func _ready() -> void:
 
 func _variant() -> String:
 	return GameState.autotest_variant if GameState.autotest else ""
+
+
+func _no_hand_shadow() -> void:
+	if player and player.camera:
+		for g in player.camera.find_children("*", "GeometryInstance3D", true, false):
+			(g as GeometryInstance3D).cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
 
 
 func _gy(p: Vector3) -> Vector3:
@@ -122,12 +136,14 @@ func _build_people() -> void:
 		w.position = _gy(Vector3(EdirneYard.PIT_HX + 1.1, 0, -1.6 + k * 3.2))
 		w.rotation.y = -PI * 0.5
 		w.set_activity("hammer")
+		w.give_tool("mallet")          # yayma P4: tokmak pozunda eli boştu
 		_workers.append(w)
 	mason = Person.new({"coat": Color("8a7a60"), "pants": Color("e8e0d0"), "hat": "turban", "beard": true, "hair": Color("b8b4a8"), "skin": Color("c89070")})
 	mason.set_meta("spk", "SPK_MASON")
 	add_child(mason)
 	mason.position = _gy(EdirneYard.CHUTE_TOP + Vector3(1.6, 0, -1.4))
 	mason.set_activity("hammer")
+	mason.give_tool("hammer")         # yayma P4: çekiç pozunda eli boştu
 	# Ateş başındaki işçiler (oturur)
 	for k in 3:
 		var a := -0.8 + k * 0.8
@@ -148,7 +164,8 @@ func _build_people() -> void:
 		p = _gy(p)
 		items.append([Transform3D(Basis(Vector3.UP, rng.randf_range(-0.4, 0.4)), p),
 			{"side": "C", "coat": coats[i % coats.size()], "hat": ["turban", "bork", "scarf"][i % 3], "pose": ""}])
-	Crowd.place(self, items, true, true)    # içlerinden geçilmesin
+	# yayma P4: kalabalık blok hâlinde kımıltısızdı; aralıklı jest, baş çevirme
+	Crowd.idle_vary(Crowd.place(self, items, true, true))    # içlerinden geçilmesin
 
 
 func _run() -> void:
@@ -217,6 +234,10 @@ func _break_mould() -> void:
 	player.camera.add_child(_mallet)
 	_mallet.position = Vector3(-0.3, -0.4, -0.75)        # tokmak sol elde (havada süzülüyordu)
 	player.free_hold = Vector3(-0.3, -0.42, -0.7)
+	player.stow_hands(true)          # yayma P4: sağ elde kumanda kalmasın
+	# yayma P4: sol el kameraya yakın; güneş gölgesi karda el biçimli gri leke bırakıyordu (bırakılırken de)
+	for g in player.free_hand.find_children("*", "GeometryInstance3D", true, false):
+		(g as GeometryInstance3D).cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
 	Props.cyl(_mallet, 0.03, 0.8, Vector3(0, 0.0, 0), Color("6a4a2c"), Vector3(-60, 0, 0), 6)
 	Props.cyl(_mallet, 0.11, 0.32, Vector3(0, 0.36, -0.2), Color("8a6a44"), Vector3(0, 0, 90), 8)
 	Props.strip_outlines(_mallet)
@@ -259,6 +280,8 @@ func _break_mould() -> void:
 			await get_tree().create_timer(0.12, false).timeout
 	_mallet.queue_free()
 	player.free_hold = Vector3.INF
+	player.free_hand.visible = false   # el aşağı inerken karda gölgesi kalmasın: anında gizlenir
+	player.stow_hands(false)
 	player.frozen = true
 
 
@@ -333,7 +356,15 @@ func _crank() -> void:
 	player.global_position = _gy(EdirneYard.WIND_REAR + Vector3(1.5, 0, 0)) + Vector3(0, 0.05, 0)
 	player.face(EdirneYard.WIND_REAR + Vector3(0, 1.1, 0))
 	foreman.look_target = null
+	# yayma P4: ustabaşının iki eli kendi çıkrığının el çarkında (çark döndükçe eller kollarla gelir); eskiden "row"
+	# pozunda kollar havada sallanıyordu
+	Stage.grip_hold(foreman, level.drums[1], [Vector3(0.14, 0.58, 0.0), Vector3(0.14, 0.0, 0.58)])
 	hud.bark("SPK_SOLDIER", "D34O_S_CRANK", 3.0)
+	# Ustabaşı karşı çıkrıkta seslenirken bakış ona döner (eli çarkta), sonra kendi çıkrığına (ustabaşı kadraj dışındaydı)
+	player.face(foreman.global_position + Vector3(0, 1.1, 0))
+	# 4. tur: yakınlaşma kaldırıldı (görüntüyü beyaza yıkıyordu); 1 sn'lik bakış, sonra kendi çıkrığı
+	await get_tree().create_timer(1.0, false).timeout
+	player.face(EdirneYard.WIND_REAR + Vector3(0, 1.1, 0))
 	player.frozen = true
 	meter.enabled = true
 	balance.visible = true
@@ -540,6 +571,7 @@ func _onto_sled() -> void:
 	# Zincirler çözülür
 	for c in level.chains:
 		c.visible = false
+	Stage.grip_release(foreman)
 	foreman.set_activity("")
 	await get_tree().create_timer(1.0, false).timeout
 	hud.bark("SPK_TOLGA", "D34O_T_REVEAL", 4.0)

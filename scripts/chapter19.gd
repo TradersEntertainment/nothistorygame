@@ -25,6 +25,7 @@ var player: Player
 var hud: Hud
 var ship: Node3D
 var crew: Array[Person] = []
+var _coil: Node3D
 var captain: Person
 var patrol: Node3D
 var patrol_reis: Soldier
@@ -141,6 +142,23 @@ func _build_ship() -> void:
 		c.position = Vector3(-0.8 + (i % 2) * 1.6, DECK_Y, -4.2 + i * 1.2 if i < 4 else 1.8)   # beşincisi oyuncunun koltuğunda (z 0,5) değil, arkasında
 		ship.add_child(c)
 		crew.append(c)
+	# Tayfa işinde (yayma P2: güvertede donuk dikiliyorlardı): biri baş gözcüsü, biri güverteyi süpürür, biri halat sarar (çömelmiş,
+	# önünde kangal), biri kıymık yontar; oyuncunun önündeki tayfa (z −0,6) bir adım ileride, sırtı dönük bakmasın diye yanlamasına
+	crew[0].set_activity("arms_folded")       # baş gözcüsü (pruvada daralan gövdede süpürgeci küpeşteye giriyordu)
+	crew[2].position.x = -0.45
+	crew[2].give_tool("broom")
+	crew[1].set_activity("crouch")       # çömelmiş, önündeki halatı sarar (kıymık yontma oturma pozuydu: havada kalıyordu)
+	crew[3].position = Vector3(1.0, DECK_Y, -1.5)
+	crew[3].rotation.y = -PI * 0.5
+	crew[3].set_activity("arms_folded")
+	crew[4].set_activity("crouch")
+	_coil = Node3D.new()
+	ship.add_child(_coil)
+	for k: int in [4, 1]:
+		var cp := crew[k].position + Vector3(0.1, 0.01, 0.55)
+		Stage.rope_coil(_coil, cp, 0.24, 4.0, 0.024)
+		Stage.rope(_coil, cp + Vector3(0.05, 0.07, 0), crew[k].position + Vector3(0.05, 0.55, 0.3), 0.05, 0.022)
+	Vfx.wake(ship, 0.0, {"stern": Vector3(0, 0, 5.4), "bow": Vector3(0, 0, -6.8), "width": 3.0})
 	captain = Person.new({"coat": Color("2a3a6a"), "pants": Color("2a2226"), "hat": "turban", "beard": true, "mustache": true, "skin": Color("dcae88"),
 		"face": {"nose": "long", "brow": 1.2, "beard": "short", "head": Vector3(1.0, 1.05, 1.0)}})
 	captain.set_meta("spk", "SPK_BRIG")
@@ -194,6 +212,7 @@ func _build_patrol() -> void:
 	lm.material_override = Props.mat(Color("ffb040"), 3.0, false, "", false)
 	patrol.position = Vector3(45, 0, 70)
 	patrol.visible = false
+	Vfx.wake(patrol, 0.0, {"stern": Vector3(0, 0, 3.6), "bow": Vector3(0, 0, -4.2), "width": 1.6})
 
 
 # ================================================================ akış
@@ -440,7 +459,11 @@ func _vote_scene() -> void:
 	await hud.fade_to(1.0, 0.8)
 	await hud.card([[tr("UI_CH19_VOTE"), 26, Color("f2e6c9")]], 1.8)
 	hud.clear_card()
+	if is_instance_valid(_coil):
+		_coil.queue_free()
 	for i in crew.size():
+		crew[i].drop_tools()
+		crew[i].set_activity("")
 		crew[i].position = Vector3(-1.0 + (i % 3) * 1.0, DECK_Y, -2.2 + (i / 3) * 1.4)
 		crew[i].rotation.y = PI * 0.5 if i % 2 == 0 else -PI * 0.5
 	# Oylamada konuşan iki tayfa ön sırada (kartta sarıklı kılıklarıyla görünürler)

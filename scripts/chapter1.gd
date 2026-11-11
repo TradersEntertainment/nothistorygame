@@ -186,7 +186,7 @@ func _run() -> void:
 	hud.set_objective(tr("UI_OBJ_LISTEN_HIKMET"))
 	player.frozen = false
 	hud.say_chain([["SPK_HIKMET", "D1_H_17"], ["SPK_HIKMET", "D1_H_18"], ["SPK_HIKMET", "D1_H_19"], ["SPK_TOLGA", "D1_T_20"],
-		["SPK_HIKMET", "D1_H_21"]])
+		["SPK_HIKMET", "D1_H_21"], ["SPK_HIKMET", "D1_H_SPARE"]])     # yedek kumanda (Bölüm 5'te aranır) burada anılır
 	while hud.chain_busy():
 		await get_tree().process_frame
 

@@ -1038,3 +1038,35 @@ Her bölüm denetiminde ve her düzeltmede bu listeyi baştan uygula. Yeni bir h
   - Duraklatınca günlüğe `ODAK: pencere odağı kaybedildi` satırı yazılır: bir sonraki `godot.log` nedeni kesin gösterir.
   - Belirti okuma: "dünya dondu ama fesin püskülü sallanıyor ve fare imleci göründü" = ağaç duraklı (HUD her zaman
     işler); motor donması ya da çökme değil.
+- v0.99.118 (yayma dalgası 1: Opus × 3 paket [ordugâh, Haliç, top çekme], Opus ara bölüm, Opus süreklilik, Sonnet × 4
+  araştırma, Sonnet × 5 denetim, Sonnet Büro; yönetmen birleştirir, karelere bakar, test eder, gönderir):
+  - Vitrin paftası hüküm vermeye yetmez: yönetmen üç pakette de ajanın seçtiği karelere bakıp "iyi" dedi; denetçi kendi
+    oynanış koşusunda aynı pakete "gönderilemez" dedi (tokmak kazığa inmiyor, ip gri şerit, elde leblebi). Kural:
+    kabul, denetçinin KENDİ koşusundan sonra verilir; ajanın paftası yalnız "bir şey değişmiş mi" sorusunu cevaplar.
+  - "Önce|sonra" çifti aynı koşudan, aynı replik anından olmalı: farklı yerden ya da sondadan alınan çift kanıt değildir.
+    Önce karesi için dosya geçici özgün hâline döndürülür (bitince `cmp` ile geri konduğu doğrulanır).
+  - "Karede seçilmiyor" bir sonuç değildir: ya seçilir kılınır, ya (maliyeti varsa) kaldırılır, ya "duruyor, kanıtsız"
+    yazılır. Görünmeyen efekt (43o yol ağı, 24o yağmur halkası, 17o tayfa aletleri, 18b sıçraması) kaldırıldı.
+  - Kanıt için oyun koduna konan kare kancaları (`_p1_shot`) kodda kaldı; sürümden önce `grep` ile arandı ve söküldü.
+    Ölçüm etiketi, kanca, sonda: iş bitince scratch'te kalır, depoda kalmaz.
+  - Ortak yardımcının görünüşü herkese yayılır: `Nature.ground_detail("camp_mud")` sert kenarlı "yağ lekesi" çıkardı,
+    üç pakete birden bulaştı. Ortak parça önce tek bölümde denetçiden geçer, sonra dağıtılır.
+  - Yakın plan ip: kameranın yakın düzlemi borunun içini keser; üçgen yönü ters ya da yüz ayıklama kapalıysa iç yüz
+    "gri şerit" olarak görünür. Elden çıkan parça kameradan ≥25 cm önde başlar, üçgenler dışa bakar, ayıklama açık.
+  - `Vfx.water_entry`/`splash` oyuncunun KENDİ düşüşünde köpük kürelerini kameranın içine düşürür (17'de "buz kütlesi").
+    17 ve 18 yerel sıçramayla çözdü; ortak işlev sonraki dalgada düzeltilecek (Bölüm 2 ve 4 de kullanıyor).
+  - Bakışı değiştirmek bütçeyi değiştirir: 28o'da oyuncu kazığa yürüyüp sura bakınca üçgen +%42 oldu; bakış kazığın
+    dibine inince −%38. RINFO evre evre ve aynı ana hizalı ölçülür; ortalama tek başına yanıltır.
+  - Uzak kalabalık için ayrı düşük ayrıntılı ağ: 56 öküz tam ağla hem pahalı hem "siyah benek"ti; öküz başına 96
+    üçgenlik çift ağıyla hem ucuz hem okunur oldu.
+  - Süreklilik ("bir anda belirme"): dört salt-okuma ajanı 61 geçişi taradı (1 delik, 26 fark edilir, 34 doğal kesme);
+    düzelten ajan her bulguyu önce kodda doğruladı. Çoğu tek replikle kapandı; yeni bölüm yalnız birinde gerekti (8y).
+  - Türlü döngü değişkeni silinmiş nesneyle patlar: `for p: CPUParticles3D in parts` bölüm değişince "Trying to assign
+    invalid previously freed instance" verir. Gecikmeli lambda içinde türsüz döngü + `is_instance_valid`.
+  - Rig'de bel eklemi yok: `look_target` bütün gövdeyi çevirir, oturan figürün bacakları bankın içinden döner.
+    Büro'da `SeatTwist` (gövde sınırlı döner, bacaklar ters karşılanır, baş kalanı tamamlar); kalıcı çözüm Rig'e bel.
+  - Yedek commit'i çalışan ajanların yarım dosyalarını da alır; bir ajanın sözdizimi hatası (camp_day, bureau) o
+    dakikalarda öteki ajanların koşularını düşürdü. Ajan kuralı: düzenleme bitmeden dosyayı ayrıştırılamaz bırakma;
+    başkasının hatasında bekle ve yeniden koş (ajanlar öyle yaptı).
+  - Çalışan ajanlar varken ana dala acil düzeltme: çalışma ağacına dokunmadan `git read-tree` + `commit-tree` ile
+    main'in üstüne kayıt; sonra `git merge main` ile çalışma dalına alındı.

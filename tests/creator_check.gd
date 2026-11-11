@@ -40,6 +40,9 @@ func _ready() -> void:
 	var story: Array[int] = []
 	for c in cards:
 		if String(c["section"]) in ["act1", "act2"]:
+			# Harfli ara bölüm (8 ile 9 arasındaki "A": Beyaz Havlu) sıraya sayı olarak girmez
+			if not String(c["no"]).is_valid_int() and String(c["no"]).to_int() == 0:
+				continue
 			story.append(String(c["no"]).to_int())
 	if story.is_empty() or story[0] != 0 or story[-1] != 12:
 		errs.append("ana hikâye 0 ile başlayıp 12 ile bitmeli: %s" % [story])

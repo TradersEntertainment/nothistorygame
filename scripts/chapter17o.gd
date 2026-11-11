@@ -424,7 +424,8 @@ func _run() -> void:
 	# Topçubaşı'nın sözleri oyuncu serbestken (30 sn donuk açılış); ışık ancak söz bitince görünür
 	player.frozen = false
 	hud.set_objective(tr("UI_OBJ17O_LISTEN"), topcu, 1.9)
-	hud.say_chain([["SPK_TOPCU", "D17O_A_01"], ["SPK_TOLGA", "D17O_T_01"], ["SPK_TOPCU", "D17O_A_02"]])
+	# 29o'da Baltaoğlu'nun kürekçisiydi: neden kıyı topçusunun yamağı olduğu (öteki Osmanlı sayfaları gibi Nihat açar)
+	hud.say_chain([["SPK_NIHAT", "D17O_N_01"], ["SPK_TOPCU", "D17O_A_01"], ["SPK_TOLGA", "D17O_T_01"], ["SPK_TOPCU", "D17O_A_02"]])
 	while hud.chain_busy():
 		await get_tree().process_frame
 	# Galata'da ışık: tespit
@@ -686,7 +687,12 @@ func _start_brigade() -> void:
 
 ## Kovalarla koşup gelir: varış noktasının 9 m gerisinden (mutfak tarafı) koşar.
 func _run_in(p: Person, to: Vector3) -> void:
-	p.position = to - Vector3(sin(p.rotation.y), 0, cos(p.rotation.y)) * 9.0
+	# Koşu topların önündeki toprak siperin (x −6..6, z 0..1,6; satır 145) içinden başlamasın: başlangıç siperin doğu
+	# ucunun ötesinde (Kadri x 4'ten koşuyor, siperin içinden geçiyordu: PACE VISAUDIT insolid)
+	var back := 9.0
+	if absf(to.z - (GUN.z + 1.8)) < 1.3:
+		back = minf(back, maxf(to.x - 6.6, 0.5))
+	p.position = to - Vector3(sin(p.rotation.y), 0, cos(p.rotation.y)) * back
 	if Stage.fast():
 		p.position = to
 		return
@@ -738,6 +744,9 @@ func _brigade_tick(delta: float) -> void:
 	Props.cyl(b, 0.2, 0.02, Vector3(0, 0.15, 0), Color("4a78a8"), Vector3.ZERO, 8)
 	b.position = (CHAIN_PTS[0] as Vector3) + Vector3(0, 0.3, 0.9)
 	Audio.sfx("splash", -20.0, 1.3)
+	var dip := (CHAIN_PTS[0] as Vector3) + Vector3(0, 0, 0.9)
+	Vfx.water_ring(self, dip, WATER_Y, 0.2, 0.9, 1.0, 0.45)      # kova suya daldırılır (yayma P2)
+	Vfx.water_drops(self, Vector3(dip.x, WATER_Y, dip.z), WATER_Y, 4)
 	var tw := create_tween()
 	tw.tween_property(b, "position", (CHAIN_PTS[0] as Vector3) + Vector3(0, 1.05, 0.3), 0.35)
 	for i in range(1, CHAIN_PTS.size()):

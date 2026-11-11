@@ -64,6 +64,14 @@ var _photo := ""
 var _focus := ""
 var _ball_t := 4.0
 var _t := 0.0
+# yayma P4: halatçılar zeminin çocuğu (kızağın değil), kişi başına gecikmeyle kızağın ardından adım atar
+var _haulers: Array[Dictionary] = []   # {"s": Soldier, "ox": kızağa göre x, "oz": z, "fx": izlediği kızak x'i, "wait": -1}
+var _ropes: Array[MeshInstance3D] = []  # iki çekme halatı (dünya), uçları kızak halkasında ve sonda yerde kangal
+var _coils: Array[MeshInstance3D] = []
+var _on_rope := false                  # oyuncunun iki eli halatın ucunda
+var _ox_teams: Array[Dictionary] = []  # yakın, canlı öküz takımları (koşumlu, kızak çekerek yürür)
+var _herd: Array[Node3D] = []          # uzak, durağan öküz sıraları (çoklu ağ)
+var _gyf := func(x: float, z: float) -> float: return SiegeField.ground(x, z)
 
 
 func _ready() -> void:
@@ -108,7 +116,9 @@ func _ready() -> void:
 	pad.get_child(0).visible = false
 	_build_stakes()
 	_build_sled()
-	sled.visible = false        # Şahi 6 Nisan'da daha yolda: kızak ve çeken bölük 11 Nisan'da görünür (açılışta duruyordu)
+	_haul_show(false)        # Şahi 6 Nisan'da daha yolda: kızak ve çeken bölük 11 Nisan'da görünür (açılışta duruyordu)
+	_build_oxen()
+	_build_ground()
 	horse = Horse.new(Color("e4e0d8"))
 	add_child(horse)
 	sultan = Person.new({"coat": Color("b3262d"), "pants": Color("6a1a1a"), "hat": "sultan", "face": "fatih", "mustache": true,
@@ -173,9 +183,11 @@ func _build_sled() -> void:
 	for side: float in [-1.0, 1.0]:
 		var a := Vector3(4.45, 0.82, side * 1.05)
 		var b := Vector3(17.8, 1.0, side * 1.75)
-		var rope := Props.cyl(sled, 0.035, a.distance_to(b), (a + b) * 0.5, rope_col, Vector3.ZERO, 5)
-		rope.basis = Basis(Quaternion(Vector3.UP, (b - a).normalized()))
 		Props.cyl(sled, 0.06, 0.5, a + Vector3(0.05, -0.05, 0), rope_col.darkened(0.2), Vector3(0, 0, 90), 6)   # kızağa bağlandığı halka
+		# Halat (yayma P4): kızak halkasından halatçıların ellerinden geçer, sonda yere iner, ucu kangal. Eskiden kızağın
+		# çocuğu iki düz krem çubuktu (Props.cyl), sarkmasız ve uçsuz.
+		_ropes.append(Stage.rope(self, Vector3.ZERO, Vector3(0, 0.1, 0), 0.0, 0.036, rope_col))
+		_coils.append(Stage.rope_coil(self, Vector3.ZERO, 0.34, 3.5, 0.036, rope_col))
 		for k in 6:
 			var s := Soldier.new([Color("b3262d"), Color("6a4a3a"), Color("e8e0d0"), Color("2f5fa8")][(k + int(side + 1.0)) % 4], "haul",
 				["bork", "turban", "azap"][k % 3])
@@ -183,12 +195,20 @@ func _build_sled() -> void:
 			s.set_meta("climber", true)
 			var x := 6.6 + k * 1.8
 			var on := a.lerp(b, (x - a.x) / (b.x - a.x))
-			s.position = Vector3(x + 0.25, 0, on.z - side * 0.32)   # halatın iç yanında
-			s.rotation.y = -PI * 0.5 + side * 0.25                   # kızağa (−X) bakar, halata hafif dönük
-			s.rope = [a, b]
-			sled.add_child(s)
+			# Zeminin çocuğu: kızakla kaymaz, kendi adımıyla izler (halatın iç yanında, kızağa (−X) bakar)
+			add_child(s)
+			s.rotation.y = -PI * 0.5 + side * 0.25
+			s.set("_t", randf() * 20.0)                              # her biri kendi soluğunda (aynı fazda sallanıyorlardı)
+			_haulers.append({"s": s, "ox": x + 0.25 + randf_range(-0.15, 0.15), "oz": on.z - side * (0.32 + randf_range(-0.06, 0.08)),
+				"fx": HAUL_FROM, "wait": -1.0, "side": side})
 			_teams.append(s)
 	Props.interactable(sled, "roller_front", Vector3(1.4, 1.2, 3.0), Vector3(5.3, 0.6, 0))
+	# Kızağın kalası ve namlusu tek ağ (çizim sayısı; makara kütükleri ayrı döner)
+	var still: Array = []
+	for c in sled.get_children():
+		if c is MeshInstance3D:
+			still.append(c)
+	Props.bake_static(sled, still)
 	_place_sled()
 
 
@@ -203,6 +223,8 @@ func _roller(parent: Node3D, pos: Vector3) -> Node3D:
 	Props.box(r, Vector3(0.07, 0.05, 2.9), Vector3(0, -0.25, 0), Color("4a3622"))
 	for z: float in [-1.42, 1.42]:
 		Props.cyl(r, 0.275, 0.08, Vector3(0, 0, z), Color("3a3634"), Vector3(90, 0, 0), 10)
+	if r.is_inside_tree():
+		Props.bake_static(r, r.get_children())
 	return r
 
 
@@ -219,6 +241,42 @@ func _place_sled() -> void:
 	for r in _rollers:
 		if is_instance_valid(r) and r.get_parent() == sled:
 			r.rotation = Vector3(0, 0, -haul_x / 0.26)
+	_lay_ropes()
+
+
+## Halatların yeri: kızak halkasından halatçıların elleri hizasında (Soldier.rope bu çizgi: eller ona uzanır) sona;
+## oyuncu ucu tutuyorsa sonu oyuncunun iki elinde, oradan yere; tutmuyorsa son halatçının ardında yere iner, ucu kangal.
+func _lay_ropes() -> void:
+	if _ropes.size() < 2:
+		return
+	for i in 2:
+		var side := -1.0 if i == 0 else 1.0
+		var a := sled.to_global(Vector3(4.45, 0.82, side * 1.05))
+		var b := sled.to_global(Vector3(17.8, 0.92, side * 1.75))
+		var coil := sled.to_global(Vector3(19.4, 0, side * 2.4))
+		coil.y = gy(coil.x, coil.z)
+		_coils[i].global_position = coil
+		var pts: Array
+		if side > 0.0 and _on_rope:
+			var hl := Vector3(0.0, -0.15, -0.64)
+			var hr := Vector3(0.15, -0.2, -0.5)
+			player.hold_both(hl, hr)
+			var l := player.camera.to_global(hl)
+			pts = Stage.sag_points(a, l, 0.02, 10)
+			pts.append(player.camera.to_global(hr))
+			var d1 := player.global_position + (player.global_position - a).normalized() * 0.5
+			d1.y = gy(d1.x, d1.z) + 0.04
+			pts.append_array([player.camera.to_global(hr + Vector3(0.05, -0.35, 0.15)), d1, coil + Vector3(0, 0.1, 0)])
+			b = l
+		else:
+			pts = Stage.sag_points(a, b, 0.03, 10)
+			var g := sled.to_global(Vector3(18.6, 0, side * 2.0))
+			g.y = gy(g.x, g.z) + 0.04
+			pts.append_array([g, coil + Vector3(0, 0.1, 0)])
+		Stage.rope_to(_ropes[i], pts)
+		for d: Dictionary in _haulers:
+			if float(d["side"]) == side:
+				(d["s"] as Soldier).rope = [a, b]
 
 
 # ================================================================ akış
@@ -252,7 +310,7 @@ func _stakes_phase() -> void:
 	_update_objective()
 	while stakes < STAKES:
 		await get_tree().process_frame
-		if GameState.autotest:
+		if GameState.autotest and not _hammering:      # bot tokmak inerken yeni kazık almaz
 			if carrying == "":
 				_on_interact("stakes")
 			else:
@@ -275,15 +333,23 @@ func _haul_phase() -> void:
 	await hud.card([[tr("UI_CH28O_HAUL"), 26, Color("f2e6c9")]], 1.8)
 	hud.clear_card()
 	phase = "haul"
-	sled.visible = true
-	# Oyuncu bölüğün yanında, biraz açıkta: kızağı, halatları ve çeken iki sırayı birlikte görür (kızağın dibinde
-	# başlayınca görüşü namlu kaplıyordu)
+	_haul_show(true)
+	# Oyuncu bölüğün yanında, biraz açıkta: kızağı, halatları ve çeken iki sırayı birlikte görür. Eldeki eşya cebe
+	# (yayma P4: çekerken elinde koli bandı vardı); halatın ucuna (son halatçının ardı) yürürse iki eliyle tutar.
+	# (Halat ucunda başlatmak denendi: görüş halatçı sırasıyla kapanıyor, çizim yükü %35 artıyordu.)
 	var ps := Vector3(haul_x + 7.5, 0, HAUL_Z + 7.0)
 	player.global_position = Vector3(ps.x, gy(ps.x, ps.z) + 0.05, ps.z)
 	player.face(Vector3(haul_x + 5.5, 1.0, HAUL_Z))
-	urban.global_position = Vector3(haul_x + 2.0, gy(haul_x + 2.0, HAUL_Z + 3.4), HAUL_Z + 3.4)
+	player.stow_hands(true)
+	player.show_remote(false)            # 2. tur: eller görünmez (koli bandı gitmişti ama el boş havada açık duruyordu)
+	_lay_ropes()
+	# "Altmış öküz bunu Edirne'den getirdi": bakış replik boyunca öküzlere (kızak yolunun gerisinde, takımlar çekerek
+	# gelir, ötede çiftler dinlenir); Urban o yanda konuşur. Replikten sonra bakış kızağa döner.
+	urban.global_position = Vector3(haul_x + 1.0, gy(haul_x + 1.0, HAUL_Z + 6.0), HAUL_Z + 6.0)
+	player.face(Vector3(-6.0, 0.5, HAUL_Z + 15.0))
 	await hud.fade_to(0.0, 0.8)
 	await hud.say("SPK_URBAN", "D28O_U_HAUL")
+	player.face(Vector3(haul_x + 5.5, 1.0, HAUL_Z))
 	match Siege.outcome(35):
 		"35O.2":
 			_roller_every = 3.0
@@ -321,13 +387,19 @@ func _haul_phase() -> void:
 					_on_interact("roller_front")
 		elif Input.is_action_just_pressed("jump") and not player.frozen:
 			meter.press()
-		# Urban kızağın yanında yürür
-		urban.global_position = Vector3(haul_x + 2.0, gy(haul_x + 2.0, HAUL_Z + 3.4), HAUL_Z + 3.4)
+		# Urban halatçı sırasının yanında yürür, davula göre bağırır
+		urban.global_position = urban.global_position.lerp(_urban_spot(), minf(1.0, dt * 3.0))
+		_rope_tick(dt)
 	meter.enabled = false
 	meter.stroke.disconnect(_on_stroke)
 	meter.beat.disconnect(_on_beat)
 	player.frozen = true
 	_drop()
+	_on_rope = false
+	player.release_both()
+	player.stow_hands(false)
+	player.show_remote(true)
+	_lay_ropes()
 	hud.set_objective("")
 	hud.set_prompt("")
 	await hud.say("SPK_URBAN", "D28O_U_PLACED" if slips == 0 else "D28O_U_PLACED_SLIP")
@@ -345,8 +417,7 @@ func _on_stroke(good: bool) -> void:
 		return
 	if not good:
 		meter.say(tr("UI_HAUL_EARLY") if meter.phase < RowMeter.WIN_A else tr("UI_HAUL_LATE"), Color("ff9a6a"))
-		for s in _teams:
-			s.heave = maxf(s.heave, 0.25)
+		_stagger_heave(0.25)
 		Audio.sfx("wood_creak", -16.0, 0.7)
 		return
 	var mid := (RowMeter.WIN_A + RowMeter.WIN_B) * 0.5
@@ -359,8 +430,9 @@ func _on_stroke(good: bool) -> void:
 func _heave(good: bool, perfect := false) -> void:
 	if not good:
 		return
-	for s in _teams:
-		s.heave = 1.0
+	_stagger_heave(1.0)
+	if _on_rope:
+		player.shake(0.06)
 	Audio.sfx("heave_shout", -4.0, randf_range(0.96, 1.04))
 	if need_roller:
 		slips += 1
@@ -444,9 +516,7 @@ func _roller_in(r: Node3D) -> void:
 func _first_shot() -> void:
 	await hud.fade_to(1.0, 0.8)
 	phase = "shot"
-	sled.visible = false
-	for s in _teams:
-		s.visible = false
+	_haul_show(false)
 	if _free_roller:
 		_free_roller.visible = false
 	walls.gun_present(true)
@@ -637,7 +707,8 @@ func _on_interact(id: String) -> void:
 				h.set_meta("done", true)
 				_drop()
 				# Kazık deliğe dikilir, tokmakla üç vuruşta çakılır (eskiden E'ye basınca bir anda çakılı beliriyordu)
-				var st := Props.cyl(h, 0.09, 2.2, Vector3(0, 1.5, 0.15), Color("8a6a44"), Vector3(-18, 0, 0), 6, 0.02)
+				# Kazık 1,8 m: tepesi bel hizasında (1,3 m) başlar, üç vuruşta 0,6 m gömülür (tokmak aşağı iner, vuruş seçilir)
+				var st := Props.cyl(h, 0.06, 1.8, Vector3(0, 0.45, 0.15), Color("8a6a44"), Vector3(-18, 0, 0), 6, 0.02)
 				stakes += 1
 				await _hammer_in(st, 0.6)
 				_update_objective()
@@ -671,37 +742,143 @@ func _hammer_in(st: Node3D, depth: float) -> void:
 	var was := player.frozen
 	player.frozen = true
 	_hammering = true
+	# Kazık tokmağı (3. tur): önce kazığın başına yürünür (1 m), bakış kazığın tepesine. Tokmak gerçek ölçüde (sap
+	# ~90 cm, baş 18x12 cm), sağ yumruk sapın ucunda, sol yumruk 28 cm yukarıda. Her vuruşta tokmağın başı kazığın
+	# tepesine iner (eksen sağ yumruktan tepeye kurulur), kazık görünür biçimde gömülür, değme anında toz ve yonga.
+	# Eskiden vuruş havayaydı: kazık metrelerce ötedeydi, baş hiçbir şeye değmiyordu.
+	var top := st.to_global(Vector3(0, 0.9, 0))
+	var base := Vector3(top.x, gy(top.x, top.z) + 0.55, top.z)
+	await Stage.walk_player(player, Vector3(top.x, player.global_position.y, top.z), 0.8, base, 1.2)
+	# 4. tur: bakış ani değil, 0,3 sn'de kazığın dibine doğru iner (eğim ~50°: sur ve sepet yığını kadrajın dışında
+	# kalır; eskiden ani dönüşle bakış sura gidiyor, üçgen +%42'ydi)
+	var cam_f := -player.camera.global_transform.basis.z
+	var from := player.camera.global_position + cam_f * 2.0
+	if Stage.fast():
+		player.face(base)
+	else:
+		var lt := create_tween()
+		lt.tween_method(func(k: float): player.face(from.lerp(base, k)), 0.0, 1.0, 0.3).set_trans(Tween.TRANS_SINE)
+		await lt.finished
 	var hm := Node3D.new()
 	hm.set_meta("transient", true)
 	player.camera.add_child(hm)
-	hm.position = Vector3(0.22, -0.3, -0.55)
-	Props.cyl(hm, 0.014, 0.32, Vector3(0, -0.06, 0), Color("6a4a2c"), Vector3.ZERO, 6)
-	Props.cyl(hm, 0.045, 0.14, Vector3(0, 0.1, 0), Color("8a6a44"), Vector3(0, 0, 90), 8)
+	var handle := Props.cyl(hm, 0.016, 1.0, Vector3(0, 0.5, 0), Color("6a4a2c"), Vector3.ZERO, 6)
+	var head := Node3D.new()
+	hm.add_child(head)
+	Props.cyl(head, 0.06, 0.18, Vector3.ZERO, Color("8a6a44"), Vector3(0, 0, 90), 9)
+	for sx: float in [-0.08, 0.08]:
+		Props.cyl(head, 0.062, 0.02, Vector3(sx, 0, 0), Color("3a3634"), Vector3(0, 0, 90), 9)
 	Props.strip_outlines(hm)
+	hm.set_meta("handle", handle)
+	hm.set_meta("head", head)
+	player.stow_hands(true)
+	_maul_pose(hm, 1.0, st)
 	var f := Stage.fast()
 	for k in 3:
 		var tw := hm.create_tween()
-		tw.tween_property(hm, "rotation_degrees", Vector3(55, 0, -10), 0.03 if f else 0.18).set_trans(Tween.TRANS_SINE)
-		tw.tween_property(hm, "rotation_degrees", Vector3(-40, 0, -10), 0.03 if f else 0.1).set_ease(Tween.EASE_IN)
+		tw.tween_method(func(v: float): _maul_pose(hm, v, st), 0.0, 1.0, 0.03 if f else 0.32).set_trans(Tween.TRANS_SINE)
+		tw.tween_method(func(v: float): _maul_pose(hm, v, st), 1.0, 0.0, 0.03 if f else 0.14).set_ease(Tween.EASE_IN)
 		await tw.finished
+		_maul_pose(hm, 0.0, st)
 		if is_instance_valid(st):
 			st.position.y -= depth / 3.0
-			Vfx.dust(self, st.global_position + Vector3(0, -0.4, 0), 0.25)
+			var tp := st.to_global(Vector3(0, 0.9, 0))
+			Vfx.dust(self, tp + Vector3(0, 0.05, 0), 0.04)            # değme: tepeden küçük yonga tozu (büyüğü tokmağı örtüyordu)
+			Vfx.dust(self, Vector3(tp.x, gy(tp.x, tp.z), tp.z), 0.07)  # dipte kabaran toprak
 		Audio.sfx("pick_tap", -4.0, 0.75 + k * 0.08)
 		player.shake(0.04)
+		# Değme anında kısa duraklama (tokmak kazığın başında görünür)
+		if not f:
+			for n in 4:
+				_maul_pose(hm, 0.0, st)
+				await get_tree().process_frame
+	player.release_both()
+	player.stow_hands(false)
 	hm.queue_free()
 	player.frozen = was
 	_hammering = false
 
 
+## Tokmağın duruşu: v = 0 vuruş (baş kazığın tepesinde), v = 1 kalkık (baş omzun üstünde, geride). Sağ yumruk
+## kameranın yerelinde iner kalkar; tokmak ekseni sağ yumruktan kazığın tepesine (vuruşta) ya da yukarı-geriye
+## (kalkıkta) kurulur, sol yumruk sapın 28 cm yukarısına konur; sap boyu başı tam tepeye getirecek kadar.
+func _maul_pose(hm: Node3D, v: float, st: Node3D) -> void:
+	if not is_instance_valid(hm) or not is_instance_valid(st):
+		return
+	var cam := player.camera
+	var rc := Vector3(0.1, -0.24, -0.38).lerp(Vector3(0.1, -0.02, -0.34), v)
+	var rw := player.rig.socket.global_position + cam.global_transform.basis.y * 0.035 if player.rig else cam.to_global(rc)
+	var top := st.to_global(Vector3(0, 0.96, 0))
+	var strike := top - rw
+	var d := clampf(strike.length(), 0.5, 1.4)
+	var raised := (cam.global_transform.basis * Vector3(0.05, 0.8, 0.55)).normalized()
+	var ax := strike.normalized().slerp(raised, clampf(v, 0.0, 1.0)).normalized()
+	var lw := rw + ax * 0.28
+	player.hold_both(cam.to_local(lw), rc)
+	var x := ax.cross(Vector3.UP if absf(ax.y) < 0.95 else Vector3.FORWARD).normalized()
+	hm.global_transform = Transform3D(Basis(x, ax, x.cross(ax)), rw)
+	var handle: Node3D = hm.get_meta("handle")
+	var head: Node3D = hm.get_meta("head")
+	var dl := lerpf(d, 0.85, v)
+	handle.scale = Vector3(1, dl + 0.1, 1)
+	handle.position = Vector3(0, (dl - 0.1) * 0.5, 0)
+	head.position = Vector3(0, dl, 0)
+
+
+var _stake_sway := Vector3.ZERO
+var _stake_yaw := INF
+
+
+## Kazık taşıma (3. tur): sağ omuzda, iki el önde; Carry.attach'in ağırlık hissinin eşdeğeri (Carry sol eli free_hold
+## ile yönettiği için iki elli tutuşla çakışıyordu): dönüşte yük geride kalıp yana yatar, adımda iner kalkar; eller
+## bu salınımla birlikte gider, kazık her karede iki yumruğun içinden geçer.
+func _stake_hold(delta: float) -> void:
+	var yaw := player.camera.global_rotation.y
+	if _stake_yaw == INF:
+		_stake_yaw = yaw
+	var dyaw := wrapf(yaw - _stake_yaw, -PI, PI)
+	_stake_yaw = yaw
+	var hv := Vector2(player.velocity.x, player.velocity.z).length()
+	var bob := sin(_t * 9.0) * 0.012 * clampf(hv / 3.0, 0.0, 1.0)
+	var want := Vector3(clampf(-dyaw / maxf(delta, 0.001) * 0.02, -0.06, 0.06), bob - 0.01 * clampf(hv / 3.0, 0.0, 1.0), 0)
+	_stake_sway = _stake_sway.lerp(want, clampf(delta * 6.0, 0.0, 1.0)) if delta > 0.0 else want
+	player.hold_both(Vector3(0.3, -0.14, -0.74) + _stake_sway * 0.7, Vector3(0.34, -0.22, -0.54) + _stake_sway)
+	_fit_fists(_carry)
+
+
+## Düğümün +Y eksenini sağ yumruktan sol yumruğa çevirir, kökü sağ yumruğa koyar (sap, kazık iki elin içinden geçer)
+func _fit_fists(n: Node3D) -> void:
+	if not is_instance_valid(n) or player.rig == null or player.free_rig == null:
+		return
+	var up := player.camera.global_transform.basis.y * 0.035      # avucun ortası (yuva avuç tabanında)
+	var r: Vector3 = player.rig.socket.global_position + up
+	var l: Vector3 = player.free_rig.socket.global_position + up
+	var y := (l - r)
+	if y.length() < 0.01:
+		return
+	y = y.normalized()
+	var x := y.cross(Vector3.UP if absf(y.y) < 0.95 else Vector3.FORWARD).normalized()
+	n.global_transform = Transform3D(Basis(x, y, x.cross(y)), r)
+
+
 func _pick(what: String) -> void:
+	if _on_rope:
+		_on_rope = false
+		player.release_both()
 	carrying = what
 	_carry = Node3D.new()
 	_carry.position = Vector3(-0.3, -0.55, -1.0)
 	player.camera.add_child(_carry)
 	if what == "stake":
-		Props.cyl(_carry, 0.07, 1.8, Vector3.ZERO, Color("8a6a44"), Vector3(70, 0, 0), 6, 0.02)
-		player.free_hold = Vector3(-0.3, -0.5, -0.75)      # kazık sol elde (havada asılıydı)
+		# Kazık iki elde, göğsün önünde çapraz (yayma P4: sol elde kazık, sağ elde koli bandı duruyordu)
+		# 2. tur: kazık (1,8 m, çap 10 cm) sağ omuzda, iki el önde tutar; arka ucu omzun ardında, ön ucu sağ kenarda
+		# hafif yukarı (ekranı boydan boya kesmez)
+		Props.cyl(_carry, 0.04, 1.5, Vector3(0, 0.6, 0), Color("8a6a44"), Vector3.ZERO, 6, 0.025)
+		player.stow_hands(true)
+		_stake_sway = Vector3.ZERO
+		_stake_yaw = INF
+		_stake_hold(0.0)
+		_fit_fists(_carry)
 		player.speed_mult = 0.85
 	else:
 		_carry.position = Vector3(0.0, -0.6, -1.0)
@@ -709,13 +886,17 @@ func _pick(what: String) -> void:
 		player.free_hold = Vector3(-0.45, -0.5, -0.9)      # kütüğün sol ucu sol elde
 		player.speed_mult = 0.65
 	Props.strip_outlines(_carry)
-	Carry.attach(player, _carry, {"weight": 0.55 if what == "stake" else 0.95})
+	if what != "stake":
+		Carry.attach(player, _carry, {"weight": 0.95})
 	Audio.sfx("land_pot", -10.0, 0.7)
 	hud.set_prompt("")
 	_update_objective()
 
 
 func _drop() -> void:
+	if carrying == "stake":
+		player.release_both()
+		player.stow_hands(false)
 	carrying = ""
 	player.free_hold = Vector3.INF
 	player.speed_mult = 1.0
@@ -726,6 +907,10 @@ func _drop() -> void:
 
 func _process(delta: float) -> void:
 	_t += delta
+	_tick_haulers(delta)
+	_tick_oxen(delta)
+	if carrying == "stake" and is_instance_valid(_carry):
+		_stake_hold(delta)
 	# 6 Nisan: surdaki Bizans topları arada bir atar; gülle siperin önüne ya da ardına düşer
 	if phase in ["stakes", "haul"] and not player.frozen and not hud.chain_busy():
 		_ball_t -= delta
@@ -743,6 +928,267 @@ func _process(delta: float) -> void:
 					Vfx.dust(self, at, 1.2)
 					Audio.sfx("explosion_small", -6.0)
 					Fx.trauma(0.25))
+
+
+# ================================================================ halatçılar, halat, öküzler, zemin (yayma P4)
+
+func _haul_show(on: bool) -> void:
+	_herd_show(on)
+	sled.visible = on
+	for t in _teams:
+		t.visible = on
+	for r in _ropes:
+		r.visible = on
+	for c in _coils:
+		c.visible = on
+
+
+## Oyuncunun halattaki yeri: +z halatının ucunda, son halatçının ardında (halatın iç yanında)
+func _rope_spot() -> Vector3:
+	return Vector3(haul_x + 19.6, 0, HAUL_Z + 2.5)
+
+
+## Urban halatçı sırasının yanında (dışında) yürür: oyuncuya 7 m, sıraya bakar
+func _urban_spot() -> Vector3:
+	var x := haul_x + 10.5
+	return Vector3(x, gy(x, HAUL_Z + 3.6), HAUL_Z + 3.6)
+
+
+var _rope_hx := INF
+
+
+## Halat ucu: oyuncu yerindeyken iki eli halatta; kızak ilerleyince oyuncu da halatla bir adım geri gelir. Yerinden
+## ayrılınca (kütüğe gidince) halat bırakılır, geri gelince (1 m) yeniden tutulur.
+func _rope_tick(_dt: float) -> void:
+	var spot := _rope_spot()
+	var pp := player.global_position
+	var d := Vector2(pp.x - spot.x, pp.z - spot.z).length()
+	# 3. tur: oyuncuyu halatla birlikte kaydıran (kare kare ışınlayan) kısım kaldırıldı; halat ucunda tutma yok
+	if _on_rope and (carrying != "" or d > 1.5):
+		_on_rope = false
+		player.release_both()
+	_rope_hx = haul_x
+	_lay_ropes()
+
+
+func _stagger_heave(amp: float) -> void:
+	for s in _teams:
+		var dl := randf_range(0.0, 0.24)
+		var am := amp * randf_range(0.78, 1.0)
+		if dl < 0.03:
+			s.heave = maxf(s.heave, am)
+		else:
+			get_tree().create_timer(dl, false).timeout.connect(func():
+				if is_instance_valid(s):
+					s.heave = maxf(s.heave, am))
+
+
+## Halatçılar kızağı kendi adımlarıyla izler: kızak ilerleyince her biri kendi gecikmesiyle (0-0,3 sn) geri adım atar
+## (adımda bacaklar "heave" ile oynar), tabanı her karede zemine basar. Eskiden kızağın çocuğuydular: kızakla birlikte
+## ayakları yerde kayıyordu.
+func _tick_haulers(delta: float) -> void:
+	for d: Dictionary in _haulers:
+		var s: Soldier = d["s"]
+		if not is_instance_valid(s) or not s.visible:
+			continue
+		var fx: float = d["fx"]
+		if absf(haul_x - fx) > 0.004:
+			if not d.get("moving", false):
+				if float(d["wait"]) < 0.0:
+					d["wait"] = randf_range(0.02, 0.3)
+				d["wait"] = float(d["wait"]) - delta
+				if float(d["wait"]) <= 0.0:
+					d["moving"] = true
+					s.heave = maxf(s.heave, 0.85)       # adım: bacaklar oynar
+			if d.get("moving", false):
+				fx = move_toward(fx, haul_x, delta * 2.6)
+				d["fx"] = fx
+		else:
+			d["moving"] = false
+			d["wait"] = -1.0
+		var p := Vector3(fx + float(d["ox"]), 0, HAUL_Z + float(d["oz"]))
+		p.y = gy(p.x, p.z)
+		s.global_position = p
+		Stage.plant_feet(s, _gyf)
+
+
+## "Altmış öküz bunu Edirne'den getirdi": topu getiren öküzler kızak yolunun gerisinde. Yakında iki canlı takım
+## (boyunduruk, dikmeler, çeki zinciri, arkada kütük kızağı; sürücü üvendireyle yanında) yol boyunca ağır ağır
+## çekerek bataryaya gelir; ötede koşumu çözülmemiş çiftler sıra sıra dinlenir (tek çoklu ağ). Toplam 60 öküz.
+func _build_oxen() -> void:
+	var coats := [Color("8a5a36"), Color("6a4a2a"), Color("b89868"), Color("4a3a2a"), Color("9a6a40")]
+	for i in 2:
+		var team := Node3D.new()
+		add_child(team)
+		team.rotation.y = PI * 0.5                    # yerel +Z → dünya +X (bataryaya doğru)
+		var oxen: Array = []
+		for sx: float in [-0.75, 0.75]:
+			var o := Ox.new(coats[(i * 2 + int(sx > 0.0)) % coats.size()])
+			team.add_child(o)
+			o.position = Vector3(sx, 0, 0)
+			_bake_ox(o)
+			oxen.append(o)
+		var still: Array = [Props.box(team, Vector3(2.0, 0.12, 0.14), Vector3(0, 1.62, 0.95), Color("5a3a22"))]
+		for sx: float in [-0.75, 0.75]:
+			for dx: float in [-0.27, 0.27]:
+				still.append(Props.cyl(team, 0.025, 0.5, Vector3(sx + dx, 1.36, 0.95), Color("6a4a2c"), Vector3.ZERO, 4))
+		# Kütük kızağı (arkada): iki kızak ayağı, çapraz kalaslar, üç kütük
+		var sz := -3.9
+		for kx: float in [-0.45, 0.45]:
+			still.append(Props.box(team, Vector3(0.12, 0.16, 2.5), Vector3(kx, 0.08, sz), Color("5a3e26")))
+		for p: Vector3 in [Vector3(-0.22, 0.42, sz), Vector3(0.22, 0.42, sz), Vector3(0, 0.72, sz)]:
+			still.append(Props.cyl(team, 0.18, 2.3, p, Color("8a6a44"), Vector3(90, 0, 0), 8))
+		Props.bake_static(team, still)
+		Stage.chain(team, Vector3(0, 1.5, 0.95), Vector3(0, 0.3, sz + 1.3), 0.35, 0.08, Color("3a3a40"))
+		var herder := Soldier.new(Color("7a5232"), "stand", "turban")
+		herder.set_meta("no_talk", true)
+		add_child(herder)
+		_goad(herder)
+		var x0 := -9.0 - i * 4.0
+		var z := HAUL_Z + 8.5 + i * 3.6
+		_ox_teams.append({"team": team, "oxen": oxen, "herder": herder, "x": x0, "z": z, "end": -3.0 - i * 4.0, "bellow": randf_range(3.0, 9.0)})
+		_place_team(_ox_teams[-1])
+	# Uzak sıralar (yayma P4, 5. tur): 28 boyunduruk çifti (56 öküz), çift başına tek düşük ayrıntılı ağ (iki öküz:
+	# gövde, hörgüç, baş, dört bacak, iki boynuz kutusu + boyunduruk; öküz başına ~100 üçgen), tek çoklu ağ, gölgesiz.
+	# Eskiden canlı öküz modeli (binlerce üçgen) uzakta siyah benek gibi okunuyordu ve çekmede üçgen +%11..28 idi.
+	var pair := _herd_pair_mesh()
+	var rng := RandomNumberGenerator.new()
+	rng.seed = 2808
+	var xs: Array = []
+	var cs: Array = []
+	var tints := [Color("f2e6d0"), Color("d8b890"), Color("b88a5c"), Color("e8d4b0")]
+	for i in 28:
+		var row := i / 7
+		var col := i % 7
+		var c := Vector3(-6.0 - col * 3.8 + rng.randf_range(-0.9, 0.9), 0, HAUL_Z + 17.0 + row * 3.8 + rng.randf_range(-0.7, 0.7))
+		var yaw := PI * 0.5 + rng.randf_range(-0.5, 0.5) + (PI if row % 2 == 1 and rng.randf() < 0.3 else 0.0)
+		c.y = gy(c.x, c.z)
+		xs.append(Transform3D(Basis(Vector3.UP, yaw), c))
+		cs.append(tints[rng.randi() % tints.size()])
+	var hm := Scenery._vc_mat()
+	hm.vertex_color_is_srgb = true
+	hm.cull_mode = BaseMaterial3D.CULL_DISABLED
+	var mm := Scenery.scatter(self, pair, xs, cs, hm)
+	mm.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
+	mm.visibility_range_end = 160.0
+	_herd.append(mm)
+	_herd_show(false)
+
+
+## Uzak öküz çifti: iki düşük ayrıntılı öküz (+Z ileri, x ±0,75) ve boyunduruk; köşe rengi (açık gövde, koyu
+## bacak/baş altı, krem boynuz); örnek rengi gövde tonunu çeşitlendirir. Öküz başına 8 kutu (96 üçgen).
+func _herd_pair_mesh() -> ArrayMesh:
+	var st := SurfaceTool.new()
+	st.begin(Mesh.PRIMITIVE_TRIANGLES)
+	var box := func(c: Vector3, sz: Vector3, col: Color, tilt := 0.0) -> void:
+		var b := Basis(Vector3.RIGHT, tilt)
+		var h := sz * 0.5
+		var faces := [[Vector3.UP, Vector3.RIGHT, Vector3.BACK], [Vector3.DOWN, Vector3.RIGHT, Vector3.FORWARD],
+			[Vector3.RIGHT, Vector3.BACK, Vector3.UP], [Vector3.LEFT, Vector3.FORWARD, Vector3.UP],
+			[Vector3.BACK, Vector3.LEFT, Vector3.UP], [Vector3.FORWARD, Vector3.RIGHT, Vector3.UP]]
+		for f: Array in faces:
+			var n: Vector3 = f[0]
+			var u: Vector3 = f[1]
+			var v: Vector3 = f[2]
+			var o := n * h
+			var du := u * h
+			var dv := v * h
+			var q := [o - du - dv, o + du - dv, o + du + dv, o - du + dv]
+			var shade := 1.0 if n.y > 0.5 else (0.7 if n.y < -0.5 else 0.86)
+			for k in [0, 2, 1, 0, 3, 2]:
+				st.set_color(Color(col.r * shade, col.g * shade, col.b * shade))
+				st.set_normal(b * n)
+				st.add_vertex(c + b * (q[k] as Vector3))
+	var coat := Color(1, 1, 1)
+	var dark := Color(0.45, 0.36, 0.3)
+	var horn := Color(1.25, 1.2, 1.05)
+	for sx: float in [-0.75, 0.75]:
+		box.call(Vector3(sx, 1.12, -0.05), Vector3(0.82, 0.82, 1.95), coat)              # gövde
+		box.call(Vector3(sx, 1.55, 0.5), Vector3(0.5, 0.3, 0.55), coat)                  # hörgüç
+		box.call(Vector3(sx, 1.25, 1.2), Vector3(0.4, 0.42, 0.6), coat, 0.5)             # baş (aşağı eğik)
+		box.call(Vector3(sx, 1.05, 1.5), Vector3(0.3, 0.26, 0.2), dark)                 # burun
+		for lz: float in [0.6, -0.7]:
+			for lx: float in [-0.24, 0.24]:
+				box.call(Vector3(sx + lx, 0.36, lz), Vector3(0.16, 0.72, 0.18), dark)      # bacak
+		box.call(Vector3(sx, 1.55, 1.08), Vector3(0.95, 0.07, 0.07), horn)               # boynuzlar
+	box.call(Vector3(0, 1.66, 0.95), Vector3(2.1, 0.13, 0.15), Color(0.55, 0.38, 0.24))  # boyunduruk
+	st.index()
+	var mesh := st.commit()
+	return mesh
+
+
+## Uzak sürü ve iki canlı takım yalnız 11 Nisan'da (çekme) görünür: 6 Nisan'da top henüz yolda, 12 Nisan atışında
+## öküzler ordugâha çekilmiş (eskiden her evrede sahnedeydiler; kazık ve atış evrelerinde üçgen bütçesini yiyordu)
+func _herd_show(on: bool) -> void:
+	for h in _herd:
+		h.visible = on
+	for t: Dictionary in _ox_teams:
+		(t["team"] as Node3D).visible = on
+		(t["herder"] as Node3D).visible = on
+		(t["herder"] as Node3D).process_mode = Node.PROCESS_MODE_INHERIT if on else Node.PROCESS_MODE_DISABLED
+
+
+## Canlı öküzün parçaları (gövde, baş, bacaklar, kuyruk) kendi içinde tek ağ: canlandırma sürer, çizim azalır
+func _bake_ox(o: Ox) -> void:
+	var body: Node3D = o.get("_body")
+	var parts: Array = [o.get("_head"), o.get("_tail")]
+	parts.append_array(o.get("_legs"))
+	for pn in parts:
+		var part := pn as Node3D
+		if part:
+			Props.bake_static(part, part.get_children())
+	var direct: Array = []
+	for c in body.get_children():
+		if c is MeshInstance3D:
+			direct.append(c)
+	Props.bake_static(body, direct)
+
+
+func _place_team(t: Dictionary) -> void:
+	var team: Node3D = t["team"]
+	var x: float = t["x"]
+	var z: float = t["z"]
+	team.global_position = Vector3(x, gy(x, z), z)
+	var herder: Soldier = t["herder"]
+	var hp := team.to_global(Vector3(-1.7, 0, 0.2))
+	herder.global_position = Vector3(hp.x, gy(hp.x, hp.z), hp.z)
+	herder.rotation.y = PI * 0.5
+
+
+## Takımlar kızak çekilirken bataryaya doğru yürür (0,55 m/sn), yolun sonunda durur; öküzler ara sıra böğürür
+func _tick_oxen(delta: float) -> void:
+	for t: Dictionary in _ox_teams:
+		if phase == "haul" and float(t["x"]) < float(t["end"]):
+			t["x"] = minf(float(t["end"]), float(t["x"]) + delta * 0.55)
+			_place_team(t)
+		t["bellow"] = float(t["bellow"]) - delta
+		if float(t["bellow"]) <= 0.0:
+			t["bellow"] = randf_range(6.0, 14.0)
+			((t["oxen"] as Array).pick_random() as Ox).bellow()
+
+
+## Sürücünün üvendiresi: sağ elde, ucunda küçük demir mıh (Bölüm 2 slipway._goad gibi)
+func _goad(sol: Soldier) -> void:
+	var el: Node3D = sol.rig.elbow_r if sol.rig else null
+	if el == null:
+		return
+	var g := Node3D.new()
+	el.add_child(g)
+	g.position = Vector3(0, -0.28, 0.06)
+	Props.cyl(g, 0.02, 1.9, Vector3(0, 0.55, 0), Color("6a4a2c"), Vector3.ZERO, 5)
+	Props.cyl(g, 0.012, 0.08, Vector3(0, 1.53, 0), Color("4a4d52"), Vector3.ZERO, 4)
+
+
+## Batarya zemini (yayma P4): siper dibinde kazık çukurlarının çamuru, kızak yolunda çamur ve ayak izi, gelinen yolda
+## kızak ve toynak izi, kazık yığınının dibinde yonga. Her tür tek çoklu ağ. Eskiden düz petek taş levhaydı.
+func _build_ground() -> void:
+	Nature.ground_detail(self, Rect2(1.4, 113.7, 15.4, 1.8), "mud", 2.4, 2801, _gyf)
+	Nature.ground_detail(self, Rect2(-24.0, HAUL_Z - 2.8, 52.0, 5.6), "mud", 0.5, 2802, _gyf)
+	Nature.ground_detail(self, Rect2(-24.0, HAUL_Z - 3.4, 52.0, 6.8), "footprint", 0.55, 2803, _gyf)
+	Nature.ground_detail(self, Rect2(16.4, 119.2, 3.4, 2.6), "chips", 3.0, 2804, _gyf)
+	for rz: float in [-0.55, 0.55]:
+		Nature.trail(self, [Vector3(-70.0, 0, HAUL_Z + rz), Vector3(HAUL_FROM - 4.6, 0, HAUL_Z + rz)], "wheel_ruts", _gyf, 1.0, 2805 + int(rz * 10.0), 0.05)
+	Nature.trail(self, [Vector3(-70.0, 0, HAUL_Z + 4.0), Vector3(-14.0, 0, HAUL_Z + 4.0)], "hoofprint", _gyf, 0.5, 2807, 1.6)
 
 
 # ================================================================ bölüm sonu

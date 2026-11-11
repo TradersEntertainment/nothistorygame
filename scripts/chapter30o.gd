@@ -177,6 +177,7 @@ func _run() -> void:
 	await hud.say("SPK_NIHAT", "D30O_N_01")
 	await hud.say("SPK_ZAGANOS", "D30O_Z_01")
 	await hud.say("SPK_TOLGA", "D30O_T_01")
+	await hud.say("SPK_ZAGANOS", "D30O_Z_URBAN")     # Urban'ın topçusu neden Zağanos'un merdivencisi (20o'dan geçiş)
 	await _carry_ladder()
 	await _climb()
 	await _wall_fight()

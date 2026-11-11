@@ -706,11 +706,16 @@ func ensure_defaults_for(chapter: int) -> void:
 ## Gizli bölüm (16) "G". Kuşatma bölümleri ve kuşatmadan sonraki 13–15 Siege.number_of'tan gelir: kuşatmanın
 ## uzunluğu tarafa göre değişir (yalnız Osmanlı tarafında oynanan bölümler var).
 const DISPLAY_NO := {16: -1}
+## Ara Bölüm "Beyaz Havlu" (scripts/chapter8y.gd, sahnesi chapter8y.tscn): kayıt ve bölüm listesi için sahte bölüm
+## numarası (Büro önsözünün Siege.BUREAU'su gibi); sonucu chapter_outcomes[80] ("8Y.1"–"8Y.3")
+const INTERLUDE_8Y := 80
 
 
 static func display_no(ch: int) -> String:
 	if ch == Siege.BUREAU:
 		return "B"          # Büro önsözü: numarası yok (bölüm listesinde 12 ile kuşatma arasında)
+	if ch == INTERLUDE_8Y:
+		return "A"          # Ara Bölüm "Beyaz Havlu": numarası yok (bölüm listesinde 8 ile 9 arasında)
 	var sn := Siege.number_of(ch)
 	if sn > 0:
 		return str(sn)
@@ -754,6 +759,8 @@ static func fill_outcomes(text: String) -> String:
 static func play_order(ch: int) -> float:
 	if ch == Siege.BUREAU:
 		return 12.49          # Büro önsözü: Bölüm 12'den sonra, kuşatmanın ilk sayfasından önce
+	if ch == INTERLUDE_8Y:
+		return 8.5            # Ara Bölüm "Beyaz Havlu" (yalnız Bizans yolu): Bölüm 8'den sonra, 9'dan önce
 	if ch in Siege.ORDER:
 		return 12.5 + Siege.ORDER.find(ch) * 0.01
 	if ch == 16:

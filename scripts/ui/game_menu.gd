@@ -457,6 +457,9 @@ func show_chapters(data: Dictionary) -> void:
 	# Kuşatma (17–26) oynanış sırasında Bölüm 12'nin ardındadır; önce Büro önsözü (zamanın dışında, v0.99.6)
 	for n in range(1, GameState.LATEST_CHAPTER + 1):
 		list.append(n)
+		# Ara Bölüm "Beyaz Havlu" (yalnız Bizans yolu): oynandıysa 8 ile 9 arasında
+		if n == 8 and GameState.INTERLUDE_8Y in reached:
+			list.append(GameState.INTERLUDE_8Y)
 		if n == 12:
 			if Siege.BUREAU in reached:
 				list.append(Siege.BUREAU)

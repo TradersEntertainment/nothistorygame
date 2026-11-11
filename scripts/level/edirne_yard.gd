@@ -50,7 +50,7 @@ var muzzle: Node3D
 var touch_hole: Node3D              # falya (namlunun arka üstü)
 var clay: Array[MeshInstance3D] = []
 var nicks: Node3D
-var chains: Array[MeshInstance3D] = []   # [arka iniş, arka kiriş, arka çıkrık, ön iniş, ön kiriş, ön çıkrık]
+var chains: Array[MultiMeshInstance3D] = []   # [arka iniş, arka kiriş, arka çıkrık, ön iniş, ön kiriş, ön çıkrık]
 var drums: Array[Node3D] = []            # [arka, ön]: el çarkı (dönen)
 var pawls: Array[Node3D] = []
 var spools: Array[MeshInstance3D] = []   # tamburdaki sarım (kalınlaşır)
@@ -124,8 +124,12 @@ func _process(delta: float) -> void:
 	for i in _rope_segs.size():
 		var a: Vector3 = rope_posts[i] + Vector3(0, 0.95, 0)
 		var b: Vector3 = rope_posts[i + 1] + Vector3(0, 0.95, 0)
-		var m := (a + b) * 0.5 + Vector3(0, -0.22 + 0.05 * sin(_t * 1.7 + i), 0.06 * sin(_t * 1.1 + i * 0.7))
-		Bogaz.rope(_rope_segs[i], a, m) if i % 2 == 0 else Bogaz.rope(_rope_segs[i], a, b)
+		# yayma P4: iki direk arasında sarkan tek parça ip (eskiden çift dilimler direğin ortasında bitiyordu)
+		var sw := Vector3(0, 0, 0.06 * sin(_t * 1.1 + i * 0.7))
+		var pts: Array = Stage.sag_points(a, b, 0.2 + 0.04 * sin(_t * 1.7 + i), 6)
+		for k in range(1, pts.size() - 1):
+			pts[k] = (pts[k] as Vector3) + sw * sin(PI * k / (pts.size() - 1))
+		Stage.rope_to(_rope_segs[i], pts)
 	var cam := get_viewport().get_camera_3d()
 	if cam and _snow:
 		_snow.global_position = cam.global_position + Vector3(0, 9.0, 0)
@@ -207,6 +211,26 @@ func _ground() -> void:
 		# Çarpışma görünen yüzeyin kendisi (eskiden atış sahasında 5 m'lik ayrı yükseklik haritası vardı, görünen 10 m'lik
 		# ızgarayla yarım metreye varan fark: yürüyen havada ya da toprağın içinde)
 		LowPoly.solid(far)
+	_tracks()
+
+
+## Kar izleri (yayma P4): kar düz beyaz levhaydı. Çukurun, çıkrıkların, ocakların ve oluğun çevresinde çiğnenmiş kar
+## ve ayak izleri, ocaklar önünde kül; ocaklardan çukura, oluktan çukura giden yollarda iz çizgisi. Her tür tek çoklu ağ.
+func _tracks() -> void:
+	var hf := func(x: float, z: float) -> float: return ground_y(x, z)
+	var out_pit := func(x: float, z: float) -> bool: return absf(x) > PIT_HX + 0.4 or absf(z) > PIT_HZ + 0.4
+	Nature.ground_detail(self, Rect2(-8.0, -12.0, 16.0, 24.0), "snow_print", 0.9, 3401, hf, out_pit)
+	# 3. tur: karda çamur yaması kirli leke gibiydi; yerine sık kar izi. Kül yalnız ocak ağızlarının önünde, seyrek
+	Nature.ground_detail(self, Rect2(-7.0, -10.0, 14.0, 20.0), "snow_print", 0.7, 3402, hf, out_pit)
+	Nature.ground_detail(self, Rect2(FURNACE.x - 3.0, FURNACE.z + 1.0, 14.0, 2.5), "ash", 0.5, 3403, hf)
+	Nature.trail(self, [FURNACE + Vector3(-3.0, 0, 3.0), Vector3(3.0, 0, -6.0), Vector3(0, 0, -6.0)], "snow_print", hf, 0.6, 3404, 0.5)
+	Nature.trail(self, [CHUTE_BOT + Vector3(2.0, 0, 0), Vector3(-6.0, 0, -1.0), Vector3(-3.0, 0, 0)], "snow_print", hf, 0.6, 3405, 0.6)
+	Nature.trail(self, [WIND_REAR + Vector3(1.6, 0, 0), WIND_FRONT + Vector3(1.6, 0, 0)], "snow_print", hf, 0.6, 3406, 0.4)
+	# Avlunun geri kalanı: ip hattı boyunca, oluğun dibinde ve gülle ölçülen yerde seyrek iz ve çiğnenmiş kar
+	Nature.ground_detail(self, Rect2(-34.0, -24.0, 62.0, 52.0), "snow_print", 0.16, 3407, hf, out_pit)
+	Nature.ground_detail(self, Rect2(CHUTE_BOT.x - 6.0, CHUTE_BOT.z - 4.0, 12.0, 12.0), "snow_print", 0.8, 3408, hf)
+	Nature.trail(self, [Vector3(ROPE_X0, 0, ROPE_Z + 1.2), Vector3(ROPE_X1, 0, ROPE_Z + 1.2)], "snow_print", hf, 0.55, 3409, 0.5)
+	Nature.trail(self, [CHUTE_TOP + Vector3(2.0, 0, 0), CHUTE_BOT + Vector3(2.0, 0, 0), Vector3(-PIT_HX - 1.0, 0, 0)], "snow_print", hf, 0.6, 3410, 0.4)
 
 
 func _height_body(x0: float, x1: float, z0: float, z1: float, step: float) -> void:
@@ -273,7 +297,10 @@ func _frame() -> void:
 			leg.rotate_object_local(Vector3.RIGHT, PI * 0.5)
 			Props.make_solid(leg)       # A ayağının içinden yürünmesin
 			# Ayak dibinde kar yığıntısı
-			Props.ball(self, 0.5, foot + Vector3(0, -0.15, 0), C_SNOW, Vector3(1.2, 0.5, 1.2), 7)
+			# 4. tur: ayak dibindeki kar yığını yassı ve kar renginde (iri 7 köşeli top gölgede açık kahve düz çokgen gibi
+			# görünüyordu)
+			var mound := Props.ball(self, 0.32, foot + Vector3(0, -0.04, 0), C_SNOW.lightened(0.08), Vector3(1.1, 0.22, 1.1), 10)
+			mound.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
 		Props.box(self, Vector3(4.2, 0.22, 0.22), Vector3(0, 2.6, z), C_WOOD.darkened(0.1))
 	Props.box(self, Vector3(0.42, 0.46, PIT_HZ * 2.0 + 2.0), Vector3(0, BEAM_Y + 0.1, 0), C_WOOD.darkened(0.05))
 	# Makaralar (kirişin altında ve uçlarda)
@@ -286,7 +313,8 @@ func _frame() -> void:
 		w.position = wp
 		for sx: float in [-0.9, 0.9]:
 			Props.make_solid(Props.box(w, Vector3(0.2, 1.3, 0.2), Vector3(sx, 0.65, 0), C_WOOD))
-			Props.ball(w, 0.35, Vector3(sx, -0.1, 0), C_SNOW, Vector3(1.2, 0.5, 1.2), 7)
+			var wm := Props.ball(w, 0.26, Vector3(sx, -0.03, 0), C_SNOW.lightened(0.08), Vector3(1.1, 0.22, 1.1), 10)
+			wm.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
 		Props.make_solid(Props.cyl(w, 0.32, 1.6, Vector3(0, 1.05, 0), C_WOOD.lightened(0.1), Vector3(0, 0, 90), 12))
 		var spool := Props.cyl(w, 0.36, 1.2, Vector3(0, 1.05, 0), Color("5a5a5e"), Vector3(0, 0, 90), 12)
 		spools.append(spool)
@@ -306,8 +334,9 @@ func _frame() -> void:
 		Props.box(pawl, Vector3(0.06, 0.08, 0.6), Vector3(0, 0, -0.3), Color("3a3a40"))
 		pawl.rotation.x = -0.6
 		pawls.append(pawl)
+	# yayma P4: halka halka demir zincir (eskiden koyu düz çubuk)
 	for i in 6:
-		chains.append(Bogaz.make_rope(self, Color("4a4a50"), 0.05))
+		chains.append(Stage.chain(self, Vector3.ZERO, Vector3(0, 0.1, 0), 0.0, 0.09, Color("3a3a40")))
 
 
 ## Zincirleri namlunun kuşaklarına göre yeniden çiz (namlu her kalktığında)
@@ -320,9 +349,9 @@ func update_chains() -> void:
 		var pul := Vector3(0, BEAM_Y - 0.3, zs * BAND_Z)
 		var end := Vector3(0, BEAM_Y - 0.3, zs * (PIT_HZ + 0.6))
 		var wp: Vector3 = (WIND_REAR if s == 0 else WIND_FRONT) + Vector3(0, 1.05, 0)
-		Bogaz.rope(chains[s * 3], band, pul)
-		Bogaz.rope(chains[s * 3 + 1], pul, end)
-		Bogaz.rope(chains[s * 3 + 2], end, wp)
+		Stage.chain_to(chains[s * 3], [band, pul])
+		Stage.chain_to(chains[s * 3 + 1], Stage.sag_points(pul, end, 0.04, 6))
+		Stage.chain_to(chains[s * 3 + 2], Stage.sag_points(end, wp, 0.06, 8))
 
 
 # ---------------------------------------------------------------- namlu
@@ -387,13 +416,37 @@ func break_clay(i: int) -> void:
 	var dir := Vector3(randf_range(-1.0, 1.0), 0, randf_range(-0.3, 0.3)).normalized()
 	var tw := c.create_tween()
 	tw.tween_property(c, "global_position", gp + dir * 0.8 + Vector3(0, 0.3, 0), 0.18)
-	tw.tween_property(c, "global_position", Vector3(gp.x + dir.x * 1.4, PIT_Y + 0.2, gp.z + dir.z), 0.45).set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_IN)
+	var land := Vector3(gp.x + dir.x * 1.4, 0, gp.z + dir.z)
+	land.y = floor_y(land.x, land.z)
+	tw.tween_property(c, "global_position", land + Vector3(0, 0.15, 0), 0.45).set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_IN)
 	tw.parallel().tween_property(c, "rotation", c.rotation + Vector3(randf_range(1, 3), 0, randf_range(1, 3)), 0.45)
-	tw.tween_property(c, "scale", Vector3(1.0, 0.5, 1.0), 0.2)
+	# 4. tur: yere değince kalıp tek dev düz levha (0,9x1,25 m) olarak kalmaz: 3-4 küçük, kalın, düzensiz parçaya
+	# ayrılır; parçalar yarı gömülü, üstlerinde kar serpintisi (eskiden karın ortasında sert kenarlı açık kahve çokgen)
+	tw.tween_callback(func(): _shatter(c, land))
 	clay[i] = null
 	Vfx.dust(self, gp, 0.35)
 	Vfx.steam(self, gp + Vector3(0, 0.1, 0))
 	Audio.sfx("land_pot", -6.0, 0.7)
+
+
+func _shatter(c: Node3D, at: Vector3) -> void:
+	if is_instance_valid(c):
+		c.visible = false
+	var g := Node3D.new()
+	add_child(g)
+	var rng := RandomNumberGenerator.new()
+	rng.seed = int(at.x * 131.0 + at.z * 17.0)
+	var n := 3 + rng.randi() % 2
+	for k in n:
+		var r := rng.randf_range(0.1, 0.22)
+		var off := Vector3(rng.randf_range(-0.35, 0.35), 0, rng.randf_range(-0.35, 0.35))
+		var p := at + off
+		p.y = floor_y(p.x, p.z) + r * 0.12
+		var b := Props.ball(g, r, p, C_CLAY.darkened(rng.randf_range(0.0, 0.18)), Vector3(rng.randf_range(1.0, 1.6), rng.randf_range(0.5, 0.8), rng.randf_range(0.8, 1.3)), 6)
+		b.rotation = Vector3(rng.randf_range(-0.3, 0.3), rng.randf() * TAU, rng.randf_range(-0.3, 0.3))
+		if k < 2:
+			Props.ball(g, r * 0.55, p + Vector3(0, r * 0.45, 0), C_SNOW, Vector3(1.3, 0.35, 1.1), 5)
+	Props.bake_static(g, g.get_children())
 
 
 ## Tunçta çentik: parlak çizik
@@ -503,7 +556,9 @@ func _rope_line() -> void:
 		rope_posts.append(p)
 		Props.cyl(self, 0.07, 1.1, p + Vector3(0, 0.55, 0), C_WOOD.darkened(0.15), Vector3.ZERO, 6)
 	for k in n:
-		_rope_segs.append(Bogaz.make_rope(self, Color("c8b080"), 0.02))
+		_rope_segs.append(Stage.rope(self, Vector3.ZERO, Vector3(0, 0.1, 0), 0.0, 0.02, Color("c8b080")))
+		# Direk dibinde sarılı ip (volta)
+		Stage.rope_wrap(self, rope_posts[k], 0.08, 0.86, 0.98, 2.0, 0.02, Color("c8b080"))
 
 
 ## Makara: üç ayaklı kaldıraç (namlu ağzının üstünde; kızakta duran topa göre)

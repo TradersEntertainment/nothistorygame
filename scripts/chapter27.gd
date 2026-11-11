@@ -218,6 +218,7 @@ func _build_ceremony() -> void:
 		e.look_at_from_position(e.position, zaganos.position, Vector3.UP)
 		e.rotate_y(PI)
 		extra.add_child(e)
+	var halk: Array = []
 	for i in 10:
 		var c := Person.new({"coat": Galata.GAL_PEOPLE[i % 6]["coat"], "pants": Color("3a3a3a"), "skirt": i % 4 == 1,
 			"mustache": i % 2 == 0, "hat": ["none", "plume", "none", "none", "plume"][i % 5], "n": 120 + i})
@@ -229,6 +230,34 @@ func _build_ceremony() -> void:
 		c.look_at_from_position(c.position, zaganos.position, Vector3.UP)
 		c.rotate_y(PI)
 		extra.add_child(c)
+		halk.append(c)
+	# Meydan kıpırdar (yayma P2: ahitname okunurken herkes dimdik ve kımıltısızdı): aralıklı jest, baş uzatma, fısıldaşma
+	Crowd.idle_vary(halk)
+
+
+## Gitmeye karar veren kişi oyuncudan uzağa yürür; ama o yön alçak bir engele (balıkçının tezgâhı, 0,9 m) çıkıyorsa
+## Person.leave'in göz hizasındaki (1 m) ışını tezgâhın üstünden geçer, kişi tezgâhın içinden yürürdü (VISAUDIT insolid,
+## 27 brig/toll). Diz ve göz hizasında boş bir yön seçilir (önce oyuncudan uzağı, sonra yanlar, sonra geri).
+func _leave_from(p: Node3D) -> Vector3:
+	var d0 := p.global_position - player.global_position
+	d0.y = 0.0
+	d0 = d0.normalized() if d0.length() > 0.1 else -p.global_transform.basis.z
+	var space := get_world_3d().direct_space_state
+	for a: float in [0.0, PI * 0.5, -PI * 0.5, PI * 0.25, -PI * 0.25, PI * 0.75, -PI * 0.75, PI]:
+		var d := d0.rotated(Vector3.UP, a)
+		var free := true
+		var side := d.cross(Vector3.UP)
+		for h: float in [0.35, 1.0, -0.35, -1.0]:          # diz/göz hizası; gövde genişliği için iki yanda (±0,35 m)
+			var e := p.global_position + Vector3(0, absf(h), 0) + side * (0.35 if h > 0.0 else -0.35)
+			var q := PhysicsRayQueryParameters3D.create(e, e + d * 4.5, 1)
+			if p is CollisionObject3D:
+				q.exclude = [(p as CollisionObject3D).get_rid()]
+			if not space.intersect_ray(q).is_empty():
+				free = false
+				break
+		if free:
+			return p.global_position - d
+	return player.global_position
 
 
 # ================================================================ akış
@@ -328,7 +357,7 @@ func _talk(id: String) -> void:
 			_advised[id] = "go"
 			await _t("D27_T_%s_GO" % k)
 			await _say(spk, "D27_%s_GO" % k)
-			p.leave(player.global_position, 4.0, 2.5)
+			p.leave(_leave_from(p), 4.0, 2.5)
 		if _advised.size() == 1:
 			await hud.say("SPK_NIHAT", "D27_N_ADVICE")
 	elif id in UNDECIDED:

@@ -841,18 +841,26 @@ func _end_chapter() -> void:
 	if GameState.autotest and GameState.autotest_variant == "next":
 		print("AUTOTEST chapter=8 -> 9 outcome=%s" % _outcome)
 		GameState.autotest_variant = ""
-		get_tree().change_scene_to_file("res://scenes/chapter9.tscn")
+		get_tree().change_scene_to_file(_next_scene())
 		return
 	if GameState.autotest:
 		_autotest_report()
 		return
 	match result:
 		"next":
-			GameState.change_scene("res://scenes/chapter9.tscn")
+			GameState.change_scene(_next_scene())
 		"replay":
 			GameState.replay_scene()
 		_:
 			get_tree().quit()
+
+
+## Sıradaki sahne: Bizans yolunda (Bölüm 6 sonucu 6b.*) önce Ara Bölüm "Beyaz Havlu" (chapter8y: surlardan ordugâha
+## yürüyüş), o da Bölüm 9'u açar. Ordugâh yolunda (6a.*) eskisi gibi doğrudan Bölüm 9.
+func _next_scene() -> String:
+	if str(GameState.chapter_outcomes.get(6, "")).begins_with("6b") and ResourceLoader.exists("res://scenes/chapter8y.tscn"):
+		return "res://scenes/chapter8y.tscn"
+	return "res://scenes/chapter9.tscn"
 
 
 func _make_chart() -> Flowchart:
@@ -885,7 +893,7 @@ func _make_chart() -> Flowchart:
 	c.footer_lines = [
 		tr("UI_CH8_STATS") % [GameState.telsiz_bag, "%02d:%02d" % [h, int(_clock) % 60], _catches],
 		tr("UI_FLOW_LEGEND"),
-		tr("UI_FLOW8_NEXT"),
+		tr("UI_FLOW8_NEXT_8Y" if _next_scene().ends_with("chapter8y.tscn") else "UI_FLOW8_NEXT"),
 		GameState.tr_pad("UI_FLOW_CONTINUE"),
 	]
 	return c

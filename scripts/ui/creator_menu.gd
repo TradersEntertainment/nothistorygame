@@ -12,7 +12,7 @@ signal picked(scene: String, setup: Dictionary)
 
 ## Ana hikâye: [sahne, iç numara, rozet]
 const ACT1 := [["chapter0", 0, "0"], ["chapter1", 1, "1"], ["chapter2", 2, "2"], ["chapter3", 3, "3"], ["chapter4", 4, "4"]]
-const ACT2 := [["chapter5", 5, "5"], ["chapter6", 6, "6"], ["chapter7", 7, "7"], ["chapter8", 8, "8"], ["chapter9", 9, "9"],
+const ACT2 := [["chapter5", 5, "5"], ["chapter6", 6, "6"], ["chapter7", 7, "7"], ["chapter8", 8, "8"], ["chapter8y", 8, "A"], ["chapter9", 9, "9"],
 	["chapter10", 10, "10"], ["chapter10b", 10, "10B"], ["chapter10z", 10, "10Z"], ["chapter10l", 10, "10L"],
 	["chapter10g", 10, "10G"], ["chapter10h", 10, "10H"], ["chapter10a", 10, "10A"], ["chapter11", 11, "11"],
 	["chapter12", 12, "12"], ["chapter12b", 12, "12B"]]
@@ -21,7 +21,7 @@ const FINALE := [["chapter13", 13], ["chapter14", 14], ["chapter15", 15], ["chap
 const WHEN := {
 	"chapter0": ["Tolga", 29, 5, 1453], "chapter1": ["Tolga", 0, 0, 2026], "chapter2": ["Tolga", 22, 4, 1453],
 	"chapter3": ["Nihat", 0, 0, 2026], "chapter4": ["Tolga", 22, 4, 1453], "chapter5": ["Hikmet", 0, 0, 2026],
-	"chapter6": ["Tolga", 23, 4, 1453], "chapter7": ["Nihat", 24, 4, 1453], "chapter8": ["Hikmet", 0, 0, 2026],
+	"chapter6": ["Tolga", 23, 4, 1453], "chapter7": ["Nihat", 24, 4, 1453], "chapter8": ["Hikmet", 0, 0, 2026], "chapter8y": ["Tolga", 25, 4, 1453],
 	"chapter9": ["Tolga", 25, 4, 1453], "chapter10": ["Tolga", 25, 4, 1453], "chapter10b": ["Tolga", 25, 4, 1453],
 	"chapter10z": ["Tolga", 25, 4, 1453], "chapter10l": ["Tolga", 25, 4, 1453], "chapter10g": ["Tolga", 25, 4, 1453],
 	"chapter10h": ["Tolga", 25, 4, 1453], "chapter10a": ["Tolga", 25, 4, 1453], "chapter11": ["Nihat · Tolga", 25, 4, 1453],

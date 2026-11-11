@@ -193,8 +193,12 @@ func _run() -> void:
 	player.frozen = false
 	phase = "tray"
 	hud.set_objective(tr("UI_OBJ25_TRAY"), door_guard, 2.1)
-	hud.say_chain([["SPK_NIHAT", "D25O_N_01" if not byz else "D25_N_01"], ["SPK_KADRI", "D25_K_01"],
-		["SPK_TOLGA", "D25_T_01" if "chickpeas" in GameState.bag else "D25_T_01_NOLEB"], ["SPK_KADRI", "D25_K_02"]])
+	var opening: Array = [["SPK_NIHAT", "D25O_N_01" if not byz else "D25_N_01"], ["SPK_KADRI", "D25_K_01"],
+		["SPK_TOLGA", "D25_T_01" if "chickpeas" in GameState.bag else "D25_T_01_NOLEB"], ["SPK_KADRI", "D25_K_02"]]
+	# 43O.2: Sultan iki gün önce "zincire vurun" demişti; şimdi otağa şerbet taşıyan yamak o (yalnız 32o'da anılıyordu)
+	if not byz and Siege.outcome(43) == "43O.2":
+		opening.append(["SPK_TOLGA", "D25O_T_43BAD"])
+	hud.say_chain(opening)
 	if GameState.autotest:
 		while hud.chain_busy():      # test botu ışınlanır: konuşan görüşten çıkmasın
 			await get_tree().process_frame

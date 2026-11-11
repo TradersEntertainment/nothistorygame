@@ -18,14 +18,22 @@ static var _mat_cache: StandardMaterial3D
 
 ## Osmanlı askeri. hat: "bork" ya da "turban"; arm: "spear", "bow", "sword_shield", "" (boş el).
 ## pose: "" (ayakta) ya da bir Rig işi ("sit_ground": ateş başında bağdaş kurmuş).
+## arm "tool:<alet>" (yayma P0, Stage.station donuk istasyon): iş aleti (Items.TOOLS) pozdan sonra ele verilir,
+## pişmiş modelde avuçta durur (pose aletin işi olmalı: "tool:mallet" + "hammer").
 static func ottoman(coat: Color, hat := "bork", arm := "spear", pose := "") -> ArrayMesh:
 	var key := "O|%s|%s|%s|%s" % [coat.to_html(), hat, arm, pose]
+	if arm.begins_with("tool:"):
+		key += "|" + FileAccess.get_md5("res://scripts/level/items.gd")      # alet modeli değişince yeniden pişer
 	if not _meshes.has(key) and not _from_disk(key):
 		var s := Soldier.new(coat, "stand", hat)
 		_meshes[key] = _bake(s, func():
-			if arm != "":
+			if arm != "" and not arm.begins_with("tool:"):
 				s.equip(arm)
-			_pose(s, pose))
+			_pose(s, pose)
+			if arm.begins_with("tool:"):
+				var t := s.give_tool(arm.substr(5), {"activity": pose, "phase": 0.3, "frozen": true})
+				if t:
+					Items._tool_pose(s, t))
 		_to_disk(key)
 	return _meshes[key]
 
@@ -249,3 +257,91 @@ static func ott(i: int, arm := "spear", coat := Color(0, 0, 0, 0)) -> Dictionary
 
 static func byz(i: int, arm := "spear", coat := Color(0, 0, 0, 0)) -> Dictionary:
 	return {"side": "B", "coat": coat if coat.a > 0.0 else BYZ_COATS[i % BYZ_COATS.size()], "arm": arm}
+
+
+# ---------------------------------------------------------------- kalabalık kıpırtısı (yayma P0)
+
+## Donuk duran sıraya / kalabalığa canlılık. people: canlı Person/Soldier'lar ve/veya Crowd.place'in döndürdüğü
+## düğümler (MultiMeshInstance3D; uzak siluet katmanı atlanır).
+##  · Canlı kişi: 5-14 sn'de bir kısa jest (opts "emotes"; varsayılan nod, cross_self, whisper, shrug, arms_cross);
+##    konuşurken, kilitliyken (emote/grip), yürürken, iş başındayken (activity) ya da "no_vary" işaretliyse atlanır.
+##    Rig saati zaten kişiden kişiye rastgele başlar (nefes, kıpırdanma fazları ayrı).
+##  · Donuk çoklu ağ: 2-4 sn'de bir birkaç örnek (opts "max_mm", 6) ±turn rad döner (ağırlık değiştirir, yana bakar),
+##    1,5-4 sn sonra yerine döner. Ucuz: yalnız o örneklerin dönüşümü yazılır.
+## opts: "emotes" (Array), "every" (Vector2: canlı jest aralığı sn), "turn" (0,25 rad), "max_mm".
+## Örnek: Crowd.idle_vary(kuyruktakiler); Crowd.idle_vary(Crowd.place(self, sira), {"turn": 0.3})
+static func idle_vary(people: Array, opts := {}) -> void:
+	for w in people:
+		if w is MultiMeshInstance3D:
+			var mmi := w as MultiMeshInstance3D
+			if mmi.visibility_range_begin > 0.0 or mmi.multimesh == null or mmi.multimesh.instance_count == 0:
+				continue
+			var base: Array = []
+			for i in mmi.multimesh.instance_count:
+				base.append(mmi.multimesh.get_instance_transform(i))
+			mmi.set_meta("vary_base", base)
+			_vary_mm_next(mmi, opts)
+		elif w is Node3D and Handover.rig_of(w) != null:
+			_vary_next(w, opts, true)
+
+
+static func _vary_next(w: Node3D, opts: Dictionary, first := false) -> void:
+	if not is_instance_valid(w) or not w.is_inside_tree():
+		return
+	var ev: Vector2 = opts.get("every", Vector2(5.0, 14.0))
+	var wait := randf_range(ev.x, ev.y) * (randf_range(0.2, 1.0) if first else 1.0)
+	w.get_tree().create_timer(wait, false).timeout.connect(func():
+		if not is_instance_valid(w) or not w.is_inside_tree():
+			return
+		var rg := Handover.rig_of(w)
+		var talking: bool = w.get("talking") == true
+		if rg and rg.lock == 0 and rg.speed < 0.2 and rg.activity == "" and not talking and not w.has_meta("no_vary") \
+				and w.is_visible_in_tree():
+			var em: Array = opts.get("emotes", ["nod", "cross_self", "whisper", "shrug", "arms_cross", "nod"])
+			rg.emote(em[randi() % em.size()])
+		_vary_next(w, opts))
+
+
+static func _vary_mm_next(mmi: MultiMeshInstance3D, opts: Dictionary) -> void:
+	if not is_instance_valid(mmi) or not mmi.is_inside_tree():
+		return
+	mmi.get_tree().create_timer(randf_range(2.0, 4.0), false).timeout.connect(func():
+		if not is_instance_valid(mmi) or not mmi.is_inside_tree():
+			return
+		var base: Array = mmi.get_meta("vary_base", [])
+		var busy: Dictionary = mmi.get_meta("vary_busy", {})
+		var n := mini(int(opts.get("max_mm", 6)), maxi(1, base.size() / 4))
+		var turn: float = opts.get("turn", 0.25)
+		for k in n:
+			var i := randi() % base.size()
+			if busy.has(i):
+				continue
+			busy[i] = true
+			var b0: Transform3D = base[i]
+			var a := randf_range(-turn, turn)
+			var tw := mmi.create_tween()
+			var put := func(v: float) -> void:
+				if is_instance_valid(mmi) and i < mmi.multimesh.instance_count:
+					mmi.multimesh.set_instance_transform(i, Transform3D(Basis(Vector3.UP, v) * b0.basis, b0.origin))
+			tw.tween_method(put, 0.0, a, 0.8).set_trans(Tween.TRANS_SINE)
+			tw.tween_interval(randf_range(1.5, 4.0))
+			tw.tween_method(put, a, 0.0, 0.9).set_trans(Tween.TRANS_SINE)
+			tw.tween_callback(func(): busy.erase(i))
+		mmi.set_meta("vary_busy", busy)
+		_vary_mm_next(mmi, opts))
+
+
+## Olay anı (bağırış, patlama, içeri giren Sultan): herkes 0..max_delay sn gecikmeyle target'a döner (look_target);
+## seconds > 0 ise o kadar sonra eski bakışına döner. Örnek: Crowd.look_at_event(kalabalik, fatih, 4.0)
+static func look_at_event(people: Array, target: Node3D, seconds := 0.0, max_delay := 1.5) -> void:
+	for w in people:
+		if not (w is Node3D) or not is_instance_valid(w) or not (w as Node3D).is_inside_tree() or not ("look_target" in w):
+			continue
+		var old = w.get("look_target")
+		(w as Node3D).get_tree().create_timer(randf_range(0.0, max_delay), false).timeout.connect(func():
+			if is_instance_valid(w) and is_instance_valid(target):
+				w.set("look_target", target)
+				if seconds > 0.0:
+					(w as Node3D).get_tree().create_timer(seconds, false).timeout.connect(func():
+						if is_instance_valid(w) and w.get("look_target") == target:
+							w.set("look_target", old if is_instance_valid(old) else null)))

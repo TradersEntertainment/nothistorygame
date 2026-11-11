@@ -261,3 +261,282 @@ static func camera_print() -> Node3D:
 	Props.box(n, Vector3(0.076, 0.0025, 0.076), Vector3(0, 0, -0.008), Color("3a3530"))
 	return n
 
+
+
+# ---------------------------------------------------------------- iş aletleri (yayma P0)
+# Kimse işini havaya yapmasın: iş pozundaki (Rig.activity) figürün elinde gerçek alet. Modelin kökü avucun ortası
+# (tutuş noktası); yerel +Z sapın elden işe doğru gittiği yön; vuran ağız -Y'de. İkinci el noktası (iki elle tutulan
+# kürek, süpürge, kazma, tokmak) "grip2" meta'sında (aletin yerelinde).
+
+## Aletin varsayılan işi (Rig.activity) ve tutuş biçimi: "fix" önkolla birlikte döner (çekiç, balta, kazma), "aim" sapı
+## her karede kişinin önündeki iş noktasına bakar (kepçe kazana), "fwd" ileri ve biraz aşağı (fırça, testere), "hang"
+## dik asılı (kova), "two" iki elle: alet kişinin önünde bir iş çizgisinde devinir (kürek bastırır-kaldırır-savurur,
+## süpürge iki yana gider, top tokmağı namluya iner çıkar), iki el (Rig.reach) her karede sapın üstünde.
+const TOOLS := {
+	"hammer": ["hammer", "fix"], "mallet": ["hammer", "fix"], "axe": ["chop", "fix"], "cleaver": ["chop", "fix"],
+	"knife": ["chop", "fix"], "pickaxe": ["chop", "fix"], "shovel": ["dig", "two"], "broom": ["sweep", "two"],
+	"ladle": ["stir", "aim"], "paddle": ["stir", "aim"], "brush": ["paint", "fwd"], "saw": ["saw", "fwd"],
+	"bucket": ["", "hang"], "rammer": ["", "two"], "chisel": ["hammer", "fix"], "powder_ladle": ["", "two"],
+	"handspike": ["", "two"],
+}
+## Önkolun uzantısında tutulan "fix" aletleri (öbürleri önkola dik)
+const TOOL_ALONG := ["axe", "cleaver", "knife", "pickaxe"]
+## "aim" aletlerinin varsayılan iş noktası (kişinin yerelinde, ölçeksiz): kazanın içi. "two" aletlerinde iş noktası
+## (kürek: palanın yere girdiği yer; tokmak: namlu ağzı).
+const TOOL_AIM := {"ladle": Vector3(0.05, 0.78, 0.8), "paddle": Vector3(0.05, 0.7, 0.8), "shovel": Vector3(0.08, 0.0, 0.95),
+	"broom": Vector3(0.1, 0.02, 0.85), "rammer": Vector3(0.0, 1.1, 2.0), "powder_ladle": Vector3(0.0, 1.1, 2.0),
+	"handspike": Vector3(0.0, 0.3, 1.2)}
+
+
+## Alet modeli (düşük poligon, dış çizgili). Kök: avucun ortası (iki elli aletlerde üst elin yeri); +Z sap yönü, -Y
+## vuran ağız; "len" meta'sı: kökten iş ucuna uzunluk. Örnek: var m := Items.tool_model("pickaxe"). Türler: TOOLS.
+static func tool_model(kind: String) -> Node3D:
+	var n := Node3D.new()
+	n.name = "Tool_" + kind
+	var wood := Color("7a5634")
+	var iron := Color("5a5c62")
+	var steel := Color("b8bec8")
+	var ln := 0.4
+	match kind:
+		"hammer", "chisel":
+			Props.cyl(n, 0.017, 0.36, Vector3(0, 0, 0.12), wood, Vector3(90, 0, 0), 6)
+			Props.box(n, Vector3(0.055, 0.15, 0.055), Vector3(0, -0.01, 0.31), iron)
+			Props.box(n, Vector3(0.06, 0.03, 0.06), Vector3(0, -0.085, 0.31), steel)
+			ln = 0.34
+		"mallet":
+			Props.cyl(n, 0.02, 0.4, Vector3(0, 0, 0.14), wood, Vector3(90, 0, 0), 6)
+			Props.cyl(n, 0.065, 0.2, Vector3(0, -0.01, 0.36), Color("9a7448"), Vector3.ZERO, 8)
+		"axe":
+			Props.cyl(n, 0.02, 0.62, Vector3(0, 0, 0.24), wood, Vector3(90, 0, 0), 6)
+			Props.box(n, Vector3(0.025, 0.1, 0.07), Vector3(0, 0.0, 0.5), iron)
+			Props.prism(n, Vector3(0.02, 0.1, 0.13), Vector3(0, -0.1, 0.5), steel, Vector3(180, 0, 0))
+			ln = 0.55
+		"cleaver":
+			Props.cyl(n, 0.018, 0.13, Vector3(0, 0, 0.02), Color("3a2a1e"), Vector3(90, 0, 0), 6)
+			Props.box(n, Vector3(0.008, 0.12, 0.2), Vector3(0, -0.045, 0.18), steel)
+			ln = 0.28
+		"knife":
+			Props.cyl(n, 0.015, 0.11, Vector3(0, 0, 0.01), Color("3a2a1e"), Vector3(90, 0, 0), 6)
+			Props.box(n, Vector3(0.006, 0.032, 0.17), Vector3(0, -0.006, 0.15), steel)
+			ln = 0.24
+		"pickaxe":
+			Props.cyl(n, 0.02, 0.74, Vector3(0, 0, 0.28), wood, Vector3(90, 0, 0), 6)
+			Props.cyl(n, 0.035, 0.2, Vector3(0, -0.1, 0.64), iron, Vector3(180, 0, 0), 5, 0.004)
+			Props.cyl(n, 0.032, 0.17, Vector3(0, 0.085, 0.64), iron, Vector3.ZERO, 5, 0.012)
+			Props.box(n, Vector3(0.06, 0.06, 0.06), Vector3(0, 0, 0.64), iron)
+			ln = 0.64
+		"shovel":
+			Props.cyl(n, 0.02, 0.92, Vector3(0, 0, 0.42), wood, Vector3(90, 0, 0), 6)
+			Props.box(n, Vector3(0.12, 0.035, 0.035), Vector3(0, 0, -0.04), wood)
+			Props.box(n, Vector3(0.22, 0.012, 0.26), Vector3(0, -0.01, 0.98), iron, Vector3(-10, 0, 0))
+			n.set_meta("grip2", Vector3(0, 0, 0.42))
+			ln = 1.05
+		"broom":
+			Props.cyl(n, 0.018, 1.0, Vector3(0, 0, 0.46), wood, Vector3(90, 0, 0), 6)
+			Props.cyl(n, 0.045, 0.3, Vector3(0, 0, 1.08), Color("c8a860"), Vector3(90, 0, 0), 7, 0.11)
+			Props.cyl(n, 0.05, 0.04, Vector3(0, 0, 0.94), Color("8a6a3a"), Vector3(90, 0, 0), 7)
+			n.set_meta("grip2", Vector3(0, 0, 0.42))
+			ln = 1.2
+		"ladle", "paddle":
+			ln = 0.62 if kind == "ladle" else 0.75
+			Props.cyl(n, 0.013, ln, Vector3(0, 0, ln * 0.5 - 0.06), Color("8a6a40") if kind == "paddle" else iron, Vector3(90, 0, 0), 5)
+			if kind == "ladle":
+				Props.ball(n, 0.065, Vector3(0, -0.02, ln - 0.04), Color("6a6c72"), Vector3(1, 0.6, 1), 8)
+			else:
+				Props.box(n, Vector3(0.09, 0.014, 0.2), Vector3(0, 0, ln - 0.02), Color("9a7448"))
+		"brush":
+			Props.cyl(n, 0.013, 0.2, Vector3(0, 0, 0.04), wood, Vector3(90, 0, 0), 5)
+			Props.box(n, Vector3(0.05, 0.022, 0.03), Vector3(0, 0, 0.15), Color("b8b0a0"))
+			Props.box(n, Vector3(0.048, 0.018, 0.06), Vector3(0, 0, 0.19), Color("3a3028"))
+			ln = 0.22
+		"saw":
+			Props.box(n, Vector3(0.04, 0.1, 0.09), Vector3(0, -0.02, 0.0), wood)
+			Props.box(n, Vector3(0.006, 0.1, 0.58), Vector3(0, -0.04, 0.33), steel)
+			Props.box(n, Vector3(0.007, 0.02, 0.58), Vector3(0, -0.095, 0.33), Color("8a8e96"))
+			ln = 0.62
+		"bucket":
+			Props.cyl(n, 0.006, 0.26, Vector3(0, -0.04, 0), iron, Vector3(0, 0, 90), 4)
+			Props.cyl(n, 0.12, 0.24, Vector3(0, -0.2, 0), Color("7a5634"), Vector3.ZERO, 9, 0.135)
+			Props.cyl(n, 0.127, 0.025, Vector3(0, -0.12, 0), iron, Vector3.ZERO, 9)
+			Props.cyl(n, 0.12, 0.025, Vector3(0, -0.28, 0), iron, Vector3.ZERO, 9)
+			ln = 0.3
+		"rammer":
+			Props.cyl(n, 0.022, 1.9, Vector3(0, 0, 0.9), wood, Vector3(90, 0, 0), 6)
+			Props.cyl(n, 0.075, 0.18, Vector3(0, 0, 1.85), Color("8a6440"), Vector3(90, 0, 0), 9)
+			n.set_meta("grip2", Vector3(0, 0, 0.45))
+			ln = 1.94
+		"powder_ladle":
+			# Barut kepçesi: uzun sap, ucunda yarım silindir bakır kepçe (namluya barut sürer)
+			Props.cyl(n, 0.02, 1.8, Vector3(0, 0, 0.85), wood, Vector3(90, 0, 0), 6)
+			Props.cyl(n, 0.07, 0.34, Vector3(0, -0.02, 1.82), Color("b87333"), Vector3(90, 0, 0), 8)
+			Props.box(n, Vector3(0.15, 0.08, 0.34), Vector3(0, 0.05, 1.82), Color("6a3a20"))
+			n.set_meta("grip2", Vector3(0, 0, 0.45))
+			ln = 1.99
+		"handspike":
+			# Manivela (topun kuyruğunu çevirir): kalın, ucu demir kaplı kısa sırık
+			Props.cyl(n, 0.03, 1.2, Vector3(0, 0, 0.56), wood, Vector3(90, 0, 0), 6, 0.022)
+			Props.cyl(n, 0.034, 0.16, Vector3(0, 0, 1.1), iron, Vector3(90, 0, 0), 6)
+			n.set_meta("grip2", Vector3(0, 0, 0.35))
+			ln = 1.18
+		_:
+			Props.cyl(n, 0.018, 0.4, Vector3(0, 0, 0.14), wood, Vector3(90, 0, 0), 6)
+	n.set_meta("len", ln)
+	return n
+
+
+## Kişinin (Person, Soldier: Rig'i olan) eline alet verir; döner: alet düğümü. Person/Soldier.give_tool bunu çağırır
+## (etkinlik değişince alet kalkar). Tek elli aletler dirseğe bağlanır (avuçta); "two" aletleri kişinin çocuğudur, her
+## karede iş çizgisinde devinir ve iki el sapa uzanır.
+## opts: "hand" ("r"/"l"), "aim" (iş noktası, kişinin yerelinde; "aim_world": true ise dünya), "mode", "scale",
+## "ram" (tokmak: namluya girip çıkar), "phase" (0..1 faz; verilmezse rastgele: yan yana iki işçi aynı anda inmez).
+static func attach_tool(who: Node3D, kind: String, opts := {}) -> Node3D:
+	var rg := Handover.rig_of(who)
+	if rg == null:
+		return null
+	var left: bool = str(opts.get("hand", "r")) == "l"
+	var el: Node3D = rg.elbow_l if left else rg.elbow_r
+	if el == null:
+		return null
+	var t := tool_model(kind)
+	var spec: Array = TOOLS.get(kind, ["", "fix"])
+	var mode: String = opts.get("mode", spec[1])
+	t.set_meta("tool_kind", kind)
+	t.set_meta("tool_mode", mode)
+	t.set_meta("tool_left", left)
+	t.set_meta("tool_ph0", float(opts.get("phase", randf())))
+	t.set_meta("tool_ram", bool(opts.get("ram", false)))
+	if opts.get("frozen", false):
+		t.set_meta("tool_frozen", true)          # donuk (Crowd pişirme): faz zamanla ilerlemez
+	if opts.has("aim") or TOOL_AIM.has(kind):
+		t.set_meta("tool_aim", opts.get("aim", TOOL_AIM.get(kind, Vector3(0, 0.5, 1.0))))
+		if opts.get("aim_world", false):
+			t.set_meta("tool_aim_world", true)     # aim dünya noktası (top namlusu, kazan): kişi dönse de oraya bakar
+	if mode == "two":
+		who.add_child(t)
+		t.scale = Vector3.ONE * float(opts.get("scale", 1.0))
+		_tool_pose(who, t)
+	else:
+		el.add_child(t)
+		var hp: Vector3 = el.get_meta("hand", Vector3(0, -0.27, 0.01))
+		t.position = hp + Vector3(0, -0.005, 0.015)
+		if kind in TOOL_ALONG:
+			# Doğrama aletleri önkolun uzantısında, ağız aşağıda (önkol yatayken bıçak tahtaya / kütüğe iner); çekiç
+			# türleri önkola dik (kol inerken baş vurur)
+			t.basis = Basis(Vector3.RIGHT, Vector3(0, 0, 1), Vector3(0, -1, 0))
+		t.scale = Vector3.ONE * float(opts.get("scale", 1.0))
+	if mode != "fix":
+		_tool_loop(who, t)
+	return t
+
+
+## Aletin her kare güncellenmesi. Kişinin kendi pozundan SONRA çalışır (Tween'ler düğümlerin _process'inden sonra
+## işler; Stage.grip_hold gibi); rig'i kilitlemez (iş sürer, bacaklar ve gövde işin devinimini yapar).
+static func _tool_loop(who: Node3D, t: Node3D) -> void:
+	var tw := who.create_tween().set_loops()
+	tw.tween_method(func(_k: float) -> void:
+		if not is_instance_valid(t) or not is_instance_valid(who):
+			tw.kill()
+			return
+		if t.is_visible_in_tree():
+			_tool_pose(who, t), 0.0, 1.0, 1.0)
+	t.set_meta("tool_tw", tw)
+
+
+## "two" aletinin iş çizgisi (kişinin yerelinde, ölçeksiz): [üst el noktası, iş ucu]. ph: 0..1 iş evresi.
+static func _tool_line(kind: String, ph: float, aim: Vector3, ram: bool) -> Array:
+	match kind:
+		"shovel":
+			# bastır (pala yere), kaldır (toprakla), yana savur, geri
+			var push := smoothstep(0.0, 0.3, ph) * (1.0 - smoothstep(0.42, 0.62, ph))
+			var lift := smoothstep(0.42, 0.62, ph) * (1.0 - smoothstep(0.86, 1.0, ph))
+			var toss := smoothstep(0.66, 0.8, ph) * (1.0 - smoothstep(0.86, 1.0, ph))
+			var top := Vector3(0.0, 1.04 - push * 0.08 + toss * 0.08, 0.3 - push * 0.05)
+			var tip := aim + Vector3(0, 0.12 - push * 0.14, -0.05) + Vector3(0, 0.42, -0.15) * lift + Vector3(0.45, 0.2, -0.1) * toss
+			return [top, tip]
+		"broom":
+			var sw := sin(ph * TAU)
+			return [Vector3(0.0 + sw * 0.05, 1.0, 0.26), aim + Vector3(sw * 0.38, 0, cos(ph * TAU) * 0.06)]
+		"rammer":
+			var r := (0.5 - 0.5 * cos(ph * TAU)) if ram else 0.0
+			var top := Vector3(0.06, 1.1, 0.42)
+			var d := (aim - top).normalized()
+			return [top + d * r * 0.45, aim + d * r * 0.45]
+		_:
+			return [Vector3(0.06, 1.05, 0.42), aim]
+
+
+static func _tool_pose(who: Node3D, t: Node3D) -> void:
+	var mode: String = t.get_meta("tool_mode", "fix")
+	if mode == "fix":
+		return
+	var wb := who.global_transform.basis.orthonormalized()
+	var sc := t.global_transform.basis.get_scale()
+	var z: Vector3
+	if mode == "two":
+		var kind: String = t.get_meta("tool_kind", "")
+		var tempo := {"shovel": 0.45, "broom": 0.43, "rammer": 0.3}.get(kind, 0.4) as float
+		var now := 0.0 if t.has_meta("tool_frozen") else Time.get_ticks_msec() * 0.001
+		var ph := fmod(now * tempo + float(t.get_meta("tool_ph0", 0.0)), 1.0)
+		var aim: Vector3 = t.get_meta("tool_aim", Vector3(0, 0.3, 1.0))
+		if t.has_meta("tool_aim_world"):
+			aim = who.to_local(aim)
+		var line := _tool_line(kind, ph, aim, t.get_meta("tool_ram", false))
+		var a := who.to_global(line[0])
+		var b := who.to_global(line[1])
+		z = b - a
+		if z.length() < 0.05:
+			return
+		z = z.normalized()
+		var x := Vector3.UP.cross(z)
+		x = x.normalized() if x.length() > 0.05 else wb.x
+		t.global_transform = Transform3D(Basis(x, z.cross(x).normalized(), z).scaled(sc), a)
+		_two_hands(who, t)
+		return
+	if mode == "aim":
+		var aim: Vector3 = t.get_meta("tool_aim", Vector3(0, 0.5, 1))
+		var target := aim if t.has_meta("tool_aim_world") else who.global_transform * aim
+		z = target - t.global_position
+	elif mode == "fwd":
+		z = wb.z * 1.0 + Vector3.DOWN * 0.3
+	else:
+		# hang: dik asılı, kişiyle aynı yöne bakar
+		t.global_basis = wb.scaled(sc)
+		return
+	if z.length() < 0.01:
+		return
+	z = z.normalized()
+	var x := Vector3.UP.cross(z)
+	x = x.normalized() if x.length() > 0.05 else wb.x
+	var y := z.cross(x).normalized()
+	t.global_basis = Basis(x, y, z).scaled(sc)
+
+
+## İki el sapta: üst el (sağ; "hand": "l" ise sol) kökte, öbür el sapın omza en yakın noktasında (grip2 ile sap boyu
+## arasında kayar). Kollar çaprazlanmaz; dirsekler aşağı-dışa.
+static func _two_hands(who: Node3D, t: Node3D) -> void:
+	var rg := Handover.rig_of(who)
+	if rg == null or rg.arm_l == null or rg.arm_r == null:
+		return
+	var left: bool = t.get_meta("tool_left", false)
+	var top_arm: Node3D = rg.arm_l if left else rg.arm_r
+	var top_el: Node3D = rg.elbow_l if left else rg.elbow_r
+	var low_arm: Node3D = rg.arm_r if left else rg.arm_l
+	var low_el: Node3D = rg.elbow_r if left else rg.elbow_l
+	var miss := 0.0
+	for pr: Array in [[top_arm, top_el, t.global_position], [low_arm, low_el, _grip2_point(t, low_arm.global_position)]]:
+		var arm: Node3D = pr[0]
+		var out := arm.global_position - who.global_position
+		out.y = 0.0
+		miss = maxf(miss, Rig.reach(arm, pr[1], pr[2], Vector3.DOWN + (out.normalized() * 0.6 if out.length() > 0.01 else Vector3.ZERO)))
+	t.set_meta("tool_miss", miss)
+
+
+## İkinci elin sapta tuttuğu nokta: sap ekseninin omza en yakın noktası, grip2 ile sap boyunun yarısı arasında.
+static func _grip2_point(t: Node3D, shoulder: Vector3) -> Vector3:
+	var g2: Vector3 = t.get_meta("grip2", Vector3(0, 0, 0.4))
+	var a := t.global_position
+	var u := t.global_basis.z
+	var sc := u.length()
+	u = u.normalized()
+	var s := clampf((shoulder - a).dot(u), 0.12 * sc, g2.z * sc * 1.5)
+	return a + u * s

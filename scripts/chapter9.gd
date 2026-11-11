@@ -260,15 +260,24 @@ func _run() -> void:
 	_capture_mouse()
 	await hud.fade_to(0.0, 1.0)
 	if _byz:
-		if GameState.chapter_outcomes.get(6, "") == "6b.3":
+		if GameState.flags.get("ch8y_done", false):
+			pass      # Ara Bölüm "Beyaz Havlu" surdan çıkışı ve yürüyüşü oynattı: geçiş repliği tekrar olmasın
+		elif GameState.chapter_outcomes.get(6, "") == "6b.3":
 			await _t("D9_T_DEPORTED")
 		else:
 			await _t("D9_T_BYZ")
 	else:
 		# Y: keçi 6a'da pazarda yakalanmadıysa (kaftan Kadri'nin termos takasıyla) "sigorta sattığım keçi" yok
 		await _t("D9_T_Y_PLAIN" if _route == "Y" and not GameState.flags.get("goat_caught", false) else "D9_T_" + _route)
+	# Sinerji (4b'den beri peşinde, 6b'de sahnedeydi) ordugâhta yok: nereye gittiği söylenir (13/16'da ordugâhta yeniden çıkar)
+	if _byz and GameState.flags.get("sinerji", false):
+		await _t("D9_T_SINERJI")
 	await _radio()
-	await _t("D9_T_GOAL")
+	# 6a "otağ yolundayım" ile bitiyordu: otağa varılıp varılmadığı (kapıdaki D9_G_WAIT'e hazırlık)
+	if not _byz:
+		await _t("D9_T_OTAG")
+	# Teklif yoksa (6b.2, 6b.3 …) "herkes teklif edecek gibi bakıyor" denmez
+	await _t("D9_T_GOAL" if not _offers.is_empty() else "D9_T_GOAL_NONE")
 	phase = "free"
 	Lore.scatter(self, "9")
 	player.frozen = false
@@ -712,6 +721,10 @@ func _end_chapter() -> void:
 	player.frozen = true
 	hud.set_objective("")
 	GameState.set_outcome(9, _outcome)
+	# 8.4: Hikmet pazarda kalıyordu, 10*'da telsizden "Urban'ın atölyesindeyim" diyor: gidişi burada söylenir
+	if is_instance_valid(hikmet_npc) and GameState.chapter_outcomes.get(8, "") == "8.4":
+		hikmet_npc.look_target = player
+		await hud.say("SPK_HIKMET", "D9_H2_URBAN")
 	await _farewell()
 	await hud.fade_to(1.0, 0.8)
 	var chart := _make_chart()

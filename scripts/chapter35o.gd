@@ -114,9 +114,11 @@ func _build_people() -> void:
 	var hm := Person.new({"coat": Color("6a5a40"), "pants": Color("e8e0d0"), "hat": "bork", "mustache": true, "skin": Color("c89070")})
 	hm.set_meta("no_talk", true)
 	add_child(hm)
-	hm.position = Vector3(1.7, ThraceRoad.BEAM_Y, ThraceRoad.BEAM_Z + 1.0)
-	hm.face_toward(hm.position + Vector3(0, 0, -3))
+	# 3. tur: yakın kıyı ayağında, oyuncunun başlangıçta baktığı yerde (karşı kıyıda seçilmiyordu); ayak başlığına çivi çakar
+	hm.position = Vector3(1.45, ThraceRoad.BEAM_Y + 0.1, -(ThraceRoad.BEAM_Z + 0.4))
+	hm.face_toward(hm.position + Vector3(-3, 0, 0.6))   # yan dönük: çekicin başı oyuncunun bakışında seçilsin
 	hm.set_activity("hammer")
+	hm.give_tool("hammer")            # yayma P4: çekiç pozunda eli boştu
 	carpenters.append(hm)
 
 
@@ -523,7 +525,18 @@ func _make_pole() -> Node3D:
 	return pole
 
 
-func _process(_delta: float) -> void:
+var _leg_ring_t := 0.0
+
+
+func _process(delta: float) -> void:
+	# Akıntı sehpa ayaklarına çarpar: ayakların dibinde aralıklı köpük halkası (yayma P4; eskiden durgun beyaz disk)
+	_leg_ring_t -= delta
+	# 3. tur: yalnız oyuncu köprüye yakınken (26 m) ve seyrek: saniyede en çok ~2 halka (her biri 1,1 sn yaşar)
+	if _leg_ring_t <= 0.0 and phase in ["intro", "bridge", "crossing"] and Vector2(player.global_position.x, player.global_position.z).length() < 26.0:
+		_leg_ring_t = 0.55
+		var tz: float = ThraceRoad.TRESTLES[randi() % 4]
+		var sx := -1.6 if randf() < 0.5 else 1.6
+		Vfx.water_ring(level, Vector3(sx + 0.25, ThraceRoad.WATER_Y + 0.02, tz), ThraceRoad.WATER_Y + 0.02, 0.2, 0.75, 1.1, 0.4)
 	for k in mini(_pole_men.size(), _poles.size()):
 		var pm := _pole_men[k]
 		var hand := pm.global_position + Vector3(-0.35, 1.0, 0.18)
@@ -565,17 +578,37 @@ func _fall_in() -> void:
 	_drop_carried()
 	var start := player.global_position
 	var water := Vector3(start.x - 0.4, ThraceRoad.WATER_Y - 0.6, clampf(start.z, -6.0, 6.0))
-	Audio.sfx("splash", 0.0, 0.9)
-	Vfx.dust(self, Vector3(start.x, ThraceRoad.WATER_Y, start.z), 0.8)
+	# Suya giriş (yayma P4): sıçrama, halkalar, damlalar; eller boşalır (eskiden toz bulutu ve ses)
+	Vfx.water_entry(self, Vector3(start.x, ThraceRoad.WATER_Y, start.z), ThraceRoad.WATER_Y, 1.6)
+	player.stow_hands(true)
 	player.hurt(10.0, Vector3.INF, true)
 	var tw := create_tween()
 	tw.tween_property(player, "global_position", water, 0.45)
 	tw.tween_property(player, "global_position", water + Vector3(12.0, 0.2, 0), 2.6).set_trans(Tween.TRANS_SINE)
-	await tw.finished
-	# Yakın kıyıdan ip atılır
+	var ring_t := 0.0
+	while tw.is_running():
+		await get_tree().process_frame
+		ring_t -= get_process_delta_time()
+		if ring_t <= 0.0:
+			ring_t = 0.3
+			Vfx.water_ring(self, player.global_position, ThraceRoad.WATER_Y, 0.3, 1.8, 1.4, 0.6)
+	# Yakın kıyıdan ip atılır: kıyıdaki kazıktan oyuncunun iki eline
 	var bank := Vector3(water.x + 13.0, ThraceRoad.ground_y(water.x + 13.0, -9.6) + 0.1, -9.6)
-	var rope := Bogaz.make_rope(self, Color("c8b080"), 0.03)
-	Bogaz.rope(rope, bank + Vector3(0, 1.0, 0), player.global_position + Vector3(0, 0.6, 0))
+	var rope := _tube_node(Color("c8b080"))
+	player.face(bank + Vector3(0, 0.6, 0))           # ip önden gelsin (yandan gelince kameranın dibinden geçiyordu)
+	var swim_rope := func() -> void:
+		var hl := Vector3(-0.12, -0.16, -0.58)
+		var hr := Vector3(0.1, -0.19, -0.5)
+		player.hold_both(hl, hr)
+		var a := bank + Vector3(0, 1.0, 0)
+		var f := _fists()
+		var b: Vector3 = f[0]
+		# Elden çıkan parça kameradan en az 25-60 cm önde ve aşağıda: önce önde suya yakın bir noktaya, oradan kıyıya
+		var lead := player.camera.to_global(Vector3(-0.1, -0.45, -0.95))
+		var pts: Array = Stage.sag_points(a, lead, 0.25 * clampf(a.distance_to(lead) / 10.0, 0.2, 1.0), 8)
+		pts.append_array([b, f[1], player.camera.to_global(Vector3(0.25, -0.55, -0.7))])
+		_tube(rope, pts, 0.017)
+	swim_rope.call()
 	hud.set_prompt(tr("UI_PROMPT35O_GRAB"))
 	var t := 0.0
 	while t < 6.0:
@@ -584,7 +617,7 @@ func _fall_in() -> void:
 			continue
 		t += get_process_delta_time()
 		player.global_position += Vector3(0.5, 0, 0) * get_process_delta_time()
-		Bogaz.rope(rope, bank + Vector3(0, 1.0, 0), player.global_position + Vector3(0, 0.6, 0))
+		swim_rope.call()
 		if Input.is_action_just_pressed("interact") or (GameState.autotest and t > 0.6):
 			break
 	hud.set_prompt("")
@@ -595,12 +628,16 @@ func _fall_in() -> void:
 			continue
 		t2 += get_process_delta_time()
 		player.global_position = player.global_position.lerp(bank, minf(1.0, get_process_delta_time() * 2.5))
-		Bogaz.rope(rope, bank + Vector3(0, 1.0, 0), player.global_position + Vector3(0, 0.6, 0))
+		swim_rope.call()
 	rope.queue_free()
+	player.release_both()
+	player.stow_hands(false)
 	hud.bark("SPK_DULGER" if lost else "SPK_TOLGA", "D35O_D_FISHED" if lost else "D35O_T_SWEPT", 4.0)
 	# Köprü başına (yığının yanına) dönülür, yüz köprüye
 	player.global_position = _gy(Vector3(1.2, 0, -11.2)) + Vector3(0, 0.1, 0)
 	_face_bridge()
+	# Islak çıkış: giysiden damlar, ayak altında birikinti, ıslak ayak izleri
+	Vfx.water_exit(player, func(x: float, z: float) -> float: return ThraceRoad.ground_y(x, z), 6.0)
 	player.frozen = false
 	_falling = false
 
@@ -691,6 +728,8 @@ func _mud() -> void:
 	_bundles_needed = 4 if broke else 3
 	_mud_t = 0.0
 	player.frozen = false
+	player.stow_hands(true)        # 3. tur: çamurda eşya cepte (çalı demeti taşırken ve çekerken elde leblebi vardı)
+	var hands_hidden := false
 	hud.bark("SPK_URBAN", "D35O_U_01", 4.5)
 	urban.global_position = _gy(Vector3(-3.6, 0, S_MUD + 2.0))
 	get_tree().create_timer(5.0, false).timeout.connect(func(): hud.bark("SPK_TOLGA", "D35O_T_MUD", 3.5))
@@ -709,6 +748,9 @@ func _mud() -> void:
 		# Otomatik test: RowMeter kendiliğinden basar; demetler yerleşmeden çekmesin
 		if GameState.autotest:
 			meter.enabled = _bundles_set >= _bundles_needed
+		if not hands_hidden and _bundles_set >= _bundles_needed and not _carry:
+			hands_hidden = true
+			player.show_remote(false)      # hey-yap: eller görünmez (çeken ekip halatta)
 		var wheel := _front_wheel()
 		if _bundles_set < _bundles_needed:
 			hud.set_objective(tr("UI_OBJ35O_BUNDLE") % [_bundles_set, _bundles_needed], wheel if _carry else ThraceRoad.BUNDLES + Vector3(0, 1.0, 0))
@@ -754,6 +796,10 @@ func _mud() -> void:
 	hud.bark("SPK_URBAN", "D35O_U_FREE", 3.5)
 	await get_tree().create_timer(2.5, false).timeout
 	player.frozen = true
+	if hands_hidden:
+		player.show_remote(true)
+	# Eşya cepte kalır: yokuşta iki el fren ipinde (yokuş bitince çıkar). Burada çıkınca yokuş girişinde leblebi
+	# bir an elde görünüyordu.
 
 
 func _front_wheel() -> Vector3:
@@ -808,7 +854,6 @@ func _on_stroke(good: bool) -> void:
 func _heave(good: bool) -> void:
 	if _whip_t >= 0.0:
 		return
-	player.hand_gesture("reach", 0.3)     # her asılışta el halata uzanır
 	if _bundles_set < _bundles_needed or not good:
 		# Demetsiz ya da kırmızıda: geri kayar; kırmızıda halat gerilir
 		slips += 1
@@ -874,6 +919,93 @@ var _red_r := 0.0
 var _red_l := 0.0
 var _tight_warned := false
 var _brake_rope: MeshInstance3D
+var _brake_coil: MeshInstance3D       # ipin artan ucu: oyuncunun ayağının dibinde kangal
+var _brake_held := false
+var _brake_near: MeshInstance3D       # kazıktan ellere ve kangala giden yakın parça (ince ağ)
+
+
+## Fren ipi (yayma P4): arabanın arka dingilinden kazığa gelir, kazığa sarılır (volta), oradan oyuncunun iki eline,
+## ellerden ayağının dibindeki kangala iner. E basılıyken eller geri çeker, ip gerilir (sarkma azalır). Aktarmada ip
+## elden bırakılır: kazıktan yere, kangala yatar. Eskiden kazıktan arabaya giden ince düz çizgi seçilmiyordu, oyuncunun
+## elinde leblebi kutusu duruyordu.
+func _brake_lay(held: bool, squeeze: bool) -> void:
+	if not is_instance_valid(_brake_rope):
+		return
+	var rear: Node3D = level.wagons[5]
+	var axle := rear.to_global(Vector3(0, 0.55, -0.95))
+	var post := _post_pos()
+	var to_w := Vector3(axle.x - post.x, 0, axle.z - post.z).normalized()
+	var pp := player.global_position
+	var to_p := Vector3(pp.x - post.x, 0, pp.z - post.z).normalized()
+	var w_in := post + to_w * 0.27 + Vector3(0, 0.98, 0)
+	var w_out := post + to_p * 0.27 + Vector3(0, 1.22, 0)
+	var pts: Array = Stage.sag_points(axle, w_in, 0.05 if squeeze else 0.22, 10)
+	if held:
+		var back := 0.07 if squeeze else 0.0
+		var hl := Vector3(-0.17, -0.17 - back * 0.4, -0.6 + back)
+		var hr := Vector3(0.06, -0.2 - back * 0.4, -0.5 + back)
+		player.hold_both(hl, hr)
+		var f := _fists()
+		var l: Vector3 = f[0]
+		var r: Vector3 = f[1]
+		# Kangal önde, oyuncuyla kazık arasında yerde (bakış alanında)
+		var right := player.camera.global_transform.basis.x
+		right.y = 0.0
+		var cp := pp.lerp(post, 0.5) + right.normalized() * 0.3
+		cp.y = ThraceRoad.ground_y(cp.x, cp.z)
+		if is_instance_valid(_brake_coil):
+			_brake_coil.global_position = cp
+		var below := r + (r - l).normalized() * 0.1 + Vector3(0, -0.3, 0)
+		var pts_near: Array = Stage.sag_points(w_out, l, 0.02 if squeeze else 0.1, 6)
+		pts_near.append_array([r])
+		pts_near.append_array(Stage.sag_points(r, cp + Vector3(0, 0.1, 0), 0.0, 1).slice(1))
+		pts_near.insert(pts_near.size() - 1, below)
+		_tube(_brake_near, pts_near)
+	else:
+		player.release_both()
+		var g0 := post + to_p * 0.45
+		g0.y = ThraceRoad.ground_y(g0.x, g0.z) + 0.04
+		var cp: Vector3 = _brake_coil.global_position if is_instance_valid(_brake_coil) else g0
+		_tube(_brake_near, [w_out, g0, cp + Vector3(0, 0.06, 0)])
+	Stage.rope_to(_brake_rope, pts)
+
+
+## Yakın plan ip (yayma P4, 2. tur): kameraya yarım metre yakında Stage.rope'un altı köşeli, dış çizgili, şeritli
+## borusu katlanmış karton cetvel gibi görünüyordu. Bu ağ ince (yarıçap 1,6 cm = çap 3,2 cm), 10 köşeli, yumuşak
+## gölgeli, dış çizgisiz; burgu yalnız köşe renginde hafif sarmal bir ton farkı. Noktalar dünya koordinatı.
+func _tube_node(col: Color) -> MeshInstance3D:
+	var mi := MeshInstance3D.new()
+	mi.set_meta("no_walk", true)
+	mi.set_meta("tube_col", col)
+	mi.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
+	mi.material_override = ThraceRoad.tube_material()
+	add_child(mi)
+	return mi
+
+
+func _tube(mi: MeshInstance3D, pts: Array, r := 0.016) -> void:
+	if not is_instance_valid(mi) or pts.size() < 2:
+		return
+	# Uçlar ve ara noktalar 5 mm'den az oynadıysa ağ yeniden kurulmaz (Stage.rope_to gibi)
+	var last: Array = mi.get_meta("tube_pts", [])
+	if last.size() == pts.size():
+		var same := true
+		for i in pts.size():
+			if (last[i] as Vector3).distance_squared_to(pts[i]) > 0.000025:
+				same = false
+				break
+		if same:
+			return
+	mi.set_meta("tube_pts", pts.duplicate())
+	mi.mesh = ThraceRoad.tube_mesh(pts, r, mi.get_meta("tube_col", Color("c8b080")))
+
+
+## Oyuncunun iki yumruğunun içi (avuçtaki eşya yuvası): ip buradan geçer. [sol, sağ]
+func _fists() -> Array:
+	var l: Vector3 = player.free_rig.socket.global_position if player.free_rig and player.free_rig.socket else player.camera.to_global(Vector3(-0.15, -0.17, -0.6))
+	var r: Vector3 = player.rig.socket.global_position if player.rig and player.rig.socket else player.camera.to_global(Vector3(0.06, -0.2, -0.5))
+	var up := player.camera.global_transform.basis.y * 0.035      # avucun ortası (yuva avuç tabanında)
+	return [l + up, r + up]
 
 
 func _slope() -> void:
@@ -893,7 +1025,11 @@ func _slope() -> void:
 	player.global_position = _gy(ThraceRoad.POST1 + Vector3(0.8, 0, -1.2)) + Vector3(0, 0.05, 0)
 	player.face(_gy(Vector3(0, 0, 70)) + Vector3(0, 1.0, 0))
 	urban.global_position = _gy(Vector3(6.4, 0, 46.5))
-	_brake_rope = Bogaz.make_rope(self, Color("c8b080"), 0.035)
+	_brake_rope = Stage.rope(self, Vector3.ZERO, Vector3(0, 0.1, 0), 0.0, 0.022, Color("c8b080"))
+	_brake_near = _tube_node(Color("c8b080"))
+	_brake_coil = _tube_node(Color("c8b080"))
+	_brake_coil.mesh = ThraceRoad.tube_mesh(ThraceRoad.coil_points(0.28, 3.5, 0.018), 0.017, Color("c8b080"))
+	_brake_lay(true, false)
 	await hud.fade_to(0.0, 0.6)
 	await hud.say("SPK_URBAN", "D35O_U_SLOPE")
 	await hud.say("SPK_TOLGA", "D35O_T_SLOPE")
@@ -942,8 +1078,7 @@ func _slope() -> void:
 		s += (0.85 + 0.55 * balance.value) * dt
 		level.update_convoy(s)
 		level.spin_wheels((0.85 + 0.55 * balance.value) * dt)
-		var rear: Node3D = level.wagons[5]
-		Bogaz.rope(_brake_rope, _post_pos() + Vector3(0, 0.7, 0), rear.global_position + Vector3(0, 0.55, -1.4))
+		_brake_lay(transfer_t < 0.0, holding)
 		# Karaca Bey geçer: atın ürkmesi ibreyi bir kez sert iter
 		if not karaca_done and t > 14.0:
 			karaca_done = true
@@ -1005,6 +1140,12 @@ func _slope() -> void:
 	hud.set_objective("")
 	hud.set_prompt("")
 	_brake_rope.queue_free()
+	if is_instance_valid(_brake_near):
+		_brake_near.queue_free()
+	player.stow_hands(false)          # çamurdan beri cepteydi
+	if is_instance_valid(_brake_coil):
+		_brake_coil.queue_free()
+	player.release_both()
 	if horse:
 		horse.queue_free()
 	if slips == slips_before:
@@ -1091,7 +1232,7 @@ func _night() -> void:
 	var names := ["Sarıkız", "Karabaş", "Benekli", ""]
 	for k in 4:
 		var o: Ox = level.camp_oxen[1 + k * 2]
-		var rope := Bogaz.make_rope(self, Color("b89a6a"), 0.025)
+		var rope := _tube_node(Color("d8c49a"))      # gece ışığında koyu çubuk gibi görünmesin: açık kenevir
 		var end := Node3D.new()
 		add_child(end)
 		Props.ball(end, 0.08, Vector3.ZERO, Color("b89a6a"), Vector3.ONE, 6)
@@ -1119,8 +1260,8 @@ func _night() -> void:
 						_grab()
 						break
 	balance.visible = false
+	_release_runner()
 	_hold = {}
-	player.release_grab()
 	hud.set_prompt("")
 	for r: Dictionary in _runners:
 		if r["state"] != "calm":
@@ -1178,10 +1319,12 @@ func _tick_runners(dt: float) -> void:
 				var dir2 := (Vector3(g2.x, 0, g2.z) - Vector3(o.position.x, 0, o.position.z)).normalized()
 				o.position = _gy(o.position + dir2 * 0.5 * dt)
 		var back := -Vector3(sin(o.rotation.y), 0, cos(o.rotation.y))
-		var tail := o.global_position + back * 2.4
+		var side := Vector3(-back.z, 0, back.x)
+		# Kopan ipin ucu öküzün yanında, arkasında yerde sürünür (eskiden gövdenin içinden geçiyordu)
+		var tail := o.global_position + back * 2.4 + side * 0.55
 		end.global_position = _gy(tail) + Vector3(0, 0.08, 0)
 		if r["state"] != "calm":
-			Bogaz.rope(r["rope"], o.global_position + Vector3(0, 1.0, 0) - back * 1.2, end.global_position)
+			_runner_rope(r, o, back, side)
 			(r["rope"] as Node3D).visible = true
 		else:
 			(r["rope"] as Node3D).visible = false
@@ -1189,6 +1332,40 @@ func _tick_runners(dt: float) -> void:
 		_hold_tick(dt)
 	else:
 		hud.set_prompt(tr(prompt) if prompt != "" else "")
+
+
+## Kaçan öküzün ipi (yayma P4): yularından (başın yanı) boynunun yanından iner. Tutulmamışsa ön bacakların yanında
+## yere düşüp ardında sürünür; tutulmuşsa böğrü boyunca geriye, oyuncunun iki eline gelir, ellerden yere sarkar.
+## Eskiden ip boynundan kuyruğa gövdenin içinden geçiyordu, oyuncunun iki yumruğu havadaydı.
+func _runner_rope(r: Dictionary, o: Ox, back: Vector3, side: Vector3) -> void:
+	var fwd := -back
+	var base := o.global_position
+	var halter := base + fwd * 1.72 + side * 0.2 + Vector3(0, 1.22, 0)
+	var neck := base + fwd * 1.25 + side * 0.42 + Vector3(0, 0.85, 0)
+	var pts: Array = [halter, neck]
+	if r["state"] == "held":
+		var bl := -0.08 * balance.value
+		var hl := Vector3(-0.15 + bl, -0.16, -0.6)
+		var hr := Vector3(0.08 + bl, -0.2, -0.5)
+		player.hold_both(hl, hr)
+		var flank := base + side * 0.62 + Vector3(0, 0.95, 0)
+		var rump := base + back * 1.1 + side * 0.55 + Vector3(0, 0.95, 0)
+		var f := _fists()
+		var l: Vector3 = f[0]
+		var rr: Vector3 = f[1]
+		var drop := player.global_position + side * 0.35 + back * 0.2
+		drop.y = _gy(drop).y + 0.05
+		pts.append(flank)
+		pts.append_array(Stage.sag_points(rump, l, 0.1, 6))
+		var ahead := player.camera.to_global(Vector3(0.22, -0.6, -0.8))
+		drop = _gy(ahead + back * -0.3) + Vector3(0, 0.05, 0)
+		pts.append_array([rr, ahead, drop])
+	else:
+		var g0 := _gy(base + fwd * 0.9 + side * 0.6) + Vector3(0, 0.04, 0)
+		var g1 := _gy(base + side * 0.62) + Vector3(0, 0.04, 0)
+		var g2 := _gy(base + back * 1.3 + side * 0.7) + Vector3(0, 0.04, 0)
+		pts.append_array([g0, g1, g2, (r["end"] as Node3D).global_position + Vector3(0, -0.04, 0)])
+	_tube(r["rope"], pts, 0.016)
 
 
 func _grab() -> void:
@@ -1203,12 +1380,19 @@ func _grab() -> void:
 			balance.show_keys = true
 			balance.value = randf_range(-0.2, 0.2)
 			player.frozen = true
-			# Atılıp ipi yakalar (el uzanmadan yapışıyordu)
-			player.reach_grab((r["end"] as Node3D).global_position)
-			player.hand_gesture("reach")
+			# Atılıp ipi iki eliyle yakalar (eşya cebe; eskiden iki yumruk havadaydı)
+			player.hold_both(Vector3(-0.15, -0.16, -0.6), Vector3(0.08, -0.2, -0.5))
+			(r["end"] as Node3D).visible = false
 			player.shake(0.2)
 			hud.bark("SPK_DROVER", "D35O_DR_GOT", 3.0)
 			return
+
+
+## İp elden çıkar: iki el iner, ipin ucu yeniden yerde görünür
+func _release_runner() -> void:
+	player.release_both()
+	for r: Dictionary in _runners:
+		(r["end"] as Node3D).visible = true
 
 
 func _hold_tick(dt: float) -> void:
@@ -1236,14 +1420,14 @@ func _hold_tick(dt: float) -> void:
 		hud.bark("SPK_TOLGA", calm_lines.get(str(_hold.get("name", "")), "D35O_T_CALM"), 3.0)
 		balance.visible = false
 		_hold = {}
-		player.release_grab()         # el ipi bırakır (uzanan sol el bölüm sonuna dek havada kalıyordu)
+		_release_runner()
 		player.frozen = false
 		return
 	if balance.value > 0.95:
 		# Fazla gevşek: ip elden çıkar
 		_hold["state"] = "run"
 		_hold = {}
-		player.release_grab()         # el ipi bırakır (uzanan sol el bölüm sonuna dek havada kalıyordu)
+		_release_runner()
 		balance.visible = false
 		player.frozen = false
 		Audio.sfx("ship_haul", -6.0, 1.5)
@@ -1251,7 +1435,7 @@ func _hold_tick(dt: float) -> void:
 		# Fazla sert: yüzüstü çamura
 		_hold["state"] = "run"
 		_hold = {}
-		player.release_grab()         # el ipi bırakır (uzanan sol el bölüm sonuna dek havada kalıyordu)
+		_release_runner()
 		balance.visible = false
 		player.hurt(10.0, Vector3.INF, true)
 		Vfx.dust(self, player.global_position, 0.6)
