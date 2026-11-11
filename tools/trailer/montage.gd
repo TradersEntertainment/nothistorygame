@@ -117,6 +117,39 @@ const STORY_CLIPS := [
 		"cap": ["Uç. Görünmez ol.", "Fly. Turn invisible."]},
 ]
 
+## İkinci kurgu ("-- set=story2"): yarısı hareket. Konuşma çekimleri ilk kurgunun kayıtlarından kısaltılır; burada
+## hareket çekimleri (bot ya da drive ile yumuşak sürüş) ve yeniden çekilecek Büro.
+const STORY2_CLIPS := [
+	# 0 Kızak: yağlı kızakta kayış, arkada kadırga (oyun oyuncuyu kendisi kaydırır)
+	{"id": "kizak_kayis", "ch": "2", "v": "perfect", "pace": true, "when": "sv('phase') == 'run' and sv('level').world_to_s(_player().global_position) > 20.0",
+		"lead": 0.0, "dur": 7.0, "wait": 2000.0, "cap": ["", ""]},
+	# 1 Beyaz havlu: iki ordunun arasında düz yürüyüş, havlu iner, ayağının önüne uyarı oku
+	{"id": "havlu_ok2", "ch": "8y", "v": "", "pace": true,
+		"when": "sv('phase') == 'field' and sv('_radio_done') == true and sv('_fired').get('radio_live', false) == false and not sv('_busy')",
+		"lead": 0.5, "dur": 10.0, "until": "done('D8Y_T_WARN_3')", "tail": 0.5, "wait": 2400.0, "drive": "steps", "cap": ["", ""], "steps": [
+			{"t": 0.0, "do": "sc().set('_busy', true)"},
+			{"t": 0.0, "do": "sc().set('_warn_cd', 60.0)"},
+			{"t": 0.0, "do": "sc().set('_warnings', 2)"},
+			{"t": 0.0, "frozen": false, "do": "pace_on()"},
+			{"t": 0.05, "walk_rel": [4.5, 0.8]},
+			{"t": 0.9, "do": "sc()._set_towel(false)"},
+			{"t": 2.0, "do": "sc()._warn('down')"},
+			{"t": 0.0, "on": "said('D8Y_T_WARN_3')", "do": "sc()._set_towel(true)"},
+		]},
+	# 2 Fıçı köprü: fıçıyı suya yuvarla
+	{"id": "fici", "ch": "18", "v": "", "pace": true, "when": "sv('phase') == 'build' and after(4.0)", "lead": 1.0, "dur": 9.0, "wait": 2400.0, "cap": ["", ""]},
+	# 3 Kazık çakma (28o)
+	{"id": "kazik", "ch": "28o", "v": "", "pace": true, "when": "sv('phase') == 'stakes'", "lead": 1.0, "dur": 9.0, "wait": 2400.0, "cap": ["", ""]},
+	# 4 Şahi'yi çekmek (28o): hey-yap
+	{"id": "sahi_hey", "ch": "28o", "v": "", "pace": true, "when": "sv('phase') == 'haul'", "lead": 2.0, "dur": 9.0, "wait": 3000.0, "cap": ["", ""]},
+	# 5 Yokuş: fren ipi (35o)
+	{"id": "fren_ipi", "ch": "35o", "v": "", "pace": true, "when": "sv('phase') == 'slope'", "lead": 1.0, "dur": 9.0, "wait": 3000.0, "cap": ["", ""]},
+	# 6 Bronz döküm (10b)
+	{"id": "dokum", "ch": "10b", "v": "", "pace": true, "when": "sv('phase') == 'cast'", "lead": 0.5, "dur": 9.0, "wait": 2400.0, "cap": ["", ""]},
+	# 7 Fırtınada çadır ipi (24o)
+	{"id": "firtina_ip", "ch": "24o", "v": "", "pace": true, "when": "sv('phase') == 'storm'", "lead": 1.0, "dur": 9.0, "wait": 3000.0, "cap": ["", ""]},
+]
+
 var _en := false
 var _only: Array = []
 var _steps: Array = []
@@ -186,7 +219,7 @@ func _ready() -> void:
 			_shots = a.trim_prefix("shots=")
 			_fps = 0.0
 			DirAccess.make_dir_recursive_absolute(_shots)
-	if _set == "story":
+	if _set.begins_with("story"):
 		_clean = true
 		_nohud = true
 	if _en:
@@ -309,7 +342,7 @@ func _track_hud() -> void:
 	_line_on = on
 	_line_txt = txt
 	if (_clean or _nohud) and _in_window:
-		for n in HUD_HIDE + (["minimap"] if _nohud else []) + (["marker", "meters", "_legend", "_sub_hint"] if _set == "story" else []):
+		for n in HUD_HIDE + (["minimap"] if _nohud else []) + (["marker", "meters", "_legend", "_sub_hint"] if _set.begins_with("story") else []):
 			var c = _hud.get(n)
 			if c != null and is_instance_valid(c) and c is CanvasItem:
 				(c as CanvasItem).modulate.a = 0.0
@@ -349,7 +382,7 @@ func _run() -> void:
 		print("MONTAGE done")
 		get_tree().quit()
 		return
-	if _set == "story":
+	if _set.begins_with("story"):
 		await _story()
 		return
 	_skipping = false
@@ -393,10 +426,11 @@ func _run() -> void:
 ## Önizlemede (only=) kart yalnız "card" verilirse çekilir.
 func _story() -> void:
 	var with_card := _only.is_empty() or "card" in OS.get_cmdline_user_args()
-	for i in STORY_CLIPS.size():
+	var clips: Array = STORY2_CLIPS if _set == "story2" else STORY_CLIPS
+	for i in clips.size():
 		if not _only.is_empty() and not (i in _only):
 			continue
-		await _clip(STORY_CLIPS[i])
+		await _clip(clips[i])
 		_seg += 1
 	if with_card:
 		_skipping = true
@@ -439,7 +473,7 @@ func _card(big: String, small: String, hold: float) -> void:
 func _clip(c: Dictionary) -> void:
 	_skipping = true
 	_mute(true)
-	if _set == "story":
+	if _set.begins_with("story"):
 		_music_bus_mute()
 	_black.color.a = 1.0
 	_cache.clear()
@@ -570,7 +604,7 @@ func _drive_step(p: Player, delta: float) -> void:
 		for n in [p.hand, p.free_hand, p.get("_prop_item"), p.get("_held_model"), p.get("_remote_model")]:
 			if n is Node3D and is_instance_valid(n):
 				(n as Node3D).visible = false
-	if _set == "story" and p.powers and p.powers.get("_layer") is CanvasLayer:
+	if _set.begins_with("story") and p.powers and p.powers.get("_layer") is CanvasLayer:
 		(p.powers.get("_layer") as CanvasLayer).visible = false     # uçuş göstergesi, yer işaretleri (arayüz)
 	if _drive == "fly" and p.powers:
 		p.frozen = false
@@ -647,6 +681,11 @@ func _steps_tick(p: Player, delta: float) -> void:
 					var at: Vector3 = (n as Node3D).global_position + Vector3(0, float(s["aim"][1]), 0)
 					var yp := _yaw_pitch(p, at)
 					_pan = {"y0": p.rotation.y, "p0": p.camera.rotation.x, "y1": yp.x, "p1": yp.y, "t": 0.0, "d": float(s["aim"][2])}
+		if s.has("walk_rel"):    # [m, hız çarpanı]: baktığı yönde düz ileri (yatay)
+			var fw := -p.global_transform.basis.z
+			fw.y = 0.0
+			_walk_to = p.global_position + fw.normalized() * float(s["walk_rel"][0])
+			_walk_mult = float(s["walk_rel"][1]) if s["walk_rel"].size() > 1 else 1.0
 		if s.has("walk"):
 			_walk_to = s["walk"][0]
 			_walk_mult = float(s["walk"][1]) if s["walk"].size() > 1 else 1.0
