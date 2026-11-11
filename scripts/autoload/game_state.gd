@@ -550,7 +550,7 @@ var _day_t := 0.0
 
 
 ## Bakış denetimi (LOOKAUDIT; testi düşürmez, yalnız raporlar): iş yapan kişinin gövdesi işine değil başka yere dönükse
-## "LOOKAUDIT backturn <kişi> <bölüm> <açı> kind=..." basar (kişi başına tür başına bir kez). Türler: grip (Stage.grip_hold
+## "LOOKAUDIT backturn <kişi> <bölüm> <açı> kind=..." basar (kişi başına tür başına bir kez; 0,5 sn sürerse). İlk aşım ayrıca "LOOKAUDIT raw ..." olarak yazılır. Türler: grip (Stage.grip_hold
 ## tutuşu: gövde yönü ile tutulan noktanın yönü), work (iş hareketindeki kişi look_target yüzünden işinden >100° döndü:
 ## iş başındaki yönüne göre), walk (look_target varken yürüdüğü yöne sırtı dönük; "walk_back" işaretlilerde geri geri çekilmek serbest).
 var _look_acc := 0.0
@@ -620,7 +620,7 @@ func _look_audit(delta: float) -> void:
 			if p.has_meta("grip_tw") and p.get("work_at") is Vector3 and p.get("work_at") != Vector3.INF:
 				var to: Vector3 = p.get("work_at") - gpos
 				to.y = 0.0
-				if to.length() > 0.25:
+				if to.length() > 0.5:      # kalçadaki ip tutamağı gibi gövdenin dibindeki iş noktası ölçülmez
 					cands.append(["grip", rad_to_deg(fwd.angle_to(to.normalized()))])
 			if lt != null and spd > 0.6 and mvg.length() < 2.0 and not p.get_meta("walk_back", false):
 				cands.append(["walk", rad_to_deg(fwd.angle_to(mvg.normalized()))])
@@ -629,10 +629,27 @@ func _look_audit(delta: float) -> void:
 					d["yaw0"] = fwd
 				elif lt != null and d.has("yaw0"):
 					cands.append(["work", rad_to_deg(fwd.angle_to(d["yaw0"]))])
+			# Sürekli sapma sayılır (2 örnek = 0,5 sn): dönüş geçişinde (yürüyüş ya da tutuş başlarken gövde yarım saniyede
+			# döner) "backturn" basmaz; ilk aşım "raw" satırı olarak her durumda yazılır (sayım karşılaştırması için)
+			var over := {}
 			for c in cands:
+				if float(c[1]) > 100.0:
+					over[c[0]] = c[1]
+			for kn in ["grip", "walk", "work"]:
+				d["n_" + kn] = (int(d.get("n_" + kn, 0)) + 1) if over.has(kn) else 0
+			for c in cands:
+				if float(c[1]) <= 100.0:
+					continue
+				var nn := int(d.get("n_" + str(c[0]), 0))
+				var label := ""
 				var key := "%d:%s" % [id, c[0]]
-				if float(c[1]) > 100.0 and not _look_done.has(key):
+				if nn >= 2 and not _look_done.has(key):
 					_look_done[key] = true
+					label = "backturn"
+				elif nn == 1 and not _look_done.has(key + ":raw"):
+					_look_done[key + ":raw"] = true
+					label = "raw"
+				if label != "":
 					var who := "Person" if grp == "persons" else "Soldier"
 					var fid = p.get("face_id")
 					if fid != null and str(fid) != "":
@@ -641,7 +658,7 @@ func _look_audit(delta: float) -> void:
 						who += "[" + str(p.get_meta("spk")) + "]"
 					if str(p.name).begins_with("@") == false:
 						who += ":" + str(p.name).replace(" ", "_")
-					print("LOOKAUDIT backturn %s %s %d kind=%s act=%s pose=%s look=%s talking=%s pos=%s" % [who, scene, int(c[1]), c[0], act,
+					print("LOOKAUDIT %s %s %s %d kind=%s act=%s pose=%s look=%s talking=%s pos=%s" % [label, who, scene, int(c[1]), c[0], act,
 						str(p.get("pose")), (str(lt.name) if lt != null else "-"), str(p.get("talking")), gpos.snapped(Vector3.ONE * 0.1)])
 
 

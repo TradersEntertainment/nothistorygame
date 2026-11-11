@@ -718,6 +718,9 @@ func reach_to(target: Vector3, hold := 0.4, left := false) -> void:
 	var el := _elbow_l if left else _elbow_r
 	if arm == null or el == null:
 		return
+	var turned := await Stage.work_turn(self, target)      # look_target gövdeyi başka yöne çevirdiyse önce hedefe döner
+	if not is_inside_tree():
+		return
 	rig.lock += 1
 	var r0 := arm.rotation
 	var e0 := el.rotation
@@ -736,6 +739,8 @@ func reach_to(target: Vector3, hold := 0.4, left := false) -> void:
 	tw.parallel().tween_property(el, "rotation", e0, 0.05 if fast else 0.3)
 	await tw.finished
 	rig.lock = maxi(0, rig.lock - 1)
+	if turned:
+		Stage.work_end(self)
 
 
 ## Önünde yük taşır (sandık, sepet ya da çuval) ve "carry" hareketine geçer.

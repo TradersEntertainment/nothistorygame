@@ -79,6 +79,9 @@ var _haul_far: MeshInstance3D
 var _haul_near: MeshInstance3D
 var _haul_held := false
 var _sallying := false
+var _haul_from := Vector3.ZERO
+const HAUL_L := Vector3(-0.05, -0.14, -0.52)
+const HAUL_R := Vector3(0.05, -0.3, -0.45)
 ## Ellerdeki yakın ip kameranın çerçevesinde kurulur (baş sallanınca ağ yeniden kurulmaz); uzak parçanın son ucu
 var _near_root: Node3D
 var _far_join := Vector3.INF
@@ -531,14 +534,14 @@ func _stockade() -> void:
 	giust.look_target = player
 	for s in squad:
 		s.visible = false
-	_haulers.clear()
 	for i in 3:
 		var s := squad[3 + i]
 		s.visible = true
-		s.pose = "stand"
-		s.rope = []
-		_haulers.append(s)
-	_haul_place(_next_barrel(), true)
+		s.position = Vector3(-1.6 + i * 1.6, _floor_y(-1.6 + i * 1.6, 24.0), 24.0)      # dilin görünen yüzü
+		s.rotation.y = PI
+		s.pose = "stand"      # özgünde "pull": boşa (ipsiz) çekiyorlardı; yerleri ve çıkıştaki rolleri aynı
+	_make_haulers()
+	_haul_place(_haul_spots(_next_barrel(), player.global_position), true)
 	await hud.fade_to(0.0, 0.4)
 	await hud.say("SPK_AZAPBASI", "D37O_AB_04")
 	await hud.say("SPK_TOLGA", "D37O_T_03")
@@ -696,69 +699,86 @@ func _clear_hook() -> void:
 	_haul_off()
 
 
-## Azapların ipteki yeri: fıçıdan oyuncuya giden çizginin yanında, oyuncunun önünde ~1,9 / 4 / 4,7 m (moloz yamacına
-## doğru sıralı); ipin iki yanında sırayla (ip kalçalarının yanından geçer). Kancanın hedefi değişince yürüyerek geçerler.
-func _haul_spots(i: int) -> Array:
-	var spot := _stockade_spot()
+## Azapların ipteki yeri: kancanın atıldığı andaki oyuncudan fıçıya giden çizginin iki yanında sırayla, moloz
+## yamacının basamak ortalarında (z 20,75 / 18,8 / 18,0), yanlamasına 0,5–0,6 m (ip kalçalarının yanından geçer).
+## Zemin yüksekliği yerin gerçek yüzeyinden (ışın): dilin ve basamakların görünen yüzü outside_y'den sapıyordu.
+func _haul_spots(i: int, from: Vector3) -> Array:
 	var tgt: Vector3 = _barrels[i].global_position if i >= 0 else LandWalls.BREACH + Vector3(0, 0, 1.6)
-	var d := Vector3(tgt.x - spot.x, 0, tgt.z - spot.z)
+	var d := Vector3(tgt.x - from.x, 0, tgt.z - from.z)
 	var ln := d.length()
 	d = d / ln if ln > 0.01 else Vector3.FORWARD
 	var out: Array = []
-	# z'ler moloz katmanlarının basamak ortası (dilin üstü 20,75; dördüncü ve üçüncü katmanın basamağı 18,8 ve 18,0):
-	# basamağın kenarında duran ayak yarı havada kalıyordu (VISAUDIT float/sunk). İpin iki yanında sırayla, yanlamasına
-	# 0,6 m (z aynı kalır): önde duran ilk azap kadrajın ortasını (fıçıları) kapatmasın.
 	for zt: float in [20.75, 18.8, 18.0]:
 		var k := out.size()
-		var p := spot + d * ((spot.z - zt) / maxf(0.2, -d.z))
+		var p := from + d * ((from.z - zt) / maxf(0.2, -d.z))
 		p.x += float([0.62, -0.6, 0.5][k])
 		p.z = zt
-		out.append([Vector3(p.x, LandWalls.outside_y(p.x, p.z), p.z), atan2(d.x, d.z)])
+		out.append([Vector3(p.x, _floor_y(p.x, p.z), p.z), atan2(d.x, d.z)])
 	return out
 
 
-func _haul_place(i: int, now: bool) -> void:
-	var sp := _haul_spots(i)
+## Yerin görünen yüzü (aşağı ışın; kişiler sayılmaz). Işın bir şey bulamazsa LandWalls.outside_y.
+func _floor_y(x: float, z: float) -> float:
+	var q := PhysicsRayQueryParameters3D.create(Vector3(x, 4.0, z), Vector3(x, -5.0, z))
+	q.collision_mask = 1
+	var hit := get_world_3d().direct_space_state.intersect_ray(q)
+	if hit.is_empty() or (hit["collider"] as Node).get_parent() is Soldier or (hit["collider"] as Node).get_parent() is Person:
+		return LandWalls.outside_y(x, z)
+	return (hit["position"] as Vector3).y
+
+
+## Azaplar yerlerine: now (kararmada ya da kurulurken) ışınlanır; değilse yürür. Yerinden 0,5 m'den az oynayan yürümez.
+func _haul_place(spots: Array, now: bool) -> void:
 	for k in _haulers.size():
 		var s := _haulers[k]
-		var tgt: Vector3 = sp[k][0]
+		var tgt: Vector3 = spots[k][0]
+		if Vector2(s.global_position.x - tgt.x, s.global_position.z - tgt.z).length() < 0.5 and not now:
+			continue
 		if now:
 			s.global_position = tgt
-			s.rotation.y = sp[k][1]
+			s.rotation.y = spots[k][1]
 		else:
-			Stage.walk_on_ground(s, tgt, LandWalls.outside_y, 1.4, tgt + Vector3(sin(sp[k][1]), 0.4, cos(sp[k][1])) * 3.0)
+			Stage.walk_on_ground(s, tgt, _floor_y, 1.6, tgt + Vector3(sin(spots[k][1]), 0.4, cos(spots[k][1])) * 3.0)
 
 
-## Düellodan sonra (kararmada): çıkışta dövüşe kalkan (Melee.rally) azaplar kılıçlı, irkilme jestinde ya da dönüş
-## yolunda kalıyordu; ikinci çekişte ipi tutmadan kolları havada duruyordu. Aynı kılıkta taze üç azap yerlerine geçer
-## (kazanınca ipin yanındaki yerlerine, yenilince oyuncunun arkasında bekler).
-func _fresh_haulers(to_rope: bool) -> void:
-	var sp := _haul_spots(_next_barrel())
-	for k in _haulers.size():
-		var old := _haulers[k]
-		var s := Soldier.new(old.coat, "stand", old.hat)
+## İp çeken azaplar (yayma P6): bölüğün üç azabı (squad[3..5]) özgündeki gibi oyuncunun ardında (z 24) durur ve
+## çıkışta dövüşe kalkar (Melee.rally); ipi ayrı üç azap tutar. Bunlar dövüşe kalkmaz (no_rally), konuşmaz, kılıçsızdır.
+func _make_haulers() -> void:
+	if not _haulers.is_empty():
+		return
+	for k in 3:
+		var s := Soldier.new([Color("b3262d"), Color("8a6a4a"), Color("6a4a3a")][k], "stand", ["azap", "bork", "azap"][k])
+		s.set_meta("no_rally", true)
+		s.set_meta("no_talk", true)
 		add_child(s)
-		var at: Vector3 = sp[k][0] if to_rope and _next_barrel() >= 0 else Vector3(-1.6 + k * 1.6, 0, 24.0)
-		s.global_position = Vector3(at.x, LandWalls.outside_y(at.x, at.z), at.z)
-		s.rotation.y = float(sp[k][1]) if to_rope else PI
-		var i := squad.find(old)
-		if i >= 0:
-			squad[i] = s
-		_haulers[k] = s
-		old.queue_free()
+		_haulers.append(s)
+		# Gölgesiz (kameranın önündeki üç figürün gölge geçişi üçgen bütçesini +%6 aşırıyordu; gece, ay ışığında seçilmiyor)
+		for mi in s.find_children("*", "GeometryInstance3D", true, false):
+			(mi as GeometryInstance3D).cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
 
 
-## Kanca takıldı: azaplar ipi kavrar, oyuncunun iki eli ipte (eşya cebe)
+## Kanca takıldı: azaplar (yerindeyseler) ipi kavrar, oyuncunun iki eli ipte (eşya cebe)
 func _haul_on(at: Vector3) -> void:
 	for s in _haulers:
 		s.heave = 0.0
+	if absf(player.global_position.x) < 3.0:
+		_haul_from = player.global_position
+		_haul_place(_haul_spots(_hook_target, _haul_from), false)
 	_far_join = Vector3.INF
 	_haul_make()
 	_haul_held = true
-	player.hold_both(Vector3(-0.05, -0.14, -0.52), Vector3(0.05, -0.3, -0.45))
+	player.hold_both(HAUL_L, HAUL_R)
 	_haul_far.visible = true
-	_haul_near.visible = true
 	_haul_far.set_meta("at", at)
+	# Yakın parça kameranın çerçevesinde, ellerin hold_both noktalarından geçer: bir kancada bir kez kurulur
+	var cam := player.camera
+	var dl := (cam.global_basis.inverse() * (at - cam.to_global(HAUL_L))).normalized()
+	var down := cam.global_basis.inverse() * Vector3.DOWN
+	var hl := HAUL_L + Vector3(0, 0.03, 0)
+	var ll := HAUL_R + Vector3(0, 0.03, 0)
+	_haul_near.set_meta("dl", dl)
+	_haul_near.mesh = ThraceRoad.tube_mesh([hl + dl * 1.0, hl, ll, ll + down * 0.25 + dl * 0.05, ll + down * 0.6], 0.009, Color("c8b080"))
+	_haul_near.visible = true
 	_haul_tick()
 
 
@@ -774,8 +794,6 @@ func _haul_make() -> void:
 		_near_root.add_child(_haul_near)
 
 
-
-
 func _haul_off() -> void:
 	for s in _haulers:
 		if is_instance_valid(s):
@@ -789,66 +807,34 @@ func _haul_off() -> void:
 		_haul_near.visible = false
 
 
-## Her kare: ip fıçıdan üstteki yumruğa (azapların elleri bu çizginin üstünde), yumruklardan geçip ucu oyuncunun
-## ayağının önüne sarkar. Yakın parça ince yuvarlak ip; ellerden çıkan parça kameradan en az 40 cm önde ve aşağıda.
+## Her kare (ucuz): yakın ip kameraya bağlı (ağ kurulmaz); uzak parça fıçıdan yakın parçanın ucuna, ucu 10 cm'den çok
+## oynayınca kurulur. Azaplar yerindeyse iki eli ipin üstünde ("haul"), yürürken ayakta; kancanın ömrü boyunca yer
+## değiştirmezler (oyuncu taştan kaçıp 0,6 m'den çok yana geçerse yeni yerlerine yürürler).
 func _haul_tick() -> void:
 	if not _haul_held or _haul_far == null:
 		return
 	var at: Vector3 = _haul_far.get_meta("at")
 	var cam := player.camera
-	var cb := cam.global_basis
 	_near_root.global_transform = cam.global_transform
-	var l: Vector3 = player.free_rig.socket.global_position if player.free_rig and player.free_rig.socket else cam.to_global(Vector3(-0.05, -0.14, -0.52))
-	var r: Vector3 = player.rig.socket.global_position if player.rig and player.rig.socket else cam.to_global(Vector3(0.05, -0.3, -0.45))
-	var hi := l + cb.y * 0.03
-	var lo := r + cb.y * 0.03
-	if hi.distance_to(at) > lo.distance_to(at):
-		var sw := hi
-		hi = lo
-		lo = sw
-	# Yakın parça kameranın çerçevesinde: üstteki yumruğun 0,9 m ötesinden yumruklardan geçip ucu aşağı sarkar.
-	# Noktalar 1,5 cm'den az oynadıysa ağ yeniden kurulmaz (baş sallanması eşiği aşmaz).
-	var hl := cam.to_local(hi)
-	var ll := cam.to_local(lo)
-	var dl := (cb.inverse() * (at - hi)).normalized()
-	var down := cb.inverse() * Vector3.DOWN
-	var pts: Array = [hl + dl * 1.0, hl, ll, ll + down * 0.25 + dl * 0.05, ll + down * 0.6]
-	var last: Array = _haul_near.get_meta("pts", [])
-	var moved := last.size() != pts.size()
-	if not moved:
-		for i in pts.size():
-			if (last[i] as Vector3).distance_to(pts[i]) > 0.015:
-				moved = true
-				break
-	if moved:
-		_haul_near.set_meta("pts", pts)
-		_haul_near.mesh = ThraceRoad.tube_mesh(pts, 0.009, Color("c8b080"))
-	# Uzak parça fıçıdan yakın parçanın ucuna (üst üste 10 cm biner, aralık görünmez); 2 cm'den az oynadıysa kurulmaz
-	var join := cam.to_global(hl + dl * 0.9)
-	if _far_join.distance_to(join) > 0.02:
+	var dl: Vector3 = _haul_near.get_meta("dl", Vector3.FORWARD)
+	var hi := cam.to_global(HAUL_L + Vector3(0, 0.03, 0))
+	var join := cam.to_global(HAUL_L + Vector3(0, 0.03, 0) + dl * 0.9)
+	if _far_join.distance_to(join) > 0.1:
 		_far_join = join
 		Bogaz.rope(_haul_far, at, join, 0.0)
-	# Azaplar: her biri yerindeyse ve elleri serbestse (dövüşe kalkıp dönmüş, irkilme jesti sürmüyor) iki eli ipin
-	# üstünde; yerinde değilse önce yürüyerek yerine geçer. İpi tutmayan azap havaya çekmez, ayakta bekler.
-	var sp := _haul_spots(_hook_target)
-	for k in _haulers.size():
-		var s := _haulers[k]
-		var spot: Vector3 = sp[k][0]
-		var ready := s.visible and s.process_mode != Node.PROCESS_MODE_DISABLED and s.get_parent() == self and (s.rig == null or s.rig.lock == 0)
-		var walking := s.has_meta("stage_walk")
-		var there := Vector2(s.global_position.x - spot.x, s.global_position.z - spot.z).length() < 0.45
-		# Omuz hizası ipe kol boyundan uzaksa tutmaz (kol yana gergin havada kalıyordu): önce yerine yürür
-		var sh := s.global_position + Vector3(0, 1.3, 0)
-		var u := (hi - at).normalized()
-		var near := (sh - (at + u * clampf((sh - at).dot(u), 0.0, at.distance_to(hi)))).length() < 0.7
-		if ready and not walking and there and near:
-			s.pose = "haul"
-			s.rope = [at, hi]
-		else:
+	if Vector2(player.global_position.x - _haul_from.x, player.global_position.z - _haul_from.z).length() > 0.6 and absf(player.global_position.x) < 3.0:
+		_haul_from = player.global_position
+		_haul_place(_haul_spots(_hook_target, _haul_from), false)
+	# Oyuncu taştan kaça kaça moloz dilinin dışına (|x| > 3) çıktıysa azaplar dilin üstünde kalır, ipi tutmaz (ip onlardan
+	# uzaktan geçer; basamakların kenarında havada/gömülü duruyorlardı)
+	var off := absf(_haul_from.x - player.global_position.x) > 1.2
+	for s in _haulers:
+		if s.has_meta("stage_walk") or off:
 			s.pose = "stand"
 			s.rope = []
-			if ready and not walking and not there:
-				Stage.walk_on_ground(s, spot, LandWalls.outside_y, 1.6, spot + Vector3(sin(sp[k][1]), 0.4, cos(sp[k][1])) * 3.0)
+		else:
+			s.pose = "haul"
+			s.rope = [at, hi]
 
 
 ## Bir "hey": arkadaki azaplar geriye yaslanır; iyi çekişte fıçı sallanır, üçüncüde devrilir. Kaçan çekişte savunan
@@ -899,8 +885,8 @@ func _topple(i: int) -> void:
 	Fx.trauma(0.3)
 	if _next_barrel() >= 0 and not _haulers.is_empty():
 		get_tree().create_timer(0.8, false).timeout.connect(func():
-			if phase == "stockade" and _hook == null and _next_barrel() >= 0 and not _sallying:
-				_haul_place(_next_barrel(), false))
+			if phase == "stockade" and _hook == null and _next_barrel() >= 0 and not _sallying and absf(player.global_position.x) < 3.0:
+				_haul_place(_haul_spots(_next_barrel(), player.global_position), false))
 	if barrels_down == 1:
 		hud.bark("SPK_AZAPBASI", "D37O_AB_PULL_1", 2.5)
 	elif barrels_down == 3:
@@ -950,9 +936,12 @@ func _sally() -> void:
 	_sallying = true      # devrilen fıçının ardından azapları ipe yürüten zamanlayıcı çıkışta onları düellocuların yoluna sokmasın
 	_clear_hook()
 	# Azaplar ipi bırakıp oyuncunun arkasına çekilir (çıkan Cenevizlilerin yolu açık kalsın)
+	var back: Array = []
 	for k in _haulers.size():
-		var bp := Vector3(-1.6 + k * 1.6, 0, 24.0)
-		Stage.walk_on_ground(_haulers[k], bp, LandWalls.outside_y, 2.6, LandWalls.BREACH + Vector3(0, 1.5, 0))
+		var bx: float = [-3.2, 3.0, -2.4][k]
+		var bz: float = [25.4, 25.6, 26.4][k]
+		back.append([Vector3(bx, _floor_y(bx, bz), bz), PI])
+	_haul_place(back, false)
 	hud.bark("SPK_AZAPBASI", "D37O_AB_SALLY", 3.0)
 	if _hizir:
 		await get_tree().create_timer(2.2, false).timeout
@@ -972,7 +961,6 @@ func _sally() -> void:
 		# bölükbaşına döndü (düello bitti); bu gece yeniden kılıç yok: geri çekilme borusu çalar.
 		await hud.say("SPK_TOLGA", "D37O_T_SALLY_LOST")
 		await hud.fade_to(1.0, 0.4)
-		_fresh_haulers(false)
 		player.global_position = _stockade_spot()
 		player.face(LandWalls.BREACH + Vector3(0, 2.0, 1.6))
 		await hud.card([[tr("UI_CH37O_SALLY_LOST"), 22, Color("f2e6c9")]], 2.6 if not GameState.autotest else 0.3)
@@ -981,8 +969,14 @@ func _sally() -> void:
 	else:
 		# Düellodan sonra kanca atılan yere dön (gediğin molozunun içinde kalınmasın)
 		await hud.fade_to(1.0, 0.25)
-		_fresh_haulers(true)
+		# Dövüşe kalkan bölük azapları kararmada yerlerine (özgünde 6,5 sn sonra kendiliğinden konuyorlardı; ikinci çekişte
+		# kılıçlarıyla kameranın dibinden geçiyorlardı)
+		for m in get_children():
+			if m is Melee:
+				(m as Melee).restore_now()
 		player.global_position = _stockade_spot()
+		if _next_barrel() >= 0:
+			_haul_place(_haul_spots(_next_barrel(), player.global_position), true)
 		player.face(LandWalls.BREACH + Vector3(0, 2.0, 1.6))
 		await hud.fade_to(0.0, 0.25)
 	_sallying = false
@@ -994,6 +988,11 @@ func _sally() -> void:
 var _sled: Node3D
 var _rope: MeshInstance3D
 var _drag_near: MeshInstance3D
+var _drag_root: Node3D
+var _drag_join := Vector3.INF
+var _drag_a := Vector3.INF
+const DRAG_L := Vector3(-0.16, -0.3, -0.5)
+const DRAG_R := Vector3(0.1, -0.24, -0.58)
 var _slip_t := 6.0
 var _slipping := -1.0
 var _pots: Array = []      # [düğüm, konum, kalan süre]
@@ -1023,12 +1022,18 @@ func _drag() -> void:
 	_drag_near.set_meta("no_walk", true)
 	_drag_near.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
 	_drag_near.material_override = LandWalls.hemp_material()
-	add_child(_drag_near)
+	_drag_root = Node3D.new()
+	add_child(_drag_root)
+	_drag_root.add_child(_drag_near)
+	# İp iki yumruğun içinden geçer (önde sağ, arkada sol), sol yumruktan aşağı-geri omzun yanından kalkana iner. Yakın
+	# parça kameranın çerçevesinde bir kez kurulur; uzak parça ucu 25 cm oynayınca (her karede değil).
+	_drag_near.mesh = ThraceRoad.tube_mesh([DRAG_R + Vector3(0.06, 0.05, -0.1), DRAG_R, DRAG_L, DRAG_L + Vector3(-0.08, -0.22, 0.12),
+		DRAG_L + Vector3(-0.12, -0.6, 0.45)], 0.009, Color("c8b080"))
 	await hud.fade_to(0.0, 0.6)
 	await hud.say("SPK_AZAPBASI", "D37O_AB_05")
 	await hud.say("SPK_AZAP", ("D37O_HZ_01_T1" if Siege.outcome(41) == "41O.1" else "D37O_HZ_01") if _hizir else "D37O_AZ_01")
 	player.frozen = false
-	player.free_hold = Vector3(-0.3, -0.42, -0.6)      # sol el ipin ucunu tutar (varsayılan eşya gösterilmez)
+	player.hold_both(DRAG_L, DRAG_R)      # iki el kalkanın ipinde (varsayılan eşya cebe)
 	hud.set_objective(tr("UI_OBJ37O_DRAG"), DRAG_TO + Vector3(0, 1.4, 0))
 	var t := 0.0
 	var pot_t := 3.0
@@ -1069,20 +1074,16 @@ func _drag() -> void:
 		if away.length() > 3.2:
 			var fixp := _sled.position + away.normalized() * 3.2
 			player.global_position = Vector3(fixp.x, player.global_position.y, fixp.z)
-		var hand := (player.camera.global_transform * player.free_hold) if player.free_hold != Vector3.INF else player.global_position + Vector3(0, 0.9, 0)
 		var tgt := Vector3(player.global_position.x, 0.0, player.global_position.z - 2.4)
 		if _slipping < 0.0 and _sled.position.distance_to(tgt) > 0.2:
 			_sled.position = _sled.position.move_toward(tgt, dt * 1.4)
 		var a := _sled.position + Vector3(0, 0.15, 0.55)
-		if player.free_hold != Vector3.INF and player.free_rig and player.free_rig.socket:
-			hand = player.free_rig.socket.global_position + player.camera.global_basis.y * 0.03
-		var join := hand + (a - hand).normalized() * minf(0.9, hand.distance_to(a) * 0.4)
-		Bogaz.rope(_rope, a, join, clampf((3.4 - a.distance_to(hand)) * 0.12, 0.0, 0.18))
-		var hp: Array = [join, hand]
-		var lastp: Array = _drag_near.get_meta("pts", [])
-		if lastp.size() != 2 or (lastp[0] as Vector3).distance_to(join) > 0.015 or (lastp[1] as Vector3).distance_to(hand) > 0.015:
-			_drag_near.set_meta("pts", hp)
-			_drag_near.mesh = ThraceRoad.tube_mesh(hp, 0.009, Color("c8b080"))
+		_drag_root.global_transform = player.camera.global_transform
+		var join := player.camera.to_global(DRAG_L + Vector3(-0.12, -0.6, 0.45))
+		if join.distance_to(_drag_join) > 0.25 or a.distance_to(_drag_a) > 0.25:
+			_drag_join = join
+			_drag_a = a
+			Bogaz.rope(_rope, a, join, clampf((3.4 - a.distance_to(join)) * 0.12, 0.0, 0.18))
 		if fmod(t, 0.5) < dt:
 			Props.box(self, Vector3(0.6, 0.01, 0.4), _sled.position + Vector3(0, 0.01, 0), Color("4a3a26"))      # toprakta iz
 		# Ateş çömlekleri: ıslık + gölge, sonra 2 m'lik yanan birikinti (8 sn)
@@ -1111,7 +1112,7 @@ func _drag() -> void:
 			hud.bark("SPK_TOLGA", "D37O_T_DRAG", 3.0)
 	hud.set_prompt("")
 	hud.set_objective("")
-	player.free_hold = Vector3.INF           # ip bırakılır
+	player.release_both()                    # ip bırakılır
 	player.frozen = true
 	if _hizir:
 		# Hızır'ın akıbeti: ip üç kez kaydıysa ya da çekiş uzadıysa (ateş birikintilerinde oyalanıldı) yetişmez
@@ -1175,8 +1176,8 @@ func _dawn() -> void:
 	hud.clear_card()
 	if is_instance_valid(_rope):
 		_rope.queue_free()
-	if is_instance_valid(_drag_near):
-		_drag_near.queue_free()
+	if is_instance_valid(_drag_root):
+		_drag_root.queue_free()
 	walls.make_dawn(0.01)
 	player.global_position = gun.position + Vector3(3.2, 0.05, 7.4)      # Urban'ın 3.4 m önü (5.7 m öteden konuşuyordu)
 	urban.face_toward(player.global_position)
@@ -1254,7 +1255,7 @@ func _process(delta: float) -> void:
 		_haul_tick()
 		for s in _haulers:
 			if is_instance_valid(s) and s.visible and not s.has_meta("stage_walk"):
-				Stage.plant_feet(s, LandWalls.outside_y)
+				Stage.plant_feet(s, _floor_y)
 
 
 # ================================================================ bölüm sonu

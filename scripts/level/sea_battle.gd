@@ -215,12 +215,8 @@ static func war_galley(parent: Node3D, pos: Vector3, yaw: float, rowers := true,
 	Props.cyl(g, 0.08, 12.0, Vector3(0, GALLEY_DECK + 8.0, -3.0), Color("6a4a2c"), Vector3(60, 0, 0), 5)
 	# Seren üstünde sarılı yelken: uçlara doğru incelen, güneşte soluk kenevir rengi demet (yayma P3: düz beyaz silindir
 	# karakanın güvertesinden "bordadan fırlayan beyaz sopa" gibi görünüyordu)
-	# Tek ağ: yuvarlak kesitli, dış çizgisiz, koyu kenevir rengi kalın demet
-	var furl := MeshInstance3D.new()
-	furl.mesh = _furl_mesh()
-	furl.material_override = ThraceRoad.tube_material()
-	furl.position = Vector3(0, GALLEY_DECK + 7.0, -2.0)
-	g.add_child(furl)
+	# Koyu kenevir rengi, uca doğru incelen demet (8 köşe; ince bölmeli boru gemi başına 2 bin üçgendi)
+	Props.cyl(g, 0.19, 6.8, Vector3(0, GALLEY_DECK + 7.0, -2.0), Color("9a8a64"), Vector3(60, 0, 0), 8, 0.07)
 	if flag:
 		Props.box(g, Vector3(0.04, 1.0, 1.6), Vector3(0, GALLEY_DECK + 9.4, -3.8), Color("b3262d"))
 		Props.crescent(g, Vector3(0, GALLEY_DECK + 9.4, -3.9), 0.24, Color("b3262d"))
@@ -237,21 +233,6 @@ static func war_galley(parent: Node3D, pos: Vector3, yaw: float, rowers := true,
 		for sx: float in [-1.0, 1.0]:
 			add_rowers(g, sx, false)
 	return g
-
-
-static var _furl: ArrayMesh
-
-
-## Sarılı latin yelken demeti (bütün kadırgalarda aynı ağ, bir kez kurulur): seren boyunca (60° yatık) 6,8 m, yumuşak
-## gölgeli yuvarlak boru (ThraceRoad.tube_mesh; Stage halatının damalı şeritleri yakında karton cetvel gibiydi).
-static func _furl_mesh() -> ArrayMesh:
-	if _furl == null:
-		var ax := Vector3(0, cos(deg_to_rad(60.0)), sin(deg_to_rad(60.0)))
-		var pts: Array = []
-		for i in 9:
-			pts.append(ax * lerpf(-3.4, 3.4, i / 8.0))
-		_furl = ThraceRoad.tube_mesh(pts, 0.17, Color("9a8a64"))
-	return _furl
 
 
 ## Kürekçiler (kıça bakar) ve kürekleri: `side` tarafında çift (odd false) ya da tek sıralara. Iskarmoz kürekçinin

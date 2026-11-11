@@ -87,9 +87,15 @@ static func _water(world: SiegeField) -> void:
 
 
 static func _landmark_bodies(world: SiegeField) -> void:
-	var ay: Vector3 = World1453.LANDMARKS["ayasofya"]
-	if world.region_name != "byz_aya":
-		Scenery.hagia_body(world, Vector3(ay.x, HornWorld.east_surf(ay.x, ay.z) - 1.0, ay.z), 1.0)
+	# Ayasofya: dünyadaki uzak kabuğun (World1453.far_aya, yerdeki modelin kendisi) üçgenleri; kubbesine konulur
+	var far_aya := world.find_child("FarAyasofya", true, false) as MeshInstance3D
+	if world.region_name != "byz_aya" and far_aya and far_aya.mesh:
+		var ab := StaticBody3D.new()
+		ab.name = "FlightAya"
+		var acs := CollisionShape3D.new()
+		acs.shape = far_aya.mesh.create_trimesh_shape()
+		ab.add_child(acs)
+		far_aya.add_child(ab)
 	var tw: Vector3 = World1453.LANDMARKS["galata_tower"]
 	if world.region_name != "galata":
 		var base := HornWorld.north_surf(tw.x, tw.z) - 1.0
@@ -99,7 +105,7 @@ static func _landmark_bodies(world: SiegeField) -> void:
 	var col: Vector3 = World1453.LANDMARKS["column"]
 	if world.region_name != "byz_aya":
 		var g := HornWorld.east_surf(col.x, col.z)
-		_cyl(world, 3.0, Vector3(col.x, g, col.z), g + 34.0)
+		_cyl(world, 2.0, Vector3(col.x, g, col.z), g + ByzCity.COLUMN_TOP)     # yerdeki sütunun ölçüsü (ByzCity.column_parts)
 
 
 static func _cyl(parent: Node3D, r: float, base: Vector3, top_y: float) -> void:

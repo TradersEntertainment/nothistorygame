@@ -1120,6 +1120,7 @@ func _gate_scene() -> void:
 func _open_gate() -> void:
 	var gy := Callable(self, "_gy")
 	guard.look_target = null
+	var spear := _plant_spear()        # iki eli işte: mızrağı yanına diker (elde kalırsa kapıdan/sürgüden geçiyordu)
 	await Stage.walk_on_ground(guard, Vector3(-0.9, 0, 12.6), gy, 1.6, BAR_AT)
 	# İki elle sürgüyü yuvalarından kaldırır (eller sürgüde), sürgüyü taşıyarak kulenin dibine götürür, dikine yaslar
 	# Eller sürgünün kendi yerelinde (Stage.grip_hold her karede izler): kaldırırken ve taşırken sürgüde kalır
@@ -1149,7 +1150,27 @@ func _open_gate() -> void:
 	Stage.walk_on_ground(guard, GUARD_AT, gy, 1.6, Vector3(0, 0, 8.0))      # beklenmez: kanatlarla birlikte
 	await open2.finished
 	await Stage.settle(guard)
+	if spear != null and is_instance_valid(spear) and guard._elbow_r != null:      # mızrağını geri alır
+		spear.reparent(guard._elbow_r, false)
+		spear.position = Vector3(0, -0.28, 0.06)
+		spear.rotation_degrees = Vector3(0, 0, -7)
 	guard.look_target = player
+
+
+## Nöbetçinin elindeki mızrağı yanına, yere diker (Soldier.equip "spear" düğümü "Spear"). Mızrak yoksa null.
+func _plant_spear() -> Node3D:
+	if guard._elbow_r == null:
+		return null
+	var sp := guard._elbow_r.get_node_or_null("Spear") as Node3D
+	if sp == null:
+		return null
+	sp.reparent(self, true)
+	var at := guard.global_position + Vector3(0.6, 0.0, 0.1)
+	var ground := _gy(at.x, at.z)
+	var tw := create_tween().set_parallel()
+	tw.tween_property(sp, "global_position", Vector3(at.x, ground + 0.4, at.z), _d(0.3)).set_trans(Tween.TRANS_SINE)
+	tw.tween_property(sp, "global_rotation", Vector3(0.0, 0.0, deg_to_rad(-4.0)), _d(0.3))
+	return sp
 
 
 ## Nöbetçi iki kanadın içteki halkalarını tutar ve geri geri yürüyerek ~35 dereceye kadar çeker (eller her karede kanatta).

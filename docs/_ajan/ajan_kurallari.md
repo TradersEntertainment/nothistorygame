@@ -90,3 +90,11 @@ Yanlış "DÜZELDİ" tek kabul edilmeyen şeydir: bağımsız denetçi kareleri 
     koşun düşerse bekle, `parse_check` geçince yeniden koş; o dosyaya dokunma.
 12. Rapora "yaptım" yazdığın her şey dosyada ve karede olmalı; yapılmayanı "YAPILMADI" yaz.
 Karşılaştırma için özgün kod: main `e551de84` (0.99.118).
+
+
+## İZİN KUTUSU YASAĞI (zorunlu)
+Kullanıcıya izin kutusu çıkaran komut yazma; kutu çıkarsa iş kilitlenir.
+- `rm -rf`, `rm -r`, `mv`, `cp -r` hedeflerinde kabuk değişkeni (`$d`, `${v}`) KULLANMA. Silme gerekiyorsa tam açık (literal) mutlak yol yaz ya da hiç silme: yeni, benzersiz adlı klasör aç. Python `shutil.rmtree("/tam/yol")` olur.
+- Çalışma klasörün ve depo dışına yazma/silme yok. sudo, curl|sh, chmod -R yok.
+- Silmeyi uzun zincirlerin ve heredoc içeren komutların içine gömme; ayrı, kısa komut yap.
+- Bir komut reddedilirse aynısını tekrar deneme, başka yoldan yap.

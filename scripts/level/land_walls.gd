@@ -772,6 +772,31 @@ func _wear_props(st: SurfaceTool, gy: Callable) -> void:
 				return Vector3(x, float(gy.call(x, z)), z)
 		return Vector3.INF
 	var counts := [[12, 3, 2, 4, 5], [9, 3, 1, 3, 6], [6, 2, 0, 1, 4]]      # yığın, merdiven, sedye, kova, kalkan
+	# Oyuncunun peribolosta en çok baktığı yerde (depo–gedik yolunun iki yanı, dış surun dibi) birer sedye, kova ve kırık
+	# merdiven: rastgele dağılımda hiçbir karede seçilmiyorlardı
+	var fixed := [["stretcher", Vector3(-5.2, 0, 9.2), 0.4], ["bucket", Vector3(4.2, 0, 10.6), 1.1], ["ladder", Vector3(-7.2, 0, 12.7), 1.52],
+		["stretcher", Vector3(14.5, 0, 9.6), -0.3], ["bucket", Vector3(-3.6, 0, 12.9), 0.2]]
+	for f: Array in fixed:
+		var p: Vector3 = f[1]
+		if not _wear_free(p.x, p.z):
+			continue
+		var b := Basis(Vector3.UP, float(f[2]))
+		match str(f[0]):
+			"stretcher":
+				for sx: float in [-0.28, 0.28]:
+					_prim(st, box, Transform3D(b * Basis.from_scale(Vector3(0.06, 0.06, 2.2)), p + b * Vector3(sx, 0.04, 0)), wood)
+				_prim(st, box, Transform3D(b * Basis.from_scale(Vector3(0.54, 0.03, 1.6)), p + b * Vector3(0, 0.07, 0)), Color("b0a07a"))
+			"bucket":
+				cyl.top_radius = 0.15
+				cyl.bottom_radius = 0.12
+				cyl.height = 0.28
+				_prim(st, cyl, Transform3D(b * Basis(Vector3.FORWARD, PI * 0.5), p + Vector3(0, 0.13, 0)), Color("7a5634"))
+			"ladder":
+				for sx: float in [-0.22, 0.22]:
+					var l := 2.6 if sx < 0.0 else 1.7
+					_prim(st, box, Transform3D(b * Basis.from_scale(Vector3(0.08, 0.07, l)), p + b * Vector3(sx, 0.04, (l - 2.6) * 0.5)), wood)
+				for r in 6:
+					_prim(st, box, Transform3D(b * Basis.from_scale(Vector3(0.46, 0.05, 0.06)), p + b * Vector3(0, 0.07, -1.05 + r * 0.42)), wood.lightened(0.1))
 	for zone in 3:
 		var cn: Array = counts[zone]
 		for i in int(cn[0]):

@@ -342,6 +342,7 @@ func equip(kind: String, shield_color := Color("8a2b22")) -> void:
 	match kind:
 		"spear":
 			var sp := Node3D.new()
+			sp.name = "Spear"        # sahne betiği (8y nöbetçisi) işe girişirken yere diker
 			_elbow_r.add_child(sp)
 			sp.position = Vector3(0, -0.28, 0.06)
 			sp.rotation_degrees = Vector3(0, 0, -7)      # üst uç dışa yatık (başlığa girmez)
