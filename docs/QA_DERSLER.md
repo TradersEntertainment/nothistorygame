@@ -1001,3 +1001,21 @@ Her bölüm denetiminde ve her düzeltmede bu listeyi baştan uygula. Yeni bir h
     alıyordu; 1:2 eğimli yamaçta havada kalıyordu. Düzeltme: yürüyenin yüksekliği bastığı noktadan (`_place`),
     `_spot_open` toleransı 0,6 → 0,3 (denetimin 0,35 eşiğinin altında). Denetimden gevşek tolerans = ara sıra düşen test.
   - CI günlüğünü bağlama dökme: `get_job_logs return_content=false` adres verir, `curl` ile indirip `grep` yeter.
+- v0.99.115 (iş ajanlara dağıtıldı: Opus İstanbul, Opus performans, Opus sokak etkileşimi, Opus × 3 Bölüm 2,
+  Sonnet denetçiler ve rötuşlar; yönetmen birleştirir, test eder, gönderir):
+  - Bağımsız denetçi şart: Bölüm 2'de ilk ajan 13 maddeye "düzeldi" dedi; denetçi oynanış karelerinde 2'sini reddetti,
+    3'ünü kanıtsız buldu (yakalanma yalnız sondanın kurduğu karede çalışıyordu). Kural: kanıt, sondayla yerleştirilmiş
+    yakın plan değil, oynanış sırasında alınmış karedir; ekranlı koşu bitmeden kanıt sayılmaz.
+  - Dar bütçe = görünmeyen iş: İstanbul siluetinin ilk turu "≤8 bin üçgen, uzak siluet" tarifiyle ufukta birkaç koyu
+    piksel çıkardı. Ölçüt "önce/sonra bir bakışta ayırt edilmeli" olunca iş göründü; bütçe sonradan ölçüldü (24 bin).
+  - RINFO çoklu ağ örneklerini saymıyor: kalabalıkların gerçek üçgeni sayacın iki katı (Bölüm 20: 10 M → 20 M).
+    `tests/perf_run.sh` artık `RTRI … real=` satırı da basıyor.
+  - Karakter ayrıntı katmanı (CharKit LOD) yalnız ekranlı koşuda çalışır; başsız takım ve CI onu sınamaz. Sürümden
+    önce birkaç bölüm `xvfb` ile koşulur (1, 3, 6, 24 geçti; 20 ve 26 bu makinede 25 dakikada bitmiyor).
+  - Görünüşü değiştiren "düzeltme": üst üste binme ajanı kesişmeyi gidermek için sakalları öne alıp şapka kenarlarını
+    küçülttü; ağız ve bıyık kayboldu. Kural: karakter düzeltmesinden sonra önce/sonra yüz paftası; ayırt ediliyorsa
+    ya geri al ya da sahibine göster.
+  - Tek konuşmacıyla `voice_consistency.py --speaker` tablonun tamamının üstüne yazar; sonra tam koşu gerekir.
+  - `get_meta("x", null)` motor hatası basar (varsayılan null = yok sayılır); `has_meta` ile oku.
+  - Makine yeniden başlayabilir: kaydedilmemiş iş tek yeniden başlatmada gidebilir. Her ajan turundan sonra
+    `wip/…` dalına yedek; uzun iş ilerleme dosyası tutar (`$S/b2/tur3_liste.md` gibi).

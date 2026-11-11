@@ -334,14 +334,34 @@ static func ground_y(x: float, z: float) -> float:
 	return y
 
 
+## Sıkı yerleşim: her poz ağına yalnız o an o pozda olan koşanlar art arda yazılır ve ağ yalnız ilk
+## visible_instance_count örneği çizer. Eskiden her koşan üç poz ağının üçünde de vardı, o pozda olmayanlar 1 mm'ye
+## küçültülüp yerin 200 m altına konuyordu: görünmüyordu ama üç ağ da bütün koşanları tam ağla çiziyordu (köşe işi
+## üç kat). Görüntü aynı: her koşan yine yalnız kendi pozunun ağında, aynı dönüşümle. Ağın kutusu (custom_aabb) eskisi
+## gibi hesaplanır (o pozdakiler + başka pozdaki varsa -200'deki gizli örnek): kırpma ve ayrıntı katmanı (LOD) seçimi
+## değişmez.
 func _update_runners(delta: float) -> void:
 	for grp in _runners:
 		var mms: Array = []
+		var cnt: Array = []
+		var boxes: Array = []
 		for mi in grp[0]:
 			mms.append((mi as MultiMeshInstance3D).multimesh)
+			cnt.append(0)
+			boxes.append(null)
 		var ids: Array = grp[1]
 		for j in ids.size():
-			_update_runner(mms, j, int(ids[j]), delta)
+			_update_runner(mms, cnt, boxes, int(ids[j]), delta)
+		for m in mms.size():
+			var mm := mms[m] as MultiMesh
+			var c := int(cnt[m])
+			var box = boxes[m]
+			if c < ids.size():
+				var hb: AABB = _hidden * mm.mesh.get_aabb()
+				box = hb if box == null else (box as AABB).merge(hb)
+			mm.visible_instance_count = c
+			mm.custom_aabb = box
+			(grp[0][m] as Node3D).visible = c > 0
 
 
 const RUN_POSES := ["run_a", "run_b", "leap"]
@@ -355,7 +375,7 @@ var _run_flames: MultiMesh
 
 ## Koşan: adım evresine göre iki koşu pozu arasında gidip gelir; hendeğe inişte, iç yamaçta ve korkulukta sıçrar.
 ## Okla vurulan geriye devrilir, bir süre yerde yatar, sonra arkadan yeniden koşar.
-func _update_runner(mms: Array, j: int, i: int, delta: float) -> void:
+func _update_runner(mms: Array, cnt: Array, boxes: Array, i: int, delta: float) -> void:
 	var r: Array = _run[i]
 	var from: Vector3 = r[0]
 	var to: Vector3 = r[1]
@@ -393,8 +413,12 @@ func _update_runner(mms: Array, j: int, i: int, delta: float) -> void:
 		# Başlangıçta arkadaki toprak tabyanın/çukurların ardından yükselerek çıkar (birden belirmez)
 		p.y -= 1.8 * (1.0 - clampf(float(r[3]) * d / 2.2, 0.0, 1.0))
 		xf = Transform3D(Basis(Vector3.UP, yaw), p)
-	for m in mms.size():
-		(mms[m] as MultiMesh).set_instance_transform(j, xf if m == pose else _hidden)
+	# Bu pozun ağında sıradaki boş yuvaya (öbür ağlarda bu koşan yok)
+	var mm := mms[pose] as MultiMesh
+	mm.set_instance_transform(int(cnt[pose]), xf)
+	cnt[pose] = int(cnt[pose]) + 1
+	var b: AABB = xf * mm.mesh.get_aabb()
+	boxes[pose] = b if boxes[pose] == null else (boxes[pose] as AABB).merge(b)
 	if _run_flames and _run_flame.has(i):
 		var up := not _down.has(i)
 		_run_flames.set_instance_transform(int(_run_flame[i]),

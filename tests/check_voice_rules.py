@@ -15,7 +15,10 @@ ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 CHRISTIAN = {"SPK_NIKO", "SPK_EMPEROR", "SPK_GIUST", "SPK_THEODOROS", "SPK_GENOESE", "SPK_URBAN", "SPK_PRIEST",
              "SPK_ISIDORE", "SPK_GRANT", "SPK_TREVISANO", "SPK_BRIG", "SPK_DEFENDER", "SPK_COCO", "SPK_LOOKOUT",
              "SPK_RIZZO", "SPK_NOTARAS", "SPK_CATTANEO", "SPK_BAILO", "SPK_PODESTA", "SPK_HUNGARIAN", "SPK_MONK",
-             "SPK_NOVOMINER", "SPK_MINER", "SPK_PAINTER", "SPK_WINE", "SPK_NOTARY", "SPK_TAILOR", "SPK_VLAD", "SPK_RADU"}
+             "SPK_NOVOMINER", "SPK_MINER", "SPK_PAINTER", "SPK_WINE", "SPK_NOTARY", "SPK_TAILOR", "SPK_VLAD", "SPK_RADU",
+             # Sokak insanı (side_events.gd): Bizans askeri, kentli, keşiş, kadın, çocuk, hamal (balıkçı değil: Galata'nın
+             # balıkçısı D27_F_AGAIN'de "Allah'a kalmış" der)
+             "SPK_CITY_GUARD", "SPK_TOWNSMAN", "SPK_STREET_MONK", "SPK_WOMAN_BYZ", "SPK_CHILD_BYZ", "SPK_PORTER"}
 OATH = re.compile(r"\b(vallahi|valla|billahi|inşallah|maşallah|allah|elhamdülillah|bismillah|helal olsun|hakkını helal|"
                   r"hazretleri|hazretlerine|mihrap|vesselam|mübarek|şükür)\b", re.I)
 SAFE = re.compile(r"tanrı'?ya şükür", re.I)

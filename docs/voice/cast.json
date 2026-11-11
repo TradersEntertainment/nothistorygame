@@ -1069,5 +1069,29 @@
  "SPK_MERCHANT": {
   "tarif": "Pazar tüccarı; konuşkan, pazarlıkçı",
   "same_as": "SPK_GENOESE"
+ },
+ "SPK_STREET_MONK": {
+  "tarif": "Sokaktaki keşiş (genel); yaşlı, yumuşak",
+  "same_as": "SPK_DERVISH"
+ },
+ "SPK_WOMAN_BYZ": {
+  "tarif": "Konstantinopolisli kadın (genel); orta yaşlı, pratik, kuru mizah",
+  "same_as": "SPK_MUFIDE"
+ },
+ "SPK_CHILD_BYZ": {
+  "tarif": "Sokaktaki Rum çocuk (genel); cıvıl cıvıl",
+  "same_as": "SPK_RADU"
+ },
+ "SPK_PORTER": {
+  "tarif": "Hamal (genel); ağır, yorgun, sabırlı",
+  "same_as": "SPK_RIZA"
+ },
+ "SPK_WORKER": {
+  "tarif": "Ordugâh işçisi (genel); köylü, yorgun",
+  "same_as": "SPK_CAMELEER"
+ },
+ "SPK_SUTLER": {
+  "tarif": "Ordu pazarcısı (genel); yaşlı esnaf, pazarlıkçı",
+  "same_as": "SPK_CEMIL"
  }
 }

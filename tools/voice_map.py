@@ -101,6 +101,11 @@ REACT_SPK = {"HIKMET": "SPK_HIKMET", "GUARDS": "SPK_HASAN", "KADRI": "SPK_KADRI"
              "CANDARLI": "SPK_CANDARLI", "CLERK": "SPK_CLERK", "WINE": "SPK_WINE", "NOTARY": "SPK_NOTARY",
              "DOUBLE": "SPK_DOUBLE", "FISHMONGER": "SPK_FISHMONGER", "CALLIGRAPHER": "SPK_CALLIGRAPHER",
              "PAINTER": "SPK_PAINTER", "KID": "SPK_KID"}
+STREET_SPK = {"BYZSOL": "SPK_CITY_GUARD", "GENMERC": "SPK_GENOESE", "OSMSOL": "SPK_SOLDIER", "JAN": "SPK_JANISSARY",
+              "AZAP": "SPK_AZAP", "VENDB": "SPK_TOWNSMAN", "VENDO": "SPK_SUTLER", "PORTER": "SPK_PORTER",
+              "WORKER": "SPK_WORKER", "PRIEST": "SPK_PRIEST", "MONK": "SPK_STREET_MONK", "DERV": "SPK_DERVISH",
+              "WOMB": "SPK_WOMAN_BYZ", "CHILDB": "SPK_CHILD_BYZ", "FISHER": "SPK_FISHMONGER", "TOWNB": "SPK_TOWNSMAN",
+              "GAL": "SPK_GENOESE", "CIVB": "SPK_TOWNSMAN", "VEND": "SPK_TOWNSMAN"}
 for key in text:
     if key in speaker:
         continue
@@ -124,6 +129,12 @@ for key in text:
     # Anahtarı kodda biçimlenen anlık sözler (v0.99.9): doğrudan çağrı taraması bunları görmüyordu, oyunda mırıltıyla
     # çalıyorlardı. Kalabalığın eşya tepkisi (Hud, SideEvents.CROWD_SPEAKER), şehir halkı ve devriye (city_life.gd),
     # tırmanma (traversal.gd), Nihat'ın uçuşu ve tanıkları (nihat_powers.gd), arena (arena.gd).
+    # Sokak insanı (side_events.gd STREET_SPK): DST_<ROL>_..., Tolga'nın cevapları DST_T_; tepki ve uyarı satırları
+    # STREET_EVENT_LINES çiftlerinden yukarıda zaten bulunur
+    if key.startswith("DST_"):
+        spk = "SPK_TOLGA" if key.split("_")[1] == "T" else STREET_SPK.get(key.split("_")[1])
+        if spk:
+            speaker[key] = spk; source[key] = "sokak"; continue
     if key.startswith("REACT_CROWD_"):
         speaker[key] = {"BYZ": "SPK_TOWNSMAN", "GAL": "SPK_GENOESE", "CAMP": "SPK_SOLDIER"}[key.split("_")[2]]
         source[key] = "yoldan geçen"; continue

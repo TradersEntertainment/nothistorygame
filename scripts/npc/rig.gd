@@ -22,6 +22,8 @@ var eyes: Node3D          # isteğe bağlı: göz kırpma
 var brows: Node3D         # isteğe bağlı: kaş
 var arm_rest_z := 0.1     # kolların gövdeden açıklığı (dinlenme)
 var lock := 0
+## Sokak gözü (scripts/street_eye.gd): bu kadar saniye oyuncuya bakar (uzaktan da; baş omuz üstünden döner, gövde dönmez)
+var stare_t := 0.0
 var speed := 0.0
 ## Sürekli iş hareketi: "" (yok), "sit" (tabureye), "sit_ground" (yere bağdaş), "stir" (kazan karıştırır),
 ## "hammer" (çekiç), "chop" (doğrar), "write" (yere oturmuş yazar), "paint" (fırça), "carry" (önünde yük; yürürken de),
@@ -316,19 +318,25 @@ func _update_core(delta: float, talking: bool, busy: bool) -> void:
 		# Diz: bacak öne salınırken bükülür, basarken düzleşir (koşuda daha çok)
 		_knee(knee_l, (0.12 + maxf(0.0, sin(_walk_phase - 1.3)) * (0.75 + run * 0.7)) * amp)
 		_knee(knee_r, (0.12 + maxf(0.0, sin(_walk_phase - 1.3 + PI)) * (0.75 + run * 0.7)) * amp)
-		if arm_l:
-			_set_xz(arm_l, -sw * (0.45 + run * 0.25) * amp, lerpf(arm_l.rotation.z, -arm_rest_z - 0.02, k))
-		if arm_r and not beam_arm:
-			_set_xz(arm_r, sw * (0.45 + run * 0.25) * amp, lerpf(arm_r.rotation.z, arm_rest_z + 0.02, k))
+		var carrying := activity == "carry" and arm_l != null and arm_r != null     # yük taşıyan kol sallamaz (yük ellerde kalır)
+		# Elinde mızrak/kazma/kılıç olan kolunu az sallar ve dirseğini az bükür: uzun eşya dirsekle birlikte döner, tam
+		# sallanınca (koşuda dirsek 1,2 rad) sap gövdeyi ve başı deliyordu
+		var held := 0.3 if owner != null and owner.has_meta("armed") else 1.0
+		if arm_l and not carrying:
+			_set_xz(arm_l, -sw * (0.45 + run * 0.25) * amp * held, lerpf(arm_l.rotation.z, -arm_rest_z - 0.02, k))
+		if arm_r and not beam_arm and not carrying:
+			_set_xz(arm_r, sw * (0.45 + run * 0.25) * amp * held, lerpf(arm_r.rotation.z, arm_rest_z + 0.02, k))
 		# Dirsek: yürürken hafif, koşarken belirgin bükük; öne salınan kol biraz daha bükülür
-		_elbow(elbow_l, -(0.25 + run * 1.0 + maxf(0.0, -sw) * 0.25) * amp, k)
-		if not beam_arm:
-			_elbow(elbow_r, -(0.25 + run * 1.0 + maxf(0.0, sw) * 0.25) * amp, k)
+		if not carrying:
+			_elbow(elbow_l, -(0.25 + run * 1.0 + maxf(0.0, -sw) * 0.25) * amp * held, k)
+			if not beam_arm:
+				_elbow(elbow_r, -(0.25 + run * 1.0 + maxf(0.0, sw) * 0.25) * amp * held, k)
 		# Adımda iki kez inip kalkma, kalça yalpası, koşuda öne eğilme; baş sarsıntıyı dengeler
 		body.position.y = (absf(sw) * 0.035 - 0.012 * run) * amp
 		_set_xz(body, lerpf(body.rotation.x, (0.06 + run * 0.14) * amp, k), lerpf(body.rotation.z, sw * 0.035 * amp, k))
 		if head:
-			head.rotation = head.rotation.lerp(Vector3(-0.04 * run - absf(sw) * 0.03, 0, -sw * 0.03), k)
+			var wg := _player_glance() if stare_t > 0.0 else Vector3.INF      # sokak gözü: yürürken de başını çevirir
+			head.rotation = head.rotation.lerp(wg if wg != Vector3.INF else Vector3(-0.04 * run - absf(sw) * 0.03, 0, -sw * 0.03), k)
 		if activity == "carry" and arm_l and arm_r:
 			_carry_arms(k)
 		elif activity == "push" and arm_l and arm_r:
@@ -462,10 +470,11 @@ func _carry_arms(k: float) -> void:
 		_elbow(elbow_r, -1.7, k)
 		_elbow(elbow_l, -0.3, k)
 		return
-	arm_r.rotation = arm_r.rotation.lerp(Vector3(-0.55, 0, 0.18), k)
-	arm_l.rotation = arm_l.rotation.lerp(Vector3(-0.55, 0, -0.18), k)
-	_elbow(elbow_l, -1.1, k)
-	_elbow(elbow_r, -1.1, k)
+	# Kollar öne ve içe: eller yükün iki yanında (x ≈ ±0.25), yük gövdeden açıkta (Person.carry load_z)
+	arm_r.rotation = arm_r.rotation.lerp(Vector3(-0.72, 0, -0.2), k)
+	arm_l.rotation = arm_l.rotation.lerp(Vector3(-0.72, 0, 0.2), k)
+	_elbow(elbow_l, -0.95, k)
+	_elbow(elbow_r, -0.95, k)
 
 
 ## Önündeki arabanın tutamağını iki eliyle kavrar (Kurye Zeki): yürürken de, dururken de
@@ -636,10 +645,10 @@ func _activity(delta: float, talking: bool, k: float) -> bool:
 			_elbow(elbow_l, -1.9, k)
 			if leg_l:
 				leg_l.rotation.x = lerpf(leg_l.rotation.x, -0.12, k)
-				leg_l.rotation.z = lerpf(leg_l.rotation.z, 0.08, k)
+				leg_l.rotation.z = lerpf(leg_l.rotation.z, -0.05, k)       # bacaklar dışa (eskiden içe: çaprazlaşıyordu)
 			if leg_r:
 				leg_r.rotation.x = lerpf(leg_r.rotation.x, 0.1, k)
-				leg_r.rotation.z = lerpf(leg_r.rotation.z, -0.08, k)
+				leg_r.rotation.z = lerpf(leg_r.rotation.z, 0.05, k)
 			body.rotation.x = lerpf(body.rotation.x, 0.08, k)
 			if head:
 				head.rotation = head.rotation.lerp(Vector3(-0.05, sin(t * 0.6) * 0.15, 0), k)
@@ -834,6 +843,10 @@ func _fidget(delta: float) -> Array:
 	if _fid_t <= 0.0:
 		_fid_t = randf_range(6.0, 16.0)
 		_fid_kind = randi() % FIDGETS.size()
+		# Elinde uzun eşya (mızrak, kılıç, kalkan, kazma) olan başını kaşımaz, elleri arkaya/önde ovuşturmaz: eşya
+		# başa, eteğe ve gövdeye girerdi; yalnız omuz silkme (4) kalır
+		if owner != null and owner.has_meta("armed"):
+			_fid_kind = FIDGETS.size() - 1
 		_fid_left = randf_range(1.2, 2.4)
 	return none
 
@@ -856,6 +869,11 @@ func _player_glance() -> Vector3:
 	var eye: Vector3 = (cam as Node3D).global_position if cam is Node3D else _player_ref.global_position + Vector3(0, 1.6, 0)
 	var d := owner.global_transform.basis.inverse() * (eye - head.global_position)
 	var flat := Vector2(d.x, d.z).length()
+	# Sokak gözü (StreetEye): tuhaflık gören 30 m'ye kadar, omzunun üstünden de dönüp bakar
+	if stare_t > 0.0:
+		stare_t -= owner.get_process_delta_time()
+		if flat > 0.4 and flat < 30.0:
+			return Vector3(clampf(-atan2(d.y, flat), -0.35, 0.3), clampf(atan2(d.x, d.z), -1.3, 1.3), 0.0)
 	# Bakış ara sıra kesilir (hep dik dik bakmasın): yakınken 3-6 sn bakar, 1-3 sn bırakır
 	_glance_t -= owner.get_process_delta_time()
 	if _glance_t <= 0.0:

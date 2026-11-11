@@ -20,8 +20,12 @@ const CYCLES := {
 const MAX_FLYING := 28
 
 var _hidden := Transform3D(Basis.from_scale(Vector3.ONE * 0.001), Vector3(0, -200, 0))
-var _men: Array = []            # {"xf", "kind", "j", "cycle", "step", "t", "dur", "group", "lag", "reach", "shown"}
-var _kinds := {}                # anahtar -> {"spec", "n", "mm": {poz: MultiMesh}}
+var _men: Array = []            # {"xf", "kind", "j", "cycle", "step", "t", "dur", "group", "lag", "reach", "shown", "slot"}
+## anahtar -> {"spec", "n", "mm": {poz: MultiMesh}, "mi": {poz: MultiMeshInstance3D}, "at": {poz: [o pozdaki kişiler]}}
+## Sıkı yerleşim: bir poz ağında yalnız o pozdakiler çizilir (ilk visible_instance_count yuva). Eskiden herkes her poz
+## ağında vardı, o pozda olmayanlar 1 mm'ye küçültülüp yerin 200 m altına konuyordu: görünmüyor ama her poz ağı bütün
+## kişileri tam ağla (köşe işi) çiziyordu. Boş poz ağı hiç çizilmez (görünür değil).
+var _kinds := {}
 var _groups := {}               # bölük -> {"cycle", "step", "t", "dur", "at"}
 var _rng := RandomNumberGenerator.new()
 var _time := 0.0
@@ -45,7 +49,7 @@ func add(xf: Transform3D, spec: Dictionary, cycle: String, group := -1, reach :=
 	var st := _rng.randi() % steps.size()
 	_men.append({"xf": xf, "kind": key, "j": int(k["n"]), "cycle": cycle, "step": st, "t": 0.0,
 		"dur": _rng.randf_range(0.0, float(steps[st][2])), "group": group, "lag": _rng.randf_range(0.0, 0.35), "reach": reach,
-		"shown": ""})
+		"shown": "#none", "slot": -1})
 	k["n"] = int(k["n"]) + 1
 	if group >= 0 and not _groups.has(group):
 		_groups[group] = {"cycle": cycle, "step": 0, "t": 0.0, "dur": _rng.randf_range(0.5, 4.0), "at": -10.0, "prev": 0}
@@ -61,9 +65,7 @@ func suppress(i: int, on: bool) -> void:
 		return
 	var m: Dictionary = _men[i]
 	if on:
-		var mms: Dictionary = (_kinds[m["kind"]] as Dictionary)["mm"]
-		if mms.has(m["shown"]):
-			(mms[m["shown"]] as MultiMesh).set_instance_transform(int(m["j"]), _hidden)
+		_take_out(m)
 		m["shown"] = "#off"
 		m["off"] = true
 	else:
@@ -104,13 +106,20 @@ func build() -> void:
 			mm.instance_count = int(k["n"])
 			for j in mm.instance_count:
 				mm.set_instance_transform(j, _hidden)
+			mm.visible_instance_count = 0
 			mm.custom_aabb = box
 			var mi := MultiMeshInstance3D.new()
 			mi.multimesh = mm
 			mi.material_override = Crowd.material()
 			mi.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
+			mi.visible = false
 			add_child(mi)
 			(k["mm"] as Dictionary)[pose] = mm
+			if not k.has("mi"):
+				k["mi"] = {}
+				k["at"] = {}
+			(k["mi"] as Dictionary)[pose] = mi
+			(k["at"] as Dictionary)[pose] = []
 	for m: Dictionary in _men:
 		_show(m, str(CYCLES[m["cycle"]][int(m["step"])][0]))
 	_built = true
@@ -119,12 +128,40 @@ func build() -> void:
 func _show(m: Dictionary, pose: String) -> void:
 	if m.get("off", false) or str(m["shown"]) == pose:
 		return
-	var mms: Dictionary = (_kinds[m["kind"]] as Dictionary)["mm"]
-	var j: int = m["j"]
-	if mms.has(m["shown"]):
-		(mms[m["shown"]] as MultiMesh).set_instance_transform(j, _hidden)
-	(mms[pose] as MultiMesh).set_instance_transform(j, m["xf"])
+	_take_out(m)
+	var k: Dictionary = _kinds[m["kind"]]
+	var at: Array = (k["at"] as Dictionary)[pose]
+	var mm := (k["mm"] as Dictionary)[pose] as MultiMesh
+	# Poz ağının sonuna eklenir
+	m["slot"] = at.size()
+	at.append(m)
+	mm.set_instance_transform(at.size() - 1, m["xf"])
+	mm.visible_instance_count = at.size()
+	((k["mi"] as Dictionary)[pose] as Node3D).visible = true
 	m["shown"] = pose
+
+
+## Kişiyi gösterildiği poz ağından çıkarır: o ağın son kişisi onun yuvasına geçer (sıkı kalır), ağ boşalınca gizlenir.
+func _take_out(m: Dictionary) -> void:
+	var k: Dictionary = _kinds[m["kind"]]
+	var pose := str(m["shown"])
+	# slot < 0: hiçbir ağda değil (henüz gösterilmedi ya da figürden çıkarıldı)
+	if not (k["mm"] as Dictionary).has(pose) or int(m["slot"]) < 0:
+		return
+	var at: Array = (k["at"] as Dictionary)[pose]
+	var mm := (k["mm"] as Dictionary)[pose] as MultiMesh
+	var s: int = m["slot"]
+	var last: Dictionary = at[at.size() - 1]
+	if not is_same(last, m):
+		at[s] = last
+		last["slot"] = s
+		mm.set_instance_transform(s, last["xf"])
+	at.resize(at.size() - 1)
+	mm.set_instance_transform(at.size(), _hidden)
+	mm.visible_instance_count = at.size()
+	if at.is_empty():
+		((k["mi"] as Dictionary)[pose] as Node3D).visible = false
+	m["slot"] = -1
 
 
 func _process(delta: float) -> void:

@@ -505,6 +505,28 @@ static func hagia_sophia(parent: Node3D, p: Vector3, s := 1.0, cross := true, de
 			Props.ball(parent, 7.0 * s, p + Vector3(q * 11, 25, side * 30) * s, lead, Vector3(1, 0.55, 1), 12)
 
 
+## Ayasofya silueti tek birleşik ağda (Dressing: 13 ayrı düğüm ve dış çizgileri ~26 çizimdi, şimdi 2). Biçim ve renk
+## hagia_sophia ile aynı (uzak, ayrıntısız); tek haritanın şehri (HornWorld) bunu kullanır.
+static func hagia_merged(parent: Node3D, p: Vector3, s := 1.0, cross := true) -> Node3D:
+	var wall := Color("9a3e2a")
+	var lead := Color("4a5a70")
+	var d := Dressing.new(537)
+	d.chunk = 4000.0
+	if cross:
+		d.box(Vector3(0.7, 5.0, 0.7) * s, p + Vector3(0, 53.5, 0) * s, Color("d9b24a"))
+		d.box(Vector3(3.2, 0.6, 0.6) * s, p + Vector3(0, 54.6, 0) * s, Color("d9b24a"))
+	d.box(Vector3(70, 26, 76) * s, p + Vector3(0, 13, 0) * s, wall)
+	for k in 4:
+		d.box(Vector3(10, 34, 10) * s, p + Vector3((k % 2 - 0.5) * 60, 17, (k / 2 - 0.5) * 26) * s, wall.darkened(0.06))
+	d.cyl(17.0 * s, 7.0 * s, p + Vector3(0, 37, 0) * s, wall.lightened(0.05), Vector3.ZERO, 20)
+	d.cyl(17.1 * s, 2.2 * s, p + Vector3(0, 37.5, 0) * s, Color("3a3438"), Vector3.ZERO, 20)
+	d.ball(17.5 * s, p + Vector3(0, 40.5, 0) * s, lead, Vector3(1, 0.62, 1), 20)
+	for side in [-1, 1]:
+		d.ball(16.0 * s, p + Vector3(0, 30, side * 17) * s, lead, Vector3(1, 0.55, 1), 16)
+		for q in [-1, 1]:
+			d.ball(7.0 * s, p + Vector3(q * 11, 25, side * 30) * s, lead, Vector3(1, 0.55, 1), 12)
+	return d.build(parent)
+
 static func _hagia_detail(parent: Node3D, p: Vector3, s: float, wall: Color, lead: Color) -> void:
 	# Kasnakta 40 pencere, aralarında payanda
 	for k in 40:

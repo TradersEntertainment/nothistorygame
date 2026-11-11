@@ -23,6 +23,7 @@ var player: Player
 var hud: Hud
 
 var _underwater := false
+var _dive_uw := false       # suya çarpış anından yüzeye dönene dek: kamera yüzeyde dururken de sualtı sisi/tonu açık (ilk karede beyaz dip görünüyordu)
 var phase := "intro"        # intro, run, caught, swim, done
 var lane := 1
 var ship_s := 0.0
@@ -38,6 +39,14 @@ var _outcome := ""
 var _arrow_hits := 0
 var _shore_props: Array = []
 var _priority_until := 0.0   # önemli telsiz satırı (garanti) bitene dek tökezleme repliği onu kesmez
+var _stowed := false
+var _rumble_t := 0.0
+
+
+func _stow(on: bool) -> void:
+	if on != _stowed:
+		_stowed = on
+		player.stow_hands(on)
 
 
 func _ready() -> void:
@@ -79,7 +88,11 @@ func _run() -> void:
 	await _wait(0.8)
 	player.shake(1.2)
 	await _wait(0.3)
-	player.face(level.s_to_world(ship_s + BOW, 0.0, 2.5))
+	player.face(level.s_to_world(ship_s + BOW, 0.0, 5.6))     # güverte, tayfa ve direk fesin kenarının altında kalsın
+	# Göz kadırgaya kilitlenir (dar bakış, kamera yerinde): 13 m yukarıdaki kadırga kadrajın üçte birini doldurur;
+	# eskiden yokuşun tepesinde küçücük görünüyordu, "üstüme geliyor" tehdidi okunmuyordu (tur 3). Kontrol gelmeden
+	# önce bakış olağan genişliğine döner.
+	_intro_zoom(0.6, 1.4)
 
 	await _t("D2_T_01")
 	await _h("D2_H_02")
@@ -102,6 +115,7 @@ func _run() -> void:
 	hud.bark("SPK_HIKMET", "D2_H_07", 1.5)
 
 	# Kızak kaçışı
+	_intro_zoom(1.0, 0.5)
 	player.face(level.s_to_world(START_S + 40.0, 0.0, 1.0))
 	# Yavaş makinede diyaloglar fizikten önce bitebilir: oyuncu yere inmeden koşu başlamasın
 	var wait := 0
@@ -120,6 +134,21 @@ func _run() -> void:
 	await _end_chapter()
 
 
+var _zoom_tw: Tween
+
+
+## Açılışta oyuncunun gözünün kadırgaya kilitlenmesi: bakış açısı ayarlanan değerin mult katına iner (kamera yerinde).
+func _intro_zoom(mult: float, t: float) -> void:
+	if _zoom_tw and _zoom_tw.is_valid():
+		_zoom_tw.kill()
+	var fov := float(GameState.settings.get("fov", 72.0)) * mult
+	if t <= 0.0 or GameState.autotest and not GameState.pace:
+		player.camera.fov = fov
+		return
+	_zoom_tw = create_tween()
+	_zoom_tw.tween_property(player.camera, "fov", fov, t).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_IN_OUT)
+
+
 # ================================================================ koşu
 
 func _process(delta: float) -> void:
@@ -127,7 +156,7 @@ func _process(delta: float) -> void:
 		return
 	hud.fez.motion = player.horizontal_speed() * 0.6
 	# Sualtı görünümü kameranın gerçek yüksekliğine bağlı (dalış, düşüş)
-	var uw := player.camera.global_position.y < level.water_y - 0.02
+	var uw := _dive_uw or player.camera.global_position.y < level.water_y - 0.02
 	if uw != _underwater:
 		_underwater = uw
 		hud.set_underwater(uw)
@@ -139,6 +168,47 @@ func _process(delta: float) -> void:
 	if phase == "run":
 		_run_step(delta)
 		_red_button(delta)
+	_swim_fx(delta)
+	_archers_tick(delta)
+	_watchers_tick(delta)
+
+
+## Yüzerken suyun tepkisi: oyuncunun çevresinde genişleyen halkalar (ilerlerken önünde, dururken seyrek), kulaç atan
+## el suya her girişinde küçük halka ve damlalar. Eskiden yüzücünün çevresinde su kıpırdamıyordu.
+var _wake_t := 0.0
+var _wake_prev := Vector3.INF
+var _stroke_k := 0
+
+
+func _swim_fx(delta: float) -> void:
+	if not player.floating or _underwater or level == null:
+		_wake_prev = Vector3.INF
+		return
+	var p := player.global_position
+	var spd := 0.0
+	if _wake_prev != Vector3.INF and delta > 0.0:
+		spd = Vector2(p.x - _wake_prev.x, p.z - _wake_prev.z).length() / delta
+	_wake_prev = p
+	if spd > 20.0:
+		spd = 0.0     # ışınlanma (otomatik test, kararma)
+	var fwd := -player.global_transform.basis.z
+	fwd.y = 0.0
+	fwd = fwd.normalized()
+	_wake_t -= delta
+	if _wake_t <= 0.0:
+		_wake_t = 0.4 if spd > 0.3 else 1.3
+		level.ripple(p + fwd * 0.35, 0.35, 1.7 if spd > 0.3 else 1.0, 1.6, 0.45 if spd > 0.3 else 0.25)
+	if spd > 0.3:
+		var st: float = player.get("_stroke")
+		var k := int(st / PI)
+		if k != _stroke_k:
+			_stroke_k = k
+			# Kulaç: önce sol, sonra sağ el suya girer (elin ekrandaki yerinin önünde)
+			var hand: Node3D = player.free_hand if k % 2 == 0 else player.hand
+			if hand and hand.is_inside_tree():
+				var hp := hand.global_position + fwd * 0.25
+				level.ripple(hp, 0.1, 0.8, 0.9, 0.55)
+				level.drops(hp, 6, 1.4, 0.016)      # gözün dibinde: küçük damlalar
 
 
 ## Fizik adımında: halatın üstünden havada geçildiyse işaretle (kare takılsa bile adil olsun);
@@ -179,6 +249,15 @@ func _run_step(delta: float) -> void:
 	level.set_ship_s(ship_s)
 	var gap := s - (ship_s + BOW)
 	hud.set_chase(tr("UI_CHASE"), 1.0 - clampf(gap / START_GAP, 0.0, 1.0))
+	# Kadırga yaklaştıkça yer sarsılır (kütüklerin gümbürtüsü): kamera hafifçe titrer
+	_rumble_t -= delta
+	if gap < 12.0 and _rumble_t <= 0.0:
+		_rumble_t = 0.25
+		player.shake(0.05 + 0.2 * (1.0 - clampf(gap / 12.0, 0.0, 1.0)))
+	level.chase_gap = gap
+	# Omuz üstünden bakış (tur 4): ilk halat aşılınca bir kez, 0,56 sn; ekranlı oyunda (testte atlanır)
+	if not _glanced and s >= 28.0 and not (GameState.autotest and not GameState.pace):
+		_glance()
 
 	# Engeller
 	var prompt := ""
@@ -232,6 +311,30 @@ func _run_step(delta: float) -> void:
 		_caught(s)
 	elif s >= Slipway.LENGTH - 1.0:
 		phase = "swim"
+
+
+var _glanced := false
+
+
+## Omuz üstünden bakış: kamera 0,56 sn'de kadırgaya döner (dev pruva kadrajı doldurur), geri gelir. Kamera oyuncunun
+## gözünde kalır; yalnız bakış döner (yürüyüş yönü ve şerit tuşları script_velocity ile sürdüğü için kontrol kaybı yok;
+## fare dönüşü korunur: dönüş eklemeli uygulanır). Oynanışı, süreleri ve engel zamanlamasını değiştirmez.
+func _glance() -> void:
+	_glanced = true
+	var turn := PI * 0.93
+	var pitch := 0.24
+	var last := {"e": 0.0}
+	var apply := func(e: float) -> void:
+		var d: float = e - float(last["e"])
+		last["e"] = e
+		if is_instance_valid(player):
+			player.rotation.y += d * turn
+			player.camera.rotation.x += d * pitch
+	var tw := create_tween()
+	tw.tween_method(apply, 0.0, 1.0, 0.18).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_OUT)
+	tw.tween_interval(0.2)
+	tw.tween_method(apply, 1.0, 0.0, 0.18).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_IN)
+	player.shake(0.25)
 
 
 ## "Yokuş bitti!" kenarda bitsin diye replik kenardan bu kadar saniye önce başlar (kaydın uzunluğu).
@@ -338,6 +441,7 @@ func _early_end() -> void:
 # ================================================================ Haliç
 
 func _swim() -> void:
+	level.chase_gap = 99.0
 	player.frozen = true
 	player.move_mode = "walk"
 	player.gravity_on = false
@@ -367,6 +471,8 @@ func _swim() -> void:
 ## Kesme yok: kamera baştan sona oyuncunun gözünde kalır.
 func _plunge() -> void:
 	hud.show_controls(false)
+	# İki el boş: kumanda fırlayışta cebe girer (düşerken, sualtında, yüzerken elde duruyordu); karaya çıkınca geri
+	_stow(true)
 	level.stop_haul()
 	var p0 := player.global_position
 	var fwd := level.down_dir()
@@ -394,9 +500,13 @@ func _plunge() -> void:
 		player.camera.rotation.x = lerpf(pitch0, -0.8, smoothstep(0.1, 0.9, t)), 0.0, 1.0, 1.25).set_trans(Tween.TRANS_LINEAR)
 	await air.finished
 	# Şap! Çığlık suyla kesilir
+	_dive_uw = true
 	hud.cut_voice()
 	Audio.sfx("splash", -1.0, 0.85)
-	level.splash(surf + fwd * 0.5, true)
+	level.splash(surf + fwd * 1.8, true)      # çarpış sütunu gözün dibinde değil, biraz önde (iri damlalar kameraya yapışıyordu)
+	# Çarpışın halkaları: biri hızla, biri yavaşça açılır (köpük suyun yüzünde bir süre kalır)
+	level.ripple(surf + fwd * 0.5, 0.4, 2.6, 1.1, 0.55)
+	level.ripple(surf + fwd * 0.5, 0.3, 3.8, 1.9, 0.35)
 	player.shake(0.8)
 	var down := create_tween()
 	down.tween_property(player, "global_position", under, 0.45).set_ease(Tween.EASE_OUT).set_trans(Tween.TRANS_QUAD)
@@ -414,13 +524,17 @@ func _plunge() -> void:
 	up.parallel().tween_method(func(t: float): player.rotation.y = lerp_angle(yaw0, yaw, t), 0.0, 1.0, 0.9)
 	up.parallel().tween_property(player.camera, "rotation:x", 0.05, 0.9)
 	await up.finished
+	_dive_uw = false
 	level.splash(surf + Vector3(0, 0, -0.6) - fwd * 0.2)
+	level.ripple(surf, 0.4, 2.6, 1.8, 0.55)
 	Audio.sfx("splash", -10.0, 1.3)
 	var rise := create_tween()
 	rise.tween_property(player, "global_position", _water(land), 0.3).set_ease(Tween.EASE_OUT)
 	await rise.finished
 	player.floating = true
 	player.face(look)
+	# Başı sudan çıktı: saçından gözünün önüne su damlar
+	level.drips(player, 2.5, player.camera)
 
 
 func _water(p: Vector3) -> Vector3:
@@ -468,19 +582,46 @@ func _to_shore() -> void:
 		_seize(guards, landing)
 		await _say("SPK_SOLDIER", "D2_S_14" if GameState.flags.get("fez", true) else "D2_S_14_NOFEZ")
 		await _t("D2_T_15")
-		Stage.reach(guards[0], Stage.player_arm(player), 1.6)
+		await _seize_done(guards)
+		_grab_arms(guards, 4.0)
 		player.shake(0.15)
 		await _say("SPK_SOLDIER", "D2_S_16")
+		await Handover.wait(self, 0.05 if Stage.fast() else 0.6)
 		await _budget()
+		player.free_hold = Vector3.INF
 		for g in guards:
 			g.queue_free()
 
 
-## Kıyıya çıkış: oyuncu kuru zemine oturur ve yer çekimi açılır (suda kapalı kalmıştı).
+## Kıyıya çıkış: oyuncu kuru zemine oturur ve yer çekimi açılır (suda kapalı kalmıştı). Sudan çıkan ıslaktır:
+## giysisinden ve saçından su damlar, ayağının altında su birikir, sudan buraya ıslak ayak izleri uzanır (eskiden
+## kararmadan kupkuru çıkıyordu).
 func _land_on_shore() -> Vector3:
 	var landing := _shore_landing()
 	player.global_position = landing
 	player.gravity_on = true
+	_stow(false)
+	level.drips(player, 9.0, player.camera)
+	level.wet_spot(Vector3(landing.x, _ground_y(landing.x, landing.z), landing.z), Vector2(1.1, 0.8), randf() * TAU, 40.0)
+	var from := _shore_water(landing)
+	var dir := Vector3(landing.x - from.x, 0.0, landing.z - from.z)
+	if dir.length() > 0.5:
+		var n := dir.normalized()
+		var lat := Vector3(-n.z, 0.0, n.x)
+		var yaw := atan2(n.x, n.z)
+		# Islak ayak izleri: çıplak ayak biçimi (topuk, taban, parmaklar), sol-sağ sırayla, adım 0,58 m, yürüyüş yönünde,
+		# zemine yatık; sudan çıkış çizgisinden çıkış yerine, sonra kururlar
+		var k := 0
+		var ln := Vector3(landing.x - from.x, 0, landing.z - from.z).length()
+		var d := 0.3
+		while d < ln - 0.2:
+			var q := from + n * d + lat * (0.1 if k % 2 == 0 else -0.1)
+			var gy := _ground_y(q.x, q.z)
+			if gy > level.water_y + 0.05:
+				var nr := Vector3(_ground_y(q.x - 0.25, q.z) - _ground_y(q.x + 0.25, q.z), 0.5, _ground_y(q.x, q.z - 0.25) - _ground_y(q.x, q.z + 0.25)).normalized()
+				level.wet_foot(Vector3(q.x, gy, q.z), yaw + (0.08 if k % 2 == 0 else -0.08), k % 2 == 0, 45.0, nr)
+			k += 1
+			d += 0.58
 	return landing
 
 
@@ -496,11 +637,11 @@ func _shore_landing() -> Vector3:
 	for dx: float in [1.5, -1.5, 4.5, 7.5, 10.5, 13.5, 16.5, 19.5, -27.0, -30.0, -24.0, -33.0, -21.0, -36.0]:
 		var p := Vector3(sp.x + dx, 0.0, sp.z + 3.2)
 		for i in 60:
-			if _ground_y(p.x, p.z) > level.water_y + 0.25:
+			if _ground_y_path(p.x, p.z) > level.water_y + 0.25:
 				break
 			p.z += 0.5
 		p.z += 1.0
-		p.y = _ground_y(p.x, p.z) + 0.05
+		p.y = _ground_y_path(p.x, p.z) + 0.05
 		if first == Vector3.INF:
 			first = p
 		if _spot_clear(p):
@@ -517,7 +658,7 @@ func _shore_landing() -> Vector3:
 func _shore_water(landing: Vector3) -> Vector3:
 	var p := landing
 	for i in 40:
-		if _ground_y(p.x, p.z) < level.water_y - 0.6:
+		if _ground_y_path(p.x, p.z) < level.water_y - 0.6:
 			break
 		p.z -= 0.5
 	return p + Vector3(0, 0, -1.5)
@@ -544,6 +685,373 @@ func _place_watchers() -> void:
 	if w.size() >= 2:
 		w[0].look_target = w[1]
 		w[1].look_target = w[0]
+		# Hüseyin'in karıştırdığı küçük ateş: taş halka, kütükler, alev ve ince duman (Hasan suyu gözlerken)
+		if _watch_fire == null:
+			var f: Vector3 = pos[1] + (pos[0] - pos[1]).normalized().rotated(Vector3.UP, 1.2) * 0.75
+			f.y = _ground_y(f.x, f.z)
+			_watch_fire = Node3D.new()
+			level.add_child(_watch_fire)
+			_watch_fire.global_position = f
+			for a in 6:
+				var ang := TAU * a / 6.0
+				Props.ball(_watch_fire, 0.09, Vector3(cos(ang) * 0.28, 0.04, sin(ang) * 0.28), Color("7a766c"), Vector3(1, 0.7, 1), 6)
+			for a in 3:
+				Props.cyl(_watch_fire, 0.04, 0.5, Vector3(0, 0.08, 0), Color("4a3422"), Vector3(80, a * 60.0, 0), 6)
+			Props.bake_static(_watch_fire, _watch_fire.get_children())
+			Flame.add(_watch_fire, Vector3(0, 0.12, 0), 0.28, 0.42)
+			Vfx.smoke_wisp(_watch_fire, f + Vector3(0, 0.55, 0), 2.6)
+			# Elinde ateşi karıştırdığı değnek (her karede elden közün içine)
+			_watch_stick = Node3D.new()
+			level.add_child(_watch_stick)
+			Props.cyl(_watch_stick, 0.018, 0.95, Vector3(0, 0, 0), Color("5a3e26"), Vector3.ZERO, 5)
+			_watch_stick.visible = false
+	_place_archers(landing, fwd)
+	# Kameranın ve karakterlerin durduğu yerlerden 1,3 m içinde ot/çalı kalmaz (tur 3: kameranın dibinde dev yaprak)
+	if not _cleared:
+		_cleared = true
+		var pts: Array = [landing]
+		var wat := _shore_water(landing)
+		for i in 12:
+			pts.append(wat.lerp(landing, i / 11.0))
+		for i in 8:
+			pts.append(landing + fwd * (0.8 * i))
+		pts.append_array(pos)
+		for a: Dictionary in _archers:
+			pts.append((a["sol"] as Node3D).global_position)
+		if _watch_fire:
+			pts.append(_watch_fire.global_position)
+		var n := level.clear_detail_near(pts, 1.3)
+		if GameState.autotest:
+			print("SHORE cleared %d grass" % n)
+
+
+## Kıyıdaki okçular: kıyı yolunda suya düşen oklar bunların yayından çıkar. Çıkış yerinin iki yanında, yüzerken bakılan
+## kıyıda, suyun kenarında dururlar. Atış: sadaktan ok çeker, oku kirişe takar, yay dik, sol kol hedefe uzanır, sağ el
+## kirişi çenesine çeker (kiriş V olur), bırakınca ok elden kavisle uçar. Atış aralarında da sadağa uzanırlar.
+## Eskiden yay yatay duruyor, ok yayın yanında asılı kalıyor, çeken el kirişe gitmiyordu.
+var _archers: Array = []      # [{sol, bow, bow_xf, string, nock, ropes, state, t, at, dur, fetch}]
+
+
+func _place_archers(landing: Vector3, fwd: Vector3) -> void:
+	if not _archers.is_empty():
+		return
+	var space := get_world_3d().direct_space_state
+	var coats := [Color("b3262d"), Color("3f7a3a"), Color("c98a3a"), Color("2f5fa8")]
+	var k := 0
+	for along: float in [-5.5, -8.5, 7.5, 10.5]:
+		# Kumsalda, suyun 0,8 m gerisinde, görünen kuma basarak (tur 3: eskiden çarpışma yüzeyi görünen yamacın altında
+		# kalıyordu, okçu yamaca gömülüp yalnız fesi görünüyordu); kumsal dar ya da doluysa kıyı boyunca kayar
+		var ok := false
+		var p := Vector3.ZERO
+		for shift: float in [0.0, 1.2, -1.2, 2.4, -2.4, 3.6, -3.6, 4.8, -4.8]:
+			var b0 := landing + fwd * (along + shift)
+			p = Vector3(b0.x, 0.0, landing.z - 7.0)
+			var wet := true
+			for i in 50:
+				if _ground_y(p.x, p.z) > level.water_y + 0.12:
+					wet = false
+					break
+				p.z += 0.3
+			if wet:
+				continue
+			p.z += 0.8
+			p.y = _ground_y(p.x, p.z)
+			var flat := true
+			for o: Vector2 in [Vector2(0.45, 0), Vector2(-0.45, 0), Vector2(0, 0.45), Vector2(0, -0.45)]:
+				if absf(_ground_y(p.x + o.x, p.z + o.y) - p.y) > 0.18:
+					flat = false
+			var sq := PhysicsShapeQueryParameters3D.new()
+			var cap := SphereShape3D.new()
+			cap.radius = 0.45
+			sq.shape = cap
+			sq.transform = Transform3D(Basis(), p + Vector3(0, 1.1, 0))
+			sq.exclude = [player.get_rid()]
+			if flat and space.intersect_shape(sq, 1).is_empty() and p.y - level.water_y < 0.9:
+				ok = true
+				break
+		if not ok:
+			continue
+		var sol := Soldier.new(coats[k % coats.size()], "stand", "azap" if k % 2 == 0 else "bork")
+		sol.set_meta("no_talk", true)
+		level.add_child(sol)
+		sol.global_position = p
+		sol.equip("bow")
+		var el: Node3D = sol.rig.elbow_l if sol.rig else null
+		var bow: Node3D = el.get_child(el.get_child_count() - 1) if el else null
+		var string: Node3D = bow.get_child(bow.get_child_count() - 1) if bow else null
+		# Sırtta sadak: deri kılıf, ağzından tüyler görünür
+		var qv := Node3D.new()
+		sol.add_child(qv)
+		qv.position = Vector3(0.14, 1.12, -0.2)
+		qv.rotation_degrees = Vector3(-14, 0, -18)
+		Props.cyl(qv, 0.07, 0.62, Vector3.ZERO, Color("6a4428"), Vector3.ZERO, 7)
+		for f in 4:
+			Props.box(qv, Vector3(0.012, 0.12, 0.05), Vector3((f % 2) * 0.04 - 0.02, 0.36, (f / 2) * 0.04 - 0.02), Color("efe6cf"))
+		# Kirişe yatırılan ok ve çekili kirişin iki kolu (çekişte görünür)
+		var nock := MeshInstance3D.new()
+		nock.mesh = Assault.arrow_mesh()
+		nock.material_override = Crowd.material()
+		level.add_child(nock)
+		nock.visible = false
+		var ropes: Array = []
+		for r in 2:
+			var rp := Stage.rope(level, Vector3.ZERO, Vector3(0, 0.1, 0), 0.0, 0.008, Color("e8e0cc"))
+			rp.visible = false
+			ropes.append(rp)
+		sol.face_toward(p + Vector3(0, 0, -10.0))
+		_archers.append({"sol": sol, "bow": bow, "bow_xf": bow.transform if bow else Transform3D(), "string": string, "nock": nock,
+			"ropes": ropes, "qv": qv, "state": "idle", "t": randf_range(1.0, 3.0), "at": Vector3.ZERO, "dur": 0.45, "fetch": 0.2})
+		k += 1
+	if GameState.autotest:
+		var hs: Array = []
+		for a: Dictionary in _archers:
+			hs.append("%.1f" % ((a["sol"] as Node3D).global_position.y - level.water_y))
+		print("ARCHERS n=%d above_water=%s" % [_archers.size(), hs])
+
+
+## Ok at: en uygun boştaki okçu hedefe döner, sadaktan ok çeker, kirişe takıp gerer, fire saniye sonra bırakır; ok kavis
+## çizip hedefe dur saniyede varır. Okçu yoksa false (eski düşen ok).
+func _archer_shoot(at: Vector3, fire: float, dur: float) -> bool:
+	var best: Dictionary = {}
+	var bd := INF
+	for a: Dictionary in _archers:
+		var sol: Soldier = a["sol"]
+		if a["state"] not in ["idle", "touch", "aim"] or not is_instance_valid(sol) or not sol.is_visible_in_tree():
+			continue
+		var d := sol.global_position.distance_to(at)
+		if d < bd and d < 45.0:
+			bd = d
+			best = a
+	if best.is_empty():
+		return false
+	var s: Soldier = best["sol"]
+	s.face_toward(at)
+	_archer_lock(best, true)
+	# Gerip nişan alan okçu hemen bırakır (ok zaten kirişte); boştaki sadaktan çeker
+	best["fetch"] = 0.0 if best["state"] == "aim" and float(best.get("drawn", 0.0)) > 0.0 else minf(0.22, fire * 0.35)
+	best["state"] = "fetch"
+	best["t"] = fire
+	best["at"] = at
+	best["dur"] = dur
+	return true
+
+
+func _archer_lock(a: Dictionary, on: bool) -> void:
+	var sol: Soldier = a["sol"]
+	if sol.rig == null or bool(a.get("locked", false)) == on:
+		return
+	a["locked"] = on
+	if on:
+		sol.rig.lock += 1
+	else:
+		sol.rig.lock = maxi(0, sol.rig.lock - 1)
+		# Kollar ve yay kendi duruşuna döner (IK'nin yazdığı dönüşler kalmasın: T-pozu)
+		for n: Node3D in [sol.rig.arm_l, sol.rig.arm_r, sol.rig.elbow_l, sol.rig.elbow_r]:
+			if n:
+				n.rotation = Vector3.ZERO
+		if a["bow"]:
+			(a["bow"] as Node3D).transform = a["bow_xf"]
+		if a["string"]:
+			(a["string"] as Node3D).visible = true
+		(a["nock"] as Node3D).visible = false
+		for rp: Node3D in a["ropes"]:
+			rp.visible = false
+
+
+## Okçunun çekiş duruşu (her kare): sol el hedefe uzanır, yay dik ve hedefe dönük; sağ el sadağa (fetch) ya da çeneye
+## (draw); çekişte kiriş iki koldan ele gelir, ok kirişte.
+func _archer_pose(a: Dictionary, draw: bool) -> void:
+	var sol: Soldier = a["sol"]
+	var rg := sol.rig
+	if rg == null or rg.arm_l == null or rg.arm_r == null:
+		return
+	var at: Vector3 = a["at"]
+	var flat := at - sol.global_position
+	flat.y = 0.0
+	var aim := flat.normalized() if flat.length() > 0.1 else -sol.global_basis.z
+	var up := Vector3.UP
+	var right := aim.cross(up).normalized()
+	var aim_up := (aim + Vector3(0, 0.16, 0)).normalized()
+	var sh_l := rg.arm_l.global_position
+	var bow_hand := sh_l + aim_up * 0.6 + right * 0.08
+	Rig.reach(rg.arm_l, rg.elbow_l, bow_hand, Vector3.DOWN - right)
+	var head := sol.global_position + Vector3(0, 1.52, 0)
+	var chin := head + aim * 0.06 + right * 0.03 - up * 0.06
+	var hand_r: Vector3 = chin if draw else sol.to_global(Vector3(0.2, 1.62, -0.24))
+	Rig.reach(rg.arm_r, rg.elbow_r, hand_r, Vector3.DOWN + right * 0.8)
+	var bow: Node3D = a["bow"]
+	if bow == null:
+		return
+	var palm := rg.elbow_l.to_global(rg.elbow_l.get_meta("hand", Vector3(0, -0.26, 0.01)))
+	var bz := aim_up
+	var by := (up - bz * up.dot(bz)).normalized()
+	bow.global_transform = Transform3D(Basis(by.cross(bz), by, bz), palm)
+	var nock: Node3D = a["nock"]
+	var string: Node3D = a["string"]
+	if draw:
+		if string:
+			string.visible = false
+		var top := bow.to_global(Vector3(0, 0.46, -0.055))
+		var bot := bow.to_global(Vector3(0, -0.46, -0.055))
+		var hand := rg.elbow_r.to_global(rg.elbow_r.get_meta("hand", Vector3(0, -0.26, 0.01)))
+		Stage.rope_to(a["ropes"][0], [level.to_local(top), level.to_local(hand)])
+		Stage.rope_to(a["ropes"][1], [level.to_local(bot), level.to_local(hand)])
+		for rp: Node3D in a["ropes"]:
+			rp.visible = true
+		var dir := (palm - hand).normalized()
+		var ny := (up - dir * up.dot(dir)).normalized()
+		nock.global_transform = Transform3D(Basis(ny.cross(dir), ny, dir), hand + dir * 0.42)
+		nock.visible = true
+	else:
+		nock.visible = false
+
+
+func _archers_tick(delta: float) -> void:
+	for a: Dictionary in _archers:
+		var sol: Soldier = a["sol"]
+		if not is_instance_valid(sol):
+			continue
+		a["t"] = float(a["t"]) - delta
+		match a["state"]:
+			"fetch":
+				# Sağ el sırttaki sadağa uzanır, bir ok çeker
+				_archer_pose(a, false)
+				a["fetch"] = float(a["fetch"]) - delta
+				if float(a["fetch"]) <= 0.0:
+					a["state"] = "draw"
+			"draw":
+				_archer_pose(a, true)
+				if float(a["t"]) <= 0.0:
+					var nock: Node3D = a["nock"]
+					var from := nock.global_position + nock.global_basis.z * 0.3
+					level.arrow_shot(from, a["at"], float(a["dur"]))
+					Audio.sfx_at("whoosh_fly", sol, -8.0)
+					a["state"] = "loose"
+					a["t"] = 0.35
+					nock.visible = false
+					for rp: Node3D in a["ropes"]:
+						rp.visible = false
+					if a["string"]:
+						(a["string"] as Node3D).visible = true
+			"loose":
+				if float(a["t"]) <= 0.0:
+					_archer_lock(a, false)
+					a["state"] = "idle"
+					a["t"] = randf_range(2.5, 4.5)
+			"touch":
+				# Atış arası: sadaktan yedek ok yoklar
+				_archer_pose(a, false)
+				if float(a["t"]) <= 0.0:
+					_archer_lock(a, false)
+					a["state"] = "idle"
+					a["t"] = randf_range(3.0, 6.0)
+			"aim":
+				# Yüzeni izleyip yayı gerer, nişanda bekler (ok kirişte, çeken el çenede), sonra gevşer: atış anı kısa
+				# olduğundan oynanış karesinde germe pozu hiç görünmüyordu (tur 3)
+				a["at"] = player.global_position
+				sol.face_toward(player.global_position)
+				a["drawn"] = float(a.get("drawn", 0.0)) + delta
+				_archer_pose(a, float(a["drawn"]) > 0.25)
+				if float(a["t"]) <= 0.0:
+					_archer_lock(a, false)
+					a["state"] = "idle"
+					a["drawn"] = 0.0
+					a["t"] = randf_range(0.8, 2.0)
+			_:
+				# Boştayken yüzen adamı gözler; çoğu zaman yayı gerip nişan alır, arada sadağa uzanır
+				if float(a["t"]) <= 0.0 and player.floating:
+					sol.face_toward(player.global_position)
+					var r := randf()
+					a["at"] = player.global_position
+					if r < 0.6:
+						_archer_lock(a, true)
+						a["state"] = "aim"
+						a["drawn"] = 0.0
+						a["t"] = randf_range(1.6, 2.6)
+					elif r < 0.85:
+						_archer_lock(a, true)
+						a["state"] = "touch"
+						a["t"] = 0.5
+					else:
+						a["t"] = 0.6
+
+
+var _watch_fire: Node3D
+var _cleared := false
+var _watch_stick: Node3D
+var _watch_lock := false
+var _watch_t := 0.0
+
+
+## Kıyıdaki iki gözcü yüzerken iş başında (tur 3: eskiden hiç kıpırdamıyorlardı): Hasan sağ elini alnına siper edip
+## suya, yüzene bakar, sol eli belinde; Hüseyin ateşin başında öne eğilmiş, değnekle közü karıştırır. Kıyıya çıkılınca
+## (konuşma, yakalama) bırakırlar.
+func _watchers_tick(delta: float) -> void:
+	var w := _watchers()
+	var on := player.floating and phase != "done" and w.size() >= 2 and _watch_fire != null and (w[0] as Node3D).is_visible_in_tree()
+	if on != _watch_lock:
+		_watch_lock = on
+		for s: Soldier in w:
+			if s.rig == null:
+				continue
+			if on:
+				s.rig.lock += 1
+			else:
+				s.rig.lock = maxi(0, s.rig.lock - 1)
+				for n: Node3D in [s.rig.arm_l, s.rig.arm_r, s.rig.elbow_l, s.rig.elbow_r]:
+					if n:
+						n.rotation = Vector3.ZERO
+				if s.rig.body:
+					s.rig.body.rotation = Vector3.ZERO
+		if _watch_stick:
+			_watch_stick.visible = on
+		# İş başındayken birbirlerine dönmezler; bırakınca yine konuşmaya dönük
+		if w.size() >= 2:
+			w[0].look_target = null if on else w[1]
+			w[1].look_target = null if on else w[0]
+	if not on:
+		return
+	_watch_t += delta
+	var h: Soldier = w[0]
+	var u: Soldier = w[1]
+	# Hasan: suya döner, eli alnında siper
+	var to := player.global_position - h.global_position
+	to.y = 0.0
+	if to.length() > 0.5:
+		h.global_rotation.y = lerp_angle(h.global_rotation.y, atan2(to.x, to.z), clampf(delta * 2.0, 0.0, 1.0))
+	var hf := h.global_basis.z.normalized()
+	var hr := Vector3.UP.cross(hf).normalized()
+	var head := h.global_position + Vector3(0, 1.62, 0)
+	if h.rig.arm_r and h.rig.elbow_r:
+		Rig.reach(h.rig.arm_r, h.rig.elbow_r, head + hf * 0.2 - hr * 0.02 + Vector3(0, 0.12 + sin(_watch_t * 0.7) * 0.01, 0), Vector3.DOWN - hr)
+	if h.rig.arm_l and h.rig.elbow_l:
+		Rig.reach(h.rig.arm_l, h.rig.elbow_l, h.global_position + Vector3(0, 0.98, 0) + hr * 0.3 + hf * 0.04, hr - hf)
+	if h.rig.body:
+		h.rig.body.rotation.x = 0.06 + sin(_watch_t * 0.5) * 0.02
+	# Hüseyin: ateşe dönük, öne eğik, değnekle közü karıştırır (küçük daireler)
+	var fp := _watch_fire.global_position
+	var tf := fp - u.global_position
+	tf.y = 0.0
+	if tf.length() > 0.2:
+		u.global_rotation.y = lerp_angle(u.global_rotation.y, atan2(tf.x, tf.z), clampf(delta * 3.0, 0.0, 1.0))
+	if u.rig.body:
+		u.rig.body.rotation.x = 0.32
+	var uf := tf.normalized() if tf.length() > 0.2 else u.global_basis.z
+	var ur := Vector3.UP.cross(uf).normalized()
+	var stir := Vector3(cos(_watch_t * 2.6), 0, sin(_watch_t * 2.6)) * 0.08
+	var hand := u.global_position + uf * 0.42 + Vector3(0, 0.98, 0) + stir + ur * 0.08
+	if u.rig.arm_r and u.rig.elbow_r:
+		Rig.reach(u.rig.arm_r, u.rig.elbow_r, hand, Vector3.DOWN + ur)
+	if u.rig.arm_l and u.rig.elbow_l:
+		Rig.reach(u.rig.arm_l, u.rig.elbow_l, u.global_position + Vector3(0, 0.62, 0) + uf * 0.3 - ur * 0.16, Vector3.DOWN - ur)
+	if _watch_stick and u.rig.elbow_r:
+		var hp := u.rig.elbow_r.to_global(u.rig.elbow_r.get_meta("hand", Vector3(0, -0.26, 0.01)))
+		var tip := fp + Vector3(0, 0.1, 0) + stir * 0.6
+		var d := (tip - hp)
+		if d.length() > 0.05:
+			var dn := d.normalized()
+			var side := dn.cross(Vector3.UP if absf(dn.y) < 0.95 else Vector3.RIGHT).normalized()
+			_watch_stick.global_transform = Transform3D(Basis(side, dn, side.cross(dn)), hp + dn * 0.4)
 
 
 func _watchers() -> Array[Node3D]:
@@ -575,7 +1083,31 @@ func _ground_y(x: float, z: float) -> float:
 		if col is CollisionObject3D and (hud._is_person_part(col) or (not hud._is_visible_occluder(col) and not (col as Node).has_meta("ground"))):
 			q.exclude = q.exclude + [(col as CollisionObject3D).get_rid()]
 			continue
+		# Görünen arazi (kumsal dahil) çarpışma yüzeyinden yüksekse ona basılır: okçular yamaca gömülüyordu (tur 3)
+		return maxf((hit["position"] as Vector3).y, level.surface_h(x, z))
+	return level.surface_h(x, z)
+
+
+## Çıkış yeri ve yüzme hedefi seçimi için zemin (tur 2'deki ölçümün aynısı: oynanış yolu değişmesin). Kumsal artık
+## arazinin kendisi ve kum kutusunun yalnız çarpışması kaldı; eski ölçüm kutunun üstünü (suyun 20 cm üstü) görüyordu.
+func _ground_y_path(x: float, z: float) -> float:
+	var q := PhysicsRayQueryParameters3D.create(Vector3(x, level.water_y + 40.0, z), Vector3(x, level.water_y - 6.0, z))
+	q.exclude = [player.get_rid()]
+	var space := get_world_3d().direct_space_state
+	for tries in 8:
+		var hit := space.intersect_ray(q)
+		if hit.is_empty():
+			break
+		var col = hit["collider"]
+		if col is CollisionObject3D and (hud._is_person_part(col) or (not hud._is_visible_occluder(col) and not (col as Node).has_meta("ground"))):
+			q.exclude = q.exclude + [(col as CollisionObject3D).get_rid()]
+			continue
 		return (hit["position"] as Vector3).y
+	var end := level.end_point()
+	if absf(x - end.x) <= 40.0 and z >= end.z - 3.0 and z <= end.z + 7.0:
+		return level.water_y + 0.2
+	if absf(x - end.x) < 46.0 and z < end.z - 3.0 and z > end.z - 10.0:
+		return level.water_y - 1.6
 	return level.surface_h(x, z)
 
 
@@ -596,7 +1128,7 @@ func _spot_clear(p: Vector3) -> bool:
 	fwd0 = fwd0.normalized()
 	var side0 := Vector3(-fwd0.z, 0.0, fwd0.x)
 	for o: Vector3 in [fwd0 * 2.6 + side0 * 0.9, fwd0 * 2.6 - side0 * 0.9, fwd0 * 4.0 - side0 * 0.45, fwd0 * 4.9 + side0 * 0.85]:
-		if absf(_ground_y(p.x + o.x, p.z + o.z) - p.y) > 0.6:
+		if absf(_ground_y_path(p.x + o.x, p.z + o.z) - p.y) > 0.6:
 			return false
 	# Önündeki askerlerin duracağı şerit: diz, bel ve göz hizasında, ortada ve iki yanda (tezgâh damı göz hizasının altında kalabiliyor)
 	var fwd := _shore_look(p) - p
@@ -635,10 +1167,44 @@ func _spot_clear(p: Vector3) -> bool:
 ## Yakalama: askerler bağırarak koşup gelir, biri Tolga'yı kolundan tutar (eskiden 2.6 m önde belirip bağırıyor,
 ## sonra göz önünde siliniyorlardı; QA_DERSLER "yakalama yüz yüze").
 func _seize(guards: Array[Node3D], at: Vector3) -> void:
-	var side := player.global_transform.basis.x
+	var fwd := _shore_look(at) - at
+	fwd.y = 0.0
+	fwd = fwd.normalized()
+	var side := Vector3(-fwd.z, 0.0, fwd.x)
+	# Kol boyuna gelirler (tur 4: oyuncunun iki yanında yarım adım geride, 1,05 m açıkta: yüzleri kadrajın kenarında, gövdeleri kameranın yakın düzlemine girmez; gövde öne eğilip kollar bileklere uzanır): ayakları her adımda kuma/çimene basar (eskiden doğrusal
+	# tween eğimde havada yürütüyordu, bazen 6 m'de kalıp boşluğa uzanıyorlardı)
 	for i in guards.size():
-		Stage.approach(guards[i], at, 1.75, 3.2, side * (0.55 if i == 0 else -0.55), _ground_y)
-	await Handover.wait(self, 0.05 if Stage.fast() else 1.4)
+		Stage.walk_on_ground(guards[i], at + fwd * 0.3 + side * (-1.05 if i == 0 else 1.05), _ground_y, 3.2, at + Vector3(0, 1.4, 0))
+	await Handover.wait(self, 0.05 if Stage.fast() else 0.3)
+
+
+## Askerler varana dek bekler (en çok 4 sn).
+func _seize_done(guards: Array[Node3D]) -> void:
+	var t := 0.0
+	while t < 4.0:
+		var busy := false
+		for g in guards:
+			if is_instance_valid(g) and g.get_meta("stage_walk", false):
+				busy = true
+		if not busy:
+			return
+		await get_tree().process_frame
+		t += get_process_delta_time()
+
+
+## İki asker Tolga'yı iki bileğinden tutar: Tolga'nın sol eli de görünür (yarı kalkık), sağdaki asker sağ bileği,
+## soldaki sol bileği kavrar; askerler öne eğilir, eller bileklerin üstünde her karede yerinde kalır (Stage.grip_hold).
+## Eskiden hedef kameranın önünde boşluktaydı: kol boşluğa uzanıyor, yumruk havada kalıyordu.
+func _grab_arms(guards: Array[Node3D], hold: float, lean := 0.4) -> void:
+	player.free_hold = Vector3(-0.24, -0.2, -0.45)
+	for i in mini(2, guards.size()):
+		var g := guards[i]
+		if g is Soldier:
+			(g as Soldier).pose = "stand"
+		Stage.face(g, player.global_position)
+		var hand: Node3D = player.free_hand if i == 0 else player.hand
+		if hand:
+			Stage.grip_hold(g, hand, [Vector3(0, 0.035, 0.07)], hold + 4.0, lean)
 
 
 ## Kızaktan uzağa, kıyı boyunca bakar (kadırga arkada kalır).
@@ -684,8 +1250,10 @@ func _to_chain() -> void:
 		along.y = 0.0
 		along = along.normalized()
 		var side := along.cross(Vector3.UP).normalized()
-		player.global_position = _water(cp + side * 2.3)
-		player.face(Vector3(cp.x, level.water_y + 0.9, cp.z) + along * 14.0)
+		# Tur 4: kütük kadrajı kaplıyordu (2,3 m yanında, sonra %40 yaklaşıp 1,4 m'ye iniyordu): biraz geride ve yanda,
+		# zincire çaprazdan bakar (pull %30 → son uzaklık ≈2,3 m); kütük sol altta, uzakta zincirin devamı kalır
+		player.global_position = _water(cp + side * 2.8 - along * 1.8)
+		player.face(Vector3(cp.x, level.water_y + 0.6, cp.z) + along * 12.0 - side * 1.0)
 		await hud.fade_to(0.0, 0.6)
 	else:
 		player.face(cp + Vector3(20, 1.0, -60))
@@ -693,7 +1261,14 @@ func _to_chain() -> void:
 	var to_me := Vector3(player.global_position.x - cp.x, 0.0, player.global_position.z - cp.z).normalized()
 	var grip := Vector3(cp.x, level.water_y + 0.3, cp.z) + to_me * 0.45
 	await player.reach_grab(grip)
-	var pull := player.global_position.lerp(Vector3(grip.x, player.global_position.y, grip.z), 0.4)
+	# El ıslak kütüğe şaplar: suda iki halka, sıçrayan damlalar, kütüğün çevresinde köpük (tur 3: belirgin)
+	# (halkalar kütüğün oyuncu tarafında: kütüğün ardında kalınca görünmüyordu)
+	var near_side := grip + to_me * 0.55
+	level.ripple(near_side, 0.25, 2.2, 1.6, 0.75)
+	level.ripple(near_side, 0.6, 3.6, 2.6, 0.45)
+	level.drops(near_side, 14, 2.4)
+	level.splash(grip + to_me * 0.3)
+	var pull := player.global_position.lerp(Vector3(grip.x, player.global_position.y, grip.z), 0.3)
 	if GameState.autotest:
 		player.global_position = pull
 	else:
@@ -713,7 +1288,16 @@ func _to_chain() -> void:
 		player.release_grab()
 		player.flail(1.0)
 		player.shake(0.8)
-		level.splash(player.global_position)
+		# Suya gömülüş: büyük sıçrama, üç halka, kabarcıklar (tur 3: su tepkisi seçilmiyordu)
+		var fwd0 := -player.global_transform.basis.z
+		fwd0.y = 0.0
+		var fall_at := player.global_position + fwd0.normalized() * 1.4
+		level.splash(fall_at, true)
+		level.ripple(player.global_position, 0.4, 2.6, 1.3, 0.55)
+		level.ripple(player.global_position, 0.6, 3.8, 2.0, 0.35)
+		level.ripple(grip, 0.3, 2.0, 1.4, 0.5)
+		level.drops(fall_at, 18, 3.0)
+		level.bubbles(Vector3(fall_at.x, level.water_y - 1.0, fall_at.z), 1.2)
 		Audio.sfx("splash", -6.0)
 		await _t("D2_T_22")
 		await hud.fade_to(1.0, 0.8)
@@ -728,8 +1312,11 @@ func _to_chain() -> void:
 		await hud.fade_to(0.0, 0.8)
 		_seize(guards, landing)
 		await _say("SPK_SOLDIER", "D2_S_23")
-		await Stage.reach(guards[0], Stage.player_arm(player), 1.0)
+		await _seize_done(guards)
+		_grab_arms(guards, 3.5)
+		await Handover.wait(self, 0.15 if Stage.fast() else 1.65)     # eski tek kollu uzanışın süresi (0,35 + 1,0 + 0,3)
 		await _budget()
+		player.free_hold = Vector3.INF
 		for g in guards:
 			g.queue_free()
 
@@ -889,13 +1476,16 @@ func _swim_free(goal: Vector3, route: String) -> bool:
 			fwd.y = 0.0
 			var at := player.global_position + fwd.normalized() * randf_range(0.5, 3.5) + Vector3(randf_range(-1.6, 1.6), 0, randf_range(-1.6, 1.6))
 			level.arrow_warning(at, 1.1)
-			pending.append({"pos": at, "t": 1.1})
+			# Ok kıyıdaki bir okçunun yayından çıkar: 0,62 sn gerer, ok 0,45 sn uçar (halka sönerken suya saplanır)
+			var shot := _archer_shoot(at, 0.62, 0.45)
+			pending.append({"pos": at, "t": 1.1, "shot": shot})
 		for a in pending.duplicate():
 			a["t"] -= dt
 			if a["t"] <= 0.0:
 				pending.erase(a)
 				var ap: Vector3 = a["pos"]
-				level.arrow_fall(ap)
+				if not a["shot"]:
+					level.arrow_fall(ap)
 				var d := Vector2(player.global_position.x - ap.x, player.global_position.z - ap.z).length()
 				if d < 1.3 and _dive_t <= 0.0:
 					hits += 1
@@ -1032,6 +1622,7 @@ func _delayed_bark(delay: float, speaker: String, key: String, seconds: float) -
 # ================================================================ son
 
 func _end_chapter() -> void:
+	_stow(false)
 	player.frozen = true
 	player.release_grab()
 	hud.set_objective("")

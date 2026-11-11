@@ -220,8 +220,8 @@ func _ready() -> void:
 			Props.ball(_head, 0.23, Vector3(0, 0.14, -0.01), Color("7e848c"), Vector3(1.0, 0.95, 1.0), 12)
 			Props.cyl(_head, 0.03, 0.2, Vector3(0, 0.4, -0.01), Color("7e848c"), Vector3.ZERO, 8, 0.004)
 			Props.cyl(_head, 0.245, 0.08, Vector3(0, 0.1, -0.01), Color("efe8d6"), Vector3.ZERO, 14)
-			Props.box(_head, Vector3(0.025, 0.14, 0.02), Vector3(0, 0.02, 0.235), Color("7e848c"))
-			Props.ball(_head, 0.22, Vector3(0, -0.1, -0.08), Color("5e646c"), Vector3(1.0, 0.75, 0.8), 10)
+			Props.box(_head, Vector3(0.025, 0.14, 0.05), Vector3(0, 0.03, 0.27), Color("7e848c"))     # burnun ÖNÜNDE (0.245), üstü bantta
+			Props.ball(_head, 0.2, Vector3(0, -0.06, -0.09), Color("5e646c"), Vector3(1.0, 0.75, 0.8), 10)
 		"turban":
 			# Kaşların üstünde oturur: alında başı saran sargı, üstte kabarık; geriye hafif yatık. (Eskiden tek iri top
 			# göz hizasına iniyordu: sarıklıların gözü görünmüyordu.)
@@ -252,7 +252,8 @@ func _ready() -> void:
 				var a := TAU * i / 4.0
 				Props.ball(_head, 0.03, Vector3(sin(a) * 0.2, 0.22, cos(a) * 0.2), Color("c8323a"), Vector3.ONE, 5)
 		"hood":
-			Props.ball(_head, 0.25, Vector3(0, 0.04, -0.04), Color("2a2a30"), Vector3(1.0, 1.1, 1.05), 10)
+			# Kukuleta yüzü örtmez: ön yüzü yüzün (0.196) hemen arkasında biter, burun/ağız/gözler dışarıda; alt kenarı yukarıda
+			Props.ball(_head, 0.25, Vector3(0, 0.09, -0.08), Color("2a2a30"), Vector3(1.0, 0.97, 1.05), 10)
 		"kamelaukion":
 			# Bizans memur külahı: silindir, kırmızı
 			Props.ball(_head, 0.215, Vector3(0, 0.06, -0.03), hair, Vector3(1.02, 0.9, 1.0), 10)
@@ -294,12 +295,17 @@ func _ready() -> void:
 			Props.ball(_head, 0.03, Vector3(0, 0.44, 0), Color("d4a640"), Vector3.ONE, 6)
 		"astro":
 			# Astronot kaskı: beyaz küre, koyu altın vizör
-			Props.ball(_head, 0.27, Vector3(0, 0.03, -0.01), Color("eceae4"), Vector3.ONE, 12)
-			Props.ball(_head, 0.2, Vector3(0, 0.04, 0.1), Color("6a5420"), Vector3(1.0, 0.75, 0.6), 10, 0.3)
+			# Yüz açıkta, kask okunur: arkası/yanları opak beyaz kabuk (dış çizgili), önde beyaz çerçeveli mavi-altın cam açıklık,
+			# boyun halkası, camda parlama çizgisi. Kabuğun ön yüzü yüzün (0.196) arkasında biter.
+			Props.ball(_head, 0.262, Vector3(0, 0.09, -0.07), Color("f4f2ec"), Vector3(1.0, 0.93, 1.0), 12)
+			Props.ring(_head, 0.15, 0.225, Vector3(0, 0.05, 0.15), Color("f4f2ec"), Vector3(90, 0, 0))
+			Props.ball(_head, 0.2, Vector3(0, 0.05, 0.12), Color(0.45, 0.62, 0.8, 0.22), Vector3(1.0, 1.0, 0.75), 12)
+			Props.box(_head, Vector3(0.015, 0.1, 0.01), Vector3(-0.09, 0.12, 0.222), Color("ffffff"), Vector3(0, 0, 25), 1.2)
+			Props.ring(_head, 0.15, 0.225, Vector3(0, -0.17, 0.0), Color("c8c6c0"))
 		"robot":
 			# 2150'den robot stajyer: gümüş kubbe, anten, parlayan vizör
 			Props.ball(_head, 0.215, Vector3(0, 0.04, -0.01), Color("b8c2cc"), Vector3(1.0, 1.05, 1.0), 10)
-			Props.box(_head, Vector3(0.3, 0.07, 0.06), Vector3(0, 0.02, 0.19), Color("3ae0e8"), Vector3.ZERO, 2.0)
+			Props.box(_head, Vector3(0.3, 0.07, 0.04), Vector3(0, 0.02, 0.215), Color("3ae0e8"), Vector3.ZERO, 2.0)      # yüzün önünde oturur (içine gömülü değil)
 			Props.cyl(_head, 0.008, 0.2, Vector3(0.08, 0.3, -0.02), Color("8a949e"), Vector3(0, 0, -12), 5)
 			Props.ball(_head, 0.025, Vector3(0.1, 0.4, -0.02), Color("ff4a3a"), Vector3.ONE, 6, 1.5)
 		"uraeus":
@@ -318,7 +324,7 @@ func _ready() -> void:
 			Props.box(_head, Vector3(0.44, 0.03, 0.26), Vector3(0, 0.2, -0.12), Color("f6f4ee"), Vector3(-8, 0, 0))
 		"scarf":
 			# Başörtüsü: saçı örter, çenenin altından bağlı
-			Props.ball(_head, 0.235, Vector3(0, 0.05, -0.03), scarf, Vector3(1.04, 1.08, 1.04), 10)
+			Props.ball(_head, 0.235, Vector3(0, 0.05, -0.07), scarf, Vector3(1.04, 1.08, 1.04), 10)      # ön yüzü yüzün (0.196) arkasında: yüz açıkta
 			Props.ball(_head, 0.08, Vector3(0, -0.2, 0.08), scarf, Vector3(1.2, 0.6, 0.8), 6)
 		_:
 			if child:
@@ -356,9 +362,9 @@ func _sultan() -> void:
 	Props.box(_head, Vector3(0.025, 0.34, 0.08), Vector3(0.0, 0.6, 0.29), white, Vector3(-18, 0, 0))
 	Props.box(_head, Vector3(0.02, 0.24, 0.05), Vector3(0.05, 0.57, 0.28), Color("1a1a1a"), Vector3(-22, 0, 12))
 	# Kapaniçe: samur kürk yaka ve önde kürk şeritler, kırmızı-altın kaftan
-	Props.ring(_body, 0.2, 0.31, Vector3(0, 1.33, 0), fur, Vector3(-6, 0, 0))
+	Props.ring(_body, 0.19, 0.275, Vector3(0, 1.34, 0), fur, Vector3(-6, 0, 0))       # omuz topuna (x ±0.3) ve kalkan kola girmesin
 	for sx in [-0.09, 0.09]:
-		Props.box(_body, Vector3(0.07, 1.05, 0.05), Vector3(sx, 0.72, 0.3), fur)
+		Props.box(_body, Vector3(0.07, 1.05, 0.05), Vector3(sx, 0.72, 0.3), fur)       # kalçaya kadar: bacak şeride girmez
 	Props.box(_body, Vector3(0.1, 1.0, 0.04), Vector3(0, 0.72, 0.29), gold.darkened(0.15))
 	# Çintemani: eteğe üçlü altın benekler
 	for i in 8:
@@ -427,11 +433,11 @@ func _helm() -> void:
 	else:
 		# Kettle hat (chapel de fer): kubbe, çevresinde aşağı eğik geniş kenar
 		Props.ball(_head, 0.235, Vector3(0, 0.16, -0.01), steel, Vector3(1.0, 0.8, 1.0), 12)
-		Props.cyl(_head, 0.36, 0.025, Vector3(0, 0.12, -0.01), steel, Vector3.ZERO, 16, 0.3)
-		Props.cyl(_head, 0.365, 0.012, Vector3(0, 0.107, -0.01), dark, Vector3.ZERO, 16)
+		Props.cyl(_head, 0.33, 0.025, Vector3(0, 0.12, -0.01), steel, Vector3.ZERO, 16, 0.28)       # kenar (eskiden 0.36; en çok %8 küçük)
+		Props.cyl(_head, 0.335, 0.012, Vector3(0, 0.107, -0.01), dark, Vector3.ZERO, 16)
 		Props.box(_head, Vector3(0.025, 0.03, 0.44), Vector3(0, 0.33, -0.01), dark)
 	# Zincir boyunluk: ense ve yanlarda (yüzü, ağzı kapatmaz)
-	Props.ball(_head, 0.22, Vector3(0, -0.1, -0.08), Color("5e646c"), Vector3(1.0, 0.75, 0.8), 10)
+	Props.ball(_head, 0.2, Vector3(0, -0.06, -0.09), Color("5e646c"), Vector3(1.0, 0.75, 0.8), 10)
 
 
 ## Asker zırhı gövdeye: gambeson (kapitone dikiş çizgileri), zincir zırh (gri gövde, zincir etek, önde renkli yelek),
@@ -528,7 +534,7 @@ func _vizier() -> void:
 func _galero() -> void:
 	var red := Color("b3262d")
 	Props.ball(_head, 0.215, Vector3(0, 0.06, -0.03), hair, Vector3(1.02, 0.9, 1.0), 10)
-	Props.cyl(_head, 0.38, 0.03, Vector3(0, 0.19, 0), red, Vector3.ZERO, 16)
+	Props.cyl(_head, 0.34, 0.03, Vector3(0, 0.19, 0), red, Vector3.ZERO, 16)       # eskiden 0.38 (%11 küçük)
 	Props.cyl(_head, 0.19, 0.1, Vector3(0, 0.25, 0), red, Vector3.ZERO, 12, 0.17)
 	for sx in [-1, 1]:
 		Props.cyl(_head, 0.008, 0.45, Vector3(sx * 0.32, -0.04, 0), red.darkened(0.2), Vector3.ZERO, 4)
@@ -700,7 +706,10 @@ func reach_to(target: Vector3, hold := 0.4, left := false) -> void:
 ## Önünde yük taşır (sandık, sepet ya da çuval) ve "carry" hareketine geçer.
 func carry(kind := "crate") -> void:
 	var c := Node3D.new()
-	c.position = Vector3(0, 0.98, 0.34)
+	# Yük gövdenin (yarıçap 0.25) ÖNÜNDE durur: merkez z = gövde yüzü + yük yarı derinliği + küçük aralık (eskiden 0.34'te
+	# yükün arka yarısı göğse/kaftana giriyordu). Kollar yükü yanlarından sarar (Rig._carry_arms).
+	var load_z := {"basket": 0.5, "sack": 0.5, "earth": 0.52, "barrel": 0.52, "crate": 0.45, "tray": 0.5}.get(kind, 0.5) as float
+	c.position = Vector3(0, 1.02, load_z)
 	_body.add_child(c)
 	_carried = c
 	match kind:
@@ -1143,6 +1152,7 @@ func equip(kind: String, shield_color := Color("7a2a24")) -> void:
 	if _elbow_r == null:
 		ready.connect(func(): equip(kind, shield_color), CONNECT_ONE_SHOT)
 		return
+	set_meta("armed", true)     # elinde eşya var: Rig boşta kıpırdanmada eşyayı gövdeye sokan kol hareketlerini yapmaz
 	match kind:
 		"lamp":
 			# Kandil: pişmiş topraktan yağ kandili (gövde, emzik, kulp), emzikte alev ve sıcak ışık
@@ -1184,6 +1194,7 @@ func equip(kind: String, shield_color := Color("7a2a24")) -> void:
 			cr.name = "Cross"
 			_elbow_r.add_child(cr)
 			cr.position = Vector3(0, -0.28, 0.08)
+			cr.rotation_degrees = Vector3(0, 0, -7)      # elde tutuş noktası sabit, üst uç dışa yatık: geniş başlıklara (kavuk 0.36) girmez
 			Props.cyl(cr, 0.022, 2.4, Vector3(0, 0.8, 0), Color("5a3a22"), Vector3.ZERO, 5)
 			Props.box(cr, Vector3(0.05, 0.5, 0.04), Vector3(0, 2.2, 0), Color("d8b048"))
 			Props.box(cr, Vector3(0.34, 0.05, 0.04), Vector3(0, 2.28, 0), Color("d8b048"))
@@ -1230,6 +1241,7 @@ func equip(kind: String, shield_color := Color("7a2a24")) -> void:
 			fn.name = "Fanari"
 			_elbow_r.add_child(fn)
 			fn.position = Vector3(0, -0.28, 0.08)
+			fn.rotation_degrees = Vector3(0, 0, -7)
 			Props.cyl(fn, 0.02, 2.3, Vector3(0, 0.75, 0), Color("5a3a22"), Vector3.ZERO, 5)
 			var top := Vector3(0, 2.05, 0)
 			Props.cyl(fn, 0.13, 0.05, top + Vector3(0, -0.16, 0), Color("b8963e"), Vector3.ZERO, 8)
@@ -1253,8 +1265,10 @@ func equip(kind: String, shield_color := Color("7a2a24")) -> void:
 			pk.name = "Pick"
 			_elbow_l.add_child(pk)
 			pk.position = Vector3(0, -0.3, 0.06)
-			Props.cyl(pk, 0.02, 0.9, Vector3(0, 0.25, 0), Color("6a4a2c"), Vector3.ZERO, 5)
-			Props.box(pk, Vector3(0.5, 0.05, 0.05), Vector3(0, 0.68, 0), Color("4a4a50"), Vector3(0, 0, 8))
+			# Sap elde, baş (demir) gövdeden DIŞARI taşır ve kısa: eskiden 0.9'luk sap omuza/başa uzanıyor, baş boyna giriyordu
+			pk.rotation_degrees = Vector3(-12, 0, 10)
+			Props.cyl(pk, 0.02, 0.78, Vector3(0, 0.12, 0), Color("6a4a2c"), Vector3.ZERO, 5)
+			Props.box(pk, Vector3(0.46, 0.05, 0.05), Vector3(-0.12, 0.5, 0), Color("4a4a50"), Vector3(0, 0, 8))
 		"rod":
 			# Hocanın değneği: sağ elde dik tutulan ince sopa (elde döndürülen eşya gibi yüzün önünde yatmaz)
 			var rd := Node3D.new()
@@ -1267,6 +1281,7 @@ func equip(kind: String, shield_color := Color("7a2a24")) -> void:
 			sp.name = "Spear"
 			_elbow_r.add_child(sp)
 			sp.position = Vector3(0, -0.28, 0.06)
+			sp.rotation_degrees = Vector3(0, 0, -7)      # üst uç dışa yatık: baş/başlığa girmez, tutuş eli sapta kalır
 			Props.cyl(sp, 0.022, 2.6, Vector3(0, 0.9, 0), Color("6a4a2c"), Vector3.ZERO, 5)
 			Props.cyl(sp, 0.045, 0.26, Vector3(0, 2.3, 0), Color("c8ccd4"), Vector3.ZERO, 5, 0.0)
 		"bow":
