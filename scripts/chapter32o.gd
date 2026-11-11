@@ -195,12 +195,12 @@ func _build_field() -> void:
 	rng.seed = 3202
 	for i in 14:
 		var p := PILE + Vector3(rng.randf_range(-1.6, 1.6), 0.25 + (i / 5) * 0.4, rng.randf_range(-1.0, 1.0))
-		Props.cyl(self, 0.32, 1.8, p, Color("6a5636").darkened(rng.randf_range(0.0, 0.3)), Vector3(0, rng.randf_range(-30, 30), 90), 6)
+		_static_heaps.append(Props.cyl(self, 0.32, 1.8, p, Color("6a5636").darkened(rng.randf_range(0.0, 0.3)), Vector3(0, rng.randf_range(-30, 30), 90), 6))
 	Props.interactable(self, "pile", Vector3(3.6, 1.8, 2.6), PILE + Vector3(0, 0.9, 0))
 	for i in 5:
 		var p := EARTH + Vector3(-1.6 + i * 0.8, 0.0, (i % 2) * 0.6)
-		Props.cyl(self, 0.32, 0.5, p + Vector3(0, 0.25, 0), Color("8a6a3a"), Vector3.ZERO, 8, 0.8)
-		Props.cyl(self, 0.28, 0.06, p + Vector3(0, 0.5, 0), Color("5a4630"), Vector3.ZERO, 8)
+		_static_heaps.append(Props.cyl(self, 0.32, 0.5, p + Vector3(0, 0.25, 0), Color("8a6a3a"), Vector3.ZERO, 8, 0.8))
+		_static_heaps.append(Props.cyl(self, 0.28, 0.06, p + Vector3(0, 0.5, 0), Color("5a4630"), Vector3.ZERO, 8))
 	Props.interactable(self, "earth", Vector3(4.0, 1.6, 2.0), EARTH + Vector3(0, 0.8, 0))
 	# Hendek kıyısı: buraya atılır
 	Props.interactable(self, "edge", Vector3(26.0, 1.8, 1.6), Vector3(0, 0.9, EDGE_Z))
@@ -223,20 +223,27 @@ func _build_field() -> void:
 	_rung_root = lad
 	Props.interactable(self, "bench", Vector3(5.0, 1.6, 2.4), BENCH + Vector3(0, 0.8, 0))
 	for i in 4:
-		Props.box(self, Vector3(0.8, 0.12, 6.0), BENCH + Vector3(-4.5, 0.1 + i * 0.14, 0), Color("6a4a2c"), Vector3(0, 90 + i * 5.0, 0))
+		_static_heaps.append(Props.box(self, Vector3(0.8, 0.12, 6.0), BENCH + Vector3(-4.5, 0.1 + i * 0.14, 0), Color("6a4a2c"), Vector3(0, 90 + i * 5.0, 0)))
 	# Hendekte daha önce atılmış demetler (görüntü): az ve dağınık
 	for i in 10:
-		Props.cyl(self, 0.3, 1.8, Vector3(rng.randf_range(-24, 24), -2.65, rng.randf_range(22.0, 34.0)), Color("5a4630"),
-			Vector3(0, rng.randf_range(-40, 40), 90), 6)
+		_static_heaps.append(Props.cyl(self, 0.3, 1.8, Vector3(rng.randf_range(-24, 24), -2.65, rng.randf_range(22.0, 34.0)), Color("5a4630"),
+			Vector3(0, rng.randf_range(-40, 40), 90), 6))
 	# Sancaklı ordu, bataryalar, surda savunanlar (hücum yarın: koşan dalga ve merdiven yok)
 	assault = Assault.new()
 	assault.keep = Rect2(-40.0, 36.4, 80.0, 72.6)
 	add_child(assault)
 	assault.build_calm()
 	Garrison.land_walls(self, [], [], [], 3210)
+	# Duran yığınlar tek ağ (yayma P5: eklenen zemin ayrıntısı ve aletler çizim sayısını artırmasın)
+	Props.bake_static(self, _static_heaps)
+	_field_ground()
+	_battery_ground()
+	_bake_gun_yard()
 
 
 var _rung_root: Node3D
+var _static_heaps: Array = []     # birleştirilecek duran yığın parçaları (demet yığını, sepetler, kalaslar)
+var _carpenters: Array = []       # tezgâhta çekiç sallayan üç marangoz (batarya evresinde ikisi topun yamakları)
 var _back_bar: Node3D      # ovanın arka sınırı: topun güllesinin yolunda, batarya fazında kalkar
 
 
@@ -285,6 +292,7 @@ func _build_people() -> void:
 		add_child(c)
 		var b := Props.cyl(c, 0.28, 1.5, Vector3(0, 1.45, -0.1), Color("6a5636"), Vector3(0, 90, 90), 6)
 		_carriers.append([c, b, Vector3(x, 0, EDGE_Z + 1.2)])
+		_shoulder_grip(c, b)
 	for k in 2:
 		var ps := Soldier.new(Color("8a6a4a"), "push", "turban" if k == 0 else "bork")
 		add_child(ps)
@@ -292,11 +300,122 @@ func _build_people() -> void:
 		_pushers.append(ps)
 	for i in 3:
 		var s := Soldier.new([Color("8a6a4a"), Color("6a4a3a"), Color("2f5fa8")][i], "stand", ["turban", "bork", "turban"][i])
-		s.position = BENCH + Vector3(-1.4 + i * 1.4, 0, -1.4)
+		s.position = BENCH + Vector3(-2.2 + i * 2.2, 0, -2.7)
 		if i == 1:
 			s.set_meta("spk", "SPK_SOLDIER")      # "Kâtip! Kule gecesinde merdiveni tutan sendin" diyen marangoz
 		add_child(s)
-		s.set_activity("hammer") if s.has_method("set_activity") else null
+		# Elinde çekiç: vuruş, önündeki merdivenin yan kirişine çakılan basamağın ucuna iner (eskiden eli boş havayı
+		# dövüyordu). Faz kişiden kişiye ayrı (Items.attach_tool): üçü aynı anda vurmaz.
+		s.give_tool("hammer")
+		_carpenters.append(s)
+	_carpenter_bench()
+
+
+## Marangozların tezgâhı (yayma P5): Usta'nın tezgâhının ardında, üç sehpa üstünde yatan uzun merdiven; yan
+## kirişin üstü çekicin indiği yükseklikte (0,66 m: Soldier "hammer" vuruşunun en alçak noktası, kişiden 0,34 m önde,
+## 0,30 m sağda). Basamaklar kirişlere çakılı, çakılanın ucu yakın kirişte. Altında talaş ve yonga. Tek ağa
+## birleşir (Props.bake_static: çizim artmaz).
+func _carpenter_bench() -> void:
+	var root := Node3D.new()
+	root.name = "CarpenterBench"
+	root.position = BENCH + Vector3(0, 0, -2.7)
+	add_child(root)
+	var oak := Color("6a4a2c")
+	var near_z := 0.345
+	var far_z := near_z + 0.52
+	var ry := 0.615
+	for z: float in [near_z, far_z]:
+		Props.cyl(root, 0.045, 7.4, Vector3(0, ry, z), oak, Vector3(0, 0, 90), 6)
+	for x: float in [-3.3, -1.1, 1.1, 3.3]:
+		Props.box(root, Vector3(0.12, ry - 0.045, 0.82), Vector3(x, (ry - 0.045) * 0.5, (near_z + far_z) * 0.5), Color("5a4028"))
+		Props.box(root, Vector3(0.5, 0.06, 0.1), Vector3(x, 0.03, (near_z + far_z) * 0.5), Color("4a3422"))
+	# Basamaklar: 40 cm arayla; her marangozun önünde (x + 0,30) çakılmakta olan basamak, ucu kirişten taşar
+	var xs: Array = []
+	for k in 18:
+		xs.append(-3.4 + k * 0.4)
+	for i in 3:
+		xs.append(-2.2 + i * 2.2 + 0.3)
+	for x: float in xs:
+		Props.cyl(root, 0.026, far_z - near_z + 0.1, Vector3(x, ry + 0.01, (near_z + far_z) * 0.5), Color("7a5634"), Vector3(90, 0, 0), 5)
+	for i in 3:
+		var hx := -2.2 + i * 2.2 + 0.3
+		Props.box(root, Vector3(0.05, 0.03, 0.05), Vector3(hx, ry + 0.042, near_z), Color("8a6a40"))     # takoz ucu
+		Props.box(root, Vector3(0.26, 0.12, 0.18), Vector3(hx + 0.55, 0.06, near_z - 0.55), Color("5a4630"))   # çivi sandığı
+	Props.bake_static(root, [root])
+	var gy := func(_x: float, _z: float) -> float: return 0.0
+	Nature.ground_detail(self, Rect2(BENCH.x - 3.8, BENCH.z - 3.6, 7.6, 2.2), "chips", 1.6, 3241, gy)
+	Nature.ground_detail(self, Rect2(BENCH.x - 2.6, BENCH.z - 1.0, 5.2, 2.0), "chips", 0.9, 3242, gy)
+
+
+## Hendek kıyısı ve ova (yayma P5; land_walls'un ovasına dokunmadan, yalnız bu bölümün alanı): yığından ve toprak
+## sepetlerinden kıyıya giden çiğnenmiş patika (tek iz çizgisi kıyı boyunca da gider), kıyıda çiğnenmiş çamur,
+## dökülen çalı çırpısı, taş; mantonun tekerlek izi; topun bataryasında petek taşın üstünde çamur, iz, barut lekesi.
+func _field_ground() -> void:
+	var gy := func(_x: float, _z: float) -> float: return 0.0
+	Nature.trail(self, [PILE + Vector3(0.6, 0, -1.4), Vector3(-6.0, 0, EDGE_Z + 1.4), Vector3(-1.0, 0, EDGE_Z + 1.0),
+		Vector3(6.0, 0, EDGE_Z + 1.4), EARTH + Vector3(-0.6, 0, -1.2)], "footprint", gy, 0.55, 3243, 0.6)
+	Nature.trail(self, [MANTLET_FROM + Vector3(0, 0, -1.0), MANTLET_TO + Vector3(0, 0, 0.6)], "wheel_ruts", gy, 1.0, 3244)
+	var edge := Rect2(-26.0, EDGE_Z + 0.3, 52.0, 3.6)
+	Nature.ground_detail(self, edge, "camp_mud", 0.12, 3245, gy)
+	Nature.ground_detail(self, edge, "straw", 0.35, 3246, gy)
+	Nature.ground_detail(self, Rect2(-26.0, EDGE_Z + 0.3, 52.0, 16.0), "stone", 0.03, 3247, gy)
+	Nature.ground_detail(self, Rect2(PILE.x - 2.6, PILE.z - 1.8, 5.2, 3.6), "straw", 1.2, 3248, gy)
+
+
+## Büyük topun bataryası (20o ile aynı mevzi; döşeme LandWalls'un: üstü y = 0).
+func _battery_ground() -> void:
+	var y0 := gun.global_position.y
+	var top := func(_x: float, _z: float) -> float: return y0
+	var c := gun.global_position
+	var area := Rect2(c.x - 11.5, c.z - 7.5, 23.0, 19.0)
+	# Kızağın, siperliğin ve sepetlerin altı boş kalır (ayrıntı katıların içinden çıkmasın)
+	var free := func(x: float, z: float) -> bool:
+		var l := gun.to_local(Vector3(x, y0, z))
+		if absf(l.x) < 2.2 and absf(l.z) < 4.9:
+			return false
+		if l.z < -5.4 and absf(l.x) < 9.0:
+			return false
+		return true
+	# Tür başına tek çağrı (tek çoklu ağ); yoğunluk farkı konuma bağlı seyreltmeyle (düzensiz)
+	var thin := func(x: float, z: float, n: int) -> bool:
+		return absi(hash(Vector2i(roundi(x * 37.0), roundi(z * 41.0)))) % n == 0
+	var work := Rect2(c.x - 5.0, c.z - 5.0, 10.0, 12.0)            # topun çevresi: çok çiğnenmiş
+	var casks := Rect2(c.x - 4.6, c.z - 3.0, 2.4, 6.0)             # barut fıçıları
+	var mouth := Rect2(c.x - 2.6, c.z - 5.4, 5.2, 1.2)             # namlu ağzının önü
+	Nature.ground_detail(self, area, "camp_mud", 0.06, 3250 + 1, top, free)
+	Nature.ground_detail(self, area, "footprint", 0.4, 3250 + 2, top, func(x: float, z: float) -> bool:
+		return free.call(x, z) and (work.has_point(Vector2(x, z)) or thin.call(x, z, 10)))
+	# Barut lekesi (kara, yumuşak kenarlı) ve kömür kırıntısı: fıçıların ve namlu ağzının önü
+	Nature.ground_detail(self, casks.merge(mouth), "ash", 0.38, 3250 + 4, top, func(x: float, z: float) -> bool:
+		return free.call(x, z) and (casks.has_point(Vector2(x, z)) or mouth.has_point(Vector2(x, z))))
+	Nature.ground_detail(self, Rect2(c.x - 4.6, c.z - 3.0, 3.0, 7.0), "coal", 0.9, 3250 + 6, top, free)
+	# Tapa samanı (tapa sepetinin dibi) ve taş
+	Nature.ground_detail(self, Rect2(c.x - 4.0, c.z + 4.6, 2.6, 2.0), "straw", 1.2, 3250 + 7, top, free)
+	Nature.ground_detail(self, area, "pebble", 0.14, 3250 + 9, top, free)
+
+
+## Batarya zemini (yerel: topun döşemesi y = 0; dışı ova).
+func _battery_y(x: float, z: float) -> float:
+	var l := gun.to_local(Vector3(x, 0, z))
+	if absf(l.x) < 12.0 and l.z > -8.0 and l.z < 12.0:
+		return gun.global_position.y
+	return LandWalls.outside_y(x, z)
+
+
+## Büyük topun mevzisindeki duran parçalar (siper direkleri, makaralar, sepetler, barut fıçıları, gülle yığını) tek
+## ağa birleşir: kızak, namlu ve siperlik (hareket eder) ve desenli döşeme dışında. Eklenen tayfa aletleri ve zemin
+## ayrıntısı çizim sayısını artırmasın.
+func _bake_gun_yard() -> void:
+	var parts: Array = []
+	for c in gun.get_children():
+		var mi := c as MeshInstance3D
+		if mi == null or not mi.visible:
+			continue
+		var m := mi.material_override as StandardMaterial3D
+		if m == null or m.albedo_texture != null:
+			continue
+		parts.append(mi)
+	Props.bake_static(gun, parts)
 
 
 func _build_camp() -> void:
@@ -732,9 +851,12 @@ func _process(delta: float) -> void:
 	if phase == "mantlet" and mantlet:
 		for k in _pushers.size():
 			var ps: Soldier = _pushers[k]
-			ps.visible = true
-			ps.position = mantlet.position + Vector3(-1.6 + k * 3.2, 0, 1.0)
+			var sx := -1.0 if k == 0 else 1.0
+			ps.position = mantlet.position + Vector3(sx * 1.4, 0, 0.8)
 			ps.rotation.y = PI
+			if not ps.visible:
+				ps.visible = true
+				_push_grip(ps, sx)
 	if phase != "ditch" or player.frozen:
 		return
 	if _fire_t >= 0.0:
@@ -774,6 +896,23 @@ func _process(delta: float) -> void:
 			hud.bark("SPK_AZAP", "D32O_AZ_VOLLEY", VOLLEY_WARN)
 
 
+## Mantoyu iten asker (yayma P5): iki avucu mantonun arka yüzünde, köşeye yakın (tekerleğin dışında durur), gövde
+## öne yatık; ayak tabanları her karede yere basar (Stage.plant_feet: eğilince ayaklar havada kalıyordu).
+func _push_grip(ps: Soldier, sx: float) -> void:
+	Stage.grip_hold(ps, mantlet, [Vector3(sx * 1.0, 1.0, 0.1), Vector3(sx * 1.17, 1.32, 0.1)], -1.0, 0.28)
+	var tw := ps.create_tween().set_loops()
+	tw.tween_method(func(_k: float) -> void:
+		if is_instance_valid(ps) and ps.is_visible_in_tree():
+			Stage.plant_feet(ps, func(_x: float, _z: float) -> float: return 0.0, 0.3), 0.0, 1.0, 0.5)
+
+
+## Omuzdaki demet iki elle tutulur (yayma P5: eller boştaydı, demet omzun üstünde kendi kendine duruyordu).
+## Demet başın üstünde boylamasına yatar (yerel y: askerin önü, yerel -x: aşağı, yerel z: sağı); avuçlar demetin
+## ön ucunun altında, yüzün önünde iki yanda.
+func _shoulder_grip(s: Soldier, b: Node3D) -> void:
+	Stage.grip_hold(s, b, [Vector3(-0.22, 0.3, -0.16), Vector3(-0.22, 0.3, 0.16)], -1.0)
+
+
 ## Yan bölüğün demet taşıyanları: yığından kıyıya yürür, demeti atar (demet hendeğe yuvarlanır), boş döner
 func _update_carriers(delta: float) -> void:
 	for c: Array in _carriers:
@@ -785,6 +924,7 @@ func _update_carriers(delta: float) -> void:
 		if d.length() < 0.3:
 			if bundle.visible:
 				bundle.visible = false
+				Stage.grip_release(s)
 				var n := Props.cyl(self, 0.3, 1.6, s.position + Vector3(0, 1.4, -0.6), Color("6a5636"), Vector3(0, randf_range(-30, 30), 90), 6)
 				var to := Vector3(s.position.x + randf_range(-1, 1), -2.6, randf_range(29.0, 34.0))
 				var tw := n.create_tween()
@@ -792,6 +932,7 @@ func _update_carriers(delta: float) -> void:
 				c[2] = Vector3(s.position.x, 0, 54.0)
 			else:
 				bundle.visible = true
+				_shoulder_grip(s, bundle)
 				c[2] = Vector3(s.position.x, 0, EDGE_Z + 1.2)
 			continue
 		var step := d.normalized() * minf(d.length(), (1.3 if bundle.visible else 1.9) * delta)
@@ -936,6 +1077,7 @@ func _ladders() -> void:
 	hud.set_objective("")
 	player.frozen = true
 	for ps in _pushers:
+		Stage.grip_release(ps)
 		(ps as Soldier).pose = "stand"
 	await hud.say("SPK_USTA", "D32O_U_END")
 
@@ -1011,6 +1153,7 @@ func _guns() -> void:
 	walls.make_dawn(0.01)
 	if is_instance_valid(_back_bar):
 		_back_bar.queue_free()
+	_gun_hands()
 	# Topçunun 3.4 m önü: 5.7 m öteden, sırtı dönük konuşuyordu (sahneleme raporu). Namlu araya girmez.
 	player.global_position = gun.position + Vector3(3.2, 0.05, 7.4)
 	topcu.face_toward(player.global_position)
@@ -1053,6 +1196,27 @@ func _guns() -> void:
 	await Stage.approach(topcu, player.global_position, 2.2, 1.6)
 	await hud.say("SPK_TOPCU", "D32O_TP_END_OK" if hits >= 2 else "D32O_TP_END_BAD")
 	await hud.say("SPK_TOLGA", "D32O_T_GUNS")
+
+
+## Ali'nin topunun yamakları (yayma P5; batarya eskiden bomboştu, topu Ali ile Tolga dolduruyordu): tezgâhtaki iki
+## marangoz kararmanın ardında çekiçlerini bırakıp topun başına geçer (üçüncüsü tezgâhta çakmayı sürdürür: üçü birden
+## kadraja girince bataryanın üçgen bütçesi aşılıyordu). CannonCrew.add_crew: kepçeci barut kepçesini namluya sürer,
+## manivelacı nişanda kuyruğu çevirir; gülleyi Tolga getirir. Kalabalık sayısı aynı.
+func _gun_hands() -> void:
+	var sp: Dictionary = gun_crew._crew_spots()
+	var men := [_carpenters[0], null, _carpenters[2]]
+	for i: int in [0, 2]:
+		var s: Soldier = men[i]
+		if not is_instance_valid(s):
+			continue
+		s.drop_tools()
+		s.rig.activity = ""
+		var p: Vector3 = sp["kepçe"] if i == 0 else sp["manivela"]
+		s.global_position = Vector3(p.x, _battery_y(p.x, p.z), p.z)
+		Stage.face(s, sp["m"] if i == 0 else sp["bp"])
+	men[0].give_tool("powder_ladle", {"activity": "", "aim": Vector3(0.25, 3.0, 0.6)})
+	men[2].give_tool("handspike", {"activity": "", "aim": Vector3(0.0, 2.6, 0.8)})
+	gun_crew.add_crew(men, _battery_y)
 
 
 func _fire() -> void:

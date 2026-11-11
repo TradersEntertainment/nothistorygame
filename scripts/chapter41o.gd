@@ -144,6 +144,7 @@ func _build() -> void:
 	Props.cyl(_pot, 0.22, 0.42, Vector3(0, 0.21, 0), Color("b8743a"), Vector3.ZERO, 12, 0.17)
 	Props.ring(_pot, 0.15, 0.2, Vector3(0, 0.42, 0), Color("8a4a24"))
 	_pot.global_position = pot_man.global_position + Vector3(0, 0.95, 0.42)
+	_hold_pot()
 	drill = Drill.new()
 	add_child(drill)
 	drill.setup(self, hud, player, yard, "D41O", "kilij")
@@ -152,6 +153,11 @@ func _build() -> void:
 	drill.partner = hizir
 	drill.partner_spk = "SPK_AZAP"
 	drill.kukla = kukla
+
+
+## Su kabı azabın iki elinde (kap kalçasının önünde havada asılı duruyordu): avuçlar kabın iki yanında.
+func _hold_pot() -> void:
+	Stage.grip_hold(pot_man, _pot, [Vector3(-0.21, 0.24, 0.0), Vector3(0.21, 0.24, 0.0)], -1.0, 0.06)
 
 
 func _top_man(off: Vector3, look: Dictionary) -> Person:
@@ -335,6 +341,7 @@ func _drop_bag() -> void:
 func _pour() -> void:
 	_water = "warn"
 	hud.set_qte(GameState.tr_pad("UI_QTE41O_WATER"))
+	Stage.grip_release(pot_man)
 	if pot_man.rig:
 		pot_man.rig.activity = "lean_down"
 	var l := yard.ladder
@@ -381,6 +388,7 @@ func _pour() -> void:
 	var back := _pot.create_tween()
 	back.tween_property(_pot, "rotation", Vector3.ZERO, 0.3)
 	back.tween_property(_pot, "global_position", pot_man.global_position + Vector3(0, 0.95, 0.42), 0.4)
+	back.tween_callback(_hold_pot)
 	if pot_man.rig:
 		pot_man.rig.activity = ""
 	hud.set_qte("")

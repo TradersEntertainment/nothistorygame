@@ -104,6 +104,7 @@ func _ready() -> void:
 		s.position = gun.position + Vector3([-4.2, -2.0, 6.6, 8.2][i], 0, [3.2, 4.0, 2.4, 3.4][i])
 		add_child(s)
 		crew.append(s)
+	_battery_crew()
 	# Topun çevresi boş kalmasın: iki yanda (setle topçu ordugâhı arasında) sancaklı bölükler, halat çitin ardında
 	# topu seyreden askerler, karşıda surlarda Bizans nöbetçileri (uzak)
 	for spec in [[Vector3(-40.0, 0, 123.0), Color("b3262d"), Color("2e6a3a")], [Vector3(-22.0, 0, 124.0), Color("2f5fa8"), Color("b3262d")],
@@ -171,6 +172,77 @@ func _run() -> void:
 	# Gece yarısı hücumu (7 Mayıs gecesi azaplar gediğe yüklendi): Bölüm 20'nin Osmanlı aynası
 	await _assault()
 	await _end_chapter()
+
+
+## Topun tayfası iş başında (yayma P5; eskiden doldururken topun yanında boş dikiliyordu): kepçeci barut kepçesini
+## namluya sürer, gülleci yığından sonraki gülleyi iki elle getirir, manivelacı nişanda kuyruğu çevirir
+## (CannonCrew.add_crew). Dördüncü topçunun elinde kova (namlu zeytinyağıyla soğutulacak).
+## Batarya zemini: petek taşın üstünde çiğnenmiş çamur, ayak izi, barut lekesi ve kömür kırıntısı, tapa samanı, yonga.
+func _battery_crew() -> void:
+	# Doldurma başlamadan (Urban konuşurken) kepçe ve manivela dik tutulur: aletler CannonCrew'un kullandığıyla aynı
+	crew[0].give_tool("powder_ladle", {"activity": "", "aim": Vector3(0.25, 3.0, 0.6)})
+	crew[2].give_tool("handspike", {"activity": "", "aim": Vector3(0.0, 2.6, 0.8)})
+	gun_crew.add_crew([crew[0], crew[1], crew[2]], _battery_y)
+	# Dördüncü topçu yerinde (topun sağ arkası), elinde soğutma kovası: kameranın önüne alınınca bölümün üçgen
+	# bütçesini aşıyordu
+	crew[3].give_tool("bucket", {"activity": ""})
+	_battery_ground()
+	_bake_gun_yard()
+
+
+## Büyük topun mevzisindeki duran parçalar (siper direkleri, makaralar, sepetler, barut fıçıları, gülle yığını) tek
+## ağa birleşir: kızak, namlu ve siperlik (hareket eder) ve desenli döşeme dışında. Eklenen tayfa aletleri ve zemin
+## ayrıntısı çizim sayısını artırmasın.
+func _bake_gun_yard() -> void:
+	var parts: Array = []
+	for c in gun.get_children():
+		var mi := c as MeshInstance3D
+		if mi == null or not mi.visible:
+			continue
+		var m := mi.material_override as StandardMaterial3D
+		if m == null or m.albedo_texture != null:
+			continue
+		parts.append(mi)
+	Props.bake_static(gun, parts)
+
+
+## Bataryanın döşemesi (LandWalls._great_gun_model: topun altında 24 × 20 m, üstü y = 0); dışı ova.
+func _battery_y(x: float, z: float) -> float:
+	var l := gun.to_local(Vector3(x, 0, z))
+	if absf(l.x) < 12.0 and l.z > -8.0 and l.z < 12.0:
+		return gun.global_position.y
+	return LandWalls.outside_y(x, z)
+
+
+func _battery_ground() -> void:
+	var y0 := gun.global_position.y
+	var top := func(_x: float, _z: float) -> float: return y0
+	var c := gun.global_position
+	var area := Rect2(c.x - 11.5, c.z - 7.5, 23.0, 19.0)
+	# Kızağın, siperliğin ve sepetlerin altı boş kalır (ayrıntı katıların içinden çıkmasın)
+	var free := func(x: float, z: float) -> bool:
+		var l := gun.to_local(Vector3(x, y0, z))
+		if absf(l.x) < 2.2 and absf(l.z) < 4.9:
+			return false
+		if l.z < -5.4 and absf(l.x) < 9.0:
+			return false
+		return true
+	# Tür başına tek çağrı (tek çoklu ağ); yoğunluk farkı konuma bağlı seyreltmeyle (düzensiz)
+	var thin := func(x: float, z: float, n: int) -> bool:
+		return absi(hash(Vector2i(roundi(x * 37.0), roundi(z * 41.0)))) % n == 0
+	var work := Rect2(c.x - 5.0, c.z - 5.0, 10.0, 12.0)            # topun çevresi: çok çiğnenmiş
+	var casks := Rect2(c.x - 4.6, c.z - 3.0, 2.4, 6.0)             # barut fıçıları
+	var mouth := Rect2(c.x - 2.6, c.z - 5.4, 5.2, 1.2)             # namlu ağzının önü
+	Nature.ground_detail(self, area, "camp_mud", 0.06, 2040 + 1, top, free)
+	Nature.ground_detail(self, area, "footprint", 0.4, 2040 + 2, top, func(x: float, z: float) -> bool:
+		return free.call(x, z) and (work.has_point(Vector2(x, z)) or thin.call(x, z, 10)))
+	# Barut lekesi (kara, yumuşak kenarlı) ve kömür kırıntısı: fıçıların ve namlu ağzının önü
+	Nature.ground_detail(self, casks.merge(mouth), "ash", 0.38, 2040 + 4, top, func(x: float, z: float) -> bool:
+		return free.call(x, z) and (casks.has_point(Vector2(x, z)) or mouth.has_point(Vector2(x, z))))
+	Nature.ground_detail(self, Rect2(c.x - 4.6, c.z - 3.0, 3.0, 7.0), "coal", 0.9, 2040 + 6, top, free)
+	# Tapa samanı (tapa sepetinin dibi) ve taş
+	Nature.ground_detail(self, Rect2(c.x - 4.0, c.z + 4.6, 2.6, 2.0), "straw", 1.2, 2040 + 7, top, free)
+	Nature.ground_detail(self, area, "pebble", 0.14, 2040 + 9, top, free)
 
 
 ## Urban'ın topu: elle doldurma ve nişan (CannonCrew). Barut fıçıları ve gülle yığını topun yanında.

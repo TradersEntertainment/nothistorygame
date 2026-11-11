@@ -44,6 +44,7 @@ func _ready() -> void:
 	_ring()
 	_tower()
 	_props()
+	_bake_decor()
 
 
 ## Yerel → dünya
@@ -60,14 +61,74 @@ func _ground() -> void:
 		Props.set_pattern(g, Color("b8a888"), "flagstone")
 	else:
 		Props.set_pattern(g, SAND, "plaster")
-	# Ayak izleri, sürtme izleri (koyu lekeler)
-	var rng := RandomNumberGenerator.new()
-	rng.seed = 4141 if side == "O" else 4242
-	for i in 26:
-		var p := Vector3(rng.randf_range(-5.0, 5.0), 0.022, RING.z + rng.randf_range(-4.0, 4.0))
-		if Vector2(p.x - RING.x, p.z - RING.z).length() > RING_R - 0.3:
+	_ground_detail()
+
+
+## Zemin ayrıntısı (yayma P5): halkanın içi çiğnenmiş (yumuşak kenarlı koyu yamalar, sık ayak izi), dışı seyrek iz,
+## taş ve çakıl; kuklanın ve silah sehpasının dibinde kırık tahta kılıç yongaları, balyaların dibinde saman, ok
+## hedeflerinin önünde yere saplı kırık oklar. Her tür tek çoklu ağ (eski 26 ayrı disk lekesinin yerine: çizim azalır).
+## Seyrek, düzensiz (tekdüze rastgele); kum yüzeyin 2,5 cm üstünde (yamalar titremez).
+func _ground_detail() -> void:
+	var top := func(_x: float, _z: float) -> float: return 0.02
+	var s0 := 4141 if side == "O" else 4242
+	var in_ring := func(x: float, z: float) -> bool: return Vector2(x - RING.x, z - RING.z).length() < RING_R - 0.35
+	var off_tower := func(x: float, z: float) -> bool:
+		return not (absf(x - TOWER.x) < TOWER_W * 0.5 + 0.4 and z > TOWER.z - TOWER_D * 0.5 - 7.0 and z < TOWER.z + TOWER_D * 0.5 + 0.3)
+	var outside := func(x: float, z: float) -> bool:
+		return off_tower.call(x, z) and Vector2(x - RING.x, z - RING.z).length() > RING_R + 0.3
+	var area := Rect2(-11.5, -14.5, 23.0, 27.0)
+	# Tür başına tek çağrı (tek çoklu ağ): yoğunluk farkı keep'teki konuma bağlı seyreltmeyle (düzensiz, ızgarasız)
+	var thin := func(x: float, z: float, keep_one_in: int) -> bool:
+		return absi(hash(Vector2i(roundi(x * 37.0), roundi(z * 41.0)))) % keep_one_in == 0
+	var ladder_foot := func(x: float, z: float) -> bool:
+		return absf(x - TOWER.x) < 1.8 and z > TOWER.z + TOWER_D * 0.5 + 0.4 and z < TOWER.z + TOWER_D * 0.5 + 4.6
+	# Halkanın içi (dövüşülen yer) ve merdivenin dibi çok çiğnenmiş; kalan meydan seyrek
+	Nature.ground_detail(self, area, "camp_mud", 0.25, s0 + 1, top, func(x: float, z: float) -> bool:
+		return off_tower.call(x, z) and (ladder_foot.call(x, z) or (in_ring.call(x, z) and thin.call(x, z, 3))))
+	# Ayak izi ağı 342 üçgen: halkada seyrek, dışında daha seyrek (iskelenin tepesinden bakınca bütün meydan kadrajda)
+	Nature.ground_detail(self, area, "footprint", 0.4, s0 + 2, top, func(x: float, z: float) -> bool:
+		return in_ring.call(x, z) or (outside.call(x, z) and thin.call(x, z, 12)))
+	Nature.ground_detail(self, area, "pebble", 0.12, s0 + 5, top, off_tower)
+	# Kırık tahta kılıç / sopa yongaları: kuklanın dibi, silah sehpası
+	var chips_a := Rect2(KUKLA.x - 1.0, KUKLA.z - 0.9, 2.0, 1.8)
+	var chips_b := Rect2(RING.x + RING_R + 0.7, RING.z - 1.8, 1.6, 2.6)
+	Nature.ground_detail(self, chips_a.merge(chips_b), "chips", 2.0, s0 + 7, top, func(x: float, z: float) -> bool:
+		return chips_a.has_point(Vector2(x, z)) or (chips_b.has_point(Vector2(x, z)) and thin.call(x, z, 2)))
+	# Saman: balyaların dibi ve Bizans'ta merdivenin düştüğü balyalar
+	var straw_a := Rect2(RING.x - RING_R - 2.6, RING.z - 2.0, 2.2, 2.4)
+	var straw_b := Rect2(TOWER.x - 2.2, TOWER.z + TOWER_D * 0.5 + 2.6, 4.4, 3.4) if side == "B" else straw_a
+	Nature.ground_detail(self, straw_a.merge(straw_b), "straw", 1.3, s0 + 9, top, func(x: float, z: float) -> bool:
+		return straw_a.has_point(Vector2(x, z)) or straw_b.has_point(Vector2(x, z)))
+	# Ok hedeflerinin önü ve ardı: yere saplanmış kırık oklar
+	Nature.ground_detail(self, Rect2(-10.0, -6.5, 3.0, 6.0), "arrows", 0.8, s0 + 11, top)
+
+
+## Meydanın duran, desensiz dekoru tek ağlara birleşir (Props.bake_static): eklenen zemin ayrıntısı çizim sayısını
+## artırmasın. Yalnız sıkı kümeler: iskele (rampa basamakları, direkler, kuşaklar), silah sehpası, balyalar ve fıçı
+## (iki ok hedefi arası açık: birleşmez). Küme kutusu gerçek nesneyi aşmaz (geniş kutulu birleşik ağ, görüş denetiminde konuşanı "örtüyor",
+## iskeleden bakarken meydanın öbür ucunu da çizdiriyordu). Desenli (ahşap dokulu) parçalar, çarpışma gövdeleri, düello
+## kamerasının gizlediği çit parçaları ("cam_fence"), merdiven ve kukla birleşmez.
+func _bake_decor() -> void:
+	var rack := RING + Vector3(RING_R + 1.4, 0, -0.5)
+	var bales := RING + Vector3(-RING_R - 1.5, 0, 0.6)
+	var groups := [[], [], [], []]
+	for c in get_children():
+		var mi := c as MeshInstance3D
+		if mi == null or mi.is_in_group("cam_fence") or not mi.visible:
 			continue
-		Props.cyl(self, rng.randf_range(0.25, 0.6), 0.01, p, SAND.darkened(0.25 + rng.randf() * 0.1), Vector3.ZERO, 10)
+		var m := mi.material_override as StandardMaterial3D
+		if m == null or m.albedo_texture != null:
+			continue
+		var p := mi.position
+		if absf(p.x - TOWER.x) < TOWER_W * 0.5 + 0.3 and p.z < TOWER.z + TOWER_D * 0.5 + 0.4 and p.z > TOWER.z - TOWER_D * 0.5 - 7.0:
+			groups[0].append(mi)
+		elif Vector2(p.x - rack.x, p.z - rack.z).length() < 1.6:
+			groups[1].append(mi)
+		elif Vector2(p.x - bales.x, p.z - bales.z).length() < 1.9:
+			groups[3].append(mi)
+	for g: Array in groups:
+		if not g.is_empty():
+			Props.bake_static(self, g)
 
 
 func _ring() -> void:
@@ -82,19 +143,113 @@ func _ring() -> void:
 		for k: Node3D in [Props.cyl(self, 0.06, 1.1, p + Vector3(0, 0.55, 0), WOOD_D, Vector3.ZERO, 6),
 				Props.ball(self, 0.07, p + Vector3(0, 1.1, 0), WOOD, Vector3.ONE, 6)]:
 			_fence_piece(k, p, p + Vector3(0, 1.17, 0))
+	# İp (yayma P5): her kazığa iki tur sarılır, iki kazık arasında kendi ağırlığıyla sarkar (eski: kazıktan kazığa
+	# gerili düz çubuk). Oyuncunun hep yakınında: yuvarlak kesitli ince boru, dış çizgisiz (ThraceRoad.tube_material).
+	# Her açıklık ayrı düğüm: düello kamerası önüne düşen parçayı gizler ("cam_fence").
+	var open := func(i: int) -> bool:
+		return (posts[i] + posts[(i + 1) % n]).z * 0.5 > RING.z + RING_R * 0.85      # girişte ip yok (+z yüzü)
 	for i in n:
+		if open.call(i):
+			continue
 		var a: Vector3 = posts[i]
 		var b: Vector3 = posts[(i + 1) % n]
-		var mid := (a + b) * 0.5
-		# Girişte ip yok (halkanın +z yüzü)
-		if mid.z > RING.z + RING_R * 0.85:
-			continue
-		var d := b - a
-		var ln := d.length()
-		var rope := Props.cyl(self, 0.015, ln, mid + Vector3(0, 0.88, 0), Color("b8a070"), Vector3.ZERO, 4)
-		rope.look_at_from_position(mid + Vector3(0, 0.88, 0), b + Vector3(0, 0.88, 0), Vector3.UP)
-		rope.rotate_object_local(Vector3.RIGHT, PI * 0.5)
-		_fence_piece(rope, a + Vector3(0, 0.88, 0), b + Vector3(0, 0.88, 0))
+		var pts := _fence_rope_points(a, b, true, open.call((i + 1) % n))
+		var mi := MeshInstance3D.new()
+		mi.name = "FenceRope"
+		mi.mesh = _tube(pts, ROPE_R, ROPE_COL)
+		mi.material_override = ThraceRoad.tube_material()
+		mi.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
+		mi.set_meta("no_walk", true)
+		add_child(mi)
+		_fence_piece(mi, a + Vector3(0, ROPE_Y, 0), b + Vector3(0, ROPE_Y, 0))
+
+
+const ROPE_Y := 0.88
+const ROPE_R := 0.014
+const ROPE_COL := Color("b49a6c")
+const POST_R := 0.06
+
+
+## Bir açıklığın ipi (yerel noktalar): a kazığına iki tur sarım (aşağıdan yukarı, son tur b'ye dönük biter), oradan
+## b kazığına sarkan kavis; b'de ip bitiyorsa (giriş) b'ye de bir buçuk tur sarılır.
+func _fence_rope_points(a: Vector3, b: Vector3, wrap_a: bool, wrap_b: bool) -> Array:
+	var d := Vector3(b.x - a.x, 0, b.z - a.z)
+	var span := d.length()
+	d = d.normalized()
+	var rr := POST_R + ROPE_R * 0.9
+	var ang_b := atan2(d.z, d.x)            # a'dan b'ye yön (x-z açısı)
+	var pts: Array = []
+	if wrap_a:
+		var turns := 2.0
+		var steps := int(turns * 10.0)
+		for k in steps + 1:
+			var t := float(k) / steps
+			var ang := ang_b + (1.0 - t) * turns * TAU + PI * 0.5 * t
+			pts.append(a + Vector3(cos(ang) * rr, ROPE_Y - 0.07 + t * 0.07, sin(ang) * rr))
+	var from := a + Vector3(0, ROPE_Y, 0) + d * rr
+	var to := b + Vector3(0, ROPE_Y, 0) - d * rr
+	if not pts.is_empty():
+		from = pts[-1]
+	if wrap_b:          # sarıma yandan, teğet girer
+		to = b + Vector3(cos(ang_b + PI * 0.5) * rr, ROPE_Y, sin(ang_b + PI * 0.5) * rr)
+	var sag := 0.035 * span + 0.03            # 3 m açıklıkta ~13 cm
+	var n := 14
+	for k in range(1 if not pts.is_empty() else 0, n + 1):
+		var t := float(k) / n
+		pts.append(from.lerp(to, t) + Vector3.DOWN * sag * 4.0 * t * (1.0 - t))
+	if wrap_b:
+		var ang_a := ang_b + PI
+		var steps := 15
+		for k in range(1, steps + 1):
+			var t := float(k) / steps
+			var ang := ang_a - PI * 0.5 * (1.0 - t) - t * 1.5 * TAU
+			pts.append(b + Vector3(cos(ang) * rr, ROPE_Y - t * 0.06, sin(ang) * rr))
+	return pts
+
+
+## Yuvarlak kesitli ip borusu (8 köşe, ~8 cm'de bir halka): ThraceRoad.tube_mesh'in hafif hâli (çit ipi uzun; aynı
+## sarım yönü: üçgenler dışa dönük, arka yüz ayıklanır). Ton farkı hafif sarmal burgu.
+static func _tube(pts: Array, r: float, col: Color) -> ArrayMesh:
+	var q: Array = [pts[0]]
+	for i in range(1, pts.size()):
+		var a: Vector3 = q[-1]
+		var b: Vector3 = pts[i]
+		var m := maxi(1, int(ceil(a.distance_to(b) / 0.08)))
+		for k in range(1, m + 1):
+			q.append(a.lerp(b, float(k) / m))
+	const SIDES := 8
+	var st := SurfaceTool.new()
+	st.begin(Mesh.PRIMITIVE_TRIANGLES)
+	var rings: Array = []
+	var along := 0.0
+	var prev_side := Vector3.ZERO
+	for i in q.size():
+		var p: Vector3 = q[i]
+		var t: Vector3 = ((q[mini(i + 1, q.size() - 1)] as Vector3) - (q[maxi(i - 1, 0)] as Vector3)).normalized()
+		if i > 0:
+			along += p.distance_to(q[i - 1])
+		var side := t.cross(Vector3.UP) if absf(t.y) < 0.95 else t.cross(Vector3.RIGHT)
+		if prev_side != Vector3.ZERO:
+			side = side - t * side.dot(t)
+			side = side if side.dot(prev_side) >= 0.0 else -side
+		side = side.normalized()
+		prev_side = side
+		var up := side.cross(t).normalized()
+		var ring: Array = []
+		for k in SIDES:
+			var a := TAU * k / SIDES
+			var nrm := side * cos(a) + up * sin(a)
+			var shade := 0.84 + 0.16 * (0.5 + 0.5 * sin(a * 2.0 + along * 60.0))
+			ring.append([p + nrm * r, nrm, Color(col.r * shade, col.g * shade, col.b * shade)])
+		rings.append(ring)
+	for i in rings.size() - 1:
+		for k in SIDES:
+			var k2 := (k + 1) % SIDES
+			for v: Array in [rings[i][k], rings[i][k2], rings[i + 1][k], rings[i][k2], rings[i + 1][k2], rings[i + 1][k]]:
+				st.set_color(v[2])
+				st.set_normal(v[1])
+				st.add_vertex(v[0])
+	return st.commit()
 
 
 ## İnce dekor parçası: Duel'in öldürme kamerası için uçları (seg_a, seg_b; ebeveyninin, yani talim alanının uzayında)
