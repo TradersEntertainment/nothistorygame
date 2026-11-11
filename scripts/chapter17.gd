@@ -377,6 +377,10 @@ func _run() -> void:
 	_capture_mouse()
 	await hud.fade_to(0.0, 1.0)
 	phase = "brief"
+	# Öteki Bizans sayfaları gibi Nihat'ın açılış cümlesi (29'dan sekiz gün sonra, Venedik kadırgası). Büro önsözü
+	# bu koşuda oynandıysa Nihat zaten gönderdi: tekrar yok
+	if skip_bureau:
+		await hud.say("SPK_NIHAT", "D17_N_HALIC")
 	# Brifingte konuşan kaptan kadrajda (Tolga öne bakarken kaptan arkada kalıyordu)
 	if is_instance_valid(trevisano):
 		player.face(trevisano.global_position + Vector3(0, 1.5, 0))

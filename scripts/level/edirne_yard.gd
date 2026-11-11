@@ -297,7 +297,10 @@ func _frame() -> void:
 			leg.rotate_object_local(Vector3.RIGHT, PI * 0.5)
 			Props.make_solid(leg)       # A ayağının içinden yürünmesin
 			# Ayak dibinde kar yığıntısı
-			Props.ball(self, 0.5, foot + Vector3(0, -0.15, 0), C_SNOW, Vector3(1.2, 0.5, 1.2), 7)
+			# 4. tur: ayak dibindeki kar yığını yassı ve kar renginde (iri 7 köşeli top gölgede açık kahve düz çokgen gibi
+			# görünüyordu)
+			var mound := Props.ball(self, 0.32, foot + Vector3(0, -0.04, 0), C_SNOW.lightened(0.08), Vector3(1.1, 0.22, 1.1), 10)
+			mound.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
 		Props.box(self, Vector3(4.2, 0.22, 0.22), Vector3(0, 2.6, z), C_WOOD.darkened(0.1))
 	Props.box(self, Vector3(0.42, 0.46, PIT_HZ * 2.0 + 2.0), Vector3(0, BEAM_Y + 0.1, 0), C_WOOD.darkened(0.05))
 	# Makaralar (kirişin altında ve uçlarda)
@@ -310,7 +313,8 @@ func _frame() -> void:
 		w.position = wp
 		for sx: float in [-0.9, 0.9]:
 			Props.make_solid(Props.box(w, Vector3(0.2, 1.3, 0.2), Vector3(sx, 0.65, 0), C_WOOD))
-			Props.ball(w, 0.35, Vector3(sx, -0.1, 0), C_SNOW, Vector3(1.2, 0.5, 1.2), 7)
+			var wm := Props.ball(w, 0.26, Vector3(sx, -0.03, 0), C_SNOW.lightened(0.08), Vector3(1.1, 0.22, 1.1), 10)
+			wm.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
 		Props.make_solid(Props.cyl(w, 0.32, 1.6, Vector3(0, 1.05, 0), C_WOOD.lightened(0.1), Vector3(0, 0, 90), 12))
 		var spool := Props.cyl(w, 0.36, 1.2, Vector3(0, 1.05, 0), Color("5a5a5e"), Vector3(0, 0, 90), 12)
 		spools.append(spool)

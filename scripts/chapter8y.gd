@@ -851,7 +851,10 @@ func _warn(reason: String) -> void:
 	var land := pp + fwd * 6.0 + lead.limit_length(4.0) + side * -1.4
 	land.y = _gy(land.x, land.z)
 	var from_wall := pp.z < 70.0
-	var src := Vector3(land.x * 0.5 + (2.0 if _warnings % 2 == 0 else -2.0), 9.5, 15.0) if from_wall else Vector3(land.x + 1.5, 2.6, 110.0)
+	# Ok yay çizip dikçe iner (yaklaşık 40°): saplanınca yere yatık değil, dik durur ve seçilir. Son 13 m'lik iniş
+	# çizgisi sur (arka) ya da siper (ön) yönünden gelir.
+	var back := 1.0 if from_wall else -1.0
+	var src := land + Vector3((1.2 if _warnings % 2 == 0 else -1.2), 10.0, -12.0 * back)
 	_shoot_arrow(src, land)
 	_scare_sinerji()
 	var line: Array = (WARN_WALL if from_wall else WARN_TRENCH)[1 if reason == "run" else 0]

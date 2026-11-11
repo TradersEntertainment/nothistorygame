@@ -426,7 +426,8 @@ func _run() -> void:
 	# Topçubaşı'nın sözleri oyuncu serbestken (30 sn donuk açılış); ışık ancak söz bitince görünür
 	player.frozen = false
 	hud.set_objective(tr("UI_OBJ17O_LISTEN"), topcu, 1.9)
-	hud.say_chain([["SPK_TOPCU", "D17O_A_01"], ["SPK_TOLGA", "D17O_T_01"], ["SPK_TOPCU", "D17O_A_02"]])
+	# 29o'da Baltaoğlu'nun kürekçisiydi: neden kıyı topçusunun yamağı olduğu (öteki Osmanlı sayfaları gibi Nihat açar)
+	hud.say_chain([["SPK_NIHAT", "D17O_N_01"], ["SPK_TOPCU", "D17O_A_01"], ["SPK_TOLGA", "D17O_T_01"], ["SPK_TOPCU", "D17O_A_02"]])
 	while hud.chain_busy():
 		await get_tree().process_frame
 	# Galata'da ışık: tespit
