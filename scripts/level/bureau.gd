@@ -2596,8 +2596,10 @@ func _rb_wait() -> void:
 		if r == 2:
 			# Son sıranın ilk koltuğunda Nasreddin Hoca ters oturur (ata biner gibi, kolları sırtlıkta): onun sırtlığı
 			# ayrı ve dar, bacakları iki yanından geçsin; sıranın sürekli sırtlığı bacaklarını içine alıyordu
-			Props.box(self, Vector3(0.05, 0.34, 2.22), Vector3(x - 0.22, 0.68, -8.19), orange)
-			Props.box(self, Vector3(0.05, 0.34, 0.28), Vector3(x - 0.22, 0.68, -6.8), orange)
+			Props.box(self, Vector3(0.05, 0.34, 2.12), Vector3(x - 0.22, 0.68, -8.24), orange)
+			# Hoca'nın sırtlığı: kaftan (yarıçap 0,32) sırtlığı kesiyordu; plaka kaftanın dışına, kendi ayağıyla durur
+			Props.box(self, Vector3(0.05, 0.34, 0.3), Vector3(x - 0.4, 0.74, -6.8), orange)
+			Props.box(self, Vector3(0.05, 0.57, 0.05), Vector3(x - 0.4, 0.285, -6.8), steel)
 		else:
 			Props.box(self, Vector3(0.05, 0.34, 2.8), Vector3(x - 0.22, 0.68, -7.9), orange)
 		for i in 5:
@@ -3747,10 +3749,20 @@ func _fg_corner(p: Person) -> void:
 	# önkollar belde V çizip kâğıdın yarısını örtüyordu ve tek satıra sıkışan yazı V'nin içinden taşıyordu. Kâğıt
 	# omuz hizasına çıktı (kolların üstünde), iki satıra bölünmüş yazı kâğıdın içinde, gövdeden bir parmak dışarıda.
 	var bd: Node3D = p._body
-	Props.box(bd, Vector3(0.3, 0.3, 0.006), Vector3(0, 1.17, -0.246), Color("f6f2e6"), Vector3(0, 0, 3))
-	Props.box(bd, Vector3(0.08, 0.02, 0.008), Vector3(-0.09, 1.325, -0.25), Color("d8d0a0"), Vector3(0, 0, -20))
-	Props.box(bd, Vector3(0.08, 0.02, 0.008), Vector3(0.09, 1.325, -0.25), Color("d8d0a0"), Vector3(0, 0, 20))
-	Props.label(bd, tr("BUR_HIT_SIGN").replace(". ", ".\n"), Vector3(0, 1.17, -0.252), 11, Color("1a1a1a"), Vector3(0, 180, 3), 0.25)
+	Props.box(bd, Vector3(0.36, 0.4, 0.006), Vector3(0, 1.19, -0.246), Color("f6f2e6"), Vector3(0, 0, 3))
+	Props.box(bd, Vector3(0.09, 0.022, 0.008), Vector3(-0.11, 1.395, -0.25), Color("d8d0a0"), Vector3(0, 0, -20))
+	Props.box(bd, Vector3(0.09, 0.022, 0.008), Vector3(0.11, 1.395, -0.25), Color("d8d0a0"), Vector3(0, 0, 20))
+	# Yazı üç satır: ilk cümle bir satır, kalanı ortadan ikiye bölünür (kâğıdı doldurur, 2-3 m'den okunur)
+	var sg: String = tr("BUR_HIT_SIGN")
+	var cut := sg.find(". ")
+	var l1 := sg.substr(0, cut + 1) if cut >= 0 else sg
+	var rest := sg.substr(cut + 2) if cut >= 0 else ""
+	var words := rest.split(" ")
+	var half := ceili(words.size() / 2.0)
+	var sgn := l1
+	if rest != "":
+		sgn += "\n" + " ".join(words.slice(0, half)) + "\n" + " ".join(words.slice(half))
+	Props.label(bd, sgn, Vector3(0, 1.19, -0.252), 24, Color("120c0c"), Vector3(0, 180, 3), 0.32)
 
 
 func _fg_build() -> void:
