@@ -17,6 +17,7 @@ const CANDLE := 14.0
 const START := Vector3(0.0, 0.0, 0.0)
 
 var _pick: Node3D
+var _dragan_pick: Node3D
 var player: Player
 var hud: Hud
 var phase := "intro"
@@ -123,6 +124,10 @@ func _build() -> void:
 	dragan.rotation.y = PI
 	dragan.look_target = player
 	add_child(dragan)
+	# Dragan kazmayı elinde tutar (T_04 "Kazmaya bakar" derken eli boştu); kazma, verildiğinde Tolga'nın eline geçer
+	_dragan_pick = Items.attach_tool(dragan, "pickaxe")
+	if _dragan_pick:
+		dragan.set_meta("armed", true)
 	_lamp = OmniLight3D.new()
 	_lamp.light_color = Color("ffb060")
 	_lamp.light_energy = 1.6
@@ -143,7 +148,10 @@ func _build() -> void:
 	for sx in [-1.4, 1.4]:
 		var d := Person.new({"coat": Color("7a6a58"), "pants": Color("3a3028"), "hat": "helm", "mustache": true, "skin": Color("d9a07a")})
 		d.position = ch + Vector3(sx, 0, -1.6)
+		d.rotation.y = PI          # duvara döner: kazarken kazması elinde (eli boş duruyorlardı)
 		add_child(d)
+		d.set_activity("chop")
+		d.give_tool("pickaxe")
 	var cl := OmniLight3D.new()
 	cl.position = ch + Vector3(0, 2.4, 0.2)
 	cl.light_color = Color("ffc070")
@@ -440,12 +448,18 @@ func _truce() -> void:
 
 ## Kazma: Dragan'ın verdiği, Tolga'nın sağ elinde; kazınca savrulur.
 func _give_pick() -> void:
+	if is_instance_valid(_dragan_pick):
+		_dragan_pick.queue_free()          # Dragan kazmayı uzattı
+		dragan.remove_meta("armed")
+	_dragan_pick = null
 	if Handover.instant():
 		return
 	_pick = Node3D.new()
-	Props.cyl(_pick, 0.018, 0.55, Vector3(0, 0.0, 0), Color("6a4a2c"), Vector3.ZERO, 6)
-	Props.box(_pick, Vector3(0.32, 0.04, 0.05), Vector3(0, 0.27, 0), Color("5a5a60"), Vector3(0, 0, 8))
-	Props.strip_outlines(_pick)
+	var pm := Items.tool_model("pickaxe")          # sivri/düz uçlu madenci kazması (eskiden düz gri levha)
+	pm.basis = Basis(Vector3.UP, deg_to_rad(90.0)) * Basis(Vector3.RIGHT, deg_to_rad(-90.0))
+	pm.scale = Vector3.ONE * 0.8
+	pm.position = Vector3(0, -0.1, 0)
+	_pick.add_child(pm)
 	player.hold_model(_pick)
 	_pick.position = Vector3(0.22, -0.32, -0.5)
 	_pick.rotation = Vector3(0.3, 0, -0.35)

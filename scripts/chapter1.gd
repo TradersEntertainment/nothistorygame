@@ -170,13 +170,16 @@ func _run() -> void:
 	player.frozen = true
 	player.face(hikmet.global_position + Vector3(0, 1.3, 0))
 	await _h("D1_H_15")
+	# Kumanda Hikmet'in elinde görünür (havadan uzanmıyordu: eli boştu); "Al şunu" derken uzatır, Tolga'nın eline geçer
+	var rm := _remote_prop()
+	if rm and Handover.rig_of(hikmet):
+		Handover.rig_of(hikmet).hold_item(rm, false, false)
 	await _h("D1_H_16")
 	# Hikmet uzatır, Tolga alır (kumanda elde kendiliğinden beliriyordu)
-	if hikmet.get("rig"):
-		Stage.reach(hikmet, Stage.player_arm(player), 0.5)
 	player.reach_grab(hikmet.global_position + Vector3(0, 1.1, 0))
 	player.hand_gesture("reach")
 	await Handover.wait(self, 0.6)
+	await _pass_remote(rm)
 	player.release_grab()         # kumandayı alan el çekilir (sol el bölüm boyunca Hikmet'e uzanık kalıyordu)
 	remote_given = true
 	player.show_remote(true)
@@ -933,6 +936,37 @@ func _use_panel() -> void:
 
 
 # ================================================================ yardımcılar
+## Hikmet'in elindeki kumanda: Tolga'nın birinci şahıs kumandasının kopyası (aynı görünüş), elde tutulacak ölçüde.
+func _remote_prop() -> Node3D:
+	if player._remote_model == null:
+		return null
+	var m := player._remote_model.duplicate() as Node3D
+	m.visible = true
+	m.scale = Vector3.ONE * 1.5
+	return m
+
+
+## Kumanda Hikmet'in elinden çıkar, Tolga'nın uzanan eline gelir (kol boyu: Handover.audit_distance), sonra elde belirir.
+func _pass_remote(rm: Node3D) -> void:
+	var rg := Handover.rig_of(hikmet)
+	if rm == null or rg == null or not is_instance_valid(rm) or not rm.is_inside_tree():
+		if rg:
+			rg.release_item()
+		return
+	var from := rm.global_position
+	var gt := rm.global_transform
+	rm.get_parent().remove_child(rm)
+	add_child(rm)
+	rm.global_transform = gt
+	rg.release_item()
+	var dest := player.camera.global_transform * Vector3(0.08, -0.25, -0.5)
+	Handover.audit_distance(hikmet, from, dest)
+	var tw := create_tween()
+	tw.tween_property(rm, "global_position", dest, 0.05 if Handover.instant() else 0.4).set_trans(Tween.TRANS_SINE)
+	await tw.finished
+	rm.queue_free()
+
+
 
 func _h(key: String) -> void:
 	hikmet.talking = true

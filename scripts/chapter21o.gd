@@ -112,6 +112,7 @@ func _build() -> void:
 	digger.set_meta("no_talk", true)
 	add_child(digger)
 	digger.set_activity("chop")
+	digger.give_tool("pickaxe")       # kazmacı kazmasız vuruyordu (havaya)
 	zaganos = Person.new({"coat": Color("2f4a6a"), "pants": Color("2a2a30"), "hat": "turban", "beard": true, "mustache": true, "robe": Color("2f4a6a"),
 		"skin": Color("d9a07a"), "face": {"nose": "hook", "brow": 1.3, "brow_tilt": 8.0, "beard": "short", "head": Vector3(0.98, 1.08, 0.98)}})
 	zaganos.set_meta("spk", "SPK_ZAGANOS")
@@ -537,9 +538,11 @@ func _give_pick() -> void:
 	_pick.position = Vector3(-0.24, -0.34, -0.55)
 	_pick.rotation_degrees.x = -20.0
 	player.camera.add_child(_pick)
-	Props.cyl(_pick, 0.018, 0.5, Vector3(0, 0.16, 0), Color("6a4a2a"), Vector3.ZERO, 6)
-	Props.box(_pick, Vector3(0.32, 0.04, 0.04), Vector3(0, 0.4, 0), Color("6a6e74"))
-	Props.strip_outlines(_pick)
+	# Madencinin kazması (Items.tool_model): sivri ve düz uçlu çift başlı, sap yukarıda (eskiden düz gri levha: tokmak gibiydi)
+	var pm := Items.tool_model("pickaxe")
+	pm.basis = Basis(Vector3.UP, deg_to_rad(90.0)) * Basis(Vector3.RIGHT, deg_to_rad(-90.0))
+	pm.scale = Vector3.ONE * 0.8
+	_pick.add_child(pm)
 	player.free_hold = Vector3(-0.24, -0.34, -0.55)
 
 

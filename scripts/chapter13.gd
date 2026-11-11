@@ -165,7 +165,13 @@ func _open_window(line: String) -> void:
 	else:
 		await _h("D13_H_TUNED")
 	await _h("D13_H_LEVER")
-	player.hand_gesture("reach")
+	# Hikmet'in eli kolun topuzunu tutar (el havada "uzanıyordu", kol kadrajda değildi)
+	var knob := _lever_knob()
+	if knob != Vector3.INF:
+		player.face(knob.lerp(garage.panel_node.global_position + Vector3(0, 1.2, 0), 0.35))
+		player.reach_grab(knob)
+	else:
+		player.hand_gesture("reach")
 	await _hold_qte("UI_CH13_LEVER", "interact", 1.5, true, "UI_CH13_LEVER_BAR")
 	Audio.sfx("kick_metal", -10.0, 0.7)          # kol yerine oturur (kol, makine ve pencere sessizdi)
 	if garage:
@@ -174,11 +180,26 @@ func _open_window(line: String) -> void:
 		garage.machine_light.light_energy = 2.5
 		if garage.lever:
 			create_tween().tween_property(garage.lever, "rotation:z", deg_to_rad(-70.0), _d(0.35)).set_trans(Tween.TRANS_BACK)
+			# El kolla birlikte iner (kol çekilirken el yerinde kalmasın)
+			if knob != Vector3.INF:
+				var ht := create_tween()
+				ht.tween_method(func(_t: float) -> void:
+					if player and is_instance_valid(garage) and garage.lever:
+						player.reach_grab(_lever_knob()), 0.0, 1.0, _d(0.4))
+				ht.tween_interval(_d(0.8))
+				ht.tween_callback(func() -> void: if player: player.release_grab())      # kol indi, el çekilir
 		# Pencere gerçekten açılır: halkanın içinde parıltı (yalnız makine hızlanıyordu)
 		create_tween().tween_property(garage, "portal", 1.0, _d(1.2))
 	Audio.sfx("machine_spin", -6.0)
 	player.shake(0.5)
 	await _h("D13_H_OPEN")
+
+
+## Makine kolunun topuzu (dünya); garaj ya da kol yoksa INF.
+func _lever_knob() -> Vector3:
+	if garage == null or not is_instance_valid(garage) or garage.lever == null:
+		return Vector3.INF
+	return garage.lever.to_global(Vector3(-0.1, 0.39, 0.0))
 
 
 ## Kontrol Tolga'ya geçer: pencere açıkken kırmızı düğmeyi basılı tut.

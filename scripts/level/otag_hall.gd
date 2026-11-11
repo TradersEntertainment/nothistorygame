@@ -17,6 +17,7 @@ const PAGE_AT_TOLGA := Vector3(0.7, 0.0, -2.0)     # Tolga'dan 1,6 m (0,9 m'de u
 
 var fatih: Person
 var scribe: Person
+var _court: Array = []       # vezirler (Crowd.idle_vary)
 var page: Person
 var guards: Array = []
 var lights: Array = []
@@ -208,9 +209,10 @@ func _build_people() -> void:
 	page.set_meta("no_chat", true)
 	add_child(page)
 	scribe = Person.new({"coat": Color("3a4a3a"), "pants": Color("2a2a24"), "hat": "turban", "beard": true, "robe": Color("3a4a3a"), "skin": Color("d9a07a")})
-	scribe.position = Vector3(-4.2, 0, -1.6)
-	scribe.rotation.y = PI * 0.8
+	scribe.position = Vector3(-4.2, 0, -1.75)
+	scribe.rotation.y = PI          # alçak masaya döner (arkası masaya bakıyordu, elinde kalem yoktu)
 	add_child(scribe)
+	scribe.set_activity("write")     # bağdaş kurmuş yazar: kalem sağ elde, defter solda (Person "write")
 	for s in [-1, 1]:
 		var g := Soldier.new(Color("b3262d") if s < 0 else Color("2f5fa8"), "stand", "bork")
 		g.position = THRONE + Vector3(s * 3.0, 0, 0.6)
@@ -227,6 +229,7 @@ func _build_people() -> void:
 		v.position = Vector3(side * (5.9 + (i / 4) * 0.7), 0, -0.9 + ((i % 4) / 2) * 1.8)      # arka sıra ön sıranın ardında (yan sandıkların içinde değil)
 		v.rotation.y = -side * PI * 0.5
 		add_child(v)
+		_court.append(v)
 	for i in 4:
 		var side := -1.0 if i % 2 == 0 else 1.0
 		var g := Soldier.new([Color("b3262d"), Color("2f5fa8")][i / 2], "stand", "bork")
@@ -234,6 +237,8 @@ func _build_people() -> void:
 		g.rotation.y = -side * PI * 0.5
 		add_child(g)
 		g.equip("spear")
+	# Vezirler donuk durmasın: ağırlık değiştirme, baş sallama, fısıldaşma (huzurda küçük, seyrek jestler)
+	Crowd.idle_vary(_court, {"emotes": ["nod", "cross_self", "shrug", "nod"], "every": Vector2(7.0, 18.0)})
 
 
 ## İç oğlanı (yerel koordinatta) bir yere yürür; bacaklar tween hızından yürür, halıda yumuşak adım.
