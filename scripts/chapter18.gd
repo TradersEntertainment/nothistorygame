@@ -537,6 +537,9 @@ func _do_barrels() -> void:
 ## Yığından alınan fıçı oyuncunun önünde yere iner, iki el üstünde (hold_both) köprü ucuna doğru itilir, ellerden
 ## çıkınca yuvarlanmayı sürdürür, kenardan suya düşer (Vfx.water_entry); bölümün fıçı çifti sudan yüzeye çıkıp oturur.
 ## Oynanış aynı: adım hemen "lash"a geçer, oyuncu donmaz.
+var _look_tw: Tween
+
+
 func _roll_barrel(s: Node3D, b: Node3D, end: Vector3) -> void:
 	var head_z := SHORE_Z + 2.0 + SEC_LEN * built
 	# Fıçı oyuncunun önüne, köprü ucuna doğru iner; oyuncu o yöne döner (tur 2: kameranın baktığı yöne indiğinde ustanın
@@ -572,7 +575,10 @@ func _roll_barrel(s: Node3D, b: Node3D, end: Vector3) -> void:
 	player.hold_both(Vector3(-0.24, 0.3, -0.2), Vector3(0.24, 0.3, -0.2), carrier)
 	# Bakış ellere iner (fıçı göz hizasının çok altında: ekranın dışında kalıyordu), itiş bitince geri kalkar
 	var pitch0 := player.camera.rotation.x
+	if _look_tw and _look_tw.is_valid():
+		_look_tw.kill()
 	var look := create_tween()
+	_look_tw = look
 	look.tween_property(player.camera, "rotation:x", minf(pitch0, -0.5), 0.3).set_trans(Tween.TRANS_SINE)
 	look.tween_interval(1.0)
 	look.tween_property(player.camera, "rotation:x", pitch0, 0.5).set_trans(Tween.TRANS_SINE)
@@ -727,6 +733,8 @@ func _do_planks() -> void:
 
 func _finish_bridge() -> void:
 	phase = "done"
+	if _look_tw and _look_tw.is_valid():
+		_look_tw.kill()           # son fıçının bakış inişi top sahnesinin bakışını ezmesin
 	player.frozen = true
 	hud.set_objective("")
 	await hud.say("SPK_USTA", ("D18_U_DONE" if misses == 0 else "D18_U_DONE_LOOSE") if misses <= 2 else "D18_U_CROOKED")
@@ -758,9 +766,9 @@ func _finish_bridge() -> void:
 		w.reparent(cannon, true)          # topla birlikte gider; önce arkasına yürür
 		w.pose = "push"
 		# Yalnız yatayda yürür; yükseklik her karede altındaki zeminden (_ground_pushers)
-		walk.tween_property(w, "position:x", -0.75 + i * 0.75, 2.0 if not GameState.autotest else 0.05)
-		walk.tween_property(w, "position:z", -2.45, 2.0 if not GameState.autotest else 0.05)
-		walk.tween_property(w, "rotation:y", 0.0, 0.5 if not GameState.autotest else 0.05)
+		walk.tween_property(w, "position:x", -0.75 + i * 0.75, 2.0 if not fast else 0.05)
+		walk.tween_property(w, "position:z", -2.45, 2.0 if not fast else 0.05)
+		walk.tween_property(w, "rotation:y", 0.0, 0.5 if not fast else 0.05)
 	# Arkaya varınca iki el kuyruktaki sırıkta (topun yerelinde), gövde öne yatık
 	walk.finished.connect(func():
 		for i in _pushers.size():

@@ -102,6 +102,9 @@ var _seat: Node3D
 var _archers: Array[Soldier] = []
 ## Sinerji (4b'den beri Tolga'nın peşindeki tavuk; bayrak "sinerji"): kapıdan pazara kadar yanında yürür
 var sinerji: Chicken
+## Sinerji'nin izlediği nokta: Chicken.follow hedefin arkasına geçer; birinci şahısta arkadaki tavuk hiç görünmüyordu.
+## Yürürken oyuncunun sağ önünde (bakışın sağ altında görünür), sahnelerde yanında durur.
+var _lead: Node3D
 
 
 func _ready() -> void:
@@ -331,7 +334,7 @@ func _build_people() -> void:
 	# altında küçük görünmez döşeme (Unclip onları sur dibine indirmesin)
 	for i in 4:
 		# Mazgal aralıklarında (dünyanın dış sur mazgalları 1,8 m arayla): köprüden bakınca mazgal taşının ardında kalmasınlar
-		var x: float = [-6.8, -8.6, 7.6, 9.4][i]
+		var x: float = [-8.6, -10.4, 7.6, 9.4][i]
 		var s := Soldier.new([Color("6a2a2a"), Color("3a4a6a"), Color("5a3a2a"), Color("6a2a2a")][i], "stand", "helm")
 		# Mazgalın ardında taş atış basamağında (0,45 m): köprüden bakınca omuzdan yukarısı mazgalın üstünde görünür
 		s.position = Vector3(x, 8.45, 15.05)
@@ -643,9 +646,22 @@ func _towel_tick(delta: float) -> void:
 
 ## Sinerji oyuncunun arkasında yanından yürür (Chicken.follow); burada yalnız yürünen yerde tutulur: hendek geçidinden
 ## (x ±3,5) taşıp hendeğin üstünde havada kalmasın, kapı ve peribolos duvarlarına girmesin; ayağı görünen zeminde.
+func _move_lead() -> void:
+	if not is_instance_valid(_lead):
+		return
+	var f := -player.camera.global_transform.basis.z if player.camera else Vector3.BACK
+	f.y = 0.0
+	f = f.normalized() if f.length() > 0.01 else Vector3.BACK
+	var r := f.cross(Vector3.UP)        # sağ
+	var walking := not _busy and phase in ["peri", "out", "field", "lines"]
+	var p := player.global_position + (f * 3.4 + r * 1.3 if walking else f * 1.4 + r * 0.9)
+	_lead.global_transform = Transform3D(Basis(Vector3.UP, atan2(-f.x, -f.z)), Vector3(p.x, player.global_position.y, p.z))
+
+
 func _keep_sinerji() -> void:
 	if not is_instance_valid(sinerji):
 		return
+	_move_lead()
 	var p := sinerji.global_position
 	var lim := 13.5
 	if p.z < -4.0:
@@ -680,7 +696,7 @@ func _warn(reason: String) -> void:
 	fwd.y = 0.0
 	fwd = fwd.normalized() if fwd.length() > 0.01 else Vector3.BACK
 	var side := fwd.cross(Vector3.UP)
-	var land := pp + fwd * 1.5 + side * (0.45 if _warnings % 2 == 0 else -0.45)
+	var land := pp + fwd * 3.0 + side * (0.5 if _warnings % 2 == 0 else -0.5)      # 3 m önü: bakışın alt yarısında görünür
 	land.y = _gy(land.x, land.z)
 	var from_wall := pp.z < 70.0
 	var src := Vector3(land.x * 0.5 + (2.0 if _warnings % 2 == 0 else -2.0), 9.5, 15.0) if from_wall else Vector3(land.x + 1.5, 2.6, 110.0)
@@ -733,7 +749,10 @@ func _run() -> void:
 		sinerji.process_priority = -10      # önce tavuk yürür, sonra bölüm onu koridorda ve zeminde tutar (_keep_sinerji)
 		sinerji.global_position = player.global_position + Vector3(0.8, 0, 1.0)
 		sinerji.global_position.y = _gy(sinerji.global_position.x, sinerji.global_position.z)
-		sinerji.follow = player
+		_lead = Node3D.new()
+		add_child(_lead)
+		_move_lead()
+		sinerji.follow = _lead
 	_capture_mouse()
 	await hud.fade_to(0.0, 1.0)
 	if _deported:
@@ -1036,7 +1055,7 @@ func _finale() -> void:
 	await Stage.walk_player(player, END_AT, 0.05, END_AT + Vector3(0, 1.6, 10.0))
 	player.face(END_AT + Vector3(0, 1.6, 10.0))
 	if is_instance_valid(sinerji):
-		sinerji.global_position = END_AT + Vector3(0.9, _gy(0.9, END_AT.z + 1.2), 1.2)
+		sinerji.global_position = END_AT + Vector3(1.0, _gy(1.0, END_AT.z + 2.6), 2.6)
 		sinerji.rotation.y = 0.0
 	await _t("D8Y_T_END_DEP" if _deported else "D8Y_T_END")
 	if _deported:

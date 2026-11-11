@@ -247,7 +247,7 @@ func _cast() -> void:
 		tilt.tween_property(_crucible, "position", above, _d(0.15))
 		tilt.tween_property(_crucible, "rotation:z", -0.9, _d(0.25))
 		await tilt.finished
-		_p1_shot("10B_POUR_%d" % i, 0.05)
+		_p1_shot("10B_POUR_%d" % i)
 		Stage.grip_hold(urban, _crucible, [Vector3(side * 0.3, 0.06, -0.16), Vector3(side * 0.3, 0.06, 0.16)], -1.0, 0.12)
 		_stream.visible = true
 		var top := _crucible.global_position + Vector3(0, 0.1, 0)

@@ -162,12 +162,12 @@ func _build() -> void:
 		add_child(loose)
 		loose.global_position = top
 		loose.set_meta("base", 0.0)
-		var lr := Stage.rope(loose, Vector3.ZERO, Vector3(0, -0.3, 0), 0.0, 0.045, Color("c09a68"))      # tur 2: kalın, açık kenevir
+		var lr := Stage.rope(loose, Vector3.ZERO, Vector3(0, -0.3, 0), 0.0, 0.036, Color("c09a68"))      # tur 2: kalın, açık kenevir
 		lr.name = "Rope"
 		_rope_loose.append(loose)
 		_loose_rope_pts(i, 0.0)
 		# Gergin ip: çadırın tepesinden elde/kazıkta (sarkan, burgulu Stage halatı)
-		var taut := Stage.rope(self, to_local(top), to_local(peg + Vector3(0, 0.5, 0)), 0.1, 0.045, Color("c09a68"))
+		var taut := Stage.rope(self, to_local(top), to_local(peg + Vector3(0, 0.5, 0)), 0.1, 0.036, Color("c09a68"))
 		taut.visible = false
 		_rope_taut.append(taut)
 		# Bağlanınca: kazığa sarılmış üç tur ip ve düğüm (kazıkla birlikte çakılır: kazığın çocuğu)
@@ -505,13 +505,15 @@ func _storm() -> void:
 
 
 func _auto_ropes() -> void:
-	_p1_shot("24O_LOOSE")
+	_p1_shot("24O_LOOSE", 0.0, _rope_peg[0] - Vector3(0, 0.3, 0))
+	for f in 3:
+		await get_tree().process_frame
 	for i in 3:
 		_rope(i, 0.6)                 # ip çekilirken (yalnız görüntü; bağlama yine _tie)
 		_p1_shot("24O_PULL_%d" % i, 0.1)
 		await get_tree().create_timer(0.3, false).timeout
 		_tie(i)
-		_p1_shot("24O_TIED_%d" % i, 0.25)
+		_p1_shot("24O_TIED_%d" % i, 0.25, _rope_peg[i] - Vector3(0, 0.2, 0))
 
 
 func _world_env() -> WorldEnvironment:
@@ -596,9 +598,9 @@ func _rope(i: int, k: float) -> void:
 
 ## Tolga'nın ipi tutan eli (görünen el; yoksa kameranın sağ altı)
 func _hand_point() -> Vector3:
-	if player.hand and player.hand.is_visible_in_tree():
-		return player.hand.global_position
-	return player.camera.global_transform * Vector3(0.22, -0.28, -0.5)
+	# Görünen sağ elin avucu (kameranın sağ altı; tur 2: player.hand düğümü görünen elden ayrı yerdeydi, ip ekranın sol
+	# altından çıkıyordu)
+	return player.camera.global_transform * Vector3(0.1, -0.1, -0.5)
 
 
 ## Gevşek ipin noktaları (loose düğümünün yerelinde): tepeden yere iner, yerde kazığa doğru kıvrılır; w rüzgâr salınımı

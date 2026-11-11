@@ -185,9 +185,6 @@ func _build_gate() -> void:
 	Props.interactable(self, "tailor", Vector3(1.2, 2.0, 1.2), tailor.position + Vector3(0, 1.0, 0))
 	# Sıradakiler kıpırdar: ağırlık verir, kol kavuşturur, iç çeker, boynunu uzatıp öne bakar (yayma P1; eskiden kıpırtısız
 	# dikiliyorlardı). Kapıdaki nöbetçiler de.
-	# Duruşlar farklı: deveci yarı devesine dönük, terzi sıranın başına (Ağa'ya) yan durur
-	cameleer.rotation.y = -0.9
-	tailor.rotation.y = PI * 0.75
 	Crowd.idle_vary([cameleer, tailor, hasan, huseyin], {"every": Vector2(2.0, 5.0),
 		"emotes": ["nod", "arms_cross", "think", "sigh", "shrug", "lean"]})
 	# Otağın içinde, perde arkasında: gölge
@@ -234,9 +231,8 @@ func _run() -> void:
 	else:
 		await _t("D10O_T_01")
 		Crowd.look_at_event([cameleer, tailor, hasan, huseyin], aga, 3.5, 0.8)     # bağırınca sıra Ağa'ya döner
+		_p1_shot("10_SHOUT", 1.0)
 		await _say("SPK_AGA", "D10O_A_SHOUT")
-		_p1_shot("10_SHOUT")
-		_p1_shot("10_QUEUE", 1.2)
 		await _t("D10O_T_02")
 		phase = "free"
 		Lore.scatter(self, "10")
