@@ -18,8 +18,11 @@ autotest koşusundan, AYNI olay anından (geçici kare kancası; iş bitince sö
 | 30o taşıma evresi (ok yağmuru, taşıyanlar) | bakılmadı ayrıntılı | — | BAKILMADI |
 
 ## Testler
-Başsız (`--headless --max-fps 20`): bkz. aşağıdaki sonuç bloğu. Ekranlı koşuda 30o `AUTOTEST FAIL` verir (ÖNCE ve SONRA
-aynı: yavaş yazılım çizimiyle yağ/taş zamanlaması); başsız özgün hâl `PASS` (taban koşusu: `flee=ride`).
+Başsız (`timeout … --headless --max-fps 20`), son kodla: **8/8 AUTOTEST PASS**; `SCRIPT ERROR`, `WARN_FX_STUCK`,
+`WARN_FLY_ITEM`, `VISAUDIT`, `WARN_VOID_TELEPORT`, `WALKTHRU`, `ARMAUDIT`, `HELDAUDIT`, `JOURNEY_*` satırı YOK. `parse_check` PASS (247 betik).
+- 30: `""` PASS, `=lose` PASS, `=bridge_ok` PASS, `=bridge_bad` PASS (4/4)
+- 30o: `""` PASS, `=lose` PASS, `=sprint` PASS, `=stonehit` PASS (4/4)
+Ekranlı koşuda 30o `AUTOTEST FAIL` verir (ÖNCE ve SONRA aynı: yavaş yazılım çizimiyle zamanlama); başsız koşu PASS.
 
 ## Performans (RINFO, ekranlı, `--hitchaudit`; aynı sıradaki örnekler)
 Bölüm 30, durağan evreler (örnek 0–17): çizim çağrısı ÖNCE 2617→SONRA 2601 (eşit/az), üçgen +%3…+%5. Medyan çizim
