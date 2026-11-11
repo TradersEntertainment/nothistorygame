@@ -342,6 +342,10 @@ func _collapse() -> void:
 	await hud.say("SPK_NIHAT", "D10L_N_DIG_1")
 	await _t("D10L_T_COLLAPSE_2B")     # Nihat kendini tanıtmadı (adı Bölüm 11'de)
 	await hud.say("SPK_NIHAT", "D10L_N_DIG_2")
+	# Beyan ve çıkarılış (bölüm "Beyan edin"de bitiyordu; 11'de "sizi ben çıkardım" deniyordu ama görülmüyordu)
+	await _t("D10L_T_DECLARE")
+	await hud.say("SPK_NIHAT", "D10L_N_DECLARED")
+	shaft.light_energy = 6.0              # delik açılır: ışık büyür, kararma bölüm sonunda
 	GameState.paradox += 20
 	GameState.flags["buried"] = true
 	_outcome = "10L.3"

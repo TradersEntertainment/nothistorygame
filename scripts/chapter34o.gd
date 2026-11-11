@@ -150,7 +150,8 @@ func _build_people() -> void:
 		p = _gy(p)
 		items.append([Transform3D(Basis(Vector3.UP, rng.randf_range(-0.4, 0.4)), p),
 			{"side": "C", "coat": coats[i % coats.size()], "hat": ["turban", "bork", "scarf"][i % 3], "pose": ""}])
-	Crowd.place(self, items, true, true)    # içlerinden geçilmesin
+	# yayma P4: kalabalık blok hâlinde kımıltısızdı; aralıklı jest, baş çevirme
+	Crowd.idle_vary(Crowd.place(self, items, true, true))    # içlerinden geçilmesin
 
 
 func _run() -> void:
@@ -335,6 +336,9 @@ func _crank() -> void:
 	player.global_position = _gy(EdirneYard.WIND_REAR + Vector3(1.5, 0, 0)) + Vector3(0, 0.05, 0)
 	player.face(EdirneYard.WIND_REAR + Vector3(0, 1.1, 0))
 	foreman.look_target = null
+	# yayma P4: ustabaşının iki eli kendi çıkrığının el çarkında (çark döndükçe eller kollarla gelir); eskiden "row"
+	# pozunda kollar havada sallanıyordu
+	Stage.grip_hold(foreman, level.drums[1], [Vector3(0.14, 0.58, 0.0), Vector3(0.14, 0.0, 0.58)])
 	hud.bark("SPK_SOLDIER", "D34O_S_CRANK", 3.0)
 	player.frozen = true
 	meter.enabled = true
@@ -542,6 +546,7 @@ func _onto_sled() -> void:
 	# Zincirler çözülür
 	for c in level.chains:
 		c.visible = false
+	Stage.grip_release(foreman)
 	foreman.set_activity("")
 	await get_tree().create_timer(1.0, false).timeout
 	hud.bark("SPK_TOLGA", "D34O_T_REVEAL", 4.0)

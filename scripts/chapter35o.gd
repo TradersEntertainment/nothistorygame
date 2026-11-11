@@ -592,17 +592,18 @@ func _fall_in() -> void:
 			Vfx.water_ring(self, player.global_position, ThraceRoad.WATER_Y, 0.3, 1.2, 1.2, 0.45)
 	# Yakın kıyıdan ip atılır: kıyıdaki kazıktan oyuncunun iki eline
 	var bank := Vector3(water.x + 13.0, ThraceRoad.ground_y(water.x + 13.0, -9.6) + 0.1, -9.6)
-	var rope := Stage.rope(self, bank + Vector3(0, 1.0, 0), player.global_position + Vector3(0, 0.6, 0), 0.0, 0.03, Color("c8b080"))
+	var rope := _tube_node(Color("c8b080"))
 	var swim_rope := func() -> void:
 		var hl := Vector3(-0.12, -0.16, -0.58)
 		var hr := Vector3(0.1, -0.19, -0.5)
 		player.hold_both(hl, hr)
 		var a := bank + Vector3(0, 1.0, 0)
-		var b := player.camera.to_global(hl)
+		var f := _fists()
+		var b: Vector3 = f[0]
 		var pts: Array = Stage.sag_points(a, b, 0.25 * clampf(a.distance_to(b) / 10.0, 0.2, 1.0), 8)
-		pts.append(player.camera.to_global(hr))
-		pts.append(player.camera.to_global(hr + Vector3(0.05, -0.25, 0.2)))
-		Stage.rope_to(rope, pts)
+		pts.append(f[1])
+		pts.append((f[1] as Vector3) + Vector3(0, -0.3, 0))
+		_tube(rope, pts, 0.017)
 	swim_rope.call()
 	hud.set_prompt(tr("UI_PROMPT35O_GRAB"))
 	var t := 0.0
@@ -908,6 +909,7 @@ var _tight_warned := false
 var _brake_rope: MeshInstance3D
 var _brake_coil: MeshInstance3D       # ipin artan ucu: oyuncunun ayağının dibinde kangal
 var _brake_held := false
+var _brake_near: MeshInstance3D       # kazıktan ellere ve kangala giden yakın parça (ince ağ)
 
 
 ## Fren ipi (yayma P4): arabanın arka dingilinden kazığa gelir, kazığa sarılır (volta), oradan oyuncunun iki eline,
@@ -931,24 +933,100 @@ func _brake_lay(held: bool, squeeze: bool) -> void:
 		var hl := Vector3(-0.17, -0.17 - back * 0.4, -0.6 + back)
 		var hr := Vector3(0.06, -0.2 - back * 0.4, -0.5 + back)
 		player.hold_both(hl, hr)
-		var l := player.camera.to_global(hl)
-		var r := player.camera.to_global(hr)
+		var f := _fists()
+		var l: Vector3 = f[0]
+		var r: Vector3 = f[1]
 		var mid := w_out.lerp(l, 0.5) + Vector3(0, -0.03 if squeeze else -0.12, 0)
-		pts.append_array([w_out, mid, l, r, player.camera.to_global(hr + Vector3(0.06, -0.3, 0.12))])
 		var right := player.camera.global_transform.basis.x
 		right.y = 0.0
 		var cp := pp + right.normalized() * 0.45 + Vector3(0, 0, 0)
 		cp.y = ThraceRoad.ground_y(cp.x, cp.z)
 		if is_instance_valid(_brake_coil):
 			_brake_coil.global_position = cp
-		pts.append(cp + Vector3(0, 0.12, 0))
+		var below := r + (r - l).normalized() * 0.12 + Vector3(0, -0.25, 0)
+		_tube(_brake_near, [w_out, mid, l, r, below, cp + Vector3(0, 0.12, 0)])
 	else:
 		player.release_both()
 		var g0 := post + to_p * 0.45
 		g0.y = ThraceRoad.ground_y(g0.x, g0.z) + 0.04
 		var cp: Vector3 = _brake_coil.global_position if is_instance_valid(_brake_coil) else g0
-		pts.append_array([w_out, g0, cp + Vector3(0, 0.06, 0)])
+		_tube(_brake_near, [w_out, g0, cp + Vector3(0, 0.06, 0)])
 	Stage.rope_to(_brake_rope, pts)
+
+
+## Yakın plan ip (yayma P4, 2. tur): kameraya yarım metre yakında Stage.rope'un altı köşeli, dış çizgili, şeritli
+## borusu katlanmış karton cetvel gibi görünüyordu. Bu ağ ince (yarıçap 1,6 cm = çap 3,2 cm), 10 köşeli, yumuşak
+## gölgeli, dış çizgisiz; burgu yalnız köşe renginde hafif sarmal bir ton farkı. Noktalar dünya koordinatı.
+static var _tube_mat: StandardMaterial3D
+
+
+func _tube_node(col: Color) -> MeshInstance3D:
+	var mi := MeshInstance3D.new()
+	mi.set_meta("no_walk", true)
+	mi.set_meta("tube_col", col)
+	mi.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
+	if _tube_mat == null:
+		_tube_mat = StandardMaterial3D.new()
+		_tube_mat.vertex_color_use_as_albedo = true
+		_tube_mat.vertex_color_is_srgb = true
+		_tube_mat.roughness = 0.95
+	mi.material_override = _tube_mat
+	add_child(mi)
+	return mi
+
+
+func _tube(mi: MeshInstance3D, pts: Array, r := 0.016) -> void:
+	if not is_instance_valid(mi) or pts.size() < 2:
+		return
+	var col: Color = mi.get_meta("tube_col", Color("c8b080"))
+	# Kısa parçalara böl (köşelerde kırık görünmesin): her parça en çok 6 cm
+	var q: Array = [pts[0]]
+	for i in range(1, pts.size()):
+		var a: Vector3 = q[-1]
+		var b: Vector3 = pts[i]
+		var n := maxi(1, int(ceil(a.distance_to(b) / 0.06)))
+		for k in range(1, n + 1):
+			q.append(a.lerp(b, float(k) / n))
+	const SIDES := 10
+	var st := SurfaceTool.new()
+	st.begin(Mesh.PRIMITIVE_TRIANGLES)
+	var rings: Array = []
+	var along := 0.0
+	var prev_side := Vector3.ZERO
+	for i in q.size():
+		var p: Vector3 = q[i]
+		var t: Vector3 = ((q[mini(i + 1, q.size() - 1)] as Vector3) - (q[maxi(i - 1, 0)] as Vector3)).normalized()
+		if i > 0:
+			along += p.distance_to(q[i - 1])
+		var side := t.cross(Vector3.UP) if absf(t.y) < 0.95 else t.cross(Vector3.RIGHT)
+		if prev_side != Vector3.ZERO:
+			side = (side if side.dot(prev_side) >= 0.0 else -side)
+		side = side.normalized()
+		prev_side = side
+		var up := side.cross(t).normalized()
+		var ring: Array = []
+		for k in SIDES:
+			var a := TAU * k / SIDES
+			var nrm := side * cos(a) + up * sin(a)
+			var shade := 0.86 + 0.14 * (0.5 + 0.5 * sin(a * 2.0 + along * 70.0))
+			ring.append([p + nrm * r, nrm, Color(col.r * shade, col.g * shade, col.b * shade)])
+		rings.append(ring)
+	for i in rings.size() - 1:
+		for k in SIDES:
+			var k2 := (k + 1) % SIDES
+			for v: Array in [rings[i][k], rings[i + 1][k], rings[i][k2], rings[i][k2], rings[i + 1][k], rings[i + 1][k2]]:
+				st.set_color(v[2])
+				st.set_normal(v[1])
+				st.add_vertex(v[0])
+	mi.mesh = st.commit()
+
+
+## Oyuncunun iki yumruğunun içi (avuçtaki eşya yuvası): ip buradan geçer. [sol, sağ]
+func _fists() -> Array:
+	var l: Vector3 = player.free_rig.socket.global_position if player.free_rig and player.free_rig.socket else player.camera.to_global(Vector3(-0.15, -0.17, -0.6))
+	var r: Vector3 = player.rig.socket.global_position if player.rig and player.rig.socket else player.camera.to_global(Vector3(0.06, -0.2, -0.5))
+	var up := player.camera.global_transform.basis.y * 0.035      # avucun ortası (yuva avuç tabanında)
+	return [l + up, r + up]
 
 
 func _slope() -> void:
@@ -968,8 +1046,9 @@ func _slope() -> void:
 	player.global_position = _gy(ThraceRoad.POST1 + Vector3(0.8, 0, -1.2)) + Vector3(0, 0.05, 0)
 	player.face(_gy(Vector3(0, 0, 70)) + Vector3(0, 1.0, 0))
 	urban.global_position = _gy(Vector3(6.4, 0, 46.5))
-	_brake_rope = Stage.rope(self, Vector3.ZERO, Vector3(0, 0.1, 0), 0.0, 0.035, Color("c8b080"))
-	_brake_coil = Stage.rope_coil(self, Vector3.ZERO, 0.3, 3.5, 0.034, Color("c8b080"))
+	_brake_rope = Stage.rope(self, Vector3.ZERO, Vector3(0, 0.1, 0), 0.0, 0.022, Color("c8b080"))
+	_brake_near = _tube_node(Color("c8b080"))
+	_brake_coil = Stage.rope_coil(self, Vector3.ZERO, 0.3, 3.5, 0.018, Color("c8b080"))
 	_brake_lay(true, false)
 	await hud.fade_to(0.0, 0.6)
 	await hud.say("SPK_URBAN", "D35O_U_SLOPE")
@@ -1081,6 +1160,8 @@ func _slope() -> void:
 	hud.set_objective("")
 	hud.set_prompt("")
 	_brake_rope.queue_free()
+	if is_instance_valid(_brake_near):
+		_brake_near.queue_free()
 	if is_instance_valid(_brake_coil):
 		_brake_coil.queue_free()
 	player.release_both()
@@ -1170,7 +1251,7 @@ func _night() -> void:
 	var names := ["Sarıkız", "Karabaş", "Benekli", ""]
 	for k in 4:
 		var o: Ox = level.camp_oxen[1 + k * 2]
-		var rope := Stage.rope(self, Vector3.ZERO, Vector3(0, 0.1, 0), 0.0, 0.026, Color("b89a6a"))
+		var rope := _tube_node(Color("b89a6a"))
 		var end := Node3D.new()
 		add_child(end)
 		Props.ball(end, 0.08, Vector3.ZERO, Color("b89a6a"), Vector3.ONE, 6)
@@ -1288,8 +1369,9 @@ func _runner_rope(r: Dictionary, o: Ox, back: Vector3, side: Vector3) -> void:
 		player.hold_both(hl, hr)
 		var flank := base + side * 0.62 + Vector3(0, 0.95, 0)
 		var rump := base + back * 1.1 + side * 0.55 + Vector3(0, 0.95, 0)
-		var l := player.camera.to_global(hl)
-		var rr := player.camera.to_global(hr)
+		var f := _fists()
+		var l: Vector3 = f[0]
+		var rr: Vector3 = f[1]
 		var drop := player.global_position + side * 0.35 + back * 0.2
 		drop.y = _gy(drop).y + 0.05
 		pts.append_array([flank, rump, l, rr, rr + Vector3(0, -0.4, 0) + back * 0.1, drop])
@@ -1298,7 +1380,7 @@ func _runner_rope(r: Dictionary, o: Ox, back: Vector3, side: Vector3) -> void:
 		var g1 := _gy(base + side * 0.62) + Vector3(0, 0.04, 0)
 		var g2 := _gy(base + back * 1.3 + side * 0.7) + Vector3(0, 0.04, 0)
 		pts.append_array([g0, g1, g2, (r["end"] as Node3D).global_position + Vector3(0, -0.04, 0)])
-	Stage.rope_to(r["rope"], pts)
+	_tube(r["rope"], pts, 0.016)
 
 
 func _grab() -> void:

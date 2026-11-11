@@ -624,36 +624,31 @@ func _lay_chain() -> void:
 ## kıyısında ıslak bant, köpük, saz; yokuş kenarında taşlar; konakta saman ve çiğnenmiş çamur. Her tür tek çoklu ağ.
 ## Eskiden yol ve tarlalar düz boyalı, kıyıda 40 ayrı saz silindiri, yokuşta 30 ayrı taş vardı.
 func _details() -> void:
+	# 2. tur: yalnız yol şeridi ve oyuncunun geçtiği yerler (köprü başı z −24'ten konağa); tarladaki ot/taş kaldırıldı
+	# (üçgen bütçesi: ilk turda +%20)
 	var hf := func(x: float, z: float) -> float: return ground_y(x, z)
 	var off_bridge := func(x: float, z: float) -> bool: return absf(z) > 9.9
-	Nature.ground_detail(self, Rect2(-3.0, -78.0, 6.0, 222.0), "mud", 0.2, 3511, hf, off_bridge)
-	Nature.ground_detail(self, Rect2(-9.0, MUD_Z - 9.0, 18.0, 18.0), "camp_mud", 0.9, 3512, hf,
+	Nature.ground_detail(self, Rect2(-3.0, -24.0, 6.0, 164.0), "mud", 0.12, 3511, hf, off_bridge)
+	Nature.ground_detail(self, Rect2(-9.0, MUD_Z - 9.0, 18.0, 18.0), "camp_mud", 0.35, 3512, hf,
 		func(x: float, z: float) -> bool: return Vector2(x, z - MUD_Z).length() < 8.5)
-	Nature.ground_detail(self, Rect2(-3.4, -78.0, 6.8, 222.0), "footprint", 0.15, 3513, hf,
-		func(x: float, z: float) -> bool: return absf(z) > 9.9 and absf(x) > 1.7)
 	for rx: float in [-0.6, 0.6]:
-		Nature.trail(self, [Vector3(rx, 0, -78.0), Vector3(rx, 0, -10.2)], "wheel_ruts", hf, 1.0, 3514 + int(rx * 10.0), 0.1)
-		Nature.trail(self, [Vector3(rx, 0, 10.2), Vector3(rx, 0, 146.0)], "wheel_ruts", hf, 1.0, 3516 + int(rx * 10.0), 0.1)
-	Nature.trail(self, [Vector3(0, 0, -78.0), Vector3(0, 0, -10.2)], "hoofprint", hf, 0.45, 3518, 0.9)
-	Nature.trail(self, [Vector3(0, 0, 10.2), Vector3(0, 0, 146.0)], "hoofprint", hf, 0.45, 3519, 0.9)
-	var field := func(x: float, z: float) -> bool: return absf(x) > 3.6 and absf(z) > 9.9 and not (absf(z - STAKES_Z) < 3.0 and absf(x) < 16.0)
-	Nature.ground_detail(self, Rect2(-40.0, -80.0, 80.0, 260.0), "grass", 0.04, 3520, hf, field)
-	Nature.ground_detail(self, Rect2(-40.0, -80.0, 80.0, 260.0), "stone", 0.003, 3521, hf, field)
+		Nature.trail(self, [Vector3(rx, 0, -24.0), Vector3(rx, 0, -10.2)], "wheel_ruts", hf, 1.0, 3514 + int(rx * 10.0), 0.1)
+		Nature.trail(self, [Vector3(rx, 0, 10.2), Vector3(rx, 0, 112.0)], "wheel_ruts", hf, 1.0, 3516 + int(rx * 10.0), 0.1)
+	Nature.trail(self, [Vector3(0, 0, 14.0), Vector3(0, 0, 60.0)], "hoofprint", hf, 0.9, 3519, 0.9)
 	# Yokuş kenarı taşları (eskiden 30 ayrı top)
-	Nature.ground_detail(self, Rect2(-7.6, SLOPE_Z0, 15.2, SLOPE_Z1 - SLOPE_Z0), "stone", 0.14, 3502, hf,
+	Nature.ground_detail(self, Rect2(-7.6, SLOPE_Z0, 15.2, SLOPE_Z1 - SLOPE_Z0), "stone", 0.05, 3502, hf,
 		func(x: float, _z: float) -> bool: return absf(x) > 5.2)
-	# Kıyı: sazlar (eskiden 40 ayrı silindir), ıslak bant, köpük, yosun
-	Nature.ground_detail(self, Rect2(-34.0, 7.3, 68.0, 2.2), "tall_grass", 0.5, 3501, hf,
+	# Kıyı (köprü çevresi): sazlar (eskiden 40 ayrı silindir), ıslak bant, köpük, yosun
+	Nature.ground_detail(self, Rect2(-20.0, 7.3, 40.0, 2.2), "tall_grass", 0.35, 3501, hf,
 		func(x: float, _z: float) -> bool: return absf(x) > 3.0)
-	Nature.ground_detail(self, Rect2(-34.0, -9.5, 68.0, 2.2), "tall_grass", 0.5, 3522, hf,
+	Nature.ground_detail(self, Rect2(-20.0, -9.5, 40.0, 2.2), "tall_grass", 0.35, 3522, hf,
 		func(x: float, _z: float) -> bool: return absf(x) > 3.0)
 	var bank_keep := func(x: float, _z: float) -> bool: return absf(x) > 2.3
-	Nature.shore_band(self, Vector3(-36.0, 0, -9.8), Vector3(36.0, 0, -9.8), Vector3(0, 0, 1), WATER_Y, hf, 3523, bank_keep)
-	Nature.shore_band(self, Vector3(-36.0, 0, 9.8), Vector3(36.0, 0, 9.8), Vector3(0, 0, -1), WATER_Y, hf, 3524, bank_keep)
-	# Gece konağı: kazık sırasında saman ve toynak izi, konakta çiğnenmiş çamur
-	Nature.ground_detail(self, Rect2(-16.0, STAKES_Z - 1.0, 18.0, 5.0), "straw", 1.2, 3525, hf)
-	Nature.ground_detail(self, Rect2(-16.0, STAKES_Z - 2.0, 18.0, 6.0), "hoofprint", 0.6, 3526, hf)
-	Nature.ground_detail(self, Rect2(-18.0, CAMP.z - 10.0, 36.0, 26.0), "camp_mud", 0.12, 3527, hf)
+	Nature.shore_band(self, Vector3(-20.0, 0, -9.8), Vector3(20.0, 0, -9.8), Vector3(0, 0, 1), WATER_Y, hf, 3523, bank_keep)
+	Nature.shore_band(self, Vector3(-20.0, 0, 9.8), Vector3(20.0, 0, 9.8), Vector3(0, 0, -1), WATER_Y, hf, 3524, bank_keep)
+	# Gece konağı: kazık sırasında saman ve toynak izi
+	Nature.ground_detail(self, Rect2(-16.0, STAKES_Z - 1.0, 18.0, 5.0), "straw", 0.8, 3525, hf)
+	Nature.ground_detail(self, Rect2(-16.0, STAKES_Z - 2.0, 18.0, 6.0), "hoofprint", 0.4, 3526, hf)
 
 
 ## Konvoyu yola oturt: s = öndeki arabanın önünün z'si. Her parça kendi z'sinde zemine oturur, arabalar eğime göre eğilir.

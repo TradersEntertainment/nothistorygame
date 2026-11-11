@@ -341,10 +341,15 @@ func _haul_phase() -> void:
 	player.global_position = Vector3(ps.x, gy(ps.x, ps.z) + 0.05, ps.z)
 	player.face(Vector3(haul_x + 5.5, 1.0, HAUL_Z))
 	player.stow_hands(true)
+	player.show_remote(false)            # 2. tur: eller görünmez (koli bandı gitmişti ama el boş havada açık duruyordu)
 	_lay_ropes()
-	urban.global_position = _urban_spot()
+	# "Altmış öküz bunu Edirne'den getirdi": bakış replik boyunca öküzlere (kızak yolunun gerisinde, takımlar çekerek
+	# gelir, ötede çiftler dinlenir); Urban o yanda konuşur. Replikten sonra bakış kızağa döner.
+	urban.global_position = Vector3(haul_x + 1.0, gy(haul_x + 1.0, HAUL_Z + 6.0), HAUL_Z + 6.0)
+	player.face(Vector3(-14.0, 0.9, HAUL_Z + 10.0))
 	await hud.fade_to(0.0, 0.8)
 	await hud.say("SPK_URBAN", "D28O_U_HAUL")
+	player.face(Vector3(haul_x + 5.5, 1.0, HAUL_Z))
 	match Siege.outcome(35):
 		"35O.2":
 			_roller_every = 3.0
@@ -393,6 +398,7 @@ func _haul_phase() -> void:
 	_on_rope = false
 	player.release_both()
 	player.stow_hands(false)
+	player.show_remote(true)
 	_lay_ropes()
 	hud.set_objective("")
 	hud.set_prompt("")
@@ -701,7 +707,7 @@ func _on_interact(id: String) -> void:
 				h.set_meta("done", true)
 				_drop()
 				# Kazık deliğe dikilir, tokmakla üç vuruşta çakılır (eskiden E'ye basınca bir anda çakılı beliriyordu)
-				var st := Props.cyl(h, 0.09, 2.2, Vector3(0, 1.5, 0.15), Color("8a6a44"), Vector3(-18, 0, 0), 6, 0.02)
+				var st := Props.cyl(h, 0.06, 1.8, Vector3(0, 1.0, 0.15), Color("8a6a44"), Vector3(-18, 0, 0), 6, 0.02)
 				stakes += 1
 				await _hammer_in(st, 0.6)
 				_update_objective()
@@ -735,30 +741,29 @@ func _hammer_in(st: Node3D, depth: float) -> void:
 	var was := player.frozen
 	player.frozen = true
 	_hammering = true
-	# Kazık tokmağı (yayma P4): iki elle tutulan uzun saplı ağaç tokmak, eller sapta; eldeki eşya cebe. Eskiden kameranın
-	# sağ altında elsiz küçük bir çekiç sallanıyor, elde koli bandı duruyordu.
+	# Kazık tokmağı (yayma P4, 2. tur): gerçek ölçüde (sap 90 cm, baş 18x12 cm), iki el sapın ucunda. Tokmak her karede
+	# iki yumruğun içinden geçecek biçimde konur (sağ yumruk sapın ucunda, sol yumruk 25 cm yukarıda); vuruş elleri
+	# kaldırıp indirir, tokmak onlarla gelir. Eldeki eşya cebe. Eskiden kameranın sağ altında elsiz küçük bir çekiç,
+	# 1. turda da eller sapa oturmayan, başı adam boyunda bir tokmak vardı.
 	var hm := Node3D.new()
 	hm.set_meta("transient", true)
 	player.camera.add_child(hm)
-	hm.position = Vector3(0.08, -0.22, -0.66)
-	hm.rotation_degrees = Vector3(-40, 0, -8)
-	var handle := Props.cyl(hm, 0.02, 0.66, Vector3(0, -0.13, 0), Color("6a4a2c"), Vector3.ZERO, 6)
-	Props.cyl(hm, 0.085, 0.28, Vector3(0, 0.22, 0), Color("8a6a44"), Vector3(0, 0, 90), 9)
-	Props.cyl(hm, 0.088, 0.03, Vector3(-0.12, 0.22, 0), Color("3a3634"), Vector3(0, 0, 90), 9)
-	Props.cyl(hm, 0.088, 0.03, Vector3(0.12, 0.22, 0), Color("3a3634"), Vector3(0, 0, 90), 9)
+	Props.cyl(hm, 0.016, 0.9, Vector3(0, 0.33, 0), Color("6a4a2c"), Vector3.ZERO, 6)
+	Props.cyl(hm, 0.06, 0.18, Vector3(0, 0.8, 0), Color("8a6a44"), Vector3(0, 0, 90), 9)
+	for sx: float in [-0.08, 0.08]:
+		Props.cyl(hm, 0.062, 0.02, Vector3(sx, 0.8, 0), Color("3a3634"), Vector3(0, 0, 90), 9)
 	Props.strip_outlines(hm)
 	player.stow_hands(true)
-	var hax := handle.transform.basis.y.normalized()
-	player.hold_both(handle.position - hax * 0.26, handle.position - hax * 0.06, hm)
+	_maul_pose(hm, 0.0)
 	var f := Stage.fast()
 	for k in 3:
 		var tw := hm.create_tween()
-		tw.tween_property(hm, "rotation_degrees", Vector3(50, 0, -8), 0.03 if f else 0.22).set_trans(Tween.TRANS_SINE)
-		tw.tween_property(hm, "rotation_degrees", Vector3(-40, 0, -8), 0.03 if f else 0.11).set_ease(Tween.EASE_IN)
+		tw.tween_method(func(v: float): _maul_pose(hm, v), 0.0, 1.0, 0.03 if f else 0.3).set_trans(Tween.TRANS_SINE)
+		tw.tween_method(func(v: float): _maul_pose(hm, v), 1.0, 0.0, 0.03 if f else 0.14).set_ease(Tween.EASE_IN)
 		await tw.finished
 		if is_instance_valid(st):
 			st.position.y -= depth / 3.0
-			Vfx.dust(self, st.global_position + Vector3(0, -0.4, 0), 0.25)
+			Vfx.dust(self, st.global_position + Vector3(0, 0.9, 0), 0.25)
 		Audio.sfx("pick_tap", -4.0, 0.75 + k * 0.08)
 		player.shake(0.04)
 	player.release_both()
@@ -766,6 +771,31 @@ func _hammer_in(st: Node3D, depth: float) -> void:
 	hm.queue_free()
 	player.frozen = was
 	_hammering = false
+
+
+## Tokmağın duruşu: v = 0 vuruş (baş önde aşağıda, kazığın başında), v = 1 kalkık (baş başın üstünde). Eller
+## kameranın yerelinde bu iki duruş arasında; tokmak iki yumruğun içinden geçer (sağ yumruk sap ucunda).
+func _maul_pose(hm: Node3D, v: float) -> void:
+	if not is_instance_valid(hm):
+		return
+	var r := Vector3(0.08, -0.3, -0.36).lerp(Vector3(0.08, -0.08, -0.34), v)
+	var l := Vector3(0.03, -0.34, -0.56).lerp(Vector3(0.03, 0.04, -0.4), v)
+	player.hold_both(l, r)
+	_fit_fists(hm)
+
+
+## Düğümün +Y eksenini sağ yumruktan sol yumruğa çevirir, kökü sağ yumruğa koyar (sap, kazık iki elin içinden geçer)
+func _fit_fists(n: Node3D) -> void:
+	if not is_instance_valid(n) or player.rig == null or player.free_rig == null:
+		return
+	var r: Vector3 = player.rig.socket.global_position
+	var l: Vector3 = player.free_rig.socket.global_position
+	var y := (l - r)
+	if y.length() < 0.01:
+		return
+	y = y.normalized()
+	var x := y.cross(Vector3.UP if absf(y.y) < 0.95 else Vector3.FORWARD).normalized()
+	n.global_transform = Transform3D(Basis(x, y, x.cross(y)), r)
 
 
 func _pick(what: String) -> void:
@@ -778,15 +808,11 @@ func _pick(what: String) -> void:
 	player.camera.add_child(_carry)
 	if what == "stake":
 		# Kazık iki elde, göğsün önünde çapraz (yayma P4: sol elde kazık, sağ elde koli bandı duruyordu)
-		# Kazık iki elin arasından geçer: eller kameranın yerelinde sabit, kazık o iki noktadan geçecek biçimde yatırılır
-		_carry.position = Vector3.ZERO
-		var hl := Vector3(-0.15, -0.2, -0.62)
-		var hr := Vector3(0.13, -0.3, -0.5)
-		var ax := (hl - hr).normalized()
-		var stake := Props.cyl(_carry, 0.07, 1.8, hr + ax * 0.45, Color("8a6a44"), Vector3.ZERO, 6, 0.02)
-		stake.basis = Basis(Quaternion(Vector3.UP, ax))
+		# 2. tur: kazık 1,8 m, çap 12 cm, iki yumruğun içinden geçer; ucu önde yere doğru (mızrak gibi), ekranı kesmez
+		Props.cyl(_carry, 0.06, 1.8, Vector3(0, 0.45, 0), Color("8a6a44"), Vector3.ZERO, 6, 0.02)
 		player.stow_hands(true)
-		player.hold_both(hl, hr)
+		player.hold_both(Vector3(0.0, -0.4, -0.58), Vector3(0.12, -0.31, -0.36))
+		_fit_fists(_carry)
 		player.speed_mult = 0.85
 	else:
 		_carry.position = Vector3(0.0, -0.6, -1.0)
@@ -794,7 +820,8 @@ func _pick(what: String) -> void:
 		player.free_hold = Vector3(-0.45, -0.5, -0.9)      # kütüğün sol ucu sol elde
 		player.speed_mult = 0.65
 	Props.strip_outlines(_carry)
-	Carry.attach(player, _carry, {"weight": 0.55 if what == "stake" else 0.95})
+	if what != "stake":
+		Carry.attach(player, _carry, {"weight": 0.95})
 	Audio.sfx("land_pot", -10.0, 0.7)
 	hud.set_prompt("")
 	_update_objective()
@@ -816,6 +843,8 @@ func _process(delta: float) -> void:
 	_t += delta
 	_tick_haulers(delta)
 	_tick_oxen(delta)
+	if carrying == "stake" and is_instance_valid(_carry):
+		_fit_fists(_carry)
 	# 6 Nisan: surdaki Bizans topları arada bir atar; gülle siperin önüne ya da ardına düşer
 	if phase in ["stakes", "haul"] and not player.frozen and not hud.chain_busy():
 		_ball_t -= delta
@@ -873,8 +902,6 @@ func _rope_tick(_dt: float) -> void:
 			player.release_both()
 		elif _rope_hx != INF and absf(haul_x - _rope_hx) > 0.0001:
 			player.global_position = pp + Vector3(haul_x - _rope_hx, 0, 0)
-	elif carrying == "" and d < 1.0:
-		_on_rope = true
 	_rope_hx = haul_x
 	_lay_ropes()
 
@@ -952,9 +979,9 @@ func _build_oxen() -> void:
 		herder.set_meta("no_talk", true)
 		add_child(herder)
 		_goad(herder)
-		var x0 := -32.0 + i * 7.0
-		var z := HAUL_Z + 6.0 + i * 3.4
-		_ox_teams.append({"team": team, "oxen": oxen, "herder": herder, "x": x0, "z": z, "end": -13.0 - i * 3.0, "bellow": randf_range(3.0, 9.0)})
+		var x0 := -24.0 + i * 6.0
+		var z := HAUL_Z + 7.0 + i * 3.6
+		_ox_teams.append({"team": team, "oxen": oxen, "herder": herder, "x": x0, "z": z, "end": -9.0 - i * 3.0, "bellow": randf_range(3.0, 9.0)})
 		_place_team(_ox_teams[-1])
 	# Uzak sıralar: 28 çift (56 öküz) boyundurukta dinlenir; tek çoklu ağ (öküz) + tek çoklu ağ (boyunduruk)
 	var proto := Ox.new(Color.WHITE.darkened(0.15))

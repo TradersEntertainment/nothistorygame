@@ -158,7 +158,7 @@ func _build() -> void:
 			[Vector3(15.2, 0.3, -9.4), Vector3(-1, 0, 0.2), "saw_log"], [Vector3(-12.4, 0.3, -10.8), Vector3(-0.5, 0, 1), "hammer_log"],
 			[Vector3(-10.5, 0.3, -18.0), Vector3(0.6, 0, -1), "carry_barrel"]]:
 		Stage.station(self, spec[2], spec[0], spec[1], {"ground": flat, "coat": [Color("8a6a4a"), Color("6a4a3a"), Color("7a5a3a")][int(absf(spec[0].x)) % 3],
-			"hat": "turban", "person": false})
+			"hat": "turban", "person": false, "live": spec[2] in ["coil_rope", "carry_barrel"]})      # tokmak/testere: donuk figür (çizim bütçesi)
 		var sb := Props.solid(self, Vector3(0.5, 1.8, 0.44), spec[0] + Vector3(0, 0.9, 0), Color.WHITE)
 		sb.get_child(0).visible = false
 		sb.set_meta("no_climb", true)
@@ -359,8 +359,7 @@ func _build() -> void:
 func _build_shore() -> void:
 	var edge := SHORE_Z + 3.2         # şev kutusunun su yüzü (z), su yerelde y 0
 	var keep_path := func(x: float, z: float) -> bool: return absf(x) > 2.8 or z < SHORE_Z - 3.2
-	Nature.quay_band(self, Vector3(-60.0, 0, edge), Vector3(-2.6, 0, edge), Vector3(0, 0, 1), 0.0, 1811, 0.3)
-	Nature.quay_band(self, Vector3(2.6, 0, edge), Vector3(60.0, 0, edge), Vector3(0, 0, 1), 0.0, 1812, 0.3)
+	Nature.quay_band(self, Vector3(-60.0, 0, edge), Vector3(60.0, 0, edge), Vector3(0, 0, 1), 0.0, 1811, 0.3)
 	# Şevin üstü (y ≈ 0,27 su kenarında; içeride kıyı zemininin altına iner): su kenarına yakın ıslak bant
 	var bank := func(_x: float, z: float) -> float:
 		return -0.3 + 0.297 + (z - (SHORE_Z + 1.2)) * 0.139 + 0.012
@@ -374,8 +373,6 @@ func _build_shore() -> void:
 	Nature.ground_detail(self, area, "mud", 0.05, 1816, flat, keep_path)
 	Nature.ground_detail(self, area, "footprint", 0.12, 1817, flat, keep_path)
 	Nature.ground_detail(self, Rect2(8.0, -24.0, 12.0, 18.0), "chips", 0.6, 1818, flat)
-	Nature.ground_detail(self, Rect2(-60.0, -6.0, 120.0, 5.8), "stone", 0.06, 1819, flat, keep_path)
-	Nature.ground_detail(self, Rect2(-60.0, -46.0, 120.0, 44.0), "grass", 0.05, 1820, flat, func(x: float, z: float) -> bool: return absf(x) > 25.0)
 	Nature.trail(self, [Vector3(6.0, 0, SHORE_Z - 4.0), Vector3(2.0, 0, SHORE_Z - 3.6), Vector3(0.0, 0, SHORE_Z - 3.2)], "wheel_ruts", flat)
 
 

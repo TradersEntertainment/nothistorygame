@@ -9685,3 +9685,7 @@ FLOW_8Y_3,Sınır dışı edildi,Deported
 UI_CH8Y_STATS,Uyarı oku: %d · Havlu indi: %d kez,Warning arrows: %d · Towel lowered: %d times
 UI_FLOW8Y_NEXT,"Sıradaki: Bölüm 9 — Teklifler (Tolga · 25 Nisan, ordugâhta sabah)","Next: Chapter 9 — Offers (Tolga · 25 April, morning in the camp)"
 UI_FLOW8_NEXT_8Y,"Sıradaki: Ara Bölüm — Beyaz Havlu (Tolga · 25 Nisan, şafak)","Next: Interlude — The White Towel (Tolga · 25 April, dawn)"
+D13_T_GALATA_SHIP,"(Rıhtımdaki gemiye bakar) Gemi zincire kadar gitti, döndü. Zincir kapalıymış. Kaptan Venedik'e üç ay dedi; bana bir gece sürdü.","(Looks at the ship at the quay) The ship got as far as the chain and turned back. The chain's up. Three months to Venice, the captain said. Took me one night."
+D13_H3_00_CAMP,"Evlât! Kumanda seni ordugâhın öbür ucundan buraya çekti; korkma. Burası Urban'ın topunun başı. Yürümedin, yorulmadın; ben yanındayım.","Son! The remote pulled you here from the other end of the camp; don't be scared. This is Urban's cannon. You didn't walk, you're not tired, and I'm right here."
+D10L_T_DECLARE,"Beyan ediyorum: canlıyım, toprağın altındayım, kalemim yok.","I hereby declare: I'm alive, I'm under the ground, and I haven't got a pen."
+D10L_N_DECLARED,Beyanınız alındı. (Bileğinden tutup yukarı çeker) Çıktınız. Üstünüzdeki toprak sizde kalabilir; zimmete yazılmaz.,Declaration received. (Grabs his wrist and hauls him up) You're out. You may keep the dirt; it isn't on the inventory.
