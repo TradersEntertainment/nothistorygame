@@ -978,11 +978,12 @@ static func wet_mark(parent: Node, pos: Vector3, yaw: float, left := false, seco
 	mi.mesh = _footprint_mesh() if not puddle else _puddle_mesh()
 	var m := StandardMaterial3D.new()
 	# Koyu ıslak ton; kenarı köşe rengiyle (saydam) yumuşak (tur 3: eskiden keskin kenarlı nokta ve poligon leke)
-	m.albedo_color = Color(0.07, 0.06, 0.04, 0.7)
+	m.albedo_color = Color(0.05, 0.04, 0.025, 0.78)
 	m.vertex_color_use_as_albedo = true
 	m.transparency = BaseMaterial3D.TRANSPARENCY_ALPHA
-	m.roughness = 0.15
-	m.metallic_specular = 0.8
+	# Az parlak: çok parlak iz gökyüzünü yansıtıp açık mavi nokta gibi görünüyordu
+	m.roughness = 0.45
+	m.metallic_specular = 0.35
 	m.depth_draw_mode = BaseMaterial3D.DEPTH_DRAW_DISABLED
 	m.cull_mode = BaseMaterial3D.CULL_DISABLED
 	mi.material_override = m

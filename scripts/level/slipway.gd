@@ -204,11 +204,20 @@ func ground_h(x: float, z: float) -> float:
 	# Kumsal arazinin kendisi (tur 3): kızağın ucunun iki yanında suyun 20 cm üstünde düz kum, önü suya iner. Eskiden düz
 	# bir kum kutusu yamacın üçgenleriyle kesişiyor, yamaçta beyaz üçgenler, kumsalda keskin kenarlı nane renkli levha,
 	# sualtından bakınca altı karanlık büyük bir plaka görünüyordu. Kutunun çarpışması kalır, görüntüsü gizli.
+	# Kumsalın su altı yüzü dik (arazi ızgarası 3,3 m: köşe end_z-3,36'da su 1,25 m derin, -0,03'te kuru kum): yüzme
+	# hedefinde (end_z-4,8) su 1,4 m derin kalır; eskiden 0,6 m'lik sığlıkta yüzücü kumun üstünde süzülüyor gibiydi.
 	var bx := absf(x - end_point().x)
 	if bx < 46.0 and z > end_z - 7.0 and z < end_z + 10.0:
 		var beach := water_y + 0.2
-		if z < end_z - 3.0:
-			beach = lerpf(water_y - 1.6, water_y + 0.2, smoothstep(end_z - 7.0, end_z - 3.0, z))
+		var dz := z - end_z
+		if dz < -3.4:
+			beach = lerpf(water_y - 1.6, water_y - 1.25, smoothstep(-7.0, -3.4, dz))
+		elif dz < -0.6:
+			beach = lerpf(water_y - 1.25, water_y + 0.2, (dz + 3.4) / 2.8)
+		# Rampanın önündeki oluk (kızağın iki arazi şeridi arası): kumsalın yüzü derine iner, düşüş yeri açık su kalır
+		if bx < WIDTH / 2.0 + 0.4 and dz < -3.4:
+			beach = lerpf(water_y - 1.25, water_y - 2.6, clampf((-3.4 - dz) / 1.6, 0.0, 1.0))
+			return beach
 		var w := (1.0 - smoothstep(40.0, 46.0, bx)) * (1.0 - smoothstep(end_z + 7.0, end_z + 10.0, z))
 		h = maxf(h, lerpf(h, beach, w))
 	return h
@@ -350,10 +359,11 @@ func _build_slope() -> void:
 	var log_c := Color("8a5e38")
 	var beam_c := Color("5f4329")
 	# Ray kirişleri: kütükler bunların üstüne enine yatar (iki iç ray + iki kenar kirişi), kızağın başından suya kadar
+	# (kızağın ucunda biter: rampa kısalınca 4 m'si suyun üstünde yatay sopalar gibi kalıyordu)
 	for rx: float in [-2.3, 2.3]:
-		Props.box(_track_deco, Vector3(0.34, 0.16, LENGTH + 37.0), Vector3(rx, 0.02, (32.0 - LENGTH - 5.0) / 2.0), beam_c.darkened(0.1))
+		Props.box(_track_deco, Vector3(0.34, 0.16, LENGTH + 33.0), Vector3(rx, 0.02, (32.0 - LENGTH - 1.0) / 2.0), beam_c.darkened(0.1))
 	for side in [-1, 1]:
-		Props.box(_track_deco, Vector3(0.3, 0.32, LENGTH + 37.0), Vector3(side * (WIDTH / 2.0 - 0.15), 0.16, (32.0 - LENGTH - 5.0) / 2.0), beam_c)
+		Props.box(_track_deco, Vector3(0.3, 0.32, LENGTH + 33.0), Vector3(side * (WIDTH / 2.0 - 0.15), 0.16, (32.0 - LENGTH - 1.0) / 2.0), beam_c)
 	# Enine yağlı kütükler: kalın, yuvarlak, parlak; uçlarında açık kesit ve iki yanında takoz
 	var s := -31.0
 	while s < LENGTH:
@@ -369,7 +379,9 @@ func _build_slope() -> void:
 	for lx: float in LANES:
 		var z0 := rng.randf_range(2.0, 6.0)
 		while z0 < LENGTH - 2.0:
-			var ln := rng.randf_range(5.0, 14.0)
+			# Şerit kızağın ucunda biter (tur 3, sonda: son şerit 12 m'ye dek kızağın eğiminde uzayıp suya giriyordu; sualtından
+			# bakınca tepede koyu, keskin kenarlı büyük bir yamuk levha olarak görünen buydu)
+			var ln := minf(rng.randf_range(5.0, 14.0), LENGTH - 1.0 - z0)
 			Props.box(_track_gloss, Vector3(rng.randf_range(0.6, 1.1), 0.014, ln), Vector3(lx + rng.randf_range(-0.25, 0.25), 0.008, -(z0 + ln * 0.5)), Color("6a4c2c"))
 			z0 += ln + rng.randf_range(2.0, 7.0)
 	# Yer yer yenilenmiş (açık renk) ve kırık (iki parça, uçları kalkık) kalaslar
@@ -390,7 +402,9 @@ func _build_slope() -> void:
 			Props.cyl(_track_deco, 0.1, 0.06, Vector3(side * (WIDTH / 2.0 + 0.05), 0.55, -k), Color("b89a6a"), Vector3.ZERO, 6)
 			k += 6.5
 	# Kızağın ucu: kalas rampa suya iner ve suyun altında kaybolur (eskiden yol havada kesik bitiyordu); iki yanında kazıklar
-	var ramp_len := 6.0
+	# Rampa su çizgisinin hemen altında biter (tur 3): eskiden 6 m uzayıp suyun altında koyu zeytin rengi büyük bir yamuk
+	# levha gibi görünüyordu; su altında yalnız kazıklar kalır (kazıklı iskele gibi)
+	var ramp_len := 3.3
 	var ang := deg_to_rad(16.0)
 	var rc := Vector3(0, -sin(ang) * ramp_len * 0.5 - 0.1, -LENGTH - 1.0 - cos(ang) * ramp_len * 0.5)
 	Props.box(_track_deco, Vector3(WIDTH - 1.0, 0.18, ramp_len), rc, C_TRACK.darkened(0.08), Vector3(-rad_to_deg(ang), 0, 0))
@@ -399,7 +413,8 @@ func _build_slope() -> void:
 	for i in 3:
 		var dd := 1.6 + i * 2.0
 		var zz := -LENGTH - 1.0 - cos(ang) * dd
-		Props.cyl(_track_gloss, 0.2, WIDTH - 1.4, Vector3(0, -0.1 - sin(ang) * dd + 0.12, zz), Color("6e5030"), Vector3(0, 0, 90), 10)
+		if dd < ramp_len:
+			Props.cyl(_track_gloss, 0.2, WIDTH - 1.4, Vector3(0, -0.1 - sin(ang) * dd + 0.12, zz), Color("6e5030"), Vector3(0, 0, 90), 10)
 		for side in [-1, 1]:
 			Props.cyl(_track_deco, 0.13, 3.0, Vector3(side * (WIDTH / 2.0 - 0.2), -1.0 - i * 0.4, zz), Color("4e3a26"), Vector3.ZERO, 6)
 
@@ -424,8 +439,11 @@ func _build_terrain() -> void:
 	var edge := WIDTH / 2.0 + 0.3
 	var colf := func(x: float, z: float, y: float, steep: float) -> Color:
 		var ax := absf(x) - WIDTH / 2.0
+		if y < water_y - 0.45:
+			return Color("8a946a").srgb_to_linear()      # su altındaki kum: sığlığın dibiyle aynı ton (sualtında parlak turuncu levha olmasın)
 		if y < water_y + 0.25:
-			return C_SAND
+			# Zemin gölgelendiricisi köşe rengini doğrusal okur: kum açık nane/beyaz görünüyordu (tur 3), sıcak kum tonu
+			return C_SAND.lerp(C_SAND.srgb_to_linear(), 0.55)
 		if ax < 1.6:
 			return Color("8f6f4a")
 		var n := _noise.get_noise_2d(x * 3.1, z * 3.1)
@@ -440,6 +458,9 @@ func _build_terrain() -> void:
 	add_child(LowPoly.terrain(-110.0, -edge, end_z - 10.0, 160.0, 36, 90, hf, colf))
 	# Yokuşun tepesinin arkası (kadırga buradan başlar)
 	add_child(LowPoly.terrain(-edge, edge, 4.0, 160.0, 4, 30, hf, colf))
+	# Rampanın altı ve önü (kızak yolunun iki arazi şeridi arasındaki boşluk): kumsalın su altı yüzü burada da sürer.
+	# Eskiden kum kutusu örtüyordu; kutu gizlenince sudan bakınca keskin kenarlı derin bir oluk görünüyordu (tur 3)
+	add_child(LowPoly.terrain(-edge, edge, end_z - 5.0, end_z - 0.5, 4, 2, hf, colf))
 
 
 ## Zemin ayrıntısı (Nature.ground_detail; her tür tek çoklu ağ): kızağın iki yanında çiğnenmiş çamur şeridi, ayak izleri,
@@ -499,11 +520,8 @@ func clear_detail_near(points: Array, r: float) -> int:
 ## kayıklar, kuruyan ağlar, çardak, nöbet ateşi, askerlerin geldiği patika). Eskiden kumsal düz açık bej bir şeritti.
 func _build_shore() -> void:
 	var end := end_point()
-	var beach := func(x: float, z: float) -> float:
-		var h := surface_h(x, z)
-		if absf(x - end.x) <= 40.0 and z >= end.z - 3.0 and z <= end.z + 7.0:
-			h = maxf(h, water_y + 0.2)
-		return h
+	# Kumsal görünen arazinin kendisi (ground_h): ıslak bant ve köpük gerçek su çizgisinde (end_z-0,5 dolayı)
+	var beach := func(x: float, z: float) -> float: return surface_h(x, z)
 	var off_track := func(x: float, _z: float) -> bool: return absf(x - end.x) > 5.6
 	Nature.shore_band(self, Vector3(end.x - 39.0, 0, end.z - 1.0), Vector3(end.x + 39.0, 0, end.z - 1.0), Vector3(0, 0, -1),
 		water_y, beach, 91, off_track)
@@ -679,7 +697,7 @@ func _build_sides() -> void:
 					var lo := INF
 					for k in 12:
 						var a := TAU * k / 12.0
-						var gy := surface_h(xz3.x + cos(a) * 2.1, xz3.y + sin(a) * 2.1)
+						var gy := surface_h(xz3.x + cos(a) * 2.5, xz3.y + sin(a) * 2.5)
 						hi = maxf(hi, gy)
 						lo = minf(lo, gy)
 					hi = maxf(hi, surface_h(xz3.x, xz3.y))
@@ -689,23 +707,39 @@ func _build_sides() -> void:
 					add_child(dk)
 					dk.position = Vector3(xz3.x, hi + 0.05, xz3.y)
 					dk.rotation.y = rng.randf_range(0.0, PI)
-					for j in 7:
-						var u := -1.8 + j * 0.6
-						var ln := 2.0 * sqrt(maxf(0.04, 4.0 - u * u)) - rng.randf_range(0.0, 0.25)
+					# Çap 4,8 m: makarayı iterek dönenlerin geride gergin bacağı da kalasa basar (4 m'lik döşemede kenardan
+					# boşluğa sarkıyordu)
+					for j in 9:
+						var u := -2.4 + j * 0.6
+						var ln := 2.0 * sqrt(maxf(0.36, 6.25 - u * u)) - rng.randf_range(0.0, 0.15)
 						var pc := Color("8a6a44").lerp(Color("a07c50"), rng.randf()).darkened(0.05 if j % 2 == 0 else 0.15)
 						Props.box(dk, Vector3(0.56, 0.07, ln), Vector3(u, -0.035, rng.randf_range(-0.06, 0.06)), pc, Vector3(0, rng.randf_range(-1.5, 1.5), 0))
 					for bz: float in [-0.95, 0.95]:
-						Props.box(dk, Vector3(3.9, 0.14, 0.18), Vector3(0, -0.14, bz), Color("5f4329"))
+						Props.box(dk, Vector3(4.8, 0.14, 0.18), Vector3(0, -0.14, bz), Color("5f4329"))
+					# Döşemenin çarpışması (eski dolu dilimin yerine): makarayı çevirenler kalasa basar, zemine inmez
+					# (üçgen yüzeyli şekil: Unclip görünen zemin sayar; yoksa dinlenen askerleri araziye indiriyordu)
+					var dcol := StaticBody3D.new()
+					var dcs := CollisionShape3D.new()
+					var dcy := CylinderMesh.new()
+					dcy.top_radius = 2.45
+					dcy.bottom_radius = 2.45
+					dcy.height = 0.14
+					dcy.radial_segments = 12
+					dcy.rings = 1
+					dcs.shape = dcy.create_trimesh_shape()
+					dcs.position = Vector3(0, -0.07, 0)
+					dcol.add_child(dcs)
+					dk.add_child(dcol)
 					for k in 6:
 						var a := TAU * k / 6.0 + 0.3
-						var pp := dk.to_global(Vector3(cos(a) * 1.7, 0, sin(a) * 1.7))
+						var pp := dk.to_global(Vector3(cos(a) * 2.1, 0, sin(a) * 2.1))
 						var gy := surface_h(pp.x, pp.z)
 						var ph := (dk.global_position.y - 0.2) - gy + 0.12
 						if ph > 0.12:
 							Props.cyl(self, 0.09, ph, Vector3(pp.x, gy - 0.12 + ph * 0.5, pp.z), Color("4e3a26"), Vector3.ZERO, 6)
 					for k in 16:
 						var a := TAU * k / 16.0 + rng.randf_range(-0.15, 0.15)
-						var rr := rng.randf_range(2.15, 2.9)
+						var rr := rng.randf_range(2.6, 3.3)
 						_deck_mud.append(Vector3(xz3.x + cos(a) * rr, 0, xz3.y + sin(a) * rr))
 					cap.position = Vector3(xz3.x, hi + 0.05, xz3.y)
 					cap.set_meta("no_bake", true)
@@ -1300,13 +1334,10 @@ func _build_ship() -> void:
 			Props.cyl(body, 0.19, 0.04, Vector3(side * 1.6, 2.12, -4.6 + i * 1.6), shc, Vector3(0, 0, 90), 10)
 	Props.ball(body, 0.18, Vector3(0, 3.35, 7.2), Color("ffcf6a"), Vector3.ONE, 8, 2.5)
 	Props.cyl(body, 0.04, 0.5, Vector3(0, 3.05, 7.2), Color("3a2a1a"), Vector3.ZERO, 4)
-	# Mahmuz: pruvanın omurga çizgisini sürdüren kalın, sivrilen gaga (gövde renginde, ucu tunç kaplı) ve onu pruva
-	# bodosuna bağlayan su keseni. Eskiden pruvadan öne uzanan ince koyu bir sopaydı: önden bakınca yana fırlamış,
-	# havada asılı bir çubuk gibi okunuyordu (tur 3).
-	Props.cyl(body, 0.2, 1.5, Vector3(0, 1.62, -10.15), Color("5b3a22"), Vector3(-86, 0, 0), 4, 0.06)
-	Props.cyl(body, 0.07, 0.34, Vector3(0, 1.68, -10.95), Color("b8862e"), Vector3(-86, 0, 0), 4, 0.0)
-	Props.box(body, Vector3(0.14, 0.62, 1.0), Vector3(0, 1.62, -9.35), Color("4e321e"), Vector3(-30, 0, 0))
-	Props.box(body, Vector3(0.36, 0.08, 0.5), Vector3(0, 1.86, -9.9), Color("b8862e"), Vector3(-6, 0, 0))
+	# Mahmuz yok (tur 3): pruvadan öne uzanan koyu sopa (sonda: gövdenin "Mahmuz" silindiri; kameraya doğru uzandığı
+	# için yandan bakınca gövdeden yana/yukarı fırlamış, havada asılı bir çubuk gibi görünüyordu) kaldırıldı. Kalın
+	# gaga denemesi de yakından boynuz gibi okundu. Pruva bodosu yalnız tunç bir başlıkla biter.
+	Props.cyl(body, 0.09, 0.22, Vector3(0, 2.5, -9.58), Color("b8862e"), Vector3.ZERO, 6, 0.04)
 	# Kürekler içeri alınmış: karada çekilen kadırgada kürekler güverteye yatırılır, iki demet hâlinde bağlanır. Eskiden
 	# borda dışına fırlayan 20 çubuk uzaktan kafes/V, yakından yerden çıkan sopalar gibi görünüyordu; bordanın dışında
 	# artık hiçbir şey yok.
@@ -1386,6 +1417,13 @@ func _build_ship() -> void:
 		if absf(z - 3.6) < 0.8 or absf(z + 5.5) < 0.6 or absf(z + 2.5) < 0.6 or absf(z - 0.6) < 0.7:
 			continue
 		var x := (2.05 if i % 2 == 0 else -2.05) + (0.12 if i % 3 == 0 else -0.08)
+		# Gövde pruvaya doğru daralır: asker küpeştenin içinde kalsın (pruvadakiler bordanın dışında havada duruyordu)
+		var hw := 1.72
+		var prof := [[-9.6, 0.06], [-8.0, 0.9], [-5.0, 1.5], [0.0, 1.72], [4.0, 1.62], [6.5, 1.3], [7.7, 0.85]]
+		for pi in prof.size() - 1:
+			if z >= float(prof[pi][0]) and z <= float(prof[pi + 1][0]):
+				hw = lerpf(float(prof[pi][1]), float(prof[pi + 1][1]), (z - float(prof[pi][0])) / (float(prof[pi + 1][0]) - float(prof[pi][0])))
+		x = signf(x) * minf(absf(x), hw * SHIP_K - 0.5)
 		var spear := i % 3 != 1
 		var c: Color = [Color("b3262d"), Color("2f5fa8"), Color("3f7a3a"), Color("c98a3a")][i % 4]
 		deck.append([Transform3D(Basis(Vector3.UP, PI + (0.25 if x > 0.0 else -0.25)), Vector3(x, dy, z)),
@@ -1411,7 +1449,7 @@ func _build_ship() -> void:
 	_ship_shadow = MeshInstance3D.new()
 	_ship_shadow.mesh = _shadow_mesh()
 	var sm := StandardMaterial3D.new()
-	sm.albedo_color = Color(0.06, 0.05, 0.09, 0.42)
+	sm.albedo_color = Color(0.06, 0.05, 0.09, 0.58)
 	sm.vertex_color_use_as_albedo = true
 	sm.transparency = BaseMaterial3D.TRANSPARENCY_ALPHA
 	sm.shading_mode = BaseMaterial3D.SHADING_MODE_UNSHADED
@@ -1501,8 +1539,8 @@ func _shadow_mesh() -> ArrayMesh:
 	var hull: Array[Vector2] = []
 	for p: Vector2 in [Vector2(0.0, 2.0), Vector2(2.6, 0.5), Vector2(2.9, -3.0), Vector2(2.5, -7.0), Vector2(1.6, -10.5),
 			Vector2(0.4, -12.8), Vector2(-0.4, -12.8), Vector2(-1.6, -10.5), Vector2(-2.5, -7.0), Vector2(-2.9, -3.0), Vector2(-2.6, 0.5)]:
-		hull.append(p)
-	Vfx._soft_poly(st, Vector2(0, -4.5), hull, 0.62)
+		hull.append(Vector2(p.x, p.y * 1.45 if p.y < 0.0 else p.y))     # uzun sabah gölgesi: oyuncunun önüne uzanır
+	Vfx._soft_poly(st, Vector2(0, -6.5), hull, 0.62)
 	var mast: Array[Vector2] = [Vector2(0.45, -11.0), Vector2(0.38, -24.0), Vector2(0.2, -SHADOW_LEN), Vector2(-0.2, -SHADOW_LEN),
 		Vector2(-0.38, -24.0), Vector2(-0.45, -11.0)]
 	Vfx._soft_poly(st, Vector2(0, -22.0), mast, 0.45)
@@ -1656,7 +1694,8 @@ func _build_bottom() -> void:
 	_water.mesh = pm
 	var sh := ShaderMaterial.new()
 	sh.shader = load("res://assets/shaders/water.gdshader")
-	sh.set_shader_parameter("shore_z", end.z - 3.0)
+	sh.set_shader_parameter("shore_z", end.z - 0.6)      # görünen su çizgisi (ground_h kumsalı)
+	sh.set_shader_parameter("foam_width", 1.6)           # dar köpük şeridi (4 m'lik şerit suyun üstünde düz soluk bir levha gibiydi)
 	_water.material_override = sh
 	_water.position = Vector3(end.x, water_y, end.z - 380)
 	if in_world:
@@ -1823,6 +1862,8 @@ func _build_chain_and_boat() -> void:
 		{"z": 2.6, "w": 0.35, "top": 0.7, "bottom": 0.2},
 	], Color("6b4428"), Color("2f5fa8"), 0.4))
 	Props.box(boat, Vector3(1.1, 0.06, 0.3), Vector3(0, 0.4, 0.6), Color("a07a4e"))
+	# Omurga: sualtından bakınca kayığın altı düz koyu bir yamuk levha gibi görünüyordu (tur 3)
+	Props.box(boat, Vector3(0.09, 0.12, 4.4), Vector3(0, -0.14, -0.05), Color("3e2614"))
 	var rower := Soldier.new(Color("c98a3a"), "stand", "turban")
 	rower.set_meta("spk", "SPK_ROWER")
 	rower.position = Vector3(0, 0.1, 0.6)
@@ -1884,7 +1925,6 @@ func _particles(pos: Vector3, amount: int, color: Color, radius: float) -> CPUPa
 ## Suya çarpma: yukarı fışkıran damlalar ve genişleyen köpük halkası.
 func splash(pos: Vector3, big := false) -> void:
 	var at := Vector3(pos.x, water_y + 0.1, pos.z)
-	# Damlalar küçük ve yarı saydam (eskiden 7-11 cm'lik opak beyaz çokgenler: havada konfeti gibi)
 	# Damlalar küçük ve yarı saydam (tur 3: 2-3 cm; eskiden 5 cm'lik çokgenler kameranın önünde iri damla kalıyordu)
 	var drops := _particles(at, 120 if big else 70, Color(0.92, 0.97, 1.0, 0.55), 0.03 if big else 0.02)
 	drops.gravity = Vector3(0, -12.0, 0)
@@ -2053,7 +2093,13 @@ func _build_swim_scenery() -> void:
 		node.position = Vector3(p.x, water_y + 0.05, p.z)
 		add_child(node)
 		if swim_debris.size() % 2 == 0:
-			Props.cyl(node, 0.3, 2.6, Vector3.ZERO, C_LOG, Vector3(90, rng.randf() * 180.0, 0), 8)
+			var lyaw := rng.randf() * 180.0
+			Props.cyl(node, 0.3, 2.6, Vector3.ZERO, C_LOG, Vector3(90, lyaw, 0), 10)
+			# Açık renkli kesik uçlar ve bir dal güdüğü: sualtından bakınca kütük düz koyu bir levha gibi görünüyordu (tur 3)
+			var ax := Basis.from_euler(Vector3(deg_to_rad(90.0), deg_to_rad(lyaw), 0.0)) * Vector3.UP
+			for e: float in [-1.0, 1.0]:
+				Props.cyl(node, 0.25, 0.03, ax * 1.3 * e, Color("d8b98a"), Vector3(90, lyaw, 0), 10)
+			Props.cyl(node, 0.06, 0.35, ax * 0.4 + Vector3(0, -0.3, 0), Color("6a4c2c"), Vector3(0, 0, 25), 5)
 		else:
 			var bm := Props.model(node, "barrel", Vector3(0, -0.2, 0), rng.randf() * 360.0)
 			if bm:
@@ -2171,7 +2217,7 @@ func arrow_fall(pos: Vector3) -> void:
 func _reserved(s: float, side: int, dist: float, pad: float) -> bool:
 	var rects: Array = []
 	for s3: float in [6.0, 45.0, 84.0]:
-		rects.append(Rect2(s3 - 2.6, 0.6, 13.0, 4.0))          # ırgat güvertesi ve kızağın yolu
+		rects.append(Rect2(s3 - 2.6, 0.6, 13.0, 5.2))          # ırgat güvertesi (çap 4,8) ve kızağın yolu
 	for s0: float in OX_S:
 		rects.append(Rect2(s0 - 3.2, 3.0, 11.0, 3.4))          # öküzler, arkalarındaki kızak ve yürüdükleri yol
 	for os: float in [26.0, 56.0, 104.0]:

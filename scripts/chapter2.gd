@@ -87,7 +87,11 @@ func _run() -> void:
 	await _wait(0.8)
 	player.shake(1.2)
 	await _wait(0.3)
-	player.face(level.s_to_world(ship_s + BOW, 0.0, 2.5))
+	player.face(level.s_to_world(ship_s + BOW, 0.0, 5.6))     # güverte, tayfa ve direk fesin kenarının altında kalsın
+	# Göz kadırgaya kilitlenir (dar bakış, kamera yerinde): 13 m yukarıdaki kadırga kadrajın üçte birini doldurur;
+	# eskiden yokuşun tepesinde küçücük görünüyordu, "üstüme geliyor" tehdidi okunmuyordu (tur 3). Kontrol gelmeden
+	# önce bakış olağan genişliğine döner.
+	_intro_zoom(0.6, 1.4)
 
 	await _t("D2_T_01")
 	await _h("D2_H_02")
@@ -110,6 +114,7 @@ func _run() -> void:
 	hud.bark("SPK_HIKMET", "D2_H_07", 1.5)
 
 	# Kızak kaçışı
+	_intro_zoom(1.0, 0.5)
 	player.face(level.s_to_world(START_S + 40.0, 0.0, 1.0))
 	# Yavaş makinede diyaloglar fizikten önce bitebilir: oyuncu yere inmeden koşu başlamasın
 	var wait := 0
@@ -126,6 +131,21 @@ func _run() -> void:
 		return
 	await _swim()
 	await _end_chapter()
+
+
+var _zoom_tw: Tween
+
+
+## Açılışta oyuncunun gözünün kadırgaya kilitlenmesi: bakış açısı ayarlanan değerin mult katına iner (kamera yerinde).
+func _intro_zoom(mult: float, t: float) -> void:
+	if _zoom_tw and _zoom_tw.is_valid():
+		_zoom_tw.kill()
+	var fov := float(GameState.settings.get("fov", 72.0)) * mult
+	if t <= 0.0 or GameState.autotest and not GameState.pace:
+		player.camera.fov = fov
+		return
+	_zoom_tw = create_tween()
+	_zoom_tw.tween_property(player.camera, "fov", fov, t).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_IN_OUT)
 
 
 # ================================================================ koşu
@@ -1210,9 +1230,11 @@ func _to_chain() -> void:
 	var grip := Vector3(cp.x, level.water_y + 0.3, cp.z) + to_me * 0.45
 	await player.reach_grab(grip)
 	# El ıslak kütüğe şaplar: suda iki halka, sıçrayan damlalar, kütüğün çevresinde köpük (tur 3: belirgin)
-	level.ripple(grip, 0.25, 2.2, 1.6, 0.75)
-	level.ripple(grip, 0.6, 3.6, 2.6, 0.45)
-	level.drops(grip, 14, 2.4)
+	# (halkalar kütüğün oyuncu tarafında: kütüğün ardında kalınca görünmüyordu)
+	var near_side := grip + to_me * 0.55
+	level.ripple(near_side, 0.25, 2.2, 1.6, 0.75)
+	level.ripple(near_side, 0.6, 3.6, 2.6, 0.45)
+	level.drops(near_side, 14, 2.4)
 	level.splash(grip + to_me * 0.3)
 	var pull := player.global_position.lerp(Vector3(grip.x, player.global_position.y, grip.z), 0.4)
 	if GameState.autotest:
