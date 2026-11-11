@@ -87,12 +87,21 @@ const STORY_CLIPS := [
 			{"t": 0.4, "do": "sv('bureau')._fg_seq([['nap', 'BUR_FG_NAP_3', 8.0, 'hit'], ['hit', 'BUR_FG_HIT_R', 1.2, 'nap'], ['nap', 'BUR_FG_NAP_4', 0.8, 'hit']])"},
 			{"t": 0.0, "on": "said('BUR_FG_HIT_R')", "pan": [Vector3(-8.15, 1.3, -7.95), 0.8]},
 		]},
-	# Büro: tespit makinesi Model Z-0, Nihat'ın deneme karesi
-	{"id": "buro_kamera", "ch": "17", "v": "", "pace": true, "pace_key": "D17_T_05", "when": "said('D17_N_CAM_4')",
-		"lead": 0.0, "until": "done('D17_N_CAM_4')", "dur": 10.0, "wait": 2400.0, "tail": 0.4, "cap": ["", ""]},
+	# Büro: Napolyon ile Cengiz Han sıra numarası yarışı
+	{"id": "buro_numara", "ch": "3", "v": "", "bot": false, "when": "loose() and after(3.0)", "lead": 0.3, "dur": 10.0,
+		"until": "done('BUR_AMB_G1_2_3')", "tail": 0.5, "drive": "steps", "nohands": true, "cap": ["", ""], "steps": [
+			{"t": 0.0, "do": "sv('bureau').set('_amb_on', false)"},
+			{"t": 0.0, "do": "sv('bureau').set('_wait_said', true)"},
+			{"t": 0.0, "pos": Vector3(-2.5, 0.05, -8.6), "look": Vector3(-3.9, 1.75, -6.1)},
+			{"t": 0.0, "do": "_player().camera.set('fov', 62.0)"},
+			{"t": 0.4, "do": "sv('bureau')._fg_seq([['nap', 'BUR_AMB_G1_2_1', 1.9, 'gen'], ['gen', 'BUR_AMB_G1_2_2', 2.9, 'nap'], ['nap', 'BUR_AMB_G1_2_3', 1.6, 'gen']])"},
+		]},
 	# Edirne 1444: genç Vlad'a kale sigortası ("Kazık." / "Hayır, poliçe.")
 	{"id": "vlad_kazik", "ch": "17", "v": "edirne_policy", "pace": true, "pace_key": "D17E_R_03", "when": "said('D17E_T_POL_2')",
 		"lead": 0.0, "until": "done('D17E_V_POL_3')", "dur": 14.0, "wait": 4000.0, "tail": 0.4, "cap": ["", ""]},
+	# 1977: genç Hikmet'e poliçe; "kırmızı düğmeye basma" (hikâyenin merak ucu)
+	{"id": "hikmet_1977", "ch": "15", "v": "wrong_stay", "pace": true, "pace_key": "D15_Y_T_RADIO", "when": "said('D15_S7_YH_5')",
+		"lead": 0.0, "until": "done('D15_S7_YH_5')", "dur": 9.0, "wait": 3000.0, "tail": 0.05, "cap": ["", ""]},
 	# 5 Otağ: Fatih "Bu şehir alınacak mı?" / "Evet. 29 Mayıs'ta. Salı günü."
 	{"id": "otag_sali", "ch": "12", "v": "leblebi", "pre": "unbag('book')", "pace": true, "pace_key": "D12_F_KEY", "when": "said('D12_F_KEY')",
 		"lead": 0.1, "until": "done('D12_T_KEY_B') or done('D12_T_KEY_B_NOBOOK')", "dur": 14.0, "tail": 0.5, "wait": 3000.0,
@@ -104,10 +113,7 @@ const STORY_CLIPS := [
 	{"id": "bogaz_prim", "ch": "33o", "v": "", "pace": true, "pace_key": "D33O_M_DONE", "when": "said('D33O_T_05')",
 		"lead": 0.0, "until": "done('D33O_T_05')", "dur": 10.0, "wait": 3000.0, "tail": 0.4, "drive": "steps", "nohands": true,
 		"cap": ["", ""], "steps": []},
-	# 1977: genç Hikmet'e poliçe; "kırmızı düğmeye basma" (hikâyenin merak ucu)
-	{"id": "hikmet_1977", "ch": "15", "v": "wrong_stay", "pace": true, "pace_key": "D15_Y_T_RADIO", "when": "said('D15_S7_YH_5')",
-		"lead": 0.0, "until": "done('D15_S7_T_6')", "dur": 16.0, "wait": 3000.0, "tail": 0.5, "cap": ["", ""]},
-	{"id": "flight", "ch": "7", "v": "", "when": "flyable()", "lead": 3.0, "dur": 5.5, "drive": "fly", "bot": false, "wait": 1200.0,
+	{"id": "flight", "ch": "7", "v": "", "when": "flyable()", "lead": 3.0, "dur": 5.5, "drive": "fly", "bot": false, "wait": 1200.0, "nohands": true,
 		"cap": ["Uç. Görünmez ol.", "Fly. Turn invisible."]},
 ]
 
@@ -560,6 +566,12 @@ func _clip(c: Dictionary) -> void:
 ## "fly": uçuşu açar, yükselir, ileri süzülür, yavaşça döner; ortada bir an görünmez olur
 func _drive_step(p: Player, delta: float) -> void:
 	_drive_t += delta
+	if _nohands:
+		for n in [p.hand, p.free_hand, p.get("_prop_item"), p.get("_held_model"), p.get("_remote_model")]:
+			if n is Node3D and is_instance_valid(n):
+				(n as Node3D).visible = false
+	if _set == "story" and p.powers and p.powers.get("_layer") is CanvasLayer:
+		(p.powers.get("_layer") as CanvasLayer).visible = false     # uçuş göstergesi, yer işaretleri (arayüz)
 	if _drive == "fly" and p.powers:
 		p.frozen = false
 		if not p.powers.flying:
@@ -646,10 +658,6 @@ func _steps_tick(p: Player, delta: float) -> void:
 					push_error("MONTAGE adım çalışmadı: " + String(s["do"]))
 			else:
 				push_error("MONTAGE adım okunamadı: " + String(s["do"]))
-	if _nohands:
-		for n in [p.hand, p.free_hand, p.get("_prop_item"), p.get("_held_model"), p.get("_remote_model")]:
-			if n is Node3D and is_instance_valid(n):
-				(n as Node3D).visible = false
 	if not _pan.is_empty():
 		_pan["t"] += delta
 		var k := smoothstep(0.0, 1.0, clampf(_pan["t"] / maxf(_pan["d"], 0.01), 0.0, 1.0))

@@ -20,7 +20,7 @@ sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 from cut import ass_color, ass_time, esc, header, ev, esc_path, strip_stage, FONTS, ROOT  # noqa: E402
 
 FPS = 30.0
-LEAD = 0.1      # pencerenin ilk karesi 3B yeniden açılırken gri çıkabiliyor
+LEAD = 0.034   # pencerenin ilk karesi 3B yeniden açılırken gri çıkabiliyor (bir kare atılır)
 
 
 def parse(log_path):

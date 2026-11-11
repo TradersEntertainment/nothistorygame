@@ -350,7 +350,17 @@ func _climb() -> void:
 	player.face(carrack.to_global(Vector3(-SeaBattle.RAIL_X, SeaBattle.RAIL_TOP + 1.0, 0.4)))
 	var rail_pt := carrack.to_global(Vector3(-SeaBattle.RAIL_X - 0.1, SeaBattle.RAIL_TOP, 0.4))
 	var hook := SeaBattle.hook_line(self, rail_pt, foot + Vector3(0, 0.3, 0), 0.0)
-	# Tırmanırken iki el ipte (yayma P3): ip kameranın önünden geçer, eller onun üstünde
+	# Tırmanırken iki el ipte (yayma P3): kameranın önündeki parça yuvarlak kesitli, dış çizgisiz ip; küpeşteden üst
+	# yumruğa, alt yumruğa, oradan kadırganın güvertesine
+	hook.get_node("Line").visible = false
+	var line := MeshInstance3D.new()
+	line.set_meta("no_walk", true)
+	line.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
+	line.material_override = ThraceRoad.tube_material()
+	hook.add_child(line)
+	line.top_level = true
+	line.global_transform = Transform3D.IDENTITY
+	line.mesh = ThraceRoad.tube_mesh([rail_pt, foot + Vector3(0, 0.3, 0)], 0.017, Color("c8a878"))
 	var on_rope := func(_k: float) -> void:
 		var c := player.camera
 		var a := c.to_local(rail_pt)
@@ -358,6 +368,10 @@ func _climb() -> void:
 		var lp := a.lerp(b, clampf((a.y - (-0.18)) / maxf(a.y - b.y, 0.01), 0.0, 1.0))
 		var rp := a.lerp(b, clampf((a.y - (-0.02)) / maxf(a.y - b.y, 0.01), 0.0, 1.0))
 		player.hold_both(lp + Vector3(-0.03, 0, 0), rp + Vector3(0.03, 0, 0))
+		var fl: Vector3 = player.free_rig.socket.global_position if player.free_rig and player.free_rig.socket else c.to_global(lp)
+		var fr: Vector3 = player.rig.socket.global_position if player.rig and player.rig.socket else c.to_global(rp)
+		var upv := c.global_transform.basis.y * 0.035      # avucun ortası
+		line.mesh = ThraceRoad.tube_mesh([rail_pt, fr + upv, fl + upv, foot + Vector3(0, 0.3, 0)], 0.017, Color("c8a878"))
 	var tw := create_tween()
 	tw.tween_property(player, "global_position", up, 2.2).set_trans(Tween.TRANS_SINE)
 	tw.parallel().tween_method(on_rope, 0.0, 1.0, 2.2)
@@ -387,6 +401,7 @@ func _climb() -> void:
 	climbed = true
 	await get_tree().create_timer(0.5, false).timeout
 	player.release_both()            # taş isabet eder: eller ipten kayar
+	line.mesh = ThraceRoad.tube_mesh([rail_pt, foot + Vector3(0, 0.3, 0)], 0.017, Color("c8a878"))
 	Audio.sfx("land_thud", -2.0)
 	var fall := create_tween()
 	fall.tween_property(player, "global_position", foot, 0.45).set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_IN)
