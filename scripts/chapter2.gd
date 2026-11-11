@@ -23,6 +23,7 @@ var player: Player
 var hud: Hud
 
 var _underwater := false
+var _dive_uw := false       # suya çarpış anından yüzeye dönene dek: kamera yüzeyde dururken de sualtı sisi/tonu açık (ilk karede beyaz dip görünüyordu)
 var phase := "intro"        # intro, run, caught, swim, done
 var lane := 1
 var ship_s := 0.0
@@ -155,7 +156,7 @@ func _process(delta: float) -> void:
 		return
 	hud.fez.motion = player.horizontal_speed() * 0.6
 	# Sualtı görünümü kameranın gerçek yüksekliğine bağlı (dalış, düşüş)
-	var uw := player.camera.global_position.y < level.water_y - 0.02
+	var uw := _dive_uw or player.camera.global_position.y < level.water_y - 0.02
 	if uw != _underwater:
 		_underwater = uw
 		hud.set_underwater(uw)
@@ -254,6 +255,9 @@ func _run_step(delta: float) -> void:
 		_rumble_t = 0.25
 		player.shake(0.05 + 0.2 * (1.0 - clampf(gap / 12.0, 0.0, 1.0)))
 	level.chase_gap = gap
+	# Omuz üstünden bakış (tur 4): ilk halat aşılınca bir kez, 0,56 sn; ekranlı oyunda (testte atlanır)
+	if not _glanced and s >= 28.0 and not (GameState.autotest and not GameState.pace):
+		_glance()
 
 	# Engeller
 	var prompt := ""
@@ -307,6 +311,30 @@ func _run_step(delta: float) -> void:
 		_caught(s)
 	elif s >= Slipway.LENGTH - 1.0:
 		phase = "swim"
+
+
+var _glanced := false
+
+
+## Omuz üstünden bakış: kamera 0,56 sn'de kadırgaya döner (dev pruva kadrajı doldurur), geri gelir. Kamera oyuncunun
+## gözünde kalır; yalnız bakış döner (yürüyüş yönü ve şerit tuşları script_velocity ile sürdüğü için kontrol kaybı yok;
+## fare dönüşü korunur: dönüş eklemeli uygulanır). Oynanışı, süreleri ve engel zamanlamasını değiştirmez.
+func _glance() -> void:
+	_glanced = true
+	var turn := PI * 0.93
+	var pitch := 0.24
+	var last := {"e": 0.0}
+	var apply := func(e: float) -> void:
+		var d: float = e - float(last["e"])
+		last["e"] = e
+		if is_instance_valid(player):
+			player.rotation.y += d * turn
+			player.camera.rotation.x += d * pitch
+	var tw := create_tween()
+	tw.tween_method(apply, 0.0, 1.0, 0.18).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_OUT)
+	tw.tween_interval(0.2)
+	tw.tween_method(apply, 1.0, 0.0, 0.18).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_IN)
+	player.shake(0.25)
 
 
 ## "Yokuş bitti!" kenarda bitsin diye replik kenardan bu kadar saniye önce başlar (kaydın uzunluğu).
@@ -472,12 +500,13 @@ func _plunge() -> void:
 		player.camera.rotation.x = lerpf(pitch0, -0.8, smoothstep(0.1, 0.9, t)), 0.0, 1.0, 1.25).set_trans(Tween.TRANS_LINEAR)
 	await air.finished
 	# Şap! Çığlık suyla kesilir
+	_dive_uw = true
 	hud.cut_voice()
 	Audio.sfx("splash", -1.0, 0.85)
 	level.splash(surf + fwd * 1.8, true)      # çarpış sütunu gözün dibinde değil, biraz önde (iri damlalar kameraya yapışıyordu)
 	# Çarpışın halkaları: biri hızla, biri yavaşça açılır (köpük suyun yüzünde bir süre kalır)
-	level.ripple(surf + fwd * 0.5, 0.8, 4.5, 1.6, 0.7)
-	level.ripple(surf + fwd * 0.5, 0.5, 7.0, 3.2, 0.45)
+	level.ripple(surf + fwd * 0.5, 0.4, 2.6, 1.1, 0.55)
+	level.ripple(surf + fwd * 0.5, 0.3, 3.8, 1.9, 0.35)
 	player.shake(0.8)
 	var down := create_tween()
 	down.tween_property(player, "global_position", under, 0.45).set_ease(Tween.EASE_OUT).set_trans(Tween.TRANS_QUAD)
@@ -495,6 +524,7 @@ func _plunge() -> void:
 	up.parallel().tween_method(func(t: float): player.rotation.y = lerp_angle(yaw0, yaw, t), 0.0, 1.0, 0.9)
 	up.parallel().tween_property(player.camera, "rotation:x", 0.05, 0.9)
 	await up.finished
+	_dive_uw = false
 	level.splash(surf + Vector3(0, 0, -0.6) - fwd * 0.2)
 	level.ripple(surf, 0.4, 2.6, 1.8, 0.55)
 	Audio.sfx("splash", -10.0, 1.3)
@@ -1141,10 +1171,10 @@ func _seize(guards: Array[Node3D], at: Vector3) -> void:
 	fwd.y = 0.0
 	fwd = fwd.normalized()
 	var side := Vector3(-fwd.z, 0.0, fwd.x)
-	# Kol boyuna gelirler (oyuncunun iki yanına, biraz önüne: yüzleri kadrajın kenarında, kolları bileklere uzanır): ayakları her adımda kuma/çimene basar (eskiden doğrusal
+	# Kol boyuna gelirler (tur 4: oyuncunun iki yanında yarım adım geride, 1,05 m açıkta: yüzleri kadrajın kenarında, gövdeleri kameranın yakın düzlemine girmez; gövde öne eğilip kollar bileklere uzanır): ayakları her adımda kuma/çimene basar (eskiden doğrusal
 	# tween eğimde havada yürütüyordu, bazen 6 m'de kalıp boşluğa uzanıyorlardı)
 	for i in guards.size():
-		Stage.walk_on_ground(guards[i], at + fwd * 0.5 + side * (-0.84 if i == 0 else 0.84), _ground_y, 3.2, at + Vector3(0, 1.4, 0))
+		Stage.walk_on_ground(guards[i], at + fwd * 0.3 + side * (-1.05 if i == 0 else 1.05), _ground_y, 3.2, at + Vector3(0, 1.4, 0))
 	await Handover.wait(self, 0.05 if Stage.fast() else 0.3)
 
 
@@ -1165,7 +1195,7 @@ func _seize_done(guards: Array[Node3D]) -> void:
 ## İki asker Tolga'yı iki bileğinden tutar: Tolga'nın sol eli de görünür (yarı kalkık), sağdaki asker sağ bileği,
 ## soldaki sol bileği kavrar; askerler öne eğilir, eller bileklerin üstünde her karede yerinde kalır (Stage.grip_hold).
 ## Eskiden hedef kameranın önünde boşluktaydı: kol boşluğa uzanıyor, yumruk havada kalıyordu.
-func _grab_arms(guards: Array[Node3D], hold: float) -> void:
+func _grab_arms(guards: Array[Node3D], hold: float, lean := 0.4) -> void:
 	player.free_hold = Vector3(-0.24, -0.2, -0.45)
 	for i in mini(2, guards.size()):
 		var g := guards[i]
@@ -1174,7 +1204,7 @@ func _grab_arms(guards: Array[Node3D], hold: float) -> void:
 		Stage.face(g, player.global_position)
 		var hand: Node3D = player.free_hand if i == 0 else player.hand
 		if hand:
-			Stage.grip_hold(g, hand, [Vector3(0, 0.035, 0.07)], hold + 4.0, 0.06)
+			Stage.grip_hold(g, hand, [Vector3(0, 0.035, 0.07)], hold + 4.0, lean)
 
 
 ## Kızaktan uzağa, kıyı boyunca bakar (kadırga arkada kalır).
@@ -1220,8 +1250,10 @@ func _to_chain() -> void:
 		along.y = 0.0
 		along = along.normalized()
 		var side := along.cross(Vector3.UP).normalized()
-		player.global_position = _water(cp + side * 2.3)
-		player.face(Vector3(cp.x, level.water_y + 0.9, cp.z) + along * 14.0)
+		# Tur 4: kütük kadrajı kaplıyordu (2,3 m yanında, sonra %40 yaklaşıp 1,4 m'ye iniyordu): biraz geride ve yanda,
+		# zincire çaprazdan bakar (pull %30 → son uzaklık ≈2,3 m); kütük sol altta, uzakta zincirin devamı kalır
+		player.global_position = _water(cp + side * 2.8 - along * 1.8)
+		player.face(Vector3(cp.x, level.water_y + 0.6, cp.z) + along * 12.0 - side * 1.0)
 		await hud.fade_to(0.0, 0.6)
 	else:
 		player.face(cp + Vector3(20, 1.0, -60))
@@ -1236,7 +1268,7 @@ func _to_chain() -> void:
 	level.ripple(near_side, 0.6, 3.6, 2.6, 0.45)
 	level.drops(near_side, 14, 2.4)
 	level.splash(grip + to_me * 0.3)
-	var pull := player.global_position.lerp(Vector3(grip.x, player.global_position.y, grip.z), 0.4)
+	var pull := player.global_position.lerp(Vector3(grip.x, player.global_position.y, grip.z), 0.3)
 	if GameState.autotest:
 		player.global_position = pull
 	else:
@@ -1261,9 +1293,9 @@ func _to_chain() -> void:
 		fwd0.y = 0.0
 		var fall_at := player.global_position + fwd0.normalized() * 1.4
 		level.splash(fall_at, true)
-		level.ripple(player.global_position, 0.5, 3.6, 2.0, 0.8)
-		level.ripple(player.global_position, 0.9, 6.0, 3.4, 0.5)
-		level.ripple(grip, 0.3, 2.4, 1.6, 0.6)
+		level.ripple(player.global_position, 0.4, 2.6, 1.3, 0.55)
+		level.ripple(player.global_position, 0.6, 3.8, 2.0, 0.35)
+		level.ripple(grip, 0.3, 2.0, 1.4, 0.5)
 		level.drops(fall_at, 18, 3.0)
 		level.bubbles(Vector3(fall_at.x, level.water_y - 1.0, fall_at.z), 1.2)
 		Audio.sfx("splash", -6.0)

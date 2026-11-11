@@ -641,7 +641,7 @@ static func gun_blast(parent: Node3D, pos: Vector3, size := 1.0, light_at := Vec
 
 # ---------------------------------------------------------------- su, ıslaklık, sualtı, hava (Bölüm 2 tur 2; ortak)
 
-static var _ring_mesh: TorusMesh
+static var _ring_mesh: ArrayMesh
 static var _ring_n := 0
 static var _drop_mesh: SphereMesh
 static var _sway_mat: ShaderMaterial
@@ -862,17 +862,16 @@ static func water_ring(parent: Node, pos: Vector3, water_y: float, r0 := 0.4, r1
 	if parent == null or not parent.is_inside_tree() or _ring_n > 60:
 		return
 	if _ring_mesh == null:
-		_ring_mesh = TorusMesh.new()
-		_ring_mesh.inner_radius = 0.86
-		_ring_mesh.outer_radius = 1.0
-		_ring_mesh.rings = 22
-		_ring_mesh.ring_segments = 3
+		_ring_mesh = _soft_ring_mesh()
 	var ring := MeshInstance3D.new()
 	ring.mesh = _ring_mesh
 	var m := StandardMaterial3D.new()
 	m.albedo_color = Color(0.95, 0.98, 1.0, alpha)
+	m.vertex_color_use_as_albedo = true
 	m.transparency = BaseMaterial3D.TRANSPARENCY_ALPHA
 	m.shading_mode = BaseMaterial3D.SHADING_MODE_UNSHADED
+	m.cull_mode = BaseMaterial3D.CULL_DISABLED
+	m.depth_draw_mode = BaseMaterial3D.DEPTH_DRAW_DISABLED
 	ring.material_override = m
 	ring.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
 	parent.add_child(ring)
@@ -885,6 +884,29 @@ static func water_ring(parent: Node, pos: Vector3, water_y: float, r0 := 0.4, r1
 	tw.chain().tween_callback(func():
 		_ring_n -= 1
 		ring.queue_free())
+
+
+## Yumuşak köpük halkası ağı (tur 4): düz halka, iki kenarı köşe rengiyle saydamlaşır, ortası dolu. Eskiden üç kenarlı simit
+## kesiti (TorusMesh) sivri beyaz üçgenler gibi görünüyordu.
+static func _soft_ring_mesh() -> ArrayMesh:
+	var st := SurfaceTool.new()
+	st.begin(Mesh.PRIMITIVE_TRIANGLES)
+	var radii := [0.7, 0.86, 1.0]
+	var alphas := [0.0, 1.0, 0.0]
+	var n := 28
+	for i in n:
+		var a0 := TAU * i / n
+		var a1 := TAU * (i + 1) / n
+		for r in 2:
+			var pts: Array = []
+			for q: Array in [[r, a0], [r + 1, a0], [r, a1], [r, a1], [r + 1, a0], [r + 1, a1]]:
+				var rr: float = radii[q[0]]
+				pts.append([Vector3(cos(q[1]) * rr, 0.0, sin(q[1]) * rr), float(alphas[q[0]])])
+			for p: Array in pts:
+				st.set_color(Color(1, 1, 1, p[1]))
+				st.set_normal(Vector3.UP)
+				st.add_vertex(p[0])
+	return st.commit()
 
 
 ## Su damlaları: küçük (yarıçap r), yarı saydam, yer çekimiyle düşer; su yüzeyinin hemen üstünden sıçrar.

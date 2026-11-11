@@ -441,17 +441,18 @@ func _build_terrain() -> void:
 		var ax := absf(x) - WIDTH / 2.0
 		if y < water_y - 0.45:
 			return Color("8a946a").srgb_to_linear()      # su altındaki kum: sığlığın dibiyle aynı ton (sualtında parlak turuncu levha olmasın)
-		if y < water_y + 0.25:
-			# Zemin gölgelendiricisi köşe rengini doğrusal okur: kum açık nane/beyaz görünüyordu (tur 3), sıcak kum tonu
-			return C_SAND.lerp(C_SAND.srgb_to_linear(), 0.55)
+		# Kum-çim sınırı (tur 4): düz çizgi değil, girintili çıkıntılı; sınırda iki renk karışır (köşe rengi), kum sıcak ve yamalı
+		var k := sand_k(x, z, y)
+		var c := Color("2c4d1d").lerp(Color("466426"), clampf(_noise.get_noise_2d(x * 3.1, z * 3.1) * 1.5 + 0.5, 0.0, 1.0))
 		if ax < 1.6:
-			return Color("8f6f4a")
-		var n := _noise.get_noise_2d(x * 3.1, z * 3.1)
-		var c := Color("2c4d1d").lerp(Color("466426"), clampf(n * 1.5 + 0.5, 0.0, 1.0))
-		if steep > 0.35:
-			c = c.darkened(0.12)
-		if y - z * _tan > 5.0:
-			c = c.lerp(Color("5f6238"), 0.35)
+			c = Color("8f6f4a")
+		else:
+			if steep > 0.35:
+				c = c.darkened(0.12)
+			if y - z * _tan > 5.0:
+				c = c.lerp(Color("5f6238"), 0.35)
+		if k > 0.0:
+			return c.lerp(_sand_color(x, z), k)
 		return c
 	var hf := func(x: float, z: float) -> float: return ground_h(x, z)
 	add_child(LowPoly.terrain(edge, 110.0, end_z - 10.0, 160.0, 36, 90, hf, colf))
@@ -461,6 +462,27 @@ func _build_terrain() -> void:
 	# Rampanın altı ve önü (kızak yolunun iki arazi şeridi arasındaki boşluk): kumsalın su altı yüzü burada da sürer.
 	# Eskiden kum kutusu örtüyordu; kutu gizlenince sudan bakınca keskin kenarlı derin bir oluk görünüyordu (tur 3)
 	add_child(LowPoly.terrain(-edge, edge, end_z - 5.0, end_z - 0.5, 4, 2, hf, colf))
+
+
+## Kumsalın kum oranı (1: kum, 0: çim): kıyıdan uzaklaştıkça ve kumsalın doğu-batı uçlarında, gürültüyle oynayan bir sınır
+## (girinti ve çıkıntılar, 2-8 m); yükseldikçe (yamaç) çimene döner. Arazi rengi ve kıyı ayrıntıları (ot, çakıl) kullanır.
+func sand_k(x: float, z: float, y: float) -> float:
+	var end := end_point()
+	var dz := z - end.z
+	var bx := absf(x - end.x)
+	var n1 := _noise.get_noise_2d(x * 4.0 + 13.0, z * 4.0) * 1.7
+	var n2 := _noise.get_noise_2d(x * 3.0 - 40.0, z * 3.0 + 9.0) * 1.7
+	var kz := clampf((5.0 + n1 * 3.4 - dz) / 1.6, 0.0, 1.0)
+	var kx := clampf((37.0 + n2 * 4.0 - bx) / 2.5, 0.0, 1.0)
+	var ky := 1.0 - smoothstep(0.7, 2.4, y - water_y)      # kum plato bitince yamaca biraz tırmanır (çimle karışık)
+	return minf(minf(kz, kx), ky)
+
+
+## Sıcak, hafif yamalı kum rengi (zemin gölgelendiricisi köşe rengini doğrusal okur).
+func _sand_color(x: float, z: float) -> Color:
+	var p := clampf(_noise.get_noise_2d(x * 1.7 + 5.0, z * 1.7 - 3.0) * 1.9 + 0.3, 0.0, 0.8)
+	var c := Color("dcbb82").lerp(Color("c08f58"), p)
+	return c.lerp(c.srgb_to_linear(), 0.85)
 
 
 ## Zemin ayrıntısı (Nature.ground_detail; her tür tek çoklu ağ): kızağın iki yanında çiğnenmiş çamur şeridi, ayak izleri,
@@ -535,6 +557,17 @@ func _build_shore() -> void:
 	for i in 8:
 		foam.append(Vector3(end.x + rng.randf_range(-4.0, 4.0), water_y, end.z - rng.randf_range(5.5, 7.5)))
 	Nature._scatter_at(self, "foam", foam, 93, func(x: float, z: float) -> float: return water_y)
+	# Kumun çimle sınırında ot öbekleri, kumun üstünde çakıl ve yassı taş: sınır çizgi gibi değil, geçişli görünsün (tur 4)
+	var sandy := func(lo: float, hi: float) -> Callable:
+		return func(x: float, z: float) -> bool:
+			var yy := surface_h(x, z)
+			var kk := sand_k(x, z, yy)
+			return absf(x - end.x) > 5.6 and yy > water_y + 0.12 and kk >= lo and kk <= hi
+	var sand_area := Rect2(end.x - 44.0, end.z + 0.5, 88.0, 10.0)
+	var sd := 120
+	for kd: Array in [["grass", 0.55, 0.02, 0.9], ["pebble", 0.35, 0.3, 1.0], ["stone", 0.05, 0.3, 1.0], ["chips", 0.06, 0.3, 1.0]]:
+		Nature.ground_detail(self, sand_area, kd[0], kd[1], sd, beach, sandy.call(kd[2], kd[3]))
+		sd += 1
 	_build_guard_post(end)
 
 
@@ -1456,6 +1489,7 @@ func _build_ship() -> void:
 	sm.depth_draw_mode = BaseMaterial3D.DEPTH_DRAW_DISABLED
 	sm.cull_mode = BaseMaterial3D.CULL_DISABLED
 	_ship_shadow.material_override = sm
+	_ship_shadow_mat = sm
 	_ship_shadow.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
 	_ship_shadow.set_meta("no_walk", true)
 	_ship_shadow.set_meta("soft", true)
@@ -1528,26 +1562,57 @@ func _tick_rollers(delta: float, cam_s: float, bow: float) -> void:
 var _bow_logs: Array[Node3D] = []
 var _ship_dust: CPUParticles3D
 var _ship_shadow: MeshInstance3D
+var _ship_shadow_mat: StandardMaterial3D
 const SHADOW_LEN := 34.0
 
 
 ## Kadırganın yokuş aşağı düşen gölgesi (yerel -z ileri, 0'dan -SHADOW_LEN'e): gövdenin geniş gölgesi sivrilerek uzar,
 ## ardından direğin ve yelken çubuğunun ince uzun gölgesi; kenarlar köşe rengiyle saydamlaşır.
 func _shadow_mesh() -> ArrayMesh:
+	# Kadırganın siluetine benzer (tur 4): pruvanın sivri gölgesi, ince direk gölgeleri, yelken çubuğu ve yelken. Her parça
+	# dışa doğru saydamlaşan 0,9-1,2 m'lik tüy kenarlı (sert şerit yok); parçalar birbirinin üstüne binmez.
 	var st := SurfaceTool.new()
 	st.begin(Mesh.PRIMITIVE_TRIANGLES)
-	var hull: Array[Vector2] = []
-	for p: Vector2 in [Vector2(0.0, 2.0), Vector2(2.6, 0.5), Vector2(2.9, -3.0), Vector2(2.5, -7.0), Vector2(1.6, -10.5),
-			Vector2(0.4, -12.8), Vector2(-0.4, -12.8), Vector2(-1.6, -10.5), Vector2(-2.5, -7.0), Vector2(-2.9, -3.0), Vector2(-2.6, 0.5)]:
-		hull.append(Vector2(p.x, p.y * 1.45 if p.y < 0.0 else p.y))     # uzun sabah gölgesi: oyuncunun önüne uzanır
-	Vfx._soft_poly(st, Vector2(0, -6.5), hull, 0.62)
-	var mast: Array[Vector2] = [Vector2(0.45, -11.0), Vector2(0.38, -24.0), Vector2(0.2, -SHADOW_LEN), Vector2(-0.2, -SHADOW_LEN),
-		Vector2(-0.38, -24.0), Vector2(-0.45, -11.0)]
-	Vfx._soft_poly(st, Vector2(0, -22.0), mast, 0.45)
-	# Yelken çubuğunun eğik gölgesi ve sarılı yelken
-	var yard: Array[Vector2] = [Vector2(2.4, -17.0), Vector2(2.7, -18.0), Vector2(-1.6, -28.5), Vector2(-2.0, -27.8)]
-	Vfx._soft_poly(st, Vector2(0.4, -22.8), yard, 0.4)
+	# Pruva: kıçtan (kızağa gömülü) sivri uca; uç yokuş aşağı
+	_feather(st, [Vector2(0.0, -9.0), Vector2(0.9, -7.0), Vector2(1.8, -4.0), Vector2(2.4, -0.5), Vector2(2.4, 3.0),
+		Vector2(-2.4, 3.0), Vector2(-2.4, -0.5), Vector2(-1.8, -4.0), Vector2(-0.9, -7.0)], 1.0, 0.9)
+	# Ana direk: uzun, ince, uca doğru incelir
+	_feather(st, [Vector2(0.3, -9.4), Vector2(0.22, -22.0), Vector2(0.1, -SHADOW_LEN), Vector2(-0.1, -SHADOW_LEN), Vector2(-0.22, -22.0),
+		Vector2(-0.3, -9.4)], 0.55, 0.85)
+	# Yelken çubuğu ve sarılı yelken: direğin ortasında enine, hafif eğik
+	_feather(st, [Vector2(3.3, -14.2), Vector2(3.5, -15.4), Vector2(-3.0, -21.2), Vector2(-3.4, -19.8)], 0.8, 0.55)
+	# Küçük ikinci direk ve çubuğu (pruvaya yakın)
+	_feather(st, [Vector2(1.1, -9.8), Vector2(1.05, -16.0), Vector2(0.85, -16.0), Vector2(0.9, -9.8)], 0.35, 0.5)
 	return st.commit()
+
+
+## Dışbükey çokgen çekirdek (alfa a) ve çevresinde tüy kenar (f m, alfa 0): köşe rengiyle yumuşak gölge parçası.
+static func _feather(st: SurfaceTool, ring: Array, f: float, a: float) -> void:
+	var n := ring.size()
+	var c := Vector2.ZERO
+	for p: Vector2 in ring:
+		c += p
+	c /= n
+	var outer: Array[Vector2] = []
+	for i in n:
+		var p0: Vector2 = ring[(i + n - 1) % n]
+		var p1: Vector2 = ring[i]
+		var p2: Vector2 = ring[(i + 1) % n]
+		var n1 := (p1 - p0).normalized()
+		var n2 := (p2 - p1).normalized()
+		var out := Vector2(n1.y, -n1.x) + Vector2(n2.y, -n2.x)
+		if out.dot(p1 - c) < 0.0:
+			out = -out
+		outer.append(p1 + out.normalized() * f)
+	var on := Color(1, 1, 1, a)
+	var off := Color(1, 1, 1, 0)
+	var v3 := func(p: Vector2) -> Vector3: return Vector3(p.x, 0.0, p.y)
+	for i in n:
+		var j := (i + 1) % n
+		for v: Array in [[c, on], [ring[i], on], [ring[j], on], [ring[i], on], [outer[i], off], [ring[j], on], [ring[j], on], [outer[i], off], [outer[j], off]]:
+			st.set_color(v[1])
+			st.set_normal(Vector3.UP)
+			st.add_vertex(v3.call(v[0]))
 
 
 var _ship_body: Node3D
@@ -1719,10 +1784,11 @@ func _build_bottom() -> void:
 	for zz in [-8.0, -5.0, -2.0]:
 		for xx in [-0.9, 0.9]:
 			Props.cyl(self, 0.12, 2.0, Vector3(end.x + 22 + xx, water_y - 0.4, end.z + zz), Color("5f4329"), Vector3.ZERO, 6)
-	# Kıyıda askerler ve fıçılar (kıyı yolu için)
+	# Kıyıda fıçılar (tur 4): suyun hemen üstündeki kuma oturur (eskiden düz kapaklı üç silindir suyun üstünde havada
+	# duruyordu); çıkış yerinin gerisinde kalır (iniş seçimi _spot_clear önündeki kutuya bakar)
 	var sp := shore_point()
 	for i in 3:
-		Props.cyl(self, 0.35, 0.8, sp + Vector3(-1.5 + i * 0.8, water_y - sp.y + 0.6, 2.5), Color("7a5232"), Vector3.ZERO, 8)
+		_shore_barrel(Vector3(sp.x - 3.2 + i * 0.85, 0.0, end.z + 0.1 + (0.35 if i == 1 else 0.0)), i == 2, float(i) * 70.0)
 	for i in 2:
 		var sol := Soldier.new(Color("b3262d") if i == 0 else Color("2f5fa8"), "stand", "bork")
 		# Kıyıdaki ikizler: Hasan (kırmızı) ile Hüseyin (mavi). Gizlice çıkınca onlar konuşur; yakalanınca
@@ -1732,6 +1798,36 @@ func _build_bottom() -> void:
 		sol.position = sp + Vector3(1.5 + i * 1.2, water_y - sp.y + 0.2, 1.0)
 		sol.rotation_degrees.y = 150
 		add_child(sol)
+
+
+## Kıyı fıçısı: tahta tahta, ortası şişkin, demir çemberli, kapaklı; kuma oturur. lying: yan yatık.
+func _shore_barrel(at: Vector3, lying: bool, yaw: float) -> void:
+	var g := Node3D.new()
+	add_child(g)
+	var base_y := surface_h(at.x, at.z)
+	g.position = Vector3(at.x, base_y - 0.02, at.z)
+	g.rotation_degrees.y = yaw
+	var h := 0.8
+	var wood := Color("8a5f3a")
+	var body := Node3D.new()
+	g.add_child(body)
+	# Şişkin gövde: üç kat (alt, orta, üst), her kat koni gövdeli
+	Props.cyl(body, 0.3, h * 0.36, Vector3(0, h * 0.18, 0), wood.darkened(0.08), Vector3.ZERO, 10, 0.34)
+	Props.cyl(body, 0.34, h * 0.3, Vector3(0, h * 0.51, 0), wood, Vector3.ZERO, 10, 0.34)
+	Props.cyl(body, 0.34, h * 0.36, Vector3(0, h * 0.82, 0), wood.darkened(0.08), Vector3.ZERO, 10, 0.3)
+	# Tahta çizgileri: dikey ince koyu şeritler
+	for k in 10:
+		var a := TAU * k / 10.0 + 0.15
+		Props.box(body, Vector3(0.012, h * 0.96, 0.02), Vector3(cos(a) * 0.335, h * 0.5, sin(a) * 0.335), wood.darkened(0.35), Vector3(0, -rad_to_deg(a), 0))
+	# Demir çemberler (alt, üst, ortada ikisi)
+	for hy: float in [0.1, 0.28, 0.52, 0.7]:
+		var r := 0.31 if hy < 0.2 or hy > 0.6 else 0.345
+		Props.ring(body, r - 0.012, r + 0.03, Vector3(0, hy, 0), Color("3a3634"), Vector3.ZERO)
+	# Kapak: hafif içbükey, koyu halka çerçeveli
+	Props.cyl(body, 0.29, 0.03, Vector3(0, h + 0.005, 0), wood.lightened(0.1), Vector3.ZERO, 10)
+	if lying:
+		body.rotation_degrees = Vector3(0, 0, 90)
+		body.position = Vector3(0.4, 0.34, 0)
 
 
 func _build_far_shore() -> void:
@@ -1922,44 +2018,29 @@ func _particles(pos: Vector3, amount: int, color: Color, radius: float) -> CPUPa
 	return p
 
 
-## Suya çarpma: yukarı fışkıran damlalar ve genişleyen köpük halkası.
+## Suya çarpma (tur 4): küçük damlacık demeti ve genişleyen, yuvarlak, yumuşak kenarlı iki köpük halkası, kısa ömürlü.
+## Eskiden 15 m'ye açılan dolu bir simit (sert kenarlı beyaz üçgenler, ekranı kaplayan levha) vardı.
 func splash(pos: Vector3, big := false) -> void:
 	var at := Vector3(pos.x, water_y + 0.1, pos.z)
-	# Damlalar küçük ve yarı saydam (tur 3: 2-3 cm; eskiden 5 cm'lik çokgenler kameranın önünde iri damla kalıyordu)
-	var drops := _particles(at, 120 if big else 70, Color(0.92, 0.97, 1.0, 0.55), 0.03 if big else 0.02)
+	# Damlalar küçük ve yarı saydam (2-3 cm), kısa ömürlü
+	var drops := _particles(at, 80 if big else 44, Color(0.92, 0.97, 1.0, 0.6), 0.036 if big else 0.026)
 	drops.gravity = Vector3(0, -12.0, 0)
 	drops.one_shot = true
 	drops.explosiveness = 0.92
-	drops.lifetime = 1.1
+	drops.lifetime = 0.85
 	drops.direction = Vector3.UP
-	drops.spread = 38.0
-	drops.initial_velocity_min = 4.0 if big else 3.0
-	drops.initial_velocity_max = 11.0 if big else 7.0
+	drops.spread = 32.0
+	drops.initial_velocity_min = 2.5 if big else 2.0
+	drops.initial_velocity_max = 7.5 if big else 5.0
 	drops.scale_amount_min = 0.5
-	drops.scale_amount_max = 1.4
+	drops.scale_amount_max = 1.3
 	drops.emitting = true
-	var ring := MeshInstance3D.new()
-	var tm := TorusMesh.new()
-	tm.inner_radius = 0.7
-	tm.outer_radius = 1.0
-	tm.rings = 24
-	tm.ring_segments = 4
-	ring.mesh = tm
-	var rm := StandardMaterial3D.new()
-	rm.albedo_color = Color(0.95, 0.98, 1.0, 0.85)
-	rm.transparency = BaseMaterial3D.TRANSPARENCY_ALPHA
-	rm.shading_mode = BaseMaterial3D.SHADING_MODE_UNSHADED
-	ring.material_override = rm
-	ring.position = at + Vector3(0, 0.05, 0)
-	ring.scale = Vector3(1, 0.15, 1)
-	add_child(ring)
-	var k := 3.0 if big else 1.0
-	var tw := create_tween().set_parallel()
-	tw.tween_property(ring, "scale", Vector3(5.0 * k, 0.15, 5.0 * k), 2.2).set_ease(Tween.EASE_OUT).set_trans(Tween.TRANS_CUBIC)
-	tw.tween_property(rm, "albedo_color:a", 0.0, 2.2)
-	tw.chain().tween_callback(func():
-		ring.queue_free()
-		drops.queue_free())
+	var k := 1.0 if big else 0.55
+	ripple(at, 0.25, 0.9 + 1.7 * k, 0.9, 0.5)
+	ripple(at, 0.12, 0.6 + 0.9 * k, 0.6, 0.4)
+	get_tree().create_timer(1.6, false).timeout.connect(func():
+		if is_instance_valid(drops):
+			drops.queue_free())
 
 
 ## Sualtında yükselen kabarcıklar.
@@ -2309,13 +2390,13 @@ func _rope_team(o: Dictionary) -> void:
 	var s: float = o["s"]
 	var span_root := Node3D.new()
 	node.add_child(span_root)
-	Stage.rope(span_root, Vector3(-(WIDTH + 0.7) / 2.0, 0.55, 0), Vector3((WIDTH + 0.7) / 2.0, 0.55, 0), 0.05, 0.045, Color("c9b48a"), 10)
+	Stage.rope(span_root, Vector3(-(WIDTH + 0.7) / 2.0, 0.42, 0), Vector3((WIDTH + 0.7) / 2.0, 0.42, 0), 0.05, 0.045, Color("c9b48a"), 10)
 	var tm := {"o": o, "span": span_root, "sides": [], "down": false, "shout": false}
 	var coats := [Color("b3262d"), Color("2f5fa8"), Color("3f7a3a"), Color("c98a3a")]
 	for side: int in [-1, 1]:
-		var e := s_to_world(s, side * (WIDTH / 2.0 + 0.35), 0.55)
+		var e := s_to_world(s, side * (WIDTH / 2.0 + 0.35), 0.42)
 		var bg := _ground_at(s, side * (WIDTH / 2.0 + 3.0))
-		var b := bg + Vector3(0, 1.2, 0)      # halat askerlerin elinde bel-göğüs hizasında (yolun üstünde 0,55 m)
+		var b := bg + Vector3(0, 1.2, 0)      # halat askerlerin elinde bel-göğüs hizasında (yolun üstünde 0,42 m: göz hizasından geçmez)
 		var coil := _ground_at(s + 0.5, side * (WIDTH / 2.0 + 3.7))
 		Stage.rope_coil(self, coil, 0.3, 3.5, 0.03, Color("b89a6a"))
 		var main := _rope_make(self, 0.045, Color("c9b48a"))
@@ -2346,7 +2427,7 @@ func _rope_lines(sd: Dictionary, down: bool) -> void:
 	var coil: Vector3 = sd["coil"]
 	var c_top := coil + Vector3(0, 0.12, 0)
 	if down:
-		var ed := e + Vector3(0, -0.47, 0)
+		var ed := e + Vector3(0, -0.36, 0)
 		var bd := Vector3(b.x, b.y - 1.16, b.z)
 		_rope_set(sd["main"], _sag(ed, bd, 0.02, 6))
 		_rope_set(sd["tail"], [bd, bd.lerp(c_top, 0.5) + Vector3(0, 0.03, 0.2), c_top])
@@ -2358,7 +2439,7 @@ func _rope_lines(sd: Dictionary, down: bool) -> void:
 func _rope_drop(tm: Dictionary) -> void:
 	tm["down"] = true
 	var span: Node3D = tm["span"]
-	span.create_tween().tween_property(span, "position:y", -0.47, 0.35).set_ease(Tween.EASE_IN)
+	span.create_tween().tween_property(span, "position:y", -0.36, 0.35).set_ease(Tween.EASE_IN)
 	for sd: Dictionary in tm["sides"]:
 		_rope_lines(sd, true)
 		for m: Dictionary in sd["men"]:
@@ -2432,7 +2513,7 @@ func _build_crews() -> void:
 	# Öküz takımları: iki öküz boyundurukta, boyunduruğun zinciri arkadaki kütük kızağına bağlı; kızağı yokuş yukarı ağır ağır
 	# çekerek yürürler (yol kenarında, kendi şeritlerinde). Sürücü yanlarında yürür: bir eli öküzün sağrısında, öbüründe
 	# üvendire. Takım düğümü her karede arazinin eğimine oturur (_tick_oxen). Eskiden koşumlu ama yerinde duruyorlardı.
-	var ox_c := [Color("8a5a36"), Color("6a4a2a"), Color("c8a878"), Color("4a3a2a")]
+	var ox_c := [Color("8a5a36"), Color("6a4a2a"), Color("b89868"), Color("4a3a2a")]
 	for side: int in [-1, 1]:
 		for i in 3:
 			var s0: float = OX_S[i]
@@ -2556,7 +2637,7 @@ func _ox_model(parent: Node3D, coat: Color, rng: RandomNumberGenerator) -> Dicti
 		rings.append(ring)
 	var tri := func(a: Vector3, b: Vector3, c: Vector3) -> void:
 		var n := (c - a).cross(b - a).normalized()
-		var shade := Color.WHITE.lerp(Color(1.22, 1.18, 1.1), clampf(-n.y, 0.0, 1.0) * 0.6)
+		var shade := Color.WHITE.lerp(Color(1.08, 1.05, 1.0), clampf(-n.y, 0.0, 1.0) * 0.6)
 		for v: Vector3 in [a, b, c]:
 			st.set_color(shade)
 			st.set_normal(n)
@@ -2821,6 +2902,9 @@ func _tick_ship(delta: float, ship_s: float) -> void:
 		var room := LENGTH + 0.5 - (ship_s + 9.0)
 		_ship_shadow.visible = room > 1.0
 		_ship_shadow.scale = Vector3(1.0, 1.0, clampf(room / SHADOW_LEN, 0.05, 1.0))
+		# Kadırga yaklaştıkça gölge koyulaşır (tur 4): 22 m'de soluk, 4 m'de koyu
+		if _ship_shadow_mat:
+			_ship_shadow_mat.albedo_color.a = lerpf(0.2, 0.7, clampf((22.0 - chase_gap) / 18.0, 0.0, 1.0))
 	_push_ph += delta * clampf(_ship_v, 0.0, 8.0) * 1.9
 	var ty := func(x: float, z: float) -> float: return track_y(x, z)
 	for i in _pushers.size():

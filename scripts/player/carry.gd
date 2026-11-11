@@ -38,7 +38,7 @@ static func attach(p: Player, node: Node3D, opts := {}) -> Carry:
 	if p == null or node == null or p.camera == null:
 		return null
 	# Aynı yüke ikinci bileşen bağlanmasın (yeniden alınca)
-	var old = node.get_meta("carry", null)
+	var old = node.get_meta("carry") if node.has_meta("carry") else null     # null varsayılanı motor hatası basıyordu
 	if old is Carry and is_instance_valid(old):
 		(old as Carry)._finish()
 	var c := Carry.new()

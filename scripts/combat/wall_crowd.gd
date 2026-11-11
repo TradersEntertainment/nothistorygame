@@ -103,7 +103,7 @@ func _convert(scene: Node3D, box: AABB, side: String, cap: int, avoid: Array) ->
 	# Uzak kopyaları (siluet) da gizle: aynı figürün uzaktan görünen eşi
 	for sl: Array in _slots:
 		for it: Array in (sl[1] as Array).duplicate():
-			var twin = (it[0] as Node).get_meta("crowd_twin", null)
+			var twin = (it[0] as Node).get_meta("crowd_twin") if (it[0] as Node).has_meta("crowd_twin") else null
 			if twin is MultiMeshInstance3D and is_instance_valid(twin):
 				(sl[1] as Array).append([twin, it[1], (twin as MultiMeshInstance3D).multimesh.get_instance_transform(it[1])])
 				_hide(twin, it[1])
