@@ -735,6 +735,8 @@ func _set_flood(k: float) -> void:
 func _kid_step() -> void:
 	phase = "kid"
 	player.pinned = false
+	# Kısa kararma: halkın, sedyenin ve ikonanın saçağa çekilişi ve Tolga'nın çocuğun yanına geçişi tek karede oluyordu
+	await hud.fade_to(1.0, 0.35)
 	# "Herkes bir saçak altına!": halk saçakların altına çekilir, sel caddesinde beklemez
 	for c in crowd:
 		if is_instance_valid(c):
@@ -769,6 +771,8 @@ func _kid_step() -> void:
 	player.global_position = litter.to_global(Vector3(-1.4, 0.05, 2.2))
 	kid.visible = true
 	kid.set_activity("")
+	player.face(kid.global_position + Vector3(0, 0.9, 0))
+	await hud.fade_to(0.0, 0.4)
 	Audio.sfx("crowd_gasp", -8.0, 1.4)
 	hud.bark("SPK_KID", "D24_K_HELP", 3.0)
 	player.face(kid.global_position + Vector3(0, 0.9, 0))

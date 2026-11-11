@@ -243,6 +243,8 @@ func _run() -> void:
 	# 12B (Son Akşam) Bölüm 12'nin yerine oynanır: Tolga o gün Sultan'ı değil İmparator'u gördü
 	var o12 := String(GameState.chapter_outcomes.get(12, ""))
 	var met_emperor: bool = GameState.has_met("emperor") or o12.begins_with("12B") or GameState.flags.get("byz_letter", false)
+	# Blakherna (30, Bizans): İmparator adını sordu, suru ona emanet etti (Osmanlı'nın 30O.x sonucu karışmaz)
+	met_emperor = met_emperor or Siege.outcome(30).begins_with("30.")
 	var met_sultan: bool = o12 != "" and not o12.begins_with("12B")
 	if met_emperor:
 		await _say("SPK_EMPEROR", "D23_K_KNOWN")

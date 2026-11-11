@@ -260,7 +260,9 @@ func _run() -> void:
 	_capture_mouse()
 	await hud.fade_to(0.0, 1.0)
 	if _byz:
-		if GameState.chapter_outcomes.get(6, "") == "6b.3":
+		if GameState.flags.get("ch8y_done", false):
+			pass      # Ara Bölüm "Beyaz Havlu" surdan çıkışı ve yürüyüşü oynattı: geçiş repliği tekrar olmasın
+		elif GameState.chapter_outcomes.get(6, "") == "6b.3":
 			await _t("D9_T_DEPORTED")
 		else:
 			await _t("D9_T_BYZ")

@@ -71,6 +71,10 @@ static func recap(scene: String, kind: String) -> String:
 		return ""
 	if kind == "PREV" and f.trim_prefix("chapter").to_int() == int(GameState.flags.get("siege_detour_back", -1)):
 		return ""
+	# Sayfanın sonucu tanığı karşı tarafa düşürüyorsa (30O.2) "Sırada" satırı bu tarafın sırasını söyler, yanlıştır:
+	# şemanın altbilgisi (UI_FLOW_DETOUR_*) sıradaki sayfayı zaten söylüyor
+	if kind == "NEXT" and detour_target(f.trim_prefix("chapter").to_int()) > 0:
+		return ""
 	var key := GameState.line_variant("UI_RECAP_%s_%s" % [f.trim_prefix("chapter").to_upper(), kind])
 	var t := TranslationServer.translate(key)
 	return "" if t == key else String(t)

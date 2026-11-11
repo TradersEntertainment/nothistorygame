@@ -40,7 +40,10 @@ const FIELD_Z := 37.0
 const TRENCH_Z := 103.5
 const HASAN_AT := Vector3(-1.3, 0.0, 109.0)
 const HUSEYIN_AT := Vector3(1.3, 0.0, 109.0)
-const MARKET_AT := Vector3(0.8, 0.0, 142.0)
+const MARKET_AT := Vector3(-2.6, 0.0, 141.0)
+## Ordugâh bölgesinin (CampDay) yerel z 0'ı bu bölümde: BYZ_SPAWN (yerel z 22) = END_AT
+const CAMP_Z0 := 162.0
+const END_AT := Vector3(0.0, 0.0, 140.0)
 const END_Z := 137.5
 const BATTERY := Vector3(10.5, 0.0, 99.0)
 const LADDER_AT := Vector3(-5.2, 0.0, 61.0)
@@ -95,6 +98,7 @@ var _leaf_l: Node3D
 var _leaf_r: Node3D
 var _bar: Node3D
 var _seat: Node3D
+var _archers: Array[Soldier] = []
 
 
 func _ready() -> void:
@@ -325,6 +329,10 @@ func _build_people() -> void:
 		s.position = Vector3(x, 8.0, 14.55)
 		add_child(s)
 		s.equip("spear" if i == 2 else "bow")
+		if i == 1 or i == 3:
+			# Okçular yayı kaldırmış, ovaya nişanlı (kapı açılınca çıkan Tolga'ya döner); gözcünün sözüyle indirir
+			s.pose = "aim"
+			_archers.append(s)
 		var slab := Props.solid(self, Vector3(1.0, 0.3, 0.9), Vector3(x, 7.85, 14.55), Color.WHITE)
 		slab.get_child(0).visible = false
 		if i == 0:
@@ -459,28 +467,69 @@ func _build_lines() -> void:
 		tx.append(Scenery._t(Vector3(x, _gy(x, z) - 0.1, z), Vector3(0, i * 0.9, 0), Vector3.ONE * (2.0 + fmod(i * 0.37, 0.8))))
 		tc.append([Color("d4c8aa"), Color("cbbd9c"), Color("bcad8c"), Color("ddd1b6")][i % 4])
 	Scenery.scatter(self, Scenery.tent_mesh(Color("7a3a2e")), tx, tc)
-	# Pazarın girişi: iki tezgâh (direk, tente, tezgâh, mallar) ve satıcı
-	for st: Vector3 in [Vector3(-8.0, 0, 146.5), Vector3(8.0, 0, 147.5)]:
-		var s := Node3D.new()
-		s.position = st + Vector3(0, _gy(st.x, st.z), 0)
-		s.rotation.y = PI * 0.5 if st.x < 0.0 else -PI * 0.5
-		add_child(s)
-		for c: Vector2 in [Vector2(-1.2, -0.7), Vector2(1.2, -0.7), Vector2(-1.2, 0.7), Vector2(1.2, 0.7)]:
-			Props.cyl(s, 0.05, 2.3 if c.y < 0.0 else 2.0, Vector3(c.x, 1.15 if c.y < 0.0 else 1.0, c.y), Color("6a4a2c"), Vector3.ZERO, 6)
-		Props.box(s, Vector3(2.7, 0.05, 1.8), Vector3(0, 2.18, 0), Color("b3262d") if st.x < 0.0 else Color("d8c8a8"), Vector3(-9, 0, 0))
-		Props.box(s, Vector3(2.4, 0.08, 0.9), Vector3(0, 0.85, 0.3), Color("7a5634"))
-		for k in 2:
-			Props.box(s, Vector3(0.08, 0.8, 0.8), Vector3(-1.1 + k * 2.2, 0.42, 0.3), Color("5a3e26"))
-		for k in 5:
-			Props.ball(s, 0.11, Vector3(-0.9 + k * 0.42, 0.98, 0.25), [Color("c8a040"), Color("8a2b22"), Color("e0d8b0")][k % 3], Vector3(1, 0.8, 1), 6)
-		for k in 2:
-			Props.cyl(s, 0.22, 0.5, Vector3(-0.7 + k * 1.4, 0.25, -0.75), Color("c8b48a"), Vector3.ZERO, 8, 0.18)
-	var vendor := Person.new({"coat": Color("8a6a4a"), "pants": Color("4a3a2a"), "hat": "turban", "mustache": true, "beard": true,
-		"apron": Color("e8e0cc")})
-	vendor.position = Vector3(-9.0, _gy(-9.0, 146.5), 146.5)
-	add_child(vendor)
-	Stage.face(vendor, Vector3(0, 0, 146.5))
-	vendor.look_target = player
+	_build_market()
+
+
+## Pazarın girişi: Bölüm 9'un açıldığı yerin (CampDay._build_market, BYZ_SPAWN çevresi) aynısı. Ordugâh bölgesinin yerel
+## koordinatı bu bölümde (−x, CAMP_Z0 − z)'ye düşer (iki bölge de sura bakar, yönleri ters): beş tezgâh aynı sırada,
+## aynı tente renkleri ve mallar, "PAZAR" tabelası, meydanın kırmızı sancağı, pazar keçisi, mektup yazdıracak asker.
+## Tolga'nın bittiği yer ve bakışı Bölüm 9'un ilk karesiyle aynı (BYZ_SPAWN, ordugâhın içine doğru).
+func _camp(cx: float, cz: float, y := 0.0) -> Vector3:
+	return Vector3(-cx, y, CAMP_Z0 - cz)
+
+
+func _build_market() -> void:
+	var awning := [Color("8a4a3a"), Color("56627a"), Color("a0804e"), Color("64704e"), Color("b8ab8e")]
+	var dm := Dressing.new(748)
+	dm.at(Vector3.ZERO, 0.0)
+	for i in 5:
+		var p := _camp(-8.0 + i * 4.0, 17.0)
+		p.y = _gy(p.x, p.z)
+		Props.solid(self, Vector3(2.4, 0.9, 1.2), p + Vector3(0, 0.45, 0), Color("7a5a38"))
+		for k in 4:
+			dm.cyl(0.04, 2.2, p + Vector3(1.1 - (k % 2) * 2.2, 1.1, 0.55 - (k / 2) * 1.1), Color("4a3020"), Vector3.ZERO, 4)
+		dm.box(Vector3(2.8, 0.05, 1.8), p + Vector3(0, 2.2, -0.2), awning[i], Vector3(10, 0, 0))
+		if Kit.has_food():
+			var goods: Array = [["Apple", "Orange", "Apple_Green"], ["Eggplant", "Turnip", "Carrot"], ["Bread", "Bread_Slice"],
+				["Fish", "Fish"], ["Jar_Large", "CookingPot", "FryingPan"]][i]
+			if i < 2:
+				var prng := RandomNumberGenerator.new()
+				prng.seed = 60 + i
+				Kit.produce(self, p + Vector3(0, 0.9, 0.15), 2.1, 0.8, prng, goods)
+				continue
+			for k in 10:
+				var g: String = goods[k % goods.size()]
+				var big := g in ["Jar_Large", "CookingPot", "FryingPan", "Fish", "Bread"]
+				if big and k >= 5:
+					continue
+				Kit.food(self, g, p + Vector3(0.95 - (k % 5) * 0.47, 0.9, 0.35 - (k / 5) * 0.3), k * 1.7 + PI)
+		else:
+			for k in 5:
+				Props.ball(self, 0.13, p + Vector3(0.9 - k * 0.45, 1.0, 0.2), [Color("e0a020"), Color("b3262d"), Color("6a8a3a"), Color("e8e0cc"), Color("c98a3a")][(k + i) % 5], Vector3.ONE, 6)
+	dm.build(self)
+	# "PAZAR" tabelası (iki yüzü yazılı) ve meydanın sancağı
+	var sp := _camp(-2.5, 7.2)
+	sp.y = _gy(sp.x, sp.z)
+	Props.cyl(self, 0.05, 2.2, sp + Vector3(0, 1.1, 0), Color("4a3020"), Vector3.ZERO, 5)
+	Props.box(self, Vector3(1.8, 0.45, 0.06), sp + Vector3(0, 2.0, 0), Color("c8a868"))
+	Props.label(self, "PAZAR", sp + Vector3(0, 2.0, -0.035), 36, Color("2a1a10"), Vector3(0, 180, 0), 1.6)
+	Props.label(self, "PAZAR", sp + Vector3(0, 2.0, 0.035), 36, Color("2a1a10"), Vector3.ZERO, 1.6)
+	var fp := _camp(0.0, -4.0)
+	fp.y = _gy(fp.x, fp.z)
+	Props.cyl(self, 0.08, 7.0, fp + Vector3(0, 3.5, 0), Color("6a4c30"), Vector3.ZERO, 6)
+	Props.box(self, Vector3(0.02, 1.0, 1.6), fp + Vector3(0, 6.3, -0.8), Color("c8262f"))
+	Props.crescent(self, fp + Vector3(0, 6.3, -0.9), 0.22, Color("c8262f"), 0.02)
+	# Pazarın keçisi (Bölüm 9'daki gibi tezgâhların arkasında dolaşır) ve mektup yazdıracak asker
+	var mg := Goat.new()
+	var gp := _camp(0.0, 11.0)
+	mg.position = Vector3(gp.x, 0.0, gp.z)
+	mg.bounds = Rect2(-7.0, CAMP_Z0 - 15.0, 14.0, 6.5)
+	add_child(mg)
+	var ls := Soldier.new(Color("3a6b3a"), "stand", "bork")
+	ls.position = _camp(5.5, 12.0, _gy(-5.5, CAMP_Z0 - 12.0))
+	ls.rotation.y = PI * 0.8 + PI
+	add_child(ls)
+	Props.solid(self, Vector3(0.5, 0.45, 0.5), ls.position + Vector3(-0.8, 0.22, -0.2), Color("8a6440"))
 
 
 # ================================================================ havlu
@@ -668,8 +717,13 @@ func _run() -> void:
 ## Niko havluyu uzatır: önce onun elinde, sonra Tolga'nın (show_prop "towel_pole"), sonra iki el sırıkta.
 func _hand_towel() -> void:
 	player.face(niko.global_position + Vector3(0, 1.3, 0))
-	await Handover.take_from(self, player, niko, Towel.pole_model(0.05), "towel_pole", 0.5)
-	player.drop_prop()
+	await Handover.take_from(self, player, niko, Towel.pole_model(0.05), "towel_pole", 2.0)
+	# Gösterilen sırık (show_prop) duruşunda gizlenir, aynı duruşta iki elle tutulan sırık gelir; show_prop kendi
+	# tween'iyle geri çekilip silinir (drop_prop onu tween sürerken siliyordu: "Target object freed" uyarısı)
+	var shown = player.get("_prop_item")
+	if shown is Node3D and is_instance_valid(shown):
+		(shown as Node3D).visible = false
+		player.set("_prop_item", null)
 	_hold_towel()
 
 
@@ -715,6 +769,8 @@ func _gate_scene() -> void:
 	await _t("D8Y_T_BYE")
 	await _say("SPK_NIKO", "D8Y_NIKO_BYE")
 	player.face(Vector3(0, 1.6, 30.0))
+	for a: Soldier in _archers:
+		a.look_target = player
 	phase = "out"
 	hud.set_objective(tr("UI_OBJ8Y_FIELD"), Vector3(0, 1.6, 104.0))
 	player.frozen = false
@@ -749,12 +805,28 @@ func _bridge_scene() -> void:
 	player.frozen = true
 	lookout.look_target = player
 	player.face(lookout.global_position + Vector3(0, 1.5, 0))
-	await _say("SPK_LOOKOUT", "D8Y_WALL_1")
+	_say("SPK_LOOKOUT", "D8Y_WALL_1")
+	await _wait(1.2)
+	_lower_bows()
+	while hud.is_talking():
+		await get_tree().process_frame
 	await _say("SPK_LOOKOUT", "D8Y_WALL_2")
 	player.face(player.global_position + Vector3(0, 1.5, 12.0))
 	await _t("D8Y_T_BRIDGE")
 	player.frozen = false
 	_busy = false
+
+
+## Okçular yayı indirir: nişan duruşundan (kollar önde, gövde öne) ayakta duruşa, sonra yine Tolga'yı izler
+func _lower_bows() -> void:
+	for a: Soldier in _archers:
+		if not is_instance_valid(a):
+			continue
+		a.pose = "stand"
+		var body = a.get("_body")
+		if body is Node3D:
+			var tw := create_tween()
+			tw.tween_property(body, "rotation:x", 0.0, _d(0.4))
 
 
 func _start_field() -> void:
@@ -891,7 +963,9 @@ func _finale() -> void:
 	hasan.look_target = player
 	player.face(hasan.global_position + Vector3(0, 1.5, 0))
 	await _say("SPK_HASAN", "D8Y_HASAN_MARKET")
-	player.face(player.global_position + Vector3(-3.0, 1.6, 10.0))
+	# Son kare Bölüm 9'un ilk karesi: BYZ_SPAWN'da, ordugâhın içine (tezgâhlara, sancağa) bakarak
+	await Stage.walk_player(player, END_AT, 0.05, END_AT + Vector3(0, 1.6, 10.0))
+	player.face(END_AT + Vector3(0, 1.6, 10.0))
 	await _t("D8Y_T_END_DEP" if _deported else "D8Y_T_END")
 	if _deported:
 		_outcome = "8Y.3"
@@ -918,7 +992,8 @@ func _end_chapter() -> void:
 	Engine.time_scale = 1.0
 	if GameState.autotest and GameState.autotest_variant == "next":
 		print("AUTOTEST chapter=8y -> 9 outcome=%s" % _outcome)
-		GameState.autotest_variant = ""
+		# Bölüm 9'un Bizans yolundaki testi: Theodoros'un teklifi (6b.1; varsayılan "" Kadri'yi arar, bu yolda yok)
+		GameState.autotest_variant = "arch"
 		get_tree().change_scene_to_file("res://scenes/chapter9.tscn")
 		return
 	if GameState.autotest:

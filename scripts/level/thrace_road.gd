@@ -596,7 +596,7 @@ func _build_convoy() -> void:
 			var hd := Node3D.new()
 			add_child(hd)
 			_man_handles.append(hd)
-	_yoke_chain = Stage.chain(self, Vector3.ZERO, Vector3(0, 0, 1), 0.0, 0.085, Color("3a3a40"))
+	_yoke_chain = Stage.chain(self, Vector3.ZERO, Vector3(0, 0, 1), 0.0, 0.12, Color("6a6a72"))
 	drover = Person.new({"coat": Color("5a4a36"), "pants": Color("4a3a2a"), "hat": "bork", "beard": true, "hair": Color("c8c4b8"), "skin": Color("c08868")})
 	drover.set_meta("spk", "SPK_DROVER")
 	add_child(drover)
@@ -633,7 +633,7 @@ func _details() -> void:
 		func(x: float, z: float) -> bool: return Vector2(x, z - MUD_Z).length() < 8.5)
 	for rx: float in [-0.6, 0.6]:
 		Nature.trail(self, [Vector3(rx, 0, -24.0), Vector3(rx, 0, -10.2)], "wheel_ruts", hf, 1.0, 3514 + int(rx * 10.0), 0.1)
-		Nature.trail(self, [Vector3(rx, 0, 10.2), Vector3(rx, 0, 112.0)], "wheel_ruts", hf, 1.0, 3516 + int(rx * 10.0), 0.1)
+		Nature.trail(self, [Vector3(rx, 0, 10.2), Vector3(rx, 0, 70.0)], "wheel_ruts", hf, 1.0, 3516 + int(rx * 10.0), 0.1)
 	Nature.trail(self, [Vector3(0, 0, 14.0), Vector3(0, 0, 60.0)], "hoofprint", hf, 0.9, 3519, 0.9)
 	# Yokuş kenarı taşları (eskiden 30 ayrı top)
 	Nature.ground_detail(self, Rect2(-7.6, SLOPE_Z0, 15.2, SLOPE_Z1 - SLOPE_Z0), "stone", 0.05, 3502, hf,

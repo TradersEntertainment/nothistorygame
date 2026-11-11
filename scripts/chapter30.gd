@@ -27,6 +27,7 @@ var _outcome := ""
 var gun_shots := 0
 var gun_hits := 0
 var _rifle_shots := 4         # 18b'nin izi: köprüyü vuran topçuya beş, gülleleri suya düşene üç
+var _gun_giver: Soldier
 var pushed := 0
 var boarders := 0
 var _duel_won := true
@@ -71,6 +72,8 @@ func _ready() -> void:
 		d.rotation.y = 0.0
 		add_child(d)
 		d.equip(["spear", "sword_shield", "spear", "sword_shield", "spear"][k])
+		if k == 2:
+			_gun_giver = d                  # tüfeği bu savunucu uzatır (elde kendiliğinden beliriyordu)
 	player.focus_changed.connect(_on_focus)
 	if GameState.autotest:
 		Engine.time_scale = 3.0
@@ -110,6 +113,12 @@ func _run() -> void:
 func _gun() -> void:
 	phase = "gun"
 	await hud.say("SPK_DEFENDER", "D30_D_GUN")
+	# Tüfek yakındaki savunucunun elinden alınır (20 ve 26'daki gibi), sonra savunucu yerine döner
+	if is_instance_valid(_gun_giver):
+		var home := _gun_giver.global_position
+		await Handover.hand_rifle(self, player, _gun_giver)
+		var back := create_tween()
+		back.tween_property(_gun_giver, "global_position", home, 0.05 if Stage.fast() else 1.2)
 	# Haliç'teki topçu (18b): köprüyü vurduysa beş atış, gülleleri suya düştüyse üç
 	match Siege.outcome(18):
 		"18B.1":

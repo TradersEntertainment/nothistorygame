@@ -404,6 +404,9 @@ func _scene_garage() -> void:
 		add_child(ch)
 	if key == "D15_G_H1" and W == "W1":
 		Props.box(garage, Vector3(0.05, 1.3, 0.5), Vector3(Garage.W / 2.0 - 0.3, 1.2, 1.4), Color("7a3a8a"))
+	# Tutuklu Tolga (11.1) Bekleme Salonu'ndan Büro'ya alındı (T4): pencere hiç açılmadı, "servise yetişti" denmez
+	if key == "D15_G_H1" and T == "T4" and GameState.flags.get("tolga_arrested", false):
+		key = "D15_G_T4_ARREST"
 	await hud.fade_to(0.0, 0.8)
 	if T == "T3" and hikmet:
 		await _garage_1977(hikmet)
@@ -413,7 +416,7 @@ func _scene_garage() -> void:
 	else:
 		if hikmet:
 			hikmet.talking = true
-			if key == "D15_G_H1":
+			if key in ["D15_G_H1", "D15_G_T4_ARREST"]:
 				hikmet.emote("stir_cup")
 			elif key == "D15_G_N4" and is_instance_valid(_rep_nihat):
 				hikmet.look_target = _rep_nihat

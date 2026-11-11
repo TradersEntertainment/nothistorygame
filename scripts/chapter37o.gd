@@ -961,6 +961,9 @@ func _drop_cymbal_and_shield() -> void:
 
 func _dawn() -> void:
 	await hud.fade_to(1.0, 0.8)
+	# Barikattan Urban'ın topuna geçiş başlıksızdı (17o/22o/32o'daki kalıp: kararmada yer ve saat kartı)
+	await hud.card([[tr("UI_CH37O_DAWN"), 26, Color("f2e6c9")]], 1.8)
+	hud.clear_card()
 	if is_instance_valid(_rope):
 		_rope.queue_free()
 	walls.make_dawn(0.01)

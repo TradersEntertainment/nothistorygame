@@ -854,6 +854,9 @@ var _rung_press := false
 
 func _ladders() -> void:
 	await hud.fade_to(1.0, 0.5)
+	# Hendekten Usta'nın tezgâhına geçiş başlıksızdı (öteki geçişlerde kart var: ikindi, gün batımı)
+	await hud.card([[tr("UI_CH32O_NOON"), 26, Color("f2e6c9")]], 1.6)
+	hud.clear_card()
 	player.global_position = BENCH + Vector3(0.4, 0.05, 4.0)
 	player.face(usta.global_position + Vector3(0, 1.5, 0))
 	usta.face_toward(player.global_position)      # tezgâha dönük, sırtı Tolga'ya konuşuyordu

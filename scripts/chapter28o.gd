@@ -346,7 +346,7 @@ func _haul_phase() -> void:
 	# "Altmış öküz bunu Edirne'den getirdi": bakış replik boyunca öküzlere (kızak yolunun gerisinde, takımlar çekerek
 	# gelir, ötede çiftler dinlenir); Urban o yanda konuşur. Replikten sonra bakış kızağa döner.
 	urban.global_position = Vector3(haul_x + 1.0, gy(haul_x + 1.0, HAUL_Z + 6.0), HAUL_Z + 6.0)
-	player.face(Vector3(-14.0, 0.9, HAUL_Z + 10.0))
+	player.face(Vector3(-8.0, 0.8, HAUL_Z + 13.0))
 	await hud.fade_to(0.0, 0.8)
 	await hud.say("SPK_URBAN", "D28O_U_HAUL")
 	player.face(Vector3(haul_x + 5.5, 1.0, HAUL_Z))
@@ -778,8 +778,8 @@ func _hammer_in(st: Node3D, depth: float) -> void:
 func _maul_pose(hm: Node3D, v: float) -> void:
 	if not is_instance_valid(hm):
 		return
-	var r := Vector3(0.08, -0.3, -0.36).lerp(Vector3(0.08, -0.08, -0.34), v)
-	var l := Vector3(0.03, -0.34, -0.56).lerp(Vector3(0.03, 0.04, -0.4), v)
+	var r := Vector3(0.11, -0.2, -0.42).lerp(Vector3(0.1, -0.02, -0.38), v)
+	var l := Vector3(0.02, -0.25, -0.62).lerp(Vector3(0.03, 0.04, -0.46), v)
 	player.hold_both(l, r)
 	_fit_fists(hm)
 
@@ -788,8 +788,9 @@ func _maul_pose(hm: Node3D, v: float) -> void:
 func _fit_fists(n: Node3D) -> void:
 	if not is_instance_valid(n) or player.rig == null or player.free_rig == null:
 		return
-	var r: Vector3 = player.rig.socket.global_position
-	var l: Vector3 = player.free_rig.socket.global_position
+	var up := player.camera.global_transform.basis.y * 0.035      # avucun ortası (yuva avuç tabanında)
+	var r: Vector3 = player.rig.socket.global_position + up
+	var l: Vector3 = player.free_rig.socket.global_position + up
 	var y := (l - r)
 	if y.length() < 0.01:
 		return
@@ -809,9 +810,9 @@ func _pick(what: String) -> void:
 	if what == "stake":
 		# Kazık iki elde, göğsün önünde çapraz (yayma P4: sol elde kazık, sağ elde koli bandı duruyordu)
 		# 2. tur: kazık 1,8 m, çap 12 cm, iki yumruğun içinden geçer; ucu önde yere doğru (mızrak gibi), ekranı kesmez
-		Props.cyl(_carry, 0.06, 1.8, Vector3(0, 0.45, 0), Color("8a6a44"), Vector3.ZERO, 6, 0.02)
+		Props.cyl(_carry, 0.06, 1.8, Vector3(0, 0.62, 0), Color("8a6a44"), Vector3.ZERO, 6, 0.02)
 		player.stow_hands(true)
-		player.hold_both(Vector3(0.0, -0.4, -0.58), Vector3(0.12, -0.31, -0.36))
+		player.hold_both(Vector3(0.0, -0.25, -0.62), Vector3(0.12, -0.22, -0.4))
 		_fit_fists(_carry)
 		player.speed_mult = 0.85
 	else:
@@ -979,9 +980,9 @@ func _build_oxen() -> void:
 		herder.set_meta("no_talk", true)
 		add_child(herder)
 		_goad(herder)
-		var x0 := -24.0 + i * 6.0
-		var z := HAUL_Z + 7.0 + i * 3.6
-		_ox_teams.append({"team": team, "oxen": oxen, "herder": herder, "x": x0, "z": z, "end": -9.0 - i * 3.0, "bellow": randf_range(3.0, 9.0)})
+		var x0 := -11.0 - i * 5.0
+		var z := HAUL_Z + 9.0 + i * 3.8
+		_ox_teams.append({"team": team, "oxen": oxen, "herder": herder, "x": x0, "z": z, "end": -3.0 - i * 4.0, "bellow": randf_range(3.0, 9.0)})
 		_place_team(_ox_teams[-1])
 	# Uzak sıralar: 28 çift (56 öküz) boyundurukta dinlenir; tek çoklu ağ (öküz) + tek çoklu ağ (boyunduruk)
 	var proto := Ox.new(Color.WHITE.darkened(0.15))
@@ -1000,7 +1001,7 @@ func _build_oxen() -> void:
 	for i in 28:
 		var row := i / 7
 		var col := i % 7
-		var c := Vector3(-21.0 - col * 4.8 + rng.randf_range(-1.0, 1.0), 0, HAUL_Z + 13.5 + row * 4.4 + rng.randf_range(-0.8, 0.8))
+		var c := Vector3(-13.0 - col * 4.6 + rng.randf_range(-1.0, 1.0), 0, HAUL_Z + 18.0 + row * 4.2 + rng.randf_range(-0.8, 0.8))
 		var yaw := PI * 0.5 + rng.randf_range(-0.7, 0.7) + (PI if row % 2 == 1 and rng.randf() < 0.3 else 0.0)
 		var b := Basis(Vector3.UP, yaw)
 		for sx: float in [-0.75, 0.75]:

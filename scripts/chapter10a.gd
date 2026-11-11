@@ -213,6 +213,7 @@ func _run() -> void:
 	player.face(theodoros.global_position + Vector3(0, 1.5, 0))
 	_capture_mouse()
 	await hud.fade_to(0.0, 1.0)
+	await _t("D10A_T_00_GATE")          # 9.5: ordugâhtan arşive geçiş (cephe hattı hiç anılmıyordu)
 	await _th("D10A_TH_01")
 	player.face(HEN_AT + Vector3(0, 0.2, 0))
 	await _t("D10A_T_02")

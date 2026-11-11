@@ -1041,11 +1041,20 @@ func _hold() -> void:
 	Siege.resolve(true)
 	# Şehir düşmediği için Galata (27) ve Büro kapanışı yok: dönüş buradan (eskiden siege_done kurulmuyordu,
 	# Bölüm 15'te müdürün "bir ay" sorusu bu yolda hiç gelmiyordu)
+	# Büro'nun zimmet telefonu (17'de verildi) 27'nin Büro kapanışında iade ediliyordu; o kapanış bu yolda yok
+	var phone_back: bool = GameState.flags.get("bureau_phone", false) and GameState.has_item("phone")
+	if phone_back:
+		await hud.say("SPK_NIHAT", "D26_N_PHONE_BACK")
+		player.show_prop("phone", 2.4)
+		await hud.say("SPK_TOLGA", "D26_T_PHONE_BACK")
 	await hud.say("SPK_NIHAT", "D26_N_RETURN")
 	await hud.say("SPK_TOLGA", "D26_T_RETURN")
 	GameState.flags["siege_done"] = true
 	Audio.sfx("machine_jump", -4.0)
 	await hud.fade_to(1.0, 1.5, Color.WHITE)
+	if phone_back:                       # Büro telefonu atlamada geri alır
+		GameState.lose("phone", "bureau_return")
+		GameState.flags.erase("bureau_phone")
 	await hud.card([[tr("UI_ACT4_END_HOLD"), 34, Color("f2e6c9")],
 		[tr(GameState.line_variant("UI_ACT4_END_SUB")) % [Siege.page_count(), Siege.page_total()], 18, Color(1, 1, 1, 0.75)]], 3.5)
 	hud.clear_card()
@@ -1935,7 +1944,8 @@ func _aya() -> void:
 		await hud.say("SPK_TOLGA", "D26_T_POCKET")
 	_outcome = "26.1" if pick == 0 and cam != null and cam.done else "26.2"
 	Siege.record(26, _photo if _outcome == "26.1" else "", "SIEGE_NOTE_26_%s" % _outcome.split(".")[1])
-	await hud.say("SPK_NIHAT", "D26_N_LIFT")
+	# Osmanlı nüshasında 26o'dan sonra dört sayfa daha var (38o, 39o, 31o, 27): "Eve" denmez
+	await hud.say("SPK_NIHAT", "D26O_N_LIFT" if Siege.side() == "O" else "D26_N_LIFT")
 	Audio.sfx("machine_jump", -4.0)
 	await hud.fade_to(1.0, 1.0)
 

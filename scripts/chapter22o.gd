@@ -608,6 +608,7 @@ func _run() -> void:
 			_carry_mult = 0.6
 		lines.append(["SPK_HASAN", "D22O_H_CAPTIVE"])
 		lines.append(["SPK_TOLGA", "D22O_T_CAPTIVE"])
+		lines.append(["SPK_NIHAT", "D22O_N_CAPTIVE"])      # kaçışın kendisi hiç anlatılmıyordu ("Grant'e kaçtı denecek")
 	else:
 		# Blakherna (30o): surda Rum'u yenen kâtibi bölük konuşuyor; surdan atılan kâtip topallıyor
 		match Siege.outcome(30):

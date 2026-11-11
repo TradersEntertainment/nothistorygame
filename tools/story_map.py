@@ -158,6 +158,9 @@ PRE = [
      ["İki sürüm: 6a'dan gelince ordugâhta (7a), 6b'den gelince Bizans şehrinde (7b).",
       "Two versions: in the camp (7a) after 6a, in the Byzantine city (7b) after 6b."]],
     ["ch8", "chapter8.gd", "UI_CH8_TITLE", "UI_CH8_SUB", None],
+    ["ch8y", "chapter8y.gd", "UI_CH8Y_TITLE", "UI_CH8Y_SUB",
+     ["Yalnız Bizans yolunda (6b): surlardan çıkış ve iki ordunun arası, beyaz bayrak yerine bir hamam havlusuyla.",
+      "Byzantine route only (6b): out through the walls and across no man's land, with a bathhouse towel for a white flag."]],
     ["ch9", "chapter9.gd", "UI_CH9_TITLE", "UI_CH9_SUB",
      ["Yedi teklif, yedi dal bölümü. Hepsini reddedersen Otağ Kapısı.", "Seven offers, seven branch chapters. Turn them all down and it's the Tent Gate."]],
     ["ch10z", "chapter10z.gd", "UI_CH10Z_TITLE", "UI_CH10Z_SUB", ["Kadri'nin teklifi (9.1).", "Kadri's offer (9.1)."]],
@@ -287,10 +290,12 @@ for id_, script, tkey, skey, note in PRE:
     CHAPTERS[id_] = chapter_entry(id_, script, tkey, skey, note, num={"all": m.group(1)})
 
 # Aynı numarayı paylaşan dal bölümleri sitede sonuç kimliklerindeki adla ayrılır (4a/4b, 10Z…, 12B)
-TAGS = {"ch4a": "4a", "ch4b": "4b", "ch6a": "6a", "ch6b": "6b", "ch10z": "10Z", "ch10b": "10B", "ch10g": "10G",
+TAGS = {"ch8y": "8Y", "ch4a": "4a", "ch4b": "4b", "ch6a": "6a", "ch6b": "6b", "ch10z": "10Z", "ch10b": "10B", "ch10g": "10G",
         "ch10h": "10H", "ch10a": "10A", "ch10l": "10L", "ch12b": "12B"}
 for id_, tag in TAGS.items():
     CHAPTERS[id_]["tag"] = tag
+# Ara Bölüm "Beyaz Havlu": numarasız (oyunda GameState.display_no: "A")
+CHAPTERS["ch8y"]["num"] = {"all": "A"}
 
 # Kuşatma: iki tarafın sahneleri; ortak sahne (23, 25, 27) tek bölümdür, iki numarası vardır
 SIEGE_ROWS = []
@@ -387,7 +392,7 @@ ROWS = [
     {"t": "row", "cells": [["ch4a", 0], ["ch4b", 1]]}, {"t": "row", "cells": [["ch5", 0]]},
     {"t": "act", "act": "II"},
     {"t": "row", "cells": [["ch6a", 0], ["ch6b", 1]]}, {"t": "row", "cells": [["ch7", 0]]},
-    {"t": "row", "cells": [["ch8", 0]]}, {"t": "row", "cells": [["ch9", 0]]},
+    {"t": "row", "cells": [["ch8", 0]]}, {"t": "row", "cells": [["ch8y", 1]]}, {"t": "row", "cells": [["ch9", 0]]},
     {"t": "row", "cells": [["ch10z", 0], ["ch10b", 1]]}, {"t": "row", "cells": [["ch10g", 2], ["ch10h", 3]]},
     {"t": "row", "cells": [["ch10a", 4], ["ch10l", 5]]}, {"t": "row", "cells": [["ch10", 6]]},
     {"t": "row", "cells": [["ch11", 0]]},
@@ -463,6 +468,7 @@ EDGES = [
     ["ch5", "ch6a", [], C("4a'dan", "From 4a"), None], ["ch5", "ch6b", [], C("4b'den", "From 4b"), None],
     ["ch6a", "ch7", [], None, None], ["ch6b", "ch7", [], None, None],
     ["ch7", "ch8", [], None, None], ["ch8", "ch9", [], None, None],
+    ["ch8", "ch8y", [], C("Bizans yolunda (6b)", "On the Byzantine route (6b)"), None], ["ch8y", "ch9", [], None, None],
     ["ch9", "ch10z", ["9.1"], None, None], ["ch9", "ch10b", ["9.2"], None, None], ["ch9", "ch10g", ["9.3"], None, None],
     ["ch9", "ch10h", ["9.4"], None, None], ["ch9", "ch10a", ["9.5"], None, None], ["ch9", "ch10l", ["9.7"], None, None],
     ["ch9", "ch10", ["9.6"], None, None],

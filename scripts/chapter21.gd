@@ -435,6 +435,9 @@ func _tunnel() -> void:
 	await hud.say("SPK_NIHAT", "D21_N_END")
 	if _captive:
 		await hud.say("SPK_NIHAT", "D21_N_END_CAPTIVE")
+	else:
+		# Sayfa 23 Mayıs'ta bitiyor, sıradaki (22) 18 Mayıs: geri sarma söylenir (19 → 20'deki D19_N_BACK_B gibi)
+		await hud.say("SPK_NIHAT", "D21_N_BACK_B")
 	_outcome = "21.1" if found_by_bowl else "21.2"
 	GameState.flags["siege21_tunnel"] = _tunnel_way
 	GameState.flags["siege21_talk"] = _talk
