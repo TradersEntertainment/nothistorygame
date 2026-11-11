@@ -32,6 +32,7 @@ var _overlay: ColorRect
 var _mat: ShaderMaterial
 var _caption: Control
 var _place: Label
+var _place_tw: Tween
 var freeze_cam: Camera3D
 var froze := false
 
@@ -194,10 +195,10 @@ func _run() -> void:
 	Audio.sfx("cannon", -2.0)
 	await hud.fade_to(0.0, 0.8)
 	_place.text = tr("UI_CH0_PLACE")
-	var tw := create_tween()
-	tw.tween_property(_place, "visible_ratio", 1.0, 1.4)
-	tw.tween_interval(2.6)
-	tw.tween_property(_place, "modulate:a", 0.0, 0.5)
+	_place_tw = create_tween()
+	_place_tw.tween_property(_place, "visible_ratio", 1.0, 1.4)
+	_place_tw.tween_interval(2.6)
+	_place_tw.tween_property(_place, "modulate:a", 0.0, 0.5)
 	phase = "run"
 	player.frozen = false
 	# Yeni oyuncunun ilk saniyeleri (oyun testi: "ne yapacağımız anlaşılmıyor"): kontrol önce gösterilir, ilk söz
@@ -297,6 +298,7 @@ func _hit() -> void:
 	hud.bark("SPK_DEFENDER", "D0_S_ARROWS", 2.0)
 	await get_tree().create_timer(1.6, false).timeout
 	hud.bark("SPK_LOOKOUT", "D20_L_WARN_2", 2.4, true)      # gözcü topu görür, askerin sözünü keser: bağırış toptan önce
+	_place_out()
 	walls.fire_flash()
 	BattleExtras.all_take_cover(world, [])
 	Audio.sfx("cannon", 0.0, 0.8)
@@ -408,6 +410,19 @@ func _freeze() -> void:
 	await hud.say("SPK_TOLGA", "D0_T_FREEZE_2")
 	Audio.sfx("radio_static", -6.0)
 	await hud.say("SPK_NIHAT", "D0_N_FREEZE")
+
+
+## Yer/tarih yazısı en geç top ateşlenirken söner. Kendi süresi (yazılış 1,4 + bekleme 2,6 + sönme 0,5 sn) oyun
+## zamanıyla sayar ve akıştan habersizdi: koşan oyuncu (5,2 m/sn, çizgiye ~2 sn) ya da test botu (ışınlanır; 2,5-4x
+## hızda) çizgiye 4,5 sn dolmadan vardığında yazı vuruşun, patlamanın ve donan karenin ("TOLGA" kartı) üstünde
+## kalıyordu (fragmanın kanca çekimi yazıyla açılıyordu). Artık bitiş akışa bağlı: süre dolmadıysa burada hızlıca söner.
+func _place_out() -> void:
+	if _place_tw and _place_tw.is_valid():
+		_place_tw.kill()
+	if _place.modulate.a <= 0.0:
+		return
+	_place_tw = create_tween()
+	_place_tw.tween_property(_place, "modulate:a", 0.0, 0.3)
 
 
 ## Kaset gibi geri sarma, beyaz ışık, garaj.

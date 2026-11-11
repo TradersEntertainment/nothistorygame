@@ -1,0 +1,106 @@
+[t0 rc=0] --chapter=0 --autotest :: AUTOTEST PASS chapter=0 variant= froze=true
+[t0next rc=0] --chapter=0 --autotest=next :: AUTOTEST PASS chapter=0 variant=next froze=true
+AUTOTEST chapter=1 -> 2 outcome=1.1 bag=["phone", "lighter", "book", "chickpeas", "powerbank"]
+AUTOTEST PASS chapter=2 variant= outcome=2.1 stumbles=1 telsiz=3
+[t0pace rc=0] --chapter=0 --autotest :: WARN_VOID_TELEPORT scene=chapter0.tscn pos=(0.2, -415.4871, 9.4)
+AUTOTEST PASS chapter=0 variant= froze=true
+[t2 rc=0] --chapter=2 --autotest :: AUTOTEST PASS chapter=2 variant= outcome=2.1 stumbles=1 telsiz=3
+[t2=perfect rc=0] --chapter=2 --autotest=perfect :: AUTOTEST PASS chapter=2 variant=perfect outcome=2.2 stumbles=0 telsiz=3
+[t2=chain rc=0] --chapter=2 --autotest=chain :: AUTOTEST PASS chapter=2 variant=chain outcome=2.3 stumbles=0 telsiz=3
+[t2=chainfail rc=0] --chapter=2 --autotest=chainfail :: AUTOTEST PASS chapter=2 variant=chainfail outcome=2.4 stumbles=0 telsiz=3
+[t2=red rc=0] --chapter=2 --autotest=red :: AUTOTEST PASS chapter=2 variant=red outcome=2.5 stumbles=0 telsiz=3
+[t2=swimshore rc=0] --chapter=2 --autotest=swimshore :: AUTOTEST PASS chapter=2 variant=swimshore outcome=2.1 stumbles=2 telsiz=3
+[t2=swimchain rc=0] --chapter=2 --autotest=swimchain :: AUTOTEST PASS chapter=2 variant=swimchain outcome=2.3 stumbles=0 telsiz=3
+[t2=next rc=0] --chapter=2 --autotest=next :: AUTOTEST chapter=2 -> 3 outcome=2.2
+AUTOTEST PASS chapter=3 variant= outcome=3.3 sadakat=50 rel=0 baski=0 machine=free
+[t12 rc=0] --chapter=12 --autotest :: AUTOTEST PASS chapter=12 variant= outcome=12.1 merak=4 paradox=0 tries=0 key=1 honest=true tezkire=true
+[t12=leblebi rc=0] --chapter=12 --autotest=leblebi :: AUTOTEST PASS chapter=12 variant=leblebi outcome=12.2 merak=3 paradox=80 tries=0 key=1 honest=true tezkire=true
+[t12=twokings rc=0] --chapter=12 --autotest=twokings :: AUTOTEST PASS chapter=12 variant=twokings outcome=12.3 merak=4 paradox=45 tries=0 key=1 honest=true tezkire=false
+[t12=repair rc=0] --chapter=12 --autotest=repair :: AUTOTEST PASS chapter=12 variant=repair outcome=12.4 merak=4 paradox=0 tries=0 key=1 honest=true tezkire=true
+[t12=kitchen rc=0] --chapter=12 --autotest=kitchen :: AUTOTEST PASS chapter=12 variant=kitchen outcome=12.5 merak=1 paradox=40 tries=2 key=2 honest=false tezkire=false
+[t12=retry rc=0] --chapter=12 --autotest=retry :: AUTOTEST PASS chapter=12 variant=retry outcome=12.1 merak=4 paradox=0 tries=1 key=1 honest=true tezkire=true
+[t12=hikmet rc=0] --chapter=12 --autotest=hikmet :: AUTOTEST PASS chapter=12 variant=hikmet outcome=12.6 merak=4 paradox=0 tries=0 key=1 honest=true tezkire=true
+[t12=nihat rc=0] --chapter=12 --autotest=nihat :: AUTOTEST PASS chapter=12 variant=nihat outcome=12.1 merak=4 paradox=0 tries=0 key=1 honest=true tezkire=true
+[t12=urban rc=0] --chapter=12 --autotest=urban :: AUTOTEST PASS chapter=12 variant=urban outcome=12.1 merak=2 paradox=0 tries=0 key=1 honest=true tezkire=true
+[t12=next rc=0] --chapter=12 --autotest=next :: AUTOTEST chapter=12 -> 17 outcome=12.1
+AUTOTEST PASS chapter=17 variant= outcome=17.1 saved=3 fell=false lost=false next=chapter18b.tscn shot=true chain=false rescue_t=40 genoese=0
+[t17 rc=0] --chapter=17 --autotest :: AUTOTEST PASS chapter=17 variant= outcome=17.1 saved=3 fell=false lost=false next=chapter18b.tscn shot=true chain=false rescue_t=40 genoese=0
+[t17=two rc=0] --chapter=17 --autotest=two :: AUTOTEST PASS chapter=17 variant=two outcome=17.2 saved=2 fell=false lost=false next=chapter18b.tscn shot=true chain=false rescue_t=40 genoese=0
+[t17=fall rc=0] --chapter=17 --autotest=fall :: AUTOTEST PASS chapter=17 variant=fall outcome=17.1 saved=3 fell=true lost=false next=chapter18b.tscn shot=true chain=false rescue_t=40 genoese=0
+[t17=nophoto rc=0] --chapter=17 --autotest=nophoto :: AUTOTEST PASS chapter=17 variant=nophoto outcome=17.1 saved=3 fell=false lost=false next=chapter18b.tscn shot=false chain=false rescue_t=40 genoese=0
+[t17=chain rc=0] --chapter=17 --autotest=chain :: AUTOTEST PASS chapter=17 variant=chain outcome=17.1 saved=3 fell=false lost=false next=chapter18b.tscn shot=true chain=true rescue_t=52 genoese=0
+[t17=ship_ok rc=0] --chapter=17 --autotest=ship_ok :: AUTOTEST PASS chapter=17 variant=ship_ok outcome=17.1 saved=3 fell=false lost=false next=chapter18b.tscn shot=true chain=false rescue_t=48 genoese=2
+[t17=ship_bad rc=0] --chapter=17 --autotest=ship_bad :: AUTOTEST PASS chapter=17 variant=ship_bad outcome=17.1 saved=3 fell=false lost=false next=chapter18b.tscn shot=true chain=false rescue_t=32 genoese=0
+[t17=lost rc=0] --chapter=17 --autotest=lost :: AUTOTEST PASS chapter=17 variant=lost outcome=17.3 saved=0 fell=true lost=true next=chapter18.tscn shot=true chain=false rescue_t=40 genoese=0
+[t17=edirne_policy rc=0] --chapter=17 --autotest=edirne_policy :: AUTOTEST PASS chapter=17 variant=edirne_policy vlad=policy who=greek answer=flat caesar=salad future=told side=B
+[t17=edirne_none rc=0] --chapter=17 --autotest=edirne_none :: AUTOTEST PASS chapter=17 variant=edirne_none vlad=none who=time answer=dunno caesar=veni future=silent side=B
+[t17=osm rc=0] --chapter=17 --autotest=osm :: AUTOTEST PASS chapter=33o variant=osm outcome=33O.1 stones=4 hits=0 falls=0 water=0 hidden=true gift=refuse warn=ok big=true
+[t17=route rc=0] --chapter=17 --autotest=route :: AUTOTEST PASS chapter=17 variant=route first=res://scenes/chapter42b.tscn
+[t17legend rc=0] --chapter=17 --autotest=edirne_legend --bag=phone,book,selfie,cube :: AUTOTEST PASS chapter=17 variant=edirne_legend vlad=legend who=hizir answer=flat caesar=brutus future=book side=B
+[t15 rc=0] --chapter=15 --autotest :: AUTOTEST review cards=27
+AUTOTEST PASS chapter=15 variant= final=ordinary_monday T=T1 H=H1 N=N1 W=W1 fixed=false
+[t15=missed rc=0] --chapter=15 --autotest=missed :: AUTOTEST review cards=27
+AUTOTEST PASS chapter=15 variant=missed final=empty_desk T=T2 H=H1 N=N1 W=W1 fixed=false
+[t15=wrong rc=0] --chapter=15 --autotest=wrong :: AUTOTEST review cards=27
+AUTOTEST PASS chapter=15 variant=wrong final=late_by_49_years T=T3 H=H1 N=N1 W=W1 fixed=false
+[t15=wrong_recall rc=0] --chapter=15 --autotest=wrong_recall :: AUTOTEST review cards=27
+AUTOTEST PASS chapter=15 variant=wrong_recall final=late_by_49_years T=T3 H=H1 N=N1 W=W1 fixed=false
+[t15=wrong_stay rc=0] --chapter=15 --autotest=wrong_stay :: AUTOTEST review cards=27
+AUTOTEST PASS chapter=15 variant=wrong_stay final=another_year T=T3 H=H1 N=N1 W=W1 fixed=false
+[t15=recruit rc=0] --chapter=15 --autotest=recruit :: AUTOTEST review cards=27
+AUTOTEST PASS chapter=15 variant=recruit final=night_shift T=T4 H=H1 N=N1 W=W1 fixed=false
+[t15=w4 rc=0] --chapter=15 --autotest=w4 :: AUTOTEST review cards=27
+AUTOTEST PASS chapter=15 variant=w4 final=sultans_repair T=T1 H=H1 N=N1 W=W4 fixed=false
+[t15=forge rc=0] --chapter=15 --autotest=forge :: AUTOTEST review cards=27
+AUTOTEST PASS chapter=15 variant=forge final=off_the_books T=T1 H=H1 N=N2 W=W1 fixed=false
+[t15=resign rc=0] --chapter=15 --autotest=resign :: AUTOTEST review cards=27
+AUTOTEST PASS chapter=15 variant=resign final=time_repair T=T1 H=H1 N=N4 W=W1 fixed=false
+[t15=newmodel rc=0] --chapter=15 --autotest=newmodel :: AUTOTEST review cards=27
+AUTOTEST PASS chapter=15 variant=newmodel final=new_model T=T1 H=H1 N=N3 W=W1 fixed=false
+[t15=pyjama rc=0] --chapter=15 --autotest=pyjama :: AUTOTEST review cards=27
+AUTOTEST PASS chapter=15 variant=pyjama final=pyjama_rescue T=T1 H=H1 N=N1 W=W1 fixed=false
+[t15=stay rc=0] --chapter=15 --autotest=stay :: AUTOTEST review cards=27
+AUTOTEST PASS chapter=15 variant=stay final=two_neighbours T=T2 H=H3 N=N1 W=W1 fixed=false
+[t15=leblebi rc=0] --chapter=15 --autotest=leblebi :: AUTOTEST review cards=27
+AUTOTEST PASS chapter=15 variant=leblebi final=nobody_noticed T=T1 H=H1 N=N2 W=W2 fixed=false
+[t15=fixed rc=0] --chapter=15 --autotest=fixed :: AUTOTEST review cards=27
+AUTOTEST PASS chapter=15 variant=fixed final=fixed_mostly T=T1 H=H1 N=N1 W=W2 fixed=true
+[t15=liar rc=0] --chapter=15 --autotest=liar :: AUTOTEST review cards=27
+AUTOTEST PASS chapter=15 variant=liar final=ordinary_monday T=T1 H=H1 N=N1 W=W1 fixed=false
+[t15=boom rc=0] --chapter=15 --autotest=boom :: AUTOTEST review cards=27
+AUTOTEST PASS chapter=15 variant=boom final=big_bang T=T1 H=H1 N=N1 W=W5B fixed=false
+[t15=gunner rc=0] --chapter=15 --autotest=gunner :: AUTOTEST review cards=27
+AUTOTEST PASS chapter=15 variant=gunner final=master_gunner T=T1 H=H1 N=N1 W=W5 fixed=false
+[t15=w6 rc=0] --chapter=15 --autotest=w6 :: AUTOTEST review cards=27
+AUTOTEST PASS chapter=15 variant=w6 final=envoy_to_venice T=T1 H=H1 N=N1 W=W6 fixed=false
+[t15=w7 rc=0] --chapter=15 --autotest=w7 :: AUTOTEST review cards=27
+AUTOTEST PASS chapter=15 variant=w7 final=sultans_table T=T1 H=H1 N=N1 W=W7 fixed=false
+[t15=w8 rc=0] --chapter=15 --autotest=w8 :: AUTOTEST review cards=27
+AUTOTEST PASS chapter=15 variant=w8 final=bureau_founding T=T1 H=H1 N=N1 W=W8 fixed=false
+[t15=founder rc=0] --chapter=15 --autotest=founder :: AUTOTEST review cards=27
+AUTOTEST PASS chapter=15 variant=founder final=founding_member T=T4 H=H1 N=N1 W=W8 fixed=false
+[t15=w13 rc=0] --chapter=15 --autotest=w13 :: AUTOTEST review cards=27
+AUTOTEST PASS chapter=15 variant=w13 final=tunnel_truce T=T1 H=H1 N=N1 W=W13 fixed=false
+[t15=w10 rc=0] --chapter=15 --autotest=w10 :: AUTOTEST review cards=27
+AUTOTEST PASS chapter=15 variant=w10 final=one_more_year T=T1 H=H1 N=N1 W=W10 fixed=false
+[t15=w11 rc=0] --chapter=15 --autotest=w11 :: AUTOTEST review cards=27
+AUTOTEST PASS chapter=15 variant=w11 final=long_wait T=T1 H=H1 N=N1 W=W11 fixed=false
+[t15=w12 rc=0] --chapter=15 --autotest=w12 :: AUTOTEST review cards=27
+AUTOTEST PASS chapter=15 variant=w12 final=missing_paperwork T=T1 H=H1 N=N1 W=W12 fixed=false
+[t15=sealed rc=0] --chapter=15 --autotest=sealed :: AUTOTEST review cards=27
+AUTOTEST PASS chapter=15 variant=sealed final=sealed_garage T=T2 H=H2 N=N1 W=W1 fixed=false
+[t15=evening rc=0] --chapter=15 --autotest=evening :: AUTOTEST review cards=27
+AUTOTEST PASS chapter=15 variant=evening final=one_evening T=T1 H=H1 N=N1 W=W1 fixed=false
+[t15=eaves rc=0] --chapter=15 --autotest=eaves :: AUTOTEST review cards=27
+AUTOTEST PASS chapter=15 variant=eaves final=eaves_child T=T1 H=H1 N=N1 W=W1 fixed=false
+[t15=water rc=0] --chapter=15 --autotest=water :: AUTOTEST review cards=27
+AUTOTEST PASS chapter=15 variant=water final=water_bearer T=T1 H=H1 N=N1 W=W1 fixed=false
+[t15=fates rc=0] --chapter=15 --autotest=fates :: AUTOTEST review cards=27
+AUTOTEST PASS chapter=15 variant=fates final=ordinary_monday T=T1 H=H1 N=N1 W=W1 fixed=false
+[t15=card rc=0] --chapter=15 --autotest=card :: AUTOTEST review cards=27
+AUTOTEST PASS chapter=15 variant=card final=ordinary_monday T=T1 H=H1 N=N1 W=W1 fixed=false
+[t15=people rc=0] --chapter=15 --autotest=people :: AUTOTEST review cards=27
+AUTOTEST PASS chapter=15 variant=people final=ordinary_monday T=T1 H=H1 N=N1 W=W1 fixed=false
+[t15=people_osm rc=0] --chapter=15 --autotest=people_osm :: AUTOTEST review cards=27
+AUTOTEST PASS chapter=15 variant=people_osm final=ordinary_monday T=T1 H=H1 N=N1 W=W1 fixed=false
+ALLDONE
