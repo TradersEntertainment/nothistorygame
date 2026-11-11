@@ -328,7 +328,8 @@ func _build_people() -> void:
 		# Mazgal aralıklarında (dünyanın dış sur mazgalları 1,8 m arayla): köprüden bakınca mazgal taşının ardında kalmasınlar
 		var x: float = [-6.8, -8.6, 7.6, 9.4][i]
 		var s := Soldier.new([Color("6a2a2a"), Color("3a4a6a"), Color("5a3a2a"), Color("6a2a2a")][i], "stand", "helm")
-		s.position = Vector3(x, 8.0, 15.0)
+		# Mazgalın ardında taş atış basamağında (0,45 m): köprüden bakınca omuzdan yukarısı mazgalın üstünde görünür
+		s.position = Vector3(x, 8.45, 15.05)
 		s.set_meta("climber", true)        # mazgalda: Unclip yere indirmesin (sur yolunun çarpışması sonradan kurulur)
 		s.set_meta("no_unclip", true)
 		add_child(s)
@@ -337,8 +338,8 @@ func _build_people() -> void:
 			# Okçular yayı kaldırmış, ovaya nişanlı (kapı açılınca çıkan Tolga'ya döner); gözcünün sözüyle indirir
 			s.pose = "aim"
 			_archers.append(s)
-		var slab := Props.solid(self, Vector3(1.0, 0.3, 0.7), Vector3(x, 7.85, 14.85), Color.WHITE)
-		slab.get_child(0).visible = false
+		var step := Props.solid(self, Vector3(1.0, 0.45, 0.6), Vector3(x, 8.225, 15.05), Color.WHITE)
+		Props.set_pattern(step, Color("b8a888"), "ashlar")
 		if i == 0:
 			lookout = s
 			s.set_meta("spk", "SPK_LOOKOUT")

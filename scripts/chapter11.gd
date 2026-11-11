@@ -255,6 +255,8 @@ func _lost() -> void:
 		await _n("D11_N_FIRED")
 		await hud.card([[tr("UI_CH11_FIRED"), 30, Color("f2e6c9")], [tr("UI_CH11_FIRED_SUB"), 20, Color(1, 1, 1, 0.7)]], 2.6)
 		hud.clear_card()
+		# Görevden alınan Nihat kuşatma boyunca Büro'yu yine yönetiyor (17-27): yeni model gelene kadar dosya onda
+		await _n("D11_N_FIRED_LAST")
 		GameState.flags["nihat_dismissed"] = true
 	else:
 		await _n("D11_N_LOST_2")

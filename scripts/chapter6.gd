@@ -724,6 +724,8 @@ func _run_6b() -> void:
 	if cell:
 		await _say("SPK_NIKO", "D6B_N_CELL_MORNING")
 	await _t("D6B_T_01")
+	if not cell:
+		await _t("D6B_T_01_NIGHT")      # 4b.1/4b.2: gece kapıdan girilmişti, sabaha kadar nerede olunduğu söylenmiyordu
 	await _radio_call()
 	# Niko kançılaryanın önünde bekler
 	phase = "free"

@@ -628,6 +628,7 @@ func _run_4b() -> void:
 	_capture_mouse()
 	await hud.fade_to(0.0, 0.6)
 	await _t("D4B_T_01")
+	await _t("D4B_T_01_DAY")          # 2.3 sabah zincirde bitiyordu, 4b gece başlıyor: aradaki gün
 	await _h("D4B_H_02")
 	if "selfie" in GameState.bag:
 		await _t("D4B_T_SELFIE")
