@@ -117,10 +117,72 @@ func _build() -> void:
 	var sh := SeaBattle.shore(self)
 	horse = sh["horse"]
 	sultan = sh["sultan"]
+	_crew_jobs()
 
 
 func _deck(local: Vector3) -> Vector3:
 	return carrack.to_global(local + Vector3(0, DECK, 0))
+
+
+## Güvertedeki tayfa iş başında (yayma P3: savaşın ortasında kollar yanda dikiliyorlardı). İskele (kadırgalar) yanında:
+## taş atanlar — taşı iki eliyle tutar, aralıklarla küpeşteden aşağıdaki kadırganın güvertesine atar, ayağının dibindeki
+## yığından yenisini alır. Sancak yanında: ikisi yandaki Ceneviz gemisine bağlanan halatı çeker (gemiler birbirine
+## bağlanmıştı), ikisi elinde kova bekler.
+func _crew_jobs() -> void:
+	var ship2: Node3D = ships[1] if ships.size() > 1 else null
+	for c: Node in carrack.get_meta("crew"):
+		var p := c as Person
+		if p == null:
+			continue
+		var sx := signf(p.position.x)
+		var z := p.position.z
+		if sx < 0.0:
+			# Ayağının dibinde (basamakta, içeride) üç taşlık yığın
+			for k in 3:
+				Props.ball(carrack, 0.12, Vector3(p.position.x + 0.28, p.position.y + 0.08, z + 0.3 + (k - 1) * 0.22), Color("5e5a52").lerp(Color("6e665a"), k * 0.5), Vector3(1.1 - k * 0.1, 0.7, 0.9 + k * 0.1), 8)
+			_stone_loop(p)
+		elif ship2 and int(round((z + 5.6) / 2.9)) % 2 == 1:
+			# Halat: yandaki geminin iskele küpeştesinden bizim küpeştenin üstünden ellere, oradan basamakta kangala
+			var far_pt := carrack.to_local(ship2.to_global(Vector3(-SeaBattle.RAIL_X, SeaBattle.RAIL_TOP - 0.1, z - 1.5)))
+			var rail := Vector3(SeaBattle.RAIL_X + 0.02, SeaBattle.RAIL_TOP + 0.04, z)
+			var hy := p.position.y + 1.05
+			var hr := Vector3(p.position.x + 0.42, hy, z + 0.12)
+			var hl := Vector3(p.position.x + 0.2, hy - 0.04, z + 0.1)
+			var coil := Vector3(p.position.x - 0.35, p.position.y + 0.0, z - 0.45)
+			var pts: Array = Stage.sag_points(far_pt, rail, 0.02, 4)
+			pts.append_array([hr, hl, hl + Vector3(-0.15, -0.35, 0.0)])
+			pts.append_array(Stage.sag_points(hl + Vector3(-0.15, -0.35, 0.0), coil + Vector3(0, 0.08, 0), 0.05, 3).slice(1))
+			var r := Stage.rope(carrack, pts[0], pts[1], 0.0, 0.024)
+			Stage.rope_to(r, pts)
+			Stage.rope_coil(carrack, coil, 0.24, 3.0, 0.024)
+			Stage.grip_hold(p, carrack, [hl, hr], -1.0, -0.12)      # geriye yaslanıp çeker
+		else:
+			p.give_tool("bucket")
+
+
+## Taş atan: taşı göğsünde iki eliyle tutar; 4-7 sn'de bir küpeşteden aşağıdaki kadırganın güvertesine atar (toz, gümbürtü),
+## bir an sonra yığından yenisini alır. Akşam rüzgârında (gemi yola çıkınca) durur.
+func _stone_loop(p: Person) -> void:
+	await get_tree().create_timer(randf_range(0.5, 4.0), false).timeout
+	while is_instance_valid(p) and phase != "wind" and is_inside_tree():
+		var st := Props.ball(p, 0.15, Vector3(0, 1.12, 0.36), Color("5e5a52"), Vector3(1.0, 0.8, 0.9), 8)
+		Stage.grip_hold(p, p, [Vector3(-0.15, 1.1, 0.34), Vector3(0.15, 1.1, 0.34)])
+		await get_tree().create_timer(randf_range(4.0, 7.0), false).timeout
+		if not is_instance_valid(p) or not is_instance_valid(st):
+			return
+		Stage.grip_release(p)
+		var from := st.global_position
+		var land := carrack.to_global(Vector3(-(SeaBattle.RAIL_X + 1.6), SeaBattle.GALLEY_DECK + 0.12, p.position.z + randf_range(-0.6, 0.6)))
+		st.reparent(self)
+		var tw := st.create_tween()
+		tw.tween_method(func(k: float):
+			if is_instance_valid(st):
+				st.global_position = from.lerp(land, k * k) + Vector3(0, sin(k * PI) * 0.35, 0), 0.0, 1.0, 0.75)
+		tw.tween_callback(func():
+			if is_instance_valid(st):
+				Vfx.dust(self, st.global_position, 0.2)
+				st.queue_free())
+		await get_tree().create_timer(randf_range(1.2, 2.0), false).timeout
 
 
 # ================================================================ akış
@@ -186,7 +248,7 @@ func _spawn_hook() -> void:
 	var z := -5.4 + ((spawned * 7) % 6) * 2.0
 	var top := _deck(Vector3(-SeaBattle.RAIL_X - 0.1, SeaBattle.RAIL_TOP - DECK, z))
 	var bottom := carrack.to_global(Vector3(-(SeaBattle.RAIL_X + 2.4), SeaBattle.GALLEY_DECK + 0.6, z))
-	var n := SeaBattle.hook(self, top, bottom)
+	var n := SeaBattle.hook_line(self, top, bottom)      # burgulu ip, kadırganın küpeştesine bağlı (yayma P3)
 	Props.interactable(n, id, Vector3(1.0, 1.4, 1.0), Vector3(0.6, -0.4, 0)).global_position = top + carrack.global_transform.basis.x * 0.6 - Vector3(0, 0.4, 0)
 	_hooks[id] = {"node": n, "life": HOOK_LIFE, "stand": _deck(Vector3(-SeaBattle.RAIL_X + 1.0, 0.05, z))}
 	Audio.sfx("kick_metal", -6.0, 1.5)
@@ -217,8 +279,7 @@ func _cut(id: String) -> void:
 	_hooks.erase(id)
 	cut += 1
 	Audio.sfx("pick_tap", -4.0, 0.8)
-	Vfx.dust(self, n.global_position, 0.25)
-	n.queue_free()
+	SeaBattle.cut_hook(n, sea_y)       # kopan ip kadırgadan sarkar, kanca suya düşer (yayma P3; anında siliniyordu)
 	player.hand_gesture("reach")       # ipi kesen el
 	_hold = 0.0
 	hud.set_chase("", 0.0)
@@ -251,7 +312,7 @@ func _board_fight() -> void:
 			"hat": ["azap", "bork", "turban"][k], "mustache": true, "beard": k == 1}})
 		var top := carrack.to_global(Vector3(-(SeaBattle.RAIL_X + 0.5), SeaBattle.RAIL_TOP - 1.3, z))
 		var bottom := carrack.to_global(Vector3(-(SeaBattle.RAIL_X + 2.4), SeaBattle.GALLEY_DECK, z))
-		SeaBattle.hook(self, _deck(Vector3(-SeaBattle.RAIL_X - 0.1, SeaBattle.RAIL_TOP - DECK, z)), bottom + Vector3(0, 0.6, 0))
+		SeaBattle.hook_line(self, _deck(Vector3(-SeaBattle.RAIL_X - 0.1, SeaBattle.RAIL_TOP - DECK, z)), bottom + Vector3(0, 0.6, 0))
 		lanes.append({"base": bottom, "top": top, "land": _deck(Vector3(-SeaBattle.RAIL_X + 1.0, 0, z))})
 	player.frozen = false
 	var r: Dictionary = await StoryDuel.fight(self, hud, player, specs, "spathion", 0.38, 75.0, {"ladders": lanes})
@@ -473,6 +534,10 @@ func _pick() -> void:
 	Props.cyl(_carry, 0.15, 0.02, Vector3(0, 0.14, 0), Color("4a7aa8"), Vector3.ZERO, 8)
 	Props.strip_outlines(_carry)
 	Audio.sfx("splash", -14.0, 1.6)
+	# Kova fıçıya daldırılınca fıçının suyu dalgalanır (yayma P3)
+	var wtop := carrack.to_global(Vector3(1.2, DECK + 1.045, 2.6))
+	Vfx.water_ring(self, wtop, wtop.y, 0.06, 0.36, 0.9, 0.6)
+	Vfx.water_drops(self, wtop, wtop.y, 5, 1.0, 0.016)
 	hud.set_prompt("")
 	_update_objective()
 

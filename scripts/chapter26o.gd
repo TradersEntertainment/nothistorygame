@@ -957,3 +957,16 @@ func _entry_ground(p: Vector3) -> float:
 func _ally_ladder(l: Ladder) -> Dictionary:
 	return {"base": l.point_at(0.0) + l.front_dir() * 0.35, "top": l.point_at(l.height - 0.3) + l.front_dir() * 0.3,
 		"land": l.top_exit() - Vector3(0, 0.1, 0)}
+
+
+## Girişin sahnesi (yayma P6): yol boyunca dizilen yeniçeriler aynı pozda donup dikiliyordu. Her biri kendi
+## zamanında kıpırdar (jest, ağırlık değiştirme) ve Sultan'ı birkaç saniyelik gecikmelerle başıyla izler.
+func _entry_stage() -> Dictionary:
+	var st: Dictionary = super()
+	var men: Array = []
+	for n in st["line"]:
+		if n is Soldier:
+			men.append(n)
+	Crowd.idle_vary(men, {"every": Vector2(3.0, 9.0), "emotes": ["nod", "shrug", "arms_cross", "nod", "whisper"]})
+	Crowd.look_at_event(men, st["sultan"], 0.0, 4.0)
+	return st

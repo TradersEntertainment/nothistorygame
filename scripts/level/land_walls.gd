@@ -83,6 +83,7 @@ func _ready() -> void:
 	_build_field()
 	if not intact:
 		_battle_damage()
+	_ground_wear()
 
 
 ## Gediğin yerinde bütün dış sur (Bölüm 28o): iki yandaki sur parçasının arasını kapatan aynı taş gövde ve mazgallar
@@ -612,6 +613,71 @@ func _build_rubble() -> void:
 	Vfx.smolder(self, b + Vector3(-2.2, 2.2, 1.2), 1.0)
 	Vfx.smolder(self, b + Vector3(2.8, 1.2, 3.6), 0.7, false)
 	Vfx.smolder(self, Vector3(-11.0, OUTER_H + 0.4, zc), 0.6, false)
+
+
+## Zeminin yıpranması (yayma P6): peribolos, sur dibi seti, hendek dibi ve yakın ova düz boyalı levhaydı. Seyrek ve
+## düzensiz serpilmiş ayrıntı: surdan kopmuş taş ve moloz kırıntısı, çiğnenmiş çamur, yere düşmüş oklar, barikat
+## işinden yonga, depodan gediğe giden çiğnenmiş yol. Tür başına tek çoklu ağ, gölgesiz, çarpışmasız (oynanış yolu
+## değişmez). 28o (gun_gate: bataryanın zemini bölümün kendi yaması, bütçe dar) ve menünün hafif sahnesi atlanır.
+func _ground_wear() -> void:
+	if gun_gate or lite:
+		return
+	var gy := func(x: float, z: float) -> float: return 0.0 if z < OUTER_Z0 else outside_y(x, z)
+	# Yoğunluk kuşaklara göre (tür başına tek çoklu ağ: alanın tamamına en yüksek yoğunlukla serpilir, kuşağın payı
+	# kadarı kalır). Kuşaklar: peribolos (z < 14), set (16–20), hendek (20–36), yakın ova (36–60), uzak ova.
+	var band := func(z: float, w: Array) -> float:
+		if z < OUTER_Z0:
+			return w[0]
+		if z < 20.2:
+			return w[1]
+		if z < 35.9:
+			return w[2]
+		return w[3] if z < 60.0 else w[4]
+	var put := func(kind: String, w: Array, seed: int, x0: float = -47.0, x1: float = 47.0) -> MultiMeshInstance3D:
+		var top := 0.0
+		for v: float in w:
+			top = maxf(top, v)
+		var keep := func(x: float, z: float) -> bool:
+			if z > OUTER_Z0 - 0.1 and z < OUTER_Z1 + 0.1:
+				return false       # sur gövdesi
+			# gediğin moloz yamacı ve dili kendi taşlarıyla örülü; depo ve peribolos çiti boş
+			if absf(x - BREACH.x) < BREACH_W * 0.5 + EDGE_W + 0.6 and z > OUTER_Z0 - 4.6 and z < TONGUE_Z1 + 0.5:
+				return false
+			if z < OUTER_Z0 and (Vector2(x - DEPOT.x, z - DEPOT.z).length() < 4.6 or absf(absf(x) - 32.0) < 1.2):
+				return false
+			var h := fposmod(sin(x * 12.9898 + z * 78.233 + seed) * 43758.5453, 1.0)
+			return h < float(band.call(z, w)) / top
+		return Nature.ground_detail(self, Rect2(x0, INNER_Z1 + 0.5, x1 - x0, 82.0 - INNER_Z1), kind, top, seed, gy, keep)
+	# Surdan kopmuş taşlar, sur diplerinde moloz kırıntısı, çiğnenmiş çamur, surdan atılmış (yerde ve hendekte) oklar
+	put.call("stone", [0.05, 0.05, 0.065, 0.025, 0.01], 6201)
+	put.call("arrows", [0.015, 0.06, 0.05, 0.04, 0.015], 6202, -46.0, 46.0)
+	# Çamur yamaları zeminin kendi renginin biraz koyusu/açığı (kara leke değil): peribolos açık toprak, hendek dibi koyu
+	_tint(put.call("camp_mud", [0.012, 0.0, 0.028, 0.012, 0.004], 6203), [Color("5c5242"), Color("5c5242"), Color("302e26"), Color("3e3828"), Color("3e3828")])
+	# Hendekte ve önünde kırık kirişler, çalı demetleri (fascine) ve kalaslar: duvarın tepesinden de okunur boyda
+	put.call("log", [0.0, 0.0, 0.014, 0.004, 0.0], 6207)
+	put.call("plank", [0.004, 0.0, 0.012, 0.004, 0.0], 6208)
+	# Sur dipleri: dış surun iki yüzünün dibinde kırıntı şeridi
+	var foot := func(x: float, z: float) -> bool:
+		return (absf(z - (OUTER_Z0 - 1.2)) < 0.9 or absf(z - (OUTER_Z1 + 1.4)) < 1.1) and absf(x - BREACH.x) > BREACH_W * 0.5 + EDGE_W + 0.6
+	Nature.ground_detail(self, Rect2(-47.0, OUTER_Z0 - 2.1, 94.0, 6.0), "rubble", 0.12, 6206, gy, foot)
+	# Depodan gediğe yük taşıyanların çiğnediği yol (yöne dönük ayak izleri) ve gedik önünde barikat yongası
+	var flat0 := func(_x: float, _z: float) -> float: return 0.0
+	_tint(Nature.trail(self, [DEPOT + Vector3(-2.0, 0, 2.4), Vector3(5.0, 0, 8.4), BREACH + Vector3(1.0, 0, -4.4)], "footprint", flat0, 1.5, 6204, 0.7),
+		[Color("564c3c")])
+	Nature.ground_detail(self, Rect2(-9.0, OUTER_Z0 - 6.0, 18.0, 1.6), "chips", 0.12, 6205, flat0)
+
+
+## Ayrıntı örneklerinin rengi kuşağına göre (z: peribolos, set, hendek, yakın ova, uzak ova; tek renk verilirse hepsi),
+## ±%8 ton oynamasıyla: kara leke gibi durmasın, zeminin rengine yakın kalsın.
+func _tint(mi: MultiMeshInstance3D, cols: Array) -> void:
+	if mi == null or mi.multimesh == null or not mi.multimesh.use_colors:
+		return
+	var mm := mi.multimesh
+	for i in mm.instance_count:
+		var z := mm.get_instance_transform(i).origin.z
+		var k := 0 if cols.size() == 1 or z < OUTER_Z0 else (1 if z < 20.2 else (2 if z < 35.9 else (3 if z < 60.0 else 4)))
+		var c: Color = cols[mini(k, cols.size() - 1)]
+		mm.set_instance_color(i, c.lightened(fposmod(z * 7.31 + i * 0.37, 1.0) * 0.08))
 
 
 ## Malzeme deposu: fıçılar, toprak yığını ve sepetler, kalaslar. Oyuncu buradan yük alır.

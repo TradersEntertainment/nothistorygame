@@ -208,7 +208,14 @@ static func war_galley(parent: Node3D, pos: Vector3, yaw: float, rowers := true,
 	# Latin yelkenli direk (yelken sarılı: savaşta kürekle gidilir)
 	Props.cyl(g, 0.12, 9.0, Vector3(0, GALLEY_DECK + 4.5, -3.0), Color("5a3e26"), Vector3.ZERO, 6)
 	Props.cyl(g, 0.08, 12.0, Vector3(0, GALLEY_DECK + 8.0, -3.0), Color("6a4a2c"), Vector3(60, 0, 0), 5)
-	Props.cyl(g, 0.2, 7.0, Vector3(0, GALLEY_DECK + 7.0, -2.0), Color("e6dcc4"), Vector3(60, 0, 0), 6)
+	# Seren üstünde sarılı yelken: uçlara doğru incelen, güneşte soluk kenevir rengi demet (yayma P3: düz beyaz silindir
+	# karakanın güvertesinden "bordadan fırlayan beyaz sopa" gibi görünüyordu)
+	# Tek ağ: sarmal bağlarla (köşe renginde koyu-açık şerit) sarılmış koyu kenevir rengi demet
+	var furl := MeshInstance3D.new()
+	furl.mesh = _furl_mesh()
+	furl.material_override = Stage.rope_material()
+	furl.position = Vector3(0, GALLEY_DECK + 7.0, -2.0)
+	g.add_child(furl)
 	if flag:
 		Props.box(g, Vector3(0.04, 1.0, 1.6), Vector3(0, GALLEY_DECK + 9.4, -3.8), Color("b3262d"))
 		Props.crescent(g, Vector3(0, GALLEY_DECK + 9.4, -3.9), 0.24, Color("b3262d"))
@@ -225,6 +232,21 @@ static func war_galley(parent: Node3D, pos: Vector3, yaw: float, rowers := true,
 		for sx: float in [-1.0, 1.0]:
 			add_rowers(g, sx, false)
 	return g
+
+
+static var _furl: ArrayMesh
+
+
+## Sarılı latin yelken demeti (bütün kadırgalarda aynı ağ, bir kez kurulur): seren boyunca (60° yatık) 6,8 m, Stage'in
+## burgulu boru ağı gibi şeritli (bağlar); yerel merkezi sıfır.
+static func _furl_mesh() -> ArrayMesh:
+	if _furl == null:
+		var ax := Vector3(0, cos(deg_to_rad(60.0)), sin(deg_to_rad(60.0)))
+		var pts: Array = []
+		for i in 9:
+			pts.append(ax * lerpf(-3.4, 3.4, i / 8.0))
+		_furl = Stage.rope_mesh(pts, 0.17, Color("9a8a64"))
+	return _furl
 
 
 ## Kürekçiler (kıça bakar) ve kürekleri: `side` tarafında çift (odd false) ya da tek sıralara. Iskarmoz kürekçinin
@@ -295,6 +317,75 @@ static func hook(parent: Node3D, top: Vector3, bottom: Vector3) -> Node3D:
 	var rope := Props.cyl(h, 0.025, d.length(), Vector3.ZERO, Color("b89a6a"), Vector3.ZERO, 4)
 	rope.global_transform = Transform3D(Basis(Quaternion(Vector3.UP, d.normalized())), top + d * 0.5)
 	return h
+
+
+## Kanca ve ipi (yayma P3): hook() gibi, ama ip Stage'in burgulu, hafif sarkan halatıdır ve kancanın sapından aşağıdaki
+## teknenin küpeştesine bağlıdır (düz silindir çubuk karede seçilmiyordu). Noktalar dünya koordinatı. Döner: düğüm
+## (meta "bottom": ipin alt ucu; cut_hook ile kesilir). hook()'u kullanan öbür bölümler (37o) değişmez.
+## Örnek: var h := SeaBattle.hook_line(self, kupeste, kadirga_kupestesi)
+static func hook_line(parent: Node3D, top: Vector3, bottom: Vector3, sag := 0.06) -> Node3D:
+	var h := Node3D.new()
+	parent.add_child(h)
+	h.global_position = top
+	var iron := Node3D.new()
+	iron.name = "Iron"
+	h.add_child(iron)
+	var c := Color("3a3a40")
+	Props.cyl(iron, 0.035, 0.42, Vector3(0, 0.06, 0), c, Vector3.ZERO, 5)
+	for k in 3:
+		var a := TAU * k / 3.0
+		Props.cyl(iron, 0.026, 0.3, Vector3(cos(a) * 0.11, 0.26, sin(a) * 0.11), c, Vector3(sin(a) * 60.0, 0, -cos(a) * 60.0), 4)
+	h.set_meta("bottom", bottom)
+	var ln := Stage.rope(h, Vector3(0, -0.14, 0), h.to_local(bottom), sag, 0.024, Color("b89a6a"))
+	ln.name = "Line"
+	return h
+
+
+## Kancanın ipi kesilir: kanca küpeşteden düşer, kopan ip aşağıdaki teknenin küpeştesinden sarkar, kanca suya düşünce
+## halka ve damla; birkaç saniye sonra silinir. Etkileşim kutusu hemen kalkar. h: hook_line düğümü (değilse silinir).
+static func cut_hook(h: Node3D, water_y := 0.0) -> void:
+	if not is_instance_valid(h):
+		return
+	var ln := h.get_node_or_null("Line") as MeshInstance3D
+	if ln == null or not h.has_meta("bottom"):
+		h.queue_free()
+		return
+	for ch in h.get_children():
+		if ch is StaticBody3D:
+			ch.queue_free()
+	var bottom: Vector3 = h.get_meta("bottom")
+	var top := h.global_position
+	var out := Vector3(top.x - bottom.x, 0, top.z - bottom.z)
+	out = out.normalized() if out.length() > 0.01 else Vector3.RIGHT
+	# Kanca kadırganın bordasıyla karakanın arasındaki suya düşer (ipin boyu kadar uzağa gidemez)
+	var land := Vector3(lerpf(top.x, bottom.x, 0.55), water_y + 0.05, lerpf(top.z, bottom.z, 0.55))
+	var fast := Stage.fast()
+	var tw := h.create_tween()
+	tw.tween_method(func(k: float):
+		if not is_instance_valid(h) or not is_instance_valid(ln):
+			return
+		var p := top.lerp(land, k * k) + out * sin(k * PI) * 0.4
+		h.global_position = p
+		h.rotation.z = k * 2.4
+		var b := h.to_local(bottom)
+		var hp := h.to_local(p)
+		Stage.rope_to(ln, Stage.sag_points(hp, b, 0.15 + 0.5 * k, 8)), 0.0, 1.0, 0.05 if fast else 0.8)
+	tw.tween_callback(func():
+		if not is_instance_valid(h):
+			return
+		var par := h.get_parent()
+		if par:
+			Vfx.water_ring(par, land, water_y, 0.12, 0.9, 1.2, 0.5)
+			Vfx.water_drops(par, land, water_y, 6, 1.4)
+			# İpin kopuk ucu kanca batarken suda yüzer: ikinci, geniş halka
+			par.get_tree().create_timer(0.3, false).timeout.connect(func():
+				if is_instance_valid(par) and par.is_inside_tree():
+					Vfx.water_ring(par, land, water_y, 0.3, 1.5, 1.4, 0.3))
+		var iron := h.get_node_or_null("Iron") as Node3D
+		if iron:
+			iron.visible = false)
+	tw.tween_interval(0.3 if fast else 2.4)
+	tw.tween_callback(h.queue_free)
 
 
 # ================================================================ kıyı

@@ -142,6 +142,14 @@ func _ground() -> void:
 			Props.set_pattern(sb, C_STONE.darkened(0.12 + 0.05 * j), "ashlar")     # dokusuz açık taş güneşte bembeyaz görünüyordu
 			Props.make_solid(sb)
 	Props.make_solid(Props.box(self, Vector3(2.2, 0.4, 1.2), Vector3(-6.0, QUAY_Y + 0.2, -8.0), Color("6a4a2c")))
+	# Şantiyenin zemini (yayma P3: düz petek taş): taş yığınlarının, iskelenin ve harç teknesinin çevresinde yontu kırığı,
+	# iskele dibinde talaş; seyrek ve düzensiz (yığınlardan uzaklaştıkça azalır)
+	var qy := func(_x: float, _z: float) -> float: return QUAY_Y
+	var near_work := func(x: float, z: float) -> bool:
+		var d := minf(Vector2(x + 6.0, z + 11.0).length() * 0.7, Vector2(x + 4.0, z + 15.5).length())
+		return fposmod(sin(x * 12.9898 + z * 78.233) * 43758.5453, 1.0) < clampf(1.25 - d / 9.0, 0.0, 1.0)
+	Nature.ground_detail(self, Rect2(-20.0, -16.0, 30.0, 13.0), "rubble", 0.32, 3311, qy, near_work)
+	Nature.ground_detail(self, Rect2(-12.0, -16.0, 16.0, 6.0), "chips", 0.22, 3312, qy, near_work)
 	Props.box(self, Vector3(2.0, 0.1, 1.0), Vector3(-6.0, QUAY_Y + 0.42, -8.0), Color("b8b0a0"))
 
 
@@ -257,6 +265,15 @@ func _scaffold() -> void:
 		w.position = Vector3(-1.0 + i * 1.4, DECK2_Y, z0 + 1.0)
 		w.rotation.y = PI
 		w.set_activity(["hammer", "stir", "hammer"][i])
+		# Elde alet (yayma P3: aletsiz havaya vuruyorlardı): ikisi çekiçle kulenin yüzündeki taşı düzeltir, biri yanındaki
+		# teknede harç karıştırır
+		if i == 1:
+			var tub := w.position + Vector3(0.55, 0.0, -0.35)       # kişinin yerelinde (−0,55, 0, 0,35): sol önü
+			Props.cyl(self, 0.26, 0.62, tub + Vector3(0, 0.31, 0), Color("6a4a2c"), Vector3.ZERO, 10, 0.3)
+			Props.cyl(self, 0.24, 0.02, tub + Vector3(0, 0.6, 0), Color("b8b0a0"), Vector3.ZERO, 10)
+			w.give_tool("paddle", {"aim": Vector3(-0.55, 0.62, 0.35)})
+		else:
+			w.give_tool("hammer")
 
 
 ## Çıkrık: kulenin tepesinde dikme ve dışarı uzanan kol (ucunda makara); tambur rıhtımda, iki işçi çevirir

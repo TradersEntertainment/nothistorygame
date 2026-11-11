@@ -66,8 +66,59 @@ const SHORT_CLIPS := [
 		"until": "done('D33O_T_05')", "dur": 30.0, "wait": 3000.0, "tail": 0.25, "cap": ["Boğaz gümrüğü", "Bosphorus customs"]},
 ]
 
+## Hikâye fragmanı ("-- set=story"): komik/merak uyandıran sahneler + birkaç temiz mekanik an. Yazısız kayıt (clean
+## + nohud): altyazı ve üst yazı story_cut.py'de ASS ile basılır; oyunun müzik yolu susturulur, kurguda tek parça
+## müzik alta yatar. "steps": botsuz çekimlerde oyuncuyu betikten süren zamanlı adımlar (bkz. _steps_tick).
+## Adım: {"t": sn (koşul sağlandığı andan), "pos": Vector3 (ışınla), "look": Vector3 (anında bak),
+##   "pan": [Vector3, sn] (yumuşak dönüş), "walk": [Vector3, hız çarpanı] (ileri yürü, hedefe bakarak),
+##   "do": "ifade" (Expression; ör. "sv('bureau')._fg_seq([...])"), "frozen": bool}
+const STORY_CLIPS := [
+	# 0 Kanca: soğuk açılış, kare donar, Tolga havada: "Evet. Bu benim."
+	{"id": "kanca_bu_benim", "ch": "0", "v": "", "pace": true, "pace_key": "D0_S_ARROWS", "when": "sv('phase') == 'freeze'",
+		"lead": 0.0, "until": "done('D0_T_FREEZE_1')", "dur": 14.0, "tail": 0.3, "wait": 600.0, "cap": ["", ""]},
+	# 3 Zaman Bürosu bekleme salonu: Napolyon Hitler'e Rusya dersi verir (atışma otomatik testte kapalı: betikten)
+	{"id": "buro_atisma", "ch": "3", "v": "", "bot": false, "when": "loose() and after(3.0)", "lead": 0.3, "dur": 14.0,
+		"until": "done('BUR_FG_NAP_4')", "tail": 0.5, "drive": "steps", "nohands": true,
+		"cap": ["Zaman Bürosu, bekleme salonu", "Time Bureau, waiting room"], "steps": [
+			{"t": 0.0, "do": "sv('bureau').set('_amb_on', false)"},
+			{"t": 0.0, "do": "sv('bureau').set('_wait_said', true)"},
+			{"t": 0.0, "pos": Vector3(-7.4, 0.05, -9.4), "look": Vector3(-4.7, 1.85, -6.9)},
+			{"t": 0.0, "do": "_player().camera.set('fov', 46.0)"},
+			{"t": 0.4, "do": "sv('bureau')._fg_seq([['nap', 'BUR_FG_NAP_3', 8.0, 'hit'], ['hit', 'BUR_FG_HIT_R', 1.2, 'nap'], ['nap', 'BUR_FG_NAP_4', 0.8, 'hit']])"},
+			{"t": 0.0, "on": "said('BUR_FG_HIT_R')", "pan": [Vector3(-8.15, 1.3, -7.95), 0.8]},
+		]},
+	# Büro: tespit makinesi Model Z-0, Nihat'ın deneme karesi
+	{"id": "buro_kamera", "ch": "17", "v": "", "pace": true, "pace_key": "D17_T_05", "when": "said('D17_N_CAM_4')",
+		"lead": 0.0, "until": "done('D17_N_CAM_4')", "dur": 10.0, "wait": 2400.0, "tail": 0.4, "cap": ["", ""]},
+	# Edirne 1444: genç Vlad'a kale sigortası ("Kazık." / "Hayır, poliçe.")
+	{"id": "vlad_kazik", "ch": "17", "v": "edirne_policy", "pace": true, "pace_key": "D17E_R_03", "when": "said('D17E_T_POL_2')",
+		"lead": 0.0, "until": "done('D17E_V_POL_3')", "dur": 14.0, "wait": 4000.0, "tail": 0.4, "cap": ["", ""]},
+	# 5 Otağ: Fatih "Bu şehir alınacak mı?" / "Evet. 29 Mayıs'ta. Salı günü."
+	{"id": "otag_sali", "ch": "12", "v": "leblebi", "pre": "unbag('book')", "pace": true, "pace_key": "D12_F_KEY", "when": "said('D12_F_KEY')",
+		"lead": 0.1, "until": "done('D12_T_KEY_B') or done('D12_T_KEY_B_NOBOOK')", "dur": 14.0, "tail": 0.5, "wait": 3000.0,
+		"drive": "steps", "nohands": true, "cap": ["", ""], "steps": [
+			{"t": 0.0, "do": "_player().camera.set('fov', 24.0)"},
+			{"t": 0.0, "aim": ["sv('hall').fatih", 1.55, 0.05]},
+		]},
+	# Boğaz gümrüğü: "Ağam, siz sigortacılığı icat etmişsiniz."
+	{"id": "bogaz_prim", "ch": "33o", "v": "", "pace": true, "pace_key": "D33O_M_DONE", "when": "said('D33O_T_05')",
+		"lead": 0.0, "until": "done('D33O_T_05')", "dur": 10.0, "wait": 3000.0, "tail": 0.4, "drive": "steps", "nohands": true,
+		"cap": ["", ""], "steps": []},
+	# 1977: genç Hikmet'e poliçe; "kırmızı düğmeye basma" (hikâyenin merak ucu)
+	{"id": "hikmet_1977", "ch": "15", "v": "wrong_stay", "pace": true, "pace_key": "D15_Y_T_RADIO", "when": "said('D15_S7_YH_5')",
+		"lead": 0.0, "until": "done('D15_S7_T_6')", "dur": 16.0, "wait": 3000.0, "tail": 0.5, "cap": ["", ""]},
+	{"id": "flight", "ch": "7", "v": "", "when": "flyable()", "lead": 3.0, "dur": 5.5, "drive": "fly", "bot": false, "wait": 1200.0,
+		"cap": ["Uç. Görünmez ol.", "Fly. Turn invisible."]},
+]
+
 var _en := false
 var _only: Array = []
+var _steps: Array = []
+var _step_i := 0
+var _pan := {}               # {"y0","p0","y1","p1","t","d"}
+var _walk_to := Vector3.INF
+var _walk_mult := 1.0
+var _nohands := false         # çekimde birinci şahıs eller gizli (elde alakasız eşya kadrajı kapatmasın)
 var _shots := ""
 var _layer: CanvasLayer
 var _black: ColorRect
@@ -129,6 +180,9 @@ func _ready() -> void:
 			_shots = a.trim_prefix("shots=")
 			_fps = 0.0
 			DirAccess.make_dir_recursive_absolute(_shots)
+	if _set == "story":
+		_clean = true
+		_nohud = true
 	if _en:
 		GameState.locale = "en"
 		TranslationServer.set_locale("en")
@@ -249,7 +303,7 @@ func _track_hud() -> void:
 	_line_on = on
 	_line_txt = txt
 	if (_clean or _nohud) and _in_window:
-		for n in HUD_HIDE + (["minimap"] if _nohud else []):
+		for n in HUD_HIDE + (["minimap"] if _nohud else []) + (["marker", "meters", "_legend", "_sub_hint"] if _set == "story" else []):
 			var c = _hud.get(n)
 			if c != null and is_instance_valid(c) and c is CanvasItem:
 				(c as CanvasItem).modulate.a = 0.0
@@ -289,6 +343,9 @@ func _run() -> void:
 		print("MONTAGE done")
 		get_tree().quit()
 		return
+	if _set == "story":
+		await _story()
+		return
 	_skipping = false
 	Engine.time_scale = 1.0
 	# Açılış kartı (kara zemin, yazı): kayıtta tutulur
@@ -326,6 +383,41 @@ func _run() -> void:
 	get_tree().quit()
 
 
+## Hikâye fragmanı: açılış kartı yok (ilk çekim kanca), çekimler, kapanış kartı (ad, tek cümle, istek listesi).
+## Önizlemede (only=) kart yalnız "card" verilirse çekilir.
+func _story() -> void:
+	var with_card := _only.is_empty() or "card" in OS.get_cmdline_user_args()
+	for i in STORY_CLIPS.size():
+		if not _only.is_empty() and not (i in _only):
+			continue
+		await _clip(STORY_CLIPS[i])
+		_seg += 1
+	if with_card:
+		_skipping = true
+		_mute(true)
+		_black.color.a = 1.0
+		GameState.changing = false
+		get_tree().change_scene_to_file("res://tools/trailer/blank.tscn")
+		await _wait(0.6)
+		_skipping = false
+		Engine.time_scale = 1.0
+		_mute(false)
+		_mark("in")
+		print("MONTAGE card seg=%d frame=%d" % [_seg, Engine.get_process_frames()])
+		await _card(_tx(["Gerçek Tarih Bu Değil", "Not a History Game"]),
+			_tx(["Tarih böyle değildi. Artık böyle.\n27 final · kuşatma iki taraftan · tamamen seslendirilmiş\nSteam'de istek listene ekle",
+				"History wasn't like this. Now it is.\n27 endings · the siege from both sides · fully voiced\nWishlist it on Steam"]), 4.0)
+		_mark("out")
+	print("MONTAGE done")
+	get_tree().quit()
+
+
+func _music_bus_mute() -> void:
+	var mb := AudioServer.get_bus_index("Music")
+	if mb >= 0:
+		AudioServer.set_bus_mute(mb, true)
+
+
 func _card(big: String, small: String, hold: float) -> void:
 	_black.color.a = 1.0
 	_title.text = big
@@ -341,6 +433,8 @@ func _card(big: String, small: String, hold: float) -> void:
 func _clip(c: Dictionary) -> void:
 	_skipping = true
 	_mute(true)
+	if _set == "story":
+		_music_bus_mute()
 	_black.color.a = 1.0
 	_cache.clear()
 	_seen.clear()
@@ -379,6 +473,10 @@ func _clip(c: Dictionary) -> void:
 	get_tree().change_scene_to_file(path)
 	await get_tree().process_frame
 	await get_tree().process_frame
+	if c.has("pre"):          # sahne kurulunca bir kez (ör. "unbag('book')"): bölümün akışı başlamadan
+		var pe := Expression.new()
+		if pe.parse(String(c["pre"])) == OK:
+			pe.execute([], self, false)
 	_t = 0.0
 	var ex := Expression.new()
 	if ex.parse(c["when"]) != OK:
@@ -399,6 +497,11 @@ func _clip(c: Dictionary) -> void:
 	_drive = c.get("drive", "")
 	_drive_t = 0.0
 	_drive_y0 = INF
+	_steps = c.get("steps", [])
+	_nohands = bool(c.get("nohands", false))
+	_step_i = 0
+	_pan = {}
+	_walk_to = Vector3.INF
 	await _wait(float(c.get("lead", 0.0)))
 	# Pencere: gerçek hız, ses açık, kara kalkar (sert kesme), üstte başlık
 	_skipping = false
@@ -482,6 +585,8 @@ func _drive_step(p: Player, delta: float) -> void:
 					p.powers.set_cloak(false))
 
 
+	elif _drive == "steps":
+		_steps_tick(p, delta)
 	elif _drive == "look_up":
 		# Merdivende kamera yukarı: surun tepesi, düşen taş ve kaynar yağ kadrajda (botun bakışı duvara dönüktü)
 		p.camera.rotation.x = lerpf(p.camera.rotation.x, 0.75, clampf(delta * 3.0, 0.0, 1.0))
@@ -490,10 +595,112 @@ func _drive_step(p: Player, delta: float) -> void:
 		p.camera.rotation.x = lerpf(p.camera.rotation.x, -0.12, clampf(delta * 3.0, 0.0, 1.0))
 
 
+func _yaw_pitch(p: Player, at: Vector3) -> Vector2:
+	var to := at - p.global_position
+	var flat := Vector2(to.x, to.z).length()
+	return Vector2(atan2(-to.x, -to.z), atan2(to.y - p.eye_height, flat))
+
+
+## Zamanlı adımlar: ışınlama, bakış, yumuşak dönüş, amaçlı yürüyüş, betik çağrısı
+func _steps_tick(p: Player, delta: float) -> void:
+	while _step_i < _steps.size() and _drive_t >= float(_steps[_step_i].get("t", 0.0)):
+		var s: Dictionary = _steps[_step_i]
+		if s.has("on"):         # koşullu adım (ör. "said('BUR_FG_HIT_R')"): sağlanana dek sıradakiler de bekler
+			var oe := Expression.new()
+			if oe.parse(String(s["on"])) != OK:
+				push_error("MONTAGE adım koşulu okunamadı: " + String(s["on"]))
+			else:
+				var ok: Variant = oe.execute([], self, false)
+				if oe.has_execute_failed() or ok != true:
+					break
+		_step_i += 1
+		if s.has("frozen"):
+			p.frozen = bool(s["frozen"])
+		if s.has("pos"):
+			p.global_position = s["pos"]
+			p.velocity = Vector3.ZERO
+		if s.has("look"):
+			_pan = {}
+			var yp := _yaw_pitch(p, s["look"])
+			p.rotation.y = yp.x
+			p.camera.rotation = Vector3(yp.y, 0.0, 0.0)
+		if s.has("pan"):
+			var yp := _yaw_pitch(p, s["pan"][0])
+			_pan = {"y0": p.rotation.y, "p0": p.camera.rotation.x, "y1": yp.x, "p1": yp.y, "t": 0.0, "d": float(s["pan"][1])}
+		if s.has("aim"):        # [ifade (Node3D), yükseklik, sn]: düğüme yumuşak dönüş (yeri betikte belli olmayan kişi)
+			var ae := Expression.new()
+			if ae.parse(String(s["aim"][0])) == OK:
+				var n: Variant = ae.execute([], self, false)
+				if n is Node3D:
+					var at: Vector3 = (n as Node3D).global_position + Vector3(0, float(s["aim"][1]), 0)
+					var yp := _yaw_pitch(p, at)
+					_pan = {"y0": p.rotation.y, "p0": p.camera.rotation.x, "y1": yp.x, "p1": yp.y, "t": 0.0, "d": float(s["aim"][2])}
+		if s.has("walk"):
+			_walk_to = s["walk"][0]
+			_walk_mult = float(s["walk"][1]) if s["walk"].size() > 1 else 1.0
+		if s.has("do"):
+			var ex := Expression.new()
+			if ex.parse(String(s["do"])) == OK:
+				ex.execute([], self, false)
+				if ex.has_execute_failed():
+					push_error("MONTAGE adım çalışmadı: " + String(s["do"]))
+			else:
+				push_error("MONTAGE adım okunamadı: " + String(s["do"]))
+	if _nohands:
+		for n in [p.hand, p.free_hand, p.get("_prop_item"), p.get("_held_model"), p.get("_remote_model")]:
+			if n is Node3D and is_instance_valid(n):
+				(n as Node3D).visible = false
+	if not _pan.is_empty():
+		_pan["t"] += delta
+		var k := smoothstep(0.0, 1.0, clampf(_pan["t"] / maxf(_pan["d"], 0.01), 0.0, 1.0))
+		p.rotation.y = lerp_angle(_pan["y0"], _pan["y1"], k)
+		p.camera.rotation.x = lerpf(_pan["p0"], _pan["p1"], k)
+		if k >= 1.0:
+			_pan = {}
+	if _walk_to != Vector3.INF:
+		var to := _walk_to - p.global_position
+		if Vector2(to.x, to.z).length() < 0.3:
+			Input.action_release("move_forward")
+			p.speed_mult = 1.0
+			_walk_to = Vector3.INF
+		else:
+			p.speed_mult = _walk_mult
+			if _pan.is_empty():
+				p.rotation.y = lerp_angle(p.rotation.y, atan2(-to.x, -to.z), clampf(delta * 4.0, 0.0, 1.0))
+			Input.action_press("move_forward")
+
+
+## Adım yardımcıları: geçerli sahne; replikleri seslendirme süresince oynat
+func sc() -> Node:
+	return get_tree().current_scene
+
+
+func unbag(id: String) -> bool:
+	GameState.bag.erase(id)
+	return true
+
+
+func pace_on() -> bool:
+	GameState.pace = true
+	return true
+
+
+## Koşul yardımcısı: oyuncu sahnede ve serbest
+func loose() -> bool:
+	var p := _player()
+	return p != null and not p.frozen
+
+
 func _end_drive() -> void:
 	for a in ["move_forward", "jump", "sprint", "dive"]:
 		Input.action_release(a)
+	var p := _player()
+	if p:
+		p.speed_mult = 1.0
 	_drive = ""
+	_nohands = false
+	_steps = []
+	_walk_to = Vector3.INF
 
 
 # ---------------------------------------------------------------- koşul yardımcıları (Expression)
