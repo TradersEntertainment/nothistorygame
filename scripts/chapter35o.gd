@@ -116,7 +116,7 @@ func _build_people() -> void:
 	add_child(hm)
 	# 3. tur: yakın kıyı ayağında, oyuncunun başlangıçta baktığı yerde (karşı kıyıda seçilmiyordu); ayak başlığına çivi çakar
 	hm.position = Vector3(1.45, ThraceRoad.BEAM_Y + 0.1, -(ThraceRoad.BEAM_Z + 0.4))
-	hm.face_toward(hm.position + Vector3(0, 0, 3))
+	hm.face_toward(hm.position + Vector3(-3, 0, 0.6))   # yan dönük: çekicin başı oyuncunun bakışında seçilsin
 	hm.set_activity("hammer")
 	hm.give_tool("hammer")            # yayma P4: çekiç pozunda eli boştu
 	carpenters.append(hm)
@@ -595,6 +595,7 @@ func _fall_in() -> void:
 	# Yakın kıyıdan ip atılır: kıyıdaki kazıktan oyuncunun iki eline
 	var bank := Vector3(water.x + 13.0, ThraceRoad.ground_y(water.x + 13.0, -9.6) + 0.1, -9.6)
 	var rope := _tube_node(Color("c8b080"))
+	player.face(bank + Vector3(0, 0.6, 0))           # ip önden gelsin (yandan gelince kameranın dibinden geçiyordu)
 	var swim_rope := func() -> void:
 		var hl := Vector3(-0.12, -0.16, -0.58)
 		var hr := Vector3(0.1, -0.19, -0.5)
@@ -602,9 +603,10 @@ func _fall_in() -> void:
 		var a := bank + Vector3(0, 1.0, 0)
 		var f := _fists()
 		var b: Vector3 = f[0]
-		var pts: Array = Stage.sag_points(a, b, 0.25 * clampf(a.distance_to(b) / 10.0, 0.2, 1.0), 8)
-		pts.append(f[1])
-		pts.append((f[1] as Vector3) + Vector3(0, -0.3, 0))
+		# Elden çıkan parça kameradan en az 25-60 cm önde ve aşağıda: önce önde suya yakın bir noktaya, oradan kıyıya
+		var lead := player.camera.to_global(Vector3(-0.1, -0.45, -0.95))
+		var pts: Array = Stage.sag_points(a, lead, 0.25 * clampf(a.distance_to(lead) / 10.0, 0.2, 1.0), 8)
+		pts.append_array([b, f[1], player.camera.to_global(Vector3(0.25, -0.55, -0.7))])
 		_tube(rope, pts, 0.017)
 	swim_rope.call()
 	hud.set_prompt(tr("UI_PROMPT35O_GRAB"))
@@ -1355,7 +1357,9 @@ func _runner_rope(r: Dictionary, o: Ox, back: Vector3, side: Vector3) -> void:
 		drop.y = _gy(drop).y + 0.05
 		pts.append(flank)
 		pts.append_array(Stage.sag_points(rump, l, 0.1, 6))
-		pts.append_array([rr, rr + Vector3(0, -0.4, 0) + back * 0.1, drop])
+		var ahead := player.camera.to_global(Vector3(0.22, -0.6, -0.8))
+		drop = _gy(ahead + back * -0.3) + Vector3(0, 0.05, 0)
+		pts.append_array([rr, ahead, drop])
 	else:
 		var g0 := _gy(base + fwd * 0.9 + side * 0.6) + Vector3(0, 0.04, 0)
 		var g1 := _gy(base + side * 0.62) + Vector3(0, 0.04, 0)

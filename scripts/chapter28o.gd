@@ -747,8 +747,18 @@ func _hammer_in(st: Node3D, depth: float) -> void:
 	# tepesine iner (eksen sağ yumruktan tepeye kurulur), kazık görünür biçimde gömülür, değme anında toz ve yonga.
 	# Eskiden vuruş havayaydı: kazık metrelerce ötedeydi, baş hiçbir şeye değmiyordu.
 	var top := st.to_global(Vector3(0, 0.9, 0))
-	await Stage.walk_player(player, Vector3(top.x, player.global_position.y, top.z), 0.8, top + Vector3(0, -0.15, 0), 3.0)
-	player.face(top + Vector3(0, -0.15, 0))
+	var base := Vector3(top.x, gy(top.x, top.z) + 0.55, top.z)
+	await Stage.walk_player(player, Vector3(top.x, player.global_position.y, top.z), 0.8, base, 1.2)
+	# 4. tur: bakış ani değil, 0,3 sn'de kazığın dibine doğru iner (eğim ~50°: sur ve sepet yığını kadrajın dışında
+	# kalır; eskiden ani dönüşle bakış sura gidiyor, üçgen +%42'ydi)
+	var cam_f := -player.camera.global_transform.basis.z
+	var from := player.camera.global_position + cam_f * 2.0
+	if Stage.fast():
+		player.face(base)
+	else:
+		var lt := create_tween()
+		lt.tween_method(func(k: float): player.face(from.lerp(base, k)), 0.0, 1.0, 0.3).set_trans(Tween.TRANS_SINE)
+		await lt.finished
 	var hm := Node3D.new()
 	hm.set_meta("transient", true)
 	player.camera.add_child(hm)
@@ -779,7 +789,7 @@ func _hammer_in(st: Node3D, depth: float) -> void:
 		player.shake(0.04)
 		# Değme anında kısa duraklama (tokmak kazığın başında görünür)
 		if not f:
-			for n in 10:
+			for n in 4:
 				_maul_pose(hm, 0.0, st)
 				await get_tree().process_frame
 	player.release_both()
@@ -832,7 +842,7 @@ func _stake_hold(delta: float) -> void:
 	var bob := sin(_t * 9.0) * 0.012 * clampf(hv / 3.0, 0.0, 1.0)
 	var want := Vector3(clampf(-dyaw / maxf(delta, 0.001) * 0.02, -0.06, 0.06), bob - 0.01 * clampf(hv / 3.0, 0.0, 1.0), 0)
 	_stake_sway = _stake_sway.lerp(want, clampf(delta * 6.0, 0.0, 1.0)) if delta > 0.0 else want
-	player.hold_both(Vector3(0.22, -0.16, -0.72) + _stake_sway * 0.7, Vector3(0.26, -0.24, -0.5) + _stake_sway)
+	player.hold_both(Vector3(0.3, -0.14, -0.74) + _stake_sway * 0.7, Vector3(0.34, -0.22, -0.54) + _stake_sway)
 	_fit_fists(_carry)
 
 
@@ -863,7 +873,7 @@ func _pick(what: String) -> void:
 		# Kazık iki elde, göğsün önünde çapraz (yayma P4: sol elde kazık, sağ elde koli bandı duruyordu)
 		# 2. tur: kazık (1,8 m, çap 10 cm) sağ omuzda, iki el önde tutar; arka ucu omzun ardında, ön ucu sağ kenarda
 		# hafif yukarı (ekranı boydan boya kesmez)
-		Props.cyl(_carry, 0.05, 1.8, Vector3(0, 0.62, 0), Color("8a6a44"), Vector3.ZERO, 6, 0.03)
+		Props.cyl(_carry, 0.04, 1.5, Vector3(0, 0.6, 0), Color("8a6a44"), Vector3.ZERO, 6, 0.025)
 		player.stow_hands(true)
 		_stake_sway = Vector3.ZERO
 		_stake_yaw = INF

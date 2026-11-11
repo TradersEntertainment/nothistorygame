@@ -708,7 +708,13 @@ static func tube_material() -> StandardMaterial3D:
 		_tube_mat.vertex_color_use_as_albedo = true
 		_tube_mat.vertex_color_is_srgb = true
 		_tube_mat.roughness = 0.95
-		_tube_mat.cull_mode = BaseMaterial3D.CULL_DISABLED
+		# Üçgenler dışa dönük (saat yönü = ön yüz): arka yüz ayıklanır; kameranın yakın düzlemi boruyu keserse içi
+		# görünmez (4. tur: iç yüz koyu zeytin düz tahta gibi görünüyordu)
+		_tube_mat.cull_mode = BaseMaterial3D.CULL_BACK
+		# Gece ışığında da kenevir rengi okunsun: hafif kendinden aydınlık
+		_tube_mat.emission_enabled = true
+		_tube_mat.emission = Color("c8b080")
+		_tube_mat.emission_energy_multiplier = 0.12
 	return _tube_mat
 
 

@@ -891,7 +891,7 @@ func _shoot_arrow(from: Vector3, to: Vector3) -> void:
 		var amp := deg_to_rad(5.0) * (1.0 - k / 5.0) * (1.0 if k % 2 == 0 else -1.0)
 		qt.tween_property(a, "rotation:x", r0 + amp, 0.06)
 	qt.tween_property(a, "rotation:x", r0, 0.06)
-	_cshot("ok_%d" % _warnings, 0.05)
+	_cshot("ok_%d" % _warnings)
 
 
 ## Saplanan okun tozu: küçük, yarı saydam, çabuk dağılan birkaç zerre (ok seçilsin; Vfx.dust bu yakınlıkta ekranı örtüyordu)
@@ -1359,7 +1359,7 @@ func _trench() -> void:
 ## Hasan'ın sözünden sonra cebe geri girer. El Player'ın gösterilen eşya tutuşu (hold_model: sol el kâğıdın köşesinde).
 var _letter_node: Node3D
 ## Gösterme yeri (kamera yereli): ortanın biraz altı, iki nöbetçinin arasında, altyazının üstünde; Hasan'a uzatılmış
-const LETTER_SHOW := Vector3(-0.01, -0.12, -0.5)
+const LETTER_SHOW := Vector3(0.0, -0.065, -0.5)
 
 
 func _show_letter(on: bool) -> void:
@@ -1370,20 +1370,24 @@ func _show_letter(on: bool) -> void:
 		_letter_node.rotation_degrees = Vector3(-10, 6, 4)
 		Audio.sfx("paper_tear", -16.0, 1.4)
 		var tw := create_tween().set_parallel()
-		tw.tween_property(_letter_node, "position", LETTER_SHOW, 0.05 if Stage.fast() else 0.45).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_OUT)
-		tw.tween_property(_letter_node, "rotation_degrees", Vector3(-22, 4, 3), 0.05 if Stage.fast() else 0.45)
+		tw.tween_property(_letter_node, "position", LETTER_SHOW, 0.45).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_OUT)
+		tw.tween_property(_letter_node, "rotation_degrees", Vector3(-18, 4, 3), 0.45)
 		await tw.finished
-		_cshot("muhur", 0.3)
+		_cshot("muhur")          # bir sonraki çizilen kare: Hasan'ın sözü başlarken (gecikme gerçek zamanlı, oyun hızlıyken kaçar)
 		return
 	if not is_instance_valid(_letter_node):
 		return
 	var n := _letter_node
 	_letter_node = null
+	var mid := (LETTER_SHOW + Vector3(-0.12, -0.5, -0.36)) * 0.5
 	var tw2 := create_tween()
-	tw2.tween_property(n, "position", Vector3(-0.12, -0.5, -0.36), 0.05 if Stage.fast() else 0.5).set_trans(Tween.TRANS_SINE)
-	_cshot("muhur_iner", 0.25)
-	tw2.tween_callback(n.queue_free)
+	tw2.tween_property(n, "position", mid, 0.25).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_IN)
 	await tw2.finished
+	_cshot("muhur_iner")     # iniş yarıda: el ve mektup cebe doğru
+	var tw3 := create_tween()
+	tw3.tween_property(n, "position", Vector3(-0.12, -0.5, -0.36), 0.25).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_OUT)
+	tw3.tween_callback(n.queue_free)
+	await tw3.finished
 
 
 var _hasan_walking := false
@@ -1581,7 +1585,7 @@ func _auto() -> void:
 			_bot_running = true
 			await _wait_until(func() -> bool: return _warnings >= 2, 20.0)
 			_bot_running = false
-			await get_tree().create_timer(1.6, false).timeout        # okun saplandığı yerde durur (gerçek oyuncu gibi): ok bakışta saplanır, karesi alınır
+			await get_tree().create_timer(1.6, false, false, true).timeout        # okun saplandığı yerde durur (gerçek oyuncu gibi): ok bakışta saplanır, karesi alınır
 	await _bot_to(Vector3(0.0, 0.0, 105.0))
 	await _wait_until(func() -> bool: return phase in ["lines", "done"] and not _busy)
 	await _bot_to(Vector3(0.6, 0.0, 139.0))

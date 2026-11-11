@@ -958,13 +958,14 @@ static func drip(who: Node3D, seconds := 6.0, head: Node3D = null) -> void:
 			hair.emitting = true
 			parts.append(hair)
 	who.get_tree().create_timer(seconds, false).timeout.connect(func():
-		for p: CPUParticles3D in parts:
+		# Türsüz döngü: bölüm değişince damlalar sahneyle silinmiş olabilir; türlü değişkene silinmiş nesne atanamaz
+		for p in parts:
 			if is_instance_valid(p):
-				p.emitting = false)
+				(p as CPUParticles3D).emitting = false)
 	who.get_tree().create_timer(seconds + 1.2, false).timeout.connect(func():
-		for p: CPUParticles3D in parts:
+		for p in parts:
 			if is_instance_valid(p):
-				p.queue_free())
+				(p as Node).queue_free())
 
 
 static func _drop_particles(parent: Node, n: int, r: float) -> CPUParticles3D:

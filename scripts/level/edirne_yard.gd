@@ -412,13 +412,37 @@ func break_clay(i: int) -> void:
 	var dir := Vector3(randf_range(-1.0, 1.0), 0, randf_range(-0.3, 0.3)).normalized()
 	var tw := c.create_tween()
 	tw.tween_property(c, "global_position", gp + dir * 0.8 + Vector3(0, 0.3, 0), 0.18)
-	tw.tween_property(c, "global_position", Vector3(gp.x + dir.x * 1.4, PIT_Y + 0.2, gp.z + dir.z), 0.45).set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_IN)
+	var land := Vector3(gp.x + dir.x * 1.4, 0, gp.z + dir.z)
+	land.y = floor_y(land.x, land.z)
+	tw.tween_property(c, "global_position", land + Vector3(0, 0.15, 0), 0.45).set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_IN)
 	tw.parallel().tween_property(c, "rotation", c.rotation + Vector3(randf_range(1, 3), 0, randf_range(1, 3)), 0.45)
-	tw.tween_property(c, "scale", Vector3(1.0, 0.5, 1.0), 0.2)
+	# 4. tur: yere değince kalıp tek dev düz levha (0,9x1,25 m) olarak kalmaz: 3-4 küçük, kalın, düzensiz parçaya
+	# ayrılır; parçalar yarı gömülü, üstlerinde kar serpintisi (eskiden karın ortasında sert kenarlı açık kahve çokgen)
+	tw.tween_callback(func(): _shatter(c, land))
 	clay[i] = null
 	Vfx.dust(self, gp, 0.35)
 	Vfx.steam(self, gp + Vector3(0, 0.1, 0))
 	Audio.sfx("land_pot", -6.0, 0.7)
+
+
+func _shatter(c: Node3D, at: Vector3) -> void:
+	if is_instance_valid(c):
+		c.visible = false
+	var g := Node3D.new()
+	add_child(g)
+	var rng := RandomNumberGenerator.new()
+	rng.seed = int(at.x * 131.0 + at.z * 17.0)
+	var n := 3 + rng.randi() % 2
+	for k in n:
+		var r := rng.randf_range(0.1, 0.22)
+		var off := Vector3(rng.randf_range(-0.35, 0.35), 0, rng.randf_range(-0.35, 0.35))
+		var p := at + off
+		p.y = floor_y(p.x, p.z) + r * 0.12
+		var b := Props.ball(g, r, p, C_CLAY.darkened(rng.randf_range(0.0, 0.18)), Vector3(rng.randf_range(1.0, 1.6), rng.randf_range(0.5, 0.8), rng.randf_range(0.8, 1.3)), 6)
+		b.rotation = Vector3(rng.randf_range(-0.3, 0.3), rng.randf() * TAU, rng.randf_range(-0.3, 0.3))
+		if k < 2:
+			Props.ball(g, r * 0.55, p + Vector3(0, r * 0.45, 0), C_SNOW, Vector3(1.3, 0.35, 1.1), 5)
+	Props.bake_static(g, g.get_children())
 
 
 ## Tunçta çentik: parlak çizik

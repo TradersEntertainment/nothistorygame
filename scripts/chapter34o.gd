@@ -362,14 +362,8 @@ func _crank() -> void:
 	hud.bark("SPK_SOLDIER", "D34O_S_CRANK", 3.0)
 	# Ustabaşı karşı çıkrıkta seslenirken bakış ona döner (eli çarkta), sonra kendi çıkrığına (ustabaşı kadraj dışındaydı)
 	player.face(foreman.global_position + Vector3(0, 1.1, 0))
-	# Ustabaşı 13 m ötede: bakış kısa süre daralır (yakınlaşma), eli çarkta seçilsin; sonra eski açıya döner
-	var fov0 := player.camera.fov
-	var ztw := create_tween()
-	ztw.tween_property(player.camera, "fov", 26.0, 0.4)
-	await get_tree().create_timer(2.5, false).timeout
-	if is_instance_valid(ztw):
-		ztw.kill()
-	player.camera.fov = fov0
+	# 4. tur: yakınlaşma kaldırıldı (görüntüyü beyaza yıkıyordu); 1 sn'lik bakış, sonra kendi çıkrığı
+	await get_tree().create_timer(1.0, false).timeout
 	player.face(EdirneYard.WIND_REAR + Vector3(0, 1.1, 0))
 	player.frozen = true
 	meter.enabled = true
