@@ -835,7 +835,12 @@ func _swim_back() -> void:
 	player.flail(1.2)
 	var fall := player.global_position
 	var at := Vector3(fall.x, 0.0, fall.z)
-	Vfx.water_entry(self, at, 0.0, 1.0)
+	# Halka ve damla (Vfx.water_entry'nin köpük küreleri oyuncunun kendi düşüşünde kameranın içinde dev küre oluyordu)
+	Audio.sfx("splash", -2.0, 0.9)
+	Vfx.water_ring(self, at, 0.0, 0.5, 2.4, 1.2, 0.55)
+	for k in 4:
+		var a := k * TAU / 4.0 + 0.4
+		Vfx.water_drops(self, at + Vector3(cos(a), 0, sin(a)) * 1.2, 0.0, 5)
 	player.shake(0.5)
 	var eye := Player.EYE
 	var surf := Vector3(fall.x, -eye + 0.22, fall.z)
