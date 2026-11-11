@@ -223,7 +223,7 @@ func _build_extension() -> void:
 			tx += 42.0 + rng.randf_range(-3.0, 3.0)
 	Scenery.scatter(self, Scenery._boxm(Vector3.ONE), merl, [], Props.mat(Color("bba98a")))
 	d.build(self)
-	Flame.from_glow_boxes(nd.build(self))     # nöbet ateşleri kutu değil alev
+	nd.build(self)
 	# Surda nöbetçiler (uzak siluet, mazgalların ardında denize bakar): devam kesitlerinde sık, yakın kesitte
 	# yalnız kapıdan ve Niko'nun yerinden uzak iki uçta
 	var men: Array = []

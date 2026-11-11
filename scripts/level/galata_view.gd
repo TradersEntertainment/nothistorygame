@@ -13,12 +13,8 @@ const ROOF := Color("7a3a2c")
 const WIN := Color("ffc870")
 
 
-## houses: verilirse (tek harita: HornWorld) evler kutu olarak çizilmez; yerleri [{c, yaw, v, away}] listesiyle bu işleve
-## verilir (CityHouses.build: Galata bölümündeki ve şehirdeki evlerle aynı Kit evleri, üç ayrıntı katmanı). Evler
-## birbirine girmesin diye 6 m'den yakın olanı atılır.
 static func build(parent: Node3D, hf: Callable, tower_xz: Vector2, top_y: float, center_xz: Vector2, radius: float,
-		sea_y := 0.0, seed := 1453, night := true, keep: Array = [], houses := Callable()) -> void:
-	var hl: Array = []
+		sea_y := 0.0, seed := 1453, night := true, keep: Array = []) -> void:
 	var free := func(x: float, z: float, m: float) -> bool:
 		for r: Rect2 in keep:
 			if r.grow(m).has_point(Vector2(x, z)):
@@ -51,19 +47,6 @@ static func build(parent: Node3D, hf: Callable, tower_xz: Vector2, top_y: float,
 		var c: Color = plasters[rng.randi() % plasters.size()]
 		var base := gy - 1.5          # yamaçta gömülsün (alt boşluk kalmasın)
 		var hh := h + 1.5
-		if houses.is_valid():
-			var near := false
-			for o: Dictionary in hl:
-				if (o["c"] as Vector2).distance_to(Vector2(x, z)) < 9.0:
-					near = true
-			for k in rng.randi_range(1, 3):
-				rng.randf(); rng.randf(); rng.randf(); rng.randf()
-			if not near:
-				var yr := deg_to_rad(yaw)
-				# Sokak yönü: cephe merkezden dışa değil yamaç boyunca (eve sokaktan girilir)
-				hl.append({"c": Vector2(x, z), "yaw": yr, "v": [0, 1, 3, 4][int(absf(x * 7.0 + z * 3.0)) % 4], "away": Vector2(cos(yr), -sin(yr))})
-			placed += 1
-			continue
 		d.box(Vector3(w, hh, dp), Vector3(x, base + hh * 0.5, z), c, Vector3(0, yaw, 0))
 		d.prism(Vector3(w + 0.6, 1.6, dp + 0.6), Vector3(x, base + hh + 0.8, z), ROOF.lightened(rng.randf() * 0.1), Vector3(0, yaw, 0))
 		# Pencereler: gece bir kısmı yanar (sıcak ışık), gündüz koyu
@@ -123,8 +106,6 @@ static func build(parent: Node3D, hf: Callable, tower_xz: Vector2, top_y: float,
 			d.cyl(0.18, 11.0, Vector3(mp.x, sea_y + 5.5, mp.y), Color("2e2620"), Vector3.ZERO, 5)
 			d.box(Vector3(0.12, 0.12, 5.0), Vector3(mp.x, sea_y + 8.5, mp.y), Color("2e2620"), Vector3(0, rad_to_deg(-a) + rng.randf_range(-20, 20), 20))
 			d.box(Vector3(9.0, 1.4, 2.6), Vector3(mp.x, sea_y + 0.4, mp.y), Color("2a1e16"), Vector3(0, rad_to_deg(-a) + 90.0, 0))
-	if not hl.is_empty():
-		houses.call(hl)
 	if not free.call(tower_xz.x, tower_xz.y, 2.0):
 		d.build(parent)            # kule bölgenin kendisinde (Bölüm 27)
 		return

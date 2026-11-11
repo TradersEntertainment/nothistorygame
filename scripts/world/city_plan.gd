@@ -271,7 +271,7 @@ static func _grid_y(x: float, z: float, x0: float, z0: float, dx: float, dz: flo
 static func _corner(i: int, j: int, x0: float, z0: float, dx: float, dz: float, g: int) -> float:
 	var k := Vector3i(i, j, g)
 	if not _hc.has(k):
-		_hc[k] = World1453.city_ground(x0 + i * dx, z0 + j * dz)
+		_hc[k] = SiegeField.city_ground(x0 + i * dx, z0 + j * dz)
 	return _hc[k]
 
 

@@ -2,11 +2,8 @@
 // (mode 0) ya da yuvarlak sıcak hale (mode 1). Saydam karışım (eskiden toplamalıydı): karanlıkta aynı görünür, gündüz
 // parlak gökte ya da duvarda beyaza dönmez (26'da Fatih'in girişinde surdaki yangın bembeyaz bir lekeydi).
 // Çoklu ağda (MultiMesh) her örneğin evresi dünyadaki yerinden gelir: yan yana iki alev aynı anda titremez.
-// Alev yukarıdan bakılınca (uçan Nihat, kuşbakışı) dik kalan dörtgen kenarından görünüp çizgiye/kareye dönüyordu: bakış
-// dikleştikçe dörtgen kameraya yatar, alevin ortasına taşınır ve biçim dil dil yanan yuvarlak bir ateşe (çevresi kızıl
-// diller, ortası sarı kor) geçer.
 shader_type spatial;
-render_mode unshaded, blend_mix, depth_draw_never, cull_disabled, fog_disabled, shadows_disabled, skip_vertex_transform;
+render_mode unshaded, blend_mix, depth_draw_never, cull_disabled, fog_disabled, shadows_disabled;
 
 uniform int mode = 0;
 uniform vec4 core_color : source_color = vec4(1.0, 0.93, 0.62, 1.0);
@@ -21,7 +18,6 @@ uniform bool use_color = false;
 uniform float day = 0.0;
 
 varying float v_phase;
-varying float v_top;
 
 float hash(vec2 p) {
 	return fract(sin(dot(p, vec2(127.1, 311.7))) * 43758.5453);
@@ -38,25 +34,16 @@ void vertex() {
 	vec3 sc = vec3(length(MODEL_MATRIX[0].xyz), length(MODEL_MATRIX[1].xyz), length(MODEL_MATRIX[2].xyz));
 	vec3 o = MODEL_MATRIX[3].xyz;
 	v_phase = hash(o.xz * 0.37 + vec2(o.y));
-	vec3 cam_r = INV_VIEW_MATRIX[0].xyz;
-	vec3 cam_u = INV_VIEW_MATRIX[1].xyz;
-	vec3 w;
+	mat4 bb;
 	if (mode == 0) {
-		// Yandan: dik kalır, yalnız kendi ekseninde kameraya döner. Yukarıdan: kameraya yatar, alevin ortasına oturur.
-		vec3 to_cam = normalize(INV_VIEW_MATRIX[3].xyz - (o + vec3(0.0, sc.y * 0.4, 0.0)));
-		float top = smoothstep(0.5, 0.9, to_cam.y);
-		v_top = top;
-		vec3 hr = vec3(cam_r.x, 0.0, cam_r.z);
-		vec3 right = length(hr) > 1e-4 ? normalize(hr) : vec3(1.0, 0.0, 0.0);
-		vec3 up = normalize(mix(vec3(0.0, 1.0, 0.0), cam_u, top));
-		float hy = mix(sc.y, sc.x * 1.25, top);
-		float wx = mix(sc.x, sc.x * 1.25, top);
-		w = o + right * VERTEX.x * wx + up * (VERTEX.y - 0.5 * top) * hy + vec3(0.0, sc.y * 0.3 * top, 0.0);
+		// Dik kalır, yalnız kendi ekseninde kameraya döner
+		vec3 right = normalize(cross(vec3(0.0, 1.0, 0.0), INV_VIEW_MATRIX[2].xyz));
+		vec3 fwd = normalize(cross(right, vec3(0.0, 1.0, 0.0)));
+		bb = mat4(vec4(right, 0.0), vec4(0.0, 1.0, 0.0, 0.0), vec4(fwd, 0.0), vec4(o, 1.0));
 	} else {
-		v_top = 0.0;
-		w = o + cam_r * VERTEX.x * sc.x + cam_u * VERTEX.y * sc.y;
+		bb = mat4(INV_VIEW_MATRIX[0], INV_VIEW_MATRIX[1], INV_VIEW_MATRIX[2], vec4(o, 1.0));
 	}
-	VERTEX = (VIEW_MATRIX * vec4(w, 1.0)).xyz;
+	MODELVIEW_MATRIX = VIEW_MATRIX * bb * mat4(vec4(sc.x, 0.0, 0.0, 0.0), vec4(0.0, sc.y, 0.0, 0.0), vec4(0.0, 0.0, sc.z, 0.0), vec4(0.0, 0.0, 0.0, 1.0));
 }
 
 void fragment() {
@@ -80,21 +67,8 @@ void fragment() {
 		vec3 col = mix(edge_color.rgb, core_color.rgb, core);
 		// Uçta kızıla döner, ince is
 		col = mix(col, edge_color.rgb * vec3(0.9, 0.5, 0.35), smoothstep(0.55, 1.0, y) * 0.6);
-		// Yukarıdan: yuvarlak ateş, çevresinde dönen kızıl diller, ortada sarı kor
-		vec2 p = (UV - vec2(0.5)) * 2.0;
-		float r = length(p);
-		float ang = atan(p.y, p.x);
-		vec2 cs = vec2(cos(ang), sin(ang));
-		float tn = noise(cs * 2.2 + vec2(t * 1.3, v_phase * 7.0)) * 0.65 + noise(cs * 4.5 + vec2(-t * 2.1, 3.0)) * 0.35;
-		float rr = r * (0.8 + 0.55 * tn) * (0.92 + 0.08 * glow);
-		float a_top = smoothstep(0.95, 0.45, rr);
-		float core_top = smoothstep(0.6, 0.0, r * (0.9 + 0.3 * tn));
-		vec3 col_top = mix(edge_color.rgb * vec3(0.95, 0.6, 0.45), edge_color.rgb, smoothstep(0.95, 0.55, rr));
-		col_top = mix(col_top, core_color.rgb, core_top);
-		col = mix(col, col_top, v_top);
-		a = mix(a * (0.75 + 0.25 * core), a_top * (0.8 + 0.2 * core_top), v_top);
 		ALBEDO = col * energy * glow;
-		ALPHA = clamp(a, 0.0, 1.0);
+		ALPHA = clamp(a * (0.75 + 0.25 * core), 0.0, 1.0);
 		if (use_color) {
 			ALBEDO *= mix(vec3(1.0), COLOR.rgb * 1.3, 0.6);
 			ALPHA *= COLOR.a;
