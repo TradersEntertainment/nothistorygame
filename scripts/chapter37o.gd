@@ -817,7 +817,11 @@ func _haul_tick() -> void:
 		var ready := s.visible and s.process_mode != Node.PROCESS_MODE_DISABLED and s.get_parent() == self and (s.rig == null or s.rig.lock == 0)
 		var walking := s.has_meta("stage_walk")
 		var there := Vector2(s.global_position.x - spot.x, s.global_position.z - spot.z).length() < 0.45
-		if ready and not walking and there:
+		# Omuz hizası ipe kol boyundan uzaksa tutmaz (kol yana gergin havada kalıyordu): önce yerine yürür
+		var sh := s.global_position + Vector3(0, 1.3, 0)
+		var u := (hi - at).normalized()
+		var near := (sh - (at + u * clampf((sh - at).dot(u), 0.0, at.distance_to(hi)))).length() < 0.7
+		if ready and not walking and there and near:
 			s.pose = "haul"
 			s.rope = [at, hi]
 		else:

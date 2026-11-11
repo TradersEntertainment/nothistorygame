@@ -3749,10 +3749,89 @@ func _fg_corner(p: Person) -> void:
 	# önkollar belde V çizip kâğıdın yarısını örtüyordu ve tek satıra sıkışan yazı V'nin içinden taşıyordu. Kâğıt
 	# omuz hizasına çıktı (kolların üstünde), iki satıra bölünmüş yazı kâğıdın içinde, gövdeden bir parmak dışarıda.
 	var bd: Node3D = p._body
-	Props.box(bd, Vector3(0.42, 0.44, 0.006), Vector3(0, 1.2, -0.246), Color("f6f2e6"), Vector3(0, 0, 3))
-	Props.box(bd, Vector3(0.09, 0.022, 0.008), Vector3(-0.12, 1.42, -0.25), Color("d8d0a0"), Vector3(0, 0, -20))
-	Props.box(bd, Vector3(0.09, 0.022, 0.008), Vector3(0.12, 1.42, -0.25), Color("d8d0a0"), Vector3(0, 0, 20))
-	# Yazı üç satır: ilk cümle bir satır, kalanı ortadan ikiye bölünür (kâğıdı doldurur, 2-3 m'den okunur)
+	# Kâğıt gövdenin arka yayına SARILI tek kavisli ağ (gövde: r 0,225-0,25 kapsül; düz 0,42 m levha kenarlardan 15 cm
+	# kopuk kalıp yandan "havada levha" gibi görünüyordu). Yazı ağın dokusu (SubViewport, tek çizim): kenarlarda
+	# da yüzeyde kalır, harfler yay boyunca eğilmez. Hepsi _body'nin çocuğu: gövdeyle birlikte hareket eder.
+	var mi := MeshInstance3D.new()
+	mi.name = "HitPaper"
+	mi.mesh = _hit_paper_mesh()
+	_hit_sv = SubViewport.new()
+	_hit_sv.size = Vector2i(512, 560)
+	_hit_sv.transparent_bg = false
+	_hit_sv.disable_3d = true
+	bd.add_child(_hit_sv)
+	var pm := StandardMaterial3D.new()
+	pm.shading_mode = BaseMaterial3D.SHADING_MODE_UNSHADED
+	pm.cull_mode = BaseMaterial3D.CULL_DISABLED
+	pm.albedo_color = Color(0.97, 0.96, 0.93)
+	pm.albedo_texture = _hit_sv.get_texture()
+	pm.texture_filter = BaseMaterial3D.TEXTURE_FILTER_LINEAR
+	mi.material_override = pm
+	mi.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
+	bd.add_child(mi)
+	_hit_sign_draw()
+	# Bantlar: üst iki köşede kâğıt yüzeyine teğet
+	for sx in [-1.0, 1.0]:
+		var ph: float = sx * 0.125 / _hit_back_r(_HIT_Y1 - 0.01)
+		var rr := _hit_back_r(_HIT_Y1 - 0.01) + 0.02
+		var nrm := Vector2(-sin(ph), -cos(ph))
+		Props.box(bd, Vector3(0.09, 0.022, 0.008), Vector3(-sin(ph) * rr, _HIT_Y1 - 0.01, -cos(ph) * rr), Color("d8d0a0"), Vector3(0, rad_to_deg(atan2(nrm.x, nrm.y)), sx * 20.0))
+
+
+var _hit_sv: SubViewport
+const _HIT_Y0 := 0.98
+const _HIT_Y1 := 1.38
+const _HIT_W := 0.39      # yay boyunca genişlik
+const _HIT_OFF := 0.018   # gövde yüzeyinden dışarıda (dış hat + z-çatışması payı)
+
+
+## Gövdenin arka yarıçapı y yüksekliğinde: konik gövde (0,225 -> 0,25) ve omuz küresi (r 0,25, merkez 1,19)
+func _hit_back_r(y: float) -> float:
+	var yc := 1.191
+	if y <= yc:
+		return lerpf(0.225, 0.25, clampf((y - 0.809) / 0.382, 0.0, 1.0))
+	return sqrt(maxf(0.0625 - (y - yc) * (y - yc), 0.0004))
+
+
+func _hit_paper_mesh() -> ArrayMesh:
+	var cols := 12
+	var rows := 8
+	var vs := PackedVector3Array()
+	var uvs := PackedVector2Array()
+	var ns := PackedVector3Array()
+	var idx := PackedInt32Array()
+	for r in rows + 1:
+		var v := float(r) / rows
+		var y := lerpf(_HIT_Y1, _HIT_Y0, v)
+		var rr := _hit_back_r(y) + _HIT_OFF
+		for c in cols + 1:
+			var u := float(c) / cols
+			var ph := minf((u - 0.5) * _HIT_W / rr, 1.3) if u >= 0.5 else maxf((u - 0.5) * _HIT_W / rr, -1.3)
+			vs.append(Vector3(-sin(ph) * rr, y, -cos(ph) * rr))
+			ns.append(Vector3(-sin(ph), 0, -cos(ph)))
+			uvs.append(Vector2(u, v))
+	for r in rows:
+		for c in cols:
+			var i0 := r * (cols + 1) + c
+			idx.append_array([i0, i0 + 1, i0 + cols + 1, i0 + 1, i0 + cols + 2, i0 + cols + 1])
+	var arr := []
+	arr.resize(Mesh.ARRAY_MAX)
+	arr[Mesh.ARRAY_VERTEX] = vs
+	arr[Mesh.ARRAY_NORMAL] = ns
+	arr[Mesh.ARRAY_TEX_UV] = uvs
+	arr[Mesh.ARRAY_INDEX] = idx
+	var m := ArrayMesh.new()
+	m.add_surface_from_arrays(Mesh.PRIMITIVE_TRIANGLES, arr)
+	return m
+
+
+## Kâğıdın yazısı: üç satır (ilk cümle, kalanı ortadan ikiye), kâğıt rengi zemin, koyu kalın yazı. Dil değişince yeniden.
+func _hit_sign_draw() -> void:
+	if _hit_sv == null or not is_instance_valid(_hit_sv):
+		return
+	for ch in _hit_sv.get_children():
+		_hit_sv.remove_child(ch)
+		ch.queue_free()
 	var sg: String = tr("BUR_HIT_SIGN")
 	var cut := sg.find(". ")
 	var l1 := sg.substr(0, cut + 1) if cut >= 0 else sg
@@ -3762,7 +3841,33 @@ func _fg_corner(p: Person) -> void:
 	var sgn := l1
 	if rest != "":
 		sgn += "\n" + " ".join(words.slice(0, half)) + "\n" + " ".join(words.slice(half))
-	Props.label(bd, sgn, Vector3(0, 1.2, -0.252), 24, Color("120c0c"), Vector3(0, 180, 3), 0.37)
+	var bg := ColorRect.new()
+	bg.color = Color("f6f2e6")
+	bg.size = Vector2(512, 560)
+	_hit_sv.add_child(bg)
+	var font := Props.sign_font()
+	var fs := 84
+	while fs > 20 and font.get_string_size(sgn.split("\n")[0], HORIZONTAL_ALIGNMENT_LEFT, -1, fs).x > 440.0:
+		fs -= 2
+	for ln in sgn.split("\n"):
+		while fs > 20 and font.get_string_size(ln, HORIZONTAL_ALIGNMENT_LEFT, -1, fs).x > 440.0:
+			fs -= 2
+	var lb := Label.new()
+	lb.text = sgn
+	lb.add_theme_font_override("font", font)
+	lb.add_theme_font_size_override("font_size", fs)
+	lb.add_theme_color_override("font_color", Color("120c0c"))
+	lb.add_theme_constant_override("line_spacing", 6)
+	lb.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	lb.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
+	lb.size = Vector2(512, 560)
+	_hit_sv.add_child(lb)
+	_hit_sv.render_target_update_mode = SubViewport.UPDATE_ONCE
+
+
+func _notification(what: int) -> void:
+	if what == NOTIFICATION_TRANSLATION_CHANGED:
+		_hit_sign_draw()
 
 
 func _fg_build() -> void:

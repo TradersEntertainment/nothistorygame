@@ -3,7 +3,7 @@
 oyunun replik kayıtlarından (MONTAGE line on/off) altyazıyı, üst yazıları (MONTAGE cap) ASS ile basar; oyunun müzik yolu
 kayıtta susturulduğu için alta tek parça müzik yatırır (replik sırasında kısılır), sesi -14 LUFS'a getirir.
 
-  python3 tools/trailer/story_cut.py CIKTI.mp4 HAM.avi:HAM.log:çekim_id[:baş_kırp[:son_kırp[:sessiz]]] ... [--music theme.ogg]
+  python3 tools/trailer/story_cut.py CIKTI.mp4 HAM.avi:HAM.log:çekim_id[:baş_kırp[:son_kırp[:sessiz[:üst yazı]]]] ... [--music theme.ogg]
 
 "sessiz": çekimin oyun sesi atılır, yalnız alttaki müzik kalır (ör. pencereye taşan, yarıda kalacak bir telsiz repliği;
 altyazısı da yazılmaz).
@@ -96,6 +96,7 @@ def main():
         k0 = float(f[3]) if len(f) > 3 and f[3] else 0.0
         k1 = float(f[4]) if len(f) > 4 and f[4] else 0.0
         mute = len(f) > 5 and f[5] == "sessiz"
+        own = f[6] if len(f) > 6 else ""     # kurgunun üst yazısı (oyundaki bir replikten alıntı; | satır sonu)
         if log not in cache:
             cache[log] = parse(log)
         segs, lines, caps = cache[log]
@@ -119,6 +120,8 @@ def main():
             x0, x1 = max(c["t0"], r0), min(c["t1"], r1)
             if x1 - x0 > 0.3:
                 overs.append({"t0": x0 + sh, "t1": x1 + sh, "text": c["text"]})
+        if own:
+            overs.append({"t0": t, "t1": t + min(r1 - r0, 3.0), "text": own.replace("|", "\\N")})
         parts.append((raw, r0, r1, mute))
         t += r1 - r0
     print("toplam %.2f sn, %d çekim" % (t, len(parts)))

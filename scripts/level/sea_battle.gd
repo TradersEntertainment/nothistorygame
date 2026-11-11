@@ -210,10 +210,10 @@ static func war_galley(parent: Node3D, pos: Vector3, yaw: float, rowers := true,
 	Props.cyl(g, 0.08, 12.0, Vector3(0, GALLEY_DECK + 8.0, -3.0), Color("6a4a2c"), Vector3(60, 0, 0), 5)
 	# Seren üstünde sarılı yelken: uçlara doğru incelen, güneşte soluk kenevir rengi demet (yayma P3: düz beyaz silindir
 	# karakanın güvertesinden "bordadan fırlayan beyaz sopa" gibi görünüyordu)
-	# Tek ağ: sarmal bağlarla (köşe renginde koyu-açık şerit) sarılmış koyu kenevir rengi demet
+	# Tek ağ: yuvarlak kesitli, dış çizgisiz, koyu kenevir rengi kalın demet
 	var furl := MeshInstance3D.new()
 	furl.mesh = _furl_mesh()
-	furl.material_override = Stage.rope_material()
+	furl.material_override = ThraceRoad.tube_material()
 	furl.position = Vector3(0, GALLEY_DECK + 7.0, -2.0)
 	g.add_child(furl)
 	if flag:
@@ -237,15 +237,15 @@ static func war_galley(parent: Node3D, pos: Vector3, yaw: float, rowers := true,
 static var _furl: ArrayMesh
 
 
-## Sarılı latin yelken demeti (bütün kadırgalarda aynı ağ, bir kez kurulur): seren boyunca (60° yatık) 6,8 m, Stage'in
-## burgulu boru ağı gibi şeritli (bağlar); yerel merkezi sıfır.
+## Sarılı latin yelken demeti (bütün kadırgalarda aynı ağ, bir kez kurulur): seren boyunca (60° yatık) 6,8 m, yumuşak
+## gölgeli yuvarlak boru (ThraceRoad.tube_mesh; Stage halatının damalı şeritleri yakında karton cetvel gibiydi).
 static func _furl_mesh() -> ArrayMesh:
 	if _furl == null:
 		var ax := Vector3(0, cos(deg_to_rad(60.0)), sin(deg_to_rad(60.0)))
 		var pts: Array = []
 		for i in 9:
 			pts.append(ax * lerpf(-3.4, 3.4, i / 8.0))
-		_furl = Stage.rope_mesh(pts, 0.17, Color("9a8a64"))
+		_furl = ThraceRoad.tube_mesh(pts, 0.17, Color("9a8a64"))
 	return _furl
 
 

@@ -139,7 +139,7 @@ func _crew_jobs() -> void:
 		if sx < 0.0:
 			# Ayağının dibinde (basamakta, içeride) üç taşlık yığın
 			for k in 3:
-				Props.ball(carrack, 0.12, Vector3(p.position.x + 0.28, p.position.y + 0.08, z + 0.3 + (k - 1) * 0.22), Color("5e5a52").lerp(Color("6e665a"), k * 0.5), Vector3(1.1 - k * 0.1, 0.7, 0.9 + k * 0.1), 8)
+				Props.ball(carrack, 0.12, Vector3(p.position.x + 0.28, p.position.y + 0.08, z + 0.3 + (k - 1) * 0.22), Color("4a4640").lerp(Color("5a544a"), k * 0.5), Vector3(1.1 - k * 0.1, 0.7, 0.9 + k * 0.1), 8)
 			_stone_loop(p)
 		elif ship2 and int(round((z + 5.6) / 2.9)) % 2 == 1:
 			# Halat: yandaki geminin iskele küpeştesinden bizim küpeştenin üstünden ellere, oradan basamakta kangala
@@ -165,7 +165,7 @@ func _crew_jobs() -> void:
 func _stone_loop(p: Person) -> void:
 	await get_tree().create_timer(randf_range(0.5, 4.0), false).timeout
 	while is_instance_valid(p) and phase != "wind" and is_inside_tree():
-		var st := Props.ball(p, 0.15, Vector3(0, 1.12, 0.36), Color("5e5a52"), Vector3(1.0, 0.8, 0.9), 8)
+		var st := Props.ball(p, 0.15, Vector3(0, 1.12, 0.36), Color("4a4640"), Vector3(1.0, 0.8, 0.9), 8)
 		Stage.grip_hold(p, p, [Vector3(-0.15, 1.1, 0.34), Vector3(0.15, 1.1, 0.34)])
 		await get_tree().create_timer(randf_range(4.0, 7.0), false).timeout
 		if not is_instance_valid(p) or not is_instance_valid(st):
