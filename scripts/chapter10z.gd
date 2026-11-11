@@ -55,6 +55,7 @@ func _ready() -> void:
 	kadri = day.kadri
 	kadri.position = KADRI_AT
 	kadri.look_target = player
+	kadri.set_activity("")          # bu bölümde doğramaz, Tolga'yı yönetir (satır elinden kalkar; yayma P1)
 	fatih = Person.new({"coat": Color("b3262d"), "pants": Color("6a1a1a"), "hat": "sultan", "face": "fatih", "mustache": true, "robe": Color("c8323a"),
 		"hair": Color("2a1e14"), "skin": Color("e0b08a")})
 	fatih.scale = Vector3(1.06, 1.06, 1.06)
@@ -145,6 +146,16 @@ func _hold_ladle() -> void:
 	player.hold_model(l)
 	l.position = Vector3(0.2, -0.36, -0.55)      # sağ altta, küçük (ekranın sağını kaplıyordu)
 	l.rotation = Vector3(0.4, 0, -0.3)
+
+
+## Kadri'nin tadım kaşığı (tahta, uzun saplı)
+func _spoon_model() -> Node3D:
+	var n := Node3D.new()
+	# Sap avuçta, ön kolun uzantısında; kâse parmakların ötesinde (tadarken ağza gelir)
+	Props.cyl(n, 0.013, 0.26, Vector3(0, -0.1, 0), Color("a07a4e"), Vector3.ZERO, 6)
+	Props.ball(n, 0.045, Vector3(0, -0.25, 0.01), Color("c09a64"), Vector3(1.0, 1.35, 0.5), 8)
+	Props.strip_outlines(n)
+	return n
 
 
 func _plate_model() -> Node3D:
@@ -257,8 +268,12 @@ func _cooking() -> void:
 					await _k("D10Z_K_TASTE_BURNT" if _burnt == 1 else "D10Z_K_TASTE_BURNT2")
 		if _burnt >= 2:
 			break
-		# Kadri'nin denetimi: her tadımda fikir değiştirir
+		# Kadri'nin denetimi: her tadımda fikir değiştirir. Tadar: tahta kaşık elinde, ağzına götürür (yayma P1; eskiden
+		# eli boş "tadıyordu")
+		kadri.hold_item(_spoon_model(), false, false)
+		kadri.emote("eat")
 		await _k("D10Z_K_CRIT_%d" % (i + 1))
+		kadri.release_item()
 		var keys := ["UI_CH10Z_CRIT_YES", "UI_CH10Z_CRIT_FUSION"]
 		if "chickpeas" in GameState.bag and not _leblebi:
 			keys.append("UI_CH10Z_CRIT_LEBLEBI")

@@ -49,6 +49,7 @@ func _build_ground() -> void:
 			return Color("4a3a2a").lerp(Color("3a3024"), noise.get_noise_2d(x * 4.0, z * 4.0) * 0.5 + 0.5)
 		return Color("26331f").lerp(Color("34402a"), noise.get_noise_2d(x * 3.0, z * 3.0) * 0.5 + 0.5)
 	add_child(LowPoly.terrain(-90.0, 90.0, -90.0, 140.0, 45, 58, hf, cf))
+	_ground_wear(hf)
 	# Görünmez düz zemin (çarpışma)
 	var floor_body := StaticBody3D.new()
 	var shape := CollisionShape3D.new()
@@ -58,6 +59,44 @@ func _build_ground() -> void:
 	shape.position = Vector3(0, -0.5, 25)
 	floor_body.add_child(shape)
 	add_child(floor_body)
+
+
+## Gece ordugâhının zemini (yayma P1; Nature.ground_detail, her tür tek çoklu ağ, çarpışmasız): esir alanında ve kapı
+## önünde çiğnenmiş çamur, ayak izleri (çadırdan kapıya), saman (çadır ve saman yığını çevresi), ateş diplerinde kül ve
+## kömür; çitin dışında at izleri, ot öbekleri ve taş. Eskiden tek renk koyu düz levhaydı.
+func _ground_wear(hf: Callable) -> void:
+	var sy := func(x: float, z: float) -> float:
+		return LowPoly.surface_y(x, z, -90.0, 90.0, -90.0, 140.0, 45, 58, hf)
+	var pen := Rect2(-PEN_X + 0.3, PEN_Z0 + 0.3, PEN_X * 2.0 - 0.6, GATE_Z - PEN_Z0 + 13.0)
+	var in_pen := func(x: float, z: float) -> bool: return absf(x) < PEN_X - 0.3 and z > PEN_Z0 + 0.3 and z < GATE_Z - 0.3
+	var near_gate := func(x: float, z: float) -> bool: return absf(x) < 4.0 and z > GATE_Z - 4.0 and z < GATE_Z + 18.0
+	var fires: Array = [Vector3(-6.0, 0, -1.0), Vector3(0, 0, GATE_Z + 2.2)]
+	var ring := func(x: float, z: float, r0: float, r1: float) -> bool:
+		for f: Vector3 in fires:
+			var d := Vector2(x - f.x, z - f.z).length()
+			if d > r0 and d < r1:
+				return true
+		return false
+	Nature.ground_detail(self, pen, "camp_mud", 0.12, 4401, sy, func(x: float, z: float) -> bool: return in_pen.call(x, z) or near_gate.call(x, z))
+	# Ayak izleri: çadırdan kapıya giden patika ve kapının önü (nöbet yeri)
+	var lane := func(x: float, z: float) -> bool:
+		var q := Geometry2D.get_closest_point_to_segment(Vector2(x, z), Vector2(TENT_SPAWN.x, TENT_SPAWN.z), Vector2(0, GATE_Z + 6.0))
+		return q.distance_to(Vector2(x, z)) < 1.4 or bool(near_gate.call(x, z))
+	Nature.ground_detail(self, pen, "footprint", 0.35, 4402, sy, lane)
+	Nature.ground_detail(self, Rect2(-9.0, -11.0, 7.0, 6.0), "straw", 0.7, 4403, sy, in_pen)
+	# Gece de seçilsin: alanın her yerine dağılmış saman çöpü ve çakıl (koyu çamur gece zeminde pek okunmuyor)
+	Nature.ground_detail(self, pen, "straw", 0.16, 4410, sy, in_pen)
+	Nature.ground_detail(self, pen, "pebble", 0.18, 4411, sy, func(x: float, z: float) -> bool: return in_pen.call(x, z) or near_gate.call(x, z))
+	Nature.ground_detail(self, pen, "ash", 1.2, 4404, sy, func(x: float, z: float) -> bool: return ring.call(x, z, 0.5, 1.15))
+	Nature.ground_detail(self, pen, "coal", 3.0, 4405, sy, func(x: float, z: float) -> bool: return ring.call(x, z, 0.5, 0.95))
+	# Çitin dışı: at izleri ve çiğnenmiş toprak (ateşlerin ve atların çevresi), ot öbekleri, taş
+	var outside := func(x: float, z: float) -> bool: return not (absf(x) < PEN_X + 0.5 and z > PEN_Z0 - 0.5 and z < GATE_Z + 0.5)
+	var ground_out := Rect2(-34.0, -26.0, 68.0, 76.0)
+	Nature.ground_detail(self, ground_out, "camp_mud", 0.035, 4406, sy, outside)
+	Nature.ground_detail(self, ground_out, "hoofprint", 0.05, 4407, sy, outside)
+	Nature.ground_detail(self, ground_out, "grass", 0.25, 4408, sy, func(x: float, z: float) -> bool:
+		return bool(outside.call(x, z)) and not near_gate.call(x, z) and Vector2(x, z).length() > 14.0)
+	Nature.ground_detail(self, ground_out, "stone", 0.02, 4409, sy, outside)
 
 
 func _stake_line(a: Vector3, b: Vector3) -> void:
@@ -177,13 +216,32 @@ func _build_camp() -> void:
 		if absf(p.x) < 6.0:
 			p.x += 12.0
 		lights.append(Night.campfire(self, p, 1.0))
+		# Ateş başında üç kişi: biri ayakta ısınır (ara sıra kıpırdanır), biri bağdaş kurmuş oturur, üçüncüsü (her ikinci
+		# ateşte) ateşin üstündeki kazanı kepçeyle karıştırır (yayma P1: eskiden üçü de kıpırtısız dikiliyordu)
+		var standing: Array = []
 		for k in 3:
-			var s := Soldier.new([Color("b3262d"), Color("2f5fa8"), Color("3a6b3a")][k], "stand", "bork" if k != 1 else "turban")
 			var a := TAU * k / 3.0 + 0.4
-			s.position = p + Vector3(cos(a), 0, sin(a)) * 1.6
-			s.rotation.y = atan2(-cos(a), -sin(a))
+			var at := p + Vector3(cos(a), 0, sin(a)) * 1.6
+			var yaw := atan2(-cos(a), -sin(a))
+			var coat: Color = [Color("b3262d"), Color("2f5fa8"), Color("3a6b3a")][k]
+			if k == 2 and i % 2 == 0:
+				Stage.station(self, "stir_pot", p + Vector3(cos(a), 0, sin(a)) * 0.8, -Vector3(cos(a), 0, sin(a)),
+					{"fire": false, "person": false, "coat": coat, "hat": "bork", "seed": 4500 + i})
+				continue
+			if k == 1:
+				var ps := Person.new({"coat": coat, "pants": Color("3a2a1e"), "hat": "turban", "mustache": true, "beard": i % 2 == 1})
+				ps.position = p + Vector3(cos(a), 0, sin(a)) * 1.3
+				ps.rotation.y = yaw
+				add_child(ps)
+				ps.set_activity("sit_ground")
+				continue
+			var s := Soldier.new(coat, "stand", "bork" if k != 1 else "turban")
+			s.position = at
+			s.rotation.y = yaw
 			s.scale = Vector3(1, 0.8, 1)
 			add_child(s)
+			standing.append(s)
+		Crowd.idle_vary(standing, {"every": Vector2(4.0, 10.0), "emotes": ["nod", "arms_cross", "shrug", "think", "laugh"]})
 	# Çitin hemen dışı: bağlı atlar, arabalar, çuvallar, silah sehpaları (çitin arasından görünür; kaçış yolu açık kalır)
 	var dd := Dressing.new(422)
 	var spots := 0

@@ -950,7 +950,10 @@ func _eclipse() -> void:
 
 
 func _fell() -> void:
-	Audio.sfx("splash", -2.0)
+	# Suya giriş: sıçrama, iki halka, damlalar ve ses (yayma P1; eskiden yalnız ses ve kararma)
+	var fwd := -player.camera.global_transform.basis.z
+	var wp := player.global_position + Vector3(fwd.x, 0, fwd.z).normalized() * 0.4
+	Vfx.water_entry(self, Vector3(wp.x, SeaWalls.WATER_Y, wp.z), SeaWalls.WATER_Y, 1.0)
 	player.flail(0.8)
 	player.shake(1.5)
 	hud.set_underwater(true)
@@ -1031,6 +1034,12 @@ func _act_end() -> void:
 	var cf := func(x: float, z: float, y: float, steep: float) -> Color:
 		return Color("1e2a1a").lerp(Color("2c3a24"), clampf(y / 6.0, 0.0, 1.0))
 	vista.add_child(LowPoly.terrain(-120.0, 120.0, -160.0, 60.0, 40, 36, hf, cf))
+	# Tepenin çevresi: ot öbekleri, uzun ot, taş (yayma P1: Nihat düz yeşil bir levhanın üstündeydi)
+	var vy := func(x: float, z: float) -> float: return LowPoly.surface_y(x, z, -120.0, 120.0, -160.0, 60.0, 40, 36, hf)
+	var off_top := func(x: float, z: float) -> bool: return Vector2(x, z + 4.0).length() > 1.2
+	Nature.ground_detail(vista, Rect2(-16.0, -20.0, 32.0, 32.0), "grass", 1.4, 4031, vy, off_top)
+	Nature.ground_detail(vista, Rect2(-16.0, -20.0, 32.0, 32.0), "tall_grass", 0.12, 4032, vy, off_top)
+	Nature.ground_detail(vista, Rect2(-16.0, -20.0, 32.0, 32.0), "stone", 0.05, 4033, vy, off_top)
 	# Uzakta: ordugâhta (4a) kamp ateşi, kırmızı bir fes ve çadırlar. Şehirdeki rotalarda (4b) Tolga surların içindedir;
 	# orada ordugâh ve fes yerine aynı yönde şehrin bir feneri görünür.
 	var far := Vector3(22.0, hf.call(22.0, -46.0), -46.0)

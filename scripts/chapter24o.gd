@@ -147,23 +147,33 @@ func _build() -> void:
 		var peg := _gy((TENTS[i] as Vector3) + dir * 3.4)
 		var stake := Props.cyl(self, 0.06, 0.6, peg + Vector3(0, 0.3, 0), Color("5a3e26"), Vector3(0, 0, -15), 5)
 		_stakes.append(stake)
+		# Kazığın dibi: dövülmüş çamur (yağmurda ıslak)
+		Props.cyl(self, 0.2, 0.012, peg + Vector3(0, 0.006, 0), Color("3a2c1e"), Vector3.ZERO, 8)
 		# İp: bağlanmadan önce kazığın dibinde gevşek (rüzgârda savrulur); bağlarken çadırın tepesinden kazığa uzar ve
 		# gerilir; bağlanınca kazıkta düğüm. (Eskiden dikey duran 1 cm'lik bir çizgiydi, görünmüyordu.)
 		var top := _gy(TENTS[i]) + dir * 1.8 + Vector3(0, 1.5, 0)
 		_rope_top.append(top)
 		_rope_peg.append(peg + Vector3(0, 0.5, 0))
+		# Gevşek ip: çadırın tepesinden (bağlı ucu) yere sarkar, yerde kazığa doğru kıvrılarak uzanır; rüzgârda savrulur
+		# (yayma P1: eskiden kazığın dibinde yatan üç düz çubuktu, çadıra bağlı değildi)
 		var loose := Node3D.new()
 		add_child(loose)
-		loose.global_position = peg + Vector3(0, 0.05, 0)
-		loose.rotation.y = atan2(-dir.z, dir.x)      # yerel -X çadıra doğru
-		loose.set_meta("base", loose.rotation.y)
-		for k in 3:
-			Props.cyl(loose, 0.05, 0.7, Vector3(-0.3 - k * 0.55, 0.0, 0.15 * (k % 2)), Color("9a7448"), Vector3(0, 20.0 * k, 90), 4)
+		loose.global_position = top
+		loose.set_meta("base", 0.0)
+		var lr := Stage.rope(loose, Vector3.ZERO, Vector3(0, -0.3, 0), 0.0, 0.028, Color("9a7448"))
+		lr.name = "Rope"
 		_rope_loose.append(loose)
-		var taut := Props.cyl(self, 0.05, 1.0, Vector3.ZERO, Color("9a7448"), Vector3.ZERO, 5)
+		_loose_rope_pts(i, 0.0)
+		# Gergin ip: çadırın tepesinden elde/kazıkta (sarkan, burgulu Stage halatı)
+		var taut := Stage.rope(self, to_local(top), to_local(peg + Vector3(0, 0.5, 0)), 0.1, 0.028, Color("9a7448"))
 		taut.visible = false
 		_rope_taut.append(taut)
-		var knot := Props.ball(self, 0.1, peg + Vector3(0, 0.5, 0), Color("7a5a34"), Vector3(1.2, 1.0, 1.2), 6)
+		# Bağlanınca: kazığa sarılmış üç tur ip ve düğüm (kazıkla birlikte çakılır: kazığın çocuğu)
+		var knot := Node3D.new()
+		stake.add_child(knot)
+		var wrap := Stage.rope_wrap(knot, Vector3(0, 0.08, 0), 0.075, 0.0, 0.16, 3.0, 0.026, Color("9a7448"))
+		Props.ball(knot, 0.045, (wrap.get_meta("end") as Vector3) + Vector3(0.02, 0.0, 0.0), Color("7a5a34"), Vector3(1.3, 1.0, 1.0), 6)
+		knot.set_meta("end", wrap.get_meta("end"))
 		knot.visible = false
 		_rope_knot.append(knot)
 		Props.interactable(self, "rope_%d" % i, Vector3(1.4, 1.6, 1.4), peg + Vector3(0, 0.6, 0))
@@ -451,6 +461,7 @@ func _kadri_to_fire(i: int) -> void:
 func _storm() -> void:
 	await hud.fade_to(1.0, 0.8)
 	_storm_sky()
+	_wet_ground()
 	await hud.card([[tr("UI_CH24O_STORM"), 26, Color("f2e6c9")]], 1.8)
 	hud.clear_card()
 	rain.emitting = true
@@ -558,15 +569,48 @@ func _morning_sky() -> void:
 		SkyBody.attach(day, l, false)            # güneş diski (aynı ışığa bağlı)
 
 
-## İpi çadırın tepesinden k kadar (0…1) kazığa doğru uzat
+## İpi çekmek: k (0…1). Çekerken ip çadırın tepesinden Tolga'nın eline gider (k arttıkça gerilir, sarkma azalır);
+## bağlanınca (k = 1) kazığa sarılı düğüme. (Eskiden ucu havada, kazığa doğru uzayan düz bir çubuktu; yayma P1.)
 func _rope(i: int, k: float) -> void:
 	var a: Vector3 = _rope_top[i]
-	var b: Vector3 = a.lerp(_rope_peg[i], clampf(k, 0.05, 1.0))
-	var r := _rope_taut[i]
+	var r := _rope_taut[i] as MeshInstance3D
 	r.visible = k > 0.0
-	var d := b - a
-	r.global_transform = Transform3D(Basis(Quaternion(Vector3.UP, d.normalized())).scaled(Vector3(1.0, d.length(), 1.0)), a + d * 0.5)
-	_rope_loose[i].visible = k < 0.3
+	var b: Vector3
+	if tent_state[i] == 1 or k >= 1.0:
+		b = _rope_knot[i].to_global(_rope_knot[i].get_meta("end", Vector3.ZERO))
+	else:
+		b = _hand_point()
+	var sag := lerpf(0.35, 0.04, clampf(k, 0.0, 1.0))
+	var pts: Array = []
+	for p: Vector3 in Stage.sag_points(a, b, sag, 8):
+		pts.append(to_local(p))
+	Stage.rope_to(r, pts)
+	_rope_loose[i].visible = k <= 0.0
+
+
+## Tolga'nın ipi tutan eli (görünen el; yoksa kameranın sağ altı)
+func _hand_point() -> Vector3:
+	if player.hand and player.hand.is_visible_in_tree():
+		return player.hand.global_position
+	return player.camera.global_transform * Vector3(0.22, -0.28, -0.5)
+
+
+## Gevşek ipin noktaları (loose düğümünün yerelinde): tepeden yere iner, yerde kazığa doğru kıvrılır; w rüzgâr salınımı
+func _loose_rope_pts(i: int, w: float) -> void:
+	var loose := _rope_loose[i]
+	var top: Vector3 = _rope_top[i]
+	var peg: Vector3 = _rope_peg[i] - Vector3(0, 0.5, 0)
+	var d := Vector3(peg.x - top.x, 0, peg.z - top.z)
+	var side := Vector3(-d.z, 0, d.x).normalized()
+	var pts: Array = []
+	for k in 9:
+		var t := float(k) / 8.0
+		var g := top.lerp(peg, t * 0.8)
+		var gy := _gy(g).y + 0.03
+		var y := lerpf(top.y, gy, smoothstep(0.0, 0.45, t))
+		var swing := sin(t * 7.0 + w) * 0.18 * t + w * 0.0
+		pts.append(loose.to_local(Vector3(g.x, y, g.z) + side * swing))
+	Stage.rope_to(loose.get_node("Rope") as MeshInstance3D, pts)
 
 
 func _tie(i: int) -> void:
@@ -621,7 +665,7 @@ func _process(delta: float) -> void:
 		for i in 3:
 			var t := tents[i]
 			if tent_state[i] == 0:
-				_rope_loose[i].rotation.y = float(_rope_loose[i].get_meta("base")) + sin(_t * 7.0 + i * 2.0) * 0.5
+				_loose_rope_pts(i, sin(_t * 3.5 + i * 2.0) * 1.6)
 				_gust[i] += delta / 9.0
 				t.rotation.z = sin(_t * 6.0 + i) * 0.06 * (1.0 + clampf(_gust[i], 0.0, 1.0) * 2.0)
 				worst = maxf(worst, _gust[i])
@@ -629,6 +673,7 @@ func _process(delta: float) -> void:
 					_fly(i)
 			elif tent_state[i] == 1:
 				t.rotation.z = sin(_t * 6.0 + i) * 0.02
+				_rope(i, 1.0)
 		hud.set_chase(tr("UI_CH24O_WIND"), clampf(worst, 0.0, 1.0))
 		var id := player.focus_id
 		if id.begins_with("rope_") and Input.is_action_pressed("interact"):
@@ -655,6 +700,15 @@ func _on_item(target: String, item: String) -> bool:
 			_tie(k)
 			return true
 	return false
+
+
+## Fırtınada zemin ıslanır: çadırların çevresinde koyu çamur yamaları ve parlak su birikintileri (yayma P1; eskiden
+## dolu yağarken zemin kupkuruydu). Fırtına sonrası sabah da ıslak kalır.
+func _wet_ground() -> void:
+	var area := Rect2(-41.0, -19.0, 18.0, 27.0)
+	Nature.ground_detail(self, area, "camp_mud", 0.22, 2431, _ground_y)
+	Nature.ground_detail(self, area, "grease", 0.05, 2432, _ground_y)
+	Nature.ground_detail(self, area, "footprint", 0.12, 2433, _ground_y)
 
 
 ## Tolga konuşacağı kişinin dibine yürür (eşya elden ele geçsin; 1 m'ye).

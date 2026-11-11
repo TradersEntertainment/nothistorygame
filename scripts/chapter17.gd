@@ -142,6 +142,9 @@ func _build_horn() -> void:
 	_place_boat(boat, 0.0)
 	_place_boat(coco_boat, coco_d, 1.0, COCO_LANE)
 	_place_ships()
+	# Kayıkların izi (yayma P2): kıçta köpük halkaları, pruvada V; durunca seyrek halka. Baş -z (look_at), kıç +z
+	Vfx.wake(boat, 0.0, {"stern": Vector3(0, 0, 6.4), "bow": Vector3(0, 0, -6.6), "width": 2.4})
+	Vfx.wake(coco_boat, 0.0, {"stern": Vector3(0, 0, 4.9), "bow": Vector3(0, 0, -5.1), "width": 2.0, "far": 60.0})
 
 
 ## Kürekli kadırga: gövde, güverte (katı), korkuluk, sıralar, kürekçiler ve kürekler.
@@ -781,6 +784,7 @@ func _chain_skiff() -> Node3D:
 	k.add_child(ll)
 	k.global_position = boat.to_global(Vector3(-5.6, 0.0, -0.4))
 	k.global_rotation = boat.global_rotation
+	Vfx.wake(k, 0.0, {"stern": Vector3(0, 0, 2.0), "bow": Vector3(0, 0, -2.1), "width": 1.2, "far": 30.0})
 	return k
 
 
@@ -811,6 +815,16 @@ func _pull(i: int) -> void:
 	player.reach_grab(s.global_position + Vector3(0, 1.0, 0))
 	get_tree().create_timer(0.05 if GameState.autotest and not GameState.pace else 0.9, false).timeout.connect(player.release_grab)
 	s.set_activity("")
+	# El ele (yayma P2): denizcinin eli Tolga'nın görünen bileğinde, çekilirken bırakmaz; sudan çıkarken su köpürür,
+	# giysisinden kayığa su damlar
+	if player.hand:
+		Stage.grip_hold(s, player.hand, [Vector3(0, 0.035, 0.07)], 0.8)
+	var wp := Vector3(s.global_position.x, 0.0, s.global_position.z)
+	Vfx.water_ring(self, wp, 0.0, 0.4, 2.0, 1.5, 0.5)
+	Vfx.water_drops(self, wp, 0.0, 10)
+	get_tree().create_timer(0.9, false).timeout.connect(func():
+		if is_instance_valid(s):
+			Vfx.drip(s, 6.0))
 	Audio.sfx("splash", -4.0)
 	Audio.sfx("cloth", -8.0, 0.8)                 # ıslak giysiden tutup çeker
 	Audio.sfx("wood_creak", -12.0, 1.3)           # küpeşte yük alır
@@ -1112,10 +1126,20 @@ func _rescue_tick(delta: float) -> void:
 		if not sw["saved"]:
 			var s: Person = sw["node"]
 			s.global_position = (sw["base"] as Vector3) + Vector3(sin(_t * 0.7 + s.get_instance_id()) * 0.3, sin(_t * 2.2) * 0.08, 0)
+			# Çırpınan denizcinin çevresinde su kıpırdar (yayma P2): seyrek halka, kulaçta damla
+			var nt: float = sw.get("ring_t", randf() * 0.8) - delta
+			if nt <= 0.0:
+				nt = randf_range(0.6, 1.1)
+				var wp := Vector3(s.global_position.x, 0.0, s.global_position.z)
+				Vfx.water_ring(self, wp, 0.0, 0.35, 1.3, 1.2, 0.4)
+				if randf() < 0.5:
+					Vfx.water_drops(self, wp + Vector3(randf_range(-0.3, 0.3), 0, randf_range(-0.3, 0.3)), 0.0, 4)
+			sw["ring_t"] = nt
 	# Güverteden suya düşen Tolga: tayfa çeker, zaman kaybı. İkinci kez düşerse halat yetişmez, toplar kayığı geri
 	# çeker; Tolga'yı Osmanlı kayıkçıları sudan çeker (kaza rotası, 17.3)
 	if player.global_position.y < -0.6 and not player.frozen:
 		Audio.sfx("splash", 0.0)
+		Vfx.water_entry(self, player.global_position, 0.0, 1.0)      # sıçrama ve halkalar (yayma P2)
 		player.frozen = true
 		player.flail(1.4)                         # çırpınır (düşüş hareketsizdi)
 		hud.set_underwater(true)                  # suyun altı: boğuk (Haliç'te süzgeç hiç açılmıyordu)
@@ -1128,18 +1152,54 @@ func _rescue_tick(delta: float) -> void:
 		_fell = true
 		_rescue_t -= 6.0
 		hud.bark("SPK_TREVISANO", "D17_TR_FELL", 3.0, true)      # haykırış sıra beklemez
+		_surface()
 		get_tree().create_timer(1.2, false).timeout.connect(_haul_back)
 
 
-## Tayfa Tolga'yı küpeşteden çeker: kısa karartma (gözün önünde güverteye ışınlanıyordu), ıslak çıkış
+## Düşen Tolga kısa bir dalıştan sonra kayığın yanında yüzeye çıkar (yayma P2): çırpınır, çevresinde su köpürür.
+func _surface() -> void:
+	player.pinned = true
+	player.velocity = Vector3.ZERO
+	player.stow_hands(true)
+	var p := player.global_position
+	var fast := GameState.autotest and not GameState.pace
+	var tw := create_tween()
+	tw.tween_property(player, "global_position", Vector3(p.x, -Player.EYE - 0.7, p.z), 0.05 if fast else 0.3).set_ease(Tween.EASE_OUT)
+	tw.tween_property(player, "global_position", Vector3(p.x, -Player.EYE + 0.2, p.z), 0.05 if fast else 0.45).set_trans(Tween.TRANS_SINE)
+	tw.tween_callback(func():
+		hud.set_underwater(false)
+		player.floating = true
+		player.face(boat.global_position + Vector3(0, 1.4, 0))
+		Vfx.water_ring(self, Vector3(p.x, 0, p.z), 0.0, 0.4, 2.0, 1.4, 0.5)
+		Vfx.water_drops(self, Vector3(p.x, 0, p.z), 0.0, 8))
+
+
+## Tayfa Tolga'yı küpeşteden çeker (yayma P2: karartma + ışınlamaydı): sudan küpeşteye, oradan güverteye çekilir;
+## giysisinden damlar, güvertede ıslak izler kalır. Kesme yok.
 func _haul_back() -> void:
 	Audio.sfx("cloth", -6.0, 0.8)
-	await hud.fade_to(1.0, 0.25)
 	hud.set_underwater(false)
-	Audio.sfx("splash", -6.0, 1.2)
-	player.global_position = boat.to_global(Vector3(0.0, DECK_Y + 0.1, 0.0))
+	var fast := GameState.autotest and not GameState.pace
+	var p0 := player.global_position
+	var lp := boat.to_local(p0)
+	var side := 1.0 if lp.x >= 0.0 else -1.0
+	var rail := boat.to_global(Vector3(side * 1.25, DECK_Y + 0.5, clampf(lp.z, -4.0, 4.0)))
+	var deck := boat.to_global(Vector3(0.0, DECK_Y + 0.1, 0.0))
+	var tw := create_tween()
+	player.face(rail + Vector3(0, 0.2, 0))
+	tw.tween_property(player, "global_position", rail + Vector3(0, -Player.EYE + 0.3, 0), 0.05 if fast else 0.55).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_OUT)
+	tw.tween_callback(func():
+		Audio.sfx("splash", -6.0, 1.2)
+		Vfx.water_ring(self, Vector3(p0.x, 0, p0.z), 0.0, 0.4, 2.2, 1.6, 0.45)
+		Vfx.water_drops(self, Vector3(p0.x, 0, p0.z), 0.0, 10))
+	tw.tween_property(player, "global_position", deck, 0.05 if fast else 0.4).set_trans(Tween.TRANS_SINE)
+	await tw.finished
+	player.floating = false
 	player.velocity = Vector3.ZERO
-	await hud.fade_to(0.0, 0.35)
+	player.face(boat.to_global(Vector3(0.0, DECK_Y + 1.5, -4.0)))      # güvertede kalkınca bakış güverteye (yukarı, gökteydi)
+	player.pinned = false
+	player.stow_hands(false)
+	Vfx.water_exit(player, func(_x: float, _z: float) -> float: return boat.to_global(Vector3(0, DECK_Y, 0)).y, 6.0, player.camera)
 	Audio.sfx("land_thud", -8.0, 0.9)
 	player.shake(0.3)
 	player.frozen = false

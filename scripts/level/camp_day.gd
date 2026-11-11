@@ -266,17 +266,41 @@ func _illuminate() -> void:
 		# Hale alevin boyunu pek aşmaz: çadırların ardındaki ateşin halesi gökte asılı top gibi görünmesin
 		halos.append(Transform3D(Basis().scaled(Vector3.ONE * h * 0.95), p3 + Vector3(0, h * 0.35, 0)))
 		embers.append(Transform3D(Basis().scaled(Vector3(k3, 1, k3)), p3 + Vector3(0, 0.12, 0)))
+	# Ateş yatağı (yayma P1): taş halka, kül yatağı ve ortada kor yığını (eskiden yerde parlayan düz turuncu bir disk,
+	# yakından bakınca ateşin altında levha gibiydi). Her biri tek çoklu ağ.
 	var ember := CylinderMesh.new()
-	ember.top_radius = 0.45
-	ember.bottom_radius = 0.75
-	ember.height = 0.25
+	ember.top_radius = 0.16
+	ember.bottom_radius = 0.55
+	ember.height = 0.24
 	ember.radial_segments = 8
 	var em := StandardMaterial3D.new()
 	em.albedo_color = Color("2a1a12")
 	em.emission_enabled = true
 	em.emission = Color("ff4a10")
-	em.emission_energy_multiplier = 1.2
+	em.emission_energy_multiplier = 0.9
 	Scenery.scatter(self, ember, embers, [], em).cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
+	var bed := CylinderMesh.new()
+	bed.top_radius = 0.9
+	bed.bottom_radius = 1.0
+	bed.height = 0.05
+	bed.radial_segments = 10
+	var beds: Array = []
+	var bed_c: Array = []
+	var stones: Array = []
+	var stone_c: Array = []
+	for x: Transform3D in embers:
+		var k3 := x.basis.get_scale().x
+		var o := x.origin - Vector3(0, 0.1, 0)
+		beds.append(Transform3D(Basis().scaled(Vector3(k3, 1.0, k3)), o))
+		bed_c.append(Color("3a3632").lerp(Color("5a5450"), rng.randf()))
+		for s in 9:
+			var a4 := s * TAU / 9.0 + rng.randf_range(-0.15, 0.15)
+			var ss := rng.randf_range(0.16, 0.24) * k3
+			stones.append(Transform3D(Basis(Vector3.UP, rng.randf() * TAU).scaled(Vector3(ss * 1.3, ss, ss)),
+				o + Vector3(cos(a4), 0, sin(a4)) * 1.0 * k3 + Vector3(0, ss * 0.25, 0)))
+			stone_c.append(Color("6a6660").lerp(Color("8e8a82"), rng.randf()))
+	Scenery.scatter(self, bed, beds, bed_c, Nature._detail()).cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
+	Scenery.scatter(self, Nature.rock(1), stones, stone_c, Nature.rock_material()).cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
 	Flame.scatter_flames(self, flames, 1.7)
 	Flame.scatter_glows(self, halos, 0.32, Color("ffc070"), Color("ff6a18"))
 	# Ateşin içinden yürünmesin (ordugâhın içindekiler): eski koninin boyu kadar
@@ -503,6 +527,31 @@ func _build_kitchen() -> void:
 	kadri.scale = Vector3(1.12, 1.0, 1.12)
 	add_child(kadri)
 	kadri.set_activity("chop")
+	# Satır elde, önünde tezgâhta kesme tahtası ve doğranan soğan (eskiden eli boş havayı doğruyordu; yayma P1)
+	kadri.give_tool("cleaver")
+	# (Tahta, soğan, kütük ve odunlar tek birleşik ağ: Dressing; çizim sayısı artmasın)
+	var dk := Dressing.new(458)
+	dk.at(Vector3.ZERO, 0.0)
+	# Satırın indiği yer (sonda: ağzın en alt noktası Kadri'nin 0,55 m önünde, 0,87 m'de): tahta tam orada, üstü 0,905
+	var board := KADRI_POS + Vector3(0.0, 0.89, 0.62)
+	dk.box(Vector3(0.55, 0.03, 0.28), board, Color("b08a5a"), Vector3(0, 4, 0))
+	dk.ball(0.075, board + Vector3(-0.19, 0.075, 0.03), Color("d8b878"), Vector3(1, 0.85, 1), 7)
+	for k in 5:
+		dk.box(Vector3(0.05, 0.012, 0.09), board + Vector3(0.06 + k * 0.045, 0.021, 0.0 + (k % 2) * 0.03), Color("efe6cf"), Vector3(0, k * 17, 0))
+	# Odun yarma kütüğü, saplı balta ve yarılmış odun yığını (mutfağın doğu köşesi; ocakların odunu)
+	var chop := Vector3(-8.6, 0, -11.3)
+	dk.cyl(0.3, 0.55, chop + Vector3(0, 0.275, 0), Color("6b4a2e"), Vector3.ZERO, 9)
+	dk.cyl(0.28, 0.02, chop + Vector3(0, 0.555, 0), Color("c8a878"), Vector3.ZERO, 9)
+	var axe := Items.tool_model("axe")
+	# Ağzı (-Y) kütüğe gömülü, sap (+Z'nin tersi) yukarı kalkık
+	var az := Vector3(0.75, -0.45, 0.0).normalized()
+	var ay := Vector3(0.45, 0.75, 0.0).normalized()
+	var aln := float(axe.get_meta("len", 0.7))
+	axe.transform = Transform3D(Basis(ay.cross(az), ay, az), chop + Vector3(0, 0.6, 0) - az * aln + ay * 0.05)
+	add_child(axe)
+	for k in 6:
+		dk.cyl(0.07, 0.5, chop + Vector3(0.85, 0.08 + (k / 3) * 0.13, -0.3 + (k % 3) * 0.15 + (k / 3) * 0.07), Color("8a6440"), Vector3(90, 0, 0), 5)
+	dk.build(self)
 	Props.interactable(self, "kadri", Vector3(1.2, 2.0, 1.2), KADRI_POS + Vector3(0, 1.0, 0))
 
 
@@ -614,6 +663,22 @@ func _build_artillery() -> void:
 	urban.scale = Vector3(1.2, 1.1, 1.2)
 	add_child(urban)
 	urban.set_activity("hammer")
+	urban.give_tool("hammer")
+	# Önünde örs (kütük üstünde): kalıbın demir kuşağını döver; örsün üstünde kızgın demir şerit (eskiden çekiçsiz,
+	# önü boştu: havayı dövüyordu; yayma P1)
+	# Çekicin indiği yer (sonda: başın en alt noktası Urban'ın 0,47 m sağında, 0,97 m önünde, 1,10 m'de; Urban iri):
+	# kalın kütüğün üstünde örs, yüzü 1,08 m'de
+	var anvil := urban.position + Vector3(0.45, 0, 0.95)
+	var da := Dressing.new(617)
+	da.at(Vector3.ZERO, 0.0)
+	da.cyl(0.3, 0.84, anvil + Vector3(0, 0.42, 0), Color("5a3e26"), Vector3.ZERO, 9)      # katı değil: yol değişmesin
+	da.cyl(0.28, 0.02, anvil + Vector3(0, 0.845, 0), Color("a88660"), Vector3.ZERO, 9)
+	da.box(Vector3(0.42, 0.16, 0.2), anvil + Vector3(0, 0.92, 0), Color("3a3a3e"))
+	da.box(Vector3(0.3, 0.07, 0.14), anvil + Vector3(0, 1.035, 0), Color("4a4a50"))
+	da.prism(Vector3(0.12, 0.1, 0.14), anvil + Vector3(0.27, 1.02, 0), Color("4a4a50"), Vector3(0, 0, -90))
+	da.build(self)
+	var bar := Props.box(self, Vector3(0.36, 0.025, 0.05), anvil + Vector3(-0.02, 1.083, 0.01), Color("ff7a2a"), Vector3(0, 12, 0))
+	bar.material_override = Props.mat(Color("ff6a1a"), 1.8, false, "", false)
 	urban.set_meta("spk", "SPK_URBAN")
 	# Macar elçisi ve Topçubaşı Saruca (yan sahne)
 	envoy = Person.new({"coat": Color("2f5a3a"), "pants": Color("3a2a1e"), "hat": "kalpak", "mustache": true, "hair": Color("8a5a2a")})
@@ -749,12 +814,14 @@ func _build_market() -> void:
 	_sign(Vector3(-2.5, 0, 7.2), "PAZAR", 0.0)
 	# Tente bezi: bitki boyalı keten (kök boya, çivit, cehri, zeytin) ve boyasız ham bez
 	var awning := [Color("8a4a3a"), Color("56627a"), Color("a0804e"), Color("64704e"), Color("b8ab8e")]
+	var dm := Dressing.new(748)      # direkler ve tenteler tek birleşik ağ (eskiden 25 ayrı çizim; yayma P1)
+	dm.at(Vector3.ZERO, 0.0)
 	for i in 5:
 		var p := Vector3(-8.0 + i * 4.0, 0, 17.0)
 		Props.solid(self, Vector3(2.4, 0.9, 1.2), p + Vector3(0, 0.45, 0), Color("7a5a38"))
 		for k in 4:
-			Props.cyl(self, 0.04, 2.2, p + Vector3(-1.1 + (k % 2) * 2.2, 1.1, -0.55 + (k / 2) * 1.1), Color("4a3020"), Vector3.ZERO, 4)
-		Props.box(self, Vector3(2.8, 0.05, 1.8), p + Vector3(0, 2.2, 0.2), awning[i], Vector3(-10, 0, 0))
+			dm.cyl(0.04, 2.2, p + Vector3(-1.1 + (k % 2) * 2.2, 1.1, -0.55 + (k / 2) * 1.1), Color("4a3020"), Vector3.ZERO, 4)
+		dm.box(Vector3(2.8, 0.05, 1.8), p + Vector3(0, 2.2, 0.2), awning[i], Vector3(-10, 0, 0))
 		if Kit.has_food():
 			# Her tezgâhın kendi malı (Quaternius Ultimate Food, CC0): meyve, sebze, ekmek, balık, kap kacak
 			var goods: Array = [["Apple", "Orange", "Apple_Green"], ["Eggplant", "Turnip", "Carrot"], ["Bread", "Bread_Slice"],
@@ -774,6 +841,7 @@ func _build_market() -> void:
 		else:
 			for k in 5:
 				Props.ball(self, 0.13, p + Vector3(-0.9 + k * 0.45, 1.0, -0.2), [Color("e0a020"), Color("b3262d"), Color("6a8a3a"), Color("e8e0cc"), Color("c98a3a")][(k + i) % 5], Vector3.ONE, 6)
+	dm.build(self)
 	# Kaçak keçi
 	goat = Goat.new()
 	goat.position = Vector3(0, 0, 11.0)
@@ -840,17 +908,22 @@ func _build_otag() -> void:
 	var gold := Color("e0b848")
 	var cream := Color("f4e8cc")
 	var navy := Color("28366a")
+	# Panolar tek birleşik ağ (Dressing; eskiden 96 ayrı parça = 96 çizim çağrısı; yayma P1 çizim bütçesi)
+	var dp := Dressing.new(819)
 	for i in 16:
 		var a := TAU * (i + 0.5) / 16.0
 		var rd := rad_to_deg(a)
 		var wp := base + Vector3(sin(a) * 7.02, 1.7, cos(a) * 7.02)
-		Props.box(self, Vector3(1.5, 2.2, 0.06), wp, cream, Vector3(0, rd, 0))
-		Props.box(self, Vector3(1.06, 1.06, 0.06), wp + Vector3(0, 1.1, 0), cream, Vector3(0, rd, 45))
-		Props.box(self, Vector3(1.0, 1.7, 0.07), wp + Vector3(0, -0.1, 0), navy, Vector3(0, rd, 0))
-		Props.box(self, Vector3(0.7, 0.7, 0.07), wp + Vector3(0, 0.75, 0), navy, Vector3(0, rd, 45))
-		Props.ball(self, 0.22, wp + Vector3(0, 0.1, 0), gold, Vector3(1, 1, 0.3), 8).rotation.y = a
+		dp.at(Vector3.ZERO, 0.0)
+		dp.box(Vector3(1.5, 2.2, 0.06), wp, cream, Vector3(0, rd, 0))
+		dp.box(Vector3(1.06, 1.06, 0.06), wp + Vector3(0, 1.1, 0), cream, Vector3(0, rd, 45))
+		dp.box(Vector3(1.0, 1.7, 0.07), wp + Vector3(0, -0.1, 0), navy, Vector3(0, rd, 0))
+		dp.box(Vector3(0.7, 0.7, 0.07), wp + Vector3(0, 0.75, 0), navy, Vector3(0, rd, 45))
 		var ep := base + Vector3(sin(a) * 7.45, 5.2, cos(a) * 7.45)
-		Props.box(self, Vector3(0.5, 0.5, 0.05), ep, gold, Vector3(-18, rd, 45))
+		dp.box(Vector3(0.5, 0.5, 0.05), ep, gold, Vector3(-18, rd, 45))
+		dp.at(wp + Vector3(0, 0.1, 0), a)
+		dp.ball(0.22, Vector3.ZERO, gold, Vector3(1, 1, 0.3), 8)
+	dp.build(self)
 	Props.cyl(self, 7.06, 0.25, base + Vector3(0, 0.3, 0), gold, Vector3.ZERO, 16)
 	# Kapı saçağı (sayeban): iki direk, altın saçaklı kırmızı gölgelik
 	var door := base + Vector3(0, 0, 7.0)
@@ -966,34 +1039,161 @@ func world_landmarks() -> Array:
 	return out
 
 
-## Çamur birikintileri ve tekerlek izleri (araba, top arabası): düz, ıslak parlak lekeler (çarpışmasız).
+## Çiğnenmiş ordugâh zemini (yayma P1; Nature.ground_detail / trail, her tür tek çoklu ağ, çarpışmasız): meydanda ve
+## yollarda koyu çamur yamaları, ayak ve at izleri, otağ yolunda tekerlek izi; mutfakta ve tavuk avlusunda saman, ocak
+## diplerinde kül ve kömür; topçu ocağının önünde kömür tozu. Kuşbakışında (43o) yollar ve çiğnenmiş alanlar büyük ölçekli
+## çamur yamalarıyla seçilir. Eskiden: tek renk zemin, üstünde gökyüzü mavisi yansıtan parlak düz elips "birikintiler".
 func _build_mud() -> void:
-	var wet := StandardMaterial3D.new()
-	wet.vertex_color_use_as_albedo = true
-	wet.roughness = 0.18
-	wet.metallic_specular = 0.7
-	var d := Dressing.new(611)
+	var hf := func(x: float, z: float) -> float: return CampDay.height(x, z)
+	var area := Rect2(-38.0, -64.0, 76.0, 98.0)
+	var seed := 611
+	for kd: Array in [["camp_mud", 0.11], ["footprint", 0.32], ["straw", 0.5], ["ash", 0.6], ["coal", 1.6], ["chips", 0.6]]:
+		var kind: String = kd[0]
+		var dmax: float = kd[1]
+		var keep := func(x: float, z: float) -> bool: return CampDay._wear_pick(x, z, kind, dmax)
+		Nature.ground_detail(self, area, kind, dmax, seed, hf, keep, 6000)
+		seed += 1
+	# Otağ yolu: iki tekerlek izi (erzak arabaları mutfağa iner) ve atlıların izi
+	Nature.trail(self, [Vector3(0.2, 0, -59.0), Vector3(0.2, 0, -27.0), Vector3(-1.5, 0, -14.0), Vector3(-6.0, 0, -4.2),
+		Vector3(-10.5, 0, -2.6)], "wheel_ruts", hf, 1.0, 621)
+	Nature.trail(self, [Vector3(-0.9, 0, -60.0), Vector3(-0.9, 0, -26.0), Vector3(1.2, 0, -12.0), Vector3(4.5, 0, 2.0),
+		Vector3(8.5, 0, 14.0), Vector3(12.0, 0, 24.0)], "hoofprint", hf, 0.75, 622, 0.4)
+	_far_wear()
+
+
+## Kuşbakışı ölçeği (43o drone, 30 m): bütün ordugâh ızgarasında (±88 m) 2,5-6 m'lik koyu çiğnenmiş toprak yamaları:
+## yollar, meydan ve çadır araları boyunca yoğun, açık arazide seyrek (gürültüyle öbek öbek). Yamaç eğimine yatık, tek
+## çoklu ağ. Eskiden yukarıdan bütün ordugâh tek renk düz yeşil düzlüktü.
+func _far_wear() -> void:
 	var rng := RandomNumberGenerator.new()
-	rng.seed = 612
-	# Otağ yolunda iki derin tekerlek izi, aralarında at izi çamuru
-	for sx: float in [-0.72, 0.72]:
-		d.box(Vector3(0.2, 0.02, 34.0), Vector3(sx, 0.012, -42.0), Color("3e3022"))
-	for i in 10:
-		d.ball(rng.randf_range(0.5, 0.9), Vector3(rng.randf_range(-1.0, 1.0), 0.0, rng.randf_range(-58.0, -26.0)), Color("46382a"), Vector3(1.0, 0.02, 1.4), 8)
-	# Meydanda çapraz izler ve birikintiler
-	for k in 4:
-		var a := rng.randf() * PI
-		var c := Vector3(rng.randf_range(-24.0, 24.0), 0, rng.randf_range(-20.0, 20.0))
-		for sx: float in [-0.72, 0.72]:
-			var off := Vector3(cos(a), 0, -sin(a)) * sx
-			d.box(Vector3(0.18, 0.02, rng.randf_range(10.0, 16.0)), c + off + Vector3(0, 0.012, 0), Color("4a3a28"), Vector3(0, rad_to_deg(a), 0))
-	for i in 26:
-		var p := Vector3(rng.randf_range(-32.0, 32.0), 0.0, rng.randf_range(-24.0, 26.0))
-		d.ball(rng.randf_range(0.6, 1.6), p, Color("3a3024").lerp(Color("4a3e30"), rng.randf()), Vector3(1.0, 0.015, rng.randf_range(0.5, 0.9)), 10)
-	var root := d.build(self)
-	for m in root.find_children("*", "MeshInstance3D", true, false):
-		(m as MeshInstance3D).material_override = wet
-		(m as MeshInstance3D).cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
+	rng.seed = 631
+	var nz := FastNoiseLite.new()
+	nz.seed = 632
+	nz.frequency = 0.035
+	var xs: Array = []
+	var cs: Array = []
+	var c0 := Color("3e3022")
+	var c1 := Color("5e4a34")
+	for i in 2600:
+		var x := rng.randf_range(GRID_X0 + 2.0, GRID_X0 + GRID_N * GRID_STEP - 2.0)
+		var z := rng.randf_range(GRID_Z0 + 2.0, GRID_Z0 + GRID_N * GRID_STEP - 2.0)
+		var w := _wear_w(x, z, "far_mud") * 12.0 + clampf(nz.get_noise_2d(x, z) * 1.6, 0.0, 0.8)
+		# Çadır sıraları arasındaki ana yollar (otağdan dört yöne ve çevre yolu)
+		var ring := absf(Vector2(x, z + 10.0).length() - 46.0) < 3.0
+		if ring or absf(x) < 3.5 or absf(z + 4.0) < 3.0:
+			w = maxf(w, 0.75)
+		if absf(x) < 36.0 and z > -64.0 and z < 32.0:
+			w *= 0.35             # yakın ayrıntının olduğu yerde (meydan, yollar) iri yama az: yerden bakınca kaba durmasın
+		if rng.randf() > w:
+			continue
+		var y := CampDay.height(x, z)
+		var dx := CampDay.height(x + 1.5, z) - CampDay.height(x - 1.5, z)
+		var dz := CampDay.height(x, z + 1.5) - CampDay.height(x, z - 1.5)
+		if absf(dx) > 1.2 or absf(dz) > 1.2:
+			continue                 # dik yamaç: yama kenarı havada kalmasın
+		var nrm := Vector3(-dx / 3.0, 1.0, -dz / 3.0).normalized()
+		var b := Basis(Vector3.UP, rng.randf() * TAU)
+		var ax := Vector3.UP.cross(nrm)
+		if ax.length() > 0.0001:
+			b = Basis(ax.normalized(), Vector3.UP.angle_to(nrm)) * b
+		var sz := rng.randf_range(2.5, 6.0)
+		xs.append(Transform3D(b * Basis.from_scale(Vector3(sz * rng.randf_range(0.8, 1.3), 1.0, sz)), Vector3(x, y + 0.03, z)))
+		cs.append(c0.lerp(c1, rng.randf()))
+	# Izgaranın ötesi (dünyanın ordugâhı, uçuşta görünen geniş çadır denizi): seyrek, daha büyük öbekler
+	for i in 3000:
+		var x := rng.randf_range(-230.0, 230.0)
+		var z := rng.randf_range(-300.0, 150.0)
+		if x > GRID_X0 and x < GRID_X0 + GRID_N * GRID_STEP and z > GRID_Z0 and z < GRID_Z0 + GRID_N * GRID_STEP:
+			continue
+		if rng.randf() > clampf(nz.get_noise_2d(x * 0.6, z * 0.6) * 1.8 + 0.15, 0.0, 0.8):
+			continue
+		var y := CampDay.height(x, z)
+		var dx := CampDay.height(x + 2.0, z) - CampDay.height(x - 2.0, z)
+		var dz := CampDay.height(x, z + 2.0) - CampDay.height(x, z - 2.0)
+		if absf(dx) > 1.0 or absf(dz) > 1.0:
+			continue
+		var nrm := Vector3(-dx / 4.0, 1.0, -dz / 4.0).normalized()
+		var b := Basis(Vector3.UP, rng.randf() * TAU)
+		var ax := Vector3.UP.cross(nrm)
+		if ax.length() > 0.0001:
+			b = Basis(ax.normalized(), Vector3.UP.angle_to(nrm)) * b
+		var sz := rng.randf_range(4.0, 8.0)
+		xs.append(Transform3D(b * Basis.from_scale(Vector3(sz * rng.randf_range(0.8, 1.4), 1.0, sz)), Vector3(x, y + 0.05, z)))
+		cs.append(c0.lerp(c1, rng.randf()).lerp(Color("6a5a3a"), 0.3))
+	var mi := Scenery.scatter(self, Nature.detail_mesh("camp_mud"), xs, cs, Nature._soft(false))
+	mi.set_meta("no_walk", true)
+	mi.set_meta("soft", true)
+	mi.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
+
+
+## Zemin aşınmasının yere göre yoğunluğu (adet/m²): ground_detail'in keep'i, dmax ile seyreltir (her tür tek çağrı).
+static func _wear_w(x: float, z: float, kind: String) -> float:
+	var road := absf(x) < 3.0 and z < -24.0 and z > -60.0            # otağ yolu
+	var sq := Vector2(x, z - 2.0).length() < 15.0                     # meydan
+	# Meydandan duraklara giden patikalar (mutfak, tercüman, topçu, pazar)
+	var lane := 99.0
+	for seg: Array in [[Vector2(0, 2), Vector2(-12, -5)], [Vector2(0, 2), Vector2(12, -5)], [Vector2(0, 2), Vector2(-3, -17)],
+			[Vector2(0, 2), Vector2(0, 15)], [Vector2(0, -4), Vector2(0, -26)], [Vector2(-12, -5), Vector2(-16, 1)]]:
+		lane = minf(lane, Geometry2D.get_closest_point_to_segment(Vector2(x, z), seg[0], seg[1]).distance_to(Vector2(x, z)))
+	var kitchen := Rect2(-18.5, -11.5, 11.0, 9.5).has_point(Vector2(x, z))
+	var yard := Rect2(-19.5, -2.5, 7.0, 8.0).has_point(Vector2(x, z))
+	var market := Rect2(-11.0, 14.5, 22.0, 5.5).has_point(Vector2(x, z))
+	var foundry := Vector2(x + 2.6, z + 18.2).length()               # topçu döküm ocağı (c + (-5.6, 0, 2.8))
+	var mess := Vector2(x - 9.0, z - 6.0).length()                    # yemek molası ocağı
+	var tent_ring := Vector2(x, z + 8.0).length() > 24.0
+	match kind:
+		"camp_mud":
+			if road or lane < 1.6:
+				return 0.11
+			if sq or kitchen or foundry < 5.0:
+				return 0.05
+			return 0.0 if tent_ring else 0.012
+		"footprint":
+			if lane < 1.3 or road:
+				return 0.32
+			if sq or market or kitchen:
+				return 0.14
+			return 0.0 if tent_ring else 0.02
+		"straw":
+			if yard:
+				return 0.5
+			if market or (kitchen and x < -14.0):
+				return 0.12
+			return 0.0 if tent_ring else 0.006
+		"ash":
+			# Kazan ocaklarının dibi (c + (-1.8..1.8, 0, -0.8)), yemek ocağı, döküm ocağının önü
+			var pot := minf(minf(Vector2(x + 14.8, z + 8.8).length(), Vector2(x + 13.0, z + 8.8).length()), Vector2(x + 11.2, z + 8.8).length())
+			if pot < 0.95 or (mess > 0.55 and mess < 1.3) or (foundry > 1.6 and foundry < 3.2 and z > -18.0):
+				return 0.6
+			return 0.0
+		"coal":
+			var pot2 := minf(minf(Vector2(x + 14.8, z + 8.8).length(), Vector2(x + 13.0, z + 8.8).length()), Vector2(x + 11.2, z + 8.8).length())
+			if pot2 < 0.8 or (mess > 0.55 and mess < 1.1):
+				return 1.6
+			if foundry > 1.5 and foundry < 4.2:
+				return 1.0
+			return 0.0
+		"chips":
+			# Mutfağın doğu köşesinde odun yarma kütüğü (_build_kitchen): çevresinde yonga
+			if Vector2(x + 8.6, z + 11.3).length() < 1.4:
+				return 0.6
+			return 0.0
+		"pebble":
+			return 0.05 if (sq or lane < 2.0) else 0.0
+		"far_mud":
+			if road or lane < 2.5 or sq:
+				return 0.06
+			return 0.025 if not tent_ring else 0.01
+	return 0.0
+
+
+## Deterministik seyreltme: (x, z)'deki yoğunluk / dmax olasılığıyla tutar.
+static func _wear_pick(x: float, z: float, kind: String, dmax: float) -> bool:
+	var w := _wear_w(x, z, kind)
+	if w <= 0.0:
+		return false
+	var h := fposmod(sin(x * 12.9898 + z * 78.233 + kind.length() * 3.1) * 43758.5453, 1.0)
+	return h < w / dmax
 
 
 func _build_tents() -> void:

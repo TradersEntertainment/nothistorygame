@@ -218,6 +218,7 @@ func _build_ceremony() -> void:
 		e.look_at_from_position(e.position, zaganos.position, Vector3.UP)
 		e.rotate_y(PI)
 		extra.add_child(e)
+	var halk: Array = []
 	for i in 10:
 		var c := Person.new({"coat": Galata.GAL_PEOPLE[i % 6]["coat"], "pants": Color("3a3a3a"), "skirt": i % 4 == 1,
 			"mustache": i % 2 == 0, "hat": ["none", "plume", "none", "none", "plume"][i % 5], "n": 120 + i})
@@ -229,6 +230,9 @@ func _build_ceremony() -> void:
 		c.look_at_from_position(c.position, zaganos.position, Vector3.UP)
 		c.rotate_y(PI)
 		extra.add_child(c)
+		halk.append(c)
+	# Meydan kıpırdar (yayma P2: ahitname okunurken herkes dimdik ve kımıltısızdı): aralıklı jest, baş uzatma, fısıldaşma
+	Crowd.idle_vary(halk)
 
 
 # ================================================================ akış

@@ -1918,6 +1918,13 @@ func show_prop(kind: String, hold := 2.4) -> void:
 			glass.material_override = Props.mat(Color(0.9, 0.95, 1.0, 0.25), 0.0, true, "", false)
 			item.rotation_degrees = Vector3(0, 0, 0)
 			target = Vector3(0.05, -0.1, -0.3)
+		"towel_pole":
+			# Sırığa bağlı havlu (Ara Bölüm "Beyaz Havlu", scripts/chapter8y_towel.gd): Niko'nun elinden gelir, sırık sağ
+			# alttan yukarı ve öne yatık, havlu sağ üstte dalgalanır (bölümün iki elle tuttuğu duruşun aynısı)
+			var tp: Node3D = load("res://scripts/chapter8y_towel.gd").pole_model(0.05)
+			item.add_child(tp)
+			tp.rotation_degrees = Vector3(-38, 4, -11)
+			target = Vector3(0.06, -0.3, -0.52)
 		_:
 			# Çantadaki bir eşya (geri verilen çakmak gibi): kendi modeli, ele sığacak boyda. Cepteki kâğıtlar (izin,
 			# tezkire) okunacak kadar büyük ve yakın tutulur

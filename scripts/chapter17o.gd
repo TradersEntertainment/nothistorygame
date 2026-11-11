@@ -187,6 +187,8 @@ func _build() -> void:
 		s.position = GUN + Vector3([-4.9, -3.1, 3.1, 4.9][i], 0, -0.2)
 		add_child(s)
 		crew.append(s)
+		# Öbür topların başında aletleriyle (yayma P2: elleri boş dikiliyorlardı): tokmak, barut kepçesi, manivela
+		s.give_tool(["rammer", "powder_ladle", "handspike", "rammer"][i])
 	_build_valley_camp(lf)
 	# Demirli donanma: kıçları kıyıya, başları denize; ateş hattının (sol-ön) dışında, sağda sıra sıra
 	var rng := RandomNumberGenerator.new()
@@ -738,6 +740,9 @@ func _brigade_tick(delta: float) -> void:
 	Props.cyl(b, 0.2, 0.02, Vector3(0, 0.15, 0), Color("4a78a8"), Vector3.ZERO, 8)
 	b.position = (CHAIN_PTS[0] as Vector3) + Vector3(0, 0.3, 0.9)
 	Audio.sfx("splash", -20.0, 1.3)
+	var dip := (CHAIN_PTS[0] as Vector3) + Vector3(0, 0, 0.9)
+	Vfx.water_ring(self, dip, WATER_Y, 0.2, 0.9, 1.0, 0.45)      # kova suya daldırılır (yayma P2)
+	Vfx.water_drops(self, Vector3(dip.x, WATER_Y, dip.z), WATER_Y, 4)
 	var tw := create_tween()
 	tw.tween_property(b, "position", (CHAIN_PTS[0] as Vector3) + Vector3(0, 1.05, 0.3), 0.35)
 	for i in range(1, CHAIN_PTS.size()):

@@ -122,12 +122,14 @@ func _build_people() -> void:
 		w.position = _gy(Vector3(EdirneYard.PIT_HX + 1.1, 0, -1.6 + k * 3.2))
 		w.rotation.y = -PI * 0.5
 		w.set_activity("hammer")
+		w.give_tool("mallet")          # yayma P4: tokmak pozunda eli boştu
 		_workers.append(w)
 	mason = Person.new({"coat": Color("8a7a60"), "pants": Color("e8e0d0"), "hat": "turban", "beard": true, "hair": Color("b8b4a8"), "skin": Color("c89070")})
 	mason.set_meta("spk", "SPK_MASON")
 	add_child(mason)
 	mason.position = _gy(EdirneYard.CHUTE_TOP + Vector3(1.6, 0, -1.4))
 	mason.set_activity("hammer")
+	mason.give_tool("hammer")         # yayma P4: çekiç pozunda eli boştu
 	# Ateş başındaki işçiler (oturur)
 	for k in 3:
 		var a := -0.8 + k * 0.8

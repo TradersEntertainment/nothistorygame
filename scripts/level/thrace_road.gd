@@ -51,6 +51,8 @@ var camp_oxen: Array[Ox] = []
 var fires: Array[Node3D] = []
 var tents: Array[Node3D] = []
 var _man_ropes: Array[MeshInstance3D] = []
+var _man_handles: Array[Node3D] = []      # adamların iki elinin tuttuğu ip noktası (her karede ipin üstüne)
+var _yoke_chain: MultiMeshInstance3D      # arabanın önünden boyunduruklara uzanan çeki zinciri (tek çoklu ağ)
 var _t := 0.0
 var convoy_s := CONVOY_WAIT
 var sink := 0.0                       # öndeki arabanın çamura gömülmesi (0..0.5 m)
@@ -103,18 +105,52 @@ func _ready() -> void:
 	_camp()
 	_horizon()
 	_build_convoy()
+	_details()
 	update_convoy(convoy_s)
+	# İp tutan adamların elleri ipte (kendi pozlarından sonra uygulanır)
+	for i in men.size():
+		if i < _man_handles.size():
+			Stage.grip_hold(men[i], _man_handles[i], [Vector3(0.13, 0, 0), Vector3(-0.13, 0, 0)])
 
 
 func _process(delta: float) -> void:
 	_t += delta
-	# Adamların ipleri
+	# Adamların ipleri (yayma P4): arabanın yan tahtasındaki halkadan adamın iki eline sarkarak gelir, ellerin ardından
+	# kalçanın yanından yere iner, ucu yerde sürünür. Eller ipte (Stage.grip_hold, her adamın tutamak düğümü ipin
+	# üstünde). Eskiden göğüsten arabaya gergin düz çubuktu, eller boştaydı.
 	for i in men.size():
 		if i < _man_ropes.size():
-			var m := men[i]
-			var w := wagons[mini(i % 6, wagons.size() - 1)]
-			Bogaz.rope(_man_ropes[i], m.global_position + Vector3(0, 1.15, 0) + (w.global_position - m.global_position).normalized() * 0.3,
-				w.global_position + Vector3(signf(m.global_position.x - w.global_position.x) * 1.0, 1.0, 0))
+			_man_rope(i)
+
+
+## i. adamın ipi ve tutamağı: halka (arabada) → sarkma → iki el → kalçadan yere → yerde uç
+func _man_rope(i: int) -> void:
+	var m := men[i]
+	var w := wagons[mini((i / 2) % 6, wagons.size() - 1)]
+	var side := signf(m.global_position.x - w.global_position.x)
+	if side == 0.0:
+		side = 1.0
+	var ring := w.to_global(Vector3(side * 1.12, 1.12, 0.35))
+	var fwd := Vector3(sin(m.global_rotation.y), 0, cos(m.global_rotation.y))
+	var inb := Vector3(-side, 0, 0)
+	var h := m.global_position + Vector3(0, 0.98, 0) + inb * 0.3 + fwd * 0.22
+	var u := (ring - h).normalized()
+	var p1 := h + u * 0.13
+	var p2 := h - u * 0.13
+	var hip := m.global_position + Vector3(0, 0.62, 0) - inb * 0.2 - fwd * 0.12
+	var g0 := m.global_position - inb * 0.45 - fwd * 0.55
+	g0.y = road_y(g0.x, g0.z) + 0.03
+	var g1 := m.global_position - inb * 0.6 - fwd * 1.25
+	g1.y = road_y(g1.x, g1.z) + 0.03
+	var pts: Array = Stage.sag_points(ring, p1, 0.06, 5)
+	pts.append_array([p2, hip, g0, g1])
+	Stage.rope_to(_man_ropes[i], pts)
+	if i < _man_handles.size():
+		var hd := _man_handles[i]
+		var x := u
+		var y := Vector3.UP - x * x.dot(Vector3.UP)
+		y = y.normalized() if y.length() > 0.01 else Vector3.FORWARD
+		hd.global_transform = Transform3D(Basis(x, y, x.cross(y)), h)
 
 
 func _env() -> void:
@@ -268,15 +304,7 @@ func _stream() -> void:
 	sh.set_shader_parameter("streaks", 0.55)
 	w.material_override = sh
 	add_child(w)
-	var rng := RandomNumberGenerator.new()
-	rng.seed = 3501
-	# Kıyıda çakıl ve sazlar
-	for i in 40:
-		var z := (7.6 + rng.randf() * 1.6) * (1.0 if i % 2 == 0 else -1.0)
-		var x := rng.randf_range(-30.0, 30.0)
-		if absf(x) < 3.0:
-			continue
-		Props.cyl(self, 0.03, 0.9, Vector3(x, ground_y(x, z) + 0.4, z), Color("8a8a50"), Vector3(rng.randf_range(-12, 12), 0, rng.randf_range(-12, 12)), 4)
+	# Kıyıdaki sazlar ve kıyı bandı: _details (tek çoklu ağlar)
 
 
 func _bridge() -> void:
@@ -428,15 +456,11 @@ func _slope() -> void:
 	for pp: Vector3 in [POST1, POST2]:
 		var y := ground_y(pp.x, pp.z)
 		Props.cyl(self, 0.24, 1.6, Vector3(pp.x, y + 0.7, pp.z), Color("4a3424"), Vector3.ZERO, 10)
-		for k in 3:
-			Props.ring(self, 0.24, 0.3, Vector3(pp.x, y + 0.6 + k * 0.12, pp.z), Color("c8b080"), Vector3(0, 0, 0))
-	# Yol kenarında taşlar
-	var rng := RandomNumberGenerator.new()
-	rng.seed = 3502
-	for i in 30:
-		var z := rng.randf_range(SLOPE_Z0, SLOPE_Z1)
-		var x := (5.4 + rng.randf() * 2.0) * (1.0 if i % 2 == 0 else -1.0)
-		Props.ball(self, rng.randf_range(0.2, 0.5), Vector3(x, ground_y(x, z), z), Color("7a7468"), Vector3(1.2, 0.7, 1.0), 6)
+		# Kazığa iki buçuk tur sarılı ip (volta): fren ipi buradan arabaya ve oyuncunun eline gider (eskiden üç düz halka)
+		Stage.rope_wrap(self, Vector3(pp.x, y, pp.z), 0.255, 0.56, 0.84, 2.5, 0.034, Color("c8b080"))
+		# Kazığın dibinde ipin sürtünmesiyle kazınmış toprak
+		Props.cyl(self, 0.42, 0.06, Vector3(pp.x, y + 0.01, pp.z), Color("4a3a28"), Vector3.ZERO, 9)
+	# Yol kenarında taşlar: _details
 
 
 func _camp() -> void:
@@ -511,6 +535,14 @@ func _build_convoy() -> void:
 		var yoke := Node3D.new()
 		add_child(yoke)
 		Props.box(yoke, Vector3(2.0, 0.12, 0.14), Vector3(0, 1.62, 0), Color("5a3a22"))
+		# Boyunduruk dikmeleri: her öküzün boynunun iki yanından inen çubuklar, altta kayış; ortada zincir halkası
+		# (yayma P4: boyunduruk boynun üstünde havada duran bir kalastı)
+		for sx: float in [-0.75, 0.75]:
+			for dx: float in [-0.27, 0.27]:
+				Props.cyl(yoke, 0.025, 0.5, Vector3(sx + dx, 1.36, 0.0), Color("6a4a2c"), Vector3.ZERO, 4)
+			Props.box(yoke, Vector3(0.58, 0.05, 0.08), Vector3(sx, 1.12, 0.0), Color("3a2a1e"))
+		Props.ring(yoke, 0.05, 0.08, Vector3(0, 1.52, 0.0), Color("3a3a40"), Vector3(90, 0, 0))
+		Props.bake_static(yoke, yoke.get_children())
 		convoy.append({"n": yoke, "d": 3.4 + k * 2.9 + 0.95, "x": 0.0, "kind": "yoke"})
 	# Arabalar: bağlı altı araba
 	for k in 6:
@@ -532,6 +564,11 @@ func _build_convoy() -> void:
 					sp.rotation.x = s * PI / 3.0
 				if k == 0:
 					wheels.append(wh)
+		# Önde çeki oku ve halkası (zincir buraya bağlı)
+		Props.cyl(w, 0.06, 0.7, Vector3(0, 0.62, 1.7), C_WOOD.darkened(0.3), Vector3(90, 0, 0), 6)
+		Props.ring(w, 0.05, 0.08, Vector3(0, 0.62, 2.07), Color("3a3a40"), Vector3(90, 0, 0))
+		if k > 0:
+			Props.bake_static(w, w.get_children())      # dönmeyen arabalar tek ağ (çizim sayısı)
 		wagons.append(w)
 		convoy.append({"n": w, "d": -1.6 - k * 3.15, "x": 0.0, "kind": "wagon"})
 	# Şahi: kızakta, arabaların üstünde (zincirle bağlı)
@@ -555,11 +592,68 @@ func _build_convoy() -> void:
 			add_child(m)
 			men.append(m)
 			convoy.append({"n": m, "d": -1.0 - k * 3.15, "x": sx * 2.55, "kind": "man"})
-			_man_ropes.append(Bogaz.make_rope(self, Color("c8b080"), 0.02))
+			_man_ropes.append(Stage.rope(self, Vector3.ZERO, Vector3(0, 0.1, 0), 0.0, 0.022, Color("c8b080")))
+			var hd := Node3D.new()
+			add_child(hd)
+			_man_handles.append(hd)
+	_yoke_chain = Stage.chain(self, Vector3.ZERO, Vector3(0, 0, 1), 0.0, 0.085, Color("3a3a40"))
 	drover = Person.new({"coat": Color("5a4a36"), "pants": Color("4a3a2a"), "hat": "bork", "beard": true, "hair": Color("c8c4b8"), "skin": Color("c08868")})
 	drover.set_meta("spk", "SPK_DROVER")
 	add_child(drover)
 	convoy.append({"n": drover, "d": 20.6, "x": -1.9, "kind": "man"})
+
+
+## Çeki zinciri: öndeki arabanın ok ucundaki halkadan birinci boyunduruğa, oradan her boyunduruğa (iki öküzün
+## arasından, sarkarak). Tek çoklu ağ.
+func _lay_chain() -> void:
+	if _yoke_chain == null or wagons.is_empty():
+		return
+	var pts: Array = [wagons[0].to_global(Vector3(0, 0.62, 2.07))]
+	for it: Dictionary in convoy:
+		if it["kind"] == "yoke":
+			var y: Node3D = it["n"]
+			var q := y.global_position + Vector3(0, 1.5, 0)
+			var a: Vector3 = pts[-1]
+			var mid := a.lerp(q, 0.5)
+			mid.y = minf(a.y, q.y) - 0.3
+			pts.append_array([a.lerp(mid, 0.5) + Vector3(0, -0.08, 0), mid, mid.lerp(q, 0.5) + Vector3(0, -0.08, 0), q])
+	Stage.chain_to(_yoke_chain, pts)
+
+
+## Zemin ayrıntısı (yayma P4): yolda çamur, tekerlek ve toynak izi, kenarlarda ayak izi; tarlada ot ve taş; dere
+## kıyısında ıslak bant, köpük, saz; yokuş kenarında taşlar; konakta saman ve çiğnenmiş çamur. Her tür tek çoklu ağ.
+## Eskiden yol ve tarlalar düz boyalı, kıyıda 40 ayrı saz silindiri, yokuşta 30 ayrı taş vardı.
+func _details() -> void:
+	var hf := func(x: float, z: float) -> float: return ground_y(x, z)
+	var off_bridge := func(x: float, z: float) -> bool: return absf(z) > 9.9
+	Nature.ground_detail(self, Rect2(-3.0, -78.0, 6.0, 222.0), "mud", 0.2, 3511, hf, off_bridge)
+	Nature.ground_detail(self, Rect2(-9.0, MUD_Z - 9.0, 18.0, 18.0), "camp_mud", 0.9, 3512, hf,
+		func(x: float, z: float) -> bool: return Vector2(x, z - MUD_Z).length() < 8.5)
+	Nature.ground_detail(self, Rect2(-3.4, -78.0, 6.8, 222.0), "footprint", 0.15, 3513, hf,
+		func(x: float, z: float) -> bool: return absf(z) > 9.9 and absf(x) > 1.7)
+	for rx: float in [-0.6, 0.6]:
+		Nature.trail(self, [Vector3(rx, 0, -78.0), Vector3(rx, 0, -10.2)], "wheel_ruts", hf, 1.0, 3514 + int(rx * 10.0), 0.1)
+		Nature.trail(self, [Vector3(rx, 0, 10.2), Vector3(rx, 0, 146.0)], "wheel_ruts", hf, 1.0, 3516 + int(rx * 10.0), 0.1)
+	Nature.trail(self, [Vector3(0, 0, -78.0), Vector3(0, 0, -10.2)], "hoofprint", hf, 0.45, 3518, 0.9)
+	Nature.trail(self, [Vector3(0, 0, 10.2), Vector3(0, 0, 146.0)], "hoofprint", hf, 0.45, 3519, 0.9)
+	var field := func(x: float, z: float) -> bool: return absf(x) > 3.6 and absf(z) > 9.9 and not (absf(z - STAKES_Z) < 3.0 and absf(x) < 16.0)
+	Nature.ground_detail(self, Rect2(-40.0, -80.0, 80.0, 260.0), "grass", 0.04, 3520, hf, field)
+	Nature.ground_detail(self, Rect2(-40.0, -80.0, 80.0, 260.0), "stone", 0.003, 3521, hf, field)
+	# Yokuş kenarı taşları (eskiden 30 ayrı top)
+	Nature.ground_detail(self, Rect2(-7.6, SLOPE_Z0, 15.2, SLOPE_Z1 - SLOPE_Z0), "stone", 0.14, 3502, hf,
+		func(x: float, _z: float) -> bool: return absf(x) > 5.2)
+	# Kıyı: sazlar (eskiden 40 ayrı silindir), ıslak bant, köpük, yosun
+	Nature.ground_detail(self, Rect2(-34.0, 7.3, 68.0, 2.2), "tall_grass", 0.5, 3501, hf,
+		func(x: float, _z: float) -> bool: return absf(x) > 3.0)
+	Nature.ground_detail(self, Rect2(-34.0, -9.5, 68.0, 2.2), "tall_grass", 0.5, 3522, hf,
+		func(x: float, _z: float) -> bool: return absf(x) > 3.0)
+	var bank_keep := func(x: float, _z: float) -> bool: return absf(x) > 2.3
+	Nature.shore_band(self, Vector3(-36.0, 0, -9.8), Vector3(36.0, 0, -9.8), Vector3(0, 0, 1), WATER_Y, hf, 3523, bank_keep)
+	Nature.shore_band(self, Vector3(-36.0, 0, 9.8), Vector3(36.0, 0, 9.8), Vector3(0, 0, -1), WATER_Y, hf, 3524, bank_keep)
+	# Gece konağı: kazık sırasında saman ve toynak izi, konakta çiğnenmiş çamur
+	Nature.ground_detail(self, Rect2(-16.0, STAKES_Z - 1.0, 18.0, 5.0), "straw", 1.2, 3525, hf)
+	Nature.ground_detail(self, Rect2(-16.0, STAKES_Z - 2.0, 18.0, 6.0), "hoofprint", 0.6, 3526, hf)
+	Nature.ground_detail(self, Rect2(-18.0, CAMP.z - 10.0, 36.0, 26.0), "camp_mud", 0.12, 3527, hf)
 
 
 ## Konvoyu yola oturt: s = öndeki arabanın önünün z'si. Her parça kendi z'sinde zemine oturur, arabalar eğime göre eğilir.
@@ -592,7 +686,12 @@ func update_convoy(s: float, tilt := 0.0) -> void:
 				n.position = Vector3(x, y, z)
 			_:
 				n.position = Vector3(x, y, z)
-				n.rotation = Vector3(0, 0, 0)
+				# İp tutan adam yürüdüğü yöne bakar, gövdesi arabaya (ipe) hafif dönük
+				n.rotation = Vector3(0, -signf(x) * 0.45 if absf(x) > 1.5 and n != drover else 0.0, 0)
+	_lay_chain()
+	for i in men.size():
+		if i < _man_ropes.size():
+			_man_rope(i)
 
 
 func spin_wheels(delta_m: float) -> void:

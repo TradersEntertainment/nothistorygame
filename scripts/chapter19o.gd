@@ -179,6 +179,8 @@ func _kayik(ours: bool) -> Node3D:
 		reis.position = Vector3(0, DECK_Y, 3.0)
 		reis.rotation.y = PI
 		g.add_child(reis)
+	# Kayık izi (yayma P2): kıçta köpük, pruvada V, durgunken seyrek halka. Küçük kayıklar yakından üretir
+	Vfx.wake(g, 0.0, {"stern": Vector3(0, 0, 3.8), "bow": Vector3(0, 0, -4.4), "width": 1.8, "far": 45.0 if ours else 30.0})
 	return g
 
 
@@ -217,6 +219,7 @@ func _build_ship() -> void:
 	captain.position = Vector3(1.0, BRIG_DECK, 0.6)
 	captain.rotation.y = -PI * 0.5
 	ship.add_child(captain)
+	Vfx.wake(ship, 0.0, {"stern": Vector3(0, 0, 5.4), "bow": Vector3(0, 0, -6.8), "width": 3.0})
 
 
 func _world_env() -> Environment:

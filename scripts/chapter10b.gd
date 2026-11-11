@@ -71,6 +71,7 @@ func _ready() -> void:
 	urban = day.urban
 	urban.position = URBAN_AT
 	urban.look_target = player
+	urban.set_activity("")          # bu bölümde örste dövmez: çekiç elinden kalkar (CampDay ona çekiç veriyor; yayma P1)
 	day.goat.chase = null
 	day.goat.caught = true
 	day.goat.position = CANNON + Vector3(-2.5, 0, -3.5)
@@ -227,6 +228,15 @@ func _cast() -> void:
 		mold.visible = true
 		player.show_prop("ladle", 30.0)          # döküm kepçesi elde (yalnız pota eğiliyordu, el boştu)
 		player.hand_gesture("pour")
+		# Urban kalıbın öbür yanına geçer, potayı iki elinden kavrayıp eğer (yayma P1: pota kendi kendine eğiliyordu,
+		# Urban'ın eli kalıba ve potaya değmiyordu)
+		# Potanın yolunun dışında, kalıbın dış yanında durur (pota ocaktan kalıba gelirken gövdesinin içinden geçmesin)
+		var mp := mold.global_position
+		# Batıdaki iki kalıpta batı yanı (Tolga'nın güneybatıdan baktığı yerden potanın yanında görünür), doğudakinde doğu
+		var side := 1.0 if mp.x > FOUNDRY.x + 0.5 else -1.0
+		await Stage.approach(urban, Vector3(mp.x + side * 0.62, urban.global_position.y, mp.z - 0.25), 0.0, 1.8)
+		Stage.face(urban, Vector3(mp.x, urban.global_position.y, mp.z))
+		Stage.grip_hold(urban, _crucible, [Vector3(side * 0.3, 0.06, -0.16), Vector3(side * 0.3, 0.06, 0.16)], -1.0, 0.12)
 		# Pota kalıbın tam üstüne gelir (eskiden ocak önünde kalıyordu: akış kalıba değmeden havada asılıydı)
 		var home := FOUNDRY + Vector3(0, 1.5, -0.4)
 		var above := Vector3(mold.position.x, home.y, mold.position.z)
@@ -265,12 +275,16 @@ func _cast() -> void:
 		meter.flash = 1.0
 		_stream.visible = false
 		player.drop_prop()                       # kepçe iner
+		Stage.grip_release(urban)               # döküm bitti: potayı bırakır, pota askısına döner
 		var back := create_tween().set_parallel(true)
 		back.tween_property(_crucible, "rotation:z", 0.0, _d(0.3))
 		back.tween_property(_crucible, "position", home, _d(0.3))
 		var z := KickMeter.zone(v)
 		await _wait(0.2)
 		meter.visible = false
+		# Urban kalıbın başından ocağın yanındaki yerine döner (potanın ardında kalıp yüzü örtülmesin), Tolga'ya döner
+		await Stage.approach(urban, FOUNDRY + Vector3(-1.8, 0, -0.2), 0.0, 2.0)
+		Stage.face(urban, player.global_position)
 		match z:
 			"sweet":
 				_quality += 1
