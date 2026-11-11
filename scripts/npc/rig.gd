@@ -27,6 +27,7 @@ var stare_t := 0.0
 var speed := 0.0
 ## Sürekli iş hareketi: "" (yok), "sit" (tabureye), "sit_ground" (yere bağdaş), "stir" (kazan karıştırır),
 ## "hammer" (çekiç), "chop" (doğrar), "write" (yere oturmuş yazar), "paint" (fırça), "carry" (önünde yük; yürürken de),
+## "dig" (bel/kürekle kazar), "sweep" (süpürür), "saw" (testere) — aleti Person/Soldier.give_tool verir (yayma P0),
 ## "whittle" (taburede oturur, sol elde sopa, sağ elde bıçak: sopayı kendinden dışarı doğru yontar; Person araçları verir).
 ## Konuşurken el işleri durur (oturuşlar sürer), konuşma bitince devam eder.
 var activity := ""
@@ -801,6 +802,41 @@ func _activity(delta: float, talking: bool, k: float) -> bool:
 			arm_l.rotation = arm_l.rotation.lerp(Vector3(-0.5, 0, -0.35), k)
 			if head:
 				head.rotation = head.rotation.lerp(Vector3(-0.05, sin(t * 0.5) * 0.1, sin(t * 0.8) * 0.1), k)
+		"dig":
+			# Bel/kürekle kazar (Items "shovel"; sol el sapta: Items._tool_loop): bastırır, kaldırır, yana savurur.
+			# Faz kişiden kişiye _t ile değişir (yan yana kazanlar aynı anda inmez).
+			var ph := fmod(t * 0.45, 1.0)
+			var push := smoothstep(0.0, 0.3, ph) * (1.0 - smoothstep(0.42, 0.62, ph))
+			var toss := smoothstep(0.66, 0.8, ph) * (1.0 - smoothstep(0.86, 1.0, ph))
+			body.rotation.x = lerpf(body.rotation.x, 0.22 + push * 0.18 - toss * 0.12, k)
+			arm_r.rotation = arm_r.rotation.lerp(Vector3(-0.55 - toss * 0.55 + push * 0.2, 0, 0.16 + toss * 0.12), k)
+			_elbow(elbow_r, -0.95 + push * 0.45, k)
+			arm_l.rotation = arm_l.rotation.lerp(Vector3(-0.9, 0, -0.1), k)
+			_elbow(elbow_l, -0.4, k)
+			_knee(knee_l, 0.12 + push * 0.3, k)
+			_knee(knee_r, 0.05 + push * 0.12, k)
+			if head:
+				head.rotation = head.rotation.lerp(Vector3(0.4 - toss * 0.2, toss * 0.25, 0), k)
+		"sweep":
+			# Süpürür (Items "broom"; sol el sapta): kollar önde aşağıda, süpürge yerde iki yana gider gelir
+			var sw := sin(t * 2.6)
+			body.rotation.x = lerpf(body.rotation.x, 0.2, k)
+			arm_r.rotation = arm_r.rotation.lerp(Vector3(-0.55 + sw * 0.08, 0, 0.12 + sw * 0.28), k * 2.0)
+			_elbow(elbow_r, -0.75, k)
+			arm_l.rotation = arm_l.rotation.lerp(Vector3(-0.8, 0, -0.1), k)
+			_elbow(elbow_l, -0.35, k)
+			if head:
+				head.rotation = head.rotation.lerp(Vector3(0.35, sw * 0.12, 0), k)
+		"saw":
+			# Testere (Items "saw"): sağ kol ileri-geri iter çeker, sol el kütüğün üstüne dayalı, gövde işe eğik
+			var sp := sin(t * 4.2)
+			body.rotation.x = lerpf(body.rotation.x, 0.3, k)
+			arm_r.rotation = Vector3(-0.85 - sp * 0.25, 0, 0.1)
+			_elbow(elbow_r, -0.75 + sp * 0.55)
+			arm_l.rotation = arm_l.rotation.lerp(Vector3(-0.95, 0, -0.25), k)
+			_elbow(elbow_l, -0.55, k)
+			if head:
+				head.rotation = head.rotation.lerp(Vector3(0.4, 0, 0), k)
 		"carry":
 			_carry_arms(k)
 			# Yük taşıyan da nefes alır, ağırlığını yükün altında hafifçe değiştirir (yoksa bütünüyle donuk duruyordu)

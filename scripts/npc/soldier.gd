@@ -187,6 +187,8 @@ func has_hat_on() -> bool:
 
 func _process(delta: float) -> void:
 	_t += delta
+	if not _tools.is_empty() and rig and rig.activity != _tool_act:
+		drop_tools()          # iş değişti: alet kalkar
 	if GameState.autotest:
 		Unclip.walk_audit(self)
 	Unclip.rest_settle(self, _rest, delta)
@@ -393,3 +395,37 @@ func equip(kind: String, shield_color := Color("8a2b22")) -> void:
 			Props.cyl(ax, 0.025, 0.9, Vector3(0, 0.3, 0), Color("6a4a2c"), Vector3.ZERO, 5)
 			Props.box(ax, Vector3(0.03, 0.2, 0.22), Vector3(0, 0.68, 0.1), Color("9aa0a8"))
 
+
+var _tools: Array[Node3D] = []
+var _tool_act := ""
+
+
+## Ele iş aleti verir (Person.give_tool ile aynı katalog: Items.TOOLS). Rig işi aletin varsayılanına (ya da
+## opts "activity") geçer; iş değişince (rig.activity) alet kalkar. Örnek: asker.give_tool("shovel") — kazar;
+## asker.give_tool("rammer", {"aim": namlu_agzi, "aim_world": true}) — iki elle tokmak.
+func give_tool(kind: String, opts := {}) -> Node3D:
+	if _elbow_r == null or rig == null:
+		ready.connect(func(): give_tool(kind, opts), CONNECT_ONE_SHOT)
+		return null
+	var act: String = opts.get("activity", str((Items.TOOLS.get(kind, [""]) as Array)[0]))
+	if act != "" or opts.has("activity"):
+		rig.activity = act
+	var t := Items.attach_tool(self, kind, opts)
+	if t:
+		_tools.append(t)
+		_tool_act = rig.activity
+		if not has_meta("armed"):
+			set_meta("armed", true)
+			set_meta("tool_armed", true)
+	return t
+
+
+## Eldeki iş aletlerini bırakır.
+func drop_tools() -> void:
+	for t in _tools:
+		if is_instance_valid(t):
+			t.queue_free()
+	_tools.clear()
+	if has_meta("tool_armed"):
+		remove_meta("tool_armed")
+		remove_meta("armed")

@@ -472,8 +472,8 @@ func sand_k(x: float, z: float, y: float) -> float:
 	var bx := absf(x - end.x)
 	var n1 := _noise.get_noise_2d(x * 4.0 + 13.0, z * 4.0) * 1.7
 	var n2 := _noise.get_noise_2d(x * 3.0 - 40.0, z * 3.0 + 9.0) * 1.7
-	var kz := clampf((5.0 + n1 * 3.4 - dz) / 1.6, 0.0, 1.0)
-	var kx := clampf((37.0 + n2 * 4.0 - bx) / 2.5, 0.0, 1.0)
+	var kz := clampf((5.0 + n1 * 3.4 - dz) / 3.2, 0.0, 1.0)
+	var kx := clampf((37.0 + n2 * 4.0 - bx) / 4.5, 0.0, 1.0)
 	var ky := 1.0 - smoothstep(0.7, 2.4, y - water_y)      # kum plato bitince yamaca biraz tırmanır (çimle karışık)
 	return minf(minf(kz, kx), ky)
 

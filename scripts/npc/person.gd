@@ -613,6 +613,38 @@ func _drop_tools() -> void:
 			t.queue_free()
 	_tools.clear()
 	_tip = null
+	if has_meta("tool_armed"):
+		remove_meta("tool_armed")
+		remove_meta("armed")
+
+
+## Ele iş aleti verir (Items.tool_model: "hammer", "mallet", "axe", "cleaver", "knife", "pickaxe", "shovel", "broom",
+## "ladle", "paddle", "brush", "saw", "bucket", "rammer", "chisel"). Kişi boştaysa aletin işine geçer (çekiç → "hammer",
+## kazma → "chop", kürek → "dig", süpürge → "sweep", kepçe → "stir", fırça → "paint", testere → "saw"); opts "activity"
+## başka iş seçer. İş değişince (set_activity) alet kalkar. opts: "hand" ("l"), "aim" (kişinin yerelinde iş noktası;
+## "aim_world": true ise dünya noktası), "two_hands", "scale". set_activity'DEN SONRA çağırın (önce çağrılırsa iş
+## değişiminde düşer). Örnek: usta.give_tool("hammer"); kadri.set_activity("chop"); kadri.give_tool("cleaver")
+func give_tool(kind: String, opts := {}) -> Node3D:
+	if _elbow_r == null:
+		ready.connect(func(): give_tool(kind, opts), CONNECT_ONE_SHOT)
+		return null
+	var act: String = opts.get("activity", "")
+	if act == "" and activity == "":
+		act = str((Items.TOOLS.get(kind, [""]) as Array)[0])
+	if act != "" and act != activity:
+		set_activity(act)
+	var t := Items.attach_tool(self, kind, opts)
+	if t:
+		_tools.append(t)
+		if not has_meta("armed"):
+			set_meta("armed", true)          # boşta kıpırdanma / yürüyüş kolu aleti gövdeye sokmasın
+			set_meta("tool_armed", true)
+	return t
+
+
+## Eldeki iş aletlerini bırakır (iş sürer).
+func drop_tools() -> void:
+	_drop_tools()
 
 
 ## Yontarken: her itişte bir talaş kıvrımı bıçağın ucundan yere düşer (yerde birikir), sopanın ucu sivrilir.
