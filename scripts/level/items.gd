@@ -276,14 +276,16 @@ const TOOLS := {
 	"hammer": ["hammer", "fix"], "mallet": ["hammer", "fix"], "axe": ["chop", "fix"], "cleaver": ["chop", "fix"],
 	"knife": ["chop", "fix"], "pickaxe": ["chop", "fix"], "shovel": ["dig", "two"], "broom": ["sweep", "two"],
 	"ladle": ["stir", "aim"], "paddle": ["stir", "aim"], "brush": ["paint", "fwd"], "saw": ["saw", "fwd"],
-	"bucket": ["", "hang"], "rammer": ["", "two"], "chisel": ["hammer", "fix"],
+	"bucket": ["", "hang"], "rammer": ["", "two"], "chisel": ["hammer", "fix"], "powder_ladle": ["", "two"],
+	"handspike": ["", "two"],
 }
 ## Önkolun uzantısında tutulan "fix" aletleri (öbürleri önkola dik)
 const TOOL_ALONG := ["axe", "cleaver", "knife", "pickaxe"]
 ## "aim" aletlerinin varsayılan iş noktası (kişinin yerelinde, ölçeksiz): kazanın içi. "two" aletlerinde iş noktası
 ## (kürek: palanın yere girdiği yer; tokmak: namlu ağzı).
 const TOOL_AIM := {"ladle": Vector3(0.05, 0.78, 0.8), "paddle": Vector3(0.05, 0.7, 0.8), "shovel": Vector3(0.08, 0.0, 0.95),
-	"broom": Vector3(0.1, 0.02, 0.85), "rammer": Vector3(0.0, 1.1, 2.0)}
+	"broom": Vector3(0.1, 0.02, 0.85), "rammer": Vector3(0.0, 1.1, 2.0), "powder_ladle": Vector3(0.0, 1.1, 2.0),
+	"handspike": Vector3(0.0, 0.3, 1.2)}
 
 
 ## Alet modeli (düşük poligon, dış çizgili). Kök: avucun ortası (iki elli aletlerde üst elin yeri); +Z sap yönü, -Y
@@ -359,10 +361,23 @@ static func tool_model(kind: String) -> Node3D:
 			Props.cyl(n, 0.12, 0.025, Vector3(0, -0.28, 0), iron, Vector3.ZERO, 9)
 			ln = 0.3
 		"rammer":
-			Props.cyl(n, 0.022, 2.0, Vector3(0, 0, 0.8), wood, Vector3(90, 0, 0), 6)
+			Props.cyl(n, 0.022, 1.9, Vector3(0, 0, 0.9), wood, Vector3(90, 0, 0), 6)
 			Props.cyl(n, 0.075, 0.18, Vector3(0, 0, 1.85), Color("8a6440"), Vector3(90, 0, 0), 9)
 			n.set_meta("grip2", Vector3(0, 0, 0.45))
 			ln = 1.94
+		"powder_ladle":
+			# Barut kepçesi: uzun sap, ucunda yarım silindir bakır kepçe (namluya barut sürer)
+			Props.cyl(n, 0.02, 1.8, Vector3(0, 0, 0.85), wood, Vector3(90, 0, 0), 6)
+			Props.cyl(n, 0.07, 0.34, Vector3(0, -0.02, 1.82), Color("b87333"), Vector3(90, 0, 0), 8)
+			Props.box(n, Vector3(0.15, 0.08, 0.34), Vector3(0, 0.05, 1.82), Color("6a3a20"))
+			n.set_meta("grip2", Vector3(0, 0, 0.45))
+			ln = 1.99
+		"handspike":
+			# Manivela (topun kuyruğunu çevirir): kalın, ucu demir kaplı kısa sırık
+			Props.cyl(n, 0.03, 1.2, Vector3(0, 0, 0.56), wood, Vector3(90, 0, 0), 6, 0.022)
+			Props.cyl(n, 0.034, 0.16, Vector3(0, 0, 1.1), iron, Vector3(90, 0, 0), 6)
+			n.set_meta("grip2", Vector3(0, 0, 0.35))
+			ln = 1.18
 		_:
 			Props.cyl(n, 0.018, 0.4, Vector3(0, 0, 0.14), wood, Vector3(90, 0, 0), 6)
 	n.set_meta("len", ln)
@@ -390,6 +405,8 @@ static func attach_tool(who: Node3D, kind: String, opts := {}) -> Node3D:
 	t.set_meta("tool_left", left)
 	t.set_meta("tool_ph0", float(opts.get("phase", randf())))
 	t.set_meta("tool_ram", bool(opts.get("ram", false)))
+	if opts.get("frozen", false):
+		t.set_meta("tool_frozen", true)          # donuk (Crowd pişirme): faz zamanla ilerlemez
 	if opts.has("aim") or TOOL_AIM.has(kind):
 		t.set_meta("tool_aim", opts.get("aim", TOOL_AIM.get(kind, Vector3(0, 0.5, 1.0))))
 		if opts.get("aim_world", false):
@@ -441,11 +458,11 @@ static func _tool_line(kind: String, ph: float, aim: Vector3, ram: bool) -> Arra
 			return [Vector3(0.0 + sw * 0.05, 1.0, 0.26), aim + Vector3(sw * 0.38, 0, cos(ph * TAU) * 0.06)]
 		"rammer":
 			var r := (0.5 - 0.5 * cos(ph * TAU)) if ram else 0.0
-			var top := Vector3(0.02, 1.12, 0.3)
+			var top := Vector3(0.06, 1.1, 0.42)
 			var d := (aim - top).normalized()
 			return [top + d * r * 0.45, aim + d * r * 0.45]
 		_:
-			return [Vector3(0.1, 1.0, 0.3), aim]
+			return [Vector3(0.06, 1.05, 0.42), aim]
 
 
 static func _tool_pose(who: Node3D, t: Node3D) -> void:
@@ -458,7 +475,8 @@ static func _tool_pose(who: Node3D, t: Node3D) -> void:
 	if mode == "two":
 		var kind: String = t.get_meta("tool_kind", "")
 		var tempo := {"shovel": 0.45, "broom": 0.43, "rammer": 0.3}.get(kind, 0.4) as float
-		var ph := fmod(Time.get_ticks_msec() * 0.001 * tempo + float(t.get_meta("tool_ph0", 0.0)), 1.0)
+		var now := 0.0 if t.has_meta("tool_frozen") else Time.get_ticks_msec() * 0.001
+		var ph := fmod(now * tempo + float(t.get_meta("tool_ph0", 0.0)), 1.0)
 		var aim: Vector3 = t.get_meta("tool_aim", Vector3(0, 0.3, 1.0))
 		if t.has_meta("tool_aim_world"):
 			aim = who.to_local(aim)

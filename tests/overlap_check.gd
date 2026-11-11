@@ -66,7 +66,7 @@ const ACT_POSES := ["run_a", "run_b", "run_m", "run_ta", "run_tb", "run_tm", "le
 	"thrust_a", "thrust_b", "throw_up", "throw_down", "dead", "crouch", "stretch_up", "stretch_pull", "stretch_low", "halay",
 	"halay_lead", "clap", "row", "fly", "hover", "swim", "ride", "sit", "sit_ground", "doze", "hold_paper", "sit_astride",
 	"hands_behind", "arms_folded", "hand_in_coat", "push", "write", "write_desk", "stir", "read_ground", "whittle", "chop",
-	"hammer", "paint", "carry"]
+	"hammer", "paint", "carry", "dig", "sweep", "saw"]
 const EMOTES := ["surprise", "laugh", "shrug", "wave", "cross_self", "wink", "nod", "facepalm", "cheer", "bow", "lean", "sip", "eat",
 	"sniff", "stir_cup", "offer", "offer2", "offer_cup", "read", "phone", "write", "stamp", "sigh", "tearful", "hat", "point",
 	"arms_cross", "swing", "whisper", "think"]
@@ -1236,7 +1236,9 @@ func _apply_item(a: Act, item: String) -> void:
 					Blades.shield(sm, Color("7a2a24"))
 					a.rig.arm_shield = sm
 			_:
-				if item.begins_with("yük:"):
+				if item.begins_with("alet:"):
+					p.give_tool(item.substr(5))       # yayma P0: iş aleti (--items=alet:hammer --poses=hammer)
+				elif item.begins_with("yük:"):
 					var kind: String = {"sepet": "basket", "çuval": "sack", "sini": "tray", "toprak": "earth", "fıçı": "barrel", "kalas": "plank",
 						"sandık": "crate"}[item.substr(4)]
 					p.carry(kind)
@@ -1258,6 +1260,9 @@ func _apply_item(a: Act, item: String) -> void:
 				var cl := CityLife.new()
 				cl._lantern(s._elbow_r)
 				cl.free()
+			_:
+				if item.begins_with("alet:"):
+					s.give_tool(item.substr(5))
 	a.keep_beam = a.rig.beam_arm
 	a.keep_shield = a.rig.arm_shield
 	a.keep_shield_out = a.rig.arm_shield_out
@@ -1392,6 +1397,9 @@ func _tick(a: Act, d: Dictionary, f: int) -> void:
 				if tw.is_valid():
 					tw.custom_step(DT)
 	a.node._process(DT)
+	if a.item.begins_with("alet:"):
+		for tl in a.node.find_children("Tool_*", "Node3D", true, false):
+			Items._tool_pose(a.node, tl)      # alet yönü ve iki elli aletlerde öbür el (oyunda Tween yapar)
 	if str(d["t"]) == "clip":
 		var an2: LimbAnim = d["_anim"]
 		an2.set("_k", 1.0)
@@ -1846,7 +1854,12 @@ func _run() -> void:
 			var a := await _build_act(t)
 			if a == null:
 				continue
-			var items: Array = SOLDIER_ITEMS if a.kind == "soldier" else PERSON_ITEMS
+			var items: Array = (SOLDIER_ITEMS if a.kind == "soldier" else PERSON_ITEMS).duplicate()
+			# İş aletleri (yayma P0) yalnız --items ile istenince: --items=alet:hammer,alet:shovel
+			if _opt.has("items"):
+				for it2: String in str(_opt["items"]).split(","):
+					if it2.begins_with("alet:") and not it2 in items:
+						items.append(it2)
 			for it: String in items:
 				if not _want("items", it):
 					continue

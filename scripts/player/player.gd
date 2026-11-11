@@ -871,7 +871,9 @@ func _animate_hands(delta: float, horiz: float) -> void:
 		var k := clampf(_flail_t * 3.0, 0.0, 1.0)
 		pos += Vector3(-0.04, 0.15 + sin(_hand_t * 19.0) * 0.03, 0.04) * k
 		rot += Vector3(35.0 + sin(_hand_t * 17.0) * 18.0, 0.0, sin(_hand_t * 13.0) * 20.0) * k
-	if hand and hand.visible and _hand_shown and not (_hand_tween and _hand_tween.is_running()):
+	if _both_r != Vector3.INF:
+		_hold_both_tick(delta)          # iki el nesnede (hold_both): sağ el de noktasında
+	elif hand and hand.visible and _hand_shown and not (_hand_tween and _hand_tween.is_running()):
 		var w := clampf(delta * 12.0, 0.0, 1.0)
 		hand.position = hand.position.lerp(pos, w)
 		hand.rotation_degrees = hand.rotation_degrees.lerp(rot, w)
@@ -2751,3 +2753,91 @@ func _on_released() -> void:
 ## elde kalıyordu.
 func stow_hands(on: bool) -> void:
 	_stow(on)
+
+
+# ---------------------------------------------------------------- iki el bir nesnede (yayma P0)
+var _both_l := Vector3.INF
+var _both_r := Vector3.INF
+var _both_target: WeakRef
+var _both_grip := ""
+
+
+## İki el bir nesnede (merdiveni tutmak/itmek, fıçıyı itmek, kirişi taşımak, halatı çekmek): sol el `left`, sağ el
+## `right` noktasını tutar, parmaklar kapanır; eldeki eşya ve kumanda cebe girer (free_hold'un stow sayacı: stow_hands
+## ile iç içe çalışır). target verilirse noktalar onun yerelindedir ve her karede yeniden okunur (merdiven devrilir,
+## fıçı yuvarlanır: eller onunla gider); verilmezse noktalar kameranın yerelindedir. Bırakmak: release_both().
+## Noktalar ekranın alt yarısında kalacak biçimde sıkıştırılır (el kameraya girmez).
+## Örnek: player.hold_both(Vector3(-0.25, 1.2, 0), Vector3(0.25, 1.2, 0), merdiven)   # merdivenin iki sırığı
+## Örnek: player.hold_both(Vector3(-0.2, -0.22, -0.5), Vector3(0.2, -0.22, -0.5))      # önde bir şeyi iterken
+func hold_both(left: Vector3, right: Vector3, target: Node3D = null) -> void:
+	if left == Vector3.INF or right == Vector3.INF:
+		release_both()
+		return
+	if _both_r == Vector3.INF and rig and rig.palm:
+		_both_grip = rig.grip
+		rig.pose("open")
+		rig.palm.rotation_degrees = Vector3.ZERO
+		if hand and hand.get_node_or_null("BothSleeve") == null:
+			# El yukarı kalkınca kısa kolluğun ucu görünüyordu: sol eldeki gibi omza uzanan kolluk
+			var sl := Node3D.new()
+			sl.name = "BothSleeve"
+			hand.add_child(sl)
+			var sc := {"hikmet": Color("5b7fb3"), "nihat": Color("4a4a52")}.get(hand_style, Color("2b2f38")) as Color
+			Props.cyl(sl, 0.042, 0.36, Vector3(0, 0.002, 0.36), sc, Vector3(90, 0, 0), 8)      # HandRig kolluğunun devamı
+			Props.strip_outlines(sl)
+	_both_l = left
+	_both_r = right
+	_both_target = weakref(target) if target else null
+	_hold_both_points()
+
+
+## hold_both'u bırakır: sol el iner, sağ el eski tutuşuna döner, eşya cepten çıkar.
+func release_both() -> void:
+	if _both_r == Vector3.INF:
+		return
+	_both_l = Vector3.INF
+	_both_r = Vector3.INF
+	_both_target = null
+	free_hold = Vector3.INF
+	var bs := hand.get_node_or_null("BothSleeve") if hand else null
+	if bs:
+		bs.queue_free()
+	if rig and rig.palm:
+		rig.pose(_both_grip if _both_grip != "" else "open")
+	_sync_remote()
+
+
+## İki elin kameranın yerelindeki yeri: [sol, sağ] (INF: hedef silindi).
+func _hold_both_points() -> Array:
+	var l := _both_l
+	var r := _both_r
+	if _both_target != null:
+		var tgt := _both_target.get_ref() as Node3D
+		if tgt == null or not tgt.is_inside_tree():
+			return [Vector3.INF, Vector3.INF]
+		l = camera.to_local(tgt.to_global(_both_l))
+		r = camera.to_local(tgt.to_global(_both_r))
+	var out: Array = []
+	for q: Vector3 in [l, r]:
+		# Ekranın alt yarısında, kolun uzanabileceği kutuda (el kameraya girmez, kadrajdan uçmaz)
+		out.append(Vector3(clampf(q.x, -0.45, 0.45), clampf(q.y, -0.42, 0.05), clampf(q.z, -0.75, -0.3)))
+	free_hold = out[0]
+	return out
+
+
+func _hold_both_tick(delta: float) -> void:
+	var pts := _hold_both_points()
+	if pts[1] == Vector3.INF:
+		release_both()
+		return
+	if hand == null or not _hand_shown or (_hand_tween and _hand_tween.is_running()):
+		return
+	var w := clampf(delta * 14.0, 0.0, 1.0)
+	hand.position = hand.position.lerp(pts[1], w)
+	var aim := hand.position - Vector3(0.2, -0.45, 0.12)        # sağ omuz (FREE_SHOULDER'ın aynası)
+	if aim.length() > 0.01:
+		var q := Quaternion(Basis.looking_at(aim.normalized(), Vector3.UP))
+		q = q * Quaternion(Vector3(0, 0, 1), deg_to_rad(20.0)) * Quaternion(Vector3(1, 0, 0), deg_to_rad(30.0))
+		hand.quaternion = hand.quaternion.slerp(q, w)
+	if rig and rig.palm:
+		rig.curl(-85.0)

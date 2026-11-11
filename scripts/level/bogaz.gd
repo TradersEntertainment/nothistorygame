@@ -424,28 +424,40 @@ func _far_shore() -> void:
 	Scenery.trees(self, Vector3(0, 0, -160), 40.0, 200.0, 80, [Rect2(-90.0, -110.0, 180.0, 100.0)], hf, 3302)
 
 
-## İki nokta arasında ip (silindir); her karede yeniden konumlanabilir
-static func rope(node: MeshInstance3D, a: Vector3, b: Vector3) -> void:
-	var mid := (a + b) * 0.5
-	node.global_position = mid
+## İki nokta (dünya) arasında ip; her karede yeniden konumlanabilir. yayma P0: make_rope'un düğümünde Stage'in
+## burgulu, dış çizgili, sarkan halatı (Stage.rope_to: noktalar 5 mm'den az değiştiyse ağ yeniden kurulmaz).
+## sag < 0 (varsayılan): kendiliğinden — dik asılı (vinç, makara) ve kısa ip gergin; yatık ip boyunun %1,2'si kadar
+## (en çok 12 cm) sarkar (çekilen, yük taşıyan ip gergin görünür). sag = 0: dümdüz gergin; > 0: o kadar sarkar.
+## make_rope dışından gelen eski düz silindir düğümünde eski davranış (ölçekli silindir) sürer.
+static func rope(node: MeshInstance3D, a: Vector3, b: Vector3, sag := -1.0) -> void:
+	if not is_instance_valid(node):
+		return
 	var d := b - a
 	var l := d.length()
+	if not node.has_meta("rope"):
+		var mid := (a + b) * 0.5
+		node.global_position = mid
+		if l < 0.01:
+			return
+		var up := d / l
+		var side := up.cross(Vector3.FORWARD if absf(up.dot(Vector3.FORWARD)) < 0.95 else Vector3.RIGHT).normalized()
+		node.global_basis = Basis(side, up, side.cross(up)).scaled(Vector3(1.0, l, 1.0))
+		return
+	if node.is_inside_tree() and not node.global_transform.is_equal_approx(Transform3D.IDENTITY):
+		node.global_transform = Transform3D.IDENTITY       # noktalar dünyada: düğüm dünyaya hizalı
 	if l < 0.01:
 		return
-	var up := d / l
-	var side := up.cross(Vector3.FORWARD if absf(up.dot(Vector3.FORWARD)) < 0.95 else Vector3.RIGHT).normalized()
-	node.global_basis = Basis(side, up, side.cross(up)).scaled(Vector3(1.0, l, 1.0))
+	if sag < 0.0:
+		sag = 0.0 if absf(d.y) / l > 0.85 or l < 0.6 else clampf(l * 0.012, 0.0, 0.12)
+	Stage.rope_to(node, Stage.sag_points(a, b, sag, 8 if sag > 0.0 else 1))
 
 
+## Halat düğümü (boş; ağı ilk rope() çağrısı kurar): Stage'in burgulu halatı (renk, yarıçap r).
 static func make_rope(parent: Node3D, color := Color("b89a6a"), r := 0.025) -> MeshInstance3D:
 	var m := MeshInstance3D.new()
-	var cm := CylinderMesh.new()
-	cm.top_radius = r
-	cm.bottom_radius = r
-	cm.height = 1.0
-	cm.radial_segments = 5
-	m.mesh = cm
-	m.material_override = Props.mat(color, 0.0, false, "", false)
+	m.set_meta("rope", [r, color])
+	m.set_meta("no_walk", true)
+	m.material_override = Stage.rope_material()
 	m.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
 	parent.add_child(m)
 	return m

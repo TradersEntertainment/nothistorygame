@@ -31,6 +31,14 @@ var lock_point := Vector3.INF    # hayalette: ıskarmoz (dünya); el sap ile bun
 var _boat: Node3D
 var _seat: Transform3D
 var _w := 0.0
+## Pala suya girip çıkarken su teması (yayma P0): girişte halka + damla, çekişte palanın ardında küçük köpük, çıkışta
+## damla. Kamera SPLASH_FAR m'den uzaksa atlanır. false: kapalı (sessiz, efektsiz kürek).
+var splash := true
+const SPLASH_FAR := 40.0
+var _cam_clear := 0.0            # hayalet kürek: sap ucu kameradan uzak tutulur (0..1)
+var _cam_clear_on := false
+var _own_splash := false          # sahne pala halkasını kendisi yazıyor (Slipway): OarGrip üretmez
+static var _snd_t := 0
 
 
 func _ready() -> void:
@@ -128,6 +136,13 @@ func _process(delta: float) -> void:
 	if _boat == null:
 		_boat = fr.get_parent() as Node3D
 		_seat = fr.transform
+		# Bölüm 2'nin kızağı (Slipway) kayığın pala halkasını kendisi yazıyor: çift halka/ses olmasın
+		var an: Node = _boat
+		while an:
+			if an is Slipway:
+				_own_splash = true
+				break
+			an = an.get_parent()
 	if fr.get_parent() != _boat:
 		return      # kayıktan indi
 	var rig: Rig = null
@@ -173,6 +188,14 @@ func _process(delta: float) -> void:
 		var bl: float = o.get_meta("blade", 2.5)
 		var t := o.global_position
 		var q := sg * Vector3(e["x"], 0.8, lerpf(Z_FIN, Z_CATCH, rz))
+		if rig == null and _cam_clear > 0.0:
+			# Oyuncunun küreği (hayalet): sap ucu kameranın dibine geliyordu (Bölüm 17: ön planda bulanık dev kütük).
+			# Sap kürekçinin önünde, ıskarmoz yanına kayık ve biraz alçakta döner; el sapı yine tutar (oar_hold).
+			# Sapın yatay yönü ıskarmozdan q'ya: q ıskarmoz çizgisine doğru (kameranın önüne) kayınca kürek bordaya daha
+			# dik durur, sap ucu kameranın yanından değil önünden geçer.
+			var lz := (fr.transform.basis.inverse() * (o.position - fr.position)).z
+			var zz := lerpf(Z_FIN, Z_CATCH, rz)
+			q = sg * Vector3(e["x"], 0.8, lerpf(zz, lz + (zz - Z_FIN) * 0.8 + signf(zz - lz) * 0.35, _cam_clear))
 		var hd := q - t
 		hd.y = 0.0
 		hd = hd.normalized() if hd.length() > 0.01 else -_boat.global_transform.basis.x * float(o.get_meta("side", 1.0))
@@ -185,11 +208,19 @@ func _process(delta: float) -> void:
 		var u := hd * cos(asin(sa)) + Vector3.UP * sa
 		_pose(o, u, roll)
 		poses.append([o, t, u.normalized(), inboard])
+		if splash and not _own_splash:
+			_splash_tick(e, o, bl, depth)
 	if rig == null:
 		if not poses.is_empty() and poses[0] != null:
 			var p0: Array = poses[0]
 			handle_point = (p0[1] as Vector3) + (p0[2] as Vector3) * (float(p0[3]) - 0.22)
 			lock_point = p0[1]
+			# Sap ucu kameraya 0,75 m'den yakın geldiyse sap bundan sonra kameradan uzakta döner (kalıcı, yumuşak geçiş)
+			var cam := get_viewport().get_camera_3d() if is_inside_tree() else null
+			var tip := (p0[1] as Vector3) + (p0[2] as Vector3) * float(p0[3])
+			if cam and (_cam_clear_on or cam.global_position.distance_to(tip) < 1.0):
+				_cam_clear_on = true
+				_cam_clear = move_toward(_cam_clear, 1.0, delta * 2.0)
 		return
 	# Eller: iki elle tek kürek → omuzların sap üstündeki en yakın noktaları; her ele bir kürek → sap ucu
 	var arms := [[rig.arm_l, rig.elbow_l], [rig.arm_r, rig.elbow_r]]
@@ -239,3 +270,37 @@ func _process(delta: float) -> void:
 		var a: Node3D = arms[k][0]
 		var sx := signf(a.position.x) if absf(a.position.x) > 0.01 else (1.0 if k == 1 else -1.0)
 		reach_miss = maxf(reach_miss, Rig.reach(a, arms[k][1], targets[k], fb * Vector3(sx * 0.7, -0.5, -0.6)))
+
+
+## Palanın ortası (dünya). Kürek düğümünün yerel +x * side yönünde, "blade" m.
+static func blade_point(o: Node3D) -> Vector3:
+	return o.to_global(Vector3(float(o.get_meta("side", 1.0)) * float(o.get_meta("blade", 2.5)), 0, 0))
+
+
+## Bir kürek için su teması: palanın su yüzüne göre yeri izlenir (e["wy"]), aşağı geçişte halka ve damla (+ yakınsa
+## şapırtı), suda çekerken arada bir küçük köpük halkası, yukarı çıkışta damla.
+func _splash_tick(e: Dictionary, o: Node3D, bl: float, depth: float) -> void:
+	var bp := blade_point(o)
+	var below := bp.y < water_y + 0.02
+	var was: bool = e.get("wet", below)
+	e["wet"] = below
+	if Vfx._far_from_cam(o, bp, SPLASH_FAR):
+		return
+	var par := Vfx._fx_root(o)
+	if par == null:
+		return
+	if below and not was:
+		Vfx.water_ring(par, bp, water_y, 0.18, 0.9, 1.0, 0.5)
+		Vfx.water_drops(par, bp, water_y, 4, 1.4, 0.018)
+		var now := Time.get_ticks_msec()
+		if now - _snd_t > 350 and not Vfx._far_from_cam(o, bp, 12.0):
+			_snd_t = now
+			Audio.sfx_at("splash", o, -24.0)
+		e["foam_t"] = 0.25
+	elif below and depth > 0.5:
+		e["foam_t"] = float(e.get("foam_t", 0.25)) - get_process_delta_time()
+		if float(e["foam_t"]) <= 0.0:
+			e["foam_t"] = 0.32
+			Vfx.water_ring(par, bp, water_y, 0.1, 0.45, 0.7, 0.35)
+	elif was and not below:
+		Vfx.water_drops(par, bp, water_y, 3, 1.0, 0.016)
