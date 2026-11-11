@@ -97,6 +97,8 @@ def main():
         k1 = float(f[4]) if len(f) > 4 and f[4] else 0.0
         mute = len(f) > 5 and f[5] == "sessiz"
         own = f[6] if len(f) > 6 else ""     # kurgunun üst yazısı (oyundaki bir replikten alıntı; | satır sonu)
+        # ANAHTAR=metin: replik nefes yerinde kesildiyse altyazı da oraya kadar (sesle aynı metin)
+        trim_txt = dict(x.split("=", 1) for x in f[7].split(";")) if len(f) > 7 and f[7] else {}
         if log not in cache:
             cache[log] = parse(log)
         segs, lines, caps = cache[log]
@@ -115,7 +117,8 @@ def main():
                 cut = " [KESİK]" if (L["t0"] < r0 - 0.05 or L["t1"] > r1 + 0.05) else ""
                 if a.dry:
                     print("      %5.2f-%5.2f %-10s %s%s" % (L["t0"] - r0, L["t1"] - r0, L["spk"][:10], L["text"][:70], cut))
-                subs.append({"t0": x0 + sh, "t1": x1 + sh, "spk": L["spk"], "col": L["col"], "text": L["text"]})
+                subs.append({"t0": x0 + sh, "t1": x1 + sh, "spk": L["spk"], "col": L["col"],
+                             "text": trim_txt.get(L.get("key", ""), L["text"])})
         for c in caps:
             x0, x1 = max(c["t0"], r0), min(c["t1"], r1)
             if x1 - x0 > 0.3:
