@@ -772,8 +772,8 @@ func _hammer_in(st: Node3D, depth: float) -> void:
 		if is_instance_valid(st):
 			st.position.y -= depth / 3.0
 			var tp := st.to_global(Vector3(0, 0.9, 0))
-			Vfx.dust(self, tp, 0.18)                                   # değme: tepeden yonga tozu
-			Vfx.dust(self, Vector3(tp.x, gy(tp.x, tp.z), tp.z), 0.3)   # dipte kabaran toprak
+			Vfx.dust(self, tp + Vector3(0, 0.05, 0), 0.04)            # değme: tepeden küçük yonga tozu (büyüğü tokmağı örtüyordu)
+			Vfx.dust(self, Vector3(tp.x, gy(tp.x, tp.z), tp.z), 0.07)  # dipte kabaran toprak
 		Audio.sfx("pick_tap", -4.0, 0.75 + k * 0.08)
 		player.shake(0.04)
 		# Değme anında kısa duraklama (tokmak kazığın başında görünür)

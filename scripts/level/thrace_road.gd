@@ -457,7 +457,11 @@ func _slope() -> void:
 		var y := ground_y(pp.x, pp.z)
 		Props.cyl(self, 0.24, 1.6, Vector3(pp.x, y + 0.7, pp.z), Color("4a3424"), Vector3.ZERO, 10)
 		# Kazığa iki buçuk tur sarılı ip (volta): fren ipi buradan arabaya ve oyuncunun eline gider (eskiden üç düz halka)
-		Stage.rope_wrap(self, Vector3(pp.x, y, pp.z), 0.255, 0.95, 1.25, 2.5, 0.03, Color("c8b080"))
+		var wrap := MeshInstance3D.new()
+		wrap.set_meta("no_walk", true)
+		wrap.mesh = tube_mesh(wrap_points(Vector3(pp.x, y, pp.z), 0.258, 0.95, 1.25, 2.5), 0.017, Color("c8b080"))
+		wrap.material_override = tube_material()
+		add_child(wrap)
 		# Kazığın dibinde ipin sürtünmesiyle kazınmış toprak
 		Props.cyl(self, 0.42, 0.06, Vector3(pp.x, y + 0.01, pp.z), Color("4a3a28"), Vector3.ZERO, 9)
 	# Yol kenarında taşlar: _details
@@ -534,12 +538,13 @@ func _build_convoy() -> void:
 			convoy.append({"n": o, "d": 3.4 + k * 2.9, "x": sx, "kind": "ox"})
 		var yoke := Node3D.new()
 		add_child(yoke)
-		Props.box(yoke, Vector3(2.0, 0.12, 0.14), Vector3(0, 1.62, 0), Color("5a3a22"))
+		# 3. tur: boyunduruk hörgücün içinde kalıyordu; yukarıda, kalın ve açık renk (karede seçilsin)
+		Props.box(yoke, Vector3(2.1, 0.16, 0.18), Vector3(0, 1.8, 0), Color("8a6a44"))
 		# Boyunduruk dikmeleri: her öküzün boynunun iki yanından inen çubuklar, altta kayış; ortada zincir halkası
 		# (yayma P4: boyunduruk boynun üstünde havada duran bir kalastı)
 		for sx: float in [-0.75, 0.75]:
 			for dx: float in [-0.27, 0.27]:
-				Props.cyl(yoke, 0.025, 0.5, Vector3(sx + dx, 1.36, 0.0), Color("6a4a2c"), Vector3.ZERO, 4)
+				Props.cyl(yoke, 0.03, 0.62, Vector3(sx + dx, 1.45, 0.0), Color("6a4a2c"), Vector3.ZERO, 4)
 			Props.box(yoke, Vector3(0.58, 0.05, 0.08), Vector3(sx, 1.12, 0.0), Color("3a2a1e"))
 		Props.ring(yoke, 0.05, 0.08, Vector3(0, 1.52, 0.0), Color("3a3a40"), Vector3(90, 0, 0))
 		Props.bake_static(yoke, yoke.get_children())
@@ -690,3 +695,84 @@ func update_convoy(s: float, tilt := 0.0) -> void:
 func spin_wheels(delta_m: float) -> void:
 	for w in wheels:
 		w.rotation.x += delta_m / 0.55
+
+# ---------------------------------------------------------------- yakın plan ip (yayma P4, 3. tur)
+static var _tube_mat: StandardMaterial3D
+
+
+## Yuvarlak kesitli, dış çizgisiz, yumuşak gölgeli ip ağı (10 köşe); burgu yalnız hafif sarmal ton farkı. Stage.rope'un
+## şeritli/dış çizgili borusu kameraya yakın (fren ipi, volta, kangal) damalı karton cetvel gibi görünüyordu.
+static func tube_material() -> StandardMaterial3D:
+	if _tube_mat == null:
+		_tube_mat = StandardMaterial3D.new()
+		_tube_mat.vertex_color_use_as_albedo = true
+		_tube_mat.vertex_color_is_srgb = true
+		_tube_mat.roughness = 0.95
+		_tube_mat.cull_mode = BaseMaterial3D.CULL_DISABLED
+	return _tube_mat
+
+
+static func tube_mesh(pts: Array, r: float, col: Color) -> ArrayMesh:
+	# Kısa parçalara böl (köşelerde kırık görünmesin): her parça en çok 6 cm
+	var q: Array = [pts[0]]
+	for i in range(1, pts.size()):
+		var a: Vector3 = q[-1]
+		var b: Vector3 = pts[i]
+		var n := maxi(1, int(ceil(a.distance_to(b) / 0.06)))
+		for k in range(1, n + 1):
+			q.append(a.lerp(b, float(k) / n))
+	const SIDES := 10
+	var st := SurfaceTool.new()
+	st.begin(Mesh.PRIMITIVE_TRIANGLES)
+	var rings: Array = []
+	var along := 0.0
+	var prev_side := Vector3.ZERO
+	for i in q.size():
+		var p: Vector3 = q[i]
+		var t: Vector3 = ((q[mini(i + 1, q.size() - 1)] as Vector3) - (q[maxi(i - 1, 0)] as Vector3)).normalized()
+		if i > 0:
+			along += p.distance_to(q[i - 1])
+		var side := t.cross(Vector3.UP) if absf(t.y) < 0.95 else t.cross(Vector3.RIGHT)
+		if prev_side != Vector3.ZERO:
+			side = (side if side.dot(prev_side) >= 0.0 else -side)
+		side = side.normalized()
+		prev_side = side
+		var up := side.cross(t).normalized()
+		var ring: Array = []
+		for k in SIDES:
+			var a := TAU * k / SIDES
+			var nrm := side * cos(a) + up * sin(a)
+			var shade := 0.86 + 0.14 * (0.5 + 0.5 * sin(a * 2.0 + along * 70.0))
+			ring.append([p + nrm * r, nrm, Color(col.r * shade, col.g * shade, col.b * shade)])
+		rings.append(ring)
+	for i in rings.size() - 1:
+		for k in SIDES:
+			var k2 := (k + 1) % SIDES
+			for v: Array in [rings[i][k], rings[i][k2], rings[i + 1][k], rings[i][k2], rings[i + 1][k2], rings[i + 1][k]]:
+				st.set_color(v[2])
+				st.set_normal(v[1])
+				st.add_vertex(v[0])
+	return st.commit()
+
+
+## Yerde kangal: dıştan içe düz sarmal (merkez yerel sıfır)
+static func coil_points(r: float, turns: float, thick: float) -> Array:
+	var pts: Array = []
+	var steps := int(turns * 16.0)
+	for i in steps + 1:
+		var k := float(i) / steps
+		var a := k * turns * TAU
+		var rr := lerpf(r, r * 0.35, k)
+		pts.append(Vector3(cos(a) * rr, thick + k * thick * 1.4, sin(a) * rr))
+	return pts
+
+
+## Direğe/kazığa sarılı ip turları (volta), dünya noktaları
+static func wrap_points(center: Vector3, radius: float, y0: float, y1: float, turns: float) -> Array:
+	var pts: Array = []
+	var steps := int(turns * 14.0)
+	for i in steps + 1:
+		var k := float(i) / steps
+		var a := k * turns * TAU
+		pts.append(center + Vector3(cos(a) * radius, lerpf(y0, y1, k), sin(a) * radius))
+	return pts

@@ -1083,7 +1083,7 @@ func _far_wear() -> void:
 	var nz := FastNoiseLite.new()
 	nz.seed = 632
 	nz.frequency = 0.05
-	var road := Color("a08a62")
+	var road := Color("c4ae84")       # tur 2: kuşbakışında okunsun (a08a62 zeminle karışıyordu)
 	var ring: Array = []
 	for k in 33:
 		var a := TAU * k / 32.0
@@ -1101,7 +1101,7 @@ func _far_wear() -> void:
 	]
 	var i := 0
 	for rd: Array in roads:
-		_ribbon(st, rd[0], float(rd[1]), road, 0.7, nz, 1.0, Vector3.ZERO, 640 + i * 17)
+		_ribbon(st, rd[0], float(rd[1]), road, 0.9, nz, 1.0, Vector3.ZERO, 640 + i * 17)
 		i += 1
 	# Tekerlek izleri: otağ yolundan mutfağa
 	var cart := [Vector3(0.2, 0, -59.0), Vector3(0.2, 0, -27.0), Vector3(-1.5, 0, -14.0), Vector3(-6.0, 0, -4.2), Vector3(-10.5, 0, -2.6)]
@@ -1146,8 +1146,8 @@ func _ribbon(st: SurfaceTool, path: Array, w: float, col: Color, a: float, nz: F
 		for f: float in [-1.0, -0.45, 0.0, 0.45, 1.0]:
 			var v := c + lat * (hw * f)
 			v.y = CampDay.height(v.x, v.z) + lift
-			var al := ca * (1.0 - absf(f)) * (1.0 if absf(f) < 0.9 else 0.0)
-			row.append([v, Color(cc.r, cc.g, cc.b, clampf(al * 1.3, 0.0, 1.0))])
+			var al := ca * (1.0 if absf(f) < 0.1 else (0.85 if absf(f) < 0.9 else 0.0))
+			row.append([v, Color(cc.r, cc.g, cc.b, clampf(al, 0.0, 1.0))])
 		if not prev.is_empty():
 			for f in 4:
 				for tri: Array in [[prev[f], prev[f + 1], row[f]], [prev[f + 1], row[f + 1], row[f]]]:

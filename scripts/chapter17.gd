@@ -1164,15 +1164,18 @@ func _surface() -> void:
 	player.stow_hands(true)
 	var p := player.global_position
 	var fast := GameState.autotest and not GameState.pace
+	# Yüzeye gövdeden biraz açıkta çıkar: kürekçilerin başı kameranın dibine girmesin (tur 2)
+	var lp := boat.to_local(p)
+	var up := boat.to_global(Vector3(signf(lp.x) * maxf(absf(lp.x), 4.2), 0.0, lp.z))
 	var tw := create_tween()
 	tw.tween_property(player, "global_position", Vector3(p.x, -Player.EYE - 0.7, p.z), 0.05 if fast else 0.3).set_ease(Tween.EASE_OUT)
-	tw.tween_property(player, "global_position", Vector3(p.x, -Player.EYE + 0.2, p.z), 0.05 if fast else 0.45).set_trans(Tween.TRANS_SINE)
+	tw.tween_property(player, "global_position", Vector3(up.x, -Player.EYE + 0.2, up.z), 0.05 if fast else 0.45).set_trans(Tween.TRANS_SINE)
 	tw.tween_callback(func():
 		hud.set_underwater(false)
 		player.floating = true
-		player.face(boat.global_position + Vector3(0, 1.4, 0))
-		Vfx.water_ring(self, Vector3(p.x, 0, p.z), 0.0, 0.4, 2.0, 1.4, 0.5)
-		Vfx.water_drops(self, Vector3(p.x, 0, p.z), 0.0, 8))
+		player.face(boat.global_position + Vector3(0, 0.6, 0))
+		Vfx.water_ring(self, Vector3(up.x, 0, up.z), 0.0, 0.4, 2.0, 1.4, 0.5)
+		Vfx.water_drops(self, Vector3(up.x, 0, up.z), 0.0, 8))
 
 
 ## Tayfa Tolga'yı küpeşteden çeker (yayma P2: karartma + ışınlamaydı): sudan küpeşteye, oradan güverteye çekilir;
@@ -1186,16 +1189,19 @@ func _haul_back() -> void:
 	var side := 1.0 if lp.x >= 0.0 else -1.0
 	# Küpeştenin kürekçi sıraları arasındaki boşluğundan (z 0: sıralar ±1,6'da) çekilir: kürekçinin başı kameranın
 	# dibine girmesin (yayma P2 tur 2)
-	var rail := boat.to_global(Vector3(side * 1.3, DECK_Y + 0.5, 0.0))
+	# Ayak küpeştenin (DECK_Y + 0,555) üstünden geçer: gövde küpeştenin içinden geçmesin (PACE VISAUDIT insolid)
+	var rail := boat.to_global(Vector3(side * 1.8, DECK_Y + 0.65, 0.0))
+	var over := boat.to_global(Vector3(side * 0.6, DECK_Y + 0.65, 0.0))
 	var deck := boat.to_global(Vector3(side * 0.25, DECK_Y + 0.1, 0.0))
 	var tw := create_tween()
-	player.face(rail + Vector3(0, 0.2, 0))
-	tw.tween_property(player, "global_position", rail + Vector3(0, -Player.EYE + 0.3, 0), 0.05 if fast else 0.55).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_OUT)
+	player.face(over + Vector3(0, 1.0, 0))
+	tw.tween_property(player, "global_position", rail, 0.05 if fast else 0.55).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_OUT)
 	tw.tween_callback(func():
 		Audio.sfx("splash", -6.0, 1.2)
 		Vfx.water_ring(self, Vector3(p0.x, 0, p0.z), 0.0, 0.4, 2.2, 1.6, 0.45)
 		Vfx.water_drops(self, Vector3(p0.x, 0, p0.z), 0.0, 10))
-	tw.tween_property(player, "global_position", deck, 0.05 if fast else 0.4).set_trans(Tween.TRANS_SINE)
+	tw.tween_property(player, "global_position", over, 0.05 if fast else 0.3).set_trans(Tween.TRANS_SINE)
+	tw.tween_property(player, "global_position", deck, 0.05 if fast else 0.25).set_trans(Tween.TRANS_SINE)
 	await tw.finished
 	player.floating = false
 	player.velocity = Vector3.ZERO

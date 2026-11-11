@@ -71,6 +71,7 @@ func _ready() -> void:
 	urban = day.urban
 	urban.position = URBAN_AT
 	urban.look_target = player
+	urban.set_activity("")          # bu bölümde örste dövmez: çekiç elinden kalkar (CampDay ona çekiç veriyor; yayma P1)
 	day.goat.chase = null
 	day.goat.caught = true
 	day.goat.position = CANNON + Vector3(-2.5, 0, -3.5)
@@ -132,7 +133,7 @@ func _build_field() -> void:
 	_crucible = Node3D.new()
 	_crucible.position = f + Vector3(0, 1.5, -0.4)
 	add_child(_crucible)
-	Props.cyl(_crucible, 0.35, 0.6, Vector3(0, 0, 0), Color("4a4a50"), Vector3.ZERO, 10, 0.28)
+	Props.cyl(_crucible, 0.35, 0.6, Vector3(0, 0, 0), Color("7a7068"), Vector3.ZERO, 10, 0.28)      # tur 2: kil-demir pota, zeminden ayrılsın
 	var melt := Props.cyl(_crucible, 0.3, 0.02, Vector3(0, 0.29, 0), Color("ffb040"), Vector3.ZERO, 10)
 	melt.material_override = Props.mat(Color("ffb040"), 3.0, false, "", false)
 	for sx in [-0.8, 0.8]:
@@ -227,14 +228,27 @@ func _cast() -> void:
 		mold.visible = true
 		player.show_prop("ladle", 30.0)          # döküm kepçesi elde (yalnız pota eğiliyordu, el boştu)
 		player.hand_gesture("pour")
+		# Urban kalıbın öbür yanına geçer, potayı iki elinden kavrayıp eğer (yayma P1: pota kendi kendine eğiliyordu,
+		# Urban'ın eli kalıba ve potaya değmiyordu)
+		# Potanın yolunun dışında, kalıbın dış yanında durur (pota ocaktan kalıba gelirken gövdesinin içinden geçmesin)
+		var mp := mold.global_position
+		# Batıdaki iki kalıpta batı yanı (Tolga'nın güneybatıdan baktığı yerden potanın yanında görünür), doğudakinde doğu
+		# Tur 2: hep batı yanda (Tolga güneybatıdan bakar: Urban potanın yanında görünür); pota L yolunda gelir
+		var side := -1.0
+		await Stage.approach(urban, Vector3(mp.x + side * 0.62, urban.global_position.y, mp.z - 0.2), 0.0, 1.8)
+		Stage.face(urban, Vector3(mp.x, urban.global_position.y, mp.z))
 		# Pota kalıbın tam üstüne gelir (eskiden ocak önünde kalıyordu: akış kalıba değmeden havada asılıydı)
 		var home := FOUNDRY + Vector3(0, 1.5, -0.4)
 		var above := Vector3(mold.position.x, home.y, mold.position.z)
-		var tilt := create_tween().set_parallel(true)
-		tilt.tween_property(_crucible, "position", above, _d(0.4))
-		tilt.tween_property(_crucible, "rotation:z", -0.9, _d(0.4))
+		# Ocak direklerinden öne çıkar, kalıbın hizasına kayar, kalıbın üstüne gelir; sonra eğilir
+		var tilt := create_tween()
+		tilt.tween_property(_crucible, "position", Vector3(home.x, home.y, home.z + 0.7), _d(0.15))
+		tilt.tween_property(_crucible, "position", Vector3(above.x, home.y, home.z + 0.7), _d(0.15))
+		tilt.tween_property(_crucible, "position", above, _d(0.15))
+		tilt.tween_property(_crucible, "rotation:z", -0.9, _d(0.25))
 		await tilt.finished
-		_p1_shot("10B_POUR_%d" % i)
+		_p1_shot("10B_POUR_%d" % i, 0.0, _crucible.global_position)
+		Stage.grip_hold(urban, _crucible, [Vector3(side * 0.3, 0.06, -0.16), Vector3(side * 0.3, 0.06, 0.16)], -1.0, 0.12)
 		_stream.visible = true
 		var top := _crucible.global_position + Vector3(0, 0.1, 0)
 		var bottom := mold.global_position
@@ -266,12 +280,16 @@ func _cast() -> void:
 		meter.flash = 1.0
 		_stream.visible = false
 		player.drop_prop()                       # kepçe iner
+		Stage.grip_release(urban)               # döküm bitti: potayı bırakır, pota askısına döner
 		var back := create_tween().set_parallel(true)
 		back.tween_property(_crucible, "rotation:z", 0.0, _d(0.3))
 		back.tween_property(_crucible, "position", home, _d(0.3))
 		var z := KickMeter.zone(v)
 		await _wait(0.2)
 		meter.visible = false
+		# Urban kalıbın başından ocağın yanındaki yerine döner (potanın ardında kalıp yüzü örtülmesin), Tolga'ya döner
+		await Stage.approach(urban, FOUNDRY + Vector3(-1.8, 0, -0.2), 0.0, 2.0)
+		Stage.face(urban, player.global_position)
 		match z:
 			"sweet":
 				_quality += 1

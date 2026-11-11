@@ -115,7 +115,7 @@ func _build_people() -> void:
 	hm.set_meta("no_talk", true)
 	add_child(hm)
 	# 3. tur: yakın kıyı ayağında, oyuncunun başlangıçta baktığı yerde (karşı kıyıda seçilmiyordu); ayak başlığına çivi çakar
-	hm.position = Vector3(1.75, ThraceRoad.BEAM_Y + 0.1, -(ThraceRoad.BEAM_Z + 0.75))
+	hm.position = Vector3(1.45, ThraceRoad.BEAM_Y + 0.1, -(ThraceRoad.BEAM_Z + 0.4))
 	hm.face_toward(hm.position + Vector3(0, 0, 3))
 	hm.set_activity("hammer")
 	hm.give_tool("hammer")            # yayma P4: çekiç pozunda eli boştu
@@ -796,7 +796,8 @@ func _mud() -> void:
 	player.frozen = true
 	if hands_hidden:
 		player.show_remote(true)
-	player.stow_hands(false)
+	# Eşya cepte kalır: yokuşta iki el fren ipinde (yokuş bitince çıkar). Burada çıkınca yokuş girişinde leblebi
+	# bir an elde görünüyordu.
 
 
 func _front_wheel() -> Vector3:
@@ -970,22 +971,12 @@ func _brake_lay(held: bool, squeeze: bool) -> void:
 ## Yakın plan ip (yayma P4, 2. tur): kameraya yarım metre yakında Stage.rope'un altı köşeli, dış çizgili, şeritli
 ## borusu katlanmış karton cetvel gibi görünüyordu. Bu ağ ince (yarıçap 1,6 cm = çap 3,2 cm), 10 köşeli, yumuşak
 ## gölgeli, dış çizgisiz; burgu yalnız köşe renginde hafif sarmal bir ton farkı. Noktalar dünya koordinatı.
-static var _tube_mat: StandardMaterial3D
-
-
 func _tube_node(col: Color) -> MeshInstance3D:
 	var mi := MeshInstance3D.new()
 	mi.set_meta("no_walk", true)
 	mi.set_meta("tube_col", col)
 	mi.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
-	if _tube_mat == null:
-		_tube_mat = StandardMaterial3D.new()
-		_tube_mat.vertex_color_use_as_albedo = true
-		_tube_mat.vertex_color_is_srgb = true
-		_tube_mat.roughness = 0.95
-		# 3. tur: üçgen yönü ters çıkıyordu (ön yüzler ayıklanıp borunun iç arka duvarı görünüyordu: gri düz şerit)
-		_tube_mat.cull_mode = BaseMaterial3D.CULL_DISABLED
-	mi.material_override = _tube_mat
+	mi.material_override = ThraceRoad.tube_material()
 	add_child(mi)
 	return mi
 
@@ -1004,47 +995,7 @@ func _tube(mi: MeshInstance3D, pts: Array, r := 0.016) -> void:
 		if same:
 			return
 	mi.set_meta("tube_pts", pts.duplicate())
-	var col: Color = mi.get_meta("tube_col", Color("c8b080"))
-	# Kısa parçalara böl (köşelerde kırık görünmesin): her parça en çok 6 cm
-	var q: Array = [pts[0]]
-	for i in range(1, pts.size()):
-		var a: Vector3 = q[-1]
-		var b: Vector3 = pts[i]
-		var n := maxi(1, int(ceil(a.distance_to(b) / 0.06)))
-		for k in range(1, n + 1):
-			q.append(a.lerp(b, float(k) / n))
-	const SIDES := 10
-	var st := SurfaceTool.new()
-	st.begin(Mesh.PRIMITIVE_TRIANGLES)
-	var rings: Array = []
-	var along := 0.0
-	var prev_side := Vector3.ZERO
-	for i in q.size():
-		var p: Vector3 = q[i]
-		var t: Vector3 = ((q[mini(i + 1, q.size() - 1)] as Vector3) - (q[maxi(i - 1, 0)] as Vector3)).normalized()
-		if i > 0:
-			along += p.distance_to(q[i - 1])
-		var side := t.cross(Vector3.UP) if absf(t.y) < 0.95 else t.cross(Vector3.RIGHT)
-		if prev_side != Vector3.ZERO:
-			side = (side if side.dot(prev_side) >= 0.0 else -side)
-		side = side.normalized()
-		prev_side = side
-		var up := side.cross(t).normalized()
-		var ring: Array = []
-		for k in SIDES:
-			var a := TAU * k / SIDES
-			var nrm := side * cos(a) + up * sin(a)
-			var shade := 0.86 + 0.14 * (0.5 + 0.5 * sin(a * 2.0 + along * 70.0))
-			ring.append([p + nrm * r, nrm, Color(col.r * shade, col.g * shade, col.b * shade)])
-		rings.append(ring)
-	for i in rings.size() - 1:
-		for k in SIDES:
-			var k2 := (k + 1) % SIDES
-			for v: Array in [rings[i][k], rings[i][k2], rings[i + 1][k], rings[i][k2], rings[i + 1][k2], rings[i + 1][k]]:
-				st.set_color(v[2])
-				st.set_normal(v[1])
-				st.add_vertex(v[0])
-	mi.mesh = st.commit()
+	mi.mesh = ThraceRoad.tube_mesh(pts, r, mi.get_meta("tube_col", Color("c8b080")))
 
 
 ## Oyuncunun iki yumruğunun içi (avuçtaki eşya yuvası): ip buradan geçer. [sol, sağ]
@@ -1074,7 +1025,8 @@ func _slope() -> void:
 	urban.global_position = _gy(Vector3(6.4, 0, 46.5))
 	_brake_rope = Stage.rope(self, Vector3.ZERO, Vector3(0, 0.1, 0), 0.0, 0.022, Color("c8b080"))
 	_brake_near = _tube_node(Color("c8b080"))
-	_brake_coil = Stage.rope_coil(self, Vector3.ZERO, 0.3, 3.5, 0.018, Color("c8b080"))
+	_brake_coil = _tube_node(Color("c8b080"))
+	_brake_coil.mesh = ThraceRoad.tube_mesh(ThraceRoad.coil_points(0.28, 3.5, 0.018), 0.017, Color("c8b080"))
 	_brake_lay(true, false)
 	await hud.fade_to(0.0, 0.6)
 	await hud.say("SPK_URBAN", "D35O_U_SLOPE")
@@ -1188,6 +1140,7 @@ func _slope() -> void:
 	_brake_rope.queue_free()
 	if is_instance_valid(_brake_near):
 		_brake_near.queue_free()
+	player.stow_hands(false)          # çamurdan beri cepteydi
 	if is_instance_valid(_brake_coil):
 		_brake_coil.queue_free()
 	player.release_both()
@@ -1277,7 +1230,7 @@ func _night() -> void:
 	var names := ["Sarıkız", "Karabaş", "Benekli", ""]
 	for k in 4:
 		var o: Ox = level.camp_oxen[1 + k * 2]
-		var rope := _tube_node(Color("b89a6a"))
+		var rope := _tube_node(Color("d8c49a"))      # gece ışığında koyu çubuk gibi görünmesin: açık kenevir
 		var end := Node3D.new()
 		add_child(end)
 		Props.ball(end, 0.08, Vector3.ZERO, Color("b89a6a"), Vector3.ONE, 6)
@@ -1400,7 +1353,9 @@ func _runner_rope(r: Dictionary, o: Ox, back: Vector3, side: Vector3) -> void:
 		var rr: Vector3 = f[1]
 		var drop := player.global_position + side * 0.35 + back * 0.2
 		drop.y = _gy(drop).y + 0.05
-		pts.append_array([flank, rump, l, rr, rr + Vector3(0, -0.4, 0) + back * 0.1, drop])
+		pts.append(flank)
+		pts.append_array(Stage.sag_points(rump, l, 0.1, 6))
+		pts.append_array([rr, rr + Vector3(0, -0.4, 0) + back * 0.1, drop])
 	else:
 		var g0 := _gy(base + fwd * 0.9 + side * 0.6) + Vector3(0, 0.04, 0)
 		var g1 := _gy(base + side * 0.62) + Vector3(0, 0.04, 0)

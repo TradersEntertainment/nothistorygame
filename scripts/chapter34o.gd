@@ -65,6 +65,14 @@ func _ready() -> void:
 	player = Player.new()
 	add_child(player)
 	player.frozen = true
+	# yayma P4 (3. tur): alçak kış güneşinde kameradaki ellerin (kumanda, tokmak) gölgesi karda el biçimli gri leke
+	# bırakıyordu: kameraya bağlı her şey gölge düşürmez (eşya değişince de, saniyede bir yeniden uygulanır)
+	var shade_t := Timer.new()
+	shade_t.wait_time = 1.0
+	shade_t.autostart = true
+	shade_t.timeout.connect(_no_hand_shadow)
+	add_child(shade_t)
+	_no_hand_shadow.call_deferred()
 	hud.set_fez(GameState.flags.get("fez", true))
 	hud.set_signal(0)
 	meter = RowMeter.new()
@@ -92,6 +100,12 @@ func _ready() -> void:
 
 func _variant() -> String:
 	return GameState.autotest_variant if GameState.autotest else ""
+
+
+func _no_hand_shadow() -> void:
+	if player and player.camera:
+		for g in player.camera.find_children("*", "GeometryInstance3D", true, false):
+			(g as GeometryInstance3D).cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
 
 
 func _gy(p: Vector3) -> Vector3:
@@ -348,7 +362,14 @@ func _crank() -> void:
 	hud.bark("SPK_SOLDIER", "D34O_S_CRANK", 3.0)
 	# Ustabaşı karşı çıkrıkta seslenirken bakış ona döner (eli çarkta), sonra kendi çıkrığına (ustabaşı kadraj dışındaydı)
 	player.face(foreman.global_position + Vector3(0, 1.1, 0))
+	# Ustabaşı 13 m ötede: bakış kısa süre daralır (yakınlaşma), eli çarkta seçilsin; sonra eski açıya döner
+	var fov0 := player.camera.fov
+	var ztw := create_tween()
+	ztw.tween_property(player.camera, "fov", 26.0, 0.4)
 	await get_tree().create_timer(2.5, false).timeout
+	if is_instance_valid(ztw):
+		ztw.kill()
+	player.camera.fov = fov0
 	player.face(EdirneYard.WIND_REAR + Vector3(0, 1.1, 0))
 	player.frozen = true
 	meter.enabled = true
