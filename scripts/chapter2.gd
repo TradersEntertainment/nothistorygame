@@ -592,6 +592,7 @@ func _to_shore() -> void:
 		await _say("SPK_SOLDIER", "D2_S_16")
 		await Handover.wait(self, 0.05 if Stage.fast() else 0.6)
 		await _budget()
+		_seize_report()
 		player.free_hold = Vector3.INF
 		player.look_lock = false
 		for g in guards:
@@ -1238,10 +1239,14 @@ func _grab_arms(guards: Array[Node3D], hold: float, lean := 0.22) -> void:
 ## yerelinde: kameranın 25 cm önünden geride ve görüş ekseninden 0,8 m'den yakınsa asker kameranın içinde/yanındadır.
 ## Unclip.walk_audit (WALKTHRU) bunu göremez: yalnız görünen StaticBody3D'lere ışın atar (oyuncu CharacterBody3D) ve
 ## testte (PACE dışı) askerler yürümeden varır (Stage.fast); tutarken öne eğilme de yürüme sayılmaz.
+var _seize_worst := {}       # "asker:parça" (sabit ad) -> süre boyunca en kötü (en derin) kayıt
+var _seize_closest := INF    # kameraya en yakın parça uzaklığı (bilgi)
+
+
 func _seize_audit(guards: Array[Node3D], seconds: float) -> void:
 	var t := 0.0
-	var worst := {}       # sabit parça adı -> en kötü (en derin) kayıt
-	var closest := INF    # kameraya en yakın parça uzaklığı (bilgi)
+	_seize_worst = {}
+	_seize_closest = INF
 	while t < seconds:
 		await get_tree().process_frame
 		t += get_process_delta_time()
@@ -1260,19 +1265,25 @@ func _seize_audit(guards: Array[Node3D], seconds: float) -> void:
 				if part == null:
 					continue
 				var lp := player.camera.to_local(part.global_position)
-				closest = minf(closest, lp.length())
+				_seize_closest = minf(_seize_closest, lp.length())
 				if lp.z > -0.25 and Vector2(lp.x, lp.y).length() < 0.8:
 					var key := "%d:%s" % [gi, pn]
-					if not worst.has(key) or lp.z > worst[key][1].z:
-						worst[key] = [g.get_meta("speaker", g.name), lp, part.global_position]
-	if worst.is_empty():
-		print("SEIZE_AUDIT ok closest=%.2f" % closest)
+					if not _seize_worst.has(key) or lp.z > _seize_worst[key][1].z:
+						_seize_worst[key] = [g.get_meta("speaker", g.name), lp, part.global_position]
+
+
+## Süre boyunca en kötü değeri parça başına bir kez basar (yalnız testte; iki çağrı yeri askerleri silmeden önce çağırır).
+func _seize_report() -> void:
+	if not GameState.autotest:
 		return
-	# Süre boyunca en kötü değer, parça başına bir kez
-	for key: String in worst:
-		var w: Array = worst[key]
+	if _seize_worst.is_empty():
+		print("SEIZE_AUDIT ok closest=%.2f" % _seize_closest)
+		return
+	for key: String in _seize_worst:
+		var w: Array = _seize_worst[key]
 		print("WALKTHRU scene=chapter2.tscn who=%s at=%s by=player/camera part=%s local=%s src=chapter2.gd:_seize" % [
 			w[0], (w[2] as Vector3).snapped(Vector3.ONE * 0.1), key.get_slice(":", 1), (w[1] as Vector3).snapped(Vector3.ONE * 0.01)])
+	_seize_worst = {}
 
 
 ## Kızaktan uzağa, kıyı boyunca bakar (kadırga arkada kalır).
@@ -1385,6 +1396,7 @@ func _to_chain() -> void:
 		_grab_arms(guards, 3.5)
 		await Handover.wait(self, 0.15 if Stage.fast() else 1.65)     # eski tek kollu uzanışın süresi (0,35 + 1,0 + 0,3)
 		await _budget()
+		_seize_report()
 		player.free_hold = Vector3.INF
 		player.look_lock = false
 		for g in guards:
