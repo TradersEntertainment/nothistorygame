@@ -182,8 +182,17 @@ Sahibinin gözüyle, dürüstçe ("kare kare mi? kule kutu mu? yer kötü mü?")
   **5/5 PASS**, yasak satır 0.
 
 ### F. Dallar
-- 30 dakikada bir çekme: ordugah5, canli, doku4, cevre4, baglama4 birleştirildi (bir kez; ikinci çekmede yeni kayıt
-  yoktu — BAKILMADI son 40 dakika). `wip/ist2-zemin` uzakta yok. Hayvan/çadır dosyalarına dokunulmadı.
+- ordugah5, canli, doku4, cevre4, baglama4 iki kez birleştirildi (17:5x ve 19:05); `wip/ist2-zemin` 19:05'te uzakta
+  belirdi ve birleştirildi (çakışma yok). ZEMİN, `sur_zemin.gd:_mat()`'ı ortak zemin malzemesine (`zemin.gd`
+  `kopya("kusatma")`) geçirmiş: toprak set, hendek kesitinin toprak/çamur yüzü ve rampalar böylece ortak zemine bağlı
+  (yamalarım ayrıca taşınmadı; API aynı). Birleşik son kodla kareler: `birlesik/*.jpg` (sur dibi artık parlak yeşil değil,
+  çiğnenmiş gri-kahve toprak; `birlesik/sahip_03_sur_disi_30m.jpg`, `birlesik/s3_hendek.jpg`). Hayvan/çadır dosyalarına
+  dokunulmadı.
+- **Birleşik son kodla testler:** Bölüm 7 (boş, `=wall`) ve 11 (boş, `=helpwall`) **4/4 AUTOTEST PASS**, ama her koşuda
+  binlerce `SCRIPT ERROR: Cannot call method 'get_image' on a null value` — kaynak `scripts/level/zemin.gd:159`
+  (`doseme_kir`, ZEMİN'in dosyası; başsızda gürültü dokusu boş; çağıranlar `land_walls.gd:176`, `byz_city.gd:353`,
+  `galata.gd:108`). ZEMİN birleşmeden önceki kodla aynı testlerde yasak satır 0'dı. Benim dosyalarımdan değil:
+  ORTAK İSTEK 6.
 
 ## ORTAK İSTEK / BİLGİ
 
@@ -205,6 +214,13 @@ Sahibinin gözüyle, dürüstçe ("kare kare mi? kule kutu mu? yer kötü mü?")
 5. **ZEMİN (BİLGİ: API)** — sur kuşağı yamalarım: `sur_zemin.gd:set_` (toprak set), `hendek_kesit`, `rampa`,
    `ates_alani` (SUR-4). Ortak zemin kitaplığı gelince bunlar `ZEMIN.toprak_mat()` benzeri ortak malzemeye geçirilebilir;
    çağrılar: `set_(p, x0, x1, z0, lod, tohum, pencere)`, `hendek_kesit(p, x0, x1, z0, z1, md, lod, tohum, pencere)`.
+
+6. **ZEMİN (`scripts/level/zemin.gd:doseme_kir`)** — başsız koşuda `_gurultu` dokusu null: `get_image` öncesi denetim:
+   ```gdscript
+   var src: Image = _gurultu.get_image() if _gurultu != null else null
+   if src == null:
+       return m          # başsız/yükleme öncesi: kir katmanı atlanır
+   ```
 
 ## Dosyalar
 - Yeni: `scripts/world/ist/sur_kule.gd`, `tests/_ist/sur5_kare.gd/.tscn`.
