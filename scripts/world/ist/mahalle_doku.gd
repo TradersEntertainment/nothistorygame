@@ -719,7 +719,7 @@ func _oge_uzak() -> void:
 func _cam() -> Vector3:
 	var vp := get_viewport()
 	if vp and vp.get_camera_3d():
-		return vp.get_camera_3d().global_position
+		return to_local(vp.get_camera_3d().global_position)
 	return Vector3.ZERO
 
 

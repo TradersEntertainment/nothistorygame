@@ -485,7 +485,7 @@ func _process(delta: float) -> void:
 	var ref: Node3D = oyuncu if oyuncu != null else cam
 	if ref == null:
 		return
-	_pw = ref.global_position
+	_pw = to_local(ref.global_position)
 	if _last_pw.distance_to(_pw) > 120.0:
 		_ilk = 6.0            # ışınlanma/bölüm geçişi: yeni yerde de ilk kare dolu olsun
 	_last_pw = _pw
@@ -535,8 +535,8 @@ func _view_cone(cam: Camera3D) -> void:
 	if cam == null:
 		_cam_at = Vector3.INF
 		return
-	_cam_at = cam.global_position
-	_cam_fwd = (-cam.global_basis.z).normalized()
+	_cam_at = to_local(cam.global_position)
+	_cam_fwd = (global_basis.inverse() * -cam.global_basis.z).normalized()
 	var vs := get_viewport().get_visible_rect().size
 	var aspect := vs.x / maxf(vs.y, 1.0)
 	var half := atan(tan(deg_to_rad(cam.fov) * 0.5) * maxf(aspect, 1.0))
@@ -567,7 +567,7 @@ func doldur(n := 6) -> void:
 	var ref: Node3D = oyuncu if oyuncu != null else cam
 	if ref == null:
 		return
-	_pw = ref.global_position
+	_pw = to_local(ref.global_position)
 	_view_cone(cam)
 	_ilk = float(n)
 	for k in n:
