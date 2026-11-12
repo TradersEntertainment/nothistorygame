@@ -106,8 +106,8 @@ static func _mm(host: Node3D, mesh: Mesh, xfs: Array, cols: Array, nm: String) -
 ## üçgen ediyordu. Kişiler PARCA m'lik karolara bölünür: her karoda gerçek model (kameraya ≤ YAKIN m) ve hafif figür
 ## (ötesi) görünürlük aralığıyla değişir. Kişi SAYISI aynı; yalnız uzaktakilerin çizimi hafif.
 const PARCA_ESIK := 40
-const PARCA := 36.0
-const YAKIN := 42.0
+const PARCA := 50.0
+const YAKIN := 45.0
 
 static func _kur_parcali(host: Node3D, kisiler: Array, pts: PackedVector3Array) -> PackedVector3Array:
 	var karo := {}
