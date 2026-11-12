@@ -12,7 +12,7 @@ const TOPRAK := Color("66523c")
 const TOPRAK2 := Color("554534")
 const OT := Color("5e6a3a")
 const YANIK := Color("4e4438")
-const CAMUR := Color("4a4032")
+const CAMUR := Color("6a5a44")
 
 
 static func _hash(a: int, b: int) -> float:
