@@ -15,6 +15,7 @@ extends Node3D
 
 const DIR := "res://scripts/world/ist/"
 const ESER := preload("res://scripts/world/ist/sehir_eser.gd")
+const SURDOKU := preload("res://scripts/world/ist/sur_doku.gd")
 const SELF := ["sehir", "evler"]
 ## Uzaklık eşikleri (parçanın yarıçapı eklenir): lod 0 < R0, lod 1 < R1, ötesi lod 2
 const R0 := 90.0
@@ -342,6 +343,7 @@ func _build(it: Dictionary, lod: int, bol := false) -> void:
 	elif v2:
 		# v2 yakın katman: görüntü doku başına pişirilir (çizim sayısı), çarpışma gövdeleri olduğu gibi kalır
 		_bake_lod(n, false)
+	_sur_tas(it, n)
 	# Süre: kurma + pişirme (tek işin toplamı; ISTYAVAS)
 	var ms := (Time.get_ticks_usec() - t0) / 1000.0
 	var pis_ms := (Time.get_ticks_usec() - t_kur) / 1000.0
@@ -361,6 +363,7 @@ func _pis(it: Dictionary) -> void:
 		return
 	var t0 := Time.get_ticks_usec()
 	_bake_lod(n, false)
+	_sur_tas(it, n)
 	n.visible = true
 	var ms := (Time.get_ticks_usec() - t0) / 1000.0
 	_cost["%s/0" % String(it.get("mod", ""))] = ms
@@ -404,6 +407,7 @@ func _pencere_is(it: Dictionary) -> void:
 	IstMk.pencere = Vector2(-1e9, 1e9)
 	_kapi_gecit_hat(it, w)
 	_bake_lod(w, false)
+	_sur_tas(it, w)
 	var ms := (Time.get_ticks_usec() - t0) / 1000.0
 	_cost["%s/0" % String(it.get("mod", ""))] = ms
 	_yavas_say(it, "0w", ms, 0.0)
@@ -434,6 +438,23 @@ func _yavas_say(it: Dictionary, lk: String, ms: float, pis_ms: float) -> void:
 	if not stats.has("yavas_pis"):
 		stats["yavas_pis"] = {}
 	stats["yavas_pis"][key] = maxf(float(stats["yavas_pis"].get(key, 0.0)), pis_ms)
+
+
+## SUR-4: sur dilimlerinin, köşe kulelerinin ve sur kapılarının "ashlar" desenli yüzeyleri pişirmeden sonra sur taşı
+## gölgelendiricisine çevrilir (sur_doku.gd: opus mixtum; deniz surları kaba-gri, Galata kesme taş)
+const SUR_MOD := ["surlar", "surlar_kapi", "marmara_sur", "halic_sur", "halic_kapi", "galata_sur"]
+
+func _sur_tas(it: Dictionary, n: Node3D) -> void:
+	if not v2 or n == null:
+		return
+	var hat := String(it.get("hat", it.get("kapi_hat", "")))
+	if hat == "" and not String(it.get("mod", "")) in SUR_MOD:
+		return
+	if hat == "" and String(it.get("mod", "")) == "galata_sur":
+		hat = "galata_suru"
+	elif hat == "" and String(it.get("mod", "")).begins_with("halic"):
+		hat = "halic_suru"
+	stats["sur_tas_n"] = int(stats.get("sur_tas_n", 0)) + SURDOKU.uygula(n, SURDOKU.tur_of(hat))
 
 
 ## Deniz surları: yürüme yolu kule tepelerine basamakla çıkar; kule tepe korkuluğu yolu enine kesiyordu
@@ -1970,12 +1991,16 @@ func _pad(p: Vector3, nm: String) -> void:
 ## yakınken gizlenir, dilimin kendi orta katmanı 420 m'de kurulur
 const HAT_CELL := 160.0
 const HAT_BEGIN := 200.0
-var _hat_far := {}             # Vector2i → SurfaceTool
+var _hat_far := {}             # Vector3i (hücre x, z, taş türü) → SurfaceTool
 var _hat_mat: Material
 
 func _hat_far_add(it: Dictionary) -> void:
 	var tmp := Node3D.new()
+	# SUR-4: toprak setin eteği araziye insin (uzak katman ağacın dışında kurulur)
+	SURZEMIN.xf_dunya = Transform3D(Basis(Vector3.UP, float(it["yaw"])), it["pos"])
+	SURZEMIN.xf_var = true
 	(it["make"] as Callable).call(tmp, 2)
+	SURZEMIN.xf_var = false
 	var list: Array = []
 	for c in tmp.find_children("*", "MeshInstance3D", true, false):
 		list.append(c)
@@ -1985,7 +2010,8 @@ func _hat_far_add(it: Dictionary) -> void:
 	var holder := Node3D.new()
 	var mi := World1453.bake(list, tmp, Transform3D.IDENTITY, holder, "HatUzak", 0.05, 0, true)
 	var p: Vector3 = it["pos"]
-	var ck := Vector2i(floori(p.x / HAT_CELL), floori(p.z / HAT_CELL))
+	# SUR-4: hücre + taş türü (kara / deniz / Galata ayrı malzemeyle)
+	var ck := Vector3i(floori(p.x / HAT_CELL), floori(p.z / HAT_CELL), SURDOKU.tur_of(String(it.get("hat", ""))))
 	var cen := Vector3((ck.x + 0.5) * HAT_CELL, 0, (ck.y + 0.5) * HAT_CELL)
 	if mi.mesh != null:
 		if not _hat_far.has(ck):
@@ -2031,11 +2057,11 @@ static func _acik(m: Mesh, f: float) -> Mesh:
 
 
 func _hat_far_commit() -> void:
-	for ck: Vector2i in _hat_far:
+	for ck: Vector3i in _hat_far:
 		var mi := MeshInstance3D.new()
 		mi.mesh = _acik(( _hat_far[ck] as SurfaceTool).commit(), 1.3)
-		# şeritli taş malzemesi (tuğla bantları dünya yüksekliğinden; kalite notu 11)
-		mi.material_override = ESER.sur_uzak_mat()
+		# sur taşı (yakınla aynı desen; SUR-4)
+		mi.material_override = ESER.sur_uzak_mat(ck.z)
 		mi.position = Vector3((ck.x + 0.5) * HAT_CELL, 0, (ck.y + 0.5) * HAT_CELL)
 		mi.visibility_range_begin = HAT_BEGIN
 		mi.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
@@ -2150,6 +2176,13 @@ func _hatlar_v2() -> void:
 				g = float(it["glen"])
 			elif String(it["mod"]) == "surlar":
 				g = IstSurlar._gate_len(String(it["id"]), float(it["k"]))
+			else:
+				# SUR-4 (süreklilik): modül parçaları (Galata kapısı, Haliç kapıları, Mermer Kule) yarıçaplarının 1,4 katı
+				# kesiyordu; parçanın sur gövdesi bundan kısa: iki yanda 10–40 m'lik boşluk kalıyordu (Galata'da 80 m).
+				# Kesik parçanın gerçek gövdesine indirilir (dilim uçları parçanın içine biraz girer: boşluk kalmaz).
+				g = float(it["r"]) * 0.8
+				if String(it["id"]) == "galata_sur":
+					continue
 			gaps[ad].append([Vector2(it["pos"].x, it["pos"].z), g])
 	var seed := 0
 	for ad: String in HAT:
@@ -2245,6 +2278,10 @@ func _hatlar_v2() -> void:
 				kc["b2"] = a + d * 4.5
 			s_acc += L
 		_basamaklar(ad, String(cfg["kur"]))
+		_kose_dolgu(ad, String(cfg["kur"]))
+		if ad == "kara_suru":
+			_hendek_oy(ad)
+			_ates_alani(pl)
 	# Bozdoğan (iki tepe arası, altından Mese kolu geçer)
 	var bz := IstGeo.yol("bozdogan")
 	if bz.size() >= 2:
@@ -2353,6 +2390,211 @@ func _near_item(p: Vector2, pad: float) -> bool:
 		if Vector2(q.x, q.z).distance_to(p) < float(it["r"]) + pad:
 			return true
 	return false
+
+
+## SUR-4 (madde 1, süreklilik): ardışık iki dilimin (ya da dilim–kapı koşusunun) kavuştuğu yerde hat kırılıyorsa dış yanda
+## kama biçimli boşluk kalıyordu (iç surda köşe kulesi örter; dış sur, parateikhion, hendek duvarları ve set açık kalıyordu;
+## köşe kulesinin kurulmadığı köşelerde iç sur da). Her kavuşmada kesitin her şeridi için iki uç arasını kapatan dörtgen
+## prizma (yakın/orta/uzak katmanda; yakında çarpışmalı). Şeritler yerel kesitten (IstSurlar.dims) ya da deniz suru kalınlığından.
+var kose_dolgu_n := 0
+
+func _kose_dolgu(ad: String, kur: String) -> void:
+	var list: Array = []
+	for it: Dictionary in hat_items + items:
+		var on := String(it.get("hat", "")) == ad or String(it.get("kapi_hat", "")) == ad
+		if on and it.has("s0") and it.has("a2") and not String(it["id"]).begins_with("kose_") and not list.has(it):
+			list.append(it)
+	list.sort_custom(func(a: Dictionary, b: Dictionary) -> bool: return float(a["s0"]) < float(b["s0"]))
+	var bands: Array = []           # [z0, z1, alt (tabandan), üst (tabandan, "walk" = yürüme yolu), renk, desen]
+	match kur:
+		"kara":
+			var d := IstSurlar.dims(K_SUR)
+			var MD := float(d["MD"])
+			bands = [[float(d["zi0"]), float(d["zi1"]), -3.0, "walk", Color("cdbd9e"), "ashlar"],
+				[float(d["zi1"]), float(d["zo0"]), -3.0, 0.0, IstSurlar.C_EARTH, "dirt"],
+				[float(d["zo0"]), float(d["zo1"]), -3.0, float(d["OH"]), Color("c5b597"), "ashlar"],
+				[float(d["zo1"]), float(d["zm0"]) - 1.8, -4.0, 0.0, Color("857158"), "dirt"],
+				[float(d["zm0"]) - 1.8, float(d["zm0"]) - 0.9, -1.0, 1.6, Color("b5a585"), "ashlar"],
+				[float(d["zm0"]) - 0.9, float(d["zm0"]), -MD - 0.4, 0.0, Color("a89878"), "ashlar"],
+				[float(d["zm0"]), float(d["zm1"]), -MD - 1.2, -MD, SURZEMIN.CAMUR, "dirt"],
+				[float(d["zm1"]), float(d["zm1"]) + 0.9, -MD - 0.4, 0.0, Color("a89878"), "ashlar"]]
+		"blakherna":
+			bands = [[-0.5, 4.6, -3.0, "walk", Color("cdbd9e"), "ashlar"]]
+		_:
+			var T := _walk_w(kur) + 0.9
+			bands = [[-T * 0.5, T * 0.5, -3.0, "walk", Color("c8bca4"), "ashlar"]]
+	for i in list.size() - 1:
+		var A: Dictionary = list[i]
+		var B: Dictionary = list[i + 1]
+		var gap := float(B["s0"]) - float(A["s1"])
+		# (kısa kenarlarda iki köşe kulesi arası < 6 m'lik aralığa dilim kurulmuyordu: 26 m'ye kadar olan aralık da doldurulur)
+		if gap > 30.0 or gap < -2.0:
+			continue
+		var pa: Vector2 = A["b2"]
+		var pb: Vector2 = B["a2"]
+		var da: Vector2 = ((A["b2"] as Vector2) - (A["a2"] as Vector2)).normalized()
+		var db: Vector2 = ((B["b2"] as Vector2) - (B["a2"] as Vector2)).normalized()
+		var bend := absf(da.angle_to(db))
+		if bend < deg_to_rad(1.5) and pa.distance_to(pb) < 0.3:
+			continue
+		var oa := _out(da, pa, ad)
+		var ob := _out(db, pb, ad)
+		var ya := float(A["pos"].y)
+		var yb := float(B["pos"].y)
+		var y0 := minf(ya, yb)
+		var wtop := maxf(float(A.get("walk", ya + _walk_h(kur))), float(B.get("walk", yb + _walk_h(kur))))
+		var top_off := maxf(ya, yb) - y0
+		var cen := (pa + pb) * 0.5
+		var polys: Array = []
+		var dya := ya + _dis_dy(A) - y0 if kur == "kara" else 0.0
+		var dyb := yb + _dis_dy(B) - y0 if kur == "kara" else 0.0
+		var bi := 0
+		for bd: Array in bands:
+			var z0 := float(bd[0])
+			var z1 := float(bd[1])
+			var q := PackedVector2Array([pa + oa * z0 - cen, pa + oa * z1 - cen, pb + ob * z1 - cen, pb + ob * z0 - cen])
+			var yb0 := float(bd[2])
+			var yt: float = (wtop - y0) if bd[3] is String else float(bd[3]) + top_off
+			if kur == "kara" and bi >= 3:
+				# dış bölge kademesi (parateikhion, hendek): iki ucun ortası
+				yb0 += minf(dya, dyb)
+				yt = float(bd[3]) + maxf(dya, dyb)
+			elif kur == "kara" and bi == 2:
+				yb0 = minf(minf(dya, dyb), 0.0) - 0.5
+			polys.append([q, yb0, yt, bd[4], bd[5]])
+			bi += 1
+		var mk := func(n: Node3D, lod: int) -> void:
+			for pq: Array in polys:
+				_prizma(n, pq[0], float(pq[1]), float(pq[2]), pq[3], String(pq[4]), lod)
+		var it := _v2_item("kdolgu_%s_%d" % [ad, i], Vector3(cen.x, y0, cen.y), 0.0, maxf(pa.distance_to(pb), 6.0) + 30.0, mk, {}, true)
+		it["hat"] = ad
+		it["walk"] = wtop
+		hat_items.append(it)
+		kose_dolgu_n += 1
+
+
+## Dörtgen taban (yerel x,z; dışbükey sırayla) üstünde dik prizma: alt y0, üst y1. lod 0: çarpışmalı.
+static func _prizma(n: Node3D, q: PackedVector2Array, y0: float, y1: float, col: Color, pat: String, lod: int) -> void:
+	if y1 - y0 < 0.05:
+		return
+	# alan sıfıra yakınsa (iki uç aynı yerde) kurma
+	var area := 0.0
+	for i in q.size():
+		var a := q[i]
+		var b := q[(i + 1) % q.size()]
+		area += a.x * b.y - b.x * a.y
+	if absf(area) < 0.05:
+		return
+	if area < 0.0:
+		q = PackedVector2Array([q[0], q[3], q[2], q[1]])
+	var st := SurfaceTool.new()
+	st.begin(Mesh.PRIMITIVE_TRIANGLES)
+	var top: Array = []
+	var bot: Array = []
+	for v: Vector2 in q:
+		top.append(Vector3(v.x, y1, v.y))
+		bot.append(Vector3(v.x, y0, v.y))
+	var mid := Vector3.ZERO
+	for v: Vector3 in top + bot:
+		mid += v
+	mid /= 8.0
+	var tri := func(a: Vector3, b: Vector3, c: Vector3) -> void:
+		# dışa bakan normal; Godot ön yüzü saat yönünde: (b−a)×(c−a) içe bakmalı
+		var nr := (b - a).cross(c - a).normalized()
+		var fc := (a + b + c) / 3.0
+		if nr.dot(fc - mid) > 0.0:
+			var t := b
+			b = c
+			c = t
+		else:
+			nr = -nr
+		for v: Vector3 in [a, b, c]:
+			st.set_normal(nr)
+			st.add_vertex(v)
+	tri.call(top[0], top[1], top[2])
+	tri.call(top[0], top[2], top[3])
+	tri.call(bot[0], bot[2], bot[1])
+	tri.call(bot[0], bot[3], bot[2])
+	for i in 4:
+		var j := (i + 1) % 4
+		tri.call(bot[i], top[i], top[j])
+		tri.call(bot[i], top[j], bot[j])
+	var mi := MeshInstance3D.new()
+	mi.mesh = st.commit()
+	mi.material_override = Props.mat(col, 0.0, false, pat if lod <= 1 else ("ashlar_far" if pat == "ashlar" else ""))
+	n.add_child(mi)
+	if lod == 0:
+		var body := StaticBody3D.new()
+		var cs := CollisionShape3D.new()
+		var cv := ConvexPolygonShape3D.new()
+		cv.points = PackedVector3Array(top + bot)
+		cs.shape = cv
+		body.add_child(cs)
+		n.add_child(body)
+
+
+## SUR-4 (madde 3): hendeğin içini arazi dolduruyordu (arazi hendeği oymuyor: dilim tabanı medyan yükseklikte, hendek
+## tabanı 6 m aşağıda; yamaçta hendek ağzına kadar çimen, taş duvarlar çimenden çıkan kenar taşı gibi). Her dilimin ve kapı
+## koşusunun hendek şeridi boyunca 7 m'de bir düzlük kaydı (IstGeo.duzle): arazi hendek tabanının hemen altına iner (ya da
+## aşağıdaysa tabana yükselir); arazi ağı o şeritte yenilenir.
+var hendek_oy_n := 0
+
+## Dilimin/kapı koşusunun dış bölge kademesi (IstSurlar.dis_dy; kara suru dışında 0)
+func _dis_dy(it: Dictionary) -> float:
+	var L := float(it.get("len", it.get("glen", 0.0)))
+	if L <= 0.0:
+		return 0.0
+	var h := it["holder"] as Node3D
+	var xf := h.global_transform if h.is_inside_tree() else Transform3D(Basis(Vector3.UP, float(it["yaw"])), it["pos"])
+	return IstSurlar.dis_dy(xf, L, K_SUR)
+
+
+func _hendek_oy(ad: String) -> void:
+	var d := IstSurlar.dims(K_SUR)
+	var zc := (float(d["zm0"]) + float(d["zm1"])) * 0.5
+	var r := (float(d["zm1"]) - float(d["zm0"])) * 0.5 - 1.2
+	var MD := float(d["MD"])
+	var alan := Rect2()
+	for it: Dictionary in hat_items + items:
+		var on := String(it.get("hat", "")) == ad or String(it.get("kapi_hat", "")) == ad
+		if not on or not it.has("a2") or String(it["id"]).begins_with("kose_") or String(it["id"]).begins_with("kdolgu_"):
+			continue
+		if String(it["id"]) in ["kaligaria", "kerkoporta"]:
+			continue
+		var a: Vector2 = it["a2"]
+		var b: Vector2 = it["b2"]
+		var L := a.distance_to(b)
+		if L < 1.0:
+			continue
+		var dv := (b - a) / L
+		var o := _out(dv, (a + b) * 0.5, ad)
+		var y := float(it["pos"].y) + _dis_dy(it) - MD - 0.2
+		var n := maxi(1, int(ceil(L / 7.0)))
+		for k in n + 1:
+			var q := a + dv * (L * k / n) + o * zc
+			IstGeo.duzle(q, r, y, 3.0)
+			hendek_oy_n += 1
+			alan = Rect2(q, Vector2.ZERO) if alan.size == Vector2.ZERO and alan.position == Vector2.ZERO else alan.expand(q)
+	var dn := get_parent()
+	if dn != null and dn.has_method("yenile") and hendek_oy_n > 0:
+		dn.call("yenile", alan.grow(20.0))
+
+
+## SUR-4: kara surunun dışında hendekten sonraki "ateş alanı" (çiğnenmiş toprak, gülle çukurları, döküntü; ağaçsız):
+## sur_zemin.gd. Hattan zm1 + 12 m'de (hendek + toprak set) başlar; ORDUGÂH-4 ile sınır hendekten 60 m.
+const SURZEMIN := preload("res://scripts/world/ist/sur_zemin.gd")
+
+func _ates_alani(pl: PackedVector2Array) -> void:
+	var t0 := Time.get_ticks_usec()
+	var kp: Array = []
+	for it: Dictionary in items:
+		if String(it.get("kapi_hat", "")) == "kara_suru":
+			kp.append(Vector2(it["pos"].x, it["pos"].z))
+	var dm := IstSurlar.dims(K_SUR)
+	var bas := float(dm["zm1"]) + 12.0
+	var n := SURZEMIN.ates_alani(self, pl, func(d: Vector2, p: Vector2) -> Vector2: return _out(d, p, "kara_suru"), bas, kp)
+	stats["ates_alani"] = n.get_meta("say", {})
+	stats["ates_alani_ms"] = (Time.get_ticks_usec() - t0) / 1000.0
 
 
 ## Hat dilimi: kur türüne göre parçanın parametreli kurucusu

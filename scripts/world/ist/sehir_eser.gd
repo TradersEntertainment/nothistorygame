@@ -4,6 +4,7 @@ extends RefCounted
 ##             zemin katta kemerli revak, üst katta balkon, kiremit kırma çatı, yan kuleler, şehir yanında avlu).
 ## Yerel düzen: sur iç yüzü z ≈ +2 (dış +z), saray gövdesi z −26…−16, avlu z −26…−44 (şehre bakar).
 
+const SURDOKU := preload("res://scripts/world/ist/sur_doku.gd")
 const STONE := Color("d8c8a8")
 const BRICK := Color("9a5040")
 const TILE := Color("a4553a")
@@ -163,37 +164,10 @@ static func palace(n: Node3D, lod: int, gece: bool) -> void:
 ## çizgileri; yatay yüzler (yürüme yolu, kule terası) düz taş. Işık oyunun toon diliyle (gece ay ışığında da taş rengi).
 static var _sur_uzak_mat: ShaderMaterial
 
-static func sur_uzak_mat() -> ShaderMaterial:
-	if _sur_uzak_mat != null:
-		return _sur_uzak_mat
-	var sh := Shader.new()
-	sh.code = """
-shader_type spatial;
-render_mode diffuse_toon, specular_disabled;
-varying vec3 wpos;
-varying vec3 wnrm;
-void vertex() {
-	wpos = (MODEL_MATRIX * vec4(VERTEX, 1.0)).xyz;
-	wnrm = normalize((MODEL_MATRIX * vec4(NORMAL, 0.0)).xyz);
-}
-void fragment() {
-	// köşe rengi sRGB olarak saklı (albedo_color'dan): doğrusala çevrilir (yoksa uzak sur yakınından açık ve gece
-	// ay ışığında bembeyaz görünüyordu)
-	vec3 c = pow(COLOR.rgb, vec3(2.2));
-	float vert = step(abs(wnrm.y), 0.5);
-	float stone = step(COLOR.r - COLOR.b, 0.24);
-	float band = step(fract((wpos.y + 0.35) / 1.9), 0.24) * vert * stone;
-	float course = step(fract(wpos.y / 0.62), 0.07) * vert * stone;
-	float joint = step(fract((wpos.x + wpos.z) / 1.3), 0.04) * vert * stone * (1.0 - band);
-	c = mix(c, pow(vec3(0.58, 0.31, 0.22), vec3(2.2)), band * 0.85);
-	c *= 1.0 - (course + joint) * 0.10;
-	ALBEDO = c;
-	ROUGHNESS = 0.95;
-}
-"""
-	_sur_uzak_mat = ShaderMaterial.new()
-	_sur_uzak_mat.shader = sh
-	return _sur_uzak_mat
+static func sur_uzak_mat(tur := 0) -> ShaderMaterial:
+	# SUR-4: uzak katman yakınla AYNI sur taşı gölgelendiricisi (sur_doku.gd: blok sıraları + ince tuğla hatılı;
+	# eski düz şerit gölgelendiricisi uzaktan "çizgili kutu"/kereste okunuyordu). Köşe rengi pişmiş ağda.
+	return SURDOKU.mat(tur, Color.WHITE, false)
 
 
 ## Pişmiş uzak sur ağına mazgal dişleri: yerel eksene hizalı, yukarı bakan geniş üst yüzlerin (sur yürüme yolu,
