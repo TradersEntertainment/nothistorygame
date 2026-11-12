@@ -1200,8 +1200,24 @@ func _seize(guards: Array[Node3D], at: Vector3) -> void:
 	# 0,4 rad eğilince başları kameranın 15 cm önüne ve 45 cm yanına, omuzları kameranın arkasına geçiyordu: fragmanda
 	# askerler kameranın içinden geçiyordu (sonuç 2.1 ve 2.4; denetim _seize_audit).
 	for i in guards.size():
-		Stage.walk_on_ground(guards[i], at + fwd * SEIZE_AHEAD + side * (-SEIZE_SIDE if i == 0 else SEIZE_SIDE), _ground_y, 3.2, at + Vector3(0, 1.4, 0))
+		Stage.walk_on_ground(guards[i], _seize_spot(at, fwd, side, -1.0 if i == 0 else 1.0), _ground_y, 3.2, at + Vector3(0, 1.4, 0))
 	await Handover.wait(self, 0.05 if Stage.fast() else 0.3)
+
+
+## Askerin duracağı nokta: ileri 1 m / yan 0,55 m çevresinde (ileri 0,9-1,3 m, yan 0,45-0,7 m: kameraya ≥ 0,65 m kalır),
+## zemini oyuncunun ayağıyla en aynı yükseklikte olan. Eğimli kıyıda zemin ayaktan 0,3-0,5 m aşağıdaysa asker omuzdan
+## alçalır, eli bileğe yetişmezdi (bakış 90°/180° çevrilince avuç-bilek hatası 0,25 m). Dağılım sabit: bakışa bağlı değil.
+func _seize_spot(at: Vector3, fwd: Vector3, side: Vector3, sgn: float) -> Vector3:
+	var best := at + fwd * SEIZE_AHEAD + side * (sgn * SEIZE_SIDE)
+	var best_d := absf(_ground_y(best.x, best.z) - at.y) - 0.03       # varsayılana küçük üstünlük
+	for ah: float in [0.9, 1.1, 1.3]:
+		for sd: float in [0.45, 0.55, 0.7]:
+			var p := at + fwd * ah + side * (sgn * sd)
+			var d := absf(_ground_y(p.x, p.z) - at.y)
+			if d < best_d:
+				best_d = d
+				best = p
+	return best
 
 
 ## Askerler varana dek bekler (en çok 4 sn).
