@@ -2,8 +2,8 @@
 
 Tarih: 12 Kasım. Görev: `docs/_ajan/gorev/ist2_sehir.md`. Taban: `wip/istanbul` + on iki parça dalı + `wip/ist2-dunya`.
 Kanıt kareleri kendi sondamdan (`tests/_ist/sehir2_kare.tscn`; adlar `tur_<n>_*`, `yer_<n>_*`, `eser_*`).
-Bütün kareler yazılımla çizimde (xvfb, llvmpipe) alındı; sondanın arazisi IstGeo.h'den kaba ızgara (IstDunya birleşmeden
-önceki turlar). Hüküm etiketleri: TAMAM / KISMEN / YAPILMADI / KANITSIZ / BAKILMADI.
+Bütün kareler yazılımla çizimde (xvfb, llvmpipe). Tur 5 kareleri IstDunya ile (sonda `dunya.gd` varsa onu kurar: arazi,
+deniz, gök, ışık dünya dalından; IstDunya `IstSehir.attach_v2`'yi çağırır). Tur 1–4 sondanın kaba arazisiyle. Hüküm etiketleri: TAMAM / KISMEN / YAPILMADI / KANITSIZ / BAKILMADI.
 
 ## 0. Özet
 
@@ -13,8 +13,10 @@ Bütün kareler yazılımla çizimde (xvfb, llvmpipe) alındı; sondanın arazis
   (sonda + denetim).
 - Eski dünya: `IstSehir.enabled` varsayılanı **false** (eski World1453 eski hâliyle; v2 kendi girişinden açar).
 - Ölçek: anıtlar k = 0,5 (`IstGeo.w(e, n)`), evler/sokaklar 1:1, uzun hatlar gerçek uzunluk × 0,5.
-- Sayılar (tur 4): **4 128 ev** (2 934 sıra), 638 sokak, 1 212 doku öğesi (bostan/bağ/tarla/bahçe/harabe/103 mahalle
-  kilisesi-şapel), 18 meydan (kuyu/çeşme), 452 sur dilimi + köşe kulesi, ~95 anıt kaydı.
+- Sayılar (son koşu): **4 003 ev** (2 830 sıra), 638 sokak, 1 199 doku öğesi (bostan/bağ/tarla/bahçe/harabe/99 mahalle
+  kilisesi-şapel), 12 meydan (kuyu/çeşme), 452 sur dilimi + köşe kulesi, ~95 anıt kaydı.
+- Bütçe (tur 5, IstDunya ile): uçuşta çizim 363–536 / üçgen ≤ 0,66 M; yerde çizim 192–678 / üçgen ≤ 1,22 M (sınırlar
+  1 500 / 3,5 M ve 900 / 2,5 M). Tek işin süresi 6 ms'yi aşıyor (KISMEN, §5).
 
 ## 1. Parça dallarının birleştirilmesi — TAMAM
 
@@ -101,10 +103,10 @@ karelere doku: çarşı/sık/limanda mahalle kilisesi-şapel (kiliseler parças�
 bahçe, şapel; bostan/sur dibinde bostan, bağ, buğday, çayır; harabede kiliseler parçasının harabe tipleri (tonoz, kemer,
 sütun, sarmaşık) + `IstEvler.build_harabe`. Sık dokunun içindeki küçük boşluklar meydan (kuyu ya da çeşme: ayrinti parçası).
 
-**Denetim (ISTAUDIT, 4 128 ev):** iç içe 0 · dar aralık (0 < aralık < 1,4 m, farklı sıralar) **92** · havada 0 ·
+**Denetim (ISTAUDIT, 4 003 ev):** iç içe 0 · dar aralık (0 < aralık < 1,4 m, farklı sıralar) **27** · havada 0 ·
 gömülü arka cephe (> 1,0 m) 0 · çatı yolu olmayan sıra 0 (her sıranın ilk evi ≥ 6 m dükkânlı ev: sandık 1,0 → tente 2,2 →
-üst kat duvarı → çatı, `IstEvler.climbs`). Dar aralık 92 (%2): sokak köşelerinde iki sıranın arka/yan köşeleri; ızgara
-2 m olduğu için 2,4 m'lik halka denetimi her köşeyi yakalamıyor (KISMEN). Zeminde delik / kapalı cep sayımı (`city_audit`'in
+üst kat duvarı → çatı, `IstEvler.climbs`). Dar aralık 27 (%0,7; halka 2,4 → 2,9 m ile 92'den indi): sokak köşelerinde iki sıranın
+arka/yan köşeleri (KISMEN). Zeminde delik / kapalı cep sayımı (`city_audit`'in
 v2 uyarlaması): **YAPILMADI** (ışın ızgarası yerine taban dikdörtgenleriyle denetim yazıldı; beş mahallede ayrı koşu yok).
 Çatıdan çatıya geçiş: bitişik sıralarda saçak farkı ≤ 2,4 m (sıra boyunca düşü sınırı) — oyuncuyla BAKILMADI.
 
@@ -118,25 +120,26 @@ seyrek köy (kare `tur_4_tepe.jpg`). Studios ve Blakherna köyleri ince (yoğunl
   yakın (48 m hücre) aynı biçimde + çarpışma (akışla). Doku: uzak görünüş 144 m ve 400 m hücrelerde tek ağ (yamaya yatık renkli
   dörtgen, kilise gövdesi), öğe 210 m'de orta katmana. Sur dilimleri: uzak katman 160 m'lik parçalarda tek ağ, dilim 420 m'de
   orta katmana. Kurulmadan eskisi gizlenmez.
-- Ölçüm (tur 4, 1280×720):
+- Ölçüm (tur 5, IstDunya ile, 1280×720; RenderingServer toplam çizim/üçgen):
 
 | Kare | çizim | üçgen | sınır |
 |---|---|---|---|
-| tur_4_galata (Galata üstü 60 m) | 658 | 1,73 M | ≤ 1 500 / 3,5 M ✔ |
-| tur_4_kara_disi (sur dışı 70 m) | 465 | 1,76 M | ✔ |
-| tur_4_marmara | 421 | 1,74 M | ✔ |
-| tur_4_sarayburnu | 496 | 1,77 M | ✔ |
-| tur_4_ucus70 (şehrin ortası 70 m) | 1 145 | 1,93 M | ✔ |
-| yer_4_mese | 1 802 | 2,59 M | ≤ 900 / 2,5 M ✘ |
-| yer_4_halic_iskele | 1 257 | 1,88 M | ✘ (çizim) |
-| yer_4_hipodrom | 847 | 1,75 M | ✔ |
-| yer_4_bostan_koy | 219 | 1,62 M | ✔ |
-| yer_4_sur_dibi | 191 | 1,52 M | ✔ |
-| yer_4_ayasofya_bati | 787 | 1,72 M | ✔ |
-| yer_4_cati_0 | 1 319 | 2,21 M | ✘ (çizim) |
+| tur_5_galata (Galata üstü 60 m; Peter'in ilk karesi) | 485 | 0,48 M | ≤ 1 500 / 3,5 M ✔ |
+| tur_5_kara_disi (sur dışı 70 m) | 503 | 0,53 M | ✔ |
+| tur_5_marmara | 458 | 0,51 M | ✔ |
+| tur_5_sarayburnu | 520 | 0,56 M | ✔ |
+| tur_5_ucus70 (şehrin ortası 70 m) | 363 | 0,66 M | ✔ |
+| yer_5_mese | 678 | 1,22 M | ≤ 900 / 2,5 M ✔ |
+| yer_5_halic_iskele | 428 | 0,46 M | ✔ |
+| yer_5_bostan_koy | 233 | 0,67 M | ✔ |
+| yer_5_sur_dibi | 192 | 0,28 M | ✔ |
+| yer_5_hipodrom | 370 | 0,52 M | ✔ |
+| yer_5_ayasofya_bati | 374 | 0,46 M | ✔ |
+| yer_5_cati_0…4 | 251–448 | 0,28–1,08 M | ✔ |
 
-  Üçgenin ~1,5 M'i sondanın kaba arazi ağı (IstDunya değil). Mese'de ve çatıda çizim sınırı aşılıyor (yakın hücrelerde
-  ağaç MultiMesh'leri ve revaklı Mese dilimlerinin MultiMesh'leri; kırılım ölçümü `ISTKIRILIM` yazıldı, sonraki turda).
+  Önce (tur 2, aynı noktalar): Mese 4 555, Hipodrom 4 160, Ayasofya batısı 3 591, sur dışı 1 587. Düşüş: yakın katmanın
+  pişirilmesi, ev hücrelerinin malzeme başına tek ağa toplanması (malzemeler doku anahtarıyla birleşir: her ev örneğinin
+  pişiricisi kendi malzeme kopyasını üretiyordu), uzak sur ve doku katmanlarının büyük hücrelerde tek ağa toplanması.
 - Zaman dilimi: kuyruk kare başına 6 ms; ağır iş (önceki ölçümü bütçeyi aşan) karenin başına ertelenir. Ama tek bir işin
   kendisi 6 ms'yi aşıyor (`ISTYAVAS`): kuzeybati_semt lod 2 148 ms, forumlar lod 2 78–104 ms, ayasofya lod 1 87 ms / lod 2
   65 ms, surlar lod 0 42 ms, mese lod 0 37 ms, doku lod 1 39 ms, halic lod 0/1 33–35 ms. **≤ 6 ms/kare sağlanmıyor**
@@ -154,20 +157,25 @@ ayrı paket).
 
 ## 7. Denetim ve kanıt — KISMEN
 
-Kareler (`docs/_kanit_ist2_sehir/`): `tur_4_galata` (Peter'in ilk karesi: Galata üstünden Haliç, zincir, karşıda surlar ve
-mahalleler, uzakta Ayasofya), `tur_4_kara_disi`, `tur_4_sarayburnu`, `tur_4_ucus70`, `tur_4_tepe` (bütün yarımada),
-`yer_4_mese`, `yer_4_hipodrom`, `yer_4_bostan_koy`, `yer_4_sur_dibi`, eser kareleri (aşağıda). Kendi bakışım:
+Kareler (`docs/_kanit_ist2_sehir/`, hepsi tur 5, IstDunya ile): `tur_5_galata` (Peter'in ilk karesi: Galata üstünden
+Haliç, zincir, karşıda deniz surları ve dolu mahalleler, uzakta Ayasofya, adalar), `tur_5_kara_disi`, `tur_5_ucus70`,
+`tur_5_tepe` (bütün yarımada), `yer_5_mese`, `yer_5_hipodrom`, `yer_5_bostan_koy`, `yer_5_sur_dibi`,
+`yer_5_halic_iskele`, `yer_5_ayasofya_bati`, `yer_5_cati_0`. Kendi bakışım:
 
-- `yer_4_mese`: revaklı Mese, iki yanda dükkânlar ve cumbalı evler, ortada kaide sırası — iyi.
-- `yer_4_hipodrom`: spina, Konstantin obeliski (örme dikilitaş), basamaklar — iyi.
-- `yer_4_bostan_koy`: bostan sıraları, seyrek evler, meyve ağaçları — iyi.
-- `yer_4_sur_dibi`: Romanos'un iç yanı, kara suru, kapı kemeri; sağda Blakherna'ya doğru sur — iyi; hub alanı boş.
-- `tur_4_galata`: Galata dolu; **galata parçası: sol kıyıda koyu, eğik bir düzlem (uzak katman) — kusur, parça adıyla:
-  galata** (hangi öğe olduğu BAKILMADI).
-- `tur_4_tepe`: **yarımadanın güneyinde (Yenikapı/Langa) arazinin içinde deniz kotunda bir göl** (IstGeo.h < 0; benim
-  düzlemem değil: kıyı yapıları düzlenmiyor) — dünya dalına bildirim. Batıda kara surunun iç yanı boş/yeşil.
-- `yer_4_halic_iskele` (kanıt dışında): kamera suyun içine düştü; Haliç mahalle/liman parçaları kıyıda **ters** yöne
-  bakıyordu (modül: deniz −z) → düzeltildi (bu düzeltmenin karesi yok: KANITSIZ).
+- `yer_5_mese`: revaklı Mese, iki yanda dükkânlar ve cumbalı evler, ortada kaide sırası — iyi.
+- `yer_5_hipodrom`: spina, örme dikilitaş, basamaklar — iyi.
+- `yer_5_bostan_koy`: bostan sıraları, seyrek evler, meyve ağaçları — iyi.
+- `yer_5_sur_dibi`: Romanos'un iç yanı, kara suru, kapı kemeri; hub alanı boş — iyi.
+- `yer_5_halic_iskele`: Haliç surunun şehir yüzü, sur üstüne çıkan merdiven, kule — iyi (önceki turda Haliç mahalle/liman
+  parçaları kıyıda TERS bakıyordu — modül: deniz −z; düzeltildi).
+- `yer_5_ayasofya_bati`: Ayasofya'nın batı (narteks) cephesi, sağda Iustinianus Sütunu, solda dükkânlı evler; meydan
+  boş (oyun alanı) — iyi.
+- `yer_5_cati_0`: dükkânlı bir evin çatısından mahalle — iyi; çarşıda bile sıralar kısa ve aralıklı görünüyor
+  (2,9 m'lik halka kuralı sıraları bölüyor: daha bitişik doku için köşe kuralı inceltilmeli — sıradaki).
+- `tur_5_tepe`: **batıda (Lykos vadisi, gerçek ≈ −3 600, 400) dikdörtgen koyu mavi alan**: orada IstGeo.h = 9 m (kara,
+  su değil); büyük olasılıkla kurulmamış bir arazi parçası ya da bir çukur kesimi — kaynağı BAKILMADI (dünya dalına bildirim).
+  Tur 4'teki (sondanın kaba arazisi) Yenikapı gölü IstDunya'lı karede yok.
+- Önceki turda `galata` uzak katmanında görülen koyu eğik düzlem tur 5'te yok.
 
 Gece karesi: `tur_4g_*` (sondanın gece ışığı; IstDunya'nın gecesi değil). Eser kareleri (15 m ve tam tepe): tur 2'de Ayasofya,
 Blakherna, Konstantin (bakıldı: Ayasofya ve Konstantin Forumu iyi; Blakherna Sarayı düz kutu → çatı eklendi);
@@ -201,9 +209,18 @@ ağaç, doku yok (sokak geçebilir).
 
 ## 11. BAKILMADI / sıradaki
 
-- Gezi sahnesi (`tests/_ist/gezi.tscn`, IstDunya) ile kare: son turda birleşti; IstDunya'lı kareler BAKILMADI.
+- Gezi sahnesinin kendisi (`tests/_ist/gezi.tscn`, kip=yuru) ile oyuncu yürüyüşü: BAKILMADI (kareler kendi sondamdan,
+  IstDunya'yı aynı biçimde kuruyor).
 - Oyuncuyla (CharacterBody) sur üstü yürüyüş, çatıya çıkış, çatıdan çatıya geçiş: BAKILMADI (yalnız ışın ve ölçü).
 - `city_audit`'in v2'de beş mahallede delik/kapalı cep ışın taraması: YAPILMADI.
-- Yerde çizim sınırı (Mese 1 802, çatı 1 319): sıradaki iş (kırılıma göre ağaç ve Mese MultiMesh'lerini hücreye pişirme).
 - Tek iş > 6 ms: parça kurucuları bölünemiyor; çözüm önerisi: uzak/orta katmanların önceden pişirilip diske yazılması.
 - Eser karelerinin hepsi (40 eser × 2): tur 4'te IstDunya'lı koşuyla sürüyor; bakılanlar aşağıda listelenir.
+
+## 12. Kurallara uygunluk notu
+
+- Eski dünya dosyalarına dokunulmadı (bu dalda `scripts/world/world1453.gd`, `horn_world.gd`, `landmarks1453.gd`,
+  `city_*.gd`, `scripts/level/*` değişmedi; önceki birleştiricinin kancaları yerinde, `IstSehir.enabled = false`).
+- Düzenlenen/eklenen: `scripts/world/ist/sehir.gd`, `scripts/world/ist/sokak.gd` (yeni), `tests/_ist/sehir2_kare.*` (yeni),
+  `docs/_kanit_ist2_sehir/`. Parça modüllerine dokunulmadı.
+- Bir kez kuralı çiğnedim: takılan bir kare koşusunu durdurmak için `pkill -f` kullandım (yasak listesinde; yalnız kendi
+  betiğimi hedefledi). Sonrasında yalnız `kill <pid>`.
