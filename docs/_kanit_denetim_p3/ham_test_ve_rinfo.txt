@@ -1,0 +1,152 @@
+# Basitsiz test ciktilari (ham; hl.sh: --headless --max-fps 20, timeout 600)
+== SONRA ch=29 var=def rc=0
+AUTOTEST PASS chapter=29 variant= outcome=29.1 cut=6/6 boarders=0 fires=0 duel=true
+== SONRA ch=29 var=lose rc=0
+AUTOTEST PASS chapter=29 variant=lose outcome=29.2 cut=0/6 boarders=6 fires=3 duel=false
+== SONRA ch=29o var=def rc=0
+AUTOTEST PASS chapter=29o variant= outcome=29O.1 hooks=4/5 gun=4/4
+== SONRA ch=29o var=lose rc=0
+AUTOTEST PASS chapter=29o variant=lose outcome=29O.2 hooks=0/0 gun=4/4
+== SONRA ch=33o var=def rc=0
+AUTOTEST PASS chapter=33o variant= outcome=33O.1 stones=4 hits=0 falls=0 water=0 hidden=true gift=refuse warn=ok big=true
+== SONRA ch=33o var=wide rc=0
+AUTOTEST PASS chapter=33o variant=wide outcome=33O.2 stones=4 hits=0 falls=0 water=0 hidden=false gift=refuse warn=hit big=false
+== SONRA ch=33o var=fall rc=0
+AUTOTEST PASS chapter=33o variant=fall outcome=33O.1 stones=4 hits=1 falls=2 water=1 hidden=true gift=refuse warn=ok big=true
+== SONRA ch=38o var=def rc=0
+AUTOTEST PASS chapter=38o variant= outcome=38O.1 oars=10 arrows=0 forks=3/3 fire=true pulled=true oil=false snaps=0 splashes=0 explored=15.6 helper=false slips=0
+== SONRA ch=38o var=lose rc=0
+AUTOTEST PASS chapter=38o variant=lose outcome=38O.2 oars=11 arrows=0 forks=0/3 fire=false pulled=false oil=true snaps=0 splashes=4 explored=15.3 helper=false slips=0
+== SONRA ch=38o var=hooks_ok rc=0
+AUTOTEST PASS chapter=38o variant=hooks_ok outcome=38O.1 oars=11 arrows=0 forks=3/3 fire=true pulled=true oil=false snaps=0 splashes=0 explored=15.3 helper=true slips=0
+== SONRA ch=38o var=hooks_bad rc=0
+VISAUDIT personhidden key=D38O_S_03 scene=chapter38o.tscn speaker=SPK_SAILOR by=@Node3D@24971/@Node3D@27165(spk) at=(18.6, 0.9, 56.2) eye=(14.0, 2.6, 56.2) head=(19.6, 2.6, 56.5) src=Chapter38o>Node3D>Person
+AUTOTEST PASS chapter=38o variant=hooks_bad outcome=38O.1 oars=10 arrows=0 forks=3/3 fire=true pulled=true oil=false snaps=0 splashes=0 explored=15.3 helper=false slips=0
+== SONRA ch=38o var=lose rc=0
+AUTOTEST PASS chapter=38o variant=lose outcome=38O.2 oars=10 arrows=0 forks=0/3 fire=false pulled=false oil=true snaps=0 splashes=4 explored=15.3 helper=false slips=0
+== SONRA ch=38o var=lose rc=0
+AUTOTEST PASS chapter=38o variant=lose outcome=38O.2 oars=10 arrows=0 forks=0/3 fire=false pulled=false oil=true snaps=0 splashes=4 explored=15.3 helper=false slips=0
+== ONCE ch=38o var=lose rc=0
+AUTOTEST PASS chapter=38o variant=lose outcome=38O.2 oars=11 arrows=0 forks=0/3 fire=false pulled=false oil=true snaps=0 splashes=4 explored=15.3 helper=false slips=0
+== ONCE ch=38o var=lose rc=0
+AUTOTEST PASS chapter=38o variant=lose outcome=38O.2 oars=9 arrows=0 forks=0/3 fire=false pulled=false oil=true snaps=0 splashes=4 explored=15.3 helper=false slips=0
+== ONCE ch=38o var=lose rc=0
+AUTOTEST PASS chapter=38o variant=lose outcome=38O.2 oars=10 arrows=0 forks=0/3 fire=false pulled=false oil=true snaps=0 splashes=4 explored=15.3 helper=false slips=0
+== ONCE ch=33o var=fall rc=0
+AUTOTEST PASS chapter=33o variant=fall outcome=33O.1 stones=4 hits=1 falls=2 water=1 hidden=true gift=refuse warn=ok big=true
+== ONCE ch=33o var=def rc=0
+AUTOTEST PASS chapter=33o variant= outcome=33O.1 stones=4 hits=0 falls=0 water=0 hidden=true gift=refuse warn=ok big=true
+== ONCE ch=38o var=hooks_bad rc=0
+AUTOTEST PASS chapter=38o variant=hooks_bad outcome=38O.1 oars=11 arrows=0 forks=3/3 fire=true pulled=true oil=false snaps=0 splashes=0 explored=15.3 helper=false slips=0
+== ONCE ch=38o var=hooks_bad rc=0
+AUTOTEST PASS chapter=38o variant=hooks_bad outcome=38O.1 oars=10 arrows=0 forks=3/3 fire=true pulled=true oil=false snaps=0 splashes=0 explored=15.3 helper=false slips=0
+== ONCE ch=38o var=hooks_bad rc=0
+AUTOTEST PASS chapter=38o variant=hooks_bad outcome=38O.1 oars=11 arrows=0 forks=3/3 fire=true pulled=true oil=false snaps=0 splashes=0 explored=15.3 helper=false slips=0
+== SONRA ch=38o var=hooks_bad rc=0
+AUTOTEST PASS chapter=38o variant=hooks_bad outcome=38O.1 oars=9 arrows=0 forks=3/3 fire=true pulled=true oil=false snaps=0 splashes=0 explored=15.3 helper=false slips=0
+== SONRA ch=38o var=hooks_bad rc=0
+AUTOTEST PASS chapter=38o variant=hooks_bad outcome=38O.1 oars=10 arrows=0 forks=3/3 fire=true pulled=true oil=false snaps=0 splashes=0 explored=15.3 helper=false slips=0
+
+# RINFO sondasi (sonda_rinfo.gd; ham SRINFO satirlari)
+SRINFO ONCE ch=29 phase=wind mode=dogal k=0 draws=2418 prims=1205k objs=2636
+SRINFO ONCE ch=29 phase=wind mode=dogal k=1 draws=2749 prims=1487k objs=2967
+SRINFO ONCE ch=29 phase=wind mode=dogal k=2 draws=3149 prims=1758k objs=3367
+SRINFO ONCE ch=29 phase=wind mode=sabit k=0 draws=7555 prims=8892k objs=7773
+SRINFO ONCE ch=29 phase=wind mode=sabit k=1 draws=7676 prims=8925k objs=7894
+SRINFO ONCE ch=29 phase=wind mode=sabit k=2 draws=7719 prims=8975k objs=7937
+SRINFO ONCE ch=29o phase=climb mode=dogal k=0 draws=592 prims=382k objs=811
+SRINFO ONCE ch=29o phase=climb mode=dogal k=1 draws=581 prims=355k objs=799
+SRINFO ONCE ch=29o phase=climb mode=dogal k=2 draws=764 prims=616k objs=982
+SRINFO ONCE ch=29o phase=climb mode=sabit k=0 draws=1425 prims=1157k objs=1770
+SRINFO ONCE ch=29o phase=climb mode=sabit k=1 draws=2412 prims=1206k objs=2656
+SRINFO ONCE ch=29o phase=climb mode=sabit k=2 draws=2432 prims=1207k objs=2676
+SRINFO ONCE ch=29o phase=gun mode=dogal k=0 draws=836 prims=756k objs=1084
+SRINFO ONCE ch=29o phase=gun mode=dogal k=1 draws=1734 prims=1693k objs=1994
+SRINFO ONCE ch=29o phase=gun mode=dogal k=2 draws=1728 prims=1697k objs=1981
+SRINFO ONCE ch=29o phase=gun mode=sabit k=0 draws=7615 prims=9220k objs=7868
+SRINFO ONCE ch=29o phase=gun mode=sabit k=1 draws=7699 prims=9226k objs=7991
+SRINFO ONCE ch=29o phase=gun mode=sabit k=2 draws=7695 prims=9234k objs=7985
+SRINFO ONCE ch=29o phase=hooks mode=dogal k=0 draws=2031 prims=1862k objs=2275
+SRINFO ONCE ch=29o phase=hooks mode=dogal k=1 draws=2036 prims=1867k objs=2280
+SRINFO ONCE ch=29o phase=hooks mode=dogal k=2 draws=799 prims=465k objs=1080
+SRINFO ONCE ch=29o phase=hooks mode=sabit k=0 draws=7282 prims=8831k objs=7526
+SRINFO ONCE ch=29o phase=hooks mode=sabit k=1 draws=975 prims=953k objs=1219
+SRINFO ONCE ch=29o phase=hooks mode=sabit k=2 draws=969 prims=943k objs=1213
+SRINFO ONCE ch=29o phase=wind mode=dogal k=0 draws=6278 prims=7513k objs=6496
+SRINFO ONCE ch=29o phase=wind mode=dogal k=1 draws=3484 prims=3172k objs=3702
+SRINFO ONCE ch=29o phase=wind mode=dogal k=2 draws=2682 prims=2013k objs=2900
+SRINFO ONCE ch=29o phase=wind mode=sabit k=0 draws=2574 prims=1836k objs=2792
+SRINFO ONCE ch=29o phase=wind mode=sabit k=1 draws=2489 prims=1698k objs=2707
+SRINFO ONCE ch=29o phase=wind mode=sabit k=2 draws=2199 prims=1346k objs=2417
+SRINFO ONCE ch=38o phase=climb mode=dogal k=0 draws=5242 prims=6286k objs=5558
+SRINFO ONCE ch=38o phase=climb mode=dogal k=1 draws=5354 prims=6307k objs=5720
+SRINFO ONCE ch=38o phase=climb mode=dogal k=2 draws=5380 prims=6440k objs=5704
+SRINFO ONCE ch=38o phase=climb mode=sabit k=0 draws=6803 prims=8180k objs=7127
+SRINFO ONCE ch=38o phase=climb mode=sabit k=1 draws=6787 prims=8161k objs=7111
+SRINFO ONCE ch=38o phase=climb mode=sabit k=2 draws=6781 prims=8210k objs=7105
+SRINFO ONCE ch=38o phase=explore mode=dogal k=0 draws=5170 prims=6010k objs=5608
+SRINFO ONCE ch=38o phase=explore mode=dogal k=1 draws=5152 prims=5936k objs=5646
+SRINFO ONCE ch=38o phase=explore mode=dogal k=2 draws=5085 prims=5864k objs=5579
+SRINFO ONCE ch=38o phase=explore mode=sabit k=0 draws=5380 prims=6653k objs=5874
+SRINFO ONCE ch=38o phase=explore mode=sabit k=1 draws=5207 prims=6400k objs=5701
+SRINFO ONCE ch=38o phase=explore mode=sabit k=2 draws=5067 prims=6080k objs=5561
+SRINFO ONCE ch=38o phase=ladder mode=dogal k=0 draws=3146 prims=2474k objs=3622
+SRINFO ONCE ch=38o phase=ladder mode=dogal k=1 draws=3174 prims=2484k objs=3650
+SRINFO ONCE ch=38o phase=ladder mode=dogal k=2 draws=3175 prims=2470k objs=3651
+SRINFO ONCE ch=38o phase=ladder mode=sabit k=0 draws=2119 prims=1592k objs=2595
+SRINFO ONCE ch=38o phase=ladder mode=sabit k=1 draws=2119 prims=1591k objs=2595
+SRINFO ONCE ch=38o phase=ladder mode=sabit k=2 draws=2114 prims=1588k objs=2590
+SRINFO SONRA ch=29 phase=wind mode=dogal k=0 draws=2430 prims=1207k objs=2648
+SRINFO SONRA ch=29 phase=wind mode=dogal k=1 draws=2794 prims=1527k objs=3012
+SRINFO SONRA ch=29 phase=wind mode=dogal k=2 draws=3172 prims=1759k objs=3390
+SRINFO SONRA ch=29 phase=wind mode=sabit k=0 draws=7533 prims=8926k objs=7751
+SRINFO SONRA ch=29 phase=wind mode=sabit k=1 draws=7685 prims=8951k objs=7903
+SRINFO SONRA ch=29 phase=wind mode=sabit k=2 draws=7693 prims=8986k objs=7911
+SRINFO SONRA ch=29o phase=climb mode=dogal k=0 draws=590 prims=360k objs=808
+SRINFO SONRA ch=29o phase=climb mode=dogal k=1 draws=597 prims=365k objs=815
+SRINFO SONRA ch=29o phase=climb mode=dogal k=2 draws=1316 prims=1147k objs=1618
+SRINFO SONRA ch=29o phase=climb mode=sabit k=0 draws=2509 prims=1216k objs=2801
+SRINFO SONRA ch=29o phase=climb mode=sabit k=1 draws=2428 prims=1215k objs=2672
+SRINFO SONRA ch=29o phase=climb mode=sabit k=2 draws=2428 prims=1212k objs=2672
+SRINFO SONRA ch=29o phase=gun mode=dogal k=0 draws=1688 prims=1690k objs=1948
+SRINFO SONRA ch=29o phase=gun mode=dogal k=1 draws=1677 prims=1690k objs=1930
+SRINFO SONRA ch=29o phase=gun mode=dogal k=2 draws=1606 prims=1578k objs=1859
+SRINFO SONRA ch=29o phase=gun mode=sabit k=0 draws=7627 prims=9230k objs=7919
+SRINFO SONRA ch=29o phase=gun mode=sabit k=1 draws=7636 prims=9234k objs=7926
+SRINFO SONRA ch=29o phase=gun mode=sabit k=2 draws=7592 prims=9226k objs=7863
+SRINFO SONRA ch=29o phase=hooks mode=dogal k=0 draws=2007 prims=1867k objs=2251
+SRINFO SONRA ch=29o phase=hooks mode=dogal k=1 draws=2007 prims=1867k objs=2251
+SRINFO SONRA ch=29o phase=hooks mode=dogal k=2 draws=778 prims=446k objs=1059
+SRINFO SONRA ch=29o phase=hooks mode=sabit k=0 draws=7243 prims=8856k objs=7487
+SRINFO SONRA ch=29o phase=hooks mode=sabit k=1 draws=972 prims=965k objs=1216
+SRINFO SONRA ch=29o phase=hooks mode=sabit k=2 draws=970 prims=964k objs=1214
+SRINFO SONRA ch=29o phase=wind mode=dogal k=0 draws=6276 prims=7652k objs=6494
+SRINFO SONRA ch=29o phase=wind mode=dogal k=1 draws=3461 prims=3199k objs=3679
+SRINFO SONRA ch=29o phase=wind mode=dogal k=2 draws=2607 prims=2003k objs=2825
+SRINFO SONRA ch=29o phase=wind mode=sabit k=0 draws=2499 prims=1830k objs=2717
+SRINFO SONRA ch=29o phase=wind mode=sabit k=1 draws=2432 prims=1709k objs=2650
+SRINFO SONRA ch=29o phase=wind mode=sabit k=2 draws=2159 prims=1358k objs=2377
+SRINFO SONRA ch=38o phase=climb mode=dogal k=0 draws=5157 prims=6173k objs=5472
+SRINFO SONRA ch=38o phase=climb mode=dogal k=1 draws=5256 prims=6167k objs=5622
+SRINFO SONRA ch=38o phase=climb mode=dogal k=2 draws=5356 prims=6285k objs=5722
+SRINFO SONRA ch=38o phase=climb mode=sabit k=0 draws=5313 prims=6329k objs=5637
+SRINFO SONRA ch=38o phase=climb mode=sabit k=1 draws=6760 prims=8151k objs=7084
+SRINFO SONRA ch=38o phase=climb mode=sabit k=2 draws=6746 prims=8178k objs=7070
+SRINFO SONRA ch=38o phase=explore mode=dogal k=0 draws=5167 prims=5953k objs=5661
+SRINFO SONRA ch=38o phase=explore mode=dogal k=1 draws=5107 prims=5885k objs=5601
+SRINFO SONRA ch=38o phase=explore mode=dogal k=2 draws=5022 prims=5817k objs=5516
+SRINFO SONRA ch=38o phase=explore mode=sabit k=0 draws=5314 prims=6586k objs=5808
+SRINFO SONRA ch=38o phase=explore mode=sabit k=1 draws=5154 prims=6321k objs=5648
+SRINFO SONRA ch=38o phase=explore mode=sabit k=2 draws=5026 prims=6018k objs=5520
+SRINFO SONRA ch=38o phase=ladder mode=dogal k=0 draws=1377 prims=728k objs=1853
+SRINFO SONRA ch=38o phase=ladder mode=dogal k=1 draws=1377 prims=728k objs=1853
+SRINFO SONRA ch=38o phase=ladder mode=dogal k=2 draws=1377 prims=728k objs=1853
+SRINFO SONRA ch=38o phase=ladder mode=sabit k=0 draws=976 prims=305k objs=1452
+SRINFO SONRA ch=38o phase=ladder mode=sabit k=1 draws=975 prims=305k objs=1451
+SRINFO SONRA ch=38o phase=ladder mode=sabit k=2 draws=975 prims=305k objs=1451
+SRINFO_DONE
+SRINFO_DONE
+SRINFO_DONE
+SRINFO_DONE
+SRINFO_DONE
+SRINFO_DONE
