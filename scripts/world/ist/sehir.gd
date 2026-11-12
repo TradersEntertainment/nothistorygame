@@ -304,25 +304,21 @@ func _build(it: Dictionary, lod: int) -> void:
 	if v2 and not it.has("hat") and String(it.get("mod", "")) != "doku":
 		_kursun(n)
 	if v2 and lod == 0 and it.has("glen"):
-		_kapi_gecit(n)
-	if v2 and not it.has("hat") and String(it.get("mod", "")) != "doku":
-		_kursun(n)
-	if v2 and lod == 0 and it.has("glen"):
-		_kapi_gecit(n)
-	var ms := (Time.get_ticks_usec() - t0) / 1000.0
-	stats["kur_ms_max"] = maxf(stats["kur_ms_max"], ms)
-	stats["kur_n"] += 1
-	_cost["%s/%d" % [String(it.get("mod", "")), lod]] = ms
-	if ms > 6.0:
-		if not stats.has("yavas"):
-			stats["yavas"] = {}
-		var mk := String(it["mod"])
-		if mk == "v2":
-			mk = String(it["id"]).get_slice("_", 0)
-		elif mk == "doku":
-			mk = "doku_" + String(it["id"]).get_slice("_", 1)
-		var key := "%s/%d" % [mk, lod]
-		stats["yavas"][key] = maxf(float(stats["yavas"].get(key, 0.0)), ms)
+		var hw0 := float(IstSurlar.dims(K_SUR)["HW"])
+		_kapi_gecit(n, hw0 - 0.35, hw0 + 0.35)
+	elif v2 and lod == 0 and it.has("hat") and it.has("len"):
+		# Deniz surları: yürüme yolu kule tepelerine basamakla çıkar; kule tepe korkuluğu yolu enine kesiyordu
+		var kur := String(HAT.get(String(it["hat"]), {}).get("kur", ""))
+		if kur in ["marmara", "halic"]:
+			var dm := IstMarmaraSur.dims(K_SUR)
+			var hh := float(dm["H"])
+			var top := float(dm["TH"])
+			if kur == "halic" and absf(float(it["len"]) - float(IstHalicSur.dims(K_SUR)["L"])) < 0.05:
+				hh = float(IstHalicSur.dims(K_SUR)["H"])
+				top = hh + float(IstHalicSur.dims(K_SUR)["TH"])
+			var lo_y := float(it["walk"]) - float(it["pos"].y) - hh
+			_kapi_gecit(n, hh + lo_y - 0.35, top + lo_y + 0.35)
+	var t_kur := Time.get_ticks_usec()
 	if lod > 0:
 		_bake_lod(n, lod >= 2)
 		for c in n.find_children("*", "GeometryInstance3D", true, false):
@@ -336,6 +332,25 @@ func _build(it: Dictionary, lod: int) -> void:
 	elif v2:
 		# v2 yakın katman: görüntü doku başına pişirilir (çizim sayısı), çarpışma gövdeleri olduğu gibi kalır
 		_bake_lod(n, false)
+	# Süre: kurma + pişirme (tek işin toplamı; ISTYAVAS)
+	var ms := (Time.get_ticks_usec() - t0) / 1000.0
+	var pis_ms := (Time.get_ticks_usec() - t_kur) / 1000.0
+	stats["kur_ms_max"] = maxf(stats["kur_ms_max"], ms)
+	stats["kur_n"] += 1
+	_cost["%s/%d" % [String(it.get("mod", "")), lod]] = ms
+	if ms > 6.0:
+		if not stats.has("yavas"):
+			stats["yavas"] = {}
+		var mk := String(it["mod"])
+		if mk == "v2":
+			mk = String(it["id"]).get_slice("_", 0)
+		elif mk == "doku":
+			mk = "doku_" + String(it["id"]).get_slice("_", 1)
+		var key := "%s/%d" % [mk, lod]
+		stats["yavas"][key] = maxf(float(stats["yavas"].get(key, 0.0)), ms)
+		if not stats.has("yavas_pis"):
+			stats["yavas_pis"] = {}
+		stats["yavas_pis"][key] = maxf(float(stats["yavas_pis"].get(key, 0.0)), pis_ms)
 	it["have"][lod] = n
 	_show(it)
 
@@ -369,7 +384,11 @@ func _kursun(n: Node3D) -> void:
 				d.metallic_specular = 0.6
 				d.roughness = 0.45
 				_kursun_mat[key] = d
-			mi.set_surface_override_material(si, _kursun_mat[key])
+			# material_override yüzey başına malzemeden önce gelir
+			if mi.material_override == m:
+				mi.material_override = _kursun_mat[key]
+			else:
+				mi.set_surface_override_material(si, _kursun_mat[key])
 
 
 ## Uzak/orta katmanın ilkel parçaları tek ağa pişirilir (World1453.bake: doku başına bir yüzey; uzakta tek yüzey):
@@ -1160,10 +1179,17 @@ func _on_pisir() -> void:
 	for it: Dictionary in items:
 		var mod := String(it.get("mod", ""))
 		var id := String(it["id"])
-		if it.has("hat") or mod == "doku" or (mod == "v2" and not id.begins_with("mese_") and id != "ayasofya" and id != "blakherna" and id != "bozdogan"):
+		var hat := it.has("hat") or id.begins_with("kose_")
+		if not hat and mod == "v2" and not id.begins_with("mese_") and id != "ayasofya" and id != "blakherna" and id != "bozdogan" and id != "zincir":
 			continue
 		var h := it["holder"] as Node3D
 		_build(it, 1)
+		if hat:
+			# sur dilimi: orta katman açılışta (lod 0 akışta: dilim başına ön-pişirme bellek açısından çok pahalı)
+			it["pre"] = [null, null, null]
+			it["want"] = 2
+			_show(it)
+			continue
 		var t0 := Time.get_ticks_usec()
 		_build(it, 0)
 		var ms := (Time.get_ticks_usec() - t0) / 1000.0
@@ -1326,8 +1352,7 @@ func _coz_cakisma(c: Array) -> void:
 
 ## Kapı koşusunun yürüme yolunu enine kesen alçak korkuluklar (kapı kulesinin tepe çevresi yürüme yolu hizasında kalıyor):
 ## yürüme yolu şeridinde (yerel z ±2) bu korkuluklar kaldırılır, üstündeki mazgallar da (sur üstünde kesintisiz yürüyüş)
-func _kapi_gecit(n: Node3D) -> void:
-	var HW := float(IstSurlar.dims(K_SUR)["HW"])
+func _kapi_gecit(n: Node3D, ymin: float, ymax: float) -> void:
 	var gone: Array = []
 	for b in n.find_children("*", "StaticBody3D", true, false):
 		var body := b as StaticBody3D
@@ -1338,7 +1363,7 @@ func _kapi_gecit(n: Node3D) -> void:
 			var root := n
 			var lp := root.global_transform.affine_inverse() * (cs as Node3D).global_position if root.is_inside_tree() else body.position
 			var bot := lp.y - sz.y * 0.5
-			if sz.x < 0.7 and sz.y < 1.5 and sz.z > 3.0 and absf(bot - HW) < 0.35 and absf(lp.z) < sz.z * 0.5 - 1.0:
+			if sz.x < 0.7 and sz.y < 1.8 and sz.z > 2.0 and bot > ymin and bot < ymax and absf(lp.z) < sz.z * 0.5 - 0.6:
 				gone.append(Rect2(lp.x - 0.6, lp.z - sz.z * 0.5, 1.2, sz.z))
 				body.get_parent().remove_child(body)
 				body.free()
@@ -1356,7 +1381,7 @@ func _kapi_gecit(n: Node3D) -> void:
 			var lp2 := t.origin
 			var hit := false
 			for r: Rect2 in gone:
-				if r.has_point(Vector2(lp2.x, lp2.z)) and absf(lp2.y - HW - 1.3) < 1.0:
+				if r.has_point(Vector2(lp2.x, lp2.z)) and lp2.y > ymin and lp2.y < ymax + 2.5:
 					hit = true
 			if not hit:
 				keep.append(t)
@@ -1655,10 +1680,30 @@ func _hat_far_add(it: Dictionary) -> void:
 	tmp.free()
 
 
+## Uzak sur ağı: düz pişirmede renk = taban rengi × dokunun ortalaması; kesme taş dokusu koyu olduğundan sur uzakta
+## kahverengiye kaçıyordu (dışarıdan bakışta "alçak kahverengi çit"). Köşe renkleri açılır (kireçtaşı krem).
+static func _acik(m: Mesh, f: float) -> Mesh:
+	if m == null or m.get_surface_count() == 0:
+		return m
+	var am := ArrayMesh.new()
+	for si in m.get_surface_count():
+		var arr := m.surface_get_arrays(si)
+		var cols = arr[Mesh.ARRAY_COLOR]
+		if cols is PackedColorArray:
+			var pc: PackedColorArray = cols
+			for i in pc.size():
+				var c := pc[i]
+				pc[i] = Color(minf(c.r * f, 1.0), minf(c.g * f, 1.0), minf(c.b * f, 1.0), c.a)
+			arr[Mesh.ARRAY_COLOR] = pc
+		am.add_surface_from_arrays(Mesh.PRIMITIVE_TRIANGLES, arr)
+		am.surface_set_material(si, m.surface_get_material(si))
+	return am
+
+
 func _hat_far_commit() -> void:
 	for ck: Vector2i in _hat_far:
 		var mi := MeshInstance3D.new()
-		mi.mesh = (_hat_far[ck] as SurfaceTool).commit()
+		mi.mesh = _acik(( _hat_far[ck] as SurfaceTool).commit(), 1.3)
 		if _hat_mat:
 			mi.material_override = _hat_mat
 		mi.position = Vector3((ck.x + 0.5) * HAT_CELL, 0, (ck.y + 0.5) * HAT_CELL)
