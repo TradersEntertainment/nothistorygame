@@ -687,7 +687,13 @@ func _process(delta: float) -> void:
 					_queue.push_front(job)
 					break
 		elif job[0] == "cell":
-			_cell_up(job[1])
+			_cell_up(job[1], true)
+			# çarpışma bir sonraki karede (sıranın başında)
+			if (job[1] as Dictionary).get("col_bekle", false):
+				_queue.push_front(["cellcol", job[1]])
+				break
+		elif job[0] == "cellcol":
+			_cell_col(job[1])
 
 
 func _plan(cp: Vector3) -> void:
@@ -733,6 +739,8 @@ func _plan(cp: Vector3) -> void:
 		var d := Vector2(cc.x - cp.x, cc.z - cp.z).length() + maxf(0.0, cp.y - cc.y - 20.0) * 1.5
 		if d < 150.0 and not c["up"]:
 			jobs.append([d, ["cell", c]])
+		elif c.get("col_bekle", false):
+			jobs.append([d - 1000.0, ["cellcol", c]])
 		elif d > 210.0 and c["up"]:
 			_cell_down(c)
 	jobs.sort_custom(func(a: Array, b: Array) -> bool: return float(a[0]) < float(b[0]))
@@ -930,14 +938,11 @@ func _mm(m: Mesh, xfs: Array) -> MultiMeshInstance3D:
 
 
 ## Yakın hücre: tam ayrıntılı ev ağı (MultiMesh) ve evlerin çarpışması
-func _cell_up(c: Dictionary) -> void:
+func _cell_up(c: Dictionary, bol := false) -> void:
 	if c["up"]:
 		return
 	c["up"] = true
 	var t0 := Time.get_ticks_usec()
-	var body := StaticBody3D.new()
-	body.name = "EvCarpisma"
-	add_child(body)
 	if v2:
 		# v2: evler, kaideler ve sokak taşları hücre başına tek ağ (malzeme başına bir yüzey); ağaçlar MultiMesh
 		var mi := _merge_groups(c["groups"], 0, c["c"])
@@ -949,6 +954,25 @@ func _cell_up(c: Dictionary) -> void:
 			var mm := _mm(_mesh_for(key, 0), c["groups"][key])
 			mm.visibility_range_end = NEAR
 			c["mm"].append(mm)
+	var ms := (Time.get_ticks_usec() - t0) / 1000.0
+	_hucre_say("ev_gorsel", ms)
+	if v2 and bol:
+		# çarpışma ayrı işte (sonraki kare; ŞEHİR-3 zaman dilimi): _plan bekleyen hücreyi öne alır
+		c["col_bekle"] = true
+	else:
+		_cell_col(c)
+
+
+## Hücrenin ev/kaide/taş çarpışması: gövde şekiller eklendikten SONRA ağaca bağlanır (ağaçtaki gövdeye her şekil
+## eklenişi fizik sunucusunu güncelliyordu)
+func _cell_col(c: Dictionary) -> void:
+	c.erase("col_bekle")
+	if not c["up"] or c["col"] != null:
+		return
+	var t0 := Time.get_ticks_usec()
+	var body := StaticBody3D.new()
+	body.name = "EvCarpisma"
+	for key: String in c["groups"]:
 		if key == "kaide" or key == "tas":
 			for xf: Transform3D in c["groups"][key]:
 				var bcs := CollisionShape3D.new()
@@ -965,9 +989,17 @@ func _cell_up(c: Dictionary) -> void:
 				cs.shape = s[0]
 				cs.transform = xf * (s[1] as Transform3D)
 				body.add_child(cs)
+	add_child(body)
 	c["col"] = body
-	var ms := (Time.get_ticks_usec() - t0) / 1000.0
+	_hucre_say("ev_carpisma", (Time.get_ticks_usec() - t0) / 1000.0)
+
+
+func _hucre_say(k: String, ms: float) -> void:
 	stats["kur_ms_max"] = maxf(stats["kur_ms_max"], ms)
+	if v2 and ms > 6.0:
+		if not stats.has("yavas"):
+			stats["yavas"] = {}
+		stats["yavas"][k] = maxf(float(stats["yavas"].get(k, 0.0)), ms)
 
 
 func _cell_down(c: Dictionary) -> void:
@@ -1394,7 +1426,7 @@ func _on_pisir() -> void:
 		var mod := String(it.get("mod", ""))
 		var id := String(it["id"])
 		var hat := it.has("hat") or id.begins_with("kose_")
-		if not hat and mod == "v2" and not id.begins_with("mese_") and id != "ayasofya" and id != "blakherna" and id != "bozdogan" and id != "zincir":
+		if not hat and mod == "v2" and not id.begins_with("mese_") and not id in ["ayasofya", "blakherna", "bozdogan", "zincir", "hub_sehir"]:
 			continue
 		var h := it["holder"] as Node3D
 		_build(it, 1)
@@ -1419,6 +1451,14 @@ func _on_pisir() -> void:
 		it["want"] = 2
 		_show(it)
 	stats["on_pisir_n"] = n
+	# Isınma: ev hücrelerindeki her örneğin yakın ağı (IstEvler.mesh lod 0) açılışta üretilir (ilk hücre 60–90 ms sürüyordu)
+	var anahtar := {}
+	for c: Dictionary in _cells0:
+		for key: String in c["groups"]:
+			anahtar[key] = true
+	for key: String in anahtar:
+		_mesh_for(key, 0)
+	stats["isin_ev_n"] = anahtar.size()
 	# Isınma: her sur kurucusunun yakın katmanı bir kez (desen dokuları, paylaşılan ağlar ve malzemeler önbelleğe girer;
 	# oyunda ilk dilimin ilk penceresi bunları üretirken 40–70 ms sürüyordu). Kurulan atılır.
 	var isin := {}
@@ -1890,13 +1930,10 @@ func _place_v2() -> void:
 	var hx := hub_xf()
 	if hx != Transform3D():
 		var hc := hx * Vector3(0, 0, -10)
-		IstGeo.duzle(Vector2(hc.x, hc.z), 48.0, hx.origin.y, 10.0)
+		# bölümün kaldırımı (üstü yerel y 0) arazinin üstünde kalsın: arazi 12 cm aşağıda düzlenir
+		IstGeo.duzle(Vector2(hc.x, hc.z), 48.0, hx.origin.y - 0.12, 10.0)
 		# Hub şehri tek katmanlı öğe (kendi uzaklık katmanları var); BAĞLAMA bölümde (7b) alanı temizlerken kalkar
-		var hit := _v2_item_tek("hub_sehir", hx.origin, 50.0, func(nd: Node3D, _lod: int) -> void:
-			var t0 := Time.get_ticks_msec()
-			ByzCity.far_hub(nd, Transform3D.IDENTITY)
-			stats["hub_ms"] = Time.get_ticks_msec() - t0)
-		hit["data"] = {}
+		_v2_item("hub_sehir", hx.origin, 0.0, 50.0, _make_hub)
 
 
 ## Tek katmanlı öğe: kurucusu bir kez (açılışta) çalışır, kendi uzaklık katmanlarını ve çarpışmasını kendisi kurar
@@ -2047,6 +2084,34 @@ func _make_aya(n: Node3D, lod: int) -> void:
 		Ayasofya._domes(inner)
 
 
+## Hub şehri: mektup bölümünün kurucuları (ByzCity "walls": zemin, cadde ve evleri, kançılarya, iç sur ve Romanos kemeri,
+## saray avlusu, kubbeli kiliseler, dolgu evler) — ByzCity.far_hub'ın kurduğu parçaların aynısı; ama şehrin katmanlı
+## pişirmesiyle (ByzCity.far_hub'daki World1453.bake köşe renkli parçaların rengini silip bembeyaz bırakıyordu, ŞEHİR-3).
+## Kişiler, yazılar atılır; ışıklar yalnız yakın katmanda.
+func _make_hub(n: Node3D, lod: int) -> void:
+	var t0 := Time.get_ticks_msec()
+	var c := ByzCity.new()
+	c.part = "walls"
+	c._build_ground()
+	c._build_street()
+	c._build_chancery()
+	c._build_walls()
+	c._build_palace()
+	c._build_small_skyline()
+	c._build_fill()
+	for ch in c.get_children():
+		c.remove_child(ch)
+		n.add_child(ch)
+	c.free()
+	for x in n.find_children("*", "", true, false):
+		if not is_instance_valid(x):
+			continue
+		if x is Person or x is Label3D or x is Area3D or (x is Light3D and lod > 0):
+			x.get_parent().remove_child(x)
+			x.free()
+	stats["hub_ms"] = Time.get_ticks_msec() - t0
+
+
 func _make_blakherna(n: Node3D, lod: int) -> void:
 	# Blakherna Sarayı (ŞEHİR-3): bölümün düz kutu kabuğu yerine saray gibi kurulur (Tekfur Sarayı dili: üç kat, kemerli
 	# pencere sıraları, revak, balkon, kırma çatı, yan kuleler, şehir yanında avlu): scripts/world/ist/sehir_eser.gd
@@ -2141,7 +2206,8 @@ func _hatlar_v2() -> void:
 				# Eğimde kısa dilim: dilim boyunca 1,6 m'den fazla düşü olmasın
 				var dh := absf(IstGeo.h(a.x + d.x * v[0], a.y + d.y * v[0]) - IstGeo.h(a.x + d.x * v[1], a.y + d.y * v[1]))
 				# (ŞEHİR-3: en kısa dilim 30 → 12 m; Galata/Haliç yamacında dilimler arası 4–9 m'lik basamak kalıyordu)
-				n = maxi(n, mini(int(ceil(dh / 1.4)), int(span / 12.0)))
+				# (kara surunda kısa dilim kule kapılarını ve köşe sayısını artırıp yürüyüşü bozuyordu: kara 30 m'de kalır)
+				n = maxi(n, mini(int(ceil(dh / 1.4)), int(span / (30.0 if String(cfg["kur"]) == "kara" else 12.0))))
 				var lens: Array = []
 				var hl := float(IstHalicSur.dims(K_SUR)["L"])
 				if String(cfg["kur"]) == "halic" and dh < 2.5 and span >= hl:
