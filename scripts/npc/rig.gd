@@ -187,9 +187,11 @@ var _durus := {}
 ## Eğim denetimi (POSEAUDIT tilt, susturulamaz): kişinin kökü dünya dikeyinden 20°'den çok sapmışsa bir kez yazar.
 ## Bilinçli düşme/taşınma/uyuma/uçma işleri hariç (açık liste).
 const EGIM_SERBEST := ["fly", "hover", "swim", "fall", "dead", "lie", "sleep"]
-## Etkinlik adı vermeden kökü bilerek yatıran düşme sahneleri (açık liste; kişinin üst düğümünün betiği, kilitliyken):
+## Etkinlik adı vermeden kökü bilerek yatıran düşme/taşınma sahneleri (açık liste): [kişinin üst düğümünün betiği,
+## kişinin face_id'si ("" = hepsi)].
 ##   wall_fight.gd: ateş alan asker koşar, sonra yüzüstü düşer (_burn, ~1,45 rad)
-const EGIM_SERBEST_BETIK := ["res://scripts/level/wall_fight.gd"]
+##   chapter26.gd giustiniani: vurulur, sırtüstü moloza düşer, sedyeyle poternaya taşınır (_carry_pose, ~90°)
+const EGIM_SERBEST_SAHNE := [["res://scripts/level/wall_fight.gd", ""], ["res://scripts/chapter26.gd", "giustiniani"]]
 var _egim_t := 0.0
 var _egim_bildi := false
 
@@ -203,8 +205,10 @@ func _egim_denet(delta: float) -> void:
 	var deg := rad_to_deg(acos(clampf(up.dot(Vector3.UP), -1.0, 1.0)))
 	if deg > 20.0 and not activity in EGIM_SERBEST:
 		var par := owner.get_parent()
-		if lock > 0 and par and par.get_script() and (par.get_script() as Script).resource_path in EGIM_SERBEST_BETIK:
-			return
+		var ps: String = (par.get_script() as Script).resource_path if par and par.get_script() else ""
+		for e: Array in EGIM_SERBEST_SAHNE:
+			if ps == e[0] and (e[1] == "" or str(owner.get("face_id")) == e[1]):
+				return
 		_egim_bildi = true
 		print("POSEAUDIT tilt %s %.0f %s (%s/%s)" % [owner.name, deg, activity, par.get_parent().name if par and par.get_parent() else "", par.name if par else ""])
 
