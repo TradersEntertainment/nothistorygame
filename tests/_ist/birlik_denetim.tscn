@@ -1,0 +1,6 @@
+[gd_scene load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://tests/_ist/birlik_denetim.gd" id="1"]
+
+[node name="BirlikDenetim" type="Node3D"]
+script = ExtResource("1")

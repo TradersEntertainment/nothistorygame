@@ -90,6 +90,8 @@ static func build(parent: Node3D, gece_ := false, merkez_ := Vector3.ZERO) -> No
 			if m.get("name", "") == "attach_v2":
 				S.call("attach_v2", d, gece_)
 				break
+	# BİRLİK: ortak görsel kural (scripts/world/ist/gorsel_dil.gd); akışla eklenen parçalar da kurala çekilir
+	load("res://scripts/world/ist/gorsel_dil.gd").kur(d)
 	return d
 
 
