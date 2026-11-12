@@ -33,6 +33,9 @@ func _ready() -> void:
 			"liste": liste = kv[1]
 			"kip": kip = kv[1]
 			"sehir": IstDunya.sehir_bagla = kv[1] != "0"
+	if kip == "harita":
+		_harita.call_deferred()
+		return
 	if kip == "":
 		kip = "kare" if liste != "" else "ucus"
 	cam = Camera3D.new()
@@ -214,4 +217,79 @@ func _yuru_sina() -> void:
 	var q := pl.global_position
 	print("YURU yakalayici konum=%s su=%s zemin=%.2f %s" % [q, IstGeo.su(q.x, q.z), IstGeo.h(q.x, q.z),
 		"PASS" if not IstGeo.su(q.x, q.z) and q.y > -0.5 else "FAIL"])
+	get_tree().quit(0)
+
+
+## kip=harita: IstGeo.mahalle türlerinin tam tepe haritası (dünya hücresi `hucre` m) → shots/mahalle_harita.png;
+## satırlar: HARITA tur=… hucre_sayisi=…, en büyük kesintisiz evsiz (bostan/harabe/seyrek ada) alan.
+const TUR_RENK := {"carsi": "c0392b", "sik": "e08a4a", "seyrek": "e8c27a", "bostan": "5d8a3a", "harabe": "8e8170",
+	"liman": "3e6fb0", "sur_dibi": "a0522d", "kir": "c9c08f", "sarnic": "2f6b2f", "hipodrom": "d9cfae", "saray": "6e6258",
+	"ordugah": "b08fd0", "koy": "d8a0a0", "bag": "7a9a3a", "orman": "2e5030"}
+func _harita() -> void:
+	var hucre := 10.0
+	var e0 := -7200.0
+	var e1 := 5200.0
+	var n0 := -3400.0
+	var n1 := 6400.0
+	var W := int((e1 - e0) * IstGeo.S / hucre)
+	var H := int((n1 - n0) * IstGeo.S / hucre)
+	var img := Image.create(W, H, false, Image.FORMAT_RGB8)
+	var say := {}
+	var ici := PackedByteArray()
+	ici.resize(W * H)
+	var t0 := Time.get_ticks_msec()
+	for j in H:
+		for i in W:
+			var x := e0 * IstGeo.S + (i + 0.5) * hucre
+			var z := -n1 * IstGeo.S + (j + 0.5) * hucre
+			var m := IstGeo.mahalle(x, z)
+			var tur := String(m["tur"])
+			if m["ad"] == "deniz":
+				img.set_pixel(i, j, Color("1d4f7a"))
+				continue
+			var c := Color(TUR_RENK.get(tur, "ff00ff"))
+			c = c.darkened(0.25 * (1.0 - float(m["yogunluk"])))
+			img.set_pixel(i, j, c)
+			if IstGeo.sehir_ici(x, z):
+				say[tur] = int(say.get(tur, 0)) + 1
+				if tur in ["bostan", "harabe"] or (tur == "seyrek" and float(m["yogunluk"]) < 0.5):
+					ici[j * W + i] = 1
+	# en büyük kesintisiz evsiz ada (4-komşu)
+	var en_buyuk := 0
+	var en_yer := Vector2.ZERO
+	var gor := PackedByteArray()
+	gor.resize(W * H)
+	for k in W * H:
+		if ici[k] == 0 or gor[k] == 1:
+			continue
+		var yigin := [k]
+		gor[k] = 1
+		var n := 0
+		var mn := Vector2i(W, H)
+		var mx := Vector2i(-1, -1)
+		while not yigin.is_empty():
+			var q: int = yigin.pop_back()
+			n += 1
+			var qi := q % W
+			var qj := q / W
+			mn = Vector2i(mini(mn.x, qi), mini(mn.y, qj))
+			mx = Vector2i(maxi(mx.x, qi), maxi(mx.y, qj))
+			for d in [q - 1, q + 1, q - W, q + W]:
+				if d >= 0 and d < W * H and ici[d] == 1 and gor[d] == 0 and absi(d % W - qi) <= 1:
+					gor[d] = 1
+					yigin.append(d)
+		var boy := maxi(mx.x - mn.x + 1, mx.y - mn.y + 1)
+		if boy > en_buyuk:
+			en_buyuk = boy
+			en_yer = Vector2(e0 + (mn.x + mx.x) * 0.5 * hucre / IstGeo.S, n1 - (mn.y + mx.y) * 0.5 * hucre / IstGeo.S)
+	var top := 0
+	for t in say:
+		top += say[t]
+	for t in say:
+		print("HARITA sehir_ici tur=%s hucre=%d oran=%.3f" % [t, say[t], float(say[t]) / maxf(top, 1)])
+	print("HARITA en_buyuk_evsiz_ada_kenar=%.0f m (dunya) gercek_merkez=%s sure_ms=%d" % [en_buyuk * hucre, en_yer, Time.get_ticks_msec() - t0])
+	if shots != "":
+		DirAccess.make_dir_recursive_absolute(shots)
+		img.save_png(shots.path_join("mahalle_harita.png"))
+		print("GEZI kare ", shots.path_join("mahalle_harita.png"))
 	get_tree().quit(0)

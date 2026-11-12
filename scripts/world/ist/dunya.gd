@@ -9,12 +9,17 @@ extends Node3D
 const BUDGET_US := 5000
 ## Kare başına iş bütçesi (µs); kare alma sondası büyütebilir
 static var butce_us := BUDGET_US
-## Çekirdek (şehir ve çevresi) parça ızgarası: dünya metre
-const CX0 := -3072.0
-const CZ0 := -3072.0
+## Çekirdek (şehir ve çevresi) parça ızgarası: GERÇEK kapsam (e −6144…+4608, n −3072…+6144 m) IstGeo.S ile dünyaya
+## çevrilir ve CH'lik parçalara yuvarlanır (S değişince kendiliğinden uyar).
 const CH := 768.0
-const CNX := 7
-const CNZ := 6
+const CE_A := -6144.0
+const CE_B := 4608.0
+const CN_A := -3072.0
+const CN_B := 6144.0
+static var CX0 := floorf(CE_A * IstGeo.S / CH) * CH
+static var CZ0 := floorf(-CN_B * IstGeo.S / CH) * CH
+static var CNX := int(ceilf((CE_B * IstGeo.S - CX0) / CH))
+static var CNZ := int(ceilf((-CN_A * IstGeo.S - CZ0) / CH))
 ## Ayrıntı düzeyleri: hücre boyu (m) ve devreye girme uzaklığı (parça dikdörtgenine yatay uzaklık)
 const LOD_CELL := [6.0, 12.0, 24.0, 48.0]
 const LOD_DIST := [150.0, 700.0, 1900.0]
@@ -358,7 +363,8 @@ func _renk(x: float, z: float, y: float, egim: float) -> Color:
 	var g := sin(x * 0.021 + z * 0.013) * 0.5 + sin(x * 0.0071 - z * 0.0093 + 1.3) * 0.5
 	var c := C_CAYIR.lerp(C_KURU, clampf(0.45 + g * 0.45, 0.0, 1.0))
 	var b := IstGeo.bolge(x, z)
-	var yakin := absf(x + 600.0) < 2600.0 and absf(z + 200.0) < 2400.0
+	var rr := IstGeo.real(x, z)
+	var yakin := absf(rr.x + 1200.0) < 5200.0 and absf(rr.y - 400.0) < 4800.0
 	if b == IstGeo.B_YARIMADA or b == IstGeo.B_GALATA:
 		var m := _mah(x, z) if yakin else {"tur": "seyrek", "yogunluk": 0.3}
 		var yog: float = m["yogunluk"]
@@ -372,8 +378,8 @@ func _renk(x: float, z: float, y: float, egim: float) -> Color:
 				c = c.lerp(cig, clampf(0.25 + yog * 0.9, 0.0, 1.0))
 	elif b == IstGeo.B_TRAKYA and yakin:
 		# kuşatma ovası: surların önü çiğnenmiş toprak, ötesi kuru çayır
-		var dk := IstGeo.cizgi_uzak(Vector2(x, z), IstGeo.Y_KARA) if x < -1700.0 and x > -3400.0 and z > -2000.0 and z < 1200.0 else 999.0
-		c = C_CIGNEN.lerp(c, smoothstep(30.0, 160.0, dk))
+		var dk := IstGeo.cizgi_uzak(Vector2(x, z), IstGeo.Y_KARA) / IstGeo.S if rr.x < -3400.0 and rr.x > -6800.0 and rr.y < 4000.0 and rr.y > -2400.0 else 9999.0
+		c = C_CIGNEN.lerp(c, smoothstep(60.0, 320.0, dk))
 	elif b == IstGeo.B_ANADOLU:
 		c = c.lerp(Color("5f7a40"), 0.35)
 	if b == IstGeo.B_TRAKYA or b == IstGeo.B_ANADOLU:
