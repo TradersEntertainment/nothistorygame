@@ -18,8 +18,15 @@ Dal `wip/ist2-canli` (taban `wip/ist2-ordugah4`, üstüne `wip/ist2-doku4` birle
   üçgen, 6 kesim) Bld'nin içine pişiyor (çizim artmasın diye). 5–8 m'den bakınca gövde kenarı çokgen kırığı ve toon
   gölgede yüz yüz okunuyor (`yakin_agil`: ağıl öküzü). Kutu değil, ama "yuvarlak" da değil: KISMEN.
 - **60 m karesi:** gerçek ölçekte hayvan 20–40 piksel; siluet (dört bacak, boyun, baş) okunuyor ama ayrıntı yok.
-- **Deve:** baş gövdeye göre küçük; yakında hörgüç hâlâ hafif köşeli; çökmüş devede bacak katlanışı yandan bakınca
-  dizin dışarı taştığı yerde kırık.
+- **Deve:** baş gövdeye göre küçük, boyun gerçek devedeki gibi aşağı inip yükselmiyor (düz öne uzanıyor); çökmüş
+  devede bacak katlanışı yandan bakınca dizin dışarı taştığı yerde kırık.
+- **Kedi ve köpek:** kutu değil ama karikatür: kedi hâlâ biraz gelincik gibi uzun, köpeğin başı ata benziyor
+  (`sonda_07`, `sonda_08`). ÖNCE'deki kedi zaten kürelerdendi; kazanç küçük.
+- **Martı:** tünekte katlı kanadın koyu ucu kuyruğun çok gerisine uzanıyor, yandan bıçak gibi (`sonda_07`).
+- **`pafta_01` 60 m karesi:** kamera öküze bakıyor ama öküzler batarya setinin arkasında kalıyor; karede hayvan yok
+  (ÖNCE'de de yok). 60 m kanıtı yalnız sonda paftalarında: ordugâh içinde KANITSIZ.
+- **28o uzak sürü:** ilk SONRA karesinde sürü bembeyazdı (kitin açık postu eski yüz gölgesinden parlak); taban rengi
+  koyulaştırıldı, son karesi `pafta_03`'te (aşağıda).
 - **Öküz önden:** boyunduruk başın üstünden geçen düz çubuk gibi duruyor (ensede değil, alnın üstünde okunuyor).
 - **Koyun:** yatan koyunun bacakları gövdenin altında kayboluyor, iyi; ama otlayan koyunun başı yakında çok koyu leke.
 - **Ordugâhta canlılık yok:** ordugâh hayvanları durağan birleşik ağ (duruş çeşitliliği var: duran, otlayan, yatan,
@@ -172,7 +179,20 @@ okz.done(host, "okuz")
   `wip/ist2-doku4` birleşmesinden önceki kayıt (`e106a7e1`); fark ordugâhın dışında (ordugâh payı yukarıda eşit).
   Şehrin yakın hayvanları 6 ağa pişirildikten sonra da toplam aynı kaldı: fark birleşen dallardan. KANITSIZ (birleşik
   taban ayrıca ölçülmedi).
-- 28o: RINFO_28O
+- **28o** (`RINFO=1 PACE=1 … --chapter=28o --autotest --hitchaudit`, ÖNCE ve SONRA aynı akış; 2 sn'lik örnekler,
+  aynı sahne anında; geçiş anlarındaki tek örnekli sıçramalar dışında):
+
+  | an (sahne sn) | ÖNCE çizim / üçgen | SONRA çizim / üçgen | fark |
+  |---|---|---|---|
+  | t = 9 | 2 900 / 3 456 k | 2 904 / 3 462 k | +4 / +%0,2 |
+  | t = 19 | 2 375 / 2 675 k | 2 385 / 2 682 k | +10 / +%0,3 |
+  | t = 44 | 2 429 / 2 803 k | 2 441 / 2 766 k | +12 / −%1,3 |
+  | t = 57 | 2 260 / 2 647 k | 2 273 / 2 630 k | +13 / −%0,6 |
+
+  Üçgen: TAMAM (≤ +%0,6). Çizim +4…+13 (≈ +%0,5): Ox sınıfının parçaları (gövde ağı + boyun/baş/bacak pişmiş ağları,
+  dış hat geçişi) eski pişmiş kutulardan birkaç fazla: "çizim artmaz" tam tutmadı: KISMEN. Not: `HitchAudit` RINFO
+  örneklerini sahnenin ilk ~73 sn'sinde verdi (çekme anı 190. sn civarında; o anın RINFO'su yok: KANITSIZ).
+  Uzak sürü (56 öküz) kutu ~126 üçgen → kit orta ~280 üçgen/öküz: +8,6 k üçgen, görünürken.
 
 ## 8. Testler
 
@@ -183,15 +203,37 @@ okz.done(host, "okuz")
     `VISAUDIT overlap Squad>Person|Squad>Person` (iki asker üst üste). Aynı varyant yeniden koşunca 0, ÖNCE
     kopyasında 0 → rastlantısal, hayvanla ilgisi yok (kişi çakışması).
   - 2. grup (55): 15 (32), 3 (6), 17o (4), 9 ve 8y kalanlar: 55 PASS, yasak 0.
-  - Son kodla yeniden: 28o, 28o lose, 35o, 35o slip, 2, 10, 6, 8y, 11, 16, 7, 26 (12) PASS 0; 28o dört varyant
-    (uzak sürü değişikliğinden sonra) PASS 0; 16 üç varyant (kedi değişikliğinden sonra) PASS 0.
-  - Toplam 176 koşu, 175 temiz, 1 rastlantısal (yukarıda).
-- Bakamadıklarım: 1. ve 2. gruptan sonra yapılan değişiklikler (ordugâh Bld kuralı, göz kesimi, şehir yakın hayvan
-  birleştirme, 28o sürü, 16 kedisi) yalnız yukarıdaki son koşu listesiyle sınandı; bütün varyantlar yeniden koşmadı.
+  - Ara koşular: 12 anahtar (28o, 35o, 2, 10, 6, 8y, 11, 16, 7, 26) + 28o dört varyant + 16 üç varyant: PASS 0.
+  - SON KODLA (bütün değişikliklerden sonra, `OZET6`): 28o (4 varyant), 35o (2), 2 (2), 10 (2), 6 (2), 8y (2),
+    16 (2), 11, 7, 9, 15, 3, 26: 22/22 PASS, yasak 0. Ekranlı 28o (SONRA, son kod): PASS.
+  - Toplam 198 başsız koşu; 197 temiz, 1 rastlantısal (yukarıda).
+- Bakamadıklarım: 1. ve 2. gruptan sonraki değişiklikler (ordugâh Bld kuralı, göz kesimi, halka çerçevesi sürekliliği,
+  şehir yakın hayvan birleştirme, 28o sürü, 16 kedisi, at göğüslüğü) son kodla yalnız 22 koşuluk listeyle sınandı;
+  157 varyantın hepsi son kodla yeniden koşmadı.
 
-## 9. Paftalar
+## 9. Paftalar (`docs/_kanit_canli/`, hepsi ÖNCE | SONRA; JPEG ≤ 300 KB)
 
-PAFTALAR
+| dosya | içerik |
+|---|---|
+| `pafta_01_ordugah_sahi_once_sonra.jpg` | sahibinin karesinin aynı kamerası (`yer_sahi`), Şahi öküzleri 6 m, 60 m |
+| `pafta_02_ordugah_at_agil_oba_once_sonra.jpg` | at bağı (yer + 6 m), ağıl (koyun, öküz), oba (köpek) |
+| `pafta_03_bolum28o_okuzler_once_sonra.jpg` | Bölüm 28o çekme anı (`D28O_U_HAUL`), tam kare + 3× kırpık |
+| `sonda_01_okuz_once_sonra.jpg` | ordugâh öküzü: 5 m yan, çapraz, ön, 60 m (kırpık), sürü |
+| `sonda_02_at_once_sonra.jpg` | ordugâh atı |
+| `sonda_03_deve_once_sonra.jpg` | ayakta deve + çökmüş deve sürüsü |
+| `sonda_04_koyun_agil_once_sonra.jpg` | ağıl (koyun, öküz, köpek, çoban) |
+| `sonda_05_sinif_okuz_at_once_sonra.jpg` | oyunun `Ox` ve `Horse` sınıfları |
+| `sonda_06_keci_tavuk_once_sonra.jpg` | `Goat`, `Chicken` |
+| `sonda_07_kedi_marti_once_sonra.jpg` | `Cat`, `ThiefGull` (ÖNCE'de bunlar zaten küreydi: fark küçük) |
+| `sonda_08_esek_kopek_once_sonra.jpg` | şehrin yakın eşeği (`IstHayatGovde.animal`), ordugâh köpeği |
+
+Sonda sahnesi: `tests/_canli/sonda_kare.tscn` (nötr zemin, oyunun API'siyle kurar; ÖNCE kopyasında aynı betik).
+Ordugâh: `tests/_canli/ordu_kare.tscn` (ORDUGÂH-4 sondasından miras, aynı kamera hesabı). Üçgen sayacı:
+`tests/_canli/sonda_kit.gd`.
+
+SAHİBİNE GÖSTERİLECEK KARELER: `pafta_01` (üst satır: aynı kamera, kutu öküz → gerçek öküz), `pafta_02` (at bağı ve
+ağıl), `sonda_01` (öküz yakın üç bakış), `sonda_03` (deve), `sonda_05` (sınıf öküz ve at), `sonda_06` (keçi, tavuk),
+`pafta_03` (28o, uzakta), `sonda_04` (koyun sürüsü).
 
 ## 10. Bakamadıklarım
 
