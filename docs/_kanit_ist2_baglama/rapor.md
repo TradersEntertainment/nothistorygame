@@ -78,6 +78,7 @@ Replik, süre, sayaç, sonuç ve bot akışı değişmedi (bölüm dosyalarında
 | Bölüm 7, `--eski-dunya` (10 varyant) | 10/10 PASS, yasak 0, v2 kurulmadı |
 | Bölüm 11, `--eski-dunya` (10 varyant) | 10/10 PASS, yasak 0, v2 kurulmadı |
 | Komşular (eski dünya): 6, 10, 12b, 24 | 4/4 PASS |
+| Son birleşimden (ŞEHİR-3 `af2fe6f1`, DOKU-3 `9c85b4df`) sonra hepsi yeniden: v2 20 + eski 20 + komşu 4 + `flight_check` | 44/44 PASS + PASS, yasak 0 |
 | `flight_check` (eski camp + walls; v2 camp + walls) | PASS: v2'de 28 işaret, 12 form, 3 konma; 43/43 noktanın altında zemin/yapı, konma yüzeyi ≤ 1,5 m; Haliç ortası su; hepsi sınırın içinde |
 | Görev 6 denemesi: 12b `- lie year d2 d3` `--ist2-deneme=12b` | 5/5 PASS (v2 hub) |
 
@@ -112,13 +113,35 @@ Benim payım: ordugâh uzak hücre ağı ikinci kez kuruluyordu (−2,2 sn, düz
 Uçuştaki takılmaların kaynağı (`--hitchaudit`): şehre girerken `sehir<dunya` 300–890 düğüm/kare (66–90 ms), `ordugah_yonetici`
 442 düğüm (43 ms) → ORTAK İSTEK. Kalkıştaki 107 ms (uçuş katılaştırma taraması) giderildi.
 
-**Uçuşta çizim / üçgen (xvfb, HUD'lu kare anı):** tablo: `rinfo.md`. Özet (SONRA): şehrin üstünde ve eserlere yaklaşırken 567–1 446
-çizim, 0,66–2,31 M üçgen (bütçe ≤ 1 500 / 3,5 M: içinde). Bölümün kendi ordugâhının üstünde ve kalkışta 2 250–4 030 çizim (ÖNCE
-4 267 / 3 935: kaynak CampDay'in kendisi, aşağıda kırılım). Galata'dan dönüş ÖNCE 6 161–6 458 / 8,2–8,5 M → SONRA 891–1 520 / 2,5–2,9 M.
+**Uçuşta çizim / üçgen (xvfb, HUD'lu kare anı):** tam tablo `rinfo.md`. SONRA (birleşik dal):
+- Şehrin üstü ve eserlere yaklaşma: Bölüm 7a (gündüz) 867–1 388 çizim, 0,9–2,3 M üçgen (hepsi bütçe içinde); Bölüm 11 (gece)
+  599–2 378 çizim, 0,6–2,4 M (17 bakıştan 4'ü 1 500 çizimi aşıyor: Havariyun 2 378, Galata 2 092, Blakherna 1 656, Bozdoğan 1 512;
+  gece katmanı). Üçgen her bakışta ≤ 3,5 M.
+- Galata'dan dönüş: ÖNCE 6 161–6 458 çizim / 8,2–8,5 M → SONRA 748–1 198 / 2,5–2,6 M (bölüm sahnesine görünürlük uzaklığı).
+- Kalkış: ÖNCE 4 267–4 530 / 6,0–6,3 M → SONRA 2 042–2 297 / 3,2–3,5 M (kırılım: sahne ~1 200–1 600, v2 ~1 100–1 200).
+- Bölümün ordugâhının üstü (60 m): ÖNCE 3 935–3 953 → SONRA 4 301 (7a gündüz; sahne 3 624 + v2 1 153), **12 483** (11 gece; sahne
+  3 782 + v2 8 956: v2 ordugâhının gece katmanı/yakın çadırları → ORTAK İSTEK 2); 7b hub'ının üstü 7 241 (ByzCity 5 870).
 
 ## 4. Kanıt (paftalar, `docs/_kanit_ist2_baglama/`)
 
-PAFTA_LISTESI
+Hepsi oyun içi (HUD'lu: hedef, Paradoks Tarayıcı, sadakat, seyir defteri, eser işaretleri, altyazı), sol ÖNCE (eski dünya,
+`--eski-dunya`), sağ SONRA (v2), aynı bölüm, aynı an, aynı göreli bakış (eserler kimliğiyle eşlenir). Kaynak: `tests/_ist/baglama_ucus.tscn`
+(`kip=kare|rota`, `kirilim=1`).
+
+| pafta | içerik |
+|---|---|
+| `01_b11_kalkis_ordugah.jpg` | Bölüm 11 (gece): kalkış (kapının 8 m üstü), ordugâhın üstü (60 m) |
+| `02_b11_sehrin_ustu_galata_donus.jpg` | şehrin üstü (110 m, Ayasofya'ya bakış), Galata'dan dönüş (eve bakış) |
+| `03_b11_eser_ayasofya_hipodrom_konstantin.jpg` | yan görev eserlerine yaklaşma 1–3 ("Seyir defteri: Ayasofya (1/28)") |
+| `04_b11_eser_havariyun_bozdogan_zincir.jpg` | eserler 4–6 (eser replikleri) |
+| `05_b11_eser_galata_blakherna_surlar.jpg` | eserler 7–9 |
+| `06_b11_yeni_eserler_ve_eve_donus.jpg` | yalnız v2'de olan eserler: Theodosius Forumu, Arkadius, Kıztaşı, Anemodoulion, Studios + dönüşte ordugâhın girişi |
+| `07_b7a_gunduz_kalkis_sehir_ayasofya.jpg` | Bölüm 7a (gündüz): kalkış, şehrin üstü, Ayasofya |
+| `08_b7a_gunduz_galata_ordugah.jpg` | Galata Kulesi, ordugâhın üstü, Galata'dan dönüş |
+| `09_b7b_hub_kalkis_ustu_sehir.jpg` | Bölüm 7b: hub'dan kalkış, hub'ın üstü (kusur 1), şehrin üstü |
+| `10_rota_60sn_a.jpg`, `11_rota_60sn_b.jpg` | Bölüm 11, 60 sn güzergâh (kapı → tırmanış → kara surlarının üstü → şehir → Theodosius Forumu), 3 sn'de bir, 20 kare |
+
+Toplam 17 eser yaklaşması (Bölüm 11) + 17 (Bölüm 7a); ham kareler ve satırlar: `rinfo.md`.
 
 Sahip kareleri (DÜNYA-2'nin 14 bakışı, birleşik dal, gezi sahnesi, öteleme 0): `sahip_<n>_<ad>.jpg`.
 
