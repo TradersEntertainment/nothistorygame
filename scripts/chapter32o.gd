@@ -242,6 +242,7 @@ func _build_field() -> void:
 
 
 var _rung_root: Node3D
+var _battery_mms: Array = []      # batarya zemini ayrıntıları (batarya evresine dek gizli)
 var _static_heaps: Array = []     # birleştirilecek duran yığın parçaları (demet yığını, sepetler, kalaslar)
 var _carpenters: Array = []       # tezgâhta çekiç sallayan üç marangoz (batarya evresinde ikisi topun yamakları)
 var _back_bar: Node3D      # ovanın arka sınırı: topun güllesinin yolunda, batarya fazında kalkar
@@ -364,6 +365,7 @@ func _field_ground() -> void:
 
 ## Büyük topun bataryası (20o ile aynı mevzi; döşeme LandWalls'un: üstü y = 0).
 func _battery_ground() -> void:
+	var first := get_child_count()
 	var y0 := gun.global_position.y
 	var top := func(_x: float, _z: float) -> float: return y0
 	var c := gun.global_position
@@ -392,6 +394,12 @@ func _battery_ground() -> void:
 	# Tapa samanı (tapa sepetinin dibi) ve taş
 	Nature.ground_detail(self, Rect2(c.x - 4.0, c.z + 4.6, 2.6, 2.0), "straw", 1.2, 3250 + 7, top, free)
 	Nature.ground_detail(self, area, "pebble", 0.14, 3250 + 9, top, free)
+	# Batarya zemini yalnız batarya evresinde (öğleden sonra) görünür: gündüz hendek evrelerinde çizim sayısını artırmasın
+	for k in range(first, get_child_count()):
+		var mm := get_child(k) as MultiMeshInstance3D
+		if mm:
+			mm.visible = false
+			_battery_mms.append(mm)
 
 
 ## Batarya zemini (yerel: topun döşemesi y = 0; dışı ova).
@@ -1153,6 +1161,8 @@ func _guns() -> void:
 	walls.make_dawn(0.01)
 	if is_instance_valid(_back_bar):
 		_back_bar.queue_free()
+	for mm: MultiMeshInstance3D in _battery_mms:
+		mm.visible = true
 	_gun_hands()
 	# Topçunun 3.4 m önü: 5.7 m öteden, sırtı dönük konuşuyordu (sahneleme raporu). Namlu araya girmez.
 	player.global_position = gun.position + Vector3(3.2, 0.05, 7.4)
