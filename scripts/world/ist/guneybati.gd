@@ -306,14 +306,16 @@ static func _b_studios(h: Node3D, k: float, lod: int, out: Dictionary) -> void:
 		var zc2 := hz + t * 0.5 + 0.05 + (n1 - 1 - i + 0.5) * K.STEP_RUN
 		K.sb(h, Vector3(1.8, ht, K.STEP_RUN + 0.02), Vector3(xs, ht * 0.5, zc2), K.C_STONE_D, "ashlar")
 	K.out_add(out, "climb", [Vector3(xs, 0.0, hz + t * 0.5 + 0.05 + n1 * K.STEP_RUN + 0.4), Vector3(xs, Ha, hz + t * 0.5 + 0.2), "basamak"])
-	# yan nef çatısından nave saçağına sandık basamakları
+	# yan nef çatısından nave saçağına sandık basamakları (yüzey eğimli: y_of)
+	var aisle_y := func(_x: float, z: float) -> float:
+		return Ha + ar * clampf((hz + 0.2 - z) / (hz + 0.2 - (nw * 0.5 + 0.1)), 0.0, 1.0)
 	var zc3 := nw * 0.5 + 0.4 + 0.35
-	var slab_y := Ha + ar * (1.0 - (zc3 + 0.7 * 2.5 - nw * 0.5) / aw)
-	var n2 := maxi(1, ceili((Hn - slab_y) / K.CRATE_H))
-	var zbase := zc3 + 0.7 * (n2 - 0.5)
+	var y_low: float = aisle_y.call(0.0, zc3 + 1.4)
+	var n2 := maxi(1, ceili((Hn - y_low) / 0.5))
+	var zbase := zc3 + 0.7 * n2
 	var xc3 := x0 + Lb * 0.35
-	var tp := K.crates(h, Vector3(xc3, slab_y - 0.1, zbase), Vector2(0, -1), n2, 1.4)
-	K.out_add(out, "climb", [Vector3(xc3, slab_y, zbase + 0.9), Vector3(tp.x, Hn, nw * 0.5 + 0.5), "sandik"])
+	var tp := K.crates(h, Vector3(xc3, 0.0, zbase), Vector2(0, -1), n2, 1.4, aisle_y, Hn)
+	K.out_add(out, "climb", [Vector3(xc3, aisle_y.call(0.0, zbase + 0.9), zbase + 0.9), Vector3(tp.x, Hn, nw * 0.5 + 0.5), "sandik"])
 	# kuzey: hücre çatısına merdiven, hücre çatısından revak çatısına adım
 	var xa_mid := (xa0 + xn0) * 0.5
 	var n3 := _nsteps(Hcell + 0.1)

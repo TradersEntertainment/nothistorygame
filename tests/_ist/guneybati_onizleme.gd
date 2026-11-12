@@ -161,7 +161,7 @@ func _audit() -> Dictionary:
 	for n in _host.find_children("*", "MeshInstance3D", true, false):
 		var mi := n as MeshInstance3D
 		var a := mi.global_transform * mi.get_aabb()
-		if a.size.x >= 1.0 and a.size.z >= 1.0 and a.size.y >= 0.5 and mi.rotation_degrees.length() < 1.0 and not (mi.mesh is SphereMesh) and not (mi.mesh is PrismMesh):
+		if a.size.x >= 1.0 and a.size.z >= 1.0 and a.size.y >= 0.5 and mi.global_transform.basis.get_euler().length() < 0.02 and not (mi.mesh is SphereMesh) and not (mi.mesh is PrismMesh):
 			big.append(a)
 	for a in big:
 		var cx: float = a.position.x + a.size.x * 0.5
@@ -204,6 +204,7 @@ func _audit() -> Dictionary:
 				if bottom > 0.05:
 					var q2 := PhysicsRayQueryParameters3D.create(Vector3(gt.origin.x, bottom - 0.02, gt.origin.z), Vector3(gt.origin.x, -1.0, gt.origin.z))
 					q2.exclude = [sb.get_rid()]
+					q2.hit_from_inside = true
 					var h2 := space.intersect_ray(q2)
 					if h2.is_empty() or (h2["position"] as Vector3).y < bottom - 3.5:
 						hv += 1
@@ -255,6 +256,13 @@ func _climb_test() -> String:
 					vy = 3.6
 			vy -= 9.8 / 60.0
 			b.velocity.y = vy
+			# oyuncudaki gibi alçak basamak (STEP_H 0,42): önü kapalıysa ve 0,42 yukarısı boşsa yukarı al
+			if hd.length() > 0.1 and b.is_on_floor():
+				var mv := hd / 60.0 * 1.5
+				if b.test_move(b.global_transform, mv):
+					var up := b.global_transform.translated(Vector3(0, 0.42, 0))
+					if not b.test_move(up, mv) and not b.test_move(b.global_transform, Vector3(0, 0.42, 0)):
+						b.global_position.y += 0.42
 			b.move_and_slide()
 			if b.is_on_floor():
 				vy = 0.0
