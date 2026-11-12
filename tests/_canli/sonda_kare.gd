@@ -137,8 +137,7 @@ func _make(tur: String, pos: Vector3, yaw: float, i: int) -> float:
 			var m := ThiefGull.new()
 			m.position = pos
 			m.rotation.y = deg_to_rad(yaw)
-			_root.add_child(m)
-			m.set_process(false)
+			_root.add_child(m)          # süreç açık: tünekte kanat katlanır (oyundaki duruş)
 			return 0.35
 		"esek":
 			var e := IstHayatGovde.animal("donkey", i)
@@ -188,7 +187,7 @@ func _run(tur: String) -> void:
 func _shot(nm: String, from: Vector3, to: Vector3) -> void:
 	_cam.position = from
 	_cam.look_at(to, Vector3.UP)
-	for k in 3:
+	for k in 12:
 		await RenderingServer.frame_post_draw
 	var img := get_viewport().get_texture().get_image()
 	img.save_jpg(_shots.path_join(nm + ".jpg"), 0.88)
