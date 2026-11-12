@@ -1083,7 +1083,7 @@ func _herd_pair_mesh() -> ArrayMesh:
 	var ck = preload("res://scripts/world/ist/canli_kit.gd")
 	var acc = ck.Acc.new()
 	for sx: float in [-0.75, 0.75]:
-		var o: Dictionary = {"renk": Color(0.95, 0.93, 0.9), "H": 1.48, "poz": "dur", "bas_yaw": -sx * 8.0, "tohum": int(sx > 0.0) + 1}
+		var o: Dictionary = {"renk": Color(0.74, 0.62, 0.48), "H": 1.48, "poz": "dur", "bas_yaw": -sx * 8.0, "tohum": int(sx > 0.0) + 1}
 		acc.add(ck.birikim("okuz", 1, o), Transform3D(Basis.IDENTITY, Vector3(sx, 0, 0)))
 	var yk = ck.Acc.new()
 	ck._tube(yk, [[Vector3(-1.05, 1.6, 0.95), 0.06, 0.065, 0.065, Color(0.55, 0.38, 0.24)], [Vector3(0, 1.64, 0.95), 0.075, 0.08, 0.08, Color(0.6, 0.42, 0.26)],
