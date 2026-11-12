@@ -234,7 +234,7 @@ static func perches_zeuksippos(k: float = 0.5) -> Array:
 
 static func climbs_zeuksippos(k: float = 0.5) -> Array:
 	var w := maxf(46.0 * k, 22.0)
-	return [[Vector3(w * 0.5 + 4.8, 0, 0), Vector3(w * 0.5 + 2.0, 1.2, 0), "basamak"]]
+	return [[Vector3(w * 0.5 + 5.6, 0, 0), Vector3(w * 0.5 + 2.0, 1.2, 0), "basamak"]]
 
 
 # ---------------------------------------------------------------------------------------------------------------
@@ -278,4 +278,4 @@ static func perches_nea(k: float = 0.5) -> Array:
 
 static func climbs_nea(k: float = 0.5) -> Array:
 	var w := maxf(30.0 * k, 14.0)
-	return [[Vector3(w * 0.5 + 4.8, 0, 0), Vector3(w * 0.5 + 2.0, 1.2, 0), "sandik"]]
+	return [[Vector3(w * 0.5 + 5.6, 0, 0), Vector3(w * 0.5 + 2.0, 1.2, 0), "sandik"]]

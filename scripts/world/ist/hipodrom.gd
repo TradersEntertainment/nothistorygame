@@ -130,7 +130,7 @@ static func build_hipodrom(host: Node3D, k: float = 0.5, lod: int = 0) -> void:
 			var gap := (not near_mid) and rng.randf() < 0.2
 			if gap:
 				keep = 0.3
-			var nr := maxi(2, roundi(n * keep))
+			var nr := _fix_nr(maxi(2, roundi(n * keep)), n)
 			_tier_block(host, sx, z, len, A, nr, n, rng, lod, (idx % 2) == 0)
 			_back_wall(host, sx, z, len, A + band, wt, top_h, keep, rng, lod)
 			z += len
@@ -149,6 +149,11 @@ static func build_hipodrom(host: Node3D, k: float = 0.5, lod: int = 0) -> void:
 	K.scatter(host, Rect2(-A + 1.0, z_n + 6.0, A * 2.0 - 2.0, cz - z_n - 10.0), int(300 * k + 60), rng, 0.06, "ot")
 	K.scatter(host, Rect2(-A, z_n + 4.0, A * 2.0, cz - z_n), int(80 * k + 20), rng, 0.06, "moloz")
 	_hayvanlar(host, A, cz, z_n, rng)
+
+
+## Kırık basamak ile arkadaki duvar arası ya 0 ya ≥ 1,4 m olsun (dar aralık yok)
+static func _fix_nr(nr: int, n: int) -> int:
+	return n if n - nr < 2 else nr
 
 
 ## Düz kenar basamak bloğu: nr basamak kalmış (içten dışa), n toplam. Her basamak kendi katı kutusu (tabanı zeminde).
@@ -207,7 +212,7 @@ static func _sphendone(host: Node3D, A: float, band: float, wt: float, cz: float
 		var a1 := PI * (s + 1) / segs
 		var m := (a0 + a1) * 0.5
 		# bu dilimdeki kalan basamak sayısı: sağlam çoğunluk, birkaç kırık
-		var nr := n if rng.randf() > 0.3 else maxi(3, int(n * rng.randf_range(0.3, 0.9)))
+		var nr := n
 		for i in nr:
 			var r_in := A + i * TIER_RUN
 			var r_mid := r_in + TIER_RUN * 0.5
@@ -287,14 +292,14 @@ static func _spina(host: Node3D, k: float, rng: RandomNumberGenerator, lod: int)
 	for sx: float in [-1.0, 1.0]:
 		for sz: float in [-1.0, 1.0]:
 			K.ground_box(host, 0.9, 0.7, 0.9, sx * 1.0, oz + sz * 1.0, K.BRONZE, "", 3.4)
-	K.ground_box(host, ow * 1.6, 0.4, ow * 1.6, 0, oz, K.BRONZE.darkened(0.1), "", 3.4 - 0.4 + 0.0)
-	var shaft := K.sc(host, ow * 0.5, oh, Vector3(0, 3.7 + oh * 0.5, oz), K.GRANITE, 4, ow * 0.3, Vector3(0, 45, 0), 1.0)
-	var piramid := K.sc(host, ow * 0.3, 0.9, Vector3(0, 3.7 + oh + 0.45, oz), K.GOLD.darkened(0.15), 4, 0.02, Vector3(0, 45, 0), 1.0)
+	K.ground_box(host, ow * 1.6, 0.4, ow * 1.6, 0, oz, K.BRONZE.darkened(0.1), "", 4.1)
+	var shaft := K.sc(host, ow * 0.5, oh, Vector3(0, 4.5 + oh * 0.5, oz), K.GRANITE, 4, ow * 0.3, Vector3(0, 45, 0), 1.0)
+	var piramid := K.sc(host, ow * 0.3, 0.9, Vector3(0, 4.5 + oh + 0.45, oz), K.GOLD.darkened(0.15), 4, 0.02, Vector3(0, 45, 0), 1.0)
 	if lod == 0:
 		# hiyeroglif şeritleri (koyu, hafif çıkıntı) dört yüzde
 		for yy in 6:
-			var y := 3.7 + oh * (0.18 + 0.13 * yy)
-			var wdt := lerpf(ow * 0.85, ow * 0.6, (y - 3.7) / oh)
+			var y := 4.5 + oh * (0.18 + 0.13 * yy)
+			var wdt := lerpf(ow * 0.85, ow * 0.6, (y - 4.5) / oh)
 			for f in 4:
 				var ang := f * 90.0 + 45.0
 				var dir := Vector3(sin(deg_to_rad(ang + 45.0)), 0, cos(deg_to_rad(ang + 45.0)))
@@ -360,7 +365,7 @@ static func _kathisma(host: Node3D, A: float, band: float, wt: float, k: float, 
 	# zeminden kathisma'ya taş basamak sırası (sokaktan çıkış): her biri 0,4 m
 	var steps := int(hh / 0.4)
 	for s in steps:
-		K.ground_box(host, 0.6, (s + 1) * 0.4, 3.0, x_out + 12.0 + 1.0 + (steps - s) * 0.6 - 0.5, cz + 8.0, K.STONE_D, "ashlar")
+		K.ground_box(host, 0.6, (s + 1) * 0.4, 3.0, x_out + 12.3 + (steps - 1 - s) * 0.6, cz + 8.0, K.STONE_D, "ashlar")
 
 
 static func _outer_stairs(host: Node3D, k: float) -> void:
@@ -382,7 +387,9 @@ static func _hayvanlar(host: Node3D, A: float, cz: float, z_n: float, rng: Rando
 		var horse := (i % 3) == 0
 		var bc := Color("8a6a4a") if horse else Color("ece4d2")
 		var sz := Vector3(0.5, 0.7, 1.4) if horse else Vector3(0.45, 0.5, 0.8)
-		var body := K.sb(host, sz, Vector3(p.x, sz.y * 0.5 + (0.45 if horse else 0.12), p.z), bc)
+		var body := K.sb(host, sz, Vector3(p.x, sz.y * 0.5 + (0.45 if horse else 0.0), p.z), bc)
+		if horse:
+			K.sb(host, Vector3(0.4, 0.45, 1.0), Vector3(p.x, 0.225, p.z), bc.darkened(0.3)).rotation.y = rng.randf() * TAU
 		body.rotation.y = rng.randf() * TAU
 		var head_off := Vector3(0, 0.1, sz.z * 0.55).rotated(Vector3.UP, body.rotation.y)
 		K.vb(host, Vector3(0.28, 0.3, 0.42) if horse else Vector3(0.22, 0.24, 0.3), Vector3(p.x + head_off.x, sz.y + (0.5 if horse else 0.1), p.z + head_off.z), bc.darkened(0.15), Vector3(0, rad_to_deg(body.rotation.y), 0))
@@ -398,7 +405,7 @@ static func perches_hipodrom(k: float = 0.5) -> Array:
 	var z := _spina_z(k)
 	var oh := 19.6 * k + 4.0
 	var out: Array = []
-	out.append(Vector3(0, 3.7 + oh + 0.9, z["obelisk"]))           # Mısır Dikilitaşı piramidyonu
+	out.append(Vector3(0, 4.5 + oh + 0.9, z["obelisk"]))           # Mısır Dikilitaşı piramidyonu
 	var mh := 32.0 * k * 0.55 + 4.0
 	out.append(Vector3(0, 2.6 + mh + 0.8, z["orme"]))               # Örme Dikilitaş
 	var sh := maxf(8.0 * k + 3.0, 6.5)
@@ -419,12 +426,14 @@ static func climbs_hipodrom(k: float = 0.5) -> Array:
 	for sx: float in [-1.0, 1.0]:
 		out.append([Vector3(sx * (A - 0.8), 0, _len(k) * 0.04), Vector3(sx * (A + (n - 1) * TIER_RUN + 0.45), n * TIER_RISE, _len(k) * 0.04), "basamak"])
 	# sokak → dış taş basamak → duvar tepesi
-	out.append([Vector3(-(x_out + wall_h / 0.4 * 0.6 + 1.0), 0, -_len(k) * 0.12), Vector3(-(x_out - 0.6), wall_h, -_len(k) * 0.12), "basamak"])
+	var ws := int(wall_h / 0.4) + 1
+	out.append([Vector3(-(x_out + 0.3 + (ws - 1) * 0.6 + 1.4), 0, -_len(k) * 0.12), Vector3(-(x_out + 0.3), ws * 0.4, -_len(k) * 0.12), "basamak"])
 	# kathisma basamakları
 	var hh := n * TIER_RISE + 5.0
 	var steps := int(hh / 0.4)
-	out.append([Vector3(x_out + 12.0 + steps * 0.6 + 1.0, 0, _len(k) * 0.04 + 8.0), Vector3(x_out + 12.0 + 1.0 + 0.3, steps * 0.4, _len(k) * 0.04 + 8.0), "basamak"])
+	out.append([Vector3(x_out + 12.3 + (steps - 1) * 0.6 + 1.4, 0, _len(k) * 0.04 + 8.0), Vector3(x_out + 12.3, steps * 0.4, _len(k) * 0.04 + 8.0), "basamak"])
 	# spina platformu: uç basamak (0,5 m) → 1,0 m platform
 	var z := _spina_z(k)
-	out.append([Vector3(0, 0, float(z["bas"]) - 2.6), Vector3(0, 1.0, float(z["bas"]) + 1.5), "basamak"])
+	var zm := (float(z["obelisk"]) + float(z["kolon1"])) * 0.5
+	out.append([Vector3(4.9, 0, zm), Vector3(0, 1.0, zm), "basamak"])
 	return out

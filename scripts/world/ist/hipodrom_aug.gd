@@ -334,6 +334,9 @@ static func build_sergios(host: Node3D, k: float = 0.5, lod: int = 0) -> void:
 	# narthex + güney sundurma kapısının önü
 	K.ground_box(host, 6.0, h * 0.45, 3.0, 0, R + 2.0, wall.darkened(0.05), "brick")
 	K.vb(host, Vector3(6.4, 0.2, 3.4), Vector3(0, h * 0.45 + 0.1, R + 2.0), K.TILE)
+	var ns := int(h * 0.45 / 0.4) + 1
+	for si in ns:
+		K.ground_box(host, 0.6, minf((si + 1) * 0.4, h * 0.45), 2.4, 3.3 + (ns - 1 - si) * 0.6, R + 2.0, K.STONE_D, "ashlar")
 	K.vb(host, Vector3(2.4, 2.4, 0.07), Vector3(0, 1.2, R + 3.53), K.DARK)
 	# kuzey çıkıntı (apsis)
 	K.sc(host, 4.0, h * 0.7, Vector3(0, h * 0.35, -R - 1.5), wall.darkened(0.05), 8, 3.9, Vector3.ZERO, 1.0)
@@ -355,4 +358,4 @@ static func climbs_sergios(k: float = 0.5) -> Array:
 	var h := maxf(14.0 * k, 7.5)
 	# sandık yığını → narthex çatısı (h*0.45 + 0,2); oradan duvar saçağına zıpla/tırman
 	return [[Vector3(R + 7.2, 0, 3.2), Vector3(R + 5.0, 1.2, 3.2), "sandik"],
-			[Vector3(0, 0, R + 5.0), Vector3(0, h * 0.45 + 0.2, R + 2.0), "iskele"]]
+			[Vector3(3.3 + (int(h * 0.45 / 0.4)) * 0.6 + 1.4, 0, R + 2.0), Vector3(2.0, h * 0.45, R + 2.0), "basamak"]]

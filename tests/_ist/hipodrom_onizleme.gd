@@ -209,14 +209,17 @@ func _run_audit(id: String, ab: AABB, tr: int) -> void:
 	var nz := mini(int(ab.size.z / cell), 900)
 	var delik := 0
 	var dar := 0
+	var dlist: Array = []
+	var rlist: Array = []
 	# --- katı görsel kutular (AABB) toplamı: görsel var, çarpışma yok denetimi ---
 	var vis: Array = []
 	for n in _host.find_children("*", "MeshInstance3D", true, false):
 		var mi := n as MeshInstance3D
-		if mi.mesh is BoxMesh or mi.mesh is CylinderMesh or mi.mesh is SphereMesh:
+		if mi.mesh is BoxMesh and absf(mi.global_transform.basis.y.y) > 0.99 and not (mi.get_parent() is StaticBody3D):
 			var a := mi.global_transform * mi.get_aabb()
-			var mn := minf(a.size.x, minf(a.size.y, a.size.z))
-			if mn >= 0.4 and a.size.x * a.size.y * a.size.z > 2.0 and mi.get_parent() is StaticBody3D == false:
+			var ms: Vector3 = (mi.mesh as BoxMesh).size * mi.global_transform.basis.get_scale()
+			var mn := minf(ms.x, minf(ms.y, ms.z))
+			if mn >= 0.4 and a.size.x * a.size.y * a.size.z > 2.0 :
 				vis.append(a)
 	var step := 1
 	if nx * nz > 90000:
@@ -234,6 +237,7 @@ func _run_audit(id: String, ab: AABB, tr: int) -> void:
 					hv = maxf(hv, a.end.y)
 			if hv - hc > 0.6:
 				delik += 1
+				if dlist.size() < 5: dlist.append(Vector3(x, hv, z).snapped(Vector3.ONE * 0.1))
 			# dar aralık: 1 m yükseklikte ±x doğrultusunda iki katı arası 0,2–1,4 m
 			var from := Vector3(x, 1.0, z)
 			var pq := PhysicsPointQueryParameters3D.new()
@@ -248,6 +252,7 @@ func _run_audit(id: String, ab: AABB, tr: int) -> void:
 					var wd: float = from.distance_to(h1.position) + from.distance_to(h2.position)
 					if wd > 0.2 and wd < 1.4:
 						dar += 1
+						if rlist.size() < 6: rlist.append(Vector3(x, 1.0, z).snapped(Vector3.ONE * 0.1))
 	# --- havada: katı kutuların tabanı ---
 	var havada := 0
 	var hav_list: Array = []
@@ -257,7 +262,8 @@ func _run_audit(id: String, ab: AABB, tr: int) -> void:
 			var b := cs.shape as BoxShape3D
 			var gt := cs.global_transform
 			var bottom := gt.origin.y - b.size.y * 0.5 * (absf(gt.basis.y.y))
-			var rq := PhysicsRayQueryParameters3D.create(Vector3(gt.origin.x, bottom - 0.001, gt.origin.z), Vector3(gt.origin.x, bottom - 6.0, gt.origin.z), 3)
+			var rq := PhysicsRayQueryParameters3D.create(Vector3(gt.origin.x, bottom + 0.02, gt.origin.z), Vector3(gt.origin.x, bottom - 6.0, gt.origin.z), 3)
+			rq.exclude = [(cs.get_parent() as CollisionObject3D).get_rid()]
 			var rh := space.intersect_ray(rq)
 			var dist := 99.0
 			if rh:
@@ -274,7 +280,7 @@ func _run_audit(id: String, ab: AABB, tr: int) -> void:
 		if r:
 			ok += 1
 		print("ISTYOL id=%s %s -> %s tur=%s sonuc=%s" % [id, cl[0].snapped(Vector3(0.1, 0.1, 0.1)), cl[1].snapped(Vector3(0.1, 0.1, 0.1)), cl[2], r])
-	print("ISTAUDIT id=%s tris=%d draws=%d delik=%d dar=%d havada=%d cati_yolu=%d/%d %s" % [id, tr, RenderingServer.get_rendering_info(RenderingServer.RENDERING_INFO_TOTAL_DRAW_CALLS_IN_FRAME), delik, dar, havada, ok, climbs.size(), str(hav_list)])
+	print("ISTAUDIT id=%s tris=%d draws=%d delik=%d dar=%d havada=%d cati_yolu=%d/%d %s delik_yer=%s dar_yer=%s" % [id, tr, RenderingServer.get_rendering_info(RenderingServer.RENDERING_INFO_TOTAL_DRAW_CALLS_IN_FRAME), delik, dar, havada, ok, climbs.size(), str(hav_list), str(dlist), str(rlist)])
 
 
 ## Gerçek bir CharacterBody3D (kapsül r 0,35, boy 1,8) ile alt → üst yürüme: adım 0,42, zıplama 0,66, tutunma 2,3.
