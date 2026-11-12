@@ -237,9 +237,11 @@ func _build_far() -> void:
 	for l in find_children("*", "Label3D", true, false):
 		l.queue_free()
 	Props.bake_static(self, get_children())
-	for mi in find_children("*", "MeshInstance3D", true, false):
-		(mi as MeshInstance3D).visibility_range_end = 1500.0
-		(mi as MeshInstance3D).visibility_range_end_margin = 150.0
+	# Uzakta hiç çizilmez: birleşik ağlar ve çoklu ağlar (eşya, at, kazık dağıtımları) 1500 m'de biter (kenar payıyla).
+	# Yalnız ateşler (aşağıda) sınırsız: gece ordugâhın öbür ateşleri gibi uzaktan seçilir
+	for gi in find_children("*", "GeometryInstance3D", true, false):
+		(gi as GeometryInstance3D).visibility_range_end = 1500.0
+		(gi as GeometryInstance3D).visibility_range_end_margin = 150.0
 	# Ateşler: alev ve hale (gece)
 	var fl: Array = []
 	var gl: Array = []
