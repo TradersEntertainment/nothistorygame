@@ -8,6 +8,7 @@ extends RefCounted
 ## başına bütçeyle akar, 210 m ötesi silinir. (Tür başına MultiMesh denendi: hücre × tür çizimi yerde bütçeyi aşıyordu.)
 
 const HUCRE := 48.0
+const ORTA := 66.0        # hücre merkezine bu uzaklıktan öte öğeler sınır kutusu (ortalama renk; 10 üçgen)
 const UZAK := 125.0       # hücre merkezine uzaklık (hücre yarı köşegeni 34 m: 90 m içindeki öğe hep görünür)
 
 ## mahalle türü → [öğe, ağırlık]
@@ -238,7 +239,30 @@ func _ag(id: String) -> Array:
 				oc.append(Color(col.r * tint.r, col.g * tint.g, col.b * tint.b, 1.0))
 	tree.root.remove_child(root)
 	root.queue_free()
-	_mesh[id] = [ov, on, oc]
+	# uzak hâl: ağın sınır kutusu, ağın ortalama renginde (10 üçgen; alt yüz yok)
+	var lo := Vector3(INF, INF, INF)
+	var hi := Vector3(-INF, -INF, -INF)
+	var ort := Color(0, 0, 0)
+	for i in ov.size():
+		lo = lo.min(ov[i])
+		hi = hi.max(ov[i])
+		ort += oc[i]
+	if ov.is_empty():
+		lo = Vector3.ZERO
+		hi = Vector3(0.1, 0.1, 0.1)
+	ort = ort / maxf(ov.size(), 1)
+	ort.a = 1.0
+	var bv := PackedVector3Array()
+	var bn := PackedVector3Array()
+	var bc := PackedColorArray()
+	var c := [Vector3(lo.x, lo.y, lo.z), Vector3(hi.x, lo.y, lo.z), Vector3(hi.x, lo.y, hi.z), Vector3(lo.x, lo.y, hi.z),
+		Vector3(lo.x, hi.y, lo.z), Vector3(hi.x, hi.y, lo.z), Vector3(hi.x, hi.y, hi.z), Vector3(lo.x, hi.y, hi.z)]
+	for f: Array in [[4, 7, 6, 5, Vector3.UP], [0, 4, 5, 1, Vector3.FORWARD], [2, 6, 7, 3, Vector3.BACK], [3, 7, 4, 0, Vector3.LEFT], [1, 5, 6, 2, Vector3.RIGHT]]:
+		for t: int in [0, 1, 2, 0, 2, 3]:
+			bv.append(c[f[t]])
+			bn.append(f[4])
+			bc.append(ort.darkened(0.12) if f[4] != Vector3.UP else ort)
+	_mesh[id] = [ov, on, oc, bv, bn, bc]
 	return _mesh[id]
 
 
@@ -285,33 +309,45 @@ func akis(cp: Vector3, butce_us: int) -> void:
 
 func _hucre_kur(k: Vector2i) -> void:
 	var cen := Vector3((k.x + 0.5) * HUCRE, 0.0, (k.y + 0.5) * HUCRE)
-	var vv := PackedVector3Array()
-	var nn := PackedVector3Array()
-	var cc := PackedColorArray()
-	for e: Array in _hucre[k]:
-		var t: Array = _ag(String(e[0]))
-		var xf: Transform3D = e[1]
-		xf.origin -= cen
-		vv.append_array(xf * (t[0] as PackedVector3Array))
-		nn.append_array(Transform3D(xf.basis, Vector3.ZERO) * (t[1] as PackedVector3Array))
-		cc.append_array(t[2])
-	var arr := []
-	arr.resize(Mesh.ARRAY_MAX)
-	arr[Mesh.ARRAY_VERTEX] = vv
-	arr[Mesh.ARRAY_NORMAL] = nn
-	arr[Mesh.ARRAY_COLOR] = cc
-	var am := ArrayMesh.new()
-	am.add_surface_from_arrays(Mesh.PRIMITIVE_TRIANGLES, arr)
-	am.surface_set_material(0, CharKit.vc_mat(false))
-	var mi := MeshInstance3D.new()
-	mi.name = "SokakEsya_%d_%d" % [k.x, k.y]
-	mi.mesh = am
-	mi.position = cen
-	mi.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
-	mi.visibility_range_end = UZAK
-	mi.visibility_range_end_margin = 8.0
-	mi.set_meta("no_walk", true)
-	mi.set_meta("soft", true)
-	doku.add_child(mi)
-	_kurulu[k] = mi
+	var host := Node3D.new()
+	host.name = "SokakEsya_%d_%d" % [k.x, k.y]
+	host.position = cen
+	doku.add_child(host)
+	for uzak in 2:
+		var vv := PackedVector3Array()
+		var nn := PackedVector3Array()
+		var cc := PackedColorArray()
+		var o := 3 if uzak == 1 else 0
+		for e: Array in _hucre[k]:
+			var t: Array = _ag(String(e[0]))
+			var xf: Transform3D = e[1]
+			xf.origin -= cen
+			vv.append_array(xf * (t[o] as PackedVector3Array))
+			nn.append_array(Transform3D(xf.basis, Vector3.ZERO) * (t[o + 1] as PackedVector3Array))
+			cc.append_array(t[o + 2])
+		if vv.is_empty():
+			continue
+		var arr := []
+		arr.resize(Mesh.ARRAY_MAX)
+		arr[Mesh.ARRAY_VERTEX] = vv
+		arr[Mesh.ARRAY_NORMAL] = nn
+		arr[Mesh.ARRAY_COLOR] = cc
+		var am := ArrayMesh.new()
+		am.add_surface_from_arrays(Mesh.PRIMITIVE_TRIANGLES, arr)
+		am.surface_set_material(0, CharKit.vc_mat(false))
+		var mi := MeshInstance3D.new()
+		mi.mesh = am
+		mi.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
+		if uzak == 0:
+			mi.visibility_range_end = ORTA
+			mi.visibility_range_end_margin = 4.0
+		else:
+			mi.visibility_range_begin = ORTA
+			mi.visibility_range_begin_margin = 4.0
+			mi.visibility_range_end = UZAK
+			mi.visibility_range_end_margin = 8.0
+		mi.set_meta("no_walk", true)
+		mi.set_meta("soft", true)
+		host.add_child(mi)
+	_kurulu[k] = host
 	stats["kurulan"] = int(stats.get("kurulan", 0)) + 1

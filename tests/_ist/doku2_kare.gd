@@ -113,8 +113,34 @@ func _kareler() -> void:
 		if shots != "":
 			var img := get_viewport().get_texture().get_image()
 			img.save_png(shots.path_join(on + ad + ".png"))
+		if tur3:
+			await _katman_olc(ad, dc, pr)
 	print("DOKU2 bitti")
 	get_tree().quit(0)
+
+
+## Katman payı: yakın kişiler (CityLife) ve sokak eşyası gizlenince çizim/üçgen ne kadar düşüyor
+func _katman_olc(ad: String, dc0: int, pr0: int) -> void:
+	var gizle: Array = []
+	if IstHayatYakin.aktif != null and is_instance_valid(IstHayatYakin.aktif):
+		gizle.append(["kisi", [IstHayatYakin.aktif]])
+	var es: Array = []
+	if IstMahalleDoku.aktif != null:
+		for c in IstMahalleDoku.aktif.get_children():
+			if String(c.name).begins_with("SokakEsya"):
+				es.append(c)
+	gizle.append(["esya", es])
+	for g: Array in gizle:
+		for n: Node3D in g[1]:
+			n.visible = false
+		for i in 3:
+			await get_tree().process_frame
+		await RenderingServer.frame_post_draw
+		var dc := RenderingServer.get_rendering_info(RenderingServer.RENDERING_INFO_TOTAL_DRAW_CALLS_IN_FRAME)
+		var pr := RenderingServer.get_rendering_info(RenderingServer.RENDERING_INFO_TOTAL_PRIMITIVES_IN_FRAME)
+		print("RINFO katman %s %s cizim=%d ucgen=%d" % [ad, g[0], dc0 - dc, pr0 - pr])
+		for n: Node3D in g[1]:
+			n.visible = true
 
 
 ## Etkin yakın kişilerden sokak eşyasının (0,35 m) içinde duranlar
@@ -152,11 +178,31 @@ func _kam(b: Array) -> bool:
 				continue
 			var pl: PackedVector2Array = s["pts"]
 			for i in pl.size() - 1:
+				# DOKU-3: sokak bakışında yalnız ≥ 22 m'lik düz parçalar, kamera parçanın başında (sokak boyunca görünsün)
 				var q := Geometry2D.get_closest_point_to_segment(w, pl[i], pl[i + 1])
+				var dv := (pl[i + 1] - pl[i]).normalized()
+				if kip == "sokak":
+					# i'den başlayan ≥ 22 m'lik neredeyse düz koşu (ara noktalar çizgiden ≤ 1,2 m)
+					var j := i + 1
+					var duz := 0.0
+					while j < pl.size():
+						var ok := true
+						for m in range(i + 1, j):
+							if Geometry2D.get_closest_point_to_segment(pl[m], pl[i], pl[j]).distance_to(pl[m]) > 1.2:
+								ok = false
+								break
+						if not ok:
+							break
+						duz = pl[i].distance_to(pl[j])
+						j += 1
+					if duz < 22.0:
+						continue
+					dv = (pl[j - 1] - pl[i]).normalized()
+					q = pl[i] + dv * 2.0
 				if q.distance_to(w) < bd:
 					bd = q.distance_to(w)
 					best = q
-					dir = (pl[i + 1] - pl[i]).normalized()
+					dir = dv
 		if best == Vector2.INF:
 			if kip == "sur":
 				best = w
