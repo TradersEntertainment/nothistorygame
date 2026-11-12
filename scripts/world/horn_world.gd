@@ -494,8 +494,22 @@ func _wall_run(a: Vector3, b: Vector3, h: float, tower_step: float, d: Dressing,
 		if k % 2 == 0:
 			# Nöbet ateşi: siperlerin (hh+1…hh+2) gömdüğü alçak kutu değil, surun ortasında, demir mangalın üstünde, siperlerin
 			# üstüne taşan alev (dört yönden 6 m'den seçilir)
-			d.box(Vector3(0.9, 0.55, 0.9), mid + Vector3(0, hh + 1.8, 0) + side * 0.2, Color("2a2622"), Vector3(0, yaw, 0))
-			nd.glow(Vector3(0.6, 0.9, 0.6), mid + Vector3(0, hh + 2.55, 0) + side * 0.2, Color("ffb040"))
+			# Ateşin yeri kule gövdesinden/çatısından en az 6,5 m uzakta olmalı (kuleye yakın ya da içinde kalan ateş ya hiç
+			# görünmüyor ya da kule arkasında kalıyordu): parça içinde kaydırılır, hiçbir yer uygun değilse bu parçada ateş yok
+			var fire_at := INF
+			var reach := maxf(seg * 0.5 - 3.0, 0.0)
+			var off := 0.0
+			while off <= reach:
+				for sgn: float in [1.0, -1.0]:
+					if is_inf(fire_at) and _tower_clear(a, dir, side, len, tower_step, mid + dir * off * sgn + side * 0.2):
+						fire_at = off * sgn
+				if not is_inf(fire_at):
+					break
+				off += 1.0
+			if not is_inf(fire_at):
+				var fp := mid + dir * fire_at
+				d.box(Vector3(0.9, 0.55, 0.9), fp + Vector3(0, hh + 1.8, 0) + side * 0.2, Color("2a2622"), Vector3(0, yaw, 0))
+				nd.glow(Vector3(0.6, 0.9, 0.6), fp + Vector3(0, hh + 2.55, 0) + side * 0.2, Color("ffb040"))
 		for m in int(seg / 3.5):
 			merl.append(Transform3D(Basis(Vector3.UP, deg_to_rad(yaw)).scaled(Vector3(1.2, 1.0, 1.0)), p0.lerp(p1, (m + 0.5) / int(seg / 3.5)) + Vector3(0, hh + 1.5, 0) + side * 1.2))
 	var t := tower_step * 0.5
@@ -512,6 +526,23 @@ func _wall_run(a: Vector3, b: Vector3, h: float, tower_step: float, d: Dressing,
 		if rng.randf() < 0.5:
 			nd.glow(Vector3(0.4, 0.6, 0.4), p + Vector3(0, th + 1.0, 0), Color("ffb040"))
 		t += tower_step
+
+
+## Sur ateşi için kule açıklığı: f noktası, _wall_run'ın kuracağı kulelerin (8×8 m gövde ve çatı, aynı yerleşim ve atlama kuralı)
+## ayak izine en az 6,5 m uzaktaysa doğru (kamera ateşten 6 m uzakta kulenin içine ya da arkasına düşmesin)
+func _tower_clear(a: Vector3, dir: Vector3, side: Vector3, len: float, tower_step: float, f: Vector3) -> bool:
+	var t := tower_step * 0.5
+	while t < len:
+		var p := a + dir * t
+		t += tower_step
+		if not _free(p.x, p.z, 6.0):
+			continue
+		var dd := f - (p + side * 1.0)
+		var ex := maxf(absf(dd.dot(dir)) - 4.2, 0.0)
+		var ez := maxf(absf(dd.dot(side)) - 4.2, 0.0)
+		if Vector2(ex, ez).length() < 6.5:
+			return false
+	return true
 
 
 ## Kıyı surunun tepesi: iki yandaki görünen zeminin 5 m üstü (en az h); bölümün kendi sur parçasının yanında (keep) eski
