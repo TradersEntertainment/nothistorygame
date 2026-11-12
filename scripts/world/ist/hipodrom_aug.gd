@@ -248,47 +248,148 @@ static func climbs_milion(k: float = 0.5) -> Array:
 # ---------------------------------------------------------------------------------------------------------------
 # Aya İrini
 # ---------------------------------------------------------------------------------------------------------------
+static func _irini(k: float) -> Dictionary:
+	var w := maxf(32.0 * k, 14.0)          # toplam en (orta nef + iki yan nef)
+	var d := maxf(63.0 * k, 26.0)          # boy (narteks hariç)
+	var hn := maxf(17.0 * k, 9.0)          # orta nef duvarı (pencere sırası)
+	var ha := hn * 0.58                    # yan nef saçağı
+	var dr := w * 0.27                     # ana kubbe yarıçapı
+	var dh := 3.2 + 1.0 * k                # kasnak
+	var dz := -d * 0.12                    # ana kubbe ekseni (doğuya yakın)
+	return {"w": w, "d": d, "hn": hn, "ha": ha, "dr": dr, "dh": dh, "dz": dz}
+
+
+## Aya İrini (ÇEVRE-4; kalite notu 22): düz kutu değil, BAZİLİKA: yüksek orta nef + alçak yan nefler (eğik kurşun
+## çatılar), orta nefin üstünde yüksek pencereli KASNAKLI ana kubbe, batıda alçak ikinci kubbe, doğuda dışı çokgen apsis
+## (yarım kubbeli), yan neflerde tuğla payandalar, batıda narteks ve revaklı atrium (Bizans'ta kalan tek atrium).
+## Taş-tuğla şeritli duvar (tuğla ağırlıklı), kurşun çatı ve kubbeler (eser paleti). Ana eksen z (doğu = −z).
 static func build_aya_irini(host: Node3D, k: float = 0.5, lod: int = 0) -> void:
-	var w := maxf(32.0 * k, 14.0)
-	var d := maxf(63.0 * k, 26.0)
-	var h := maxf(15.0 * k, 8.0)
-	var inf := church(host, w, d, h, w * 0.32, lod, 0.0, 11)
-	if lod >= 2:
-		return
-	# ikinci (batı) küçük kubbe + atrium duvarı (batıda açık avlu, çevresi alçak duvar, ortasında sütun kütükleri)
+	var q := _irini(k)
+	var w: float = q["w"]
+	var d: float = q["d"]
+	var hn: float = q["hn"]
+	var ha: float = q["ha"]
+	var dr: float = q["dr"]
+	var dh: float = q["dh"]
+	var dz: float = q["dz"]
+	var nw := w * 0.52                     # orta nef eni
+	var wall := K.BRICK.lerp(K.STONE, 0.2)
+	var lead := K.LEAD
 	var rng := RandomNumberGenerator.new()
 	rng.seed = 532
-	K.lead_dome(host, w * 0.2, w * 0.1, Vector3(0, float(inf["roof_top"]) + 0.2, d * 0.28), 8, w * 0.1, K.BRICK, true)
+	if lod >= 2:
+		K.ground_box(host, w, ha, d, 0, 0, wall)
+		K.ground_box(host, nw, hn, d * 0.9, 0, 0, wall)
+		K.sc(host, dr * 1.02, dh, Vector3(0, hn + dh * 0.5, dz), wall, 10, dr, Vector3.ZERO, 1.0)
+		K.dome(host, dr, dr * 0.6, Vector3(0, hn + dh, dz), lead, 10)
+		K.sc(host, w * 0.24, hn * 0.8, Vector3(0, hn * 0.4, -d * 0.5 - w * 0.12), wall, 7, w * 0.24, Vector3.ZERO, 1.0)
+		return
+	# --- yan nefler: katı alçak gövde (kapı batıda), eğik kurşun çatı ---
+	var t := 1.2
+	K.ground_box(host, w, 0.15, d, 0, 0, K.LIGHT.darkened(0.1), "marble")
+	for sx: float in [-1.0, 1.0]:
+		K.ground_box(host, t, ha, d, sx * (w * 0.5 - t * 0.5), 0, wall, "brick")
+		# eğik çatı: yan duvardan orta nef duvarına
+		var run := (w - nw) * 0.5
+		var rise := 1.8
+		var ang := atan2(rise, run)
+		var rl := sqrt(run * run + rise * rise) + 0.5
+		var rb := K.sb(host, Vector3(rl, 0.25, d + 0.6), Vector3(sx * (nw * 0.5 + run * 0.5), ha + rise * 0.5 + 0.12, 0), lead, "", Vector3(0, 0, sx * -rad_to_deg(ang)))
+		rb.name = "Roof"
+	# doğu ve batı duvarları (batıda ortada 2,4 m kapı)
+	K.ground_box(host, w - t * 2.0, ha, t, 0, -d * 0.5 + t * 0.5, wall, "brick")
+	var sw := (w - t * 2.0 - 2.4) * 0.5
+	for sx2: float in [-1.0, 1.0]:
+		K.ground_box(host, sw, ha, t, sx2 * (1.2 + sw * 0.5), d * 0.5 - t * 0.5, wall, "brick")
+	K.ground_box(host, 2.4, ha - 2.8, t, 0, d * 0.5 - t * 0.5, wall, "brick", 2.8)
+	# --- orta nef (yüksek): yan nef çatısının üstünde pencere sırası ---
+	for sx: float in [-1.0, 1.0]:
+		K.ground_box(host, 1.0, hn - ha, d * 0.92, sx * (nw * 0.5 - 0.5), 0, wall, "brick", ha)
+	for ez: float in [-1.0, 1.0]:
+		K.ground_box(host, nw, hn - ha, 1.0, 0, ez * (d * 0.46 - 0.5), wall, "brick", ha)
+	# orta nef çatısı: kubbelerin dışında düz kurşun teras (kubbe kaideleri arası)
+	K.ground_box(host, nw + 0.4, 0.4, d * 0.92 + 0.4, 0, 0, lead, "", hn)
+	# --- ana kubbe: kare kaide + yüksek pencereli kasnak + kurşun kubbe ---
+	K.ground_box(host, dr * 2.3, 1.4, dr * 2.3, 0, dz, wall, "brick", hn + 0.4)
+	var db := hn + 1.8
+	var drum := K.sc(host, dr * 1.04, dh, Vector3(0, db + dh * 0.5, dz), wall, 16, dr * 1.02, Vector3.ZERO, 1.0)
 	if lod == 0:
-		var az := d * 0.5 + 6.0
-		K.ground_box(host, w, 0.15, 12.0, 0, az, K.STONE_D, "flagstone")
-		K.ruin_wall(host, Vector2(-w * 0.5, d * 0.5 + 12.0), Vector2(-2.5, d * 0.5 + 12.0), 2.6, 1.0, K.BRICK2, rng, "brick")
-		K.ruin_wall(host, Vector2(2.5, d * 0.5 + 12.0), Vector2(w * 0.5, d * 0.5 + 12.0), 2.6, 1.0, K.BRICK2, rng, "brick")
-		for i in 4:
-			K.sc(host, 0.36, rng.randf_range(1.0, 3.2), Vector3(-w * 0.35 + i * w * 0.23, 0.15 + 1.0, az), K.MARBLE.darkened(0.1), 8, 0.34)
+		Props.set_pattern(drum, wall, "brick")
+		for i in 16:
+			var a := TAU * (i + 0.5) / 16.0
+			var o := Vector3(cos(a), 0, sin(a)) * (dr * 1.03 + 0.02)
+			K.vb(host, Vector3(0.7, dh * 0.6, 0.7), Vector3(o.x, db + dh * 0.5, dz + o.z), K.DARK, Vector3(0, -rad_to_deg(a), 0))
+		Props.cyl(host, dr * 1.08, 0.3, Vector3(0, db + dh, dz), K.STONE, Vector3.ZERO, 16)
+	K.dome(host, dr, dr * 0.62, Vector3(0, db + dh + 0.15, dz), lead, 16)
+	if lod == 0:
+		for i in 12:
+			var a2 := TAU * i / 12.0
+			K.vb(host, Vector3(0.12, dr * 0.5, 0.12), Vector3(cos(a2) * dr * 0.72, db + dh + dr * 0.36, dz + sin(a2) * dr * 0.72), lead.darkened(0.15), Vector3(rad_to_deg(sin(a2)) * 0.9, 0, -rad_to_deg(cos(a2)) * 0.9))
+		K.vb(host, Vector3(0.12, 1.6, 0.12), Vector3(0, db + dh + dr * 0.62 + 0.9, dz), K.GOLD)
+		K.vb(host, Vector3(0.8, 0.12, 0.12), Vector3(0, db + dh + dr * 0.62 + 1.2, dz), K.GOLD)
+	# --- batı (ikinci) kubbe: alçak, kasnaksız, elips ---
+	var wz := d * 0.26
+	K.ground_box(host, nw * 0.9, 0.9, nw * 0.9, 0, wz, wall, "brick", hn + 0.4)
+	K.dome(host, nw * 0.42, nw * 0.22, Vector3(0, hn + 1.3, wz), lead, 12)
+	# --- apsis: dışı çokgen (yedi yüz), yarım kubbe ---
+	var ar := nw * 0.48
+	var az := -d * 0.5 - ar * 0.55
+	var aps := K.sc(host, ar, hn * 0.82, Vector3(0, hn * 0.41, az), wall, 7, ar, Vector3.ZERO, 1.0)
+	if lod == 0:
+		Props.set_pattern(aps, wall, "brick")
+		for i in 3:
+			var a3 := PI * 0.5 + (i - 1) * 0.6
+			var o3 := Vector3(cos(a3), 0, -sin(a3)) * (ar + 0.02)
+			K.vb(host, Vector3(1.0, 2.6, 0.2), Vector3(o3.x, hn * 0.45, az + o3.z), K.DARK, Vector3(0, rad_to_deg(a3) - 90.0, 0))
+	K.dome(host, ar, ar * 0.5, Vector3(0, hn * 0.82, az), lead, 10)
+	# --- payandalar (yan neflerde tuğla) ve şeritler ---
+	for i in 5:
+		var pz := -d * 0.4 + i * d * 0.2
+		for sx3: float in [-1.0, 1.0]:
+			K.ground_box(host, 1.2, ha * 0.92, 1.4, sx3 * (w * 0.5 + 0.6), pz, K.BRICK2, "brick")
+			K.vb(host, Vector3(1.3, 0.3, 1.5), Vector3(sx3 * (w * 0.5 + 0.6), ha * 0.92 + 0.15, pz), lead)
+	if lod == 0:
+		for sx4: float in [-1.0, 1.0]:
+			K.windows(host, Vector3(sx4 * (w * 0.5 + 0.03), 0.0, 0), Vector3(sx4, 0, 0), d - 8.0, ha * 0.45, 5, 1.0, 2.0)
+			K.windows(host, Vector3(sx4 * (nw * 0.5 + 0.03), 0.0, 0), Vector3(sx4, 0, 0), d * 0.8, ha + 1.0, 6, 0.9, 1.8)
+			for yy: float in [ha * 0.3, ha * 0.75]:
+				K.vb(host, Vector3(0.08, 0.3, d + 0.04), Vector3(sx4 * (w * 0.5 + 0.03), yy, 0), K.STONE)
+	# --- narteks (batı) ---
+	K.ground_box(host, w * 0.96, ha * 0.8, 5.0, 0, d * 0.5 + 2.5, wall.darkened(0.04), "brick")
+	K.vb(host, Vector3(w * 0.96 + 0.4, 0.3, 5.4), Vector3(0, ha * 0.8 + 0.15, d * 0.5 + 2.5), lead)
+	K.vb(host, Vector3(2.4, 2.6, 0.07), Vector3(0, 1.3, d * 0.5 + 5.03), K.DARK)
+	K.ground_box(host, 2.4, 0.1, 5.2, 0, d * 0.5 + 2.5, K.STONE_D, "", 0.0)
+	# --- atrium: üç yanı revaklı avlu (batıda) ---
+	if lod == 0:
+		var a0 := d * 0.5 + 5.0
+		var al := 16.0
+		K.ground_box(host, w, 0.12, al, 0, a0 + al * 0.5, K.STONE_D, "flagstone")
+		for sx5: float in [-1.0, 1.0]:
+			K.ground_box(host, 0.8, 4.4, al, sx5 * (w * 0.5 - 0.4), a0 + al * 0.5, K.STONE, "ashlar")
+			for i in 5:
+				K.sc(host, 0.26, 3.6, Vector3(sx5 * (w * 0.5 - 3.6), 1.9, a0 + 1.6 + i * (al - 3.2) / 4.0), K.MARBLE.darkened(0.05), 8, 0.24)
+			K.vb(host, Vector3(4.2, 0.22, al), Vector3(sx5 * (w * 0.5 - 2.2), 4.4, a0 + al * 0.5), K.TILE, Vector3(0, 0, sx5 * 10.0))
+		var bw := (w - 3.0) * 0.5
+		for sx6: float in [-1.0, 1.0]:
+			K.ground_box(host, bw, 4.4, 0.8, sx6 * (1.5 + bw * 0.5), a0 + al - 0.4, K.STONE, "ashlar")
+		K.sc(host, 1.3, 0.8, Vector3(0, 0.5, a0 + al * 0.5), K.MARBLE.darkened(0.08), 8, 1.3)
+		K.scatter(host, Rect2(-w * 0.4, a0 + 1.0, w * 0.8, al - 2.0), 30, rng, 0.12, "ot")
 		# kemerli dış kapı eşiği ve sandık yığını (çatıya erişim)
 		for i in 3:
-			K.ground_box(host, 1.0, 0.4 * (i + 1), 1.2, -w * 0.5 - 0.5 - (2 - i) * 1.0, 0, K.WOOD, "wood")
-		# yan tuğla payandalar
-		for sz in 4:
-			for sx: float in [-1.0, 1.0]:
-				K.ground_box(host, 1.0, h * 0.8, 0.9, sx * (w * 0.5 + 0.5), -d * 0.35 + sz * d * 0.23, K.BRICK2, "brick")
+			K.ground_box(host, 1.0, 0.4 * (i + 1), 1.2, -w * 0.5 - 1.7 - (2 - i) * 1.0, 0, K.WOOD, "wood")
 
 
 static func perches_aya_irini(k: float = 0.5) -> Array:
-	var w := maxf(32.0 * k, 14.0)
-	var h := maxf(15.0 * k, 8.0)
-	var rise := minf(w * 0.18, 3.0)
-	var base_y := h + rise + 0.2
-	var r := w * 0.32
-	return [Vector3(0, base_y + r * 0.5 + 0.25 + r * 0.55 + 0.1, -maxf(63.0 * k, 26.0) * 0.04)]
+	var q := _irini(k)
+	var dr: float = q["dr"]
+	return [Vector3(0, float(q["hn"]) + 1.8 + float(q["dh"]) + 0.15 + dr * 0.62 + 0.1, float(q["dz"]))]
 
 
 static func climbs_aya_irini(k: float = 0.5) -> Array:
-	var w := maxf(32.0 * k, 14.0)
-	var h := maxf(15.0 * k, 8.0)
-	# sandık yığını (1,2) → payanda tepesi/yan çatı saçağı: çatı levhası saçakta h civarında; payanda h*0.8
-	return [[Vector3(-w * 0.5 - 4.6, 0, 0), Vector3(-w * 0.5 - 0.6, 1.2, 0), "sandik"]]
+	var q := _irini(k)
+	var w: float = q["w"]
+	# sandık yığını (1,2) → payanda tepesi (yan nef saçağının altı)
+	return [[Vector3(-w * 0.5 - 5.8, 0, 0), Vector3(-w * 0.5 - 1.2, 1.2, 0), "sandik"]]
 
 
 # ---------------------------------------------------------------------------------------------------------------

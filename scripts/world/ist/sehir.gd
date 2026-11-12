@@ -313,6 +313,9 @@ func _build(it: Dictionary, lod: int, bol := false) -> void:
 			ESER.manastir(n, lod, mv.x, mv.y, String(it["id"]).hash())
 	if v2 and not it.has("hat") and String(it.get("mod", "")) != "doku":
 		_kursun(n)
+	if v2 and _paletli(it):
+		# ÇEVRE-4: eser paleti (kalite notu 21; sehir_eser.gd başındaki tablo)
+		stats["palet_n"] = int(stats.get("palet_n", 0)) + ESER.palet(n)
 	if v2 and lod == 0 and it.has("glen"):
 		var hw0 := float(IstSurlar.dims(K_SUR)["HW"])
 		_kapi_gecit(n, hw0 - 0.35, hw0 + 0.35)
@@ -351,6 +354,22 @@ func _build(it: Dictionary, lod: int, bol := false) -> void:
 	_yavas_say(it, str(lod), ms, pis_ms)
 	it["have"][lod] = n
 	_show(it)
+
+
+## Eser paletine giren öğeler: surlar, sur kapıları (SUR-4), ordugâh, gemiler, yaşam ve hub (bölümün kendi şehri) hariç
+const PALETSIZ := ["surlar", "surlar_kapi", "surlar_ayrinti", "marmara_sur", "marmara_kit", "halic_sur", "galata_sur",
+	"ordugah", "gemiler", "hayat"]
+
+func _paletli(it: Dictionary) -> bool:
+	if it.has("hat") or it.has("glen") or it.get("tek", false):
+		return false
+	var mod := String(it.get("mod", ""))
+	if String(it.get("id", "")) in ["hub_sehir", "zincir"]:
+		return false
+	for p: String in PALETSIZ:
+		if mod.begins_with(p):
+			return false
+	return true
 
 
 ## İkinci iş: bekleyen yakın katmanın pişirilmesi ve gösterilmesi
@@ -1426,7 +1445,7 @@ func _on_pisir() -> void:
 		var mod := String(it.get("mod", ""))
 		var id := String(it["id"])
 		var hat := it.has("hat") or id.begins_with("kose_")
-		if not hat and mod == "v2" and not id.begins_with("mese_") and not id in ["ayasofya", "blakherna", "bozdogan", "zincir", "hub_sehir"]:
+		if not hat and mod == "v2" and not id.begins_with("mese_") and not id in ["ayasofya", "blakherna", "bozdogan", "zincir", "hub_sehir", "meydan_aya_cevre"]:
 			continue
 		var h := it["holder"] as Node3D
 		_build(it, 1)
@@ -1926,6 +1945,27 @@ func _place_v2() -> void:
 	IstGeo.duzle(mc, mr2.size.length() * 0.5, my, 6.0)
 	_v2_item("meydan_aya", Vector3(mc.x, my - 0.02, mc.y), 0.0, mr2.size.length() * 0.5,
 		func(nd: Node3D, lod: int) -> void: ESER.meydan(nd, lod, mr2.size.x, mr2.size.y))
+	# ÇEVRE-4: Ayasofya'nın dört yanı (atrium, vaftizhane, skeuophylakion, patrikhane, Khalke revakı, kuzey avlu duvarı,
+	# döşeme; sehir_eser.gd aya_cevre). Kimlik "meydan_" ile başlar: DOKU'nun taban damgası onu ev engeli saymaz.
+	var axf := Transform3D(Basis(Vector3.UP, float(ait["yaw"])), ait["pos"])
+	var ainv := axf.affine_inverse()
+	var bos: Array = []
+	for o: Dictionary in items:
+		var oid := String(o["id"])
+		if oid == "ayasofya" or oid.begins_with("doku_") or oid.begins_with("mese_") or o.has("hat"):
+			continue
+		var op: Vector3 = o["pos"]
+		var lo := ainv * op
+		if Vector2(lo.x, lo.z).length() > 140.0:
+			continue
+		var orr := float(o["r"]) * (0.55 if oid == "meydan_aya" else 0.7)
+		bos.append([Vector2(lo.x, lo.z), orr])
+	var apy: Vector3 = ait["pos"]
+	var ayh := func(x: float, z: float) -> float:
+		var w := axf * Vector3(x, 0, z)
+		return maxf(IstGeo.h(w.x, w.z), apy.y - 2.0) - apy.y
+	_v2_item("meydan_aya_cevre", apy, float(ait["yaw"]), 70.0,
+		func(nd: Node3D, lod: int) -> void: ESER.aya_cevre(nd, lod, ayh, bos))
 	# Hub (mektup bölümünün şehri): zemini düzlenir (arazi ağı sonra kurulur)
 	var hx := hub_xf()
 	if hx != Transform3D():
