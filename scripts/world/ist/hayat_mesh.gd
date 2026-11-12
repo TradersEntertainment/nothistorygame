@@ -62,14 +62,14 @@ static func insan_uzak() -> ArrayMesh:
 
 
 ## Dört ayaklı (eşek, at, keçi, köpek): yüzü −z, ayak y = 0, omuz ≈ 1,0 m, uzunluk 1,5 m.
-## CANLI (kalite notu 32): canli_kit eşeği (orta katman, kesit halkalı gövde, uzun kulak, eklemli bacak); kutu yok.
+## CANLI (kalite notu 32): canli_kit eşeği (uzak katman siluet ≤ 90 üçgen; yakında IstHayatYakin gerçek gövdesi; kesit halkalı gövde, uzun kulak, eklemli bacak); kutu yok.
 ## Köşe rengi alfa kodu korunur: post (açık gri) alfa 1 = örnek rengi × parlaklık; toynak, burun, yük alfa 0 (sabit).
 ## Gölgelendirici kuralları korunur: bacak y < 0,64 (0,62'den döner), baş z < −0,4 ve y > 0,9 (otlarken iner).
 static func hayvan(yuklu := false) -> ArrayMesh:
 	var key := "hayvan_y" if yuklu else "hayvan"
 	if _c.has(key):
 		return _c[key]
-	var m := _canli("esek", 1, {"renk": Color(0.9, 0.9, 0.9), "takim": ["yuk"] if yuklu else [], "H": 1.0}, 1.0, 0.0, true)
+	var m := _canli("esek", 2, {"renk": Color(0.9, 0.9, 0.9), "takim": ["yuk"] if yuklu else [], "H": 1.0}, 1.0, 0.0, true)
 	_c[key] = m
 	return m
 
@@ -78,7 +78,7 @@ static func hayvan(yuklu := false) -> ArrayMesh:
 static func tavuk() -> ArrayMesh:
 	if _c.has("tavuk"):
 		return _c["tavuk"]
-	var m := _canli("tavuk", 1, {"renk": Color(0.95, 0.95, 0.95)}, 0.85, 0.0, true)
+	var m := _canli("tavuk", 2, {"renk": Color(0.95, 0.95, 0.95)}, 0.85, 0.0, true)
 	_c["tavuk"] = m
 	return m
 

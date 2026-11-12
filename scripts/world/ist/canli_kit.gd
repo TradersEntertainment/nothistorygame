@@ -872,10 +872,12 @@ static func dugum(tur: String, opt := {}) -> Dictionary:
 	for ad: String in parts:
 		var p: Dictionary = parts[ad]
 		var acc := _parca_acc(p, lod)
+		# birleşen parça, birleşmeyen ilk atasının ağına pişer (ör. "boyun","bas","kulak" → govde; "d" → "b")
 		var hedef := ad
-		for bb: String in birles:
-			if ad.begins_with(bb):
-				hedef = String(p["ust"])
+		var guard := 0
+		while guard < 6 and _birlesir(hedef, birles):
+			hedef = String(parts[hedef]["ust"])
+			guard += 1
 		var pv: Vector3 = parts[hedef]["pv"]
 		var a2 := Acc.new()
 		a2.add(acc, Transform3D(Basis.IDENTITY, -pv))
@@ -898,15 +900,26 @@ static func dugum(tur: String, opt := {}) -> Dictionary:
 		if mi:
 			mi.mesh = (mi.get_meta("canli_acc") as Acc).mesh()
 			mi.remove_meta("canli_acc")
-	for ad: String in birles:
+	# birleşmiş (ağsız, çocuksuz) parça düğümleri kalkar
+	var sil := true
+	while sil:
+		sil = false
 		for k: String in nodes.keys():
-			if k.begins_with(ad):
+			if _birlesir(k, birles):
 				var n: Node3D = nodes[k]
 				if n.get_child_count() == 0:
 					n.get_parent().remove_child(n)
 					n.free()
 					nodes.erase(k)
+					sil = true
 	return {"root": root, "p": nodes}
+
+
+static func _birlesir(ad: String, birles: Array) -> bool:
+	for bb: String in birles:
+		if ad.begins_with(bb):
+			return true
+	return false
 
 
 ## Ordugâhın Bld'sine (IstOrdugahKit.Bld) ekler: desensiz Bld'ye doğrudan (çizim eklenmez); desenli (ahşap) Bld'ye
