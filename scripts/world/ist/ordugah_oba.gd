@@ -327,7 +327,8 @@ static func build(host: Node3D, alan: PackedVector2Array, tur: String, k: float,
 			if lod <= 1:
 				OC.leke(zs, fp, 2.2, Color("3e3830"), r5, rot, 0.7, 10)
 			fires.append(fpw)
-			ocak3.append(Vector3(fpw.x, fy, fpw.y))
+			if r5.randf() < 0.35:
+				ocak3.append(Vector3(fpw.x, fy, fpw.y))      # duman: küçük ocakların üçte biri (70 m'den "çubuk ormanı" olmasın)
 			var ns2 := r5.randi_range(2, 5)
 			var b0 := r5.randf() * TAU
 			for i in ns2:
