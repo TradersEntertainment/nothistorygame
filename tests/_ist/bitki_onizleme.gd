@@ -73,12 +73,6 @@ func _setup_world() -> void:
 	add_child(_cam)
 	_cam.current = true
 
-func _call(sc: GDScript, fn: String, args: Array) -> bool:
-	if sc.has_script_method(fn) if sc.has_method("has_script_method") else true:
-		sc.callv(fn, args)
-		return true
-	return false
-
 func _build(id: String, lod: int) -> void:
 	if _subject:
 		_subject.queue_free()
@@ -88,7 +82,8 @@ func _build(id: String, lod: int) -> void:
 	_r = 6.0
 	_top = 4.0
 	if IstBitki.AGAC.has(id):
-		IstBitki.callv("build_" + id, [_subject, _k, lod])
+		var sb: GDScript = IstBitki
+		sb.callv("build_" + id, [_subject, _k, lod])
 		_top = IstBitki.AGAC[id]["boy"]
 		_r = _top * 0.7 + 3.0
 		return
