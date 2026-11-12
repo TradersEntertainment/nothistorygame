@@ -624,8 +624,35 @@ static func _build_moat(root: Node3D, lay: Dictionary, lod: int, stone: Color, o
 	if gw > 0.0:
 		var half := gw * 0.5 + 1.2
 		var ay := 4.5
+		# SUR-5: ayaklar kesme kutu değil: yıkık köprü ayağı (görünen: kademeli kırık taş sıraları, gedik yanına doğru
+		# alçalır, üstünde düşmüş bloklar); çarpışma eski kutu
+		carp_only = true
 		_s(root, Vector3(-half, -MD, zm0), Vector3(half, 0, zm0 + ay), stone.darkened(0.1), "ashlar", lod, true)
 		_s(root, Vector3(-half, -MD, zm1 - ay), Vector3(half, 0, zm1), stone.darkened(0.1), "ashlar", lod, true)
+		carp_only = false
+		if _ic(0.0):
+			var ag = KULE.Ag.new()
+			var rng := RandomNumberGenerator.new()
+			rng.seed = int(lay["rng_seed"]) + 91
+			for side: float in [1.0, -1.0]:
+				var zb := zm0 if side > 0.0 else zm1
+				var nk := 5
+				for k in nk:
+					# yakadan gediğe: her sıra biraz daha alçak ve dar (kırık uç)
+					var t := float(k) / nk
+					var dz := ay / nk
+					var z0k := zb + side * dz * k
+					var w := half * 2.0 * (1.0 - 0.12 * t) + rng.randf_range(-0.4, 0.2)
+					var yt := lerpf(0.0, -MD * 0.55, t * t) + rng.randf_range(-0.25, 0.1)
+					var n2 := 3
+					for m in n2:
+						var xa := -w * 0.5 + w * float(m) / n2
+						var xb := -w * 0.5 + w * float(m + 1) / n2
+						var yy := yt - rng.randf_range(0.0, 0.5) * t
+						ag.kutu(Vector3((xa + xb) * 0.5, -MD - 0.2, z0k if side > 0.0 else z0k - dz), Vector3.RIGHT, Vector3.BACK, xb - xa - 0.04, yy + MD + 0.2, dz - 0.04)
+				for k2 in 6 if lod == 0 else 0:
+					KULE._moloz_tas(ag, Vector3(rng.randf_range(-half, half), -MD, zb + side * (ay + rng.randf_range(0.3, 2.5))), rng)
+			ag.mesh_ekle(root, KULE._tas_mat(stone.darkened(0.1), lod), "YikikKopru")
 		if lod == 0:
 			for k in 3:
 				var kx := -half + 0.6 + k * (half * 2.0 - 1.2) / 2.0
