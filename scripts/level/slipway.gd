@@ -455,6 +455,7 @@ func _build_terrain() -> void:
 			return c.lerp(_sand_color(x, z), k)
 		return c
 	var hf := func(x: float, z: float) -> float: return ground_h(x, z)
+	load("res://scripts/level/zemin.gd").yore("kiyi", self, {"su_y": water_y})      # ZEMİN: yöre paleti, kıyı bantları
 	add_child(LowPoly.terrain(edge, 110.0, end_z - 10.0, 160.0, 36, 90, hf, colf))
 	add_child(LowPoly.terrain(-110.0, -edge, end_z - 10.0, 160.0, 36, 90, hf, colf))
 	# Yokuşun tepesinin arkası (kadırga buradan başlar)

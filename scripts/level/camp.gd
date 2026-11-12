@@ -48,6 +48,7 @@ func _build_ground() -> void:
 		if absf(x) < PEN_X and z > PEN_Z0 and z < GATE_Z + 14.0:
 			return Color("4a3a2a").lerp(Color("3a3024"), noise.get_noise_2d(x * 4.0, z * 4.0) * 0.5 + 0.5)
 		return Color("26331f").lerp(Color("34402a"), noise.get_noise_2d(x * 3.0, z * 3.0) * 0.5 + 0.5)
+	load("res://scripts/level/zemin.gd").yore("ordugah", self)      # ZEMİN: yöre paleti
 	add_child(LowPoly.terrain(-90.0, 90.0, -90.0, 140.0, 45, 58, hf, cf))
 	_ground_wear(hf)
 	# Görünmez düz zemin (çarpışma)
