@@ -414,10 +414,49 @@ func _bake_lod(n: Node3D, flat: bool) -> void:
 		c.get_parent().remove_child(c)
 		c.queue_free()
 	if v2:
-		# Pişiricinin ürettiği otomatik ayrıntı düzeyleri (ImporterMesh.generate_lods) büyük düz yüzeyleri (forum döşemesi,
-		# sarnıç tabanı) uzakta bozup simsiyah gösteriyordu: v2'de katmanlar zaten ayrı; motorun sadeleştirmesi kapalı
 		mi.lod_bias = 128.0
+		if flat:
+			# Uzak katman: gölge düşürmez (tam tepeden ve uzaktan forum döşemesi, sarnıç tabanı, çatı levhası gölge
+			# haritasının kaba çözünürlüğünde simsiyah kalıyordu); yatay yüzlerin normali yukarı
+			mi.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
+			mi.mesh = _yukari_normal(mi.mesh)
 	n.add_child(mi)
+
+
+static func _yukari_normal(m: Mesh) -> Mesh:
+	if m == null:
+		return m
+	var am := ArrayMesh.new()
+	for si in m.get_surface_count():
+		var arr := m.surface_get_arrays(si)
+		var vs: PackedVector3Array = arr[Mesh.ARRAY_VERTEX]
+		var ns = arr[Mesh.ARRAY_NORMAL]
+		if not (ns is PackedVector3Array) or (ns as PackedVector3Array).size() != vs.size():
+			am.add_surface_from_arrays(Mesh.PRIMITIVE_TRIANGLES, arr)
+			am.surface_set_material(si, m.surface_get_material(si))
+			continue
+		var nn: PackedVector3Array = ns
+		var ia = arr[Mesh.ARRAY_INDEX]
+		var idx: PackedInt32Array = ia if ia is PackedInt32Array else PackedInt32Array()
+		var cnt := idx.size() if idx.size() > 0 else vs.size()
+		for t in range(0, cnt - 2, 3):
+			var a: int = idx[t] if idx.size() > 0 else t
+			var b: int = idx[t + 1] if idx.size() > 0 else t + 1
+			var c: int = idx[t + 2] if idx.size() > 0 else t + 2
+			var fnrm := (vs[b] - vs[a]).cross(vs[c] - vs[a])
+			var L := fnrm.length()
+			if L < 1e-6:
+				continue
+			fnrm /= L
+			if absf(fnrm.y) > 0.7:
+				var up := fnrm if fnrm.y > 0.0 else -fnrm
+				for v: int in [a, b, c]:
+					if nn[v].y < 0.3:
+						nn[v] = up
+		arr[Mesh.ARRAY_NORMAL] = nn
+		am.add_surface_from_arrays(Mesh.PRIMITIVE_TRIANGLES, arr)
+		am.surface_set_material(si, m.surface_get_material(si))
+	return am
 
 
 ## Pişiriciye girecek parça: gölgelendiricili, saydam, ışıklı, gizli ya da insan (Person) altındaki parçalar kalır

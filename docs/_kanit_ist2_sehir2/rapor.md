@@ -101,8 +101,11 @@ gemileri, sur üstünde ve sokakta insanlar. Ordugâh çadır denizi 70 m'den se
   kenar ışığı kapatılır; ilk denemede `material_override` önceliği yüzünden uygulanmıyordu (düzeltildi).
 - Ayasofya × 1,5 ufukta en büyük kütle; Galata Kulesi, Hipodrom dikilitaşları, Konstantin/Arkadius/Markianos sütunları,
   Bozdoğan ve Pantokrator/Havariyun kubbeleri Galata ve şehir üstü karelerinde seçiliyor (`tur_5_galata`, `tur_5_ucus70`).
-- Uzak katmanda büyük düz yüzeylerin (Konstantin forumu döşemesi, Mokios/Aetios sarnıç tabanı) simsiyah görünmesi: pişirilmiş
-  ağın motor ayrıntı düzeyi (mesh LOD) bozulması; v2'de pişmiş katmanlarda kapatıldı (`lod_bias`). Sonrası tur 5 karesinde.
+- Uzak katmanda büyük düz yüzeylerin (Konstantin forumu döşemesi, Mokios/Aetios/Aspar sarnıç tabanı) tam tepeden simsiyah
+  görünmesi (`eser_uzak_pafta`, `tur_5_tepe`) SÜRÜYOR: motorun mesh LOD'u v2 pişmiş katmanlarında kapatıldı, düzelmedi; neden
+  KANITSIZ (lod 2 düz pişirmede normal ya da renk). 70 m uçuş ve yakın karelerde yok (orada lod 1/0).
+- Uzak sur ağı kireçtaşı kremine çekildi: Galata'dan Haliç surları ve kuleler taş duvar olarak okunuyor (`tur_5_galata`;
+  önce kahverengi/ahşap görünüyordu, `tur_4_galata`).
 
 ## 5. Zaman dilimi — KISMEN
 
@@ -142,8 +145,28 @@ lod 0'da alt dilimlere bölmek (kule aralığı başına) ya da dilimlerin lod 0
 - Eski `ISTAUDIT` (benim taban dikdörtgeni denetimim) DOKU-2'nin yeni ev modeline uymuyor (sıra/dükkân alanları değişti:
   `dar 259`, `cati_yolu_eksik_sira 1 900` sayıları bu yüzden anlamsız); ev aralığı denetimi DOKU-2'nin `doku2_kare`'sinde
   (rapor: dar aralık 0). BAKILMADI (benim tarafımdan yeniden yazılmadı).
-- **Zeminde delik / kapalı cep (ISTDELIK) ve çatıdan çatıya (ISTCATI): §6b'de** (son koşu).
-- Eser paftası: 15 m ve tam tepe; ayrıca 700 m'den uzak katman (siyah yüzey avı) — `eser_15m_pafta.jpg`, `eser_tepe_pafta.jpg`.
+- Eser paftası (24 eser): 15 m ve tam tepe; ayrıca 700 m'den uzak katman (siyah yüzey avı) — `eser_15m_pafta.jpg`,
+  `eser_tepe_pafta.jpg`, `eser_uzak_pafta.jpg` (tur 4; Ayasofya kubbesi bu karelerde kurşun düzeltmesinden önce).
+
+### 6b. Oynanış denetimi (`--set=oyun`, başsız, gerçek fizik; beş mahalle, her biri 80 × 80 m, 0,5 m ızgara = 25 600 hücre)
+
+Delik: karada hiçbir çarpışmaya değmeyen ya da zeminin > 0,5 m altına inen ışın. Kapalı cep: zemin hizasındaki hücreden
+sokağa yürüyüş + zıplamayla (komşu hücreye ≤ 1,1 m çıkış, iniş serbest) dönülemiyor. Çatı: zeminden > 2,5 m yüksek hücreler;
+"sokaktan yürüyerek" = tırmanma kipi olmadan ulaşılabilen oran (tırmanma kipi bu ölçüme girmez).
+
+| Mahalle (`IstGeo.mahalle`) | merkez (dünya) | delik | kapalı cep hücre | çatı hücre | sokaktan yürüyerek | çatıdan çatıya (oyuncu) |
+|---|---|---|---|---|---|---|
+| Psamathia | (−1567, 126) | **0** | 355 (≈ 89 m²; örnek −1607, 156) | 9 342 | %20 | KALDI |
+| Kyparission | (−1290, −193) | **0** | 0 | 6 664 | %26 | KALDI |
+| Aksaray (Bous) | (−1038, 28) | **0** | 2 (örnek −1078, 67) | 8 560 | %37 | KALDI |
+| Zeugma (Unkapanı) | (−744, −496) | **0** | 0 | 9 455 | %25 | GEÇTİ |
+| Konstantin Forumu | (−308, 126) | **0** | 52 (örnek −269, 95) | 8 884 | %0 | GEÇTİ |
+
+Çatıdan çatıya: aynı sıradaki iki bitişik evin çatısında `Player` (script yürüyüşü) A'dan B'ye 6 sn yürür: 2 / 5 geçti; kalan
+üçünde oyuncu iki çatı arasındaki sırtta/çatı farkında kalıyor (A 22,5 → 22,0 m; komşu evlerin kat farkı). Kapalı cepler:
+Psamathia'da 355 hücre ve Konstantin'de 52 hücre — avlu/bahçe duvarıyla ya da anıt tabanıyla çevrili, çıkışsız zemin parçaları
+(kaynağı, DOKU-2 avlusu mu anıt mı: KANITSIZ, kare alınmadı). Sokaktan çatıya erişim (yalnız yürüyüş+zıplama) %0–37: geri
+kalanı `IstEvler.climbs` (sandık → tente → tırmanma) ile; tırmanma kipiyle oyuncu sınaması BAKILMADI.
 
 ## 7. Nihat'ın yan görevi (`IstSehir.flight_data_v2`) — TAMAM (işaret) / KISMEN (form)
 
@@ -152,14 +175,21 @@ lod 0'da alt dilimlere bölmek (kule aralığı başına) ya da dilimlerin lod 0
   Kare: `isaret_pafta.jpg` (32 eser, kırmızı küre işaret): hepsi eserin üstünde; Eugenios'ta modülün deniz plakası karada.
 - Konma noktaları: 34 / 34 gerçek çarpışmalı yüzeyde (ISTKONMA).
 - Formlar (12): Ayasofya kubbe kapağı, Konstantin sütunu, Galata Kulesi, Hipodrom, Bozdoğan, Havariyun, Blakherna, Eugenios
-  (konma noktası varsa onun 0,6 m üstü), San Domenico (Galata sırtı), Kız Kulesi adacığı, Romanos, Üsküdar sırtı. Önceki koşuda
-  6 / 12 yüzeyde değildi (haç ucu, havada); konma noktalarına bağlandı — son sayı §6b'de.
+  (konma noktası varsa onun 0,6 m üstü), San Domenico (Galata sırtı), Kız Kulesi adacığı, Romanos, Üsküdar sırtı. ISTFORM
+  (altında 3 m içinde çarpışma): önce 6 / 12 (haç ucu, havada), sonra **8 / 12**; kalan: Bozdoğan ve Blakherna (en yüksek
+  köşe görsel bir parça), Kız Kulesi ve Üsküdar (zemin üstünde; dünyanın arazi çarpışması yalnız oyuncunun çevresinde akıyor,
+  sınama anında uzakta: KANITSIZ).
 
 ## 8. Oyun alanları — TAMAM (boş)
 
 `IstSehir.oyun_alanlari()` (ev, ağaç, doku yok; eser çakışma çözümünde sabit engel): hub (6b, 7b, 10h, 12b, 23, 24)
 Romanos Kapısı'nın iç yanında, kapıdan 75 m içeride 90 × 90 m; Ayasofya meydanı (24, 25, 26, 31o) Ayasofya'nın batısında
-(narteks önü, Ayasofya × 1,5'e göre kaydırıldı) 55 × 50 m. Konumlar §6b'deki `ISTOYUN` satırlarında.
+(narteks önü, Ayasofya × 1,5'e göre kaydırıldı) 55 × 50 m. S = 0,35'te (`ISTOYUN`):
+
+| Alan | dünya merkezi (x, z) | boyut | gerçek (doğu, kuzey) |
+|---|---|---|---|
+| hub (Romanos'un iç yanı) | (−1620, −289) | 90 × 90 m | (−4630, 826) |
+| Ayasofya meydanı | (−90, 0) | 55 × 50 m | (−259, 0) |
 
 ## 9. Bütçe (tur 4, 1280×720; RenderingServer toplamı: dünya + şehir + ordugâh + gemiler + hayat)
 
@@ -179,7 +209,23 @@ Romanos Kapısı'nın iç yanında, kapıdan 75 m içeride 90 × 90 m; Ayasofya 
 
 Yerde bütçe aşılıyor: en büyük pay **ordugâh (~500 çizim, şehrin ortasından bile)**, sonra DOKU-2'nin mahalle dokusu (~350) ve
 şehrin birleşik ağları (~300). Benim payım için yapılan: köşe kulelerinin lod 1 yarıçapı (uzak sur ağının başlangıcı 360 → 200 m)
-küçültüldü (yeniden ölçüm tur 5'te). ORTAK İSTEK: ordugâh.
+küçültüldü. Tur 5 (aynı noktalar):
+
+| Kare | tur 4 çizim / üçgen | tur 5 çizim / üçgen | baskın (tur 5) |
+|---|---|---|---|
+| tur_5_galata | 934 / 1,87 M | 742 / 1,86 M | |
+| tur_5_kara_disi | 1 030 / 2,11 M | 904 / 2,07 M | |
+| tur_5_sarayburnu | 1 231 / 2,10 M | 1 165 / 2,09 M | |
+| tur_5_ucus70 | 631 / 1,25 M | 555 / 1,28 M | |
+| yer_5_mese | 1 947 / 3,60 M | **1 167 / 2,79 M** | şehir ağları 287, mahalle dokusu 222, ordugâh 174, köşe 44 |
+| yer_5_halic_iskele | 1 266 / 2,08 M | 946 / 1,65 M | ordugâh 337, halic 190 |
+| yer_5_bostan_koy | 1 548 / 2,56 M | 1 310 / 2,37 M | ordugâh 517 |
+| yer_5_sur_dibi | 979 / 1,52 M | 957 / 1,58 M | ordugâh 543 |
+| yer_5_ayasofya_bati | 757 / 1,20 M | 751 / 1,21 M | ordugâh 505 |
+| yer_5_cati_0 | 1 350 / 3,08 M | 1 334 / 3,07 M | ordugâh 494, mahalle dokusu 353 |
+
+Uçuşta sınır içinde; yerde çizim 750–1 330 (sınır 900): ordugâhsız (−~500) yerdeki karelerin hepsi sınırın altına iner.
+KISMEN; ORTAK İSTEK: ordugâh.
 
 ## 10. Eski dünya (IstSehir kapalı) — PASS
 

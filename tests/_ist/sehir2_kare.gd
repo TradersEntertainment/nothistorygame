@@ -425,8 +425,10 @@ func _yer() -> void:
 		await _shot(p + "sur_dibi", g.call(at.x, at.z), h.transform * Vector3(0, 8, 0), 70)
 	if by.has("hipodrom"):
 		var h := by["hipodrom"]["holder"] as Node3D
-		var at: Vector3 = h.transform * Vector3(0, 0, 60)
-		await _shot(p + "hipodrom", g.call(at.x, at.z), h.transform * Vector3(0, 3, -60), 70)
+		# arena yanında (spina ortada): k ile ölçekli
+		var hk := float(by["hipodrom"]["k"])
+		var at: Vector3 = h.transform * Vector3(25.0 * hk / 0.5, 0, 110.0 * hk / 0.5)
+		await _shot(p + "hipodrom", g.call(at.x, at.z), h.transform * Vector3(0, 3, -110.0 * hk / 0.5), 70)
 	if by.has("ayasofya"):
 		var ap: Vector3 = by["ayasofya"]["pos"]
 		await _shot(p + "ayasofya_bati", g.call(ap.x - 75, ap.z + 5), ap + Vector3(0, 14, 0), 70)
