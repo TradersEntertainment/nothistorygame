@@ -110,3 +110,51 @@ GEZI_OLAY takilma -4887 252 rota=R2_dis25_rhegion_romanos zipla=8 yerde=true |0.
 GEZI_OLAY takilma -4896 374 rota=R2_dis25_rhegion_romanos zipla=8 yerde=true |0.3:IstDunya/IstSehir/Ist_kara_suru_13/L0/W6|1.0:-|1.7:-
 GEZI_OLAY takilma -4917 449 rota=R2_dis25_rhegion_romanos zipla=17 yerde=true |0.3:-|1.0:-|1.7:-
 GEZI_OLAY takilma -4909 698 rota=R2_dis25_rhegion_romanos zipla=8 yerde=true |0.3:IstDunya/IstSehir/Ist_kara_suru_14/L0/W2|1.0:-|1.7:-
+GEZI_OLAY takilma -4874 853 rota=R2_dis25_rhegion_romanos zipla=8 yerde=true |0.3:IstDunya/IstSehir/Ist_romanos/L0/AzizRomanos|1.0:IstDunya/IstSehir/Ist_romanos/L0/AzizRomanos|1.7:IstDunya/IstSehir/Ist_romanos/L0/AzizRomanos
+GEZI_OLAY takilma -4874 872 rota=R2_dis25_rhegion_romanos zipla=8 yerde=true |0.3:IstDunya/IstSehir/Ist_romanos/L0/AzizRomanos|1.0:IstDunya/IstSehir/Ist_romanos/L0/AzizRomanos|1.7:IstDunya/IstSehir/Ist_romanos/L0/AzizRomanos
+GEZI_OLAY takilma -4871 879 rota=R2_dis25_rhegion_romanos zipla=7 yerde=true |0.3:IstDunya/IstSehir/Ist_romanos/L0/AzizRomanos|1.0:IstDunya/IstSehir/Ist_romanos/L0/AzizRomanos|1.7:IstDunya/IstSehir/Ist_romanos/L0/AzizRomanos
+GEZI_OLAY takilma -4851 888 rota=R2_dis25_rhegion_romanos zipla=0 yerde=false |0.3:IstDunya/IstSehir/Ist_romanos/L0/AzizRomanos|1.0:IstDunya/IstSehir/Ist_romanos/L0/AzizRomanos|1.7:IstDunya/IstSehir/Ist_romanos/L0/AzizRomanos
+GEZI_OLAY dusme -4869 885 rota=R2_dis25_rhegion_romanos y0=24.7 y=15.7
+GEZI_ROTA R2_dis25_rhegion_romanos dilim=218 gecti=179 olay=39 yurunen_m=2148 sure_ms=467428
+GEZI_OLAY takilma -4818 110 rota=R3_ic60 zipla=8 yerde=true |0.3:IstDunya/IstSehir/EvCarpisma|1.0:IstDunya/IstSehir/EvCarpisma|1.7:IstDunya/IstSehir/EvCarpisma
+GEZI_OLAY takilma -4801 107 rota=R3_ic60 zipla=17 yerde=true |0.3:-|1.0:-|1.7:-
+GEZI_OLAY takilma -4807 135 rota=R3_ic60 zipla=8 yerde=true |0.3:IstDunya/IstSehir/@StaticBody3D@235219|1.0:IstDunya/IstSehir/@StaticBody3D@235219|1.7:IstDunya/IstSehir/@StaticBody3D@235219
+GEZI_OLAY takilma -4805 201 rota=R3_ic60 zipla=8 yerde=false |0.3:IstDunya/IstSehir/@StaticBody3D@235219|1.0:IstDunya/IstSehir/@StaticBody3D@235219|1.7:IstDunya/IstSehir/@StaticBody3D@235219
+GEZI_OLAY takilma -4807 241 rota=R3_ic60 zipla=8 yerde=false |0.3:IstDunya/IstSehir/@StaticBody3D@235219|1.0:IstDunya/IstSehir/@StaticBody3D@235219|1.7:IstDunya/IstSehir/@StaticBody3D@235219
+GEZI_OLAY takilma -4802 307 rota=R3_ic60 zipla=8 yerde=true |0.3:IstDunya/IstSehir/IstMahalleDoku/@StaticBody3D@229719|1.0:IstDunya/IstSehir/IstMahalleDoku/@StaticBody3D@229719|1.7:IstDunya/IstSehir/IstMahalleDoku/@StaticBody3D@229719
+GEZI_OLAY takilma -4807 363 rota=R3_ic60 zipla=8 yerde=true |0.3:IstDunya/IstSehir/@StaticBody3D@206944|1.0:IstDunya/IstSehir/@StaticBody3D@206944|1.7:IstDunya/IstSehir/@StaticBody3D@206944
+GEZI_OLAY takilma -4845 571 rota=R3_ic60 zipla=7 yerde=true |0.3:IstDunya/IstSehir/@StaticBody3D@218829|1.0:IstDunya/IstSehir/@StaticBody3D@218829|1.7:IstDunya/IstSehir/@StaticBody3D@218829
+GEZI_OLAY takilma -4821 704 rota=R3_ic60 zipla=9 yerde=false |0.3:IstDunya/IstSehir/@StaticBody3D@242000|1.0:IstDunya/IstSehir/@StaticBody3D@242000|1.7:IstDunya/IstSehir/@StaticBody3D@242000
+GEZI_OLAY takilma -4815 746 rota=R3_ic60 zipla=8 yerde=false |0.3:IstDunya/IstSehir/@StaticBody3D@242000|1.0:IstDunya/IstSehir/@StaticBody3D@242000|1.7:IstDunya/IstSehir/@StaticBody3D@242000
+GEZI_OLAY takilma -4812 760 rota=R3_ic60 zipla=8 yerde=false |0.3:IstDunya/IstSehir/@StaticBody3D@242000|1.0:-|1.7:-
+GEZI_OLAY takilma -4737 987 rota=R3_ic60 zipla=7 yerde=true |0.3:IstDunya/IstSehir/@StaticBody3D@245674|1.0:IstDunya/IstSehir/@StaticBody3D@245674|1.7:IstDunya/IstSehir/@StaticBody3D@245674
+GEZI_OLAY takilma -4752 1077 rota=R3_ic60 zipla=7 yerde=false |0.3:IstDunya/IstSehir/Ist_kara_suru_17/L0/W6|1.0:IstDunya/IstSehir/Ist_kara_suru_17/L0/W6|1.7:IstDunya/IstSehir/Ist_kara_suru_17/L0/W6
+GEZI_OLAY takilma -4783 1089 rota=R3_ic60 zipla=8 yerde=false |0.3:IstDunya/IstSehir/Ist_kara_suru_17/L0/W6|1.0:IstDunya/IstSehir/Ist_kara_suru_17/L0/W6|1.7:IstDunya/IstSehir/Ist_kara_suru_17/L0/W6
+GEZI_OLAY takilma -4764 1089 rota=R3_ic60 zipla=8 yerde=false |0.3:IstDunya/IstSehir/Ist_kara_suru_17/L0/W4|1.0:IstDunya/IstSehir/Ist_kara_suru_17/L0/W4|1.7:IstDunya/IstSehir/Ist_kara_suru_17/L0/W4
+GEZI_OLAY takilma -4746 1051 rota=R3_ic60 zipla=7 yerde=false |0.3:IstDunya/IstSehir/@StaticBody3D@245674|1.0:IstDunya/IstSehir/@StaticBody3D@245674|1.7:IstDunya/IstSehir/@StaticBody3D@245674
+GEZI_OLAY takilma -4734 1039 rota=R3_ic60 zipla=16 yerde=true |0.3:-|1.0:-|1.7:-
+GEZI_OLAY takilma -4715 1031 rota=R3_ic60 zipla=8 yerde=false |0.3:IstDunya/IstSehir/IstMahalleDoku/@StaticBody3D@215612|1.0:IstDunya/IstSehir/IstMahalleDoku/@StaticBody3D@215612|1.7:IstDunya/IstSehir/IstMahalleDoku/@StaticBody3D@215612
+GEZI_ROTA R3_ic60 dilim=158 gecti=140 olay=18 yurunen_m=1680 sure_ms=270915
+GEZI_OLAY takilma -4961 -507 rota=R_kapi_rhegion zipla=8 yerde=false |0.3:IstDunya/IstSehir/Ist_rhegion/L0/Rhegion|1.0:IstDunya/IstSehir/Ist_rhegion/L0/Rhegion|1.7:IstDunya/IstSehir/Ist_rhegion/L0/Rhegion
+GEZI_OLAY takilma -4980 -501 rota=R_kapi_rhegion zipla=8 yerde=false |0.3:IstDunya/IstSehir/Ist_rhegion/L0/Rhegion|1.0:IstDunya/IstSehir/Ist_rhegion/L0/Rhegion|1.7:IstDunya/IstSehir/Ist_rhegion/L0/Rhegion
+GEZI_OLAY takilma -4995 -531 rota=R_kapi_rhegion zipla=7 yerde=false |0.3:IstDunya/IstSehir/Ist_rhegion/L0/Rhegion|1.0:IstDunya/IstSehir/Ist_rhegion/L0/Rhegion|1.7:IstDunya/IstSehir/Ist_rhegion/L0/Rhegion
+GEZI_ROTA R_kapi_rhegion dilim=10 gecti=7 olay=3 yurunen_m=84 sure_ms=34204
+GEZI_OLAY takilma -4223 1775 rota=R_kapi_pempton zipla=7 yerde=false |0.3:IstDunya/IstSehir/Ist_pempton/L0/Pempton|1.0:IstDunya/IstSehir/Ist_pempton/L0/Pempton|1.7:IstDunya/IstSehir/Ist_pempton/L0/Pempton
+GEZI_OLAY takilma -4240 1780 rota=R_kapi_pempton zipla=7 yerde=true |0.3:IstDunya/IstSehir/Ist_pempton/L0/Pempton|1.0:IstDunya/IstSehir/Ist_pempton/L0/Pempton|1.7:IstDunya/IstSehir/Ist_pempton/L0/Pempton
+GEZI_OLAY takilma -4237 1757 rota=R_kapi_pempton zipla=7 yerde=true |0.3:IstDunya/IstSehir/Ist_kara_suru_23/L0/W0|1.0:IstDunya/IstSehir/Ist_kara_suru_23/L0/W0|1.7:IstDunya/IstSehir/Ist_kara_suru_23/L0/W0
+GEZI_OLAY takilma -4249 1768 rota=R_kapi_pempton zipla=0 yerde=false |0.3:IstDunya/IstSehir/Ist_pempton/L0/Pempton|1.0:IstDunya/IstSehir/Ist_pempton/L0/Pempton|1.7:IstDunya/IstSehir/Ist_pempton/L0/Pempton
+GEZI_OLAY takilma -4254 1751 rota=R_kapi_pempton zipla=8 yerde=true |0.3:IstDunya/IstSehir/Ist_kara_suru_23/L0/W0|1.0:IstDunya/IstSehir/Ist_kara_suru_23/L0/W0|1.7:IstDunya/IstSehir/Ist_kara_suru_23/L0/W0
+GEZI_OLAY dusme -4275 1728 rota=R_kapi_pempton y0=29.2 y=21.1
+GEZI_ROTA R_kapi_pempton dilim=10 gecti=4 olay=6 yurunen_m=48 sure_ms=49639
+GEZI_OLAY takilma -4741 832 rota=R_hub_capraz zipla=8 yerde=false |0.3:IstDunya/IstSehir/Ist_hub_sehir/L0/@StaticBody3D@68937|1.0:IstDunya/IstSehir/Ist_hub_sehir/L0/@StaticBody3D@68937|1.7:IstDunya/IstSehir/Ist_hub_sehir/L0/@StaticBody3D@68937
+GEZI_OLAY takilma -4726 843 rota=R_hub_capraz zipla=7 yerde=false |0.3:IstDunya/IstSehir/Ist_hub_sehir/L0/@StaticBody3D@68937|1.0:IstDunya/IstSehir/Ist_hub_sehir/L0/@StaticBody3D@68937|1.7:IstDunya/IstSehir/Ist_hub_sehir/L0/@StaticBody3D@68937
+GEZI_OLAY takilma -4736 845 rota=R_hub_capraz zipla=7 yerde=true |0.3:IstDunya/IstSehir/Ist_hub_sehir/L0/@StaticBody3D@68942|1.0:IstDunya/IstSehir/Ist_hub_sehir/L0/@StaticBody3D@68942|1.7:IstDunya/IstSehir/Ist_hub_sehir/L0/@StaticBody3D@68942
+GEZI_OLAY takilma -4735 864 rota=R_hub_capraz zipla=8 yerde=true |0.3:IstDunya/IstSehir/Ist_hub_sehir/L0/@StaticBody3D@68952|1.0:IstDunya/IstSehir/Ist_hub_sehir/L0/@StaticBody3D@68952|1.7:IstDunya/IstSehir/Ist_hub_sehir/L0/@StaticBody3D@68952
+GEZI_OLAY takilma -4735 881 rota=R_hub_capraz zipla=9 yerde=false |0.3:-|1.0:-|1.7:-
+GEZI_ROTA R_hub_capraz dilim=29 gecti=24 olay=5 yurunen_m=288 sure_ms=71006
+GEZI_BITTI toplam_m=7632
+# --- ilk deneme koşusu (yalnız R_kapi_romanos; terminal çıktısından aynen) ---
+GEZI_OLAY takilma -4828 887 rota=R_kapi_romanos zipla=8 yerde=false |0.3:IstDunya/IstSehir/Ist_romanos/L0/AzizRomanos|1.0:IstDunya/IstSehir/Ist_romanos/L0/AzizRomanos|1.7:IstDunya/IstSehir/Ist_romanos/L0/AzizRomanos
+GEZI_OLAY dusme -4852 894 rota=R_kapi_romanos y0=20.2 y=17.6
+GEZI_OLAY takilma -4883 904 rota=R_kapi_romanos zipla=8 yerde=false |0.3:IstDunya/IstSehir/Ist_romanos/L0/AzizRomanos|1.0:IstDunya/IstSehir/Ist_romanos/L0/AzizRomanos|1.7:IstDunya/IstSehir/Ist_romanos/L0/AzizRomanos
+GEZI_ROTA R_kapi_romanos dilim=10 gecti=7 olay=3 yurunen_m=84 sure_ms=26393
