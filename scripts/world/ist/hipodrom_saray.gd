@@ -2,7 +2,7 @@ class_name IstHipoSaray
 extends RefCounted
 ## Büyük Saray harabeleri, Khalke kalıntısı, Zeuksippos hamamı harabesi, Nea Ekklesia kalıntısı. Bkz. hipodrom.gd.
 
-const K := IstHipoKit
+const K := preload("res://scripts/world/ist/hipodrom_kit.gd")
 
 static func catalog() -> Array:
 	return [

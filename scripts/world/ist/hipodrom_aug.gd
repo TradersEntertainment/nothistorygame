@@ -2,7 +2,7 @@ class_name IstHipoAug
 extends RefCounted
 ## Augustaion + Iustinianus Sütunu, Milion, Aya İrini, Aya Sergios-Bakhos (Küçük Ayasofya). Bkz. hipodrom.gd.
 
-const K := IstHipoKit
+const K := preload("res://scripts/world/ist/hipodrom_kit.gd")
 
 static func catalog() -> Array:
 	return [
