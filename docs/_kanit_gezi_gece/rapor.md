@@ -1,17 +1,18 @@
-# GEZİ DENETİMİ — bölge `gece` (bütün şehir + ordugâh, GECE) — İLK GÖNDERİM (ara rapor)
+# GEZİ DENETİMİ — bölge `gece` (bütün şehir + ordugâh, GECE) — SON RAPOR
 
-Denetçi: bağımsız gezgin. Oyun kodu değiştirilmedi (yalnız `tests/_ist/gezi_gece.*`, `gezi_gece_kiyi.gd` ve bu klasör). Tüm kareler `gezi_gece.tscn -- gece=1` ile, 1280×720, yazılım GL.
+Denetçi: bağımsız gezgin. **Oyun kodu değiştirilmedi** (`git diff wip/ist2-gezi-taban -- scripts assets scenes` boş); yalnız `tests/_ist/gezi_gece.gd/.tscn`, `tests/_ist/gezi_gece_kiyi.gd` (kıyı/su sondası) ve bu klasör eklendi. Kareler `gezi_gece.tscn -- gece=1` ile, 1280×720, yazılım GL (llvmpipe), `IstDunya.butce_us=250000`.
 
-## 1. Bölge, kare sayıları
-- Bölge: bütün kara (doğu −7000…+700, kuzey −1900…+3600 gerçek m) ve ordugâh (batı −6600…−5100); sınır dört köşe: (−6600,−1500) (−6600,2700) (700,3600) (700,−1900).
-- Izgara: GÖREV 150 m istiyor; 4 çekirdekli yazılım GL'de kare başına ~7–10 sn olduğu için ızgara **420 m** alındı (her düğümde iki yön) — SAPMA. Zorunlu yerler (Mese boyu, Ayasofya/Augustaion, Konstantin, hub, sur üstü/dışı altı nokta, Haliç, Marmara, Galata, ordugâh sekiz yer, havadan sekiz bakış) ayrı satırlar.
-- Çekilen kare: ara rapor anında ~150 / planlanan 548 + 31 (kıyı/havadan yeniden). Bakılan (3×3 paftada incelenen): 90. Bakılmayan kareler için yalnız ortanca parlaklık/karanlık oranı (`ham_gece_satirlari.txt`) var; bunlardan bulgu YAZILMADI.
-- Atlanan: deniz üzerine düşen düğümler (22 satır `GECE_SU`: Haliç iskeleleri, Marmara limanları, hava_3/5/6); kıyıya kaydırılıp yeniden çekiliyor (`liste_gece_kiyi_hava.txt`).
-- Gerçek oyuncuyla yürüyüş (madde 6): bu ara raporda YAPILMADI (bakılmadı).
-- Ham kare listesi: `liste_gece_ana.txt`; ham satırlar: `ham_gece_satirlari.txt` (ort=ortalama, medyan=ortanca parlaklık /255, karanlik= <%2 parlaklık oranı, çizim, üçgen).
+## 1. Bölge, kare sayıları, yürüyüş
+- Bölge (gerçek m, doğu/kuzey): dört köşe (−6600, −1900) (−6600, 3600) (700, 3600) (700, −1900); şehir −5100…+700, ordugâh −6600…−5100.
+- **SAPMA (açık yazıyorum):** görev ızgarayı 150 m istiyor; yazılım GL'de kare başına ~7–10 sn olduğu için ızgara **420 m** alındı, düğümlerin bir kısmı (şehir içi: her 3. düğüm, ordugâh: her 2.) atlandı. Yani "karış karış" DEĞİL, seyrek örnekleme. Zorunlu yerler (Mese boyu, Ayasofya/Augustaion, Konstantin, hub, sur üstü/dışı altı nokta, Haliç, Marmara kapı kıyıları, Galata, ordugâh sekiz yer, havadan 8 bakış + tam tepe + Galata'dan bakış) ayrı satırlar.
+- **Çekilen kare: 276** (+ 54 satır deniz üstüne düştüğü için atlandı: `GECE_SU`). Haliç iskeleleri ve Marmara limanı düğümleri kıyıya kaydırılarak yeniden çekildi. **Bakılan (3×3 paftada açılıp incelenen): 198.** Kalan 78 kare için yalnız ortanca parlaklık/karanlık/çizim sayısı var (`ham_gece_satirlari.txt`); onlardan bulgu YAZILMADI.
+- Zifiri ölçümü (160×90'a küçültülmüş karede ortanca parlaklık, 0–255): 276 karenin ortancası **16,2**; ortancası ≤ 5 olan **58 kare** (%21), karenin yarısından fazlası siyah olan 58 kare. Çoğu kamera sur/hendek/yapı kütlesinin dibinde ya da içinde (izgara düğümü bir yapıya düştü); bunları "oyuncu yolunu bulamaz" diye değil ŞÜPHELİ yazdım (G01, G04, G13, G28, G29, G42, G43, G53–G55, G67).
+- Gerçek oyuncuyla yürüyüş (madde 6): `gezi.tscn kip=yuru_sina gece=1`, başsız. **13 rota, toplam ≈ 0,67 km** (hedef ≥ 1,2 km: **ULAŞILAMADI**; sonda tek koşuda 1500 fizik karesi ≈ 125 m yürütüyor). Düşme = 0, `alt_dusme=0`, su yakalayıcı PASS (7/7). Üç rota tam 125–130 m temiz yürüdü (Mese doğu→batı: (−500,−20) (−790,−5) (−1130,98)); 7 rota erken durdu: (−240,−30)→6 m, (−1590,222)→24 m, (−2480,1190)→66 m, (−756,−11)→0 m (Konstantin kaidesi), (−4700,850)→23 m (hub), (−5200,930)→3 m (ordugâh), (−504,1500)→4 m (Galata). Duruş nedeni (görünmez duvar / yapı içi doğuş / sonda) AYIRT EDİLEMEDİ; yalnız Konstantin 0 m durumunu G62 olarak tabloya aldım (kamera aynı noktada kaide içinde kapkara), diğer duruşları tabloya ALMADIM. Ham: `ham_yuruyus.txt`.
+- Performans (yer 1200 çizim / 2,5 M üçgen, uçuş 1500 / 3,5 M): 265 yer karesinin 100'ü (%38) bütçeyi aşıyor, en kötü izgara_023a 4,84 M üçgen; uçuşta hava_4 (1590 / 4,29 M) aşıyor. Kurulumda > 50 ms kare: ölçülmedi (kare_ms sondada yok).
+- Ham kamera listeleri: `liste_gece_ana.txt`, `liste_gece_kiyi_hava.txt` (liste3 ızgara alt kümesi ana listenin her 3.sü).
 
 ## 2. GENEL NOT: 3,5 / 10
-Sahibi geceyi gezerse ilk olarak ordugâha kızar: çadırlar gece parlayan gri piramitler, zemin kapkara ve ateş neredeyse yok. İkincisi ışık dili tutarsız: bir yanda kapkara cepheler, öbür yanda ay ışığında fosforlu çim, bembeyaz pencere/kemer/sur şeridi. Üçüncüsü kara surunda nöbetçi ve meşale yok.
+Sahibi geceyi gezerse ilk olarak ordugâha kızar: ova gece fosforlu yeşil ya da kapkara düz toprak, çadırlar kendi ışığıyla parlayan gri-mavi piramitler, ateş ve kişi yalnız birkaç noktada. İkinci kızgınlığı ışık dilinin tutarsızlığı: bir yanda kapkara cepheler ve zifiri sur dipleri, öbür yanda bembeyaz pencereler, ışıyan buz mavisi ağaç tacları, parlayan sur şeridi ve yeşil çimler. Üçüncüsü hâlâ kutu: oyuncak ağaç taçları, çıplak kaide levhaları ve çokgen çadırlar; ama Mese/çarşı sokaklarındaki kandil ve meşale ışığı (İYİ kareler: G22, G46, G60, G61, G68, G74, G75) doğru yolda.
 
 ## 3. BULGU TABLOSU
 | no | tür | önem | yer | doğu, kuzey | kare | ne görünüyor | kaynak | öneri |
@@ -46,18 +47,76 @@ Sahibi geceyi gezerse ilk olarak ordugâha kızar: çadırlar gece parlayan gri 
 | G28 | GÖRSEL | 2 | Galata suru yanı (-760,1900) | -760, 1900 (yük 1.7 m, yön 0°, eğim 0) | kare/galata_sur_a.jpg | Tamamen siyah kare (medyan 3,0, %100 karanlık): kamera sur dibinde duvara gömülü ŞÜPHELİ (medyan 3.0) | galata_sur.gd | Oyuncu oraya girebiliyorsa çarpışma/ışık |
 | G29 | GÖRSEL | 2 | Kara suru dışı hendek/sur arası (-5000,-440) | -5000, -440 (yük 1.7 m, yön 210°, eğim 0) | kare/izgara_003a.jpg | Tamamen siyah kare; hendek/sur kütlesi içinde ya da dibinde, yol bulunamaz (medyan 3.0) | izgara kare ŞÜPHELİ | Hendek tabanına ay ışığı alt sınırı |
 | G30 | GÖRSEL | 3 | Hendek tabanı (-5000,400) | -5000, 400 (yük 1.7 m, yön 350°, eğim 0) | kare/izgara_005a.jpg | Hendek içinde kum tabanı okunuyor, sur kütlesi karanlık; yeşil-sarı kamışlar tek renk: iyi çalışıyor ama ayağı kaldıran ışık yok (medyan 20.0) | hendek (SUR-5 sürüyor) | — |
+| G31 | KUTU | 2 | Izgara düğümü (şehir içi) | -4580, -860 (yük 1.7 m, yön 330°, eğim 0) | kare/izgara_015a.jpg | Ağaç taçları açık buz mavisi, düz yüzlü çokgen (oyuncak ağaç): ay ışığında bile parlak, evlerden çok daha açık (medyan 18.4) | bitki.gd / bitki_yama.gd (ağaç tacı) ŞÜPHELİ | Taçları yuvarlak kesit + gece yeşili |
+| G32 | GÖRSEL | 2 | Izgara düğümü (ordugâh) | -5000, 1660 (yük 1.7 m, yön 20°, eğim 0) | kare/izgara_008b.jpg | Açık mavi-beyaz çadır kendi ışığıyla parlıyor, lacivert etek; dört 'kanat' pano çadırdan dışarı taşıyor (kutu+levha) (medyan 17.9) | ordugah_oba.gd:PALET / ordugah_yapi.gd (çadır tepesi) ŞÜPHELİ | Gece rengi (krem→gri-mavi koyu), panoları gövdeye bağla |
+| G33 | GÖRSEL | 2 | Izgara düğümü (ordugâh, sur önü) | -5000, 1240 (yük 1.7 m, yön 130°, eğim 0) | kare/izgara_007a.jpg | Aynı mavi-beyaz çadır sur eteği önünde, zemin kapkara; çadırın çevresinde ışık/ocak yok (medyan 13.4) | aynı | aynı |
+| G34 | GÖRSEL | 3 | Izgara düğümü (Marmara surunun dibi) | -4580, -1700 (yük 1.7 m, yön 190°, eğim 0) | kare/izgara_013a.jpg | Duvar yüzünde ışıma çizgileri/ışın deseni (hare); yan tarafta deniz (medyan 10.7) | marmara_sur.gd / sur_doku.gd (şerit gölgelendirici) ŞÜPHELİ | Duvar şerit dokusunu uzak düşmede filtrele |
+| G35 | GÖRSEL | 3 | Izgara düğümü (ordugâh) | -5000, 2500 (yük 1.7 m, yön 160°, eğim 0) | kare/izgara_010b.jpg | Çadır bezi beyaz tahta kaplama gibi, üstünde kırmızı lekeler (kan/boya?); çatı üçgen dev (medyan 25.5) | ordugah_yapi2.gd ŞÜPHELİ | Kırmızı lekeleri kaldır ya da anlamlandır |
+| G36 | MANTIK | 3 | Ordugâh ocak başı | -5000, 2080 (yük 1.7 m, yön 90°, eğim 0) | kare/izgara_009b.jpg | Ateş başındaki iki asker aynı yüz/fes modeli (yan yana kopya) ŞÜPHELİ; ateş iyi (medyan 21.8) | ordugah_kisi.gd ŞÜPHELİ | Yüz çeşitliliği |
+| G37 | ZEMİN | 2 | Bütün şehir tam tepeden (2300 m) | -2500, 800 (yük 2300 m, yön 0°, eğim -90) | kare/hava_tam_tepe.jpg | Surun batısında açık renkli düzgün dikdörtgen yamalar (cetvelle kesilmiş zemin) ve ordugâh yalnız sarı nokta kümeleri; ordugâh alanı geceleri neredeyse ışıksız (medyan 24.6) | ordugah.gd (zemin yaması) ŞÜPHELİ | Yama kenarlarını yumuşat; ordugâh ateşlerini artır |
+| G38 | BOŞLUK | 2 | Marmara, Kontoskalion kapısı kıyısı | -601, -777 (yük 1.7 m, yön 225°, eğim 0) | kare/kiyi_kontoskalion.jpg | Liman iskelesi siyah kiriş direkleri; kandil/nöbetçi/gemi yok, deniz boş: ölü liman (medyan 3.3) | marmara_sur.gd / gemiler.gd ŞÜPHELİ | İskele başına fener, nöbetçi, bağlı tekne |
+| G39 | KUTU | 2 | Bukoleon kıyısı | -234, -730 (yük 1.7 m, yön 45°, eğim 0) | kare/kiyi_bukoleon_b.jpg | Ağaç kümeleri açık mavi çokgen; iskelede ışıksız tezgâh/kalas; yeşil çubuk havada (medyan 20.0) | bitki.gd ŞÜPHELİ | Ağaç taçları yuvarlak, kıyıya kandil |
+| G40 | GÖRSEL | 3 | Bukoleon sur dibi | -234, -730 (yük 1.7 m, yön 225°, eğim 0) | kare/kiyi_bukoleon.jpg | Sur yüzünde dev çapraz siyah kirişler; çim bu karede parlak yeşil, sol altta havada yeşil çubuk (medyan 22.4) | marmara_sur.gd ŞÜPHELİ | Çapraz kirişleri kaldır/sur taşına otur |
+| G41 | BOŞLUK | 3 | Marmara kıyısı Davutpaşa | -2846, -838 (yük 1.7 m, yön 225°, eğim 0) | kare/kiyi_davutpasa.jpg | Siyah kiriş iskele, ışık/kişi yok; denizde parlak çizgi (medyan 12.7) | gemiler.gd ŞÜPHELİ | — |
+| G42 | GÖRSEL | 3 | Demir Kapı (Marmara) | -440, -780 (yük 1.7 m, yön 225°, eğim 0) | kare/kiyi_demirkapi.jpg | Zifiri kare (medyan 3,0): kamera kapı/kule kütlesi içinde ya da dibinde ŞÜPHELİ (medyan 3.0) | marmara_sur.gd | Oyuncu girebiliyor mu bakılmadı |
+| G43 | GÖRSEL | 3 | Yenikapı (Marmara) | -2357, -818 (yük 1.7 m, yön 225°, eğim 0) | kare/kiyi_yenikapi.jpg | Zifiri kare; kamera yapı içi ŞÜPHELİ (medyan 3.0) | marmara_sur.gd | aynı |
+| G44 | BOŞLUK | 3 | Marmara açığı havadan (-1500,-1500) | -1500, -1500 (yük 60 m, yön 0°, eğim -30) | kare/hava_6.jpg | Marmara'da tek kayık yok, deniz bomboş siyah; Haliç ise gemi dolu (medyan 5.9) | gemiler.gd | Marmara'ya birkaç gece feneri/balıkçı teknesi |
+| G45 | GÖRSEL | 3 | Galata yarımadası havadan | -1000, 1100 (yük 60 m, yön 10°, eğim -30) | kare/hava_3.jpg | Galata çevresinde siyah halka (gölge şeridi) ve kule; genel iyi (medyan 5.9) | galata_sur.gd ŞÜPHELİ | Gölge şeridini kıs |
+| G46 | İYİ | 3 | Galata'dan şehre bakış | -504, 1500 (yük 40 m, yön 205°, eğim -8) | kare/galata_bakis.jpg | (korunacak) bayraklı gemiler, ışıklı şehir silueti (medyan 17.0) | — | — |
+| G47 | ZEMİN | 2 | Izgara düğümü (ordugâh, sur önü ova) | -4160, 2500 (yük 1.7 m, yön 0°, eğim 0) | kare/izgara_036a.jpg | Çayır gece doygun fosforlu yeşil, ufuktaki çadırlar ve ağaçlar kapkara: zemin ile üstündekiler arasında ton uçurumu; çam gibi siyah koni ağaç, yapraklı ağaçlar dörtgen çokgen (medyan 14.2) | sur_zemin.gd / mahalle_doku.gd (çim) + bitki.gd ŞÜPHELİ | Çimi gece yeşiline (koyu zeytin) çek, ağaç taçlarını yuvarlak yap |
+| G48 | ZEMİN | 2 | Izgara düğümü (ordugâh, sur önü ova) | -4160, 2500 (yük 1.7 m, yön 180°, eğim 0) | kare/izgara_036b.jpg | Aynı parlak yeşil çim; siperde dizili beyaz üniformalı askerler tepeden tırnağa parlak beyaz (gece parlaklığı fazla), arkada kapkara siluet (medyan 12.7) | aynı + ordugah_kisi.gd ŞÜPHELİ | Üniforma tonunu kıs |
+| G49 | KUTU | 2 | Izgara düğümü (şehir içi) | -2900, -20 (yük 1.7 m, yön 330°, eğim 0) | kare/izgara_069b.jpg | Dev koyu cam-göbeği çokgen (ağaç tacı) kameranın önünde düz yüzlü 5-6 kenarlı levha gibi, gövdesi yok: oyuncak/kutu ağaç (medyan 15.1) | bitki.gd ŞÜPHELİ | Taç yuvarlak ve gövdeli |
+| G50 | GÖRSEL | 3 | Izgara düğümü (şehir içi) | -3320, 2920 (yük 1.7 m, yön 90°, eğim 0) | kare/izgara_063a.jpg | Karenin yarısı tamamen düz lacivert tek renk levha (kameranın önünde dev çokgen/duvar), dokusuz (medyan 6.0) | kare: izgara_063a ŞÜPHELİ (ağaç tacı ya da duvar) | Dokusuz yüze doku |
+| G51 | GÖRSEL | 3 | Arkadius Sütunu çevresi (-3320,-860) | -3320, -860 (yük 1.7 m, yön 0°, eğim 0) | kare/izgara_054b.jpg | Sütun gövdesi gece açık mavi-beyaz ışıyor; çevre evler karanlık, ağaç tacı mor çokgen (medyan 18.0) | forumlar_yapi.gd:sutun ŞÜPHELİ | Gövdeyi gece değeriyle çarp |
+| G52 | GÖRSEL | 3 | Izgara düğümü (şehir içi) | -2900, 2500 (yük 1.7 m, yön 210°, eğim 0) | kare/izgara_075a.jpg | Açık mavi-beyaz sivri kule/dikilitaş gece ışıyor; sağdaki evler kapkara (medyan 19.3) | kare: izgara_075a ŞÜPHELİ | aynı |
+| G53 | MANTIK | 3 | Izgara düğümü (şehir içi) | -2480, -440 (yük 1.7 m, yön 270°, eğim 0) | kare/izgara_081a.jpg | Kamera boş bir odanın içinde: tavan dokulu, duvarlar düz lacivert, içeride eşya yok; ev kabuğu içi boş ve görünür (medyan 5.6) | kare: izgara_081a ŞÜPHELİ (kapalı cep) | Oyuncu giremiyorsa iç yüzü dışlayıp sınır koy; girebiliyorsa iç mekân |
+| G54 | MANTIK | 3 | Izgara düğümü (şehir içi) | -2480, -440 (yük 1.7 m, yön 90°, eğim 0) | kare/izgara_081b.jpg | Aynı boş kabuk içi, düz lacivert yüzler (medyan 12.7) | aynı | aynı |
+| G55 | MANTIK | 3 | Izgara düğümü (sur dibi) | -4160, 1240 (yük 1.7 m, yön 330°, eğim 0) | kare/izgara_033b.jpg | Boş kabuk içi (tavan + düz duvar), zifiri (medyan 4.4) | kare: izgara_033b ŞÜPHELİ | aynı |
+| G56 | GÖRSEL | 3 | Izgara düğümü (Marmara surunun dibi) | -4160, -1280 (yük 1.7 m, yön 270°, eğim 0) | kare/izgara_027b.jpg | Sur duvarı yüzünde yatay şerit çizgileri (kıl) ve siyah kütle; zifiri (medyan 3.2) | marmara_sur.gd ŞÜPHELİ | — |
+| G57 | GÖRSEL | 3 | Izgara düğümü (şehir içi) | -3740, 2080 (yük 1.7 m, yön 120°, eğim 0) | kare/izgara_048a.jpg | Cephe şeritleri (yatay gri-lacivert) ve %75 kapkara, pencere/kandil yok (medyan 5.6) | sehir.gd:3003 (pencere yalnız üst kat %40) ŞÜPHELİ | Cepheye pencere/kandil |
+| G58 | GÖRSEL | 3 | Izgara düğümü (şehir içi) | -2480, 2080 (yük 1.7 m, yön 330°, eğim 0) | kare/izgara_087a.jpg | Neredeyse tamamen düz lacivert doku (bir duvar), ayrıntı yok, ortanca 4,4 (medyan 4.4) | kare: izgara_087a | — |
+| G59 | KUTU | 3 | Izgara düğümü (şehir içi) | -3740, 820 (yük 1.7 m, yön 270°, eğim 0) | kare/izgara_045a.jpg | Yeşil çokgen ağaç tacı (düz yüzlü, 4-5 kenar) kameranın solunda; gövde yok, havada gibi (medyan 10.6) | bitki.gd ŞÜPHELİ | Taç yuvarlak ve gövdeli |
+| G60 | İYİ | 3 | Izgara düğümü (şehir içi sokak) | -2900, 1240 (yük 1.7 m, yön 0°, eğim 0) | kare/izgara_072a.jpg | (korunacak) kandil, yanan pencere ve sokak ışığı, gölge doğru (medyan 17.7) | — | — |
+| G61 | İYİ | 3 | Izgara düğümü (şehir içi sokak) | -3320, 400 (yük 1.7 m, yön 210°, eğim 0) | kare/izgara_057b.jpg | (korunacak) kandil ışığı, yanan pencere (medyan 16.2) | — | — |
+| G62 | OYNANIŞ | 2 | Konstantin Forumu merkezi (-756,-11) | -756, -11 (yük 1.7 m, yön 286°, eğim 0) | kare/mese_02.jpg | GEZİ yürüyüşü: oyuncu forumun ortasından doğuya yürümeye başlayınca 0 m ilerliyor (yol=0), kamera aynı noktada kaide içinde zifiri (mese_02): sütun kaidesi oyuncuyu kapalı cebe hapsediyor ŞÜPHELİ (medyan 12.7) | forumlar_yapi.gd:sutun (kaide çarpışması) | Oyuncu doğuş noktasını kaidenin dışına al, çarpışmayı kaide kenarına koy |
+| G63 | KUTU | 2 | Izgara düğümü (Haliç kıyısı yamaç) | -2060, 2920 (yük 1.7 m, yön 300°, eğim 0) | kare/izgara_102a.jpg | Elmas (eşkenar dörtgen) biçimli düz ağaç tacı ince çubuk gövdede: oyuncak ağaç; yamaç çimi gece fosforlu koyu yeşil (medyan 24.1) | bitki.gd ŞÜPHELİ | Taç yuvarlak ve gövdeli, dallı |
+| G64 | KUTU | 2 | Izgara düğümü (şehir içi meydan) | -2060, 1660 (yük 1.7 m, yön 90°, eğim 0) | kare/izgara_099a.jpg | Buz mavisi çok yüzlü ağaç tacı ince gövdede, çevredeki evlerden çok daha parlak: oyuncak/ışıyan ağaç (medyan 19.7) | bitki.gd ŞÜPHELİ | Gece yeşiline indir |
+| G65 | KUTU | 3 | Izgara düğümü (şehir içi) | -800, 400 (yük 1.7 m, yön 270°, eğim 0) | kare/izgara_135b.jpg | Yine buz mavisi çokgen ağaç tacı sokak arasında; 3 karede (099a, 135b, 015a) tekrarlıyor (medyan 12.5) | bitki.gd ŞÜPHELİ | aynı |
+| G66 | KUTU | 3 | Izgara düğümü (şehir içi) | -1220, -440 (yük 1.7 m, yön 120°, eğim 0) | kare/izgara_120a.jpg | Sokakta düz mor-gri çıplak levha/kutu (kaldırım taşı gibi) ve siyah kapı kutusu; dokusuz kenarlı (medyan 35.4) | kare: izgara_120a ŞÜPHELİ | Pah/doku ekle |
+| G67 | MANTIK | 3 | Izgara düğümü (şehir içi) | -1220, 820 (yük 1.7 m, yön 330°, eğim 0) | kare/izgara_123a.jpg | Boş kabuk içi: düz lacivert duvarlar, tavan, eşya yok; kapalı cep ŞÜPHELİ (üç karede daha: 033b, 081a/b, 111a) (medyan 12.7) | kare: izgara_123a | Giriş yoksa iç yüzü dışlayıp sınır koy |
+| G68 | İYİ | 3 | Izgara düğümü (şehir içi çarşı) | -2060, 400 (yük 1.7 m, yön 240°, eğim 0) | kare/izgara_096a.jpg | (korunacak) meşaleli iki kişi, zeminde sıcak ışık havuzu, yanan pencereler, tezgâh (medyan 20.7) | — | — |
+| G69 | BOŞLUK | 2 | Izgara düğümü (ordugâh dış ucu) | -6600, 1020 (yük 1.7 m, yön 20°, eğim 0) | kare/ordugah_izgara_188b.jpg | Çadır sırasının dışında yüzlerce metre düz kapkara toprak: tek tük koni çadır, elmas biçimli çıplak ağaç tacı; ateş/kişi yok (boş alan istemiyorum) (medyan 19.2) | ordugah_oba.gd (obalar arası boşluk) ŞÜPHELİ | Dış ucu obalarla/ağıllarla doldur, ateş ekle |
+| G70 | BOŞLUK | 2 | Izgara düğümü (ordugâh) | -5340, -1500 (yük 1.7 m, yön 260°, eğim 0) | kare/ordugah_izgara_212b.jpg | Ufka kadar düz karanlık ova, uzakta çadır silueti; yolda iz damgaları aynı biçimde tekrarlı (ayak izi yaması) (medyan 15.5) | ordugah.gd zemin ŞÜPHELİ | Zemini çeşitlendir |
+| G71 | GÖRSEL | 2 | Izgara düğümü (ordugâh) | -5760, 1860 (yük 1.7 m, yön 300°, eğim 0) | kare/ordugah_izgara_210a.jpg | Açık mavi-beyaz düz levha çatılı iri yapı (kule/ahır?) gece parlıyor; çevre siyah; dokusuz çıplak yüzler (medyan 21.2) | ordugah_yapi2.gd ŞÜPHELİ | Doku + gece tonu |
+| G72 | GÖRSEL | 2 | Izgara düğümü (ordugâh ön hat) | -5340, -660 (yük 1.7 m, yön 220°, eğim 0) | kare/ordugah_izgara_214a.jpg | Sağ üstte parlak mavi dikdörtgen levha (kalkan/perde?) gece ışıyan düz yüz; yanında kapkara tabya (medyan 12.7) | ordugah_cephe.gd ŞÜPHELİ | Perdeye doku ve gece tonu |
+| G73 | KUTU | 3 | Izgara düğümü (ordugâh) | -5340, 180 (yük 1.7 m, yön 180°, eğim 0) | kare/ordugah_izgara_216b.jpg | Çıplak 8 yüzlü açık yeşil-gri koni çadır tek başına, dokusuz, çevresi boş (medyan 17.5) | ordugah_oba.gd / ordugah_kit.gd ŞÜPHELİ | Kumaş doku, kıvrım, ip/kazık |
+| G74 | İYİ | 3 | Izgara düğümü (ordugâh ön hattı, sur önü) | -5340, -1500 (yük 1.7 m, yön 80°, eğim 0) | kare/ordugah_izgara_212a.jpg | (korunacak) meşaleler, nöbetçi sıraları, sur silueti: gece ön hat okunuyor (medyan 15.5) | ordugah_cephe.gd | — |
+| G75 | İYİ | 3 | Izgara düğümü (ordugâh ön hat) | -5340, -660 (yük 1.7 m, yön 40°, eğim 0) | kare/ordugah_izgara_214b.jpg | (korunacak) meşale hale ile yanıyor, askerler meşale ışığında, sur önü (medyan 14.2) | ordugah_cephe.gd | — |
+| G76 | PERFORMANS | 2 | Izgara düğümü (şehir içi) | -4580, 2500 (yük 1.7 m, yön 170°, eğim 0) | kare/izgara_023a.jpg | Yer karesi 1450 çizim / 4,84 M üçgen (bütçe 1200 / 2,5 M); gece yer karelerinin 265'inden 100'ü (%38) bütçeyi aşıyor (ham: ham_gece_satirlari.txt, ölçüm yazılım GL'de RenderingServer sayaçları) (medyan 20.6) | dunya.gd (lod/akış bütçesi) ŞÜPHELİ | Gece yakın katman ve ordugâh çizim bütçesi |
+| G77 | PERFORMANS | 2 | Hipodrom havadan 60 m | -300, -400 (yük 60 m, yön 330°, eğim -30) | kare/hava_4.jpg | Uçuş karesi 1590 çizim / 4,29 M üçgen (bütçe 1500 / 3,5 M) (medyan 26.9) | hipodrom_kit.gd / hipodrom.gd ŞÜPHELİ | Hipodrom oturak/sütun toplulaştırma |
 
-Kaynak sütunundaki "ŞÜPHELİ"/"KANITSIZ" = düğüm adı (`sur4_kare --set=kim`) çalıştırılmadı, dosya tahminidir. "Biliniyor" listesindekiler (kule kutu+çatı, ordugâh çadırları kulübe, ateş görünmüyor): G18, G19, G20, G21 ile örtüşür.
+Kaynak sütunu: "ŞÜPHELİ" = düğüm adı (`sur4_kare --set=kim`) çalıştırılmadı, dosya adı tahmin; "KANITSIZ" = kaynak bulunamadı. Her bulgunun karesi `kare/` altında. "Biliniyor" listesindekiler (ordugâh çadırları kulübe/bacalı, kamp ateşi azlığı, kara suru kule+levha çatı, sur üstü beyaz küpler) G18, G19, G32, G33, G73 (çadırlar), G20, G21 (ateş azlığı), G14–G16 (sur şeridi) ile örtüşür: yine de yazıldı. ÖNCE'de var mıydı? sorusu bu denetimde ÖLÇÜLMEDİ (taban karşılaştırması yapılmadı).
 
-## 4. Tür sayımı (ara)
-{'GÖRSEL': 20, 'ZEMİN': 4, 'KUTU': 2, 'BOŞLUK': 3, 'İYİ': 1}
-KUTU kalan = 2 (G08, G19), hedef 0.
+## 4. Tür sayımı ve KUTU
+(78 satırın 7'si İYİ = korunacaklar; 71 satır bulgu, bunların 2'si PERFORMANS. Hedef 40: karşılandı, ama bunların çoğu ŞÜPHELİ kaynaklı.)
+{'GÖRSEL': 36, 'ZEMİN': 7, 'KUTU': 11, 'BOŞLUK': 8, 'İYİ': 7, 'MANTIK': 5, 'OYNANIŞ': 1, 'PERFORMANS': 2}
+**KUTU kalan = 11** (hedef 0): kareler konstantin_0, ordugah_oba1_1, izgara_015a, kiyi_bukoleon_b, izgara_069b, izgara_045a, izgara_102a, izgara_099a, izgara_135b, izgara_120a, ordugah_izgara_216b. Canlı (insan/hayvan) kutu bulgusu bu gece taramasında görülmedi (hayvan yakın karesi 5 m / uzak 60 m ZORUNLU ölçütü yapılmadı: hayvanlar gece karelerinde seçilemedi).
 
-## 5. En kötü kareler (ara)
-mesek_05, galata_sur_a, izgara_003a (zifiri); hava_4 (neon Hipodrom); ordugah_oba2_0 (parlayan piramit çadırlar); ayasofya_3; hub_2; konstantin_1; surdisi_0; mesek_02.
+## 5. En kötü 12 kare
+1. `mesek_05`, `galata_sur_a`, `izgara_003a`, `izgara_081a` (zifiri/kabuk içi: oyuncu yön bulamaz)
+2. `hava_4` (neon Hipodrom zemini + bütçe aşımı)
+3. `ordugah_oba2_0`, `izgara_008b` (kendiliğinden parlayan çadır piramitleri)
+4. `izgara_036a` (fosforlu ova çimi, siyah ağaçlar)
+5. `ayasofya_3` (bembeyaz pencereler, siyah iç)
+6. `konstantin_1` (kaynaksız turuncu sızıntı, bıçak çizgisi)
+7. `izgara_102a` (elmas ağaç tacı)
+8. `hub_2` (aşırı parlak elmas desenli cephe)
+9. `surdisi_0` (sur eteğinde ışıyan beyaz şerit, ateşsiz ova)
 
-## 6. İYİ olan kareler (korunacaklar)
-mese_04 / mesek_04 (kandil ışığı yolu ve tezgâh), ordugah_rumeli_1 (ateş başı), meseg_01 (çeşme/gölgelik sahnesi), konstantin_hava (şehir ışıkları), hava_2 (şehir pencere ışıkları).
+## 6. İYİ olan 5 kare (korunacaklar)
+`mese_04` (kandil ışığı yolu, tezgâh), `ordugah_rumeli_1` (ocak başında askerler), `ordugah_izgara_214b` + `ordugah_izgara_212a` (meşaleli nöbetçi, sur önü), `galata_bakis` (bayraklı gemiler, ışıklı şehir), `izgara_096a` (meşaleli çarşı, ışık havuzu).
 
-## 7. Bakamadıklarım (ara)
-Gerçek oyuncu yürüyüşü; 420 m ızgaranın büyük kısmı (yalnız sayısal ölçüm); düğüm adı/kaynak doğrulaması; Haliç/Marmara/Galata iskeleleri (yeniden çekim sürüyor); ordugâh otağ içi.
+## 7. Bakamadıklarım
+- 78 kare (yalnız sayısal ölçüm), ızgaranın atlanan düğümleri (150 m ızgara yapılmadı), Haliç iskelelerinin bir kısmı (kıyıya kaydırılan düğümlerin ilk yarısına bakıldı), Marmara limanlarının gerçek rıhtım noktaları (CSV liman koordinatları denizde kalıyor; kapı kıyıları kullanıldı).
+- Gerçek oyuncu yürüyüşünün 1,2 km hedefi; durma nedeni.
+- Hayvanlar (öküz/at/deve) yakın-uzak kareleri; ordugâh otağ içi; kaynak doğrulaması (`--set=kim`); ÖNCE/SONRA karşılaştırması; ay (ay diski/ışığı ayrı incelenmedi; yalnız yıldız biçimi G78).

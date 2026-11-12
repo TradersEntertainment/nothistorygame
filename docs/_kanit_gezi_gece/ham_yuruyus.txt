@@ -1,0 +1,121 @@
+ROTA 1 -1554,211,0.5,80
+YURU kare=150 konum=(-531.3109, 16.95787, -76.10731) zemin=16.89 fark=0.07 yerde=true cizim=0 ucgen=0 dunya={ "tris": 137922, "draws": 37, "lod": [2, 5, 17, 6], "isler": 0, "kare_us": 115, "kurulum_ms": 539.993 }
+YURU kare=300 konum=(-518.5118, 16.95787, -78.36523) zemin=16.89 fark=0.07 yerde=true cizim=0 ucgen=0 dunya={ "tris": 137922, "draws": 37, "lod": [2, 5, 17, 6], "isler": 0, "kare_us": 154, "kurulum_ms": 539.993 }
+YURU kare=450 konum=(-505.762, 17.49749, -80.61266) zemin=17.49 fark=0.01 yerde=true cizim=0 ucgen=0 dunya={ "tris": 137922, "draws": 37, "lod": [2, 5, 17, 6], "isler": 0, "kare_us": 128, "kurulum_ms": 539.993 }
+YURU kare=600 konum=(-493.0764, 18.61106, -82.83709) zemin=18.61 fark=0.00 yerde=true cizim=0 ucgen=0 dunya={ "tris": 137922, "draws": 37, "lod": [2, 5, 17, 6], "isler": 0, "kare_us": 112, "kurulum_ms": 539.993 }
+YURU kare=750 konum=(-490.0539, 18.67528, -83.50952) zemin=18.67 fark=0.00 yerde=true cizim=0 ucgen=0 dunya={ "tris": 137922, "draws": 37, "lod": [2, 5, 17, 6], "isler": 0, "kare_us": 111, "kurulum_ms": 539.993 }
+YURU kare=900 konum=(-490.0539, 18.67528, -83.50952) zemin=18.67 fark=0.00 yerde=true cizim=0 ucgen=0 dunya={ "tris": 137922, "draws": 37, "lod": [2, 5, 17, 6], "isler": 0, "kare_us": 126, "kurulum_ms": 539.993 }
+YURU kare=1050 konum=(-490.0539, 18.67528, -83.50952) zemin=18.67 fark=0.00 yerde=true cizim=0 ucgen=0 dunya={ "tris": 137922, "draws": 37, "lod": [2, 5, 17, 6], "isler": 0, "kare_us": 133, "kurulum_ms": 539.993 }
+YURU kare=1200 konum=(-490.0539, 18.67528, -83.50952) zemin=18.67 fark=0.00 yerde=true cizim=0 ucgen=0 dunya={ "tris": 137922, "draws": 37, "lod": [2, 5, 17, 6], "isler": 0, "kare_us": 108, "kurulum_ms": 539.993 }
+YURU kare=1350 konum=(-490.0539, 18.67528, -83.50952) zemin=18.67 fark=0.00 yerde=true cizim=0 ucgen=0 dunya={ "tris": 137922, "draws": 37, "lod": [2, 5, 17, 6], "isler": 0, "kare_us": 120, "kurulum_ms": 539.993 }
+YURU kare=1500 konum=(-490.0539, 18.67528, -83.50952) zemin=18.67 fark=0.00 yerde=true cizim=0 ucgen=0 dunya={ "tris": 137922, "draws": 37, "lod": [2, 5, 17, 6], "isler": 0, "kare_us": 89, "kurulum_ms": 539.993 }
+YURU sonuc yol=55 m alt_dusme=0 yerde_en_buyuk_fark=0.07
+YURU yakalayici konum=(-515.8105, 0.804688, -531.3309) su=false zemin=0.80 PASS
+ROTA 2 -756,-11,0.5,95
+YURU kare=150 konum=(-264.6, 16.26314, 3.694897) zemin=16.54 fark=-0.27 yerde=true cizim=0 ucgen=0 dunya={ "tris": 135580, "draws": 37, "lod": [2, 4, 20, 4], "isler": 0, "kare_us": 135, "kurulum_ms": 567.279 }
+YURU kare=300 konum=(-264.6, 16.26314, 3.694897) zemin=16.54 fark=-0.27 yerde=true cizim=0 ucgen=0 dunya={ "tris": 135580, "draws": 37, "lod": [2, 4, 20, 4], "isler": 0, "kare_us": 101, "kurulum_ms": 567.279 }
+YURU kare=450 konum=(-264.6, 16.26314, 3.694897) zemin=16.54 fark=-0.27 yerde=true cizim=0 ucgen=0 dunya={ "tris": 135580, "draws": 37, "lod": [2, 4, 20, 4], "isler": 0, "kare_us": 106, "kurulum_ms": 567.279 }
+YURU kare=600 konum=(-264.6, 16.26314, 3.694897) zemin=16.54 fark=-0.27 yerde=true cizim=0 ucgen=0 dunya={ "tris": 135580, "draws": 37, "lod": [2, 4, 20, 4], "isler": 0, "kare_us": 130, "kurulum_ms": 567.279 }
+YURU kare=750 konum=(-264.6, 16.26314, 3.694897) zemin=16.54 fark=-0.27 yerde=true cizim=0 ucgen=0 dunya={ "tris": 135580, "draws": 37, "lod": [2, 4, 20, 4], "isler": 0, "kare_us": 106, "kurulum_ms": 567.279 }
+YURU kare=900 konum=(-264.6, 16.26314, 3.694897) zemin=16.54 fark=-0.27 yerde=true cizim=0 ucgen=0 dunya={ "tris": 135580, "draws": 37, "lod": [2, 4, 20, 4], "isler": 0, "kare_us": 106, "kurulum_ms": 567.279 }
+YURU kare=1050 konum=(-264.6, 16.26314, 3.694897) zemin=16.54 fark=-0.27 yerde=true cizim=0 ucgen=0 dunya={ "tris": 135580, "draws": 37, "lod": [2, 4, 20, 4], "isler": 0, "kare_us": 108, "kurulum_ms": 567.279 }
+YURU kare=1200 konum=(-264.6, 16.26314, 3.694897) zemin=16.54 fark=-0.27 yerde=true cizim=0 ucgen=0 dunya={ "tris": 135580, "draws": 37, "lod": [2, 4, 20, 4], "isler": 0, "kare_us": 116, "kurulum_ms": 567.279 }
+YURU kare=1350 konum=(-264.6, 16.26314, 3.694897) zemin=16.54 fark=-0.27 yerde=true cizim=0 ucgen=0 dunya={ "tris": 135580, "draws": 37, "lod": [2, 4, 20, 4], "isler": 0, "kare_us": 111, "kurulum_ms": 567.279 }
+YURU kare=1500 konum=(-264.6, 16.26314, 3.694897) zemin=16.54 fark=-0.27 yerde=true cizim=0 ucgen=0 dunya={ "tris": 135580, "draws": 37, "lod": [2, 4, 20, 4], "isler": 0, "kare_us": 139, "kurulum_ms": 567.279 }
+YURU sonuc yol=0 m alt_dusme=0 yerde_en_buyuk_fark=0.29
+YURU yakalayici konum=(-515.8105, 0.804688, -531.3309) su=false zemin=0.80 PASS
+ROTA 3 -1100,95,0.5,260
+YURU kare=150 konum=(-397.5936, 15.03936, -30.9932) zemin=14.62 fark=0.42 yerde=true cizim=0 ucgen=0 dunya={ "tris": 133916, "draws": 37, "lod": [2, 4, 19, 5], "isler": 0, "kare_us": 100, "kurulum_ms": 540.059 }
+YURU kare=300 konum=(-409.8657, 15.0399, -33.75547) zemin=14.76 fark=0.28 yerde=true cizim=0 ucgen=0 dunya={ "tris": 133916, "draws": 37, "lod": [2, 4, 19, 5], "isler": 0, "kare_us": 109, "kurulum_ms": 540.059 }
+YURU kare=450 konum=(-418.3938, 15.2199, -34.98967) zemin=14.99 fark=0.23 yerde=true cizim=0 ucgen=0 dunya={ "tris": 133916, "draws": 37, "lod": [2, 4, 19, 5], "isler": 0, "kare_us": 133, "kurulum_ms": 540.059 }
+YURU kare=600 konum=(-427.4033, 15.21974, -35.14399) zemin=15.20 fark=0.02 yerde=true cizim=0 ucgen=0 dunya={ "tris": 133916, "draws": 37, "lod": [2, 4, 19, 5], "isler": 0, "kare_us": 111, "kurulum_ms": 540.059 }
+YURU kare=750 konum=(-427.4033, 15.21974, -35.14399) zemin=15.20 fark=0.02 yerde=true cizim=0 ucgen=0 dunya={ "tris": 133916, "draws": 37, "lod": [2, 4, 19, 5], "isler": 0, "kare_us": 110, "kurulum_ms": 540.059 }
+YURU kare=900 konum=(-427.4033, 15.21974, -35.14399) zemin=15.20 fark=0.02 yerde=true cizim=0 ucgen=0 dunya={ "tris": 133916, "draws": 37, "lod": [2, 4, 19, 5], "isler": 0, "kare_us": 114, "kurulum_ms": 540.059 }
+YURU kare=1050 konum=(-427.4033, 15.21974, -35.14399) zemin=15.20 fark=0.02 yerde=true cizim=0 ucgen=0 dunya={ "tris": 133916, "draws": 37, "lod": [2, 4, 19, 5], "isler": 0, "kare_us": 107, "kurulum_ms": 540.059 }
+YURU kare=1200 konum=(-427.4033, 15.21974, -35.14399) zemin=15.20 fark=0.02 yerde=true cizim=0 ucgen=0 dunya={ "tris": 133916, "draws": 37, "lod": [2, 4, 19, 5], "isler": 0, "kare_us": 143, "kurulum_ms": 540.059 }
+YURU kare=1350 konum=(-427.4033, 15.21974, -35.14399) zemin=15.20 fark=0.02 yerde=true cizim=0 ucgen=0 dunya={ "tris": 133916, "draws": 37, "lod": [2, 4, 19, 5], "isler": 0, "kare_us": 116, "kurulum_ms": 540.059 }
+YURU kare=1500 konum=(-427.4033, 15.21974, -35.14399) zemin=15.20 fark=0.02 yerde=true cizim=0 ucgen=0 dunya={ "tris": 133916, "draws": 37, "lod": [2, 4, 19, 5], "isler": 0, "kare_us": 140, "kurulum_ms": 540.059 }
+YURU sonuc yol=44 m alt_dusme=0 yerde_en_buyuk_fark=0.45
+YURU yakalayici konum=(-515.8105, 0.804688, -531.3309) su=false zemin=0.80 PASS
+ROTA 4 -4700,850,0.5,90
+YURU kare=150 konum=(-1632.216, 14.90065, -297.5) zemin=14.78 fark=0.12 yerde=true cizim=0 ucgen=0 dunya={ "tris": 166388, "draws": 37, "lod": [2, 4, 12, 12], "isler": 0, "kare_us": 103, "kurulum_ms": 556.699 }
+YURU kare=300 konum=(-1622.227, 14.90149, -297.6958) zemin=14.78 fark=0.12 yerde=true cizim=0 ucgen=0 dunya={ "tris": 166388, "draws": 37, "lod": [2, 4, 12, 12], "isler": 0, "kare_us": 100, "kurulum_ms": 556.699 }
+YURU kare=450 konum=(-1622.227, 14.90149, -297.6958) zemin=14.78 fark=0.12 yerde=true cizim=0 ucgen=0 dunya={ "tris": 166388, "draws": 37, "lod": [2, 4, 12, 12], "isler": 0, "kare_us": 98, "kurulum_ms": 556.699 }
+YURU kare=600 konum=(-1622.227, 14.90149, -297.6958) zemin=14.78 fark=0.12 yerde=true cizim=0 ucgen=0 dunya={ "tris": 166388, "draws": 37, "lod": [2, 4, 12, 12], "isler": 0, "kare_us": 115, "kurulum_ms": 556.699 }
+YURU kare=750 konum=(-1622.227, 14.90149, -297.6958) zemin=14.78 fark=0.12 yerde=true cizim=0 ucgen=0 dunya={ "tris": 166388, "draws": 37, "lod": [2, 4, 12, 12], "isler": 0, "kare_us": 108, "kurulum_ms": 556.699 }
+YURU kare=900 konum=(-1622.227, 14.90149, -297.6958) zemin=14.78 fark=0.12 yerde=true cizim=0 ucgen=0 dunya={ "tris": 166388, "draws": 37, "lod": [2, 4, 12, 12], "isler": 0, "kare_us": 93, "kurulum_ms": 556.699 }
+YURU kare=1050 konum=(-1622.227, 14.90149, -297.6958) zemin=14.78 fark=0.12 yerde=true cizim=0 ucgen=0 dunya={ "tris": 166388, "draws": 37, "lod": [2, 4, 12, 12], "isler": 0, "kare_us": 106, "kurulum_ms": 556.699 }
+YURU kare=1200 konum=(-1622.227, 14.90149, -297.6958) zemin=14.78 fark=0.12 yerde=true cizim=0 ucgen=0 dunya={ "tris": 166388, "draws": 37, "lod": [2, 4, 12, 12], "isler": 0, "kare_us": 102, "kurulum_ms": 556.699 }
+YURU kare=1350 konum=(-1622.227, 14.90149, -297.6958) zemin=14.78 fark=0.12 yerde=true cizim=0 ucgen=0 dunya={ "tris": 166388, "draws": 37, "lod": [2, 4, 12, 12], "isler": 0, "kare_us": 107, "kurulum_ms": 556.699 }
+YURU kare=1500 konum=(-1622.227, 14.90149, -297.6958) zemin=14.78 fark=0.12 yerde=true cizim=0 ucgen=0 dunya={ "tris": 166388, "draws": 37, "lod": [2, 4, 12, 12], "isler": 0, "kare_us": 115, "kurulum_ms": 556.699 }
+YURU sonuc yol=23 m alt_dusme=0 yerde_en_buyuk_fark=0.12
+YURU yakalayici konum=(-515.8097, 0.805272, -531.3309) su=false zemin=0.80 PASS
+ROTA 5 -5200,930,0.5,45
+YURU kare=150 konum=(-1819.157, 11.34398, -325.4476) zemin=11.38 fark=-0.04 yerde=true cizim=0 ucgen=0 dunya={ "tris": 141300, "draws": 37, "lod": [1, 5, 12, 12], "isler": 0, "kare_us": 98, "kurulum_ms": 557.424 }
+YURU kare=300 konum=(-1818.66, 11.34104, -325.5364) zemin=11.38 fark=-0.04 yerde=true cizim=0 ucgen=0 dunya={ "tris": 141300, "draws": 37, "lod": [1, 5, 12, 12], "isler": 0, "kare_us": 107, "kurulum_ms": 557.424 }
+YURU kare=450 konum=(-1818.405, 11.33928, -325.788) zemin=11.37 fark=-0.03 yerde=true cizim=0 ucgen=0 dunya={ "tris": 141300, "draws": 37, "lod": [1, 5, 12, 12], "isler": 0, "kare_us": 167, "kurulum_ms": 557.424 }
+YURU kare=600 konum=(-1818.321, 11.34016, -325.8604) zemin=11.37 fark=-0.03 yerde=true cizim=0 ucgen=0 dunya={ "tris": 141300, "draws": 37, "lod": [1, 5, 12, 12], "isler": 0, "kare_us": 112, "kurulum_ms": 557.424 }
+YURU kare=750 konum=(-1818.321, 11.34255, -325.8584) zemin=11.37 fark=-0.03 yerde=true cizim=0 ucgen=0 dunya={ "tris": 141300, "draws": 37, "lod": [1, 5, 12, 12], "isler": 0, "kare_us": 105, "kurulum_ms": 557.424 }
+YURU kare=900 konum=(-1818.321, 11.33994, -325.8616) zemin=11.37 fark=-0.03 yerde=true cizim=0 ucgen=0 dunya={ "tris": 141300, "draws": 37, "lod": [1, 5, 12, 12], "isler": 0, "kare_us": 149, "kurulum_ms": 557.424 }
+YURU kare=1050 konum=(-1818.321, 11.34036, -325.8592) zemin=11.37 fark=-0.03 yerde=true cizim=0 ucgen=0 dunya={ "tris": 141300, "draws": 37, "lod": [1, 5, 12, 12], "isler": 0, "kare_us": 147, "kurulum_ms": 557.424 }
+YURU kare=1200 konum=(-1818.321, 11.33976, -325.8627) zemin=11.37 fark=-0.03 yerde=true cizim=0 ucgen=0 dunya={ "tris": 141300, "draws": 37, "lod": [1, 5, 12, 12], "isler": 0, "kare_us": 110, "kurulum_ms": 557.424 }
+YURU kare=1350 konum=(-1818.321, 11.34005, -325.8611) zemin=11.37 fark=-0.03 yerde=true cizim=0 ucgen=0 dunya={ "tris": 141300, "draws": 37, "lod": [1, 5, 12, 12], "isler": 0, "kare_us": 95, "kurulum_ms": 557.424 }
+YURU kare=1500 konum=(-1818.321, 11.34363, -325.8599) zemin=11.37 fark=-0.03 yerde=true cizim=0 ucgen=0 dunya={ "tris": 141300, "draws": 37, "lod": [1, 5, 12, 12], "isler": 0, "kare_us": 107, "kurulum_ms": 557.424 }
+YURU sonuc yol=3 m alt_dusme=0 yerde_en_buyuk_fark=0.07
+YURU yakalayici konum=(-515.8105, 0.804688, -531.3309) su=false zemin=0.80 PASS
+ROTA 6 -504,1500,0.5,20
+YURU kare=150 konum=(-176.1352, -0.154432, -535.1103) zemin=-0.19 fark=0.03 yerde=true cizim=0 ucgen=0 dunya={ "tris": 142794, "draws": 37, "lod": [1, 7, 20, 2], "isler": 0, "kare_us": 138, "kurulum_ms": 578.819 }
+YURU kare=300 konum=(-175.9209, -0.15439, -535.1099) zemin=-0.19 fark=0.03 yerde=true cizim=0 ucgen=0 dunya={ "tris": 142794, "draws": 37, "lod": [1, 7, 20, 2], "isler": 0, "kare_us": 108, "kurulum_ms": 578.819 }
+YURU kare=450 konum=(-175.6912, -0.154394, -535.1088) zemin=-0.19 fark=0.03 yerde=true cizim=0 ucgen=0 dunya={ "tris": 142794, "draws": 37, "lod": [1, 7, 20, 2], "isler": 0, "kare_us": 105, "kurulum_ms": 578.819 }
+YURU kare=600 konum=(-175.4443, -0.154388, -535.108) zemin=-0.19 fark=0.03 yerde=true cizim=0 ucgen=0 dunya={ "tris": 142794, "draws": 37, "lod": [1, 7, 20, 2], "isler": 0, "kare_us": 121, "kurulum_ms": 578.819 }
+YURU kare=750 konum=(-175.22, -0.154425, -535.1071) zemin=-0.19 fark=0.03 yerde=true cizim=0 ucgen=0 dunya={ "tris": 142794, "draws": 37, "lod": [1, 7, 20, 2], "isler": 0, "kare_us": 125, "kurulum_ms": 578.819 }
+YURU kare=900 konum=(-174.9996, -0.154399, -535.1064) zemin=-0.19 fark=0.03 yerde=true cizim=0 ucgen=0 dunya={ "tris": 142794, "draws": 37, "lod": [1, 7, 20, 2], "isler": 0, "kare_us": 109, "kurulum_ms": 578.819 }
+YURU kare=1050 konum=(-174.7806, -0.154453, -535.1048) zemin=-0.19 fark=0.03 yerde=true cizim=0 ucgen=0 dunya={ "tris": 142794, "draws": 37, "lod": [1, 7, 20, 2], "isler": 0, "kare_us": 149, "kurulum_ms": 578.819 }
+YURU kare=1200 konum=(-174.5617, -0.154425, -535.105) zemin=-0.19 fark=0.03 yerde=true cizim=0 ucgen=0 dunya={ "tris": 142794, "draws": 37, "lod": [1, 7, 20, 2], "isler": 0, "kare_us": 109, "kurulum_ms": 578.819 }
+YURU kare=1350 konum=(-174.3465, -0.154425, -535.1046) zemin=-0.19 fark=0.03 yerde=true cizim=0 ucgen=0 dunya={ "tris": 142794, "draws": 37, "lod": [1, 7, 20, 2], "isler": 0, "kare_us": 115, "kurulum_ms": 578.819 }
+YURU kare=1500 konum=(-174.1326, -0.154441, -535.1041) zemin=-0.19 fark=0.03 yerde=true cizim=0 ucgen=0 dunya={ "tris": 142794, "draws": 37, "lod": [1, 7, 20, 2], "isler": 0, "kare_us": 143, "kurulum_ms": 578.819 }
+YURU sonuc yol=4 m alt_dusme=0 yerde_en_buyuk_fark=0.17
+YURU yakalayici konum=(-515.8105, 0.804975, -531.3309) su=false zemin=0.80 PASS
+ROTA 7 -2300,1000,0.5,135
+YURU kare=150 konum=(-795.5303, 19.14074, -341.2751) zemin=19.14 fark=0.00 yerde=true cizim=0 ucgen=0 dunya={ "tris": 158258, "draws": 37, "lod": [2, 4, 17, 7], "isler": 0, "kare_us": 108, "kurulum_ms": 536.493 }
+YURU kare=300 konum=(-786.9109, 18.69413, -331.9948) zemin=18.69 fark=0.00 yerde=true cizim=0 ucgen=0 dunya={ "tris": 158258, "draws": 37, "lod": [2, 4, 17, 7], "isler": 0, "kare_us": 111, "kurulum_ms": 536.493 }
+YURU kare=450 konum=(-777.6935, 18.4485, -323.8415) zemin=18.44 fark=0.00 yerde=true cizim=0 ucgen=0 dunya={ "tris": 158628, "draws": 37, "lod": [2, 4, 18, 6], "isler": 0, "kare_us": 133, "kurulum_ms": 536.493 }
+YURU kare=600 konum=(-770.7368, 18.20189, -314.7677) zemin=18.20 fark=-0.00 yerde=true cizim=0 ucgen=0 dunya={ "tris": 158628, "draws": 37, "lod": [2, 4, 18, 6], "isler": 0, "kare_us": 113, "kurulum_ms": 536.493 }
+YURU kare=750 konum=(-761.5449, 17.99483, -305.5746) zemin=17.99 fark=0.00 yerde=true cizim=0 ucgen=0 dunya={ "tris": 158628, "draws": 37, "lod": [2, 4, 18, 6], "isler": 0, "kare_us": 142, "kurulum_ms": 536.493 }
+YURU kare=900 konum=(-760.8923, 17.97911, -304.922) zemin=17.98 fark=0.00 yerde=true cizim=0 ucgen=0 dunya={ "tris": 158628, "draws": 37, "lod": [2, 4, 18, 6], "isler": 0, "kare_us": 136, "kurulum_ms": 536.493 }
+YURU kare=1050 konum=(-760.8923, 17.97911, -304.922) zemin=17.98 fark=0.00 yerde=true cizim=0 ucgen=0 dunya={ "tris": 158628, "draws": 37, "lod": [2, 4, 18, 6], "isler": 0, "kare_us": 110, "kurulum_ms": 536.493 }
+YURU kare=1200 konum=(-760.8923, 17.97911, -304.922) zemin=17.98 fark=0.00 yerde=true cizim=0 ucgen=0 dunya={ "tris": 158628, "draws": 37, "lod": [2, 4, 18, 6], "isler": 0, "kare_us": 110, "kurulum_ms": 536.493 }
+YURU kare=1350 konum=(-760.8923, 17.97911, -304.922) zemin=17.98 fark=0.00 yerde=true cizim=0 ucgen=0 dunya={ "tris": 158628, "draws": 37, "lod": [2, 4, 18, 6], "isler": 0, "kare_us": 109, "kurulum_ms": 536.493 }
+YURU kare=1500 konum=(-760.8923, 17.97911, -304.922) zemin=17.98 fark=0.00 yerde=true cizim=0 ucgen=0 dunya={ "tris": 158628, "draws": 37, "lod": [2, 4, 18, 6], "isler": 0, "kare_us": 95, "kurulum_ms": 536.493 }
+YURU sonuc yol=64 m alt_dusme=0 yerde_en_buyuk_fark=0.01
+YURU yakalayici konum=(-515.8105, 0.804688, -531.3309) su=false zemin=0.80 PASS
+ROTA 1 -240,-30,0.5,272
+YURU kare=150 konum=(-90.08358, 12.9774, 10.27997) zemin=12.92 fark=0.06 yerde=true cizim=0 ucgen=0 dunya={ "tris": 143026, "draws": 37, "lod": [4, 2, 22, 2], "
+YURU kare=600 konum=(-90.08358, 12.9774, 10.27997) zemin=12.92 fark=0.06 yerde=true cizim=0 ucgen=0 dunya={ "tris": 143026, "draws": 37, "lod": [4, 2, 22, 2], "
+YURU kare=1500 konum=(-90.08358, 12.9774, 10.27997) zemin=12.92 fark=0.06 yerde=true cizim=0 ucgen=0 dunya={ "tris": 143026, "draws": 37, "lod": [4, 2, 22, 2], 
+YURU sonuc yol=6 m alt_dusme=0 yerde_en_buyuk_fark=0.06
+ROTA 2 -500,-20,0.5,268
+YURU kare=150 konum=(-187.7057, 14.8054, 7.481942) zemin=14.80 fark=0.00 yerde=true cizim=0 ucgen=0 dunya={ "tris": 138394, "draws": 37, "lod": [2, 4, 22, 2], "
+YURU kare=600 konum=(-226.5524, 16.53677, 8.879958) zemin=16.54 fark=0.00 yerde=true cizim=0 ucgen=0 dunya={ "tris": 138394, "draws": 37, "lod": [2, 4, 22, 2], 
+YURU kare=1500 konum=(-304.4556, 16.53768, 11.60084) zemin=16.54 fark=0.00 yerde=true cizim=0 ucgen=0 dunya={ "tris": 135580, "draws": 37, "lod": [2, 4, 20, 4],
+YURU sonuc yol=130 m alt_dusme=0 yerde_en_buyuk_fark=0.07
+ROTA 3 -790,-5,0.5,286
+YURU kare=150 konum=(-288.7971, 16.6055, -1.823843) zemin=16.54 fark=0.07 yerde=true cizim=0 ucgen=0 dunya={ "tris": 135580, "draws": 37, "lod": [2, 4, 20, 4], 
+YURU kare=600 konum=(-324.2804, 15.86584, -12.15623) zemin=15.87 fark=0.00 yerde=true cizim=0 ucgen=0 dunya={ "tris": 135580, "draws": 37, "lod": [2, 4, 20, 4],
+YURU kare=1500 konum=(-399.3348, 15.03911, -33.67599) zemin=14.75 fark=0.28 yerde=true cizim=0 ucgen=0 dunya={ "tris": 137244, "draws": 37, "lod": [2, 4, 21, 3]
+YURU sonuc yol=128 m alt_dusme=0 yerde_en_buyuk_fark=0.29
+ROTA 4 -1130,98,0.5,285
+YURU kare=150 konum=(-406.0595, 15.0399, -37.56361) zemin=14.96 fark=0.08 yerde=true cizim=0 ucgen=0 dunya={ "tris": 132270, "draws": 37, "lod": [2, 4, 18, 6], 
+YURU kare=600 konum=(-440.5103, 16.25034, -47.55129) zemin=16.25 fark=0.00 yerde=true cizim=0 ucgen=0 dunya={ "tris": 132270, "draws": 37, "lod": [2, 4, 18, 6],
+YURU kare=1500 konum=(-515.8141, 16.95797, -67.67867) zemin=16.89 fark=0.07 yerde=true cizim=0 ucgen=0 dunya={ "tris": 132270, "draws": 37, "lod": [2, 4, 18, 6]
+YURU sonuc yol=126 m alt_dusme=0 yerde_en_buyuk_fark=0.18
+ROTA 5 -1590,222,0.5,311
+YURU kare=150 konum=(-566.1972, 16.95787, -86.14536) zemin=16.89 fark=0.07 yerde=true cizim=0 ucgen=0 dunya={ "tris": 137922, "draws": 37, "lod": [2, 5, 17, 6],
+YURU kare=600 konum=(-574.78, 16.95861, -93.41986) zemin=16.84 fark=0.12 yerde=true cizim=0 ucgen=0 dunya={ "tris": 137922, "draws": 37, "lod": [2, 5, 17, 6], "
+YURU kare=1500 konum=(-574.78, 16.95861, -93.41986) zemin=16.84 fark=0.12 yerde=true cizim=0 ucgen=0 dunya={ "tris": 137922, "draws": 37, "lod": [2, 5, 17, 6], 
+YURU sonuc yol=24 m alt_dusme=0 yerde_en_buyuk_fark=0.12
+ROTA 6 -2480,1190,0.5,320
+YURU kare=150 konum=(-874.8241, 20.79327, -426.3353) zemin=20.79 fark=0.00 yerde=true cizim=0 ucgen=0 dunya={ "tris": 164658, "draws": 37, "lod": [2, 5, 16, 7],
+YURU kare=600 konum=(-890.5138, 20.5002, -456.2053) zemin=20.50 fark=-0.00 yerde=true cizim=0 ucgen=0 dunya={ "tris": 164658, "draws": 37, "lod": [2, 5, 16, 7],
+YURU kare=1500 konum=(-902.1809, 19.64205, -470.1048) zemin=19.64 fark=0.00 yerde=true cizim=0 ucgen=0 dunya={ "tris": 164658, "draws": 37, "lod": [2, 5, 16, 7]
+YURU sonuc yol=66 m alt_dusme=0 yerde_en_buyuk_fark=0.01
