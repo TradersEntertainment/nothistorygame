@@ -57,6 +57,7 @@ D2_H_WARRANTY_END,SPK_HIKMET,telsiz,,chapter2.gd:298 1453'te Hikmet yalnız tels
 D2_H_AFTER_WARRANTY,SPK_HIKMET,telsiz,,1453'te Hikmet yalnız telsizle konuşur,
 D2_T_08,SPK_TOLGA,telsiz,,chapter2.gd:458 Tolga telsizden Hikmet'e cevap verir,
 D2_H_09,SPK_HIKMET,telsiz,,chapter2.gd:459 1453'te Hikmet yalnız telsizle konuşur,
+D2_T_CURRENT,SPK_TOLGA,ic_ses,,chapter2.gd:465 kütükte akıntıya kapılınca kendi kendine,
 D2_T_10,SPK_TOLGA,ic_ses,,"chapter2.gd:578 kıyıda yakalanma anı, kendi kendine/dar sesle",
 D2_HA_11,SPK_HASAN,yakin,3,chapter2.gd:575 Hasan–Hüseyin kendi aralarında konuşur; Tolga'yı görmezler,
 D2_HU_12,SPK_HUSEYIN,yakin,3,chapter2.gd:576 Hasan–Hüseyin kendi aralarında konuşur; Tolga'yı görmezler,
@@ -324,8 +325,138 @@ D5_N_CALL_4,SPK_NIHAT,telsiz,,"chapter5.gd:790 Hikmet–Tolga/Büro telsiz-telef
 D5_H_CALL_5,SPK_HIKMET,telsiz,,"chapter5.gd:791 Hikmet–Tolga/Büro telsiz-telefon görüşmesi (metinde ""(Telsiz)"" ya da Hikmet aramada)",
 D5_N_CALL_6,SPK_NIHAT,telsiz,,"chapter5.gd:792 Hikmet–Tolga/Büro telsiz-telefon görüşmesi (metinde ""(Telsiz)"" ya da Hikmet aramada)",
 D5_H_END,SPK_HIKMET,ic_ses,,"chapter5.gd:808 oyuncu Hikmet garajda tek başına, kendi kendine konuşuyor",
+D6_T_RADIO_DEAD,SPK_TOLGA,telsiz,,"chapter6.gd:179 Tolga–Hikmet telsiz görüşmesi (chapter6.gd _radio akışı, ""(Telsiz)"" notu)",
+D6_H_CALL,SPK_HIKMET,telsiz,,"chapter6.gd:181 Tolga–Hikmet telsiz görüşmesi (chapter6.gd _radio akışı, ""(Telsiz)"" notu)",
+D6_T_ANSWER,SPK_TOLGA,telsiz,,"chapter6.gd:186 Tolga–Hikmet telsiz görüşmesi (chapter6.gd _radio akışı, ""(Telsiz)"" notu)",
+D6B_T_ANSWER,SPK_TOLGA,telsiz,,"chapter6.gd:186 Tolga–Hikmet telsiz görüşmesi (chapter6.gd _radio akışı, ""(Telsiz)"" notu)",
+D6_H_ANSWER,SPK_HIKMET,telsiz,,"chapter6.gd:188 Tolga–Hikmet telsiz görüşmesi (chapter6.gd _radio akışı, ""(Telsiz)"" notu)",
+D6_H_ANSWER_6B,SPK_HIKMET,telsiz,,"chapter6.gd:188 Tolga–Hikmet telsiz görüşmesi (chapter6.gd _radio akışı, ""(Telsiz)"" notu)",
+D6_H_NO_ANSWER,SPK_HIKMET,telsiz,,"chapter6.gd:191 Tolga–Hikmet telsiz görüşmesi (chapter6.gd _radio akışı, ""(Telsiz)"" notu)",
+D6_KADRI_HELLO,SPK_KADRI,yakin,2,chapter6.gd:308 eşya/konuşma sahnesi: NPC ile Tolga yüz yüze (ordugâh/kançılarya),[fmt: kod anahtarı biçimle kuruyor]
+D6_LUTFI_HELLO,SPK_LUTFI,yakin,2,chapter6.gd:308 eşya/konuşma sahnesi: NPC ile Tolga yüz yüze (ordugâh/kançılarya),[fmt: kod anahtarı biçimle kuruyor]
+D6_URBAN_HELLO,SPK_URBAN,yakin,2,chapter6.gd:308 eşya/konuşma sahnesi: NPC ile Tolga yüz yüze (ordugâh/kançılarya),[fmt: kod anahtarı biçimle kuruyor]
+D6_KADRI_ASK,SPK_KADRI,yakin,2,chapter6.gd:329 eşya/konuşma sahnesi: NPC ile Tolga yüz yüze (ordugâh/kançılarya),[fmt: kod anahtarı biçimle kuruyor]
+D6_LUTFI_ASK,SPK_LUTFI,yakin,2,chapter6.gd:329 eşya/konuşma sahnesi: NPC ile Tolga yüz yüze (ordugâh/kançılarya),[fmt: kod anahtarı biçimle kuruyor]
+D6_URBAN_ASK,SPK_URBAN,yakin,2,chapter6.gd:329 eşya/konuşma sahnesi: NPC ile Tolga yüz yüze (ordugâh/kançılarya),[fmt: kod anahtarı biçimle kuruyor]
+D6_KADRI_PHONE,SPK_KADRI,yakin,2,chapter6.gd:388 eşya/konuşma sahnesi: NPC ile Tolga yüz yüze (ordugâh/kançılarya),[fmt: kod anahtarı biçimle kuruyor]
+D6_KADRI_LIGHTER,SPK_KADRI,yakin,2,chapter6.gd:388 eşya/konuşma sahnesi: NPC ile Tolga yüz yüze (ordugâh/kançılarya),[fmt: kod anahtarı biçimle kuruyor]
+D6_KADRI_BOOK,SPK_KADRI,yakin,2,chapter6.gd:388 eşya/konuşma sahnesi: NPC ile Tolga yüz yüze (ordugâh/kançılarya),[fmt: kod anahtarı biçimle kuruyor]
+D6_KADRI_CHICKPEAS,SPK_KADRI,yakin,2,chapter6.gd:1698 eşya/konuşma sahnesi: NPC ile Tolga yüz yüze (ordugâh/kançılarya),
+D6_KADRI_CHICKPEAS_T,SPK_TOLGA,yakin,2,chapter6.gd:388 eşya/konuşma sahnesi: NPC ile Tolga yüz yüze (ordugâh/kançılarya),[fmt: kod anahtarı biçimle kuruyor]
+D6_KADRI_CHICKPEAS_2,SPK_KADRI,yakin,2,chapter6.gd:388 eşya/konuşma sahnesi: NPC ile Tolga yüz yüze (ordugâh/kançılarya),[fmt: kod anahtarı biçimle kuruyor]
+D6_KADRI_POWERBANK,SPK_KADRI,yakin,2,chapter6.gd:388 eşya/konuşma sahnesi: NPC ile Tolga yüz yüze (ordugâh/kançılarya),[fmt: kod anahtarı biçimle kuruyor]
+D6_KADRI_TAPE,SPK_KADRI,yakin,2,chapter6.gd:388 eşya/konuşma sahnesi: NPC ile Tolga yüz yüze (ordugâh/kançılarya),[fmt: kod anahtarı biçimle kuruyor]
+D6_KADRI_THERMOS,SPK_KADRI,yakin,2,chapter6.gd:388 eşya/konuşma sahnesi: NPC ile Tolga yüz yüze (ordugâh/kançılarya),[fmt: kod anahtarı biçimle kuruyor]
+D6_KADRI_SELFIE,SPK_KADRI,yakin,2,chapter6.gd:388 eşya/konuşma sahnesi: NPC ile Tolga yüz yüze (ordugâh/kançılarya),[fmt: kod anahtarı biçimle kuruyor]
+D6_KADRI_COLOGNE,SPK_KADRI,yakin,2,chapter6.gd:388 eşya/konuşma sahnesi: NPC ile Tolga yüz yüze (ordugâh/kançılarya),[fmt: kod anahtarı biçimle kuruyor]
+D6_KADRI_CUBE,SPK_KADRI,yakin,2,chapter6.gd:388 eşya/konuşma sahnesi: NPC ile Tolga yüz yüze (ordugâh/kançılarya),[fmt: kod anahtarı biçimle kuruyor]
+D6_KADRI_FEZ_OFF,SPK_KADRI,yakin,2,chapter6.gd:490 eşya/konuşma sahnesi: NPC ile Tolga yüz yüze (ordugâh/kançılarya),
+D6_KADRI_DONE,SPK_KADRI,yakin,2,chapter6.gd:520 eşya/konuşma sahnesi: NPC ile Tolga yüz yüze (ordugâh/kançılarya),
+D6_LUTFI_PHONE,SPK_LUTFI,yakin,2,chapter6.gd:388 eşya/konuşma sahnesi: NPC ile Tolga yüz yüze (ordugâh/kançılarya),[fmt: kod anahtarı biçimle kuruyor]
+D6_LUTFI_LIGHTER,SPK_LUTFI,yakin,2,chapter6.gd:388 eşya/konuşma sahnesi: NPC ile Tolga yüz yüze (ordugâh/kançılarya),[fmt: kod anahtarı biçimle kuruyor]
+D6_LUTFI_BOOK,SPK_LUTFI,yakin,2,chapter6.gd:388 eşya/konuşma sahnesi: NPC ile Tolga yüz yüze (ordugâh/kançılarya),[fmt: kod anahtarı biçimle kuruyor]
+D6_LUTFI_CHICKPEAS,SPK_LUTFI,yakin,2,chapter6.gd:388 eşya/konuşma sahnesi: NPC ile Tolga yüz yüze (ordugâh/kançılarya),[fmt: kod anahtarı biçimle kuruyor]
+D6_LUTFI_POWERBANK,SPK_LUTFI,yakin,2,chapter6.gd:388 eşya/konuşma sahnesi: NPC ile Tolga yüz yüze (ordugâh/kançılarya),[fmt: kod anahtarı biçimle kuruyor]
+D6_LUTFI_TAPE,SPK_LUTFI,yakin,2,chapter6.gd:388 eşya/konuşma sahnesi: NPC ile Tolga yüz yüze (ordugâh/kançılarya),[fmt: kod anahtarı biçimle kuruyor]
+D6_LUTFI_THERMOS,SPK_LUTFI,yakin,2,chapter6.gd:388 eşya/konuşma sahnesi: NPC ile Tolga yüz yüze (ordugâh/kançılarya),[fmt: kod anahtarı biçimle kuruyor]
+D6_LUTFI_SELFIE,SPK_LUTFI,yakin,2,chapter6.gd:388 eşya/konuşma sahnesi: NPC ile Tolga yüz yüze (ordugâh/kançılarya),[fmt: kod anahtarı biçimle kuruyor]
+D6_LUTFI_COLOGNE,SPK_LUTFI,yakin,2,chapter6.gd:388 eşya/konuşma sahnesi: NPC ile Tolga yüz yüze (ordugâh/kançılarya),[fmt: kod anahtarı biçimle kuruyor]
+D6_LUTFI_CUBE,SPK_LUTFI,yakin,2,chapter6.gd:388 eşya/konuşma sahnesi: NPC ile Tolga yüz yüze (ordugâh/kançılarya),[fmt: kod anahtarı biçimle kuruyor]
+D6_LUTFI_FEZ_ON,SPK_LUTFI,yakin,2,chapter6.gd:502 eşya/konuşma sahnesi: NPC ile Tolga yüz yüze (ordugâh/kançılarya),
+D6_LUTFI_DONE,SPK_LUTFI,yakin,2,chapter6.gd:505 eşya/konuşma sahnesi: NPC ile Tolga yüz yüze (ordugâh/kançılarya),
+D6_URBAN_PHONE,SPK_URBAN,yakin,2,chapter6.gd:1704 eşya/konuşma sahnesi: NPC ile Tolga yüz yüze (ordugâh/kançılarya),
+D6_URBAN_LIGHTER,SPK_URBAN,yakin,2,chapter6.gd:388 eşya/konuşma sahnesi: NPC ile Tolga yüz yüze (ordugâh/kançılarya),[fmt: kod anahtarı biçimle kuruyor]
+D6_URBAN_BOOK,SPK_URBAN,yakin,2,chapter6.gd:388 eşya/konuşma sahnesi: NPC ile Tolga yüz yüze (ordugâh/kançılarya),[fmt: kod anahtarı biçimle kuruyor]
+D6_URBAN_CHICKPEAS,SPK_URBAN,yakin,2,chapter6.gd:388 eşya/konuşma sahnesi: NPC ile Tolga yüz yüze (ordugâh/kançılarya),[fmt: kod anahtarı biçimle kuruyor]
+D6_URBAN_POWERBANK,SPK_URBAN,yakin,2,chapter6.gd:388 eşya/konuşma sahnesi: NPC ile Tolga yüz yüze (ordugâh/kançılarya),[fmt: kod anahtarı biçimle kuruyor]
+D6_URBAN_POWERBANK_T,SPK_URBAN,yakin,2,chapter6.gd:388 eşya/konuşma sahnesi: NPC ile Tolga yüz yüze (ordugâh/kançılarya),[fmt: kod anahtarı biçimle kuruyor]
+D6_URBAN_TAPE,SPK_URBAN,yakin,2,chapter6.gd:388 eşya/konuşma sahnesi: NPC ile Tolga yüz yüze (ordugâh/kançılarya),[fmt: kod anahtarı biçimle kuruyor]
+D6_URBAN_THERMOS,SPK_URBAN,yakin,2,chapter6.gd:388 eşya/konuşma sahnesi: NPC ile Tolga yüz yüze (ordugâh/kançılarya),[fmt: kod anahtarı biçimle kuruyor]
+D6_URBAN_SELFIE,SPK_URBAN,yakin,2,chapter6.gd:388 eşya/konuşma sahnesi: NPC ile Tolga yüz yüze (ordugâh/kançılarya),[fmt: kod anahtarı biçimle kuruyor]
+D6_URBAN_COLOGNE,SPK_URBAN,yakin,2,chapter6.gd:388 eşya/konuşma sahnesi: NPC ile Tolga yüz yüze (ordugâh/kançılarya),[fmt: kod anahtarı biçimle kuruyor]
+D6_URBAN_CUBE,SPK_URBAN,yakin,2,chapter6.gd:388 eşya/konuşma sahnesi: NPC ile Tolga yüz yüze (ordugâh/kançılarya),[fmt: kod anahtarı biçimle kuruyor]
+D6_URBAN_DONE,SPK_URBAN,yakin,2,chapter6.gd:510 eşya/konuşma sahnesi: NPC ile Tolga yüz yüze (ordugâh/kançılarya),
+D6B_N_CELL_MORNING,SPK_NIKO,yakin,2,"chapter6.gd:725 kançılarya/surların içinde yüz yüze diyalog (Niko, Giustiniani, Theodoros, İmparator)",
+D6B_T_01,SPK_TOLGA,ic_ses,,chapter6.gd:726 Tolga kendi kendine/anlatı; yanında dinleyen yok ya da parantezli düşünce,
+D6B_N_CALL,SPK_NIKO,uzak,10,"chapter6.gd:738 Niko kançılarya önünden/aşağıdan çatıdaki-sokaktaki Tolga'ya bağırır (""aşağıdan bağırır"")",
+D6B_N_PERMIT,SPK_NIKO,yakin,2,"chapter6.gd:799 kançılarya/surların içinde yüz yüze diyalog (Niko, Giustiniani, Theodoros, İmparator)",
+D6B_N_HINT,SPK_NIKO,yakin,2,"chapter6.gd:807 kançılarya/surların içinde yüz yüze diyalog (Niko, Giustiniani, Theodoros, İmparator)",
+D6B_T_DUNGEON,SPK_TOLGA,ic_ses,,chapter6.gd:1061 Tolga kendi kendine/anlatı; yanında dinleyen yok ya da parantezli düşünce,
+D6B_N_DUNGEON,SPK_NIKO,yakin,2,"chapter6.gd:1062 kançılarya/surların içinde yüz yüze diyalog (Niko, Giustiniani, Theodoros, İmparator)",
+D6_GIUST_NO_PERMIT,SPK_GIUST,yakin,2,chapter6.gd:359 eşya/konuşma sahnesi: NPC ile Tolga yüz yüze (ordugâh/kançılarya),
+D6_GIUST_HELLO,SPK_GIUST,yakin,2,chapter6.gd:1073 eşya/konuşma sahnesi: NPC ile Tolga yüz yüze (ordugâh/kançılarya),
+D6B_T_INSURANCE,SPK_TOLGA,yakin,2,chapter6.gd:1074 Tolga yanındakine (Giustiniani/İmparator/Niko) normal konuşur,
+D6B_G_INSURANCE,SPK_GIUST,yakin,2,"chapter6.gd:1075 kançılarya/surların içinde yüz yüze diyalog (Niko, Giustiniani, Theodoros, İmparator)",
+D6B_T_INSURANCE2,SPK_TOLGA,yakin,2,chapter6.gd:1076 Tolga yanındakine (Giustiniani/İmparator/Niko) normal konuşur,
+D6B_G_INSURANCE2,SPK_GIUST,yakin,2,"chapter6.gd:1077 kançılarya/surların içinde yüz yüze diyalog (Niko, Giustiniani, Theodoros, İmparator)",
+D6B_T_BOOK,SPK_TOLGA,ic_ses,,chapter6.gd:1084 Tolga kendi kendine/anlatı; yanında dinleyen yok ya da parantezli düşünce,
+D6_GIUST_BOOK,SPK_GIUST,yakin,2,chapter6.gd:1085 eşya/konuşma sahnesi: NPC ile Tolga yüz yüze (ordugâh/kançılarya),
+D6_GIUST_PHONE,SPK_GIUST,yakin,2,chapter6.gd:388 eşya/konuşma sahnesi: NPC ile Tolga yüz yüze (ordugâh/kançılarya),[fmt: kod anahtarı biçimle kuruyor]
+D6_GIUST_LIGHTER,SPK_GIUST,yakin,2,chapter6.gd:388 eşya/konuşma sahnesi: NPC ile Tolga yüz yüze (ordugâh/kançılarya),[fmt: kod anahtarı biçimle kuruyor]
+D6_GIUST_CHICKPEAS,SPK_GIUST,yakin,2,chapter6.gd:388 eşya/konuşma sahnesi: NPC ile Tolga yüz yüze (ordugâh/kançılarya),[fmt: kod anahtarı biçimle kuruyor]
+D6_GIUST_POWERBANK,SPK_GIUST,yakin,2,chapter6.gd:388 eşya/konuşma sahnesi: NPC ile Tolga yüz yüze (ordugâh/kançılarya),[fmt: kod anahtarı biçimle kuruyor]
+D6_GIUST_TAPE,SPK_GIUST,yakin,2,chapter6.gd:388 eşya/konuşma sahnesi: NPC ile Tolga yüz yüze (ordugâh/kançılarya),[fmt: kod anahtarı biçimle kuruyor]
+D6_GIUST_THERMOS,SPK_GIUST,yakin,2,chapter6.gd:388 eşya/konuşma sahnesi: NPC ile Tolga yüz yüze (ordugâh/kançılarya),[fmt: kod anahtarı biçimle kuruyor]
+D6_GIUST_SELFIE,SPK_GIUST,yakin,2,chapter6.gd:388 eşya/konuşma sahnesi: NPC ile Tolga yüz yüze (ordugâh/kançılarya),[fmt: kod anahtarı biçimle kuruyor]
+D6_GIUST_COLOGNE,SPK_GIUST,yakin,2,chapter6.gd:388 eşya/konuşma sahnesi: NPC ile Tolga yüz yüze (ordugâh/kançılarya),[fmt: kod anahtarı biçimle kuruyor]
+D6_GIUST_CUBE,SPK_GIUST,yakin,2,chapter6.gd:388 eşya/konuşma sahnesi: NPC ile Tolga yüz yüze (ordugâh/kançılarya),[fmt: kod anahtarı biçimle kuruyor]
+D6_EMP_PHONE,SPK_EMPEROR,yakin,2,chapter6.gd:388 eşya/konuşma sahnesi: NPC ile Tolga yüz yüze (ordugâh/kançılarya),[fmt: kod anahtarı biçimle kuruyor]
+D6_EMP_LIGHTER,SPK_EMPEROR,yakin,2,chapter6.gd:388 eşya/konuşma sahnesi: NPC ile Tolga yüz yüze (ordugâh/kançılarya),[fmt: kod anahtarı biçimle kuruyor]
+D6_EMP_BOOK,SPK_EMPEROR,yakin,2,chapter6.gd:388 eşya/konuşma sahnesi: NPC ile Tolga yüz yüze (ordugâh/kançılarya),[fmt: kod anahtarı biçimle kuruyor]
+D6_EMP_CHICKPEAS,SPK_EMPEROR,yakin,2,chapter6.gd:388 eşya/konuşma sahnesi: NPC ile Tolga yüz yüze (ordugâh/kançılarya),[fmt: kod anahtarı biçimle kuruyor]
+D6_EMP_POWERBANK,SPK_EMPEROR,yakin,2,chapter6.gd:388 eşya/konuşma sahnesi: NPC ile Tolga yüz yüze (ordugâh/kançılarya),[fmt: kod anahtarı biçimle kuruyor]
+D6_EMP_TAPE,SPK_EMPEROR,yakin,2,chapter6.gd:388 eşya/konuşma sahnesi: NPC ile Tolga yüz yüze (ordugâh/kançılarya),[fmt: kod anahtarı biçimle kuruyor]
+D6_EMP_THERMOS,SPK_EMPEROR,yakin,2,chapter6.gd:388 eşya/konuşma sahnesi: NPC ile Tolga yüz yüze (ordugâh/kançılarya),[fmt: kod anahtarı biçimle kuruyor]
+D6_EMP_SELFIE,SPK_EMPEROR,yakin,2,chapter6.gd:388 eşya/konuşma sahnesi: NPC ile Tolga yüz yüze (ordugâh/kançılarya),[fmt: kod anahtarı biçimle kuruyor]
+D6_EMP_COLOGNE,SPK_EMPEROR,yakin,2,chapter6.gd:388 eşya/konuşma sahnesi: NPC ile Tolga yüz yüze (ordugâh/kançılarya),[fmt: kod anahtarı biçimle kuruyor]
+D6_EMP_CUBE,SPK_EMPEROR,yakin,2,chapter6.gd:388 eşya/konuşma sahnesi: NPC ile Tolga yüz yüze (ordugâh/kançılarya),[fmt: kod anahtarı biçimle kuruyor]
+D6B_T_KNOW,SPK_TOLGA,ic_ses,,chapter6.gd:1101 Tolga kendi kendine/anlatı; yanında dinleyen yok ya da parantezli düşünce,
+D6B_T_WARN,SPK_TOLGA,yakin,2,chapter6.gd:1109 Tolga yanındakine (Giustiniani/İmparator/Niko) normal konuşur,
+D6B_G_WARN,SPK_GIUST,yakin,2,"chapter6.gd:1110 kançılarya/surların içinde yüz yüze diyalog (Niko, Giustiniani, Theodoros, İmparator)",
+D6B_NIHAT_ALARM,SPK_NIHAT,telsiz,,"chapter6.gd:1113 ""(Uzaktan, daktilo sesi)"": Nihat Büro'dan, 1453'te değil; telsiz/uzak kanal",
+D6B_T_SILENT,SPK_TOLGA,yakin,2,chapter6.gd:1115 Tolga yanındakine (Giustiniani/İmparator/Niko) normal konuşur,
+D6B_G_SILENT,SPK_GIUST,yakin,2,"chapter6.gd:1116 kançılarya/surların içinde yüz yüze diyalog (Niko, Giustiniani, Theodoros, İmparator)",
+D6B_N_NOT_YET,SPK_NIKO,yakin,2,"chapter6.gd:362 kançılarya/surların içinde yüz yüze diyalog (Niko, Giustiniani, Theodoros, İmparator)",
+D6B_E_01,SPK_EMPEROR,yakin,2,"chapter6.gd:1139 kançılarya/surların içinde yüz yüze diyalog (Niko, Giustiniani, Theodoros, İmparator)",
+D6B_N_E_01,SPK_NIKO,yakin,2,"chapter6.gd:1140 kançılarya/surların içinde yüz yüze diyalog (Niko, Giustiniani, Theodoros, İmparator)",
+D6B_N_E_01_NOCHICK,SPK_NIKO,yakin,2,"chapter6.gd:1140 kançılarya/surların içinde yüz yüze diyalog (Niko, Giustiniani, Theodoros, İmparator)",
+D6B_T_E_02,SPK_TOLGA,yakin,2,chapter6.gd:1141 Tolga yanındakine (Giustiniani/İmparator/Niko) normal konuşur,
+D6B_E_03,SPK_EMPEROR,yakin,2,"chapter6.gd:1142 kançılarya/surların içinde yüz yüze diyalog (Niko, Giustiniani, Theodoros, İmparator)",
+D6B_N_E_03,SPK_NIKO,yakin,2,"chapter6.gd:1144 kançılarya/surların içinde yüz yüze diyalog (Niko, Giustiniani, Theodoros, İmparator)",
+D6B_E_04,SPK_EMPEROR,yakin,2,"chapter6.gd:1145 kançılarya/surların içinde yüz yüze diyalog (Niko, Giustiniani, Theodoros, İmparator)",
+D6B_N_E_04,SPK_NIKO,yakin,2,"chapter6.gd:1146 kançılarya/surların içinde yüz yüze diyalog (Niko, Giustiniani, Theodoros, İmparator)",
+D6B_N_FRIEND,SPK_NIKO,yakin,2,"chapter6.gd:1149 kançılarya/surların içinde yüz yüze diyalog (Niko, Giustiniani, Theodoros, İmparator)",
+D6B_T_LETTER,SPK_TOLGA,ic_ses,,chapter6.gd:1163 Tolga kendi kendine/anlatı; yanında dinleyen yok ya da parantezli düşünce,
+D6B_T_SEALED,SPK_TOLGA,ic_ses,,chapter6.gd:1171 Tolga kendi kendine/anlatı; yanında dinleyen yok ya da parantezli düşünce,
+D6B_N_BYE,SPK_NIKO,yakin,2,"chapter6.gd:1185 kançılarya/surların içinde yüz yüze diyalog (Niko, Giustiniani, Theodoros, İmparator)",
+D6B_T_PECK,SPK_TOLGA,ic_ses,,chapter6.gd:1202 Tolga kendi kendine/anlatı; yanında dinleyen yok ya da parantezli düşünce,
+D6B_T_AFTER_LETTER,SPK_TOLGA,ic_ses,,chapter6.gd:1204 Tolga kendi kendine/anlatı; yanında dinleyen yok ya da parantezli düşünce,
+D6B_NIHAT_CAMEO,SPK_NIHAT,yakin,3,"chapter6.gd:1420 kançılarya koridorundaki Nihat'a etkileşimle yaklaşılır, bark",
 D1_T_MIRROR,SPK_TOLGA,ic_ses,,chapter1.gd:869 Tolga aynadaki kendine bakıp söylenir,
 D1_T_MIRROR_FEZ,SPK_TOLGA,ic_ses,,chapter1.gd:869 Tolga aynadaki kendine bakıp söylenir,
+ITEM_SELF_REMOTE,SPK_TOLGA,ic_ses,,"player.gd:2382 player.gd _self_use: eşyayı boşlukta kullanır, Tolga kendi kendine (bark)",
+ITEM_SHOW_THING,SPK_TOLGA,yakin,1.5,"hud.gd:1368 eşya gösterme jesti: karşısındakine yakından, Tolga normal sesle",
+ITEM_SHOW_PERSON,SPK_TOLGA,yakin,1.5,"hud.gd:1370 eşya gösterme jesti: karşısındakine yakından, Tolga normal sesle",
+ITEM_SELF_PHONE,SPK_TOLGA,ic_ses,,"items.gd:80 player.gd _self_use: eşyayı boşlukta kullanır, Tolga kendi kendine (bark)",[fmt: kod anahtarı biçimle kuruyor]
+ITEM_SELF_PHONE_2,SPK_TOLGA,ic_ses,,"items.gd:80 player.gd _self_use: eşyayı boşlukta kullanır, Tolga kendi kendine (bark)",[fmt: kod anahtarı biçimle kuruyor]
+ITEM_SELF_LIGHTER,SPK_TOLGA,ic_ses,,"items.gd:80 player.gd _self_use: eşyayı boşlukta kullanır, Tolga kendi kendine (bark)",[fmt: kod anahtarı biçimle kuruyor]
+ITEM_SELF_LIGHTER_2,SPK_TOLGA,ic_ses,,"items.gd:80 player.gd _self_use: eşyayı boşlukta kullanır, Tolga kendi kendine (bark)",[fmt: kod anahtarı biçimle kuruyor]
+ITEM_SELF_BOOK,SPK_TOLGA,ic_ses,,"items.gd:80 player.gd _self_use: eşyayı boşlukta kullanır, Tolga kendi kendine (bark)",[fmt: kod anahtarı biçimle kuruyor]
+ITEM_SELF_BOOK_2,SPK_TOLGA,ic_ses,,"items.gd:80 player.gd _self_use: eşyayı boşlukta kullanır, Tolga kendi kendine (bark)",[fmt: kod anahtarı biçimle kuruyor]
+ITEM_SELF_BOOK_3,SPK_TOLGA,ic_ses,,"items.gd:80 player.gd _self_use: eşyayı boşlukta kullanır, Tolga kendi kendine (bark)",[fmt: kod anahtarı biçimle kuruyor]
+ITEM_SELF_CHICKPEAS,SPK_TOLGA,ic_ses,,"items.gd:80 player.gd _self_use: eşyayı boşlukta kullanır, Tolga kendi kendine (bark)",[fmt: kod anahtarı biçimle kuruyor]
+ITEM_SELF_CHICKPEAS_2,SPK_TOLGA,ic_ses,,"items.gd:80 player.gd _self_use: eşyayı boşlukta kullanır, Tolga kendi kendine (bark)",[fmt: kod anahtarı biçimle kuruyor]
+ITEM_SELF_POWERBANK,SPK_TOLGA,ic_ses,,"items.gd:80 player.gd _self_use: eşyayı boşlukta kullanır, Tolga kendi kendine (bark)",[fmt: kod anahtarı biçimle kuruyor]
+ITEM_SELF_TAPE,SPK_TOLGA,ic_ses,,"items.gd:80 player.gd _self_use: eşyayı boşlukta kullanır, Tolga kendi kendine (bark)",[fmt: kod anahtarı biçimle kuruyor]
+ITEM_SELF_TAPE_2,SPK_TOLGA,ic_ses,,"items.gd:80 player.gd _self_use: eşyayı boşlukta kullanır, Tolga kendi kendine (bark)",[fmt: kod anahtarı biçimle kuruyor]
+ITEM_SELF_THERMOS,SPK_TOLGA,ic_ses,,"items.gd:80 player.gd _self_use: eşyayı boşlukta kullanır, Tolga kendi kendine (bark)",[fmt: kod anahtarı biçimle kuruyor]
+ITEM_SELF_THERMOS_2,SPK_TOLGA,ic_ses,,"items.gd:80 player.gd _self_use: eşyayı boşlukta kullanır, Tolga kendi kendine (bark)",[fmt: kod anahtarı biçimle kuruyor]
+ITEM_SELF_SELFIE,SPK_TOLGA,ic_ses,,"items.gd:80 player.gd _self_use: eşyayı boşlukta kullanır, Tolga kendi kendine (bark)",[fmt: kod anahtarı biçimle kuruyor]
+ITEM_SELF_SELFIE_2,SPK_TOLGA,ic_ses,,"items.gd:80 player.gd _self_use: eşyayı boşlukta kullanır, Tolga kendi kendine (bark)",[fmt: kod anahtarı biçimle kuruyor]
+ITEM_SELF_COLOGNE,SPK_TOLGA,ic_ses,,"items.gd:80 player.gd _self_use: eşyayı boşlukta kullanır, Tolga kendi kendine (bark)",[fmt: kod anahtarı biçimle kuruyor]
+ITEM_SELF_COLOGNE_2,SPK_TOLGA,ic_ses,,"items.gd:80 player.gd _self_use: eşyayı boşlukta kullanır, Tolga kendi kendine (bark)",[fmt: kod anahtarı biçimle kuruyor]
+ITEM_SELF_CUBE,SPK_TOLGA,ic_ses,,"items.gd:80 player.gd _self_use: eşyayı boşlukta kullanır, Tolga kendi kendine (bark)",[fmt: kod anahtarı biçimle kuruyor]
+ITEM_SELF_CUBE_2,SPK_TOLGA,ic_ses,,"items.gd:80 player.gd _self_use: eşyayı boşlukta kullanır, Tolga kendi kendine (bark)",[fmt: kod anahtarı biçimle kuruyor]
 D2_H_SWIM_HELP,SPK_HIKMET,telsiz,,chapter2.gd:1475 1453'te Hikmet yalnız telsizle konuşur,
 D2_T_SWIM_NOAIR,SPK_TOLGA,ic_ses,,chapter2.gd:1502 suda kendi kendine söylenir,
 D2_T_ARROW_1,SPK_TOLGA,telsiz,,chapter2.gd:1531 Tolga telsizden Hikmet'e cevap verir,[fmt: kod anahtarı biçimle kuruyor]
@@ -336,6 +467,19 @@ D2_T_FEZ_FOUND,SPK_TOLGA,ic_ses,,suda kendi kendine söylenir,
 D2_T_FEZ_SPARE,SPK_TOLGA,ic_ses,,chapter2.gd:1553 suda kendi kendine söylenir,
 D2_T_AMPHORA,SPK_TOLGA,ic_ses,,chapter2.gd:1560 suda kendi kendine söylenir,
 D2_H_SWIM_BOAT,SPK_HIKMET,telsiz,,chapter2.gd:1575 1453'te Hikmet yalnız telsizle konuşur,
+NPC_CALLIGRAPHER_1,SPK_CALLIGRAPHER,yakin,2,side_events.gd:94 side_events.gd interact: sokak NPC'sine 2.5 m içinde etkileşimle konuşulur (bark),[fmt: kod anahtarı biçimle kuruyor]
+NPC_CALLIGRAPHER_2,SPK_CALLIGRAPHER,yakin,2,side_events.gd:94 side_events.gd interact: sokak NPC'sine 2.5 m içinde etkileşimle konuşulur (bark),[fmt: kod anahtarı biçimle kuruyor]
+NPC_CALLIGRAPHER_3,SPK_CALLIGRAPHER,yakin,2,side_events.gd:94 side_events.gd interact: sokak NPC'sine 2.5 m içinde etkileşimle konuşulur (bark),[fmt: kod anahtarı biçimle kuruyor]
+NPC_CALLIGRAPHER_4,SPK_CALLIGRAPHER,yakin,2,side_events.gd:94 side_events.gd interact: sokak NPC'sine 2.5 m içinde etkileşimle konuşulur (bark),[fmt: kod anahtarı biçimle kuruyor]
+NPC_PAINTER_1,SPK_PAINTER,yakin,2,side_events.gd:94 side_events.gd interact: sokak NPC'sine 2.5 m içinde etkileşimle konuşulur (bark),[fmt: kod anahtarı biçimle kuruyor]
+NPC_PAINTER_2,SPK_PAINTER,yakin,2,side_events.gd:94 side_events.gd interact: sokak NPC'sine 2.5 m içinde etkileşimle konuşulur (bark),[fmt: kod anahtarı biçimle kuruyor]
+NPC_PAINTER_3,SPK_PAINTER,yakin,2,side_events.gd:94 side_events.gd interact: sokak NPC'sine 2.5 m içinde etkileşimle konuşulur (bark),[fmt: kod anahtarı biçimle kuruyor]
+NPC_PAINTER_4,SPK_PAINTER,yakin,2,side_events.gd:94 side_events.gd interact: sokak NPC'sine 2.5 m içinde etkileşimle konuşulur (bark),[fmt: kod anahtarı biçimle kuruyor]
+NPC_KID_1,SPK_KID,yakin,2,side_events.gd:94 side_events.gd interact: sokak NPC'sine 2.5 m içinde etkileşimle konuşulur (bark),[fmt: kod anahtarı biçimle kuruyor]
+NPC_KID_2,SPK_KID,yakin,2,side_events.gd:94 side_events.gd interact: sokak NPC'sine 2.5 m içinde etkileşimle konuşulur (bark),[fmt: kod anahtarı biçimle kuruyor]
+NPC_KID_3,SPK_KID,yakin,2,side_events.gd:94 side_events.gd interact: sokak NPC'sine 2.5 m içinde etkileşimle konuşulur (bark),[fmt: kod anahtarı biçimle kuruyor]
+NPC_KID_THANKS_1,SPK_KID,yakin,2,cat.gd:67 side_events.gd interact: sokak NPC'sine 2.5 m içinde etkileşimle konuşulur (bark),
+NPC_KID_THANKS_2,SPK_KID,yakin,2,side_events.gd:94 side_events.gd interact: sokak NPC'sine 2.5 m içinde etkileşimle konuşulur (bark),[fmt: kod anahtarı biçimle kuruyor]
 D4B_N_ECLIPSE_1,SPK_NIKO,yakin_yuksek,2.5,chapter4.gd:963 Niko tutulmada heyecan/panikle sesini yükseltir,
 D4B_T_ECLIPSE_1,SPK_TOLGA,yakin,2,chapter4.gd:968 Niko kapıda/zindanda Tolga ile yüz yüze,
 D4B_N_ECLIPSE_2,SPK_NIKO,yakin_yuksek,2.5,chapter4.gd:969 Niko tutulmada heyecan/panikle sesini yükseltir,
@@ -345,7 +489,36 @@ D4B_T_ECLIPSE_3,SPK_TOLGA,yakin,2,chapter4.gd:980 Niko kapıda/zindanda Tolga il
 D2_H_SWIM_BOAT_2,SPK_HIKMET,telsiz,,chapter2.gd:1576 1453'te Hikmet yalnız telsizle konuşur,
 D1_H_07B,SPK_HIKMET,yakin,2,"chapter1.gd:137 garajda Hikmet ile Tolga yan yana, normal konuşma",
 D1_T_07C,SPK_TOLGA,yakin,2,"chapter1.gd:137 garajda Hikmet ile Tolga yan yana, normal konuşma",
+NPC_CROWD_BYZ_1,SPK_TOWNSMAN,yakin,2,side_events.gd:69 side_events.gd interact: sokak NPC'sine 2.5 m içinde etkileşimle konuşulur (bark),[fmt: kod anahtarı biçimle kuruyor]
+NPC_CROWD_BYZ_2,SPK_TOWNSMAN,yakin,2,side_events.gd:69 side_events.gd interact: sokak NPC'sine 2.5 m içinde etkileşimle konuşulur (bark),[fmt: kod anahtarı biçimle kuruyor]
+NPC_CROWD_BYZ_3,SPK_TOWNSMAN,yakin,2,side_events.gd:69 side_events.gd interact: sokak NPC'sine 2.5 m içinde etkileşimle konuşulur (bark),[fmt: kod anahtarı biçimle kuruyor]
+NPC_CROWD_BYZ_4,SPK_TOWNSMAN,yakin,2,side_events.gd:69 side_events.gd interact: sokak NPC'sine 2.5 m içinde etkileşimle konuşulur (bark),[fmt: kod anahtarı biçimle kuruyor]
+NPC_CROWD_BYZ_5,SPK_TOWNSMAN,yakin,2,side_events.gd:69 side_events.gd interact: sokak NPC'sine 2.5 m içinde etkileşimle konuşulur (bark),[fmt: kod anahtarı biçimle kuruyor]
+NPC_CROWD_BYZ_6,SPK_TOWNSMAN,yakin,2,side_events.gd:69 side_events.gd interact: sokak NPC'sine 2.5 m içinde etkileşimle konuşulur (bark),[fmt: kod anahtarı biçimle kuruyor]
+NPC_CROWD_BYZ_7,SPK_TOWNSMAN,yakin,2,side_events.gd:69 side_events.gd interact: sokak NPC'sine 2.5 m içinde etkileşimle konuşulur (bark),[fmt: kod anahtarı biçimle kuruyor]
+NPC_CROWD_BYZ_8,SPK_TOWNSMAN,yakin,2,side_events.gd:69 side_events.gd interact: sokak NPC'sine 2.5 m içinde etkileşimle konuşulur (bark),[fmt: kod anahtarı biçimle kuruyor]
+NPC_CROWD_BYZ_9,SPK_TOWNSMAN,yakin,2,side_events.gd:69 side_events.gd interact: sokak NPC'sine 2.5 m içinde etkileşimle konuşulur (bark),[fmt: kod anahtarı biçimle kuruyor]
+NPC_CROWD_BYZ_10,SPK_TOWNSMAN,yakin,2,side_events.gd:69 side_events.gd interact: sokak NPC'sine 2.5 m içinde etkileşimle konuşulur (bark),[fmt: kod anahtarı biçimle kuruyor]
+NPC_CROWD_CAMP_1,SPK_SOLDIER,yakin,2,side_events.gd:69 side_events.gd interact: sokak NPC'sine 2.5 m içinde etkileşimle konuşulur (bark),[fmt: kod anahtarı biçimle kuruyor]
+NPC_CROWD_CAMP_2,SPK_SOLDIER,yakin,2,side_events.gd:69 side_events.gd interact: sokak NPC'sine 2.5 m içinde etkileşimle konuşulur (bark),[fmt: kod anahtarı biçimle kuruyor]
+NPC_CROWD_CAMP_3,SPK_SOLDIER,yakin,2,side_events.gd:69 side_events.gd interact: sokak NPC'sine 2.5 m içinde etkileşimle konuşulur (bark),[fmt: kod anahtarı biçimle kuruyor]
+NPC_CROWD_CAMP_4,SPK_SOLDIER,yakin,2,side_events.gd:69 side_events.gd interact: sokak NPC'sine 2.5 m içinde etkileşimle konuşulur (bark),[fmt: kod anahtarı biçimle kuruyor]
+NPC_CROWD_CAMP_5,SPK_SOLDIER,yakin,2,side_events.gd:69 side_events.gd interact: sokak NPC'sine 2.5 m içinde etkileşimle konuşulur (bark),[fmt: kod anahtarı biçimle kuruyor]
+NPC_CROWD_CAMP_6,SPK_SOLDIER,yakin,2,side_events.gd:69 side_events.gd interact: sokak NPC'sine 2.5 m içinde etkileşimle konuşulur (bark),[fmt: kod anahtarı biçimle kuruyor]
+NPC_CROWD_CAMP_7,SPK_SOLDIER,yakin,2,side_events.gd:69 side_events.gd interact: sokak NPC'sine 2.5 m içinde etkileşimle konuşulur (bark),[fmt: kod anahtarı biçimle kuruyor]
+NPC_CROWD_CAMP_8,SPK_SOLDIER,yakin,2,side_events.gd:69 side_events.gd interact: sokak NPC'sine 2.5 m içinde etkileşimle konuşulur (bark),[fmt: kod anahtarı biçimle kuruyor]
+NPC_CROWD_CAMP_9,SPK_SOLDIER,yakin,2,side_events.gd:69 side_events.gd interact: sokak NPC'sine 2.5 m içinde etkileşimle konuşulur (bark),[fmt: kod anahtarı biçimle kuruyor]
+NPC_CROWD_CAMP_10,SPK_SOLDIER,yakin,2,side_events.gd:69 side_events.gd interact: sokak NPC'sine 2.5 m içinde etkileşimle konuşulur (bark),[fmt: kod anahtarı biçimle kuruyor]
+NPC_CROWD_GAL_1,SPK_GENOESE,yakin,2,side_events.gd:69 side_events.gd interact: sokak NPC'sine 2.5 m içinde etkileşimle konuşulur (bark),[fmt: kod anahtarı biçimle kuruyor]
+NPC_CROWD_GAL_2,SPK_GENOESE,yakin,2,side_events.gd:69 side_events.gd interact: sokak NPC'sine 2.5 m içinde etkileşimle konuşulur (bark),[fmt: kod anahtarı biçimle kuruyor]
+NPC_CROWD_GAL_3,SPK_GENOESE,yakin,2,side_events.gd:69 side_events.gd interact: sokak NPC'sine 2.5 m içinde etkileşimle konuşulur (bark),[fmt: kod anahtarı biçimle kuruyor]
+NPC_CROWD_GAL_4,SPK_GENOESE,yakin,2,side_events.gd:69 side_events.gd interact: sokak NPC'sine 2.5 m içinde etkileşimle konuşulur (bark),[fmt: kod anahtarı biçimle kuruyor]
+NPC_CROWD_GAL_5,SPK_GENOESE,yakin,2,side_events.gd:69 side_events.gd interact: sokak NPC'sine 2.5 m içinde etkileşimle konuşulur (bark),[fmt: kod anahtarı biçimle kuruyor]
+NPC_CROWD_GAL_6,SPK_GENOESE,yakin,2,side_events.gd:69 side_events.gd interact: sokak NPC'sine 2.5 m içinde etkileşimle konuşulur (bark),[fmt: kod anahtarı biçimle kuruyor]
+NPC_CROWD_GAL_7,SPK_GENOESE,yakin,2,side_events.gd:69 side_events.gd interact: sokak NPC'sine 2.5 m içinde etkileşimle konuşulur (bark),[fmt: kod anahtarı biçimle kuruyor]
+NPC_CROWD_GAL_8,SPK_GENOESE,yakin,2,side_events.gd:69 side_events.gd interact: sokak NPC'sine 2.5 m içinde etkileşimle konuşulur (bark),[fmt: kod anahtarı biçimle kuruyor]
 D0_G_ARROWS,SPK_GIUST,yakin_yuksek,4,"chapter0.gd:210 gedikte savaş gürültüsü, Giustiniani oyuncuya ok taşımasını emreder",
+D0_S_ARROWS,SPK_DEFENDER,yakin_yuksek,3,"chapter0.gd:298 gedikte savaş gürültüsünde savunucu oyuncuya ""Şimdi eğil!"" (bark)",
 D0_T_FREEZE_1,SPK_TOLGA,ic_ses,,"chapter0.gd:405 kare donar, Tolga kameraya/seyirciye anlatır (kimseye seslenmiyor)",
 D0_T_FREEZE_2,SPK_TOLGA,ic_ses,,"chapter0.gd:410 kare donar, Tolga kameraya/seyirciye anlatır (kimseye seslenmiyor)",
 D0_N_FREEZE,SPK_NIHAT,telsiz,,chapter0.gd:412 Nihat telsizden araya girer,
@@ -385,20 +558,47 @@ D3_H_EAVES,SPK_HIKMET,ic_ses,,"chapter3.gd:1157 Hikmet kendi kendine söylenir (
 D3_N_EAVES,SPK_NIHAT,fisilti,0.5,"chapter3.gd:1158 Nihat görünmez, Hikmet'in yanında gizlice not alır",
 D3_N_EAVES_CALL,SPK_NIHAT,yakin,2,chapter3.gd:791 Büro/garaj sahnesinde Nihat ile karşılıklı normal konuşma,
 D3_N_EAVES_CALL_KIND,SPK_NIHAT,yakin,2,chapter3.gd:791 Büro/garaj sahnesinde Nihat ile karşılıklı normal konuşma,
+D6B_THEO_GRANT,SPK_THEODOROS,yakin,2,"chapter6.gd:826 kançılarya/surların içinde yüz yüze diyalog (Niko, Giustiniani, Theodoros, İmparator)",
+D6B_C_FEAST,SPK_CLERK,yakin,2,"chapter6.gd:824 kançılarya/surların içinde yüz yüze diyalog (Niko, Giustiniani, Theodoros, İmparator)",
+D6B_T_GOT_PERMIT,SPK_TOLGA,ic_ses,,chapter6.gd:830 Tolga kendi kendine/anlatı; yanında dinleyen yok ya da parantezli düşünce,
+D6B_T_GULL,SPK_TOLGA,yakin_yuksek,4,chapter6.gd:864 Tolga martıyı kovalarken bağırır,
+D6B_N_GULL,SPK_NIKO,yakin_yuksek,5,"chapter6.gd:867 martı kovalamacasında Niko koşturur, bağırarak yönlendirir",
+D6B_T_CHASE_1,SPK_TOLGA,yakin_yuksek,4,chapter6.gd:1729 Tolga martıyı kovalarken bağırır,
+D6B_T_CHASE_2,SPK_TOLGA,yakin_yuksek,4,chapter6.gd:884 Tolga martıyı kovalarken bağırır,[fmt: kod anahtarı biçimle kuruyor]
+D6B_T_CHASE_3,SPK_TOLGA,yakin_yuksek,4,chapter6.gd:1735 Tolga martıyı kovalarken bağırır,
+D6B_T_CHASE_4,SPK_TOLGA,yakin_yuksek,4,chapter6.gd:884 Tolga martıyı kovalarken bağırır,[fmt: kod anahtarı biçimle kuruyor]
+D6B_T_CHASE_5,SPK_TOLGA,yakin_yuksek,4,chapter6.gd:884 Tolga martıyı kovalarken bağırır,[fmt: kod anahtarı biçimle kuruyor]
+D6B_T_MISS,SPK_TOLGA,yakin_yuksek,4,chapter6.gd:921 Tolga martıyı kovalarken bağırır,
+D6B_N_MISS,SPK_NIKO,yakin_yuksek,5,"chapter6.gd:921 martı kovalamacasında Niko koşturur, bağırarak yönlendirir",
+D6B_T_LURE,SPK_TOLGA,ic_ses,,chapter6.gd:966 Tolga kendi kendine/anlatı; yanında dinleyen yok ya da parantezli düşünce,
+D6B_T_CAUGHT,SPK_TOLGA,ic_ses,,chapter6.gd:992 Tolga kendi kendine/anlatı; yanında dinleyen yok ya da parantezli düşünce,
+D6B_G_GULL,SPK_GIUST,yakin,2,"chapter6.gd:996 kançılarya/surların içinde yüz yüze diyalog (Niko, Giustiniani, Theodoros, İmparator)",
+D6B_T_LOST,SPK_TOLGA,ic_ses,,chapter6.gd:1015 Tolga kendi kendine/anlatı; yanında dinleyen yok ya da parantezli düşünce,
+D6B_GUARD_FAIL,SPK_CITY_GUARD,yakin,2,"chapter6.gd:1046 kançılarya/surların içinde yüz yüze diyalog (Niko, Giustiniani, Theodoros, İmparator)",
 D3_N_EAVES_HINT,SPK_NIHAT,ic_ses,,"chapter3.gd:544 Nihat kendi kendine rapor/iç not düşüyor, karşısında dinleyen yok",
 D3_H_VANISH,SPK_HIKMET,yakin,3,chapter3.gd:1151 Hikmet garajda Nihat'ın yakınında kendi kendine/misafire konuşur,
 D5_H_DROPPED,SPK_HIKMET,ic_ses,,"chapter5.gd:388 oyuncu Hikmet garajda tek başına, kendi kendine konuşuyor",
 D5_V_KNOCK_REAL,SPK_VAN,yakin_yuksek,2,chapter5.gd:404 minibüsteki memur garaj kapısını vurup bağırır (kapı arkası),
 D5_H_KNOCK,SPK_HIKMET,fisilti,0.3,chapter5.gd:405 Hikmet sırtını kapıya dayayıp fısıltıyla (metin: fısıltıyla),
+D6B_T_VISTA_1,SPK_TOLGA,ic_ses,,chapter6.gd:23 Tolga kendi kendine/anlatı; yanında dinleyen yok ya da parantezli düşünce,
+D6B_T_VISTA_2,SPK_TOLGA,ic_ses,,chapter6.gd:21 Tolga kendi kendine/anlatı; yanında dinleyen yok ya da parantezli düşünce,
+D6B_T_VISTA_3,SPK_TOLGA,ic_ses,,chapter6.gd:22 Tolga kendi kendine/anlatı; yanında dinleyen yok ya da parantezli düşünce,
+D6_KADRI_DONE_FIRE,SPK_KADRI,yakin,2,chapter6.gd:522 eşya/konuşma sahnesi: NPC ile Tolga yüz yüze (ordugâh/kançılarya),
 D4B_T_ECLIPSE_2_LIGHTER,SPK_TOLGA,yakin,2,chapter4.gd:977 Niko kapıda/zindanda Tolga ile yüz yüze,[fmt: kod anahtarı biçimle kuruyor]
 D4B_T_ECLIPSE_3_LIGHTER,SPK_TOLGA,yakin,2,chapter4.gd:980 Niko kapıda/zindanda Tolga ile yüz yüze,[fmt: kod anahtarı biçimle kuruyor]
 D4B_T_ECLIPSE_2_REMOTE,SPK_TOLGA,yakin,2,chapter4.gd:977 Niko kapıda/zindanda Tolga ile yüz yüze,[fmt: kod anahtarı biçimle kuruyor]
 D4B_T_ECLIPSE_3_REMOTE,SPK_TOLGA,yakin,2,chapter4.gd:980 Niko kapıda/zindanda Tolga ile yüz yüze,[fmt: kod anahtarı biçimle kuruyor]
 D2_T_STUMBLE_2_NOFEZ,SPK_TOLGA,yakin_yuksek,,"chapter2.gd:356 kovalamada/düşüşte panik çığlığı, dinleyen yok",[base: kod anahtarı biçimle kuruyor]
+D2_HA_11_NOFEZ,SPK_HASAN,yakin,3,"chapter2.gd:575 Hasan–Hüseyin kendi aralarında (D2_HA_11 ile aynı sahne, fessiz varyant)",[base: kod anahtarı biçimle kuruyor]
 D2_T_ARROW_2_NOFEZ,SPK_TOLGA,telsiz,,Tolga telsizden Hikmet'e cevap verir,
 D4A_T_OTAG_NOFEZ,SPK_TOLGA,ic_ses,,chapter4.gd:583 Tolga gizlenirken/çıkışta kendi kendine anlatıyor,[base: kod anahtarı biçimle kuruyor]
 D4B_N_CELL_NOFEZ,SPK_NIKO,yakin,2,chapter4.gd:1034 Niko kapıda/zindanda Tolga ile yüz yüze,[base: kod anahtarı biçimle kuruyor]
 D5_T_ACCIDENT_CAMP_NOFEZ,SPK_TOLGA,telsiz,,"chapter5.gd:765 Hikmet–Tolga/Büro telsiz-telefon görüşmesi (metinde ""(Telsiz)"" ya da Hikmet aramada)",[fmt: kod anahtarı biçimle kuruyor]
+D6B_N_CELL_MORNING_NOFEZ,SPK_NIKO,yakin,2,"chapter6.gd:725 kançılarya/surların içinde yüz yüze diyalog (Niko, Giustiniani, Theodoros, İmparator)",[base: kod anahtarı biçimle kuruyor]
+D6B_N_DUNGEON_NOFEZ,SPK_NIKO,yakin,2,"chapter6.gd:1062 kançılarya/surların içinde yüz yüze diyalog (Niko, Giustiniani, Theodoros, İmparator)",[base: kod anahtarı biçimle kuruyor]
+D6B_N_DUNGEON_FIRST,SPK_NIKO,yakin,2,"chapter6.gd:1062 kançılarya/surların içinde yüz yüze diyalog (Niko, Giustiniani, Theodoros, İmparator)",
+D6B_N_DUNGEON_FIRST_NOFEZ,SPK_NIKO,yakin,2,"chapter6.gd:1062 kançılarya/surların içinde yüz yüze diyalog (Niko, Giustiniani, Theodoros, İmparator)",[base: kod anahtarı biçimle kuruyor]
+D6B_T_DUNGEON_FIRST,SPK_TOLGA,ic_ses,,chapter6.gd:1061 Tolga kendi kendine/anlatı; yanında dinleyen yok ya da parantezli düşünce,
 D3_N_EVIDENCE_TOLGA_BARE,SPK_NIHAT,yakin,2,chapter3.gd:802 Büro/garaj sahnesinde Nihat ile karşılıklı normal konuşma,[fmt: kod anahtarı biçimle kuruyor]
 D3_N_EVIDENCE_TOLGA_BARE_RULE,SPK_NIHAT,yakin,2,chapter3.gd:802 Büro/garaj sahnesinde Nihat ile karşılıklı normal konuşma,[fmt: kod anahtarı biçimle kuruyor]
 D3_T_RADIO_1_HIDE,SPK_TOLGA,fisilti,0.3,chapter3.gd:1015 Tolga tezgâh altında telsize fısıltıyla (metin: fısıltıyla),
@@ -414,11 +614,16 @@ D5_H_AFTER_CAMP,SPK_HIKMET,telsiz,,"chapter5.gd:766 Hikmet–Tolga/Büro telsiz-
 D5_H_AFTER_DISHES,SPK_HIKMET,telsiz,,"chapter5.gd:766 Hikmet–Tolga/Büro telsiz-telefon görüşmesi (metinde ""(Telsiz)"" ya da Hikmet aramada)",[fmt: kod anahtarı biçimle kuruyor]
 D5_H_AFTER_CELL,SPK_HIKMET,telsiz,,"chapter5.gd:766 Hikmet–Tolga/Büro telsiz-telefon görüşmesi (metinde ""(Telsiz)"" ya da Hikmet aramada)",[fmt: kod anahtarı biçimle kuruyor]
 D5_H_AFTER_CITY,SPK_HIKMET,telsiz,,"chapter5.gd:766 Hikmet–Tolga/Büro telsiz-telefon görüşmesi (metinde ""(Telsiz)"" ya da Hikmet aramada)",[fmt: kod anahtarı biçimle kuruyor]
+D6B_NK_ROOF,SPK_NIKO,uzak,10,"chapter6.gd:788 Niko kançılarya önünden/aşağıdan çatıdaki-sokaktaki Tolga'ya bağırır (""aşağıdan bağırır"")",
 D4A_T_FEZ,SPK_TOLGA,yakin,2,chapter4.gd:462 Tolga yakalayan nöbetçiye yüz yüze cevap verir,
 D4A_HU_FEZ_1,SPK_HUSEYIN,yakin,2,chapter4.gd:466 nöbetçi/aşçı yakalanan Tolga ile yüz yüze normal konuşma,
 D4A_HA_FEZ_2,SPK_HASAN,yakin,2,chapter4.gd:467 nöbetçi/aşçı yakalanan Tolga ile yüz yüze normal konuşma,
 D4A_HU_FEZ_3,SPK_HUSEYIN,yakin,2,chapter4.gd:473 nöbetçi/aşçı yakalanan Tolga ile yüz yüze normal konuşma,
 D4A_T_WIN_FEZ,SPK_TOLGA,ic_ses,,chapter4.gd:522 Tolga gizlenirken/çıkışta kendi kendine anlatıyor,[fmt: kod anahtarı biçimle kuruyor]
+D6B_G_BOOK_KEEP,SPK_GIUST,yakin,2,"chapter6.gd:1094 kançılarya/surların içinde yüz yüze diyalog (Niko, Giustiniani, Theodoros, İmparator)",
+D6B_T_BOOK_KEEP,SPK_TOLGA,ic_ses,,chapter6.gd:1096 Tolga kendi kendine/anlatı; yanında dinleyen yok ya da parantezli düşünce,
+D6B_G_BOOK_BACK,SPK_GIUST,yakin,2,"chapter6.gd:1098 kançılarya/surların içinde yüz yüze diyalog (Niko, Giustiniani, Theodoros, İmparator)",
+D6_URBAN_LIGHTER_2,SPK_URBAN,yakin,2,chapter6.gd:388 eşya/konuşma sahnesi: NPC ile Tolga yüz yüze (ordugâh/kançılarya),[fmt: kod anahtarı biçimle kuruyor]
 D4A_T_01_WET,SPK_TOLGA,ic_ses,,chapter4.gd:179 Tolga gizlenirken/çıkışta kendi kendine anlatıyor,
 D4A_HU_WET,SPK_HUSEYIN,yakin_yuksek,6,"chapter4.gd:360 nöbetçi Tolga'yı görünce ""Dur!"" (VIEW_RANGE 8.5 m içinde), emir sesi",
 D4A_HA_WET,SPK_HASAN,yakin_yuksek,6,"chapter4.gd:361 nöbetçi Tolga'yı görünce ""Dur!"" (VIEW_RANGE 8.5 m içinde), emir sesi",
@@ -426,5 +631,1023 @@ D3_N_EVIDENCE_HIKMET_KIND,SPK_NIHAT,yakin,2,chapter3.gd:802 Büro/garaj sahnesin
 D3_H_DOUBLE_DOWN_KIND,SPK_HIKMET,yakin,2,chapter3.gd:811 Büro/garaj sahnesinde Nihat ile karşılıklı normal konuşma,
 D3_N_END_34_KIND,SPK_NIHAT,yakin,2,chapter3.gd:816 Büro/garaj sahnesinde Nihat ile karşılıklı normal konuşma,
 D3_H_END_34B_KIND,SPK_HIKMET,fisilti,0.3,"chapter3.gd:820 Hikmet telsize fısıltıyla (metinde ""Telsize, fısıltıyla""), Nihat gidince",
+D6_KADRI_DONE_KITCHEN,SPK_KADRI,yakin,2,chapter6.gd:523 eşya/konuşma sahnesi: NPC ile Tolga yüz yüze (ordugâh/kançılarya),
 D1_H_SPARE,SPK_HIKMET,yakin,2,"chapter1.gd:189 garajda Hikmet ile Tolga yan yana, normal konuşma",
 D4B_T_01_DAY,SPK_TOLGA,ic_ses,,chapter4.gd:631 Tolga zincirde/rıhtımda kendi kendine,
+D6B_T_01_NIGHT,SPK_TOLGA,ic_ses,,chapter6.gd:728 Tolga kendi kendine/anlatı; yanında dinleyen yok ya da parantezli düşünce,
+D7_N_ARRIVE,SPK_NIHAT,ic_ses,,chapter7.gd:415 Nihat tarayıcı/rapor başında kendi kendine not düşüyor (hologram/tarama anlatısı),
+D7_M_BRIEF,SPK_MUFIDE,telsiz,,"chapter7.gd:422 Müfide ""(Büro telsizi)/(Telsizden)"" ile Nihat'a",
+D7_N_BRIEF,SPK_NIHAT,telsiz,,chapter7.gd:422 Nihat Müfide'ye telsizle karşılık veriyor (zincir/telsiz sahnesi),
+D7_M_BUDGET,SPK_MUFIDE,telsiz,,"chapter7.gd:422 Müfide ""(Büro telsizi)/(Telsizden)"" ile Nihat'a",
+D7_N_SCANNER,SPK_NIHAT,telsiz,,chapter7.gd:423 Nihat Müfide'ye telsizle karşılık veriyor (zincir/telsiz sahnesi),
+D7_N_SUNSET,SPK_NIHAT,ic_ses,,chapter7.gd:454 Nihat tarayıcı/rapor başında kendi kendine not düşüyor (hologram/tarama anlatısı),
+D7_N_TRACE_KITCHEN,SPK_NIHAT,ic_ses,,chapter7.gd:288 Nihat tarayıcı/rapor başında kendi kendine not düşüyor (hologram/tarama anlatısı),[fmt: kod anahtarı biçimle kuruyor]
+D7_N_TRACE_TENT,SPK_NIHAT,ic_ses,,chapter7.gd:288 Nihat tarayıcı/rapor başında kendi kendine not düşüyor (hologram/tarama anlatısı),[fmt: kod anahtarı biçimle kuruyor]
+D7_N_TRACE_ARTILLERY,SPK_NIHAT,ic_ses,,chapter7.gd:288 Nihat tarayıcı/rapor başında kendi kendine not düşüyor (hologram/tarama anlatısı),[fmt: kod anahtarı biçimle kuruyor]
+D7_N_TRACE_MARKET,SPK_NIHAT,ic_ses,,chapter7.gd:288 Nihat tarayıcı/rapor başında kendi kendine not düşüyor (hologram/tarama anlatısı),[fmt: kod anahtarı biçimle kuruyor]
+D7_N_TRACE_OTAG,SPK_NIHAT,ic_ses,,chapter7.gd:288 Nihat tarayıcı/rapor başında kendi kendine not düşüyor (hologram/tarama anlatısı),[fmt: kod anahtarı biçimle kuruyor]
+D7_N_TRACE_OTAG_PLAIN,SPK_NIHAT,ic_ses,,chapter7.gd:287 Nihat tarayıcı/rapor başında kendi kendine not düşüyor (hologram/tarama anlatısı),
+D7_N_TRACE_CHANCERY,SPK_NIHAT,ic_ses,,chapter7.gd:288 Nihat tarayıcı/rapor başında kendi kendine not düşüyor (hologram/tarama anlatısı),[fmt: kod anahtarı biçimle kuruyor]
+D7_N_TRACE_WALLS,SPK_NIHAT,ic_ses,,chapter7.gd:288 Nihat tarayıcı/rapor başında kendi kendine not düşüyor (hologram/tarama anlatısı),[fmt: kod anahtarı biçimle kuruyor]
+D7_N_TRACE_PALACE,SPK_NIHAT,ic_ses,,chapter7.gd:487 Nihat tarayıcı/rapor başında kendi kendine not düşüyor (hologram/tarama anlatısı),
+D7_N_TRACE_CELL,SPK_NIHAT,ic_ses,,chapter7.gd:1510 Nihat tarayıcı/rapor başında kendi kendine not düşüyor (hologram/tarama anlatısı),
+D7_N_TRACE_CELL_NOFEZ,SPK_NIHAT,ic_ses,,chapter7.gd:1510 Nihat tarayıcı/rapor başında kendi kendine not düşüyor (hologram/tarama anlatısı),[base: kod anahtarı biçimle kuruyor]
+D7_N_TRACE_OUTSIDE,SPK_NIHAT,ic_ses,,chapter7.gd:288 Nihat tarayıcı/rapor başında kendi kendine not düşüyor (hologram/tarama anlatısı),[fmt: kod anahtarı biçimle kuruyor]
+D7_N_HOT,SPK_NIHAT,ic_ses,,chapter7.gd:491 Nihat tarayıcı/rapor başında kendi kendine not düşüyor (hologram/tarama anlatısı),
+D7_N_WARM,SPK_NIHAT,ic_ses,,chapter7.gd:493 Nihat tarayıcı/rapor başında kendi kendine not düşüyor (hologram/tarama anlatısı),
+D7_N_COLD,SPK_NIHAT,ic_ses,,chapter7.gd:495 Nihat tarayıcı/rapor başında kendi kendine not düşüyor (hologram/tarama anlatısı),
+D7_N_HOLO_KITCHEN,SPK_NIHAT,ic_ses,,chapter7.gd:1525 Nihat tarayıcı/rapor başında kendi kendine not düşüyor (hologram/tarama anlatısı),
+D7_N_HOLO_TENT,SPK_NIHAT,ic_ses,,chapter7.gd:554 Nihat tarayıcı/rapor başında kendi kendine not düşüyor (hologram/tarama anlatısı),[fmt: kod anahtarı biçimle kuruyor]
+D7_N_HOLO_ARTILLERY,SPK_NIHAT,ic_ses,,chapter7.gd:554 Nihat tarayıcı/rapor başında kendi kendine not düşüyor (hologram/tarama anlatısı),[fmt: kod anahtarı biçimle kuruyor]
+D7_N_HOLO_MARKET,SPK_NIHAT,ic_ses,,chapter7.gd:554 Nihat tarayıcı/rapor başında kendi kendine not düşüyor (hologram/tarama anlatısı),[fmt: kod anahtarı biçimle kuruyor]
+D7_N_HOLO_CELL,SPK_NIHAT,ic_ses,,chapter7.gd:554 Nihat tarayıcı/rapor başında kendi kendine not düşüyor (hologram/tarama anlatısı),[fmt: kod anahtarı biçimle kuruyor]
+D7_N_HOLO_CELL_NOFEZ,SPK_NIHAT,ic_ses,,chapter7.gd:554 Nihat tarayıcı/rapor başında kendi kendine not düşüyor (hologram/tarama anlatısı),[fmt: kod anahtarı biçimle kuruyor]
+D7_N_HOLO_OUTSIDE,SPK_NIHAT,ic_ses,,chapter7.gd:554 Nihat tarayıcı/rapor başında kendi kendine not düşüyor (hologram/tarama anlatısı),[fmt: kod anahtarı biçimle kuruyor]
+D7_KADRI_HELLO,SPK_KADRI,yakin,2,"chapter7.gd:585 Nihat NPC ile yüz yüze konuşuyor (soruşturma sahnesi, say)",
+D7_N_KADRI_ASK,SPK_NIHAT,yakin,2,"chapter7.gd:586 Nihat NPC ile yüz yüze konuşuyor (soruşturma sahnesi, say)",
+D7_KADRI_PROTECT,SPK_KADRI,yakin,2,"chapter7.gd:588 Nihat NPC ile yüz yüze konuşuyor (soruşturma sahnesi, say)",
+D7_N_KADRI_FEZ,SPK_NIHAT,yakin,2,"chapter7.gd:589 Nihat NPC ile yüz yüze konuşuyor (soruşturma sahnesi, say)",
+D7_KADRI_AGAIN,SPK_KADRI,yakin,2,"chapter7.gd:638 Nihat NPC ile yüz yüze konuşuyor (soruşturma sahnesi, say)",[fmt: kod anahtarı biçimle kuruyor]
+D7_URBAN_HELLO,SPK_URBAN,yakin,2,"chapter7.gd:593 Nihat NPC ile yüz yüze konuşuyor (soruşturma sahnesi, say)",
+D7_N_URBAN_ASK,SPK_NIHAT,yakin,2,"chapter7.gd:594 Nihat NPC ile yüz yüze konuşuyor (soruşturma sahnesi, say)",
+D7_URBAN_DJINN,SPK_URBAN,yakin,2,"chapter7.gd:598 Nihat NPC ile yüz yüze konuşuyor (soruşturma sahnesi, say)",
+D7_N_URBAN_DJINN,SPK_NIHAT,ic_ses,,chapter7.gd:599 Nihat tarayıcı/rapor başında kendi kendine not düşüyor (hologram/tarama anlatısı),
+D7_URBAN_NO,SPK_URBAN,yakin,2,"chapter7.gd:603 Nihat NPC ile yüz yüze konuşuyor (soruşturma sahnesi, say)",
+D7_URBAN_SAW,SPK_URBAN,yakin,2,"chapter7.gd:601 Nihat NPC ile yüz yüze konuşuyor (soruşturma sahnesi, say)",
+D7_URBAN_AGAIN,SPK_URBAN,yakin,2,"chapter7.gd:638 Nihat NPC ile yüz yüze konuşuyor (soruşturma sahnesi, say)",[fmt: kod anahtarı biçimle kuruyor]
+D7_LUTFI_HELLO,SPK_LUTFI,yakin,2,"chapter7.gd:697 Nihat NPC ile yüz yüze konuşuyor (soruşturma sahnesi, say)",
+D7_LUTFI_HELLO_NEW,SPK_LUTFI,yakin,2,"chapter7.gd:697 Nihat NPC ile yüz yüze konuşuyor (soruşturma sahnesi, say)",
+D7_N_LUTFI_ASK,SPK_NIHAT,yakin,2,"chapter7.gd:698 Nihat NPC ile yüz yüze konuşuyor (soruşturma sahnesi, say)",
+D7_N_LUTFI_ASK_NEW,SPK_NIHAT,yakin,2,"chapter7.gd:698 Nihat NPC ile yüz yüze konuşuyor (soruşturma sahnesi, say)",
+D7_LUTFI_FEE,SPK_LUTFI,yakin,2,"chapter7.gd:699 Nihat NPC ile yüz yüze konuşuyor (soruşturma sahnesi, say)",
+D7_N_FORM_GIVE,SPK_NIHAT,yakin,2,"chapter7.gd:705 Nihat NPC ile yüz yüze konuşuyor (soruşturma sahnesi, say)",
+D7_LUTFI_FORM,SPK_LUTFI,yakin,2,"chapter7.gd:707 Nihat NPC ile yüz yüze konuşuyor (soruşturma sahnesi, say)",
+D7_LUTFI_TRUTH_A,SPK_LUTFI,yakin,2,"chapter7.gd:711 Nihat NPC ile yüz yüze konuşuyor (soruşturma sahnesi, say)",[fmt: kod anahtarı biçimle kuruyor]
+D7_LUTFI_TRUTH_B,SPK_LUTFI,yakin,2,"chapter7.gd:711 Nihat NPC ile yüz yüze konuşuyor (soruşturma sahnesi, say)",[fmt: kod anahtarı biçimle kuruyor]
+D7_LUTFI_TRUTH_C,SPK_LUTFI,yakin,2,"chapter7.gd:711 Nihat NPC ile yüz yüze konuşuyor (soruşturma sahnesi, say)",[fmt: kod anahtarı biçimle kuruyor]
+D7_LUTFI_TRUTH_Y,SPK_LUTFI,yakin,2,"chapter7.gd:711 Nihat NPC ile yüz yüze konuşuyor (soruşturma sahnesi, say)",[fmt: kod anahtarı biçimle kuruyor]
+D7_N_LUTFI_THANKS,SPK_NIHAT,yakin,2,"chapter7.gd:712 Nihat NPC ile yüz yüze konuşuyor (soruşturma sahnesi, say)",
+D7_N_LUTFI_LEAVE,SPK_NIHAT,yakin,2,"chapter7.gd:702 Nihat NPC ile yüz yüze konuşuyor (soruşturma sahnesi, say)",
+D7_LUTFI_AGAIN,SPK_LUTFI,yakin,2,"chapter7.gd:638 Nihat NPC ile yüz yüze konuşuyor (soruşturma sahnesi, say)",[fmt: kod anahtarı biçimle kuruyor]
+D7_LUTFI_AGAIN_LEFT,SPK_LUTFI,yakin,2,"chapter7.gd:631 Nihat NPC ile yüz yüze konuşuyor (soruşturma sahnesi, say)",
+D7_HASAN_HELLO,SPK_HASAN,yakin,2,"chapter7.gd:718 Nihat NPC ile yüz yüze konuşuyor (soruşturma sahnesi, say)",
+D7_HUSEYIN_HELLO,SPK_HUSEYIN,yakin,2,"chapter7.gd:719 Nihat NPC ile yüz yüze konuşuyor (soruşturma sahnesi, say)",
+D7_N_GUARDS_ASK,SPK_NIHAT,yakin,2,"chapter7.gd:720 Nihat NPC ile yüz yüze konuşuyor (soruşturma sahnesi, say)",
+D7_HASAN_FAN,SPK_HASAN,yakin,2,"chapter7.gd:729 Nihat NPC ile yüz yüze konuşuyor (soruşturma sahnesi, say)",
+D7_HUSEYIN_FAN,SPK_HUSEYIN,yakin,2,"chapter7.gd:725 Nihat NPC ile yüz yüze konuşuyor (soruşturma sahnesi, say)",
+D7_HUSEYIN_TEA,SPK_HUSEYIN,yakin,2,"chapter7.gd:732 Nihat NPC ile yüz yüze konuşuyor (soruşturma sahnesi, say)",
+D7_N_TEA,SPK_NIHAT,ic_ses,,chapter7.gd:742 Nihat tarayıcı/rapor başında kendi kendine not düşüyor (hologram/tarama anlatısı),
+D7_HASAN_TEA,SPK_HASAN,yakin,2,"chapter7.gd:745 Nihat NPC ile yüz yüze konuşuyor (soruşturma sahnesi, say)",
+D7_HASAN_TEA_HUFEZ,SPK_HASAN,yakin,2,"Nihat NPC ile yüz yüze konuşuyor (soruşturma sahnesi, say)",
+D7_HUSEYIN_TRUTH_A,SPK_HUSEYIN,yakin,2,"chapter7.gd:660 Nihat NPC ile yüz yüze konuşuyor (soruşturma sahnesi, say)",[fmt: kod anahtarı biçimle kuruyor]
+D7_HUSEYIN_TRUTH_A_FIRE,SPK_HUSEYIN,yakin,2,"chapter7.gd:659 Nihat NPC ile yüz yüze konuşuyor (soruşturma sahnesi, say)",
+D7_HUSEYIN_TRUTH_A_PLAIN,SPK_HUSEYIN,yakin,2,"chapter7.gd:659 Nihat NPC ile yüz yüze konuşuyor (soruşturma sahnesi, say)",
+D7_HUSEYIN_TRUTH_B,SPK_HUSEYIN,yakin,2,"chapter7.gd:660 Nihat NPC ile yüz yüze konuşuyor (soruşturma sahnesi, say)",[fmt: kod anahtarı biçimle kuruyor]
+D7_HUSEYIN_TRUTH_C,SPK_HUSEYIN,yakin,2,"chapter7.gd:660 Nihat NPC ile yüz yüze konuşuyor (soruşturma sahnesi, say)",[fmt: kod anahtarı biçimle kuruyor]
+D7_HUSEYIN_TRUTH_Y,SPK_HUSEYIN,yakin,2,"chapter7.gd:660 Nihat NPC ile yüz yüze konuşuyor (soruşturma sahnesi, say)",[fmt: kod anahtarı biçimle kuruyor]
+D7_N_TEA_DONE,SPK_NIHAT,ic_ses,,chapter7.gd:747 Nihat tarayıcı/rapor başında kendi kendine not düşüyor (hologram/tarama anlatısı),
+D7_N_NO_TEA,SPK_NIHAT,ic_ses,,chapter7.gd:751 Nihat tarayıcı/rapor başında kendi kendine not düşüyor (hologram/tarama anlatısı),
+D7_HASAN_LIE_KITCHEN,SPK_HASAN,yakin,2,"chapter7.gd:761 Nihat NPC ile yüz yüze konuşuyor (soruşturma sahnesi, say)",[fmt: kod anahtarı biçimle kuruyor]
+D7_HASAN_LIE_TENT,SPK_HASAN,yakin,2,"chapter7.gd:761 Nihat NPC ile yüz yüze konuşuyor (soruşturma sahnesi, say)",[fmt: kod anahtarı biçimle kuruyor]
+D7_HASAN_LIE_ARTILLERY,SPK_HASAN,yakin,2,"chapter7.gd:761 Nihat NPC ile yüz yüze konuşuyor (soruşturma sahnesi, say)",[fmt: kod anahtarı biçimle kuruyor]
+D7_HASAN_LIE_MARKET,SPK_HASAN,yakin,2,"chapter7.gd:761 Nihat NPC ile yüz yüze konuşuyor (soruşturma sahnesi, say)",[fmt: kod anahtarı biçimle kuruyor]
+D7_HUSEYIN_LIE,SPK_HUSEYIN,yakin,2,"chapter7.gd:762 Nihat NPC ile yüz yüze konuşuyor (soruşturma sahnesi, say)",
+D7_HASAN_TRUTH_A,SPK_HASAN,yakin,2,"chapter7.gd:755 Nihat NPC ile yüz yüze konuşuyor (soruşturma sahnesi, say)",[fmt: kod anahtarı biçimle kuruyor]
+D7_HASAN_TRUTH_B,SPK_HASAN,yakin,2,"chapter7.gd:755 Nihat NPC ile yüz yüze konuşuyor (soruşturma sahnesi, say)",[fmt: kod anahtarı biçimle kuruyor]
+D7_HASAN_TRUTH_C,SPK_HASAN,yakin,2,"chapter7.gd:755 Nihat NPC ile yüz yüze konuşuyor (soruşturma sahnesi, say)",[fmt: kod anahtarı biçimle kuruyor]
+D7_HASAN_TRUTH_Y,SPK_HASAN,yakin,2,"chapter7.gd:755 Nihat NPC ile yüz yüze konuşuyor (soruşturma sahnesi, say)",[fmt: kod anahtarı biçimle kuruyor]
+D7_HUSEYIN_WHO,SPK_HUSEYIN,yakin,2,"chapter7.gd:765 Nihat NPC ile yüz yüze konuşuyor (soruşturma sahnesi, say)",
+D7_GUARDS_AGAIN,SPK_HASAN,yakin,2,"chapter7.gd:638 Nihat NPC ile yüz yüze konuşuyor (soruşturma sahnesi, say)",[fmt: kod anahtarı biçimle kuruyor]
+D7_GUARDS_AGAIN_HUFEZ,SPK_HASAN,yakin,2,"Nihat NPC ile yüz yüze konuşuyor (soruşturma sahnesi, say)",
+D7_GUARDS_AGAIN_NOTEA,SPK_HASAN,yakin,2,"chapter7.gd:634 Nihat NPC ile yüz yüze konuşuyor (soruşturma sahnesi, say)",
+D7_GUARDS_AGAIN_NOTEA_HUFEZ,SPK_HASAN,yakin,2,"Nihat NPC ile yüz yüze konuşuyor (soruşturma sahnesi, say)",
+D7_NIKO_HELLO,SPK_NIKO,yakin,2,"chapter7.gd:776 Nihat NPC ile yüz yüze konuşuyor (soruşturma sahnesi, say)",
+D7_N_NIKO_ASK,SPK_NIHAT,yakin,2,"chapter7.gd:777 Nihat NPC ile yüz yüze konuşuyor (soruşturma sahnesi, say)",
+D7_NIKO_LIE,SPK_NIKO,yakin,2,"chapter7.gd:786 Nihat NPC ile yüz yüze konuşuyor (soruşturma sahnesi, say)",
+D7_NIKO_CELL,SPK_NIKO,yakin,2,"chapter7.gd:795 Nihat NPC ile yüz yüze konuşuyor (soruşturma sahnesi, say)",
+D7_NIKO_OUTSIDE,SPK_NIKO,yakin,2,"chapter7.gd:781 Nihat NPC ile yüz yüze konuşuyor (soruşturma sahnesi, say)",
+D7_NIKO_AGAIN,SPK_NIKO,yakin,2,"chapter7.gd:638 Nihat NPC ile yüz yüze konuşuyor (soruşturma sahnesi, say)",[fmt: kod anahtarı biçimle kuruyor]
+D7_THEO_HELLO,SPK_THEODOROS,yakin,2,"chapter7.gd:799 Nihat NPC ile yüz yüze konuşuyor (soruşturma sahnesi, say)",
+D7_N_THEO_ASK,SPK_NIHAT,yakin,2,"chapter7.gd:800 Nihat NPC ile yüz yüze konuşuyor (soruşturma sahnesi, say)",
+D7_THEO_FORM_Z9,SPK_THEODOROS,yakin,2,"chapter7.gd:801 Nihat NPC ile yüz yüze konuşuyor (soruşturma sahnesi, say)",
+D7_N_THEO_CHAT,SPK_NIHAT,yakin,2,"chapter7.gd:806 Nihat NPC ile yüz yüze konuşuyor (soruşturma sahnesi, say)",
+D7_THEO_CHAT,SPK_THEODOROS,yakin,2,"chapter7.gd:807 Nihat NPC ile yüz yüze konuşuyor (soruşturma sahnesi, say)",
+D7_N_THEO_CHAT2,SPK_NIHAT,yakin,2,"chapter7.gd:808 Nihat NPC ile yüz yüze konuşuyor (soruşturma sahnesi, say)",
+D7_THEO_CHAT2,SPK_THEODOROS,yakin,2,"chapter7.gd:809 Nihat NPC ile yüz yüze konuşuyor (soruşturma sahnesi, say)",
+D7_THEO_FORM,SPK_THEODOROS,yakin,2,"chapter7.gd:817 Nihat NPC ile yüz yüze konuşuyor (soruşturma sahnesi, say)",
+D7_THEO_TRUTH_OUT,SPK_THEODOROS,yakin,2,"chapter7.gd:812 Nihat NPC ile yüz yüze konuşuyor (soruşturma sahnesi, say)",[fmt: kod anahtarı biçimle kuruyor]
+D7_THEO_TRUTH_CELL,SPK_THEODOROS,yakin,2,"chapter7.gd:812 Nihat NPC ile yüz yüze konuşuyor (soruşturma sahnesi, say)",[fmt: kod anahtarı biçimle kuruyor]
+D7_THEODOROS_AGAIN,SPK_THEODOROS,yakin,2,"chapter7.gd:638 Nihat NPC ile yüz yüze konuşuyor (soruşturma sahnesi, say)",[fmt: kod anahtarı biçimle kuruyor]
+D7_THEODOROS_AGAIN_PLAIN,SPK_THEODOROS,yakin,2,"chapter7.gd:637 Nihat NPC ile yüz yüze konuşuyor (soruşturma sahnesi, say)",
+D7_GIUST_HELLO,SPK_GIUST,yakin,2,"chapter7.gd:828 Nihat NPC ile yüz yüze konuşuyor (soruşturma sahnesi, say)",
+D7_N_GIUST_ASK,SPK_NIHAT,yakin,2,"chapter7.gd:829 Nihat NPC ile yüz yüze konuşuyor (soruşturma sahnesi, say)",
+D7_GIUST_NO,SPK_GIUST,yakin,2,"chapter7.gd:831 Nihat NPC ile yüz yüze konuşuyor (soruşturma sahnesi, say)",
+D7_GIUST_TRUTH,SPK_GIUST,yakin,2,"chapter7.gd:833 Nihat NPC ile yüz yüze konuşuyor (soruşturma sahnesi, say)",
+D7_GIUST_WARNED,SPK_GIUST,yakin,2,"chapter7.gd:835 Nihat NPC ile yüz yüze konuşuyor (soruşturma sahnesi, say)",
+D7_N_GIUST_WARNED,SPK_NIHAT,yakin,2,"chapter7.gd:836 Nihat NPC ile yüz yüze konuşuyor (soruşturma sahnesi, say)",
+D7_GIUSTINIANI_AGAIN,SPK_GIUST,yakin,2,"chapter7.gd:638 tekrar konuşmada Nihat'la yüz yüze (chapter7.gd:638 ""D7_%s_AGAIN"")",[fmt: kod anahtarı biçimle kuruyor]
+D7_EMP_HELLO,SPK_EMPEROR,yakin,2,"chapter7.gd:615 Nihat NPC ile yüz yüze konuşuyor (soruşturma sahnesi, say)",
+D7_N_EMP,SPK_NIHAT,yakin,2,"chapter7.gd:616 Nihat NPC ile yüz yüze konuşuyor (soruşturma sahnesi, say)",
+D7_EMP_FORM,SPK_EMPEROR,yakin,2,"chapter7.gd:618 Nihat NPC ile yüz yüze konuşuyor (soruşturma sahnesi, say)",
+D7_EMPEROR_AGAIN,SPK_EMPEROR,yakin,2,"chapter7.gd:638 tekrar konuşmada Nihat'la yüz yüze (chapter7.gd:638 ""D7_%s_AGAIN"")",[fmt: kod anahtarı biçimle kuruyor]
+D7_CLERK_QUEUE,SPK_CLERK,yakin,2,"chapter7.gd:1381 Nihat NPC ile yüz yüze konuşuyor (soruşturma sahnesi, say)",
+D7_N_GOAT,SPK_NIHAT,ic_ses,,chapter7.gd:1386 Nihat tarayıcı/rapor başında kendi kendine not düşüyor (hologram/tarama anlatısı),
+D7_N_CANNON,SPK_NIHAT,ic_ses,,chapter7.gd:1388 Nihat tarayıcı/rapor başında kendi kendine not düşüyor (hologram/tarama anlatısı),
+D7_C_NOBODY,SPK_CANDARLI,yakin,2,"chapter7.gd:1390 Nihat NPC ile yüz yüze konuşuyor (soruşturma sahnesi, say)",
+D7_S_LETTER,SPK_SOLDIER,yakin,2,"game_state.gd:528 ordugâhta asker Tolga/oyuncuya mektup cevabını anlatır (chapter7.gd:1392 bark, chapter9.gd:815)",
+D7_N_GATE,SPK_NIHAT,ic_ses,,chapter7.gd:1394 Nihat tarayıcı/rapor başında kendi kendine not düşüyor (hologram/tarama anlatısı),
+D7_N_REPORT,SPK_NIHAT,ic_ses,,chapter7.gd:896 Nihat tarayıcı/rapor başında kendi kendine not düşüyor (hologram/tarama anlatısı),
+D7_N_FOUND,SPK_NIHAT,ic_ses,,chapter7.gd:977 Nihat tarayıcı/rapor başında kendi kendine not düşüyor (hologram/tarama anlatısı),
+D7_T_FAR_A,SPK_TOLGA,uzak,10,"chapter7.gd:979 Nihat uzaktan izler: Tolga ordugâhta başkalarına seslenir (""(Uzaktan)"" notu, _clear_view uzak açı)",TOLGA [fmt: kod anahtarı biçimle kuruyor]
+D7_T_FAR_B,SPK_TOLGA,uzak,10,"chapter7.gd:979 Nihat uzaktan izler: Tolga ordugâhta başkalarına seslenir (""(Uzaktan)"" notu, _clear_view uzak açı)",TOLGA [fmt: kod anahtarı biçimle kuruyor]
+D7_T_FAR_C,SPK_TOLGA,uzak,10,"chapter7.gd:979 Nihat uzaktan izler: Tolga ordugâhta başkalarına seslenir (""(Uzaktan)"" notu, _clear_view uzak açı)",TOLGA [fmt: kod anahtarı biçimle kuruyor]
+D7_T_FAR_Y,SPK_TOLGA,uzak,10,"chapter7.gd:979 Nihat uzaktan izler: Tolga ordugâhta başkalarına seslenir (""(Uzaktan)"" notu, _clear_view uzak açı)",TOLGA [fmt: kod anahtarı biçimle kuruyor]
+D7_N_FOUND2,SPK_NIHAT,ic_ses,,chapter7.gd:981 Nihat tarayıcı/rapor başında kendi kendine not düşüyor (hologram/tarama anlatısı),
+D7_N_FOUND_OUT,SPK_NIHAT,ic_ses,,chapter7.gd:938 Nihat tarayıcı/rapor başında kendi kendine not düşüyor (hologram/tarama anlatısı),
+D7_N_BUDGET,SPK_NIHAT,ic_ses,,chapter7.gd:940 Nihat tarayıcı/rapor başında kendi kendine not düşüyor (hologram/tarama anlatısı),
+D7_N_FOUND_CELL,SPK_NIHAT,ic_ses,,chapter7.gd:954 Nihat tarayıcı/rapor başında kendi kendine not düşüyor (hologram/tarama anlatısı),
+D7_T_CELL,SPK_TOLGA,yakin_yuksek,3,"chapter7.gd:956 Tolga zindan parmaklığının arkasından (""(İçeriden)""), Nihat önünde",
+D7_N_FOUND_CELL2,SPK_NIHAT,ic_ses,,chapter7.gd:958 Nihat tarayıcı/rapor başında kendi kendine not düşüyor (hologram/tarama anlatısı),
+D7_N_LOST_GOAT,SPK_NIHAT,telsiz,,chapter7.gd:1032 Nihat Müfide'ye telsizle karşılık veriyor (zincir/telsiz sahnesi),
+D7_N_LOST_HEN,SPK_NIHAT,telsiz,,chapter7.gd:1032 Nihat Müfide'ye telsizle karşılık veriyor (zincir/telsiz sahnesi),
+D7_M_LOST,SPK_MUFIDE,telsiz,,"chapter7.gd:1033 Müfide ""(Büro telsizi)/(Telsizden)"" ile Nihat'a",
+D7_N_LOST_END,SPK_NIHAT,telsiz,,chapter7.gd:1035 Nihat Müfide'ye telsizle karşılık veriyor (zincir/telsiz sahnesi),
+D7_N_SEND_Q,SPK_NIHAT,ic_ses,,chapter7.gd:1049 Nihat tarayıcı/rapor başında kendi kendine not düşüyor (hologram/tarama anlatısı),
+D7_N_SEND_Q_PLAIN,SPK_NIHAT,ic_ses,,chapter7.gd:1049 Nihat tarayıcı/rapor başında kendi kendine not düşüyor (hologram/tarama anlatısı),
+D7_N_SENT,SPK_NIHAT,ic_ses,,chapter7.gd:1054 Nihat tarayıcı/rapor başında kendi kendine not düşüyor (hologram/tarama anlatısı),
+D7_N_DELAYED,SPK_NIHAT,ic_ses,,chapter7.gd:1071 Nihat tarayıcı/rapor başında kendi kendine not düşüyor (hologram/tarama anlatısı),
+D7_N_WALL,SPK_NIHAT,ic_ses,,chapter7.gd:1077 Nihat tarayıcı/rapor başında kendi kendine not düşüyor (hologram/tarama anlatısı),
+D7_N_WALL_TORN,SPK_NIHAT,telsiz,,chapter7.gd:1061 Nihat Müfide'ye telsizle karşılık veriyor (zincir/telsiz sahnesi),
+D7_M_WALL_TORN,SPK_MUFIDE,telsiz,,"chapter7.gd:1062 Müfide ""(Büro telsizi)/(Telsizden)"" ile Nihat'a",
+D7_N_WALL_KEPT,SPK_NIHAT,ic_ses,,chapter7.gd:1067 Nihat tarayıcı/rapor başında kendi kendine not düşüyor (hologram/tarama anlatısı),
+D8_H_01,SPK_HIKMET,ic_ses,,chapter8.gd:151 oyuncu Hikmet dükkânda/garajda kendi kendine konuşuyor (iç not),
+D8_H_PAJAMA,SPK_HIKMET,ic_ses,,chapter8.gd:152 oyuncu Hikmet dükkânda/garajda kendi kendine konuşuyor (iç not),
+D8_H_TAPE,SPK_HIKMET,ic_ses,,chapter8.gd:154 oyuncu Hikmet dükkânda/garajda kendi kendine konuşuyor (iç not),
+D8_H_VAN,SPK_HIKMET,ic_ses,,chapter8.gd:157 oyuncu Hikmet dükkânda/garajda kendi kendine konuşuyor (iç not),
+D8_V_01,SPK_VAN,uzak,8,"chapter8.gd:158 minibüsün hoparlörü dükkânın dışından (bark/say, SPK_VAN)",
+D8_C_01,SPK_CEMIL,yakin,2,chapter8.gd:221 Hikmet–Cemil dükkânda tezgâhta yüz yüze,
+D8_H_C_02,SPK_HIKMET,yakin,2,chapter8.gd:222 Hikmet–Cemil dükkânda tezgâhta yüz yüze,
+D8_C_03,SPK_CEMIL,yakin,2,chapter8.gd:223 Hikmet–Cemil dükkânda tezgâhta yüz yüze,
+D8_H_LIST,SPK_HIKMET,yakin,2,chapter8.gd:224 Hikmet–Cemil dükkânda tezgâhta yüz yüze,
+D8_H_HIDDEN,SPK_HIKMET,yakin,2,chapter8.gd:229 Hikmet–Cemil dükkânda tezgâhta yüz yüze,
+D8_H_LIST_HEIST,SPK_HIKMET,yakin,2,chapter8.gd:224 Hikmet–Cemil dükkânda tezgâhta yüz yüze,
+D8_H_BACKUP,SPK_HIKMET,ic_ses,,chapter8.gd:227 oyuncu Hikmet dükkânda/garajda kendi kendine konuşuyor (iç not),
+D8_C_WHERE,SPK_CEMIL,yakin,2,chapter8.gd:230 Hikmet–Cemil dükkânda tezgâhta yüz yüze,
+D8_C_WHERE_HEIST,SPK_CEMIL,yakin,2,chapter8.gd:230 Hikmet–Cemil dükkânda tezgâhta yüz yüze,
+D8_C_TAPE,SPK_CEMIL,yakin,2,chapter8.gd:251 Hikmet–Cemil dükkânda tezgâhta yüz yüze,
+D8_A1_ENTER,SPK_AGENT1,yakin,4,chapter8.gd:246 ajanlar Cemil'le/kendi aralarında dükkânda konuşur,
+D8_C_TEA,SPK_CEMIL,yakin,2,chapter8.gd:252 Hikmet–Cemil dükkânda tezgâhta yüz yüze,
+D8_A2_ENTER,SPK_AGENT2,yakin,4,chapter8.gd:254 ajanlar Cemil'le/kendi aralarında dükkânda konuşur,
+D8_H_AGENTS,SPK_HIKMET,ic_ses,,chapter8.gd:264 oyuncu Hikmet dükkânda/garajda kendi kendine konuşuyor (iç not),
+D8_H_GOT_CAPACITOR,SPK_HIKMET,ic_ses,,chapter8.gd:485 oyuncu Hikmet dükkânda/garajda kendi kendine konuşuyor (iç not),[fmt: kod anahtarı biçimle kuruyor]
+D8_H_GOT_ANTENNA,SPK_HIKMET,ic_ses,,chapter8.gd:485 oyuncu Hikmet dükkânda/garajda kendi kendine konuşuyor (iç not),[fmt: kod anahtarı biçimle kuruyor]
+D8_H_GOT_GLASS,SPK_HIKMET,ic_ses,,chapter8.gd:485 oyuncu Hikmet dükkânda/garajda kendi kendine konuşuyor (iç not),[fmt: kod anahtarı biçimle kuruyor]
+D8_H_GOT_TAPE,SPK_HIKMET,ic_ses,,chapter8.gd:485 oyuncu Hikmet dükkânda/garajda kendi kendine konuşuyor (iç not),[fmt: kod anahtarı biçimle kuruyor]
+D8_H_GOT_CUTTER,SPK_HIKMET,ic_ses,,chapter8.gd:485 oyuncu Hikmet dükkânda/garajda kendi kendine konuşuyor (iç not),[fmt: kod anahtarı biçimle kuruyor]
+D8_H_GOT_LAMINATOR,SPK_HIKMET,ic_ses,,chapter8.gd:485 oyuncu Hikmet dükkânda/garajda kendi kendine konuşuyor (iç not),[fmt: kod anahtarı biçimle kuruyor]
+D8_H_GOT_RAINCOAT,SPK_HIKMET,ic_ses,,chapter8.gd:485 oyuncu Hikmet dükkânda/garajda kendi kendine konuşuyor (iç not),[fmt: kod anahtarı biçimle kuruyor]
+D8_A_CAUGHT_1,SPK_AGENT1,yakin,1,chapter8.gd:437 yakalayan ajan yürüyüp Hikmet'in omzuna dokunur (_caught yorumu: 7 m öteden bağırması düzeltildi),[fmt: kod anahtarı biçimle kuruyor]
+D8_A_CAUGHT_2,SPK_AGENT2,yakin,1,chapter8.gd:438 yakalayan ajan yürüyüp Hikmet'in omzuna dokunur (_caught yorumu: 7 m öteden bağırması düzeltildi),
+D8_A_CAUGHT_3,SPK_AGENT1,yakin,1,chapter8.gd:437 yakalayan ajan yürüyüp Hikmet'in omzuna dokunur (_caught yorumu: 7 m öteden bağırması düzeltildi),[fmt: kod anahtarı biçimle kuruyor]
+D8_H_CAUGHT_1,SPK_HIKMET,ic_ses,,chapter8.gd:459 oyuncu Hikmet dükkânda/garajda kendi kendine konuşuyor (iç not),[fmt: kod anahtarı biçimle kuruyor]
+D8_H_CAUGHT_2,SPK_HIKMET,ic_ses,,chapter8.gd:459 oyuncu Hikmet dükkânda/garajda kendi kendine konuşuyor (iç not),[fmt: kod anahtarı biçimle kuruyor]
+D8_C_HINT_CAPACITOR,SPK_CEMIL,yakin,2,chapter8.gd:530 Hikmet–Cemil dükkânda tezgâhta yüz yüze,[fmt: kod anahtarı biçimle kuruyor]
+D8_C_HINT_ANTENNA,SPK_CEMIL,yakin,2,chapter8.gd:530 Hikmet–Cemil dükkânda tezgâhta yüz yüze,[fmt: kod anahtarı biçimle kuruyor]
+D8_C_HINT_GLASS,SPK_CEMIL,yakin,2,chapter8.gd:530 Hikmet–Cemil dükkânda tezgâhta yüz yüze,[fmt: kod anahtarı biçimle kuruyor]
+D8_C_HINT_TAPE,SPK_CEMIL,yakin,2,chapter8.gd:530 Hikmet–Cemil dükkânda tezgâhta yüz yüze,[fmt: kod anahtarı biçimle kuruyor]
+D8_C_HINT_CUTTER,SPK_CEMIL,yakin,2,chapter8.gd:530 Hikmet–Cemil dükkânda tezgâhta yüz yüze,[fmt: kod anahtarı biçimle kuruyor]
+D8_C_HINT_LAMINATOR,SPK_CEMIL,yakin,2,chapter8.gd:530 Hikmet–Cemil dükkânda tezgâhta yüz yüze,[fmt: kod anahtarı biçimle kuruyor]
+D8_C_HINT_RAINCOAT,SPK_CEMIL,yakin,2,chapter8.gd:530 Hikmet–Cemil dükkânda tezgâhta yüz yüze,[fmt: kod anahtarı biçimle kuruyor]
+D8_C_HINT_END,SPK_CEMIL,yakin,2,chapter8.gd:532 Hikmet–Cemil dükkânda tezgâhta yüz yüze,
+D8_H_NO_CARD,SPK_HIKMET,ic_ses,,chapter8.gd:562 oyuncu Hikmet dükkânda/garajda kendi kendine konuşuyor (iç not),
+D8_H_PHONE,SPK_HIKMET,ic_ses,,chapter8.gd:569 oyuncu Hikmet dükkânda/garajda kendi kendine konuşuyor (iç not),
+D8_H_CALL_1,SPK_HIKMET,telsiz,,chapter8.gd:586 Hikmet–Nihat sabit hat telefonu / Tolga telsizi (metinde cızırtı/(Telsiz)),
+D8_N_CALL_2,SPK_NIHAT,telsiz,,chapter8.gd:587 Hikmet–Nihat sabit hat telefonu / Tolga telsizi (metinde cızırtı/(Telsiz)),
+D8_H_CALL_3,SPK_HIKMET,telsiz,,chapter8.gd:588 Hikmet–Nihat sabit hat telefonu / Tolga telsizi (metinde cızırtı/(Telsiz)),
+D8_N_RULEFREE,SPK_NIHAT,telsiz,,chapter8.gd:590 Hikmet–Nihat sabit hat telefonu / Tolga telsizi (metinde cızırtı/(Telsiz)),
+D8_A1_RECALL,SPK_AGENT1,yakin,2,"chapter8.gd:594 ajan telsizinden çağrılınca Cemil'e cevap verir, tezgâh başında",
+D8_A2_RECALL,SPK_AGENT2,yakin,2,"chapter8.gd:595 ajan telsizinden çağrılınca Cemil'e cevap verir, tezgâh başında",
+D8_A2_RECALL_TEA,SPK_AGENT2,yakin,2,"chapter8.gd:595 ajan telsizinden çağrılınca Cemil'e cevap verir, tezgâh başında",
+D8_N_HINT,SPK_NIHAT,telsiz,,chapter8.gd:612 Hikmet–Nihat sabit hat telefonu / Tolga telsizi (metinde cızırtı/(Telsiz)),
+D8_H_CALL_END,SPK_HIKMET,telsiz,,chapter8.gd:613 Hikmet–Nihat sabit hat telefonu / Tolga telsizi (metinde cızırtı/(Telsiz)),
+D8_C_PAY,SPK_CEMIL,yakin,2,chapter8.gd:636 Hikmet–Cemil dükkânda tezgâhta yüz yüze,
+D8_H_PAY,SPK_HIKMET,yakin,2,chapter8.gd:642 Hikmet–Cemil dükkânda tezgâhta yüz yüze,
+D8_C_PAY2,SPK_CEMIL,yakin,2,chapter8.gd:643 Hikmet–Cemil dükkânda tezgâhta yüz yüze,
+D8_H_BADGE_1,SPK_HIKMET,yakin,2,chapter8.gd:653 Hikmet–Cemil dükkânda tezgâhta yüz yüze,
+D8_C_BADGE,SPK_CEMIL,yakin,2,chapter8.gd:659 Hikmet–Cemil dükkânda tezgâhta yüz yüze,
+D8_H_BADGE_2,SPK_HIKMET,yakin,2,chapter8.gd:660 Hikmet–Cemil dükkânda tezgâhta yüz yüze,
+D8_H_BADGE_3,SPK_HIKMET,yakin,2,chapter8.gd:661 Hikmet–Cemil dükkânda tezgâhta yüz yüze,
+D8_H_G1,SPK_HIKMET,ic_ses,,chapter8.gd:697 oyuncu Hikmet dükkânda/garajda kendi kendine konuşuyor (iç not),
+D8_H_G1_NOTAPE,SPK_HIKMET,ic_ses,,chapter8.gd:697 oyuncu Hikmet dükkânda/garajda kendi kendine konuşuyor (iç not),
+D8_H_G2,SPK_HIKMET,ic_ses,,chapter8.gd:704 oyuncu Hikmet dükkânda/garajda kendi kendine konuşuyor (iç not),
+D8_T_RADIO_A,SPK_TOLGA,telsiz,,chapter8.gd:707 Hikmet–Nihat sabit hat telefonu / Tolga telsizi (metinde cızırtı/(Telsiz)),
+D8_T_RADIO_B,SPK_TOLGA,telsiz,,chapter8.gd:707 Hikmet–Nihat sabit hat telefonu / Tolga telsizi (metinde cızırtı/(Telsiz)),
+D8_H_G3,SPK_HIKMET,ic_ses,,chapter8.gd:708 oyuncu Hikmet dükkânda/garajda kendi kendine konuşuyor (iç not),
+D8_H_G3_NO,SPK_HIKMET,ic_ses,,chapter8.gd:710 oyuncu Hikmet dükkânda/garajda kendi kendine konuşuyor (iç not),
+D8_H_G4,SPK_HIKMET,ic_ses,,chapter8.gd:711 oyuncu Hikmet dükkânda/garajda kendi kendine konuşuyor (iç not),
+D8_H_STAY,SPK_HIKMET,ic_ses,,chapter8.gd:719 oyuncu Hikmet dükkânda/garajda kendi kendine konuşuyor (iç not),
+D8_H_RIDE_1,SPK_HIKMET,ic_ses,,chapter8.gd:725 oyuncu Hikmet dükkânda/garajda kendi kendine konuşuyor (iç not),
+D8_H_RIDE_2,SPK_HIKMET,ic_ses,,chapter8.gd:736 oyuncu Hikmet dükkânda/garajda kendi kendine konuşuyor (iç not),
+D8_C_LATE,SPK_CEMIL,yakin,2,chapter8.gd:788 Hikmet–Cemil dükkânda tezgâhta yüz yüze,
+D8_H_FAIL_LATE,SPK_HIKMET,ic_ses,,chapter8.gd:792 oyuncu Hikmet dükkânda/garajda kendi kendine konuşuyor (iç not),
+D8_H_FAIL_LATE_HEIST,SPK_HIKMET,ic_ses,,chapter8.gd:790 oyuncu Hikmet dükkânda/garajda kendi kendine konuşuyor (iç not),
+D8_H_FAIL_LATE_PARTS,SPK_HIKMET,ic_ses,,chapter8.gd:792 oyuncu Hikmet dükkânda/garajda kendi kendine konuşuyor (iç not),
+D8_H_FAIL_CAUGHT,SPK_HIKMET,ic_ses,,chapter8.gd:783 oyuncu Hikmet dükkânda/garajda kendi kendine konuşuyor (iç not),
+D8_H_FAIL_END,SPK_HIKMET,ic_ses,,chapter8.gd:793 oyuncu Hikmet dükkânda/garajda kendi kendine konuşuyor (iç not),
+D8_H_FAIL_END_HEIST,SPK_HIKMET,ic_ses,,chapter8.gd:793 oyuncu Hikmet dükkânda/garajda kendi kendine konuşuyor (iç not),
+D9_T_A,SPK_TOLGA,ic_ses,,"chapter9.gd:271 Tolga ordugâhta kendi kendine düşünür/anlatır (bark/say, karşısında kimse yok)",[fmt: kod anahtarı biçimle kuruyor]
+D9_T_B,SPK_TOLGA,ic_ses,,"chapter9.gd:271 Tolga ordugâhta kendi kendine düşünür/anlatır (bark/say, karşısında kimse yok)",[fmt: kod anahtarı biçimle kuruyor]
+D9_T_C,SPK_TOLGA,ic_ses,,"chapter9.gd:271 Tolga ordugâhta kendi kendine düşünür/anlatır (bark/say, karşısında kimse yok)",[fmt: kod anahtarı biçimle kuruyor]
+D9_T_Y,SPK_TOLGA,ic_ses,,"chapter9.gd:271 Tolga ordugâhta kendi kendine düşünür/anlatır (bark/say, karşısında kimse yok)",[fmt: kod anahtarı biçimle kuruyor]
+D9_T_Y_PLAIN,SPK_TOLGA,ic_ses,,"chapter9.gd:271 Tolga ordugâhta kendi kendine düşünür/anlatır (bark/say, karşısında kimse yok)",
+D9_T_BYZ,SPK_TOLGA,ic_ses,,"chapter9.gd:268 Tolga ordugâhta kendi kendine düşünür/anlatır (bark/say, karşısında kimse yok)",
+D9_T_DEPORTED,SPK_TOLGA,ic_ses,,"chapter9.gd:266 Tolga ordugâhta kendi kendine düşünür/anlatır (bark/say, karşısında kimse yok)",
+D9_T_GOAL,SPK_TOLGA,ic_ses,,"chapter9.gd:280 Tolga ordugâhta kendi kendine düşünür/anlatır (bark/say, karşısında kimse yok)",
+D9_T_RADIO_DEAD,SPK_TOLGA,telsiz,,"chapter10g.gd:421 Hikmet–Tolga telsiz (chapter9.gd; metinde ""(Telsiz)"")",
+D9_H_CALL,SPK_HIKMET,telsiz,,"chapter9.gd:306 Hikmet–Tolga telsiz (chapter9.gd; metinde ""(Telsiz)"")",
+D9_T_ANSWER,SPK_TOLGA,telsiz,,"chapter9.gd:309 Hikmet–Tolga telsiz (chapter9.gd; metinde ""(Telsiz)"")",
+D9_T_ANSWER_NONE,SPK_TOLGA,telsiz,,"chapter9.gd:309 Hikmet–Tolga telsiz (chapter9.gd; metinde ""(Telsiz)"")",
+D9_H_8_1,SPK_HIKMET,yakin,2,chapter9.gd:310 ordugâhta NPC ile Tolga yüz yüze teklif/pazarlık sahnesi (say),[fmt: kod anahtarı biçimle kuruyor]
+D9_H_8_2,SPK_HIKMET,yakin,2,chapter9.gd:310 ordugâhta NPC ile Tolga yüz yüze teklif/pazarlık sahnesi (say),[fmt: kod anahtarı biçimle kuruyor]
+D9_H_8_2_HEIST,SPK_HIKMET,yakin,2,chapter9.gd:310 ordugâhta NPC ile Tolga yüz yüze teklif/pazarlık sahnesi (say),[fmt: kod anahtarı biçimle kuruyor]
+D9_H_8_2_CAUGHT,SPK_HIKMET,yakin,2,chapter9.gd:310 ordugâhta NPC ile Tolga yüz yüze teklif/pazarlık sahnesi (say),[fmt: kod anahtarı biçimle kuruyor]
+D9_H_8_3,SPK_HIKMET,yakin,2,chapter9.gd:310 ordugâhta NPC ile Tolga yüz yüze teklif/pazarlık sahnesi (say),[fmt: kod anahtarı biçimle kuruyor]
+D9_H_NO_ANSWER,SPK_HIKMET,telsiz,,"chapter9.gd:318 Hikmet–Tolga telsiz (chapter9.gd; metinde ""(Telsiz)"")",
+D9_H_HERE,SPK_HIKMET,telsiz,,"chapter9.gd:300 Hikmet–Tolga telsiz (chapter9.gd; metinde ""(Telsiz)"")",
+D9_T_HERE,SPK_TOLGA,telsiz,,"chapter9.gd:301 Hikmet–Tolga telsiz (chapter9.gd; metinde ""(Telsiz)"")",
+D9_KADRI_BUSY,SPK_KADRI,yakin,2,chapter9.gd:371 ordugâhta NPC ile Tolga yüz yüze teklif/pazarlık sahnesi (say),[fmt: kod anahtarı biçimle kuruyor]
+D9_LUTFI_BUSY,SPK_LUTFI,yakin,2,chapter9.gd:371 ordugâhta NPC ile Tolga yüz yüze teklif/pazarlık sahnesi (say),[fmt: kod anahtarı biçimle kuruyor]
+D9_URBAN_BUSY,SPK_URBAN,yakin,2,chapter9.gd:371 ordugâhta NPC ile Tolga yüz yüze teklif/pazarlık sahnesi (say),[fmt: kod anahtarı biçimle kuruyor]
+D9_KADRI_OFFER_1,SPK_KADRI,yakin,2,chapter9.gd:1007 ordugâhta NPC ile Tolga yüz yüze teklif/pazarlık sahnesi (say),
+D9_T_KADRI_Q,SPK_TOLGA,yakin,2,chapter9.gd:271 ordugâhta NPC ile Tolga yüz yüze teklif/pazarlık sahnesi (say),[fmt: kod anahtarı biçimle kuruyor]
+D9_KADRI_OFFER_2,SPK_KADRI,yakin,2,chapter9.gd:400 ordugâhta NPC ile Tolga yüz yüze teklif/pazarlık sahnesi (say),[fmt: kod anahtarı biçimle kuruyor]
+D9_KADRI_TRIAL,SPK_KADRI,yakin,2,ordugâhta NPC ile Tolga yüz yüze teklif/pazarlık sahnesi (say),
+D9_KADRI_TR1,SPK_KADRI,yakin,2,chapter9.gd:426 ordugâhta NPC ile Tolga yüz yüze teklif/pazarlık sahnesi (say),[fmt: kod anahtarı biçimle kuruyor]
+D9_KADRI_TR2,SPK_KADRI,yakin,2,chapter9.gd:426 ordugâhta NPC ile Tolga yüz yüze teklif/pazarlık sahnesi (say),[fmt: kod anahtarı biçimle kuruyor]
+D9_KADRI_TR3,SPK_KADRI,yakin,2,chapter9.gd:426 ordugâhta NPC ile Tolga yüz yüze teklif/pazarlık sahnesi (say),[fmt: kod anahtarı biçimle kuruyor]
+D9_KADRI_AGAIN,SPK_KADRI,yakin,2,chapter9.gd:396 ordugâhta NPC ile Tolga yüz yüze teklif/pazarlık sahnesi (say),[fmt: kod anahtarı biçimle kuruyor]
+D9_KADRI_YES,SPK_KADRI,yakin,2,chapter9.gd:432 ordugâhta NPC ile Tolga yüz yüze teklif/pazarlık sahnesi (say),[fmt: kod anahtarı biçimle kuruyor]
+D9_T_KADRI_YES,SPK_TOLGA,yakin,2,chapter9.gd:271 ordugâhta NPC ile Tolga yüz yüze teklif/pazarlık sahnesi (say),[fmt: kod anahtarı biçimle kuruyor]
+D9_KADRI_NO,SPK_KADRI,yakin,2,chapter9.gd:438 ordugâhta NPC ile Tolga yüz yüze teklif/pazarlık sahnesi (say),[fmt: kod anahtarı biçimle kuruyor]
+D9_LUTFI_OFFER_1,SPK_LUTFI,yakin,2,chapter9.gd:399 ordugâhta NPC ile Tolga yüz yüze teklif/pazarlık sahnesi (say),[fmt: kod anahtarı biçimle kuruyor]
+D9_T_LUTFI_Q,SPK_TOLGA,yakin,2,chapter9.gd:271 ordugâhta NPC ile Tolga yüz yüze teklif/pazarlık sahnesi (say),[fmt: kod anahtarı biçimle kuruyor]
+D9_LUTFI_OFFER_2,SPK_LUTFI,yakin,2,chapter9.gd:400 ordugâhta NPC ile Tolga yüz yüze teklif/pazarlık sahnesi (say),[fmt: kod anahtarı biçimle kuruyor]
+D9_LUTFI_TRIAL,SPK_LUTFI,yakin,2,ordugâhta NPC ile Tolga yüz yüze teklif/pazarlık sahnesi (say),
+D9_LUTFI_TR1,SPK_LUTFI,yakin,2,chapter9.gd:426 ordugâhta NPC ile Tolga yüz yüze teklif/pazarlık sahnesi (say),[fmt: kod anahtarı biçimle kuruyor]
+D9_LUTFI_TR2,SPK_LUTFI,yakin,2,chapter9.gd:426 ordugâhta NPC ile Tolga yüz yüze teklif/pazarlık sahnesi (say),[fmt: kod anahtarı biçimle kuruyor]
+D9_LUTFI_TR3,SPK_LUTFI,yakin,2,chapter9.gd:426 ordugâhta NPC ile Tolga yüz yüze teklif/pazarlık sahnesi (say),[fmt: kod anahtarı biçimle kuruyor]
+D9_LUTFI_AGAIN,SPK_LUTFI,yakin,2,chapter9.gd:396 ordugâhta NPC ile Tolga yüz yüze teklif/pazarlık sahnesi (say),[fmt: kod anahtarı biçimle kuruyor]
+D9_LUTFI_YES,SPK_LUTFI,yakin,2,chapter9.gd:432 ordugâhta NPC ile Tolga yüz yüze teklif/pazarlık sahnesi (say),[fmt: kod anahtarı biçimle kuruyor]
+D9_T_LUTFI_YES,SPK_TOLGA,yakin,2,chapter9.gd:271 ordugâhta NPC ile Tolga yüz yüze teklif/pazarlık sahnesi (say),[fmt: kod anahtarı biçimle kuruyor]
+D9_LUTFI_NO,SPK_LUTFI,yakin,2,chapter9.gd:438 ordugâhta NPC ile Tolga yüz yüze teklif/pazarlık sahnesi (say),[fmt: kod anahtarı biçimle kuruyor]
+D9_URBAN_OFFER_1,SPK_URBAN,yakin,2,chapter9.gd:399 ordugâhta NPC ile Tolga yüz yüze teklif/pazarlık sahnesi (say),[fmt: kod anahtarı biçimle kuruyor]
+D9_T_URBAN_Q,SPK_TOLGA,yakin,2,chapter9.gd:271 ordugâhta NPC ile Tolga yüz yüze teklif/pazarlık sahnesi (say),[fmt: kod anahtarı biçimle kuruyor]
+D9_URBAN_OFFER_2,SPK_URBAN,yakin,2,chapter9.gd:400 ordugâhta NPC ile Tolga yüz yüze teklif/pazarlık sahnesi (say),[fmt: kod anahtarı biçimle kuruyor]
+D9_URBAN_TRIAL,SPK_URBAN,yakin,2,ordugâhta NPC ile Tolga yüz yüze teklif/pazarlık sahnesi (say),
+D9_URBAN_TRIAL_NOPH,SPK_URBAN,yakin,2,chapter9.gd:416 ordugâhta NPC ile Tolga yüz yüze teklif/pazarlık sahnesi (say),[fmt: kod anahtarı biçimle kuruyor]
+D9_URBAN_TR1,SPK_URBAN,yakin,2,chapter9.gd:426 ordugâhta NPC ile Tolga yüz yüze teklif/pazarlık sahnesi (say),[fmt: kod anahtarı biçimle kuruyor]
+D9_URBAN_TR2,SPK_URBAN,yakin,2,chapter9.gd:426 ordugâhta NPC ile Tolga yüz yüze teklif/pazarlık sahnesi (say),[fmt: kod anahtarı biçimle kuruyor]
+D9_URBAN_TR3,SPK_URBAN,yakin,2,chapter9.gd:426 ordugâhta NPC ile Tolga yüz yüze teklif/pazarlık sahnesi (say),[fmt: kod anahtarı biçimle kuruyor]
+D9_URBAN_AGAIN,SPK_URBAN,yakin,2,chapter9.gd:396 ordugâhta NPC ile Tolga yüz yüze teklif/pazarlık sahnesi (say),[fmt: kod anahtarı biçimle kuruyor]
+D9_URBAN_YES,SPK_URBAN,yakin,2,chapter9.gd:432 ordugâhta NPC ile Tolga yüz yüze teklif/pazarlık sahnesi (say),[fmt: kod anahtarı biçimle kuruyor]
+D9_T_URBAN_YES,SPK_TOLGA,yakin,2,chapter9.gd:271 ordugâhta NPC ile Tolga yüz yüze teklif/pazarlık sahnesi (say),[fmt: kod anahtarı biçimle kuruyor]
+D9_URBAN_NO,SPK_URBAN,yakin,2,chapter9.gd:438 ordugâhta NPC ile Tolga yüz yüze teklif/pazarlık sahnesi (say),[fmt: kod anahtarı biçimle kuruyor]
+D9_C_NOBODY,SPK_CANDARLI,yakin,2,chapter9.gd:383 ordugâhta NPC ile Tolga yüz yüze teklif/pazarlık sahnesi (say),
+D9_C_NOBODY_GONE,SPK_CANDARLI,yakin,2,chapter9.gd:383 ordugâhta NPC ile Tolga yüz yüze teklif/pazarlık sahnesi (say),
+D9_P_1,SPK_PASHA,yakin,2,chapter9.gd:462 ordugâhta NPC ile Tolga yüz yüze teklif/pazarlık sahnesi (say),
+D9_P_1_KAFTAN,SPK_PASHA,yakin,2,chapter9.gd:462 ordugâhta NPC ile Tolga yüz yüze teklif/pazarlık sahnesi (say),
+D9_T_P_2,SPK_TOLGA,yakin,2,chapter9.gd:464 ordugâhta NPC ile Tolga yüz yüze teklif/pazarlık sahnesi (say),
+D9_P_3,SPK_PASHA,yakin,2,chapter9.gd:467 ordugâhta NPC ile Tolga yüz yüze teklif/pazarlık sahnesi (say),
+D9_T_P_4,SPK_TOLGA,yakin,2,chapter9.gd:468 ordugâhta NPC ile Tolga yüz yüze teklif/pazarlık sahnesi (say),
+D9_P_5,SPK_PASHA,yakin,2,chapter9.gd:469 ordugâhta NPC ile Tolga yüz yüze teklif/pazarlık sahnesi (say),
+D9_P_AGAIN,SPK_PASHA,yakin,2,chapter9.gd:453 ordugâhta NPC ile Tolga yüz yüze teklif/pazarlık sahnesi (say),
+D9_P_GALATA,SPK_PASHA,yakin,2,chapter9.gd:483 ordugâhta NPC ile Tolga yüz yüze teklif/pazarlık sahnesi (say),
+D9_T_GALATA,SPK_TOLGA,yakin,2,chapter9.gd:484 ordugâhta NPC ile Tolga yüz yüze teklif/pazarlık sahnesi (say),
+D9_P_FATIH,SPK_PASHA,yakin,2,chapter9.gd:489 ordugâhta NPC ile Tolga yüz yüze teklif/pazarlık sahnesi (say),
+D9_T_FATIH,SPK_TOLGA,yakin,2,chapter9.gd:490 ordugâhta NPC ile Tolga yüz yüze teklif/pazarlık sahnesi (say),
+D9_P_NO,SPK_PASHA,yakin,2,chapter9.gd:503 ordugâhta NPC ile Tolga yüz yüze teklif/pazarlık sahnesi (say),
+D9_P_AGAIN_FATIH,SPK_PASHA,yakin,2,chapter9.gd:446 ordugâhta NPC ile Tolga yüz yüze teklif/pazarlık sahnesi (say),
+D9_THEO_1,SPK_THEODOROS,yakin_yuksek,8,"chapter9.gd:516 Theodoros beyaz bayrakla ordugâha koşup ""Bekleyin!"" diye seslenir",
+D9_T_THEO_2,SPK_TOLGA,yakin,2,chapter9.gd:517 ordugâhta NPC ile Tolga yüz yüze teklif/pazarlık sahnesi (say),
+D9_THEO_3,SPK_THEODOROS,yakin_yuksek,8,"chapter9.gd:518 Theodoros beyaz bayrakla ordugâha koşup ""Bekleyin!"" diye seslenir",
+D9_T_THEO_4,SPK_TOLGA,yakin,2,chapter9.gd:519 ordugâhta NPC ile Tolga yüz yüze teklif/pazarlık sahnesi (say),
+D9_THEO_5,SPK_THEODOROS,yakin,2,chapter9.gd:520 ordugâhta NPC ile Tolga yüz yüze teklif/pazarlık sahnesi (say),
+D9_THEO_AGAIN,SPK_THEODOROS,yakin,2,chapter9.gd:514 ordugâhta NPC ile Tolga yüz yüze teklif/pazarlık sahnesi (say),
+D9_THEO_YES,SPK_THEODOROS,yakin,2,chapter9.gd:528 ordugâhta NPC ile Tolga yüz yüze teklif/pazarlık sahnesi (say),
+D9_T_THEO_YES,SPK_TOLGA,yakin,2,chapter9.gd:532 ordugâhta NPC ile Tolga yüz yüze teklif/pazarlık sahnesi (say),
+D9_THEO_NO,SPK_THEODOROS,yakin,2,chapter9.gd:536 ordugâhta NPC ile Tolga yüz yüze teklif/pazarlık sahnesi (say),
+D9_THEO_OPEN,SPK_THEODOROS,yakin,2,chapter9.gd:510 ordugâhta NPC ile Tolga yüz yüze teklif/pazarlık sahnesi (say),
+D9_T_THEO_OPEN,SPK_TOLGA,yakin,2,chapter9.gd:511 ordugâhta NPC ile Tolga yüz yüze teklif/pazarlık sahnesi (say),
+D9_G_1,SPK_HASAN,yakin,3,chapter9.gd:550 Otağ kapısı nöbetçileri Tolga ile yüz yüze,
+D9_G_2,SPK_HUSEYIN,yakin,3,chapter9.gd:551 Otağ kapısı nöbetçileri Tolga ile yüz yüze,
+D9_T_GATE_OPEN,SPK_TOLGA,ic_ses,,"chapter9.gd:559 Tolga ordugâhta kendi kendine düşünür/anlatır (bark/say, karşısında kimse yok)",
+D9_G_LATER,SPK_HUSEYIN,yakin,3,chapter9.gd:565 Otağ kapısı nöbetçileri Tolga ile yüz yüze,
+D9_G_AGAIN,SPK_HASAN,yakin,3,chapter9.gd:547 Otağ kapısı nöbetçileri Tolga ile yüz yüze,
+D9_G_WAIT,SPK_HASAN,yakin,3,chapter9.gd:569 Otağ kapısı nöbetçileri Tolga ile yüz yüze,
+D9_T_GATE_WAIT,SPK_TOLGA,yakin,2,chapter9.gd:271 ordugâhta NPC ile Tolga yüz yüze teklif/pazarlık sahnesi (say),[fmt: kod anahtarı biçimle kuruyor]
+D9_T_GATE_BYZ,SPK_TOLGA,yakin,2,chapter9.gd:271 ordugâhta NPC ile Tolga yüz yüze teklif/pazarlık sahnesi (say),[fmt: kod anahtarı biçimle kuruyor]
+D9_T_GATE_DEPORTED,SPK_TOLGA,yakin,2,chapter9.gd:271 ordugâhta NPC ile Tolga yüz yüze teklif/pazarlık sahnesi (say),[fmt: kod anahtarı biçimle kuruyor]
+D9_T_GATE_LETTER,SPK_TOLGA,yakin,2,chapter9.gd:271 ordugâhta NPC ile Tolga yüz yüze teklif/pazarlık sahnesi (say),[fmt: kod anahtarı biçimle kuruyor]
+D9_T_H2_1,SPK_TOLGA,yakin,2,chapter9.gd:619 ordugâhta NPC ile Tolga yüz yüze teklif/pazarlık sahnesi (say),
+D9_H2_2,SPK_HIKMET,yakin,2,"chapter9.gd:620 Hikmet 8.4'te pazarda bizzat Tolga'nın karşısında (hikmet_npc), pijamayla",
+D9_T_H2_3,SPK_TOLGA,yakin,2,chapter9.gd:621 ordugâhta NPC ile Tolga yüz yüze teklif/pazarlık sahnesi (say),
+D9_H2_4,SPK_HIKMET,yakin,2,"chapter9.gd:622 Hikmet 8.4'te pazarda bizzat Tolga'nın karşısında (hikmet_npc), pijamayla",
+D9_T_H2_5,SPK_TOLGA,yakin,2,chapter9.gd:628 ordugâhta NPC ile Tolga yüz yüze teklif/pazarlık sahnesi (say),
+D9_H2_6,SPK_HIKMET,yakin,2,"chapter9.gd:629 Hikmet 8.4'te pazarda bizzat Tolga'nın karşısında (hikmet_npc), pijamayla",
+D9_H2_AGAIN,SPK_HIKMET,yakin,2,"chapter9.gd:616 Hikmet 8.4'te pazarda bizzat Tolga'nın karşısında (hikmet_npc), pijamayla",
+D9_T_GOAT,SPK_TOLGA,ic_ses,,"chapter9.gd:811 Tolga ordugâhta kendi kendine düşünür/anlatır (bark/say, karşısında kimse yok)",
+D9_MINER_BUSY,SPK_MINER,yakin,2,chapter9.gd:371 ordugâhta NPC ile Tolga yüz yüze teklif/pazarlık sahnesi (say),[fmt: kod anahtarı biçimle kuruyor]
+D9_MINER_OFFER_1,SPK_MINER,yakin,2,chapter9.gd:399 ordugâhta NPC ile Tolga yüz yüze teklif/pazarlık sahnesi (say),[fmt: kod anahtarı biçimle kuruyor]
+D9_T_MINER_Q,SPK_TOLGA,yakin,2,chapter9.gd:271 ordugâhta NPC ile Tolga yüz yüze teklif/pazarlık sahnesi (say),[fmt: kod anahtarı biçimle kuruyor]
+D9_MINER_OFFER_2,SPK_MINER,yakin,2,chapter9.gd:400 ordugâhta NPC ile Tolga yüz yüze teklif/pazarlık sahnesi (say),[fmt: kod anahtarı biçimle kuruyor]
+D9_MINER_TRIAL,SPK_MINER,yakin,2,ordugâhta NPC ile Tolga yüz yüze teklif/pazarlık sahnesi (say),
+D9_MINER_TR1,SPK_MINER,yakin,2,chapter9.gd:426 ordugâhta NPC ile Tolga yüz yüze teklif/pazarlık sahnesi (say),[fmt: kod anahtarı biçimle kuruyor]
+D9_MINER_TR2,SPK_MINER,yakin,2,chapter9.gd:426 ordugâhta NPC ile Tolga yüz yüze teklif/pazarlık sahnesi (say),[fmt: kod anahtarı biçimle kuruyor]
+D9_MINER_TR3,SPK_MINER,yakin,2,chapter9.gd:426 ordugâhta NPC ile Tolga yüz yüze teklif/pazarlık sahnesi (say),[fmt: kod anahtarı biçimle kuruyor]
+D9_MINER_YES,SPK_MINER,yakin,2,chapter9.gd:432 ordugâhta NPC ile Tolga yüz yüze teklif/pazarlık sahnesi (say),[fmt: kod anahtarı biçimle kuruyor]
+D9_T_MINER_YES,SPK_TOLGA,yakin,2,chapter9.gd:271 ordugâhta NPC ile Tolga yüz yüze teklif/pazarlık sahnesi (say),[fmt: kod anahtarı biçimle kuruyor]
+D9_MINER_NO,SPK_MINER,yakin,2,chapter9.gd:438 ordugâhta NPC ile Tolga yüz yüze teklif/pazarlık sahnesi (say),[fmt: kod anahtarı biçimle kuruyor]
+D9_MINER_AGAIN,SPK_MINER,yakin,2,chapter9.gd:396 ordugâhta NPC ile Tolga yüz yüze teklif/pazarlık sahnesi (say),[fmt: kod anahtarı biçimle kuruyor]
+D7_N_TRACE_PALACE_SEALED,SPK_NIHAT,ic_ses,,chapter7.gd:285 Nihat tarayıcı/rapor başında kendi kendine not düşüyor (hologram/tarama anlatısı),
+D7_N_TRACE_PALACE_WAX,SPK_NIHAT,ic_ses,,chapter7.gd:285 Nihat tarayıcı/rapor başında kendi kendine not düşüyor (hologram/tarama anlatısı),
+D8_H_GUN_1,SPK_HIKMET,ic_ses,,chapter8.gd:749 oyuncu Hikmet dükkânda/garajda kendi kendine konuşuyor (iç not),
+D8_H_GUN_2,SPK_HIKMET,ic_ses,,chapter8.gd:758 oyuncu Hikmet dükkânda/garajda kendi kendine konuşuyor (iç not),
+D8_H_GUN_3,SPK_HIKMET,ic_ses,,chapter8.gd:767 oyuncu Hikmet dükkânda/garajda kendi kendine konuşuyor (iç not),
+D9_T_H2_GUN,SPK_TOLGA,yakin,2,chapter9.gd:624 ordugâhta NPC ile Tolga yüz yüze teklif/pazarlık sahnesi (say),
+D9_H2_GUN,SPK_HIKMET,yakin,2,"chapter9.gd:625 Hikmet 8.4'te pazarda bizzat Tolga'nın karşısında (hikmet_npc), pijamayla",
+D9_T_H2_GUN2,SPK_TOLGA,yakin,2,chapter9.gd:626 ordugâhta NPC ile Tolga yüz yüze teklif/pazarlık sahnesi (say),
+D9_H2_GUN2,SPK_HIKMET,yakin,2,"chapter9.gd:627 Hikmet 8.4'te pazarda bizzat Tolga'nın karşısında (hikmet_npc), pijamayla",
+D7_AWE_KADRI,SPK_KADRI,yakin,2,"chapter7.gd:580 Nihat NPC ile yüz yüze konuşuyor (soruşturma sahnesi, say)",[fmt: kod anahtarı biçimle kuruyor]
+D7_AWE_URBAN,SPK_URBAN,yakin,2,"chapter7.gd:580 Nihat NPC ile yüz yüze konuşuyor (soruşturma sahnesi, say)",[fmt: kod anahtarı biçimle kuruyor]
+D7_AWE_LUTFI,SPK_LUTFI,yakin,2,"chapter7.gd:580 Nihat NPC ile yüz yüze konuşuyor (soruşturma sahnesi, say)",[fmt: kod anahtarı biçimle kuruyor]
+D7_AWE_GUARDS,SPK_HASAN,yakin,2,"chapter7.gd:580 Nihat NPC ile yüz yüze konuşuyor (soruşturma sahnesi, say)",[fmt: kod anahtarı biçimle kuruyor]
+D7_AWE_NIKO,SPK_NIKO,yakin,2,"chapter7.gd:580 Nihat NPC ile yüz yüze konuşuyor (soruşturma sahnesi, say)",[fmt: kod anahtarı biçimle kuruyor]
+D7_AWE_THEODOROS,SPK_THEODOROS,yakin,2,"chapter7.gd:580 Nihat NPC ile yüz yüze konuşuyor (soruşturma sahnesi, say)",[fmt: kod anahtarı biçimle kuruyor]
+D7_AWE_GIUSTINIANI,SPK_GIUST,yakin,2,"chapter7.gd:580 Nihat NPC ile yüz yüze konuşuyor (soruşturma sahnesi, say)",[fmt: kod anahtarı biçimle kuruyor]
+D7_AWE_EMPEROR,SPK_EMPEROR,yakin,2,"chapter7.gd:580 Nihat NPC ile yüz yüze konuşuyor (soruşturma sahnesi, say)",[fmt: kod anahtarı biçimle kuruyor]
+D7_HUSEYIN_AWE_TRUTH,SPK_HUSEYIN,yakin,2,"chapter7.gd:754 Nihat NPC ile yüz yüze konuşuyor (soruşturma sahnesi, say)",
+D7_NIKO_AWE_TRUTH,SPK_NIKO,yakin,2,"chapter7.gd:780 Nihat NPC ile yüz yüze konuşuyor (soruşturma sahnesi, say)",
+D7_N_AWE_TRUTH,SPK_NIHAT,yakin,2,"chapter7.gd:756 Nihat NPC ile yüz yüze konuşuyor (soruşturma sahnesi, say)",
+D7_EAVES_GUARDS,SPK_HASAN,fisilti,1.5,"chapter7.gd:857 Hasan–Hüseyin ""(Fısıltıyla)"": Nihat görünmez dinler",
+D7_EAVES_GUARDS_2_KITCHEN,SPK_HUSEYIN,fisilti,1.5,"chapter7.gd:858 Hasan–Hüseyin ""(Fısıltıyla)"": Nihat görünmez dinler",[fmt: kod anahtarı biçimle kuruyor]
+D7_EAVES_GUARDS_2_TENT,SPK_HUSEYIN,fisilti,1.5,"chapter7.gd:858 Hasan–Hüseyin ""(Fısıltıyla)"": Nihat görünmez dinler",[fmt: kod anahtarı biçimle kuruyor]
+D7_EAVES_GUARDS_2_ARTILLERY,SPK_HUSEYIN,fisilti,1.5,"chapter7.gd:858 Hasan–Hüseyin ""(Fısıltıyla)"": Nihat görünmez dinler",[fmt: kod anahtarı biçimle kuruyor]
+D7_EAVES_GUARDS_2_MARKET,SPK_HUSEYIN,fisilti,1.5,"chapter7.gd:858 Hasan–Hüseyin ""(Fısıltıyla)"": Nihat görünmez dinler",[fmt: kod anahtarı biçimle kuruyor]
+D7_EAVES_KADRI,SPK_KADRI,ic_ses,,"chapter7.gd:862 ""(Kendi kendine)"": NPC yalnız mırıldanıyor, görünmez Nihat dinliyor",[fmt: kod anahtarı biçimle kuruyor]
+D7_EAVES_LUTFI,SPK_LUTFI,ic_ses,,"chapter7.gd:862 ""(Kendi kendine)"": NPC yalnız mırıldanıyor, görünmez Nihat dinliyor",[fmt: kod anahtarı biçimle kuruyor]
+D7_EAVES_URBAN,SPK_URBAN,ic_ses,,"chapter7.gd:862 ""(Kendi kendine)"": NPC yalnız mırıldanıyor, görünmez Nihat dinliyor",[fmt: kod anahtarı biçimle kuruyor]
+D7_EAVES_THEODOROS,SPK_THEODOROS,ic_ses,,"chapter7.gd:862 ""(Kendi kendine)"": NPC yalnız mırıldanıyor, görünmez Nihat dinliyor",[fmt: kod anahtarı biçimle kuruyor]
+D7_EAVES_GIUSTINIANI,SPK_GIUST,ic_ses,,"chapter7.gd:862 ""(Kendi kendine)"": NPC yalnız mırıldanıyor, görünmez Nihat dinliyor",[fmt: kod anahtarı biçimle kuruyor]
+D7_EAVES_EMPEROR,SPK_EMPEROR,ic_ses,,"chapter7.gd:862 ""(Kendi kendine)"": NPC yalnız mırıldanıyor, görünmez Nihat dinliyor",[fmt: kod anahtarı biçimle kuruyor]
+D7_N_EAVES,SPK_NIHAT,fisilti,1,"chapter7.gd:865 Nihat görünmez, yanlarında alçak sesle",
+D7_M_SEEN,SPK_MUFIDE,telsiz,,"chapter7.gd:1273 Müfide ""(Büro telsizi)/(Telsizden)"" ile Nihat'a",
+D7_M_LEGEND,SPK_MUFIDE,telsiz,,"chapter7.gd:1270 Müfide ""(Büro telsizi)/(Telsizden)"" ile Nihat'a",
+D7_N_LEGEND,SPK_NIHAT,telsiz,,chapter7.gd:1271 Nihat Müfide'ye telsizle karşılık veriyor (zincir/telsiz sahnesi),
+D8_A_CAUGHT_2_EMPTY,SPK_AGENT1,yakin,1,chapter8.gd:438 yakalayan ajan yürüyüp Hikmet'in omzuna dokunur (_caught yorumu: 7 m öteden bağırması düzeltildi),
+D8_A_CAUGHT_2_ANTENNA,SPK_AGENT1,yakin,1,yakalayan ajan yürüyüp Hikmet'in omzuna dokunur (_caught yorumu: 7 m öteden bağırması düzeltildi),
+D8_A_CAUGHT_2_GLASS,SPK_AGENT1,yakin,1,yakalayan ajan yürüyüp Hikmet'in omzuna dokunur (_caught yorumu: 7 m öteden bağırması düzeltildi),
+D8_A_CAUGHT_2_TAPE,SPK_AGENT1,yakin,1,yakalayan ajan yürüyüp Hikmet'in omzuna dokunur (_caught yorumu: 7 m öteden bağırması düzeltildi),
+D8_A_CAUGHT_2_CUTTER,SPK_AGENT1,yakin,1,yakalayan ajan yürüyüp Hikmet'in omzuna dokunur (_caught yorumu: 7 m öteden bağırması düzeltildi),
+D8_A_CAUGHT_2_LAMINATOR,SPK_AGENT1,yakin,1,yakalayan ajan yürüyüp Hikmet'in omzuna dokunur (_caught yorumu: 7 m öteden bağırması düzeltildi),
+D8_A_CAUGHT_2_RAINCOAT,SPK_AGENT1,yakin,1,yakalayan ajan yürüyüp Hikmet'in omzuna dokunur (_caught yorumu: 7 m öteden bağırması düzeltildi),
+D8_H_FAIL_CAUGHT_EMPTY,SPK_HIKMET,ic_ses,,oyuncu Hikmet dükkânda/garajda kendi kendine konuşuyor (iç not),
+D8_H_FAIL_CAUGHT_ANTENNA,SPK_HIKMET,ic_ses,,oyuncu Hikmet dükkânda/garajda kendi kendine konuşuyor (iç not),
+D8_H_FAIL_CAUGHT_GLASS,SPK_HIKMET,ic_ses,,oyuncu Hikmet dükkânda/garajda kendi kendine konuşuyor (iç not),
+D8_H_FAIL_CAUGHT_TAPE,SPK_HIKMET,ic_ses,,oyuncu Hikmet dükkânda/garajda kendi kendine konuşuyor (iç not),
+D8_H_FAIL_CAUGHT_CUTTER,SPK_HIKMET,ic_ses,,oyuncu Hikmet dükkânda/garajda kendi kendine konuşuyor (iç not),
+D8_H_FAIL_CAUGHT_LAMINATOR,SPK_HIKMET,ic_ses,,oyuncu Hikmet dükkânda/garajda kendi kendine konuşuyor (iç not),
+D8_H_FAIL_CAUGHT_RAINCOAT,SPK_HIKMET,ic_ses,,oyuncu Hikmet dükkânda/garajda kendi kendine konuşuyor (iç not),
+D8_C_TEA_OFFER,SPK_CEMIL,yakin_yuksek,6,"chapter8.gd:546 Cemil dükkânın ötesindeki ajanlara ""Beyler!"" diye seslenir",
+D8_A1_TEA,SPK_AGENT1,yakin,4,chapter8.gd:547 ajanlar Cemil'le/kendi aralarında dükkânda konuşur,
+D8_H_TEA,SPK_HIKMET,ic_ses,,chapter8.gd:553 oyuncu Hikmet dükkânda/garajda kendi kendine konuşuyor (iç not),
+D8_A2_TEA_DONE,SPK_AGENT2,yakin,4,chapter8.gd:386 ajanlar Cemil'le/kendi aralarında dükkânda konuşur,
+D7_M_LOST_HEN,SPK_MUFIDE,telsiz,,"chapter7.gd:1033 Müfide ""(Büro telsizi)/(Telsizden)"" ile Nihat'a",
+D9_P_1_ALT,SPK_PASHA,yakin,2,chapter9.gd:457 ordugâhta NPC ile Tolga yüz yüze teklif/pazarlık sahnesi (say),
+D7_N_TRACE_KITCHEN_FIRE,SPK_NIHAT,ic_ses,,chapter7.gd:288 Nihat tarayıcı/rapor başında kendi kendine not düşüyor (hologram/tarama anlatısı),[fmt: kod anahtarı biçimle kuruyor]
+D7_N_HOLO_KITCHEN_FIRE,SPK_NIHAT,ic_ses,,chapter7.gd:554 Nihat tarayıcı/rapor başında kendi kendine not düşüyor (hologram/tarama anlatısı),[fmt: kod anahtarı biçimle kuruyor]
+D7_N_TRACE_CELL_CARD,SPK_NIHAT,ic_ses,,chapter7.gd:288 Nihat tarayıcı/rapor başında kendi kendine not düşüyor (hologram/tarama anlatısı),[fmt: kod anahtarı biçimle kuruyor]
+D7_N_TRACE_CELL_CARD_NOFEZ,SPK_NIHAT,ic_ses,,chapter7.gd:288 Nihat tarayıcı/rapor başında kendi kendine not düşüyor (hologram/tarama anlatısı),[fmt: kod anahtarı biçimle kuruyor]
+D7_KADRI_NO_PLAIN,SPK_KADRI,yakin,2,"chapter7.gd:652 Nihat NPC ile yüz yüze konuşuyor (soruşturma sahnesi, say)",
+D7_KADRI_SAW,SPK_KADRI,yakin,2,"chapter7.gd:647 Nihat NPC ile yüz yüze konuşuyor (soruşturma sahnesi, say)",
+D7_KADRI_SAW_FIRE,SPK_KADRI,yakin,2,"chapter7.gd:649 Nihat NPC ile yüz yüze konuşuyor (soruşturma sahnesi, say)",
+D7_KADRI_SAW_KITCHEN,SPK_KADRI,yakin,2,"chapter7.gd:651 Nihat NPC ile yüz yüze konuşuyor (soruşturma sahnesi, say)",
+D7_KADRI_SAW_THERMOS,SPK_KADRI,yakin,2,"chapter7.gd:645 Nihat NPC ile yüz yüze konuşuyor (soruşturma sahnesi, say)",
+D9_KADRI_OFFER_2_FIRE,SPK_KADRI,yakin,2,ordugâhta NPC ile Tolga yüz yüze teklif/pazarlık sahnesi (say),
+D9_KADRI_OFFER_2_KITCHEN,SPK_KADRI,yakin,2,ordugâhta NPC ile Tolga yüz yüze teklif/pazarlık sahnesi (say),
+D9_URBAN_OFFER_1_PLAIN,SPK_URBAN,yakin,2,ordugâhta NPC ile Tolga yüz yüze teklif/pazarlık sahnesi (say),
+D9_URBAN_OFFER_2_PLAIN,SPK_URBAN,yakin,2,ordugâhta NPC ile Tolga yüz yüze teklif/pazarlık sahnesi (say),
+D7_N_URBAN_ASK_PLAIN,SPK_NIHAT,yakin,2,"chapter7.gd:594 Nihat NPC ile yüz yüze konuşuyor (soruşturma sahnesi, say)",
+D7_URBAN_DJINN_TAPE,SPK_URBAN,yakin,2,"chapter7.gd:598 Nihat NPC ile yüz yüze konuşuyor (soruşturma sahnesi, say)",[fmt: kod anahtarı biçimle kuruyor]
+D7_URBAN_DJINN_LIGHTER,SPK_URBAN,yakin,2,"chapter7.gd:598 Nihat NPC ile yüz yüze konuşuyor (soruşturma sahnesi, say)",[fmt: kod anahtarı biçimle kuruyor]
+D7_URBAN_DJINN_CUBE,SPK_URBAN,yakin,2,"chapter7.gd:598 Nihat NPC ile yüz yüze konuşuyor (soruşturma sahnesi, say)",[fmt: kod anahtarı biçimle kuruyor]
+D7_N_URBAN_DJINN_PLAIN,SPK_NIHAT,ic_ses,,chapter7.gd:599 Nihat tarayıcı/rapor başında kendi kendine not düşüyor (hologram/tarama anlatısı),
+D7_N_TRACE_ARTILLERY_TAPE,SPK_NIHAT,ic_ses,,chapter7.gd:288 Nihat tarayıcı/rapor başında kendi kendine not düşüyor (hologram/tarama anlatısı),[fmt: kod anahtarı biçimle kuruyor]
+D7_N_TRACE_ARTILLERY_LIGHTER,SPK_NIHAT,ic_ses,,chapter7.gd:288 Nihat tarayıcı/rapor başında kendi kendine not düşüyor (hologram/tarama anlatısı),[fmt: kod anahtarı biçimle kuruyor]
+D7_N_TRACE_ARTILLERY_PHONE,SPK_NIHAT,ic_ses,,chapter7.gd:288 Nihat tarayıcı/rapor başında kendi kendine not düşüyor (hologram/tarama anlatısı),[fmt: kod anahtarı biçimle kuruyor]
+D7_N_TRACE_ARTILLERY_CUBE,SPK_NIHAT,ic_ses,,chapter7.gd:288 Nihat tarayıcı/rapor başında kendi kendine not düşüyor (hologram/tarama anlatısı),[fmt: kod anahtarı biçimle kuruyor]
+D7_N_HOLO_ARTILLERY_LIGHTER,SPK_NIHAT,ic_ses,,chapter7.gd:554 Nihat tarayıcı/rapor başında kendi kendine not düşüyor (hologram/tarama anlatısı),[fmt: kod anahtarı biçimle kuruyor]
+D7_N_HOLO_ARTILLERY_PHONE,SPK_NIHAT,ic_ses,,chapter7.gd:554 Nihat tarayıcı/rapor başında kendi kendine not düşüyor (hologram/tarama anlatısı),[fmt: kod anahtarı biçimle kuruyor]
+D7_N_HOLO_ARTILLERY_CUBE,SPK_NIHAT,ic_ses,,chapter7.gd:554 Nihat tarayıcı/rapor başında kendi kendine not düşüyor (hologram/tarama anlatısı),[fmt: kod anahtarı biçimle kuruyor]
+D7_N_TRACE_TENT_THERMOS,SPK_NIHAT,ic_ses,,chapter7.gd:288 Nihat tarayıcı/rapor başında kendi kendine not düşüyor (hologram/tarama anlatısı),[fmt: kod anahtarı biçimle kuruyor]
+D7_N_TRACE_TENT_COLOGNE,SPK_NIHAT,ic_ses,,chapter7.gd:288 Nihat tarayıcı/rapor başında kendi kendine not düşüyor (hologram/tarama anlatısı),[fmt: kod anahtarı biçimle kuruyor]
+D7_N_HOLO_TENT_THERMOS,SPK_NIHAT,ic_ses,,chapter7.gd:554 Nihat tarayıcı/rapor başında kendi kendine not düşüyor (hologram/tarama anlatısı),[fmt: kod anahtarı biçimle kuruyor]
+D7_N_HOLO_TENT_COLOGNE,SPK_NIHAT,ic_ses,,chapter7.gd:554 Nihat tarayıcı/rapor başında kendi kendine not düşüyor (hologram/tarama anlatısı),[fmt: kod anahtarı biçimle kuruyor]
+D7_HASAN_FAN_CUBE,SPK_HASAN,yakin,2,"chapter7.gd:729 Nihat NPC ile yüz yüze konuşuyor (soruşturma sahnesi, say)",[fmt: kod anahtarı biçimle kuruyor]
+D7_HUSEYIN_FAN_CUBE,SPK_HUSEYIN,yakin,2,"chapter7.gd:725 Nihat NPC ile yüz yüze konuşuyor (soruşturma sahnesi, say)",[fmt: kod anahtarı biçimle kuruyor]
+D7_HASAN_FAN_TAPE,SPK_HASAN,yakin,2,"chapter7.gd:729 Nihat NPC ile yüz yüze konuşuyor (soruşturma sahnesi, say)",[fmt: kod anahtarı biçimle kuruyor]
+D7_HUSEYIN_FAN_TAPE,SPK_HUSEYIN,yakin,2,"chapter7.gd:725 Nihat NPC ile yüz yüze konuşuyor (soruşturma sahnesi, say)",[fmt: kod anahtarı biçimle kuruyor]
+D7_T_FAR_A_FIRE,SPK_TOLGA,uzak,10,"chapter7.gd:979 Nihat uzaktan izler: Tolga ordugâhta başkalarına seslenir (""(Uzaktan)"" notu, _clear_view uzak açı)",TOLGA [fmt: kod anahtarı biçimle kuruyor]
+D7_N_FOUND_NOFEZ,SPK_NIHAT,ic_ses,,chapter7.gd:977 Nihat tarayıcı/rapor başında kendi kendine not düşüyor (hologram/tarama anlatısı),[base: kod anahtarı biçimle kuruyor]
+D7_T_CELL_NOFEZ,SPK_TOLGA,yakin_yuksek,3,"chapter7.gd:956 Tolga zindan parmaklığının arkasından (""(İçeriden)""), Nihat önünde",[base: kod anahtarı biçimle kuruyor]
+D7_T_CELL_FIRST,SPK_TOLGA,yakin_yuksek,3,"chapter7.gd:956 Tolga zindan parmaklığının arkasından (""(İçeriden)""), Nihat önünde",
+D7_T_CELL_FIRST_NOFEZ,SPK_TOLGA,yakin_yuksek,3,"chapter7.gd:956 Tolga zindan parmaklığının arkasından (""(İçeriden)""), Nihat önünde",[base: kod anahtarı biçimle kuruyor]
+D7_NIKO_CELL_NOFEZ,SPK_NIKO,yakin,2,"chapter7.gd:795 Nihat NPC ile yüz yüze konuşuyor (soruşturma sahnesi, say)",[base: kod anahtarı biçimle kuruyor]
+D7_NIKO_CELL_FIRST,SPK_NIKO,yakin,2,"chapter7.gd:795 Nihat NPC ile yüz yüze konuşuyor (soruşturma sahnesi, say)",
+D7_NIKO_CELL_FIRST_NOFEZ,SPK_NIKO,yakin,2,"chapter7.gd:795 Nihat NPC ile yüz yüze konuşuyor (soruşturma sahnesi, say)",[base: kod anahtarı biçimle kuruyor]
+D7_EAVES_GUARDS_NOFEZ,SPK_HASAN,fisilti,1.5,"chapter7.gd:857 Hasan–Hüseyin ""(Fısıltıyla)"": Nihat görünmez dinler",[base: kod anahtarı biçimle kuruyor]
+D9_P_1_ALT_NOFEZ,SPK_PASHA,yakin,2,chapter9.gd:457 ordugâhta NPC ile Tolga yüz yüze teklif/pazarlık sahnesi (say),[base: kod anahtarı biçimle kuruyor]
+D9_P_5_NOFEZ,SPK_PASHA,yakin,2,chapter9.gd:469 ordugâhta NPC ile Tolga yüz yüze teklif/pazarlık sahnesi (say),[base: kod anahtarı biçimle kuruyor]
+D9_P_5_PLAIN,SPK_PASHA,yakin,2,chapter9.gd:469 ordugâhta NPC ile Tolga yüz yüze teklif/pazarlık sahnesi (say),
+D9_P_5_PLAIN_NOFEZ,SPK_PASHA,yakin,2,chapter9.gd:469 ordugâhta NPC ile Tolga yüz yüze teklif/pazarlık sahnesi (say),[base: kod anahtarı biçimle kuruyor]
+D9_MINER_OFFER_1_NOFEZ,SPK_MINER,yakin,2,ordugâhta NPC ile Tolga yüz yüze teklif/pazarlık sahnesi (say),
+D7_N_CANNON_PLAIN,SPK_NIHAT,ic_ses,,chapter7.gd:1388 Nihat tarayıcı/rapor başında kendi kendine not düşüyor (hologram/tarama anlatısı),
+D7_N_GOAT_PLAIN,SPK_NIHAT,ic_ses,,chapter7.gd:1386 Nihat tarayıcı/rapor başında kendi kendine not düşüyor (hologram/tarama anlatısı),
+D7_S_LETTER_NONE,SPK_SOLDIER,yakin,2,"game_state.gd:527 ordugâhta asker Tolga/oyuncuya mektup cevabını anlatır (chapter7.gd:1392 bark, chapter9.gd:815)",
+D7_S_LETTER_R1,SPK_SOLDIER,yakin,2,"game_state.gd:528 ordugâhta asker Tolga/oyuncuya mektup cevabını anlatır (chapter7.gd:1392 bark, chapter9.gd:815)",
+D7_S_LETTER_R3,SPK_SOLDIER,yakin,2,"game_state.gd:528 ordugâhta asker Tolga/oyuncuya mektup cevabını anlatır (chapter7.gd:1392 bark, chapter9.gd:815)",
+D7_EAVES_NIKO_CELL_CASUS,SPK_NIKO,ic_ses,,"chapter7.gd:860 ""(Kendi kendine)"": NPC yalnız mırıldanıyor, görünmez Nihat dinliyor",[fmt: kod anahtarı biçimle kuruyor]
+D7_EAVES_NIKO_OUTSIDE_CASUS,SPK_NIKO,ic_ses,,"chapter7.gd:860 ""(Kendi kendine)"": NPC yalnız mırıldanıyor, görünmez Nihat dinliyor",[fmt: kod anahtarı biçimle kuruyor]
+D8_C_PAY_HEIST,SPK_CEMIL,yakin,2,chapter8.gd:638 Hikmet–Cemil dükkânda tezgâhta yüz yüze,
+D8_C_PAY_NOTAPE,SPK_CEMIL,yakin,2,chapter8.gd:640 Hikmet–Cemil dükkânda tezgâhta yüz yüze,
+D9_T_GOAT_PLAIN,SPK_TOLGA,ic_ses,,"chapter9.gd:811 Tolga ordugâhta kendi kendine düşünür/anlatır (bark/say, karşısında kimse yok)",
+D9_HU_CUBE_BACK,SPK_HUSEYIN,yakin,2,chapter9.gd:583 ordugâhta NPC ile Tolga yüz yüze teklif/pazarlık sahnesi (say),
+D9_HA_CUBE_BACK,SPK_HASAN,yakin,2,chapter9.gd:584 ordugâhta NPC ile Tolga yüz yüze teklif/pazarlık sahnesi (say),
+D9_T_CUBE_BACK,SPK_TOLGA,yakin,2,chapter9.gd:588 ordugâhta NPC ile Tolga yüz yüze teklif/pazarlık sahnesi (say),
+D9_T_CUBE_KEEP,SPK_TOLGA,ic_ses,,"chapter9.gd:590 Tolga ordugâhta kendi kendine düşünür/anlatır (bark/say, karşısında kimse yok)",
+D7_HUSEYIN_HELLO_HUFEZ,SPK_HUSEYIN,yakin,2,"Nihat NPC ile yüz yüze konuşuyor (soruşturma sahnesi, say)",
+D7_HASAN_FAN_HUFEZ,SPK_HASAN,yakin,2,"chapter7.gd:729 Nihat NPC ile yüz yüze konuşuyor (soruşturma sahnesi, say)",[fmt: kod anahtarı biçimle kuruyor]
+D7_HUSEYIN_WHO_HUFEZ,SPK_HUSEYIN,yakin,2,"Nihat NPC ile yüz yüze konuşuyor (soruşturma sahnesi, say)",
+D7_HUSEYIN_WHO_HUCUBE,SPK_HUSEYIN,yakin,2,"Nihat NPC ile yüz yüze konuşuyor (soruşturma sahnesi, say)",
+D9_G_2_HUFEZ,SPK_HUSEYIN,yakin,2,ordugâhta NPC ile Tolga yüz yüze teklif/pazarlık sahnesi (say),
+D9_G_LATER_HUFEZ,SPK_HUSEYIN,yakin,3,Otağ kapısı nöbetçileri Tolga ile yüz yüze,
+D9_HA_THERMOS_BACK,SPK_HASAN,yakin,2,chapter9.gd:600 ordugâhta NPC ile Tolga yüz yüze teklif/pazarlık sahnesi (say),
+D9_HU_THERMOS_BACK,SPK_HUSEYIN,yakin,2,chapter9.gd:601 ordugâhta NPC ile Tolga yüz yüze teklif/pazarlık sahnesi (say),
+D9_HU_THERMOS_BACK_HUFEZ,SPK_HUSEYIN,yakin,2,ordugâhta NPC ile Tolga yüz yüze teklif/pazarlık sahnesi (say),
+D9_T_THERMOS_BACK,SPK_TOLGA,yakin,2,chapter9.gd:608 ordugâhta NPC ile Tolga yüz yüze teklif/pazarlık sahnesi (say),
+D9_T_THERMOS_KEEP,SPK_TOLGA,ic_ses,,"chapter9.gd:610 Tolga ordugâhta kendi kendine düşünür/anlatır (bark/say, karşısında kimse yok)",
+D7_URBAN_DJINN_LIGHTER_ULIGHTER,SPK_URBAN,yakin,2,"chapter7.gd:598 Nihat NPC ile yüz yüze konuşuyor (soruşturma sahnesi, say)",[fmt: kod anahtarı biçimle kuruyor]
+D8_A1_KNOWN,SPK_AGENT1,yakin,4,chapter8.gd:260 ajanlar Cemil'le/kendi aralarında dükkânda konuşur,
+D8_A2_UNKNOWN,SPK_AGENT2,yakin,4,chapter8.gd:263 ajanlar Cemil'le/kendi aralarında dükkânda konuşur,
+D7_HUSEYIN_FAN_HUFEZ,SPK_HUSEYIN,yakin,2,"chapter7.gd:1436 Nihat NPC ile yüz yüze konuşuyor (soruşturma sahnesi, say)",
+D9_P_LETTER_1,SPK_PASHA,yakin,2,chapter9.gd:459 ordugâhta NPC ile Tolga yüz yüze teklif/pazarlık sahnesi (say),
+D9_P_LETTER_3,SPK_PASHA,yakin,2,chapter9.gd:467 ordugâhta NPC ile Tolga yüz yüze teklif/pazarlık sahnesi (say),
+D9_P_AGAIN_LETTER,SPK_PASHA,yakin,2,chapter9.gd:453 ordugâhta NPC ile Tolga yüz yüze teklif/pazarlık sahnesi (say),
+D9_P_NO_LETTER,SPK_PASHA,yakin,2,chapter9.gd:501 ordugâhta NPC ile Tolga yüz yüze teklif/pazarlık sahnesi (say),
+D8Y_NIKO_1,SPK_NIKO,yakin,2,chapter8y.gd:957 kapı önünde Niko ile / siperde Hasan–Hüseyin ile yüz yüze,
+D8Y_T_TOWEL,SPK_TOLGA,yakin,2,chapter8y.gd:959 kapı önünde Niko ile / siperde Hasan–Hüseyin ile yüz yüze,
+D8Y_NIKO_TOWEL,SPK_NIKO,yakin,2,chapter8y.gd:960 kapı önünde Niko ile / siperde Hasan–Hüseyin ile yüz yüze,
+D8Y_NIKO_LETTER,SPK_NIKO,yakin,2,chapter8y.gd:965 kapı önünde Niko ile / siperde Hasan–Hüseyin ile yüz yüze,
+D8Y_T_LETTER,SPK_TOLGA,yakin,2,chapter8y.gd:966 kapı önünde Niko ile / siperde Hasan–Hüseyin ile yüz yüze,
+D8Y_NIKO_OPENED,SPK_NIKO,yakin,2,chapter8y.gd:962 kapı önünde Niko ile / siperde Hasan–Hüseyin ile yüz yüze,
+D8Y_T_OPENED,SPK_TOLGA,yakin,2,chapter8y.gd:963 kapı önünde Niko ile / siperde Hasan–Hüseyin ile yüz yüze,
+D8Y_NIKO_DEP,SPK_NIKO,yakin,2,chapter8y.gd:948 kapı önünde Niko ile / siperde Hasan–Hüseyin ile yüz yüze,
+D8Y_T_DEP,SPK_TOLGA,yakin,2,chapter8y.gd:950 kapı önünde Niko ile / siperde Hasan–Hüseyin ile yüz yüze,
+D8Y_NIKO_DEP_TOWEL,SPK_NIKO,yakin,2,chapter8y.gd:952 kapı önünde Niko ile / siperde Hasan–Hüseyin ile yüz yüze,
+D8Y_T_DEP_TOWEL,SPK_TOLGA,yakin,2,chapter8y.gd:954 kapı önünde Niko ile / siperde Hasan–Hüseyin ile yüz yüze,
+D8Y_NIKO_GATE,SPK_NIKO,yakin_yuksek,4,chapter8y.gd:1101 Niko kapıdaki nöbetçiyle bağıra çağıra pazarlık eder (kapı önü),
+D8Y_GUARD_GATE,SPK_CITY_GUARD,yakin_yuksek,4,chapter8y.gd:1102 Niko kapıdaki nöbetçiyle bağıra çağıra pazarlık eder (kapı önü),
+D8Y_NIKO_GATE2,SPK_NIKO,yakin_yuksek,4,chapter8y.gd:1103 Niko kapıdaki nöbetçiyle bağıra çağıra pazarlık eder (kapı önü),
+D8Y_NIKO_RULES,SPK_NIKO,yakin,2,chapter8y.gd:1106 kapı önünde Niko ile / siperde Hasan–Hüseyin ile yüz yüze,
+D8Y_T_BYE,SPK_TOLGA,yakin,2,chapter8y.gd:1107 kapı önünde Niko ile / siperde Hasan–Hüseyin ile yüz yüze,
+D8Y_NIKO_BYE,SPK_NIKO,yakin,2,chapter8y.gd:1108 kapı önünde Niko ile / siperde Hasan–Hüseyin ile yüz yüze,
+D8Y_WALL_1,SPK_LOOKOUT,uzak,15,"chapter8y.gd:1220 sur gözcüsü (afar işaretli, sur üstü 8,4 m yükseklikte) hendek köprüsündeki Tolga'ya bağırır",
+D8Y_WALL_2,SPK_LOOKOUT,uzak,15,"chapter8y.gd:1229 sur gözcüsü (afar işaretli, sur üstü 8,4 m yükseklikte) hendek köprüsündeki Tolga'ya bağırır",
+D8Y_T_BRIDGE,SPK_TOLGA,ic_ses,,chapter8y.gd:1232 Tolga yürürken gördüklerini kendi kendine yorumlar (_event yorumları),
+D8Y_T_ARROWS,SPK_TOLGA,ic_ses,,chapter8y.gd:1306 Tolga yürürken gördüklerini kendi kendine yorumlar (_event yorumları),
+D8Y_T_LADDER,SPK_TOLGA,ic_ses,,chapter8y.gd:1308 Tolga yürürken gördüklerini kendi kendine yorumlar (_event yorumları),
+D8Y_T_GOAT,SPK_TOLGA,ic_ses,,chapter8y.gd:1310 Tolga yürürken gördüklerini kendi kendine yorumlar (_event yorumları),
+D8Y_T_CRATER,SPK_TOLGA,ic_ses,,chapter8y.gd:1311 Tolga yürürken gördüklerini kendi kendine yorumlar (_event yorumları),
+D8Y_WALL_WARN_1,SPK_LOOKOUT,uzak,15,"chapter8y.gd:69 sur gözcüsü (afar işaretli, sur üstü 8,4 m yükseklikte) hendek köprüsündeki Tolga'ya bağırır",
+D8Y_WALL_WARN_2,SPK_LOOKOUT,uzak,15,"chapter8y.gd:69 sur gözcüsü (afar işaretli, sur üstü 8,4 m yükseklikte) hendek köprüsündeki Tolga'ya bağırır",
+D8Y_HASAN_WARN_1,SPK_HASAN,uzak,30,chapter8y.gd:70 Osmanlı ileri siperinden ölü bölgeyi geçen Tolga'ya seslenirler,
+D8Y_HUSEYIN_WARN_2,SPK_HUSEYIN,uzak,30,chapter8y.gd:70 Osmanlı ileri siperinden ölü bölgeyi geçen Tolga'ya seslenirler,
+D8Y_T_WARN_1,SPK_TOLGA,uzak,20,"chapter8y.gd:71 Tolga iki taraftaki okçulara ""Yukarıda!"" diye bağırır",
+D8Y_T_WARN_2,SPK_TOLGA,ic_ses,,chapter8y.gd:71 Tolga yürürken gördüklerini kendi kendine yorumlar (_event yorumları),
+D8Y_T_WARN_3,SPK_TOLGA,ic_ses,,chapter8y.gd:71 Tolga yürürken gördüklerini kendi kendine yorumlar (_event yorumları),
+D8Y_H_RADIO_1,SPK_HIKMET,telsiz,,chapter8y.gd:72 Hikmet–Tolga telsiz (chapter8y.gd RADIO sabiti),
+D8Y_T_RADIO_1,SPK_TOLGA,telsiz,,chapter8y.gd:72 Hikmet–Tolga telsiz (chapter8y.gd RADIO sabiti),
+D8Y_H_RADIO_2,SPK_HIKMET,telsiz,,chapter8y.gd:72 Hikmet–Tolga telsiz (chapter8y.gd RADIO sabiti),
+D8Y_HASAN_1,SPK_HASAN,yakin_yuksek,5,"chapter8y.gd:1367 Hasan siperde Tolga'ya ""Dur!"" emri",
+D8Y_HUSEYIN_1,SPK_HUSEYIN,yakin,2,chapter8y.gd:1371 kapı önünde Niko ile / siperde Hasan–Hüseyin ile yüz yüze,
+D8Y_HASAN_2,SPK_HASAN,yakin,2,chapter8y.gd:1372 kapı önünde Niko ile / siperde Hasan–Hüseyin ile yüz yüze,
+D8Y_T_TRENCH,SPK_TOLGA,yakin,2,chapter8y.gd:1373 kapı önünde Niko ile / siperde Hasan–Hüseyin ile yüz yüze,
+D8Y_HUSEYIN_2,SPK_HUSEYIN,yakin,2,chapter8y.gd:1374 kapı önünde Niko ile / siperde Hasan–Hüseyin ile yüz yüze,
+D8Y_HASAN_SEAL,SPK_HASAN,yakin,2,chapter8y.gd:1390 kapı önünde Niko ile / siperde Hasan–Hüseyin ile yüz yüze,
+D8Y_HUSEYIN_SEAL,SPK_HUSEYIN,yakin,2,chapter8y.gd:1395 kapı önünde Niko ile / siperde Hasan–Hüseyin ile yüz yüze,
+D8Y_HUSEYIN_SEAL_OPEN,SPK_HUSEYIN,yakin,2,chapter8y.gd:1393 kapı önünde Niko ile / siperde Hasan–Hüseyin ile yüz yüze,
+D8Y_HASAN_ITEM,SPK_HASAN,yakin,2,chapter8y.gd:1401 kapı önünde Niko ile / siperde Hasan–Hüseyin ile yüz yüze,
+D8Y_T_HONEST,SPK_TOLGA,yakin,2,chapter8y.gd:1404 kapı önünde Niko ile / siperde Hasan–Hüseyin ile yüz yüze,
+D8Y_T_HONEST_DEP,SPK_TOLGA,yakin,2,chapter8y.gd:1404 kapı önünde Niko ile / siperde Hasan–Hüseyin ile yüz yüze,
+D8Y_HASAN_HONEST,SPK_HASAN,yakin,2,chapter8y.gd:1405 kapı önünde Niko ile / siperde Hasan–Hüseyin ile yüz yüze,
+D8Y_HUSEYIN_END,SPK_HUSEYIN,yakin,2,chapter8y.gd:1407 kapı önünde Niko ile / siperde Hasan–Hüseyin ile yüz yüze,
+D8Y_HASAN_END,SPK_HASAN,yakin,2,chapter8y.gd:1408 kapı önünde Niko ile / siperde Hasan–Hüseyin ile yüz yüze,
+D8Y_T_BATTERY,SPK_TOLGA,ic_ses,,chapter8y.gd:1312 Tolga yürürken gördüklerini kendi kendine yorumlar (_event yorumları),
+D8Y_HASAN_MARKET,SPK_HASAN,yakin,2,chapter8y.gd:1486 kapı önünde Niko ile / siperde Hasan–Hüseyin ile yüz yüze,
+D8Y_T_END,SPK_TOLGA,ic_ses,,chapter8y.gd:1493 Tolga yürürken gördüklerini kendi kendine yorumlar (_event yorumları),
+D8Y_T_END_DEP,SPK_TOLGA,ic_ses,,chapter8y.gd:1493 Tolga yürürken gördüklerini kendi kendine yorumlar (_event yorumları),
+D9_T_SINERJI,SPK_TOLGA,ic_ses,,"chapter9.gd:274 Tolga ordugâhta kendi kendine düşünür/anlatır (bark/say, karşısında kimse yok)",
+D9_T_OTAG,SPK_TOLGA,ic_ses,,"chapter9.gd:278 Tolga ordugâhta kendi kendine düşünür/anlatır (bark/say, karşısında kimse yok)",
+D9_T_GOAL_NONE,SPK_TOLGA,ic_ses,,"chapter9.gd:280 Tolga ordugâhta kendi kendine düşünür/anlatır (bark/say, karşısında kimse yok)",
+D9_H2_URBAN,SPK_HIKMET,yakin,2,"chapter9.gd:727 Hikmet 8.4'te pazarda bizzat Tolga'nın karşısında (hikmet_npc), pijamayla",
+D8Y_NIKO_SINERJI,SPK_NIKO,yakin,2,chapter8y.gd:970 kapı önünde Niko ile / siperde Hasan–Hüseyin ile yüz yüze,
+D8Y_NIKO_SINERJI_N,SPK_NIKO,yakin,2,chapter8y.gd:972 kapı önünde Niko ile / siperde Hasan–Hüseyin ile yüz yüze,
+D8Y_HUSEYIN_WHO,SPK_HUSEYIN,yakin,2,chapter8y.gd:1369 kapı önünde Niko ile / siperde Hasan–Hüseyin ile yüz yüze,
+D8Y_HASAN_WHO,SPK_HASAN,yakin,2,chapter8y.gd:1370 kapı önünde Niko ile / siperde Hasan–Hüseyin ile yüz yüze,
+D8Y_T_DEP_NOFEZ,SPK_TOLGA,yakin,2,chapter8y.gd:950 kapı önünde Niko ile / siperde Hasan–Hüseyin ile yüz yüze,[base: kod anahtarı biçimle kuruyor]
+D8Y_T_MANTLET,SPK_TOLGA,ic_ses,,chapter8y.gd:1305 Tolga yürürken gördüklerini kendi kendine yorumlar (_event yorumları),
+D8Y_HASAN_STOP,SPK_HASAN,uzak,30,chapter8y.gd:1259 Osmanlı ileri siperinden ölü bölgeyi geçen Tolga'ya seslenirler,
+D8Y_HUSEYIN_COME,SPK_HUSEYIN,uzak,30,chapter8y.gd:1262 Osmanlı ileri siperinden ölü bölgeyi geçen Tolga'ya seslenirler,
+D11_N_ARRIVE,SPK_NIHAT,ic_ses,,"chapter11.gd:211 Nihat/Tolga kendi kendine, parantezli sahne anlatısı veya iç karar",
+D11_M_FOUND,SPK_MUFIDE,telsiz,,"chapter11.gd:229 Müfide ""(Büro telsizi)"" ile Nihat; Nihat telsizle yanıtlar",
+D11_N_FOUND,SPK_NIHAT,telsiz,,"chapter11.gd:229 Müfide ""(Büro telsizi)"" ile Nihat; Nihat telsizle yanıtlar",
+D11_N_LOST_1,SPK_NIHAT,telsiz,,"chapter11.gd:251 Müfide ""(Büro telsizi)"" ile Nihat; Nihat telsizle yanıtlar",
+D11_N_LOST_1_HEN,SPK_NIHAT,telsiz,,"chapter11.gd:251 Müfide ""(Büro telsizi)"" ile Nihat; Nihat telsizle yanıtlar",
+D11_M_LOST,SPK_MUFIDE,telsiz,,"chapter11.gd:252 Müfide ""(Büro telsizi)"" ile Nihat; Nihat telsizle yanıtlar",
+D11_M_LOST_HEN,SPK_MUFIDE,telsiz,,"chapter11.gd:252 Müfide ""(Büro telsizi)"" ile Nihat; Nihat telsizle yanıtlar",
+D11_M_FIRED,SPK_MUFIDE,telsiz,,"chapter11.gd:254 Müfide ""(Büro telsizi)"" ile Nihat; Nihat telsizle yanıtlar",
+D11_N_FIRED,SPK_NIHAT,telsiz,,"chapter11.gd:255 Müfide ""(Büro telsizi)"" ile Nihat; Nihat telsizle yanıtlar",
+D11_N_LOST_2,SPK_NIHAT,telsiz,,"chapter11.gd:262 Müfide ""(Büro telsizi)"" ile Nihat; Nihat telsizle yanıtlar",
+D11_N_01,SPK_NIHAT,yakin,1.5,chapter11.gd:305 ateş başında Nihat–Tolga yüz yüze,
+D11_T_02,SPK_TOLGA,yakin,1.5,chapter11.gd:306 ateş başında Nihat–Tolga yüz yüze,
+D11_N_03,SPK_NIHAT,yakin,1.5,chapter11.gd:314 ateş başında Nihat–Tolga yüz yüze,
+D11_T_04,SPK_TOLGA,yakin,1.5,chapter11.gd:315 ateş başında Nihat–Tolga yüz yüze,
+D11_N_05,SPK_NIHAT,yakin,1.5,chapter11.gd:316 ateş başında Nihat–Tolga yüz yüze,
+D11_N_DECIDE,SPK_NIHAT,ic_ses,,"chapter11.gd:423 Nihat/Tolga kendi kendine, parantezli sahne anlatısı veya iç karar",
+D11_N_FROZE,SPK_NIHAT,ic_ses,,"chapter11.gd:427 Nihat/Tolga kendi kendine, parantezli sahne anlatısı veya iç karar",
+D11_N_WALL,SPK_NIHAT,ic_ses,,"chapter11.gd:434 Nihat/Tolga kendi kendine, parantezli sahne anlatısı veya iç karar",
+D11_N_WALL_TORN,SPK_NIHAT,ic_ses,,"chapter11.gd:438 Nihat/Tolga kendi kendine, parantezli sahne anlatısı veya iç karar",
+D11_N_WALL_KEPT,SPK_NIHAT,ic_ses,,"chapter11.gd:442 Nihat/Tolga kendi kendine, parantezli sahne anlatısı veya iç karar",
+D11_N_CANT_HELP,SPK_NIHAT,ic_ses,,"chapter11.gd:444 Nihat/Tolga kendi kendine, parantezli sahne anlatısı veya iç karar",
+D11_N_RELEASE,SPK_NIHAT,yakin,1.5,chapter11.gd:498 ateş başında Nihat–Tolga yüz yüze,
+D11_T_RELEASE,SPK_TOLGA,yakin,1.5,chapter11.gd:499 ateş başında Nihat–Tolga yüz yüze,
+D11_N_HELP_1,SPK_NIHAT,yakin,1.5,chapter11.gd:506 ateş başında Nihat–Tolga yüz yüze,
+D11_T_HELP_2,SPK_TOLGA,yakin,1.5,chapter11.gd:509 ateş başında Nihat–Tolga yüz yüze,
+D11_N_HELP_3,SPK_NIHAT,yakin,1.5,chapter11.gd:510 ateş başında Nihat–Tolga yüz yüze,
+D11_T_HELP_4,SPK_TOLGA,yakin,1.5,chapter11.gd:511 ateş başında Nihat–Tolga yüz yüze,
+D11_N_ARREST,SPK_NIHAT,yakin,1.5,chapter11.gd:520 ateş başında Nihat–Tolga yüz yüze,
+D11_N_T_SILENT,SPK_NIHAT,yakin,1.5,chapter11.gd:548 ateş başında Nihat–Tolga yüz yüze,
+D11_T_SURRENDER,SPK_TOLGA,yakin,1.5,chapter11.gd:555 ateş başında Nihat–Tolga yüz yüze,
+D11_T_RUN,SPK_TOLGA,ic_ses,,"chapter11.gd:584 Nihat/Tolga kendi kendine, parantezli sahne anlatısı veya iç karar",
+D11_N_RUN_OK,SPK_NIHAT,ic_ses,,"chapter11.gd:589 Nihat/Tolga kendi kendine, parantezli sahne anlatısı veya iç karar",
+D11_N_RUN_FAIL,SPK_NIHAT,yakin,1.5,chapter11.gd:593 ateş başında Nihat–Tolga yüz yüze,
+D11_T_HONEST,SPK_TOLGA,yakin,1.5,chapter11.gd:597 ateş başında Nihat–Tolga yüz yüze,
+D11_N_HONEST,SPK_NIHAT,yakin,1.5,chapter11.gd:598 ateş başında Nihat–Tolga yüz yüze,
+D11_T_INSURANCE,SPK_TOLGA,yakin,1.5,chapter11.gd:601 ateş başında Nihat–Tolga yüz yüze,
+D11_N_INSURANCE,SPK_NIHAT,yakin,1.5,chapter11.gd:602 ateş başında Nihat–Tolga yüz yüze,
+D11_N_ITEM_CHICKPEAS,SPK_NIHAT,yakin,1.5,chapter11.gd:605 ateş başında Nihat–Tolga yüz yüze,[fmt: kod anahtarı biçimle kuruyor]
+D11_N_ITEM_PHONE,SPK_NIHAT,yakin,1.5,chapter11.gd:605 ateş başında Nihat–Tolga yüz yüze,[fmt: kod anahtarı biçimle kuruyor]
+D11_N_ITEM_BOOK,SPK_NIHAT,yakin,1.5,chapter11.gd:605 ateş başında Nihat–Tolga yüz yüze,[fmt: kod anahtarı biçimle kuruyor]
+D11_N_ITEM_THERMOS,SPK_NIHAT,yakin,1.5,chapter11.gd:605 ateş başında Nihat–Tolga yüz yüze,[fmt: kod anahtarı biçimle kuruyor]
+D11_N_ITEM_CUBE,SPK_NIHAT,yakin,1.5,chapter11.gd:605 ateş başında Nihat–Tolga yüz yüze,[fmt: kod anahtarı biçimle kuruyor]
+D11_N_ITEM_TAPE,SPK_NIHAT,yakin,1.5,chapter11.gd:605 ateş başında Nihat–Tolga yüz yüze,[fmt: kod anahtarı biçimle kuruyor]
+D11_N_ITEM_COLOGNE,SPK_NIHAT,yakin,1.5,chapter11.gd:605 ateş başında Nihat–Tolga yüz yüze,[fmt: kod anahtarı biçimle kuruyor]
+D11_N_ITEM_SELFIE,SPK_NIHAT,yakin,1.5,chapter11.gd:605 ateş başında Nihat–Tolga yüz yüze,[fmt: kod anahtarı biçimle kuruyor]
+D11_N_ITEM_POWERBANK,SPK_NIHAT,yakin,1.5,chapter11.gd:605 ateş başında Nihat–Tolga yüz yüze,[fmt: kod anahtarı biçimle kuruyor]
+D11_N_ITEM_LIGHTER,SPK_NIHAT,yakin,1.5,chapter11.gd:605 ateş başında Nihat–Tolga yüz yüze,[fmt: kod anahtarı biçimle kuruyor]
+D11_N_ITEM_ANY,SPK_NIHAT,yakin,1.5,chapter11.gd:612 ateş başında Nihat–Tolga yüz yüze,
+D11_N_GIVE_UP,SPK_NIHAT,yakin,1.5,chapter11.gd:618 ateş başında Nihat–Tolga yüz yüze,
+D11_N_TIME_UP,SPK_NIHAT,yakin,1.5,chapter11.gd:623 ateş başında Nihat–Tolga yüz yüze,
+D11_N_CUFF,SPK_NIHAT,yakin,1.5,chapter11.gd:643 ateş başında Nihat–Tolga yüz yüze,
+D11_T_CUFF,SPK_TOLGA,yakin,1.5,chapter11.gd:644 ateş başında Nihat–Tolga yüz yüze,
+D11_H_01,SPK_HIKMET,uzak,10,"chapter11.gd:347 ""(Karanlıktan, pijamalı) DUR BAKALIM!"": Hikmet karanlıktan seslenir",
+D11_N_H_02,SPK_NIHAT,yakin_yuksek,2,chapter11.gd:348 Hikmet–Nihat sözlü kavgası (yönetmelik–garanti tartışması),
+D11_H_03,SPK_HIKMET,yakin_yuksek,2,chapter11.gd:351 Hikmet–Nihat sözlü kavgası (yönetmelik–garanti tartışması),
+D11_N_H_04,SPK_NIHAT,yakin_yuksek,2,chapter11.gd:352 Hikmet–Nihat sözlü kavgası (yönetmelik–garanti tartışması),
+D11_H_05,SPK_HIKMET,yakin_yuksek,2,chapter11.gd:353 Hikmet–Nihat sözlü kavgası (yönetmelik–garanti tartışması),
+D11_N_H_06,SPK_NIHAT,yakin_yuksek,2,chapter11.gd:354 Hikmet–Nihat sözlü kavgası (yönetmelik–garanti tartışması),
+D11_H_07,SPK_HIKMET,yakin_yuksek,2,chapter11.gd:358 Hikmet–Nihat sözlü kavgası (yönetmelik–garanti tartışması),
+D11_N_H_08,SPK_NIHAT,yakin_yuksek,2,chapter11.gd:361 Hikmet–Nihat sözlü kavgası (yönetmelik–garanti tartışması),
+D11_NK_01,SPK_NIKO,yakin_yuksek,5,"chapter11.gd:379 Niko ""SALDIR!"" diye bağırarak araya girer (büyük harf, sahne kargaşası)",
+D11_N_NK_02,SPK_NIHAT,yakin,1.5,chapter11.gd:391 ateş başında Nihat–Tolga yüz yüze,
+D11_NK_03,SPK_NIKO,yakin_yuksek,5,"chapter11.gd:393 Niko ""SALDIR!"" diye bağırarak araya girer (büyük harf, sahne kargaşası)",
+D11_N_NK_04,SPK_NIHAT,yakin,1.5,chapter11.gd:394 ateş başında Nihat–Tolga yüz yüze,
+D10B_U_01,SPK_URBAN,yakin,2,chapter10b.gd:200 topçu sahasında Urban/Fatih/Tolga yüz yüze (say),
+D10B_T_02,SPK_TOLGA,yakin,2,chapter10b.gd:201 topçu sahasında Urban/Fatih/Tolga yüz yüze (say),
+D10B_U_03,SPK_URBAN,yakin,2,chapter10b.gd:202 topçu sahasında Urban/Fatih/Tolga yüz yüze (say),
+D10B_U_CAST_INTRO,SPK_URBAN,yakin,2,chapter10b.gd:217 topçu sahasında Urban/Fatih/Tolga yüz yüze (say),
+D10B_U_CAST_OK,SPK_URBAN,yakin,2,chapter10b.gd:295 topçu sahasında Urban/Fatih/Tolga yüz yüze (say),
+D10B_U_CAST_OK2,SPK_URBAN,yakin,2,chapter10b.gd:295 topçu sahasında Urban/Fatih/Tolga yüz yüze (say),
+D10B_U_CAST_COLD,SPK_URBAN,yakin,2,chapter10b.gd:297 topçu sahasında Urban/Fatih/Tolga yüz yüze (say),
+D10B_U_CAST_SPILL,SPK_URBAN,yakin_yuksek,3,chapter10b.gd:300 Urban top/döküm gürültüsünde bağırır (büyük harf/ünlem),
+D10B_T_CAST_SPILL,SPK_TOLGA,yakin,2,chapter10b.gd:301 topçu sahasında Urban/Fatih/Tolga yüz yüze (say),
+D10B_U_CAST_GOOD,SPK_URBAN,yakin,2,chapter10b.gd:305 topçu sahasında Urban/Fatih/Tolga yüz yüze (say),
+D10B_U_CAST_BAD,SPK_URBAN,yakin,2,chapter10b.gd:305 topçu sahasında Urban/Fatih/Tolga yüz yüze (say),
+D10B_U_NAME,SPK_URBAN,yakin,2,chapter10b.gd:310 topçu sahasında Urban/Fatih/Tolga yüz yüze (say),
+D10B_U_NAME_1,SPK_URBAN,yakin,2,chapter10b.gd:322 topçu sahasında Urban/Fatih/Tolga yüz yüze (say),[fmt: kod anahtarı biçimle kuruyor]
+D10B_U_NAME_2,SPK_URBAN,yakin,2,chapter10b.gd:322 topçu sahasında Urban/Fatih/Tolga yüz yüze (say),[fmt: kod anahtarı biçimle kuruyor]
+D10B_U_NAME_3,SPK_URBAN,yakin,2,chapter10b.gd:322 topçu sahasında Urban/Fatih/Tolga yüz yüze (say),[fmt: kod anahtarı biçimle kuruyor]
+D10B_U_NAME_4,SPK_URBAN,yakin_yuksek,3,chapter10b.gd:322 Urban top/döküm gürültüsünde bağırır (büyük harf/ünlem),[fmt: kod anahtarı biçimle kuruyor]
+D10B_T_ARRIVE,SPK_TOLGA,ic_ses,,"chapter10b.gd:341 parantezli sahne anlatısı / hesap, Tolga kendi kendine",
+D10B_U_BOW,SPK_URBAN,yakin,2,chapter10b.gd:363 topçu sahasında Urban/Fatih/Tolga yüz yüze (say),
+D10B_F_01,SPK_FATIH,yakin,2,chapter10b.gd:364 topçu sahasında Urban/Fatih/Tolga yüz yüze (say),
+D10B_U_TAPED,SPK_URBAN,yakin,2,chapter10b.gd:365 topçu sahasında Urban/Fatih/Tolga yüz yüze (say),
+D10B_U_UNTAPED,SPK_URBAN,yakin,2,chapter10b.gd:365 topçu sahasında Urban/Fatih/Tolga yüz yüze (say),
+D10B_F_02,SPK_FATIH,yakin,2,chapter10b.gd:366 topçu sahasında Urban/Fatih/Tolga yüz yüze (say),
+D10B_T_TAPE_Q,SPK_TOLGA,yakin,2,chapter10b.gd:375 topçu sahasında Urban/Fatih/Tolga yüz yüze (say),
+D10B_F_TAPE,SPK_FATIH,yakin,2,chapter10b.gd:392 topçu sahasında Urban/Fatih/Tolga yüz yüze (say),
+D10B_U_POWDER,SPK_URBAN,yakin,2,chapter10b.gd:397 topçu sahasında Urban/Fatih/Tolga yüz yüze (say),
+D10B_U_POWDER_1,SPK_URBAN,yakin,2,chapter10b.gd:409 topçu sahasında Urban/Fatih/Tolga yüz yüze (say),[fmt: kod anahtarı biçimle kuruyor]
+D10B_U_POWDER_2,SPK_URBAN,yakin,2,chapter10b.gd:409 topçu sahasında Urban/Fatih/Tolga yüz yüze (say),[fmt: kod anahtarı biçimle kuruyor]
+D10B_U_POWDER_3,SPK_URBAN,yakin,2,chapter10b.gd:409 topçu sahasında Urban/Fatih/Tolga yüz yüze (say),[fmt: kod anahtarı biçimle kuruyor]
+D10B_T_POWDER_3,SPK_TOLGA,yakin,2,chapter10b.gd:422 topçu sahasında Urban/Fatih/Tolga yüz yüze (say),
+D10B_U_CALC,SPK_URBAN,yakin,2,chapter10b.gd:433 topçu sahasında Urban/Fatih/Tolga yüz yüze (say),
+D10B_T_CALC_PHONE,SPK_TOLGA,ic_ses,,"chapter10b.gd:445 parantezli sahne anlatısı / hesap, Tolga kendi kendine",[fmt: kod anahtarı biçimle kuruyor]
+D10B_T_CALC_EYE,SPK_TOLGA,ic_ses,,"chapter10b.gd:445 parantezli sahne anlatısı / hesap, Tolga kendi kendine",[fmt: kod anahtarı biçimle kuruyor]
+D10B_T_CALC_CUBE,SPK_TOLGA,ic_ses,,"chapter10b.gd:445 parantezli sahne anlatısı / hesap, Tolga kendi kendine",[fmt: kod anahtarı biçimle kuruyor]
+D10B_U_CALC_OK,SPK_URBAN,yakin,2,chapter10b.gd:446 topçu sahasında Urban/Fatih/Tolga yüz yüze (say),
+D10B_U_CALC_EYE,SPK_URBAN,yakin,2,chapter10b.gd:446 topçu sahasında Urban/Fatih/Tolga yüz yüze (say),
+D10B_U_FUSE,SPK_URBAN,yakin,2,chapter10b.gd:458 topçu sahasında Urban/Fatih/Tolga yüz yüze (say),
+D10B_U_FUSE_LIGHTER,SPK_URBAN,yakin,2,chapter10b.gd:478 topçu sahasında Urban/Fatih/Tolga yüz yüze (say),
+D10B_U_FUSE_URBAN,SPK_URBAN,yakin,2,chapter10b.gd:494 topçu sahasında Urban/Fatih/Tolga yüz yüze (say),
+D10B_U_FUSE_TORCH,SPK_URBAN,yakin,2,chapter10b.gd:486 topçu sahasında Urban/Fatih/Tolga yüz yüze (say),
+D10B_U_EARS,SPK_URBAN,yakin_yuksek,3,chapter10b.gd:506 Urban top/döküm gürültüsünde bağırır (büyük harf/ünlem),
+D10B_T_B1_1,SPK_TOLGA,ic_ses,,"chapter10b.gd:549 parantezli sahne anlatısı / hesap, Tolga kendi kendine",
+D10B_U_B1_2,SPK_URBAN,yakin,2,chapter10b.gd:552 topçu sahasında Urban/Fatih/Tolga yüz yüze (say),
+D10B_T_B1_3,SPK_TOLGA,yakin,2,chapter10b.gd:553 topçu sahasında Urban/Fatih/Tolga yüz yüze (say),
+D10B_RIDER,SPK_RIDER,yakin_yuksek,6,chapter10b.gd:564 atlı ulak Sultan'a soluk soluğa haber verir,
+D10B_F_B1_1,SPK_FATIH,yakin,2,chapter10b.gd:567 topçu sahasında Urban/Fatih/Tolga yüz yüze (say),
+D10B_T_B1_4,SPK_TOLGA,yakin,2,chapter10b.gd:570 topçu sahasında Urban/Fatih/Tolga yüz yüze (say),
+D10B_F_B1_2,SPK_FATIH,yakin,2,chapter10b.gd:571 topçu sahasında Urban/Fatih/Tolga yüz yüze (say),
+D10B_T_B1_5,SPK_TOLGA,yakin,2,chapter10b.gd:572 topçu sahasında Urban/Fatih/Tolga yüz yüze (say),
+D10B_F_B1_3,SPK_FATIH,yakin,2,chapter10b.gd:573 topçu sahasında Urban/Fatih/Tolga yüz yüze (say),
+D10B_F_B1_3_CUBE,SPK_FATIH,yakin,2,chapter10b.gd:573 topçu sahasında Urban/Fatih/Tolga yüz yüze (say),[fmt: kod anahtarı biçimle kuruyor]
+D10B_T_B2_1,SPK_TOLGA,ic_ses,,"chapter10b.gd:590 parantezli sahne anlatısı / hesap, Tolga kendi kendine",
+D10B_U_B2_2,SPK_URBAN,yakin,2,chapter10b.gd:592 topçu sahasında Urban/Fatih/Tolga yüz yüze (say),
+D10B_F_B2_1,SPK_FATIH,yakin,2,chapter10b.gd:594 topçu sahasında Urban/Fatih/Tolga yüz yüze (say),
+D10B_U_B2_3,SPK_URBAN,yakin,2,chapter10b.gd:595 topçu sahasında Urban/Fatih/Tolga yüz yüze (say),
+D10B_F_B2_2,SPK_FATIH,yakin,2,chapter10b.gd:596 topçu sahasında Urban/Fatih/Tolga yüz yüze (say),
+D10B_U_B3_1,SPK_URBAN,yakin,2,chapter10b.gd:607 topçu sahasında Urban/Fatih/Tolga yüz yüze (say),
+D10B_T_B3_2,SPK_TOLGA,yakin,2,chapter10b.gd:608 topçu sahasında Urban/Fatih/Tolga yüz yüze (say),
+D10B_T_B3_AIR,SPK_TOLGA,telsiz,,"chapter10b.gd:665 Hikmet–Tolga telsiz (""(Telsiz)""), top sahası",
+D10B_H_B3_AIR,SPK_HIKMET,telsiz,,"chapter10b.gd:670 Hikmet–Tolga telsiz (""(Telsiz)""), top sahası",
+D10B_T_B3_3,SPK_TOLGA,ic_ses,,"chapter10b.gd:699 parantezli sahne anlatısı / hesap, Tolga kendi kendine",
+D10B_F_B3_1,SPK_FATIH,yakin,2,chapter10b.gd:702 topçu sahasında Urban/Fatih/Tolga yüz yüze (say),
+D10B_U_B3_4,SPK_URBAN,yakin,2,chapter10b.gd:704 topçu sahasında Urban/Fatih/Tolga yüz yüze (say),
+D10B_F_B3_2,SPK_FATIH,yakin,2,chapter10b.gd:706 topçu sahasında Urban/Fatih/Tolga yüz yüze (say),
+D10B_F_B3_2P,SPK_FATIH,yakin,2,chapter10b.gd:706 topçu sahasında Urban/Fatih/Tolga yüz yüze (say),
+D10B_F_B3_3,SPK_FATIH,yakin,2,chapter10b.gd:707 topçu sahasında Urban/Fatih/Tolga yüz yüze (say),
+D10B_T_B3_4,SPK_TOLGA,yakin,2,chapter10b.gd:708 topçu sahasında Urban/Fatih/Tolga yüz yüze (say),
+D10B_F_B3_4,SPK_FATIH,yakin,2,chapter10b.gd:710 topçu sahasında Urban/Fatih/Tolga yüz yüze (say),
+D10B_T_B3_5,SPK_TOLGA,yakin,2,chapter10b.gd:711 topçu sahasında Urban/Fatih/Tolga yüz yüze (say),
+D10B_F_B3_5,SPK_FATIH,yakin,2,chapter10b.gd:712 topçu sahasında Urban/Fatih/Tolga yüz yüze (say),
+D10B_KADRI_B3,SPK_KADRI,uzak,60,"chapter10b.gd:714 ""(Uzaktan, mutfaktan)"": Kadri mutfaktan topçu sahasına bağırır",
+D10B_H_RADIO_1,SPK_HIKMET,telsiz,,"chapter10b.gd:767 Hikmet–Tolga telsiz (""(Telsiz)""), top sahası",
+D10B_T_RADIO_1,SPK_TOLGA,telsiz,,"chapter10b.gd:768 Hikmet–Tolga telsiz (""(Telsiz)""), top sahası",[fmt: kod anahtarı biçimle kuruyor]
+D10B_T_RADIO_2,SPK_TOLGA,telsiz,,"chapter10b.gd:768 Hikmet–Tolga telsiz (""(Telsiz)""), top sahası",[fmt: kod anahtarı biçimle kuruyor]
+D10B_T_RADIO_3,SPK_TOLGA,telsiz,,"chapter10b.gd:768 Hikmet–Tolga telsiz (""(Telsiz)""), top sahası",[fmt: kod anahtarı biçimle kuruyor]
+D10B_H_RADIO_3,SPK_HIKMET,telsiz,,"chapter10b.gd:769 Hikmet–Tolga telsiz (""(Telsiz)""), top sahası",
+D10B_T_RADIO_4,SPK_TOLGA,telsiz,,"chapter10b.gd:771 Hikmet–Tolga telsiz (""(Telsiz)""), top sahası",
+D11_N_BOOM,SPK_NIHAT,yakin,1.5,chapter11.gd:284 ateş başında Nihat–Tolga yüz yüze,
+D11_T_BOOM,SPK_TOLGA,yakin,1.5,chapter11.gd:285 ateş başında Nihat–Tolga yüz yüze,
+D10H_E_01,SPK_ENVOY,yakin,5,"chapter10h.gd:160 İmparator huzurunda resmî konuşma, tercüme eşliğinde (heyet salonu)",
+D10H_L_02,SPK_LUTFI,yakin,2,chapter10h.gd:161 heyet/surda yüz yüze konuşma (say),
+D10H_T_03,SPK_TOLGA,yakin,2,chapter10h.gd:162 heyet/surda yüz yüze konuşma (say),
+D10H_L_04,SPK_LUTFI,yakin,2,chapter10h.gd:174 heyet/surda yüz yüze konuşma (say),
+D10H_K_01,SPK_EMPEROR,yakin,5,"chapter10h.gd:193 İmparator huzurunda resmî konuşma, tercüme eşliğinde (heyet salonu)",
+D10H_TH_01,SPK_THEODOROS,fisilti,0.4,"chapter10h.gd:196 tercüman Theodoros/Lütfi Tolga'ya fısıldar (metinde ""fısıldar/dişlerinin arasından"")",
+D10H_E_OFFER,SPK_ENVOY,yakin,5,"chapter10h.gd:205 İmparator huzurunda resmî konuşma, tercüme eşliğinde (heyet salonu)",
+D10H_L_OFFER,SPK_LUTFI,yakin,2,chapter10h.gd:206 heyet/surda yüz yüze konuşma (say),
+D10H_TH_OFFER,SPK_THEODOROS,fisilti,0.4,"chapter10h.gd:207 tercüman Theodoros/Lütfi Tolga'ya fısıldar (metinde ""fısıldar/dişlerinin arasından"")",
+D10H_T_FIX_1,SPK_TOLGA,yakin,2,chapter10h.gd:212 heyet/surda yüz yüze konuşma (say),
+D10H_L_FIXED_1,SPK_LUTFI,fisilti,0.4,"chapter10h.gd:213 tercüman Theodoros/Lütfi Tolga'ya fısıldar (metinde ""fısıldar/dişlerinin arasından"")",
+D10H_K_FIXED_1,SPK_EMPEROR,yakin,5,"chapter10h.gd:214 İmparator huzurunda resmî konuşma, tercüme eşliğinde (heyet salonu)",
+D10H_T_RENT,SPK_TOLGA,yakin,2,chapter10h.gd:216 heyet/surda yüz yüze konuşma (say),
+D10H_K_RENT,SPK_EMPEROR,yakin,5,"chapter10h.gd:217 İmparator huzurunda resmî konuşma, tercüme eşliğinde (heyet salonu)",
+D10H_K_HOUSE,SPK_EMPEROR,yakin,5,"chapter10h.gd:219 İmparator huzurunda resmî konuşma, tercüme eşliğinde (heyet salonu)",
+D10H_K_ANSWER,SPK_EMPEROR,yakin,5,"chapter10h.gd:221 İmparator huzurunda resmî konuşma, tercüme eşliğinde (heyet salonu)",
+D10H_L_ANSWER,SPK_LUTFI,yakin,2,chapter10h.gd:222 heyet/surda yüz yüze konuşma (say),
+D10H_TH_ANSWER,SPK_THEODOROS,fisilti,0.4,"chapter10h.gd:223 tercüman Theodoros/Lütfi Tolga'ya fısıldar (metinde ""fısıldar/dişlerinin arasından"")",
+D10H_T_FIX_2,SPK_TOLGA,yakin,2,chapter10h.gd:227 heyet/surda yüz yüze konuşma (say),
+D10H_E_FIXED_2,SPK_ENVOY,yakin,5,"chapter10h.gd:228 İmparator huzurunda resmî konuşma, tercüme eşliğinde (heyet salonu)",
+D10H_E_MAYBE,SPK_ENVOY,yakin,5,"chapter10h.gd:230 İmparator huzurunda resmî konuşma, tercüme eşliğinde (heyet salonu)",
+D10H_K_FRANK,SPK_EMPEROR,yakin,5,"chapter10h.gd:232 İmparator huzurunda resmî konuşma, tercüme eşliğinde (heyet salonu)",
+D10H_TH_FRANK,SPK_THEODOROS,fisilti,0.4,"chapter10h.gd:233 tercüman Theodoros/Lütfi Tolga'ya fısıldar (metinde ""fısıldar/dişlerinin arasından"")",
+D10H_T_FRANK_1,SPK_TOLGA,yakin,2,chapter10h.gd:235 heyet/surda yüz yüze konuşma (say),[fmt: kod anahtarı biçimle kuruyor]
+D10H_T_FRANK_2,SPK_TOLGA,yakin,2,chapter10h.gd:235 heyet/surda yüz yüze konuşma (say),[fmt: kod anahtarı biçimle kuruyor]
+D10H_T_FRANK_3,SPK_TOLGA,yakin,2,chapter10h.gd:235 heyet/surda yüz yüze konuşma (say),[fmt: kod anahtarı biçimle kuruyor]
+D10H_K_FRANK_1,SPK_EMPEROR,yakin,5,"chapter10h.gd:236 İmparator huzurunda resmî konuşma, tercüme eşliğinde (heyet salonu)",[fmt: kod anahtarı biçimle kuruyor]
+D10H_K_FRANK_2,SPK_EMPEROR,yakin,5,"chapter10h.gd:236 İmparator huzurunda resmî konuşma, tercüme eşliğinde (heyet salonu)",[fmt: kod anahtarı biçimle kuruyor]
+D10H_K_FRANK_3,SPK_EMPEROR,yakin,5,"chapter10h.gd:236 İmparator huzurunda resmî konuşma, tercüme eşliğinde (heyet salonu)",[fmt: kod anahtarı biçimle kuruyor]
+D10H_K_LETTER,SPK_EMPEROR,yakin,5,"chapter10h.gd:241 İmparator huzurunda resmî konuşma, tercüme eşliğinde (heyet salonu)",
+D10H_TH_LETTER,SPK_THEODOROS,yakin,2,chapter10h.gd:242 heyet/surda yüz yüze konuşma (say),
+D10H_T_KEEP,SPK_TOLGA,ic_ses,,chapter10h.gd:257 Tolga mektupla/barikatla kendi kendine (parantezli),
+D10H_T_OPEN,SPK_TOLGA,ic_ses,,chapter10h.gd:251 Tolga mektupla/barikatla kendi kendine (parantezli),
+D10H_T_OPEN_2,SPK_TOLGA,ic_ses,,chapter10h.gd:254 Tolga mektupla/barikatla kendi kendine (parantezli),
+D10H_K_SHAME,SPK_EMPEROR,yakin,5,"chapter10h.gd:260 İmparator huzurunda resmî konuşma, tercüme eşliğinde (heyet salonu)",
+D10H_L_SHAME,SPK_LUTFI,yakin,2,chapter10h.gd:261 heyet/surda yüz yüze konuşma (say),
+D10H_K_STAY,SPK_EMPEROR,yakin,5,"chapter10h.gd:276 İmparator huzurunda resmî konuşma, tercüme eşliğinde (heyet salonu)",
+D10H_T_SAFE,SPK_TOLGA,yakin,2,chapter10h.gd:280 heyet/surda yüz yüze konuşma (say),
+D10H_K_SAFE,SPK_EMPEROR,yakin,5,"chapter10h.gd:281 İmparator huzurunda resmî konuşma, tercüme eşliğinde (heyet salonu)",
+D10H_T_CONFESS,SPK_TOLGA,yakin,2,chapter10h.gd:283 heyet/surda yüz yüze konuşma (say),
+D10H_TH_CONFESS,SPK_THEODOROS,yakin,2,chapter10h.gd:284 heyet/surda yüz yüze konuşma (say),
+D10H_K_CONFESS,SPK_EMPEROR,yakin,5,"chapter10h.gd:285 İmparator huzurunda resmî konuşma, tercüme eşliğinde (heyet salonu)",
+D10H_T_CANT_SAY,SPK_TOLGA,yakin,2,chapter10h.gd:289 heyet/surda yüz yüze konuşma (say),
+D10H_K_CANT_SAY,SPK_EMPEROR,yakin,5,"chapter10h.gd:290 İmparator huzurunda resmî konuşma, tercüme eşliğinde (heyet salonu)",
+D10H_T_HELP,SPK_TOLGA,yakin,2,chapter10h.gd:296 heyet/surda yüz yüze konuşma (say),
+D10H_K_HELP,SPK_EMPEROR,yakin,5,"chapter10h.gd:297 İmparator huzurunda resmî konuşma, tercüme eşliğinde (heyet salonu)",
+D10H_TH_HELP,SPK_THEODOROS,yakin,2,chapter10h.gd:298 heyet/surda yüz yüze konuşma (say),
+D10H_T_K_1,SPK_TOLGA,yakin,2,chapter10h.gd:349 heyet/surda yüz yüze konuşma (say),
+D10H_T_K_NOTAPE,SPK_TOLGA,yakin,2,chapter10h.gd:352 heyet/surda yüz yüze konuşma (say),
+D10H_T_K_2,SPK_TOLGA,ic_ses,,chapter10h.gd:368 Tolga mektupla/barikatla kendi kendine (parantezli),
+D10H_N_K,SPK_NIKO,uzak,12,"chapter10h.gd:369 ""(Surun üstünden)"": Niko surdan Tolga'ya seslenir",
+D10H_T_K_DONE,SPK_TOLGA,yakin,2,chapter10h.gd:346 heyet/surda yüz yüze konuşma (say),
+D10H_G_1,SPK_GIUST,yakin,2,chapter10h.gd:380 heyet/surda yüz yüze konuşma (say),
+D10H_T_G_PB,SPK_TOLGA,yakin,2,chapter10h.gd:389 heyet/surda yüz yüze konuşma (say),
+D10H_G_PB,SPK_GIUST,yakin,2,chapter10h.gd:391 heyet/surda yüz yüze konuşma (say),
+D10H_T_G_WARN,SPK_TOLGA,yakin,2,chapter10h.gd:399 heyet/surda yüz yüze konuşma (say),
+D10H_G_WARN,SPK_GIUST,yakin,2,chapter10h.gd:400 heyet/surda yüz yüze konuşma (say),
+D10H_G_NOTHING,SPK_GIUST,yakin,2,chapter10h.gd:404 heyet/surda yüz yüze konuşma (say),
+D10H_G_DONE,SPK_GIUST,yakin,2,chapter10h.gd:375 heyet/surda yüz yüze konuşma (say),
+D10H_N_1,SPK_NIKO,yakin,2,chapter10h.gd:415 heyet/surda yüz yüze konuşma (say),
+D10H_N_NOPEAS,SPK_NIKO,yakin,2,chapter10h.gd:418 heyet/surda yüz yüze konuşma (say),
+D10H_T_N_PEAS,SPK_TOLGA,yakin,2,chapter10h.gd:424 heyet/surda yüz yüze konuşma (say),
+D10H_N_PEAS,SPK_NIKO,yakin,2,chapter10h.gd:426 heyet/surda yüz yüze konuşma (say),
+D10H_N_DONE,SPK_NIKO,yakin,2,chapter10h.gd:409 heyet/surda yüz yüze konuşma (say),
+D10H_T_EXIT_0,SPK_TOLGA,yakin,2,chapter10h.gd:466 heyet/surda yüz yüze konuşma (say),[fmt: kod anahtarı biçimle kuruyor]
+D10H_T_EXIT_1,SPK_TOLGA,yakin,2,chapter10h.gd:466 heyet/surda yüz yüze konuşma (say),[fmt: kod anahtarı biçimle kuruyor]
+D10H_T_EXIT_3,SPK_TOLGA,yakin,2,chapter10h.gd:466 heyet/surda yüz yüze konuşma (say),[fmt: kod anahtarı biçimle kuruyor]
+D10H_H_RADIO,SPK_HIKMET,telsiz,,"chapter10h.gd:491 Hikmet telsizle (""(Telsiz)"")",
+D10H_T_RADIO_SAVE,SPK_TOLGA,yakin,2,chapter10h.gd:496 heyet/surda yüz yüze konuşma (say),
+D10H_H_RADIO_SAVE,SPK_HIKMET,yakin,2,chapter10h.gd:497 heyet/surda yüz yüze konuşma (say),
+D10H_T_RADIO_LETTER,SPK_TOLGA,yakin,2,chapter10h.gd:499 heyet/surda yüz yüze konuşma (say),
+D10H_T_RADIO_SHAME,SPK_TOLGA,yakin,2,chapter10h.gd:501 heyet/surda yüz yüze konuşma (say),
+D11_N_BYZ,SPK_NIHAT,yakin,1.5,chapter11.gd:290 ateş başında Nihat–Tolga yüz yüze,
+D11_T_BYZ,SPK_TOLGA,yakin,1.5,chapter11.gd:291 ateş başında Nihat–Tolga yüz yüze,
+D10Z_K_01,SPK_KADRI,yakin,2,chapter10z.gd:104 mutfakta Kadri–Tolga yüz yüze (say),
+D10Z_T_02,SPK_TOLGA,yakin,2,chapter10z.gd:105 mutfakta Kadri–Tolga yüz yüze (say),
+D10Z_K_03,SPK_KADRI,yakin,2,chapter10z.gd:106 mutfakta Kadri–Tolga yüz yüze (say),
+D10Z_K_ASK_SOUP,SPK_KADRI,yakin,2,chapter10z.gd:176 mutfakta Kadri–Tolga yüz yüze (say),[fmt: kod anahtarı biçimle kuruyor]
+D10Z_T_SOUP_MODERN,SPK_TOLGA,yakin,2,chapter10z.gd:184 mutfakta Kadri–Tolga yüz yüze (say),[fmt: kod anahtarı biçimle kuruyor]
+D10Z_K_SOUP_NO,SPK_KADRI,yakin,2,chapter10z.gd:186 mutfakta Kadri–Tolga yüz yüze (say),[fmt: kod anahtarı biçimle kuruyor]
+D10Z_K_SOUP_OK_1,SPK_KADRI,yakin,2,chapter10z.gd:189 mutfakta Kadri–Tolga yüz yüze (say),[fmt: kod anahtarı biçimle kuruyor]
+D10Z_K_SOUP_OK_2,SPK_KADRI,yakin,2,chapter10z.gd:189 mutfakta Kadri–Tolga yüz yüze (say),[fmt: kod anahtarı biçimle kuruyor]
+D10Z_K_ASK_MAIN,SPK_KADRI,yakin,2,chapter10z.gd:176 mutfakta Kadri–Tolga yüz yüze (say),[fmt: kod anahtarı biçimle kuruyor]
+D10Z_T_MAIN_MODERN,SPK_TOLGA,yakin,2,chapter10z.gd:184 mutfakta Kadri–Tolga yüz yüze (say),[fmt: kod anahtarı biçimle kuruyor]
+D10Z_K_MAIN_NO,SPK_KADRI,yakin,2,chapter10z.gd:489 mutfakta Kadri–Tolga yüz yüze (say),
+D10Z_K_MAIN_NO_1,SPK_KADRI,yakin,2,chapter10z.gd:186 mutfakta Kadri–Tolga yüz yüze (say),
+D10Z_K_MAIN_OK_1,SPK_KADRI,yakin,2,chapter10z.gd:189 mutfakta Kadri–Tolga yüz yüze (say),[fmt: kod anahtarı biçimle kuruyor]
+D10Z_K_MAIN_OK_2,SPK_KADRI,yakin,2,chapter10z.gd:189 mutfakta Kadri–Tolga yüz yüze (say),[fmt: kod anahtarı biçimle kuruyor]
+D10Z_K_ASK_SWEET,SPK_KADRI,yakin,2,chapter10z.gd:176 mutfakta Kadri–Tolga yüz yüze (say),[fmt: kod anahtarı biçimle kuruyor]
+D10Z_T_SWEET_MODERN,SPK_TOLGA,yakin,2,chapter10z.gd:184 mutfakta Kadri–Tolga yüz yüze (say),[fmt: kod anahtarı biçimle kuruyor]
+D10Z_K_SWEET_NO,SPK_KADRI,yakin,2,chapter10z.gd:186 mutfakta Kadri–Tolga yüz yüze (say),[fmt: kod anahtarı biçimle kuruyor]
+D10Z_K_SWEET_OK_1,SPK_KADRI,yakin,2,chapter10z.gd:189 mutfakta Kadri–Tolga yüz yüze (say),[fmt: kod anahtarı biçimle kuruyor]
+D10Z_K_SWEET_OK_2,SPK_KADRI,yakin,2,chapter10z.gd:189 mutfakta Kadri–Tolga yüz yüze (say),[fmt: kod anahtarı biçimle kuruyor]
+D10Z_T_MENU_DONE,SPK_TOLGA,ic_ses,,chapter10z.gd:194 Tolga kendi kendine / parantezli sahne anlatısı,
+D10Z_K_STOVE,SPK_KADRI,yakin,2,chapter10z.gd:200 mutfakta Kadri–Tolga yüz yüze (say),
+D10Z_K_TASTE_OK_1,SPK_KADRI,yakin,2,chapter10z.gd:189 mutfakta Kadri–Tolga yüz yüze (say),[fmt: kod anahtarı biçimle kuruyor]
+D10Z_K_TASTE_OK_2,SPK_KADRI,yakin,2,chapter10z.gd:189 mutfakta Kadri–Tolga yüz yüze (say),[fmt: kod anahtarı biçimle kuruyor]
+D10Z_K_TASTE_OK_3,SPK_KADRI,yakin,2,chapter10z.gd:189 mutfakta Kadri–Tolga yüz yüze (say),[fmt: kod anahtarı biçimle kuruyor]
+D10Z_K_TASTE_RAW,SPK_KADRI,yakin,2,chapter10z.gd:252 mutfakta Kadri–Tolga yüz yüze (say),
+D10Z_K_TASTE_BURNT,SPK_KADRI,yakin_yuksek,3,chapter10z.gd:269 mutfakta yangın/panik: Kadri bağırır,
+D10Z_K_TASTE_BURNT2,SPK_KADRI,yakin_yuksek,3,chapter10z.gd:269 mutfakta yangın/panik: Kadri bağırır,
+D10Z_K_CRIT_1,SPK_KADRI,yakin,2,chapter10z.gd:276 mutfakta Kadri–Tolga yüz yüze (say),[fmt: kod anahtarı biçimle kuruyor]
+D10Z_K_CRIT_2,SPK_KADRI,yakin,2,chapter10z.gd:276 mutfakta Kadri–Tolga yüz yüze (say),[fmt: kod anahtarı biçimle kuruyor]
+D10Z_K_CRIT_3,SPK_KADRI,yakin,2,chapter10z.gd:276 mutfakta Kadri–Tolga yüz yüze (say),[fmt: kod anahtarı biçimle kuruyor]
+D10Z_T_YES,SPK_TOLGA,yakin,2,chapter10z.gd:295 mutfakta Kadri–Tolga yüz yüze (say),
+D10Z_K_YES_1,SPK_KADRI,yakin,2,chapter10z.gd:296 mutfakta Kadri–Tolga yüz yüze (say),[fmt: kod anahtarı biçimle kuruyor]
+D10Z_K_YES_2,SPK_KADRI,yakin,2,chapter10z.gd:296 mutfakta Kadri–Tolga yüz yüze (say),[fmt: kod anahtarı biçimle kuruyor]
+D10Z_K_YES_3,SPK_KADRI,yakin,2,chapter10z.gd:296 mutfakta Kadri–Tolga yüz yüze (say),[fmt: kod anahtarı biçimle kuruyor]
+D10Z_T_FUSION,SPK_TOLGA,yakin,2,chapter10z.gd:292 mutfakta Kadri–Tolga yüz yüze (say),
+D10Z_K_FUSION,SPK_KADRI,yakin,2,chapter10z.gd:293 mutfakta Kadri–Tolga yüz yüze (say),
+D10Z_T_LEBLEBI,SPK_TOLGA,ic_ses,,chapter10z.gd:289 Tolga kendi kendine / parantezli sahne anlatısı,
+D10Z_K_LEBLEBI,SPK_KADRI,yakin,2,chapter10z.gd:290 mutfakta Kadri–Tolga yüz yüze (say),
+D10Z_K_FIRE_1,SPK_KADRI,yakin,2,chapter10z.gd:307 mutfakta Kadri–Tolga yüz yüze (say),
+D10Z_T_FIRE_2,SPK_TOLGA,ic_ses,,chapter10z.gd:315 Tolga kendi kendine / parantezli sahne anlatısı,
+D10Z_K_FIRE_3,SPK_KADRI,yakin_yuksek,3,chapter10z.gd:317 mutfakta yangın/panik: Kadri bağırır,
+D10Z_H_FIRE,SPK_HIKMET,telsiz,,"chapter10z.gd:322 Hikmet telsizle (""(Telsiz)"")",
+D10Z_T_FIRE_4,SPK_TOLGA,yakin,2,chapter10z.gd:323 mutfakta Kadri–Tolga yüz yüze (say),
+D10Z_K_WAIT,SPK_KADRI,yakin,2,chapter10z.gd:338 mutfakta Kadri–Tolga yüz yüze (say),
+D10Z_T_WAIT,SPK_TOLGA,yakin,2,chapter10z.gd:339 mutfakta Kadri–Tolga yüz yüze (say),
+D10Z_T_ENTER,SPK_TOLGA,ic_ses,,chapter10z.gd:349 Tolga kendi kendine / parantezli sahne anlatısı,
+D10Z_F_01,SPK_FATIH,yakin,2,chapter10z.gd:350 mutfakta Kadri–Tolga yüz yüze (say),
+D10Z_F_TASTE_LEB,SPK_FATIH,yakin,2,chapter10z.gd:519 mutfakta Kadri–Tolga yüz yüze (say),
+D10Z_F_TASTE_GOOD,SPK_FATIH,yakin,2,chapter10z.gd:526 mutfakta Kadri–Tolga yüz yüze (say),
+D10Z_F_TASTE_OK,SPK_FATIH,yakin,2,chapter10z.gd:528 mutfakta Kadri–Tolga yüz yüze (say),
+D10Z_F_WHO,SPK_FATIH,yakin,2,chapter10z.gd:358 mutfakta Kadri–Tolga yüz yüze (say),
+D10Z_BOTH,SPK_KADRI,yakin_yuksek,3,chapter10z.gd:359 mutfakta yangın/panik: Kadri bağırır,
+D10Z_F_STAY,SPK_FATIH,yakin,2,chapter10z.gd:360 mutfakta Kadri–Tolga yüz yüze (say),
+D10Z_T_TITLE,SPK_TOLGA,yakin,2,chapter10z.gd:361 mutfakta Kadri–Tolga yüz yüze (say),
+D10Z_K_TITLE,SPK_KADRI,yakin,2,chapter10z.gd:362 mutfakta Kadri–Tolga yüz yüze (say),
+D10Z_K_TITLE_PLAIN,SPK_KADRI,yakin,2,chapter10z.gd:362 mutfakta Kadri–Tolga yüz yüze (say),
+D10Z_T_TITLE_2,SPK_TOLGA,ic_ses,,chapter10z.gd:363 Tolga kendi kendine / parantezli sahne anlatısı,
+D10Z_H_RADIO,SPK_HIKMET,yakin,2,chapter10z.gd:365 mutfakta Kadri–Tolga yüz yüze (say),
+D10Z_T_RADIO,SPK_TOLGA,yakin,2,chapter10z.gd:366 mutfakta Kadri–Tolga yüz yüze (say),
+D10G_T_01,SPK_TOLGA,yakin,2,chapter10g.gd:100 Galata'da tüccar/kaptan/Tolga yüz yüze (say),
+D10G_T_02,SPK_TOLGA,ic_ses,,chapter10g.gd:102 Tolga kendi kendine/anlatı (parantezli sahne notu),
+D10G_F_1,SPK_FISHMONGER,yakin,2,chapter10g.gd:137 Galata'da tüccar/kaptan/Tolga yüz yüze (say),
+D10G_T_F_2,SPK_TOLGA,yakin,2,chapter10g.gd:138 Galata'da tüccar/kaptan/Tolga yüz yüze (say),
+D10G_F_3,SPK_FISHMONGER,yakin,2,chapter10g.gd:139 Galata'da tüccar/kaptan/Tolga yüz yüze (say),
+D10G_F_AGAIN,SPK_FISHMONGER,yakin,2,chapter10g.gd:142 Galata'da tüccar/kaptan/Tolga yüz yüze (say),
+D10G_W_EARLY,SPK_WINE,yakin,2,chapter10g.gd:152 Galata'da tüccar/kaptan/Tolga yüz yüze (say),
+D10G_W_1,SPK_WINE,yakin,2,chapter10g.gd:145 Galata'da tüccar/kaptan/Tolga yüz yüze (say),
+D10G_T_W_1,SPK_TOLGA,yakin,2,chapter10g.gd:147 Galata'da tüccar/kaptan/Tolga yüz yüze (say),[fmt: kod anahtarı biçimle kuruyor]
+D10G_T_W_2,SPK_TOLGA,yakin,2,chapter10g.gd:147 Galata'da tüccar/kaptan/Tolga yüz yüze (say),[fmt: kod anahtarı biçimle kuruyor]
+D10G_T_W_3,SPK_TOLGA,yakin,2,chapter10g.gd:147 Galata'da tüccar/kaptan/Tolga yüz yüze (say),[fmt: kod anahtarı biçimle kuruyor]
+D10G_W_R1,SPK_WINE,yakin,2,chapter10g.gd:148 Galata'da tüccar/kaptan/Tolga yüz yüze (say),[fmt: kod anahtarı biçimle kuruyor]
+D10G_W_R2,SPK_WINE,yakin,2,chapter10g.gd:148 Galata'da tüccar/kaptan/Tolga yüz yüze (say),[fmt: kod anahtarı biçimle kuruyor]
+D10G_W_R3,SPK_WINE,yakin,2,chapter10g.gd:148 Galata'da tüccar/kaptan/Tolga yüz yüze (say),[fmt: kod anahtarı biçimle kuruyor]
+D10G_W_2,SPK_WINE,yakin,2,chapter10g.gd:149 Galata'da tüccar/kaptan/Tolga yüz yüze (say),
+D10G_W_AGAIN,SPK_WINE,yakin,2,chapter10g.gd:154 Galata'da tüccar/kaptan/Tolga yüz yüze (say),
+D10G_N_EARLY,SPK_NOTARY,yakin,2,chapter10g.gd:167 Galata'da tüccar/kaptan/Tolga yüz yüze (say),
+D10G_N_1,SPK_NOTARY,yakin,2,chapter10g.gd:158 Galata'da tüccar/kaptan/Tolga yüz yüze (say),
+D10G_T_N_2,SPK_TOLGA,yakin,2,chapter10g.gd:159 Galata'da tüccar/kaptan/Tolga yüz yüze (say),
+D10G_N_3,SPK_NOTARY,yakin,2,chapter10g.gd:160 Galata'da tüccar/kaptan/Tolga yüz yüze (say),
+D10G_T_N_4,SPK_TOLGA,yakin,2,chapter10g.gd:161 Galata'da tüccar/kaptan/Tolga yüz yüze (say),
+D10G_N_5,SPK_NOTARY,yakin,2,chapter10g.gd:162 Galata'da tüccar/kaptan/Tolga yüz yüze (say),
+D10G_N_AGAIN,SPK_NOTARY,yakin,2,chapter10g.gd:169 Galata'da tüccar/kaptan/Tolga yüz yüze (say),
+D10G_D_1,SPK_DOUBLE,yakin,2,chapter10g.gd:172 Galata'da tüccar/kaptan/Tolga yüz yüze (say),
+D10G_T_D_2,SPK_TOLGA,yakin,2,chapter10g.gd:173 Galata'da tüccar/kaptan/Tolga yüz yüze (say),
+D10G_D_3,SPK_DOUBLE,yakin,2,chapter10g.gd:174 Galata'da tüccar/kaptan/Tolga yüz yüze (say),
+D10G_D_AGAIN,SPK_DOUBLE,yakin,2,chapter10g.gd:176 Galata'da tüccar/kaptan/Tolga yüz yüze (say),
+D10G_C_EARLY,SPK_CAPTAIN,yakin,2,chapter10g.gd:179 Galata'da tüccar/kaptan/Tolga yüz yüze (say),
+D10G_C_1,SPK_CAPTAIN,yakin,2,chapter10g.gd:197 Galata'da tüccar/kaptan/Tolga yüz yüze (say),
+D10G_T_C_2,SPK_TOLGA,yakin,2,chapter10g.gd:198 Galata'da tüccar/kaptan/Tolga yüz yüze (say),
+D10G_C_3,SPK_CAPTAIN,yakin,2,chapter10g.gd:199 Galata'da tüccar/kaptan/Tolga yüz yüze (say),
+D10G_T_TO_FATIH,SPK_TOLGA,yakin,2,chapter10g.gd:203 Galata'da tüccar/kaptan/Tolga yüz yüze (say),
+D10G_C_TO_FATIH,SPK_CAPTAIN,yakin,2,chapter10g.gd:204 Galata'da tüccar/kaptan/Tolga yüz yüze (say),
+D10G_T_MISSED,SPK_TOLGA,uzak,25,chapter10g.gd:226 Tolga kalkan gemiye iskeleden bağırır,
+D10G_C_MISSED,SPK_CAPTAIN,uzak,20,"chapter10g.gd:227 ""(Güverteden)"": kaptan kalkan gemiden iskeleye bağırır",
+D10G_T_MISSED_2,SPK_TOLGA,ic_ses,,chapter10g.gd:228 Tolga kendi kendine/anlatı (parantezli sahne notu),
+D10G_F_LETTER,SPK_FATIH,yakin,2,chapter10g.gd:251 Galata'da tüccar/kaptan/Tolga yüz yüze (say),
+D10G_T_LETTER,SPK_TOLGA,yakin,2,chapter10g.gd:253 Galata'da tüccar/kaptan/Tolga yüz yüze (say),
+D10G_C_SAIL,SPK_CAPTAIN,yakin_yuksek,8,chapter10g.gd:274 kaptan gemi güvertesinde tayfaya emir verir,
+D10G_T_SAIL,SPK_TOLGA,ic_ses,,chapter10g.gd:275 Tolga kendi kendine/anlatı (parantezli sahne notu),
+D10G_T_FATIH_1,SPK_TOLGA,ic_ses,,chapter10g.gd:287 Tolga kendi kendine/anlatı (parantezli sahne notu),
+D10G_T_FATIH_2,SPK_TOLGA,ic_ses,,chapter10g.gd:293 Tolga kendi kendine/anlatı (parantezli sahne notu),
+D10G_C_VENICE,SPK_CAPTAIN,yakin,2,chapter10g.gd:295 Galata'da tüccar/kaptan/Tolga yüz yüze (say),
+D10G_T_SEASICK,SPK_TOLGA,ic_ses,,chapter10g.gd:296 Tolga kendi kendine/anlatı (parantezli sahne notu),
+D10G_H_RADIO,SPK_HIKMET,telsiz,,chapter10g.gd:298 Hikmet–Tolga telsiz (gemide),
+D10G_T_RADIO,SPK_TOLGA,telsiz,,chapter10g.gd:299 Hikmet–Tolga telsiz (gemide),
+D10A_TH_01,SPK_THEODOROS,yakin,2,chapter10a.gd:217 arşivde / otağda yüz yüze konuşma (say),
+D10A_T_02,SPK_TOLGA,yakin,2,chapter10a.gd:219 arşivde / otağda yüz yüze konuşma (say),
+D10A_TH_03,SPK_THEODOROS,yakin,2,chapter10a.gd:220 arşivde / otağda yüz yüze konuşma (say),
+D10A_T_04,SPK_TOLGA,yakin,2,chapter10a.gd:227 arşivde / otağda yüz yüze konuşma (say),
+D10A_T_04_CUBE,SPK_TOLGA,yakin,2,chapter10a.gd:227 arşivde / otağda yüz yüze konuşma (say),
+D10A_TH_05,SPK_THEODOROS,yakin,2,chapter10a.gd:227 arşivde / otağda yüz yüze konuşma (say),
+D10A_TH_EMPTY,SPK_THEODOROS,yakin,2,chapter10a.gd:272 arşivde / otağda yüz yüze konuşma (say),
+D10A_TH_WRONG_1,SPK_THEODOROS,yakin,2,chapter10a.gd:277 arşivde / otağda yüz yüze konuşma (say),[fmt: kod anahtarı biçimle kuruyor]
+D10A_TH_WRONG_2,SPK_THEODOROS,yakin,2,chapter10a.gd:277 arşivde / otağda yüz yüze konuşma (say),[fmt: kod anahtarı biçimle kuruyor]
+D10A_TH_WRONG_3,SPK_THEODOROS,yakin,2,chapter10a.gd:277 arşivde / otağda yüz yüze konuşma (say),[fmt: kod anahtarı biçimle kuruyor]
+D10A_TH_PROGRESS,SPK_THEODOROS,yakin,2,chapter10a.gd:298 arşivde / otağda yüz yüze konuşma (say),
+D10A_TH_DONE_CLEAN,SPK_THEODOROS,yakin,2,chapter10a.gd:303 arşivde / otağda yüz yüze konuşma (say),[fmt: kod anahtarı biçimle kuruyor]
+D10A_TH_DONE_MESSY,SPK_THEODOROS,yakin,2,chapter10a.gd:303 arşivde / otağda yüz yüze konuşma (say),[fmt: kod anahtarı biçimle kuruyor]
+D10A_T_DONE,SPK_TOLGA,yakin,2,chapter10a.gd:304 arşivde / otağda yüz yüze konuşma (say),
+D10A_N_01,SPK_NIHAT,yakin,2,chapter10a.gd:359 arşivde / otağda yüz yüze konuşma (say),
+D10A_N_03,SPK_NIHAT,yakin,2,chapter10a.gd:364 arşivde / otağda yüz yüze konuşma (say),
+D10A_N_FORM_1,SPK_NIHAT,yakin,2,chapter10a.gd:373 arşivde / otağda yüz yüze konuşma (say),
+D10A_N_FORM_2,SPK_NIHAT,yakin,2,chapter10a.gd:375 arşivde / otağda yüz yüze konuşma (say),
+D10A_N_FORM_3,SPK_NIHAT,yakin,2,chapter10a.gd:381 arşivde / otağda yüz yüze konuşma (say),
+D10A_T_FORM_4,SPK_TOLGA,yakin,2,chapter10a.gd:382 arşivde / otağda yüz yüze konuşma (say),
+D10A_TH_FORM_5,SPK_THEODOROS,yakin,2,chapter10a.gd:383 arşivde / otağda yüz yüze konuşma (say),
+D10A_N_FORM_6,SPK_NIHAT,yakin,2,chapter10a.gd:384 arşivde / otağda yüz yüze konuşma (say),
+D10A_N_OTAG_1,SPK_NIHAT,yakin,2,chapter10a.gd:405 arşivde / otağda yüz yüze konuşma (say),
+D10A_F_2,SPK_FATIH,yakin,2,chapter10a.gd:415 arşivde / otağda yüz yüze konuşma (say),
+D10A_T_READ,SPK_TOLGA,fisilti,1,"chapter10a.gd:413 Tolga Fatih'in okuma sessizliğinde fısıltıyla (""(Fısıltıyla)"")",
+D10A_N_OTAG_2,SPK_NIHAT,yakin,2,chapter10a.gd:419 arşivde / otağda yüz yüze konuşma (say),
+D10A_F_3,SPK_FATIH,yakin,2,chapter10a.gd:421 arşivde / otağda yüz yüze konuşma (say),
+D10A_N_SIGN,SPK_NIHAT,yakin,2,chapter10a.gd:430 arşivde / otağda yüz yüze konuşma (say),
+D10A_T_SIGN,SPK_TOLGA,yakin,2,chapter10a.gd:452 arşivde / otağda yüz yüze konuşma (say),
+D10A_T_REFUSE,SPK_TOLGA,yakin,2,chapter10a.gd:434 arşivde / otağda yüz yüze konuşma (say),
+D10A_N_REFUSE,SPK_NIHAT,yakin,2,chapter10a.gd:435 arşivde / otağda yüz yüze konuşma (say),
+D10A_N_MEET_1,SPK_NIHAT,yakin,2,chapter10a.gd:468 arşivde / otağda yüz yüze konuşma (say),
+D10A_TH_MEET_2,SPK_THEODOROS,yakin,2,chapter10a.gd:469 arşivde / otağda yüz yüze konuşma (say),
+D10A_T_MEET_3,SPK_TOLGA,yakin,2,chapter10a.gd:470 arşivde / otağda yüz yüze konuşma (say),
+D10A_N_MEET_4,SPK_NIHAT,yakin,2,chapter10a.gd:471 arşivde / otağda yüz yüze konuşma (say),
+D10A_H_RADIO,SPK_HIKMET,telsiz,,"chapter10a.gd:474 Hikmet–Tolga telsiz, toplantı ortasında (""(Telsiz, …)"")",
+D10A_T_RADIO,SPK_TOLGA,telsiz,,"chapter10a.gd:475 Hikmet–Tolga telsiz, toplantı ortasında (""(Telsiz, …)"")",
+D10A_N_MEET_5,SPK_NIHAT,yakin,2,chapter10a.gd:476 arşivde / otağda yüz yüze konuşma (say),
+D10L_D_01,SPK_MINER,yakin,1.5,chapter10l.gd:212 lağımda mum ışığında yüz yüze,
+D10L_T_02,SPK_TOLGA,yakin,1.5,chapter10l.gd:213 lağımda mum ışığında yüz yüze,
+D10L_D_03,SPK_MINER,yakin,1.5,chapter10l.gd:214 lağımda mum ışığında yüz yüze,
+D10L_T_04,SPK_TOLGA,ic_ses,,chapter10l.gd:215 Tolga lağımda kendi kendine / parantezli sahne anlatısı,
+D10L_D_05,SPK_MINER,yakin,1.5,chapter10l.gd:216 lağımda mum ışığında yüz yüze,
+D10L_D_DIG_1,SPK_MINER,yakin,1.5,chapter10l.gd:303 lağımda mum ışığında yüz yüze,[fmt: kod anahtarı biçimle kuruyor]
+D10L_D_DIG_2,SPK_MINER,yakin,1.5,chapter10l.gd:303 lağımda mum ışığında yüz yüze,[fmt: kod anahtarı biçimle kuruyor]
+D10L_D_DIG_3,SPK_MINER,yakin,1.5,chapter10l.gd:303 lağımda mum ışığında yüz yüze,[fmt: kod anahtarı biçimle kuruyor]
+D10L_D_DIG_4,SPK_MINER,yakin,1.5,chapter10l.gd:303 lağımda mum ışığında yüz yüze,[fmt: kod anahtarı biçimle kuruyor]
+D10L_D_DIG_5,SPK_MINER,yakin,1.5,chapter10l.gd:303 lağımda mum ışığında yüz yüze,[fmt: kod anahtarı biçimle kuruyor]
+D10L_D_WARN,SPK_MINER,yakin_yuksek,2,chapter10l.gd:301 Dragan tavan çökerken uyarı,
+D10L_D_SUPPORT,SPK_MINER,yakin,1.5,chapter10l.gd:252 lağımda mum ışığında yüz yüze,
+D10L_D_SUPPORT_NO,SPK_MINER,yakin,1.5,chapter10l.gd:247 lağımda mum ışığında yüz yüze,
+D10L_T_LISTEN,SPK_TOLGA,ic_ses,,chapter10l.gd:257 Tolga lağımda kendi kendine / parantezli sahne anlatısı,
+D10L_D_SILENT,SPK_MINER,yakin,1.5,chapter10l.gd:265 lağımda mum ışığında yüz yüze,
+D10L_T_HEARD,SPK_TOLGA,yakin,1.5,chapter10l.gd:262 lağımda mum ışığında yüz yüze,
+D10L_D_HEARD,SPK_MINER,yakin,1.5,chapter10l.gd:263 lağımda mum ışığında yüz yüze,
+D10L_T_COLLAPSE,SPK_TOLGA,ic_ses,,chapter10l.gd:340 Tolga lağımda kendi kendine / parantezli sahne anlatısı,
+D10L_N_DIG_1,SPK_NIHAT,uzak,4,"chapter10l.gd:342 ""(Yukarıdan, kazma sesi)"": Nihat toprağın üstünden, arada toprak/tavan",
+D10L_N_DIG_2,SPK_NIHAT,uzak,4,"chapter10l.gd:344 ""(Yukarıdan, kazma sesi)"": Nihat toprağın üstünden, arada toprak/tavan",
+D10L_T_CANDLE,SPK_TOLGA,yakin,1.5,chapter10l.gd:355 lağımda mum ışığında yüz yüze,
+D10L_D_CANDLE,SPK_MINER,yakin,1.5,chapter10l.gd:356 lağımda mum ışığında yüz yüze,
+D10L_T_MEET_1,SPK_TOLGA,ic_ses,,chapter10l.gd:375 Tolga lağımda kendi kendine / parantezli sahne anlatısı,
+D10L_G_MEET_2,SPK_GRANT,yakin,1.5,chapter10l.gd:376 lağımda mum ışığında yüz yüze,
+D10L_T_MEET_3,SPK_TOLGA,yakin,1.5,chapter10l.gd:377 lağımda mum ışığında yüz yüze,
+D10L_T_MEET_3B,SPK_TOLGA,yakin,1.5,chapter10l.gd:377 lağımda mum ışığında yüz yüze,
+D10L_G_MEET_4,SPK_GRANT,yakin,1.5,chapter10l.gd:378 lağımda mum ışığında yüz yüze,
+D10L_T_POLICY,SPK_TOLGA,yakin,1.5,chapter10l.gd:392 lağımda mum ışığında yüz yüze,
+D10L_G_POLICY,SPK_GRANT,yakin,1.5,chapter10l.gd:393 lağımda mum ışığında yüz yüze,
+D10L_T_LEBLEBI,SPK_TOLGA,ic_ses,,chapter10l.gd:398 Tolga lağımda kendi kendine / parantezli sahne anlatısı,
+D10L_G_LEBLEBI,SPK_GRANT,yakin,1.5,chapter10l.gd:402 lağımda mum ışığında yüz yüze,
+D10L_T_RETREAT,SPK_TOLGA,fisilti,1,chapter10l.gd:410 Tolga karşı lağımdan sessizce geri çekilirken,
+D10L_G_RETREAT,SPK_GRANT,yakin,1.5,chapter10l.gd:411 lağımda mum ışığında yüz yüze,
+D10L_D_TRUCE,SPK_MINER,yakin,1.5,chapter10l.gd:427 lağımda mum ışığında yüz yüze,
+D10L_D_TRUCE_LEB,SPK_MINER,yakin,1.5,chapter10l.gd:427 lağımda mum ışığında yüz yüze,
+D10L_G_TRUCE,SPK_GRANT,yakin,1.5,chapter10l.gd:428 lağımda mum ışığında yüz yüze,
+D10L_T_TRUCE,SPK_TOLGA,ic_ses,,chapter10l.gd:429 Tolga lağımda kendi kendine / parantezli sahne anlatısı,
+D10L_H_RADIO,SPK_HIKMET,telsiz,,"chapter10l.gd:434 Hikmet telsizle, çok cızırtılı",
+D10L_T_RADIO,SPK_TOLGA,yakin,1.5,chapter10l.gd:435 lağımda mum ışığında yüz yüze,
+D11_N_BURIED,SPK_NIHAT,yakin,1.5,chapter11.gd:287 ateş başında Nihat–Tolga yüz yüze,
+D11_T_BURIED,SPK_TOLGA,yakin,1.5,chapter11.gd:288 ateş başında Nihat–Tolga yüz yüze,
+D11_N_ILLUM,SPK_NIHAT,telsiz,,"chapter11.gd:215 Müfide ""(Büro telsizi)"" ile Nihat; Nihat telsizle yanıtlar",
+D11_M_ILLUM,SPK_MUFIDE,telsiz,,"chapter11.gd:216 Müfide ""(Büro telsizi)"" ile Nihat; Nihat telsizle yanıtlar",
+D11_N_ILLUM_2,SPK_NIHAT,telsiz,,"chapter11.gd:217 Müfide ""(Büro telsizi)"" ile Nihat; Nihat telsizle yanıtlar",
+D11_N_H_GUN,SPK_NIHAT,yakin_yuksek,2,chapter11.gd:349 Hikmet–Nihat sözlü kavgası (yönetmelik–garanti tartışması),
+D11_H_GUN,SPK_HIKMET,yakin_yuksek,2,chapter11.gd:350 Hikmet–Nihat sözlü kavgası (yönetmelik–garanti tartışması),
+D11_RUMOR_1,SPK_WITNESS,yakin,3,"chapter11.gd:220 tanıklar kendi aralarında konuşur, Nihat dinler",
+D11_RUMOR_2,SPK_WITNESS,yakin,3,"chapter11.gd:221 tanıklar kendi aralarında konuşur, Nihat dinler",
+D11_N_RUMOR,SPK_NIHAT,yakin,1.5,chapter11.gd:222 ateş başında Nihat–Tolga yüz yüze,
+D11_T_EAVES,SPK_TOLGA,ic_ses,,"chapter11.gd:466 Nihat/Tolga kendi kendine, parantezli sahne anlatısı veya iç karar",
+D11_N_AMBUSH,SPK_NIHAT,yakin,1.5,chapter11.gd:294 ateş başında Nihat–Tolga yüz yüze,
+D11_T_AMBUSH,SPK_TOLGA,yakin_yuksek,1,chapter11.gd:295 Nihat perdeden çıkınca Tolga irkilip bağırır,
+D11_T_SAW_FLY,SPK_TOLGA,yakin,1.5,chapter11.gd:297 ateş başında Nihat–Tolga yüz yüze,
+D11_N_SAW_FLY,SPK_NIHAT,yakin,1.5,chapter11.gd:298 ateş başında Nihat–Tolga yüz yüze,
+D10H_TH_01_NEW,SPK_THEODOROS,fisilti,0.4,"chapter10h.gd:196 tercüman Theodoros/Lütfi Tolga'ya fısıldar (metinde ""fısıldar/dişlerinin arasından"")",
+D10H_G_1_NEW,SPK_GIUST,yakin,2,chapter10h.gd:380 heyet/surda yüz yüze konuşma (say),
+D10H_N_K_ALT,SPK_NIKO,uzak,12,"chapter10h.gd:369 ""(Surun üstünden)"": Niko surdan Tolga'ya seslenir",
+D11_N_03_HEN,SPK_NIHAT,yakin,1.5,chapter11.gd:311 ateş başında Nihat–Tolga yüz yüze,
+D11_T_04_GOAT,SPK_TOLGA,yakin,1.5,chapter11.gd:315 ateş başında Nihat–Tolga yüz yüze,
+D11_T_04_HEN,SPK_TOLGA,yakin,1.5,chapter11.gd:312 ateş başında Nihat–Tolga yüz yüze,
+D11_T_04_SINERJI,SPK_TOLGA,yakin,1.5,chapter11.gd:312 ateş başında Nihat–Tolga yüz yüze,
+D11_T_EAVES_ALT,SPK_TOLGA,ic_ses,,"chapter11.gd:466 Nihat/Tolga kendi kendine, parantezli sahne anlatısı veya iç karar",
+D11_N_RELEASE_ALT,SPK_NIHAT,yakin,1.5,chapter11.gd:498 ateş başında Nihat–Tolga yüz yüze,
+D11_N_HELP_1_ALT,SPK_NIHAT,yakin,1.5,chapter11.gd:506 ateş başında Nihat–Tolga yüz yüze,
+D11_N_HELP_1_WALLS,SPK_NIHAT,yakin,1.5,chapter11.gd:506 ateş başında Nihat–Tolga yüz yüze,
+D11_T_HELP_4_ALT,SPK_TOLGA,yakin,1.5,chapter11.gd:511 ateş başında Nihat–Tolga yüz yüze,
+D10G_T_01_CARD,SPK_TOLGA,yakin,2,chapter10g.gd:100 Galata'da tüccar/kaptan/Tolga yüz yüze (say),
+D10Z_T_FIRE_2_PLAIN,SPK_TOLGA,ic_ses,,chapter10z.gd:315 Tolga kendi kendine / parantezli sahne anlatısı,[fmt: kod anahtarı biçimle kuruyor]
+D10Z_K_FIRE_3_PLAIN,SPK_KADRI,yakin_yuksek,3,chapter10z.gd:317 mutfakta yangın/panik: Kadri bağırır,[fmt: kod anahtarı biçimle kuruyor]
+D10Z_T_FIRE_4_PLAIN,SPK_TOLGA,yakin,2,chapter10z.gd:323 mutfakta Kadri–Tolga yüz yüze (say),[fmt: kod anahtarı biçimle kuruyor]
+D11_N_03_NOLEB,SPK_NIHAT,yakin,1.5,chapter11.gd:314 ateş başında Nihat–Tolga yüz yüze,
+D11_N_03_HEN_NOLEB,SPK_NIHAT,yakin,1.5,chapter11.gd:311 ateş başında Nihat–Tolga yüz yüze,
+D10H_K_HELP_NOTAPE,SPK_EMPEROR,yakin,5,"chapter10h.gd:297 İmparator huzurunda resmî konuşma, tercüme eşliğinde (heyet salonu)",
+D10H_T_RADIO_SAVE_HELP,SPK_TOLGA,yakin,2,chapter10h.gd:496 heyet/surda yüz yüze konuşma (say),[fmt: kod anahtarı biçimle kuruyor]
+D10H_H_RADIO_SAVE_HELP,SPK_HIKMET,yakin,2,chapter10h.gd:497 heyet/surda yüz yüze konuşma (say),[fmt: kod anahtarı biçimle kuruyor]
+D11_T_BYZ_HELP,SPK_TOLGA,yakin,1.5,chapter11.gd:291 ateş başında Nihat–Tolga yüz yüze,
+D10B_U_NAME_PLAIN,SPK_URBAN,yakin,2,chapter10b.gd:310 topçu sahasında Urban/Fatih/Tolga yüz yüze (say),
+D10B_F_B3_2_PLAIN,SPK_FATIH,yakin,2,chapter10b.gd:706 topçu sahasında Urban/Fatih/Tolga yüz yüze (say),
+D10A_F_3_NOFEZ,SPK_FATIH,yakin,2,chapter10a.gd:421 arşivde / otağda yüz yüze konuşma (say),[base: kod anahtarı biçimle kuruyor]
+D10B_F_02_NOFEZ,SPK_FATIH,yakin,2,chapter10b.gd:366 topçu sahasında Urban/Fatih/Tolga yüz yüze (say),[base: kod anahtarı biçimle kuruyor]
+D10B_F_B3_3_NOFEZ,SPK_FATIH,yakin,2,chapter10b.gd:707 topçu sahasında Urban/Fatih/Tolga yüz yüze (say),[base: kod anahtarı biçimle kuruyor]
+D10G_D_AGAIN_NOFEZ,SPK_DOUBLE,yakin,2,chapter10g.gd:176 Galata'da tüccar/kaptan/Tolga yüz yüze (say),[base: kod anahtarı biçimle kuruyor]
+D10G_D_AGAIN_NOKAFTAN,SPK_DOUBLE,yakin,2,chapter10g.gd:176 Galata'da tüccar/kaptan/Tolga yüz yüze (say),
+D10G_D_AGAIN_NOKAFTAN_NOFEZ,SPK_DOUBLE,yakin,2,chapter10g.gd:176 Galata'da tüccar/kaptan/Tolga yüz yüze (say),[base: kod anahtarı biçimle kuruyor]
+D10H_K_HELP_NOFEZ,SPK_EMPEROR,yakin,5,"chapter10h.gd:297 İmparator huzurunda resmî konuşma, tercüme eşliğinde (heyet salonu)",[base: kod anahtarı biçimle kuruyor]
+D10H_K_HELP_NOTAPE_NOFEZ,SPK_EMPEROR,yakin,5,"chapter10h.gd:297 İmparator huzurunda resmî konuşma, tercüme eşliğinde (heyet salonu)",[base: kod anahtarı biçimle kuruyor]
+D11_N_DECIDE_NOFEZ,SPK_NIHAT,ic_ses,,"chapter11.gd:423 Nihat/Tolga kendi kendine, parantezli sahne anlatısı veya iç karar",[base: kod anahtarı biçimle kuruyor]
+D11_N_RELEASE_NOFEZ,SPK_NIHAT,yakin,1.5,chapter11.gd:498 ateş başında Nihat–Tolga yüz yüze,[base: kod anahtarı biçimle kuruyor]
+D11_N_RELEASE_ALT_NOFEZ,SPK_NIHAT,yakin,1.5,chapter11.gd:498 ateş başında Nihat–Tolga yüz yüze,[base: kod anahtarı biçimle kuruyor]
+D10A_T_N_02_NEW,SPK_TOLGA,yakin,2,chapter10a.gd:361 arşivde / otağda yüz yüze konuşma (say),
+D10A_N_INTRO,SPK_NIHAT,yakin,2,chapter10a.gd:363 arşivde / otağda yüz yüze konuşma (say),
+D10A_F_REFUSE_CAMP,SPK_FATIH,yakin,2,chapter10a.gd:438 arşivde / otağda yüz yüze konuşma (say),
+D10B_U_CALC_NOPHONE,SPK_URBAN,yakin,2,chapter10b.gd:433 topçu sahasında Urban/Fatih/Tolga yüz yüze (say),
+D10B_U_CALC_OK_CUBE,SPK_URBAN,yakin,2,chapter10b.gd:446 topçu sahasında Urban/Fatih/Tolga yüz yüze (say),
+D10B_T_B1_4_CUBE,SPK_TOLGA,yakin,2,chapter10b.gd:570 topçu sahasında Urban/Fatih/Tolga yüz yüze (say),[fmt: kod anahtarı biçimle kuruyor]
+D10B_F_B1_2_CUBE,SPK_FATIH,yakin,2,chapter10b.gd:571 topçu sahasında Urban/Fatih/Tolga yüz yüze (say),[fmt: kod anahtarı biçimle kuruyor]
+D10B_T_B1_5_CUBE,SPK_TOLGA,yakin,2,chapter10b.gd:572 topçu sahasında Urban/Fatih/Tolga yüz yüze (say),[fmt: kod anahtarı biçimle kuruyor]
+D10H_L_KAFTAN,SPK_LUTFI,yakin,2,chapter10h.gd:166 heyet/surda yüz yüze konuşma (say),
+D10H_N_NOPEAS_NEW,SPK_NIKO,yakin,2,chapter10h.gd:418 heyet/surda yüz yüze konuşma (say),
+D10H_T_EXIT_2B,SPK_TOLGA,yakin,2,chapter10h.gd:466 heyet/surda yüz yüze konuşma (say),
+D10L_T_COLLAPSE_2B,SPK_TOLGA,yakin,1.5,chapter10l.gd:343 lağımda mum ışığında yüz yüze,
+D10L_D_SUPPORT_PLAIN,SPK_MINER,yakin,1.5,chapter10l.gd:252 lağımda mum ışığında yüz yüze,
+D11_N_KNOWN,SPK_NIHAT,yakin,1.5,chapter11.gd:301 ateş başında Nihat–Tolga yüz yüze,
+D11_NK_00,SPK_NIKO,yakin_yuksek,5,"chapter11.gd:377 Niko ""SALDIR!"" diye bağırarak araya girer (büyük harf, sahne kargaşası)",
+D11_NK_01_HEN,SPK_NIKO,yakin_yuksek,5,"chapter11.gd:379 Niko ""SALDIR!"" diye bağırarak araya girer (büyük harf, sahne kargaşası)",
+D10Z_K_STOVE_KTHERMOS,SPK_KADRI,yakin,2,mutfakta Kadri–Tolga yüz yüze (say),
+D10Z_K_THERMOS_SAVE,SPK_KADRI,yakin_yuksek,3,chapter10z.gd:263 mutfakta yangın/panik: Kadri bağırır,
+D10H_TH_PASS,SPK_THEODOROS,yakin,2,chapter10h.gd:202 heyet/surda yüz yüze konuşma (say),
+D10B_U_FUSE_ULIGHTER,SPK_URBAN,yakin,2,topçu sahasında Urban/Fatih/Tolga yüz yüze (say),
+D10B_U_FUSE_URBAN_ULIGHTER,SPK_URBAN,yakin,2,topçu sahasında Urban/Fatih/Tolga yüz yüze (say),
+D10B_U_POWDER_3_NEW,SPK_URBAN,yakin,2,chapter10b.gd:412 topçu sahasında Urban/Fatih/Tolga yüz yüze (say),
+D10Z_F_TASTE_LEB_MAIN,SPK_FATIH,yakin,2,chapter10z.gd:521 mutfakta Kadri–Tolga yüz yüze (say),
+D10Z_F_TASTE_LEB_SWEET,SPK_FATIH,yakin,2,chapter10z.gd:522 mutfakta Kadri–Tolga yüz yüze (say),
+D10Z_F_TASTE_PILAF,SPK_FATIH,yakin,2,chapter10z.gd:525 mutfakta Kadri–Tolga yüz yüze (say),
+D10Z_F_TASTE_RAW,SPK_FATIH,yakin,2,chapter10z.gd:529 mutfakta Kadri–Tolga yüz yüze (say),
+D11_N_KNOWN_TUNNEL,SPK_NIHAT,yakin,1.5,chapter11.gd:304 ateş başında Nihat–Tolga yüz yüze,
+D10A_H_RADIO_H1453,SPK_HIKMET,telsiz,,"Hikmet–Tolga telsiz, toplantı ortasında (""(Telsiz, …)"")",
+D10H_H_RADIO_H1453,SPK_HIKMET,telsiz,,"Hikmet telsizle (""(Telsiz)"")",
+D10Z_H_RADIO_H1453,SPK_HIKMET,yakin,2,mutfakta Kadri–Tolga yüz yüze (say),
+D10G_H_RADIO_H1453,SPK_HIKMET,telsiz,,Hikmet–Tolga telsiz (gemide),
+D10L_H_RADIO_H1453,SPK_HIKMET,telsiz,,"Hikmet telsizle, çok cızırtılı",
+D10L_T_DECLARE,SPK_TOLGA,yakin,1.5,chapter10l.gd:346 lağımda mum ışığında yüz yüze,
+D10L_N_DECLARED,SPK_NIHAT,yakin,1.5,chapter10l.gd:347 lağımda mum ışığında yüz yüze,
+D10A_T_00_GATE,SPK_TOLGA,ic_ses,,"chapter10a.gd:216 Tolga arşive geçişi anlatıyor, karşısında dinleyen yok",
+D11_N_FIRED_LAST,SPK_NIHAT,telsiz,,"chapter11.gd:259 Müfide ""(Büro telsizi)"" ile Nihat; Nihat telsizle yanıtlar",
