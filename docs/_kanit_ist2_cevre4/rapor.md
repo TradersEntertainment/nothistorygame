@@ -243,7 +243,8 @@ Son birleşik hâlde (dört dal birleştikten sonra, 17:00–17:40 UTC) yeniden:
 (regions=13 landmarks=35), `flight_check` PASS, `city_check` PASS, Bölüm 7 PASS (7a, 7.1), Bölüm 7 `=byz` PASS (7b,
 7.1 + 7.3), Bölüm 11 PASS (11.2), Bölüm 12b PASS (12B.1), Bölüm 6 PASS (6a.1). Yasak satırların hiçbiri yok. Bu
 koşulardan sonraki son değişiklikler yalnız renk/doku (palet: mavi doku pikselleri), forum ve Hipodrom zemin rengi/kalınlığı:
-ayrıştırma PASS; bölüm sınamaları yeniden koşulmadı (BAKILMADI).
+ayrıştırma PASS. Beş dalın son birleşik hâlinde (kayıt `74b09f53`, 18:01 UTC): `parse_check` PASS (335), Bölüm 7 PASS
+(7a, 7.1), Bölüm 11 PASS (11.2); öteki varyantlar bu son hâlde koşulmadı (BAKILMADI).
 
 ## ORTAK İSTEK / BİLGİ
 
