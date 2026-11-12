@@ -45,8 +45,12 @@ Kullanım: `GD.renk("keten")`; yeni malzeme: `GD.malzeme("kumas", "keten", vc)`.
 
 ## 4. Kategori kuralı
 
-Doygunluk ve parlaklık sRGB HSV'de, malzemenin **taban rengi** (albedo × köşe rengi × örnek rengi × doku) üstünde,
-gölgelendiricide sıkıştırılır (renk palete çekilmez, yalnız tavana). Sıkıştırma **yumuşak dirsekli**: tavanın %70'ine
+Doygunluk ve parlaklık HSV'de, malzemenin **taban rengi** (albedo × köşe rengi × örnek rengi × doku) üstünde,
+gölgelendiricide sıkıştırılır (renk palete çekilmez, yalnız tavana). **Uzay notu (dürüst):** sıkıştırma ALBEDO'nun
+^(1/2,2)'si üstünde yapılır. Oyunun çizicisi (Compatibility, `OUTPUT_IS_SRGB` doğru) ALBEDO'yu zaten sRGB tutar; yani
+tablodaki tavanlar gama kaldırılmış uzaydadır: gerçek taban renk parlaklık tavanı = tavan^2,2 (ör. zemin 0,66 →
+taban V 0,40; kumaş 0,72 → 0,49; taş 0,80 → 0,61). Değerler bu uzayda, yayındaki bölümlerin EKRAN ölçüsüne
+(§2) göre ayarlandı; Forward+ çiziciye geçilirse yeniden ayarlanmalı. Sıkıştırma **yumuşak dirsekli**: tavanın %70'ine
 kadar dokunulmaz, üstü üstel olarak tavana yaklaşır (sert kırpma dokuyu siliyordu: ilk denemede zemin düz yeşile
 dönmüştü); tabanda 2 × taban altı doğrusal kaldırılır. Sıra ve doku korunur, tavan aşılmaz.
 

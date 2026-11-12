@@ -805,7 +805,8 @@ static func std_shader(bay: Dictionary) -> Shader:
 	if bay["vc"] and bay["srgb"]:
 		# Godot'nun kendi dönüşümü, vertex()'te (örnek rengi bundan SONRA çarpılır: fragment'te yapılırsa kaftan rengi de
 		# gama'dan geçip koyulaşıyor ve doyuyordu)
-		c += "\tCOLOR.rgb = mix(pow((COLOR.rgb + vec3(0.055)) * (1.0 / (1.0 + 0.055)), vec3(2.4)), COLOR.rgb * (1.0 / 12.92), lessThan(COLOR.rgb, vec3(0.04045)));\n"
+		# BaseMaterial3D ile birebir: Compatibility çizicisinde OUTPUT_IS_SRGB doğru, dönüşüm YOK (yapılırsa figürler koyulaşıyordu)
+		c += "\tif (!OUTPUT_IS_SRGB) {\n\t\tCOLOR.rgb = mix(pow((COLOR.rgb + vec3(0.055)) * (1.0 / (1.0 + 0.055)), vec3(2.4)), COLOR.rgb * (1.0 / 12.92), lessThan(COLOR.rgb, vec3(0.04045)));\n\t}\n"
 	if bay["tri"]:
 		if bay["dunya"]:
 			c += "\tvec3 n = normalize((MODEL_MATRIX * vec4(NORMAL, 0.0)).xyz);\n\tvec3 p = (MODEL_MATRIX * vec4(VERTEX, 1.0)).xyz;\n"
