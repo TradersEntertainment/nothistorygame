@@ -1078,43 +1078,18 @@ func _build_oxen() -> void:
 ## Uzak öküz çifti: iki düşük ayrıntılı öküz (+Z ileri, x ±0,75) ve boyunduruk; köşe rengi (açık gövde, koyu
 ## bacak/baş altı, krem boynuz); örnek rengi gövde tonunu çeşitlendirir. Öküz başına 8 kutu (96 üçgen).
 func _herd_pair_mesh() -> ArrayMesh:
-	var st := SurfaceTool.new()
-	st.begin(Mesh.PRIMITIVE_TRIANGLES)
-	var box := func(c: Vector3, sz: Vector3, col: Color, tilt := 0.0) -> void:
-		var b := Basis(Vector3.RIGHT, tilt)
-		var h := sz * 0.5
-		var faces := [[Vector3.UP, Vector3.RIGHT, Vector3.BACK], [Vector3.DOWN, Vector3.RIGHT, Vector3.FORWARD],
-			[Vector3.RIGHT, Vector3.BACK, Vector3.UP], [Vector3.LEFT, Vector3.FORWARD, Vector3.UP],
-			[Vector3.BACK, Vector3.LEFT, Vector3.UP], [Vector3.FORWARD, Vector3.RIGHT, Vector3.UP]]
-		for f: Array in faces:
-			var n: Vector3 = f[0]
-			var u: Vector3 = f[1]
-			var v: Vector3 = f[2]
-			var o := n * h
-			var du := u * h
-			var dv := v * h
-			var q := [o - du - dv, o + du - dv, o + du + dv, o - du + dv]
-			var shade := 1.0 if n.y > 0.5 else (0.7 if n.y < -0.5 else 0.86)
-			for k in [0, 2, 1, 0, 3, 2]:
-				st.set_color(Color(col.r * shade, col.g * shade, col.b * shade))
-				st.set_normal(b * n)
-				st.add_vertex(c + b * (q[k] as Vector3))
-	var coat := Color(1, 1, 1)
-	var dark := Color(0.45, 0.36, 0.3)
-	var horn := Color(1.25, 1.2, 1.05)
+	# CANLI (kalite notu 32): boyunduruk çifti canli_kit'ten (orta katman, öküz başına ~280 üçgen; kesit halkalı gövde,
+	# baş, boynuz, eklemli bacak); kutu yok. Açık post (örnek rengi boyar), çift x = ±0,75, ortak boyunduruk yuvarlak.
+	var ck = preload("res://scripts/world/ist/canli_kit.gd")
+	var acc = ck.Acc.new()
 	for sx: float in [-0.75, 0.75]:
-		box.call(Vector3(sx, 1.12, -0.05), Vector3(0.82, 0.82, 1.95), coat)              # gövde
-		box.call(Vector3(sx, 1.55, 0.5), Vector3(0.5, 0.3, 0.55), coat)                  # hörgüç
-		box.call(Vector3(sx, 1.25, 1.2), Vector3(0.4, 0.42, 0.6), coat, 0.5)             # baş (aşağı eğik)
-		box.call(Vector3(sx, 1.05, 1.5), Vector3(0.3, 0.26, 0.2), dark)                 # burun
-		for lz: float in [0.6, -0.7]:
-			for lx: float in [-0.24, 0.24]:
-				box.call(Vector3(sx + lx, 0.36, lz), Vector3(0.16, 0.72, 0.18), dark)      # bacak
-		box.call(Vector3(sx, 1.55, 1.08), Vector3(0.95, 0.07, 0.07), horn)               # boynuzlar
-	box.call(Vector3(0, 1.66, 0.95), Vector3(2.1, 0.13, 0.15), Color(0.55, 0.38, 0.24))  # boyunduruk
-	st.index()
-	var mesh := st.commit()
-	return mesh
+		var o: Dictionary = {"renk": Color(0.95, 0.93, 0.9), "H": 1.48, "poz": "dur", "bas_yaw": -sx * 8.0, "tohum": int(sx > 0.0) + 1}
+		acc.add(ck.birikim("okuz", 1, o), Transform3D(Basis.IDENTITY, Vector3(sx, 0, 0)))
+	var yk = ck.Acc.new()
+	ck._tube(yk, [[Vector3(-1.05, 1.6, 0.95), 0.06, 0.065, 0.065, Color(0.55, 0.38, 0.24)], [Vector3(0, 1.64, 0.95), 0.075, 0.08, 0.08, Color(0.6, 0.42, 0.26)],
+		[Vector3(1.05, 1.6, 0.95), 0.06, 0.065, 0.065, Color(0.55, 0.38, 0.24)]], 5, true, true, 0.5, [], 0.0, Vector3.BACK)
+	acc.add(yk, Transform3D.IDENTITY)
+	return acc.mesh()
 
 
 ## Uzak sürü ve iki canlı takım yalnız 11 Nisan'da (çekme) görünür: 6 Nisan'da top henüz yolda, 12 Nisan atışında
