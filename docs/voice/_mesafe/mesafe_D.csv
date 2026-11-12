@@ -999,3 +999,103 @@ REACT_CALLIGRAPHER_BOOK,SPK_CALLIGRAPHER,yakin,2,"hud.gd:1363 show_reaction -> b
 REACT_CALLIGRAPHER_CHICKPEAS,SPK_CALLIGRAPHER,yakin,2,"hud.gd:1363 show_reaction -> bark(SPK_CALLIGRAPHER) 5.5 sn, player.gd:2404 focus_id hedefine gösterme","eşya elde gösterilir (Player E, player.gd:2404), yanında normal konuşma"
 REACT_CALLIGRAPHER_POWERBANK,SPK_CALLIGRAPHER,yakin,2,"hud.gd:1363 show_reaction -> bark(SPK_CALLIGRAPHER) 5.5 sn, player.gd:2404 focus_id hedefine gösterme","eşya elde gösterilir (Player E, player.gd:2404), yanında normal konuşma"
 REACT_CALLIGRAPHER_TAPE,SPK_CALLIGRAPHER,yakin,2,"hud.gd:1363 show_reaction -> bark(SPK_CALLIGRAPHER) 5.5 sn, player.gd:2404 focus_id hedefine gösterme","eşya elde gösterilir (Player E, player.gd:2404), yanında normal konuşma"
+REACT_CALLIGRAPHER_THERMOS,SPK_CALLIGRAPHER,yakin,2,"hud.gd:1363 show_reaction -> bark(SPK_CALLIGRAPHER) 5.5 sn, player.gd:2404 focus_id hedefine gösterme","eşya elde gösterilir (Player E, player.gd:2404), yanında normal konuşma"
+REACT_CALLIGRAPHER_SELFIE,SPK_CALLIGRAPHER,yakin,2,"hud.gd:1363 show_reaction -> bark(SPK_CALLIGRAPHER) 5.5 sn, player.gd:2404 focus_id hedefine gösterme","eşya elde gösterilir (Player E, player.gd:2404), yanında normal konuşma"
+REACT_CALLIGRAPHER_COLOGNE,SPK_CALLIGRAPHER,yakin,2,"hud.gd:1363 show_reaction -> bark(SPK_CALLIGRAPHER) 5.5 sn, player.gd:2404 focus_id hedefine gösterme","eşya elde gösterilir (Player E, player.gd:2404), yanında normal konuşma"
+REACT_CALLIGRAPHER_CUBE,SPK_CALLIGRAPHER,yakin,2,"hud.gd:1363 show_reaction -> bark(SPK_CALLIGRAPHER) 5.5 sn, player.gd:2404 focus_id hedefine gösterme","eşya elde gösterilir (Player E, player.gd:2404), yanında normal konuşma"
+REACT_PAINTER_PHONE,SPK_PAINTER,yakin,2,"hud.gd:1363 show_reaction -> bark(SPK_PAINTER) 5.5 sn, player.gd:2404 focus_id hedefine gösterme","eşya elde gösterilir (Player E, player.gd:2404), yanında normal konuşma"
+REACT_PAINTER_LIGHTER,SPK_PAINTER,yakin,2,"hud.gd:1363 show_reaction -> bark(SPK_PAINTER) 5.5 sn, player.gd:2404 focus_id hedefine gösterme","eşya elde gösterilir (Player E, player.gd:2404), yanında normal konuşma"
+REACT_PAINTER_BOOK,SPK_PAINTER,yakin,2,"hud.gd:1363 show_reaction -> bark(SPK_PAINTER) 5.5 sn, player.gd:2404 focus_id hedefine gösterme","eşya elde gösterilir (Player E, player.gd:2404), yanında normal konuşma"
+REACT_PAINTER_CHICKPEAS,SPK_PAINTER,yakin,2,"hud.gd:1363 show_reaction -> bark(SPK_PAINTER) 5.5 sn, player.gd:2404 focus_id hedefine gösterme","eşya elde gösterilir (Player E, player.gd:2404), yanında normal konuşma"
+REACT_PAINTER_POWERBANK,SPK_PAINTER,yakin,2,"hud.gd:1363 show_reaction -> bark(SPK_PAINTER) 5.5 sn, player.gd:2404 focus_id hedefine gösterme","eşya elde gösterilir (Player E, player.gd:2404), yanında normal konuşma"
+REACT_PAINTER_TAPE,SPK_PAINTER,yakin,2,"hud.gd:1363 show_reaction -> bark(SPK_PAINTER) 5.5 sn, player.gd:2404 focus_id hedefine gösterme","eşya elde gösterilir (Player E, player.gd:2404), yanında normal konuşma"
+REACT_PAINTER_THERMOS,SPK_PAINTER,yakin,2,"hud.gd:1363 show_reaction -> bark(SPK_PAINTER) 5.5 sn, player.gd:2404 focus_id hedefine gösterme","eşya elde gösterilir (Player E, player.gd:2404), yanında normal konuşma"
+REACT_PAINTER_SELFIE,SPK_PAINTER,yakin,2,"hud.gd:1363 show_reaction -> bark(SPK_PAINTER) 5.5 sn, player.gd:2404 focus_id hedefine gösterme","eşya elde gösterilir (Player E, player.gd:2404), yanında normal konuşma"
+REACT_PAINTER_COLOGNE,SPK_PAINTER,yakin,2,"hud.gd:1363 show_reaction -> bark(SPK_PAINTER) 5.5 sn, player.gd:2404 focus_id hedefine gösterme","eşya elde gösterilir (Player E, player.gd:2404), yanında normal konuşma"
+REACT_PAINTER_CUBE,SPK_PAINTER,yakin,2,"hud.gd:1363 show_reaction -> bark(SPK_PAINTER) 5.5 sn, player.gd:2404 focus_id hedefine gösterme","eşya elde gösterilir (Player E, player.gd:2404), yanında normal konuşma"
+REACT_KID_PHONE,SPK_KID,yakin,2,"hud.gd:1363 show_reaction -> bark(SPK_KID) 5.5 sn, player.gd:2404 focus_id hedefine gösterme","eşya elde gösterilir (Player E, player.gd:2404), yanında normal konuşma"
+REACT_KID_LIGHTER,SPK_KID,yakin,2,"hud.gd:1363 show_reaction -> bark(SPK_KID) 5.5 sn, player.gd:2404 focus_id hedefine gösterme","eşya elde gösterilir (Player E, player.gd:2404), yanında normal konuşma"
+REACT_KID_BOOK,SPK_KID,yakin,2,"hud.gd:1363 show_reaction -> bark(SPK_KID) 5.5 sn, player.gd:2404 focus_id hedefine gösterme","eşya elde gösterilir (Player E, player.gd:2404), yanında normal konuşma"
+REACT_KID_CHICKPEAS,SPK_KID,yakin,2,"hud.gd:1363 show_reaction -> bark(SPK_KID) 5.5 sn, player.gd:2404 focus_id hedefine gösterme","eşya elde gösterilir (Player E, player.gd:2404), yanında normal konuşma"
+REACT_KID_POWERBANK,SPK_KID,yakin,2,"hud.gd:1363 show_reaction -> bark(SPK_KID) 5.5 sn, player.gd:2404 focus_id hedefine gösterme","eşya elde gösterilir (Player E, player.gd:2404), yanında normal konuşma"
+REACT_KID_TAPE,SPK_KID,yakin,2,"hud.gd:1363 show_reaction -> bark(SPK_KID) 5.5 sn, player.gd:2404 focus_id hedefine gösterme","eşya elde gösterilir (Player E, player.gd:2404), yanında normal konuşma"
+REACT_KID_THERMOS,SPK_KID,yakin,2,"hud.gd:1363 show_reaction -> bark(SPK_KID) 5.5 sn, player.gd:2404 focus_id hedefine gösterme","eşya elde gösterilir (Player E, player.gd:2404), yanında normal konuşma"
+REACT_KID_SELFIE,SPK_KID,yakin,2,"hud.gd:1363 show_reaction -> bark(SPK_KID) 5.5 sn, player.gd:2404 focus_id hedefine gösterme","eşya elde gösterilir (Player E, player.gd:2404), yanında normal konuşma"
+REACT_KID_COLOGNE,SPK_KID,yakin,2,"hud.gd:1363 show_reaction -> bark(SPK_KID) 5.5 sn, player.gd:2404 focus_id hedefine gösterme","eşya elde gösterilir (Player E, player.gd:2404), yanında normal konuşma"
+REACT_KID_CUBE,SPK_KID,yakin,2,"hud.gd:1363 show_reaction -> bark(SPK_KID) 5.5 sn, player.gd:2404 focus_id hedefine gösterme","eşya elde gösterilir (Player E, player.gd:2404), yanında normal konuşma"
+REACT_FATIH_REPLAY_1,SPK_FATIH,yakin,2,hud.gd:1355 show_reaction: tekrar oyuncu espirisi REACT_FATIH_REPLAY_1,karakter eşya gösterilirken yanında
+REACT_FATIH_REPLAY_2,SPK_FATIH,yakin,2,hud.gd:1355 show_reaction: tekrar oyuncu espirisi REACT_FATIH_REPLAY_2,karakter eşya gösterilirken yanında
+REACT_FATIH_REPLAY_3,SPK_FATIH,yakin,2,hud.gd:1355 show_reaction: tekrar oyuncu espirisi REACT_FATIH_REPLAY_3,karakter eşya gösterilirken yanında
+REACT_FATIH_REPLAY_4,SPK_FATIH,yakin,2,hud.gd:1355 show_reaction: tekrar oyuncu espirisi REACT_FATIH_REPLAY_4,karakter eşya gösterilirken yanında
+REACT_FATIH_REPLAY_5,SPK_FATIH,yakin,2,hud.gd:1355 show_reaction: tekrar oyuncu espirisi REACT_FATIH_REPLAY_5,karakter eşya gösterilirken yanında
+REACT_EMPEROR_REPLAY_1,SPK_EMPEROR,yakin,2,hud.gd:1355 show_reaction: tekrar oyuncu espirisi REACT_EMPEROR_REPLAY_1,karakter eşya gösterilirken yanında
+REACT_EMPEROR_REPLAY_2,SPK_EMPEROR,yakin,2,hud.gd:1355 show_reaction: tekrar oyuncu espirisi REACT_EMPEROR_REPLAY_2,karakter eşya gösterilirken yanında
+REACT_EMPEROR_REPLAY_3,SPK_EMPEROR,yakin,2,hud.gd:1355 show_reaction: tekrar oyuncu espirisi REACT_EMPEROR_REPLAY_3,karakter eşya gösterilirken yanında
+REACT_EMPEROR_REPLAY_4,SPK_EMPEROR,yakin,2,hud.gd:1355 show_reaction: tekrar oyuncu espirisi REACT_EMPEROR_REPLAY_4,karakter eşya gösterilirken yanında
+REACT_EMPEROR_REPLAY_5,SPK_EMPEROR,yakin,2,hud.gd:1355 show_reaction: tekrar oyuncu espirisi REACT_EMPEROR_REPLAY_5,karakter eşya gösterilirken yanında
+REACT_URBAN_REPLAY_1,SPK_URBAN,yakin,2,hud.gd:1355 show_reaction: tekrar oyuncu espirisi REACT_URBAN_REPLAY_1,karakter eşya gösterilirken yanında
+REACT_URBAN_REPLAY_2,SPK_URBAN,yakin,2,hud.gd:1355 show_reaction: tekrar oyuncu espirisi REACT_URBAN_REPLAY_2,karakter eşya gösterilirken yanında
+REACT_URBAN_REPLAY_3,SPK_URBAN,yakin,2,hud.gd:1355 show_reaction: tekrar oyuncu espirisi REACT_URBAN_REPLAY_3,karakter eşya gösterilirken yanında
+REACT_URBAN_REPLAY_4,SPK_URBAN,yakin,2,hud.gd:1355 show_reaction: tekrar oyuncu espirisi REACT_URBAN_REPLAY_4,karakter eşya gösterilirken yanında
+REACT_URBAN_REPLAY_5,SPK_URBAN,yakin,2,hud.gd:1355 show_reaction: tekrar oyuncu espirisi REACT_URBAN_REPLAY_5,karakter eşya gösterilirken yanında
+REACT_NIKO_REPLAY_1,SPK_NIKO,yakin,2,hud.gd:1355 show_reaction: tekrar oyuncu espirisi REACT_NIKO_REPLAY_1,karakter eşya gösterilirken yanında
+REACT_NIKO_REPLAY_2,SPK_NIKO,yakin,2,hud.gd:1355 show_reaction: tekrar oyuncu espirisi REACT_NIKO_REPLAY_2,karakter eşya gösterilirken yanında
+REACT_NIKO_REPLAY_3,SPK_NIKO,yakin,2,hud.gd:1355 show_reaction: tekrar oyuncu espirisi REACT_NIKO_REPLAY_3,karakter eşya gösterilirken yanında
+REACT_NIKO_REPLAY_4,SPK_NIKO,yakin,2,hud.gd:1355 show_reaction: tekrar oyuncu espirisi REACT_NIKO_REPLAY_4,karakter eşya gösterilirken yanında
+REACT_NIKO_REPLAY_5,SPK_NIKO,yakin,2,hud.gd:1355 show_reaction: tekrar oyuncu espirisi REACT_NIKO_REPLAY_5,karakter eşya gösterilirken yanında
+REACT_KADRI_REPLAY_1,SPK_KADRI,yakin,2,hud.gd:1355 show_reaction: tekrar oyuncu espirisi REACT_KADRI_REPLAY_1,karakter eşya gösterilirken yanında
+REACT_KADRI_REPLAY_2,SPK_KADRI,yakin,2,hud.gd:1355 show_reaction: tekrar oyuncu espirisi REACT_KADRI_REPLAY_2,karakter eşya gösterilirken yanında
+REACT_KADRI_REPLAY_3,SPK_KADRI,yakin,2,hud.gd:1355 show_reaction: tekrar oyuncu espirisi REACT_KADRI_REPLAY_3,karakter eşya gösterilirken yanında
+REACT_KADRI_REPLAY_4,SPK_KADRI,yakin,2,hud.gd:1355 show_reaction: tekrar oyuncu espirisi REACT_KADRI_REPLAY_4,karakter eşya gösterilirken yanında
+REACT_KADRI_REPLAY_5,SPK_KADRI,yakin,2,hud.gd:1355 show_reaction: tekrar oyuncu espirisi REACT_KADRI_REPLAY_5,karakter eşya gösterilirken yanında
+MG_CAUL_K_PICK,SPK_KADRI,yakin_yuksek,1.5,"minigame_cauldron.gd:52 masa/tezgâh başında karşılıklı mini oyun, host replik balonu (minigame.gd:188 say)",komutan tehdidi
+MG_CAUL_K_START_0,SPK_KADRI,yakin,1.5,"minigame_cauldron.gd:52 masa/tezgâh başında karşılıklı mini oyun, host replik balonu (minigame.gd:188 say)",mini oyun masasında karşılıklı konuşma
+MG_CAUL_K_START_1,SPK_KADRI,yakin,1.5,"minigame_cauldron.gd:52 masa/tezgâh başında karşılıklı mini oyun, host replik balonu (minigame.gd:188 say)",mini oyun masasında karşılıklı konuşma
+MG_CAUL_K_START_2,SPK_KADRI,yakin,1.5,"minigame_cauldron.gd:52 masa/tezgâh başında karşılıklı mini oyun, host replik balonu (minigame.gd:188 say)",mini oyun masasında karşılıklı konuşma
+MG_CAUL_K_START_3,SPK_KADRI,yakin_yuksek,1.5,"minigame_cauldron.gd:52 masa/tezgâh başında karşılıklı mini oyun, host replik balonu (minigame.gd:188 say)","""Kaşıkları çekin!"" emir"
+MG_CAUL_K_COMBO_1,SPK_KADRI,yakin_yuksek,1.5,"minigame_cauldron.gd:52 masa/tezgâh başında karşılıklı mini oyun, host replik balonu (minigame.gd:188 say)",coşkulu ünlem
+MG_CAUL_K_COMBO_2,SPK_KADRI,yakin,1.5,"minigame_cauldron.gd:52 masa/tezgâh başında karşılıklı mini oyun, host replik balonu (minigame.gd:188 say)",mini oyun masasında karşılıklı konuşma
+MG_CAUL_K_COMBO_3,SPK_KADRI,yakin_yuksek,1.5,"minigame_cauldron.gd:52 masa/tezgâh başında karşılıklı mini oyun, host replik balonu (minigame.gd:188 say)","""Durma!"" emir"
+MG_CAUL_K_MISS_1,SPK_KADRI,yakin,1.5,"minigame_cauldron.gd:52 masa/tezgâh başında karşılıklı mini oyun, host replik balonu (minigame.gd:188 say)",mini oyun masasında karşılıklı konuşma
+MG_CAUL_K_MISS_2,SPK_KADRI,yakin_yuksek,1.5,"minigame_cauldron.gd:52 masa/tezgâh başında karşılıklı mini oyun, host replik balonu (minigame.gd:188 say)","""Gözün nerede?"" azar"
+MG_CAUL_K_MISS_3,SPK_KADRI,yakin,1.5,"minigame_cauldron.gd:52 masa/tezgâh başında karşılıklı mini oyun, host replik balonu (minigame.gd:188 say)",mini oyun masasında karşılıklı konuşma
+MG_CAUL_K_DUEL_WIN,SPK_KADRI,yakin,1.5,"minigame_cauldron.gd:52 masa/tezgâh başında karşılıklı mini oyun, host replik balonu (minigame.gd:188 say)","düello sonrası, Kadri karşısında"
+MG_CAUL_K_DUEL_LOSE,SPK_KADRI,yakin,1.5,"minigame_cauldron.gd:52 masa/tezgâh başında karşılıklı mini oyun, host replik balonu (minigame.gd:188 say)","düello sonrası, Kadri karşısında"
+MG_CAUL_T_DUEL_WIN,SPK_TOLGA,ic_ses,,"player.gd:2706 hud.bark(SPK_TOLGA,""MG_CAUL_T_DUEL_WIN"") oyundan sonra",Tolga sonucu kendi kendine yorumluyor
+MG_CAUL_T_DUEL_LOSE,SPK_TOLGA,ic_ses,,"player.gd:2706 hud.bark(SPK_TOLGA,""MG_CAUL_T_DUEL_LOSE"") oyundan sonra",Tolga sonucu kendi kendine yorumluyor
+MG_HAG_URBAN_OPEN,SPK_URBAN,yakin_yuksek,1.5,"minigame_haggle.gd:47 masa/tezgâh başında karşılıklı mini oyun, host replik balonu (minigame.gd:188 say)","övünç, ünlem"
+MG_HAG_URBAN_LOW,SPK_URBAN,yakin_yuksek,1.5,"minigame_haggle.gd:47 masa/tezgâh başında karşılıklı mini oyun, host replik balonu (minigame.gd:188 say)","ÖFKE, ünlemli"
+MG_HAG_URBAN_FAIR,SPK_URBAN,yakin,1.5,"minigame_haggle.gd:47 masa/tezgâh başında karşılıklı mini oyun, host replik balonu (minigame.gd:188 say)",mini oyun masasında karşılıklı konuşma
+MG_HAG_URBAN_SWEET,SPK_URBAN,yakin_yuksek,1.5,"minigame_haggle.gd:47 masa/tezgâh başında karşılıklı mini oyun, host replik balonu (minigame.gd:188 say)",coşkulu ünlem
+MG_HAG_URBAN_NOSWEET,SPK_URBAN,yakin_yuksek,1.5,"minigame_haggle.gd:47 masa/tezgâh başında karşılıklı mini oyun, host replik balonu (minigame.gd:188 say)","""Rakam!"" çıkışı"
+MG_HAG_URBAN_WIN,SPK_URBAN,yakin_yuksek,1.5,"minigame_haggle.gd:47 masa/tezgâh başında karşılıklı mini oyun, host replik balonu (minigame.gd:188 say)",ünlemli
+MG_HAG_URBAN_DEAL,SPK_URBAN,yakin,1.5,"minigame_haggle.gd:47 masa/tezgâh başında karşılıklı mini oyun, host replik balonu (minigame.gd:188 say)",mini oyun masasında karşılıklı konuşma
+MG_HAG_URBAN_LOSE,SPK_URBAN,yakin_yuksek,1.5,"minigame_haggle.gd:47 masa/tezgâh başında karşılıklı mini oyun, host replik balonu (minigame.gd:188 say)",BÜYÜK HARF kovma
+MG_HAG_NIKO_OPEN,SPK_NIKO,yakin,1.5,"minigame_haggle.gd:47 masa/tezgâh başında karşılıklı mini oyun, host replik balonu (minigame.gd:188 say)",mini oyun masasında karşılıklı konuşma
+MG_HAG_NIKO_LOW,SPK_NIKO,yakin,1.5,"minigame_haggle.gd:47 masa/tezgâh başında karşılıklı mini oyun, host replik balonu (minigame.gd:188 say)",mini oyun masasında karşılıklı konuşma
+MG_HAG_NIKO_FAIR,SPK_NIKO,yakin,1.5,"minigame_haggle.gd:47 masa/tezgâh başında karşılıklı mini oyun, host replik balonu (minigame.gd:188 say)",mini oyun masasında karşılıklı konuşma
+MG_HAG_NIKO_SWEET,SPK_NIKO,yakin,1.5,"minigame_haggle.gd:47 masa/tezgâh başında karşılıklı mini oyun, host replik balonu (minigame.gd:188 say)",mini oyun masasında karşılıklı konuşma
+MG_HAG_NIKO_NOSWEET,SPK_NIKO,yakin,1.5,"minigame_haggle.gd:47 masa/tezgâh başında karşılıklı mini oyun, host replik balonu (minigame.gd:188 say)",mini oyun masasında karşılıklı konuşma
+MG_HAG_NIKO_WIN,SPK_NIKO,yakin,1.5,"minigame_haggle.gd:47 masa/tezgâh başında karşılıklı mini oyun, host replik balonu (minigame.gd:188 say)",mini oyun masasında karşılıklı konuşma
+MG_HAG_NIKO_DEAL,SPK_NIKO,yakin,1.5,"minigame_haggle.gd:47 masa/tezgâh başında karşılıklı mini oyun, host replik balonu (minigame.gd:188 say)",mini oyun masasında karşılıklı konuşma
+MG_HAG_NIKO_LOSE,SPK_NIKO,yakin,1.5,"minigame_haggle.gd:47 masa/tezgâh başında karşılıklı mini oyun, host replik balonu (minigame.gd:188 say)",mini oyun masasında karşılıklı konuşma
+MG_MAN_E_OPEN,SPK_EMPEROR,yakin,1.5,"minigame_mangala.gd:33 masa/tezgâh başında karşılıklı mini oyun, host replik balonu (minigame.gd:188 say)",İmparator mangala masasında alçak sesle ([Yunanca] notu)
+MG_MAN_E_OUCH_1,SPK_EMPEROR,yakin,1.5,"minigame_mangala.gd:33 masa/tezgâh başında karşılıklı mini oyun, host replik balonu (minigame.gd:188 say)",İmparator mangala masasında alçak sesle ([Yunanca] notu)
+MG_MAN_E_OUCH_2,SPK_EMPEROR,yakin,1.5,"minigame_mangala.gd:33 masa/tezgâh başında karşılıklı mini oyun, host replik balonu (minigame.gd:188 say)",İmparator mangala masasında alçak sesle ([Yunanca] notu)
+MG_MAN_E_OUCH_3,SPK_EMPEROR,yakin,1.5,"minigame_mangala.gd:33 masa/tezgâh başında karşılıklı mini oyun, host replik balonu (minigame.gd:188 say)",İmparator mangala masasında alçak sesle ([Yunanca] notu)
+MG_MAN_E_CAPTURE_1,SPK_EMPEROR,yakin,1.5,"minigame_mangala.gd:33 masa/tezgâh başında karşılıklı mini oyun, host replik balonu (minigame.gd:188 say)",İmparator mangala masasında alçak sesle ([Yunanca] notu)
+MG_MAN_E_CAPTURE_2,SPK_EMPEROR,yakin,1.5,"minigame_mangala.gd:33 masa/tezgâh başında karşılıklı mini oyun, host replik balonu (minigame.gd:188 say)",İmparator mangala masasında alçak sesle ([Yunanca] notu)
+MG_MAN_E_CAPTURE_3,SPK_EMPEROR,yakin,1.5,"minigame_mangala.gd:33 masa/tezgâh başında karşılıklı mini oyun, host replik balonu (minigame.gd:188 say)",İmparator mangala masasında alçak sesle ([Yunanca] notu)
+MG_ARC_H_OPEN,SPK_HASAN,yakin,1.5,"minigame_archery.gd:36 masa/tezgâh başında karşılıklı mini oyun, host replik balonu (minigame.gd:188 say)",mini oyun masasında karşılıklı konuşma
+MG_ARC_H_BULL_1,SPK_HASAN,yakin_yuksek,1.5,"minigame_archery.gd:36 masa/tezgâh başında karşılıklı mini oyun, host replik balonu (minigame.gd:188 say)","ünlem, övgü"
+MG_ARC_H_BULL_2,SPK_HASAN,yakin,1.5,"minigame_archery.gd:36 masa/tezgâh başında karşılıklı mini oyun, host replik balonu (minigame.gd:188 say)",mini oyun masasında karşılıklı konuşma
+MG_ARC_H_BULL_3,SPK_HASAN,yakin,1.5,"minigame_archery.gd:36 masa/tezgâh başında karşılıklı mini oyun, host replik balonu (minigame.gd:188 say)",mini oyun masasında karşılıklı konuşma
+MG_ARC_H_MISS_1,SPK_HASAN,yakin,1.5,"minigame_archery.gd:36 masa/tezgâh başında karşılıklı mini oyun, host replik balonu (minigame.gd:188 say)",mini oyun masasında karşılıklı konuşma
+MG_ARC_H_MISS_2,SPK_HASAN,yakin,1.5,"minigame_archery.gd:36 masa/tezgâh başında karşılıklı mini oyun, host replik balonu (minigame.gd:188 say)",mini oyun masasında karşılıklı konuşma
+MG_ARC_H_MISS_3,SPK_HASAN,yakin,1.5,"minigame_archery.gd:36 masa/tezgâh başında karşılıklı mini oyun, host replik balonu (minigame.gd:188 say)",mini oyun masasında karşılıklı konuşma
+MG_ARC_H_APPLE,SPK_HASAN,yakin_yuksek,1.5,"minigame_archery.gd:36 masa/tezgâh başında karşılıklı mini oyun, host replik balonu (minigame.gd:188 say)",BÜYÜK HARF ünlem
+MG_ARC_H_WIND,SPK_HASAN,yakin,1.5,"minigame_archery.gd:36 masa/tezgâh başında karşılıklı mini oyun, host replik balonu (minigame.gd:188 say)",mini oyun masasında karşılıklı konuşma
+MG_ARC_H_MOVE,SPK_HASAN,yakin,1.5,"minigame_archery.gd:36 masa/tezgâh başında karşılıklı mini oyun, host replik balonu (minigame.gd:188 say)",mini oyun masasında karşılıklı konuşma
+MG_ARC_H_WIN,SPK_HASAN,yakin,1.5,"minigame_archery.gd:36 masa/tezgâh başında karşılıklı mini oyun, host replik balonu (minigame.gd:188 say)",mini oyun masasında karşılıklı konuşma
+MG_ARC_H_LOSE,SPK_HASAN,yakin,1.5,"minigame_archery.gd:36 masa/tezgâh başında karşılıklı mini oyun, host replik balonu (minigame.gd:188 say)",mini oyun masasında karşılıklı konuşma
+MG_ARC_H_AFTER_WIN,SPK_HASAN,yakin,2,"player.gd:2709 hud.bark(SPK_HASAN,""MG_ARC_H_AFTER_*"") oyun sonrası",Hasan yanında
