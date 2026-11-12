@@ -2690,6 +2690,26 @@ func _ates_alani(pl: PackedVector2Array) -> void:
 	stats["ates_alani_ms"] = (Time.get_ticks_usec() - t0) / 1000.0
 
 
+## SUR-5 (D): Mesoteikhion (Lykos vadisi; IstSurlar.catalog "mesoteikhion" noktası) çevresinde üç top gediği: dilimin
+## yerel x'leri (yaw: dilimin dönüşü; yerel +x = Basis(UP, yaw) * X). Dilim ucuna 9 m'den yakın gedik atlanır.
+func _gedik_x(mid: Vector2, yaw: float, L: float) -> Array:
+	var pg := Vector2(-5241.70, -434.15)
+	var rm := Vector2(-4939.29, 1113.20)
+	var dr := (rm - pg).normalized()
+	var meso := Vector2(rm.x + 60.0, rm.y - 170.0)
+	var ex := Vector2(cos(yaw), -sin(yaw))
+	var ez := Vector2(sin(yaw), cos(yaw))
+	var out: Array = []
+	for s: float in [-130.0, -10.0, 105.0]:
+		var r := meso + dr * s
+		var q := IstGeo.w2(r.x, r.y)
+		var lx := (q - mid).dot(ex)
+		var lz := (q - mid).dot(ez)
+		if absf(lz) < 60.0 and absf(lx) < L * 0.5 - 9.0:
+			out.append(lx)
+	return out
+
+
 ## Hat dilimi: kur türüne göre parçanın parametreli kurucusu
 func _hat_piece(ad: String, kur: String, mid: Vector2, d: Vector2, L: float, seed: int) -> Dictionary:
 	var yaw := _yaw_x(d, mid, ad)
@@ -2705,7 +2725,9 @@ func _hat_piece(ad: String, kur: String, mid: Vector2, d: Vector2, L: float, see
 	var make: Callable
 	match kur:
 		"kara":
-			make = func(n: Node3D, lod: int) -> void: IstSurlar.build_run(n, L, K_SUR, lod, 1453 + seed)
+			# SUR-5 (D): Mesoteikhion gedikleri bu dilime düşüyorsa yerel x'leri
+			var gk := _gedik_x(mid, yaw, L)
+			make = func(n: Node3D, lod: int) -> void: IstSurlar._run(n, L, K_SUR, lod, 1453 + seed, {"ad": "SurDilimi", "gedik": gk})
 		"blakherna":
 			make = func(n: Node3D, lod: int) -> void: _blakherna_wall(n, L, lod)
 		"halic":

@@ -9,6 +9,7 @@ extends Node3D
 ##   … -- --set=hilal                   (ISTHILAL sayi=N: hilalli bez/hilal çağrısı)
 ##   … -- --set=yuru                    (ISTSURYURU: sur üstü yürüyüş oranı; IstSehir hat dilimleri üstünde)
 
+const SURDOKU := preload("res://scripts/world/ist/sur_doku.gd")
 var out := "user://sur5"
 var set_ := "liste"
 var liste := ""
@@ -42,6 +43,10 @@ func _ready() -> void:
 		if s.size() > 0:
 			_kam_koy(_kam_coz(s[0]))
 			ilk = cam.global_position
+	if set_ == "birim":
+		_birim()
+		get_tree().quit(0)
+		return
 	dunya = IstDunya.build(self, gece, ilk)
 	IstDunya.butce_us = 250000
 	await get_tree().process_frame
@@ -60,6 +65,14 @@ func _ready() -> void:
 			await _kim()
 		"kimust":
 			await _kim_ust()
+		"birim":
+			_birim()
+		"kule":
+			await _kule()
+		"hendek4":
+			await _hendek4()
+		"gedik":
+			await _gedik()
 		"deniz":
 			await _deniz()
 		"uzak":
@@ -500,3 +513,162 @@ func _mat_ad(m: Material) -> String:
 	if m is ShaderMaterial:
 		return "shader %s" % (m as ShaderMaterial).get_shader_parameter("renk")
 	return str(m)
+
+
+## Tek dilim kurulumu (lod 0/1/2): düğüm adları ve üçgen sayıları (kule bütçesi: yakın ≤ 2 500, orta ≤ 300, uzak ≤ 60)
+func _birim() -> void:
+	for lod in 3:
+		var h := Node3D.new()
+		add_child(h)
+		IstSurlar._run(h, 160.0, 1.0, lod, 1453, {"ad": "SurDilimi", "gedik": [30.0]})
+		var say := {}
+		var ucg := {}
+		for c in h.find_children("*", "MeshInstance3D", true, false):
+			var mi := c as MeshInstance3D
+			var ad := String(mi.name).rstrip("0123456789@")
+			say[ad] = int(say.get(ad, 0)) + 1
+			var t := 0
+			if mi.mesh:
+				for si in mi.mesh.get_surface_count():
+					var arr := mi.mesh.surface_get_arrays(si)
+					var ia = arr[Mesh.ARRAY_INDEX]
+					t += ((ia as PackedInt32Array).size() if ia != null and (ia as PackedInt32Array).size() > 0 else (arr[Mesh.ARRAY_VERTEX] as PackedVector3Array).size()) / 3
+			ucg[ad] = int(ucg.get(ad, 0)) + t
+		print("SURBIRIM lod=%d %s" % [lod, str(say)])
+		print("SURBIRIM ucgen lod=%d %s" % [lod, str(ucg)])
+		h.free()
+		# kule başına üçgen (pişirmesiz, tek kule)
+		for tur in 3:
+			var k := Node3D.new()
+			IstSurlar.KULE.ic_kule(k, {"cx": 0.0, "w": 9.0, "zb": -2.65, "zf": 8.5, "zi1": 2.5, "yf": 12.03, "HT": 19.0, "yc": 18.5,
+				"tur": tur, "tohum": 7 + tur, "hasar": 1.0, "cati": tur == 1, "yazit": tur == 2}, lod)
+			print("SURKULE ic tur=%d lod=%d ucgen=%d" % [tur, lod, _ucg(k)])
+			k.free()
+		for tur in 2:
+			var k2 := Node3D.new()
+			IstSurlar.KULE.dis_kule(k2, {"cx": 0.0, "w": 4.5, "z0": 17.5, "zf": 24.1, "y0": -0.5, "OH": 8.5, "OTH": 13.0, "tur": tur, "tohum": 3, "hasar": 1.0}, lod)
+			print("SURKULE dis tur=%d lod=%d ucgen=%d" % [tur, lod, _ucg(k2)])
+			k2.free()
+
+
+
+## Kule türü başına kareler: yalnız (oyun dışı) bir kara dilimi batı ovasında kurulur (dört iç kule: kare, sekizgen,
+## kare, altıgen; dış kuleler kare/U), her tür için 15 m'den iki açı ve 150 m'den bir kare.
+func _kule() -> void:
+	var w := IstGeo.w2(-6900.0, 300.0)
+	var y := IstGeo.h(w.x, w.y)
+	var host := Node3D.new()
+	add_child(host)
+	host.global_position = Vector3(w.x, y, w.y)
+	IstSurlar._run(host, 230.0, 1.0, 0, 1453, {"ad": "KuleDeneme"})
+	SURDOKU.uygula(host, 0)
+	var lay := IstSurlar._layout(230.0, 1.0, 1453, {})
+	var itx: Array = lay["itx"]
+	var otx: Array = lay["otx"]
+	var adlar := ["kare", "sekizgen", "kare2", "altigen"]
+	var xf := host.global_transform
+	for i in mini(itx.size(), 4):
+		if i == 2:
+			continue
+		var cx := float(itx[i]["x"])
+		var c := xf * Vector3(cx, 14.0, 6.0)
+		await _bak("kule_ic_%s_15m_a" % adlar[i], xf * Vector3(cx - 9.0, 4.0, 6.0 + 12.0), c)
+		await _bak("kule_ic_%s_15m_b" % adlar[i], xf * Vector3(cx + 11.0, 9.0, 6.0 + 9.0), c)
+		await _bak("kule_ic_%s_150m" % adlar[i], xf * Vector3(cx - 40.0, 30.0, 150.0), c)
+	var bul := [-1, -1]
+	for j in otx.size():
+		var tur := (j + int(absf(float(otx[j])))) % 2
+		if bul[tur] < 0:
+			bul[tur] = j
+	for tur in 2:
+		if bul[tur] < 0:
+			continue
+		var cx := float(otx[bul[tur]])
+		var c := xf * Vector3(cx, 8.0, 21.0)
+		var ad := "kare" if tur == 0 else "U"
+		await _bak("kule_dis_%s_15m_a" % ad, xf * Vector3(cx - 8.0, 3.0, 21.0 + 12.0), c)
+		await _bak("kule_dis_%s_15m_b" % ad, xf * Vector3(cx + 10.0, 6.0, 21.0 + 10.0), c)
+		await _bak("kule_dis_%s_150m" % ad, xf * Vector3(cx + 40.0, 30.0, 160.0), c)
+
+
+## Hendek içinden ve kenarından dört kare (kara noktaları 5 ve 8)
+func _hendek4() -> void:
+	var pl := IstSehir._sade(IstGeo.yol("kara_suru"))
+	var L := 0.0
+	for i in pl.size() - 1:
+		L += pl[i].distance_to(pl[i + 1])
+	var n := maxi(12, int(L / 180.0))
+	for i: int in [5, 8]:
+		var sv := L * (i + 0.5) / n
+		var q := _hat_at(pl, sv)
+		var p: Vector2 = q["p"]
+		var d: Vector2 = q["d"]
+		var o := IstSehir._out(d, p, "kara_suru")
+		var base := _walk_at("kara_suru", sv, IstGeo.h(p.x, p.y) + 12.0) - 12.0
+		var dm := IstSurlar.dims(1.0)
+		var mz := (float(dm["zm0"]) + float(dm["zm1"])) * 0.5
+		var c := p + o * mz
+		await _bak("hendek_ici_%02d" % i, Vector3(c.x, base - 6.0 + 1.7, c.y) - Vector3(d.x, 0, d.y) * 20.0, Vector3(c.x, base - 5.0, c.y) + Vector3(d.x, 0, d.y) * 20.0)
+		var k := p + o * (float(dm["zm1"]) + 6.0)
+		await _bak("hendek_kenar_%02d" % i, Vector3(k.x, IstGeo.h(k.x, k.y) + 1.7, k.y) - Vector3(d.x, 0, d.y) * 8.0, Vector3(c.x, base - 4.5, c.y) + Vector3(d.x, 0, d.y) * 12.0)
+
+
+## Mesoteikhion gedikleri: her biri için dışarıdan (hendek ötesi), peribolostan, sur üstünden; GEDIK satırı
+func _gedik() -> void:
+	await _bekle()
+	var pl := IstSehir._sade(IstGeo.yol("kara_suru"))
+	print("SURGEDIK sayi=%d" % IstSurlar.gedik_dunya.size())
+	var k := 0
+	var tek: Array = []
+	for g: Vector3 in IstSurlar.gedik_dunya:
+		var var_ := false
+		for t: Vector3 in tek:
+			if t.distance_to(g) < 3.0:
+				var_ = true
+		if not var_:
+			tek.append(g)
+	print("SURGEDIK tekil=%d" % tek.size())
+	for g: Vector3 in tek:
+		var en := 0.0
+		var ed := INF
+		var sv := 0.0
+		var L := 0.0
+		for i in pl.size() - 1:
+			L += pl[i].distance_to(pl[i + 1])
+		while sv < L:
+			var q0 := _hat_at(pl, sv)
+			var dd := (q0["p"] as Vector2).distance_to(Vector2(g.x, g.z))
+			if dd < ed:
+				ed = dd
+				en = sv
+			sv += 3.0
+		var q := _hat_at(pl, en)
+		var p: Vector2 = q["p"]
+		var d: Vector2 = q["d"]
+		var o := IstSehir._out(d, p, "kara_suru")
+		var gp := Vector2(g.x, g.z)
+		var gy := g.y
+		var rr := IstGeo.real(g.x, g.z)
+		print("SURGEDIK %d gercek=(%.0f,%.0f) y=%.1f" % [k, rr.x, rr.y, gy])
+		var hedef := Vector3(gp.x, gy + 3.0, gp.y) - Vector3(o.x, 0, o.y) * 1.3
+		var a := gp + o * 32.0 + d * 10.0
+		await _bak("gedik_%d_dis" % k, Vector3(a.x, gy + 9.0, a.y), hedef)
+		var b := gp - o * 9.0 + d * 12.0
+		await _bak("gedik_%d_peribolos" % k, Vector3(b.x, gy + 2.0, b.y), hedef)
+		var c := gp - o * 20.0 - d * 6.0
+		await _bak("gedik_%d_ic_sur" % k, Vector3(c.x, gy + 14.0, c.y), hedef - Vector3(0, 2.0, 0))
+		k += 1
+
+
+
+func _ucg(n: Node) -> int:
+	var t := 0
+	for c in n.find_children("*", "MeshInstance3D", true, false):
+		var mi := c as MeshInstance3D
+		if mi.mesh == null:
+			continue
+		for si in mi.mesh.get_surface_count():
+			var arr := mi.mesh.surface_get_arrays(si)
+			var ia = arr[Mesh.ARRAY_INDEX]
+			t += ((ia as PackedInt32Array).size() if ia != null and (ia as PackedInt32Array).size() > 0 else (arr[Mesh.ARRAY_VERTEX] as PackedVector3Array).size()) / 3
+	return t

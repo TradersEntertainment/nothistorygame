@@ -16,7 +16,7 @@ const C_STONE := Color("cdbd9e")
 const C_DARK := Color("1a1612")
 const C_BRICK := Color("7a4a3a")
 const C_WOOD := Color("6e4e30")
-const C_ROOF := Color("6a4a3c")
+const C_ROOF := Color("6e5446")          # soluk, eskimiş kiremit (doygun kırmızı değil)
 const C_MARBLE := Color("ddd6c6")
 const PARAPET_H := 1.2
 
@@ -589,7 +589,7 @@ static func ic_kule(p: Node3D, g: Dictionary, lod: int) -> void:
 	tas.mesh_ekle(p, _tas_mat(stone.darkened(0.02), lod), "Kule")
 	koyu.mesh_ekle(p, Props.mat(C_DARK), "KuleKoyu", false)
 	tug.mesh_ekle(p, Props.mat(C_BRICK, 0.0, false, "brick"), "KuleTugla")
-	ahs.mesh_ekle(p, Props.mat(C_ROOF, 0.0, false, "tiles"), "KuleCati")
+	ahs.mesh_ekle(p, Props.mat(C_ROOF, 0.0, false, ""), "KuleCati")
 	if bool(g.get("cati", false)) and lod <= 1:
 		var dir := Ag.new()
 		for q: Vector2 in _otele(poly, -0.5):

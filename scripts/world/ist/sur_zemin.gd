@@ -80,7 +80,7 @@ static func set_(p: Node3D, x0: float, x1: float, z0: float, lod: int, tohum: in
 		pts.append(row)
 		cols.append(crow)
 	# SUR-5: kesit sıklaştırılır (Chaikin) ve köşe normalleri komşulardan (düz renkli üçgen yüzler okunuyordu: kara_05_yer60)
-	for k in 2:
+	for k in (2 if lod == 0 else 0):
 		for i in pts.size():
 			var r0: Array = pts[i]
 			var c0: Array = cols[i]
@@ -407,7 +407,7 @@ static func _ucgen_n(st: SurfaceTool, v: Array, c: Array, nn: Array) -> void:
 ## çukur). Yerel: x0..x1 boyunca, z0 (iç yaka duvarı) … z1 (karşı yaka), dip y = -md. Çarpışma surlar.gd'deki kutular.
 ## Dönen: [taş ağı (ashlar; sur taşı gölgelendiricisine çevrilir), toprak ağı]
 static func hendek_kesit(p: Node3D, x0: float, x1: float, z0: float, z1: float, md: float, lod: int, tohum: int, pencere := Vector2(-1e9, 1e9)) -> void:
-	var adim := 2.5 if lod == 0 else 8.0
+	var adim := 2.5 if lod == 0 else (8.0 if lod == 1 else 40.0)
 	var n := maxi(1, int(ceil((x1 - x0) / adim)))
 	var W := z1 - z0
 	# kesit (z, y): taş iç yaka 0 → 1,1 (şev), dip köşesi yuvarlak, taban, karşı yaka simetrik
@@ -522,3 +522,42 @@ static func _saz() -> Mesh:
 		c.rings = 1
 		_sz = c
 	return _sz
+
+
+## SUR-5: hendek rampası (görünen): kama prizması uçtan bakınca "yeşil piramit" okunuyordu (sahip_03). Toprak döküm
+## rampa: üstü düz yürüme şeridi, yanları yumuşak eğimle dibe iner; köşe normalli, toprak renkli. xa: dipteki uç, xb:
+## yaka hizasındaki uç (y0 + rise), z: şerit ortası, w: şerit eni. Çarpışma surlar.gd'deki görünmez kama.
+static func rampa(p: Node3D, xa: float, xb: float, z: float, y0: float, rise: float, w: float, tohum: int) -> void:
+	var nx := 10
+	var kes := [-w * 0.5 - 2.6, -w * 0.5 - 1.0, -w * 0.5, 0.0, w * 0.5, w * 0.5 + 1.0, w * 0.5 + 2.6]
+	var rows: Array = []
+	var cols: Array = []
+	for i in nx + 1:
+		var t := float(i) / nx
+		var x := lerpf(xa, xb, t)
+		var yt := y0 + rise * t
+		var r: Array = []
+		var c: Array = []
+		for j in kes.size():
+			var zz: float = kes[j]
+			var dz := maxf(absf(zz) - w * 0.5, 0.0)
+			var k := clampf(dz / 2.6, 0.0, 1.0)
+			var y := lerpf(yt, y0 - 0.05, k * k * (3.0 - 2.0 * k)) + (_hash(tohum + i, j) - 0.5) * 0.1
+			r.append(Vector3(x, y, z + zz))
+			c.append(TOPRAK.lerp(CAMUR, _hash(tohum * 3 + i, j)) if k < 0.5 else CAMUR.lerp(TOPRAK2, 0.4))
+		rows.append(r)
+		cols.append(c)
+	var nrm := _izgara_normal(rows)
+	var st := SurfaceTool.new()
+	st.begin(Mesh.PRIMITIVE_TRIANGLES)
+	for i in nx:
+		for j in kes.size() - 1:
+			_ucgen_n(st, [rows[i][j], rows[i][j + 1], rows[i + 1][j], rows[i + 1][j], rows[i][j + 1], rows[i + 1][j + 1]],
+				[cols[i][j], cols[i][j + 1], cols[i + 1][j], cols[i + 1][j], cols[i][j + 1], cols[i + 1][j + 1]],
+				[nrm[i][j], nrm[i][j + 1], nrm[i + 1][j], nrm[i + 1][j], nrm[i][j + 1], nrm[i + 1][j + 1]])
+	var mi := MeshInstance3D.new()
+	mi.name = "HendekRampa"
+	mi.mesh = st.commit()
+	mi.material_override = _mat()
+	mi.set_meta("no_walk", true)
+	p.add_child(mi)
