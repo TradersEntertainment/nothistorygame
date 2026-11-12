@@ -5,6 +5,7 @@ extends RefCounted
 ## dry = true: hiçbir düğüm kurulmaz, yalnız perches / climbs hesaplanır (perches_x / climbs_x için).
 ## lod 0: katı + tam ayrıntı; lod 1: ana kütleler + çatı (çarpışmasız); lod 2: birkaç kutu/kubbe.
 
+const BitkiKit := preload("res://scripts/level/bitki_kit.gd")
 const STONE := Color("d6c6a2")
 const STONE_D := Color("b3a280")
 const BRICK := Color("b4684a")
@@ -439,8 +440,8 @@ func stair_run(height: float) -> float:
 func tree_cypress(base: Vector3, h := 6.0) -> void:
 	if dry:
 		return
-	vc(base, 0.18, h * 0.2, WOOD_D, 5)
-	vc(base + Vector3(0, h * 0.2, 0), h * 0.12, h * 0.8, CYPRESS, 7, Vector3.ZERO, 0.04)
+	# BİTKİ: ortak kit servisi (eski: iki koni)
+	BitkiKit.ornek(host, "servi", base, h, mini(lod, 2), fposmod(base.x * 0.7 + base.z * 0.3, TAU))
 	# gövde taban çarpışması: ince katı sütun
 	if lod == 0:
 		var body := StaticBody3D.new()
@@ -457,11 +458,12 @@ func tree_cypress(base: Vector3, h := 6.0) -> void:
 func tree_plane(base: Vector3, h := 7.0) -> void:
 	if dry:
 		return
-	vc(base, 0.3, h * 0.5, Color("6b5a44"), 6, Vector3.ZERO, 0.2)
+	# BİTKİ: ortak kit çınarı (eski: silindir + beş top); rng çağrı sayısı korunur
+	var yaw := 0.0
 	for i in 4:
-		var a := TAU * i / 4.0 + rng.randf() * 0.5
-		vball(base + Vector3(cos(a) * h * 0.18, h * 0.62 + rng.randf() * h * 0.1, sin(a) * h * 0.18), h * 0.22, Color("5b8a3a").darkened(rng.randf() * 0.15), Vector3(1.0, 0.8, 1.0), 7)
-	vball(base + Vector3(0, h * 0.78, 0), h * 0.24, Color("68993f"), Vector3(1, 0.8, 1), 7)
+		yaw += rng.randf() + rng.randf() * 0.0
+		rng.randf()
+	BitkiKit.ornek(host, "cinar", base, h * 1.02, mini(lod, 2), fposmod(yaw, TAU))
 	if lod == 0:
 		var body := StaticBody3D.new()
 		body.position = base + Vector3(0, 1.1, 0)
@@ -567,7 +569,8 @@ func flush() -> void:
 	_mm(host, unit_cyl, Props.mat(MARBLE, 0.0, false, "", false), _df, false)
 	_mm(host, unit_cyl, Props.mat(DARK, 0.0, false, "", false), _dd, false)
 	_mm(host, unit_box, Props.mat(BRICK, 0.0, false, "brick", false), _band)
-	_mm(host, unit_ball, Props.mat(IVY, 0.0, false, "", false), _ivy)
+	# BİTKİ: sarmaşık ortak kitten (yaprak kümesi; eski: yassı yeşil top)
+	_mm(host, BitkiKit.sarmasik(), BitkiKit.mat(), _ivy)
 	_mm(host, unit_cyl, Props.mat(GRASS, 0.0, false, "", false), _moss, false)
 	_mm(host, unit_box, Props.mat(Color("9b8c70"), 0.0, false, "rubble", false), _stone_bits)
 	_mm(host, unit_box, Props.mat(TILE_D, 0.0, false, "", false), _tile_rows)

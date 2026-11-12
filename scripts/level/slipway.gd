@@ -8,6 +8,7 @@ extends Node3D
 ## Yokuş "track" düğümünün içinde kuruludur: track'in yerel -Z yönü yokuş aşağıdır.
 ## s: yokuş boyunca metre (0 = tepe), x: şerit ekseni.
 
+const BitkiKit := preload("res://scripts/level/bitki_kit.gd")
 const SLOPE_DEG := 7.0
 const LENGTH := 130.0
 const WIDTH := 9.0
@@ -1273,9 +1274,8 @@ func _mallet(sol: Soldier) -> Node3D:
 
 
 func _cypress(parent: Node3D, h: float) -> void:
-	Props.cyl(parent, 0.14, 0.9, Vector3(0, 0.45, 0), Color("5a3a24"), Vector3.ZERO, 6)
-	Props.cyl(parent, 0.62, h, Vector3(0, 0.8 + h / 2.0, 0), Color("2f5a2c"), Vector3.ZERO, 7, 0.06)
-	Props.cyl(parent, 0.5, h * 0.55, Vector3(0.05, 0.9 + h * 0.28, 0.05), Color("3a6a34"), Vector3.ZERO, 7, 0.2)
+	# BİTKİ (4. tur): ortak kit servisi (eski: üç koni)
+	BitkiKit.ornek(parent, "servi", Vector3.ZERO, 0.8 + h, 0, h * 1.7)
 
 
 ## Ordu çadırı: yuvarlak gövde, renkli kuşak, sivri dam, kapı (Scenery.tent_mesh). Eskiden düz beyaz prizma: yamaçta

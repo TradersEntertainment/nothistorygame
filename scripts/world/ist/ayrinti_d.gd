@@ -3,6 +3,7 @@ extends RefCounted
 ## Ayrıntı kitaplığı, bölüm D: su yapıları, kilise/mezar ayrıntıları, bostan ve ağaçlar, sokak mobilyası.
 ## ITEMS: [id, ad, en, yükseklik, boy, çarpışma, grup]
 
+const BitkiKit := preload("res://scripts/level/bitki_kit.gd")
 const L := preload("res://scripts/world/ist/ayrinti_lib.gd")
 
 const ITEMS := [
@@ -172,45 +173,26 @@ static func build_korkuluk(h: Node3D) -> void:
 
 
 static func build_meyve_agaci(h: Node3D) -> void:
-	L.cb(h, 0.17, 1.6, 0, 0, 0, L.WOOD_D, 7, 0.12)
 	L.col_box(h, Vector3(0.35, 1.5, 0.35), Vector3(0, 0.75, 0))
-	L.rod(h, Vector3(0, 1.3, 0), Vector3(-0.7, 2.2, 0.2), 0.1, L.WOOD_D)
-	L.rod(h, Vector3(0, 1.4, 0), Vector3(0.7, 2.3, -0.2), 0.1, L.WOOD_D)
-	L.s(h, 0.5, Vector3(0, 2.6, 0), L.GREEN, Vector3(2.6, 1.8, 2.6), 8)
-	L.s(h, 0.5, Vector3(-0.8, 2.3, 0.3), L.GREEN_D, Vector3(1.4, 1.1, 1.4), 7)
-	L.s(h, 0.5, Vector3(0.8, 2.4, -0.3), L.GREEN.lightened(0.1), Vector3(1.4, 1.0, 1.4), 7)
-	for i in 7:
-		var a := i * 0.9
-		L.s(h, 0.8 * 0.1, Vector3(cos(a) * 0.9, 2.4 + (i % 3) * 0.25, sin(a) * 0.9), Color("f5e6ea") if i % 2 == 0 else L.RED, Vector3.ONE, 5)
+	# BİTKİ: ortak kit (çiçek açmış badem; eski: üç top + beyaz benekler); gövde çarpışması yukarıda
+	BitkiKit.ornek(h, "badem", Vector3.ZERO, 3.6)
 
 
 static func build_zeytin_agaci(h: Node3D) -> void:
-	L.cb(h, 0.22, 1.4, 0, 0, 0, L.WOOD_D.lightened(0.1), 7, 0.16)
 	L.col_box(h, Vector3(0.45, 1.4, 0.45), Vector3(0, 0.7, 0))
-	L.rod(h, Vector3(0, 1.2, 0), Vector3(-0.9, 2.4, 0), 0.13, L.WOOD_D)
-	L.rod(h, Vector3(0, 1.2, 0), Vector3(0.9, 2.2, 0.3), 0.13, L.WOOD_D)
-	L.rod(h, Vector3(0, 1.3, 0), Vector3(0.1, 2.7, -0.7), 0.12, L.WOOD_D)
-	var gc := Color("7e9a64")
-	L.s(h, 0.5, Vector3(0, 3.0, 0), gc, Vector3(3.0, 1.5, 3.0), 8)
-	L.s(h, 0.5, Vector3(-1.0, 2.5, 0.2), gc.darkened(0.1), Vector3(1.6, 1.0, 1.6), 7)
-	L.s(h, 0.5, Vector3(1.0, 2.6, 0.3), gc.lightened(0.08), Vector3(1.6, 1.0, 1.6), 7)
-	L.s(h, 0.5, Vector3(0.1, 3.5, -0.4), gc.lightened(0.05), Vector3(1.8, 0.9, 1.8), 7)
+	# BİTKİ: ortak kit zeytini (eski: dört top)
+	BitkiKit.ornek(h, "zeytin", Vector3.ZERO, 4.2)
 
 
 static func build_selvi(h: Node3D) -> void:
-	L.cb(h, 0.1, 0.8, 0, 0, 0, L.WOOD_D, 6)
 	L.col_box(h, Vector3(0.25, 0.8, 0.25), Vector3(0, 0.4, 0))
-	L.cb(h, 0.55, 5.2, 0, 0.8, 0, Color("3f5e34"), 8, 0.03)
-	L.s(h, 0.5, Vector3(0, 2.3, 0), Color("466a38"), Vector3(1.1, 3.0, 1.1), 7)
+	# BİTKİ: ortak kit servisi (eski: koni + uzun top)
+	BitkiKit.ornek(h, "servi", Vector3.ZERO, 6.0)
 
 
 static func build_cali(h: Node3D) -> void:
-	for i in 5:
-		var a := i * 1.3
-		L.s(h, 0.5, Vector3(cos(a) * 0.3, 0.3 + (i % 2) * 0.1, sin(a) * 0.3), L.GREEN if i % 2 == 0 else L.GREEN_D, Vector3(0.7, 0.55, 0.7), 6)
-	L.s(h, 0.5, Vector3(0, 0.45, 0), L.GREEN.lightened(0.1), Vector3(0.8, 0.6, 0.8), 6)
-	for i in 3:
-		L.s(h, 0.05, Vector3(cos(i * 2.0) * 0.4, 0.5, sin(i * 2.0) * 0.4), L.RED, Vector3.ONE, 4)
+	# BİTKİ: ortak kit çalısı (böğürtlen; eski: altı top)
+	BitkiKit.ornek(h, "cali", Vector3.ZERO, 0.95)
 
 
 static func build_cicek_tarhasi(h: Node3D) -> void:

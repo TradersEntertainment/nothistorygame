@@ -234,52 +234,13 @@ static func add_flecks(m: Dictionary, c: Vector3, rad: Vector3, n: int, size: fl
 
 
 # ------------------------------------------------------------------ ağaç ağı
+## BİTKİ (4. tur): ağaçlar ortak kitten (scripts/level/bitki_kit.gd, KIT_SURUM 10) gelir: incelen eğri gövde, dallar,
+## 5–12 yumuşak normalli yaprak öbeği; çiçekli ağaçta kırık beyaz-pembe, parlaklık tavanlı. Eski tek blok taç kalktı.
+const BitkiKit := preload("res://scripts/level/bitki_kit.gd")
+
+
 static func tree_mesh(tur: String, lod: int) -> ArrayMesh:
-	var key := "agac|%s|%d" % [tur, lod]
-	if _cache.has(key):
-		return _cache[key]
-	var d: Dictionary = AGAC[tur]
-	var m := new_mesh_data()
-	var th: float = d["th"]
-	var tr: float = d["tr"]
-	var tc: Color = d["tc"]
-	var seed := tur.hash() & 0xffff
-	if lod >= 2:
-		add_frustum(m, Vector3.ZERO, tr * 1.2, tr * 0.8, th, 4, tc, tc, Vector3.ZERO, true)
-		for t: Array in d["taclar"]:
-			add_blob(m, Vector3(0, th, 0) + (t[0] as Vector3), t[1], seed, t[2], t[3], 5, 3, 0.7, 0.1)
-		var am2 := finish(m)
-		_cache[key] = am2
-		return am2
-	# gövde: kök tabanı geniş, yukarı daralır + iki üç ana dal
-	add_frustum(m, Vector3.ZERO, tr * 1.5, tr, th * 0.35, 7, tc.darkened(0.15), tc, Vector3.ZERO, false)
-	add_frustum(m, Vector3(0, th * 0.35, 0), tr, tr * 0.8, th * 0.65, 7, tc, tc.lightened(0.08), Vector3(tr * 0.3, 0, 0), true)
-	if lod == 0 and not d.get("konik", false):
-		for i in 3:
-			var a := TAU * float(i) / 3.0 + 0.4
-			var dir := Vector3(cos(a), 0, sin(a))
-			add_frustum(m, Vector3(0, th * 0.8, 0), tr * 0.5, tr * 0.25, th * 0.5 + 0.5, 5, tc, tc.lightened(0.1), dir * (th * 0.35 + 0.4), true)
-	var seg := 8 if lod == 0 else 6
-	var rings := 5 if lod == 0 else 4
-	var ti := 0
-	for t: Array in d["taclar"]:
-		var c := Vector3(0, th, 0) + (t[0] as Vector3)
-		var rad: Vector3 = t[1]
-		if d.get("konik", false):
-			add_frustum(m, Vector3(0, th, 0), rad.x * 1.1, 0.02, rad.y * 2.0, seg, t[2], t[3], Vector3.ZERO, false)
-			# dilimli sırt: açık-koyu şeritler
-			for i in 4:
-				var h := 0.6 + float(i) * 1.1
-				add_blob(m, Vector3(rad.x * 0.1 * (i % 2), th + h, 0), Vector3(rad.x * (1.0 - h / (rad.y * 2.0) * 0.9) * 1.0, 0.9, rad.x * (1.0 - h / (rad.y * 2.0) * 0.9)), seed + i, t[2], t[3], 7, 3, 0.9, 0.12)
-		else:
-			add_blob(m, c, rad, seed + ti, t[2], t[3], seg, rings, 0.62, 0.2)
-			if lod == 0 and d.has("cicek"):
-				var n := int(rad.x * rad.y * 5.0)
-				add_flecks(m, c, rad, mini(n, 22), 0.2 + rad.x * 0.03, d["cicek"], d["cicek2"], seed + 7 + ti)
-		ti += 1
-	var am := finish(m)
-	_cache[key] = am
-	return am
+	return BitkiKit.agac(tur, lod)
 
 
 ## Tek ağaç: gövde katı (silindir), taç çarpışmasız. Ağaç, gövde tepesinde konma noktası için küçük kapak taşır.
@@ -297,8 +258,9 @@ static func _agac(host: Node3D, tur: String, k: float, lod: int) -> void:
 		body.name = "govde_katı"
 		var cs := CollisionShape3D.new()
 		var cy := CylinderShape3D.new()
-		cy.radius = maxf(0.2, float(d["tr"]) * 1.2)
-		cy.height = float(d["th"])
+		var go := BitkiKit.govde_olcu(tur)
+		cy.radius = go.x
+		cy.height = go.y
 		cs.shape = cy
 		cs.position = Vector3(0, cy.height * 0.5, 0)
 		body.add_child(cs)

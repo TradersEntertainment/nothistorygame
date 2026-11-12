@@ -3,6 +3,7 @@ extends RefCounted
 ## Kemer parçası ortak yardımcıları: katı kutu, kubbe, tambur, tonoz, merdiven, çokgen gövde, MultiMesh.
 ## Her şey ilkel parçalardan (Props); "k" yalnız kütleyi ölçekler, insan ölçüsü sabit kalır.
 
+const BitkiKit := preload("res://scripts/level/bitki_kit.gd")
 const STONE := Color("d8c7a4")        # kesme taş, sıcak
 const STONE_D := Color("b9a47c")
 const BRICK := Color("c0795a")        # Bizans tuğlası
@@ -178,12 +179,9 @@ static func rubble(host: Node3D, base: Vector3, r: float, h: float, seed_v := 1,
 
 ## Ağaç (selvi/çınar/incir benzeri basit): gövde + taç. kind: "selvi" ya da "incir".
 static func tree(host: Node3D, base: Vector3, h: float, kind := "selvi") -> void:
-	var trunk := Props.cyl(host, 0.18, h * 0.35, base + Vector3(0, h * 0.175, 0), Color("5a4630"), Vector3.ZERO, 6)
-	Props.make_solid(trunk)
-	if kind == "selvi":
-		Props.make_solid(Props.cyl(host, h * 0.14, h * 0.8, base + Vector3(0, h * 0.6, 0), Color("3e5a35"), Vector3.ZERO, 7, 0.02), 1.0)
-	else:
-		Props.make_solid(Props.ball(host, h * 0.3, base + Vector3(0, h * 0.62, 0), Color("6c8d44"), Vector3(1, 0.8, 1), 8), 0.8)
+	# BİTKİ: ortak kit (selvi → servi, öteki → incir); gövde katı, taç çarpışmasız
+	BitkiKit.ornek(host, "servi" if kind == "selvi" else "incir", base, h, 0, fposmod(base.x * 0.6 + base.z * 0.4, TAU))
+	BitkiKit.govde(host, base, 0.22, h * 0.35)
 
 
 ## Bostan tarhası (alçak toprak tarla, yürünür, görsel): w×d, 0,12 m yüksek katı.

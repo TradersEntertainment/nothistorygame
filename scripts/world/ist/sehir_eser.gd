@@ -4,6 +4,7 @@ extends RefCounted
 ##             zemin katta kemerli revak, üst katta balkon, kiremit kırma çatı, yan kuleler, şehir yanında avlu).
 ## Yerel düzen: sur iç yüzü z ≈ +2 (dış +z), saray gövdesi z −26…−16, avlu z −26…−44 (şehre bakar).
 
+const BitkiKit := preload("res://scripts/level/bitki_kit.gd")
 const SURDOKU := preload("res://scripts/world/ist/sur_doku.gd")
 const STONE := Color("d8c8a8")
 const BRICK := Color("9a5040")
@@ -518,11 +519,11 @@ static func manastir(n: Node3D, lod: int, hx: float, hz: float, seed: int) -> vo
 		if absf(p.x) > hx - t - cw - 1.2:
 			continue
 		var cyp := k % 2 == 0
-		Props.cyl(n, 0.16, 1.6, p + Vector3(0, 0.8, 0), Color("5a3a20"), Vector3.ZERO, 5)
+		# BİTKİ: ortak kit (servi; çiçekte badem ya da dut); eski: silindir + koni/top
 		if cyp:
-			Props.cyl(n, 0.8, 6.5, p + Vector3(0, 4.6, 0), Color("27402a"), Vector3.ZERO, 7, 0.05)
+			BitkiKit.ornek(n, "servi", p, 7.9, mini(lod, 2), a)
 		else:
-			Props.ball(n, 1.6, p + Vector3(0, 2.9, 0), Color("e8c8d0") if k % 3 == 0 else Color("6a8a4a"), Vector3(1, 0.8, 1), 7)
+			BitkiKit.ornek(n, "badem" if k % 3 == 0 else "dut", p, 4.6, mini(lod, 2), a)
 
 
 # ---------------------------------------------------------------- Ayasofya meydanı (oyun alanı; Augustaion'un batısı)
@@ -546,8 +547,8 @@ static func meydan(n: Node3D, lod: int, sx: float, sz: float) -> void:
 	for c: Vector2 in [Vector2(-1, -1), Vector2(1, -1), Vector2(-1, 1), Vector2(1, 1)]:
 		var p := Vector3(c.x * (sx * 0.5 - 3.0), 0, c.y * (sz * 0.5 - 3.0))
 		Props.cyl(n, 1.3, 0.5, p + Vector3(0, 0.25, 0), tas.darkened(0.2), Vector3.ZERO, 10)
-		Props.cyl(n, 0.35, 5.0, p + Vector3(0, 2.6, 0), Color("6a5640"), Vector3.ZERO, 7)
-		Props.ball(n, 3.6, p + Vector3(0, 7.2, 0), Color("4f7a3a"), Vector3(1.0, 0.75, 1.0), 9)
+		# BİTKİ: ortak kit çınarı (eski: silindir + iri top); çarpışma eskisi gibi yok (oyun alanı)
+		BitkiKit.ornek(n, "cinar", p + Vector3(0, 0.45, 0), 10.0, lod, c.x * 1.3 + c.y * 0.7)
 	# çeşme (kuzeybatı köşesine yakın): kemerli taş gövde, kurna
 	var cp := Vector3(-sx * 0.5 + 9.0, 0, -sz * 0.5 + 2.2)
 	Props.box(n, Vector3(4.0, 3.2, 1.6), cp + Vector3(0, 1.6, 0), Color("ddd2bc"))
@@ -796,16 +797,13 @@ static func _sol_rot(n: Node3D, size: Vector3, pos: Vector3, yaw: float, lod: in
 
 
 static func _servi(n: Node3D, p: Vector3, h: float) -> void:
-	Props.cyl(n, 0.2, 1.4, p + Vector3(0, 0.7, 0), P_AHSAP, Vector3.ZERO, 5)
-	Props.cyl(n, 1.0, h, p + Vector3(0, 1.2 + h * 0.5, 0), Color("34492f"), Vector3.ZERO, 7, 0.08)
+	# BİTKİ: ortak kit servisi (dikey fırça dokulu, tepesi eğik); boy eskisiyle aynı (1,2 + h)
+	BitkiKit.ornek(n, "servi", p, 1.2 + h, 0, fposmod(p.x * 0.37 + p.z * 0.11, TAU))
 
 
 static func _cinar(n: Node3D, p: Vector3, lod: int) -> void:
-	Props.cyl(n, 0.45, 5.0, p + Vector3(0, 2.5, 0), Color("6a5a46"), Vector3.ZERO, 7)
-	Props.ball(n, 4.2, p + Vector3(0, 7.4, 0), Color("4d6a38"), Vector3(1.0, 0.72, 1.0), 9)
-	if lod == 0:
-		Props.ball(n, 2.8, p + Vector3(2.0, 8.4, 1.2), Color("56733f"), Vector3(1.0, 0.75, 1.0), 8)
-		Props.ball(n, 2.6, p + Vector3(-1.8, 8.0, -1.4), Color("466336"), Vector3(1.0, 0.75, 1.0), 8)
+	# BİTKİ: ortak kit çınarı (dallı gövde, birbirine geçen öbekler); boy eskisiyle aynı (~10,4 m)
+	BitkiKit.ornek(n, "cinar", p, 10.5, mini(lod, 2), fposmod(p.x * 0.29 + p.z * 0.17, TAU))
 
 
 ## Mumcu / ikona / ekmek tezgâhı: tezgâh, tente (soluk), mal

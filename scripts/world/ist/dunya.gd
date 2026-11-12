@@ -6,6 +6,7 @@ extends Node3D
 ##
 ## Bütçe: kurulum ilk kare ≤ 2 sn (kaba ayrıntı), sonrası kare başına ≤ BUDGET_US (ayrıntı + çarpışma zaman dilimli).
 
+const BitkiKit := preload("res://scripts/level/bitki_kit.gd")
 const BUDGET_US := 5000
 ## OTURTMA: sur kuşağı (hendek bandında arazi ağı kırpılır; sur dibi rengi; kuşak yerleştirme maskesi)
 const OTURTMA := preload("res://scripts/world/ist/sur_oturtma.gd")
@@ -586,7 +587,7 @@ func _karsi_kiyilar() -> void:
 	var t0 := Time.get_ticks_usec()
 	var rng := RandomNumberGenerator.new()
 	rng.seed = 1453
-	var turler := ["agac", "servi", "ev", "ot", "cali"]
+	var turler := ["agac", "servi", "ev", "ot", "cali", "kutuk"]
 	var obekler := {}                # Vector2i → {tur: Array[Transform3D, Color]}
 	var xa := KARSI_E.x * IstGeo.S
 	var xb := KARSI_E.y * IstGeo.S
@@ -657,7 +658,12 @@ func _karsi_kiyilar() -> void:
 				var y := IstGeo.h(px, pz)
 				var sc: float = o[1]
 				var tf := Transform3D(Basis(Vector3.UP, rng.randf() * TAU).scaled(Vector3.ONE * sc), Vector3(px, y - 0.2, pz))
-				(obekler[ok][o[0]] as Array).append([tf, o[2]])
+				# BİTKİ (4. tur): kuşatmada sur dışı ateş alanında (kara suruna 260 m, hendekten ~200 m) ağaç kesilmiştir:
+				# aynı yerde kütük kalır (konum ve sayı aynı)
+				if (o[0] == "agac" or o[0] == "servi") and _ates_alani(px, pz):
+					(obekler[ok]["kutuk"] as Array).append([tf, Color.WHITE])
+				else:
+					(obekler[ok][o[0]] as Array).append([tf, o[2]])
 				konan += 1
 			if konan > 0:
 				karsi_sayim[Vector2i(i, j)] = konan
@@ -685,7 +691,7 @@ func _karsi_kiyilar() -> void:
 			var mi := MultiMeshInstance3D.new()
 			mi.name = "Karsi_%s_%d_%d" % [t, ok.x, ok.y]
 			mi.multimesh = mm
-			mi.material_override = mats[t]
+			mi.material_override = mats[t] if t != "kutuk" else BitkiKit.mat()
 			mi.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
 			mi.visibility_range_end = 4200.0 if t in ["agac", "ev", "servi"] else 2400.0
 			add_child(mi)
@@ -717,19 +723,41 @@ static func sc_pay(t: String) -> float:
 	return 1.0 if t in ["agac", "ev", "servi"] else 0.0
 
 
+## BİTKİ: kuşatma ateş alanı — sur dışı (şehir/Galata dışı) ve kara suru çizgisine 260 m'den yakın (hendekten ~200 m)
+static var _sur_cizgi := PackedVector2Array()
+func _ates_alani(x: float, z: float) -> bool:
+	if IstGeo.sehir_ici(x, z) or IstGeo.galata_ici(x, z):
+		return false
+	if _sur_cizgi.is_empty():
+		_sur_cizgi = IstGeo.yol("kara_suru")
+	return _sur_cizgi.size() > 1 and IstGeo.cizgi_uzak(Vector2(x, z), _sur_cizgi) < 260.0
+
+
 ## Düşük çokgen öğe ağları (köşe rengi × örnek rengi)
 func _karsi_ag(t: String) -> ArrayMesh:
+	# BİTKİ (4. tur): karşı kıyı ağaç/servi/çalısı ortak kitin uzak katmanından (gövde + düzensiz taç; koni yok).
+	# Köşe rengi örnek rengiyle çarpılır: kit renkleri türün yaprak ortasına bölünerek ton çarpanına çevrilir.
+	if t in ["agac", "servi", "cali", "kutuk"]:
+		var kt: String = {"agac": "dut", "servi": "servi", "cali": "cali", "kutuk": "kutuk"}[t]
+		if t == "kutuk":
+			return BitkiKit.agac(kt, 1)
+		var src := BitkiKit.agac_boy(kt, 2, {"agac": 7.5, "servi": 11.8, "cali": 1.8}[t])
+		var arr := src.surface_get_arrays(0)
+		var d: Dictionary = BitkiKit.TUR[kt]
+		var ref: Color = (d["y1"] as Color).lerp(d["y2"], 0.5)
+		var cs: PackedColorArray = arr[Mesh.ARRAY_COLOR]
+		for i in cs.size():
+			var c := cs[i]
+			cs[i] = Color(minf(c.r / ref.r, 1.6), minf(c.g / ref.g, 1.6), minf(c.b / ref.b, 1.6), 1.0)
+		arr[Mesh.ARRAY_COLOR] = cs
+		var am := ArrayMesh.new()
+		am.add_surface_from_arrays(Mesh.PRIMITIVE_TRIANGLES, arr)
+		am.set_meta("bitki_kit", kt)
+		am.set_meta("bitki_carpan", true)      # köşe rengi ton çarpanı (örnek rengiyle çarpılır)
+		return am
 	var st := SurfaceTool.new()
 	st.begin(Mesh.PRIMITIVE_TRIANGLES)
 	match t:
-		"agac":
-			_koni(st, 0.35, 0.3, 0.0, 2.2, 5, Color("6b5338"))
-			_koni(st, 3.0, 0.0, 1.8, 7.5, 6, Color(1, 1, 1), 2.6)
-		"servi":
-			_koni(st, 0.3, 0.3, 0.0, 1.0, 4, Color("6b5338"))
-			_koni(st, 1.3, 0.0, 0.8, 11.0, 6, Color(1, 1, 1))
-		"cali":
-			_koni(st, 1.6, 0.0, 0.0, 1.8, 5, Color(1, 1, 1), 1.0)
 		"ot":
 			_koni(st, 2.2, 0.3, 0.0, 2.6, 7, Color(1, 1, 1))
 		"ev":
