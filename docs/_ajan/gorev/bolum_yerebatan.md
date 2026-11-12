@@ -5,22 +5,50 @@
 `docs/EGLENCE.md`, `docs/COMBAT_FEEL.md`, `docs/QA_DERSLER.md` (son dersler), `docs/_ajan/ajan_kurallari.md` oku.
 Dalın: `wip/bolum-yerebatan`. Kanıt: `docs/_kanit_yerebatan/`.
 
-## Sahibin sözü (12 Kasım, aynen)
-"bizansa yerebatan sarnıcı bölümü ekleyelim hem manzara hayranlık yaratsın hem de heyecanlı bi bölüm olsun"
+## Sahibin sözleri (12 Kasım, aynen)
+- "bizansa yerebatan sarnıcı bölümü ekleyelim hem manzara hayranlık yaratsın hem de heyecanlı bi bölüm olsun"
+- "bildiğim kadarıyla ne bizans ne osmanlı bilmiyordu sen onu iyice araştır tolga kazara bulacak ya da halktan birisi
+  bir şey isterken ona yardım ederken oraya varacak gibi bir şeyler"
+
+## ÖNCE ARAŞTIR (iyice; kaynaklı; `docs/BOLUM_YEREBATAN.md`'nin ilk bölümü olarak yaz)
+Sahibinin bildiği: sarnıç UNUTULMUŞTU; ne Bizans yönetimi ne Osmanlı varlığından haberdardı. WebSearch/WebFetch ile
+doğrula ve ayrıntılandır (birden çok kaynak; çelişenleri yan yana yaz, emin olmadığını BELİRSİZ yaz):
+- Yapım (Iustinianus, 532 sonrası; Stoa Basilika'nın altı), ölçüler (138 × 65 m, 336 sütun, ~9 m), su kaynağı.
+- Geç Bizans'ta durumu: Büyük Saray terk edildikten sonra kullanımı/bakımı ne oldu; 1453'te kimler biliyordu?
+- Fetihten sonra: Osmanlıların bilip bilmediği (bazı kaynaklar suyun Topkapı bahçelerinde kullanıldığını söyler,
+  bazıları tümüyle unutulduğunu), Petrus Gyllius'un 1540'lardaki "yeniden keşfi": üstteki ev sahiplerinin zemindeki
+  kuyulardan kovayla su, hatta balık çektiğini ama altlarındaki yapıyı bilmediklerini görmesi; bir evin içinden inip
+  meşale ışığında sandalla dolaşması (kendi anlatısından ayrıntılar: balıklar, karanlık, sütunlar).
+- Medusa başları 1453'te görünür müydü (çamur/su altında mıydı; bugünkü görünüşleri 1980'lerdeki temizlikten),
+  "gözyaşı" sütunu, su düzeyi, dipte çamur, balıklar, hava, ses.
+SONUÇ (oyunun kurgusu için): sarnıç 1453'te UNUTULMUŞ bir yeraltı dünyası; üstündeki mahalleli evinin kuyusundan su
+(ve balık) çekiyor ama aşağıda ne olduğunu bilmiyor; saray da ordu da bilmiyor. Bölüm bu "bilinmezlik" üstüne kurulur.
+
+## GİRİŞ KURGUSU (sahibin isteği: kazara ya da halktan birine yardım ederken)
+Tolga sarnıcı ARAMAZ, BULUR. Aday girişler (en iyisini seç ya da birleştir; oyunun mizahında):
+- Halktan biri yardım ister: kuyuya düşen kova/yüzük/ikona/kedi/çocuğun oyuncağı; "kuyumdan balık çıkıyor, cin mi var"
+  diyen yaşlı kadın; suyu çekilen kuyusuna inecek "ince yapılı biri" arayan fırıncı. Tolga iple kuyuya iner; ip kısa
+  gelir / kopar; düşer: karanlık, su, ve telefon ışığını açınca sütun ormanı (HAYRANLIK ANI burada).
+- Kazara: top sarsıntısıyla bir bodrumun zemini çöker; kovalanırken saklandığı kilerin döşemesi göçer.
+Aşağıda yalnız değildir (heyecan için seç): yıllardır orada balık tutan bir kaçak/münzevi, mahallelinin "cin" sandığı
+biri; ya da hiç kimse yok ve tehlike mekânın kendisi (karanlık, derin su, çöken tonoz, yükselen su, yolunu kaybetme).
+Tolga'nın gelecekten bildiği şeyle oynayan mizah: "burayı biliyorum, okul gezisinde gelmiştik… bilet kuyruğu vardı",
+Medusa başlarını ararken rehber ezberi; Hikmet'in telsizden "kimseye söyleme, yüz yıl sonra bir Fransız bulacak, tarihi
+bozma" diye paylaması (paradoks sayacı); çıkışta Tolga'nın kimseyi inandıramaması ya da bilerek susması. Keşif SIR
+kalmalı (tarih değişmesin): bölümün sonuçlarından biri "sırrı korudu / ağzından kaçırdı" ekseninde olabilir.
 
 ## İki hedef (ikisi de şart)
 1. **Hayranlık:** oyuncu sarnıca girdiği an durup bakmalı: 336 sütunluk orman (12 sıra × 28; ~9 m yükseklik; 138 × 65 m:
    oyunda gerçeğe yakın boyda kur), tuğla çapraz tonozlar, sütun başlıkları (Korint/İon/yalın karışık, devşirme),
    "gözyaşı" (tavus gözü) sütunu, iki Medusa başı (biri yan, biri ters), sütunların durgun suda yansıması, tavandaki
    kuyu ağızlarından inen ışık huzmeleri ve toz, damlalar ve halkaları, sudaki balıklar (sazan), yosun/kireç izleri,
-   su çizgisi, yankı, uzaklaşan karanlık. 1453'te sarnıç DOLU ve kullanımda (saray ve çevre su alıyor; üstteki evlerin
-   zeminindeki kuyulardan kovayla su ve balık çekilir): araştır (WebSearch: Basilica Cistern, Gyllius'un anlatısı,
-   Bizans'ta kullanımı), kaynaklı kısa not yaz. Işık kaynakları: kuyu huzmeleri, meşale/kandil, Tolga'nın telefon
+   su çizgisi, yankı, uzaklaşan karanlık. 1453'te sarnıç su dolu ama UNUTULMUŞ (yukarıdaki araştırma): bakımsız, karanlık,
+   el değmemiş; üstteki evlerin kuyu ağızlarından ip ve kova sarkıyor. Işık kaynakları: kuyu huzmeleri, meşale/kandil, Tolga'nın telefon
    ışığı ve çakmağı (oyunda var), suyun tavana vuran kıpırtılı yansıması (kostik: gölgelendirici).
 2. **Heyecan:** oynanış tempolu ve gerilimli; oyunun var olan düzeneklerinden kur (sandal/kürek: Bölüm 17, 19, 38o;
    tırmanma ve dar yerde yürüme: 6b labirent, Ayasofya tırmanışı; gizlenme/kaçış; zamanlı işler; `Handover`; telefon/
-   çakmak ışığı). Örnek omurga (daha iyisini bulursan onu yaz): Tolga bir işi için (mesaj, kaçış, bir şeyi saklama ya da
-   kurtarma, surlara gizli su yolu, Bizanslıların sakladığı bir emanet…) sarnıca iner → sandalla sütunların arasında
+   çakmak ışığı). Örnek omurga (daha iyisini bulursan onu yaz): Tolga yukarıdaki giriş kurgusuyla (yardım ederken ya da kazara) sarnıca
+   düşer → sandalla sütunların arasında
    karanlıkta yol bulma (ışık yönetimi) → top atışlarının sarsıntısıyla tonozdan parçalar düşmesi, su baskını ya da
    kovalamaca → Medusa başlarının orada bir bulmaca/geçit → çıkış: bir kuyudan yukarı, beklenmedik bir yere (bir evin
    mutfağı, saray kileri, Ayasofya'nın bodrumu). En az iki sonuç (başarı/başarısız ya da iki farklı çıkış) ve bunların
