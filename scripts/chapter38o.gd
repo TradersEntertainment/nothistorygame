@@ -547,6 +547,88 @@ const BRACE_HANDS := 1.42                       # ellerin dikmelerde tuttuğu ye
 ## birlikte görünür (4,4 ve 7,4 m'de ikincisi öndekinin arkasında kapalı kalıyordu). Bakış bu yüzden BRACE_LOOK = 3,2 m.
 const CLIMB_AT := 3.5
 const CLIMB_GAP := 3.5
+const CLIMB := preload("res://scripts/npc/climb_anim.gd")
+## Tırmanan tayfa: {"ca": tırmanma animasyonu, "next": bir sonraki hamlenin zamanı, "over": mazgala geçti mi}
+var _crew: Array = []
+
+
+## Tayfa tutma süresi boyunca canlıdır: üstteki merdivenin tepesine (çatalın geldiği mazgalın dibine) kadar basamak
+## basamak çıkar, alttaki onun 2,9 m altına kadar izler. Merdiven sallanınca (ibre kenarda), çatal tepeyi iterken ve
+## ateş sırasında (merdiven boşta) iki elle tutunup gövdesini merdivene yapıştırır, başını eğer; sakinleşince yeniden çıkar.
+func _crew_tick(t: float, dt: float) -> void:
+	var shaky := absf(_bal) > 0.45 or _fork_window >= 0.0 or not _holding
+	for i in _crew.size():
+		var c: Dictionary = _crew[i]
+		var ca: Node = c["ca"]
+		if not is_instance_valid(ca) or ca.state != "climb":
+			continue
+		ca.brace = move_toward(ca.brace, 1.0 if shaky else 0.0, dt * 3.0)
+		if shaky:
+			ca.goal = floorf(ca.s + 0.999) if ca.s - floorf(ca.s) > 0.5 else floorf(ca.s)     # adımı bitirir ya da geri yerleşir
+			c["next"] = maxf(float(c["next"]), t + 1.2)
+			continue
+		if t < float(c["next"]):
+			continue
+		# Hamle: 2-3 basamak çıkar, sonra kısa soluklanır (üstteki tepeye varınca orada tutunur)
+		var lim: float = ca.max_step()
+		if i == 0 and _crew.size() > 1:
+			var up: Node = (_crew[1] as Dictionary)["ca"]
+			if is_instance_valid(up) and up.state == "climb":
+				lim = minf(lim, up.s - roundf(2.9 / Ladder.RUNG))
+		ca.goal = clampf(floorf(ca.s) + float(randi_range(2, 3)), 0.0, maxf(floorf(ca.s), lim))
+		c["next"] = t + 2.6 + randf() * 1.6
+
+
+## Kayıştan sonra: güvertede doğrulup merdivene yeniden tutunur (oyuncunun başının üstünden; eski yerinden merdivene geçer)
+func _crew_remount(climbers: Array) -> void:
+	for k in climbers.size():
+		var cl: Person = climbers[k]
+		if not is_instance_valid(cl) or not is_instance_valid(ladder):
+			continue
+		var ca := CLIMB.attach(cl, ladder, 2.3 + k * 1.1, "38o")
+		ca.side = 0.1 if k == 0 else -0.1
+		ca.speed = 1.1
+		ca.blend_from(cl.global_position, 0.7)
+		if k < _crew.size():
+			_crew[k]["ca"] = ca
+			_crew[k]["next"] = _t + 1.5
+
+
+## Tutma bitince: tayfa tepeden mazgala geçer (bacağını atar, içeri çekilir) ve sur yolunda merdivenin ağzından
+## ayrılır; sonra oyuncu tırmanır (yolu açık). Üstteki önce, alttaki tepeye varınca.
+func _crew_over(climbers: Array) -> void:
+	for k in [1, 0]:
+		if k >= climbers.size():
+			continue
+		var cl: Person = climbers[k]
+		var ca: Node = CLIMB.of(cl)
+		if not is_instance_valid(cl) or ca == null:
+			continue
+		ca.brace = 0.0
+		ca.speed = 1.6
+		ca.goal = ca.max_step()
+		_crew_mantle.call_deferred(cl, ca, k)
+
+
+func _crew_mantle(cl: Person, ca: Node, k: int) -> void:
+	var limit := 12.0
+	while is_instance_valid(ca) and is_instance_valid(ladder) and not ca.at_top() and limit > 0.0:
+		await get_tree().process_frame
+		limit -= get_process_delta_time()
+	if not is_instance_valid(cl) or not is_instance_valid(ladder):
+		return
+	var to := ladder.top_exit() + Vector3(0, -0.1, 0)
+	if is_instance_valid(ca):
+		ca.mantle(to, -ladder.front_dir(), 1.7)
+		await get_tree().create_timer(1.8, false).timeout
+	if not is_instance_valid(cl):
+		return
+	# Sur yolunda yana (mazgalın ağzını boşaltır), siperin ardında kalır
+	cl.set_activity("")
+	var aside := cl.global_position + Vector3(2.6 if k == 1 else -2.6, 0, 0.6)
+	var tw := cl.create_tween()
+	tw.tween_property(cl, "global_position", aside, 1.6)
+	tw.tween_callback(cl.queue_free)
 
 
 ## Tırmananlar iki dikmeye yakın, biri solda biri sağda (±0,3 m; dikme ±0,4): alttaki, üsttekini ayaktan bakınca
@@ -631,10 +713,13 @@ func _ladder_phase() -> void:
 		cl.set_meta("climber", true)
 		cl.set_meta("no_talk", true)
 		add_child(cl)
-		cl.global_position = ladder.point_at(CLIMB_AT + k * CLIMB_GAP) + ladder.front_dir() * 0.4 + _climb_side(k)
-		cl.rotation.y = 0.0        # sura (+z) dönük tırmanır: oyuncu sırtını görür
-		cl.set_activity("climb_a")
+		# Merdivenin ÜSTÜNDE tırmanır (ortak tırmanma animasyonu): gövde yatık merdivene paralel, eller ve ayaklar
+		# gerçek basamaklarda; yüzü sura dönük (oyuncu sırtını görür)
+		var ca := CLIMB.attach(cl, ladder, CLIMB_AT + k * CLIMB_GAP, "38o")
+		ca.side = 0.1 if k == 0 else -0.1
+		ca.speed = 1.1
 		climbers.append(cl)
+		_crew.append({"ca": ca, "next": 1.5 + k * 1.1, "over": false})
 	_brace()
 	await hud.say("SPK_TOLGA", "D38O_T_02")
 	await _hooks_memory()
@@ -665,10 +750,9 @@ func _ladder_phase() -> void:
 		_bal += (swell * 0.4 * _swell_k + input * 1.4 + (randf_range(-0.6, 0.6) * _swell_k if not _holding else 0.0)) * dt
 		balance.value = _bal
 		ladder.rotation.z = _bal * 0.05
-		# Tayfa merdivende; kayıştan sonra güverteden yeniden tırmanır (yerine ışınlanmaz)
-		for k in climbers.size():
-			var on := ladder.point_at(CLIMB_AT + k * CLIMB_GAP) + ladder.front_dir() * 0.4 + _climb_side(k)
-			climbers[k].global_position = climbers[k].global_position.lerp(on, minf(1.0, dt * 1.6))
+		# Tayfa merdivende basamak basamak çıkar; sallantıda ve çatalda tutunup bekler (kayıştan sonra güverteden
+		# yeniden tırmanır, yerine ışınlanmaz)
+		_crew_tick(t, dt)
 		if absf(_bal) >= 1.0:
 			# Merdiven kayar: tırmanan iki tayfa güverteye düşer
 			ladder_slips += 1
@@ -678,11 +762,16 @@ func _ladder_phase() -> void:
 			Fx.trauma(0.4)
 			# Düşüş göz önünde: merdivenden güverteye kayarlar (eskiden güverteye ışınlanıyorlardı)
 			for cl in climbers:
+				var cca := CLIMB.of(cl)
+				if cca:
+					cca.release(true, "fall")
 				var ftw := cl.create_tween()
 				ftw.tween_property(cl, "global_position", galley.to_global(Vector3(randf_range(-1, 1), DECK, -7.0)), 0.45) \
 					.set_ease(Tween.EASE_IN).set_trans(Tween.TRANS_QUAD)
+				ftw.tween_callback(cl.set_activity.bind(""))
 			Audio.sfx("fall_scream", -10.0, 1.1)
 			await get_tree().create_timer(1.2, false).timeout
+			_crew_remount(climbers)
 		# Çatal: mazgaldan uzanır, merdivenin tepesini iter; 1,5 sn içinde Space = bastır
 		if fork_at.size() > 0 and t >= fork_at[0]:
 			fork_at.pop_front()
@@ -741,8 +830,7 @@ func _ladder_phase() -> void:
 		hud.bark("SPK_SAILOR2", "D38O_S2_HOOKS_EVEN" if ladder_slips == 0 else "D38O_S2_HOOKS_AGAIN", 3.0)
 	else:
 		hud.bark("SPK_SAILOR", "D38O_S_HOLD_DONE" if ladder_slips == 0 else "D38O_S_HOLD_SOSO", 3.0)
-	for cl in climbers:
-		cl.queue_free()
+	_crew_over(climbers)
 	if _helper:
 		_old_sailor_to(OLD_POST, "")
 

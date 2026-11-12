@@ -1235,6 +1235,36 @@ func climb_in(base: Vector3, top: Vector3, land: Vector3, delay := 0.0) -> void:
 		rotation.y = atan2(-out.x, -out.z)
 
 
+const CLIMB := preload("res://scripts/npc/climb_anim.gd")
+
+
+## Tırmanan gövdeyi merdivene oturtur: dibi base'e en yakın Ladder bulunur (Melee.add_ladder: base = dip + ön × 0,35);
+## yoksa base–top hattı 0,36 m aralıklı basamaklı merdiven sayılır. at: dipten metre.
+func _climb_pose(base: Vector3, top: Vector3, at: float) -> void:
+	if not body or not body.rig:
+		return
+	var ca: Node = CLIMB.of(body)
+	if ca == null:
+		var lad: Node3D = null
+		for n in get_tree().get_nodes_in_group("ladder"):
+			if n is Ladder and is_instance_valid(n) and ((n as Ladder).point_at(0.0) + (n as Ladder).front_dir() * 0.35).distance_to(base) < 0.6:
+				lad = n
+				break
+		ca = CLIMB.attach(body, lad, at, "")
+		if lad == null:
+			var out := global_transform.basis.z * -1.0
+			ca.set_line(base - out * 0.35, top - out * 0.3, out, 0.3, 0.36, 0.8)
+	ca.follow(at)
+
+
+func _climb_unpose() -> void:
+	if body:
+		var ca: Node = CLIMB.of(body)
+		if ca:
+			ca.release(true, "")
+			body.transform = Transform3D.IDENTITY
+
+
 func climbing() -> bool:
 	return not _climb.is_empty() and float(_climb["vault"]) < 0.0
 
@@ -1254,11 +1284,12 @@ func _climb_tick(delta: float) -> void:
 		var h := minf(rung * 0.45, len)
 		var ph := fmod(rung, 1.0)
 		global_position = base.lerp(top, minf((floorf(rung) + smoothstep(0.1, 0.85, ph)) * 0.45 / maxf(len, 0.1), 1.0))
-		if body and body.rig:
-			body.set_activity("climb_a" if int(rung) % 2 == 0 else "climb_b")
+		# Gövde merdivenin üstünde (ortak tırmanma animasyonu): merdivene paralel, eller ve ayaklar basamaklarda
+		_climb_pose(base, top, global_position.distance_to(base))
 		if h >= len:
 			c["vault"] = 0.0
 			c["from"] = global_position
+			_climb_unpose()
 			if body and body.rig:
 				body.set_activity("")
 				body.rig.lock = 1
@@ -1302,6 +1333,7 @@ func ladder_pushed(out: Vector3) -> void:
 	if _climb.is_empty():
 		return
 	_climb = {}
+	_climb_unpose()
 	if body:
 		body.remove_meta("climber")
 		if body.rig:

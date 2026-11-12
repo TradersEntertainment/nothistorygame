@@ -353,17 +353,26 @@ func _climb() -> void:
 	hook.get_node("Line").visible = false
 	var line := _rope_pool(hook, 3, CLIMB_ROPE_R)      # küpeşte → üst yumruk → alt yumruk → halka: 3 parça
 	_rope_set(line, [rail_pt, low_pt])
-	var on_rope := func(_k: float) -> void:
+	# El üstüne el (ortak tırmanma döngüsünün ip sürümü): 2,2 sn'de dört çekiş; her çekişte alttaki el ipi bırakıp öbürünün
+	# üstüne uzanır ve tutar, tutan el gövde yükseldikçe görüşte aşağı kayar (ipte yerinde kalır). İki el hep ipte.
+	var on_rope := func(k: float) -> void:
 		var c := player.camera
 		var a := c.to_local(rail_pt)
 		var b := c.to_local(low_pt)
-		var lp := a.lerp(b, clampf((a.y - (-0.18)) / maxf(a.y - b.y, 0.01), 0.0, 1.0))
-		var rp := a.lerp(b, clampf((a.y - (-0.02)) / maxf(a.y - b.y, 0.01), 0.0, 1.0))
+		var cyc := k * 4.0
+		var f := cyc - floorf(cyc)
+		var hi := lerpf(-0.18, -0.02, smoothstep(0.1, 0.8, f))      # uzanan el: alttan üste
+		var lo := lerpf(-0.02, -0.18, f)                            # tutan el: gövde yükseldikçe aşağı
+		var left_up := int(cyc) % 2 == 0
+		var ly := hi if left_up else lo
+		var ry := lo if left_up else hi
+		var lp := a.lerp(b, clampf((a.y - ly) / maxf(a.y - b.y, 0.01), 0.0, 1.0))
+		var rp := a.lerp(b, clampf((a.y - ry) / maxf(a.y - b.y, 0.01), 0.0, 1.0))
 		player.hold_both(lp + Vector3(-0.03, 0, 0), rp + Vector3(0.03, 0, 0))
 		var fl: Vector3 = player.free_rig.socket.global_position if player.free_rig and player.free_rig.socket else c.to_global(lp)
 		var fr: Vector3 = player.rig.socket.global_position if player.rig and player.rig.socket else c.to_global(rp)
 		var upv := c.global_transform.basis.y * 0.035      # avucun ortası
-		_rope_set(line, [rail_pt, fr + upv, fl + upv, low_pt])
+		_rope_set(line, [rail_pt, fr + upv, fl + upv, low_pt] if ry >= ly else [rail_pt, fl + upv, fr + upv, low_pt])
 	var tw := create_tween()
 	tw.tween_property(player, "global_position", up, 2.2).set_trans(Tween.TRANS_SINE)
 	tw.parallel().tween_method(on_rope, 0.0, 1.0, 2.2)
