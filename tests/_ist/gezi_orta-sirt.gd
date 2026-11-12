@@ -3,11 +3,14 @@ extends Node3D
 ##   godot --headless --path . res://tests/_ist/gezi_orta-sirt.tscn -- e0=-4000 e1=-1700 n0=800 n1=2350 adim=80 cikti=DOSYA
 
 func _ready() -> void:
-	var a := {"mod": "izgara", "rota": "", "e0": "-4000", "e1": "-1700", "n0": "800", "n1": "2350", "adim": "80", "cikti": ""}
+	var a := {"mod": "izgara", "rota": "", "girdi": "", "cikti2": "", "e0": "-4000", "e1": "-1700", "n0": "800", "n1": "2350", "adim": "80", "cikti": ""}
 	for s: String in OS.get_cmdline_user_args():
 		var kv := s.trim_prefix("--").split("=", true, 1)
 		if kv.size() == 2:
 			a[kv[0]] = kv[1]
+	if a["mod"] == "ac":
+		_ac_basla.call_deferred(String(a["girdi"]), String(a["cikti"]))
+		return
 	if a["mod"] == "yuru":
 		var rot: Array = []
 		for r: String in String(a["rota"]).split("|", false):
@@ -134,3 +137,73 @@ func _rota(ad: String, noktalar: Array) -> float:
 	Input.action_release("sprint")
 	print("GEZI_ROTA %s yol_dunya_m=%.0f gercek_m=%.0f olay=%d" % [ad, yol, yol / IstGeo.S, olay])
 	return yol
+
+
+## --- Açık zemin bulucu (mod=ac; başsız): içeride kalan ızgara düğümlerini en yakın açık zemine kaydırır ------------
+## godot --headless --path . res://tests/_ist/gezi_orta-sirt.tscn -- mod=ac girdi=DOSYA cikti=DOSYA
+## girdi satırı: "ad e n yuk yon egim"; çıktı aynı biçim, e/n açık zemine kaydırılmış ("ad_k"), bulunamayanlar "YOK ad".
+func _ac_basla(girdi: String, cikti: String) -> void:
+	IstDunya.butce_us = 20000
+	var cam := Camera3D.new()
+	add_child(cam)
+	cam.global_position = Vector3(0, 50, 0)
+	var satirlar: Array = []
+	for l in FileAccess.get_file_as_string(girdi).split("\n", false):
+		var p := l.strip_edges().split(" ", false)
+		if p.size() >= 6:
+			satirlar.append(p)
+	var w0 := IstGeo.w2(float(satirlar[0][1]), float(satirlar[0][2]))
+	cam.global_position = Vector3(w0.x, IstGeo.h(w0.x, w0.y) + 3.0, w0.y)
+	cam.current = true
+	dunya = IstDunya.build(self, false, cam.global_position) as IstDunya
+	var out := ""
+	var bulundu := 0
+	for p in satirlar:
+		var e := float(p[1]); var n := float(p[2])
+		var w := IstGeo.w2(e, n)
+		dunya.izle = cam
+		cam.global_position = Vector3(w.x, IstGeo.h(w.x, w.y) + 3.0, w.y)
+		dunya.carpisma_yenile(cam.global_position)
+		for i in 24:
+			await get_tree().physics_frame
+		var best := Vector2.INF
+		var space := get_world_3d().direct_space_state
+		for r in [0.0, 5.0, 10.0, 15.0, 20.0, 28.0]:
+			var ok := false
+			for a in (1 if r == 0.0 else 12):
+				var th := TAU * a / 12.0
+				var q := Vector2(e + r * sin(th), n + r * cos(th))
+				var wq := IstGeo.w2(q.x, q.y)
+				if IstGeo.su(wq.x, wq.y):
+					continue
+				var g := IstGeo.h(wq.x, wq.y)
+				var from := Vector3(wq.x, g + 60.0, wq.y)
+				var qy := PhysicsRayQueryParameters3D.create(from, Vector3(wq.x, g - 5.0, wq.y))
+				var hit := space.intersect_ray(qy)
+				if hit.is_empty() or absf(hit["position"].y - g) > 0.6:
+					continue    # çatı/üst yüzey ya da çarpışma yok: açık zemin değil
+				var tavan := PhysicsRayQueryParameters3D.create(Vector3(wq.x, g + 1.7, wq.y), Vector3(wq.x, g + 30.0, wq.y))
+				if not space.intersect_ray(tavan).is_empty():
+					continue    # üstü kapalı (bina içi)
+				var temiz := true
+				for d in 8:
+					var ang := TAU * d / 8.0
+					var hq := PhysicsRayQueryParameters3D.create(Vector3(wq.x, g + 1.7, wq.y),
+						Vector3(wq.x + 3.0 * sin(ang), g + 1.7, wq.y + 3.0 * cos(ang)))
+					if not space.intersect_ray(hq).is_empty():
+						temiz = false
+						break
+				if temiz:
+					best = q
+					ok = true
+					break
+			if ok:
+				break
+		if best == Vector2.INF:
+			out += "YOK %s %s %s\n" % [p[0], p[1], p[2]]
+		else:
+			bulundu += 1
+			out += "%s_k %.0f %.0f %s %s %s\n" % [p[0], best.x, best.y, p[3], p[4], p[5]]
+	FileAccess.open(cikti, FileAccess.WRITE).store_string(out)
+	print("GEZI_AC bulundu=%d / %d" % [bulundu, satirlar.size()])
+	get_tree().quit(0)
