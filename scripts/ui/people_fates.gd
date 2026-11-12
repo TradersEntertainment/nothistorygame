@@ -232,6 +232,16 @@ static func people() -> Array:
 		if o.has(27):
 			isi.append("PF_ISIDORE_ROME")
 		_add(out, "PF_ISIDORE", isi, "PF26_ISIDORE_KASIM" if by_kasim else "PF26_ISIDORE")
+	# İki hükümdar: Tolga hükümdarına el kaldırıp karşı tarafa sürüldüyse (scripts/level/huzur.gd, chapter8s)
+	var sg: Array = []
+	if f.has("surgun_bureau"):
+		sg.append("PF_SURGUN_BURO_" + str(f["surgun_bureau"]))
+	for e in f.get("surgun_log", []):
+		if int((e as Dictionary).get("ch", 0)) in Siege.ORDER:
+			sg.append("PF_SURGUN_" + str((e as Dictionary).get("from", "B")))
+	if f.get("huzur_ban", false):
+		sg.append("PF_SURGUN_BAN")
+	_add(out, "PF_SURGUN", sg, "PF26_SURGUN")
 	return out
 
 

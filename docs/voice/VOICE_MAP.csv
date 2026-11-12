@@ -5878,3 +5878,54 @@ KRL_T_CAT,,SPK_TOLGA,,0,Kedi bile beni kınadı.,Even the cat disapproves.,kod
 KRL_T_CMD,,SPK_TOLGA,,0,Şaka! Şaka! Ayak ısınması...,Joking! Joking! Just warming up the leg...,kod
 KRL_37O_FIRAR,,SPK_AZAPBASI,,0,Talimden kaçan kâtip! Bu gece kaçacak yer yok; önümde dur.,The clerk who ran from drill! Tonight there's nowhere to run. Stand in front of me.,kod
 KRL_36B_FIRAR,,SPK_LEON,,0,Talimden kaçan tercüman. Bugün kaçarsan kapı arkandan kapanır.,The interpreter who ran from drill. Run today and the gate shuts behind you.,kod
+HZR_FATIH_COUNTER,,SPK_FATIH,[calm],1,"Elini indir, kâtip. O el kalem tutmak için.","Lower your hand, scribe. That hand was made for a pen.",kod
+HZR_FATIH_COUNTER_SWORD,,SPK_FATIH,[calm],1,"Kılıcı kınından çıkaran, nereye ineceğini bilmeli.",He who draws a sword should know where it will fall.,kod
+HZR_EMP_COUNTER,,SPK_EMPEROR,[calm],1,Otuz yıldır kılıç taşırım. Yerde kal biraz; kalkınca daha akıllı olursun.,I have carried a sword for thirty years. Stay down a moment; you will rise wiser.,kod
+HZR_EMP_COUNTER_SWORD,,SPK_EMPEROR,[calm],1,"O kılıç sana Şehir için verildi, bana karşı değil.","That sword was given to you for the City, not against me.",kod
+HZR_FATIH_VERDICT,,SPK_FATIH,[stern],1,"Kan dökülmesin. Sancaksız çıkarın, surlara salın. Ayağını orada denesin.",No blood. Put him out without a banner and send him to the walls. Let him try his foot over there.,kod
+HZR_EMP_VERDICT,,SPK_EMPEROR,[stern],1,"Kimse ona dokunmasın. Kapıyı açın, karşıya yollayın. Sultan'ın ordusunda bir ayak fazla olsun.",Let no one touch him. Open the gate and send him across. Let the Sultan's army have one more foot.,kod
+HZR_FATIH_PRE,,SPK_FATIH,[calm],1,Bırakın. Bu adamı kuşatmada karşımda görmek isterim.,Let him go. I would rather see this man facing me at the siege.,kod
+HZR_EMP_PRE,,SPK_EMPEROR,[calm],1,Bırakın onu. Kuşatma gelince karşı safta dursun; orada daha az zarar verir.,"Let him go. When the siege comes, let him stand on the other side; he will do less harm there.",kod
+HZR_FATIH_ENEMY,,SPK_FATIH,[stern],1,Geldiği yere götürün. Dövüşecekse kendi safında dövüşsün.,"Take him back where he came from. If he means to fight, let him fight among his own.",kod
+HZR_EMP_ENEMY,,SPK_EMPEROR,[stern],1,Geri itin. Bugün esir besleyecek ekmeğimiz yok.,Push him back. We have no bread to spare for prisoners today.,kod
+HZR_FATIH_BAN,,SPK_FATIH,[stern],1,Bu adamı bir daha huzuruma getirmeyin.,Do not bring this man before me again.,kod
+HZR_EMP_BAN,,SPK_EMPEROR,[stern],1,Bu adamı bir daha huzuruma getirmeyin. Uzaktan dinlesin.,Do not bring this man before me again. Let him listen from afar.,kod
+HZR_JAN_GUARD,,SPK_JANISSARY,[shouting],1,"Huzurda el kalkmaz, kâtip! Yere!","No hand is raised in the presence, scribe! Down!",kod
+HZR_BYZ_GUARD,,SPK_CITY_GUARD,[shouting],1,"Basileus'a el! Yere, yabancı!","A hand against the Basileus! Down, stranger!",kod
+HZR_JAN_BLOCK,,SPK_JANISSARY,[stern],1,"Geri dur, kâtip. Huzur sana kapalı.","Stand back, scribe. The presence is closed to you.",kod
+HZR_BYZ_BLOCK,,SPK_CITY_GUARD,[stern],1,Bir adım daha yok. Emir böyle.,Not one step closer. Those are the orders.,kod
+HZR_T_DOWN_1,,SPK_TOLGA,,0,"Tamam... Hasar tespiti: tek taraflı, sigortalı kusurlu.","Right... Damage report: one-sided, insured party at fault.",kod
+HZR_T_DOWN_2,,SPK_TOLGA,,0,Yerdeyim. Gökyüzü güzelmiş bu arada.,"I'm on the ground. Lovely sky, by the way.",kod
+HZR_T_DOWN_3,,SPK_TOLGA,,0,Yine yerdeyim. Zemin beni tanımaya başladı.,Down again. The floor's starting to recognise me.,kod
+HZR_T_SWORD,,SPK_TOLGA,,0,Kılıç gitti. Poliçede 'silah teslimi' diye bir madde vardı; şimdi anladım.,The sword's gone. There was a 'surrender of arms' clause in the policy. Now I get it.,kod
+HZR_N_BURO_B,,SPK_NIHAT,[dry],1,"Dosyanızda bir not var, Tolga Bey: 'Bu adamı kuşatmada karşımda görmek isterim.' Altında tuğra. Bizans nüshasına yazıldınız.","There's a note in your file, Mr Tolga: 'I would see this man facing me at the siege.' A tughra underneath. You've been assigned to the Byzantine copy.",kod
+HZR_N_BURO_O,,SPK_NIHAT,[dry],1,"Dosyanızda bir not var, Tolga Bey: İmparator sizi surların içinde istemiyor. Mühürlü. Osmanlı nüshasına yazıldınız.","There's a note in your file, Mr Tolga: the Emperor doesn't want you inside the walls. Sealed. You've been assigned to the Ottoman copy.",kod
+HZR_N_BURO_BOTH,,SPK_NIHAT,[dry],1,"İki hükümdardan da not var, Tolga Bey. İkisi de sizi huzurunda istemiyor. Tarafınızı seçin; huzura çıkmayacaksınız.","Notes from both sovereigns, Mr Tolga. Neither wants you in his presence. Pick a side; you won't be seeing either of them.",kod
+HZR_T_BURO,,SPK_TOLGA,,0,Yani tayinim çıktı. Tekmeyle tayin diye bir şey varmış.,So I've been reassigned. Apparently reassignment by kick is a thing.,kod
+HZR_GATE_B,,SPK_CITY_GUARD,[stern],1,"Kapı arkandan kapanacak. Ellerini kaldır, yavaş yürü. Bizim okçular da seni artık tanımıyor.","The gate shuts behind you. Hands up, walk slowly. Our archers don't know you any more either.",kod
+HZR_GATE_B2,,SPK_CITY_GUARD,[stern],1,İmparator'un emri: dokunmayacağız. Ama bu kapıyı bir daha senin için açmayacağız.,The Emperor's order: we won't touch you. But we won't open this gate for you again.,kod
+HZR_T_GATE_TOWEL,,SPK_TOLGA,,0,Beyaz havlu yok mu? Geçen sefer havlu vardı.,No white towel? Last time there was a towel.,kod
+HZR_T_GATE,,SPK_TOLGA,,0,"Bayrak yok, bez yok. Poliçede bunun adı: teminatsız bölge.","No flag, no rag. In the policy we call this: uninsured territory.",kod
+HZR_HUSEYIN_OUT,,SPK_HUSEYIN,,0,"Yürü bakalım, kâtip. Sancak yok, bez yok; ellerin havada olsun, yeter.","Off you go, scribe. No banner, no rag; just keep your hands up.",kod
+HZR_HASAN_OUT,,SPK_HASAN,,0,Sultan'ım 'kan dökülmesin' dedi. Surdakiler de aynısını desin diye dua et.,My Sultan said 'no blood'. Pray the ones on the walls say the same.,kod
+HZR_WALL_WARN_HANDS,,SPK_LOOKOUT,[shouting],1,Ellerini kaldır! Bir dahaki ok uyarı olmaz!,Hands up! The next arrow won't be a warning!,kod
+HZR_TRENCH_WARN_HANDS,,SPK_HASAN,[shouting],1,"Ellerini göster, bre! Ne saklıyorsun?","Show your hands, man! What are you hiding?",kod
+HZR_T_WARN_HANDS,,SPK_TOLGA,[shouting],1,Tamam! Havada! İkisi de havada!,"Okay! Up! Both of them, up!",kod
+HZR_WALL_HIT,,SPK_LOOKOUT,[shouting],1,"Vurdum! ...Sıyırdı. Kalk, yürü!","Got him! ...Just grazed. Up, keep walking!",kod
+HZR_TRENCH_HIT,,SPK_HASAN,[shouting],1,"Sıyırdı mı? Sıyırdı. Kalk, ellerin havada gel!","Grazed? Grazed. Up, and come with your hands high!",kod
+HZR_T_HIT,,SPK_TOLGA,,0,"Omzuma değdi. Kayda geçsin: tek parça, biraz delik.","It nicked my shoulder. For the record: one piece, slightly perforated.",kod
+HZR_WALL_OUT,,SPK_LOOKOUT,,0,Yayları indirin. Bu bizim kâtipti; artık değil.,Bows down. That was our scribe. Not any more.,kod
+HZR_HASAN_HALT,,SPK_HASAN,[shouting],1,Dur orada! Ellerin havada kalsın!,Halt right there! Keep those hands up!,kod
+HZR_HASAN_MEET_MET,,SPK_HASAN,,0,"Bre, bizim Frenk kâtip! Seni karşıdan yolladılar, öyle mi?","Well, if it isn't our Frankish scribe! They sent you over from the other side, did they?",kod
+HZR_HASAN_MEET_NEW,,SPK_HASAN,,0,"Bre, karşıdan biri geldi! Elleri havada, sancağı yok. Seni karşıdan yolladılar, öyle mi?","Hey, someone's come over! Hands up, no banner. So they sent you across, did they?",kod
+HZR_HUSEYIN_MEET,,SPK_HUSEYIN,,0,"İmparator'una el kaldırmışsın diyorlar. Surdan bağırdılar, bütün siper duydu.",They say you raised a hand to your Emperor. They shouted it from the walls; the whole trench heard.,kod
+HZR_T_MEET_O,,SPK_TOLGA,,0,"Bir hamle yaptım, karşılığı daha iyi bir hamleydi. Kısaca: tayin.",I made a move. The reply was a better move. Long story short: reassignment.,kod
+HZR_HASAN_TAKE,,SPK_HASAN,,0,Gel. Ağam karar versin. Ama önce bir tas çorba; aç adam yalan söyler.,Come on. The agha will decide. But first a bowl of soup; a hungry man tells lies.,kod
+HZR_WALL_HALT,,SPK_LOOKOUT,[shouting],1,Dur! Ellerini göster! Kimsin sen?,Halt! Show your hands! Who are you?,kod
+HZR_T_HALT,,SPK_TOLGA,[shouting],1,Kâtip! Eski Osmanlı kâtibi! Sultan yolladı. Uzun hikâye!,A scribe! Former Ottoman scribe! The Sultan sent me. Long story!,kod
+HZR_WALL_COME,,SPK_LOOKOUT,,0,"Sultan'a el kaldıran adam, ha? Gel. Yavaş gel.","The man who raised a hand to the Sultan, eh? Come on. Slowly.",kod
+HZR_NIKO_MEET_MET,,SPK_NIKO,,0,Tolga! Seni karşıdan yolladılar demek. Sultan'a el kaldıran adama bu şehirde bir tas çorba çıkar.,"Tolga! So they sent you over from their side. In this city, a man who raised his hand to the Sultan gets a bowl of soup.",kod
+HZR_NIKO_MEET_NEW,,SPK_NIKO,,0,"Sen, karşıdan gelen! Seni karşıdan yolladılar, değil mi? Sultan'a el kaldırmışsın; bütün sur konuşuyor. Ben Niko.","You, from the other side! They sent you across, didn't they? You raised your hand to the Sultan; the whole wall's talking. I'm Niko.",kod
+HZR_T_MEET_B,,SPK_TOLGA,,0,Bir hamle yaptım; Sultan'ınki daha iyiydi. Raporuma 'karşı tarafın refleksleri yerinde' yazacağım.,I made a move; the Sultan's was better. I'll write 'other party's reflexes intact' in my report.,kod
+HZR_NIKO_TAKE,,SPK_NIKO,,0,"Gel içeri. Kumandan seni görmek ister. Ellerini de indir artık, kimse ateş etmiyor.","Come inside. The commander will want to see you. And put your hands down, nobody's shooting.",kod
+HZR_N_RADIO_BRIDGE,,SPK_NIHAT,[radio],1,"(Telsiz) Dosyanız karşı nüshaya taşındı, Tolga Bey. Kaldığınız günden devam; tarih aynı, taraf değil.","(Radio) Your file's been moved to the other copy, Mr Tolga. You carry on from the same day: same date, different side.",kod

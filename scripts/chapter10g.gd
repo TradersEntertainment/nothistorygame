@@ -36,6 +36,7 @@ func _ready() -> void:
 	add_child(hud)
 	player = Player.new()
 	add_child(player)
+	preload("res://scripts/level/huzur.gd").watch(self, hud, player)      # hükümdara el kaldırmak (SENARYO_KURAL_CIGNEME §6)
 	kural = preload("res://scripts/level/kural.gd").hits(self, hud, player)      # halka/askere tekme (docs/SENARYO_KURAL_CIGNEME.md)
 	player.interacted.connect(_on_interact)
 	player.focus_changed.connect(_on_focus)

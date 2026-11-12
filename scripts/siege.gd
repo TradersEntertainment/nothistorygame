@@ -110,6 +110,12 @@ static func next_path(ch: int) -> String:
 	var i := ORDER.find(ch)
 	for k in range(i + 1, ORDER.size()):
 		if _plays(ORDER[k], true):
+			# Sürgün (scripts/level/huzur.gd): kuşatmadan önce hükümdarına el kaldıran (34o) iki taraflı günlere
+			# geçerken karşı tarafa yürür
+			var hz = load("res://scripts/level/huzur.gd")
+			if hz.pending_walk(ch, ORDER[k]):
+				var pend_from := side()
+				return hz.prepare_walk(ch, pend_from, "B" if pend_from == "O" else "O", "fatih" if pend_from == "O" else "emperor")
 			if GameState.flags.get("siege_detour_done", false) and not GameState.flags.has("siege_detour_back"):
 				GameState.flags["siege_detour_back"] = ORDER[k]
 			return scene_path(ORDER[k])
@@ -129,10 +135,29 @@ static func _plays(ch: int, held_check := false, for_side := "") -> bool:
 static func chapters(for_side := "") -> Array[int]:
 	var sd := for_side if for_side != "" else home_side()
 	var out: Array[int] = []
+	var route := for_side == "" and has_route()
 	for ch: int in ORDER:
-		if _plays(ch, false, sd):
+		if _plays(ch, false, side_at(ch) if route else sd):
 			out.append(ch)
 	return out
+
+
+## Sürgün kaydı (flags.surgun_log, scripts/chapter8s.gd): taraf kuşatmanın ortasında değişti mi
+static func has_route() -> bool:
+	for e in GameState.flags.get("surgun_log", []):
+		if int((e as Dictionary).get("ch", 0)) in ORDER:
+			return true
+	return false
+
+
+## Bu sayfanın oynandığı (oynanacağı) taraf: sürgünün olduğu sayfa ve öncesi eski taraf, sonrası yeni taraf
+static func side_at(ch: int) -> String:
+	var i := ORDER.find(ch)
+	for e in GameState.flags.get("surgun_log", []):
+		var at := ORDER.find(int((e as Dictionary).get("ch", 0)))
+		if at >= 0 and i <= at:
+			return String((e as Dictionary).get("from", side()))
+	return side()
 
 
 ## Büro'dan sonra gidilen ilk bölüm.
@@ -177,6 +202,8 @@ static func number(scene: String) -> int:
 ## İç kimliğin ekrandaki numarası (kuşatma ya da kuşatmadan sonraki ana hikâye bölümü değilse 0).
 static func number_of(ch: int, for_side := "") -> int:
 	var list := chapters(for_side)
+	if for_side != "" and has_route() and ch in chapters():
+		list = chapters()          # sürgünlü yol: iki tarafın sayfaları tek sırada
 	var i := list.find(ch) + 1
 	if i > 0:
 		return NUMBER_BASE + i

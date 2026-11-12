@@ -63,6 +63,7 @@ func _ready() -> void:
 	player = Player.new()
 	player.hand_style = "nihat"
 	add_child(player)
+	preload("res://scripts/level/huzur.gd").watch(self, hud, player)      # hükümdara el kaldırmak (SENARYO_KURAL_CIGNEME §6)
 	player.interacted.connect(_on_interact)
 	player.focus_changed.connect(_on_focus)
 	player.frozen = true

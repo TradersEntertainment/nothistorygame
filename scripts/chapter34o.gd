@@ -64,6 +64,7 @@ func _ready() -> void:
 	hud.chase_music = "tension"
 	player = Player.new()
 	add_child(player)
+	preload("res://scripts/level/huzur.gd").watch(self, hud, player)      # hükümdara el kaldırmak (SENARYO_KURAL_CIGNEME §6)
 	player.frozen = true
 	# yayma P4 (3. tur): alçak kış güneşinde kameradaki ellerin (kumanda, tokmak) gölgesi karda el biçimli gri leke
 	# bırakıyordu: kameraya bağlı her şey gölge düşürmez (eşya değişince de, saniyede bir yeniden uygulanır)

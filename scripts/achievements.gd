@@ -36,7 +36,8 @@ const LIST: Array[Dictionary] = [
 	{"id": "ACH_STUBBORN_WIN", "secret": true},   # savaşlı bölümde 4+ kez düşüp yine de bitir
 	{"id": "ACH_FIRAR", "secret": true},          # talimden toplam 3 kez kaç (scripts/level/kural.gd)
 	{"id": "ACH_KADI", "secret": true},           # sokakta tekme at, tutuklan (Kural)
-	{"id": "ACH_TARIHE_TEKME", "secret": true},   # Fatih'e ya da İmparator'a ayak kaldır (Kural: Büro acil iadesi)
+	{"id": "ACH_TARIHE_TEKME", "secret": true},   # Fatih'e ya da İmparator'a el/ayak kaldır (Huzur: karşı hamle anında)
+	{"id": "ACH_SURGUN", "secret": true},         # kendi hükümdarına el kaldırıp karşı tarafa sürül (Huzur, chapter8s)
 	{"id": "ACH_DRONE_DODGE", "secret": false},   # 43O: kuşla surların üstünde 15 sn alçaktan uç, vurulma
 	{"id": "ACH_GOATHERD", "secret": false},      # kaçan keçiyi yakala
 	{"id": "ACH_CHICKEN_WHISPERER", "secret": false},  # tavuğu 3 kez yakala
@@ -136,6 +137,7 @@ static func met(id: String) -> bool:
 		"ACH_FIRAR": return _stat("firar") >= 3
 		"ACH_KADI": return _stat("tutuklama") >= 1
 		"ACH_TARIHE_TEKME": return _stat("tarihe_tekme") >= 1
+		"ACH_SURGUN": return _stat("surgun") >= 1
 		"ACH_DRONE_DODGE": return _stat("drone_dodge") >= 1
 		"ACH_GOATHERD": return _quest("goatherd")
 		"ACH_CHICKEN_WHISPERER": return _quest("chickens")

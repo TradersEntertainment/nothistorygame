@@ -37,6 +37,7 @@ GodotSteam eklendiğinde `GameState.unlock_achievement(id)` içinde `Steam.setAc
 | `ACH_FIRAR` | Firari Kâtip (gizli) | The Runaway Clerk (secret) | Run away from drill three times. |
 | `ACH_KADI` | Kadı Huzurunda (gizli) | Before the Kadi (secret) | Kick someone in the street and get arrested. |
 | `ACH_TARIHE_TEKME` | Tarihe Tekme (gizli) | Kicking History (secret) | Raise your foot to a sovereign. |
+| `ACH_SURGUN` | Bayraksız Geçiş (gizli) | The Flagless Crossing (secret) | Raise your hand to your own sovereign and be exiled to the other side. |
 | `ACH_DRONE_DODGE` | Ok Yağmurunda Kuş | Bird in the Arrow Storm | Fly the drone low over the walls for 15 seconds without being shot down. |
 | `ACH_GOATHERD` | Keçi Çobanı | Goatherd | Catch the runaway goat in the camp. |
 | `ACH_CHICKEN_WHISPERER` | Tavuk Fısıldayan | Chicken Whisperer | Catch Synergy 3 times. |

@@ -541,8 +541,13 @@ func _prologue_side() -> void:
 		await hud.say("SPK_NIHAT", claim)
 		await hud.say("SPK_TOLGA", "D17_T_CLAIM")
 	var auto := 1 if GameState.autotest_variant == "osm" else 0
-	var side := await hud.choose(["UI_C17_SIDE_B", "UI_C17_SIDE_O"], 0.0, auto)
-	GameState.flags["siege_side"] = "O" if side == 1 else "B"
+	# Perde II'de hükümdarına el kaldıran (scripts/level/huzur.gd): taraf seçilmez, karşı nüshaya yazılmıştır
+	var forced: String = await preload("res://scripts/level/huzur.gd").bureau_side(hud)
+	if forced != "":
+		GameState.flags["siege_side"] = forced
+	else:
+		var side := await hud.choose(["UI_C17_SIDE_B", "UI_C17_SIDE_O"], 0.0, auto)
+		GameState.flags["siege_side"] = "O" if side == 1 else "B"
 	await hud.say("SPK_TOLGA", _side_line())
 	# Osmanlı tarafında fessiz Frenk göze batar: Büro kılığı fesli (kuşatma bölümleri fesli yamak diye seslenir)
 	if Siege.side() == "O" and not GameState.flags.get("fez", true):

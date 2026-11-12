@@ -1,0 +1,82 @@
+# Yeni replikler, 2. tur (hükümdara el kaldırmak, sürgün). Ses ÜRETİLMEDİ.
+# anahtar | konuşmacı | ton | TR | EN | okuma notu   (konuşmacısız satırlar arayüz/başarım/akıbet metnidir, seslendirilmez)
+HZR_FATIH_COUNTER | SPK_FATIH | [calm] | Elini indir, kâtip. O el kalem tutmak için. | Lower your hand, scribe. That hand was made for a pen. | sakin, alçak ses; bileği tutarken, alaysız
+HZR_FATIH_COUNTER_SWORD | SPK_FATIH | [calm] | Kılıcı kınından çıkaran, nereye ineceğini bilmeli. | He who draws a sword should know where it will fall. | sakin, tek nefes; kılıç düştükten sonra
+HZR_EMP_COUNTER | SPK_EMPEROR | [calm] | Otuz yıldır kılıç taşırım. Yerde kal biraz; kalkınca daha akıllı olursun. | I have carried a sword for thirty years. Stay down a moment; you will rise wiser. | yorgun ama vakur; yukarıdan, öfkesiz
+HZR_EMP_COUNTER_SWORD | SPK_EMPEROR | [calm] | O kılıç sana Şehir için verildi, bana karşı değil. | That sword was given to you for the City, not against me. | hüzünlü kınama; bağırmadan
+HZR_FATIH_VERDICT | SPK_FATIH | [stern] | Kan dökülmesin. Sancaksız çıkarın, surlara salın. Ayağını orada denesin. | No blood. Put him out without a banner and send him to the walls. Let him try his foot over there. | hüküm; kısa, kesin, muhafızlara
+HZR_EMP_VERDICT | SPK_EMPEROR | [stern] | Kimse ona dokunmasın. Kapıyı açın, karşıya yollayın. Sultan'ın ordusunda bir ayak fazla olsun. | Let no one touch him. Open the gate and send him across. Let the Sultan's army have one more foot. | hüküm; ağır, hafif buruk espri
+HZR_FATIH_PRE | SPK_FATIH | [calm] | Bırakın. Bu adamı kuşatmada karşımda görmek isterim. | Let him go. I would rather see this man facing me at the siege. | merakla, ölçülü
+HZR_EMP_PRE | SPK_EMPEROR | [calm] | Bırakın onu. Kuşatma gelince karşı safta dursun; orada daha az zarar verir. | Let him go. When the siege comes, let him stand on the other side; he will do less harm there. | yorgun, kuru tebessüm
+HZR_FATIH_ENEMY | SPK_FATIH | [stern] | Geldiği yere götürün. Dövüşecekse kendi safında dövüşsün. | Take him back where he came from. If he means to fight, let him fight among his own. | kısa emir
+HZR_EMP_ENEMY | SPK_EMPEROR | [stern] | Geri itin. Bugün esir besleyecek ekmeğimiz yok. | Push him back. We have no bread to spare for prisoners today. | savaşın ortasında, nefes nefese değil, sakin
+HZR_FATIH_BAN | SPK_FATIH | [stern] | Bu adamı bir daha huzuruma getirmeyin. | Do not bring this man before me again. | son söz; soğuk, kesin
+HZR_EMP_BAN | SPK_EMPEROR | [stern] | Bu adamı bir daha huzuruma getirmeyin. Uzaktan dinlesin. | Do not bring this man before me again. Let him listen from afar. | son söz; ağır
+HZR_JAN_GUARD | SPK_JANISSARY | [shouting] | Huzurda el kalkmaz, kâtip! Yere! | No hand is raised in the presence, scribe! Down! | mızrak sapını indirirken bağırır
+HZR_BYZ_GUARD | SPK_CITY_GUARD | [shouting] | Basileus'a el! Yere, yabancı! | A hand against the Basileus! Down, stranger! | kalkanla iterken bağırır
+HZR_JAN_BLOCK | SPK_JANISSARY | [stern] | Geri dur, kâtip. Huzur sana kapalı. | Stand back, scribe. The presence is closed to you. | önünü keserken, sert
+HZR_BYZ_BLOCK | SPK_CITY_GUARD | [stern] | Bir adım daha yok. Emir böyle. | Not one step closer. Those are the orders. | önünü keserken, sert
+HZR_T_DOWN_1 | SPK_TOLGA | - | Tamam... Hasar tespiti: tek taraflı, sigortalı kusurlu. | Right... Damage report: one-sided, insured party at fault. | yerde, nefesi kesik, kendine güler
+HZR_T_DOWN_2 | SPK_TOLGA | - | Yerdeyim. Gökyüzü güzelmiş bu arada. | I'm on the ground. Lovely sky, by the way. | yerde, boş boş
+HZR_T_DOWN_3 | SPK_TOLGA | - | Yine yerdeyim. Zemin beni tanımaya başladı. | Down again. The floor's starting to recognise me. | yerde, bıkkın
+HZR_T_SWORD | SPK_TOLGA | - | Kılıç gitti. Poliçede 'silah teslimi' diye bir madde vardı; şimdi anladım. | The sword's gone. There was a 'surrender of arms' clause in the policy. Now I get it. | yerde, şaşkın
+HZR_N_BURO_B | SPK_NIHAT | [dry] | Dosyanızda bir not var, Tolga Bey: 'Bu adamı kuşatmada karşımda görmek isterim.' Altında tuğra. Bizans nüshasına yazıldınız. | There's a note in your file, Mr Tolga: 'I would see this man facing me at the siege.' A tughra underneath. You've been assigned to the Byzantine copy. | memur tonu, kâğıttan okur
+HZR_N_BURO_O | SPK_NIHAT | [dry] | Dosyanızda bir not var, Tolga Bey: İmparator sizi surların içinde istemiyor. Mühürlü. Osmanlı nüshasına yazıldınız. | There's a note in your file, Mr Tolga: the Emperor doesn't want you inside the walls. Sealed. You've been assigned to the Ottoman copy. | memur tonu, kâğıttan okur
+HZR_N_BURO_BOTH | SPK_NIHAT | [dry] | İki hükümdardan da not var, Tolga Bey. İkisi de sizi huzurunda istemiyor. Tarafınızı seçin; huzura çıkmayacaksınız. | Notes from both sovereigns, Mr Tolga. Neither wants you in his presence. Pick a side; you won't be seeing either of them. | iki kâğıdı yan yana koyar, kuru
+HZR_T_BURO | SPK_TOLGA | - | Yani tayinim çıktı. Tekmeyle tayin diye bir şey varmış. | So I've been reassigned. Apparently reassignment by kick is a thing. | kendini savunur gibi
+HZR_GATE_B | SPK_CITY_GUARD | [stern] | Kapı arkandan kapanacak. Ellerini kaldır, yavaş yürü. Bizim okçular da seni artık tanımıyor. | The gate shuts behind you. Hands up, walk slowly. Our archers don't know you any more either. | kuru, emir verir gibi
+HZR_GATE_B2 | SPK_CITY_GUARD | [stern] | İmparator'un emri: dokunmayacağız. Ama bu kapıyı bir daha senin için açmayacağız. | The Emperor's order: we won't touch you. But we won't open this gate for you again. | sürgüye uzanırken
+HZR_T_GATE_TOWEL | SPK_TOLGA | - | Beyaz havlu yok mu? Geçen sefer havlu vardı. | No white towel? Last time there was a towel. | umutla, sonra hayal kırıklığı
+HZR_T_GATE | SPK_TOLGA | - | Bayrak yok, bez yok. Poliçede bunun adı: teminatsız bölge. | No flag, no rag. In the policy we call this: uninsured territory. | gergin espri
+HZR_HUSEYIN_OUT | SPK_HUSEYIN | - | Yürü bakalım, kâtip. Sancak yok, bez yok; ellerin havada olsun, yeter. | Off you go, scribe. No banner, no rag; just keep your hands up. | itmeden, babacan
+HZR_HASAN_OUT | SPK_HASAN | - | Sultan'ım 'kan dökülmesin' dedi. Surdakiler de aynısını desin diye dua et. | My Sultan said 'no blood'. Pray the ones on the walls say the same. | yarı şaka yarı ciddi
+HZR_WALL_WARN_HANDS | SPK_LOOKOUT | [shouting] | Ellerini kaldır! Bir dahaki ok uyarı olmaz! | Hands up! The next arrow won't be a warning! | surdan bağırır
+HZR_TRENCH_WARN_HANDS | SPK_HASAN | [shouting] | Ellerini göster, bre! Ne saklıyorsun? | Show your hands, man! What are you hiding? | siperden bağırır
+HZR_T_WARN_HANDS | SPK_TOLGA | [shouting] | Tamam! Havada! İkisi de havada! | Okay! Up! Both of them, up! | panikle
+HZR_WALL_HIT | SPK_LOOKOUT | [shouting] | Vurdum! ...Sıyırdı. Kalk, yürü! | Got him! ...Just grazed. Up, keep walking! | önce sevinç, sonra hayal kırıklığı
+HZR_TRENCH_HIT | SPK_HASAN | [shouting] | Sıyırdı mı? Sıyırdı. Kalk, ellerin havada gel! | Grazed? Grazed. Up, and come with your hands high! | siperden
+HZR_T_HIT | SPK_TOLGA | - | Omzuma değdi. Kayda geçsin: tek parça, biraz delik. | It nicked my shoulder. For the record: one piece, slightly perforated. | acıyla güler
+HZR_WALL_OUT | SPK_LOOKOUT | - | Yayları indirin. Bu bizim kâtipti; artık değil. | Bows down. That was our scribe. Not any more. | yukarıdan, kuru
+HZR_HASAN_HALT | SPK_HASAN | [shouting] | Dur orada! Ellerin havada kalsın! | Halt right there! Keep those hands up! | siperden bağırır
+HZR_HASAN_MEET_MET | SPK_HASAN | - | Bre, bizim Frenk kâtip! Seni karşıdan yolladılar, öyle mi? | Well, if it isn't our Frankish scribe! They sent you over from the other side, did they? | şaşkın sevinç
+HZR_HASAN_MEET_NEW | SPK_HASAN | - | Bre, karşıdan biri geldi! Elleri havada, sancağı yok. Seni karşıdan yolladılar, öyle mi? | Hey, someone's come over! Hands up, no banner. So they sent you across, did they? | merakla
+HZR_HUSEYIN_MEET | SPK_HUSEYIN | - | İmparator'una el kaldırmışsın diyorlar. Surdan bağırdılar, bütün siper duydu. | They say you raised a hand to your Emperor. They shouted it from the walls; the whole trench heard. | dedikodu tadında
+HZR_T_MEET_O | SPK_TOLGA | - | Bir hamle yaptım, karşılığı daha iyi bir hamleydi. Kısaca: tayin. | I made a move. The reply was a better move. Long story short: reassignment. | yorgun
+HZR_HASAN_TAKE | SPK_HASAN | - | Gel. Ağam karar versin. Ama önce bir tas çorba; aç adam yalan söyler. | Come on. The agha will decide. But first a bowl of soup; a hungry man tells lies. | babacan
+HZR_WALL_HALT | SPK_LOOKOUT | [shouting] | Dur! Ellerini göster! Kimsin sen? | Halt! Show your hands! Who are you? | surdan bağırır
+HZR_T_HALT | SPK_TOLGA | [shouting] | Kâtip! Eski Osmanlı kâtibi! Sultan yolladı. Uzun hikâye! | A scribe! Former Ottoman scribe! The Sultan sent me. Long story! | bağırarak, elleri havada
+HZR_WALL_COME | SPK_LOOKOUT | - | Sultan'a el kaldıran adam, ha? Gel. Yavaş gel. | The man who raised a hand to the Sultan, eh? Come on. Slowly. | merak ve şüphe
+HZR_NIKO_MEET_MET | SPK_NIKO | - | Tolga! Seni karşıdan yolladılar demek. Sultan'a el kaldıran adama bu şehirde bir tas çorba çıkar. | Tolga! So they sent you over from their side. In this city, a man who raised his hand to the Sultan gets a bowl of soup. | sevinçli fırlama
+HZR_NIKO_MEET_NEW | SPK_NIKO | - | Sen, karşıdan gelen! Seni karşıdan yolladılar, değil mi? Sultan'a el kaldırmışsın; bütün sur konuşuyor. Ben Niko. | You, from the other side! They sent you across, didn't they? You raised your hand to the Sultan; the whole wall's talking. I'm Niko. | çarşı ağzı, hızlı
+HZR_T_MEET_B | SPK_TOLGA | - | Bir hamle yaptım; Sultan'ınki daha iyiydi. Raporuma 'karşı tarafın refleksleri yerinde' yazacağım. | I made a move; the Sultan's was better. I'll write 'other party's reflexes intact' in my report. | yorgun espri
+HZR_NIKO_TAKE | SPK_NIKO | - | Gel içeri. Kumandan seni görmek ister. Ellerini de indir artık, kimse ateş etmiyor. | Come inside. The commander will want to see you. And put your hands down, nobody's shooting. | rahat
+HZR_N_RADIO_BRIDGE | SPK_NIHAT | [radio] | (Telsiz) Dosyanız karşı nüshaya taşındı, Tolga Bey. Kaldığınız günden devam; tarih aynı, taraf değil. | (Radio) Your file's been moved to the other copy, Mr Tolga. You carry on from the same day: same date, different side. | telsizden, memur
+UI_CH8S_TITLE | (arayüz) | - | SÜRGÜN | EXILE | -
+UI_CH8S_SUB_B2O | (arayüz) | - | Bayraksız · surlardan ordugâha | No flag · from the walls to the camp | -
+UI_CH8S_SUB_O2B | (arayüz) | - | Bayraksız · ordugâhtan surlara | No flag · from the camp to the walls | -
+UI_OBJ8S_GATE | (arayüz) | - | Kapıya yürü | Walk to the gate | -
+UI_OBJ8S_WALLS | (arayüz) | - | Surlara yürü: eller havada, yavaş | Walk to the walls: hands up, slowly | -
+UI_OBJ8S_FIELD | (arayüz) | - | Siperlere yürü: eller havada, yavaş | Walk to the trenches: hands up, slowly | -
+UI_PROMPT8S_HANDS | (arayüz) | - | [E] Ellerini kaldır | [E] Raise your hands | -
+UI_FLOW8S_TITLE | (arayüz) | - | SÜRGÜN · Bayraksız Geçiş | EXILE · The Flagless Crossing | -
+FLOW8S_FROM_B | (arayüz) | - | Şehirde, İmparator'un yanında | In the City, beside the Emperor | -
+FLOW8S_FROM_O | (arayüz) | - | Ordugâhta, Sultan'ın yanında | In the camp, beside the Sultan | -
+FLOW8S_COUNTER_FATIH | (arayüz) | - | Sultan'a el kalktı: havada yakalandı | A hand raised to the Sultan: caught mid-air | -
+FLOW8S_COUNTER_EMPEROR | (arayüz) | - | İmparator'a el kalktı: yere indirildi | A hand raised to the Emperor: brought down | -
+FLOW8S_FIELD | (arayüz) | - | İki ordunun arası, bayraksız | Between two armies, no flag | -
+FLOW_8S_1 | (arayüz) | - | Eller havada; tek ok bile değmedi | Hands up all the way; not one arrow touched him | -
+FLOW_8S_2 | (arayüz) | - | Ok sıyırdı; yine de karşıya vardı | An arrow grazed him; he still made it across | -
+UI_FLOW8S_ROUTE | (arayüz) | - | Bölüm %s · %s tarafından %s tarafına sürüldün | Chapter %s · exiled from the %s side to the %s side | -
+UI_FLOW8S_TO | (arayüz) | - | Sıradaki: Bölüm %s · %s (karşı tarafta, aynı günlerden) | Next: Chapter %s · %s (on the other side, same days) | -
+UI_SIDE_B | (arayüz) | - | Bizans | Byzantine | -
+UI_SIDE_O | (arayüz) | - | Osmanlı | Ottoman | -
+UI_CH8S_STATS | (arayüz) | - | Uyarı oku: %d · Sıyıran ok: %d | Warning arrows: %d · Grazing arrows: %d | -
+ACH_SURGUN_T | (arayüz) | - | Bayraksız Geçiş | The Flagless Crossing | -
+ACH_SURGUN_D | (arayüz) | - | Hükümdarına el kaldır, karşı tarafa sürül. | Raise your hand to your own sovereign and be exiled to the other side. | -
+PF_SURGUN | (arayüz) | - | İki hükümdar | The two sovereigns | -
+PF_SURGUN_O | (arayüz) | - | Sultan'a el kaldırdın, havada yakalandın; sancaksız surlara salındın | you raised a hand to the Sultan, were caught mid-air and sent to the walls without a banner | -
+PF_SURGUN_B | (arayüz) | - | İmparator'a el kaldırdın, yere indirildin; kapı açıldı, ordugâha yollandın | you raised a hand to the Emperor, were brought down, and the gate opened to send you to the camp | -
+PF_SURGUN_BURO_O | (arayüz) | - | Sultan'ın notuyla Büro seni Bizans nüshasına yazdı | on the Sultan's note the Bureau put you in the Byzantine copy | -
+PF_SURGUN_BURO_B | (arayüz) | - | İmparator'un notuyla Büro seni Osmanlı nüshasına yazdı | on the Emperor's note the Bureau put you in the Ottoman copy | -
+PF_SURGUN_BAN | (arayüz) | - | üçüncüsünde ikisi de 'bir daha huzuruma getirmeyin' dedi | the third time, both said 'do not bring him before me again' | -
+PF26_SURGUN | (arayüz) | - | 2026: bir tarih forumunda 'Fatih bir kâtibi sancaksız sürmüş' diye tek satırlık bir kayıt dolaşır; kaynak gösterilemez. | 2026: a one-line claim circulates on a history forum, 'the Conqueror exiled a scribe without a banner'; nobody can cite a source. | -

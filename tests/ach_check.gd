@@ -23,6 +23,7 @@ const NEW := {
 	"ACH_FIRAR": {"firar": 3},
 	"ACH_KADI": {"tutuklama": 1},
 	"ACH_TARIHE_TEKME": {"tarihe_tekme": 1},
+	"ACH_SURGUN": {"surgun": 1},
 }
 
 

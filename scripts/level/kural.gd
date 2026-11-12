@@ -8,7 +8,8 @@ extends Node
 ##   watch_hits   sivile vuruş: var olan "kick" (F / sol tık), önündeki 2,3 m içindeki kişi ya da hayvan.
 ##                erkek sivil: 1 şaşkınlık · 2 kalabalık + karşılık (Tolga yere) · 3 muhafız koşarak gelir → tutuklanma.
 ##                kadın, çocuk, yaşlı, din adamı: vuruş işlemez (Tolga vazgeçer / biri araya girer / Hikmet paylar).
-##                asker, komutan: ayağı yakalar → doğrudan tutuklanma. Fatih, İmparator: Büro acil iadesi, bölüm baştan.
+##                asker, komutan: ayağı yakalar → doğrudan tutuklanma. Fatih, İmparator: scripts/level/huzur.gd (karşı
+##                hamle ya da muhafız, sonra sürgün).
 ##                hayvan: karşılık verir (keçi, at, öküz: yere; tavuk: üstüne atlar; kedi: kaçar).
 ## Bu davranışları yapmayan oyuncu için hiçbir şey değişmez: izleyiciler yalnız alandan çıkınca / tekmeye basınca çalışır.
 ## Başka bölüme tek satır: preload("res://scripts/level/kural.gd").hits(self, hud, player)
@@ -47,7 +48,7 @@ const LINES := [
 const REACH := 2.3                # tekmenin yetiştiği uzaklık (ayak ~1,1 m önde; hedef 2,3 m'ye kadar atılarak)
 const HIT_WINDOW := 120.0         # tırmanma penceresi: bu kadar saniye içinde yeni vuruş bir sonraki basamaktır
 const MARK_COOL := 22.0           # "işte o tekmeci" sözlerinin arası
-## Hükümdarlar: vuruş işlemez, Büro acil iadesi
+## Hükümdarlar: vuruş işlemez (Huzur: karşı hamle, sürgün)
 const RULERS := ["fatih", "emperor"]
 ## Sivil erkekler: rolün söz öbeği (KRL_<öbek>_…; öbeğin konuşmacısı SideEvents.STREET_SPK'dan)
 const CIV_GROUP := {"TOWNB": "TOWNB", "VENDB": "TOWNB", "PORTER": "TOWNB", "FISHER": "TOWNB", "CIVB": "TOWNB",
@@ -410,7 +411,7 @@ func _on_kick(t: Dictionary) -> void:
 		_animal(n)
 		return
 	var p := n as Person
-	if p and p.face_id in RULERS:
+	if p and p.face_id in RULERS and not p.child:
 		_ruler(p)
 		return
 	if n.get_parent() is Duelist:
@@ -745,26 +746,13 @@ func _commander(n: Node3D) -> void:
 	await _arrest(SideEvents.street_ctx(get_tree()), "")
 
 
+## Hükümdar (docs/SENARYO_KURAL_CIGNEME.md §6): vuramaz; karşı hamle / muhafız, sonra sürgün (scripts/level/huzur.gd).
+## Eski davranış (Büro acil iadesi, bölüm baştan) kaldırıldı (sahibin kararı, 2. tur).
 func _ruler(p: Person) -> void:
-	busy = true
 	ruler_tries += 1
 	last = "ruler"
-	GameState.bump_stat("tarihe_tekme")
-	_log("ruler face=%s" % p.face_id)
-	player.frozen = true
-	await _leg_abort()
-	hud.bark("SPK_NIHAT", "KRL_RULER_N1", 1.6, true)
-	await hud.fade_to(1.0, 0.5, Color(0.92, 0.92, 0.86))
-	await hud.card([[tr("UI_KRL_CARD_RULER"), 40, Color("2a2a2a")], [tr("UI_KRL_CARD_RULER_SUB"), 22, Color(0.1, 0.1, 0.1, 0.85)]], 2.6)
-	await hud.say("SPK_NIHAT", "KRL_RULER_N2")
-	await hud.say("SPK_HIKMET", "KRL_RULER_H")
-	hud.clear_card()
-	if GameState.autotest:
-		await hud.fade_to(0.0, 0.3)
-		player.frozen = false
-		busy = false
-		return
-	GameState.replay_scene()           # tarih geri teper: bölüm baştan
+	_log("ruler face=%s -> huzur" % p.face_id)
+	load("res://scripts/level/huzur.gd").of(scene, hud, player).attempt(p, "kick")
 
 
 func _animal(n: Node3D) -> void:

@@ -56,6 +56,7 @@ func _ready() -> void:
 	add_child(hud)
 	player = Player.new()
 	add_child(player)
+	preload("res://scripts/level/huzur.gd").watch(self, hud, player)      # hükümdara el kaldırmak (SENARYO_KURAL_CIGNEME §6)
 	player.interacted.connect(_on_interact)
 	player.frozen = true
 	hud.set_fez(GameState.flags.get("fez", true))

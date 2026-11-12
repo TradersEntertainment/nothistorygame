@@ -45,6 +45,7 @@ func _ready() -> void:
 	add_child(hud)
 	player = Player.new()
 	add_child(player)
+	preload("res://scripts/level/huzur.gd").watch(self, hud, player)      # hükümdara el kaldırmak (SENARYO_KURAL_CIGNEME §6)
 	player.frozen = true
 	# Osmanlı dalında fes bayrağa bağlı (her zaman kapalıydı; 20O/22O/24O ile aynı). Bölüm 22'nin yanığı portrede kalır
 	# (yeni Hud yanığı sıfırlıyordu: "Kaşların nerede?" denirken portre temizdi)

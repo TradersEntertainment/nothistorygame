@@ -47,6 +47,7 @@ func _ready() -> void:
 	hud.chase_music = "tension"
 	player = Player.new()
 	add_child(player)
+	preload("res://scripts/level/huzur.gd").watch(self, hud, player)      # hükümdara el kaldırmak (SENARYO_KURAL_CIGNEME §6)
 	player.frozen = true
 	hud.set_fez(GameState.flags.get("fez", true))
 	hud.set_signal(0)
