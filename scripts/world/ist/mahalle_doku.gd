@@ -24,7 +24,7 @@ const OGE_YAKIN := 110.0
 const CARP_YAKIN := 150.0
 
 ## Zemin renkleri (ISTANBUL_GORUNUS §2: toprak yol kuru #A89677 / çamurlu #7C6B52; kaldırım iri kesme taş #9A9588)
-const R_MESE := Color("7a7466")
+const R_MESE := Color("6f6656")
 const R_YOL := Color("706a5e")
 const R_TOPRAK := Color("8a785c")
 const R_CAMUR := Color("6a5b46")
@@ -286,7 +286,7 @@ func _renk(t: int, p: Vector2) -> Color:
 	var tane := _hs(floorf(p.x * 0.5), floorf(p.y * 0.5), t) - 0.5
 	var c: Color
 	match t:
-		1: c = R_MESE.lerp(Color("85796a"), leke * 0.6)
+		1: c = R_MESE.lerp(Color("7b6d5a"), leke * 0.6)
 		2: c = R_YOL.lerp(Color("6b665c"), leke * 0.5)
 		4: c = R_SAVUNMA.lerp(R_CAMUR, leke * 0.35)
 		5: c = R_AVLU.lerp(Color("7a7653"), leke * 0.45)
@@ -375,7 +375,7 @@ static func dosek_tex() -> ImageTexture:
 					var kenar := mini(mini(i, w - 1 - i), mini(j, h - 1 - j))
 					if kenar < 2:
 						var g := sin((X * 0.37 + Y * 0.21)) * 0.5 + 0.5
-						c = derz.lerp(ot, 0.7) if g > 0.86 else derz
+						c = derz.lerp(ot, 0.6) if g > 0.93 else derz
 					else:
 						var n := sin(X * 0.9 + Y * 1.3) * sin(X * 0.31 - Y * 0.57) * 0.035 + rng.randf_range(-0.025, 0.025)
 						c = Color(c.r + n, c.g + n, c.b + n * 0.8)

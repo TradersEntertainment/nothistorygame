@@ -123,6 +123,10 @@ func _ready() -> void:
 		print("ISTKARE BITTI")
 		get_tree().quit(0)
 		return
+	if set_ == "beyaz":
+		await _beyaz()
+		get_tree().quit(0)
+		return
 	if set_ == "s3":
 		await _s3()
 		print("ISTKARE BITTI")
@@ -421,7 +425,12 @@ func _eser_yer(it: Dictionary, h: float) -> void:
 	var dist := clampf(r * 0.9 + 14.0, 18.0, 90.0)
 	var sec := Vector3.INF
 	var hedef := Vector3.INF
-	for yon: Vector3 in [Vector3(0, 0, 1), Vector3(1, 0, 0), Vector3(-1, 0, 0), Vector3(0, 0, -1), Vector3(0.7, 0, 0.7), Vector3(-0.7, 0, 0.7)]:
+	var yonler: Array = [Vector3(0, 0, 1), Vector3(1, 0, 0), Vector3(-1, 0, 0), Vector3(0, 0, -1), Vector3(0.7, 0, 0.7), Vector3(-0.7, 0, 0.7)]
+	if String(it["id"]) == "blakherna":
+		# saray sura yaslı (yerel +z sur dışı): avlu kapısı önünden (şehir yanı)
+		yonler = [Vector3(0, 0, -1), Vector3(0.6, 0, -1), Vector3(-0.6, 0, -1)]
+		dist = 62.0
+	for yon: Vector3 in yonler:
 		var dw := (holder.global_transform.basis * yon)
 		dw.y = 0.0
 		dw = dw.normalized()
@@ -1110,7 +1119,7 @@ func _yavas_yol() -> void:
 	print("ISTAKIS kare=%d ortanca_ms=%.1f p95_ms=%.1f p99_ms=%.1f en_cok_ms=%.1f" % [dts.size(), dts[dts.size() / 2], dts[int(dts.size() * 0.95)], dts[int(dts.size() * 0.99)], dts[dts.size() - 1]])
 	print("ISTYAVAS ", s.stats.get("yavas", {}))
 	print("ISTYAVAS_PIS ", s.stats.get("yavas_pis", {}))
-	print("ISTBAGLA bagla_ms_max=%.1f kur_ms_max=%.1f" % [float(s.stats.get("bagla_ms_max", 0.0)), float(s.stats["kur_ms_max"])])
+	print("ISTBAGLA bagla_ms_max=%.1f kur_ms_max=%.1f pencere_ms=%.1f (%s)" % [float(s.stats.get("bagla_ms_max", 0.0)), float(s.stats["kur_ms_max"]), float(s.stats.get("pencere_ms", 0.0)), String(s.stats.get("pencere_en", ""))])
 
 
 # ---------------------------------------------------------------- ŞEHİR-3 kareleri (sur uzak katmanı, ordugâh, hub, meydan)
@@ -1141,8 +1150,52 @@ func _s3() -> void:
 	if hx != Transform3D():
 		var hc := hx * Vector3(0, 0, -10)
 		await _shot(p + "hub_25m", hx * Vector3(-70, 25, -10), hc, 70)
-		await _shot(p + "hub_yer", hx * Vector3(-30, 1.7, 2), hx * Vector3(10, 3, 2), 70)
+		# bölümün ana caddesi (ByzCity yerel x 0, z −16…18): caddenin güney ucundan kuzeye
+		await _shot(p + "hub_yer", hx * Vector3(0.5, 1.7, 14), hx * Vector3(0, 3, -25), 70)
 	var mr := IstSehir._meydan_rect()
 	var mc := mr.get_center()
 	var my := IstGeo.h(mc.x, mc.y)
 	await _shot(p + "aya_meydan", Vector3(mc.x - 45, my + 18, mc.y + 40), Vector3(mc.x + 20, my, mc.y), 70)
+
+
+## Tanı: kara suru dilimi ve kapı koşusunun yakın katmanında beyaza yakın yüzeyler (malzeme/köşe rengi)
+func _beyaz() -> void:
+	var s := IstSehir.active
+	s.set_process(false)
+	var n := 0
+	for it: Dictionary in s.items:
+		var id := String(it["id"])
+		if not (id.begins_with("kara_suru_") or id == "romanos") or n >= 3:
+			continue
+		n += 1
+		s._build(it, 0)
+		s._build(it, 1)
+		for l in 2:
+			var nd: Node3D = it["have"][l]
+			if nd == null:
+				continue
+			for c in nd.find_children("*", "MeshInstance3D", true, false):
+				var mi := c as MeshInstance3D
+				if mi.mesh == null:
+					continue
+				for si in mi.mesh.get_surface_count():
+					var m := mi.get_active_material(si)
+					var col := Color.BLACK
+					var tex := ""
+					if m is StandardMaterial3D:
+						var sm := m as StandardMaterial3D
+						col = sm.albedo_color
+						tex = str(sm.albedo_texture.resource_path if sm.albedo_texture else "") + (" tex" if sm.albedo_texture else "") + (" vc" if sm.vertex_color_use_as_albedo else "") + (" unshaded" if sm.shading_mode == BaseMaterial3D.SHADING_MODE_UNSHADED else "")
+						if sm.vertex_color_use_as_albedo:
+							var arr := mi.mesh.surface_get_arrays(si)
+							var cs = arr[Mesh.ARRAY_COLOR]
+							if cs is PackedColorArray and (cs as PackedColorArray).size() > 0:
+								var acc := Color(0, 0, 0)
+								var hi := 0
+								for q: Color in cs:
+									if q.get_luminance() > 0.85:
+										hi += 1
+								col = Color(float(hi) / (cs as PackedColorArray).size(), 0, 0)
+								tex += " beyaz_kose=%d/%d" % [hi, (cs as PackedColorArray).size()]
+					print("BEYAZ %s l%d %s yuzey=%d renk=%s %s aabb=%s" % [id, l, mi.name, si, col, tex, mi.get_aabb()])
+	print("BEYAZ BITTI")

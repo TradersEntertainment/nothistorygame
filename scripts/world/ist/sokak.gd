@@ -1172,12 +1172,44 @@ func _eser_meydanlari() -> void:
 		var pay := 30.0 if id == "ayasofya" else (14.0 if unlu else 9.0)
 		var R := r + 4.0 + pay
 		var n := 0
+		# Ayasofya: taban dairesi (r + 4 = 64 m) binadan çok geniş; gövde karesinin (yarı 31 m, yönüyle) dışı meydan olur
+		# (oyun alanları ve öbür anıtların çekirdeği hariç)
+		var aya_yaw := float(it.get("yaw", 0.0))
+		var au := Vector2(cos(aya_yaw), -sin(aya_yaw))
+		var av := Vector2(sin(aya_yaw), cos(aya_yaw))
+		var alanlar: Array = s.oyun_alanlari() if s.has_method("oyun_alanlari") else []
+		var komsu: Array = []
+		if id == "ayasofya":
+			for o: Dictionary in s.items:
+				if o == it or o.has("hat"):
+					continue
+				var op: Vector3 = o["pos"]
+				if Vector2(op.x, op.z).distance_to(c) < R + float(o["r"]):
+					komsu.append([Vector2(op.x, op.z), float(o["r"]) * 0.7 + 3.0])
 		for j in range(maxi(0, int((c.y - R - z0) / G)), mini(nz, int((c.y + R - z0) / G) + 1)):
 			for i in range(maxi(0, int((c.x - R - x0) / G)), mini(nx, int((c.x + R - x0) / G) + 1)):
 				var k := j * nx + i
-				if occ[k] == 0 and cell_c(i, j).distance_to(c) <= R:
+				var q := cell_c(i, j)
+				if q.distance_to(c) > R:
+					continue
+				if occ[k] == 0:
 					occ[k] = 5
 					n += 1
+				elif occ[k] == 3 and id == "ayasofya":
+					var dq := q - c
+					if absf(dq.dot(au)) < 31.0 and absf(dq.dot(av)) < 31.0:
+						continue
+					var serbest := true
+					for a: Rect2 in alanlar:
+						if a.grow(2.0).has_point(q):
+							serbest = false
+					for o: Array in komsu:
+						if (o[0] as Vector2).distance_to(q) < float(o[1]):
+							serbest = false
+							break
+					if serbest:
+						occ[k] = 5
+						n += 1
 		if n == 0:
 			continue
 		zemin_ek.append({"c": c, "r": R, "tur": "mese"})
