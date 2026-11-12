@@ -216,8 +216,8 @@ yoksa hükümdarın kendisi).
 
 | Kim | Boş el / eşya / tekme | Kılıçla gelene |
 |---|---|---|
-| **Mehmed** (genç, çevik) | Bileği (tekmede ayak bileğini) havada yakalar, yarım adım yana çekilir, çevirir; Tolga omzundan yanına yere iner. "Elini indir, kâtip. O el kalem tutmak için." | Kendi kılıcını çeker, tek parad; Tolga'nın kılıcı elinden fırlayıp yere düşer, sonra aynı çevirme. "Kılıcı kınından çıkaran, nereye ineceğini bilmeli." |
-| **Konstantinos** (tecrübeli asker) | Sol eli göğse, sağ ayağı çeler; Tolga sırtüstü. "Otuz yıldır kılıç taşırım. Yerde kal biraz; kalkınca daha akıllı olursun." | Kılıcının kabzasıyla süpürür, kılıç düşer; sonra aynı çelme. "O kılıç sana Şehir için verildi, bana karşı değil." |
+| **Mehmed** (genç, çevik) | Bileği (tekmede ayak bileğini) havada yakalar, yarım adım yana çekilir, çevirir; Tolga omzundan yanına yere iner. "Elini indir, kâtip. O el kalem tutmak için." | Kılıçlı bileği havada yakalar ve çevirir (parad yerine çıplak elle; kendi kılıcı kınında kalır): Tolga'nın kılıcı elinden fırlayıp yere düşer, sonra aynı çevirme. "Kılıcı kınından çıkaran, nereye ineceğini bilmeli." |
+| **Konstantinos** (tecrübeli asker) | Sol eli göğse, sağ ayağı çeler; Tolga sırtüstü. "Otuz yıldır kılıç taşırım. Yerde kal biraz; kalkınca daha akıllı olursun." | Önkoluyla kılıcı yana süpürür, kılıç düşer; sonra aynı çelme. "O kılıç sana Şehir için verildi, bana karşı değil." |
 | **Muhafızlar** | İki muhafız iki yandan koşar, mızrak sapları/kalkanla iter: "Huzurda el kalkmaz, kâtip! Yere!" (yeniçeri) · "Basileus'a el! Yere, yabancı!" (Bizans) | aynı, kılıç düşer |
 
 Gövde: hükümdarın eli her karede oyuncunun bileğinde/ayağında/göğsünde (Rig.reach), ayakları yerde (yalnız yatay yarım

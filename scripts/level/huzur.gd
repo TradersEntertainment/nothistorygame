@@ -346,6 +346,9 @@ func attempt(p: Person, kind: String) -> void:
 			GameState.flags["huzur_ban"] = true
 			await _put_out(origin, p)
 	_restore_blade()
+	if _stowed:
+		player.stow_hands(false)
+		_stowed = false
 	player.free_look = was_free_look
 	_release_dialogue()
 	player.frozen = was_frozen
@@ -355,6 +358,7 @@ func attempt(p: Person, kind: String) -> void:
 	busy = false
 
 
+var _stowed := false
 var _lock_on: Node3D
 var _look_at := Vector3.INF
 
@@ -514,6 +518,8 @@ func _grip(p: Person, kind: String, left: bool, secs: float) -> void:
 
 ## Oyuncu yere iner: kamera sarsılır, yana yatar, göz hizası yere iner; dest'e (yerde) kayar, bakış up_at'e
 func _fall(dest: Vector3, roll: float, up_at: Vector3, secs := 0.55) -> void:
+	player.stow_hands(true)          # yerdeyken el ve eşya kadraja kalkmasın
+	_stowed = true
 	player.shake(0.9)
 	Audio.sfx("land_thud", -2.0, 0.85)
 	var t := 0.05 if Stage.fast() else secs
@@ -562,7 +568,7 @@ func _counter_mehmed(p: Person, kind: String) -> void:
 	p.face_toward(player.global_position)
 	var own: Node3D = null
 	if kind == "sword":
-		own = _ruler_blade(p, "kilij")
+		own = null          # kendi kılıcını çekmez: bileği çevirir, kılıç oyuncunun elinden düşer (kopuk kılıç görünmesin)
 	await _lunge(p, kind)
 	var side := p.global_transform.basis.x
 	side.y = 0.0
@@ -603,7 +609,7 @@ func _counter_konstantinos(p: Person, kind: String) -> void:
 	p.face_toward(player.global_position)
 	var own: Node3D = null
 	if kind == "sword":
-		own = _ruler_blade(p, "spathion")
+		own = null          # kolla süpürür (kopuk kılıç görünmesin)
 	await _lunge(p, kind)
 	if kind == "sword" and own:
 		Audio.sfx("sword_clash", -4.0, 0.9)
