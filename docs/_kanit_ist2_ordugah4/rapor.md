@@ -31,6 +31,13 @@ Altıncı kamera (gece) bu gönderimde YOK: gece koşusu sürüyor (bkz. §9, BA
 - **Kişiler donuk:** yakında gerçek model (Soldier, Crowd'un pişirdiği birebir kopya) ama Rig ile canlı oynamıyor (nefes/yürüyüş
   yok); "yürüyen bölük" duruyor. Belirme/kaybolma: lod 0 ↔ 1 geçişinde (≈120 m + öğe yarıçapı) gerçek model ↔ hafif figür
   değişimi var; karede gözle seçilmedi ama KANITSIZ (geçiş videosu alınmadı).
+- **TAKILMA (en ciddi kusur):** bir kanat öğesinin tek kurulumu 330–615 ms (`ISTORDUKURMS kanat_l0/kanat_l1`; hedef ≤ 6 ms).
+  Oba yerleşimi (dart atışı, binlerce nokta sınaması, arazi yüksekliği sorguları, hayvan/kişi ağları) tek karede yapılıyor;
+  uçuşta ordugâh üstünde her yeni hücrede takılma olur. Kıyı/şehir sınamasını 4 m ızgarada önbelleğe almak düşürmedi; kurulumu
+  karelere bölmek ya da obaları açılışta bir kez üretip önbelleğe almak gerekiyor: YAPILMADI. (ÖNCE ızgaranın değeri ölçülmedi.)
+  Öteki öğeler: batarya/siper 12–28 ms, Şahi 14–56 ms, otağ 14–44 ms (hepsi 6 ms'yi aşıyor).
+- `yer_zaganos`: 30 m içinde 0 kişi (Zağanos hücresi bu kamerada yakın katmanda kurulmamış ya da kişiler arkada: KANITSIZ).
+- `ISTORDUKISI`: çadır/katının içinde kalan kişi var (aşağıda): `icinde=0` TUTMADI.
 - `yer_otag_onu` ve `yer_sahi`: 30 m içinde 4 ve 7 kişi (hedef 15–25 ve ön hatta ≥ 40): KISMEN.
 
 ## 3. §7e işleri (madde madde)
@@ -88,12 +95,19 @@ Ek: mancınık 4 → 2 (arka hat, d 235). Ateşler TOPLU (`K.ateslar`: host baş
 | yer_sahi | 7 | 94 | 8 / 8 |
 | yer_otag_onu | 4 | 938 | 0 / 36 |
 
+| yer_at_bagi | 4 | 920 | 10 / 44 |
+| yer_mutfak | 14 | 536 | 0 / 26 |
+| yer_mescit | 23 | 769 | 0 / 29 |
+| yer_zaganos | 0 | 186 | 0 / 3 |
+
 Sayım: kurulmuş öğelerin kişi noktaları, kamera konisinde ve ekranda (`_karede`); örtülme hesaba katılmadı (ekranda olup tepe
 ardında kalan da sayılır). Ölçütler: 70 m'den karede ≥ 150 figür TUTTU (1 363); çadır alanında 30 m'de 15–25: anadolu, pazar
 TUTTU, yeniçeri/rumeli/otağ önü TUTMADI; ön hatta 30 m'den ≥ 40: TUTMADI (23–25).
 `ISTORDUKISI` (çadırın içinde / havada, fizik ışını): ilk koşu `icinde=45 havada=43 toplam=622` (havada sayılanların çoğu batarya
 terasındaki ekip: ölçüt araziye göreydi, ışınla düzeltildi; ekip ve istif yerleri sedde/yığın gövdesinden çıkarıldı). Düzeltilmiş
-sondanın sonucu: §9'a bakın (koşu sürüyor). Şimdilik KANITSIZ.
+sondanın sonucu (yedi öğenin çevresi): gündüz ekranlı koşu `icinde=54 havada=0 toplam=819`, son kodla başsız koşu
+`icinde=7 havada=0 toplam=449`. **havada=0 TAMAM; icinde=0 TUTMADI** (sayıyı oynatan: öğe kurulum sırası; hangi katıya girdikleri
+ayrıştırılmadı: KANITSIZ).
 
 Kişi türleri (`ordugah_kisi.gd` TIP): nöbetçi, okçu, azap, sipahi, ocak başında oturan, aşçı (kepçe), kazan işçi (kürek), saka (kova),
 tokmakçı, manivelacı, odun kesen (balta), silah bileyen/demirci (çekiç), uyuklayan, namaz safı, seyis, yürüyen bölük, kâtip,
@@ -118,16 +132,31 @@ esir (sivil), tüccar (sivil), alıcı. Başlık: yeniçeri beyaz börk, öbürl
 
 ## 6. Bütçe
 
-| nokta | ÖNCE v2 çizim / üçgen | SONRA v2 çizim / üçgen | SONRA ordugâh payı |
-|---|---|---|---|
-| ordu_30 | 1 069 / 3,70 M | 1 282 / 3,32 M | §9 |
-| ordu_70 | 1 163 / 4,10 M | 1 396 / 3,46 M | §9 |
-| otag_yakin | 256 / 2,39 M | 503 / 1,44 M | §9 |
-| kara_disi | 856 / 2,74 M | 1 003 / 2,88 M | §9 |
-| hendek | 1 305 / 2,85 M | 1 369 / 3,13 M | §9 |
-| yer (8 nokta) | — | 362–1 169 / 1,04–4,42 M | §9 |
+| nokta | ÖNCE v2 çizim / üçgen | SONRA v2 çizim / üçgen |
+|---|---|---|
+| ordu_30 | 1 069 / 3,70 M | 1 282 / 3,32 M |
+| ordu_70 | 1 163 / 4,10 M | 1 396 / 3,46 M |
+| otag_yakin | 256 / 2,39 M | 503 / 1,44 M |
+| kara_disi | 856 / 2,74 M | 1 003 / 2,88 M |
+| hendek | 1 305 / 2,85 M | 1 369 / 3,13 M |
 
-Hüküm: **KISMEN / hedef tutmadı.** Gece: ateşler artık host başına 1–2 çizim (önce ateş başına 3); gece ölçümü BAKILMADI (§9).
+SONRA ordugâh payı (ordugâh düğümü gizlenip yeniden ölçülerek; `ISTORDUBUTCE`, gündüz):
+
+| nokta | v2 toplam çizim / üçgen | ordugâh payı çizim / üçgen | hedef (uçuş ≤ 1 000, yer ≤ 900) |
+|---|---|---|---|
+| uçuş 60 m otağ | 1 229 / 3,09 M | 723 / 1,44 M | ✔ |
+| yer otağ | 1 124 / 3,01 M | 601 / 1,27 M | ✔ |
+| uçuş 60 m Şahi | 1 001 / 2,48 M | 321 / 0,57 M | ✔ |
+| yer Şahi | 893 / 2,44 M | 116 / 0,29 M | ✔ |
+| uçuş 60 m Anadolu | 430 / 0,83 M | 380 / 0,62 M | ✔ |
+| yer Anadolu | 392 / 1,04 M | 348 / 0,87 M | ✔ |
+| uçuş 60 m Rumeli | 1 260 / 4,18 M | **1 047 / 2,88 M** | ✘ |
+| uçuş 60 m batarya 2 | 786 / 2,00 M | 166 / 0,33 M | ✔ |
+| uçuş 60 m yeniçeri | 813 / 2,25 M | 660 / 1,43 M | ✔ |
+
+ÖNCE'nin ordugâh payı ölçülmedi (ÖNCE koşusu yalnız pafta seti); BAĞLAMA-3'ün Bölüm 11 gecesindeki v2 payı 8 956 idi.
+
+Hüküm: **KISMEN** — gündüz dokuz noktadan sekizi hedefte, Rumeli üstü 1 047 (aşıyor), v2 toplamı ordugâhın üstünde 1 000–1 400. Gece: ateşler artık host başına 1–2 çizim (önce ateş başına 3); gece ölçümü BAKILMADI (§9).
 Yapılan: orta katmanda gereçler tek ağ (önce 6 ağ), hafif figür 2 çoklu ağ, çadır gölgesi yalnız yakında, kişiler tür başına tek
 çoklu ağ. Sıradaki (yapılmadı): lod 1 eşiğini 450 → 350 m, yakın katmanda gereç ağlarını birleştirmek, uzak hücreyi yarıya bölmek.
 Kurulum: ordugâh uzak hücreleri 3,6–4,5 sn (ÖNCE 3,6 sn); tek öğe kurulum süresi (`ISTORDUKURMS`) §9.
@@ -161,9 +190,7 @@ Kurulum: ordugâh uzak hücreleri 3,6–4,5 sn (ÖNCE 3,6 sn); tek öğe kurulum
 ## 9. Süren koşular / bakamadıklarım
 
 - Gece kareleri (pafta 6. kamera, gece dört kare) ve gece bütçesi: BAKILMADI (sıradaki ekranlı koşu).
-- Bütçe ayrımı (ordugâh payı, `ISTORDUBUTCE`) ve düzeltilmiş `ISTORDUKISI`: gündüz koşusunun sonunda; bu rapora girmediyse KANITSIZ.
-- 30 m / 70 m'den sekiz kare (`hava` seti): koşulmadı. Yerden 12 kareden 8'i alındı (`pafta_yer.jpg`); at bağı, mutfak, mescit,
-  Zağanos yakası karesi: süren koşuda.
+- 30 m / 70 m'den sekiz kare (`hava` seti): koşulmadı. Yerden 12 kare alındı (`sonra/yer_*.jpg`, `pafta_yer.jpg`).
 - 14 sahip karesi (`gezi_sahip.txt`): YAPILMADI (süre).
 - Öbür dört dal (`wip/ist2-sur4`, `-cevre4`, `-doku4`, `-baglama4`): uzakta henüz yoktu (`git fetch`: couldn't find remote ref),
   birleştirilecek bir şey yoktu.
