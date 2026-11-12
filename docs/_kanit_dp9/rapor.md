@@ -96,8 +96,9 @@ gürültü (yukarıdaki gerekçe). Bunu kesin değil "ölçüm yöntemi farkı" 
 - `_hold_both_points` kutusu (y ≤ 0,05, z ≥ −0,75): bu turda kutunun içine düşen noktalar seçildi; değişiklik gerekmedi.
 
 ## Bakamadıklarım / açık
-- 30o yan kamerada askerlerin avuçları: `sonda_p30o_capraz` paftası raporla aynı kayıtta değilse (koşu sürüyordu)
-  bir sonraki kayıtta eklenir; sayısal ölçüm yukarıda.
+- 30o çapraz kamera (`pafta_09`): yandaki iki asker dikmede, arkadaki basamakta; arkadaki asker sol askerin önüne
+  biniyor gibi görünüyor (kamera açısı; merkezler arası ≥ 0,94 m ölçüldü). Asıl yan profil kamerası (tam yandan) alınamadı:
+  sağ asker kameraya sırtını dönüyordu.
 - 30o `lose/sprint/stonehit` ekranlı koşu: BAKILMADI (başsız PASS).
 - Gerçek fare/klavye ile itiş: BAKILMADI (bot ve sonda).
 
