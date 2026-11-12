@@ -214,9 +214,21 @@ func _calis() -> void:
 		var y := IstGeo.h(p.x, p.y) + 1.65
 		cam.global_position = Vector3(p.x, y, p.y)
 		cam.rotation = Vector3(deg_to_rad(-3.0), atan2(-d.x, -d.y), 0.0)
+		var sat := ""
+		for k in range(0, 40):
+			var q := p + d * (k * 2.0)
+			sat += str(sokak.cell(q.x, q.y))
+		print("HUCRE %s ileri(2m): %s" % [ad, sat])
+		sat = ""
+		var rt2 := Vector2(-d.y, d.x)
+		for k in range(-10, 11):
+			var q := p + rt2 * (k * 1.0)
+			sat += str(sokak.cell(q.x, q.y))
+		print("HUCRE %s yanal(1m): %s" % [ad, sat])
 		await _bekle_arazi()
 		# akış: mevcut herkes uzaktan çekilsin, yeniden dolsun
 		hy._ilk = 6.0
+		hy.doldur(8)
 		hy.prof_sum_us = 0.0
 		hy.prof_n = 0
 		hy.prof_max_us = 0.0
@@ -230,6 +242,29 @@ func _calis() -> void:
 			if shots != "":
 				img.save_png(shots.path_join(fn))
 			print(hy.sayim_satiri(ad + "_" + str(r)))
+			if OS.get_cmdline_user_args().has("halka=1"):
+				var fw2 := Vector2(-cam.global_basis.z.x, -cam.global_basis.z.z).normalized()
+				var rt3 := Vector2(-fw2.y, fw2.x)
+				var hh := {}
+				var nall := 0
+				for g2 in hy._P.size():
+					if (hy._P[g2] - Vector2(cam.global_position.x, cam.global_position.z)).length() < 85.0:
+						nall += 1
+				print("HALKA tum_noktalar_85m=%d ring=%d cands=%d" % [nall, hy._ring.size(), hy._cands(Vector2(cam.global_position.x, cam.global_position.z), 85.0).size()])
+				for g: int in hy._ring:
+					var dv2: Vector2 = hy._P[g] - Vector2(cam.global_position.x, cam.global_position.z)
+					var onn := dv2.dot(fw2)
+					var sg := dv2.dot(rt3)
+					if absf(sg) < 9.0:
+						var key := int(floor(onn / 10.0)) * 10
+						hh[key] = int(hh.get(key, 0)) + 1
+				print("HALKA %s toplam=%d eksen(on:adet)=%s" % [ad, hy._ring.size(), hh])
+			if OS.get_cmdline_user_args().has("nokta=1"):
+				var fw := Vector2(-cam.global_basis.z.x, -cam.global_basis.z.z).normalized()
+				var rt := Vector2(-fw.y, fw.x)
+				for a: IstHayatYakin.Agent in hy.active_list():
+					var dv := Vector2(a.pos.x - cam.global_position.x, a.pos.z - cam.global_position.z)
+					print("  NOKTA %s %s on=%.1f sag=%.1f mod=%s" % [a.prol, ad, dv.dot(fw), dv.dot(rt), a.mode])
 			var t1 := Time.get_ticks_msec()
 			while Time.get_ticks_msec() - t1 < 2500:
 				await get_tree().process_frame
