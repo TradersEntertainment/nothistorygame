@@ -126,8 +126,8 @@ func _yer(x: float, z: float) -> float:
 	if not hit.is_empty():
 		return (hit["position"] as Vector3).y
 	if IstBaglama.aktif() and IstBaglama.kok != null:
-		var q := IstBaglama.kok.to_local(Vector3(x, 0.0, z))       # v2 çerçevesi (dönüşümlü bağlama)
-		return IstBaglama.kok.to_global(Vector3(q.x, IstGeo.h(q.x, q.z), q.z)).y
+		var ql := IstBaglama.kok.to_local(Vector3(x, 0.0, z))      # v2 çerçevesi (dönüşümlü bağlama)
+		return IstBaglama.kok.to_global(Vector3(ql.x, IstGeo.h(ql.x, ql.z), ql.z)).y
 	return 0.0
 
 
