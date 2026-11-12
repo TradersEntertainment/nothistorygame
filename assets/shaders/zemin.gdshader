@@ -87,7 +87,7 @@ void fragment() {
 	// ---- ot katmanı (paletten; ipucunun parlaklığına hafif uyar)
 	vec3 ot = mix(c_ot2.rgb, c_ot.rgb, smoothstep(0.35, 0.65, O.y + (T.y - 0.5) * 0.3 * mikro));
 	ot = mix(ot, c_kuru.rgb, smoothstep(0.3, 0.85, kur + (Q.x - 0.5) * 0.8));
-	ot *= clamp(L / max(lum(c_ot.rgb), 0.01), 0.8, 1.12);
+	ot *= clamp(L / max(lum(c_ot.rgb), 0.01), 0.8, 1.04);
 
 	// ---- toprak katmanı: ipucunun tonu (yol, kum, taş) korunur; yeşil ipucunda palet toprağı
 	vec3 topr = c_toprak.rgb * (0.9 + 0.2 * M.y);
@@ -153,13 +153,16 @@ void fragment() {
 	float ince = texture(gurultu, vec2(p.x * 0.6 - p.y * 0.8, p.x * 0.8 + p.y * 0.6) / 0.41).r - 0.5;
 	float tane = (T.x - 0.5) * 0.9;
 	c *= 1.0 + mix(tane * 0.12, ince * 0.42 + tane * 0.2, ot_m) * mikro;
-	// toprak: çakıl taneleri (hücre başına rastgele: halka/yineleme yok), gölgeli
-	vec4 ct = texture(gurultu, p / 2.6 + 0.21);
-	float tas_var = (1.0 - ot_m) * clamp(0.18 + cakil_m * 0.9 + kaya_m * 0.4 + gri * 0.2 - camur_m * 0.15, 0.0, 1.0);
-	float tas = (1.0 - smoothstep(0.17, 0.27, ct.b)) * step(1.0 - tas_var, ct.a);
-	vec3 tas_c = mix(c * 1.12, c_cakil.rgb, 0.4) * (0.92 + 0.3 * clamp(0.22 - ct.b, 0.0, 0.22) * 4.0) * (0.9 + 0.2 * fract(ct.a * 13.0));
+	// toprak: çakıl taneleri (hücre başına rastgele boy ve ton: halka/yineleme yok), zemine yakın tonda, hafif gölgeli
+	vec4 ct = texture(gurultu, p / 2.3 + 0.21);
+	float tas_var = (1.0 - ot_m) * clamp(0.07 + cakil_m * 0.6 + kaya_m * 0.3 + gri * 0.12 - camur_m * 0.06, 0.0, 0.8);
+	float secili = step(1.0 - tas_var, ct.a);
+	float r0 = 0.1 + 0.13 * fract(ct.a * 7.31);
+	float tas = (1.0 - smoothstep(r0 - 0.05, r0, ct.b)) * secili;
+	float ton = fract(ct.a * 13.7);
+	vec3 tas_c = mix(c, c_cakil.rgb, 0.35 + 0.25 * ton) * (1.0 + 0.16 * ton) * (0.95 + 0.6 * clamp(r0 - ct.b, 0.0, 0.2));
 	c = mix(c, tas_c, tas * mikro);
-	c *= 1.0 - (smoothstep(0.22, 0.28, ct.b) - smoothstep(0.28, 0.36, ct.b)) * step(1.0 - tas_var, ct.a) * 0.3 * mikro;
+	c *= 1.0 - (smoothstep(r0 - 0.02, r0 + 0.02, ct.b) - smoothstep(r0 + 0.02, r0 + 0.09, ct.b)) * secili * 0.18 * mikro;
 	// kuru toprakta çatlak ağı (hücre sınırı; ~0,7 m'lik çokgenler)
 	float cb = texture(gurultu, p / 16.0 + 0.53).b;
 	float catlak = smoothstep(0.47, 0.53, cb) * (1.0 - ot_m) * (1.0 - camur_m) * smoothstep(0.45, 0.75, kur)

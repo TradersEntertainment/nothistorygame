@@ -132,21 +132,14 @@ static func _ucgen(st: SurfaceTool, a: Vector3, b: Vector3, c: Vector3, ca: Colo
 	st.add_vertex(c)
 
 
-static var _m: StandardMaterial3D
+static var _m: ShaderMaterial
 
-static func _mat() -> StandardMaterial3D:
+## ZEMİN (scripts/level/zemin.gd): ateş alanı ve set ortak zemin malzemesiyle (köşe rengi ipucu: toprak, ot, yanık,
+## çamur); yöre "kusatma": çiğnenmiş toprak öbekleri, solgun ot, çakıl, çatlak; bulanık tek doku yerine üç ölçek.
+static func _mat() -> Material:
 	if _m == null:
-		_m = StandardMaterial3D.new()
-		_m.vertex_color_use_as_albedo = true
-		_m.vertex_color_is_srgb = true
-		_m.albedo_color = Color(0.86, 0.84, 0.8)
-		_m.diffuse_mode = BaseMaterial3D.DIFFUSE_TOON
-		_m.specular_mode = BaseMaterial3D.SPECULAR_DISABLED
-		_m.roughness = 1.0
-		_m.albedo_texture = Props._noise("dirt")
-		_m.uv1_triplanar = true
-		_m.uv1_world_triplanar = true
-		_m.uv1_scale = Vector3(0.25, 0.25, 0.25)
+		_m = load("res://scripts/level/zemin.gd").kopya("kusatma")
+		_m.set_shader_parameter("su_y", -10000.0)
 	return _m
 
 

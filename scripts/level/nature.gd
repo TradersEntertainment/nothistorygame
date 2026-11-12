@@ -113,8 +113,8 @@ static var _gloss_mat: StandardMaterial3D
 
 ## ground_detail türleri: ağ, boy aralığı, renk aralığı, yere yatık mı (eğime oturur), malzeme ("grass", "gloss", "")
 const DETAIL := {
-	"grass": [0.45, 0.9, Color("3e6428"), Color("7e7c48"), false, "grass"],
-	"tall_grass": [0.6, 0.95, Color("4a6a2c"), Color("8e8650"), false, "grass"],
+	"grass": [0.45, 0.9, Color("4c6030"), Color("8a8452"), false, "grass"],          # ZEMİN: solgun bahar yeşili ↔ kuru ot
+	"tall_grass": [0.6, 0.95, Color("54663a"), Color("948a58"), false, "grass"],
 	"stone": [0.12, 0.45, Color("7e7a6e"), Color("b2aa96"), false, "rock"],
 	"pebble": [0.04, 0.12, Color("8a8478"), Color("c8bfae"), false, "rock"],
 	"chips": [0.35, 0.7, Color("b89a6a"), Color("d8c090"), true, ""],
