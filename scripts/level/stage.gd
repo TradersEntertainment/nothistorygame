@@ -230,6 +230,7 @@ static func gaze_dir(who: Node3D, act: String, talking: bool, to: Vector3, mv: V
 		if hv.length() / delta > (0.25 if was_walk else 0.35) and hv.length() < 2.0:
 			if not was_walk:
 				who.set_meta("gaze_walk", true)
+				who.set_meta("gaze_walk_t", Time.get_ticks_msec())      # yürüyüş başı: Person ilk 0,3 sn gövdeyi hızlı döndürür
 			return hv
 		if was_walk:
 			who.remove_meta("gaze_walk")

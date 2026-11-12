@@ -1146,9 +1146,10 @@ func _open_gate() -> void:
 	await Stage.walk_on_ground(guard, _leaf_pt(18.0, LEAF_R), gy, 2.2, _leaf_l.to_global(Vector3(LEAF_R, 1.3, -0.15)))
 	await _pull_leaves()
 	if spear != null and is_instance_valid(spear) and guard._elbow_r != null:      # mızrağını geri alır
-		spear.reparent(guard._elbow_r, false)
-		spear.position = Vector3(0, -0.28, 0.06)
-		spear.rotation_degrees = Vector3(0, 0, -7)
+		spear.reparent(guard._elbow_r, true)      # yerdeki yerinden (dünya dönüşümü korunur) ele 0,3 sn'de gelir: tek karede ışınlanmaz
+		var stw := create_tween().set_parallel()
+		stw.tween_property(spear, "position", Vector3(0, -0.28, 0.06), _d(0.3)).set_trans(Tween.TRANS_SINE)
+		stw.tween_property(spear, "rotation_degrees", Vector3(0, 0, -7), _d(0.3))
 	guard.look_target = player
 
 

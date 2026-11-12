@@ -43,6 +43,7 @@ var _elbow_r: Node3D
 var _eyes: Node3D
 var _brows: Node3D
 var _t := 0.0
+var _walk_face := false      # yürüyüş yönüne bakma histerezisi (0,35 başlar, 0,25 bırakır; Stage.gaze_dir / rig.gd ile aynı)
 var _last_pos := Vector3.INF      # ilk karede ayarlanır (doğduğu yer, sahne merkezinden yürümüş sayılmasın)
 var _last_gpos := Vector3.INF
 var _busy := false
@@ -840,7 +841,8 @@ func _process(delta: float) -> void:
 	_clear_way(delta)
 	if delta > 0.0 and look_target == null and not _busy and activity in ["", "carry"]:
 		var hv := Vector2(mv.x, mv.z)
-		if hv.length() / delta > 0.6 and hv.length() < 2.0:
+		_walk_face = hv.length() / delta > (0.25 if _walk_face else 0.35) and hv.length() < 2.0
+		if _walk_face:
 			chatting = false
 			rotation.y = lerp_angle(rotation.y, atan2(mv.x, mv.z), clampf(delta * 8.0, 0.0, 1.0))
 	var mouth_open := LipSync.mouth(_t, delta) if talking else (absf(sin(_t * 11.0)) * 0.7 if chatting else 0.0)
@@ -858,7 +860,9 @@ func _process(delta: float) -> void:
 		to.y = 0.0
 		to = Stage.gaze_dir(self, activity, talking, to, mv, delta)      # iş/yürüyüş sürerken gövde işine döner
 		if to.length() > 0.1:
-			rotation.y = lerp_angle(rotation.y, atan2(to.x, to.z), clampf(delta * 4.0, 0.0, 1.0))
+			# yürüyüşün ilk 0,3 sn'sinde gövde hızlı döner (oyuncuya dönük durandan gidiş yönüne "ay yürüyüşü" yapmasın)
+			var turn := 10.0 if has_meta("gaze_walk_t") and Time.get_ticks_msec() - int(get_meta("gaze_walk_t")) < 300 else 4.0
+			rotation.y = lerp_angle(rotation.y, atan2(to.x, to.z), clampf(delta * turn, 0.0, 1.0))
 	rig.update(delta, talking or chatting, _busy)
 
 
@@ -921,6 +925,12 @@ func _clear_way(delta: float) -> void:
 		if Unclip.in_solid(o, mover.global_position + step, 0.17) and not Unclip.in_solid(o, mover.global_position, 0.17):
 			continue          # adım ışının ötesinde bir katının (sur, siper) içine girerdi
 		mover.global_position += step
+		# İtilmek yürümek değildir: kayma, itilenin kendi yer değişiminden (gövde yönü, bakış, yürüme eşiği) sayılmasın
+		if mover == o and o._last_pos != Vector3.INF:
+			var par := o.get_parent() as Node3D
+			var lstep: Vector3 = (par.global_transform.basis.inverse() * step) if par else step
+			o._last_pos += lstep
+			GameState.look_audit_shift(o, lstep)      # bakış denetimi de itilmeyi yürüyüş saymasın (denetim gevşemez: kişi yürümüyor)
 		# Yana çekildiği yerin GÖRÜNEN zemini (moloz, basamak): gömülmesin, havada kalmasın (görünmez çarpışma kutusunun
 		# üstüne ya da altına değil)
 		var fy := Unclip.floor_y(o, mover.global_position, 1.0, 1.0)
