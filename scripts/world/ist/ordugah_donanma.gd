@@ -193,12 +193,12 @@ static func build_fici_kopru(host: Node3D, k: float, lod: int, tohum := 15, uzun
 	var W := 5.0
 	# fıçılar: 5 sıra, 1 m aralık; çoklu ağ
 	var barrel := B.new("wood")
-	barrel.cyl(B.xf(Vector3.ZERO, 0.0, Vector3(0, 0, 90)), 0.46, 1.0, K.AHSAP, 8)
-	barrel.cyl(B.xf(Vector3(0.28, 0, 0), 0.0, Vector3(0, 0, 90)), 0.47, 0.05, K.DEMIR, 8)
-	barrel.cyl(B.xf(Vector3(-0.28, 0, 0), 0.0, Vector3(0, 0, 90)), 0.47, 0.05, K.DEMIR, 8)
+	barrel.cyl(B.xf(Vector3.ZERO, 0.0, Vector3(0, 0, 90)), 0.46, 1.0, K.AHSAP, 6)
+	barrel.cyl(B.xf(Vector3(0.28, 0, 0), 0.0, Vector3(0, 0, 90)), 0.47, 0.05, K.DEMIR, 6)
+	barrel.cyl(B.xf(Vector3(-0.28, 0, 0), 0.0, Vector3(0, 0, 90)), 0.47, 0.05, K.DEMIR, 6)
 	var bmesh := K.bld_mesh(barrel)
 	var xfs: Array = []
-	var step := 1.05 if lod == 0 else 2.1
+	var step := 1.4 if lod == 0 else 2.8
 	var nx := int(L / step)
 	for i in nx:
 		for j in 5:
