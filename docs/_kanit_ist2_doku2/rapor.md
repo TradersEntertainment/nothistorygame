@@ -105,7 +105,8 @@ Kat: 1 katlı 6 895 · 2 katlı 2 567 · 3 katlı 133 (yalnız çarşı ve Latin
   Son koşu: **1/5 PASS** (Haliç kıyısı, gerçek 435, 697: 3,6 m çıkıp dama ulaştı); kara surunun dibindeki üç evde (gerçek
   −4 990, −820 / −4 987, −1 029 / −3 597, −239) oyuncu merdivenin 2,4 m'sinde duruyor (çarpışma listesinde yalnız zemin;
   adsız bir parça gövdesinin üstünde: sur/kapı ayrıntısının merdivenle çakışması olası — KANITSIZ); bir evde (−2 265, −617)
-  ilk basamakta (sokak evin tabanından alçak: ilk basamak > 0,42 m). Satırlar: `DOKU2 cati_sina …`.
+  oyuncu ilk 1,5 m'de duruyor (merdiven dibine sokağa doğru iki ek basamak eklendi: sonuç değişmedi; neden KANITSIZ).
+  Satırlar: `DOKU2 cati_sina …` (komut: `godot --headless --path . res://tests/_ist/doku2_kare.tscn -- sadece=yok oyuncu=1`).
 - Çatıdan çatıya geçiş gerçek oyuncuyla: BAKILMADI (ŞEHİR-2'nin sondasında "oyun denetimi … çatıdan çatıya" var).
 
 ## 6. Bütçe — KISMEN (benim katmanım içinde; toplam yer sınırı ordugâh yüzünden aşılıyor)

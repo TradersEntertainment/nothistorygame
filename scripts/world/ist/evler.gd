@@ -589,10 +589,14 @@ static func _sundurma(host: Node3D, x: float, w: float, d: float, fz: float, lod
 			Props.box(host, Vector3(0.48, 0.05, d + 0.1), Vector3(x - w * 0.5 + 0.26 + i * 0.52, SHED + 0.02, fz + d * 0.5), _dk(P_KIREMIT[i % 3], ""))
 
 
-## Dış taş merdiven (teras ve kule dama): evin bir yan duvarı boyunca, sokak cephesinden arkaya doğru çıkar
+## Dış taş merdiven (teras ve kule dama): evin bir yan duvarı boyunca, sokak cephesinden arkaya doğru çıkar. Dipte
+## sokağa doğru iki ek basamak (üstleri −0,02 / −0,32 m): yamaçta sokak evin tabanından alçaksa ilk basamak ≤ 0,42 m kalır.
 static func _dis_merdiven(host: Node3D, p: Dictionary, lod: int) -> void:
 	var L: float = p["L"]
 	var D: float = p["D"]
+	for k in 2:
+		var ust := -0.02 - k * 0.3
+		_block(host, Vector3(1.0, ust + 1.6, 0.3), Vector3(L * 0.5 + 0.5, (ust - 1.6) * 0.5, D * 0.5 + 0.15 + k * 0.3), P_TAS[1], "ashlar", lod)
 	var top: float = float(p["H"]) + (0.18 if String(p["cati"]) == "teras" else 0.2)
 	var n := int(ceil(top / 0.30))
 	var rise := top / n
@@ -705,6 +709,9 @@ static func shapes(v: int, tip: String) -> Array:
 		var rise := top / n
 		var run := D - 0.6
 		var stepd := run / n
+		for k in 2:
+			var ust := -0.02 - k * 0.3
+			out.append([_bs(Vector3(1.0, ust + 1.6, 0.3)), Transform3D(Basis.IDENTITY, Vector3(L * 0.5 + 0.5, (ust - 1.6) * 0.5, D * 0.5 + 0.15 + k * 0.3))])
 		for i in n:
 			var hh := (i + 1) * rise
 			out.append([_bs(Vector3(1.0, hh, stepd + 0.02)), Transform3D(Basis.IDENTITY, Vector3(L * 0.5 + 0.5, hh * 0.5, D * 0.5 - 0.2 - (i + 0.5) * stepd))])
