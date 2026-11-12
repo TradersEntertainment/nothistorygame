@@ -297,8 +297,8 @@ func _audit(id: String, k: float, lod: int, perches: Array, climbs: Array) -> vo
 	pq.collide_with_bodies = true
 	for i in nx:
 		for j in nz:
-			var px := b.position.x + i * dstep
-			var pz := b.position.z + j * dstep
+			var px := b.position.x + i * dstep + 0.037
+			var pz := b.position.z + j * dstep + 0.037
 			var o2 := 0
 			for yy in [0.7, 1.5]:
 				pq.position = Vector3(px, yy, pz)
@@ -336,18 +336,16 @@ func _audit(id: String, k: float, lod: int, perches: Array, climbs: Array) -> vo
 				run2 = 0
 			else:
 				run2 += 1
-	if dar > 0 and String(_args.get("dump", "0")) == "1":
-		var shown := 0
-		for i in range(1, nx - 1):
-			for j in range(1, nz - 1):
-				if occ[i * nz + j] == 0 and occ[(i - 1) * nz + j] == 1 and occ[(i + 1) * nz + j] == 1 and shown < 2:
-					shown += 1
-					var txt := "dump @(%.2f,%.2f):\n" % [b.position.x + i * dstep, b.position.z + j * dstep]
-					for jj in range(maxi(j - 6, 0), mini(j + 7, nz)):
-						for ii in range(maxi(i - 8, 0), mini(i + 9, nx)):
-							txt += "#" if occ[ii * nz + jj] == 1 else "."
-						txt += "\n"
-					print(txt)
+	if String(_args.get("dump", "0")) == "1" and _args.has("dx"):
+		var i0 := int((float(_args["dx"]) - b.position.x) / dstep)
+		var j0 := int((float(_args["dz"]) - b.position.z) / dstep)
+		var txt := "dump dx=%s dz=%s (x sağa, z aşağı; hücre %.2f):\n" % [_args["dx"], _args["dz"], dstep]
+		for jj in range(maxi(j0 - 10, 0), mini(j0 + 11, nz)):
+			txt += "%6.2f " % (b.position.z + jj * dstep)
+			for ii in range(maxi(i0 - 10, 0), mini(i0 + 11, nx)):
+				txt += "#" if occ[ii * nz + jj] == 1 else "."
+			txt += "\n"
+		print(txt)
 	# ---- havada: tabanı zeminden > 5 cm yukarıda ve komşu katıya değmeyen kütle
 	var havada := 0
 	var hv_ornek := ""
