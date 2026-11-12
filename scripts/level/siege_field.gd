@@ -109,6 +109,7 @@ func build() -> void:
 		world_on = true
 		wall_x_min = maxf(wall_x_min, World1453.WALL_N_X)
 		add_to_group(MapView.GROUP)      # harita (MiniMap, WorldMap) bu alanın dönüşümüyle oyuncuyu bulur
+	World1453.tunnel_keep(self)          # G7: lağım ağızlarının yeri (ova, hendeğin önü) keep'e
 	_terrain()
 	await _step("_terrain()")
 	_wall_extension()
@@ -127,6 +128,7 @@ func build() -> void:
 	await _step("_city()")
 	_no_mans_land()
 	await _step("_no_mans_land()")
+	World1453.tunnel_build(self)         # G7: lağım ağızları (10L, 21O) ovada, surlara doğru
 	_trench()
 	await _step("_trench()")
 	_batteries()
