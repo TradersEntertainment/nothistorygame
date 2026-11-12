@@ -34,7 +34,7 @@ const BOLGELER := ["camp", "byz_walls"]
 ## Tolga'nın şehir bölümleri (ByzCity "walls" hub'ı; bölüm dosyasına dokunulmaz: sahnenin betiğinden tanınır). Varsayılan
 ## AÇIK olanlar yalnız kareleri temiz olanlar (docs/_kanit_ist2_baglama4/rapor.md); öbürleri `--ist2-deneme=<id>` ile denenir.
 const TOLGA := ["6", "10h", "12b", "23", "24"]
-const TOLGA_ACIK: Array = []
+const TOLGA_ACIK: Array = ["12b"]
 ## Bölüm yereli → v2 (dönüşümlü bağlama). kok.transform bunun tersi.
 static var xf := Transform3D()
 ## Bölümün yerel çapası: CampDay.OTAG_POS (v2 otağının yerine), ByzCity sur parçasının ortası (oyun alanının ortasına)
