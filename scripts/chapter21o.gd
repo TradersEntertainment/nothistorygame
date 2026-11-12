@@ -548,15 +548,16 @@ func _give_pick() -> void:
 
 
 ## Sol elin kamera yerelindeki dönüşü (Player._animate_free_hand'in formülü: omuzdan tutuş noktasına bakar, roll -20, tilt 30)
-## ve avuç altından geçen sapın dönüşü. Sap avuca enine yakın yatar (parmaklar sapı sarar), baş yukarı-aşağı.
+## ve avuç altından geçen sapın dönüşü.
 func _pick_in_hand(hold: Vector3) -> Transform3D:
 	var q := Quaternion(Basis.looking_at((hold - Vector3(-0.2, -0.45, 0.12)).normalized(), Vector3.UP)) \
 		* Quaternion(Vector3(0, 0, 1), deg_to_rad(-20.0)) * Quaternion(Vector3(1, 0, 0), deg_to_rad(30.0))
 	var hb := Basis(q)
-	var d := Vector3(0.8, 0.2, -0.56).normalized()
-	var y := (Vector3.UP - d * d.dot(Vector3.UP)).normalized()
+	# Sap yukarı-ileri (avuca 45° eğik: parmaklar sarar), T başı ekranda yatay: karşıdan iki ucu da görünür
+	var d := Vector3(0.35, 0.85, -0.2).normalized()
+	var y := (Vector3.RIGHT - d * d.dot(Vector3.RIGHT)).normalized()
 	var x := y.cross(d)
-	return Transform3D(hb * Basis(x, y, d), hold + hb * Vector3(-0.02, -0.075, -0.06))
+	return Transform3D(Basis(x, y, d), hold + hb * Vector3(-0.02, -0.075, -0.06))
 
 
 func _drop_pick() -> void:

@@ -953,7 +953,7 @@ func _remote_prop() -> Node3D:
 
 
 ## Tolga'nın sol eli kumandanın olduğu yere gider, Hikmet'in kolu da oraya uzanır: kumanda Hikmet'in avucundayken iki el
-## buluşur (havada süzülme yok); temastan sonra kumanda Tolga'nın elinde kalır, Hikmet çekilir. Toplam süre eskisi gibi 0,95 sn.
+## buluşur (havada süzülme yok); temastan sonra kumanda Tolga'nın elinde kalır, Hikmet çekilir. Toplam 0,6 sn (eskisi otomatik testte 0,6, oynanışta 0,95).
 func _meet_remote(rm: Node3D) -> void:
 	var rg := Handover.rig_of(hikmet)
 	var ok: bool = rm != null and rg != null and is_instance_valid(rm) and rm.is_inside_tree()
@@ -964,7 +964,7 @@ func _meet_remote(rm: Node3D) -> void:
 		Stage.reach(hikmet, player.camera.to_global(player.free_hold), 0.4)
 	else:
 		player.hand_gesture("reach")
-	await Handover.wait(self, 0.55)
+	await Handover.wait(self, 0.35)
 	if ok and is_instance_valid(rm):
 		# Temas: kumanda Hikmet'in avucundan Tolga'nın eline geçer, el onu geri çeker
 		var gt := rm.global_transform
@@ -975,7 +975,7 @@ func _meet_remote(rm: Node3D) -> void:
 		rm.global_transform = gt
 		var tw := rm.create_tween()
 		tw.tween_property(rm, "position", Vector3(0, -0.04, 0.0), 0.05 if Handover.instant() else 0.2)
-		await Handover.wait(self, 0.4)
+		await Handover.wait(self, 0.25)
 		rm.queue_free()
 	elif rg:
 		rg.release_item()
