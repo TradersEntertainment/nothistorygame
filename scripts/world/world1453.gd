@@ -441,7 +441,7 @@ static func bake(list: Array, top: Node3D, xf: Transform3D, parent: Node3D, node
 			continue
 		var t := xf * rel
 		var nb := t.basis.inverse().transposed()
-		if max_tris > 0 and not (n.mesh is PrimitiveMesh):
+		if max_tris > 0 and not (n.mesh is PrimitiveMesh) and _roofish(n, top):
 			var tc := 0
 			for si in n.mesh.get_surface_count():
 				tc += n.mesh.surface_get_array_index_len(si) / 3 if n.mesh.surface_get_array_index_len(si) > 0 else n.mesh.surface_get_array_len(si) / 3
@@ -534,6 +534,18 @@ static func bake(list: Array, top: Node3D, xf: Transform3D, parent: Node3D, node
 	mi.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_ON
 	parent.add_child(mi)
 	return mi
+
+
+## Kiremit çatı parçası mı (max_tris yalnız bunlara uygulanır: bütün bir ev ağı da 300 üçgeni aşar ve prizmaya çevrilince
+## beyaz levha oluyordu): düğüm, atası ya da ağın adı "Roof" içerir
+static func _roofish(n: Node, top: Node) -> bool:
+	var cur: Node = n
+	while cur != null and cur != top:
+		if String(cur.name).containsn("roof"):
+			return true
+		cur = cur.get_parent()
+	var m: Mesh = (n as MeshInstance3D).mesh
+	return m != null and (m.resource_path.containsn("roof") or m.resource_name.containsn("roof"))
 
 
 ## Desen dokusunun ortalama rengi (yoksa ya da henüz üretilmediyse beyaz)
