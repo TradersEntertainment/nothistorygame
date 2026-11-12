@@ -140,10 +140,16 @@ func _build_walls_scene() -> void:
 	# gediğin içindeydi)
 	var lx := [-10.5, 9.5, -24.0, 22.0, 28.0]
 	for i in 5:
-		var l := Ladder.new(9.0, 16.0)
+		# Boyu mazgalın üstüne çıkar (9,8 m, 14,5°): eskiden ucu mazgal taşının 0,25 m altında, surun dış yüzünde
+		# kalıyordu; sur yolundan görünmüyor, itilirken eller ona yetişmiyordu. Ayağı aynı yerde.
+		var l := Ladder.new(9.8, 14.5)
 		l.position = Vector3(lx[i], 0, LandWalls.OUTER_Z1 + 2.6)
-		l.visible = false
 		add_child(l)
+		# Sırıklar ve basamaklar tek ağ (merdiven başına ~29 çizim yerine 1; görünüş aynı, ağ merdivenle döner)
+		var fr := l.get_child(0) as Node3D
+		if fr and l.is_inside_tree():
+			Props.bake_static(fr, fr.get_children())
+		l.visible = false
 		ladders.append(l)
 	# Surların önündeki hücum: ova boyunca sancaklı ordu, sura koşan dalgalar, merdivenlerde tırmananlar,
 	# ateş eden bataryalar (Bizans tarafından, surdan görülür). Oyuncunun alanı surların içi.
@@ -2022,6 +2028,7 @@ func _deliver() -> void:
 
 func _process(delta: float) -> void:
 	_t += delta
+	_ladder_push_tick(delta)
 	if walls == null:
 		return
 	# Hücum sırasında surun ötesinde ateş, patlama, toz
@@ -2067,6 +2074,134 @@ func _process(delta: float) -> void:
 			hud.set_qte(tr("UI_QTE20_COVER"))
 		if _gun_t <= 0.0:
 			_fire()
+
+
+## Merdiveni it (Melee: tırmanan varken merdiven başında E basılı): Tolga mazgal taşının başına çıkar, üstünden eğilir,
+## iki eli merdivenin iki sırığının ucunda (Player.hold_both, merdivene bağlı: merdiven oynarsa eller onunla gider);
+## kılıç ve kalkan o an elde görünmez. Merdiven devrilmeye başlayınca eller bir an onunla gider ve bırakır, Tolga
+## geri çekilir. Eskiden yalnız basılı tutma göstergesi vardı, eller kılıçta kalıyordu.
+var _push := {}
+var _push_t := 0.0
+var _push_state := ""
+var _push_back := Vector3.INF
+var _push_look := Vector2.ZERO
+var _push_hid: Array = []
+var _push_duel: Duel
+
+
+func _ladder_push_tick(delta: float) -> void:
+	var melee: Melee = null
+	for c in get_children():
+		if c is Melee and not c.is_queued_for_deletion():
+			melee = c
+	if _push.is_empty():
+		if melee == null or player == null or player.frozen:
+			return
+		for l: Dictionary in melee.ladders:
+			if float(l["hold"]) > 0.0 and float(l["down"]) <= 0.0 and is_instance_valid(l["node"]):
+				_push_begin(melee, l)
+				break
+		return
+	_push_t += delta
+	var lad := _push["node"] as Ladder
+	# Devrilirken bir anlık donma (atılanların öldürme sayımı) tutuşu bitirmez; tutarken donarsa bırakır
+	if melee == null or not is_instance_valid(lad) or (player.frozen and _push_state == "grip"):
+		_push_end()
+		return
+	match _push_state:
+		"grip":
+			if float(_push["down"]) > 0.0:
+				_push_state = "tip"       # itildi: eller merdivenle bir an gider, sonra bırakır
+				_push_t = 0.0
+			elif float(_push["hold"]) <= 0.0:
+				_push_end()
+				return
+			_push_aim(lad, delta)
+			# Kılıç ve kalkan, eller merdivene geçtikten sonra (eller meşgulken) elden kalkar
+			_push_hide_blade()
+		"tip":
+			# Merdiven devrilirken bakış onda kalır, eller onunla bir an gider ve bırakır
+			_push_aim(lad, delta, false)
+			if _push_t >= 0.35:
+				_push_end()
+
+
+func _push_hide_blade() -> void:
+	if not _push_hid.is_empty() or player.get("_hands_busy") != true or not is_instance_valid(_push_duel):
+		return
+	for pv in [_push_duel.sword_pivot, _push_duel.shield_pivot]:
+		if pv and is_instance_valid(pv) and (pv as Node3D).visible:
+			(pv as Node3D).visible = false
+			_push_hid.append(pv)
+
+
+func _push_grip_pts(lad: Ladder) -> Array:
+	var b := Basis.from_euler(Vector3(deg_to_rad(-lad.tilt), 0, 0))
+	var t := lad.height - 0.85        # mazgal taşının hemen üstünde: Tolga taşın üstünden eğilip sırıkları kavrar
+	return [b * Vector3(-Ladder.WIDTH * 0.5, t, 0.06), b * Vector3(Ladder.WIDTH * 0.5, t, 0.06)]
+
+
+func _push_begin(melee: Melee, l: Dictionary) -> void:
+	_push = l
+	_push_t = 0.0
+	_push_state = "grip"
+	var lad := l["node"] as Ladder
+	_push_back = player.global_position
+	_push_look = Vector2(player.rotation.y, player.camera.rotation.x)
+	player.pinned = true
+	_push_hid.clear()
+	_push_duel = melee.duel
+	player.set("_hand_shown", true)
+	player.hand.visible = true
+	var pts := _push_grip_pts(lad)
+	player.hold_both(pts[0], pts[1], lad)
+	player.call("_sync_busy_hands")      # eller hemen "meşgul": kılıç aynı karede kalkabilsin
+	_push_hide_blade()
+
+
+## Merdivenin ucunun hemen gerisinde, mazgal taşının başında durur; bakış iki elin ortasına yumuşakça iner
+func _push_aim(lad: Ladder, delta: float, step := true) -> void:
+	var pts := _push_grip_pts(lad)
+	var mid: Vector3 = lad.to_global((pts[0] + pts[1]) * 0.5)
+	var fwd := lad.front_dir()
+	fwd.y = 0.0
+	fwd = fwd.normalized()
+	var spot := Vector3(mid.x, _push_back.y, mid.z) - fwd * 0.38
+	var k := clampf(delta * 6.0, 0.0, 1.0)
+	if step:
+		player.global_position = player.global_position.lerp(spot, k)
+		player.eye_height = lerpf(player.eye_height, Player.EYE - 0.4, k)      # taşın üstüne eğilir
+	var to := mid - player.camera.global_position
+	player.rotation.y = lerp_angle(player.rotation.y, atan2(-to.x, -to.z), k)
+	player.camera.rotation.x = lerpf(player.camera.rotation.x, atan2(to.y, Vector2(to.x, to.z).length()), k)
+
+
+func _push_end() -> void:
+	if _push.is_empty():
+		return
+	_push = {}
+	_push_state = ""
+	# Önce kılıç ele döner, sonra eller merdivenden kalkar (kılıçsız ve eli boş an olmasın)
+	for pv in _push_hid:
+		if is_instance_valid(pv):
+			(pv as Node3D).visible = true
+	_push_hid.clear()
+	player.release_both()
+	player.set("_hand_shown", false)
+	if player.hand:
+		player.hand.visible = false
+	# Sur yoluna geri adım (mazgal taşının başından), doğrulur ve bakışı itmeden önceki yere (dövüşe) yumuşakça döner
+	create_tween().tween_property(player, "eye_height", player.eye_rest, 0.35).set_trans(Tween.TRANS_SINE)
+	var lk := create_tween().set_parallel()
+	lk.tween_property(player, "rotation:y", player.rotation.y + wrapf(_push_look.x - player.rotation.y, -PI, PI), 0.35).set_trans(Tween.TRANS_SINE)
+	lk.tween_property(player.camera, "rotation:x", _push_look.y, 0.35).set_trans(Tween.TRANS_SINE)
+	if _push_back != Vector3.INF and not player.frozen:
+		var tw := create_tween()
+		tw.tween_property(player, "global_position", _push_back, 0.35).set_trans(Tween.TRANS_SINE)
+		tw.tween_callback(func(): player.pinned = false)
+	else:
+		player.pinned = false
+	_push_back = Vector3.INF
 
 
 func _fire() -> void:

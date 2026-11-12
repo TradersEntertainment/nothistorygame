@@ -444,6 +444,9 @@ func _ladders() -> void:
 			Props.cyl(l, 0.075, len, Vector3(sx, len * 0.5, 0), Color("8a6440"), Vector3.ZERO, 6)
 		for k in int(len / 0.45):
 			Props.box(l, Vector3(0.7, 0.07, 0.07), Vector3(0, 0.3 + k * 0.45, 0), Color("8a6440"))
+		# Sırıklar ve basamaklar tek ağ (merdiven başına ~19 çizim yerine 1; görünüş aynı)
+		if l.is_inside_tree():
+			Props.bake_static(l, l.get_children())
 		# Tırmananlar: iki-üç kişi, farklı yüksekliklerde
 		for k in 3:
 			var s := Soldier.new([Color("8a3a2e"), Color("3e4c68"), Color("6a5a48")][k], "stand", ["bork", "helmet", "turban"][k])
@@ -850,6 +853,8 @@ func _ladder_team(x: float) -> void:
 		Props.box(lad, Vector3(0.09, 0.09, 7.2), Vector3(sx, 0, 0), Color("8a6440"))
 	for k in 15:
 		Props.box(lad, Vector3(0.6, 0.06, 0.06), Vector3(0, 0, -3.4 + k * 0.48), Color("8a6440"))
+	if lad.is_inside_tree():
+		Props.bake_static(lad, lad.get_children())
 	var men: Array = []
 	for k in 3:
 		var s := Soldier.new([Color("d8cfb8"), Color("6a5a48"), Color("8a3a2e")][k], "stand", ["bork", "turban", "bork"][k])

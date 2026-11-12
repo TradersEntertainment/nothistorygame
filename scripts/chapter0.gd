@@ -34,6 +34,11 @@ var _caption: Control
 var _place: Label
 var freeze_cam: Camera3D
 var froze := false
+## Barikatın ardındaki okçular ({"p", "t", "next", "state"}) ve okları bekleyen iki savunucu
+var _archers: Array = []
+var _waiting: Array = []
+var _archers_on := true
+var _shafts: Array = []        # [ok, hız, kalan süre, yer yüksekliği]
 
 
 func _ready() -> void:
@@ -68,10 +73,21 @@ func _build() -> void:
 		var d := Person.new({"coat": [Color("7a2a24"), Color("5a6a7a"), Color("8a8e96")][i % 3], "pants": Color("3a2a22"), "hat": "helm",
 			"beard": i % 2 == 0, "mustache": true, "n": 40 + i})
 		d.set_meta("no_talk", true)
-		d.set_meta("spk", "SPK_DEFENDER")       # "Oklar!": kartta en yakın savunucu
 		# Barikatın arkasında (tabyanın içinde değil)
 		d.position = LandWalls.on_rubble(LandWalls.BREACH + Vector3(-3.2 + i * 1.3, 0, -2.7 - (i % 2) * 0.35))
 		world.add_child(d)
+		# Eskiden altısı da eli boş, aynı yöne dönük dikiliyordu (oyuncu ok taşırken önünde bekleyen kalabalık). Kenardaki
+		# dördü okçu: oku biten yayını gerip barikatın üstünden atar (her biri kendi saatinde); ortadaki ikisi okları
+		# bekleyen savunucular: koşup gelen Tolga'ya bakar, demeti o alır ("Oklar!": kartta en yakın savunucu).
+		if i in [2, 3]:
+			d.set_meta("spk", "SPK_DEFENDER")
+			d.look_target = player
+			_waiting.append(d)
+		else:
+			d.rotation.y = [-0.32, 0.12, 0.0, 0.0, -0.18, 0.28][i]
+			d.equip("bow")
+			_archers.append({"p": d, "t": 0.0, "next": [0.6, 2.4, 0.0, 0.0, 1.5, 3.3][i], "state": "rest"})
+	Crowd.idle_vary(_waiting, {"every": Vector2(2.5, 5.0), "emotes": ["point", "wave", "nod"]})
 	# Surun önü: sancaklı ordu, sura koşan dalgalar, merdivenler, bataryalar, surda savunanlar, ok yağmuru
 	assault = Assault.new()
 	assault.keep = Rect2(-40.0, -10.0, 80.0, 36.0)
@@ -112,7 +128,7 @@ func _build() -> void:
 	world.add_child(chaos)
 	# Başın üstünde kalkan (birinci şahıs: ekranın üst solunda, alttan görünür)
 	var sh := Node3D.new()
-	sh.position = Vector3(-0.44, 0.34, -0.78)
+	sh.position = Vector3(-0.44, 0.25, -0.78)      # iki el tutuşunun erişiminde (sol el altından kavrar)
 	sh.rotation = Vector3(-1.05, 0.0, 0.35)
 	sh.scale = Vector3.ONE * 0.75
 	player.camera.add_child(sh)
@@ -122,12 +138,13 @@ func _build() -> void:
 	_shield = sh
 	# Kolun altında ok demetleri (gedikteki okçulara; 29 Mayıs gecesi okçuların oku tükeniyordu)
 	_carry = Node3D.new()
-	_carry.position = Vector3(0.32, -0.5, -0.75)
+	_carry.position = Vector3(0.3, -0.42, -0.7)
 	_carry.rotation = Vector3(0.2, 0.9, 0.35)
 	player.camera.add_child(_carry)
 	for k in 2:
 		var bd := BattleExtras.arrow_bundle(_carry)
 		bd.position = Vector3(k * 0.14, -k * 0.05, k * 0.06)
+		_merge_shafts(bd)
 	Props.strip_outlines(_carry)
 	player.speed_mult = 0.9
 
@@ -188,6 +205,7 @@ func _run() -> void:
 	player.global_position = START
 	player.face(LINE + Vector3(0, 1.4, 0))
 	player.show_remote(false)
+	_hands_on_load(true)
 	_capture_mouse()
 	Audio.music("tension", 0.0)
 	Audio.ambience("amb_wall_night")
@@ -260,6 +278,7 @@ func _nudge() -> void:
 
 
 func _process(delta: float) -> void:
+	_archer_tick(delta)
 	if phase != "run":
 		return
 	# Oklar oyuncunun çevresine yağar (üstüne değil: yakınına saplanır)
@@ -274,6 +293,127 @@ func _process(delta: float) -> void:
 		phase = "delivered"
 
 
+## Demetin 18 okunu tek ağda birleştirir (18 çizim yerine 1; görünüş aynı: ok ağı malzemesiz, birleşik ağ da öyle).
+## Demet savunucunun elinde sahnede kaldığı için (eskiden silinirdi) çizim yükü artmasın.
+func _merge_shafts(bd: Node3D) -> void:
+	var st := SurfaceTool.new()
+	st.begin(Mesh.PRIMITIVE_TRIANGLES)
+	var n := 0
+	for c in bd.get_children():
+		var mi := c as MeshInstance3D
+		if mi == null or mi.mesh != Assault.arrow_mesh():
+			continue
+		var arr := mi.mesh.surface_get_arrays(0)
+		var verts: PackedVector3Array = arr[Mesh.ARRAY_VERTEX]
+		var norms: PackedVector3Array = arr[Mesh.ARRAY_NORMAL]
+		var cols = arr[Mesh.ARRAY_COLOR]
+		var idx = arr[Mesh.ARRAY_INDEX]
+		var xf := mi.transform
+		var count: int = idx.size() if idx != null and idx.size() > 0 else verts.size()
+		for j in count:
+			var i: int = idx[j] if idx != null and idx.size() > 0 else j
+			if cols != null and cols.size() > i:
+				st.set_color(cols[i])
+			st.set_normal((xf.basis * norms[i]).normalized())
+			st.add_vertex(xf * verts[i])
+		bd.remove_child(mi)
+		mi.queue_free()
+		n += 1
+	if n > 0:
+		var out := MeshInstance3D.new()
+		out.mesh = st.commit()
+		bd.add_child(out)
+
+
+## Koşarken iki el yükte: sol el baş üstündeki kalkanın altında, sağ el koltuk altındaki ok demetlerini kavrar
+## (eskiden demetler elsiz, kameranın altında duruyordu). Demetler verilince sağ el iner, sol el kalkanda kalır.
+func _hands_on_load(on: bool) -> void:
+	var grip_l := _shield.position + Vector3(0.08, -0.2, 0.12)
+	if on and _carry:
+		player.set("_hand_shown", true)
+		player.hand.visible = true
+		player.hold_both(grip_l, _carry.position + Vector3(-0.02, 0.06, 0.03))
+	else:
+		# Sağ el demetleri uzatır (hand_gesture "reach"), sonra iner; sol el kalkanın altında kalır
+		player.release_both()
+		player.free_hold = grip_l
+		get_tree().create_timer(0.05 if Stage.fast() else 0.5, false).timeout.connect(func():
+			player.set("_hand_shown", false)
+			player.hand.visible = false)
+
+
+## Okçular: yayı gerer (Rig "aim", yay kalkar), bir an nişan alır, oku barikatın üstünden ovaya bırakır, yayı indirip
+## bekler. Ok yere inince silinir (sahnede birikmez; çizim yükü bir iki ok).
+func _archer_tick(delta: float) -> void:
+	for a: Dictionary in _archers:
+		var p := a["p"] as Person
+		if not is_instance_valid(p) or p.rig == null:
+			continue
+		var bow := p.find_child("Bow", true, false) as Node3D
+		a["t"] = float(a["t"]) + delta
+		if not _archers_on:
+			if a["state"] != "rest":
+				a["state"] = "rest"
+				if p.rig.activity == "aim":
+					p.rig.activity = ""
+			if bow:
+				bow.rotation.x = lerpf(bow.rotation.x, 0.0, clampf(delta * 6.0, 0.0, 1.0))
+			continue
+		match a["state"]:
+			"rest":
+				if bow:
+					bow.rotation.x = lerpf(bow.rotation.x, 0.0, clampf(delta * 6.0, 0.0, 1.0))
+				if float(a["t"]) >= float(a["next"]) and p.rig.lock == 0:
+					a["t"] = 0.0
+					a["state"] = "draw"
+					a["next"] = randf_range(1.0, 1.5)
+					p.rig.activity = "aim"
+			"draw":
+				if bow:
+					bow.rotation.x = lerpf(bow.rotation.x, 1.45, clampf(delta * 6.0, 0.0, 1.0))
+				if float(a["t"]) >= float(a["next"]):
+					a["t"] = 0.0
+					a["state"] = "rest"
+					a["next"] = randf_range(2.2, 4.8)
+					p.rig.activity = ""
+					_loose(p)
+	for k in range(_shafts.size() - 1, -1, -1):
+		var s: Array = _shafts[k]
+		var n := s[0] as Node3D
+		s[2] = float(s[2]) - delta
+		if not is_instance_valid(n) or float(s[2]) <= 0.0 or n.global_position.y < float(s[3]):
+			if is_instance_valid(n):
+				n.queue_free()
+			_shafts.remove_at(k)
+			continue
+		var v: Vector3 = s[1]
+		v.y -= 9.8 * delta
+		s[1] = v
+		n.global_position += v * delta
+		n.look_at(n.global_position - v, Vector3.UP)      # ok ağının ucu +Z: uç uçuş yönünde
+
+
+func _loose(p: Person) -> void:
+	var fwd := p.global_basis.z
+	fwd.y = 0.0
+	fwd = fwd.normalized() if fwd.length() > 0.1 else Vector3.BACK
+	var from := p.global_position + Vector3(0, 1.5, 0) + fwd * 0.5
+	var to := p.global_position + fwd * randf_range(16.0, 26.0) + p.global_basis.x * randf_range(-3.0, 3.0)
+	to.y = Assault.ground_y(to.x, to.z)
+	var t := randf_range(1.2, 1.6)
+	var v := (to - from) / t
+	v.y = (to.y - from.y + 0.5 * 9.8 * t * t) / t
+	var mi := MeshInstance3D.new()
+	mi.mesh = Assault.arrow_mesh()
+	mi.material_override = Crowd.material()
+	mi.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
+	world.add_child(mi)
+	mi.global_position = from
+	_shafts.append([mi, v, t + 0.1, to.y])
+	if player.global_position.distance_to(from) < 12.0:
+		Audio.sfx("whoosh_fly", -18.0, randf_range(1.2, 1.5))
+
+
 ## Oklar verilir; gözcü bağırır, herkes siper alır; büyük top; gülle arkaya düşer.
 func _hit() -> void:
 	player.frozen = true
@@ -286,18 +426,30 @@ func _hit() -> void:
 			to = who.global_position + Vector3(0, 1.1, 0)
 		var xf := _carry.global_transform
 		_carry.get_parent().remove_child(_carry)
-		add_child(_carry)
-		_carry.global_transform = xf
+		_hands_on_load(false)
 		player.hand_gesture("reach")
-		var ht := _carry.create_tween()
-		ht.tween_property(_carry, "global_position", to, 0.05 if Stage.fast() else 0.4).set_trans(Tween.TRANS_SINE)
-		ht.tween_callback(_carry.queue_free)
+		if who is Person and who.global_position.distance_to(player.global_position) < 6.0:
+			# Savunucu demetleri iki eliyle alır ve göğsünde tutar (eskiden göğsüne uçup yok oluyordu)
+			var pw := who as Person
+			pw.look_target = null
+			pw.face_toward(player.global_position)
+			_carry.rotation = Vector3.ZERO
+			for c in _carry.get_children():
+				(c as Node3D).rotation = Vector3(PI * 0.5, 0, 0)       # demetler dik, avuçta demet gibi (yanındakinin yüzüne uzanmaz)
+			pw.receive_item(_carry, xf.origin, false, false)
+		else:
+			add_child(_carry)
+			_carry.global_transform = xf
+			var ht := _carry.create_tween()
+			ht.tween_property(_carry, "global_position", to, 0.05 if Stage.fast() else 0.4).set_trans(Tween.TRANS_SINE)
+			ht.tween_callback(_carry.queue_free)
 		_carry = null
 	Audio.sfx("land_thud", -10.0)
 	hud.bark("SPK_DEFENDER", "D0_S_ARROWS", 2.0)
 	await get_tree().create_timer(1.6, false).timeout
 	hud.bark("SPK_LOOKOUT", "D20_L_WARN_2", 2.4, true)      # gözcü topu görür, askerin sözünü keser: bağırış toptan önce
 	walls.fire_flash()
+	_archers_on = false
 	BattleExtras.all_take_cover(world, [])
 	Audio.sfx("cannon", 0.0, 0.8)
 	# Top surun ardında: gökyüzü turuncu parlar, yer sarsılır

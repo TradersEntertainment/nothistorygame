@@ -819,14 +819,18 @@ func _breakthrough() -> void:
 	_tap(true)
 	await _w(0.4)
 	# Kazma ucu delip çıkar, geri çekilir
-	var tip := Node3D.new()
+	# Gerçek kazma (Items.tool_model, ~20 cm'lik demir uç): ucu yüzden Tolga'ya doğru çıkar, sapı yüzün içinde kalır.
+	# Eskiden yarım metrelik çıplak gri bir çubuk havada beliriyordu.
+	var tip := Items.tool_model("pickaxe")
 	add_child(tip)
-	tip.global_position = _face.global_position + Vector3(0.2, 1.35, -0.2)
-	Props.box(tip, Vector3(0.05, 0.06, 0.5), Vector3(0, 0, 0), Color("4a4a50"))
+	tip.rotation = Vector3(-PI * 0.5, 0, 0)        # uç (-Y) Tolga'ya (+Z), sap yukarıda, yüzün içinde
+	var head_z := _face.global_position.z - 0.05
+	tip.global_position = Vector3(_face.global_position.x + 0.2, _face.global_position.y + 1.35 - 0.64, head_z)
 	var poke := create_tween()
-	poke.tween_property(tip, "global_position:z", _face.global_position.z + 0.55, _d(0.12))
+	poke.tween_property(tip, "global_position:z", _face.global_position.z + 0.2, _d(0.12))
 	Audio.sfx("land_thud", -2.0, 1.4)
-	Vfx.dust(self, _face.global_position + Vector3(0.2, 1.35, 0.5), 0.5)
+	# Toz ucun altından dökülür (eskiden ucun önünde bulut olup kazmayı örtüyordu)
+	Vfx.dust(self, _face.global_position + Vector3(0.25, 1.05, 0.3), 0.3)
 	await poke.finished
 	# Delikten kandil ışığı sızar
 	var glow := OmniLight3D.new()
@@ -870,6 +874,11 @@ func _breakthrough() -> void:
 		miner.rig.lock += 1
 		miner._arm_r.rotation = Vector3(-1.05, 0, 0.1)
 		miner._elbow_r.rotation = Vector3(-0.9, 0, 0)
+	# Kazma sol elde, sapı öne-yukarı: demir başı gövdenin önünde, kandilin altında seçilir (eskiden sap ön kolun
+	# boyunca yukarı, baş dirseğin yanında gövdenin ardında kalıyordu; "öbür elinde kazma" karede okunmuyordu)
+	var pk := miner.find_child("Pick", true, false) as Node3D
+	if pk:
+		pk.rotation_degrees = Vector3(55, 0, 12)
 	player.face(miner.global_position + Vector3(0, 1.5, 0))
 	await _w(1.0)
 
