@@ -1939,7 +1939,7 @@ func _place_v2() -> void:
 				var gq := Vector2(p.x, p.z) + gd * gl * (q / 6.0 - 0.5)
 				ghs.append(IstGeo.h(gq.x, gq.y))
 			ghs.sort()
-			p.y = maxf(float(ghs[3]), -0.6) - 0.05
+			p.y = maxf(float(ghs[3]), OTURTMA.Y_MIN if String((YER2[id] as Dictionary).get("hat", "")) == "kara_suru" else -0.6) - 0.05
 			holder.position = p
 			it["pos"] = p
 			var o: Dictionary = IstSurlar.OPTS[id]
@@ -2545,7 +2545,11 @@ func _kose_dolgu(ad: String, kur: String) -> void:
 			if kur == "kara" and bi >= 3:
 				# dış bölge kademesi (parateikhion, hendek): iki ucun ortası
 				yb0 += minf(dya, dyb)
-				yt = float(bd[3]) + maxf(dya, dyb)
+				# OTURTMA: toprak ve hendek şeritleri ALÇAK ucun düzeyinde (yüksek uçta alçak dilimin terasında arazinin
+				# üstüne çıkan levha oluyordu); alçak duvar (parateikhion) yüksek uçta
+				yt = float(bd[3]) + (maxf(dya, dyb) if bi == 4 else minf(dya, dyb))
+			elif kur == "kara" and bi == 1:
+				yt = float(bd[3])
 			elif kur == "kara" and bi == 2:
 				yb0 = minf(minf(dya, dyb), 0.0) - 0.5
 			polys.append([q, yb0, yt, bd[4], bd[5]])
@@ -2776,7 +2780,8 @@ func _hat_piece(ad: String, kur: String, mid: Vector2, d: Vector2, L: float, see
 		var q := mid + d * L * (k / 6.0 - 0.5)
 		hs.append(IstGeo.h(q.x, q.y))
 	hs.sort()
-	var lo := maxf(float(hs[3]), -0.6)
+	# OTURTMA: kara surunda taban deniz düzeyine inmez (Lykos vadisi: sur dibi kıyı/ıslak zemin gibi boyanıyordu)
+	var lo := maxf(float(hs[3]), OTURTMA.Y_MIN if kur == "kara" else -0.6)
 	var dip := maxf(float(hs[0]), -2.5)
 	var make: Callable
 	match kur:

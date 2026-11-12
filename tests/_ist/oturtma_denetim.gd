@@ -145,7 +145,7 @@ func _topla(alan: Rect2) -> void:
 			var ar := absf((b.x - a.x) * (cc.z - a.z) - (cc.x - a.x) * (b.z - a.z))
 			if ar < 1e-5:
 				continue
-			_tri.append([a, b, cc, tur])
+			_tri.append([a, b, cc, tur, yol.get_slice("IstSehir/", 1) if hata >= 0.0 else ""])
 			var idx := _tri.size() - 1
 			for gx in range(floori(lo.x / IZ), floori(hi.x / IZ) + 1):
 				for gz in range(floori(lo.y / IZ), floori(hi.y / IZ) + 1):
@@ -176,7 +176,7 @@ func _isin(q: Vector2) -> Array:
 		var w := (v0.x * v2.y - v2.x * v0.y) / den
 		if u < -1e-4 or w < -1e-4 or u + w > 1.0001:
 			continue
-		o.append([a.y + u * (b.y - a.y) + w * (c.y - a.y), t[3]])
+		o.append([a.y + u * (b.y - a.y) + w * (c.y - a.y), t[3], t[4]])
 	o.sort_custom(func(x: Array, y: Array) -> bool: return float(x[0]) > float(y[0]))
 	return o
 
@@ -286,11 +286,16 @@ func _calis() -> void:
 					var qq := p + o * cc
 					var hs := ""
 					for e: Array in _isin(qq):
-						hs += "%s:%.2f " % [e[1], e[0]]
+						hs += "%s:%.2f[%s] " % [e[1], e[0], String(e[2]).right(40)]
 					var nd := 0
-					for e2: Array in IstGeo._duz:
+					var ds := ""
+					for ii in IstGeo._duz.size():
+						var e2: Array = IstGeo._duz[ii]
 						if (e2[0] as Vector2).distance_to(qq) < float(e2[1]) + float(e2[3]):
 							nd += 1
+							ds += "#%d(r%.1f y%.2f g%.1f) " % [ii, e2[1], e2[2], e2[3]]
+					if cc == 10.0:
+						print("HATA duz ", ds, " toplam=", IstGeo._duz.size())
 					print("HATA c=%.0f h=%.2f duz=%d isin=%s" % [cc, IstGeo.h(qq.x, qq.y), nd, hs])
 			var hendekli := not (String(og[0]["id"]) in ["kaligaria", "kerkoporta"])
 			_yuz(sv, p, o, zi0, -1.0, y, "ic_sur_sehir")

@@ -186,7 +186,9 @@ func _piksel(ad: String, px: Vector2) -> void:
 					if dd < best:
 						best = dd
 			if best < INF:
-				hits.append([best, String(gi.get_path()).replace("/root/OturtmaKare/", "")])
+				var mt := gi.material_override
+				var mts := "" if mt == null else (mt.get_class() + (" " + str((mt as BaseMaterial3D).albedo_color) if mt is BaseMaterial3D else " " + str((mt as ShaderMaterial).shader.resource_path if mt is ShaderMaterial and (mt as ShaderMaterial).shader else "")))
+				hits.append([best, String(gi.get_path()).replace("/root/OturtmaKare/", "") + " ab=" + str(ab.size) + " mat=" + mts])
 	hits.sort_custom(func(a: Array, b: Array) -> bool: return float(a[0]) < float(b[0]))
 	for i in mini(4, hits.size()):
 		var w := o + dr * float(hits[i][0])
