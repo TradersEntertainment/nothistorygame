@@ -2015,18 +2015,20 @@ func _merge_groups(groups: Dictionary, lod: int, cen: Vector3) -> MeshInstance3D
 			var sm: Material = m.surface_get_material(si)
 			if sm == null and m is PrimitiveMesh:
 				sm = (m as PrimitiveMesh).material
-			if not by_mat.has(sm):
+			# Aynı doku ve ölçekteki malzemeler (her ev örneğinin pişiricisi kendi kopyasını üretir) tek yüzeyde
+			var mk := _mat_key(sm)
+			if not by_mat.has(mk):
 				var nst := SurfaceTool.new()
 				nst.begin(Mesh.PRIMITIVE_TRIANGLES)
-				by_mat[sm] = nst
+				by_mat[mk] = [nst, sm]
 			for xf: Transform3D in groups[key]:
-				(by_mat[sm] as SurfaceTool).append_from(m, si, Transform3D(xf.basis, xf.origin - cen))
+				(by_mat[mk][0] as SurfaceTool).append_from(m, si, Transform3D(xf.basis, xf.origin - cen))
 	if by_mat.is_empty():
 		return null
 	var am := ArrayMesh.new()
-	for sm in by_mat:
-		(by_mat[sm] as SurfaceTool).commit(am)
-		am.surface_set_material(am.get_surface_count() - 1, sm)
+	for mk in by_mat:
+		(by_mat[mk][0] as SurfaceTool).commit(am)
+		am.surface_set_material(am.get_surface_count() - 1, by_mat[mk][1])
 	var mi := MeshInstance3D.new()
 	mi.mesh = am
 	mi.position = cen
@@ -2034,6 +2036,22 @@ func _merge_groups(groups: Dictionary, lod: int, cen: Vector3) -> MeshInstance3D
 	mi.set_meta("no_walk", true)
 	add_child(mi)
 	return mi
+
+
+static var _mkeys := {}
+
+static func _mat_key(m: Material) -> String:
+	if m == null:
+		return "null"
+	if _mkeys.has(m):
+		return _mkeys[m]
+	var k := str(m.get_instance_id())
+	if m is BaseMaterial3D:
+		var bm := m as BaseMaterial3D
+		k = "%s|%s|%s|%s|%s|%s" % [bm.albedo_texture.get_rid() if bm.albedo_texture else "-", bm.uv1_scale, bm.uv1_triplanar,
+			bm.vertex_color_use_as_albedo, bm.albedo_color if not bm.vertex_color_use_as_albedo else Color.WHITE, bm.next_pass != null]
+	_mkeys[m] = k
+	return k
 
 
 static var _kaide_mesh: Mesh

@@ -42,6 +42,22 @@ func _ready() -> void:
 		IstSehir.attach_v2(root, gece)
 		_kaba_dunya()
 	print("ISTKUR ms=%d dunya=%s" % [Time.get_ticks_msec() - t0, "IstDunya" if dscr else "sonda"])
+	if set_ == "kirilim":
+		var m := IstGeo.yol("mese")
+		var pts: Array = [["mese", m[2].lerp(m[3], 0.35)], ["ayasofya", IstGeo.w2(-150, 10)], ["galata", IstGeo.w2(-480, 1800)]]
+		for pr: Array in pts:
+			var q: Vector2 = pr[1]
+			var at := Vector3(q.x, IstGeo.h(q.x, q.y) + 1.7, q.y)
+			cam.global_position = at
+			cam.look_at(at + Vector3(10, 0, 3), Vector3.UP)
+			for i in 200:
+				await get_tree().process_frame
+				if not _yakin_eksik(IstSehir.active, at) and i > 20:
+					break
+			print("KIRILIM_AT ", pr[0])
+			_kirilim(at)
+		get_tree().quit(0)
+		return
 	if set_ == "hatdebug":
 		var s2 := IstSehir.active
 		s2.set_process(false)
@@ -272,13 +288,16 @@ func _hava() -> void:
 		return
 
 
+const ESER_LISTE := ["ayasofya", "hipodrom", "konstantin", "havariyun", "bozdogan", "galata_kulesi", "blakherna", "romanos",
+	"tauri", "arkadius", "studios", "khora", "pammakaristos", "halic_eugenios", "aya_irini", "sergios"]
+
 func _eserler() -> void:
 	var s := IstSehir.active
 	if s == null:
 		return
 	for it: Dictionary in s.items:
 		var d: Dictionary = it["data"]
-		if not d.get("gorev", false) and not String(it["id"]) in ["ayasofya", "blakherna"]:
+		if not String(it["id"]) in ESER_LISTE:
 			continue
 		var pp: Vector3 = it["pos"]
 		var r := float(it["r"])
