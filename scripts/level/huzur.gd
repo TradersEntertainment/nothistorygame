@@ -812,7 +812,10 @@ func _guards(p: Person, kind: String, rs: String) -> bool:
 		side.y = 0.0
 		var to := _safe(me, me + side)
 		if _headroom(to):
-			await Stage.approach(g, to, 0.7, 4.6)      # duvarın/katının içine yürümesin
+			var kk: Node = k
+			var fy := me.y
+			await Stage.approach(g, to, 0.7, 4.6, Vector3.ZERO, func(x: float, z: float) -> float:
+				return float(kk.call("_ground", Vector3(x, 0, z), fy)))      # duvarın/katının içine yürümesin; zemini izler
 			if is_instance_valid(g):
 				g.set_meta("huzur_put", g.global_position)
 		else:
