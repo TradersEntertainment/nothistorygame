@@ -10,16 +10,19 @@ extends Node3D
 ## [ad, göz (salon yereli), bakılan nokta (salon yereli), görüş açısı]. Göz dünyadaki otağın kabuğunun (yarıçap 7)
 ## içindeyse "out" kipinde çekilmez (kapalı kabuğun içi).
 const SHOTS := [
+	["sonda_taht", Vector3(0.0, 1.62, -0.6), Vector3(0.0, 1.9, -6.7), 72.0],
+	["sonda_yan_vezir", Vector3(0.0, 1.62, -0.6), Vector3(-6.0, 1.6, -0.6), 72.0],
 	["sonda_kapi_tolga", Vector3(0.0, 1.62, -0.6), Vector3(0.0, 1.3, 40.0), 70.0],
 	["sonda_kapi_giris", Vector3(0.0, 1.62, 7.8), Vector3(0.0, 1.0, 60.0), 70.0],
 	["sonda_kapi_giris_sol", Vector3(0.0, 1.62, 7.8), Vector3(-45.0, 1.0, 40.0), 70.0],
 	["sonda_kapi_giris_sag", Vector3(0.0, 1.62, 7.8), Vector3(45.0, 1.0, 40.0), 70.0],
 	["sonda_kapi_tele", Vector3(0.0, 1.62, 7.8), Vector3(0.0, 9.0, 482.0), 22.0],
 ]
-## Yalnız "out": dışarıdan ve havadan otağın kapısına (salon yereli)
+## Dışarıdan ve havadan otağın kapısına (salon yereli; "in" kipinde salonun kabuğu ve dilimin sınırı görünür)
 const OUT_SHOTS := [
 	["sonda_dis_kapiya", Vector3(0.0, 1.7, 34.0), Vector3(0.0, 3.0, 6.0), 70.0],
 	["sonda_hava_kapiya", Vector3(14.0, 38.0, 70.0), Vector3(0.0, 2.0, 4.0), 70.0],
+	["sonda_hava_yakin", Vector3(10.0, 20.0, 26.0), Vector3(0.0, 3.0, 0.0), 50.0],
 ]
 
 var mode := "in"
@@ -52,8 +55,7 @@ func _ready() -> void:
 	for i in 150:
 		await get_tree().process_frame
 	var list: Array = SHOTS.duplicate()
-	if mode != "in":
-		list.append_array(OUT_SHOTS)
+	list.append_array(OUT_SHOTS)        # "in": salonun dış kabuğu ve dilimin sınırı havadan (ölçü karşılaştırması)
 	for s in list:
 		if mode != "in" and Vector2((s[1] as Vector3).x, (s[1] as Vector3).z).length() < 7.3:
 			continue

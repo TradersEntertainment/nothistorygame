@@ -41,6 +41,7 @@ func _ready() -> void:
 func _process(delta: float) -> void:
 	_t += delta
 	Night.flicker(lights, _t)
+	_door_view_cull()
 
 
 func _build_env() -> void:
@@ -165,7 +166,7 @@ func _build_tent() -> void:
 
 ## Otağ haritada Maltepe'deki yerinde (dünya (30, 0, 480), kapı yerel +z = dünya −z: ordugâhın yolu, çadır sıraları,
 ## uzakta kara surları). Dünya içeride kurulmaz: yalnız kapının önündeki yarım düzlem, uzaklıkla sadeleşmiş tek ağ
-## (3 bant + gök; ışıksız, gölgesiz). Salon yereli = bölge yereli (World1453.region("otag")): dilim salonun çocuğu,
+## (7 parça: yakın/orta bant × 3 açı dilimi + uzak, ve gök; ışıksız, gölgesiz). Salon yereli = bölge yereli (World1453.region("otag")): dilim salonun çocuğu,
 ## salon nereye konursa (10a: arşivin yanında) kapının ardı aynı ordugâhtır. Kalabalık yok; görmeyen kamera çizmez.
 func _build_door_view() -> void:
 	var t0 := Time.get_ticks_usec()
@@ -181,6 +182,27 @@ func _build_door_view() -> void:
 		_outside_card.visible = false
 	if OS.get_environment("RINFO") != "":
 		print("OTAGDOOR load=%.1fms" % ((Time.get_ticks_usec() - t0) / 1000.0))
+
+
+## Kapı açıklığı (yerel kutu) kameranın görüş konisinde değilse dilim hiç çizilmez (duvarın ardında boşuna çizim yok)
+const DOOR_BOX := AABB(Vector3(-2.5, 0.0, 8.4), Vector3(5.0, 5.2, 0.8))
+func _door_view_cull() -> void:
+	if door_view == null:
+		return
+	var cam := get_viewport().get_camera_3d()
+	if cam == null:
+		return
+	var see := true
+	for pl: Plane in cam.get_frustum():
+		var out := 0
+		for k in 8:
+			if pl.is_point_over(to_global(DOOR_BOX.get_endpoint(k))):
+				out += 1
+		if out == 8:
+			see = false
+			break
+	if door_view.visible != see:
+		door_view.visible = see
 
 
 func _build_floor() -> void:

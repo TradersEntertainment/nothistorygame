@@ -75,9 +75,13 @@ func _ready() -> void:
 	print("BAKE sun dir=%s col=%s e=%.2f amb=%.2f fog=%.4f exp=%.2f" % [sun_dir, _sun_col, _sun_e, _amb_e, _fog_d, _exposure])
 	sun_dir = (to_hall.basis * sun_dir).normalized()
 	var to_sun := -sun_dir
-	var bands := [SurfaceTool.new(), SurfaceTool.new(), SurfaceTool.new()]
-	for b: SurfaceTool in bands:
+	# Parçalar: yakın ve orta bant üç açı diliminde (sol, orta, sağ), uzak tek: görmeyen kamera (Sultan'a, yan
+	# duvarlara bakış) parçanın sınır kutusunu kesmez, çizmez
+	var bands: Array = []
+	for i in PART_NAMES.size():
+		var b := SurfaceTool.new()
 		b.begin(Mesh.PRIMITIVE_TRIANGLES)
+		bands.append(b)
 	var tris := [0, 0, 0]
 	# Kalabalık (Crowd.scatter: yakın figürler ve uzak ikizleri) dilime girmez
 	for n in camp.find_children("*", "MultiMeshInstance3D", true, false):
@@ -115,7 +119,7 @@ func _ready() -> void:
 		keys.sort_custom(func(a, b): return int(_stats[a][2]) > int(_stats[b][2]))
 		for k in keys.slice(0, 80):
 			print("INV %-70s inst=%d tris=%d far=%d" % [k, _stats[k][0], _stats[k][1], _stats[k][2]])
-	print("BAKE tris near=%d mid=%d far=%d" % tris)
+	print("BAKE tris near=%d mid=%d far=%d parts=%s" % [tris[0], tris[1], tris[2], _part_tris])
 	if inventory:
 		get_tree().quit()
 		return
@@ -125,15 +129,14 @@ func _ready() -> void:
 	mat.shading_mode = BaseMaterial3D.SHADING_MODE_UNSHADED
 	mat.vertex_color_use_as_albedo = true
 	mat.cull_mode = BaseMaterial3D.CULL_DISABLED
-	var names := ["Near", "Mid", "Far"]
-	for i in 3:
-		if tris[i] == 0:
+	for i in PART_NAMES.size():
+		if _part_tris[i] == 0:
 			continue
 		var s: SurfaceTool = bands[i]
 		s.index()
 		var mesh := s.commit()
 		var out := MeshInstance3D.new()
-		out.name = names[i]
+		out.name = PART_NAMES[i]
 		out.mesh = mesh
 		out.material_override = mat
 		out.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
@@ -262,10 +265,10 @@ func _emit(mesh: Mesh, xfs: Array, override: Material, gi: GeometryInstance3D, b
 					_stats[key][2] = int(_stats[key][2]) + 1
 				if inventory:
 					continue
-				var s: SurfaceTool = bands[band]
+				var ps: Array = [a, b, d]
+				var cs: Array = []
 				for q in 3:
 					var vi: int = [i0, i1, i2][q]
-					var p: Vector3 = [a, b, d][q]
 					var col := base * mc
 					if use_vc and cols != null and (cols as PackedColorArray).size() > vi:
 						var vc: Color = (cols as PackedColorArray)[vi]
@@ -273,8 +276,9 @@ func _emit(mesh: Mesh, xfs: Array, override: Material, gi: GeometryInstance3D, b
 					if ground:
 						var lum := col.get_luminance()
 						col = col.lerp(Color(lum, lum, lum), 0.1) * 0.7
-					s.set_color(_shade(col, nrm, p, to_sun, unshaded, toon))
-					s.add_vertex(p)
+					cs.append(_shade(col, nrm, ps[q], to_sun, unshaded, toon))
+				var part := _part(band, (a + b + d) / 3.0)
+				_put(bands[part], ps, cs, part)
 
 
 ## Yüzeyin dizinli köşeleri ve ayrıntı katmanları: [diziler, [tam dizin, LOD1, ...]] (meshoptimizer, ImporterMesh)
@@ -303,6 +307,56 @@ func _lods(mesh: Mesh, si: int) -> Array:
 	var res := [arr, out]
 	_lod_cache[key] = res
 	return res
+
+
+const PART_NAMES := ["NearL", "NearC", "NearR", "MidL", "MidC", "MidR", "Far"]
+## Kapı çizgisinin gerisi (salonun yanları ve arkası) kırpılır: büyük arazi üçgenleri parçanın kutusunu salonun
+## arkasına uzatmasın (Sultan'a bakan kamera da çizerdi)
+const CLIP_Z := 7.0
+const SECTOR := 28.0             # orta dilimin yarı açısı (°)
+var _part_tris := [0, 0, 0, 0, 0, 0, 0]
+
+
+func _part(band: int, c: Vector3) -> int:
+	if band == 2:
+		return 6
+	var ang := rad_to_deg(atan2(c.x - DOOR.x, maxf(c.z - DOOR.z, 0.001)))
+	var sec := 1 if absf(ang) <= SECTOR else (0 if ang > 0.0 else 2)
+	return band * 3 + sec
+
+
+## Üçgeni z ≥ CLIP_Z yarı uzayına kırpar (renk doğrusal ara değerle), yelpaze üçgenleriyle yazar
+func _put(st: SurfaceTool, ps: Array, cs: Array, part: int) -> void:
+	var inside := 0
+	for p: Vector3 in ps:
+		if p.z >= CLIP_Z:
+			inside += 1
+	if inside == 0:
+		return
+	var poly_p: Array = ps
+	var poly_c: Array = cs
+	if inside < 3:
+		poly_p = []
+		poly_c = []
+		for i in 3:
+			var p0: Vector3 = ps[i]
+			var p1: Vector3 = ps[(i + 1) % 3]
+			var c0: Color = cs[i]
+			var c1: Color = cs[(i + 1) % 3]
+			var in0 := p0.z >= CLIP_Z
+			var in1 := p1.z >= CLIP_Z
+			if in0:
+				poly_p.append(p0)
+				poly_c.append(c0)
+			if in0 != in1:
+				var t := (CLIP_Z - p0.z) / (p1.z - p0.z)
+				poly_p.append(p0.lerp(p1, t))
+				poly_c.append(c0.lerp(c1, t))
+	for k in range(1, poly_p.size() - 1):
+		for v in [0, k, k + 1]:
+			st.set_color(poly_c[v])
+			st.add_vertex(poly_p[v])
+		_part_tris[part] = int(_part_tris[part]) + 1
 
 
 ## Üçgen merkezine göre bant: -1 dilim dışı, 0 yakın (<60 m), 1 orta (<FAR_FROM), 2 uzak
@@ -401,7 +455,7 @@ func _sky_dome(to_sun: Vector3) -> MeshInstance3D:
 	var seg := 24
 	var rings := 10
 	var pt := func(i: int, k: int) -> Vector3:
-		var az := deg_to_rad(-95.0 + 190.0 * i / seg)
+		var az := deg_to_rad(-88.0 + 176.0 * i / seg)       # kutusu kapı çizgisinin önünde kalır (z ≥ 9)
 		var el := deg_to_rad(-6.0 + 96.0 * k / rings)
 		return DOOR + Vector3(sin(az) * cos(el) * r, sin(el) * r, cos(az) * cos(el) * r)
 	var colf := func(p: Vector3) -> Color:
