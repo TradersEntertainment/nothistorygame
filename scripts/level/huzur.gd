@@ -155,9 +155,7 @@ static func ruler_side(p: Person) -> String:
 func _visible_ruler(p) -> bool:
 	if not (is_instance_valid(p) and (p as Person) != null and p.is_inside_tree() and p.is_visible_in_tree()):
 		return false
-	# Atlı hükümdar (26'nın sonunda Fatih Ayasofya'ya at üstünde girer) hedef değil: yaya Tolga'nın eli ancak üzengiye
-	# yetişir, karşı hamle yapılamaz; o anda zaten fotoğraf ara sahnesi
-	return not p.get_meta("hologram", false) and not hud._is_mounted(p)
+	return not p.get_meta("hologram", false)
 
 
 ## Bakılan ve uzanılabilen hükümdar (yoksa null)
@@ -298,7 +296,9 @@ func attempt(p: Person, kind: String) -> void:
 	to_pl.y = 0.0
 	var front := rf.normalized().dot(to_pl.normalized()) if rf.length() > 0.01 and to_pl.length() > 0.01 else 1.0
 	# Oturan hükümdar (tahtta: 12, 23) çelme atamaz, yarım adım çekilemez: muhafızlar karşılar
-	var seated := str(p.activity).begins_with("sit") or (p.rig != null and str(p.rig.activity).begins_with("sit"))
+	# Atlı hükümdar (28o'da Fatih baştan sona, 26'nın sonunda Ayasofya'da at üstünde) de: elle karşılayamaz, at yerinden oynamaz
+	var seated := str(p.activity).begins_with("sit") or (p.rig != null and str(p.rig.activity).begins_with("sit")) \
+		or hud._is_mounted(p)
 	var counter := "ruler" if dist <= COUNTER_DIST and front >= BEHIND_DOT and not seated and _bot != "huzur_guard" else "guards"
 	_log("attempt ruler=%s kind=%s dist=%.1f front=%.2f counter=%s mode=%s ch=%d side=%s" % [p.face_id, kind, dist, front,
 		counter, mode, GameState.current_chapter, Siege.side()])
@@ -552,7 +552,13 @@ func _fall(dest: Vector3, roll: float, up_at: Vector3, secs := 0.55) -> void:
 ## Ayasofya'nın kapısı). Görünmüyorsa öbür yana, o da olmazsa olduğu yere düşer.
 func _land_spot(from: Vector3, want: Vector3, head: Vector3) -> Vector3:
 	var side := want - from
-	var cands := [want, from - Vector3(side.x, 0, side.z), from]
+	side.y = 0.0
+	var away := from - head
+	away.y = 0.0
+	away = away.normalized() if away.length() > 0.01 else Vector3.FORWARD
+	# İstenen yer, öbür yanı, sonra hükümdardan uzaklaşan yerler (atlı hükümdar: atın boynu yakından yüzü örter)
+	var cands := [want, from - side, from, from + away * 1.5, from + away * 2.5, from + away * 3.5,
+		from + away.rotated(Vector3.UP, 0.6) * 2.5, from + away.rotated(Vector3.UP, -0.6) * 2.5]
 	for c: Vector3 in cands:
 		var d := _safe(from, c)
 		if _sees(d + Vector3(0, 0.42, 0), head):
