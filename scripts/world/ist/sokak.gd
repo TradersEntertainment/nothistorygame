@@ -428,7 +428,7 @@ func _row(p0: Vector2, d: Vector2, nrm: Vector2, w: float, rowlen: float, tur: S
 	var total := 0.0
 	var first: int = VAR_WIDE[rng.randi() % VAR_WIDE.size()]
 	if tur in ["seyrek", "bostan", "harabe", "kir"]:
-		first = [0, 1, 4][rng.randi() % 3]
+		first = [1, 1, 3][rng.randi() % 3]
 	vs.append(first)
 	total = IstEvler.dims(first).x
 	while true:
@@ -455,7 +455,7 @@ func _row(p0: Vector2, d: Vector2, nrm: Vector2, w: float, rowlen: float, tur: S
 					break
 		if ok:
 			# 1,4 m'lik halka: başka ev yok (geçit ya bitişik ya ≥ 1,4)
-			var ring := _rect_cells(c, d, nrm, total * 0.5 + 1.6, dep * 0.5 + 1.6)
+			var ring := _rect_cells(c, d, nrm, total * 0.5 + 2.4, dep * 0.5 + 2.4)
 			for k in ring:
 				if k >= 0 and occ[k] == 2:
 					ok = false
@@ -466,6 +466,12 @@ func _row(p0: Vector2, d: Vector2, nrm: Vector2, w: float, rowlen: float, tur: S
 			var hb := IstGeo.h(p0.x + d.x * total + nrm.x * front, p0.y + d.y * total + nrm.y * front)
 			if absf(ha - hb) > 2.4:
 				ok = false
+			# Arka köşeler cephe tabanından en çok 1,0 m yüksek (gömülü arka cephe yok)
+			var back := front + dep
+			for t in [0.0, total]:
+				var hq := IstGeo.h(p0.x + d.x * t + nrm.x * back, p0.y + d.y * t + nrm.y * back)
+				if hq - minf(ha, hb) > 1.0:
+					ok = false
 		if ok:
 			for k in cells:
 				occ[k] = 2

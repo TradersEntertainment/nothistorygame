@@ -39,8 +39,8 @@ func _ready() -> void:
 	if dscr != null:
 		dscr.call("build", root, gece, Vector3.ZERO)
 	else:
-		_kaba_dunya()
 		IstSehir.attach_v2(root, gece)
+		_kaba_dunya()
 	print("ISTKUR ms=%d dunya=%s" % [Time.get_ticks_msec() - t0, "IstDunya" if dscr else "sonda"])
 	if set_ in ["denetim", "hepsi"]:
 		await _denetim()
@@ -295,7 +295,7 @@ func _denetim() -> void:
 			var a := pl[i]
 			var b := pl[i + 1]
 			var L := a.distance_to(b)
-			var n := int(L)
+			var n := int(L / 0.25)
 			for k in n:
 				var q := a.lerp(b, float(k) / n)
 				var from := Vector3(q.x, IstGeo.h(q.x, q.y) + 40.0, q.y)

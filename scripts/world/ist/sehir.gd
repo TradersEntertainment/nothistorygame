@@ -378,14 +378,18 @@ func _plan(cp: Vector3) -> void:
 	for it: Dictionary in items:
 		var p: Vector3 = it["pos"]
 		var d := Vector3(p.x - cp.x, (p.y - cp.y) * 1.3, p.z - cp.z).length() - float(it["r"])
-		var want := 0 if d < R0 else (1 if d < R1 else 2)
+		var r1 := float(it.get("r1", R1))
+		var want := 0 if d < R0 else (1 if d < r1 else 2)
 		it["want"] = want
 		# Boşalt: payın ötesindeki ince katmanlar
 		for l in 2:
-			var lim := R0 if l == 0 else R1
+			var lim := R0 if l == 0 else r1
 			if it["have"][l] != null and d > lim + HYST and want > l:
 				(it["have"][l] as Node3D).queue_free()
 				it["have"][l] = null
+		if want == 2 and it.get("no2", false):
+			_show(it)
+			continue
 		if it["have"][want] == null:
 			jobs.append([d, ["item", it, want]])
 			if want == 0 and it["have"][1] == null:
@@ -981,6 +985,7 @@ static func attach_v2(dunya: Node3D, gece_ := false) -> void:
 	s._place_v2()
 	var t1 := Time.get_ticks_msec()
 	s._hatlar_v2()
+	s._basamak_ag()
 	var t2 := Time.get_ticks_msec()
 	s._sehir_dokusu_v2()
 	print("ISTSEHIR2 yer=%d hat=%d kur_ms=%d hat_ms=%d doku_ms=%d" % [s.items.size(), s.hat_items.size(), t1 - t0, t2 - t1, Time.get_ticks_msec() - t2])
@@ -1077,7 +1082,13 @@ static func _to_land(w: Vector2) -> Vector2:
 func _place_v2() -> void:
 	# Ayasofya: bölümün kendi dış kabuğu (ByzCity.aya_exterior + Ayasofya kabuğu), kubbe (0,0)'da
 	var aw := IstGeo.w2(0, 0)
-	_v2_item("ayasofya", Vector3(aw.x, IstGeo.h(aw.x, aw.y) - 0.05, aw.y), -deg_to_rad(103.0), 40.0, _make_aya)
+	var ay := IstGeo.h(aw.x, aw.y)
+	IstGeo.duzle(aw, 34.0, ay)
+	var ait := _v2_item("ayasofya", Vector3(aw.x, ay - 0.05, aw.y), -deg_to_rad(103.0), 40.0, _make_aya)
+	# Kubbenin tepesindeki haçın 3,5 m yanı (kurşun kubbe yüzeyi): her uzaklıkta katı konma kapağı
+	var ap := (ait["holder"] as Node3D).transform * Vector3(3.5, 19.5 + 11.1 * 0.42 * sqrt(1.0 - pow(3.5 / 11.1, 2.0)), 0)
+	_pad(ap, "Konma_ayasofya")
+	ait["perch_aya"] = ap
 	# Blakherna Sarayı: Blachernae.shell_parts ("palace"), Blakherna suruna yaslı
 	var bl := IstGeo.w2(-3402.0, 3436.0)
 	var bpl := IstGeo.yol("blakherna_suru")
@@ -1098,6 +1109,9 @@ func _place_v2() -> void:
 		if pl.is_empty():
 			continue
 		var p: Vector3 = pl["pos"]
+		# Yapının tabanı düzlenir (arazi ağı bu kayıtlardan sonra kurulur; IstGeo.duzle)
+		if float(pl["r"]) <= 130.0 and String((e["data"] as Dictionary).get("tur", "")) != "liman":
+			IstGeo.duzle(Vector2(p.x, p.z), float(pl["r"]) * 0.85, p.y + 0.03)
 		var holder := Node3D.new()
 		holder.name = "Ist_" + id
 		holder.position = p
@@ -1109,6 +1123,18 @@ func _place_v2() -> void:
 		items.append(it)
 		_build(it, 2)
 		_perch_pad(it)
+
+
+func _pad(p: Vector3, nm: String) -> void:
+	var body := StaticBody3D.new()
+	body.name = nm
+	var cs := CollisionShape3D.new()
+	var bs := BoxShape3D.new()
+	bs.size = Vector3(1.4, 0.3, 1.4)
+	cs.shape = bs
+	body.add_child(cs)
+	body.position = p - Vector3(0, 0.15, 0)
+	add_child(body)
 
 
 func _v2_item(id: String, p: Vector3, yaw: float, r: float, make: Callable, data := {}) -> Dictionary:
@@ -1237,11 +1263,20 @@ func _hatlar_v2() -> void:
 					var s0 := float(v[0]) + k * pl_len
 					var mid := a + d * (s0 + pl_len * 0.5)
 					seed += 1
-					_hat_piece(ad, String(cfg["kur"]), mid, d, pl_len, seed)
+					var pc := _hat_piece(ad, String(cfg["kur"]), mid, d, pl_len, seed)
+					pc["s0"] = s_acc + s0
+					pc["s1"] = s_acc + s0 + pl_len
+					pc["a2"] = a + d * s0
+					pc["b2"] = a + d * (s0 + pl_len)
 			# Köşe kulesi (iç köşe ve dış köşedeki kopukluğu örter; tepesi yürüme yolu hizasında)
 			if i > 0:
-				_kose(ad, String(cfg["kur"]), a)
+				var kc := _kose(ad, String(cfg["kur"]), a)
+				kc["s0"] = s_acc - 4.5
+				kc["s1"] = s_acc + 4.5
+				kc["a2"] = a - (a - pl[i - 1]).normalized() * 4.5
+				kc["b2"] = a + d * 4.5
 			s_acc += L
+		_basamaklar(ad, String(cfg["kur"]))
 	# Bozdoğan (iki tepe arası, altından Mese kolu geçer)
 	var bz := IstGeo.yol("bozdogan")
 	if bz.size() >= 2:
@@ -1303,7 +1338,7 @@ func _near_item(p: Vector2, pad: float) -> bool:
 
 
 ## Hat dilimi: kur türüne göre parçanın parametreli kurucusu
-func _hat_piece(ad: String, kur: String, mid: Vector2, d: Vector2, L: float, seed: int) -> void:
+func _hat_piece(ad: String, kur: String, mid: Vector2, d: Vector2, L: float, seed: int) -> Dictionary:
 	var yaw := _yaw_x(d, mid, ad)
 	var lo := INF
 	for k in 5:
@@ -1325,10 +1360,17 @@ func _hat_piece(ad: String, kur: String, mid: Vector2, d: Vector2, L: float, see
 				make = func(n: Node3D, lod: int) -> void: IstMarmaraSur.build_run(n, L, K2, lod, {})
 		_:
 			make = func(n: Node3D, lod: int) -> void: IstMarmaraSur.build_run(n, L, K2, lod, {})
-	var it := _v2_item("%s_%d" % [ad, seed], Vector3(mid.x, lo - 0.05, mid.y), yaw, L * 0.5 + 6.0, make)
+	var pos := Vector3(mid.x, lo - 0.05, mid.y)
+	if kur == "blakherna":
+		# Blakherna kabuğunun suru yerel z 0…4,6'da (dış yüz +z): sur ekseni hatta otursun
+		var o := _out(d, mid, ad)
+		pos -= Vector3(o.x, 0, o.y) * 2.3
+	var it := _v2_item("%s_%d" % [ad, seed], pos, yaw, L * 0.5 + 6.0, make)
 	it["hat"] = ad
 	it["len"] = L
+	it["walk"] = lo - 0.05 + _walk_h(kur)
 	hat_items.append(it)
+	return it
 
 
 ## Blakherna suru dilimi: Blachernae.shell_parts("wall") 120 m'lik; L'ye göre x ekseninde ölçeklenmez, kırpılır
@@ -1351,8 +1393,79 @@ func _blakherna_wall(n: Node3D, L: float, lod: int) -> void:
 	Blachernae.shell_parts(emit, "wall")
 
 
+static func _walk_h(kur: String) -> float:
+	match kur:
+		"kara": return float(IstSurlar.dims(K2)["HW"])
+		"blakherna": return Blachernae.WALK_Y
+		"halic": return float(IstHalicSur.dims(K2)["H"])
+	return float(IstMarmaraSur.dims(K2)["H"])
+
+
+static func _walk_w(kur: String) -> float:
+	match kur:
+		"kara": return float(IstSurlar.dims(K2)["T"]) - 1.0
+		"blakherna": return 3.4
+		"halic": return float(IstHalicSur.dims(K2)["T"]) - 0.9
+	return float(IstMarmaraSur.dims(K2)["T"]) - 0.9
+
+
+## Sur üstü yürüyüş: ardışık iki öğenin (dilim/köşe kulesi) yürüme yolları arasında > 0,35 m fark varsa alçak olanın
+## ucuna 0,30 m'lik taş basamaklar (tek MultiMesh + tek çarpışma gövdesi; uzakta çizilmez)
+var _bas_xf: Array = []
+var _bas_body: StaticBody3D
+
+func _basamaklar(ad: String, kur: String) -> void:
+	var list: Array = []
+	for it: Dictionary in hat_items:
+		if String(it.get("hat", "")) == ad and it.has("s0") and it.has("walk"):
+			list.append(it)
+	list.sort_custom(func(a: Dictionary, b: Dictionary) -> bool: return float(a["s0"]) < float(b["s0"]))
+	if _bas_body == null:
+		_bas_body = StaticBody3D.new()
+		_bas_body.name = "SurBasamak"
+		add_child(_bas_body)
+	var ww := _walk_w(kur)
+	for i in list.size() - 1:
+		var A: Dictionary = list[i]
+		var B: Dictionary = list[i + 1]
+		if float(B["s0"]) - float(A["s1"]) > 1.5:
+			continue
+		var ya := float(A["walk"])
+		var yb := float(B["walk"])
+		var dh := absf(yb - ya)
+		if dh < 0.35:
+			continue
+		var lowA := ya < yb
+		var J: Vector2 = A["b2"] if lowA else B["a2"]
+		var dir: Vector2 = ((A["b2"] as Vector2) - (A["a2"] as Vector2)).normalized()
+		if not lowA:
+			dir = ((B["a2"] as Vector2) - (B["b2"] as Vector2)).normalized()
+		var y0 := minf(ya, yb)
+		var n := int(ceil(dh / 0.3))
+		for k in n:
+			var top := y0 + (k + 1) * dh / n
+			var c := J - dir * ((n - k - 0.5) * 0.45)
+			var hgt := top - y0 + 0.05
+			var bas := Basis(Vector3.UP, atan2(-dir.y, dir.x))
+			var xf := Transform3D(bas.scaled(Vector3(0.46, hgt, ww)), Vector3(c.x, y0 - 0.05 + hgt * 0.5, c.y))
+			_bas_xf.append(xf)
+			var cs := CollisionShape3D.new()
+			var bs := BoxShape3D.new()
+			bs.size = Vector3(0.46, hgt, ww)
+			cs.shape = bs
+			cs.transform = Transform3D(bas, xf.origin)
+			_bas_body.add_child(cs)
+
+
+func _basamak_ag() -> void:
+	if _bas_xf.is_empty():
+		return
+	var mm := _mm(_unit_box(Color("cdbd9e"), "ashlar"), _bas_xf)
+	mm.visibility_range_end = 260.0
+
+
 ## Köşe kulesi: iki dilimin birleştiği yerde dolu kule; tepesi yürüme yolu hizasında (yürüyüş kesilmez)
-func _kose(ad: String, kur: String, p: Vector2) -> void:
+func _kose(ad: String, kur: String, p: Vector2) -> Dictionary:
 	var walk := 6.65
 	var sz := 9.0
 	match kur:
@@ -1388,7 +1501,9 @@ func _kose(ad: String, kur: String, p: Vector2) -> void:
 			Props.box(n, Vector3(sz, walk + 1.1, sz), Vector3(0, (walk + 1.1) * 0.5, 0), stone)
 	var it := _v2_item("kose_%s_%d" % [ad, hat_items.size()], Vector3(p.x, lo - 0.05, p.y), 0.0, sz, make)
 	it["hat"] = ad
+	it["walk"] = lo - 0.05 + walk
 	hat_items.append(it)
+	return it
 
 
 func _make_zincir(n: Node3D, lod: int, L: float) -> void:
@@ -1501,6 +1616,7 @@ func _sehir_dokusu_v2() -> void:
 				_add(g0, g1, g2, "tas", Transform3D(Basis(Vector3.UP, yaw).scaled(Vector3(float(st["w"]) - 0.4, 0.3, L / ns + 0.05)), Vector3(q.x, hy - 0.12, q.y)))
 	# Doku: bostan/bağ/tarla yamaları, harabe, mahalle kiliseleri, ağaçlık, bahçe
 	var np := 0
+	var far: Array = []
 	for dk: Dictionary in sokak.doku:
 		var tur := String(dk["tur"])
 		var c: Vector2 = dk["c"]
@@ -1537,7 +1653,8 @@ func _sehir_dokusu_v2() -> void:
 			var tp := c + Vector2((alan.x * 0.5 + 1.5) * (1 if rng.randf() < 0.5 else -1), rng.randf_range(-alan.y * 0.4, alan.y * 0.4))
 			if sokak.cell(tp.x, tp.y) in [0, 5]:
 				_add(g0, g1, g2, "ag|" + String(AGAC_SIK[rng.randi() % AGAC_SIK.size()]), Transform3D(Basis(Vector3.UP, rng.randf() * TAU), Vector3(tp.x, IstGeo.h(tp.x, tp.y) - 0.05, tp.y)))
-		_item(it)
+		_item_lazy(it)
+		far.append([tur, c, alan, float(dk["yaw"]), lo])
 	# Meydan: kuyu ya da çeşme ve çevresinde pazar köşesi
 	var nm := 0
 	for m: Dictionary in sokak.meydan:
@@ -1550,10 +1667,101 @@ func _sehir_dokusu_v2() -> void:
 			if lod >= 2:
 				return
 			Ayrinti.build(which, nd, 1.0, lod)
-		_item(it)
+		_item_lazy(it)
 		nm += 1
 	_layers2(g0, g1, g2)
+	_far_doku(far)
 	print("ISTEVLER2 ev=%d doku=%d meydan=%d hucre=%d" % [n, np, nm, _cells0.size()])
+
+
+## Dokunun tekil öğesi (v2): uzakta kurulmaz (uzak görünüşü hücre başına birleşik ağda: _far_doku), 310 m'de orta katman
+func _item_lazy(it: Dictionary) -> void:
+	var holder := Node3D.new()
+	holder.name = String(it["id"])
+	holder.position = it["pos"]
+	holder.rotation.y = float(it["yaw"])
+	add_child(holder)
+	it["holder"] = holder
+	it["no2"] = true
+	it["r1"] = 310.0
+	items.append(it)
+
+
+const FAR_DOKU_CELL := 144.0
+const FAR_DOKU_BEGIN := 200.0
+const DOKU_RENK := {"bostan": Color("7a7a3a"), "bag": Color("4a6a2a"), "bugday": Color("b8b060"), "cayir": Color("7a9a4a"),
+	"bahce": Color("5a8a3a")}
+
+## Doku öğelerinin uzak görünüşü: 144 m hücre başına tek ağ (yama: zemine yatık renkli dörtgen; kilise: gövde + çatı;
+## harabe: alçak taş kütle). Hücrenin merkezine 200 m'den yakınken gizlenir (öğeler 310 m'de orta katmana geçer).
+func _far_doku(far: Array) -> void:
+	var cells := {}
+	for f: Array in far:
+		var c: Vector2 = f[1]
+		var ck := Vector2i(floori(c.x / FAR_DOKU_CELL), floori(c.y / FAR_DOKU_CELL))
+		if not cells.has(ck):
+			cells[ck] = []
+		cells[ck].append(f)
+	var mat := StandardMaterial3D.new()
+	mat.vertex_color_use_as_albedo = true
+	mat.roughness = 1.0
+	for ck: Vector2i in cells:
+		var cen := Vector3((ck.x + 0.5) * FAR_DOKU_CELL, 0, (ck.y + 0.5) * FAR_DOKU_CELL)
+		var st := SurfaceTool.new()
+		st.begin(Mesh.PRIMITIVE_TRIANGLES)
+		for f: Array in cells[ck]:
+			var tur := String(f[0])
+			var c: Vector2 = f[1]
+			var alan: Vector2 = f[2]
+			var bas := Basis(Vector3.UP, float(f[3]))
+			var lo := float(f[4])
+			if DOKU_RENK.has(tur):
+				var q: Array = []
+				for o: Vector2 in [Vector2(-0.5, -0.5), Vector2(0.5, -0.5), Vector2(0.5, 0.5), Vector2(-0.5, 0.5)]:
+					var lp := bas * Vector3(o.x * alan.x, 0, o.y * alan.y)
+					var wx := c.x + lp.x
+					var wz := c.y + lp.z
+					q.append(Vector3(wx, IstGeo.h(wx, wz) + 0.25, wz) - cen)
+				st.set_color(DOKU_RENK[tur])
+				st.set_normal(Vector3.UP)
+				for idx in [0, 1, 2, 0, 2, 3]:
+					st.add_vertex(q[idx])
+			else:
+				var sz := Vector3(6, 2.0, 8)
+				var col := Color("cfc2a6")
+				if tur == "kilise_kucuk":
+					sz = Vector3(10, 9, 15)
+					col = Color("c88a6a")
+				elif tur == "sapel":
+					sz = Vector3(5, 5.5, 10)
+					col = Color("c88a6a")
+				elif tur == "kilise_orta":
+					sz = Vector3(13, 12, 20)
+					col = Color("c88a6a")
+				_box_st(st, Vector3(c.x, lo, c.y) - cen, bas, sz, col)
+		var mi := MeshInstance3D.new()
+		st.generate_normals()
+		mi.mesh = st.commit()
+		mi.material_override = mat
+		mi.position = cen
+		mi.visibility_range_begin = FAR_DOKU_BEGIN
+		mi.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
+		mi.set_meta("no_walk", true)
+		add_child(mi)
+
+
+static func _box_st(st: SurfaceTool, base: Vector3, bas: Basis, sz: Vector3, col: Color) -> void:
+	st.set_color(col)
+	var h := sz * 0.5
+	var c := [Vector3(-h.x, 0, -h.z), Vector3(h.x, 0, -h.z), Vector3(h.x, 0, h.z), Vector3(-h.x, 0, h.z),
+		Vector3(-h.x, sz.y, -h.z), Vector3(h.x, sz.y, -h.z), Vector3(h.x, sz.y, h.z), Vector3(-h.x, sz.y, h.z)]
+	for f: Array in [[0, 1, 5, 4], [1, 2, 6, 5], [2, 3, 7, 6], [3, 0, 4, 7], [4, 5, 6, 7]]:
+		var a: Vector3 = base + bas * c[f[0]]
+		var b: Vector3 = base + bas * c[f[1]]
+		var cc: Vector3 = base + bas * c[f[2]]
+		var d: Vector3 = base + bas * c[f[3]]
+		for v: Vector3 in [a, cc, b, a, d, cc]:
+			st.add_vertex(v)
 
 
 ## v2 katmanları: uzak (lod 2) hücre başına TEK ağ (bütün ev örnekleri birleşik), orta MultiMesh, yakın akışla
@@ -1589,13 +1797,41 @@ func _layers2(g0: Dictionary, g1: Dictionary, g2: Dictionary) -> void:
 		mi.set_meta("no_walk", true)
 		add_child(mi)
 	for ck: Vector2i in g1:
+		# Evler ve kaideler: hücre başına tek ağ (malzeme başına bir yüzey); ağaçlar MultiMesh
+		var by_mat := {}
+		var cen := Vector3((ck.x + 0.5) * CELL1, 0, (ck.y + 0.5) * CELL1)
 		for key: String in g1[ck]:
 			var m1 := _mesh_for(key, 1)
 			if m1 == null:
 				continue
+			if key.begins_with("ev|") or key == "kaide":
+				for si in m1.get_surface_count():
+					var sm: Material = m1.surface_get_material(si)
+					if sm == null and m1 is PrimitiveMesh:
+						sm = (m1 as PrimitiveMesh).material
+					if not by_mat.has(sm):
+						var nst := SurfaceTool.new()
+						nst.begin(Mesh.PRIMITIVE_TRIANGLES)
+						by_mat[sm] = nst
+					for xf: Transform3D in g1[ck][key]:
+						(by_mat[sm] as SurfaceTool).append_from(m1, si, Transform3D(xf.basis, xf.origin - cen))
+				continue
 			var mm := _mm(m1, g1[ck][key])
 			mm.visibility_range_begin = NEAR
-			mm.visibility_range_end = MID if (key.begins_with("ev|") or key == "kaide") else MID * 0.6
+			mm.visibility_range_end = MID * 0.6
+		if not by_mat.is_empty():
+			var am := ArrayMesh.new()
+			for sm in by_mat:
+				(by_mat[sm] as SurfaceTool).commit(am)
+				am.surface_set_material(am.get_surface_count() - 1, sm)
+			var mi := MeshInstance3D.new()
+			mi.mesh = am
+			mi.position = cen
+			mi.visibility_range_begin = NEAR
+			mi.visibility_range_end = MID
+			mi.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
+			mi.set_meta("no_walk", true)
+			add_child(mi)
 	for ck: Vector2i in g0:
 		var cx := (ck.x + 0.5) * CELL0
 		var cz := (ck.y + 0.5) * CELL0
@@ -1659,8 +1895,7 @@ static func flight_data_v2(world: Node3D = null) -> Dictionary:
 		forms.append([i + 1, (landmarks[i][1] as Vector3) - Vector3(0, 4.0, 0)])
 	var perches: Array = []
 	if by.has("ayasofya"):
-		var a: Vector3 = by["ayasofya"]["pos"]
-		perches.append(["aya", g.call(a + Vector3(3.5, 19.5 + 11.1 * 0.42 * sqrt(1.0 - pow(3.5 / 11.1, 2.0)), 0)), 5.0])
+		perches.append(["aya", g.call(by["ayasofya"]["perch_aya"]), 5.0])
 	for q: Array in s.perch_marks():
 		perches.append([q[0], g.call(q[1]), q[2]])
 	return {"landmarks": landmarks, "forms": forms, "perches": perches}
