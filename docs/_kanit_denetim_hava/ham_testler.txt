@@ -1,0 +1,161 @@
+# Ham test satırları (denetçi koşuları, başsız, --max-fps 20, depo wip/denetim-hava = geliştirici HEAD ef860ea2)
+PARSECHECK PASS scripts=248
+FLIGHTCHECK camp landmarks=9 forms=12 perches=3
+FLIGHTCHECK walls landmarks=9 forms=12 perches=3
+FLIGHTCHECK PASS
+
+## b3_default: _sonuc_listA.txt.txt:b3_default rc=0 pass=1 bad=0 t=14s
+AUTOTEST PASS chapter=3 variant= outcome=3.3 sadakat=50 rel=0 baski=0 machine=free
+## b4_caught: _sonuc_listB.txt.txt:b4_caught rc=0 pass=1 bad=0 t=7s
+AUTOTEST PASS chapter=4 variant=caught branch=4a start=tent outcome=4a.3 catches=2 fez=true telsiz=3
+## b4_chain: _sonuc_listB.txt.txt:b4_chain rc=0 pass=1 bad=0 t=14s
+AUTOTEST PASS chapter=4 variant=chain branch=4b start=chain outcome=4b.1 catches=0 fez=true telsiz=3
+## b4_default: _sonuc_listB.txt.txt:b4_default rc=0 pass=1 bad=0 t=7s
+AUTOTEST PASS chapter=4 variant= branch=4a start=tent outcome=4a.1 catches=0 fez=true telsiz=3
+## b4_fall: _sonuc_listB.txt.txt:b4_fall rc=0 pass=1 bad=0 t=6s
+AUTOTEST PASS chapter=4 variant=fall branch=4b start=chain outcome=4b.3 catches=0 fez=true telsiz=3
+## b4_fez: _sonuc_listB.txt.txt:b4_fez rc=0 pass=1 bad=0 t=9s
+AUTOTEST PASS chapter=4 variant=fez branch=4a start=tent outcome=4a.2 catches=0 fez=true telsiz=3
+## b4_item: _sonuc_listB.txt.txt:b4_item rc=0 pass=1 bad=0 t=7s
+AUTOTEST PASS chapter=4 variant=item branch=4a start=tent outcome=4a.2 catches=0 fez=true telsiz=3
+## b4_market: _sonuc_listB.txt.txt:b4_market rc=0 pass=1 bad=0 t=7s
+AUTOTEST PASS chapter=4 variant=market branch=4a start=market outcome=4a.1 catches=0 fez=true telsiz=3
+## b4_nofez: _sonuc_listB.txt.txt:b4_nofez rc=0 pass=1 bad=0 t=14s
+AUTOTEST PASS chapter=4 variant=nofez branch=4b start=chain outcome=4b.2 catches=0 fez=false telsiz=3
+## b4_wet: _sonuc_listB.txt.txt:b4_wet rc=0 pass=1 bad=0 t=7s
+AUTOTEST PASS chapter=4 variant=wet branch=4a start=tent outcome=4a.2 catches=0 fez=true telsiz=3
+## b6_byz: _sonuc_listA.txt.txt:b6_byz rc=0 pass=1 bad=0 t=18s
+AUTOTEST PASS chapter=6 variant=byz branch=6b outcome=6b.1 paradox=0 mistakes=0 telsiz=4
+## b6_default: _sonuc_listA.txt.txt:b6_default rc=0 pass=1 bad=0 t=14s
+AUTOTEST PASS chapter=6 variant= branch=6a outcome=6a.1 paradox=10 mistakes=0 telsiz=4
+## b7_byz: _sonuc_listA.txt.txt:b7_byz rc=0 pass=1 bad=0 t=13s
+AUTOTEST PASS chapter=7 variant=byz branch=7b outcome=7.1 extras=["7.3"] sadakat=50 baski=0 hour=14.0
+## b7_byzcell: _sonuc_listA.txt.txt:b7_byzcell rc=0 pass=1 bad=0 t=13s
+AUTOTEST PASS chapter=7 variant=byzcell branch=7b outcome=7.1 extras=[] sadakat=60 baski=0 hour=13.0
+## b7_byzniko: _sonuc_listA.txt.txt:b7_byzniko rc=0 pass=1 bad=0 t=13s
+AUTOTEST PASS chapter=7 variant=byzniko branch=7b outcome=7.2 extras=[] sadakat=55 baski=2 hour=12.5
+## b7_default: _sonuc_listA.txt.txt:b7_default rc=0 pass=1 bad=0 t=14s
+AUTOTEST PASS chapter=7 variant= branch=7a outcome=7.1 extras=[] sadakat=60 baski=0 hour=13.5
+## b7_fez: _sonuc_listA.txt.txt:b7_fez rc=0 pass=1 bad=0 t=16s
+AUTOTEST PASS chapter=7 variant=fez branch=7a outcome=7.1 extras=["7.4"] sadakat=50 baski=0 hour=13.0
+## b7_form: _sonuc_listA.txt.txt:b7_form rc=0 pass=1 bad=0 t=16s
+AUTOTEST PASS chapter=7 variant=form branch=7a outcome=7.1 extras=[] sadakat=70 baski=0 hour=14.0
+## b7_lost: _sonuc_listA.txt.txt:b7_lost rc=0 pass=1 bad=0 t=13s
+AUTOTEST PASS chapter=7 variant=lost branch=7a outcome=7.2 extras=[] sadakat=55 baski=2 hour=12.5
+## b7_tea: _sonuc_listA.txt.txt:b7_tea rc=0 pass=1 bad=0 t=14s
+AUTOTEST PASS chapter=7 variant=tea branch=7a outcome=7.1 extras=["7.4"] sadakat=50 baski=0 hour=13.0
+## b7_wall: _sonuc_listA.txt.txt:b7_wall rc=0 pass=1 bad=0 t=16s
+AUTOTEST PASS chapter=7 variant=wall branch=7a outcome=7.1 extras=["7.5a"] sadakat=30 baski=0 hour=13.5
+## b7_wallkeep: _sonuc_listA.txt.txt:b7_wallkeep rc=0 pass=1 bad=0 t=17s
+AUTOTEST PASS chapter=7 variant=wallkeep branch=7a outcome=7.1 extras=["7.5b"] sadakat=50 baski=0 hour=13.5
+## b8_default: _sonuc_listA.txt.txt:b8_default rc=0 pass=1 bad=0 t=6s
+AUTOTEST PASS chapter=8 variant= machine=free outcome=8.1 parts=["capacitor", "antenna", "tape"] catches=0 called=false solid=0
+## b8y_default: _sonuc_listA.txt.txt:b8y_default rc=0 pass=1 bad=0 t=24s
+AUTOTEST PASS chapter=8y variant= outcome=8Y.1 id=seal warnings=0 lowered=0 radio=true
+## b9_default: _sonuc_listA.txt.txt:b9_default rc=0 pass=1 bad=0 t=13s
+AUTOTEST PASS chapter=9 variant= route=A byz=false offers=["kadri", "miner"] outcome=9.1 telsiz=4 merak=0
+## b10_default: _sonuc_listA.txt.txt:b10_default rc=0 pass=1 bad=0 t=14s
+AUTOTEST PASS chapter=10 variant= outcome=10O.1 tries=0 envoy=false merak=0
+## b11_arrest: _sonuc_listA.txt.txt:b11_arrest rc=0 pass=1 bad=0 t=13s
+AUTOTEST PASS chapter=11 variant=arrest outcome=11.1 persuade=25 sadakat=55 baski=0
+## b11_default: _sonuc_listA.txt.txt:b11_default rc=0 pass=1 bad=0 t=13s
+AUTOTEST PASS chapter=11 variant= outcome=11.2 persuade=25 sadakat=55 baski=1
+## b11_escape: _sonuc_listA.txt.txt:b11_escape rc=0 pass=1 bad=0 t=13s
+AUTOTEST PASS chapter=11 variant=escape outcome=11.2 persuade=70 sadakat=55 baski=1
+## b11_fired: _sonuc_listA.txt.txt:b11_fired rc=0 pass=1 bad=0 t=14s
+AUTOTEST PASS chapter=11 variant=fired outcome=11.4 persuade=25 sadakat=55 baski=4
+## b11_help: _sonuc_listA.txt.txt:b11_help rc=0 pass=1 bad=0 t=13s
+AUTOTEST PASS chapter=11 variant=help outcome=11.3 persuade=25 sadakat=55 baski=0
+## b11_helpwall: _sonuc_listA.txt.txt:b11_helpwall rc=0 pass=1 bad=0 t=15s
+AUTOTEST PASS chapter=11 variant=helpwall outcome=11.3 persuade=25 sadakat=30 baski=0
+## b11_hikmet: _sonuc_listA.txt.txt:b11_hikmet rc=0 pass=1 bad=0 t=12s
+AUTOTEST PASS chapter=11 variant=hikmet outcome=11.5 persuade=25 sadakat=55 baski=0
+## b11_lost: _sonuc_listA.txt.txt:b11_lost rc=0 pass=1 bad=0 t=13s
+AUTOTEST PASS chapter=11 variant=lost outcome=11.4 persuade=25 sadakat=55 baski=0
+## b11_niko: _sonuc_listA.txt.txt:b11_niko rc=0 pass=1 bad=0 t=13s
+AUTOTEST PASS chapter=11 variant=niko outcome=11.6 persuade=25 sadakat=55 baski=0
+## b11_persuade: _sonuc_listA.txt.txt:b11_persuade rc=0 pass=1 bad=0 t=14s
+AUTOTEST PASS chapter=11 variant=persuade outcome=11.2 persuade=70 sadakat=55 baski=1
+## b17_default: _sonuc_listB.txt.txt:b17_default rc=0 pass=1 bad=0 t=50s
+AUTOTEST PASS chapter=17 variant= outcome=17.1 saved=3 fell=false lost=false next=chapter18b.tscn shot=true chain=false rescue_t=40 genoese=0
+## b17o_default: _sonuc_listB.txt.txt:b17o_default rc=0 pass=1 bad=0 t=14s
+AUTOTEST PASS chapter=17o variant= outcome=17O.1 acc=1.00 water=4 pours=10.0 kadri=true
+## b18_default: _sonuc_listB.txt.txt:b18_default rc=0 pass=1 bad=0 t=12s
+AUTOTEST PASS chapter=18 variant= outcome=18.1 built=6 misses=0 taped=0 twins=false captive=false next=
+## b19_default: _sonuc_listB.txt.txt:b19_default rc=0 pass=1 bad=0 t=20s
+AUTOTEST PASS chapter=19 variant= outcome=19.1 suspicion=0 tezkire=false saved=false grain=0
+## b24_default: _sonuc_listB.txt.txt:b24_default rc=0 pass=1 bad=0 t=19s
+AUTOTEST PASS chapter=24 variant= outcome=24.1 stumbles=0 kid=true niko=false steadied=0 kid_t=0.2
+## b24o_default: _sonuc_listB.txt.txt:b24o_default rc=0 pass=1 bad=0 t=15s
+AUTOTEST PASS chapter=24o variant= outcome=24O.1 calmed=3 kadri=false tea=0 menu=false eclipse=false
+## b25_default: _sonuc_listB.txt.txt:b25_default rc=0 pass=1 bad=0 t=18s
+AUTOTEST PASS chapter=25 variant= outcome=25.1 caught=0 candle=true tezkire=false marco=false
+## b26_default: _sonuc_listB.txt.txt:b26_default rc=0 pass=1 bad=0 t=111s
+AUTOTEST PASS chapter=26 variant= outcome=26.1 water=3 repaired=3 cleared=2 world= gun=3/4 gunner=3/3
+## b27_default: _sonuc_listB.txt.txt:b27_default rc=0 pass=1 bad=0 t=14s
+AUTOTEST PASS chapter=27 variant= outcome=27.1 stayed=3 brig=false genoese=false
+## b29_default: _sonuc_listB.txt.txt:b29_default rc=0 pass=1 bad=0 t=31s
+AUTOTEST PASS chapter=29 variant= outcome=29.1 cut=6/6 boarders=0 fires=0 duel=true
+## b30_default: _sonuc_listB.txt.txt:b30_default rc=0 pass=1 bad=0 t=35s
+AUTOTEST PASS chapter=30 variant= outcome=30.1 gun=3/4 pushed=2 boarders=0 duel=true rifle=4
+## b31o_default: _sonuc_listB.txt.txt:b31o_default rc=0 pass=1 bad=0 t=54s
+AUTOTEST PASS chapter=31o variant= outcome=31O.1 house=true(163) falls=0 signs=3 wrong=0 sun=true lashes=3 miss=0 scaff=true mats=8/8 err=1
+## b32o_default: _sonuc_listB.txt.txt:b32o_default rc=0 pass=1 bad=0 t=41s
+AUTOTEST PASS chapter=32o variant= outcome=32O.1 bundles=6/6 earth=2 arrows=0 rungs=6 bad=0 hits=3/3 fires=6 greek=2/2 hasan=water
+## b39o_default: _sonuc_listB.txt.txt:b39o_default rc=0 pass=1 bad=0 t=25s
+AUTOTEST PASS chapter=39o variant= outcome=39O.1 flags=6/6 lost=0 wrong=0 door=98 broke=false tez=1 struggle=0 lowered=true roof=83 answer=write called=false axes=2
+## b43o_default: _sonuc_listB.txt.txt:b43o_default rc=0 pass=1 bad=0 t=45s
+AUTOTEST PASS chapter=43 variant= outcome=43O.1 bad=0 lessons=3 soup=true flown=1069 battery=22
+
+## Özet (bad = SCRIPT ERROR|WARN_FX_STUCK|WARN_FLY_ITEM|VISAUDIT|WARN_VOID_TELEPORT|WALKTHRU|ARMAUDIT|HELDAUDIT|LOOKAUDIT backturn|JOURNEY_MISS|JOURNEY_OVERLAP sayısı)
+b11_default rc=0 pass=1 bad=0 t=13s
+b11_arrest rc=0 pass=1 bad=0 t=13s
+b11_escape rc=0 pass=1 bad=0 t=13s
+b11_persuade rc=0 pass=1 bad=0 t=14s
+b11_help rc=0 pass=1 bad=0 t=13s
+b11_helpwall rc=0 pass=1 bad=0 t=15s
+b11_lost rc=0 pass=1 bad=0 t=13s
+b11_fired rc=0 pass=1 bad=0 t=14s
+b11_hikmet rc=0 pass=1 bad=0 t=12s
+b11_niko rc=0 pass=1 bad=0 t=13s
+b7_default rc=0 pass=1 bad=0 t=14s
+b7_tea rc=0 pass=1 bad=0 t=14s
+b7_lost rc=0 pass=1 bad=0 t=13s
+b7_form rc=0 pass=1 bad=0 t=16s
+b7_wall rc=0 pass=1 bad=0 t=16s
+b7_wallkeep rc=0 pass=1 bad=0 t=17s
+b7_byz rc=0 pass=1 bad=0 t=13s
+b7_byzniko rc=0 pass=1 bad=0 t=13s
+b7_byzcell rc=0 pass=1 bad=0 t=13s
+b7_fez rc=0 pass=1 bad=0 t=16s
+b3_default rc=0 pass=1 bad=0 t=14s
+b6_default rc=0 pass=1 bad=0 t=14s
+b6_byz rc=0 pass=1 bad=0 t=18s
+b8_default rc=0 pass=1 bad=0 t=6s
+b8y_default rc=0 pass=1 bad=0 t=24s
+b9_default rc=0 pass=1 bad=0 t=13s
+b10_default rc=0 pass=1 bad=0 t=14s
+b4_default rc=0 pass=1 bad=0 t=7s
+b4_item rc=0 pass=1 bad=0 t=7s
+b4_caught rc=0 pass=1 bad=0 t=7s
+b4_market rc=0 pass=1 bad=0 t=7s
+b4_chain rc=0 pass=1 bad=0 t=14s
+b4_nofez rc=0 pass=1 bad=0 t=14s
+b4_fall rc=0 pass=1 bad=0 t=6s
+b4_fez rc=0 pass=1 bad=0 t=9s
+b4_wet rc=0 pass=1 bad=0 t=7s
+b17_default rc=0 pass=1 bad=0 t=50s
+b17o_default rc=0 pass=1 bad=0 t=14s
+b18_default rc=0 pass=1 bad=0 t=12s
+b19_default rc=0 pass=1 bad=0 t=20s
+b24_default rc=0 pass=1 bad=0 t=19s
+b24o_default rc=0 pass=1 bad=0 t=15s
+b25_default rc=0 pass=1 bad=0 t=18s
+b26_default rc=0 pass=1 bad=0 t=111s
+b27_default rc=0 pass=1 bad=0 t=14s
+b29_default rc=0 pass=1 bad=0 t=31s
+b30_default rc=0 pass=1 bad=0 t=35s
+b31o_default rc=0 pass=1 bad=0 t=54s
+b32o_default rc=0 pass=1 bad=0 t=41s
+b39o_default rc=0 pass=1 bad=0 t=25s
+b43o_default rc=0 pass=1 bad=0 t=45s
