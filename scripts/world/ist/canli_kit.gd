@@ -832,6 +832,16 @@ static func mat_ordu() -> StandardMaterial3D:
 	return _mat_ordu
 
 
+static var _mat_ordu_u: StandardMaterial3D
+
+## Ordugâhın orta mesafe ağı: dış hatsız (32 m ötesinde çizgi piksel altı; ikinci çizim geçişi yok)
+static func mat_ordu_uzak() -> StandardMaterial3D:
+	if _mat_ordu_u == null:
+		_mat_ordu_u = mat_ordu().duplicate() as StandardMaterial3D
+		_mat_ordu_u.next_pass = null
+	return _mat_ordu_u
+
+
 ## Eklemli düğüm ağacı (yakın katman). Her parça bir Node3D (pivotunda) + MeshInstance3D (köşe renkli ağ).
 ## Döndürür {"root", "p": {ad: Node3D}}. opt.lod (varsayılan 0). opt.birlestir: ["kulak"] → kulaklar başa pişer.
 static func dugum(tur: String, opt := {}) -> Dictionary:
@@ -936,14 +946,14 @@ static func bld_ekle(b: Object, tur: String, pos: Vector3, yaw_deg: float, opt :
 		if mi == null:
 			mi = MeshInstance3D.new()
 			mi.name = nm
-			mi.material_override = mat_ordu()
+			mi.material_override = mat_ordu() if L == 0 else mat_ordu_uzak()
 			mi.set_meta("no_walk", true)
 			mi.set_meta("canli_acc", Acc.new())
 			if lods.size() > 1:
 				if L == 0:
-					mi.visibility_range_end = 32.0
+					mi.visibility_range_end = 24.0
 				else:
-					mi.visibility_range_begin = 32.0
+					mi.visibility_range_begin = 24.0
 					mi.visibility_range_end = 300.0
 			if L > 0:
 				mi.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
