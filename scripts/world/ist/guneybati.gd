@@ -549,7 +549,7 @@ static func _b_mokios(h: Node3D, k: float, lod: int, out: Dictionary) -> void:
 				body.add_child(cs)
 			bedx.append(Transform3D(Basis(), Vector3(cx, 0.15, cz)))
 			var kind := (i + j * 2) % 3
-			var nc := 0 if K.lite else int(bed_l / 0.9)
+			var nc := 0 if K.lite else int(bed_l / 1.5)
 			for q in nc:
 				var qx := cx - bed_l * 0.5 + (q + 0.5) * bed_l / nc
 				for rz in [-0.4, 0.4]:
@@ -567,8 +567,8 @@ static func _b_mokios(h: Node3D, k: float, lod: int, out: Dictionary) -> void:
 		var sph := SphereMesh.new()
 		sph.radius = 0.28
 		sph.height = 0.46
-		sph.radial_segments = 6
-		sph.rings = 3
+		sph.radial_segments = 5
+		sph.rings = 2
 		K.mm(h, sph, Color("78a043"), cropx)
 		K.mm(h, K.cone_mesh(0.16, 0.7, 5), Color("a8c05a"), cropx2)
 	# kuyu çıkrığı
@@ -702,7 +702,7 @@ static func _b_psamathia(h: Node3D, k: float, lod: int, out: Dictionary) -> void
 # ---------- ALTIN KAPI KALINTISI ----------
 
 static func _b_altinkapi(h: Node3D, k: float, lod: int, out: Dictionary) -> void:
-	var GW := maxf(20.0 * k, 12.0)
+	var GW := maxf(30.0 * k, 18.0)
 	var GH := maxf(15.0 * k, 7.0)
 	var GT := maxf(6.0 * k, 4.0)
 	var TW := maxf(9.0 * k, 5.0)
@@ -718,7 +718,7 @@ static func _b_altinkapi(h: Node3D, k: float, lod: int, out: Dictionary) -> void
 	var ow := 3.6
 	var hz := GT * 0.5
 	# kapı bloğu: üç geçit (orta geniş, yanlar dar), kuzey-güney yönünde geçilir
-	var doors := [[GW * 0.5, ow + 0.8], [GW * 0.5 - (ow + 2.4), ow - 0.6], [GW * 0.5 + (ow + 2.4), ow - 0.6]]
+	var doors := [[GW * 0.5, 4.2], [GW * 0.5 - 6.0, 3.0], [GW * 0.5 + 6.0, 3.0]]
 	K.wall(h, Vector2(-GW * 0.5, 0), Vector2(GW * 0.5, 0), GH, GT, marble, "marble", doors, 0, 0.0, -1.0, 1.3, oh)
 	# kemer kabartması: mermer kuşaklar ve koyu iç
 	if h != null:
@@ -754,13 +754,14 @@ static func _b_altinkapi(h: Node3D, k: float, lod: int, out: Dictionary) -> void
 		var zc := TW * 0.5 + 0.05 + (n - 1 - i + 0.5) * K.STEP_RUN
 		K.sb(h, Vector3(2.0, ht, K.STEP_RUN + 0.02), Vector3(cxl, ht * 0.5, zc), rub.darkened(0.1), "rubble")
 	K.out_add(out, "climb", [Vector3(cxl, 0.0, TW * 0.5 + 0.05 + n * K.STEP_RUN + 0.4), Vector3(cxl, h1, TW * 0.5 + 0.2), "basamak"])
-	# kule tepesinden kapı üstüne: sandıklar kapı bloğunun batı yüzüne dayalı, +x yönünde yükselir
-	var hd: float = GH - h1
-	var n2 := maxi(1, ceili(hd / 0.36))
-	var xr: float = cxl + TW * 0.5
-	var dep2 := 0.5
-	K.crates(h, Vector3(xr - dep2 * n2 - 0.0, h1, 0.0), Vector2(1, 0), n2, 1.6, Callable(), GH, dep2)
-	K.out_add(out, "climb", [Vector3(xr - dep2 * n2 - 0.8, h1, 0.0), Vector3(xr + 0.4, GH, 0.0), "sandik"])
+	# kapı bloğunun güney yüzünde, ayaklar arasında (x = 3,3) yerden üst yola dış merdiven
+	var ns := _nsteps(GH)
+	var rs := GH / ns
+	for i in ns:
+		var hh := rs * (i + 1)
+		var zc5 := hz + 0.05 + (ns - 1 - i + 0.5) * K.STEP_RUN
+		K.sb(h, Vector3(1.3, hh, K.STEP_RUN + 0.02), Vector3(3.3, hh * 0.5, zc5), rub.darkened(0.05), "rubble")
+	K.out_add(out, "climb", [Vector3(3.3, 0.0, hz + 0.05 + ns * K.STEP_RUN + 0.4), Vector3(3.3, GH, hz + 0.2), "basamak"])
 	# bitki ve moloz
 	_tree_round(h, Vector3(GW * 0.5 + TW + 3.0, 0, 3.0), 4.0, Color("6a8a3c"))
 	if h != null:
