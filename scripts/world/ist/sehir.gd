@@ -26,12 +26,31 @@ const K_TUR := {"anit": 0.5, "kilise": 0.5, "kapi": 0.6, "sur": 0.5, "liman": 0.
 ## Yerleştirme tablosu: kimlik → düzeltme. "k": ölçek, "lm": World1453.LANDMARKS anahtarına oturt (yan görev işareti ve
 ## eski konumla aynı yer), "dx"/"dz": dünya metresi kaydırma, "yaw": derece (dünya yönüne ek), "skip": kurma,
 ## "old": yerine geçtiği eski kaba yapı (Landmarks1453 anahtarı; yeni kurulunca eskisi kurulmaz)
-static var YER := {}
+static var YER := {
+	# hipodrom (wip/ist-hipodrom): yan görev işaretleri ve bölümlerin anıt yerleri World1453.LANDMARKS'ta
+	"hipodrom": {"lm": "hippodrome"},
+	"buyuk_saray": {"lm": "great_palace"},
+	"aya_irini": {"lm": "aya_irini"},
+	"augustaion": {"lm": "augustaion"},
+}
 
-## Eski kaba yapının (Landmarks1453) yerini alan kimlikler: anahtar → eski anahtar (modüller geldikçe doldurulur)
-static var REPLACES := {}
+## Eski kaba yapının (Landmarks1453 anahtarı) yerini alan kimlikler: yeni kurulunca eskisi kurulmaz (çifte yapı yok)
+const REPLACES := {
+	"hipodrom": "hippodrome", "buyuk_saray": "great_palace", "aya_irini": "aya_irini", "augustaion": "augustaion",
+}
+
+
+## Landmarks1453.build için: yeni parçası şehre yerleşen eski anahtarlar
+static func replaced() -> Array:
+	var out: Array = []
+	for e: Dictionary in catalog_all():
+		if REPLACES.has(e["id"]) and not (YER.get(e["id"], {}) as Dictionary).get("skip", false):
+			out.append(REPLACES[e["id"]])
+	return out
 
 static var active: IstSehir
+static var KITS := {}                    # konumsuz kit öğeleri: kimlik → betik (bitki, ayrıntı)
+static var _ids := {}
 static var _catalog: Array = []          # [{id, mod, data}]
 static var _scanned := false
 
@@ -81,8 +100,14 @@ static func catalog_all() -> Array:
 			if not (e is Dictionary) or not e.has("id"):
 				continue
 			var fn := "build_" + String(e["id"])
-			if not methods.has(fn):
+			if not methods.has(fn) or _ids.has(e["id"]):
 				continue
+			# Konumsuz kitaplık öğeleri (bitki, ayrıntı: dogu/kuzey 0) yerleşmez; mahalle dokusunda kullanılır (KITS)
+			var tur := String(e.get("tur", ""))
+			if e.get("yama", false) or (tur in ["bitki", "ayrinti"] and float(e.get("dogu_m", 0.0)) == 0.0 and float(e.get("kuzey_m", 0.0)) == 0.0):
+				KITS[String(e["id"])] = scr
+				continue
+			_ids[e["id"]] = true
 			_catalog.append({"id": e["id"], "mod": base, "script": scr, "data": e,
 				"perch_fn": "perches_" + String(e["id"]) if methods.has("perches_" + String(e["id"])) else ""})
 	return _catalog
@@ -125,6 +150,7 @@ static func attach(f: Node3D) -> IstSehir:
 	s.keep = (f.get("keep") as Array).duplicate() if f.get("keep") != null else []
 	f.add_child(s)
 	s._place_all()
+	s._doku()
 	active = s
 	return s
 
@@ -171,7 +197,10 @@ func _build(it: Dictionary, lod: int) -> void:
 	n.name = "L%d" % lod
 	(it["holder"] as Node3D).add_child(n)
 	var t0 := Time.get_ticks_usec()
-	(it["script"] as GDScript).call("build_" + String(it["id"]), n, float(it["k"]), lod)
+	if it.has("make"):
+		(it["make"] as Callable).call(n, lod)
+	else:
+		(it["script"] as GDScript).call("build_" + String(it["id"]), n, float(it["k"]), lod)
 	var ms := (Time.get_ticks_usec() - t0) / 1000.0
 	stats["kur_ms_max"] = maxf(stats["kur_ms_max"], ms)
 	stats["kur_n"] += 1
@@ -309,7 +338,7 @@ func _houses(list: Array, surf: Callable, free: Callable, nd: Dressing) -> void:
 		# Yamaçta evin altında taş kaide: gövde zemine kadar iner (havada kalmaz)
 		var tip := "dukkan" if (hash(Vector2i(int(c.x), int(c.y))) % 5 < 2 and dm.x >= 6.0) else "sira"
 		var xf := Transform3D(Basis(Vector3.UP, yaw), Vector3(c.x, y, c.y))
-		var key := "%d|%s" % [v, tip]
+		var key := "ev|%d|%s" % [v, tip]
 		for pair: Array in [[g0, CELL0], [g1, CELL1], [g2, CELL2]]:
 			var g: Dictionary = pair[0]
 			var ck := Vector2i(floori(c.x / pair[1]), floori(c.y / pair[1]))
@@ -326,18 +355,7 @@ func _houses(list: Array, surf: Callable, free: Callable, nd: Dressing) -> void:
 		n += 1
 	nd.at(Vector3.ZERO)
 	# Uzak (lod 2) ve orta (lod 1): hemen; yakın (lod 0): ağı yaklaşınca pişirilir
-	for ck: Vector2i in g2:
-		for key: String in g2[ck]:
-			var mm := _mm(IstEvler.mesh(int(key.get_slice("|", 0)), key.get_slice("|", 1), 2), g2[ck][key])
-			mm.visibility_range_begin = MID
-	for ck: Vector2i in g1:
-		for key: String in g1[ck]:
-			var mm := _mm(IstEvler.mesh(int(key.get_slice("|", 0)), key.get_slice("|", 1), 1), g1[ck][key])
-			mm.visibility_range_begin = NEAR
-			mm.visibility_range_end = MID
-	for ck: Vector2i in g0:
-		var cell := {"c": Vector3((ck.x + 0.5) * CELL0, 0, (ck.y + 0.5) * CELL0), "groups": g0[ck], "mm": [], "col": null, "up": false}
-		_cells0.append(cell)
+	_layers(g0, g1, g2)
 	print("ISTEVLER ev=%d hucre=%d kur_ms=%.1f" % [n, _cells0.size(), (Time.get_ticks_usec() - t0) / 1000.0])
 	# Başlangıçta oyuncunun yakınındaki hücreler eşzamanlı (yükleme: bölge merkezi)
 	var rp := Vector3.ZERO
@@ -350,6 +368,45 @@ func _houses(list: Array, surf: Callable, free: Callable, nd: Dressing) -> void:
 		var cc: Vector3 = c["c"]
 		if Vector2(cc.x - rp.x, cc.z - rp.z).length() < 110.0:
 			_cell_up(c)
+
+
+## Hücre grupları → katmanlar: uzak ve orta MultiMesh hemen, yakın hücreler akışla (_cell_up)
+func _layers(g0: Dictionary, g1: Dictionary, g2: Dictionary) -> void:
+	for ck: Vector2i in g2:
+		for key: String in g2[ck]:
+			var m2 := _mesh_for(key, 2)
+			if m2:
+				_mm(m2, g2[ck][key]).visibility_range_begin = MID
+	for ck: Vector2i in g1:
+		for key: String in g1[ck]:
+			var mm := _mm(_mesh_for(key, 1), g1[ck][key])
+			mm.visibility_range_begin = NEAR
+			mm.visibility_range_end = MID if key.begins_with("ev|") else MID * 0.75
+	for ck: Vector2i in g0:
+		var cell := {"c": Vector3((ck.x + 0.5) * CELL0, 0, (ck.y + 0.5) * CELL0), "groups": g0[ck], "mm": [], "col": null, "up": false}
+		_cells0.append(cell)
+
+
+## Grup anahtarı: "ev|örnek|tip" ya da "ag|tür" (IstBitki ağacı)
+func _mesh_for(key: String, lod: int) -> Mesh:
+	var p := key.split("|")
+	if p[0] == "ev":
+		return IstEvler.mesh(int(p[1]), p[2], lod)
+	if KITS.has(p[1]):
+		if lod >= 2:
+			return null                     # ağaçlar uzakta çizilmez (orta katman MID'in 3/4'ünde biter)
+		return (KITS[p[1]] as GDScript).call("tree_mesh", p[1], lod)
+	return null
+
+
+func _shapes_for(key: String) -> Array:
+	var p := key.split("|")
+	if p[0] == "ev":
+		return IstEvler.shapes(int(p[1]), p[2])
+	var cy := CylinderShape3D.new()
+	cy.radius = 0.25
+	cy.height = 2.0
+	return [[cy, Transform3D(Basis.IDENTITY, Vector3(0, 1.0, 0))]]
 
 
 ## Yamaçta evin altındaki taş kaide (yalnız eğimli yerde)
@@ -398,12 +455,10 @@ func _cell_up(c: Dictionary) -> void:
 	body.name = "EvCarpisma"
 	add_child(body)
 	for key: String in c["groups"]:
-		var v := int(key.get_slice("|", 0))
-		var tip := key.get_slice("|", 1)
-		var mm := _mm(IstEvler.mesh(v, tip, 0), c["groups"][key])
+		var mm := _mm(_mesh_for(key, 0), c["groups"][key])
 		mm.visibility_range_end = NEAR
 		c["mm"].append(mm)
-		var shp := IstEvler.shapes(v, tip)
+		var shp := _shapes_for(key)
 		for xf: Transform3D in c["groups"][key]:
 			for s: Array in shp:
 				var cs := CollisionShape3D.new()
@@ -425,6 +480,149 @@ func _cell_down(c: Dictionary) -> void:
 	if c["col"] != null:
 		(c["col"] as Node).queue_free()
 		c["col"] = null
+
+
+# ---------------------------------------------------------------- mahalle dokusu
+
+const DOKU_CELL := 32.0
+## Sık mahalleler (ISTANBUL_PLAN §2, dünya dikdörtgenleri): çarşı, Haliç iskeleleri, Ayasofya çevresi, hub, Petrion
+const SIK := [Rect2(-700, -1500, 100, 650), Rect2(-520, -1360, 280, 380), Rect2(-700, -1720, 300, 360),
+	Rect2(-140, -330, 320, 326), Rect2(-700, -820, 180, 440), Rect2(-420, -900, 220, 280)]
+const AGAC_SIK := ["erguvan", "badem", "kiraz", "incir", "nar", "servi", "defne", "dut"]
+const AGAC_SEYREK := ["zeytin", "servi", "cinar", "badem", "erguvan", "incir", "dut"]
+const YAMA := ["bostan", "bag", "bugday", "cayir", "bahce"]
+
+## Anıtların, CityPlan evlerinin ve sokaklarının arasındaki boş hücreler mahalle karakterine göre dolar: sık yerde
+## bitişik sıra evler (aralık 0), seyrek yerde bostan, bağ, tarla, harabe, ağaç kümeleri (Nisan 1453: şehrin çoğu seyrek).
+func _doku() -> void:
+	if not houses_on:
+		return
+	var t0 := Time.get_ticks_usec()
+	var occ := {}
+	for h: Dictionary in CityPlan.houses_in(-INF, INF):
+		var c: Vector2 = h["c"]
+		occ[Vector2i(floori(c.x / 16.0), floori(c.y / 16.0))] = true
+	for it: Dictionary in items:
+		var p: Vector3 = it["pos"]
+		var r := float(it["r"]) + 8.0
+		for i in range(floori((p.x - r) / 16.0), floori((p.x + r) / 16.0) + 1):
+			for j in range(floori((p.z - r) / 16.0), floori((p.z + r) / 16.0) + 1):
+				occ[Vector2i(i, j)] = true
+	var g0 := {}
+	var g1 := {}
+	var g2 := {}
+	var nh := 0
+	var nt := 0
+	var np := 0
+	var free_fn := Callable(field, "_free") if field and field.has_method("_free") else Callable()
+	for i in range(floori(-700.0 / DOKU_CELL), ceili(700.0 / DOKU_CELL)):
+		for j in range(floori(-1720.0 / DOKU_CELL), 0):
+			var c := Vector2((i + 0.5) * DOKU_CELL, (j + 0.5) * DOKU_CELL)
+			if not World1453.in_city(c.x, c.y, 14.0):
+				continue
+			var ok := true
+			for a in range(-1, 2):
+				for b in range(-1, 2):
+					if occ.has(Vector2i(floori(c.x / 16.0) + a, floori(c.y / 16.0) + b)):
+						ok = false
+			if not ok or CityPlan.blocked(c.x, c.y, 13.0) or WallRear.in_band(c.x, c.y, 14.0):
+				continue
+			if _blocked(Vector3(c.x, 0, c.y), 18.0) or (free_fn.is_valid() and not free_fn.call(c.x, c.y, 14.0, true)):
+				continue
+			var rng := RandomNumberGenerator.new()
+			rng.seed = hash(Vector2i(i, j)) ^ 1453
+			var sik := false
+			for r: Rect2 in SIK:
+				if r.has_point(c):
+					sik = true
+			var roll := rng.randf()
+			var hs := [World1453.surface_h(c.x - 10, c.y - 10), World1453.surface_h(c.x + 10, c.y - 10),
+				World1453.surface_h(c.x - 10, c.y + 10), World1453.surface_h(c.x + 10, c.y + 10)]
+			var lo: float = hs.min()
+			var slope: float = hs.max() - lo
+			if (sik and roll < 0.75) or (not sik and roll < 0.22):
+				# Bitişik sıra evler: ortak duvar (aralık 0); cephe bir yana, arkası avlu/bahçe
+				var yaw := rng.randi_range(0, 3) * PI * 0.5
+				var bas := Basis(Vector3.UP, yaw)
+				var n := rng.randi_range(2, 4) if sik else rng.randi_range(1, 2)
+				var vs: Array = []
+				var total := 0.0
+				for k in n:
+					var v := rng.randi_range(0, IstEvler.variant_count() - 1)
+					vs.append(v)
+					total += IstEvler.dims(v).x
+				var x := -total * 0.5
+				for v: int in vs:
+					var dm := IstEvler.dims(v)
+					var lp := bas * Vector3(x + dm.x * 0.5, 0, -dm.z * 0.5 + 4.0)
+					x += dm.x
+					var y := INF
+					for o: Vector3 in [Vector3(-1, 0, -1), Vector3(1, 0, -1), Vector3(-1, 0, 1), Vector3(1, 0, 1)]:
+						var q := Vector3(c.x, 0, c.y) + lp + bas * (o * Vector3(dm.x * 0.5, 0, dm.z * 0.5))
+						y = minf(y, World1453.surface_h(q.x, q.z))
+					var tip := "dukkan" if (sik and rng.randf() < 0.35 and dm.x >= 6.0) else "sira"
+					var xf := Transform3D(bas, Vector3(c.x + lp.x, y - 0.03, c.y + lp.z))
+					_add(g0, g1, g2, "ev|%d|%s" % [v, tip], xf)
+					nh += 1
+				# avluda bir iki ağaç
+				for k in rng.randi_range(0, 2):
+					var tp := Vector3(c.x, 0, c.y) + bas * Vector3(rng.randf_range(-total * 0.4, total * 0.4), 0, -9.0 - rng.randf() * 3.0)
+					_add(g0, g1, g2, "ag|" + AGAC_SIK[rng.randi() % AGAC_SIK.size()], Transform3D(Basis(Vector3.UP, rng.randf() * TAU), Vector3(tp.x, World1453.surface_h(tp.x, tp.z) - 0.05, tp.z)))
+					nt += 1
+			elif roll < (0.9 if sik else 0.62) and slope < 1.2 and KITS.has(YAMA[0]):
+				# Bostan / bağ / tarla yaması (kendi kenar duvarı ve öğeleriyle), köşesinde ağaç
+				var tur: String = YAMA[rng.randi() % YAMA.size()]
+				var alan := Vector2(rng.randf_range(16.0, 24.0), rng.randf_range(16.0, 24.0))
+				var it := {"id": "yama_%s_%d_%d" % [tur, i, j], "pos": Vector3(c.x, lo + 0.02, c.y), "yaw": 0.0, "k": 1.0,
+					"r": alan.length() * 0.5, "have": [null, null, null], "data": {"tur": "bitki"}, "mod": "doku"}
+				var scr: GDScript = KITS[tur] if KITS.has(tur) else KITS[YAMA[0]]
+				var tohum := i * 31 + j
+				it["make"] = func(n: Node3D, lod: int) -> void: scr.call("build_patch_" + tur, n, alan, 1.0, lod, tohum)
+				_item(it)
+				np += 1
+			elif roll < (0.95 if sik else 0.78):
+				# Harabe (yıkık ev), çevresinde ot ve ağaç
+				var it := {"id": "harabe_%d_%d" % [i, j], "pos": Vector3(c.x, lo - 0.03, c.y), "yaw": rng.randi_range(0, 3) * PI * 0.5,
+					"k": 1.0, "r": 6.0, "have": [null, null, null], "data": {"tur": "ev"}, "mod": "doku"}
+				var tohum := i * 17 + j
+				it["make"] = func(n: Node3D, lod: int) -> void: IstEvler.build_harabe(n, 1.0, lod, tohum)
+				_item(it)
+				np += 1
+			# Ağaç kümesi (her boş hücrede birkaç; seyrek yerde daha çok)
+			var list: Array = AGAC_SIK if sik else AGAC_SEYREK
+			for k in rng.randi_range(1, 2 if sik else 5):
+				var tp := Vector2(c.x + rng.randf_range(-13, 13), c.y + rng.randf_range(-13, 13))
+				if CityPlan.blocked(tp.x, tp.y, 2.0):
+					continue
+				_add(g0, g1, g2, "ag|" + String(list[rng.randi() % list.size()]), Transform3D(Basis(Vector3.UP, rng.randf() * TAU), Vector3(tp.x, World1453.surface_h(tp.x, tp.y) - 0.05, tp.y)))
+				nt += 1
+	_layers(g0, g1, g2)
+	print("ISTDOKU ev=%d agac=%d yama=%d hucre=%d kur_ms=%.1f" % [nh, nt, np, _cells0.size(), (Time.get_ticks_usec() - t0) / 1000.0])
+
+
+func _add(g0: Dictionary, g1: Dictionary, g2: Dictionary, key: String, xf: Transform3D) -> void:
+	if key.begins_with("ag|") and not KITS.has(key.substr(3)):
+		return
+	for pair: Array in [[g0, CELL0], [g1, CELL1], [g2, CELL2]]:
+		var g: Dictionary = pair[0]
+		var ck := Vector2i(floori(xf.origin.x / pair[1]), floori(xf.origin.z / pair[1]))
+		if not g.has(ck):
+			g[ck] = {}
+		if not g[ck].has(key):
+			g[ck][key] = []
+		g[ck][key].append(xf)
+
+
+## Dokunun tekil öğesi (yama, harabe): anıtlar gibi akışla kurulur (uzakta lod 2)
+func _item(it: Dictionary) -> void:
+	var holder := Node3D.new()
+	holder.name = String(it["id"])
+	holder.position = it["pos"]
+	holder.rotation.y = float(it["yaw"])
+	add_child(holder)
+	it["holder"] = holder
+	items.append(it)
+	_build(it, 2)
 
 
 # ---------------------------------------------------------------- Nihat'ın yan görevi
