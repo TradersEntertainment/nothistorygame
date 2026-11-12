@@ -31,7 +31,7 @@ static func build_tekfur(host: Node3D, k: float = 0.5, lod: int = 0) -> void:
 	var T := Color("e8d8b4")
 	var W := Color("d8c8a4")
 	# sur kesiti (arkada) ve uç kuleleri
-	c.block(0, -7.5, 56, 4, 13, 0, W, "ashlar_far")
+	c.block(0, -8.5, 56, 6, 13, 0, W, "ashlar_far")
 	c.block(-26, -6.5, 7, 7, 17, 0, W, "ashlar")
 	c.block(26, -6.5, 7, 7, 17, 0, W, "ashlar")
 	c.gable(-26, -6.5, 7, 7, 17, 2.0, true)
@@ -40,12 +40,12 @@ static func build_tekfur(host: Node3D, k: float = 0.5, lod: int = 0) -> void:
 	c.block(0, 0, 20, 11, 17, 0, T, "tekfur")
 	c.gable(0, 0, 20, 11, 17, 2.2, false)
 	# doğu merdiven kulesi (sur yürüme yolu ile saray çatısı arasında geçit)
-	c.block(12.5, -3.5, 5, 4, 15, 0, W, "ashlar")
+	c.block(13.0, -3.5, 6, 4, 15, 0, W, "ashlar")
 	# sur yürüme yolu siperliği (kuzey kenarı) ve uç kule tepeleri
 	if lod < 2:
-		c.parapet(-29.5, -9.5, 29.5, -9.5, 13.0 * c.k)
+		c.parapet(-29.5, -11.5, 29.5, -11.5, 13.0 * c.k)
 		c.parapet(-23.0, -5.5, 10.0, -5.5, 13.0 * c.k)
-		c.parapet(19.0, -5.5, 24.5, -5.5, 13.0 * c.k)
+		c.parapet(23.0, -5.5, 28.0, -5.5, 13.0 * c.k)
 	# cephe: zemin katta beş kemerli revak (mermer sütunlu), iki kat cephe bantları, pencereler, geometrik rozetler
 	if lod == 0:
 		var offs := [-8.0, -4.0, 0.0, 4.0, 8.0]
@@ -70,7 +70,7 @@ static func build_tekfur(host: Node3D, k: float = 0.5, lod: int = 0) -> void:
 				var xx2 := (-9.0 + i * 2.25)
 				var rz := Props.box(c.root, Vector3(0.5, 0.5, 0.05), Vector3(xx2 * k, fl * k, 5.5 * k + 0.02), IstKbCtx.BRICK, Vector3(0, 0, 45))
 				rz.material_override = Props.mat(Color("b8523a"))
-		c.door_on(12.5, -3.5, 0, 2.0, 0.0, 15.0)
+		c.door_on(13.0, -3.5, 0, 2.0, 0.0, 15.0)
 		c.cypress(-14.0, 11.0, 9.0)
 		c.cypress(15.0, 12.0, 9.5)
 		c.olive(-10.0, 15.0, 0.0, 1.0)
@@ -81,9 +81,9 @@ static func build_tekfur(host: Node3D, k: float = 0.5, lod: int = 0) -> void:
 		Props.cyl(c.root, 0.7, 0.04, Vector3(-8.0 * k, 0.92, 13.0 * k), Color("2a3a46"), Vector3.ZERO, 10)
 	# tırmanış: yerden sur yürüme yoluna dış merdiven (batıdan), sonra kuleye ve saray çatısına sandık basamakları
 	var hw := 13.0 * k
-	c.stair(16.0, -5.5, Vector2(0, -1), hw, 1.6, IstKbCtx.STONE_D, 0.34, 0.0)
+	c.stair(19.8, -5.5, Vector2(0, -1), hw, 1.6, IstKbCtx.STONE_D, 0.34, 0.0)
 	var n1 := maxi(1, int(ceil(2.0 * k / 0.6)))
-	c.crate_steps(12.5, -5.5, Vector2(0, 1), n1, 2.0 * k / n1, hw)
+	c.crate_steps(13.0, -5.5, Vector2(0, 1), n1, 2.0 * k / n1, hw)
 	var n2 := maxi(1, int(ceil(2.0 * k / 0.6)))
 	c.crate_steps(10.0, -4.5, Vector2(-1, 0), n2, 2.0 * k / n2, 15.0 * k)
 

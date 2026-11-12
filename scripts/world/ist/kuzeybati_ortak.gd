@@ -496,7 +496,7 @@ func crate_steps(x: float, z: float, dir: Vector2, count: int, rise := 0.5, y0 :
 		Props.box(root, Vector3(1.12, 0.06, 0.92), pos + Vector3(0, top * 0.5 - 0.08, 0), WOOD_D, Vector3(0, ang, 0))
 	var base := Vector3(x * k, 0, z * k)
 	var d3 := Vector3(d.x, 0, d.y)
-	add_climb(base - d3 * (0.6 * (count - 1) + 1.3) + Vector3(0, y0, 0), base + d3 * 0.8 + Vector3(0, y0 + count * rise, 0), "sandik")
+	add_climb(base - d3 * (0.6 * (count - 1) + 1.3) + Vector3(0, y0, 0), base + d3 * 0.5 + Vector3(0, y0 + count * rise, 0), "sandik")
 
 
 ## Dekor: tuğla bandı (opus mixtum şeridi) bir cephenin üstüne
