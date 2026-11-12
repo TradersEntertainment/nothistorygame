@@ -202,11 +202,17 @@ func _audit() -> Dictionary:
 					continue
 				var bottom := gt.origin.y - bs.size.y * 0.5
 				if bottom > 0.05:
-					var q2 := PhysicsRayQueryParameters3D.create(Vector3(gt.origin.x, bottom - 0.02, gt.origin.z), Vector3(gt.origin.x, -1.0, gt.origin.z))
-					q2.exclude = [sb.get_rid()]
-					q2.hit_from_inside = true
-					var h2 := space.intersect_ray(q2)
-					if h2.is_empty() or (h2["position"] as Vector3).y < bottom - 3.5:
+					var supported := false
+					for off in [Vector2.ZERO, Vector2(1, 1), Vector2(-1, 1), Vector2(1, -1), Vector2(-1, -1)]:
+						var px := gt.origin.x + off.x * (bs.size.x * 0.5 - 0.1)
+						var pz := gt.origin.z + off.y * (bs.size.z * 0.5 - 0.1)
+						var q2 := PhysicsRayQueryParameters3D.create(Vector3(px, bottom - 0.02, pz), Vector3(px, -1.0, pz))
+						q2.exclude = [sb.get_rid()]
+						q2.hit_from_inside = true
+						var h2 := space.intersect_ray(q2)
+						if not h2.is_empty() and (h2["position"] as Vector3).y >= bottom - 3.5:
+							supported = true
+					if not supported:
 						hv += 1
 						print("HAVADA ", gt.origin, bs.size)
 	res["havada"] = hv

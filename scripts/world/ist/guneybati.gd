@@ -294,10 +294,6 @@ static func _b_studios(h: Node3D, k: float, lod: int, out: Dictionary) -> void:
 		K.sb(h, Vector3(0.25, 1.0, cl), Vector3(cx0 + sg * cw - (tc * 0.5 - 0.12) * (1.0 if sg > 0.5 else -1.0), Hcis + 0.5, cc.y), K.C_STONE, "ashlar")
 	# --- dış merdivenler ve tırmanış yolları ---
 	var xs := x0 + Lb * 0.35
-	var top1 := _stair_to(h, xs, hz + 0.5, Ha, Vector2(0, 1), out, 1.8)      # güney yan nef çatısına (orada +z yönünden duvara)
-	# merdiven uzaklaşan yönde basamak yükselir: duvar yönüne doğru yükselsin diye ters çevrilir (aşağıda yeniden kurulur)
-	# (yukarıdaki çağrı yalnız çıktı kaydı içindi; asıl merdiveni duvara doğru yükselen biçimde kuruyoruz)
-	out["climb"] = []
 	var n1 := _nsteps(Ha)
 	var rise1 := Ha / n1
 	for i in n1:
@@ -310,11 +306,10 @@ static func _b_studios(h: Node3D, k: float, lod: int, out: Dictionary) -> void:
 	var aisle_y := func(_x: float, z: float) -> float:
 		return Ha + ar * clampf((hz + 0.2 - z) / (hz + 0.2 - (nw * 0.5 + 0.1)), 0.0, 1.0)
 	var zc3 := nw * 0.5 + 0.4 + 0.35
-	var y_low: float = aisle_y.call(0.0, zc3 + 1.4)
-	var n2 := maxi(1, ceili((Hn - y_low) / 0.5))
-	var zbase := zc3 + 0.7 * n2
+	var n2 := maxi(1, ceili((Hn - aisle_y.call(0.0, zc3 + 1.5)) / 0.58))
+	var zbase := zc3 + 0.45 * n2
 	var xc3 := x0 + Lb * 0.35
-	var tp := K.crates(h, Vector3(xc3, 0.0, zbase), Vector2(0, -1), n2, 1.4, aisle_y, Hn)
+	var tp := K.crates(h, Vector3(xc3, 0.0, zbase), Vector2(0, -1), n2, 1.4, aisle_y, Hn, 0.45)
 	K.out_add(out, "climb", [Vector3(xc3, aisle_y.call(0.0, zbase + 0.9), zbase + 0.9), Vector3(tp.x, Hn, nw * 0.5 + 0.5), "sandik"])
 	# kuzey: hücre çatısına merdiven, hücre çatısından revak çatısına adım
 	var xa_mid := (xa0 + xn0) * 0.5
@@ -335,7 +330,6 @@ static func _b_studios(h: Node3D, k: float, lod: int, out: Dictionary) -> void:
 	K.out_add(out, "climb", [Vector3(cx0 + cw + tc * 0.5 + n4 * K.STEP_RUN + 0.5, 0.0, cc.y), Vector3(cx0 + cw, Hcis, cc.y), "basamak"])
 	K.out_add(out, "perch", Vector3((x0 + x1) * 0.5, Hn + nr + 0.15, 0))
 	K.out_add(out, "perch", Vector3(xa_mid, Hp + 0.1, hz - pd * 0.5))
-	top1 = top1
 
 
 # ---------- kubbeli küçük kiliseler (Peribleptos, Andreas) ----------

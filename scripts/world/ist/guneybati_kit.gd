@@ -191,17 +191,17 @@ static func stair(h: Node3D, x: float, z: float, y0: float, dir: Vector2, n: int
 
 ## Sandık/fıçı yığını basamağı: base'ten duvara (toward) doğru her sandık bir basamak daha yüksek.
 ## y_of: (x,z) → yüzey yüksekliği (eğimli çatı üstü için); top_y ≥ 0 ise son sandığın üstü tam top_y olur.
-static func crates(h: Node3D, base: Vector3, toward: Vector2, n: int, w := 1.2, y_of := Callable(), top_y := -1.0) -> Vector3:
+static func crates(h: Node3D, base: Vector3, toward: Vector2, n: int, w := 1.2, y_of := Callable(), top_y := -1.0, dep := 0.7) -> Vector3:
 	var top := Vector3.ZERO
 	var c0 := Vector2(base.x, base.z) + toward * 0.35
 	var y0: float = base.y if not y_of.is_valid() else y_of.call(c0.x, c0.y)
 	var step := CRATE_H if top_y < 0.0 else (top_y - y0) / n
 	for i in n:
-		var c2 := Vector2(base.x, base.z) + toward * (0.7 * (i + 0.5))
+		var c2 := Vector2(base.x, base.z) + toward * (dep * (i + 0.5))
 		var ys: float = base.y if not y_of.is_valid() else y_of.call(c2.x, c2.y)
 		var ht := y0 + step * (i + 1)
 		var bottom := ys - 0.25
-		var sz := Vector3(0.7, ht - bottom, w) if absf(toward.x) > 0.5 else Vector3(w, ht - bottom, 0.7)
+		var sz := Vector3(dep, ht - bottom, w) if absf(toward.x) > 0.5 else Vector3(w, ht - bottom, dep)
 		sb(h, sz, Vector3(c2.x, bottom + (ht - bottom) * 0.5, c2.y), C_WOOD if i % 2 == 0 else C_WOOD_D, "wood")
 		top = Vector3(c2.x, ht, c2.y)
 	return top
