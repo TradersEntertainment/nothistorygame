@@ -199,14 +199,15 @@ static func build_langa(host: Node3D, k: float = 0.5, lod: int = 0) -> void:
 	var rows := 4
 	var bw := 6.0
 	var gap := 1.6
-	var nx := int(floor((W - 14.0) / (bw + gap)))
+	var bx0 := -W * 0.5 + 15.0
+	var nx := int(floor((W * 0.5 - 4.0 - bx0) / (bw + gap)))
 	var xf_cab: Array = []
 	var xf_leek: Array = []
 	var xf_bean: Array = []
 	for r in rows:
 		var z := -L * 0.5 + 5.0 + r * ((L - 22.0) / (rows - 1)) if rows > 1 else 0.0
 		for i in nx:
-			var x := -W * 0.5 + 9.0 + i * (bw + gap)
+			var x := bx0 + bw * 0.5 + i * (bw + gap)
 			IstMk.S(root, Vector3(bw, 0.25, 2.4), Vector3(x, 0.0, z), IstMk.SOIL, "")
 			if lod >= 1:
 				continue
@@ -265,8 +266,7 @@ static func build_langa(host: Node3D, k: float = 0.5, lod: int = 0) -> void:
 		IstMk.S(root, Vector3(3.4, 2.4, 3.0), Vector3(hx, 0.0, hz), IstMk.STONE_DK, "rubble")
 		IstMk.ROOF(root, Vector3(3.0, 1.2, 4.2), Vector3(hx, 2.4, hz), IstMk.THATCH, "", 90.0)
 		IstMk.DOOR_DARK(root, Vector3(hx, 0.0, hz - 1.53), 1.0, 2.0)
-	for i in 7:
-		IstMk.S(root, Vector3(1.4, 2.4 / 7.0 * (i + 1), 0.82), Vector3(-W * 0.5 + 6.0, 0.0, -L * 0.5 + 3.0 + 1.5 + 0.4 + (6 - i) * 0.8), IstMk.WOOD_LT if i % 2 == 0 else IstMk.WOOD, "wood")
+	var fl := IstMk.FLIGHT(root, Vector3(-W * 0.5 + 6.0, 0.0, -L * 0.5 + 3.0 + 1.5 + 8 * 0.46 + 0.02), Vector3(0, 0, -1), 2.4, 1.4, [], IstMk.WOOD_LT, "wood")
 	# --- çit: hasır çit, çevrenin güney ve doğu kenarında
 	var fp: Array = []
 	for i in int(W / 1.2):
@@ -319,7 +319,7 @@ static func climbs_langa(k: float = 0.5) -> Array:
 	var d := ld(k)
 	var W: float = d["W"]
 	var L: float = d["L"]
-	return [[Vector3(-W * 0.5 + 6.0, 0.0, -L * 0.5 + 3.0 + 7.8), Vector3(-W * 0.5 + 6.0, 3.55, -L * 0.5 + 3.0), "sandik"]]
+	return [[Vector3(-W * 0.5 + 6.0, 0.0, -L * 0.5 + 3.0 + 1.5 + 8 * 0.46 + 0.9), Vector3(-W * 0.5 + 6.0, 3.55, -L * 0.5 + 3.0), "sandik"]]
 
 
 # =========================================================== SOPHIA LİMANI ======================================

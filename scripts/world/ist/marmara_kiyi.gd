@@ -419,10 +419,9 @@ static func build_kayalar(host: Node3D, k: float = 0.5, lod: int = 0) -> void:
 	var tops := [0.4, 0.8, 1.2, 1.6, 2.0, 2.4, 2.8, 3.2]
 	for i in tops.size():
 		var t: float = tops[i]
-		var ry := t / 1.55
-		var rxz := 1.5 + 0.1 * (i % 3)
+		var rxz := 1.7 + 0.1 * (i % 3)
 		var pos := Vector3(-7.0 + i * 1.5, 0.0, 1.0 * sin(i * 1.3))
-		var m := IstMk.ROCKB(root, pos, Vector3(rxz, ry, rxz * 0.9), IstMk.ROCK if i % 2 == 0 else IstMk.ROCK_DK, true)
+		var m := IstMk.CY(root, rxz, t + 0.3, pos - Vector3(0, 0.3, 0), IstMk.ROCK if i % 2 == 0 else IstMk.ROCK_DK, "rubble", 7, true, rxz * 0.85)
 	if lod >= 2:
 		return
 	# tepede düz taş levha (konma noktası): üst yüzeyi 3,2 m
@@ -430,7 +429,7 @@ static func build_kayalar(host: Node3D, k: float = 0.5, lod: int = 0) -> void:
 	# dağınık kayalar
 	for i in 16:
 		var pos := Vector3(rng.randf_range(-12.0, 10.0), 0.0, rng.randf_range(-6.0, 7.0))
-		if pos.distance_to(Vector3(-2.0, 0.0, 0.5)) < 5.5 and absf(pos.z - 0.5) < 3.0:
+		if absf(pos.z - 0.5) < 3.8 and pos.x > -11.0 and pos.x < 6.0:
 			continue
 		IstMk.ROCKB(root, pos, Vector3(rng.randf_range(0.5, 1.4), rng.randf_range(0.25, 0.7), rng.randf_range(0.5, 1.2)), IstMk.ROCK if rng.randf() < 0.6 else IstMk.ROCK_DK, true)
 	if lod >= 1:
