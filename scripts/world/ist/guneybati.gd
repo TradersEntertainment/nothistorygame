@@ -234,9 +234,9 @@ static func _b_studios(h: Node3D, k: float, lod: int, out: Dictionary) -> void:
 	var pd := 2.8
 	for sg in [-1.0, 1.0]:
 		K.sb(h, Vector3(AL, 0.3, pd), Vector3((xa0 + xn0) * 0.5, Hp - 0.15, sg * (hz - pd * 0.5)), K.C_TILE, "tiles")
-		var nc := maxi(2, int(AL / 2.2))
+		var nc := maxi(2, int((AL - pd - 1.0) / 2.2))
 		for i in nc + 1:
-			var cx2 := xa0 + 1.0 + i * ((AL - 2.0) / nc)
+			var cx2 := xa0 + pd + i * ((AL - pd - 1.0) / nc)
 			if h != null:
 				K.cy(h, 0.22, Hp - 0.3, Vector3(cx2, (Hp - 0.3) * 0.5, sg * (hz - pd)), K.C_MARBLE, 10, -1.0, "marble")
 	var wz := hz - pd
