@@ -520,16 +520,26 @@ func _layers(g0: Dictionary, g1: Dictionary, g2: Dictionary) -> void:
 	for ck: Vector2i in g0:
 		var cx := (ck.x + 0.5) * CELL0
 		var cz := (ck.y + 0.5) * CELL0
-		var cell := {"c": Vector3(cx, World1453.surface_h(cx, cz), cz), "groups": g0[ck], "mm": [], "col": null, "up": false}
+		var cell := {"c": Vector3(cx, _hh(cx, cz), cz), "groups": g0[ck], "mm": [], "col": null, "up": false}
 		_cells0.append(cell)
 
 
 ## Grup anahtarı: "ev|örnek|tip" ya da "ag|tür" (IstBitki ağacı)
 func _mesh_for(key: String, lod: int) -> Mesh:
 	var p := key.split("|")
+	if key == "kaide":
+		if _kaide_mesh == null:
+			_kaide_mesh = _unit_box(Color("d8ccb8"), "ashlar")
+		return _kaide_mesh
+	if key == "tas":
+		if lod >= 2:
+			return null
+		if _tas_mesh == null:
+			_tas_mesh = _unit_box(Color("b8ae9c"), "flagstone")
+		return _tas_mesh
 	if p[0] == "ev":
 		return IstEvler.mesh(int(p[1]), p[2], lod)
-	if KITS.has(p[1]):
+	if p.size() > 1 and KITS.has(p[1]):
 		if lod >= 2:
 			return null                     # ağaçlar uzakta çizilmez (orta katman MID'in 3/4'ünde biter)
 		return (KITS[p[1]] as GDScript).call("tree_mesh", p[1], lod)
@@ -595,6 +605,15 @@ func _cell_up(c: Dictionary) -> void:
 		var mm := _mm(_mesh_for(key, 0), c["groups"][key])
 		mm.visibility_range_end = NEAR
 		c["mm"].append(mm)
+		if key == "kaide" or key == "tas":
+			for xf: Transform3D in c["groups"][key]:
+				var bcs := CollisionShape3D.new()
+				var bb := BoxShape3D.new()
+				bb.size = xf.basis.get_scale()
+				bcs.shape = bb
+				bcs.transform = Transform3D(xf.basis.orthonormalized(), xf.origin)
+				body.add_child(bcs)
+			continue
 		var shp := _shapes_for(key)
 		for xf: Transform3D in c["groups"][key]:
 			for s: Array in shp:
@@ -835,3 +854,824 @@ func perch_marks() -> Array:
 		if it.has("perch"):
 			out.append(["ist_" + String(it["id"]), it["perch"], 4.0])
 	return out
+
+
+# ================================================================ İSTANBUL v2 (yeni dünya; docs/_ajan/gorev/_ist2_ortak.md)
+#
+# Gerçek koordinat (Ayasofya 0,0) → IstGeo.w(e, n) (yarı ölçek, bükmesiz). Anıtlar k = 0,5; evler ve sokaklar 1:1.
+# Eski dünyaya (World1453, CityPlan, CityGeo) bağlı hiçbir şey kullanılmaz; yükseklik IstGeo.h.
+
+static var v2 := false
+static var sokak: IstSokak
+const K2 := 0.5
+## v2'de kayıttan kurulmayan modüller: kiliseler tip örnekleridir (konumları kestirim; mahalle dokusunda kullanılır)
+const MOD_SKIP2 := ["kiliseler", "kiliseler_kilise", "kiliseler_harabe", "kiliseler_manastir", "kiliseler_ortak"]
+## Uzun hatlarla kurulanlar: tek kayıt olarak kurulmaz
+const HAT_IDS := ["sur", "msur", "halic_sur", "mese", "bozdogan", "mesoteikhion"]
+
+## v2 yer tablosu (gerçek doğu/kuzey metre). Modül dosyalarına dokunulmaz; sapmalar burada düzeltilir (gerekçe raporda,
+## parça adıyla). "kiyi": kıyı suruna göre içeri oturt (dünya metresi), "hat": surun üstüne oturt ve yönünü surdan al,
+## "skip": kurma (gerekçe yanında), "yon": yönü değiştir (derece).
+static var YER2 := {
+	# forumlar: dizindeki yerler (ISTANBUL_YERLER.csv) ve bilinen enlem/boylamlar (kestirim)
+	"konstantin": {"e": -756.0, "n": -11.0},
+	"tauri": {"e": -1554.0, "n": 211.0},
+	"arkadius": {"e": -3444.0, "n": -956.0},
+	"myrelaion": {"e": -1890.0, "n": -400.0},
+	"philadelphion": {"e": -1739.0, "n": 545.0},
+	"kapitolion": {"e": -1800.0, "n": 470.0},
+	"anemodoulion": {"e": -1660.0, "n": 300.0},
+	"amastrianon": {"e": -2370.0, "n": 100.0},
+	"bovis": {"e": -2705.0, "n": -11.0},
+	"markianos": {"e": -2560.0, "n": 900.0},
+	# hipodrom: Hipodrom ve Milion, Küçük Ayasofya dizinden / enlem-boylamdan
+	"hipodrom": {"e": -400.0, "n": -300.0},
+	"milion": {"e": -250.0, "n": -25.0},
+	"sergios": {"e": -487.0, "n": -657.0},
+	"aya_irini": {"e": 70.0, "n": 95.0},
+	# kemer: Fatih (Havariyun), Zeyrek (Pantokrator), Saraçhane (Polyeuktos), Fenari İsa (Lips), Vefa, Eski İmaret, Gül,
+	# Aspar (Sultan Selim çukurbostanı)
+	"havariyun": {"e": -2540.0, "n": 1210.0},
+	"pantokrator": {"e": -2024.0, "n": 1414.0},
+	"polyeuktos": {"e": -2285.0, "n": 801.0},
+	"lips": {"e": -2957.0, "n": 1013.0},
+	"vefa": {"e": -1571.0, "n": 880.0},
+	"pantepoptes": {"e": -2075.0, "n": 1670.0},
+	"gul": {"e": -2134.0, "n": 2126.0},
+	"aspar": {"e": -2705.0, "n": 1915.0},
+	# kuzeybati: Tekfur, Anemas, Ayazma (Blakhernai Meryem), Aetios (Karagümrük)
+	"tekfur": {"e": -3335.0, "n": 2827.0},
+	"anemas": {"e": -3251.0, "n": 3384.0},
+	"blakhernai_kilise": {"e": -3170.0, "n": 3220.0},
+	"aetios": {"e": -3420.0, "n": 1880.0},
+	"kaligaria": {"e": -2980.0, "n": 2760.0},
+	# guneybati: Studios (İmrahor) dizinden, Andreas (Koca Mustafa Paşa), Mokios (Altımermer), Samatya
+	"studios": {"e": -4495.0, "n": -1790.0},
+	"andreas": {"e": -3940.0, "n": -570.0},
+	"mokios": {"e": -3600.0, "n": -450.0},
+	"psamathia": {"e": -3377.0, "n": -1124.0},
+	"peribleptos": {"e": -3050.0, "n": -1250.0},
+	"diomedes": {"e": -4500.0, "n": -1550.0},
+	"altinkapi": {"skip": true},                  # surlar/altin_kapi ile aynı yer: çifte yapı olurdu (surlarınki seçildi)
+	"kopru": {"e": -3150.0, "n": -500.0},
+	"degirmen": {"e": -3350.0, "n": -650.0},
+	# marmara: Kadırga (Kontoskalion), Langa, Mermer Kule (kara surunun deniz ucu), Ahırkapı
+	"kontoskalion": {"e": -941.0, "n": -650.0, "kiyi": "marmara_suru"},
+	"langa": {"e": -2540.0, "n": -700.0, "kiyi": "marmara_suru"},
+	"mermerkule": {"hat": "kara_suru", "uc": 0},
+	"ahirkapi": {"e": 109.0, "n": -568.0, "kiyi": "marmara_suru"},
+	"sophia": {"kiyi": "marmara_suru"},
+	"bukoleon": {"e": -437.0, "n": -846.0, "kiyi": "marmara_suru"},
+	"kayikhane": {"kiyi": "marmara_suru"},
+	"balikci": {"e": -3600.0, "n": -1300.0, "kiyi": "marmara_suru"},
+	"agsehpa": {"e": -3640.0, "n": -1290.0, "kiyi": "marmara_suru"},
+	# halic: modülün konumları Sarayburnu'nda kümelenmişti (doğu −520…470); gerçek sırayla kıyı boyunca (kestirim)
+	"halic_yahudi": {"e": -1193.0, "n": 957.0, "kiyi": "halic_suru"},
+	"halic_iskele": {"e": -1025.0, "n": 900.0, "kiyi": "halic_suru"},
+	"halic_venedik": {"e": -857.0, "n": 935.0, "kiyi": "halic_suru"},
+	"halic_balik": {"e": -731.0, "n": 913.0, "kiyi": "halic_suru"},
+	"halic_pisa_amalfi": {"e": -605.0, "n": 840.0, "kiyi": "halic_suru"},
+	"halic_neorion": {"e": -479.0, "n": 801.0, "kiyi": "halic_suru"},
+	"halic_ceneviz": {"e": -353.0, "n": 760.0, "kiyi": "halic_suru"},
+	"halic_eugenios": {"e": -150.0, "n": 790.0, "kiyi": "halic_suru"},
+	"halic_petrion": {"e": -2520.0, "n": 2046.0, "hat": "halic_suru"},
+	"halic_fener": {"e": -2478.0, "n": 2213.0, "hat": "halic_suru"},
+	"ayvansaray_iskele": {"kiyi": "halic_suru"},
+	# surlar: kapılar dizindeki yerlerinden, kara surunun üstüne oturur
+	"altin_kapi": {"e": -4797.0, "n": -1679.0, "hat": "kara_suru"},
+	"ksylokerkos": {"e": -5000.0, "n": -1520.0, "hat": "kara_suru"},
+	"pege": {"e": -5251.0, "n": -1401.0, "hat": "kara_suru"},
+	"rhegion": {"e": -4873.0, "n": -512.0, "hat": "kara_suru"},
+	"romanos": {"e": -4621.0, "n": 823.0, "hat": "kara_suru"},
+	"pempton": {"e": -3906.0, "n": 1601.0, "hat": "kara_suru"},
+	"kharisios": {"e": -3545.0, "n": 2413.0, "hat": "kara_suru"},
+	"kerkoporta": {"e": -3300.0, "n": 2650.0, "hat": "blakherna_suru"},
+	# galata
+	"galata_sur": {"hat": "galata_suru"},
+}
+
+## Uzun hatların yapı türleri: kurucu, yürüme yolu yüksekliği, en çok dilim boyu
+const HAT := {
+	"kara_suru": {"kur": "kara", "max": 110.0},
+	"blakherna_suru": {"kur": "blakherna", "max": 120.0},
+	"marmara_suru": {"kur": "marmara", "max": 120.0},
+	"halic_suru": {"kur": "halic", "max": 120.0},
+	"galata_suru": {"kur": "marmara", "max": 90.0},
+}
+
+var gece := false
+var hat_items: Array = []         # sur dilimleri (denetim)
+var quest2: Dictionary = {}       # ilk dokuz eserin v2 yerleri: KİMLİK → {p: Vector3, r, perch}
+
+
+static func _hh(x: float, z: float) -> float:
+	return IstGeo.h(x, z) if v2 else World1453.surface_h(x, z)
+
+
+## Yeni dünyaya bağlar (IstDunya.build çağırır). dunya: dünyanın kökü (yerel = dünya koordinatı).
+static func attach_v2(dunya: Node3D, gece_ := false) -> void:
+	v2 = true
+	enabled = true
+	var s := IstSehir.new()
+	s.name = "IstSehir"
+	s.gece = gece_
+	dunya.add_child(s)
+	active = s
+	var t0 := Time.get_ticks_msec()
+	s._place_v2()
+	var t1 := Time.get_ticks_msec()
+	s._hatlar_v2()
+	var t2 := Time.get_ticks_msec()
+	s._sehir_dokusu_v2()
+	print("ISTSEHIR2 yer=%d hat=%d kur_ms=%d hat_ms=%d doku_ms=%d" % [s.items.size(), s.hat_items.size(), t1 - t0, t2 - t1, Time.get_ticks_msec() - t2])
+
+
+## Kaydın v2'deki yeri: {pos, yaw, k, r} ya da {} (kurulmaz)
+func _place2_of(e: Dictionary) -> Dictionary:
+	var data: Dictionary = e["data"]
+	var id := String(e["id"])
+	var fix: Dictionary = YER2.get(id, {})
+	if fix.get("skip", false):
+		return {}
+	var real := Vector2(float(data.get("dogu_m", 0.0)), float(data.get("kuzey_m", 0.0)))
+	if fix.has("e"):
+		real = Vector2(float(fix["e"]), float(fix["n"]))
+	var w := IstGeo.w2(real.x, real.y)
+	var yaw := -deg_to_rad(float(fix.get("yon", data.get("yon_derece", 0.0))))
+	var k := float(fix.get("k", K2))
+	var s: Vector3 = data.get("gercek_olcu", Vector3(20, 10, 20))
+	var r := maxf(s.x, s.z) * k * 0.5
+	if fix.has("hat"):
+		var pl := IstGeo.yol(String(fix["hat"]))
+		if pl.size() >= 2:
+			var sn := _snap(pl, w) if not fix.has("uc") else {"p": pl[0], "d": (pl[1] - pl[0]).normalized()}
+			w = sn["p"]
+			var d: Vector2 = sn["d"]
+			yaw = _yaw_x(d, w, String(fix["hat"]))
+			if String(e["mod"]).begins_with("halic"):
+				yaw += PI            # Haliç kapıları: deniz −z
+	elif fix.has("kiyi"):
+		var pl := IstGeo.yol(String(fix["kiyi"]))
+		if pl.size() >= 2:
+			var sn := _snap(pl, w)
+			var d: Vector2 = sn["d"]
+			var o := _out(d, sn["p"], String(fix["kiyi"]))
+			var tur := String(data.get("tur", ""))
+			# liman suyun kenarına (sur dışı rıhtım), ötekiler surun içine (yarıçap + 10 m)
+			var ic := -(r * 0.6) if tur == "liman" else r + 10.0
+			w = sn["p"] - o * ic
+			yaw = atan2(-o.x, -o.y) + PI        # yerel −z denize
+			if String(e["mod"]).begins_with("halic"):
+				yaw = atan2(o.x, o.y)
+	# Suya düştüyse en yakın karaya (liman hariç)
+	if String(data.get("tur", "")) != "liman" and IstGeo.su(w.x, w.y):
+		w = _to_land(w)
+	var hs: Array = []
+	var u := Vector2(cos(-yaw), sin(-yaw))
+	for o: Vector2 in [Vector2.ZERO, Vector2(1, 1), Vector2(-1, 1), Vector2(1, -1), Vector2(-1, -1)]:
+		var q := w + Vector2(u.x * o.x * s.x * k * 0.45 - u.y * o.y * s.z * k * 0.45, u.y * o.x * s.x * k * 0.45 + u.x * o.y * s.z * k * 0.45)
+		hs.append(IstGeo.h(q.x, q.y))
+	hs.sort()
+	var y: float = hs[2] if r > 25.0 else hs[0]
+	if String(data.get("tur", "")) == "liman":
+		y = maxf(y, 0.0)
+	return {"pos": Vector3(w.x, y - 0.03 + float(fix.get("dy", 0.0)), w.y), "yaw": yaw, "k": k, "r": r}
+
+
+static func _snap(pl: PackedVector2Array, p: Vector2) -> Dictionary:
+	var best := {}
+	var bd := INF
+	var acc := 0.0
+	for i in pl.size() - 1:
+		var q := Geometry2D.get_closest_point_to_segment(p, pl[i], pl[i + 1])
+		if q.distance_to(p) < bd:
+			bd = q.distance_to(p)
+			best = {"p": q, "d": (pl[i + 1] - pl[i]).normalized(), "s": acc + pl[i].distance_to(q), "i": i}
+		acc += pl[i].distance_to(pl[i + 1])
+	return best
+
+
+## Hattın dış yanı (şehir dışı) birim normali
+static func _out(d: Vector2, p: Vector2, ad: String) -> Vector2:
+	var o := Vector2(-d.y, d.x)
+	var inside := IstGeo.galata_ici(p.x + o.x * 20.0, p.y + o.y * 20.0) if ad == "galata_suru" else IstGeo.sehir_ici(p.x + o.x * 20.0, p.y + o.y * 20.0)
+	return -o if inside else o
+
+
+## Yerel +x hat boyunca, yerel +z dışarı bakacak yaw
+static func _yaw_x(d: Vector2, p: Vector2, ad: String) -> float:
+	var o := _out(d, p, ad)
+	var dd := Vector2(o.y, -o.x)          # o = (−dd.y, dd.x) olacak biçimde hat yönü
+	return atan2(-dd.y, dd.x)
+
+
+static func _to_land(w: Vector2) -> Vector2:
+	for r in range(1, 40):
+		for k in 16:
+			var q := w + Vector2.from_angle(k * TAU / 16.0) * r * 8.0
+			if not IstGeo.su(q.x, q.y) and IstGeo.h(q.x, q.y) > 0.6:
+				return q
+	return w
+
+
+func _place_v2() -> void:
+	# Ayasofya: bölümün kendi dış kabuğu (ByzCity.aya_exterior + Ayasofya kabuğu), kubbe (0,0)'da
+	var aw := IstGeo.w2(0, 0)
+	_v2_item("ayasofya", Vector3(aw.x, IstGeo.h(aw.x, aw.y) - 0.05, aw.y), -deg_to_rad(103.0), 40.0, _make_aya)
+	# Blakherna Sarayı: Blachernae.shell_parts ("palace"), Blakherna suruna yaslı
+	var bl := IstGeo.w2(-3402.0, 3436.0)
+	var bpl := IstGeo.yol("blakherna_suru")
+	var byaw := 0.0
+	if bpl.size() >= 2:
+		var sn := _snap(bpl, bl)
+		var o := _out(sn["d"], sn["p"], "blakherna_suru")
+		bl = (sn["p"] as Vector2) - o * 16.0
+		byaw = _yaw_x(sn["d"], sn["p"], "blakherna_suru")
+	_v2_item("blakherna", Vector3(bl.x, IstGeo.h(bl.x, bl.y) - 0.05, bl.y), byaw, 22.0, _make_blakherna)
+	quest2["BLAKHERNA"] = {"p": Vector3(bl.x, IstGeo.h(bl.x, bl.y) + 26.0, bl.y), "r": 34.0}
+	for e: Dictionary in catalog_all():
+		var id := String(e["id"])
+		var mod := String(e["mod"])
+		if mod in MOD_SKIP2 or id in HAT_IDS:
+			continue
+		var pl := _place2_of(e)
+		if pl.is_empty():
+			continue
+		var p: Vector3 = pl["pos"]
+		var holder := Node3D.new()
+		holder.name = "Ist_" + id
+		holder.position = p
+		holder.rotation.y = float(pl["yaw"])
+		holder.set_meta("ist_id", id)
+		add_child(holder)
+		var it := {"id": id, "script": e["script"], "pos": p, "yaw": pl["yaw"], "k": pl["k"], "r": pl["r"],
+			"have": [null, null, null], "holder": holder, "data": e["data"], "mod": mod}
+		items.append(it)
+		_build(it, 2)
+		_perch_pad(it)
+
+
+func _v2_item(id: String, p: Vector3, yaw: float, r: float, make: Callable, data := {}) -> Dictionary:
+	var holder := Node3D.new()
+	holder.name = "Ist_" + id
+	holder.position = p
+	holder.rotation.y = yaw
+	add_child(holder)
+	var it := {"id": id, "pos": p, "yaw": yaw, "k": K2, "r": r, "have": [null, null, null], "holder": holder,
+		"data": data, "mod": "v2", "make": make}
+	items.append(it)
+	_build(it, 2)
+	return it
+
+
+func _make_aya(n: Node3D, lod: int) -> void:
+	var off := Node3D.new()
+	off.position = -ByzCity.AYA
+	n.add_child(off)
+	ByzCity.aya_exterior(off)
+	if lod <= 1:
+		var inner := Node3D.new()
+		inner.position = ByzCity.AYA
+		off.add_child(inner)
+		Ayasofya._shell_walls(inner)
+		Ayasofya._narthex(inner)
+		Ayasofya._apse(inner)
+		Ayasofya._domes(inner)
+
+
+func _make_blakherna(n: Node3D, lod: int) -> void:
+	var merl: Array = []
+	var emit := func(kind: String, size: Vector3, pos: Vector3, col: Color, pattern: String, solid: bool, tag: String) -> void:
+		match kind:
+			"merl":
+				if lod == 0:
+					Props.box(n, size, pos, col)
+			"glass":
+				Props.box(n, size, pos, col).material_override = Props.mat(Color("ffc070"), 2.2 if gece else 0.6, false, "", false)
+			"dark":
+				Props.box(n, size, pos, col)
+			_:
+				if solid and lod == 0:
+					var b := Props.solid(n, size, pos, Color.WHITE)
+					Props.set_pattern(b, col, pattern)
+				else:
+					Props.box(n, size, pos, col)
+	Blachernae.shell_parts(emit, "palace")
+	Blachernae.shell_parts(emit, "join")
+
+
+# ---------------------------------------------------------------- uzun hatlar
+
+## Polyline'ı sadeleştir: < 7° kırıkları birleştir (köşe kulesi sayısı azalsın)
+static func _sade(pl: PackedVector2Array) -> PackedVector2Array:
+	if pl.size() < 3:
+		return pl
+	var out := PackedVector2Array([pl[0]])
+	var last := pl[0]
+	for i in range(1, pl.size() - 1):
+		var a := (pl[i] - last).normalized()
+		var b := (pl[i + 1] - pl[i]).normalized()
+		if absf(a.angle_to(b)) > deg_to_rad(7.0) or last.distance_to(pl[i]) > 260.0:
+			out.append(pl[i])
+			last = pl[i]
+	out.append(pl[pl.size() - 1])
+	return out
+
+
+func _hatlar_v2() -> void:
+	# Kapı aralıkları: hattın üstüne oturan kayıtlar (yay boyu ± yarım genişlik)
+	var gaps := {}
+	for it: Dictionary in items:
+		var fix: Dictionary = YER2.get(String(it["id"]), {})
+		if fix.has("hat"):
+			var ad := String(fix["hat"])
+			if not gaps.has(ad):
+				gaps[ad] = []
+			var g := float(it["r"]) * 1.4
+			if String(it["mod"]) == "surlar":
+				g = IstSurlar._gate_len(String(it["id"]), K2)
+			gaps[ad].append([Vector2(it["pos"].x, it["pos"].z), g])
+	var seed := 0
+	for ad: String in HAT:
+		var pl := _sade(IstGeo.yol(ad))
+		if pl.size() < 2:
+			continue
+		var cfg: Dictionary = HAT[ad]
+		var cuts: Array = []
+		for g: Array in gaps.get(ad, []):
+			var sn := _snap(pl, g[0])
+			cuts.append([float(sn["s"]) - float(g[1]) * 0.5, float(sn["s"]) + float(g[1]) * 0.5])
+		var s_acc := 0.0
+		for i in pl.size() - 1:
+			var a := pl[i]
+			var b := pl[i + 1]
+			var L := a.distance_to(b)
+			var d := (b - a) / L
+			var corner := 4.5 if i > 0 else 0.0
+			var end_c := 4.5 if i < pl.size() - 2 else 0.0
+			# Bu kenarın kapılarla bölünmüş aralıkları
+			var iv: Array = [[corner, L - end_c]]
+			for c: Array in cuts:
+				var c0 := float(c[0]) - s_acc
+				var c1 := float(c[1]) - s_acc
+				var nv: Array = []
+				for v: Array in iv:
+					if c1 <= v[0] or c0 >= v[1]:
+						nv.append(v)
+					else:
+						if c0 > v[0]:
+							nv.append([v[0], c0])
+						if c1 < v[1]:
+							nv.append([c1, v[1]])
+				iv = nv
+			for v: Array in iv:
+				var span := float(v[1]) - float(v[0])
+				if span < 6.0:
+					continue
+				var n := maxi(1, int(ceil(span / float(cfg["max"]))))
+				# Eğimde kısa dilim: dilim boyunca 1,6 m'den fazla düşü olmasın
+				var dh := absf(IstGeo.h(a.x + d.x * v[0], a.y + d.y * v[0]) - IstGeo.h(a.x + d.x * v[1], a.y + d.y * v[1]))
+				n = maxi(n, mini(int(ceil(dh / 1.6)), int(span / 30.0)))
+				var pl_len := span / n
+				for k in n:
+					var s0 := float(v[0]) + k * pl_len
+					var mid := a + d * (s0 + pl_len * 0.5)
+					seed += 1
+					_hat_piece(ad, String(cfg["kur"]), mid, d, pl_len, seed)
+			# Köşe kulesi (iç köşe ve dış köşedeki kopukluğu örter; tepesi yürüme yolu hizasında)
+			if i > 0:
+				_kose(ad, String(cfg["kur"]), a)
+			s_acc += L
+	# Bozdoğan (iki tepe arası, altından Mese kolu geçer)
+	var bz := IstGeo.yol("bozdogan")
+	if bz.size() >= 2:
+		var a := bz[0]
+		var b := bz[bz.size() - 1]
+		var L := a.distance_to(b)
+		var mid := (a + b) * 0.5
+		var d := (b - a) / L
+		var lo := INF
+		for k in 9:
+			var q := a.lerp(b, k / 8.0)
+			lo = minf(lo, IstGeo.h(q.x, q.y))
+		var brg := atan2(d.x, -d.y)
+		var uz := L / K2
+		var it := _v2_item("bozdogan", Vector3(mid.x, lo - 0.1, mid.y), -brg, L * 0.5,
+			func(n: Node3D, lod: int) -> void: IstKemerSu.build_bozdogan(n, K2, lod, uz))
+		it["data"] = {"gorev": true}
+		hat_items.append(it)
+		quest2["BOZDOGAN"] = {"p": Vector3(mid.x, lo + float(IstKemerSu.params(K2, uz)["hmax"]) + 9.0, mid.y), "r": 34.0}
+	# Mese revaklı dilimleri: forumların arasında, ana Mese boyunca
+	var mese := IstGeo.yol("mese")
+	if mese.size() >= 2:
+		for i in mese.size() - 1:
+			var a := mese[i]
+			var b := mese[i + 1]
+			var L := a.distance_to(b)
+			var d := (b - a) / L
+			var n := maxi(1, int(L / 70.0))
+			for k in n:
+				var mid := a + d * ((k + 0.5) * L / n)
+				if _near_item(mid, 6.0):
+					continue
+				var hl := minf(IstGeo.h(mid.x - d.x * L / n * 0.5, mid.y - d.y * L / n * 0.5), IstGeo.h(mid.x + d.x * L / n * 0.5, mid.y + d.y * L / n * 0.5))
+				var ln := L / n - 2.0
+				var it := _v2_item("mese_%d_%d" % [i, k], Vector3(mid.x, hl - 0.04, mid.y), -atan2(d.x, -d.y), ln * 0.5,
+					func(nd: Node3D, lod: int) -> void: IstForumlar.build_mese(nd, ln, K2, lod))
+				hat_items.append(it)
+	# Zincir: Eugenios'tan Galata'ya yüzen kütükler üstünde (halic_eugenios kulesi kıyıda)
+	var zc := IstGeo.yol("zincir")
+	if zc.size() >= 2:
+		var a := zc[0]
+		var b := zc[zc.size() - 1]
+		var mid := (a + b) * 0.5
+		var d := (b - a).normalized()
+		var L := a.distance_to(b)
+		var it := _v2_item("zincir", Vector3(mid.x, 0.0, mid.y), -atan2(d.x, -d.y), L * 0.5, _make_zincir.bind(L))
+		quest2["ZINCIR"] = {"p": Vector3(mid.x, 8.0, mid.y), "r": 45.0}
+		hat_items.append(it)
+
+
+func _near_item(p: Vector2, pad: float) -> bool:
+	for it: Dictionary in items:
+		if String(it["mod"]) == "v2":
+			continue
+		var q: Vector3 = it["pos"]
+		if Vector2(q.x, q.z).distance_to(p) < float(it["r"]) + pad:
+			return true
+	return false
+
+
+## Hat dilimi: kur türüne göre parçanın parametreli kurucusu
+func _hat_piece(ad: String, kur: String, mid: Vector2, d: Vector2, L: float, seed: int) -> void:
+	var yaw := _yaw_x(d, mid, ad)
+	var lo := INF
+	for k in 5:
+		var q := mid + d * L * (k / 4.0 - 0.5)
+		lo = minf(lo, IstGeo.h(q.x, q.y))
+	lo = maxf(lo, -0.6)
+	var make: Callable
+	match kur:
+		"kara":
+			make = func(n: Node3D, lod: int) -> void: IstSurlar.build_run(n, L, K2, lod, 1453 + seed)
+		"blakherna":
+			make = func(n: Node3D, lod: int) -> void: _blakherna_wall(n, L, lod)
+		"halic":
+			# Haliç suru: modülün 80 m'lik parçası (deniz −z) sığıyorsa; değilse parametreli deniz suru
+			if L >= float(IstHalicSur.dims(K2)["L"]) - 0.5 and L <= float(IstHalicSur.dims(K2)["L"]) * 1.25:
+				yaw += PI
+				make = func(n: Node3D, lod: int) -> void: IstHalicSur.build(n, K2, lod)
+			else:
+				make = func(n: Node3D, lod: int) -> void: IstMarmaraSur.build_run(n, L, K2, lod, {})
+		_:
+			make = func(n: Node3D, lod: int) -> void: IstMarmaraSur.build_run(n, L, K2, lod, {})
+	var it := _v2_item("%s_%d" % [ad, seed], Vector3(mid.x, lo - 0.05, mid.y), yaw, L * 0.5 + 6.0, make)
+	it["hat"] = ad
+	it["len"] = L
+	hat_items.append(it)
+
+
+## Blakherna suru dilimi: Blachernae.shell_parts("wall") 120 m'lik; L'ye göre x ekseninde ölçeklenmez, kırpılır
+func _blakherna_wall(n: Node3D, L: float, lod: int) -> void:
+	var emit := func(kind: String, size: Vector3, pos: Vector3, col: Color, pattern: String, solid: bool, tag: String) -> void:
+		if absf(pos.x) - size.x * 0.5 > L * 0.5:
+			return
+		var sz := size
+		var p := pos
+		if size.x > L:
+			sz.x = L
+			p.x = 0.0
+		if kind == "merl" and lod > 0:
+			return
+		if solid and lod == 0:
+			var b := Props.solid(n, sz, p, Color.WHITE)
+			Props.set_pattern(b, col, pattern)
+		else:
+			Props.box(n, sz, p, col)
+	Blachernae.shell_parts(emit, "wall")
+
+
+## Köşe kulesi: iki dilimin birleştiği yerde dolu kule; tepesi yürüme yolu hizasında (yürüyüş kesilmez)
+func _kose(ad: String, kur: String, p: Vector2) -> void:
+	var walk := 6.65
+	var sz := 9.0
+	match kur:
+		"kara":
+			walk = float(IstSurlar.dims(K2)["HW"])
+			sz = float(IstSurlar.dims(K2)["T"]) + 6.0
+		"blakherna":
+			walk = Blachernae.WALK_Y
+			sz = 9.0
+		"halic":
+			walk = float(IstHalicSur.dims(K2)["H"])
+			sz = float(IstHalicSur.dims(K2)["T"]) + 5.0
+		_:
+			walk = float(IstMarmaraSur.dims(K2)["H"])
+			sz = float(IstMarmaraSur.dims(K2)["T"]) + 5.0
+	var lo := INF
+	for o: Vector2 in [Vector2(-1, -1), Vector2(1, -1), Vector2(-1, 1), Vector2(1, 1), Vector2.ZERO]:
+		lo = minf(lo, IstGeo.h(p.x + o.x * sz * 0.4, p.y + o.y * sz * 0.4))
+	lo = maxf(lo, -0.6)
+	var make := func(n: Node3D, lod: int) -> void:
+		var stone := Color("cdbd9e")
+		if lod == 0:
+			var b := Props.solid(n, Vector3(sz, walk, sz), Vector3(0, walk * 0.5, 0), Color.WHITE)
+			Props.set_pattern(b, stone, "ashlar")
+			for sd: Vector2 in [Vector2(1, 0), Vector2(-1, 0), Vector2(0, 1), Vector2(0, -1)]:
+				for t in 3:
+					var off := (t - 1) * sz * 0.33
+					var mp := Vector3(sd.x * (sz * 0.5 - 0.3) + absf(sd.y) * off, walk + 0.55, sd.y * (sz * 0.5 - 0.3) + absf(sd.x) * off)
+					Props.box(n, Vector3(1.0 if sd.y != 0 else 0.6, 1.1, 0.6 if sd.y != 0 else 1.0), mp, stone.darkened(0.08))
+			for y: float in [walk * 0.33, walk * 0.66]:
+				Props.box(n, Vector3(sz + 0.06, 0.4, sz + 0.06), Vector3(0, y, 0), Color("a8583a"))
+		else:
+			Props.box(n, Vector3(sz, walk + 1.1, sz), Vector3(0, (walk + 1.1) * 0.5, 0), stone)
+	var it := _v2_item("kose_%s_%d" % [ad, hat_items.size()], Vector3(p.x, lo - 0.05, p.y), 0.0, sz, make)
+	it["hat"] = ad
+	hat_items.append(it)
+
+
+func _make_zincir(n: Node3D, lod: int, L: float) -> void:
+	# Yüzen kütükler (ahşap şamandıra) ve aralarında demir zincir; uçta Galata'nın Kastellion kulesi tarafına bağlanır
+	var nlog := int(L / 6.0)
+	for i in nlog:
+		var z := -L * 0.5 + (i + 0.5) * L / nlog
+		if lod >= 2 and i % 3 != 0:
+			continue
+		Props.cyl(n, 0.45, 4.6, Vector3(0, 0.15, z), Color("6a4a2e"), Vector3(0, 0, 90), 8 if lod == 0 else 5)
+		if lod == 0:
+			Props.box(n, Vector3(0.18, 0.18, L / nlog), Vector3(0, 0.62, z), Color("3a3a3e"))
+	if lod == 0:
+		var body := StaticBody3D.new()
+		n.add_child(body)
+		var cs := CollisionShape3D.new()
+		var bs := BoxShape3D.new()
+		bs.size = Vector3(1.0, 0.8, L)
+		cs.shape = bs
+		cs.position = Vector3(0, 0.3, 0)
+		body.add_child(cs)
+
+
+# ---------------------------------------------------------------- sokaklar, evler, doku
+
+func _sehir_dokusu_v2() -> void:
+	var foot: Array = []
+	for it: Dictionary in items:
+		var p: Vector3 = it["pos"]
+		if it.has("hat"):
+			continue
+		var rr := float(it["r"]) + 4.0
+		if String(it["id"]).begins_with("mese_"):
+			rr = float(it["r"]) * 0.3
+		foot.append(Vector3(p.x, rr, p.z))
+	var bands: Array = []
+	for ad: String in HAT:
+		var hw := 26.0 if ad == "kara_suru" else (16.0 if ad == "blakherna_suru" else 9.0)
+		bands.append([IstGeo.yol(ad), hw])
+	bands.append([IstGeo.yol("bozdogan"), 6.0])
+	var gates: Array = []
+	for it: Dictionary in items:
+		var fix: Dictionary = YER2.get(String(it["id"]), {})
+		var tur := String((it["data"] as Dictionary).get("tur", ""))
+		if tur == "kapi" and fix.has("hat"):
+			var p: Vector3 = it["pos"]
+			var hat := String(fix["hat"])
+			gates.append([Vector2(p.x, p.z), "halic" if hat == "halic_suru" else "kara"])
+	# Dizindeki deniz kapıları (Haliç ve Marmara): yokuş başları
+	for y: Dictionary in IstGeo.yerler():
+		if String(y["tur"]) != "kapi":
+			continue
+		var w: Vector3 = y["w"]
+		var hp := Vector2(w.x, w.z)
+		for ad: String in ["halic_suru", "marmara_suru"]:
+			var pl := IstGeo.yol(ad)
+			if pl.size() < 2:
+				continue
+			var sn := _snap(pl, hp)
+			if (sn["p"] as Vector2).distance_to(hp) < 120.0:
+				gates.append([sn["p"], "halic" if ad == "halic_suru" else "marmara"])
+	sokak = IstSokak.new()
+	sokak.build(foot, bands, gates)
+	print("ISTSOKAK ", sokak.stats)
+	var g0 := {}
+	var g1 := {}
+	var g2 := {}
+	var rng := RandomNumberGenerator.new()
+	rng.seed = 29
+	var n := 0
+	for h: Dictionary in sokak.houses:
+		var v := int(h["v"])
+		var dm := IstEvler.dims(v)
+		var c: Vector2 = h["c"]
+		var yaw := float(h["yaw"])
+		var fr: Vector2 = h["on"]
+		var yf := IstGeo.h(fr.x, fr.y)
+		var lo := yf
+		var bas := Basis(Vector3.UP, yaw)
+		for o: Vector3 in [Vector3(-0.5, 0, -0.5), Vector3(0.5, 0, -0.5), Vector3(-0.5, 0, 0.5), Vector3(0.5, 0, 0.5)]:
+			var q := Vector3(c.x, 0, c.y) + bas * (o * Vector3(dm.x, 0, dm.z))
+			lo = minf(lo, IstGeo.h(q.x, q.z))
+		var y := yf - 0.04
+		var xf := Transform3D(bas, Vector3(c.x, y, c.y))
+		_add(g0, g1, g2, "ev|%d|%s" % [v, String(h["tip"])], xf)
+		if y - lo > 0.15:
+			var drop := y - lo + 0.3
+			_add(g0, g1, g2, "kaide", Transform3D(bas.scaled(Vector3(dm.x, drop, dm.z)), Vector3(c.x, y - drop * 0.5 + 0.02, c.y)))
+		n += 1
+	# Sokak taşları ve basamaklar (yamaçta) — uzakta çizilmez
+	for st: Dictionary in sokak.streets:
+		if String(st["tur"]) != "basamak":
+			continue
+		var pl: PackedVector2Array = st["pts"]
+		for i in pl.size() - 1:
+			var a := pl[i]
+			var b := pl[i + 1]
+			var ha := IstGeo.h(a.x, a.y)
+			var hb := IstGeo.h(b.x, b.y)
+			var L := a.distance_to(b)
+			var ns := int(absf(hb - ha) / 0.3)
+			if ns < 2:
+				continue
+			var d := (b - a) / L
+			var yaw := atan2(-d.x, -d.y)
+			for k in ns:
+				var t := (k + 0.5) / ns
+				var q := a.lerp(b, t)
+				var hy := lerpf(ha, hb, t)
+				_add(g0, g1, g2, "tas", Transform3D(Basis(Vector3.UP, yaw).scaled(Vector3(float(st["w"]) - 0.4, 0.3, L / ns + 0.05)), Vector3(q.x, hy - 0.12, q.y)))
+	# Doku: bostan/bağ/tarla yamaları, harabe, mahalle kiliseleri, ağaçlık, bahçe
+	var np := 0
+	for dk: Dictionary in sokak.doku:
+		var tur := String(dk["tur"])
+		var c: Vector2 = dk["c"]
+		var alan: Vector2 = dk["alan"]
+		var tohum := int(dk["tohum"])
+		var hs := [IstGeo.h(c.x - alan.x * 0.4, c.y - alan.y * 0.4), IstGeo.h(c.x + alan.x * 0.4, c.y - alan.y * 0.4),
+			IstGeo.h(c.x - alan.x * 0.4, c.y + alan.y * 0.4), IstGeo.h(c.x + alan.x * 0.4, c.y + alan.y * 0.4), IstGeo.h(c.x, c.y)]
+		var lo: float = hs.min()
+		var id := "doku_%s_%d" % [tur, np]
+		np += 1
+		if tur == "agaclik":
+			for k in rng.randi_range(4, 10):
+				var tp := c + Vector2(rng.randf_range(-alan.x * 0.45, alan.x * 0.45), rng.randf_range(-alan.y * 0.45, alan.y * 0.45))
+				_add(g0, g1, g2, "ag|" + String(AGAC_SEYREK[rng.randi() % AGAC_SEYREK.size()]), Transform3D(Basis(Vector3.UP, rng.randf() * TAU), Vector3(tp.x, IstGeo.h(tp.x, tp.y) - 0.05, tp.y)))
+			continue
+		var it := {"id": id, "pos": Vector3(c.x, lo + 0.02, c.y), "yaw": float(dk["yaw"]), "k": 1.0, "r": alan.length() * 0.5,
+			"have": [null, null, null], "data": {"tur": "bitki"}, "mod": "doku"}
+		if tur in ["bostan", "bag", "bugday", "cayir", "bahce"] and KITS.has(tur):
+			var scr: GDScript = KITS[tur]
+			it["make"] = func(nd: Node3D, lod: int) -> void: scr.call("build_patch_" + tur, nd, alan, 1.0, lod, tohum)
+		elif tur == "harabe":
+			it["pos"] = Vector3(c.x, lo - 0.03, c.y)
+			it["make"] = func(nd: Node3D, lod: int) -> void: IstEvler.build_harabe(nd, 1.0, lod, tohum)
+		elif tur.begins_with("harabe_") or tur in ["kilise_kucuk", "sapel", "kilise_orta"]:
+			var kk := 0.75 if tur == "kilise_orta" else 1.0
+			it["data"] = {"tur": "kilise"}
+			it["make"] = func(nd: Node3D, lod: int) -> void:
+				nd.set_meta("tohum", tohum)
+				IstKiliseler.build(tur, nd, kk, lod)
+		else:
+			continue
+		# bahçe/bostan kenarında birkaç ağaç
+		for k in rng.randi_range(1, 3):
+			var tp := c + Vector2((alan.x * 0.5 + 1.5) * (1 if rng.randf() < 0.5 else -1), rng.randf_range(-alan.y * 0.4, alan.y * 0.4))
+			if sokak.cell(tp.x, tp.y) in [0, 5]:
+				_add(g0, g1, g2, "ag|" + String(AGAC_SIK[rng.randi() % AGAC_SIK.size()]), Transform3D(Basis(Vector3.UP, rng.randf() * TAU), Vector3(tp.x, IstGeo.h(tp.x, tp.y) - 0.05, tp.y)))
+		_item(it)
+	# Meydan: kuyu ya da çeşme ve çevresinde pazar köşesi
+	var nm := 0
+	for m: Dictionary in sokak.meydan:
+		var c: Vector2 = m["c"]
+		var tohum := int(m["tohum"])
+		var it := {"id": "meydan_%d" % nm, "pos": Vector3(c.x, IstGeo.h(c.x, c.y) - 0.02, c.y), "yaw": float(m["yaw"]), "k": 1.0, "r": 7.0,
+			"have": [null, null, null], "data": {"tur": "ayrinti"}, "mod": "doku"}
+		var which := "kuyu" if tohum % 2 == 0 else "cesme"
+		it["make"] = func(nd: Node3D, lod: int) -> void:
+			if lod >= 2:
+				return
+			Ayrinti.build(which, nd, 1.0, lod)
+		_item(it)
+		nm += 1
+	_layers2(g0, g1, g2)
+	print("ISTEVLER2 ev=%d doku=%d meydan=%d hucre=%d" % [n, np, nm, _cells0.size()])
+
+
+## v2 katmanları: uzak (lod 2) hücre başına TEK ağ (bütün ev örnekleri birleşik), orta MultiMesh, yakın akışla
+func _layers2(g0: Dictionary, g1: Dictionary, g2: Dictionary) -> void:
+	for ck: Vector2i in g2:
+		var st := SurfaceTool.new()
+		st.begin(Mesh.PRIMITIVE_TRIANGLES)
+		var mat: Material = null
+		var any := false
+		var cen := Vector3((ck.x + 0.5) * CELL2, 0, (ck.y + 0.5) * CELL2)
+		for key: String in g2[ck]:
+			if not key.begins_with("ev|") and key != "kaide":
+				continue
+			var m2 := _mesh_for(key, 2)
+			if m2 == null:
+				continue
+			if mat == null:
+				mat = m2.surface_get_material(0)
+			for xf: Transform3D in g2[ck][key]:
+				var lx := Transform3D(xf.basis, xf.origin - cen)
+				for si in m2.get_surface_count():
+					st.append_from(m2, si, lx)
+				any = true
+		if not any:
+			continue
+		var mi := MeshInstance3D.new()
+		mi.mesh = st.commit()
+		if mat:
+			mi.material_override = mat
+		mi.position = cen
+		mi.visibility_range_begin = MID
+		mi.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
+		mi.set_meta("no_walk", true)
+		add_child(mi)
+	for ck: Vector2i in g1:
+		for key: String in g1[ck]:
+			var m1 := _mesh_for(key, 1)
+			if m1 == null:
+				continue
+			var mm := _mm(m1, g1[ck][key])
+			mm.visibility_range_begin = NEAR
+			mm.visibility_range_end = MID if (key.begins_with("ev|") or key == "kaide") else MID * 0.6
+	for ck: Vector2i in g0:
+		var cx := (ck.x + 0.5) * CELL0
+		var cz := (ck.y + 0.5) * CELL0
+		_cells0.append({"c": Vector3(cx, _hh(cx, cz), cz), "groups": g0[ck], "mm": [], "col": null, "up": false})
+
+
+static var _kaide_mesh: Mesh
+static var _tas_mesh: Mesh
+
+static func _unit_box(col: Color, pat: String) -> Mesh:
+	var bm := BoxMesh.new()
+	bm.size = Vector3.ONE
+	bm.material = Props.mat(col, 0.0, false, pat)
+	return bm
+
+
+# ---------------------------------------------------------------- Nihat'ın yan görevi (v2)
+
+const ILK_DOKUZ := ["AYASOFYA", "HIPODROM", "KONSTANTIN", "HAVARIYUN", "BOZDOGAN", "ZINCIR", "GALATA", "BLAKHERNA", "SURLAR"]
+const DOKUZ_ID := {"HIPODROM": "hipodrom", "KONSTANTIN": "konstantin", "HAVARIYUN": "havariyun", "GALATA": "galata_kulesi",
+	"SURLAR": "romanos"}
+
+## World1453.flight_data ile aynı biçim: landmarks [[KİMLİK, dünya noktası, yarıçap]], forms [[n, nokta]], perches
+## [[ad, nokta, yarıçap]]. İlk dokuz aynı kimlik ve sırayla (v2'deki yerlerinde); ardından "gorev": true olan yeni eserler.
+static func flight_data_v2(world: Node3D = null) -> Dictionary:
+	var s := active
+	if s == null:
+		return {"landmarks": [], "forms": [], "perches": []}
+	var g := func(p: Vector3) -> Vector3:
+		return s.to_global(p) if s.is_inside_tree() else p
+	var by := {}
+	for it: Dictionary in s.items:
+		by[String(it["id"])] = it
+	var landmarks: Array = []
+	var used := {}
+	for q: String in ILK_DOKUZ:
+		var p := Vector3.INF
+		var r := 36.0
+		if q == "AYASOFYA" and by.has("ayasofya"):
+			var a: Vector3 = by["ayasofya"]["pos"]
+			p = a + Vector3(0, World1453.AYA_DOME_TOP + 6.0, 0)
+			r = 48.0
+		elif s.quest2.has(q):
+			p = s.quest2[q]["p"]
+			r = float(s.quest2[q]["r"])
+		elif DOKUZ_ID.has(q) and by.has(DOKUZ_ID[q]):
+			var it: Dictionary = by[DOKUZ_ID[q]]
+			p = _bakis_of(it)
+			r = float((it["data"] as Dictionary).get("bakis_r", 36.0))
+			used[DOKUZ_ID[q]] = true
+		landmarks.append([q, g.call(p), r])
+	for it: Dictionary in s.items:
+		var d: Dictionary = it["data"]
+		if not d.get("gorev", false) or used.has(it["id"]) or String(it["id"]) in ["bozdogan"]:
+			continue
+		landmarks.append([String(it["id"]).to_upper(), g.call(_bakis_of(it)), float(d.get("bakis_r", 30.0))])
+	var forms: Array = []
+	for i in landmarks.size():
+		if i >= 12:
+			break
+		forms.append([i + 1, (landmarks[i][1] as Vector3) - Vector3(0, 4.0, 0)])
+	var perches: Array = []
+	if by.has("ayasofya"):
+		var a: Vector3 = by["ayasofya"]["pos"]
+		perches.append(["aya", g.call(a + Vector3(3.5, 19.5 + 11.1 * 0.42 * sqrt(1.0 - pow(3.5 / 11.1, 2.0)), 0)), 5.0])
+	for q: Array in s.perch_marks():
+		perches.append([q[0], g.call(q[1]), q[2]])
+	return {"landmarks": landmarks, "forms": forms, "perches": perches}
+
+
+## Eserin yan görev işareti: kaydın "bakis" noktası (yerel) varsa ondan, yoksa tepesinin 8 m üstü
+static func _bakis_of(it: Dictionary) -> Vector3:
+	var d: Dictionary = it["data"]
+	var h := it["holder"] as Node3D
+	if d.has("bakis"):
+		var b: Vector3 = d["bakis"]
+		return h.transform * b
+	var sz: Vector3 = d.get("gercek_olcu", Vector3(20, 20, 20))
+	return h.transform * Vector3(0, sz.y * float(it["k"]) + 8.0, 0)
