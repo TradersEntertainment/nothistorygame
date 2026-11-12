@@ -602,6 +602,8 @@ func _near_shot() -> void:
 
 ## 10B.3: Büyük Patlama. Ağır çekim, herkes uçar, kimse yaralanmaz (çizgi film kuralı).
 func _explosion() -> void:
+	# Urban "...Hmm." derken oyuncu ona bakar (eskiden Fatih'e bakıyordu: Urban kadrajın sağ kenarında kolu kesik görünüyordu)
+	player.face(urban.global_position + Vector3(0, 1.0, 0))
 	await _say("SPK_URBAN", "D10B_U_B3_1")
 	await _t("D10B_T_B3_2")
 	var slow := not GameState.autotest
