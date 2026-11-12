@@ -436,7 +436,16 @@ func _hit() -> void:
 			_carry.rotation = Vector3.ZERO
 			for c in _carry.get_children():
 				(c as Node3D).rotation = Vector3(PI * 0.5, 0, 0)       # demetler dik, avuçta demet gibi (yanındakinin yüzüne uzanmaz)
-			pw.receive_item(_carry, xf.origin, false, false)
+			if pw.rig and pw.rig.elbow_r and pw.rig.arm_r:
+				# Savunucu sağ kolunu uzatıp kaldırırken demet oyuncunun kolunun altından onun eline gelir (eskiden demet
+				# kol inikken kalçasına yapışıyor, kol sonradan kalkıyordu): demet baştan elinde, yerel konumu sıfırlanır
+				pw.hold_item(_carry, false, false)
+				_carry.global_transform = xf
+				var ft := _carry.create_tween().set_parallel()
+				ft.tween_property(_carry, "position", Vector3.ZERO, 0.4 if Stage.fast() else 0.45).set_trans(Tween.TRANS_SINE)
+				ft.tween_property(_carry, "rotation", Vector3.ZERO, 0.4 if Stage.fast() else 0.45).set_trans(Tween.TRANS_SINE)
+			else:
+				pw.receive_item(_carry, xf.origin, false, false)
 		else:
 			add_child(_carry)
 			_carry.global_transform = xf

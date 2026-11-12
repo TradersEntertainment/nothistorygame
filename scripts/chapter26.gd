@@ -158,6 +158,9 @@ func _build_walls_scene() -> void:
 					b2.size.y = 9.0
 					(cs as CollisionShape3D).shape = b2
 					(cs as Node3D).position.y -= (bx.size.y - 9.0) * 0.5
+			# Tırmanış hesabı (Melee.add_ladder: node.height) eski boydan kalır: 9,0 m. Sırıkların görünen boyu 9,8 m
+			# (LADDER_VIS_H); aksi hâlde tırmanış ve itme süresi ~%9 uzuyordu. Geometri ve katı gövde kuruldu, değişmez.
+			l.height = 9.0
 		l.visible = false
 		ladders.append(l)
 	# Surların önündeki hücum: ova boyunca sancaklı ordu, sura koşan dalgalar, merdivenlerde tırmananlar,
@@ -2097,6 +2100,7 @@ var _push_look := Vector2.ZERO
 var _push_hand: Array = []
 var _push_hid: Array = []
 var _push_duel: Duel
+const LADDER_VIS_H := 9.8        # sırıkların görünen boyu (Ladder.height tırmanış hesabı için 9,0'da tutulur)
 
 
 func _ladder_push_tick(delta: float) -> void:
@@ -2126,8 +2130,11 @@ func _ladder_push_tick(delta: float) -> void:
 	match _push_state:
 		"grip":
 			if float(_push["down"]) > 0.0:
-				_push_state = "tip"       # itildi: eller merdivenle bir an gider, sonra bırakır
+				# İtildi: merdiven devrilirken tutuş noktaları erişim kutusundan taşar (eller sırıktan kopup havada kalıyordu):
+				# kılıç ele döner, eller hemen iner; Tolga geri adımı ve bakışın dönüşü 0,35 sn'de biter
+				_push_state = "tip"
 				_push_t = 0.0
+				_push_release_hands()
 			elif float(_push["hold"]) <= 0.0:
 				_push_end()
 				return
@@ -2152,7 +2159,7 @@ func _push_hide_blade() -> void:
 
 func _push_grip_pts(lad: Ladder) -> Array:
 	var b := Basis.from_euler(Vector3(deg_to_rad(-lad.tilt), 0, 0))
-	var t := lad.height - 0.85        # mazgal taşının hemen üstünde: Tolga taşın üstünden eğilip sırıkları kavrar
+	var t := LADDER_VIS_H - 0.85        # mazgal taşının hemen üstünde: Tolga taşın üstünden eğilip sırıkları kavrar
 	return [b * Vector3(-Ladder.WIDTH * 0.5, t, 0.06), b * Vector3(Ladder.WIDTH * 0.5, t, 0.06)]
 
 
@@ -2189,15 +2196,14 @@ func _push_aim(lad: Ladder, delta: float, step := true) -> void:
 		player.eye_height = lerpf(player.eye_height, Player.EYE - 0.4, k)      # taşın üstüne eğilir
 	var to := mid - player.camera.global_position
 	player.rotation.y = lerp_angle(player.rotation.y, atan2(-to.x, -to.z), k)
-	player.camera.rotation.x = lerpf(player.camera.rotation.x, atan2(to.y, Vector2(to.x, to.z).length()), k)
+	var want_pitch := atan2(to.y, Vector2(to.x, to.z).length())
+	if not step:
+		want_pitch = minf(want_pitch, -0.85)      # devrilirken yere (merdivenin dibine) bakar: ova ve kalabalık kadraja girmez
+	player.camera.rotation.x = lerpf(player.camera.rotation.x, want_pitch, k)
 
 
-func _push_end() -> void:
-	if _push.is_empty():
-		return
-	_push = {}
-	_push_state = ""
-	# Önce kılıç ele döner, sonra eller merdivenden kalkar (kılıçsız ve eli boş an olmasın)
+## Önce kılıç ele döner, sonra eller merdivenden kalkar (kılıçsız ve eli boş an olmasın). Tekrar çağrılabilir.
+func _push_release_hands() -> void:
 	for pv in _push_hid:
 		if is_instance_valid(pv):
 			(pv as Node3D).visible = true
@@ -2207,6 +2213,15 @@ func _push_end() -> void:
 		player.set("_hand_shown", _push_hand[0])
 		if player.hand:
 			player.hand.visible = _push_hand[1]
+		_push_hand.clear()
+
+
+func _push_end() -> void:
+	if _push.is_empty():
+		return
+	_push = {}
+	_push_state = ""
+	_push_release_hands()
 	# Sur yoluna geri adım (mazgal taşının başından), doğrulur ve bakışı itmeden önceki yere (dövüşe) yumuşakça döner
 	create_tween().tween_property(player, "eye_height", player.eye_rest, 0.35).set_trans(Tween.TRANS_SINE)
 	var lk := create_tween().set_parallel()
