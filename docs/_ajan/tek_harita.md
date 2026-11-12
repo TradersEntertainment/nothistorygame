@@ -110,21 +110,29 @@ bağlı değil. Oyuncunun "havadaki İstanbul'un yerdekiyle alakası yok" sözü
 | G7 Tünel | 10l, 21o | chapter10l/21o | kara surlarının altı (gedik yakını) | Düşük | P0.1 | Giriş ağzı ovada gerçek yerinde |
 | G8 Boğazkesen | 33o | bogaz.gd | World1453 dışı (kuzeyde) | Yüksek | dünyanın Boğaz'ını kuzeye uzatma | İsteğe bağlı |
 
-## E. Kare kanıtlı kusur listesi
-(koşular sürüyor; ilk bulgular kod okumasından, kareyle doğrulanınca işaretlenecek)
+## E. Kare kanıtlı kusur listesi ve durumu (önem sırası)
 
-1. YÜKSEK — Askerlerin başında durduğu ateşler emisyonlu KUTU: siege_field.gd:974–975 (halka ateşleri), 1117 (ovada
-   1000 ateş), 561, 1173; wall_rear.gd:247, 826; horn_world.gd:186, 416, 431 — hepsi `Dressing.glow` = kutu
-   (dressing.gd:128). Gece (11) havadan "küp küp".
-2. YÜKSEK — `Flame` alevi (flame.gdshader:38–42) yalnız y ekseninde kameraya döner: tepeden bakınca dörtgen
-   kenarından görünür (çizgi/boşluk).
-3. YÜKSEK — İki Ayasofya: yerde ~35 m, havada ~70 m gövde; renk ve biçim farklı (byz_city.gd:525 / scenery.gd:510).
-4. YÜKSEK — Hub (byz_walls) uçuş bölümlerinde yok; yerine CityPlan evleri.
-5. ORTA — Blakherna uzak modeli bölümünkinden farklı ölçüde kutular (horn_world.gd:641).
-6. ORTA — Konstantin Sütunu iki yerde/iki biçimde; aya bölümlerinde forum revakı sütunsuz.
-7. ORTA — "Küp" özel yapılar: Hipodrom (iki düz kutu duvar, horn_world.gd:276), Büyük Saray (dört kutu, 287),
-   22 kilise (kutu + silindir + top, 247), Havariyun (kutu haç + silindir + top, 724), Bozdoğan (kemersiz kutu
-   ayaklar + düz kuşak, 736), kuzey kıyıda 420 prizma çadır (184).
+Kare dizini: `kare/` (c11o = 11 önce, c11s/p11t = 11 sonra, c7ao/c7as/c7at = 7a önce/sonra, c4o/c4s = 4a gece ordugâhı,
+g6/g25/g27/g30 = yerden, c7bs = 7b sonra). Çiftler `cift/` (sol önce, sağ sonra, aynı koşu düzeni, aynı nokta ve açı;
+"önce" koşusu dosyalarım e551de84'e geçici döndürülerek alındı: `before.sh`, sahne kurulunca geri konup `cmp` ile doğrulandı).
+
+| # | Önem | Kusur (kare) | Neden (dosya:satır, e551de84) | Düzeltme | Durum |
+|---|---|---|---|---|---|
+| 1 | YÜKSEK | Askerlerin halkasındaki ateşler sarı/turuncu KUTU (c11o_ring15, c11o_ringtop) | siege_field.gd:974-975, 1117, 561, 1173; wall_rear.gd:247, 826; horn_world.gd:186/416/431 → `Dressing.glow` = emisyonlu kutu | `Flame.from_glow_boxes` (flame.gd): ateş renkli kutuları ağdan söker, aynı yere çoklu ağ alev koyar; World1453.build bütün dünyaya, sea_walls/blachernae/horn kendi köklerine uygular | DÜZELDİ (cift/01, 02, 03, 11_ring15) |
+| 2 | YÜKSEK | Alev tepeden bakınca kenarından görünür (dörtgen çizgi) | flame.gdshader:38-42 (yalnız y ekseninde dönen dörtgen) | Bakış dikleştikçe dörtgen kameraya yatar, alevin ortasına taşınır, biçim yuvarlak dil dil ateşe geçer (skip_vertex_transform) | DÜZELDİ (cift/02 tepeden alevler yuvarlak; 4a_ftop/f3/f15 bozulma yok) |
+| 3 | YÜKSEK | İki Ayasofya: havada 70×76 m kızıl kutu + mavi küreler (c11o_aya, c7ao_aya) | scenery.gd:510 hagia_merged; yerde byz_city.gd:525 başka model | Yerdeki kabuk `ByzCity.aya_exterior` (tek kurucu) + Ayasofya'nın "exterior" parçaları → `World1453.far_aya` pişirir; 90 m'den öte tek yüzeyli kopya; uzak siluet aynı ölçüde; byz_aya bölgesi tepenin yüzeyine (AYA_Y 17,6) kaldırıldı (eskiden aya bölümlerinde 17 m çukur); meydan her bölümde düz (`World1453.city_ground`) | DÜZELDİ (cift/11_aya, 7a_aya, 11_hipp) |
+| 4 | YÜKSEK | Hub (6b/7b'nin caddesi, kançılarya, saray, kapı) uçuşta yok; yerinde tarla (c11o_romanos, p11o_hubtop, c7ao_hubtop) | World1453.build bölgeyi yalnız kendi bölümünde kurar | `World1453.FAR_REGIONS` + `ByzCity.far_hub`: hub'ın kendi kurucuları sahne dışında, pişirilmiş (dokulu ≤300 m, düz >300 m), bölümün çarpışma kutularıyla | DÜZELDİ (cift/11_romanos, 11_hubtop, 7a_hubtop) |
+| 5 | ORTA | Bozdoğan Kemeri görünmüyor: toprağa gömülü (c11o_aqued) | horn_world.gd:736-749 tepe mutlak 20 m, zemin 18–22 m | Tepe en yüksek zeminin üstünde (`HornWorld.aqueduct_top`), iki katlı gerçek kemerler (kemer taşları, dolgu, kuşak, kanal) | DÜZELDİ (cift/11_aqued, 7a_aqued) |
+| 6 | ORTA | Havariyun kutu haç + silindir + top (c11o_apost) | horn_world.gd:724-734 | Kiremit beşik çatılı haç kolları, hatıllar, iki sıra pencere, pencereli kasnaklı 5 kubbe, apsis, narteks (birleşik ağ) | DÜZELDİ (cift/11_apost, 7a_apost) |
+| 7 | ORTA | 22 mahalle kilisesi kutu+silindir+top (c11o_apost sol alt) | horn_world.gd:247-257 | Kapalı Yunan haçı kilise (`HornWorld._church`): beşik çatılar, kasnaklı kubbe, apsis, narteks, pencereler; Props düğümleri yerine birleşik ağ (çizim azaldı) | DÜZELDİ (cift/11_apost) |
+| 8 | ORTA | Blakherna uzak görünüşü bölümünkinden farklı ölçüde kutular; saray pencerisiz desenli kutu; dışı düz gri levha (c11o_blach) | horn_world.gd:641-661 | `Blachernae.shell_parts` tek kurucu; dünya aynı parçaları pişirir (dokulu); ışıklı pencereler gece; dış zemin toprak deseni | DÜZELDİ (cift/11_blach, 7a_blach) |
+| 9 | ORTA | Konstantin Sütunu düz pembe silindir (c11o_column) | horn_world.gd:285 | Yerdeki sütunun biçimi (`ByzCity.column_parts`: kaide, porfir gövde, altın halkalar); uçuş konma/parça yükseklikleri buna göre | DÜZELDİ (cift/11_column) |
+| 10 | ORTA | Hipodrom iki düz kutu duvar | horn_world.gd:276-282 | Dış yüzde iki kat kemer açıklıkları, saçak/kuşak, carceres kapıları ve iki kule, kathisma (kubbeli loca), dikilitaş kaidesi ve piramidion | KISMEN (cift/11_hipp: kathisma ve kapılar seçiliyor; kemerler dış yüzde, bu açıdan az görünür) |
+| 11 | ORTA | Büyük Saray dört düz kutu | horn_world.gd:287-291 | Teraslar: kemerli destek duvarı, korkuluk silmesi, bahçe/döşeme | DÜZELDİ (cift/11_aya sağ üst, 7a_aya) |
+| 12 | ORTA | Galata evleri pencereli beyaz kutular, rastgele (c11o_galata) | galata_view.gd:30-60 | Dünyada GalataView evleri CityHouses (Kit evleri, üç ayrıntı katmanı: Galata bölümündeki ve şehirdeki evlerle aynı tür); iç içe girmesin diye 11 m aralık | DÜZELDİ (cift/11_galata, 11_galtop, 7a_galata); yerleşim yoğunluğu azaldı (AÇIK not) |
+| 13 | DÜŞÜK | Kuzey kıyıda 420 çadır üçgen prizma | horn_world.gd:184 | Yuvarlak keçe gövde + sivri tepe (Night.tent biçimi) | DÜZELDİ (uzak; c11t_blach sol üst) |
+| 14 | DÜŞÜK | Ova zemininde dikdörtgen renk yamaları (c11o_ringtop) | siege_field.gd arazi boyası | — | AÇIK (dosya listemde yok) |
+| 15 | DÜŞÜK | 7a mutfak ateşleri kazanların altında (kittop karesi çatıya düştü) | — | gece (11) ve 4a kareleri kullanıldı | BAKILAMADI (gündüz ateş tepeden) |
 
 ## F. Ortak arayüz (göç paketleri için) — bu sürümde depoda
 
@@ -168,4 +176,81 @@ bağlı değil. Oyuncunun "havadaki İstanbul'un yerdekiyle alakası yok" sözü
    ile alev + haleye çevrilir (World1453.build bunu bütün dünyaya uygular; bölüm kendi Dressing kökü için çağırabilir).
 
 ## G. RINFO / testler
-(sonra)
+
+Ölçüm: ekranlı (xvfb, llvmpipe), aynı koşu düzeni, her bakışta 5 karenin ortancası (çizim / üçgen, bin). Önce = dosyalarım
+e551de84'e geçici döndürülmüş (before.sh).
+
+**Bölüm 11 (gece, uçuş)** p11o → p11v (son kod):
+
+| bakış | çizim önce→sonra | üçgen önce→sonra | Δ üçgen |
+|---|---|---|---|
+| camp50 | 3952 → 3951 | 3668k → 3658k | −0,3 % |
+| ring15 | 2207 → 2173 | 3914k → 3876k | −1,0 % |
+| walls | 1490 → 1292 | 1691k → 1701k | +0,6 % |
+| city | 1051 → 824 | 1151k → 1176k | +2,2 % |
+| aya | 392 → 311 | 623k → 634k | +1,8 % |
+| hipp | 435 → 381 | 691k → 706k | +2,2 % |
+| column | 737 → 562 | 1022k → 1026k | +0,4 % |
+| apost | 1054 → 796 | 1187k → 1223k | +3,0 % |
+| aqued | 932 → 708 | 1068k → 1114k | +4,3 % |
+| blach | 1067 → 842 | 1097k → 1157k | +5,5 % |
+| galata | 288 → 169 | 227k → 235k | +3,5 % |
+| romanos | 3596 → 3540 | 5834k → 5958k | +2,1 % |
+| galtop | 323 → 209 | 231k → 246k | +6,5 % |
+| hubtop | 432 → 441 | 705k → 743k | +5,4 % (çizim +9; p11t'de 425: koşu oynaması, min 424→435) |
+
+**Bölüm 7a (gündüz, uçuş)** c7ao → c7at:
+
+| bakış | çizim | üçgen | Δ üçgen |
+|---|---|---|---|
+| kit3 (mutfak ateşi, 2,5 m) | 6591 → 6395 | 8340k → 8400k | +0,7 % |
+| kit15 | 3741 → 3733 | 4432k → 4432k | 0 |
+| kittop | 1749 → 1755 | 2933k → 2931k | 0 (çizim +6, min 1729→1721) |
+| camp50 | 4528 → 4534 | 3967k → 3970k | +0,1 % (çizim +6; aynı kodla iki koşu arası oynama 4504–4534) |
+| aya | 418 → 338 | 641k → 662k | +3,3 % |
+| romanos | 3646 → 3617 | 5919k → 5935k | +0,3 % |
+| hubtop | 516 → 464 | 782k → 784k | +0,3 % |
+| blach | 1033 → 828 | 1121k → 1192k | +6,3 % |
+| apost | 1030 → 774 | 1174k → 1208k | +2,9 % |
+| galata | 292 → 160 | 206k → 210k | +1,9 % |
+| hipp | 450 → 396 | 734k → 749k | +2,0 % |
+| aqued | 916 → 690 | 1050k → 1096k | +4,4 % |
+
+**Bölüm 7b (gündüz, uçuş, hub bölgesi)** c7bo → c7bs: hubtop 5007/2590k → 5007/2589k; romanos 8000/7391k → 7994/7438k
+(+0,6 %); aya 455/639k → 375/653k (+2,2 %); camp50 1591/2988k → 1591/2988k; blach 1046/1139k → 831/1192k (+4,7 %);
+column 731/1017k → 555/1021k (+0,4 %).
+
+Kare hızı: bu makinede (llvmpipe, yük ortalaması 12–21) ölçülen fps her iki sürümde de 1–2; düşüş görülmedi, anlamlı
+bir kare hızı karşılaştırması bu makinede yapılamaz (KANITSIZ). Çizim sayısı uçuş bakışlarının hemen hepsinde azaldı
+(Props düğümleri yerine birleşik ağ; ateş kutularının parça ağları yerine tek çoklu ağ).
+
+**Testler (son kodla, başsız):** 48/48 RUNOK, 0 RUNFAIL, 0 SCRIPT ERROR / VISAUDIT / WALKTHRU / ARMAUDIT: 3; 7 (=, byz, byzniko,
+tea, form, wall); 11 (=, arrest, escape, persuade, help, helpwall, lost, fired, hikmet, niko); 4 (=, item, caught, market,
+chain, nofez, fall, fez, wet); 6 (=, byz); 8; 8y; 9; 10; 24o; 32o; 43o; ek olarak 2, 17, 17o, 18, 19, 24, 25, 26, 27, 29,
+30, 31o, 39o. (`tests_final.log`). flight_check PASS, parse_check PASS. Görünürlük payı düzeltmesinden sonra 7, 11, 25
+yeniden RUNOK.
+
+## H. Göç paketlerinde benim yaptığım / kalan
+
+- **G3 hub**: YAPILDI: hub'ın uzak görünüşü her tek harita bölümünde gerçek yerinde (ByzCity.far_hub, aynı kurucular,
+  çarpışmalı; dünya orada ev/ağaç koymaz). KALDI: hub sokaklarının CityPlan grafiğine bağlanması (CityPlan caddeleri hub
+  dikdörtgeninde kesiliyor; hub'ın evleri `_house`/`_build_fill` kutu-sıva evleri, dünyanınkiler Kit evleri: iki ev üslubu
+  yan yana); LandWalls bölümlerinde (0, 20…) surun içi LandWalls/SiegeField'in kendi şehri (absf(x)<56) — hub orada yok
+  (land_walls.gd başkasının dosyası, World1453.build çağırmıyor).
+- **G4 Ayasofya**: YAPILDI: tek Ayasofya modeli (aya_exterior), bölge yüksekliği, meydan düzlüğü, siluet, uçuş konma
+  noktası. KALDI: aya parçasının dolgu evleri (_build_fill) dünyada uzak kurulmuyor (yerinde CityPlan evleri); Konstantin
+  Sütunu iki yerde (aya parçasında Ayasofya'nın 60 m batısında "ev:column" etkileşimi; dünyada forumda) — biri seçilmeli
+  (oynanış etkileşimi yerdeki sütunda).
+- **G5 Galata**: YAPILDI: dünyadaki Galata evleri Kit evleri (CityHouses). KALDI: galata.gd'nin rıhtım sırası ve kulesi
+  (_build_tower) ile GalataView'in kulesi ayrı kurucular; GalataView'in evleri rastgele serpiliyor (sokak dokusu yok).
+- **G6 kıyı surları**: YAPILDI: nöbet ateşleri alev. KALDI: sea_walls.gd'nin sur kesiti ile HornWorld._wall_run ayrı
+  kurucular (ölçü/renk farkı), petrion.gd caddesi dünyada uzak kurulmuyor.
+
+## I. "Tek harita" sorusunun cevabı
+
+Önce: koordinat olarak tekti (14 bölge World1453'te gerçek yerinde), ama bir bölgenin ayrıntılı yapısı yalnız o bölümde
+vardı; öbür bölümlerde aynı yerde dünyanın ayrı, kaba bir modeli çiziliyordu (Ayasofya iki kat büyük ve başka renkte, hub
+yerine tarla, Blakherna başka ölçüde, sütun başka biçimde). Nihat'la havadan görülen şehir, Tolga'nın yürüdüğü şehir değildi.
+Şimdi: Ayasofya, hub, Blakherna, Konstantin Sütunu yerdeki kurucularından (aynı yer, ölçü, renk, doku) dünyaya pişiriliyor;
+uçuş bölümleriyle yerdeki bölümler bu yapılarda aynı. Hâlâ ayrı olanlar §H'de (ev üslubu, Galata ve kıyı surlarının
+ayrı kurucuları, LandWalls'ın iç şehri, 4a ordugâhı, otağ içi).
