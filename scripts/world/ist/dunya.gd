@@ -491,13 +491,10 @@ func _gok() -> void:
 	e.tonemap_mode = Environment.TONE_MAPPER_FILMIC
 	e.tonemap_exposure = 0.9
 	e.fog_enabled = true
-	e.fog_mode = Environment.FOG_MODE_DEPTH
+	# üstel sis (Compatibility çizicisinde derinlik sisi yok): 1 km'de %80, 3 km'de %55, 10 km'de %13 görünür
 	e.fog_light_color = Color("c9d6de")
-	e.fog_depth_begin = 1400.0
-	e.fog_depth_end = 9000.0
-	e.fog_depth_curve = 1.6
-	e.fog_density = 1.0
-	e.fog_aerial_perspective = 0.3
+	e.fog_density = 0.00012
+	e.fog_aerial_perspective = 0.0
 	e.fog_sky_affect = 0.0
 	e.glow_enabled = true
 	e.glow_intensity = 0.2
@@ -505,6 +502,11 @@ func _gok() -> void:
 	e.adjustment_saturation = 1.08
 	e.adjustment_contrast = 1.05
 	env.environment = e
+	# Look.apply_env (GameState) sisi şehir ölçeğine göre kalınlaştırır (en az 0,002/m): km ölçeğinde dünya süt beyazı
+	# olurdu. fog_cap ile sınırla; gece işareti lacivert pus verir.
+	env.set_meta("fog_cap", 0.00025 if gece else 0.00012)
+	if gece:
+		env.set_meta("look", "night")
 	add_child(env)
 	_env = e
 	_sun = DirectionalLight3D.new()
@@ -521,8 +523,7 @@ func _gok() -> void:
 		sm.ground_horizon_color = Color("1c2238")
 		sm.ground_bottom_color = Color("10141f")
 		e.fog_light_color = Color("1c2440")
-		e.fog_depth_begin = 600.0
-		e.fog_depth_end = 6000.0
+		e.fog_density = 0.00025
 		e.ambient_light_energy = 0.22
 		_sun.rotation_degrees = Vector3(-50, -140, 0)
 		_sun.light_color = Color("9fb4e8")
