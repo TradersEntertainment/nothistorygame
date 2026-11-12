@@ -193,7 +193,6 @@ static func build(host: Node3D, alan: PackedVector2Array, tur: String, k: float,
 			(cad[bk][0] as Array).append(Transform3D(Basis(Vector3.UP, kyaw).scaled(Vector3(ln, r5.randf_range(0.95, 1.12), wi)), Vector3(w0.x, K.gy(w0.x, w0.y) - 0.1, w0.y)))
 			(cad[bk][1] as Array).append(bc if bk == "buyuk" else K.ton(Color(0.95, 0.93, 0.9), r5, 0.05))
 			shapes.append([Vector3(w0.x, K.gy(w0.x, w0.y) + 1.5, w0.y), maxf(ln, wi) * 0.5, -kyaw, ln, wi])
-			yer.ekle(oc, maxf(ln, wi) * 0.5 + 0.8)      # ORDUGÂH-5: uzun çadırın uçları da dolu sayılsın (kişi içine düşmesin)
 		else:
 			var rr := bey_cap * 0.5
 			(cad["can"][0] as Array).append(Transform3D(Basis(Vector3.UP, kyaw).scaled(Vector3(rr, r5.randf_range(1.05, 1.2), rr)), Vector3(w0.x, K.gy(w0.x, w0.y) - 0.1, w0.y)))
@@ -274,13 +273,12 @@ static func build(host: Node3D, alan: PackedVector2Array, tur: String, k: float,
 				bark_c.append(c2.darkened(0.1))
 				shapes.append([Vector3(pw.x, yg + 0.7, pw.y), maxf(ln2, wi2) * 0.5, -yaw2, ln2, wi2])
 			elif u < float(info["bark"]) + float(info["cati"]):
-				var ln3 := cap * r.randf_range(1.05, 1.3)
+				var ln3 := minf(cap * r.randf_range(1.05, 1.3), cap + 1.2)      # ORDUGÂH-5: uçlar yer dairesine sığsın (yerleşim ÖNCE ile aynı)
 				var wi3 := cap * r.randf_range(0.7, 0.85)
 				# kapı obanın ortasına bakar
 				var to_c := oc - pl
 				var yaw3 := ang + atan2(to_c.y, to_c.x) + PI / 2.0 + r.randf_range(-0.2, 0.2)
 				cati_x.append(Transform3D(Basis.from_euler(Vector3(0, -yaw3, 0)).scaled(Vector3(ln3, r.randf_range(1.0, 1.35), wi3)), Vector3(pw.x, yg - 0.1, pw.y)))
-				yer.ekle(pl, maxf(ln3, wi3) * 0.5 + 0.5)    # ORDUGÂH-5: çatma uçları
 				cati_c.append(c2)
 				shapes.append([Vector3(pw.x, yg + 1.2, pw.y), maxf(ln3, wi3) * 0.5, -yaw3, ln3, wi3])
 			else:
