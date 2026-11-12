@@ -1,0 +1,40 @@
+Godot Engine v4.4.1.stable.official.49a5bc7b6 - https://godotengine.org
+
+WARNING: Screen-space ambient occlusion (SSAO) can only be enabled when using the Forward+ renderer.
+     at: environment_set_ssao (servers/rendering/storage/environment_storage.cpp:586)
+WARNING: Screen-space indirect lighting (SSIL) can only be enabled when using the Forward+ renderer.
+     at: environment_set_ssil (servers/rendering/storage/environment_storage.cpp:661)
+HELDDEFAULT scene=chapter6 item=chickpeas
+CYPRESS planted=9 skipped=6
+LORE key=6b placed=5
+WORLDWALK region=byz_walls shapes=10329 boxes=9577 tris=284364 ms=1661
+CITYLIFE region=byz_walls src=plan era=siege night=false density=0.85 nodes=1026 plazas=19 landmarks=23
+PROBE ruler found emperor pos=(-29.6, 0.0, -14.0) tarihe=0
+KURAL ruler face=emperor
+WARNING: Target object freed before starting, aborting Tweener.
+     at: start (scene/animation/tween.cpp:594)
+PROBE replay_scene
+HELDDEFAULT scene=chapter6 item=chickpeas
+CYPRESS planted=9 skipped=6
+LORE key=6b placed=5
+WORLDWALK region=byz_walls shapes=10329 boxes=9577 tris=284364 ms=1806
+CITYLIFE region=byz_walls src=plan era=siege night=false density=0.85 nodes=1026 plazas=19 landmarks=23
+PROBE ruler found emperor pos=(-29.6, 0.0, -14.0) tarihe=1
+KURAL ruler face=emperor
+WARNING: Target object freed before starting, aborting Tweener.
+     at: start (scene/animation/tween.cpp:594)
+PROBE replay_scene
+HELDDEFAULT scene=chapter6 item=chickpeas
+CYPRESS planted=9 skipped=6
+LORE key=6b placed=5
+WORLDWALK region=byz_walls shapes=10329 boxes=9577 tris=284364 ms=1700
+CITYLIFE region=byz_walls src=plan era=siege night=false density=0.85 nodes=1026 plazas=19 landmarks=23
+PROBE ruler found emperor pos=(-29.6, 0.0, -14.0) tarihe=2
+KURAL ruler face=emperor
+WARNING: Target object freed before starting, aborting Tweener.
+     at: start (scene/animation/tween.cpp:594)
+PROBE replay_scene
+HELDDEFAULT scene=chapter6 item=chickpeas
+CYPRESS planted=9 skipped=6
+LORE key=6b placed=5
+WORLDWALK region=byz_walls shapes=10329 boxes=9577 tris=284364 ms=1811

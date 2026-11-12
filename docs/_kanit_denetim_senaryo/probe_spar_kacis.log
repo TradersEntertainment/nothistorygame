@@ -1,0 +1,11 @@
+78:KURAL bot dir=(0.382683, 0.0, 0.92388) spot=(-63.00694, 1.616373, 154.7112)
+79:KURAL area step=1 escapes=1 d=23.3
+80:KURAL area step=2 runner
+81:KURAL area caught n=1
+82:KURAL bot done kural=kacak caught=1 iade=0 arrests=0 soft=0 animal=0 last=caught
+84:PROBE spar kacak start combat=false
+86:KURAL bot dir=(0.26009, 0.0, 0.965584) spot=(-65.88789, 1.616518, 155.6912)
+89:KURAL area step=1 escapes=1 d=23.0
+94:KURAL area step=2 runner
+100:AUTOTEST: beklenen 41O.1, gelen 41O.1 (sayfa=true foto=true ders={ "dir": 4, "bumps": 0, "blocks": 3, "parries": 2, "kick": true, "kick_down": true, "finisher": "ground", "finishers": 3, "fin_kinds": "thrust,slash,gr
+101:AUTOTEST FAIL chapter=41 variant=kacak outcome=41O.1 dir=4 bumps=0 blocks=3 parries=2 kick=true down=true fins=thrust,slash,ground spar=1/0 bags=0/1 water=0 kural=kacak caught=0 iade=0 arrests=0 soft=0 animal=0 last=
