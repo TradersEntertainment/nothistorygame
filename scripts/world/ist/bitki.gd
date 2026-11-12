@@ -140,6 +140,9 @@ static func palet(cs: PackedColorArray) -> PackedColorArray:
 		var hd := c.h * 360.0
 		if hd > 55.0 and hd < 170.0 and c.s > 0.25:
 			out[i] = Color.from_hsv(c.h, c.s * 0.62, c.v * 0.86, c.a)
+		elif c.v > 0.85 and c.s < 0.25:
+			# çiçekli badem/kiraz tacı: kar beyazı top gibi okunmasın (krem, hafif koyu)
+			out[i] = Color.from_hsv(0.08, maxf(c.s, 0.08), c.v * 0.86, c.a)
 		else:
 			out[i] = Color.from_hsv(c.h, c.s * 0.85, c.v, c.a)
 	return out
