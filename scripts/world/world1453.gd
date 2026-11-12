@@ -397,6 +397,12 @@ static func far_aya(parent: Node3D) -> MeshInstance3D:
 	for n in tmp.find_children("*", "MeshInstance3D", true, false):
 		if not inner.is_ancestor_of(n) or n.has_meta("exterior") or n.get_parent().has_meta("exterior"):
 			list.append(n)
+	# Düz ızgara örtüler (kurşun çatı: 0,5 m'lik kare hücreler, binlerce üçgen) aynı şekilde büyük dikdörtgenlere birleştirilir
+	for n: MeshInstance3D in list:
+		if n.mesh is ArrayMesh and n.mesh.get_surface_count() == 1 and n.mesh.get_aabb().size.y < 0.001 and n.mesh.surface_get_array_len(0) > 3000:
+			var mm := _merge_flat_grid(n.mesh as ArrayMesh, 0.5)
+			if mm != null:
+				n.mesh = mm
 	var mi := bake(list, tmp, region("byz_aya"), parent, "FarAyasofya", 0.4)
 	# Uzaklık katmanı: AYA_NEAR m'ye kadar dokulu, dış çizgili kabuk; ötesinde küçük parçasız, tek yüzeyli, dış çizgisiz kopya
 	# (siluet ve renk aynı; uzaktan dış çizgi zaten seçilmez, üçgen yarıya iner)
@@ -419,6 +425,72 @@ static func far_aya(parent: Node3D) -> MeshInstance3D:
 	sh.set_meta("no_walk", true)
 	tmp.free()
 	return mi
+
+
+## Düz (tek yükseklikte, normali yukarı ya da aşağı) hücre ızgarasını aynı alanı kaplayan en az sayıda dikdörtgene birleştirir
+## (şekil ve delikler aynı, üçgen sayısı onda biri). Hücre kare değilse ya da ızgaraya oturmuyorsa null (ağ değişmez).
+static func _merge_flat_grid(m: ArrayMesh, cell: float) -> ArrayMesh:
+	var arr := m.surface_get_arrays(0)
+	var v: PackedVector3Array = arr[Mesh.ARRAY_VERTEX]
+	var nr: PackedVector3Array = arr[Mesh.ARRAY_NORMAL]
+	var ia = arr[Mesh.ARRAY_INDEX]
+	var idx: PackedInt32Array = ia if ia != null else PackedInt32Array()
+	var count := idx.size() if idx.size() > 0 else v.size()
+	if count % 6 != 0 or nr.size() != v.size():
+		return null
+	var y := v[0].y
+	var up := nr[0].y > 0.0
+	var lo := Vector2(INF, INF)
+	for p3 in v:
+		lo = Vector2(minf(lo.x, p3.x), minf(lo.y, p3.z))
+	var cells := {}
+	var area := 0.0
+	for k in range(0, count, 3):
+		var a := v[idx[k] if idx.size() > 0 else k]
+		var b := v[idx[k + 1] if idx.size() > 0 else k + 1]
+		var c := v[idx[k + 2] if idx.size() > 0 else k + 2]
+		if absf(a.y - y) > 0.001 or absf(b.y - y) > 0.001 or absf(c.y - y) > 0.001:
+			return null
+		var cx := (a.x + b.x + c.x) / 3.0
+		var cz := (a.z + b.z + c.z) / 3.0
+		cells[Vector2i(int(floorf((cx - lo.x) / cell)), int(floorf((cz - lo.y) / cell)))] = true
+		area += absf((b - a).cross(c - a).y) * 0.5
+	if absf(area - cells.size() * cell * cell) > 0.01 * area:
+		return null
+	var st := SurfaceTool.new()
+	st.begin(Mesh.PRIMITIVE_TRIANGLES)
+	var done := {}
+	var keys: Array = cells.keys()
+	keys.sort_custom(func(p: Vector2i, q: Vector2i) -> bool: return p.x < q.x or (p.x == q.x and p.y < q.y))
+	var nrm := Vector3.UP if up else Vector3.DOWN
+	for key: Vector2i in keys:
+		if done.has(key):
+			continue
+		var nz := 1
+		while cells.has(Vector2i(key.x, key.y + nz)) and not done.has(Vector2i(key.x, key.y + nz)):
+			nz += 1
+		var nx := 1
+		var grow := true
+		while grow:
+			for j in nz:
+				var q := Vector2i(key.x + nx, key.y + j)
+				if not cells.has(q) or done.has(q):
+					grow = false
+					break
+			if grow:
+				nx += 1
+		for i in nx:
+			for j in nz:
+				done[Vector2i(key.x + i, key.y + j)] = true
+		var x0 := lo.x + key.x * cell
+		var z0 := lo.y + key.y * cell
+		var x1 := x0 + nx * cell
+		var z1 := z0 + nz * cell
+		var q4 := [Vector3(x0, y, z0), Vector3(x1, y, z0), Vector3(x1, y, z1), Vector3(x0, y, z1)]
+		for qi in ([0, 1, 2, 0, 2, 3] if up else [0, 2, 1, 0, 3, 2]):
+			st.set_normal(nrm)
+			st.add_vertex(q4[qi])
+	return st.commit()
 
 
 ## Yalnız gölge atan çok düşük üçgenli vekil: 5 m'den büyük parçalar; küre ve silindir (kubbe, apsis, kule) seyrek ayrıtlı kopyayla,
