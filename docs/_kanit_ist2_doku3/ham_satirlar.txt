@@ -161,3 +161,11 @@ RINFO katman y_ayasofya esya cizim=4 ucgen=1192
 RINFO doku2 h30_carsi cizim=740 ucgen=1674689 konum=(-402.5, 43.92156, -21.0)
 RINFO katman h30_carsi kisi cizim=42 ucgen=35028
 RINFO katman h30_carsi esya cizim=7 ucgen=6888
+# SONRA (s6, havadan küp figür düzeltmesi)
+ISTKISI y_carsi y30=13 y60=27 gorunen=14 hayvan=6 etkin=34 yuruyen=23 duran=11 evde=0 havada=0 suda=0 ms=2.10 ms_ort=2.20 ms_max=5.67 hedef=34 esyada=0
+RINFO doku2 y_carsi cizim=1139 ucgen=3415892 konum=(-385.4355, 16.67308, -31.61606)
+RINFO katman y_carsi kisi cizim=270 ucgen=310160
+RINFO katman y_carsi esya cizim=7 ucgen=2602
+RINFO doku2 h30_carsi cizim=723 ucgen=1649385 konum=(-402.5, 43.92156, -21.0)
+RINFO katman h30_carsi kisi cizim=49 ucgen=45696
+RINFO katman h30_carsi esya cizim=7 ucgen=6888
