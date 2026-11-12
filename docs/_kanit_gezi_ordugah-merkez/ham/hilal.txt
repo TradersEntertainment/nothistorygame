@@ -1,0 +1,1 @@
+ISTHILAL sayi=3 hayat_veri.gd:622 hayat_veri.gd:623 hayat_veri.gd:665
