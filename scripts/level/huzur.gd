@@ -883,7 +883,7 @@ func _nearest_guards(p: Person, n: int) -> Array[Node3D]:
 			if not (c is Soldier or c.get_meta("street_role", "") in ["JAN", "BYZSOL", "OSMSOL", "AZAP"]):
 				continue
 			var d := c.global_position.distance_to(player.global_position)
-			if d > 18.0 or absf(c.global_position.y - player.global_position.y) > 1.5:
+			if d > 18.0 or absf(c.global_position.y - player.global_position.y) > 0.3:
 				continue
 			cands.append([d, c])
 	cands.sort_custom(func(a: Array, b: Array) -> bool: return float(a[0]) < float(b[0]))
