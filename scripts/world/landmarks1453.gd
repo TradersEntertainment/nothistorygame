@@ -121,7 +121,7 @@ static func build(parent: Node3D, free: Callable, region := "") -> Array[String]
 	for e: Dictionary in all():
 		var key: String = e["key"]
 		var p: Vector3 = e["pos"]
-		if key in IstSehir.replaced():       # İstanbul 1453: yerine scripts/world/ist parçası kuruluyor (IstSehir)
+		if key in IstSehir.replaced(region):       # İstanbul 1453: yerine scripts/world/ist parçası kuruluyor (IstSehir)
 			built.append(key)
 			continue
 		var existing := false

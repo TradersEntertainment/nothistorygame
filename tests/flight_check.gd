@@ -32,11 +32,16 @@ func _check(hub: String, h: Node3D, world: SiegeField) -> void:
 	var lms: Array = h.call("world_landmarks")
 	var forms: Array = h.call("world_forms")
 	var perches: Array = h.call("world_perches")
-	if lms.size() != NihatPowers.LANDMARK_IDS.size():
-		_fail("%s: %d yer işareti (beklenen %d)" % [hub, lms.size(), NihatPowers.LANDMARK_IDS.size()])
-	for l: Array in lms:
-		if not (l[0] in NihatPowers.LANDMARK_IDS):
-			_fail("%s: bilinmeyen yer işareti %s" % [hub, l[0]])
+	# İlk dokuzu kayıtlı oyunların kimlikleri, aynı sırada; ardından İstanbul 1453 parçalarının yeni eserleri (adı yazılı)
+	if lms.size() < NihatPowers.LANDMARK_IDS.size():
+		_fail("%s: %d yer işareti (beklenen en az %d)" % [hub, lms.size(), NihatPowers.LANDMARK_IDS.size()])
+	for i in lms.size():
+		var l: Array = lms[i]
+		if i < NihatPowers.LANDMARK_IDS.size():
+			if l[0] != NihatPowers.LANDMARK_IDS[i]:
+				_fail("%s: %d. yer işareti %s (beklenen %s)" % [hub, i, l[0], NihatPowers.LANDMARK_IDS[i]])
+		elif TranslationServer.translate("LM_" + String(l[0])) == "LM_" + String(l[0]):
+			_fail("%s: adı yazılmamış yer işareti %s" % [hub, l[0]])
 	if forms.size() != NihatPowers.FORMS_TOTAL:
 		_fail("%s: %d parça (beklenen %d)" % [hub, forms.size(), NihatPowers.FORMS_TOTAL])
 	var ids := perches.map(func(p: Array) -> String: return p[0])

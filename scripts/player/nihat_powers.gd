@@ -378,7 +378,7 @@ func _check_landmarks() -> void:
 		GameState.flags["nihat_landmarks"] = book
 		GameState.flags["lm_%s" % str(lm.id)] = true
 		Audio.sfx("radio_beep", -8.0, 1.4)
-		_toast.text = tr("UI_LM_FOUND") % [tr("LM_" + str(lm.id)), book.size(), LANDMARK_IDS.size()]
+		_toast.text = tr("UI_LM_FOUND") % [tr("LM_" + str(lm.id)), book.size(), maxi(LANDMARK_IDS.size(), landmarks.size())]
 		var tw := create_tween()
 		tw.tween_property(_toast, "modulate:a", 1.0, 0.4)
 		tw.tween_interval(3.5)
@@ -387,7 +387,7 @@ func _check_landmarks() -> void:
 		if h and not h.is_talking():
 			_bark_cd = 6.0
 			h.bark("SPK_NIHAT", "D_LM_" + str(lm.id), 6.0)
-		if book.size() >= LANDMARK_IDS.size() and not GameState.flags.get("nihat_seyyah", false):
+		if LANDMARK_IDS.all(func(i: String) -> bool: return book.has(i)) and not GameState.flags.get("nihat_seyyah", false):
 			GameState.flags["nihat_seyyah"] = true
 			get_tree().create_timer(6.5).timeout.connect(func():
 				if is_instance_valid(h) and not h.is_talking():

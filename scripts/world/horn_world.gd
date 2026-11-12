@@ -281,6 +281,11 @@ func _city_east() -> void:
 	var hy := east_surf(hp2.x, hp2.z)
 	var d := Dressing.new(342)
 	d.chunk = 240.0
+	# İstanbul 1453 (IstSehir): yeni parçası yerleşen eski yapı boş bir Dressing'e kurulur (çizilmez; çifte yapı yok)
+	var d_ist := d
+	var ist_old := IstSehir.replaced(region_name)
+	if "hippodrome" in ist_old:
+		d = Dressing.new(0)
 	# Hipodrom (eskiden iki düz kutu duvar): dışta iki kat kemerli galeri (ayaklar, kemer açıklıkları, kuşak silmesi),
 	# kuzey ucunda kapılı başlangıç binası (carceres) ve kuleleri, doğu yanında imparator locası (kathisma), ortada
 	# spina üstünde Mısır Dikilitaşı (kaidesiyle) ve Yılanlı Sütun
@@ -313,6 +318,7 @@ func _city_east() -> void:
 	d.cyl(1.4, 20.0, Vector3(hp2.x, hy + 12.6, hp2.z - 30.0), Color("c8a888"), Vector3(0, 45, 0), 4, 0.3)
 	d.cyl(0.42, 1.2, Vector3(hp2.x, hy + 23.2, hp2.z - 30.0), Landmarks1453.GOLD, Vector3(0, 45, 0), 4, 0.0)
 	d.cyl(1.0, 18.0, Vector3(hp2.x, hy + 9.0, hp2.z + 20.0), Color("8a6a50"), Vector3.ZERO, 8)
+	d = Dressing.new(0) if "forum_constantine" in ist_old else d_ist
 	var col: Vector3 = World1453.LANDMARKS["column"]
 	if region_name != "byz_aya":            # Ayasofya parçası kendi sütununu kurar (ev:column)
 		# Yerdeki Konstantin Sütunu'nun biçimi (ByzCity.COLUMN: kaide, porfir gövde, altın halkalar)
@@ -324,6 +330,7 @@ func _city_east() -> void:
 				d.cyl(sz.x, sz.y, q, c, Vector3.ZERO, 12))
 	# Büyük Saray: yamaca basamaklanan teraslar (eskiden düz kutular): kemerli destek duvarları (alt yapı), korkuluk
 	# silmesi, üstte bahçe ve döşeme; yıkıntılar Landmarks1453._palace_ruins
+	d = Dressing.new(0) if "great_palace" in ist_old else d_ist
 	var gp: Vector3 = World1453.LANDMARKS["great_palace"]
 	for k in 4:
 		var p := gp + Vector3(k * 8.0, 0, -k * 14.0)
@@ -342,6 +349,7 @@ func _city_east() -> void:
 		for a in 5:
 			var ax := p.x - 12.0 + a * 6.0
 			d.box(Vector3(3.0, th * 0.55, 0.3), Vector3(ax, gy + 4.0 - th * 0.12, p.z - 20.05), DARK_ARCH)
+	d = d_ist
 	d.build(self)
 	# Serviler ve çınarlar: blokların içindeki bahçelerde (sokaklara, evlere değmez)
 	var cyp: Array = []

@@ -341,6 +341,12 @@ static func flight_data(world: SiegeField) -> Dictionary:
 		["BLAKHERNA", at.call("blachernae", 16.0), 34.0],
 		["SURLAR", at.call("romanos", 18.0, Vector3(0, 0, 9.0)), 30.0],
 	]
+	# İstanbul 1453 (IstSehir): parçaların yan görev eserleri ("gorev": true), dokuzun ardına; adı yazılmamış olan girmez
+	var ist := world.get_node_or_null("IstSehir") as IstSehir
+	if ist:
+		for q: Array in ist.quest_marks():
+			if TranslationServer.translate("LM_" + String(q[0])) != "LM_" + String(q[0]):
+				landmarks.append([q[0], world.to_global(q[1]), q[2]])
 	var gc: Vector3 = LANDMARKS["galata_center"]
 	var e: Vector3 = LANDMARKS["eugenius"]
 	var forms := [
@@ -364,6 +370,9 @@ static func flight_data(world: SiegeField) -> Dictionary:
 		["galata", world.to_global(Vector3(tw.x, gallery, tw.z)), 9.5],
 		["column", world.to_global(Vector3(col.x, HornWorld.east_surf(col.x, col.z) + ByzCity.COLUMN_TOP, col.z)), 3.5],
 	]
+	if ist:
+		for q: Array in ist.perch_marks():
+			perches.append([q[0], world.to_global(q[1]), q[2]])
 	return {"landmarks": landmarks, "forms": forms, "perches": perches}
 
 

@@ -27,24 +27,70 @@ const K_TUR := {"anit": 0.5, "kilise": 0.5, "kapi": 0.6, "sur": 0.5, "liman": 0.
 ## eski konumla aynı yer), "dx"/"dz": dünya metresi kaydırma, "yaw": derece (dünya yönüne ek), "skip": kurma,
 ## "old": yerine geçtiği eski kaba yapı (Landmarks1453 anahtarı; yeni kurulunca eskisi kurulmaz)
 static var YER := {
-	# hipodrom (wip/ist-hipodrom): yan görev işaretleri ve bölümlerin anıt yerleri World1453.LANDMARKS'ta
-	"hipodrom": {"lm": "hippodrome"},
+	# hipodrom (wip/ist-hipodrom): yan görev işaretleri ve bölümlerin anıt yerleri World1453.LANDMARKS'ta. Ayasofya
+	# çevresi haritada sıkışık (gerçek 480 m → dünya 95 m): küçük anıtlar Ayasofya'nın, Hipodrom'un ve Augustaion'un
+	# arasındaki boşluklara elle oturtuldu (gerçek sırayla: Milion ve Zeuksippos Augustaion ile Hipodrom arasında,
+	# Khalke ve Nea sarayın önünde, Küçük Ayasofya Marmara'ya doğru).
+	"hipodrom": {"lm": "hippodrome", "yaw_abs": 0.0, "quest": false},
 	"buyuk_saray": {"lm": "great_palace"},
 	"aya_irini": {"lm": "aya_irini"},
 	"augustaion": {"lm": "augustaion"},
+	"milion": {"x": -515.0, "z": -1405.0},
+	"zeuksippos": {"x": -522.0, "z": -1352.0},
+	"khalke": {"x": -511.0, "z": -1538.0},
+	"nea": {"x": -508.0, "z": -1602.0},
+	# forumlar (wip/ist-forumlar): modülün konumları araştırma dizininden 100–700 m sapıyordu (Arkadius ve Myrelaion
+	# suya düşüyordu). Dizinde olanlar dizinden; olmayanlar bilinen yerinden (enlem/boylam, kestirim). Mese dilimi
+	# CityPlan'ın Mese'sine hizalanmadan konmaz (sokağı kapatırdı).
+	"mese": {"skip": true},
+	"konstantin": {"lm": "column", "quest": false, "skip_regions": ["byz_aya"]},
+	"tauri": {"lm": "forum_tauri"},
+	"arkadius": {"e": -3444.0, "n": -956.0},
+	"myrelaion": {"e": -1890.0, "n": -400.0},
+	"markianos": {"e": -2243.0, "n": 902.0},
+	"philadelphion": {"e": -1739.0, "n": 545.0},
+	"kapitolion": {"e": -1800.0, "n": 480.0},
+	"anemodoulion": {"e": -1700.0, "n": 330.0},
+	"amastrianon": {"e": -2370.0, "n": 100.0},
+	"bovis": {"e": -2705.0, "n": -11.0},
+	# halic (wip/ist-halic): haritada Haliç kıyısı x −700'de düz bir çizgi; mahalleler kıyı surunun hemen içine, yerel +z
+	# şehre (dünya +x) bakacak biçimde, gerçek sırayla (batıdan doğuya) dizildi. Kıyı suru, Eugenios/zincir, Petrion ve
+	# Fener kapıları HornWorld'de duruyor (G6: kıyı suru değişimi sonraki tur): modülünkiler şimdilik kurulmaz.
+	"halic_yahudi": {"x": -694.0, "z": -790.0, "yaw_abs": PI * 0.5},
+	"halic_venedik": {"x": -694.0, "z": -905.0, "yaw_abs": PI * 0.5},
+	"halic_balik": {"x": -694.0, "z": -1040.0, "yaw_abs": PI * 0.5},
+	"halic_pisa_amalfi": {"x": -694.0, "z": -1180.0, "yaw_abs": PI * 0.5},
+	"halic_neorion": {"x": -694.0, "z": -1290.0, "yaw_abs": PI * 0.5},
+	"halic_iskele": {"x": -694.0, "z": -1370.0, "yaw_abs": PI * 0.5},
+	"halic_ceneviz": {"x": -694.0, "z": -1452.0, "yaw_abs": PI * 0.5},
+	"halic_sur": {"skip": true},
+	"halic_eugenios": {"skip": true},
+	"halic_petrion": {"skip": true},
+	"halic_fener": {"skip": true},
 }
 
 ## Eski kaba yapının (Landmarks1453 anahtarı) yerini alan kimlikler: yeni kurulunca eskisi kurulmaz (çifte yapı yok)
 const REPLACES := {
 	"hipodrom": "hippodrome", "buyuk_saray": "great_palace", "aya_irini": "aya_irini", "augustaion": "augustaion",
+	"konstantin": "forum_constantine", "tauri": "forum_tauri",
+	"halic_venedik": "quay_venice", "halic_pisa_amalfi": "quay_amalfi", "halic_ceneviz": "quay_genoa",
 }
+## Modülün bütünü bu turda kurulmaz (gerekçe raporda): galata → GalataView (HornWorld) ile aynı yerde çifte şehir olurdu
+const MOD_SKIP := ["galata", "galata_kule", "galata_ortak", "galata_sur", "galata_yapi"]
+
+
+static func _skipped(id: String, mod: String, region: String) -> bool:
+	if mod in MOD_SKIP:
+		return true
+	var fix: Dictionary = YER.get(id, {})
+	return fix.get("skip", false) or region in (fix.get("skip_regions", []) as Array)
 
 
 ## Landmarks1453.build için: yeni parçası şehre yerleşen eski anahtarlar
-static func replaced() -> Array:
+static func replaced(region := "") -> Array:
 	var out: Array = []
 	for e: Dictionary in catalog_all():
-		if REPLACES.has(e["id"]) and not (YER.get(e["id"], {}) as Dictionary).get("skip", false):
+		if REPLACES.has(e["id"]) and not _skipped(String(e["id"]), String(e["mod"]), region):
 			out.append(REPLACES[e["id"]])
 	return out
 
@@ -119,6 +165,8 @@ static func place_of(e: Dictionary) -> Dictionary:
 	var id := String(e["id"])
 	var fix: Dictionary = YER.get(id, {})
 	var real := Vector2(float(data.get("dogu_m", 0.0)), float(data.get("kuzey_m", 0.0)))
+	if fix.has("e"):
+		real = Vector2(float(fix["e"]), float(fix["n"]))
 	var w := CityGeo.real_to_world(real)
 	var brg := deg_to_rad(float(data.get("yon_derece", 0.0)))
 	var dirr := Vector2(sin(brg), cos(brg))
@@ -126,17 +174,24 @@ static func place_of(e: Dictionary) -> Dictionary:
 	if fix.has("lm") and World1453.LANDMARKS.has(fix["lm"]):
 		var lm: Vector3 = World1453.LANDMARKS[fix["lm"]]
 		w = Vector2(lm.x, lm.z)
+	if fix.has("x"):
+		w = Vector2(float(fix["x"]), float(fix["z"]))
 	w += Vector2(float(fix.get("dx", 0.0)), float(fix.get("dz", 0.0)))
 	var yaw := atan2(-dw.x, -dw.y) + deg_to_rad(float(fix.get("yaw", 0.0)))
+	if fix.has("yaw_abs"):
+		yaw = float(fix["yaw_abs"])
 	var k := float(fix.get("k", K_TUR.get(String(data.get("tur", "anit")), 0.5)))
 	var s: Vector3 = data.get("gercek_olcu", Vector3(20, 10, 20))
 	var r := maxf(s.x, s.z) * k * 0.5
-	# Taban: dört köşenin ve ortanın en alçağı (yamaçta havada kalmaz; yukarı yanı zemine gömülür)
-	var y := INF
+	# Taban: küçük yapıda dört köşenin ve ortanın en alçağı (yamaçta havada kalmaz; yukarı yanı zemine gömülür); büyük
+	# yapıda (r > 25 m) ortanca (kıyıya taşan bir köşe bütün yapıyı denize indirmesin)
+	var hs: Array = []
 	var u := Vector2(cos(-yaw), sin(-yaw))
 	for o: Vector2 in [Vector2.ZERO, Vector2(1, 1), Vector2(-1, 1), Vector2(1, -1), Vector2(-1, -1)]:
 		var q := w + Vector2(u.x * o.x * s.x * k * 0.45 - u.y * o.y * s.z * k * 0.45, u.y * o.x * s.x * k * 0.45 + u.x * o.y * s.z * k * 0.45)
-		y = minf(y, World1453.surface_h(q.x, q.y))
+		hs.append(World1453.surface_h(q.x, q.y))
+	hs.sort()
+	var y: float = hs[2] if r > 25.0 else hs[0]
 	return {"pos": Vector3(w.x, y - 0.03, w.y), "yaw": yaw, "k": k, "r": r}
 
 
@@ -155,6 +210,10 @@ static func attach(f: Node3D) -> IstSehir:
 	return s
 
 
+func _region() -> String:
+	return String(field.get("region_name")) if field and field.get("region_name") != null else ""
+
+
 func _blocked(p: Vector3, r: float) -> bool:
 	for kr: Rect2 in keep:
 		if kr.grow(r * 0.7).has_point(Vector2(p.x, p.z)):
@@ -167,7 +226,7 @@ func _place_all() -> void:
 	for e: Dictionary in catalog_all():
 		var id := String(e["id"])
 		var fix: Dictionary = YER.get(id, {})
-		if fix.get("skip", false):
+		if _skipped(id, String(e["mod"]), _region()):
 			continue
 		var pl := place_of(e)
 		var p: Vector3 = pl["pos"]
@@ -266,7 +325,7 @@ func _plan(cp: Vector3) -> void:
 	var jobs: Array = []
 	for it: Dictionary in items:
 		var p: Vector3 = it["pos"]
-		var d := Vector2(p.x - cp.x, p.z - cp.z).length() - float(it["r"])
+		var d := Vector3(p.x - cp.x, (p.y - cp.y) * 1.3, p.z - cp.z).length() - float(it["r"])
 		var want := 0 if d < R0 else (1 if d < R1 else 2)
 		it["want"] = want
 		# Boşalt: payın ötesindeki ince katmanlar
@@ -282,7 +341,7 @@ func _plan(cp: Vector3) -> void:
 		_show(it)
 	for c: Dictionary in _cells0:
 		var cc: Vector3 = c["c"]
-		var d := Vector2(cc.x - cp.x, cc.z - cp.z).length()
+		var d := Vector2(cc.x - cp.x, cc.z - cp.z).length() + maxf(0.0, cp.y - cc.y - 20.0) * 1.5
 		if d < 150.0 and not c["up"]:
 			jobs.append([d, ["cell", c]])
 		elif d > 210.0 and c["up"]:
@@ -314,8 +373,30 @@ static func houses(parent: Node3D, list: Array, surf: Callable, free: Callable, 
 		host = IstSehir.new()
 		host.name = "IstEvler"
 		parent.add_child(host)
-	host._houses(list, surf, free, nd)
+	var sf: Node = parent
+	while sf != null and not (sf is SiegeField):
+		sf = sf.get_parent()
+	var region := String(sf.get("region_name")) if sf else ""
+	var foot := footprints(region)
+	var free2 := func(x: float, z: float, m: float) -> bool:
+		for fp: Vector3 in foot:
+			if Vector2(x - fp.x, z - fp.z).length() < fp.y + m:
+				return false
+		return free.call(x, z, m)
+	host._houses(list, surf, free2, nd)
 	return true
+
+
+## Parçaların tabanları (dünya x, yarıçap, z): evler ve doku bunlara girmez
+static func footprints(region: String) -> Array:
+	var out: Array = []
+	for e: Dictionary in catalog_all():
+		if _skipped(String(e["id"]), String(e["mod"]), region):
+			continue
+		var pl := place_of(e)
+		var p: Vector3 = pl["pos"]
+		out.append(Vector3(p.x, float(pl["r"]) + 2.0, p.z))
+	return out
 
 
 func _houses(list: Array, surf: Callable, free: Callable, nd: Dressing) -> void:
@@ -383,7 +464,9 @@ func _layers(g0: Dictionary, g1: Dictionary, g2: Dictionary) -> void:
 			mm.visibility_range_begin = NEAR
 			mm.visibility_range_end = MID if key.begins_with("ev|") else MID * 0.75
 	for ck: Vector2i in g0:
-		var cell := {"c": Vector3((ck.x + 0.5) * CELL0, 0, (ck.y + 0.5) * CELL0), "groups": g0[ck], "mm": [], "col": null, "up": false}
+		var cx := (ck.x + 0.5) * CELL0
+		var cz := (ck.y + 0.5) * CELL0
+		var cell := {"c": Vector3(cx, World1453.surface_h(cx, cz), cz), "groups": g0[ck], "mm": [], "col": null, "up": false}
 		_cells0.append(cell)
 
 
@@ -484,7 +567,7 @@ func _cell_down(c: Dictionary) -> void:
 
 # ---------------------------------------------------------------- mahalle dokusu
 
-const DOKU_CELL := 32.0
+const DOKU_CELL := 26.0
 ## Sık mahalleler (ISTANBUL_PLAN §2, dünya dikdörtgenleri): çarşı, Haliç iskeleleri, Ayasofya çevresi, hub, Petrion
 const SIK := [Rect2(-700, -1500, 100, 650), Rect2(-520, -1360, 280, 380), Rect2(-700, -1720, 300, 360),
 	Rect2(-140, -330, 320, 326), Rect2(-700, -820, 180, 440), Rect2(-420, -900, 220, 280)]
@@ -525,12 +608,21 @@ func _doku() -> void:
 				for b in range(-1, 2):
 					if occ.has(Vector2i(floori(c.x / 16.0) + a, floori(c.y / 16.0) + b)):
 						ok = false
-			if not ok or CityPlan.blocked(c.x, c.y, 13.0) or WallRear.in_band(c.x, c.y, 14.0):
-				continue
-			if _blocked(Vector3(c.x, 0, c.y), 18.0) or (free_fn.is_valid() and not free_fn.call(c.x, c.y, 14.0, true)):
+			if WallRear.in_band(c.x, c.y, 10.0) or _blocked(Vector3(c.x, 0, c.y), 14.0) or (free_fn.is_valid() and not free_fn.call(c.x, c.y, 10.0, true)):
 				continue
 			var rng := RandomNumberGenerator.new()
 			rng.seed = hash(Vector2i(i, j)) ^ 1453
+			if not ok or CityPlan.blocked(c.x, c.y, 13.0):
+				# Sokak evlerinin arkasındaki adanın içi: bahçe ağaçları (ev ve yama konmaz: kapalı cep olmasın)
+				if CityPlan.blocked(c.x, c.y, 4.0):
+					continue
+				for k in rng.randi_range(1, 3):
+					var tp := Vector2(c.x + rng.randf_range(-9, 9), c.y + rng.randf_range(-9, 9))
+					if CityPlan.blocked(tp.x, tp.y, 2.5) or _blocked(Vector3(tp.x, 0, tp.y), 2.0):
+						continue
+					_add(g0, g1, g2, "ag|" + String(AGAC_SIK[rng.randi() % AGAC_SIK.size()]), Transform3D(Basis(Vector3.UP, rng.randf() * TAU), Vector3(tp.x, World1453.surface_h(tp.x, tp.y) - 0.05, tp.y)))
+					nt += 1
+				continue
 			var sik := false
 			for r: Rect2 in SIK:
 				if r.has_point(c):
@@ -632,9 +724,37 @@ func quest_marks() -> Array:
 	var out: Array = []
 	for it: Dictionary in items:
 		var d: Dictionary = it["data"]
-		if not d.get("gorev", false):
+		if not d.get("gorev", false) or not (YER.get(it["id"], {}) as Dictionary).get("quest", true):
 			continue
 		var s: Vector3 = d.get("gercek_olcu", Vector3(20, 20, 20))
 		var h := it["holder"] as Node3D
 		out.append([String(it["id"]).to_upper(), h.transform * Vector3(0, s.y * float(it["k"]) + 8.0, 0), float(d.get("bakis_r", 30.0))])
+	return out
+
+
+## Parçaların konma noktaları (perches_<id>): [ad, nokta (field yereli), yarıçap]; nokta lod 0'ın çarpışmalı yüzeyinde
+## (Nihat yaklaşınca lod 0 kurulur)
+func perch_marks() -> Array:
+	var out: Array = []
+	for it: Dictionary in items:
+		if not it.has("script"):
+			continue
+		var fn := "perches_" + String(it["id"])
+		var scr := it["script"] as GDScript
+		var has := false
+		for m: Dictionary in scr.get_script_method_list():
+			if m["name"] == fn:
+				has = true
+				break
+		if not has:
+			continue
+		var pts = scr.call(fn, float(it["k"]))
+		if not (pts is Array) or (pts as Array).is_empty():
+			continue
+		var p0 = pts[0]
+		if p0 is Array and (p0 as Array).size() > 0:
+			p0 = p0[0]
+		if not (p0 is Vector3):
+			continue
+		out.append(["ist_" + String(it["id"]), (it["holder"] as Node3D).transform * (p0 as Vector3), 4.0])
 	return out

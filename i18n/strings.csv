@@ -9754,3 +9754,29 @@ D_WIT_RIZ_1,"Müfettiş Bey, uçarken de iş güvenliği yönetmeliği geçerli.
 D_WIT_RIZ_2,Kaldırma Formu'nu ben verdim. Demek ki kaza benim zimmetime yazılır.,I issued the Lift Form. So any accident goes on my account.
 D_WIT_MUF_1,"Nihat Bey, tavan lambasına dikkat. Demirbaş kaydında.","Mr. Nihat, mind the ceiling lamp. It's on the inventory."
 D_WIT_MUF_2,"Uçmak serbest, ama koridorda değil.","Flying is permitted, but not in the corridor."
+LM_AUGUSTAION,Augustaion ve Iustinianus Sütunu,The Augustaion and the Column of Justinian
+LM_MILION,Milion,The Milion
+LM_AYA_IRINI,Aya İrini,Hagia Irene
+LM_SERGIOS,Küçük Ayasofya,Little Hagia Sophia
+LM_BUYUK_SARAY,Büyük Saray Harabeleri,Ruins of the Great Palace
+LM_KHALKE,Khalke Kapısı,The Chalke Gate
+LM_ZEUKSIPPOS,Zeuksippos Hamamı,The Baths of Zeuxippus
+LM_NEA,Nea Ekklesia,The Nea Ekklesia
+LM_TAURI,Theodosius Forumu,The Forum of Theodosius
+LM_ARKADIUS,Arkadius Sütunu,The Column of Arcadius
+LM_MARKIANOS,Kıztaşı,The Column of Marcian
+LM_ANEMODOULION,Anemodoulion,The Anemodoulion
+LM_HALIC_VENEDIK,Venedik Mahallesi,The Venetian Quarter
+D_LM_AUGUSTAION,"Augustaion. Iustinianus atının üstünde, eli doğuya uzanmış. Elindeki küre 1317'de düşmüş; kimse yerine koymamış. Bizim Büro'da da düşen bir şey yerine konmaz.","The Augustaion. Justinian on his horse, hand stretched to the east. The orb in his hand fell in 1317 and nobody put it back. Nothing that falls at the Bureau gets put back either."
+D_LM_MILION,"Milion. Bütün yolların sıfır noktası. Bütün mesafeler buradan ölçülürmüş. Bizim Büro'nun sıfır noktası çaycının ocağıdır.","The Milion. Mile zero for every road; all distances were measured from here. The Bureau's mile zero is the tea stove."
+D_LM_AYA_IRINI,"Aya İrini. Ayasofya'dan da eski bir kilise. Adı 'barış' demek. Zamanlaması pek uymamış.","Hagia Irene. A church older than Hagia Sophia itself. Its name means 'peace'. The timing could have been better."
+D_LM_SERGIOS,"Küçük Ayasofya. Büyüğünün provası gibi. Her büyük işin önce küçüğü yapılır; bizde önce yazışması yapılır.","Little Hagia Sophia. Like a rehearsal for the big one. Every great work starts with a small one; ours starts with paperwork."
+D_LM_BUYUK_SARAY,"Büyük Saray. Bin yıl imparatorların eviymiş, şimdi otlu bir harabe. Mozaiklerin üstünde keçi otluyor. Saygısızlık değil, bakım.","The Great Palace. A thousand years the emperors' home, now an overgrown ruin. Goats graze over the mosaics. Not disrespect, maintenance."
+D_LM_KHALKE,"Khalke Kapısı. Sarayın tunç kapısı. Kapı duruyor, saray gitmiş. Bizim Büro'nun kapısı da hep kapalı ama arkasında biz varız. Maalesef.","The Chalke Gate. The palace's bronze gate. The gate stands, the palace is gone. The Bureau's door is always shut too, but we're behind it. Unfortunately."
+D_LM_ZEUKSIPPOS,"Zeuksippos Hamamı. Bir zamanlar heykellerle doluymuş. Şimdi duvar diplerinde ot, kemerlerde güvercin. Hamam kalmamış, buhar kalmış: benim.","The Baths of Zeuxippus. Once full of statues. Now weeds along the walls and pigeons in the arches. The baths are gone; the steam is still here. That's me."
+D_LM_NEA,"Nea Ekklesia. Adı 'yeni kilise'. Yedi yüz yaşında. Bizde de 'yeni yönetmelik' diye bir şey var, ondan biraz genç.","The Nea Ekklesia. Its name means 'new church'. It's seven hundred years old. We have a 'new regulation' at the Bureau; it's slightly younger."
+D_LM_TAURI,"Theodosius Forumu. Zafer takının sütunlarında gözyaşı deseni var. Zafer için gözyaşı. Kimse sormamış neden.","The Forum of Theodosius. The triumphal arch's columns have a teardrop pattern. Tears for a triumph. Nobody asked why."
+D_LM_ARKADIUS,"Arkadius Sütunu. Baştan aşağı kabartma: savaşlar, alaylar, zaferler. Yukarıdan okununca bir çizgi roman. Aşağıdan okununca boyun ağrısı.","The Column of Arcadius. Reliefs from top to bottom: wars, processions, victories. Read from above, it's a comic book. From below, it's a neck ache."
+D_LM_MARKIANOS,"Kıztaşı. Tepesinde kanatlı kızlar. Halk dokunanın kalbini bildiğine inanıyormuş. Ben dokunmuyorum, dosyam kabarık.","The Column of Marcian. Winged maidens on top. People believe it can see into the heart of whoever touches it. I'm not touching it. My file is thick enough."
+D_LM_ANEMODOULION,"Anemodoulion. Rüzgârın kölesi demek. Tepesindeki fırıldak rüzgârı gösterirmiş. Benim de rüzgâra göre dönen bir amirim var.","The Anemodoulion. 'Servant of the winds'. Its vane showed which way the wind blew. I also have a superior who turns with the wind."
+D_LM_HALIC_VENEDIK,"Venedik mahallesi. Ambarlar, iskeleler, aslanlı bayrak. Burada her şeyin bir fiyatı var; Venedikliler fiyatını da yazıyla tutuyor. Meslektaş sayılırız.","The Venetian quarter. Warehouses, quays, the lion banner. Everything here has a price, and the Venetians keep the price in writing. Colleagues, practically."

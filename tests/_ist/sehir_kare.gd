@@ -22,11 +22,23 @@ func _ready() -> void:
 			tur = a.substr(6).to_int()
 		elif a.begins_with("--set="):
 			set_ = a.substr(6)
+	if set_ == "liste":
+		for e: Dictionary in IstSehir.catalog_all():
+			var d: Dictionary = e["data"]
+			var pl := IstSehir.place_of(e)
+			var p: Vector3 = pl["pos"]
+			print("LISTE %s|%s|%s|real=(%.0f,%.0f)|olcu=%s|yon=%.0f|dunya=(%.0f,%.0f,%.1f)|k=%.2f|r=%.0f|su=%s|gorev=%s|%s" % [e["mod"], e["id"],
+				d.get("tur", ""), float(d.get("dogu_m", 0)), float(d.get("kuzey_m", 0)), str(d.get("gercek_olcu")), float(d.get("yon_derece", 0)),
+				p.x, p.z, p.y, pl["k"], pl["r"], World1453.is_water(p.x, p.z), d.get("gorev", false), d.get("ad", "")])
+		print("KITS %s" % [IstSehir.KITS.keys()])
+		get_tree().quit(0)
+		return
 	DirAccess.make_dir_recursive_absolute(out)
-	_env()
 	city = ByzCity.new()
 	city.part = "walls"
 	add_child(city)
+	if find_children("*", "WorldEnvironment", true, false).is_empty():
+		_env()
 	f = city.world
 	if f:
 		f.set_mode("day")
