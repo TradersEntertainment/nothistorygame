@@ -12,6 +12,7 @@ var tur := 1
 var set_ := "hepsi"
 var gece := false
 var eser_sec: Array = []
+var a_uzak := false
 var cam: Camera3D
 var root: Node3D
 var dunya: Node3D
@@ -25,6 +26,8 @@ func _ready() -> void:
 			tur = a.substr(6).to_int()
 		elif a.begins_with("--set="):
 			set_ = a.substr(6)
+		elif a == "--uzak":
+			a_uzak = true
 		elif a == "--gece":
 			gece = true
 		elif a.begins_with("--eser="):
@@ -83,6 +86,11 @@ func _ready() -> void:
 			n += 1
 		get_tree().quit(0)
 		return
+	if set_ == "oyun":
+		await _oyun_denetim()
+		print("ISTKARE BITTI")
+		get_tree().quit(0)
+		return
 	if set_ == "isaret":
 		await _isaretler()
 		print("ISTKARE BITTI")
@@ -103,6 +111,8 @@ func _ready() -> void:
 		await _yer()
 	if IstSehir.active and IstSehir.active.stats.has("yavas"):
 		print("ISTYAVAS ", IstSehir.active.stats["yavas"])
+		print("ISTYAVAS_PIS ", IstSehir.active.stats.get("yavas_pis", {}))
+		print("ISTBAGLA bagla_ms_max=%.1f" % float(IstSehir.active.stats.get("bagla_ms_max", 0.0)))
 	print("ISTKARE BITTI")
 	get_tree().quit(0)
 
@@ -234,7 +244,7 @@ func _shot(name: String, at: Vector3, look: Vector3, fov := 62.0) -> void:
 	img.save_jpg(out.path_join(name + ".jpg"), 0.82)
 	var draws := RenderingServer.get_rendering_info(RenderingServer.RENDERING_INFO_TOTAL_DRAW_CALLS_IN_FRAME)
 	var tris := RenderingServer.get_rendering_info(RenderingServer.RENDERING_INFO_TOTAL_PRIMITIVES_IN_FRAME)
-	if name.begins_with("yer_"):
+	if name.begins_with("yer_") or name.begins_with("tur_") or name.ends_with("_15m"):
 		_kirilim(at)
 	print("ISTKARE %s at=(%.0f,%.0f,%.0f) cizim=%d ucgen=%d bekleme=%d kur_ms_max=%.1f" % [name, at.x, at.y, at.z, draws, tris, guard, s.stats["kur_ms_max"] if s else 0.0])
 
@@ -243,6 +253,23 @@ func _shot(name: String, at: Vector3, look: Vector3, fov := 62.0) -> void:
 func _kirilim(at: Vector3) -> void:
 	var s := IstSehir.active
 	var groups := {}
+	# Şehir dışındaki katmanlar (dünya, ordugâh, gemiler, hayat): dünyanın doğrudan çocuğu başına
+	var ust: Node = s.get_parent()
+	for gi in ust.find_children("*", "GeometryInstance3D", true, false):
+		var g2 := gi as GeometryInstance3D
+		if s.is_ancestor_of(g2) or not g2.is_visible_in_tree():
+			continue
+		var d2 := g2.global_position.distance_to(at)
+		if (g2.visibility_range_end > 0.0 and d2 > g2.visibility_range_end) or d2 < g2.visibility_range_begin:
+			continue
+		var n2 := 1
+		if g2 is MeshInstance3D and (g2 as MeshInstance3D).mesh:
+			n2 = (g2 as MeshInstance3D).mesh.get_surface_count()
+		var t2: Node = g2
+		while t2.get_parent() != ust and t2.get_parent() != null:
+			t2 = t2.get_parent()
+		var k2 := "D:" + String(t2.name).left(18)
+		groups[k2] = int(groups.get(k2, 0)) + n2
 	for gi in s.find_children("*", "GeometryInstance3D", true, false):
 		var g := gi as GeometryInstance3D
 		if not g.is_visible_in_tree():
@@ -272,7 +299,7 @@ func _kirilim(at: Vector3) -> void:
 	for k in groups:
 		arr.append([groups[k], k])
 	arr.sort_custom(func(a: Array, b: Array) -> bool: return int(a[0]) > int(b[0]))
-	print("ISTKIRILIM ", arr.slice(0, 12))
+	print("ISTKIRILIM ", arr.slice(0, 16))
 
 
 func _yakin_eksik(s: IstSehir, at: Vector3) -> bool:
@@ -324,6 +351,8 @@ func _eserler() -> void:
 		var h := sz.y * float(it["k"])
 		await _shot("eser_%s_15m" % it["id"], pp + Vector3(r * 0.9 + 12.0, h + 15.0, r * 0.9 + 12.0), pp + Vector3(0, h * 0.4, 0), 60)
 		await _shot("eser_%s_tepe" % it["id"], pp + Vector3(0, h + maxf(30.0, r * 2.2), 0.1), pp, 60)
+		if a_uzak:
+			await _shot("eser_%s_uzak" % it["id"], pp + Vector3(0, 700.0, 0.1), pp, 12)
 
 
 func _yer() -> void:
@@ -597,6 +626,7 @@ func _sur_yuru() -> void:
 		var ok := 0
 		var dus := 0
 		var tak := 0
+		var zipla := 0
 		var kotu: Array = []
 		var t_hat := Time.get_ticks_msec()
 		var sv := 4.0
@@ -610,9 +640,18 @@ func _sur_yuru() -> void:
 			var hedef := _hat_nokta(pl, sv + ADIM)
 			var sonuc := "tak"
 			var t := 0.0
+			var son_p := _pl.global_position
+			var son_tt := 0.0
 			while t < 8.0:
 				await get_tree().physics_frame
 				t += get_physics_process_delta_time()
+				# takılınca zıpla (oyuncunun yapabildiği: JUMP 3,6 m/sn ≈ 0,66 m)
+				if t - son_tt > 0.4:
+					if Vector2(_pl.global_position.x - son_p.x, _pl.global_position.z - son_p.z).length() < 0.15 and _pl.is_on_floor():
+						_pl.velocity.y = 3.6
+						zipla += 1
+					son_p = _pl.global_position
+					son_tt = t
 				var p2 := Vector2(_pl.global_position.x, _pl.global_position.z)
 				var s_now := float(IstSehir._snap(pl, p2)["s"])
 				var hn := _hat_nokta(pl, minf(s_now + 3.0, sv + ADIM))
@@ -671,7 +710,7 @@ func _sur_yuru() -> void:
 			kar += 1
 			if kar % 20 == 0:
 				print("ISTSURILERLE %s s=%.0f/%.0f ok=%d dus=%d tak=%d" % [ad, sv, lim, ok, dus, tak])
-		print("ISTSURYURU hat=%s uzunluk=%.0f sinanan=%.0f dilim=%d gecti=%d dusme=%d takilma=%d gercek_ms=%d" % [ad, hat_len, minf(sv, lim), ok + dus + tak, ok, dus, tak, Time.get_ticks_msec() - t_hat])
+		print("ISTSURYURU hat=%s uzunluk=%.0f sinanan=%.0f dilim=%d gecti=%d dusme=%d takilma=%d zipla=%d gercek_ms=%d" % [ad, hat_len, minf(sv, lim), ok + dus + tak, ok, dus, tak, zipla, Time.get_ticks_msec() - t_hat])
 		print("ISTSURYURU_OLAY %s %s" % [ad, " ".join(kotu.slice(0, 80))])
 		for it: Dictionary in s.items:
 			if String(it.get("hat", "")) == ad or String((IstSehir.YER2.get(String(it["id"]), {}) as Dictionary).get("hat", "")) == ad:
@@ -767,3 +806,174 @@ func _isaretler() -> void:
 		await _shot("isaret_%02d_%s" % [i, String(lm[0]).to_lower()], p + off, p - Vector3(0, 10.0, 0), 60)
 		sp.queue_free()
 		i += 1
+
+
+# ---------------------------------------------------------------- oynanış denetimi (kalite notu 9)
+
+## Beş mahallede (80 × 80 m): lod 0 ve ev çarpışmaları kurulur; 0,5 m ızgarada yukarıdan ışın.
+##   delik: karada hiçbir çarpışmaya değmeyen ışın ya da zeminin > 0,5 m altına inen vuruş
+##   kapali_cep: zemin hizasındaki (vuruş − zemin < 0,3 m) hücreden sokağa (IstSokak hücre 1) yürüyüş + zıplamayla
+##     (komşu hücreye en çok 1,1 m çıkış, iniş serbest) ulaşılamıyor (oyuncu oraya düşerse çıkamaz)
+##   cati_ulasilamaz: zeminden > 2,5 m yüksek hücrelerden sokaktan bu kuralla ulaşılamayanların oranı (tırmanma kipi hariç)
+## Çatıdan çatıya: aynı sıradaki iki komşu evin çatısında oyuncu (Player, script yürüyüşü) A'dan B'ye 6 sn yürür.
+func _oyun_denetim() -> void:
+	var s := IstSehir.active
+	s.set_process(false)
+	var sk := IstSehir.sokak
+	var hs: Array = sk.houses.duplicate()
+	hs.sort_custom(func(a: Dictionary, b: Dictionary) -> bool: return (a["c"] as Vector2).x < (b["c"] as Vector2).x)
+	var merkezler: Array = []
+	for q: float in [0.1, 0.3, 0.5, 0.7, 0.9]:
+		merkezler.append((hs[int(q * (hs.size() - 1))] as Dictionary)["c"])
+	var P = load("res://scripts/player/player.gd")
+	_pl = P.new()
+	add_child(_pl)
+	if dunya and "izle" in dunya:
+		dunya.izle = _pl
+	var cati_ok := 0
+	var cati_n := 0
+	for mi in merkezler.size():
+		var m: Vector2 = merkezler[mi]
+		var mah := IstGeo.mahalle(m.x, m.y)
+		if dunya and dunya.has_method("carpisma_yenile"):
+			dunya.call("carpisma_yenile", Vector3(m.x, IstGeo.h(m.x, m.y), m.y))
+		for c: Dictionary in s._cells0:
+			var cc: Vector3 = c["c"]
+			if Vector2(cc.x - m.x, cc.z - m.y).length() < 110.0 and not c["up"]:
+				s._cell_up(c)
+		for it: Dictionary in s.items:
+			var pp: Vector3 = it["pos"]
+			if Vector2(pp.x - m.x, pp.z - m.y).length() - float(it["r"]) < 70.0:
+				s._build(it, 0)
+		for i in 4:
+			await get_tree().physics_frame
+		var sp := get_world_3d().direct_space_state
+		var N := 160
+		var top := PackedFloat32Array()
+		top.resize(N * N)
+		var gr := PackedFloat32Array()
+		gr.resize(N * N)
+		var delik := 0
+		var kara := 0
+		for j in N:
+			for i in N:
+				var x := m.x - 40.0 + i * 0.5 + 0.25
+				var z := m.y - 40.0 + j * 0.5 + 0.25
+				var g := IstGeo.h(x, z)
+				gr[j * N + i] = g
+				if IstGeo.su(x, z):
+					top[j * N + i] = NAN
+					continue
+				kara += 1
+				var rq := PhysicsRayQueryParameters3D.create(Vector3(x, g + 60.0, z), Vector3(x, g - 4.0, z))
+				rq.exclude = [_pl.get_rid()]
+				var h := sp.intersect_ray(rq)
+				if h.is_empty() or (h["position"] as Vector3).y < g - 0.5:
+					delik += 1
+					top[j * N + i] = NAN
+				else:
+					top[j * N + i] = (h["position"] as Vector3).y
+		# Sokaktan ulaşılabilirlik (ileri) ve sokağa dönebilirlik (geri)
+		var ileri := PackedByteArray()
+		ileri.resize(N * N)
+		var geri := PackedByteArray()
+		geri.resize(N * N)
+		var q1: Array = []
+		for k in N * N:
+			var x := m.x - 40.0 + (k % N) * 0.5 + 0.25
+			var z := m.y - 40.0 + (k / N) * 0.5 + 0.25
+			if not is_nan(top[k]) and top[k] - gr[k] < 0.3 and sk.cell(x, z) == 1:
+				ileri[k] = 1
+				geri[k] = 1
+				q1.append(k)
+		var q2: Array = q1.duplicate()
+		while not q1.is_empty():
+			var u: int = q1.pop_back()
+			for d: int in [1, -1, N, -N]:
+				var v := u + d
+				if v < 0 or v >= N * N or (absi(d) == 1 and (v / N) != (u / N)) or ileri[v] == 1 or is_nan(top[v]):
+					continue
+				if top[v] - top[u] <= 1.1 and top[u] - top[v] <= 8.0:
+					ileri[v] = 1
+					q1.append(v)
+		while not q2.is_empty():
+			var u: int = q2.pop_back()
+			for d: int in [1, -1, N, -N]:
+				var v := u + d
+				if v < 0 or v >= N * N or (absi(d) == 1 and (v / N) != (u / N)) or geri[v] == 1 or is_nan(top[v]):
+					continue
+				# v'den u'ya geçilebiliyor mu (v → u)
+				if top[u] - top[v] <= 1.1 and top[v] - top[u] <= 8.0:
+					geri[v] = 1
+					q2.append(v)
+		var cep := 0
+		var cati := 0
+		var cati_ulas := 0
+		var cep_ornek := ""
+		for k in N * N:
+			if is_nan(top[k]):
+				continue
+			var yuk := top[k] - gr[k]
+			if yuk < 0.3 and geri[k] == 0:
+				cep += 1
+				if cep_ornek == "":
+					cep_ornek = "(%.0f,%.0f)" % [m.x - 40.0 + (k % N) * 0.5, m.y - 40.0 + (k / N) * 0.5]
+			if yuk > 2.5:
+				cati += 1
+				if ileri[k] == 1:
+					cati_ulas += 1
+		print("ISTDELIK mah=%s merkez=(%.0f,%.0f) kara_hucre=%d delik=%d kapali_cep_hucre=%d ornek=%s cati_hucre=%d sokaktan_yuruyerek=%.0f%%" % [String(mah.get("ad", "")), m.x, m.y, kara, delik, cep, cep_ornek, cati, 100.0 * cati_ulas / maxf(cati, 1)])
+		# Çatıdan çatıya: bu bölgedeki aynı sıradan iki komşu ev
+		var cift: Array = []
+		for a: Dictionary in sk.houses:
+			if (a["c"] as Vector2).distance_to(m) > 35.0:
+				continue
+			for b: Dictionary in sk.houses:
+				if b == a or int(b["sira"]) != int(a["sira"]):
+					continue
+				var da := IstEvler.dims(int(a["v"]))
+				var db := IstEvler.dims(int(b["v"]))
+				var dd := (a["c"] as Vector2).distance_to(b["c"])
+				if dd < (da.x + db.x) * 0.5 + 0.3 and dd > 2.0:
+					cift = [a, b]
+					break
+			if not cift.is_empty():
+				break
+		if cift.is_empty():
+			print("ISTCATI mah=%s cift_yok" % mah.get("ad", ""))
+			continue
+		var A: Dictionary = cift[0]
+		var B: Dictionary = cift[1]
+		var ca: Vector2 = A["c"]
+		var cb: Vector2 = B["c"]
+		var ra := sp.intersect_ray(PhysicsRayQueryParameters3D.create(Vector3(ca.x, 80, ca.y), Vector3(ca.x, -5, ca.y)))
+		if ra.is_empty():
+			print("ISTCATI mah=%s A_cati_yok" % mah.get("ad", ""))
+			continue
+		_pl.global_position = (ra["position"] as Vector3) + Vector3(0, 0.6, 0)
+		_pl.velocity = Vector3.ZERO
+		for i in 6:
+			await get_tree().physics_frame
+		var y_a := _pl.global_position.y
+		var t := 0.0
+		_pl.set("move_mode", "script")
+		while t < 6.0:
+			await get_tree().physics_frame
+			t += get_physics_process_delta_time()
+			var p2 := Vector2(_pl.global_position.x, _pl.global_position.z)
+			var to := Vector3(cb.x - p2.x, 0, cb.y - p2.y)
+			_pl.rotation.y = atan2(-to.x, -to.z)
+			_pl.set("script_velocity", to.normalized() * 2.4 if to.length() > 0.4 else Vector3.ZERO)
+		_pl.set("script_velocity", Vector3.ZERO)
+		var son := _pl.global_position
+		var ok := Vector2(son.x, son.z).distance_to(cb) < 1.5 and son.y > IstGeo.h(cb.x, cb.y) + 2.5
+		cati_n += 1
+		if ok:
+			cati_ok += 1
+		print("ISTCATI mah=%s A=(%.0f,%.0f) B=(%.0f,%.0f) y_a=%.1f son=(%.1f,%.1f,%.1f) zemin_b=%.1f %s" % [mah.get("ad", ""), ca.x, ca.y, cb.x, cb.y, y_a, son.x, son.y, son.z, IstGeo.h(cb.x, cb.y), "GECTI" if ok else "KALDI"])
+		if DisplayServer.get_name() != "headless":
+			cam.make_current()
+			await _shot("oyun_cati_%d" % mi, son + Vector3(6, 5, 6), son, 70)
+	print("ISTCATI toplam=%d gecti=%d" % [cati_n, cati_ok])
+	_pl.queue_free()
+	s.set_process(true)
