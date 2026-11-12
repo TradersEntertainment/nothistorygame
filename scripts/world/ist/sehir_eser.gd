@@ -89,7 +89,10 @@ static func _tex_of(t: Texture2D) -> Texture2D:
 	for y in hgt:
 		for x in w:
 			var c := img.get_pixel(x, y)
-			if c.s > 0.12:
+			if c.s > 0.12 and c.h > 0.46 and c.h < 0.72:
+				# mavi/lacivert (kurşun dokusu): mavi-gri, toon gölgede siyaha kaçmayacak açıklıkta
+				img.set_pixel(x, y, Color.from_hsv(0.58, 0.08, clampf(c.v * 1.5, 0.42, 0.62), c.a))
+			elif c.s > 0.12:
 				var hh := c.h
 				if hh < 0.105 or hh > 0.965:
 					hh = lerpf(hh if hh < 0.5 else hh - 1.0, 0.035, 0.5)
