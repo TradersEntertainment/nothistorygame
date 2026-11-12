@@ -20,6 +20,13 @@ static var CX0 := floorf(CE_A * IstGeo.S / CH) * CH
 static var CZ0 := floorf(-CN_B * IstGeo.S / CH) * CH
 static var CNX := int(ceilf((CE_B * IstGeo.S - CX0) / CH))
 static var CNZ := int(ceilf((-CN_A * IstGeo.S - CZ0) / CH))
+
+## Izgara kaydırmayla (IstGeo.OX/OZ, IstBaglama) yeniden türer: parça sınırları kaydırmasız dünyadakiyle aynı yere düşer
+static func _izgara() -> void:
+	CX0 = floorf(CE_A * IstGeo.S / CH) * CH + IstGeo.OX
+	CZ0 = floorf(-CN_B * IstGeo.S / CH) * CH + IstGeo.OZ
+	CNX = int(ceilf((CE_B * IstGeo.S + IstGeo.OX - CX0) / CH))
+	CNZ = int(ceilf((-CN_A * IstGeo.S + IstGeo.OZ - CZ0) / CH))
 ## Ayrıntı düzeyleri: hücre boyu (m) ve devreye girme uzaklığı (parça dikdörtgenine yatay uzaklık)
 const LOD_CELL := [6.0, 12.0, 24.0, 48.0]
 const LOD_DIST := [150.0, 700.0, 1900.0]
@@ -38,6 +45,8 @@ const COL_MOVE := 70.0        # bu kadar uzaklaşınca yenilenir
 
 ## false: IstSehir.attach_v2 çağrılmaz (yalnız arazi denetimi)
 static var sehir_bagla := true
+## false: gök, güneş ve ortam kurulmaz (bölümün kendi gökyüzü ve ışığı kullanılır; IstBaglama)
+static var gok_kur := true
 
 var gece := false
 var merkez := Vector3.ZERO
@@ -65,6 +74,7 @@ var _yakala_son := 0.0
 
 
 static func build(parent: Node3D, gece_ := false, merkez_ := Vector3.ZERO) -> Node3D:
+	_izgara()
 	var d := IstDunya.new()
 	d.name = "IstDunya"
 	d.gece = gece_
@@ -82,7 +92,8 @@ static func build(parent: Node3D, gece_ := false, merkez_ := Vector3.ZERO) -> No
 
 func _kur() -> void:
 	var t0 := Time.get_ticks_usec()
-	_gok()
+	if gok_kur:
+		_gok()
 	_deniz()
 	_ufuk()
 	# çekirdek: önce hepsi kaba (lod 3), sonra merkeze yakınlar zaman dilimli inceltilir
@@ -507,9 +518,9 @@ func _karsi_kiyilar() -> void:
 	var j0 := floori(za / 40.0)
 	for j in range(j0, floori(zb / 40.0) + 1):
 		for i in range(i0, floori(xb / 40.0) + 1):
-			var cx := (i + 0.5) * 40.0
-			var cz := (j + 0.5) * 40.0
-			if IstGeo.su(cx, cz) or IstGeo.sehir_ici(cx, cz) or IstGeo.galata_ici(cx, cz):
+			var cx := (i + 0.5) * 40.0 + IstGeo.OX
+			var cz := (j + 0.5) * 40.0 + IstGeo.OZ
+			if IstGeo.su(cx, cz) or IstGeo.sehir_ici(cx, cz) or IstGeo.galata_ici(cx, cz) or IstGeo.dislanan_mi(cx, cz):
 				continue
 			var m := IstGeo.mahalle(cx, cz)
 			var tur := String(m["tur"])
@@ -871,7 +882,7 @@ func _ufuk() -> void:
 	st.begin(Mesh.PRIMITIVE_TRIANGLES)
 	var rng := RandomNumberGenerator.new()
 	rng.seed = 1453
-	var o := Vector3.ZERO
+	var o := Vector3(IstGeo.OX, 0.0, IstGeo.OZ)      # Ayasofya (kerteriz merkezi)
 	for y in UFUK_YAY:
 		var a0: float = y[0]
 		var a1: float = y[1]
