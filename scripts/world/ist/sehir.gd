@@ -359,7 +359,7 @@ func _build(it: Dictionary, lod: int) -> void:
 ## kurşun tonları güneş ve gök ışığında açık maviye kaçıyor, ufukta ev çatılarının arasında kayboluyordu. Mavimsi açık griler
 ## koyu kurşuna çevrilir, hafif metal parıltı (silüette seçilsin). Malzeme önbellekli (pişirmede tek yüzeyde birleşir).
 static var _kursun_mat := {}
-const KURSUN := Color("646a72")
+const KURSUN := Color("4c525a")
 
 func _kursun(n: Node3D) -> void:
 	for c in n.find_children("*", "MeshInstance3D", true, false):
@@ -379,11 +379,13 @@ func _kursun(n: Node3D) -> void:
 			var key := sm.get_instance_id()
 			if not _kursun_mat.has(key):
 				var d := sm.duplicate() as StandardMaterial3D
-				d.albedo_color = KURSUN.lerp(col, 0.15)
+				d.albedo_color = KURSUN.lerp(col, 0.1)
+				d.rim_enabled = false
 				d.metallic = 0.35
 				d.metallic_specular = 0.6
 				d.roughness = 0.45
 				_kursun_mat[key] = d
+			stats["kursun_n"] = int(stats.get("kursun_n", 0)) + 1
 			# material_override yüzey başına malzemeden önce gelir
 			if mi.material_override == m:
 				mi.material_override = _kursun_mat[key]
@@ -411,6 +413,10 @@ func _bake_lod(n: Node3D, flat: bool) -> void:
 	for c: MeshInstance3D in list:
 		c.get_parent().remove_child(c)
 		c.queue_free()
+	if v2:
+		# Pişiricinin ürettiği otomatik ayrıntı düzeyleri (ImporterMesh.generate_lods) büyük düz yüzeyleri (forum döşemesi,
+		# sarnıç tabanı) uzakta bozup simsiyah gösteriyordu: v2'de katmanlar zaten ayrı; motorun sadeleştirmesi kapalı
+		mi.lod_bias = 128.0
 	n.add_child(mi)
 
 
@@ -1160,9 +1166,12 @@ static func attach_v2(dunya: Node3D, gece_ := false) -> void:
 	var t3 := Time.get_ticks_msec()
 	s._on_pisir()
 	var t4 := Time.get_ticks_msec()
-	print("ISTONPISIR ms=%d adet=%d" % [t4 - t3, s.stats.get("on_pisir_n", 0)])
+	print("ISTONPISIR ms=%d adet=%d kursun=%d" % [t4 - t3, s.stats.get("on_pisir_n", 0), s.stats.get("kursun_n", 0)])
 	t3 = t4
 	s._parcalar_bagla(dunya, gece_)
+	for r: Rect2 in s.oyun_alanlari():
+		var rc := IstGeo.real(r.get_center().x, r.get_center().y)
+		print("ISTOYUN alan dunya_merkez=(%.0f, %.0f) boyut=%s gercek=(%.0f, %.0f)" % [r.get_center().x, r.get_center().y, r.size, rc.x, rc.y])
 	print("ISTSEHIR2 yer=%d hat=%d kur_ms=%d hat_ms=%d doku_ms=%d parca_ms=%d" % [s.items.size(), s.hat_items.size(), t1 - t0, t2 - t1, t3 - t2, Time.get_ticks_msec() - t3])
 
 
@@ -1555,7 +1564,8 @@ func _place_v2() -> void:
 	for e: Dictionary in catalog_all():
 		var id := String(e["id"])
 		var mod := String(e["mod"])
-		if mod in MOD_SKIP2 or id in HAT_IDS:
+		if mod in MOD_SKIP2 or id in HAT_IDS or mod.begins_with("ordugah") or mod.begins_with("gemiler") or mod.begins_with("hayat"):
+			# ordugâh, gemiler, hayat kendi attach'ıyla kurulur (kayıttan da kurulursa çifte yapı olur)
 			continue
 		var pl := _place2_of(e)
 		if pl.is_empty():
@@ -1648,7 +1658,7 @@ func _pad(p: Vector3, nm: String) -> void:
 ## Sur dilimlerinin uzak katmanı: 160 m'lik parçalarda tek ağ (dilim başına çizim yerine); parçanın merkezine 360 m'den
 ## yakınken gizlenir, dilimin kendi orta katmanı 420 m'de kurulur
 const HAT_CELL := 160.0
-const HAT_BEGIN := 360.0
+const HAT_BEGIN := 200.0
 var _hat_far := {}             # Vector2i → SurfaceTool
 var _hat_mat: Material
 
@@ -1691,9 +1701,16 @@ static func _acik(m: Mesh, f: float) -> Mesh:
 		var cols = arr[Mesh.ARRAY_COLOR]
 		if cols is PackedColorArray:
 			var pc: PackedColorArray = cols
+			var krem := Color("d2c3a3")
 			for i in pc.size():
 				var c := pc[i]
-				pc[i] = Color(minf(c.r * f, 1.0), minf(c.g * f, 1.0), minf(c.b * f, 1.0), c.a)
+				if c.r > c.b + 0.18 and c.r > c.g + 0.1:
+					# tuğla şeritleri ve kiremit: kızıl kalır, biraz açılır
+					pc[i] = Color(minf(c.r * f, 1.0), minf(c.g * f, 1.0), minf(c.b * f, 1.0), c.a)
+				else:
+					# kesme taş, toprak, kule gövdesi: kireçtaşı kremi (parlaklık farkı korunur)
+					var l := clampf(0.72 + c.get_luminance() * 0.55, 0.72, 1.1)
+					pc[i] = Color(minf(krem.r * l, 1.0), minf(krem.g * l, 1.0), minf(krem.b * l, 1.0), c.a)
 			arr[Mesh.ARRAY_COLOR] = pc
 		am.add_surface_from_arrays(Mesh.PRIMITIVE_TRIANGLES, arr)
 		am.surface_set_material(si, m.surface_get_material(si))
@@ -1741,6 +1758,9 @@ func _make_aya(n: Node3D, lod: int) -> void:
 	off.position = -ByzCity.AYA
 	sc.add_child(off)
 	ByzCity.aya_exterior(off)
+	if lod >= 2:
+		# Uzak katmanda iç kabuk kurulmaz: gövdenin üstü (kubbeler arası kurşun çatı) yukarıdan boş görünüyordu
+		Props.box(sc, Vector3(33.0, 0.4, 33.0), Vector3(0, 16.3, 0), Color("6c737c"))
 	if lod <= 1:
 		var inner := Node3D.new()
 		inner.position = ByzCity.AYA
@@ -2675,15 +2695,21 @@ static func flight_data_v2(world: Node3D = null) -> Dictionary:
 		"san_domenico", "", "romanos", ""]
 	for i in fe.size():
 		var p := Vector3.INF
-		if fe[i] != "" and by.has(fe[i]):
-			p = s._tepe_nokta(by[fe[i]], 0.6)
+		if i == 0 and by.has("ayasofya"):
+			# kubbe yüzeyindeki konma kapağının 1 m yanı (katı)
+			p = (by["ayasofya"]["perch_aya"] as Vector3) + Vector3(0.0, 0.5, 0.0)
+		elif fe[i] != "" and by.has(fe[i]):
+			var it: Dictionary = by[fe[i]]
+			# Konma noktası varsa (çarpışmalı yüzey, ISTKONMA ile sınanır) onun üstü; yoksa en yüksek köşe
+			p = (it["perch"] as Vector3) + Vector3(0, 0.6, 0) if it.has("perch") else s._tepe_nokta(it, 0.6)
 		elif i == 9:
-			# Kız Kulesi adacığı (Damalis)
+			# Kız Kulesi adacığı (Damalis): adacığın zemini
 			var kq := IstGeo.ll(41.0211, 29.0041)
-			p = Vector3(kq.x, maxf(kq.y, 0.0) + 14.0, kq.z)
+			p = Vector3(kq.x, maxf(IstGeo.h(kq.x, kq.z), 0.0) + 0.6, kq.z)
 		elif i == 11:
+			# Üsküdar sırtı: zemin
 			var u := IstGeo.w2(2900.0, 1900.0)
-			p = Vector3(u.x, IstGeo.h(u.x, u.y) + 22.0, u.y)
+			p = Vector3(u.x, IstGeo.h(u.x, u.y) + 0.6, u.y)
 		if p != Vector3.INF:
 			forms.append([i + 1, g.call(p)])
 	var perches: Array = []

@@ -26,6 +26,8 @@ func _ready() -> void:
 			tur = a.substr(6).to_int()
 		elif a.begins_with("--set="):
 			set_ = a.substr(6)
+		elif a == "--onpisirme=0":
+			IstSehir.on_pisirme = false
 		elif a == "--uzak":
 			a_uzak = true
 		elif a == "--gece":
@@ -86,6 +88,31 @@ func _ready() -> void:
 			n += 1
 		get_tree().quit(0)
 		return
+	if set_ == "kosedbg":
+		var m := IstGeo.yol("mese")
+		var q := m[2].lerp(m[3], 0.35)
+		cam.global_position = Vector3(q.x, IstGeo.h(q.x, q.y) + 1.7, q.y)
+		for i in 60:
+			await get_tree().process_frame
+		var gor := 0
+		var ornek := ""
+		for it: Dictionary in IstSehir.active.items:
+			if not String(it["id"]).begins_with("kose_"):
+				continue
+			for l in 3:
+				var nd: Node3D = it["have"][l]
+				if nd != null and nd.is_visible_in_tree():
+					gor += 1
+					if ornek.length() < 300:
+						ornek += " %s:l%d:d%.0f:want%d:r1=%.0f" % [it["id"], l, (it["pos"] as Vector3).distance_to(cam.global_position), int(it.get("want", -1)), float(it.get("r1", -1))]
+		print("KOSEDBG gorunur=%d %s" % [gor, ornek])
+		get_tree().quit(0)
+		return
+	if set_ == "yavas":
+		await _yavas_yol()
+		print("ISTKARE BITTI")
+		get_tree().quit(0)
+		return
 	if set_ == "oyun":
 		await _oyun_denetim()
 		print("ISTKARE BITTI")
@@ -109,6 +136,9 @@ func _ready() -> void:
 		await _eserler()
 	if set_ in ["yer", "hepsi"]:
 		await _yer()
+	if set_ == "hepsi":
+		await _isaretler()
+		await _oyun_denetim()
 	if IstSehir.active and IstSehir.active.stats.has("yavas"):
 		print("ISTYAVAS ", IstSehir.active.stats["yavas"])
 		print("ISTYAVAS_PIS ", IstSehir.active.stats.get("yavas_pis", {}))
@@ -228,7 +258,7 @@ func _shot(name: String, at: Vector3, look: Vector3, fov := 62.0) -> void:
 	var guard := 0
 	var s := IstSehir.active
 	# Yakın çevre: kameranın 150 m'si içindeki öğelerin istenen katmanı kurulana dek (en çok 240 kare)
-	while guard < 240 and s and _yakin_eksik(s, at):
+	while guard < 150 and s and _yakin_eksik(s, at):
 		await get_tree().process_frame
 		guard += 1
 	for we in get_tree().root.find_children("*", "WorldEnvironment", true, false):
@@ -335,7 +365,8 @@ func _hava() -> void:
 
 
 const ESER_LISTE := ["ayasofya", "hipodrom", "konstantin", "havariyun", "bozdogan", "galata_kulesi", "blakherna", "romanos",
-	"tauri", "arkadius", "studios", "khora", "pammakaristos", "halic_eugenios", "aya_irini", "sergios"]
+	"tauri", "arkadius", "studios", "khora", "pammakaristos", "halic_eugenios", "aya_irini", "sergios", "pantokrator", "tekfur",
+	"altin_kapi", "aetios", "mokios", "aspar", "augustaion", "buyuk_saray"]
 
 func _eserler() -> void:
 	var s := IstSehir.active
@@ -977,3 +1008,36 @@ func _oyun_denetim() -> void:
 	print("ISTCATI toplam=%d gecti=%d" % [cati_n, cati_ok])
 	_pl.queue_free()
 	s.set_process(true)
+
+
+## Zaman dilimi ölçümü: kamera sabit bir yolda (Romanos'un iç yanı → Mese → Ayasofya → Galata, 40 m ve yerde 1,7 m)
+## 18 m/sn ile ilerler; akış kendi kuyruğuyla kurar. Sonda: ISTYAVAS (6 ms'yi aşan tek işler, kurma+pişirme) ve
+## kare başına akış süresi dağılımı (ISTAKIS).
+func _yavas_yol() -> void:
+	var s := IstSehir.active
+	s.stats.erase("yavas")
+	s.stats.erase("yavas_pis")
+	s.stats["kur_ms_max"] = 0.0
+	var yol: Array = [Vector3(-4400, 900, 40), Vector3(-3000, 300, 40), Vector3(-1554, 211, 40), Vector3(-756, -11, 20),
+		Vector3(-100, 0, 20), Vector3(-300, 900, 40), Vector3(-480, 1900, 30), Vector3(-1200, 300, 1.7), Vector3(-600, 0, 1.7)]
+	var dts: Array = []
+	for i in yol.size() - 1:
+		var a: Vector3 = yol[i]
+		var b: Vector3 = yol[i + 1]
+		var A := _gw(a.x, a.y) + Vector3(0, a.z, 0)
+		var B := _gw(b.x, b.y) + Vector3(0, b.z, 0)
+		var L := A.distance_to(B)
+		var n := int(L / (18.0 / 30.0))
+		for k in n:
+			var p := A.lerp(B, float(k) / n)
+			p.y = maxf(p.y, IstGeo.h(p.x, p.z) + 1.7)
+			cam.global_position = p
+			cam.look_at(p + (B - A).normalized() + Vector3(0, -0.05, 0), Vector3.UP)
+			var t0 := Time.get_ticks_usec()
+			await get_tree().process_frame
+			dts.append((Time.get_ticks_usec() - t0) / 1000.0)
+	dts.sort()
+	print("ISTAKIS kare=%d ortanca_ms=%.1f p95_ms=%.1f p99_ms=%.1f en_cok_ms=%.1f" % [dts.size(), dts[dts.size() / 2], dts[int(dts.size() * 0.95)], dts[int(dts.size() * 0.99)], dts[dts.size() - 1]])
+	print("ISTYAVAS ", s.stats.get("yavas", {}))
+	print("ISTYAVAS_PIS ", s.stats.get("yavas_pis", {}))
+	print("ISTBAGLA bagla_ms_max=%.1f kur_ms_max=%.1f" % [float(s.stats.get("bagla_ms_max", 0.0)), float(s.stats["kur_ms_max"])])
