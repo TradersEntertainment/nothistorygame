@@ -612,7 +612,9 @@ func _save_check(to_path: String) -> void:
 	GameState._snapshots[to_ch]["scene"] = to_path
 	var data := GameState.run_data()
 	var want_side := String(walk.get("to", ""))
+	GameState.flags = {}                  # yükleme yeni bir süreçteymiş gibi: bayraklar kayıttan gelmeli
 	var path := GameState.prepare_load(data)
+	GameState.snapshot(to_ch)             # açılan sayfanın _ready'si: kendi başlangıç kaydını geri yükler
 	var f := GameState.flags
 	var hist: Array = f.get("surgun_log", [])
 	var reached := GameState.reached_chapters(data)
