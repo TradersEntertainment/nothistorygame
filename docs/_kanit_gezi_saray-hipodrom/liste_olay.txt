@@ -1,0 +1,12 @@
+olay_takilma_-330_-38_a -336 -33 1.7 124 0
+olay_takilma_-330_-38_b -330 -38 1.7 124 -8
+olay_takilma_-565_-697_a -571 -697 1.7 90 0
+olay_takilma_-565_-697_b -565 -697 1.7 180 -5
+olay_takilma_-516_-623_a -516 -630 1.7 0 0
+olay_takilma_-516_-623_b -516 -623 1.7 90 -5
+olay_takilma_102_-326_a 112 -326 1.7 270 0
+olay_takilma_102_-326_b 102 -326 1.7 220 -5
+olay_takilma_136_-270_a 136 -278 1.7 0 0
+olay_takilma_250_443_a 250 436 1.7 0 0
+olay_takilma_250_443_b 250 443 1.7 20 -5
+olay_hipodrom_sphendone_4_yeniden -520 -470 1.7 40 0

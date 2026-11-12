@@ -1,0 +1,57 @@
+# İstanbul v2 — karış karış gezi denetimi: bölge `saray-hipodrom` (ARA RAPOR, ilk gönderim)
+
+Denetçi: bağımsız gezgin. Dal `wip/gezi-saray-hipodrom`. Oyun kodu değiştirilmedi (yalnız `tests/_ist/gezi_saray-hipodrom.*` ve bu klasör).
+Taban: `wip/ist2-gezi-taban`. Kareler 1280×720, `tests/_ist/sur4_kare.tscn` (yazılım çizimi, gl_compatibility); yürüyüş `tests/_ist/gezi_saray-hipodrom.tscn` (gerçek `Player`).
+
+## 1. Bölge sınırı, kare sayıları
+
+Bölge: Büyük Saray harabeleri, Hipodrom, Zeuksippos, Khalke, Nea, Küçük Ayasofya, Bukoleon ve limanı, Marmara kıyısının doğu ucu, Sarayburnu.
+Gerçek (doğu, kuzey) metre, Ayasofya kubbesi (0,0): **dört köşe** GB (−700, −800) · GD (+600, −800) · KD (+600, +900) · KB (−700, +250);
+Ayasofya yarıçap 150 m çıkarılır (mese-doğu bölgesinin), kuzey-batı kolu (Haliç yamacı n>250, e<100) halic/mese-dogu bölgelerinindir.
+Yapıların oyundaki gerçek yerleri (IstSehir düğümlerinden okundu): Hipodrom (−421,−344) · Büyük Saray (19,−271) · Khalke (78,−167) · Nea (138,−298) ·
+Zeuksippos (−104,−241) · Milion (−224,−111) · Küçük Ayasofya/Sergios (−531,−660) · Bukoleon (−439,−706) · Sophia limanı (−441,−838) · Ahırkapı (−17,−480) · Kayıkhane (−749,−681).
+
+**Ölçü yorumu (dürüstlük notu):** görev "60 m ızgara / 15 m yürüyüş adımı" der; oyunun dünyası gerçeğin 0,35'i (IstGeo.S) ve kamera yüksekliği/yakın katman
+dünya metresiyle işlediği için **ızgara 60 dünya m ≈ 171 gerçek m (180 m)**, yol adımı **15 dünya m ≈ 43 gerçek m** alındı. Bunun dışında 60 gerçek m'lik
+izgaranın 3. bölümü (çekirdek) 12 ara düğümle sıklaştırıldı. Bölge 60 gerçek m'lik ızgarayla 780'den fazla düğüm (3 000+ kare) tutardı; yazılım çizimiyle kare
+başına ≈ 8–15 sn olduğu için bu kapsam 2,5 saate sığmaz; yapılan kapsam aşağıda sayılıdır.
+
+KARE SAYILARI: (aşağıda "Teslim durumu" bölümünde)
+
+## 3. BULGU TABLOSU
+
+| no | tür | önem | yer adı | doğu, kuzey | kare dosyası | ne görünüyor | kaynak | öneri |
+|---|---|---|---|---|---|---|---|---|
+| 1 | KUTU | 1 | Hipodrom pisti (otlayan hayvanlar) | -520, -400 | kare/eser_hipodrom_guney_sphendone_0.jpg | Pistte duran inek/at kutu gövde + kutu baş + kare bacaktan: ayaklı sandık (kalite notu 32 ihlali). | scripts/world/ist/hipodrom.gd:_hayvanlar (K.sb/K.vb kutular) | CANLI hattındaki yuvarlak kesitli hayvan modelini kullan; yoksa pisti kaldır |
+| 2 | ZEMİN | 1 | Hipodrom pisti | -343, -266 | kare/eser_hipodrom_orta_1.jpg | Pist zemini neon açık yeşil, dokusuz düz renk (parlak çim) ve ince dalgalı moiré deseni; sahibin 'yerler çok kötü' dediği türden. | hipodrom.gd:build_hipodrom (K.sb pist levhası, GRASS_D.lerp(SOIL,0.4)); dunya.gd:411 'hipodrom' zemin rengi | Pist levhasını kaldırıp arazi dokusuna (kuru çim/çiğnenmiş toprak) bırak ya da dokulu malzeme + ışık düzeltmesi |
+| 3 | ZEMİN | 2 | Hipodrom pisti | -343, -266 | kare/eser_hipodrom_orta_1.jpg | Pistte cetvelle kesilmiş sivri köşeli pembe/açık dikdörtgen yamalar (keskin kenarlı yama). | hipodrom.gd:build_hipodrom (18 adet K.vb 'gp' yaması); hipodrom.gd:_sphendone_floor (SAND levhaları) | Yamaları kenar yumuşak karışımlı toprak lekesi (vertex renk/doku) yap |
+| 4 | KUTU | 2 | Hipodrom pisti (ot ve moloz) | -343, -266 | kare/eser_hipodrom_orta_1.jpg | Ot öbekleri parlak yeşil prizma/koni (oyuncak çalı), moloz taşlar beyaz küp; havada duruyor gibi. | scripts/world/ist/hipodrom_kit.gd:scatter (PrismMesh 'ot', box_mesh 'moloz') | Düzensiz yuvarlak ot kümesi, kırık taş (pahlı, renk çeşitli) MultiMesh |
+| 5 | GÖRSEL | 2 | Hipodrom, sphendone ucu | -569, -519 | kare/eser_hipodrom_guney_sphendone_5.jpg | Sphendone zemini aşırı parlak, bembeyaz dokusuz düz yüzey (ışık patlaması); ufuk çizgisi silik. | hipodrom.gd:_sphendone_floor (SAND levhası 10 dilim, 'dişli çokgen') | SAND levhaları daha koyu/dokulu; döşeme kaplaması |
+| 6 | GÖRSEL | 2 | Hipodrom, kuzey carceres cephesi | -343, -422 | kare/eser_hipodrom_orta_3.jpg | Tribün/carceres cephesindeki pencere ve kapılar düz siyah dikdörtgen (içi yok, derinliksiz boşluk). | hipodrom.gd:_carceres (K.ground_box koyu kapı kutuları) | Niş/içe çökük kemerli kapı, iç gölgeli geri çekilmiş yüzey |
+| 7 | GÖRSEL | 3 | Hipodrom, Kathisma | -343, -266 | kare/eser_hipodrom_orta_1.jpg | Kathisma çatısı 'ufo' gibi: krem düz tabla + pembe disk; çatı levhası gövdeden taşmış, kubbe okunmuyor. | hipodrom.gd:_kathisma | Eğimli kiremit/kurşun çatı + gerçek kubbe |
+| 8 | KUTU | 3 | Hipodrom, spina anıtları | -498, -492 | kare/eser_hipodrom_guney_sphendone_yakin.jpg | Spina'daki sarı obelisk beyaz-krem tek kutu kaideye oturmuş; kaide pahsız çıplak küp. | hipodrom.gd:_spina (K.ground_box kaide, satır 287-330) | Kaideye basamaklı profil, pah ve derz |
+| 9 | GÖRSEL | 1 | Büyük Saray harabesi | -45, -207 | kare/eser_buyuk_saray_7.jpg | Havada eğik duran büyük krem düz levhalar (yıkık tonoz yerine kağıt gibi tabaka); gölgesi yok, yüzeyi dokusuz. | scripts/world/ist/hipodrom_saray.gd:_hall / build_buyuk_saray (tonoz-çatı levhaları) | Levhaları kırık tonoz parçası (kalın, dokulu, yere oturmuş) yap |
+| 10 | GÖRSEL | 2 | Büyük Saray harabesi | 41, -293 | kare/eser_buyuk_saray_yakin.jpg | Kemer boşlukları düz mor-gri dolgu (niş içi dokusuz disk), pembe çerçeveli: harabe değil karton kesik. | hipodrom_saray.gd:_wall_with_door / build_buyuk_saray (kemer dolgusu) | Kemer içini gerçekten boş bırak ya da dokulu taş dolgu |
+| 11 | GÖRSEL | 2 | Büyük Saray harabesi | 41, -293 | kare/eser_buyuk_saray_yakin.jpg | Duvara yapıştırılmış dikdörtgen düz yeşil levha (sarmaşık olmalı); kenarları cetvelle kesik. | hipodrom_saray.gd:build_buyuk_saray (yeşil levha) | Sarmaşığı yaprak kümesi/alpha kartı yap |
+| 12 | ZEMİN | 2 | Khalke / Saray avlusu | 78, -112 | kare/eser_khalke_0.jpg | İki farklı döşeme yan yana: gri-nane (gölgede camgöbeği) ve turuncu balık sırtı; sınır cetvelle düz (kalite notu 28). | hipodrom_saray.gd:build_khalke + hipodrom_kit.gd zemin/döşeme (ZEMİN) | Tek sıcak gri-krem döşeme, düzensiz geçiş ve kırık derz |
+| 13 | GÖRSEL | 2 | Khalke | 100, -189 | kare/eser_khalke_yakin.jpg | Cephede dört düz siyah dikdörtgen pencere + beyaz çubuk şeritler; cephe tuğla ama pencere derinlik yok. | hipodrom_saray.gd:build_khalke | Pencerelere kemer ve geri çekme |
+| 14 | GÖRSEL | 2 | Nea Ekklesia | 160, -320 | kare/eser_nea_yakin.jpg | İç zemin nane-beyaz alaca mermer deseni, çok açık ve düz; duvarlar V biçimli çıplak tuğla, tavan düz koyu kırmızı levha. | hipodrom_saray.gd:build_nea | Zemin kireçtaşı/prokonnesos tonu, tavan tonoz |
+| 15 | GÖRSEL | 2 | Zeuksippos hamamı | -152, -268 | kare/eser_zeuksippos_4.jpg | Somon-pembe düz boyalı kaba tambur gövde, dokusuz, siyah dikdörtgen deliklerle; yanında açık mavi dikdörtgen levha (havuz) yerden fırlamış. | hipodrom_saray.gd:build_zeuksippos | Tambur tuğla/sıva dokulu; havuz suyu çukur içinde |
+| 16 | GÖRSEL | 3 | Zeuksippos hamamı | -104, -186 | kare/eser_zeuksippos_0.jpg | Gri-mor düz dolgulu kemer + parlak yeşil levha + somon duvar yan yana: üç düz renk karton. | hipodrom_saray.gd:build_zeuksippos | Dokulu taş/sıva, sarmaşık kartı |
+| 17 | GÖRSEL | 2 | Küçük Ayasofya (Sergios-Bakkhos) | -483, -632 | kare/eser_sergios_kucuk_aya_1.jpg | Çıplak tuğla kutu gövde, iki beyaz çıta bandı, siyah dikdörtgen pencere; üstünde düz somon tambur ve gümüş-mavi kubbe: 'kutu + kubbe'. | scripts/world/ist/hipodrom_aug.gd:build_sergios | Sekizgen gövde, kemerli pencereler, tuğla-taş şerit, kurşun gri kubbe |
+| 18 | GÖRSEL | 3 | Küçük Ayasofya iç | -509, -682 | kare/eser_sergios_kucuk_aya_yakin.jpg | İçeriden kubbe düz gri kapak; iç duvar çıplak tuğla, ışık/süsleme yok. | hipodrom_aug.gd:build_sergios | İç duvara sıva/mozaik tonu, kubbe pencereleri |
+| 19 | GÖRSEL | 3 | Küçük Ayasofya yakını | -579, -632 | kare/eser_sergios_kucuk_aya_5.jpg | Zemin nane-beyaz alaca mermer, açık ve düz (kalite notu 28). | hipodrom_aug.gd:build_sergios + zemin döşemesi | Sıcak gri-krem döşeme |
+| 20 | KUTU | 2 | Bukoleon yakını (ağaçlar) | -359, -706 | kare/eser_bukoleon_2.jpg | Mor ve açık yeşil faceted küre taçlı 'oyuncak' ağaçlar; taç doygun mor. | scripts/world/ist/bitki.gd:tree_mesh/_agac (erguvan, badem… taç ağı) | Düzensiz yaprak kütlesi, soluk doğal tonlar |
+| 21 | GÖRSEL | 1 | Bukoleon limanı (Sophia) | -371, -838 | kare/eser_sophia_liman_2.jpg | Su üstünde parlak camgöbeği düz dikdörtgen yamalar, açık yeşil küçük küpler ve ince yeşil çubuklar süzülüyor. | scripts/world/ist/marmara_liman.gd:build_sophia + marmara_kit.gd:WATER_PLANE/TUFTS | Su altı yamalarını kaldır; iskele kazığı ahşap dokulu |
+| 22 | KUTU | 2 | Bukoleon limanı kayaları | -392, -887 | kare/eser_sophia_liman_3.jpg | Taşlar 'tespih' gibi birbirine eklenmiş facetli yastıklar (kozalak/tırtıl); kaya değil oyuncak. | marmara_kit.gd:ROCKB (kaya blob) – marmara_liman.gd:build_sophia | Düzensiz kaya parçası ağı, pahlı blok |
+| 23 | GÖRSEL | 2 | Bukoleon limanı suru | -392, -887 | kare/eser_sophia_liman_3.jpg | Sur şeritleri parlak turuncu (doygun oyuncak), taş sırası renk çeşidi az; kule tepelerinde beyaz küp mazgal. | scripts/world/ist/marmara_sur.gd:_tower/_details (şerit rengi), _parapets (mazgal) | Tuğla bandı soluk kiremit; mazgal taş rengi |
+| 24 | MANTIK | 3 | Ahırkapı | -17, -535 | kare/eser_ahirkapi_3.jpg | Kapı önünde somon-pembe düz levha basamak (kutu); duvarla zemin arasında aralık. | scripts/world/ist/marmara_sur.gd:_gate / rampa (Ahırkapı) | Taş basamak kademeli, pahlı |
+| 25 | GÖRSEL | 3 | Kayıkhane | -749, -631 | kare/eser_kayikhane_0.jpg | Taş duvarlı kutu + düz kırmızı levha çatı; ince siyah yarık pencereler. | marmara.gd:build_kayikhane (KIY) | Kiremitli/eğimli çatı, kemerli kapı |
+| 26 | GÖRSEL | 1 | Hipodrom (tam tepe) | -250, -350 | kare/hava_tam_tepe_cekirdek.jpg | Tam tepeden Hipodrom pisti dokusuz bembeyaz uzun dikdörtgen (neon-krem), çevresindeki şehirden kopuk; yeşil alanla keskin kenarlı. | hipodrom.gd:build_hipodrom (pist), hipodrom_kit.gd | Pist zeminini arazi dokusuyla uyumlu toprak/çim yap |
+| 27 | KUTU | 2 | Büyük Saray harabeleri (bitki) | -300, -600 | kare/hava_60_01.jpg | Beyaz ve mor facetli 'bulut' ağaçlar harabe alanına serpiştirilmiş; toy gibi, taç düz renk. | bitki.gd:tree_mesh/_agac (taç ağı) | Daha az doygun, doku/gürültü eklenmiş taç; tür çeşidi |
+| 28 | GÖRSEL | 2 | Marmara deniz suru (Saray önü) | -60, -500 | kare/hava_60_02.jpg | Sur dilimleri komşu renkte değil: kahverengi ahşap kaplama gibi ve koyu lacivert-gri yan yana (kalite notu 27 devam). | marmara_sur.gd | Bütün Marmara suruna tek malzeme ve renk |
+| 29 | GÖRSEL | 2 | Marmara suru kule üstleri | -560, -700 | kare/hava_20_00.jpg | Sur kulelerinin yanında ve üstünde beyaz küp blok yığınları (mazgal/küp). | marmara_sur.gd:_parapets (BİLİNİYOR) | Mazgal taş dokulu, kule renginde |
+| 30 | GÖRSEL | 2 | Haliç suru kule tablası | -300, 780 | kare/hava_20_09.jpg | Kule üstü geniş gri-yeşil dama döşeme düz, siyah kazan tek parça; kenarlar cetvelle. | scripts/world/ist/halic_sur.gd:_tower (kule tablası) | Taş döşeme düzensiz, mazgal ve basamak |
+| 31 | MANTIK | 3 | Haliç suru kulesi | -300, 780 | kare/hava_20_09.jpg | Bayrak kuleye göre dev ölçekte (kırmızı-sarı levha, kuleden büyük görünüyor); rüzgârsız dümdüz. | halic_sur.gd:_banner | Bayrak boyu ≤ 2 m, dalgalanma |
+| 32 | PERF | 2 | Bölge geneli (yer) | 41, -293 | kare/eser_buyuk_saray_yakin.jpg | RINFO: 129 yer/uçuş karesinin 38'inde üçgen > 2,5 M (en kötü 3,29 M, çizim 1013); yer bütçesi 1 200/2,5 M aşıldı. | IstSehir/IstDunya (hipodrom + saray + mahalle MultiMesh) | LOD1 eşiği saray/hipodrom için yakınlaştır |
+
