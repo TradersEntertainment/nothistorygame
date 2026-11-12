@@ -1,4 +1,4 @@
-DURUM: DEVAM EDİYOR (bölüm 1–2 yazıldı; 3–7 sürüyor). Yedi bölüm de dolunca bu satır `DURUM: TAMAM` olacak.
+DURUM: DEVAM EDİYOR (bölüm 1–4 yazıldı; 5–7 sürüyor). Yedi bölüm de dolunca bu satır `DURUM: TAMAM` olacak.
 
 # Nisan–Mayıs 1453 Osmanlı ordugâhı ve kuşatma hatları: gerçekte nasıl görünüyordu?
 
@@ -209,3 +209,121 @@ Kural: **kırmızı çadır ordunun %2'sinden az**. Şu an koddaki `tent_mesh("y
 **Çeşitlilik kuralı (eş boy engeli):** çap dağılımı (kümeler için): küçük 3,0–3,6 m %35; orta 4,2–5,0 m %45; büyük 5,5–7,0 m %15; çok büyük (bey/komutan) 8–12 m %5.
 Yükseklikte aynı oran. Her çadıra rastgele yaw, ±%15 ölçek, ±%8 ton (K.ton) ve tek tek ip-kazık. [TAHMİN]
 
+---
+
+## 3. İNSANLAR ve HAYVANLAR ("askerler nerde?")
+
+### 3.1 Sorunun cevabı
+
+İlk karede asker yoktu çünkü sahne çadırlardan ibaretti. Gerçekte üç yerde yoğunlaşırlardı: **(a) ön hat** (hendek kenarı perdesi, siper, batarya: gündüz en kalabalık ve en tehlikeli yer),
+**(b) çadır alanı** (yemek, hayvan, nöbet değişimi, talim, ibadet), **(c) hizmet kuşağı** (kazan, demirci, saka, pazar, barut, ağıl). Barbaro'nun 1453'ten kendi sözü (Pears üzerinden): savaş günlerinde düşman
+"o kadar çoktu ki **yer ya da başka bir şey görülmüyordu; yalnız yeniçerilerin beyaz başlıkları ve diğer Türklerin kırmızı başlıkları**" [K: PEARS1903, Barbaro s. 27, ikinci el].
+Bu cümle ordugâhın görsel imzasıdır: **beyaz başlık (yeniçeri) + kırmızı başlık (diğerleri) noktaları**. Not: Pears'in "red fezes" çevirisi **modern fes (19. yy) değildir**; kırmızı keçe/kumaş başlık (üsküf/kalpak türü) olarak çizin [TAHMİN]. Oyunun Tolga fesi zaten bilinçli anakronizmdir.
+
+### 3.2 Gruplar (kıyafet, silah, renk)
+
+Sayısal oranlar [TAHMİN] (15. yy ordusu için kaynak yok; Ágoston'dan genel sonuç: yaygın yeniçeri tüfeği 16. yy ikinci yarısı).
+
+| Grup | Oran (görünen kişi) | Silah | Başlık/giysi | Kaynak |
+|---|---|---|---|---|
+| **Yeniçeri** | %12 | **Yay + ok (ana), kısa kılıç/pala, balta, kalkan (küçük ahşap), mızrak/zıpkın; az sayıda el tüfeği/arkebüz (%5–15)** | **Beyaz keçe başlık (börk): Barbaro'nun "beyaz başlık"ı**; dolama (uzun kaftan) lacivert-koyu/kırmızı-bordo, kuşak; boyu bilek altı | Silah: PEARS1903 (Tetaldi, La Brocquière, Barbaro "firelocks that threw leaden balls"); tüfek oranı **[TARTIŞMALI]**; börk detay (sarkık kol) **[SONRAKİ DÖNEM]** |
+| **Sipahi / Rumeli–Anadolu atlısı** | %10 | Ok-yay, pala, topuz, kalkan, mızrak; zırh zincir göğüslük/yastıklı "jacque" (kuşatmada çoğu atından inip piyade gibi savaşır) | Beyaz/renkli sarık, boyalı eyer örtüsü; çok çeşitli | PEARS1903 (Philelphus; Leonardo: "kuşatmada atlılar piyade gibi savaştı") |
+| **Azap, eyalet piyadesi** | %30 | Yay, mızrak, kılıç, tahta kalkan; çoğu zırhsız | Keçe/yün başlık, sarık, yün dolama, bez kuşak | Tetaldi: yarısı ¼'ten azı zırhlı; geri kalan yastıklı kumaş |
+| **Başıbozuk / gönüllü / yağmacı** | %20 | Sopa, bıçak, sapan, ok, kalkan; bir kısmı Hristiyan yağmacı | Paçavra, kürk parçası, hasır başlık | PEARS1903 (poorest Turks + Christians for plunder) |
+| **Topçu ve top arabacıları** | %5 | Kürek, kama, zincir, kürek, sepet, ateş mızrağı; barutçular | Önlük/yağlı kumaş, is lekeli; başları bez örtülü | WP-Fall; Kritovulos (top yatağı, barut) |
+| **Lağımcı (Sırp madenci), marangoz, demirci** | %4 | Kazma, kürek, tahta destek, el arabası | Gri/kahverengi yün, koyu başlık, kil rengi giysi | PEARS1903 (Novo Brdo madencileri Zağanos'un emrinde; Saksonlar olabilir) |
+| **Hristiyan vasal birlikleri** | %2–3 | Sırp süvarisi (Branković, 1500 atlı), diğer vasaller | Kendi giysileri, Balkan mızraklı süvari | WP-Fall (Buc 2020; Ivanović 2019) |
+| **Ulema, dervişler, imamlar** | %2 | Silahsız, tespih, bazıları kılıç | Beyaz sarık, yeşil/kahve cübbe; derviş keçe külah | Dervişler: Murad II 1422 kuşatması anlatısı PEARS1903; 1453'te Akşemseddin geleneksel olarak anılır **[TARTIŞMALI, kaynak okunamadı]** |
+| **Saka, aşçı, seyis, bakıcı, çadır kurucu** | %8 | Deri tulum, kazan kepçesi, kalem; kırbaç | Önlük, rengârenk karışık | [TAHMİN; WP-Tents: çadır bakım birliği — çadırcılar] |
+| **Tüccar, esnaf, çerçi** | %2 | Terazi, çuval | Renkli sarık, tezgâh | Tetaldi (Pears): "hawkers, thieves, plunderers" |
+| **Yaralı/ölü taşıyıcılar, cerrah** | %1 | Sedye, battaniye | Kan lekeli beyaz/bej | **[TAHMİN]**; "hastane çadırı" sonraki dönem **[SONRAKİ DÖNEM]** |
+| **Bayraktar, tellal, mehter** | %1 | Sancak, davul, zurna, nefir | Renkli sancak şeridi, kırmızı | Davul/zurna: PEARS1903 (gemi yolunda "fifes and drums"); tellal/boru: WP-Fall |
+
+**Giysi rengi:** Çoğu yıkanmamış yün/keten tonları (krem, bej, gri, kahve). Boyalı kumaş (çivit mavisi, kök boya kırmızısı, sarı) azınlıkta ve **statü işareti**. Kıyafet rengi `#CDBF9A`, `#8F8064`, `#6A563C`, `#3A4F78` (çivit), `#8C3A2E` (kök boya kırmızısı), `#E8E0C8` (beyaz sarık/başlık) arasında dağıtılsın [TAHMİN]. **En yakın görsel kaynak** 1479–81 Gentile Bellini'nin İstanbul çizimleri (27 yıl sonra, saray çevresi, ordugâh değil) **[SONRAKİ DÖNEM]**; 16. yy minyatürleri (Süleymanname, Şehname-i Selim Han) daha geç.
+
+### 3.3 Gündüz ve gece (ne yapıyorlar?)
+
+| Saat | Etkinlik | Yer |
+|---|---|---|
+| Sabah ezan öncesi (~04:30) | Kalkış, abdest, saka kuyruğu, ocak yakma; ilk top atışı gün doğumunda | çadır alanı, dere |
+| Sabah | Sabah namazı kümeleri (saf), kazan kaynatma, hayvan yemleme, talim/hücum provası | mescit çadırları |
+| Gündüz | Top ateşi (büyük topun günde ≈ 7 atışı + 1 gece [K: Chalkokondyles, PEARS1903]); siper/hendek doldurma, gülle taşıma, top tamiri, ok atışları, nöbet değişimi | ön hat |
+| Öğle/ikindi | Namaz, dinlenme, yemek (yeniçeri kazan başına toplanır), pazar yoğun | otağ çevresi, pazar |
+| Akşam | Akşam namazı, ateşler, hayvan sulama, çadırlar önünde sohbet; **26 Mayıs: büyük ışıklandırma** | hepsi |
+| Gece | Nöbet; devriye; **gece işçiliği**: kule inşası (17–18 Mayıs gecesi tamamlanıp sabah görüldü [K: PEARS1903, Barbaro]), hendek doldurma, lağım kazma; gemi yolu hazırlığı; top ateşi azalır | ön hat |
+
+- **26 Mayıs akşamı** (güneş batışından bir saat sonra): ordugâh boyunca büyük bir aydınlatma, "her çadır görülebiliyordu", gece yarısına kadar süren çığlıklar; ferman: üç gün şükür, bir gün oruç [K: PEARS1903 (Leonardo); Barbaro'nun "her çadırda iki büyük ateş" ifadesi ikinci el özet].
+- **24 Mayıs:** Barbaro: Türkler arasında müzik ve ziyafet; genel saldırı haberi [K: PEARS1903].
+- **Saldırı öncesi:** gece 28–29 Mayıs hareketlenme, ateşler ve sessizlik [K: ISTANBUL_1453.md; WP-Fall].
+- **Kuşatma ortası ağır işler:** gemilerin karadan çekilmesi (21–22 Nisan): ~70–80 gemi, **yağlı tomruk/kızak, 3 mil**, "bir kısmı insan gücüyle, bir kısmı makara, **bir kısmı manda** ile"; gemilerde yelkenler açık, kürekçiler yerinde, **zurna ve davul** çalıyor; ordu şenlikli [K: PEARS1903].
+
+### 3.4 Hayvanlar (kaynaklı)
+
+- **Öküz/manda:** Urban topunu 60 öküz çekti [K: WP-Fall (Norwich 1997); tutarlı]; yanında **400 adam** (Norwich) veya 200 adam [TARTIŞMALI: 200/400/1000]. 120 mil, 42 gün anlatısı tek ikincil kaynak [TARTIŞMALI].
+- **Manda:** gemi yolunda [K: PEARS1903].
+- **Deve:** yük taşıma; savaş düzeninde deve çevresi (Varna 1444 örneği: "yeniçeri merkezinde çevresinde hendek, onun arkasında develer, onun arkasında kalkan perdesi") [K: PEARS1903; 1444'te; 1453'te ordugâh çevre sırası olarak aynı yöntem **[TAHMİN]**]. Kule derileri: deve veya öküz derisi [K: PEARS1903].
+- **At/katır:** süvari, top arabası çekimi, ikmal; atlar çadır gerisinde sıra sıra kazıkta [TAHMİN].
+- **Koyun/keçi sürüleri:** et ihtiyacı; ağıllar çevre uçlarında [TAHMİN]; ISTANBUL_1453.md madde 162.
+- **Köpek, tavuk, kuş:** ordugâh köpekleri; leş kuşları sur önünde (ölü çoğaldıkça) [TAHMİN].
+- **Ses:** **ezan ordugâhta okunur, şehirde okunmaz** [K: ISTANBUL_1453.md 159]; davul-zurna-nefir (mehter) [**TARTIŞMALI**: "mehterhane" kurumunun 1453'teki biçimi bilinmiyor; davul/zurna/boru kesin]; tellal ve boru; hayvan bağırtısı; top gümbürtüsü; nal ve araba tekerleği; demirci çekici; dua ve hep bir ağızdan "Allah Allah" seslenişi.
+
+### 3.5 Sayısal öneri: 70 m'den ve 30 m'den görünen insan sayıları
+
+- **70 m uçuşunda:** her 40×40 m'lik karede **12–25 nokta insan** (çadır alanı); ön hatta **40–80**; otağ çevresinde **30–60**; pazar karesinde 60+; ağıl karesinde 15–30 hayvan. Kaynak yok, [TAHMİN]; sahibin "boş alan istemiyorum" ölçütüne uyumlu.
+- **30 m yürürken görüş yarıçapı içinde:** en az **15–25 kişi** (ön hatta 40+), 4–10 hayvan, 3–5 ocak, 2–3 kazan.
+
+---
+
+## 4. TOPLAR ve KUŞATMA ARAÇLARI
+
+### 4.1 Batarya sayısı ve yerleri (kaynaklara göre)
+
+Bkz. §1.4. Özet: **üç ana top istasyonu** (Tekfur Sarayı–Edirnekapı; Pempton/Lykos vadisi; Üçüncü Askerî Kapı) + Silivrikapı çevresi bataryası + Galata'da St. Theodore tepesi bataryası. Phrantzes 14×4; Barbaro 9; modern ~70 top. Kod 14 batarya + Şahi: **makul**; ama Mesoteikhion'daki yoğunluğu Edirnekapı ve Silivrikapı'dan **2–3 kat** artırın: ana saldırı bölgesinde `u ≈ 1000–1700` aralığında toplam top sayısının ≥ %45'i [TAHMİN, Pears'ın "üç yarık" analizi].
+
+### 4.2 Şahi / "Basilica" (Urban topu)
+
+| Özellik | Değer | Kaynak |
+|---|---|---|
+| Boy | ≈ 27 ft ≈ **8,2 m** (Edirne'de dökülmüş, ~3 ay) | [K: WP-Fall (Runciman 1965)] |
+| Gülle | Taş; **600 libre (≈ 270 kg)** (WP-Fall) / **1200 libre** (Leonardo, Pears) | [TARTIŞMALI] |
+| Gülle çevresi | **88 inç ≈ 2,24 m çevre → çap ≈ 70 cm** (Leonardo ölçtü; Pears iki hayatta kalan güllede doğruladı) | [K: PEARS1903] |
+| Gülle kaynağı | Karadeniz kıyısından taşınmış taş | [K: PEARS1903] |
+| Menzil | > 1 mil (1,6 km) | [K: WP-Fall] |
+| Ateş sıklığı | **Günde ≈ 7 atış + 1 gece** (Chalkokondyles); alt: 1 atış/3 saat yükleme ⇒ günde ≤ 7; "günde 3 atış" tek kaynak | [K: PEARS1903; WP-Fall] [TARTIŞMALI] |
+| Çekim | **60 öküz + 200–400 adam** (+ ~50 marangoz ve 200 usta yol için, Karaca Paşa) | [K: WP-Fall] [TARTIŞMALI] |
+| Yatak | **Tekerlek yok**; hedefe yöneltilip **ahşap bloklarla (yatak) gömülür**; atış sonrası geri kayar, yeniden yöneltilir | [K: Kritovulos aktarımı, PEARS1903] |
+| Yeri | İlk Kaligaria (Blakhernai tarafı) civarı; sonra Lykos vadisi; "en büyük top Mesoteikhion'da, otağ önünde" | [K: PEARS1903 (Leonardo, Chalkokondyles)] [TARTIŞMALI] |
+| Çatlama | "6 hafta sonra çatladı/patladı" yalnız Leonardo ve Nestor İskender'de | [K: WP-Fall] [TARTIŞMALI] |
+
+**Uygulama (Şahi):** namlu 8 m, ağız çapı ≈ 75 cm [TAHMİN, gülle çapından]; kalın tomruk yatak; arkada **ağır çıkrık (vinç)** ve **sürükleme kızağı**; çevrede 2,5–3 m yükseklikte tomruk+toprak siper; namlu için kapaklı delik; **öküz sırası** (kod 6 öküz çiziyor: gerçekte 60; en az 12–20 göster, gerisi yolda/ağılda). Gülle piramidi çapı 70 cm taş küreler, yığın 3–4 katman.
+
+### 4.3 Orta ve küçük toplar, havan
+
+- **Orta ve küçük toplar:** çok sayıda; "bombard, kolonborna, çok sayıda küçük top" [K: PEARS1903; Tetaldi 10.000 abartılı]. Kısa namlu, ahşap yatak; **tekerleksiz** (Pears: "none were mounted on wheels") [K: PEARS1903] — sahra topu arabası değil, batarya yataklarında.
+- **Havan (yüksek açılı):** 21 Nisan'da Galata'nın St. Theodore tepesinden **Haliç ağzındaki zincir gemilerine ~100 atış**, bir gemi battı [K: PEARS1903]. Bunu "havan" diye adlandıran kaynak okumadım; **yüksek tepeden alçak açıyla top** olabilir. Oyunda "tepe bataryası" olarak çizin; "havan" adı [TARTIŞMALI]. Havan benzeri kısa kalın namlu gösterecekseniz küçük sayıda (2–3) yapın [TAHMİN].
+- **El silahı:** "ateşli kilitli silah (firelock/fusil)" Barbaro 18 Mayıs'taki çatışmada kurşun atar [K: PEARS1903, dn. 306 "zarabotane"]. Küçük sayıda.
+
+### 4.4 Top siperleri ve ateş hattı
+
+- Ön perde: **ahşap perde (palisade), üstüne toprak yığılı, ateş delikleri aralıklı**, hendek kenarına çok yakın [K: PEARS1903 (Chalkokondyles s. 159)].
+- Batarya gövdesi (mevcut kod): toprak teras 1 m, ön sedde 1,5–2,6 m, boşluk 2,6 m. Gerçek ölçü kaynaksız; mantıklı [TAHMİN]. **Gabion** (toprak dolu sepet) ve **fıçı/çuval siper** 15. yy'da kullanılıyordu, ama 1453 Osmanlı özelinde kaynak yok [TAHMİN].
+- **Barut ve gülle yığınları:** barut fıçıları batarya gerisinde kapaklı çukur; taş gülle piramitleri; kurşun gülle (küçük toplar için). **Çadırdan ≥ 50 m** [TAHMİN].
+- **Hendek doldurma:** top ateşiyle yıkılan duvar parçaları, tahta, çalı, fıçı; Kritovulos §142 "hendeği toplar önünde doldurdular" [K: KRIT-DRM]; 18 Mayıs'taki kule bu amaçla da hendeğe sürülüyor; savunmacı barut fıçısı + çalı çırpı yakarak yok etti [K: PEARS1903]. Sonuç: Lykos vadisinde hendek ve dış sur tamamen doldu (yıkıntıyla) [K: PEARS1903, Tetaldi: ~1200 ft'lik yarık].
+
+### 4.5 Kuşatma kulesi (18 Mayıs)
+
+- Gece boyunca inşa edilmiş; sabah görüldü; "bütün Hristiyanlar bir ayda yapamazdı" [K: PEARS1903, Barbaro].
+- Yeri: **Romanos (Pempton) kapısı yakınında**; ölçü: dış surun üstünü aşacak yükseklikte (dış sur ~8,5 m + kule) [K: PEARS1903]. **Tekerlek/tomruk üzerinde**, kalın kiriş iskelet, içi kısmen toprakla dolu (!), dışı **üç kat deve veya sığır derisi** kaplı; basamaklı üst platform; **ordugâha giden yol da kaplanmış (örtülü yol)**; tepeden **merdivenler** atılabiliyor [K: PEARS1903]. Barbaro: duvara 10 adım kala (hendeğin içinde) [TARTIŞMALI]. Hendeğe malzeme **üç açıklıktan** atılıyor, lağım kazımı için de [K: PEARS1903].
+- Sonuç: gece Hristiyanlar kuleyi barut fıçıları ve yanan çalı ile yakıp yıktı; ikinci kule Pege/Üçüncü Askerî Kapı karşısı; başka kuleler olası [K: PEARS1903] [TARTIŞMALI].
+- Kod: `ordugah_yapi.gd:build_kule` 4,6×4,6 m gövde, 13 m, üç kat deri, merdiven, bayrak: **iyi, makul**. Ölçü [TAHMİN] ama kaynakla uyumlu.
+
+### 4.6 Merdiven, manto/tosbağa, lağım
+
+- **Merdiven:** hücum merdivenleri çok sayıda; kuşatma kulesi merdiveni; hendeğe iniş merdivenleri [K: PEARS1903 + TAHMİN].
+- **Manto (taşınır kalkan perde)/tosbağa (kalkanlı koruma):** 15. yy'da yaygın; 1453 Osmanlı özelinde **kaynak okumadım** [TAHMİN]. Ahşap, deri kaplı, sekiz tekerlekli kulübe şeklinde.
+- **Lağım ağzı:** Sırp madenciler, Zağanos emrinde. **16 Mayıs'ta ilk lağım bulundu**; sonra 21, 23, 24, 25 Mayıs; Edirnekapı–Tekfur Sarayı arası; hendek ve dış sur altına; **tomruk destekli** galeri; savunmacı karşı-lağım (Johannes Grant), Yunan ateşi, **23 Mayıs'ta iki esir söz verdi, tüm lağımlar bulundu** [K: PEARS1903; WP-Fall]. Oyun: lağım ağzı = küçük toprak yığın + tomruk destekli giriş, çıkarılan toprak dumanı, kazı toprağı yığını, çevrede 6–10 işçi.
+
+### 4.7 Kızak yolu ve fıçı köprüsü
+
+- **Kızak yolu (21–22 Nisan):** **Tophane civarından Kasımpaşa vadisine** düzeltilmiş yol; kalas ve tomruk döşeli; **6 mızrak ≈ 13–14 ft (≈ 4 m)** uzunlukta yağlı silindirler (kütükler); gemi beşikleri (iskele kenarlarına direk takılı); ilk deneme küçük fusta; 70–80 gemi; yağlar; manda, makara, insan [K: PEARS1903]. Rota: Boğaz kıyısı → tepe geçişi (Taksim yönü) → Kasımpaşa; **~3 mil**; iniş noktası tartışmalı [K: ISTANBUL_1453.md; WP-Fall] [TARTIŞMALI]. Kod kızak yolu Beşiktaş–Kasımpaşa çizgisi ile uyumlu.
+- **Fıçı köprüsü:** **Cynegion (Ayvansaray) civarı, Haliç'in üst ucu, kara surlarının Haliç surlarına bağlandığı yer**; **1000'den fazla şarap fıçısı**, halatlarla bağlı; genişlik **iki fıçı boyuna**; üstüne kirişler, kalas; **yan yana beş asker yürüyebilir**; amaç haberleşme ve **fıçı sallar (pontoons) üzerine top koymak** [K: PEARS1903]. Kritovulos §117: **Keramika'dan** (Ceramica) bir köprü [K: KRIT-DRM]. WP-Fall: yeri belirsiz. Oyun `fici_kopru` Kasımpaşa (kuzey) – Cibali (güney) arası yerleştiriyor → **Pears ve Kritovulos'la uyumsuz**: üst Haliç, Ayvansaray/Eyüp tarafı olmalı [bkz. §7d].
