@@ -110,10 +110,10 @@ func _kur() -> void:
 
 func _bakan() -> Vector3:
 	if izle != null and is_instance_valid(izle) and izle.is_inside_tree():
-		return izle.global_position
+		return to_local(izle.global_position)
 	var c := get_viewport().get_camera_3d() if is_inside_tree() else null
 	if c != null:
-		return c.global_position
+		return to_local(c.global_position)
 	return Vector3.ZERO
 
 

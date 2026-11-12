@@ -120,11 +120,12 @@ func _kur() -> void:
 # ------------------------------------------------------------------ izleme
 
 func _bakan() -> Vector3:
+	# Dönüşümlü bağlama (IstBaglama: v2 kökü bölümün çerçevesinde döner/iner): izleyici v2 çerçevesinde okunur
 	if izle != null and is_instance_valid(izle) and izle.is_inside_tree():
-		return izle.global_position
+		return to_local(izle.global_position)
 	var c := get_viewport().get_camera_3d() if is_inside_tree() else null
 	if c != null:
-		return c.global_position
+		return to_local(c.global_position)
 	return merkez
 
 
@@ -1032,7 +1033,7 @@ func _yakalayici(p: Vector3) -> void:
 		return
 	_yakala_son = now
 	var k := kiyi_bul(p)
-	izle.global_position = k + Vector3(0, 1.0, 0)
+	izle.global_position = to_global(k + Vector3(0, 1.0, 0))
 	(izle as CharacterBody3D).velocity = Vector3.ZERO
 	carpisma_yenile(k)
 	print("ISTDUNYA su_yakalayici %s -> %s" % [p, k])

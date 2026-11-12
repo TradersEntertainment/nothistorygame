@@ -147,7 +147,7 @@ func _check_v2(hub: String, h: Node3D) -> void:
 			_fail("%s: %s uçuş sınırının dışında" % [tag, sp[0]])
 		cam.global_position = p + Vector3(0, 12, 8)
 		cam.look_at(p)
-		IstBaglama.dunya.carpisma_yenile(p)
+		IstBaglama.dunya.carpisma_yenile(IstBaglama.kok.to_local(p))     # v2 çerçevesi (dönüşümlü bağlama)
 		var t := 0.0
 		while t < 8.0:
 			await get_tree().process_frame
