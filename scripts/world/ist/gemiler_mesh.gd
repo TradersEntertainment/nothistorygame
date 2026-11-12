@@ -244,17 +244,22 @@ static func _yuk_kutular(tip: String) -> Array:
 	var L: float = d["L"]
 	var B: float = d["B"]
 	var kx := B * 0.5 * 0.55
+	var bas: Array = []
+	if tip in ["kadirga", "kalyata", "fusta", "parandarya"]:
+		bas = [{"c": Vector3(0, yd + 0.55, L * 0.5 - 2.0), "s": Vector3(2.8, 1.1, 3.2)}]
+	if tip == "kog":
+		bas = [{"c": Vector3(0.3, yd + 0.5, -1.0), "s": Vector3(2.0, 1.0, 1.1)}]
 	if tip == "karaka" or tip == "kog":
-		return [{"c": Vector3(0, yd + 0.55, L * 0.18), "s": Vector3(0.7, 1.1, 0.7)},
+		return bas + [{"c": Vector3(0, yd + 0.55, L * 0.18), "s": Vector3(0.7, 1.1, 0.7)},
 			{"c": Vector3(-kx, yd + 0.4, -0.2), "s": Vector3(0.7, 0.8, 2.5)},
 			{"c": Vector3(kx, yd + 0.35, 1.0), "s": Vector3(0.9, 0.7, 0.8)},
 			{"c": Vector3(kx, yd + 0.35, 2.0), "s": Vector3(0.8, 0.7, 0.7)},
 			{"c": Vector3(kx + 0.05, yd + 1.0, 1.4), "s": Vector3(0.7, 0.6, 0.6)}]
 	if tip in ["kadirga", "kalyata", "fusta"]:
-		return [{"c": Vector3(0, yd + 0.35, L * 0.28 - 1.0), "s": Vector3(0.6, 0.7, 2.6)},
+		return bas + [{"c": Vector3(0, yd + 0.35, L * 0.28 - 1.0), "s": Vector3(0.6, 0.7, 2.6)},
 			{"c": Vector3(0, yd + 0.3, L * 0.1), "s": Vector3(0.9, 0.6, 0.7)}]
 	if tip == "parandarya":
-		return [{"c": Vector3(0, yd + 0.4, 5.6), "s": Vector3(3.8, 0.8, 1.0)}]
+		return bas + [{"c": Vector3(0, yd + 0.4, 5.6), "s": Vector3(3.8, 0.8, 1.0)}]
 	return []
 
 # ------------------------------------------------------------------ bayraklar
