@@ -365,12 +365,138 @@ D30O_N_END,SPK_NIHAT,telsiz,,"chapter30o.gd:177/810/1540 Nihat satırı; Blakher
 D30O_G_CAPTIVE,SPK_GRANT,yakin,2,"chapter30o.gd:1535-1539 esir sahnesi, Grant Tolga'nın karşısında (player.face(grant), _captors yakında)",
 D30O_T_CAPTIVE,SPK_TOLGA,yakin,2,"chapter30o.gd:1535-1539 esir sahnesi, Grant Tolga'nın karşısında (player.face(grant), _captors yakında)",
 D30O_N_CAPTIVE,SPK_NIHAT,telsiz,,"chapter30o.gd:177/810/1540 Nihat satırı; Blakherna surları önünde Nihat nesnesi yok, tutanak sesi (N_CAPTIVE: ""sinyaliniz surun içinden geliyor"")",
+D32O_N_01,SPK_NIHAT,telsiz,,"chapter32o.gd:347/459/1155/1221/1261/1315 Nihat satırı; ordugâhta/hendekte Nihat nesnesi yok, tutanak sesi",
+D32O_K_01,SPK_KADRI,yakin,2.1,"chapter32o.gd:337-349 Tolga (-14,72), Kadri (-12.6,70.4) ≈2.1 m, sabah brifingi",
+D32O_T_01,SPK_TOLGA,yakin,2.1,"chapter32o.gd:337-349 Tolga (-14,72), Kadri (-12.6,70.4) ≈2.1 m, sabah brifingi",
+D32O_TL_01,SPK_HERALD,uzak,13,"chapter32o.gd:401-403 bark 4.2 sn; tellal x -22→22, z=60 boyunca yürür, Tolga (-14,72): 12-14 m; kalabalığa ferman",
+D32O_TL_02,SPK_HERALD,uzak,13,"chapter32o.gd:401-403 bark 4.2 sn; tellal x -22→22, z=60 boyunca yürür, Tolga (-14,72): 12-14 m; kalabalığa ferman",
+D32O_TL_03,SPK_HERALD,uzak,13,"chapter32o.gd:401-403 bark 4.2 sn; tellal x -22→22, z=60 boyunca yürür, Tolga (-14,72): 12-14 m; kalabalığa ferman",
+D32O_T_02,SPK_TOLGA,ic_ses,,chapter32o.gd:410/456/1055/703-711/761/1225/1310/1313/912 Tolga kendi kendine yorum (T_HIT/T_FIRE bark: ünlemli ama kimseye seslenmiyor; T_MANTLET Usta'ya kısa yorum),T_MANTLET ustaya yakın cevap sayılabilir (yakin)
+D32O_AZ_01,SPK_AZAP,yakin,2.4,"chapter32o.gd:406-420 player.global_position = azap + (0,0.05,2.4) ≈2.4 m, hendek brifingi",
+D32O_AZ_01_LOST,SPK_AZAP,yakin,2.4,"chapter32o.gd:406-420 player.global_position = azap + (0,0.05,2.4) ≈2.4 m, hendek brifingi",
+D32O_AZ_01_NEW,SPK_AZAP,yakin,2.4,"chapter32o.gd:406-420 player.global_position = azap + (0,0.05,2.4) ≈2.4 m, hendek brifingi",
+D32O_AZ_02,SPK_AZAP,yakin,2.4,"chapter32o.gd:406-420 player.global_position = azap + (0,0.05,2.4) ≈2.4 m, hendek brifingi",
+D32O_T_03,SPK_TOLGA,yakin,2.4,"chapter32o.gd:406-420 player.global_position = azap + (0,0.05,2.4) ≈2.4 m, hendek brifingi",
+D32O_AZ_B1,SPK_AZAP,yakin_yuksek,6,"chapter32o.gd:647-667 bark 3.5 sn; azap hendek kenarında (2,46) sayar/uyarır, Tolga PILE/EARTH (±9,54) ile hendek arasında 6-12 m gidip gelir, açık arazi, ovada bölükler",
+D32O_AZ_B3,SPK_AZAP,yakin_yuksek,6,"chapter32o.gd:647-667 bark 3.5 sn; azap hendek kenarında (2,46) sayar/uyarır, Tolga PILE/EARTH (±9,54) ile hendek arasında 6-12 m gidip gelir, açık arazi, ovada bölükler",
+D32O_AZ_EARTH,SPK_AZAP,yakin_yuksek,6,"chapter32o.gd:647-667 bark 3.5 sn; azap hendek kenarında (2,46) sayar/uyarır, Tolga PILE/EARTH (±9,54) ile hendek arasında 6-12 m gidip gelir, açık arazi, ovada bölükler",
+D32O_AZ_B6,SPK_AZAP,yakin_yuksek,6,"chapter32o.gd:647-667 bark 3.5 sn; azap hendek kenarında (2,46) sayar/uyarır, Tolga PILE/EARTH (±9,54) ile hendek arasında 6-12 m gidip gelir, açık arazi, ovada bölükler",
+D32O_AZ_VOLLEY,SPK_AZAP,uzak,12,"chapter32o.gd:774 bark ok yağmuru uyarısı; oyuncu COVERS (±5,43)(0,49) ve PILE/EARTH arası 10+ m dağınık",
+D32O_AZ_SAFE,SPK_AZAP,uzak,10,"chapter32o.gd:768 bark 2.5 sn ""Geçti"" siperdeki oyuncuya; azap hendekte (2,46), oyuncu siperde/yığında",
+D32O_T_HIT_1,SPK_TOLGA,ic_ses,,chapter32o.gd:410/456/1055/703-711/761/1225/1310/1313/912 Tolga kendi kendine yorum (T_HIT/T_FIRE bark: ünlemli ama kimseye seslenmiyor; T_MANTLET Usta'ya kısa yorum),T_MANTLET ustaya yakın cevap sayılabilir (yakin)
+D32O_T_HIT_2,SPK_TOLGA,ic_ses,,chapter32o.gd:410/456/1055/703-711/761/1225/1310/1313/912 Tolga kendi kendine yorum (T_HIT/T_FIRE bark: ünlemli ama kimseye seslenmiyor; T_MANTLET Usta'ya kısa yorum),T_MANTLET ustaya yakın cevap sayılabilir (yakin)
+D32O_AZ_DOWN,SPK_AZAP,yakin_yuksek,4,"chapter32o.gd:765 bark 3 sn; Tolga vurulup düştü, azap koşup gelir ""Kalk!""",
+D32O_AZ_DOWN_NEW,SPK_AZAP,yakin_yuksek,4,"chapter32o.gd:765 bark 3 sn; Tolga vurulup düştü, azap koşup gelir ""Kalk!""",
+D32O_T_DITCH,SPK_TOLGA,ic_ses,,chapter32o.gd:410/456/1055/703-711/761/1225/1310/1313/912 Tolga kendi kendine yorum (T_HIT/T_FIRE bark: ünlemli ama kimseye seslenmiyor; T_MANTLET Usta'ya kısa yorum),T_MANTLET ustaya yakın cevap sayılabilir (yakin)
+D32O_AZ_HALF,SPK_AZAP,yakin,3,"chapter32o.gd:458 hendek sonu sahnesi, azap Tolga'nın yanında (T_DITCH sonrası)",konum tahmini
+D32O_N_DITCH,SPK_NIHAT,telsiz,,"chapter32o.gd:347/459/1155/1221/1261/1315 Nihat satırı; ordugâhta/hendekte Nihat nesnesi yok, tutanak sesi",
+D32O_U_01,SPK_USTA,yakin,2.4,"chapter32o.gd:860-940 Tolga BENCH+(0.4,0.05,4.0), usta BENCH+(0,0,1.6) ≈2.4 m, tezgâh başı",
+D32O_T_U1,SPK_TOLGA,yakin,2.4,"chapter32o.gd:860-940 Tolga BENCH+(0.4,0.05,4.0), usta BENCH+(0,0,1.6) ≈2.4 m, tezgâh başı",
+D32O_U_02,SPK_USTA,yakin,2.4,"chapter32o.gd:860-940 Tolga BENCH+(0.4,0.05,4.0), usta BENCH+(0,0,1.6) ≈2.4 m, tezgâh başı",
+D32O_U_RUNG_OK,SPK_USTA,yakin,2.4,"chapter32o.gd:897/901 bark 3 sn çekiç sesi içinde ustanın değerlendirmesi, tezgâh başı 2.4 m",çekiç gürültüsü var; gerekirse yakin_yuksek
+D32O_U_RUNG_BAD,SPK_USTA,yakin,2.4,"chapter32o.gd:897/901 bark 3 sn çekiç sesi içinde ustanın değerlendirmesi, tezgâh başı 2.4 m",çekiç gürültüsü var; gerekirse yakin_yuksek
+D32O_S_CARP,SPK_SOLDIER,yakin,3,"chapter32o.gd:868 bark 4 sn; asker tezgâhta (BENCH+(-1.4+i*1.4,0,-1.4)), Tolga BENCH+(0.4,4) ≈3-4 m",
+D32O_S_CARP_LIMP,SPK_SOLDIER,yakin,3,"chapter32o.gd:868 bark 4 sn; asker tezgâhta (BENCH+(-1.4+i*1.4,0,-1.4)), Tolga BENCH+(0.4,4) ≈3-4 m",
+D32O_U_CARRY,SPK_USTA,yakin,2.4,"chapter32o.gd:860-940 Tolga BENCH+(0.4,0.05,4.0), usta BENCH+(0,0,1.6) ≈2.4 m, tezgâh başı",
+D32O_U_MANTLET,SPK_USTA,yakin,2.4,"chapter32o.gd:860-940 Tolga BENCH+(0.4,0.05,4.0), usta BENCH+(0,0,1.6) ≈2.4 m, tezgâh başı",
+D32O_T_MANTLET,SPK_TOLGA,ic_ses,,chapter32o.gd:410/456/1055/703-711/761/1225/1310/1313/912 Tolga kendi kendine yorum (T_HIT/T_FIRE bark: ünlemli ama kimseye seslenmiyor; T_MANTLET Usta'ya kısa yorum),T_MANTLET ustaya yakın cevap sayılabilir (yakin)
+D32O_U_END,SPK_USTA,yakin,2.4,"chapter32o.gd:860-940 Tolga BENCH+(0.4,0.05,4.0), usta BENCH+(0,0,1.6) ≈2.4 m, tezgâh başı",
+D32O_TP_01,SPK_TOPCU,yakin,2.2,"chapter32o.gd:1015-1053 Tolga gun+(3.2,7.4), topçu gun+(4.8,4.4); Stage.approach(topcu, player, 2.2) yanında konuşur, atış arası",
+D32O_T_TP1,SPK_TOLGA,yakin,2.2,"chapter32o.gd:1015-1053 Tolga gun+(3.2,7.4), topçu gun+(4.8,4.4); Stage.approach(topcu, player, 2.2) yanında konuşur, atış arası",
+D32O_TP_02,SPK_TOPCU,yakin,2.2,"chapter32o.gd:1015-1053 Tolga gun+(3.2,7.4), topçu gun+(4.8,4.4); Stage.approach(topcu, player, 2.2) yanında konuşur, atış arası",
+D32O_TP_URBAN,SPK_TOPCU,yakin,2.2,"chapter32o.gd:1015-1053 Tolga gun+(3.2,7.4), topçu gun+(4.8,4.4); Stage.approach(topcu, player, 2.2) yanında konuşur, atış arası",
+D32O_TP_HIT_1,SPK_TOPCU,yakin_yuksek,2.2,"chapter32o.gd:1074-1085 top atışı sonrası/atış arası (explosion_big), topçu approach 2.2 m (""6.5 m öteden"" yorumu düzeltilmiş)",TP_GUNNER dinamik anahtar (literal yok)
+D32O_TP_HIT_2,SPK_TOPCU,yakin_yuksek,2.2,"chapter32o.gd:1074-1085 top atışı sonrası/atış arası (explosion_big), topçu approach 2.2 m (""6.5 m öteden"" yorumu düzeltilmiş)",TP_GUNNER dinamik anahtar (literal yok)
+D32O_TP_MISS,SPK_TOPCU,yakin_yuksek,2.2,"chapter32o.gd:1074-1085 top atışı sonrası/atış arası (explosion_big), topçu approach 2.2 m (""6.5 m öteden"" yorumu düzeltilmiş)",TP_GUNNER dinamik anahtar (literal yok)
+D32O_TP_COOL,SPK_TOPCU,yakin_yuksek,2.2,"chapter32o.gd:1074-1085 top atışı sonrası/atış arası (explosion_big), topçu approach 2.2 m (""6.5 m öteden"" yorumu düzeltilmiş)",TP_GUNNER dinamik anahtar (literal yok)
+D32O_TP_GUNNER,SPK_TOPCU,yakin_yuksek,2.2,"chapter32o.gd:1074-1085 top atışı sonrası/atış arası (explosion_big), topçu approach 2.2 m (""6.5 m öteden"" yorumu düzeltilmiş)",TP_GUNNER dinamik anahtar (literal yok)
+D32O_TP_END_OK,SPK_TOPCU,yakin,2.2,"chapter32o.gd:1015-1053 Tolga gun+(3.2,7.4), topçu gun+(4.8,4.4); Stage.approach(topcu, player, 2.2) yanında konuşur, atış arası",
+D32O_TP_END_BAD,SPK_TOPCU,yakin,2.2,"chapter32o.gd:1015-1053 Tolga gun+(3.2,7.4), topçu gun+(4.8,4.4); Stage.approach(topcu, player, 2.2) yanında konuşur, atış arası",
+D32O_T_GUNS,SPK_TOLGA,ic_ses,,chapter32o.gd:410/456/1055/703-711/761/1225/1310/1313/912 Tolga kendi kendine yorum (T_HIT/T_FIRE bark: ünlemli ama kimseye seslenmiyor; T_MANTLET Usta'ya kısa yorum),T_MANTLET ustaya yakın cevap sayılabilir (yakin)
+D32O_K_IFTAR,SPK_KADRI,yakin,3.4,"chapter32o.gd:1124-1128 Tolga KADRI_POT+(0,0,-3), Kadri KADRI_POT+(1.2,0.4) ≈3.4 m, iftar",
+D32O_T_IFTAR,SPK_TOLGA,yakin,3.4,"chapter32o.gd:1124-1128 Tolga KADRI_POT+(0,0,-3), Kadri KADRI_POT+(1.2,0.4) ≈3.4 m, iftar",
+D32O_TL_04,SPK_HERALD,uzak,12,"chapter32o.gd:1129 bark 4 sn; tellal ordugâh boyunca ""Ateşler yansın!"", Tolga Kadri'nin ateşinde, tellal yürüyerek geçer",konum koddan çıkmıyor; tellal genel hitap
+D32O_T_FIRE_1,SPK_TOLGA,ic_ses,,chapter32o.gd:410/456/1055/703-711/761/1225/1310/1313/912 Tolga kendi kendine yorum (T_HIT/T_FIRE bark: ünlemli ama kimseye seslenmiyor; T_MANTLET Usta'ya kısa yorum),T_MANTLET ustaya yakın cevap sayılabilir (yakin)
+D32O_T_FIRE_3,SPK_TOLGA,ic_ses,,chapter32o.gd:410/456/1055/703-711/761/1225/1310/1313/912 Tolga kendi kendine yorum (T_HIT/T_FIRE bark: ünlemli ama kimseye seslenmiyor; T_MANTLET Usta'ya kısa yorum),T_MANTLET ustaya yakın cevap sayılabilir (yakin)
+D32O_T_FIRE_6,SPK_TOLGA,ic_ses,,chapter32o.gd:410/456/1055/703-711/761/1225/1310/1313/912 Tolga kendi kendine yorum (T_HIT/T_FIRE bark: ünlemli ama kimseye seslenmiyor; T_MANTLET Usta'ya kısa yorum),T_MANTLET ustaya yakın cevap sayılabilir (yakin)
+D32O_N_LIGHTS,SPK_NIHAT,telsiz,,"chapter32o.gd:347/459/1155/1221/1261/1315 Nihat satırı; ordugâhta/hendekte Nihat nesnesi yok, tutanak sesi",
+D32O_S_SULTAN,SPK_SOLDIER,uzak,10,"chapter32o.gd:1179 bark 3 sn ""Yol açın!"": Sultan ve muhafızları hat boyunca ilerler (from→to), Tolga fotoğraf noktasında; kalabalığa hitap",
+D32O_F_01,SPK_FATIH,uzak,8,"chapter32o.gd:1206/1209 bark 5 sn; Sultan atla hatları dolaşır (horse from→to), Tolga p+(0,0,8) fotoğraf mesafesinde (autotest) ≈8 m; Fatih vakur ama topluluğa hitap","Fatih bağırmaz, sesi taşıyan ve ağırbaşlı"
+D32O_F_02,SPK_FATIH,uzak,8,"chapter32o.gd:1206/1209 bark 5 sn; Sultan atla hatları dolaşır (horse from→to), Tolga p+(0,0,8) fotoğraf mesafesinde (autotest) ≈8 m; Fatih vakur ama topluluğa hitap","Fatih bağırmaz, sesi taşıyan ve ağırbaşlı"
+D32O_T_SULTAN,SPK_TOLGA,ic_ses,,chapter32o.gd:410/456/1055/703-711/761/1225/1310/1313/912 Tolga kendi kendine yorum (T_HIT/T_FIRE bark: ünlemli ama kimseye seslenmiyor; T_MANTLET Usta'ya kısa yorum),T_MANTLET ustaya yakın cevap sayılabilir (yakin)
+D32O_T_SULTAN_ALT,SPK_TOLGA,ic_ses,,chapter32o.gd:410/456/1055/703-711/761/1225/1310/1313/912 Tolga kendi kendine yorum (T_HIT/T_FIRE bark: ünlemli ama kimseye seslenmiyor; T_MANTLET Usta'ya kısa yorum),T_MANTLET ustaya yakın cevap sayılabilir (yakin)
+D32O_N_PHOTO,SPK_NIHAT,telsiz,,"chapter32o.gd:347/459/1155/1221/1261/1315 Nihat satırı; ordugâhta/hendekte Nihat nesnesi yok, tutanak sesi",
+D32O_J_SILENCE,SPK_JANISSARY,yakin_yuksek,5,"chapter32o.gd:1253 crier Tolga'ya dönük (face_toward/look_target), sonra leave(…8.0…): ordugâhta sessizlik emri",
+D32O_N_SILENCE,SPK_NIHAT,telsiz,,"chapter32o.gd:347/459/1155/1221/1261/1315 Nihat satırı; ordugâhta/hendekte Nihat nesnesi yok, tutanak sesi",
+D32O_H_01,SPK_HASAN,yakin,1.9,"chapter32o.gd:1275-1314 Tolga hasan+(1.6,0.05,1.0) ≈1.9 m, ateş başında alçak sohbet (:1304 walk_player 1.3)",
+D32O_T_H1,SPK_TOLGA,yakin,1.9,"chapter32o.gd:1275-1314 Tolga hasan+(1.6,0.05,1.0) ≈1.9 m, ateş başında alçak sohbet (:1304 walk_player 1.3)",
+D32O_H_02,SPK_HASAN,yakin,1.9,"chapter32o.gd:1275-1314 Tolga hasan+(1.6,0.05,1.0) ≈1.9 m, ateş başında alçak sohbet (:1304 walk_player 1.3)",
+D32O_H_03,SPK_HASAN,yakin,1.9,"chapter32o.gd:1275-1314 Tolga hasan+(1.6,0.05,1.0) ≈1.9 m, ateş başında alçak sohbet (:1304 walk_player 1.3)",
+D32O_T_LEB,SPK_TOLGA,yakin,1.9,"chapter32o.gd:1275-1314 Tolga hasan+(1.6,0.05,1.0) ≈1.9 m, ateş başında alçak sohbet (:1304 walk_player 1.3)",
+D32O_H_LEB,SPK_HASAN,yakin,1.9,"chapter32o.gd:1275-1314 Tolga hasan+(1.6,0.05,1.0) ≈1.9 m, ateş başında alçak sohbet (:1304 walk_player 1.3)",
+D32O_T_WATER,SPK_TOLGA,yakin,1.9,"chapter32o.gd:1275-1314 Tolga hasan+(1.6,0.05,1.0) ≈1.9 m, ateş başında alçak sohbet (:1304 walk_player 1.3)",
+D32O_H_WATER,SPK_HASAN,yakin,1.9,"chapter32o.gd:1275-1314 Tolga hasan+(1.6,0.05,1.0) ≈1.9 m, ateş başında alçak sohbet (:1304 walk_player 1.3)",
+D32O_T_SIT,SPK_TOLGA,ic_ses,,chapter32o.gd:410/456/1055/703-711/761/1225/1310/1313/912 Tolga kendi kendine yorum (T_HIT/T_FIRE bark: ünlemli ama kimseye seslenmiyor; T_MANTLET Usta'ya kısa yorum),T_MANTLET ustaya yakın cevap sayılabilir (yakin)
+D32O_H_SIT,SPK_HASAN,yakin,1.9,"chapter32o.gd:1275-1314 Tolga hasan+(1.6,0.05,1.0) ≈1.9 m, ateş başında alçak sohbet (:1304 walk_player 1.3)",
+D32O_H_04,SPK_HASAN,yakin,1.9,"chapter32o.gd:1275-1314 Tolga hasan+(1.6,0.05,1.0) ≈1.9 m, ateş başında alçak sohbet (:1304 walk_player 1.3)",
+D32O_T_END,SPK_TOLGA,ic_ses,,chapter32o.gd:410/456/1055/703-711/761/1225/1310/1313/912 Tolga kendi kendine yorum (T_HIT/T_FIRE bark: ünlemli ama kimseye seslenmiyor; T_MANTLET Usta'ya kısa yorum),T_MANTLET ustaya yakın cevap sayılabilir (yakin)
+D32O_H_GO,SPK_HASAN,yakin,1.9,"chapter32o.gd:1275-1314 Tolga hasan+(1.6,0.05,1.0) ≈1.9 m, ateş başında alçak sohbet (:1304 walk_player 1.3)",
+D32O_N_END,SPK_NIHAT,telsiz,,"chapter32o.gd:347/459/1155/1221/1261/1315 Nihat satırı; ordugâhta/hendekte Nihat nesnesi yok, tutanak sesi",
 D25O_N_01,SPK_NIHAT,telsiz,,"chapter25.gd:196/513 Nihat satırı; ordugâhta Nihat nesnesi yok, tutanak sesi",
 D25O_N_HANDOFF,SPK_NIHAT,telsiz,,"chapter25.gd:196/513 Nihat satırı; ordugâhta Nihat nesnesi yok, tutanak sesi",
 D26O_H_01_WATER,SPK_HASAN,yakin,3.6,"chapter26o.gd:566-585 player.global_position = hasan + (2.0,0.05,3.0) ≈3.6 m, Hasan'a dönük, veda sohbeti",
 D26O_H_01_LEB,SPK_HASAN,yakin,3.6,"chapter26o.gd:566-585 player.global_position = hasan + (2.0,0.05,3.0) ≈3.6 m, Hasan'a dönük, veda sohbeti",
 D26O_H_01_SIT,SPK_HASAN,yakin,3.6,"chapter26o.gd:566-585 player.global_position = hasan + (2.0,0.05,3.0) ≈3.6 m, Hasan'a dönük, veda sohbeti",
 D26O_AZ_LATE,SPK_AZAP,uzak,12,"chapter26o.gd:249 bark 4 sn; azaplar hendekte, Tolga (6,52); sonraki dalga bağırışı kesmesin diye _wait_bark_voice",
+D32O_AZ_GREEKFIRE,SPK_AZAP,yakin_yuksek,6,"chapter32o.gd:823 bark 4 sn Rum ateşi alarmı, açık arazi",
+D32O_AZ_FIRE_OUT,SPK_AZAP,yakin_yuksek,5,chapter32o.gd:842/846 bark 3.5 sn yangın sonrası azap hendek başında,
+D32O_AZ_FIRE_LOST,SPK_AZAP,yakin_yuksek,5,chapter32o.gd:842/846 bark 3.5 sn yangın sonrası azap hendek başında,
+D31O_N_01,SPK_NIHAT,telsiz,,"chapter31o.gd:174/666/785/951/1205-1265 Nihat satırı; sahnede Nihat nesnesi yok (sokak, kazı, Ayasofya), tutanak sesi",
+D31O_T_01,SPK_TOLGA,ic_ses,,"chapter31o.gd:175/201/780/1142/1261/1264 hud.say Tolga, kimseye seslenmiyor, gözlem/yorum",
+D31O_K_LADLE,SPK_KADRI,yakin_yuksek,4.5,"chapter31o.gd:190 bark 3.5 sn; Kadri pot (-2.6,-44) yanında, Tolga z<-40 yolda x≈1 ≈4-5 m; sokakta çorba dağıtımı kalabalığı",
+D31O_HR_01,SPK_HERALD,yakin_yuksek,6,"chapter31o.gd:193 bark 5 sn; tellal yürüyerek halka ferman okur (herald yolu z→-50), kalabalığa hitap",
+D31O_AZ_TRAPPED,SPK_AZAP,uzak,15,"chapter31o.gd:199 azap yıkık binanın üst katında (8,ROOM_Y,-77.2), Tolga caddede ≈z-57…-62; ""Yukarıdan"" (T_02); kiriş altında bağırır",
+D31O_T_02,SPK_TOLGA,ic_ses,,"chapter31o.gd:175/201/780/1142/1261/1264 hud.say Tolga, kimseye seslenmiyor, gözlem/yorum",
+D31O_T_BEAM_CREAK,SPK_TOLGA,ic_ses,,"chapter31o.gd:435/984 bark Tolga kirişte/iskelede yalnız, kendi kendine","ünlemsiz, alçak"
+D31O_AZ_01,SPK_AZAP,yakin,1.5,"chapter31o.gd:232-239 Tolga azabın yanında (player.face(azap)), azap (1.4,-73.6) oturur, ≈1.5 m; dinlenme sohbeti (AZ_01* dinamik: :257-264)",
+D31O_AZ_01_FAIL,SPK_AZAP,yakin,1.5,"chapter31o.gd:232-239 Tolga azabın yanında (player.face(azap)), azap (1.4,-73.6) oturur, ≈1.5 m; dinlenme sohbeti (AZ_01* dinamik: :257-264)",
+D31O_S_EMBER,SPK_AZAP,yakin_yuksek,4,"chapter31o.gd:487 bark 2.5 sn; azap odada (8,ROOM_Y,-77.2), Tolga BEAM_B+(1,0.1,-0.6) ≈3-5 m; tavan dökülürken uyarı",
+D31O_T_AZ,SPK_TOLGA,yakin,1.5,"chapter31o.gd:232-239 Tolga azabın yanında (player.face(azap)), azap (1.4,-73.6) oturur, ≈1.5 m; dinlenme sohbeti (AZ_01* dinamik: :257-264)",
+D31O_AZ_02,SPK_AZAP,yakin,1.5,"chapter31o.gd:232-239 Tolga azabın yanında (player.face(azap)), azap (1.4,-73.6) oturur, ≈1.5 m; dinlenme sohbeti (AZ_01* dinamik: :257-264)",
+D31O_K_CATCH,SPK_KADRI,yakin_yuksek,4,"chapter31o.gd:224/233 Kadri yıkık binanın dibinde (kto), Tolga zeminde (2,-75); kurtarma anı, çocuk ağlıyor/moloz",
+D31O_K_CAVEIN,SPK_KADRI,yakin_yuksek,4,"chapter31o.gd:224/233 Kadri yıkık binanın dibinde (kto), Tolga zeminde (2,-75); kurtarma anı, çocuk ağlıyor/moloz",
+D31O_AZ_EMP,SPK_AZAP,yakin,1.5,"chapter31o.gd:232-239 Tolga azabın yanında (player.face(azap)), azap (1.4,-73.6) oturur, ≈1.5 m; dinlenme sohbeti (AZ_01* dinamik: :257-264)",
+D31O_K_01,SPK_KADRI,yakin,4,"chapter31o.gd:240 Kadri aynı sahnede (kto), yıkık bina önü, sakin",
+D31O_N_03,SPK_NIHAT,telsiz,,"chapter31o.gd:174/666/785/951/1205-1265 Nihat satırı; sahnede Nihat nesnesi yok (sokak, kazı, Ayasofya), tutanak sesi",
+D31O_DV_01,SPK_DERVISH,yakin,4.5,"chapter31o.gd:664-669 Tolga (-4,0.35,-8), Akşemseddin (-1,-12), derviş (-2.6,-10.6) ≈4-5 m, player.face(aksem), sakin",
+D31O_AK_01,SPK_AKSEMSEDDIN,yakin,4.5,"chapter31o.gd:664-669 Tolga (-4,0.35,-8), Akşemseddin (-1,-12), derviş (-2.6,-10.6) ≈4-5 m, player.face(aksem), sakin",
+D31O_T_03,SPK_TOLGA,yakin,4.5,"chapter31o.gd:664-669 Tolga (-4,0.35,-8), Akşemseddin (-1,-12), derviş (-2.6,-10.6) ≈4-5 m, player.face(aksem), sakin",
+D31O_AK_NO,SPK_AKSEMSEDDIN,yakin,5,"chapter31o.gd:1410 bark 2.5 sn yanlış işaret; Akşemseddin'in o anki konumu koddan çıkmıyor (-1,-12 başlangıç, işaretlerde dolaşıyor)",mesafe tahmini
+D31O_AK_03,SPK_AKSEMSEDDIN,yakin,2,"chapter31o.gd:700-711 aksem DIG+(-1.2,0,1.0), Tolga DIG+(1.6,0,0.8) walk_player; yorum ""7.7 m öteden söyleniyordu"" düzeltildi, ≈2.8 m",
+D31O_T_STONE,SPK_TOLGA,ic_ses,,"chapter31o.gd:175/201/780/1142/1261/1264 hud.say Tolga, kimseye seslenmiyor, gözlem/yorum",
+D31O_AK_04,SPK_AKSEMSEDDIN,yakin,2,"chapter31o.gd:700-711 aksem DIG+(-1.2,0,1.0), Tolga DIG+(1.6,0,0.8) walk_player; yorum ""7.7 m öteden söyleniyordu"" düzeltildi, ≈2.8 m",
+D31O_AK_SUNSET,SPK_AKSEMSEDDIN,yakin,2,"chapter31o.gd:700-711 aksem DIG+(-1.2,0,1.0), Tolga DIG+(1.6,0,0.8) walk_player; yorum ""7.7 m öteden söyleniyordu"" düzeltildi, ≈2.8 m",
+D31O_N_04,SPK_NIHAT,telsiz,,"chapter31o.gd:174/666/785/951/1205-1265 Nihat satırı; sahnede Nihat nesnesi yok (sokak, kazı, Ayasofya), tutanak sesi",
+D31O_N_05,SPK_NIHAT,telsiz,,"chapter31o.gd:174/666/785/951/1205-1265 Nihat satırı; sahnede Nihat nesnesi yok (sokak, kazı, Ayasofya), tutanak sesi",
+D31O_CARP_01,SPK_SOLDIER,yakin,3.6,"chapter31o.gd:940-953 Tolga (sx-4,fz+6), marangoz (sx-2,fz+3) ≈3.6 m, yer seviyesi",
+D31O_T_04,SPK_TOLGA,yakin,3.6,"chapter31o.gd:940-953 Tolga (sx-4,fz+6), marangoz (sx-2,fz+3) ≈3.6 m, yer seviyesi",
+D31O_CARP_GUST,SPK_SOLDIER,uzak,9,"chapter31o.gd:1001/1052/1056/1075 bark 2 sn; Tolga iskelede (sx,10.8,fz-2) yükseklerde, marangoz yerde (sx-2,0,fz+3) ≈10 m",yükseklik farkı
+D31O_CARP_KNOT_OK,SPK_SOLDIER,uzak,9,"chapter31o.gd:1001/1052/1056/1075 bark 2 sn; Tolga iskelede (sx,10.8,fz-2) yükseklerde, marangoz yerde (sx-2,0,fz+3) ≈10 m",yükseklik farkı
+D31O_CARP_KNOT_BAD,SPK_SOLDIER,uzak,9,"chapter31o.gd:1001/1052/1056/1075 bark 2 sn; Tolga iskelede (sx,10.8,fz-2) yükseklerde, marangoz yerde (sx-2,0,fz+3) ≈10 m",yükseklik farkı
+D31O_CARP_LATE,SPK_SOLDIER,uzak,9,"chapter31o.gd:1001/1052/1056/1075 bark 2 sn; Tolga iskelede (sx,10.8,fz-2) yükseklerde, marangoz yerde (sx-2,0,fz+3) ≈10 m",yükseklik farkı
+D31O_T_TOP,SPK_TOLGA,ic_ses,,"chapter31o.gd:435/984 bark Tolga kirişte/iskelede yalnız, kendi kendine","ünlemsiz, alçak"
+D31O_DV_02,SPK_DERVISH,yakin,4.5,"chapter31o.gd:1129-1142 Tolga a+(2,13), derviş rope_c+(-2,4); Ayasofya içi hazırlık, saygılı ses",
+D31O_T_05,SPK_TOLGA,ic_ses,,"chapter31o.gd:175/201/780/1142/1261/1264 hud.say Tolga, kimseye seslenmiyor, gözlem/yorum",
+D31O_DV_OK,SPK_DERVISH,yakin,4.5,"chapter31o.gd:1331 bark 2 sn; derviş hasır yerleştirmeyi yönlendirir (Ayasofya içi), Tolga hasır taşırken birkaç metre",
+D31O_DV_TURN,SPK_DERVISH,yakin,4.5,"chapter31o.gd:1331 bark 2 sn; derviş hasır yerleştirmeyi yönlendirir (Ayasofya içi), Tolga hasır taşırken birkaç metre",
+D31O_DV_FIXED,SPK_DERVISH,yakin,4.5,"chapter31o.gd:1129-1142 Tolga a+(2,13), derviş rope_c+(-2,4); Ayasofya içi hazırlık, saygılı ses",
+D31O_N_PHOTO,SPK_NIHAT,telsiz,,"chapter31o.gd:174/666/785/951/1205-1265 Nihat satırı; sahnede Nihat nesnesi yok (sokak, kazı, Ayasofya), tutanak sesi",
+D31O_N_PHOTO_OK,SPK_NIHAT,telsiz,,"chapter31o.gd:174/666/785/951/1205-1265 Nihat satırı; sahnede Nihat nesnesi yok (sokak, kazı, Ayasofya), tutanak sesi",
+D31O_AZ_03,SPK_AZAP,yakin,3.7,"chapter31o.gd:1239 az a+(3,14.6), Tolga a+(2,11); saflar dolarken (player.face(az))",
+D31O_N_KHUTBE,SPK_NIHAT,telsiz,,"chapter31o.gd:174/666/785/951/1205-1265 Nihat satırı; sahnede Nihat nesnesi yok (sokak, kazı, Ayasofya), tutanak sesi",
+D31O_T_06,SPK_TOLGA,ic_ses,,"chapter31o.gd:175/201/780/1142/1261/1264 hud.say Tolga, kimseye seslenmiyor, gözlem/yorum",
+D31O_T_END,SPK_TOLGA,ic_ses,,"chapter31o.gd:175/201/780/1142/1261/1264 hud.say Tolga, kimseye seslenmiyor, gözlem/yorum",
+D31O_N_END,SPK_NIHAT,telsiz,,"chapter31o.gd:174/666/785/951/1205-1265 Nihat satırı; sahnede Nihat nesnesi yok (sokak, kazı, Ayasofya), tutanak sesi",
 D27O_N_01,SPK_NIHAT,telsiz,,"chapter27.gd:275 say_chain Nihat; sahnede Nihat nesnesi yok, tutanak sesi",
 D10O_A_AGAIN_NOFEZ,SPK_AGA,yakin,2.4,"chapter10.gd:291/432 (dinamik anahtar) Ağa sınavda 2.4 m önünde, normal konuşma",
 D10O_K_COME_NOFEZ,SPK_KADRI,yakin_yuksek,1.5,"chapter10.gd:558 Kadri kalabalığı yarıp emir verir, Tolga yüzünü dönmüş; metin ""(Kadri kalabalığı yarar) Sen!""",
@@ -391,6 +517,8 @@ D20O_T_TAPE,SPK_TOLGA,yakin,2.2,chapter20o.gd:394 Tolga ustaya yakından,
 D20O_U_TAPE_NEW,SPK_URBAN,yakin,2.2,"chapter20o.gd:375/410 Urban namluyu yoklayıp konuşur, Tolga yanında (walk_player 2.2)",
 D20O_U_TAPE_AGAIN,SPK_URBAN,yakin,2.2,"chapter20o.gd:375/410 Urban namluyu yoklayıp konuşur, Tolga yanında (walk_player 2.2)",
 D20O_U_LESS,SPK_URBAN,yakin_yuksek,2.2,chapter20o.gd:414 ünlemli talimat atıştan hemen önce,
+D32O_TP_URBAN_CRACKED,SPK_TOPCU,yakin,2.2,"chapter32o.gd:1015-1053 Tolga gun+(3.2,7.4), topçu gun+(4.8,4.4); Stage.approach(topcu, player, 2.2) yanında konuşur, atış arası",
+D32O_TP_URBAN_TAPED,SPK_TOPCU,yakin,2.2,"chapter32o.gd:1015-1053 Tolga gun+(3.2,7.4), topçu gun+(4.8,4.4); Stage.approach(topcu, player, 2.2) yanında konuşur, atış arası",
 D17O_K_COME,SPK_KADRI,uzak,10,"chapter17o.gd:722 bark; Kadri varış noktasının 9 m gerisinden koşarak gelirken bağırır (:_run_in back=9), Tolga iskele yakınında",
 D17O_K_DAWN,SPK_KADRI,yakin,2,"chapter17o.gd:853 player.global_position = KADRI_AT+(-0.4,0.05,-2.0), Kadri'ye ~2 m bakar",
 D17O_K_DAWN_BURNED,SPK_KADRI,yakin,2,"chapter17o.gd:853 player.global_position = KADRI_AT+(-0.4,0.05,-2.0), Kadri'ye ~2 m bakar",
@@ -416,6 +544,22 @@ D24O_T_ECLIPSE_AGAIN,SPK_TOLGA,fisilti,2,"chapter24o.gd:263 replik içinde ""(F�
 D24O_K_MENU_1,SPK_KADRI,yakin,2,"chapter24o.gd:222-243 Tolga KADRI_FRONT+(0.8,2.0), Kadri tezgâhın başında ≈2 m, açılış sohbeti",
 D24O_K_MENU_2,SPK_KADRI,yakin,2,"chapter24o.gd:222-243 Tolga KADRI_FRONT+(0.8,2.0), Kadri tezgâhın başında ≈2 m, açılış sohbeti",
 D24O_K_MENU_BURNED,SPK_KADRI,yakin,2,"chapter24o.gd:222-243 Tolga KADRI_FRONT+(0.8,2.0), Kadri tezgâhın başında ≈2 m, açılış sohbeti",
+D32O_TP_01_HIT,SPK_TOPCU,yakin,2.2,"chapter32o.gd:1015-1053 Tolga gun+(3.2,7.4), topçu gun+(4.8,4.4); Stage.approach(topcu, player, 2.2) yanında konuşur, atış arası",
+D32O_TP_NAME_1,SPK_TOPCU,yakin,2.2,"chapter32o.gd:1015-1053 Tolga gun+(3.2,7.4), topçu gun+(4.8,4.4); Stage.approach(topcu, player, 2.2) yanında konuşur, atış arası",
+D32O_TP_NAME_2,SPK_TOPCU,yakin,2.2,"chapter32o.gd:1015-1053 Tolga gun+(3.2,7.4), topçu gun+(4.8,4.4); Stage.approach(topcu, player, 2.2) yanında konuşur, atış arası",
+D32O_TP_NAME_3,SPK_TOPCU,yakin,2.2,"chapter32o.gd:1015-1053 Tolga gun+(3.2,7.4), topçu gun+(4.8,4.4); Stage.approach(topcu, player, 2.2) yanında konuşur, atış arası",
+D32O_TP_NAME_4,SPK_TOPCU,yakin,2.2,"chapter32o.gd:1015-1053 Tolga gun+(3.2,7.4), topçu gun+(4.8,4.4); Stage.approach(topcu, player, 2.2) yanında konuşur, atış arası",
+D32O_T_NAME,SPK_TOLGA,yakin,2.2,"chapter32o.gd:1015-1053 Tolga gun+(3.2,7.4), topçu gun+(4.8,4.4); Stage.approach(topcu, player, 2.2) yanında konuşur, atış arası",
+D32O_T_NAME_4,SPK_TOLGA,yakin,2.2,"chapter32o.gd:1015-1053 Tolga gun+(3.2,7.4), topçu gun+(4.8,4.4); Stage.approach(topcu, player, 2.2) yanında konuşur, atış arası",
+D31O_TW_39_OK,SPK_TOWNSMAN,yakin,1.8,"chapter31o.gd:297-308 Stage.approach(petrion_man, spot, 0, 1.8) Petrion'lu yanına gelir; ipi uzatır (reach)",
+D31O_T_39_OK,SPK_TOLGA,yakin,1.8,"chapter31o.gd:297-308 Stage.approach(petrion_man, spot, 0, 1.8) Petrion'lu yanına gelir; ipi uzatır (reach)",
+D31O_TW_39_BAD,SPK_TOWNSMAN,yakin,1.8,"chapter31o.gd:297-308 Stage.approach(petrion_man, spot, 0, 1.8) Petrion'lu yanına gelir; ipi uzatır (reach)",
+D31O_T_39_BAD,SPK_TOLGA,yakin,1.8,"chapter31o.gd:297-308 Stage.approach(petrion_man, spot, 0, 1.8) Petrion'lu yanına gelir; ipi uzatır (reach)",
+D32O_K_25_OK,SPK_KADRI,yakin,2.1,"chapter32o.gd:337-349 Tolga (-14,72), Kadri (-12.6,70.4) ≈2.1 m, sabah brifingi",
+D32O_T_25_OK,SPK_TOLGA,yakin,2.1,"chapter32o.gd:337-349 Tolga (-14,72), Kadri (-12.6,70.4) ≈2.1 m, sabah brifingi",
+D32O_K_25_BAD,SPK_KADRI,yakin,2.1,"chapter32o.gd:337-349 Tolga (-14,72), Kadri (-12.6,70.4) ≈2.1 m, sabah brifingi",
+D32O_T_25_BAD,SPK_TOLGA,yakin,2.1,"chapter32o.gd:337-349 Tolga (-14,72), Kadri (-12.6,70.4) ≈2.1 m, sabah brifingi",
+D32O_AZ_25_BUNDLE,SPK_AZAP,uzak,20,"chapter32o.gd:430 bark 3 sn; _ditch başlangıcı, azap (2,46), Tolga ~(−14,72) civarı yolda ≈25-30 m, ""Gerisi senin, kâtip!""",oyuncu konumu bu anda hendeğe yürümekte
 D30O_D_CHASE,SPK_DEFENDER,yakin_yuksek,5,"chapter30o.gd:945 bark 1.6 sn kovalama, war_cry; savunucular Tolga'nın az ötesinde",
 D30O_A_LATE,SPK_AZAP,yakin_yuksek,3,chapter30o.gd:940 geç kalan azap Tolga'ya dönüp seslenir (player.face(_late)); kaçış kargaşası,
 D30O_T_PANIC,SPK_TOLGA,ic_ses,,chapter30o.gd:953/1143 bark 2.2 sn; kaçarken/merdivenden inerken kendi kendine (ünlemli),panik; gerekirse yakin_yuksek
@@ -433,6 +577,12 @@ D19O_T_END_WISH,SPK_TOLGA,ic_ses,,chapter19o.gd:469-470 bölüm sonu Tolga kendi
 D20O_U_CHARGE_HOLD,SPK_URBAN,yakin_yuksek,5,"chapter20o.gd:529 gedikte azaplara ""ileri!"" hücum komutu, moloz önünde",
 D22O_H_LOST_STAY,SPK_HASAN,yakin_yuksek,7.5,"chapter22o.gd:1141/1152 Hasan (TOWER+(0.4,2.6)), Tolga TOWER+(3,10) ≈7.5 m, ""Çekil!"" yangın anı",
 D26O_N_HIDE,SPK_NIHAT,telsiz,,"chapter26o.gd:204/644/585, chapter26.gd:1356/1948 Nihat satırı; surda/hendekte Nihat nesnesi yok, tutanak sesi",
+D31O_AZ_01_BOTH,SPK_AZAP,yakin,1.5,"chapter31o.gd:232-239 Tolga azabın yanında (player.face(azap)), azap (1.4,-73.6) oturur, ≈1.5 m; dinlenme sohbeti (AZ_01* dinamik: :257-264)",
+D31O_AZ_01_BLAK,SPK_AZAP,yakin,1.5,"chapter31o.gd:232-239 Tolga azabın yanında (player.face(azap)), azap (1.4,-73.6) oturur, ≈1.5 m; dinlenme sohbeti (AZ_01* dinamik: :257-264)",
+D31O_AZ_01_LOST,SPK_AZAP,yakin,1.5,"chapter31o.gd:232-239 Tolga azabın yanında (player.face(azap)), azap (1.4,-73.6) oturur, ≈1.5 m; dinlenme sohbeti (AZ_01* dinamik: :257-264)",
+D32O_TP_CRACK,SPK_TOPCU,yakin,2.2,"chapter32o.gd:1015-1053 Tolga gun+(3.2,7.4), topçu gun+(4.8,4.4); Stage.approach(topcu, player, 2.2) yanında konuşur, atış arası",
+D32O_T_SULTAN_43,SPK_TOLGA,ic_ses,,chapter32o.gd:410/456/1055/703-711/761/1225/1310/1313/912 Tolga kendi kendine yorum (T_HIT/T_FIRE bark: ünlemli ama kimseye seslenmiyor; T_MANTLET Usta'ya kısa yorum),T_MANTLET ustaya yakın cevap sayılabilir (yakin)
+D32O_T_SULTAN_43_BAD,SPK_TOLGA,ic_ses,,chapter32o.gd:410/456/1055/703-711/761/1225/1310/1313/912 Tolga kendi kendine yorum (T_HIT/T_FIRE bark: ünlemli ama kimseye seslenmiyor; T_MANTLET Usta'ya kısa yorum),T_MANTLET ustaya yakın cevap sayılabilir (yakin)
 D26O_N_LIFT,SPK_NIHAT,telsiz,,"chapter26o.gd:204/644/585, chapter26.gd:1356/1948 Nihat satırı; surda/hendekte Nihat nesnesi yok, tutanak sesi",
 D30O_Z_URBAN,SPK_ZAGANOS,yakin,3.6,"chapter30o.gd:121/172-180 Zağanos START+(-3,2), Tolga START ≈3.6 m, gece hücum öncesi brifing",
 D22O_N_CAPTIVE,SPK_NIHAT,telsiz,,"chapter22o.gd:708/719/1166 Nihat satırı say_chain/hud.say; kule başında Nihat nesnesi yok, tutanak sesi",
