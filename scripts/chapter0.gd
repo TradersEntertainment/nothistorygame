@@ -33,6 +33,9 @@ var _mat: ShaderMaterial
 var _caption: Control
 var _place: Label
 var _place_tw: Tween
+## Yer/tarih yazısının yazılış süresi (sn). 1,4 iken bot/PACE koşusunda (yazı 1,7-2,0 sn'de söner) tam yazıldıktan sonra
+## ekranda 1,6-1,9 sn kalıyordu; 0,8 ile en az 2,0 sn (ölçüm: PLACE_OUT).
+const PLACE_WRITE := 0.8
 var _place_age := -1.0       # yazı başladığından beri oyun zamanı (sn); -1 = başlamadı
 var freeze_cam: Camera3D
 var froze := false
@@ -198,8 +201,8 @@ func _run() -> void:
 	_place.text = tr("UI_CH0_PLACE")
 	_place_age = 0.0
 	_place_tw = create_tween()
-	_place_tw.tween_property(_place, "visible_ratio", 1.0, 1.4)
-	_place_tw.tween_interval(2.6)
+	_place_tw.tween_property(_place, "visible_ratio", 1.0, PLACE_WRITE)
+	_place_tw.tween_interval(3.2)      # yazılış 0,6 sn kısaldı; toplam süre (4,5 sn) aynı
 	_place_tw.tween_property(_place, "modulate:a", 0.0, 0.5)
 	phase = "run"
 	player.frozen = false
@@ -427,11 +430,11 @@ func _place_out() -> void:
 		_place_tw.kill()
 	if _place.modulate.a <= 0.0:
 		return
-	# Yazı tam yazıldıktan (1,4 sn) en az 2,0 sn ekranda kalır; ama patlamadan (top ateşinden 1,56 sn sonra) 0,26 sn
+	# Yazı tam yazıldıktan (PLACE_WRITE) en az 2,0 sn ekranda kalır; ama patlamadan (top ateşinden 1,56 sn sonra) 0,26 sn
 	# önce sönmüş olur: bekleme en çok 1,0 sn. Yürüyen oyuncuda bekleme 0 (eski süre), koşanda ~0,3 sn.
-	var hold := clampf(1.4 + 2.0 - _place_age, 0.0, 1.0) if _place_age >= 0.0 else 0.0
+	var hold := clampf(PLACE_WRITE + 2.0 - _place_age, 0.0, 1.0) if _place_age >= 0.0 else 0.0
 	if GameState.autotest:
-		print("PLACE_OUT age=%.2f hold=%.2f" % [_place_age, hold])
+		print("PLACE_OUT age=%.2f hold=%.2f full_visible=%.2f" % [_place_age, hold, maxf(_place_age - PLACE_WRITE, 0.0) + hold + 0.3])
 	_place_tw = create_tween()
 	if hold > 0.0:
 		_place_tw.tween_interval(hold)

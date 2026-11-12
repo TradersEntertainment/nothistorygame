@@ -503,6 +503,7 @@ func _fire() -> void:
 	# Urban da yanan fitilden çekilir, Tolga'nın yanına gelir (topun dibinde, kamp eşyalarının ardından bağırıyordu)
 	Stage.approach(urban, TOLGA_AT + Vector3(1.2, 0, -1.6), 0.0, 1.8)
 	await Stage.settle(urban)
+	_ease_face_urban()      # Urban "Kulaklarınızı kapatın" derken kadrajda (VISAUDIT offview)
 	await _say("SPK_URBAN", "D10B_U_EARS")
 	await _wait(1.0)
 	if _risk >= 2:
@@ -981,3 +982,21 @@ func _run_shots() -> void:
 	await _shot("c10b_03_patlama.png")
 	get_tree().paused = false
 	get_tree().quit()
+
+
+## Oyuncunun bakışı Urban'a yumuşakça döner (0,5 sn; testte anında): Urban yanına gelip konuşurken kadrajda olsun.
+func _ease_face_urban() -> void:
+	var target := urban.global_position + Vector3(0, 1.4, 0)
+	if Stage.fast():
+		player.face(target)
+		return
+	var from_y := player.rotation.y
+	var from_x := player.camera.rotation.x
+	player.face(target)
+	var to_y := player.rotation.y
+	var to_x := player.camera.rotation.x
+	player.rotation.y = from_y
+	player.camera.rotation.x = from_x
+	var tw := create_tween().set_parallel(true)
+	tw.tween_property(player, "rotation:y", from_y + angle_difference(from_y, to_y), 0.5).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_IN_OUT)
+	tw.tween_property(player.camera, "rotation:x", to_x, 0.5).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_IN_OUT)
