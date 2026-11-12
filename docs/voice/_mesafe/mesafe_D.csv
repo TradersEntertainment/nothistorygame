@@ -1099,3 +1099,103 @@ MG_ARC_H_MOVE,SPK_HASAN,yakin,1.5,"minigame_archery.gd:36 masa/tezgâh başında
 MG_ARC_H_WIN,SPK_HASAN,yakin,1.5,"minigame_archery.gd:36 masa/tezgâh başında karşılıklı mini oyun, host replik balonu (minigame.gd:188 say)",mini oyun masasında karşılıklı konuşma
 MG_ARC_H_LOSE,SPK_HASAN,yakin,1.5,"minigame_archery.gd:36 masa/tezgâh başında karşılıklı mini oyun, host replik balonu (minigame.gd:188 say)",mini oyun masasında karşılıklı konuşma
 MG_ARC_H_AFTER_WIN,SPK_HASAN,yakin,2,"player.gd:2709 hud.bark(SPK_HASAN,""MG_ARC_H_AFTER_*"") oyun sonrası",Hasan yanında
+MG_ARC_H_AFTER_LOSE,SPK_HASAN,yakin,2,"player.gd:2709 hud.bark(SPK_HASAN,""MG_ARC_H_AFTER_*"") oyun sonrası",Hasan yanında
+REACT_CROWD_BYZ_PHONE,SPK_TOWNSMAN,yakin,2,"hud.gd:1340 show_reaction(""npc:crowd""): eşyayı gösterdiği sokak/ordugâh kişisi street_bark (hud.gd:1232)",eşya elde gösterilir; kişi TALK_R 4 m içinde (street_eye.gd TALK_R)
+REACT_CROWD_BYZ_CHICKPEAS,SPK_TOWNSMAN,yakin,2,"hud.gd:1340 show_reaction(""npc:crowd""): eşyayı gösterdiği sokak/ordugâh kişisi street_bark (hud.gd:1232)",eşya elde gösterilir; kişi TALK_R 4 m içinde (street_eye.gd TALK_R)
+REACT_CROWD_BYZ_CUBE,SPK_TOWNSMAN,yakin,2,"hud.gd:1340 show_reaction(""npc:crowd""): eşyayı gösterdiği sokak/ordugâh kişisi street_bark (hud.gd:1232)",eşya elde gösterilir; kişi TALK_R 4 m içinde (street_eye.gd TALK_R)
+REACT_CROWD_BYZ_COLOGNE,SPK_TOWNSMAN,yakin,2,"hud.gd:1340 show_reaction(""npc:crowd""): eşyayı gösterdiği sokak/ordugâh kişisi street_bark (hud.gd:1232)",eşya elde gösterilir; kişi TALK_R 4 m içinde (street_eye.gd TALK_R)
+REACT_CROWD_BYZ_SELFIE,SPK_TOWNSMAN,yakin,2,"hud.gd:1340 show_reaction(""npc:crowd""): eşyayı gösterdiği sokak/ordugâh kişisi street_bark (hud.gd:1232)",eşya elde gösterilir; kişi TALK_R 4 m içinde (street_eye.gd TALK_R)
+REACT_CROWD_BYZ_LIGHTER,SPK_TOWNSMAN,yakin,2,"hud.gd:1340 show_reaction(""npc:crowd""): eşyayı gösterdiği sokak/ordugâh kişisi street_bark (hud.gd:1232)",eşya elde gösterilir; kişi TALK_R 4 m içinde (street_eye.gd TALK_R)
+REACT_CROWD_BYZ_ANY,SPK_TOWNSMAN,yakin,2,"hud.gd:1340 show_reaction(""npc:crowd""): eşyayı gösterdiği sokak/ordugâh kişisi street_bark (hud.gd:1232)",eşya elde gösterilir; kişi TALK_R 4 m içinde (street_eye.gd TALK_R)
+REACT_CROWD_CAMP_PHONE,SPK_SOLDIER,yakin,2,"hud.gd:1340 show_reaction(""npc:crowd""): eşyayı gösterdiği sokak/ordugâh kişisi street_bark (hud.gd:1232)",eşya elde gösterilir; kişi TALK_R 4 m içinde (street_eye.gd TALK_R)
+REACT_CROWD_CAMP_CHICKPEAS,SPK_SOLDIER,yakin,2,"hud.gd:1340 show_reaction(""npc:crowd""): eşyayı gösterdiği sokak/ordugâh kişisi street_bark (hud.gd:1232)",eşya elde gösterilir; kişi TALK_R 4 m içinde (street_eye.gd TALK_R)
+REACT_CROWD_CAMP_CUBE,SPK_SOLDIER,yakin,2,"hud.gd:1340 show_reaction(""npc:crowd""): eşyayı gösterdiği sokak/ordugâh kişisi street_bark (hud.gd:1232)",eşya elde gösterilir; kişi TALK_R 4 m içinde (street_eye.gd TALK_R)
+REACT_CROWD_CAMP_COLOGNE,SPK_SOLDIER,yakin,2,"hud.gd:1340 show_reaction(""npc:crowd""): eşyayı gösterdiği sokak/ordugâh kişisi street_bark (hud.gd:1232)",eşya elde gösterilir; kişi TALK_R 4 m içinde (street_eye.gd TALK_R)
+REACT_CROWD_CAMP_SELFIE,SPK_SOLDIER,yakin,2,"hud.gd:1340 show_reaction(""npc:crowd""): eşyayı gösterdiği sokak/ordugâh kişisi street_bark (hud.gd:1232)",eşya elde gösterilir; kişi TALK_R 4 m içinde (street_eye.gd TALK_R)
+REACT_CROWD_CAMP_LIGHTER,SPK_SOLDIER,yakin,2,"hud.gd:1340 show_reaction(""npc:crowd""): eşyayı gösterdiği sokak/ordugâh kişisi street_bark (hud.gd:1232)",eşya elde gösterilir; kişi TALK_R 4 m içinde (street_eye.gd TALK_R)
+REACT_CROWD_CAMP_ANY,SPK_SOLDIER,yakin,2,"hud.gd:1340 show_reaction(""npc:crowd""): eşyayı gösterdiği sokak/ordugâh kişisi street_bark (hud.gd:1232)",eşya elde gösterilir; kişi TALK_R 4 m içinde (street_eye.gd TALK_R)
+REACT_CROWD_GAL_PHONE,SPK_GENOESE,yakin,2,"hud.gd:1340 show_reaction(""npc:crowd""): eşyayı gösterdiği sokak/ordugâh kişisi street_bark (hud.gd:1232)",eşya elde gösterilir; kişi TALK_R 4 m içinde (street_eye.gd TALK_R)
+REACT_CROWD_GAL_CHICKPEAS,SPK_GENOESE,yakin,2,"hud.gd:1340 show_reaction(""npc:crowd""): eşyayı gösterdiği sokak/ordugâh kişisi street_bark (hud.gd:1232)",eşya elde gösterilir; kişi TALK_R 4 m içinde (street_eye.gd TALK_R)
+REACT_CROWD_GAL_CUBE,SPK_GENOESE,yakin,2,"hud.gd:1340 show_reaction(""npc:crowd""): eşyayı gösterdiği sokak/ordugâh kişisi street_bark (hud.gd:1232)",eşya elde gösterilir; kişi TALK_R 4 m içinde (street_eye.gd TALK_R)
+REACT_CROWD_GAL_COLOGNE,SPK_GENOESE,yakin,2,"hud.gd:1340 show_reaction(""npc:crowd""): eşyayı gösterdiği sokak/ordugâh kişisi street_bark (hud.gd:1232)",eşya elde gösterilir; kişi TALK_R 4 m içinde (street_eye.gd TALK_R)
+REACT_CROWD_GAL_SELFIE,SPK_GENOESE,yakin,2,"hud.gd:1340 show_reaction(""npc:crowd""): eşyayı gösterdiği sokak/ordugâh kişisi street_bark (hud.gd:1232)",eşya elde gösterilir; kişi TALK_R 4 m içinde (street_eye.gd TALK_R)
+REACT_CROWD_GAL_LIGHTER,SPK_GENOESE,yakin,2,"hud.gd:1340 show_reaction(""npc:crowd""): eşyayı gösterdiği sokak/ordugâh kişisi street_bark (hud.gd:1232)",eşya elde gösterilir; kişi TALK_R 4 m içinde (street_eye.gd TALK_R)
+REACT_CROWD_GAL_ANY,SPK_GENOESE,yakin,2,"hud.gd:1340 show_reaction(""npc:crowd""): eşyayı gösterdiği sokak/ordugâh kişisi street_bark (hud.gd:1232)",eşya elde gösterilir; kişi TALK_R 4 m içinde (street_eye.gd TALK_R)
+DST_BYZSOL_IDLE_1,SPK_CITY_GUARD,yakin,2,side_events.gd:432 IDLE havuzu (street_talk side_events.gd:496) -> hud.street_bark hud.gd:1232,"oyuncu E ile konuşur (street_talk), TALK_R 4 m"
+DST_BYZSOL_IDLE_2,SPK_CITY_GUARD,yakin,2,side_events.gd:432 IDLE havuzu (street_talk side_events.gd:496) -> hud.street_bark hud.gd:1232,"oyuncu E ile konuşur (street_talk), TALK_R 4 m"
+DST_BYZSOL_IDLE_3,SPK_CITY_GUARD,yakin,2,side_events.gd:432 IDLE havuzu (street_talk side_events.gd:496) -> hud.street_bark hud.gd:1232,"oyuncu E ile konuşur (street_talk), TALK_R 4 m"
+DST_BYZSOL_IDLE_4,SPK_CITY_GUARD,yakin,2,side_events.gd:432 IDLE havuzu (street_talk side_events.gd:496) -> hud.street_bark hud.gd:1232,"oyuncu E ile konuşur (street_talk), TALK_R 4 m"
+DST_BYZSOL_IDLE_5,SPK_CITY_GUARD,yakin,2,side_events.gd:432 IDLE havuzu (street_talk side_events.gd:496) -> hud.street_bark hud.gd:1232,"oyuncu E ile konuşur (street_talk), TALK_R 4 m"
+DST_BYZSOL_IDLE_6,SPK_CITY_GUARD,yakin,2,side_events.gd:432 IDLE havuzu (street_talk side_events.gd:496) -> hud.street_bark hud.gd:1232,"oyuncu E ile konuşur (street_talk), TALK_R 4 m"
+DST_BYZSOL_IDLE_7,SPK_CITY_GUARD,yakin,2,side_events.gd:432 IDLE havuzu (street_talk side_events.gd:496) -> hud.street_bark hud.gd:1232,"oyuncu E ile konuşur (street_talk), TALK_R 4 m"
+DST_BYZSOL_IDLE_8,SPK_CITY_GUARD,yakin,2,side_events.gd:432 IDLE havuzu (street_talk side_events.gd:496) -> hud.street_bark hud.gd:1232,"oyuncu E ile konuşur (street_talk), TALK_R 4 m"
+DST_BYZSOL_FEZ_1,SPK_CITY_GUARD,yakin,2,side_events.gd:423 FEZ havuzu (street_talk side_events.gd:496) -> hud.street_bark hud.gd:1232,"oyuncu E ile konuşur (street_talk), TALK_R 4 m"
+DST_BYZSOL_FEZ_2,SPK_CITY_GUARD,yakin,2,side_events.gd:423 FEZ havuzu (street_talk side_events.gd:496) -> hud.street_bark hud.gd:1232,"oyuncu E ile konuşur (street_talk), TALK_R 4 m"
+DST_BYZSOL_FEZ_3,SPK_CITY_GUARD,yakin,2,side_events.gd:423 FEZ havuzu (street_talk side_events.gd:496) -> hud.street_bark hud.gd:1232,"oyuncu E ile konuşur (street_talk), TALK_R 4 m"
+DST_BYZSOL_NIGHT_1,SPK_CITY_GUARD,yakin,2,side_events.gd:427 NIGHT havuzu (street_talk side_events.gd:496) -> hud.street_bark hud.gd:1232,"oyuncu E ile konuşur (street_talk), TALK_R 4 m"
+DST_BYZSOL_NIGHT_2,SPK_CITY_GUARD,yakin,2,side_events.gd:427 NIGHT havuzu (street_talk side_events.gd:496) -> hud.street_bark hud.gd:1232,"oyuncu E ile konuşur (street_talk), TALK_R 4 m"
+DST_GENMERC_IDLE_1,SPK_GENOESE,yakin,2,side_events.gd:432 IDLE havuzu (street_talk side_events.gd:496) -> hud.street_bark hud.gd:1232,"oyuncu E ile konuşur (street_talk), TALK_R 4 m"
+DST_GENMERC_IDLE_2,SPK_GENOESE,yakin,2,side_events.gd:432 IDLE havuzu (street_talk side_events.gd:496) -> hud.street_bark hud.gd:1232,"oyuncu E ile konuşur (street_talk), TALK_R 4 m"
+DST_GENMERC_IDLE_3,SPK_GENOESE,yakin,2,side_events.gd:432 IDLE havuzu (street_talk side_events.gd:496) -> hud.street_bark hud.gd:1232,"oyuncu E ile konuşur (street_talk), TALK_R 4 m"
+DST_GENMERC_IDLE_4,SPK_GENOESE,yakin,2,side_events.gd:432 IDLE havuzu (street_talk side_events.gd:496) -> hud.street_bark hud.gd:1232,"oyuncu E ile konuşur (street_talk), TALK_R 4 m"
+DST_GENMERC_IDLE_5,SPK_GENOESE,yakin,2,side_events.gd:432 IDLE havuzu (street_talk side_events.gd:496) -> hud.street_bark hud.gd:1232,"oyuncu E ile konuşur (street_talk), TALK_R 4 m"
+DST_GENMERC_IDLE_6,SPK_GENOESE,yakin,2,side_events.gd:432 IDLE havuzu (street_talk side_events.gd:496) -> hud.street_bark hud.gd:1232,"oyuncu E ile konuşur (street_talk), TALK_R 4 m"
+DST_GENMERC_FEZ_1,SPK_GENOESE,yakin,2,side_events.gd:423 FEZ havuzu (street_talk side_events.gd:496) -> hud.street_bark hud.gd:1232,"oyuncu E ile konuşur (street_talk), TALK_R 4 m"
+DST_OSMSOL_IDLE_1,SPK_SOLDIER,yakin,2,side_events.gd:432 IDLE havuzu (street_talk side_events.gd:496) -> hud.street_bark hud.gd:1232,"oyuncu E ile konuşur (street_talk), TALK_R 4 m"
+DST_OSMSOL_IDLE_2,SPK_SOLDIER,yakin,2,side_events.gd:432 IDLE havuzu (street_talk side_events.gd:496) -> hud.street_bark hud.gd:1232,"oyuncu E ile konuşur (street_talk), TALK_R 4 m"
+DST_OSMSOL_IDLE_3,SPK_SOLDIER,yakin,2,side_events.gd:432 IDLE havuzu (street_talk side_events.gd:496) -> hud.street_bark hud.gd:1232,"oyuncu E ile konuşur (street_talk), TALK_R 4 m"
+DST_OSMSOL_IDLE_4,SPK_SOLDIER,yakin,2,side_events.gd:432 IDLE havuzu (street_talk side_events.gd:496) -> hud.street_bark hud.gd:1232,"oyuncu E ile konuşur (street_talk), TALK_R 4 m"
+DST_OSMSOL_IDLE_5,SPK_SOLDIER,yakin,2,side_events.gd:432 IDLE havuzu (street_talk side_events.gd:496) -> hud.street_bark hud.gd:1232,"oyuncu E ile konuşur (street_talk), TALK_R 4 m"
+DST_OSMSOL_IDLE_6,SPK_SOLDIER,yakin,2,side_events.gd:432 IDLE havuzu (street_talk side_events.gd:496) -> hud.street_bark hud.gd:1232,"oyuncu E ile konuşur (street_talk), TALK_R 4 m"
+DST_OSMSOL_IDLE_7,SPK_SOLDIER,yakin,2,side_events.gd:432 IDLE havuzu (street_talk side_events.gd:496) -> hud.street_bark hud.gd:1232,"oyuncu E ile konuşur (street_talk), TALK_R 4 m"
+DST_OSMSOL_FEZ_1,SPK_SOLDIER,yakin,2,side_events.gd:423 FEZ havuzu (street_talk side_events.gd:496) -> hud.street_bark hud.gd:1232,"oyuncu E ile konuşur (street_talk), TALK_R 4 m"
+DST_OSMSOL_FEZ_2,SPK_SOLDIER,yakin,2,side_events.gd:423 FEZ havuzu (street_talk side_events.gd:496) -> hud.street_bark hud.gd:1232,"oyuncu E ile konuşur (street_talk), TALK_R 4 m"
+DST_JAN_IDLE_1,SPK_JANISSARY,yakin,2,side_events.gd:432 IDLE havuzu (street_talk side_events.gd:496) -> hud.street_bark hud.gd:1232,"oyuncu E ile konuşur (street_talk), TALK_R 4 m"
+DST_JAN_IDLE_2,SPK_JANISSARY,yakin,2,side_events.gd:432 IDLE havuzu (street_talk side_events.gd:496) -> hud.street_bark hud.gd:1232,"oyuncu E ile konuşur (street_talk), TALK_R 4 m"
+DST_JAN_IDLE_3,SPK_JANISSARY,yakin,2,side_events.gd:432 IDLE havuzu (street_talk side_events.gd:496) -> hud.street_bark hud.gd:1232,"oyuncu E ile konuşur (street_talk), TALK_R 4 m"
+DST_JAN_IDLE_4,SPK_JANISSARY,yakin,2,side_events.gd:432 IDLE havuzu (street_talk side_events.gd:496) -> hud.street_bark hud.gd:1232,"oyuncu E ile konuşur (street_talk), TALK_R 4 m"
+DST_JAN_IDLE_5,SPK_JANISSARY,yakin,2,side_events.gd:432 IDLE havuzu (street_talk side_events.gd:496) -> hud.street_bark hud.gd:1232,"oyuncu E ile konuşur (street_talk), TALK_R 4 m"
+DST_JAN_IDLE_6,SPK_JANISSARY,yakin,2,side_events.gd:432 IDLE havuzu (street_talk side_events.gd:496) -> hud.street_bark hud.gd:1232,"oyuncu E ile konuşur (street_talk), TALK_R 4 m"
+DST_JAN_FEZ_1,SPK_JANISSARY,yakin,2,side_events.gd:423 FEZ havuzu (street_talk side_events.gd:496) -> hud.street_bark hud.gd:1232,"oyuncu E ile konuşur (street_talk), TALK_R 4 m; ünlem ama normal selam"
+DST_JAN_FEZ_2,SPK_JANISSARY,yakin,2,side_events.gd:423 FEZ havuzu (street_talk side_events.gd:496) -> hud.street_bark hud.gd:1232,"oyuncu E ile konuşur (street_talk), TALK_R 4 m"
+DST_AZAP_IDLE_1,SPK_AZAP,yakin,2,side_events.gd:432 IDLE havuzu (street_talk side_events.gd:496) -> hud.street_bark hud.gd:1232,"oyuncu E ile konuşur (street_talk), TALK_R 4 m"
+DST_AZAP_IDLE_2,SPK_AZAP,yakin,2,side_events.gd:432 IDLE havuzu (street_talk side_events.gd:496) -> hud.street_bark hud.gd:1232,"oyuncu E ile konuşur (street_talk), TALK_R 4 m"
+DST_AZAP_IDLE_3,SPK_AZAP,yakin,2,side_events.gd:432 IDLE havuzu (street_talk side_events.gd:496) -> hud.street_bark hud.gd:1232,"oyuncu E ile konuşur (street_talk), TALK_R 4 m"
+DST_AZAP_IDLE_4,SPK_AZAP,yakin,2,side_events.gd:432 IDLE havuzu (street_talk side_events.gd:496) -> hud.street_bark hud.gd:1232,"oyuncu E ile konuşur (street_talk), TALK_R 4 m"
+DST_AZAP_IDLE_5,SPK_AZAP,yakin,2,side_events.gd:432 IDLE havuzu (street_talk side_events.gd:496) -> hud.street_bark hud.gd:1232,"oyuncu E ile konuşur (street_talk), TALK_R 4 m"
+DST_VENDB_IDLE_1,SPK_TOWNSMAN,yakin,2,side_events.gd:432 IDLE havuzu (street_talk side_events.gd:496) -> hud.street_bark hud.gd:1232,"oyuncu E ile konuşur (street_talk), TALK_R 4 m"
+DST_VENDB_IDLE_2,SPK_TOWNSMAN,yakin,2,side_events.gd:432 IDLE havuzu (street_talk side_events.gd:496) -> hud.street_bark hud.gd:1232,"oyuncu E ile konuşur (street_talk), TALK_R 4 m"
+DST_VENDB_IDLE_3,SPK_TOWNSMAN,yakin,2,side_events.gd:432 IDLE havuzu (street_talk side_events.gd:496) -> hud.street_bark hud.gd:1232,"oyuncu E ile konuşur (street_talk), TALK_R 4 m"
+DST_VENDB_IDLE_4,SPK_TOWNSMAN,yakin,2,side_events.gd:432 IDLE havuzu (street_talk side_events.gd:496) -> hud.street_bark hud.gd:1232,"oyuncu E ile konuşur (street_talk), TALK_R 4 m"
+DST_VENDB_IDLE_5,SPK_TOWNSMAN,yakin,2,side_events.gd:432 IDLE havuzu (street_talk side_events.gd:496) -> hud.street_bark hud.gd:1232,"oyuncu E ile konuşur (street_talk), TALK_R 4 m"
+DST_VENDB_IDLE_6,SPK_TOWNSMAN,yakin,2,side_events.gd:432 IDLE havuzu (street_talk side_events.gd:496) -> hud.street_bark hud.gd:1232,"oyuncu E ile konuşur (street_talk), TALK_R 4 m"
+DST_VENDO_IDLE_1,SPK_SUTLER,yakin,2,side_events.gd:432 IDLE havuzu (street_talk side_events.gd:496) -> hud.street_bark hud.gd:1232,"oyuncu E ile konuşur (street_talk), TALK_R 4 m"
+DST_VENDO_IDLE_2,SPK_SUTLER,yakin,2,side_events.gd:432 IDLE havuzu (street_talk side_events.gd:496) -> hud.street_bark hud.gd:1232,"oyuncu E ile konuşur (street_talk), TALK_R 4 m"
+DST_VENDO_IDLE_3,SPK_SUTLER,yakin,2,side_events.gd:432 IDLE havuzu (street_talk side_events.gd:496) -> hud.street_bark hud.gd:1232,"oyuncu E ile konuşur (street_talk), TALK_R 4 m"
+DST_VENDO_IDLE_4,SPK_SUTLER,yakin,2,side_events.gd:432 IDLE havuzu (street_talk side_events.gd:496) -> hud.street_bark hud.gd:1232,"oyuncu E ile konuşur (street_talk), TALK_R 4 m"
+DST_VENDO_IDLE_5,SPK_SUTLER,yakin,2,side_events.gd:432 IDLE havuzu (street_talk side_events.gd:496) -> hud.street_bark hud.gd:1232,"oyuncu E ile konuşur (street_talk), TALK_R 4 m"
+DST_PORTER_IDLE_1,SPK_PORTER,yakin,2,side_events.gd:432 IDLE havuzu (street_talk side_events.gd:496) -> hud.street_bark hud.gd:1232,"oyuncu E ile konuşur (street_talk), TALK_R 4 m"
+DST_PORTER_IDLE_2,SPK_PORTER,yakin,2,side_events.gd:432 IDLE havuzu (street_talk side_events.gd:496) -> hud.street_bark hud.gd:1232,"oyuncu E ile konuşur (street_talk), TALK_R 4 m"
+DST_PORTER_IDLE_3,SPK_PORTER,yakin,2,side_events.gd:432 IDLE havuzu (street_talk side_events.gd:496) -> hud.street_bark hud.gd:1232,"oyuncu E ile konuşur (street_talk), TALK_R 4 m"
+DST_PORTER_IDLE_4,SPK_PORTER,yakin,2,side_events.gd:432 IDLE havuzu (street_talk side_events.gd:496) -> hud.street_bark hud.gd:1232,"oyuncu E ile konuşur (street_talk), TALK_R 4 m"
+DST_PORTER_IDLE_5,SPK_PORTER,yakin,2,side_events.gd:432 IDLE havuzu (street_talk side_events.gd:496) -> hud.street_bark hud.gd:1232,"oyuncu E ile konuşur (street_talk), TALK_R 4 m"
+DST_WORKER_IDLE_1,SPK_WORKER,yakin,2,side_events.gd:432 IDLE havuzu (street_talk side_events.gd:496) -> hud.street_bark hud.gd:1232,"oyuncu E ile konuşur (street_talk), TALK_R 4 m"
+DST_WORKER_IDLE_2,SPK_WORKER,yakin,2,side_events.gd:432 IDLE havuzu (street_talk side_events.gd:496) -> hud.street_bark hud.gd:1232,"oyuncu E ile konuşur (street_talk), TALK_R 4 m"
+DST_WORKER_IDLE_3,SPK_WORKER,yakin,2,side_events.gd:432 IDLE havuzu (street_talk side_events.gd:496) -> hud.street_bark hud.gd:1232,"oyuncu E ile konuşur (street_talk), TALK_R 4 m"
+DST_WORKER_IDLE_4,SPK_WORKER,yakin,2,side_events.gd:432 IDLE havuzu (street_talk side_events.gd:496) -> hud.street_bark hud.gd:1232,"oyuncu E ile konuşur (street_talk), TALK_R 4 m"
+DST_WORKER_IDLE_5,SPK_WORKER,yakin,2,side_events.gd:432 IDLE havuzu (street_talk side_events.gd:496) -> hud.street_bark hud.gd:1232,"oyuncu E ile konuşur (street_talk), TALK_R 4 m"
+DST_PRIEST_IDLE_1,SPK_PRIEST,yakin,2,side_events.gd:432 IDLE havuzu (street_talk side_events.gd:496) -> hud.street_bark hud.gd:1232,"oyuncu E ile konuşur (street_talk), TALK_R 4 m"
+DST_PRIEST_IDLE_2,SPK_PRIEST,yakin,2,side_events.gd:432 IDLE havuzu (street_talk side_events.gd:496) -> hud.street_bark hud.gd:1232,"oyuncu E ile konuşur (street_talk), TALK_R 4 m"
+DST_PRIEST_IDLE_3,SPK_PRIEST,yakin,2,side_events.gd:432 IDLE havuzu (street_talk side_events.gd:496) -> hud.street_bark hud.gd:1232,"oyuncu E ile konuşur (street_talk), TALK_R 4 m"
+DST_PRIEST_IDLE_4,SPK_PRIEST,yakin,2,side_events.gd:432 IDLE havuzu (street_talk side_events.gd:496) -> hud.street_bark hud.gd:1232,"oyuncu E ile konuşur (street_talk), TALK_R 4 m"
+DST_MONK_IDLE_1,SPK_STREET_MONK,yakin,2,side_events.gd:432 IDLE havuzu (street_talk side_events.gd:496) -> hud.street_bark hud.gd:1232,"oyuncu E ile konuşur (street_talk), TALK_R 4 m"
+DST_MONK_IDLE_2,SPK_STREET_MONK,yakin,2,side_events.gd:432 IDLE havuzu (street_talk side_events.gd:496) -> hud.street_bark hud.gd:1232,"oyuncu E ile konuşur (street_talk), TALK_R 4 m"
+DST_MONK_IDLE_3,SPK_STREET_MONK,yakin,2,side_events.gd:432 IDLE havuzu (street_talk side_events.gd:496) -> hud.street_bark hud.gd:1232,"oyuncu E ile konuşur (street_talk), TALK_R 4 m"
+DST_DERV_IDLE_1,SPK_DERVISH,yakin,2,side_events.gd:432 IDLE havuzu (street_talk side_events.gd:496) -> hud.street_bark hud.gd:1232,"oyuncu E ile konuşur (street_talk), TALK_R 4 m"
+DST_DERV_IDLE_2,SPK_DERVISH,yakin,2,side_events.gd:432 IDLE havuzu (street_talk side_events.gd:496) -> hud.street_bark hud.gd:1232,"oyuncu E ile konuşur (street_talk), TALK_R 4 m"
+DST_DERV_IDLE_3,SPK_DERVISH,yakin,2,side_events.gd:432 IDLE havuzu (street_talk side_events.gd:496) -> hud.street_bark hud.gd:1232,"oyuncu E ile konuşur (street_talk), TALK_R 4 m"
+DST_DERV_IDLE_4,SPK_DERVISH,yakin,2,side_events.gd:432 IDLE havuzu (street_talk side_events.gd:496) -> hud.street_bark hud.gd:1232,"oyuncu E ile konuşur (street_talk), TALK_R 4 m"
+DST_DERV_FEZ_1,SPK_DERVISH,yakin,2,side_events.gd:423 FEZ havuzu (street_talk side_events.gd:496) -> hud.street_bark hud.gd:1232,"oyuncu E ile konuşur (street_talk), TALK_R 4 m"
+DST_WOMB_IDLE_1,SPK_WOMAN_BYZ,yakin,2,side_events.gd:432 IDLE havuzu (street_talk side_events.gd:496) -> hud.street_bark hud.gd:1232,"oyuncu E ile konuşur (street_talk), TALK_R 4 m"
+DST_WOMB_IDLE_2,SPK_WOMAN_BYZ,yakin,2,side_events.gd:432 IDLE havuzu (street_talk side_events.gd:496) -> hud.street_bark hud.gd:1232,"oyuncu E ile konuşur (street_talk), TALK_R 4 m"
+DST_WOMB_IDLE_3,SPK_WOMAN_BYZ,yakin,2,side_events.gd:432 IDLE havuzu (street_talk side_events.gd:496) -> hud.street_bark hud.gd:1232,"oyuncu E ile konuşur (street_talk), TALK_R 4 m"
