@@ -93,7 +93,95 @@ static func h_ham(x: float, z: float) -> float:
 	var k := j * NX + i
 	var a := _h[k] + (_h[k + 1] - _h[k]) * tx
 	var b := _h[k + NX] + (_h[k + NX + 1] - _h[k + NX]) * tx
-	return (a + (b - a) * tz) * _HK
+	var yv := a + (b - a) * tz                     # saklı (VERI_S) ölçek
+	if kiyi_yumusat and absf(yv) < KIYI_YV:
+		yv = _kiyi_duzelt(x / S, -z / S, yv)
+	return yv * _HK
+
+## Kıyı yumuşatma: ızgara verisi kıyıyı 20 m'lik raster maskeden aldığı için kıyı çizgisi basamaklıydı. Kıyı şeridinde
+## (gerçek ≤ KIYI_BANT m) yükseklik, kıyı çokgenine (yarımada, Trakya, Anadolu; yalnız denize bakan kenarlar) işaretli
+## uzaklıkla yeniden kurulur: kıyı çizgisi çokgeni izler (S'den bağımsız, gerçek metre).
+## false: kıyı yumuşatması kapalı (yalnız ÖNCE/SONRA sınaması için; gezi kiyi=0)
+static var kiyi_yumusat := true
+const KIYI_YV := 12.0                       # saklı yükseklik |y| bundan küçükse kıyı adayı
+const KIYI_BANT := 70.0                    # gerçek m
+const KIYI_IC := 40.0                      # bu uzaklığın içinde tamamen çokgen profili
+const KIYI_HUCRE := 80.0
+static var _kseg := PackedVector2Array()   # a, b çiftleri (gerçek e,n)
+static var _kyon := PackedFloat32Array()   # kara tarafı işareti (+1: segment yönünün solu kara)
+static var _kizg := {}
+static var _kiyi_hazir := false
+
+static func _kiyi_kur() -> void:
+	_kiyi_hazir = true
+	for poly in [R_YARIMADA, R_TRAKYA, R_ANADOLU]:
+		var n: int = poly.size()
+		for i in n:
+			var a: Vector2 = poly[i]
+			var b: Vector2 = poly[(i + 1) % n]
+			var L := a.distance_to(b)
+			if L < 0.5 or L > 2000.0:
+				continue
+			var m := (a + b) * 0.5
+			var nl := Vector2(-(b - a).y, (b - a).x) / L        # sol normal
+			var hl := _veri(m + nl * 60.0)
+			var hr := _veri(m - nl * 60.0)
+			if (hl < 0.0) == (hr < 0.0):
+				continue                                     # denize bakmayan kenar (kara suru, veri sınırı)
+			var idx := _kyon.size()
+			_kseg.append(a); _kseg.append(b)
+			_kyon.append(1.0 if hl >= 0.0 else -1.0)
+			var lo := Vector2(minf(a.x, b.x), minf(a.y, b.y)) - Vector2.ONE * KIYI_BANT
+			var hi := Vector2(maxf(a.x, b.x), maxf(a.y, b.y)) + Vector2.ONE * KIYI_BANT
+			for ci in range(floori(lo.x / KIYI_HUCRE), floori(hi.x / KIYI_HUCRE) + 1):
+				for cj in range(floori(lo.y / KIYI_HUCRE), floori(hi.y / KIYI_HUCRE) + 1):
+					var key := Vector2i(ci, cj)
+					if not _kizg.has(key):
+						_kizg[key] = PackedInt32Array()
+					var l: PackedInt32Array = _kizg[key]
+					l.append(idx)
+					_kizg[key] = l
+
+## Ham ızgara değeri (saklı ölçek, gerçek e,n; düzeltmesiz)
+static func _veri(r: Vector2) -> float:
+	var fx := clampf((r.x - GE0) / GST, 0.0, NX - 1.001)
+	var fz := clampf((GN0 - r.y) / GST, 0.0, NZ - 1.001)
+	var i := int(fx)
+	var j := int(fz)
+	var k := j * NX + i
+	var a := _h[k] + (_h[k + 1] - _h[k]) * (fx - i)
+	var b := _h[k + NX] + (_h[k + NX + 1] - _h[k + NX]) * (fx - i)
+	return a + (b - a) * (fz - j)
+
+static func _kiyi_duzelt(e: float, n: float, yv: float) -> float:
+	if not _kiyi_hazir:
+		_kiyi_kur()
+	var l = _kizg.get(Vector2i(floori(e / KIYI_HUCRE), floori(n / KIYI_HUCRE)))
+	if l == null:
+		return yv
+	var p := Vector2(e, n)
+	var best := INF
+	var yon := 1.0
+	for idx in (l as PackedInt32Array):
+		var a := _kseg[idx * 2]
+		var b := _kseg[idx * 2 + 1]
+		var q := Geometry2D.get_closest_point_to_segment(p, a, b)
+		var d := p.distance_squared_to(q)
+		if d < best:
+			best = d
+			var ab := b - a
+			var cr := ab.x * (p.y - a.y) - ab.y * (p.x - a.x)    # >0: solda
+			yon = _kyon[idx] * (1.0 if cr >= 0.0 else -1.0)
+	var d := sqrt(best)
+	if d >= KIYI_BANT:
+		return yv
+	# hedef profil (gerçek m; SÜREKLİ: sıfır çizgisi ağ hücresine değil kıyı çokgenine düşsün): kıyıdan 5 m içeri %30 dik
+	# (dalga ±0,25 m dünyanın üstüne çabuk çıksın), ötesi kara %12 / deniz %8
+	var hedef := minf(d, 5.0) * 0.3 + maxf(d - 5.0, 0.0) * (0.12 if yon > 0.0 else 0.08)
+	hedef *= yon
+	hedef *= VERI_S
+	var wt := 1.0 - smoothstep(KIYI_IC, KIYI_BANT, d)
+	return lerpf(yv, hedef, wt)
 
 ## Arazi yüksekliği (dünya y; su altında deniz tabanı < 0). Yapı tabanı düzleme kayıtlarını (duzle) uygular.
 static func h(x: float, z: float) -> float:

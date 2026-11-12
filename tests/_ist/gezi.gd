@@ -19,6 +19,9 @@ var player: Node3D
 var _yaw := 0.0
 var _pitch := 0.0
 var _hiz := 18.0
+var _bos := false         # bos=1: kareler bitince ISTBOS sayımı (40 m kareler)
+var _duz := false         # duz=1: arazi düz köşe-renkli malzemeyle (gölgelendirici denemesi)
+var _sis := -1.0          # sis=… : gün sis yoğunluğunu ayarlama denemesi (0: kapalı)
 
 
 func _ready() -> void:
@@ -32,7 +35,11 @@ func _ready() -> void:
 			"shots": shots = kv[1]
 			"liste": liste = kv[1]
 			"kip": kip = kv[1]
+			"bos": _bos = kv[1] == "1"
 			"sehir": IstDunya.sehir_bagla = kv[1] != "0"
+			"sis": _sis = kv[1].to_float()
+			"duz": _duz = kv[1] == "1"
+			"kiyi": IstGeo.kiyi_yumusat = kv[1] != "0"
 	if kip == "harita":
 		_harita.call_deferred()
 		return
@@ -47,6 +54,18 @@ func _ready() -> void:
 	var k := _kam_coz(kam)
 	_kam_koy(k)
 	dunya = IstDunya.build(self, gece, cam.global_position) as IstDunya
+	if _sis >= 0.0:
+		var we := dunya.get_node("Gok") as WorldEnvironment
+		we.environment.fog_enabled = _sis > 0.0
+		we.environment.fog_density = _sis
+	if _duz:
+		var dm := StandardMaterial3D.new()
+		dm.vertex_color_use_as_albedo = true
+		dm.roughness = 1.0
+		dm.specular_mode = BaseMaterial3D.SPECULAR_DISABLED
+		for c in dunya.get_children():
+			if c is MeshInstance3D and String(c.name).begins_with("Arazi"):
+				(c as MeshInstance3D).material_override = dm
 	if kip == "yuru" or kip == "yuru_sina":
 		_oyuncu(k)
 		if kip == "yuru_sina":
@@ -171,6 +190,8 @@ func _kareler() -> void:
 			var img := get_viewport().get_texture().get_image()
 			img.save_png(shots.path_join(ad + ".png"))
 			print("GEZI kare ", shots.path_join(ad + ".png"))
+	if _bos:
+		await _bos_say()
 	print("GEZI bitti kurulum_ms=%.0f" % dunya.olcum()["kurulum_ms"])
 	get_tree().quit(0)
 
@@ -293,3 +314,99 @@ func _harita() -> void:
 		img.save_png(shots.path_join("mahalle_harita.png"))
 		print("GEZI kare ", shots.path_join("mahalle_harita.png"))
 	get_tree().quit(0)
+
+
+## ISTBOS: 40 m'lik dünya karelerinde (IstGeo.kare40) öğe var mı. Öğe = zeminden ≥ 0,3 m yükselen herhangi bir geometri
+## (ağ köşeleri, MultiMesh örnekleri, ilkel ağ konumları); arazi, deniz, gök ve ufuk sayılmaz. Bölge: IstGeo.bos_bolge.
+## Satırlar: ISTBOS bolge=… kare=… bos=… oran=… ornek=(e,n)…; harita: shots/istbos.png (kırmızı = boş).
+func _bos_say() -> void:
+	var dolu := {}
+	var yigin: Array = [get_tree().root]
+	var t0 := Time.get_ticks_msec()
+	while not yigin.is_empty():
+		var n: Node = yigin.pop_back()
+		for c in n.get_children():
+			yigin.append(c)
+		if n.get_parent() == dunya and (n.name.begins_with("Arazi") or n.name.begins_with("Deniz") or n.name.begins_with("Ufuk")):
+			continue
+		if n is MultiMeshInstance3D:
+			var mm := (n as MultiMeshInstance3D).multimesh
+			if mm == null:
+				continue
+			var gt := (n as Node3D).global_transform
+			var ust := Vector3.ZERO
+			if mm.mesh != null:
+				var ma := mm.mesh.get_aabb()
+				ust = Vector3(ma.get_center().x, ma.end.y, ma.get_center().z)     # örneğin tepesi
+			for k in mm.visible_instance_count if mm.visible_instance_count >= 0 else mm.instance_count:
+				_bos_isle(dolu, gt * (mm.get_instance_transform(k) * ust))
+		elif n is MeshInstance3D:
+			var mi := n as MeshInstance3D
+			if mi.mesh == null:
+				continue
+			var gt := mi.global_transform
+			var ab := gt * mi.get_aabb()
+			if ab.size.x < 60.0 and ab.size.z < 60.0:
+				_bos_isle(dolu, ab.get_center() + Vector3(0, ab.size.y * 0.5 - 0.01, 0))
+				continue
+			if mi.mesh is ArrayMesh:
+				for si in mi.mesh.get_surface_count():
+					var v: PackedVector3Array = (mi.mesh as ArrayMesh).surface_get_arrays(si)[Mesh.ARRAY_VERTEX]
+					var adim := maxi(1, v.size() / 400000)
+					for k in range(0, v.size(), adim):
+						_bos_isle(dolu, gt * v[k])
+	# sayım
+	var bolgeler := {}
+	var e0 := -7000.0
+	var e1 := 5000.0
+	var n0 := -3200.0
+	var n1 := 6200.0
+	var i0 := floori(e0 * IstGeo.S / 40.0)
+	var i1 := floori(e1 * IstGeo.S / 40.0)
+	var j0 := floori(-n1 * IstGeo.S / 40.0)
+	var j1 := floori(-n0 * IstGeo.S / 40.0)
+	var img := Image.create(i1 - i0 + 1, j1 - j0 + 1, false, Image.FORMAT_RGB8)
+	img.fill(Color("1d4f7a"))
+	for j in range(j0, j1 + 1):
+		for i in range(i0, i1 + 1):
+			var cx := (i + 0.5) * 40.0
+			var cz := (j + 0.5) * 40.0
+			var b := IstGeo.bos_bolge(cx, cz)
+			if b == "deniz":
+				continue
+			var kare := 0
+			# kıyıdaki yarı-deniz kareler: kara payı < %40 ise sayılmaz
+			for q in [Vector2(-12, -12), Vector2(12, -12), Vector2(-12, 12), Vector2(12, 12), Vector2.ZERO]:
+				if not IstGeo.su(cx + q.x, cz + q.y):
+					kare += 1
+			if kare < 2:
+				continue
+			if not bolgeler.has(b):
+				bolgeler[b] = {"kare": 0, "bos": 0, "ornek": []}
+			var d: Dictionary = bolgeler[b]
+			d["kare"] += 1
+			var var_mi := dolu.has(Vector2i(i, j))
+			img.set_pixel(i - i0, j - j0, Color("5e8a3a") if var_mi else Color("e0302a"))
+			if b == "uzak":
+				img.set_pixel(i - i0, j - j0, Color("8a9a6a") if var_mi else Color("c08070"))
+			if not var_mi:
+				d["bos"] += 1
+				if (d["ornek"] as Array).size() < 8 and randf() < 0.3:
+					var r := IstGeo.real(cx, cz)
+					(d["ornek"] as Array).append("(%d,%d)" % [int(r.x), int(r.y)])
+	for b in bolgeler:
+		var d: Dictionary = bolgeler[b]
+		print("ISTBOS bolge=%s kare=%d bos=%d oran=%.1f%% ornek_gercek_en=%s" % [b, d["kare"], d["bos"],
+			100.0 * d["bos"] / maxf(d["kare"], 1), " ".join(d["ornek"])])
+	print("ISTBOS sure_ms=%d dolu_kare=%d" % [Time.get_ticks_msec() - t0, dolu.size()])
+	if shots != "":
+		img.resize(img.get_width() * 3, img.get_height() * 3, Image.INTERPOLATE_NEAREST)
+		img.save_png(shots.path_join("istbos.png"))
+
+
+func _bos_isle(dolu: Dictionary, p: Vector3) -> void:
+	var k := IstGeo.kare40(p.x, p.z)
+	if dolu.has(k):
+		return
+	if p.y - maxf(IstGeo.h(p.x, p.z), 0.0) >= 0.3:
+		dolu[k] = true
