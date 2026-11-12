@@ -98,21 +98,33 @@ func _dump() -> void:
 
 func _ara() -> void:
 	await _bekle()
-	var n := 0
+	var keys := ara.split(",", false)
+	var say := {}
+	for k in keys:
+		say[k] = 0
 	for c in get_tree().root.find_children("*", "Node", true, false):
 		var ad := String(c.name).to_lower()
 		var ms := ""
 		if c is MeshInstance3D and (c as MeshInstance3D).mesh:
 			ms = String((c as MeshInstance3D).mesh.resource_name).to_lower()
-		if ad.contains(ara.to_lower()) or ms.contains(ara.to_lower()):
-			n += 1
-			if n < 60:
-				var pos := Vector3.ZERO
-				if c is Node3D:
-					pos = (c as Node3D).global_position
-				var r := IstGeo.real(pos.x, pos.z)
-				print("GZ_ARA %s %s (%.0f,%.0f)" % [String(c.get_path()).replace("/root/", ""), ms, r.x, r.y])
-	print("GZ_ARA toplam ", n)
+		var tx := ""
+		if c is Label3D:
+			tx = (c as Label3D).text.to_lower()
+		for k in keys:
+			if ad.contains(k.to_lower()) or ms.contains(k.to_lower()) or tx.contains(k.to_lower()):
+				say[k] += 1
+				if say[k] < 6:
+					var pos := Vector3.ZERO
+					if c is Node3D:
+						pos = (c as Node3D).global_position
+					var r := IstGeo.real(pos.x, pos.z)
+					print("GZ_ARA %s | %s | %s (%.0f,%.0f)" % [k, String(c.get_path()).replace("/root/", ""), tx, r.x, r.y])
+	var lab := 0
+	for c in get_tree().root.find_children("*", "Label3D", true, false):
+		lab += 1
+		if lab < 15:
+			print("GZ_LABEL ", (c as Label3D).text.replace("\n", " "), " @", String(c.get_path()).replace("/root/", ""))
+	print("GZ_ARA sayim ", say, " Label3D=", lab)
 
 
 func _liste(sat: Array) -> void:
