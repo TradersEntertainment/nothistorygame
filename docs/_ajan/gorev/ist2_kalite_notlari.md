@@ -89,3 +89,42 @@ Düzeltilecekler:
 18. **Ev renkleri hâlâ tek tip** (parlak turuncu çatı + açık duvar): görünüş kılavuzundaki palet (soluk kırmızı-kahve
     Bizans kiremidi, taş-tuğla şerit, kireç badana tonları) uygulanmalı; çatılar daha az doygun.
 19. **ISTBOS şehir içi %5,5** (hedef %0).
+
+---
+
+# TUR 3 ilk eser kareleri (11:18 UTC, `docs/_kanit_ist2_sehir3/ilk/eser_*`) — yöneticinin notları (4. tura girecek)
+
+İyi: şehir artık ufka kadar dolu ve okunaklı (ada/sokak); Haliç'te filo; Konstantin ve Tauri forumları döşeli, insanlı;
+Blakherna Sarayı + arkasında surlar + sur dışında çadır denizi; Galata Kulesi ve suru; Hipodrom'un bütünü.
+
+Düzeltilecekler:
+20. **Ayasofya'nın dört yanı HÂLÂ çıplak çayır** (15 m, tepe ve yer karelerinin üçünde de): döşeli meydan yok, avlu
+    duvarı yok, insan yok, tezgâh yok; yerden bakınca boş arazide tek bina. Not 13 kapanmadı: en öncelikli iş.
+    Ayasofya'nın kendisi iyi ama kütle dili yalın: payandalar, atrium, vaftizhane, batı avlusu, güney ek yapıları yok.
+21. **Eserlerin rengi oyuncak gibi doygun:** Studios ve Ayasofya'nın yanındaki kilise (Aya İrini?) parlak turuncu-kırmızı
+    tuğla + düz KIRMIZI çatı levhası (kiremit/kurşun değil); Galata Kulesi'nin külahı parlak kırmızı; Konstantin Sütunu
+    macenta. Eserler evlerle aynı palete insin: Bizans tuğlası soluk kırmızı-kahve + geniş harç derzi + taş şerit;
+    çatılar kurşun gri ya da soluk kiremit; porfir koyu erguvan-kahve (macenta değil).
+22. **Ayasofya'nın yanındaki kilise düz kutu:** kırmızı düz dam üstüne oturmuş iki kubbe; cephe ayrıntısı yok.
+23. **Büyük Saray/Hipodrom güneyindeki "harabe"ler ham basamak blokları** (turuncu tuğla merdiven yığınları): harabe gibi
+    okunmuyor; yıkık tonoz, sarmaşık, moloz, yarım kemer.
+24. **Uzak deniz surları hâlâ beyaz blok yığını** (Ayasofya ve Konstantin karelerinin ufkunda Haliç boyunca).
+25. **Ordugâh:** çadır denizi var ama eş boy, eş renk, ızgara dizili küçük kulübeler; otağ, sancaklar, toplar, at
+    sıraları, yollar, ateşler, obalara göre renk/boy farkı yok; kümeler ve boşluk-yollar olmalı.
+26. **Kırık kareler:** `eser_hipodrom_yer` (kamera bir sütunun içinde, gece/karanlık), `eser_halic_eugenios_yer` (5 KB,
+    boş): yer kareleri eserin önünde 12–20 m geride, göz hizasında, gündüz alınmalı; kanıt karesine bakılmadan gönderilmiş.
+27. **Sur dokusu ahşap kaplama gibi** (Blakherna ve Galata surlarında bej yatay şeritler tahta gibi okunuyor): taş sıra +
+    tuğla hatıl (5 sıra tuğla / 1–1,5 m taş) oranı ve renkleri kara surlarındaki gibi olmalı.
+28. **Döşeme tonu** Tauri'de hâlâ nane-beyaz ve gölgede camgöbeği; Konstantin'de iyi: aynı sıcak gri-krem her yerde.
+29. **Yeşil küreler** forum döşemesinin üstünde düzenli aralıkla (ot öbeği mi?): yapay duruyor; seyrek ve derz aralarında.
+
+## Sahibin 12:15 sözleri (sur dışı karesi `s3_kara_disi.jpg` üstüne)
+30. **"Surların arası boş, tam değil bazı yerlerde."** Kara surları kesik dilimler hâlinde: dilimler arasında boşluk,
+    bazı dilimler düz beyaz (şeritsiz, mazgalsız), önlerinde beyaz düz taban levhaları; iç sur / dış sur / peribolos /
+    hendek üçlüsü okunmuyor. Ölçüt: hat boyunca 5 m adımla örnekleme: boşluk sayısı 0 (kapılar dışında), yakın ve uzak
+    katmanın ikisinde de; uzak katman yakınla aynı renk ve şeritte; deniz surları ve Galata suru da aynı ölçütle.
+31. **"Çadırlar böyle mi normalde, ona da çalıştın mı, askerler nerde, eksik bir şeyler var mı?"** Ordugâh tek tip, eş
+    boy, ızgara dizili çadırlar; asker, at, top, tabya, sancak, yol, ateş görünmüyor. Ordugâh ayrı bir araştırmaya
+    dayanmalı (`docs/ORDUGAH_1453.md`, dal `wip/ordugah-arastirma`) ve yaşam dolu olmalı: talim eden, nöbet tutan,
+    yemek pişiren, top başındaki askerler; at sıraları, develer, erzak arabaları; bataryalar ve Şahi; hendek-set;
+    tuğlar ve sancaklar; obalar arası yollar; gece ateşleri. Yakında gerçek kişi modeli (`Person`), uzakta ucuz katman.
