@@ -187,7 +187,7 @@ def gd(name,pts):
 outs=""
 yar_s=Y.simplify(3)
 outs+=gd("K_YARIMADA",list(yar_s.exterior.coords)[:-1])
-outs+=gd("K_GALATA",list(G.simplify(3).exterior.coords)[:-1])
+outs+=gd("K_GALATA",list(G.simplify(2).segmentize(22).exterior.coords)[:-1])
 # anadolu & trakya: buyuk parcalar (kaba)
 AL=[p for p in parts(land) if p.intersects(Point(5000,0))]
 AL=max(parts(land.intersection(AS.buffer(400))),key=lambda p:p.area).simplify(12)
@@ -198,7 +198,7 @@ outs+=gd("Y_KARA",list(WL.coords))
 outs+=gd("Y_BLAKHERNA",list(blak.coords))
 outs+=gd("Y_MARMARA",list(marm_s.simplify(3).coords))
 outs+=gd("Y_HALIC",list(halic_s.simplify(3).coords))
-outs+=gd("Y_GALATA",list(gal_s.simplify(3).coords))
+outs+=gd("Y_GALATA",list(gal_s.simplify(2).segmentize(22).coords))
 outs+=gd("Y_MESE",mese); outs+=gd("Y_MESE_K",mk); outs+=gd("Y_MESE_G",mg)
 outs+=gd("Y_LYKOS",lyk_in); outs+=gd("Y_ZINCIR",[eug,kast]); outs+=gd("Y_BOZDOGAN",boz)
 open('/root/is2/out/sabitler.gd','w').write(outs)

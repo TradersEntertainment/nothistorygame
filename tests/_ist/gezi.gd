@@ -44,8 +44,10 @@ func _ready() -> void:
 	var k := _kam_coz(kam)
 	_kam_koy(k)
 	dunya = IstDunya.build(self, gece, cam.global_position) as IstDunya
-	if kip == "yuru":
+	if kip == "yuru" or kip == "yuru_sina":
 		_oyuncu(k)
+		if kip == "yuru_sina":
+			_yuru_sina.call_deferred()
 	elif kip == "kare":
 		IstDunya.butce_us = 250000        # yazılımla çizimde kare çok yavaş: akış beklemesin
 		_kareler.call_deferred()
@@ -167,4 +169,49 @@ func _kareler() -> void:
 			img.save_png(shots.path_join(ad + ".png"))
 			print("GEZI kare ", shots.path_join(ad + ".png"))
 	print("GEZI bitti kurulum_ms=%.0f" % dunya.olcum()["kurulum_ms"])
+	get_tree().quit(0)
+
+
+## Başsız yürüme sınaması: oyuncu ileri yürür (move_forward), arazi üstünde kalıyor mu; sonra denize bırakılır,
+## yakalayıcı kıyıya çıkarıyor mu. Satırlar: YURU …
+func _yuru_sina() -> void:
+	IstDunya.butce_us = 20000
+	var pl := player as CharacterBody3D
+	for i in 30:
+		await get_tree().physics_frame
+	Input.action_press("move_forward")
+	Input.action_press("sprint")
+	var dus := 0
+	var en_kotu := 0.0
+	var yol := 0.0
+	var son := pl.global_position
+	var t0 := Time.get_ticks_msec()
+	var kare := 0
+	while Time.get_ticks_msec() - t0 < 40000 and kare < 1500:
+		await get_tree().physics_frame
+		kare += 1
+		var p := pl.global_position
+		yol += Vector2(p.x - son.x, p.z - son.z).length()
+		son = p
+		var g := IstGeo.h(p.x, p.z)
+		var fark := p.y - g
+		if not IstGeo.su(p.x, p.z):
+			en_kotu = maxf(en_kotu, absf(fark) if pl.is_on_floor() else 0.0)
+			if fark < -0.5:
+				dus += 1
+		if kare % 150 == 0:
+			var dc := RenderingServer.get_rendering_info(RenderingServer.RENDERING_INFO_TOTAL_DRAW_CALLS_IN_FRAME)
+			var pr := RenderingServer.get_rendering_info(RenderingServer.RENDERING_INFO_TOTAL_PRIMITIVES_IN_FRAME)
+			print("YURU kare=%d konum=%s zemin=%.2f fark=%.2f yerde=%s cizim=%d ucgen=%d dunya=%s" % [kare, p, g, fark, pl.is_on_floor(), dc, pr, dunya.olcum()])
+	Input.action_release("move_forward")
+	Input.action_release("sprint")
+	print("YURU sonuc yol=%.0f m alt_dusme=%d yerde_en_buyuk_fark=%.2f" % [yol, dus, en_kotu])
+	# su yakalayıcı: Haliç'in ortasına bırak
+	var w := IstGeo.w2(-1200.0, 1500.0)
+	pl.global_position = Vector3(w.x, -1.5, w.y)
+	for i in 60:
+		await get_tree().physics_frame
+	var q := pl.global_position
+	print("YURU yakalayici konum=%s su=%s zemin=%.2f %s" % [q, IstGeo.su(q.x, q.z), IstGeo.h(q.x, q.z),
+		"PASS" if not IstGeo.su(q.x, q.z) and q.y > -0.5 else "FAIL"])
 	get_tree().quit(0)
