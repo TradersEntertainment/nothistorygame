@@ -235,6 +235,18 @@ static func _mese(n: Node3D, k: float, lod: int, uzunluk: float) -> void:
 			if alive[Vector2i(s, j)] and alive[Vector2i(s, j + 1)]:
 				var zc := -len * 0.5 + (j + 0.5) * sp
 				Y.box(n, Vector3(0.7, 0.5, sp - 0.1), Vector3(cx, 0.28 + ph - 0.5 + 0.55, zc), Y.TAS, "", col)
+		# dış (arka) cephe: payandalar, kemerli pencereler, tuğla bant; bacalar
+		if lod == 0:
+			var xo := s * (rw + pd + sd)
+			for j in nb:
+				var zb := -len * 0.5 + (j + 0.5) * sp
+				Y.box(n, Vector3(0.12, 1.3, 0.9), Vector3(xo + s * 0.04, wh * 0.45, zb), Color("1e1a18"), "", false)
+				Y.box(n, Vector3(0.14, 1.0, 0.7), Vector3(xo + s * 0.04, wh * 0.45 + 1.25, zb), Color("1e1a18"), "", false)
+				Y.box(n, Vector3(0.16, 0.14, 1.2), Vector3(xo + s * 0.05, wh * 0.45 - 0.72, zb), Y.MERMER, "", false)
+				Y.box(n, Vector3(0.5, wh, 0.55), Vector3(xo + s * 0.2, wh * 0.5, zb + sp * 0.5), Y.TAS_K, "ashlar", col)
+			Y.box(n, Vector3(0.2, 0.3, len), Vector3(xo + s * 0.08, wh - 0.3, 0), Y.TUGLA, "brick", false)
+			for j in range(1, nb, 3):
+				Y.box(n, Vector3(0.7, 1.3, 0.7), Vector3(s * (rw + pd + sd * 0.7), wh + 1.5, -len * 0.5 + (j + 0.5) * sp), Y.TUGLA, "brick", col)
 		# dükkân kapıları, pencereler, tente: revak içindeki cephede
 		if lod == 0:
 			var xf_front := s * (rw + pd) - s * 0.03
@@ -727,8 +739,16 @@ static func _kapitolion(n: Node3D, k: float, lod: int) -> void:
 		var hh := minf(float(hs[i]) * maxf(k, 0.5) * 1.1, 8.0)
 		Y.box(n, Vector3(1.6, 0.3, 1.6), Vector3(x, top + 0.15, pl * 0.5 - 2.6), Y.TAS_K, "", col)
 		Y.cyl(n, 0.55, hh, Vector3(x, top + 0.3 + hh * 0.5, pl * 0.5 - 2.6), Y.MERMER, 0.5, 10, col, "marble")
-		if hh > 5.0:
-			var bh := Y.korint_baslik(n, 0.5, Vector3(x, top + 0.3 + hh, pl * 0.5 - 2.6), Y.MERMER, col, lod == 0)
+		if hh > 2.5:
+			Y.korint_baslik(n, 0.5, Vector3(x, top + 0.3 + hh, pl * 0.5 - 2.6), Y.MERMER, col, lod == 0)
+	# ayakta kalan üç sütunun üstünde mimari kiriş ve kırık alınlık (üçgen)
+	var xa := -pw * 0.38 + 1.0 * pw * 0.76 / 5.0
+	var xb := -pw * 0.38 + 3.0 * pw * 0.76 / 5.0
+	var ey := top + 0.3 + minf(float(hs[1]) * maxf(k, 0.5) * 1.1, 8.0) + 0.95
+	Y.box(n, Vector3(xb - xa + 1.6, 0.8, 1.9), Vector3((xa + xb) * 0.5, ey + 0.4, pl * 0.5 - 2.6), Y.TAS_K, "", col)
+	var ped := Props.prism(n, Vector3(xb - xa + 1.2, 1.3, 1.4), Vector3((xa + xb) * 0.5, ey + 0.8 + 0.65, pl * 0.5 - 2.6), Y.MERMER)
+	if col:
+		Props.make_solid(ped, 1.0)
 	# kırık alınlık parçaları: yerde
 	Y.box(n, Vector3(5.0, 0.9, 1.8), Vector3(-pw * 0.2, top + 0.45, pl * 0.5 - 6.0), Y.MERMER, "marble", col, Vector3(0, 18, 4))
 	# hücre (cella) duvarları: arka ve yan, yıkık kenarlı; kemerli niş
@@ -773,7 +793,9 @@ static func _anemodoulion(n: Node3D, k: float, lod: int) -> void:
 				var ang := f * 90.0
 				var dist := (rb + rt) * 0.5 * 0.7071 + 0.03
 				var pos := Vector3(sin(deg_to_rad(ang)) * dist, y0 + seg_h * (i + 0.5), cos(deg_to_rad(ang)) * dist)
-				Y.box(n, Vector3((rb + rt) * 0.5 * 0.9, seg_h * 0.5, 0.06), pos, Y.BRONZ, "", false, Vector3(0, ang, 0))
+				Y.box(n, Vector3((rb + rt) * 0.5 * 0.9, seg_h * 0.5, 0.06), pos, Y.PATINA, "", false, Vector3(0, ang, 0))
+				for bb in 3:
+					Y.box(n, Vector3((rb + rt) * 0.5 * 0.8, 0.07, 0.1), pos + Vector3(0, (bb - 1) * seg_h * 0.14, 0) + Vector3(sin(deg_to_rad(ang)), 0, cos(deg_to_rad(ang))) * 0.02, Y.BRONZ, "", false, Vector3(0, ang, 0))
 			Y.box(n, Vector3((rt + rb) * 0.5 * 1.45, 0.25, (rt + rb) * 0.5 * 1.45), Vector3(0, y0 + seg_h * (i + 1), 0), Y.TAS_K, "", false, Vector3(0, 45, 0)) if i < 3 else null
 	var ty := y0 + th
 	var rtop := r0 * 0.4
