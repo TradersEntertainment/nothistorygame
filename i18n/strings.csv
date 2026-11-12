@@ -490,49 +490,50 @@ D4A_K_DISHES2,Belgesel ne? ...Yenir mi? Tencereye girer mi?,What's a documentary
 D4B_T_01,Zincirin ucundayım. Yüzen kütükler. Karanlık. Islak. Belgeselde bu kadar ıslak görünmüyordu.,I'm at the end of the chain. Floating logs. Dark. Wet. It didn't look this wet in the documentary.
 D4B_H_02,"(Telsiz) Evlât? Garanti bitti. Kırmızı düğme artık sadece cızırdar. Ama sen dengede dur, gerisini ben düşünürüm.","(Radio) Son? The warranty's up. The red button only crackles now. You keep your balance, I'll do the thinking."
 D4B_T_SELFIE,Selfie çubuğu! Denge çubuğu oldu. Hayatımda ilk kez işe yaradı.,The selfie stick! It's a balancing pole now. First time it's ever been useful.
-D4B_N_01,"Hey sen, fesli! Annen bir Ceneviz kayığıydı!","Oi, you in the fez! Your mother was a Genoese rowing boat!"
-D4B_N_01_NOFEZ,"Hey sen, şapkasız! Annen bir Ceneviz kayığıydı!","Oi, you with no hat! Your mother was a Genoese rowing boat!"
-D4B_N_02,Baban da kötü zeytinyağı kokardı! Buradan kokusu geliyor!,And your father smelt of bad olive oil! I can smell it from here!
-D4B_N_03,"Gel bakalım, fesli. Surun dibi benim. Tavuğum da benim.","Come on then, fez. The foot of this wall is mine. So is my chicken."
-D4B_N_03_NOFEZ,"Gel bakalım, yabancı. Surun dibi benim. Tavuğum da benim.","Come on then, stranger. The foot of this wall is mine. So is my chicken."
-D4B_N_THROW_CHICKEN_1,Tavuk geliyor!,Chicken incoming!
-D4B_N_THROW_CHICKEN_2,Yine tavuk! Aynı tavuk!,Chicken again! Same chicken!
-D4B_N_THROW_CHICKEN_3,Tavuk geri gel! ...Geldi. Al bakalım!,"Chicken, come back! ...It's back. Here you go!"
-D4B_N_THROW_CHICKEN_4,Son tavuk! ...Tavuk? Tavuk nereye gidiyorsun?,"Last chicken! ...Chicken? Where are you going, chicken?"
-D4B_N_THROW_SACK,İncir! Kuşatmada bile incirimiz var!,"Figs! We've still got figs, even under siege!"
-D4B_N_THROW_SHIELD,"Kalkan! Benim değil, Hektor'un. Bana ne!","Shield! Not mine, it's Hektor's. Don't care!"
+D4B_N_01,"Kim o? ...Zincirde fesli biri. Gecenin bu saatinde. Eh, o da olur.",Who goes there? ...Man in a fez. On the chain. At midnight. Why not.
+D4B_N_01_NOFEZ,"Kim o? ...Zincirde şapkasız biri. Gecenin bu saatinde. Eh, o da olur.",Who goes there? ...Man with no hat. On the chain. At midnight. Why not.
+D4B_N_02,"Zincirden in, fesli. Ok atacaktım, ok bitti. Tavuk kaldı. Onu atarım.","Off the chain, fez. I'd shoot, but we're out of arrows. Got a chicken. That'll do."
+D4B_N_02_NOFEZ,"Zincirden in, yabancı. Ok atacaktım, ok bitti. Tavuk kaldı. Onu atarım.","Off the chain, stranger. I'd shoot, but we're out of arrows. Got a chicken. That'll do."
+D4B_N_03,"Kapı şu dipte. Yürü. Başını eğ; elime ne geçerse atacağım, kusura bakma.",Gate's at the bottom. Walk. Head down; I'm throwing whatever I can find. Nothing personal.
+D4B_N_03_NOFEZ,"Kapı şu dipte. Yürü. Başını eğ; elime ne geçerse atacağım, kusura bakma.",Gate's at the bottom. Walk. Head down; I'm throwing whatever I can find. Nothing personal.
+D4B_N_THROW_CHICKEN_1,Tavuk. Eğil.,Chicken. Duck.
+D4B_N_THROW_CHICKEN_2,Yine tavuk. Başka yok.,Chicken again. It's the only one.
+D4B_N_THROW_CHICKEN_3,Tavuk döndü. ...Olur. Al bakalım.,Chicken's back. ...Fine. Here it comes.
+D4B_N_THROW_CHICKEN_4,Son atış. ...Tavuk? Nereye gidiyorsun sen?,Last throw. ...Chicken? Where are you off to?
+D4B_N_THROW_SACK,İncir. Erzaktan. Hesabını benden sorarlar.,Figs. From the stores. I'll be on report.
+D4B_N_THROW_SHIELD,Kalkan. Hektor'un. Hektor uyuyor.,Shield. Hektor's. Hektor's asleep.
 D4B_T_HIT_1,Ay!,Ow!
 D4B_T_HIT_2,İnciri de mi? İnciri de mi!,Figs too? FIGS too!
 D4B_T_HIT_2_SHIELD,Kalkan! Hektor'un kalkanı! Hektor kim?!,A shield! Hektor's shield! Who's Hektor?!
 D4B_T_HIT_2_CHICKEN,Tavuk mu? Bana tavuk mu attın?!,A chicken? You threw a chicken at me?!
 D4B_T_HIT_3,Yeter! Yere... suya... AAAA!,Enough! Down... in... AAAH!
 D4B_T_SINERJI,Bu tavuk beni seviyor. Geri dönmüyor. Adını Sinerji koyuyorum.,This chicken likes me. It won't go back. I'm naming it Synergy.
-D4B_N_GATE,Dur! Kimsin sen? Ne getirdin? Casuslar hep bir şey getirir.,Halt! Who are you? What've you brought? Spies always bring something.
-D4B_N_CHICKEN,Tavuğum! ...Seni seçmiş. Tavuk hep yanlış adamı seçer.,My chicken! ...It's picked you. Chickens always pick the wrong man.
+D4B_N_GATE,"Dur. Adını sonra sorarım; önce cepler. Ne var orada, göster.",Hold it. Name can wait. Pockets first. Let's see.
+D4B_N_CHICKEN,Benim tavuğum o. ...Seni seçmiş. Hayvan bilir.,That's my chicken. ...She's picked you. Animals can tell.
 D4B_N_HAT,Şimdi söyle. O kafandaki ne?,Now tell me. What's that on your head?
 D4B_N_HAT_NOFEZ,Şimdi söyle. Cebinden kırmızı bir şey sarkıyor. Ne o?,Now tell me. There's something red hanging out of your pocket. What is it?
-D4B_N_SPY,Fes! Türk casusu! Yakaladım! Madalya alırım!,A fez! A Turkish spy! Caught you! I'll get a medal!
+D4B_N_SPY,Fes. Türk casusu. Bu ay üçüncüsün; öbür ikisi balıkçı çıktı.,Fez. Turkish spy. Third this month. The other two were fishermen.
 D4B_T_SPY,Fes 1829'da gelecek. Yani teknik olarak ben gelecekten gelen bir casusum.,The fez won't exist until 1829. So technically I'm a spy from the future.
-D4B_N_SPY2,Gel. Sana şehri gezdireyim. Sonra teslim ederim. Önce gezdiririm.,Come. I'll show you the city. Then I'll hand you in. Tour first.
-D4B_N_MERCHANT,"Şapkasız... Frenk tüccarı! Kaybolmuşsun. Gir gir, dışarısı Türk dolu.","No hat... a Frankish merchant! You're lost. In you come, it's all Turks out there."
+D4B_N_SPY2,Olur. Gel; defter sabah açılır. O vakte kadar benimlesin.,"Why not. Come on; the ledger opens in the morning. Till then, you're with me."
+D4B_N_MERCHANT,"Başı açık... Frenk tüccarı. Yolunu şaşırmışsın. Gir içeri, dışarısı Türk dolu.","Bare head... Frankish merchant. Lost your way. In you come, it's all Turks out there."
 D4B_T_MERCHANT,Evet. Tüccarım. Sigorta satarım. Deniz sigortası. Kuşatma sigortası.,Yes. A merchant. I sell insurance. Marine insurance. Siege insurance.
-D4B_N_MERCHANT2,"Sigorta ne? ...Neyse, İmparator yeni şeylere bayılır. Gel.","What's insurance? ...Never mind, the Emperor loves new things. Come on."
+D4B_N_MERCHANT2,"Sigorta ne? ...Neyse, sabah kançılaryaya anlat. Onlar her şeyi yazar. Gel.",Insurance? ...Never mind. Tell the chancery tomorrow. They write everything down. Come on.
 D4B_T_ISTANBUL,"Peki, burası tam olarak İstanbul'un neresi?",So where exactly in Istanbul are we?
 D4B_N_ISTANBUL,"İs-tin-polin? 'Şehre' mi diyorsun? Türkler de öyle der, bizim lafımızdan ad yapmışlar. Burası Şehir. Konstantinopolis. Başka şehir mi var?",Is-tin-polin? 'To the City'? The Turks say that too; they've made a name out of our words. This is the City. Constantinople. As if there's another one.
 D4B_T_ISTANBUL_2,Demek 'İstanbul' Rumca 'şehre' demekmiş. Dört yüz yetmiş yedi yıl sonra resmî adı bu olacak. Söylemesem iyi.,So 'Istanbul' is just Greek for 'to the City'. In four hundred and seventy-seven years it becomes the official name. Best not to mention it.
-D4B_N_CELL,"Zindan formu: adın, baban, fesinin rengi. Sabah konuşuruz.","Dungeon form: your name, your father, the colour of your fez. We'll talk in the morning."
+D4B_N_CELL,"Zindan defteri. Adın, baban, fesin rengi. Acelesi yok, sabah yazarız.","Dungeon ledger. Name, father, colour of fez. No hurry. We'll write it up in the morning."
 D4B_T_CELL,"Islak, soğuk ve bir Bizans zindanındayım. Pazartesi toplantısı hiç bu kadar uzak olmamıştı.","Wet, cold and in a Byzantine dungeon. Monday's meeting has never felt so far away."
-D4B_N_CELL2,"Bu arada iyi yüzüyorsun. Casus için. İyi geceler, casus.","You swim well, by the way. For a spy. Good night, spy."
-D4B_NIKO_PHONE,Küçük ayna ama içinde adam var! Hey adam! Annen de mi ayna?,"Tiny mirror with a man inside! Oi, man! Was your mother a mirror too?"
-D4B_NIKO_LIGHTER,Deniz ateşi mi bu?! Cebinde mi taşıyorsun? Casus! Büyük casus!,Is that sea fire?! In your POCKET? Spy! Big spy!
+D4B_N_CELL2,İyi yüzüyorsun bu arada. Casusa göre. ...İyi geceler.,"You swim well, by the way. For a spy. ...Good night."
+D4B_NIKO_PHONE,Venedik işi ayna. İçine adam da koymuşlar. Pahalıdır bu.,Venetian mirror. They're putting little men in them now. Must cost a fortune.
+D4B_NIKO_LIGHTER,Deniz ateşi mi o? Cebinde? ...Söndür onu. Sonra konuşuruz.,Sea fire? In your pocket? ...Put it out. Then we talk.
 D4B_NIKO_BOOK,"Harfler çok düz. Bunu kim yazdı, cetvel mi?","The letters are so straight. Who wrote this, a ruler?"
-D4B_NIKO_CHICKPEAS,Nohut! Kavrulmuş! Haftalardır kuru ekmek yiyorum. Sen... sen iyi casussun.,Chickpeas! Roasted! I've had nothing but dry bread for weeks. You... you're a good spy.
+D4B_NIKO_CHICKPEAS,Nohut mu bu? Kavrulmuş... Haftalardır kuru ekmek yiyorum. ...Adam gibi casusmuşsun sen.,"Is that chickpeas? Roasted... Weeks of dry bread, I've had. ...You're all right, for a spy."
 D4B_NIKO_POWERBANK,Fırlatmak için güzel taş. Surdan atayım mı?,Nice throwing stone. Shall I chuck it off the wall?
-D4B_NIKO_TAPE,Surun çatlaklarını bununla kapatalım. ...Kapatmaz mı? O zaman geleceklilerin nesi var?,Let's patch the wall cracks with it. ...It won't? Then what good are you future people?
-D4B_NIKO_THERMOS,"Sıcak ama tencere değil! Sihirli testi! İmparatora götür, madalya verir. Bana da iki madalya.","Hot, but not a pot! Magic jug! Take it to the Emperor, he'll give you a medal. Get me two."
-D4B_NIKO_SELFIE,(Poz verir) Tavuğu da çek. Tavuk Bizanslı.,(Striking a pose) Get the chicken in. The chicken is Byzantine.
-D4B_NIKO_COLOGNE,"Limon! Venedikliler gibi kokuyorsun. Venedikliler iyidir, gemileri var. Sen gemisizsin.","Lemon! You smell like a Venetian. Venetians are good, they have ships. You have no ship."
-D4B_NIKO_CUBE,"Renkli kutu, dönüyor. Ver oynayayım. ...Kırıldı. Zaten kırıktı senin kutun.",Colourful box that twists. Give it here. ...It broke. Your box was already broken.
+D4B_NIKO_TAPE,Yapışkan bez. Surun çatlağını kapatır mı? ...Kapatmaz. Otuz yıldır ne yamasak tutmadı.,Sticky cloth. Will it patch the wall? ...No. Thirty years we've been patching that wall. Nothing holds.
+D4B_NIKO_THERMOS,"Ateş görmeden sıcak duruyor. İmparator'a götür, sever. Belki dört aylık maaşımızı da hatırlar.",A jug that's hot with no fire. Take it to the Emperor. Might remind him we've not been paid in four months.
+D4B_NIKO_SELFIE,(Poz verir) Tavuğu da çek. O da nöbetçi.,(Striking a pose) Get the chicken in. She's on watch too.
+D4B_NIKO_COLOGNE,"Limon. Venedikli gibi kokuyorsun. Venedikliler gemiyle gelir, gemiyle gider. Sen yayan gelmişsin.",Lemon. You smell like a Venetian. Venetians come by ship and leave by ship. You walked.
+D4B_NIKO_CUBE,"Renkli kutu, dönüyor. Ver bakayım. ...Karıştı. Ben almadan da karışıktı.",Coloured box. It turns. Give it here. ...It's scrambled. It was scrambled before I touched it.
 SPK_RADIO,Radyo,Radio
 SPK_VAN,Minibüsün hoparlörü,The van's loudspeaker
 SPK_BUREAU_RADIO,Büro telsizi,Bureau radio
@@ -766,13 +767,13 @@ D6A_T_ROAD_A,Otağ yolundayım. Elimde leblebi tepsisi. Başım açık. Arkamda 
 D6A_T_ROAD_B,Otağ yolundayım. Yanımda Lütfi. 'Frenk elçisi' diye tanıtıyor. Frenkçe bilmiyorum. Lütfi de bilmiyor.,"On the road to the tent. Lütfi's with me, introducing me as a 'Frankish envoy'. I don't speak Frankish. Neither does Lütfi."
 D6A_T_ROAD_C,Otağ yolundayım. Urban'ın çırağıyım. Kulaklarımda pamuk. Top denemesine Padişah gelecek.,On the road to the tent. Urban's apprentice. Cotton wool in my ears. The Sultan's coming to the test firing.
 D6A_T_ROAD_Y,"Otağ yolundayım. Kaftan, redingot, fes. Üç yüzyılı üst üste giymiş gibiyim.","On the road to the tent. Kaftan, frock coat, fez. It's like wearing three centuries at once."
-D6B_N_CELL_MORNING,"Sabah oldu, casus. Kalk. Zindan formunu ben doldurdum. Fesinin rengine 'kırmızımsı' yazdım.","Morning, spy. Up you get. I filled in your dungeon form. For the colour of your fez I put 'reddish'."
+D6B_N_CELL_MORNING,"Sabah oldu, casus, kalk. Defteri yazdım. Fesin rengi: kırmızımsı.","Morning, spy. Up. I've done the ledger. Colour of fez: reddish."
 D6B_T_01,Konstantinopolis. İçerideyim. Belgesellerde hep dışarıdan gösteriyorlardı.,Constantinople. I'm inside. The documentaries always showed it from outside.
-D6B_N_CALL,Casus! Buraya! Kançılaryaya! İzin olmadan şehirde tavuk bile gezemez.,"Spy! Over here! To the chancery! Without a permit, not even a chicken can walk this city."
-D6B_N_PERMIT,"Şehirde kalmak için Misafir İzni lazım. Logothetes Theodoros verir, en sondaki oda. Öbür altı odayla uğraşma, orada sadece mühür sayarlar.","To stay in the city you need a Visitor's Permit. Theodoros the Logothete issues them, the last room. Don't bother with the other six, they only count seals in there."
+D6B_N_CALL,Casus! Buraya. Önce kançılarya. Bu şehirde kâğıtsız yürünmez.,Spy! Over here. Chancery first. Nobody walks this city without papers.
+D6B_N_PERMIT,"Kalacaksan Misafir İzni lazım. Theodoros verir, en sondaki oda. Öbür altısında mühür sayarlar; ben otuz yıldır bu surdayım, onlar hâlâ sayıyor. Sen sona git.","Staying? You need a Guest Permit. Theodoros, last room. The other six count seals. Thirty years I've been on this wall; they're still counting. Go to the end."
 D6B_N_HINT,"En sondaki oda, Eta. Eta bizde 'bekle' demek. ...Yalan. Ama oda gerçekten Eta.","The last room, Eta. Eta means 'wait' here. ...That's a lie. But it really is Eta."
 D6B_T_DUNGEON,İkinci zindanım. 1453'te bir sigortacı için fazla.,My second dungeon. A lot for one insurance man in 1453.
-D6B_N_DUNGEON,Casus! Yine mi? Zindan formunu ezbere biliyorum artık. 'Fes: kırmızımsı.',Spy! Again? I know the dungeon form by heart now. 'Fez: reddish.'
+D6B_N_DUNGEON,"Yine mi, casus? Defteri ezbere biliyorum artık. Fes: kırmızımsı.","Again, spy? I know the ledger by heart now. Fez: reddish."
 D6_GIUST_NO_PERMIT,İzinsiz yabancıyla konuşmam. Önce kançılarya. Sonra sözleşme.,I don't talk to foreigners without a permit. The chancery first. Then the contract.
 D6_GIUST_HELLO,"Giovanni Giustiniani, Cenova. Surların komutanı. Kısa konuş, surlar bekler, faiz işler.","Giovanni Giustiniani, of Genoa. Commander of the walls. Keep it short; the walls are waiting and the interest is accruing."
 D6B_T_INSURANCE,"Size bir savaş sigortası poliçesi önermek istiyorum. Yangın, sel, deprem...","I'd like to offer you a war insurance policy. Fire, flood, earthquake..."
@@ -808,17 +809,17 @@ D6B_T_SILENT,Şey... dikkatli olun.,Just... be careful.
 D6B_G_SILENT,"Dikkatli olmak benim mesleğim. Ücretini de alırım. Güle güle, sigortacı.","Being careful is my trade. I charge for it, too. Farewell, insurance man."
 D6B_N_NOT_YET,"İmparator'a şimdi olmaz. Önce izin, sonra surlar, sonra İmparator. Sıra var.","Not the Emperor yet. Permit first, then the walls, then the Emperor. There's an order."
 D6B_E_01,"[Yunanca] Osmanlı'nın elçisi misin? Yoksa yolunu mu kaybettin, yabancı?","[Greek] Are you the Ottoman envoy? Or have you lost your way, stranger?"
-D6B_N_E_01,"İmparator diyor: bu adam kim, niye tavuk kokuyor?","The Emperor says: who is this man, and why does he smell of chicken?"
-D6B_N_E_01_NOCHICK,"İmparator diyor: bu adam kim, niye balık kokuyor?","The Emperor says: who is this man, and why does he smell of fish?"
+D6B_N_E_01,İmparator soruyor: kimsin. Benim sorum: niye tavuk kokuyorsun?,The Emperor asks who you are. I'm asking why you smell of chicken.
+D6B_N_E_01_NOCHICK,İmparator soruyor: kimsin. Benim sorum: niye balık kokuyorsun?,The Emperor asks who you are. I'm asking why you smell of fish.
 D6B_T_E_02,Ben... elçiyim. Sayılırım. Sigorta elçisi.,I'm... an envoy. Of a sort. An insurance envoy.
 D6B_E_03,[Yunanca] Sultana bir mektubum var. Onu götürür müsün?,[Greek] I have a letter for the Sultan. Will you carry it?
-D6B_N_E_03,"İmparator diyor: mektup al, git, bir daha gelme.","The Emperor says: take letter, go, don't come back."
+D6B_N_E_03,İmparator diyor: mektup Sultan'a. Kısası bu.,"The Emperor says: letter, Sultan. That's the gist."
 D6B_E_04,"[Yunanca] Tanrı seninle olsun, yabancı. Bu şehir seni hatırlayacak.","[Greek] God be with you, stranger. This city will remember you."
 D6B_N_E_04,...Diyor ki: kapı şu tarafta. (Sessizce) Aslında güzel bir şey dedi. Ben söylemeyeyim.,...He says: the gate's that way. (Quietly) Actually he said something nice. I won't say it.
-D6B_N_FRIEND,Dost casus! Nohudunu unutmadım. İmparator'a seni iyi anlattım. Yarısı yalandı ama iyiydi.,"Friend spy! I haven't forgotten your chickpeas. I spoke well of you to the Emperor. Half of it was lies, but good lies."
+D6B_N_FRIEND,"Nohudunu unutmadım, casus. İmparator'a seni iyi anlattım. Yarısı yalan, ama iyi yalan.","I haven't forgotten the chickpeas, spy. I spoke well of you to the Emperor. Half of it was lies. Good lies, though."
 D6B_T_LETTER,Cebimde bir imparatorun mektubu. Mühürlü. Kırmızı. Ağır.,An emperor's letter in my pocket. Sealed. Red. Heavy.
 D6B_T_SEALED,Mühre dokunmadım. Bazı şeyleri okumamak lazım. Bunu da belgeselden öğrenmedim.,I didn't touch the seal. Some things you shouldn't read. I didn't learn that from a documentary.
-D6B_N_BYE,"Git, casus! Annene selam söyle! Annen hâlâ bir Ceneviz kayığı mı?","Off you go, spy! Say hello to your mother! Is your mother still a Genoese rowing boat?"
+D6B_N_BYE,"Git, casus. Dümdüz yürü, koşma. ...Annene selam söyle.","Go on, spy. Walk straight. Don't run. ...Give your mother my regards."
 D6B_T_PECK,"...(Sinerji mektubu gagalamaya çalışıyor.) Hayır. Hayır! Bu bir imparatorun mektubu, Sinerji!","...(Synergy is trying to peck the letter.) No. NO! That's an emperor's letter, Synergy!"
 D6B_T_AFTER_LETTER,...(Mektubu katlıyorum. Mühür kırık.) Bunu Padişah'a nasıl açıklayacağım?,...(I fold the letter. The seal is broken.) How am I going to explain this to the Sultan?
 D6B_NIHAT_CAMEO,"(Fötr şapkalı bir adam, kançılaryanın koridorunda) Yortuda tek mühür... Olağanüstü bir sadeleştirme. Ben bu adamlardan çok şey öğrenirim. ...Siz kimsiniz? Hiç kimse. Ben de hiç kimseyim.","(A man in a fedora, in the chancery corridor) One seal on feast days... A remarkable simplification. I could learn so much from these people. ...Who are you? Nobody. I'm nobody too."
@@ -987,12 +988,12 @@ D7_GUARDS_AGAIN,"Çay bitti. Kim kim, hâlâ tartışıyoruz.",The tea's finishe
 D7_GUARDS_AGAIN_HUFEZ,"Çay bitti. Kim kim, artık tartışmıyoruz; fes Hüseyin'de.",The tea's finished. We don't argue about who's who any more; the fez is on Hüseyin.
 D7_GUARDS_AGAIN_NOTEA,"Kim kim, hâlâ tartışıyoruz. Çay da soğudu.",We're still arguing about who's who. And the tea's gone cold.
 D7_GUARDS_AGAIN_NOTEA_HUFEZ,"Kim kim, artık biliyoruz. Çay da soğudu.",We know who's who now. And the tea's gone cold.
-D7_NIKO_HELLO,Yeni casus! Şapkan fes değil. Akıllanıyorsunuz. Kimsin?,A new spy! Your hat isn't a fez. Progress. Who are you?
+D7_NIKO_HELLO,Bir casus daha. Bu sefer fessiz. Akıllanıyorsunuz. Kimsin sen?,Another spy. No fez this time. You're learning. Who are you?
 D7_N_NIKO_ASK,Zaman Bürosu. Fesli bir şahıs. Siz ona 'casus' diyordunuz sanırım.,Time Bureau. A person in a fez. I believe you called him a 'spy'.
-D7_NIKO_LIE,Casus mu? Hangi casus? ...Saraya gitti. İmparator'la çay içiyorlar. Her gün. Saatlerce. Git bak.,Spy? What spy? ...He went to the palace. He and the Emperor drink tea together. Every day. For hours. Go and look.
-D7_NIKO_CELL,Casus mu? Zindanda. Formunu ben doldurdum. Yine. Fes rengine yine 'kırmızımsı' yazdım.,The spy? In the dungeon. I filled in his form. Again. I put 'reddish' for the fez again.
-D7_NIKO_OUTSIDE,"Casus mu? Gitti. Beyaz bayrakla kapıdan çıktı, Osmanlı'ya. Bayrak bir havluydu. Benim havlum.","The spy? Gone. Out through the gate with a white flag, to the Ottomans. The flag was a towel. My towel."
-D7_NIKO_AGAIN,"Başka casus yok. Bir tane vardı, o da gitti. Ya da gitmedi. Bilmiyorum.","There are no other spies. There was one, and he left. Or didn't. I don't know."
+D7_NIKO_LIE,Casus mu? Hangi casus? ...Saraydadır. İmparator'la her akşam tavla oynuyorlar. Git bak.,Spy? What spy? ...He's at the palace. Plays backgammon with the Emperor every evening. Go and see.
+D7_NIKO_CELL,Casus mu? Zindanda. Defterini yine ben yazdım. Fes: yine kırmızımsı.,"The spy? In the dungeon. I did his ledger again. Fez: reddish, again."
+D7_NIKO_OUTSIDE,"Casus mu? Gitti. Beyaz bayrakla kapıdan çıktı, Osmanlı tarafına. Bayrak dediğim, havlu. Benim havlum.","The spy? Gone. Out the gate under a white flag, over to the Ottomans. When I say flag, I mean towel. My towel."
+D7_NIKO_AGAIN,"Başka casus yok. Bir tane vardı, gitti. Ya da gitmedi. Ben bilmem.",No other spies. There was one. Gone. Or not. I wouldn't know.
 D7_THEO_HELLO,[Yunanca] Logothetes Theodoros. Başvurunuz hangi odaya?,"[Greek] Theodoros, Logothete. Which room is your application for?"
 D7_N_THEO_ASK,"Başvuru değil. Soruşturma. Zaman Bürosu, Denetçi Zamanoğlu.","Not an application. An investigation. The Time Bureau, Inspector Zamanoğlu."
 D7_THEO_FORM_Z9,[Yunanca] Bilgi talebi Form Ζ-9 ile yapılır. Form Ζ-9'u almak için Form Ζ-8 gerekir. Ζ-8 ise...,[Greek] Requests for information are made on Form Ζ-9. To obtain Form Ζ-9 one requires Form Ζ-8. And Ζ-8...
@@ -1195,7 +1196,7 @@ D9_T_C,Kulaklarımda hâlâ pamuk var. Dün top denendi. Bugün kulaklarım dene
 D9_T_Y,Kaftanım üstümde. Sigorta sattığım keçi beni görünce başını çevirdi. Poliçesinden memnun değil.,I'm still in my kaftan. The goat I sold a policy to turned its head away when it saw me. It isn't happy with its cover.
 D9_T_Y_PLAIN,"Kaftanım üstümde. Aşçıya bir testi verdim, kaftanı aldım. Takası sigortalamayı unuttum.",I'm still in my kaftan. I gave the cook a jug and got a kaftan for it. I forgot to insure the trade.
 D9_T_BYZ,"Beyaz bayrakla surlardan çıktım, Osmanlı ordugâhına yürüdüm. Cebimde bir imparatorun mektubu. Kimse beni durdurmadı. Bayrak bir havluydu.",I left the walls under a white flag and walked to the Ottoman camp. An emperor's letter in my pocket. Nobody stopped me. The flag was a towel.
-D9_T_DEPORTED,Niko sabah beni zindandan çıkardı: 'Sınır dışı.' Kapıdan itti. Şimdi Osmanlı ordugâhındayım. Formum hâlâ açık.,Niko let me out of the dungeon this morning: 'Deported.' He pushed me through the gate. Now I'm in the Ottoman camp. My form's still open.
+D9_T_DEPORTED,Niko sabah beni zindandan çıkardı: 'Sınır dışı.' Kapıya kadar götürdü. Gerisini bana bıraktı. Şimdi Osmanlı ordugâhındayım. Formum hâlâ açık.,"Niko let me out of the dungeon this morning: 'Deported.' He saw me to the gate. Past that, I wasn't covered. Now I'm in the Ottoman camp. My form's still open."
 D9_T_GOAL,Bugün bir şey olacak. Herkes bana bir şey teklif edecek gibi bakıyor. Sigortacı olarak bu bakışı tanırım.,"Something's going to happen today. Everyone's looking at me like they're about to make me an offer. As an insurance man, I know that look."
 D9_T_RADIO_DEAD,Telsiz sessiz. Hikmet Amca'dan ses yok.,The radio's silent. Nothing from Uncle Hikmet.
 D9_H_CALL,(Telsiz) Evlât? Sabah oldu mu? Burada pazartesi oldu.,(Radio) Son? Is it morning there? It's Monday here.
@@ -1519,9 +1520,9 @@ D11_H_05,"Senin Z-1'inin arkasına bir devre şeması çizerim, anlamazsın bile
 D11_N_H_06,Formun arkasına çizim yapılmaz! Yönetmelik 3/a!,Nothing may be drawn on the back of a form! Regulation 3/a!
 D11_H_07,Yönetmelik 3/a'yı kim yazdı? Ben yazmadım! (Kendi formunu çıkarır: bir hırdavat faturası),Who wrote Regulation 3/a? I didn't! (Pulls out a form of his own: a hardware-shop receipt)
 D11_N_H_08,...Şüpheli kaçtı. Bu bir form savaşıydı ve ben... kazandım mı? Kimse kazanmadı. Tolga kazandı.,...The suspect has fled. That was a war of forms and I... won? Nobody won. Tolga won.
-D11_NK_01,"CASUS! Dostum! Kimse dokunamaz! Sinerji, SALDIR!","SPY! My friend! No one touches him! Synergy, ATTACK!"
+D11_NK_01,"Dur! O benim casusum. Kimse dokunmaz. ...Sinerji, ela!","Hold it! That's my spy. Nobody touches him. ...Synergy, ela!"
 D11_N_NK_02,(Fötr şapkasının üstünde bir tavuk) ...Şapkamda bir tavuk var. Bu da bir form mu?,(A chicken on top of his fedora) ...There's a chicken on my hat. Is this also a form?
-D11_NK_03,"Koş, casus! Ben bu adamı oyalarım. Hangi formu istiyorsa dolduracağım. Kırmızımsı!","Run, spy! I'll hold this man up. Whatever form he wants, I'll fill it in. Reddish!"
+D11_NK_03,"Koş, casus; bu adamı ben oyalarım. ...Form mu dedin, efendi? Yazalım. Fes: kırmızımsı.","Run, spy; I'll keep this one busy. ...A form, you said, sir? Let's write. Fez: reddish."
 D11_N_NK_04,...Kaçtı. Tavuk hâlâ şapkamda. Büro Baskısı'na yazmıyorum. Bu bir tavuk kazası.,...He's gone. The chicken's still on my hat. I'm not putting this in the Bureau Pressure log. It was a chicken accident.
 UI_FLOW11_NEXT_WAIT,Tolga Bekleme Salonu'nda (sıra no 4.582.119). Hikâyesi Bölüm {N14}'te sürüyor.,"Tolga is in the Waiting Room (number 4,582,119). His story continues in Chapter {N14}."
 UI_CH12_TITLE,BÖLÜM 12 — HUZUR,CHAPTER 12 — THE AUDIENCE
@@ -2181,7 +2182,7 @@ D10H_T_K_NOTAPE,Koli bandım yok. Barikatı bütün kuşatma boyunca elle tutaca
 UI_CH10H_K_TAPE,📦 Barikatı koli bandıyla sağlamlaştır,📦 Reinforce the barricade with duct tape
 UI_CH10H_K_LEAVE,Şimdilik bırak,Leave it for now
 D10H_T_K_2,"(Dikmeler, tahtalar, fıçılar. Hepsi bantlı.) Tamam. Bu barikat artık bir top güllesini... en azından bir kere karşılar. Sigortacı olarak söylüyorum.","(Posts, planks, barrels. All taped.) Right. This barricade will now take a cannonball... at least once. I say that as an insurance man."
-D10H_N_K,"(Surun üstünden) Frenk! Gedik neden parlıyor? ...Yapışkan bez mi o? Urban'ın topunda da aynısından varmış, duydum. Sen iki tarafa da mı bant satıyorsun?",(From the top of the wall) Frank! Why is the breach shiny? ...Is that sticky cloth? I heard Urban's cannon has the same stuff on it. Are you selling tape to both sides?
+D10H_N_K,"(Surun üstünden) Frenk! Gedik niye parlıyor? ...Yapışkan bez mi o? Urban'ın topuna da aynısından sarılmış, duydum. İki tarafa da mı satıyorsun?","(From the top of the wall) Frank! Why's the breach shining? ...Is that sticky cloth? Heard Urban's cannon is wrapped in the same stuff. Selling to both sides, are we?"
 D10H_T_K_DONE,Barikat bantlı. Gedik kapalı. Yarın sabaha kadar.,"The barricade's taped. The breach is closed. Until morning, anyway."
 D10H_G_1,Frenk sigortacı! Yine sen. Ne satıyorsun bu gece?,The Frankish insurance man! You again. What are you selling tonight?
 UI_CH10H_G_POWERBANK,🔋 Powerbank'ten zırh ısıtıcı: 'Omzunuzu sıcak tutar.',🔋 A power-bank armour warmer: 'Keeps your shoulder warm.'
@@ -2193,12 +2194,12 @@ D10H_T_G_WARN,"Sağ omzunuza dikkat edin. Ciddiyim. Bir gün... neyse, siz dikka
 D10H_G_WARN,"Omzuma mı? Tehdit mi bu, Frenk? ...Değil. Gözlerinden anlıyorum. (Omzuna bakar) Dikkat ederim.","My shoulder? Is that a threat, Frank? ...No, it isn't. I can see it in your eyes. (Glances at his shoulder) I'll be careful."
 D10H_G_NOTHING,"Öylesine mi uğradın? Gece yarısı, kuşatmanın ortasında? Şu Frenkler de pek tuhaf.","Dropping by? At midnight, in the middle of a siege? Franks are very strange."
 D10H_G_DONE,"Omzum sıcak, Frenk. Hâlâ neden bilmiyorum.","My shoulder's warm, Frank. I still don't know why."
-D10H_N_1,Frenk! Gece gece surda ne arıyorsun? Zincir nöbetindeyim. Uyumamak için şarkı söylüyorum. Kötü söylüyorum.,Frank! What are you doing on the walls at this hour? I'm on chain watch. I sing to stay awake. Badly.
+D10H_N_1,Frenk! Gece gece surda ne arıyorsun? Zincir nöbetindeyim. Uyumamak için şarkı söylüyorum. Hem de kötü.,Frank! What are you doing on the walls at this hour? I'm on chain watch. I sing to stay awake. Badly.
 D10H_N_NOPEAS,Uyanık kalmak için bir şey lazım. Senin o çıtır şeylerden kalmadı mı? Yazık.,We need something to stay awake. Have you none of those crunchy things left? Pity.
 UI_CH10H_N_PEAS,🥜 Leblebiyi nöbetçilere dağıt,🥜 Share the chickpeas out among the guards
 UI_CH10H_N_LEAVE,Şimdilik gerek yok,No need for now
 D10H_T_N_PEAS,"Al. Leblebi. Bir tane ye, uyanık kalırsın. İki tane ye, sabaha kadar konuşursun.",Here. Chickpeas. Eat one and you stay awake. Eat two and you'll talk till morning.
-D10H_N_PEAS,(Bir avuç atar) Çıtır! ...Zincir nöbetçileri bu gece uyumayacak. Belki bir daha hiç uyumayacak.,(Throws back a handful) Crunchy! ...The chain guards won't sleep tonight. They may never sleep again.
+D10H_N_PEAS,(Bir avuç atar) Çıtır. ...Zincir nöbetçileri bu gece uyumaz. Bir daha hiç uyumazlar belki.,(Throws back a handful) Crunchy. ...The chain watch won't sleep tonight. Might never sleep again.
 D10H_N_DONE,Nöbetçiler hâlâ çiğniyor. Zincir hiç bu kadar gürültülü korunmamıştı.,The guards are still chewing. The chain has never been guarded so noisily.
 D10H_T_EXIT_0,Hiçbir şey yapmadan çıkıyorum. Belki de en doğrusu bu.,I'm leaving without doing a thing. Maybe that's for the best.
 D10H_T_EXIT_1,Bir şey yaptım. Küçük bir şey. Tarih küçük şeyleri fark eder mi?,I did one thing. A small thing. Does history notice small things?
@@ -2750,16 +2751,16 @@ REACT_NIHAT_THERMOS,"""Çay. 1453'te çay yok. Ama ben de içiyorum. İkimiz de 
 REACT_NIHAT_SELFIE,"""Kanıt oluşturma cihazı. Fotoğrafları silmeniz gerekecek. ...Beni de çekmişsiniz.""","""Evidence-generating device. You'll have to delete those photos. ...You've photographed me as well."""
 REACT_NIHAT_COLOGNE,"""Kolonya, 18. yüzyıl. ...Ama ellerim kurudu. Bir damla.""","""Cologne, eighteenth century. ...But my hands are rather dry. Just a drop."""
 REACT_NIHAT_CUBE,"""1974, Macaristan. Beyan edilmemiş. ...Çözebilen biri var mı? Bizim büroda kimse çözemedi.""","""1974, Hungary. Undeclared. ...Has anyone actually solved it? No one at our bureau has."""
-REACT_NIKO_PHONE,"""Küçük ayna ama içinde adam var! Hey adam! Annen de mi ayna?""","""Tiny mirror with a man inside! Oi, man! Was your mother a mirror too?"""
-REACT_NIKO_LIGHTER,"""Deniz ateşi mi bu?! Cebinde mi taşıyorsun? Casus! Büyük casus!"" Tolga (kendi kendine): ""Rum ateşi... tamam, belgeselini izlemiştim.""","""Is that sea fire?! In your pocket? Spy! Big spy!"" Tolga (aside): ""Greek fire... right, I saw a documentary."""
+REACT_NIKO_PHONE,"""Venedik işi ayna. İçine adam da koymuşlar. Pahalıdır bu.""","""Venetian mirror. They're putting little men in them now. Must cost a fortune."""
+REACT_NIKO_LIGHTER,"""Deniz ateşi mi o? Cebinde? ...Söndür onu. Sonra konuşuruz."" (Tolga, kendi kendine: ""Rum ateşi... tamam, belgeselini izlemiştim."")","""Sea fire? In your pocket? ...Put it out. Then we talk."" (Tolga, aside: ""Greek fire... right, I saw a documentary."")"
 REACT_NIKO_BOOK,"""Harfler çok düz. Bunu kim yazdı, cetvel mi?""","""The letters are so straight. Who wrote this, a ruler?"""
-REACT_NIKO_CHICKPEAS,"""Nohut! Kavrulmuş! Kırk gündür kuru ekmek yiyorum. Sen... sen iyi casussun.""","""Chickpeas! Roasted! Forty days I've eaten dry bread. You... you're a good spy."""
+REACT_NIKO_CHICKPEAS,"""Nohut mu bu? Kavrulmuş... Haftalardır kuru ekmek yiyorum. ...Adam gibi casusmuşsun sen.""","""Is that chickpeas? Roasted... Weeks of dry bread, I've had. ...You're all right, for a spy."""
 REACT_NIKO_POWERBANK,"""Fırlatmak için güzel taş. Surdan atayım mı?""","""Nice throwing stone. Shall I chuck it off the wall?"""
-REACT_NIKO_TAPE,"""Surun çatlaklarını bununla kapatalım. ...Kapatmaz mı? O zaman geleceklilerin nesi var?""","""Let's patch the wall cracks with it. ...It won't? Then what good are you future people?"""
-REACT_NIKO_THERMOS,"""Sıcak ama tencere değil! Sihirli testi! İmparatora götür, madalya verir. Bana da iki madalya.""","""Hot, but not a pot! Magic jug! Take it to the Emperor, he'll give you a medal. Get me two."""
-REACT_NIKO_SELFIE,"(Niko poz verir, tavuk Sinerji de kadraja girer.) ""Tavuğu da çek. Tavuk Bizanslı.""","(Niko strikes a pose; Sinerji the chicken wanders in.) ""Get the chicken in. The chicken is Byzantine."""
-REACT_NIKO_COLOGNE,"""Limon! Venedikliler gibi kokuyorsun. Venedikliler iyidir, gemileri var. Sen gemisizsin.""","""Lemon! You smell like a Venetian. Venetians are good, they have ships. You have no ship."""
-REACT_NIKO_CUBE,"""Renkli kutu, dönüyor. Ver oynayayım. ...Kırıldı. Zaten kırıktı senin kutun.""","""Colourful box that twists. Give it here. ...It broke. Your box was already broken."""
+REACT_NIKO_TAPE,"""Yapışkan bez. Surun çatlağını kapatır mı? ...Kapatmaz. Otuz yıldır ne yamasak tutmadı.""","""Sticky cloth. Will it patch the wall? ...No. Thirty years we've been patching that wall. Nothing holds."""
+REACT_NIKO_THERMOS,"""Ateş görmeden sıcak duruyor. İmparator'a götür, sever. Belki dört aylık maaşımızı da hatırlar.""","""A jug that's hot with no fire. Take it to the Emperor. Might remind him we've not been paid in four months."""
+REACT_NIKO_SELFIE,"(Niko poz verir, tavuk Sinerji de kadraja girer.) ""Tavuğu da çek. O da nöbetçi.""","(Niko strikes a pose; Sinerji the chicken wanders in.) ""Get the chicken in. She's on watch too."""
+REACT_NIKO_COLOGNE,"""Limon. Venedikli gibi kokuyorsun. Venedikliler gemiyle gelir, gemiyle gider. Sen yayan gelmişsin.""","""Lemon. You smell like a Venetian. Venetians come by ship and leave by ship. You walked."""
+REACT_NIKO_CUBE,"""Renkli kutu, dönüyor. Ver bakayım. ...Karıştı. Ben almadan da karışıktı.""","""Coloured box. It turns. Give it here. ...It's scrambled. It was scrambled before I touched it."""
 REACT_EMPEROR_PHONE,"[Yunanca] (Uzun uzun bakar) ""Işık, ama ateş değil. Demek dünya değişecek. İyiye mi?""","[Greek] (A long look) ""Light, but not fire. So the world will change. For the better?"""
 REACT_EMPEROR_LIGHTER,"[Yunanca] ""Küçük bir ateş. Bu şehir yeterince ateş gördü, yabancı.""","[Greek] ""A small fire. This city has seen enough fire, stranger."""
 REACT_EMPEROR_BOOK,"(Kitabı kapatır ve tek kelime etmeden geri verir.) Tolga: ""...Özür dilerim.""","(He closes the book and hands it back without a word.) Tolga: ""...I'm sorry."""
@@ -3321,7 +3322,7 @@ REACT_URBAN_REPLAY_2,"Tekrar tekrar geliyorsun. Benim topum gibi: her seferinde 
 REACT_URBAN_REPLAY_3,Deja vu! Bu Macarca değil ama anladım. Bir şey tekrar ediyor.,Déjà vu! That's not Hungarian but I get it. Something is repeating.
 REACT_URBAN_REPLAY_4,"Senin yüzünü hatırlıyorum. Bir de fesini. Bir de... patlamayı? Hayır, hayır.","I remember your face. And your fez. And... an explosion? No, no."
 REACT_URBAN_REPLAY_5,Yine bant mı getirdin? Getirdin. Hep getiriyorsun. Ver bakalım.,Brought tape again? You did. You always do. Hand it over.
-REACT_NIKO_REPLAY_1,"Seni tanıyorum! Ya da tanıyacağım. Ya da tanıdım. Zaman karışık, dostum.","I know you! Or I will. Or I did. Time's a mess, friend."
+REACT_NIKO_REPLAY_1,"Seni bir yerden tanıyorum. Ya tanıdım ya tanıyacağım. Otuz yıl gece nöbeti, karışıyor.",I know you. Or I will. Thirty years of night watch; it all blurs.
 REACT_NIKO_REPLAY_2,Tavuk yine geldi mi? Geldi. Tavuk hep gelir. Sen de hep gelirsin.,Is the chicken back? It is. The chicken always comes back. So do you.
 REACT_NIKO_REPLAY_3,Bu eşyayı bana gösterdiğinde ben ne demiştim? ...Aynısını diyeyim bari.,What did I say when you showed me this before? ...I'll just say the same thing.
 REACT_NIKO_REPLAY_4,"Nöbette uyumadım, yemin ederim. Ama bu sahneyi rüyamda gördüm.","I didn't sleep on watch, I swear. But I saw this scene in a dream."
@@ -3399,14 +3400,14 @@ MG_HAG_URBAN_NOSWEET,Övgü güzel ama top övgüyle dökülmüyor. Bronzla dök
 MG_HAG_URBAN_WIN,"Al! Al, git! Ucuza verdim, kimseye söyleme. Padişah'a hiç söyleme, maaşımı keser.","Take it! Take it and go! I gave it away cheap, tell no one. Never tell the Sultan, he'll cut my pay."
 MG_HAG_URBAN_DEAL,"Anlaştık. Tarih bu gülleyi hatırlayacak. Sen de hatırlayacaksın, ağır.","Deal. History will remember this ball. So will you, it's heavy."
 MG_HAG_URBAN_LOSE,"YETER! Sen pazarlık yapmıyorsun, benim topuma hakaret ediyorsun! Topçu alanından çık!","ENOUGH! You're not haggling, you're insulting my cannon! Off my artillery ground!"
-MG_HAG_NIKO_OPEN,"Kuzenimin kayığı. Kuzenim bilmiyor. Elli akçe, bir gün. Akşama geri getir, kuzen fark etmesin.","My cousin's boat. My cousin doesn't know. Fifty akçe, one day. Bring it back by evening so he doesn't notice."
-MG_HAG_NIKO_LOW,"Dostum, bu fiyata kuzenim bile kayığa binmez. Kuzenim kendi kayığına binmez. Biraz yukarı.","Friend, at that price even my cousin wouldn't get in. My cousin won't get in his own boat. Bit higher."
-MG_HAG_NIKO_FAIR,Hmm... Olabilir. Kuzenime yarısını veririm. Ya da hiç vermem. Biraz daha çık.,Hmm... Maybe. I give my cousin half. Or none. Go up a bit more.
-MG_HAG_NIKO_SWEET,"Güzel kayık, değil mi? Ben yaptım. Yani kuzenim yaptı. Yani ben izledim. Devam!","Nice boat, right? I built it. My cousin built it. I watched. Go on!"
-MG_HAG_NIKO_NOSWEET,"Dostum, beni yeterince övdün. Artık kayığı öv. Ya da parayı.","Friend, you've praised me enough. Praise the boat now. Or the money."
-MG_HAG_NIKO_WIN,"Tamam, tamam! Al kayığı. Kuzenim sorarsa: fırtına. Fırtına oldu.","Fine, fine! Take the boat. If my cousin asks: a storm. There was a storm."
-MG_HAG_NIKO_DEAL,Anlaştık! Dostlara dost fiyatı. Bu dost fiyatıydı. Dost olduğumuz için pahalı.,Deal! Friend's price for a friend. That was the friend price. Dearer because we're friends.
-MG_HAG_NIKO_LOSE,"Yok dostum, yok. Kayık bende kalsın. Kuzenim de bende kalsın. Sen git.","No, friend, no. The boat stays with me. So does my cousin. You go."
+MG_HAG_NIKO_OPEN,"Kayık kuzenimin. Kuzen bilmiyor, bilmesin. Elli akçe, bir gün. Akşama getir, kuzen nöbetten dönmeden.","Boat's my cousin's. Cousin doesn't know. Let's keep it that way. Fifty akçe, one day. Back by evening, before he's off watch."
+MG_HAG_NIKO_LOW,O paraya küreğini bile vermem. Biraz çık.,"For that, you wouldn't get the oars. Come up a bit."
+MG_HAG_NIKO_FAIR,"Yaklaştın. Dört aydır maaş almıyorum; biraz daha çık, olur.",Getting there. I've not been paid in four months. Bit more and it's yours.
+MG_HAG_NIKO_SWEET,"Doğru, güzel kayıktır. Hiç su almaz. ...Az alır. Devam et.","True, she's a good boat. Never takes on water. ...Hardly any. Go on."
+MG_HAG_NIKO_NOSWEET,"Yeter, övdün. Lafla karın doymaz; fiyat söyle.",That's enough praise. Fine words butter no parsnips. Name a price.
+MG_HAG_NIKO_WIN,"Peki, al. Bu fiyatı kimseye söyleme. Ben de unutacağım.","All right, take it. Don't tell anyone what you paid. I'm already forgetting it."
+MG_HAG_NIKO_DEAL,Anlaştık. Bu fiyata ben de kiralardım. Akşama getir.,Deal. At that price I'd have hired it myself. Back by evening.
+MG_HAG_NIKO_LOSE,Yok. Kayık yerinde kalsın. Sen de git; nöbetim var.,No. The boat stays where it is. And you go. I've a watch to stand.
 MG_MAN_K_PIT,Çukur seç (ya da tıkla),Pick a pit (or click)
 MG_MAN_SCORE,Sen %d · Konstantinos %d,You %d · Constantine %d
 MG_MAN_YOU,Senin hazinen,Your store
@@ -3468,11 +3469,11 @@ SPK_HUNGARIAN,Macar Elçisi,Hungarian Envoy
 SPK_SARUCA,Topçubaşı Mehmed Ağa,Chief Gunner Mehmed Agha
 UI_PROMPT_EV_COUNCIL,E · Konseye kulak ver,E · Listen in on the council
 UI_PROMPT_EV_ENVOY,E · Topçuların yanına git,E · Join the gunners
-D4B_N_ECLIPSE_1,"Bak! Yukarı bak! Ay kararıyor! Eski kehaneti bilmez misin? Şehir, ay büyürken düşmez derler. Ama ay kararırsa...",Look! Look up! The moon is going dark! Don't you know the old prophecy? They say the city won't fall while the moon waxes. But if the moon goes dark...
+D4B_N_ECLIPSE_1,Dur. Yukarı bak. ...Ay kararıyor. Eskiler derdi: ay büyürken Şehir düşmez. Ama ay kararırsa...,Wait. Look up. ...The moon's going dark. The old ones used to say: the City won't fall while the moon is growing. But if it goes dark...
 D4B_T_ECLIPSE_1,Ay tutulması. Bu 22 Mayıs'ta olacaktı. Bugün 22 Nisan. Ya takvim kaydı ya da ben tarihi bir ay ileri sardım.,"A lunar eclipse. This was supposed to happen on the 22nd of May. Today is the 22nd of April. Either the calendar slipped, or I fast-forwarded history by a month."
-D4B_N_ECLIPSE_2,"Kırmızı ay! Kanlı ay! Bu gece kimse Hodegetria ikonunu taşımasın, elinden düşürür!","A red moon! A blood moon! Nobody carry the Hodegetria icon tonight, they'll drop it!"
+D4B_N_ECLIPSE_2,Panagia... Ay kızardı. Kan gibi. Bu gece Hodegetria'yı kimse taşımasın; elinden düşürür.,Panagia... The moon's gone red. Like blood. Nobody carry the Hodegetria tonight; they'll drop her.
 D4B_T_ECLIPSE_2,"Sakin ol. Karanlıkta bir şey göremiyorum, fenerimi açıyorum.","Calm down. I can't see a thing, I'm turning on my torch."
-D4B_N_ECLIPSE_3,IŞIK! Elinde ışık var! Tıpkı kubbenin üstündeki ışık gibi! İkinci alamet bu!,A LIGHT! There's light in your hand! Just like the light over the dome! That's the second omen!
+D4B_N_ECLIPSE_3,Işık... Elinde ışık var. Kubbenin üstünde de böyle bir ışık gördüler. İkinci alamet bu.,Light... There's light in your hand. They saw a light like that over the dome. That's the second omen.
 D4B_T_ECLIPSE_3,"Alamet değil, telefon. Şarj yüzde on üç, fener yiyor. Asıl alamet o.","It's not an omen, it's a phone. Thirteen percent battery, and the torch is eating it. That's the real omen."
 D11_N_ILLUM,"Ordugâh baştan başa aydınlatılmış. Meşaleler, fenerler, ateşler. Kayıtlara göre bu şenlik ateşleri 26 Mayıs'ta yakılacaktı.","The whole camp is lit up. Torches, lanterns, bonfires. According to the records, these celebration fires were meant to be lit on the 26th of May."
 D11_M_ILLUM,"(Telsiz) Bugün 25 Nisan, Nihat Bey. Bir ay erken. Anomali formunda 'sebep' kutusuna ne yazayım?","(Radio) Today is the 25th of April, Mr Nihat. A month early. What do I put in the 'cause' box on the anomaly form?"
@@ -5408,7 +5409,7 @@ D7_AWE_THEODOROS,Uçan bir memur. Arşivde bunun formu yok. Olmalı.,A flying cl
 D7_AWE_GIUSTINIANI,"Cenova'da uçan adam görmedim. Siz Cenovalı değilsiniz, değil mi?","I've never seen a flying man in Genoa. You're not Genoese, are you?"
 D7_AWE_EMPEROR,"Bir haberci mi, bir alamet mi? İkisi de bu kuşatmada eksik değil.","A messenger, or an omen? We are short of neither in this siege."
 D7_HUSEYIN_AWE_TRUTH,Gökten inen birine yalan söylenmez. Annem öyle derdi.,You don't lie to someone who came down from the sky. My mother always said so.
-D7_NIKO_AWE_TRUTH,Arkadaşımı korurdum ama... size yalan söyleyemem. Gökten indiniz.,I'd have covered for my friend but... I can't lie to you. You came down from the sky.
+D7_NIKO_AWE_TRUTH,Arkadaşımı ele vermezdim ama... size yalan söyleyemem. Gökten indiniz.,"I'd never give up a friend, but... I can't lie to you. You came down from the sky."
 D7_N_AWE_TRUTH,"Gökten inmek, sorgu tekniği olarak yönetmelikte yok. Ama işe yarıyor.",Descending from the sky isn't in the regulations as an interrogation technique. But it works.
 D7_EAVES_GUARDS,(Fısıltıyla) Fesli dostu soracaklar. Söylemeyelim.,(Whispering) They'll ask about our friend in the fez. Let's not tell.
 D7_EAVES_GUARDS_2_KITCHEN,"(Fısıltıyla) Tamam. Ama o mutfakta, Kadri'nin kazanının başında. Unutma, biz bilmiyoruz.","(Whispering) Fine. But he's in the kitchen, by Kadri's cauldron. Remember, we don't know."
@@ -5501,21 +5502,21 @@ D6B_THEO_GRANT,"[Yunanca] Misafir İzni. Normalde yedi nüsha, yedi mühür. Ama
 D6B_C_FEAST,"[Yunanca] Bugün yortu. Mühür tek, o da Theodoros'ta. Ben bugün sadece sayıyorum.","[Greek] It's a feast day. One seal only, and Theodoros has it. Today I only count."
 D6B_T_GOT_PERMIT,Tek mühür. Bizans'ta bürokrasi bile bayram yapıyor.,One seal. In Byzantium even the bureaucracy gets a holiday.
 D6B_T_GULL,Hey! O benim iznim! ...Martı. 1453'te de martı. Bazı şeyler hiç değişmiyor.,Hey! That's my permit! ...A gull. Gulls in 1453 too. Some things never change.
-D6B_N_GULL,"Casus, koş! İzinsiz yakalanırsan zindan! O martı geçen hafta bir fermanı yedi!","Run, spy! Get caught without a permit and it's the dungeon! That gull ate a decree last week!"
+D6B_N_GULL,"Martı. İznin gitti. Koş, casus; kâğıtsız yakalanırsan seni yine bana getirirler, ben de yine yazarım.","Gull. There goes your permit. Run, spy. They catch you without paper, they bring you to me, and I write you up again."
 D6B_T_CHASE_1,Gel buraya! Sigortan yok senin!,Come here! You're not insured!
 D6B_T_CHASE_2,"Martı değil bu, kanatlı memur. Belgeyi alıyor, başka masaya götürüyor.","That's no gull, it's a clerk with wings. Takes your paperwork to another desk."
 D6B_T_CHASE_3,Çamaşır ipine mi? Yok artık!,The washing line? Seriously?
 D6B_T_CHASE_4,Surlara gidiyor! Surlara gitme!,It's heading for the walls! Not the walls!
 D6B_T_CHASE_5,Masaya gidiyor! Hem de sözleşme masasına!,"It's going for the table! The contract table, of all places!"
 D6B_T_MISS,Kaçırdım! Nerede? ...Orada. Pis pis bakıyor.,Lost it! Where's it gone? ...There. Giving me a filthy look.
-D6B_N_MISS,"Sigortacı, yavaşsın! Martı sıkılıyor!","Insurance man, you're too slow! The gull's getting bored!"
+D6B_N_MISS,"Yavaşsın, casus. Martı bekliyor.","You're slow, spy. The gull's waiting."
 D6B_T_LURE,"Leblebi! Martılar leblebiye bayılır. Bunu 2026'dan biliyorum, Karaköy'den.",Chickpeas! Gulls go mad for roasted chickpeas. I know that from 2026. Karaköy.
 D6B_T_CAUGHT,Yakaladım! ...Kâğıt biraz ıslak. Mühür sağlam.,Got it! ...The paper's a bit damp. The seal's intact.
 D6B_G_GULL,O martı bu hafta üç ferman çaldı. Sizinki dördüncü. Geri alan ilk kişisiniz.,That gull has stolen three decrees this week. Yours is the fourth. You're the first to get one back.
 D6B_T_LOST,Gitti. İznim surların üstünden uçtu. Osmanlı ordugâhına. Belki orada birinin işine yarar.,Gone. My permit just flew over the walls. Into the Ottoman camp. Maybe someone over there can use it.
 D6B_GUARD_FAIL,[Yunanca] İzin? İzniniz yok. Martı mı aldı? Hepsi öyle diyor. Zindana!,[Greek] Permit? You have no permit. A gull took it? That's what they all say. To the dungeon!
 SPK_CITY_GUARD,Bizans muhafızı,Byzantine guard
-D13_N_MISSED,"Casus? Kırmızı düğme yanıp söndü, sen bakakaldın. Tamam. Kal. Zindan formunu birlikte doldururuz.",Spy? The red button flashed and you just stood there. Fine. Stay. We'll fill in the dungeon form together.
+D13_N_MISSED,"Casus? Kırmızı düğme yanıp söndü, sen bakakaldın. Olsun. Kal. Defteri beraber yazarız.",Spy? That red button flashed and you just stood there. Never mind. Stay. We'll do the ledger together.
 D13_T_MISSED_GALATA,Kaçırdım. Galata'da kaldım. En azından balık taze.,Missed it. Stuck in Galata. At least the fish is fresh.
 D8_A_CAUGHT_2_EMPTY,Yine siz. Sepetiniz boş. Bu saatte boş sepetle reyon reyon geziyorsunuz. Bu daha şüpheli. Not ediyorum. Kasaya.,"You again. Your basket's empty. At this hour, wandering the aisles with an empty basket. That's even more suspicious. I'm making a note. To the till."
 D8_A_CAUGHT_2_ANTENNA,Yine siz. Bu sepette ne var? ...Eski tip bir anten? Ne için? Not ediyorum. Kasaya.,You again. What's in the basket? ...An old-style aerial? What for? I'm making a note. To the till.
@@ -7284,22 +7285,22 @@ D2_T_STUMBLE_2_NOFEZ,"Kravatım! Kravatım gitti! ...Yok, yerinde. Ben yerimde d
 D2_HA_11_NOFEZ,Az önce yokuştan biri kaymadı mı? Redingotlu biri?,Didn't someone just slide down that hill? Someone in a frock coat?
 D2_T_ARROW_2_NOFEZ,Saçımı sıyırdı! Fes başımda olsaydı fes giderdi.,"It grazed my hair! If I'd had the fez on, the fez would be gone."
 D4A_T_OTAG_NOFEZ,'Otağ.' Padişah'ın çadırı. Oraya redingotla gidilir mi? Gidilir. Gidiyoruz.,'Imperial tent.' The Sultan's tent. Do you turn up there in a frock coat? You do. We're going.
-D4B_N_CELL_NOFEZ,"Zindan formu: adın, baban, şapkanın rengi. Şapkan yok; 'yok' yazıyorum. Sabah konuşuruz.","Dungeon form: your name, your father, the colour of your hat. You've no hat; I'm putting 'none'. We'll talk in the morning."
+D4B_N_CELL_NOFEZ,"Zindan defteri. Adın, baban, şapkanın rengi. Şapka yok, 'yok' deriz. Acelesi yok, sabah yazarız.","Dungeon ledger. Name, father, colour of hat. No hat, so 'none'. No hurry. We'll write it up in the morning."
 D5_T_ACCIDENT_CAMP_NOFEZ,"(Telsiz) Hikmet Amca? Yanlışlıkla bastım. Otağa gidiyorum. Fes cebimde; başım açık, kimse bir şey demiyor.","(Radio) Uncle Hikmet? I pressed it by accident. I'm heading to the imperial tent. The fez is in my pocket; bare head, and nobody says a thing."
 D6A_C_01_NOFEZ,Psst. Redingotlu. Buraya. Ben kimseyim. Kimse gönderdi.,Psst. Frock coat. Over here. I am nobody. Nobody sent me.
 D6A_T_ROAD_Y_NOFEZ,"Otağ yolundayım. Kaftan, redingot, başım açık. İki yüzyılı üst üste giymiş gibiyim.","On the road to the tent. Kaftan, frock coat, bare head. It's like wearing two centuries at once."
-D6B_N_CELL_MORNING_NOFEZ,"Sabah oldu, casus. Kalk. Zindan formunu ben doldurdum. Şapka rengine 'yok' yazdım. Yok da bir renktir.","Morning, spy. Up you get. I filled in your dungeon form. For hat colour I put 'none'. None is a colour too."
-D6B_N_DUNGEON_NOFEZ,Casus! Yine mi? Zindan formunu ezbere biliyorum artık. 'Şapka: yok.',Spy! Again? I know the dungeon form by heart now. 'Hat: none.'
-D6B_N_DUNGEON_FIRST,"Casus! Zindana hoş geldin. Form şöyle: adın, baban, fesinin rengi. 'Kırmızımsı' yazıyorum.","Spy! Welcome to the dungeon. The form goes: your name, your father, the colour of your fez. I'm putting 'reddish'."
-D6B_N_DUNGEON_FIRST_NOFEZ,"Casus! Zindana hoş geldin. Form şöyle: adın, baban, şapkanın rengi. Şapka: yok. Yazdım.","Spy! Welcome to the dungeon. The form goes: your name, your father, the colour of your hat. Hat: none. Written."
+D6B_N_CELL_MORNING_NOFEZ,"Sabah oldu, casus, kalk. Defteri yazdım. Şapka: yok.","Morning, spy. Up. I've done the ledger. Hat: none."
+D6B_N_DUNGEON_NOFEZ,"Yine mi, casus? Defteri ezbere biliyorum artık. Şapka: yok.","Again, spy? I know the ledger by heart now. Hat: none."
+D6B_N_DUNGEON_FIRST,"Martı mı aldı? Olur öyle. Defter şöyle: adın, baban, fesin rengi. Kırmızımsı yazıyorum.","Gull took it? Why not. Ledger goes: name, father, colour of fez. I'm putting reddish."
+D6B_N_DUNGEON_FIRST_NOFEZ,"Martı mı aldı? Olur öyle. Defter şöyle: adın, baban, şapkanın rengi. Şapka: yok.","Gull took it? Why not. Ledger goes: name, father, colour of hat. Hat: none."
 D6B_T_DUNGEON_FIRST,İlk zindanım. 1453'te bir sigortacı için bir tanesi bile fazla.,My first dungeon. Even one is a lot for an insurance man in 1453.
 D7_N_FOUND_NOFEZ,Şüpheli tespit edildi. Uzaktan. Fark etmedi. Fes: yok. Başı açık. Not ediyorum.,Suspect located. From a distance. He hasn't noticed. Fez: none. Bare-headed. Noting it.
 D7_T_CELL_NOFEZ,"(İçeriden) Niko, yine mi form? 'Şapka: yok.' Ezberledim artık.","(From inside) Niko, another form? 'Hat: none.' I know it by heart now."
 D7_T_CELL_FIRST,"(İçeriden) Niko, bu form ne? 'Fes rengi: kırmızımsı.' Bir zindanda ilk kez form dolduruyorum.","(From inside) Niko, what's this form? 'Fez colour: reddish.' First time I've filled in a form in a dungeon."
 D7_T_CELL_FIRST_NOFEZ,"(İçeriden) Niko, bu form ne? 'Şapka: yok.' Bir zindanda ilk kez form dolduruyorum.","(From inside) Niko, what's this form? 'Hat: none.' First time I've filled in a form in a dungeon."
-D7_NIKO_CELL_NOFEZ,Casus mu? Zindanda. Formunu ben doldurdum. Yine. Şapka rengine yine 'yok' yazdım.,The spy? In the dungeon. I filled in his form. Again. I put 'none' for the hat again.
-D7_NIKO_CELL_FIRST,Casus mu? Zindanda. Formunu ben doldurdum. Fes rengine 'kırmızımsı' yazdım.,The spy? In the dungeon. I filled in his form. For the fez I put 'reddish'.
-D7_NIKO_CELL_FIRST_NOFEZ,Casus mu? Zindanda. Formunu ben doldurdum. Şapka rengine 'yok' yazdım.,The spy? In the dungeon. I filled in his form. For the hat I put 'none'.
+D7_NIKO_CELL_NOFEZ,Casus mu? Zindanda. Defterini yine ben yazdım. Şapka: yine yok.,"The spy? In the dungeon. I did his ledger again. Hat: none, again."
+D7_NIKO_CELL_FIRST,Casus mu? Zindanda. Defterini ben yazdım. Fes: kırmızımsı.,The spy? In the dungeon. I did his ledger. Fez: reddish.
+D7_NIKO_CELL_FIRST_NOFEZ,Casus mu? Zindanda. Defterini ben yazdım. Şapka: yok.,The spy? In the dungeon. I did his ledger. Hat: none.
 D7_EAVES_GUARDS_NOFEZ,(Fısıltıyla) Redingotlu dostu soracaklar. Söylemeyelim.,(Whispering) They'll ask about our friend in the frock coat. Let's not tell.
 D9_P_1_ALT_NOFEZ,Başı açık sigortacı. Ordugâhta adın dilden dile dolaşıyor. Beni tanıyor musun?,The bare-headed insurance man. Your name is going round the whole camp. Do you know who I am?
 D9_P_5_NOFEZ,"Çünkü kimse sana dikkat etmiyor. Kaftanlı, redingotlu, başı açık. İki yüzyıl üst üste. Görünmezsin.","Because nobody pays you any attention. A kaftan, a frock coat, a bare head. Two centuries piled on top of each other. You're invisible."
@@ -7337,7 +7338,7 @@ D5_H_AFTER_CAMP,"...Duydun mu beni? Hiçbir şey duymadın, değil mi? İyi. Pad
 D5_H_AFTER_DISHES,"...Duydun mu beni? Hiçbir şey duymadın, değil mi? İyi. Bulaşıklara selam söyle.","...Did you hear me? You didn't hear anything, did you? Good. Say hello to the dishes."
 D5_H_AFTER_CELL,"...Duydun mu beni? Hiçbir şey duymadın, değil mi? İyi. Gardiyana selam söyle.","...Did you hear me? You didn't hear anything, did you? Good. Say hello to the jailer."
 D5_H_AFTER_CITY,"...Duydun mu beni? Hiçbir şey duymadın, değil mi? İyi. Nöbetçiye selam söyle.","...Did you hear me? You didn't hear anything, did you? Good. Say hello to the guard."
-D6B_NK_ROOF,(Aşağıdan bağırır) Casus! O çatının tapusu sende mi? İzinsiz çatı gezisi için form var. ...Ben yazdım.,(Shouting from below) Spy! Do you hold the deed to that roof? There's a form for unauthorised roof tours. ...I wrote it.
+D6B_NK_ROOF,"(Aşağıdan bağırır) Casus, in oradan. Kiremit kırılırsa onu da bana yazarlar.","(Shouting from below) Spy, get down. Break a tile and they'll put that on me too."
 D7_N_CANNON_PLAIN,Çatlak. Kimse sarmamış. Belgeselde de çatlıyordu. Burada bir sapma yok; not ediyorum ki bir sayfa boş kalmasın.,A crack. Nobody has wrapped it. It cracked in the documentary too. No deviation here; I'm noting it so a page doesn't go blank.
 D7_N_GOAT_PLAIN,Keçi. Formu yok. Bana bakıyor. Tuhaf.,A goat. No form. It's staring at me. Odd.
 D7_S_LETTER_NONE,"Anneme mektup yazacaktım. Yazı bilen kimse yok. Bu ordugâhta herkes kılıç biliyor, kalem bilen yok.",I was going to write to my mother. Nobody here can write. Everyone in this camp knows a sword; nobody knows a pen.
@@ -7363,7 +7364,7 @@ D10L_T_COLLAPSE_2B,Kim... kimsiniz? Kalemim yok.,Who... who are you? I haven't g
 D10L_D_SUPPORT_PLAIN,(Dikmeleri çakar) Tamam. Tavan şimdi Macar topu kadar sağlam. Yani... dua etsek mi?,(Hammers in the posts) Right. The roof's as solid as a Hungarian cannon now. Which is to say... shall we pray?
 D11_N_KNOWN,"Yine karşılaştık, Bay Tolga. En son arşivdeydik. Bu sefer resmî konuşacağım.","We meet again, Mr Tolga. Last time it was the archive. This time I shall be formal."
 D11_NK_00,(Yamuk sarılmış bir sarık; altından kızıl bir Bizans pelerini görünüyor) Kimse beni tanımadı. Sarık her kapıyı açıyor.,(A crookedly wound turban; a red Byzantine cloak shows underneath) Nobody recognised me. A turban opens every door.
-D11_NK_01_HEN,"CASUS! Dostum! Kimse dokunamaz! Tavuk, SALDIR!","SPY! My friend! No one touches him! Chicken, ATTACK!"
+D11_NK_01_HEN,"Dur! O benim casusum. Kimse dokunmaz. ...Tavuk, ela!","Hold it! That's my spy. Nobody touches him. ...Chicken, ela!"
 D12_F_01_HEYET,Heyetimle surların içine giren Frenk. Lütfi her şeyi anlattı; anlatabildiği kadarını. Ya çok uzaktan geldin ya da çok ileriden. Burada soruları ben sorarım. Cevapları da dinlerim. Dikkatle.,"The Frank who went inside the walls with my embassy. Lütfi told me everything; as much as he could manage. Either you came from very far away, or from very far ahead. Here, I ask the questions. And I listen to the answers. Carefully."
 D12_END_12_1_3_NONAME,"Geleceği bilen adam onu söylemez. Söylerse gelecek olmaktan çıkar, dedikodu olur. Hediyelerini al, yabancı. Evine dön.","A man who knows the future doesn't tell it. If he does, it stops being the future and becomes gossip. Take your gifts, stranger. Go home."
 D12_END_12_4_3_NONAME,"Sizin zamanınızda tamirciler kaç yaşında? ...Git, yabancı. Tam vaktine.","How old are the repairmen in your time? ...Go, stranger. To exactly the right time."
@@ -7657,7 +7658,9 @@ D24_NK_01,Tolga! Nöbeti bir saatliğine devrettim. Yanında yürürüm; rüzgâ
 D24_T_NK_01,"Niko. İyi ki geldin. Bugün espri yok, söz verdim; sen de beni güldürme.","Niko. Glad you came. No jokes today, I promised; so don't make me laugh."
 D24_NK_GUST,Tuttum! Bırakma!,Got it! Don't let go!
 D24_NK_KID,Kapı kanadını saçağın önüne yatırıyorum! Su geç gelir. Sen çocuğu getir!,I'm laying a door across the porch! It'll hold the water back. You fetch the boy!
-D24_NK_SAVED,"Çocuk kuru. Sen sırılsıklamsın, ben de. Ama çocuk kuru.","The boy's dry. You're soaked, and so am I. But the boy's dry."
+D24_NK_SAVED,Çocuk kuru. Otuz yıldır bu surdayım; böyle gün az gördüm.,The boy's dry. Thirty years on this wall. Not many days like this one.
+D24_NK_VEDA,"Ben anneme, Petrion'a. Bu da geçer, Tolga. …Geçer.","Petrion. My mother's. It'll blow over, Tolga. …It'll blow over."
+D24_NK_VEDA_LATE,"Ben anneme, Petrion'a. …Geçer.",Petrion. My mother's. …It'll blow over.
 D24_NK_LATE,"Kaçtı! ...Yukarı, kuru tarafa koştu. Kurtulur, Tolga. Kurtulur.","He ran! ...Uphill, to the dry side. He'll make it, Tolga. He'll make it."
 D20O_U_TAPED,Tık... Dur. Tutmuş! (Namlunun belindeki gri şeride vurur.) Senin o yapışkan şeridin! Hâlâ yerinde. Tunç sızlandı ama şerit bırakmadı.,"Tick... Wait. It held! (He slaps the grey strip round the barrel's waist.) That sticky strip of yours! Still there. The bronze complained, but the strip didn't let go."
 UI_C20O_TAPE,(Çatlağı koli bandıyla sar),(Wrap the crack with duct tape)
@@ -9710,7 +9713,7 @@ D9_T_GOAL_NONE,Bugün bir şey olacak. Kimse bana bir şey teklif etmiyor. Sigor
 D9_H2_URBAN,"Evlât, sen işine git. Ben Urban'ın atölyesine gidiyorum; o topla bir pencere açılır belki. Keçi de benimle geliyor. Ona sormadım.","Off you go to your job, son. I'm heading to Urban's workshop; maybe that gun can open a window. The goat's coming with me. I didn't ask it."
 D11_N_FIRED_LAST,(Şapkasını düzeltir) Yeni model gelene kadar bu dosya bende. Son vaka. Kuşatma bitmeden kimse fark etmez.,"(Straightens his hat) Until the new model arrives, this file is mine. Last case. Nobody will notice before the siege is over."
 D8Y_NIKO_SINERJI,Tavuk da mı geliyor? ...İyi. Bu şehirden sınır dışı edilen bir tek sen değilsin.,The chicken's coming too? ...Good. You're not the only one this city is getting rid of.
-D8Y_NIKO_SINERJI_N,"Tavuk da mı geliyor? ...Peki. Sultan'a bir tavuk da götür, eli boş geldi demesinler.",The chicken's coming too? ...Fine. Take the Sultan a chicken as well. Nobody can say you came empty-handed.
+D8Y_NIKO_SINERJI_N,Tavuk da mı geliyor? ...Olur. Sultan'ın kapısına eli boş gitme bari.,The chicken's coming too? ...Why not. Don't turn up at the Sultan's door empty-handed.
 D8Y_HUSEYIN_WHO,Bana mı soruyorsun? Ben Hüseyin'im. Sabahtan beri öyle.,Are you asking me? I'm Hüseyin. Have been all morning.
 D8Y_HASAN_WHO,"Sana değil, ona! ...Hem dün akşam Hasan sendin.","Not you, him! ...And last night you were Hasan."
 D8Y_T_DEP_NOFEZ,"Mektup yok, izin yok, fes bile yok. Elimde hiçbir şey yok.","No letter, no permit, not even a fez. I've got nothing."
