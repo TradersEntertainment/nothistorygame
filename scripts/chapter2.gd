@@ -36,6 +36,9 @@ var _edge_said := false
 var _after_warranty_said := false
 var _stumble_i := 0
 var _outcome := ""
+## Yakalayan askerlerin durduğu yer (oyuncuya göre: ileri, yan) ve bkz. _seize
+const SEIZE_AHEAD := 1.0
+const SEIZE_SIDE := 0.55
 var _arrow_hits := 0
 var _shore_props: Array = []
 var _priority_until := 0.0   # önemli telsiz satırı (garanti) bitene dek tökezleme repliği onu kesmez
@@ -1171,10 +1174,13 @@ func _seize(guards: Array[Node3D], at: Vector3) -> void:
 	fwd.y = 0.0
 	fwd = fwd.normalized()
 	var side := Vector3(-fwd.z, 0.0, fwd.x)
-	# Kol boyuna gelirler (tur 4: oyuncunun iki yanında yarım adım geride, 1,05 m açıkta: yüzleri kadrajın kenarında, gövdeleri kameranın yakın düzlemine girmez; gövde öne eğilip kollar bileklere uzanır): ayakları her adımda kuma/çimene basar (eskiden doğrusal
-	# tween eğimde havada yürütüyordu, bazen 6 m'de kalıp boşluğa uzanıyorlardı)
+	# Kol boyuna gelirler: ayakları her adımda kuma/çimene basar (eskiden doğrusal tween eğimde havada yürütüyordu, bazen
+	# 6 m'de kalıp boşluğa uzanıyorlardı). Oyuncunun önünde, 1 m ileride ve 0,55 m yanda dururlar: yüzleri kadrajda,
+	# yolları oyuncuya varmadan biter. Tur 4'te oyuncunun hizasında (0,3 m önde, 1,05 m yanda) duruyorlardı; tutarken
+	# 0,4 rad eğilince başları kameranın 15 cm önüne ve 45 cm yanına, omuzları kameranın arkasına geçiyordu: fragmanda
+	# askerler kameranın içinden geçiyordu (sonuç 2.1 ve 2.4; denetim _seize_audit).
 	for i in guards.size():
-		Stage.walk_on_ground(guards[i], at + fwd * 0.3 + side * (-1.05 if i == 0 else 1.05), _ground_y, 3.2, at + Vector3(0, 1.4, 0))
+		Stage.walk_on_ground(guards[i], at + fwd * SEIZE_AHEAD + side * (-SEIZE_SIDE if i == 0 else SEIZE_SIDE), _ground_y, 3.2, at + Vector3(0, 1.4, 0))
 	await Handover.wait(self, 0.05 if Stage.fast() else 0.3)
 
 
@@ -1195,8 +1201,10 @@ func _seize_done(guards: Array[Node3D]) -> void:
 ## İki asker Tolga'yı iki bileğinden tutar: Tolga'nın sol eli de görünür (yarı kalkık), sağdaki asker sağ bileği,
 ## soldaki sol bileği kavrar; askerler öne eğilir, eller bileklerin üstünde her karede yerinde kalır (Stage.grip_hold).
 ## Eskiden hedef kameranın önünde boşluktaydı: kol boşluğa uzanıyor, yumruk havada kalıyordu.
-func _grab_arms(guards: Array[Node3D], hold: float, lean := 0.4) -> void:
+func _grab_arms(guards: Array[Node3D], hold: float, lean := 0.22) -> void:
 	player.free_hold = Vector3(-0.24, -0.2, -0.45)
+	if GameState.autotest:
+		_seize_audit(guards, hold)
 	for i in mini(2, guards.size()):
 		var g := guards[i]
 		if g is Soldier:
@@ -1205,6 +1213,34 @@ func _grab_arms(guards: Array[Node3D], hold: float, lean := 0.4) -> void:
 		var hand: Node3D = player.free_hand if i == 0 else player.hand
 		if hand:
 			Stage.grip_hold(g, hand, [Vector3(0, 0.035, 0.07)], hold + 4.0, lean)
+
+
+## Yakalayan askerin gövdesi kameranın içinden ya da yanından geçiyor mu (test). Baş, omuzlar ve dirsekler kameranın
+## yerelinde: kameranın 25 cm önünden geride ve görüş ekseninden 0,8 m'den yakınsa asker kameranın içinde/yanındadır.
+## Unclip.walk_audit (WALKTHRU) bunu göremez: yalnız görünen StaticBody3D'lere ışın atar (oyuncu CharacterBody3D) ve
+## testte (PACE dışı) askerler yürümeden varır (Stage.fast); tutarken öne eğilme de yürüme sayılmaz.
+func _seize_audit(guards: Array[Node3D], seconds: float) -> void:
+	var t := 0.0
+	while t < seconds:
+		await get_tree().process_frame
+		t += get_process_delta_time()
+		if not is_instance_valid(player) or player.camera == null:
+			return
+		for g in guards:
+			if not is_instance_valid(g):
+				continue
+			var rg := Handover.rig_of(g)
+			if rg == null:
+				continue
+			for part: Node3D in [rg.head, rg.arm_l, rg.arm_r, rg.elbow_l, rg.elbow_r]:
+				if part == null:
+					continue
+				var lp := player.camera.to_local(part.global_position)
+				if lp.z > -0.25 and Vector2(lp.x, lp.y).length() < 0.8:
+					print("WALKTHRU scene=chapter2.tscn who=%s at=%s by=player/camera part=%s local=%s src=chapter2.gd:_seize" % [
+						g.get_meta("speaker", g.name), part.global_position.snapped(Vector3.ONE * 0.1), part.name,
+						lp.snapped(Vector3.ONE * 0.01)])
+					return
 
 
 ## Kızaktan uzağa, kıyı boyunca bakar (kadırga arkada kalır).
