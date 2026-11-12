@@ -1,13 +1,42 @@
-# Gezi denetimi — bölge `ordugah-kanat` (İLK GÖNDERİM (kısmi))
+# Gezi denetimi — bölge `ordugah-kanat` (SON RAPOR)
+
+Denetçi: bağımsız gezgin. Taban: `wip/ist2-gezi-taban`. Oyun kodu değiştirilmedi (`git status`: yalnız `tests/_ist/gezi_ordugah-kanat.*` ve bu klasör). Not: Nisan sonu görünümü (`IstOrdugah.tarih = 428`).
 
 ## 1. Bölge, sayılar
 
-**Bölge (gerçek metre, doğu, kuzey):** Anadolu kanadı (−6 100…−5 200, −1 700…+600), Rumeli kanadı (−5 400…−3 900, +1 900…+3 600), başıbozuk şeridi (−6 600…−4 500, −1 500…+3 900), Zağanos yakası (−1 100…+900, +2 700…+3 700), fıçı köprüsü (−3 161, +3 926). Köşeler: GB (−6 600, −1 700), GD (−4 800, −1 700), KD (−3 900 / +900 Zağanos, +3 900), KB (−6 600, +3 900). Ordugâhın merkezi (otağ, Şahi, yeniçeri) bu bölgenin dışında.
+**Bölge sınırı (gerçek metre, doğu, kuzey):** Anadolu kanadı (−6 100…−5 200, −1 700…+600), Rumeli kanadı (−5 400…−3 900, +1 900…+3 600), başıbozuk şeridi (−6 600…−4 500, −1 500…+3 900), ağıllar/at bağları (Anadolu −6 568,−391 ve −5 666,264; Rumeli −3 993,3 295 ve −4 521,3 904), Zağanos yakası (−1 100…+900, +2 700…+3 700), fıçı köprüsü (−3 161, +3 926), kızak yolu (+123,2 091 → −1 080,2 461). **Dört köşe:** GB (−6 600, −1 800) · GD (−4 800, −1 800) · KD (+900, +3 900) · KB (−6 600, +3 900). Merkez (otağ, Şahi, yeniçeri, pazar, Halil Paşa) bu bölgenin dışında; yalnız komşu olarak karelere girdi.
 
-**Yöntem notu (dürüst):** Alan çok büyük (≈ 2,6 km × 5,6 km + Zağanos). Yazılımla çizimde kare ≈ 8–10 sn olduğu için 90 m ızgara yerine **hücre merkezi ızgarası (yaklaşık 230–300 m)** ve her ünlü yapı/oba için 3 yönlü yakın kare kullanıldı. Dolayısıyla "karış karış" değil, **örneklemeli** bir gezi; her obaya girildi (çevresinden üç yön).
+**Çekilen / bakılan kare:**
+
+| küme | içerik | çekilen | bakılan |
+|---|---|---|---|
+| t0 | ilk deneme | 3 | 3 (tam boy) |
+| k1 | 30 ünlü yapı/oba × 3 yön (batı→doğu, kuzey→güney, doğu→batı; 12–16 m uzaktan) | 90 | 90 (10 paftanın tamamı) |
+| k2 | hücre merkezi ızgarası, 39 düğüm × 4 yön (K, D, G, B) | 156 | 156 (13 paftanın tamamı) |
+| k3 | havadan 20 m + 60 m (−30°), 300 m'de bir; 5 tam tepeden; fıçı köprüsü | 59 | 59 (7 pafta) |
+| k4 | gece, her 3. düğüm × 2 yön | 26 | 26 (3 pafta) |
+| k5 | canlı 5 m / 60 m, olay yerleri, fıçı köprüsü, Marmara ucu, Haliç ucu, kızak | 30 | 30 (4 pafta) |
+| k6 | gece ocak/mutfak/havadan | 10 | 10 (1 pafta) |
+| k7 | tek numaralı hücreler (2 yön) | 60 | bkz. aşağı |
+| **toplam** | | **434** | **tümü 3×3 paftada incelendi; 19 kare ayrıca tam boy açıldı** |
+
+Tam boy açılan kareler (kanıt): t0 ×3, k1/agil_anadolu_c, kule_1300_b, esir_cadiri_c, kule_2300_c, k2/g_anadolu_4_1_D, g_anadolu_8_0_D, g_rumeli_8_0_B, g_basibozuk_17_0_G, g_zaganos_2_0_D, g_zaganos_0_0_D (+ hilalli bayrak 500 % kırpımı). Kalanlar 3×3 paftada (426×240) görüldü; paftada bile seçilen ayrıntı rapora yazıldı, seçilemeyen yazılmadı.
+
+**Yürüyüş (gerçek `player.gd`, `move_mode=script`, 3,2 m/sn):** 7 güzergâh, toplam **3 695 dünya m ≈ 10,6 km gerçek** (1 426+1 983 [rota 1, iki koşu], 1 234, 1 546, 973, 1 803, 1 706, 1 315 gerçek m; dünya ölçeği S = 0,35). Olay sayımı: **takılma 72** (hepsi çadır/çit/bez katısı; 28'i tek noktada Karaca Paşa çadırı kapalı cebi), **yüksekte (çatıda) 23**, **düşme 0**, görünmez duvar şüphesi 2 (ışın çarpmıyor), boşluğa basma 0, çıkılamayan basamak 0. Ham: `ham/yuru*.log`.
+
+**Performans (RINFO, yer bütçesi 1 200 çizim / 2,5 M üçgen):** 177 yer karesinden **104'ü bütçeyi aşıyor** (ortalama 2,78 M üçgen, 810 çizim; tepe 5,99 M üçgen ahir_rumeli_b, 1 839 çizim). Ham: `ham/rinfo_k1_k2.txt`. Kurulumda > 50 ms kare ölçülmedi (sur4_kare bütün kuyruğu kare beklemeden boşaltıyor: ölçüm yöntemi bunu göstermez).
+
+**Yöntem notu (dürüst):** Alan çok büyük (≈ 1,8 km × 5,7 km + Zağanos). Yazılımla çizimde kare ≈ 7–10 sn olduğu için *90 m'lik ızgara yerine* **hücre merkezi ızgarası (~230–300 m)** ve her ünlü yapı/oba için 3 yönlü yakın kare kullanıldı; havadan 120 m yerine **300 m**'de bir. Yani **örneklemeli gezi**, "karış karış" değil. Her ünlü yapıya (mutfak, mescit, ağıl, ahır, batarya, mancınık, kule, paşa çadırları, esir, tercüman, dökümhane, barutçu, pazar, fıçı köprüsü, kızak) en az bir kez girildi/çevresinden üç yön; 8 karelik çevre dolaşma yapılmadı.
+
+
+## 2. GENEL NOT: 3 / 10
+
+Sahibi bu bölgeyi gezse **önce ahır ve ağılda kutu hayvanlara** (at, deve, öküz, koyun, köpek hâlâ kutu: 'öküzleri kare kare mi yapmışsın' sözü bire bir geçerli) **sonra ayağının altındaki düz bej çokgen yamalara, damgalı parlak yeşil çimene ve elmas ağaçlara** kızar. **Fıçı köprüsü Haliç tabanında, suyun 6 m altında (hiç görünmüyor)**, çadır kanadının uçları (güneyde Marmara'ya kadar, batıda başıbozuk kuşağının ötesi, Zağanos) çıplak çayır ve gece ordugâh karanlık: 'kamp ateşlerine vs' sorusunun karşılığı yok. Havadan çadır denizi yoğun ve mescit/pazar/dökümhane/mutfak gibi sahnelerde yaşam var; ama tek yüzlü, fesli, uzun börklü kopya insanlar ve kutu hayvanlar yüzünden 'canlı ordugâh' yerine oyuncak ordugâh okunuyor.
 
 
 ## 3. BULGU TABLOSU
+
+Önem: 1 kritik, 2 belirgin, 3 küçük. 'BİLİNİYOR' = görev dosyasındaki bilinen işler (yine de yeri yazıldı).
 
 | no | tür | önem | yer adı | doğu, kuzey | kare dosyası | ne görünüyor | kaynak | öneri |
 |---|---|---|---|---|---|---|---|---|
@@ -45,10 +74,10 @@
 | 32 | GÖRSEL | 2 | Rumeli kanadı, çadır kapı perdesi | -4206, 3511 | kare/k2_g_rumeli_6_0_D.jpg | Kapı perdesi eğik düz kalas gibi duruyor, çadırın dışına 'yaslanmış'; siyah dikdörtgen kapı deliği; içi siyah | ordugah_kit.gd:tent_mesh (kapı kanadı) | Kapı kanadı kıvrımlı kumaş, bağlı; iç aydınlık |
 | 33 | GÖRSEL | 2 | Rumeli kanadı, çatma çadırlar | -4406, 2666 | kare/k2_g_rumeli_6_1_D.jpg | Koyu kahverengi üçgen prizma çadır (kutu+levha): taslak karton ev gibi; yanında gri sekizgen; ölçek: kapı deliği boyutu insana göre çok küçük/yok | ordugah_kit.gd:tent_mesh('cati') | Çatma çadırlara direk ve gergi |
 | 34 | MANTIK | 2 | Rumeli kanadı, çadır içi/iç görüş | -4406, 2666 | kare/k2_g_rumeli_4_0_B.jpg | Dört yönde de tamamen koyu lacivert ekran, sadece birkaç mavi çizgi: kamera (çadır içi/ağıl kabuğu) içinde; oyuncu yürüyerek girebilir ve görüş kaybolur | ordugah_otag/ordugah_yerleske bez_katı kabuk (düğüm: IstOrdugah/…/bez_katı) | Çadır içine girişte iç aydınlatma |
-| 35 | MANTIK | 2 | Rumeli kanadı, çadır çatıları | -4190, 2870 | ham/yuru3.log+yuru7.log | Oyuncu çatma çadırın üstüne çıkabiliyor: 3 m yükseklikte (zemin 6,0; oyuncu 9,2) durup yürüyor, çatıda eğik yüzeyde; 18 ardışık 'yuksekte' olayı | düğüm: IstOrdugah/rumeli_8_1_lod0/cadirlar_kati (katı koni) | Çatı çarpışmasını dik/pürüzsüz koni yap ya da oyuncu kaydırıcı |
-| 36 | MANTIK | 1 | Rumeli kanadı, Karaca Paşa çadırı | -4606, 2929 | ham/yuru7.log | Oyuncu paşa çadırına girince kapalı cebe düşüyor: aynı noktada 28 ardışık takılma (-4606,2929), 3 m ileri ışınlanınca da geri dönüyor | düğüm: IstOrdugah/karaca_pasa_lod0/bez_katı (build_pasa) | Paşa çadırı kapısından geçilebilir, iç çarpışma kaldır/ayır |
-| 37 | MANTIK | 3 | Başıbozuk/Rumeli sınırı, esir çadırı | -5490, 2471 | ham/yuru4.log | Oyuncu yürürken görünmez duvara takılıyor: ileriye 1,2 m ışın hiçbir şeye çarpmıyor ama ilerlenmiyor | düğüm: IstOrdugah/esir_cadiri (build_esir: kazık çit katısı?) | Çarpışmayı görünür çite hizala |
-| 38 | MANTIK | 3 | Zağanos yakası | -324, 3126 | ham/yuru6.log | Oyuncu yürürken Zağanos sahasında görünmez duvara takılıyor (ışın yok) | düğüm adı bilinmiyor | Çarpışma kabuğunu kontrol et |
+| 35 | MANTIK | 2 | Rumeli kanadı, çadır çatıları | -4190, 2870 | kare/k5_o_cati_8_1.jpg + ham/yuru3.log,yuru7.log | Oyuncu çatma çadırın üstüne çıkabiliyor: 3 m yükseklikte (zemin 6,0; oyuncu 9,2) durup yürüyor, çatıda eğik yüzeyde; 18 ardışık 'yuksekte' olayı | düğüm: IstOrdugah/rumeli_8_1_lod0/cadirlar_kati (katı koni) | Çatı çarpışmasını dik/pürüzsüz koni yap ya da oyuncu kaydırıcı |
+| 36 | MANTIK | 1 | Rumeli kanadı, Karaca Paşa çadırı | -4606, 2929 | kare/k5_o_karaca_pasa_giris.jpg + ham/yuru7.log | Oyuncu paşa çadırına girince kapalı cebe düşüyor: aynı noktada 28 ardışık takılma (-4606,2929), 3 m ileri ışınlanınca da geri dönüyor | düğüm: IstOrdugah/karaca_pasa_lod0/bez_katı (build_pasa) | Paşa çadırı kapısından geçilebilir, iç çarpışma kaldır/ayır |
+| 37 | MANTIK | 3 | Başıbozuk/Rumeli sınırı, esir çadırı | -5490, 2471 | kare/k5_o_esir_gorunmez_duvar.jpg + ham/yuru4.log | Oyuncu yürürken görünmez duvara takılıyor: ileriye 1,2 m ışın hiçbir şeye çarpmıyor ama ilerlenmiyor | düğüm: IstOrdugah/esir_cadiri (build_esir: kazık çit katısı?) | Çarpışmayı görünür çite hizala |
+| 38 | MANTIK | 3 | Zağanos yakası | -324, 3126 | kare/k5_o_zaganos_gorunmez.jpg + ham/yuru6.log | Oyuncu yürürken Zağanos sahasında görünmez duvara takılıyor (ışın yok) | düğüm adı bilinmiyor | Çarpışma kabuğunu kontrol et |
 | 39 | MANTIK | 2 | Anadolu/Rumeli çadır sıraları, genel | -5650, -400 | kare/k2_g_anadolu_4_0_D.jpg | Çadırlar katı ve kapıları içeri açılmıyor: 7 güzergâhta 72 takılma (hepsi çadır gövdesi); sokak aralığı dar, doğrudan yürünce çadıra çarpılıyor | düğüm: IstOrdugah/<hücre>_lod0/cadirlar_kati | Çadır arası yürüme yolu 3-5 m, çadır sırasını yola dik kapıyla |
 | 40 | PERFORMANS | 2 | Ordugâh yer karelerinin tamamı (Rumeli obaları, ahır, mescit, paşa çadırları) | -3993, 3295 | kare/k1_ahir_rumeli_b.jpg | Yer bütçesi 1 200 çizim / 2,5 M üçgen: 177 kareden 104'ü aşıyor (ortalama 2,78 M üçgen; tepe 5,99 M üçgen ve 1 839 çizim ahir_rumeli_b; 1 781 çizim dokumhane_a; 5,23 M mescit_rumeli_b); yürürken takılma riski | ordugah_oba.gd/ordugah_kanat.gd (lod0 çadır kümeleri) — RINFO: ham/rinfo_k1_k2.txt | Rumeli/Anadolu obalarında lod0 yarıçapını düşür, çadır meshlerini MultiMesh'e al |
 | 41 | ZEMİN | 2 | Başıbozuk şeridi, Rumeli ağılı yanı | -4521, 3774 | kare/k2_g_basibozuk_17_0_G.jpg | Çim üzerindeki siyah kısa çizgi 'damga'ları dümdüz sıralar hâlinde yinelenen bir desen oluşturuyor (cetvelle dizilmiş), ok izi/çizik değil mühür gibi | IstDunya arazi gölgelendiricisi detay dokusu (zemin damgası; kare adından: IstDunya/Arazi*) | Damgaları rastgele yönlü, seyrek, topraklı yap ya da sil |
@@ -73,15 +102,66 @@
 | 60 | KUTU | 2 | Haliç kuzey yakası, uzak evler | -3800, 3600 | kare/k3_h_halic_ordugah_60m.jpg | Çayırda dağınık beyaz KÜP evler (pencere kapı yok) ve kırmızı levha çatı; çatı eğimsiz | dunya.gd 'ev' türü (karşı kıyı) / evler.gd uzak ev | Küp ev yerine taş kulübe, eğimli kiremit çatı |
 | 61 | GÖRSEL | 2 | Haliç ordugâh yakası | -3300, 3800 | kare/k3_h_fici_60m.jpg | Fıçı köprüsünün olması gereken Haliç üst ucunda 60 m'den sadece su ve sağda kıyıya yaslı sur/kule ucu görünüyor; köprü (>1000 fıçı) ve ona inen yol yok | ordugah.gd:_fici_yeri + ordugah_donanma.gd:build_fici_kopru | k5 karelerine bak (f_fici_kopru_*) |
 | 62 | BOŞLUK | 3 | Anadolu/Rumeli ocak başları, havadan | -5000, -600 | kare/k3_h_anadolu_-600_20m.jpg | Ocak/kazan çukurları siyah halka; içinde alev, kor ya da duman yok: dumansız ateşsiz ocak; 60 m'de hiç duman sütunu seçilmiyor (§7a-5) | ordugah_oba.gd:build (ocak halkası) ve Flame.add (BİLİNİYOR: ORDUGÂH-5) | Her ocağa alev + ince duman sütunu |
+| 63 | BOŞLUK | 1 | Anadolu kanadı, gece | -5719, -966 | kare/k4_n_anadolu_2_1_D.jpg | Gece obanın içi kapkara: 26 gece karesinde toplam yalnız 4-5 küçük alev seçiliyor; çadır başına 1/5 ateş hedefi (§7a-8) tutmuyor, çadır denizi gece 'karanlık levha'; sahibin 'kamp ateşlerine vs' sözü | ordugah_oba.gd:build (ocak) + K.gece/Flame.add (BİLİNİYOR: ORDUGÂH-5) | Her oba ortasında büyük ocak ışığı (ışık+alev+duman), çadır başı meşale |
+| 64 | GÖRSEL | 2 | Anadolu kanadı, gece, beyaz çadırlar | -5559, 22 | kare/k4_n_anadolu_6_0_D.jpg | Geceleyin açık renkli çadırlar karanlıkta 'kendinden ışıklı' gri-beyaz piramit gibi parlıyor (koyu çevre, parlak yüz) ve yanlarındaki tek ateş çok küçük | ordugah_kit.gd:tent_mesh gece malzemesi (K.gece) | Çadır rengini geceye karart, yalnız ateş yüzünü ışıklandır |
+| 65 | GÖRSEL | 2 | Zağanos yakası, gece, küp ev | -940, 2878 | kare/k4_n_zaganos_0_0_D.jpg | Gece çıplak beyaz küp ev menekşe-mavi parlıyor (gövde tek ton, gölgesiz), çevresi simsiyah; kutu ev gece de kutu | evler.gd/dunya.gd 'ev' (gece malzemesi) | Ev dokusu ve gece karartması |
+| 66 | KUTU | 3 | Başıbozuk şeridi, gece, köpek/hayvan | -6185, 1574 | kare/k4_n_basibozuk_9_0_D.jpg | Köşede krem kutu hayvan (gövde kutu + kutu baş): gece de silüet 'sandık' | ordugah_oba.gd:_kopek / ordugah_yapi2.gd:_at | Hayvan ağını yuvarlak yap |
+| 67 | GÖRSEL | 3 | Zağanos yakası, gece yol | -100, 2878 | kare/k4_n_zaganos_1_0_D.jpg | Gece ana yol karanlıkta siyah dikdörtgen şerit: kenarı bıçak, bitişik çayırdan renk atlaması; hiçbir lamba/ateş yok | ordugah_oba.gd:_serit + gece gölgelendirici | Gece yol ve çim aynı dokuyla karışsın, kenarda ateş |
+| 68 | GÖRSEL | 1 | Haliç fıçı köprüsü | -3161, 3926 | kare/k5_f_fici_kopru_ust.jpg | Köprü karelerde YOK: 60 m tepeden ve 12 m yandan, tam plan noktasında yalnız su var. Sondayla düğüm bulundu (IstOrdugah/fici_kopru_lod0) ama y = −5,98 m: köprü Haliç tabanına, suyun 6 m altına kurulmuş; 1000+ fıçı hiç görünmüyor | scripts/world/ist/ordugah_yonetici.gd:42 (it["y"] = IstGeo.h(p.x,p.y); liman/kızak/fıçı için maxf(h, 0) yok; sehir.gd:1600 liman kuralı ordugâh yöneticisinde yok); ordugah_donanma.gd:build_fici_kopru | it["y"] = maxf(IstGeo.h(...), 0.0) ('liman'/'iz' türleri için); fıçıları suya otur |
+| 69 | BOŞLUK | 1 | Anadolu kanadı güney ucu (Marmara kıyısına kadar) | -5600, -1750 | kare/k5_s_marmara_1.jpg | Çadır kanadı güneyde bitiyor: Marmara'ya kadar ufka çıplak çayır; tek tük piramit çadır ve 3-4 ağaç, hiç insan/ateş/ağıl yok; sahibin 'boş alan istemiyorum' sözü, ordugâh tanımı 'Marmara'ya kadar' | ordugah.gd:plan anadolu hücreleri u 120–1250 (u<120 boş), batarya_01 u 260 ötesi | Güneyi Marmara kıyısına kadar oba/gözcü kulesi/ağıl/at bağıyla doldur |
+| 70 | BOŞLUK | 2 | Anadolu kanadı güney ucu, havadan | -5500, -1800 | kare/k5_s_marmara_hava.jpg | Havadan: sur köşesinin dışı, kıyıya kadar çıplak sarı-yeşil çayır, dağınık sarı piramit ve ince ot; ordugâh güney ucu yok, çadırlar aniden bitiyor | ordugah.gd:plan _cells anadolu | Aynı |
+| 71 | ZEMİN | 2 | Anadolu güney ucu, tuğla yama | -5900, -1750 | kare/k5_s_marmara_3.jpg | Çayırın ortasında 60 m'yi aşan düz kahverengi 'tuğla döşeme' çokgen yama: kenarları cetvelle kesik, doku büyük tuğla; ne olduğu belli değil (batarya zemini? hendek?) | ordugah_cephe.gd / ordugah_yapi.gd:build_batarya zemin yaması (kaynak kesin değil) | Yamayı toprak/çalı karışımına çevir |
+| 72 | KUTU | 1 | Anadolu at/deve bağı, 5 m | -5658, 264 | kare/k5_y_ahir_anadolu_5m.jpg | 5 m'den: at gövde kutu, boyun kutu, bacaklar ince kutu; kırmızı semer örtüsü düz levha; 'sandık atlar'; yeleler kutu | ordugah_yapi2.gd:_at | Yuvarlak ağ |
+| 73 | KUTU | 1 | Rumeli at/deve bağı, 5 m | -3985, 3295 | kare/k5_y_ahir_rumeli_5m.jpg | 5 m'den: devenin bacakları kare kesitli kalas gibi, gövde dev düz kutu, üstünde kırmızı levha: hayvana benzemiyor | ordugah_yapi2.gd:_at (deve=true) | Yuvarlak ağ |
+| 74 | KUTU | 1 | Anadolu at/deve bağı, 60 m | -5724, 264 | kare/k5_y_ahir_anadolu_60m.jpg | 60 m'den siluet: dört ayaklı kara/açık sandık sırası; boyun düz çubuk, bağ kazığı ortasında sıra: at/deve siluetine uzaktan bile yaklaşmıyor | ordugah_yapi2.gd:_at | Uzak katmanda bile boyun-baş-bacak okunsun |
+| 75 | KUTU | 1 | Rumeli ağılı, öküz 5 m | -4513, 3904 | kare/k5_y_agil_rumeli_5m.jpg | 5 m'den öküz DEV KAHVERENGİ KUTU, dört kısa kutu ayak, hiç boyun/baş okunmuyor; çitin önünde 'kamyon' gibi | ordugah_yapi.gd:_okuz (build_agil ← ordugah_yerleske.gd) | Yuvarlak gövde, boyunduruk, boynuz |
+| 76 | KUTU | 1 | Anadolu ağılı, koyun/öküz 5 m | -6560, -391 | kare/k5_y_agil_anadolu_5m.jpg | 5 m'den: bir öküz bütün kare boyu düz krem-kahve levha ve iki kutu bacak; yanındaki ikinci hayvan düz tuğla rengi plaka | ordugah_yapi.gd:_okuz | Aynı |
+| 77 | KUTU | 1 | Anadolu ağılı, koyun sürüsü 60 m | -6620, -391 | kare/k5_y_agil_anadolu_60m.jpg | 60 m'den: koyun sürüsü 'siyah-kahverengi küp üzerinde beyaz elmas': mantar tarlası ya da şeker küpü; koyun siluetine uzaktan bile benzemiyor | ordugah_yerleske.gd:build_agil (an.sph 5 seg + an.box) | Yün küre + ince bacak + kafa kürecik |
+| 78 | MANTIK | 3 | Esir çadırı, çit | -5486, 2484 | kare/k5_o_esir_gorunmez_duvar.jpg | Çit yalnız 5 m aralıklı çıplak direkler (tel/ip/çıta yok): çit gibi okunmuyor, ama oyuncu aradan geçemiyor (route 4 görünmez duvar); koruma/nöbetçi de görünmüyor | ordugah_yerleske.gd:build_esir | Direkler arasına kalas/ip, nöbetçi |
+| 79 | KUTU | 3 | Zağanos yakası, kızak yolu yakın | 123, 2091 | kare/k5_s_kizak_1.jpg | Gemi kızağı yakından dümdüz kalas travers + siyah şerit: gemi yürütme yolu değil demiryolu hattı; tomruk silindir yok | ordugah_donanma.gd:build_kizak | Tomruk silindirler, çekme halatı, çamurlu yol |
 
 ## 4. Tür başına sayım
 
-- BOŞLUK: 6
+- BOŞLUK: 9
 - DÖNEM: 4
-- GÖRSEL: 17
-- KUTU: 16
-- MANTIK: 8
+- GÖRSEL: 21
+- KUTU: 24
+- MANTIK: 9
 - PERFORMANS: 1
-- ZEMİN: 10
+- ZEMİN: 11
+- önem 1: 27, önem 2: 37, önem 3: 15  (toplam 79)
 
-**KUTU kalan=16** (satır sayısı; her satır bir nesne ailesidir: hayvan, ağaç, gülle, köpek, çadır)
+**KUTU kalan=24** (satır sayısı; her satır bir nesne ailesi: at/deve, öküz, koyun, köpek, gülle, ağaç/çalı, küp ev, kızak. Yani kutu/elmas kalıntısı olmayan canlı ya da yuvarlak nesne ailesi **yok**; hedef 0).
+
+## 5. En kötü 12 kare (neden)
+
+1. `kare/k5_y_agil_rumeli_5m.jpg` — öküz 5 m'den dev kahverengi kutu (boyun/baş yok).
+2. `kare/k1_ahir_anadolu_c.jpg` — at/deve sandık: kutu gövde, çubuk bacak, kutu baş.
+3. `kare/k5_f_fici_kopru_ust.jpg` — fıçı köprüsünün olması gereken yer: yalnız su (köprü 6 m suyun altında).
+4. `kare/k2_g_rumeli_8_0_B.jpg` — oyuncak parlak yeşil çim + elmas ağaçlar + bıçak kenarlı yol yaması.
+5. `kare/k2_g_anadolu_8_0_D.jpg` — düz bej çokgen zemin, doku yok, yama kenarı keskin.
+6. `kare/k2_g_zaganos_0_0_D.jpg` — çıplak beyaz küp ev + demiryolu gibi kızak + elmas ağaçlar.
+7. `kare/k1_kule_2300_c.jpg` — kule platformunun içinden ağaç geçiyor.
+8. `kare/k3_h_basi_2000_20m.jpg` — ordugâhın batısı ufka kadar çıplak çayır.
+9. `kare/k5_s_marmara_1.jpg` — Anadolu kanadı güneyi Marmara'ya kadar boş.
+10. `kare/k2_g_zaganos_1_0_B.jpg` — vektör çizim gibi doygun yeşil dikdörtgen + cetvelle çizilmiş yol.
+11. `kare/k1_batarya_02_b.jpg` — gülleler elmas (oktahedron) kristal yığını.
+12. `kare/t0_t0_anadolu_mutfak.jpg` — ordugâhta hilal+yıldız bayrak (§7c yasak) ve börk > kazan ölçeği.
+
+## 6. İYİ olan 5 kare (korunacaklar)
+
+1. `kare/iyi_k1_mescit_anadolu_b.jpg` — mescit: halı, saf düzeni, yeşil örtü, ölçek ve ışık doğru.
+2. `kare/iyi_k1_pazar_a.jpg` — ordu pazarı: renkli sundurmalı tezgâhlar, tüccarlar, yaşam var.
+3. `kare/iyi_k1_dokumhane_a.jpg` — dökümhane/demirci: sundurma, ocak, kıvılcım, çalışan figür.
+4. `kare/iyi_k3_h_anadolu_-300_60m.jpg` — havadan çadır denizi yoğunluğu (sahibin 'çadır denizi' isteği), sur ve Marmara ufku.
+5. `kare/iyi_k1_mutfak_rumeli_c.jpg` — kazanlar, tuğla ocaklar, alev: yemek pişiren oba.
+
+## 7. Bakamadıklarım / yapamadıklarım
+
+- 90 m ızgara + dört yön **yapılmadı**: hücre merkezi ızgarası (~230–300 m) ve ünlü yapılara 3 yön; her 3. düğümde iki yön gece (26) yapıldı. Havadan 120 m çapraz yerine 300 m adım.
+- Ünlü her yapının çevresinde **8 kare** yerine 3 kare; yapı iç mekânına yalnız kameranın kazara girdiği yerler (paşa çadırları, mescit) incelendi; mescit/otağ içi tam gezilmedi.
+- Aynı anda 1 ekranlı koşu sınırı ve yazılımla çizim hızı yüzünden Rumeli kanadının kuzeyi (n > 3 500, Haliç'e iniş) ve Zağanos'un kuzey/doğu kenarları yalnız havadan görüldü.
+- Kızak yolunun tamamı ve Galata yamacı bataryası yalnız birkaç karede (k5 s_kizak_*, k5 s_galata_batarya_hava).
+- Z-fighting, LOD belirme/kaybolma ve çifte gölge için sistematik kare dizisi çekilmedi; yalnız karelerde rastlananlar yazıldı (LOD: ordugâh batı sınırı).
+- Performans: kurulumda > 50 ms kare ölçümü yapılmadı (sondanın kuyruk boşaltma yöntemi nedeniyle); RINFO her kare için kayıtlı.
+- Fıçı köprüsünün y = −5,98 bulgusu sondayla (`--set=fici`) doğrulandı; ancak köprü yüksekliği düzeltildiğinde nasıl görüneceği denenmedi.

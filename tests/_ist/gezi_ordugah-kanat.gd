@@ -36,6 +36,8 @@ func _ready() -> void:
 		return
 	if set_ == "yuru":
 		_yuru.call_deferred()
+	if set_ == "fici":
+		_fici.call_deferred()
 
 
 func _koy(e: float, n: float, dy := 0.6) -> void:
@@ -128,4 +130,39 @@ func _yuru() -> void:
 						son_p = ileri
 		print("GEZI_YURU route=%d bacak=%d bitti t=%.0f sn konum_hedefe=%.1f m" % [route, li, t, Vector2(_pl.global_position.x, _pl.global_position.z).distance_to(hedef)])
 	print("GEZI_YURU route=%d toplam_dunya_m=%.0f gercek_m=%.0f olaylar=%s sure_ms=%d" % [route, toplam, toplam / IstGeo.S, str(olay), Time.get_ticks_msec() - t_basla])
+	get_tree().quit(0)
+
+
+## --set=fici: fıçı köprüsü düğümü kuruldu mu? (ad, dünya konumu, çocuk sayısı, görünürlük)
+func _fici() -> void:
+	var f := IstOrdugah._fici_yeri()
+	var pos: Vector2 = f[0]
+	print("FICI yer=%s yaw=%.2f uzunluk=%.1f su_merkez=%s h=%.2f" % [str(IstGeo.real(pos.x, pos.y)), f[1], f[2], str(IstGeo.su(pos.x, pos.y)), IstGeo.h(pos.x, pos.y)])
+	var cam := Camera3D.new()
+	cam.far = 30000.0
+	add_child(cam)
+	cam.current = true
+	cam.global_position = Vector3(pos.x, 40.0, pos.y)
+	cam.rotation = Vector3(deg_to_rad(-40.0), 0, 0)
+	var dunya := IstDunya.build(self, false, cam.global_position)
+	IstDunya.butce_us = 250000
+	for i in 8:
+		await get_tree().process_frame
+	var s := IstSehir.active
+	var t0 := Time.get_ticks_msec()
+	while Time.get_ticks_msec() - t0 < 120000:
+		s._last_cam = Vector3.INF
+		for k in 400:
+			s._process(0.0)
+			if s._queue.is_empty():
+				break
+		if s._queue.is_empty() and int(dunya.olcum()["isler"]) == 0:
+			break
+		await get_tree().process_frame
+	for c in get_tree().root.find_children("*fici*", "Node3D", true, false):
+		var n3 := c as Node3D
+		var cnt := 0
+		for q in n3.find_children("*", "MeshInstance3D", true, false):
+			cnt += 1
+		print("FICI dugum=%s konum=%s gorunur=%s mesh=%d" % [str(n3.get_path()), str(n3.global_position), str(n3.is_visible_in_tree()), cnt])
 	get_tree().quit(0)
