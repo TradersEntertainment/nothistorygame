@@ -559,9 +559,11 @@ func _land_spot(from: Vector3, want: Vector3, head: Vector3) -> Vector3:
 	# İstenen yer, öbür yanı, sonra hükümdardan uzaklaşan yerler (atlı hükümdar: atın boynu yakından yüzü örter)
 	var cands := [want, from - side, from, from + away * 1.5, from + away * 2.5, from + away * 3.5,
 		from + away.rotated(Vector3.UP, 0.6) * 2.5, from + away.rotated(Vector3.UP, -0.6) * 2.5]
+	# Yerdeki gözün gövdeye göre yüksekliği (kameranın gerçek yeri: göz hizası 0,42 + gövde kökü)
+	var eye_up := player.camera.global_position.y - player.global_position.y - player.eye_height + 0.42
 	for c: Vector3 in cands:
 		var d := _safe(from, c)
-		if _sees(d + Vector3(0, 0.42, 0), head):
+		if _sees(d + Vector3(0, eye_up, 0), head):
 			return d
 	return from
 
@@ -795,7 +797,8 @@ func _guards(p: Person, kind: String, rs: String) -> bool:
 			_borrowed.append([g, g.global_position, g.global_rotation, g.get("look_target")])
 	for g in gs:
 		var side := player.camera.global_transform.basis.x * (0.75 if i == 0 else -0.75)
-		await Stage.approach(g, me + side, 0.7, 4.6)
+		side.y = 0.0
+		await Stage.approach(g, _safe(me, me + side), 0.7, 4.6)      # duvarın/katının içine yürümesin
 		if is_instance_valid(g):
 			g.set("look_target", player)
 		i += 1
