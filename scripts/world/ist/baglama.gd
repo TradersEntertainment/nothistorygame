@@ -123,7 +123,26 @@ static func birak() -> void:
 
 
 static func istek(region_name: String) -> bool:
+	if region_name == "byz_walls" and bolum == 0 and deneme_12b():
+		return true
 	return bolum in BOLUMLER and region_name in BOLGELER and etkin()
+
+
+## Görev 6 denemesi (KAPALI; yalnız `--ist2-deneme=12b` ile): Tolga'nın mektup bölümü (12b) hub'ı v2'de. Bölüm dosyasına
+## dokunulmaz: hub ByzCity'nin "walls" parçası, bölüm GameState.current_chapter 12.
+static func deneme_12b() -> bool:
+	if not etkin():
+		return false
+	var var_ := false
+	for a: String in OS.get_cmdline_user_args() + OS.get_cmdline_args():
+		if a.trim_prefix("--") == "ist2-deneme=12b":
+			var_ = true
+	if not var_:
+		return false
+	var gs := Engine.get_main_loop() as SceneTree
+	if gs and gs.root.has_node("GameState"):
+		return int(gs.root.get_node("GameState").get("current_chapter")) == 12
+	return false
 
 
 static func aktif() -> bool:
@@ -419,6 +438,9 @@ func _physics_process(_dt: float) -> void:
 ## Bölüm biterken v2'nin ağaç dışında bekleyen düğümleri (ön-pişmiş katmanlar, akıştan düşmüş hücre gövdeleri) serbest
 ## bırakılır: sahne değişince bellek ve fizik gövdesi sızmasın
 func _exit_tree() -> void:
+	if bolum == 0 and aktif_bolge != "":
+		# deneme (bölüm hazirla/birak çağırmıyor): sonraki bölümler eski dünyayı kursun
+		birak.call_deferred()
 	var s := IstSehir.active
 	if s == null:
 		return
