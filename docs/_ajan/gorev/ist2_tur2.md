@@ -1,13 +1,14 @@
 # İstanbul v2 — İKİNCİ TUR görevleri (üç Opus oturumu)
 
-Hepsi önce şunları okur ve uyar: `docs/_ajan/gorev/_ist2_ortak.md` (özellikle sondaki "İKİNCİ TUR" bölümü),
+Hepsi önce şunları okur ve uyar: `docs/_ajan/gorev/_ist2_ortak.md` (özellikle sondaki "İKİNCİ TUR" ve "SON AYAR"
+bölümleri; sayılar SON AYAR'dakilerdir),
 `docs/_ajan/gorev/ist2_kalite_notlari.md` (yöneticinin kare incelemesi: bağlayıcı), `docs/_ajan/gorev/_ortak2.md`
 (kurulum, yasaklar, izin kutusu), `docs/_ajan/gorev/_istanbul_ortak.md` (oynanış kuralları, Nihat'ın yan görevi),
 birinci turun raporları: `docs/_kanit_ist2_dunya/rapor.md`, `docs/_kanit_ist2_sehir/rapor.md`.
 Şehir BUGÜN bitecek. Karelerine kendin bak; her turda kanıt karelerini yenile; yönetici sahibine gösterecek.
 
 ## DÜNYA-2 (dal `wip/ist2-dunya2`; dosyalar: `geo.gd`, `dunya.gd`, `tests/_ist/gezi.*`; kanıt `docs/_kanit_ist2_dunya2/`)
-1. İLK 20 DAKİKA: `IstGeo.S = 0,3`; bütün tablolar (kıyı çokgenleri, yollar, yer dizini, arazi ızgarası, `mahalle`)
+1. İLK 20 DAKİKA: `IstGeo.S = 0,35` (`_ist2_ortak.md` "SON AYAR"); bütün tablolar (kıyı çokgenleri, yollar, yer dizini, arazi ızgarası, `mahalle`)
    gerçek koordinattan S ile türesin (önceden çarpılmış tablo kalmasın). Gönder (öbür iki oturum bekliyor).
 2. `mahalle(x,z)`: kalite notu 0b: yoğunluk yeniden dağıtılır; surların iç yüzüne kadar yerleşik doku; bostan/bağ/
    harabe/manastır adaları dokunun içinde (≤ ~120 × 120 m); açık sarnıç bostanları, Hipodrom, Büyük Saray harabesi
@@ -29,7 +30,8 @@ birinci turun raporları: `docs/_kanit_ist2_dunya/rapor.md`, `docs/_kanit_ist2_s
 
 ## ŞEHİR-2 — yerleşim (dal `wip/ist2-sehir2`; dosyalar: `sehir.gd` + yeni yardımcılar, `tests/_ist/sehir2_kare.*`;
 ## kanıt `docs/_kanit_ist2_sehir2/`)
-1. S = 0,3'e uyum: `YER2` yerleşimi, çakışma çözümü (öncelik ve komşuluk sırası; geniş alanlılar k = 0,3–0,4), hiçbir
+1. S = 0,35'e ve yeni k değerlerine uyum (`_ist2_ortak.md` "SON AYAR": ünlü eserler k = 0,75, ötekiler 0,6, geniş
+   alanlılar 0,45–0,5; Ayasofya var olan model × 1,5): `YER2` yerleşimi, çakışma çözümü (öncelik ve komşuluk sırası), hiçbir
    eser atılmaz; yan görev eserlerinin her biri tanınır ve çevresi dolu.
 2. Surların kesiti 1:1 (k = 1,0), uzunluk hat boyunca; kapılar yerlerinde; sur üstü yürüme yolu kesintisiz (kapı
    üstü dâhil: kapı yapısının üstünden geçiş ya da iki yanda merdiven); gerçek CharacterBody ile baştan sona yürüyüş
@@ -43,7 +45,7 @@ birinci turun raporları: `docs/_kanit_ist2_dunya/rapor.md`, `docs/_kanit_ist2_s
 6. Denetimler (kalite notu 9): zeminde delik/kapalı cep ışın ızgarası v2'de beş mahallede; çatıdan çatıya geçiş ve
    çatı yolu gerçek oyuncuyla beş yerde; eser başına 15 m ve tam tepe kare paftası yenilenir.
 7. `flight_data_v2`: işaretler eserlerin tam üstünde (kareyle tek tek), `forms` noktaları anlamlı yerlerde.
-8. Oyun alanları (hub: Romanos'un iç yanı; Ayasofya meydanı) boş bırakılmaya devam; S = 0,3'teki yerlerini raporla.
+8. Oyun alanları (hub: Romanos'un iç yanı; Ayasofya meydanı) boş bırakılmaya devam; S = 0,35'teki yerlerini raporla.
 
 ## DOKU-2 — mahalle dokusu (dal `wip/ist2-doku2`; dosyalar: `sokak.gd`, `evler.gd` + yeni yardımcılar;
 ## kanıt `docs/_kanit_ist2_doku2/`)
@@ -64,5 +66,5 @@ birinci turun raporları: `docs/_kanit_ist2_dunya/rapor.md`, `docs/_kanit_ist2_s
    iskele önleri, kapı önleri; her birinde ayrıntı grupları.
 5. Oynanış: her ev kapalı katı; bitişik aralık 0 ya da ≥ 1,4 m (dar aralık 0 hedef; şu an 27); her adada sokaktan
    çatıya yol; çatıdan çatıya geçiş; avlu çukur değil (çıkışı var); yamaçta taban oturur.
-6. Bütçe: hedef ~6–9 bin ev (S = 0,3 alanında dolu görünüm); uçuşta toplam ≤ 1 500 çizim / 3,5 M üçgen, yerde ≤ 900 /
+6. Bütçe: hedef 9–12 bin ev (S = 0,35 alanında baştan sona dolu görünüm; ev sayısı ARTAR); uçuşta toplam ≤ 1 500 çizim / 3,5 M üçgen, yerde ≤ 900 /
    2,5 M (ölç, tablo).

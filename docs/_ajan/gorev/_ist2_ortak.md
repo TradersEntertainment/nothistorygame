@@ -110,3 +110,28 @@ parçaları, surları, evleri, sokakları, bitkiyi, ayrıntıyı v2'ye yerleşti
    - DOKU-2 (mahalle) → `wip/ist2-doku2`: `scripts/world/ist/sokak.gd`, `evler.gd` (+ yeni yardımcı dosyalar)
    Başkasının dosyasına dokunma; gereken değişikliği raporda "ORTAK İSTEK" diye kod parçasıyla yaz ve o dalı çekince
    geldi mi bak. Her 30–45 dakikada kendi dalına gönder, öbür iki dalı çek ve birleştir.
+
+
+---
+
+# İKİNCİ TUR — SON AYAR (12 Kasım, 08:50 UTC) — yukarıdaki sayılarla çelişirse BU geçerlidir
+
+## Sahibin sözü (aynen)
+"ev bin sayısını azaltmaktansa böyle zoom yapıyormuşuz gibi düşün ama aşırı büyük yapma dengeli git hem ev sayısı
+arttır hem sur içini küçült hem de ayasofyayı falan büyüt"
+
+## Dengeli ayar ("zoom": harita biraz küçülür, içindekiler büyür ve çoğalır)
+- **`IstGeo.S = 0,35`** (0,5'ten küçük, 0,3 değil). Yarımada ≈ 1,9 × 2,0 km; Romanos → Ayasofya ≈ 1,6 km (koşarak
+  ~5 dk, hızlı uçuşla ~90 sn). S tek sabit kalır (0,25–0,5 arası değiştirilebilir).
+- **Eserler BÜYÜR:** yan görev eserleri ve ünlü anıtlar **k = 0,75** (Ayasofya: var olan model × 1,5: taban ~54 m, kubbe
+  tepesi ~40 m; Galata Kulesi ~50 m; Konstantin/Arkadius/Iustinianus sütunları, Havariyun, Pantokrator, Khora,
+  Pammakaristos, Studios, Aya İrini, Tekfur, Altın Kapı, kapılar). Öteki anıtlar ve kiliseler k = 0,6. Çok yer
+  kaplayanlar (Hipodrom, Büyük Saray harabesi, limanlar, açık sarnıç bostanları, forum meydanları) k = 0,45–0,5.
+  İnsan ölçüsündeki ayrıntılar parçalarda zaten k'den bağımsız; Ayasofya gibi düğüm ölçeğiyle büyütülenlerde kapı ve
+  basamak 1,5 kat olur: kabul (anıtsal kapı), ama tırmanma basamakları ve konma noktaları yeniden sınanır.
+- **Sur kesiti 1:1** (iç sur ~12 m, kuleler 18–20 m, dış sur 8,5 m, hendek ~18 m); uzunluk S ile.
+- **Ev sayısı ARTAR:** hedef **9–12 bin ev** (birinci turda 4 003), 1:1 boyda, çoğu 1–2 katlı; sur içi baştan sona
+  dolu doku (kalite notu 0 ve 0b). Yoğunluk ortalaması ~55 ev/hektar, çarşıda ve Haliç kıyısında daha sık. Akış ve
+  pişirme ile bütçe aynı (uçuşta ≤ 1 500 çizim / 3,5 M üçgen; yerde ≤ 900 / 2,5 M).
+- "Aşırı büyük yapma": hiçbir eser komşusunu yutmasın, sokaklar kapanmasın; eser çevresinde meydan/avlu payı kalsın;
+  Ayasofya ufukta en büyük yapı, ama evlerin arasında dev bir kütle gibi değil (kubbe tepesi ≈ 6–7 ev yüksekliği).
