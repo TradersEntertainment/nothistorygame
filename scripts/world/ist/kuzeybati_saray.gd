@@ -167,15 +167,21 @@ static func build_kynegion(host: Node3D, k: float = 0.5, lod: int = 0) -> void:
 				pts.append(Vector3(cos(a1) * rx * r_out, yy, sin(a1) * rz * r_out))
 				pts.append(Vector3(cos(a0) * rx * r_out, yy, sin(a0) * rz * r_out))
 			_frustum(c.root, pts, Color("d4c4a2") if (t + i) % 5 else Color("c9b690"))
-	# dış duvar kalıntısı: kuzey yarı alçak/yıkık, parça parça (kemer köklerinden kalan dikmeler)
-	for i in 9:
-		var a2 := PI + PI * (float(i) + 0.5) / 9.0
-		var wx := cos(a2) * rx * 0.62 * 1.42
-		var wz := sin(a2) * rz * 0.62 * 1.42 * 1.0
-		var wh: float = [4.2, 3.0, 2.2, 3.6, 1.6, 2.8, 4.0, 2.0, 3.2][i] * maxf(k, 0.5)
-		var tg := Vector3(-sin(a2) * rx, 0, cos(a2) * rz).normalized()
-		var wb := Props.solid(c.root, Vector3(3.8, wh, 1.0 + maxf(k, 0.5)), Vector3(wx, wh * 0.5, wz), Color.WHITE, Vector3(0, rad_to_deg(atan2(tg.x, tg.z)), 0))
-		Props.set_pattern(wb, Color("c4b290"), "rubble")
+	# dış duvar kalıntısı: kuzey yarı, bitişik yamuk parçalar (aralık yok), yükseklikleri düzensiz (yıkık)
+	var hs := [4.2, 3.0, 2.2, 3.6, 1.6, 2.8, 4.0, 2.0, 3.2, 1.4, 3.8, 2.4, 3.4, 1.8, 4.0, 2.6, 3.0, 2.2]
+	var r_in2 := 0.45 + tiers * ring_step + 0.02
+	var r_out2 := r_in2 + 0.16
+	for i in seg:
+		var a0 := PI + PI * float(i) / seg
+		var a1 := PI + PI * float(i + 1) / seg
+		var wh: float = float(hs[i % hs.size()]) * maxf(k, 0.5)
+		var pts2: Array = []
+		for yy in [0.0, wh]:
+			pts2.append(Vector3(cos(a0) * rx * r_in2, yy, sin(a0) * rz * r_in2))
+			pts2.append(Vector3(cos(a1) * rx * r_in2, yy, sin(a1) * rz * r_in2))
+			pts2.append(Vector3(cos(a1) * rx * r_out2, yy, sin(a1) * rz * r_out2))
+			pts2.append(Vector3(cos(a0) * rx * r_out2, yy, sin(a0) * rz * r_out2))
+		_frustum(c.root, pts2, Color("c4b290"))
 	# moloz, ot, birkaç sütun gövdesi
 	var rmid := 0.45 + (tiers - 0.5) * ring_step
 	c.add_climb(Vector3(0, 0.1, 0.8), Vector3(0, tier_h * tiers, rz * rmid), "basamak")

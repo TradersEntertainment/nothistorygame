@@ -178,9 +178,9 @@ static func build_kaligaria(host: Node3D, k: float = 0.5, lod: int = 0) -> void:
 	# çatıya yol: kuzey sıranın doğu ucunda dış merdiven (sokaktan, sıranın yan duvarına dayalı)
 	var xe := (n - 1) * 0.5 * hw + hw * 0.5
 	var ze := -(lane * 0.5 + hd)
-	_side_stair(c, (xe + 0.9) / c.k, ze / c.k, hh)
+	_side_stair(c, (xe + 0.7) / c.k, ze / c.k, hh)
 	var nst := maxi(1, int(ceil(hh / 0.32)))
-	c.add_climb(Vector3(xe + 0.9, 0, ze * 1.0 + 0.34 * nst + 0.9), Vector3(xe + 0.9, hh, ze + 0.1), "basamak")
+	c.add_climb(Vector3(xe + 0.7, 0, ze * 1.0 + 0.34 * nst + 0.9), Vector3(xe + 0.7, hh, ze + 0.1), "basamak")
 
 
 static func _side_stair(c: IstKbCtx, x_real: float, z_back_real: float, h: float) -> void:

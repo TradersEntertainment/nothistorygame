@@ -204,8 +204,8 @@ static func build_petra(host: Node3D, k: float = 0.5, lod: int = 0) -> void:
 	var c := IstKbCtx.create(host, "Petra", k, lod, 90.0, 53)
 	var S := Color("e6d4ac")
 	c.block(0, 0, 9.0, 9.0, 8.5, 0, S, "ashlar")
-	c.gable(0, 0, 5.5, 9.0, 8.5, 1.6, true)
-	c.gable(0, 0, 9.0, 5.5, 8.5, 1.6, false)
+	c.gable(0, 0, 4.0, 9.0, 8.5, 1.4, true)
+	c.gable(0, 0, 9.0, 4.0, 8.5, 1.4, false)
 	c.dome(0, 0, 8.5, 2.6, 3.8, 2.4, 12, 12)
 	c.block(0, 7.3, 9.0, 5.6, 6.0, 0, S, "ashlar")
 	c.deco(0, 6.01, 7.3, 8.6, 0.02, 5.2, IstKbCtx.LEAD)
@@ -217,14 +217,14 @@ static func build_petra(host: Node3D, k: float = 0.5, lod: int = 0) -> void:
 	c.windows_on(4.5, 0, 90, 0.0, [-2.0, 2.0], 4.4, 0.6, 1.4)
 	c.band(0, 7.3, 0, 2.82, 9.0, 4.2)
 	# avlu duvarı ve hücre sırası
-	c.block(11.0, 0, 1.0, 20, 3.4, 0, Color("cdbd9c"), "rubble")
-	c.block(-11.0, 0, 1.0, 20, 3.4, 0, Color("cdbd9c"), "rubble")
-	c.block(0, 10.5, 22.0, 1.0, 3.4, 0, Color("cdbd9c"), "rubble")
-	c.block(0, -10.5, 22.0, 1.0, 3.4, 0, Color("cdbd9c"), "rubble")
+	c.block(19.0, 0, 1.0, 26, 3.4, 0, Color("cdbd9c"), "rubble")
+	c.block(-19.0, 0, 1.0, 26, 3.4, 0, Color("cdbd9c"), "rubble")
+	c.block(0, 13.0, 39.0, 1.0, 3.4, 0, Color("cdbd9c"), "rubble")
+	c.block(0, -13.0, 39.0, 1.0, 3.4, 0, Color("cdbd9c"), "rubble")
 	c.cypress(7.0, 8.0, 8.0)
 	c.olive(-7.5, 7.5, 0.0, 0.9)
 	c.stair(4.5, 7.3, Vector2(-1, 0), 6.0 * c.k, 1.4, IstKbCtx.STONE_D, 0.5, 0.0)
-	c.crate_steps(0.0, 4.5, Vector2(0, -1), maxi(1, int(ceil(2.5 * c.k / 0.6))), 2.5 * c.k / maxi(1, int(ceil(2.5 * c.k / 0.6))), 6.0 * c.k)
+	c.crate_steps(-3.2, 4.5, Vector2(0, -1), maxi(1, int(ceil(2.5 * c.k / 0.6))), 2.5 * c.k / maxi(1, int(ceil(2.5 * c.k / 0.6))), 6.0 * c.k)
 
 
 # ----------------------------------------------------------------------------------------------------------------
