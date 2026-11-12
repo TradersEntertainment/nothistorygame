@@ -1,0 +1,13 @@
+takilma1_havari_ileri -2316 1138 1.7 90 0
+takilma1_havari_ust -2320 1138 14 90 -40
+takilma2_pamma_ileri -2710 2234 1.7 60 0
+takilma2_pamma_ust -2716 2230 14 60 -40
+takilma2b_pamma_son -2708 2247 1.7 283 0
+takilma3_aspar_ileri -2784 1930 1.7 90 0
+takilma3_aspar_ust -2790 1930 14 90 -40
+takilma3_aspar_yan -2780 1920 1.7 0 0
+takilma4_aetios_ileri -3260 1877 1.7 90 0
+takilma4_aetios_ust -3266 1877 14 90 -40
+takilma5_lips_ileri -2648 876 1.7 90 0
+takilma5_lips_ust -2652 876 14 90 -40
+takilma5b_lips_bat -2688 879 1.7 90 0

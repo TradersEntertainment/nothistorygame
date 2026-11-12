@@ -1,0 +1,57 @@
+GEZI_ROTA kemer_alti yol_dunya_m=166 gercek_m=475 olay=0
+GEZI_OLAY TAKILMA -2311 1138 rota=havari_pantokrator nokta=1 hedefe=4.0
+GEZI_OLAY TAKILMA -2311 1138 rota=havari_pantokrator nokta=1 hedefe=4.0
+GEZI_OLAY TAKILMA -2311 1138 rota=havari_pantokrator nokta=1 hedefe=4.0
+GEZI_OLAY TAKILMA -2311 1138 rota=havari_pantokrator nokta=1 hedefe=4.0
+GEZI_OLAY TAKILMA -2311 1138 rota=havari_pantokrator nokta=1 hedefe=4.0
+GEZI_OLAY TAKILMA -2311 1138 rota=havari_pantokrator nokta=1 hedefe=4.0
+GEZI_OLAY TAKILMA -2311 1138 rota=havari_pantokrator nokta=1 hedefe=4.0
+GEZI_OLAY TAKILMA -2311 1138 rota=havari_pantokrator nokta=1 hedefe=4.0
+GEZI_OLAY TAKILMA -2311 1138 rota=havari_pantokrator nokta=1 hedefe=4.0
+GEZI_OLAY TAKILMA -2311 1138 rota=havari_pantokrator nokta=1 hedefe=4.0
+GEZI_OLAY ULASILAMADI -2311 1137 rota=havari_pantokrator nokta=1
+GEZI_ROTA havari_pantokrator yol_dunya_m=62 gercek_m=177 olay=10
+GEZI_OLAY TAKILMA -2711 2235 rota=pammakaristos nokta=2 hedefe=6.5
+GEZI_OLAY TAKILMA -2707 2232 rota=pammakaristos nokta=2 hedefe=6.8
+GEZI_OLAY TAKILMA -2704 2229 rota=pammakaristos nokta=2 hedefe=7.4
+GEZI_OLAY TAKILMA -2704 2247 rota=pammakaristos nokta=3 hedefe=20.1
+GEZI_ROTA pammakaristos yol_dunya_m=76 gercek_m=216 olay=4
+GEZI_OLAY TAKILMA -2780 1930 rota=aspar_bostan nokta=1 hedefe=27.9
+GEZI_OLAY TAKILMA -2780 1926 rota=aspar_bostan nokta=1 hedefe=27.9
+GEZI_OLAY TAKILMA -2780 1926 rota=aspar_bostan nokta=1 hedefe=27.9
+GEZI_OLAY TAKILMA -2780 1925 rota=aspar_bostan nokta=1 hedefe=27.9
+GEZI_OLAY TAKILMA -2780 1925 rota=aspar_bostan nokta=1 hedefe=27.9
+GEZI_OLAY TAKILMA -2780 1925 rota=aspar_bostan nokta=1 hedefe=27.9
+GEZI_OLAY TAKILMA -2780 1924 rota=aspar_bostan nokta=1 hedefe=27.9
+GEZI_OLAY TAKILMA -2780 1924 rota=aspar_bostan nokta=1 hedefe=27.9
+GEZI_OLAY TAKILMA -2780 1924 rota=aspar_bostan nokta=1 hedefe=27.9
+GEZI_OLAY TAKILMA -2780 1924 rota=aspar_bostan nokta=1 hedefe=27.9
+GEZI_OLAY TAKILMA -2780 1924 rota=aspar_bostan nokta=1 hedefe=27.9
+GEZI_OLAY ULASILAMADI -2780 1921 rota=aspar_bostan nokta=1
+GEZI_ROTA aspar_bostan yol_dunya_m=37 gercek_m=106 olay=11
+GEZI_OLAY TAKILMA -3255 1877 rota=aetios_bostan nokta=2 hedefe=8.8
+GEZI_OLAY TAKILMA -3255 1877 rota=aetios_bostan nokta=2 hedefe=8.8
+GEZI_OLAY TAKILMA -3255 1877 rota=aetios_bostan nokta=2 hedefe=8.8
+GEZI_OLAY TAKILMA -3255 1877 rota=aetios_bostan nokta=2 hedefe=8.8
+GEZI_OLAY TAKILMA -3255 1877 rota=aetios_bostan nokta=2 hedefe=8.8
+GEZI_OLAY TAKILMA -3255 1877 rota=aetios_bostan nokta=2 hedefe=8.8
+GEZI_OLAY TAKILMA -3255 1877 rota=aetios_bostan nokta=2 hedefe=8.8
+GEZI_OLAY TAKILMA -3255 1877 rota=aetios_bostan nokta=2 hedefe=8.8
+GEZI_OLAY TAKILMA -3255 1877 rota=aetios_bostan nokta=2 hedefe=8.8
+GEZI_OLAY TAKILMA -3255 1877 rota=aetios_bostan nokta=2 hedefe=8.8
+GEZI_OLAY ULASILAMADI -3255 1877 rota=aetios_bostan nokta=2
+GEZI_ROTA aetios_bostan yol_dunya_m=91 gercek_m=261 olay=10
+GEZI_OLAY TAKILMA -2684 879 rota=lips_sokak nokta=1 hedefe=29.6
+GEZI_OLAY TAKILMA -2683 875 rota=lips_sokak nokta=1 hedefe=29.3
+GEZI_OLAY TAKILMA -2643 876 rota=lips_sokak nokta=1 hedefe=15.1
+GEZI_OLAY TAKILMA -2643 876 rota=lips_sokak nokta=1 hedefe=15.1
+GEZI_OLAY TAKILMA -2643 876 rota=lips_sokak nokta=1 hedefe=15.1
+GEZI_OLAY TAKILMA -2643 876 rota=lips_sokak nokta=1 hedefe=15.1
+GEZI_OLAY TAKILMA -2643 876 rota=lips_sokak nokta=1 hedefe=15.1
+GEZI_OLAY TAKILMA -2643 876 rota=lips_sokak nokta=1 hedefe=15.1
+GEZI_OLAY TAKILMA -2643 876 rota=lips_sokak nokta=1 hedefe=15.1
+GEZI_OLAY TAKILMA -2643 876 rota=lips_sokak nokta=1 hedefe=15.1
+GEZI_OLAY TAKILMA -2643 876 rota=lips_sokak nokta=1 hedefe=15.1
+GEZI_OLAY ULASILAMADI -2642 873 rota=lips_sokak nokta=1
+GEZI_ROTA lips_sokak yol_dunya_m=45 gercek_m=129 olay=11
+GEZI_YURU toplam_dunya_m=477 gercek_m=1364
