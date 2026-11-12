@@ -1,0 +1,85 @@
+# Başsız koşular (--max-fps 20). Satır başı: koşu adı, çıkış kodu, yasak satır sayısı (SCRIPT ERROR, VISAUDIT, WALKTHRU, HELDAUDIT, ARMAUDIT, LOOKAUDIT backturn, WARN_FX_STUCK, WARN_FLY_ITEM, WARN_VOID_TELEPORT, JOURNEY_*), AUTOTEST satırı
+## Toplu koşu (tüm eski + yeni varyantlar)
+b41o code=0 bad=0 :: AUTOTEST PASS chapter=41 variant= outcome=41O.1 dir=4 bumps=0 blocks=3 parries=2 kick=true down=true fins=thrust,slash,ground spar=1/0 bags=0/1 water=0
+b41o=lose code=0 bad=0 :: AUTOTEST PASS chapter=41 variant=lose outcome=41O.2 dir=4 bumps=0 blocks=3 parries=2 kick=true down=true fins=thrust,slash,ground spar=1/7 bags=0/1 water=0
+b41o=kacak code=0 bad=3 :: AUTOTEST PASS chapter=41 variant=kacak outcome=41O.1 dir=4 bumps=0 blocks=3 parries=2 kick=true down=true fins=thrust,slash,ground spar=0/0 bags=0/1 water=0 kural=kacak caught=1 iade=0 arrests=0 soft=0 animal=0 last=caught
+b41o=kacak_iade code=0 bad=0 :: AUTOTEST PASS chapter=41 variant=kacak_iade outcome=41O.1 dir=4 bumps=0 blocks=3 parries=2 kick=true down=true fins=thrust,slash,ground spar=4/0 bags=0/1 water=0 kural=kacak_iade caught=0 iade=1 arrests=0 soft=0 animal=0 last=iade
+b42b code=0 bad=0 :: AUTOTEST PASS chapter=42 variant= outcome=42.1 dir=4 bumps=2 blocks=3 parries=2 kick=true down=true fins=thrust,slash,ground spar=3/0 pushed=2 late=0
+b42b=lose code=0 bad=0 :: AUTOTEST PASS chapter=42 variant=lose outcome=42.2 dir=4 bumps=1 blocks=3 parries=2 kick=true down=true fins=thrust,slash,ground spar=1/7 pushed=2 late=0
+b42b=kacak code=0 bad=0 :: AUTOTEST PASS chapter=42 variant=kacak outcome=42.1 dir=4 bumps=1 blocks=3 parries=2 kick=true down=true fins=thrust,slash,ground spar=2/0 pushed=2 late=0 kural=kacak caught=1 iade=0 arrests=0 soft=0 animal=0 last=caught
+b42b=kacak_iade code=0 bad=0 :: AUTOTEST PASS chapter=42 variant=kacak_iade outcome=42.1 dir=4 bumps=1 blocks=3 parries=2 kick=true down=true fins=thrust,slash,ground spar=1/0 pushed=2 late=0 kural=kacak_iade caught=0 iade=1 arrests=0 soft=0 animal=0 last=iade
+b24 code=0 bad=0 :: AUTOTEST PASS chapter=24 variant= outcome=24.1 stumbles=0 kid=true niko=false steadied=0 kid_t=0.1
+b24=late code=0 bad=0 :: AUTOTEST PASS chapter=24 variant=late outcome=24.2 stumbles=0 kid=false niko=false steadied=0 kid_t=0.3
+b24=niko code=0 bad=0 :: AUTOTEST PASS chapter=24 variant=niko outcome=24.1 stumbles=0 kid=true niko=true steadied=1 kid_t=0.2
+b24=niko_slow code=0 bad=0 :: AUTOTEST PASS chapter=24 variant=niko_slow outcome=24.1 stumbles=0 kid=true niko=true steadied=2 kid_t=23.8
+b24=eclipse code=0 bad=0 :: AUTOTEST PASS chapter=24 variant=eclipse outcome=24.1 stumbles=0 kid=true niko=false steadied=0 kid_t=0.2
+b24=krl_hit code=0 bad=0 :: AUTOTEST PASS chapter=24 variant=krl_hit outcome=24.1 stumbles=0 kid=true niko=false steadied=0 kid_t=0.2 kural=krl_hit caught=0 iade=0 arrests=1 soft=0 animal=0 last=arrest
+b24=krl_soft code=0 bad=0 :: AUTOTEST PASS chapter=24 variant=krl_soft outcome=24.1 stumbles=0 kid=true niko=false steadied=0 kid_t=0.2 kural=krl_soft caught=0 iade=0 arrests=0 soft=2 animal=0 last=soft
+b10g code=0 bad=0 :: AUTOTEST PASS chapter=10g variant= outcome=10G.1 step=3 merak=0
+b10g=fatih code=0 bad=0 :: AUTOTEST PASS chapter=10g variant=fatih outcome=10G.2 step=3 merak=1
+b10g=late code=0 bad=0 :: AUTOTEST PASS chapter=10g variant=late outcome=10G.2 step=3 merak=1
+b10g=next code=0 bad=0 :: AUTOTEST PASS chapter=17 variant= outcome=17.1 saved=3 fell=false lost=false next=chapter18b.tscn shot=true chain=false rescue_t=40 genoese=0
+b10g=krl_hit code=0 bad=0 :: AUTOTEST PASS chapter=10g variant=krl_hit outcome=10G.1 step=3 merak=0 kural=krl_hit caught=0 iade=0 arrests=1 soft=0 animal=0 last=arrest
+b36b code=0 bad=0 :: AUTOTEST PASS chapter=36 variant= outcome=36.1 burned=3 fights=1 kills=5
+b36b=leave code=0 bad=0 :: AUTOTEST PASS chapter=36 variant=leave outcome=36.2 burned=3 fights=1 kills=3
+b37o code=0 bad=0 :: AUTOTEST PASS chapter=37o variant= outcome=37O.1 beats=12/16 arrows=0 falls=0 barrels=5/5 cuts=0 stones=0 slips=0 burns=0 duel=true caught=0
+b37o=lose code=0 bad=0 :: AUTOTEST PASS chapter=37o variant=lose outcome=37O.2 beats=5/16 arrows=0 falls=1 barrels=2/5 cuts=14 stones=0 slips=0 burns=1 duel=false caught=0
+b37o=trespass code=0 bad=0 :: AUTOTEST PASS chapter=37o variant=trespass outcome=37O.1 beats=12/16 arrows=0 falls=0 barrels=5/5 cuts=0 stones=0 slips=0 burns=0 duel=true caught=1
+b6 code=0 bad=0 :: AUTOTEST PASS chapter=6 variant= branch=6a outcome=6a.1 paradox=10 mistakes=0 telsiz=4
+b6=b code=0 bad=0 :: AUTOTEST PASS chapter=6 variant=b branch=6a outcome=6a.2 paradox=0 mistakes=0 telsiz=4
+b6=c code=0 bad=0 :: AUTOTEST PASS chapter=6 variant=c branch=6a outcome=6a.3 paradox=5 mistakes=0 telsiz=4
+b6=y code=0 bad=0 :: AUTOTEST PASS chapter=6 variant=y branch=6a outcome=6a.4 paradox=0 mistakes=0 telsiz=4
+b6=letter code=0 bad=0 :: AUTOTEST PASS chapter=6 variant=letter branch=6a outcome=6a.1 paradox=20 mistakes=0 telsiz=4
+b6=byz code=0 bad=0 :: AUTOTEST PASS chapter=6 variant=byz branch=6b outcome=6b.1 paradox=0 mistakes=0 telsiz=4
+b6=byzmistake code=0 bad=0 :: AUTOTEST PASS chapter=6 variant=byzmistake branch=6b outcome=6b.2 paradox=45 mistakes=1 telsiz=4
+b6=byzfail code=0 bad=0 :: AUTOTEST PASS chapter=6 variant=byzfail branch=6b outcome=6b.3 paradox=0 mistakes=3 telsiz=4
+b6=byzclimb code=0 bad=0 :: AUTOTEST PASS chapter=6 variant=byzclimb branch=6b outcome=6b.1 paradox=0 mistakes=0 telsiz=4
+b6=byzgive code=0 bad=0 :: AUTOTEST PASS chapter=6 variant=byzgive branch=6b outcome=6b.1 paradox=0 mistakes=0 telsiz=4
+b6=next code=0 bad=0 :: AUTOTEST PASS chapter=7 variant= branch=7a outcome=7.1 extras=[] sadakat=60 baski=0 hour=13.5
+b6=krl_hit code=1 bad=0 :: AUTOTEST FAIL chapter=6 variant=krl_hit branch=6a outcome=6a.1 paradox=10 mistakes=0 telsiz=4 kural=krl_hit caught=0 iade=0 arrests=0 soft=0 animal=0 last=hit1
+b6=krl_soldier code=0 bad=0 :: AUTOTEST PASS chapter=6 variant=krl_soldier branch=6a outcome=6a.1 paradox=10 mistakes=0 telsiz=4 kural=krl_soldier caught=0 iade=0 arrests=1 soft=0 animal=0 last=arrest
+b39o code=0 bad=0 :: AUTOTEST PASS chapter=39o variant= outcome=39O.1 flags=6/6 lost=0 wrong=0 door=98 broke=false tez=1 struggle=0 lowered=true roof=83 answer=write called=false axes=2
+b39o=late code=0 bad=0 :: AUTOTEST PASS chapter=39o variant=late outcome=39O.2 flags=4/6 lost=2 wrong=0 door=0 broke=true tez=0 struggle=0 lowered=true roof=83 answer=write called=false axes=2
+b39o=tezkire code=0 bad=0 :: AUTOTEST PASS chapter=39o variant=tezkire outcome=39O.1 flags=6/6 lost=0 wrong=0 door=98 broke=false tez=3 struggle=0 lowered=true roof=83 answer=write called=false axes=2
+b39o=pass code=0 bad=0 :: AUTOTEST PASS chapter=39o variant=pass outcome=39O.1 flags=6/6 lost=0 wrong=0 door=98 broke=false tez=1 struggle=0 lowered=true roof=83 answer=write called=true axes=2
+b39o=sailor_ok code=0 bad=0 :: AUTOTEST PASS chapter=39o variant=sailor_ok outcome=39O.1 flags=6/6 lost=0 wrong=0 door=99 broke=false tez=1 struggle=0 lowered=true roof=83 answer=write called=false axes=1
+b39o=sailor_bad code=0 bad=0 :: AUTOTEST PASS chapter=39o variant=sailor_bad outcome=39O.1 flags=6/6 lost=0 wrong=0 door=98 broke=false tez=1 struggle=0 lowered=true roof=83 answer=write called=false axes=2
+b39o=krl_hit code=1 bad=0 :: AUTOTEST FAIL chapter=39o variant=krl_hit outcome=39O.1 flags=6/6 lost=0 wrong=0 door=98 broke=false tez=1 struggle=0 lowered=true roof=83 answer=write called=false axes=2 kural=krl_hit caught=0 iade=0 arrests=0 soft=0 animal=0 last=
+b31o code=0 bad=0 :: AUTOTEST PASS chapter=31o variant= outcome=31O.1 house=true(163) falls=0 signs=3 wrong=0 sun=true lashes=3 miss=0 scaff=true mats=8/8 err=4
+b31o=late code=0 bad=0 :: AUTOTEST PASS chapter=31o variant=late outcome=31O.2 house=true(159) falls=1 signs=3 wrong=2 sun=false lashes=3 miss=1 scaff=true mats=5/8 err=50
+b31o=petrion_ok code=0 bad=0 :: AUTOTEST PASS chapter=31o variant=petrion_ok outcome=31O.1 house=true(203) falls=0 signs=3 wrong=0 sun=true lashes=3 miss=0 scaff=true mats=8/8 err=0
+b31o=petrion_bad code=0 bad=0 :: AUTOTEST PASS chapter=31o variant=petrion_bad outcome=31O.1 house=true(163) falls=0 signs=3 wrong=0 sun=true lashes=3 miss=0 scaff=true mats=8/8 err=0
+b24o code=0 bad=0 :: AUTOTEST PASS chapter=24o variant= outcome=24O.1 calmed=3 kadri=false tea=0 menu=false eclipse=false
+b24o=late code=0 bad=0 :: AUTOTEST PASS chapter=24o variant=late outcome=24O.2 calmed=2 kadri=false tea=0 menu=false eclipse=false
+b24o=thermos code=0 bad=0 :: AUTOTEST PASS chapter=24o variant=thermos outcome=24O.1 calmed=3 kadri=true tea=0 menu=false eclipse=false
+b24o=tea code=0 bad=0 :: AUTOTEST PASS chapter=24o variant=tea outcome=24O.1 calmed=3 kadri=false tea=3 menu=false eclipse=false
+b24o=menu code=0 bad=0 :: AUTOTEST PASS chapter=24o variant=menu outcome=24O.1 calmed=3 kadri=false tea=0 menu=true eclipse=false
+b24o=eclipse code=0 bad=0 :: AUTOTEST PASS chapter=24o variant=eclipse outcome=24O.1 calmed=3 kadri=false tea=0 menu=false eclipse=true
+b24o=krl_hit code=0 bad=0 :: AUTOTEST PASS chapter=24o variant=krl_hit outcome=24O.1 calmed=3 kadri=false tea=0 menu=false eclipse=false kural=krl_hit caught=0 iade=0 arrests=1 soft=0 animal=0 last=arrest
+## Düzeltmelerden sonra yeniden (son kod)
+r6_hit code=0 bad=0 :: AUTOTEST PASS chapter=6 variant=krl_hit branch=6a outcome=6a.1 paradox=10 mistakes=0 telsiz=4 kural=krl_hit caught=0 iade=0 arrests=1 soft=0 animal=0 last=arrest
+r6_animal code=0 bad=0 :: AUTOTEST PASS chapter=6 variant=krl_animal branch=6a outcome=6a.1 paradox=10 mistakes=0 telsiz=4 kural=krl_animal caught=0 iade=0 arrests=0 soft=0 animal=1 last=animal
+r41_kacak code=0 bad=2 :: AUTOTEST PASS chapter=41 variant=kacak outcome=41O.1 dir=4 bumps=0 blocks=3 parries=2 kick=true down=true fins=thrust,slash,ground spar=0/0 bags=0/1 water=0 kural=kacak caught=1 iade=0 arrests=0 soft=0 animal=0 last=caught
+r39_sold code=1 bad=0 :: AUTOTEST FAIL chapter=39o variant=krl_soldier outcome=39O.1 flags=6/6 lost=0 wrong=0 door=98 broke=false tez=1 struggle=0 lowered=true roof=83 answer=write called=false axes=2 kural=krl_soldier caught=0 iade=0 arrests=0 soft=0 animal=0 last=
+ACHCHECK PASS
+r41_k3 bad=0 :: AUTOTEST PASS chapter=41 variant=kacak outcome=41O.1 dir=4 bumps=1 blocks=3 parries=2 kick=true down=true fins=thrust,slash,ground spar=0/0 bags=0/1 water=0 kural=kacak caught=1 iade=0 arrests=0 soft=0 animal=0 last=caught
+f42_kacak bad=0 :: AUTOTEST PASS chapter=42 variant=kacak outcome=42.1 dir=4 bumps=0 blocks=3 parries=2 kick=true down=true fins=thrust,slash,ground spar=3/0 pushed=2 late=0 kural=kacak caught=1 iade=0 arrests=0 soft=0 animal=0 last=caught
+f42_iade bad=0 :: AUTOTEST PASS chapter=42 variant=kacak_iade outcome=42.1 dir=4 bumps=0 blocks=3 parries=2 kick=true down=true fins=thrust,slash,ground spar=3/0 pushed=2 late=0 kural=kacak_iade caught=0 iade=1 arrests=0 soft=0 animal=0 last=iade
+f41_iade bad=0 :: AUTOTEST PASS chapter=41 variant=kacak_iade outcome=41O.1 dir=4 bumps=0 blocks=3 parries=2 kick=true down=true fins=thrust,slash,ground spar=4/0 bags=0/1 water=0 kural=kacak_iade caught=0 iade=1 arrests=0 soft=0 animal=0 last=iade
+r24_hit3 bad=0 :: AUTOTEST PASS chapter=24 variant=krl_hit outcome=24.1 stumbles=0 kid=true niko=false steadied=0 kid_t=0.3 kural=krl_hit caught=0 iade=0 arrests=1 soft=0 animal=0 last=arrest
+z10g_hit bad=0 :: AUTOTEST PASS chapter=10g variant=krl_hit outcome=10G.1 step=3 merak=0 kural=krl_hit caught=0 iade=0 arrests=1 soft=0 animal=0 last=arrest
+z24o_hit bad=0 :: AUTOTEST PASS chapter=24o variant=krl_hit outcome=24O.1 calmed=3 kadri=false tea=0 menu=false eclipse=false kural=krl_hit caught=0 iade=0 arrests=1 soft=0 animal=0 last=arrest
+z24_soft bad=0 :: AUTOTEST PASS chapter=24 variant=krl_soft outcome=24.1 stumbles=0 kid=true niko=false steadied=0 kid_t=0.2 kural=krl_soft caught=0 iade=0 arrests=0 soft=2 animal=0 last=soft
+z6_sold bad=0 :: AUTOTEST PASS chapter=6 variant=krl_soldier branch=6a outcome=6a.1 paradox=10 mistakes=0 telsiz=4 kural=krl_soldier caught=0 iade=0 arrests=1 soft=0 animal=0 last=arrest
+z6_hit bad=0 :: AUTOTEST PASS chapter=6 variant=krl_hit branch=6a outcome=6a.1 paradox=10 mistakes=0 telsiz=4 kural=krl_hit caught=0 iade=0 arrests=1 soft=0 animal=0 last=arrest
+## Python denetimleri
+tests/check_consequences.py: bayrak: 201 yalnız kendi bölümünde okunan: 61 okunmayan: 21 izinli: 21 sorun: 0 (çıkış 0)
+tests/check_export_refs.py: EXPORTREFS PASS (çıkış 0)
+tests/check_inline.py: INLINECHECK PASS (723 anahtar, 0 sorun) (çıkış 0)
+tests/check_keys.py: anahtar: 6819 sorun: 0 (çıkış 0)
+tests/check_outcomes.py: kuşatma sonucu: 74  okunan: 74  okunmayan: 0  izinli: 1  hiç iz bırakmayan bölüm: 0 () (çıkış 0)
+tests/check_speakers.py: SPEAKERCHECK PASS (çıkış 0)
+tests/check_tween_await.py:  (çıkış 0)
+tests/check_voice_rules.py: VOICERULES PASS (9759 anahtar, 0 sorun) (çıkış 0)
+PARSECHECK PASS scripts=249; ACHCHECK PASS
+## Ekranlı (xvfb, 1280x720): 41o kacak ÖNCE (özgün) ve SONRA ikisi de 'fins=thrust,ground' ile FAIL: bitirici dersinde (Kural devreye girmeden önce) ekranlı hızlı koşunun bilinen dengesizliği; başsız koşularda yok. 24 krl_hit ÖNCE/SONRA PASS.

@@ -41,9 +41,23 @@ Dal: `wip/senaryo-kacak` (taban `f0250c48`, 0.99.119). Senaryo: `docs/SENARYO_KU
   `kural.bot_window()` anında çalışır; öbür varyantlarda hemen döner (test botunun yolu değişmez).
 
 ## 3. Testler
-(aşağıda: `testler.txt` ham satırlar)
-
-TESTLER_YER
+Ham satırlar: `testler.txt`.
+- **Eski varyantlar** (değişen bölümlerin hepsi): 41o (2), 42b (2), 24 (5), 10g (4, `next` dahil), 6 (11, `next`
+  dahil), 39o (6), 31o (4), 24o (6), 36b (2), 37o (3): **45/45 PASS, yasak satır 0**. Sonuçlar ve sayaçlar eski
+  koşularla aynı (ör. 41o `41O.1`, 6 `paradox=10`).
+- **Yeni varyantlar, son kodla**: 41o `kacak`, `kacak_iade`; 42b `kacak`, `kacak_iade`; 24 `krl_hit`, `krl_soft`;
+  10g `krl_hit`; 24o `krl_hit`; 6 `krl_hit`, `krl_soldier`, `krl_animal`: **11/11 PASS, yasak satır 0**.
+- Yol boyunca bulunup düzeltilenler (ilk koşularda FAIL ya da uyarı): kovalayan balyanın içinde ayakta kalıyordu
+  (VISAUDIT insolid, WALKTHRU); iş başındaki ressama bakış veriliyordu (LOOKAUDIT backturn); ordugâhta vurulan
+  işçi işini bırakınca rolü "asker"e dönüyordu (6 `krl_hit` FAIL). 39o'da (fetih akşamı, Petrion) sokakta rol
+  taşıyan sivil/asker yok: `krl_hit`/`krl_soldier` "kurban yok" diye düştü, varyant KALDIRILDI (bağlantı duruyor).
+- `parse_check` PASS (249 betik); `tests/check_*.py` hepsi PASS (keys, speakers, voice_rules, inline, consequences,
+  outcomes, export_refs, tween_await); `ach_check` PASS. `tools/voice_map.py` depo dışı kopyada: 75/75 aynı konuşmacı.
+- **Ekranlı** (xvfb 1280×720): `pafta_talim.jpg` (41o, ÖNCE özgün kod + depo dışı sonda | SONRA aynı nokta ve
+  bakış), `pafta_tekme.jpg` (24, ÖNCE özgün kod + sonda | SONRA). 41o'nun ekranlı hızlı koşusu ÖNCE'de de SONRA'da
+  da bitirici dersinde 2/3 ile FAIL veriyor (`fins=thrust,ground`): Kural'dan önce, özgün kodda da var; başsızda yok.
+  41o'da Turgut'un sözlerinin altyazısı ve CEZA kartı karelerde SEÇİLMİYOR (ekran kararınca kare alınmıyor):
+  KANITSIZ; aynı kart/söz düzeneği 24 paftasında (zindan kartı, muhafız sözü) görünüyor.
 
 ## 4. Görsel kurallar
 - Muhafız birden belirmez: oyuncunun arkasında, arada duvar olmayan, aynı zemindeki 9–16 m'lik bir noktadan
