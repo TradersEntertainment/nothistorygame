@@ -14,7 +14,7 @@ Hüküm etiketleri: TAMAM / KISMEN / YAPILMADI / KANITSIZ / BAKILMADI. Kareler y
 | 1 | S = 0,35 ve yeni k değerleri, çakışma çözümü, hiçbir eser atılmaz | TAMAM (2 KALAN çakışma çifti, aşağıda) |
 | 2 | Surların kesiti 1:1, kapılar yerinde, sur üstü yürüyüş, oyuncu sınaması | KISMEN (kara %88, Blakherna %79 geçiş; deniz surlarında modül merdiveni takılıyor) |
 | 3 | IstOrdugah / IstGemiler / IstHayat bağlandı | TAMAM (bağlı; ordugâh yoğunluğu ve çizim sayısı ORTAK İSTEK) |
-| 4 | Ufuk ve anıt okunurluğu | KISMEN |
+| 4 | Ufuk ve anıt okunurluğu | KISMEN (kurşun kubbeler, krem sur; uzakta siyah düz yüzeyler sürüyor) |
 | 5 | Zaman dilimi (ön-pişirme), ISTYAVAS ÖNCE / SONRA | KISMEN (30 → 4 yavaş iş türü; sur dilimi lod 0 hâlâ 7–34 ms) |
 | 6 | Denetimler (delik/kapalı cep, çatıdan çatıya, eser paftası) | bkz. §6 |
 | 7 | `flight_data_v2`: işaretler eser tepesinde, formlar | TAMAM (işaret) / KISMEN (form) |
@@ -98,12 +98,15 @@ gemileri, sur üstünde ve sokakta insanlar. Ordugâh çadır denizi 70 m'den se
 ## 4. Ufuk ve anıt okunurluğu — KISMEN
 
 - Kurşun kubbe ve çatılar (`_kursun`): parçaların mavimsi açık gri kurşun malzemeleri koyu kurşuna (#4C525A) çevrilir, toon
-  kenar ışığı kapatılır; ilk denemede `material_override` önceliği yüzünden uygulanmıyordu (düzeltildi).
+  kenar ışığı kapatılır (756 yüzey); ilk denemede `material_override` önceliği yüzünden uygulanmıyordu (düzeltildi). Tur 5
+  karelerinde Ayasofya, Havariyun, Pantokrator kubbeleri kurşun gri (`yer_5_pafta`, tur 4 paftalarında henüz açık mavi).
 - Ayasofya × 1,5 ufukta en büyük kütle; Galata Kulesi, Hipodrom dikilitaşları, Konstantin/Arkadius/Markianos sütunları,
   Bozdoğan ve Pantokrator/Havariyun kubbeleri Galata ve şehir üstü karelerinde seçiliyor (`tur_5_galata`, `tur_5_ucus70`).
-- Uzak katmanda büyük düz yüzeylerin (Konstantin forumu döşemesi, Mokios/Aetios/Aspar sarnıç tabanı) tam tepeden simsiyah
-  görünmesi (`eser_uzak_pafta`, `tur_5_tepe`) SÜRÜYOR: motorun mesh LOD'u v2 pişmiş katmanlarında kapatıldı, düzelmedi; neden
-  KANITSIZ (lod 2 düz pişirmede normal ya da renk). 70 m uçuş ve yakın karelerde yok (orada lod 1/0).
+- Uzak katmanda büyük düz yüzeylerin (Konstantin forumu döşemesi, Mokios/Aetios/Aspar sarnıç tabanı) tam tepeden ve 700 m'den
+  simsiyah görünmesi (`eser_uzak_pafta`, `tur_5_tepe`) **SÜRÜYOR (YAPILMADI)**. Denenip elenen: pişmiş ağın motor LOD'u
+  (`lod_bias` 128), lod 2'de yatay yüz normallerinin yukarı çevrilmesi, lod 2'nin gölge düşürmemesi — üçü de değiştirmedi
+  (k7/k8 deneme kareleri). Konstantin ovalinin yalnız yarısı kara ve sınırı düz bir çizgi: bir arazi/su parçasının üstte kalması
+  olabilir (yakında, lod 1/0'da ve 70 m uçuşta yok). Neden KANITSIZ; DÜNYA-2 ile birlikte bakılmalı (ORTAK BİLGİ).
 - Uzak sur ağı kireçtaşı kremine çekildi: Galata'dan Haliç surları ve kuleler taş duvar olarak okunuyor (`tur_5_galata`;
   önce kahverengi/ahşap görünüyordu, `tur_4_galata`).
 
@@ -243,7 +246,11 @@ parse_check PASS (322 betik), world_check PASS (regions=13 landmarks=35), flight
 - **galata:** uzak katmanda pişmeyen parçalar (tam tepede ~130 çizim).
 - **ordugah:** çadır denizi seyrek; uzak katmanı birleşik değil (~500 çizim her yerden).
 
-## 12. ORTAK İSTEK
+## 12. ORTAK İSTEK / BİLGİ
+
+- **DÜNYA-2:** tam tepede ve 700 m'den siyah düz alanlar (Konstantin forumu, Aetios/Aspar/Mokios sarnıçları): şehir katmanında
+  LOD/normal/gölge elendi; uzak arazi parçasının ya da su düzleminin bu düzlenmiş (`IstGeo.duzle`) yerlerde üstte kalması
+  olabilir (Konstantin ovalinin yarısı kara, sınır düz çizgi).
 
 - **ordugâh (`wip/ist-ordugah`):** uzak katman (> 400 m) hücre başına tek ağ; çadır yoğunluğu otağdan Marmara'ya ve Haliç'e.
 - **marmara (`wip/ist-marmara`):** `IstMarmaraSur._tower` merdiveni: basma ≥ 0,6 m, rıht ≤ 0,3 m, merdiven üstünde ≥ 2,2 m baş
@@ -257,4 +264,8 @@ parse_check PASS (322 betik), world_check PASS (regions=13 landmarks=35), flight
 - Sur dilimlerinin lod 0'ını alt parçalara bölmek (≤ 6 ms).
 - Sokaktan çatıya tırmanma (traversal kipi) gerçek oyuncuyla: yalnız yürüyüş+zıplama erişilebilirliği ölçüldü (§6b).
 - Gece karesi bu turda yenilenmedi (ilk turdaki gece katmanı yerinde).
+- Yer karelerinde Hipodrom: kamera arenanın yanında (dışından); içeriden kare yok.
+- Paftalar: `tur_5_*.jpg` (Galata, sur dışı 70 m, Sarayburnu, şehir üstü 70 m, tam tepe), `yer_5_pafta.jpg` (Mese, Haliç
+  iskelesi, bostan köyü, sur dibi, Hipodrom yanı, Ayasofya batısı, iki çatı), `eser_15m_pafta.jpg` / `eser_tepe_pafta.jpg` /
+  `eser_uzak_pafta.jpg` (24 eser, tur 4), `isaret_pafta.jpg` (32 yan görev işareti, tur 4).
 - Uçuş bölümlerinin (7, 11) v2'ye bağlanması ayrı pakette.
