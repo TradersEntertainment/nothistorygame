@@ -121,6 +121,7 @@ func _check_v2(hub: String, h: Node3D) -> void:
 	var ids := perches.map(func(p: Array) -> String: return p[0])
 	var ham := (IstSehir.flight_data_v2(IstBaglama.kok)["perches"] as Array).map(func(p: Array) -> String: return p[0])
 	print("FLIGHTCHECK %s konma=%s ham=%s" % [tag, ids, ham])
+	print("FLIGHTCHECK %s isaretler=%s" % [tag, lms.map(func(l: Array) -> String: return "%s(%s)" % [l[0], tr("LM_" + String(l[0]))])])
 	for want in ["aya", "galata", "column"]:
 		if not (want in ids):
 			_fail("%s: konma noktası yok: %s" % [tag, want])
