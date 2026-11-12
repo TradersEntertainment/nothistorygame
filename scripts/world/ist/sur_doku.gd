@@ -157,7 +157,7 @@ void fragment() {
 	if (tur > 0.5 && tur < 1.5) { yos = max(yos, smoothstep(0.6, 0.9, vn(vec2(u * 0.3, y * 0.5) + 3.0)) * (1.0 - smoothstep(0.0, 4.0, dip))); }
 	c = mix(c, vec3(0.20, 0.24, 0.12) * kat, yos * 0.35 * dikey);
 	// uzak katman (pişmiş, köşe rengi açılmış): yakındaki derz/akıntı/dip kararmasının ortalaması kadar koyulaşır
-	if (yerel_dip < 0.5) { c *= 0.84; }
+	if (yerel_dip < 0.5) { c *= 1.08; }      // SUR-5: uzak katman yakından koyu-kahve okunuyordu (uzak_kara_400m)
 	ALBEDO = c;
 	ROUGHNESS = 0.95;
 }
