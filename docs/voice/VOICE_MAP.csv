@@ -1118,7 +1118,7 @@ HIKMET_ITEM_COLOGNE,,SPK_HIKMET,,0,Limon kolonyası. Bizim milletin diplomatik d
 HIKMET_ITEM_CUBE,,SPK_HIKMET,,0,"Onu 1987'den beri çözemedim. Götür, belki geçmişte kafası çalışan biri çözer.",Been at it since 1987. Maybe someone in the past can crack it.,eşya
 HIKMET_ITEM_LIGHTER,,SPK_HIKMET,,0,At cebine. İnsanoğlu ateşi bulmak için binlerce yıl çakmaktaşı çaktı; sen hazıra konuyorsun.,Take it. Mankind spent millennia discovering fire. You just bring the finished product.,oyun
 HIKMET_ITEM_PHONE,,SPK_HIKMET,,0,Yeter de artar evlât. Orada şarj aleti yok ama priz de yok. Hesap denk yani.,"Plenty, son. No chargers there, but no sockets either. Fair's fair.",oyun
-HIKMET_ITEM_POWERBANK,,SPK_HIKMET,,0,Onu kendi icadım olan şarj aletiyle doldurdum. Sadece bir kere alev aldı.,I charged that myself. With a charger of my own design. It only caught fire the once.,eşya
+HIKMET_ITEM_POWERBANK,,SPK_HIKMET,,0,Onu kendi icadım şarj aletiyle doldurdum. Topu topu bir kere alev aldı.,I charged that myself. With a charger of my own design. It only caught fire the once.,eşya
 HIKMET_ITEM_SELFIE,,SPK_HIKMET,,0,"Tarihi yazanlarla fotoğraf çekil. Dönünce kimse inanmaz, montaj derler. Olsun.","Take selfies with the history makers. Nobody'll believe you, but still.",eşya
 HIKMET_ITEM_TAPE,,SPK_HIKMET,,0,Bu makinenin yüzde altmışını bu bant tutuyor. Kalanı umut.,Sixty percent of that machine is this. The rest is hope.,kod
 HIKMET_ITEM_THERMOS,,SPK_HIKMET,,0,"Demleme çay, iki şekerli. Orada çay yoksa bile seninki var.","Proper brewed tea, two sugars. History might not have tea yet. You do.",eşya
@@ -1433,7 +1433,7 @@ REACT_GUARDS_BOOK,,SPK_HASAN,,0,"Hasan: ""Resimli kitap! Bizi de çizmişler mi?
 REACT_GUARDS_CHICKPEAS,,SPK_HASAN,,0,"Hasan (yer): ""Nohut ama kuru. Ama güzel."" Hüseyin: ""Bana da uzat. ...Casus böyle güzel şey getirmez.""","Hasan (munching): ""Chickpeas, but dry. But good."" Hüseyin: ""Pass them over. ...Spies don't bring snacks this nice.""",eşya
 REACT_GUARDS_COLOGNE,,SPK_HASAN,,0,"Hasan: ""Limon mu? Limondan su mu olur?"" Hüseyin (ellerini uzatır): ""Bir daha.""","Hasan: ""Lemon? You can make water out of lemons?"" Hüseyin (holding out his hands): ""Again.""",eşya
 REACT_GUARDS_CUBE,,SPK_HASAN,,0,"(İkisi küpü kapar.) ""Sen çevir."" ""Hayır sen."" (Küp giderek daha çok karışır.)","(They both grab it.) ""You turn it."" ""No, you."" (The cube gets progressively worse.)",eşya
-REACT_GUARDS_LIGHTER,,SPK_HASAN,,0,"Hasan: ""Büyücü!"" Hüseyin: ""Büyücü değil, çakmaktaşı bu. Sadece küçük ve hızlı.""","Hasan: ""Sorcerer!"" Hüseyin: ""It's flint, you dolt. Just small and quick.""",eşya
+REACT_GUARDS_LIGHTER,,SPK_HASAN,,0,"Hasan: ""Büyücü!"" Hüseyin: ""Ne büyücüsü be, çakmaktaşı bu. Ufak ama tez çakar.""","Hasan: ""Sorcerer!"" Hüseyin: ""It's flint, you dolt. Just small and quick.""",eşya
 REACT_GUARDS_PHONE,,SPK_HASAN,,0,"Hasan: ""İçinde minik adam var!"" Hüseyin: ""Minik adam değil, minik Hasan."" Hasan: ""Hasan benim!""","Hasan: ""There's a tiny man inside!"" Hüseyin: ""Not a tiny man. A tiny Hasan."" Hasan: ""I'm Hasan!""",eşya
 REACT_GUARDS_POWERBANK,,SPK_HASAN,,0,"Hasan: ""Bu taş sıcak!"" Hüseyin: ""Kutsal olabilir. Dokunma."" Hasan: ""Dokundum.""","Hasan: ""This stone is warm!"" Hüseyin: ""Could be holy. Don't touch it."" Hasan: ""Touched it.""",eşya
 REACT_GUARDS_SELFIE,,SPK_HASAN,,0,"(Tolga fotoğraf çeker.) Hasan: ""Ruhumu mu aldın?"" Hüseyin: ""Senin ruhun yok ki Hasan."" Hasan: ""Ben Hüseyin'im!""","(Tolga takes a photo.) Hasan: ""Did you steal my soul?"" Hüseyin: ""You haven't got one, Hasan."" Hasan: ""I'm Hüseyin!""",eşya
@@ -1450,7 +1450,7 @@ REACT_HIKMET_SELFIE,,SPK_HIKMET,,0,"""Tarihi yazanlarla fotoğraf çekil. Kimse 
 REACT_HIKMET_TAPE,,SPK_HIKMET,,0,"""Makinenin yüzde altmışı bundan. Kalanı umut.""","""Sixty percent of that machine is this. The rest is hope.""",eşya
 REACT_HIKMET_THERMOS,,SPK_HIKMET,,0,"""Demlik çay, iki şeker. Orada çay yoksa bile senin var.""","""Proper brewed tea, two sugars. History might not have tea yet. You do.""",eşya
 REACT_KADRI_BOOK,,SPK_KADRI,,0,"""İçinde yemek tarifi yok mu? Tarifsiz tarih eksik yazılmış tarihtir.""","""No recipes? History without recipes is just dates. ...Dates! Now there's a fruit.""",eşya
-REACT_KADRI_CHICKPEAS,,SPK_KADRI,[hesitant],0,"""Nohut... ama kavrulmuş... ama kuru... ama çıtır! Bu bir devrim. Adı ne?"" Tolga: ""Leblebi."" Kadri: ""Leb-le-bi. Sultan'ın sofrasına!""","""Chickpeas... roasted... dry... crunchy! This is a revolution. What do you call it?"" Tolga: ""Leblebi."" Kadri: ""Leb-le-bi. To the Sultan's table!""",eşya
+REACT_KADRI_CHICKPEAS,,SPK_KADRI,[hesitant],0,"""Nohut... ama kavrulmuş... ama kuru... ama çıtır! Bu ne icat böyle! Adı ne?"" Tolga: ""Leblebi."" Kadri: ""Leb-le-bi. Sultan'ın sofrasına!""","""Chickpeas... roasted... dry... crunchy! This is a revolution. What do you call it?"" Tolga: ""Leblebi."" Kadri: ""Leb-le-bi. To the Sultan's table!""",eşya
 REACT_KADRI_COLOGNE,,SPK_KADRI,,0,"""Mutfağıma limon kokusu mu? ...Fena da olmadı hani.""","""Lemon in my kitchen? ...Actually, that's rather nice.""",eşya
 REACT_KADRI_CUBE,,SPK_KADRI,,0,"""Renkleri ayırıyorsun değil mi? Ben de bütün gün pilavla bulguru ayırıyorum. Aynı iş.""","""Sorting colours, is it? I sort rice from bulgur all day. Same job.""",eşya
 REACT_KADRI_LIGHTER,,SPK_KADRI,,0,"""Ocağı tek hamlede mi yakıyor? ...Evlâdım, sen bu mutfakta kalıyorsun.""","""Lights the stove in one go? ...Son, you're staying in this kitchen.""",eşya
@@ -1461,7 +1461,7 @@ REACT_KADRI_REPLAY_2,,SPK_KADRI,,0,Bu kazanı daha önce patlattın mı? Gözler
 REACT_KADRI_REPLAY_3,,SPK_KADRI,,0,"Her gelişinde aynı eşya, aynı surat. Ama tarif her seferinde farklı çıkıyor.","Every time the same object, the same face. But the recipe comes out different every time.",eşya
 REACT_KADRI_REPLAY_4,,SPK_KADRI,,0,Aşçı hatırlar. Bir kere yiyeni unutmaz. Seni üç kere unutmadım.,A cook remembers. He never forgets who ate once. I've not forgotten you three times.,eşya
 REACT_KADRI_REPLAY_5,,SPK_KADRI,,0,Mutfağa girersen çıkarken bir şey kırılır. Tecrübeyle sabit.,"Whenever you enter the kitchen, something breaks on your way out. Proven by experience.",eşya
-REACT_KADRI_SELFIE,,SPK_KADRI,,0,"""Kepçenin sapı uzun olmuş ama kepçesi yok. Kötü kepçe.""","""The ladle's all handle and no ladle. Terrible ladle.""",eşya
+REACT_KADRI_SELFIE,,SPK_KADRI,,0,"""Kepçenin sapı uzun olmuş ama kepçesi yok. Hayırsız kepçe!""","""The ladle's all handle and no ladle. Terrible ladle.""",eşya
 REACT_KADRI_TAPE,,SPK_KADRI,,0,"""Siz gelecekte dolmayı bununla mı sarıyorsunuz? Hayırsız yermiş şu gelecek.""","""Is this how you wrap dolma in the future? Grim place, the future.""",eşya
 REACT_KADRI_THERMOS,,SPK_KADRI,,0,"""Sıcağı saklayan testi mi? Çorba için isterim. Takas edelim: sana bir kaftan.""","""A jug that keeps things hot? I need that for soup. Let's trade: one kaftan.""",eşya
 REACT_KID_BOOK,,SPK_KID,,0,Resimli kitap! Venedik var mı? ...Yok mu? Kötü kitap.,A picture book! Is Venice in it? ...No? Bad book.,eşya
@@ -1890,7 +1890,7 @@ D4A_ITEM_CUBE_1,4,SPK_HASAN,,0,Sen çevir.,You turn it.,kod
 D4A_ITEM_CUBE_2,4,SPK_HUSEYIN,,0,"Hayır, sen.","No, you.",kod
 D4A_ITEM_CUBE_3,4,SPK_HASAN,,0,"...Daha kötü oldu. Ver bana. Hayır, bana.","...It's worse now. Give it here. No, here.",kod
 D4A_ITEM_LIGHTER_1,4,SPK_HASAN,[excited],0,Büyücü!,Sorcerer!,kod
-D4A_ITEM_LIGHTER_2,4,SPK_HUSEYIN,,0,"Büyücü değil, çakmaktaşı bu. Sadece küçük ve hızlı.","It's flint, you dolt. Just small and quick.",kod
+D4A_ITEM_LIGHTER_2,4,SPK_HUSEYIN,,0,"Ne büyücüsü be, çakmaktaşı bu. Ufak ama tez çakar.","It's flint, you dolt. Just small and quick.",kod
 D4A_ITEM_PHONE_1,4,SPK_HASAN,[excited],0,İçinde minik adam var!,There's a tiny man inside!,kod
 D4A_ITEM_PHONE_2,4,SPK_HUSEYIN,,0,Minik adam değil. Minik Hasan.,Not a tiny man. A tiny Hasan.,kod
 D4A_ITEM_PHONE_3,4,SPK_HASAN,[excited],0,Hasan benim!,*I'm* Hasan!,kod
@@ -2138,7 +2138,7 @@ D6B_T_LURE,6,SPK_TOLGA,,0,"Leblebi! Martılar leblebiye bayılır. Bunu 2026'dan
 D6B_T_MISS,6,SPK_TOLGA,,0,Kaçırdım! Nerede? ...Orada. Pis pis bakıyor.,Lost it! Where's it gone? ...There. Giving me a filthy look.,ad
 D6B_T_PECK,6,SPK_TOLGA,[shouting],0,"...(Sinerji mektubu gagalamaya çalışıyor.) Hayır. Hayır! Bu bir imparatorun mektubu, Sinerji!","...(Synergy is trying to peck the letter.) No. NO! That's an emperor's letter, Synergy!",kod
 D6B_T_SEALED,6,SPK_TOLGA,,0,Mühre dokunmadım. Bazı şeyleri okumamak lazım. Bunu da belgeselden öğrenmedim.,I didn't touch the seal. Some things you shouldn't read. I didn't learn that from a documentary.,oyun
-D6B_T_SILENT,6,SPK_TOLGA,,0,Sadece... dikkatli olun.,Just... be careful.,oyun
+D6B_T_SILENT,6,SPK_TOLGA,,0,Şey... dikkatli olun.,Just... be careful.,oyun
 D6B_T_VISTA_1,6,SPK_TOLGA,,0,Haliç... Zincirin ucundaki kuleyi buradan görebiliyorum. Evimden Haliç ancak trafik haberinde görünür.,The Golden Horn... I can see the tower at the end of the chain from here. From my flat you only see the Horn on the traffic news.,ad
 D6B_T_VISTA_2,6,SPK_TOLGA,,0,Ayasofya. Minaresiz. Kimseye söylemeyin ama bu hâli de çok yakışıklı.,"Hagia Sophia. No minarets. Don't tell anyone, but it looks handsome like this too.",ad
 D6B_T_VISTA_3,6,SPK_TOLGA,,0,"Kara surları. Bir ay sonra burada top sesinden başka bir şey duyulmayacak. Şimdi martı var, bir de bir teyze bağırıyor.","The land walls. In a month you won't hear anything here but cannons. Right now there are gulls, and an auntie shouting.",ad
@@ -2171,7 +2171,7 @@ D6_H_CALL,6,SPK_HIKMET,,0,(Telsiz) Evlât? Beni duyuyor musun? Sabah oldu mu ora
 D6_H_NO_ANSWER,6,SPK_HIKMET,,0,(Telsiz) ...Cevap yok. Meşguldür. 1453'te herkes meşgul.,(Radio) ...No answer. He's busy. Everyone's busy in 1453.,kod
 D6_KADRI_ASK,6,SPK_KADRI,,0,Sultan'ın sofrasına yeni bir lezzet lazım. Getirirsen yamağım olursun. Yamaklar otağa girer.,The Sultan's table needs a new flavour. Bring me one and you're my kitchen boy. Kitchen boys go into the imperial tent.,ad
 D6_KADRI_BOOK,6,SPK_KADRI,,0,İçinde yemek tarifi yok mu? Tarifsiz tarih eksik yazılmış tarihtir.,No recipes? History without recipes is history half-written.,ad
-D6_KADRI_CHICKPEAS,6,SPK_KADRI,[hesitant],0,Nohut... ama kavrulmuş... ama kuru... ama çıtır! Bu bir devrim. Adı ne?,Chickpeas... roasted... dry... crunchy! This is a revolution. What do you call it?,oyun
+D6_KADRI_CHICKPEAS,6,SPK_KADRI,[hesitant],0,Nohut... ama kavrulmuş... ama kuru... ama çıtır! Bu ne icat böyle! Adı ne?,Chickpeas... roasted... dry... crunchy! This is a revolution. What do you call it?,oyun
 D6_KADRI_CHICKPEAS_2,6,SPK_KADRI,[excited],0,Leb-le-bi. Sultan'ın sofrasına!,Leb-le-bi. To the Sultan's table!,oyun
 D6_KADRI_CHICKPEAS_T,6,SPK_TOLGA,,0,Leblebi.,Leblebi.,oyun
 D6_KADRI_COLOGNE,6,SPK_KADRI,,0,Mutfağıma limon kokusu mu? ...Fena da olmadı hani.,"Lemon in MY kitchen? ...Actually, that's rather nice.",ad
@@ -2184,7 +2184,7 @@ D6_KADRI_HELLO,6,SPK_KADRI,,0,Mutfağıma kim girdi? Tencereye girer mi? Girmez.
 D6_KADRI_LIGHTER,6,SPK_KADRI,,0,"Ocağı tek hamlede mi yakıyor? ...Evlâdım, sen bu mutfakta kalıyorsun.","Lights the stove in one go? ...Son, you're staying in this kitchen.",ad
 D6_KADRI_PHONE,6,SPK_KADRI,,0,Tencereye sığar mı? Sığmıyor mu? O zaman beni ilgilendirmez.,Does it fit in a pot? No? Then it's none of my business.,ad
 D6_KADRI_POWERBANK,6,SPK_KADRI,,0,Sıcak taş mı? Hamur bunun üstünde güzel mayalanır.,A warm stone? Dough would rise lovely on that.,ad
-D6_KADRI_SELFIE,6,SPK_KADRI,,0,Kepçenin sapı uzun olmuş ama kepçesi yok. Kötü kepçe.,The ladle's all handle and no ladle. Terrible ladle.,ad
+D6_KADRI_SELFIE,6,SPK_KADRI,,0,Kepçenin sapı uzun olmuş ama kepçesi yok. Hayırsız kepçe!,The ladle's all handle and no ladle. Terrible ladle.,ad
 D6_KADRI_TAPE,6,SPK_KADRI,,0,Siz gelecekte dolmayı bununla mı sarıyorsunuz? Hayırsız yermiş şu gelecek.,"Is this how you wrap dolma in the future? Grim place, the future.",ad
 D6_KADRI_THERMOS,6,SPK_KADRI,,0,Sıcağı saklayan testi mi? Çorba için isterim. Takas edelim: sana bir kaftan.,A jug that keeps things hot? I need that for soup. Let's trade: one kaftan.,ad
 D6_LUTFI_ASK,6,SPK_LUTFI,,0,"Bir hüner göster bakalım. Bir kelime, bir kitap, bir koku. Hoşuma giderse seni elçi diye tercüme ederim.","Impress me. A word, a book, a scent. If I'm impressed, I'll translate you as an envoy.",ad
@@ -2860,7 +2860,7 @@ D10G_T_SEASICK,10,SPK_TOLGA,,0,(Küpeşteye eğilir) İyi denizci değilim.,(Lea
 D10G_T_TO_FATIH,10,SPK_TOLGA,,0,"Bu mektubu okuyacak biri varsa, o da Sultan'dır. Ona götüreceğim.","If anyone should read this letter, it's the Sultan. I'm taking it to him.",oyun
 D10G_T_W_1,10,SPK_TOLGA,,0,"Bir kadeh alayım. Sulandırılmış olsun, mesaideyim.","I'll have a glass. Watered down, I'm on duty.",ad
 D10G_T_W_2,10,SPK_TOLGA,,0,"Fıçılarınızı sigortalayayım mı? Yangın, sel, gülle...","Shall I insure your barrels? Fire, flood, cannonballs...",oyun
-D10G_T_W_3,10,SPK_TOLGA,,0,"Sadece soruyorum. Şarap içmem, sigortacıyım.","I'm only asking. I don't drink, I'm in insurance.",ad
+D10G_T_W_3,10,SPK_TOLGA,,0,"Öylesine soruyorum. Şarap içmem, sigortacıyım.","I'm only asking. I don't drink, I'm in insurance.",ad
 D10G_W_1,10,SPK_WINE,,0,Lomellino'yu arayan çok. Önce şarap al. Galata'da bilgi şarapla gelir.,"Lots of people are looking for Lomellino. Buy some wine first. In Galata, information comes with wine.",oyun
 D10G_W_2,10,SPK_WINE,,0,Lomellino bugün meşgul. Mektubu mu var? Mühürlü mü? Noter'e git. Mühürlü her şey önce noterden geçer.,"Lomellino's busy today. A letter, is it? Sealed? Go to the notary. Everything sealed goes through the notary first.",oyun
 D10G_W_AGAIN,10,SPK_WINE,,0,"Noter şurada. Mühür, kayıt, imza. Sonra belki Lomellino.","The notary's over there. Seal, register, sign. Then maybe Lomellino.",ad
@@ -3340,7 +3340,7 @@ D12_F_ITEM_LIGHTER,12,SPK_FATIH,,0,"Çakmaktaşıyla demir, küçültülmüş. G
 D12_F_ITEM_PHONE,12,SPK_FATIH,[hesitant],0,"Işık saçan bir levha, hesap yapıyor. Nasıl çalıştığını anlat. ...Anlatamıyor musun? Taşıdığın şeyi bilmiyorsun. Yine de... hesap makinesi. Güzel.",A glowing tablet that calculates. Explain how it works. ...You can't? You carry a thing you don't understand. Still... a calculating machine. Fine work.,oyun
 D12_F_ITEM_POWERBANK,12,SPK_FATIH,,0,Taş gibi ama taş değil. İçinde ne var?,"Like a stone, yet not a stone. What's inside?",ad
 D12_F_ITEM_SELFIE,12,SPK_FATIH,,0,Bu bir asa mı? Sorucu Ağa asalı adamlara bir soru eksik sorar. Ben sormam.,Is this a staff? The Questioning Agha asks men with staffs one question fewer. I don't.,ad
-D12_F_ITEM_TAPE,12,SPK_FATIH,,0,"Yapışıyor, kopuyor, yine yapışıyor. Her mühendisin rüyası. Kaç tane var?","It sticks, it tears, it sticks again. Every engineer's dream. How much do you have?",oyun
+D12_F_ITEM_TAPE,12,SPK_FATIH,,0,"Yapışıyor, kopuyor, yine yapışıyor. Ustalarım görse bayram eder. Kaç tane var?","It sticks, it tears, it sticks again. Every engineer's dream. How much do you have?",oyun
 D12_F_ITEM_THERMOS,12,SPK_FATIH,,0,Sıcağı saklayan bir kap. İlginç. Tadı ise... Sizin zamanınızda bunu herkes mi içiyor?,A vessel that keeps its heat. Curious. And the taste... Does everyone in your time drink this?,ad
 D12_F_KEY,12,SPK_FATIH,,0,"Madem gelecektensin, söyle bakalım. Bu şehir alınacak mı?","Since you are from the future, tell me. Will this city be taken?",oyun
 D12_F_KEY_BOOK,12,SPK_FATIH,,0,Cevabı o kitaba mı soruyorsun? (Bekler) Kitap ne derse desin. Ben seni dinliyorum.,You're asking that book for the answer? (Waits) Whatever the book says. I'm listening to you.,kod
