@@ -86,7 +86,7 @@ for v in "" "=perfect" "=chain" "=chainfail" "=red" "=swimshore" "=swimchain"; d
 for v in "" "=tea" "=confiscate" "=seal" "=lie" "=radio"; do run --chapter=3 --autotest$v; done
 for v in "" "=item" "=caught" "=market" "=chain" "=nofez" "=fall" "=fez" "=wet"; do run --chapter=4 --autotest$v; done
 for v in "" "=call" "=confiscated" "=sealed" "=noradio"; do run --chapter=5 --autotest$v; done
-for v in "" "=b" "=c" "=y" "=letter" "=byz" "=byzmistake" "=byzfail" "=byzclimb" "=byzgive"; do run --chapter=6 --autotest$v; done
+for v in "" "=b" "=c" "=y" "=letter" "=byz" "=byzmistake" "=byzfail" "=byzclimb" "=byzgive" "=krl_hit" "=krl_soldier" "=krl_animal"; do run --chapter=6 --autotest$v; done
 for v in "" "=tea" "=lost" "=form" "=wall" "=wallkeep" "=byz" "=byzniko" "=byzcell" "=fez"; do run --chapter=7 --autotest$v; done
 for v in "" "=ride" "=caught" "=late" "=heist" "=call" "=rulefree" "=tea" "=known" "=unknown"; do run --chapter=8 --autotest$v; done
 # Ara Bölüm "Beyaz Havlu" (8y; yalnız Bizans yolu, 8 ile 9 arasında): uyarısız/uyarılı/sınır dışı, açılmış mühür, doğru söz, 8.4, Sinerji (tavuk)
@@ -98,7 +98,7 @@ for v in "" "=leblebi" "=twokings" "=repair" "=kitchen" "=retry" "=hikmet" "=nih
 for v in "" "=miss" "=wrong" "=depot" "=together" "=stay" "=w4" "=meclis" "=kitchen" "=city"; do run --chapter=13 --autotest$v; done
 for v in "" "=eye" "=boom" "=untaped" "=tape" "=ulighter"; do run --chapter=10b --autotest$v; done
 for v in "" "=fire" "=noleb" "=thermos"; do run --chapter=10z --autotest$v; done
-for v in "" "=fatih" "=late"; do run --chapter=10g --autotest$v; done
+for v in "" "=fatih" "=late" "=krl_hit"; do run --chapter=10g --autotest$v; done
 for v in "" "=refuse"; do run --chapter=10a --autotest$v; done
 for v in "" "=collapse" "=retreat" "=leb"; do run --chapter=10l --autotest$v; done
 for v in "" "=leb" "=late"; do run --chapter=16 --autotest$v; done
@@ -120,7 +120,7 @@ for v in "" "=grant" "=fight" "=thermos" "=ear" "=captive"; do run --chapter=21 
 for v in "" "=brow" "=miss" "=cologne" "=early" "=blakh_ok" "=blakh_bad"; do run --chapter=22 --autotest$v; done
 for v in "" "=creative" "=pass" "=singed" "=letter"; do run --chapter=23 --autotest$v; done
 run --chapter=23 --autotest=osm
-for v in "" "=late" "=niko" "=niko_slow" "=eclipse"; do run --chapter=24 --autotest$v; done
+for v in "" "=late" "=niko" "=niko_slow" "=eclipse" "=krl_hit" "=krl_soft"; do run --chapter=24 --autotest$v; done
 for v in "" "=caught" "=pass" "=kid"; do run --chapter=25 --autotest$v; done
 for v in "=osm" "=osm_caught" "=osm_tez"; do run --chapter=25 --autotest$v; done
 for v in "" "=nophoto" "=hold" "=hold_box" "=hold23" "=hold3" "=warn_notrust" "=hold_lose" "=lighter" "=isidore" "=kasim" "=candle" "=council_ok" "=council_bad"; do run --chapter=26 --autotest$v; done
@@ -131,14 +131,17 @@ for v in "" "=silent" "=hooks_ok" "=hooks_bad"; do run --chapter=19o --autotest$
 for v in "" "=wide" "=lose" "=hot" "=hot_taped" "=hot_tape" "=named" "=flawed" "=edirne" "=edirne_ok"; do run --chapter=20o --autotest$v; done
 for v in "" "=smoke" "=lose" "=ear"; do run --chapter=21o --autotest$v; done
 for v in "" "=late" "=lose" "=twins_late" "=blakh_ok" "=blakh_bad"; do run --chapter=22o --autotest$v; done
-for v in "" "=late" "=thermos" "=tea" "=menu" "=eclipse"; do run --chapter=24o --autotest$v; done
+for v in "" "=late" "=thermos" "=tea" "=menu" "=eclipse" "=krl_hit"; do run --chapter=24o --autotest$v; done
 for v in "" "=nophoto" "=lose" "=turgut" "=turgut_bad"; do run --chapter=26o --autotest$v; done
 # Huruç (36b, 9 Nisan): yaralı Leon kaldırılır (36.1) ya da bırakılır (36.2)
 for v in "" "=leave"; do run --chapter=36b --autotest$v; done
+# Kuralı çiğneyen oyuncu (scripts/level/kural.gd, docs/SENARYO_KURAL_CIGNEME.md): kacak = talimden kaçar, kovalayan
+# yakalar (angarya); kacak_iade = kovalayanı atlatır (Büro iadesi); krl_hit = sivile üç tekme (karşılık, muhafız, tutuklanma);
+# krl_soft = kadın/çocuğa tekme işlemez; krl_soldier = askere tekme (ayağı yakalanır, tutuklanma); krl_animal = keçi/tavuk
 # Talim bölümleri (v0.99.13): ordugâhta azaplarla (41o) ve surların içinde Giustiniani'yle (42b); lose: serbest talimde
 # bot savunmasız durur
-for v in "" "=lose"; do run --chapter=42b --autotest$v; done
-for v in "" "=lose"; do run --chapter=41o --autotest$v; done
+for v in "" "=lose" "=kacak" "=kacak_iade"; do run --chapter=42b --autotest$v; done
+for v in "" "=lose" "=kacak" "=kacak_iade"; do run --chapter=41o --autotest$v; done
 # Kuşbakışı (v0.99.26): Büro'nun dronu Sultan'ın otağında; bad: bahanelerin hepsi kötü (43O.2), miss: kazana yetişilmez
 for v in "" "=bad" "=miss" "=dive"; do run --chapter=43o --autotest$v; done
 for v in "" "=lose" "=edirne" "=edirne_ok"; do run --chapter=28o --autotest$v; done
@@ -149,7 +152,7 @@ for v in "" "=lose" "=sprint" "=stonehit"; do run --chapter=30o --autotest$v; do
 for v in "" "=late" "=cracked" "=gunner" "=named" "=council_ok" "=council_bad"; do run --chapter=32o --autotest$v; done
 for v in "" "=lose" "=trespass"; do run --chapter=37o --autotest$v; done
 for v in "" "=lose" "=hooks_ok" "=hooks_bad"; do run --chapter=38o --autotest$v; done
-for v in "" "=late" "=tezkire" "=pass" "=sailor_ok" "=sailor_bad"; do run --chapter=39o --autotest$v; done
+for v in "" "=late" "=tezkire" "=pass" "=sailor_ok" "=sailor_bad" "=krl_hit"; do run --chapter=39o --autotest$v; done
 for v in "" "=late" "=petrion_ok" "=petrion_bad"; do run --chapter=31o --autotest$v; done
 for v in "" "=wide" "=fall"; do run --chapter=33o --autotest$v; done
 for v in "" "=bad"; do run --chapter=34o --autotest$v; done

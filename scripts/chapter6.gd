@@ -1651,7 +1651,7 @@ func _capture_mouse() -> void:
 func _autotest_report() -> void:
 	var expected: String = {"": "6a.1", "b": "6a.2", "c": "6a.3", "y": "6a.4", "letter": "6a.1",
 		"byz": "6b.1", "byzmistake": "6b.2", "byzfail": "6b.3", "next": "6a.1", "byzclimb": "6b.1", "byzgive": "6b.1", "krl_hit": "6a.1",
-		"krl_soldier": "6a.1"}[GameState.autotest_variant]
+		"krl_soldier": "6a.1", "krl_animal": "6a.1"}[GameState.autotest_variant]
 	var ok := _outcome == expected
 	# Bizans'ta bırakılanlar: kitap ve çakmak Giustiniani'de, Misafir İzni cepte (6b.3'te izin martıyla gider)
 	if GameState.autotest_variant == "byzgive" and not (GameState.given_to("book") == "giustiniani"

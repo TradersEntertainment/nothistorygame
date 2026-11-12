@@ -3,7 +3,8 @@
 Sahibin sözü (12 Kasım): "tolgayla savaş eğitiminden kaçtım ne. geçen halka vurmaya çalıştım vurulmadı öyle bir şeye
 karşı senaryo yazabilir misin"
 
-Durum: **İLK HÂL (taslak)**. Uygulama sürüyor; bitince bu belgenin sonundaki "Uygulama durumu" dolar.
+Durum: **UYGULANDI** (v0.99.119 üstüne, dal `wip/senaryo-kacak`). Ne yapıldığı ve sınanmadığı: §5. Kanıt ve rapor:
+`docs/_kanit_senaryo_kacak/`.
 
 ## 0. Bugün ne oluyor (kodu okuyarak; ekranlı kanıt `docs/_kanit_senaryo_kacak/`)
 
@@ -35,7 +36,7 @@ Bir de kovalayan: meydanın kenarında balyada oturan azap (41o) / gönüllü (4
 
 Kalıcı iz:
 - Sayaç `GameState.stats["firar"]` (ömür boyu), bölüm işareti `flags["firar_41o"] / flags["firar_42b"]`.
-- Büro iadesi: `paradox + 1` (Büro kaydına "görev yerini terk" düşer).
+- Büro iadesi: sayaç `stats["buro_iade"]`. (Paradoks sayacına yazılmadı: 12. bölümün sonuçları ona bakıyor; §4.)
 - Gönderme: 37o (İlk Hücum) açılışında Turgut: "Talimden kaçan kâtip! Bu gece kaçacak yer yok, önümde dur.";
   36b (Huruç) açılışında Leon: "Talimden kaçan tercüman. Bugün kaçarsan, kapı arkandan kapanır."
 - Başarım (gizli): **ACH_FIRAR "Firari Kâtip" / "The Deserting Clerk"**: talimden üç kez kaçmak (toplam).
@@ -86,7 +87,7 @@ tutuklanma (2a/3, asker kendi tarafının sözüyle: "Kâtip, ayağını indir; 
 Vuruş işlemez. Zaman donar (her şey ağır çekime iner), Nihat'ın sesi: "DUR." Kart **"ZAMAN BÜROSU · ACİL İADE ·
 Form Z-0: Hükümdara Ayak Kaldırma Girişimi"**. Nihat: "Bu formu Büro'da kimse doldurmadı. Tebrikler, ilk sizsiniz."
 Hikmet (telsiz): "Evlât, tarihe tekme atılmaz; tarih geri tepiyor." → **bölüm baştan başlar** (`replay_scene`),
-`paradox + 1`. Başarım (gizli): **ACH_TARIHE_TEKME "Tarihe Tekme" / "Kicking History"**.
+Sayaç `stats["tarihe_tekme"]` (paradoksa yazılmadı, §4). Başarım (gizli): **ACH_TARIHE_TEKME "Tarihe Tekme" / "Kicking History"**.
 Giustiniani, Turgut, Urban, Çandarlı gibi tarihî komutanlar 2d'ye girer (asker yakalar, tutuklanma).
 
 ## 3. Ortak düzenek (`scripts/level/kural.gd`, `class_name` yok, `preload`)
@@ -109,7 +110,41 @@ bölümleri (3, 7 denetçi kısmı, 11, 14).
 2. Tutuklanma bir kart sahnesi; oynanabilir zindan (7. bölüm byzcell gibi) ister misin?
 3. Angarya şimdilik kart + söz; kazan karıştırma mini işi (Kadri'nin kazanı mini oyunu var) bağlansın mı?
 4. Başarım adları: "Firari Kâtip", "Kadı Huzurunda", "Tarihe Tekme".
-5. Paradoks sayacına yazılsın mı (sonları etkileyebilir)? İlk hâlde yalnız Büro iadesi ve hükümdar.
+5. Paradoks sayacına yazılsın mı? 12. bölüm paradoks 40/60 eşiğiyle sonuç seçiyor; şimdilik YAZILMADI (yalnız `stats`).
 
 ## 5. Uygulama durumu
-(doldurulacak)
+
+Düzenek: `scripts/level/kural.gd` (`class_name` yok; `preload`). Bölüm başına bir "Kural" düğümü.
+
+| Durum | Uygulandı mı | Nasıl sınandı |
+|---|---|---|
+| Talimden kaçmak 41o / 42b: laf → seslenme + kovalayan → yakalanma → CEZA kartı + üç söz → kaçtığı yere dönüş | EVET | `kacak` (41o, 42b) başsız PASS; 41o ekranlı ÖNCE/SONRA |
+| Kovalayanı atlatmak: Hikmet telsiz + Nihat + "İADE" kartı, görev veren bekliyor | EVET | `kacak_iade` (41o, 42b) başsız PASS |
+| Üstelemek: aynı bölümde 2. kaçışta ilk basamak atlanır ("Yine mi?") | EVET | kodda; ayrı varyant YOK |
+| Gönderme: 37o Turgut, 36b Leon (yalnız kaçan oyuncuya bir söz) | EVET | 37o/36b eski varyantlar PASS (söz kaçmayana çıkmaz); kaçan rota için koşu YOK |
+| Erkek sivile tekme: 1 şaşkınlık + Tolga özrü · 2 kalabalık bağırır, vurulan tekmeyle karşılık verir, Tolga yere · 3 muhafız arkadan koşarak gelir → tutuklanma kartı (zindan / kadı / podestà) | EVET | `krl_hit` 24 (Bizans), 10g (Galata), 6 ve 24o (ordugâh), 39o (fetih: yeniçeri) |
+| Kalıcı iz: tutuklanandan sonra o bölümde yakından geçen sivil "İşte o tekmeci" der, döner bakar | EVET | kodda (`_mark_tick`); koşu günlüğünde `KURAL mark` |
+| Kadın, çocuk, yaşlı, din adamı: bacak kalkar, iner; sırayla Tolga vazgeçer / biri araya girer / Hikmet telsizden / Tolga | EVET | `krl_soft` 24 |
+| Askere, talim arkadaşına: ayağı yakalar, Tolga yere, doğrudan tutuklanma | EVET | `krl_soldier` 6 |
+| Komutan/hikâye karakteri (Turgut, Giustiniani...): Tolga "Şaka!" der, muhafız gelir | EVET | KANITSIZ (varyant yok) |
+| Fatih / İmparator: "Dur." → ACİL İADE kartı, Nihat + Hikmet, bölüm baştan | EVET | KANITSIZ (bağlanan bölümlerde hükümdar serbest dolaşımda yok; otomatik testte bölüm yeniden başlamaz) |
+| Hayvan: keçi/at/öküz karşılık (Tolga yere), tavuk üstüne atlar, kedi kınar | EVET | `krl_animal` 6 |
+| Sayaçlar `stats`: firar, buro_iade, tekme_sivil, tutuklama, utanc, tekme_asker, tekme_hayvan, tarihe_tekme | EVET | ACHCHECK |
+| Başarımlar (gizli): ACH_FIRAR, ACH_KADI, ACH_TARIHE_TEKME | EVET | `tests/ach_check.gd` |
+| Paradoks sayacı | HAYIR (bilerek) | 12. bölümün sonuçlarını değiştirir; sahibin kararı (§4) |
+| Oynanabilir angarya (kazan) / oynanabilir zindan | HAYIR | kart + söz; sahibin kararı (§4) |
+
+Bağlanan bölümler: 41o, 42b (alan + tekme) · 24, 10g, 39o, 31o (şehir) · 6, 24o (ordugâh): tekme.
+Bağlanmayanlar: 7 ve 3/11/14 (oyuncu Nihat: düzenek zaten kapalı), gizlilik (4, 5, 8, 16, 21o, 25), dövüş bölümleri
+(tekme dövüşün parçası; düzenek `player.combat` iken kapalı), 1452 bölümleri (33o, 34o, 35o), 2026 bölümleri.
+
+**Başka bir bölüme bağlamak (tek satır, `add_child(player)`'dan sonra):**
+```gdscript
+kural = preload("res://scripts/level/kural.gd").hits(self, hud, player)
+```
+Talim gibi bir görev alanı için: `preload(...).area(self, hud, player, merkez, yarıçap, görev_veren, "SPK_..", kovalayan, "O"|"B")`.
+Otomatik test için bölümün güvenli bir anına `if GameState.autotest: await kural.bot_window()` ve rapora
+`kural.test_ok()`.
+
+Kaçmayan, vurmayan oyuncu için hiçbir şey değişmez: izleyici yalnız alandan çıkınca ya da önünde biri varken tekmeye
+basınca çalışır; eski varyantların hepsi aynı sonuçla geçer (§ rapor).

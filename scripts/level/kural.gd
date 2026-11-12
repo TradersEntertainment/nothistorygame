@@ -90,6 +90,7 @@ var _soft_n := 0
 var arrests := 0
 var ruler_tries := 0
 var soft_stops := 0
+var animal_hits := 0
 var last := ""                    # son tepki (test ve kanıt için)
 var _bot := ""                    # otomatik testin yaptığı (krl_hit, krl_soft, kacak, kacak_iade)
 var _bot_t := 0.0
@@ -133,7 +134,7 @@ static func area(p_scene: Node3D, p_hud: Hud, p_player: Player, center: Vector3,
 
 
 func _ready() -> void:
-	_bot = GameState.autotest_variant if GameState.autotest and GameState.autotest_variant in ["krl_hit", "krl_soft", "krl_soldier", "kacak", "kacak_iade"] else ""
+	_bot = GameState.autotest_variant if GameState.autotest and GameState.autotest_variant in ["krl_hit", "krl_soft", "krl_soldier", "krl_animal", "kacak", "kacak_iade"] else ""
 
 
 func _log(s: String) -> void:
@@ -224,16 +225,15 @@ func _send_runner() -> void:
 		_runner_rot = runner.global_rotation.y
 	# Söz onun ağzından çıksın (portre ve ses yeri): yakalayınca konuşan bu kişi
 	runner.set_meta("spk", "SPK_AZAP" if side == "O" else "SPK_DEFENDER")
-	runner.set_activity("")
-	runner.look_target = player
-	# Oturduğu balyadan kalkar: önüne, yere iner
+	# Oturduğu balyadan kalkar: önüne, yere iner (tween balyanın içinden geçiriyordu: WALKTHRU/insolid). Koşarken
+	# bakışı yolundadır (look_target yürüyüşü sırtı dönük gösteriyordu: LOOKAUDIT walk); oyuncuya yakalayınca döner
 	var fwd := -runner.global_transform.basis.z
 	fwd.y = 0.0
-	var up := runner.global_position + fwd.normalized() * 0.8
+	var up := runner.global_position + fwd.normalized() * 1.05
 	up.y = _ground(up, runner.global_position.y)
-	var tw := runner.create_tween()
-	tw.tween_property(runner, "global_position", up, 0.35)
-	await tw.finished
+	runner.look_target = null
+	runner.global_position = up
+	runner.set_activity("")
 	_chase_loop()
 
 
@@ -269,6 +269,7 @@ func _caught() -> void:
 	player.frozen = true
 	player.face(runner.global_position + Vector3(0, 1.5, 0))
 	runner.face_toward(player.global_position)
+	runner.look_target = player
 	runner.emote("point")
 	last = "caught"
 	_log("area caught n=%d" % caught)
@@ -477,6 +478,8 @@ func _civilian(n: Node3D, role: String, ctx: Dictionary) -> void:
 	await _kick_land(n)
 	var p := n as Person
 	if p and p.activity != "":
+		if not p.has_meta("street_role"):
+			p.set_meta("street_role", role)      # rolü işinden çıkıyordu (ordugâhta işçi): iş bırakınca asker sanılmasın
 		p.set_activity("")          # vurulan elindeki işi bırakır
 	if p:
 		p.face_toward(player.global_position)
@@ -754,6 +757,7 @@ func _ruler(p: Person) -> void:
 func _animal(n: Node3D) -> void:
 	busy = true
 	last = "animal"
+	animal_hits += 1
 	GameState.bump_stat("tekme_hayvan")
 	_log("animal %s" % n.get_class())
 	await _kick_land(n)
@@ -861,6 +865,35 @@ func _bot_tick(delta: float) -> void:
 			player.face(c.global_position + Vector3(0, 1.0, 0))
 			_bot_kick = true
 			_bot_t = 0.0
+		"krl_animal":
+			if animal_hits >= 1:
+				_bot_done = true
+				return
+			if _bot_t < 0.6:
+				return
+			var a: Node3D = null
+			var ad := 80.0
+			for n in scene.find_children("*", "Node3D", true, false):
+				if (n is Goat or n is Chicken or n is Horse or n is Ox or n is Cat) and (n as Node3D).is_visible_in_tree():
+					var d := (n as Node3D).global_position.distance_to(player.global_position)
+					if d < ad:
+						ad = d
+						a = n
+			if a == null:
+				_bot_done = true
+				_log("bot no-animal")
+				return
+			if _bot_home == Vector3.INF:
+				_bot_home = player.global_position
+			var off2 := player.global_position - a.global_position
+			off2.y = 0.0
+			if off2.length() < 0.2:
+				off2 = Vector3(0, 0, 1)
+			player.global_position = a.global_position + off2.normalized() * 1.5 + Vector3(0, 0.05, 0)
+			player.global_position.y = _ground(player.global_position, a.global_position.y + 0.5) + 0.05
+			player.face(a.global_position + Vector3(0, 0.4, 0))
+			_bot_kick = true
+			_bot_t = 0.0
 		"kacak", "kacak_iade":
 			if (_bot == "kacak" and caught >= 1) or (_bot == "kacak_iade" and returned >= 1):
 				_bot_done = true
@@ -908,6 +941,7 @@ func _bot_victim(mode: String) -> Person:
 func test_ok() -> bool:
 	match _bot:
 		"krl_hit", "krl_soldier": return arrests >= 1
+		"krl_animal": return animal_hits >= 1
 		"krl_soft": return soft_stops >= 2 and arrests == 0
 		"kacak": return caught >= 1
 		"kacak_iade": return returned >= 1
@@ -915,4 +949,5 @@ func test_ok() -> bool:
 
 
 func test_line() -> String:
-	return "kural=%s caught=%d iade=%d arrests=%d soft=%d last=%s" % [_bot, caught, returned, arrests, soft_stops, last]
+	return "kural=%s caught=%d iade=%d arrests=%d soft=%d animal=%d last=%s" % [_bot, caught, returned, arrests, soft_stops,
+		animal_hits, last]
