@@ -1,4 +1,4 @@
-DURUM: DEVAM EDİYOR (bölüm 1–4 yazıldı; 5–7 sürüyor). Yedi bölüm de dolunca bu satır `DURUM: TAMAM` olacak.
+DURUM: TAMAM
 
 # Nisan–Mayıs 1453 Osmanlı ordugâhı ve kuşatma hatları: gerçekte nasıl görünüyordu?
 
@@ -228,7 +228,7 @@ Sayısal oranlar [TAHMİN] (15. yy ordusu için kaynak yok; Ágoston'dan genel s
 |---|---|---|---|---|
 | **Yeniçeri** | %12 | **Yay + ok (ana), kısa kılıç/pala, balta, kalkan (küçük ahşap), mızrak/zıpkın; az sayıda el tüfeği/arkebüz (%5–15)** | **Beyaz keçe başlık (börk): Barbaro'nun "beyaz başlık"ı**; dolama (uzun kaftan) lacivert-koyu/kırmızı-bordo, kuşak; boyu bilek altı | Silah: PEARS1903 (Tetaldi, La Brocquière, Barbaro "firelocks that threw leaden balls"); tüfek oranı **[TARTIŞMALI]**; börk detay (sarkık kol) **[SONRAKİ DÖNEM]** |
 | **Sipahi / Rumeli–Anadolu atlısı** | %10 | Ok-yay, pala, topuz, kalkan, mızrak; zırh zincir göğüslük/yastıklı "jacque" (kuşatmada çoğu atından inip piyade gibi savaşır) | Beyaz/renkli sarık, boyalı eyer örtüsü; çok çeşitli | PEARS1903 (Philelphus; Leonardo: "kuşatmada atlılar piyade gibi savaştı") |
-| **Azap, eyalet piyadesi** | %30 | Yay, mızrak, kılıç, tahta kalkan; çoğu zırhsız | Keçe/yün başlık, sarık, yün dolama, bez kuşak | Tetaldi: yarısı ¼'ten azı zırhlı; geri kalan yastıklı kumaş |
+| **Azap, eyalet piyadesi** | %30 | Yay, mızrak, kılıç, tahta kalkan; çoğu zırhsız | Keçe/yün başlık, sarık, yün dolama, bez kuşak | Tetaldi: ordunun ¼'ünden azı zırhlı/yastıklı ceketli; geri kalanı zırhsız |
 | **Başıbozuk / gönüllü / yağmacı** | %20 | Sopa, bıçak, sapan, ok, kalkan; bir kısmı Hristiyan yağmacı | Paçavra, kürk parçası, hasır başlık | PEARS1903 (poorest Turks + Christians for plunder) |
 | **Topçu ve top arabacıları** | %5 | Kürek, kama, zincir, kürek, sepet, ateş mızrağı; barutçular | Önlük/yağlı kumaş, is lekeli; başları bez örtülü | WP-Fall; Kritovulos (top yatağı, barut) |
 | **Lağımcı (Sırp madenci), marangoz, demirci** | %4 | Kazma, kürek, tahta destek, el arabası | Gri/kahverengi yün, koyu başlık, kil rengi giysi | PEARS1903 (Novo Brdo madencileri Zağanos'un emrinde; Saksonlar olabilir) |
@@ -327,3 +327,163 @@ Bkz. §1.4. Özet: **üç ana top istasyonu** (Tekfur Sarayı–Edirnekapı; Pem
 
 - **Kızak yolu (21–22 Nisan):** **Tophane civarından Kasımpaşa vadisine** düzeltilmiş yol; kalas ve tomruk döşeli; **6 mızrak ≈ 13–14 ft (≈ 4 m)** uzunlukta yağlı silindirler (kütükler); gemi beşikleri (iskele kenarlarına direk takılı); ilk deneme küçük fusta; 70–80 gemi; yağlar; manda, makara, insan [K: PEARS1903]. Rota: Boğaz kıyısı → tepe geçişi (Taksim yönü) → Kasımpaşa; **~3 mil**; iniş noktası tartışmalı [K: ISTANBUL_1453.md; WP-Fall] [TARTIŞMALI]. Kod kızak yolu Beşiktaş–Kasımpaşa çizgisi ile uyumlu.
 - **Fıçı köprüsü:** **Cynegion (Ayvansaray) civarı, Haliç'in üst ucu, kara surlarının Haliç surlarına bağlandığı yer**; **1000'den fazla şarap fıçısı**, halatlarla bağlı; genişlik **iki fıçı boyuna**; üstüne kirişler, kalas; **yan yana beş asker yürüyebilir**; amaç haberleşme ve **fıçı sallar (pontoons) üzerine top koymak** [K: PEARS1903]. Kritovulos §117: **Keramika'dan** (Ceramica) bir köprü [K: KRIT-DRM]. WP-Fall: yeri belirsiz. Oyun `fici_kopru` Kasımpaşa (kuzey) – Cibali (güney) arası yerleştiriyor → **Pears ve Kritovulos'la uyumsuz**: üst Haliç, Ayvansaray/Eyüp tarafı olmalı [bkz. §7d].
+
+---
+
+## 5. SANCAK, TUĞ, IŞIK
+
+### 5.1 Sancak: ne biliniyor, ne bilinmiyor
+
+| Konu | Durum | Etiket |
+|---|---|---|
+| **Hilal ve yıldız** | 1453 Osmanlı sancağında hilal+yıldız **kanıtlı değil**. Kırmızı zemin üzerine beyaz hilal-yıldız bayrak 1844'te resmî oldu; yıldız-hilal motifinin Osmanlı bayraklarında yaygınlaşması 18. yy sonu–19. yy. "Mehmed fetihte Bizans'ın hilalini aldı" anlatısı mümkün ama **kanıtsız** | [TARTIŞMALI; SONRAKİ DÖNEM: WP-Flags] |
+| **Hilal-kırmızı bayrağın eski kökleri** | "Orhan'ın yeniçerilere verdiği kırmızı hilalli sancak" anlatısı var, 1453 öncesi dayanak zayıf | [TARTIŞMALI] |
+| **Yeşil sancak, üç hilal** | Fatih'in kadırgasında "yeşil, üç hilalli bayrak" tek bir anlatıda; | [TARTIŞMALI, tek zayıf kaynak] |
+| **Kırmızı/yeşil işlev ayrımı** | "Yeşil dinî, kırmızı dünyevî" yorumu (donanma bayrağının kırmızı olması) | [TARTIŞMALI, ikinci el] |
+| **Renkler (kırmızı, yeşil, beyaz, sarı, mavi)** | Orduda kırmızı ve yeşil sancaklar anılır (`ISTANBUL_GORUNUS.md` 7.x: "kırmızı/yeşil, hilal BELİRSİZ"); lacivert/mavi sancak 15. yy'da **kanıtsız** | [TAHMİN; ikinci el] |
+| **Yazı** | Sancak/alem üzerinde Arapça yazı (şehadet, ayet) olası; tuğra bayrakta 19. yy | [TAHMİN; SONRAKİ DÖNEM] |
+| **"Sancak-ı Şerif"** | 16. yy (Yavuz, 1517) sonrası; 1453'e koymayın | [SONRAKİ DÖNEM] |
+| **Biçim** | Dikdörtgen/üçgen uzun flama, ucu çatal olabilir; sapı metal alemli; sancak boyu 1,5–2 m'ye 1 m [TAHMİN] | [TAHMİN] |
+
+**Öneri:** **sade, düz renk (kırmızı, yeşil, beyaz, sarı), uzun çatallı flama; üzerinde altın veya beyaz Arapça hat çizgisi (okunmaz süs).** Hilal ve yıldız ikonu yok. Kırmızı sancak sayısı > yeşil.
+
+### 5.2 Tuğ ve alem
+
+- **Tuğ (at kuyruğu sancağı):** Türk-Moğol geleneği, uzun direk, tepesinde altın/pirinç alem, aşağıda at kuyruğu tutamı; makam göstergesi: **padişah 7, vezir 3, beylerbeyi 2, sancakbeyi 1** gibi sayı sistemi [SONRAKİ DÖNEM: Osmanlı protokol tarihçiliği; **1453'te bu sayıların aynen geçerli olduğu kanıtsız**]. Öneri: otağ önünde 5–7 tuğ (siyah/beyaz/kırmızı boyalı at kuyruğu), paşa çadırı önünde 1–3 [TAHMİN].
+- **Alem:** direk tepesinde yaldızlı küre/koni; otağ tepesinde büyük alem [kodda var: K.ALTIN küre]. Hilal biçimli alem **kullanmayın** (bkz. 5.1); küre veya sivri koni.
+- Mevcut `Y.sancak` ve `build_sancaklar`: kırmızı, yeşil, lacivert, kırmızı2, altın renk — **lacivert** ve **tam altın bayrak** [TAHMİN] etiketiyle kalsın ama oran: kırmızı %45, yeşil %25, beyaz %15, sarı %10, lacivert ≤ %5.
+
+### 5.3 Işık
+
+- **Gece ateşleri:** her 3–5 çadıra bir ocak [TAHMİN]; yeniçeri kazanları gece de kaynar; **26 Mayıs akşamı**: güneş battıktan 1 saat sonra "cephe boyunca büyük aydınlatma, her çadır görülebiliyordu, gündüz gibi, gece yarısına kadar" [K: PEARS1903 (Leonardo)]; Barbaro: her çadırda iki büyük ateş [K: ikinci el özet]. Oyun: 26 Mayıs gecesi ocak sayısını 3× yap (çadır başına 2 ateş), **turuncu-sarı** ışık, yoğun duman.
+- **Meşale:** hendek hattı ve siper yollarında 15–25 m aralıkla meşale [TAHMİN]; batarya içinde yağ kandili/fener (siperde ışık kapalı olmalı: gece bombardımanında kaçınılırdı [TAHMİN]).
+- **Fener:** paşa/otağ çadır girişinde iki fener (yağ kandili, kâğıt/ince deri camlı, 40 cm) [TAHMİN; SONRAKİ DÖNEM: sefer çadırı desenleri].
+- **Işıklandırma günleri:** Oyun canonu `EVREN.md`: *tarihî ışıklandırma ve sükût 27–28 Mayıs (32o)*; Pears/Leonardo 26 Mayıs akşamı; kullanıcı notu 24–28 Mayıs. → **Çelişki işaretlendi:** EVREN 27–28; kaynak 26 Mayıs. Oyunda 26 Mayıs "büyük ışıklandırma", 27–28 Mayıs "sessiz hazırlık ateşleri" ayrımı önerilir [TAHMİN].
+- **Gökyüzü:** 22 Mayıs ay tutulması [K: WP-Fall/ISTANBUL_1453.md]; 24 Mayıs civarı Hodegetria ikonunun düşmesi ve şiddetli fırtına, ertesi gün yoğun sis [K: PEARS1903 (Critobulus, Barbaro), ±1 gün]. Ordugâhın üstünde de sis ve ıslak zemin olmalı.
+
+---
+
+## 6. ZEMİN ve ÇEVRE
+
+| Öğe | Bilgi | Etiket |
+|---|---|---|
+| **Sur önü arazi (Lykos vadisi)** | Mesoteikhion'da sur Lykos vadisine iner; sur burada en alçak; vadi geniş açıklık. Hendek ve dış sur burada yıkıntıyla dolmuş | [K: PEARS1903] |
+| **Bağ ve bahçe** | Şehrin kendisi "ekili toprak, ağaç, bağ, çit" içerir (Kritovulos); Galata arkası sırtta bağlar ve çalılık, batı yamaçta Ceneviz mezarlığı (servi) | [K: PEARS1903 (Critobulus)] |
+| **Mezarlık** | Sur dışında Bizans mezarlıkları; Müslüman mezarlıkları (Eyüp) fetih sonrası | [TAHMİN + K: ISTANBUL_1453.md 9 (Eyüp türbesi fetihten sonra)] |
+| **Yakılmış köyler** | Osmanlı ordusu yolda Rumca köyleri vurdu; **Therapia** (40 kişi) ve **Studios** (36 kişi) kaleleri alındı, esirler şehre görünür biçimde **kazığa oturtuldu** (korkutma) | [K: PEARS1903] (not: sahne şiddeti; oyunda yumuşatılmış/ima) |
+| **Kesilmiş ağaçlar** | Kızak yolu, kule ve merdiven için ağaç/kereste yığını gizlice toplandı; çalı-çırpı hendek doldurma için kesildi | [K: PEARS1903 (kereste); TAHMİN] |
+| **Çiğnenmiş çamur** | 50–80 bin insan, on binlerce hayvan: Nisan'da yağmur, mayısta fırtına → ordugâh çamurlu; yollar araba tekerlekleriyle derin izli | [TAHMİN; yağış PEARS1903] |
+| **Yollar** | Edirne yolu (Via Egnatia/Ergene) batıdan ordugâha; Karaca Paşa topun geçeceği yolu onarttı: **~50 marangoz + 200 usta** | [K: WP-Fall] |
+| **Lykos deresi** | Bayrampaşa deresi; sur altından geçer; Marmara'ya akar; su kaynağı; vadi sazlık | [K: CSV; GORUNUS] |
+| **Su kaynakları** | Dere, kuyular, Haliç'in tatlı su uçları ("Tatlısular/The Springs"); su taşıma saka, deri tulum | [K: PEARS1903 (Springs); TAHMİN] |
+| **Ordugâh arkası** | Batıda artçı, hayvan sürüleri, tüccar yolu, ağırlıklar; ardında Trakya ovaları | [TAHMİN] |
+| **Mevsim** | Nisan–Mayıs: baharda yeşil buğday, çiçekli ağaç; ordugâhın çevresinde otlar ezilip kahverengiye döner | [TAHMİN] |
+| **Zemin dokusu** | tek renk çimen **yok**: çamur, kuru çim, toprak yolu, odun yığını, ocak külü, hayvan gübresi lekeleri, saman | [TAHMİN] |
+
+---
+
+## 7. OYUN İÇİN UYGULAMA ÖZETİ
+
+### 7a. Uçuşta 70 m'den nasıl görünmeli
+
+1. **Renk lekeleri değil "kümeler"**: ana renk krem/bej, ama çadırlar 3 boyda; kanat başına 15–40 çadırlık **oba kümeleri**, kümeler arası 8–15 m açık zemin (ortak yol); kümelerin ortasında 1 büyük çadır + sancak.
+2. **Çizgiler**: (a) hendek ve ön perde (sur önünde 1,5–3 m yüksek koyu çizgi), (b) 5–6 ana yol (otağ→cephe, ikmal yolu doğu-batı, dere yolu), (c) siper dikey yolları, (d) kızak yolu ve köprü.
+3. **Kırmızı-altın otağ** ordugâhın tek büyük sıcak renk lekesi; çevresi beyaz zokak çerçevesi; yanında 20–40 kümeden oluşan yeniçeri halkası (krem + beyaz).
+4. **Bataryalar** koyu toprak yığınları (kahve), gülle piramitleri (gri), ahşap siperler; her biri 2–4 top.
+5. **Duman**: ocak dumanı ince dikey sütunlar (her 4–6 çadıra bir), top ateşi ağır beyaz-gri bulut, demirci dumanı koyu; sabah ve akşam alçak sis.
+6. **Hareket**: yolda yük kafilesi (deve, öküz arabası), sürü hareketi, top çekimi, atlı devriye, sancak dalgalanması.
+7. **Sancak noktaları** her 2–3 kümede bir (kırmızı/yeşil/beyaz), otağ çevresinde tuğ grubu.
+8. **Gece**: sıcak turuncu ocak noktaları (kümelere göre gruplanmış), hendek boyunca meşale çizgisi, mutfak/demirci parıltısı.
+
+### 7b. Yerden yürürken 30 m içinde (kontrol listesi, ≥ 40 madde)
+
+Çadır/yapı: (1) 3–4 farklı çadır boyu; (2) en az 3 çadır biçimi (konik, çatma, açık sundurma); (3) yamalı ve eskimiş bezler; (4) ip-kazık ve gergi halatı her çadırda; (5) çadır kapısı perdesi açık/kapalı karışık; (6) yer yer devrik/yarım kurulu çadır; (7) başıbozuk çalı kulübeleri ve hasır çardaklar; (8) çadır önü halısı/keçe; (9) çadırlar arası yürüme yolu 3–5 m, çamurlu; (10) çadır arası kurutma ipi (çamaşır, deri, balık); (11) kılıç/kalkan/mızrak yaslı duruş; (12) sancak direği ve alem.
+Hizmet: (13) yemek kazanı ve ocak (kazan başı 8–15 kişi); (14) ocak külü ve odun yığını; (15) yemek malzemesi çuvalları; (16) su fıçısı ve saka (tulum); (17) ekmek tezgâhı/fırın (kil fırın); (18) kasap ve et asma ağacı; (19) demirci ocağı, körük, çekiç sesi; (20) marangoz tezgâhı ve ahşap parçaları; (21) ok yapıcı (mızrakçı) tezgâhı; (22) hela hendeği ve örtü; (23) çöp ve yemek artığı yığını; (24) mescit çadırı ve saf düzeni; (25) divan/komutan çadırı önünde sancak ve nöbetçi.
+İnsan/hayvan: (26) asker grubu (3–8 kişi) sohbet/yemek; (27) nöbetçi çiftleri; (28) yaralı ve sedye; (29) ok atan/talim yapan; (30) at tımarı ve nallama; (31) deve çömelmiş yük indirme; (32) öküz/manda çifti ve araba; (33) koyun sürüsü ve çoban; (34) köpekler; (35) çerçi/pazarcı; (36) derviş/imam; (37) genç yamak/saka çırakları (askerî ordugâhta çocuk ve kadın göstermeyin); (38) esir grubu (esir çadırı yanında); (39) tellal veya bayraktar; (40) haberci atlı.
+Ön hatta ek: (41) hendek kenarı perde ve toprak sıra; (42) top yatağı ve gülle yığını; (43) barut fıçıları ve ıslak örtü; (44) çıkrık ve vinç; (45) kürek ve sepet taşıyan işçi sırası; (46) hendek doldurma malzemesi (tomruk, çalı, fıçı); (47) lağım ağzı ve toprak yığını; (48) kuşatma merdivenleri yığını; (49) meşale/ateş kovası; (50) sur tepesinden gelen ok izi (yere saplanmış oklar, kırık kalkan).
+Ses/duman: (51) davul-zurna uzaktan; (52) ezan vakitleri; (53) top gümbürtüsü; (54) demirci çekici; (55) hayvan sesleri.
+
+### 7c. "KESİNLİKLE OLMASIN" listesi
+
+- **Hilal ve yıldız**lı bayrak, alem veya çadır tepesi (5.1).
+- **Modern fes** (19. yy); kırmızı başlık yerine keçe üsküf/kalpak. Tolga'nın fesi hariç (kasıtlı anakronizm).
+- **Kırmızı çadır ordusu**; kırmızı yalnız padişah/vezir/paşa çadırı ve sınırlı sancak.
+- **Tüm yeniçerilerin tüfekli**, sıralı ateş eden "musketeer" hatları (17. yy). Tüfek azınlık (≤ %10–15) [TARTIŞMALI].
+- **Yeniçeri "kuka"/yüksek börk ve kaşıklı külah** (16. yy) — 15. yy'da beyaz keçe başlık; ayrıntı belirsiz.
+- **Tekerlekli sahra topu / Vauban zigzag sapı / paralel siper / yıldız tabya / bastion** (16.–17. yy).
+- **Sibley/çan (bell) çadırı, A-çatı modern çadır, metal iskeletli, plastik, fermuarlı, camlı**; **parlak beyaz bezli çadır**.
+- **Çok renkli çadır karnavalı**; ızgara dizilim; eş boy; aynı ton.
+- **Sultanahmet/Süleymaniye silueti**, minare, ezan şehrin içinde (zaten ISTANBUL_1453.md 9).
+- **Mehter takımı olarak 18. yy tarzı kıyafetli büyük bando**; **çevgen** ve bakır "çağana" (jingling johnny) 17. yy mehter aksesuarı.
+- **Padişah çadırının üstüne hilalli bakır alem**, sultan tuğrası bayrakta (19. yy).
+- **Pazar yerinde çay, kahve, tütün, domates, patates, mısır** (ISTANBUL_1453.md 9).
+- **Çocuk ve kadın kalabalığı** (askerî ordugâh): kaynak yok; yamak/saka gençleri dışında göstermeyin [TAHMİN].
+- **Orhan'a atfedilen bayrak** gibi efsanevi ikonları kesin gerçek sunmak.
+
+### 7d. Mevcut `ordugah*.gd` kurucularında eksik/yanlış olanlar (dosya:işlev)
+
+Kod, `docs/ISTANBUL_1453.md`, `EVREN.md` ve bu belgeyle karşılaştırıldı. Okunan: `ordugah.gd`, `ordugah_kanat.gd`, `ordugah_kit.gd` (tent_mesh), `ordugah_yapi.gd`, `ordugah_yapi2.gd` (sancaklar), `ordugah_yonetici.gd`.
+
+1. **`ordugah_kanat.gd:build_kanat` — ızgara (asıl sorun).** Çadırlar `while y … while x …` döngüsüyle sabit `sp` (8–11 m) adımında, satır kaydırmalı ızgara (`row % 2`), jitter yalnızca ±0,4 m. Sokak/oba/küme yok. Çadır yarıçapı 2,0–2,5 m, yükseklik ×0,95–1,2: **neredeyse eş boy**. Düzeltme: Poisson-disk veya küme (oba) üretimi; çadır arası merkez mesafesi 5–7 m; çap 3–7 m dağılımı (§2.5); yol koridorları.
+2. **`ordugah_kanat.gd:TURLER`** — renkler birbirine çok yakın (krem/bej); "bant" renkleri (lacivert `2c3f7a`, yeşil, kırmızı `b3262d`) **her çadıra şerit** hâlinde değil sancakta kullanılıyor; ama bkz. 3. Hiç **büyük/komutan çadırı**, **kazan**, **hayvan**, **insan**, **hela**, **saka**, **ağıl** yok. Dosyada `Person`/`CityLife`/asker üretimi yok (grep: sıfır sonuç). Bu sahibin sorusunun çekirdeği.
+3. **`ordugah_kit.gd:tent_mesh("yuvarlak")`** — gövdeye `Color(0.62, 0.22, 0.2)` **kırmızı bant** ve siyah kapı kutusu: bütün çadırlar kırmızı şeritli. Kırmızı rengi padişah/vezir hakkı olan kural (AKIN-KEŞ2017, SONRAKİ DÖNEM) ve 1453 oranına (kırmızı ≤ %2) aykırı; kaldırın ya da kümeye özel yapın. Çatma/ridge mesh ("cati") sırt çizgisi koyu; iyi.
+4. **`ordugah.gd:plan` otağ** — `at(1500,330)`: 330 m; Pears ≈ 400 m, CSV ≈ 800 m (§1.2). Kabul edilebilir ama 400–450 m önerilir. Otağ `r=60` yarıçaplı; zokak 80×60 m dikdörtgen ve hizmet çadırları için `r` 80–100 m olmalı.
+5. **`ordugah_yapi.gd:build_otag`** — (a) **tek yuvarlak koni** (R=8,5): Osmanlı otağı çok bölümlü kompleks; (b) çevre **kazık çit (palisade)**, yani ahşap; gerçek: **kumaş zokak, mazgallı üst** [SONRAKİ DÖNEM]; (c) divan çadırları kırmızı kutu+prizma: kabul; (d) hazine çadırı krem silindir: kabul; (e) **eksik:** mutfak, hamam, kilar, mescit, mehterhane, tuğ grubu, halvet; (f) yeniçeri halkası 22 tane **aynı 2,5 yarıçaplı** çadır: halka büyük, çeşitli ve ortası kazanlı olmalı; (g) 4 sancak yalnız kırmızı-yeşil: tuğ (at kuyruğu) yok.
+6. **`ordugah.gd:plan` `_cells` kanatlar** — dikdörtgen bantlar (`band`) ve düz kutu süzgeç: "yeniceri" 170–380 m derinlik, "anadolu/rumeli" 175–455 m, "basibozuk" 455–600 m. Eksik: **Halil Paşa/vezir çadırları, esir çadırı, tercüman çadırı** (`EVREN.md` 98: GDD §9.3), **dökümhane/demirci/barutçu atölyesi** (ISTANBUL_1453.md 154), **mehterhane**, **hastane/cerrah** (olası), **ordu pazarı** (var), **koyun/öküz ağılı** (3 `ahir` var, sürü yok).
+7. **`ordugah.gd:plan` batarya** — 13 batarya + Şahi, her biri 2–4 top: sayı makul. Yoğunluk: ana saldırı bölgesine (`u ≈ 1000–1700`) fazla verin (§4.1). `Galata yamacı (Zağanos)` batarya satırı **CSV'de var (satır 160), `plan()`'da yok** → ekleyin (St. Theodore tepesi, Haliç/zincir gemilerine ateş).
+8. **`ordugah_yapi.gd:build_sahi_top`** — kodda `_okuz` 6 öküz; gerçek 60. Göstermelik 12–20 öküz + yedek ağıl yeterli. Topun yatağı (ahşap bloklarla gömülü, tekerleksiz) kontrol edilmeli.
+9. **`ordugah_yapi.gd:build_mancinik` ve `plan()` 4 mancınık** — 1453'te kuşatmanın belirleyici silahı topçu; mancınık için kaynak okumadım [TARTIŞMALI]. 0–2 ile sınırlayın, arka hatta yerleştirin.
+10. **`ordugah.gd:plan` 3 kule (`u` 1300, 1585, 2300)** — kule **18 Mayıs'ta bir gecede** belirdi, **Romanos/Pempton kapısı karşısında** (u ≈ 1935), ikinci kule Pege/Üçüncü Askerî Kapı karşısı (u ≈ 800–1000) [K: PEARS1903]. Tarih kapılı (18 Mayıs öncesi yok). Konumları düzeltin.
+11. **`ordugah.gd:_fici_yeri` fıçı köprüsü** — Kasımpaşa–Cibali arası (41.0292,28.9640 – 41.0245,28.9590). Pears/Kritovulos: **Haliç'in üst ucu, Cynegion/Ayvansaray (Blakhernai kıyısı)**, Keramika'dan; >1000 fıçı, 2 fıçı genişlik, 5 asker yan yana. Konum düzeltilmeli; WP-Fall "yeri belirsiz" der [TARTIŞMALI]. Fıçı sayısı için `build_fici_kopru` ölçeklenmeli.
+12. **`ordugah.gd:plan` Zağanos kutusu (3×3 hücre, 300 m)** — Kasımpaşa–Hasköy; Galata sırtı (Pera ridge) bağları ve St. Theodore tepesine yakın olmalı; hücre sayısı 9 ama çadır yoğunluğu aynı ızgara.
+13. **`ordugah_yapi2.gd:build_sancaklar` / `ordugah_yapi.gd:sancak`** — LACI (lacivert) ve ALTIN bayrak: [TAHMİN]; kırmızı/yeşil/beyaz/sarı oranına çevirin; **hilal yok (iyi, koruyun)**.
+14. **`ordugah_yapi2.gd:build_siper`** — hendek yakınında perde ve toprak sıra var; ateş delikleri ve çıkıntılı kalkan/sepet doğrulanmalı (§4.4).
+15. **Işık (`K.gece` + `Flame.add`)** — çadır başına yaklaşık 1 ateş/5 çadır; 26 Mayıs için 2×/çadır modu yok.
+16. **Ses** — mehter/ezan/davul sesi yok (`ordugah*.gd` ses çağrısı bulunmadı).
+17. **`ordugah.gd` otağ-sur mesafesi ile CSV** — CSV'deki batarya konumları (surdan 600+ m) kodla çelişir; CSV'yi düzeltmek yerine bu belge "kestirim, yanlış" olarak işaretler (§1.2).
+
+### 7e. Öncelik sırası (ilk 10 iş)
+
+1. **Çadır üretimini ızgaradan kümelere çevir** (`build_kanat`): Poisson-disk, oba kümeleri, yol koridorları, çap 3–7 m dağılımı, rastgele yaw/ölçek. (Sahibin sorusunun ilk cevabı.)
+2. **Kırmızı bandı kaldır**, ana kitleyi krem/bej/koyu kıl tonlarına çevir; kırmızı yalnız otağ/paşa (§2.5).
+3. **İnsan ve hayvan ekle** (`CityLife` benzeri hafif ordugâh akışı): ön hatta 40+, çadır alanında 15–25 kişi/30 m yarıçap; at kazıkları, deve, öküz arabası, koyun sürüsü (§3.5).
+4. **Otağ kompleksini yenile**: dikdörtgen kumaş zokak (mazgallı), sayebân, divan, hazine, mutfak, hamam, mescit, mehterhane; tuğ grubu (§2.2, 5.2).
+5. **Ön hat**: hendek kenarı ahşap perde + toprak, ateş delikleri, siper yolları; bataryaları ana saldırı bölgesine yoğunlaştır (§4.1, 4.4).
+6. **Eksik yerleşkeler**: dökümhane/demirci, barutçu çukuru, esir çadırı, tercüman çadırı, Halil Paşa çadırı, ordu pazarı zenginleştirme, ağıllar (EVREN.md 98).
+7. **Kule ve lağım**: 18 Mayıs kulesini Pempton karşısına taşı, tarih kapısı koy; lağım ağızları (16–25 Mayıs) (§4.5–4.6).
+8. **Fıçı köprüsünü** üst Haliç'e (Ayvansaray/Cynegion) taşı; Galata yamacı bataryasını ekle (§4.7, 7d-7).
+9. **Sancak/tuğ düzeni**: hilalsiz kırmızı/yeşil/beyaz/sarı çatallı flamalar; tuğ grubu (5.1–5.2).
+10. **Işık ve ses**: gece ocakları, 26 Mayıs büyük aydınlatma modu (2×), davul/zurna/ezan sesleri, ocak dumanı sütunları.
+
+---
+
+## KAYNAKÇA (bağlantılı)
+
+### Okuduğum / aktardığım kaynaklar
+
+- **[PEARS1903]** Edwin Pears, *The Destruction of the Greek Empire and the Story of the Capture of Constantinople by the Turks*, Longmans, 1903. Tam metin okundu: <https://www.gutenberg.org/ebooks/58119> (düz metin: <https://www.gutenberg.org/cache/epub/58119/pg58119.txt>). Pears Barbaro, Kritovulos, Dukas, Phrantzes, Chalkokondyles, Leonardo, Tetaldi ve Montaldo'yu ayrıntılı aktarır; "Barbaro der ki" cümleleri bu eser üzerinden **ikinci elden**dir. 1903 tarihli olduğu için sayılar (örn. 12.000 yeniçeri) modern tahminlerden yüksektir.
+- **[KRIT-DRM]** Kritovoulos, *History of Mehmed the Conqueror*, çev. Charles T. Riggs (Princeton, 1954), De Re Militari alıntı sayfası: <https://deremilitari.org/?p=2852> (§117, §120, §140, §142, §148, §186, §222 alıntıları).
+- **[WP-Fall]** Wikipedia, "Fall of Constantinople" (sayı, top, Basilica, lağım, donanma, çadır konumu, akademik atıflar Runciman 1965, Philippides & Hanak 2011, Nicolle 2000, Lanning 2005, Crowley 2013, Norwich 1997, Pertusi): <https://en.wikipedia.org/wiki/Fall_of_Constantinople> (ilk 100.000 karakter okundu; kalanı okunmadı).
+- **[WP-Tents]** Wikipedia, "Ottoman tents": <https://en.wikipedia.org/wiki/Ottoman_tents>.
+- **[AKIN-KEŞ2017]** Kamile Akın & Yusuf Keş, "Türk Kültüründeki Çadır Geleneğinin Osmanlı Minyatür Sanatına Yansımaları", (dergi adı PDF metninde okunmadı; Cilt 2, Sayı 2, Haziran–Temmuz 2017), PDF metni okundu: <https://dergipark.org.tr/en/download/article-file/397060>. Onuk (2005), Çalışkan (2013), Mesci (2012), Atasoy kaynaklı; **XVI–XIX. yy minyatür/örnek** — SONRAKİ DÖNEM.
+- **[WP-Flags]** Wikipedia, "Flags of the Ottoman Empire": <https://en.wikipedia.org/wiki/Flags_of_the_Ottoman_Empire> (arama özeti üzerinden; sayfa metni okunmadı).
+- **[BROC1433]** Bertrandon de la Brocquière, *Le Voyage d'Outremer* (1432–33); yalnız bir blog alıntısı üzerinden (kamp "seksen küsur çadır, sokak biçiminde"): <https://the-history-avenue.eu/2023/04/01/a-man-of-trust/> (ikinci el). Asıl metin okunmadı.
+- **[GORUNUS, ISTANBUL_1453, YERLER, EVREN]** Depodaki belgeler (bkz. giriş).
+- **[Ágoston]** Gábor Ágoston, *Guns for the Sultan* (Cambridge, 2005): tanıtım/inceleme düzeyinde: <https://muslimheritage.com/a-new-book-on-the-ottoman-military-history-guns-for-the-sultan-by-gabor-agoston/> (arama özeti; kitap okunmadı).
+- Nurhan Atasoy, *Otağ-ı Hümayun: The Ottoman Imperial Tent Complex*, İstanbul 2000: katalog kaydı <https://si.edu/object/siris_sil_942621> (içerik okunmadı).
+
+### Okunamayan veya yalnız özet düzeyinde görülen kaynaklar (kesinlik için güvenmeyin)
+
+| Kaynak | Neden |
+|---|---|
+| Nicolò Barbaro, *Giornale dell'assedio di Costantinopoli* (J. R. Jones çev. 1969) | Tam metin bulunamadı; yalnız Pears alıntıları ve arama özetleri (örn. <https://hekint.org/2024/10/28/the-siege-of-constantinople-as-witnessed-by-a-physician-1453/>) |
+| Kritovulos (tam metin, Oregon State sayfası) | HTTP 403: <https://open.oregonstate.education/middleearlymodernages/chapter/kritovoulos-siege-of-constantinople/>; yalnız DRM alıntısı ve Pears |
+| Dukas, Sphrantzes, Leonardo of Chios, Tedaldi, Chalkokondyles | Yalnız Pears üzerinden |
+| Tursun Bey, *Tarih-i Ebü'l-Feth* (İnalcık–Murphey 1978 çevirisi) | Çevrimiçi metin bulunamadı; arama sonuçları yalnız biyografi |
+| Runciman, Babinger, Philippides & Hanak, Nicolle (Osprey), İnalcık, Emecen | Kitap/makale metinleri açık erişimde yok; yalnız WP-Fall'ın atıfları |
+| Atasoy (2000), Onuk (2005), Mesci (2012) | Kitap/tez; yalnız AKIN-KEŞ2017'nin aktarımı |
+| Konstantin Mihailović, *Memoirs of a Janissary* | Anlatı 1455'te başlıyor; 1453 ordugâhı için kullanılamaz |
+| Altan (2017) *Tarih Dergisi* 66: <https://dergipark.org.tr/en/download/article-file/359854> | Bizans cephesi (şehir içi) makalesi; ordugâh için kullanılmadı |
+| "Maltepe'de 5 Nisan çadır" ve "Fatih Maltepe'de öldü" haberi | Arama özeti (<https://www.worldhistory.org/Mehmed_II/>, <https://int.fsm.edu.tr/Uluslararasi-Ofis-About-Us--About-Sultan-Mehmed-II>); iki iddia da zayıf veya yanlış — kullanılmadı |
+
+**Belge sınırı (özet):** 1453 Osmanlı **çadır** ve **ordugâh düzeni** için doğrudan, ölçülü, çağdaş tarif bu araştırmada bulunamadı. Çadır boyutları, renk oranları ve kümeleşme [TAHMİN] veya [SONRAKİ DÖNEM]'dir. Sağlam olanlar: otağ kırmızı-altın, surdan çeyrek mil, küçük tepe, yeniçeri çevresi, hendek önü ahşap perde, üç top istasyonu, 14×4 veya 9 batarya, günde ≈ 7 atış, 18 Mayıs kulesi, fıçı köprüsü, kızak yolu, 26 Mayıs aydınlatması, beyaz/kırmızı başlık imzası.
