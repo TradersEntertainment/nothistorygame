@@ -105,16 +105,16 @@ RINFO (RenderingServer toplam; son koşu, birleşik dal; sınır uçuşta ≤ 1 
 
 | kare | ÖNCE çizim / üçgen | SONRA çizim / üçgen | sınır |
 |---|---|---|---|
-| hava70 (70 m) | 330 / 0,61 M | 530 / 1,12 M | ✔ |
-| hava30 (30 m) | 302 / 0,76 M | 513 / 1,26 M | ✔ |
-| tepe (2 300 m tam tepe) | 533 / 0,46 M | **1 645** / 2,35 M | ✘ çizim (ordugâh 405, gemiler 118: §8) |
-| tepe_mahalle (260 m) | 200 / 0,41 M | 513 / 1,37 M | ✔ |
-| tepe_batı (300 m) | 32 / 0,06 M | 452 / 1,61 M | ✔ |
-| sokak (yer) | 354 / 0,97 M | 524 / 1,32 M | ✔ |
-| sokak_bati (yer) | 250 / 0,48 M | **1 103 / 3,0 M** | ✘ |
-| cati (çatıdan) | 376 / 0,82 M | 601 / 1,55 M | ✔ (yer sınırıyla) |
-| sur_dibi30 (30 m) | 109 / 0,27 M | 630 / 1,31 M | ✔ |
-| sur_dibi_yer (yer) | 474 / 0,56 M | **1 087** / 2,22 M | ✘ çizim |
+| hava70 (70 m) | 330 / 0,61 M | 534 / 1,12 M | ✔ |
+| hava30 (30 m) | 302 / 0,76 M | 516 / 1,26 M | ✔ |
+| tepe (2 300 m tam tepe) | 533 / 0,46 M | **1 621** / 2,25 M | ✘ çizim (ordugâh 405, gemiler 118: §8) |
+| tepe_mahalle (260 m) | 200 / 0,41 M | 517 / 1,37 M | ✔ |
+| tepe_batı (300 m) | 32 / 0,06 M | 457 / 1,61 M | ✔ |
+| sokak (yer) | 354 / 0,97 M | 526 / 1,32 M | ✔ |
+| sokak_bati (yer) | 250 / 0,48 M | **1 113 / 3,0 M** | ✘ |
+| cati (çatıdan) | 376 / 0,82 M | 607 / 1,55 M | ✔ (yer sınırıyla) |
+| sur_dibi30 (30 m) | 109 / 0,27 M | 647 / 1,35 M | ✔ |
+| sur_dibi_yer (yer) | 474 / 0,56 M | **1 123** / 2,31 M | ✘ çizim |
 
 Çizim dağılımı (sondanın kaba sayımı, kameranın önünde ve görünürlük aralığında yüzey): aşan yer karelerinde en büyük kalem
 `IstDunya/IstOrdugah` (sur_dibi_yer 448, sokak 529 (önceki koşu), tepe 405), `IstGemiler` 59–122; IstSehir ev katmanları
@@ -129,7 +129,17 @@ Kurulum süresi (açılışta bir kez): IstSokak.build 4,4 sn (sokak ağı 1,4 s
 
 - `wip/ist2-dunya2` (S = 0,35, yeni `mahalle` + `alt`, kare40, gezi bos=1), `wip/ist2-sehir2` (k değerleri, sur k = 1,0,
   ordugâh/gemiler/hayat), `wip/istanbul-gorunus` üç kez çekildi, çakışma yok.
-- gezi (DÜNYA-2'nin sondası, `liste=tests/_ist/gezi_sahip.txt bos=1`): GEZI_SONUCU_YER_TUTUCU
+- Öğelerin uzak katmanı (380 m ötesi; 384 m hücre başına tek ağ: duvar/çit, ağıl çiti, kuyu, tezgâh, şapel/manastır kütlesi)
+  eklendi: havadan da "boş alan yok".
+- DÜNYA-2'nin geometri sayımı (`gezi.tscn liste=tests/_ist/gezi_sahip.txt bos=1`; zeminden ≥ 0,3 m yükselen geometri, o
+  anda kurulu olan): **şehir içi 1 109 karede 19 boş (%1,7)** (DÜNYA-2'nin ilk ölçümünde %5,5); Galata %0; sur dışı 600 m %0,4;
+  karşı kıyılar %0,2. Kalan 19 kare üç kümede ve HEPSİ anıt tabanlarının içinde (DOKU-2 oraya ev/öğe koymaz): Langa limanı
+  (gerçek e −2 685…−2 457, n −628…−514), Hipodrom–Augustaion–Büyük Saray güneyi (e −343…0, n −343…0), Haliç Latin
+  limanları (e −1 000…−460, n 690…910) + Romanos oyun alanı (−4 628, 742; kasıtlı boş). Parçaların uzak katmanı orada
+  0,3 m'nin altında (havuz/arena/rıhtım) → ORTAK İSTEK 7. Sahip karelerinin RINFO'su (aynı koşu): tam tepe 1 083 / 1,77 M,
+  Galata 755 / 2,13 M, sur dışı 30 m 992 / 2,66 M, Romanos iç yanı 824 / 2,63 M, Mese 723 / 1,55 M, Ayasofya meydanı 707 /
+  1,28 M, Hipodrom 399 / 0,78 M, Haliç iskelesi 799 / 1,93 M, sur dibi mahallesi 1 034 / 1,91 M, bostan adası 446 / 1,58 M,
+  Marmara'dan 1 507 / 2,76 M, Sarayburnu açığı 1 134 / 2,27 M.
 
 ## 8. ORTAK İSTEK
 
@@ -150,6 +160,11 @@ Kurulum süresi (açılışta bir kez): IstSokak.build 4,4 sn (sokak ağı 1,4 s
 5. Bütçe: yer karelerinde toplam çizim 1 087–1 103 (sınır 900); en büyük kalem `IstOrdugah` (400–530 yüzey) ve `IstGemiler`
    (60–120). Ordugâh için 400 m'den sonra uzak tek ağ ya da `visibility_range_end`.
 6. Gece pencere ışığı `dm.y > IstEvler.GF + 0.5` koşuluyla; kulübe (2,2 m) ve 1 katlılar (3,4 m) zaten dışarıda — uygun.
+7. ISTBOS (DÜNYA-2 geometri sayımı) şehir içinde kalan 19 kare anıt tabanlarının içinde: Langa limanı, Hipodrom arenası /
+   Augustaion / Büyük Saray terasları, Haliç Latin limanları. Bu yapıların lod 2'si (uzak) ve açık alanları zeminden
+   0,3 m'nin altında. Öneri: açık alanlara (arena, havuz kenarı, saray terasları) uzak katmanda da görünen bostan/ot/harabe
+   kütleleri ya da DOKU-2'ye "açık alan" dikdörtgenleri (`sokak.acik_alan.append(Rect2)`; DOKU-2 içini IstBitki yamaları ve
+   öğelerle doldurur).
 
 **DÜNYA-2:** yok (yeni `mahalle` türleri ve `alt` kullanıldı: `sarnic` → bostan, `saray`/`hipodrom` → harabe, `sik` < 0,75
 → orta yoğunluk).
