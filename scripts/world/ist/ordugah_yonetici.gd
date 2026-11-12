@@ -27,6 +27,11 @@ var uzak_ms := 0
 
 
 func kur(plan: Array) -> void:
+	# yeniden kurulum (IstBaglama._temizle öğe listesini süzüp yeniden çağırır): eski hücre ağları kalkar
+	for h: Dictionary in hucreler:
+		if is_instance_valid(h["mi"]):
+			(h["mi"] as Node).queue_free()
+	hucreler.clear()
 	items = plan
 	var t0 := Time.get_ticks_msec()
 	var by := {}

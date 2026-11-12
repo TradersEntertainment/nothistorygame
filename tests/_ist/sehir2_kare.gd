@@ -442,6 +442,10 @@ func _eser_yer(it: Dictionary, h: float) -> void:
 			g += 1
 		await get_tree().physics_frame
 		var hit := get_world_3d().direct_space_state.intersect_ray(PhysicsRayQueryParameters3D.create(at, look))
+		# kamera bir yapının içinde/altında mı (üstünde tavan): o yön atlanır
+		var tavan := get_world_3d().direct_space_state.intersect_ray(PhysicsRayQueryParameters3D.create(at, at + Vector3(0, 40, 0)))
+		if not tavan.is_empty():
+			continue
 		if hit.is_empty() or (hit["collider"] is Node and holder.is_ancestor_of(hit["collider"])):
 			sec = at
 			hedef = look
@@ -1084,7 +1088,7 @@ func _yavas_yol() -> void:
 	s.stats.erase("yavas")
 	s.stats.erase("yavas_pis")
 	s.stats["kur_ms_max"] = 0.0
-	var yol: Array = [Vector3(-4400, 900, 40), Vector3(-3000, 300, 40), Vector3(-1554, 211, 40), Vector3(-756, -11, 20),
+	var yol: Array = [Vector3(-4950, -1500, 22), Vector3(-4750, 300, 22), Vector3(-4400, 900, 40), Vector3(-3000, 300, 40), Vector3(-1554, 211, 40), Vector3(-756, -11, 20),
 		Vector3(-100, 0, 20), Vector3(-300, 900, 40), Vector3(-480, 1900, 30), Vector3(-1200, 300, 1.7), Vector3(-600, 0, 1.7)]
 	var dts: Array = []
 	for i in yol.size() - 1:

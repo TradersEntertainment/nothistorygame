@@ -27,6 +27,12 @@ const STEP_RISE := 0.26
 const SPAN_NAME := "IstSurlar"
 ## lod 0'da durağan görsel parçalar tek ağda birleştirilir (çizim çağrısı azalır). Denetim kapatır (kütle kutusu bakar).
 static var bake := true
+## Kurulum penceresi (ŞEHİR-3, zaman dilimi): yalnız ortası x ∈ [pencere.x, pencere.y) olan parçalar kurulur. Şehir
+## kurucusu uzun dilimin yakın katmanını pencere pencere ayrı karelerde kurar (tek iş ≤ 6 ms). Varsayılan: hepsi.
+static var pencere := Vector2(-1e9, 1e9)
+
+static func _ic(x: float) -> bool:
+	return x >= pencere.x and x < pencere.y
 
 
 # ------------------------------------------------------------------ ölçüler
@@ -141,7 +147,7 @@ static func _layout(L: float, k: float, seed: int, o: Dictionary) -> Dictionary:
 
 static func _s(p: Node3D, lo: Vector3, hi: Vector3, col: Color, pat := "ashlar", lod := 0, nc := false) -> Node3D:
 	var size := hi - lo
-	if size.x < 0.001 or size.y < 0.001 or size.z < 0.001:
+	if size.x < 0.001 or size.y < 0.001 or size.z < 0.001 or not _ic((lo.x + hi.x) * 0.5):
 		return null
 	var pos := (lo + hi) * 0.5
 	if lod <= 1:
@@ -158,7 +164,7 @@ static func _s(p: Node3D, lo: Vector3, hi: Vector3, col: Color, pat := "ashlar",
 ## Yalnız görünen (çarpışmasız) ince ayrıntı
 static func _d(p: Node3D, lo: Vector3, hi: Vector3, col: Color, pat := "") -> MeshInstance3D:
 	var size := hi - lo
-	if size.x < 0.001 or size.y < 0.001 or size.z < 0.001:
+	if size.x < 0.001 or size.y < 0.001 or size.z < 0.001 or not _ic((lo.x + hi.x) * 0.5):
 		return null
 	var m := Props.box(p, size, (lo + hi) * 0.5, col)
 	if pat != "":
@@ -169,6 +175,8 @@ static func _d(p: Node3D, lo: Vector3, hi: Vector3, col: Color, pat := "") -> Me
 
 ## Köşegen kama (yükselen eğim, katı). Taban merkezi `base`, +x yönünde (yaw ile döner) `rise` kadar yükselir.
 static func _wedge(p: Node3D, base: Vector3, length: float, rise: float, width: float, yaw_deg: float, col: Color, pat := "ashlar") -> MeshInstance3D:
+	if not _ic(base.x):
+		return null
 	var pm := PrismMesh.new()
 	pm.left_to_right = 1.0
 	pm.size = Vector3(length, rise, width)
@@ -471,13 +479,15 @@ static func _run(host: Node3D, L: float, k: float, lod: int, seed: int, o: Dicti
 			_stairs_x(root, float(lay["out_x0"]), 1.0, zo0 - 0.9, 1.8, 0.0, OH, n_out, 0.42, stone.lightened(0.06), lod)
 			_s(root, Vector3(float(lay["out_x1"]), 0, zo0 - 1.8), Vector3(float(lay["out_x1"]) + 1.0, OH, zo0), stone.lightened(0.06), "flagstone", lod)
 	# ---- mazgallar (tek MultiMesh)
+	mer = mer.filter(func(t) -> bool: return t is Transform3D and _ic((t as Transform3D).origin.x))
 	if lod == 0 and mer.size() > 0:
 		Scenery.scatter(root, Scenery._boxm(Vector3.ONE), mer, [], Props.mat(stone.darkened(0.06), 0.0, false, "ashlar"))
 	# ---- kapı ve ayrıntı
 	if gw > 0.0:
 		IstSurlarKapi.build(root, lay, lod, o)
 	if lod == 0:
-		IstSurlarAyrinti.build(root, lay, o)
+		if _ic(0.0):
+			IstSurlarAyrinti.build(root, lay, o)
 		_wall_niches(root, lay, mer_niche_dummy())
 		if bake and root.is_inside_tree():
 			Props.bake_static(root, [root])
@@ -505,7 +515,7 @@ static func _wall_niches(root: Node3D, lay: Dictionary, _unused: int) -> void:
 			for tw in lay["itx"]:
 				if absf(float(tw["x"]) - x) < float(tw["w"]) * 0.5 + 0.8:
 					skip = true
-			if not skip:
+			if not skip and _ic(x):
 				dark.append(Transform3D(Basis.from_scale(Vector3(0.5, float(r[2]) * 1.1, 0.06)), Vector3(x, y, z)))
 				lint.append(Transform3D(Basis.from_scale(Vector3(0.85, 0.16, 0.08)), Vector3(x, y + float(r[2]) * 0.55 + 0.1, z)))
 			x += 3.4

@@ -288,6 +288,8 @@ static func _stair(root: Node3D, d: Dictionary, st: Dictionary, lod: int) -> voi
 	var total := Vector3(RUN * n, rise * n, 0)
 	var length := total.length()
 	var mid := Vector3(xf, 0, zc - 0.85 - 0.11) + total * 0.5 + Vector3(0, 0.55, 0)
+	if not IstMk._ic(mid.x):
+		return
 	var b := Props.solid(root, Vector3(length, 1.1, 0.22), mid, IstMk.STONE_DK)
 	b.rotation = Vector3(0, 0, atan2(total.y, total.x))
 	Props.set_pattern(b, IstMk.STONE_DK, "ashlar")
