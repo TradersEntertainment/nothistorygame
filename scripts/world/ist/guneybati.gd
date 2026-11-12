@@ -210,7 +210,7 @@ static func _b_studios(h: Node3D, k: float, lod: int, out: Dictionary) -> void:
 	K.gable(h, Vector3((x0 + x1) * 0.5, Hn, 0), nw + 0.9, Lb + 0.2, nr, "x", K.C_TILE, wb)
 	# --- apsis (dışarıda, duvara bitişik) ---
 	var ar_r := nw * 0.5
-	K.apse(h, Vector3(x1 + ar_r * 0.55, 0, 0), ar_r, Hn * 0.78, wb, K.C_TILE, 3)
+	K.apse(h, Vector3(x1 + ar_r * 0.3, 0, 0), ar_r, Hn * 0.78, wb, K.C_TILE, 3)
 	# --- narteks: düz katı çatı, batıda kemerli cephe ---
 	var Hnt := Ha - 0.36
 	K.wall(h, Vector2(xn0, -hz), Vector2(x0, -hz), Hnt, t, wb, "brick", [], 2)
@@ -272,7 +272,7 @@ static func _b_studios(h: Node3D, k: float, lod: int, out: Dictionary) -> void:
 	# --- sarnıç (güneyde, sokak aralığıyla): açık, taban yürünür, yan kapı + iç merdiven ---
 	var cw := maxf(18.6 * k, 8.0)
 	var cl := maxf(26.4 * k, 11.0)
-	var cx0 := 5.0 * k
+	var cx0 := 5.0 * k + 0.9
 	var cz0 := hz + 5.5
 	var Hcis := 3.4
 	var tc := 1.5
@@ -428,9 +428,9 @@ static func _b_church(h: Node3D, k: float, lod: int, out: Dictionary, P: Diction
 		for sg in [-1.0, 1.0]:
 			K.sb(h, Vector3(pL, 1.0, 0.25), Vector3(pcx, Hwl + 0.5, sg * (pz - tw * 0.5 + 0.12)), K.C_STONE, "ashlar")
 			K.sb(h, Vector3(pL, 1.0, 0.25), Vector3(pcx, Hwl + 0.5, sg * (pz + tw * 0.5 - 0.12)), K.C_STONE, "ashlar")
-		_tree_cypress(h, Vector3(px0 + 2.4, 0, -pz + 2.4), 3.6)
-		_tree_cypress(h, Vector3(px1 - 2.4, 0, pz - 2.4), 3.6)
-		_tree_cypress(h, Vector3(px1 - 2.4, 0, -pz + 2.4), 3.0)
+		_tree_cypress(h, Vector3(px0 + 3.2, 0, -pz + 3.2), 3.6)
+		_tree_cypress(h, Vector3(px1 - 3.2, 0, pz - 3.2), 3.6)
+		_tree_cypress(h, Vector3(px1 - 3.2, 0, -pz + 3.2), 3.0)
 		var ns := _nsteps(Hwl)
 		var rs := Hwl / ns
 		for i in ns:
@@ -901,7 +901,7 @@ static func _b_bag(h: Node3D, k: float, lod: int, out: Dictionary) -> void:
 		K.mm(h, sp, Color("4f7a2a"), leaves)
 		K.mm(h, K.box_mesh(Vector3(0.18, 0.7, 0.18)), Color("5a4630"), stems)
 	# bekçi kulübesi (güney doğu): taş, düz katı çatı 2,6 m
-	var hc := Vector2(hx - 3.0, hz - 3.0)
+	var hc := Vector2(hx - 5.0, hz - 5.0)
 	K.wall(h, hc + Vector2(-1.6, -1.6), hc + Vector2(1.6, -1.6), 2.6, 0.45, Color("c9b690"), "rubble")
 	K.wall(h, hc + Vector2(-1.6, 1.6), hc + Vector2(1.6, 1.6), 2.6, 0.45, Color("c9b690"), "rubble")
 	K.wall(h, hc + Vector2(-1.6, -1.6), hc + Vector2(-1.6, 1.6), 2.6, 0.45, Color("c9b690"), "rubble", [[1.6, K.DOOR_W]])

@@ -6,6 +6,7 @@ var _id := "studios"
 var _k := 0.5
 var _lod := 0
 var _dir := ""
+var _dbg := ""
 var _host: Node3D
 var _cam: Camera3D
 
@@ -16,6 +17,7 @@ func _ready() -> void:
 		elif a.begins_with("k="): _k = float(a.substr(2))
 		elif a.begins_with("lod="): _lod = int(a.substr(4))
 		elif a.begins_with("shots="): _dir = a.substr(6)
+		elif a.begins_with("dbg="): _dbg = a.substr(4)
 	var env := Environment.new()
 	var sky := ProceduralSkyMaterial.new()
 	sky.sky_top_color = Color("3f7fc4")
@@ -58,6 +60,20 @@ func _ready() -> void:
 	print("ISTAUDIT_BASLA id=", _id, " k=", _k, " lod=", _lod)
 	if _dir != "":
 		await _shots()
+	if _dbg != "":
+		var pp := _dbg.split(",")
+		var o := Vector3(float(pp[0]), 1.0, float(pp[1]))
+		var sp := get_world_3d().direct_space_state
+		for d in [Vector3.LEFT, Vector3.RIGHT]:
+			var q := PhysicsRayQueryParameters3D.create(o, o + d * 2.0)
+			var hh := sp.intersect_ray(q)
+			if not hh.is_empty():
+				var col: Node = hh["collider"]
+				var info := ""
+				for c in col.get_children():
+					if c is CollisionShape3D:
+						info += str((c as CollisionShape3D).shape)
+				print("DBG ", d, " hit=", hh["position"], " body=", col.global_position, " ", info)
 	var au: Dictionary = await _audit()
 	print("ISTAUDIT id=%s k=%s lod=%d tris=%d draws=%d delik=%d dar=%d havada=%d cati_yolu=%s" % [_id, _k, _lod, tris, au["draws"], au["delik"], au["dar"], au["havada"], au["yol"]])
 	get_tree().quit()
