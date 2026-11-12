@@ -64,7 +64,14 @@ static func climbs(id: String, k: float = 0.5) -> Array:
 	return out.get("climb", [])
 
 
-static func _run(id: String, h: Node3D, k: float, lod: int, out: Dictionary) -> void:
+static func _run(id: String, h: Node3D, k: float, lod_in: int, out: Dictionary) -> void:
+	var lod := 0 if lod_in == 1 else lod_in
+	K.lite = lod_in == 1
+	_run2(id, h, k, lod, out)
+	K.lite = false
+
+
+static func _run2(id: String, h: Node3D, k: float, lod: int, out: Dictionary) -> void:
 	match id:
 		"studios": _b_studios(h, k, lod, out)
 		"peribleptos": _b_church(h, k, lod, out, _P_PERI)
@@ -307,7 +314,7 @@ static func _b_studios(h: Node3D, k: float, lod: int, out: Dictionary) -> void:
 		return Ha + ar * clampf((hz + 0.2 - z) / (hz + 0.2 - (nw * 0.5 + 0.1)), 0.0, 1.0)
 	var zcr := nw * 0.5 + 0.4 + 0.7
 	var y_c: float = aisle_y.call(0.0, zcr)
-	var n2 := maxi(1, ceili((Hn - y_c) / 0.46))
+	var n2 := maxi(1, ceili((Hn - y_c) / 0.4))
 	var xc3 := x0 + Lb * 0.55
 	var dep2 := 0.7
 	var tp := K.crates(h, Vector3(xc3 - dep2 * n2, 0.0, zcr), Vector2(1, 0), n2, 1.4, aisle_y, Hn, dep2)
@@ -395,7 +402,7 @@ static func _b_church(h: Node3D, k: float, lod: int, out: Dictionary, P: Diction
 	K.out_add(out, "climb", [Vector3(xs, 0.0, hz + t * 0.5 + 0.05 + n1 * K.STEP_RUN + 0.4), Vector3(xs, Hn, hz + t * 0.5 + 0.2), "basamak"])
 	# narteks çatısından gövde tavanına (Hw+0.3): sandıklar gövdenin batı duvarına dayalı, duvar boyunca (kuzeyden güneye) yükselir
 	var hdiff := Hw - Hn
-	var n2 := maxi(1, ceili(hdiff / 0.46))
+	var n2 := maxi(1, ceili(hdiff / 0.4))
 	var dep2 := 0.5
 	var zb := -hz + 1.6
 	var tp := K.crates(h, Vector3(x0 - 0.7, Hn + 0.3, zb), Vector2(0, 1), n2, 1.4, Callable(), Hw + 0.3, dep2)
@@ -542,7 +549,7 @@ static func _b_mokios(h: Node3D, k: float, lod: int, out: Dictionary) -> void:
 				body.add_child(cs)
 			bedx.append(Transform3D(Basis(), Vector3(cx, 0.15, cz)))
 			var kind := (i + j * 2) % 3
-			var nc := int(bed_l / 0.9)
+			var nc := 0 if K.lite else int(bed_l / 0.9)
 			for q in nc:
 				var qx := cx - bed_l * 0.5 + (q + 0.5) * bed_l / nc
 				for rz in [-0.4, 0.4]:
@@ -749,7 +756,7 @@ static func _b_altinkapi(h: Node3D, k: float, lod: int, out: Dictionary) -> void
 	K.out_add(out, "climb", [Vector3(cxl, 0.0, TW * 0.5 + 0.05 + n * K.STEP_RUN + 0.4), Vector3(cxl, h1, TW * 0.5 + 0.2), "basamak"])
 	# kule tepesinden kapı üstüne: sandıklar kapı bloğunun batı yüzüne dayalı, +x yönünde yükselir
 	var hd: float = GH - h1
-	var n2 := maxi(1, ceili(hd / 0.46))
+	var n2 := maxi(1, ceili(hd / 0.4))
 	var xr: float = cxl + TW * 0.5
 	var dep2 := 0.55
 	K.crates(h, Vector3(xr - dep2 * n2 - 0.0, h1, 0.0), Vector2(1, 0), n2, 1.6, Callable(), GH, dep2)

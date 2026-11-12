@@ -4,6 +4,9 @@ extends RefCounted
 ## Her işlev host == null iken HİÇBİR ŞEY kurmaz (yalnız perches/climbs bilgisini hesaplamak için builder'lar
 ## host'suz da çalıştırılır). Eksenler: +x doğu, -z kuzey, zemin y = 0.
 
+## lod 1 (orta): pencere, kiremit sırası, kubbe dilimi ve bostan ekini kapatır.
+static var lite := false
+
 const DOOR_W := 1.7
 const DOOR_H := 2.3
 const STEP_RISE := 0.24      # dış merdiven basamağı (player STEP_H = 0.42, zıplama ≈ 0.66)
@@ -102,7 +105,7 @@ static func gable(h: Node3D, c: Vector3, W: float, L: float, rise: float, axis: 
 	else:
 		sb(h, Vector3(0.5, 0.22, L + 0.6), c + Vector3(0, rise + 0.02, 0), col.darkened(0.2))
 	# çatı kiremit sıraları (ince koyu çizgiler, çatı eğimine paralel): görsel
-	var rows := int(L / 1.1)
+	var rows := 0 if lite else int(L / 1.1)
 	for i in rows:
 		var off := -L * 0.5 + (i + 0.5) * (L / rows)
 		for s in [-1.0, 1.0]:
@@ -157,7 +160,7 @@ static func wall(h: Node3D, a: Vector2, b: Vector2, ht: float, t: float, col: Co
 				# lento taşı (açık renk)
 				var lsz := Vector3(ln2 + 0.5, 0.22, t + 0.06) if along_x else Vector3(t + 0.06, 0.22, ln2 + 0.5)
 				vb(h, lsz, Vector3(mid2.x, y0 + dh + 0.11, mid2.y), C_STONE)
-		if wins > 0:
+		if wins > 0 and not lite:
 			var perp := Vector2(-d.y, d.x)
 			var wyy := wy if wy > 0.0 else y0 + ht * 0.58
 			for i in wins:
@@ -214,13 +217,13 @@ static func dome(h: Node3D, c: Vector3, r: float, drum_h: float, dome_h: float, 
 		cy(h, r * 1.02, drum_h, Vector3(c.x, c.y + drum_h * 0.5, c.z), wall, 16, -1.0, "brick")
 		# kasnak kornişi
 		cy(h, r * 1.08, 0.2, Vector3(c.x, top - 0.1, c.z), C_STONE, 16, -1.0, "", false)
-		for i in windows:
+		for i in (0 if lite else windows):
 			var a := TAU * i / windows
 			var p := Vector3(c.x + sin(a) * r * 1.02, c.y + drum_h * 0.52, c.z + cos(a) * r * 1.02)
 			var wb := Props.box(h, Vector3(0.7, drum_h * 0.5, 0.06), p, C_DARK, Vector3(0, rad_to_deg(a), 0))
 			wb.scale = Vector3(1, 1, 1)
 		bl(h, r, Vector3(c.x, top, c.z), lead, Vector3(1, dome_h / r, 1), 14)
-		for i in ribs:
+		for i in (0 if lite else ribs):
 			var rb := Props.ball(h, r, Vector3(c.x, top, c.z), lead.darkened(0.18), Vector3(0.03, dome_h / r * 1.012, 1.012), 14)
 			rb.rotation_degrees = Vector3(0, 360.0 * i / (ribs * 2), 0)
 		# haç
@@ -236,7 +239,7 @@ static func apse(h: Node3D, c: Vector3, r: float, ht: float, wall: Color, roof: 
 		return
 	cy(h, r, ht, Vector3(c.x, ht * 0.5, c.z), wall, 14, -1.0, "brick")
 	cy(h, r * 1.06, ht * 0.4 if ht > 3 else 0.9, Vector3(c.x, ht + (ht * 0.4 if ht > 3 else 0.9) * 0.5, c.z), roof, 14, 0.08, "tiles")
-	for i in windows:
+	for i in (0 if lite else windows):
 		var a := deg_to_rad(-55.0 + 55.0 * i)
 		var p := Vector3(c.x + cos(a) * r * 1.0, ht * 0.55, c.z + sin(a) * r * 1.0)
 		vb(h, Vector3(0.12, 1.5, 0.8), p, C_DARK, "", Vector3(0, -rad_to_deg(a), 0))

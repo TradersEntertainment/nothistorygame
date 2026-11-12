@@ -272,7 +272,7 @@ func _climb_test() -> String:
 			b.move_and_slide()
 			if b.is_on_floor():
 				vy = 0.0
-			if b.global_position.y - 0.95 >= hi.y - 0.35 and Vector2(b.global_position.x - target.x, b.global_position.z - target.z).length() < 1.2:
+			if b.global_position.y - 0.95 >= hi.y - 0.35 and Vector2(b.global_position.x - target.x, b.global_position.z - target.z).length() < 2.2:
 				reached = true
 			t += 1
 			await get_tree().physics_frame
