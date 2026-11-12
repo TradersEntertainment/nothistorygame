@@ -128,6 +128,7 @@ func _build() -> void:
 	# Dragan kazmayı elinde tutar (T_04 "Kazmaya bakar" derken eli boştu); kazma, verildiğinde Tolga'nın eline geçer
 	_dragan_pick = Items.attach_tool(dragan, "pickaxe", {"hand": "l"})
 	if _dragan_pick:
+		_merge_tool(_dragan_pick)
 		dragan.set_meta("armed", true)
 		# Kazma sol elinde dik durur (baş yukarıda, yana dönük): ağız aşağıda sarkınca altyazı kutusunun, sağ elde de Tolga'nın elindeki paketin arkasında kalıyordu
 		_dragan_pick.basis = _dragan_pick_basis()
@@ -378,7 +379,9 @@ func _breakthrough() -> void:
 	grant.visible = true
 	grant.look_target = player
 	for m in _miners:
-		m.give_tool("pickaxe")          # oda açılınca görünürler: kazma elde, duvara vurur
+		var mt := m.give_tool("pickaxe")          # oda açılınca görünürler: kazma elde, duvara vurur
+		if mt:
+			_merge_tool(mt)
 	hud.set_chase("", 0.0)
 	hud.set_objective("")
 	var tw := create_tween()
@@ -434,10 +437,65 @@ func _miners_freeze() -> void:
 		m.set_activity("")
 		var tl := Items.attach_tool(m, "pickaxe", {"hand": "l"})
 		if tl:
+			_merge_tool(tl)
 			m.set_meta("armed", true)
 			tl.basis = _dragan_pick_basis()
 		var ang := wrapf(0.0 - m.rotation.y, -PI, PI)
 		create_tween().tween_property(m, "rotation:y", m.rotation.y + ang, 0.5).set_trans(Tween.TRANS_SINE)
+
+
+## Alet modelinin parçalarını (sap, baş, takoz) tek ağa birleştirir: köşe rengiyle tek yüzey, dış çizgi geçişi korunur.
+## Çizim sayısı eski düz levha kazmanınki kadar kalır (parça başına bir çizim yerine iki).
+static func _merge_tool(root: Node3D) -> void:
+	var verts := PackedVector3Array()
+	var norms := PackedVector3Array()
+	var cols := PackedColorArray()
+	var idx := PackedInt32Array()
+	var olds: Array[MeshInstance3D] = []
+	var first_mat: StandardMaterial3D = null
+	for n in root.find_children("*", "MeshInstance3D", true, false):
+		var mi := n as MeshInstance3D
+		var sm := mi.material_override as StandardMaterial3D
+		if mi.mesh == null or sm == null:
+			continue
+		var xf := Transform3D.IDENTITY
+		var cur: Node3D = mi
+		while cur != null and cur != root:
+			xf = cur.transform * xf
+			cur = cur.get_parent() as Node3D
+		var arr := mi.mesh.surface_get_arrays(0)
+		var base := verts.size()
+		var vs: PackedVector3Array = arr[Mesh.ARRAY_VERTEX]
+		var ns: PackedVector3Array = arr[Mesh.ARRAY_NORMAL]
+		for i in vs.size():
+			verts.append(xf * vs[i])
+			norms.append((xf.basis * ns[i]).normalized())
+			cols.append(sm.albedo_color)
+		for i: int in arr[Mesh.ARRAY_INDEX]:
+			idx.append(base + i)
+		olds.append(mi)
+		if first_mat == null:
+			first_mat = sm
+	if olds.is_empty():
+		return
+	var arrays := []
+	arrays.resize(Mesh.ARRAY_MAX)
+	arrays[Mesh.ARRAY_VERTEX] = verts
+	arrays[Mesh.ARRAY_NORMAL] = norms
+	arrays[Mesh.ARRAY_COLOR] = cols
+	arrays[Mesh.ARRAY_INDEX] = idx
+	var am := ArrayMesh.new()
+	am.add_surface_from_arrays(Mesh.PRIMITIVE_TRIANGLES, arrays)
+	var mat := first_mat.duplicate() as StandardMaterial3D
+	mat.albedo_color = Color.WHITE
+	mat.vertex_color_use_as_albedo = true
+	var merged := MeshInstance3D.new()
+	merged.mesh = am
+	merged.material_override = mat
+	root.add_child(merged)
+	for o in olds:
+		o.get_parent().remove_child(o)
+		o.free()
 
 
 ## Elde dik duran kazma: sap yukarıda, T başı yana (karşıdan bakana iki ucu da görünür: eskiden baş öne bakıyor, kazma
@@ -485,6 +543,7 @@ func _give_pick() -> void:
 	pm.basis = Basis(Vector3.UP, deg_to_rad(90.0)) * Basis(Vector3.RIGHT, deg_to_rad(-90.0))
 	pm.scale = Vector3.ONE * 0.8
 	pm.position = Vector3(0, -0.1, 0)
+	_merge_tool(pm)
 	_pick.add_child(pm)
 	player.hold_model(_pick)
 	_pick.position = Vector3(0.22, -0.32, -0.5)

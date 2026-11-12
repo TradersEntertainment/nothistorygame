@@ -112,7 +112,9 @@ func _build() -> void:
 	digger.set_meta("no_talk", true)
 	add_child(digger)
 	digger.set_activity("chop")
-	digger.give_tool("pickaxe")       # kazmacı kazmasız vuruyordu (havaya)
+	var dt := digger.give_tool("pickaxe")       # kazmacı kazmasız vuruyordu (havaya)
+	if dt:
+		_merge_tool(dt)
 	zaganos = Person.new({"coat": Color("2f4a6a"), "pants": Color("2a2a30"), "hat": "turban", "beard": true, "mustache": true, "robe": Color("2f4a6a"),
 		"skin": Color("d9a07a"), "face": {"nose": "hook", "brow": 1.3, "brow_tilt": 8.0, "beard": "short", "head": Vector3(0.98, 1.08, 0.98)}})
 	zaganos.set_meta("spk", "SPK_ZAGANOS")
@@ -541,6 +543,7 @@ func _give_pick() -> void:
 	# Madencinin kazması (Items.tool_model): sivri ve düz uçlu çift başlı. Sol elin (Player.free_hand) avucu sapı sarar:
 	# sap avucun altından geçer, T başı sağda görünür (eskiden sap elden 20 cm yanda, havada duruyordu)
 	var pm := Items.tool_model("pickaxe")
+	_merge_tool(pm)
 	_pick.add_child(pm)
 	pm.transform = _pick.transform.affine_inverse() * _pick_in_hand(_pick.position)
 	pm.scale = Vector3.ONE * 0.8
@@ -558,6 +561,60 @@ func _pick_in_hand(hold: Vector3) -> Transform3D:
 	var y := (Vector3.RIGHT - d * d.dot(Vector3.RIGHT)).normalized()
 	var x := y.cross(d)
 	return Transform3D(Basis(x, y, d), hold + hb * Vector3(-0.02, -0.075, -0.06))
+
+
+## Alet modelinin parçalarını (sap, baş, takoz) tek ağa birleştirir: köşe rengiyle tek yüzey, dış çizgi geçişi korunur.
+## Çizim sayısı eski düz levha kazmanınki kadar kalır (parça başına bir çizim yerine iki).
+static func _merge_tool(root: Node3D) -> void:
+	var verts := PackedVector3Array()
+	var norms := PackedVector3Array()
+	var cols := PackedColorArray()
+	var idx := PackedInt32Array()
+	var olds: Array[MeshInstance3D] = []
+	var first_mat: StandardMaterial3D = null
+	for n in root.find_children("*", "MeshInstance3D", true, false):
+		var mi := n as MeshInstance3D
+		var sm := mi.material_override as StandardMaterial3D
+		if mi.mesh == null or sm == null:
+			continue
+		var xf := Transform3D.IDENTITY
+		var cur: Node3D = mi
+		while cur != null and cur != root:
+			xf = cur.transform * xf
+			cur = cur.get_parent() as Node3D
+		var arr := mi.mesh.surface_get_arrays(0)
+		var base := verts.size()
+		var vs: PackedVector3Array = arr[Mesh.ARRAY_VERTEX]
+		var ns: PackedVector3Array = arr[Mesh.ARRAY_NORMAL]
+		for i in vs.size():
+			verts.append(xf * vs[i])
+			norms.append((xf.basis * ns[i]).normalized())
+			cols.append(sm.albedo_color)
+		for i: int in arr[Mesh.ARRAY_INDEX]:
+			idx.append(base + i)
+		olds.append(mi)
+		if first_mat == null:
+			first_mat = sm
+	if olds.is_empty():
+		return
+	var arrays := []
+	arrays.resize(Mesh.ARRAY_MAX)
+	arrays[Mesh.ARRAY_VERTEX] = verts
+	arrays[Mesh.ARRAY_NORMAL] = norms
+	arrays[Mesh.ARRAY_COLOR] = cols
+	arrays[Mesh.ARRAY_INDEX] = idx
+	var am := ArrayMesh.new()
+	am.add_surface_from_arrays(Mesh.PRIMITIVE_TRIANGLES, arrays)
+	var mat := first_mat.duplicate() as StandardMaterial3D
+	mat.albedo_color = Color.WHITE
+	mat.vertex_color_use_as_albedo = true
+	var merged := MeshInstance3D.new()
+	merged.mesh = am
+	merged.material_override = mat
+	root.add_child(merged)
+	for o in olds:
+		o.get_parent().remove_child(o)
+		o.free()
 
 
 func _drop_pick() -> void:
