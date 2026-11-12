@@ -44,8 +44,8 @@ seçtiği aynı tür bakış kullanıldı.
   kalıp görünmüyor (yere yattığı için alçaldı); kare onu göstermiyor.
 - Birleştirme sonrası (ORDUGÂH-5 karo düzeni) çadır yerleri değişti; `01`/`02` birleştirme ÖNCESİ koddan.
   Birleşik kodun ocak kareleri `09`'da (ÖNCE'si yok). `09` sağ karede (rumeli 3_1) sağ kenarda yatan kişinin ayakları
-  çadır eteğine giriyor gibi: yer seçimi ORDUGÂH-5'in (kişi yeri değişmedi, yalnız duruşu yatık oldu; ayakta iken çadıra
-  değmiyordu). KISMEN.
+  çadır eteğine giriyor gibi. Kişinin yeri ORDUGÂH-5'in yerleşiminden (bu oturum yeri değiştirmedi); yatınca kapladığı
+  alan büyüdüğü için olabilir, ÖNCE'si bakılmadı. KISMEN.
 
 ## 3. Maddeler
 
