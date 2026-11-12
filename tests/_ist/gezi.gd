@@ -19,6 +19,7 @@ var player: Node3D
 var _yaw := 0.0
 var _pitch := 0.0
 var _hiz := 18.0
+var _sis := -1.0          # sis=… : gün sis yoğunluğunu ayarlama denemesi (0: kapalı)
 
 
 func _ready() -> void:
@@ -33,6 +34,7 @@ func _ready() -> void:
 			"liste": liste = kv[1]
 			"kip": kip = kv[1]
 			"sehir": IstDunya.sehir_bagla = kv[1] != "0"
+			"sis": _sis = kv[1].to_float()
 	if kip == "harita":
 		_harita.call_deferred()
 		return
@@ -47,6 +49,10 @@ func _ready() -> void:
 	var k := _kam_coz(kam)
 	_kam_koy(k)
 	dunya = IstDunya.build(self, gece, cam.global_position) as IstDunya
+	if _sis >= 0.0:
+		var we := dunya.get_node("Gok") as WorldEnvironment
+		we.environment.fog_enabled = _sis > 0.0
+		we.environment.fog_density = _sis
 	if kip == "yuru" or kip == "yuru_sina":
 		_oyuncu(k)
 		if kip == "yuru_sina":
