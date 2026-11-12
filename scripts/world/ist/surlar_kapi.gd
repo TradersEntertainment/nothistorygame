@@ -36,30 +36,12 @@ static func build(root: Node3D, lay: Dictionary, lod: int, o: Dictionary) -> voi
 	if lod >= 1:
 		if o.get("mermer", false):
 			IstSurlar._s(root, Vector3(-lay["gx"], 0, zi1), Vector3(lay["gx"], HW, zi1 + 0.35), marble, "marble", lod)
+			IstSurlar._s(root, Vector3(-lay["gx"], 0, zo1), Vector3(lay["gx"], OH, zo1 + 0.35), marble, "marble", lod)
 		return
-	# ---- mermer kaplama (Altın Kapı): iki kule arasında mermer ön yüz, üç kemer, sütunlar, silme
+	# ---- mermer kaplama (Altın Kapı): hem peribolos yüzünde (iç sur) hem dış surun ova yüzünde
 	if o.get("mermer", false):
-		var gx: float = lay["gx"]
-		var zf := zi1 + 0.35
-		IstSurlar._s(root, Vector3(-gx, 0, zi1), Vector3(gx, HW, zf), marble, "marble", lod)
-		var arch_x := [-gw * 0.95, 0.0, gw * 0.95]
-		for i in 3:
-			var ax: float = arch_x[i]
-			var aw: float = gw if i == 1 else gw * 0.62
-			var ah: float = gh if i == 1 else gh * 0.8
-			# kemer boşluğu (kör): koyu zemin, tuğla dolgu, küçük kapı
-			IstSurlar._d(root, Vector3(ax - aw * 0.5, 0, zf), Vector3(ax + aw * 0.5, ah, zf + 0.05), Color("5e4a3a"), "brick")
-			arch(root, ax, ah, aw * 0.5, zf, 1.0, Color("c8b99c"))
-			IstSurlar._d(root, Vector3(ax - 0.9, 0, zf + 0.05), Vector3(ax + 0.9, 2.3, zf + 0.09), C_DARK)
-		# sütun çiftleri (mermer) ve silme
-		for i in 4:
-			var sx: float = [-gw * 1.3, -gw * 0.65, gw * 0.65, gw * 1.3][i]
-			var col := Props.cyl(root, 0.32, HW * 0.62, Vector3(sx, HW * 0.31, zf + 0.3), marble.lightened(0.04), Vector3.ZERO, 10)
-			Props.make_solid(col, 0.9)
-			Props.box(root, Vector3(0.9, 0.22, 0.9), Vector3(sx, HW * 0.62 + 0.11, zf + 0.3), marble.darkened(0.05))
-			Props.box(root, Vector3(0.8, 0.22, 0.8), Vector3(sx, 0.11, zf + 0.3), marble.darkened(0.05))
-		IstSurlar._s(root, Vector3(-gw * 1.55, HW * 0.62 + 0.22, zf), Vector3(gw * 1.55, HW * 0.62 + 0.9, zf + 0.7), marble.darkened(0.04), "marble", lod)
-		IstSurlar._d(root, Vector3(-gw * 1.5, HW * 0.62 + 0.95, zf + 0.0), Vector3(gw * 1.5, HW * 0.62 + 1.7, zf + 0.06), C_BRICK, "brick")
+		_facade(root, lay, zi1, HW, gh, lod)
+		_facade(root, lay, zo1, OH, minf(gh, OH - 1.4), lod)
 		return
 	# ---- kemer süsü iki yüzde
 	if gw > 0.0:
@@ -101,3 +83,29 @@ static func build(root: Node3D, lay: Dictionary, lod: int, o: Dictionary) -> voi
 				mer.append(Transform3D(Basis.from_scale(Vector3(cw * 0.8, 0.5, 0.9)), Vector3(xm, ch + 0.24, zz)))
 				zz += 1.7
 			Scenery.scatter(root, Scenery._boxm(Vector3.ONE), mer, [], Props.mat(stone.darkened(0.08), 0.0, false, "ashlar"))
+
+
+## Mermer cephe: z0 duvarın dış yüzü; üç kemer (ortası kapı genişliğinde, kör ve tuğla ile örülü), sütun çiftleri, silme
+static func _facade(root: Node3D, lay: Dictionary, z0: float, H: float, gh: float, lod: int) -> void:
+	var gw: float = lay["gw"]
+	var gx: float = lay["gx"]
+	var marble := Color("e6dfcf")
+	var zf := z0 + 0.35
+	IstSurlar._s(root, Vector3(-gx, 0, z0), Vector3(gx, H, zf), marble, "marble", lod)
+	var arch_x := [-gw * 0.95, 0.0, gw * 0.95]
+	for i in 3:
+		var ax: float = arch_x[i]
+		var aw: float = gw if i == 1 else gw * 0.62
+		var ah: float = gh if i == 1 else gh * 0.8
+		IstSurlar._d(root, Vector3(ax - aw * 0.5, 0, zf), Vector3(ax + aw * 0.5, ah, zf + 0.05), Color("5e4a3a"), "brick")
+		arch(root, ax, ah, aw * 0.5, zf, 1.0, Color("c8b99c"))
+		IstSurlar._d(root, Vector3(ax - 0.9, 0, zf + 0.05), Vector3(ax + 0.9, 2.3, zf + 0.09), C_DARK)
+	var colh := H * 0.62
+	for i in 4:
+		var sx: float = [-gw * 1.3, -gw * 0.65, gw * 0.65, gw * 1.3][i]
+		var cmi := Props.cyl(root, 0.32, colh, Vector3(sx, colh * 0.5, zf + 0.25), marble.lightened(0.04), Vector3.ZERO, 10)
+		Props.make_solid(cmi, 0.9)
+		Props.box(root, Vector3(0.9, 0.22, 0.9), Vector3(sx, colh + 0.11, zf + 0.25), marble.darkened(0.05))
+		Props.box(root, Vector3(0.8, 0.22, 0.8), Vector3(sx, 0.11, zf + 0.25), marble.darkened(0.05))
+	IstSurlar._s(root, Vector3(-gw * 1.55, colh + 0.22, zf), Vector3(gw * 1.55, colh + 0.9, zf + 0.7), marble.darkened(0.04), "marble", lod)
+	IstSurlar._d(root, Vector3(-gw * 1.5, colh + 0.95, zf), Vector3(gw * 1.5, colh + 1.5, zf + 0.06), C_BRICK, "brick")
