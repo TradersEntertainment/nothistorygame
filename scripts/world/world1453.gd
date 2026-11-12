@@ -741,7 +741,8 @@ static func _roofish(n: Node, top: Node) -> bool:
 
 static var _tex_avg_lin := {}
 
-## Desen dokusunun doğrusal uzaydaki ortalama rengi (doku örnekleri doğrusala çevrilip ortalanır)
+## Desen dokusunun algılanan ortalama rengi, köşe rengi (doğrusal okunur) için doğrusala çevrilmiş: sRGB ortalamasının ham hâli düz
+## kopyayı soluk somon, doğrusal örneklerin ortalaması ise koyu kahve yapıyordu
 static func _avg_lin(tex: Texture2D) -> Color:
 	if tex == null:
 		return Color.WHITE
@@ -757,10 +758,10 @@ static func _avg_lin(tex: Texture2D) -> Color:
 	var n := 0
 	for j in 24:
 		for i in 24:
-			var px := img.get_pixel(int((i + 0.5) * img.get_width() / 24.0), int((j + 0.5) * img.get_height() / 24.0)).srgb_to_linear()
-			c += px
+			c += img.get_pixel(int((i + 0.5) * img.get_width() / 24.0), int((j + 0.5) * img.get_height() / 24.0))
 			n += 1
 	c /= float(n)
+	c = c.srgb_to_linear().lerp(c, 0.5)     # tam doğrusal koyu kahve, ham sRGB soluk somon: yarı yolda (kareyle ayarlı, yakın kabukla aynı ton)
 	c.a = 1.0
 	_tex_avg_lin[tex] = c
 	return c

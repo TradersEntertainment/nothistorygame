@@ -524,7 +524,10 @@ func _wall_run(a: Vector3, b: Vector3, h: float, tower_step: float, d: Dressing,
 			d.box(Vector3(1.4, 1.3, 1.4), p + side * 1.0 + Basis(Vector3.UP, deg_to_rad(yaw)) * Vector3((q % 2 - 0.5) * 6.6, th + 1.0, (q / 2 - 0.5) * 6.6), STONE.darkened(0.14), Vector3(0, yaw, 0))
 		d.box(Vector3(8.4, 0.5, 8.4), p + Vector3(0, th + 0.2, 0) + side * 1.0, Color("9a5040"), Vector3(0, yaw, 0))
 		if rng.randf() < 0.5:
-			nd.glow(Vector3(0.4, 0.6, 0.4), p + Vector3(0, th + 1.0, 0), Color("ffb040"))
+			# Kule çatısı ateşi: köşe siperlerinin (1,3 m) üstüne taşan alev, demir mangal üstünde (alçak alev siperlerin ve
+			# kulenin arkasında kalıyordu)
+			d.box(Vector3(0.9, 0.9, 0.9), p + Vector3(0, th + 0.9, 0), Color("2a2622"), Vector3(0, yaw, 0))
+			nd.glow(Vector3(0.4, 1.0, 0.4), p + Vector3(0, th + 1.8, 0), Color("ffb040"))
 		t += tower_step
 
 
