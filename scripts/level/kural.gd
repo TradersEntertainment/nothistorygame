@@ -827,6 +827,25 @@ func _mark_tick(delta: float) -> void:
 
 var _bot_home := Vector3.INF
 var _bot_open := false
+var _bot_dir := Vector3.ZERO
+
+
+## Kaçış yönü: alanın dışında, meydanı engelsiz gören (çadır dibine düşen kare hiçbir şey göstermiyordu)
+func _clear_dir() -> Vector3:
+	var space := scene.get_world_3d().direct_space_state
+	var base := player.global_position - area_center
+	base.y = 0.0
+	base = base.normalized() if base.length() > 0.5 else Vector3(0, 0, 1)
+	for k in 16:
+		var dir := base.rotated(Vector3.UP, TAU * k / 16.0)
+		var p := area_center + dir * (area_r + 5.0)
+		p.y = _ground(p, area_center.y + 1.0) + 1.6
+		var hit := space.intersect_ray(PhysicsRayQueryParameters3D.create(p, area_center + Vector3(0, 1.6, 0) + dir * (area_r - 4.0), 1,
+			[player.get_rid()]))
+		if hit.is_empty():
+			_log("bot dir=%s spot=%s" % [dir, p])
+			return dir
+	return base
 
 
 ## Otomatik testin penceresi: bölüm, testin güvenli bir anında (oyuncu serbest, bölümün kendi botu beklerken) çağırır.
@@ -914,11 +933,9 @@ func _bot_tick(delta: float) -> void:
 			if _bot_home == Vector3.INF:
 				_bot_home = player.global_position
 			# Alanın dışına (iade: kovalayanı atlatacak kadar uzağa)
-			var away := player.global_position - area_center
-			away.y = 0.0
-			if away.length() < 0.5:
-				away = Vector3(0, 0, 1)
-			away = away.normalized()
+			if _bot_dir == Vector3.ZERO:
+				_bot_dir = _clear_dir()
+			var away := _bot_dir
 			var far := area_r + (5.0 if _step < 2 else (47.0 if _bot == "kacak_iade" else 3.0))
 			if _flat_dist(player.global_position, area_center) < far - 0.5:
 				var p := area_center + away * far
