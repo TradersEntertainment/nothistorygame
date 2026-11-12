@@ -447,10 +447,20 @@ static func bake(list: Array, top: Node3D, xf: Transform3D, parent: Node3D, node
 				tc += n.mesh.surface_get_array_index_len(si) / 3 if n.mesh.surface_get_array_index_len(si) > 0 else n.mesh.surface_get_array_len(si) / 3
 			if tc > max_tris:
 				var ab := n.mesh.get_aabb()
-				var m0 := n.get_active_material(0) as BaseMaterial3D
+				# Kiremit çatı iki yüzeyli (0: saçak/kenar şeridi, 1: kiremit): renk en çok üçgeni olan yüzeyden (kiremit);
+				# doku ortalaması sRGB, köşe rengi ise doğrusal okunur: doğrusala çevrilir (yerdeki çatıyla aynı terrakota)
+				var best_si := 0
+				var best_tc := -1
+				for si in n.mesh.get_surface_count():
+					var stc: int = n.mesh.surface_get_array_index_len(si) / 3 if n.mesh.surface_get_array_index_len(si) > 0 else n.mesh.surface_get_array_len(si) / 3
+					if stc > best_tc:
+						best_tc = stc
+						best_si = si
+				var m0 := n.get_active_material(best_si) as BaseMaterial3D
 				var rc := Color(0.7, 0.36, 0.26)
 				if m0:
 					rc = m0.albedo_color * _avg(m0.albedo_texture)
+				rc = rc.srgb_to_linear()
 				if not groups.has("flat"):
 					var fst := SurfaceTool.new()
 					fst.begin(Mesh.PRIMITIVE_TRIANGLES)
