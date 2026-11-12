@@ -466,7 +466,11 @@ def _tone_of(r, cast):
         return r["ton"]
     mode = resolve(cast, r["konusmaci"]).get("ton_mode", "")
     if mode.startswith("rol:"):
-        return role_tone(clean(r.get("tr", "")), mode[4:], r.get("ton", ""), mesafe_of(r.get("anahtar", "")))
+        k = r.get("anahtar", "")
+        mes = mesafe_of(k)
+        if mes == "uzak" and k.startswith(UZAK_HARIC):
+            mes = "yakin"      # uzakta ama bağırmıyor (toprağın üstünden konuşan Nihat, hoparlör)
+        return role_tone(clean(r.get("tr", "")), mode[4:], r.get("ton", ""), mes)
     if mode:
         return scene_tone(clean(r.get("tr", "")), mode)
     return r.get("ton", "") or resolve(cast, r["konusmaci"]).get("ton", "")
@@ -800,12 +804,16 @@ ROL_UZAK = {
     "asker_neseli": "[shouting down from the wall] [hearty]", "usta": "[shouting over the noise]",
     "komutan": "[shouting commands over battle noise]", "saray": "[calling out firmly] [raised voice]",
     "saray_genc": "[calling out sharply] [raised voice]", "telsiz": "[raised voice] [alarmed]", "amca": "[calling out] [excited]",
+    "denetci": "[calling out] [formal] [strained]",
 }
 ROL_SESLEN = {   # orta: yakında ama sesini yükseltir (acele, uyarı)
     "asker": "[calling out] [urgent]", "asker_genc": "[calling out] [nervous]", "cavus": "[barking an order]",
     "nobetci": "[calling out] [startled]", "asker_neseli": "[calling out] [hearty]", "usta": "[calling out] [impatient]",
     "komutan": "[commanding] [urgent]", "saray": "[firm] [restrained]", "saray_genc": "[sharp] [commanding]",
     "telsiz": "[dry] [alarmed but restrained]", "amca": "[excited] [chuckles]",
+    "denetci": "[raised voice] [exasperated] [dry]",
+    "kondotiyer": "[firm] [commanding] [raised voice]", "mahalleli": "[calling out] [scolding fondly]", "balikci": "[low voice] [urgent but calm]",
+    "eski_nobetci": "[raised voice] [stern]",
 }
 ROL_YAKIN = {    # (ünlem, soru, üç nokta, düz): yanındakine konuşur; bağırmaz
     "asker": ("[firm] [gruff]", "[gruff] [suspicious]", "[tired] [muttering]", "[low rough voice] [talking to someone right next to him]"),
@@ -819,7 +827,20 @@ ROL_YAKIN = {    # (ünlem, soru, üç nokta, düz): yanındakine konuşur; bağ
     "saray_genc": ("[sharp] [quiet authority]", "[curious] [amused] [quiet authority]", "[thoughtful]", "[calm] [quiet authority] [speaking to someone standing before him]"),
     "telsiz": ("[dry] [exasperated]", "[deadpan] [sceptical]", "[deadpan] [sighs]", "[deadpan] [dry] [talking quietly into a radio]"),
     "amca": ("[excited] [warm]", "[curious] [warm]", "[thinking aloud]", "[warm] [chatty] [old man talking to his nephew]"),
+    # Nihat (sahibi dinleme sayfasında L5 sesini bu okumayla seçti, 0.99.119): yorgun, alaycı, kendi kendine söylenir
+    "denetci": ("[exasperated] [dry]", "[wry] [tired]", "[tired] [sighs]", "[wry] [tired] [dry]"),
+    # Giustiniani (sahibi dinleme sayfasında K3 sesini bu okumayla seçti, iki tur üst üste): alçak, sıcak, kendinden emin
+    "kondotiyer": ("[low, warm voice] [calm authority] [firm]", "[low, warm voice] [calm authority] [wry]", "[low voice] [weary] [calm]",
+                   "[low, warm voice] [calm authority] [slight smile] [unhurried]"),
+    # Yerebatan: Eudokia (E1a) ve balıkçı Yakovos (Y2a), sahibinin seçtiği okumalar
+    "mahalleli": ("[surprised] [scolding fondly]", "[brisk] [suspicious but friendly]", "[brisk] [thinking aloud]", "[brisk] [matter-of-fact] [neighbourly]"),
+    "balikci": ("[low voice] [urgent but calm]", "[low voice] [wary] [slow]", "[low voice] [slow] [wondering]", "[low voice] [unhurried] [dry humour]"),
+    # Niko, yön B (sahibi B yönünü ve Ses 2'yi seçti): hepsini görmüş, hiçbirine şaşırmayan eski nöbetçi; yakında hep aynı düzlük
+    "eski_nobetci": ("[dry] [low] [tired]", "[dry] [low] [tired]", "[dry] [low] [tired]", "[dry] [low] [tired]"),
 }
+ROL_ONEKSIZ = {"denetci", "kondotiyer", "mahalleli", "balikci"}     # "[normal speaking voice]" eklenmez: seçilen okuma öyleydi
+ROL_UZAK_OZEL = {"kondotiyer": "[shouts] [commanding] [defiant]"}
+DENETCI_DUZ = {"telsiz": "[wry] [tired] [muttering to himself into a radio]", "ic_ses": "[wry] [tired] [muttering to himself]"}
 
 
 ROL_BAGIR = "[shouts] [yelling at the top of his lungs]"     # ölçüldü: en belirgin bağırış bu yönergeyle çıkıyor
@@ -860,6 +881,16 @@ def role_tone(text, role, taban="", mesafe=""):
             mesafe = "fisilti"
         else:
             mesafe = "yakin"
+    if role == "denetci" and mesafe in ("yakin", "telsiz", "ic_ses"):
+        # "[normal speaking voice]" eklenmez: seçilen okuma buydu; düz cümlede yere göre mırıldanır
+        yk = yakin if (ex or q or dots) else DENETCI_DUZ.get(mesafe, yakin)
+        return _tekil(duygu + " " + yk)
+    if role in ROL_ONEKSIZ and mesafe in ("yakin", "telsiz"):
+        return _tekil(duygu + " " + yakin)
+    if role in ROL_UZAK_OZEL and mesafe == "uzak":
+        return ROL_UZAK_OZEL[role]
+    if role == "kondotiyer" and mesafe == "yakin_yuksek":
+        return ROL_SESLEN[role] + (" [rallying his men]" if ex else "")
     if mesafe == "uzak":
         return ROL_BAGIR
     if mesafe == "yakin_yuksek":

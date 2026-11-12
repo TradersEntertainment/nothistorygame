@@ -36,9 +36,14 @@
   "stability": 0.75,
   "similarity": 0.8,
   "style": 0.1,
-  "voice_id": "ketyAqqchmwgrDzULh9A",
+  "voice_id": "5W74Dom7jqg8P63rrFqK",
   "design": "Turkish man in his late 40s, a time-bureau auditor. Monotone, dry, precise, bureaucratic, deadpan humour, never raises his voice. Clear standard Turkish, slightly nasal.",
-  "voice_name": "NHG Nihat"
+  "voice_name": "NHG aday Nihat L5 (kütüphane: Ozgur Ozturk - Expressive)",
+  "eski_voice_id": "ketyAqqchmwgrDzULh9A",
+  "eski_voice_name": "NHG Nihat",
+  "model": "eleven_v3",
+  "v3_stability": 0.5,
+  "ton_mode": "rol:denetci"
  },
  "SPK_MUFIDE": {
   "tarif": "Başdenetçi, orta yaş kadın; anaç ama kesin",
@@ -69,16 +74,22 @@
   "model": "eleven_v3"
  },
  "SPK_NIKO": {
-  "tarif": "Bizans nöbetçisi; gür, iyi kalpli, hafif kaba",
+  "tarif": "Deniz surunun eski nöbetçisi; hepsini görmüş, hiçbirine şaşırmıyor; kısa, düz, yorgun",
   "gender": "male",
   "age": "middle_aged",
   "search": "hearty rough",
   "stability": 0.4,
   "similarity": 0.8,
   "style": 0.45,
-  "voice_id": "3QACul1xvGwWSYKK3Azb",
-  "design": "Greek Byzantine city guard in his 40s speaking Turkish with a light Greek accent. Loud, booming, good-hearted, a bit rough, jovial.",
-  "voice_name": "NHG Niko"
+  "voice_id": "xQqhiz7D7vCWe9Kzi7Wk",
+  "design": "Byzantine sea-wall sentry of about fifty, thirty years on the same wall. Dry, low, tired, unsurprised by anything; short flat sentences; calls out only when duty requires.",
+  "voice_name": "NHG Niko aday b2",
+  "eski_voice_id": "3QACul1xvGwWSYKK3Azb",
+  "eski_voice_name": "NHG Niko",
+  "model": "eleven_v3",
+  "v3_stability": 0.5,
+  "ton_mode": "rol:eski_nobetci",
+  "not_secim": "0.99.119: sahibi yön B'yi (eski nöbetçi) ve Ses 2'yi seçti; replikler yeniden yazıldı"
  },
  "SPK_KADRI": {
   "tarif": "Aşçıbaşı; kalın, gürleyen, sert ama sevecen",
@@ -192,14 +203,16 @@
   "gender": "male",
   "age": "middle_aged",
   "design": "Genoese mercenary commander in his 40s speaking Turkish with an Italian accent. A soldier's voice, not a diplomat's: rough, tired, commanding, hoarse from battle, with a merchant's sly humour. Medium-low pitch.",
-  "voice_id": "DqCBb2FUXKaa0HiJSPAy",
-  "voice_name": "NHG Giust 2",
+  "voice_id": "0eJPI9GnhoplaJVm643n",
+  "voice_name": "NHG aday Giust K3a",
   "eski_voice_id": "94aHLmRvlOysZfcYAw7N",
   "eski_voice_name": "NHG Giust",
   "model": "eleven_v3",
   "v3_stability": 0.5,
-  "ton_mode": "rol:komutan",
-  "not_secim": "0.99.119: sahibi sahne içinde dinleyip seçti (yeni ses 1)"
+  "ton_mode": "rol:kondotiyer",
+  "not_secim": "0.99.119: sahibi iki tur üst üste K3'ü seçti (sıcak, kumlu bariton; karizmatik okuma)",
+  "onceki_voice_id": "DqCBb2FUXKaa0HiJSPAy",
+  "onceki_voice_name": "NHG Giust 2"
  },
  "SPK_EMPEROR": {
   "tarif": "İmparator Konstantinos; ağırbaşlı, yorgun, sıcak (saygılı)",
@@ -360,7 +373,11 @@
  },
  "SPK_ROWER": {
   "tarif": "Kürekçi",
-  "same_as": "SPK_NIKO"
+  "gender": "male",
+  "age": "middle_aged",
+  "voice_id": "3QACul1xvGwWSYKK3Azb",
+  "voice_name": "NHG Niko",
+  "not_secim": "0.99.119: Niko'nun sesi değişti; bu karakter eski seste (kayıtları o sesle) bırakıldı"
  },
  "SPK_MANAGER": {
   "tarif": "Ofis müdürü; plaza jargonlu, sabırsız (özel sesi slot için silindi)",
@@ -456,7 +473,11 @@
  },
  "SPK_NOTARAS": {
   "tarif": "",
-  "same_as": "SPK_GIUST"
+  "gender": "male",
+  "age": "middle_aged",
+  "voice_id": "94aHLmRvlOysZfcYAw7N",
+  "voice_name": "NHG Giust",
+  "not_secim": "0.99.119: Giustiniani'nin sesi değişti; bu karakter eski seste (kayıtları o sesle) bırakıldı"
  },
  "SPK_ISIDORE": {
   "tarif": "",
@@ -500,7 +521,11 @@
  },
  "SPK_TREVISANO": {
   "tarif": "Venedikli kaptan Trevisano; asil, cesur, kararlı",
-  "same_as": "SPK_GIUST"
+  "gender": "male",
+  "age": "middle_aged",
+  "voice_id": "94aHLmRvlOysZfcYAw7N",
+  "voice_name": "NHG Giust",
+  "not_secim": "0.99.119: Giustiniani'nin sesi değişti; bu karakter eski seste (kayıtları o sesle) bırakıldı"
  },
  "SPK_USTA": {
   "tarif": "Köprücü Usta Mahmud; yaşlı marangoz, öğretmen gibi azarlar, sıcak",
@@ -508,7 +533,11 @@
  },
  "SPK_DEFENDER": {
   "tarif": "Surdaki savunucu; yorgun, kararlı, pürüzlü ses",
-  "same_as": "SPK_NIKO"
+  "gender": "male",
+  "age": "middle_aged",
+  "voice_id": "3QACul1xvGwWSYKK3Azb",
+  "voice_name": "NHG Niko",
+  "not_secim": "0.99.119: Niko'nun sesi değişti; bu karakter eski seste (kayıtları o sesle) bırakıldı"
  },
  "SPK_LOOKOUT": {
   "tarif": "Gözcü; genç, telaşlı, uyarı bağırır",
@@ -561,7 +590,11 @@
  },
  "SPK_PODESTA": {
   "tarif": "Podesta Lomellino; yaşlı Cenevizli yönetici, ağırbaşlı, yorgun",
-  "same_as": "SPK_GIUST"
+  "gender": "male",
+  "age": "middle_aged",
+  "voice_id": "94aHLmRvlOysZfcYAw7N",
+  "voice_name": "NHG Giust",
+  "not_secim": "0.99.119: Giustiniani'nin sesi değişti; bu karakter eski seste (kayıtları o sesle) bırakıldı"
  },
  "SPK_WITNESS": {
   "tarif": "Tanık; Nihat'ı uçarken gören halktan biri, şaşkın, bağıran",
@@ -1073,7 +1106,11 @@
  },
  "SPK_EDISON": {
   "tarif": "Thomas Edison; kendinden emin, iş adamı",
-  "same_as": "SPK_GIUST"
+  "gender": "male",
+  "age": "middle_aged",
+  "voice_id": "94aHLmRvlOysZfcYAw7N",
+  "voice_name": "NHG Giust",
+  "not_secim": "0.99.119: Giustiniani'nin sesi değişti; bu karakter eski seste (kayıtları o sesle) bırakıldı"
  },
  "SPK_SOCRATES": {
   "tarif": "Sokrates; yaşlı, ironik, hep soru soran",
