@@ -1,7 +1,7 @@
 anahtar,konusmaci,mesafe,metre,kanit,not
 D12_T_ENTER,TOLGA,ic_ses,,"chapter12.gd:152 say Tolga, otağa giriş anlatısı (kimseye seslenmiyor)",
 D12_T_ENTER_LETTER,TOLGA,ic_ses,,"chapter12.gd:149 say Tolga, otağa giriş anlatısı (kimseye seslenmiyor)",
-D12_F_01,FATIH,yakin,6,"chapter12 _f: Fatih tahtta, Tolga TOLGA_SPOT'ta; otak içi resmî hitap",
+D12_F_01,FATIH,yakin,6,"chapter12.gd:177 (dolaylı) chapter12 _f: Fatih tahtta, Tolga TOLGA_SPOT'ta; otak içi resmî hitap",
 D12_F_01_TWIST,FATIH,yakin,6,"chapter12.gd:177 chapter12 _f: Fatih tahtta, Tolga TOLGA_SPOT'ta; otak içi resmî hitap",
 D12_F_01_HONEST,FATIH,yakin,6,"chapter12.gd:179 chapter12 _f: Fatih tahtta, Tolga TOLGA_SPOT'ta; otak içi resmî hitap",
 D12_F_01_RIGHT,FATIH,yakin,6,"chapter12.gd:182 chapter12 _f: Fatih tahtta, Tolga TOLGA_SPOT'ta; otak içi resmî hitap",
@@ -471,12 +471,14 @@ D17_TR_BACK,TREVISANO,yakin_yuksek,3,"chapter17.gd:881 chapter17.gd kayıkta kü
 D17_TR_THANKS,TREVISANO,yakin,2,chapter17.gd:903 kayıkta/limanda sakin konuşma,
 D17_TR_COCO,TREVISANO,yakin,2,chapter17.gd:904 kayıkta/limanda sakin konuşma,
 D17_T_END,TOLGA,yakin,2,chapter17.gd:905 kayıkta/limanda sakin konuşma,
-D17_N_END,NIHAT,yakin,2,chapter17.gd:906 D17_N_END_ANY: sefer sonu Büro'da Nihat Tolga'ya,
+D17_N_END,NIHAT,yakin,2,chapter17.gd:906 (dolaylı) D17_N_END_ANY: sefer sonu Büro'da Nihat Tolga'ya,
 D18_N_01,?,yakin,2,"chapter18.gd:464 fıçı köprü şantiyesi, Usta/Nihat/Tolga yan yana",
 D18_U_01,USTA,yakin,2,"chapter18.gd:464 fıçı köprü şantiyesi, Usta/Nihat/Tolga yan yana",
 D18_T_01,TOLGA,yakin,2,"chapter18.gd:464 fıçı köprü şantiyesi, Usta/Nihat/Tolga yan yana",
 D18_U_02,USTA,yakin,2,"chapter18.gd:465 fıçı köprü şantiyesi, Usta/Nihat/Tolga yan yana",
 D18_U_BARRELS,USTA,yakin_yuksek,4,"chapter18.gd:533 chapter18.gd Usta şantiyede işçilere ünlemli komut, su/kalas gürültüsü",
+D18_U_MISS_1,USTA,yakin,3,"chapter18.gd:649 (dolaylı) Usta Tolga'nın bağını düzeltir (bark), yan yana",
+D18_U_MISS_2,USTA,yakin,3,"chapter18.gd:649 (dolaylı) Usta Tolga'nın bağını düzeltir (bark), yan yana",
 D18_U_MISS_3,USTA,yakin_yuksek,4,"chapter18.gd:650 chapter18.gd Usta şantiyede işçilere ünlemli komut, su/kalas gürültüsü",
 D18_U_MISS_3_NOTAPE,USTA,yakin_yuksek,4,"chapter18.gd:651 chapter18.gd Usta şantiyede işçilere ünlemli komut, su/kalas gürültüsü",
 D18_U_SECTION_2,USTA,yakin_yuksek,4,"chapter18.gd:728 (dolaylı) chapter18.gd Usta şantiyede işçilere ünlemli komut, su/kalas gürültüsü",
@@ -579,7 +581,7 @@ D17_TR_IDLE,TREVISANO,yakin_yuksek,3,"chapter17.gd:1019 kayıkta kürekçiye aza
 D15_G_EVENING,HIKMET,ic_ses,,chapter15.gd:367 garajda yalnız Hikmet radyo/fotoğraf karşısında kendi kendine,T3_3'te ünlem var ama dinleyen yok
 D15_G_EAVES,HIKMET,ic_ses,,chapter15.gd:369 garajda yalnız Hikmet radyo/fotoğraf karşısında kendi kendine,T3_3'te ünlem var ama dinleyen yok
 D15_G_WATER,HIKMET,ic_ses,,chapter15.gd:371 garajda yalnız Hikmet radyo/fotoğraf karşısında kendi kendine,T3_3'te ünlem var ama dinleyen yok
-D15_O_EVENING_A,COWORKER_A,yakin,3,chapter15.gd:584 (dolaylı) ofiste iş arkadaşları,
+D15_O_EVENING_A,COWORKER_A,yakin,3,chapter15.gd:589 (dolaylı) ofiste iş arkadaşları,
 D15_O_EVENING_B,COWORKER_B,yakin,3,chapter15.gd:584 (dolaylı) ofiste iş arkadaşları,
 D15_O_EAVES_A,COWORKER_A,yakin,3,chapter15.gd:584 (dolaylı) ofiste iş arkadaşları,
 D15_O_EAVES_B,COWORKER_B,yakin,3,chapter15.gd:584 (dolaylı) ofiste iş arkadaşları,
@@ -678,6 +680,7 @@ D12B_H_RADIO_DUSK,HIKMET,telsiz,0,"chapter12b.gd:328 (dolaylı) telsiz (Hikmet "
 D12B_T_04_PLAIN,TOLGA,yakin,2,chapter12b.gd:261 İmparator surda Tolga yanında,
 D13_H_BACK_1_NOKAFTAN,HIKMET,yakin_yuksek,3,"chapter13.gd:342 garaja dönüş, Hikmet coşkuyla karşılar (ünlemler)",yanında ama sesi yüksek (sevinç)
 D13_H_BACK_1_NOKAFTAN_NOFEZ,HIKMET,yakin_yuksek,3,"chapter13.gd:342 (dolaylı) garaja dönüş, Hikmet coşkuyla karşılar (ünlemler)",yanında ama sesi yüksek (sevinç)
+D13_H_01_DUSK,HIKMET,yakin,3,chapter13.gd:148 (dolaylı) garajda Hikmet,
 D13_H_BACK_3_DUSK,HIKMET,yakin,3,chapter13.gd:346 (dolaylı) garajda Hikmet Tolga'nın karşısında,
 D13_F_MISSED_NONAME,FATIH,yakin,5,chapter13.gd:289 Fatih otakta,
 D17_N_01_NOAUD,NIHAT,yakin,2,chapter17.gd:488 Büro denetim odasında Nihat/Tolga karşılıklı,
@@ -696,6 +699,7 @@ D17_N_FEZ_ISSUE,NIHAT,yakin,2,chapter17.gd:549 Büro denetim odasında Nihat/Tol
 D17_N_RULE,NIHAT,yakin,2,chapter17.gd:566 Büro denetim odasında Nihat/Tolga karşılıklı,
 D17_T_RULE,TOLGA,yakin,2,chapter17.gd:567 Büro denetim odasında Nihat/Tolga karşılıklı,
 D17_N_END_ANY,NIHAT,yakin,2,chapter17.gd:906 D17_N_END_ANY: sefer sonu Büro'da Nihat Tolga'ya,
+D15_O_EVENING_A_PLAIN,COWORKER_A,yakin,3,chapter15.gd:589 ofiste iş arkadaşı/Tolga,
 D13_H_TOG_3_DUSK,HIKMET,yakin,2,chapter13.gd:845 (dolaylı) garajda,
 D16_H_GONE_HUFEZ,HASAN,yakin,3.4,"chapter16.gd:381 (dolaylı) iki muhafız yan yana, oyuncu 3.4 m yandan",
 D16_HU_GONE_HUFEZ,HUSEYIN,yakin,3.4,"chapter16.gd:384 (dolaylı) iki muhafız yan yana, oyuncu 3.4 m yandan",
@@ -728,6 +732,8 @@ D17_T_CAPTIVE,TOLGA,yakin,2,chapter17.gd:933 esir sahnesi kayıkta,
 D14_N_Z1_SEEN,NIHAT,ic_ses,,chapter14.gd:571 Nihat formu okurken kendi kendine,
 D14_N_SICIL_31O_1,NIHAT,yakin,3,chapter14.gd:425 chapter14.gd Büro ofisi Nihat/Saniye karşılıklı,
 D14_N_SICIL_31O_2,NIHAT,yakin,3,chapter14.gd:428 chapter14.gd Büro ofisi Nihat/Saniye karşılıklı,
+D15_O_CARD,COWORKER_B,yakin,3,chapter15.gd:609 ofiste iş arkadaşı/Tolga,
+D15_O_CARD_T,TOLGA,yakin,3,chapter15.gd:610 ofiste iş arkadaşı/Tolga,
 D_AYA_TOP_AFTER,TOLGA,ic_ses,,"level/byz_city.gd:999 Ayasofya çatısı, kendi kendine",
 D17_N_FIRST_42,NIHAT,yakin,2,chapter17.gd:564 (dolaylı) Büro asansörü/denetim odası,
 D17_N_FIRST_36,NIHAT,yakin,2,chapter17.gd:564 (dolaylı) Büro asansörü/denetim odası,
@@ -954,7 +960,229 @@ D_WIT_MNK_4,STREET_MONK,yakin_yuksek,8,"player/nihat_powers.gd:803 witness_bark:
 D_WIT_CHD_1,CHILD_BYZ,uzak,20,"player/nihat_powers.gd:804 witness_bark: tanık uçan Nihat'ı ≤32 m'den görür, gökyüzüne tepki verir",ÖZEL: ünlemsiz satırlar yakin_yuksek (yanındakine yorum)
 D_WIT_CHD_2,CHILD_BYZ,uzak,20,"player/nihat_powers.gd:804 witness_bark: tanık uçan Nihat'ı ≤32 m'den görür, gökyüzüne tepki verir",ÖZEL: ünlemsiz satırlar yakin_yuksek (yanındakine yorum)
 D_WIT_CHD_3,CHILD_BYZ,uzak,20,"player/nihat_powers.gd:804 witness_bark: tanık uçan Nihat'ı ≤32 m'den görür, gökyüzüne tepki verir",ÖZEL: ünlemsiz satırlar yakin_yuksek (yanındakine yorum)
-D_WIT_RIZ_1,RIZA,yakin_yuksek,8,"player/nihat_powers.gd:814 witness_bark: tanık uçan Nihat'ı ≤32 m'den görür, gökyüzüne tepki verir",ÖZEL: ünlemsiz satırlar yakin_yuksek (yanındakine yorum)
-D_WIT_RIZ_2,RIZA,yakin_yuksek,8,"player/nihat_powers.gd:814 witness_bark: tanık uçan Nihat'ı ≤32 m'den görür, gökyüzüne tepki verir",ÖZEL: ünlemsiz satırlar yakin_yuksek (yanındakine yorum)
-D_WIT_MUF_1,MUFIDE,yakin_yuksek,8,"player/nihat_powers.gd:815 witness_bark: tanık uçan Nihat'ı ≤32 m'den görür, gökyüzüne tepki verir",ÖZEL: ünlemsiz satırlar yakin_yuksek (yanındakine yorum)
-D_WIT_MUF_2,MUFIDE,yakin_yuksek,8,"player/nihat_powers.gd:815 witness_bark: tanık uçan Nihat'ı ≤32 m'den görür, gökyüzüne tepki verir",ÖZEL: ünlemsiz satırlar yakin_yuksek (yanındakine yorum)
+D_WIT_RIZ_1,RIZA,yakin_yuksek,8,player/nihat_powers.gd:814 Büro çalışanı uçan Nihat'a yukarı seslenir,"Büro içi, koridor"
+D_WIT_RIZ_2,RIZA,yakin_yuksek,8,player/nihat_powers.gd:814 Büro çalışanı uçan Nihat'a yukarı seslenir,"Büro içi, koridor"
+D_WIT_MUF_1,MUFIDE,yakin_yuksek,8,player/nihat_powers.gd:815 Büro çalışanı uçan Nihat'a yukarı seslenir,"Büro içi, koridor"
+D_WIT_MUF_2,MUFIDE,yakin_yuksek,8,player/nihat_powers.gd:815 Büro çalışanı uçan Nihat'a yukarı seslenir,"Büro içi, koridor"
+D20_N_01,NIHAT,yakin,2,chapter20.gd:181 Nihat Tolga'yla yürür/yan yana,
+D20_G_01,GIUST,yakin,3,"chapter20.gd:184 chapter20.gd siper/barikat onarımı, Giustiniani ve Tolga yan yana; savaş/top gürültüsü",ünlemli satırlar yakin_yuksek
+D20_T_01,TOLGA,yakin,3,"chapter20.gd:190 chapter20.gd siper/barikat onarımı, Giustiniani ve Tolga yan yana; savaş/top gürültüsü",ünlemli satırlar yakin_yuksek
+D20_G_02,GIUST,yakin,3,"chapter20.gd:192 chapter20.gd siper/barikat onarımı, Giustiniani ve Tolga yan yana; savaş/top gürültüsü",ünlemli satırlar yakin_yuksek
+D20_G_03,GIUST,yakin_yuksek,3,"chapter20.gd:192 chapter20.gd siper/barikat onarımı, Giustiniani ve Tolga yan yana; savaş/top gürültüsü",ünlemli satırlar yakin_yuksek
+D20_L_WARN_1,LOOKOUT,uzak,20,"arena.gd:193 chapter20.gd:266 gözcü kulede (garrison.gd:117-120 ""afar""), top geliyor uyarısı",kuleden/surdan aşağıya bağırır
+D20_L_WARN_2,LOOKOUT,uzak,20,"chapter0.gd:300 chapter20.gd:266 gözcü kulede (garrison.gd:117-120 ""afar""), top geliyor uyarısı",kuleden/surdan aşağıya bağırır
+D20_L_WARN_3,LOOKOUT,uzak,20,"chapter20.gd:266 (dolaylı) chapter20.gd:266 gözcü kulede (garrison.gd:117-120 ""afar""), top geliyor uyarısı",kuleden/surdan aşağıya bağırır
+D20_G_LOSS,GIUST,yakin_yuksek,4,"chapter20.gd:329 chapter20.gd bark, emir; top/oklar gürültüsü",
+D20_T_KNOCK_1,TOLGA,yakin_yuksek,3,chapter20.gd:354 (dolaylı) panik/komut ünlemi,
+D20_T_KNOCK_2,TOLGA,ic_ses,,chapter20.gd:354 (dolaylı) chapter20.gd bark Tolga kendi kendine yorum,
+D20_T_KNOCK_3,TOLGA,ic_ses,,tools/trailer/trailer.gd:50 chapter20.gd bark Tolga kendi kendine yorum,
+D20_T_FULL,TOLGA,ic_ses,,chapter20.gd:544 chapter20.gd bark Tolga kendi kendine yorum,
+D20_G_WRONG_BARREL,GIUST,yakin_yuksek,4,"chapter20.gd:553 (dolaylı) chapter20.gd bark, emir; top/oklar gürültüsü",
+D20_G_WRONG_EARTH,GIUST,yakin_yuksek,4,"chapter20.gd:553 (dolaylı) chapter20.gd bark, emir; top/oklar gürültüsü",
+D20_G_WRONG_PLANK,GIUST,yakin_yuksek,4,"chapter20.gd:553 (dolaylı) chapter20.gd bark, emir; top/oklar gürültüsü",
+D20_G_STAGE_4,GIUST,yakin_yuksek,4,"chapter20.gd:639 (dolaylı) chapter20.gd bark, emir; top/oklar gürültüsü",
+D20_G_STAGE_6,GIUST,yakin_yuksek,4,"chapter20.gd:639 (dolaylı) chapter20.gd bark, emir; top/oklar gürültüsü",
+D20_G_STAGE_8,GIUST,yakin_yuksek,4,"chapter20.gd:639 (dolaylı) chapter20.gd bark, emir; top/oklar gürültüsü",
+D20_T_DROP_1,TOLGA,ic_ses,,chapter20.gd:641 (dolaylı) chapter20.gd bark Tolga kendi kendine yorum,
+D20_T_DROP_2,TOLGA,ic_ses,,tools/trailer/trailer.gd:45 chapter20.gd bark Tolga kendi kendine yorum,
+D20_T_DROP_3,TOLGA,ic_ses,,chapter20.gd:641 (dolaylı) chapter20.gd bark Tolga kendi kendine yorum,
+D20_G_ASSAULT,GIUST,yakin_yuksek,3,"chapter20.gd:367 chapter20.gd siper/barikat onarımı, Giustiniani ve Tolga yan yana; savaş/top gürültüsü",ünlemli satırlar yakin_yuksek
+D20_G_ARROWS_FIRST,GIUST,yakin_yuksek,3,"chapter20.gd:547 chapter20.gd siper/barikat onarımı, Giustiniani ve Tolga yan yana; savaş/top gürültüsü",ünlemli satırlar yakin_yuksek
+D20_T_ARROWS_2,TOLGA,yakin_yuksek,3,chapter20.gd:751 panik/komut ünlemi,
+D20_G_ARROWS_LATE,GIUST,yakin,3,"chapter20.gd:399 chapter20.gd siper/barikat onarımı, Giustiniani ve Tolga yan yana; savaş/top gürültüsü",ünlemli satırlar yakin_yuksek
+D20_G_REPELLED,GIUST,yakin_yuksek,3,"chapter20.gd:408 chapter20.gd siper/barikat onarımı, Giustiniani ve Tolga yan yana; savaş/top gürültüsü",ünlemli satırlar yakin_yuksek
+D20_G_DONE,GIUST,yakin,3,"chapter20.gd:658 chapter20.gd siper/barikat onarımı, Giustiniani ve Tolga yan yana; savaş/top gürültüsü",ünlemli satırlar yakin_yuksek
+D20_G_UNFINISHED,GIUST,yakin,3,"chapter20.gd:660 chapter20.gd siper/barikat onarımı, Giustiniani ve Tolga yan yana; savaş/top gürültüsü",ünlemli satırlar yakin_yuksek
+D20_T_TAPE,TOLGA,yakin,2,chapter20.gd:691 Giustiniani'ye,
+D20_G_TAPE,GIUST,yakin,3,"chapter20.gd:692 chapter20.gd siper/barikat onarımı, Giustiniani ve Tolga yan yana; savaş/top gürültüsü",ünlemli satırlar yakin_yuksek
+D20_G_END,GIUST,yakin,3,"chapter20.gd:717 chapter20.gd siper/barikat onarımı, Giustiniani ve Tolga yan yana; savaş/top gürültüsü",ünlemli satırlar yakin_yuksek
+D20_T_END,TOLGA,yakin,3,"chapter20.gd:718 chapter20.gd siper/barikat onarımı, Giustiniani ve Tolga yan yana; savaş/top gürültüsü",ünlemli satırlar yakin_yuksek
+D20_N_END,NIHAT,yakin,2,chapter20.gd:719 Nihat Tolga'yla yürür/yan yana,
+D23_N_01,NIHAT,yakin,3,chapter23.gd:210 chapter23.gd Bizans salonu,
+D23_TH_01,THEODOROS,yakin,2,chapter23.gd:211 Theodoros Tolga'nın yanında,
+D23_T_01,TOLGA,yakin_yuksek,8,"chapter23.gd:212 chapter23.gd tercüme: Tolga İmparator'a/elçiye resmî hitap, 8 m",sınırda
+D23_K_KNOWN,EMPEROR,yakin_yuksek,8,"chapter23.gd:250 resmî hitap, tercüman heyetle tahtın arasında 8 m (bilerek, ""afar"")","sınırda: 8 m, ses salon boyunca taşır, bağırmaz"
+D23_I_KNOWN,ISMAIL,yakin_yuksek,8,"chapter23.gd:252 resmî hitap, tercüman heyetle tahtın arasında 8 m (bilerek, ""afar"")","sınırda: 8 m, ses salon boyunca taşır, bağırmaz"
+D23_I_OFFER_1,ISMAIL,yakin_yuksek,8,"chapter23.gd:261 resmî hitap, tercüman heyetle tahtın arasında 8 m (bilerek, ""afar"")","sınırda: 8 m, ses salon boyunca taşır, bağırmaz"
+D23_I_OFFER_2,ISMAIL,yakin_yuksek,8,"chapter23.gd:262 resmî hitap, tercüman heyetle tahtın arasında 8 m (bilerek, ""afar"")","sınırda: 8 m, ses salon boyunca taşır, bağırmaz"
+D23_T_1_TRUE,TOLGA,yakin_yuksek,8,"chapter23.gd:266 chapter23.gd tercüme: Tolga İmparator'a/elçiye resmî hitap, 8 m",sınırda
+D23_K_1_TRUE,EMPEROR,yakin_yuksek,8,"chapter23.gd:267 resmî hitap, tercüman heyetle tahtın arasında 8 m (bilerek, ""afar"")","sınırda: 8 m, ses salon boyunca taşır, bağırmaz"
+D23_T_1_SOFT,TOLGA,yakin_yuksek,8,"chapter23.gd:270 chapter23.gd tercüme: Tolga İmparator'a/elçiye resmî hitap, 8 m",sınırda
+D23_TH_1_SOFT,THEODOROS,yakin,2,chapter23.gd:271 Theodoros Tolga'nın yanında,
+D23_T_1_FIX,TOLGA,yakin_yuksek,8,"chapter23.gd:272 chapter23.gd tercüme: Tolga İmparator'a/elçiye resmî hitap, 8 m",sınırda
+D23_T_1_ADD,TOLGA,yakin_yuksek,8,"chapter23.gd:275 chapter23.gd tercüme: Tolga İmparator'a/elçiye resmî hitap, 8 m",sınırda
+D23_K_1_ADD,EMPEROR,yakin_yuksek,8,"chapter23.gd:276 resmî hitap, tercüman heyetle tahtın arasında 8 m (bilerek, ""afar"")","sınırda: 8 m, ses salon boyunca taşır, bağırmaz"
+D23_K_ANSWER_1,EMPEROR,yakin_yuksek,8,"chapter23.gd:279 resmî hitap, tercüman heyetle tahtın arasında 8 m (bilerek, ""afar"")","sınırda: 8 m, ses salon boyunca taşır, bağırmaz"
+D23_K_ANSWER_2,EMPEROR,yakin_yuksek,8,"chapter23.gd:280 resmî hitap, tercüman heyetle tahtın arasında 8 m (bilerek, ""afar"")","sınırda: 8 m, ses salon boyunca taşır, bağırmaz"
+D23_T_2_TRUE,TOLGA,yakin_yuksek,8,"chapter23.gd:284 chapter23.gd tercüme: Tolga İmparator'a/elçiye resmî hitap, 8 m",sınırda
+D23_I_2_TRUE,ISMAIL,yakin_yuksek,8,"chapter23.gd:285 resmî hitap, tercüman heyetle tahtın arasında 8 m (bilerek, ""afar"")","sınırda: 8 m, ses salon boyunca taşır, bağırmaz"
+D23_T_2_SOFT,TOLGA,yakin_yuksek,8,"chapter23.gd:289 chapter23.gd tercüme: Tolga İmparator'a/elçiye resmî hitap, 8 m",sınırda
+D23_I_2_SOFT,ISMAIL,yakin_yuksek,8,"chapter23.gd:290 resmî hitap, tercüman heyetle tahtın arasında 8 m (bilerek, ""afar"")","sınırda: 8 m, ses salon boyunca taşır, bağırmaz"
+D23_T_2_ADD,TOLGA,yakin_yuksek,8,"chapter23.gd:294 chapter23.gd tercüme: Tolga İmparator'a/elçiye resmî hitap, 8 m",sınırda
+D23_I_2_ADD,ISMAIL,yakin_yuksek,8,"chapter23.gd:295 resmî hitap, tercüman heyetle tahtın arasında 8 m (bilerek, ""afar"")","sınırda: 8 m, ses salon boyunca taşır, bağırmaz"
+D23_I_ASIDE,ISMAIL,fisilti,2,"chapter23.gd:297 elçi Tolga'ya kenardan, resmî hitap dışı (""ASIDE"")",
+D23_T_3_TELL,TOLGA,yakin_yuksek,8,"chapter23.gd:300 chapter23.gd tercüme: Tolga İmparator'a/elçiye resmî hitap, 8 m",sınırda
+D23_K_3_TELL,EMPEROR,yakin_yuksek,8,"chapter23.gd:301 resmî hitap, tercüman heyetle tahtın arasında 8 m (bilerek, ""afar"")","sınırda: 8 m, ses salon boyunca taşır, bağırmaz"
+D23_T_3_KEEP,TOLGA,yakin_yuksek,8,"chapter23.gd:304 chapter23.gd tercüme: Tolga İmparator'a/elçiye resmî hitap, 8 m",sınırda
+D23_K_DISMISS,EMPEROR,yakin_yuksek,8,"chapter23.gd:305 resmî hitap, tercüman heyetle tahtın arasında 8 m (bilerek, ""afar"")","sınırda: 8 m, ses salon boyunca taşır, bağırmaz"
+D23_I_FAREWELL,ISMAIL,yakin,2,chapter23.gd:310 elçiyle yan yana,
+D23_TH_PHOTO,THEODOROS,yakin,2,chapter23.gd:332 Theodoros Tolga'nın yanında,
+D23_I_FLASH,ISMAIL,yakin,2,chapter23.gd:349 elçiyle yan yana,
+D23_T_CARD,TOLGA,yakin,2,chapter23.gd:360 elçiyle yan yana,
+D23_I_CARD,ISMAIL,yakin,2,chapter23.gd:363 elçiyle yan yana,
+D23_N_END_TRUE,NIHAT,yakin,3,chapter23.gd:315 chapter23.gd Bizans salonu,
+D23_N_END_CREATIVE,NIHAT,yakin,3,chapter23.gd:315 chapter23.gd Bizans salonu,
+D22_T_01,TOLGA,yakin,3,chapter22.gd:188 chapter22.gd,
+D22_G_01,GIUST,yakin,3,"chapter22.gd:193 chapter22.gd sur üstü kule yakma hazırlığı, Giustiniani/Tolga yan yana",
+D22_T_02,TOLGA,yakin,3,"chapter22.gd:193 chapter22.gd sur üstü kule yakma hazırlığı, Giustiniani/Tolga yan yana",
+D22_G_02,GIUST,yakin,3,"chapter22.gd:193 chapter22.gd sur üstü kule yakma hazırlığı, Giustiniani/Tolga yan yana",
+D22_N_01,NIHAT,yakin,2,chapter22.gd:193 chapter22.gd Nihat yanda,
+D22_G_03,GIUST,yakin,3,"chapter22.gd:209 chapter22.gd sur üstü kule yakma hazırlığı, Giustiniani/Tolga yan yana",
+D22_G_04,GIUST,yakin,3,"chapter22.gd:209 chapter22.gd sur üstü kule yakma hazırlığı, Giustiniani/Tolga yan yana",
+D22_T_03,TOLGA,yakin,3,"chapter22.gd:209 chapter22.gd sur üstü kule yakma hazırlığı, Giustiniani/Tolga yan yana",
+D22_G_BLAKH_OK,GIUST,yakin,3,"chapter22.gd:215 chapter22.gd sur üstü kule yakma hazırlığı, Giustiniani/Tolga yan yana",
+D22_G_BLAKH_BAD,GIUST,yakin,3,"chapter22.gd:219 chapter22.gd sur üstü kule yakma hazırlığı, Giustiniani/Tolga yan yana",
+D22_T_SINGED,TOLGA,yakin,3,chapter22.gd:387 chapter22.gd,
+D22_G_SINGED,GIUST,yakin_yuksek,3,"chapter22.gd:388 chapter22.gd sur üstü kule yakma hazırlığı, Giustiniani/Tolga yan yana",
+D22_G_LATE,GIUST,yakin_yuksek,3,"chapter22.gd:400 chapter22.gd sur üstü kule yakma hazırlığı, Giustiniani/Tolga yan yana",
+D22_G_EARLY,GIUST,yakin_yuksek,3,"chapter22.gd:424 chapter22.gd sur üstü kule yakma hazırlığı, Giustiniani/Tolga yan yana",
+D22_G_HIT_1,GIUST,yakin_yuksek,3,"tools/trailer/trailer.gd:50 chapter22.gd sur üstü kule yakma hazırlığı, Giustiniani/Tolga yan yana",
+D22_G_HIT_2,GIUST,yakin_yuksek,3,"chapter22.gd:435 (dolaylı) chapter22.gd sur üstü kule yakma hazırlığı, Giustiniani/Tolga yan yana",
+D22_G_MEN,GIUST,yakin,3,"chapter22.gd:443 chapter22.gd sur üstü kule yakma hazırlığı, Giustiniani/Tolga yan yana",
+D22_T_BURN,TOLGA,yakin,3,"chapter22.gd:449 chapter22.gd sur üstü kule yakma hazırlığı, Giustiniani/Tolga yan yana",
+D22_G_END,GIUST,yakin,3,"chapter22.gd:473 chapter22.gd sur üstü kule yakma hazırlığı, Giustiniani/Tolga yan yana",
+D22_N_END,NIHAT,yakin,2,chapter22.gd:474 chapter22.gd Nihat yanda,
+D22_N_END_PLAIN,NIHAT,yakin,2,chapter22.gd:474 chapter22.gd Nihat yanda,
+D24_N_01,NIHAT,yakin,2,"chapter24.gd:436 chapter24.gd ikona alayı, Nihat/Tolga yan yana",
+D24_T_01,TOLGA,yakin,2,"chapter24.gd:437 chapter24.gd ikona alayı, Nihat/Tolga yan yana",
+D24_M_01,MONK,yakin,3,chapter24.gd:439 keşiş Tolga'nın yanında,
+D24_M_RAIN,MONK,yakin_yuksek,3,"chapter24.gd:458 chapter24.gd ikona alayı: yağmur/gürültü, keşişler taşırken seslenir",
+D24_M_STUMBLE,MONK,yakin_yuksek,3,"chapter24.gd:600 chapter24.gd ikona alayı: yağmur/gürültü, keşişler taşırken seslenir",
+D24_M_SLIP,MONK,yakin_yuksek,3,"chapter24.gd:654 chapter24.gd ikona alayı: yağmur/gürültü, keşişler taşırken seslenir",
+D24_T_SLIP,TOLGA,yakin,2,"chapter24.gd:655 chapter24.gd ikona alayı, Nihat/Tolga yan yana",
+D24_N_SLIP,NIHAT,yakin,2,"chapter24.gd:656 chapter24.gd ikona alayı, Nihat/Tolga yan yana",
+D24_M_STOP,MONK,yakin_yuksek,3,"chapter24.gd:663 chapter24.gd ikona alayı: yağmur/gürültü, keşişler taşırken seslenir",
+D24_K_HELP,KID,yakin_yuksek,6,"chapter24.gd:777 kayıp çocuk annesini çağırır, ağlamaklı",
+D24_T_TAKE_KID,TOLGA,yakin,1.5,chapter24.gd:927 çocuğa,
+D24_K_THANKS,KID,yakin,3,chapter24.gd:815 çocuk Tolga yakınında,
+D24_T_KID,TOLGA,yakin,1.5,chapter24.gd:816 çocuğa,
+D24_T_KID_RAN,TOLGA,ic_ses,,chapter24.gd:823 chapter24.gd kendi kendine / bark,
+D24_T_FOG,TOLGA,ic_ses,,chapter24.gd:876 chapter24.gd kendi kendine / bark,
+D24_N_FOG,NIHAT,yakin,2,"chapter24.gd:877 chapter24.gd ikona alayı, Nihat/Tolga yan yana",
+D24_M_LIGHT,MONK,yakin,3,chapter24.gd:892 keşiş Tolga'nın yanında,
+D24_T_PHONE,TOLGA,ic_ses,,chapter24.gd:912 chapter24.gd kendi kendine / bark,
+D24_T_PHONE_NOPH,TOLGA,ic_ses,,chapter24.gd:912 chapter24.gd kendi kendine / bark,
+D24_N_END,NIHAT,yakin,2,"chapter24.gd:913 chapter24.gd ikona alayı, Nihat/Tolga yan yana",
+D26_N_01,NIHAT,yakin,2,chapter26.gd:225 chapter26.gd Nihat yanda,
+D26_T_01,TOLGA,yakin,3,chapter26.gd:226 gece öncesi,
+D26_G_01,GIUST,yakin,3,"chapter26.gd:228 chapter26.gd kuşatma gecesi surda, savaş gürültüsü",
+D26_L_WAVE_1,LOOKOUT,uzak,20,chapter0.gd:213 chapter26.gd:292 gözcü sur kulesinden dalga uyarısı (garrison afar),
+D26_L_WAVE_2,LOOKOUT,uzak,20,chapter26.gd:292 (dolaylı) chapter26.gd:292 gözcü sur kulesinden dalga uyarısı (garrison afar),
+D26_L_WAVE_3,LOOKOUT,uzak,20,chapter26.gd:292 (dolaylı) chapter26.gd:292 gözcü sur kulesinden dalga uyarısı (garrison afar),
+D26_G_WAVE1,GIUST,yakin_yuksek,3,"chapter26.gd kuşatma gecesi surda, savaş gürültüsü",
+D26_S_WATER_1,SOLDIER,yakin,2,chapter26.gd:2014 askerler Tolga'ya cevap,
+D26_S_ARROWS_1,DEFENDER,yakin,2,chapter26.gd:2014 (dolaylı) askerler Tolga'ya cevap,
+D26_S_ARROWS_2,DEFENDER,yakin,2,chapter26.gd:2014 (dolaylı) askerler Tolga'ya cevap,
+D26_S_ARROWS_3,DEFENDER,yakin,2,chapter26.gd:2014 (dolaylı) askerler Tolga'ya cevap,
+D26_S_WATER_2,SOLDIER,yakin,2,chapter26.gd:2014 askerler Tolga'ya cevap,
+D26_S_WATER_3,SOLDIER,yakin,2,chapter26.gd:2014 askerler Tolga'ya cevap,
+D26_G_REPELLED_1,GIUST,yakin_yuksek,3,"chapter26.gd:429 chapter26.gd kuşatma gecesi surda, savaş gürültüsü",
+D26_G_WAVE2,GIUST,yakin_yuksek,3,"chapter26.gd:448 chapter26.gd kuşatma gecesi surda, savaş gürültüsü",
+D26_G_REPELLED_2,GIUST,yakin_yuksek,3,"chapter26.gd:472 chapter26.gd kuşatma gecesi surda, savaş gürültüsü",
+D26_G_WAVE3,GIUST,yakin,3,"chapter26.gd:585 chapter26.gd kuşatma gecesi surda, savaş gürültüsü",
+D26_S_GIUST,DEFENDER,yakin_yuksek,3,"chapter26.gd:636 chapter26.gd kuşatma gecesi surda, savaş gürültüsü",
+D26_G_HURT,GIUST,yakin,3,"chapter26.gd:637 chapter26.gd kuşatma gecesi surda, savaş gürültüsü",
+D26_G_WOUND_COLOGNE,GIUST,yakin_yuksek,3,"chapter26.gd:363 (dolaylı) chapter26.gd kuşatma gecesi surda, savaş gürültüsü",
+D26_G_WOUND_TAPE,GIUST,yakin,3,"chapter26.gd:363 (dolaylı) chapter26.gd kuşatma gecesi surda, savaş gürültüsü",
+D26_S_CLEAR_1,DEFENDER,yakin_yuksek,3,"chapter26.gd:2160 chapter26.gd kuşatma gecesi surda, savaş gürültüsü",
+D26_S_CLEAR_2,DEFENDER,yakin_yuksek,3,"chapter26.gd:2192 chapter26.gd kuşatma gecesi surda, savaş gürültüsü",
+D26_S_SHIP,DEFENDER,yakin_yuksek,3,"chapter26.gd:1099 chapter26.gd kuşatma gecesi surda, savaş gürültüsü",
+D26_G_JOLT_1,GIUST,yakin,3,"chapter26.gd:1146 (dolaylı) chapter26.gd kuşatma gecesi surda, savaş gürültüsü",
+D26_G_JOLT_2,GIUST,yakin_yuksek,3,"chapter26.gd:1146 (dolaylı) chapter26.gd kuşatma gecesi surda, savaş gürültüsü",
+D26_L_BANNER,LOOKOUT,uzak,20,chapter26.gd:697 chapter26.gd:292 gözcü sur kulesinden dalga uyarısı (garrison afar),
+D26_N_BANNER,NIHAT,yakin,2,chapter26o.gd:636 chapter26.gd Nihat yanda,
+D26_N_OUT,NIHAT,yakin,2,chapter26.gd:716 chapter26.gd Nihat yanda,
+D26_S_AXE,SOLDIER,yakin,3,"chapter26.gd:1910 chapter26.gd kuşatma gecesi surda, savaş gürültüsü",
+D26_N_AYA,NIHAT,yakin,2,chapter26.gd:1914 chapter26.gd Nihat yanda,
+D26_N_LIFT,NIHAT,yakin,2,chapter26.gd:1948 chapter26.gd Nihat yanda,
+D26_N_EPI_1,NIHAT,yakin,2,chapter27.gd:485 chapter26.gd Nihat yanda,
+D26_N_EPI_ALL,NIHAT,yakin,2,chapter27.gd:486 chapter26.gd Nihat yanda,
+D26_N_EPI_SOME,NIHAT,yakin,2,chapter27.gd:486 chapter26.gd Nihat yanda,
+D26_N_EPI_2,NIHAT,yakin,2,chapter27.gd:489 chapter26.gd Nihat yanda,
+D26_N_RETURN,NIHAT,yakin,2,chapter27.gd:498 chapter26.gd Nihat yanda,
+D26_N_HIDE,NIHAT,yakin,2,chapter26.gd:1356 chapter26.gd Nihat yanda,
+D26_N_ENTRY,NIHAT,yakin,2,chapter26.gd:1359 chapter26.gd Nihat yanda,
+D26_N_ENTRY_2,NIHAT,yakin,2,chapter26.gd:1364 chapter26.gd Nihat yanda,
+D26_N_CITY,NIHAT,yakin,2,chapter26.gd:1379 chapter26.gd Nihat yanda,
+D26_N_FLAGS,NIHAT,yakin,2,chapter26.gd:1383 chapter26.gd Nihat yanda,
+D26_N_COUPLET,NIHAT,yakin,2,chapter26.gd:1392 chapter26.gd Nihat yanda,
+D26_N_ISI,NIHAT,yakin,2,chapter26.gd:1495 chapter26.gd Nihat yanda,
+D26_N_ISI_O,NIHAT,yakin,2,chapter26.gd:1495 chapter26.gd Nihat yanda,
+D26_N_GIUST,NIHAT,yakin,2,chapter26.gd:1387 chapter26.gd Nihat yanda,
+D26_N_ANGEL,NIHAT,yakin,2,chapter26.gd:1886 chapter26.gd Nihat yanda,
+D26_N_EARTH,NIHAT,yakin,2,chapter26.gd:1890 chapter26.gd Nihat yanda,
+D20_G_DUEL,GIUST,yakin_yuksek,3,"chapter20.gd:437 chapter20.gd siper/barikat onarımı, Giustiniani ve Tolga yan yana; savaş/top gürültüsü",ünlemli satırlar yakin_yuksek
+D20_T_DUEL,TOLGA,yakin_yuksek,3,"chapter20.gd:479 chapter20.gd siper/barikat onarımı, Giustiniani ve Tolga yan yana; savaş/top gürültüsü",ünlemli satırlar yakin_yuksek
+D26_G_DUEL,GIUST,yakin_yuksek,3,"chapter26.gd:515 chapter26.gd kuşatma gecesi surda, savaş gürültüsü",
+D20_T_LOST,TOLGA,yakin,3,"chapter20.gd:479 chapter20.gd siper/barikat onarımı, Giustiniani ve Tolga yan yana; savaş/top gürültüsü",ünlemli satırlar yakin_yuksek
+D26_G_LADDER,GIUST,yakin_yuksek,3,"chapter26.gd:407 chapter26.gd kuşatma gecesi surda, savaş gürültüsü",
+D26_G_BREACH_FIGHT,GIUST,yakin_yuksek,3,"chapter26.gd:466 chapter26.gd kuşatma gecesi surda, savaş gürültüsü",
+D26_G_LAST_WAVE,GIUST,yakin_yuksek,3,"chapter26.gd:528 chapter26.gd kuşatma gecesi surda, savaş gürültüsü",
+D20_G_SECOND,GIUST,yakin_yuksek,3,"chapter20.gd:463 chapter20.gd siper/barikat onarımı, Giustiniani ve Tolga yan yana; savaş/top gürültüsü",ünlemli satırlar yakin_yuksek
+D26_G_NOTRUST,GIUST,yakin,3,"chapter26.gd:783 chapter26.gd kuşatma gecesi surda, savaş gürültüsü",
+D26_G_DUCK,GIUST,yakin,3,"chapter26.gd:794 chapter26.gd kuşatma gecesi surda, savaş gürültüsü",
+D26_G_BOX,GIUST,yakin_yuksek,3,"chapter26.gd:800 chapter26.gd kuşatma gecesi surda, savaş gürültüsü",
+D26_G_STAY,GIUST,yakin_yuksek,3,"chapter26.gd:996 chapter26.gd kuşatma gecesi surda, savaş gürültüsü",
+D26_S_STAY,DEFENDER,yakin_yuksek,3,"chapter26.gd:997 chapter26.gd kuşatma gecesi surda, savaş gürültüsü",
+D26_L_RETREAT,LOOKOUT,uzak,20,chapter26.gd:1003 chapter26.gd:292 gözcü sur kulesinden dalga uyarısı (garrison afar),
+D26_N_HOLD,NIHAT,yakin,2,chapter26.gd:1036 chapter26.gd Nihat yanda,
+D26_N_HOLD_2,NIHAT,yakin,2,chapter26.gd:1038 chapter26.gd Nihat yanda,
+D26_N_ALARM_1,NIHAT,yakin,2,chapter26.gd:885 chapter26.gd Nihat yanda,
+D26_N_ALARM_2,NIHAT,yakin,2,chapter26.gd:889 chapter26.gd Nihat yanda,
+D26_N_ALARM_3,NIHAT,yakin,2,chapter26.gd:904 chapter26.gd Nihat yanda,
+D20_G_GUN,GIUST,yakin_yuksek,3,"chapter20.gd:514 chapter20.gd siper/barikat onarımı, Giustiniani ve Tolga yan yana; savaş/top gürültüsü",ünlemli satırlar yakin_yuksek
+D20_G_GUN_GO,GIUST,yakin_yuksek,3,"chapter20.gd:525 chapter20.gd siper/barikat onarımı, Giustiniani ve Tolga yan yana; savaş/top gürültüsü",ünlemli satırlar yakin_yuksek
+D20_T_GUN_GOOD,TOLGA,yakin,3,"chapter20o.gd:522 chapter20.gd siper/barikat onarımı, Giustiniani ve Tolga yan yana; savaş/top gürültüsü",ünlemli satırlar yakin_yuksek
+D20_T_GUN_BAD,TOLGA,yakin_yuksek,3,"chapter20.gd:534 chapter20.gd siper/barikat onarımı, Giustiniani ve Tolga yan yana; savaş/top gürültüsü",ünlemli satırlar yakin_yuksek
+D26_G_GUN,GIUST,yakin_yuksek,3,"chapter26.gd:546 chapter26.gd kuşatma gecesi surda, savaş gürültüsü",
+D26_G_GUN_AGAIN,GIUST,yakin_yuksek,3,"chapter26.gd:546 chapter26.gd kuşatma gecesi surda, savaş gürültüsü",
+D20_G_01_KNOWN,GIUST,yakin_yuksek,3,"chapter20.gd:186 chapter20.gd siper/barikat onarımı, Giustiniani ve Tolga yan yana; savaş/top gürültüsü",ünlemli satırlar yakin_yuksek
+D26_N_RETURN_DUSK,NIHAT,yakin,2,chapter27.gd:498 (dolaylı) chapter26.gd Nihat yanda,
+D20_G_01_KNOWN_GLIGHTER,GIUST,yakin_yuksek,3,"chapter20.gd:186 (dolaylı) chapter20.gd siper/barikat onarımı, Giustiniani ve Tolga yan yana; savaş/top gürültüsü",ünlemli satırlar yakin_yuksek
+D20_G_01_KNOWN_GBOOK,GIUST,yakin_yuksek,3,"chapter20.gd:186 (dolaylı) chapter20.gd siper/barikat onarımı, Giustiniani ve Tolga yan yana; savaş/top gürültüsü",ünlemli satırlar yakin_yuksek
+D20_G_GUN_GLIGHTER,GIUST,yakin_yuksek,3,"chapter20.gd:514 (dolaylı) chapter20.gd siper/barikat onarımı, Giustiniani ve Tolga yan yana; savaş/top gürültüsü",ünlemli satırlar yakin_yuksek
+D26_G_NOTRUST_GBOOK,GIUST,yakin,3,"chapter26.gd:783 (dolaylı) chapter26.gd kuşatma gecesi surda, savaş gürültüsü",
+D26_G_DUCK_GBOOK,GIUST,yakin,3,"chapter26.gd:794 (dolaylı) chapter26.gd kuşatma gecesi surda, savaş gürültüsü",
+D26_G_HURT_GBOOK,GIUST,yakin,3,"chapter26.gd:637 (dolaylı) chapter26.gd kuşatma gecesi surda, savaş gürültüsü",
+D26_G_LIGHTER_BACK,GIUST,yakin,3,"chapter26.gd:735 chapter26.gd kuşatma gecesi surda, savaş gürültüsü",
+D26_S_TEZ_FREE,SOLDIER,yakin,3,"chapter26.gd:1544 chapter26.gd kuşatma gecesi surda, savaş gürültüsü",
+D26_N_TEZ_FREE,NIHAT,yakin,2,chapter26.gd:1554 chapter26.gd Nihat yanda,
+D23_TH_PASS,THEODOROS,yakin,2,chapter23.gd:234 Theodoros Tolga'nın yanında,
+D23_T_PASS,TOLGA,yakin,3,chapter23.gd:241 chapter23.gd Bizans salonu,
+D24_T_NK_01,TOLGA,yakin,2,"chapter24.gd:449 chapter24.gd ikona alayı, Nihat/Tolga yan yana",
+D22_T_COLOGNE,TOLGA,yakin,3,"chapter22.gd:234 chapter22.gd sur üstü kule yakma hazırlığı, Giustiniani/Tolga yan yana",
+D22_G_COLOGNE,GIUST,yakin,3,"chapter22.gd:235 chapter22.gd sur üstü kule yakma hazırlığı, Giustiniani/Tolga yan yana",
+D22_G_SOAKED,GIUST,yakin_yuksek,3,"chapter22.gd:435 chapter22.gd sur üstü kule yakma hazırlığı, Giustiniani/Tolga yan yana",
+D20_G_01_KNOWN_WARNED,GIUST,yakin_yuksek,3,"chapter20.gd:186 (dolaylı) chapter20.gd siper/barikat onarımı, Giustiniani ve Tolga yan yana; savaş/top gürültüsü",ünlemli satırlar yakin_yuksek
+D23_TH_SINGED,THEODOROS,yakin,2,chapter23.gd:223 Theodoros Tolga'nın yanında,
+D23_T_SINGED,TOLGA,yakin,3,chapter23.gd:224 chapter23.gd Bizans salonu,
+D23_I_LETTER,ISMAIL,yakin_yuksek,8,"chapter23.gd:256 resmî hitap, tercüman heyetle tahtın arasında 8 m (bilerek, ""afar"")","sınırda: 8 m, ses salon boyunca taşır, bağırmaz"
+D24_T_ECLIPSE,TOLGA,yakin,2,"chapter24.gd:443 chapter24.gd ikona alayı, Nihat/Tolga yan yana",
+D26_G_DUCK_WARNED,GIUST,yakin,3,"chapter26.gd:794 (dolaylı) chapter26.gd kuşatma gecesi surda, savaş gürültüsü",
+D26_G_NOTRUST_WARNED,GIUST,yakin,3,"chapter26.gd:783 (dolaylı) chapter26.gd kuşatma gecesi surda, savaş gürültüsü",
+D26_G_HURT_WARNED,GIUST,yakin,3,"chapter26.gd:637 (dolaylı) chapter26.gd kuşatma gecesi surda, savaş gürültüsü",
+D26_S_KASIM_FREE,SOLDIER,yakin,3,"chapter26.gd:1584 chapter26.gd kuşatma gecesi surda, savaş gürültüsü",
+D26_N_KASIM_FREE,NIHAT,yakin,2,chapter26.gd:1595 chapter26.gd Nihat yanda,
+D26_N_PHONE_BACK,NIHAT,yakin,2,chapter27.gd:492 chapter26.gd Nihat yanda,
+D26_G_25_OK,GIUST,yakin,3,"chapter26.gd:381 (dolaylı) chapter26.gd kuşatma gecesi surda, savaş gürültüsü",
+D26_G_25_BAD,GIUST,yakin,3,"chapter26.gd:381 (dolaylı) chapter26.gd kuşatma gecesi surda, savaş gürültüsü",
+D26_G_25B_OK,GIUST,yakin,3,"chapter26.gd:381 (dolaylı) chapter26.gd kuşatma gecesi surda, savaş gürültüsü",
+D26_G_25B_BAD,GIUST,yakin,3,"chapter26.gd:381 (dolaylı) chapter26.gd kuşatma gecesi surda, savaş gürültüsü",
+D20_G_LEON_OK,GIUST,yakin,3,"chapter20.gd:196 chapter20.gd siper/barikat onarımı, Giustiniani ve Tolga yan yana; savaş/top gürültüsü",ünlemli satırlar yakin_yuksek
+D20_G_LEON_LOST,GIUST,yakin,3,"chapter20.gd:198 chapter20.gd siper/barikat onarımı, Giustiniani ve Tolga yan yana; savaş/top gürültüsü",ünlemli satırlar yakin_yuksek
+D26_N_RETURN_ARREST,NIHAT,yakin,2,chapter27.gd:498 (dolaylı) chapter26.gd Nihat yanda,
+D20_G_01_KNOWN_WARNED6B,GIUST,yakin_yuksek,3,"chapter20.gd:186 (dolaylı) chapter20.gd siper/barikat onarımı, Giustiniani ve Tolga yan yana; savaş/top gürültüsü",ünlemli satırlar yakin_yuksek
+D26_G_DUCK_WARNED6B,GIUST,yakin,3,"chapter26.gd:794 (dolaylı) chapter26.gd kuşatma gecesi surda, savaş gürültüsü",
+D26_G_HURT_WARNED6B,GIUST,yakin,3,"chapter26.gd:637 (dolaylı) chapter26.gd kuşatma gecesi surda, savaş gürültüsü",
+D26_G_NOTRUST_WARNED6B,GIUST,yakin,3,"chapter26.gd:783 (dolaylı) chapter26.gd kuşatma gecesi surda, savaş gürültüsü",
+D20_G_01_DRILL,GIUST,yakin_yuksek,3,"chapter20.gd:188 chapter20.gd siper/barikat onarımı, Giustiniani ve Tolga yan yana; savaş/top gürültüsü",ünlemli satırlar yakin_yuksek
