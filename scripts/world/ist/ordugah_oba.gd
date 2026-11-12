@@ -274,7 +274,7 @@ static func build(host: Node3D, alan: PackedVector2Array, tur: String, k: float,
 				bark_c.append(c2.darkened(0.1))
 				shapes.append([Vector3(pw.x, yg + 0.7, pw.y), maxf(ln2, wi2) * 0.5, -yaw2, ln2, wi2])
 			elif u < float(info["bark"]) + float(info["cati"]):
-				var ln3 := cap * r.randf_range(1.05, 1.3)
+				var ln3 := minf(cap * r.randf_range(1.05, 1.3), cap + 1.2)      # ORDUGÂH-5: uçlar yer dairesine sığsın (yerleşim ÖNCE ile aynı)
 				var wi3 := cap * r.randf_range(0.7, 0.85)
 				# kapı obanın ortasına bakar
 				var to_c := oc - pl
