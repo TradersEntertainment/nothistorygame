@@ -1,0 +1,5 @@
+GZ_LABEL IC @GeziMantikDonem/IstDunya/IstSehir/Ist_ayasofya/L1/@Node3D@21977/@Node3D@21978/@Node3D@22386/@Label3D@22821
+GZ_LABEL XC @GeziMantikDonem/IstDunya/IstSehir/Ist_ayasofya/L1/@Node3D@21977/@Node3D@21978/@Node3D@22386/@Label3D@22822
+GZ_LABEL IC @GeziMantikDonem/IstDunya/IstSehir/Ist_ayasofya/L0/@Node3D@23019/@Node3D@23020/@Node3D@23428/@Label3D@23863
+GZ_LABEL XC @GeziMantikDonem/IstDunya/IstSehir/Ist_ayasofya/L0/@Node3D@23019/@Node3D@23020/@Node3D@23428/@Label3D@23864
+GZ_ARA sayim { "hilal": 0, "minare": 0, "crescent": 0, "domates": 0, "patates": 0, "misir": 0, "tutun": 0, "kahve": 0, "sancak": 0, "bayrak": 0, "flag": 0, "tabela": 0, "koyun": 0, "koy": 0, "inek": 0, "okuz": 0, "kare": 0 } Label3D=4
