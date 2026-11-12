@@ -139,6 +139,33 @@ func uret(sokak_: IstSokak, gece_: bool) -> void:
 	sokak = sokak_
 	gece = gece_
 	var t0 := Time.get_ticks_msec()
+	# DOKU-4 (yükleme): kayıtlar diskte (sokak verisi + arazi + kod + gece aynıysa)
+	var imza := ""
+	if sokak != null and sokak.ob_imza != "":
+		imza = IstSokak.onbellek_imza(["res://scripts/world/ist/hayat_veri.gd", "res://scripts/world/ist/hayat_katman.gd",
+			"res://scripts/world/ist/hayat_uzak_isik.gd", sokak.ob_imza, gece, IstGeo.yerler().size(),
+			IstSokak.arazi_ozeti(Rect2(-4500, -4500, 9000, 9000), 40)])
+		var ob = IstSokak.onbellek_oku("hayat", imza)
+		if ob is Dictionary and ob.has("K"):
+			for k: String in ob["K"]:
+				if K.has(k):
+					(K[k] as IstHayatKatman).cells = ob["K"][k][0]
+					(K[k] as IstHayatKatman).n = ob["K"][k][1]
+			ist = ob["ist"]
+			ist["onbellek"] = "okundu"
+			ist["ms"] = Time.get_ticks_msec() - t0
+			return
+	_uret_hesapla()
+	if imza != "":
+		var d := {}
+		for k: String in K:
+			d[k] = [(K[k] as IstHayatKatman).cells, (K[k] as IstHayatKatman).n]
+		IstSokak.onbellek_yaz("hayat", imza, {"K": d, "ist": ist})
+	ist["ms"] = Time.get_ticks_msec() - t0
+
+
+func _uret_hesapla() -> void:
+	var t0 := Time.get_ticks_msec()
 	if sokak != null:
 		_sokak_yuruyusu()
 		_evler()
@@ -149,6 +176,7 @@ func uret(sokak_: IstSokak, gece_: bool) -> void:
 	_ordugah()
 	_siginmacilar()
 	_manastirlar()
+	_kusatma()
 	_limanlar()
 	_kuslar()
 	for k: String in K:
@@ -556,6 +584,21 @@ func _surlar() -> void:
 			acc += seg
 	ist["nobetci"] = n_n
 	ist["isci"] = n_f
+	# DOKU-4 (gece): surların üstünde nöbet ateşleri (mangal + alev + hale); uzak görünüşü IstHayat'ın uzak ışık katmanında
+	if gece:
+		var n_a := 0
+		for h: Array in hatlar:
+			var pl := IstGeo.yol(String(h[0]))
+			if pl.size() < 2:
+				continue
+			var hy := IstSehir._walk_h(String(h[1]))
+			var tw := IstSehir._walk_w(String(h[1]))
+			for p: Vector2 in preload("res://scripts/world/ist/hayat_uzak_isik.gd").nokta_dizisi(pl, 45.0 if h[1] in ["kara", "blakherna"] else 70.0):
+				var ya := _h(p) + hy
+				kutu(Vector3(p.x, ya + 0.3, p.y), Vector3(0.7, 0.6, 0.7), 0.0, Color(0.32, 0.26, 0.2))
+				alev(Vector3(p.x, ya + 0.6, p.y), 0.55, 0.9, 2.4)
+				n_a += 1
+		ist["sur_ates"] = n_a
 
 
 # ---------------------------------------------------------------- ordugâh
@@ -707,6 +750,107 @@ func _manastirlar() -> void:
 			placed += 1
 			nm += 1
 	ist["kesis"] = nm
+
+
+# ---------------------------------------------------------------- DOKU-4: kuşatma havası
+
+## Sur dibinde savunmaya taş ve su taşıyan halk (savunma yolu boyunca, sura doğru yük taşıyan kadın-erkek-hamal; yanlarında
+## taş/fıçı yığınları), kilise ve eser meydanlarında dua eden kalabalık (kapıya dönük, diz çökmüş/ayakta), sokaklarda çocuk
+## kümeleri (küçük ölçek, koşuşan). Uzak/orta katman (yakında IstHayatYakin'in gerçek kişileri).
+func _kusatma() -> void:
+	if sokak == null:
+		return
+	var n_tas := 0
+	var n_dua := 0
+	var n_cocuk := 0
+	var n_yigin := 0
+	var R_HALK := [[0, 14, 3, 5, 12, 13], [0, 1, 3, 6]]
+	for st: Dictionary in sokak.streets:
+		if String(st["tur"]) != "savunma":
+			continue
+		var pts: PackedVector2Array = st["pts"]
+		for i in pts.size() - 1:
+			var a := pts[i]
+			var b := pts[i + 1]
+			var seg := a.distance_to(b)
+			if seg < 6.0:
+				continue
+			var d := (b - a) / seg
+			var s := rng.randf() * 18.0
+			while s < seg - 4.0:
+				var p := a + d * s
+				var r := rng.randf()
+				if r < 0.55:
+					# yük (taş sepeti / su testisi) taşıyan 1–3 kişi, savunma yolu boyunca
+					var L := minf(rng.randf_range(10.0, 30.0), seg - s - 1.0)
+					var dd := d if rng.randf() < 0.5 else -d
+					var p0 := p if dd == d else p + d * L
+					for k in rng.randi_range(1, 3):
+						insan(p0 + dd * (k * 1.6) + Vector2(-d.y, d.x) * rng.randf_range(-1.0, 1.0), dd, maxf(L - k * 1.6, 2.0), 0.85, 4, R_HALK if rng.randf() < 0.6 else R_HAMAL)
+						n_tas += 1
+				else:
+					# taş / tuğla / fıçı yığını (onarım için toplanan)
+					var q := p + Vector2(-d.y, d.x) * (float(st["w"]) * 0.5 + 0.6) * (1.0 if rng.randf() < 0.5 else -1.0)
+					if _cell(q) in [0, 1, 5]:
+						var yy := _h(q)
+						for k in rng.randi_range(2, 4):
+							var o := Vector2(rng.randf_range(-0.9, 0.9), rng.randf_range(-0.9, 0.9))
+							var tasmi := rng.randf() < 0.6
+							var bo := Vector3(0.8, 0.5, 0.7) if tasmi else Vector3(0.6, 0.9, 0.6)
+							kutu(Vector3(q.x + o.x, yy + bo.y * 0.5, q.y + o.y), bo, rng.randf() * TAU,
+								Color(0.62, 0.58, 0.5) if tasmi else Color(0.45, 0.33, 0.22))
+						n_yigin += 1
+				s += rng.randf_range(16.0, 34.0)
+	# kilise ve eser meydanları: dua eden kalabalık (meydanın kenarında, eserin merkezine dönük)
+	for e: Dictionary in sokak.eser_meydan:
+		var c: Vector2 = e["c"]
+		var r0 := float(e["r0"])
+		var R := float(e["R"])
+		var k_n := 10 if bool(e.get("unlu", false)) else 5
+		var a0 := rng.randf() * TAU
+		for k in k_n:
+			var ang := a0 + rng.randf_range(-0.5, 0.5)
+			var p := c + Vector2.from_angle(ang) * rng.randf_range(r0 + 1.5, minf(R, r0 + 8.0)) + Vector2(rng.randf_range(-3, 3), rng.randf_range(-3, 3))
+			if _cell(p) in [2, 3, 4] or IstGeo.su(p.x, p.y):
+				continue
+			insan(p, (c - p).normalized(), 0.0, 0.0, 3 if rng.randf() < 0.45 else 1, R_KADIN if rng.randf() < 0.5 else (R_PAPAZ if rng.randf() < 0.2 else R_ERKEK))
+			n_dua += 1
+	for dk: Dictionary in sokak.doku:
+		if not String(dk["tur"]) in ["kilise_kucuk", "kilise_orta", "sapel"]:
+			continue
+		var c: Vector2 = dk["c"]
+		var alan: Vector2 = dk["alan"]
+		var on := c + Vector2(0, alan.y * 0.5 + 2.5).rotated(-float(dk["yaw"]))
+		for k in rng.randi_range(2, 5):
+			var p := on + Vector2(rng.randf_range(-3.0, 3.0), rng.randf_range(-1.5, 1.5))
+			if _cell(p) in [2, 3, 4]:
+				continue
+			insan(p, (c - p).normalized(), 0.0, 0.0, 3 if rng.randf() < 0.5 else 1, R_KADIN if rng.randf() < 0.6 else R_ERKEK)
+			n_dua += 1
+	# çocuklar: sık dokuda ve çarşıda koşuşan küçük kümeler
+	for st: Dictionary in sokak.streets:
+		if not String(st["tur"]) in ["sokak", "yol"]:
+			continue
+		var pts: PackedVector2Array = st["pts"]
+		if pts.size() < 2 or rng.randf() > 0.22:
+			continue
+		var i := rng.randi() % (pts.size() - 1)
+		var a := pts[i]
+		var b := pts[i + 1]
+		var seg := a.distance_to(b)
+		if seg < 6.0:
+			continue
+		var mt := String(_mah(a).get("tur", ""))
+		if not mt in ["sik", "carsi", "liman", "sur_dibi"]:
+			continue
+		var d := (b - a) / seg
+		for k in rng.randi_range(2, 4):
+			insan(a + d * rng.randf_range(0.0, seg * 0.4) + Vector2(-d.y, d.x) * rng.randf_range(-1.2, 1.2), d, seg * 0.5, 1.7, 0, R_ERKEK if k % 2 == 0 else R_KADIN, 0, 0.68)
+			n_cocuk += 1
+	ist["tas_su_tasiyan"] = n_tas
+	ist["dua"] = n_dua
+	ist["cocuk"] = n_cocuk
+	ist["yigin"] = n_yigin
 
 
 # ---------------------------------------------------------------- limanlar

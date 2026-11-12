@@ -83,6 +83,26 @@ func _yer_uygun(p: Vector2, r: float) -> bool:
 
 func kur() -> void:
 	var t0 := Time.get_ticks_msec()
+	# DOKU-4 (yükleme): yerleşim (hücre listeleri, noktalar) diskte; sokak verisi + zemin ızgarası + kod aynıysa
+	var dk := doku as IstMahalleDoku
+	var imza := IstSokak.onbellek_imza(["res://scripts/world/ist/ayrinti_sokak.gd", "res://scripts/world/ist/mahalle_doku.gd",
+		"res://scripts/world/ist/ayrinti_api.gd", sk.ob_imza, dk._yh6 if dk != null else 0])
+	var ob = IstSokak.onbellek_oku("sokak_esya", imza) if sk.ob_imza != "" else null
+	if ob is Dictionary and ob.has("hucre"):
+		_hucre = ob["hucre"]
+		noktalar = ob["noktalar"]
+		stats = ob["stats"]
+		stats["kur_ms"] = Time.get_ticks_msec() - t0
+		stats["onbellek"] = "okundu"
+		print("ISTDOKU3 sokak_esyasi ", stats)
+		return
+	_kur_hesapla()
+	if sk.ob_imza != "":
+		IstSokak.onbellek_yaz("sokak_esya", imza, {"hucre": _hucre, "noktalar": noktalar, "stats": stats})
+
+
+func _kur_hesapla() -> void:
+	var t0 := Time.get_ticks_msec()
 	var rng := RandomNumberGenerator.new()
 	rng.seed = 145319
 	var n := 0

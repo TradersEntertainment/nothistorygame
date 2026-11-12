@@ -4,11 +4,221 @@ extends RefCounted
 ##             zemin katta kemerli revak, üst katta balkon, kiremit kırma çatı, yan kuleler, şehir yanında avlu).
 ## Yerel düzen: sur iç yüzü z ≈ +2 (dış +z), saray gövdesi z −26…−16, avlu z −26…−44 (şehre bakar).
 
+const SURDOKU := preload("res://scripts/world/ist/sur_doku.gd")
 const STONE := Color("d8c8a8")
 const BRICK := Color("9a5040")
 const TILE := Color("a4553a")
 const DARK := Color("221c18")
 const LIT := Color("ffc070")
+
+# ---------------------------------------------------------------- ESER PALETİ (ÇEVRE-4; kalite notu 21)
+## Bütün eserlerin TEK paleti. Eser kurucularının (parça dosyaları, eski dünyanın Ayasofya kabuğu) renkleri kurulumdan
+## sonra palet() ile bu tonlara indirilir: oyuncak doygunluğu gider, eserler evlerle aynı palete iner.
+##   ton            renk      HSV doygunluk / parlaklık   kullanım
+const P_TUGLA := Color("8e5646")      # 0,51 / 0,56   Bizans tuğlası: mat kiremit-kızıl (geniş harç derzi dokuda)
+const P_TUGLA_K := Color("74483b")    # 0,49 / 0,45   koyu tuğla (payanda, kemer kaşı, yıkık duvar)
+const P_KIREMIT := Color("94594a")    # 0,50 / 0,58   çatı kiremidi (soluk)
+const P_KURSUN := Color("7a838b")     # 0,12 / 0,55   kurşun kubbe ve çatı: mavi-gri
+const P_MERMER := Color("ddd4c2")     # 0,12 / 0,87   Prokonnesos mermeri: sıcak kırık beyaz
+const P_TAS := Color("c2b59a")        # 0,21 / 0,76   kireçtaşı: gri-krem
+const P_TAS_K := Color("a3977f")      # 0,22 / 0,64   koyu taş (söve, kaide, moloz)
+const P_DOSEME := Color("c3b8a0")     # 0,18 / 0,76   meydan/avlu döşemesi: her meydanda aynı sıcak gri-krem
+const P_PORFIR := Color("5c3836")     # 0,41 / 0,36   porfir: koyu erguvan-kahve (macenta değil)
+const P_AHSAP := Color("6a4a30")      # 0,55 / 0,42   ahşap
+const P_ALTIN := Color("b49650")      # 0,56 / 0,71   yaldız (haç, başlık)
+const P_YESIL := Color("5d7046")      # 0,37 / 0,44   ot, sarmaşık, yosun
+const DOYGUNLUK_EN := 0.55            # hiçbir eser rengi bunu aşmaz (bayrak, tente dâhil)
+
+## Renk → paletteki karşılığı (ton ailesi korunur, doygunluk/parlaklık sınırlanır, ton palete çekilir)
+static func ton(c: Color) -> Color:
+	var h := c.h
+	var s := c.s
+	var v := c.v
+	if s < 0.07:
+		# nötr: açıklar sıcak kırık beyaza (nane-beyaz/camgöbeği beyaz gider), koyular olduğu gibi
+		if v > 0.62:
+			return Color.from_hsv(0.11, 0.10, minf(v, 0.84), c.a)
+		return c
+	if h < 0.105 or h > 0.965:
+		# kızıl-turuncu-kahve: tuğla, kiremit, bayrak, ahşap
+		var hh := 0.03 if h < 0.5 else 0.0
+		if h < 0.105:
+			hh = lerpf(h, 0.035, 0.6)
+		var s2 := minf(s, 0.53)
+		var v2 := minf(v, 0.70)
+		if s > 0.45 and v > 0.45:
+			v2 = minf(v2 * 0.93, 0.62)        # parlak turuncu tuğla / düz kırmızı çatı → mat
+		return Color.from_hsv(hh, s2, v2, c.a)
+	if h < 0.17:
+		# krem-sarı-altın: taş, mermer, yaldız
+		var s3 := minf(s, 0.24) if v > 0.7 else minf(s, DOYGUNLUK_EN)
+		return Color.from_hsv(lerpf(h, 0.11, 0.5), s3, minf(v, 0.84), c.a)
+	if h < 0.46:
+		# yeşil: bitki, yosun
+		return Color.from_hsv(lerpf(h, 0.25, 0.3), minf(s, 0.42), minf(v, 0.60), c.a)
+	if h < 0.72:
+		# mavi: kurşun kubbe (gök mavisi kubbe → mavi-gri), mavi boya
+		if s < 0.35 or v > 0.6:
+			return Color.from_hsv(0.58, minf(s, 0.08), clampf(v * 0.85, 0.46, 0.55), c.a)
+		return Color.from_hsv(h, minf(s, 0.40), minf(v, 0.55), c.a)
+	# mor-macenta: porfir
+	return Color.from_hsv(0.99, minf(s, 0.42), minf(v, 0.42), c.a)
+
+
+static var _palet_mat := {}
+static var _palet_tex := {}
+
+## Desen dokusunun paletli kopyası (dokular kendi rengini taşır: parlak turuncu tuğla dokusu da indirilir)
+static func _tex_of(t: Texture2D) -> Texture2D:
+	if t == null or not (t is ImageTexture) or DisplayServer.get_name() == "headless":
+		return t
+	var key := t.get_rid()
+	if _palet_tex.has(key):
+		return _palet_tex[key]
+	var img := t.get_image()
+	if img == null:
+		_palet_tex[key] = t
+		return t
+	img = img.duplicate()
+	if img.is_compressed():
+		img.decompress()
+	img.clear_mipmaps()
+	var w := img.get_width()
+	var hgt := img.get_height()
+	for y in hgt:
+		for x in w:
+			var c := img.get_pixel(x, y)
+			if c.s > 0.12:
+				var hh := c.h
+				if hh < 0.105 or hh > 0.965:
+					hh = lerpf(hh if hh < 0.5 else hh - 1.0, 0.035, 0.5)
+					if hh < 0.0:
+						hh += 1.0
+				img.set_pixel(x, y, Color.from_hsv(hh, minf(c.s, 0.46) * 0.92, c.v * (0.84 if hh < 0.12 or hh > 0.9 else 0.95)))
+			else:
+				# nötr pikseller sıcak gri-krem (nane-beyaz / camgöbeği gölge gitsin)
+				img.set_pixel(x, y, Color(c.r * 0.97, c.g * 0.94, c.b * 0.86, c.a))
+	img.generate_mipmaps()
+	var nt := ImageTexture.create_from_image(img)
+	_palet_tex[key] = nt
+	return nt
+
+
+static func _mat_of(m: Material) -> Material:
+	if not (m is StandardMaterial3D):
+		return m
+	var sm := m as StandardMaterial3D
+	if sm.vertex_color_use_as_albedo or sm.transparency != BaseMaterial3D.TRANSPARENCY_DISABLED:
+		return m
+	var key := sm.get_instance_id()
+	if _palet_mat.has(key):
+		return _palet_mat[key]
+	var c := sm.albedo_color
+	var nc := ton(c)
+	if sm.albedo_texture != null and (sm.albedo_texture == Props._pattern_tex("flagstone") or sm.albedo_texture == Props._pattern_tex("cobble")):
+		# döşeme: her meydanda aynı sıcak gri-krem (kalite notu 28)
+		nc = P_DOSEME.lerp(nc, 0.25)
+	var nt := _tex_of(sm.albedo_texture) if sm.albedo_texture != null else null
+	if nc.is_equal_approx(c) and nt == sm.albedo_texture:
+		_palet_mat[key] = m
+		return m
+	var d := sm.duplicate() as StandardMaterial3D
+	d.albedo_color = nc
+	if nt != null:
+		d.albedo_texture = nt
+	if sm.emission_enabled and not sm.emission.is_equal_approx(LIT):
+		d.emission = ton(sm.emission)
+	if nc.h > 0.46 and nc.h < 0.72 and nc.s < 0.12:
+		# kurşun: mat (parlak toon yansıması gök rengini alıp kubbeyi açık maviye çeviriyordu)
+		d.metallic = 0.0
+		d.metallic_specular = 0.12
+		d.roughness = 1.0
+		d.rim_enabled = false
+	_palet_mat[key] = d
+	return d
+
+
+static var _palet_ag := {}
+
+## Köşe renkli ağ (parçanın kendi pişirmesi, ör. Galata): köşe renkleri palete indirilmiş kopya (ağ başına önbellek)
+static func _ag_of(m: Mesh) -> Mesh:
+	if not (m is ArrayMesh):
+		return m
+	var key := m.get_rid()
+	if _palet_ag.has(key):
+		return _palet_ag[key]
+	var am := ArrayMesh.new()
+	var renk := {}
+	for si in m.get_surface_count():
+		var arr := m.surface_get_arrays(si)
+		var cols = arr[Mesh.ARRAY_COLOR]
+		if cols is PackedColorArray and (cols as PackedColorArray).size() > 0:
+			var pc := cols as PackedColorArray
+			for i in pc.size():
+				var c: Color = pc[i]
+				if not renk.has(c):
+					renk[c] = ton(c)
+				pc[i] = renk[c]
+			arr[Mesh.ARRAY_COLOR] = pc
+		am.add_surface_from_arrays(m.surface_get_primitive_type(si), arr)
+		am.surface_set_material(si, m.surface_get_material(si))
+	_palet_ag[key] = am
+	return am
+
+
+static func _vc_mat(m: Material) -> Material:
+	if not (m is StandardMaterial3D) or (m as StandardMaterial3D).albedo_texture == null:
+		return m
+	var key := m.get_instance_id()
+	if _palet_mat.has(key):
+		return _palet_mat[key]
+	var nt := _tex_of((m as StandardMaterial3D).albedo_texture)
+	var d: Material = m
+	if nt != (m as StandardMaterial3D).albedo_texture:
+		d = m.duplicate()
+		(d as StandardMaterial3D).albedo_texture = nt
+	_palet_mat[key] = d
+	return d
+
+
+## Bir eserin kurulu katmanını palete indirir (pişirmeden önce). Köşe renkli ağların köşe renkleri de indirilir.
+static func palet(n: Node) -> int:
+	var k := 0
+	for c in n.find_children("*", "GeometryInstance3D", true, false):
+		var gi := c as GeometryInstance3D
+		if gi is MeshInstance3D and (gi as MeshInstance3D).mesh != null:
+			var am0 := gi.material_override if gi.material_override != null else (gi as MeshInstance3D).get_active_material(0)
+			if am0 is BaseMaterial3D and (am0 as BaseMaterial3D).vertex_color_use_as_albedo:
+				var mi0 := gi as MeshInstance3D
+				mi0.mesh = _ag_of(mi0.mesh)
+				# köşe renkli ağın desen dokusu da (kiremit/tuğla dokusu kendi rengini taşır)
+				if gi.material_override != null:
+					gi.material_override = _vc_mat(gi.material_override)
+				else:
+					for si in mi0.mesh.get_surface_count():
+						var smv := mi0.get_active_material(si)
+						if smv != null and _vc_mat(smv) != smv:
+							mi0.set_surface_override_material(si, _vc_mat(smv))
+				k += 1
+				continue
+		if gi.material_override != null:
+			var nm := _mat_of(gi.material_override)
+			if nm != gi.material_override:
+				gi.material_override = nm
+				k += 1
+			continue
+		if gi is MeshInstance3D and (gi as MeshInstance3D).mesh != null:
+			var mi := gi as MeshInstance3D
+			for si in mi.mesh.get_surface_count():
+				var om := mi.get_surface_override_material(si)
+				var sm := om if om != null else mi.mesh.surface_get_material(si)
+				if sm == null:
+					continue
+				var nm2 := _mat_of(sm)
+				if nm2 != sm:
+					mi.set_surface_override_material(si, nm2)
+					k += 1
+	return k
 
 
 static func _sol(n: Node3D, size: Vector3, pos: Vector3, col: Color, pat: String, lod: int) -> void:
@@ -163,37 +373,10 @@ static func palace(n: Node3D, lod: int, gece: bool) -> void:
 ## çizgileri; yatay yüzler (yürüme yolu, kule terası) düz taş. Işık oyunun toon diliyle (gece ay ışığında da taş rengi).
 static var _sur_uzak_mat: ShaderMaterial
 
-static func sur_uzak_mat() -> ShaderMaterial:
-	if _sur_uzak_mat != null:
-		return _sur_uzak_mat
-	var sh := Shader.new()
-	sh.code = """
-shader_type spatial;
-render_mode diffuse_toon, specular_disabled;
-varying vec3 wpos;
-varying vec3 wnrm;
-void vertex() {
-	wpos = (MODEL_MATRIX * vec4(VERTEX, 1.0)).xyz;
-	wnrm = normalize((MODEL_MATRIX * vec4(NORMAL, 0.0)).xyz);
-}
-void fragment() {
-	// köşe rengi sRGB olarak saklı (albedo_color'dan): doğrusala çevrilir (yoksa uzak sur yakınından açık ve gece
-	// ay ışığında bembeyaz görünüyordu)
-	vec3 c = pow(COLOR.rgb, vec3(2.2));
-	float vert = step(abs(wnrm.y), 0.5);
-	float stone = step(COLOR.r - COLOR.b, 0.24);
-	float band = step(fract((wpos.y + 0.35) / 1.9), 0.24) * vert * stone;
-	float course = step(fract(wpos.y / 0.62), 0.07) * vert * stone;
-	float joint = step(fract((wpos.x + wpos.z) / 1.3), 0.04) * vert * stone * (1.0 - band);
-	c = mix(c, pow(vec3(0.58, 0.31, 0.22), vec3(2.2)), band * 0.85);
-	c *= 1.0 - (course + joint) * 0.10;
-	ALBEDO = c;
-	ROUGHNESS = 0.95;
-}
-"""
-	_sur_uzak_mat = ShaderMaterial.new()
-	_sur_uzak_mat.shader = sh
-	return _sur_uzak_mat
+static func sur_uzak_mat(tur := 0) -> ShaderMaterial:
+	# SUR-4: uzak katman yakınla AYNI sur taşı gölgelendiricisi (sur_doku.gd: blok sıraları + ince tuğla hatılı;
+	# eski düz şerit gölgelendiricisi uzaktan "çizgili kutu"/kereste okunuyordu). Köşe rengi pişmiş ağda.
+	return SURDOKU.mat(tur, Color.WHITE, false)
 
 
 ## Pişmiş uzak sur ağına mazgal dişleri: yerel eksene hizalı, yukarı bakan geniş üst yüzlerin (sur yürüme yolu,
@@ -263,11 +446,12 @@ static func manastir(n: Node3D, lod: int, hx: float, hz: float, seed: int) -> vo
 	var wh := 3.6
 	var gate := 3.6
 	# avlu zemini: çakıl-toprak + döşeli yollar
-	var zem := Props.box(n, Vector3(hx * 2.0, 0.08, hz * 2.0), Vector3(0, 0.04, 0), Color("b9ab8c"))
+	# (ÇEVRE-4: kalın levha; arazi avlu içinde levhanın üstüne çıkıp avluyu yeşile boğuyordu)
+	var zem := Props.box(n, Vector3(hx * 2.0, 0.9, hz * 2.0), Vector3(0, 0.12 - 0.45, 0), Color("b9ab8c"))
 	zem.set_meta("no_walk", true)
 	if lod == 0:
 		Props.set_pattern(zem, Color("bfb194"), "cobble")
-	Props.box(n, Vector3(3.0, 0.1, hz - 6.0), Vector3(0, 0.09, hz * 0.5 + 3.0), Color("cfc2a8")).set_meta("no_walk", true)
+	Props.box(n, Vector3(3.0, 0.1, hz - 6.0), Vector3(0, 0.16, hz * 0.5 + 3.0), Color("cfc2a8")).set_meta("no_walk", true)
 	# duvarlar (kapı +z ortada, arka kapı −z)
 	for sx: float in [-1.0, 1.0]:
 		_sol(n, Vector3(t, wh, hz * 2.0), Vector3(sx * hx, wh * 0.5, 0), wall, "ashlar", lod)
@@ -339,8 +523,9 @@ static func manastir(n: Node3D, lod: int, hx: float, hz: float, seed: int) -> vo
 ## çınarlar, bir kenarda mumcu/ikona tezgâhları, bir köşede çeşme, taş sekiler. Orta alan (bölümlerin oynanışı) boş.
 ## Yerel: merkez (0,0), sx × sz dünya ekseninde.
 static func meydan(n: Node3D, lod: int, sx: float, sz: float) -> void:
-	var tas := Color("c8bea6")
-	var f := Props.box(n, Vector3(sx, 0.14, sz), Vector3(0, 0.07, 0), tas)
+	var tas := P_DOSEME
+	# kalın levha (ÇEVRE-4): ince levhanın üstüne arazi çıkıp meydanı çimene boğuyordu
+	var f := Props.box(n, Vector3(sx, 0.9, sz), Vector3(0, 0.14 - 0.45, 0), tas if lod == 0 else tas.darkened(0.3))
 	f.set_meta("no_walk", true)
 	if lod == 0:
 		Props.set_pattern(f, tas, "flagstone")
@@ -377,3 +562,254 @@ static func meydan(n: Node3D, lod: int, sx: float, sz: float) -> void:
 	# taş sekiler (kuzey kenarı)
 	for k in 3:
 		Props.box(n, Vector3(3.0, 0.45, 0.6), Vector3(-6.0 + k * 9.0, 0.22, -sz * 0.5 + 1.2), Color("d4c9b2"))
+
+
+# ---------------------------------------------------------------- Ayasofya'nın dört yanı (ÇEVRE-4; kalite notu 13, 20)
+
+## Ayasofya'nın yerel çerçevesinde (holder yaw'ı Ayasofya'nınki): +z batı (narteks, atrium), −z doğu (apsis), +x güney
+## (Augustaion, patrikhane, Khalke), −x kuzey (Aya İrini). Gövde |x| < 28, −37 < z < 36.
+##   döşeme   : her yanda sıcak gri-krem taş döşeme (P_DOSEME), komşu eserlerin ve oyun alanının çekirdeği hariç
+##   atrium   : batı avlusu; üç yanı revaklı (mermer sütun + kiremit sundurma), ortada phiale (şadırvan) ve baldaken,
+##              batıda propylon kapısı; avlu içi döşeli
+##   vaftizhane (güneybatı köşesi, sekizgen, kurşun kubbe), skeuophylakion (kuzeydoğu, yuvarlak, konik kurşun çatı)
+##   patrikhane (güney yanı, iki katlı, revaklı), Khalke'ye uzanan revak (güneydoğu), kuzeyde Aya İrini'ye bağlanan
+##   avlu duvarı (kapılı, kiremit başlıklı), çınar ve serviler, mumcu/ikona tezgâhları, taş sekiler, kuşatma yığınları
+## yh: Callable(x, z) → yerel zemin yüksekliği; bos: [[Vector2 merkez, yarıçap]] döşenmeyecek çekirdekler.
+static func aya_cevre(n: Node3D, lod: int, yh: Callable, bos: Array) -> void:
+	var rng := RandomNumberGenerator.new()
+	rng.seed = 1453
+	# --- döşeme ---
+	var T := 6.0 if lod == 0 else (12.0 if lod == 1 else 24.0)
+	var R := 66.0
+	var i0 := int(-R / T)
+	for i in range(i0, -i0 + 1):
+		for j in range(i0, -i0 + 1):
+			var c := Vector2(i * T, j * T)
+			if c.length() > R:
+				continue
+			if absf(c.x) < 22.0 - T * 0.5 and c.y > -31.0 + T * 0.5 and c.y < 30.0 - T * 0.5:
+				continue          # gövdenin altı
+			var dis := false
+			for b: Array in bos:
+				if c.distance_to(b[0]) < float(b[1]):
+					dis = true
+					break
+			if dis:
+				continue
+			# eğimde levha araziye gömülmesin: dört köşe ve ortanın en yükseği
+			var y := float(yh.call(c.x, c.y))
+			for o: Vector2 in [Vector2(-1, -1), Vector2(1, -1), Vector2(-1, 1), Vector2(1, 1)]:
+				y = maxf(y, float(yh.call(c.x + o.x * T * 0.5, c.y + o.y * T * 0.5)))
+			# uzak katman düz renk: dokunun ortalaması kadar koyu (düz yatay yüz toon ışıkta bembeyaz görünüyordu)
+			var dc := P_DOSEME if lod == 0 else P_DOSEME.darkened(0.3)
+			var f := Props.box(n, Vector3(T + 0.02, 1.2, T + 0.02), Vector3(c.x, y + 0.13 - 0.6, c.y), dc.darkened(rng.randf() * 0.05))
+			f.set_meta("no_walk", true)
+			if lod == 0:
+				Props.set_pattern(f, P_DOSEME, "flagstone")
+	if lod >= 2:
+		# uzak: atrium ve ek yapılar kütle olarak
+		Props.box(n, Vector3(46.0, 6.0, 4.0), Vector3(0, 3.0, 63.0), P_TAS)
+		for sx: float in [-1.0, 1.0]:
+			Props.box(n, Vector3(4.0, 6.0, 28.0), Vector3(sx * 21.0, 3.0, 50.0), P_TAS)
+		Props.box(n, Vector3(11.0, 10.0, 38.0), Vector3(36.0, 5.0, -5.0), P_TAS)
+		Props.cyl(n, 7.0, 9.0, Vector3(-36.0, 4.5, -30.0), P_TUGLA, Vector3.ZERO, 10)
+		Props.cyl(n, 6.0, 8.0, Vector3(36.0, 4.0, 30.0), P_TUGLA, Vector3.ZERO, 8)
+		return
+	var y0 := float(yh.call(0.0, 50.0)) + 0.13
+	# --- atrium (batı avlusu) ---
+	var ax := 22.0           # yarı en
+	var az0 := 37.0          # narteks önü
+	var az1 := 63.0          # batı ucu
+	_revak(n, lod, Vector3(-ax, y0, az0 + 1.0), Vector3(-ax, y0, az1), -1.0, rng)    # kuzey kanadı (iç yüz +x)
+	_revak(n, lod, Vector3(ax, y0, az0 + 1.0), Vector3(ax, y0, az1), 1.0, rng)       # güney kanadı
+	_revak(n, lod, Vector3(-ax, y0, az1), Vector3(-3.5, y0, az1), -1.0, rng)         # batı kanadı (iki yarı, ortada propylon)
+	_revak(n, lod, Vector3(3.5, y0, az1), Vector3(ax, y0, az1), -1.0, rng)
+	# propylon: iki ayak + kemer + kiremit alınlık
+	for sx: float in [-1.0, 1.0]:
+		_sol(n, Vector3(2.0, 7.5, 3.0), Vector3(sx * 3.5, y0 + 3.75, az1 + 0.4), P_TAS, "ashlar", lod)
+	Props.box(n, Vector3(9.0, 1.6, 3.2), Vector3(0, y0 + 8.3, az1 + 0.4), P_TAS_K)
+	Props.prism(n, Vector3(9.6, 2.2, 3.6), Vector3(0, y0 + 10.2, az1 + 0.4), P_KIREMIT)
+	if lod == 0:
+		Props.cyl(n, 2.5, 3.1, Vector3(0, y0 + 7.4, az1 + 0.4), DARK.lightened(0.1), Vector3(90, 0, 0), 12)
+		Props.cyl(n, 2.9, 3.0, Vector3(0, y0 + 7.4, az1 + 0.45), P_TUGLA_K, Vector3(90, 0, 0), 12)
+		Props.cyl(n, 2.5, 3.2, Vector3(0, y0 + 7.4, az1 + 0.4), DARK.lightened(0.1), Vector3(90, 0, 0), 12)
+	# phiale: sekizgen havuz + baldaken (dört sütun, kurşun kubbecik)
+	var pc := Vector3(0, y0, (az0 + az1) * 0.5 + 1.0)
+	Props.cyl(n, 3.2, 0.8, pc + Vector3(0, 0.4, 0), P_MERMER.darkened(0.06), Vector3.ZERO, 8)
+	Props.cyl(n, 2.7, 0.1, pc + Vector3(0, 0.78, 0), Color("4f6670"), Vector3.ZERO, 8)
+	for k in 4:
+		var a := TAU * (k + 0.5) / 4.0
+		Props.cyl(n, 0.22, 4.2, pc + Vector3(cos(a) * 2.6, 2.1, sin(a) * 2.6), P_MERMER, Vector3.ZERO, 8)
+	Props.cyl(n, 3.0, 0.45, pc + Vector3(0, 4.42, 0), P_MERMER.darkened(0.04), Vector3.ZERO, 8)
+	Props.ball(n, 2.6, pc + Vector3(0, 4.6, 0), P_KURSUN, Vector3(1.0, 0.7, 1.0), 10)
+	Props.cyl(n, 0.6, 1.4, pc + Vector3(0, 1.5, 0), P_MERMER, Vector3.ZERO, 8)
+	# avlu içi: servi ve çınar, sekiler
+	for p: Vector2 in [Vector2(-13, 44), Vector2(13, 44), Vector2(-13, 57), Vector2(13, 57)]:
+		_servi(n, Vector3(p.x, y0, p.y), 7.5)
+	# --- vaftizhane (güneybatı köşesi) ---
+	var vb := Vector3(35.0, float(yh.call(35.0, 30.0)) + 0.13, 30.0)
+	_sekizgen(n, lod, vb, 6.2, 8.0, 3.8, P_TUGLA, "brick")
+	# --- skeuophylakion (kuzeydoğu, yuvarlak) ---
+	var sk := Vector3(-37.0, float(yh.call(-37.0, -30.0)) + 0.13, -30.0)
+	var skb := Props.cyl(n, 7.0, 10.0, sk + Vector3(0, 5.0, 0), P_TUGLA, Vector3.ZERO, 14)
+	Props.make_solid(skb, 0.95)
+	if lod == 0:
+		Props.set_pattern(skb, P_TUGLA, "brick")
+		for k in 8:
+			var a2 := TAU * k / 8.0
+			var w2 := Vector3(cos(a2) * 7.02, 6.6, sin(a2) * 7.02)
+			Props.box(n, Vector3(0.9, 1.8, 0.9), sk + w2, DARK, Vector3(0, -rad_to_deg(a2), 0))
+		for yy: float in [3.2, 9.8]:
+			Props.cyl(n, 7.12, 0.35, sk + Vector3(0, yy, 0), P_TAS, Vector3.ZERO, 14)
+	Props.cyl(n, 7.6, 4.0, sk + Vector3(0, 12.0, 0), P_KURSUN, Vector3.ZERO, 14, 0.4)
+	# --- patrikhane (güney yanı): iki katlı, zemin katı revaklı, kiremit çatı ---
+	var px := 37.5
+	var pz0 := -24.0
+	var pz1 := 12.0
+	var py := float(yh.call(px, (pz0 + pz1) * 0.5)) + 0.13
+	_sol(n, Vector3(9.0, 9.0, pz1 - pz0), Vector3(px + 1.5, py + 4.5, (pz0 + pz1) * 0.5), P_TAS, "plaster", lod)
+	Props.box(n, Vector3(9.2, 0.35, pz1 - pz0 + 0.2), Vector3(px + 1.5, py + 4.6, (pz0 + pz1) * 0.5), P_TUGLA)
+	Props.prism(n, Vector3(pz1 - pz0 + 1.0, 2.6, 10.2), Vector3(px + 1.5, py + 10.3, (pz0 + pz1) * 0.5), P_KIREMIT, Vector3(0, 90, 0))
+	for k in 9:
+		var z := pz0 + 2.0 + k * (pz1 - pz0 - 4.0) / 8.0
+		_arch(n, Vector3(px - 3.0, py + 0.6, z), 2.2, 3.4, Vector3(-1, 0, 0), false, false, lod)
+		_arch(n, Vector3(px - 3.0, py + 5.6, z), 1.2, 2.2, Vector3(-1, 0, 0), false, false, lod)
+		_arch(n, Vector3(px + 6.0, py + 5.6, z), 1.2, 2.2, Vector3(1, 0, 0), false, false, lod)
+	# --- Khalke'ye uzanan revak (güneydoğu) ---
+	_revak(n, lod, Vector3(29.0, float(yh.call(29.0, -30.0)) + 0.13, -30.0), Vector3(45.0, float(yh.call(45.0, -34.0)) + 0.13, -34.0), 1.0, rng)
+	# --- kuzey avlu duvarı (Aya İrini'ye bağlanır), kapılı ---
+	var duvar := [[Vector2(-28.0, 30.0), Vector2(-54.0, 30.0)], [Vector2(-54.0, 30.0), Vector2(-54.0, 4.0)], [Vector2(-54.0, -6.0), Vector2(-54.0, -20.0)],
+		[Vector2(-28.0, -38.0), Vector2(-46.0, -46.0)]]
+	for dv: Array in duvar:
+		_avlu_duvar(n, lod, dv[0], dv[1], yh)
+	# kapı ayakları (−54, −1)
+	for sz: float in [4.0, -6.0]:
+		var gy := float(yh.call(-54.0, sz)) + 0.13
+		_sol(n, Vector3(1.4, 4.4, 1.4), Vector3(-54.0, gy + 2.2, sz), P_TAS_K, "ashlar", lod)
+	# --- ağaçlar, tezgâhlar, sekiler, kuşatma yığınları (döşemenin boş kalmaması) ---
+	var agac := [Vector2(-40, 40), Vector2(-46, 18), Vector2(-40, -12), Vector2(-20, -52), Vector2(8, -50), Vector2(48, 22),
+		Vector2(26, 50), Vector2(-30, 55), Vector2(52, -14), Vector2(-56, -38)]
+	for k in agac.size():
+		var p2: Vector2 = agac[k]
+		var gy2 := float(yh.call(p2.x, p2.y)) + 0.13
+		if k % 3 == 0:
+			_servi(n, Vector3(p2.x, gy2, p2.y), 8.0)
+		else:
+			_cinar(n, Vector3(p2.x, gy2, p2.y), lod)
+	if lod == 0:
+		var tz := [Vector2(-30, 42), Vector2(-34, 47), Vector2(-26, 70), Vector2(30, 70), Vector2(44, 40), Vector2(20, -48)]
+		for k in tz.size():
+			var q: Vector2 = tz[k]
+			_tezgah(n, Vector3(q.x, float(yh.call(q.x, q.y)) + 0.13, q.y), k)
+		for q2: Vector2 in [Vector2(-34, 20), Vector2(-34, -2), Vector2(30, -40), Vector2(0, -46)]:
+			Props.box(n, Vector3(3.0, 0.45, 0.6), Vector3(q2.x, float(yh.call(q2.x, q2.y)) + 0.35, q2.y), P_TAS.lightened(0.05))
+		# kuşatma: sura taşınacak taş ve kereste yığınları, fıçılar (güneydoğu köşesi)
+		for k in 3:
+			var sp := Vector3(14.0 + k * 3.2, float(yh.call(14.0, -48.0)) + 0.13, -48.0)
+			for j in 3:
+				Props.box(n, Vector3(1.2 - j * 0.25, 0.45, 0.8), sp + Vector3(rng.randf_range(-0.3, 0.3), 0.22 + j * 0.45, rng.randf_range(-0.2, 0.2)), P_TAS_K.darkened(0.12 + j * 0.04), Vector3(0, rng.randf_range(-25, 25), 0))
+		for k in 4:
+			Props.cyl(n, 0.4, 1.0, Vector3(-8.0 + k * 0.9, float(yh.call(-8.0, -46.0)) + 0.63, -46.0), P_AHSAP, Vector3.ZERO, 8)
+
+
+## Revak: a→b boyunca mermer sütun dizisi (3,2 m'de bir), arşitrav, arka duvar ve kiremit sundurma. ic: revakın içe
+## (avluya) bakan yönü, a→b'nin solu (+1) ya da sağı (−1).
+static func _revak(n: Node3D, lod: int, a: Vector3, b: Vector3, ic: float, rng: RandomNumberGenerator) -> void:
+	var d := Vector3(b.x - a.x, 0, b.z - a.z)
+	var L := d.length()
+	if L < 2.0:
+		return
+	d /= L
+	var yan := Vector3(-d.z, 0, d.x) * ic          # avluya doğru
+	var yaw := atan2(d.x, d.z)
+	var yd := rad_to_deg(yaw)
+	var dz := 4.2                                   # revak derinliği
+	var hh := 4.6
+	var m := (a + b) * 0.5
+	# arka duvar (dış yüz): taş, tepede tuğla şerit
+	_sol_rot(n, Vector3(0.8, hh + 1.0, L), m + Vector3(0, (hh + 1.0) * 0.5, 0) - yan * 0.4, yd, lod)
+	Props.box(n, Vector3(0.82, 0.4, L + 0.1), m + Vector3(0, hh + 0.6, 0) - yan * 0.4, P_TUGLA, Vector3(0, yd, 0))
+	# sütunlar + arşitrav
+	var k := maxi(2, int(L / 3.2))
+	for i in k + 1:
+		var p := a + d * (L * i / k) + yan * dz
+		if lod == 0 or i % 2 == 0:
+			Props.cyl(n, 0.28, hh - 0.4, p + Vector3(0, (hh - 0.4) * 0.5 + 0.2, 0), P_MERMER.darkened(0.1 + rng.randf() * 0.06), Vector3.ZERO, 8)
+			if lod == 0:
+				Props.box(n, Vector3(0.75, 0.3, 0.75), p + Vector3(0, hh - 0.05, 0), P_MERMER)
+				Props.box(n, Vector3(0.7, 0.25, 0.7), p + Vector3(0, 0.12, 0), P_TAS_K)
+	Props.box(n, Vector3(0.6, 0.5, L + 0.4), m + yan * dz + Vector3(0, hh + 0.35, 0), P_MERMER.darkened(0.05), Vector3(0, yd, 0))
+	# sundurma (tek eğimli kiremit çatı): arka duvar tepesinden sütun sırasına
+	var rr := Props.box(n, Vector3(dz + 1.6, 0.22, L + 0.6), m + yan * (dz * 0.5 - 0.2) + Vector3(0, hh + 1.0, 0), P_KIREMIT)
+	rr.basis = Basis(Vector3.UP, yaw) * Basis(Vector3(0, 0, 1), atan2(0.9, dz) * ic)
+	if lod == 0:
+		Props.set_pattern(rr, P_KIREMIT, "tiles")
+		# revak tabanı (bir basamak yüksek döşeme)
+		var tb := Props.box(n, Vector3(dz + 0.6, 0.25, L), m + yan * (dz * 0.5) + Vector3(0, 0.12, 0), P_MERMER.darkened(0.12), Vector3(0, yd, 0))
+		tb.set_meta("no_walk", true)
+
+
+## Sekizgen kubbeli yapı (vaftizhane): gövde, kasnak, kurşun kubbe, kapı ve pencereler
+static func _sekizgen(n: Node3D, lod: int, c: Vector3, r: float, h: float, kr: float, col: Color, pat: String) -> void:
+	var g := Props.cyl(n, r, h, c + Vector3(0, h * 0.5, 0), col, Vector3.ZERO, 8)
+	Props.make_solid(g, 0.95)
+	if lod == 0:
+		Props.set_pattern(g, col, pat)
+		for k in 8:
+			var a := TAU * (k + 0.5) / 8.0
+			var w := Vector3(cos(a), 0, sin(a)) * (r * 0.93 + 0.03)
+			Props.box(n, Vector3(0.9, 2.0, 0.9), c + w + Vector3(0, h * 0.62, 0), DARK, Vector3(0, -rad_to_deg(a), 0))
+		Props.cyl(n, r + 0.12, 0.35, c + Vector3(0, h * 0.35, 0), P_TAS, Vector3.ZERO, 8)
+	Props.cyl(n, r + 0.3, 0.5, c + Vector3(0, h + 0.25, 0), P_TAS_K, Vector3.ZERO, 8)
+	Props.cyl(n, kr * 1.05, kr * 0.7, c + Vector3(0, h + 0.5 + kr * 0.35, 0), col, Vector3.ZERO, 12)
+	Props.ball(n, kr, c + Vector3(0, h + 0.5 + kr * 0.7, 0), P_KURSUN, Vector3(1.0, 0.75, 1.0), 12)
+	Props.box(n, Vector3(2.0, 2.8, 0.3), c + Vector3(0, 1.4, r * 0.95), DARK)
+
+
+static func _avlu_duvar(n: Node3D, lod: int, a: Vector2, b: Vector2, yh: Callable) -> void:
+	var L := a.distance_to(b)
+	var k := maxi(1, int(L / 8.0))
+	var d := (b - a) / L
+	var yaw := rad_to_deg(atan2(d.x, d.y))
+	for i in k:
+		var m := a.lerp(b, (i + 0.5) / k)
+		var y := float(yh.call(m.x, m.y)) + 0.13
+		var w := _sol_rot(n, Vector3(0.8, 3.4, L / k + 0.05), Vector3(m.x, y + 1.7, m.y), yaw, lod)
+		Props.box(n, Vector3(1.1, 0.3, L / k + 0.3), Vector3(m.x, y + 3.55, m.y), P_KIREMIT, Vector3(0, yaw, 0))
+		w.set_meta("no_walk", false)
+
+
+static func _sol_rot(n: Node3D, size: Vector3, pos: Vector3, yaw: float, lod: int) -> Node3D:
+	if lod == 0:
+		var b := Props.solid(n, size, pos, Color.WHITE, Vector3(0, yaw, 0))
+		Props.set_pattern(b, P_TAS.darkened(0.05), "ashlar")
+		return b
+	return Props.box(n, size, pos, P_TAS.darkened(0.05), Vector3(0, yaw, 0))
+
+
+static func _servi(n: Node3D, p: Vector3, h: float) -> void:
+	Props.cyl(n, 0.2, 1.4, p + Vector3(0, 0.7, 0), P_AHSAP, Vector3.ZERO, 5)
+	Props.cyl(n, 1.0, h, p + Vector3(0, 1.2 + h * 0.5, 0), Color("34492f"), Vector3.ZERO, 7, 0.08)
+
+
+static func _cinar(n: Node3D, p: Vector3, lod: int) -> void:
+	Props.cyl(n, 0.45, 5.0, p + Vector3(0, 2.5, 0), Color("6a5a46"), Vector3.ZERO, 7)
+	Props.ball(n, 4.2, p + Vector3(0, 7.4, 0), Color("4d6a38"), Vector3(1.0, 0.72, 1.0), 9)
+	if lod == 0:
+		Props.ball(n, 2.8, p + Vector3(2.0, 8.4, 1.2), Color("56733f"), Vector3(1.0, 0.75, 1.0), 8)
+		Props.ball(n, 2.6, p + Vector3(-1.8, 8.0, -1.4), Color("466336"), Vector3(1.0, 0.75, 1.0), 8)
+
+
+## Mumcu / ikona / ekmek tezgâhı: tezgâh, tente (soluk), mal
+static func _tezgah(n: Node3D, p: Vector3, k: int) -> void:
+	var tente: Color = [Color("9a5a48"), Color("c8b890"), Color("5a6a78"), Color("a08850")][k % 4]
+	Props.box(n, Vector3(3.0, 0.9, 1.2), p + Vector3(0, 0.45, 0), P_AHSAP)
+	Props.box(n, Vector3(3.4, 0.08, 2.2), p + Vector3(0, 2.5, -0.3), tente, Vector3(-12, 0, 0))
+	for sx: float in [-1.6, 1.6]:
+		Props.box(n, Vector3(0.1, 2.5, 0.1), p + Vector3(sx, 1.25, 0.5), Color("5a4030"))
+		Props.box(n, Vector3(0.1, 2.3, 0.1), p + Vector3(sx, 1.15, -1.3), Color("5a4030"))
+	for j in 5:
+		if k % 2 == 0:
+			Props.cyl(n, 0.05, 0.35, p + Vector3(-1.2 + j * 0.6, 1.08, 0.0), Color("e8dcc0"), Vector3.ZERO, 5)
+		else:
+			Props.box(n, Vector3(0.4, 0.5, 0.05), p + Vector3(-1.2 + j * 0.6, 1.15, 0.2), P_ALTIN, Vector3(-15, 0, 0))
