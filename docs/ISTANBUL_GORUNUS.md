@@ -1,4 +1,4 @@
-DURUM: KISMİ (1., 2., 6. bölümler ilk hâl; 3, 4, 5, 7, 8, 9 yazılıyor)
+DURUM: KISMİ (1, 2, 3, 4, 5, 6 yazıldı; 7, 8, 9 yazılıyor)
 
 # İstanbul, Nisan 1453 NASIL GÖRÜNÜYORDU: görünüş kılavuzu
 
@@ -198,5 +198,128 @@ Sayı notu: öğe numaraları modelcinin kontrol listesidir. `[K]` kaynaklı, `[
 
 ---
 
-## 3–5, 7–9: YAZILIYOR
-Bu bölümler sonraki turlarda eklenecek.
+
+## 3. Ev ve sokak
+
+**Kanıt durumu:** Geç Bizans konut mimarisi için kaynak azdır: Smarthistory özeti "geç Bizans konut mimarisi kanıtı sınırlı" der; Bergama'da avlu çevresinde birkaç odalı, çoğu zaman revaklı evler; Konstantinopolis'te Roma "insula" geleneğinden çok katlı evlerin sürdüğü; dik yamaçlarda evlerin kalın alt yapı gerektirdiği [K-ikinci el, smarthistory.org/?p=49552 arama özeti]. İstanbul'a özgü 1453 ev kazısı yok. Aşağıdakilerin çoğu bu yüzden [Y]: Osmanlı sonrası ve Ege/Balkan benzerlerinden makul çıkarım. Ev dili `scripts/world/ist/evler.gd` (mektup bölümü evleri) üzerine kuruluyorsa, aşağıdaki "değiştir" listesi uygulanmalı.
+
+### 3.1 Üç ev tipi
+| Tip | Kat | Malzeme oranı | Çatı | Pencere/kapı | Avlu |
+|---|---|---|---|---|---|
+| **Yoksul ev** (balıkçı, bostancı, işçi) | 1 (bazen 1+çatı katı) | taş+kerpiç %70, ahşap %20, tuğla %10; sıvasız | alçak kırma, koyu kiremit eksik/yama; kimi yerde saz/tahta | 1 küçük kapı (≈1,6 m), 1–2 pencere (30–40 cm, ahşap kepenk, camsız) | küçük, çitle, kuyu veya çeşme ortak |
+| **Orta ev / esnaf evi** (zanaatkâr, tüccar) | 2 (alt dükkân/atölye, üst oda) | alt kat taş ve tuğla örgü %60, üst kat ahşap iskelet + kerpiç/sıva %40; | kiremit, hafif eğim | alt kat kemerli kapı + tezgâh; üst katta ahşap kepenkli pencere, bazen ahşap **çıkma** (sokağa 50–80 cm) | dar avlu |
+| **Konak / varlıklı ev** (Notaras tipi) | 2–3 | alt kat kesme taş-tuğla bantlı, üst kat sıva; ahşap galeri | kiremit, kule/çıkma | kemerli kapı, mermer söve, **bifora/triföra** pencereler (iki-üç kemerli, orta sütunlu), kepenk | geniş avlu, kuyu, bahçe, ahır |
+
+- **Notaras:** Megaduka Lukas Notaras'ın Petra/Haliç çevresindeki konağı [Y: CSV "Petra / Phanar"]. Kesin görünüşü **BELİRSİZ**; modelci "varlıklı konak" kalıbını kullanır. Kuşatmada Notaras Petra bölgesinde yedek komutandı [K: ISTANBUL_1453.md, Wikipedia Fall].
+- **Latin mahallesi evleri (Venedik, Ceneviz, Pisa):** depo+ev birleşik, kıyıda **bitişik nizam, 3 kat**, alt katta eşya kapıları, üstte konut; kemerli sundurma; iskeleye bakan vinç/makara kolu [Y]. Galata Ceneviz kasabası duvar içinde sıkı doku, taş çoğunluk, sokaklar dar ve yokuşlu [Y].
+
+### 3.2 Ev ayrıntıları (modelcinin kopyalayacağı)
+1. Kat yüksekliği ~3 m; ev cephesi 6–10 m; sokak genişliği 2–4 m (ana sokak/Mese hariç) [Y].
+2. **Çıkma var, ama Osmanlı "cumba" gibi yaygın ve süslü değil**: kısa, kalın kirişli, kapalı ahşap kutu; en fazla üst kat genişliğinin üçte biri [Y]. (Kaynak: Haliç kıyısı ev ve "çıkmalı" sokak betimi BELİRSİZ.)
+3. Çatı eğimi 20–25° (Akdeniz tipi); dik, kuzey Avrupa 45° çatılar YOK [Y].
+4. Baca: dik silindir/dikdörtgen taş baca küçük; her evde değil [Y].
+5. Cam: pencere camı ender; kepenk ve bez/mum kağıdı; zengin evde küçük cam veya alçı pencere (jali) [Y].
+6. Kapı kemerli, ahşap iki kanat, demir kapı halkası; yoksulda tek kanat [Y].
+7. Duvar: **taş+tuğla karışık örgü** (opus mixtum; sur ve kiliselerdeki aynı dil, ev ölçeğine indirilmiş) [K-genel: kiliselerde bant tekniği; evde BELİRSİZ].
+8. Sıva: bazı cepheler kireç sıvalı; kireç beyazı değil **kirli krem/gri** ve yer yer dökülmüş [Y].
+9. Merdiven: dışarıdan ahşap merdiven + üst kat sofa (galeri), yamaçlarda taş merdivenli ara sokak [Y].
+10. Evin yanında kuyu veya sarnıç ağzı, sebze bahçesi, tavuk kümesi, asma çardağı [K: Clavijo "bağlar, bahçeler" ikinci el; ayrıntı Y].
+
+### 3.3 Dükkân
+- Alt kat taş kemerli, tek açıklıklı; **ahşap tezgâh dışarıya** açılır, üstüne bez/hasır gölgelik; tabela yok (işaret: asılı ürün) [Y].
+- Çeşit: fırın, kasap, balıkçı, kumaşçı/sarraf, baharat, şarap tavernası (Latin), demirci, çömlekçi, mumcu [Y].
+- Mese boyunca revaklı dükkân sıraları (Mese "bustling commercial street" olduğu dönemden — 1453'te kısmen sönük) [K-ikinci el: shadowsofconstantinople.com].
+
+### 3.4 Sokak ve zemin
+- Ana yol (Mese, ~8–15 m): **iri kesme taş ve kalıntı kaldırım**, yer yer çıplak toprak; ortada su yolu/oluk [Y].
+- Ara sokak: **toprak ve çakıl**, kenarlarında taş şerit; Nisan yağmuru çamur [Y].
+- **Basamaklı yokuş**: Haliç yamacı ve Marmara yamacı için taş basamak 15–20 cm; ahşap korkuluk yok, duvar tutamak [Y].
+- **Revak**: Mese'de iki yanda sütunlu galeri; 1453'te yer yer kaybolmuş [K-ikinci el: Mese bölümü].
+- Aydınlatma: yok; meşale/kandil, fener sadece kilise ve saray [Y].
+- Çöp, hayvan, çocuk: sokak köpeği, kedi, tavuk, domuz (Hristiyan mahallesi) [Y].
+
+### 3.5 "Köy" görünümü
+Şehir "birkaç yoğun çekirdek + aralarında tarla/bağ/bostan/harabe" olarak okunmalı (bkz. 4, 6). Tafur (1437): "The city is sparsely populated … badly populated and there is need of good soldiers" [K, Tafur]. Clavijo (1403): surların içinde "ubiquitous ruins and vegetable gardens" [K-ikinci el, shadowsofconstantinople.com]. Britannica: surlar içindeki arazinin büyük bölümü açık tarla [K-ikinci el]. **Köy ölçeği:** bir çekirdek ~60–200 yapı, 100–300 m çap; çekirdekler arası 150–600 m açık alan [Y; nüfus 40–50 bin: Wikipedia Fall].
+
+## 4. Mahalle mahalle görünüş (18 mahalle)
+
+Yoğunluk anahtarı `IstGeo.mahalle()` türleriyle: **çarşı | sik | seyrek | bostan | harabe | liman | sur_dibi | kir**.
+
+1. **Ayasofya – Augustaion – Mese başı** (`sik`/`carsi`). Çekirdek. Taş kaplı büyük alan, Iustinianus Sütunu (bronz atlı heykelli, tepe küresi 1422–27'de düşmüş [K: Wikipedia]), Ayasofya'nın tuğla-taş kütlesi; patrikhane binaları, çevre kilise. Hâlâ dolu ve en canlı. Ayasofya'ya Doukas'a göre 1452 birleşme sonrası Ortodoks halk uğramaz (içi tenha, çevre sessiz) [K: Wikipedia]. Kuşatma izi yok (denizden uzak).
+2. **Hipodrom – Büyük Saray** (`harabe`). Hipodrom 450×130 m [K], spina üstünde dikilitaşlar, yılan sütunu; tribünler kısmen yıkık ve taş ocağı [K]. Saray teraslarında ot, harabe, kemer ağızları [K]. Seyrek evler, bostan.
+3. **Bukoleon – Marmara kıyısı (Mangana)** (`seyrek`/`kir`). Harap saray yüzü, deniz kapısı; kıyı surlarına yaslı mütevazı balıkçı kümeleri.
+4. **Studios – Psamatya** (`seyrek`/`bostan`). Büyük manastır avlusu (700 keşiş kapasitesi [K]); çevresinde bağ ve bostan, dağınık evler. Kuşatmada Marmara surunun savunma bölgesi (J. Contarini ve keşişler: Wikipedia Fall [K]).
+5. **Langa – Eleutherios – Vlanga** (`bostan`). Geniş bostan; Eleutherios (Theodosius) limanı kumlu kıyı, balıkçı kayıkları [K: Vlanga limanı].
+6. **Yedikule – Altın Kapı** (`sur_dibi`). Beyaz mermer kapı kütlesi [K]; çevresinde mera, tarla, sur içinde alçak yerleşim. Kuşatmada Cenevizli Manuel burada [K: Wikipedia Fall].
+7. **Pege – Silivri Kapısı çevresi** (`sur_dibi`/`bostan`). Pege Zoodochos kutsal pınar manastırı (sur dışı) [Bilgi]; surun içinde seyrek.
+8. **Lykos vadisi – Mesoteichion** (`sur_dibi`/`bostan`). Dere yatağı, sulak bostan, söğüt/kavak; sur burada alçak ve ordu cephesi; kuşatmada en ağır dayak [K]. 1453 hâli: savaş alanı, kule başları kopuk, palisad/ahşap barikat.
+9. **Lips – Lykos kenarı** (`seyrek`). Lips Manastırı: iki kilise (kuzey 908, güney 1286–1304); ortada **beyaz ve koyu kırmızı bantlı** tuğla-taş cephe, nişli apsis [K: Wikipedia Lips]. Çevre bostan ve ağıl.
+10. **Havariyun – Mese kuzey ekseni** (`seyrek`/`harabe`). Havariyun: beş kubbeli artı planlı büyük kilise, 1420'de çürürken görülmüş [K: Wikipedia]; avlu mezarlık ve ot; yanında Konstantin ve imparator mezarlarının kalıntısı. Etraf geniş, kırık sütunlu, bostanlı.
+11. **Pantokrator – Zeyrek yamacı** (`sik`/`seyrek`). Üç kilise, tuğla-taş bantlı kütle; yamaç aşağı Haliç'e doğru evler; Manastır kuşatma sırasında tıbbi bakım yeri ihtimali [Y].
+12. **Bozdoğan Kemeri çevresi (Valens)** (`seyrek`/`bostan`). 971 m'lik orijinal su kemeri, ~921 m kalmış; 29 m yüksek; çift kat kemer, taş ve tuğla [K: Wikipedia]. Clavijo 1403'te kemerin su taşıdığını bildirir [K: Wikipedia]. Altı: tarla, ahır, dağınık ev.
+13. **Philoxenos / Binbirdirek, Mokios–Aspar–Aetios sarnıçları** (`seyrek`). Açık sarnıçlar çukur arazi gibi: su, ot, söğüt [Y]; Aspar 152×100 m, Aetios 224×85 m [Bilgi: bu rakamlar bu oturumda kaynaktan doğrulanmadı — BELİRSİZ].
+14. **Pammakaristos – Çarşamba** (`seyrek`/`sik`). Küçük, zarif bölüm: ana kilise (üç apsis, girinti tuğla tekniği) + sağ yanda beş kubbeli parekklesion [K: Wikipedia]; çevre manastır bahçesi, dar sokaklar. Patrikhane 1456'da buraya taşınacak (şimdi YOK).
+15. **Khora – Edirnekapı iç yüzü** (`sur_dibi`). Altı kubbeli, tuğla-taş yüzlü; sur dibinde manastır bahçesi [K: Wikipedia]. Blakhernai surlarının hemen güneyi.
+16. **Blakhernai – Tekfur – Anemas** (`sik`/`sur_dibi`). Blakhernai sarayı Palaiologosların son oturumu; Blakhernai kilisesi 1434'te yanmış [K: Wikipedia + Tafur ikinci el]. Tekfur (Porphyrogennetos): üç katlı, kırmızı tuğla ve beyaz mermer geometrik desenli [K: Wikipedia]. Surlar kuşatmada ağır darbe alan Blakhernai bölümü, Venedikli Minotto savunmada [K].
+17. **Haliç kıyısı: Petra – Phanar – Perama – Neorion** (`liman`/`sik`). İskeleler, Latin kıyı yapıları, sık doku; kuşatmada gemi toplanma alanı; zincirin güney ucu Eugenios Kulesi (Sirkeci) [K: Wikipedia Walls]. Dolu.
+18. **Galata (Pera)** (`sik`). Ceneviz kasabası; duvar, hendek, **Christea Turris** (1348, silindirik taş kule, konik külah, üst katı kemerli çıkma) [K: Wikipedia Galata Tower]; Tafur ~2000 nüfus (ikinci el). Tarafsız Cenevizliler; 1453'te surlar dışına yakın bostan/mera.
+19. **Venedik Mahallesi (Haliç, Perama–Drungarios)** (`liman`). Venedik bailo'nun kıyı yapıları, kilise, depolar; 1453'te Venedikliler yoğun savunmada (Minotto) [K].
+20. **Yahudi mahallesi (Vlanga/Haliç)** (`sik`): deri, boya, gemi donatım atölyeleri; konum BELİRSİZ (ISTANBUL_YERLER.csv).
+
+Not: 20 madde istenen 15–20 aralığını doldurur; 13 ve 20 rakamsal olarak zayıf, BELİRSİZ işaretli.
+
+## 5. Anıtların 1453 görünüşü
+
+Her satır: ölçü · renk/malzeme · durum · ayırt edici ayrıntılar · havadan siluet. Kaynak etiketi satır sonunda.
+
+**Ayasofya.** ~82×73 m plan, iç yükseklik ~55,6 m, kubbe çapı 32,7–33,5 m [K Wikipedia]. Gövde tuğla+kesme taş; **sarı-kırmızı boya 19. yy**, 1453'te YOK [K]. Kubbe üstü: kurşun örtü [Y]. 1317'de dört piramit payanda (doğu, kuzey) [K]. 1344–46 deprem ve çökme, 1354'ten onarım [K]. Minare yok. Havadan: büyük yassı kubbe + yarım kubbeler basamak basamak iner, payandalar kısa ve geniş; ön tarafta atrium, bitişik baptisteri.
+
+**Aya İrini.** Tek ana kubbe ~15 m çap × 35 m yükseklik, 20 pencere; yan kısımlarda beşik çatılar; atrium [K Wikipedia, mevcut hâl]. Tuğla-taş [K]. 1453'te Ayasofya'nın yanında, daha az bakımlı [Y]. Havadan: tek kubbe + üç kanatlı alçak çatı.
+
+**Hipodrom.** ~450×130 m [K]; sphendone (güney kıvrım) yüksek kemerli taş alt yapı [K]; ortada spina: Theodosius dikilitaşı, Yılan Sütunu (üç yılan başlı bronz, tepe tası kaybı 1700'de — 1453'te hâlâ mevcut [K]), örme (Walled) dikilitaş (bronz kaplama 1204'te sökülmüş) [K]. Tribünler yarı yıkık; taş ocağı [K]. Havadan: uzun U biçimli çukur alan, ortada sivri uçlar, kenar yıkık taş.
+
+**Büyük Saray.** 16 ha, altı teras, ~33 m eğim [K]; 1453'te harap ve terk [K]; Nea Ekklesia ayakta (barut deposu olarak 1490'da patlayacak) [K]. Havadan: yamaçta yıkık duvar dizileri, ot, birkaç kemer.
+
+**Bukoleon.** Marmara kıyısında deniz kapılı saray yüzü; alçak liman; kuleli duvar [K: "seaward gate"]. Kıyıda taş kaldıraç ve balıkçı kayıkları.
+
+**Iustinianus Sütunu.** Tuğla gövde bakır plakalı, yedi basamaklı mermer kaide; tepede Iustinianus'un (Heraclius diye anılan) bronz atlı heykeli [K Wikipedia]; Buondelmonti ~70 m yazar (abartı muhtemel — BELİRSİZ). Küre 1422–27'de düşmüş [K]. Havadan: tek ince sütun + atlı heykel; ufukta Ayasofya'nın solunda.
+
+**Konstantin Sütunu.** Porfir kaideli sütun, tepesinde 1106'dan beri heykel yok; Manuel I'in koyduğu **haç** tepesinde [K: Wikipedia]. Üst yüksekliği ~35 m [K]. Demir çemberler 1515 sonrası [K], 1453'te YOK; yanık iz 1779 sonrası YOK. Konstantin Forumu: yuvarlak alan, çevresi yıkık revak.
+
+**Theodosius (Tauri) Forumu.** Kaynak okunamadı; BELİRSİZ. [Y] Geniş açık alan, yıkık kemer kalıntıları, hayvan pazarı.
+
+**Arkadius Sütunu.** ~31,9 m gövde, 4 m kaide, ~8,5 m heykel (heykel 740'ta düşmüş); spiral kabartma, iç merdiven [K Wikipedia]. 1453'te heykelsiz, tepe platformlu, 21 mermer bloktan [K Pierre Gilles'e dayanır]. 1719 depreminde yıkılacak. Avrat Pazarı çevresi.
+
+**Bozdoğan (Valens).** 971 m → 921 m; 29 m; iki sıra kemer, kesme taş+tuğla bant [K]. 1403'te su taşıyor [K]; 1453'te kısmen kullanım BELİRSİZ. Havadan: iki tepe arasında uzun gri-bej kemer çizgisi.
+
+**Havariyun.** Artı plan, beş kubbe (orta kubbe daha yüksek, pencereli kasnaklı) [K Wikipedia]. Tuğla+taş [K]. 1453'te "dilapidated" [K]. Havadan: haç biçimli çatı, beş kubbe. Çevresinde mezarlık, avlu.
+
+**Pantokrator.** Üç kilise birleşik (orta kilise iki yanındakilere eklenmiş); tuğla-taş bantlı, çok kubbeli; Haliç yamacında [Bilgi; bu sayfa 404 verdi, BELİRSİZ ölçü].
+
+**Khora.** Altı kubbe, 14. yy süsleri sonradan 19. yy ile yassılamış; tuğla-taş [K Wikipedia]. 1453'te şehrin kuzey ucunda; sur içinde.
+
+**Pammakaristos.** Girinti tuğla tekniği; parekklesion 5 kubbeli, orta kubbe Pantokrator mozaikli [K Wikipedia]. Havadan: dengeli küçük kubbe grubu.
+
+**Studios.** Beşinci yüzyıl bazilika; muazzam manastır alanı, 700 keşiş [K]; 1453'te hasarlı/bakımsız, Marmara surlarına yakın [K Wikipedia Fall]. Havadan: uzun bazilika çatısı + çevre avlu.
+
+**Lips.** Kuzey ve güney kilise; **beyaz ve koyu kırmızı bantlı** cephe; nişli apsis [K Wikipedia]. Lykos vadisinde. Havadan: iki kubbeli kare.
+
+**Myrelaion.** Artı-karede kilise ~9 m kenar; yanında çapı 41,8 m yuvarlak tonozlu sarnıç/alt yapı [K Wikipedia]. 1453'te hâlâ kilise (camiye 1500 civarı) [K].
+
+**Blakhernai ve Tekfur.** Sarayın büyük bölümü yıkılacak; kuşatma sırasında hasar [K]. Tekfur üç kat, ön avlu dört kemerli, kırmızı tuğla+beyaz mermer geometrik [K]. Blakhernai surları 12–15 m, daha kalın, kulelere sık; Manuel suru ~220 m, sekiz kule [K Wikipedia Walls]. Havadan: kule+saray bloğu, kare ve yuvarlak kule karışımı.
+
+**Anemas.** Blakhernai sarayının alt yapısı; hapishane olarak, tonozlu [K]. Havadan: sur kütlesinin içinde zindan.
+
+**Kara surları ve kapılar.** İç sur 12 m / 4,5–6 m kalın / 96 kule 15–20 m; dış sur 8,5–9 m / 62 kule 12–14 m; hendek >20 m genişlik, ≤10 m derin; 7–11 tuğla kuşağı [K Wikipedia Walls]. Kapılar listesi `ISTANBUL_1453.md` §3.2; 1453'te Kerkoporta açık kalma iddiası [K]. Havadan: üç sıra paralel çizgi (hendek, dış sur, iç sur), kuleler kare ve kırmızı bantlı.
+
+**Deniz surları.** Haliç suru ~5 600 m, ~10 m; Marmara suru ~8 460 m, 12–15 m, 188 kule; Marmara suru mermer sütunlu ve kayalarla desteklidir [K Wikipedia Walls]. Havadan: kıyıdan kesilmiş taş şerit.
+
+**Altın Kapı.** İri kare cilalı beyaz mermer bloklar, harçsız, orta kemer + iki kule [K]. 1453'te kapalı/duvarla örülü olma ihtimali BELİRSİZ.
+
+**Galata Kulesi ve Galata.** Christea Turris 1348; silindirik taş gövde, konik külah, üst katı kemerli çıkmalı [K]; **bugünkü Galata Kulesi'nin külahı ve üst katları sonraki** [K: 1453'te yaklaşık 7,5 m kısalmış hasarla]. Galata surları, hendek, ahşap köprü, yarım daire barbikan [K Wikipedia].
+
+**Açık sarnıçlar.** Aetios, Aspar, Mokios: BELİRSİZ ölçü; dev açık çukur ve çevre duvar [Y].
+
+**Limanlar.** Kontoskalion (Marmara, kayalık), Eleutherios (kumlu), Neorion (Haliç), Prosphorion (eski) [CSV]; hepsi taş iskele+ahşap bağlama. Zincir: Haliç ağzında yüzer tomruk+demir halka; kuzey ucu Galata, güney ucu Eugenios Kulesi [K Wikipedia; Madrid Skylitzes demir gösterir].
+
+## 7. Kuşatmanın görüntüsü (Nisan 1453)
