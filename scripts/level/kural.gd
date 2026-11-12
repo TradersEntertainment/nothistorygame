@@ -227,9 +227,9 @@ func _send_runner() -> void:
 	runner.set_meta("spk", "SPK_AZAP" if side == "O" else "SPK_DEFENDER")
 	# Oturduğu balyadan kalkar: önüne, yere iner (tween balyanın içinden geçiriyordu: WALKTHRU/insolid). Koşarken
 	# bakışı yolundadır (look_target yürüyüşü sırtı dönük gösteriyordu: LOOKAUDIT walk); oyuncuya yakalayınca döner
-	var fwd := -runner.global_transform.basis.z
+	var fwd := area_center - runner.global_position      # balyada meydana dönük oturur: kalkınca meydan yanına iner
 	fwd.y = 0.0
-	var up := runner.global_position + fwd.normalized() * 1.05
+	var up := runner.global_position + fwd.normalized() * 1.15
 	up.y = _ground(up, runner.global_position.y)
 	runner.look_target = null
 	runner.global_position = up
