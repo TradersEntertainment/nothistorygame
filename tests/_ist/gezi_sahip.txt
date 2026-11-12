@@ -1,6 +1,6 @@
 sahip_01_tam_tepe -1300 800 @2300 0 -90
 sahip_02_galata_yarimada -512 1889 60 205 -14
-sahip_03_sur_disi_30m -5022 889 2 92 6
+sahip_03_sur_disi_30m -5030 1010 2 95 6
 sahip_04_sur_disi_70m -5136 889 2 92 4
 sahip_05_romanos_ic_ayasofya -4700 850 2 100 2
 sahip_06_mese_yuruyus -1100 95 2 80 0
