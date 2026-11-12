@@ -62,7 +62,6 @@ func setup(p) -> void:
 	pl = p
 	name = "ShadowBody"
 	visible = false
-	set_meta("no_audit", true)
 	_skel = Skeleton3D.new()
 	_skel.name = "Skeleton"
 	add_child(_skel)
