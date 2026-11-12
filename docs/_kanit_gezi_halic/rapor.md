@@ -1,23 +1,23 @@
-# Haliç gezi denetimi — İLK GÖNDERİM (kısmi; son rapor ayrıca)
+# Haliç gezi denetimi — SON RAPOR (oyun kodu değişmedi; yalnız tests/_ist/gezi_halic.* ve bu klasör)
 
-## 1. Bölge ve sayılar
-Bölge: Haliç suru hattı Eugenios (-336, 878) → Perama/Unkapanı (-1765, 1820), sur dibi ±70 m + suyun 30 m içi; zincir ve limandaki gemiler.
-Dört köşe (doğu, kuzey): (-250, 700) · (-250, 1560) · (-1800, 700 → sur hattı) · (-1800, 1900).
-Yöntem: R_HALIC sur hattı boyunca 100 m istasyon (18 adet); her istasyonda 3 şerit (deniz 30 m, sur içi −12 m, iç −70 m) × 4 yön (ileri, geri, deniz, kara) = 216 yer karesi; 36 havadan (20 m ve 60 m) + 2 tepe. Not: gerçek 60 m ızgara yerine kıyı şeridi taraması yapıldı (iç kara ızgarası YAPILMADI).
-Çekilen kare (bu gönderim): 254 (liste_yer + liste_hava) · bakılan: ~95 kare paftalarda (9 pafta + tepe) tek tek incelendi.
-Yürüyüş km: bu gönderimde 0 (gerçek oyuncu yürüyüşü sonraki aşama).
+## 1. Bölge, kare ve yürüyüş sayıları
+- Bölge: Haliç suru hattı Eugenios (-336, 878) → Perama/Unkapanı (-1765, 1820); sur dibi ±70 m, suyun 30 m içi, zincir ve limandaki gemiler.
+- Dört köşe (doğu, kuzey): (-250, 700) · (-250, 1560) · (-1800, 700) · (-1800, 1900) (sur hattı çapraz uzanır).
+- Yöntem: 100 m istasyon (18), her birinde 3 şerit × 4 yön (216 yer karesi), 36 havadan (20/60 m) + 2 tepe, 66 özel kare (zincir iki uç, Eugenios 8+, Neorion, Prosphorion, Pisa, Venedik, Perama, gemiler 5 m/15 m/30 m/60 m/200 m, Galata rıhtımı), 18 gece. SAPMA: görevdeki 60 m ızgara yerine kıyı şeridi taraması yapıldı; sur gerisi (kara tarafı) ızgarası, ünlü yapıların çevresinde 8 kare ve her 15 m'de yürüyüş karesi YAPILMADI (bkz. 7).
+- Çekilen kare: 338 (254 + 66 + 18; kareler ham olarak ~/w'de, buraya yalnız 120 bulgu karesi JPEG olarak kondu). Bakılan: ≈205 (20 pafta × 9'a yakın, hepsi açıldı; tam boy açılan şüpheli kareler ~30). Bakılmayan 133 kare paftaya girmedi (bkz. 7).
+- Gerçek oyuncu yürüyüşü: 6 güzergâh, fiilen yürünen 1 442 m (R1 148, R2 144, R3 171, R4 313, R5 379, R6 288); planlanan güzergâh boyu daha uzun, kalanı takılma sıçramasıyla geçildi. Olaylar: takılma 24, düşme 1, suya girme 1 (534 kare). Duvardan geçme/görünmez duvar/boşluğa basma/kapalı cep AYRI sınanmadı.
 
-## 2. Genel not (ara): 4/10
-Sahibi bu kıyıda önce limon-yeşil legolar gibi sur dibi şeritlerine, kameranın üstündeki simsiyah tavana ve beyaz plastik ağaç-konilere kızar. İkinci olarak gemilerin yelkensiz, baş/kıç yüzlerinin kristal piramit ve yüklerin çıplak beyaz küp olması gelir. Üçüncü: sur dibi boş çayır, kule üstleri karolu levha ve devasa beyaz küp mazgallar.
+## 2. GENEL NOT: 3/10
+Sahibi bu kıyıya ilk gelince sur dibindeki parlak limon-yeşil lego bloklara, kapı geçitlerinin simsiyah-lacivert boşluğuna ve kameranın üstündeki düz siyah tavan levhasına kızar. Sonra kuleler/Eugenios'un dokusuz beyaz küp olmasına ve gemilerin yelkensiz, kutu bordalı, piksel bayraklı olmasına; zincirin halkasız ince çubuk olmasına bakar. Gece sur ve liman tamamen ölü: ışık yok.
 
-## 3. Bulgu tablosu (ilk 19)
+## 3. BULGU TABLOSU (45)
 | no | tür | önem | yer adı | doğu, kuzey | kare dosyası | ne görünüyor | kaynak | öneri |
 |---|---|---|---|---|---|---|---|---|
 | H01 | GÖRSEL | 1 | Haliç suru iç/üst kesit | -1498, 1534 | g_15q_deniz.jpg, g_15q_ileri.jpg, g_15s_ileri.jpg, g_00s_ileri.jpg | Kameranın üstünde simsiyah düz tavan levhası asılı (sur üstü/kule altı), kenarında bıçak gibi çapraz keskin siyah yüzey; dokusuz siyah. | ŞÜPHELİ kaynak: halic_sur.gd:_parapets/_tower (yürüme yolu alt yüzü); düğüm adı bilinmiyor | Alt yüzlere sur taşı malzemesi ver; çift yüz/normal ters mi kontrol et. |
-| H02 | KUTU | 2 | Sur dibi / rıhtım ayağı | -397, 814 | g_00s_deniz.jpg, g_15s_deniz.jpg, g_15q_ileri.jpg, g_03s_geri.jpg | Surun dibinde parlak limon-yeşil basamaklı BLOK şeritler (yeşil legolar): taş/çim değil, oyuncak doygunluğu; suya basamak gibi iniyor. | ŞÜPHELİ: halic_kit.gd:stair (K.stair) ya da halic_sur.gd:_quay; düğüm adı doğrulanmadı | Rengi taş-gri/yosunlu taşa çek; pahlı, farklı boy taş. |
+| H02 | KUTU | 2 | Sur dibi / rıhtım ayağı | -397, 814 | g_00s_deniz.jpg, g_15s_deniz.jpg, g_15q_ileri.jpg | Surun dibinde parlak limon-yeşil basamaklı BLOK şeritler (yeşil legolar): taş/çim değil, oyuncak doygunluğu; suya basamak gibi iniyor. | ŞÜPHELİ: halic_kit.gd:stair (K.stair) ya da halic_sur.gd:_quay; düğüm adı doğrulanmadı | Rengi taş-gri/yosunlu taşa çek; pahlı, farklı boy taş. |
 | H03 | GÖRSEL | 2 | Zincir, Eugenios ucu | -378, 852 | g_00q_ileri.jpg, g_00s_deniz.jpg | Göz hizasından zincir kütükleri devasa turuncu prizma, üstünden ince lacivert çubuk geçiyor; kütükler fıçı değil kesik kutu-prizma, çubuk zincir gibi okunmuyor (halka yok). | scripts/world/ist/halic_zincir.gd:build (kütük + chain) | Kütükleri yuvarlak, aralıklı, demir halkalı zincir; kütük boyu gerçek ölçüye. |
 | H04 | GÖRSEL | 1 | Venedik–Neorion kıyısı | -912, 1070 | g_06q_deniz.jpg, g_06i_kara.jpg, g_06s_kara.jpg, g_07s_kara.jpg | Beyaz ağaç öbekleri + dev beyaz sivri koni: dokusuz beyaz, çiçek değil; ağaç silueti beyaz taş gibi. | ŞÜPHELİ: bitki.gd:tree_mesh / bitki_yama.gd (çiçekli/beyaz tür) | Beyaz türü kırık beyaz-pembe çiçek dokusuna çek ya da kaldır; koni (servi?) yeşile. |
-| H05 | KUTU | 2 | Sur içi çayır | -487, 859 | g_01s_ileri.jpg, g_01s_geri.jpg, g_01i_deniz.jpg, g_02i_ileri.jpg | Oyuncak ağaçlar: düz renkli çokgen küreler (yeşil, mor, beyaz), tek gövde çubuğu; mor ağaç yapay. | scripts/world/ist/bitki.gd:_agac / tree_mesh | Yaprak kümeleri çok parçalı, renk varyasyonu; mor tür kaldır. |
+| H05 | KUTU | 2 | Sur içi çayır | -487, 859 | g_01s_ileri.jpg, g_01s_geri.jpg | Oyuncak ağaçlar: düz renkli çokgen küreler (yeşil, mor, beyaz), tek gövde çubuğu; mor ağaç yapay. | scripts/world/ist/bitki.gd:_agac / tree_mesh | Yaprak kümeleri çok parçalı, renk varyasyonu; mor tür kaldır. |
 | H06 | ZEMİN | 2 | Sur dibi çayırı | -487, 859 | g_01s_ileri.jpg, g_16s_ileri.jpg, g_15s_geri.jpg, g_16s_geri.jpg | Surun gölgesi çayırda cetvelle kesilmiş koyu yeşil üçgen; ayrıca açık sarı toprak yamasının kenarı testere dişli keskin kesik. | ŞÜPHELİ: sur_zemin.gd / bitki_yama.gd (yama kenarı) | Yama kenarını gürültüyle yumuşat; sur dibine çakıl/toprak şerit. |
 | H07 | GÖRSEL | 2 | Sur iç yüzü, genel | -468, 897 | g_01q_ileri.jpg, g_01q_geri.jpg, g_02q_geri.jpg, g_03s_ileri.jpg | İç yüz açık gri-bej, deniz yüzü koyu mavi-gri: iki ayrı palet, aynı surda bile yüzler uyuşmuyor; kırmızı bant ketçap doygunluğunda, taş sıraları ızgara plastik gibi. | scripts/world/ist/halic_sur.gd:_wall_piece / sur_doku.gd | İki yüzü tek taş paletine indir; tuğla bandı soluk kahve-kırmızı (kalite notu 21/27). |
 | H08 | MANTIK | 3 | Sur dibi çayırı | -487, 859 | g_01s_geri.jpg | Çimde tek başına yatan turuncu düz tahta levha: ne olduğu belli değil (iskele tahtası? yaslanmış kalas?). | ŞÜPHELİ: halic_mahalle.gd (prop) / düğüm adı bilinmiyor | Kalas ise istif, değilse kaldır. |
@@ -30,10 +30,74 @@ Sahibi bu kıyıda önce limon-yeşil legolar gibi sur dibi şeritlerine, kamera
 | H15 | GÖRSEL | 2 | Neorion mendireği / zincir başlangıcı | -432, 745 | h_00_60.jpg, h_01_20.jpg, h_02_60.jpg, h_00_20.jpg | Havadan zincir turuncu levha şeridi olarak, Neorion rıhtımı dikdörtgen kutu havuz olarak okunuyor: ince çizgi mendirek köşeli; kütükler birbirine takılmış gibi. | halic_zincir.gd + halic_liman.gd:build | Kütüğe yuvarlak kesit, mendireğe doğal kıyı eğrisi. |
 | H16 | MANTIK | 3 | Sur dibi mahallesi (batı) | -766, 936 | g_04s_geri.jpg | İki kişi tamamen iç içe geçmiş duruyor (mavi saçlı + gri saçlı, aynı noktada). | ŞÜPHELİ: hayat_yakin.gd (kişi yerleşimi) | Kişi aralığına min. 0,6 m. |
 | H17 | MANTIK | 2 | Sur dibi evleri (batı kesim) | -1633, 1549 | g_17i_deniz.jpg, g_17i_geri.jpg, g_16s_ileri.jpg | Ev duvarı surun dibine bitişik; kapı çerçevesi ile beyaz silindir sütun duvara yapışık, kapı sura bakıyor; kapı önünde yürüme boşluğu yok. | halic_mahalle.gd:ev yerleşimi | Evleri surdan en az 4 m geri çek, kapıyı sokağa çevir. |
-| H18 | GÖRSEL | 2 | Kule gövdesi / sur kenarı | -423, 762 | g_00i_geri.jpg, g_15q_deniz.jpg, g_16s_ileri.jpg | Sur gövdesi kule yanında dikey bant gölge/ışık sızması; yüzey çok düz büyük levha, 'cetvel kesimli' köşe; koyu mavi-gri yüzde cyan gölge. | sur_doku.gd (taş gölgelendirici), halic_sur.gd:_wall_piece | Yüzeye eğim/ aşınma, köşe pahı, gölge rengini sıcaklaştır. |
+| H18 | GÖRSEL | 2 | Kule gövdesi / sur kenarı | -423, 762 | g_15q_deniz.jpg, g_16s_ileri.jpg | Sur gövdesi kule yanında dikey bant gölge/ışık sızması; yüzey çok düz büyük levha, 'cetvel kesimli' köşe; koyu mavi-gri yüzde cyan gölge. | sur_doku.gd (taş gölgelendirici), halic_sur.gd:_wall_piece | Yüzeye eğim/ aşınma, köşe pahı, gölge rengini sıcaklaştır. |
 | H19 | PERFORMANS | 3 | Haliç boyu, sur dibi ileri bakış | -1238, 1024 | g_09i_ileri.jpg, g_07i_ileri.jpg, g_03i_ileri.jpg | 43/254 karede üçgen 2,5 M yer bütçesini aşıyor (en çok 3,09 M, 1176 çizim); hepsi kıyıya dönük 'ileri' kareler. | RINFO satırları (ham/rinfo_k1.txt) | Gemi lod'u ve sur uzak katmanını gözden geçir. |
+| H20 | GÖRSEL | 1 | Eugenios Kulesi ve sur kuleleri (LOD) | -310, 878 | e_k_d.jpg, e_k_k.jpg, z_hava_30.jpg | Kule/kule arası boşluğunda dokusuz, çıplak krem-beyaz DEV KÜPLER: Eugenios kulesi ve komşu kule gövdeleri taş yerine düz beyaz levha (lod=2 'slab'); yarım sur dizisinde birbirine karışmış beyaz küp - taş kule yan yana. | scripts/world/ist/halic_zincir.gd:build (lod>=2: K.slab düz renk) ve halic_sur.gd:build lod>=2 (K.slab) | LOD2 siluetini de taş dokulu/renkli yap; lod geçişi görünmesin (ZEMİN: uzakta beyaz küp). |
+| H21 | GÖRSEL | 1 | Kapı geçitleri (Odun/Zindan hattı) | -1609, 1441 | g_14i_deniz.jpg, g_14i_geri.jpg, g_14i_ileri.jpg, g_14i_kara.jpg, g_14q_geri.jpg, yahudi_1.jpg | Kapı geçidi içi: tonoz tavan var ama kapının ucu simsiyah-lacivert boşluk (arka duvar/zemin yok); kapı kanadı duvar içine gömülü, geçit dışına çıkış görünmüyor. | halic_sur.gd:_gate_dressing / halic_kapi.gd:build (kapı iç boşluğu); düğüm adı bilinmiyor | Geçidin ucuna sokak/iç avlu ya da kapı kapat; boşluğa bakış ver. |
+| H22 | GÖRSEL | 2 | Perama kapısı | -1761, 1813 | perama_1.jpg, perama_2.jpg | Kapı önünde koyu lacivert-teal düz zemin levhası (su mu zemin mi belli değil), köşeler bıçak gibi; geçit siyah. | halic_kapi.gd / halic_kit.gd:sea | Rıhtım/su sınırını netleştir, zemine taş döşe. |
+| H23 | KUTU | 2 | Zincir kulesi çevresi (iskele) | -640, 1100 | gemi_filo_b.jpg, e_yer_15.jpg, liman_prosphorion.jpg, liman_prosphorion2.jpg | Neorion/Prosphorion mendireğinde kare kesitli dev kahverengi sütun (gemi direği mi?) ve sarı tek renk düz zemin; kuyruk ucu iki ayrı levha; iskele sandığı çıplak kutu. | halic_liman.gd:build (iskele/vinç propları); gemiler_mesh.gd (direk) | Direği silindir yap, zemini taş döşeli. |
+| H24 | GÖRSEL | 2 | Gemi bayrakları | -700, 960 | gemi_iskele_a.jpg, gemi_filo_c.jpg, gemi_filo_d.jpg | Bayraklar 8-bit piksel kare blokları (sarı-kırmızı) ve dev: Aragon bayrağı basamaklı karelerle, rüzgârda dalgalanmıyor, düz levha. | scripts/world/ist/gemiler_mesh.gd:_bayrak/_bayrak_renk | Bayrağı kıvrımlı şeritli kumaş yap; piksel desenini kaldır. |
+| H25 | KUTU | 2 | Gemi gövdeleri, yandan | -756, 990 | liman_neorion_1.jpg, liman_neorion_2.jpg, liman_neorion_3.jpg, gemi_iskele_c.jpg | Yan bordası düz kutu: kahverengi dikdörtgen levha üstüne kırmızı şerit; baş sivri değil, kıç kutu; kasara sarı/kırmızı düz kutu çatılı. | gemiler_mesh.gd:_karaka/_kog (kasara, bordalar) | Borda yayı (şer) ve yumuşak sheerline. |
+| H26 | GÖRSEL | 2 | Zincir | -400, 900 | z_02.jpg, z_03.jpg, z_04.jpg, z_05.jpg, z_yakin_5.jpg | Zincir: yalnızca ince lacivert çubuk + enine turuncu kalas; halka, ağırlık yok; kalas kütük gibi değil düz; her yerde aynı aralık. | halic_zincir.gd:build (chain) | Halkalı zincir (torus), kütükler fıçı/kütük. |
+| H27 | MANTIK | 2 | Zincir, Galata ucu | -504, 1434 | z_galata_ucu.jpg, z_galata_ucu2.jpg, z_galata_ucu3.jpg, z_07.jpg | Zincir Galata Kastellion'una değil, tahta bir iskeleye ve tuğla sütuna bitiyor; kule ayrı duruyor; ucu bağlandığı yer belli değil. (Belgeye göre Kastellion ucu.) | halic_zincir.gd (uç) + galata_kule.gd | Zinciri kuleye halkayla bağla. |
+| H28 | MANTIK | 2 | Zincir, Eugenios ucu | -300, 840 | e_kule_hava.jpg, z_01.jpg, e_yer_15.jpg | Zincir kuleye değil, açık suya uzanan ince bir taş şeride bağlanıyor; kule ile zincir arasında boşluk, kütükler hiçbir şeye tutunmuyor. | halic_zincir.gd:build | Zincir kule duvarındaki halkaya bağlansın. |
+| H29 | GÖRSEL | 2 | Neorion rıhtımı | -756, 1000 | liman_neorion_hava.jpg, liman_pisa2.jpg, liman_pisa.jpg, gemi_iskele_b.jpg | Rıhtım iç yüzü bej levha çıkmalar; su içine uzanan dikdörtgen kalasların ucu gemiye değil boşluğa; iskele kare köşeli, vinç yanındaki turuncu kare kutu. | halic_liman.gd | Rıhtımı kıvrımlı yap, iskeleleri gemilere bağla. |
+| H30 | KUTU | 2 | Gemiler yükü, güverte | -640, 1050 | gemi_hava_15a.jpg, gemi_hava_15b.jpg, gemi_hava_15c.jpg | Havadan güverteler: beyaz çatı levhası dev kutu, tekne içi dikdörtgen kasaralar; kayık sıralarda aynı şekil (kopya). | gemiler_mesh.gd:_kasara_ayr | Kasara çeşitliliği, çatı eğimi. |
+| H31 | GÖRSEL | 3 | Sur dibi gölgesi | -1513, 1347 | g_13s_geri.jpg, g_13s_ileri.jpg, g_13s_kara.jpg | Sur gölgesi çimde geniş koyu dikdörtgen/üçgen, kenarı cetvel gibi keskin; çayır rengi 'camgöbeği gölge'. | güneş gölgesi (sunlight shadow) / sur_zemin.gd | Gölgeyi yumuşat, yeşil-koyu yerine sıcak. |
+| H32 | MANTIK | 2 | Sur dibi pazar yeri | -1513, 1347 | g_13s_ileri.jpg, g_13s_kara.jpg | Tahta tezgâh ayakları kalın kutu direk; tezgâh üstü boş, eşyasız (üstünde yalnız bir kuş); kare döşeli bej zemin parçası keskin kenarlı yama. | halic_mahalle.gd (pazar) | Tezgâhı mal ile doldur, zemin yamasını çim/toprakla karıştır. |
+| H33 | ZEMİN | 2 | Perama – Unkapanı yamacı | -1761, 1813 | perama_hava.jpg, venedik_hava.jpg, venedik_hava2.jpg | Havadan kıyı: sarı-tuğla karo döşeme şeritleri keskin kesilmiş yamalar halinde çim üzerinde; döşemeli yol aniden bitiyor; zemin beyaz küplerle (sur) çevrili. | sur_zemin.gd / halic_mahalle.gd (zemin yamaları) | Yama kenarına geçiş dokusu. |
+| H34 | GÖRSEL | 3 | Haliç uzak sur (Galata ve şehir yakası) | -640, 1100 | gemi_hava_60.jpg, gemi_uzak_200.jpg, z_hava_30.jpg | Uzakta sur beyaz-gri küp blok dizisi, ufuk çizgisinde çıplak kutular (kalite notu 24 hâlâ). Bilinen. | halic_sur.gd:lod>=2 | Uzak sur dokulu gölgeli. |
+| H35 | GÖRSEL | 2 | Sur dibi evleri / sur iç yüzü | -1557, 1499 | g_16i_ileri.jpg, g_16i_kara.jpg, g_16i_geri.jpg | Ev/duvar üstünde açık limon-yeşil yarı saydam levha (çatı mı, çim yaması mı belirsiz), gölgesiz parlak; duvar ucu kesik pahsız köşe. | ŞÜPHELİ: halic_mahalle.gd (çatı/zemin yaması); bitki_yama.gd | Çatıyı kiremit rengine çek; yaması yerleştirme. |
+| H36 | GÖRSEL | 2 | Sur iç yüzü (Perama batısı) | -1557, 1499 | g_16i_deniz.jpg, g_16q_kara.jpg, g_16s_deniz.jpg | Sur yüzleri ışıksız kömür-lacivert (gölgede tamamen siyahımsı), bir kareden diğerine doku kayması: taş sırası kaydırılmış dikdörtgen yama basamaklı kenarla bindirmiş (z-fighting/doku yırtığı). | sur_doku.gd (taş gölgelendirici), halic_sur.gd:_wall_piece | Ambient ışığı yükselt, yüz dokularını aynı UV'ye bağla. |
+| H37 | MANTIK | 3 | Sur kıyı duvarı (Odun Kapı) | -1213, 1121 | g_09q_kara.jpg, g_16q_ileri.jpg | Sur duvarının alt kenarı suyun hemen üstünde düz kesik; duvar suya basmıyor gibi, gölge kenarı havada. ŞÜPHELİ (su yüzeyi/yansıma). | halic_sur.gd:_quay (rıhtım -1.6 m) / K.sea | Duvar tabanını suya göm, rıhtım köpüğü. |
+| H38 | KUTU | 2 | Sur dibi tezgâhları | -1557, 1499 | g_16i_kara.jpg, g_09s_kara.jpg, g_09s_geri.jpg | Tezgâh ayakları kalın turuncu silindir/kutu direkler, üstü tek tahta; çimde dil gibi uzanan düz bej tahta zemin; ağaçlar koyu yeşil çokgen toplar. | halic_mahalle.gd (pazar), bitki.gd | Tezgâh ayağını ince/pahlı, eşya ekle. |
+| H39 | GÖRSEL | 1 | Sur hattı, gece | ?, ? | n_00_ileri.jpg, n_12_ileri.jpg, n_15_ileri.jpg, n_15_deniz.jpg, n_09_ileri.jpg | Gece sur yüzleri ve kuleler tamamen siyah kütle: ay/ateş ışığı yok, ne mazgal ne taş dokusu okunuyor; kapı ve kule başında meşale yok. | halic_sur.gd (Flame yalnız ana kapı fenerleri) / gece ışık sistemi | Kule ve kapılara meşale, sur yüzüne soluk ay ışığı. |
+| H40 | BOŞLUK | 2 | Limandaki gemiler, gece | ?, ? | n_03_deniz.jpg, n_06_ileri.jpg, n_00_hava.jpg, n_06_hava.jpg | Gemiler gece siyah silüet: güvertede fener/ışık yok, kayıklarda ışık yok; liman havadan ölü (yalnız uzakta Galata'da pencereler). | gemiler.gd (gece ışığı yok) / halic_liman.gd | Başta ve kıçta fener, iskelede meşale. |
+| H41 | GÖRSEL | 2 | Kule tepeleri, gece havadan | ?, ? | n_00_hava.jpg, n_03_hava.jpg, n_06_hava.jpg, n_09_hava.jpg | Mazgal küpleri gece de ışıyan parlak beyaz küpler (gri zeminde); kule üstü karolu levha net okunuyor, ışık yanlış. | halic_sur.gd:_tower / mazgal malzemesi (unshaded?) | Mazgalı taş malzemeyle gölgele. |
+| H42 | KUTU | 2 | Sur dibi yeşil bloklar, gece | ?, ? | n_03_ileri.jpg, n_06_deniz.jpg | Limon-yeşil basamak blokları gece de yanık yeşil, çevresi siyahken tek renkli kalıyor. | halic_kit.gd:stair ŞÜPHELİ | Gündeki gibi taş rengine çek. |
+| H43 | GÖRSEL | 3 | Zincir, gece | ?, ? | n_00_deniz.jpg | Zincir kütükleri ve çubuk gece koyu kahve-turuncu silüet; çubuk parlamıyor, uzakta zincir yok olarak okunuyor; ucuna ışık yok. | halic_zincir.gd | Zincir başına nöbet ateşi (belge madde 21). |
+| H44 | MANTIK | 2 | Sur dibi / Odun Kapı kıyı bükümü (yürüyüş) | -1535, 1463 | (kare yok: ham/yuru_olay.txt, GEZI_OLAY dusme+su) | Gerçek oyuncuyla R4 güzergâhında oyuncu zeminden >0,8 m aşağı düştü, sonra 534 fizik karesi suyun içinde kaldı (suya yürüdü ya da kıyı çarpışması eksik). ŞÜPHELİ: sonda güzergâhı kıyıya çok yakın olabilir. | gezi_halic.gd (sonda) + dunya.gd:carpisma_yenile | Kıyıda görünmez duvar/çarpışma şeridi ve su yakalayıcı doğrula. |
+| H45 | MANTIK | 2 | Sur dibi, 6 güzergâh (yürüyüş) | -546,863 · -634,891 · -1255,1066 · -1304,1103 · -1375,1206 · -1408,1221 · -1486,1511 · -1526,1220 · -1578,1417 · -1648,1432 | (kare yok: ham/yuru_olay.txt) | 24 takılma olayı (4 sn'de <1 m ilerleme): R1=3, R2=1, R3=6, R4=9, R5=0, R6=5. Sebep tanılanmadı: sondanın 8 m ileri hedef kuralı olabilir; en çok Odun Kapı–Perama arasında (-1255…-1650, 1066…1520). | tests/_ist/gezi_halic.gd | Bu noktaları gerçek oyuncuyla elle sına; çarpışma kutusu/ev girişi/merdiven boşluğuna bak. |
 
-## Ara not
-- Kareler `kare/` altında (JPEG ≤250 KB), paftalar `pafta_*.jpg`. Liste dosyaları `liste_*.txt`, RINFO `ham/rinfo_k1.txt`.
-- Bu gönderimde özel liste (zincir, Neorion, Venedik, Perama, gemiler: 70 kare) ve gece (18 kare) HENÜZ incelenmedi; son raporda.
-- Oyun kodu değişmedi (git status ile doğrulanacak).
+Not: "kaynak" sütununda ŞÜPHELİ yazanlar düğüm adı sur4_kare ile doğrulanmadı, yalnız dosya/işlev tahminidir. Koordinat = ilk karenin kamerası. Zincir ucu sonuçları (H28, H29) belgeye (Eugenios Kulesi – Galata Kastellion) göre MANTIK bulgusudur.
+
+## 4. Tür başına sayım
+- ZEMİN: 3
+- KUTU: 10
+- PERFORMANS: 1
+- BOŞLUK: 1
+- MANTIK: 9
+- GÖRSEL: 21
+KUTU kalan=10 (H02, H05, H09, H10, H12, H23, H25, H30, H38, H42; Biliniyor listesindeki kule/çadır kutuları hariç). Hedef 0.
+PERFORMANS: yer bütçesi 2,5 M üçgen; 254 yer/hava karesinde 43 kare aşıyor (en çok 3,09 M, 1 176 çizim, g_09i_ileri); 1 200 çizim sınırı aşılmadı. Gece karelerinde n_03_ileri 2,73 M. Kurulumda ISTONPISIR ms≈9 045 (tek iş), ISTSOKAK sokak_ms 2 156.
+
+## 5. En kötü 12 kare
+1. kare/g_15q_deniz.jpg — kamera üstünde siyah düz tavan levhası.
+2. kare/e_k_d.jpg — Eugenios kule gövdesi dokusuz krem-beyaz dev küp.
+3. kare/g_14i_geri.jpg — kapı geçidinin ucu simsiyah lacivert boşluk.
+4. kare/g_00s_deniz.jpg — sur dibinde limon-yeşil lego basamaklar.
+5. kare/g_06q_deniz.jpg ile g_06i_kara.jpg — dokusuz beyaz ağaç ve beyaz koni.
+6. kare/n_03_ileri.jpg — gece siyah sur + yanık yeşil blok.
+7. kare/g_16i_deniz.jpg — sur yüzü kömür siyahı, doku kayması.
+8. kare/h_09_20.jpg — kule tepeleri karolu levha + dev beyaz küp mazgal.
+9. kare/gemi_iskele_a.jpg — gemide 8-bit piksel dev bayrak.
+10. kare/g_02q_deniz.jpg — gemi başı siyah-bordo kristal piramit.
+11. kare/g_07s_ileri.jpg — pazarda dev çıplak turuncu kutu.
+12. kare/perama_1.jpg — Perama kapısı önü koyu lacivert levha.
+
+## 6. İyi olan 5 kare (korunacaklar)
+1. kare/z_hava_30.jpg — zincir ve gemilerin havadan taraklı dizilişi okunaklı.
+2. kare/gemi_hava_60.jpg — Haliç, gemiler, şehir silueti bütün.
+3. kare/gemi_hava_30a.jpg — gemiler ve zincir doğru yönde dizili.
+4. kare/g_08q_geri.jpg — vinç, ahşap iskele, taş rıhtım doku çeşitliliği.
+5. kare/g_07s_geri.jpg — pazar: kişiler, tezgâh, eşya (yaşam var).
+
+## 7. Bakamadıklarım / yapılamayanlar
+- Kara tarafı 60 m ızgara, ünlü yapı çevresi 8'er kare, 15 m'de bir yürüyüş karesi, tüm istasyonların tam boy incelemesi: YAPILMADI.
+- Paftaya girmeyen ≈133 yer karesi bakılmadı (s_02, s_04, s_06, s_08, s_10, y_00, y_02, y_06, h_01, h_03, k_07).
+- Yürüyüş sondası: takılma nedeni tanılanmadı; duvardan geçme/görünmez duvar/kapalı cep sayılmadı.
+- Düğüm adları (sur4_kare --set=kim) çalıştırılmadı: kaynaklar kod okuması ve dosya tahminidir.
+- Ham kareler depoya konmadı (yalnız bulgu kareleri).
+
+## Teslim
+Kareler `kare/` (JPEG ≤250 KB, 120 adet), paftalar `pafta_*.jpg` (20), `liste_*.txt`, `ham/` (RINFO ve yürüyüş olayları). Oyun kodu değişmedi: `git status`/`git diff wip/ist2-gezi-taban -- scripts` boş.

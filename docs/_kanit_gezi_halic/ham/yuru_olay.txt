@@ -1,0 +1,33 @@
+GEZI_OLAY takilma -546 863
+GEZI_OLAY takilma -576 864
+GEZI_OLAY takilma -634 891
+GEZI_ROTA R1_eugenios_neorion yol=148 hedef_s=422 takilma=3 dusme=0 su_kare=0
+GEZI_OLAY takilma -859 949
+GEZI_ROTA R2_neorion_venedik yol=144 hedef_s=838 takilma=1 dusme=0 su_kare=0
+GEZI_OLAY takilma -1255 1066
+GEZI_OLAY takilma -1270 1086
+GEZI_OLAY takilma -1304 1103
+GEZI_OLAY takilma -1375 1206
+GEZI_OLAY takilma -1390 1220
+GEZI_OLAY takilma -1408 1221
+GEZI_ROTA R3_venedik_odun yol=171 hedef_s=1260 takilma=6 dusme=0 su_kare=0
+GEZI_OLAY takilma -1578 1417
+GEZI_OLAY takilma -1582 1458
+GEZI_OLAY takilma -1580 1477
+GEZI_OLAY dusme -1535 1463
+GEZI_OLAY takilma -1551 1461
+GEZI_OLAY su -1518 1463
+GEZI_OLAY takilma -1551 1461
+GEZI_OLAY takilma -1551 1461
+GEZI_OLAY takilma -1483 1510
+GEZI_OLAY takilma -1486 1511
+GEZI_OLAY takilma -1499 1499
+GEZI_ROTA R4_odun_perama yol=313 hedef_s=1670 takilma=9 dusme=1 su_kare=534
+GEZI_ROTA R5_sur_dibi_ic_bati yol=379 hedef_s=896 takilma=0 dusme=0 su_kare=0
+GEZI_OLAY takilma -1308 1017
+GEZI_OLAY takilma -1486 1184
+GEZI_OLAY takilma -1526 1220
+GEZI_OLAY takilma -1648 1432
+GEZI_OLAY takilma -1654 1470
+GEZI_ROTA R6_sur_dibi_ic_dogu yol=288 hedef_s=1446 takilma=5 dusme=0 su_kare=0
+GEZI_YURUYUS toplam_m=1442
