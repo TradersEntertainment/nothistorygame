@@ -237,6 +237,8 @@ static func gaze_dir(who: Node3D, act: String, talking: bool, to: Vector3, mv: V
 			return d if d.length() > 0.25 else Vector3.ZERO
 		return Vector3.ZERO
 	if not act in GAZE_FREE_ACT:
+		# 3 m içindeki muhatap (Tolga yanındaysa) konuşma sayılır: SAYFACE'e takılmadan dönüp bakar
+		talking = talking or to.length() < 3.0
 		# Alet işi: yalnız konuşurken Tolga'ya döner, konuşma bitince işinin yönüne (dönmeden önceki yön) geri döner
 		if who.has_meta("gaze_seen") and absf(angle_difference(float(who.get_meta("gaze_seen")), who.rotation.y)) > 0.6:
 			who.remove_meta("gaze_home")      # sahne betiği kişiyi başka yöne çevirdi: eski yönü geçersiz

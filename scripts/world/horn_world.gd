@@ -16,6 +16,7 @@ extends Node3D
 ## Uzak görünüm; oynanış alanı değil. Bölgenin keep dikdörtgenlerine bir şey koymaz.
 
 const STONE := Color("cdbd9e")
+const DARK_ARCH := Color("3a3034")     # kemer açıklıkları, pencereler (uzaktan karanlık iç)
 
 var region_name := ""
 var keep: Array = []
@@ -147,7 +148,7 @@ static func north_surf(x: float, z: float) -> float:
 
 
 static func east_surf(x: float, z: float) -> float:
-	return LowPoly.surface_y(x, z, -760.0, 760.0, -1780.0, -700.0, 52, 36, func(px: float, pz: float) -> float: return SiegeField.city_ground(px, pz))
+	return LowPoly.surface_y(x, z, -760.0, 760.0, -1780.0, -700.0, 52, 36, func(px: float, pz: float) -> float: return World1453.city_ground(px, pz))
 
 
 static func asia_surf(x: float, z: float) -> float:
@@ -167,7 +168,12 @@ func _north_shore() -> void:
 	var tw: Vector3 = World1453.LANDMARKS["galata_tower"]
 	var gc: Vector3 = World1453.LANDMARKS["galata_center"]
 	var top := World1453.galata_top(tw)
-	GalataView.build(self, hf, Vector2(tw.x, tw.z), top, Vector2(gc.x, gc.z), 150.0, -1.6, 1453, night, keep)
+	# Evler kutu değil, şehrin ve Galata bölümünün Kit evleri (CityHouses: yakın tam model, orta sade, uzak kutu)
+	var gnd := Dressing.new(333)
+	gnd.chunk = 240.0
+	GalataView.build(self, hf, Vector2(tw.x, tw.z), top, Vector2(gc.x, gc.z), 150.0, -1.6, 1453, night, keep,
+		func(list: Array) -> void: CityHouses.build(self, list, func(px: float, pz: float) -> float: return north_surf(px, pz), _free, gnd))
+	_night.append(gnd.build(self))
 	# Osmanlı yakası: çadırlar, ateşler (Galata'nın çevresi boş)
 	var d := Dressing.new(331)
 	d.chunk = 240.0
@@ -181,7 +187,9 @@ func _north_shore() -> void:
 			continue
 		var y := north_surf(x, z)
 		var c: Color = [Color("e8dcc0"), Color("d8c8a0"), Color("c8262f"), Color("e0d4b8")][i % 4]
-		d.prism(Vector3(5.0, 3.6, 5.0), Vector3(x, y + 1.8, z), c)
+		# Osmanlı çadırı (Night.tent biçimi: yuvarlak keçe gövde, sivri tepe, bant): eskiden üçgen prizma kutular
+		d.cyl(2.4, 1.6, Vector3(x, y + 0.8, z), c, Vector3.ZERO, 8)
+		d.cyl(2.55, 2.0, Vector3(x, y + 2.6, z), c.darkened(0.08), Vector3.ZERO, 8, 0.05)
 		if i % 3 == 0:
 			nd.glow(Vector3(1.0, 1.2, 1.0), Vector3(x + 4.0, y + 0.8, z), Color("ffa040"))
 	# Pınarlar Vadisi: kıyıya çekilmiş kadırgalar (kızak yolundan gelenler) ve kızak yolu; 22 Nisan'dan önce yoklar
@@ -218,7 +226,7 @@ func _north_shore() -> void:
 # ---------------------------------------------------------------- şehrin doğu yarısı
 
 func _city_east() -> void:
-	var hf := func(x: float, z: float) -> float: return SiegeField.city_ground(x, z)
+	var hf := func(x: float, z: float) -> float: return World1453.city_ground(x, z)
 	var ccf := func(x: float, z: float, y: float, steep: float) -> Color:
 		var c := Color("7a7050").lerp(Color("5a6a40"), clampf(0.5 + 0.5 * sin(x * 0.05 - z * 0.04), 0.0, 1.0) * 0.6)
 		if y < -0.6:
@@ -242,7 +250,10 @@ func _city_east() -> void:
 	CityHouses.build(self, CityPlan.houses_in(-INF, -700.0), surf, _free, nd)
 	_night.append(nd.build(self))
 	sub.call("houses")
-	# Kiliseler (sokakların, evlerin ve anıtların dışında: blokların içi)
+	# Kiliseler (sokakların, evlerin ve anıtların dışında: blokların içi): haç planlı, kasnaklı kubbe, apsis, kiremit
+	# beşik çatılar (eskiden kutu + silindir + top: havadan "küp küp"); birleşik ağ
+	var cd := Dressing.new(344)
+	cd.chunk = 240.0
 	var placed := 0
 	for i in 90:
 		var x := rng.randf_range(-650.0, 600.0)
@@ -251,10 +262,8 @@ func _city_east() -> void:
 		if placed >= 22 or not World1453.in_city(x, z, 30.0) or not _free(x, z, 12.0) or CityPlan.blocked(x, z, r * 1.6):
 			continue
 		placed += 1
-		var p := Vector3(x, east_surf(x, z) - 0.3, z)
-		Props.box(self, Vector3(r * 2.4, r * 1.3, r * 2.0), p + Vector3(0, r * 0.65, 0), Color("b87060"))
-		Props.cyl(self, r * 0.62, r * 0.55, p + Vector3(0, r * 1.55, 0), Color("c8a890"), Vector3.ZERO, 12)
-		Props.ball(self, r * 0.64, p + Vector3(0, r * 1.82, 0), Color("8a98a8"), Vector3(1, 0.7, 1), 14)
+		_church(cd, Vector3(x, east_surf(x, z) - 0.3, z), r)
+	cd.build(self)
 	# Tarihî yapılar (Landmarks1453): Aya İrini, Augustaion, forumlar, manastırlar, limanlar, Altınkapı...
 	Landmarks1453.build(self, _free, region_name)
 	sub.call("landmarks")
@@ -264,31 +273,75 @@ func _city_east() -> void:
 	# Ayasofya, Hipodrom ve dikilitaş, Konstantin sütunu, Büyük Saray terasları
 	var ay2: Vector3 = World1453.LANDMARKS["ayasofya"]
 	if _free(ay2.x, ay2.z, 60.0):
-		var hs := Scenery.hagia_merged(self, Vector3(ay2.x, east_surf(ay2.x, ay2.z) - 1.0, ay2.z), 1.0, Landmarks1453.aya_cross(self))
-		# Uzakta uzak siluet (Landmarks1453.skyline) onun yerini alır: iki model üst üste çizilmesin (dış çizgileri
-		# siluetin içinden görünüyordu)
-		for mi in hs.find_children("*", "MeshInstance3D", false, false):
-			(mi as MeshInstance3D).visibility_range_end = Landmarks1453.SK_NEAR + 60.0
+		# Yerdeki Ayasofya'nın kendisi (ByzCity.aya_exterior, bölümlerin Ayasofya'sı; World1453.far_aya): eskiden ayrı, iki
+		# kat büyük, koyu kızıl bir model (Scenery.hagia_merged). Uzakta uzak siluet (Landmarks1453.skyline) yerini alır.
+		var fa := World1453.far_aya(self)
+		(fa.get_node("FarAyasofyaLo") as GeometryInstance3D).visibility_range_end = Landmarks1453.SK_NEAR + 60.0
 	var hp2: Vector3 = World1453.LANDMARKS["hippodrome"]
 	var hy := east_surf(hp2.x, hp2.z)
 	var d := Dressing.new(342)
 	d.chunk = 240.0
+	# Hipodrom (eskiden iki düz kutu duvar): dışta iki kat kemerli galeri (ayaklar, kemer açıklıkları, kuşak silmesi),
+	# kuzey ucunda kapılı başlangıç binası (carceres) ve kuleleri, doğu yanında imparator locası (kathisma), ortada
+	# spina üstünde Mısır Dikilitaşı (kaidesiyle) ve Yılanlı Sütun
 	for sx: float in [-1.0, 1.0]:
 		d.box(Vector3(8.0, 9.0, 220.0), Vector3(hp2.x + sx * 40.0, hy + 4.5, hp2.z), STONE.darkened(0.15))
+		d.box(Vector3(8.6, 0.6, 220.6), Vector3(hp2.x + sx * 40.0, hy + 9.2, hp2.z), STONE.darkened(0.05))
+		d.box(Vector3(8.5, 0.4, 220.4), Vector3(hp2.x + sx * 40.0, hy + 4.6, hp2.z), STONE.darkened(0.02))
+		var zz := -104.0
+		while zz <= 104.0:
+			for lv: float in [0.0, 4.6]:
+				d.box(Vector3(0.3, 3.4, 3.2), Vector3(hp2.x + sx * 44.05, hy + lv + 1.95, hp2.z + zz), DARK_ARCH)
+			zz += 8.0
 	d.box(Vector3(88.0, 9.0, 10.0), Vector3(hp2.x, hy + 4.5, hp2.z + 110.0), STONE.darkened(0.2))
+	d.box(Vector3(88.6, 0.6, 10.6), Vector3(hp2.x, hy + 9.2, hp2.z + 110.0), STONE.darkened(0.08))
+	for k in 12:
+		var gx := hp2.x - 33.0 + k * 6.0
+		d.box(Vector3(3.6, 4.6, 0.3), Vector3(gx, hy + 2.3, hp2.z + 104.9), DARK_ARCH)
+	for sx: float in [-1.0, 1.0]:
+		d.box(Vector3(9.0, 15.0, 9.0), Vector3(hp2.x + sx * 40.0, hy + 7.5, hp2.z + 110.0), STONE.darkened(0.12))
+		d.cyl(5.2, 2.4, Vector3(hp2.x + sx * 40.0, hy + 16.2, hp2.z + 110.0), Landmarks1453.LEAD, Vector3(0, 45, 0), 4, 0.05)
+	# Kathisma: doğu duvarına yaslı, kemerli cepheli, kubbeli loca
+	var kx := hp2.x + 46.0
+	d.box(Vector3(10.0, 14.0, 22.0), Vector3(kx, hy + 7.0, hp2.z + 10.0), Landmarks1453.BRICK)
+	for k in 3:
+		d.box(Vector3(0.3, 4.0, 3.4), Vector3(kx - 5.05, hy + 9.5, hp2.z + 3.0 + k * 7.0), DARK_ARCH)
+	Landmarks1453._dome(d, Vector3(kx, hy + 14.0, hp2.z + 10.0), 4.2, 2.4)
 	d.box(Vector3(70.0, 0.2, 210.0), Vector3(hp2.x, hy + 0.1, hp2.z), Color("a89878"))
 	d.box(Vector3(2.0, 1.2, 160.0), Vector3(hp2.x, hy + 0.6, hp2.z), STONE)
-	d.cyl(1.4, 20.0, Vector3(hp2.x, hy + 10.0, hp2.z - 30.0), Color("c8a888"), Vector3.ZERO, 4, 0.3)
+	d.box(Vector3(4.2, 2.6, 4.2), Vector3(hp2.x, hy + 1.3, hp2.z - 30.0), Landmarks1453.MARBLE.darkened(0.06))
+	d.cyl(1.4, 20.0, Vector3(hp2.x, hy + 12.6, hp2.z - 30.0), Color("c8a888"), Vector3(0, 45, 0), 4, 0.3)
+	d.cyl(0.42, 1.2, Vector3(hp2.x, hy + 23.2, hp2.z - 30.0), Landmarks1453.GOLD, Vector3(0, 45, 0), 4, 0.0)
 	d.cyl(1.0, 18.0, Vector3(hp2.x, hy + 9.0, hp2.z + 20.0), Color("8a6a50"), Vector3.ZERO, 8)
 	var col: Vector3 = World1453.LANDMARKS["column"]
 	if region_name != "byz_aya":            # Ayasofya parçası kendi sütununu kurar (ev:column)
-		d.cyl(3.0, 34.0, Vector3(col.x, east_surf(col.x, col.z) + 17.0, col.z), Color("b06a50"), Vector3.ZERO, 12)
+		# Yerdeki Konstantin Sütunu'nun biçimi (ByzCity.COLUMN: kaide, porfir gövde, altın halkalar)
+		ByzCity.column_parts(func(kind: String, sz: Vector3, at: Vector3, c: Color, _solid: bool) -> void:
+			var q := Vector3(col.x, east_surf(col.x, col.z), col.z) + at
+			if kind == "box":
+				d.box(sz, q, c)
+			else:
+				d.cyl(sz.x, sz.y, q, c, Vector3.ZERO, 12))
+	# Büyük Saray: yamaca basamaklanan teraslar (eskiden düz kutular): kemerli destek duvarları (alt yapı), korkuluk
+	# silmesi, üstte bahçe ve döşeme; yıkıntılar Landmarks1453._palace_ruins
 	var gp: Vector3 = World1453.LANDMARKS["great_palace"]
 	for k in 4:
 		var p := gp + Vector3(k * 8.0, 0, -k * 14.0)
 		if not _free(p.x, p.z, 20.0):
 			continue
-		d.box(Vector3(30.0, 8.0 + k * 2.0, 40.0), Vector3(p.x, east_surf(p.x, p.z) + 4.0, p.z), Color("b8a888").darkened(0.05 * k))
+		var th := 8.0 + k * 2.0
+		var gy := east_surf(p.x, p.z)
+		var tc := Color("b8a888").darkened(0.05 * k)
+		d.box(Vector3(30.0, th, 40.0), Vector3(p.x, gy + 4.0, p.z), tc)
+		d.box(Vector3(30.4, 0.5, 40.4), Vector3(p.x, gy + 4.0 + th * 0.5 + 0.25, p.z), tc.lightened(0.12))
+		d.box(Vector3(26.0, 0.1, 30.0), Vector3(p.x, gy + 4.0 + th * 0.5 + 0.52, p.z + 3.0), Color("6a7a48") if k % 2 == 0 else Color("8a7e62"))
+		for side: float in [-1.0, 1.0]:
+			for a in 6:
+				var az := p.z - 15.0 + a * 6.0
+				d.box(Vector3(0.3, th * 0.55, 3.0), Vector3(p.x + side * 15.05, gy + 4.0 - th * 0.12, az), DARK_ARCH)
+		for a in 5:
+			var ax := p.x - 12.0 + a * 6.0
+			d.box(Vector3(3.0, th * 0.55, 0.3), Vector3(ax, gy + 4.0 - th * 0.12, p.z - 20.05), DARK_ARCH)
 	d.build(self)
 	# Serviler ve çınarlar: blokların içindeki bahçelerde (sokaklara, evlere değmez)
 	var cyp: Array = []
@@ -306,6 +359,32 @@ func _city_east() -> void:
 			cyp.append(t)
 	Scenery.scatter(self, Scenery.plane_tree_mesh(), pln)
 	Scenery.scatter(self, Scenery.cypress_mesh(), cyp)
+
+
+## Mahalle kilisesi (kapalı Yunan haçı planı, Bizans orta dönemi): kare naos, haç kollarının kiremit beşik çatıları,
+## ortada pencereli kasnak ve kurşun kubbe, doğuda apsis, batıda alçak narteks, yanlarda kemerli pencereler. Yönü yerinden
+## (rastgele sıra tüketmez). r: eski kutunun ölçüsü (5–8,5 m).
+func _church(d: Dressing, p: Vector3, r: float) -> void:
+	var yaw := fposmod(p.x * 0.37 + p.z * 0.11, 1.0) * 0.6 - 0.3
+	d.at(p, yaw)
+	var w := r * 2.0
+	var L := r * 2.4
+	var h := r * 1.15
+	var col := Color("b87060").lerp(Color("c8906a"), fposmod(p.x * 0.013 - p.z * 0.007, 1.0))
+	var tile := Landmarks1453.TILE
+	d.box(Vector3(w, h, L), Vector3(0, h * 0.5, 0), col)
+	d.box(Vector3(w + 0.12, 0.3, L + 0.12), Vector3(0, h * 0.6, 0), Landmarks1453.LIGHT)
+	d.prism(Vector3(w * 0.5, r * 0.45, L + 0.5), Vector3(0, h + r * 0.225, 0), tile)
+	d.prism(Vector3(w * 0.5, r * 0.45, w + 0.5), Vector3(0, h + r * 0.225, 0), tile.darkened(0.06), Vector3(0, 90, 0))
+	Landmarks1453._dome(d, Vector3(0, h + r * 0.35, 0), r * 0.42, r * 0.5)
+	Landmarks1453._apse(d, Vector3(0, 0, -L * 0.5), r * 0.42, h * 0.75, col.darkened(0.05))
+	d.box(Vector3(w * 0.9, h * 0.62, r * 0.7), Vector3(0, h * 0.31, L * 0.5 + r * 0.35), col.lightened(0.05))
+	d.prism(Vector3(w * 0.94, r * 0.3, r * 0.8), Vector3(0, h * 0.62 + r * 0.15, L * 0.5 + r * 0.35), tile, Vector3(0, 90, 0))
+	for sx: float in [-1.0, 1.0]:
+		for k in 3:
+			var zz := -L * 0.3 + k * L * 0.3
+			d.box(Vector3(0.15, r * 0.4, r * 0.18), Vector3(sx * (w * 0.5 + 0.02), h * 0.55, zz), DARK_ARCH)
+	d.at(Vector3.ZERO)
 
 
 ## Mese'nin Philadelphion'un doğusundaki kesimi revaklı: iki yanda sütun dizisi ve üstünde düz çatı (kavşaklarda
@@ -641,12 +720,28 @@ func _chain() -> void:
 func _blachernae() -> void:
 	var bp: Vector3 = World1453.LANDMARKS["blachernae"]
 	# Zemin: Theodosius surlarının bittiği yerden Haliç'e (ova ile şehir arasındaki boşluk kalmasın)
-	Props.box(self, Vector3(124.0, 0.6, 46.0), Vector3(-640.0, -0.3, 14.0), Color("6e6452"))
-	var wall := Props.box(self, Vector3(124.0, 16.0, 4.0), Vector3(-640.0, 7.0, 0.0), Color.WHITE)
-	Props.set_pattern(wall, STONE.darkened(0.08), "ashlar")
-	for k in 6:
-		var t := Props.box(self, Vector3(10.0, 22.0, 10.0), Vector3(-695.0 + k * 22.0, 10.0, 1.0), Color.WHITE)
-		Props.set_pattern(t, STONE.darkened(0.14), "ashlar")
+	# (bölümün kendi zemini gibi: içeride arnavut kaldırımı avlu, dışarıda toprak yamaç; eskiden düz gri levha)
+	Props.set_pattern(Props.box(self, Vector3(124.0, 0.6, 46.0), Vector3(-640.0, -0.3, 14.0), Color.WHITE), Color("4e4a36"), "dirt")
+	# Sur, kuleler, mazgallar ve Tekfur Sarayı: bölümün (30, 30o) kendi kabuğu, aynı ölçü ve desenle (Blachernae.shell_parts,
+	# bölümün Props kurucusu sahne dışında, sonra World1453.bake ile tek ağa); eskiden ayrı kutular: 16 m sur, altı kule,
+	# pencerisiz saray kütlesi. Işıklı pencereler gece yanar (ayrı ışık ağı).
+	var o := World1453.to_world("blachernae", Vector3.ZERO)
+	var tb := Blachernae.new()
+	tb.in_world = false
+	var bn := Dressing.new(362)
+	bn.chunk = 400.0
+	var emit := func(kind: String, size: Vector3, pos: Vector3, col: Color, pat: String, solid: bool, tag: String) -> void:
+		if kind == "glass":
+			bn.glow(size, o + pos, col)
+		elif kind == "merl":
+			Props.set_pattern(Props.box(tb, size, pos, Color.WHITE), col, pat)
+		else:
+			tb._emit(kind, size, pos, col, pat, solid, tag)
+	for part: String in ["wall", "palace", "join"]:
+		Blachernae.shell_parts(emit, part)
+	World1453.bake(tb.find_children("*", "MeshInstance3D", true, false), tb, Transform3D(Basis.IDENTITY, o), self, "FarBlachernae")
+	tb.free()
+	_night.append(bn.build(self))
 	# Blakherna surunun Haliç'e inen kısmı (köşeden kıyı suruna)
 	var w2 := Props.box(self, Vector3(4.0, 14.0, World1453.HORN_IN_Z + 2.0), Vector3(World1453.HORN_S_X + 2.0, 6.0, World1453.HORN_IN_Z * 0.5), Color.WHITE)
 	Props.set_pattern(w2, STONE.darkened(0.1), "ashlar")
@@ -654,11 +749,8 @@ func _blachernae() -> void:
 	var x := -698.0
 	while x < -582.0:
 		if rng.randf() < 0.8:
-			_wall_men.append(Transform3D(Basis(Vector3.UP, rng.randf_range(-0.3, 0.3)), Vector3(x, 15.0, 0.6)))
+			_wall_men.append(Transform3D(Basis(Vector3.UP, rng.randf_range(-0.3, 0.3)), Vector3(x, Blachernae.WALK_Y, 0.6)))
 		x += rng.randf_range(2.8, 4.2)
-	# Tekfur Sarayı: tuğla-taş bantlı üç katlı cephe
-	var pal := Props.box(self, Vector3(30.0, 22.0, 14.0), bp + Vector3(0, 11.0, 0), Color.WHITE)
-	Props.set_pattern(pal, Color("b07050"), "tekfur")
 
 
 # ---------------------------------------------------------------- karşı kıyılar
@@ -716,37 +808,98 @@ static func asia_h(x: float, z: float) -> float:
 	return lerpf(-4.0, h, smoothstep(-6.0, 14.0, d))
 
 
+## Bozdoğan Kemeri'nin tepesi: iki tepe arasındaki en yüksek zeminin üstünde (uzak siluet de bunu kullanır)
+static func aqueduct_top() -> float:
+	var a: Vector3 = World1453.LANDMARKS["aqueduct_a"]
+	var b: Vector3 = World1453.LANDMARKS["aqueduct_b"]
+	var gmax := -INF
+	var gmin := INF
+	for k in 9:
+		var gp := a.lerp(b, k / 8.0)
+		gmax = maxf(gmax, east_surf(gp.x, gp.z))
+		gmin = minf(gmin, east_surf(gp.x, gp.z))
+	return gmax + 6.0 + maxf(0.0, 14.0 - (gmax - gmin))
+
+
 ## Uçarak varılan anıtlar (Props ilkelleri: uçuşta katı olur): Havariyun Kilisesi, Bozdoğan Kemeri, Kız Kulesi, Üsküdar
 func _monuments() -> void:
 	var wall := Color("c89478")
 	var lead := Color("7a8594")
-	# Havariyun: haç planlı, beş kubbeli
+	var md := Dressing.new(394)
+	md.chunk = 4000.0
+	# Havariyun: haç planlı, beş kubbeli (eskiden iki kutu + beş silindir ve top). Haç kolları kiremit beşik çatılı, iki sıra
+	# kemerli pencere ve tuğla hatıllı; beş kubbe pencereli kasnaklı (Landmarks1453._dome), doğu kolunun ucunda apsis,
+	# batı kolunun önünde narteks; orta kubbede altın haç
 	var ap: Vector3 = World1453.LANDMARKS["apostles"]
 	if _free(ap.x, ap.z, 30.0):
 		var g := east_surf(ap.x, ap.z) - 0.5
-		var c := Vector3(ap.x, g, ap.z)
-		Props.box(self, Vector3(46, 14, 14), c + Vector3(0, 7, 0), wall)
-		Props.box(self, Vector3(14, 14, 46), c + Vector3(0, 7, 0), wall)
+		md.at(Vector3(ap.x, g, ap.z))
+		for arm: Vector3 in [Vector3(46, 14, 14), Vector3(14, 14, 46)]:
+			md.box(arm, Vector3(0, 7, 0), wall)
+			for bh: float in [4.6, 9.6]:
+				md.box(arm + Vector3(0.15, -arm.y + 0.4, 0.15), Vector3(0, bh, 0), Landmarks1453.LIGHT)
+		md.prism(Vector3(14.6, 4.0, 46.6), Vector3(0, 16.0, 0), Landmarks1453.TILE)
+		md.prism(Vector3(14.6, 4.0, 46.6), Vector3(0, 16.0, 0), Landmarks1453.TILE.darkened(0.06), Vector3(0, 90, 0))
 		for o: Vector3 in [Vector3.ZERO, Vector3(16, 0, 0), Vector3(-16, 0, 0), Vector3(0, 0, 16), Vector3(0, 0, -16)]:
 			var r := 6.0 if o == Vector3.ZERO else 4.8
-			Props.cyl(self, r, 4.0, c + o + Vector3(0, 16, 0), wall.lightened(0.05), Vector3.ZERO, 14)
-			Props.ball(self, r + 0.3, c + o + Vector3(0, 18.0, 0), lead, Vector3(1, 0.62, 1), 14)
-		Props.box(self, Vector3(0.5, 3.0, 0.5), c + Vector3(0, 23.5, 0), Color("d8b040"))
-	# Bozdoğan Kemeri: iki katlı kemer sırası (ayaklar ve kuşaklar)
+			Landmarks1453._dome(md, o + Vector3(0, 15.0, 0), r, 4.0, 0.62, o == Vector3.ZERO)
+		# Kemerli pencereler: her kolun iki yanında ve ucunda
+		for ax in 4:
+			var dir := Basis(Vector3.UP, ax * PI * 0.5)
+			for k in 3:
+				for row: float in [3.4, 8.6]:
+					var wp := dir * Vector3(-4.2 + k * 4.2, row, 23.05)
+					md.box((dir * Vector3(1.4, 2.6, 0.2)).abs(), wp, DARK_ARCH)
+				var sp := dir * Vector3(7.05, 8.6, 11.0 + k * 4.0)
+				md.box((dir * Vector3(0.2, 2.6, 1.4)).abs(), sp, DARK_ARCH)
+				md.box((dir * Vector3(0.2, 2.6, 1.4)).abs(), dir * Vector3(-7.05, 8.6, 11.0 + k * 4.0), DARK_ARCH)
+		Landmarks1453._apse(md, Vector3(23.0, 0, 0), 5.0, 11.0, wall.darkened(0.05))
+		md.box(Vector3(6.0, 9.0, 22.0), Vector3(-26.0, 4.5, 0), wall.lightened(0.05))
+		md.prism(Vector3(6.4, 2.2, 22.4), Vector3(-26.0, 10.1, 0), Landmarks1453.TILE)
+		md.at(Vector3.ZERO)
+	# Bozdoğan Kemeri: iki katlı kemer dizisi (eskiden kutu ayaklar ve iki düz kuşak). Her gözde iki ayak arasında yarım
+	# daire kemer (kemer taşları), üstünde dolgu; alt kat yüksek, üst kat basık; tepede su kanalı ve kapak taşları.
 	var a: Vector3 = World1453.LANDMARKS["aqueduct_a"]
 	var b: Vector3 = World1453.LANDMARKS["aqueduct_b"]
 	var n := int(a.distance_to(b) / 9.0)
 	var yaw := rad_to_deg(atan2(b.x - a.x, b.z - a.z))
+	var bas := Basis(Vector3.UP, deg_to_rad(yaw))
+	var ac := Color("b89a78")
+	# Kemerin tepesi iki tepe arasındaki en yüksek zeminin 20 m üstü (eskiden mutlak 20 m: zemin 18–22 m, kemer toprağa
+	# gömülüydü); kat hizaları da buna göre
+	var top := aqueduct_top()
+	var belt := top - 9.0
+	var span := a.distance_to(b) / n
 	for k in n + 1:
 		var p := a.lerp(b, float(k) / n)
 		if not _free(p.x, p.z, 6.0):
 			continue
 		var g := east_surf(p.x, p.z)
-		var top := 20.0
-		Props.box(self, Vector3(3.2, top - g + 2.0, 3.0), Vector3(p.x, (top + g) * 0.5 - 1.0, p.z), Color("b89a78"), Vector3(0, yaw, 0))
+		md.box(Vector3(3.2, top - g + 2.0, 3.0), Vector3(p.x, (top + g) * 0.5 - 1.0, p.z), ac, Vector3(0, yaw, 0))
+		if k == n:
+			continue
+		var q := a.lerp(b, (k + 0.5) / n)
+		if not _free(q.x, q.z, 6.0):
+			continue
+		var gq := east_surf(q.x, q.z)
+		var rr := (span - 3.0) * 0.5
+		# Alt kat kemeri (üzengisi zeminin 0,55'inde), üst kat kemeri (11 m'den), aralarında dolgu ve kuşak
+		for lv: Vector2 in [Vector2(lerpf(gq, belt, 0.55), belt), Vector2(belt + 4.2, top - 0.8)]:
+			var spring := lv.x
+			for v in 7:
+				var aa := PI * (v + 0.5) / 7.0
+				var vp := Vector3(q.x, spring + sin(aa) * rr, q.z) + bas * Vector3(0, 0, cos(aa) * rr)
+				md.box(Vector3(3.0, 0.9, 1.1), vp, ac.darkened(0.06), Vector3(rad_to_deg(aa) - 90.0, yaw, 0))
+			var fill_lo := spring + rr * 0.75
+			if lv.y > fill_lo:
+				md.box(Vector3(2.9, lv.y - fill_lo, span - 3.0), Vector3(q.x, (lv.y + fill_lo) * 0.5, q.z), ac.darkened(0.03), Vector3(0, yaw, 0))
 	var mid := (a + b) * 0.5
-	for lvl: float in [11.0, 19.5]:
-		Props.box(self, Vector3(3.4, 1.6, a.distance_to(b) + 3.0), Vector3(mid.x, lvl, mid.z), Color("a88a68"), Vector3(0, yaw, 0))
+	for lvl: float in [belt, top - 0.5]:
+		md.box(Vector3(3.4, 1.0 if lvl < top - 2.0 else 1.6, a.distance_to(b) + 3.0), Vector3(mid.x, lvl, mid.z), Color("a88a68"), Vector3(0, yaw, 0))
+	md.box(Vector3(3.6, 0.4, a.distance_to(b) + 3.2), Vector3(mid.x, top + 0.5, mid.z), Color("c8b090"), Vector3(0, yaw, 0))
+	for sx: float in [-1.0, 1.0]:
+		md.box(Vector3(0.5, 0.8, a.distance_to(b) + 3.0), Vector3(mid.x, top + 0.9, mid.z) + bas * Vector3(sx * 1.4, 0, 0), Color("b8a080"), Vector3(0, yaw, 0))
+	md.build(self)
 	# Kız Kulesi (Damalis): adacık, Bizans burcu (Komnenos dönemi kare kule, mazgallı; kubbeli köşk Osmanlı'dır)
 	var dm: Vector3 = World1453.LANDMARKS["damalis"]
 	Props.ball(self, 9.0, dm + Vector3(0, -3.0, 0), Color("8a8270"), Vector3(1.3, 0.6, 1.0), 10)

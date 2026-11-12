@@ -306,6 +306,7 @@ static func galley(parent: Node3D, p: Vector3, yaw: float, lantern := false) -> 
 		d.glow(Vector3(0.35, 0.5, 0.35), Vector3(0, 4.2, -9.6), Color("ffb040"))
 		d.glow(Vector3(0.25, 0.35, 0.25), Vector3(0, 11.5, 1.0), Color("ffc060"))
 	d.build(g)
+	Flame.from_glow_boxes(g)          # fener ateşi kutu değil alev
 	return g
 
 
