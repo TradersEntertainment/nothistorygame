@@ -97,7 +97,16 @@ Kat: 1 katlı 6 895 · 2 katlı 2 567 · 3 katlı 133 (yalnız çarşı ve Latin
 - Avlu çukur değil: zemin arazi, kapı ağzı 1,6 m (sol, sağ ya da arka duvarda); avlu ile karşısındaki yapı arasında ≥ 1,4 m.
 - Yamaçta taban oturur: sıranın arka köşeleri cephe tabanından en çok 1,0 m yüksek, sıra boyunca düşü ≤ 2,4 m; alçak
   köşelerde ŞEHİR'in taş kaidesi.
-- Gerçek CharacterBody ile çatıya çıkış ve çatıdan çatıya geçiş: BAKILMADI (ŞEHİR-2 görevi madde 6; sayım ve ölçüyle).
+- **Gerçek oyuncuyla sokaktan dama (KISMEN):** sonda `oyuncu=1` kipi (`scripts/player/player.gd`, CharacterBody3D) beş teras
+  evin dış merdiveninin dibinden ileri yürür. Bulunan ve düzeltilen üç kusur: (1) basamak derinliği 0,28 m'ydi (kapsül
+  basamağa basamıyordu) → evin bütün derinliğine yayıldı (0,45–0,8 m); (2) merdivenin alt ucu evin arkasındaydı (arka
+  komşu bitişikse sokaktan ulaşılamıyordu) → sokak cephesinden başlar, arkaya çıkar; açık yanda 1,0 m taş korkuluk;
+  (3) düz damın 10 cm'lik yan saçağı merdivende başa çarpıyordu → merdiven yanında saçak yok, teras korkuluğu içeride.
+  Son koşu: **1/5 PASS** (Haliç kıyısı, gerçek 435, 697: 3,6 m çıkıp dama ulaştı); kara surunun dibindeki üç evde (gerçek
+  −4 990, −820 / −4 987, −1 029 / −3 597, −239) oyuncu merdivenin 2,4 m'sinde duruyor (çarpışma listesinde yalnız zemin;
+  adsız bir parça gövdesinin üstünde: sur/kapı ayrıntısının merdivenle çakışması olası — KANITSIZ); bir evde (−2 265, −617)
+  ilk basamakta (sokak evin tabanından alçak: ilk basamak > 0,42 m). Satırlar: `DOKU2 cati_sina …`.
+- Çatıdan çatıya geçiş gerçek oyuncuyla: BAKILMADI (ŞEHİR-2'nin sondasında "oyun denetimi … çatıdan çatıya" var).
 
 ## 6. Bütçe — KISMEN (benim katmanım içinde; toplam yer sınırı ordugâh yüzünden aşılıyor)
 
@@ -171,7 +180,8 @@ Kurulum süresi (açılışta bir kez): IstSokak.build 4,4 sn (sokak ağı 1,4 s
 
 ## 9. BAKILMADI / KANITSIZ
 
-- Gerçek oyuncu (CharacterBody) ile çatıya çıkış, çatıdan çatıya geçiş, avludan çıkış: BAKILMADI (kurallar ve sayımla).
+- Gerçek oyuncu ile dama çıkış 1/5 (§5); çatıdan çatıya geçiş ve avludan çıkış oyuncuyla BAKILMADI (kurallar ve sayımla).
+- Sıranın ilk basamağı ile sokak arasındaki yükseklik farkı (yamaçta > 0,42 m olabilir): ölçülmedi.
 - Zeminin hareketli kamerada titremesi (z-çakışması): durağan karelerde yok; hareketli gözlem BAKILMADI.
 - Gece karesi: BAKILMADI (gece ışıklarını ŞEHİR kuruyor; ev yerleri değişti, koşul aynı).
 - Eski dünya (World1453) ile bölüm testleri: IstEvler'in eski örnekleri (v < 7) aynı ölçüde kaldı; eski dünyada IstSehir
