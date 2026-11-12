@@ -26,7 +26,7 @@ func _bos_say() -> void:
 			if mm.mesh.has_meta("bitki_kit"):
 				meshler[mm.mesh] = true
 				for k in cnt:
-					agaclar.append([gt * mm.get_instance_transform(k).origin, String(mm.mesh.get_meta("bitki_kit"))])
+					agaclar.append([gt * mm.get_instance_transform(k).origin, String(mm.mesh.get_meta("bitki_kit")), str(n.get_path()).right(70)])
 			elif _ev_mi(n):
 				var ab := mm.mesh.get_aabb()
 				var anah := "%d_%d" % [int(ab.size.x), int(ab.size.y)]
@@ -43,9 +43,9 @@ func _bos_say() -> void:
 				meshler[mi.mesh] = true
 				if mi.has_meta("bitki_konum"):
 					for kt: Array in mi.get_meta("bitki_konum"):
-						agaclar.append([mi.global_transform * (kt[0] as Vector3), String(kt[1])])
+						agaclar.append([mi.global_transform * (kt[0] as Vector3), String(kt[1]), str(mi.get_path()).right(70)])
 				else:
-					agaclar.append([mi.global_position, String(mi.mesh.get_meta("bitki_kit"))])
+					agaclar.append([mi.global_position, String(mi.mesh.get_meta("bitki_kit")), str(mi.get_path()).right(70)])
 	# sokak ızgarası
 	var izg := {}
 	var sk: IstSokak = IstSehir.sokak
@@ -114,7 +114,7 @@ func _bos_say() -> void:
 			say[h] += 1
 			if (ornek[h] as Array).size() < 6:
 				var r := IstGeo.real(p.x, p.z)
-				(ornek[h] as Array).append("%s(%d,%d)" % [tur, int(r.x), int(r.y)])
+				(ornek[h] as Array).append("%s(%d,%d)%s" % [tur, int(r.x), int(r.y), ("[" + String(a[2]) + "]") if a.size() > 2 else ""])
 	var beyaz := 0
 	for m: Mesh in meshler:
 		if m.has_meta("bitki_carpan"):
