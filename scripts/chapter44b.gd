@@ -753,6 +753,8 @@ func _cannon_shot() -> void:
 	# Test (hit): bot ilk küçük parçanın altında durur: isabet yolu (su alma, karanlık, ışığın bulunması) sınanır
 	if GameState.autotest and GameState.autotest_variant == "hit" and hits == 0 and _shot_n % 2 == 1:
 		_bot_hold = WARN_SECS + 1.5
+		_boat_speed = 0.0              # süzülüp parçanın altından çıkmasın (PACE'te gerçek hızda)
+		_wave = Vector3.ZERO
 		_drop(boat.global_position, 4)
 		return
 	if _shot_n % 2 == 1:
