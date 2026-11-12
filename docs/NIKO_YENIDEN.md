@@ -391,3 +391,107 @@ Sahip yalnızca Niko'nun repliklerine izin verdi; aşağıdakiler **ayrıca soru
 ---
 
 *Hazırlayan notu: 12 örnek replik üç yönde de uzunluk (eski metnin %60–140'ı), rakam ve parantez açısından betikle denetlendi. Her biri, anahtarın betikteki işini (yön, uyarı, seçim açma, sonuç, bayrak) korur. Hiçbir bayrak, koşul ya da akış değişmez.*
+
+---
+
+## Düzeltme: Türkçe düşünülmüş replikler
+
+**Neden:** Sahip (A) yönü için: "mantıklı ama Türkçe esprilere falan dikkat et, translate olduğu belli olmasın. Türkçeye Türkçe düşün, İngilizceye İngilizce düşün." Bu söz artık bütün yeni replikler için bağlayıcı yazım kuralı (`docs/_ajan/gorev/_yazim_kurali.md`, `wip/0.99.119` dalı). Üç yönün 12'şer repliği bu kuralla, yüksek sesle okunmuş gibi tek tek sınandı.
+
+**Sınama ölçütü:** Bir kahvede, çarşıda, surda biri bunu böyle der mi? Elenenler üç türdü:
+- **İngilizce cümle iskeleti:** "Kim var orada?" (*Who goes there?* çevirisi; Türk nöbetçisi "Kim o?" der), "Annem inanmayacak!" (*Mom won't believe it*; Türkçesi "Anneme anlatsam inanmaz!"), "Bu iyi bir gündü." (*This was a good day*; Türkçesi "Böyle gün az gördüm").
+- **Kuru bildirme cümlesi:** "Geçiş parası var!", "Yol parası yok.", "Saray casus başına ödül veriyor!" Bunlar bilgi veriyor ama esnaf böyle konuşmaz; esnaf deyimle konuşur.
+- **Kurulmuş, söylenmeyen kalıp:** "orada mühür sayarlar, para saymazlar", "Yatak parası yok, sevin", "kuzen akşam sayar", "üstüne ne gelirse hesaba yazarım".
+
+**Değişmeyenler:** anahtarlar, yön kimlikleri, her repliğin oyundaki işi (yön, uyarı, seçim açma, "fes + casus" dayanağı, form esprisi, pazarlık bilgisi: elli akçe, bir gün, akşam), bayrak ve akış. `ses_tarifi_en` aynen; `okuma_notu`na yalnız İngilizce ses için bir cümle eklendi. Uzunluk eski önerinin %60–140'ı içinde (en yükseği %133), İngilizce Türkçenin ±%30'u içinde; rakam, kısaltma ve parantez yok (betikle denetlendi). Rumca seyrek: (a)'da iki ("Ela", "Panagia mu"), (b)'de hiç, (c)'de bir ("Panagia mu", korku anında).
+
+**İngilizce nasıl yazıldı:** Her İngilizce replik Türkçeden çevrilmedi, aynı işi gören İngilizce söz bulundu. Türkçe deyim İngilizceye deyim olarak taşınmadı: "siftah" → *catch of the day*, "benden ikram" → *on the house*, "veresiye" → *on your tab*, "o ayrı hesap" → *Fishing's extra*, "sopa düşer" → *I get a hiding*. Eşleşmeler bazen aynı espriyi, bazen yalnızca aynı işi taşıyor; her birinin gerekçesi JSON'daki `notlar` alanında ("TR: … / EN: …").
+
+### (a) Esnaf nöbetçi
+
+**İngilizcedeki sesi:** Levanten liman tüccarının İngilizcesi: kısa, alışverişe alışık cümleler, "friend" hitabı, balık ve hesap defteri benzetmeleri. Aksan taklidi yazımı yok; aksanı ses verir.
+
+Bu yönde ilke: **bir replikte en çok bir esnaf kalıbı**, gerisi düz konuşma. Kalıplar 12 repliğe dağıldı ve hiçbiri tekrarlanmıyor: kesene davran, o ayrı hesap, benden ikram, kefil, ona göre konuşuruz, siftah, gecelik, ne alan var ne satan, duymazlıktan gelmek, veresiye. "Hesap/defter" sözü bilerek ilk ve son iki replikte duruyor: (veresiye → deftere yazmıyorum) yayın iskeleti bu.
+
+| Anahtar | Önce | Sonra (TR) | Sonra (EN) |
+|---|---|---|---|
+| `D4B_N_01` | Hey, fesli! Zincir yol değil! Geçeceksen geçiş parası var! | Hey, fesli! Burası köprü değil, zincir! Geçeceksen kesene davran! | Oi, fez! That's a harbour chain, not a bridge! Crossing isn't free, friend! |
+| `D4B_N_02` | Gece geçişi iki katı! Düşersen seni ben çıkarırım, o da ayrı hesap! | Gece yarısı fiyat ikiye katlanır, bilmiş ol! Düşersen sudan ben çıkarırım; o ayrı hesap! | Night rates after midnight, double! And if you fall in, I'll fish you out. Fishing's extra! |
+| `D4B_N_03` | Kapı şu dipte, fesli. Gel. Yolda üstüne ne gelirse hesaba yazarım. | Kapı şu dipte, fesli, gel bakalım. Yolda kafana ne düşerse benden ikram. | Gate's at the bottom, fez. Come on. Anything hits your head on the way, it's on the house. |
+| `D6B_N_GULL` | Koş, casus! Martı iznini kaptı! O kâğıt olmadan seni zindana atarlar, ben de kefil olamam! | Ela, koş, casus! Martı iznini kaptı! Kâğıtsız yakalanırsan zindan, benden de kefil falan bekleme! | Run, spy! That gull's got your permit! No paper means the dungeon, and don't come asking me to vouch for you! |
+| `D4B_N_GATE` | Dur. Kimsin? Cebinde ne var? Göster, ona göre konuşuruz. | *(aynen: sınamayı geçti)* | Hold it. Who are you? What's in your pockets? Show me, then we'll talk. |
+| `D4B_N_SPY` | Fes mi o? Türk casusu! Saray casus başına ödül veriyor! | Panagia mu, fes mi o? Türk casusu! Bu gecenin siftahı senden! | Holy Mother, is that a fez? A Turkish spy! Now that's the catch of the day! |
+| `D4B_N_CELL` | Zindan defteri: adın, baban, fesin rengi. Yatak parası yok, sevin. | Zindan defteri: adın, baban, fesin rengi. Gecelik almıyorum, şükret. | Dungeon ledger: name, father, colour of fez. Room's free tonight. Don't get used to it. |
+| `D6B_N_PERMIT` | …Öbür altı odaya hiç girme; orada mühür sayarlar, para saymazlar, iş çıkmaz. | …Öbür altı odaya hiç girme; oralarda ne alan var ne satan, bütün gün mühür sayarlar. | Staying in the City? You need a Guest Permit. Theodoros, last room at the end. Skip the other six; nothing changes hands in there, they just count seals all day. |
+| `D6B_N_E_03` | İmparator diyor: mektubu Sultan'a götür. Yol parası yok. | İmparator diyor: mektup Sultan'a. Harçlığı sordum, duymazlıktan geldi. | The Emperor says: letter to the Sultan. I asked about expenses. He went a bit deaf. |
+| `MG_HAG_NIKO_OPEN` | Kayık kuzenimin, ama kuzen bugün nöbette. Elli akçe, bir gün. Güneş batmadan getir; kuzen akşam sayar. | Kayık kuzenimin; kuzen nöbette, kayık boşta. Bir günlüğü elli akçe. Güneş batmadan getir, kuzen dönmeden. | Boat's my cousin's. Cousin's on the wall, boat's just sitting there. Fifty akçe a day. Back by sundown, before he is. |
+| `D6B_N_BYE` | Git, casus! Bayrağın parasını almadım, unutma! Sağ dön de ödersin! | Git, casus! Bayrağı veresiye yazdım, haberin olsun. Bana borçlu ölmek yok; sağ dön, öde. | Off you go, spy! The flag's on your tab. And nobody dies owing me money, so come back and settle up. |
+| `D24_NK_SAVED` | Çocuk kuru. Bunun parasını kimseden almam. Senden de almam. | Çocuk kuru. Bunu deftere yazmıyorum, Tolga. Ne sana, ne kimseye. | The boy's dry. That one's not going on anybody's tab, Tolga. Not even yours. |
+
+Notlar:
+- `SPY`: Tolga'nın "Fes 1829'da gelecek" cevabı "fes + casus" sözlerine bağlı; ikisi de duruyor. "Ödül" isteği "siftah"ın içinde: casus onun için satılacak mal.
+- `MG_HAG_NIKO_OPEN`: "sana özel / dost fiyatı" kalıbı bilerek kullanılmadı; `MG_HAG_NIKO_DEAL` zaten "dost fiyatı" esprisini yapıyor, açılışta harcanmasın.
+- `D24_NK_SAVED`: Niko 24'te Tolga'ya adıyla sesleniyor (`D24_NK_01`, `_LATE`); burada da adı geçiyor.
+
+### (b) Eski nöbetçi (önerilen)
+
+**İngilizcedeki sesi:** Yaşlı bir liman askerinin kuru İngilizcesi: kısa cümle, alttan alma (understatement), "Why not." gibi düz kabuller. Aksan taklidi yazımı yok.
+
+Bu yön zaten az konuştuğu için en az çeviri kokan yöndü; 12 replikten 5'i aynen kaldı. Düzeltilenlerin çoğu "noktalı telgraf" ile "İngilizce iskelet" arasındaki ince çizgide.
+
+| Anahtar | Önce | Sonra (TR) | Sonra (EN) |
+|---|---|---|---|
+| `D4B_N_01` | Kim var orada? …Fesli. Zincirde. Gece yarısı. Olur. | Kim o? …Zincirde fesli biri. Gecenin bu saatinde. Eh, o da olur. | Who goes there? …Man in a fez. On the chain. At midnight. Why not. |
+| `D4B_N_02` | Zincirden in, fesli. Ben ok atmam. Ok bitti. Tavuk var, onu atarım. | Zincirden in, fesli. Ok atacaktım, ok bitti. Tavuk kaldı. Onu atarım. | Off the chain, fez. I'd shoot, but we're out of arrows. Got a chicken. That'll do. |
+| `D4B_N_03` | Kapı şu dipte. Yürü. Başını eğ; elime ne geçerse atacağım, kusura bakma. | *(aynen)* | Gate's at the bottom. Walk. Head down; I'm throwing whatever I can find. Nothing personal. |
+| `D6B_N_GULL` | Martı. İznin gitti. Koş, casus; kâğıtsız yakalanırsan seni yine bana getirirler, ben de yine yazarım. | *(aynen)* | Gull. There goes your permit. Run, spy. They catch you without paper, they bring you to me, and I write you up again. |
+| `D4B_N_GATE` | Dur. Adın sonra. Cebinde ne var, önce onu göster. | Dur. Adını sonra sorarım; önce cepler. Ne var orada, göster. | Hold it. Name can wait. Pockets first. Let's see. |
+| `D4B_N_SPY` | Fes. Türk casusu. Bu ay üçüncü. Öbür ikisi balıkçıydı. | Fes. Türk casusu. Bu ay üçüncüsün; öbür ikisi balıkçı çıktı. | Fez. Turkish spy. Third this month. The other two were fishermen. |
+| `D4B_N_CELL` | Zindan defteri. Adın, baban, fesin rengi. Acelesi yok, sabah yazarız. | *(aynen)* | Dungeon ledger. Name, father, colour of fez. No hurry. We'll write it up in the morning. |
+| `D6B_N_PERMIT` | …Öbür altı oda bugün yalnız mühür sayıyor. Sayar dururlar. Sen sona git. | …Öbür altısında mühür sayarlar; ben otuz yıldır bu surdayım, onlar hâlâ sayıyor. Sen sona git. | Staying? You need a Guest Permit. Theodoros, last room. The other six count seals. Thirty years I've been on this wall; they're still counting. Go to the end. |
+| `D6B_N_E_03` | İmparator diyor: mektup. Sultan'a. Git. | İmparator diyor: mektup Sultan'a. Kısası bu. | The Emperor says: letter, Sultan. That's the gist. |
+| `MG_HAG_NIKO_OPEN` | Kayık kuzenimin. Kuzen bilmiyor, bilmesin. Elli akçe, bir gün. Akşama getir, kuzen nöbetten dönmeden. | *(aynen)* | Boat's my cousin's. Cousin doesn't know. Let's keep it that way. Fifty akçe, one day. Back by evening, before he's off watch. |
+| `D6B_N_BYE` | Git, casus. Dümdüz yürü, koşma. …Annene selam söyle. | *(aynen)* | Go on, spy. Walk straight. Don't run. …Give your mother my regards. |
+| `D24_NK_SAVED` | Çocuk kuru. Otuz yıldır bu surdayım. Bu iyi bir gündü. | Çocuk kuru. Otuz yıldır bu surdayım; böyle gün az gördüm. | The boy's dry. Thirty years on this wall. Not many days like this one. |
+
+Neden değişti, kısaca: "Kim var orada?" ve "Bu iyi bir gündü" İngilizce cümlenin Türkçe kelimelerle doldurulmuşu; "Adın sonra" ve "Öbür altı oda … mühür sayıyor" (odalar saymaz) söylenmez; "mektup. Sultan'a. Git." kuru değil telgraf, "Kısası bu" ise Türkçenin kendi özet kalıbı ve espriyi tercüme eden adama bağlıyor.
+
+### (c) Acemi nöbetçi
+
+**İngilizcedeki sesi:** Liman mahallesinden yirmi yaşında bir delikanlının İngilizcesi: aceleci, kendini düzelten, "I mean it!" gibi blöf kuyrukları. Aksan taklidi yazımı yok.
+
+| Anahtar | Önce | Sonra (TR) | Sonra (EN) |
+|---|---|---|---|
+| `D4B_N_01` | Kim var orada?! Dur! Ben nöbetçiyim! Fesli! Kımıldama! | Dur! Kim o?! Kımıldama, fesli! …Yok, kımılda, yavaş kımılda! | Halt! Who goes there?! Don't move, fez! …No, move. Move slowly! |
+| `D4B_N_02` | Okum var! …Yok, okum yok. Ama tavuğum var! Ciddiyim! | *(aynen)* | I've got a bow! …No, I haven't. But I've got a chicken! I mean it! |
+| `D4B_N_03` | Kapıya yürü, fesli! Ben buradayım! …Korktuğumdan değil, nöbet bu. | Kapıya yürü, fesli! Ben arkandayım! …Korktuğumdan değil ha, usul böyle. | To the gate, fez! I'm right behind you! …Not because I'm scared. It's procedure. |
+| `D6B_N_GULL` | Martı kaptı! Koş, casus, koş! İzinsiz yakalanırsan zindan, beni de nöbetten alırlar! | Panagia mu, martı kaptı! Koş, casus, koş! Kâğıtsız yakalanırsan zindan, bana da sopa düşer! | Holy Mother, the gull's got it! Run, spy, run! They catch you without papers, you get the dungeon and I get a hiding! |
+| `D4B_N_GATE` | Dur! Kimsin? Ne getirdin? Elindekini göster, yavaş! | *(aynen)* | Halt! Who are you? What've you got? Show me. Slowly! |
+| `D4B_N_SPY` | Fes! Türk casusu! Benim ilk casusum! Annem inanmayacak! | Fes! Türk casusu! İlk casusum! Anneme anlatsam inanmaz! | A fez! A Turkish spy! My first spy! Wait till I tell my mother! |
+| `D4B_N_CELL` | Zindan formu. Adın, baban, fesin rengi. Yazmayı yeni öğrendim, yavaş söyle. | *(aynen)* | Dungeon form. Name, father, colour of fez. I've only just learned to write, so go slow. |
+| `D6B_N_PERMIT` | …Öbür altı odaya girme; ben girdim, bütün gün mühür saydım. | *(aynen)* | To stay in the City you need a Guest Permit. Theodoros, last room at the end. Don't go in the other six. I did. I counted seals all day. |
+| `D6B_N_E_03` | İmparator diyor: mektubu Sultan'a götür. …Lütfen dedi, duydun mu? | *(aynen)* | The Emperor says: take the letter to the Sultan. …He said please. Did you hear? |
+| `MG_HAG_NIKO_OPEN` | Kuzenimin kayığı. Kuzenim bilmiyor. Elli akçe, bir gün. Akşama getir; yoksa annem beni öldürür, kuzenimi de. | *(aynen)* | My cousin's boat. My cousin doesn't know. Fifty akçe, one day. Back by evening, or my mother kills me. And my cousin. |
+| `D6B_N_BYE` | Git, casus! Sağ git! Seni ben yakaladım, unutma! Başkası yakalamasın! | Git, casus! Sağ salim git! Seni ben yakaladım, unutma; başkasına yakalanma sakın! | Go, spy! Get home safe! I caught you, remember that. Don't you go getting caught by anyone else! |
+| `D24_NK_SAVED` | Çocuk kuru. Bağırmadım bak, Tolga. Bütün gün hiç bağırmadım. | *(aynen)* | The boy's dry. I didn't shout, Tolga. Did you notice? Not once, all day. |
+
+Neden değişti, kısaca: "Ben nöbetçiyim!" kendini tanıtan dublaj cümlesiydi; yerine durumdan doğan yanlış emir ("kımıldama… yok, kımılda") geldi. "Annem inanmayacak" İngilizce kalıp. "Beni de nöbetten alırlar" korkak bir acemi için ceza değil, ödül olurdu; "sopa düşer" gerçek korku. "Sağ git" yarım; Türkçede veda "sağ salim git".
+
+### Korunacak iyi repliklerin (§2) aynı kuralla sınanması
+
+Değiştirilmedi; yalnız işaretlendi. Çoğu sınamayı geçiyor. Çeviri kokanlar:
+
+| Anahtar | Metin | Durum | Neden |
+|---|---|---|---|
+| `D4B_NIKO_CHICKPEAS` | Nohut! Kavrulmuş! Haftalardır kuru ekmek yiyorum. Sen… sen iyi casussun. | **Çeviri kokuyor** | "Nohut! Kavrulmuş!" İngilizce *Chickpeas! Roasted!*'ın kelime kelime çevirisi; Türkçede kavrulmuş nohudun adı **leblebi** (oyunda eşyanın adı da leblebi). "Sen iyi casussun" da *you're a good spy* kalıbı. Cümlenin ortası ("Haftalardır kuru ekmek yiyorum") iyi, korunmalı. |
+| `D7_NIKO_AWE_TRUTH` | Arkadaşımı korurdum ama… size yalan söyleyemem. Gökten indiniz. | **Çeviri kokuyor** | "Arkadaşımı korurdum" *I'd have covered for my friend*'in çevirisi; Türkçede bu iş "arkadaşımı ele vermezdim" ya da "arkadaşımı satmazdım" ile söylenir. |
+| `D8Y_NIKO_DEP_TOWEL` | …Beyaz bir şey sallayanı kimse vurmaz. Genelde. | Sınırda | Tek kelimelik "Genelde." kuyruğu İngilizce *…Usually.* vuruşu; Türkçede bu ritim "Çoğu zaman yani." gibi bir uzantı ister. Ama Tolga aynı sözle karşılık verdiği için bağlantılı satırla birlikte ele alınmalı, tek başına dokunulmamalı. |
+| `D10H_N_1` | …Uyumamak için şarkı söylüyorum. Kötü söylüyorum. | Sınırda | İngilizce *I sing to stay awake. Badly.* kuyruğunu hatırlatıyor ama Türkçede de düz söylenince işliyor; "Hem de kötü söylüyorum." daha Türkçe olurdu. Öncelik düşük. |
+| `D6B_N_E_04` | …Diyor ki: kapı şu tarafta. (Sessizce) Aslında güzel bir şey dedi. Ben söylemeyeyim. | Geçiyor | Metin doğal; yalnız parantezli sahne notu seslendirmede okunur, `[TON]`'a taşınmalı (§4.2'de zaten yazılı). |
+| `D8Y_NIKO_BYE`, `_RULES`, `_LETTER`, `_OPENED` | "Yapma." / "…ikisi de ok yer." / "Üçünün de cezası idam." / "Bilmezsem yalan da söylemem." | Geçiyor | "Ok yer" Türkçenin "dayak yer" kalıbından; tam Türkçe. |
+| `D19_NK_02`, `D19_NK_TEZKIRE` | "Kaçabilirdiniz. Dönmüşsünüz." / "Şehir düşerse o kâğıt bir can kurtarır." | Geçiyor | "-mişsiniz" kipi tam Türkçe bir şaşkınlık; İngilizcesi ayrıca yazılmalı. |
+| `D20_NK_*`, `D24_NK_*` | "Bir yük benden!", "sırığa omzumu veririm", "Kurtulur, Tolga. Kurtulur.", "Çocuk kuru…" | Geçiyor | "Omuz vermek", "bir yük benden" Türkçenin kendi sözleri. |
+| `D4B_N_ISTANBUL` | İs-tin-polin? 'Şehre' mi diyorsun? … Başka şehir mi var? | Geçiyor | "Başka şehir mi var?" Türkçede doğal bir kibir sorusu. |
+| `D13_N_MISSED_STRANGER` | …Tamam. Kal. Ama gözüm üstünde. | Geçiyor | "Gözüm üstünde" Türkçede de yerleşik. |
+
+*Düzeltme notu: 36 replik (3 × 12) sınandı; 23'ü yeniden yazıldı (a: 11, b: 7, c: 5), 13'ü sınamayı geçtiği için aynen kaldı. Hepsine ayrı İngilizce yazıldı. Uzunluk, rakam ve parantez betikle denetlendi. Ses üretilmedi; `i18n/strings.csv` ve oyunun hiçbir dosyası değişmedi.*
