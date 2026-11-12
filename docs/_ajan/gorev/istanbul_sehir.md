@@ -111,6 +111,14 @@ ilk kaba hâlini gönderir, sonra derinleştirir. Sen:
    durumu sahibine gösterecek. Havadan dört yönden ve tam tepeden kareleri her turda yenile
    (`docs/_kanit_istanbul/tur_<n>_*.jpg`).
 
+7. **Nihat'ın yan görevi** (sahibin sözü: "tüm tarihi eserlere özen nihat hepsinini üstüne uçuo bakma yan görevi vr
+   çünkü"): `World1453` içindeki `landmarks` / `forms` / `perches` listeleri ve `LANDMARKS` konumları yeni
+   modellerle AYNI yere otursun (işaret eserin tam üstünde, konma noktası gerçek çarpışmalı yüzeyde). Var olan dokuz
+   eserin kimlikleri ve sırası değişmesin (kayıtlı oyunlar); parçaların `catalog()` kayıtlarında `"gorev": true`
+   olan yeni eserleri listeye EKLE (kimlik büyük harf, görünen ad için `i18n/strings.csv`'ye tr/en satırı ekle;
+   var olan satırlara dokunma). Her eserin 15 m üstünden ve tam tepeden karesini kanıta koy; kutu gibi, üstü açık,
+   arka cephesi boş eser kalmasın (kusuru parça adıyla raporla).
+
 ## Sınırlar
 - Bölüm betiklerinde oynanışa (replik, süre, sayaç, sonuç, bot yolu, kalabalık sayısı) dokunma.
 - Başka bir oturum `wip/tekharita` dalında ordugâh, otağ, kıyı surları ve tünel göçlerini birleştiriyor:

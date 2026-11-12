@@ -81,6 +81,20 @@ k = 0,35, 0,5 ve 1,0 için önizlemede kur ve bak: üçünde de inandırıcı ve
 - Performans: lod 0'da yapı başına ≤ 60 bin üçgen (büyük külliye ≤ 150 bin), lod 1 ≤ %15'i, lod 2 ≤ 600 üçgen.
   Yinelenen parçalar (mazgal, kemer, sütun, kiremit sırası, pencere) MultiMesh ile. Her karede ağ kurma yok.
 
+## NİHAT'IN YAN GÖREVİ (sahibin sözü, aynen: "tüm tarihi eserlere özen nihat hepsinini üstüne uçuo bakma yan görevi vr çünkü")
+Oyunda Nihat uçarak tarihî eserlerin ÜSTÜNE gelir ve bakar (yan görev: `scripts/world/world1453.gd` `landmarks` listesi:
+AYASOFYA, HIPODROM, KONSTANTIN, HAVARIYUN, BOZDOGAN, ZINCIR, GALATA, BLAKHERNA, SURLAR; `scripts/player/nihat_powers.gd`
+`_check_landmarks`). Yani her tarihî eser en çok HAVADAN, YAKINDAN (10–40 m üstünden, çevresinde dönerek) görülecek:
+- Üst yüzeyler bitmiş olacak: kubbe (kurşun kaplama dilimleri, kasnak pencereleri, tepede haç), çatı (kiremit sıraları,
+  mahya), tonoz sırtı, sur üstü yürüme yolu, kule tepesi, avlu döşemesi. Üstü açık kutu, tek renk düz tepe, çatısız
+  duvar, eksik arka cephe, içi görünen boş kabuk KABUL EDİLMEZ. Harabe ise harabenin içi de kurulur (yıkık tonoz, ot,
+  moloz, mozaik parçası).
+- Dört cephe + tepe aynı özenle; "ön cephe dekoru" yok. Tam tepeden, 45° dört yönden ve 15 m yakın uçuştan kareye bak.
+- Her eser bir bakışta tanınır: ayırt edici silüet + en az beş ayırt edici ayrıntı (raporda say).
+- `perches_x`: Nihat'ın konabileceği en az bir nokta (kubbe tepesi, kule, sütun başı); o noktada çarpışma var.
+- `catalog()` kaydına ekle: `"bakis": Vector3(…)` (yerel; yan görev işaretinin duracağı nokta: eserin tepesinin
+  6–10 m üstü) ve `"bakis_r": float` (yaklaşma yarıçapı), `"gorev": true` (ünlü eserler için).
+
 ## Önizleme ve KENDİ denetimin (`tests/_ist/<ad>_onizleme.tscn`)
 Sahne: düz zemin, güneş (öğleden sonra, sıcak), gökyüzü; parçalarını k = 0,5 ile yan yana kurar; komut satırından
 `-- ist=<id> k=0.5 lod=0 shots=KLASÖR` alır. Şu kareleri PNG yazar (1280×720): oyuncu gözünden (1,7 m) dört yönden
