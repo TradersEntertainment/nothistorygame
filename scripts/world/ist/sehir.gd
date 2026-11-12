@@ -43,8 +43,11 @@ static var YER := {
 	# suya düşüyordu). Dizinde olanlar dizinden; olmayanlar bilinen yerinden (enlem/boylam, kestirim). Mese dilimi
 	# CityPlan'ın Mese'sine hizalanmadan konmaz (sokağı kapatırdı).
 	"mese": {"skip": true},
-	"konstantin": {"lm": "column", "quest": false, "skip_regions": ["byz_aya"]},
-	"tauri": {"lm": "forum_tauri"},
+	# forum döşemeleri meydanda (CityPlan meydanı, CityLife sivilleri yürür): döşeme yüzeyi arazi hizasına iner
+	# Konstantin: modülün sütun kaidesi eski sütunun (ByzCity.COLUMN) kaidesinden geniş, CityLife devriyesinin meydan yoluna
+	# taşıyor (city_check: devriye "evin içinde"); bu turda eskisi kalır
+	"konstantin": {"lm": "column", "quest": false, "skip": true, "dy": -1.0},
+	"tauri": {"lm": "forum_tauri", "dy": -0.5},
 	"arkadius": {"e": -3444.0, "n": -956.0},
 	"myrelaion": {"e": -1890.0, "n": -400.0},
 	"markianos": {"e": -2243.0, "n": 902.0},
@@ -79,6 +82,8 @@ static var YER := {
 	# guneybati (wip/ist-guneybati): Studios eski yerinde; Altın Kapı kara surlarının parçası (surlar modülüyle birlikte)
 	"studios": {"lm": "studios"},
 	"altinkapi": {"skip": true},
+	# Lykos köprüsü: haritada Lykos deresi yok; lod 1 çarpışması tutucunun dışına düşüyor (hub'da VISAUDIT), kurulmaz
+	"kopru": {"skip": true},
 	"halic_sur": {"skip": true},
 	"halic_eugenios": {"skip": true},
 	"halic_petrion": {"skip": true},
@@ -212,7 +217,7 @@ static func place_of(e: Dictionary) -> Dictionary:
 		hs.append(World1453.surface_h(q.x, q.y))
 	hs.sort()
 	var y: float = hs[2] if r > 25.0 else hs[0]
-	return {"pos": Vector3(w.x, y - 0.03, w.y), "yaw": yaw, "k": k, "r": r}
+	return {"pos": Vector3(w.x, y - 0.03 + float(fix.get("dy", 0.0)), w.y), "yaw": yaw, "k": k, "r": r}
 
 
 # ---------------------------------------------------------------- kurulum
@@ -268,6 +273,7 @@ func _place_all() -> void:
 		items.append(it)
 		# Uzak siluet hemen (ucuz): her yerden bakınca şehir boşluksuz
 		_build(it, 2)
+		_perch_pad(it)
 	print("ISTSEHIR yer=%d kur_ms=%.1f" % [items.size(), (Time.get_ticks_usec() - t0) / 1000.0])
 
 
@@ -286,10 +292,34 @@ func _build(it: Dictionary, lod: int) -> void:
 	stats["kur_ms_max"] = maxf(stats["kur_ms_max"], ms)
 	stats["kur_n"] += 1
 	if lod > 0:
+		_bake_lod(n, lod >= 2)
 		for c in n.find_children("*", "GeometryInstance3D", true, false):
 			c.set_meta("no_walk", true)
 	it["have"][lod] = n
 	_show(it)
+
+
+## Uzak/orta katmanın ilkel parçaları tek ağa pişirilir (World1453.bake: doku başına bir yüzey; uzakta tek yüzey):
+## yüzlerce çizim yerine bir iki. Çarpışma gövdeleri ve MultiMesh'ler olduğu gibi kalır.
+func _bake_lod(n: Node3D, flat: bool) -> void:
+	var list: Array = []
+	for c in n.find_children("*", "MeshInstance3D", true, false):
+		var mi := c as MeshInstance3D
+		if mi.mesh != null and mi.visible and not (mi.material_override is ShaderMaterial):
+			list.append(mi)
+	if list.size() < 3:
+		return
+	var holder := Node3D.new()
+	var mi := World1453.bake(list, n, Transform3D.IDENTITY, holder, "Pismis", 0.05 if flat else 0.03, 0, flat)
+	holder.remove_child(mi)
+	holder.free()
+	if mi.mesh == null:
+		mi.free()
+		return
+	for c: MeshInstance3D in list:
+		c.get_parent().remove_child(c)
+		c.queue_free()
+	n.add_child(mi)
 
 
 ## En ince kurulu katman görünür, ötekiler gizli (kurulmadan önce eskisi gizlenmez)
@@ -756,29 +786,52 @@ func quest_marks() -> Array:
 	return out
 
 
+## Yan görev eserinin konma noktası her uzaklıkta katıdır (lod 0 kurulmadan Nihat konabilsin): noktanın altında ince,
+## görünmez bir kapak (yapının kendi tepesinin içinde kalır)
+func _perch_pad(it: Dictionary) -> void:
+	if not (it["data"] as Dictionary).get("gorev", false):
+		return
+	var p := _perch_local(it)
+	if p == Vector3.INF:
+		return
+	var body := StaticBody3D.new()
+	body.name = "Konma_" + String(it["id"])
+	var cs := CollisionShape3D.new()
+	var bs := BoxShape3D.new()
+	bs.size = Vector3(1.4, 0.3, 1.4)
+	cs.shape = bs
+	body.add_child(cs)
+	body.position = (it["holder"] as Node3D).transform * p - Vector3(0, 0.15, 0)
+	add_child(body)
+	it["perch"] = (it["holder"] as Node3D).transform * p
+
+
+func _perch_local(it: Dictionary) -> Vector3:
+	if not it.has("script"):
+		return Vector3.INF
+	var fn := "perches_" + String(it["id"])
+	var scr := it["script"] as GDScript
+	var has := false
+	for m: Dictionary in scr.get_script_method_list():
+		if m["name"] == fn:
+			has = true
+			break
+	if not has:
+		return Vector3.INF
+	var pts = scr.call(fn, float(it["k"]))
+	if not (pts is Array) or (pts as Array).is_empty():
+		return Vector3.INF
+	var p0 = pts[0]
+	if p0 is Array and (p0 as Array).size() > 0:
+		p0 = p0[0]
+	return p0 if p0 is Vector3 else Vector3.INF
+
+
 ## Parçaların konma noktaları (perches_<id>): [ad, nokta (field yereli), yarıçap]; nokta lod 0'ın çarpışmalı yüzeyinde
 ## (Nihat yaklaşınca lod 0 kurulur)
 func perch_marks() -> Array:
 	var out: Array = []
 	for it: Dictionary in items:
-		if not it.has("script"):
-			continue
-		var fn := "perches_" + String(it["id"])
-		var scr := it["script"] as GDScript
-		var has := false
-		for m: Dictionary in scr.get_script_method_list():
-			if m["name"] == fn:
-				has = true
-				break
-		if not has:
-			continue
-		var pts = scr.call(fn, float(it["k"]))
-		if not (pts is Array) or (pts as Array).is_empty():
-			continue
-		var p0 = pts[0]
-		if p0 is Array and (p0 as Array).size() > 0:
-			p0 = p0[0]
-		if not (p0 is Vector3):
-			continue
-		out.append(["ist_" + String(it["id"]), (it["holder"] as Node3D).transform * (p0 as Vector3), 4.0])
+		if it.has("perch"):
+			out.append(["ist_" + String(it["id"]), it["perch"], 4.0])
 	return out

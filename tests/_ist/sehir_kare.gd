@@ -109,6 +109,11 @@ func _shot(name: String, at: Vector3, look: Vector3, fov := 60.0) -> void:
 	while guard < 600 and _busy():
 		await get_tree().process_frame
 		guard += 1
+	for we in find_children("*", "WorldEnvironment", true, false):
+		var env := (we as WorldEnvironment).environment
+		if env:
+			env.fog_enabled = false
+			env.volumetric_fog_enabled = false
 	for i in 6:
 		await get_tree().process_frame
 	await RenderingServer.frame_post_draw
