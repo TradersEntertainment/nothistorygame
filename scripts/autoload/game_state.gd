@@ -617,12 +617,14 @@ func _look_audit(delta: float) -> void:
 			mvg.y = 0.0
 			var spd := mvg.length() / dt
 			var cands: Array = []        # [tür, açı]
+			var walk_now: bool = spd > (0.25 if d.get("walking", false) else 0.35) and mvg.length() < 2.0      # gaze_dir ile aynı eşik/histerezis
+			d["walking"] = walk_now
 			if p.has_meta("grip_tw") and p.get("work_at") is Vector3 and p.get("work_at") != Vector3.INF:
 				var to: Vector3 = p.get("work_at") - gpos
 				to.y = 0.0
 				if to.length() > 0.5:      # kalçadaki ip tutamağı gibi gövdenin dibindeki iş noktası ölçülmez
 					cands.append(["grip", rad_to_deg(fwd.angle_to(to.normalized()))])
-			if lt != null and spd > 0.6 and mvg.length() < 2.0 and not p.get_meta("walk_back", false):
+			if lt != null and walk_now and not p.get_meta("walk_back", false):
 				cands.append(["walk", rad_to_deg(fwd.angle_to(mvg.normalized()))])
 			if not (act in _LOOK_FREE_ACT) and grp == "persons":
 				if lt == null and spd < 0.3:

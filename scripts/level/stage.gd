@@ -217,15 +217,22 @@ static func work_turn(who: Node3D, target: Vector3) -> bool:
 
 ## look_target'in gövdeyi çevireceği yatay yön (kişinin ebeveyn çerçevesinde). Vector3.ZERO: çevirme.
 ## to: hedefe yön (yerel, yatay); mv: bu karedeki yerel yer değişimi; act: iş hareketi; talking: kişi konuşuyor.
-##  1) Yürüyen (>0.6 m/s) kişi (konuşurken de) gittiği yöne bakar (geri geri yürüyecekse meta "walk_back").
+##  1) Yürüyen (>0.35 m/s; yürürken 0.25'e dek) kişi (konuşurken de) gittiği yöne bakar (geri geri yürüyecekse meta "walk_back").
 ##  2) work_focus > 0 (grip_hold): gövde işin noktasına (work_at) döner; noktası yoksa olduğu yerde kalır.
 ##  3) Alet işi yapan ve konuşmayan kişi gövdesini çevirmez (konuşurken döner).
 ##  4) Öbürleri: hedefe döner (konuşma bakışı, değişmedi).
 static func gaze_dir(who: Node3D, act: String, talking: bool, to: Vector3, mv: Vector3, delta: float) -> Vector3:
 	if delta > 0.0 and not who.has_meta("walk_back"):
 		var hv := Vector3(mv.x, 0.0, mv.z)
-		if hv.length() / delta > 0.6 and hv.length() < 2.0:
+		# rig.gd yürüme animasyonu 0,35 m/sn'de başlar: eşik aynı (bu hızda gövde "ay yürüyüşü" yapmasın). Histerezis:
+		# yürürken 0,25'e düşene dek yürüyüş sayılır (eşikte yön titremez)
+		var was_walk := who.has_meta("gaze_walk")
+		if hv.length() / delta > (0.25 if was_walk else 0.35) and hv.length() < 2.0:
+			if not was_walk:
+				who.set_meta("gaze_walk", true)
 			return hv
+		if was_walk:
+			who.remove_meta("gaze_walk")
 	if int(who.get("work_focus")) > 0:
 		var wa = who.get("work_at")
 		if wa is Vector3 and wa != Vector3.INF:
@@ -240,7 +247,7 @@ static func gaze_dir(who: Node3D, act: String, talking: bool, to: Vector3, mv: V
 		# 3 m içindeki muhatap (Tolga yanındaysa) konuşma sayılır: SAYFACE'e takılmadan dönüp bakar
 		talking = talking or to.length() < 3.0
 		# Alet işi: yalnız konuşurken Tolga'ya döner, konuşma bitince işinin yönüne (dönmeden önceki yön) geri döner
-		if who.has_meta("gaze_seen") and absf(angle_difference(float(who.get_meta("gaze_seen")), who.rotation.y)) > 0.6:
+		if who.has_meta("gaze_seen") and absf(angle_difference(float(who.get_meta("gaze_seen")), who.rotation.y)) > 0.6 * maxf(delta * 60.0, 1.0):
 			who.remove_meta("gaze_home")      # sahne betiği kişiyi başka yöne çevirdi: eski yönü geçersiz
 		who.set_meta("gaze_seen", who.rotation.y)
 		if talking:

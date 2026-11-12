@@ -2315,9 +2315,11 @@ func _turn_speaker(speaker_key: String) -> void:
 	var act = who.get("activity")
 	var pose = who.get("pose")
 	var busy = who.get("_busy")
-	if (busy is bool and busy) or (act is String and act != "") or (pose is String and pose != "stand"):
-		return
 	var lt = who.get("look_target")
+	if (busy is bool and busy) or (pose is String and pose != "stand"):
+		return
+	if act is String and act != "" and not (lt == p and _fast()):
+		return      # alet işindeki yalnız testte (ışınlanma) oyuncuya döndürülür; oyunda Stage.gaze_dir yaklaşınca çeviriyor
 	if lt != null and lt != p:
 		return      # bilerek başka birine bakıyor (padişaha, baltacıya)
 	var to := p.global_position - who.global_position
