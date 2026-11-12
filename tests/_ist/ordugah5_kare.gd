@@ -12,7 +12,7 @@ extends Node3D
 ##   ISTORDUBUTCE nokta= cizim= ucgen= ordu_cizim= ordu_ucgen=
 
 var out := "user://ordugah4"
-var set_ := "hepsi"
+var set_ := "yok"
 var gece := false
 var cam: Camera3D
 var root: Node3D
@@ -51,9 +51,6 @@ func _ready() -> void:
 	var p := ("gece_" if gece else "")
 	if poz_oku != "":
 		await _poz_tekrar(p)
-		print("ISTORDUKARE BITTI")
-		get_tree().quit(0)
-		return
 	if "cadir" in set_.split(","):
 		await _cadirlar()
 	if "ocak" in set_.split(","):

@@ -366,10 +366,10 @@ static func ateslar(host: Node3D, pts: Array, lod: int, yuk := 0.22, gunduz := f
 	for p: Vector2 in pts:
 		var y := gy(p.x, p.y) + yuk
 		fx.append(Transform3D(Basis().scaled(Vector3(w, h, w)), Vector3(p.x, y, p.y)))
-		gx.append(Transform3D(Basis().scaled(Vector3.ONE * maxf(w, h) * 2.6), Vector3(p.x, y + h * 0.4, p.y)))
+		gx.append(Transform3D(Basis().scaled(Vector3.ONE * maxf(w, h) * (2.6 if lod == 0 else 4.5)), Vector3(p.x, y + h * 0.4, p.y)))
 	var f := Flame.scatter_flames(host, fx)
 	f.name = "atesler"
-	if lod == 0 and gece:
+	if lod <= 1 and gece:          # ORDUGÂH-5: orta katmanda da hale (70 m'den gece ateş noktaları seçilsin)
 		var g := Flame.scatter_glows(host, gx, 0.55)
 		g.name = "haleler"
 

@@ -327,7 +327,8 @@ static func build(host: Node3D, alan: PackedVector2Array, tur: String, k: float,
 			if lod <= 1:
 				OC.leke(zs, fp, 2.2, Color("3e3830"), r5, rot, 0.7, 10)
 			fires.append(fpw)
-			ocak3.append(Vector3(fpw.x, fy, fpw.y))
+			if r5.randf() < 0.35:
+				ocak3.append(Vector3(fpw.x, fy, fpw.y))      # duman: küçük ocakların üçte biri (70 m'den "çubuk ormanı" olmasın)
 			var ns2 := r5.randi_range(2, 5)
 			var b0 := r5.randf() * TAU
 			for i in ns2:
@@ -619,7 +620,8 @@ static func _deve_cokegi(an: B, r: RandomNumberGenerator, rot: Transform2D, ok_a
 	# yük çuvalları
 	var cw := rot * (lp + Vector2(0, 2.5))
 	for i in 4:
-		an.box(Vector3(cw.x + i * 0.65, K.gy(cw.x, cw.y) + 0.25, cw.y), Vector3(0.6, 0.45, 0.85), K.SAMAN.darkened(0.15 * (i % 2)), rad_to_deg(r.randf()))
+		an.sph(Vector3(cw.x + i * 0.65, K.gy(cw.x, cw.y) + 0.24, cw.y), 0.4, K.SAMAN.darkened(0.15 * (i % 2)), 6, Vector3(0.78, 0.6, 1.05))   # ORDUGÂH-5: yük çuvalı yuvarlak
+		r.randf()
 	var dw := rot * (lp + Vector2(1.6, 2.5))
 	kisi.append([Vector3(dw.x, K.gy(dw.x, dw.y), dw.y), r.randf() * TAU, "saka"])
 

@@ -126,8 +126,8 @@ static func duman_mesh() -> ArrayMesh:
 		for i in rows:
 			var t0 := float(i) / rows
 			var t1 := float(i + 1) / rows
-			var w0 := 0.18 + 1.5 * t0
-			var w1 := 0.18 + 1.5 * t1
+			var w0 := 0.2 + 2.2 * t0 * t0 + 0.4 * t0
+			var w1 := 0.2 + 2.2 * t1 * t1 + 0.4 * t1
 			var p00 := ax * -w0 + Vector3(0, t0, 0)
 			var p10 := ax * w0 + Vector3(0, t0, 0)
 			var p01 := ax * -w1 + Vector3(0, t1, 0)
@@ -152,7 +152,7 @@ static func duman_mat(gece: bool) -> ShaderMaterial:
 	var m := ShaderMaterial.new()
 	m.shader = sh
 	m.set_shader_parameter("renk", Color(0.2, 0.19, 0.2) if gece else Color(0.83, 0.82, 0.8))
-	m.set_shader_parameter("yogun", 0.28 if gece else 0.5)
+	m.set_shader_parameter("yogun", 0.16 if gece else 0.4)
 	_dmat[key] = m
 	return m
 

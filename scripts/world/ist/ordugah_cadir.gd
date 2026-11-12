@@ -25,7 +25,7 @@ const IC := 0.34                             # iç yüzlerin karanlığı
 static var _cache := {}
 
 
-## Tür adları: "koni", "can", "catma", "buyuk", "pasa", "kil", "barinak"; katman öneki: "" yakın, "orta_", "uzak_"
+## Tür adları: "koni", "can", "catma", "buyuk", "pasa", "otag", "kil", "barinak"; katman öneki: "" yakın, "orta_", "uzak_"
 static func mesh(kind: String) -> ArrayMesh:
 	if _cache.has(kind):
 		return _cache[kind]
@@ -59,9 +59,9 @@ static func tris(kind: String) -> int:
 ## sarkma üssü, es saçak çökmesi, ov saçak taşması, val saçak boyu, serit saçak şeridi rengi, bez ana bez rengi,
 ## ip ip boyu (birim, dışa), acik ön yüz açık (kıl çadırı).
 static func _tur(k: String, lod: int) -> Dictionary:
-	var o := {"ex": 1.0, "ez": 1.0, "m": 2.0, "direk": [0.0], "P": 10, "nc": 3, "nr": 5, "hw": 0.95, "H": 2.85, "rs": 0.0,
+	var o := {"ex": 1.0, "ez": 1.0, "m": 2.0, "direk": [0.0], "P": 10, "nc": 3, "nr": 4, "hw": 0.95, "H": 2.85, "rs": 0.0,
 		"sp": 1.55, "es": 0.11, "ov": 0.04, "val": 0.14, "serit": Color(0.55, 0.45, 0.32), "bez": Color(0.97, 0.95, 0.9),
-		"ip": 0.42, "acik": false, "kapi": true, "skal": 2}
+		"ip": 0.42, "acik": false, "kapi": true, "skal": 2, "sx": 2.4, "sz": 2.4}
 	match k:
 		"koni":
 			o.merge({"nc": 2, "skal": 1}, true)
@@ -70,18 +70,23 @@ static func _tur(k: String, lod: int) -> Dictionary:
 				"serit": Color(0.32, 0.38, 0.55), "skal": 1}, true)
 		"catma":
 			o.merge({"ex": 0.5, "ez": 0.5, "m": 5.0, "direk": [-0.3, 0.3], "P": 10, "nc": 2, "nr": 4, "hw": 0.85, "H": 2.05,
-				"rs": 0.12, "sp": 1.3, "es": 0.08, "ov": 0.03, "val": 0.1, "ip": 0.16}, true)
+				"rs": 0.12, "sp": 1.3, "es": 0.08, "ov": 0.03, "val": 0.1, "ip": 0.16, "sx": 5.0, "sz": 3.6}, true)
 		"buyuk":
 			o.merge({"ex": 0.5, "ez": 0.5, "m": 2.6, "direk": [-0.2, 0.2], "P": 12, "nc": 2, "nr": 4, "hw": 1.5, "H": 3.6,
-				"rs": 0.14, "sp": 1.4, "es": 0.1, "ov": 0.06, "val": 0.32, "serit": Color(0.3, 0.36, 0.52), "ip": 0.17, "skal": 1}, true)
+				"rs": 0.14, "sp": 1.4, "es": 0.1, "ov": 0.06, "val": 0.32, "serit": Color(0.3, 0.36, 0.52), "ip": 0.17, "skal": 1, "sx": 8.0, "sz": 5.5}, true)
 		"pasa":
 			o.merge({"ex": 0.5, "ez": 0.5, "m": 2.8, "direk": [-0.3, 0.0, 0.3], "P": 10, "nc": 2, "nr": 3, "hw": 1.9, "H": 4.5,
 				"rs": 0.3, "sp": 1.4, "es": 0.1, "ov": 0.05, "val": 0.4, "serit": Color(0.84, 0.66, 0.24),
-				"bez": Color(0.62, 0.16, 0.15), "ip": 0.12, "skal": 1}, true)
+				"bez": Color(0.62, 0.16, 0.15), "ip": 0.12, "skal": 1, "sx": 12.0, "sz": 8.0}, true)
+		"otag":
+			# otağ-ı hümayun: kırmızı çuha, altın sırma saçak, 18 duvar direği (örnek ölçeği 8,5 × 1 × 8,5)
+			o.merge({"P": 18, "nc": 2, "nr": 4, "hw": 5.0, "H": 10.2, "sp": 1.35, "es": 0.3, "ov": 0.06, "val": 0.7,
+				"serit": Color(0.86, 0.68, 0.26), "bez": Color(0.72, 0.16, 0.16), "ip": 0.2, "skal": 1, "sx": 8.5, "sz": 8.5,
+				"topuz": false}, true)
 		"kil":
 			o.merge({"ex": 0.5, "ez": 0.5, "m": 6.0, "direk": [-0.4, -0.13, 0.13, 0.4], "P": 12, "nc": 2, "nr": 3, "hw": 0.7,
 				"H": 1.75, "rs": 0.38, "sp": 1.1, "es": 0.12, "ov": 0.02, "val": 0.0, "bez": Color(0.3, 0.25, 0.21), "ip": 0.22,
-				"acik": true, "kapi": false}, true)
+				"acik": true, "kapi": false, "sx": 7.0, "sz": 3.8, "topuz": false}, true)
 	if lod == 1:
 		o["P"] = 7 if float(o["ex"]) == float(o["ez"]) and o["direk"].size() == 1 else 8
 		o["nc"] = 2 if o["direk"].size() == 1 else 1
@@ -140,7 +145,7 @@ static func _grid(b: B, G: Array, colf: Callable, ref: Callable, ic := false) ->
 
 
 ## İnce ip/direk: üçgen kesitli ince prizma (her yönden görünür, 6 üçgen)
-static func _ip(b: B, p0: Vector3, p1: Vector3, w: float, col: Color) -> void:
+static func _ip(b: B, p0: Vector3, p1: Vector3, w: float, col: Color, sx := 1.0, sz := 1.0) -> void:
 	var d := (p1 - p0).normalized()
 	var s1 := d.cross(Vector3.UP).normalized()
 	if s1.length_squared() < 1e-8:
@@ -149,7 +154,8 @@ static func _ip(b: B, p0: Vector3, p1: Vector3, w: float, col: Color) -> void:
 	var o: Array = []
 	for i in 3:
 		var a := TAU * i / 3.0
-		o.append((s1 * cos(a) + s2 * sin(a)) * w)
+		var oo := (s1 * cos(a) + s2 * sin(a)) * w
+		o.append(Vector3(oo.x / sx, oo.y, oo.z / sz))
 	for i in 3:
 		var j := (i + 1) % 3
 		var oi: Vector3 = o[i]
@@ -157,11 +163,32 @@ static func _ip(b: B, p0: Vector3, p1: Vector3, w: float, col: Color) -> void:
 		b.poly([p0 + oi, p1 + oi, p1 + oj, p0 + oj], (oi + oj) * 0.5, col)
 
 
+## Eşit olmayan örnek ölçeğini dengeleyen ince çubuk (metre yarıçap r; sx, sz: birim başına metre)
+static func _cubuk(b: B, p0: Vector3, p1: Vector3, r: float, sx: float, sz: float, col: Color, n := 5, r1 := -1.0) -> void:
+	if r1 < 0.0:
+		r1 = r
+	var d := (p1 - p0).normalized()
+	var u := d.cross(Vector3.UP if absf(d.y) < 0.9 else Vector3.RIGHT).normalized()
+	var w := d.cross(u).normalized()
+	var A: Array = []
+	var Bq: Array = []
+	for i in n:
+		var a := TAU * i / n
+		var o := u * cos(a) + w * sin(a)
+		var e := Vector3(o.x / sx, o.y, o.z / sz)
+		A.append(p0 + e * r)
+		Bq.append(p1 + e * r1)
+	for i in n:
+		var j := (i + 1) % n
+		var mid := ((A[i] as Vector3) + (A[j] as Vector3)) * 0.5 - p0
+		b.poly([A[i], A[j], Bq[j], Bq[i]], Vector3(mid.x * sx * sx, mid.y, mid.z * sz * sz), col.darkened(0.06 * (i % 2)))
+
+
 ## Kazık: üç yüzlü sivri, yere eğik çakılı
 static func _kazik(b: B, p: Vector3, dis: Vector3, sx: float, sz: float) -> void:
 	var tip := p + Vector3(0, -0.02, 0)
-	var top := p + Vector3(0, 0.17, 0) - dis * 0.04
-	var r := 0.018
+	var top := p + Vector3(0, 0.12, 0) - Vector3(dis.x * 0.08 / sx, 0, dis.z * 0.08 / sz)
+	var r := 0.035
 	var q: Array = []
 	for i in 3:
 		var a := TAU * i / 3.0
@@ -299,10 +326,19 @@ static func _govde(b: B, o: Dictionary, lod: int) -> void:
 			return col
 		_grid(b, G, colf_cati, ref_cati)
 		if lod == 0:
-			# çatının altı (iç): kaba, koyu
-			var Gi: Array = [[G[0][0], G[0][nc]], [G[nr][0], G[nr][nc]]]
-			if nr >= 4:
-				Gi = [[G[0][0], G[0][nc]], [G[nr / 2][0], G[nr / 2][nc]], [G[nr][0], G[nr][nc]]]
+			# çatının altı (iç): kaba, koyu; dış yüzün ALTINDA kalsın diye aşağı ve içe kaydırılmış (yoksa dış çatıya gölge
+			# düşürür: ilk denemede çatılar kapkara göründü)
+			var sat := [0, nr / 2, nr] if nr >= 4 else [0, nr]
+			var Gi: Array = []
+			for i: int in sat:
+				var t2 := float(i) / nr
+				var ust_row: Array = []
+				for c: int in [0, nc]:
+					var q2: Vector3 = G[i][c]
+					var sr2 := _sirt(o, Vector2(q2.x, q2.z))
+					var ic2 := Vector3(sr2.x, q2.y, 0.0) + (Vector3(q2.x, q2.y, q2.z) - Vector3(sr2.x, q2.y, 0.0)) * 0.95
+					ust_row.append(ic2 - Vector3(0, 0.2 + 0.14 * t2, 0))
+				Gi.append(ust_row)
 			_grid(b, Gi, func(_i, _c): return bez * IC * 0.85, ref_cati, true)
 		# --- saçak (taraklı alt kenar, üstte renk şeridi)
 		var val: float = o["val"]
@@ -352,7 +388,10 @@ static func _govde(b: B, o: Dictionary, lod: int) -> void:
 				col = col.lerp(Color(0.42, 0.34, 0.24), 0.28)      # etekte çamur lekesi
 			return col, ref_duvar)
 		if lod == 0:
-			_grid(b, [[W[0][0], W[0][wc]], [W[nW - 1][0], W[nW - 1][wc]]], func(_i, _c): return bez * IC, ref_duvar, true)
+			var ici := func(q3: Vector3, dy: float) -> Vector3:
+				var sr3 := _sirt(o, Vector2(q3.x, q3.z))
+				return Vector3(sr3.x, q3.y + dy, 0.0) + (q3 - Vector3(sr3.x, q3.y, 0.0)) * 0.95
+			_grid(b, [[ici.call(W[0][0], -0.06), ici.call(W[0][wc], -0.06)], [ici.call(W[nW - 1][0], 0.0), ici.call(W[nW - 1][wc], 0.0)]], func(_i, _c): return bez * IC, ref_duvar, true)
 	if lod >= 1:
 		return
 	# --- duvar direkleri, gergi ipleri, kazıklar
@@ -365,30 +404,36 @@ static func _govde(b: B, o: Dictionary, lod: int) -> void:
 		var dn := dis2.normalized()
 		var ust := hw + (0.1 if (kapi and (pj == 0 or pj == 1)) else 0.0)
 		var top := Vector3(pe.x, ust + 0.06, pe.y)
-		_ip(b, Vector3(pe.x + dn.x * 0.006, ZEMIN, pe.y + dn.y * 0.006), top + Vector3(dn.x * 0.006, 0, dn.y * 0.006), 0.009, DIREK)
+		var osx: float = o["sx"]
+		var osz: float = o["sz"]
+		var dp := Vector3(dn.x * 0.025 / osx, 0, dn.y * 0.025 / osz)
+		_cubuk(b, Vector3(pe.x, ZEMIN, pe.y) + dp, top + dp, 0.025, osx, osz, DIREK, 3)
 		var stake := pe + dn * ipb
 		var kp := Vector3(stake.x, ZEMIN, stake.y)
-		_ip(b, top, kp + Vector3(0, 0.12, 0), 0.0045, IPC)
-		_kazik(b, kp, Vector3(dn.x, 0, dn.y), 1.0, 1.0)
+		_ip(b, top, kp + Vector3(0, 0.1, 0), 0.011, IPC, osx, osz)
+		_kazik(b, kp, Vector3(dn.x, 0, dn.y), osx, osz)
 	# --- orta direk(ler), topuz/alem
 	for dx: float in o["direk"]:
 		var hh := _sirt(o, Vector2(dx, 0)).y
-		b.cylp(Vector3(dx, (ZEMIN + hh + 0.2) * 0.5, 0), 0.022, hh + 0.2 - ZEMIN, DIREK, 5)
-		b.sph(Vector3(dx, hh + 0.24, 0), 0.045, PIRINC, 5, Vector3(1.0, 1.6, 1.0))
-		b.cylp(Vector3(dx, hh + 0.34, 0), 0.016, 0.1, PIRINC, 4, 0.0)
-		b.cylp(Vector3(dx, hh + 0.02, 0), 0.06, 0.06, bez * 0.8, 6, 0.04)      # tepelik (bez yaka)
+		var dsx: float = o["sx"]
+		var dsz: float = o["sz"]
+		_cubuk(b, Vector3(dx, ZEMIN, 0), Vector3(dx, hh + 0.2, 0), 0.06, dsx, dsz, DIREK, 5, 0.05)
+		_cubuk(b, Vector3(dx, hh - 0.02, 0), Vector3(dx, hh + 0.06, 0), 0.13, dsx, dsz, bez * 0.8, 6, 0.08)   # tepelik (bez yaka)
+		if o.get("topuz", true):
+			b.sph(Vector3(dx, hh + 0.27, 0), 1.0, PIRINC, 5, Vector3(0.075 / dsx, 0.11, 0.075 / dsz))       # topuz (küre; hilal YOK)
+			_cubuk(b, Vector3(dx, hh + 0.36, 0), Vector3(dx, hh + 0.5, 0), 0.025, dsx, dsz, PIRINC, 4, 0.002)
 	# --- kapı: yana toplanıp bağlanmış perde (sol), yarı açık sarkan perde (sağ); iç: kilim, minder, sandık
 	if kapi:
 		var sa := 0.25 - 0.5 / P
 		var sb := 0.25 + 0.5 / P
-		var pa := _cevre(o, sa + 0.12 / P)
+		var pa := _cevre(o, sa + 0.05 / P)
 		var pb := _cevre(o, sb)
 		var hd := hw + 0.06
 		# toplanmış perde: kalın, düzensiz kesitli bez rulosu
 		var Rl: Array = []
 		for i in 4:
 			var y := lerpf(ZEMIN + 0.05, hd, i / 3.0)
-			var rr := 0.05 + 0.025 * sin(i * 2.1) + (0.02 if i == 1 else 0.0)
+			var rr := 0.032 + 0.014 * sin(i * 2.1) + (0.01 if i == 1 else 0.0)
 			var ring: Array = []
 			for c in 6:
 				var a := TAU * c / 5.0
@@ -396,7 +441,7 @@ static func _govde(b: B, o: Dictionary, lod: int) -> void:
 			Rl.append(ring)
 		_grid(b, Rl, func(_i, _c): return bez * 0.93, func(p: Vector3) -> Vector3: return Vector3(p.x - pa.x, 0, p.z - pa.y - 0.03))
 		var bag := Vector3(pa.x, hd * 0.55, pa.y + 0.03)
-		b.cylp(bag, 0.085, 0.05, IPC.darkened(0.2), 6)
+		_cubuk(b, bag - Vector3(0, 0.03, 0), bag + Vector3(0, 0.03, 0), 0.11, float(o["sx"]), float(o["sz"]), IPC.darkened(0.2), 6)
 		# sarkan perde: üstten asılı, altta dışa açılmış, iki kıvrım
 		var Pp: Array = []
 		var pc := pb.lerp(_cevre(o, 0.25), 0.42)
@@ -410,18 +455,28 @@ static func _govde(b: B, o: Dictionary, lod: int) -> void:
 				row2.append(Vector3(base.x + 0.0, y2, base.y + acil + 0.02 * sin(f2 * TAU * 1.5)))
 			Pp.append(row2)
 		_grid(b, Pp, func(_i, _c): return bez * 0.9, func(_p): return Vector3(0, 0.1, 1.0))
-		_grid(b, Pp, func(_i, _c): return bez * IC, func(_p): return Vector3(0, 0.1, 1.0), true)
+		var Pi: Array = []
+		for row3: Array in Pp:
+			var r3: Array = []
+			for q4: Vector3 in row3:
+				r3.append(q4 - Vector3(0, 0, 0.025))
+			Pi.append(r3)
+		_grid(b, Pi, func(_i, _c): return bez * IC, func(_p): return Vector3(0, 0.1, 1.0), true)
 		# iç: kilim (kırmızı-lacivert, kenarlı), minderler, sandık
 		var ex: float = o["ex"]
 		var ez: float = o["ez"]
 		var ky := ZEMIN + 0.012
+		var tab: Array = []
+		for i in 10:
+			var pe2 := _cevre(o, float(i) / 10.0) * 0.96
+			tab.append(Vector3(pe2.x, ZEMIN + 0.006, pe2.y))
+		b.poly(tab, Vector3.UP, Color(0.36, 0.3, 0.22))
 		b.poly([Vector3(-ex * 0.5, ky, -ez * 0.55), Vector3(ex * 0.5, ky, -ez * 0.55), Vector3(ex * 0.5, ky, ez * 0.55), Vector3(-ex * 0.5, ky, ez * 0.55)], Vector3.UP, Color(0.66, 0.5, 0.34))
 		b.poly([Vector3(-ex * 0.42, ky + 0.004, -ez * 0.47), Vector3(ex * 0.42, ky + 0.004, -ez * 0.47), Vector3(ex * 0.42, ky + 0.004, ez * 0.47), Vector3(-ex * 0.42, ky + 0.004, ez * 0.47)], Vector3.UP, Color(0.5, 0.16, 0.13))
 		b.poly([Vector3(-ex * 0.12, ky + 0.008, -ez * 0.2), Vector3(ex * 0.12, ky + 0.008, -ez * 0.2), Vector3(ex * 0.12, ky + 0.008, ez * 0.2), Vector3(-ex * 0.12, ky + 0.008, ez * 0.2)], Vector3.UP, Color(0.2, 0.24, 0.42))
 		b.sph(Vector3(-ex * 0.42, ZEMIN + 0.1, -ez * 0.62), 0.12, Color(0.55, 0.22, 0.16), 5, Vector3(1.4, 0.7, 0.8))
-		b.sph(Vector3(ex * 0.1, ZEMIN + 0.1, -ez * 0.7), 0.12, Color(0.3, 0.32, 0.45), 5, Vector3(1.5, 0.7, 0.8))
 		_sandik(b, Vector3(ex * 0.48, ZEMIN, -ez * 0.55), 0.16 / maxf(ex, 0.3), 0.22, 0.12 / maxf(ez, 0.3))
-		b.sph(Vector3(-ex * 0.62, ZEMIN + 0.16, ez * 0.1), 0.1, Color(0.6, 0.48, 0.32), 5, Vector3(0.8, 1.5, 0.8))   # su kırbası
+		b.sph(Vector3(-ex * 0.62, ZEMIN + 0.16, ez * 0.1), 0.1, Color(0.6, 0.48, 0.32), 4, Vector3(0.8, 1.5, 0.8))   # su kırbası
 
 
 ## Çatı kenarı noktası (saçak üst çizgisi)
@@ -475,11 +530,11 @@ static func _sayeban(b: B, o: Dictionary, lod: int) -> void:
 	_grid(b, [Vt, Vb], func(_i, _c): return Color(0.5, 0.14, 0.13), func(_p): return Vector3(0, 0, 1), true)
 	for sx in [-w, w]:
 		var top := Vector3(sx, y1 + 0.02, z1)
-		b.cylp(Vector3(sx, (ZEMIN + y1) * 0.5 + 0.08, z1), 0.012, y1 + 0.15 - ZEMIN, DIREK, 5)
-		b.sph(top + Vector3(0, 0.12, 0), 0.02, PIRINC, 5, Vector3(1, 1.5, 1))
+		_cubuk(b, Vector3(sx, ZEMIN, z1), Vector3(sx, y1 + 0.15, z1), 0.06, 12.0, 8.0, DIREK, 5)
+		b.sph(top + Vector3(0, 0.2, 0), 1.0, PIRINC, 5, Vector3(0.07 / 12.0, 0.1, 0.07 / 8.0))
 		var kp := Vector3(sx * 1.3, ZEMIN, z1 + 0.16)
-		_ip(b, top, kp + Vector3(0, 0.1, 0), 0.003, IPC)
-		_kazik(b, kp, Vector3(0, 0, 1), 1.0, 1.0)
+		_ip(b, top, kp + Vector3(0, 0.1, 0), 0.011, IPC, 12.0, 8.0)
+		_kazik(b, kp, Vector3(0, 0, 1), 12.0, 8.0)
 	# sayebânın altında halı
 	b.poly([Vector3(-w * 0.85, ZEMIN + 0.015, z0 + 0.02), Vector3(w * 0.85, ZEMIN + 0.015, z0 + 0.02), Vector3(w * 0.85, ZEMIN + 0.015, z1 - 0.04), Vector3(-w * 0.85, ZEMIN + 0.015, z1 - 0.04)], Vector3.UP, Color(0.2, 0.24, 0.45))
 
@@ -508,7 +563,13 @@ static func _barinak(b: B, lod: int) -> void:
 			cols[Vector2i(i, c)] = renk[r.randi() % renk.size()]
 	_grid(b, G, func(i: int, c: int) -> Color: return cols.get(Vector2i(i, c), renk[0]), func(_p): return Vector3(0, 1, 0.6))
 	if lod == 0:
-		_grid(b, G, func(_i, _c): return Color(0.22, 0.19, 0.15), func(_p): return Vector3(0, 1, 0.6), true)
+		var Gb: Array = []
+		for row5: Array in G:
+			var r5: Array = []
+			for q5: Vector3 in row5:
+				r5.append(q5 - Vector3(0, 0.03, 0))
+			Gb.append(r5)
+		_grid(b, Gb, func(i: int, c: int) -> Color: return (cols.get(Vector2i(i, c), renk[0]) as Color) * 0.62, func(_p): return Vector3(0, 1, 0.6), true)
 	if lod >= 2:
 		return
 	# yanlar: çalı-çırpı demetleri (yuvarlak öbekler; kutu yok)
@@ -529,3 +590,24 @@ static func _barinak(b: B, lod: int) -> void:
 		b.cylp(p0, 0.008, 0.5, Color(0.36, 0.28, 0.18), 4, 0.004, Vector3(r.randf_range(-50, 50), 0, r.randf_range(-60, 60)))
 	b.sph(Vector3(-0.2, ZEMIN + 0.08, -0.15), 0.12, Color(0.5, 0.42, 0.3), 5, Vector3(1.6, 0.6, 1.0))    # yatak (keçe rulosu)
 	b.sph(Vector3(0.22, ZEMIN + 0.1, -0.05), 0.1, Color(0.62, 0.52, 0.34), 5, Vector3(1.0, 1.0, 1.0))    # torba
+
+
+static var _tmat := {}
+
+## Tek çadır (çoklu ağ değil): host'a ölçekli ağ örneği; renk malzeme tonu (bez beyaza yakın ağlarda). lod 0 gölge düşürür.
+static func ekle(host: Node3D, kind: String, xf: Transform3D, renk: Color, lod: int, ad := "") -> MeshInstance3D:
+	var mi := MeshInstance3D.new()
+	mi.mesh = K.tent_lod(kind, lod)
+	var key := renk.to_html()
+	if not _tmat.has(key):
+		var m := (K.mat("") as StandardMaterial3D).duplicate() as StandardMaterial3D
+		m.albedo_color = Color(0.78, 0.76, 0.72) * renk
+		_tmat[key] = m
+	mi.material_override = _tmat[key]
+	mi.transform = xf
+	if lod > 0:
+		mi.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
+	if ad != "":
+		mi.name = ad
+	host.add_child(mi)
+	return mi
