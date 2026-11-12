@@ -4,13 +4,14 @@ Dal `wip/gezi-havadan`; sonda `tests/_ist/gezi_havadan.gd/.tscn` (yalnız test; 
 
 ## 1) Bölge, sayılar
 
-- Bölge: bütün şehir havadan. Kamera yelpazesi (gerçek m, doğu/kuzey): doğu -5969…579, kuzey -2065…3484. Dört köşe ≈ (-5969,-2065) Mermer Kule/Marmara · (-5969,3484) Haliç ucu/Blakherna · (579,3484) Galata-Sarayburnu · (579,-2065) Marmara doğu ucu.
+- Bölge: bütün şehir havadan. Kamera yelpazesi (gerçek m, doğu/kuzey): doğu -5969…579, kuzey -2065…3484. Dört köşe (kamera yelpazesinin sınırı): GB (-5969,-2065) ordugâh Anadolu kanadı/Marmara kıyısı · KB (-5969,3484) Haliç başı/Ayvansaray · KD (579,3484) Galata-Haliç ağzı · GD (579,-2065) Marmara kıyısı doğu ucu (Sarayburnu yöresi).
 - Çekilen kare: **1154** (klasör başına: eser=288, halic=330, kara=168, marmara=138, mese=36, ordugah=120, oyun11=17, oyun7=17, ucus=40). Bakılan kare (paftada açıp incelediğim): **381**. Bakmadığım kareler aşağıda "bakamadıklarım".
-- Yöntem: dört tur (kara surları boyu, Marmara kıyısı, Haliç+Galata, Mese) ve ordugâh üstü: 30/60/120 m, ileri (−12°) + aşağı (−45°); adım **80 dünya m** (görevdeki 40 m yerine; yazılımla çizimde kare başına ≈3 sn, süre yetmedi). Eserler: flight_data_v2 yer işaretlerinin tamamı (39 landmark + 34 konma
-), 150/80/40/15 m yaklaşma + konma noktasından 4 yön. Sürekli uçuş: 18 m/sn, sabit dt=1/60 sn, 640×360.
+- Yöntem: dört tur (kara surları boyu, Marmara kıyısı, Haliç+Galata, Mese) ve ordugâh üstü: 30/60/120 m, ileri (−12°) + aşağı (−45°); adım **80 dünya m** (görevdeki 40 m yerine; yazılımla çizimde kare başına ≈3 sn, süre yetmedi). Eserler: flight_data_v2 yer işaretlerinin tamamı (39 landmark, 34 konma noktası kaydı), 150/80/40/15 m yaklaşma + konma noktasından 4 yön. Sürekli uçuş: 18 m/sn, sabit dt=1/60 sn, 640×360.
 - Yürüyüş km: bu bölgede yürüyüş yok (yalnız uçuş).
 
-## 2) **GENEL NOT: 5/10 (ara rapor).** Sahibi havadan bakınca ilk olarak sur kulelerinin dev, tek renk mor-kahve levha çatılarına ve sur dibindeki çıplak yeşil çayıra kızar. Konma noktalarından üçünde (Konstantin Sütunu, Romanos kulesi, Blakherna) kamera gövdenin içinde kalıp ekran siyah çıkıyor: oyuncunun inince göreceği ilk şey siyah ekran. Şehrin geneli, Ayasofya/Hipodrom/Bozdoğan gibi eserler 150 m'den iyi tanınıyor; yakından zemin yamaları ve oyuncak ağaç/çalılar bozuyor.
+## 2) **GENEL NOT: 4/10.** Sahibi şehri havadan gezse ilk olarak (1) konma noktasına inince ekranın simsiyah kalmasına (Konstantin Sütunu, Romanos kulesi, Blakherna: kamera gövdenin içinde), (2) Haliç'te suyun üstünde duran düz camgöbeği yamaya ve Galata surunun suyun içine taşmasına, (3) sur kulelerinin dev, tek renk mor-kahve levha çatılarına ve çatıdan çatıya tekrar eden doygun somon/turuncu kutu evlere kızar; Hipodrom pisti hâlâ parlak mint düz dikdörtgen, uzak sur katmanı beyaz kutu.
+Asıl güçlü yan: baktığım eserlerin çoğu 150 m'den tanınıyor (Ayasofya, Bozdoğan, Havariyun, zincir ve filo, Mese'de kalabalık) ve oyun içi gece ordugâh ateşleri iyi; ama oyun içi uçuşta ordugâh/dönüş karelerinde çizim sayısı 2,5 katı (3 570–3 994) bütçe aşımı ve sürekli uçuşta 335 ms'lik takılmalar var.
+Sayılar: 92 bulgu; önem 1 = 6, önem 2 = 42, önem 3 = 44. 39 eserin 6'sında konma noktası yok, 3 eserde konma karesi siyah, 2 oyun içi uçuşta çizim bütçesi 3 karede 2,4–2,7 katı aşılıyor.
 
 ## 3) BULGU TABLOSU
 
