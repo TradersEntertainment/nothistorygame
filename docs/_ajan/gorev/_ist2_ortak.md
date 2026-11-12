@@ -74,3 +74,39 @@ parçaları, surları, evleri, sokakları, bitkiyi, ayrıntıyı v2'ye yerleşti
 - Gezi sahnesi (ikisi de kullanır; "dünya" yazar): `tests/_ist/gezi.tscn`: v2'yi kurar; komut satırı: `-- gece=0|1
   kam=e,n,yukseklik,yon,egim shots=KLASÖR liste=dosya` (liste: satır satır kamera konumları → PNG); ayrıca serbest uçuş
   (WASD + fare) ve yürüyen oyuncu (`scripts/player/player.gd` ile) kipi.
+
+---
+
+# İKİNCİ TUR (12 Kasım, 08:45 UTC) — KARAR DEĞİŞİKLİKLERİ (bu bölüm üsttekilerle çelişirse BU geçerlidir)
+
+## Sahibin yeni sözleri (aynen)
+- "1453 te istanbulun nasıl gözüktüğünü bulabildiler mi güzelde boş alan istemiyorum bir de"
+- "içinin scale büyütüp sura yaslayabiliriz"
+- "hayır yani aynı anda ayasofya yakın olsun sura"
+
+## Ne demek (yöneticinin kararı)
+İlk turun şehri (S = 0,5) fazla büyük ve batı yarısı boş kaldı. Sahibi derli toplu, DOLU bir şehir istiyor: içindekiler
+(anıtlar, mahalleler) haritaya göre büyük, surlara yaslı, Ayasofya kara surlarına yakın.
+1. **Dünya ölçeği `IstGeo.S = 0,3`** (0,5 değil). Yarımada ≈ 1,6 × 1,7 km; Romanos Kapısı → Ayasofya ≈ 1,4 km (koşarak
+   ~4,5 dk, hızlı uçuşla ~80 sn). Kıyı biçimi gerçek kalır. `S` TEK sabit olmalı: koddaki bütün dünya konumları
+   `IstGeo` üzerinden türesin; S 0,2–0,5 arasında değiştirilip şehir yeniden kurulabilsin (sahibi "daha yakın" derse
+   tek satır). Önceden hesaplanmış çokgen/çizgi tabloları gerçek koordinatta tutulup S ile çarpılsın.
+2. **İçerik büyük kalır:** anıtlar k = 0,5 (Ayasofya var olan modeli), evler ve sokaklar 1:1, **surların kesiti 1:1**
+   (k = 1,0: iç sur ~12 m, kuleler 18–20 m, dış sur 8,5 m, hendek ~18 m; yalnız uzunluk hat boyunca S ile kısalır).
+   S küçüldüğü için anıtlar birbirine yaklaşır: çakışanları öncelik sırasıyla (yan görev eserleri > öteki anıtlar >
+   doku) ve gerçek komşuluk sırası korunarak kaydır; çok yer kaplayanları (Hipodrom, Büyük Saray, limanlar, açık
+   sarnıçlar, forumlar) k = 0,3–0,4 ile kur. Hiçbir eser atılmaz.
+3. **BOŞ ALAN YOK ve ŞEHİR SURA KADAR DOLU:** `docs/_ajan/gorev/ist2_kalite_notlari.md` (0, 0b ve 1–10. maddeler;
+   TAMAMI bağlayıcı, oku). Görünüş kılavuzu `wip/istanbul-gorunus` dalında yazılıyor (`docs/ISTANBUL_GORUNUS.md`: renk
+   ve malzeme paleti, ev/sokak görünüşü, mahalle ve anıt görünüşleri, "boş alan yok" öğe listesi): ilk hâli 30 dakikada
+   gelir; ara ara çek, uygula. Araştırma dizini `wip/istanbul-arastirma` dalında büyüyor (160 satır hedefi): çek.
+4. **Yeni parçalar** (yazılıyor; 60. dakikada ilk hâlleri gelir; çek, birleştir, bağla): `wip/ist-ordugah` (Osmanlı
+   ordugâhı, bataryalar, hendekler: sur dışı boş kalmasın), `wip/ist-gemiler` (zincirin ardındaki filo, Osmanlı
+   donanması, kayıklar: deniz boş kalmasın), `wip/ist-hayat` (insan/hayvan/duman/gece ışıkları katmanı). Arayüzleri
+   raporlarında: `IstOrdugah.attach`, `IstGemiler.attach`, `IstHayat.attach` (`dunya`, `gece`).
+5. **Dallar (ikinci tur):** taban `wip/ist2-taban2` (birinci turun dünyası + şehri). Üç oturum, dosyalar AYRIK:
+   - DÜNYA-2 → `wip/ist2-dunya2`: `scripts/world/ist/geo.gd`, `dunya.gd`, `tests/_ist/gezi.*`
+   - ŞEHİR-2 (yerleşim) → `wip/ist2-sehir2`: `scripts/world/ist/sehir.gd` (+ yeni yardımcı dosyalar), sonda/denetim
+   - DOKU-2 (mahalle) → `wip/ist2-doku2`: `scripts/world/ist/sokak.gd`, `evler.gd` (+ yeni yardımcı dosyalar)
+   Başkasının dosyasına dokunma; gereken değişikliği raporda "ORTAK İSTEK" diye kod parçasıyla yaz ve o dalı çekince
+   geldi mi bak. Her 30–45 dakikada kendi dalına gönder, öbür iki dalı çek ve birleştir.

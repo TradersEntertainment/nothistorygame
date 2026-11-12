@@ -95,3 +95,40 @@ harabe üstü sarmaşık ve ot, kuru taş bahçe duvarı, çit, patika, toprak y
 köprü, kaynak/pınar, sazlık, kıyı kumu ve çakıl, kaya, mezarlık servileri. `build_patch_<tur>(host, alan: Vector2, k,
 lod, tohum)` ile alan doldurur; MultiMesh; uzakta tek renk yama değil, dokulu. Var olan `scripts/level/nature.gd`
 üslubunu oku, uyumlu ol (değiştirme).
+
+## ordugah — Osmanlı kuşatma düzeni, Nisan 1453 (sur dışı)
+v2 dünyasında (`IstGeo`; `docs/_ajan/gorev/_ist2_ortak.md` oku) kara surlarının dışındaki ova: II. Mehmed'in otağı
+(Aziz Romanos Kapısı'nın karşısında, Maltepe; kırmızı-altın büyük otağ, çevresinde yeniçeri çadırları halkası), Anadolu
+askeri (İshak Paşa: otağın güneyi, Marmara'ya kadar), Rumeli askeri (Karaca Paşa: kuzey, Haliç'e kadar), Zağanos Paşa
+(Haliç'in ötesinde, Galata'nın arkası), top bataryaları (14 batarya; büyük top Şahi Romanos karşısında: toprak tabya,
+sepet siperler (gabion), ahşap kalkanlar, gülle yığınları, barut fıçıları, top arabaları ve öküzler), hendekler ve
+toprak siperler (surdan ~400 m × 0,5), kazık çit, mancınıklar, kuşatma kuleleri hazırlığı, at ve deve bağları, mutfak
+kazanları, pazar çadırları, mescit çadırı, sancaklar ve tuğlar; Çifte Sütunlar (Diplokionion, Beşiktaş) donanma üssü;
+gemilerin karadan yürütüldüğü kızak yolu (Tophane → Kasımpaşa; 22 Nisan) izi; Haliç'te fıçı köprüsü yeri. Var olan
+üslubu oku ve KULLAN (değiştirme): `scripts/level/camp.gd`, `camp_day.gd`, `scripts/world/siege_field.gd` (çadır
+tipleri, otağ, top). Çadırlar MultiMesh (binlerce çadır havadan "çadır denizi" gibi görünmeli), yakında katı ve
+tırmanılmaz (çadır bezi), toprak tabya katı ve tırmanılır. `build_ordugah(host, k, lod)` yerine alan doldurucular:
+`build_kanat(host, alan_cokgen: PackedVector2Array, tur, k, lod, tohum)` + tekil yapılar; `catalog()` gerçek koordinatla.
+
+## gemiler — Nisan 1453'te sudaki her şey
+Zincirin arkasında (Haliç içinde) Bizans, Venedik ve Ceneviz gemileri (26 savaş gemisi: yüksek bordalı karaka/kog ve
+kadırgalar, yan yana zincir boyunca demirli), iskelelerde tüccar gemileri, Haliç ve Marmara'da balıkçı kayıkları ve
+sandallar, Galata rıhtımında Ceneviz gemileri; Osmanlı donanması (kadırga, kalyata, fusta, parandarya; ~140 parça)
+Çifte Sütunlar'da ve Boğaz ağzında dizili; 20 Nisan'daki dört büyük Ceneviz gemisi (isteğe bağlı sahne). Var olan gemi
+kurucularını oku ve KULLAN (değiştirme): `scripts/level/sea_battle.gd` (`war_galley` vb.), `scripts/level/horn.gd`,
+`scripts/world/landmarks1453.gd` (gemiler, kayıklar), `scripts/level/slipway.gd`. Yeni dosyada sarmala: `build_<tip>(host,
+k, lod)` (k = 1: gemiler gerçek boyda; güverte katı ve yürünür, direğe/serene tırmanış yok), filo dizicileri
+`build_filo_<ad>(host, lod, tohum)` dünya koordinatında (`IstGeo`), MultiMesh'li uzak katman (havadan yüzlerce tekne),
+hafif salınım (tek gölgelendirici/tek düğümle; her tekneye ayrı betik yok). Yelkenler sarılı (limanda), bayraklar:
+Bizans çift başlı kartal/tetragram, Venedik aslanı, Ceneviz haçı, Osmanlı kırmızı/yeşil sancak.
+
+## hayat — havadan ve yerden görünen yaşam
+v2 için ucuz, mesafeye göre yaşam katmanı (yeni dosyalar; var olan `scripts/world/city_life.gd` ve `scripts/npc/crowd.gd`
+üslubunu oku, değiştirme): uzakta ve havadan MultiMesh insan figürleri (mahalle türüne göre: çarşıda kalabalık,
+iskelede hamallar ve balıkçılar, sur üstünde nöbetçiler ve onarım işçileri, manastır avlusunda keşişler, bostanda
+çalışanlar, kiliseye giden alay, sur dibinde mülteciler; ordugâhta askerler), hafif yürüme/salınım (tek gölgelendirici),
+hayvanlar (eşek, at, keçi, tavuk, köpek, martı ve güvercin sürüleri: `scripts/level/gulls.gd`'yi oku), baca dumanı,
+fırın ve demirci dumanı, sancak ve çamaşır dalgalanması (rüzgâr gölgelendiricisi), ateşler (`Flame`), gece: pencere
+ışıkları, kandiller, nöbet ateşleri, ordugâh ateşleri denizi. `IstHayat.attach(dunya: Node3D, gece: bool)` + mesafeye
+göre akış (oyuncunun/uçuşun 150 m çevresinde ayrıntılı, ötesinde MultiMesh nokta-figür). Bütçe: uçuşta ≤ 60 çizim,
+≤ 150 bin üçgen; yerde ≤ 80 çizim. Kişiler çarpışmasız (içlerinden geçilir; oynanış kişileri bölümlerden gelir).
