@@ -230,7 +230,32 @@ func _carry_ladder() -> void:
 	player.free_hold = Vector3.INF
 	player.speed_mult = 1.0
 	# Merdiven kaldırılır: ayağı sur dibine, ucu mazgala (taşıyanlar iter); sonra gerçek (tırmanılan) merdiven
-	var fwd := _carry_fwd()
+	var lx := ladder.global_position.x
+	var lz := ladder.global_position.z
+	var from_p := player.global_position
+	# Oyuncu nereden geldiyse ayağı kaldıranların yolundan çekilir: arkadan (ovadan) geldiyse düz geri, merdivenin önüne
+	# ya da yanına (sur tarafına) geldiyse önce yana, sonra yanda geri; askerler öbür şeritlerden yürür (içinden geçilmez)
+	var behind := from_p.z > lz + 1.2 and absf(from_p.x - lx) < 1.0
+	var side := 1.0 if from_p.x >= lx else -1.0
+	var p_path: Array = [from_p, Vector3(lx, from_p.y, lz + 3.6)]
+	if not behind:
+		# Adaylardan askerlerin duracağı yerlere ve merdiven ayağına en geniş açıklığı bırakan yol seçilir
+		var py := from_p.y
+		var lane_p := lx + side * PLAYER_LANE
+		var cands: Array = [[from_p, Vector3(lane_p, py, from_p.z), Vector3(lane_p, py, lz + 2.6)]]
+		if from_p.z < lz + 0.5:
+			cands.append([from_p, Vector3(from_p.x, py, lz - 1.3), Vector3(lane_p, py, lz - 1.3), Vector3(lane_p, py, lz + 2.6)])
+		if absf(from_p.x - lx) >= 1.5:
+			cands.append([from_p, Vector3(from_p.x, py, lz + 2.6)])
+		var blocks: Array = [ladder.global_position]
+		for k in carriers.size():
+			blocks.append(ladder.global_position + (CARRY_AT[k] as Vector3))
+		var best := -1.0
+		for cp: Array in cands:
+			var clear := _path_clear(cp, blocks)
+			if clear > best + 0.05:
+				best = clear
+				p_path = cp
 	for k in carriers.size():
 		var c := carriers[k]
 		c.remove_meta("shoulder_load")
@@ -238,44 +263,130 @@ func _carry_ladder() -> void:
 			c.rig.activity = ""
 		c.pose = "push"
 		# Merdiven ayağının iki yanında ve arkasında (oyuncunun görüşünün önüne değil, kenarlarına); dikmeye yetişecek
-		# kadar yakın: eller dikmede, ayaklar yerde (yayma P9)
-		var at := ladder.global_position + Vector3([-0.68, 0.68, 0.0][k], 0, [0.32, 0.32, 0.5][k])
+		# kadar yakın: eller dikmede, ayaklar yerde. Yerine kendi şeridinden yürür (oyuncunun içinden geçmez), koşar adım.
+		var at := ladder.global_position + (CARRY_AT[k] as Vector3)
 		at.y = Blachernae.slope_y(at.z)
+		var lane := signf((CARRY_AT[k] as Vector3).x) if k < 2 else -side
+		if not behind and lane == side:
+			lane *= 0.5                # oyuncunun tarafındaki asker iç şeritten (oyuncu dış şeritte)
+		var lane_x := lx + lane * CARRY_LANE
+		# Ortadaki (arkadaki) asker şeritten çapraz, arkadan gelir: yandakilerin yerinin üstünden geçmez
+		var pts: Array = [Vector3(lane_x, at.y, c.global_position.z), Vector3(lane_x, at.y, at.z + (1.2 if k == 2 else 0.0)), at]
 		var tw := c.create_tween()
-		tw.tween_property(c, "global_position", at, 0.6)
-		tw.tween_callback(_carry_grip.bind(c, k, _carry_lad))
-		c.look_at(Vector3(at.x, at.y, Blachernae.WALL_Z1), Vector3.UP)
-		c.rotate_object_local(Vector3.UP, PI)
-	# Oyuncu ayağı kaldıranların önünden üç metre geri çekilip merdivene döner (yumuşak, 0,9 sn; eskiden merdiven ayağında
-	# sırtı dönük dururdu: ittirenler görüşün dışında, biri kafasının içinde kalıyordu)
-	var from_p := player.global_position
-	var to_p := Vector3(ladder.global_position.x, from_p.y, ladder.global_position.z + 3.6)
+		var prev := c.global_position
+		for q: Vector3 in pts:
+			var dur := clampf(prev.distance_to(q) / CARRY_WALK_V, 0.05, 1.2)
+			tw.tween_callback(func() -> void:
+				if Vector2(q.x - c.global_position.x, q.z - c.global_position.z).length() > 0.05:
+					c.look_at(Vector3(q.x, c.global_position.y, q.z), Vector3.UP)
+					c.rotate_object_local(Vector3.UP, PI))
+			tw.tween_property(c, "global_position", q, dur)
+			prev = q
+		tw.tween_callback(func() -> void:
+			c.set_meta("carry_at", true)
+			if _carry_up:              # merdiven çoktan dayandı: varınca dayanan merdivenin dikmesini tutar
+				_carry_grip(c, k, ladder.get_child(0) as Node3D))
+	# Oyuncu ayağı kaldıranların önünden çekilip merdivene döner (yumuşak; eskiden merdiven ayağında sırtı dönük dururdu:
+	# ittirenler görüşün dışında, biri kafasının içinde kalıyordu). Oyuncunun konumu ve bakışı betikle değişir (≈1 sn).
+	var p_len := 0.0
+	for i in range(1, p_path.size()):
+		p_len += (p_path[i] as Vector3).distance_to(p_path[i - 1])
 	var gaze0 := player.camera.global_position + (-player.camera.global_transform.basis.z) * 8.0
 	var gaze1 := ladder.point_at(2.6)
 	var back := create_tween()
 	back.tween_method(func(u: float) -> void:
-		player.global_position = from_p.lerp(to_p, u)
-		player.face(gaze0.lerp(gaze1, u)), 0.0, 1.0, 0.9).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_IN_OUT)
+		player.global_position = _along(p_path, u * p_len)
+		player.face(gaze0.lerp(gaze1, u)), 0.0, 1.0, clampf(p_len / 3.2, 0.9, 1.6)).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_IN_OUT)
 	var target := Transform3D(ladder.global_transform.basis * Basis.from_euler(Vector3(deg_to_rad(-ladder.tilt), 0, 0)), ladder.global_position)
 	var start := _carry_lad.global_transform
 	var rt := create_tween()
-	rt.tween_method(func(f: float): _carry_lad.global_transform = start.interpolate_with(target, f), 0.0, 1.0, 1.3)\
+	rt.tween_method(func(f: float):
+		_carry_lad.global_transform = start.interpolate_with(target, f)
+		# Yerine varan asker, merdivenin dikmesi kolunun yetişeceği yere inince tutar (uzaktaki merdivene el uzatmaz)
+		for k in carriers.size():
+			var c := carriers[k]
+			if c.has_meta("carry_at") and not c.has_meta("grip_tw") and _reach_gap(c, _carry_lad, _carry_pts(k)) < 0.04:
+				_carry_grip(c, k, _carry_lad), 0.0, 1.0, 1.3)\
 		.set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_IN_OUT)
 	hud.bark("SPK_ZAGANOS", "D30O_Z_PLANT", 3.5)
 	await rt.finished
+	_carry_up = true
 	for k in carriers.size():
-		_carry_grip(carriers[k], k, ladder.get_child(0) as Node3D)       # dayanan merdivenin eğik çerçevesi
+		if carriers[k].has_meta("carry_at"):
+			_carry_grip(carriers[k], k, ladder.get_child(0) as Node3D)       # dayanan merdivenin eğik çerçevesi
 	ladder.visible = true
 	_carry_lad.queue_free()
 	Audio.sfx("land_thud", -2.0, 0.8)
 	await get_tree().create_timer(1.2, false).timeout
 	for c in carriers:
 		_carry_release(c)
+		c.remove_meta("carry_at")
 		c.visible = false
 
 
 var _carry_lad: Node3D
+var _carry_up := false
 var _plant_tw: Dictionary = {}
+# Kaldıranların yeri (merdiven ayağına göre), yüzü, gövde eğikliği ve tutma yükseklikleri (çerçevede, dikme boyunca).
+# Yandaki iki asker merdivenin iki yanında, yüzü dikmesine dönük, iki eli önünde dikmede (sura dönükken uzak kol
+# dikmeye yetişmiyordu); üçüncüsü arkada, yüzü sura, iki yumruğu basamakta. Aralarında en az 0,7 m.
+const CARRY_AT := [Vector3(-0.96, 0, -0.32), Vector3(0.96, 0, -0.32), Vector3(0.0, 0, 0.42)]
+const CARRY_FACE := [Vector3(1, 0, 0), Vector3(-1, 0, 0), Vector3(0, 0, -1)]
+const CARRY_LEAN := [0.25, 0.25, 0.24]
+const CARRY_GRIP_Y := Vector2(1.0, 1.3)
+const CARRY_RUNG_Y := 1.38
+const CARRY_LANE := 1.9          # askerlerin yerine yürüdüğü şerit (merdiven ekseninden yana)
+const PLAYER_LANE := 2.7         # oyuncunun yandan çekildiği şerit
+const CARRY_WALK_V := 4.5        # askerlerin koşar adımı (m/sn)
+
+
+## Yol boyunca (çoklu doğru) d metre ilerideki nokta
+func _along(path: Array, d: float) -> Vector3:
+	for i in range(1, path.size()):
+		var a: Vector3 = path[i - 1]
+		var b: Vector3 = path[i]
+		var ln := a.distance_to(b)
+		if d <= ln or i == path.size() - 1:
+			return a.lerp(b, clampf(d / maxf(ln, 0.001), 0.0, 1.0))
+		d -= ln
+	return path[path.size() - 1]
+
+
+## Yolun (çoklu doğru, başlangıç noktası hariç ilk 0,3 m'den sonra) engellere (yatayda) en küçük uzaklığı
+func _path_clear(path: Array, blocks: Array) -> float:
+	var ln := 0.0
+	for i in range(1, path.size()):
+		ln += (path[i] as Vector3).distance_to(path[i - 1])
+	var m := INF
+	var d := 0.3
+	while d <= ln:
+		var p := _along(path, d)
+		for b: Vector3 in blocks:
+			m = minf(m, Vector2(p.x - b.x, p.z - b.z).length())
+		d += 0.1
+	return m
+
+
+## Askerin kolunun iki noktaya yetişmesi için eksik kalan en büyük uzaklık (m; ≤ 0 yetişir). Stage.grip gibi eşler.
+func _reach_gap(c: Soldier, frame: Node3D, pts: Array) -> float:
+	var rg := Handover.rig_of(c)
+	if rg == null or rg.arm_l == null or rg.arm_r == null or rg.elbow_l == null or rg.elbow_r == null:
+		return 0.0
+	var w: Array = [frame.to_global(pts[0]), frame.to_global(pts[1])]
+	var al := rg.arm_l.global_position
+	var ar := rg.arm_r.global_position
+	if al.distance_to(w[0]) + ar.distance_to(w[1]) > al.distance_to(w[1]) + ar.distance_to(w[0]):
+		w.reverse()
+	var gap := -INF
+	for i in 2:
+		var arm: Node3D = rg.arm_l if i == 0 else rg.arm_r
+		var el: Node3D = rg.elbow_l if i == 0 else rg.elbow_r
+		var up_len := -el.position.y
+		var h: Vector3 = el.get_meta("hand", Vector3(0, -up_len - 0.01, 0.01))
+		var sc := arm.global_transform.basis.get_scale().x
+		gap = maxf(gap, arm.global_position.distance_to(w[i]) - (up_len + h.length()) * sc)
+	return gap
+
 
 
 ## Merdiveni kaldıran asker: iki eli dikmede (Stage.grip_hold; k < 2 yandaki dikmeyi iki elle, üçüncü alttaki basamağı iki
@@ -285,15 +396,26 @@ func _carry_grip(c: Soldier, k: int, frame: Node3D) -> void:
 	if not is_instance_valid(c) or not is_instance_valid(frame):
 		return
 	if not _plant_tw.has(c):
-		c.look_at(c.global_position + Vector3(0, 0, -1), Vector3.UP)        # yüzü sura: varırken bakışı eski yerinden hesaplanmıştı
+		# Yandakiler yüzü dikmeye (merdivene), arkadaki yüzü sura: varırken bakışı eski yerinden hesaplanmıştı
+		c.look_at(c.global_position + (CARRY_FACE[k] as Vector3), Vector3.UP)
 		c.rotate_object_local(Vector3.UP, PI)
-		var tp := c.create_tween().set_loops()       # grip_hold'dan ÖNCE kurulur: önce ayak, sonra el
-		tp.tween_method(func(_u: float) -> void: Stage.plant_feet(c, func(_x: float, _z: float) -> float: return Blachernae.slope_y(0.0)), 0.0, 1.0, 0.5)
-		_plant_tw[c] = tp
+	Stage.grip_hold(c, frame, _carry_pts(k), -1.0, CARRY_LEAN[k])
+	# Ayak oturtma tutuştan (gövdenin öne eğilişinden) SONRA işler: her tutuşta yeniden kurulur (Tween'ler kuruluş sırasıyla)
+	if _plant_tw.has(c):
+		(_plant_tw[c] as Tween).kill()
+	var tp := c.create_tween().set_loops()
+	tp.tween_method(func(_u: float) -> void: Stage.plant_feet(c, func(_x: float, _z: float) -> float: return Blachernae.slope_y(0.0)), 0.0, 1.0, 0.5)
+	_plant_tw[c] = tp
+
+
+## k. kaldırıcının iki avucunun merdiven çerçevesindeki yeri (y dikme boyunca, x enine): k < 2 yandaki dikmeyi iki
+## elle (biri öbürünün üstünde), üçüncü alttaki basamağı iki yumrukla
+func _carry_pts(k: int) -> Array:
 	var half := Ladder.WIDTH * 0.5
-	var pts: Array = [Vector3(-half if k == 0 else half, 0.95, 0.0), Vector3(-half if k == 0 else half, 1.3, 0.0)] if k < 2 \
-		else [Vector3(-0.3, 1.38, 0.0), Vector3(0.3, 1.38, 0.0)]
-	Stage.grip_hold(c, frame, pts, -1.0, 0.24)
+	if k < 2:
+		var sx := -half if k == 0 else half
+		return [Vector3(sx, CARRY_GRIP_Y.x, 0.0), Vector3(sx, CARRY_GRIP_Y.y, 0.0)]
+	return [Vector3(-0.28, CARRY_RUNG_Y, 0.0), Vector3(0.28, CARRY_RUNG_Y, 0.0)]
 
 
 func _carry_release(c: Soldier) -> void:

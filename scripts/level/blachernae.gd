@@ -70,40 +70,110 @@ func _ground() -> void:
 	_field_wear()
 
 
-## Gece ovasının ayrıntısı (yayma P9): ayak izleri (hücum şeritleri sura doğru), taş ve çakıl, yere saplı oklar, birkaç
-## çiğnenmiş çamur yaması. İki ağa pişirilir (sert: taş, ok; yumuşak: iz, çamur): iki çizim çağrısı. Çarpışmasız, gölgesiz;
-## seyrek ve düzensiz (ızgara ya da leke değil). LandWalls.bake_detail ile 22o ve kara surlarındaki gibi.
+## Gece ovasının ayrıntısı (yayma P9): ayak izleri (hücum şeritleri merdiven yerlerine), taş ve çakıl, yere saplı oklar,
+## birkaç çiğnenmiş çamur yaması; 30o'nun açılışında oyuncunun önünde (ordu saflarından başlangıç yerine) çiğnenmiş bir
+## alan. Seyrek ve düzensiz (ızgara ya da leke değil); çarpışmasız, gölgesiz.
+## Bütçe (P9 düzeltme): eskiden iki ağ 146 bin üçgendi ve ova görüşte olmasa da hepsi çiziliyordu. Şimdi ≈ 47 bin üçgen,
+## x boyunca parçalı beş ağ (sert: üç, yumuşak: iki; altı levhanın yerine bir levha + beş parça: çizim sayısı eskisini
+## aşmaz), her parça görüş konisine göre ayıklanır ve 80 m'den uzakta çizilmez.
+const WEAR_SPLIT_HARD := [-19.0, 19.0]
+const WEAR_SPLIT_SOFT := [0.0]
+const WEAR_RANGE := 80.0
+
 func _field_wear() -> void:
 	var flat0 := func(_x: float, _z: float) -> float: return slope_y(0.0)
-	var area := Rect2(-58.0, WALL_Z1 + 1.6, 116.0, 46.0)
-	# Sur dibindeki sıra: merdiven ayakları (bölümün kendi merdiveni x CLIMB) ve kule önleri çoğu yerde izli
-	var hard := SurfaceTool.new()
-	hard.begin(Mesh.PRIMITIVE_TRIANGLES)
-	var soft := SurfaceTool.new()
-	soft.begin(Mesh.PRIMITIVE_TRIANGLES)
-	var dark_stone := [Color("6e685c")]
-	LandWalls.bake_detail(hard, Nature.ground_detail(self, area, "pebble", 0.16, 3051, flat0), [Color("7a7466")])
-	LandWalls.bake_detail(hard, Nature.ground_detail(self, area, "stone", 0.03, 3052, flat0), dark_stone)
-	LandWalls.bake_detail(hard, Nature.ground_detail(self, area, "arrows", 0.012, 3053, flat0), [Color("6a5234")])
-	LandWalls.bake_detail(soft, Nature.ground_detail(self, area, "camp_mud", 0.012, 3054, flat0), [Color("3e3426")])
-	# Hücum şeritleri: ordudan sur dibine inen ayak izleri (altı şerit; biri merdiven yerine kıvrılır)
-	var lanes := [[-48.0, -44.0], [-30.0, -26.0], [-8.0, -4.0], [10.0, 6.0], [30.0, 33.0], [50.0, 46.0]]
+	var z0 := WALL_Z1 + 1.6
+	var hard: Array = []
+	for i in WEAR_SPLIT_HARD.size() + 1:
+		var st := SurfaceTool.new()
+		st.begin(Mesh.PRIMITIVE_TRIANGLES)
+		hard.append(st)
+	var soft: Array = []
+	for i in WEAR_SPLIT_SOFT.size() + 1:
+		var st := SurfaceTool.new()
+		st.begin(Mesh.PRIMITIVE_TRIANGLES)
+		soft.append(st)
+	# Sur dibi şeridi (merdivenlerin dayandığı yer, surdan bakışta yakın): çakıl, ok
+	var foot := Rect2(-30.0, z0, 60.0, 22.0)
+	# 30o açılışı: oyuncunun başlangıç yerinin önü (Zağanos'un ve saflarının durduğu yer); halka biçimli, ızgara değil
+	var camp := Rect2(-6.0, 34.0, 24.0, 20.0)
+	var near_camp := func(x: float, z: float) -> bool: return Vector2(x - 5.0, z - 44.0).length() < 10.5
+	# Gece ışığında seçilsin: izler ve çamur zeminden koyu (ıslak, çiğnenmiş), çakıl açık
+	var dark_stone := Color("6e685c")
+	var pebble := Color("9a9384")
+	var mud := Color("2e271d")
+	var print_c := Color("2a2219")
+	_wear_bake(hard, WEAR_SPLIT_HARD, Nature.ground_detail(self, foot, "pebble", 0.06, 3051, flat0), pebble)
+	_wear_bake(hard, WEAR_SPLIT_HARD, Nature.ground_detail(self, camp, "pebble", 0.4, 3055, flat0, near_camp), pebble)
+	_wear_bake(hard, WEAR_SPLIT_HARD, Nature.ground_detail(self, Rect2(-58.0, z0, 116.0, 46.0), "stone", 0.008, 3052, flat0), dark_stone)
+	_wear_bake(hard, WEAR_SPLIT_HARD, Nature.ground_detail(self, Rect2(-40.0, z0, 80.0, 24.0), "arrows", 0.012, 3053, flat0), Color("6a5234"))
+	_wear_bake(soft, WEAR_SPLIT_SOFT, Nature.ground_detail(self, Rect2(-58.0, z0, 116.0, 46.0), "camp_mud", 0.004, 3054, flat0), mud)
+	_wear_bake(soft, WEAR_SPLIT_SOFT, Nature.ground_detail(self, camp, "camp_mud", 0.014, 3057, flat0, near_camp), mud)
+	# Hücum şeritleri: ovadan merdiven yerlerine (30: x −12, −4, 6, 14; 30o: x 10) inen ayak izleri, sur dibine yakın yarı
+	var lanes := [[-15.0, -12.0], [-7.0, -4.0], [12.0, 10.0], [17.0, 14.0]]
 	for i in lanes.size():
 		var ln: Array = lanes[i]
-		LandWalls.bake_detail(soft, Nature.trail(self, [Vector3(float(ln[0]), 0, WALL_Z1 + 46.0), Vector3(float(ln[0]) * 0.5 + float(ln[1]) * 0.5 + 2.0, 0, WALL_Z1 + 24.0),
-			Vector3(float(ln[1]), 0, WALL_Z1 + 3.0)], "footprint", flat0, 1.5, 3060 + i, 0.8), [Color("4a4034")])
-	for pair: Array in [[hard, Nature._detail()], [soft, Nature._soft(false)]]:
-		var mesh := (pair[0] as SurfaceTool).commit()
-		if mesh.get_surface_count() == 0:
-			continue
-		var mi := MeshInstance3D.new()
-		mi.name = "FieldWear"
-		mi.mesh = mesh
-		mi.material_override = pair[1]
-		mi.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
-		mi.set_meta("no_walk", true)        # WorldWalk: dekor, zemin değil
-		mi.set_meta("soft", true)
-		add_child(mi)
+		_wear_bake(soft, WEAR_SPLIT_SOFT, Nature.trail(self, [Vector3(float(ln[0]), 0, WALL_Z1 + 32.0), Vector3(float(ln[0]) * 0.5 + float(ln[1]) * 0.5 + 1.5, 0, WALL_Z1 + 17.0),
+			Vector3(float(ln[1]), 0, WALL_Z1 + 3.0)], "footprint", flat0, 2.0, 3060 + i, 0.8), print_c)
+	# Saflardan başlangıç yerine (30o: oyuncu Zağanos'un yanına buradan gelmiş) ve saf önünde gidip gelenlerin izleri
+	var camp_trails := [[Vector3(0.0, 0, 51.0), Vector3(4.0, 0, 46.0), Vector3(9.0, 0, 41.5)],
+		[Vector3(-3.0, 0, 41.0), Vector3(2.0, 0, 44.5), Vector3(6.0, 0, 50.0)],
+		[Vector3(8.0, 0, 52.0), Vector3(5.5, 0, 47.5), Vector3(0.5, 0, 46.0)]]
+	for i in camp_trails.size():
+		_wear_bake(soft, WEAR_SPLIT_SOFT, Nature.trail(self, camp_trails[i], "footprint", flat0, 1.3, 3066 + i, 0.5), print_c)
+	for pair: Array in [[hard, Nature._detail(), "H"], [soft, Nature._soft(false), "S"]]:
+		for j in (pair[0] as Array).size():
+			var mesh := (pair[0][j] as SurfaceTool).commit()
+			if mesh.get_surface_count() == 0:
+				continue
+			var mi := MeshInstance3D.new()
+			mi.name = "FieldWear%s%d" % [pair[2], j]
+			mi.mesh = mesh
+			mi.material_override = pair[1]
+			mi.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
+			mi.visibility_range_end = WEAR_RANGE
+			mi.set_meta("no_walk", true)        # WorldWalk: dekor, zemin değil
+			mi.set_meta("soft", true)
+			add_child(mi)
+
+
+## Ayrıntı örneklerini (MultiMesh) x'ine göre parçanın ağına pişirir (LandWalls.bake_detail gibi: tek renk, z'ye göre
+## hafif açılan ton) ve örnek düğümünü siler.
+func _wear_bake(sts: Array, splits: Array, mi: MultiMeshInstance3D, col0: Color) -> void:
+	if mi == null or mi.multimesh == null or mi.multimesh.mesh == null:
+		return
+	var xs: Array = mi.get_meta("xforms", [])
+	var mesh := mi.multimesh.mesh
+	for s in mesh.get_surface_count():
+		var a := mesh.surface_get_arrays(s)
+		var v: PackedVector3Array = a[Mesh.ARRAY_VERTEX]
+		var n: PackedVector3Array = a[Mesh.ARRAY_NORMAL] if a[Mesh.ARRAY_NORMAL] != null else PackedVector3Array()
+		var c: PackedColorArray = a[Mesh.ARRAY_COLOR] if a[Mesh.ARRAY_COLOR] != null else PackedColorArray()
+		var order := PackedInt32Array()
+		if a[Mesh.ARRAY_INDEX] != null and (a[Mesh.ARRAY_INDEX] as PackedInt32Array).size() > 0:
+			order = a[Mesh.ARRAY_INDEX]
+		else:
+			order.resize(v.size())
+			for k in v.size():
+				order[k] = k
+		for i in xs.size():
+			var xf: Transform3D = xs[i]
+			var ci := 0
+			while ci < splits.size() and xf.origin.x >= float(splits[ci]):
+				ci += 1
+			var st: SurfaceTool = sts[ci]
+			var col := col0.lightened(fposmod(xf.origin.z * 7.31 + i * 0.37, 1.0) * 0.08)
+			var nb := xf.basis.inverse().transposed()
+			for k in order:
+				var vc: Color = c[k] if k < c.size() else Color.WHITE
+				st.set_color(Color(col.r * vc.r, col.g * vc.g, col.b * vc.b, vc.a))
+				if k < n.size():
+					st.set_normal((nb * n[k]).normalized())
+				st.add_vertex(xf * v[k])
+	var par := mi.get_parent()
+	if par:
+		par.remove_child(mi)
+	mi.free()
 
 
 func _wall() -> void:
