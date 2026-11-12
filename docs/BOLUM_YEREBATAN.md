@@ -127,3 +127,17 @@ ağ + toz parçacıkları), ışık bütçesi: telefon feneri (SpotLight), meşa
 - Bizans sırası bir sayfa uzar (sayfa sayısı, ekran numaraları); başarım/sayfa sayısı sabitleri kontrol edilecek.
 - Ses: yeni replikler seslendirilmemiş olacak (ses üretilmez); altyazıyla oynanır, liste teslim edilir.
 - Süre hedefi 8–12 dakika.
+
+## 10. Uygulamada değişenler (12 Kasım, bölüm yazıldıktan sonra)
+
+- **Sıra:** `Siege.ORDER`'da 43'ün ardında (`… 24, 43, 44, 25 …`): 43 (25 Mayıs) Osmanlı'ya özgüdür, Bizans'ta atlanır;
+  Bizans oyuncusu 24 → 44 → 25 oynar. Takvim sırası korunur (25 Mayıs → 26 Mayıs).
+- **Marco:** Bölüm 24'te selden kurtarılan çocuk kanonda "Venedikli Marco"dur (annesi pazardaydı); Eudokia'nın torunu
+  yapılmadı. 24.1'de Marco annesiyle Eudokia'nın avlusunda kalır, tahta atı kuyuya düşmüştür (`SPK_KID`).
+- **Konuşmacılar:** yeni ses kişisi açılmadı: Eudokia `SPK_WOMAN_BYZ` (Kadın), Yakovos `SPK_FISHMONGER` (Balıkçı),
+  komşu `SPK_TOWNSMAN`. (Yeni ses kimliği gerekirse sahibinin kararı.)
+- **Işık:** telefon yoksa çakmak (6 sn yanar, 2 sn soğur), o da yoksa kumandanın soluk ekranı. Fener tuşu F.
+- **Çıkış kuyusu:** Medusa'lı iki sütunun güneyindeki tonoz gözü (Yakovos'un evinin kuyusu): kayık kuyunun altında
+  durur, iki taş yüz 3,5 m önde, suyun ~0,7 m altında.
+- **Bölüm 25 bağlantısı:** son ayinde Eudokia Tolga'nın sol önündedir (44.1: "cin bu sabah kovama iki balık koymuş";
+  44.2: "bodrumumuzda saray var dedi"). Test: `--chapter=25 --autotest=cistern|cistern_blab`.

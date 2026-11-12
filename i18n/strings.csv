@@ -9769,7 +9769,8 @@ UI_OBJ44_CORNER,Kuzeybatı köşeye kürek çek · sudaki halka: oraya taş dü�
 UI_OBJ44_CORNER_PAD,Kuzeybatı köşeye kürek çek (A) · sudaki halka: oraya taş düşecek,Row to the north-west corner (A) · a ring on the water: a stone is about to fall there
 UI_CH44_QUAKE,Sarsıntılar sıklaşıyor · %d sn,The tremors are getting closer · %d s
 UI_CH44_BATTERY,Pil: %%%d,Battery: %d%%
-UI_OBJ44_MEDUSA,Işığı suya tut: dipteki taş yüzü kayda geçir,Shine the light into the water: record the stone face on the bottom
+UI_OBJ44_MEDUSA,Tespit et: dipteki taş yüz (ışığı suya tut; bak ve E),Record: the stone face on the bottom (light the water; look and press E)
+UI_OBJ44_MEDUSA_PAD,Tespit et: dipteki taş yüz (ışığı suya tut; bak ve X),Record: the stone face on the bottom (light the water; look and press X)
 UI_OBJ44_CLIMB,Kuyunun demir basamaklarından tırman,Climb the iron rungs of the well
 UI_PROMPT44_CLIMB,[E] Tırman,[E] Climb
 UI_CH44_KEEP,"Sırrı koru: ""Cin yok. Kuyu derin, ip çürük.""","Keep the secret: ""No djinn. Deep well, rotten rope."""
@@ -9789,7 +9790,7 @@ SIEGE_NOTE_44_2,Sarnıç. Üç yüz otuz altı sütunu mahalleye anlattım. Kims
 PHOTO_SIEGE44,Suyun dibinde Medusa,Medusa at the bottom of the water
 D44B_N_01,"26 Mayıs 1453. Bombardıman gece gündüz sürüyor. Bugünkü kayıt küçük, Tolga Bey: Ayasofya'nın batısında bir avlu, bir kuyu.","26 May 1453. The bombardment goes on day and night. Today's entry is a small one, Mr Tolga: a courtyard west of Hagia Sophia, a well."
 D44B_T_01,"Küçük iyidir. Kuşatmanın ortasında bir kuyu: hasar tespiti beş dakika, imza, çay.","Small is good. A well in the middle of a siege: five minutes of damage assessment, signature, tea."
-D44B_E_01,"Tolga, Büro'nun tercümanı sen misin? Gel, şu kuyuya bak. Selden beri kovam balıkla çıkıyor.","Tolga, you're the Bureau's interpreter? Come, look at this well. Since the flood my bucket keeps coming up with fish in it."
+D44B_E_01,"Tolga, Büro'nun tercümanı sen misin? Ben Eudokia. Selden beri kovam kuyudan balıkla çıkıyor.","Tolga, you're the Bureau's interpreter? I'm Eudokia. Since the flood my bucket keeps coming up from the well with fish in it."
 D44B_E_02,"Dün kovamı biri aşağı çekti, ip boş geldi. Komşular 'kuyunda cin var' diyor. Su çekemiyorum artık.",Yesterday something pulled my bucket down and the rope came up empty. The neighbours say there's a djinn in my well. I can't draw water any more.
 D44B_T_02,"Hanımefendi, ben hasar tespitçisiyim. Cin kapsam dışı ama kovanıza bakarım. İp sağlam mı?","Madam, I'm a loss adjuster. Djinns aren't covered, but I'll look for your bucket. Is the rope sound?"
 D44B_K_01,"Benim atım da düştü! Annemle burada kalıyoruz. Selde beni saçağa götüren sendin, değil mi? Atımı da bulursun.","My horse fell in too! Mum and I are staying here. You're the one who got me under the eaves in the flood, aren't you? You'll find my horse."

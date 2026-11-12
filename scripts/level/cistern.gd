@@ -43,7 +43,6 @@ var body: StaticBody3D
 var focus := Vector3.ZERO               # balıkların ve damlaların toplandığı yer (oyuncu)
 var daylight := 1.0                     # kuyu ağızlarının parlaklığı (0: gece)
 var _caustic_mats: Array[ShaderMaterial] = []
-var _beam_mat: ShaderMaterial
 var _pool_mat: ShaderMaterial
 var _dust_mat: StandardMaterial3D
 
@@ -145,7 +144,7 @@ void fragment() {
 	float vein = abs(n2(vec2(a * 3.0 + y * 0.45, y * 0.9)) - 0.5);
 	vein = 1.0 - smoothstep(0.0, 0.035, vein);
 	vec3 base = tint * (0.9 + 0.16 * (cloud - 0.5));
-	base = mix(base, base * 0.78, vein * 0.35);
+	base = mix(base, base * 0.9, vein * 0.15);
 	// Su çizgisi: yosun bandı, üstünde kışın yükselen suyun bıraktığı kireç bantları, dipte koyu
 	float wl = water_y;
 	float algae = 1.0 - smoothstep(wl + 0.05, wl + 0.55, y);
@@ -154,7 +153,7 @@ void fragment() {
 	lime *= 0.55 + 0.45 * n2(vec2(a * 8.0, y * 0.5));
 	base = mix(base, vec3(0.86, 0.85, 0.78), lime * 0.35);
 	float drip = smoothstep(0.7, 0.95, n2(vec2(a * 6.0, y * 0.12))) * smoothstep(wl + 3.0, wl + 0.8, y);
-	base = mix(base, base * vec3(0.72, 0.7, 0.62), drip * 0.5);
+	base = mix(base, base * vec3(0.86, 0.84, 0.78), drip * 0.25);
 	if (reflected > 0.5) {
 		base *= vec3(0.62, 0.72, 0.70);
 		if (!FRONT_FACING) { NORMAL = -NORMAL; }
@@ -377,10 +376,15 @@ void fragment() {
 		uv = abs(wn.x) > 0.5 ? vec2(wp.z, y) : vec2(wp.x, y);
 	}
 	float aa = clamp(length(fwidth(uv)) * 9.0, 0.0, 1.0);
+	if (vault > 0.5) { aa = max(aa, 0.85); }
 	float b = mix(bricks(uv), 0.82, aa);
 	vec2 cell = vec2(floor(uv.x / 0.36 + 0.5 * mod(floor(uv.y / 0.085), 2.0)), floor(uv.y / 0.085));
 	vec3 brick = mix(vec3(0.46, 0.25, 0.17), vec3(0.58, 0.36, 0.24), h(cell));
 	brick *= 0.8 + 0.25 * n2(wp.xz * 0.7 + vec2(y));
+	if (vault > 0.5) {
+		brick = mix(vec3(0.44, 0.27, 0.19), vec3(0.6, 0.4, 0.28), n2(wp.xz * 0.6 + vec2(y * 0.3)));
+		brick *= 0.88 + 0.18 * n2(wp.xz * 4.0);
+	}
 	vec3 mortar = vec3(0.62, 0.58, 0.50);
 	vec3 col = mix(mortar, brick, b);
 	// Nem lekeleri, kireç sızıntısı (tonozun tepesinden aşağı)
@@ -628,31 +632,6 @@ void fragment() {
 # ================================================================ kuyular ve ışık huzmeleri
 
 func _build_wells() -> void:
-	var sh := Shader.new()
-	sh.code = """
-shader_type spatial;
-render_mode unshaded, blend_add, depth_draw_never, cull_disabled, shadows_disabled, fog_disabled;
-uniform vec4 col : source_color = vec4(1.0, 0.92, 0.75, 1.0);
-uniform float strength = 0.45;
-uniform float top_y = 11.4;
-uniform float bot_y = 2.2;
-varying vec3 wp;
-void vertex() { wp = (MODEL_MATRIX * vec4(VERTEX, 1.0)).xyz; }
-void fragment() {
-	float edge = pow(abs(dot(NORMAL, VIEW)), 2.0);
-	// Uzaktaki huzme sise gömülmez ama söner (gerçek havada toz ışığı tutar)
-	float dist = length(wp - (INV_VIEW_MATRIX * vec4(0.0, 0.0, 0.0, 1.0)).xyz);
-	edge *= 1.0 / (1.0 + dist * 0.035);
-	float k = clamp((wp.y - bot_y) / (top_y - bot_y), 0.0, 1.0);
-	float fade = smoothstep(0.0, 0.18, k) * (0.45 + 0.55 * k);
-	float flick = 0.9 + 0.1 * sin(TIME * 0.7 + wp.x);
-	ALBEDO = col.rgb * strength * edge * fade * flick;
-}
-"""
-	_beam_mat = ShaderMaterial.new()
-	_beam_mat.shader = sh
-	_beam_mat.set_shader_parameter("top_y", IMPOST_Y + VAULT_H)
-	_beam_mat.set_shader_parameter("bot_y", WATER_Y)
 	var ps := Shader.new()
 	ps.code = """
 shader_type spatial;
@@ -675,6 +654,18 @@ void fragment() {
 	_dust_mat.blend_mode = BaseMaterial3D.BLEND_MODE_ADD
 	_dust_mat.albedo_color = Color(1.0, 0.92, 0.75, 0.6)
 	_dust_mat.billboard_mode = BaseMaterial3D.BILLBOARD_ENABLED
+	# Yuvarlak, kenarı yumuşak zerre (kare dörtgen kameraya yakınken kutu gibi görünüyordu)
+	var dg := Gradient.new()
+	dg.set_color(0, Color(1, 1, 1, 1))
+	dg.set_color(1, Color(1, 1, 1, 0))
+	var dt := GradientTexture2D.new()
+	dt.gradient = dg
+	dt.fill = GradientTexture2D.FILL_RADIAL
+	dt.fill_from = Vector2(0.5, 0.5)
+	dt.fill_to = Vector2(0.5, 0.0)
+	dt.width = 16
+	dt.height = 16
+	_dust_mat.albedo_texture = dt
 	var stone := Props.mat(Color("4a463e"), 0.0, false, "", false)
 	var crown := IMPOST_Y + VAULT_H
 	for w: Array in WELLS:
@@ -705,23 +696,17 @@ void fragment() {
 		sky.material_override = Props.mat(Color("fff2d8"), 3.0, false, "", false)
 		sky.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
 		add_child(sky)
-		# Huzme: kuyu ağzından suya eğik inen koni (gün eğik vurur)
+		# Huzme: kuyu ağzından suya inen ışık kartı (dikey eksende kameraya döner; ortası parlak, kenarları ve dibi
+		# saydam). Silindir huzme bu ışıkta "aydınlık bir sütun" gibi okunuyordu.
+		var top_p := Vector3(c.x, crown + 1.2, c.z)
+		var bot_p := Vector3(c.x, WATER_Y, c.z)
+		var tilt := Vector3.ZERO
 		var beam := MeshInstance3D.new()
-		var bm := CylinderMesh.new()
-		bm.top_radius = 0.5
-		bm.bottom_radius = 1.45
-		bm.height = crown + 4.6 - WATER_Y
-		bm.radial_segments = 16
-		bm.cap_top = false
-		bm.cap_bottom = false
-		beam.mesh = bm
-		# Gün eğik vurur: huzme suya kuyunun ağzının ~1,6 m doğusuna/güneyine iner
-		var tilt := Vector3(0.11, 0.0, 0.045)
-		var top_p := Vector3(c.x, crown + 4.6, c.z)
-		var bot_p := Vector3(c.x, WATER_Y, c.z) + tilt * (crown + 4.6 - WATER_Y)
-		beam.basis = _align_y(top_p - bot_p)
+		var bq := QuadMesh.new()
+		bq.size = Vector2(2.2, top_p.y - bot_p.y)
+		beam.mesh = bq
 		beam.position = (top_p + bot_p) * 0.5
-		beam.material_override = _beam_mat
+		beam.material_override = _beam_card_mat()
 		beam.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
 		beam.name = "Beam"
 		add_child(beam)
@@ -781,6 +766,16 @@ void fragment() {
 		r.position = Vector3(c.x + 0.2, WATER_Y + 0.8 + len * 0.5, c.z)
 		add_child(r)
 		_bucket(Vector3(c.x + 0.2, WATER_Y + 0.55, c.z))
+	# Eudokia'nın kuyusu: ağzından sızan gün ışığı bacanın taşlarını ve ipi aydınlatır (iniş anı karanlıkta kalmasın)
+	var wl := OmniLight3D.new()
+	wl.light_color = Color("ffe6c0")
+	wl.light_energy = 1.2
+	wl.omni_range = 6.0
+	wl.shadow_enabled = false
+	var fw0 := bay(WELLS[0][0], WELLS[0][1])
+	wl.position = Vector3(fw0.x, crown + 3.6, fw0.z)
+	wl.name = "WellMouthLight"
+	add_child(wl)
 	# Eudokia'nın kuyusu: kopuk ip ucu tepede sallanır
 	var fc := bay(WELLS[0][0], WELLS[0][1])
 	var stub := MeshInstance3D.new()
@@ -794,6 +789,35 @@ void fragment() {
 	stub.position = Vector3(fc.x + 0.15, crown + 2.6, fc.z)
 	stub.name = "BrokenRope"
 	add_child(stub)
+
+
+var _beam_card: StandardMaterial3D
+
+
+func _beam_card_mat() -> StandardMaterial3D:
+	if _beam_card:
+		return _beam_card
+	var g := Gradient.new()
+	g.set_color(0, Color(1, 1, 1, 0))
+	g.set_color(1, Color(1, 1, 1, 0))
+	g.add_point(0.5, Color(1, 1, 1, 1))
+	g.add_point(0.3, Color(1, 1, 1, 0.35))
+	g.add_point(0.7, Color(1, 1, 1, 0.35))
+	var gt := GradientTexture2D.new()
+	gt.gradient = g
+	gt.width = 64
+	gt.height = 4
+	_beam_card = StandardMaterial3D.new()
+	_beam_card.shading_mode = BaseMaterial3D.SHADING_MODE_UNSHADED
+	_beam_card.transparency = BaseMaterial3D.TRANSPARENCY_ALPHA
+	_beam_card.blend_mode = BaseMaterial3D.BLEND_MODE_ADD
+	_beam_card.albedo_texture = gt
+	_beam_card.albedo_color = Color(1.0, 0.9, 0.72, 0.5)
+	_beam_card.billboard_mode = BaseMaterial3D.BILLBOARD_FIXED_Y
+	_beam_card.cull_mode = BaseMaterial3D.CULL_DISABLED
+	_beam_card.disable_fog = true
+	_beam_card.depth_draw_mode = BaseMaterial3D.DEPTH_DRAW_DISABLED
+	return _beam_card
 
 
 func _align_y(dir: Vector3) -> Basis:
@@ -1120,7 +1144,8 @@ func _process(delta: float) -> void:
 			l.global_position = (order[k]["pos"] as Vector3) + Vector3(0, 3.4, 0)
 			l.light_energy = 0.9 * daylight
 		l.visible = daylight > 0.05
-	_beam_mat.set_shader_parameter("strength", 1.1 * daylight)
+	if _beam_card:
+		_beam_card.albedo_color.a = 0.5 * daylight
 	_pool_mat.set_shader_parameter("strength", 1.0 * daylight)
 
 

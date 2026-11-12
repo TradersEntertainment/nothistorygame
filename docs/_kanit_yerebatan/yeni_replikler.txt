@@ -2,7 +2,7 @@
 # anahtar | konuşmacı | ton | tr
 D44B_N_01 | SPK_NIHAT | - | 26 Mayıs 1453. Bombardıman gece gündüz sürüyor. Bugünkü kayıt küçük, Tolga Bey: Ayasofya'nın batısında bir avlu, bir kuyu.
 D44B_T_01 | SPK_TOLGA | - | Küçük iyidir. Kuşatmanın ortasında bir kuyu: hasar tespiti beş dakika, imza, çay.
-D44B_E_01 | SPK_WOMAN_BYZ | - | Tolga, Büro'nun tercümanı sen misin? Gel, şu kuyuya bak. Selden beri kovam balıkla çıkıyor.
+D44B_E_01 | SPK_WOMAN_BYZ | - | Tolga, Büro'nun tercümanı sen misin? Ben Eudokia. Selden beri kovam kuyudan balıkla çıkıyor.
 D44B_E_02 | SPK_WOMAN_BYZ | - | Dün kovamı biri aşağı çekti, ip boş geldi. Komşular 'kuyunda cin var' diyor. Su çekemiyorum artık.
 D44B_T_02 | SPK_TOLGA | - | Hanımefendi, ben hasar tespitçisiyim. Cin kapsam dışı ama kovanıza bakarım. İp sağlam mı?
 D44B_K_01 | SPK_KID | - | Benim atım da düştü! Annemle burada kalıyoruz. Selde beni saçağa götüren sendin, değil mi? Atımı da bulursun.

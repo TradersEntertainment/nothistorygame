@@ -489,6 +489,7 @@ func _quake() -> void:
 ## Süre doldu: son büyük sarsıntı, fener de sönmüş; karanlıkta Yakovos'un sesi. İpini Tolga'nın kayığına bağlar,
 ## kendi kayığıyla sütunların arasından köşeye çeker (sayarak: "dokuz, on...").
 func _rescue(goal: Vector3) -> void:
+	player.frozen = true
 	await _tremor(1.0)
 	_light_off()
 	cis.set("daylight", 0.25)
@@ -508,6 +509,7 @@ func _rescue(goal: Vector3) -> void:
 ## Medusa köşesi: ışığı suya tut, dipteki taş yüzü kayda geçir (tespit karesi)
 func _medusa() -> void:
 	phase = "medusa"
+	player.frozen = false
 	var heads: Array = cis.get("medusa")
 	var head: Node3D = heads[0]
 	var aim := head.get_node("Aim") as Node3D
@@ -522,7 +524,7 @@ func _medusa() -> void:
 	await _turn_to(yakovos.global_position + Vector3(0, 1.3, 0), 1.0)
 	await hud.say("SPK_FISHMONGER", "D44B_Y_STONE")
 	await _turn_to(aim.global_position, 1.2)
-	hud.set_objective(tr("UI_OBJ44_MEDUSA"), aim.global_position)
+	hud.set_objective(GameState.tr_pad("UI_OBJ44_MEDUSA"), aim.global_position)
 	cam = TespitCam.new(player, hud, aim, "siege44")
 	hud.add_child(cam)
 	cam.max_dist = 14.0
@@ -875,6 +877,7 @@ func _toggle_light() -> void:
 				hud.bark("SPK_TOLGA", "D44B_T_BATTERY_0", 3.0)
 				return
 			light_on = true
+			player.hold_now("phone")          # fener elde: telefon görünür
 			_spot.visible = true
 			_spot.light_energy = 6.0
 			_spot.spot_range = 45.0
@@ -886,6 +889,7 @@ func _toggle_light() -> void:
 			if _lighter_cool > 0.0:
 				return
 			light_on = true
+			player.hold_now("lighter")
 			_lighter_t = LIGHTER_ON
 			_lighter_l.visible = true
 			_fill.visible = true
@@ -904,6 +908,8 @@ func _toggle_light() -> void:
 
 
 func _light_off() -> void:
+	if light_on and player and player.held_item() in ["phone", "lighter"]:
+		player.hold_default()
 	light_on = false
 	if _spot:
 		_spot.visible = false
@@ -942,7 +948,7 @@ func _light_tick(delta: float) -> void:
 				_light_off()
 				_lighter_cool = LIGHTER_COOL
 				hud.bark("SPK_TOLGA", "D44B_T_THUMB", 2.0)
-	if phase in ["row", "quake", "swim", "awe"]:
+	if phase in ["row", "quake"] and player.focus_id == "":
 		hud.set_prompt(tr("UI_CH44_BATTERY") % ceili(battery) if light_kind == "phone" else "")
 
 
@@ -1159,7 +1165,9 @@ func _run_shots() -> void:
 		["c44_lighter.png", Vector3(fw.x, CisternLevel.WATER_Y + 0.35, fw.z + 0.6), Vector3(fw.x - 20, CisternLevel.WATER_Y + 1.2, fw.z - 3), "lighter"],
 	]
 	var b2: Vector3 = CisternLevel.bay(17, 4)
-	shots.append(["c44_beam.png", b2 + Vector3(9, 0.9, 7), b2 + Vector3(0, 3.0, 0), ""])
+	shots.append(["c44_beam.png", b2 + Vector3(0, 0.9, 7.6), b2 + Vector3(0, 2.6, 0), ""])
+	shots.append(["c44_beam_lit.png", b2 + Vector3(0, 0.9, 7.6), b2 + Vector3(0, 2.6, 0), "phone"])
+	shots.append(["c44_up.png", Vector3(fw.x + 0.3, CisternLevel.WATER_Y + 0.35, fw.z + 0.4), Vector3(fw.x - 0.6, 20.0, fw.z - 0.4), "phone"])
 	var r0 := CisternLevel.bay(18, 6)
 	shots.append(["c44_boat_row.png", r0 + Vector3(0, 0.9, 0), r0 + Vector3(-30, 1.5, 0), "phone"])
 	var mc := CisternLevel.column(1, 1)

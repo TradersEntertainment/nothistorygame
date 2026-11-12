@@ -121,7 +121,7 @@ for v in "" "=brow" "=miss" "=cologne" "=early" "=blakh_ok" "=blakh_bad"; do run
 for v in "" "=creative" "=pass" "=singed" "=letter"; do run --chapter=23 --autotest$v; done
 run --chapter=23 --autotest=osm
 for v in "" "=late" "=niko" "=niko_slow" "=eclipse"; do run --chapter=24 --autotest$v; done
-for v in "" "=caught" "=pass" "=kid"; do run --chapter=25 --autotest$v; done
+for v in "" "=caught" "=pass" "=kid" "=cistern" "=cistern_blab"; do run --chapter=25 --autotest$v; done
 for v in "=osm" "=osm_caught" "=osm_tez"; do run --chapter=25 --autotest$v; done
 for v in "" "=nophoto" "=hold" "=hold_box" "=hold23" "=hold3" "=warn_notrust" "=hold_lose" "=lighter" "=isidore" "=kasim" "=candle" "=council_ok" "=council_bad"; do run --chapter=26 --autotest$v; done
 # Perde IV · Osmanlı tarafı (Büro'da "O" seçilince)
