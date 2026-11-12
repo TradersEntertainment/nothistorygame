@@ -406,6 +406,8 @@ func _build_hesapla(foot: Array, bands: Array, gates: Array, tohum: int) -> void
 	# 2) Kapılardan Mese'ye inen yollar ve deniz kapılarından yokuşlar
 	for g: Array in gates:
 		_gate_road(g[0] as Vector2, String(g[1]), rng)
+	# 2b) DOKU-4 madde 4: bölümlerin oyun alanlarının (hub, Ayasofya meydanı) çevresinde çevre yolu + dört yana bağlantı
+	_oyun_alani_yollari()
 	# 3) Mahalle içi organik sokaklar (üç kuşak) ve boş kalan yerleri dolduran ek sokaklar
 	var n0 := streets.size()
 	for s in range(0, n0):
@@ -446,6 +448,47 @@ func _build_hesapla(foot: Array, bands: Array, gates: Array, tohum: int) -> void
 	stats["doku"] = doku.size()
 	stats["oge"] = oge.size()
 	stats["hesap_ms"] = Time.get_ticks_msec() - t0
+
+
+## Oyun alanının (dikdörtgen) 4,5 m dışında 5 m'lik kaldırım çevre yolu ve her kenarın ortasından dışarı 70 m bağlantı:
+## alanın kenarındaki yeşil şerit kalkar, sokak dokusu (sıra evler, ara sokaklar) çevre yoluna yaslanır.
+func _oyun_alani_yollari() -> void:
+	var s: Node = IstSehir.active
+	if s == null or not is_instance_valid(s) or not s.has_method("oyun_alanlari"):
+		return
+	var n := 0
+	for a: Rect2 in s.oyun_alanlari():
+		var r := a.grow(4.5)
+		var k := [r.position, Vector2(r.end.x, r.position.y), r.end, Vector2(r.position.x, r.end.y)]
+		for i in 4:
+			var p: Vector2 = k[i]
+			var q: Vector2 = k[(i + 1) % 4]
+			n += _add_parcali(_densify(PackedVector2Array([p, q]), 4.0), 5.0, "oyun_cevre")
+			var m := (p + q) * 0.5
+			var dis := (m - a.get_center()).normalized()
+			dis = Vector2(signf(dis.x), 0.0) if absf(dis.x) > absf(dis.y) else Vector2(0.0, signf(dis.y))
+			var uc := m + dis * 70.0
+			if not IstGeo.sehir_ici(uc.x, uc.y):
+				uc = m + dis * 30.0
+			n += _add_parcali(_densify(PackedVector2Array([m + dis * 2.5, uc]), 4.0), 5.0, "oyun_bag")
+	stats["oyun_yol"] = n
+
+
+## Yalnız boş/yol hücrelerinden geçen parçaları ekler (sur bandı, anıt, deniz atlanır); eklenen parça sayısı
+func _add_parcali(pts: PackedVector2Array, w: float, ad: String) -> int:
+	var n := 0
+	var cur := PackedVector2Array()
+	for i in pts.size() + 1:
+		var ok := i < pts.size() and cell(pts[i].x, pts[i].y) in [0, 1] and IstGeo.sehir_ici(pts[i].x, pts[i].y)
+		if ok:
+			cur.append(pts[i])
+		elif cur.size() >= 3:
+			_add_street(cur, w, "yol", ad)
+			n += 1
+			cur = PackedVector2Array()
+		else:
+			cur = PackedVector2Array()
+	return n
 
 
 ## Anıt tabanları: IstSehir v2 kayıtlarından (salt okunur) döndürülmüş dikdörtgen = gerçek ölçü × k + 6 m pay. Sınır
