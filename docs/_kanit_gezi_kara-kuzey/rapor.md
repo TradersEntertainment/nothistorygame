@@ -8,7 +8,7 @@ Bölge sınırı (gerçek m, doğu, kuzey): GB (-3840, 2220), GD (-2950, 2220), 
 asıl yer: Edirnekapı (-3646, 2564) → Eğrikapı (-3353, 2826) → Blakherna/Anemas (-3360, 3547), Haliç kıyısı; sur dışı 260 m şerit.
 Izgara: 284 düğüm planlandı; 60 m yerine 120 m seyreltilmiş ızgara (77 düğüm × K ve D yönü = 154 kare) çekildi (`liste_B_izgara_K_D.txt`).
 Çekilen: 232 (A: 11 simge yapı × 6 = 66; B: 154 ızgara; ilk deneme 12). Bakılan: 232 (hepsi pafta boyunda; şüpheli ve bulgu karelerinin ~40'ı tam boy). Tam boy açıp bakılmayan kare, bulgu yazılmadı.
-Gerçek oyuncuyla yürüyüş: YAPILMADI (0 km; bkz. 7). Gece: kısmen (bkz. 7). Performans: 220 kare RINFO (`ham_RINFO.txt`): çizim ≤ 1 972 (en çok lm_egrikapi_B_yer), 50 karede > 1 200 (yer bütçesi), üçgen ≤ 3,74 M, 29 karede > 2,5 M (yer bütçesi aşıldı). Kare süreleri yazılımla çizim olduğu için anlamsız. Kurulum 907 ms.
+Gerçek oyuncuyla yürüyüş: YAPILMADI (0 km; bkz. 7). Gece: 22 kare (bkz. 7); çekilen toplam 254. Performans: 220 kare RINFO (`ham_RINFO.txt`): çizim ≤ 1 972 (en çok lm_egrikapi_B_yer), 50 karede > 1 200 (yer bütçesi), üçgen ≤ 3,74 M, 29 karede > 2,5 M (yer bütçesi aşıldı). Kare süreleri yazılımla çizim olduğu için anlamsız. Kurulum 907 ms.
 
 ## 2. GENEL NOT (ilk izlenim): 4/10
 Sahibi Kharisios'tan Tekfur'a yürüse önce sur dibine kızar: surun ARKASI ile ÖNÜ iki ayrı oyun gibi (içi döşeli, canlı pazar; dışı çıplak yeşil-kahverengi yama ve karanlık hendek duvarı).
@@ -76,8 +76,13 @@ KARE yolu: `kare/<ad>.jpg`. K=kuzey, D=doğu bakışı.
 | 54 | ZEMİN | 2 | Sur dışı | -3600, 2940 | g_3600_2940_K | düz çayır ortasında keskin bıçak çizgisi (hendek ağzı), sarı kenar çizgisi | sur_zemin.gd | — |
 | 55 | BOŞLUK | 2 | Sur dışı 200 m kuşağı | -3720 … -3840, 2400–2800 | g_3720_2700_K, g_3720_2820_D (pafta_izgara_b2) | ordugâh görünmeden düz boş çayır; ufukta birkaç çadır, ateş yok (BİLİNİYOR ORDUGÂH-5) | ordugah | — |
 
+| 56 | GÖRSEL | 1 | gece, 8 yer karesi | bkz. yan | pafta_gece.jpg (4. satır 1,2,5,6,7,8,11–14,16,19,20: lm_blakherna_saray_G/K, lm_edirnekapi_G/K, lm_egrikapi_G, lm_isaakios_K, lm_khora_K, lm_pentapyrgion_G/K) | 22 gece karesinin ~10'u tamamen siyah: yapı içine/yakınına düşen kamera ışık almıyor; gündüz lacivert olan yüzler gecede siyah | sehir ışığı (dunya.gd gece ortamı), surlar | iç yüze ışık ya da kamera dışı; ŞÜPHELİ (benim noktam) |
+| 57 | BOŞLUK | 1 | gece, sur dışı | -3612, 2880 / -3528, 3014 | gece_lm_tekfur_K_yer, pafta_gece (pentapyrgion) | sur dışında gece tek ateş, meşale, nöbetçi ışığı yok; kuşatma gecesi simsiyah çayır (BİLİNİYOR ORDUGÂH-5) | ordugah | ateş, meşale |
+| 58 | GÖRSEL | 2 | gece, Blakherna kapısı | -3512, 2925 | gece_lm_blakherna_kapi_G_yer | sur yüzü lacivert-siyah dokusuz blok, mazgal okunmuyor | surlar.gd, gece ortamı | yüzey emisyon/ay ışığı |
+| 59 | GÖRSEL | 3 | gece, Khora çevresi | -3444, 2491 | pafta_gece (15. kare lm_khora_G_yer) | evler gece çıplak mavi-beyaz, pencere ve kapılar siyah kare; ışık yok | evler.gd | pencere ışığı |
+
 ## 4. Tür sayımı
-55 bulgu: KUTU 24 (en az 8 BİLİNİYOR), GÖRSEL 14, ZEMİN 8, MANTIK 5, BOŞLUK 4 (ŞÜPHELİ işaretliler 2, 10, 18, 42, 45, 25); `KUTU kalan=24`.
+59 bulgu: KUTU 24 (en az 8 BİLİNİYOR), GÖRSEL 17, ZEMİN 8, MANTIK 5, BOŞLUK 5 (ŞÜPHELİ işaretliler 2, 10, 18, 42, 45, 25); `KUTU kalan=24`.
 
 ## 5. En kötü 12 kare
 1. lm_tekfur_D_yer — kilometrelerce dokusuz koyu hendek duvarı. 2. lm_blakherna_kapi_B_yer — havada asılı merdiven. 3. g_3000_2220_D — dev yeşil prizma + beyaz ağaç. 4. lm_isaakios_D_yer — beyaz ağaçlar + beyaz koni. 5. lm_khora_K_yer — dokusuz lacivert yüz. 6. lm_edirnekapi_h60 — hendek/set bıçak yamaları. 7. lm_anemas_B_yer — sur suya kesik bitiyor. 8. lm_blakherna_saray_D_yer — kişisiz karanlık peribolos. 9. lm_tekfur_K_yer — köşegen bıçak çim yaması. 10. g_3600_3060_D — elmas ağaç + keskin hendek ağzı. 11. lm_isaakios_B_yer — siyah kapı deliği. 12. g_3120_2940_D — tam ekran lacivert.
@@ -88,7 +93,7 @@ lm_edirnekapi_kap2_D_yer (taş döşeli pazar, insanlar, tezgâh), lm_edirnekapi
 ## 7. Bakamadıklarım / eksikler (dürüst)
 - Izgara 60 m yerine 120 m, 4 yön yerine 2 (K, D): 284×4 = 1 136 kare yerine 154. Yürüyüş yolları (15 m'de bir kare), 8'li çevre dolaşma, 120 m'de çapraz kare: YAPILMADI.
 - Gerçek oyuncuyla 6 güzergâh / 1,2 km: YAPILMADI (zaman). `GEZI_OLAY` sayımı yok: takılma/boşluğa basma/kapalı cep hakkında hüküm yok.
-- Gece: arka plan koşusu başlatıldı (`liste_C_gece.txt`, 22 kare), sonuçları bu rapora girmedi; gece hakkında hüküm yok.
+- Gece: yalnız 22 yer karesi (`liste_C_gece.txt`, `pafta_gece.jpg`), ızgara gecesi ve havadan gece YOK.
 - Kare yerleşimi: yer karelerinin birçoğu (özellikle `lm_*_yer`, `g_*`) bir yapının içine düştü (lacivert/turuncu yüzeyler); bunlar benim noktam, oyuncunun orada olabileceği doğrulanmadı. 2, 10, 18, 42, 45 ŞÜPHELİ.
 - Meryem/Blakherna Sarayı eşleşmesi (25) görsel çıkarım: belge koordinatı ile görünen yapı uyuşmuyor, hangisi doğru bilinmiyor.
 - Kare başı kaynak: düğüm adı çıkarımı (`sur4_kare --set=kim` koşulmadı); dosya:işlev yalnız grep tahmini, "ŞÜPHELİ" işaretli.
