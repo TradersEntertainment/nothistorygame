@@ -1,0 +1,7 @@
+ISTDUNYA karsi_kiyilar oge=31768 kare=12841 ms=447
+ISTDUNYA kurulum_ms=806
+ISTSOKAK { "taban": 95, "izgara_ms": 426, "oyun_yol": 14, "dolgu_0": 484, "dolgu_1": 33, "dolgu_2": 20, "sokak": 1093, "sokak_ms": 1664, "kilise_yeri": 31, "eser_meydan": 37, "red_ortusme_ayni_sokak":
+ISTEVLER2 ev=8982 doku=111 meydan=86 hucre=750
+ISTONPISIR ms=9152 adet=130 kursun=822
+ISTORDU uzak_hucre=25 ms=6869
+ISTGEMILER gemi=313 kurulum_ms=450

@@ -9,6 +9,7 @@ var shot := false
 var cam: Camera3D
 var dunya: Node3D
 var pl: CharacterBody3D
+var _iyi := Vector3.ZERO
 
 const ROTALAR := {
 	"r1_rihtimdan_kuleye": [[-470, 1485], [-478, 1600], [-490, 1720], [-487, 1860]],
@@ -16,7 +17,7 @@ const ROTALAR := {
 	"r3_dogu_dikme": [[-250, 1530], [-250, 1640], [-260, 1760], [-250, 1880]],
 	"r4_bati_dikme": [[-700, 1555], [-700, 1700], [-690, 1830], [-640, 1915]],
 	"r5_surdan_disari": [[-300, 1800], [-380, 1900], [-480, 1990], [-480, 2060], [-450, 2200]],
-	"r6_iskele_boyu": [[-880, 1650], [-780, 1580], [-640, 1545], [-520, 1540], [-400, 1520], [-300, 1560]],
+	"r6_iskele_boyu": [[-790, 1615], [-700, 1585], [-600, 1560], [-520, 1560], [-420, 1545], [-330, 1555]],
 }
 
 
@@ -68,6 +69,8 @@ func _ready() -> void:
 				await get_tree().physics_frame
 				var dt := get_physics_process_delta_time()
 				t += dt
+				if pl.is_on_floor() and not IstGeo.su(pl.global_position.x, pl.global_position.z):
+					_iyi = pl.global_position
 				var p2 := Vector2(pl.global_position.x, pl.global_position.z)
 				var to := Vector3(hw.x - p2.x, 0, hw.y - p2.y)
 				if to.length() < 2.0:
@@ -83,7 +86,7 @@ func _ready() -> void:
 						stuck += 1
 						pl.velocity.y = 3.6
 						var rr := IstGeo.real(pl.global_position.x, pl.global_position.z)
-						print("GEZI_OLAY tak %.0f %.0f (%s) engel=%s" % [rr.x, rr.y, ad, _engel(to)])
+						print("GEZI_OLAY tak %.0f %.0f (%s) yon=%.0f engel=%s" % [rr.x, rr.y, ad, fposmod(rad_to_deg(atan2(to.x, -to.z)), 360.0), _engel(to)])
 						tak += 1
 						olay += 1
 						if shot and out != "" and olay <= 40:
@@ -107,7 +110,8 @@ func _ready() -> void:
 					olay += 1
 					var rs := IstGeo.real(pl.global_position.x, pl.global_position.z)
 					print("GEZI_OLAY su %.0f %.0f (%s)" % [rs.x, rs.y, ad])
-					pl.global_position += Vector3(0, 0, 8.0)
+					pl.global_position = _iyi
+					pl.velocity = Vector3.ZERO
 		pl.set("script_velocity", Vector3.ZERO)
 		tum += uz
 		print("GEZI_ROTA %s uzunluk=%.0f yurunen=%.0f tak=%d dus=%d" % [ad, uz, yur, tak, dus])
