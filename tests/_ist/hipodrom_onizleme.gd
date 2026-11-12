@@ -13,6 +13,7 @@ var _k := 0.5
 var _lod := 0
 var _shots := ""
 var _audit := true
+var _only := ""
 var _cam: Camera3D
 var _host: Node3D
 var _ground: StaticBody3D
@@ -26,6 +27,7 @@ func _ready() -> void:
 		elif a.begins_with("k="): _k = a.substr(2).to_float()
 		elif a.begins_with("lod="): _lod = a.substr(4).to_int()
 		elif a.begins_with("shots="): _shots = a.substr(6)
+		elif a.begins_with("only="): _only = a.substr(5)
 		elif a.begins_with("audit="): _audit = a.substr(6) != "0"
 	_ids = IDS if ist == "all" else ist.split(",")
 	_setup_world()
@@ -50,13 +52,17 @@ func _setup_world() -> void:
 	var pm := PlaneMesh.new()
 	pm.size = Vector2(1200, 1200)
 	gm.mesh = pm
-	gm.material_override = Props.mat(Color("9db16a"), 0.0, false, "", false)
+	var gmat := StandardMaterial3D.new()
+	gmat.albedo_color = Color("6f8a48")
+	gmat.roughness = 1.0
+	gmat.metallic_specular = 0.0
+	gm.material_override = gmat
 	gm.position.y = -0.002
 	add_child(gm)
 	var sun := DirectionalLight3D.new()
-	sun.rotation_degrees = Vector3(-42, -50, 0)
+	sun.rotation_degrees = Vector3(-42, 130, 0)
 	sun.light_color = Color("fff0d4")
-	sun.light_energy = 1.25
+	sun.light_energy = 0.55
 	sun.shadow_enabled = true
 	sun.directional_shadow_max_distance = 400.0
 	add_child(sun)
@@ -71,7 +77,10 @@ func _setup_world() -> void:
 	env.sky = sky
 	env.background_mode = Environment.BG_SKY
 	env.ambient_light_source = Environment.AMBIENT_SOURCE_SKY
-	env.ambient_light_energy = 0.9
+	env.ambient_light_energy = 0.3
+	env.reflected_light_source = Environment.REFLECTION_SOURCE_DISABLED
+	env.tonemap_mode = Environment.TONE_MAPPER_LINEAR
+	env.tonemap_exposure = 0.8
 	var we := WorldEnvironment.new()
 	we.environment = env
 	add_child(we)
@@ -126,7 +135,7 @@ func _tris(h: Node3D) -> int:
 
 
 func _shot(name: String, from: Vector3, to: Vector3) -> void:
-	if _shots == "":
+	if _shots == "" or (_only != "" and not _only.contains(name.get_slice("_", 2))):
 		return
 	_cam.global_position = from
 	var up := Vector3.UP
@@ -157,13 +166,15 @@ func _run_one(id: String) -> void:
 	if _audit and _lod == 0:
 		await _run_audit(id, ab, tr)
 	var eye := 1.7
-	var dist := clampf(ext * 0.75, 18.0, 160.0)
+	var dist := clampf(ext * 0.45, 18.0, 110.0)
 	var tag := "%s_k%03d" % [id, int(_k * 100)]
 	if _shots != "" and _lod == 0:
 		var dirs := {"G": Vector3(0, 0, 1), "D": Vector3(1, 0, 0), "K": Vector3(0, 0, -1), "B": Vector3(-1, 0, 0)}
 		for dn: String in dirs:
 			var d3: Vector3 = dirs[dn]
-			await _shot("%s_yaklasma_%s" % [tag, dn], Vector3(c.x, eye, c.z) + d3 * dist, Vector3(c.x, minf(ab.size.y * 0.5, 8.0), c.z))
+			var half := Vector3(ab.size.x, 0, ab.size.z) * 0.5
+			var off := absf(d3.x) * half.x + absf(d3.z) * half.z + 22.0
+			await _shot("%s_yaklasma_%s" % [tag, dn], Vector3(c.x, eye, c.z) + d3 * off, Vector3(c.x, minf(ab.size.y * 0.5, 8.0), c.z))
 		# kapı önü yakın plan: yapının güney yüzü, yakın
 		await _shot("%s_kapi_onu" % tag, Vector3(c.x, eye, ab.end.z + 8.0), Vector3(c.x, 2.0, ab.end.z - 2.0))
 		# üst yüzeyde oyuncu gözü: perches'in altı yaklaşımı
@@ -198,14 +209,17 @@ func _run_audit(id: String, ab: AABB, tr: int) -> void:
 	var nz := mini(int(ab.size.z / cell), 900)
 	var delik := 0
 	var dar := 0
+	var dlist: Array = []
+	var rlist: Array = []
 	# --- katı görsel kutular (AABB) toplamı: görsel var, çarpışma yok denetimi ---
 	var vis: Array = []
 	for n in _host.find_children("*", "MeshInstance3D", true, false):
 		var mi := n as MeshInstance3D
-		if mi.mesh is BoxMesh or mi.mesh is CylinderMesh or mi.mesh is SphereMesh:
+		if mi.mesh is BoxMesh and absf(mi.global_transform.basis.y.y) > 0.99 and not (mi.get_parent() is StaticBody3D):
 			var a := mi.global_transform * mi.get_aabb()
-			var mn := minf(a.size.x, minf(a.size.y, a.size.z))
-			if mn >= 0.4 and a.size.x * a.size.y * a.size.z > 2.0 and mi.get_parent() is StaticBody3D == false:
+			var ms: Vector3 = (mi.mesh as BoxMesh).size * mi.global_transform.basis.get_scale()
+			var mn := minf(ms.x, minf(ms.y, ms.z))
+			if mn >= 0.4 and a.size.x * a.size.y * a.size.z > 2.0 :
 				vis.append(a)
 	var step := 1
 	if nx * nz > 90000:
@@ -223,6 +237,7 @@ func _run_audit(id: String, ab: AABB, tr: int) -> void:
 					hv = maxf(hv, a.end.y)
 			if hv - hc > 0.6:
 				delik += 1
+				if dlist.size() < 5: dlist.append(Vector3(x, hv, z).snapped(Vector3.ONE * 0.1))
 			# dar aralık: 1 m yükseklikte ±x doğrultusunda iki katı arası 0,2–1,4 m
 			var from := Vector3(x, 1.0, z)
 			var pq := PhysicsPointQueryParameters3D.new()
@@ -237,6 +252,7 @@ func _run_audit(id: String, ab: AABB, tr: int) -> void:
 					var wd: float = from.distance_to(h1.position) + from.distance_to(h2.position)
 					if wd > 0.2 and wd < 1.4:
 						dar += 1
+						if rlist.size() < 6: rlist.append(Vector3(x, 1.0, z).snapped(Vector3.ONE * 0.1))
 	# --- havada: katı kutuların tabanı ---
 	var havada := 0
 	var hav_list: Array = []
@@ -246,7 +262,8 @@ func _run_audit(id: String, ab: AABB, tr: int) -> void:
 			var b := cs.shape as BoxShape3D
 			var gt := cs.global_transform
 			var bottom := gt.origin.y - b.size.y * 0.5 * (absf(gt.basis.y.y))
-			var rq := PhysicsRayQueryParameters3D.create(Vector3(gt.origin.x, bottom - 0.001, gt.origin.z), Vector3(gt.origin.x, bottom - 6.0, gt.origin.z), 3)
+			var rq := PhysicsRayQueryParameters3D.create(Vector3(gt.origin.x, bottom + 0.02, gt.origin.z), Vector3(gt.origin.x, bottom - 6.0, gt.origin.z), 3)
+			rq.exclude = [(cs.get_parent() as CollisionObject3D).get_rid()]
 			var rh := space.intersect_ray(rq)
 			var dist := 99.0
 			if rh:
@@ -263,7 +280,7 @@ func _run_audit(id: String, ab: AABB, tr: int) -> void:
 		if r:
 			ok += 1
 		print("ISTYOL id=%s %s -> %s tur=%s sonuc=%s" % [id, cl[0].snapped(Vector3(0.1, 0.1, 0.1)), cl[1].snapped(Vector3(0.1, 0.1, 0.1)), cl[2], r])
-	print("ISTAUDIT id=%s tris=%d draws=%d delik=%d dar=%d havada=%d cati_yolu=%d/%d %s" % [id, tr, RenderingServer.get_rendering_info(RenderingServer.RENDERING_INFO_TOTAL_DRAW_CALLS_IN_FRAME), delik, dar, havada, ok, climbs.size(), str(hav_list)])
+	print("ISTAUDIT id=%s tris=%d draws=%d delik=%d dar=%d havada=%d cati_yolu=%d/%d %s delik_yer=%s dar_yer=%s" % [id, tr, RenderingServer.get_rendering_info(RenderingServer.RENDERING_INFO_TOTAL_DRAW_CALLS_IN_FRAME), delik, dar, havada, ok, climbs.size(), str(hav_list), str(dlist), str(rlist)])
 
 
 ## Gerçek bir CharacterBody3D (kapsül r 0,35, boy 1,8) ile alt → üst yürüme: adım 0,42, zıplama 0,66, tutunma 2,3.
