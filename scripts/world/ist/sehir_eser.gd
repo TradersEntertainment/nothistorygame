@@ -36,7 +36,7 @@ static func ton(c: Color) -> Color:
 	if s < 0.07:
 		# nötr: açıklar sıcak kırık beyaza (nane-beyaz/camgöbeği beyaz gider), koyular olduğu gibi
 		if v > 0.62:
-			return Color.from_hsv(0.11, 0.10, minf(v, 0.87), c.a)
+			return Color.from_hsv(0.11, 0.10, minf(v, 0.84), c.a)
 		return c
 	if h < 0.105 or h > 0.965:
 		# kızıl-turuncu-kahve: tuğla, kiremit, bayrak, ahşap
@@ -51,14 +51,14 @@ static func ton(c: Color) -> Color:
 	if h < 0.17:
 		# krem-sarı-altın: taş, mermer, yaldız
 		var s3 := minf(s, 0.24) if v > 0.7 else minf(s, DOYGUNLUK_EN)
-		return Color.from_hsv(lerpf(h, 0.11, 0.5), s3, minf(v, 0.87), c.a)
+		return Color.from_hsv(lerpf(h, 0.11, 0.5), s3, minf(v, 0.84), c.a)
 	if h < 0.46:
 		# yeşil: bitki, yosun
 		return Color.from_hsv(lerpf(h, 0.25, 0.3), minf(s, 0.42), minf(v, 0.60), c.a)
 	if h < 0.72:
 		# mavi: kurşun kubbe (gök mavisi kubbe → mavi-gri), mavi boya
 		if s < 0.35 or v > 0.6:
-			return Color.from_hsv(0.58, minf(s, 0.09), clampf(v * 0.8, 0.40, 0.50), c.a)
+			return Color.from_hsv(0.58, minf(s, 0.08), clampf(v * 0.85, 0.46, 0.55), c.a)
 		return Color.from_hsv(h, minf(s, 0.40), minf(v, 0.55), c.a)
 	# mor-macenta: porfir
 	return Color.from_hsv(0.99, minf(s, 0.42), minf(v, 0.42), c.a)
@@ -137,11 +137,69 @@ static func _mat_of(m: Material) -> Material:
 	return d
 
 
-## Bir eserin kurulu katmanını palete indirir (pişirmeden önce; köşe renkli pişmiş ağlar dokunulmaz)
+static var _palet_ag := {}
+
+## Köşe renkli ağ (parçanın kendi pişirmesi, ör. Galata): köşe renkleri palete indirilmiş kopya (ağ başına önbellek)
+static func _ag_of(m: Mesh) -> Mesh:
+	if not (m is ArrayMesh):
+		return m
+	var key := m.get_rid()
+	if _palet_ag.has(key):
+		return _palet_ag[key]
+	var am := ArrayMesh.new()
+	var renk := {}
+	for si in m.get_surface_count():
+		var arr := m.surface_get_arrays(si)
+		var cols = arr[Mesh.ARRAY_COLOR]
+		if cols is PackedColorArray and (cols as PackedColorArray).size() > 0:
+			var pc := cols as PackedColorArray
+			for i in pc.size():
+				var c: Color = pc[i]
+				if not renk.has(c):
+					renk[c] = ton(c)
+				pc[i] = renk[c]
+			arr[Mesh.ARRAY_COLOR] = pc
+		am.add_surface_from_arrays(m.surface_get_primitive_type(si), arr)
+		am.surface_set_material(si, m.surface_get_material(si))
+	_palet_ag[key] = am
+	return am
+
+
+static func _vc_mat(m: Material) -> Material:
+	if not (m is StandardMaterial3D) or (m as StandardMaterial3D).albedo_texture == null:
+		return m
+	var key := m.get_instance_id()
+	if _palet_mat.has(key):
+		return _palet_mat[key]
+	var nt := _tex_of((m as StandardMaterial3D).albedo_texture)
+	var d: Material = m
+	if nt != (m as StandardMaterial3D).albedo_texture:
+		d = m.duplicate()
+		(d as StandardMaterial3D).albedo_texture = nt
+	_palet_mat[key] = d
+	return d
+
+
+## Bir eserin kurulu katmanını palete indirir (pişirmeden önce). Köşe renkli ağların köşe renkleri de indirilir.
 static func palet(n: Node) -> int:
 	var k := 0
 	for c in n.find_children("*", "GeometryInstance3D", true, false):
 		var gi := c as GeometryInstance3D
+		if gi is MeshInstance3D and (gi as MeshInstance3D).mesh != null:
+			var am0 := gi.material_override if gi.material_override != null else (gi as MeshInstance3D).get_active_material(0)
+			if am0 is BaseMaterial3D and (am0 as BaseMaterial3D).vertex_color_use_as_albedo:
+				var mi0 := gi as MeshInstance3D
+				mi0.mesh = _ag_of(mi0.mesh)
+				# köşe renkli ağın desen dokusu da (kiremit/tuğla dokusu kendi rengini taşır)
+				if gi.material_override != null:
+					gi.material_override = _vc_mat(gi.material_override)
+				else:
+					for si in mi0.mesh.get_surface_count():
+						var smv := mi0.get_active_material(si)
+						if smv != null and _vc_mat(smv) != smv:
+							mi0.set_surface_override_material(si, _vc_mat(smv))
+				k += 1
+				continue
 		if gi.material_override != null:
 			var nm := _mat_of(gi.material_override)
 			if nm != gi.material_override:
@@ -491,8 +549,9 @@ static func manastir(n: Node3D, lod: int, hx: float, hz: float, seed: int) -> vo
 ## çınarlar, bir kenarda mumcu/ikona tezgâhları, bir köşede çeşme, taş sekiler. Orta alan (bölümlerin oynanışı) boş.
 ## Yerel: merkez (0,0), sx × sz dünya ekseninde.
 static func meydan(n: Node3D, lod: int, sx: float, sz: float) -> void:
-	var tas := Color("c8bea6")
-	var f := Props.box(n, Vector3(sx, 0.14, sz), Vector3(0, 0.07, 0), tas)
+	var tas := P_DOSEME
+	# kalın levha (ÇEVRE-4): ince levhanın üstüne arazi çıkıp meydanı çimene boğuyordu
+	var f := Props.box(n, Vector3(sx, 0.9, sz), Vector3(0, 0.14 - 0.45, 0), tas if lod == 0 else tas.darkened(0.3))
 	f.set_meta("no_walk", true)
 	if lod == 0:
 		Props.set_pattern(f, tas, "flagstone")
@@ -563,7 +622,10 @@ static func aya_cevre(n: Node3D, lod: int, yh: Callable, bos: Array) -> void:
 					break
 			if dis:
 				continue
+			# eğimde levha araziye gömülmesin: dört köşe ve ortanın en yükseği
 			var y := float(yh.call(c.x, c.y))
+			for o: Vector2 in [Vector2(-1, -1), Vector2(1, -1), Vector2(-1, 1), Vector2(1, 1)]:
+				y = maxf(y, float(yh.call(c.x + o.x * T * 0.5, c.y + o.y * T * 0.5)))
 			# uzak katman düz renk: dokunun ortalaması kadar koyu (düz yatay yüz toon ışıkta bembeyaz görünüyordu)
 			var dc := P_DOSEME if lod == 0 else P_DOSEME.darkened(0.3)
 			var f := Props.box(n, Vector3(T + 0.02, 1.2, T + 0.02), Vector3(c.x, y + 0.13 - 0.6, c.y), dc.darkened(rng.randf() * 0.05))
@@ -604,8 +666,8 @@ static func aya_cevre(n: Node3D, lod: int, yh: Callable, bos: Array) -> void:
 	for k in 4:
 		var a := TAU * (k + 0.5) / 4.0
 		Props.cyl(n, 0.22, 4.2, pc + Vector3(cos(a) * 2.6, 2.1, sin(a) * 2.6), P_MERMER, Vector3.ZERO, 8)
-	Props.box(n, Vector3(6.0, 0.5, 6.0), pc + Vector3(0, 4.45, 0), P_MERMER.darkened(0.04))
-	Props.ball(n, 3.0, pc + Vector3(0, 4.7, 0), P_KURSUN, Vector3(1.0, 0.55, 1.0), 10)
+	Props.cyl(n, 3.0, 0.45, pc + Vector3(0, 4.42, 0), P_MERMER.darkened(0.04), Vector3.ZERO, 8)
+	Props.ball(n, 2.6, pc + Vector3(0, 4.6, 0), P_KURSUN, Vector3(1.0, 0.7, 1.0), 10)
 	Props.cyl(n, 0.6, 1.4, pc + Vector3(0, 1.5, 0), P_MERMER, Vector3.ZERO, 8)
 	# avlu içi: servi ve çınar, sekiler
 	for p: Vector2 in [Vector2(-13, 44), Vector2(13, 44), Vector2(-13, 57), Vector2(13, 57)]:
@@ -671,7 +733,7 @@ static func aya_cevre(n: Node3D, lod: int, yh: Callable, bos: Array) -> void:
 		for k in 3:
 			var sp := Vector3(14.0 + k * 3.2, float(yh.call(14.0, -48.0)) + 0.13, -48.0)
 			for j in 3:
-				Props.box(n, Vector3(1.2, 0.5, 0.8), sp + Vector3(rng.randf_range(-0.3, 0.3), 0.25 + j * 0.5, 0), P_TAS_K.darkened(j * 0.04))
+				Props.box(n, Vector3(1.2 - j * 0.25, 0.45, 0.8), sp + Vector3(rng.randf_range(-0.3, 0.3), 0.22 + j * 0.45, rng.randf_range(-0.2, 0.2)), P_TAS_K.darkened(0.12 + j * 0.04), Vector3(0, rng.randf_range(-25, 25), 0))
 		for k in 4:
 			Props.cyl(n, 0.4, 1.0, Vector3(-8.0 + k * 0.9, float(yh.call(-8.0, -46.0)) + 0.63, -46.0), P_AHSAP, Vector3.ZERO, 8)
 
@@ -698,7 +760,7 @@ static func _revak(n: Node3D, lod: int, a: Vector3, b: Vector3, ic: float, rng: 
 	for i in k + 1:
 		var p := a + d * (L * i / k) + yan * dz
 		if lod == 0 or i % 2 == 0:
-			Props.cyl(n, 0.28, hh - 0.4, p + Vector3(0, (hh - 0.4) * 0.5 + 0.2, 0), P_MERMER.darkened(rng.randf() * 0.06), Vector3.ZERO, 8)
+			Props.cyl(n, 0.28, hh - 0.4, p + Vector3(0, (hh - 0.4) * 0.5 + 0.2, 0), P_MERMER.darkened(0.1 + rng.randf() * 0.06), Vector3.ZERO, 8)
 			if lod == 0:
 				Props.box(n, Vector3(0.75, 0.3, 0.75), p + Vector3(0, hh - 0.05, 0), P_MERMER)
 				Props.box(n, Vector3(0.7, 0.25, 0.7), p + Vector3(0, 0.12, 0), P_TAS_K)
