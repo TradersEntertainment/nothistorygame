@@ -549,7 +549,7 @@ static func _b_mokios(h: Node3D, k: float, lod: int, out: Dictionary) -> void:
 				body.add_child(cs)
 			bedx.append(Transform3D(Basis(), Vector3(cx, 0.15, cz)))
 			var kind := (i + j * 2) % 3
-			var nc := 0 if K.lite else int(bed_l / 1.5)
+			var nc := 0 if K.lite else int(bed_l / (1.5 if k <= 0.6 else 4.0))
 			for q in nc:
 				var qx := cx - bed_l * 0.5 + (q + 0.5) * bed_l / nc
 				for rz in [-0.4, 0.4]:
