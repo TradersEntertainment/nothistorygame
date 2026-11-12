@@ -1,0 +1,107 @@
+anahtar,konusmaci,mesafe,metre,kanit,not
+D10O_T_01,SPK_TOLGA,ic_ses,,"chapter10.gd:232 _t anlatı, Tolga START z=-37 kapıya bakıyor, kimseye seslenmiyor",
+D10O_A_SHOUT,SPK_AGA,uzak,14,"chapter10.gd:234 Ağa AGA_POS z=-51.2, Tolga START z=-37; sıraya bağırır; ayrıca :832 bark 30 sn",
+D10O_T_02,SPK_TOLGA,ic_ses,,"chapter10.gd:232 _t anlatı, Tolga START z=-37 kapıya bakıyor, kimseye seslenmiyor",
+D10O_CAMELEER_1,SPK_CAMELEER,yakin,1.8,"chapter10.gd:315-320 _queue_talk, Tolga 1.8 m yanında",
+D10O_T_CAMELEER_ASK,SPK_TOLGA,yakin,1.8,chapter10.gd:319 _queue_talk Stage.walk_player 1.8 m yanına gidip sorar,
+D10O_CAMELEER_2,SPK_CAMELEER,yakin,1.8,"chapter10.gd:315-320 _queue_talk, Tolga 1.8 m yanında",
+D10O_DERVISH_1,SPK_DERVISH,yakin,1.8,"chapter10.gd:315-320 _queue_talk, Tolga 1.8 m yanında",
+D10O_T_DERVISH_ASK,SPK_TOLGA,yakin,1.8,chapter10.gd:319 _queue_talk Stage.walk_player 1.8 m yanına gidip sorar,
+D10O_DERVISH_2,SPK_DERVISH,yakin,1.8,"chapter10.gd:315-320 _queue_talk, Tolga 1.8 m yanında",
+D10O_TAILOR_1,SPK_TAILOR,yakin,1.8,"chapter10.gd:315-320 _queue_talk, Tolga 1.8 m yanında",
+D10O_T_TAILOR_ASK,SPK_TOLGA,yakin,1.8,chapter10.gd:319 _queue_talk Stage.walk_player 1.8 m yanına gidip sorar,
+D10O_TAILOR_2,SPK_TAILOR,yakin,1.8,"chapter10.gd:315-320 _queue_talk, Tolga 1.8 m yanında",
+D10O_A_INTRO,SPK_AGA,yakin,2.4,"chapter10.gd:291/432 (dinamik anahtar) Ağa sınavda 2.4 m önünde, normal konuşma",
+D10O_A_AGAIN,SPK_AGA,yakin,2.4,"chapter10.gd:291/432 (dinamik anahtar) Ağa sınavda 2.4 m önünde, normal konuşma",
+D10O_A_BEGIN,SPK_AGA,yakin,2.4,"chapter10.gd:291/432 (dinamik anahtar) Ağa sınavda 2.4 m önünde, normal konuşma",
+D10O_A_ITEM_PHONE,SPK_AGA,yakin,2.4,"chapter10.gd:291/432 (dinamik anahtar) Ağa sınavda 2.4 m önünde, normal konuşma",
+D10O_A_ITEM_LIGHTER,SPK_AGA,yakin,2.4,"chapter10.gd:291/432 (dinamik anahtar) Ağa sınavda 2.4 m önünde, normal konuşma",
+D10O_A_ITEM_BOOK,SPK_AGA,yakin,2.4,"chapter10.gd:291/432 (dinamik anahtar) Ağa sınavda 2.4 m önünde, normal konuşma",
+D10O_A_ITEM_CHICKPEAS,SPK_AGA,yakin,2.4,"chapter10.gd:291/432 (dinamik anahtar) Ağa sınavda 2.4 m önünde, normal konuşma",
+D10O_A_ITEM_POWERBANK,SPK_AGA,yakin,2.4,"chapter10.gd:291/432 (dinamik anahtar) Ağa sınavda 2.4 m önünde, normal konuşma",
+D10O_A_ITEM_TAPE,SPK_AGA,yakin,2.4,"chapter10.gd:291/432 (dinamik anahtar) Ağa sınavda 2.4 m önünde, normal konuşma",
+D10O_A_ITEM_THERMOS,SPK_AGA,yakin,2.4,"chapter10.gd:291/432 (dinamik anahtar) Ağa sınavda 2.4 m önünde, normal konuşma",
+D10O_A_ITEM_SELFIE,SPK_AGA,yakin,2.4,"chapter10.gd:291/432 (dinamik anahtar) Ağa sınavda 2.4 m önünde, normal konuşma",
+D10O_A_ITEM_COLOGNE,SPK_AGA,yakin,2.4,"chapter10.gd:291/432 (dinamik anahtar) Ağa sınavda 2.4 m önünde, normal konuşma",
+D10O_A_ITEM_CUBE,SPK_AGA,yakin,2.4,"chapter10.gd:291/432 (dinamik anahtar) Ağa sınavda 2.4 m önünde, normal konuşma",
+D10O_A_Q1,SPK_AGA,yakin_yuksek,2.4,"chapter10.gd:380 Aga 2.4 m önünde sınavda, kapı bekçisi sesini yükseltir",Ağa tüm sahne boyunca yüksek sesli resmî bekçi
+D10O_A_Q1_OK,SPK_AGA,yakin,2.4,"chapter10.gd:380 Ağa sınavda 2.4 m önünde, normal konuşma",
+D10O_A_Q1_OK2,SPK_AGA,yakin,2.4,"chapter10.gd:380 Ağa sınavda 2.4 m önünde, normal konuşma",
+D10O_A_Q1_LIE,SPK_AGA,yakin_yuksek,2.4,"chapter10.gd:380 Aga 2.4 m önünde sınavda, kapı bekçisi sesini yükseltir",Ağa tüm sahne boyunca yüksek sesli resmî bekçi
+D10O_A_Q1_SKIP,SPK_AGA,yakin,2.4,"chapter10.gd:378 Ağa sınavda 2.4 m önünde, normal konuşma",
+D10O_A_Q2,SPK_AGA,yakin_yuksek,2.4,"chapter10.gd:395 Aga 2.4 m önünde sınavda, kapı bekçisi sesini yükseltir",Ağa tüm sahne boyunca yüksek sesli resmî bekçi
+D10O_A_Q2_OK,SPK_AGA,yakin,2.4,"chapter10.gd:390 Ağa sınavda 2.4 m önünde, normal konuşma",
+D10O_A_Q2_OK2,SPK_AGA,yakin,2.4,"chapter10.gd:390 Ağa sınavda 2.4 m önünde, normal konuşma",
+D10O_A_Q2_LIE,SPK_AGA,yakin_yuksek,2.4,"chapter10.gd:390 Aga 2.4 m önünde sınavda, kapı bekçisi sesini yükseltir",Ağa tüm sahne boyunca yüksek sesli resmî bekçi
+D10O_A_Q2_LETTER,SPK_AGA,yakin,2.4,"chapter10.gd:291/432 (dinamik anahtar) Ağa sınavda 2.4 m önünde, normal konuşma",
+D10O_A_Q2_SKIP,SPK_AGA,yakin,2.4,"chapter10.gd:386 Ağa sınavda 2.4 m önünde, normal konuşma",
+D10O_A_TIMEOUT,SPK_AGA,yakin_yuksek,2.4,"chapter10.gd:291/432 (dinamik anahtar) Aga 2.4 m önünde sınavda, kapı bekçisi sesini yükseltir",Ağa tüm sahne boyunca yüksek sesli resmî bekçi
+D10O_A_Q3_CAMEL,SPK_AGA,yakin_yuksek,2.4,"chapter10.gd:291/432 (dinamik anahtar) Aga 2.4 m önünde sınavda, kapı bekçisi sesini yükseltir",Ağa tüm sahne boyunca yüksek sesli resmî bekçi
+D10O_A_Q3_CAMEL_TWIST,SPK_AGA,yakin_yuksek,2.4,"chapter10.gd:291/432 (dinamik anahtar) Aga 2.4 m önünde sınavda, kapı bekçisi sesini yükseltir",Ağa tüm sahne boyunca yüksek sesli resmî bekçi
+D10O_A_Q3_POLES,SPK_AGA,yakin_yuksek,2.4,"chapter10.gd:291/432 (dinamik anahtar) Aga 2.4 m önünde sınavda, kapı bekçisi sesini yükseltir",Ağa tüm sahne boyunca yüksek sesli resmî bekçi
+D10O_A_Q3_POLES_TWIST,SPK_AGA,yakin_yuksek,2.4,"chapter10.gd:291/432 (dinamik anahtar) Aga 2.4 m önünde sınavda, kapı bekçisi sesini yükseltir",Ağa tüm sahne boyunca yüksek sesli resmî bekçi
+D10O_A_Q3_KAVUK,SPK_AGA,yakin_yuksek,2.4,"chapter10.gd:291/432 (dinamik anahtar) Aga 2.4 m önünde sınavda, kapı bekçisi sesini yükseltir",Ağa tüm sahne boyunca yüksek sesli resmî bekçi
+D10O_A_Q3_KAVUK_TWIST,SPK_AGA,yakin,2.4,"chapter10.gd:291/432 (dinamik anahtar) Ağa sınavda 2.4 m önünde, normal konuşma",
+D10O_T_TWIST,SPK_TOLGA,ic_ses,,"chapter10.gd:453 chapter10.gd _t(): Tolga kendi kendine yorum, kimseye seslenmiyor",
+D10O_A_Q3_OK,SPK_AGA,yakin_yuksek,2.4,"chapter10.gd:442 Aga 2.4 m önünde sınavda, kapı bekçisi sesini yükseltir",Ağa tüm sahne boyunca yüksek sesli resmî bekçi
+D10O_A_Q3_LUCKY,SPK_AGA,yakin,2.4,"chapter10.gd:291/432 (dinamik anahtar) Ağa sınavda 2.4 m önünde, normal konuşma",
+D10O_A_Q3_WRONG,SPK_AGA,yakin_yuksek,2.4,"chapter10.gd:291/432 (dinamik anahtar) Aga 2.4 m önünde sınavda, kapı bekçisi sesini yükseltir",Ağa tüm sahne boyunca yüksek sesli resmî bekçi
+D10O_A_Q3_IDK,SPK_AGA,yakin,2.4,"chapter10.gd:291/432 (dinamik anahtar) Ağa sınavda 2.4 m önünde, normal konuşma",
+D10O_A_Q3_IDK_AGAIN,SPK_AGA,yakin,2.4,"chapter10.gd:291/432 (dinamik anahtar) Ağa sınavda 2.4 m önünde, normal konuşma",
+D10O_G_LIFT,SPK_HASAN,yakin,0.75,"chapter10.gd:484 Hasan Tolga'nın yanında (0.75 m), koltuk altından kaldırırken",
+D10O_G_LIFT2,SPK_HUSEYIN,yakin,0.75,chapter10.gd:485 Hüseyin Tolga'nın yanında (0.75 m) kaldırırken,
+D10O_A_NEXT,SPK_AGA,yakin_yuksek,5,"chapter10.gd:506 Ağa sıraya ""SIRADAKİ!"" der; Tolga kapı+6.5 m=z-46, Ağa z-51.2 ≈5 m",
+D10O_T_THROWN_1,SPK_TOLGA,ic_ses,,"chapter10.gd:513 _t(""D10O_T_THROWN_%d"") Tolga kendi kendine, taşındıktan sonra",
+D10O_T_THROWN_2,SPK_TOLGA,ic_ses,,"chapter10.gd:513 _t(""D10O_T_THROWN_%d"") Tolga kendi kendine, taşındıktan sonra",
+D10O_A_PASS,SPK_AGA,yakin_yuksek,2.4,"chapter10.gd:516 Ağa kapıyı açtırmak için emir verir, Tolga 2.4 m önünde",
+D10O_A_PASS_SKIP,SPK_AGA,yakin_yuksek,2.4,"chapter10.gd:516 Ağa kapıyı açtırmak için emir verir, Tolga 2.4 m önünde",
+D10O_K_COME,SPK_KADRI,yakin_yuksek,1.5,"chapter10.gd:558 Kadri kalabalığı yarıp emir verir, Tolga yüzünü dönmüş; metin ""(Kadri kalabalığı yarar) Sen!""",
+D10O_T_KITCHEN,SPK_TOLGA,ic_ses,,"chapter10.gd:560 chapter10.gd _t(): Tolga kendi kendine yorum, kimseye seslenmiyor",
+D10O_A_BYE,SPK_AGA,yakin,6,"chapter10.gd:561 Kadri tepsiyi verdikten sonra Ağa yolcu eder, Tolga kapıdan ~6 m",
+D10O_T_ENVOY,SPK_TOLGA,ic_ses,,"chapter10.gd:592 chapter10.gd _t(): Tolga kendi kendine yorum, kimseye seslenmiyor",
+D10O_G_ENVOY,SPK_HASAN,uzak,15,"chapter10.gd:594 hasan.set_meta(""afar"") ""kapıdan bütün kervana bağırır""",
+D10O_A_CHASE,SPK_AGA,yakin_yuksek,2,"chapter10.gd:619 Ağa Tolga yanına (1.2,1.6) koşar, ""Bir dakika!"" soluk soluğa",
+D10O_A_ENVOY_WRONG,SPK_AGA,yakin,1.5,"chapter10.gd:623 Ağa yanında, iç çekerek teslim olur",
+D10O_T_INSIDE,SPK_TOLGA,ic_ses,,"chapter10.gd:648 chapter10.gd _t(): Tolga kendi kendine yorum, kimseye seslenmiyor",
+D10O_T_ASK_WHEN,SPK_TOLGA,fisilti,1.8,"chapter10.gd:649 replikte ""(Fısıltıyla)""; Fatih gölgesi ~1.8 m (otağ perdesi)",
+D10O_T_INSIDE_PLAIN,SPK_TOLGA,ic_ses,,"chapter10.gd:648 chapter10.gd _t(): Tolga kendi kendine yorum, kimseye seslenmiyor",
+D10O_F_TOMORROW,SPK_FATIH,yakin,1.8,"chapter10.gd:650 Fatih gölgesi z+7.4, Tolga z+9.2; tek kelime, vakur",
+D10O_T_END,SPK_TOLGA,ic_ses,,"chapter10.gd:651 chapter10.gd _t(): Tolga kendi kendine yorum, kimseye seslenmiyor",
+D17O_A_01,SPK_TOPCU,yakin_yuksek,4,"chapter17o.gd:428/:434 Topçu GUN+(-2.2,-1.4), Tolga GUN+(1.6,-2.6) ≈4 m; top bataryası, emir veren topçubaşı",
+D17O_T_01,SPK_TOLGA,yakin,4,chapter17o.gd:428 Tolga Topçu'ya ~4 m yanından cevap verir,
+D17O_A_02,SPK_TOPCU,yakin_yuksek,4,"chapter17o.gd:428/:434 Topçu GUN+(-2.2,-1.4), Tolga GUN+(1.6,-2.6) ≈4 m; top bataryası, emir veren topçubaşı",
+D17O_A_LIGHT,SPK_TOPCU,yakin_yuksek,4,"chapter17o.gd:428/:434 Topçu GUN+(-2.2,-1.4), Tolga GUN+(1.6,-2.6) ≈4 m; top bataryası, emir veren topçubaşı",
+D17O_T_MISSED,SPK_TOLGA,ic_ses,,chapter17o.gd:454 hud.say Tolga kamerayla fotoğraf sonrası kendi kendine,
+D17O_A_WATCH,SPK_TOPCU,yakin,4,"chapter17o.gd:458 gece gözcülüğü, topçubaşı yanında alçak uyarı; top henüz atmıyor",
+D17O_T_SPOT,SPK_TOLGA,yakin_yuksek,4,"chapter17o.gd:507 bark 3 sn, gece alarmı (church_bell), Topçu ~4 m; gölgeyi haber verir",
+D17O_A_LOAD_1,SPK_TOPCU,yakin_yuksek,4,"chapter17o.gd:484 hud.say Topçu ""Doldur!"" emri, top bataryası atış arasında",
+D17O_A_LOAD_2,SPK_TOPCU,yakin_yuksek,4,"chapter17o.gd:484 hud.say Topçu ""Doldur!"" emri, top bataryası atış arasında",
+D17O_A_NEAR,SPK_TOPCU,yakin_yuksek,4,"chapter17o.gd:529/561 top atışı sonrası (Audio cannon) Topçu bağırır, ~4 m",
+D17O_A_MISS,SPK_TOPCU,yakin_yuksek,4,"chapter17o.gd:529/561 top atışı sonrası (Audio cannon) Topçu bağırır, ~4 m",
+D17O_A_HIT_YOU,SPK_TOPCU,yakin_yuksek,4,"chapter17o.gd:529/561 top atışı sonrası (Audio cannon) Topçu bağırır, ~4 m",
+D17O_A_HIT_OTHER,SPK_TOPCU,yakin_yuksek,4,"chapter17o.gd:529/561 top atışı sonrası (Audio cannon) Topçu bağırır, ~4 m",
+D17O_T_HIT,SPK_TOLGA,ic_ses,,chapter17o.gd:562 Tolga batan fustaya bakıp kendi kendine yorumlar,
+D17O_A_FIRE,SPK_TOPCU,yakin_yuksek,4,"chapter17o.gd:596 player.frozen hâlâ, Tolga topun yanında; Topçu kovalar için bağırır, ""bağırarak yönetir"" :680",
+D17O_T_POUR_1,SPK_TOLGA,ic_ses,,chapter17o.gd:932 hud.bark 2.2 sn Tolga kova atarken kendi kendine; yangın gürültüsü var,ünlemli ama kimseye seslenmiyor; gerekirse yakin_yuksek
+D17O_T_POUR_2,SPK_TOLGA,ic_ses,,chapter17o.gd:932 hud.bark 2.2 sn Tolga kova atarken kendi kendine; yangın gürültüsü var,ünlemli ama kimseye seslenmiyor; gerekirse yakin_yuksek
+D17O_T_POUR_3,SPK_TOLGA,ic_ses,,chapter17o.gd:932 hud.bark 2.2 sn Tolga kova atarken kendi kendine; yangın gürültüsü var,ünlemli ama kimseye seslenmiyor; gerekirse yakin_yuksek
+D17O_A_OUT,SPK_TOPCU,uzak,13,"chapter17o.gd:837 yangın sonrası Topçu GUN yakınında (-2.2,-2.4); Tolga iskele/kova BUCKETS (11,-0.6) ~13 m, oyuncu serbest dolaşıyordu",oyuncu konumu koda bağlı değil; kıyı boyu en olası konum
+D17O_A_BURNED,SPK_TOPCU,uzak,13,"chapter17o.gd:837 yangın sonrası Topçu GUN yakınında (-2.2,-2.4); Tolga iskele/kova BUCKETS (11,-0.6) ~13 m, oyuncu serbest dolaşıyordu",oyuncu konumu koda bağlı değil; kıyı boyu en olası konum
+D17O_A_DAWN,SPK_TOPCU,belirsiz,,chapter17o.gd:842 şafak kartından sonra oyuncu ışınlanmıyor; Topçu-Tolga uzaklığı oyuncunun kıyıda nerede olduğuna bağlı,konum bağlı değil
+D17O_A_DAWN_SAVED,SPK_TOPCU,belirsiz,,chapter17o.gd:842 şafak kartından sonra oyuncu ışınlanmıyor; Topçu-Tolga uzaklığı oyuncunun kıyıda nerede olduğuna bağlı,konum bağlı değil
+D17O_T_END,SPK_TOLGA,ic_ses,,chapter17o.gd:843 Tolga şafakta kendi kendine,
+D10O_A_AGAIN_NOFEZ,SPK_AGA,yakin,2.4,"chapter10.gd:291/432 (dinamik anahtar) Ağa sınavda 2.4 m önünde, normal konuşma",
+D10O_K_COME_NOFEZ,SPK_KADRI,yakin_yuksek,1.5,"chapter10.gd:558 Kadri kalabalığı yarıp emir verir, Tolga yüzünü dönmüş; metin ""(Kadri kalabalığı yarar) Sen!""",
+D10O_HU_FEZ_VOUCH,SPK_HUSEYIN,yakin,2.5,"chapter10.gd:366 Hüseyin kapı nöbetçisi, Ağa ve Tolga yakın (≤3 m)",
+D10O_A_FEZ_VOUCH,SPK_AGA,yakin,2.4,"chapter10.gd:291/432 (dinamik anahtar) Ağa sınavda 2.4 m önünde, normal konuşma",
+D10O_A_Q1_SKIP_FEZ,SPK_AGA,yakin,2.4,"chapter10.gd:291/432 (dinamik anahtar) Ağa sınavda 2.4 m önünde, normal konuşma",
+D10O_G_LIFT2_HUFEZ,SPK_HUSEYIN,yakin,0.75,chapter10.gd:485 Hüseyin Tolga'nın yanında (0.75 m) kaldırırken,
+D10O_G_LIFT2_HUCUBE,SPK_HUSEYIN,yakin,0.75,chapter10.gd:485 Hüseyin Tolga'nın yanında (0.75 m) kaldırırken,
+D10O_T_THROWN_2_HUFEZ,SPK_TOLGA,ic_ses,,"chapter10.gd:513 _t(""D10O_T_THROWN_%d"") Tolga kendi kendine, taşındıktan sonra",
+D17O_K_COME,SPK_KADRI,uzak,10,"chapter17o.gd:722 bark; Kadri varış noktasının 9 m gerisinden koşarak gelirken bağırır (:_run_in back=9), Tolga iskele yakınında",
+D17O_K_DAWN,SPK_KADRI,yakin,2,"chapter17o.gd:853 player.global_position = KADRI_AT+(-0.4,0.05,-2.0), Kadri'ye ~2 m bakar",
+D17O_K_DAWN_BURNED,SPK_KADRI,yakin,2,"chapter17o.gd:853 player.global_position = KADRI_AT+(-0.4,0.05,-2.0), Kadri'ye ~2 m bakar",
+D17O_T_SHOT,SPK_TOLGA,ic_ses,,chapter17o.gd:454 hud.say Tolga kamerayla fotoğraf sonrası kendi kendine,
+D17O_T_POUR_OUT,SPK_TOLGA,ic_ses,,chapter17o.gd:932 hud.bark 2.2 sn Tolga kova atarken kendi kendine; yangın gürültüsü var,ünlemli ama kimseye seslenmiyor; gerekirse yakin_yuksek
+D17O_T_POUR_MORE,SPK_TOLGA,ic_ses,,chapter17o.gd:932 hud.bark 2.2 sn Tolga kova atarken kendi kendine; yangın gürültüsü var,ünlemli ama kimseye seslenmiyor; gerekirse yakin_yuksek
+D17O_N_01,SPK_NIHAT,telsiz,,"chapter17o.gd:428 say_chain; sahnede Nihat nesnesi yok, kıyıda yalnız Topçu; tutanak sesi (aynı bölümde :433 radio_beep, :435 bark Nihat telsiz)",
