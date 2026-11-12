@@ -97,6 +97,7 @@ func _kur() -> void:
 		kt.kur(self)
 	kur_ms = Time.get_ticks_msec() - t0
 	print("ISTHAYAT kur_ms=%d %s" % [kur_ms, veri.ist])
+	print("ISTEVONBELLEK ", IstEvler.ob_say)
 	if _yakin_olacak and yakin == null:
 		var t1 := Time.get_ticks_msec()
 		yakin = IstHayatYakin.attach(dunya, null, gece)

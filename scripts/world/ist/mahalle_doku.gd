@@ -158,6 +158,24 @@ var _skod := PackedByteArray()
 
 func _zemin() -> void:
 	_izgaralar()
+	# DOKU-4 (yükleme): hücre ağlarının dizileri diskte (sokak verisi + arazi ızgaraları + kod aynıysa)
+	var imza := IstSokak.onbellek_imza(["res://scripts/world/ist/mahalle_doku.gd", sk.occ, sk.rid, sk.streets.size(), sk.zemin_ek,
+		sk.x0, sk.z0, sk.nx, sk.nz, _yh6, _yh24, _gx0, _gz0])
+	var tz := Time.get_ticks_msec()
+	var ob = IstSokak.onbellek_oku("zemin", imza)
+	stats["zemin_oku_ms"] = Time.get_ticks_msec() - tz
+	var gruplar := {}                 # Vector2i → [[verts, cols] taş, [verts, cols] toprak]
+	if ob is Dictionary and ob.has("gruplar"):
+		gruplar = ob["gruplar"]
+		stats["zemin_kare"] = ob.get("n_kare", 0)
+		stats["zemin_onbellek"] = "okundu"
+	else:
+		gruplar = _zemin_hesapla()
+		IstSokak.onbellek_yaz("zemin", imza, {"gruplar": gruplar, "n_kare": stats.get("zemin_kare", 0)})
+	_zemin_kur(gruplar)
+
+
+func _zemin_hesapla() -> Dictionary:
 	_skod.resize(sk.streets.size())
 	for i in sk.streets.size():
 		_skod[i] = {"mese": 1, "yol": 2, "savunma": 4}.get(String(sk.streets[i]["tur"]), 3)
@@ -242,6 +260,11 @@ func _zemin() -> void:
 			g[0] = vv
 			g[1] = cc
 			n_kare += 1
+	stats["zemin_kare"] = n_kare
+	return gruplar
+
+
+func _zemin_kur(gruplar: Dictionary) -> void:
 	var mt := _zemin_mat(true)
 	var mt2 := _zemin_mat(false)
 	for ck: Vector2i in gruplar:
@@ -271,7 +294,6 @@ func _zemin() -> void:
 		mi.set_meta("no_walk", true)
 		mi.name = "Zemin_%d_%d" % [ck.x, ck.y]
 		add_child(mi)
-	stats["zemin_kare"] = n_kare
 	stats["zemin_hucre"] = gruplar.size()
 
 
@@ -332,6 +354,14 @@ static var _dosek: ImageTexture
 static func dosek_tex() -> ImageTexture:
 	if _dosek != null:
 		return _dosek
+	# DOKU-4: üretilen doku diskte (aynı kod → aynı doku); piksel döngüsü ~1 sn
+	var ob_yol := IstSokak.ONBELLEK_DIR + "dosek_" + IstSokak.onbellek_imza(["res://scripts/world/ist/mahalle_doku.gd"]) + ".png"
+	if IstSokak._ob_kip() not in ["yok", "yaz"] and FileAccess.file_exists(ob_yol):
+		var oi := Image.load_from_file(ob_yol)
+		if oi != null and not oi.is_empty():
+			oi.generate_mipmaps()
+			_dosek = ImageTexture.create_from_image(oi)
+			return _dosek
 	const N := 512
 	var rng := RandomNumberGenerator.new()
 	rng.seed = 17453
@@ -389,6 +419,9 @@ static func dosek_tex() -> ImageTexture:
 							c = ot.lerp(c, 0.3)
 					img.set_pixel(X, Y, c)
 			x += w
+	if IstSokak._ob_kip() != "yok":
+		DirAccess.make_dir_recursive_absolute(IstSokak.ONBELLEK_DIR)
+		img.save_png(ob_yol)
 	img.generate_mipmaps()
 	_dosek = ImageTexture.create_from_image(img)
 	return _dosek
@@ -401,13 +434,21 @@ const BAHCE_AGAC := ["incir", "dut", "zeytin", "servi", "nar", "erguvan", "badem
 
 
 ## Sebze tarhları ve çalılar (alçak, çarpışmasız): 192 m hücre başına tek ağ (köşe renkli)
+static var _tmat: StandardMaterial3D
+
+static func _tarh_mat() -> StandardMaterial3D:
+	if _tmat == null:
+		_tmat = StandardMaterial3D.new()
+		_tmat.vertex_color_use_as_albedo = true
+		_tmat.vertex_color_is_srgb = true
+		_tmat.diffuse_mode = BaseMaterial3D.DIFFUSE_TOON
+		_tmat.roughness = 1.0
+	return _tmat
+
+
 func _tarhlar(tarh: Dictionary) -> void:
 	var renk := [Color("4f6a2e"), Color("5e7a34"), Color("6b7a3a"), Color("7a6a48")]
-	var mat := StandardMaterial3D.new()
-	mat.vertex_color_use_as_albedo = true
-	mat.vertex_color_is_srgb = true
-	mat.diffuse_mode = BaseMaterial3D.DIFFUSE_TOON
-	mat.roughness = 1.0
+	var mat := _tarh_mat()
 	for tk: Vector2i in tarh:
 		var st := SurfaceTool.new()
 		st.begin(Mesh.PRIMITIVE_TRIANGLES)
@@ -436,7 +477,58 @@ func _tarhlar(tarh: Dictionary) -> void:
 		mi.set_meta("no_walk", true)
 		add_child(mi)
 
+## DOKU-4 (yükleme): avlu katmanının sonucu (ağ dizileri, çarpışma kutuları, avlu öğeleri) diskte
+var _kayit = null                 # Array: _avlular sırasında eklenen öğeler (önbelleğe)
+
 func _avlular() -> void:
+	var imza := IstSokak.onbellek_imza(["res://scripts/world/ist/mahalle_doku.gd", "res://scripts/world/ist/bitki.gd",
+		"res://scripts/world/ist/evler.gd", sk.ob_imza, _yh6])
+	var ob = IstSokak.onbellek_oku("avlu", imza) if sk.ob_imza != "" else null
+	if ob is Dictionary and ob.has("mi"):
+		for r: Array in ob["mi"]:
+			var mi := MeshInstance3D.new()
+			var am := ArrayMesh.new()
+			am.add_surface_from_arrays(Mesh.PRIMITIVE_TRIANGLES, r[4])
+			mi.mesh = am
+			match String(r[3]):
+				"duvar": mi.material_override = _duvar_mat()
+				"tarh": mi.material_override = _tarh_mat()
+				_: mi.material_override = IstBitki.tree_mesh("incir", 1).surface_get_material(0)
+			mi.position = r[0]
+			mi.visibility_range_end = r[1]
+			mi.cast_shadow = r[2]
+			mi.set_meta("no_walk", true)
+			add_child(mi)
+		_duvar_cells = ob["duvar"]
+		for o: Dictionary in ob["oge"]:
+			_oge_ekle(o)
+		for k: String in ob["stats"]:
+			stats[k] = ob["stats"][k]
+		stats["avlu_onbellek"] = "okundu"
+		return
+	var once := get_child_count()
+	_kayit = []
+	_avlular_hesapla()
+	var kayit: Array = _kayit
+	_kayit = null
+	if sk.ob_imza == "":
+		return
+	var mis: Array = []
+	for i in range(once, get_child_count()):
+		var mi := get_child(i) as MeshInstance3D
+		if mi == null or mi.mesh == null or mi.mesh.get_surface_count() != 1:
+			return
+		var mk := "agac"
+		if mi.material_override == _duvar_mat():
+			mk = "duvar"
+		elif mi.material_override == _tarh_mat():
+			mk = "tarh"
+		mis.append([mi.position, mi.visibility_range_end, mi.cast_shadow, mk, mi.mesh.surface_get_arrays(0)])
+	IstSokak.onbellek_yaz("avlu", imza, {"mi": mis, "duvar": _duvar_cells, "oge": kayit,
+		"stats": {"avlu": stats.get("avlu", 0), "duvar_hucre": stats.get("duvar_hucre", 0), "bahce_agac": stats.get("bahce_agac", 0)}})
+
+
+func _avlular_hesapla() -> void:
 	var gruplar := {}                 # Vector2i(192) → SurfaceTool
 	var agac := {}                    # Vector2i(64) → {tür: [Transform3D]}
 	var n := 0
@@ -635,6 +727,8 @@ static func _kutu(st: SurfaceTool, xf: Transform3D, sz: Vector3, col: Color, cen
 # ================================================================ 3. öğeler (akışla)
 
 func _oge_ekle(o: Dictionary) -> void:
+	if _kayit is Array:
+		(_kayit as Array).append(o)
 	var c: Vector2 = o["c"]
 	var ck := Vector2i(floori(c.x / OGE_HUCRE), floori(c.y / OGE_HUCRE))
 	if not _cells.has(ck):
