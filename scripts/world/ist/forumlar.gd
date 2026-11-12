@@ -184,6 +184,10 @@ static func _mese(n: Node3D, k: float, lod: int, uzunluk: float) -> void:
 			Y.box(n, Vector3(pd + sd, wh, len), Vector3(s * (rw + (pd + sd) * 0.5), wh * 0.5, 0), Y.TAS, "", false)
 			Y.box(n, Vector3(pd + sd + 0.6, 0.8, len), Vector3(s * (rw + (pd + sd) * 0.5), wh + 0.4, 0), Y.KIREMIT, "", false)
 		_perch(n, Vector3(rw + pd + sd * 0.5, wh + 0.9, len * 0.5 - 2.0))
+		var ty2 := ph + 0.2 + 0.8 + 0.2
+		var ns2 := maxi(1, ceili((ty2 - 0.05) / Y.ADIM_H - 0.001))
+		_climb(n, Vector3(-(rw + pd * 0.5), 0.02, -len * 0.5 - 0.15 - ns2 * Y.ADIM_D - 0.8), Vector3(-(rw + pd * 0.5), ty2 - 0.1, -len * 0.5 + 1.2))
+		_climb(n, Vector3(rw + pd * 0.5, 0.02, len * 0.5 + 0.15 + ns2 * Y.ADIM_D + 0.8), Vector3(rw + pd * 0.5, ty2 - 0.1, len * 0.5 - 1.2))
 		return
 	# Ruins: sütun ayakta mı?
 	var alive := {}
@@ -225,12 +229,24 @@ static func _mese(n: Node3D, k: float, lod: int, uzunluk: float) -> void:
 				# yıkık sütun: kütük ve moloz
 				var sh := rng.randf_range(0.7, 1.9)
 				Y.cyl(n, cr, sh, Vector3(cx, 0.28 + sh * 0.5, z), Y.MERMER, cr * 0.95, 8, col, "marble")
-				Y.moloz(n, Vector3(cx + s * 0.4, 0.28, z + rng.randf_range(-1.0, 1.0)), 1.6, 1.4, 2, rng, col)
+				Y.moloz(n, Vector3(cx, 0.28, z), 1.7, 1.5, 2, rng, col)
 		# mimari kiriş (sütun başlığı üzeri): iki ucu da ayakta olan açıklıklar
 		for j in nb:
 			if alive[Vector2i(s, j)] and alive[Vector2i(s, j + 1)]:
 				var zc := -len * 0.5 + (j + 0.5) * sp
 				Y.box(n, Vector3(0.7, 0.5, sp - 0.1), Vector3(cx, 0.28 + ph - 0.5 + 0.55, zc), Y.TAS, "", col)
+		# dış (arka) cephe: payandalar, kemerli pencereler, tuğla bant; bacalar
+		if lod == 0:
+			var xo := s * (rw + pd + sd)
+			for j in nb:
+				var zb := -len * 0.5 + (j + 0.5) * sp
+				Y.box(n, Vector3(0.12, 1.3, 0.9), Vector3(xo + s * 0.04, wh * 0.45, zb), Color("1e1a18"), "", false)
+				Y.box(n, Vector3(0.14, 1.0, 0.7), Vector3(xo + s * 0.04, wh * 0.45 + 1.25, zb), Color("1e1a18"), "", false)
+				Y.box(n, Vector3(0.16, 0.14, 1.2), Vector3(xo + s * 0.05, wh * 0.45 - 0.72, zb), Y.MERMER, "", false)
+				Y.box(n, Vector3(0.5, wh, 0.55), Vector3(xo + s * 0.2, wh * 0.5, zb + sp * 0.5), Y.TAS_K, "ashlar", col)
+			Y.box(n, Vector3(0.2, 0.3, len), Vector3(xo + s * 0.08, wh - 0.3, 0), Y.TUGLA, "brick", false)
+			for j in range(1, nb, 3):
+				Y.box(n, Vector3(0.7, 1.3, 0.7), Vector3(s * (rw + pd + sd * 0.7), wh + 1.5, -len * 0.5 + (j + 0.5) * sp), Y.TUGLA, "brick", col)
 		# dükkân kapıları, pencereler, tente: revak içindeki cephede
 		if lod == 0:
 			var xf_front := s * (rw + pd) - s * 0.03
@@ -241,7 +257,7 @@ static func _mese(n: Node3D, k: float, lod: int, uzunluk: float) -> void:
 				Y.box(n, Vector3(0.12, 0.3, 1.9), Vector3(xf_front, 0.28 + dh + 0.15, zc2), Y.MERMER, "", false)
 				if rng.randf() < 0.65:
 					# kepenk/tezgâh
-					Y.box(n, Vector3(0.6, 1.0, 1.4), Vector3(xf_front - s * 0.5, 0.28 + 0.5, zc2 + 0.0), Y.AHSAP, "wood", col)
+					Y.box(n, Vector3(0.6, 1.0, 1.4), Vector3(xf_front - s * 0.3, 0.28 + 0.5, zc2 + 0.0), Y.AHSAP, "wood", col)
 					# tente
 					Y.box(n, Vector3(0.9, 0.06, 2.6), Vector3(xf_front - s * 0.5, 0.28 + 2.55, zc2), [Color("b8452f"), Color("e0b24a"), Color("3f6f8c")][rng.randi() % 3], "", false, Vector3(0, 0, s * 12))
 				# üst pencere sırası: sıva üzerinde
@@ -254,17 +270,18 @@ static func _mese(n: Node3D, k: float, lod: int, uzunluk: float) -> void:
 			Y.box(n, Vector3(1.8, 0.18, 1.8), Vector3(0, 0.1 + 1.29, zc3), Y.TAS_K, "", col)
 			zc3 += maxf(28.0 * k, 12.0)
 		for j in 3:
-			var wz := rng.randf_range(-len * 0.4, len * 0.4)
-			Y.box(n, Vector3(0.9, 0.9, 0.9), Vector3(rng.randf_range(-rw * 0.5, rw * 0.5), 0.55, wz), Y.AHSAP, "wood", col)   # sandık
+			var wz := -len * 0.25 + j * len * 0.25 + 7.0 * k
+			Y.box(n, Vector3(0.9, 0.9, 0.9), Vector3((rw * 0.6) * (1 if j % 2 == 0 else -1), 0.55, wz), Y.AHSAP, "wood", col)   # sandık
 	_zemin_serpinti(n, rng, rw + pd, len * 0.5, 14, lod)
 	# dış merdiven: kuzey ucundan sol revak çatısına, güney ucundan sağ dükkân sırasına (revak çatısı üstü)
 	var top_y := ph + 0.2 + 0.8 + 0.2
+	var ns := maxi(1, ceili((top_y - 0.05) / Y.ADIM_H - 0.001))
 	var s0 := Vector3(-(rw + pd * 0.5), 0.0, -len * 0.5 - 0.15)
-	var nn := Y.stairs(n, s0 + Vector3(0, 0, -(ceili(top_y / Y.ADIM_H) * Y.ADIM_D)), Vector3(0, 0, 1), top_y - 0.05, 1.8, Y.TAS, col)
-	_climb(n, s0 + Vector3(0, 0.02, -(nn * Y.ADIM_D) + 0.4), Vector3(-(rw + pd * 0.5), top_y - 0.1, -len * 0.5 + 1.2))
+	Y.stairs(n, s0 + Vector3(0, 0, -ns * Y.ADIM_D), Vector3(0, 0, 1), top_y - 0.05, 1.8, Y.TAS, col)
+	_climb(n, s0 + Vector3(0, 0.02, -ns * Y.ADIM_D - 0.8), Vector3(-(rw + pd * 0.5), top_y - 0.1, -len * 0.5 + 1.2))
 	var s1 := Vector3(rw + pd * 0.5, 0.0, len * 0.5 + 0.15)
-	var nn2 := Y.stairs(n, s1 + Vector3(0, 0, ceili(top_y / Y.ADIM_H) * Y.ADIM_D), Vector3(0, 0, -1), top_y - 0.05, 1.8, Y.TAS, col)
-	_climb(n, s1 + Vector3(0, 0.02, nn2 * Y.ADIM_D - 0.4), Vector3(rw + pd * 0.5, top_y - 0.1, len * 0.5 - 1.2))
+	Y.stairs(n, s1 + Vector3(0, 0, ns * Y.ADIM_D), Vector3(0, 0, -1), top_y - 0.05, 1.8, Y.TAS, col)
+	_climb(n, s1 + Vector3(0, 0.02, ns * Y.ADIM_D + 0.8), Vector3(rw + pd * 0.5, top_y - 0.1, len * 0.5 - 1.2))
 	_perch(n, Vector3(-(rw + pd + sd * 0.5), wh + 1.1, 0))
 	_perch(n, Vector3(rw + pd + sd * 0.5, wh + 1.1, len * 0.25))
 	# kırık sütun üstlerinden "yıkık duvar basamakları"
@@ -286,7 +303,7 @@ static func _konstantin(n: Node3D, k: float, lod: int) -> void:
 		pass
 	var o := {"kaide_w": 7.0, "kaide_h": 6.5, "govde_r": 1.6, "govde_h": 27.0, "tambur": 8, "renk": Y.PORFIR, "cember": true,
 		"baslik": "hac", "kaide_renk": Y.MERMER, "merdiven_yon": Vector3(0, 0, 1)}
-	var r := Y.sutun(n, Vector3.ZERO, k, o, lod)
+	var r := Y.sutun(n, Vector3(0, 0.1, 0), k, o, lod)
 	_perch(n, Vector3(0, float(r["ust"]) - 2.2, 0))
 	_climb(n, r["merdiven_alt"], r["merdiven_ust"])
 	# iki kapı: batıda sağlam, doğuda yıkık
@@ -298,10 +315,11 @@ static func _konstantin(n: Node3D, k: float, lod: int) -> void:
 		g.position = Vector3(sd * (a + 3.0), 0.0, 0.0)
 		g.rotation_degrees = Vector3(0, 90, 0)
 		n.add_child(g)
-		Y.kapi_kemeri(g, Vector3.ZERO, ac, yay, ust, maxf(4.0 * k, 3.0), maxf(3.0 * k, 2.2), Y.TAS, 1 if sd == 1 else 0, col)
+		var yol := Y.kapi_kemeri(g, Vector3.ZERO, ac, yay, ust, maxf(4.0 * k, 3.0), maxf(3.0 * k, 2.2), Y.TAS, 1 if sd == 1 else 0, col)
 		if sd == -1:
 			_perch(n, Vector3(sd * (a + 3.0), ust + 0.55, 0))
-	_climb(n, Vector3(a + 3.0, 0.0, maxf(3.0 * k, 2.2) + ac * 0.5 + 1.5), Vector3(a + 3.0, 0.8, ac * 0.5 + maxf(3.0 * k, 2.2) * 0.5), "basamak")
+		if not yol.is_empty():
+			_climb(n, g.transform * (yol["alt"] as Vector3), g.transform * (yol["ust"] as Vector3), "basamak")
 	if lod == 2:
 		return
 	# çevre revak kalıntısı: elips boyunca sütun kütükleri ve kırık sütunlar
@@ -337,32 +355,33 @@ static func _tauri(n: Node3D, k: float, lod: int) -> void:
 	# Theodosius Sütunu (ortada, doğuya kayık)
 	var o := {"kaide_w": 8.0, "kaide_h": 8.0, "govde_r": 1.5, "govde_h": 30.0, "tambur": 10, "renk": Y.MERMER,
 		"baslik": "duz", "desen": "spiral", "sarim": 8, "kaide_renk": Y.MERMER, "merdiven_yon": Vector3(0, 0, 1)}
-	var r := Y.sutun(n, Vector3(wx * 0.3, 0, 0), k, o, lod)
+	var r := Y.sutun(n, Vector3(wx * 0.3, 0.1, 0), k, o, lod)
 	_perch(n, Vector3(wx * 0.3, float(r["ust"]), 0))
 	_climb(n, r["merdiven_alt"], r["merdiven_ust"])
 	# zafer takı (batı ucu): üç gözlü; ortada yüksek, yanlarda alçak; sağ yarı yıkık
 	var g := Node3D.new()
-	g.position = Vector3(-wx * 0.95, 0, 0)
+	g.position = Vector3(-wx * 0.95, 0.1, 0)
 	g.rotation_degrees = Vector3(0, 90, 0)
 	n.add_child(g)
 	var ac := maxf(8.0 * k, 3.6)
 	var yay := maxf(8.0 * k, 3.4)
 	var ust := yay + ac * 0.5 + maxf(3.0 * k, 2.0)
 	var ayw := maxf(3.4 * k, 2.4)
-	Y.kapi_kemeri(g, Vector3.ZERO, ac, yay, ust, maxf(5.0 * k, 3.0), ayw, Y.TAS, -1, col)
+	var yol := Y.kapi_kemeri(g, Vector3.ZERO, ac, yay, ust, maxf(5.0 * k, 3.0), ayw, Y.TAS, -1, col)
+	if not yol.is_empty():
+		_climb(n, g.transform * (yol["alt"] as Vector3), g.transform * (yol["ust"] as Vector3), "basamak")
 	_perch(n, Vector3(-wx * 0.95, ust + 0.5, 0))
 	# yan kapılar: alçak, ortaya bitişik değil (aradaki boşluk 0 ya da ≥ 1,4 m): 2,4 m aralıklı dış kemerler
 	var yan := ac * 0.5 + ayw + ayw * 0.0 + 3.2
-	Y.kapi_kemeri(g, Vector3(yan + ac * 0.25, 0, 0), maxf(ac * 0.5, 3.0), yay * 0.9, yay * 0.9 + maxf(ac * 0.5, 3.0) * 0.5 + 1.0, maxf(5.0 * k, 3.0), ayw * 0.8, Y.TAS, 0, col)
+	Y.kapi_kemeri(g, Vector3(ac * 0.5 + ayw + ayw * 0.8 + maxf(ac * 0.5, 3.0) * 0.5, 0, 0), maxf(ac * 0.5, 3.0), yay * 0.9, yay * 0.9 + maxf(ac * 0.5, 3.0) * 0.5 + 1.0, maxf(5.0 * k, 3.0), ayw * 0.8, Y.TAS, 0, col)
 	# gözyaşı sütunları (iki adet), takın önünde; biri yarıda kırık
 	var po := {"kaide_w": 3.0, "kaide_h": 3.0, "govde_r": 0.9, "govde_h": 13.0, "tambur": 4, "renk": Y.GRANIT,
 		"baslik": "korint", "desen": "gozyasi", "kaide_renk": Y.MERMER, "merdiven": false}
-	Y.sutun(n, Vector3(-wx * 0.95 + 5.0 * 0 + 0, 0, -(ac * 0.5 + ayw + 4.5)), k, po, lod)
+	Y.sutun(n, Vector3(-wx * 0.95, 0.1, -(ac * 0.5 + ayw + 11.0)), k, po, lod)
 	var po2 := po.duplicate()
 	po2["govde_h"] = 6.5
 	po2["baslik"] = "yok"
-	Y.sutun(n, Vector3(-wx * 0.95, 0, (ac * 0.5 + ayw + 4.5)), k, po2, lod)
-	_climb(n, Vector3(-wx * 0.95 - ayw - 4.0, 0.0, -ac * 0.5 - 1.0), Vector3(-wx * 0.95 - ayw, 0.8, -ac * 0.5 - 1.0), "basamak")
+	Y.sutun(n, Vector3(-wx * 0.95, 0.1, (ac * 0.5 + ayw + 11.0)), k, po2, lod)
 	if lod == 2:
 		return
 	for i in 10:
@@ -390,13 +409,13 @@ static func _amastrianon(n: Node3D, k: float, lod: int) -> void:
 		for i in 4:
 			var t := TAU * i / 4.0 + PI / 4
 			Y.cyl(n, 0.22, 3.4, Vector3(cos(t) * 1.7, 0.12 + 0.9 + 1.7, sin(t) * 1.7), Y.MERMER, 0.2, 8, col)
-		Props.cyl(n, 2.5, 1.0, Vector3(0, 0.12 + 0.9 + 3.4 + 0.5, 0), Y.KURSUN, Vector3.ZERO, 8, 0.1)
+		Y.cyl(n, 2.5, 1.0, Vector3(0, 0.12 + 0.9 + 3.4 + 0.5, 0), Y.KURSUN, 0.1, 8, col)
 	_perch(n, Vector3(0, 0.12 + 0.9 + 3.4 + 0.3, 0))
 	# çınarlar
 	for p in [Vector3(-wx * 0.6, 0, -wz * 0.5), Vector3(wx * 0.62, 0, wz * 0.45), Vector3(-wx * 0.55, 0, wz * 0.55), Vector3(wx * 0.5, 0, -wz * 0.6)]:
 		Y.cyl(n, 0.4, 3.0, p + Vector3(0, 1.5, 0), Y.AHSAP, 0.32, 6, col)
-		Y.ball(n, 3.2, p + Vector3(0, 5.2, 0), Y.OT, Vector3(1.0, 0.8, 1.0), 8)
-		Y.ball(n, 2.2, p + Vector3(1.6, 4.4, 0.9), Y.OT_K, Vector3(1.0, 0.8, 1.0), 6)
+		Y.yaprak(n, 3.2, p + Vector3(0, 5.2, 0), Y.OT, Vector3(1.0, 0.8, 1.0), 8)
+		Y.yaprak(n, 2.2, p + Vector3(1.6, 4.4, 0.9), Y.OT_K, Vector3(1.0, 0.8, 1.0), 6)
 	# yıkık revak köşesi (kuzey ve doğu kenar): 4 sütun ve kiriş
 	var d := 0
 	for j in 5:
@@ -433,17 +452,20 @@ static func _bovis(n: Node3D, k: float, lod: int) -> void:
 	Y.box(n, Vector3(wx * 2.0, 0.12, wz * 2.0), Vector3(0, 0.06, 0), Y.TAS_K, "flagstone" if lod < 2 else "", col)
 	# kaide: üç basamak + mermer blok
 	for i in 3:
-		var w := 6.0 - i * 0.7
+		var w := 8.0 - i * 0.7
 		Y.box(n, Vector3(w, 0.28 * (i + 1), w), Vector3(0, 0.12 + 0.28 * (i + 1) * 0.5, 0), Y.TAS_K, "ashlar", col)
 	var ph := 0.12 + 0.84
-	Y.box(n, Vector3(3.6, 1.4, 6.0), Vector3(0, ph + 0.7, 0), Y.MERMER, "marble", col)
-	Y.box(n, Vector3(4.0, 0.2, 6.4), Vector3(0, ph + 1.5, 0), Y.TAS_K, "", col)
+	Y.box(n, Vector3(3.6, 1.4, 6.4), Vector3(0, ph + 0.7, 0), Y.MERMER, "marble", col)
+	Y.box(n, Vector3(4.0, 0.2, 6.8), Vector3(0, ph + 1.5, 0), Y.TAS_K, "", col)
 	var by := ph + 1.6
 	# bronz boğa (yaklaşık): gövde, kafa, boynuz, bacaklar
 	var bz := Vector3(0, by, 0)
 	Y.box(n, Vector3(1.5, 1.5, 3.2), bz + Vector3(0, 1.45, 0), Y.BRONZ, "", col)
-	Y.ball(n, 0.95, bz + Vector3(0, 1.75, -0.9), Y.BRONZ, Vector3(0.95, 0.9, 1.35), 8)
-	Y.ball(n, 0.75, bz + Vector3(0, 1.95, 1.75), Y.BRONZ, Vector3(0.8, 0.8, 0.95), 8)
+	var b1 := Y.ball(n, 0.95, bz + Vector3(0, 1.75, -0.9), Y.BRONZ, Vector3(0.95, 0.9, 1.35), 8)
+	var b2 := Y.ball(n, 0.75, bz + Vector3(0, 1.95, 1.75), Y.BRONZ, Vector3(0.8, 0.8, 0.95), 8)
+	if col:
+		Props.make_solid(b1, 1.0)
+		Props.make_solid(b2, 1.0)
 	Y.box(n, Vector3(0.9, 0.7, 0.9), bz + Vector3(0, 1.85, 2.2), Y.BRONZ, "", false)
 	for sd: int in [-1, 1]:
 		Y.cyl(n, 0.06, 0.8, bz + Vector3(sd * 0.55, 2.3, 2.1), Y.MERMER, 0.02, 5, false, "")
@@ -452,8 +474,9 @@ static func _bovis(n: Node3D, k: float, lod: int) -> void:
 	_perch(n, bz + Vector3(0, 2.5, 0))
 	var ust := ph + 1.6
 	# kaideye tırmanma: dört yandan merdiven
-	var nn := Y.stairs(n, Vector3(0, 0, 3.2 + ceili((ph + 1.5) / Y.ADIM_H) * Y.ADIM_D), Vector3(0, 0, -1), ph + 1.5, 1.8, Y.TAS, col)
-	_climb(n, Vector3(0, 0.02, 3.2 + nn * Y.ADIM_D + 0.6), Vector3(0, ph + 1.52, 2.5))
+	var nn := Y.stairs(n, Vector3(0, 0, 3.4 + ceili((ph + 1.5) / Y.ADIM_H) * Y.ADIM_D), Vector3(0, 0, -1), ph + 1.5, 1.8, Y.TAS, col)
+	Y.box(n, Vector3(1.8, ph + 1.5 - 0.3, 0.2), Vector3(0, (ph + 1.2) * 0.5, 3.3), Y.TAS, "", col)
+	_climb(n, Vector3(0, 0.02, 3.4 + nn * Y.ADIM_D + 0.6), Vector3(0, ph + 1.52, 3.05))
 	if lod == 2:
 		return
 	# yıkık dükkân sırası (kuzey kenar): tonozlu odalar duvarı, kırık
@@ -566,9 +589,9 @@ static func _myrelaion(n: Node3D, k: float, lod: int) -> void:
 	# haç kolları: kısa beşik tonozlar (görsel, yüksekliği ≤ 1,3)
 	if lod < 2:
 		for ax: int in [0, 1]:
-			var v := Props.cyl(n, 1.5, cw * 0.98, Vector3(0, cy + 0.2, 0), Y.KURSUN, Vector3(90 if ax == 0 else 0, 0, 0 if ax == 0 else 90), 8)
-			v.scale = Vector3(1.0, 1.0, 1.0)
-			v.position = Vector3(0, cy + 0.0, 0)
+			var v := Props.cyl(n, 2.2, cw * 0.98, Vector3(0, cy - 1.2, 0), Y.KURSUN, Vector3(90 if ax == 0 else 0, 0, 0 if ax == 0 else 90), 10)
+			if col:
+				Props.make_solid(v, 1.0)
 	# yürünür çatı terası: kolların altındaki düz örtü (yüzey cy)
 	Y.box(n, Vector3(cw - 0.4, 0.05, cw - 0.4), Vector3(0, cy + 0.025, 0), Y.KURSUN, "", col)
 	# kubbe: sekizgen kasnak + pencere + kurşun kubbe + haç
@@ -579,7 +602,9 @@ static func _myrelaion(n: Node3D, k: float, lod: int) -> void:
 		for i in 8:
 			var t := TAU * i / 8.0 + PI / 8
 			Y.box(n, Vector3(0.7, 1.2, 0.15), Vector3(cos(t) * (dr * 0.93), cy + dh * 0.5, sin(t) * (dr * 0.93)), Color("2a2622"), "", false, Vector3(0, -rad_to_deg(t) + 90, 0))
-	Y.ball(n, dr, Vector3(0, cy + dh, 0), Y.KURSUN, Vector3(1.0, 0.7, 1.0), 12)
+	var dome := Y.ball(n, dr, Vector3(0, cy + dh, 0), Y.KURSUN, Vector3(1.0, 0.7, 1.0), 12)
+	if col:
+		Props.make_solid(dome, 1.0)
 	Y.hac(n, Vector3(0, cy + dh + dr * 0.7, 0), 1.2)
 	# üç apsis (doğu cephe): yarım silindir çıkıntılar
 	for i in 3:
@@ -611,6 +636,8 @@ static func _myrelaion(n: Node3D, k: float, lod: int) -> void:
 	var sx := -rr * 0.3
 	var sz2 := sqrt(maxf(rr * rr - sx * sx, 1.0)) + run - 0.1
 	var nn := Y.stairs(n, Vector3(sx, 0.1, sz2), Vector3(0, 0, -1), hh, 2.0, Y.TAS, col)
+	var ze := sqrt(maxf(rr * rr - sx * sx, 1.0))
+	Y.box(n, Vector3(2.0, hh - 0.04, 1.6), Vector3(sx, 0.1 + (hh - 0.04) * 0.5, ze - 0.2), Y.TAS, "", col)
 	# merdiven rotunda gövdesine ~ (0,0.1 yükseklik) bitişir; üst basamak terasa kadar gelmeli: teras kenar cw/2+1.0
 	_climb(n, Vector3(sx, 0.12, sz2 + 0.6), Vector3(sx, ty + 0.02, sqrt(maxf(rr * rr - sx * sx, 1.0)) - 0.4))
 	_perch(n, Vector3(0, cy + dh + dr * 0.7 + 1.0, 0))
@@ -702,6 +729,7 @@ static func _kapitolion(n: Node3D, k: float, lod: int) -> void:
 	# ön (güney, +z) geniş merdiven
 	var sw := minf(pw * 0.5, 8.0)
 	var nn := Y.stairs(n, Vector3(0, 0.1, pl * 0.5 + 0.4 + ceili((top - 0.1) / Y.ADIM_H) * Y.ADIM_D), Vector3(0, 0, -1), top - 0.1, sw, Y.TAS, col)
+	Y.box(n, Vector3(sw, top - 0.1 - 0.5, 0.4), Vector3(0, 0.1 + (top - 0.6) * 0.5, pl * 0.5 + 0.2), Y.TAS, "", col)
 	_climb(n, Vector3(0, 0.12, pl * 0.5 + 0.4 + nn * Y.ADIM_D + 0.6), Vector3(0, top + 0.02, pl * 0.5 - 0.2))
 	if lod == 2:
 		_perch(n, Vector3(0, top + 3.0, 0))
@@ -713,8 +741,16 @@ static func _kapitolion(n: Node3D, k: float, lod: int) -> void:
 		var hh := minf(float(hs[i]) * maxf(k, 0.5) * 1.1, 8.0)
 		Y.box(n, Vector3(1.6, 0.3, 1.6), Vector3(x, top + 0.15, pl * 0.5 - 2.6), Y.TAS_K, "", col)
 		Y.cyl(n, 0.55, hh, Vector3(x, top + 0.3 + hh * 0.5, pl * 0.5 - 2.6), Y.MERMER, 0.5, 10, col, "marble")
-		if hh > 5.0:
-			var bh := Y.korint_baslik(n, 0.5, Vector3(x, top + 0.3 + hh, pl * 0.5 - 2.6), Y.MERMER, col, lod == 0)
+		if hh > 2.5:
+			Y.korint_baslik(n, 0.5, Vector3(x, top + 0.3 + hh, pl * 0.5 - 2.6), Y.MERMER, col, lod == 0)
+	# ayakta kalan üç sütunun üstünde mimari kiriş ve kırık alınlık (üçgen)
+	var xa := -pw * 0.38 + 1.0 * pw * 0.76 / 5.0
+	var xb := -pw * 0.38 + 3.0 * pw * 0.76 / 5.0
+	var ey := top + 0.3 + minf(float(hs[1]) * maxf(k, 0.5) * 1.1, 8.0) + 0.95
+	Y.box(n, Vector3(xb - xa + 1.6, 0.8, 1.9), Vector3((xa + xb) * 0.5, ey + 0.4, pl * 0.5 - 2.6), Y.TAS_K, "", col)
+	var ped := Props.prism(n, Vector3(xb - xa + 1.2, 1.3, 1.4), Vector3((xa + xb) * 0.5, ey + 0.8 + 0.65, pl * 0.5 - 2.6), Y.MERMER)
+	if col:
+		Props.make_solid(ped, 1.0)
 	# kırık alınlık parçaları: yerde
 	Y.box(n, Vector3(5.0, 0.9, 1.8), Vector3(-pw * 0.2, top + 0.45, pl * 0.5 - 6.0), Y.MERMER, "marble", col, Vector3(0, 18, 4))
 	# hücre (cella) duvarları: arka ve yan, yıkık kenarlı; kemerli niş
@@ -740,7 +776,7 @@ static func _anemodoulion(n: Node3D, k: float, lod: int) -> void:
 	var th := 28.0 * k
 	Y.box(n, Vector3(bw * 2.2 + 6, 0.1, bw * 2.2 + 6), Vector3(0, 0.05, 0), Y.TAS_K, "flagstone" if lod < 2 else "", col)
 	# kaide: iki kademe
-	Y.box(n, Vector3(bw * 1.7, 0.28, bw * 1.7), Vector3(0, 0.1 + 0.14, 0), Y.TAS_K, "ashlar", col)
+	Y.box(n, Vector3(bw * 1.9, 0.28, bw * 1.9), Vector3(0, 0.1 + 0.14, 0), Y.TAS_K, "ashlar", col)
 	Y.box(n, Vector3(bw * 1.45, 0.56, bw * 1.45), Vector3(0, 0.1 + 0.28 + 0.28, 0), Y.TAS_K, "ashlar", col)
 	var y0 := 0.1 + 0.84
 	# gövde: dört kenarlı kesik piramit (silindir, 4 yüz), kenarlar eksene hizalı olsun diye 45° döndürülür
@@ -759,7 +795,9 @@ static func _anemodoulion(n: Node3D, k: float, lod: int) -> void:
 				var ang := f * 90.0
 				var dist := (rb + rt) * 0.5 * 0.7071 + 0.03
 				var pos := Vector3(sin(deg_to_rad(ang)) * dist, y0 + seg_h * (i + 0.5), cos(deg_to_rad(ang)) * dist)
-				Y.box(n, Vector3((rb + rt) * 0.5 * 0.9, seg_h * 0.5, 0.06), pos, Y.BRONZ, "", false, Vector3(0, ang, 0))
+				Y.box(n, Vector3((rb + rt) * 0.5 * 0.9, seg_h * 0.5, 0.06), pos, Y.PATINA, "", false, Vector3(0, ang, 0))
+				for bb in 3:
+					Y.box(n, Vector3((rb + rt) * 0.5 * 0.8, 0.07, 0.1), pos + Vector3(0, (bb - 1) * seg_h * 0.14, 0) + Vector3(sin(deg_to_rad(ang)), 0, cos(deg_to_rad(ang))) * 0.02, Y.BRONZ, "", false, Vector3(0, ang, 0))
 			Y.box(n, Vector3((rt + rb) * 0.5 * 1.45, 0.25, (rt + rb) * 0.5 * 1.45), Vector3(0, y0 + seg_h * (i + 1), 0), Y.TAS_K, "", false, Vector3(0, 45, 0)) if i < 3 else null
 	var ty := y0 + th
 	var rtop := r0 * 0.4
@@ -776,5 +814,5 @@ static func _anemodoulion(n: Node3D, k: float, lod: int) -> void:
 		Y.box(n, Vector3(1.9, 0.3, 0.14), Vector3(0, y0 + 2.45, -(r0 * 0.7071) - 0.04), Y.TAS_K, "", false)
 	_perch(n, Vector3(0, ty + 0.45, 0))
 	# kule tabanından kaideye üç basamak: kaide en az bir yandan 0,28'lik adımlarla; kapı önünde merdiven
-	_climb(n, Vector3(bw * 1.2, 0.0, 0), Vector3(bw * 0.8, 0.84, 0), "basamak")
-	Y.stairs(n, Vector3(bw * 0.85 + 1.3, 0.1, 0), Vector3(-1, 0, 0), 0.84 - 0.0, 2.0, Y.TAS, col)
+	_climb(n, Vector3(bw * 0.725 + 3 * Y.ADIM_D + 0.8, 0.1, 0), Vector3(bw * 0.725 + 0.2, 0.94, 0), "basamak")
+	Y.stairs(n, Vector3(bw * 0.725 + 3 * Y.ADIM_D, 0.1, 0), Vector3(-1, 0, 0), 0.84, 2.0, Y.TAS, col)
