@@ -368,13 +368,6 @@ func _zemin_mat(tas: bool) -> StandardMaterial3D:
 	m.diffuse_mode = BaseMaterial3D.DIFFUSE_TOON
 	m.specular_mode = BaseMaterial3D.SPECULAR_DISABLED
 	m.roughness = 1.0
-	if not gece:
-		# DOKU-4 (kalite notu 28): gölgede kalan yol/döşeme mavi gök ortam ışığıyla camgöbeğine dönüyordu. Gündüz ortam
-		# ışığı kapalı; yerine sıcak, düşük taban ışıması (gölgedeki toprak koyu kahve-gri okunur)
-		m.disable_ambient_light = true
-		m.emission_enabled = true
-		m.emission = Color(0.27, 0.235, 0.18) if tas else Color(0.27, 0.225, 0.165)
-		m.emission_energy_multiplier = 1.0
 	if tas:
 		# Prokonnesos/kireçtaşı döşeme (kalite notu 17): düzensiz sıralı kesme taş, derz, kırık, otlu derz; 7,2 m'de bir tekrar
 		var tex := dosek_tex()
