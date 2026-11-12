@@ -197,7 +197,8 @@ func _start_field_s() -> void:
 	_fired["radio"] = true
 	if not _hands:
 		_set_hands(true)
-	hud.set_prompt(GameState.tr_pad("UI_PROMPT8S_HANDS"))
+	_prompt = ""
+	hud.set_prompt("")
 
 
 # ---------------------------------------------------------------- eller havada
