@@ -3,7 +3,10 @@ extends Node3D
 ## Bölüm 4a: Osmanlı ordugâhı, 22 Nisan 1453 gecesi (GDD §9.3).
 ## Kazıklı çitle çevrili esir alanı: esir çadırı, kapanmış pazar tezgâhları, siper
 ## olacak sandık ve fıçılar. Tek çıkış, meşaleli nöbet noktası (Hasan ile Hüseyin).
-## Çitin dışında ordugâh: çadırlar, kamp ateşleri, "OTAĞ" tabelası, ufukta surlar.
+## Tek harita: esir alanı World1453'ün ordugâhında, "camp_pen" bölgesinde durur (Maltepe ordugâhının ön kenarı, otağın
+## ~280 m batı-güneyi, kara surlarından ~235 m geride). Çitin dışı dünyanın ordugâhı (çadır sıraları, ateşler), ufuk
+## gerçek kara surları ve şehrin siluetidir; yerel +z (kapı, kaçış yolu) surlara bakar. Öbür bölümlerde ve havadan aynı
+## alanı far_pen kurar (World1453.FAR_REGIONS).
 
 const PEN_X := 10.0
 const PEN_Z0 := -12.0
@@ -15,21 +18,175 @@ const TENT_SPAWN := Vector3(-4.0, 0.0, -5.6)
 const MARKET_SPAWN := Vector3(6.2, 0.0, -2.0)
 const HASAN_POS := Vector3(-1.0, 0.0, GATE_Z + 0.7)
 const HUSEYIN_POS := Vector3(1.0, 0.0, GATE_Z + 0.7)
+## Bölgenin oynanış alanı (yerel): dünya buraya çadır, ağaç, kalabalık koymaz, zemini düzler (World1453.FAR_REGIONS)
+const KEEP := Rect2(-46.0, -24.0, 92.0, 80.0)
+## Esir alanının kendi zemini (çiğnenmiş çamur; ötesi dünyanın arazisi)
+const PATCH := Rect2(-22.0, -20.0, 44.0, 50.0)
+## Gece sisinde ordugâhın çadır katmanlarının çizildiği yarıçap (esir alanından)
+const NEAR_R := 210.0
 
 var hasan: Soldier
 var huseyin: Soldier
 var lights: Array = []
+var world: SiegeField
+## Uzak kurulum (far_pen): yalnız görüntü, birleşik ağ; insan, ışık, yazı yok; parçalar dünyanın arazisine oturur
+var far := false
+var _far_fires: Array = []
 var _t := 0.0
 
 
 func _ready() -> void:
+	if far:
+		_build_far()
+		return
 	Audio.voice_space("outdoor")
-	Night.environment(self, 0.014)
+	# Gece ortamı (dünyanın gece bölümleriyle aynı); sis surları ve şehrin siluetini yutmasın diye seyrek
+	Night.environment(self, 0.007)
 	_build_ground()
 	_build_pen()
 	_build_market()
 	_build_gate()
 	_build_camp()
+	_bake_near()
+	_occluders()
+	_build_world()
+
+
+## Esir alanının durağan ayrıntısı (kazıklar, çadırlar, tezgâhlar, sandıklar, ateş taşları) aynı malzeme gruplarıyla
+## birleşik ağa pişirilir: görüntü aynı (renk köşede, desen ve dış çizgi grupta), çizim sayısı yüzlerden birkaça iner.
+## Çarpışmalar, insanlar, alevler, ışıklar, yazılar ve betikli düğümler (gökyüzü, istasyonlar) olduğu gibi kalır.
+func _bake_near() -> void:
+	var nodes: Array = []
+	for c in get_children():
+		if c.get_script() != null or c.has_meta("dressing") or not (c is Node3D):
+			continue
+		nodes.append(c)
+	Props.bake_static(self, nodes)
+
+
+## Dünya ilk kare çizildikten sonra kurulur (bölüm kartı ve karartma ekrandayken): sahne açılışı bekletmez
+func _build_world() -> void:
+	await get_tree().process_frame
+	await get_tree().process_frame
+	if not is_inside_tree():
+		return
+	world = World1453.build(self, "camp_pen", [KEEP], true)
+	# Esir alanının kendi zemininin altından dünyanın otu, taşı çıkmasın
+	World1453.clear_rect(world, World1453.world_rect(World1453.region("camp_pen"), PATCH), false)
+	_thin_world()
+	# Yaşayan şehir ve sur arkası sonradan kurulur: onlar da seyrelsin
+	for d: float in [1.0, 4.0]:
+		await get_tree().create_timer(d, false).timeout
+		if is_instance_valid(world):
+			_thin_world()
+
+
+## Gece, esir alanından: dünyanın küçük parçaları (insan, eşya, sancak, kapı, sandık) mesafeyle seyrelir (sisin içinde
+## zaten seçilmez); ordugâhın kalabalık hücreleri gölge düşürmez, tam model 70 m'de siluete döner, siluet (ucu yoktu) 120 m'de, surdaki mürettebat 200 m'de biter; duman
+## sütunları 350 m. Alev ve haleler (surlardaki meşaleler, ordugâhın ateşleri), çadır ve ağaç katmanları, büyük yapılar
+## dokunulmaz. Geniş ağlar ay gölgesine girmez (gölge yalnız 35 m'de; arazinin bütün üçgenleri gölge geçişindeydi).
+func _thin_world() -> void:
+	for n in world.find_children("*", "GeometryInstance3D", true, false):
+		var g := n as GeometryInstance3D
+		if g.material_override is ShaderMaterial:
+			continue
+		if g is CPUParticles3D or g is GPUParticles3D:
+			_range(g, 350.0, 30.0)
+			continue
+		if g is MultiMeshInstance3D:
+			# Ordugâhın kalabalık hücreleri (yakın katman gölge düşürüyordu) ve uzak siluetleri
+			g.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
+			var twin = g.get_meta("crowd_twin") if g.has_meta("crowd_twin") else null
+			if twin is GeometryInstance3D and is_instance_valid(twin):
+				# Yakın (tam model) katman 70 m'de siluete döner (gece, 150 m'de bir figür birkaç piksel)
+				g.visibility_range_end = 70.0
+				g.visibility_range_end_margin = 8.0
+				(twin as GeometryInstance3D).visibility_range_begin = 70.0
+				(twin as GeometryInstance3D).visibility_range_begin_margin = 8.0
+			elif g.visibility_range_begin > 0.0 and g.visibility_range_end <= 0.0:
+				_range(g, 120.0, 15.0)
+			elif g.get_parent() is PoseCrew:
+				_range(g, 200.0, 20.0)      # surdaki okçu/taşçı mürettebatı: esir alanından en az 230 m
+			else:
+				_near_first(g as MultiMeshInstance3D, NEAR_R)
+			continue
+		var sz := g.get_aabb().size * g.global_basis.get_scale()
+		var m := maxf(sz.x, maxf(sz.y, sz.z))
+		if m < 5.0:
+			_range(g, 140.0, 15.0)
+		elif m < 25.0:
+			_range(g, 450.0, 40.0)
+		elif m > 60.0:
+			g.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
+
+
+## Ordugâhı kaplayan çoklu ağ katmanları (çadır, at, köşk, ağaç): örnekler esir alanına uzaklığa göre sıralanır ve
+## yalnız r içindekiler çizilir (gece sisinde ötesi seçilmez). Dizi ("xforms") aynı sırayla güncellenir; çarpışmalar
+## kurulurken ayrı şekil olarak yazıldığından etkilenmez. Bir kez yapılır.
+func _near_first(mmi: MultiMeshInstance3D, r: float) -> void:
+	var mm := mmi.multimesh
+	# Yalnız Scenery.scatter'ın durağan dağıtımları ("xforms" yazılı); örnek sırasıyla canlandırılan ağlar (PoseCrew vb.)
+	# ve örnek verisi taşıyanlar dokunulmaz
+	if mm == null or mm.transform_format != MultiMesh.TRANSFORM_3D or mmi.has_meta("g1_near") or mm.instance_count < 16 \
+			or not mmi.has_meta("xforms") or mm.use_custom_data or mmi.get_parent() is PoseCrew:
+		return
+	var ab := mmi.get_aabb()
+	if maxf(ab.size.x, ab.size.z) < 150.0:
+		return
+	mmi.set_meta("g1_near", true)
+	var c := mmi.global_transform.affine_inverse() * global_position
+	var xfs: Array = []
+	for i in mm.instance_count:
+		xfs.append(WorldWalk.inst_xf(mmi, i))
+	var order: Array = range(mm.instance_count)
+	var d: Array = []
+	for i in mm.instance_count:
+		d.append(Vector2((xfs[i] as Transform3D).origin.x - c.x, (xfs[i] as Transform3D).origin.z - c.z).length())
+	order.sort_custom(func(a: int, b: int) -> bool: return d[a] < d[b])
+	var cols: Array = []
+	if mm.use_colors:
+		for i in mm.instance_count:
+			cols.append(mm.get_instance_color(i))
+	var out: Array = []
+	var n := 0
+	for k in order.size():
+		var i: int = order[k]
+		out.append(xfs[i])
+		mm.set_instance_transform(k, xfs[i])
+		if mm.use_colors:
+			mm.set_instance_color(k, cols[i])
+		if d[i] <= r:
+			n += 1
+	if mmi.has_meta("xforms"):
+		mmi.set_meta("xforms", out)
+	mm.visible_instance_count = n
+
+
+## Görünürlük ucunu kısaltır (zaten daha kısaysa dokunmaz; yakın/uzak katmanların başlangıcı korunur)
+func _range(g: GeometryInstance3D, end: float, margin: float) -> void:
+	if g.visibility_range_end > 0.0 and g.visibility_range_end <= end:
+		return
+	if g.visibility_range_begin >= end:
+		g.visible = false
+		return
+	g.visibility_range_end = end
+	g.visibility_range_end_margin = margin
+
+
+## Kazık çit örtücüsü: çitin içinden bakınca arkasında tamamen kalan dünya çizilmez (kazık araları 10 cm, gece karanlık)
+func _occluders() -> void:
+	for seg: Array in [[Vector3(-PEN_X, 0, PEN_Z0), Vector3(PEN_X, 0, PEN_Z0)], [Vector3(-PEN_X, 0, PEN_Z0), Vector3(-PEN_X, 0, GATE_Z)],
+			[Vector3(PEN_X, 0, PEN_Z0), Vector3(PEN_X, 0, GATE_Z)], [Vector3(-PEN_X, 0, GATE_Z), Vector3(-GATE_HALF - 0.2, 0, GATE_Z)],
+			[Vector3(GATE_HALF + 0.2, 0, GATE_Z), Vector3(PEN_X, 0, GATE_Z)]]:
+		var a: Vector3 = seg[0]
+		var b: Vector3 = seg[1]
+		var o := OccluderInstance3D.new()
+		var bo := BoxOccluder3D.new()
+		bo.size = Vector3(0.06, 2.1, a.distance_to(b))
+		o.occluder = bo
+		o.position = (a + b) * 0.5 + Vector3(0, 1.15, 0)
+		o.rotation.y = atan2(b.x - a.x, b.z - a.z)
+		add_child(o)
 
 
 func _process(delta: float) -> void:
@@ -37,26 +194,94 @@ func _process(delta: float) -> void:
 	Night.flicker(lights, _t)
 
 
+## Öbür bölümlerde (ve 7, 11 uçuşunda) esir alanı: aynı kurucular, uzak sürümde (World1453.build çağırır)
+static func far_pen(parent: Node3D, xf: Transform3D) -> Node3D:
+	var c := Camp.new()
+	c.name = "FarPen"
+	c.far = true
+	c.transform = xf
+	c.set_meta("night", bool(parent.get("night_build")) if parent.get("night_build") != null else true)
+	parent.add_child(c)
+	return c
+
+
+## Görünen dünya arazisinin bu bölgedeki yerel yüksekliği (bölümün kendisinde düzlenmiş: ≈ −0,05)
+func _gy(x: float, z: float) -> float:
+	if not far and KEEP.has_point(Vector2(x, z)):
+		return -0.05          # bölgenin alanı: dünya zemini bölgenin zemininin hemen altında düz (World1453 BLEND)
+	var xf := World1453.region("camp_pen")
+	var w := xf * Vector3(x, 0.0, z)
+	return World1453.surface_h(w.x, w.z) - xf.origin.y
+
+
+## Yerleştirme yüksekliği: bölümün kendisinde düz zemin (0), uzak kurulumda dünyanın arazisi
+func _y(x: float, z: float) -> float:
+	return _gy(x, z) if far else 0.0
+
+
+func _build_far() -> void:
+	set_process(false)
+	var hf := func(x: float, z: float) -> float: return _gy(x, z) + 0.02
+	add_child(LowPoly.terrain(PATCH.position.x, PATCH.end.x, PATCH.position.y, PATCH.end.y, 11, 12, hf, _patch_color))
+	var n0 := get_child_count()
+	_build_pen()
+	_build_market()
+	_build_gate()
+	# Çit, çadır, tezgâh, sandık: her parça kendi yerinde dünyanın arazisine oturur
+	for i in range(n0, get_child_count()):
+		var c := get_child(i) as Node3D
+		if c and not c.has_meta("placed"):
+			c.position.y += _gy(c.position.x, c.position.z)
+	_build_camp()
+	# Yazılar uzaktan okunmaz (birleşik ağa da girmez)
+	for l in find_children("*", "Label3D", true, false):
+		l.queue_free()
+	Props.bake_static(self, get_children())
+	for mi in find_children("*", "MeshInstance3D", true, false):
+		(mi as MeshInstance3D).visibility_range_end = 1500.0
+		(mi as MeshInstance3D).visibility_range_end_margin = 150.0
+	# Ateşler: alev ve hale (gece)
+	var fl: Array = []
+	var gl: Array = []
+	for f: Array in _far_fires:
+		var p: Vector3 = f[0]
+		var s: float = f[1]
+		fl.append(Transform3D(Basis.from_scale(Vector3(0.8, 1.2, 0.8) * s), p))
+		gl.append(Transform3D(Basis.from_scale(Vector3.ONE * 3.2 * s), p + Vector3(0, 0.5 * s, 0)))
+	var fires := Node3D.new()
+	fires.name = "night"
+	add_child(fires)
+	Flame.scatter_flames(fires, fl)
+	Flame.scatter_glows(fires, gl)
+	fires.visible = bool(get_meta("night", true))
+	# Dünya sonradan geceye/gündüze dönerse (CampDay.make_night → SiegeField.set_mode) ateşler de yanar/söner
+	var nl = get_parent().get("_night")
+	if nl is Array:
+		(nl as Array).append(fires)
+
+
+static func _patch_color(x: float, z: float, _h: float, _steep: float) -> Color:
+	var n := 0.5 + 0.5 * sin(x * 1.3 + z * 0.7) * cos(z * 1.1 - x * 0.4)
+	var mud := Color("4a3a2a").lerp(Color("3a3024"), n)
+	if absf(x) < PEN_X and z > PEN_Z0 and z < GATE_Z + 14.0:
+		return mud
+	# Alanın kenarına doğru dünyanın çayırına döner (dikiş görünmesin)
+	var e := minf(minf(x - PATCH.position.x, PATCH.end.x - x), minf(z - PATCH.position.y, PATCH.end.y - z))
+	return mud.lerp(Color("4e5a36"), clampf(1.0 - e / 9.0, 0.0, 1.0) * 0.85 + 0.15)
+
+
 func _build_ground() -> void:
-	var noise := FastNoiseLite.new()
-	noise.seed = 4
-	noise.frequency = 0.03
-	var hf := func(x: float, z: float) -> float:
-		var d := Vector2(x, z).length()
-		return noise.get_noise_2d(x, z) * clampf((d - 18.0) / 30.0, 0.0, 1.0) * 4.0
-	var cf := func(x: float, z: float, y: float, steep: float) -> Color:
-		if absf(x) < PEN_X and z > PEN_Z0 and z < GATE_Z + 14.0:
-			return Color("4a3a2a").lerp(Color("3a3024"), noise.get_noise_2d(x * 4.0, z * 4.0) * 0.5 + 0.5)
-		return Color("26331f").lerp(Color("34402a"), noise.get_noise_2d(x * 3.0, z * 3.0) * 0.5 + 0.5)
-	add_child(LowPoly.terrain(-90.0, 90.0, -90.0, 140.0, 45, 58, hf, cf))
-	_ground_wear(hf)
-	# Görünmez düz zemin (çarpışma)
+	# Esir alanının ve kapı önünün çiğnenmiş zemini; ötesi dünyanın arazisi (bölgenin altında düz, rampayla ovaya döner)
+	var flat := func(_x: float, _z: float) -> float: return 0.0
+	add_child(LowPoly.terrain(PATCH.position.x, PATCH.end.x, PATCH.position.y, PATCH.end.y, 22, 25, flat, _patch_color))
+	_ground_wear()
+	# Görünmez düz zemin (çarpışma): bölgenin oynanış alanı
 	var floor_body := StaticBody3D.new()
 	var shape := CollisionShape3D.new()
 	var box := BoxShape3D.new()
-	box.size = Vector3(200, 1, 260)
+	box.size = Vector3(KEEP.size.x, 1, KEEP.size.y)
 	shape.shape = box
-	shape.position = Vector3(0, -0.5, 25)
+	shape.position = Vector3(KEEP.get_center().x, -0.5, KEEP.get_center().y)
 	floor_body.add_child(shape)
 	add_child(floor_body)
 
@@ -64,9 +289,9 @@ func _build_ground() -> void:
 ## Gece ordugâhının zemini (Nature.ground_detail, her tür tek çoklu ağ, çarpışmasız): esir alanında ve kapı
 ## önünde çiğnenmiş çamur, ayak izleri (çadırdan kapıya), saman (çadır ve saman yığını çevresi), ateş diplerinde kül ve
 ## kömür; çitin dışında at izleri, ot öbekleri ve taş. Eskiden tek renk koyu düz levhaydı.
-func _ground_wear(hf: Callable) -> void:
+func _ground_wear() -> void:
 	var sy := func(x: float, z: float) -> float:
-		return LowPoly.surface_y(x, z, -90.0, 90.0, -90.0, 140.0, 45, 58, hf)
+		return 0.0 if PATCH.has_point(Vector2(x, z)) else _gy(x, z)
 	var pen := Rect2(-PEN_X + 0.3, PEN_Z0 + 0.3, PEN_X * 2.0 - 0.6, GATE_Z - PEN_Z0 + 13.0)
 	var in_pen := func(x: float, z: float) -> bool: return absf(x) < PEN_X - 0.3 and z > PEN_Z0 + 0.3 and z < GATE_Z - 0.3
 	var near_gate := func(x: float, z: float) -> bool: return absf(x) < 4.0 and z > GATE_Z - 4.0 and z < GATE_Z + 18.0
@@ -91,7 +316,7 @@ func _ground_wear(hf: Callable) -> void:
 	Nature.ground_detail(self, pen, "coal", 3.0, 4405, sy, func(x: float, z: float) -> bool: return ring.call(x, z, 0.5, 0.95))
 	# Çitin dışı: at izleri ve çiğnenmiş toprak (ateşlerin ve atların çevresi), ot öbekleri, taş
 	var outside := func(x: float, z: float) -> bool: return not (absf(x) < PEN_X + 0.5 and z > PEN_Z0 - 0.5 and z < GATE_Z + 0.5)
-	var ground_out := Rect2(-34.0, -26.0, 68.0, 76.0)
+	var ground_out := Rect2(-34.0, -23.0, 68.0, 73.0)
 	Nature.ground_detail(self, ground_out, "camp_mud", 0.035, 4406, sy, outside)
 	Nature.ground_detail(self, ground_out, "hoofprint", 0.05, 4407, sy, outside)
 	Nature.ground_detail(self, ground_out, "grass", 0.25, 4408, sy, func(x: float, z: float) -> bool:
@@ -133,7 +358,7 @@ func _build_pen() -> void:
 	Props.label(self, "FRENK CASUSU", TENT_SPAWN + Vector3(0, 1.75, -0.32), 30, Color("2a1a10"), Vector3.ZERO, 1.2)
 	for i in 6:
 		Props.box(self, Vector3(0.5, 0.08, 0.3), TENT_SPAWN + Vector3(-0.8 + (i % 3) * 0.6, 0.04, -1.0 - (i / 3) * 0.4), Color("c8a860"), Vector3(0, i * 25, 0))
-	lights.append(Night.campfire(self, Vector3(-6.0, 0, -1.0), 0.8))
+	_fire(Vector3(-6.0, 0, -1.0), 0.8)
 	# Siper: sandıklar ve fıçılar (nöbetçilerin görüşünü keser)
 	var cover := [Vector3(-2.6, 0, 2.6), Vector3(2.8, 0, 3.4), Vector3(-5.5, 0, 3.0), Vector3(0.4, 0, -1.2), Vector3(4.5, 0, 0.8)]
 	for i in cover.size():
@@ -172,15 +397,24 @@ func _build_market() -> void:
 func _build_gate() -> void:
 	# Kapının dışındaki şerit (nöbetçilerin arası): yandan dolanıp kaçış çizgisini (ESCAPE_Z) geçmeden bütün ordugâha,
 	# oradan dünyanın kenarına yürünüyordu. İki yanda görünmez duvar: kapıdan çıkan ileri, nöbetçilerin yanından geçer.
+	if not far:
+		for sx: float in [-1.0, 1.0]:
+			var side := Props.solid(self, Vector3(0.3, 3.0, ESCAPE_Z - GATE_Z + 0.6), Vector3(sx * 4.2, 1.5, (GATE_Z + ESCAPE_Z) * 0.5 + 0.2), Color.WHITE)
+			side.get_child(0).visible = false
+			side.set_meta("no_climb", true)
 	for sx: float in [-1.0, 1.0]:
-		var side := Props.solid(self, Vector3(0.3, 3.0, ESCAPE_Z - GATE_Z + 0.6), Vector3(sx * 4.2, 1.5, (GATE_Z + ESCAPE_Z) * 0.5 + 0.2), Color.WHITE)
-		side.get_child(0).visible = false
-		side.set_meta("no_climb", true)
-	lights.append(Night.torch(self, Vector3(-GATE_HALF - 0.3, 0, GATE_Z + 0.2), 2.6))
-	lights.append(Night.torch(self, Vector3(GATE_HALF + 0.3, 0, GATE_Z + 0.2), 2.6))
+		var tp := Vector3(sx * (GATE_HALF + 0.3), 0, GATE_Z + 0.2)
+		if far:
+			Props.cyl(self, 0.05, 2.6, tp + Vector3(0, 1.3, 0), Color("4a3020"), Vector3.ZERO, 5)
+			_far_fires.append([tp + Vector3(0, _gy(tp.x, tp.z) + 2.66, 0), 0.3])
+		else:
+			lights.append(Night.torch(self, tp, 2.6))
 	# Mangal
 	Props.cyl(self, 0.35, 0.5, Vector3(0, 0.5, GATE_Z + 2.2), Color("3a3a3a"), Vector3.ZERO, 8, 0.45)
-	lights.append(Night.campfire(self, Vector3(0, 0.75, GATE_Z + 2.2), 0.4))
+	_fire(Vector3(0, 0.75, GATE_Z + 2.2), 0.4)
+	if far:
+		_sign()
+		return
 	hasan = Soldier.new(Color("b3262d"), "stand", "bork")
 	hasan.set_meta("spk", "SPK_HASAN")
 	hasan.position = HASAN_POS
@@ -192,30 +426,54 @@ func _build_gate() -> void:
 	huseyin.rotation.y = PI
 	add_child(huseyin)
 	Props.interactable(self, "guards", Vector3(3.4, 2.0, 1.6), Vector3(0, 1.0, GATE_Z + 0.7))
-	# Tabela: otağa giden yol
+	_sign()
+
+
+## Tabela: otağa giden yol (otağ kapıdan çıkanın sağında, ordugâhın içinde)
+func _sign() -> void:
 	Props.cyl(self, 0.06, 2.4, Vector3(2.6, 1.2, GATE_Z + 7.0), Color("4a3020"), Vector3.ZERO, 5)
 	Props.box(self, Vector3(1.6, 0.4, 0.06), Vector3(3.2, 2.1, GATE_Z + 7.0), Color("8a6a44"), Vector3(0, 180, -4))
 	Props.label(self, "OTAĞ →", Vector3(3.2, 2.1, GATE_Z + 6.96), 40, Color("2a1a10"), Vector3(0, 180, -4), 1.3)
 
 
+## Kamp ateşi: bölümde ateş, ışık ve titreme; uzak kurulumda yalnız alev ve hale (ışıksız)
+func _fire(p: Vector3, size: float) -> void:
+	if far:
+		_far_fires.append([p + Vector3(0, _gy(p.x, p.z) + 0.1 * size, 0), size])
+		return
+	lights.append(Night.campfire(self, p, size))
+
+
+## Çitin dışı: esir alanının çevresindeki çadırlar, ateş başındaki askerler, atlar ve arabalar. Daha ötesi dünyanın
+## ordugâhıdır (World1453: çadır sıraları, binlerce ateş, otağ, kara surları ve şehir). Bölgenin dışına (KEEP) taşan
+## çadır konmaz: orası dünyanın çadır ızgarası.
 func _build_camp() -> void:
 	var rng := RandomNumberGenerator.new()
 	rng.seed = 1453
 	var colors := [Color("d8cbb0"), Color("c8b894"), Color("e0d4b8"), Color("b8a888")]
 	var bands := [Color("8a2b22"), Color("2f5fa8"), Color("3a6b3a"), Color("c98a3a")]
+	var inner := KEEP.grow(-3.0)
 	for i in 34:
 		var a := rng.randf_range(-PI * 0.95, PI * 0.95)
 		var r := rng.randf_range(18.0, 60.0)
 		var p := Vector3(sin(a) * r, 0, cos(a) * r + 8.0)
 		if absf(p.x) < PEN_X + 3.0 and p.z < GATE_Z + 10.0:
 			continue
-		var t := Night.tent(self, p, rng.randf_range(1.6, 2.6), colors[i % 4], bands[i % 4])
-		t.rotation.y = rng.randf() * TAU
+		var rad := rng.randf_range(1.6, 2.6)
+		var yaw := rng.randf() * TAU
+		if not inner.has_point(Vector2(p.x, p.z)):
+			continue
+		p.y = _gy(p.x, p.z) - 0.08
+		var t := Night.tent(self, p, rad, colors[i % 4], bands[i % 4])
+		t.rotation.y = yaw
+		t.set_meta("placed", true)
 	for i in 7:
 		var p := Vector3(rng.randf_range(-40, 40), 0, rng.randf_range(14, 50))
 		if absf(p.x) < 6.0:
 			p.x += 12.0
-		lights.append(Night.campfire(self, p, 1.0))
+		_fire(p, 1.0)
+		if far:
+			continue
 		# Ateş başında üç kişi: biri ayakta ısınır (ara sıra kıpırdanır), biri bağdaş kurmuş oturur, üçüncüsü (her ikinci
 		# ateşte) ateşin üstündeki kazanı kepçeyle karıştırır (eskiden üçü de kıpırtısız dikiliyordu)
 		var standing: Array = []
@@ -255,6 +513,7 @@ func _build_camp() -> void:
 			continue
 		if absf(p.x) < PEN_X + 2.0 and p.z < GATE_Z + 2.0 and p.z > PEN_Z0 - 2.0:
 			continue
+		p.y = _y(p.x, p.z)
 		dd.at(p, rng.randf() * TAU)
 		match spots % 5:
 			0: dd._c_horses()
@@ -263,41 +522,4 @@ func _build_camp() -> void:
 			3: dd.spear_rack(Vector3.ZERO)
 			_: dd.barrels(Vector3.ZERO)
 		spots += 1
-	dd.build(self)
-	# Gece ordugâhı: çitin ötesinde yüzlerce çadır ve ateş (ufuk boş kalmaz)
-	var avoid := [Rect2(-PEN_X - 6.0, PEN_Z0 - 6.0, (PEN_X + 6.0) * 2.0, GATE_Z - PEN_Z0 + 22.0)]
-	var noise := FastNoiseLite.new()
-	noise.seed = 4
-	noise.frequency = 0.03
-	var hf := func(x: float, z: float) -> float:
-		var d := Vector2(x, z).length()
-		return noise.get_noise_2d(x, z) * clampf((d - 18.0) / 30.0, 0.0, 1.0) * 4.0
-	Scenery.camp(self, Vector3(0, 0, 20), 22.0, 110.0, 260, avoid, hf, 1454, true)
-	var glow := StandardMaterial3D.new()
-	glow.albedo_color = Color("ffb050")
-	glow.emission_enabled = true
-	glow.emission = Color("ff9a3a")
-	glow.emission_energy_multiplier = 4.0
-	glow.shading_mode = BaseMaterial3D.SHADING_MODE_UNSHADED
-	var fires: Array = []
-	for i in 90:
-		var a := rng.randf() * TAU
-		var r := rng.randf_range(24.0, 115.0)
-		var p := Vector3(sin(a) * r, 0, cos(a) * r + 20.0)
-		if Scenery._blocked(p, avoid):
-			continue
-		p.y = hf.call(p.x, p.z) + 0.3
-		fires.append(Scenery._t(p, Vector3.ZERO, Vector3.ONE * rng.randf_range(0.8, 1.6)))
-	var fm := Scenery._ball(0.35)
-	fm.material = glow
-	var fmi := Scenery.scatter(self, fm, fires, [])
-	fmi.material_override = glow
-	Scenery.hills(self, Vector3(0, 0, 20), 200.0, 26, Color("1a2418"), 44)
-	# Ufukta surlar: meşale noktalarıyla
-	var wall_z := 150.0
-	Props.box(self, Vector3(420, 16, 6), Vector3(0, 6, wall_z), Color("2a2c34"))
-	for i in 18:
-		var x := -200.0 + i * 24.0
-		Props.box(self, Vector3(10, 24, 10), Vector3(x, 10, wall_z - 2), Color("24262e"))
-		var fl := Props.ball(self, 0.6, Vector3(x + 5.5, 16 + (i % 3), wall_z - 7.2), Color("ffb040"), Vector3.ONE, 4, 3.0)
-		fl.material_override = Props.mat(Color("ffb040"), 4.0, false, "", false)
+	dd.build(self).set_meta("placed", true)

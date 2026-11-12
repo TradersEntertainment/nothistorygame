@@ -105,7 +105,15 @@ static var REGIONS := {
 	"byz_walls": Transform3D(_TO_NORTH, Vector3(5.5, 0.0, -36.3)),
 	# ByzCity'nin Ayasofya parçası (24, 25, 26, 31o): yerel AYA (−14, −82) = dünyanın Ayasofya'sı
 	"byz_aya": Transform3D(_TO_NORTH, Vector3(-560.0 - 82.0, 0.0, -1480.0 + 14.0)),
+	# Bölüm 4a (Camp): esir alanı, Maltepe ordugâhının ön kenarı (otağın ~280 m batı-güneyi, surlardan ~235 m geride).
+	# Yön CampDay'inkiyle aynı: yerel +z (alanın kapısı, kaçış yolu) surlara (dünya −z); y = arazinin oradaki ortalaması
+	"camp_pen": Transform3D(Basis(Vector3.UP, PI), Vector3(-110.0, -0.3, 240.0)),
 }
+
+## Uzak bölgeler: başka bir bölümün oynanış alanı (bölge yerel dikdörtgeni). Etkin olmayan her kayıtlı bölgenin dünya
+## dikdörtgeni keep'e eklenir (dünya oraya çadır, ağaç, kalabalık koymaz; zemini düzlenmez) ve bölgenin uzak kurucusu
+## (build_far) aynı yeri aynı biçimde kurar. Etkin bölgenin oynanış alanıyla kesişen kurulmaz.
+const FAR_REGIONS := {"camp_pen": Rect2(-46.0, -24.0, 92.0, 80.0)}
 
 
 ## Tepelerin arasındaki bölgeler: dünya zemini düz alana rampayla iner
@@ -118,7 +126,7 @@ const HORN_GATE_Z := [-260.0, -520.0, -900.0, -1180.0, -1450.0]
 const MARMARA_GATES := [0.22, 0.5, 0.78]
 ## Bölgenin altında dünya zemininin ineceği yükseklik (bölgenin arazisi kıyıya, suya iniyorsa)
 const FLAT_Y := {"slipway": -6.0}
-const BLEND := {"petrion": 70.0, "galata": 60.0, "camp": 90.0, "byz_aya": 70.0}
+const BLEND := {"petrion": 70.0, "galata": 60.0, "camp": 90.0, "byz_aya": 70.0, "camp_pen": 40.0}
 
 
 static func region(name: String) -> Transform3D:
@@ -224,6 +232,7 @@ static func build(parent: Node3D, region_name: String, keep_local: Array, night 
 		keep.append(world_rect(xf, r))
 	f.keep = keep
 	SiegeField.flat_rects = keep.duplicate()
+	keep.append_array(far_keep(region_name, keep))      # uzak bölgelerin alanı boş kalır (düzlenmez)
 	# Bölgenin kendi zemini dünya zemininin üstünde kalsın: dünya, bölgenin altına iner
 	SiegeField.flat_y = xf.origin.y - 0.8 if xf.origin.y < -0.1 else -0.03
 	if FLAT_Y.has(region_name):
@@ -239,6 +248,7 @@ static func build(parent: Node3D, region_name: String, keep_local: Array, night 
 	SiegeField.blend_rects = br
 	parent.add_child(f)
 	f.build()
+	build_far(f, region_name)
 	f.set_mode("night" if night else "day")
 	# Her yer yürünür: dünyanın görüntüsü katılaşır (karelere yayılarak)
 	WorldWalk.attach(f)
@@ -248,6 +258,105 @@ static func build(parent: Node3D, region_name: String, keep_local: Array, night 
 	# Gölgelendiriciler yüklemede derlensin (yaklaşınca donma olmasın)
 	ShaderWarmup.after_world(f)
 	return f
+
+
+## Etkin bölgenin dışındaki uzak bölgelerin dünya dikdörtgenleri (etkin oynanış alanıyla kesişenler hariç)
+static func far_keep(region_name: String, active_keep: Array) -> Array:
+	var out: Array = []
+	for name: String in FAR_REGIONS:
+		if name == region_name:
+			continue
+		var r := world_rect(region(name), FAR_REGIONS[name])
+		var hit := false
+		for k: Rect2 in active_keep:
+			hit = hit or k.intersects(r)
+		if not hit:
+			out.append(r)
+	return out
+
+
+## Uzak bölgelerin kurucuları (far_keep'in seçtikleri): bölgenin kendi yapıları, uzak sürümde, dünyanın alanının altında
+static func build_far(f: SiegeField, region_name: String) -> void:
+	# Dünyanın keep'e bakmadan dağıttıkları (Scenery.camp çadırları, ağaçlar, uzak ateşler): uzak bölgelerin ve etkin
+	# bölgenin (kayıtlıysa) alanı önce boşaltılır, sonra uzak kurucu kurar
+	for name: String in FAR_REGIONS:
+		var r := world_rect(region(name), FAR_REGIONS[name])
+		if name == region_name or f.keep.has(r):
+			clear_rect(f, r)
+	for name: String in FAR_REGIONS:
+		if name == region_name or not f.keep.has(world_rect(region(name), FAR_REGIONS[name])):
+			continue
+		match name:
+			"camp_pen": Camp.far_pen(f, region(name))
+
+
+## Dünyanın (f) dünya dikdörtgenindeki dağıtılmış yapılarını kaldırır: çoklu ağ örnekleri (çadır, ağaç, köşk; 0,8 m'den
+## alçak yer örtüsü keep_low ise kalır) gizlenir
+## (WorldWalk.hide_inst) ve çarpışmaları kapatılır; Dressing parçalarının (uzak ateş kutuları, eşya) üçgenleri ve
+## çarpışma kutuları atılır; duman sütunları silinir. Arazi ve tek parça yapılar dokunulmaz.
+static func clear_rect(f: Node3D, r: Rect2, keep_low := true) -> void:
+	var inv := f.global_transform.affine_inverse()
+	var r3 := AABB(Vector3(r.position.x, -1000.0, r.position.y), Vector3(r.size.x, 2000.0, r.size.y))
+	for n in f.find_children("*", "GeometryInstance3D", true, false):
+		var g := n as GeometryInstance3D
+		var xf := inv * g.global_transform
+		var ab := xf * g.get_aabb()
+		if not ab.intersects(r3):
+			continue
+		if g is MultiMeshInstance3D:
+			var mmi := g as MultiMeshInstance3D
+			if mmi.multimesh == null or mmi.multimesh.transform_format != MultiMesh.TRANSFORM_3D:
+				continue
+			var solid := mmi.get_node_or_null("Solid")
+			var mh := mmi.multimesh.mesh.get_aabb().size.y if mmi.multimesh.mesh else 0.0
+			for i in mmi.multimesh.instance_count:
+				var ixf := WorldWalk.inst_xf(mmi, i)
+				if keep_low and mh * ixf.basis.get_scale().y < 0.8:
+					continue                # yer örtüsü (ot, taş, çamur): kalır, alan çıplak kare olmasın
+				var o := xf * ixf.origin
+				if r.has_point(Vector2(o.x, o.z)):
+					WorldWalk.hide_inst(mmi, i)
+					if solid and i < solid.get_child_count():
+						(solid.get_child(i) as CollisionShape3D).disabled = true
+		elif g is MeshInstance3D and g.get_parent() and g.get_parent().has_meta("dressing"):
+			var mi := g as MeshInstance3D
+			var a := mi.mesh.surface_get_arrays(0)
+			var v: PackedVector3Array = a[Mesh.ARRAY_VERTEX]
+			var nn: PackedVector3Array = a[Mesh.ARRAY_NORMAL]
+			var cc: PackedColorArray = a[Mesh.ARRAY_COLOR]
+			var v2 := PackedVector3Array()
+			var n2 := PackedVector3Array()
+			var c2 := PackedColorArray()
+			for t in range(0, v.size() - 2, 3):
+				var m := xf * ((v[t] + v[t + 1] + v[t + 2]) / 3.0)
+				if r.has_point(Vector2(m.x, m.z)):
+					continue
+				for k in 3:
+					v2.append(v[t + k])
+					n2.append(nn[t + k])
+					c2.append(cc[t + k])
+			if v2.size() == v.size():
+				continue
+			var am := ArrayMesh.new()
+			if not v2.is_empty():
+				var arr := []
+				arr.resize(Mesh.ARRAY_MAX)
+				arr[Mesh.ARRAY_VERTEX] = v2
+				arr[Mesh.ARRAY_NORMAL] = n2
+				arr[Mesh.ARRAY_COLOR] = c2
+				am.add_surface_from_arrays(Mesh.PRIMITIVE_TRIANGLES, arr)
+			mi.mesh = am
+		elif g is CPUParticles3D or g is GPUParticles3D:
+			var o := xf.origin
+			if r.has_point(Vector2(o.x, o.z)):
+				g.queue_free()
+	for b in f.find_children("*", "StaticBody3D", true, false):
+		if not b.get_parent() or not b.get_parent().has_meta("dressing"):
+			continue
+		for cs in b.get_children():
+			var o := inv * (cs as Node3D).global_position
+			if cs is CollisionShape3D and r.has_point(Vector2(o.x, o.z)):
+				(cs as CollisionShape3D).disabled = true
 
 
 ## Eski ad (Blakherna bölümleri)
