@@ -72,6 +72,7 @@ func _ready() -> void:
 	hud.meters._shown_loyalty = _loyalty()
 	var ch6: String = GameState.chapter_outcomes.get(6, "6a.1")
 	branch = "7b" if ch6.begins_with("6b") else "7a"
+	IstBaglama.hazirla(7)                  # İstanbul v2: uçuş yeni şehirde (anahtar kapalıysa eski dünya)
 	if branch == "7a":
 		_route = {"6a.1": "A", "6a.2": "B", "6a.3": "C", "6a.4": "Y"}.get(ch6, GameState.flags.get("route", "A"))
 		# 6a.4'e pazar yerine Kadri'nin termos-kaftan takasıyla varıldıysa iz mutfaktadır (keçi/sigorta izleri yanlıştı)
@@ -88,8 +89,13 @@ func _ready() -> void:
 	player.show_remote(true)
 	var pw := player.enable_nihat_powers(7)
 	# Tek harita: uçuş dünyanın üstünde (yer işaretleri, parçalar, konma noktaları World1453'ten; çarpışma WorldFlight)
-	WorldFlight.attach(day.world if branch == "7a" else city.world)
-	if branch == "7a":
+	if IstBaglama.aktif():
+		IstBaglama.ucus_bagla(pw, FLIGHT_RANGE, 110.0)
+	else:
+		WorldFlight.attach(day.world if branch == "7a" else city.world)
+	if IstBaglama.aktif():
+		pass
+	elif branch == "7a":
 		pw.add_landmarks(day.world_landmarks(), FLIGHT_RANGE, 110.0)
 		pw.add_forms(day.world_forms())
 		pw.add_perches(day.world_perches())
@@ -105,6 +111,10 @@ func _ready() -> void:
 		_run_shots()
 	else:
 		_run()
+
+
+func _exit_tree() -> void:
+	IstBaglama.birak()
 
 
 ## Otomatik test ve doğrudan başlatma için önceki bölümlerin sonuçları.

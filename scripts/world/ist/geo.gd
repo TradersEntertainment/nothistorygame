@@ -26,6 +26,10 @@ const NZ := 1001
 static var X0 := GE0 * S
 static var Z0 := -GN0 * S
 static var ST := GST * S
+## Dünya kaydırması (IstBaglama: bölümün yerel sahnesi v2'nin içine oturur). Dünya = gerçek × S + (OX, OZ). Varsayılan 0
+## (gezi ve bütün önizlemeler değişmez). Yalnız yatay öteleme: yönler ve deniz düzeyi (y = 0) değişmez. kaydir() ile.
+static var OX := 0.0
+static var OZ := 0.0
 const _HK := S / VERI_S                    # saklı yükseklik → dünya yüksekliği
 ## Bölge kodları (arazi_b)
 const B_DENIZ := 0
@@ -39,7 +43,7 @@ static func _wl(r: PackedVector2Array) -> PackedVector2Array:
 	var o := PackedVector2Array()
 	o.resize(r.size())
 	for i in r.size():
-		o[i] = Vector2(r[i].x * S, -r[i].y * S)
+		o[i] = Vector2(r[i].x * S + OX, -r[i].y * S + OZ)
 	return o
 
 static var _h := PackedFloat32Array()
@@ -65,12 +69,12 @@ static func _yukle() -> void:
 
 ## gerçek (doğu, kuzey m) → dünya (x, yükseklik, z)
 static func w(e: float, n: float) -> Vector3:
-	var x := e * S
-	var z := -n * S
+	var x := e * S + OX
+	var z := -n * S + OZ
 	return Vector3(x, h(x, z), z)
 
 static func w2(e: float, n: float) -> Vector2:
-	return Vector2(e * S, -n * S)
+	return Vector2(e * S + OX, -n * S + OZ)
 
 ## enlem/boylam → dünya
 static func ll(enlem: float, boylam: float) -> Vector3:
@@ -78,7 +82,7 @@ static func ll(enlem: float, boylam: float) -> Vector3:
 
 ## dünya → gerçek (e, n)
 static func real(x: float, z: float) -> Vector2:
-	return Vector2(x / S, -z / S)
+	return Vector2((x - OX) / S, -(z - OZ) / S)
 
 ## Ham ızgara yüksekliği (düzleme kayıtları hariç), çift doğrusal
 static func h_ham(x: float, z: float) -> float:
@@ -95,7 +99,7 @@ static func h_ham(x: float, z: float) -> float:
 	var b := _h[k + NX] + (_h[k + NX + 1] - _h[k + NX]) * tx
 	var yv := a + (b - a) * tz                     # saklı (VERI_S) ölçek
 	if kiyi_yumusat and absf(yv) < KIYI_YV:
-		yv = _kiyi_duzelt(x / S, -z / S, yv)
+		yv = _kiyi_duzelt((x - OX) / S, -(z - OZ) / S, yv)
 	return yv * _HK
 
 ## Kıyı yumuşatma: ızgara verisi kıyıyı 20 m'lik raster maskeden aldığı için kıyı çizgisi basamaklıydı. Kıyı şeridinde
@@ -186,6 +190,8 @@ static func _kiyi_duzelt(e: float, n: float, yv: float) -> float:
 ## Arazi yüksekliği (dünya y; su altında deniz tabanı < 0). Yapı tabanı düzleme kayıtlarını (duzle) uygular.
 static func h(x: float, z: float) -> float:
 	var y := h_ham(x, z)
+	if not _yama.is_empty():
+		y = _yama_uygula(x, z, y)
 	if _duz.is_empty():
 		return y
 	var c := Vector2i(floori(x / 64.0), floori(z / 64.0))
@@ -223,6 +229,65 @@ static func duzle(merkez: Vector2, yaricap: float, y: float, gecis := -1.0) -> v
 static func duzle_temizle() -> void:
 	_duz.clear()
 	_duz_izg.clear()
+
+## ------------------------------------------------------------------ bağlama (IstBaglama)
+
+## Bölge yaması: bölümün kendi zemininin olduğu yerde arazi bölümün yükseklik işlevini izler (iç yarıçap), dışında doğal
+## araziye yumuşak geçer. [merkez (dünya), iç yarıçap, dış yarıçap, işlev(x, z) → y]
+static var _yama: Array = []
+## Dünya süslerinin (karşı kıyı öğeleri, ordugâh çadırları) konmadığı dünya dikdörtgenleri (bölümün kendi alanı)
+static var dislanan: Array = []
+
+static func yama_ekle(merkez: Vector2, r_ic: float, r_dis: float, fn: Callable) -> void:
+	_yama.append([merkez, r_ic, maxf(r_dis, r_ic + 1.0), fn])
+
+static func _yama_uygula(x: float, z: float, y: float) -> float:
+	for ym: Array in _yama:
+		var d := (ym[0] as Vector2).distance_to(Vector2(x, z))
+		var ro: float = ym[2]
+		if d >= ro:
+			continue
+		var ri: float = ym[1]
+		var hedef := float((ym[3] as Callable).call(x, z))
+		if d <= ri:
+			return hedef
+		var t := (d - ri) / (ro - ri)
+		t = t * t * (3.0 - 2.0 * t)
+		return lerpf(hedef, y, t)
+	return y
+
+static func dislanan_mi(x: float, z: float) -> bool:
+	for r: Rect2 in dislanan:
+		if r.has_point(Vector2(x, z)):
+			return true
+	return false
+
+## Dünyayı yatayda öteler (gerçek (0,0) → dünya o). Bütün tablolar yeniden türer; düzleme kayıtları, yamalar, yer dizini
+## temizlenir. v2 kurulmadan ÖNCE çağrılır (IstBaglama.build).
+static func kaydir(o: Vector2) -> void:
+	OX = o.x
+	OZ = o.y
+	X0 = GE0 * S + OX
+	Z0 = -GN0 * S + OZ
+	K_YARIMADA = _wl(R_YARIMADA)
+	K_GALATA = _wl(R_GALATA)
+	K_ANADOLU = _wl(R_ANADOLU)
+	K_TRAKYA = _wl(R_TRAKYA)
+	Y_KARA = _wl(R_KARA)
+	Y_BLAKHERNA = _wl(R_BLAKHERNA)
+	Y_MARMARA = _wl(R_MARMARA)
+	Y_HALIC = _wl(R_HALIC)
+	Y_GALATA = _wl(R_GALATA_SUR)
+	Y_MESE = _wl(R_MESE)
+	Y_MESE_K = _wl(R_MESE_K)
+	Y_MESE_G = _wl(R_MESE_G)
+	Y_LYKOS = _wl(R_LYKOS)
+	Y_ZINCIR = _wl(R_ZINCIR)
+	Y_BOZDOGAN = _wl(R_BOZDOGAN)
+	_yerler.clear()
+	duzle_temizle()
+	_yama.clear()
+	dislanan.clear()
 
 ## Bölge kodu (en yakın hücre)
 static func bolge(x: float, z: float) -> int:
@@ -449,7 +514,7 @@ static func bos_bolge(x: float, z: float) -> String:
 	var b := bolge(x, z)
 	if b == B_TRAKYA and cizgi_uzak(Vector2(x, z), Y_KARA) < 600.0 and real(x, z).x < -4300.0:
 		return "sur_disi_600"
-	if (b == B_ANADOLU or b == B_TRAKYA) and Vector2(x, z).length() < 3000.0:
+	if (b == B_ANADOLU or b == B_TRAKYA) and Vector2(x - OX, z - OZ).length() < 3000.0:
 		return "karsi_kiyi"
 	return "uzak"
 
