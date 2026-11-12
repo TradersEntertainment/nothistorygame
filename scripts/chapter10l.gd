@@ -128,7 +128,7 @@ func _build() -> void:
 	# Dragan kazmayı elinde tutar (T_04 "Kazmaya bakar" derken eli boştu); kazma, verildiğinde Tolga'nın eline geçer
 	_dragan_pick = Items.attach_tool(dragan, "pickaxe", {"hand": "l"})
 	if _dragan_pick:
-		_merge_tool(_dragan_pick)
+		_merge_tool(_dragan_pick, false)
 		dragan.set_meta("armed", true)
 		# Kazma sol elinde dik durur (baş yukarıda, yana dönük): ağız aşağıda sarkınca altyazı kutusunun, sağ elde de Tolga'nın elindeki paketin arkasında kalıyordu
 		_dragan_pick.basis = _dragan_pick_basis()
@@ -446,7 +446,7 @@ func _miners_freeze() -> void:
 
 ## Alet modelinin parçalarını (sap, baş, takoz) tek ağa birleştirir: köşe rengiyle tek yüzey, dış çizgi geçişi korunur.
 ## Çizim sayısı eski düz levha kazmanınki kadar kalır (parça başına bir çizim yerine iki).
-static func _merge_tool(root: Node3D) -> void:
+static func _merge_tool(root: Node3D, outline := true) -> void:
 	var verts := PackedVector3Array()
 	var norms := PackedVector3Array()
 	var cols := PackedColorArray()
@@ -489,6 +489,8 @@ static func _merge_tool(root: Node3D) -> void:
 	var mat := first_mat.duplicate() as StandardMaterial3D
 	mat.albedo_color = Color.WHITE
 	mat.vertex_color_use_as_albedo = true
+	if not outline:
+		mat.next_pass = null          # eski düz levha kazma da çizgisizdi: çizim sayısı eskisi gibi
 	var merged := MeshInstance3D.new()
 	merged.mesh = am
 	merged.material_override = mat
@@ -543,7 +545,7 @@ func _give_pick() -> void:
 	pm.basis = Basis(Vector3.UP, deg_to_rad(90.0)) * Basis(Vector3.RIGHT, deg_to_rad(-90.0))
 	pm.scale = Vector3.ONE * 0.8
 	pm.position = Vector3(0, -0.1, 0)
-	_merge_tool(pm)
+	_merge_tool(pm, false)
 	_pick.add_child(pm)
 	player.hold_model(_pick)
 	_pick.position = Vector3(0.22, -0.32, -0.5)
