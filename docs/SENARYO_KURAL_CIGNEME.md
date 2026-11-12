@@ -122,7 +122,7 @@ Düzenek: `scripts/level/kural.gd` (`class_name` yok; `preload`). Bölüm başı
 | Kovalayanı atlatmak: Hikmet telsiz + Nihat + "İADE" kartı, görev veren bekliyor | EVET | `kacak_iade` (41o, 42b) başsız PASS |
 | Üstelemek: aynı bölümde 2. kaçışta ilk basamak atlanır ("Yine mi?") | EVET | kodda; ayrı varyant YOK |
 | Gönderme: 37o Turgut, 36b Leon (yalnız kaçan oyuncuya bir söz) | EVET | 37o/36b eski varyantlar PASS (söz kaçmayana çıkmaz); kaçan rota için koşu YOK |
-| Erkek sivile tekme: 1 şaşkınlık + Tolga özrü · 2 kalabalık bağırır, vurulan tekmeyle karşılık verir, Tolga yere · 3 muhafız arkadan koşarak gelir → tutuklanma kartı (zindan / kadı / podestà) | EVET | `krl_hit` 24 (Bizans), 10g (Galata), 6 ve 24o (ordugâh), 39o (fetih: yeniçeri) |
+| Erkek sivile tekme: 1 şaşkınlık + Tolga özrü · 2 kalabalık bağırır, vurulan tekmeyle karşılık verir, Tolga yere · 3 muhafız arkadan koşarak gelir → tutuklanma kartı (zindan / kadı / podestà) | EVET | `krl_hit` 24 (Bizans), 10g (Galata), 6 ve 24o (ordugâh). 39o bağlı ama sokakta rolü olan kişi yok: koşusu yok |
 | Kalıcı iz: tutuklanandan sonra o bölümde yakından geçen sivil "İşte o tekmeci" der, döner bakar | EVET | kodda (`_mark_tick`); koşu günlüğünde `KURAL mark` |
 | Kadın, çocuk, yaşlı, din adamı: bacak kalkar, iner; sırayla Tolga vazgeçer / biri araya girer / Hikmet telsizden / Tolga | EVET | `krl_soft` 24 |
 | Askere, talim arkadaşına: ayağı yakalar, Tolga yere, doğrudan tutuklanma | EVET | `krl_soldier` 6 |
