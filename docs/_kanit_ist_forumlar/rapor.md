@@ -38,3 +38,53 @@ Dosyalar: `scripts/world/ist/forumlar.gd` (`IstForumlar`: catalog, build_*/perch
 | kapitolion | podyum, kırık Korint sütunları, alınlık parçası, hücre duvarları | TAMAM (v1) |
 | anemodoulion | dört yüzlü piramit kule, bronz levhalar, devrik figür | TAMAM (v1) |
 
+## Ölçek ve oynanış
+- k yalnız kütleyi ölçekler; kapı/basamak/yürüme genişliği sabit: basamak 0,28 m (≤ STEP_H 0,42), merdiven genişliği 1,8–2,0 m,
+  revak serbest yüksekliği ≥ 3,4 m, geçit açıklığı ≥ 3,4 m. Kaideler/anıtlar k ile (k = 0,35 / 0,5 / 1,0 üçünde koşuldu).
+- Her sütun/anıtta kaideye dış taş merdiven (kaide–merdiven yarığı dolgu bloğuyla kapalı); yıkık kapı ayağına kırık taş basamak;
+  mese revak çatısına iki uçtan dış merdiven; Kapitolion ön geniş merdiven; Myrelaion rotunda yanından terasa merdiven.
+- Çatılar: eğimli kiremit çatıların altında/içinde çarpışma kabuğu var (üçgen prizma ya da eğik plaka, eğim ≤ 32°).
+- Nihat: `perches_x` her öğede ≥ 1 (kubbe, sütun başlığı, çatı sırtı, kule tepesi); `catalog()` içinde `bakis`, `bakis_r`, `gorev`.
+
+## ISTAUDIT (k = 0,5, lod 0; kendi denetim sahnem, 0,5 m ızgara)
+```
+mese          tris=7744 draws=460 delik=0 dar=44 havada=0 cati_yolu=2/2
+konstantin    tris=5712 draws=154 delik=0 dar=0  havada=0 cati_yolu=2/2
+tauri         tris=9152 draws=118 delik=0 dar=0  havada=0 cati_yolu=2/2
+amastrianon   tris=1880 draws=56  delik=0 dar=0  havada=0 cati_yolu=1/1
+bovis         tris=1876 draws=54  delik=0 dar=1  havada=0 cati_yolu=1/1
+arkadius      tris=4452 draws=48  delik=0 dar=0  havada=0 cati_yolu=1/1
+markianos     tris=1544 draws=42  delik=0 dar=1  havada=0 cati_yolu=1/1
+myrelaion     tris=1508 draws=75  delik=0 dar=1  havada=2 cati_yolu=1/1
+philadelphion tris=2124 draws=69  delik=0 dar=1  havada=0 cati_yolu=1/1
+kapitolion    tris=2504 draws=69  delik=0 dar=0  havada=0 cati_yolu=1/1
+anemodoulion  tris=1062 draws=83  delik=0 dar=0  havada=0 cati_yolu=1/1
+```
+k = 0,35 ve 1,0 koşuları: delik = 0 her yerde, havada = 0 (k = 0,35'te myrelaion 2), cati_yolu tam; dar yalnız mese (85–93),
+tauri (10–14, bu tur giderildi, k = 0,5'te 0), birkaç öğede 1–4 küçük kayıt.
+Yol sınaması: `climbs_x` noktaları arasında 10 cm adımla yürüyen, yükselmeyi ≤ 0,43 m ve kapsülü (r 0,3, boy 1,8)
+çarpışmasız tutan betik (gerçek `CharacterBody3D` değil; oyunun basamak kuralının simülasyonu).
+
+## Üçgen sayıları (lod 0 / 1 / 2)
+mese 7744 / 3556 / 60; konstantin 5712 / 2760 / 1344; tauri 9152 / 2016 / 1920; amastrianon 1880 / 1292 / 1004;
+bovis 1876 / 604 / 580; arkadius 4452 / 864 / 864; markianos 1544 / 288 / 288; myrelaion 1508 / 1136 / 872;
+philadelphion 2124 / 1404 / 1212; kapitolion 2504 / 1040 / 180; anemodoulion 1062 / 1038 / 234.
+Hepsi lod 0 bütçesinin (60 bin) çok altında. UYARI: lod 1 ≤ %15 hedefi mese, konstantin, amastrianon, myrelaion, philadelphion,
+kapitolion, anemodoulion'da tutmuyor (lod 0 zaten küçük olduğu için oran yüksek; mutlak değer ≤ 3,6 bin) ve lod 2 birkaç
+öğede 600 üçgenin üstünde (konstantin 1344, tauri 1920, philadelphion 1212, amastrianon 1004).
+
+## Bilinen kusurlar
+- mese: denetimde 44 "dar" kaydı (0,25 m; moloz yığınları ile sütun kütükleri arasındaki ince parçalar). Oynanışı engellemez ama temizlenmedi.
+- bovis, markianos, philadelphion, myrelaion: birer 0,25–0,5 m'lik küçük dar kayıt; myrelaion'da iki "havada" kaydı (narteks yakını, nedeni bulunamadı).
+- lod 1 / lod 2 üçgen hedefleri yukarıdaki gibi aşılıyor; lod 2 yalnız birkaç kutu değil çoğu öğede basitleştirilmiş tam kütle.
+- Bronz boğa (bovis) ve devrik figür (anemodoulion) kaba (kutu/küre). Mese 'yıkık bölüm' rastgele tohumla sabit; konum kestirimleri belirsiz.
+- Aydınlatma önizlemede aşırı parlak (toon malzeme); renkler oyun sahnesinde farklı görünecek.
+- İlk elde: Godot'un `--import` ürettiği `.import`/`.uid` dosyaları depoya EKLENMEDİ.
+
+## Bakamadıklarım
+Oyun içi gerçek oyuncu hareketi (gerçek `player.gd` ile yürüyüş), gerçek şehir yerleşimiyle (CityGeo) çakışma/yükseklik farkı,
+1,0 ölçeğinde ekran karelerinin tamamı (denetim sayıları var, kareleri tek tek incelemedim), gece/farklı ışık.
+
+## Paftalar (`pafta/`, k = 0,5)
+mese (45° kuş bakışı), konstantin (45° ve çatı/merdiven üstü), tauri, arkadius (yerden), markianos (kuş bakışı 15 m),
+myrelaion, philadelphion, kapitolion, anemodoulion (yerden), bovis, amastrianon.
