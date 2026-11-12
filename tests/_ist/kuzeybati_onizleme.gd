@@ -53,6 +53,8 @@ func _scene() -> void:
 	gm.albedo_color = Color("6a8240")
 	gm.roughness = 1.0
 	gm.metallic_specular = 0.0
+	gm.specular_mode = BaseMaterial3D.SPECULAR_DISABLED
+	gm.diffuse_mode = BaseMaterial3D.DIFFUSE_TOON
 	(g.get_child(0) as MeshInstance3D).material_override = gm
 	g.name = "Zemin"
 	cam = Camera3D.new()
@@ -172,7 +174,7 @@ func _audit() -> void:
 		if ab.size.x * ab.size.y * ab.size.z * mi.global_transform.basis.get_scale().x * mi.global_transform.basis.get_scale().y * mi.global_transform.basis.get_scale().z < 1.5:
 			continue
 		var pq := PhysicsPointQueryParameters3D.new()
-		pq.position = mi.global_transform * ab.get_center()
+		pq.position = mi.global_transform * (ab.get_center() - Vector3(0, ab.size.y * 0.25, 0))
 		if space.intersect_point(pq, 1).is_empty():
 			delik += 1
 			print("  delik: ", mi.get_path(), " ", pq.position, " ", mi.mesh.get_class(), " aabb=", mi.mesh.get_aabb().size, " scale=", mi.global_transform.basis.get_scale())
