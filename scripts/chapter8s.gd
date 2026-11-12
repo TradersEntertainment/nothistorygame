@@ -178,6 +178,7 @@ func _process(delta: float) -> void:
 			_hands_tick(delta)
 			_checkpoints(pz)
 			if dir == "B2O":
+				_fired["mantlet"] = true      # 8y'nin perde yorumu havluyu anar ("Ben havluya saklanıyorum"): sürgünde havlu yok
 				_events(pz, delta)
 				if not _busy and pz > HALT_Z and not _fired.has("halt"):
 					_halt_b2o()
