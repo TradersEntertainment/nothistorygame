@@ -42,11 +42,11 @@ Kabul kareleri: 41o ip çit → 01/11; 42b ip çit → 12/13; 20o tayfa → 03/0
 | 20o | "", wide, lose, hot, hot_taped, hot_tape, named, flawed, edirne, edirne_ok | 10/10 PASS, kötü satır 0 |
 | 32o | "", late, cracked, gunner, named, council_ok, council_bad | 7/7 PASS, kötü satır 0 |
 
-`parse_check`: PARSECHECK PASS scripts=247. 42b'deki satır talim alanından ~28 m ötede iki şehir yayasının
-örtüşmesi; `city_life.gd:1210` bunu bilinen seyrek sorun olarak anıyor ("dört koşuda bir"). Sayım: son kodla 42b
-başsız 10 koşuda 1, ekranlı 1 koşuda 1; özgün kodla başsız 9 koşuda 0, ekranlı 2 koşuda 0. Benim dosyalarımdan
-gelmediğini kanıtlayamadım (rastgele zamanlamaya bağlı; CityLife benim paketimde değil): AÇIK.
-Ekranlı koşularda 41o ve 42b `AUTOTEST FAIL` (bot iki bitirici yapıyor, üç bekleniyor) ÖZGÜN kodda da aynı; başsızda geçiyor.
+`parse_check`: PARSECHECK PASS scripts=247. 42b'deki `VISAUDIT overlap CityLife` (iki şehir yayasının örtüşmesi, talim
+alanından ~28 m ötede) paketten gelmiyor: bağımsız denetimde özgün kodla da 1/20 koşuda çıktı (`o_42b_19`), son kodla
+1/20 (`s_42b_6`); `city_life.gd:1210` de bunu bilinen seyrek sorun olarak anıyor. Önceki "özgünde 0/9" sayımı örneklem
+küçüklüğüydü. DÜZELTME: önceki sürümdeki "ekranlı koşularda 41o ve 42b AUTOTEST FAIL, özgünde de aynı" cümlesi yanlıştı;
+denetimde ekranlı 41o ve 42b (ÖNCE ve SONRA) PASS verdi, iddia yeniden üretilemedi.
 
 ## Performans (aynı replik anı, ÖNCE → SONRA; `prims` = üçgen)
 | Bölüm | Çizim farkı (ortanca / en kötü) | Üçgen farkı (ortanca / en kötü) | Not |
