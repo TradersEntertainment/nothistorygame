@@ -1060,7 +1060,8 @@ func _planla(cp: Vector3) -> void:
 		_is_kuyrugu.append([hd[1], hd[2]])
 	# avlu duvarlarının (ve çatı geçitlerinin) çarpışması: kameranın ve oyuncunun çevresinde
 	var pl := get_tree().get_first_node_in_group("player") as Node3D if is_inside_tree() else null
-	var p2 := Vector2(pl.global_position.x, pl.global_position.z) if pl != null else p
+	var pll := to_local(pl.global_position) if pl != null else Vector3(p.x, 0, p.y)
+	var p2 := Vector2(pll.x, pll.z)
 	for ck: Vector2i in _duvar_cells:
 		var c := Vector2((ck.x + 0.5) * DUVAR_HUCRE, (ck.y + 0.5) * DUVAR_HUCRE)
 		var yakin := minf(c.distance_to(p), c.distance_to(p2)) < CARP_YAKIN + DUVAR_HUCRE * 0.71
