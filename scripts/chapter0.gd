@@ -33,6 +33,10 @@ var _mat: ShaderMaterial
 var _caption: Control
 var _place: Label
 var _place_tw: Tween
+## Yer/tarih yazısının yazılış süresi (sn). 1,4 iken bot/PACE koşusunda (yazı 1,7-2,0 sn'de söner) tam yazıldıktan sonra
+## ekranda 1,6-1,9 sn kalıyordu; 0,8 ile en az 2,0 sn (ölçüm: PLACE_OUT).
+const PLACE_WRITE := 0.8
+var _place_age := -1.0       # yazı başladığından beri oyun zamanı (sn); -1 = başlamadı
 var freeze_cam: Camera3D
 var froze := false
 
@@ -195,9 +199,10 @@ func _run() -> void:
 	Audio.sfx("cannon", -2.0)
 	await hud.fade_to(0.0, 0.8)
 	_place.text = tr("UI_CH0_PLACE")
+	_place_age = 0.0
 	_place_tw = create_tween()
-	_place_tw.tween_property(_place, "visible_ratio", 1.0, 1.4)
-	_place_tw.tween_interval(2.6)
+	_place_tw.tween_property(_place, "visible_ratio", 1.0, PLACE_WRITE)
+	_place_tw.tween_interval(3.2)      # yazılış 0,6 sn kısaldı; toplam süre (4,5 sn) aynı
 	_place_tw.tween_property(_place, "modulate:a", 0.0, 0.5)
 	phase = "run"
 	player.frozen = false
@@ -261,6 +266,8 @@ func _nudge() -> void:
 
 
 func _process(delta: float) -> void:
+	if _place_age >= 0.0:
+		_place_age += delta
 	if phase != "run":
 		return
 	# Oklar oyuncunun çevresine yağar (üstüne değil: yakınına saplanır)
@@ -393,6 +400,8 @@ func _freeze() -> void:
 	# DON: dünya durur, ağızdaki söz de yarıda donar (sonraki replik onu beklemesin)
 	hud.cut_voice(0.02)
 	_pause_world(true)
+	player.gravity_on = false      # dünya DISABLED: zemin çarpışmaları kapandı, donmuş oyuncu boşluğa düşmesin
+	player.velocity = Vector3.ZERO
 	froze = true
 	_unstack_frozen()
 	Audio.sfx("stamp", 0.0)
@@ -421,7 +430,12 @@ func _place_out() -> void:
 		_place_tw.kill()
 	if _place.modulate.a <= 0.0:
 		return
+	# Yazı tam yazıldıktan (PLACE_WRITE) en az 2,0 sn ekranda kalır; ama patlamadan (top ateşinden 1,56 sn sonra) 0,26 sn
+	# önce sönmüş olur: bekleme en çok 1,0 sn. Yürüyen oyuncuda bekleme 0 (eski süre), koşanda ~0,3 sn.
+	var hold := clampf(PLACE_WRITE + 2.0 - _place_age, 0.0, 1.0) if _place_age >= 0.0 else 0.0
 	_place_tw = create_tween()
+	if hold > 0.0:
+		_place_tw.tween_interval(hold)
 	_place_tw.tween_property(_place, "modulate:a", 0.0, 0.3)
 
 
@@ -439,6 +453,7 @@ func _rewind() -> void:
 	await get_tree().create_timer(1.1, false).timeout
 	await hud.fade_to(1.0, 0.3, Color.WHITE)
 	_pause_world(false)
+	player.gravity_on = true
 	if GameState.autotest:
 		print("AUTOTEST PASS chapter=0 variant=%s froze=%s" % [GameState.autotest_variant, froze])
 		if GameState.autotest_variant != "next":
