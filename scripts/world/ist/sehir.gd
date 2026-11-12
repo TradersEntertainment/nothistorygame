@@ -281,6 +281,18 @@ func _place_all() -> void:
 func _build(it: Dictionary, lod: int) -> void:
 	if it["have"][lod] != null:
 		return
+	# Ön-pişirilmiş katman (v2: açılışta kurulmuş, ağaçtan ayrık bekler): yalnız ağaca bağlanır
+	if it.has("pre") and it["pre"][lod] != null:
+		var t1 := Time.get_ticks_usec()
+		var pn: Node3D = it["pre"][lod]
+		it["pre"][lod] = null
+		(it["holder"] as Node3D).add_child(pn)
+		it["have"][lod] = pn
+		_show(it)
+		var bms := (Time.get_ticks_usec() - t1) / 1000.0
+		stats["bagla_ms_max"] = maxf(float(stats.get("bagla_ms_max", 0.0)), bms)
+		_cost["%s/%d" % [String(it.get("mod", "")), lod]] = bms
+		return
 	var n := Node3D.new()
 	n.name = "L%d" % lod
 	(it["holder"] as Node3D).add_child(n)
@@ -296,7 +308,12 @@ func _build(it: Dictionary, lod: int) -> void:
 	if ms > 6.0:
 		if not stats.has("yavas"):
 			stats["yavas"] = {}
-		var key := "%s/%d" % [String(it["mod"]) if String(it["mod"]) != "v2" else String(it["id"]).get_slice("_", 0), lod]
+		var mk := String(it["mod"])
+		if mk == "v2":
+			mk = String(it["id"]).get_slice("_", 0)
+		elif mk == "doku":
+			mk = "doku_" + String(it["id"]).get_slice("_", 1)
+		var key := "%s/%d" % [mk, lod]
 		stats["yavas"][key] = maxf(float(stats["yavas"].get(key, 0.0)), ms)
 	if lod > 0:
 		_bake_lod(n, lod >= 2)
@@ -421,7 +438,13 @@ func _plan(cp: Vector3) -> void:
 		for l in 2:
 			var lim := R0 if l == 0 else r1
 			if it["have"][l] != null and d > lim + HYST and want > l:
-				(it["have"][l] as Node3D).queue_free()
+				if it.has("pre"):
+					# ön-pişirilmiş: ağaçtan ayrılır, bellekte bekler (yeniden yaklaşınca kurulmaz, bağlanır)
+					var on: Node3D = it["have"][l]
+					on.get_parent().remove_child(on)
+					it["pre"][l] = on
+				else:
+					(it["have"][l] as Node3D).queue_free()
 				it["have"][l] = null
 		if want == 2 and it.get("no2", false):
 			_show(it)
@@ -910,7 +933,42 @@ func perch_marks() -> Array:
 
 static var v2 := false
 static var sokak: IstSokak
-const K2 := 0.5
+## Ölçekler (ikinci tur SON AYAR, docs/_ajan/gorev/_ist2_ortak.md): dünya IstGeo.S (tek sabit; bütün konumlar IstGeo'dan
+## türer); ünlü eserler ve yan görev eserleri k = 0,75; öteki anıt ve kiliseler 0,6; çok yer kaplayanlar 0,45–0,5;
+## surların ve sur kapılarının kesiti 1:1 (k = 1,0; uzunluk hat boyunca S ile); Ayasofya: var olan model × 1,5.
+const K_UNLU := 0.75
+const K_OTEKI := 0.6
+const K_SUR := 1.0
+const AYA_K := 1.5
+const K2 := K_OTEKI
+## Ünlü eserler (k = 0,75); ayrıca catalog() kaydında "gorev": true olan her eser ve kapı türündeki her kayıt
+const UNLU := ["konstantin", "arkadius", "iustinianus", "havariyun", "pantokrator", "khora", "pammakaristos", "studios",
+	"aya_irini", "tekfur", "galata_kulesi", "tauri", "sergios", "theodosius", "markianos", "halic_eugenios"]
+## Gerçek yerinden hiç kaymayanlar (silüetin çapaları; öbürleri bunların çevresinden itilir)
+const SABIT_UNLU := ["galata_kulesi", "hipodrom", "konstantin", "havariyun", "pantokrator", "khora", "tekfur", "studios"]
+## Çok yer kaplayanlar: kimlik → k (Hipodrom, Büyük Saray harabesi, limanlar, açık sarnıç bostanları, forum meydanları)
+const GENIS := {"hipodrom": 0.45, "buyuk_saray": 0.45, "bukoleon": 0.5, "kontoskalion": 0.45, "langa": 0.45, "sophia": 0.45,
+	"aetios": 0.45, "aspar": 0.45, "mokios": 0.45, "philadelphion": 0.5, "kapitolion": 0.5, "amastrianon": 0.5, "bovis": 0.5,
+	"myrelaion": 0.55, "anemodoulion": 0.5, "halic_neorion": 0.5, "halic_iskele": 0.5}
+
+
+## Kaydın v2 ölçeği (YER2'deki "k" önceliklidir)
+static func _k2(id: String, data: Dictionary) -> float:
+	var fix: Dictionary = YER2.get(id, {})
+	if fix.has("k"):
+		return float(fix["k"])
+	var tur := String(data.get("tur", ""))
+	if fix.has("hat") and tur in ["kapi", "sur"]:
+		return K_SUR
+	if GENIS.has(id):
+		return float(GENIS[id])
+	if tur == "liman":
+		return 0.5
+	if id in UNLU or data.get("gorev", false) or tur == "kapi":
+		return K_UNLU
+	if tur in ["ev", "ayrinti", "bitki"]:
+		return 1.0
+	return K_OTEKI
 ## v2 orta katman yarıçapı (yarıçap eklenir): uzak siluetten orta katmana geçiş
 const R1_V2 := 300.0
 ## v2'de kayıttan kurulmayan modüller: kiliseler tip örnekleridir (konumları kestirim; mahalle dokusunda kullanılır)
@@ -1034,7 +1092,74 @@ static func attach_v2(dunya: Node3D, gece_ := false) -> void:
 	s._basamak_ag()
 	var t2 := Time.get_ticks_msec()
 	s._sehir_dokusu_v2()
-	print("ISTSEHIR2 yer=%d hat=%d kur_ms=%d hat_ms=%d doku_ms=%d" % [s.items.size(), s.hat_items.size(), t1 - t0, t2 - t1, Time.get_ticks_msec() - t2])
+	var t3 := Time.get_ticks_msec()
+	s._on_pisir()
+	var t4 := Time.get_ticks_msec()
+	print("ISTONPISIR ms=%d adet=%d" % [t4 - t3, s.stats.get("on_pisir_n", 0)])
+	t3 = t4
+	s._parcalar_bagla(dunya, gece_)
+	print("ISTSEHIR2 yer=%d hat=%d kur_ms=%d hat_ms=%d doku_ms=%d parca_ms=%d" % [s.items.size(), s.hat_items.size(), t1 - t0, t2 - t1, t3 - t2, Time.get_ticks_msec() - t3])
+
+
+## Ön-pişirme (kalite notu 8: tek iş ≤ 6 ms): anıtların (modül kayıtları ve Mese dilimleri) orta katmanı (lod 1) açılışta
+## kurulur (gizli bekler); yakın katmanı (lod 0) açılışta kurulup ölçülür: kurulumu ON_PISIR_MS'yi aşanlarınki ağaçtan ayrık
+## bellekte bekler (yaklaşınca yalnız ağaca bağlanır), ötekiler boşaltılır (akışta kurulur; zaten ucuz).
+static var on_pisirme := true
+const ON_PISIR_MS := 4.0
+
+func _on_pisir() -> void:
+	if not on_pisirme:
+		return
+	var n := 0
+	for it: Dictionary in items:
+		var mod := String(it.get("mod", ""))
+		var id := String(it["id"])
+		if it.has("hat") or mod == "doku" or (mod == "v2" and not id.begins_with("mese_") and id != "ayasofya" and id != "blakherna" and id != "bozdogan"):
+			continue
+		var h := it["holder"] as Node3D
+		_build(it, 1)
+		var t0 := Time.get_ticks_usec()
+		_build(it, 0)
+		var ms := (Time.get_ticks_usec() - t0) / 1000.0
+		var l0: Node3D = it["have"][0]
+		it["have"][0] = null
+		it["pre"] = [null, null, null]
+		if ms > ON_PISIR_MS:
+			h.remove_child(l0)
+			it["pre"][0] = l0
+			n += 1
+		else:
+			l0.free()
+		it["want"] = 2
+		_show(it)
+	stats["on_pisir_n"] = n
+	# açılıştaki ölçümler oyun içi "yavaş iş" sayılmaz
+	stats.erase("yavas")
+	stats["kur_ms_max"] = 0.0
+
+
+## İkinci turun yeni parçaları (dalları birleştirilmişse): Osmanlı ordugâhı (sur dışı), gemiler (su), yaşam katmanı
+## (insan/hayvan/duman/gece ışıkları; sokak ağını IstSehir.sokak'tan okur, bu yüzden dokudan SONRA). Dosyası yoksa atlanır.
+const PARCA_V2 := [["ordugah", "IstOrdugah"], ["gemiler", "IstGemiler"], ["hayat", "IstHayat"]]
+static var parcalar_acik := true
+var parca_durum := {}
+
+func _parcalar_bagla(dunya: Node3D, gece_: bool) -> void:
+	if not parcalar_acik:
+		return
+	for pr: Array in PARCA_V2:
+		var path := DIR + String(pr[0]) + ".gd"
+		if not ResourceLoader.exists(path):
+			parca_durum[pr[1]] = "yok"
+			continue
+		var scr := load(path) as GDScript
+		if scr == null:
+			parca_durum[pr[1]] = "yuklenemedi"
+			continue
+		var t0 := Time.get_ticks_msec()
+		scr.call("attach", dunya, gece_)
+		parca_durum[pr[1]] = "%d ms" % (Time.get_ticks_msec() - t0)
+	print("ISTPARCA ", parca_durum)
 
 
 ## Kaydın v2'deki yeri: {pos, yaw, k, r} ya da {} (kurulmaz)
@@ -1049,7 +1174,7 @@ func _place2_of(e: Dictionary) -> Dictionary:
 		real = Vector2(float(fix["e"]), float(fix["n"]))
 	var w := IstGeo.w2(real.x, real.y)
 	var yaw := -deg_to_rad(float(fix.get("yon", data.get("yon_derece", 0.0))))
-	var k := float(fix.get("k", K2))
+	var k := _k2(id, data)
 	var s: Vector3 = data.get("gercek_olcu", Vector3(20, 10, 20))
 	var r := maxf(s.x, s.z) * k * 0.5
 	if fix.has("hat"):
@@ -1079,6 +1204,13 @@ func _place2_of(e: Dictionary) -> Dictionary:
 	# Suya düştüyse en yakın karaya (liman hariç)
 	if String(data.get("tur", "")) != "liman" and IstGeo.su(w.x, w.y):
 		w = _to_land(w)
+	var y := _taban_y(w, yaw, s, k, r, String(data.get("tur", "")))
+	return {"pos": Vector3(w.x, y - 0.03 + float(fix.get("dy", 0.0)), w.y), "yaw": yaw, "k": k, "r": r,
+		"sabit": fix.has("hat") or fix.has("kiyi"), "w0": w}
+
+
+## Taban yüksekliği: küçük yapıda dört köşe + ortanın en alçağı, büyükte (r > 25 m) ortanca
+static func _taban_y(w: Vector2, yaw: float, s: Vector3, k: float, r: float, tur: String) -> float:
 	var hs: Array = []
 	var u := Vector2(cos(-yaw), sin(-yaw))
 	for o: Vector2 in [Vector2.ZERO, Vector2(1, 1), Vector2(-1, 1), Vector2(1, -1), Vector2(-1, -1)]:
@@ -1086,9 +1218,80 @@ func _place2_of(e: Dictionary) -> Dictionary:
 		hs.append(IstGeo.h(q.x, q.y))
 	hs.sort()
 	var y: float = hs[2] if r > 25.0 else hs[0]
-	if String(data.get("tur", "")) == "liman":
+	if tur == "liman":
 		y = maxf(y, 0.0)
-	return {"pos": Vector3(w.x, y - 0.03 + float(fix.get("dy", 0.0)), w.y), "yaw": yaw, "k": k, "r": r}
+	return y
+
+
+## Çakışma çözümü (S küçülünce eserler birbirine yaklaşır): taban daireleri (yarıçap + PAY) kesişen iki eser, merkezlerini
+## birleştiren doğru boyunca itilir (gerçek komşuluk sırası korunur: kimse komşusunun öbür yanına geçmez). Öncelik: yan görev /
+## ünlü eserler (2) > öteki anıtlar (1); öncelik farkında yalnız düşük olan kayar; eşitte ikisi yarı yarıya. Hatta/kıyıya
+## oturanlar (surlar, kapılar, limanlar), Ayasofya, Blakherna Sarayı ve oyun alanları SABİT engeldir. Kayan eser denize,
+## sur dışına ya da sur bandına düşerse o adım geri alınır. Hiçbir eser atılmaz; kalan çakışmalar raporlanır.
+const CAKISMA_PAY := 5.0
+var cakisma_rapor: Array = []
+
+func _coz_cakisma(c: Array) -> void:
+	var n := c.size()
+	for it in 80:
+		var moved := false
+		for i in n:
+			var A: Dictionary = c[i]
+			for j in range(i + 1, n):
+				var B: Dictionary = c[j]
+				if A["sabit"] and B["sabit"]:
+					continue
+				var pa: Vector2 = A["w"]
+				var pb: Vector2 = B["w"]
+				var need := float(A["r"]) + float(B["r"]) + CAKISMA_PAY
+				var d := pa.distance_to(pb)
+				if d >= need:
+					continue
+				var dir := (pb - pa) / d if d > 0.01 else Vector2.from_angle(float(i * 7 + j))
+				var gap := (need - d) * 0.55 + 0.5
+				var wa := 0.5
+				var wb := 0.5
+				if A["sabit"] or int(A["prio"]) > int(B["prio"]):
+					wa = 0.0
+					wb = 1.0
+				elif B["sabit"] or int(B["prio"]) > int(A["prio"]):
+					wa = 1.0
+					wb = 0.0
+				if wa > 0.0 and not _kaydir(A, pa - dir * gap * wa):
+					wb = 1.0
+				if wb > 0.0 and not _kaydir(B, pb + dir * gap * wb) and wa == 0.0 and not A["sabit"]:
+					_kaydir(A, pa - dir * gap)
+				moved = true
+		if not moved:
+			break
+	cakisma_rapor.clear()
+	for i in n:
+		var A: Dictionary = c[i]
+		var sh := (A["w"] as Vector2).distance_to(A["w0"])
+		if sh > 1.0:
+			cakisma_rapor.append("%s kaydi=%.0f m" % [A["id"], sh])
+		for j in range(i + 1, n):
+			var B: Dictionary = c[j]
+			if (A["w"] as Vector2).distance_to(B["w"]) < float(A["r"]) + float(B["r"]) - 2.0 and not (A["sabit"] and B["sabit"]):
+				cakisma_rapor.append("KALAN %s~%s" % [A["id"], B["id"]])
+
+
+func _kaydir(A: Dictionary, q: Vector2) -> bool:
+	if A["sabit"]:
+		return false
+	if String(A["tur"]) != "liman" and (IstGeo.su(q.x, q.y) or not (IstGeo.sehir_ici(q.x, q.y) or IstGeo.galata_ici(q.x, q.y))):
+		return false
+	var r := float(A["r"])
+	for ad: String in ["kara_suru", "blakherna_suru", "marmara_suru", "halic_suru"]:
+		var pl := IstGeo.yol(ad)
+		if pl.size() >= 2 and IstGeo.cizgi_uzak(q, pl) < r * 0.8 + (14.0 if ad == "kara_suru" else 8.0):
+			if IstGeo.cizgi_uzak(q, pl) < IstGeo.cizgi_uzak(A["w"], pl):
+				return false
+	# kayma payı: gerçek yerinden en çok yarıçapın 1,6 katı + 40 m
+	if q.distance_to(A["w0"]) > r * 1.6 + 40.0:
+		return false
+	A["w"] = q
+	return true
 
 
 static func _snap(pl: PackedVector2Array, p: Vector2) -> Dictionary:
@@ -1131,10 +1334,12 @@ func _place_v2() -> void:
 	# Ayasofya: bölümün kendi dış kabuğu (ByzCity.aya_exterior + Ayasofya kabuğu), kubbe (0,0)'da
 	var aw := IstGeo.w2(0, 0)
 	var ay := IstGeo.h(aw.x, aw.y)
-	IstGeo.duzle(aw, 34.0, ay)
-	var ait := _v2_item("ayasofya", Vector3(aw.x, ay - 0.05, aw.y), -deg_to_rad(103.0), 40.0, _make_aya)
-	# Kubbenin tepesindeki haçın 3,5 m yanı (kurşun kubbe yüzeyi): her uzaklıkta katı konma kapağı
-	var ap := (ait["holder"] as Node3D).transform * Vector3(3.5, 19.5 + 11.1 * 0.42 * sqrt(1.0 - pow(3.5 / 11.1, 2.0)), 0)
+	IstGeo.duzle(aw, 34.0 * AYA_K, ay)
+	var ait := _v2_item("ayasofya", Vector3(aw.x, ay - 0.05, aw.y), -deg_to_rad(103.0), 40.0 * AYA_K, _make_aya)
+	ait["k"] = AYA_K
+	ait["data"] = {"gercek_olcu": Vector3(54, 40, 54), "gorev": true}
+	# Kubbenin tepesindeki haçın 3,5 m yanı (kurşun kubbe yüzeyi; model × AYA_K): her uzaklıkta katı konma kapağı
+	var ap := (ait["holder"] as Node3D).transform * (Vector3(3.5, 19.5 + 11.1 * 0.42 * sqrt(1.0 - pow(3.5 / 11.1, 2.0)), 0) * AYA_K)
 	_pad(ap, "Konma_ayasofya")
 	ait["perch_aya"] = ap
 	# Blakherna Sarayı: Blachernae.shell_parts ("palace"), Blakherna suruna yaslı
@@ -1148,6 +1353,12 @@ func _place_v2() -> void:
 		byaw = _yaw_x(sn["d"], sn["p"], "blakherna_suru")
 	_v2_item("blakherna", Vector3(bl.x, IstGeo.h(bl.x, bl.y) - 0.05, bl.y), byaw, 22.0, _make_blakherna)
 	quest2["BLAKHERNA"] = {"p": Vector3(bl.x, IstGeo.h(bl.x, bl.y) + 26.0, bl.y), "r": 34.0}
+	var cand: Array = []
+	# Sabit engeller: Ayasofya, Blakherna Sarayı, oyun alanları (hub alanı Romanos'tan sonra eklenir)
+	cand.append({"id": "ayasofya", "w": aw, "w0": aw, "r": 40.0 * AYA_K * 0.8, "sabit": true, "prio": 3, "tur": "anit"})
+	cand.append({"id": "blakherna", "w": bl, "w0": bl, "r": 22.0, "sabit": true, "prio": 3, "tur": "anit"})
+	var mr := _meydan_rect()
+	cand.append({"id": "oyun_meydan", "w": mr.get_center(), "w0": mr.get_center(), "r": mr.size.length() * 0.42, "sabit": true, "prio": 3, "tur": ""})
 	for e: Dictionary in catalog_all():
 		var id := String(e["id"])
 		var mod := String(e["mod"])
@@ -1156,6 +1367,32 @@ func _place_v2() -> void:
 		var pl := _place2_of(e)
 		if pl.is_empty():
 			continue
+		var data: Dictionary = e["data"]
+		var tur := String(data.get("tur", ""))
+		pl["id"] = id
+		pl["e"] = e
+		pl["tur"] = tur
+		pl["w"] = Vector2((pl["pos"] as Vector3).x, (pl["pos"] as Vector3).z)
+		pl["prio"] = 3 if id in SABIT_UNLU else (2 if (id in UNLU or data.get("gorev", false) or tur == "kapi") else 1)
+		# Hub (Romanos'un iç yanı) sabit engel
+		if id == "romanos":
+			var inn := -Vector2(sin(float(pl["yaw"])), cos(float(pl["yaw"])))
+			var hc: Vector2 = pl["w"] + inn * 75.0
+			cand.append({"id": "oyun_hub", "w": hc, "w0": hc, "r": 55.0, "sabit": true, "prio": 3, "tur": ""})
+		cand.append(pl)
+	_coz_cakisma(cand)
+	print("ISTCAKISMA ", " · ".join(cakisma_rapor))
+	for pl: Dictionary in cand:
+		if not pl.has("e"):
+			continue
+		var e: Dictionary = pl["e"]
+		var id := String(e["id"])
+		var mod := String(e["mod"])
+		var data: Dictionary = e["data"]
+		var wq: Vector2 = pl["w"]
+		if wq.distance_to(pl["w0"]) > 0.5:
+			var y := _taban_y(wq, float(pl["yaw"]), data.get("gercek_olcu", Vector3(20, 10, 20)), float(pl["k"]), float(pl["r"]), String(pl["tur"]))
+			pl["pos"] = Vector3(wq.x, y - 0.03, wq.y)
 		var p: Vector3 = pl["pos"]
 		# Yapının tabanı düzlenir (arazi ağı bu kayıtlardan sonra kurulur; IstGeo.duzle)
 		# (kıyıdaki alçak yapılar düzlenmez: taban deniz düzeyine yakınsa arazi göl gibi suya iner)
@@ -1254,9 +1491,13 @@ func _v2_item(id: String, p: Vector3, yaw: float, r: float, make: Callable, data
 
 
 func _make_aya(n: Node3D, lod: int) -> void:
+	# Var olan model × AYA_K (taban ~54 m, kubbe tepesi ~40 m); kapı ve basamak da büyür (anıtsal kapı: kabul)
+	var sc := Node3D.new()
+	sc.scale = Vector3.ONE * AYA_K
+	n.add_child(sc)
 	var off := Node3D.new()
 	off.position = -ByzCity.AYA
-	n.add_child(off)
+	sc.add_child(off)
 	ByzCity.aya_exterior(off)
 	if lod <= 1:
 		var inner := Node3D.new()
@@ -1334,7 +1575,7 @@ func _hatlar_v2() -> void:
 				gaps[ad] = []
 			var g := float(it["r"]) * 1.4
 			if String(it["mod"]) == "surlar":
-				g = IstSurlar._gate_len(String(it["id"]), K2)
+				g = IstSurlar._gate_len(String(it["id"]), float(it["k"]))
 			gaps[ad].append([Vector2(it["pos"].x, it["pos"].z), g])
 	var seed := 0
 	for ad: String in HAT:
@@ -1378,7 +1619,7 @@ func _hatlar_v2() -> void:
 				var dh := absf(IstGeo.h(a.x + d.x * v[0], a.y + d.y * v[0]) - IstGeo.h(a.x + d.x * v[1], a.y + d.y * v[1]))
 				n = maxi(n, mini(int(ceil(dh / 1.6)), int(span / 30.0)))
 				var lens: Array = []
-				var hl := float(IstHalicSur.dims(K2)["L"])
+				var hl := float(IstHalicSur.dims(K_SUR)["L"])
 				if String(cfg["kur"]) == "halic" and dh < 2.5 and span >= hl:
 					# Haliç: modülün 80 m'lik parçaları (kapı, rıhtım) + kalanı parametreli deniz suru
 					var kk := int(span / hl)
@@ -1425,12 +1666,12 @@ func _hatlar_v2() -> void:
 			var q := a.lerp(b, k / 8.0)
 			lo = minf(lo, IstGeo.h(q.x, q.y))
 		var brg := atan2(d.x, -d.y)
-		var uz := L / K2
+		var uz := L / K_UNLU
 		var it := _v2_item("bozdogan", Vector3(mid.x, lo - 0.1, mid.y), -brg, L * 0.5,
-			func(n: Node3D, lod: int) -> void: IstKemerSu.build_bozdogan(n, K2, lod, uz))
+			func(n: Node3D, lod: int) -> void: IstKemerSu.build_bozdogan(n, K_UNLU, lod, uz))
 		it["data"] = {"gorev": true}
 		hat_items.append(it)
-		quest2["BOZDOGAN"] = {"p": Vector3(mid.x, lo + float(IstKemerSu.params(K2, uz)["hmax"]) + 9.0, mid.y), "r": 34.0}
+		quest2["BOZDOGAN"] = {"p": Vector3(mid.x, lo + float(IstKemerSu.params(K_UNLU, uz)["hmax"]) + 9.0, mid.y), "r": 34.0}
 	# Mese revaklı dilimleri: forumların arasında, ana Mese boyunca
 	var mese := IstGeo.yol("mese")
 	if mese.size() >= 2:
@@ -1482,9 +1723,14 @@ func oyun_alanlari() -> Array:
 			var inn := (h.transform.basis * Vector3(0, 0, -1)).normalized()
 			var c := Vector2(p.x, p.z) + Vector2(inn.x, inn.z) * 75.0
 			_oyun.append(Rect2(c - Vector2(45, 45), Vector2(90, 90)))
-	var aw := IstGeo.w2(0, 0)
-	_oyun.append(Rect2(aw + Vector2(-95, -25), Vector2(55, 50)))
+	_oyun.append(_meydan_rect())
 	return _oyun
+
+
+## Ayasofya meydanı oyun alanı (24, 25, 26, 31o): Ayasofya'nın batısında (narteks önü), 55 × 50 m
+static func _meydan_rect() -> Rect2:
+	var aw := IstGeo.w2(0, 0)
+	return Rect2(aw + Vector2(-42.0 * AYA_K - 55.0, -25), Vector2(55, 50))
 
 
 func _near_item(p: Vector2, pad: float) -> bool:
@@ -1512,19 +1758,19 @@ func _hat_piece(ad: String, kur: String, mid: Vector2, d: Vector2, L: float, see
 	var make: Callable
 	match kur:
 		"kara":
-			make = func(n: Node3D, lod: int) -> void: IstSurlar.build_run(n, L, K2, lod, 1453 + seed)
+			make = func(n: Node3D, lod: int) -> void: IstSurlar.build_run(n, L, K_SUR, lod, 1453 + seed)
 		"blakherna":
 			make = func(n: Node3D, lod: int) -> void: _blakherna_wall(n, L, lod)
 		"halic":
 			# Haliç suru: modülün 80 m'lik parçası (deniz −z) sığıyorsa; değilse parametreli deniz suru
-			if absf(L - float(IstHalicSur.dims(K2)["L"])) < 0.05:
+			if absf(L - float(IstHalicSur.dims(K_SUR)["L"])) < 0.05:
 				yaw += PI
-				make = func(n: Node3D, lod: int) -> void: IstHalicSur.build(n, K2, lod)
+				make = func(n: Node3D, lod: int) -> void: IstHalicSur.build(n, K_SUR, lod)
 			else:
 				kur = "marmara"
-				make = func(n: Node3D, lod: int) -> void: IstMarmaraSur.build_run(n, L, K2, lod, {})
+				make = func(n: Node3D, lod: int) -> void: IstMarmaraSur.build_run(n, L, K_SUR, lod, {})
 		_:
-			make = func(n: Node3D, lod: int) -> void: IstMarmaraSur.build_run(n, L, K2, lod, {})
+			make = func(n: Node3D, lod: int) -> void: IstMarmaraSur.build_run(n, L, K_SUR, lod, {})
 	if lo - dip > 0.3:
 		var inner := make
 		var tk := _walk_w(kur) + 1.6
@@ -1571,18 +1817,18 @@ func _blakherna_wall(n: Node3D, L: float, lod: int) -> void:
 
 static func _walk_h(kur: String) -> float:
 	match kur:
-		"kara": return float(IstSurlar.dims(K2)["HW"])
+		"kara": return float(IstSurlar.dims(K_SUR)["HW"])
 		"blakherna": return Blachernae.WALK_Y
-		"halic": return float(IstHalicSur.dims(K2)["H"])
-	return float(IstMarmaraSur.dims(K2)["H"])
+		"halic": return float(IstHalicSur.dims(K_SUR)["H"])
+	return float(IstMarmaraSur.dims(K_SUR)["H"])
 
 
 static func _walk_w(kur: String) -> float:
 	match kur:
-		"kara": return float(IstSurlar.dims(K2)["T"]) - 1.0
+		"kara": return float(IstSurlar.dims(K_SUR)["T"]) - 1.0
 		"blakherna": return 3.4
-		"halic": return float(IstHalicSur.dims(K2)["T"]) - 0.9
-	return float(IstMarmaraSur.dims(K2)["T"]) - 0.9
+		"halic": return float(IstHalicSur.dims(K_SUR)["T"]) - 0.9
+	return float(IstMarmaraSur.dims(K_SUR)["T"]) - 0.9
 
 
 ## Sur üstü yürüyüş: ardışık iki öğenin (dilim/köşe kulesi) yürüme yolları arasında > 0,35 m fark varsa alçak olanın
@@ -1646,17 +1892,17 @@ func _kose(ad: String, kur: String, p: Vector2) -> Dictionary:
 	var sz := 9.0
 	match kur:
 		"kara":
-			walk = float(IstSurlar.dims(K2)["HW"])
-			sz = float(IstSurlar.dims(K2)["T"]) + 6.0
+			walk = float(IstSurlar.dims(K_SUR)["HW"])
+			sz = float(IstSurlar.dims(K_SUR)["T"]) + 6.0
 		"blakherna":
 			walk = Blachernae.WALK_Y
 			sz = 9.0
 		"halic":
-			walk = float(IstHalicSur.dims(K2)["H"])
-			sz = float(IstHalicSur.dims(K2)["T"]) + 5.0
+			walk = float(IstHalicSur.dims(K_SUR)["H"])
+			sz = float(IstHalicSur.dims(K_SUR)["T"]) + 5.0
 		_:
-			walk = float(IstMarmaraSur.dims(K2)["H"])
-			sz = float(IstMarmaraSur.dims(K2)["T"]) + 5.0
+			walk = float(IstMarmaraSur.dims(K_SUR)["H"])
+			sz = float(IstMarmaraSur.dims(K_SUR)["T"]) + 5.0
 	var lo := INF
 	for o: Vector2 in [Vector2(-1, -1), Vector2(1, -1), Vector2(-1, 1), Vector2(1, 1), Vector2.ZERO]:
 		lo = minf(lo, IstGeo.h(p.x + o.x * sz * 0.4, p.y + o.y * sz * 0.4))
@@ -2125,8 +2371,8 @@ static func flight_data_v2(world: Node3D = null) -> Dictionary:
 		var r := 36.0
 		if q == "AYASOFYA" and by.has("ayasofya"):
 			var a: Vector3 = by["ayasofya"]["pos"]
-			p = a + Vector3(0, World1453.AYA_DOME_TOP + 6.0, 0)
-			r = 48.0
+			p = a + Vector3(0, World1453.AYA_DOME_TOP * AYA_K + 6.0, 0)
+			r = 60.0
 		elif s.quest2.has(q):
 			p = s.quest2[q]["p"]
 			r = float(s.quest2[q]["r"])

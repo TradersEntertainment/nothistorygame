@@ -1,0 +1,11 @@
+# ad e n yukseklik yon egim   (gerçek doğu/kuzey m; yükseklik arazinin üstü dünya m; yon pusula; eğim derece)
+v2_genel_sehirden 3000 1400 900 270 -22
+v2_genel_yukari -2500 1300 1400 270 -40
+v2_otag_hava -5250 1700 60 215 -32
+v2_otag_yer -5120 1500 1.7 250 2
+v2_sahi_hava -4780 1330 45 285 -28
+v2_sahi_yer -4880 1236 1.7 270 4
+v2_siper_yer -4760 700 1.7 280 2
+v2_anadolu_hava -5400 -300 120 300 -35
+v2_rumeli_hava -4300 2400 120 300 -35
+v2_kus_ordugah -4700 600 260 275 -40
