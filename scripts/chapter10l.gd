@@ -125,9 +125,11 @@ func _build() -> void:
 	dragan.look_target = player
 	add_child(dragan)
 	# Dragan kazmayı elinde tutar (T_04 "Kazmaya bakar" derken eli boştu); kazma, verildiğinde Tolga'nın eline geçer
-	_dragan_pick = Items.attach_tool(dragan, "pickaxe")
+	_dragan_pick = Items.attach_tool(dragan, "pickaxe", {"hand": "l"})
 	if _dragan_pick:
 		dragan.set_meta("armed", true)
+		# Kazma sol elinde dik durur (ağzı yukarıda): ağız aşağıda sarkınca altyazı kutusunun, sağ elde de Tolga'nın elindeki paketin arkasında kalıyordu
+		_dragan_pick.basis = Basis(Vector3(0, 0, 1), deg_to_rad(35.0)) * Basis(Vector3.RIGHT, Vector3(0, 0, -1), Vector3(0, 1, 0))
 	_lamp = OmniLight3D.new()
 	_lamp.light_color = Color("ffb060")
 	_lamp.light_energy = 1.6

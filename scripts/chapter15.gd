@@ -517,6 +517,7 @@ func _scene_monday() -> void:
 	monday = Monday.new(W, fixed)
 	monday.final_id = final_id
 	add_child(monday)
+	_meeting_nods()
 	# Durak
 	_cam(Monday.STOP + Vector3(1.5, 0.0, 6.0), Monday.STOP + Vector3(2.5, 2.4, -4.2))
 	if N == "N3":
@@ -1063,6 +1064,7 @@ func _recall_ending() -> void:
 	monday = Monday.new(W, fixed)
 	monday.final_id = final_id
 	add_child(monday)
+	_meeting_nods()
 	_cam(Monday.MEET_CAM, monday.manager.global_position + Vector3(0, 1.2, 0))
 	await hud.fade_to(0.0, 0.8)
 	for c in monday.colleagues:
@@ -1585,6 +1587,26 @@ func _run_shots() -> void:
 	await get_tree().create_timer(0.8, false).timeout
 	await _shot("c15_03_final.png")
 	get_tree().quit()
+
+
+## Toplantıdakiler donuk durmasın (özgün kodda oturan çalışanlar hiç kıpırdamıyordu): 3-9 sn'de bir başlarını sallar
+## (yalnız baş: "nod"), konuşurken ya da bir jest sürerken atlanır. Yeni düğüm yok.
+func _meeting_nods() -> void:
+	var mon := monday
+	if mon == null:
+		return
+	for c in mon.colleagues:
+		_nod_later(mon, c)
+
+
+func _nod_later(mon: Monday, c: Person) -> void:
+	get_tree().create_timer(randf_range(3.0, 9.0), false).timeout.connect(func() -> void:
+		if mon != monday or not is_instance_valid(c) or not c.is_inside_tree():
+			return
+		var rg := Handover.rig_of(c)
+		if rg != null and rg.lock == 0 and not c.talking:
+			rg.emote("nod")
+		_nod_later(mon, c))
 
 
 ## Surda 570 yıllık bant: heyet gecesi gedik (10H) ya da 7 Mayıs gecesi gedik (20.2) bantlandıysa.

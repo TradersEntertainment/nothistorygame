@@ -168,7 +168,6 @@ func _open_window(line: String) -> void:
 	# Hikmet'in eli kolun topuzunu tutar (el havada "uzanıyordu", kol kadrajda değildi)
 	var knob := _lever_knob()
 	if knob != Vector3.INF:
-		player.face(knob.lerp(garage.panel_node.global_position + Vector3(0, 1.2, 0), 0.35))
 		player.reach_grab(knob)
 	else:
 		player.hand_gesture("reach")
