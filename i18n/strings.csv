@@ -9815,7 +9815,7 @@ D44B_T_Y_03,Yani burayı yukarıda kimse bilmiyor mu? İmparator? Saray?,So nobo
 D44B_Y_04,"Saray Blaherna'ya taşınalı çok oldu. Kim iner buraya? Ben inerim, bir de sen, düşerek. Al, Eudokia'nın kovası.","The palace moved to Blachernae long ago. Who comes down here? I do, and you, by falling. Here, Eudokia's bucket."
 D44B_Y_04_KID,"Kimse bilmez. Ben bilirim, bir de sen, düşerek. Al, Eudokia'nın kovası; içinde tahta bir at var.","Nobody knows. I do, and you, by falling. Here, Eudokia's bucket; there's a wooden horse in it."
 D44B_T_Y_04,Kova hasarsız. Dosyayı kapatıyorum. Şimdi çıkış nerede?,"Bucket undamaged. Closing the file. Now, where's the way out?"
-D44B_Y_05,"Kuzeybatı köşede, taş kadınların yanında benim evin kuyusu var. Basamakları ben çaktım. Işığını kısma.","In the north-west corner, by the stone women, there's my house's well. I hammered in the rungs myself. Keep your light up."
+D44B_Y_05,Kuzeybatı köşede benim evin kuyusu var. Basamakları ben çaktım. Işığını kısma.,In the north-west corner there's my house's well. I hammered in the rungs myself. Keep your light up.
 D44B_Y_QUAKE,"Yine toplar! Her atışta tavan biraz daha konuşuyor. Kımıldama, dinle...","The guns again! Every shot, the ceiling talks a little more. Don't move, listen..."
 D44B_N_QUAKE,"Top sizi duymuyor, Tolga Bey; tavan duyuyor. Önce toz iner, sonra taş. Suda halka görürseniz oradan uzak durun.","The guns can't hear you, Mr Tolga; the ceiling can. First dust, then stone. If you see rings on the water, keep away."
 D44B_Y_TORCH,"Meşalem! Gitti. Ben karanlıkta da bulurum ama sen bulamazsın. Önden git, ışık sende. Kuzeybatı!","My torch! Gone. I can find my way in the dark, but you can't. Go first, you have the light. North-west!"
@@ -9829,11 +9829,11 @@ D44B_T_THUMB,"Ah, başparmağım! Çakmak da dinlensin, ben de.","Ow, my thumb! 
 D44B_T_HIT_1,"Ah! Kafama değil, kayığa. Kayık da sigortasız.","Ah! Not my head, the boat. And the boat's not insured either."
 D44B_T_HIT_2,"Bir tane daha! Halka görünce kaç demişti. Halka, kaç. Halka, kaç.","Another one! See a ring, get away, he said. Ring, away. Ring, away."
 D44B_T_HIT_3,Tavanın kusuru yok. Kullanıcı hatası.,The ceiling's not at fault. User error.
-D44B_Y_STONE,"İşte köşe. Işığını suya tut, dibe bak. Taş kadınlar. Annem onlara bakma derdi.","Here's the corner. Shine your light into the water, look at the bottom. The stone women. My mother used to say don't look at them."
+D44B_Y_STONE,"İşte köşe, kuyum şurada. Dur, kandili suya eğeyim... Kırk yıldır bu köşede balık tutarım, dipte çamurdan başka şey görmedim. Bu ne?","Here's the corner, my well's right there. Wait, let me tip the lamp to the water... Forty years I've fished this corner and never seen anything but mud down there. What is that?"
 D44B_T_MEDUSA_1,"Medusa! İşte! Biri yan, biri ters. Neden ters? Rehber üç ayrı teori anlattı, hiçbirini dinlemedim.","Medusa! There! One sideways, one upside down. Why upside down? The guide gave three theories and I listened to none of them."
 D44B_T_MEDUSA_2,"Biri 'nazar için' dedi, biri 'taş ölçüye uysun diye', biri 'kimse bakmadı'. Ben üçüncüsüne inanıyorum.","One said 'against the evil eye', one said 'so the stone would fit', one said 'nobody checked'. I believe the third."
-D44B_Y_MEDUSA,Bizim mahallede 'bakan taş olur' derler. Ben kırk yıldır bakıyorum. Hâlâ balıkçıyım.,Round here they say whoever looks turns to stone. I've been looking for forty years. Still a fisherman.
-D44B_N_MEDUSA,"Kayıtlarda gerekçe yok, kimse form doldurmamış. 1985'te çamurdan çıkacaklar; o güne dek ben de doldurmuyorum.","There's no reason on record; nobody filled in a form. They come out of the mud in 1985; until then, I'm not filling one in either."
+D44B_Y_MEDUSA,Taş kadınlar... Sarsıntı çamuru silkelemiş. Mahallede 'bakan taş olur' derler. Bakıyorum; hâlâ balıkçıyım.,Stone women... The shaking has shrugged the mud off them. Round here they say whoever looks turns to stone. I'm looking. Still a fisherman.
+D44B_N_MEDUSA,"Kayıtlarda yok, Tolga Bey. Sabaha çamur yine örter; 1985'teki temizliğe dek kimse görmeyecek. Ben de form doldurmuyorum.","Not on record, Mr Tolga. By morning the mud will cover them again; nobody will see them until the clean-up in 1985. I'm not filling in a form either."
 D44B_T_CLIMB,Kırk basamak. Yukarıda bir kiler. Turşu kokusu. Turşuya hiç bu kadar sevinmemiştim.,Forty rungs. A cellar up top. Smells of pickles. I've never been this happy about pickles.
 D44B_E_BACK,"Tolga! Benim kuyumdan girdin, Yakovos'un kilerinden çıktın. Bu nasıl iş?",Tolga! You went in through my well and came out of Yakovos's cellar. How does that work?
 D44B_Y_BUCKET,"Kovan, Eudokia. Kuyun derin, ipin çürük. Yenisini ben öreceğim.","Your bucket, Eudokia. Your well is deep, your rope is rotten. I'll braid you a new one."
@@ -9850,6 +9850,16 @@ D44B_E_BLAB,"Otur oğlum, su iç. Kuyudan değil, çeşmeden.","Sit down, son, d
 D44B_Y_BLAB,"Kimse inanmadı, iyi. Ama mahalle kuyuları taşla doldurur şimdi. Balığa başka kuyudan inerim.","Nobody believed you, good. But now the street will fill the wells with stones. I'll go fishing through another well."
 D44B_N_BLAB,"Kimse inanmadı, Tolga Bey. Tarih sizi duymadı ama dosya duydu. Küçük bir çizik.","Nobody believed you, Mr Tolga. History didn't hear you, but the file did. A small scratch."
 D44B_T_END,"Dosya notu: kuyu derin, ip çürük, kova teslim edildi. Altında ne olduğunu sorarsanız... kapsam dışı.","File note: deep well, rotten rope, bucket returned. If you ask what's underneath... not covered."
+D44B_T_FISH,Altımdan bir şey geçti! Bir sürü şey! ...Sazan. Sazandır. Lütfen sazan olsun.,Something just went under me! Lots of somethings! ...Carp. They're carp. Please be carp.
+D44B_T_FAR,Bu gümbürtü ne? ...Top. Yukarıda kuşatma var. Tavan da duydu galiba.,What's that rumble? ...Cannon. There's a siege up there. I think the ceiling heard it too.
+D44B_N_SPLASH,"Solunuzda bir şey suya girdi, Tolga Bey. Kayıtlarda cin yok. Balık deyip geçin.","Something went into the water on your left, Mr Tolga. There are no djinns on record. Call it a fish and keep going."
+D44B_Y_LAMP,Kandilim var ama ancak kendi burnumu gösterir. Arkandayım; kandili görüyorsan ben de seni görüyorum.,"I've got my little lamp, but it only shows my own nose. I'm behind you; if you can see the lamp, I can see you."
+D44B_T_HENEYE,Bu sütun ağlıyor. Gözyaşı sütunu! Rehber burada fotoğraf çektirmişti. Şimdi ağlamanın sırası değil.,This column is crying. The weeping column! The guide made us take photos here. Not the time for crying.
+D44B_N_COLLAPSE,"Öndeki tonoz çatlıyor, Tolga Bey! Düşünce dar yerden geçin, kenardan!","The vault ahead is cracking, Mr Tolga! When it comes down, take the narrow gap, by the edge!"
+D44B_T_SUN,Gün ışığı... Bütün orman görünüyor... Bunu kimse görmedi. Görmemesi de lazım. Kürek!,Daylight... I can see the whole forest... Nobody has ever seen this. And nobody should. Row!
+D44B_N_SUN,"Tonoz delindi, Tolga Bey. Güzel ama üstünüze düşüyor. Hayranlığı sonra kayda geçiririz.","The vault's been holed, Mr Tolga. Lovely, but it's falling on you. We'll file the wonder later."
+D44B_T_DROP,Elimden kaydı! Işık gitti... Yakovos! Kandilini göster!,It slipped! The light's gone... Yakovos! Show me your lamp!
+D44B_T_FOUND,"Buldum, kayığın dibindeymiş. Islak ama çalışıyor. Nefes al, Tolga.","Found it, in the bottom of the boat. Wet, but working. Breathe, Tolga."
 PF_YAKOVOS,Balıkçı Yakovos,Yakovos the fisherman
 PF_YAKOVOS_KEEP,"44'te sarnıcın sırrını onunla paylaştın, yukarıda kimseye söylemedin",in 44 you shared the cistern's secret with him and told no one up top
 PF_YAKOVOS_BLAB,44'te sarnıcı bütün mahalleye anlattın; kimse inanmadı ama kuyular taşla dolduruldu,"in 44 you told the whole street about the cistern; nobody believed you, but the wells were filled with stones"
