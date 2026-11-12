@@ -62,6 +62,7 @@ var sliding := false
 ## Tepeden bakış (0..1): kalça merdivenin ucuna kadar çıkar (geçmez), eller dikmelerin uçlarını tutar, ayaklar en üst
 ## basamaklarda; baş ve göğüs mazgalın üstünden görünür (30o: geç kalan azap başını mazgaldan uzatır)
 var peek := 0.0
+var _slide_root := 0.0
 
 var _kh := 3                     # alçak elin alçak ayaktan kaç basamak yukarıda olduğu
 var _root_off := -0.17           # kök (ayak tabanı hizası) ile alçak ayağın basamağı arası, merdiven boyunca
@@ -308,14 +309,15 @@ func _process(delta: float) -> void:
 	if absf(g - s) > 0.0001:
 		s = move_toward(s, g, speed * delta * (1.0 - brace * 0.85))
 	_tick += 1
-	if not full and _tick % 3 != 0:
-		return
-	_pose()
-	_audit()
+	# Ucuz sürüm: kök, gövde ve baş her kare (sahne betiği kökü mantık yerine koymuş olabilir), uzuv IK'si üç karede bir
+	var limbs := full or _tick % 3 == 0
+	_pose(limbs)
+	if limbs:
+		_audit()
 
 
 ## Bütün gövdeyi yerleştirir: kök, gövde eğimi, kalça salınımı, baş, iki kol ve iki bacak (IK)
-func _pose() -> void:
+func _pose(limbs := true) -> void:
 	if not rig or not is_instance_valid(who):
 		return
 	var n := int(floorf(s))
@@ -323,7 +325,7 @@ func _pose() -> void:
 	var rise := smoothstep(0.0, 1.0, p) if _driven else smoothstep(0.05, 0.85, p)
 	var root_u := rung0 + _root_off + gap * (float(n) + rise)
 	if peek > 0.0:
-		root_u = lerpf(root_u, _len - _hip_h - 0.45, peek)     # omuz merdivenin ucunda: eller dikme uçlarına yetişir
+		root_u = lerpf(root_u, _len - _hip_h - 0.03, peek)     # kalça merdivenin ucunda (geçmez)
 	# Kalça hareketli ayak tarafına salınır (a çiftinde sol ayak kalkar: kalça sağa)
 	var dir := 1.0 if n % 2 == 0 else -1.0
 	var sway := sin(p * PI) * 0.035 * dir * (1.0 - brace)
@@ -350,6 +352,9 @@ func _pose() -> void:
 		var pitch := lerpf(-0.32, 0.45, down)
 		pitch = lerpf(pitch, 0.38, brace)
 		rig.head.rotation = Vector3(pitch, sway * 3.0, 0)
+	if not limbs:
+		return
+	_slide_root = root_u
 	if sliding:
 		_slide_limbs(root_u)
 		return
@@ -383,15 +388,20 @@ func _pose() -> void:
 
 
 func _peek_limbs(root_u: float) -> void:
-	# İki ayak aynı basamakta (bilek kalçanın 0,10–0,46 m altında: bacak erişiminde)
+	# İki ayak aynı basamakta (bilek kalçanın 0,10–0,46 m altında: bacak erişiminde); bakış yarıyı geçince eller
+	# dikmeleri bırakıp (beşte biri geçince) mazgalın üstünde havaya kalkar (ÖNCE'deki el sallayışı), öncesinde dikmeler boyunca yükselir
 	var fk := roundf((root_u + _hip_h - 0.28 - ANKLE_UP - rung0) / gap)
+	var up := smoothstep(0.2, 0.5, peek)
 	for sd: float in [1.0, -1.0]:
 		var arm: Node3D = rig.arm_r if sd > 0.0 else rig.arm_l
 		var el: Node3D = rig.elbow_r if sd > 0.0 else rig.elbow_l
 		if arm and el:
-			# Eller dikmelerde omzun biraz üstünde, en çok dikmenin ucunda (tepeye çıkarken dikme boyunca yükselir)
 			var hu := minf(_len - 0.03, root_u + _sh_h + 0.15)
 			Rig.reach(arm, el, _o + _u * hu + _r * sd * width * 0.5 + _f * 0.03, -_u + _r * sd + _f * 0.3)
+			if up > 0.0:
+				var wave := sin(_t * 9.0 + sd) * 0.25
+				arm.rotation = arm.rotation.lerp(Vector3(-2.7 + wave, 0, sd * 0.35), up)
+				el.rotation = el.rotation.lerp(Vector3(-0.35, 0, 0), up)
 		var leg: Node3D = rig.leg_r if sd > 0.0 else rig.leg_l
 		var knee: Node3D = rig.knee_r if sd > 0.0 else rig.knee_l
 		if leg and knee:
@@ -407,7 +417,12 @@ func _slide_limbs(root_u: float) -> void:
 		var el: Node3D = rig.elbow_r if sd > 0.0 else rig.elbow_l
 		var rail := _o + _r * sd * width * 0.5 + _f * 0.03
 		if arm and el:
-			Rig.reach(arm, el, rail + _u * minf(root_u + _sh_h + 0.12, _len), -_u + _r * sd + _f * 0.3)
+			# Eller dikmede omzun biraz altında; omuz merdivenin ucunu aşmışsa (tepeden kaymaya başlarken) eller havada
+			var hu := root_u + _sh_h - 0.15
+			Rig.reach(arm, el, rail + _u * minf(hu, _len - 0.03), -_u + _r * sd + _f * 0.3)
+			if hu > _len - 0.03:
+				arm.rotation = Vector3(-2.7, 0, sd * 0.35)
+				el.rotation = Vector3(-0.35, 0, 0)
 		var leg: Node3D = rig.leg_r if sd > 0.0 else rig.leg_l
 		var knee: Node3D = rig.knee_r if sd > 0.0 else rig.knee_l
 		if leg and knee:
@@ -536,7 +551,8 @@ func _audit() -> void:
 			_report("chest_gap", gap_m)
 	for pair in 2:
 		var l := _limb(pair, n, p)
-		var holding := sliding or peek > 0.0 or l.y <= 0.0 or l.y >= 1.0
+		var slide_hold := sliding and _slide_root + _sh_h - 0.15 <= _len - 0.03
+		var holding := slide_hold or (not sliding and peek > 0.0 and peek < 0.2) or (peek <= 0.0 and (l.y <= 0.0 or l.y >= 1.0))
 		var elbow: Node3D = rig.elbow_r if pair == 0 else rig.elbow_l
 		if holding and elbow:
 			var hm: Vector3 = elbow.get_meta("hand", Vector3(0, -0.27, 0.01))
