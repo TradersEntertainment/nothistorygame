@@ -100,6 +100,10 @@ static func etkin() -> bool:
 		var st = gs.root.get_node("GameState").get("settings")
 		if st is Dictionary and bool((st as Dictionary).get("eski_dunya", false)):
 			return false
+	# GameState yalnız bilinen ayar anahtarlarını yükler: kayıtlı ayar dosyasından da okunur (set_setting kalıcı olsun)
+	var cfg := ConfigFile.new()
+	if cfg.load("user://settings.cfg") == OK and bool(cfg.get_value("settings", "eski_dunya", false)):
+		return false
 	return true
 
 
