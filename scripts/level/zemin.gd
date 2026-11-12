@@ -100,7 +100,7 @@ static func yama_malzeme(ipucu: Color, boyut: Vector2, kenar := 2.0) -> ShaderMa
 		var base: Shader = load("res://assets/shaders/zemin.gdshader")
 		_yama_sh = Shader.new()
 		_yama_sh.code = base.code.replace("//YAMA_KENAR", "{ vec2 e = min(UV, 1.0 - UV) * yama_boyut; float ed = min(e.x, e.y);\n" +
-			"\tALPHA = smoothstep(0.0, 1.0, ed / max(yama_kenar, 0.01) + (W.r - 0.5) * 1.1 + (Mi.g - 0.5) * 0.3);\n" +
+			"\tALPHA = smoothstep(0.0, 1.0, ed / max(yama_kenar, 0.01) + (W.x - 0.5) * 1.1 + (T.y - 0.5) * 0.3);\n" +
 			"\tALPHA_SCISSOR_THRESHOLD = 0.5; }")
 	var m := kopya("trakya")
 	m.shader = _yama_sh
@@ -344,24 +344,29 @@ static func _g(u: float, v: float) -> Color:
 	return _gimg.get_pixel(x, y)
 
 
-static func _n2(x: float, z: float, s1: float, s2: float) -> Color:
-	var qx := x * 0.8 - z * 0.6
-	var qz := x * 0.6 + z * 0.8
-	return (_g(x / s1, z / s1) + _g(qx / s2 + 0.37, qz / s2 + 0.37)) * 0.5
+## Gölgelendiricinin n2'si: iki ölçekte, döndürülmüş örnek (R, G yumuşak kanallar).
+static func _n2(x: float, z: float, s1: float, s2: float, a: float) -> Vector2:
+	var qx := x * cos(a) - z * sin(a)
+	var qz := x * sin(a) + z * cos(a)
+	var c1 := _g(x / s1, z / s1)
+	var c2 := _g(qx / s2 + 0.37, qz / s2 + 0.37)
+	return Vector2(c1.r + c2.g, c1.g + c2.r) * 0.5
 
 
 ## Gölgelendiricinin ot payı (yaklaşık): yer örtüsü otu yalnız otlu yerde çıksın.
 static func ot_payi(x: float, z: float, ipucu: Color) -> float:
-	var s := Color(ipucu.r, ipucu.g, ipucu.b)
-	var yesil := clampf((s.g - maxf(s.r, s.b)) * 7.0, 0.0, 1.0)
-	var o := _n2(x, z, 31.0, 19.0)
-	var w := _n2(x, z, 7.3, 4.1)
+	var yesil := clampf((ipucu.g - maxf(ipucu.r, ipucu.b)) * 7.0, 0.0, 1.0)      # ipucu sRGB
+	var o := _n2(x, z, 37.0, 23.0, 1.1)
+	var q := _n2(x, z, 17.0, 11.0, 2.3)
+	var w := _n2(x, z, 6.1, 3.7, 0.9)
 	var m := malzeme()
-	var otluk := yesil + (w.r - 0.5) * 0.55
-	otluk -= float(m.get_shader_parameter("cignenme")) * 0.35 * smoothstep(0.35, 0.65, o.r)
-	otluk -= smoothstep(0.62, 0.8, 1.0 - o.b) * 0.45 * (1.0 - yesil * 0.4)
-	otluk += smoothstep(0.66, 0.85, o.g) * 0.4
-	return smoothstep(0.42, 0.58, otluk)
+	var cig := float(m.get_shader_parameter("cignenme"))
+	var acik := smoothstep(0.42, 0.62, ipucu.r * 0.2126 + ipucu.g * 0.7152 + ipucu.b * 0.0722)
+	var otluk := yesil + (w.x - 0.5) * 0.6 + (q.y - 0.5) * 0.35
+	otluk -= cig * 0.45 * smoothstep(0.4, 0.7, o.x)
+	otluk -= smoothstep(0.6, 0.78, q.x) * 0.5 * (1.0 - yesil * 0.5)
+	otluk += smoothstep(0.62, 0.8, o.y) * 0.45 * (1.0 - acik) * (1.0 - cig * 0.6)
+	return smoothstep(0.44, 0.56, otluk)
 
 
 # ------------------------------------------------------------------ yer örtüsü ağları
@@ -541,6 +546,7 @@ class Ortu extends Node3D:
 	var _yaklasik := 0
 
 	func _ready() -> void:
+		process_mode = Node.PROCESS_MODE_ALWAYS      # bölüm duraklatılsa da (giriş kartı, menü) örtü akar
 		for t: String in TURLER:
 			var mm := MultiMesh.new()
 			mm.transform_format = MultiMesh.TRANSFORM_3D
@@ -694,27 +700,28 @@ class Ortu extends Node3D:
 					continue
 				var ip: Color = renk.call(cx, cz) if renk.is_valid() else Color("6c8644")
 				var otp: float = Z.ot_payi(cx, cz, ip)
-				var obek: Color = Z._n2(cx, cz, 13.0, 7.0)
+				var obek: Vector2 = Z._n2(cx, cz, 13.0, 7.0, 0.4)
+				var obk2: Vector2 = Z._n2(cx, cz, 9.0, 5.0, 2.0)
 				var as_: Color = Z.asinma_oku(cx, cz)
 				var cig := maxf(as_.r, as_.g)
 				if kar_var:
 					otp = 0.0
-				var deneme := int(round((2.0 + 7.0 * smoothstep(0.35, 0.7, obek.g)) * otp * yog * (1.0 - cig)))
+				var deneme := int(round((2.0 + 7.0 * smoothstep(0.35, 0.7, obek.y)) * otp * yog * (1.0 - cig)))
 				for q in deneme:
 					var x := cx + rng.randf_range(-1.0, 1.0)
 					var z := cz + rng.randf_range(-1.0, 1.0)
 					if tut.is_valid() and not tut.call(x, z):
 						continue
 					var y: float = yukseklik.call(x, z)
-					var kuru := clampf(obek.r * 1.2 - 0.2 + rng.randf_range(-0.2, 0.2), 0.0, 1.0)
+					var kuru := clampf(obek.x * 1.2 - 0.2 + rng.randf_range(-0.2, 0.2), 0.0, 1.0)
 					var c := Color("8a9a62").lerp(Color("b4a874"), kuru) * rng.randf_range(0.85, 1.08)
 					c.a = 1.0
 					var s := rng.randf_range(0.7, 1.35)
 					_ekle(out["ot"], Vector3(x, y - 0.02, z), rng.randf() * TAU, Vector3(s, s * rng.randf_range(0.8, 1.2), s), c, rng.randf())
 				# çiçek öbekleri: seyrek, otun içinde
 				var cic: float = ayar.get("cicek", 1.0)
-				if otp > 0.6 and obek.b > 0.72 and rng.randf() < 0.55 * cic:
-					var tur := "gelincik" if obek.a > 0.55 else "papatya"
+				if otp > 0.6 and obk2.x > 0.66 and rng.randf() < 0.55 * cic:
+					var tur := "gelincik" if obk2.y > 0.55 else "papatya"
 					for q in rng.randi_range(1, 3):
 						var x := cx + rng.randf_range(-0.9, 0.9)
 						var z := cz + rng.randf_range(-0.9, 0.9)
@@ -742,8 +749,8 @@ class Ortu extends Node3D:
 						var s := rng.randf_range(0.6, 1.4)
 						_ekle(out["dal"], Vector3(x, yukseklik.call(x, z), z), rng.randf() * TAU, Vector3(s, s, s), Color.WHITE, rng.randf())
 				# su birikintisi: çamurlu, otsuz, nemli yerde
-				var nem: Color = Z._n2(cx, cz, 31.0, 19.0)
-				if (as_.g > 0.5 or (otp < 0.3 and nem.r < 0.3)) and rng.randf() < 0.18 * float(ayar.get("birikinti", 1.0)):
+				var nem: Vector2 = Z._n2(cx, cz, 17.0, 11.0, 2.3)
+				if (as_.g > 0.5 or (otp < 0.3 and nem.y < 0.3)) and rng.randf() < 0.18 * float(ayar.get("birikinti", 1.0)):
 					var x := cx + rng.randf_range(-0.6, 0.6)
 					var z := cz + rng.randf_range(-0.6, 0.6)
 					if not tut.is_valid() or tut.call(x, z):
