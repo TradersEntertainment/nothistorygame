@@ -43,6 +43,7 @@ func _ready() -> void:
 	match set_:
 		"liste": await _liste(s)
 		"yuru": await _yuru(s)
+		"kim": await _kim(s)
 	print("GEZI BITTI")
 	get_tree().quit(0)
 
@@ -229,3 +230,40 @@ func _kaydir(k: PackedStringArray) -> void:
 				print("GEZI_KAYDIR %s %.0f dunya_m" % [k[0], r])
 				return
 	print("GEZI_KAYDIR %s bulunamadi" % k[0])
+
+
+## --set=kim: satır "ad e n yaricap_gercek_m": çevredeki görünür geometri düğümleri (yol, sayı, ağ/malzeme adı)
+func _kim(s: Array) -> void:
+	for ln: String in s:
+		var k: PackedStringArray = ln.split(" ", false)
+		var w: Vector2 = IstGeo.w2(k[1].to_float(), k[2].to_float())
+		var r: float = k[3].to_float() * IstGeo.S
+		cam.global_position = Vector3(w.x, IstGeo.h(w.x, w.y) + 2.0, w.y)
+		await _bekle()
+		var say := {}
+		for c in get_tree().root.find_children("*", "GeometryInstance3D", true, false):
+			var gi := c as GeometryInstance3D
+			if not gi.is_visible_in_tree():
+				continue
+			var yol := String(gi.get_path()).replace("/root/GeziMeseBati/", "")
+			var parca := yol.split("/")
+			var kisa := "/".join(parca.slice(0, mini(5, parca.size())))
+			var n := 0
+			if gi is MultiMeshInstance3D:
+				var mm := (gi as MultiMeshInstance3D).multimesh
+				if mm == null:
+					continue
+				var xf := gi.global_transform
+				for i in mini(mm.visible_instance_count if mm.visible_instance_count >= 0 else mm.instance_count, mm.instance_count):
+					var o := xf * mm.get_instance_transform(i).origin
+					if Vector2(o.x, o.z).distance_to(w) < r:
+						n += 1
+				if n > 0:
+					say[kisa + " [MM " + String(mm.mesh.resource_name if mm.mesh else "") + "]"] = int(say.get(kisa + " [MM " + String(mm.mesh.resource_name if mm.mesh else "") + "]", 0)) + n
+			else:
+				var o2 := gi.global_position
+				if Vector2(o2.x, o2.z).distance_to(w) < r:
+					say[kisa] = int(say.get(kisa, 0)) + 1
+		for kk: String in say:
+			print("GEZI_KIM %s | %s = %d" % [k[0], kk, say[kk]])
+	print("GEZI_KIM bitti")

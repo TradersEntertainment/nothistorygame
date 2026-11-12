@@ -1,0 +1,6 @@
+kim_mokios_agac -3806 189 25
+kim_arkadius_sur -3444 -956 70
+kim_langa_sur -2250 -700 90
+kim_tauri_sutun -1554 211 35
+kim_psam_kule -4272 -1475 40
+kim_langa_bostan -2250 -560 60
