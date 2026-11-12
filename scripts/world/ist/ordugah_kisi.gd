@@ -55,7 +55,9 @@ static func kur(host: Node3D, kisiler: Array, lod: int) -> int:
 	var pts := PackedVector3Array()
 	if host.has_meta("kisiler"):
 		pts = host.get_meta("kisiler")
-	if lod == 0:
+	if lod == 0 and kisiler.size() > PARCA_ESIK:
+		pts = _kur_parcali(host, kisiler, pts)
+	elif lod == 0:
 		var groups := {}
 		for k: Array in kisiler:
 			var t: String = k[2]
@@ -131,6 +133,70 @@ static func _ekle(m: ArrayMesh, xf: Transform3D, col: Color) -> Array:
 	return [xf * v, Transform3D(xf.basis, Vector3.ZERO) * n, c2]
 
 
+static func _mm(host: Node3D, mesh: Mesh, xfs: Array, cols: Array, nm: String) -> MultiMeshInstance3D:
+	var mi := IstOrdugahKit.mm(host, mesh, xfs, cols, nm, "", false)
+	if mi:
+		mi.material_override = _figmat()
+	return mi
+
+
+## ORDUGÂH-5: oyunun gerçek kişi modeli ~20 000 üçgen; kalabalık bir obada (ocak başları) yakın katmanın kişileri milyonlarca
+## üçgen ediyordu. Kişiler PARCA m'lik karolara bölünür: her karoda gerçek model (kameraya ≤ YAKIN m) ve hafif figür
+## (ötesi) görünürlük aralığıyla değişir. Kişi SAYISI aynı; yalnız uzaktakilerin çizimi hafif.
+const PARCA_ESIK := 40
+const PARCA := 50.0
+const YAKIN := 45.0
+
+static func _kur_parcali(host: Node3D, kisiler: Array, pts: PackedVector3Array) -> PackedVector3Array:
+	var karo := {}
+	for k: Array in kisiler:
+		var p: Vector3 = k[0]
+		var key := Vector2i(floori(p.x / PARCA), floori(p.z / PARCA))
+		if not karo.has(key):
+			karo[key] = []
+		(karo[key] as Array).append(k)
+		pts.append(p)
+	for key: Vector2i in karo:
+		var liste: Array = karo[key]
+		var cen := Vector3.ZERO
+		for k: Array in liste:
+			cen += k[0]
+		cen /= float(liste.size())
+		var node := Node3D.new()
+		node.name = "kisi_karo_%d_%d" % [key.x, key.y]
+		node.position = cen
+		host.add_child(node)
+		var groups := {}
+		var gx: Array = []
+		var gc: Array = []
+		var hc: Array = []
+		for k: Array in liste:
+			var t: String = k[2]
+			var rel: Vector3 = (k[0] as Vector3) - cen
+			if not groups.has(t):
+				groups[t] = []
+			(groups[t] as Array).append(Transform3D(Basis(Vector3.UP, float(k[1])), rel))
+			var sp: Array = TIP.get(t, TIP["azap"])
+			var oturan := String(sp[3]) in ["sit_ground", "doze", "write"]
+			gx.append(Transform3D(Basis(Vector3.UP, float(k[1])).scaled(Vector3(1, 0.58, 1) if oturan else Vector3.ONE), rel))
+			gc.append(sp[0])
+			hc.append(BASLIK.get(sp[1], BASLIK["azap"]))
+		for t: String in groups:
+			var sp2: Array = TIP.get(t, TIP["azap"])
+			var m: ArrayMesh = Crowd.civilian(sp2[0], sp2[1], sp2[3]) if sp2.size() > 4 else Crowd.ottoman(sp2[0], sp2[1], sp2[2], sp2[3])
+			var mi := Scenery.scatter(node, m, groups[t], [], Crowd.material())
+			mi.name = "kisi_" + t
+			mi.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
+			mi.set_meta("no_walk", true)
+			mi.visibility_range_end = YAKIN
+			mi.visibility_range_end_margin = 3.0
+		for f in [_mm(node, figur("govde"), gx, gc, "figur_govde"), _mm(node, figur("bas_baslik"), gx, hc, "figur_baslik")]:
+			if f:
+				(f as MultiMeshInstance3D).visibility_range_begin = YAKIN
+				(f as MultiMeshInstance3D).visibility_range_begin_margin = 3.0
+	return pts
+
+
 static var _fmat: StandardMaterial3D
 
 static func _figmat() -> StandardMaterial3D:
@@ -153,9 +219,9 @@ static func figur(kind: String) -> ArrayMesh:
 	var B := IstOrdugahKit.Bld
 	match kind:
 		"govde":
-			b.cyl(B.xf(Vector3(0, 0.55, 0)), 0.26, 1.1, Color(0.92, 0.92, 0.92), 6, 0.2)        # dolama (etek)
-			b.cyl(B.xf(Vector3(0, 1.22, 0)), 0.2, 0.36, Color.WHITE, 6, 0.17)                    # göğüs
-			b.cyl(B.xf(Vector3(0, 1.0, 0)), 0.215, 0.07, Color(0.55, 0.5, 0.42), 6)              # kuşak
+			b.cyl(B.xf(Vector3(0, 0.55, 0)), 0.26, 1.1, Color(0.92, 0.92, 0.92), 5, 0.2, false)  # dolama (etek)  ORDUGÂH-5: 5 kenar, kapaksız
+			b.cyl(B.xf(Vector3(0, 1.22, 0)), 0.2, 0.36, Color.WHITE, 5, 0.17)                    # göğüs
+			b.cyl(B.xf(Vector3(0, 1.0, 0)), 0.215, 0.07, Color(0.55, 0.5, 0.42), 5, -1.0, false)  # kuşak
 			b.box(Vector3(-0.24, 1.1, 0.04), Vector3(0.09, 0.5, 0.1), Color(0.88, 0.88, 0.88), 0.0, Vector3(0, 0, 8))
 			b.box(Vector3(0.24, 1.1, 0.04), Vector3(0.09, 0.5, 0.1), Color(0.88, 0.88, 0.88), 0.0, Vector3(0, 0, -8))
 			b.box(Vector3(0, 0.04, 0.04), Vector3(0.34, 0.08, 0.24), Color(0.3, 0.24, 0.2))        # çizme
