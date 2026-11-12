@@ -1,0 +1,11 @@
+sonra 1 rc=0 S03=0 vis=0 AUTOTEST PASS
+sonra 2 rc=0 S03=0 vis=0 AUTOTEST PASS
+sonra 3 rc=0 S03=0 vis=0 AUTOTEST PASS
+sonra 4 rc=0 S03=0 vis=0 AUTOTEST PASS
+sonra 5 rc=0 S03=0 vis=0 AUTOTEST PASS
+sonra 6 rc=0 S03=0 vis=0 AUTOTEST PASS
+sonra 7 rc=0 S03=0 vis=0 AUTOTEST PASS
+sonra 8 rc=0 S03=0 vis=0 AUTOTEST PASS
+sonra 9 rc=0 S03=0 vis=0 AUTOTEST PASS
+sonra 10 rc=0 S03=0 vis=0 AUTOTEST PASS
+ALLDONE

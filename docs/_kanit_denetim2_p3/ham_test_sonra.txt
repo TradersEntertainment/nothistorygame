@@ -1,0 +1,76 @@
+== SONRA 29_
+rc=0
+AUTOTEST PASS chapter=29 variant= outcome=29.1 cut=6/6 boarders=0 fires=0 duel=true
+== SONRA 29_lose
+rc=0
+AUTOTEST PASS chapter=29 variant=lose outcome=29.2 cut=0/6 boarders=6 fires=3 duel=false
+== SONRA 29o_
+rc=0
+AUTOTEST PASS chapter=29o variant= outcome=29O.1 hooks=4/5 gun=4/4
+== SONRA 29o_lose
+rc=0
+AUTOTEST PASS chapter=29o variant=lose outcome=29O.2 hooks=0/0 gun=4/4
+== SONRA 33o_
+rc=0
+AUTOTEST PASS chapter=33o variant= outcome=33O.1 stones=4 hits=0 falls=0 water=0 hidden=true gift=refuse warn=ok big=true
+== SONRA 33o_wide
+rc=0
+AUTOTEST PASS chapter=33o variant=wide outcome=33O.2 stones=4 hits=0 falls=0 water=0 hidden=false gift=refuse warn=hit big=false
+== SONRA 33o_fall
+rc=0
+AUTOTEST PASS chapter=33o variant=fall outcome=33O.1 stones=4 hits=1 falls=2 water=1 hidden=true gift=refuse warn=ok big=true
+== SONRA 38o_
+rc=0
+AUTOTEST PASS chapter=38o variant= outcome=38O.1 oars=10 arrows=0 forks=3/3 fire=true pulled=true oil=false snaps=0 splashes=0 explored=15.7 helper=false slips=0
+== SONRA 38o_lose
+rc=0
+AUTOTEST PASS chapter=38o variant=lose outcome=38O.2 oars=11 arrows=0 forks=0/3 fire=false pulled=false oil=true snaps=0 splashes=4 explored=15.7 helper=false slips=0
+== SONRA 38o_hooks_ok
+rc=0
+AUTOTEST PASS chapter=38o variant=hooks_ok outcome=38O.1 oars=10 arrows=0 forks=3/3 fire=true pulled=true oil=false snaps=0 splashes=0 explored=15.3 helper=true slips=0
+== SONRA 38o_hooks_bad
+rc=0
+AUTOTEST PASS chapter=38o variant=hooks_bad outcome=38O.1 oars=11 arrows=0 forks=3/3 fire=true pulled=true oil=false snaps=0 splashes=0 explored=15.3 helper=false slips=0
+== SONRA 28o_
+rc=0
+AUTOTEST PASS chapter=28o variant= outcome=28O.1 stakes=4 slips=0 hit=true master=false roller_every=4.0 rollers=2
+== SONRA 28o_lose
+rc=0
+AUTOTEST PASS chapter=28o variant=lose outcome=28O.2 stakes=4 slips=1 hit=true master=false roller_every=4.0 rollers=2
+== SONRA 28o_edirne
+rc=0
+AUTOTEST PASS chapter=28o variant=edirne outcome=28O.1 stakes=4 slips=0 hit=true master=true roller_every=3.0 rollers=3
+== SONRA 28o_edirne_ok
+rc=0
+AUTOTEST PASS chapter=28o variant=edirne_ok outcome=28O.1 stakes=4 slips=0 hit=true master=false roller_every=6.0 rollers=1
+== SONRA 34o_
+rc=0
+AUTOTEST PASS chapter=34o variant= outcome=34O.1 nicks=0 slips=0 calls=8/8 stopped=1 crowd=6 sparks=0 blast=false jam=false hit=true
+== SONRA 34o_bad
+rc=0
+AUTOTEST PASS chapter=34o variant=bad outcome=34O.2 nicks=3 slips=1 calls=5/8 stopped=0 crowd=6 sparks=1 blast=false jam=true hit=false
+== SONRA 19_
+rc=0
+AUTOTEST PASS chapter=19 variant= outcome=19.1 suspicion=0 tezkire=false saved=false grain=0
+== SONRA 19_flee
+rc=0
+AUTOTEST PASS chapter=19 variant=flee outcome=19.2 suspicion=0 tezkire=false saved=false grain=0
+== SONRA 19_tezkire
+rc=0
+AUTOTEST PASS chapter=19 variant=tezkire outcome=19.1 suspicion=0 tezkire=true saved=false grain=0
+== SONRA 19_saved
+rc=0
+AUTOTEST PASS chapter=19 variant=saved outcome=19.1 suspicion=0 tezkire=false saved=true grain=0
+== SONRA 19_ship_ok
+rc=0
+AUTOTEST PASS chapter=19 variant=ship_ok outcome=19.1 suspicion=0 tezkire=false saved=false grain=1
+== SONRA 19_ship_bad
+rc=0
+AUTOTEST PASS chapter=19 variant=ship_bad outcome=19.1 suspicion=0 tezkire=false saved=false grain=-1
+== SONRA 19_ship_ok_flee
+rc=0
+AUTOTEST PASS chapter=19 variant=ship_ok_flee outcome=19.2 suspicion=0 tezkire=false saved=false grain=1
+== SONRA 19_captive18
+rc=0
+AUTOTEST PASS chapter=19 variant=captive18 outcome=19.1 suspicion=0 tezkire=false saved=false grain=0
+ALLDONE
