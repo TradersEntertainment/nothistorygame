@@ -1299,3 +1299,21 @@ DST_WARN_O_3,SPK_JANISSARY,yakin_yuksek,5-18,"street_eye.gd:678 _warn: nöbetçi
 DST_WARN_G_1,SPK_GENOESE,yakin_yuksek,5-18,"street_eye.gd:678 _warn: nöbetçi 8 m içinde ya da görmüş en çok 18 m, işaret edip uyarır","uyarı/emir; mesafe 8 m üstü olabilir, sahnede yerini bilmek gerek"
 DST_WHISPER_B_1,SPK_WOMAN_BYZ,fisilti,1.5,"street_eye.gd:610 c[""whisper""] -> DST_WHISPER_*; yanındakine fısıldar (<2,4 m, street_eye.gd:550)",komşuya fısıltı
 DST_WHISPER_B_2,SPK_TOWNSMAN,fisilti,1.5,"street_eye.gd:610 c[""whisper""] -> DST_WHISPER_*; yanındakine fısıldar (<2,4 m, street_eye.gd:550)",komşuya fısıltı
+DST_WHISPER_O_1,SPK_SOLDIER,fisilti,1.5,"street_eye.gd:610 c[""whisper""] -> DST_WHISPER_*; yanındakine fısıldar (<2,4 m, street_eye.gd:550)",komşuya fısıltı
+DST_WHISPER_O_2,SPK_AZAP,fisilti,1.5,"street_eye.gd:610 c[""whisper""] -> DST_WHISPER_*; yanındakine fısıldar (<2,4 m, street_eye.gd:550)",komşuya fısıltı
+DST_CHILD_COPY_1,SPK_CHILD_BYZ,yakin_yuksek,3-8,street_eye.gd:609 CHILD_COPY çocuk taklidi (zıplama/dönme/telefon),çocuk sevinçle bağırır (ünlem)
+DST_CHILD_COPY_2,SPK_CHILD_BYZ,yakin_yuksek,3-8,street_eye.gd:609 CHILD_COPY çocuk taklidi (zıplama/dönme/telefon),çocuk sevinçle bağırır (ünlem)
+DST_CHILD_COPY_3,SPK_CHILD_BYZ,yakin_yuksek,3-8,street_eye.gd:609 CHILD_COPY çocuk taklidi (zıplama/dönme/telefon),çocuk sevinçle bağırır (ünlem)
+DST_T_REPLY_1,SPK_TOLGA,yakin,2,side_events.gd:519 street_talk: Tolga sokaktaki kişiye kısa cevap (hud.bark SPK_TOLGA),"sokak sohbeti, TALK_R 4 m"
+DST_T_REPLY_2,SPK_TOLGA,yakin,2,side_events.gd:519 street_talk: Tolga sokaktaki kişiye kısa cevap (hud.bark SPK_TOLGA),"sokak sohbeti, TALK_R 4 m"
+DST_T_REPLY_3,SPK_TOLGA,yakin,2,side_events.gd:519 street_talk: Tolga sokaktaki kişiye kısa cevap (hud.bark SPK_TOLGA),"sokak sohbeti, TALK_R 4 m"
+DST_T_REPLY_4,SPK_TOLGA,yakin,2,side_events.gd:519 street_talk: Tolga sokaktaki kişiye kısa cevap (hud.bark SPK_TOLGA),"sokak sohbeti, TALK_R 4 m"
+DST_T_REPLY_5,SPK_TOLGA,yakin,2,side_events.gd:519 street_talk: Tolga sokaktaki kişiye kısa cevap (hud.bark SPK_TOLGA),"sokak sohbeti, TALK_R 4 m"
+DST_T_REPLY_6,SPK_TOLGA,yakin,2,side_events.gd:519 street_talk: Tolga sokaktaki kişiye kısa cevap (hud.bark SPK_TOLGA),"sokak sohbeti, TALK_R 4 m"
+DST_T_REPLY_7,SPK_TOLGA,yakin,2,side_events.gd:519 street_talk: Tolga sokaktaki kişiye kısa cevap (hud.bark SPK_TOLGA),"sokak sohbeti, TALK_R 4 m"
+DST_T_REPLY_8,SPK_TOLGA,yakin,2,side_events.gd:519 street_talk: Tolga sokaktaki kişiye kısa cevap (hud.bark SPK_TOLGA),"sokak sohbeti, TALK_R 4 m"
+DST_T_ODD_1,SPK_TOLGA,ic_ses,,street_eye.gd:721 _tolga_odd/_later_tolga: Tolga kendi kendine laf eder,herkes bakınca Tolga mırıldanır
+DST_T_ODD_2,SPK_TOLGA,ic_ses,,street_eye.gd:721 _tolga_odd/_later_tolga: Tolga kendi kendine laf eder,herkes bakınca Tolga mırıldanır
+DST_T_ODD_3,SPK_TOLGA,ic_ses,,street_eye.gd:721 _tolga_odd/_later_tolga: Tolga kendi kendine laf eder,herkes bakınca Tolga mırıldanır
+DST_T_ODD_4,SPK_TOLGA,ic_ses,,street_eye.gd:721 _tolga_odd/_later_tolga: Tolga kendi kendine laf eder,herkes bakınca Tolga mırıldanır
+DST_T_ODD_5,SPK_TOLGA,ic_ses,,street_eye.gd:721 _tolga_odd/_later_tolga: Tolga kendi kendine laf eder,herkes bakınca Tolga mırıldanır
