@@ -18,7 +18,7 @@ static func build(h: Node3D, k: float, lod: int, out: Dictionary) -> void:
 	var xs := -E * 0.5                          # iç merdiven x'i
 	var n := ceili(Hw / 0.3)
 	var sb := Vector3(xs, 0, t * 0.5 + n * 0.36)
-	out["climbs"].append([Vector3(xs, 0, sb.z + 0.5), Vector3(xs, Hw, t * 0.5), "basamak"])
+	out["climbs"].append([Vector3(xs, 0, sb.z + 0.5), Vector3(xs, Hw, t * 0.5 + 0.18), "basamak"])
 	out["perches"].append(Vector3(-E, Hw + tw * 0.0 + 1.15, -t * 0.5 + 0.25))
 	out["perches"].append(Vector3(E, Hw + 1.15, -t * 0.5 + 0.25))
 	if lod >= 3:
@@ -65,6 +65,23 @@ static func build(h: Node3D, k: float, lod: int, out: Dictionary) -> void:
 		# ok yarığı
 		O.vis(h, Vector3(0.25, 1.1, 0.2), Vector3(x, Hw * 0.55, -tw * 0.25 - (tw + t * 0.5) * 0.5 - 0.05), O.DARK)
 		Flame.add(h, Vector3(x, Hw + 1.6, -tw * 0.25 - (tw + t * 0.5) * 0.5 + 0.7), 0.3, 0.5)
+	# kapı burçlarının dış köşelerinde taş köşe kuleciği (bartizan) ve konik külah
+	for sx2: float in [-1.0, 1.0]:
+		var bx: float = sx2 * (gate * 0.5 + tw - 1.0)
+		var bzz := -tw * 0.25 - (tw + t * 0.5) * 0.5 + 0.9
+		O.cyl(h, 1.0, 3.7, Vector3(bx, Hw, bzz), O.STONE, "ashlar", 10)
+		O.cyl(h, 1.35, 1.8, Vector3(bx, Hw + 3.7, bzz), O.TILE_D, "tiles", 10, 0.1, false)
+		O.vis(h, Vector3(0.3, 0.9, 0.2), Vector3(bx, Hw + 2.0, bzz - 1.0), O.DARK)
+	# ok yarıkları, kuşak ve payandalar (dış yüz)
+	var slits: Array = []
+	for i in int(2 * E / 4.0):
+		slits.append(Transform3D(Basis(), Vector3(-E + 2.0 + i * 4.0, Hw * 0.58, -t * 0.5 - 0.02)))
+	O.mm(h, Vector3(0.2, 1.0, 0.2), slits, O.DARK)
+	O.vis(h, Vector3(2 * E, 0.35, t + 0.3), Vector3(0, Hw - 0.8, 0), O.LIGHT, "ashlar")
+	for i in int(2 * E / 9.0):
+		var px := -E + 4.5 + i * 9.0
+		if absf(px) > gate * 0.5 + tw + 0.5:
+			O.sol(h, Vector3(1.0, Hw * 0.8, 0.5), Vector3(px, 0, -t * 0.5 - 0.25), O.STONE, "ashlar")
 	# bayrak (sağ kapı burcu)
 	O.flag(h, Vector3(gate * 0.5 + tw * 0.5 - 0.8, Hw, -tw * 0.25 + 0.8), 4.5, 2.0, 1.3)
 	# --- merdiven (iç yüz)
@@ -78,8 +95,8 @@ static func build(h: Node3D, k: float, lod: int, out: Dictionary) -> void:
 		var cx := s * (x0 + ln * 0.5)
 		O.sol(h, Vector3(ln, dep, 2.0), Vector3(cx, 0, bz - 1.0), O.STONE_D, "rubble")
 		var rz := bz - 2.0
-		O.ramp(h, Vector3(cx, 0, rz - 3.2 * dep), Vector3(0, 0, 1), 3.2 * dep, dep, ln, O.GREEN_D.lerp(O.STONE_D, 0.5))
-		O.ramp(h, Vector3(cx, 0, bz + 3.2 * dep), Vector3(0, 0, -1), 3.2 * dep, dep, ln, O.GREEN_D.lerp(O.STONE_D, 0.5))
+		O.ramp(h, Vector3(cx, 0, rz - 3.2 * dep), Vector3(0, 0, 1), 3.2 * dep, dep, ln, Color("7d6e4c"))
+		O.ramp(h, Vector3(cx, 0, bz + 3.2 * dep), Vector3(0, 0, -1), 3.2 * dep, dep, ln, Color("7d6e4c"))
 	# kapı önünde ahşap köprü/ geçit (zemin düzeyinde yürüme tahtası)
 	O.vis(h, Vector3(gl * 2 - 0.2, 0.05, wm + 1.0), Vector3(0, 0.0, -(t * 0.5 + wm * 0.5)), O.WOOD, "wood")
 	# --- tepeye çıkılamayan dış yüz için düz taş; yan tarafta sur dibinde moloz

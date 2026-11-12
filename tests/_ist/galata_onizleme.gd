@@ -154,12 +154,12 @@ func _audit(id: String, bb: AABB, t0: Array, t1: Array, t2: Array) -> void:
 	for iz in nz:
 		var row: Array = []
 		for ix in nx:
-			q.position = Vector3(x0 + ix * 0.5, 0.9, z0 + iz * 0.5)
-			var hit := space.intersect_point(q, 1)
 			var solid := false
-			for r in hit:
-				if r["collider"] != _floor:
-					solid = true
+			for off in [Vector2(0, 0), Vector2(0.15, 0), Vector2(-0.15, 0), Vector2(0, 0.15), Vector2(0, -0.15)]:
+				q.position = Vector3(x0 + ix * 0.5 + 0.25 + off.x, 0.9, z0 + iz * 0.5 + 0.25 + off.y)
+				for r in space.intersect_point(q, 2):
+					if r["collider"] != _floor:
+						solid = true
 			row.append(solid)
 		grid.append(row)
 	var dar := 0
@@ -170,6 +170,8 @@ func _audit(id: String, bb: AABB, t0: Array, t1: Array, t2: Array) -> void:
 			if grid[iz][ix]:
 				if seen and run >= 1 and run <= 2:
 					dar += 1
+					if dar <= 6:
+						print("  DAR id=%s x=%.1f z=%.1f (x yönü, %d hücre)" % [id, x0 + (ix - run) * 0.5, z0 + iz * 0.5, run])
 				run = 0
 				seen = true
 			elif seen:
@@ -181,6 +183,8 @@ func _audit(id: String, bb: AABB, t0: Array, t1: Array, t2: Array) -> void:
 			if grid[iz][ix]:
 				if seen and run >= 1 and run <= 2:
 					dar += 1
+					if dar <= 12:
+						print("  DAR id=%s x=%.1f z=%.1f (z yönü, %d hücre)" % [id, x0 + ix * 0.5, z0 + (iz - run) * 0.5, run])
 				run = 0
 				seen = true
 			elif seen:
@@ -250,9 +254,12 @@ func _audit(id: String, bb: AABB, t0: Array, t1: Array, t2: Array) -> void:
 			var r := space.intersect_ray(rq)
 			var y: float = r["position"].y if not r.is_empty() else 0.0
 			if y - prev > 0.43:
+				if good:
+					print("  CATI_SORUN id=%s adim=%d xz=(%.2f,%.2f) y=%.2f onceki=%.2f" % [id, s, p.x, p.y, y, prev])
 				good = false
 			prev = y
 		if absf(prev - b.y) > 0.5:
+			print("  CATI_SORUN id=%s uc y=%.2f beklenen=%.2f" % [id, prev, b.y])
 			good = false
 		if good:
 			ok += 1

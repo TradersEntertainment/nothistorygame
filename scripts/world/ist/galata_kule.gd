@@ -109,9 +109,10 @@ static func build(h: Node3D, k: float, lod: int, out: Dictionary) -> void:
 		Flame.add(h, p + Vector3(0, 1.2, 0), 0.3, 0.5)
 	O.flag(h, Vector3(sin(0.8) * (Rg - 0.6), H1, cos(0.8) * (Rg - 0.6)), 5.0, 2.2, 1.4)
 	# ek yapı: taş ambar sundurması (düz katı çatı, korkuluk), merdiven; sandık yığını öbür yanda
-	O.sol(h, Vector3(4.4, an_h, 6.0), Vector3(ax, 0, 0.3), O.PLASTER3, "plaster")
-	O.vis(h, Vector3(4.6, 0.3, 6.2), Vector3(ax, an_h, 0.3), O.STONE_D, "ashlar")
+	var a0 := R * 0.4
+	var a1 := ax + 2.2
+	O.sol(h, Vector3(a1 - a0, an_h, 6.0), Vector3((a0 + a1) * 0.5, 0, 0.3), O.PLASTER3, "plaster")
+	O.vis(h, Vector3(a1 - a0 + 0.2, 0.3, 6.2), Vector3((a0 + a1) * 0.5, an_h, 0.3), O.STONE_D, "ashlar")
 	O.vis(h, Vector3(1.3, 2.2, 0.15), Vector3(ax, 0.0, 3.35), O.WOOD_D, "wood")
 	O.stair(h, stair_base, Vector3(0, 0, -1), an_h, 1.5, O.STONE, "ashlar")
-	O.crates(h, Vector3(-ax, 0, 2.0), Vector3(0, 0, -1), 6)
-	O.cargo(h, Vector3(-ax - 2.0, 0, 3.5), 11)
+	O.cargo(h, Vector3(-ax - 3.0, 0, 4.5), 11)

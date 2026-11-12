@@ -5,7 +5,7 @@ extends RefCounted
 
 const STONE := Color("b9aa8c")
 const STONE_D := Color("8f8470")
-const LIGHT := Color("d8ccb0")
+const LIGHT := Color("b5a784")
 const PLASTER := Color("d9c7a4")
 const PLASTER2 := Color("cfa982")
 const PLASTER3 := Color("c9b48f")
@@ -19,7 +19,7 @@ const RED := Color("b32b2b")
 const WHITE := Color("f2eee4")
 const GREEN := Color("5f7a3c")
 const GREEN_D := Color("3f5a2a")
-const SEA := Color("3f7f93")
+const SEA := Color("2c5a6c")
 
 static var col := true
 
@@ -104,7 +104,8 @@ static func gable(h: Node3D, w: float, l: float, base: Vector3, rise: float, c: 
 	Props.box(g, Vector3(0.5, 0.3, l + 0.9), Vector3(0, rise + 0.1, 0), TILE_D)
 	# alın üçgenleri (iki uçta)
 	for e: float in [-1.0, 1.0]:
-		Props.prism(g, Vector3(w, rise, 0.3), Vector3(0, rise * 0.5 - 0.02, e * (l * 0.5 + 0.0)), gable_c, Vector3(0, 0, 0))
+		var pr := Props.prism(g, Vector3(w, rise, 0.3), Vector3(0, rise * 0.5 - 0.02, e * (l * 0.5 + 0.0)), gable_c, Vector3(0, 0, 0))
+		Props.set_pattern(pr, gable_c, "ashlar" if gable_c == STONE else "plaster")
 
 
 ## Merdiven: base'den dir yönünde, rise kadar yükselir (basamak ≤ 0,3 m). Dolu bloklu basamaklar.
@@ -175,16 +176,17 @@ static func flag(h: Node3D, base: Vector3, pole_h := 4.0, w := 1.8, fh := 1.2) -
 	Props.box(h, Vector3(0.05, 0.22, w), top + Vector3(0, 0, w * 0.5 + 0.05), RED)
 
 
-## Fıçı ve sandık yığını (süs + dayanak).
-static func cargo(h: Node3D, base: Vector3, seed: int) -> void:
-	var rng := RandomNumberGenerator.new()
-	rng.seed = seed
-	for i in 3:
-		var p := base + Vector3(rng.randf_range(-0.9, 0.9), 0, rng.randf_range(-0.9, 0.9))
-		if i % 2 == 0:
-			sol(h, Vector3(0.8, 0.8, 0.8), p, WOOD, "wood", rng.randf_range(0, 90))
-		else:
-			cyl(h, 0.38, 0.9, p, WOOD_D, "wood", 8, 0.33)
+## Fıçı ve sandık yığını (süs + dayanak): parçalar birbirine değer, aralarında dar boşluk kalmaz.
+static func cargo(h: Node3D, base: Vector3, _seed: int) -> void:
+	var yaw := float(_seed % 4) * 90.0
+	var g := Node3D.new()
+	g.position = base
+	g.rotation_degrees.y = yaw
+	h.add_child(g)
+	sol(g, Vector3(0.8, 0.8, 0.8), Vector3(-0.45, 0, 0), WOOD, "wood")
+	sol(g, Vector3(0.6, 0.6, 0.6), Vector3(-0.45, 0.8, 0), WOOD_D, "wood")
+	cyl(g, 0.38, 0.9, Vector3(0.33, 0, 0), WOOD_D, "wood", 8, 0.33)
+	cyl(g, 0.38, 0.9, Vector3(0.33, 0, 0.76), WOOD_D, "wood", 8, 0.33)
 
 
 ## Katı rampa: base (alçak uç, zemin) → dir yönünde run kadar ilerleyip rise kadar yükselir.
