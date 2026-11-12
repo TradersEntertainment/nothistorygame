@@ -487,7 +487,7 @@ func _row(p0: Vector2, d: Vector2, nrm: Vector2, w: float, rowlen: float, tur: S
 					break
 		if ok:
 			# 1,4 m'lik halka: başka ev yok (geçit ya bitişik ya ≥ 1,4)
-			var ring := _rect_cells(c, d, nrm, total * 0.5 + 2.4, dep * 0.5 + 2.4)
+			var ring := _rect_cells(c, d, nrm, total * 0.5 + 2.9, dep * 0.5 + 2.9)
 			for k in ring:
 				if k >= 0 and occ[k] == 2:
 					ok = false
