@@ -460,7 +460,7 @@ static func bake(list: Array, top: Node3D, xf: Transform3D, parent: Node3D, node
 				var rc := Color(0.7, 0.36, 0.26)
 				if m0:
 					rc = m0.albedo_color * _avg(m0.albedo_texture)
-				rc = rc.srgb_to_linear()
+				rc = rc.srgb_to_linear().lerp(rc, 0.5)       # tam doğrusal koyu çıkıyor (dokunun aydınlık karoları ortalamayı düşürür): yarı yolda
 				if not groups.has("flat"):
 					var fst := SurfaceTool.new()
 					fst.begin(Mesh.PRIMITIVE_TRIANGLES)
