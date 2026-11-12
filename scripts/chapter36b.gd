@@ -211,6 +211,8 @@ func _run() -> void:
 	var o42 := Siege.outcome(42)
 	player.face(leon.global_position + Vector3(0, 1.2, 0))      # konuşan Leon kadrajda (savunucular arada olmasın)
 	await hud.say("SPK_LEON","D36_L_01_T1" if o42 == "42.1" else ("D36_L_01_T2" if o42 == "42.2" else "D36_L_01"))
+	if int(GameState.flags.get("firar_42b", 0)) > 0:      # talimden kaçtıysa (scripts/level/kural.gd)
+		await hud.say("SPK_LEON", "KRL_36B_FIRAR")
 	# Çıkış: adamlar köprüden geçip siperin önüne yayılır; Tolga ardından
 	phase = "cross"
 	walls.dawn_to(0.12, 60.0)

@@ -27,6 +27,8 @@ var _sailing := false
 var _talked: Dictionary = {}
 
 
+var kural: Node                 # kuralı çiğneyen oyuncu: sokakta tekme (scripts/level/kural.gd)
+
 func _ready() -> void:
 	GameState.snapshot(10)
 	_apply_autotest_setup()
@@ -34,6 +36,7 @@ func _ready() -> void:
 	add_child(hud)
 	player = Player.new()
 	add_child(player)
+	kural = preload("res://scripts/level/kural.gd").hits(self, hud, player)      # halka/askere tekme (docs/SENARYO_KURAL_CIGNEME.md)
 	player.interacted.connect(_on_interact)
 	player.focus_changed.connect(_on_focus)
 	player.frozen = true
@@ -106,6 +109,8 @@ func _run() -> void:
 	player.enable_climb([Rect2(-48.0, -76.0, 84.0, 84.0)])
 	player.frozen = false
 	_update_objective()
+	if GameState.autotest:
+		await kural.bot_window()      # yalnız krl_* varyantlarında bir şey yapar
 	if GameState.autotest:
 		await _auto()
 	while _outcome == "":
@@ -430,12 +435,12 @@ func _capture_mouse() -> void:
 
 func _autotest_report() -> void:
 	var v := GameState.autotest_variant
-	var expected: String = {"": "10G.1", "fatih": "10G.2", "late": "10G.2", "next": "10G.1"}[v]
-	var ok: bool = _outcome == expected and GameState.chapter_outcomes.get(10, "") == _outcome
+	var expected: String = {"": "10G.1", "fatih": "10G.2", "late": "10G.2", "next": "10G.1", "krl_hit": "10G.1"}[v]
+	var ok: bool = _outcome == expected and GameState.chapter_outcomes.get(10, "") == _outcome and kural.test_ok()
 	if not ok:
 		printerr("AUTOTEST: beklenen %s, gelen %s" % [expected, _outcome])
 	print("AUTOTEST %s chapter=10g variant=%s outcome=%s step=%d merak=%d" % ["PASS" if ok else "FAIL", v, _outcome, _step,
-		int(GameState.flags.get("merak", 0))])
+		int(GameState.flags.get("merak", 0))] + (" " + kural.test_line() if GameState.autotest_variant.begins_with("krl_") else ""))
 	get_tree().quit(0 if ok else 1)
 
 

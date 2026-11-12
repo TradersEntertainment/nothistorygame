@@ -20,6 +20,9 @@ const NEW := {
 	"ACH_HORSE_SEA": {"horse_sea": 1},
 	"ACH_FIRST_SHOT": {"first_shot": 1},
 	"ACH_BLACHERNAE": {"blachernae_held": 1},
+	"ACH_FIRAR": {"firar": 3},
+	"ACH_KADI": {"tutuklama": 1},
+	"ACH_TARIHE_TEKME": {"tarihe_tekme": 1},
 }
 
 

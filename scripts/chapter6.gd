@@ -63,6 +63,8 @@ var _lured := false
 var _chase_left := 0.0
 
 
+var kural: Node                 # kuralı çiğneyen oyuncu: sokakta tekme (scripts/level/kural.gd)
+
 func _ready() -> void:
 	GameState.snapshot(6)
 	if GameState.autotest and GameState.autotest_variant == "byzgive":
@@ -72,6 +74,7 @@ func _ready() -> void:
 	add_child(hud)
 	player = Player.new()
 	add_child(player)
+	kural = preload("res://scripts/level/kural.gd").hits(self, hud, player)      # halka/askere tekme (docs/SENARYO_KURAL_CIGNEME.md)
 	player.interacted.connect(_on_interact)
 	player.item_handler = _on_item_used
 	player.focus_changed.connect(_on_focus)
@@ -165,6 +168,8 @@ func _run_6a() -> void:
 	Lore.scatter(self, branch)
 	player.frozen = false
 	_update_objective()
+	if GameState.autotest:
+		await kural.bot_window()      # yalnız krl_* varyantlarında bir şey yapar
 	if GameState.autotest:
 		await _auto_6a()
 	while _outcome == "":
@@ -1645,7 +1650,8 @@ func _capture_mouse() -> void:
 
 func _autotest_report() -> void:
 	var expected: String = {"": "6a.1", "b": "6a.2", "c": "6a.3", "y": "6a.4", "letter": "6a.1",
-		"byz": "6b.1", "byzmistake": "6b.2", "byzfail": "6b.3", "next": "6a.1", "byzclimb": "6b.1", "byzgive": "6b.1"}[GameState.autotest_variant]
+		"byz": "6b.1", "byzmistake": "6b.2", "byzfail": "6b.3", "next": "6a.1", "byzclimb": "6b.1", "byzgive": "6b.1", "krl_hit": "6a.1",
+		"krl_soldier": "6a.1"}[GameState.autotest_variant]
 	var ok := _outcome == expected
 	# Bizans'ta bırakılanlar: kitap ve çakmak Giustiniani'de, Misafir İzni cepte (6b.3'te izin martıyla gider)
 	if GameState.autotest_variant == "byzgive" and not (GameState.given_to("book") == "giustiniani"
@@ -1664,10 +1670,10 @@ func _autotest_report() -> void:
 		ok = false
 	if not ok:
 		printerr("AUTOTEST: beklenen sonuç %s, gelen %s" % [expected, _outcome])
-	if GameState.chapter_outcomes.get(6, "") != _outcome:
+	if GameState.chapter_outcomes.get(6, "") != _outcome or not kural.test_ok():
 		ok = false
 	print("AUTOTEST %s chapter=6 variant=%s branch=%s outcome=%s paradox=%d mistakes=%d telsiz=%d" % [
-		"PASS" if ok else "FAIL", GameState.autotest_variant, branch, _outcome, GameState.paradox, _mistakes, GameState.telsiz_bag])
+		"PASS" if ok else "FAIL", GameState.autotest_variant, branch, _outcome, GameState.paradox, _mistakes, GameState.telsiz_bag] + (" " + kural.test_line() if GameState.autotest_variant.begins_with("krl_") else ""))
 	get_tree().quit(0 if ok else 1)
 
 

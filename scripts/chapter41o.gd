@@ -15,7 +15,9 @@ extends Node3D
 ## Dallanma: Bölüm 37o (İlk Hücum) Turgut'un ilk sözü talimi hatırlar (41O.1 öne, 41O.2 arkasına alır).
 ##   37o'da Hızır huruçta yanında dövüşür ve sürüklenen yaralı odur (hizir_fell: çekiş aksarsa yetişemez); sonraki
 ##   çarpışmalarda sağsa unutulan tekmeyi/bitiriciyi hatırlatır (Mentor); Bölüm 15 İnsanların Akıbeti'nde yazılır.
-##   --autotest[=lose]   (varsayılan: 41O.1; lose: serbest talimde bot savunmasız durur)
+##   --autotest[=lose|kacak|kacak_iade|krl_hit]   (varsayılan: 41O.1; lose: serbest talimde bot savunmasız durur;
+##   kacak: merdivenden sonra meydandan kaçar, azap yakalar, Kadri'nin kazanı cezası; kacak_iade: kovalayanı atlatır,
+##   Büro iadesi; krl_hit: meydandaki azaba tekme, yakalanır ve kadı huzuru. Bkz. docs/SENARYO_KURAL_CIGNEME.md)
 
 const YARD_AT := Vector3(-72.0, 0.0, 134.0)
 const TURGUT_AT := Vector3(3.4, 0.0, 6.2)          # yerel: halkanın girişinin yanında
@@ -56,6 +58,8 @@ var _bag_falling := false
 var _water := ""                   # "" | "warn" | "pour"
 var _water_done := false
 var climbs := 0
+var kural: Node                    # kuralı çiğneyen oyuncu: talimden kaçmak, halka/askere tekme (scripts/level/kural.gd)
+var _sitter: Person                # balyada oturan azap: talimden kaçanın peşinden o koşar
 
 
 func _ready() -> void:
@@ -135,6 +139,8 @@ func _build() -> void:
 		s.global_position = yard.at(TrainingYard.RING + Vector3(-TrainingYard.RING_R - 1.6, 0.7, -1.0 + k * 1.0))
 		s.face_toward(yard.at(TrainingYard.RING))
 		s.set_activity("sit")
+		if k == 0:
+			_sitter = s
 	# İskelenin üstünde kum torbası ve su kabıyla bekleyen iki azap
 	# Kulenin üstündekiler talim çiftleri ve okçularla aynı kılıkta olmasın (aynı adam iki yerde görünüyordu)
 	bag_man = _top_man(BAG_AT, AZAPS[0].merged({"coat": Color("8a6a3a"), "hat": "bork"}, true))
@@ -152,6 +158,8 @@ func _build() -> void:
 	drill.partner = hizir
 	drill.partner_spk = "SPK_AZAP"
 	drill.kukla = kukla
+	kural = preload("res://scripts/level/kural.gd").area(self, hud, player, yard.at(Vector3(0, 0, -1.0)), 18.5, turgut,
+		"SPK_AZAPBASI", _sitter, "O")
 
 
 func _top_man(off: Vector3, look: Dictionary) -> Person:
@@ -189,6 +197,8 @@ func _run() -> void:
 	await drill.kicking()
 	await drill.finishing()
 	await _ladder_drill()
+	if GameState.autotest:
+		await kural.bot_window()      # yalnız kacak / kacak_iade / krl_* varyantlarında bir şey yapar
 	var won := await drill.spar(GameState.autotest_variant == "lose")
 	_outcome = "41O.1" if won else "41O.2"
 	await _after_spar(won)
@@ -484,13 +494,14 @@ func _autotest_report() -> void:
 	var s := drill.summary()
 	var ok: bool = _outcome == expected and not page.is_empty() and cam != null and cam.done
 	ok = ok and int(s["dir"]) >= 3 and int(s["blocks"]) >= 3 and bool(s["kick"]) and bool(s["kick_down"]) and int(s["finishers"]) >= 3
-	ok = ok and climbs >= 1 and _water_done
+	ok = ok and climbs >= 1 and _water_done and kural.test_ok()
 	if not ok:
 		printerr("AUTOTEST: beklenen %s, gelen %s (sayfa=%s foto=%s ders=%s tırmanış=%d su=%s)" % [expected, _outcome,
 			not page.is_empty(), cam != null and cam.done, s, climbs, _water_done])
 	print("AUTOTEST %s chapter=41 variant=%s outcome=%s dir=%d bumps=%d blocks=%d parries=%d kick=%s down=%s fins=%s spar=%d/%d bags=%d/%d water=%d" % [
 		"PASS" if ok else "FAIL", v, _outcome, int(s["dir"]), int(s["bumps"]), int(s["blocks"]), int(s["parries"]), s["kick"],
-		s["kick_down"], s["fin_kinds"], int(s["spar_hits"]), int(s["spar_taken"]), bag_hits, bags, water_hits])
+		s["kick_down"], s["fin_kinds"], int(s["spar_hits"]), int(s["spar_taken"]), bag_hits, bags, water_hits]
+		+ (" " + kural.test_line() if v.begins_with("kacak") or v.begins_with("krl_") else ""))
 	get_tree().quit(0 if ok else 1)
 
 

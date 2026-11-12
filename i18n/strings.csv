@@ -9754,3 +9754,97 @@ D_WIT_RIZ_1,"Müfettiş Bey, uçarken de iş güvenliği yönetmeliği geçerli.
 D_WIT_RIZ_2,Kaldırma Formu'nu ben verdim. Demek ki kaza benim zimmetime yazılır.,I issued the Lift Form. So any accident goes on my account.
 D_WIT_MUF_1,"Nihat Bey, tavan lambasına dikkat. Demirbaş kaydında.","Mr. Nihat, mind the ceiling lamp. It's on the inventory."
 D_WIT_MUF_2,"Uçmak serbest, ama koridorda değil.","Flying is permitted, but not in the corridor."
+KRL_TALIM_O_1,Kâtip! Meydan bu yanda; sen öbür yana gidiyorsun.,Clerk! The yard is this way. You're going the other way.
+KRL_TALIM_O_2,"Kalk bre! Getir şu kâtibi, kulağından tutup!","Up, you! Fetch me that clerk. By the ear!"
+KRL_TALIM_O_AGAIN,"Yine mi? Koş bre, bu sefer bırakma!","Again? Run, man, and don't let go this time!"
+KRL_TALIM_O_CATCH,"Yakaladım ağam! Bacakları uzun, nefesi kısa.","Got him, sir! Long legs, short breath."
+KRL_TALIM_O_PUN_1,Kaçmak da talimdir; lâkin dönüş yokuştur. Akşama kadar Kadri'nin kazanı seni bekler.,"Running is drill too, but the way back is uphill. Kadri's cauldron is waiting for you till sundown."
+KRL_TALIM_T_PUN_O,Kazan karıştırmak dövüş sanatı sayılıyor mu bari?,Does stirring a cauldron at least count as a martial art?
+KRL_TALIM_O_PUN_2,Sayılır. Kepçeyle. Şimdi meydana!,"It does. With a ladle. Now, back to the yard!"
+KRL_TALIM_O_BACK,Gelmişsin. Ben de seni bekliyordum; kazan da bekliyordu.,There you are. I was waiting for you. So was the cauldron.
+KRL_TALIM_B_1,Tercüman. Talim burada. Şehir bir yere kaçmıyor; sen de kaçma.,Interpreter. The drill is here. The city isn't going anywhere. Neither are you.
+KRL_TALIM_B_2,Getirin onu. Nazikçe; şimdilik.,Bring him back. Gently. For now.
+KRL_TALIM_B_AGAIN,İkinci kez. Bu sefer koşarak getirin.,"Twice now. This time, bring him at a run."
+KRL_TALIM_B_CATCH,"Kumandanım, kaçak burada. Direnmedi; yoruldu.","Commander, here's the runaway. He didn't resist. He ran out of breath."
+KRL_TALIM_B_PUN_1,Kaçan adam surda işe yaramaz. Taş taşıyan yarar. Akşama kadar taş.,"A man who runs is no use on the wall. A man who carries stones is. Stones, till sundown."
+KRL_TALIM_T_PUN_B,Bel fıtığı poliçede kapsam dışı ama... peki.,"Slipped discs aren't covered by the policy, but... fine."
+KRL_TALIM_B_PUN_2,Taşlar bitince kılıca dönersin. Sur bekler; Sultan beklemez.,"When the stones are done, back to the sword. The wall can wait. The Sultan won't."
+KRL_TALIM_B_BACK,"Kayboldun, kendini buldun. Güzel. Şimdi kılıç.","You got lost, and found yourself. Good. Now, the sword."
+KRL_IADE_H,"Evlât, nereye? Tarih kitabında bugün talimdesin. Sen dışarıdasın, kitap içeride.","Son, where are you off to? The history book has you at drill today. You're out here, the book's in there."
+KRL_IADE_N,Görev yerini terk. Büro sizi iade ediyor; ambalajı açılmış hâlde.,Abandoning your post. The Bureau is returning you. Packaging opened.
+KRL_IADE_T,İade mi? Kargo ücretini kim ödüyor?,Returned? Who pays the shipping?
+KRL_T_HIT_1,Pardon! Refleks. Sigortacı refleksi.,Sorry! Reflex. Insurance man's reflex.
+KRL_T_HIT_2,"Ayağım kendi kafasına göre takılıyor, ben karışmıyorum.",My foot has a mind of its own. I'm staying out of it.
+KRL_T_HIT_3,Hasar tespiti yapalım mı? Yapmayalım. Yürüyorum.,Shall we do a damage assessment? Let's not. I'm walking.
+KRL_TOWNB_HIT_1,Hey! Ne yaptın sen? Beni katır mı sandın?,Hey! What was that? Do I look like a mule?
+KRL_TOWNB_HIT_2,"Ayağını tut, yabancı! Kuşatma yetmiyor, bir de sen mi?","Mind your foot, stranger! The siege isn't enough, now you too?"
+KRL_TOWNB_CROWD,Deli var! Tekmeci deli! Kaçın!,A madman! A kicking madman! Run!
+KRL_TOWNB_BACK,Al sana! Bu da benden!,Take that! That one's from me!
+KRL_TOWNB_MARK_1,İşte o tekmeci. Kenara çekil.,That's the kicker. Step aside.
+KRL_TOWNB_MARK_2,"Çocuklar, içeri! Tekmeci geçiyor.","Children, inside! The kicker's coming."
+KRL_TOWNB_SHAME,"Utanmaz! Kadına, çocuğa ayak mı kaldırılır?",Shameless! You'd raise your foot to women and children?
+KRL_WORKER_HIT_1,"Bre! Ayağın mı kaydı, aklın mı?","Hey! Did your foot slip, or your mind?"
+KRL_WORKER_HIT_2,"Hey kâtip! Ben iş başındayım, sen tekme başında!","Hey, clerk! I'm at work, and you're at kicking!"
+KRL_WORKER_CROWD,Tutun şunu! Ayağı boş durmuyor!,Grab him! His foot won't keep still!
+KRL_WORKER_BACK,Al bre! Ordugâhta tekme böyle atılır!,Here! This is how we kick in the camp!
+KRL_WORKER_MARK_1,Kâtibin ayağı yine kaşınıyor mu?,Is the clerk's foot itching again?
+KRL_WORKER_MARK_2,Uzak dur; tekmeci kâtip bu.,Keep away. That's the kicking clerk.
+KRL_WORKER_SHAME,Utan be adam! Ordugâhta bile böylesi görülmedi.,Shame on you! Not even the camp has seen the like.
+KRL_GAL_HIT_1,Ehi! Bu tekmenin faturasını kime keseyim?,Ehi! Who do I send the bill for that kick?
+KRL_GAL_HIT_2,"Galata'da tekmenin de gümrüğü var, dostum!","In Galata even a kick pays customs, friend!"
+KRL_GAL_CROWD,Muhafız! Burada bir tekmeci var!,Guards! There's a kicker here!
+KRL_GAL_BACK,Hesap kapandı!,Account settled!
+KRL_GAL_MARK_1,Tekmeci geçiyor; keselerinizi tutun.,The kicker's passing. Hold on to your purses.
+KRL_GAL_SHAME,Rezalet! Cenova'da bunun cezası ağırdır.,Disgraceful! In Genoa that carries a heavy fine.
+KRL_BYZSOL_ARREST,Dur! İmparator'un kanunu adına!,Halt! In the name of the Emperor's law!
+KRL_JAN_ARREST,Dur bre! Subaşıya gidiyoruz!,Halt! We're off to the captain!
+KRL_GENMERC_ARREST,Fermo! Podestà seni görmek istiyor.,Fermo! The Podestà wants a word.
+KRL_BYZSOL_CATCH,"Ayağını indir, yabancı. Yoksa ben indiririm.","Put the foot down, stranger. Or I'll put it down for you."
+KRL_JAN_CATCH,Ayağını indir kâtip; yoksa ben indiririm.,"Put that foot down, clerk, or I'll put it down for you."
+KRL_OSMSOL_CATCH,Bre! Askere ayak kaldırılmaz!,Hey! You don't raise your foot to a soldier!
+KRL_AZAP_CATCH,"Talimde tekme kuklaya atılır, kâtip! Bana değil!","In drill you kick the dummy, clerk! Not me!"
+KRL_GENMERC_CATCH,Bu bacağın sigortası var mı? Yoksa yaptıralım.,"Is this leg insured? If not, we'll arrange it."
+KRL_ZINDAN_G,Bir gece burada kal. Sabaha ayaklarını tanırsın.,One night in here. By morning you'll know your own feet.
+KRL_ZINDAN_T,"Avukatımı istiyorum. Bin dört yüz elli üçte avukat yok, değil mi?","I want my lawyer. There are no lawyers in fourteen fifty-three, are there?"
+KRL_ZINDAN_N,Var. Ben. Ücretim formdur.,There is. Me. My fee is a form.
+KRL_KADI_J,"Kadı efendi hükmetti: kabahat ayaktadır, ayağa falaka. Lâkin kâtipsin; kırk dilekçe yazacaksın.","The kadi has ruled: the fault lies with the foot, so the foot gets the cane. But you're a clerk: forty petitions instead."
+KRL_KADI_T,Kırk mı? Ben dilekçeyi hep kopyala yapıştır yazarım...,Forty? I always copy-paste my petitions...
+KRL_KADI_N,Burada kopyala yapıştır sizsiniz. Yazın.,"Here, you are the copy-paste. Write."
+KRL_PODESTA_G,Ceza on altın. Ya da üç gün iskelede halat sarmak.,The fine is ten gold. Or three days coiling rope on the quay.
+KRL_PODESTA_T,Kartla olur mu? Temassız?,Can I pay by card? Contactless?
+KRL_PODESTA_G2,Temassız olan iskele. Halata dokunmadan sarabilirsen.,The contactless option is the quay. If you can coil rope without touching it.
+KRL_T_NOPE_1,Yok. Annem duysa beni Zamanatör'le kendisi geri yollar.,"No. If my mum heard, she'd send me back on the Zamanatör herself."
+KRL_T_NOPE_2,Ayak kalktı ama vicdan indirdi.,"The foot went up, but my conscience put it down."
+KRL_T_NOPE_3,Bugün ayaklarımı cebime koyuyorum.,Today my feet are going in my pocket.
+KRL_T_NOPE_PRIEST,"Tamam, tamam. Günah hanesine yazılmasın.","Okay, okay. Don't put that in the sins column."
+KRL_H_NOPE,"Evlât, ona ayak kaldırırsan ben de seni geri almam, haberin olsun.","Son, raise your foot to that one and I'm not bringing you back. Just so you know."
+KRL_WOMB_NOPE,Sen kimin oğlusun? Annen bunu görse!,Whose son are you? If your mother saw this!
+KRL_RULER_N1,Dur.,Stop.
+KRL_RULER_N2,"Bu formu Büro'da bugüne dek kimse doldurmadı. Tebrikler, ilk sizsiniz.","Nobody at the Bureau has ever filled in this form. Congratulations, you're the first."
+KRL_RULER_H,"Evlât, tarihe tekme atılmaz; tarih geri teper. Baştan alıyoruz.","Son, you don't kick history. History kicks back. We're starting over."
+KRL_T_GOAT,Keçi de mi taraf tuttu?,Even the goat's picked a side?
+KRL_T_CHICKEN,Tamam! Barış! Barış!,Okay! Truce! Truce!
+KRL_T_HORSE,Bunu poliçeye 'at tarafından tekmelendi' diye yazacaklar.,They'll write this up as 'kicked by a horse'.
+KRL_T_CAT,Kedi bile beni kınadı.,Even the cat disapproves.
+KRL_T_CMD,Şaka! Şaka! Ayak ısınması...,Joking! Joking! Just warming up the leg...
+KRL_37O_FIRAR,Talimden kaçan kâtip! Bu gece kaçacak yer yok; önümde dur.,The clerk who ran from drill! Tonight there's nowhere to run. Stand in front of me.
+KRL_36B_FIRAR,Talimden kaçan tercüman. Bugün kaçarsan kapı arkandan kapanır.,The interpreter who ran from drill. Run today and the gate shuts behind you.
+UI_KRL_CARD_PUN,CEZA,PUNISHMENT
+UI_KRL_CARD_KAZAN,Kadri'nin kazanı · akşama kadar,Kadri's cauldron · till sundown
+UI_KRL_CARD_TAS,Sur taşı taşımak · akşama kadar,Carrying wall stones · till sundown
+UI_KRL_CARD_IADE,ZAMAN BÜROSU · İADE,TIME BUREAU · RETURNS
+UI_KRL_CARD_IADE_SUB,1 adet kâtip · ambalajı açılmış,1 clerk · packaging opened
+UI_KRL_CARD_ZINDAN,Eparkhos'un zindanı,The Eparch's dungeon
+UI_KRL_CARD_ZINDAN_SUB,Bir gece,One night
+UI_KRL_CARD_KADI,Kadı huzuru,Before the kadi
+UI_KRL_CARD_KADI_SUB,Ordugâhın mahkemesi,The camp court
+UI_KRL_CARD_PODESTA,Podestà'nın divanı,The Podestà's bench
+UI_KRL_CARD_PODESTA_SUB,Galata,Galata
+UI_KRL_CARD_RULER,ZAMAN BÜROSU · ACİL İADE,TIME BUREAU · EMERGENCY RETURN
+UI_KRL_CARD_RULER_SUB,Form Z-0: Hükümdara Ayak Kaldırma Girişimi,Form Z-0: Attempted Raising of a Foot to a Sovereign
+ACH_FIRAR_T,Firari Kâtip,The Runaway Clerk
+ACH_FIRAR_D,Talimden üç kez kaç.,Run away from drill three times.
+ACH_KADI_T,Kadı Huzurunda,Before the Kadi
+ACH_KADI_D,"Sokakta tekme at, tutuklan.",Kick someone in the street and get arrested.
+ACH_TARIHE_TEKME_T,Tarihe Tekme,Kicking History
+ACH_TARIHE_TEKME_D,Bir hükümdara ayak kaldır.,Raise your foot to a sovereign.

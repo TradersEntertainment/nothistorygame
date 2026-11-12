@@ -54,6 +54,8 @@ var _strokes: Array = []
 var _t := 0.0
 
 
+var kural: Node                 # kuralı çiğneyen oyuncu: sokakta tekme (scripts/level/kural.gd)
+
 func _ready() -> void:
 	GameState.snapshot(39)
 	if GameState.autotest:
@@ -67,6 +69,7 @@ func _ready() -> void:
 	hud.chase_music = "tension"
 	player = Player.new()
 	add_child(player)
+	kural = preload("res://scripts/level/kural.gd").hits(self, hud, player)      # halka/askere tekme (docs/SENARYO_KURAL_CIGNEME.md)
 	player.frozen = true
 	player.focus_changed.connect(_on_focus)
 	player.interacted.connect(_on_interact)
@@ -154,6 +157,8 @@ func _run() -> void:
 	hud.say_chain(lines)
 	while hud.chain_busy():
 		await get_tree().process_frame
+	if GameState.autotest:
+		await kural.bot_window()      # yalnız krl_* varyantlarında bir şey yapar
 	await _flags()
 	await _church_door()
 	await _fire()
@@ -1072,7 +1077,7 @@ func _autotest_report() -> void:
 	var v := GameState.autotest_variant
 	var expected: String = {"": "39O.1", "late": "39O.2", "tezkire": "39O.1", "pass": "39O.1", "sailor_ok": "39O.1"}.get(v, "39O.1")
 	var page: Dictionary = (GameState.flags.get("dossier", {}) as Dictionary).get("39", {})
-	var ok: bool = _outcome == expected and not page.is_empty() and cam != null and emperor_answer == "write"
+	var ok: bool = _outcome == expected and not page.is_empty() and cam != null and emperor_answer == "write" and kural.test_ok()
 	if v in ["", "tezkire", "pass", "sailor_ok"]:
 		ok = ok and flags_done == 6 and wrong_doors == 0 and not door_broke and _lowered and cam.done
 	# Sultan'ın tezkiresi üçüncü kez gösterilir; Misafir İzni'ni gören komşu çavuşu kendisi getirir
@@ -1090,7 +1095,7 @@ func _autotest_report() -> void:
 			not page.is_empty(), flags_done, 6, flags_lost, door_hp, door_broke, _lowered, roof_left, cam != null and cam.done])
 	print("AUTOTEST %s chapter=39o variant=%s outcome=%s flags=%d/6 lost=%d wrong=%d door=%.0f broke=%s tez=%d struggle=%d lowered=%s roof=%.0f answer=%s called=%s axes=%d" % [
 		"PASS" if ok else "FAIL", v, _outcome, flags_done, flags_lost, wrong_doors, door_hp, door_broke, tez_used, struggles_won, _lowered, roof_left, emperor_answer,
-		_cavus_called, _axes.size()])
+		_cavus_called, _axes.size()] + (" " + kural.test_line() if GameState.autotest_variant.begins_with("krl_") else ""))
 	get_tree().quit(0 if ok else 1)
 
 

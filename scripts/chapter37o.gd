@@ -252,6 +252,8 @@ func _cymbal_take() -> void:
 	# Talim (41o) oynandıysa Turgut kâtibi tanır: Hızır'ı yendiyse öne, dayak yediyse arkasına alır
 	var o41 := Siege.outcome(41)
 	await hud.say("SPK_AZAPBASI", "D37O_AB_01_T1" if o41 == "41O.1" else ("D37O_AB_01_T2" if o41 == "41O.2" else "D37O_AB_01"))
+	if int(GameState.flags.get("firar_41o", 0)) > 0:      # talimden kaçtıysa (scripts/level/kural.gd)
+		await hud.say("SPK_AZAPBASI", "KRL_37O_FIRAR")
 	await hud.say("SPK_TOLGA", "D37O_T_02")
 	player.frozen = false
 	hud.set_objective(tr("UI_OBJ37O_CYMBAL"), turgut.global_position + Vector3(0, 2.0, 0))      # iş zili almak; hedef "Urban'ın bataryasına git" diyordu

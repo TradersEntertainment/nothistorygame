@@ -14,7 +14,9 @@ extends Node3D
 ## Dallanma: Bölüm 36 (Huruç) Leon'un ilk sözü talimi hatırlar.
 ##   Leon esir düşmediyse (36.2 değilse) sonraki çarpışmalarda unutulan tekmeyi/bitiriciyi hatırlatır (Mentor);
 ##   Bölüm 15 İnsanların Akıbeti'nde yazılır.
-##   --autotest[=lose]   (varsayılan: 42.1; lose: serbest talimde bot savunmasız durur)
+##   --autotest[=lose|kacak|kacak_iade|krl_hit]   (varsayılan: 42.1; lose: serbest talimde bot savunmasız durur;
+##   kacak: merdiven taliminden sonra meydandan kaçar, gönüllü yakalar, sur taşı cezası; kacak_iade: Büro iadesi;
+##   krl_hit: meydandaki askere tekme, tutuklanma. Bkz. docs/SENARYO_KURAL_CIGNEME.md)
 
 const YARD_AT := Vector3(-16.0, 0.0, -20.0)
 const GIUST_AT := Vector3(3.4, 0.0, 6.2)
@@ -47,6 +49,8 @@ var _photo := ""
 var pushed := 0
 var late := 0
 var _hold := 0.0
+var kural: Node                     # kuralı çiğneyen oyuncu: talimden kaçmak, tekme (scripts/level/kural.gd)
+var _sitter: Person                 # balyada sırasını bekleyen gönüllü: talimden kaçanın peşinden o koşar
 var _climb_t := -1.0                # tırmananın merdivendeki yüksekliği (m); < 0 merdivende değil
 
 
@@ -119,6 +123,8 @@ func _build() -> void:
 		s.global_position = yard.at(TrainingYard.RING + Vector3(-TrainingYard.RING_R - 1.6, 0.7, -1.0 + k * 1.0))
 		s.face_toward(yard.at(TrainingYard.RING))
 		s.set_activity("sit")
+		if k == 0:
+			_sitter = s
 	# Merdivene tırmanacak gönüllü (Leon'un adamı): merdivenin dibinde bekler
 	climber = Person.new(MEN[5])
 	climber.set_meta("no_talk", true)
@@ -134,6 +140,8 @@ func _build() -> void:
 	drill.partner = leon
 	drill.partner_spk = "SPK_LEON"
 	drill.kukla = kukla
+	kural = preload("res://scripts/level/kural.gd").area(self, hud, player, yard.at(Vector3(0, 0, -1.0)), 18.5, giust,
+		"SPK_GIUST", _sitter, "B")
 
 
 func _climber_home() -> void:
@@ -174,6 +182,8 @@ func _run() -> void:
 	await drill.kicking()
 	await drill.finishing()
 	await _push_drill()
+	if GameState.autotest:
+		await kural.bot_window()      # yalnız kacak / kacak_iade / krl_* varyantlarında bir şey yapar
 	var won := await drill.spar(GameState.autotest_variant == "lose")
 	_outcome = "42.1" if won else "42.2"
 	await _after_spar(won)
@@ -461,12 +471,14 @@ func _autotest_report() -> void:
 	var s := drill.summary()
 	var ok: bool = _outcome == expected and not page.is_empty() and cam != null and cam.done
 	ok = ok and int(s["dir"]) >= 3 and int(s["blocks"]) >= 3 and bool(s["kick"]) and bool(s["kick_down"]) and int(s["finishers"]) >= 3 and pushed >= 2
+	ok = ok and kural.test_ok()
 	if not ok:
 		printerr("AUTOTEST: beklenen %s, gelen %s (sayfa=%s foto=%s ders=%s itilen=%d)" % [expected, _outcome, not page.is_empty(),
 			cam != null and cam.done, s, pushed])
 	print("AUTOTEST %s chapter=42 variant=%s outcome=%s dir=%d bumps=%d blocks=%d parries=%d kick=%s down=%s fins=%s spar=%d/%d pushed=%d late=%d" % [
 		"PASS" if ok else "FAIL", v, _outcome, int(s["dir"]), int(s["bumps"]), int(s["blocks"]), int(s["parries"]), s["kick"],
-		s["kick_down"], s["fin_kinds"], int(s["spar_hits"]), int(s["spar_taken"]), pushed, late])
+		s["kick_down"], s["fin_kinds"], int(s["spar_hits"]), int(s["spar_taken"]), pushed, late]
+		+ (" " + kural.test_line() if v.begins_with("kacak") or v.begins_with("krl_") else ""))
 	get_tree().quit(0 if ok else 1)
 
 

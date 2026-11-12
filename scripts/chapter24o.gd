@@ -57,6 +57,8 @@ var _storm_snd: Node
 var _bowls: Array[Node3D] = []
 
 
+var kural: Node                 # kuralı çiğneyen oyuncu: sokakta tekme (scripts/level/kural.gd)
+
 func _ready() -> void:
 	GameState.snapshot(24)
 	if GameState.autotest:
@@ -79,6 +81,7 @@ func _ready() -> void:
 	hud.chase_music = "tension"
 	player = Player.new()
 	add_child(player)
+	kural = preload("res://scripts/level/kural.gd").hits(self, hud, player)      # halka/askere tekme (docs/SENARYO_KURAL_CIGNEME.md)
 	player.frozen = true
 	player.focus_changed.connect(_on_focus)
 	player.interacted.connect(_on_interact)
@@ -242,6 +245,8 @@ func _run() -> void:
 	player.frozen = false
 	hud.set_objective(tr("UI_OBJ_LISTEN_TO") % tr("SPK_KADRI"), day.kadri, 1.9)
 	hud.say_chain(lines)
+	if GameState.autotest:
+		await kural.bot_window()      # yalnız krl_* varyantlarında bir şey yapar
 	while hud.chain_busy():
 		await get_tree().process_frame
 	player.frozen = true
@@ -801,7 +806,7 @@ func _autotest_report() -> void:
 	var v := GameState.autotest_variant
 	var expected: String = {"": "24O.1", "late": "24O.2", "thermos": "24O.1", "tea": "24O.1"}.get(v, "24O.1")
 	var page: Dictionary = (GameState.flags.get("dossier", {}) as Dictionary).get("24", {})
-	var ok: bool = _outcome == expected and not page.is_empty() and cam != null and cam.done and tent_state.count(1) == 3
+	var ok: bool = _outcome == expected and not page.is_empty() and cam != null and cam.done and tent_state.count(1) == 3 and kural.test_ok()
 	# Kadri'deki termos bir ateşi kendisi sakinleştirir; çantadaki termos her ateşte bir bardak verir (üç bardak, biter)
 	if kadri_fire != (v == "thermos") or (v == "tea" and (tea_cups != 3 or GameState.has_item("thermos"))):
 		printerr("AUTOTEST: Kadri'nin ateşi=%s çay=%d" % [kadri_fire, tea_cups])
@@ -812,7 +817,7 @@ func _autotest_report() -> void:
 	if not ok:
 		printerr("AUTOTEST: beklenen %s, gelen %s (sayfa=%s)" % [expected, _outcome, not page.is_empty()])
 	print("AUTOTEST %s chapter=24o variant=%s outcome=%s calmed=%d kadri=%s tea=%d menu=%s eclipse=%s" % ["PASS" if ok else "FAIL", v, _outcome,
-		calmed.count(true), kadri_fire, tea_cups, _menu_line, _eclipse_again])
+		calmed.count(true), kadri_fire, tea_cups, _menu_line, _eclipse_again] + (" " + kural.test_line() if GameState.autotest_variant.begins_with("krl_") else ""))
 	get_tree().quit(0 if ok else 1)
 
 

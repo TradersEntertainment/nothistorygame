@@ -65,12 +65,15 @@ var _level := 0.0
 const FLOOD_TOP := 0.42
 
 
+var kural: Node                 # kuralı çiğneyen oyuncu: sokakta tekme (scripts/level/kural.gd)
+
 func _ready() -> void:
 	GameState.snapshot(24)
 	hud = Hud.new()
 	add_child(hud)
 	player = Player.new()
 	add_child(player)
+	kural = preload("res://scripts/level/kural.gd").hits(self, hud, player)      # halka/askere tekme (docs/SENARYO_KURAL_CIGNEME.md)
 	player.frozen = true
 	player.focus_changed.connect(_on_focus)
 	player.interacted.connect(_on_interact)
@@ -878,6 +881,8 @@ func _fog_day() -> void:
 	phase = "fog"
 	Lore.scatter(self, "24")
 	player.frozen = false
+	if GameState.autotest:
+		await kural.bot_window()      # yalnız krl_* varyantlarında bir şey yapar
 	hud.set_objective(tr("UI_OBJ24_WAIT"))
 	await get_tree().create_timer(2.0 if GameState.autotest else 14.0, false).timeout
 	_evening()
@@ -994,11 +999,11 @@ func _autotest_report() -> void:
 	ok = ok and (niko != null) == v.begins_with("niko")
 	if v == "niko_slow":
 		ok = ok and _kid_elapsed > KID_TIME
-	ok = ok and _eclipse_again == (v == "eclipse")
+	ok = ok and _eclipse_again == (v == "eclipse") and kural.test_ok()
 	if not ok:
 		printerr("AUTOTEST: beklenen %s, gelen %s (sayfa=%s)" % [expected, _outcome, not page.is_empty()])
 	print("AUTOTEST %s chapter=24 variant=%s outcome=%s stumbles=%d kid=%s niko=%s steadied=%d kid_t=%.1f" % ["PASS" if ok else "FAIL", v, _outcome,
-		stumbles, _kid_saved, niko != null, _niko_steadied, _kid_elapsed])
+		stumbles, _kid_saved, niko != null, _niko_steadied, _kid_elapsed] + (" " + kural.test_line() if GameState.autotest_variant.begins_with("krl_") else ""))
 	get_tree().quit(0 if ok else 1)
 
 

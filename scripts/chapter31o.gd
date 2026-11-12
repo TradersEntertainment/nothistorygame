@@ -70,6 +70,8 @@ var mats_ok := false
 var mat_err_sum := 0.0
 
 
+var kural: Node                 # kuralı çiğneyen oyuncu: sokakta tekme (scripts/level/kural.gd)
+
 func _ready() -> void:
 	GameState.snapshot(31)
 	if GameState.autotest and GameState.autotest_variant.begins_with("petrion"):
@@ -79,6 +81,7 @@ func _ready() -> void:
 	hud.chase_music = "tension"
 	player = Player.new()
 	add_child(player)
+	kural = preload("res://scripts/level/kural.gd").hits(self, hud, player)      # halka/askere tekme (docs/SENARYO_KURAL_CIGNEME.md)
 	player.frozen = true
 	player.focus_changed.connect(_on_focus)
 	player.interacted.connect(_on_interact)
