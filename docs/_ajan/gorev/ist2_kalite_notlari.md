@@ -2,6 +2,19 @@
 
 Kaynak kareler: `docs/_kanit_ist2_sehir/tur_5_*.jpg`, `yer_5_*.jpg` (dal `wip/ist2-sehir`).
 
+0. **BOŞ ALAN YOK (sahibin sözü, 12 Kasım: "güzel de boş alan istemiyorum bir de").** Haritanın hiçbir yerinde çıplak düz
+   çayır kalmayacak; uçuşta 70 m'den ve yerden bakınca her 40 × 40 m'lik karede en az bir "şey" seçilecek. 1453'te
+   surların içi tarihî olarak seyrekti, ama seyrek = boş değil: çiçekte meyve bahçeleri (erguvan, badem, erik), bağlar,
+   bostan tarhları ve su dolapları, yeşil buğday tarlaları ve aralarında patikalar, kuru taş bahçe duvarları, çitler,
+   harabeler (yıkık tonoz, sütun sırası, sarmaşıklı duvar), manastırlar ve avlu duvarları, şapeller, mezarlıklar ve
+   serviler, açık sarnıçların içinde bostanlar, kuyular, ağıllar ve sürüler, tek tek çiftlik evleri, dere ve köprüler,
+   kayalıklar, ağaç kümeleri. Sur dışı: ordugâh (çadır denizi), hendek ve tabyalar, ikmal yolları, yakılmış köyler,
+   bağlar, mezarlıklar. Karşı kıyılar ve ufuk da boş değil: Galata'nın arkası bağ ve bahçe, Üsküdar/Khrysopolis ve
+   Kadıköy/Khalkedon köyleri, Eyüp/Kosmidion, Boğaz köyleri, ormanlık tepeler, tarlalar. Deniz: gemiler, kayıklar,
+   balıkçı ağları, martılar. Zemin dokusu da tek renk yeşil olmayacak (toprak yol, taşlık, çiçekli çayır, sürülmüş
+   tarla). Ölçüt: `IstGeo` ızgarasında 40 m'lik karelerin "boş" (içinde hiçbir öğe olmayan) oranı şehir içinde %0, sur
+   dışı 600 m kuşakta ≤ %5, karşı kıyıların görünen yamaçlarında ≤ %15; sayım denetime eklenecek (`ISTBOS`).
+
 1. **Surlar cılız.** Kara surları dışarıdan alçak kahverengi bir çit gibi (k = 0,5 ile iç sur ~6 m; evlerden alçak).
    Oyunun var olan surları gerçek yükseklikte (`Blachernae.WALL_H` ~11–12 m). Karar: bütün surların KESİTİ gerçek boyda
    (k = 1,0: iç sur ~12 m, kuleler ~18–20 m, dış sur ~8,5 m, hendek ~18 m), yalnız UZUNLUK hat boyunca yarı ölçek
