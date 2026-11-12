@@ -150,6 +150,8 @@ void fragment() {
 	float yos = smoothstep(0.5, 0.85, vn(vec2(u * 0.4, y * 0.6) + 17.0)) * (1.0 - smoothstep(0.0, 2.4, dip));
 	if (tur > 0.5 && tur < 1.5) { yos = max(yos, smoothstep(0.6, 0.9, vn(vec2(u * 0.3, y * 0.5) + 3.0)) * (1.0 - smoothstep(0.0, 4.0, dip))); }
 	c = mix(c, vec3(0.20, 0.24, 0.12) * kat, yos * 0.35 * dikey);
+	// uzak katman (pişmiş, köşe rengi açılmış): yakındaki derz/akıntı/dip kararmasının ortalaması kadar koyulaşır
+	if (yerel_dip < 0.5) { c *= 0.84; }
 	ALBEDO = c;
 	ROUGHNESS = 0.95;
 }

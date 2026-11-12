@@ -2469,6 +2469,7 @@ func _kose_dolgu(ad: String, kur: String) -> void:
 		var it := _v2_item("kdolgu_%s_%d" % [ad, i], Vector3(cen.x, y0, cen.y), 0.0, maxf(pa.distance_to(pb), 6.0) + 30.0, mk, {}, true)
 		it["hat"] = ad
 		it["walk"] = wtop
+		it["kd_s"] = Vector2(float(A["s1"]), float(B["s0"]))
 		hat_items.append(it)
 		kose_dolgu_n += 1
 

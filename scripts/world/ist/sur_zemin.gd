@@ -174,7 +174,7 @@ static func hendek_dibi(p: Node3D, x0: float, x1: float, z0: float, z1: float, y
 					saz.append(Transform3D(Basis.from_euler(Vector3(rng.randf_range(-0.25, 0.25), rng.randf() * TAU, rng.randf_range(-0.25, 0.25))).scaled(Vector3(0.05, h, 0.05)), q))
 		x += l + rng.randf_range(4.0, 16.0)
 	if su.size() > 0:
-		Scenery.scatter(p, _disk(), su, [], Props.mat(Color("3e4c48"), 0.0, false, "", false))
+		Scenery.scatter(p, _disk(), su, [], Props.mat(Color("4a4a3e"), 0.0, false, "", false))
 	if saz.size() > 0:
 		Scenery.scatter(p, Scenery._boxm(Vector3.ONE), saz, [], Props.mat(Color("7a7a3c"), 0.0, false, "", false))
 

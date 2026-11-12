@@ -54,6 +54,10 @@ func _ready() -> void:
 			await _hendek()
 		"kim":
 			await _kim()
+		"deniz":
+			await _deniz()
+		"uzak":
+			await _uzak()
 	print("SUR4 BITTI")
 	get_tree().quit(0)
 
@@ -220,6 +224,54 @@ func _kara() -> void:
 			await _bak("kara_%02d_ust_b" % i, top, top - Vector3(d.x, 0, d.y) * 40.0 + Vector3(0, -2.0, 0))
 
 
+## Deniz surları ve Galata: hat başına dört nokta (dışarıdan 45 m, 18 m yükseklik) + bir sur üstü; gece kipinde iki
+func _deniz() -> void:
+	var pre := "gece_" if gece else ""
+	for ad: String in ["marmara_suru", "halic_suru", "galata_suru"]:
+		var pl := IstSehir._sade(IstGeo.yol(ad))
+		var L := 0.0
+		for i in pl.size() - 1:
+			L += pl[i].distance_to(pl[i + 1])
+		var kisa := ad.get_slice("_", 0)
+		var n := 2 if gece else 4
+		for i in n:
+			var sv := L * (i + 0.5) / n
+			var q := _hat_at(pl, sv)
+			var p: Vector2 = q["p"]
+			var d: Vector2 = q["d"]
+			var o := IstSehir._out(d, p, ad)
+			var y0 := maxf(IstGeo.h(p.x, p.y), 0.0)
+			var c := p + o * 45.0 - d * 20.0
+			await _bak("%s%s_%d" % [pre, kisa, i], Vector3(c.x, maxf(IstGeo.h(c.x, c.y), 0.0) + 18.0, c.y), Vector3(p.x, y0 + 6.0, p.y))
+		if not gece:
+			var q2 := _hat_at(pl, L * 0.4)
+			var p2: Vector2 = q2["p"]
+			var d2: Vector2 = q2["d"]
+			var w := _walk_at(ad, L * 0.4, maxf(IstGeo.h(p2.x, p2.y), 0.0) + 8.0)
+			var top := Vector3(p2.x, w + 1.7, p2.y)
+			await _bak("%s_ust" % kisa, top, top + Vector3(d2.x, 0, d2.y) * 40.0 + Vector3(0, -2.0, 0))
+
+
+## Uzak katman: 400 m ve 1 km'den dörder kare (kara dışı, Marmara, Haliç, Galata)
+func _uzak() -> void:
+	var pre := "gece_" if gece else ""
+	var hedef := [["kara_suru", 0.45], ["marmara_suru", 0.5], ["halic_suru", 0.45], ["galata_suru", 0.3]]
+	for r: float in [400.0, 1000.0]:
+		for hd: Array in hedef:
+			var ad: String = hd[0]
+			var pl := IstSehir._sade(IstGeo.yol(ad))
+			var L := 0.0
+			for i in pl.size() - 1:
+				L += pl[i].distance_to(pl[i + 1])
+			var q := _hat_at(pl, L * float(hd[1]))
+			var p: Vector2 = q["p"]
+			var d: Vector2 = q["d"]
+			var o := IstSehir._out(d, p, ad)
+			var c := p + o * r
+			var y := maxf(IstGeo.h(c.x, c.y), 0.0) + (40.0 if r < 500.0 else 90.0)
+			await _bak("%suzak_%s_%dm" % [pre, ad.get_slice("_", 0), int(r)], Vector3(c.x, y, c.y), Vector3(p.x, maxf(IstGeo.h(p.x, p.y), 0.0) + 8.0, p.y))
+
+
 static func _hat_at(pl: PackedVector2Array, sv: float) -> Dictionary:
 	var acc := 0.0
 	for i in pl.size() - 1:
@@ -361,6 +413,8 @@ func _kimde(ad: String, sv: float) -> String:
 		var on := String(it.get("hat", "")) == ad or String(it.get("kapi_hat", "")) == ad
 		if on and it.has("s0") and sv >= float(it["s0"]) - 8.0 and sv <= float(it["s1"]) + 8.0:
 			o += "%s:%.0f-%.0f " % [String(it["id"]), float(it["s0"]), float(it["s1"])]
+		elif on and it.has("kd_s") and sv >= (it["kd_s"] as Vector2).x - 8.0 and sv <= (it["kd_s"] as Vector2).y + 8.0:
+			o += "%s:%.0f-%.0f " % [String(it["id"]), (it["kd_s"] as Vector2).x, (it["kd_s"] as Vector2).y]
 	return o.strip_edges()
 
 
