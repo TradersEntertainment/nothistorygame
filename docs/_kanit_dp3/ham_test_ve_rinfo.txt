@@ -1,0 +1,128 @@
+# Başsız testler (SONRA = dal ucu, son kod), --max-fps 20
+== son_19_def: AUTOTEST PASS chapter=19 variant= outcome=19.1 suspicion=0 tezkire=false saved=false grain=0 | hata satırı: 0
+== son_28o_def: AUTOTEST PASS chapter=28o variant= outcome=28O.1 stakes=4 slips=0 hit=true master=false roller_every=4.0 rollers=2 | hata satırı: 0
+== son_29_def: AUTOTEST PASS chapter=29 variant= outcome=29.1 cut=6/6 boarders=0 fires=0 duel=true | hata satırı: 0
+== son_29_lose: AUTOTEST PASS chapter=29 variant=lose outcome=29.2 cut=0/6 boarders=6 fires=3 duel=false | hata satırı: 0
+== son_29o_def: AUTOTEST PASS chapter=29o variant= outcome=29O.1 hooks=4/5 gun=4/4 | hata satırı: 0
+== son_29o_lose: AUTOTEST PASS chapter=29o variant=lose outcome=29O.2 hooks=0/0 gun=4/4 | hata satırı: 0
+== son_33o_def: AUTOTEST PASS chapter=33o variant= outcome=33O.1 stones=4 hits=0 falls=0 water=0 hidden=true gift=refuse warn=ok big=true | hata satırı: 0
+== son_33o_fall: AUTOTEST PASS chapter=33o variant=fall outcome=33O.1 stones=4 hits=1 falls=2 water=1 hidden=true gift=refuse warn=ok big=true | hata satırı: 0
+== son_33o_wide: AUTOTEST PASS chapter=33o variant=wide outcome=33O.2 stones=4 hits=0 falls=0 water=0 hidden=false gift=refuse warn=hit big=false | hata satırı: 0
+== son_34o_def: AUTOTEST PASS chapter=34o variant= outcome=34O.1 nicks=0 slips=0 calls=8/8 stopped=1 crowd=6 sparks=0 blast=false jam=false hit=true | hata satırı: 0
+== son_37o_def: AUTOTEST PASS chapter=37o variant= outcome=37O.1 beats=12/16 arrows=0 falls=0 barrels=5/5 cuts=0 stones=0 slips=0 burns=1 duel=true caught=0 | hata satırı: 0
+== son_38o_def: AUTOTEST PASS chapter=38o variant= outcome=38O.1 oars=9 arrows=0 forks=3/3 fire=true pulled=true oil=false snaps=0 splashes=0 explored=15.3 helper=false slips=0 | hata satırı: 0
+== son_38o_hooks_bad: AUTOTEST PASS chapter=38o variant=hooks_bad outcome=38O.1 oars=10 arrows=0 forks=3/3 fire=true pulled=true oil=false snaps=0 splashes=0 explored=15.3 helper=false slips=0 | hata satırı: 0
+== son_38o_hooks_ok: AUTOTEST PASS chapter=38o variant=hooks_ok outcome=38O.1 oars=10 arrows=0 forks=3/3 fire=true pulled=true oil=false snaps=0 splashes=0 explored=15.6 helper=true slips=0 | hata satırı: 0
+== son_38o_lose: AUTOTEST PASS chapter=38o variant=lose outcome=38O.2 oars=11 arrows=0 forks=0/3 fire=false pulled=false oil=true snaps=0 splashes=4 explored=15.6 helper=false slips=0 | hata satırı: 0
+== sonra_38o_hb_1: AUTOTEST PASS chapter=38o variant=hooks_bad outcome=38O.1 oars=9 arrows=0 forks=3/3 fire=true pulled=true oil=false snaps=0 splashes=0 explored=15.3 helper=false slips=0 | hata satırı: 0
+== sonra_38o_hb_10: AUTOTEST PASS chapter=38o variant=hooks_bad outcome=38O.1 oars=10 arrows=0 forks=3/3 fire=true pulled=true oil=false snaps=0 splashes=0 explored=15.7 helper=false slips=0 | hata satırı: 0
+== sonra_38o_hb_2: AUTOTEST PASS chapter=38o variant=hooks_bad outcome=38O.1 oars=11 arrows=0 forks=3/3 fire=true pulled=true oil=false snaps=0 splashes=0 explored=16.1 helper=false slips=0 | hata satırı: 0
+== sonra_38o_hb_3: AUTOTEST PASS chapter=38o variant=hooks_bad outcome=38O.1 oars=9 arrows=0 forks=3/3 fire=true pulled=true oil=false snaps=0 splashes=0 explored=15.5 helper=false slips=0 | hata satırı: 0
+== sonra_38o_hb_4: AUTOTEST PASS chapter=38o variant=hooks_bad outcome=38O.1 oars=10 arrows=0 forks=3/3 fire=true pulled=true oil=false snaps=0 splashes=0 explored=15.3 helper=false slips=0 | hata satırı: 0
+== sonra_38o_hb_5: AUTOTEST PASS chapter=38o variant=hooks_bad outcome=38O.1 oars=11 arrows=0 forks=3/3 fire=true pulled=true oil=false snaps=0 splashes=0 explored=15.3 helper=false slips=0 | hata satırı: 0
+== sonra_38o_hb_6: AUTOTEST PASS chapter=38o variant=hooks_bad outcome=38O.1 oars=11 arrows=0 forks=3/3 fire=true pulled=true oil=false snaps=0 splashes=0 explored=15.3 helper=false slips=0 | hata satırı: 0
+== sonra_38o_hb_7: AUTOTEST PASS chapter=38o variant=hooks_bad outcome=38O.1 oars=10 arrows=0 forks=3/3 fire=true pulled=true oil=false snaps=0 splashes=0 explored=15.3 helper=false slips=0 | hata satırı: 0
+== sonra_38o_hb_8: AUTOTEST PASS chapter=38o variant=hooks_bad outcome=38O.1 oars=9 arrows=0 forks=3/3 fire=true pulled=true oil=false snaps=0 splashes=0 explored=15.3 helper=false slips=0 | hata satırı: 0
+== sonra_38o_hb_9: AUTOTEST PASS chapter=38o variant=hooks_bad outcome=38O.1 oars=10 arrows=0 forks=3/3 fire=true pulled=true oil=false snaps=0 splashes=0 explored=15.3 helper=false slips=0 | hata satırı: 0
+
+# 38o hooks_bad x10: ÖNCE (e551de84)
+== once_hb_1: AUTOTEST PASS chapter=38o variant=hooks_bad outcome=38O.1 oa | 
+== once_hb_2: AUTOTEST PASS chapter=38o variant=hooks_bad outcome=38O.1 oa | 
+== once_hb_3: AUTOTEST PASS chapter=38o variant=hooks_bad outcome=38O.1 oa | VISAUDIT personhidden key=D38O_S_03 scene=chapter38o.tscn speaker=SPK_SAILOR by=@Node3D@24961/@Node3D@27155(spk) at=(18.6, 0.9, 56.2) eye=(14.0, 2.6, 56.2) head=(19.6, 2.6, 56.5) src=Chapter38o>Node3D
+== once_hb_4: AUTOTEST PASS chapter=38o variant=hooks_bad outcome=38O.1 oa | 
+== once_hb_5: AUTOTEST PASS chapter=38o variant=hooks_bad outcome=38O.1 oa | 
+== once_hb_6: AUTOTEST PASS chapter=38o variant=hooks_bad outcome=38O.1 oa | 
+== once_hb_7: AUTOTEST PASS chapter=38o variant=hooks_bad outcome=38O.1 oa | 
+== once_hb_8: AUTOTEST PASS chapter=38o variant=hooks_bad outcome=38O.1 oa | 
+== once_hb_9: AUTOTEST PASS chapter=38o variant=hooks_bad outcome=38O.1 oa | 
+== once_hb_10: AUTOTEST PASS chapter=38o variant=hooks_bad outcome=38O.1 oa | 
+
+# 38o hooks_bad x10: P3 ilk teslim (ef860ea2)
+== ara_hb_1: AUTOTEST PASS chapter=38o variant=hooks_bad outcome=38O.1 oa | 
+== ara_hb_2: AUTOTEST PASS chapter=38o variant=hooks_bad outcome=38O.1 oa | 
+== ara_hb_3: AUTOTEST PASS chapter=38o variant=hooks_bad outcome=38O.1 oa | 
+== ara_hb_4: AUTOTEST PASS chapter=38o variant=hooks_bad outcome=38O.1 oa | 
+== ara_hb_5: AUTOTEST PASS chapter=38o variant=hooks_bad outcome=38O.1 oa | 
+== ara_hb_6: AUTOTEST PASS chapter=38o variant=hooks_bad outcome=38O.1 oa | 
+== ara_hb_7: AUTOTEST PASS chapter=38o variant=hooks_bad outcome=38O.1 oa | 
+== ara_hb_8: AUTOTEST PASS chapter=38o variant=hooks_bad outcome=38O.1 oa | 
+== ara_hb_9: AUTOTEST PASS chapter=38o variant=hooks_bad outcome=38O.1 oa | 
+== ara_hb_10: AUTOTEST PASS chapter=38o variant=hooks_bad outcome=38O.1 oa | 
+
+# RINFO (ekranlı, RINFO=1 --hitchaudit), replik satırından sonraki örnekler
+-- D29_C_WIND (atla 0) ÖNCE=once_29 SONRA=sonra_29c
+ÖNCE  D29_C_WIND draws=2371 prims=1160k vis=858k
+ÖNCE  D29_C_WIND draws=2913 prims=1639k vis=1077k
+ÖNCE  D29_C_WIND draws=3457 prims=1675k vis=1047k
+ÖNCE  ORT D29_C_WIND draws=2914 prims=1491k
+SONRA D29_C_WIND draws=2373 prims=1164k vis=859k
+SONRA D29_C_WIND draws=2911 prims=1638k vis=1075k
+SONRA D29_C_WIND draws=3457 prims=1680k vis=1049k
+SONRA ORT D29_C_WIND draws=2914 prims=1494k
+-- D29O_B_GUN (atla 1) ÖNCE=once_29o SONRA=sonra_29o
+ÖNCE  D29O_B_GUN draws=2642 prims=1305k vis=884k
+ÖNCE  D29O_B_GUN draws=1556 prims=1539k vis=732k
+ÖNCE  D29O_B_GUN draws=1725 prims=1640k vis=796k
+ÖNCE  ORT D29O_B_GUN draws=1974 prims=1495k
+SONRA D29O_B_GUN draws=2633 prims=1302k vis=883k
+SONRA D29O_B_GUN draws=1519 prims=1516k vis=725k
+SONRA D29O_B_GUN draws=1683 prims=1640k vis=796k
+SONRA ORT D29O_B_GUN draws=1945 prims=1486k
+-- D29O_B_HOOK (atla 0) ÖNCE=once_29o SONRA=sonra_29o
+ÖNCE  D29O_B_HOOK draws=1897 prims=1212k vis=1094k
+ÖNCE  D29O_B_HOOK draws=2314 prims=1873k vis=980k
+ÖNCE  D29O_B_HOOK draws=2156 prims=1833k vis=1088k
+ÖNCE  ORT D29O_B_HOOK draws=2122 prims=1639k
+SONRA D29O_B_HOOK draws=1899 prims=1215k vis=1094k
+SONRA D29O_B_HOOK draws=2287 prims=1872k vis=978k
+SONRA D29O_B_HOOK draws=2123 prims=1831k vis=1090k
+SONRA ORT D29O_B_HOOK draws=2103 prims=1639k
+-- D29O_T_CLIMB (atla 0) ÖNCE=once_29o SONRA=sonra_29o
+ÖNCE  D29O_T_CLIMB draws=2801 prims=1268k vis=886k
+ÖNCE  D29O_T_CLIMB draws=770 prims=609k vis=283k
+ÖNCE  D29O_T_CLIMB draws=607 prims=378k vis=199k
+ÖNCE  ORT D29O_T_CLIMB draws=1393 prims=752k
+SONRA D29O_T_CLIMB draws=2793 prims=1268k vis=886k
+SONRA D29O_T_CLIMB draws=797 prims=633k vis=292k
+SONRA D29O_T_CLIMB draws=606 prims=364k vis=196k
+SONRA ORT D29O_T_CLIMB draws=1399 prims=755k
+-- D38O_T_02 (atla 6) ÖNCE=once_38o2 SONRA=sonra_38o
+ÖNCE  D38O_T_02 draws=2412 prims=2022k vis=1438k
+ÖNCE  D38O_T_02 draws=2412 prims=2009k vis=1427k
+ÖNCE  D38O_T_02 draws=2566 prims=1999k vis=1421k
+ÖNCE  ORT D38O_T_02 draws=2463 prims=2010k
+SONRA D38O_T_02 draws=2680 prims=2138k vis=1490k
+SONRA D38O_T_02 draws=2684 prims=2151k vis=1504k
+SONRA D38O_T_02 draws=2853 prims=2148k vis=1501k
+SONRA ORT D38O_T_02 draws=2739 prims=2146k
+-- D38O_T_02 (atla 6) ÖNCE=once_38o2 SONRA=sonra_38o_r2
+ÖNCE  D38O_T_02 draws=2412 prims=2022k vis=1438k
+ÖNCE  D38O_T_02 draws=2412 prims=2009k vis=1427k
+ÖNCE  D38O_T_02 draws=2566 prims=1999k vis=1421k
+ÖNCE  ORT D38O_T_02 draws=2463 prims=2010k
+SONRA D38O_T_02 draws=2625 prims=2089k vis=1499k
+SONRA D38O_T_02 draws=2610 prims=2067k vis=1495k
+SONRA D38O_T_02 draws=2766 prims=2056k vis=1483k
+SONRA ORT D38O_T_02 draws=2667 prims=2071k
+-- D38O_R_UP (atla 2) ÖNCE=once_38o2 SONRA=sonra_38o
+ÖNCE  D38O_R_UP draws=6940 prims=8166k vis=7500k
+ÖNCE  D38O_R_UP draws=6768 prims=8170k vis=7457k
+ÖNCE  D38O_R_UP draws=4843 prims=6125k vis=5151k
+ÖNCE  ORT D38O_R_UP draws=6184 prims=7487k
+SONRA D38O_R_UP draws=6735 prims=8054k vis=7272k
+SONRA D38O_R_UP draws=6768 prims=8154k vis=7429k
+SONRA D38O_R_UP draws=5111 prims=6217k vis=5219k
+SONRA ORT D38O_R_UP draws=6205 prims=7475k
+-- D38O_T_TOP (atla 3) ÖNCE=once_38o2 SONRA=sonra_38o
+ÖNCE  D38O_T_TOP draws=1394 prims=1128k vis=546k
+ÖNCE  D38O_T_TOP draws=1510 prims=1139k vis=553k
+ÖNCE  D38O_T_TOP draws=1497 prims=1126k vis=546k
+ÖNCE  ORT D38O_T_TOP draws=1467 prims=1131k
+SONRA D38O_T_TOP draws=1402 prims=1108k vis=517k
+SONRA D38O_T_TOP draws=1510 prims=1091k vis=510k
+SONRA D38O_T_TOP draws=1497 prims=1086k vis=510k
+SONRA ORT D38O_T_TOP draws=1470 prims=1095k
+
+# sonda_ (geçici, söküldü): 38o tam akış, merdiven kurulduktan 16 sn sonra aynı an
+ÖNCE  SONDAG DRAWS 2637 OBJS 2990
+SONRA SONDAG DRAWS 2617 OBJS 2970

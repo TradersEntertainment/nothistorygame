@@ -361,7 +361,7 @@ func _climb() -> void:
 	hook.add_child(line)
 	line.top_level = true
 	line.global_transform = Transform3D.IDENTITY
-	_tube_to(line, [rail_pt, low_pt], 0.017)
+	_tube_to(line, [rail_pt, low_pt], CLIMB_ROPE_R)
 	var on_rope := func(_k: float) -> void:
 		var c := player.camera
 		var a := c.to_local(rail_pt)
@@ -372,7 +372,7 @@ func _climb() -> void:
 		var fl: Vector3 = player.free_rig.socket.global_position if player.free_rig and player.free_rig.socket else c.to_global(lp)
 		var fr: Vector3 = player.rig.socket.global_position if player.rig and player.rig.socket else c.to_global(rp)
 		var upv := c.global_transform.basis.y * 0.035      # avucun ortası
-		_tube_to(line, [rail_pt, fr + upv, fl + upv, low_pt], 0.017)
+		_tube_to(line, [rail_pt, fr + upv, fl + upv, low_pt], CLIMB_ROPE_R)
 	var tw := create_tween()
 	tw.tween_property(player, "global_position", up, 2.2).set_trans(Tween.TRANS_SINE)
 	tw.parallel().tween_method(on_rope, 0.0, 1.0, 2.2)
@@ -409,12 +409,16 @@ func _climb() -> void:
 	fall.parallel().tween_method(func(_k: float):
 		_tube_to(line, _rope_clear([rail_pt, low_pt], player.camera, 0.3), 0.012), 0.0, 1.0, 0.45)
 	await fall.finished
-	_tube_to(line, [rail_pt, low_pt], 0.017)
+	_tube_to(line, [rail_pt, low_pt], CLIMB_ROPE_R)
 	Fx.trauma(0.6)
 	hook.queue_free()
 	_stand()
 	await hud.say("SPK_TOLGA", "D29O_T_FELL")
 	await hud.say("SPK_NIHAT", "D29O_N_FELL")
+
+
+## Tırmanış ipinin kesiti (m): elden aşağı inen parça kameraya 35-50 cm'de kalıyor, 0,017'de alt köşede kalın krem şeritti
+const CLIMB_ROPE_R := 0.012
 
 
 ## Boru ipi yeniden kurar; noktalar 5 mm'den az oynadıysa kurmaz (33o _guide_lay, 38o _rope_hands ile aynı koruma).
