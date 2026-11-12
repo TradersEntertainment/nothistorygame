@@ -213,6 +213,10 @@ SIEGE_NOTES = {
               "görünmez Nihat engeller; sonuç 27 Mayıs meclisinde Zağanos'un sözüne geçer.",
               "Ottoman side only: 25 May, a drone that fell from the Bureau's store into the camp. Tolga teaches the Sultan to fly it "
               "while an invisible Nihat interferes; the result enters Zağanos's words at the council of 27 May."],
+    "ch44b": ["Yalnız Bizans tarafı: 26 Mayıs, Ayasofya'nın batısında bir kuyudan unutulmuş Bazilika Sarnıcı'na düşüş "
+              "(Yerebatan); sırrı korumak ya da ağzından kaçırmak.",
+              "Byzantine side only: 26 May, a fall through a well west of Hagia Sophia into the forgotten Basilica Cistern; "
+              "keep the secret or let it slip."],
     "ch29": ["20 Nisan: zincirin önünde deniz savaşı, surlardan.",
              "20 April: the sea battle at the chain, seen from the walls."],
     "ch33o": ["Osmanlı tarafının ilk sayfası: kuşatmadan sekiz ay önce, Boğazkesen'in son taşları.",
@@ -423,9 +427,9 @@ GHOSTS = {
                "Sorties are forbidden: the Byzantine side waits out the first shot and the first assault behind the walls. "
                "The next Byzantine page is 20 April, at the chain ({c:ch29})."),
     "ch43o": L("Bizans tarafında 25 Mayıs ayrı bir sayfa değil: Büro'nun şehre düşen aletleri (saha aydınlatma fişekleri) "
-               "sonraki işlerin konusu. Sıradaki Bizans sayfası Son Akşam ({c:ch25}).",
+               "sonraki işlerin konusu. Sıradaki Bizans sayfası 26 Mayıs, Ayasofya'nın batısında bir kuyu ({c:ch44b}).",
                "No separate Byzantine page for 25 May: the Bureau devices that fell into the city (field illumination flares) "
-               "are a matter for later. The next Byzantine page is the Last Evening ({c:ch25})."),
+               "are a matter for later. The next Byzantine page is 26 May, a well west of Hagia Sophia ({c:ch44b})."),
     "ch32o": L("Bizans tarafı 28 Mayıs'ı Son Akşam'ın içinde yaşar: surdan Ayasofya'ya, son ayine ({c:ch25}).",
                "The Byzantine side lives 28 May inside the Last Evening: from the wall to Hagia Sophia, to the last liturgy ({c:ch25})."),
     "ch38o": L("Bizans tarafının kuşatma sayfaları şafakla biter ({c:ch26}). Osmanlı tarafı fethin gününü ve ertesini yazar; "

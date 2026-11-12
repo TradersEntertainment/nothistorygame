@@ -621,6 +621,7 @@ func _liturgy() -> void:
 	Audio.sfx("church_bell", -8.0, 0.7)
 	await hud.say("SPK_NIHAT", "D25_N_AYA")
 	await hud.say("SPK_TOLGA", "D25_T_AYA")
+	await _cistern_neighbor()
 	# İmparator girer, ortaya yürür
 	var tw := create_tween()
 	tw.tween_property(emperor, "position", AYA + Vector3(0, 0, 4.0), 5.0)
@@ -718,6 +719,28 @@ func _on_focus(id: String) -> void:
 
 
 ## Selden çekilen Marco ve annesi: mumluğun kapı tarafında, Tolga'ya dönük (cemaatin ve İmparator'un yolunun dışında).
+## Bölüm 44 (Sarnıç) oynandıysa kuyusuna inilen Eudokia ayindedir, Tolga'nın yanında: sır korunduysa (44.1) fısıltıyla
+## "cin" balığını anar, ağızdan kaçtıysa (44.2) yanındakine Tolga'yı "bodrumda saray var diyen tercüman" diye gösterir.
+func _cistern_neighbor() -> void:
+	var o44 := Siege.outcome(44)
+	if o44 == "":
+		return
+	var e := Person.new({"coat": Color("4a4a5a"), "pants": Color("3a3028"), "robe": Color("3a3a48"), "skirt": true,
+		"hat": "scarf", "scarf": Color("2a2a30"), "hair": Color("b0aca4"), "skin": Color("e0b896")})
+	e.set_meta("spk", "SPK_WOMAN_BYZ")
+	var fwd := -player.global_transform.basis.z
+	var side := player.global_transform.basis.x
+	var want := player.global_position + fwd * 1.3 + side * 0.9
+	var at := Person.clear_spot(get_tree(), want, e, 0.7)
+	e.position = Vector3(at.x, player.global_position.y, at.z)
+	add_child(e)
+	e.look_target = player
+	await get_tree().process_frame
+	e.talking = true
+	await hud.say("SPK_WOMAN_BYZ", "D25_E_CISTERN_1" if o44 == "44.1" else "D25_E_CISTERN_2")
+	e.talking = false
+
+
 func _build_marco(stand: Vector3) -> void:
 	var mother := Person.new({"coat": Color("6a4a5a"), "pants": Color("3a2a2a"), "skirt": true, "hat": "scarf", "scarf": Color("8a6a4a"),
 		"skin": Color("f0c8a0"), "n": 2540})

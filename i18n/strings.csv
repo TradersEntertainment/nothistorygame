@@ -9754,3 +9754,108 @@ D_WIT_RIZ_1,"Müfettiş Bey, uçarken de iş güvenliği yönetmeliği geçerli.
 D_WIT_RIZ_2,Kaldırma Formu'nu ben verdim. Demek ki kaza benim zimmetime yazılır.,I issued the Lift Form. So any accident goes on my account.
 D_WIT_MUF_1,"Nihat Bey, tavan lambasına dikkat. Demirbaş kaydında.","Mr. Nihat, mind the ceiling lamp. It's on the inventory."
 D_WIT_MUF_2,"Uçmak serbest, ama koridorda değil.","Flying is permitted, but not in the corridor."
+UI_CH44B_TITLE,BÖLÜM {N} — SARNIÇ,CHAPTER {N} — THE CISTERN
+UI_CH44B_SUB,"26 Mayıs 1453 · Ayasofya'nın batısı · bir avlu, bir kuyu","26 May 1453 · West of Hagia Sophia · a courtyard, a well"
+UI_OBJ44_WELL,Eudokia'nın kuyusuna bak,Look at Eudokia's well
+UI_PROMPT44_WELL,"[E] İpe tutun, kuyuya in","[E] Grab the rope, climb down the well"
+UI_OBJ44_LIGHT_PHONE,Telefonun fenerini aç [F],Turn on your phone's torch [F]
+UI_OBJ44_LIGHT_LIGHTER,Çakmağı yak [F],Strike the lighter [F]
+UI_OBJ44_LIGHT_REMOTE,Kumandanın ekranını yak [F],Light up the remote's screen [F]
+UI_OBJ44_BOAT,Sütuna bağlı kayığa yüz,Swim to the boat tied to the column
+UI_PROMPT44_BOAT,[E] Kayığa çık,[E] Climb into the boat
+UI_OBJ44_ROW,Meşaleye kürek çek: ibre yeşile gelince Space · A / D dümen,Row to the torch: Space when the needle is in the green · A / D to steer
+UI_OBJ44_ROW_PAD,Meşaleye kürek çek: ibre yeşile gelince A · sol çubukla dümen,Row to the torch: A when the needle is in the green · steer with the left stick
+UI_OBJ44_CORNER,Kuzeybatı köşeye kürek çek · sudaki halka: oraya taş düşecek,Row to the north-west corner · a ring on the water: a stone is about to fall there
+UI_OBJ44_CORNER_PAD,Kuzeybatı köşeye kürek çek (A) · sudaki halka: oraya taş düşecek,Row to the north-west corner (A) · a ring on the water: a stone is about to fall there
+UI_CH44_QUAKE,Sarsıntılar sıklaşıyor · %d sn,The tremors are getting closer · %d s
+UI_CH44_BATTERY,Pil: %%%d,Battery: %d%%
+UI_OBJ44_MEDUSA,Işığı suya tut: dipteki taş yüzü kayda geçir,Shine the light into the water: record the stone face on the bottom
+UI_OBJ44_CLIMB,Kuyunun demir basamaklarından tırman,Climb the iron rungs of the well
+UI_PROMPT44_CLIMB,[E] Tırman,[E] Climb
+UI_CH44_KEEP,"Sırrı koru: ""Cin yok. Kuyu derin, ip çürük.""","Keep the secret: ""No djinn. Deep well, rotten rope."""
+UI_CH44_BLAB,"Ağzından kaçır: ""Altınızda saray var!""","Let it slip: ""There's a palace under your feet!"""
+UI_CH44_STATS,Çarpma: %d   ·   Düşen taş: %d   ·   Dosya: %d/%d sayfa,Bumps: %d   ·   Falling stones: %d   ·   File: %d/%d pages
+UI_FLOW44_TITLE,AKIŞ ŞEMASI — BÖLÜM {N}: SARNIÇ,FLOWCHART — CHAPTER {N}: THE CISTERN
+FLOW44_WELL,Eudokia'nın kuyusu: ip koptu,Eudokia's well: the rope snapped
+FLOW44_FOREST,Kuyunun altında 336 sütun,"Under the well, 336 columns"
+FLOW44_RESCUED,Karanlıkta kaldın: Yakovos sayarak çekti,"Lost in the dark: Yakovos towed you, counting"
+FLOW44_MEDUSA,"Taş kadınlar: biri yan, biri ters","The stone women: one sideways, one upside down"
+FLOW_44_1,Sırrı korudun; doksan yıl sonra bir Fransız bulacak,You kept the secret; a Frenchman will find it ninety years later
+FLOW_44_2,"Ağzından kaçırdın; kimse inanmadı, kuyular kapandı","You let it slip; nobody believed you, the wells were sealed"
+SIEGE_DATE_44,26 Mayıs 1453,26 May 1453
+SIEGE_EV_44,"Bombardıman sürer. Ayasofya'nın batısında, evlerin altında Iustinianus'un sarnıcı unutulmuştur; mahalleli onu kuyu sanır.","The bombardment goes on. West of Hagia Sophia, under the houses, Justinian's cistern is forgotten; the neighbours think it is a well."
+SIEGE_NOTE_44_1,"Sarnıç. Bir kuyuya indim, altında üç yüz otuz altı sütun buldum. Kayda geçmedi; Yakovos'un balıkları da.",Cistern. I went down a well and found three hundred and thirty-six columns. Not on the record; nor are Yakovos's fish.
+SIEGE_NOTE_44_2,Sarnıç. Üç yüz otuz altı sütunu mahalleye anlattım. Kimse inanmadı. Kuyular taşla doldurulacak.,Cistern. I told the whole street about the three hundred and thirty-six columns. Nobody believed me. The wells will be filled with stones.
+PHOTO_SIEGE44,Suyun dibinde Medusa,Medusa at the bottom of the water
+D44B_N_01,"26 Mayıs 1453. Bombardıman gece gündüz sürüyor. Bugünkü kayıt küçük, Tolga Bey: Ayasofya'nın batısında bir avlu, bir kuyu.","26 May 1453. The bombardment goes on day and night. Today's entry is a small one, Mr Tolga: a courtyard west of Hagia Sophia, a well."
+D44B_T_01,"Küçük iyidir. Kuşatmanın ortasında bir kuyu: hasar tespiti beş dakika, imza, çay.","Small is good. A well in the middle of a siege: five minutes of damage assessment, signature, tea."
+D44B_E_01,"Tolga, Büro'nun tercümanı sen misin? Gel, şu kuyuya bak. Selden beri kovam balıkla çıkıyor.","Tolga, you're the Bureau's interpreter? Come, look at this well. Since the flood my bucket keeps coming up with fish in it."
+D44B_E_02,"Dün kovamı biri aşağı çekti, ip boş geldi. Komşular 'kuyunda cin var' diyor. Su çekemiyorum artık.",Yesterday something pulled my bucket down and the rope came up empty. The neighbours say there's a djinn in my well. I can't draw water any more.
+D44B_T_02,"Hanımefendi, ben hasar tespitçisiyim. Cin kapsam dışı ama kovanıza bakarım. İp sağlam mı?","Madam, I'm a loss adjuster. Djinns aren't covered, but I'll look for your bucket. Is the rope sound?"
+D44B_K_01,"Benim atım da düştü! Annemle burada kalıyoruz. Selde beni saçağa götüren sendin, değil mi? Atımı da bulursun.","My horse fell in too! Mum and I are staying here. You're the one who got me under the eaves in the flood, aren't you? You'll find my horse."
+D44B_T_KID,"Seni tanıdım. Tamam, dosyaya ekliyorum: kayıp eşya, bir adet, tahta, at.","I remember you. Right, adding it to the file: lost item, one, wooden, horse."
+D44B_E_03,İp babamdan kalma. Sağlamdır. Herhalde.,The rope was my father's. It's sound. Probably.
+D44B_T_ROPE,"'Herhalde' kelimesini poliçede hiç sevmem. Neyse. Bir el yukarıda, bir el ipte.","I never like the word 'probably' in a policy. Anyway. One hand up top, one on the rope."
+D44B_T_DOWN,"Kuyu dediğin daralır. Bu genişliyor. Neden genişliyor? Hanımefendi, bu ip neden çıtırdıyor?","Wells get narrower. This one's getting wider. Why is it getting wider? Madam, why is this rope crackling?"
+D44B_T_DARK,"Karanlık. Su. Ayağım yere değmiyor. Yukarıda bir delik kadar ışık. Sakin ol, Tolga. Işık lazım.","Dark. Water. My feet don't touch anything. A hole's worth of light up there. Calm down, Tolga. I need light."
+D44B_T_AWE_PHONE,Bir dakika. Bir dakika... Bu bir kuyu değil.,Hang on. Hang on... This isn't a well.
+D44B_T_AWE_LIGHTER,"Çakmak bir sütuna yetiyor. Bir sütun, bir sütun daha, bir sütun daha... Bitmiyor.","The lighter's good for one column. One column, another column, another... It doesn't end."
+D44B_T_AWE_REMOTE,Kumandanın ekranı mavi bir sütun gösteriyor. Arkasında bir tane daha. Arkasında... bir orman.,The remote's screen shows a blue column. Another one behind it. Behind that... a forest.
+D44B_T_AWE_2,Yerebatan. Burası Yerebatan Sarnıcı. Okul gezisinde gelmiştik. Bilet kuyruğu vardı.,Yerebatan. This is the Basilica Cistern. We came here on a school trip. There was a queue for tickets.
+D44B_N_AWE,"Kayda geçirmeyin, Tolga Bey. Yukarıdakiler kuyu sanıyor; saray da ordu da bilmiyor. Doksan yıl sonra bir Fransız bulacak.","Keep it off the record, Mr Tolga. The people up there think it's a well; neither the palace nor the army knows. A Frenchman finds it in ninety years."
+D44B_T_AWE_3,"Üç yüz otuz altı sütun. Rehber söylemişti. Kimse bilmiyor, ben biliyorum. Bu hiç başıma gelmedi.","Three hundred and thirty-six columns. The guide told us. Nobody knows, and I do. That has never happened to me."
+D44B_T_BOAT,Biri bu kayığı buraya bağlamış. Kürekler de içinde. Demek cinin kayığı da var.,"Someone tied this boat here. Oars inside, too. So the djinn has a boat."
+D44B_Y_01,"Kimsin? Cin misin, Türk mü? Bağırma, balıklar kaçar.","Who are you? A djinn or a Turk? Don't shout, you'll scare the fish."
+D44B_T_Y_01,Sigortacıyım.,I'm in insurance.
+D44B_Y_02,"O hangisi? Neyse, cin olsan kürek çekmeyi bilirdin. Ben Yakovos. Bu su benim; babamdan, onun babasından.","Which one's that? Never mind, a djinn could row. I'm Yakovos. This water is mine; from my father, and his father."
+D44B_T_Y_02,Mahalle 'cin var' diyor. Kovaları siz mi çekiyorsunuz?,The street says there's a djinn. Is it you pulling the buckets?
+D44B_Y_03,"Kovaya balık takılır, kovayı çekerim, balığı alırım. Bazen kova da gelir. Biraz cin olur, o kadar.","A fish gets caught in a bucket, I pull the bucket, I take the fish. Sometimes the bucket comes too. A little bit of djinn, that's all."
+D44B_T_Y_03,Yani burayı yukarıda kimse bilmiyor mu? İmparator? Saray?,So nobody up there knows about this place? The Emperor? The palace?
+D44B_Y_04,"Saray Blaherna'ya taşınalı çok oldu. Kim iner buraya? Ben inerim, bir de sen, düşerek. Al, Eudokia'nın kovası.","The palace moved to Blachernae long ago. Who comes down here? I do, and you, by falling. Here, Eudokia's bucket."
+D44B_Y_04_KID,"Kimse bilmez. Ben bilirim, bir de sen, düşerek. Al, Eudokia'nın kovası; içinde tahta bir at var.","Nobody knows. I do, and you, by falling. Here, Eudokia's bucket; there's a wooden horse in it."
+D44B_T_Y_04,Kova hasarsız. Dosyayı kapatıyorum. Şimdi çıkış nerede?,"Bucket undamaged. Closing the file. Now, where's the way out?"
+D44B_Y_05,"Kuzeybatı köşede, taş kadınların yanında benim evin kuyusu var. Basamakları ben çaktım. Işığını kısma.","In the north-west corner, by the stone women, there's my house's well. I hammered in the rungs myself. Keep your light up."
+D44B_Y_QUAKE,"Yine toplar! Her atışta tavan biraz daha konuşuyor. Kımıldama, dinle...","The guns again! Every shot, the ceiling talks a little more. Don't move, listen..."
+D44B_N_QUAKE,"Top sizi duymuyor, Tolga Bey; tavan duyuyor. Önce toz iner, sonra taş. Suda halka görürseniz oradan uzak durun.","The guns can't hear you, Mr Tolga; the ceiling can. First dust, then stone. If you see rings on the water, keep away."
+D44B_Y_TORCH,"Meşalem! Gitti. Ben karanlıkta da bulurum ama sen bulamazsın. Önden git, ışık sende. Kuzeybatı!","My torch! Gone. I can find my way in the dark, but you can't. Go first, you have the light. North-west!"
+D44B_T_LEAD,Ben mi önden? Ben navigasyonsuz otoparktan çıkamam. Tamam. Tamam. Kuzeybatı. Kuzey hangisiydi?,"Me, first? I can't get out of a car park without satnav. Fine. Fine. North-west. Which way was north?"
+D44B_T_LOST,Işık gitti. Her yer sütun. Hepsi aynı sütun! Yakovos? Yakovos!,The light's gone. Columns everywhere. They're all the same column! Yakovos? Yakovos!
+D44B_Y_RESCUE,"Buradayım. Bağırma. İpimi kayığına bağladım. Sayarak çekerim: dokuz, on, on bir...","I'm here. Don't shout. I've tied my rope to your boat. I'll tow you, counting: nine, ten, eleven..."
+D44B_Y_RESCUE_2,Gördün mü? Kırk yıldır karanlıkta sayarım. Sütun yalan söylemez.,See? Forty years I've counted in the dark. A column never lies.
+D44B_T_DARK_HINT,Işık. Bir ışık lazım.,Light. I need some light.
+D44B_T_BATTERY_0,Yüzde sıfır. Telefon artık tuğla. Pahalı bir tuğla.,Zero percent. The phone's a brick now. An expensive brick.
+D44B_T_THUMB,"Ah, başparmağım! Çakmak da dinlensin, ben de.","Ow, my thumb! The lighter needs a rest, and so do I."
+D44B_T_HIT_1,"Ah! Kafama değil, kayığa. Kayık da sigortasız.","Ah! Not my head, the boat. And the boat's not insured either."
+D44B_T_HIT_2,"Bir tane daha! Halka görünce kaç demişti. Halka, kaç. Halka, kaç.","Another one! See a ring, get away, he said. Ring, away. Ring, away."
+D44B_T_HIT_3,Tavanın kusuru yok. Kullanıcı hatası.,The ceiling's not at fault. User error.
+D44B_Y_STONE,"İşte köşe. Işığını suya tut, dibe bak. Taş kadınlar. Annem onlara bakma derdi.","Here's the corner. Shine your light into the water, look at the bottom. The stone women. My mother used to say don't look at them."
+D44B_T_MEDUSA_1,"Medusa! İşte! Biri yan, biri ters. Neden ters? Rehber üç ayrı teori anlattı, hiçbirini dinlemedim.","Medusa! There! One sideways, one upside down. Why upside down? The guide gave three theories and I listened to none of them."
+D44B_T_MEDUSA_2,"Biri 'nazar için' dedi, biri 'taş ölçüye uysun diye', biri 'kimse bakmadı'. Ben üçüncüsüne inanıyorum.","One said 'against the evil eye', one said 'so the stone would fit', one said 'nobody checked'. I believe the third."
+D44B_Y_MEDUSA,Bizim mahallede 'bakan taş olur' derler. Ben kırk yıldır bakıyorum. Hâlâ balıkçıyım.,Round here they say whoever looks turns to stone. I've been looking for forty years. Still a fisherman.
+D44B_N_MEDUSA,"Kayıtlarda gerekçe yok, kimse form doldurmamış. 1985'te çamurdan çıkacaklar; o güne dek ben de doldurmuyorum.","There's no reason on record; nobody filled in a form. They come out of the mud in 1985; until then, I'm not filling one in either."
+D44B_T_CLIMB,Kırk basamak. Yukarıda bir kiler. Turşu kokusu. Turşuya hiç bu kadar sevinmemiştim.,Forty rungs. A cellar up top. Smells of pickles. I've never been this happy about pickles.
+D44B_E_BACK,"Tolga! Benim kuyumdan girdin, Yakovos'un kilerinden çıktın. Bu nasıl iş?",Tolga! You went in through my well and came out of Yakovos's cellar. How does that work?
+D44B_Y_BUCKET,"Kovan, Eudokia. Kuyun derin, ipin çürük. Yenisini ben öreceğim.","Your bucket, Eudokia. Your well is deep, your rope is rotten. I'll braid you a new one."
+D44B_Y_BUCKET_KID,"Kovan, Eudokia. İçinde de bir at var. Kuyun derin, ipin çürük. Yenisini ben öreceğim.","Your bucket, Eudokia. There's a horse in it, too. Your well is deep, your rope is rotten. I'll braid you a new one."
+D44B_K_HORSE,"Atım! Islanmış ama gülüyor. Sağ ol, Tolga.","My horse! It's soaked, but it's smiling. Thank you, Tolga."
+D44B_TW_DJINN,"Söyle bakalım tercüman: aşağıda ne var? Cin var mı, yok mu?","Go on then, interpreter: what's down there? Is there a djinn or not?"
+D44B_T_KEEP,"Cin yok. Kuyu derin, ip çürük. Balık da Tanrı'nın. Yeni ipi Yakovos örecek.","No djinn. The well's deep, the rope's rotten. The fish belong to God. Yakovos will braid a new rope."
+D44B_E_KEEP,"Cin yokmuş, duydunuz mu? Yakovos, ipi kalın ör. Tolga, akşam balığa gel.","No djinn, did you hear? Yakovos, braid it thick. Tolga, come for fish this evening."
+D44B_Y_KEEP,"Sağ ol, sigortacı. Torunumun torunu bir gün bu suyu birine gösterecek. Senin gibi bir yabancıya.","Thank you, insurance man. One day my grandson's grandson will show this water to someone. A stranger, like you."
+D44B_N_KEEP,"Kayda geçmedi, Tolga Bey. 1540'larda Gyllius adlı bir Fransız bir evden inecek, bir ev sahibinin kayığına binecek.","It's off the record, Mr Tolga. In the 1540s a Frenchman called Gyllius will go down through a house and step into the owner's boat."
+D44B_T_BLAB,"Altınızda saray var! Üç yüz otuz altı sütun, tuğla tonoz, bir de ters Medusa! Bilet keseriz, kuyruk olur!","There's a palace under your feet! Three hundred and thirty-six columns, brick vaults, and an upside-down Medusa! We sell tickets, there'll be queues!"
+D44B_TW_LAUGH,"Cin çarpmış bunu. Kuyuya düşen hep böyle konuşur. Saray varmış, bilet varmış!","The djinn's got him. Everyone who falls down a well talks like this. A palace, he says, tickets!"
+D44B_E_BLAB,"Otur oğlum, su iç. Kuyudan değil, çeşmeden.","Sit down, son, drink some water. Not from the well. From the fountain."
+D44B_Y_BLAB,"Kimse inanmadı, iyi. Ama mahalle kuyuları taşla doldurur şimdi. Balığa başka kuyudan inerim.","Nobody believed you, good. But now the street will fill the wells with stones. I'll go fishing through another well."
+D44B_N_BLAB,"Kimse inanmadı, Tolga Bey. Tarih sizi duymadı ama dosya duydu. Küçük bir çizik.","Nobody believed you, Mr Tolga. History didn't hear you, but the file did. A small scratch."
+D44B_T_END,"Dosya notu: kuyu derin, ip çürük, kova teslim edildi. Altında ne olduğunu sorarsanız... kapsam dışı.","File note: deep well, rotten rope, bucket returned. If you ask what's underneath... not covered."
+PF_YAKOVOS,Balıkçı Yakovos,Yakovos the fisherman
+PF_YAKOVOS_KEEP,"44'te sarnıcın sırrını onunla paylaştın, yukarıda kimseye söylemedin",in 44 you shared the cistern's secret with him and told no one up top
+PF_YAKOVOS_BLAB,44'te sarnıcı bütün mahalleye anlattın; kimse inanmadı ama kuyular taşla dolduruldu,"in 44 you told the whole street about the cistern; nobody believed you, but the wells were filled with stones"
+PF_YAKOVOS_RESCUE,karanlıkta kaldığında seni sayarak köşeye çekti,"when you were lost in the dark he towed you to the corner, counting"
+PF26_YAKOVOS,"Gyllius, 1540'lar: ""Ev sahibi meşaleler yaktı, beni sütunların arasında kürekle gezdirdi, balık zıpkınladı.""","Gyllius, 1540s: ""The master of the house lit torches, rowed me among the pillars, and speared fish."""
+PF26_YAKOVOS_BLAB,"Yerebatan'ın kuzeybatı tonozunda taşla doldurulmuş eski bir kuyu ağzı. Rehber: ""Neden kapatıldığı bilinmiyor.""","In the north-west vault of the cistern, an old well shaft filled with stones. The guide: ""Nobody knows why it was sealed."""
+D25_E_CISTERN_1,Tolga. Cin bu sabah kovama iki balık koymuş. Kimseye söylemedim.,Tolga. This morning the djinn put two fish in my bucket. I told no one.
+D25_E_CISTERN_2,"Saraylı tercüman bu. Bodrumumuzda saray var dedi. Dua edelim, aklı yerine gelsin.",That's the palace interpreter. Said there's a palace in our cellars. Let's pray his wits come back.
+ACH_CISTERN_T,Doksan Yıl Erken,Ninety Years Early
+ACH_CISTERN_D,1453'te bir kuyunun altında unutulmuş Bazilika Sarnıcı'nı bul.,Find the forgotten Basilica Cistern beneath a well in 1453.

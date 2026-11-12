@@ -1,0 +1,66 @@
+# Bölüm 44 (Sarnıç) yeni seslendirilecek replikler — SES ÜRETİLMEDİ
+# anahtar | konuşmacı | ton | tr
+D44B_N_01 | SPK_NIHAT | - | 26 Mayıs 1453. Bombardıman gece gündüz sürüyor. Bugünkü kayıt küçük, Tolga Bey: Ayasofya'nın batısında bir avlu, bir kuyu.
+D44B_T_01 | SPK_TOLGA | - | Küçük iyidir. Kuşatmanın ortasında bir kuyu: hasar tespiti beş dakika, imza, çay.
+D44B_E_01 | SPK_WOMAN_BYZ | - | Tolga, Büro'nun tercümanı sen misin? Gel, şu kuyuya bak. Selden beri kovam balıkla çıkıyor.
+D44B_E_02 | SPK_WOMAN_BYZ | - | Dün kovamı biri aşağı çekti, ip boş geldi. Komşular 'kuyunda cin var' diyor. Su çekemiyorum artık.
+D44B_T_02 | SPK_TOLGA | - | Hanımefendi, ben hasar tespitçisiyim. Cin kapsam dışı ama kovanıza bakarım. İp sağlam mı?
+D44B_K_01 | SPK_KID | - | Benim atım da düştü! Annemle burada kalıyoruz. Selde beni saçağa götüren sendin, değil mi? Atımı da bulursun.
+D44B_T_KID | SPK_TOLGA | - | Seni tanıdım. Tamam, dosyaya ekliyorum: kayıp eşya, bir adet, tahta, at.
+D44B_E_03 | SPK_WOMAN_BYZ | - | İp babamdan kalma. Sağlamdır. Herhalde.
+D44B_T_ROPE | SPK_TOLGA | - | 'Herhalde' kelimesini poliçede hiç sevmem. Neyse. Bir el yukarıda, bir el ipte.
+D44B_T_DOWN | SPK_TOLGA | [nervous] | Kuyu dediğin daralır. Bu genişliyor. Neden genişliyor? Hanımefendi, bu ip neden çıtırdıyor?
+D44B_T_DARK | SPK_TOLGA | [whispers] | Karanlık. Su. Ayağım yere değmiyor. Yukarıda bir delik kadar ışık. Sakin ol, Tolga. Işık lazım.
+D44B_T_AWE_PHONE | SPK_TOLGA | [whispers] | Bir dakika. Bir dakika... Bu bir kuyu değil.
+D44B_T_AWE_LIGHTER | SPK_TOLGA | [whispers] | Çakmak bir sütuna yetiyor. Bir sütun, bir sütun daha, bir sütun daha... Bitmiyor.
+D44B_T_AWE_REMOTE | SPK_TOLGA | [whispers] | Kumandanın ekranı mavi bir sütun gösteriyor. Arkasında bir tane daha. Arkasında... bir orman.
+D44B_T_AWE_2 | SPK_TOLGA | [whispers] | Yerebatan. Burası Yerebatan Sarnıcı. Okul gezisinde gelmiştik. Bilet kuyruğu vardı.
+D44B_N_AWE | SPK_NIHAT | - | Kayda geçirmeyin, Tolga Bey. Yukarıdakiler kuyu sanıyor; saray da ordu da bilmiyor. Doksan yıl sonra bir Fransız bulacak.
+D44B_T_AWE_3 | SPK_TOLGA | - | Üç yüz otuz altı sütun. Rehber söylemişti. Kimse bilmiyor, ben biliyorum. Bu hiç başıma gelmedi.
+D44B_T_BOAT | SPK_TOLGA | - | Biri bu kayığı buraya bağlamış. Kürekler de içinde. Demek cinin kayığı da var.
+D44B_Y_01 | SPK_FISHMONGER | - | Kimsin? Cin misin, Türk mü? Bağırma, balıklar kaçar.
+D44B_T_Y_01 | SPK_TOLGA | - | Sigortacıyım.
+D44B_Y_02 | SPK_FISHMONGER | - | O hangisi? Neyse, cin olsan kürek çekmeyi bilirdin. Ben Yakovos. Bu su benim; babamdan, onun babasından.
+D44B_T_Y_02 | SPK_TOLGA | - | Mahalle 'cin var' diyor. Kovaları siz mi çekiyorsunuz?
+D44B_Y_03 | SPK_FISHMONGER | - | Kovaya balık takılır, kovayı çekerim, balığı alırım. Bazen kova da gelir. Biraz cin olur, o kadar.
+D44B_T_Y_03 | SPK_TOLGA | - | Yani burayı yukarıda kimse bilmiyor mu? İmparator? Saray?
+D44B_Y_04 | SPK_FISHMONGER | - | Saray Blaherna'ya taşınalı çok oldu. Kim iner buraya? Ben inerim, bir de sen, düşerek. Al, Eudokia'nın kovası.
+D44B_Y_04_KID | SPK_FISHMONGER | - | Kimse bilmez. Ben bilirim, bir de sen, düşerek. Al, Eudokia'nın kovası; içinde tahta bir at var.
+D44B_T_Y_04 | SPK_TOLGA | - | Kova hasarsız. Dosyayı kapatıyorum. Şimdi çıkış nerede?
+D44B_Y_05 | SPK_FISHMONGER | - | Kuzeybatı köşede, taş kadınların yanında benim evin kuyusu var. Basamakları ben çaktım. Işığını kısma.
+D44B_Y_QUAKE | SPK_FISHMONGER | [urgent] | Yine toplar! Her atışta tavan biraz daha konuşuyor. Kımıldama, dinle...
+D44B_N_QUAKE | SPK_NIHAT | - | Top sizi duymuyor, Tolga Bey; tavan duyuyor. Önce toz iner, sonra taş. Suda halka görürseniz oradan uzak durun.
+D44B_Y_TORCH | SPK_FISHMONGER | [shouting] | Meşalem! Gitti. Ben karanlıkta da bulurum ama sen bulamazsın. Önden git, ışık sende. Kuzeybatı!
+D44B_T_LEAD | SPK_TOLGA | [nervous] | Ben mi önden? Ben navigasyonsuz otoparktan çıkamam. Tamam. Tamam. Kuzeybatı. Kuzey hangisiydi?
+D44B_T_LOST | SPK_TOLGA | [panicked] | Işık gitti. Her yer sütun. Hepsi aynı sütun! Yakovos? Yakovos!
+D44B_Y_RESCUE | SPK_FISHMONGER | - | Buradayım. Bağırma. İpimi kayığına bağladım. Sayarak çekerim: dokuz, on, on bir...
+D44B_Y_RESCUE_2 | SPK_FISHMONGER | - | Gördün mü? Kırk yıldır karanlıkta sayarım. Sütun yalan söylemez.
+D44B_T_DARK_HINT | SPK_TOLGA | - | Işık. Bir ışık lazım.
+D44B_T_BATTERY_0 | SPK_TOLGA | - | Yüzde sıfır. Telefon artık tuğla. Pahalı bir tuğla.
+D44B_T_THUMB | SPK_TOLGA | - | Ah, başparmağım! Çakmak da dinlensin, ben de.
+D44B_T_HIT_1 | SPK_TOLGA | - | Ah! Kafama değil, kayığa. Kayık da sigortasız.
+D44B_T_HIT_2 | SPK_TOLGA | - | Bir tane daha! Halka görünce kaç demişti. Halka, kaç. Halka, kaç.
+D44B_T_HIT_3 | SPK_TOLGA | - | Tavanın kusuru yok. Kullanıcı hatası.
+D44B_Y_STONE | SPK_FISHMONGER | - | İşte köşe. Işığını suya tut, dibe bak. Taş kadınlar. Annem onlara bakma derdi.
+D44B_T_MEDUSA_1 | SPK_TOLGA | - | Medusa! İşte! Biri yan, biri ters. Neden ters? Rehber üç ayrı teori anlattı, hiçbirini dinlemedim.
+D44B_T_MEDUSA_2 | SPK_TOLGA | - | Biri 'nazar için' dedi, biri 'taş ölçüye uysun diye', biri 'kimse bakmadı'. Ben üçüncüsüne inanıyorum.
+D44B_Y_MEDUSA | SPK_FISHMONGER | - | Bizim mahallede 'bakan taş olur' derler. Ben kırk yıldır bakıyorum. Hâlâ balıkçıyım.
+D44B_N_MEDUSA | SPK_NIHAT | - | Kayıtlarda gerekçe yok, kimse form doldurmamış. 1985'te çamurdan çıkacaklar; o güne dek ben de doldurmuyorum.
+D44B_T_CLIMB | SPK_TOLGA | - | Kırk basamak. Yukarıda bir kiler. Turşu kokusu. Turşuya hiç bu kadar sevinmemiştim.
+D44B_E_BACK | SPK_WOMAN_BYZ | [surprised] | Tolga! Benim kuyumdan girdin, Yakovos'un kilerinden çıktın. Bu nasıl iş?
+D44B_Y_BUCKET | SPK_FISHMONGER | - | Kovan, Eudokia. Kuyun derin, ipin çürük. Yenisini ben öreceğim.
+D44B_Y_BUCKET_KID | SPK_FISHMONGER | - | Kovan, Eudokia. İçinde de bir at var. Kuyun derin, ipin çürük. Yenisini ben öreceğim.
+D44B_K_HORSE | SPK_KID | [happy] | Atım! Islanmış ama gülüyor. Sağ ol, Tolga.
+D44B_TW_DJINN | SPK_TOWNSMAN | - | Söyle bakalım tercüman: aşağıda ne var? Cin var mı, yok mu?
+D44B_T_KEEP | SPK_TOLGA | - | Cin yok. Kuyu derin, ip çürük. Balık da Tanrı'nın. Yeni ipi Yakovos örecek.
+D44B_E_KEEP | SPK_WOMAN_BYZ | [happy] | Cin yokmuş, duydunuz mu? Yakovos, ipi kalın ör. Tolga, akşam balığa gel.
+D44B_Y_KEEP | SPK_FISHMONGER | [whispers] | Sağ ol, sigortacı. Torunumun torunu bir gün bu suyu birine gösterecek. Senin gibi bir yabancıya.
+D44B_N_KEEP | SPK_NIHAT | - | Kayda geçmedi, Tolga Bey. 1540'larda Gyllius adlı bir Fransız bir evden inecek, bir ev sahibinin kayığına binecek.
+D44B_T_BLAB | SPK_TOLGA | [excited] | Altınızda saray var! Üç yüz otuz altı sütun, tuğla tonoz, bir de ters Medusa! Bilet keseriz, kuyruk olur!
+D44B_TW_LAUGH | SPK_TOWNSMAN | [laughing] | Cin çarpmış bunu. Kuyuya düşen hep böyle konuşur. Saray varmış, bilet varmış!
+D44B_E_BLAB | SPK_WOMAN_BYZ | - | Otur oğlum, su iç. Kuyudan değil, çeşmeden.
+D44B_Y_BLAB | SPK_FISHMONGER | - | Kimse inanmadı, iyi. Ama mahalle kuyuları taşla doldurur şimdi. Balığa başka kuyudan inerim.
+D44B_N_BLAB | SPK_NIHAT | - | Kimse inanmadı, Tolga Bey. Tarih sizi duymadı ama dosya duydu. Küçük bir çizik.
+D44B_T_END | SPK_TOLGA | - | Dosya notu: kuyu derin, ip çürük, kova teslim edildi. Altında ne olduğunu sorarsanız... kapsam dışı.
+D25_E_CISTERN_1 | SPK_WOMAN_BYZ | [whispers] | Tolga. Cin bu sabah kovama iki balık koymuş. Kimseye söylemedim.
+D25_E_CISTERN_2 | SPK_WOMAN_BYZ | [whispers] | Saraylı tercüman bu. Bodrumumuzda saray var dedi. Dua edelim, aklı yerine gelsin.
