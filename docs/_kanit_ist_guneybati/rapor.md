@@ -71,9 +71,9 @@ bag          k=0.5  lod0 tris=1380   delik=0 dar=0 havada=0 cati_yolu=1/1   (k=0
 Notlar:
 - `*` Altın Kapı `havada=3`: üç geçidin lentosu; kutu açıklığı tam örttüğü için köşe ışınları alttaki boşluğu görüyor
   (yapısal olarak iki yanındaki duvarlara oturur). **Yanlış alarm**, ama otomatik denetim bunu ayıramıyor.
-- Mokios k=1.0 son düzeltmeden sonra yeniden ölçülmedi; düzeltme öncesi 207 704 üçgen (sınır 150 000 aşıldı) ve `delik=1` vardı.
-  Ekin yoğunluğu k > 0,6 için azaltıldı; **doğrulanmadı**.
-- lod 1 ≤ %15 hedefi **karşılanmadı**: lod 1 yalnız ayrıntıyı kısıyor (Studios %64, Peribleptos %32, Andreas %24, Mokios %7 ✓.).
+- Mokios k=1.0 (son koşu): `tris=73784 draws=170 delik=1 dar=0 havada=0 cati_yolu=2/2`; büyük külliye sınırı (150 000) içinde.
+  `delik=1`: kapı üstündeki dekoratif taş lento kutusu (çarpışmasız görsel; duvar lentosunun önüne 0,1 m taşar). Bilinen küçük kusur.
+- lod 1 ≤ %15 hedefi **çoğunda karşılanmadı**: lod 1 yalnız ayrıntıyı kısıyor (Studios %64, Peribleptos %32, Andreas %24, Mokios %7 ✓.).
   Altın Kapı, Köprü lod 1'de lod 0 ile aynı. Kabul edilebilir bir ara sürüm için ayrı lod 1 kütle kodu gerekir.
 - Denetim sınırları: `delik` yalnız dönmemiş büyük kutu ağlarını örnekler; `dar` 1 m ızgarada ayak yüksekliği yatay ışınlardır;
   `havada` yalnız eksen hizalı kutu şekillerini ve 5 örnek noktayı denetler; `cati_yolu` test gövdesi (kapsül 0,35 × 1,8, g 9,8,
@@ -103,8 +103,7 @@ Notlar:
 
 ## 7. Bakılamayanlar
 
-lod 1 karelerine, k=0,35 / 1,0 karelerine ve çatı gözü karelerinin çoğuna bakmadım (yalnız sayısal denetim); k=1,0 Mokios
-son hâli; geceleyin ışık/ateş (`Flame` hiç kullanılmadı).
+lod 1 karelerine, k=0,35 / 1,0 karelerine ve çatı gözü karelerinin çoğuna bakmadım (yalnız sayısal denetim); geceleyin ışık/ateş (`Flame` hiç kullanılmadı).
 
 ## 8. Paftalar (`pafta/`, JPEG)
 
