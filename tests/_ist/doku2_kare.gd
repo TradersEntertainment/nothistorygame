@@ -68,6 +68,8 @@ func _bekle(sn := 25.0) -> void:
 func _kareler() -> void:
 	await _bekle(40.0)
 	_sayim()
+	if OS.get_cmdline_user_args().has("oyuncu=1"):
+		await _cati_sina()
 	if shots != "":
 		DirAccess.make_dir_recursive_absolute(shots)
 	for b: Array in BAKIS:
@@ -144,6 +146,71 @@ func _kam(b: Array) -> bool:
 	cam.global_position = Vector3(w.x, y, w.y)
 	cam.rotation = Vector3(deg_to_rad(float(b[5])), yaw, 0.0)
 	return true
+
+
+## Gerçek oyuncu (player.gd, CharacterBody3D) ile sokaktan dama: teras evlerin dış taş merdiveni, beş yerde.
+## Satır: DOKU2 cati_sina ev=… baslangic=… hedef_y=… en_yuksek=… PASS|FAIL
+func _cati_sina() -> void:
+	var sk: IstSokak = IstSehir.sokak
+	var list: Array = []
+	for h: Dictionary in sk.houses:
+		if String(h["tip"]) == "teras" and IstGeo.sehir_ici((h["c"] as Vector2).x, (h["c"] as Vector2).y):
+			list.append(h)
+	if list.is_empty():
+		print("DOKU2 cati_sina teras yok")
+		return
+	var P = load("res://scripts/player/player.gd")
+	var ok := 0
+	for n in 5:
+		var h: Dictionary = list[(n * 7919 + 13) % list.size()]
+		var v := int(h["v"])
+		var dm := IstEvler.dims(v)
+		var fr: Vector2 = h["on"]
+		var c: Vector2 = h["c"]
+		var bas := Basis(Vector3.UP, float(h["yaw"]))
+		var xf := Transform3D(bas, Vector3(c.x, IstGeo.h(fr.x, fr.y) - 0.04, c.y))
+		var cl: Array = IstEvler.climbs(v, "teras")
+		if cl.is_empty():
+			continue
+		var alt: Vector3 = xf * (cl[0][0] as Vector3)
+		var ust: Vector3 = xf * (cl[0][1] as Vector3)
+		cam.global_position = alt + Vector3(0, 30, 20)
+		await _bekle(10.0)
+		for i in 30:
+			await get_tree().physics_frame
+		var pl: CharacterBody3D = P.new()
+		add_child(pl)
+		var ileri: Vector3 = bas * Vector3(0, 0, -1)
+		pl.global_position = Vector3(alt.x, maxf(alt.y, IstGeo.h(alt.x, alt.z)) + 0.3, alt.z) + bas * Vector3(-0.08, 0, 0.5)
+		pl.rotation.y = atan2(-ileri.x, -ileri.z)
+		dunya.izle = pl
+		dunya.carpisma_yenile(pl.global_position)
+		for i in 20:
+			await get_tree().physics_frame
+		var bas0 := pl.global_position
+		Input.action_press("move_forward")
+		var en := -INF
+		for i in 900:
+			Input.action_press("move_forward")          # odak kaybında eylemler bırakılıyor: her kare yeniden bas
+			await get_tree().physics_frame
+			en = maxf(en, pl.global_position.y)
+			if n == 4 and i % 20 == 0 and i < 400:
+				print("DOKU2 iz i=%d yerel=%s hiz=%s yerde=%s ladder=%s kip=%s pinned=%s frozen=%s mult=%s girdi=%s" % [i, (xf.affine_inverse() * pl.global_position).snapped(Vector3.ONE * 0.01), pl.velocity.snapped(Vector3.ONE * 0.01), pl.is_on_floor(), pl.get("ladder"), pl.get("move_mode"), pl.get("pinned"), pl.get("frozen"), pl.get("speed_mult"), [pl.get("_tp_hold"), pl.get("_void_frames"), pl.get("_stagger"), pl.get("is_down")]])
+		var carp: Array = []
+		for ci in pl.get_slide_collision_count():
+			var co := pl.get_slide_collision(ci)
+			carp.append([String((co.get_collider() as Node).name) if co.get_collider() is Node else "?", co.get_normal().snapped(Vector3.ONE * 0.01), co.get_position().snapped(Vector3.ONE * 0.01)])
+		var yon := Vector2(pl.global_position.x - bas0.x, pl.global_position.z - bas0.z).normalized()
+		print("DOKU2 cati_sina_ayr ev=%d beklenen_yon=%s gidilen=%s carpisma=%s ev_yerel_son=%s" % [n, Vector2(ileri.x, ileri.z).snapped(Vector2.ONE * 0.01), yon.snapped(Vector2.ONE * 0.01), carp, (xf.affine_inverse() * pl.global_position).snapped(Vector3.ONE * 0.01)])
+		Input.action_release("move_forward")
+		var hedef := ust.y
+		var gecti := en >= hedef - 0.35
+		if gecti:
+			ok += 1
+		print("DOKU2 cati_sina ev=%s gercek=%s hedef_y=%.2f en_yuksek=%.2f bas=%s son=%s yol=%.2f alt=%s frozen=%s %s" % [n, IstGeo.real(c.x, c.y).round(), hedef, en, bas0, pl.global_position, Vector2(pl.global_position.x - bas0.x, pl.global_position.z - bas0.z).length(), alt, pl.get("frozen"), "PASS" if gecti else "FAIL"])
+		pl.queue_free()
+		await get_tree().physics_frame
+	print("DOKU2 cati_sina sonuc %d/5" % ok)
 
 
 ## Kabaca: kameranın önünde ve görünürlük aralığında olan çizim yüzeyleri, katmana göre (IstSehir altında ad önekiyle)

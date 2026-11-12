@@ -568,12 +568,73 @@ func _oge_hucreleri() -> void:
 		_oge_ekle(o)
 	stats["oge"] = sk.oge.size()
 	stats["oge_hucre"] = _cells.size()
+	_oge_uzak()
 	# başlangıç: kameranın çevresi hemen
 	var cp := _cam()
 	_planla(cp)
 	var t0 := Time.get_ticks_msec()
 	while not _is_kuyrugu.is_empty() and Time.get_ticks_msec() - t0 < 8000:
 		_is_yap(_is_kuyrugu.pop_front())
+
+
+## Öğelerin uzak görünüşü (380 m'den sonra): 384 m hücre başına tek ağ, öğe başına birkaç kütle (köşe renkli)
+func _oge_uzak() -> void:
+	var gr := {}
+	for o: Dictionary in sk.oge:
+		var c: Vector2 = o["c"]
+		var ck := Vector2i(floori(c.x / ZEMIN_HUCRE), floori(c.y / ZEMIN_HUCRE))
+		if not gr.has(ck):
+			var st := SurfaceTool.new()
+			st.begin(Mesh.PRIMITIVE_TRIANGLES)
+			gr[ck] = st
+		var cen := Vector3((ck.x + 0.5) * ZEMIN_HUCRE, 0, (ck.y + 0.5) * ZEMIN_HUCRE)
+		var y := IstGeo.h(c.x, c.y)
+		var bas := Basis(Vector3.UP, float(o.get("yaw", 0.0)))
+		var st: SurfaceTool = gr[ck]
+		var tur := String(o["tur"])
+		var p := Vector3(c.x, y, c.y)
+		match tur:
+			"yama_duvar":
+				var al: Vector2 = o["alan"]
+				for e: Array in [[Vector3(0, 0, -al.y * 0.5 - 0.6), Vector3(al.x, 0.9, 0.5)], [Vector3(-al.x * 0.5 - 0.6, 0, 0), Vector3(0.5, 0.9, al.y)], [Vector3(al.x * 0.5 + 0.6, 0, 0), Vector3(0.5, 0.9, al.y)]]:
+					var q: Vector3 = p + bas * (e[0] as Vector3)
+					var sz: Vector3 = e[1]
+					_kutu(st, Transform3D(bas, Vector3(q.x, IstGeo.h(q.x, q.z) + sz.y * 0.5, q.z)), sz, Color("7a7262"), cen)
+			"agil", "ciftlik":
+				for i in 6:
+					var a := i * TAU / 6.0
+					_kutu(st, Transform3D(Basis(Vector3.UP, -a), p + Vector3(cos(a) * 4.5, 0.6, sin(a) * 4.5)), Vector3(0.2, 1.2, 4.5), Color("6a5440"), cen)
+				_kutu(st, Transform3D(bas, p + Vector3(0, 0.45, 0)), Vector3(3.0, 0.9, 2.0), Color("c8c0b0"), cen)
+				if tur == "ciftlik":
+					_kutu(st, Transform3D(bas, p + bas * Vector3(-9.0, 1.7, -2.0)), Vector3(7.0, 3.4, 6.0), IstEvler.P_KERPIC[0], cen)
+			"manastir", "sapel_kucuk", "mezarlik":
+				var sz := Vector3(14, 8, 20) if tur == "manastir" else (Vector3(5, 5, 9) if tur == "sapel_kucuk" else Vector3(14, 0.8, 14))
+				_kutu(st, Transform3D(bas, p + Vector3(0, sz.y * 0.5, 0)), sz, IstEvler.P_TAS[0] if tur != "mezarlik" else Color("8a8678"), cen)
+			"agac_kumesi":
+				for i in 3:
+					_kutu(st, Transform3D(bas, p + bas * Vector3((i - 1) * 3.0, 2.5, (i % 2) * 2.0)), Vector3(3.0, 3.6, 3.0), Color("4e6a34"), cen)
+			_:
+				# ayrıntı köşesi / kuyu: tezgâh, çuval, kuyu bileziği boyunda birkaç kütle
+				var n := 1 if tur in ["kuyu", "asma_cardagi", "kumes", "camasir_ipi", "odun_yigini"] else 4
+				for i in n:
+					var q := p + bas * Vector3((i - 1.5) * 2.2 if n > 1 else 0.0, 0.0, (i % 2) * 1.6)
+					_kutu(st, Transform3D(bas, Vector3(q.x, IstGeo.h(q.x, q.z) + 0.5, q.z)), Vector3(1.6, 1.0, 1.2), Color("8a7458") if i % 2 == 0 else Color("a8553a"), cen)
+	var mat := StandardMaterial3D.new()
+	mat.vertex_color_use_as_albedo = true
+	mat.vertex_color_is_srgb = true
+	mat.diffuse_mode = BaseMaterial3D.DIFFUSE_TOON
+	mat.roughness = 1.0
+	for ck: Vector2i in gr:
+		var mi := MeshInstance3D.new()
+		mi.mesh = (gr[ck] as SurfaceTool).commit()
+		mi.material_override = mat
+		mi.position = Vector3((ck.x + 0.5) * ZEMIN_HUCRE, 0, (ck.y + 0.5) * ZEMIN_HUCRE)
+		mi.visibility_range_begin = OGE_ORTA - 40.0
+		mi.visibility_range_end = ZEMIN_UZAK
+		mi.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
+		mi.set_meta("no_walk", true)
+		mi.name = "OgeUzak_%d_%d" % [ck.x, ck.y]
+		add_child(mi)
 
 
 func _cam() -> Vector3:

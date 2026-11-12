@@ -415,12 +415,16 @@ static func _cati(host: Node3D, p: Dictionary, lod: int) -> void:
 						Props.box(host, Vector3(0.5, 0.45, 0.42), Vector3(-L * 0.5 + 0.6 + i * 1.2, H + 1.42, sd * (D * 0.5 - 0.2)), _dk(tas, ""))
 		"duz", "teras":
 			var dam: Color = p["dam"]
-			_block(host, Vector3(L + 0.2, 0.18, D + over + 0.2), Vector3(0, H + 0.09, over * 0.5), dam, "", lod)
+			# dış merdivenli evde +x yanında saçak yok (merdivende baş çarpmasın)
+			var mr := bool(p["merdiven"])
+			var dw := L + (0.1 if mr else 0.2)
+			var dx := -0.05 if mr else 0.0
+			_block(host, Vector3(dw, 0.18, D + over + 0.2), Vector3(dx, H + 0.09, over * 0.5), dam, "", lod)
 			if cati == "teras":
-				# korkuluk 1,0 m (sokak cephesinde ve yanlarda; arkada merdiven ağzı)
-				_block(host, Vector3(L + 0.2, 1.0, 0.3), Vector3(0, H + 0.68, D * 0.5 + over - 0.05), p["ust"], "plaster", lod)
+				# korkuluk 1,0 m (sokak cephesinde ve yanlarda; merdiven yanında arkada ağız)
+				_block(host, Vector3(L - 0.4, 1.0, 0.3), Vector3(-0.2, H + 0.68, D * 0.5 + over - 0.15), p["ust"], "plaster", lod)
 				for sd in [-1, 1]:
-					_block(host, Vector3(0.3, 1.0, D * 0.6), Vector3(sd * (L * 0.5 - 0.05), H + 0.68, D * 0.2 + over * 0.5), p["ust"], "plaster", lod)
+					_block(host, Vector3(0.3, 1.0, D * 0.6), Vector3(sd * (L * 0.5 - 0.25), H + 0.68, D * 0.2 + over * 0.5), p["ust"], "plaster", lod)
 				if lod == 0:
 					# asma çardağı
 					for sx in [-1, 1]:
@@ -585,18 +589,24 @@ static func _sundurma(host: Node3D, x: float, w: float, d: float, fz: float, lod
 			Props.box(host, Vector3(0.48, 0.05, d + 0.1), Vector3(x - w * 0.5 + 0.26 + i * 0.52, SHED + 0.02, fz + d * 0.5), _dk(P_KIREMIT[i % 3], ""))
 
 
-## Dış taş merdiven (teras ve kule dama): evin bir yan duvarı boyunca, arkadan öne
+## Dış taş merdiven (teras ve kule dama): evin bir yan duvarı boyunca, sokak cephesinden arkaya doğru çıkar. Dipte
+## sokağa doğru iki ek basamak (üstleri −0,02 / −0,32 m): yamaçta sokak evin tabanından alçaksa ilk basamak ≤ 0,42 m kalır.
 static func _dis_merdiven(host: Node3D, p: Dictionary, lod: int) -> void:
 	var L: float = p["L"]
 	var D: float = p["D"]
+	for k in 2:
+		var ust := -0.02 - k * 0.3
+		_block(host, Vector3(1.0, ust + 1.6, 0.3), Vector3(L * 0.5 + 0.5, (ust - 1.6) * 0.5, D * 0.5 + 0.15 + k * 0.3), P_TAS[1], "ashlar", lod)
 	var top: float = float(p["H"]) + (0.18 if String(p["cati"]) == "teras" else 0.2)
 	var n := int(ceil(top / 0.30))
 	var rise := top / n
-	var run := minf(D - 0.4, n * 0.28)
+	var run := D - 0.6
 	var stepd := run / n
 	for i in n:
 		var hh := (i + 1) * rise
-		_block(host, Vector3(1.0, hh, stepd + 0.02), Vector3(L * 0.5 + 0.5, hh * 0.5, -D * 0.5 + 0.2 + (i + 0.5) * stepd), P_TAS[1], "ashlar", lod)
+		_block(host, Vector3(1.0, hh, stepd + 0.02), Vector3(L * 0.5 + 0.5, hh * 0.5, D * 0.5 - 0.2 - (i + 0.5) * stepd), P_TAS[1], "ashlar", lod)
+		# açık yanda 1,0 m'lik taş korkuluk (merdivenden düşülmesin)
+		_block(host, Vector3(0.16, hh + 1.0, stepd + 0.02), Vector3(L * 0.5 + 0.92, (hh + 1.0) * 0.5, D * 0.5 - 0.2 - (i + 0.5) * stepd), P_TAS[0], "ashlar", lod)
 
 
 ## Katı blok: lod 0 ve 1'de çarpışmalı (Props.solid + desen), lod 2'de yalnız görüntü (görünen renk aynı)
@@ -670,11 +680,12 @@ static func shapes(v: int, tip: String) -> Array:
 				out.append([_bs(Vector3(L, 1.0, 0.4)), Transform3D(Basis.IDENTITY, Vector3(0, H + 0.7, sd * (D * 0.5 - 0.2)))])
 				out.append([_bs(Vector3(0.4, 1.0, D - 0.8)), Transform3D(Basis.IDENTITY, Vector3(sd * (L * 0.5 - 0.2), H + 0.7, 0))])
 		"duz", "teras":
-			out.append([_bs(Vector3(L + 0.2, 0.18, D + over + 0.2)), Transform3D(Basis.IDENTITY, Vector3(0, H + 0.09, over * 0.5))])
+			var mr := bool(p["merdiven"])
+			out.append([_bs(Vector3(L + (0.1 if mr else 0.2), 0.18, D + over + 0.2)), Transform3D(Basis.IDENTITY, Vector3(-0.05 if mr else 0.0, H + 0.09, over * 0.5))])
 			if String(p["cati"]) == "teras":
-				out.append([_bs(Vector3(L + 0.2, 1.0, 0.3)), Transform3D(Basis.IDENTITY, Vector3(0, H + 0.68, D * 0.5 + over - 0.05))])
+				out.append([_bs(Vector3(L - 0.4, 1.0, 0.3)), Transform3D(Basis.IDENTITY, Vector3(-0.2, H + 0.68, D * 0.5 + over - 0.15))])
 				for sd in [-1, 1]:
-					out.append([_bs(Vector3(0.3, 1.0, D * 0.6)), Transform3D(Basis.IDENTITY, Vector3(sd * (L * 0.5 - 0.05), H + 0.68, D * 0.2 + over * 0.5))])
+					out.append([_bs(Vector3(0.3, 1.0, D * 0.6)), Transform3D(Basis.IDENTITY, Vector3(sd * (L * 0.5 - 0.25), H + 0.68, D * 0.2 + over * 0.5))])
 		_:
 			var conv := ConvexPolygonShape3D.new()
 			var z0 := -D * 0.5
@@ -696,11 +707,15 @@ static func shapes(v: int, tip: String) -> Array:
 		var top: float = H + (0.18 if String(p["cati"]) == "teras" else 0.2)
 		var n := int(ceil(top / 0.30))
 		var rise := top / n
-		var run := minf(D - 0.4, n * 0.28)
+		var run := D - 0.6
 		var stepd := run / n
+		for k in 2:
+			var ust := -0.02 - k * 0.3
+			out.append([_bs(Vector3(1.0, ust + 1.6, 0.3)), Transform3D(Basis.IDENTITY, Vector3(L * 0.5 + 0.5, (ust - 1.6) * 0.5, D * 0.5 + 0.15 + k * 0.3))])
 		for i in n:
 			var hh := (i + 1) * rise
-			out.append([_bs(Vector3(1.0, hh, stepd + 0.02)), Transform3D(Basis.IDENTITY, Vector3(L * 0.5 + 0.5, hh * 0.5, -D * 0.5 + 0.2 + (i + 0.5) * stepd))])
+			out.append([_bs(Vector3(1.0, hh, stepd + 0.02)), Transform3D(Basis.IDENTITY, Vector3(L * 0.5 + 0.5, hh * 0.5, D * 0.5 - 0.2 - (i + 0.5) * stepd))])
+			out.append([_bs(Vector3(0.16, hh + 1.0, stepd + 0.02)), Transform3D(Basis.IDENTITY, Vector3(L * 0.5 + 0.92, (hh + 1.0) * 0.5, D * 0.5 - 0.2 - (i + 0.5) * stepd))])
 	return out
 
 
@@ -740,7 +755,7 @@ static func climbs(v: int, tip: String) -> Array:
 		var sx := _sundurma_x(v, tip)
 		out.append([Vector3(sx + 1.85, 0, d.z * 0.5 + 1.0), Vector3(sx, d.y + RISE * 0.5, 0), "sandik"])
 	if bool(p["merdiven"]):
-		out.append([Vector3(d.x * 0.5 + 0.5, 0, -d.z * 0.5), Vector3(0, d.y + 0.2, 0), "merdiven"])
+		out.append([Vector3(d.x * 0.5 + 0.5, 0, d.z * 0.5 + 0.5), Vector3(d.x * 0.5 - 0.6, d.y + 0.2, -d.z * 0.5 + 0.8), "merdiven"])
 	if tip == "kulube":
 		out.append([Vector3(0, 0, d.z * 0.5 + 0.8), Vector3(0, d.y + RISE * 0.5, 0), "tutunma"])
 	return out
