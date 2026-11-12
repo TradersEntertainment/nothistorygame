@@ -130,7 +130,7 @@ static func _info(id: String, k: float) -> Dictionary:
 	if _cache.has(key):
 		return _cache[key]
 	var tmp := Node3D.new()
-	var acc := _layout(id, tmp, k, 2)
+	var acc := _layout(id, tmp, k, 0)
 	tmp.free()
 	_cache[key] = acc
 	return acc
@@ -144,7 +144,8 @@ static func _layout(id: String, host: Node3D, k: float, lod: int) -> Dictionary:
 			var W := 3.0 * s / k
 			_merge(acc, KIL.church(host, {"pos": Vector3.ZERO, "rot": 0.0, "W": W, "D": W, "Hc": 7.0, "ext": 5.0, "dome_d": 11.0,
 				"narthex": 0.0, "col": KIT.BRICK, "roof": KIT.LEAD, "five": true, "ruin": 0.62, "seed": 1, "apses": 3, "tag": "Havariyun"}, k, lod))
-			var he := HAR.build_heroon(host, Vector3(1.5 * s + 22.0 * k + 6.0, 0, -s * 0.2), k)
+			if lod == 0:
+				HAR.build_heroon(host, Vector3(1.5 * s + 22.0 * k + 6.0, 0, -s * 0.2), k)
 		"pantokrator":
 			var W := 22.0
 			var zs := (7.0 + 10.0) * k
@@ -160,8 +161,11 @@ static func _layout(id: String, host: Node3D, k: float, lod: int) -> Dictionary:
 			var hn := 8.0 * k
 			var D := 52.0 * k
 			var nx := -W * k * 0.5 - nd * 0.5
-			KIT.blk(host, Vector3(nd, hn, D), Vector3(nx, 0, k), KIT.BRICK.lightened(0.12), "ashlar")
-			HAR.build_pantokrator_court(host, k, -W * k * 0.5 - nd, lod)
+			if lod == 0:
+				KIT.blk(host, Vector3(nd, hn, D), Vector3(nx, 0, k), KIT.BRICK.lightened(0.12), "ashlar")
+				HAR.build_pantokrator_court(host, k, -W * k * 0.5 - nd, lod)
+			else:
+				Props.box(host, Vector3(nd, hn, D), Vector3(nx, hn * 0.5, k), KIT.BRICK.lightened(0.12))
 		"lips":
 			_merge(acc, KIL.church(host, {"pos": Vector3(0, 0, 8.5 * k), "rot": 0.0, "W": 14.0, "D": 17.0, "Hc": 9.0, "ext": 5.0, "dome_d": 6.0,
 				"narthex": 4.0, "col": KIT.BRICK, "roof": KIT.LEAD, "seed": 5, "apses": 3, "tag": "KuzeyKilise"}, k, lod))

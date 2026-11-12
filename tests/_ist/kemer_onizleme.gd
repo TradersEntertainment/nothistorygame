@@ -40,21 +40,22 @@ func _make_world() -> void:
 	var sky := Sky.new()
 	var pm := ProceduralSkyMaterial.new()
 	pm.sky_top_color = Color("6fa6d8")
-	pm.sky_horizon_color = Color("e9d9b8")
-	pm.ground_horizon_color = Color("d8c8a0")
+	pm.sky_horizon_color = Color("b9cfe0")
+	pm.ground_horizon_color = Color("b9cfe0")
 	pm.ground_bottom_color = Color("8a7c5a")
 	sky.sky_material = pm
 	env.sky = sky
-	env.ambient_light_source = Environment.AMBIENT_SOURCE_SKY
-	env.ambient_light_energy = 0.45
-	env.tonemap_mode = Environment.TONE_MAPPER_FILMIC
+	env.ambient_light_source = Environment.AMBIENT_SOURCE_COLOR
+	env.ambient_light_color = Color("c9c2b4")
+	env.ambient_light_energy = 0.55
+	env.tonemap_mode = Environment.TONE_MAPPER_LINEAR
 	var we := WorldEnvironment.new()
 	we.environment = env
 	add_child(we)
 	var sun := DirectionalLight3D.new()
 	sun.rotation_degrees = Vector3(-38, -50, 0)
 	sun.light_color = Color("ffe2b0")
-	sun.light_energy = 0.95
+	sun.light_energy = 0.85
 	sun.shadow_enabled = true
 	sun.directional_shadow_max_distance = 220.0
 	add_child(sun)
@@ -122,8 +123,10 @@ func _run_one(id: String, k: float, lod: int) -> void:
 	var tag := "%s_k%s" % [id, str(k)]
 	if shots_dir != "":
 		await _shots(id, k, tag)
-	if lod == 0 or args.has("audit"):
+	if lod == 0:
 		await _audit(id, k, lod)
+	else:
+		print("ISTTRIS id=%s lod=%d tris=%d" % [id, lod, _count_tris()[0]])
 	if shots_dir != "" and lod == 0:
 		for l in [1, 2]:
 			await _build(id, k, l)
@@ -269,10 +272,19 @@ func _audit(id: String, k: float, lod: int) -> void:
 				var yv: float = rv["position"].y
 				var yc: float = rc["position"].y if not rc.is_empty() else 0.0
 				var dy := yv - yc
+				var near_ok := false
 				if dy > 0.3 and dy < 2.0:
+					# dik yan yüzlerde (kubbe kenarı) 12 cm yanında çarpışma görünür yüzeye yetişiyorsa yanlış-pozitif
+					for o in [Vector2(0.12, 0), Vector2(-0.12, 0), Vector2(0, 0.12), Vector2(0, -0.12)]:
+						var q2 := PhysicsRayQueryParameters3D.create(Vector3(x + o.x, hi.y + 3.0, z + o.y), Vector3(x + o.x, -2.0, z + o.y), 1)
+						var r2 := space.intersect_ray(q2)
+						if not r2.is_empty() and r2["position"].y >= yv - 0.3:
+							near_ok = true
+							break
+				if dy > 0.3 and dy < 2.0 and not near_ok:
 					delik += 1
 					if samples.size() < 5:
-						samples.append(Vector3(x, yv, z))
+						samples.append([snappedf(x, 0.1), snappedf(z, 0.1), snappedf(yv, 0.01), snappedf(yc, 0.01)])
 			z += step
 		x += step
 	# --- dar: 0,2–1,4 m girilebilir aralık (iki yükseklikte, çizgi taraması)
@@ -310,8 +322,8 @@ func _audit(id: String, k: float, lod: int) -> void:
 							var gap := (j - i - 1) * 0.1
 							if gap >= 0.2 and gap <= 1.4:
 								dar += 1
-								if dar_s.size() < 5:
-									dar_s.append(pos_list[i])
+								if dar_s.size() < 14:
+									dar_s.append([snappedf(pos_list[i].x, 0.1), snappedf(pos_list[i].z, 0.1), hy, snappedf(gap, 0.1)])
 						i = j
 					else:
 						i += 1
@@ -324,6 +336,8 @@ func _audit(id: String, k: float, lod: int) -> void:
 		var bs := cshape.shape as BoxShape3D
 		if bs == null:
 			continue
+		if cshape.get_parent().get_child_count() > 3:
+			continue          # birleşik gövde (çok parçalı): parçalar birbirine yaslanır, tek tek sınanmaz
 		var gt3 := cshape.global_transform
 		if absf(gt3.basis.y.dot(Vector3.UP)) < 0.995:
 			continue
@@ -331,14 +345,15 @@ func _audit(id: String, k: float, lod: int) -> void:
 		if bottom < 0.05:
 			continue
 		var supported := false
-		for off in [Vector2(0, 0), Vector2(0.4, 0.4), Vector2(-0.4, 0.4), Vector2(0.4, -0.4), Vector2(-0.4, -0.4)]:
-			var px := gt3.origin + gt3.basis * Vector3(off.x * bs.size.x * 0.5, 0, off.y * bs.size.z * 0.5)
-			var q := PhysicsRayQueryParameters3D.create(Vector3(px.x, bottom + 0.03, px.z), Vector3(px.x, bottom - 0.2, px.z), 1)
-			q.exclude = [cshape.get_parent().get_rid()] if cshape.get_parent() is CollisionObject3D else []
-			var r := space.intersect_ray(q)
-			if not r.is_empty():
-				supported = true
-				break
+		var qb := PhysicsShapeQueryParameters3D.new()
+		var gb := BoxShape3D.new()
+		gb.size = bs.size + Vector3(0.14, 0.14, 0.14)
+		qb.shape = gb
+		qb.transform = Transform3D(gt3.basis.orthonormalized(), gt3.origin + Vector3(0, -0.03, 0))
+		qb.collision_mask = 1
+		if cshape.get_parent() is CollisionObject3D:
+			qb.exclude = [cshape.get_parent().get_rid()]
+		supported = not space.intersect_shape(qb, 1).is_empty()
 		if not supported:
 			havada += 1
 			if hav_s.size() < 5:
@@ -353,6 +368,14 @@ func _audit(id: String, k: float, lod: int) -> void:
 	print("ISTAUDIT id=%s k=%s lod=%d tris=%d draws=%d delik=%d dar=%d havada=%d cati_yolu=%d/%d" % [id, str(k), lod, td[0], td[1], delik, dar, havada, okc, cl.size()])
 	if delik > 0:
 		print("  delik örnek: ", samples)
+		for sm: Array in samples.slice(0, 5):
+			var pt := Vector3(sm[0], sm[2] - 0.02, sm[1])
+			for n in host.find_children("*", "MeshInstance3D", true, false):
+				var mi := n as MeshInstance3D
+				var ab := mi.global_transform * mi.get_aabb()
+				if ab.grow(0.03).has_point(pt):
+					print("    ", sm[0], ",", sm[1], " <- ", host.get_path_to(mi), " ", mi.mesh.get_class(), " ", mi.mesh.get_aabb().size)
+					break
 	if dar > 0:
 		print("  dar örnek: ", dar_s)
 	if havada > 0:

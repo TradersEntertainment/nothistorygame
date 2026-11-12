@@ -19,6 +19,14 @@ static func build_aspar(host: Node3D, k: float, lod: int) -> void:
 	root.name = "Aspar"
 	host.add_child(root)
 	# taban (bostan toprağı)
+	if lod >= 1:
+		Props.box(root, Vector3(W, 0.3, D), Vector3(0, -0.15, 0), Color("8a7552"))
+		for r2 in [[Vector3(W + 2 * T, H, T), Vector3(0, H * 0.5, -(D + T) * 0.5)], [Vector3(W + 2 * T, H, T), Vector3(0, H * 0.5, (D + T) * 0.5)], [Vector3(T, H, D), Vector3(-(W + T) * 0.5, H * 0.5, 0)], [Vector3(T, H, D), Vector3((W + T) * 0.5, H * 0.5, 0)]]:
+			Props.box(root, r2[0], r2[1], KIT.STONE)
+		if lod == 1:
+			for i in 6:
+				Props.box(root, Vector3(W / 7.0, 0.3, D * 0.3), Vector3(-W * 0.4 + i * W * 0.16, 0.15, (-1.0 if i % 2 == 0 else 1.0) * D * 0.2), Color("5f8a3c"))
+		return
 	var floor_b := KIT.blk(root, Vector3(W, 0.3, D), Vector3(0, -0.3, 0), KIT.SOIL, "")
 	floor_b.get_child(0).material_override = Props.mat(Color("8a7552"), 0.0, false, "")
 	# dört sed: üstü yürünür, iç yüz kesme taş, dış yüz toprak şev (ramplı)
@@ -69,8 +77,7 @@ static func build_aspar(host: Node3D, k: float, lod: int) -> void:
 			KIT.blk(root, Vector3(4.0, 2.6, 3.4), Vector3(hx, 0, hz), Color("d8bd8c"), "plaster", rng.randf_range(0, 90))
 			var rf := Props.prism(root, Vector3(4.6, 1.2, 4.0), Vector3(hx, 3.2, hz), KIT.TILE, Vector3(0, 0, 0))
 			rf.material_override = Props.mat(KIT.TILE, 0.0, false, "tiles")
-			var rfs := KIT.blk(root, Vector3(4.2, 0.2, 3.6), Vector3(hx, 2.6, hz), KIT.TILE.darkened(0.3))
-			rfs.get_child(0).visible = false
+			Props.make_solid(rf)
 		for i in 12:
 			KIT.tree(root, Vector3(rng.randf_range(-W * 0.45, W * 0.45), 0, rng.randf_range(-D * 0.45, D * 0.45)), rng.randf_range(4.0, 7.0), "incir" if i % 3 else "selvi")
 
@@ -96,9 +103,15 @@ static func build_polyeuktos(host: Node3D, k: float, lod: int) -> void:
 	var root := Node3D.new()
 	root.name = "Polyeuktos"
 	host.add_child(root)
+	if lod >= 1:
+		Props.box(root, Vector3(S + 0.6, 1.0, S + 0.6), Vector3(0, 0.5, 0), KIT.STONE_D)
+		if lod == 1:
+			for i in 6:
+				Props.box(root, Vector3(1.6, 2.5 + (i % 3), 1.6), Vector3(-S * 0.3 + i * S * 0.12, 1.0 + (2.5 + (i % 3)) * 0.5, (-1.0 if i % 2 == 0 else 1.0) * S * 0.2), KIT.STONE)
+		return
 	# temel kaide (alçak podyum, üstü yürünür): bina izi
 	KIT.blk(root, Vector3(S, 0.9, S), Vector3(0, 0, 0), KIT.STONE_D, "rubble")
-	KIT.vis(root, Vector3(S + 0.6, 0.35, S + 0.6), Vector3(0, 0, 0), KIT.STONE)
+	KIT.blk(root, Vector3(S + 0.6, 0.35, S + 0.6), Vector3(0, 0, 0), KIT.STONE, "ashlar")
 	# sıra sıra kırık pilye kütükleri (dört sıra): nef ve yan nefler
 	var pcount := maxi(3, int(S / 8.0))
 	for row in 4:
@@ -132,9 +145,8 @@ static func build_polyeuktos(host: Node3D, k: float, lod: int) -> void:
 			KIT.blk(root, Vector3(2.2, 0.4, 1.4), p, Color("ece2cf"), "marble", rng.randf_range(0, 90))
 		else:
 			KIT.rubble(root, p, rng.randf_range(0.9, 1.7), rng.randf_range(0.5, 1.1), i)
-	# kenarda basamaklı yıkık duvar (çıkış)
-	for sgn in [-1.0, 1.0]:
-		KIT.stairs(root, Vector3(S * 0.5 + 0.35 + 3.0 * 0.5 * 0, 0.0, sgn * S * 0.22), Vector3(-1, 0, 0), 0, 0.3, 0.5, 2.0, KIT.STONE)
+	# doğu kenarda basamaklı çıkış (4 basamak)
+	KIT.stairs(root, Vector3(S * 0.5 + 2.0, 0, 0), Vector3(-1, 0, 0), 4, 0.225, 0.5, 2.4, KIT.STONE)
 	# ot ve dikenli çalı
 	if lod == 0:
 		for i in 14:
@@ -152,7 +164,7 @@ static func perches_polyeuktos(k: float) -> Array:
 
 static func climbs_polyeuktos(k: float) -> Array:
 	var S := 52.0 * k
-	return [[Vector3(S * 0.5 + 0.6, 0, 0), Vector3(S * 0.5 - 0.6, 0.9, 0), "basamak"]]
+	return [[Vector3(S * 0.5 + 2.4, 0, 0), Vector3(S * 0.5 - 0.7, 0.9, 0), "basamak"]]
 
 
 ## Heroon / Konstantin rotundası harabesi (Havariyun yanında): yarım yıkık dairesel duvar, zemin, moloz.
@@ -208,13 +220,12 @@ static func build_pantokrator_court(host: Node3D, k: float, cx: float, lod: int)
 		Props.make_solid(dcap)
 	# keşiş hücreleri: avlunun güney kenarında sıra (alçak, kiremit çatılı)
 	for i in 5:
-		var x := cx - cw + 1.5 + i * 4.2
+		var x := cx - cw + 2.1 + i * 4.2
 		var z := cd * 0.5 + 2.5
-		KIT.blk(root, Vector3(3.6, 3.0, 4.0), Vector3(x, 0, z), Color("d9c6a0"), "plaster")
-		var r := KIT.blk(root, Vector3(3.8, 0.2, 4.2), Vector3(x, 3.0, z), KIT.TILE.darkened(0.3))
-		r.get_child(0).visible = false
-		var pm := Props.prism(root, Vector3(4.0, 1.1, 4.4), Vector3(x, 3.6, z), KIT.TILE)
+		KIT.blk(root, Vector3(4.2, 3.0, 4.0), Vector3(x, 0, z), Color("d9c6a0"), "plaster")
+		var pm := Props.prism(root, Vector3(4.4, 1.1, 4.4), Vector3(x, 3.55, z), KIT.TILE)
 		pm.material_override = Props.mat(KIT.TILE, 0.0, false, "tiles")
+		Props.make_solid(pm)
 		Props.box(root, Vector3(0.9, 2.0, 0.1), Vector3(x, 1.0, z - 2.03), Color("4a3524"))
 	# hastane kalıntısı: uzun salon, kırık duvarlar, kemer sırası
 	var hz := -cd * 0.5 - 6.0
