@@ -406,6 +406,8 @@ func _build_hesapla(foot: Array, bands: Array, gates: Array, tohum: int) -> void
 	# 2) Kapılardan Mese'ye inen yollar ve deniz kapılarından yokuşlar
 	for g: Array in gates:
 		_gate_road(g[0] as Vector2, String(g[1]), rng)
+	# 2b) DOKU-4 madde 4: bölümlerin oyun alanlarının (hub, Ayasofya meydanı) çevresinde çevre yolu + dört yana bağlantı
+	_oyun_alani_yollari()
 	# 3) Mahalle içi organik sokaklar (üç kuşak) ve boş kalan yerleri dolduran ek sokaklar
 	var n0 := streets.size()
 	for s in range(0, n0):
@@ -446,6 +448,47 @@ func _build_hesapla(foot: Array, bands: Array, gates: Array, tohum: int) -> void
 	stats["doku"] = doku.size()
 	stats["oge"] = oge.size()
 	stats["hesap_ms"] = Time.get_ticks_msec() - t0
+
+
+## Oyun alanının (dikdörtgen) 4,5 m dışında 5 m'lik kaldırım çevre yolu ve her kenarın ortasından dışarı 70 m bağlantı:
+## alanın kenarındaki yeşil şerit kalkar, sokak dokusu (sıra evler, ara sokaklar) çevre yoluna yaslanır.
+func _oyun_alani_yollari() -> void:
+	var s: Node = IstSehir.active
+	if s == null or not is_instance_valid(s) or not s.has_method("oyun_alanlari"):
+		return
+	var n := 0
+	for a: Rect2 in s.oyun_alanlari():
+		var r := a.grow(4.5)
+		var k := [r.position, Vector2(r.end.x, r.position.y), r.end, Vector2(r.position.x, r.end.y)]
+		for i in 4:
+			var p: Vector2 = k[i]
+			var q: Vector2 = k[(i + 1) % 4]
+			n += _add_parcali(_densify(PackedVector2Array([p, q]), 4.0), 5.0, "oyun_cevre")
+			var m := (p + q) * 0.5
+			var dis := (m - a.get_center()).normalized()
+			dis = Vector2(signf(dis.x), 0.0) if absf(dis.x) > absf(dis.y) else Vector2(0.0, signf(dis.y))
+			var uc := m + dis * 70.0
+			if not IstGeo.sehir_ici(uc.x, uc.y):
+				uc = m + dis * 30.0
+			n += _add_parcali(_densify(PackedVector2Array([m + dis * 2.5, uc]), 4.0), 5.0, "oyun_bag")
+	stats["oyun_yol"] = n
+
+
+## Yalnız boş/yol hücrelerinden geçen parçaları ekler (sur bandı, anıt, deniz atlanır); eklenen parça sayısı
+func _add_parcali(pts: PackedVector2Array, w: float, ad: String) -> int:
+	var n := 0
+	var cur := PackedVector2Array()
+	for i in pts.size() + 1:
+		var ok := i < pts.size() and cell(pts[i].x, pts[i].y) in [0, 1] and IstGeo.sehir_ici(pts[i].x, pts[i].y)
+		if ok:
+			cur.append(pts[i])
+		elif cur.size() >= 3:
+			_add_street(cur, w, "yol", ad)
+			n += 1
+			cur = PackedVector2Array()
+		else:
+			cur = PackedVector2Array()
+	return n
 
 
 ## Anıt tabanları: IstSehir v2 kayıtlarından (salt okunur) döndürülmüş dikdörtgen = gerçek ölçü × k + 6 m pay. Sınır
@@ -1366,6 +1409,10 @@ func _eser_meydanlari() -> void:
 
 
 ## Eser meydanlarının içini doldurur (evlerden sonra): köşe grupları, ağaç kümesi, kuyu/çeşme + gezinme noktaları
+## DOKU-4 madde 6: forum meydanlarının içi (yapı ÇEVRE'nin; doku ve kişi DOKU'nun): pazar köşeleri, mumcu, kuyu, ayin
+const FORUM_IDS := ["konstantin", "tauri", "bovis", "amastrianon", "arkadius", "philadelphion", "augustaion"]
+const FORUM_SET := ["set_pazar_kosesi", "mumcu", "set_pazar_kosesi", "kuyu", "set_ayin_alayi", "set_pazar_kosesi", "agac_kumesi", "set_pazar_kosesi"]
+
 func _eser_meydan_doldur() -> void:
 	var nset := 0
 	for e: Dictionary in eser_meydan:
@@ -1373,7 +1420,8 @@ func _eser_meydan_doldur() -> void:
 		var r0 := float(e["r0"])
 		var R := float(e["R"])
 		var aya := String(e["id"]) == "ayasofya"
-		var sets: Array = ["mumcu", "set_ayin_alayi", "set_pazar_kosesi", "agac_kumesi", "mumcu", "set_manastir_avlusu", "agac_kumesi",
+		var forum := String(e["id"]) in FORUM_IDS
+		var sets: Array = FORUM_SET if forum else ["mumcu", "set_ayin_alayi", "set_pazar_kosesi", "agac_kumesi", "mumcu", "set_manastir_avlusu", "agac_kumesi",
 			"set_pazar_kosesi", "kuyu", "agac_kumesi", "set_meyhane_onu", "mumcu"] if aya else (
 			["mumcu", "set_pazar_kosesi", "agac_kumesi", "set_ayin_alayi"] if bool(e["unlu"]) else ["agac_kumesi", "mumcu"])
 		var rr := (r0 + R) * 0.5
@@ -1444,7 +1492,8 @@ func _kare_doldur(c: Vector2, r0: float, R: float, yer: String, h0: int) -> int:
 					break
 			if best == Vector2.INF:
 				continue
-			oge.append({"tur": ["agac_kumesi", "mumcu", "kuyu", "agac_kumesi"][(i + j * 3) & 3], "c": best, "yaw": float(i * 1.7 + j), "tohum": h0 * 11 + i * 31 + j, "yer": yer})
+			var dl: Array = ["set_pazar_kosesi", "mumcu", "kuyu", "set_pazar_kosesi"] if yer in FORUM_IDS else ["agac_kumesi", "mumcu", "kuyu", "agac_kumesi"]
+			oge.append({"tur": dl[(i + j * 3) & 3], "c": best, "yaw": float(i * 1.7 + j), "tohum": h0 * 11 + i * 31 + j, "yer": yer})
 			_stamp_disc(best, 3.5, 5)
 			dolu[Vector2i(i, j)] = true
 			nset += 1
