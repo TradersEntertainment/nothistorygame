@@ -42,7 +42,7 @@ static func cyl(h: Node3D, r: float, height: float, pos: Vector3, col: Color, to
 	if pat != "":
 		mi.material_override = Props.mat(col.lerp(Color.WHITE, 0.5), 0.0, false, pat)
 	if solid:
-		Props.make_solid(mi, 0.93)
+		Props.make_solid(mi, 0.98)
 	return mi
 
 
@@ -55,6 +55,13 @@ static func disk(h: Node3D, rx: float, rz: float, height: float, pos: Vector3, c
 	if solid:
 		Props.make_solid(mi, 1.0)
 	return mi
+
+
+## Yaprak/süs küresi: çarpışmasız, denetimde "delik" sayılmaz (meta dekor).
+static func yaprak(h: Node3D, r: float, pos: Vector3, col: Color, sc := Vector3.ONE, segs := 8) -> MeshInstance3D:
+	var m := Props.ball(h, r, pos, col, sc, segs)
+	m.set_meta("dekor", true)
+	return m
 
 
 static func ball(h: Node3D, r: float, pos: Vector3, col: Color, sc := Vector3.ONE, segs := 8) -> MeshInstance3D:

@@ -193,6 +193,7 @@ func _tris(root: Node) -> int:
 
 
 var _tri_cache := {}
+var _walk_son := ""
 
 
 func _mesh_tris(m: Mesh) -> int:
@@ -210,6 +211,34 @@ func _mesh_tris(m: Mesh) -> int:
 	return c
 
 
+## Kenar etkisini ele: dört komşu noktada da aynı hata varsa gerçek delik.
+func _delik_dogrula(space: PhysicsDirectSpaceState3D, thick: Array, x: float, z: float) -> bool:
+	for off in [Vector2(0.15, 0), Vector2(-0.15, 0), Vector2(0, 0.15), Vector2(0, -0.15)]:
+		var xx := x + off.x
+		var zz := z + off.y
+		var q := PhysicsRayQueryParameters3D.create(Vector3(xx, 400, zz), Vector3(xx, -5, zz))
+		q.exclude = [_ground_rid]
+		var hit := space.intersect_ray(q)
+		var ct := 0.0 if hit.is_empty() else (hit["position"] as Vector3).y
+		var vt := 0.0
+		for e in thick:
+			var gab: AABB = e[2]
+			if xx < gab.position.x or xx > gab.end.x or zz < gab.position.z or zz > gab.end.z or gab.end.y < ct + 0.6:
+				continue
+			var mi2: MeshInstance3D = e[0]
+			var inv := mi2.global_transform.affine_inverse()
+			var o := inv * Vector3(xx, 400, zz)
+			var d := inv.basis * Vector3(0, -1, 0)
+			var fc: PackedVector3Array = e[1]
+			for fi in range(0, fc.size(), 3):
+				var hv: Variant = Geometry3D.ray_intersects_triangle(o, d, fc[fi], fc[fi + 1], fc[fi + 2])
+				if hv != null:
+					vt = maxf(vt, (mi2.global_transform * (hv as Vector3)).y)
+		if vt - ct <= 0.6:
+			return false
+	return true
+
+
 func _audit(id: String, k: float, lod: int, perches: Array, climbs: Array) -> void:
 	var space := get_world_3d().direct_space_state
 	var b := _bounds(_item)
@@ -222,7 +251,7 @@ func _audit(id: String, k: float, lod: int, perches: Array, climbs: Array) -> vo
 		var mi := n as MeshInstance3D
 		var ab := mi.mesh.get_aabb()
 		var sz := ab.size * mi.global_transform.basis.get_scale()
-		if minf(minf(absf(sz.x), absf(sz.y)), absf(sz.z)) > 0.3:
+		if minf(minf(absf(sz.x), absf(sz.y)), absf(sz.z)) > 0.3 and not mi.has_meta("dekor"):
 			thick.append([mi, mi.mesh.get_faces(), mi.global_transform * ab])
 	var delik := 0
 	var delik_ornek := ""
@@ -252,7 +281,7 @@ func _audit(id: String, k: float, lod: int, perches: Array, climbs: Array) -> vo
 					var hv: Variant = Geometry3D.ray_intersects_triangle(o, d, fc[fi], fc[fi + 1], fc[fi + 2])
 					if hv != null:
 						vis_top = maxf(vis_top, (mi2.global_transform * (hv as Vector3)).y)
-			if vis_top - col_top > 0.6:
+			if vis_top - col_top > 0.6 and await _delik_dogrula(space, thick, x, z):
 				delik += 1
 				if delik_ornek == "":
 					delik_ornek = "(%.1f,%.1f vis=%.1f col=%.1f)" % [x, z, vis_top, col_top]
@@ -288,8 +317,8 @@ func _audit(id: String, k: float, lod: int, perches: Array, climbs: Array) -> vo
 			if occ[i * nz + j] == 1:
 				if seen_occ and run >= minrun and run <= maxrun:
 					dar += 1
-					if dar_ornek == "":
-						dar_ornek = "(%.1f,%.1f z-yönü %.2fm)" % [b.position.x + i * dstep, b.position.z + j * dstep, run * dstep]
+					if dar_ornek.count("(") < 3:
+						dar_ornek += "(%.1f,%.1f z-yönü %.2fm)" % [b.position.x + i * dstep, b.position.z + j * dstep, run * dstep]
 				seen_occ = true
 				run = 0
 			else:
@@ -301,8 +330,8 @@ func _audit(id: String, k: float, lod: int, perches: Array, climbs: Array) -> vo
 			if occ[i * nz + j] == 1:
 				if seen2 and run2 >= minrun and run2 <= maxrun:
 					dar += 1
-					if dar_ornek == "":
-						dar_ornek = "(%.1f,%.1f x-yönü %.2fm)" % [b.position.x + i * dstep, b.position.z + j * dstep, run2 * dstep]
+					if dar_ornek.count("(") < 3:
+						dar_ornek += "(%.1f,%.1f x-yönü %.2fm)" % [b.position.x + i * dstep, b.position.z + j * dstep, run2 * dstep]
 				seen2 = true
 				run2 = 0
 			else:
@@ -310,20 +339,19 @@ func _audit(id: String, k: float, lod: int, perches: Array, climbs: Array) -> vo
 	# ---- havada: tabanı zeminden > 5 cm yukarıda ve komşu katıya değmeyen kütle
 	var havada := 0
 	var hv_ornek := ""
-	var shape := BoxShape3D.new()
-	var sq := PhysicsShapeQueryParameters3D.new()
-	sq.shape = shape
+	var meshes: Array = []
 	for n in _item.find_children("*", "MeshInstance3D", true, false):
-		var mi3 := n as MeshInstance3D
-		var gab2 := mi3.global_transform * mi3.mesh.get_aabb()
+		var mm := n as MeshInstance3D
+		meshes.append([mm, mm.global_transform * mm.mesh.get_aabb()])
+	for e in meshes:
+		var mi3: MeshInstance3D = e[0]
+		var gab2: AABB = e[1]
 		if gab2.position.y < 0.05 or mi3.mesh.get_aabb().size.length() < 0.25:
 			continue
-		shape.size = gab2.size + Vector3.ONE * 0.16
-		sq.transform = Transform3D(Basis.IDENTITY, gab2.get_center())
-		var hits := space.intersect_shape(sq, 8)
 		var sup := false
-		for h in hits:
-			if h["rid"] != _ground_rid:
+		var grow := gab2.grow(0.08)
+		for e2 in meshes:
+			if e2[0] != mi3 and grow.intersects(e2[1]):
 				sup = true
 				break
 		if not sup:
@@ -341,7 +369,7 @@ func _audit(id: String, k: float, lod: int, perches: Array, climbs: Array) -> vo
 		if r2:
 			ok_paths += 1
 		else:
-			notes += " [yol-yok:%s %s→%s]" % [kind, str(a.snapped(Vector3(0.1, 0.1, 0.1))), str(u.snapped(Vector3(0.1, 0.1, 0.1)))]
+			notes += " [yol-yok:%s %s %s→%s]" % [_walk_son, kind, str(a.snapped(Vector3(0.1, 0.1, 0.1))), str(u.snapped(Vector3(0.1, 0.1, 0.1)))]
 	var line := "ISTAUDIT id=%s k=%s lod=%d tris=%d draws=%d delik=%d dar=%d havada=%d cati_yolu=%d/%d perch=%d" % [id, str(k), lod, tris, draws, delik, dar, havada, ok_paths, climbs.size(), perches.size()]
 	print(line)
 	_log.append(line)
@@ -404,5 +432,7 @@ func _walk(a: Vector3, u: Vector3, kind: String) -> bool:
 		var col := body.move_and_collide(Vector3(0, -0.6, 0))
 		if col == null:
 			body.global_position += Vector3(0, -0.0, 0)
+	if not ok:
+		_walk_son = "son=" + str(body.global_position.snapped(Vector3(0.1, 0.1, 0.1)))
 	body.queue_free()
 	return ok

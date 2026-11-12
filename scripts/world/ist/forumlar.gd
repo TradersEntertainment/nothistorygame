@@ -395,8 +395,8 @@ static func _amastrianon(n: Node3D, k: float, lod: int) -> void:
 	# çınarlar
 	for p in [Vector3(-wx * 0.6, 0, -wz * 0.5), Vector3(wx * 0.62, 0, wz * 0.45), Vector3(-wx * 0.55, 0, wz * 0.55), Vector3(wx * 0.5, 0, -wz * 0.6)]:
 		Y.cyl(n, 0.4, 3.0, p + Vector3(0, 1.5, 0), Y.AHSAP, 0.32, 6, col)
-		Y.ball(n, 3.2, p + Vector3(0, 5.2, 0), Y.OT, Vector3(1.0, 0.8, 1.0), 8)
-		Y.ball(n, 2.2, p + Vector3(1.6, 4.4, 0.9), Y.OT_K, Vector3(1.0, 0.8, 1.0), 6)
+		Y.yaprak(n, 3.2, p + Vector3(0, 5.2, 0), Y.OT, Vector3(1.0, 0.8, 1.0), 8)
+		Y.yaprak(n, 2.2, p + Vector3(1.6, 4.4, 0.9), Y.OT_K, Vector3(1.0, 0.8, 1.0), 6)
 	# yıkık revak köşesi (kuzey ve doğu kenar): 4 sütun ve kiriş
 	var d := 0
 	for j in 5:
@@ -566,9 +566,9 @@ static func _myrelaion(n: Node3D, k: float, lod: int) -> void:
 	# haç kolları: kısa beşik tonozlar (görsel, yüksekliği ≤ 1,3)
 	if lod < 2:
 		for ax: int in [0, 1]:
-			var v := Props.cyl(n, 1.5, cw * 0.98, Vector3(0, cy + 0.2, 0), Y.KURSUN, Vector3(90 if ax == 0 else 0, 0, 0 if ax == 0 else 90), 8)
-			v.scale = Vector3(1.0, 1.0, 1.0)
-			v.position = Vector3(0, cy + 0.0, 0)
+			var v := Props.cyl(n, 2.2, cw * 0.98, Vector3(0, cy - 1.2, 0), Y.KURSUN, Vector3(90 if ax == 0 else 0, 0, 0 if ax == 0 else 90), 10)
+			if col:
+				Props.make_solid(v, 1.0)
 	# yürünür çatı terası: kolların altındaki düz örtü (yüzey cy)
 	Y.box(n, Vector3(cw - 0.4, 0.05, cw - 0.4), Vector3(0, cy + 0.025, 0), Y.KURSUN, "", col)
 	# kubbe: sekizgen kasnak + pencere + kurşun kubbe + haç
@@ -579,7 +579,9 @@ static func _myrelaion(n: Node3D, k: float, lod: int) -> void:
 		for i in 8:
 			var t := TAU * i / 8.0 + PI / 8
 			Y.box(n, Vector3(0.7, 1.2, 0.15), Vector3(cos(t) * (dr * 0.93), cy + dh * 0.5, sin(t) * (dr * 0.93)), Color("2a2622"), "", false, Vector3(0, -rad_to_deg(t) + 90, 0))
-	Y.ball(n, dr, Vector3(0, cy + dh, 0), Y.KURSUN, Vector3(1.0, 0.7, 1.0), 12)
+	var dome := Y.ball(n, dr, Vector3(0, cy + dh, 0), Y.KURSUN, Vector3(1.0, 0.7, 1.0), 12)
+	if col:
+		Props.make_solid(dome, 1.0)
 	Y.hac(n, Vector3(0, cy + dh + dr * 0.7, 0), 1.2)
 	# üç apsis (doğu cephe): yarım silindir çıkıntılar
 	for i in 3:
