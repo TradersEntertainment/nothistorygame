@@ -1493,11 +1493,15 @@ func _near_item(p: Vector2, pad: float) -> bool:
 ## Hat dilimi: kur türüne göre parçanın parametreli kurucusu
 func _hat_piece(ad: String, kur: String, mid: Vector2, d: Vector2, L: float, seed: int) -> Dictionary:
 	var yaw := _yaw_x(d, mid, ad)
-	var lo := INF
-	for k in 5:
-		var q := mid + d * L * (k / 4.0 - 0.5)
-		lo = minf(lo, IstGeo.h(q.x, q.y))
-	lo = maxf(lo, -0.6)
+	# Taban: hat boyunca örneklerin ortancası (kıyıda bir ucu denize, bir ucu yamaca düşen dilim gömülmesin); ortancanın
+	# altında kalan yer taş temelle (dilim boyu, sur kalınlığı) doldurulur
+	var hs: Array = []
+	for k in 7:
+		var q := mid + d * L * (k / 6.0 - 0.5)
+		hs.append(IstGeo.h(q.x, q.y))
+	hs.sort()
+	var lo := maxf(float(hs[3]), -0.6)
+	var dip := maxf(float(hs[0]), -2.5)
 	var make: Callable
 	match kur:
 		"kara":
@@ -1514,6 +1518,17 @@ func _hat_piece(ad: String, kur: String, mid: Vector2, d: Vector2, L: float, see
 				make = func(n: Node3D, lod: int) -> void: IstMarmaraSur.build_run(n, L, K2, lod, {})
 		_:
 			make = func(n: Node3D, lod: int) -> void: IstMarmaraSur.build_run(n, L, K2, lod, {})
+	if lo - dip > 0.3:
+		var inner := make
+		var tk := _walk_w(kur) + 1.6
+		var drop := lo - dip + 0.4
+		make = func(n: Node3D, lod: int) -> void:
+			inner.call(n, lod)
+			var fy := -drop * 0.5 + 0.05
+			if lod == 0:
+				Props.set_pattern(Props.solid(n, Vector3(L, drop, tk), Vector3(0, fy, 0), Color.WHITE), Color("b8a888"), "ashlar")
+			else:
+				Props.box(n, Vector3(L, drop, tk), Vector3(0, fy, 0), Color("b8a888"))
 	var pos := Vector3(mid.x, lo - 0.05, mid.y)
 	if kur == "blakherna":
 		# Blakherna kabuğunun suru yerel z 0…4,6'da (dış yüz +z): sur ekseni hatta otursun

@@ -42,6 +42,27 @@ func _ready() -> void:
 		IstSehir.attach_v2(root, gece)
 		_kaba_dunya()
 	print("ISTKUR ms=%d dunya=%s" % [Time.get_ticks_msec() - t0, "IstDunya" if dscr else "sonda"])
+	if set_ == "hatdebug":
+		var s2 := IstSehir.active
+		s2.set_process(false)
+		var n := 0
+		for it: Dictionary in s2.hat_items:
+			if String(it.get("hat", "")) != "halic_suru" or not it.has("len"):
+				continue
+			s2._build(it, 0)
+			await get_tree().physics_frame
+			await get_tree().physics_frame
+			var p: Vector3 = it["pos"]
+			var sp := get_world_3d().direct_space_state
+			var out := []
+			for dz: float in [-6.0, -3.0, 0.0, 3.0, 6.0]:
+				var q: Vector3 = (it["holder"] as Node3D).transform * Vector3(0, 0, dz)
+				var hit := sp.intersect_ray(PhysicsRayQueryParameters3D.create(q + Vector3(0, 40, 0), q - Vector3(0, 40, 0)))
+				out.append("%.0f:%s" % [dz, ("%.1f" % (hit["position"] as Vector3).y) if not hit.is_empty() else "-"])
+			print("HATDBG len=%.1f pos=%s h=%.1f mesh=%d body=%d %s" % [float(it["len"]), str(p), IstGeo.h(p.x, p.z), (it["holder"] as Node3D).find_children("*", "MeshInstance3D", true, false).size(), (it["holder"] as Node3D).find_children("*", "CollisionShape3D", true, false).size(), " ".join(out)])
+			n += 1
+		get_tree().quit(0)
+		return
 	if set_ in ["denetim", "hepsi"]:
 		await _denetim()
 	if set_ in ["hava", "hepsi"]:
@@ -209,6 +230,8 @@ func _hava() -> void:
 	await _shot_en(p + "sarayburnu", 1700.0, 900.0, 70.0, 250.0, 10.0)
 	await _shot_en(p + "ucus70", -1500.0, 300.0, 70.0, 80.0, 25.0)
 	await _shot_en(p + "tepe", -2000.0, 400.0, 2600.0, 0.0, 89.0, 62.0)
+	if gece:
+		return
 
 
 func _eserler() -> void:
@@ -229,12 +252,62 @@ func _eserler() -> void:
 
 func _yer() -> void:
 	var p := "yer_%d_" % tur
-	await _shot_en(p + "mese", -1150.0, 120.0, 1.7, 270.0, 3.0, 70)
-	await _shot_en(p + "halic_iskele", -1000.0, 960.0, 1.7, 170.0, 3.0, 70)
-	await _shot_en(p + "bostan_koy", -4400.0, -1650.0, 1.7, 40.0, 3.0, 70)
-	await _shot_en(p + "sur_dibi", -4560.0, 820.0, 1.7, 250.0, -8.0, 70)
-	await _shot_en(p + "hipodrom", -400.0, -300.0, 1.7, 35.0, 2.0, 70)
-	await _shot_en(p + "ayasofya_bati", -200.0, 20.0, 1.7, 90.0, -6.0, 70)
+	var s := IstSehir.active
+	var by := {}
+	for it: Dictionary in s.items:
+		by[String(it["id"])] = it
+	var g := func(x: float, z: float) -> Vector3:
+		return Vector3(x, IstGeo.h(x, z) + 1.7, z)
+	# Mese: Konstantin ile Tauri arasındaki revaklı dilimin ortası, cadde boyunca
+	var m := IstGeo.yol("mese")
+	if m.size() >= 4:
+		var a := m[2].lerp(m[3], 0.35)
+		var b := m[3]
+		await _shot(p + "mese", g.call(a.x, a.y), g.call(b.x, b.y), 70)
+	# Haliç iskelesi: iskele öğesinin kara yanından suya
+	if by.has("halic_iskele"):
+		var h := by["halic_iskele"]["holder"] as Node3D
+		var at: Vector3 = h.transform * Vector3(0, 0, 40)
+		await _shot(p + "halic_iskele", g.call(at.x, at.z), h.position + Vector3(0, 2, 0), 70)
+	# Bostan köyü: Studios'a en yakın bostan/bağ yaması
+	var best: Dictionary = {}
+	var bd := INF
+	var sp: Vector3 = by["studios"]["pos"] if by.has("studios") else Vector3(-2250, 0, 900)
+	for it: Dictionary in s.items:
+		if String(it["id"]).begins_with("doku_bostan") or String(it["id"]).begins_with("doku_bag"):
+			var d := (it["pos"] as Vector3).distance_to(sp)
+			if d < bd:
+				bd = d
+				best = it
+	if not best.is_empty():
+		var bp: Vector3 = best["pos"]
+		await _shot(p + "bostan_koy", g.call(bp.x + 16, bp.z + 16), bp, 70)
+	# Sur dibi: Romanos Kapısı'nın iç yanında, sura bakarak
+	if by.has("romanos"):
+		var h := by["romanos"]["holder"] as Node3D
+		var at: Vector3 = h.transform * Vector3(30, 0, -28)
+		await _shot(p + "sur_dibi", g.call(at.x, at.z), h.transform * Vector3(0, 8, 0), 70)
+	if by.has("hipodrom"):
+		var h := by["hipodrom"]["holder"] as Node3D
+		var at: Vector3 = h.transform * Vector3(0, 0, 60)
+		await _shot(p + "hipodrom", g.call(at.x, at.z), h.transform * Vector3(0, 3, -60), 70)
+	if by.has("ayasofya"):
+		var ap: Vector3 = by["ayasofya"]["pos"]
+		await _shot(p + "ayasofya_bati", g.call(ap.x - 75, ap.z + 5), ap + Vector3(0, 14, 0), 70)
+	# Çatıdan bakış: beş dükkânlı evin çatı sırtında (sandık 1,0 → tente 2,2 → saçak; IstEvler.climbs)
+	var n := 0
+	for hh: Dictionary in IstSehir.sokak.houses:
+		if String(hh["tip"]) != "dukkan" or (int(hh["sira"]) % 97) != 3:
+			continue
+		var dm := IstEvler.dims(int(hh["v"]))
+		var c: Vector2 = hh["c"]
+		var fr: Vector2 = hh["on"]
+		var y := IstGeo.h(fr.x, fr.y) + dm.y + IstEvler.RISE + 1.6
+		var dir := (c - fr).normalized()
+		await _shot(p + "cati_%d" % n, Vector3(c.x, y, c.y), Vector3(c.x + dir.x * 30.0, y - 4.0, c.y + dir.y * 30.0), 70)
+		n += 1
+		if n >= 5:
+			break
 
 
 # ---------------------------------------------------------------- denetim
@@ -244,6 +317,7 @@ func _denetim() -> void:
 	if s == null:
 		return
 	var sk := IstSehir.sokak
+	s.set_process(false)          # denetim boyunca akış kurduğumuz yakın katmanı boşaltmasın
 	print("ISTDENETIM ev=%d sokak=%d doku=%d" % [sk.houses.size(), sk.streets.size(), sk.doku.size()])
 	# 1) Evler arası aralık: aynı sıradan olmayan iki ev arasında 0 < aralık < 1,4 m (kaba: taban dikdörtgenleri)
 	var grid := {}
@@ -368,6 +442,7 @@ func _denetim() -> void:
 	print("ISTKONMA toplam=%d carpismali=%d eksik=%s" % [fd["perches"].size(), ok, str(bad)])
 	for lm: Array in fd["landmarks"]:
 		print("ISTESER %s p=%s r=%.0f" % [lm[0], str(lm[1]), lm[2]])
+	s.set_process(true)
 
 
 static func _rect_gap(a: Array, b: Array) -> float:
