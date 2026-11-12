@@ -268,6 +268,10 @@ static func arazi_ozeti(r: Rect2, n := 48) -> PackedFloat32Array:
 	return out
 
 
+static func onbellek_var(ad: String, imza: String) -> bool:
+	return _ob_kip() not in ["yok", "yaz"] and FileAccess.file_exists(ONBELLEK_DIR + ad + "_" + imza + ".bin")
+
+
 static func onbellek_oku(ad: String, imza: String) -> Variant:
 	if _ob_kip() in ["yok", "yaz"]:
 		return null

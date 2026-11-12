@@ -42,7 +42,42 @@ const BAKIS3 := [
 	["h70_mahalle", -1500.0, 250.0, "70", 125.0, -32.0, ""],
 	["h70_ayasofya", -700.0, -150.0, "70", 60.0, -30.0, ""],
 ]
+## DOKU-4 (tur=4): dört mahalle × dört yerden sokak karesi (çarşı/Mese, sık mahalle, sur dibi, bostan-seyrek) + havadan;
+## gece=1 ile GECE listesi (Galata'dan, uçuştan, surdan, ordugâh ufku, sokak).
+const BAKIS4 := [
+	["y4_carsi_1", -1100.0, 95.0, "1.7", 80.0, -3.0, "mese"],
+	["y4_carsi_2", -1500.0, 180.0, "1.7", 0.0, -3.0, "sokak"],
+	["y4_carsi_3", -800.0, 60.0, "1.7", 0.0, -3.0, "sokak"],
+	["y4_carsi_4", -1900.0, 120.0, "1.7", 260.0, -3.0, "mese"],
+	["y4_sik_1", -1450.0, 520.0, "1.7", 0.0, -3.0, "sokak"],
+	["y4_sik_2", -2000.0, 900.0, "1.7", 0.0, -3.0, "sokak"],
+	["y4_sik_3", -1100.0, 700.0, "1.7", 0.0, -3.0, "sokak"],
+	["y4_sik_4", -2600.0, 1300.0, "1.7", 0.0, -3.0, "sokak"],
+	["y4_surdibi_1", -4400.0, 400.0, "1.7", 0.0, -3.0, "sur"],
+	["y4_surdibi_2", -4250.0, 1300.0, "1.7", 0.0, -3.0, "sur"],
+	["y4_surdibi_3", -4200.0, -500.0, "1.7", 0.0, -3.0, "sur"],
+	["y4_surdibi_4", -3700.0, 2200.0, "1.7", 0.0, -3.0, "sur"],
+	["y4_bostan_1", -2250.0, -560.0, "1.7", 0.0, -3.0, "sokak"],
+	["y4_bostan_2", -3200.0, -700.0, "1.7", 0.0, -3.0, "sokak"],
+	["y4_bostan_3", -2900.0, 300.0, "1.7", 0.0, -3.0, "sokak"],
+	["y4_bostan_4", -3600.0, 1000.0, "1.7", 0.0, -3.0, "sokak"],
+	["h4_hub_30", -4700.0, 850.0, "30", 100.0, -30.0, ""],
+	["h4_carsi_30", -1150.0, 60.0, "30", 80.0, -35.0, ""],
+	["h4_mahalle_70", -1500.0, 250.0, "70", 125.0, -32.0, ""],
+	["h4_bati_70", -3600.0, 600.0, "70", 90.0, -30.0, ""],
+]
+const BAKIS4_GECE := [
+	["g4_galata_kule", -512.0, 1889.0, "60", 205.0, -14.0, ""],
+	["g4_galata_yer", -560.0, 1700.0, "1.7", 200.0, 2.0, "sokak"],
+	["g4_halic_100", -1200.0, 1500.0, "100", 200.0, -18.0, ""],
+	["g4_ucus_sehir", -2600.0, 400.0, "120", 90.0, -22.0, ""],
+	["g4_sur_ordugah", -4550.0, 700.0, "40", 270.0, -8.0, ""],
+	["g4_kara_suru", -5100.0, 1100.0, "50", 150.0, -12.0, ""],
+	["g4_mese_yer", -1100.0, 95.0, "1.7", 80.0, -3.0, "mese"],
+	["g4_ayasofya_28", -470.0, -20.0, "28", 88.0, -10.0, ""],
+]
 var tur3 := false
+var tur4 := false
 var gece := false
 
 
@@ -55,7 +90,9 @@ func _ready() -> void:
 			"shots": shots = kv[1]
 			"on": on = kv[1]
 			"sadece": sadece = Array(kv[1].split(","))
-			"tur": tur3 = kv[1] == "3"
+			"tur":
+				tur3 = kv[1] == "3"
+				tur4 = kv[1] == "4"
 			"gece": gece = kv[1] == "1"
 			"yakin": IstHayat.yakin_acik = kv[1] != "0"
 	cam = Camera3D.new()
@@ -91,7 +128,10 @@ func _kareler() -> void:
 		await _cati_sina()
 	if shots != "":
 		DirAccess.make_dir_recursive_absolute(shots)
-	for b: Array in (BAKIS3 if tur3 else BAKIS):
+	var liste: Array = BAKIS3 if tur3 else BAKIS
+	if tur4:
+		liste = BAKIS4_GECE if gece else BAKIS4
+	for b: Array in liste:
 		var ad: String = b[0]
 		if not sadece.is_empty() and not ad in sadece:
 			continue
@@ -113,7 +153,7 @@ func _kareler() -> void:
 		if shots != "":
 			var img := get_viewport().get_texture().get_image()
 			img.save_png(shots.path_join(on + ad + ".png"))
-		if tur3:
+		if tur3 or tur4:
 			await _katman_olc(ad, dc, pr)
 	print("DOKU2 bitti")
 	get_tree().quit(0)

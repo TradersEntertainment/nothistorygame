@@ -556,6 +556,21 @@ func _surlar() -> void:
 			acc += seg
 	ist["nobetci"] = n_n
 	ist["isci"] = n_f
+	# DOKU-4 (gece): surların üstünde nöbet ateşleri (mangal + alev + hale); uzak görünüşü IstHayat'ın uzak ışık katmanında
+	if gece:
+		var n_a := 0
+		for h: Array in hatlar:
+			var pl := IstGeo.yol(String(h[0]))
+			if pl.size() < 2:
+				continue
+			var hy := IstSehir._walk_h(String(h[1]))
+			var tw := IstSehir._walk_w(String(h[1]))
+			for p: Vector2 in preload("res://scripts/world/ist/hayat_uzak_isik.gd").nokta_dizisi(pl, 45.0 if h[1] in ["kara", "blakherna"] else 70.0):
+				var ya := _h(p) + hy
+				kutu(Vector3(p.x, ya + 0.3, p.y), Vector3(0.7, 0.6, 0.7), 0.0, Color(0.32, 0.26, 0.2))
+				alev(Vector3(p.x, ya + 0.6, p.y), 0.55, 0.9, 2.4)
+				n_a += 1
+		ist["sur_ates"] = n_a
 
 
 # ---------------------------------------------------------------- ordugâh
