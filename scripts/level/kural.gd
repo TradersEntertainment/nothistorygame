@@ -277,9 +277,18 @@ func _chase_loop() -> void:
 	_runner_tw = null
 
 
+## Yukarıdan inen ışın (yokuşta oyuncunun hizası zeminin altında kalabilir) ve oyuncunun boşluk denetiminin ölçütü:
+## bulunan yüzeyin üstünden 60 m aşağıya yine bir şey olmalı (Player._frozen_void_hold)
 func _has_ground(p: Vector3, near_y: float) -> bool:
 	var space := scene.get_world_3d().direct_space_state
-	var q := PhysicsRayQueryParameters3D.create(Vector3(p.x, near_y + 2.0, p.z), Vector3(p.x, near_y - 3.0, p.z), 1)
+	var hit := space.intersect_ray(PhysicsRayQueryParameters3D.create(Vector3(p.x, near_y + 40.0, p.z), Vector3(p.x, near_y - 60.0, p.z)))
+	if hit.is_empty():
+		return false
+	var top: Vector3 = hit["position"]
+	if absf(top.y - near_y) > 6.0:
+		return false          # uçurum ya da tepe: koşan oraya varamaz
+	var q := PhysicsRayQueryParameters3D.create(top + Vector3(0, 0.25, 0), top + Vector3(0, -60.0, 0))
+	q.exclude = [player.get_rid()]
 	return not space.intersect_ray(q).is_empty()
 
 
@@ -709,7 +718,7 @@ func _guard_run(who: String, role: String) -> Node3D:
 	await Stage.approach(g, player.global_position, 1.6, 4.6, Vector3.ZERO, func(x: float, z: float) -> float:
 		return _ground(Vector3(x, 0, z), me.y))
 	if is_instance_valid(g):
-		g.look_target = player
+		_look(g, 8.0)          # baş çevirme; look_target yürüyüş bitmeden gövdeyi çeviriyordu (LOOKAUDIT raw, denetim ZORUNLU 1)
 		await _turn_to(g.global_position + Vector3(0, 1.5, 0), 0.45)      # yumuşak dönüş (denetim ZORUNLU 5)
 	return g
 
@@ -990,7 +999,10 @@ func _bot_tick(delta: float) -> void:
 				while f2 > area_r + 3.0 and not _has_ground(p, player.global_position.y):
 					f2 -= 4.0
 					p = area_center + away * f2
-				p.y = _ground(p, player.global_position.y)
+				var sp := scene.get_world_3d().direct_space_state
+				var gh := sp.intersect_ray(PhysicsRayQueryParameters3D.create(Vector3(p.x, player.global_position.y + 40.0, p.z),
+					Vector3(p.x, player.global_position.y - 60.0, p.z)))
+				p.y = (gh["position"] as Vector3).y if not gh.is_empty() else _ground(p, player.global_position.y)
 				player.global_position = p + Vector3(0, 0.05, 0)
 				player.face(area_center + Vector3(0, 1.5, 0))     # kaçan geriye, meydana bakar (seslenen ve koşan görünsün)
 
