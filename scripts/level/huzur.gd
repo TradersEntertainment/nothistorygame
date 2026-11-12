@@ -780,6 +780,10 @@ func _guards(p: Person, kind: String, rs: String) -> bool:
 		_disarm()
 	var me := player.global_position
 	var i := 0
+	_borrowed.clear()
+	for g in gs:
+		if not g in spawned:
+			_borrowed.append([g, g.global_position, g.global_rotation, g.get("look_target")])
 	for g in gs:
 		var side := player.camera.global_transform.basis.x * (0.75 if i == 0 else -0.75)
 		await Stage.approach(g, me + side, 0.7, 4.6)
@@ -807,6 +811,7 @@ func _guards(p: Person, kind: String, rs: String) -> bool:
 
 
 var _spawned: Array[Node3D] = []
+var _borrowed: Array = []          # [muhafız, yeri, dönüşü, bakışı]: sahnenin askerleri kararmada yerine döner
 
 
 func _nearest_guards(p: Person, n: int) -> Array[Node3D]:
@@ -845,6 +850,13 @@ func _put_out(origin: Vector3, p: Person) -> void:
 		if is_instance_valid(g):
 			g.queue_free()
 	_spawned.clear()
+	for it: Array in _borrowed:
+		var g: Node3D = it[0]
+		if is_instance_valid(g):
+			g.global_position = it[1]
+			g.global_rotation = it[2]
+			g.set("look_target", it[3])
+	_borrowed.clear()
 	var away := origin - p.global_position
 	away.y = 0.0
 	var back := origin + (away.normalized() if away.length() > 0.1 else Vector3.ZERO) * 2.5
