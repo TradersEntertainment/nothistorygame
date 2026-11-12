@@ -316,10 +316,11 @@ static func build_kayikhane(host: Node3D, k: float = 0.5, lod: int = 0) -> void:
 	IstMk.V(root, Vector3(OW, OW * 0.5, 0.05), Vector3(0, OH, D * 0.5 + 0.0), IstMk.DARK)
 	IstMk.V(root, Vector3(W - 1.4, 0.03, D - 1.2), Vector3(0, 0.0, 0.0), IstMk.SAND, "flagstone")
 	# iç: orta eksende tekne iskeleti (katı), kızak kirişleri, direkler
-	IstMk.S(root, Vector3(1.5, 0.7, 5.6), Vector3(0, 0.5, 0.0), IstMk.WOOD_LT, "wood")
+	var bz := -D * 0.5 + 0.5 + 2.8
+	IstMk.S(root, Vector3(1.5, 0.7, 5.6), Vector3(0, 0.5, bz), IstMk.WOOD_LT, "wood")
 	for i in 3:
-		IstMk.S(root, Vector3(1.0, 0.5, 0.35), Vector3(0, 0.0, -2.0 + i * 2.0), IstMk.WOOD_DK, "wood")
-	IstMk.V(root, Vector3(1.6, 0.1, 0.5), Vector3(0, 1.2, 0.8), IstMk.WOOD)
+		IstMk.S(root, Vector3(1.0, 0.5, 0.35), Vector3(0, 0.0, bz - 2.0 + i * 2.0), IstMk.WOOD_DK, "wood")
+	IstMk.V(root, Vector3(1.6, 0.1, 0.5), Vector3(0, 1.2, bz + 0.8), IstMk.WOOD)
 	# arka duvara yaslı kürek dizisi ve ağ yığını (bitişik: boşluk yok)
 	var oars: Array = []
 	for i in 8:
@@ -419,10 +420,9 @@ static func build_kayalar(host: Node3D, k: float = 0.5, lod: int = 0) -> void:
 	var tops := [0.4, 0.8, 1.2, 1.6, 2.0, 2.4, 2.8, 3.2]
 	for i in tops.size():
 		var t: float = tops[i]
-		var ry := t / 1.55
-		var rxz := 1.5 + 0.1 * (i % 3)
+		var rxz := 1.7 + 0.1 * (i % 3)
 		var pos := Vector3(-7.0 + i * 1.5, 0.0, 1.0 * sin(i * 1.3))
-		var m := IstMk.ROCKB(root, pos, Vector3(rxz, ry, rxz * 0.9), IstMk.ROCK if i % 2 == 0 else IstMk.ROCK_DK, true)
+		var m := IstMk.CY(root, rxz, t + 0.3, pos - Vector3(0, 0.3, 0), IstMk.ROCK if i % 2 == 0 else IstMk.ROCK_DK, "rubble", 7, true, rxz * 0.85)
 	if lod >= 2:
 		return
 	# tepede düz taş levha (konma noktası): üst yüzeyi 3,2 m
@@ -430,7 +430,7 @@ static func build_kayalar(host: Node3D, k: float = 0.5, lod: int = 0) -> void:
 	# dağınık kayalar
 	for i in 16:
 		var pos := Vector3(rng.randf_range(-12.0, 10.0), 0.0, rng.randf_range(-6.0, 7.0))
-		if pos.distance_to(Vector3(-2.0, 0.0, 0.5)) < 5.5 and absf(pos.z - 0.5) < 3.0:
+		if absf(pos.z - 0.5) < 3.8 and pos.x > -11.0 and pos.x < 6.0:
 			continue
 		IstMk.ROCKB(root, pos, Vector3(rng.randf_range(0.5, 1.4), rng.randf_range(0.25, 0.7), rng.randf_range(0.5, 1.2)), IstMk.ROCK if rng.randf() < 0.6 else IstMk.ROCK_DK, true)
 	if lod >= 1:

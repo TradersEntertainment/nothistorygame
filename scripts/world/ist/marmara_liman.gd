@@ -26,7 +26,7 @@ static func build_kontoskalion(host: Node3D, k: float = 0.5, lod: int = 0) -> vo
 	IstMk.S(root, Vector3(W + 0.2, 0.5, L + 0.2), Vector3(0, FLOOR_Y - 0.5, 0), IstMk.SAND, "flagstone" if lod == 0 else "")
 	# rıhtım halkası: batı, doğu, kuzey tam; güney iki yanı ağız bırakır
 	var qh := -FLOOR_Y + 0.08
-	var wallc := IstMk.STONE
+	var wallc := IstMk.STONE_DK
 	IstMk.S(root, Vector3(Q, qh, L + 2.0 * Q), Vector3(-ox, FLOOR_Y, 0), wallc, "ashlar")
 	IstMk.S(root, Vector3(Q, qh, L + 2.0 * Q), Vector3(ox, FLOOR_Y, 0), wallc, "ashlar")
 	IstMk.S(root, Vector3(W, qh, Q), Vector3(0, FLOOR_Y, -oz), wallc, "ashlar")
@@ -128,7 +128,7 @@ static func _basin_details(root: Node3D, d: Dictionary, k: float) -> void:
 	IstMk.CY(root, 0.4, 0.5, Vector3(tx, 5.38, mz), IstMk.DARK, "", 8, true)
 	Flame.add(root, Vector3(tx, 5.9, mz), 0.7, 1.1)
 	# kule merdiveni (mendirekten dama): 5 m
-	IstMk.FLIGHT(root, Vector3(tx - 9.0, 0.08, mz), Vector3(1, 0, 0), 5.3, 1.6, [1.0, -1.0], IstMk.STONE, "ashlar")
+	IstMk.FLIGHT(root, Vector3(tx - 9.0, 0.08, mz), Vector3(1, 0, 0), 5.3, 4.1, [], IstMk.STONE, "ashlar")
 	# mendirek kıyısında kaya yığını
 	for i in 7:
 		IstMk.ROCKB(root, Vector3(mx - MO * 0.5 + rng.randf_range(0.0, MO), -0.9, mz + 3.6 + rng.randf_range(0.0, 2.0)), Vector3(rng.randf_range(0.6, 1.2), 0.5, 0.8), IstMk.ROCK, false)
@@ -199,14 +199,15 @@ static func build_langa(host: Node3D, k: float = 0.5, lod: int = 0) -> void:
 	var rows := 4
 	var bw := 6.0
 	var gap := 1.6
-	var nx := int(floor((W - 14.0) / (bw + gap)))
+	var bx0 := -W * 0.5 + 15.0
+	var nx := int(floor((W * 0.5 - 4.0 - bx0) / (bw + gap)))
 	var xf_cab: Array = []
 	var xf_leek: Array = []
 	var xf_bean: Array = []
 	for r in rows:
 		var z := -L * 0.5 + 5.0 + r * ((L - 22.0) / (rows - 1)) if rows > 1 else 0.0
 		for i in nx:
-			var x := -W * 0.5 + 9.0 + i * (bw + gap)
+			var x := bx0 + bw * 0.5 + i * (bw + gap)
 			IstMk.S(root, Vector3(bw, 0.25, 2.4), Vector3(x, 0.0, z), IstMk.SOIL, "")
 			if lod >= 1:
 				continue
@@ -225,7 +226,7 @@ static func build_langa(host: Node3D, k: float = 0.5, lod: int = 0) -> void:
 				for j in 4:
 					xf_bean.append([Vector3(x - bw * 0.5 + 0.8 + j * 1.4, 0.25 + 0.8, z), 0.0])
 	if lod == 0:
-		IstMk.MMC(root, 0.2, 0.3, xf_cab, Color("6f9a4a"), 7)
+		IstMk.MMC(root, 0.3, 0.34, xf_cab, Color("5f8f3e"), 7)
 		IstMk.MMC(root, 0.05, 0.56, xf_leek, Color("8ab050"), 5)
 		IstMk.MMC(root, 0.04, 1.6, xf_bean, Color("8a6a40"), 5)
 		var bean_leaf: Array = []
@@ -265,8 +266,7 @@ static func build_langa(host: Node3D, k: float = 0.5, lod: int = 0) -> void:
 		IstMk.S(root, Vector3(3.4, 2.4, 3.0), Vector3(hx, 0.0, hz), IstMk.STONE_DK, "rubble")
 		IstMk.ROOF(root, Vector3(3.0, 1.2, 4.2), Vector3(hx, 2.4, hz), IstMk.THATCH, "", 90.0)
 		IstMk.DOOR_DARK(root, Vector3(hx, 0.0, hz - 1.53), 1.0, 2.0)
-	for i in 7:
-		IstMk.S(root, Vector3(1.4, 2.4 / 7.0 * (i + 1), 0.82), Vector3(-W * 0.5 + 6.0, 0.0, -L * 0.5 + 3.0 + 1.5 + 0.4 + (6 - i) * 0.8), IstMk.WOOD_LT if i % 2 == 0 else IstMk.WOOD, "wood")
+	var fl := IstMk.FLIGHT(root, Vector3(-W * 0.5 + 6.0, 0.0, -L * 0.5 + 3.0 + 1.5 + 8 * 0.46 + 0.02), Vector3(0, 0, -1), 2.4, 1.4, [], IstMk.WOOD_LT, "wood")
 	# --- çit: hasır çit, çevrenin güney ve doğu kenarında
 	var fp: Array = []
 	for i in int(W / 1.2):
@@ -319,7 +319,7 @@ static func climbs_langa(k: float = 0.5) -> Array:
 	var d := ld(k)
 	var W: float = d["W"]
 	var L: float = d["L"]
-	return [[Vector3(-W * 0.5 + 6.0, 0.0, -L * 0.5 + 3.0 + 7.8), Vector3(-W * 0.5 + 6.0, 3.55, -L * 0.5 + 3.0), "sandik"]]
+	return [[Vector3(-W * 0.5 + 6.0, 0.0, -L * 0.5 + 3.0 + 1.5 + 8 * 0.46 + 0.9), Vector3(-W * 0.5 + 6.0, 3.55, -L * 0.5 + 3.0), "sandik"]]
 
 
 # =========================================================== SOPHIA LİMANI ======================================
