@@ -569,7 +569,7 @@ func _ev_fish() -> void:
 	fm.metallic = 0.5
 	fm.roughness = 0.25
 	fm.emission_enabled = true
-	fm.emission = Color("5a5640")
+	fm.emission = Color("8a8460")
 	fm.cull_mode = BaseMaterial3D.CULL_DISABLED
 	mi.material_override = fm
 	mi.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
@@ -577,8 +577,8 @@ func _ev_fish() -> void:
 	var f := _fwd()
 	var side := Vector3(-f.z, 0, f.x)
 	# Pruvanın 6–8 m önünden çapraz geçer, sonra kayığa doğru kıvrılıp altına dalar (fenerin konisinde, altyazının üstünde)
-	var a := boat.global_position + f * 8.0 - side * 5.0
-	var b := boat.global_position + f * 1.0 + side * 4.0
+	var a := boat.global_position + f * 9.5 - side * 4.5
+	var b := boat.global_position + f * 2.5 + side * 4.5
 	var offs: Array[Vector3] = []
 	for k in 26:
 		offs.append(Vector3(randf_range(-1.0, 1.0), randf_range(-0.25, 0.1), randf_range(-0.9, 0.9)))
@@ -597,7 +597,7 @@ func _ev_fish() -> void:
 		var bs := Basis.looking_at(dir, Vector3.UP).rotated(Vector3.UP, PI)
 		for k in 26:
 			var wob := Vector3(sin(t * 6.0 + k) * 0.08, 0, cos(t * 5.0 + k * 1.3) * 0.08)
-			var depth := lerpf(-0.08, -0.45, k0 * k0)          # önce sırtları suyu yarar, kayığın altına dalarken derinleşir
+			var depth := lerpf(-0.04, -0.45, pow(k0, 3.0))          # önce sırtları suyu yarar, kayığın altına dalarken derinleşir
 			mm.set_instance_transform(k, Transform3D(bs.rotated(dir, sin(t * 11.0 + k) * 0.2).scaled(Vector3.ONE * 1.7), Vector3(c.x, CisternLevel.WATER_Y + depth, c.z) + offs[k] * Vector3(1, 0.3, 1) + wob))
 		rang += dt
 		if rang > 0.18:
