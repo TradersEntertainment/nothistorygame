@@ -1329,12 +1329,6 @@ func _seize_audit(guards: Array[Node3D], seconds: float, hands: Array[Node3D] = 
 		if not is_instance_valid(player) or player.camera == null:
 			break
 		# Avuç-bilek hatası (Stage.grip kolu aynı pozda yeniden kurar; grip_hold her karede aynısını yapıyor)
-		if t > 0.2 and not has_meta("pr"):
-			set_meta("pr", true)
-			for gi in mini(guards.size(), hands.size()):   # PROBE
-				var rgp := Handover.rig_of(guards[gi])
-				var arm: Node3D = rgp.arm_l if rgp.arm_l.global_position.distance_to(hands[gi].to_global(GRIP_PTS[0])) < rgp.arm_r.global_position.distance_to(hands[gi].to_global(GRIP_PTS[0])) else rgp.arm_r
-				print("PROBE g%d gy=%.2f py=%.2f shoulder=%s wrist=%s dist=%.2f campos=%s guard=%s" % [gi, guards[gi].global_position.y, player.global_position.y, arm.global_position, hands[gi].to_global(GRIP_PTS[0]), arm.global_position.distance_to(hands[gi].to_global(GRIP_PTS[0])), player.camera.global_position, guards[gi].global_position])
 		if t > 0.2:
 			for gi in mini(guards.size(), hands.size()):
 				if is_instance_valid(guards[gi]) and is_instance_valid(hands[gi]):
