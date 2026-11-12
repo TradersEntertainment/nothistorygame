@@ -3,6 +3,8 @@ extends Node3D
 ## Bölüm 6b'nin hırsız martısı: gagasında kırmızı mühürlü Misafir İzni. Tünekte başını oynatır, gagalar,
 ## oyuncu yaklaşınca çığlık atıp bir sonraki tüneğe kavisle uçar. Kanatlar uçarken çırpar, tünekte katlanır.
 
+const CK = preload("res://scripts/world/ist/canli_kit.gd")
+
 signal landed
 
 var flying := false
@@ -13,24 +15,12 @@ var _t := 0.0
 
 
 func _ready() -> void:
-	var white := Color("f4f2ec")
-	var grey := Color("9aa4ae")
-	var body := Node3D.new()
-	add_child(body)
-	Props.ball(body, 0.16, Vector3(0, 0.22, 0), white, Vector3(1.0, 0.9, 1.7), 10)
-	Props.ball(body, 0.1, Vector3(0, 0.2, -0.28), grey, Vector3(0.9, 0.5, 1.2), 8)      # kuyruk
-	Props.box(body, Vector3(0.14, 0.04, 0.12), Vector3(0, 0.22, -0.4), Color("2a2a2e"))   # kuyruk ucu
-	for s in [-1, 1]:
-		Props.cyl(body, 0.012, 0.16, Vector3(s * 0.06, 0.07, 0.02), Color("e8a040"), Vector3.ZERO, 4)
-		Props.box(body, Vector3(0.06, 0.01, 0.07), Vector3(s * 0.06, 0.0, 0.05), Color("e8a040"))
-	_head = Node3D.new()
-	_head.position = Vector3(0, 0.36, 0.2)
-	add_child(_head)
-	Props.ball(_head, 0.09, Vector3.ZERO, white, Vector3.ONE, 10)
-	for s in [-1, 1]:
-		Props.ball(_head, 0.016, Vector3(s * 0.07, 0.025, 0.04), Color("1a1a1a"), Vector3.ONE, 5)
-	Props.box(_head, Vector3(0.035, 0.035, 0.13), Vector3(0, -0.01, 0.13), Color("f0c030"))
-	Props.ball(_head, 0.012, Vector3(0, -0.03, 0.17), Color("d83a2a"), Vector3.ONE, 4)
+	# CANLI (kalite notu 32): martı canli_kit'ten (kesit halkalı gövde, yuvarlak baş, sivri gaga, kanatlar omuz pivotunda,
+	# sivrilen kanat ucu koyu); kutu yok. Arayüz aynı: _head (izin onun çocuğu), _wings [[pivot, s]].
+	var kit: Dictionary = CK.dugum("marti", {"lod": 0, "golge": false})
+	add_child(kit["root"])
+	var kp: Dictionary = kit["p"]
+	_head = kp["bas"]
 	# Gagadaki izin: katlanmış kâğıt, kırmızı balmumu mühür
 	paper = Node3D.new()
 	paper.position = Vector3(0.05, -0.05, 0.2)
@@ -39,12 +29,7 @@ func _ready() -> void:
 	Props.box(paper, Vector3(0.24, 0.16, 0.01), Vector3.ZERO, Color("efe6cf"))
 	Props.cyl(paper, 0.03, 0.012, Vector3(0.04, -0.02, 0.008), Color("b3262d"), Vector3(90, 0, 0), 8)
 	for s in [-1, 1]:
-		var pivot := Node3D.new()
-		pivot.position = Vector3(s * 0.1, 0.27, 0.0)
-		add_child(pivot)
-		Props.box(pivot, Vector3(0.42, 0.025, 0.22), Vector3(s * 0.21, 0, 0), grey)
-		Props.box(pivot, Vector3(0.16, 0.026, 0.14), Vector3(s * 0.46, 0, -0.03), Color("2a2a2e"))
-		_wings.append([pivot, s])
+		_wings.append([kp["kanat_l" if s < 0 else "kanat_r"], s])
 	scale = Vector3.ONE * 1.6
 
 

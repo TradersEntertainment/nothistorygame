@@ -3,6 +3,8 @@ extends Node3D
 ## Galata'nın kayıp kedisi: bir köşede oturur; oyuncu yaklaşınca peşine takılır, sahibine (grup "cat_owner")
 ## yaklaşınca yanına oturur ve "cat_returned" bayrağı açılır (yan görev).
 
+const CK = preload("res://scripts/world/ist/canli_kit.gd")
+
 var _t := 0.0
 var _body: Node3D
 var _tail: Node3D
@@ -14,22 +16,10 @@ func _ready() -> void:
 	_t = randf() * 4.0
 	_body = Node3D.new()
 	add_child(_body)
-	var fur := Color("d8843a")
-	Props.ball(_body, 0.14, Vector3(0, 0.2, 0), fur, Vector3(0.9, 0.85, 1.5), 8)
-	var head := Node3D.new()
-	head.position = Vector3(0, 0.32, 0.2)
-	_body.add_child(head)
-	Props.ball(head, 0.1, Vector3.ZERO, fur, Vector3.ONE, 8)
-	for s in [-1, 1]:
-		Props.prism(head, Vector3(0.05, 0.07, 0.03), Vector3(s * 0.055, 0.1, 0), fur, Vector3.ZERO)
-		Props.ball(head, 0.014, Vector3(s * 0.04, 0.02, 0.09), Color("2a3a1a"), Vector3.ONE, 4)
-		for k in 2:
-			Props.cyl(_body, 0.02, 0.18, Vector3(s * 0.06, 0.09, -0.12 + k * 0.24), fur.darkened(0.1), Vector3.ZERO, 4)
-	Props.ball(head, 0.015, Vector3(0, -0.01, 0.1), Color("d86a6a"), Vector3.ONE, 4)
-	_tail = Node3D.new()
-	_tail.position = Vector3(0, 0.26, -0.2)
-	_body.add_child(_tail)
-	Props.cyl(_tail, 0.02, 0.28, Vector3(0, 0.12, -0.04), fur, Vector3(-30, 0, 0), 4)
+	# CANLI (kalite notu 32): kedi canli_kit'ten (kesit halkalı ince gövde, yuvarlak baş, dik kulak, kıvrık kuyruk)
+	var kit: Dictionary = CK.dugum("kedi", {"renk": Color("d8843a"), "lod": 0, "birlestir": ["kulak"], "golge": false})
+	_body.add_child(kit["root"])
+	_tail = (kit["p"] as Dictionary)["kuyruk"]
 
 
 func _process(delta: float) -> void:

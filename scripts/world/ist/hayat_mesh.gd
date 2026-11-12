@@ -61,32 +61,15 @@ static func insan_uzak() -> ArrayMesh:
 	return m
 
 
-## Dört ayaklı (eşek, at, keçi, köpek): yüzü −z, ayak y = 0, omuz ≈ 1,0 m, uzunluk 1,5 m
+## Dört ayaklı (eşek, at, keçi, köpek): yüzü −z, ayak y = 0, omuz ≈ 1,0 m, uzunluk 1,5 m.
+## CANLI (kalite notu 32): canli_kit eşeği (orta katman, kesit halkalı gövde, uzun kulak, eklemli bacak); kutu yok.
+## Köşe rengi alfa kodu korunur: post (açık gri) alfa 1 = örnek rengi × parlaklık; toynak, burun, yük alfa 0 (sabit).
+## Gölgelendirici kuralları korunur: bacak y < 0,64 (0,62'den döner), baş z < −0,4 ve y > 0,9 (otlarken iner).
 static func hayvan(yuklu := false) -> ArrayMesh:
 	var key := "hayvan_y" if yuklu else "hayvan"
 	if _c.has(key):
 		return _c[key]
-	var k := MeshKit.new()
-	var body := Color(1, 1, 1, 1.0)
-	var dark := Color(0.14, 0.11, 0.09, 0.0)
-	for sx: float in [-1.0, 1.0]:
-		for sz: float in [-1.0, 1.0]:
-			_box(k, Vector3(sx * 0.14, 0.31, sz * 0.46), Vector3(0.1, 0.62, 0.1), body.darkened(0.15))
-			_box(k, Vector3(sx * 0.14, 0.03, sz * 0.46), Vector3(0.11, 0.07, 0.12), dark)
-	_box(k, Vector3(0, 0.84, 0.0), Vector3(0.42, 0.44, 1.0), body)
-	_box(k, Vector3(0, 1.15, -0.5), Vector3(0.2, 0.46, 0.2), body.darkened(0.04))        # boyun
-	_box(k, Vector3(0, 1.33, -0.68), Vector3(0.18, 0.2, 0.34), body.lightened(0.04))     # baş
-	_box(k, Vector3(0, 1.26, -0.86), Vector3(0.14, 0.12, 0.1), Color(0.8, 0.72, 0.62, 0.0))   # burun
-	for sx: float in [-1.0, 1.0]:
-		_box(k, Vector3(sx * 0.06, 1.5, -0.6), Vector3(0.05, 0.18, 0.05), body.darkened(0.1))   # kulak
-	_box(k, Vector3(0, 0.84, 0.56), Vector3(0.07, 0.34, 0.07), body.darkened(0.2))       # kuyruk
-	if yuklu:
-		# semer ve iki yanda çuval/küp (eşek yükü)
-		_box(k, Vector3(0, 1.1, 0.0), Vector3(0.5, 0.06, 0.56), Color(0.6, 0.18, 0.15, 0.0))
-		for sx: float in [-1.0, 1.0]:
-			_box(k, Vector3(sx * 0.33, 1.0, 0.0), Vector3(0.24, 0.42, 0.5), Color(0.72, 0.62, 0.42, 0.0))
-		_box(k, Vector3(0, 1.3, 0.05), Vector3(0.36, 0.3, 0.42), Color(0.55, 0.42, 0.26, 0.0))
-	var m := _am(k)
+	var m := _canli("esek", 1, {"renk": Color(0.9, 0.9, 0.9), "takim": ["yuk"] if yuklu else [], "H": 1.0}, 1.0, 0.0, true)
 	_c[key] = m
 	return m
 
@@ -95,43 +78,44 @@ static func hayvan(yuklu := false) -> ArrayMesh:
 static func tavuk() -> ArrayMesh:
 	if _c.has("tavuk"):
 		return _c["tavuk"]
-	var k := MeshKit.new()
-	_box(k, Vector3(0, 0.2, 0), Vector3(0.16, 0.16, 0.26), Color(1, 1, 1, 1.0))
-	_box(k, Vector3(0, 0.32, -0.12), Vector3(0.08, 0.16, 0.08), Color(1, 1, 1, 1.0))
-	_box(k, Vector3(0, 0.42, -0.14), Vector3(0.05, 0.06, 0.05), Color(0.8, 0.12, 0.1, 0.0))
-	_box(k, Vector3(0, 0.36, -0.19), Vector3(0.03, 0.03, 0.05), Color(0.9, 0.7, 0.2, 0.0))
-	_box(k, Vector3(0, 0.3, 0.16), Vector3(0.04, 0.16, 0.1), Color(1, 1, 1, 1.0).darkened(0.25))
-	_box(k, Vector3(0, 0.06, 0), Vector3(0.05, 0.12, 0.05), Color(0.8, 0.6, 0.2, 0.0))
-	var m := _am(k)
+	var m := _canli("tavuk", 1, {"renk": Color(0.95, 0.95, 0.95)}, 0.85, 0.0, true)
 	_c["tavuk"] = m
 	return m
 
 
-## Martı / güvercin (başı −z; Gulls'taki gibi dirsekten kırık kanat; x = ±0,06'dan öte kanat)
+## Martı / güvercin (başı −z; kanatlar açık, uçuşta; ist_kus kanadı |x| ile çırpar). Uzak katman siluet (≤ 90 üçgen).
 static func kus(guvercin := false) -> ArrayMesh:
 	var key := "kus_g" if guvercin else "kus_m"
 	if _c.has(key):
 		return _c[key]
-	var k := MeshKit.new()
-	var white := Color(0.94, 0.94, 0.92) if not guvercin else Color(0.6, 0.62, 0.68)
-	var wing := Color(0.9, 0.9, 0.92) if not guvercin else Color(0.5, 0.52, 0.58)
-	var tip := Color(0.2, 0.2, 0.24) if not guvercin else Color(0.35, 0.36, 0.42)
-	var g := Basis.from_scale(Vector3.ONE * 1.5)
-	var xf := Transform3D(g, Vector3.ZERO)
-	k.box(Transform3D(g, Vector3(0, 0, 0.02)), Vector3(0.13, 0.11, 0.4), white)
-	k.box(Transform3D(g, Vector3(0, 0.02, -0.25)), Vector3(0.09, 0.09, 0.12), white if not guvercin else Color(0.35, 0.4, 0.5))
-	k.box(Transform3D(g, Vector3(0, 0.0, -0.34)), Vector3(0.03, 0.03, 0.08), Color(0.95, 0.7, 0.2) if not guvercin else Color(0.3, 0.25, 0.2))
-	k._quad(xf, Vector3(-0.06, 0.0, 0.2), Vector3(0.06, 0.0, 0.2), Vector3(0.1, 0.0, 0.42), Vector3(-0.1, 0.0, 0.42), wing.darkened(0.04))
-	for sx: float in [-1.0, 1.0]:
-		var wc := wing if sx < 0 else wing.darkened(0.08)
-		k._quad(xf, Vector3(sx * 0.06, 0.0, -0.12), Vector3(sx * 0.5, 0.07, -0.1), Vector3(sx * 0.5, 0.07, 0.1), Vector3(sx * 0.06, 0.0, 0.16), wc)
-		k._tri(xf, Vector3(sx * 0.5, 0.07, -0.1), Vector3(sx * 0.82, 0.04, 0.16), Vector3(sx * 0.5, 0.07, 0.1), wc)
-		k._tri(xf, Vector3(sx * 0.7, 0.05, 0.04), Vector3(sx * 1.0, 0.03, 0.3), Vector3(sx * 0.82, 0.04, 0.16), tip)
-		# alt yüz (aşağıdan da görünsün)
-		k._quad(xf, Vector3(sx * 0.06, -0.001, 0.16), Vector3(sx * 0.5, 0.069, 0.1), Vector3(sx * 0.5, 0.069, -0.1), Vector3(sx * 0.06, -0.001, -0.12), wc.darkened(0.1))
-	var m := _am(k)
+	var m := _canli("guvercin" if guvercin else "marti", 2, {"poz": "uc"}, 1.5, -0.24, false)
 	_c[key] = m
 	return m
+
+
+## canli_kit ağını bu katmanın düzenine çevirir: 180° (yüz −z), ölçek, dikey kaydırma; kod=true ise renk alfa kodu
+static func _canli(tur: String, lod: int, opt: Dictionary, olcek: float, dy: float, kod: bool) -> ArrayMesh:
+	var acc = preload("res://scripts/world/ist/canli_kit.gd").birikim(tur, lod, opt)
+	var xf := Transform3D(Basis(Vector3.UP, PI).scaled(Vector3.ONE * olcek), Vector3(0, dy, 0))
+	var v := PackedVector3Array()
+	var n := PackedVector3Array()
+	var c := PackedColorArray()
+	for i in acc.v.size():
+		v.append(xf * acc.v[i])
+		n.append((xf.basis * acc.n[i]).normalized())
+		var cc: Color = acc.c[i]
+		if kod:
+			var gri := absf(cc.r - cc.g) < 0.05 and absf(cc.g - cc.b) < 0.06 and cc.get_luminance() > 0.45
+			cc = Color(clampf(cc.get_luminance() * 1.12, 0.0, 1.0), 0, 0, 1.0) if gri else Color(cc.r, cc.g, cc.b, 0.0)
+		c.append(cc)
+	var arr := []
+	arr.resize(Mesh.ARRAY_MAX)
+	arr[Mesh.ARRAY_VERTEX] = v
+	arr[Mesh.ARRAY_NORMAL] = n
+	arr[Mesh.ARRAY_COLOR] = c
+	var am := ArrayMesh.new()
+	am.add_surface_from_arrays(Mesh.PRIMITIVE_TRIANGLES, arr)
+	return am
 
 
 ## Duman/buhar dörtgeni (kameraya döner; ölçek örnek dönüşümünde)
