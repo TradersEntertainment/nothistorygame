@@ -21,12 +21,18 @@ var page: Person
 var guards: Array = []
 var lights: Array = []
 var _t := 0.0
+## Tek harita (World1453 "otag" bölgesi): kapıdan görülen ordugâh dilimi (tests/otag_door_bake.gd ile gerçek ordugâhtan
+## pişirilmiş, ışığı köşe renginde; yoksa eski aydınlık perde kalır)
+const DOOR_VIEW := "res://assets/data/otag_door_day.scn"
+var door_view: Node3D
+var _outside_card: MeshInstance3D
 
 
 func _ready() -> void:
 	Audio.voice_space("hall")
 	_build_env()
 	_build_tent()
+	_build_door_view()
 	_build_floor()
 	_build_throne()
 	_build_people()
@@ -35,6 +41,7 @@ func _ready() -> void:
 func _process(delta: float) -> void:
 	_t += delta
 	Night.flicker(lights, _t)
+	_door_view_cull()
 
 
 func _build_env() -> void:
@@ -139,7 +146,7 @@ func _build_tent() -> void:
 	for s in [-1, 1]:
 		Props.box(self, Vector3(0.6, 4.6, 0.12), Vector3(s * 1.6, 2.3, RADIUS - 0.1), Color("6a1418"))
 	# Dışarısı (girişten görünen gün ışığı)
-	Props.box(self, Vector3(3.0, 4.6, 0.05), Vector3(0, 2.3, RADIUS + 1.5), Color("f4e8c8"), Vector3.ZERO, 1.2)
+	_outside_card = Props.box(self, Vector3(3.0, 4.6, 0.05), Vector3(0, 2.3, RADIUS + 1.5), Color("f4e8c8"), Vector3.ZERO, 1.2)
 	# Asılı fenerler
 	for k in 6:
 		var a := TAU * k / 6.0 + 0.3
@@ -155,6 +162,47 @@ func _build_tent() -> void:
 		l.omni_range = 7.0
 		add_child(l)
 		lights.append(l)
+
+
+## Otağ haritada Maltepe'deki yerinde (dünya (30, 0, 480), kapı yerel +z = dünya −z: ordugâhın yolu, çadır sıraları,
+## uzakta kara surları). Dünya içeride kurulmaz: yalnız kapının önündeki yarım düzlem, uzaklıkla sadeleşmiş tek ağ
+## (7 parça: yakın/orta bant × 3 açı dilimi + uzak, ve gök; ışıksız, gölgesiz). Salon yereli = bölge yereli (World1453.region("otag")): dilim salonun çocuğu,
+## salon nereye konursa (10a: arşivin yanında) kapının ardı aynı ordugâhtır. Kalabalık yok; görmeyen kamera çizmez.
+func _build_door_view() -> void:
+	var t0 := Time.get_ticks_usec()
+	if not ResourceLoader.exists(DOOR_VIEW):
+		return
+	var ps := load(DOOR_VIEW) as PackedScene
+	if ps == null:
+		return
+	door_view = ps.instantiate() as Node3D
+	door_view.name = "DoorView"
+	add_child(door_view)
+	if _outside_card:
+		_outside_card.visible = false
+	if OS.get_environment("RINFO") != "":
+		print("OTAGDOOR load=%.1fms" % ((Time.get_ticks_usec() - t0) / 1000.0))
+
+
+## Kapı açıklığı (yerel kutu) kameranın görüş konisinde değilse dilim hiç çizilmez (duvarın ardında boşuna çizim yok)
+const DOOR_BOX := AABB(Vector3(-2.5, 0.0, 8.4), Vector3(5.0, 5.2, 0.8))
+func _door_view_cull() -> void:
+	if door_view == null:
+		return
+	var cam := get_viewport().get_camera_3d()
+	if cam == null:
+		return
+	var see := true
+	for pl: Plane in cam.get_frustum():
+		var out := 0
+		for k in 8:
+			if pl.is_point_over(to_global(DOOR_BOX.get_endpoint(k))):
+				out += 1
+		if out == 8:
+			see = false
+			break
+	if door_view.visible != see:
+		door_view.visible = see
 
 
 func _build_floor() -> void:

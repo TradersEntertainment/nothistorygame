@@ -103,6 +103,9 @@ static var REGIONS := {
 	"slipway": Transform3D(_TO_NORTH, SLIP_TOP),
 	# CampDay (ordugâh bölümleri): yerel +z surlara (dünya −z), otağ yerel (0, −62) = Maltepe'deki otağ (30, 480)
 	"camp": Transform3D(Basis(Vector3.UP, PI), Vector3(30.0, 0.0, 418.0)),
+	# Otağın içi (OtagHall: 10a, 12, 13): salonun yereli; merkez tabanda, kapı yerel +z = ordugâhın yolu ve surlar (dünya −z).
+	# CampDay'deki otağın (yerel (0, −62)) yeriyle aynı: "camp" dönüşümü + (0, 0, −62)
+	"otag": Transform3D(Basis(Vector3.UP, PI), Vector3(30.0, 0.0, 480.0)),
 	# ByzCity'nin sur parçası (6, 10H, 12B, 13, 23, 24): iç sur (yerel x 34) = kara surlarının iç suru (dünya z −2,3),
 	# Romanos Kapısı (yerel z 5,5) = dünya x 0; yerel +x ova, yerel +z Haliç yönü
 	"byz_walls": Transform3D(_TO_NORTH, Vector3(5.5, 0.0, -36.3)),
