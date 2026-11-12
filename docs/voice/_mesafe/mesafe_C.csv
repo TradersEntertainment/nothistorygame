@@ -72,7 +72,7 @@ D17O_T_01,SPK_TOLGA,yakin,4,chapter17o.gd:428 Tolga Topçu'ya ~4 m yanından cev
 D17O_A_02,SPK_TOPCU,yakin_yuksek,4,"chapter17o.gd:428/:434 Topçu GUN+(-2.2,-1.4), Tolga GUN+(1.6,-2.6) ≈4 m; top bataryası, emir veren topçubaşı",
 D17O_A_LIGHT,SPK_TOPCU,yakin_yuksek,4,"chapter17o.gd:428/:434 Topçu GUN+(-2.2,-1.4), Tolga GUN+(1.6,-2.6) ≈4 m; top bataryası, emir veren topçubaşı",
 D17O_T_MISSED,SPK_TOLGA,ic_ses,,chapter17o.gd:454 hud.say Tolga kamerayla fotoğraf sonrası kendi kendine,
-D17O_A_WATCH,SPK_TOPCU,yakin,4,"chapter17o.gd:458 gece gözcülüğü, topçubaşı yanında alçak uyarı; top henüz atmıyor",
+D17O_A_WATCH,SPK_TOPCU,fisilti,4,"chapter17o.gd:458 gece gözcülüğü, topçubaşı yanında alçak uyarı; top henüz atmıyor",
 D17O_T_SPOT,SPK_TOLGA,yakin_yuksek,4,"chapter17o.gd:507 bark 3 sn, gece alarmı (church_bell), Topçu ~4 m; gölgeyi haber verir",
 D17O_A_LOAD_1,SPK_TOPCU,yakin_yuksek,4,"chapter17o.gd:484 hud.say Topçu ""Doldur!"" emri, top bataryası atış arasında",
 D17O_A_LOAD_2,SPK_TOPCU,yakin_yuksek,4,"chapter17o.gd:484 hud.say Topçu ""Doldur!"" emri, top bataryası atış arasında",
@@ -107,16 +107,16 @@ D20O_U_END_HOLD,SPK_URBAN,yakin,2.2,"chapter20o.gd:467-468 ""son söz yanında""
 D20O_T_END,SPK_TOLGA,ic_ses,,chapter20o.gd:469 Tolga gün sonu kendi kendine yorum,
 D20O_N_END,SPK_NIHAT,telsiz,,"chapter20o.gd:145/470/560 hud.say Nihat; sahnede Nihat nesnesi yok (yalnız Urban, azaplar), tutanak sesi",
 D21O_Z_01,SPK_ZAGANOS,yakin,3,"chapter21o.gd:196-201 lağım girişi, Zağanos Tolga'ya dönük karşısında (player.face(zaganos)), emir veren paşa ama kapalı tünel ağzı",
-D21O_D_01,SPK_MINER,yakin,1.5,"chapter21o.gd:203-205 dar lağımda Dragan yanında (kural: ""bağırma""), normal ses",
-D21O_D_01K,SPK_MINER,yakin,1.5,"chapter21o.gd:203-205 dar lağımda Dragan yanında (kural: ""bağırma""), normal ses",
-D21O_T_01,SPK_TOLGA,yakin,1.5,"chapter21o.gd:203-205 dar lağımda Dragan yanında (kural: ""bağırma""), normal ses",
-D21O_D_02,SPK_MINER,yakin,1.5,"chapter21o.gd:203-205 dar lağımda Dragan yanında (kural: ""bağırma""), normal ses",
-D21O_DIG_1,SPK_MINER,yakin,1.5,chapter21o.gd:264 bark 2.5 sn (D21O_DIG_%d) kazı sırasında Dragan/Tolga dar tünelde yan yana,"kural ""bağırma"""
-D21O_DIG_2,SPK_TOLGA,yakin,1.5,chapter21o.gd:264 bark 2.5 sn (D21O_DIG_%d) kazı sırasında Dragan/Tolga dar tünelde yan yana,"kural ""bağırma"""
-D21O_DIG_3,SPK_MINER,yakin,1.5,chapter21o.gd:264 bark 2.5 sn (D21O_DIG_%d) kazı sırasında Dragan/Tolga dar tünelde yan yana,"kural ""bağırma"""
-D21O_DIG_4,SPK_TOLGA,yakin,1.5,chapter21o.gd:264 bark 2.5 sn (D21O_DIG_%d) kazı sırasında Dragan/Tolga dar tünelde yan yana,"kural ""bağırma"""
-D21O_DIG_5,SPK_MINER,yakin,1.5,chapter21o.gd:264 bark 2.5 sn (D21O_DIG_%d) kazı sırasında Dragan/Tolga dar tünelde yan yana,"kural ""bağırma"""
-D21O_D_SUPPORT,SPK_MINER,yakin,1.5,chapter21o.gd:607 bark 2 sn direk koyarken tünelde yan yana,
+D21O_D_01,SPK_MINER,fisilti,1.5,"chapter21o.gd:203-205 dar lağımda Dragan yanında (kural: ""bağırma""), alçak ses, düşman lağımı yakın",
+D21O_D_01K,SPK_MINER,fisilti,1.5,"chapter21o.gd:203-205 dar lağımda Dragan yanında (kural: ""bağırma""), alçak ses, düşman lağımı yakın",
+D21O_T_01,SPK_TOLGA,fisilti,1.5,"chapter21o.gd:203-205 dar lağımda Dragan yanında (kural: ""bağırma""), alçak ses, düşman lağımı yakın",
+D21O_D_02,SPK_MINER,fisilti,1.5,"chapter21o.gd:203-205 dar lağımda Dragan yanında (kural: ""bağırma""), alçak ses, düşman lağımı yakın",
+D21O_DIG_1,SPK_MINER,fisilti,1.5,chapter21o.gd:264 bark 2.5 sn (D21O_DIG_%d) kazı sırasında Dragan/Tolga dar tünelde yan yana,"kural ""bağırma"""
+D21O_DIG_2,SPK_TOLGA,fisilti,1.5,chapter21o.gd:264 bark 2.5 sn (D21O_DIG_%d) kazı sırasında Dragan/Tolga dar tünelde yan yana,"kural ""bağırma"""
+D21O_DIG_3,SPK_MINER,fisilti,1.5,chapter21o.gd:264 bark 2.5 sn (D21O_DIG_%d) kazı sırasında Dragan/Tolga dar tünelde yan yana,"kural ""bağırma"""
+D21O_DIG_4,SPK_TOLGA,fisilti,1.5,chapter21o.gd:264 bark 2.5 sn (D21O_DIG_%d) kazı sırasında Dragan/Tolga dar tünelde yan yana,"kural ""bağırma"""
+D21O_DIG_5,SPK_MINER,fisilti,1.5,chapter21o.gd:264 bark 2.5 sn (D21O_DIG_%d) kazı sırasında Dragan/Tolga dar tünelde yan yana,"kural ""bağırma"""
+D21O_D_SUPPORT,SPK_MINER,fisilti,1.5,chapter21o.gd:607 bark 2 sn direk koyarken tünelde yan yana,
 D21O_D_LISTEN,SPK_MINER,fisilti,1.5,"chapter21o.gd:351-356 duvara kulak verip karşı kazıyı dinlerken; düşman lağımı yakın, ses çıkarılmaz",tünelde dinleme anı
 D21O_T_LISTEN,SPK_TOLGA,fisilti,1.5,"chapter21o.gd:351-356 duvara kulak verip karşı kazıyı dinlerken; düşman lağımı yakın, ses çıkarılmaz",tünelde dinleme anı
 D21O_T_FACE,SPK_TOLGA,ic_ses,,"chapter21o.gd:374 çöken duvarda karşılaşma anlatısı, Tolga kendi kendine (karşıda düşman madenci 2.2 m)",
@@ -155,11 +155,11 @@ D22O_H_CARRY,SPK_HASAN,yakin_yuksek,7.5,"chapter22o.gd:1141/1152 Hasan (TOWER+(0
 D22O_T_END,SPK_TOLGA,ic_ses,,chapter22o.gd:1165 bölüm sonu Tolga kendi kendine,
 D22O_N_END,SPK_NIHAT,telsiz,,"chapter22o.gd:708/719/1166 Nihat satırı say_chain/hud.say; kule başında Nihat nesnesi yok, tutanak sesi",
 D19O_N_01,SPK_NIHAT,telsiz,,"chapter19o.gd:263/411/471 hud.say Nihat; kayıkta Nihat nesnesi yok (yalnız reis, kaptan), tutanak/telsiz sesi",
-D19O_R_01,SPK_PATROL,yakin,1.5,"chapter19o.gd:264-266 Tolga kayıkta reisin yanında oturur (_seat, player.face(reis)), gece devriyesi, normal konuşma",
+D19O_R_01,SPK_PATROL,yakin,1.5,"chapter19o.gd:264 Tolga kayıkta reisin yanında oturur (_seat, player.face(reis)), gece devriyesi, normal konuşma",
 D19O_T_01,SPK_TOLGA,yakin,1.5,chapter19o.gd:265 kayıkta reise cevap,
-D19O_R_02,SPK_PATROL,yakin,1.5,"chapter19o.gd:264-266 Tolga kayıkta reisin yanında oturur (_seat, player.face(reis)), gece devriyesi, normal konuşma",
+D19O_R_02,SPK_PATROL,fisilti,1.5,"chapter19o.gd:266 reis kürek tekniğini anlatır: ""erken çekersen su şapırdar, sur duyar""; sur yakında, alçak ses",
 D19O_R_WATCH,SPK_PATROL,fisilti,1.5,"chapter19o.gd:278 zincir açıklığında gölge; R_02 ""su şapırdar, sur duyar"": sur yakında, sessiz devriye",
-D19O_T_SPOT,SPK_TOLGA,yakin,1.5,"chapter19o.gd:324 bark 3 sn, reisin yanında gördüğünü haber verir; sur duymasın diye alçak ama heyecanlı",R_WATCH ile aynı sessiz devriye; gerekirse fisilti
+D19O_T_SPOT,SPK_TOLGA,fisilti,1.5,"chapter19o.gd:324 bark 3 sn, reisin yanında gördüğünü haber verir; sur duymasın diye alçak ama heyecanlı",R_WATCH ile aynı sessiz devriye; gerekirse fisilti
 D19O_C_ANSWER,SPK_BRIG,yakin_yuksek,5,"chapter19o.gd:362/370 kayık brigantine 5 m yanaşır (to = at - side*5.0, :345); güverteden suya, kaptan yüksek sesle yanıtlar",
 D19O_T_NOTICE,SPK_TOLGA,ic_ses,,"chapter19o.gd:363 replik ""(İçinden)"", Tolga kendi kendine",
 D19O_T_TELL,SPK_TOLGA,yakin_yuksek,5,"chapter19o.gd:368/373 brigantindeki kaptan duysun diye (C_TELL/C_WISH cevap veriyor), 5 m yanaşmış kayıktan",
@@ -451,6 +451,80 @@ D26O_AZ_LATE,SPK_AZAP,uzak,12,"chapter26o.gd:249 bark 4 sn; azaplar hendekte, To
 D32O_AZ_GREEKFIRE,SPK_AZAP,yakin_yuksek,6,"chapter32o.gd:823 bark 4 sn Rum ateşi alarmı, açık arazi",
 D32O_AZ_FIRE_OUT,SPK_AZAP,yakin_yuksek,5,chapter32o.gd:842/846 bark 3.5 sn yangın sonrası azap hendek başında,
 D32O_AZ_FIRE_LOST,SPK_AZAP,yakin_yuksek,5,chapter32o.gd:842/846 bark 3.5 sn yangın sonrası azap hendek başında,
+D41O_N_01,SPK_NIHAT,telsiz,,"chapter41o.gd:178/396/424 Nihat satırı; talim sahasında Nihat nesnesi yok, tutanak sesi",
+D41O_H_HELLO,SPK_AZAPBASI,yakin,5.5,"chapter41o.gd:102/172-185 Tolga START (0,10.5), Turgut TURGUT_AT (3.4,6.2) ≈5.5 m (look_target=player, point emote), açılış",
+D41O_T_01,SPK_TOLGA,yakin,5.5,"chapter41o.gd:102/172-185 Tolga START (0,10.5), Turgut TURGUT_AT (3.4,6.2) ≈5.5 m (look_target=player, point emote), açılış",
+D41O_H_02,SPK_AZAPBASI,yakin,5.5,"chapter41o.gd:102/172-185 Tolga START (0,10.5), Turgut TURGUT_AT (3.4,6.2) ≈5.5 m (look_target=player, point emote), açılış",
+D41O_T_02,SPK_TOLGA,yakin,5.5,"chapter41o.gd:102/172-185 Tolga START (0,10.5), Turgut TURGUT_AT (3.4,6.2) ≈5.5 m (look_target=player, point emote), açılış",
+D41O_H_03,SPK_AZAPBASI,yakin,5.5,"chapter41o.gd:102/172-185 Tolga START (0,10.5), Turgut TURGUT_AT (3.4,6.2) ≈5.5 m (look_target=player, point emote), açılış",
+D41O_H_DIR_1,SPK_AZAPBASI,yakin,2.2,"scripts/combat/drill.gd:125-145 _say_h → teacher_near(): Stage.approach(teacher, player, 2.2) ders anlatımı oyuncunun yanına gelip (dinamik anahtar _key(""h_""+k))",
+D41O_H_DIR_2,SPK_AZAPBASI,yakin,2.2,"scripts/combat/drill.gd:125-145 _say_h → teacher_near(): Stage.approach(teacher, player, 2.2) ders anlatımı oyuncunun yanına gelip (dinamik anahtar _key(""h_""+k))",
+D41O_H_DIR_BLOCKED,SPK_AZAPBASI,yakin_yuksek,7,"scripts/combat/drill.gd:154-158 _bark_h/hud.bark; düello sürerken hoca yürümez (teacher_near duel.active), halka kenarından 5-9 m (:134 yorumu), antrenman komutu",5-9 m
+D41O_H_NEAR,SPK_AZAPBASI,yakin_yuksek,7,"scripts/combat/drill.gd:154-158 _bark_h/hud.bark; düello sürerken hoca yürümez (teacher_near duel.active), halka kenarından 5-9 m (:134 yorumu), antrenman komutu",5-9 m
+D41O_H_DIR_HELP,SPK_AZAPBASI,yakin_yuksek,7,"scripts/combat/drill.gd:154-158 _bark_h/hud.bark; düello sürerken hoca yürümez (teacher_near duel.active), halka kenarından 5-9 m (:134 yorumu), antrenman komutu",5-9 m
+D41O_H_DIR_OK_2,SPK_AZAPBASI,yakin_yuksek,7,"scripts/combat/drill.gd:154-158 _bark_h/hud.bark; düello sürerken hoca yürümez (teacher_near duel.active), halka kenarından 5-9 m (:134 yorumu), antrenman komutu",5-9 m
+D41O_H_DIR_OK_0,SPK_AZAPBASI,yakin_yuksek,7,"scripts/combat/drill.gd:154-158 _bark_h/hud.bark; düello sürerken hoca yürümez (teacher_near duel.active), halka kenarından 5-9 m (:134 yorumu), antrenman komutu",5-9 m
+D41O_H_DIR_OK_1,SPK_AZAPBASI,yakin_yuksek,7,"scripts/combat/drill.gd:154-158 _bark_h/hud.bark; düello sürerken hoca yürümez (teacher_near duel.active), halka kenarından 5-9 m (:134 yorumu), antrenman komutu",5-9 m
+D41O_P_BLOCK,SPK_AZAP,yakin,2.5,"scripts/combat/drill.gd:292/422/441/491/651/720 hud.say(partner_spk…) Hızır partner PARTNER (1.6,2.2) halka içinde Tolga ile birkaç metre; mimli replikler ders arasında",
+D41O_H_BLOCK_1,SPK_AZAPBASI,yakin,2.2,"scripts/combat/drill.gd:125-145 _say_h → teacher_near(): Stage.approach(teacher, player, 2.2) ders anlatımı oyuncunun yanına gelip (dinamik anahtar _key(""h_""+k))",
+D41O_H_BLOCK_MISS,SPK_AZAPBASI,yakin_yuksek,7,"scripts/combat/drill.gd:154-158 _bark_h/hud.bark; düello sürerken hoca yürümez (teacher_near duel.active), halka kenarından 5-9 m (:134 yorumu), antrenman komutu",5-9 m
+D41O_H_BLOCK_OK,SPK_AZAPBASI,yakin,2.2,"scripts/combat/drill.gd:125-145 _say_h → teacher_near(): Stage.approach(teacher, player, 2.2) ders anlatımı oyuncunun yanına gelip (dinamik anahtar _key(""h_""+k))",
+D41O_H_BLOCK_TURTLE,SPK_AZAPBASI,yakin,2.2,"scripts/combat/drill.gd:125-145 _say_h → teacher_near(): Stage.approach(teacher, player, 2.2) ders anlatımı oyuncunun yanına gelip (dinamik anahtar _key(""h_""+k))",
+D41O_H_PARRY_1,SPK_AZAPBASI,yakin,2.2,"scripts/combat/drill.gd:125-145 _say_h → teacher_near(): Stage.approach(teacher, player, 2.2) ders anlatımı oyuncunun yanına gelip (dinamik anahtar _key(""h_""+k))",
+D41O_H_PARRY_2,SPK_AZAPBASI,yakin,2.2,"scripts/combat/drill.gd:125-145 _say_h → teacher_near(): Stage.approach(teacher, player, 2.2) ders anlatımı oyuncunun yanına gelip (dinamik anahtar _key(""h_""+k))",
+D41O_H_PARRY_EARLY,SPK_AZAPBASI,yakin_yuksek,7,"scripts/combat/drill.gd:154-158 _bark_h/hud.bark; düello sürerken hoca yürümez (teacher_near duel.active), halka kenarından 5-9 m (:134 yorumu), antrenman komutu",5-9 m
+D41O_H_PARRY_LATE,SPK_AZAPBASI,yakin_yuksek,7,"scripts/combat/drill.gd:154-158 _bark_h/hud.bark; düello sürerken hoca yürümez (teacher_near duel.active), halka kenarından 5-9 m (:134 yorumu), antrenman komutu",5-9 m
+D41O_H_PARRY_OK,SPK_AZAPBASI,yakin_yuksek,7,"scripts/combat/drill.gd:154-158 _bark_h/hud.bark; düello sürerken hoca yürümez (teacher_near duel.active), halka kenarından 5-9 m (:134 yorumu), antrenman komutu",5-9 m
+D41O_H_PARRY_SOFT,SPK_AZAPBASI,yakin,2.2,"scripts/combat/drill.gd:125-145 _say_h → teacher_near(): Stage.approach(teacher, player, 2.2) ders anlatımı oyuncunun yanına gelip (dinamik anahtar _key(""h_""+k))",
+D41O_P_KICK,SPK_AZAP,yakin,2.5,"scripts/combat/drill.gd:292/422/441/491/651/720 hud.say(partner_spk…) Hızır partner PARTNER (1.6,2.2) halka içinde Tolga ile birkaç metre; mimli replikler ders arasında",
+D41O_H_KICK_1,SPK_AZAPBASI,yakin,2.2,"scripts/combat/drill.gd:125-145 _say_h → teacher_near(): Stage.approach(teacher, player, 2.2) ders anlatımı oyuncunun yanına gelip (dinamik anahtar _key(""h_""+k))",
+D41O_H_KICK_HINT,SPK_AZAPBASI,yakin_yuksek,7,"scripts/combat/drill.gd:154-158 _bark_h/hud.bark; düello sürerken hoca yürümez (teacher_near duel.active), halka kenarından 5-9 m (:134 yorumu), antrenman komutu",5-9 m
+D41O_P_KICK_OUCH,SPK_AZAP,yakin,2.5,"scripts/combat/drill.gd:292/422/441/491/651/720 hud.say(partner_spk…) Hızır partner PARTNER (1.6,2.2) halka içinde Tolga ile birkaç metre; mimli replikler ders arasında",
+D41O_H_FIN_1,SPK_AZAPBASI,yakin,2.2,"scripts/combat/drill.gd:125-145 _say_h → teacher_near(): Stage.approach(teacher, player, 2.2) ders anlatımı oyuncunun yanına gelip (dinamik anahtar _key(""h_""+k))",
+D41O_H_FIN_NOW,SPK_AZAPBASI,yakin_yuksek,7,"scripts/combat/drill.gd:154-158 _bark_h/hud.bark; düello sürerken hoca yürümez (teacher_near duel.active), halka kenarından 5-9 m (:134 yorumu), antrenman komutu",5-9 m
+D41O_H_FIN_OK,SPK_AZAPBASI,yakin,2.2,"scripts/combat/drill.gd:125-145 _say_h → teacher_near(): Stage.approach(teacher, player, 2.2) ders anlatımı oyuncunun yanına gelip (dinamik anahtar _key(""h_""+k))",
+D41O_H_FIN_SOFT,SPK_AZAPBASI,yakin,2.2,"scripts/combat/drill.gd:125-145 _say_h → teacher_near(): Stage.approach(teacher, player, 2.2) ders anlatımı oyuncunun yanına gelip (dinamik anahtar _key(""h_""+k))",
+D41O_H_KICK_DEMO,SPK_AZAPBASI,yakin,2.2,"scripts/combat/drill.gd:125-145 _say_h → teacher_near(): Stage.approach(teacher, player, 2.2) ders anlatımı oyuncunun yanına gelip (dinamik anahtar _key(""h_""+k))",
+D41O_P_KICK_DEMO,SPK_AZAP,yakin,2.5,"scripts/combat/drill.gd:292/422/441/491/651/720 hud.say(partner_spk…) Hızır partner PARTNER (1.6,2.2) halka içinde Tolga ile birkaç metre; mimli replikler ders arasında",
+D41O_H_KICK_FOLLOW,SPK_AZAPBASI,yakin_yuksek,7,"scripts/combat/drill.gd:154-158 _bark_h/hud.bark; düello sürerken hoca yürümez (teacher_near duel.active), halka kenarından 5-9 m (:134 yorumu), antrenman komutu",5-9 m
+D41O_H_KICK_LATE,SPK_AZAPBASI,yakin_yuksek,7,"scripts/combat/drill.gd:154-158 _bark_h/hud.bark; düello sürerken hoca yürümez (teacher_near duel.active), halka kenarından 5-9 m (:134 yorumu), antrenman komutu",5-9 m
+D41O_H_KICK_FOLLOW_OK,SPK_AZAPBASI,yakin,2.2,"scripts/combat/drill.gd:125-145 _say_h → teacher_near(): Stage.approach(teacher, player, 2.2) ders anlatımı oyuncunun yanına gelip (dinamik anahtar _key(""h_""+k))",
+D41O_H_KICK_SOFT,SPK_AZAPBASI,yakin,2.2,"scripts/combat/drill.gd:125-145 _say_h → teacher_near(): Stage.approach(teacher, player, 2.2) ders anlatımı oyuncunun yanına gelip (dinamik anahtar _key(""h_""+k))",
+D41O_H_KICK_DOWN_1,SPK_AZAPBASI,yakin,2.2,"scripts/combat/drill.gd:125-145 _say_h → teacher_near(): Stage.approach(teacher, player, 2.2) ders anlatımı oyuncunun yanına gelip (dinamik anahtar _key(""h_""+k))",
+D41O_H_KICK_DOWN_OK,SPK_AZAPBASI,yakin,2.2,"scripts/combat/drill.gd:125-145 _say_h → teacher_near(): Stage.approach(teacher, player, 2.2) ders anlatımı oyuncunun yanına gelip (dinamik anahtar _key(""h_""+k))",
+D41O_T_KICK_DOWN,SPK_TOLGA,ic_ses,,"chapter41o.gd:226/drill.gd/210/423 Tolga espri/yorum, kimseye seslenmiyor",
+D41O_H_KICK_DOWN_SOFT,SPK_AZAPBASI,yakin,2.2,"scripts/combat/drill.gd:125-145 _say_h → teacher_near(): Stage.approach(teacher, player, 2.2) ders anlatımı oyuncunun yanına gelip (dinamik anahtar _key(""h_""+k))",
+D41O_H_FIN_THRUST,SPK_AZAPBASI,yakin,2.2,"scripts/combat/drill.gd:125-145 _say_h → teacher_near(): Stage.approach(teacher, player, 2.2) ders anlatımı oyuncunun yanına gelip (dinamik anahtar _key(""h_""+k))",
+D41O_H_FIN_SLASH,SPK_AZAPBASI,yakin,2.2,"scripts/combat/drill.gd:125-145 _say_h → teacher_near(): Stage.approach(teacher, player, 2.2) ders anlatımı oyuncunun yanına gelip (dinamik anahtar _key(""h_""+k))",
+D41O_H_FIN_GROUND,SPK_AZAPBASI,yakin,2.2,"scripts/combat/drill.gd:125-145 _say_h → teacher_near(): Stage.approach(teacher, player, 2.2) ders anlatımı oyuncunun yanına gelip (dinamik anahtar _key(""h_""+k))",
+D41O_H_FIN_WRONG_THRUST,SPK_AZAPBASI,yakin_yuksek,7,"scripts/combat/drill.gd:154-158 _bark_h/hud.bark; düello sürerken hoca yürümez (teacher_near duel.active), halka kenarından 5-9 m (:134 yorumu), antrenman komutu",5-9 m
+D41O_H_FIN_WRONG_SLASH,SPK_AZAPBASI,yakin_yuksek,7,"scripts/combat/drill.gd:154-158 _bark_h/hud.bark; düello sürerken hoca yürümez (teacher_near duel.active), halka kenarından 5-9 m (:134 yorumu), antrenman komutu",5-9 m
+D41O_H_FIN_WRONG_GROUND,SPK_AZAPBASI,yakin_yuksek,7,"scripts/combat/drill.gd:154-158 _bark_h/hud.bark; düello sürerken hoca yürümez (teacher_near duel.active), halka kenarından 5-9 m (:134 yorumu), antrenman komutu",5-9 m
+D41O_P_FIN_THRUST,SPK_AZAP,yakin,2.5,"scripts/combat/drill.gd:292/422/441/491/651/720 hud.say(partner_spk…) Hızır partner PARTNER (1.6,2.2) halka içinde Tolga ile birkaç metre; mimli replikler ders arasında",
+D41O_P_FIN_SLASH,SPK_AZAP,yakin,2.5,"scripts/combat/drill.gd:292/422/441/491/651/720 hud.say(partner_spk…) Hızır partner PARTNER (1.6,2.2) halka içinde Tolga ile birkaç metre; mimli replikler ders arasında",
+D41O_P_FIN_GROUND,SPK_AZAP,yakin,2.5,"scripts/combat/drill.gd:292/422/441/491/651/720 hud.say(partner_spk…) Hızır partner PARTNER (1.6,2.2) halka içinde Tolga ile birkaç metre; mimli replikler ders arasında",
+D41O_H_FIN_BASH,SPK_AZAPBASI,yakin,2.2,"scripts/combat/drill.gd:125-145 _say_h → teacher_near(): Stage.approach(teacher, player, 2.2) ders anlatımı oyuncunun yanına gelip (dinamik anahtar _key(""h_""+k))",
+D41O_H_FIN_SKIP,SPK_AZAPBASI,yakin,2.2,"scripts/combat/drill.gd:125-145 _say_h → teacher_near(): Stage.approach(teacher, player, 2.2) ders anlatımı oyuncunun yanına gelip (dinamik anahtar _key(""h_""+k))",
+D41O_H_LADDER_1,SPK_AZAPBASI,yakin,4,chapter41o.gd:224-225 merdiven dersi öncesi Turgut yer seviyesinde Tolga'ya (place_player turgut yakını),
+D41O_H_LADDER_2,SPK_AZAPBASI,yakin,4,chapter41o.gd:224-225 merdiven dersi öncesi Turgut yer seviyesinde Tolga'ya (place_player turgut yakını),
+D41O_T_LADDER,SPK_TOLGA,ic_ses,,"chapter41o.gd:226/drill.gd/210/423 Tolga espri/yorum, kimseye seslenmiyor",
+D41O_H_LADDER_HIT,SPK_AZAPBASI,uzak,8,"chapter41o.gd:322/376/378 bark 2-3 sn; Tolga kule merdiveninde yüksekte (TrainingYard TOWER_H), Turgut yerde; yağ/taş torbası uyarısı",yükseklik farkı
+D41O_H_LADDER_WET,SPK_AZAPBASI,uzak,8,"chapter41o.gd:322/376/378 bark 2-3 sn; Tolga kule merdiveninde yüksekte (TrainingYard TOWER_H), Turgut yerde; yağ/taş torbası uyarısı",yükseklik farkı
+D41O_H_LADDER_DRY,SPK_AZAPBASI,uzak,8,"chapter41o.gd:322/376/378 bark 2-3 sn; Tolga kule merdiveninde yüksekte (TrainingYard TOWER_H), Turgut yerde; yağ/taş torbası uyarısı",yükseklik farkı
+D41O_H_LADDER_TOP,SPK_AZAPBASI,uzak,8,"chapter41o.gd:261 say; Tolga merdivenin tepesinde (player.frozen, top_y), Turgut aşağıda (""İn, son bir iş var"")",yükseklik farkı
+D41O_H_LADDER_TOP_2,SPK_AZAPBASI,uzak,8,"chapter41o.gd:261 say; Tolga merdivenin tepesinde (player.frozen, top_y), Turgut aşağıda (""İn, son bir iş var"")",yükseklik farkı
+D41O_H_SPAR_1,SPK_AZAPBASI,yakin,2.2,"scripts/combat/drill.gd:125-145 _say_h → teacher_near(): Stage.approach(teacher, player, 2.2) ders anlatımı oyuncunun yanına gelip (dinamik anahtar _key(""h_""+k))",
+D41O_P_SPAR,SPK_AZAP,yakin,2.5,"scripts/combat/drill.gd:292/422/441/491/651/720 hud.say(partner_spk…) Hızır partner PARTNER (1.6,2.2) halka içinde Tolga ile birkaç metre; mimli replikler ders arasında",
+D41O_P_SPAR_WIN,SPK_AZAP,yakin,2,"chapter41o.gd:196-209 Stage.approach(hizir, player, 2.0) yenilen Hızır gülerek yanına gelir; Turgut yakında",
+D41O_H_SPAR_WIN,SPK_AZAPBASI,yakin,2,"chapter41o.gd:196-209 Stage.approach(hizir, player, 2.0) yenilen Hızır gülerek yanına gelir; Turgut yakında",
+D41O_H_SPAR_STOP,SPK_AZAPBASI,yakin,2,"chapter41o.gd:196-209 Stage.approach(hizir, player, 2.0) yenilen Hızır gülerek yanına gelir; Turgut yakında",
+D41O_P_SPAR_LOSE,SPK_AZAP,yakin,2,"chapter41o.gd:196-209 Stage.approach(hizir, player, 2.0) yenilen Hızır gülerek yanına gelir; Turgut yakında",
+D41O_T_SPAR_LOSE,SPK_TOLGA,ic_ses,,"chapter41o.gd:226/drill.gd/210/423 Tolga espri/yorum, kimseye seslenmiyor",
+D41O_N_PHOTO,SPK_NIHAT,telsiz,,"chapter41o.gd:178/396/424 Nihat satırı; talim sahasında Nihat nesnesi yok, tutanak sesi",
+D41O_H_END_1,SPK_AZAPBASI,yakin,2.5,"chapter41o.gd:422 gün sonu Turgut Tolga'nın yanında, sakin",
+D41O_H_END_2,SPK_AZAPBASI,yakin,2.5,"chapter41o.gd:422 gün sonu Turgut Tolga'nın yanında, sakin",
+D41O_T_END,SPK_TOLGA,ic_ses,,"chapter41o.gd:226/drill.gd/210/423 Tolga espri/yorum, kimseye seslenmiyor",
+D41O_N_END,SPK_NIHAT,telsiz,,"chapter41o.gd:178/396/424 Nihat satırı; talim sahasında Nihat nesnesi yok, tutanak sesi",
 D37O_AB_01_T1,SPK_AZAPBASI,yakin,4.4,"chapter37o.gd:184/251-255 Turgut gun+(0.6,0,11), Tolga gun+(3.2,7.4) ≈4.4 m, zil verir, player.face(turgut)",
 D37O_AB_01_T2,SPK_AZAPBASI,yakin,4.4,"chapter37o.gd:184/251-255 Turgut gun+(0.6,0,11), Tolga gun+(3.2,7.4) ≈4.4 m, zil verir, player.face(turgut)",
 D37O_N_01,SPK_NIHAT,telsiz,,"chapter37o.gd:228/563/561/1191 Nihat satırı (N_PHOTO bark); gece siperinde Nihat nesnesi yok, tutanak sesi",
@@ -907,6 +981,8 @@ D32O_T_25_OK,SPK_TOLGA,yakin,2.1,"chapter32o.gd:337-349 Tolga (-14,72), Kadri (-
 D32O_K_25_BAD,SPK_KADRI,yakin,2.1,"chapter32o.gd:337-349 Tolga (-14,72), Kadri (-12.6,70.4) ≈2.1 m, sabah brifingi",
 D32O_T_25_BAD,SPK_TOLGA,yakin,2.1,"chapter32o.gd:337-349 Tolga (-14,72), Kadri (-12.6,70.4) ≈2.1 m, sabah brifingi",
 D32O_AZ_25_BUNDLE,SPK_AZAP,uzak,20,"chapter32o.gd:430 bark 3 sn; _ditch başlangıcı, azap (2,46), Tolga ~(−14,72) civarı yolda ≈25-30 m, ""Gerisi senin, kâtip!""",oyuncu konumu bu anda hendeğe yürümekte
+D41O_HZ_KICK_FIELD,SPK_AZAP,yakin_yuksek,3,"scripts/combat/mentor.gd:67/78 bark 2.5-3 sn; saha düellosunda Hızır yanında dövüşür, savaş gürültüsü",
+D41O_HZ_FIN_FIELD,SPK_AZAP,yakin_yuksek,3,"scripts/combat/mentor.gd:67/78 bark 2.5-3 sn; saha düellosunda Hızır yanında dövüşür, savaş gürültüsü",
 D30O_D_CHASE,SPK_DEFENDER,yakin_yuksek,5,"chapter30o.gd:945 bark 1.6 sn kovalama, war_cry; savunucular Tolga'nın az ötesinde",
 D30O_A_LATE,SPK_AZAP,yakin_yuksek,3,chapter30o.gd:940 geç kalan azap Tolga'ya dönüp seslenir (player.face(_late)); kaçış kargaşası,
 D30O_T_PANIC,SPK_TOLGA,ic_ses,,chapter30o.gd:953/1143 bark 2.2 sn; kaçarken/merdivenden inerken kendi kendine (ünlemli),panik; gerekirse yakin_yuksek
@@ -921,6 +997,90 @@ D33O_F_EDIRNE_HIZIR,SPK_FATIH,uzak,20,"chapter33o.gd:560/567 Sultan rıhtımdaki
 D33O_F_EDIRNE_TIME,SPK_FATIH,uzak,20,"chapter33o.gd:560/567 Sultan rıhtımdaki heyet içinde, Tolga hâlâ kule tepesinde (0.6,14.5,-25.6); dinamik anahtar F_EDIRNE_%s","Fatih vakur, bağırmaz; bu anlar kısa diyalog, gerekirse yakin"
 D33O_F_EDIRNE_GREEK,SPK_FATIH,uzak,20,"chapter33o.gd:560/567 Sultan rıhtımdaki heyet içinde, Tolga hâlâ kule tepesinde (0.6,14.5,-25.6); dinamik anahtar F_EDIRNE_%s","Fatih vakur, bağırmaz; bu anlar kısa diyalog, gerekirse yakin"
 D33O_T_EDIRNE,SPK_TOLGA,ic_ses,,"chapter33o.gd:562/568 Tolga kendi kendine (""(Benim için iki saat oldu.)"" parantezli iç ses)",
+D43O_N_01,SPK_NIHAT,telsiz,,"chapter43o.gd:212-217/255/268/322/452/463/495/568/587/747 Nihat satırı; Nihat görünmez (_ghost_at/cuffs) ya da telsizden, Sultan'ın otağında bedensel Nihat yok; ""Uçmaz deyin"" fısıltı ama kulaklıktan",
+D43O_N_02,SPK_NIHAT,telsiz,,"chapter43o.gd:212-217/255/268/322/452/463/495/568/587/747 Nihat satırı; Nihat görünmez (_ghost_at/cuffs) ya da telsizden, Sultan'ın otağında bedensel Nihat yok; ""Uçmaz deyin"" fısıltı ama kulaklıktan",
+D43O_T_01,SPK_TOLGA,telsiz,,"chapter43o.gd:214/216/588 Tolga, Nihat'la telsizden konuşuyor (otağa varmadan: player (0.6,-27); T_END: Nihat'a soru)",
+D43O_N_03,SPK_NIHAT,telsiz,,"chapter43o.gd:212-217/255/268/322/452/463/495/568/587/747 Nihat satırı; Nihat görünmez (_ghost_at/cuffs) ya da telsizden, Sultan'ın otağında bedensel Nihat yok; ""Uçmaz deyin"" fısıltı ama kulaklıktan",
+D43O_T_02,SPK_TOLGA,telsiz,,"chapter43o.gd:214/216/588 Tolga, Nihat'la telsizden konuşuyor (otağa varmadan: player (0.6,-27); T_END: Nihat'a soru)",
+D43O_N_04,SPK_NIHAT,telsiz,,"chapter43o.gd:212-217/255/268/322/452/463/495/568/587/747 Nihat satırı; Nihat görünmez (_ghost_at/cuffs) ya da telsizden, Sultan'ın otağında bedensel Nihat yok; ""Uçmaz deyin"" fısıltı ama kulaklıktan",
+D43O_U_01,SPK_URBAN,yakin,4.4,"chapter43o.gd:246/493 Urban URBAN_AT (2.4,-48.6), Tolga (1,-44.4) ≈4.4 m, Sultan'a bilgi verir",
+D43O_Z_01,SPK_ZAGANOS,yakin,7.7,"chapter43o.gd:248/266/262/298/426/583 Zağanos ZAGANOS_AT (-3.2,-49.8), Tolga ≈7.7 m, otak içi",
+D43O_F_01,SPK_FATIH,yakin,6.6,"chapter43o.gd:249-584; level/drone_defense.gd:61 (DODGE bark) Fatih FATIH_AT (-1.4,-50.6) ↔ Tolga (1,-44.4) ≈6.6 m; Sultan bağırmaz, sakin/vakur (:343/387/462/499 face_toward(player))",Fatih bağırmaz
+D43O_T_READ,SPK_TOLGA,yakin,6.6,"chapter43o.gd:251/346/361/417/433/497/817 Tolga PLAYER_AT (1,-44.4), Fatih FATIH_AT (-1.4,-50.6) ≈6.6 m, otak içi törensel/sakin konuşma",
+D43O_F_02,SPK_FATIH,yakin,6.6,"chapter43o.gd:249-584; level/drone_defense.gd:61 (DODGE bark) Fatih FATIH_AT (-1.4,-50.6) ↔ Tolga (1,-44.4) ≈6.6 m; Sultan bağırmaz, sakin/vakur (:343/387/462/499 face_toward(player))",Fatih bağırmaz
+D43O_N_WHISPER,SPK_NIHAT,telsiz,,"chapter43o.gd:212-217/255/268/322/452/463/495/568/587/747 Nihat satırı; Nihat görünmez (_ghost_at/cuffs) ya da telsizden, Sultan'ın otağında bedensel Nihat yok; ""Uçmaz deyin"" fısıltı ama kulaklıktan",
+D43O_U_LIE,SPK_URBAN,yakin_yuksek,4.4,"chapter43o.gd:261 Urban Sultan'a itiraz eder ""Yalan söylüyor!"", ≈4.4 m",
+D43O_Z_LIE,SPK_ZAGANOS,yakin,7.7,"chapter43o.gd:248/266/262/298/426/583 Zağanos ZAGANOS_AT (-3.2,-49.8), Tolga ≈7.7 m, otak içi",
+D43O_F_UNSURE,SPK_FATIH,yakin,6.6,"chapter43o.gd:249-584; level/drone_defense.gd:61 (DODGE bark) Fatih FATIH_AT (-1.4,-50.6) ↔ Tolga (1,-44.4) ≈6.6 m; Sultan bağırmaz, sakin/vakur (:343/387/462/499 face_toward(player))",Fatih bağırmaz
+D43O_F_03,SPK_FATIH,yakin,6.6,"chapter43o.gd:249-584; level/drone_defense.gd:61 (DODGE bark) Fatih FATIH_AT (-1.4,-50.6) ↔ Tolga (1,-44.4) ≈6.6 m; Sultan bağırmaz, sakin/vakur (:343/387/462/499 face_toward(player))",Fatih bağırmaz
+D43O_Z_03,SPK_ZAGANOS,yakin,7.7,"chapter43o.gd:248/266/262/298/426/583 Zağanos ZAGANOS_AT (-3.2,-49.8), Tolga ≈7.7 m, otak içi",
+D43O_T_03,SPK_TOLGA,ic_ses,,"chapter43o.gd:267; level/drone_defense.gd:128-133 bark(…,true) Tolga dronu uçururken kendi kendine tepki, kimseye seslenmiyor",
+D43O_N_05,SPK_NIHAT,telsiz,,"chapter43o.gd:212-217/255/268/322/452/463/495/568/587/747 Nihat satırı; Nihat görünmez (_ghost_at/cuffs) ya da telsizden, Sultan'ın otağında bedensel Nihat yok; ""Uçmaz deyin"" fısıltı ama kulaklıktan",
+D43O_F_HOVER,SPK_FATIH,yakin,6.6,"chapter43o.gd:249-584; level/drone_defense.gd:61 (DODGE bark) Fatih FATIH_AT (-1.4,-50.6) ↔ Tolga (1,-44.4) ≈6.6 m; Sultan bağırmaz, sakin/vakur (:343/387/462/499 face_toward(player))",Fatih bağırmaz
+D43O_Z_HOVER,SPK_ZAGANOS,yakin,7.7,"chapter43o.gd:248/266/262/298/426/583 Zağanos ZAGANOS_AT (-3.2,-49.8), Tolga ≈7.7 m, otak içi",
+D43O_F_DARK,SPK_FATIH,yakin,6.6,"chapter43o.gd:249-584; level/drone_defense.gd:61 (DODGE bark) Fatih FATIH_AT (-1.4,-50.6) ↔ Tolga (1,-44.4) ≈6.6 m; Sultan bağırmaz, sakin/vakur (:343/387/462/499 face_toward(player))",Fatih bağırmaz
+D43O_F_DARK_A,SPK_FATIH,yakin,6.6,"chapter43o.gd:249-584; level/drone_defense.gd:61 (DODGE bark) Fatih FATIH_AT (-1.4,-50.6) ↔ Tolga (1,-44.4) ≈6.6 m; Sultan bağırmaz, sakin/vakur (:343/387/462/499 face_toward(player))",Fatih bağırmaz
+D43O_F_DARK_B,SPK_FATIH,yakin,6.6,"chapter43o.gd:249-584; level/drone_defense.gd:61 (DODGE bark) Fatih FATIH_AT (-1.4,-50.6) ↔ Tolga (1,-44.4) ≈6.6 m; Sultan bağırmaz, sakin/vakur (:343/387/462/499 face_toward(player))",Fatih bağırmaz
+D43O_Z_DARK_C,SPK_ZAGANOS,yakin_yuksek,7.7,"chapter43o.gd:320/451/567 Zağanos ürkmüş ""büyü yapıyor!/cin işi"", ünlemli, ≈7.7 m",
+D43O_T_HAND,SPK_TOLGA,fisilti,6.6,"chapter43o.gd:321 Sultan ve Zağanos önünde Nihat'a ""çekin elinizi"" der; kulaklıktan ama alçak sesle, otağ içinde",telsiz+gizli
+D43O_N_HAND,SPK_NIHAT,telsiz,,"chapter43o.gd:212-217/255/268/322/452/463/495/568/587/747 Nihat satırı; Nihat görünmez (_ghost_at/cuffs) ya da telsizden, Sultan'ın otağında bedensel Nihat yok; ""Uçmaz deyin"" fısıltı ama kulaklıktan",
+D43O_F_WALLS,SPK_FATIH,yakin,6.6,"chapter43o.gd:249-584; level/drone_defense.gd:61 (DODGE bark) Fatih FATIH_AT (-1.4,-50.6) ↔ Tolga (1,-44.4) ≈6.6 m; Sultan bağırmaz, sakin/vakur (:343/387/462/499 face_toward(player))",Fatih bağırmaz
+D43O_F_GIVE,SPK_FATIH,yakin,6.6,"chapter43o.gd:249-584; level/drone_defense.gd:61 (DODGE bark) Fatih FATIH_AT (-1.4,-50.6) ↔ Tolga (1,-44.4) ≈6.6 m; Sultan bağırmaz, sakin/vakur (:343/387/462/499 face_toward(player))",Fatih bağırmaz
+D43O_T_GIVE,SPK_TOLGA,yakin,6.6,"chapter43o.gd:251/346/361/417/433/497/817 Tolga PLAYER_AT (1,-44.4), Fatih FATIH_AT (-1.4,-50.6) ≈6.6 m, otak içi törensel/sakin konuşma",
+D43O_F_GIVE2,SPK_FATIH,yakin,6.6,"chapter43o.gd:249-584; level/drone_defense.gd:61 (DODGE bark) Fatih FATIH_AT (-1.4,-50.6) ↔ Tolga (1,-44.4) ≈6.6 m; Sultan bağırmaz, sakin/vakur (:343/387/462/499 face_toward(player))",Fatih bağırmaz
+D43O_F_UP_OK,SPK_FATIH,yakin,6.6,"chapter43o.gd:249-584; level/drone_defense.gd:61 (DODGE bark) Fatih FATIH_AT (-1.4,-50.6) ↔ Tolga (1,-44.4) ≈6.6 m; Sultan bağırmaz, sakin/vakur (:343/387/462/499 face_toward(player))",Fatih bağırmaz
+D43O_F_UP_B,SPK_FATIH,yakin_yuksek,6.6,"chapter43o.gd:360/408 Sultan kumandayı yanlış yönlendirince şaşırır/öfkelenir (""Yere dalıyor!"", ""Fırladı! Yamak!""), ≈6.6 m",
+D43O_F_UP_C,SPK_FATIH,yakin,6.6,"chapter43o.gd:249-584; level/drone_defense.gd:61 (DODGE bark) Fatih FATIH_AT (-1.4,-50.6) ↔ Tolga (1,-44.4) ≈6.6 m; Sultan bağırmaz, sakin/vakur (:343/387/462/499 face_toward(player))",Fatih bağırmaz
+D43O_F_TURN,SPK_FATIH,yakin,6.6,"chapter43o.gd:249-584; level/drone_defense.gd:61 (DODGE bark) Fatih FATIH_AT (-1.4,-50.6) ↔ Tolga (1,-44.4) ≈6.6 m; Sultan bağırmaz, sakin/vakur (:343/387/462/499 face_toward(player))",Fatih bağırmaz
+D43O_F_TURN_OK,SPK_FATIH,yakin,6.6,"chapter43o.gd:249-584; level/drone_defense.gd:61 (DODGE bark) Fatih FATIH_AT (-1.4,-50.6) ↔ Tolga (1,-44.4) ≈6.6 m; Sultan bağırmaz, sakin/vakur (:343/387/462/499 face_toward(player))",Fatih bağırmaz
+D43O_F_TURN_B,SPK_FATIH,yakin,6.6,"chapter43o.gd:249-584; level/drone_defense.gd:61 (DODGE bark) Fatih FATIH_AT (-1.4,-50.6) ↔ Tolga (1,-44.4) ≈6.6 m; Sultan bağırmaz, sakin/vakur (:343/387/462/499 face_toward(player))",Fatih bağırmaz
+D43O_F_TURN_C,SPK_FATIH,yakin,6.6,"chapter43o.gd:249-584; level/drone_defense.gd:61 (DODGE bark) Fatih FATIH_AT (-1.4,-50.6) ↔ Tolga (1,-44.4) ≈6.6 m; Sultan bağırmaz, sakin/vakur (:343/387/462/499 face_toward(player))",Fatih bağırmaz
+D43O_F_FWD,SPK_FATIH,yakin,6.6,"chapter43o.gd:249-584; level/drone_defense.gd:61 (DODGE bark) Fatih FATIH_AT (-1.4,-50.6) ↔ Tolga (1,-44.4) ≈6.6 m; Sultan bağırmaz, sakin/vakur (:343/387/462/499 face_toward(player))",Fatih bağırmaz
+D43O_F_FWD_OK,SPK_FATIH,yakin,6.6,"chapter43o.gd:249-584; level/drone_defense.gd:61 (DODGE bark) Fatih FATIH_AT (-1.4,-50.6) ↔ Tolga (1,-44.4) ≈6.6 m; Sultan bağırmaz, sakin/vakur (:343/387/462/499 face_toward(player))",Fatih bağırmaz
+D43O_F_FWD_B,SPK_FATIH,yakin_yuksek,6.6,"chapter43o.gd:360/408 Sultan kumandayı yanlış yönlendirince şaşırır/öfkelenir (""Yere dalıyor!"", ""Fırladı! Yamak!""), ≈6.6 m",
+D43O_F_FWD_C,SPK_FATIH,yakin,6.6,"chapter43o.gd:249-584; level/drone_defense.gd:61 (DODGE bark) Fatih FATIH_AT (-1.4,-50.6) ↔ Tolga (1,-44.4) ≈6.6 m; Sultan bağırmaz, sakin/vakur (:343/387/462/499 face_toward(player))",Fatih bağırmaz
+D43O_T_PRO,SPK_TOLGA,yakin,6.6,"chapter43o.gd:251/346/361/417/433/497/817 Tolga PLAYER_AT (1,-44.4), Fatih FATIH_AT (-1.4,-50.6) ≈6.6 m, otak içi törensel/sakin konuşma",
+D43O_F_VIEW1,SPK_FATIH,yakin,6.6,"chapter43o.gd:249-584; level/drone_defense.gd:61 (DODGE bark) Fatih FATIH_AT (-1.4,-50.6) ↔ Tolga (1,-44.4) ≈6.6 m; Sultan bağırmaz, sakin/vakur (:343/387/462/499 face_toward(player))",Fatih bağırmaz
+D43O_Z_VIEW1,SPK_ZAGANOS,yakin,7.7,"chapter43o.gd:248/266/262/298/426/583 Zağanos ZAGANOS_AT (-3.2,-49.8), Tolga ≈7.7 m, otak içi",
+D43O_F_VIEW2,SPK_FATIH,yakin,6.6,"chapter43o.gd:249-584; level/drone_defense.gd:61 (DODGE bark) Fatih FATIH_AT (-1.4,-50.6) ↔ Tolga (1,-44.4) ≈6.6 m; Sultan bağırmaz, sakin/vakur (:343/387/462/499 face_toward(player))",Fatih bağırmaz
+D43O_F_VIEW3,SPK_FATIH,yakin,6.6,"chapter43o.gd:249-584; level/drone_defense.gd:61 (DODGE bark) Fatih FATIH_AT (-1.4,-50.6) ↔ Tolga (1,-44.4) ≈6.6 m; Sultan bağırmaz, sakin/vakur (:343/387/462/499 face_toward(player))",Fatih bağırmaz
+D43O_F_STATIC,SPK_FATIH,yakin,6.6,"chapter43o.gd:249-584; level/drone_defense.gd:61 (DODGE bark) Fatih FATIH_AT (-1.4,-50.6) ↔ Tolga (1,-44.4) ≈6.6 m; Sultan bağırmaz, sakin/vakur (:343/387/462/499 face_toward(player))",Fatih bağırmaz
+D43O_F_ST_A,SPK_FATIH,yakin,6.6,"chapter43o.gd:249-584; level/drone_defense.gd:61 (DODGE bark) Fatih FATIH_AT (-1.4,-50.6) ↔ Tolga (1,-44.4) ≈6.6 m; Sultan bağırmaz, sakin/vakur (:343/387/462/499 face_toward(player))",Fatih bağırmaz
+D43O_F_ST_B,SPK_FATIH,yakin,6.6,"chapter43o.gd:249-584; level/drone_defense.gd:61 (DODGE bark) Fatih FATIH_AT (-1.4,-50.6) ↔ Tolga (1,-44.4) ≈6.6 m; Sultan bağırmaz, sakin/vakur (:343/387/462/499 face_toward(player))",Fatih bağırmaz
+D43O_Z_ST_C,SPK_ZAGANOS,yakin_yuksek,7.7,"chapter43o.gd:320/451/567 Zağanos ürkmüş ""büyü yapıyor!/cin işi"", ünlemli, ≈7.7 m",
+D43O_N_STATIC,SPK_NIHAT,telsiz,,"chapter43o.gd:212-217/255/268/322/452/463/495/568/587/747 Nihat satırı; Nihat görünmez (_ghost_at/cuffs) ya da telsizden, Sultan'ın otağında bedensel Nihat yok; ""Uçmaz deyin"" fısıltı ama kulaklıktan",
+D43O_F_OVER,SPK_FATIH,yakin,6.6,"chapter43o.gd:249-584; level/drone_defense.gd:61 (DODGE bark) Fatih FATIH_AT (-1.4,-50.6) ↔ Tolga (1,-44.4) ≈6.6 m; Sultan bağırmaz, sakin/vakur (:343/387/462/499 face_toward(player))",Fatih bağırmaz
+D43O_T_OVER,SPK_TOLGA,yakin,6.6,"chapter43o.gd:251/346/361/417/433/497/817 Tolga PLAYER_AT (1,-44.4), Fatih FATIH_AT (-1.4,-50.6) ≈6.6 m, otak içi törensel/sakin konuşma",
+D43O_B_SPOT,SPK_DEFENDER,yakin_yuksek,15,"level/drone_defense.gd:76 bark 2.5 sn; surdaki savunucular dronu görünce bağırır (ZONE_Z 375); oyuncu kamerası drondan, seslendirme drone bakışında",drone bakışı: savunucular dron altında 10-30 m; gerekirse uzak
+D43O_B_SHOOT,SPK_DEFENDER,yakin_yuksek,15,"level/drone_defense.gd:76 bark 2.5 sn; surdaki savunucular dronu görünce bağırır (ZONE_Z 375); oyuncu kamerası drondan, seslendirme drone bakışında",drone bakışı: savunucular dron altında 10-30 m; gerekirse uzak
+D43O_B_AGAIN,SPK_DEFENDER,yakin_yuksek,15,"level/drone_defense.gd:76 bark 2.5 sn; surdaki savunucular dronu görünce bağırır (ZONE_Z 375); oyuncu kamerası drondan, seslendirme drone bakışında",drone bakışı: savunucular dron altında 10-30 m; gerekirse uzak
+D43O_T_HIT_1,SPK_TOLGA,ic_ses,,"chapter43o.gd:267; level/drone_defense.gd:128-133 bark(…,true) Tolga dronu uçururken kendi kendine tepki, kimseye seslenmiyor",
+D43O_T_HIT_2,SPK_TOLGA,ic_ses,,"chapter43o.gd:267; level/drone_defense.gd:128-133 bark(…,true) Tolga dronu uçururken kendi kendine tepki, kimseye seslenmiyor",
+D43O_T_LIFT,SPK_TOLGA,ic_ses,,"chapter43o.gd:267; level/drone_defense.gd:128-133 bark(…,true) Tolga dronu uçururken kendi kendine tepki, kimseye seslenmiyor",
+D43O_F_DODGE,SPK_FATIH,yakin,6.6,"chapter43o.gd:249-584; level/drone_defense.gd:61 (DODGE bark) Fatih FATIH_AT (-1.4,-50.6) ↔ Tolga (1,-44.4) ≈6.6 m; Sultan bağırmaz, sakin/vakur (:343/387/462/499 face_toward(player))",Fatih bağırmaz
+D43O_T_FENCE,SPK_TOLGA,yakin,6.6,"chapter43o.gd:251/346/361/417/433/497/817 Tolga PLAYER_AT (1,-44.4), Fatih FATIH_AT (-1.4,-50.6) ≈6.6 m, otak içi törensel/sakin konuşma",
+D43O_F_FENCE2,SPK_FATIH,yakin,6.6,"chapter43o.gd:249-584; level/drone_defense.gd:61 (DODGE bark) Fatih FATIH_AT (-1.4,-50.6) ↔ Tolga (1,-44.4) ≈6.6 m; Sultan bağırmaz, sakin/vakur (:343/387/462/499 face_toward(player))",Fatih bağırmaz
+D43O_N_PHOTO,SPK_NIHAT,telsiz,,"chapter43o.gd:212-217/255/268/322/452/463/495/568/587/747 Nihat satırı; Nihat görünmez (_ghost_at/cuffs) ya da telsizden, Sultan'ın otağında bedensel Nihat yok; ""Uçmaz deyin"" fısıltı ama kulaklıktan",
+D43O_F_URBAN,SPK_FATIH,yakin,6.6,"chapter43o.gd:249-584; level/drone_defense.gd:61 (DODGE bark) Fatih FATIH_AT (-1.4,-50.6) ↔ Tolga (1,-44.4) ≈6.6 m; Sultan bağırmaz, sakin/vakur (:343/387/462/499 face_toward(player))",Fatih bağırmaz
+D43O_U_URBAN,SPK_URBAN,yakin,4.4,"chapter43o.gd:246/493 Urban URBAN_AT (2.4,-48.6), Tolga (1,-44.4) ≈4.4 m, Sultan'a bilgi verir",
+D43O_N_06,SPK_NIHAT,telsiz,,"chapter43o.gd:212-217/255/268/322/452/463/495/568/587/747 Nihat satırı; Nihat görünmez (_ghost_at/cuffs) ya da telsizden, Sultan'ın otağında bedensel Nihat yok; ""Uçmaz deyin"" fısıltı ama kulaklıktan",
+D43O_T_LAST,SPK_TOLGA,yakin,6.6,"chapter43o.gd:251/346/361/417/433/497/817 Tolga PLAYER_AT (1,-44.4), Fatih FATIH_AT (-1.4,-50.6) ≈6.6 m, otak içi törensel/sakin konuşma",
+D43O_F_LAST,SPK_FATIH,yakin,6.6,"chapter43o.gd:249-584; level/drone_defense.gd:61 (DODGE bark) Fatih FATIH_AT (-1.4,-50.6) ↔ Tolga (1,-44.4) ≈6.6 m; Sultan bağırmaz, sakin/vakur (:343/387/462/499 face_toward(player))",Fatih bağırmaz
+D43O_K_SOUP,SPK_KADRI,yakin_yuksek,3,"chapter43o.gd:547 _cut_to_kitchen (kamera mutfağa kesilir), Kadri CAULDRON (-16.6,-9.2) başında, çorbaya düşen dron karşısında bağırır",
+D43O_F_SOUP,SPK_FATIH,yakin,6.6,"chapter43o.gd:249-584; level/drone_defense.gd:61 (DODGE bark) Fatih FATIH_AT (-1.4,-50.6) ↔ Tolga (1,-44.4) ≈6.6 m; Sultan bağırmaz, sakin/vakur (:343/387/462/499 face_toward(player))",Fatih bağırmaz
+D43O_U_SOUP,SPK_URBAN,yakin,6.6,"chapter43o.gd:551 çorba olayı sonrası Urban otakta Sultan yanında, sakin",
+D43O_Z_FLOAT,SPK_ZAGANOS,yakin_yuksek,7.7,"chapter43o.gd:320/451/567 Zağanos ürkmüş ""büyü yapıyor!/cin işi"", ünlemli, ≈7.7 m",
+D43O_N_FLOAT,SPK_NIHAT,telsiz,,"chapter43o.gd:212-217/255/268/322/452/463/495/568/587/747 Nihat satırı; Nihat görünmez (_ghost_at/cuffs) ya da telsizden, Sultan'ın otağında bedensel Nihat yok; ""Uçmaz deyin"" fısıltı ama kulaklıktan",
+D43O_F_END_OK,SPK_FATIH,yakin,6.6,"chapter43o.gd:249-584; level/drone_defense.gd:61 (DODGE bark) Fatih FATIH_AT (-1.4,-50.6) ↔ Tolga (1,-44.4) ≈6.6 m; Sultan bağırmaz, sakin/vakur (:343/387/462/499 face_toward(player))",Fatih bağırmaz
+D43O_F_END_OK2,SPK_FATIH,yakin,6.6,"chapter43o.gd:249-584; level/drone_defense.gd:61 (DODGE bark) Fatih FATIH_AT (-1.4,-50.6) ↔ Tolga (1,-44.4) ≈6.6 m; Sultan bağırmaz, sakin/vakur (:343/387/462/499 face_toward(player))",Fatih bağırmaz
+D43O_Z_END_BAD,SPK_ZAGANOS,yakin,7.7,"chapter43o.gd:248/266/262/298/426/583 Zağanos ZAGANOS_AT (-3.2,-49.8), Tolga ≈7.7 m, otak içi",
+D43O_F_END_BAD,SPK_FATIH,yakin,6.6,"chapter43o.gd:249-584; level/drone_defense.gd:61 (DODGE bark) Fatih FATIH_AT (-1.4,-50.6) ↔ Tolga (1,-44.4) ≈6.6 m; Sultan bağırmaz, sakin/vakur (:343/387/462/499 face_toward(player))",Fatih bağırmaz
+D43O_N_END_BAD,SPK_NIHAT,telsiz,,"chapter43o.gd:212-217/255/268/322/452/463/495/568/587/747 Nihat satırı; Nihat görünmez (_ghost_at/cuffs) ya da telsizden, Sultan'ın otağında bedensel Nihat yok; ""Uçmaz deyin"" fısıltı ama kulaklıktan",
+D43O_N_END,SPK_NIHAT,telsiz,,"chapter43o.gd:212-217/255/268/322/452/463/495/568/587/747 Nihat satırı; Nihat görünmez (_ghost_at/cuffs) ya da telsizden, Sultan'ın otağında bedensel Nihat yok; ""Uçmaz deyin"" fısıltı ama kulaklıktan",
+D43O_N_END_SOUP,SPK_NIHAT,telsiz,,"chapter43o.gd:212-217/255/268/322/452/463/495/568/587/747 Nihat satırı; Nihat görünmez (_ghost_at/cuffs) ya da telsizden, Sultan'ın otağında bedensel Nihat yok; ""Uçmaz deyin"" fısıltı ama kulaklıktan",
+D43O_T_END,SPK_TOLGA,telsiz,,"chapter43o.gd:214/216/588 Tolga, Nihat'la telsizden konuşuyor (otağa varmadan: player (0.6,-27); T_END: Nihat'a soru)",
+D43O_N_END2,SPK_NIHAT,telsiz,,"chapter43o.gd:212-217/255/268/322/452/463/495/568/587/747 Nihat satırı; Nihat görünmez (_ghost_at/cuffs) ya da telsizden, Sultan'ın otağında bedensel Nihat yok; ""Uçmaz deyin"" fısıltı ama kulaklıktan",
+D43O_T_FIX,SPK_TOLGA,yakin,6.6,"chapter43o.gd:251/346/361/417/433/497/817 Tolga PLAYER_AT (1,-44.4), Fatih FATIH_AT (-1.4,-50.6) ≈6.6 m, otak içi törensel/sakin konuşma",
 D17O_T_SHOT,SPK_TOLGA,ic_ses,,chapter17o.gd:454 hud.say Tolga kamerayla fotoğraf sonrası kendi kendine,
 D17O_T_POUR_OUT,SPK_TOLGA,ic_ses,,chapter17o.gd:932 hud.bark 2.2 sn Tolga kova atarken kendi kendine; yangın gürültüsü var,ünlemli ama kimseye seslenmiyor; gerekirse yakin_yuksek
 D17O_T_POUR_MORE,SPK_TOLGA,ic_ses,,chapter17o.gd:932 hud.bark 2.2 sn Tolga kova atarken kendi kendine; yangın gürültüsü var,ünlemli ama kimseye seslenmiyor; gerekirse yakin_yuksek
@@ -928,6 +1088,7 @@ D19O_T_END_WISH,SPK_TOLGA,ic_ses,,chapter19o.gd:469-470 bölüm sonu Tolga kendi
 D20O_U_CHARGE_HOLD,SPK_URBAN,yakin_yuksek,5,"chapter20o.gd:529 gedikte azaplara ""ileri!"" hücum komutu, moloz önünde",
 D22O_H_LOST_STAY,SPK_HASAN,yakin_yuksek,7.5,"chapter22o.gd:1141/1152 Hasan (TOWER+(0.4,2.6)), Tolga TOWER+(3,10) ≈7.5 m, ""Çekil!"" yangın anı",
 D26O_N_HIDE,SPK_NIHAT,telsiz,,"chapter26o.gd:204/644/585, chapter26.gd:1356/1948 Nihat satırı; surda/hendekte Nihat nesnesi yok, tutanak sesi",
+D26O_T_HIDE,SPK_TOLGA,ic_ses,,"chapter26.gd:1357 Nihat'ın ""fesinizi çıkarmayın"" kaydına Tolga yol kenarında kendi kendine yorum/özet; yanında kimse yok",Nihat sonrası: telsiz yanıtı sayılabilir
 D31O_AZ_01_BOTH,SPK_AZAP,yakin,1.5,"chapter31o.gd:232-239 Tolga azabın yanında (player.face(azap)), azap (1.4,-73.6) oturur, ≈1.5 m; dinlenme sohbeti (AZ_01* dinamik: :257-264)",
 D31O_AZ_01_BLAK,SPK_AZAP,yakin,1.5,"chapter31o.gd:232-239 Tolga azabın yanında (player.face(azap)), azap (1.4,-73.6) oturur, ≈1.5 m; dinlenme sohbeti (AZ_01* dinamik: :257-264)",
 D31O_AZ_01_LOST,SPK_AZAP,yakin,1.5,"chapter31o.gd:232-239 Tolga azabın yanında (player.face(azap)), azap (1.4,-73.6) oturur, ≈1.5 m; dinlenme sohbeti (AZ_01* dinamik: :257-264)",
