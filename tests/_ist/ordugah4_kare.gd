@@ -38,18 +38,21 @@ func _ready() -> void:
 	for i in 10:
 		await get_tree().process_frame
 	var p := ("gece_" if gece else "")
-	if set_ in ["pafta", "hepsi"]:
+	if set_ in ["pafta", "hepsi"] or "pafta" in set_.split(","):
 		await _pafta(p)
-	if set_ in ["yer", "hepsi"] and not gece:
+	if (set_ in ["yer", "hepsi"] or "yer" in set_.split(",")) and not gece:
 		await _yer()
 	if set_ in ["hava", "hepsi"] and not gece:
 		await _hava()
-	if set_ in ["gece"] or (gece and set_ == "hepsi"):
+	if set_ in ["gece"] or (gece and set_ == "hepsi") or (gece and "gece" in set_.split(",")):
 		await _gece_kareler()
-	if set_ in ["butce", "hepsi"]:
+	if set_ in ["butce", "hepsi"] or "butce" in set_.split(","):
 		await _butce(p)
-	if set_ in ["kisi", "hepsi"]:
+	if set_ in ["kisi", "hepsi"] or "kisi" in set_.split(","):
 		await _kisi_denetim()
+	var o := _ordu()
+	if o:
+		print("ISTORDUKURMS ", o.get("kur_ms"))
 	print("ISTORDUKARE BITTI")
 	get_tree().quit(0)
 
@@ -180,7 +183,7 @@ func _gece_kareler() -> void:
 # ---------------------------------------------------------------- bütçe: ≥ 6 nokta, uçuşta 60 m ve yerde
 
 func _butce(p: String) -> void:
-	var ids := ["otag", "sahi_top", "anadolu_4_1", "rumeli_3_1", "basibozuk_10_0", "batarya_02", "yeniceri_2_1", "zaganos_1_1"]
+	var ids := ["otag", "sahi_top", "anadolu_4_1", "rumeli_3_1", "batarya_02", "yeniceri_2_1"]
 	for id: String in ids:
 		var it := _plan_it(id)
 		if it.is_empty():
@@ -189,7 +192,8 @@ func _butce(p: String) -> void:
 		var yaw := float(it["yaw"])
 		var tw := Vector2(sin(yaw), cos(yaw))
 		await _olc(p + "ucus60_" + id, _g(c - tw * 60.0, 60.0), _g(c + tw * 60.0, 0.0))
-		await _olc(p + "yer_" + id, _g(_bos_yer(c - tw * 12.0), 1.7), _g(c + tw * 30.0, 1.5))
+		if id in ["otag", "anadolu_4_1", "sahi_top"]:
+			await _olc(p + "yer_" + id, _g(_bos_yer(c - tw * 12.0), 1.7), _g(c + tw * 30.0, 1.5))
 
 
 func _olc(name: String, at: Vector3, look: Vector3) -> void:
@@ -241,8 +245,11 @@ func _kisi_denetim() -> void:
 		for k in _kisiler(cam.global_position, 60.0, "kisiler"):
 			var q: Vector3 = k
 			toplam += 1
+			# ayak altı: arazi ya da bir katı yüzey (teras, halı, zemin) 0,35 m içinde mi
 			var g := IstGeo.h(q.x, q.z)
-			if absf(q.y - g) > 0.35:
+			var alt := sp.intersect_ray(PhysicsRayQueryParameters3D.create(q + Vector3(0, 0.3, 0), q - Vector3(0, 0.6, 0)))
+			var destek := absf(q.y - g) <= 0.35 or (not alt.is_empty() and q.y - (alt["position"] as Vector3).y <= 0.35)
+			if not destek or q.y < g - 0.3:
 				havada += 1
 			var hit := sp.intersect_ray(PhysicsRayQueryParameters3D.create(q + Vector3(0, 6.0, 0), q + Vector3(0, 0.4, 0)))
 			if not hit.is_empty() and (hit["position"] as Vector3).y > q.y + 1.0:

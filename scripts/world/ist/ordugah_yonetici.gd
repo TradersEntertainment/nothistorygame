@@ -15,6 +15,7 @@ var lod0_m := 120.0           # ŞEHİR-3: 230 → 120 (sık çadır denizinde y
 var lod1_m := 450.0           # 800 → 450 (ötesi hücre başına pişmiş uzak ağ)
 var butce_us := 9000
 var kurulan := 0
+var kur_ms := {}                  # ORDUGÂH-4: tür_lod → en uzun tek kurulum (ms)
 var bakan: Node3D                 # yoksa etkin kamera
 
 
@@ -230,7 +231,11 @@ func _kur_item(i: int, lod: int) -> void:
 		it["host"] = null
 		it["lod"] = 2
 		return
+	var t0 := Time.get_ticks_usec()
 	var host := _kur_host(i, lod)
+	var dt := (Time.get_ticks_usec() - t0) / 1000.0
+	var key := "%s_l%d" % [it["kind"], lod]
+	kur_ms[key] = maxf(float(kur_ms.get(key, 0.0)), dt)
 	var eski = it["host"]
 	it["host"] = host
 	it["lod"] = lod
@@ -257,6 +262,15 @@ func _kur_host(i: int, lod: int) -> Node3D:
 		var v := Vector3(x, 0, z).rotated(Vector3.UP, yaw)
 		return IstGeo.h(px + v.x, pz + v.z) - py
 	# kanat süzgeci: su, Galata içi, yarımada içi ve yapı çevreleri dışlanır (yerel x,z)
+	# ORDUGÂH-4: yalnız bu öğeye yakın yapılar sınanır (oba yerleşimi binlerce nokta sorar; önce her noktada bütün plan)
+	var yakin: Array = []
+	var hr: float = float(it["r"]) + 6.0
+	for j in items.size():
+		var o: Dictionary = items[j]
+		if o["kind"] == "kanat" or o["kind"] == "siper" or j == i:
+			continue
+		if (o["pos"] as Vector2).distance_to(p) < hr + float(o["r"]) + 4.0:
+			yakin.append([o["pos"], float(o["r"]) + 4.0])
 	K.filtre = func(x: float, z: float) -> bool:
 		var v := Vector3(x, 0, z).rotated(Vector3.UP, yaw)
 		var wx := px + v.x
@@ -264,11 +278,8 @@ func _kur_host(i: int, lod: int) -> Node3D:
 		if IstGeo.su(wx, wz) or IstGeo.sehir_ici(wx, wz) or IstGeo.galata_ici(wx, wz):
 			return false
 		var wp := Vector2(wx, wz)
-		for j in items.size():
-			var o: Dictionary = items[j]
-			if o["kind"] == "kanat" or o["kind"] == "siper":
-				continue
-			if (o["pos"] as Vector2).distance_to(wp) < float(o["r"]) + 4.0:
+		for o: Array in yakin:
+			if (o[0] as Vector2).distance_to(wp) < float(o[1]):
 				return false
 		return true
 	IstOrdugah.uret(it, host, lod)
