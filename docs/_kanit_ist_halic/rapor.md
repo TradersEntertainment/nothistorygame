@@ -43,7 +43,7 @@ Tırmanılmaz sayılan düz sur yüzü (9 m) hiçbir basamaksız bırakıldı; �
 ISTAUDIT satırları `docs/_kanit_ist_halic/denetim.txt` dosyasında. Özet: delik 0; çatı/üst yüzey yolu her öğede çalışıyor (gerçek
 CharacterBody3D, STEP_H ve zıplama benzetimiyle); dar aralık yalnız birkaç hücre (kuleler arası basamak yanları); "havada" uyarıları
 kapı lentoları (iki ayağa oturur), tek yüzü destekli iskele tahtaları (suyun üstünde), sur kulesi lentosu — yanlış pozitif.
-Üçgen sayısı lod 0/1/2: sur 5750/1178/60 · Eugenios 5300/458/24 · Venedik 12100/2612/12 · … (denetim.txt).
+Üçgen sayısı lod 0/1/2 denetim.txt içinde (örn. sur 5750/362/60, Venedik 12100/1748/12). lod 1 oranı balık pazarında ~%39, Ceneviz ~%25 (hedef %15 üstü).
 
 ## 5. Ayırt edici ayrıntılar (en az beş)
 - **Sur**: tuğla bantlı kesme taş, mazgal sırası (MultiMesh), kemerli kapı + lento kitabesi + haç, açık kapı kanatları, fenerler, bayrak.
