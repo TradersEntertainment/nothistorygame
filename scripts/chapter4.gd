@@ -1045,7 +1045,10 @@ func _act_end() -> void:
 	hud.set_objective("")
 	await hud.fade_to(1.0, 1.0)
 	if camp:
-		camp.queue_free()
+		# Ordugâh (ve içindeki tek haritanın dünyası) silinmez, gizlenip durdurulur: dünyanın sur arkasındaki işlerinin
+		# bekleyen zamanlayıcıları silinmiş düğüme dokunmasın. Bölüm sahnesiyle birlikte kalkar.
+		camp.visible = false
+		camp.process_mode = Node.PROCESS_MODE_DISABLED
 		camp = null
 	if walls:
 		walls.queue_free()

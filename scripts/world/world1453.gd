@@ -118,6 +118,9 @@ static var REGIONS := {
 	# 3,0) ovanın yüzeyine (−0,03) oturur. Tünelin kendisi dünyada kurulmaz (yeraltı), yalnız ağız: Ch10L.add_mouth.
 	"tunnel_10l": Transform3D(Basis.IDENTITY, Vector3(134.0, -3.03, 44.0)),
 	"tunnel_21o": Transform3D(Basis.IDENTITY, Vector3(189.0, -3.03, 44.0)),
+	# Bölüm 4a (Camp): esir alanı, Maltepe ordugâhının ön kenarı (otağın ~280 m batı-güneyi, surlardan ~235 m geride).
+	# Yön CampDay'inkiyle aynı: yerel +z (alanın kapısı, kaçış yolu) surlara (dünya −z); y = arazinin oradaki ortalaması
+	"camp_pen": Transform3D(Basis(Vector3.UP, PI), Vector3(-110.0, -0.3, 240.0)),
 }
 
 ## G7: lağım ağzı bölgeleri → ağız türü (chapter10l.gd mouth_parts)
@@ -126,8 +129,12 @@ const _CH10L := preload("res://scripts/chapter10l.gd")
 
 
 ## Uzak görünüşü dünyada kurulan bölgeler: bölge → oynanış dikdörtgeni (yerel). Bölüm o bölgede değilse dünya, bölgenin
-## kendi kurucusunun pişirilmiş sürümünü koyar (ByzCity.far_hub). Ayasofya (byz_aya) HornWorld'de (World1453.far_aya).
-const FAR_REGIONS := {"byz_walls": Rect2(-46.0, -48.0, 84.0, 70.0)}
+## kendi kurucusunun pişirilmiş sürümünü koyar (ByzCity.far_hub, Camp.far_pen). Ayasofya (byz_aya) HornWorld'de (World1453.far_aya).
+## camp_pen (4a esir alanı, G1): ordugâhın içinde; dünyanın keep'e bakmadan dağıttıkları önce boşaltılır (FAR_CLEAR).
+const FAR_REGIONS := {"byz_walls": Rect2(-46.0, -48.0, 84.0, 70.0), "camp_pen": Rect2(-46.0, -24.0, 92.0, 80.0)}
+## Alanı dünyanın dağıtılmış yapılarından (Scenery.camp çadırları, ağaçlar, uzak ateşler) boşaltılacak bölgeler:
+## bölge etkinse de, uzak kurulacaksa da (clear_rect)
+const FAR_CLEAR := ["camp_pen"]
 
 
 ## Tepelerin arasındaki bölgeler: dünya zemini düz alana rampayla iner
@@ -140,7 +147,7 @@ const HORN_GATE_Z := [-260.0, -520.0, -900.0, -1180.0, -1450.0]
 const MARMARA_GATES := [0.22, 0.5, 0.78]
 ## Bölgenin altında dünya zemininin ineceği yükseklik (bölgenin arazisi kıyıya, suya iniyorsa)
 const FLAT_Y := {"slipway": -6.0}
-const BLEND := {"petrion": 70.0, "galata": 60.0, "camp": 90.0, "byz_aya": 70.0}
+const BLEND := {"petrion": 70.0, "galata": 60.0, "camp": 90.0, "byz_aya": 70.0, "camp_pen": 40.0}
 
 
 static func region(name: String) -> Transform3D:
@@ -291,6 +298,11 @@ static func build(parent: Node3D, region_name: String, keep_local: Array, night 
 	SiegeField.blend_rects = br
 	parent.add_child(f)
 	f.build()
+	# Dünyanın keep'e bakmadan dağıttıkları: etkin bölgenin ve uzak kurulacak bölgelerin alanı önce boşaltılır
+	# (ateş kutuları Flame.from_glow_boxes'tan önce atılsın)
+	for fr: String in FAR_CLEAR:
+		if fr == region_name or far.has(fr):
+			clear_rect(f, world_rect(region(fr), FAR_REGIONS[fr]))
 	f.set_mode("night" if night else "day")
 	# Her yer yürünür: dünyanın görüntüsü katılaşır (karelere yayılarak)
 	WorldWalk.attach(f)
@@ -301,11 +313,82 @@ static func build(parent: Node3D, region_name: String, keep_local: Array, night 
 		match fr:
 			"byz_walls":
 				ByzCity.far_hub(f, region(fr))
+			"camp_pen":
+				Camp.far_pen(f, region(fr))
 	# Ateşler: Dressing.glow kutuları (ordugâhın, ovanın, surların, kıyının gece ateşleri) alev ve haleye çevrilir
 	Flame.from_glow_boxes(f)
 	# Gölgelendiriciler yüklemede derlensin (yaklaşınca donma olmasın)
 	ShaderWarmup.after_world(f)
 	return f
+
+
+## Dünyanın (f) dünya dikdörtgenindeki dağıtılmış yapılarını kaldırır: çoklu ağ örnekleri (çadır, ağaç, köşk; 0,8 m'den
+## alçak yer örtüsü keep_low ise kalır) gizlenir
+## (WorldWalk.hide_inst) ve çarpışmaları kapatılır; Dressing parçalarının (uzak ateş kutuları, eşya) üçgenleri ve
+## çarpışma kutuları atılır; duman sütunları silinir. Arazi ve tek parça yapılar dokunulmaz.
+static func clear_rect(f: Node3D, r: Rect2, keep_low := true) -> void:
+	var inv := f.global_transform.affine_inverse()
+	var r3 := AABB(Vector3(r.position.x, -1000.0, r.position.y), Vector3(r.size.x, 2000.0, r.size.y))
+	for n in f.find_children("*", "GeometryInstance3D", true, false):
+		var g := n as GeometryInstance3D
+		var xf := inv * g.global_transform
+		var ab := xf * g.get_aabb()
+		if not ab.intersects(r3):
+			continue
+		if g is MultiMeshInstance3D:
+			var mmi := g as MultiMeshInstance3D
+			if mmi.multimesh == null or mmi.multimesh.transform_format != MultiMesh.TRANSFORM_3D:
+				continue
+			var solid := mmi.get_node_or_null("Solid")
+			var mh := mmi.multimesh.mesh.get_aabb().size.y if mmi.multimesh.mesh else 0.0
+			for i in mmi.multimesh.instance_count:
+				var ixf := WorldWalk.inst_xf(mmi, i)
+				if keep_low and mh * ixf.basis.get_scale().y < 0.8:
+					continue                # yer örtüsü (ot, taş, çamur): kalır, alan çıplak kare olmasın
+				var o := xf * ixf.origin
+				if r.has_point(Vector2(o.x, o.z)):
+					WorldWalk.hide_inst(mmi, i)
+					if solid and i < solid.get_child_count():
+						(solid.get_child(i) as CollisionShape3D).disabled = true
+		elif g is MeshInstance3D and g.get_parent() and g.get_parent().has_meta("dressing"):
+			var mi := g as MeshInstance3D
+			var a := mi.mesh.surface_get_arrays(0)
+			var v: PackedVector3Array = a[Mesh.ARRAY_VERTEX]
+			var nn: PackedVector3Array = a[Mesh.ARRAY_NORMAL]
+			var cc: PackedColorArray = a[Mesh.ARRAY_COLOR]
+			var v2 := PackedVector3Array()
+			var n2 := PackedVector3Array()
+			var c2 := PackedColorArray()
+			for t in range(0, v.size() - 2, 3):
+				var m := xf * ((v[t] + v[t + 1] + v[t + 2]) / 3.0)
+				if r.has_point(Vector2(m.x, m.z)):
+					continue
+				for k in 3:
+					v2.append(v[t + k])
+					n2.append(nn[t + k])
+					c2.append(cc[t + k])
+			if v2.size() == v.size():
+				continue
+			var am := ArrayMesh.new()
+			if not v2.is_empty():
+				var arr := []
+				arr.resize(Mesh.ARRAY_MAX)
+				arr[Mesh.ARRAY_VERTEX] = v2
+				arr[Mesh.ARRAY_NORMAL] = n2
+				arr[Mesh.ARRAY_COLOR] = c2
+				am.add_surface_from_arrays(Mesh.PRIMITIVE_TRIANGLES, arr)
+			mi.mesh = am
+		elif g is CPUParticles3D or g is GPUParticles3D:
+			var o := xf.origin
+			if r.has_point(Vector2(o.x, o.z)):
+				g.queue_free()
+	for b in f.find_children("*", "StaticBody3D", true, false):
+		if not b.get_parent() or not b.get_parent().has_meta("dressing"):
+			continue
+		for cs in b.get_children():
+			var o := inv * (cs as Node3D).global_position
+			if cs is CollisionShape3D and r.has_point(Vector2(o.x, o.z)):
+				(cs as CollisionShape3D).disabled = true
 
 
 ## Eski ad (Blakherna bölümleri)
