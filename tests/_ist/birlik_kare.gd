@@ -132,6 +132,8 @@ func _shot(ad: String) -> void:
 	var dc := RenderingServer.get_rendering_info(RenderingServer.RENDERING_INFO_TOTAL_DRAW_CALLS_IN_FRAME)
 	var pr := RenderingServer.get_rendering_info(RenderingServer.RENDERING_INFO_TOTAL_PRIMITIVES_IN_FRAME)
 	print("RINFO birlik %s cizim=%d ucgen=%d" % [ad, dc, pr])
+	if OS.has_environment("BIRLIK_TANI"):
+		_tani(ad)
 	var img := get_viewport().get_texture().get_image()
 	img.save_jpg(out.path_join(ad + ".jpg"), 0.85)
 	if id_:
@@ -316,3 +318,30 @@ func _uret() -> void:
 		var o: Vector2 = ka[1]
 		await _bak("k%02d_kapi_onu_%d" % [no, kn], _yer(p + o * (zm1 + 40.0), 1.7), _yer(p, 7.0)); no += 1
 		kn += 1
+
+
+## Tanı: kamera görüş alanındaki geometri — yüzey, ikinci geçiş (dış çizgi), saydam, gölge atan, malzeme sınıfı
+func _tani(ad: String) -> void:
+	var fr := cam.get_frustum()
+	var say := {}
+	for c in get_tree().root.find_children("*", "GeometryInstance3D", true, false):
+		var gi := c as GeometryInstance3D
+		if not gi.is_visible_in_tree():
+			continue
+		var ab := gi.get_aabb()
+		var gab: AABB = gi.global_transform * ab
+		var ic := true
+		for pl: Plane in fr:
+			if pl.distance_to(gab.get_center()) > gab.size.length() * 0.5:
+				ic = false
+				break
+		if not ic:
+			continue
+		for e: Array in GD._yuvalar(gi):
+			var m: Material = e[0]
+			var k := "%s|np=%s|%s" % [m.get_class() if m else "null", m != null and m.next_pass != null, gi.get_class().left(5)]
+			if m is ShaderMaterial and (m as ShaderMaterial).shader != null:
+				k += "|" + ("enj" if (m as ShaderMaterial).shader.code.contains("b9_uygula") else "kaynak")
+			say[k] = int(say.get(k, 0)) + 1
+	for k in say:
+		print("TANI %s %4d %s" % [ad, say[k], k])

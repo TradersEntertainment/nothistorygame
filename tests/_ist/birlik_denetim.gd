@@ -31,6 +31,11 @@ func _ready() -> void:
 	for p: Vector3 in noktalar:
 		cam.global_position = p
 		await _bekle()
+		# akış bitti; uyum boru hattının zamanlı adımları (sur taşını bekleme ≤ 30 kare) oyundaki gibi tamamlansın
+		for k in 40:
+			await get_tree().process_frame
+		if GD.aktif != null:
+			GD.aktif.bitir()        # bu karede eklenenler de (oyunda aynı karenin sonunda işlenir)
 		var r := GD.denetle(dunya)
 		print("BIRLIK nokta=%s malzeme=%d kategorisiz=%d doygunluk_asan=%d duz_buyuk_yuzey=%d saf_beyaz=%d" % [p, r["malzeme"],
 			r["kategorisiz"], r["doygunluk_asan"], r["duz_buyuk_yuzey"], r["saf_beyaz"]])

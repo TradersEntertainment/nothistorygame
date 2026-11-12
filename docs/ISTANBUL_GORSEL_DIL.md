@@ -46,27 +46,32 @@ Kullanım: `GD.renk("keten")`; yeni malzeme: `GD.malzeme("kumas", "keten", vc)`.
 ## 4. Kategori kuralı
 
 Doygunluk ve parlaklık sRGB HSV'de, malzemenin **taban rengi** (albedo × köşe rengi × örnek rengi × doku) üstünde,
-gölgelendiricide sıkıştırılır (renk palete çekilmez, yalnız tavana).
+gölgelendiricide sıkıştırılır (renk palete çekilmez, yalnız tavana). Sıkıştırma **yumuşak dirsekli**: tavanın %70'ine
+kadar dokunulmaz, üstü üstel olarak tavana yaklaşır (sert kırpma dokuyu siliyordu: ilk denemede zemin düz yeşile
+dönmüştü); tabanda 2 × taban altı doğrusal kaldırılır. Sıra ve doku korunur, tavan aşılmaz.
 
 | kategori | doygunluk tavanı | parlaklık | ayrıntı dokusu | döşeme | 10 m'de öğe | kir (dip) | güneş solması (üst) |
 |---|---|---|---|---|---|---|---|
-| taş | 0,30 | 0,22–0,82 | taş yumrusu | 2,4 m | ~0,45 m ≈ 23 px | — | 0,08 |
-| sıva | 0,34 | 0,25–0,84 | leke + seyrek çatlak | 3,2 m | ~0,8 m ≈ 41 px | — | 0,08 |
+| taş | 0,34 | 0,20–0,80 | taş yumrusu | 2,4 m | ~0,45 m ≈ 23 px | — | 0,08 |
+| sıva | 0,34 | 0,25–0,74 | leke + seyrek çatlak | 3,2 m | ~0,8 m ≈ 41 px | — | 0,08 |
 | kiremit | 0,50 | 0,20–0,70 | taş yumrusu | 1,6 m | ~0,3 m ≈ 15 px | — | 0,10 |
 | ahşap | 0,46 | 0,12–0,70 | tahta + lif | 1,6 m | 0,2 m ≈ 10 px | 0,25 / 0,5 m | 0,12 |
-| zemin | 0,36 | 0,16–0,74 | toprak lekesi + çakıl | 3,6 m | ~0,6 m ≈ 31 px | — | — |
+| zemin | 0,40 | 0,14–0,66 | ince tane + toprak lekesi + çakıl | 2,4 m | ~0,3 m ≈ 15 px (tane 4 cm, yakında) | — | — |
 | bitki | 0,44 | 0,10–0,70 | ot lekesi | 2,8 m | ~0,5 m ≈ 26 px | — | 0,06 |
-| kumaş | 0,50 | 0,18–0,84 | dikiş (0,6 m) + atkı + ince dokuma | 1,2 m | 0,6 m ≈ 31 px | 0,55 / 0,6 m | 0,16 |
+| kumaş | 0,50 | 0,18–0,72 | dikiş (0,6 m) + atkı + ince dokuma | 1,2 m | 0,6 m ≈ 31 px | 0,55 / 0,6 m | 0,16 |
 | kişi/canlı | 0,52 | 0,08–0,84 | ince dokuma | 0,9 m | ~0,45 m | — | — |
 | metal | 0,36 | 0,10–0,66 | taş yumrusu (ince) | 0,8 m | ~0,15 m | — | — |
-| yapı (pişmiş karışık) | 0,42 | 0,12–0,84 | sıva | 3,2 m | ~0,8 m | — | 0,06 |
+| yapı (pişmiş karışık) | 0,42 | 0,12–0,78 | sıva | 3,2 m | ~0,8 m | — | 0,06 |
 
 (10 m'de 1 m ≈ 51 px: 720 satır, dikey görüş 70°.) Ayrıntı 25–70 m arasında söner, ötesinde düz renk (mip de
-ortalamaya iner): **uzakta gürültü yok**. Desenli dokuların (Props `ashlar`, `wood` …) karşıtlığı kendi ortalamasına
-doğru kategori çarpanıyla iner (taş 0,62, ahşap 0,75 …). Filtre tek tip: doğrusal + mip + anizotropik.
+ortalamaya iner): **uzakta gürültü yok** (zeminde 110 m). Desenli dokuların (Props `ashlar`, `wood` …) karşıtlığı kendi
+ortalamasına doğru kategori çarpanıyla iner (taş 0,7, ahşap 0,75 …). Sur taşı gölgelendiricisinin (sur_doku.gd) blok
+blok ton farkı orta kireçtaşına (tas_kirec_koyu) doğru 0,7 çarpanla iner: taş sıraları ve tuğla hatılı okunur, dama
+gürültüsü yok. Taş ışık tonu 1,03 / 1,0 / 0,94 (sıcak). Filtre tek tip: doğrusal + mip + anizotropik.
 
 Gölgeleme: yayındaki `Props.mat` ile aynı — toon dağınık ışık + toon parlama, pürüz 0,9, parlama 0,2, kenar ışığı
-0,2 / tonu 0,6; dış çizgi kaynağınki (ters kabuk, `Props._outline_mat`). Kişi ve kumaş lambert idiyse toon'a geçer.
+0,2 / tonu 0,6; dış çizgi kaynağınki (ters kabuk, `Props._outline_mat`). Kumaş lambert idiyse toon'a geçer; kişi
+kendi gölgelemesinde kalır (zorla toon'da güneş arkadayken figürler kapkara siluet oluyordu: ilk denemede k07).
 Zemin ve ot lambert kalır (yayındaki zemin de lambert).
 
 ## 5. Yıpranma kuralı
@@ -100,6 +105,13 @@ laciverdi, soluk cehri sarısı) yalnız şerit/etek/saçak/alemde. Dokuma dokus
 IstHayat'ın kutu gövdeli çadırı yuvarlak alaçıkla (on dilimli hafif eğik duvar, konik çatı, kök boya saçak, alem)
 değiştirildi.
 
+## 8b. Canlılar (KUTU YASAĞI)
+
+IstHayat insan katmanının yakın (≈ 70 üçgen) ve uzak (≈ 20 üçgen) ağları kutulardan yapılmıştı. Aynı bölge ve renk
+kodu düzeninde (ist_insan.gdshader bacağı y < 0,8, kolu |x| > 0,215 bandında sallar; alfa 0 sabit, 1 tunik, 0,5
+başlık, 0,25 alet) yuvarlak gövde: kesik koni bacak/gövde/kol, elipsoit baş ve el, kesik koni başlık (yakın ≈ 160,
+uzak ≈ 35 üçgen). `GD.insan_yuvarlak(uzak)`; katmanın görünüm ağı uyum geçişinde değişir (hayat_mesh.gd değişmedi).
+
 ## 9. Işık ve hava
 
 Gündüz: gök "yer" yarısı cfc4aa / 7a6a50, ortam ışığı 0,52, güneş ffe9c7 × 1,25 (yayındaki ordugâh gündüzü
@@ -109,7 +121,10 @@ ayarı.
 ## 10. Uygulama
 
 * Uyum geçişi: `GD.kur(dunya)` (IstDunya.build sonunda tek satır kanca). İlk karede bütün ağaç; sonra `node_added`
-  ile akışla eklenen her geometri bir kare sonra (kurucusu malzemeyi atasın, sur taşı/pişirme bitsin) kurala çekilir.
+  ile akışla eklenen her geometri aynı karenin sonunda (process_priority 1000) kurala çekilir. "ashlar" desenli yüzey
+  sur taşı gölgelendiricisine dönene kadar bekletilir (sehir.gd `_sur_tas` bazen sonraki karede çevirir; erken çevirmek
+  sur dilimini kahverengi şeritli Props desenine ve dış çizgili çifte çizime bırakıyordu), 30 karede dönmezse (sur
+  olmayan "ashlar" yüzey) genel kurala çekilir.
 * Önbellek: aynı kaynak malzeme + kategori + kir → aynı uyumlu malzeme. Tek yüzeyli MultiMesh'te `material_override`,
   MeshInstance'ta yüzey üstüne yazma (ağ kaynağı değişmez: yayındaki bölümlerle paylaşılan ağlar etkilenmez), çok
   yüzeyli MultiMesh'te ağın uyumlu kopyası. Çizim çağrısı artmaz.

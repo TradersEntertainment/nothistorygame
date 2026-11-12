@@ -54,25 +54,25 @@ static func renk(ad: String) -> Color:
 ## y), gunes (yukarı bakan yüzde solma), karsit (desenli dokuda karşıtlık çarpanı), ton (renk sıcaklığı çarpanı).
 ## v1 ≤ 0,88 (saf beyaz yasak), v0 ≥ 0,06 (saf siyah yasak).
 const KURAL := {
-	"tas": {"sat": 0.34, "v0": 0.26, "v1": 0.82, "detay": "tas", "olcek": 2.4, "guc": 0.16, "oge": 0.45, "kir": 0.0,
-		"kir_h": 1.2, "gunes": 0.08, "karsit": 0.55, "ton": Color(1.05, 1.0, 0.9)},
-	"siva": {"sat": 0.34, "v0": 0.25, "v1": 0.84, "detay": "siva", "olcek": 3.2, "guc": 0.14, "oge": 0.8, "kir": 0.0,
+	"tas": {"sat": 0.34, "v0": 0.2, "v1": 0.8, "detay": "tas", "olcek": 2.4, "guc": 0.16, "oge": 0.45, "kir": 0.0,
+		"kir_h": 1.2, "gunes": 0.08, "karsit": 0.7, "ton": Color(1.03, 1.0, 0.94)},
+	"siva": {"sat": 0.34, "v0": 0.25, "v1": 0.74, "detay": "siva", "olcek": 3.2, "guc": 0.14, "oge": 0.8, "kir": 0.0,
 		"kir_h": 1.0, "gunes": 0.08, "karsit": 0.7, "ton": Color(1, 1, 1)},
 	"kiremit": {"sat": 0.50, "v0": 0.20, "v1": 0.70, "detay": "tas", "olcek": 1.6, "guc": 0.12, "oge": 0.3, "kir": 0.0,
 		"kir_h": 1.0, "gunes": 0.10, "karsit": 0.7, "ton": Color(1, 1, 1)},
 	"ahsap": {"sat": 0.46, "v0": 0.12, "v1": 0.70, "detay": "ahsap", "olcek": 1.6, "guc": 0.20, "oge": 0.2, "kir": 0.25,
 		"kir_h": 0.5, "gunes": 0.12, "karsit": 0.75, "ton": Color(1, 1, 1)},
-	"zemin": {"sat": 0.38, "v0": 0.16, "v1": 0.64, "detay": "toprak", "olcek": 2.4, "guc": 0.36, "oge": 0.4, "kir": 0.0,
+	"zemin": {"sat": 0.40, "v0": 0.14, "v1": 0.66, "detay": "toprak", "olcek": 2.4, "guc": 0.34, "oge": 0.3, "kir": 0.0,
 		"kir_h": 1.0, "gunes": 0.0, "karsit": 0.8, "ton": Color(1, 1, 1)},
 	"bitki": {"sat": 0.44, "v0": 0.10, "v1": 0.70, "detay": "ot", "olcek": 2.8, "guc": 0.12, "oge": 0.5, "kir": 0.0,
 		"kir_h": 1.0, "gunes": 0.06, "karsit": 0.8, "ton": Color(1, 1, 1)},
-	"kumas": {"sat": 0.50, "v0": 0.18, "v1": 0.74, "detay": "dokuma", "olcek": 1.2, "guc": 0.16, "oge": 0.6, "kir": 0.55,
+	"kumas": {"sat": 0.50, "v0": 0.18, "v1": 0.72, "detay": "dokuma", "olcek": 1.2, "guc": 0.16, "oge": 0.6, "kir": 0.55,
 		"kir_h": 0.6, "gunes": 0.16, "karsit": 0.75, "ton": Color(0.97, 0.955, 0.92)},
 	"kisi": {"sat": 0.52, "v0": 0.08, "v1": 0.84, "detay": "dokuma", "olcek": 0.9, "guc": 0.08, "oge": 0.45, "kir": 0.0,
 		"kir_h": 0.3, "gunes": 0.0, "karsit": 0.85, "ton": Color(1, 1, 1)},
 	"metal": {"sat": 0.36, "v0": 0.10, "v1": 0.66, "detay": "tas", "olcek": 0.8, "guc": 0.08, "oge": 0.15, "kir": 0.0,
 		"kir_h": 0.3, "gunes": 0.0, "karsit": 0.8, "ton": Color(1, 1, 1)},
-	"yapi": {"sat": 0.42, "v0": 0.12, "v1": 0.84, "detay": "siva", "olcek": 3.2, "guc": 0.10, "oge": 0.8, "kir": 0.0,
+	"yapi": {"sat": 0.42, "v0": 0.12, "v1": 0.78, "detay": "siva", "olcek": 3.2, "guc": 0.10, "oge": 0.8, "kir": 0.0,
 		"kir_h": 1.0, "gunes": 0.06, "karsit": 0.75, "ton": Color(1, 1, 1)},
 }
 ## Kurala girmeyen ama sınıflı olanlar (ışık/efekt/su/gök): dokunulmaz, "kategorisiz" sayılmaz
@@ -132,12 +132,15 @@ func _process(_dt: float) -> void:
 	_kare += 1
 	if not _ilk:
 		_ilk = true
-		uyumla(kok)
+		for c in kok.find_children("*", "GeometryInstance3D", true, false):
+			_tek(c)
 		_kuyruk.clear()
 	if not _hayat_tamam:
 		_hayat_tamam = _hayat_duzen()
 	if not _isik_tamam:
 		_isik_tamam = _isik()
+	if _kare % 8 == 0 and not _bekleyen.is_empty():
+		_bekleyenler(false)
 	if _kuyruk.is_empty():
 		return
 	var t0 := Time.get_ticks_usec()
@@ -146,28 +149,117 @@ func _process(_dt: float) -> void:
 	while i < _kuyruk.size():
 		var e: Array = _kuyruk[i]
 		i += 1
-		# bir kare bekle: kurucular malzemeyi ekledikten sonra atayabilir, sur taşı / pişirme aynı karede biter
-		if int(e[1]) >= _kare - 1 and int(e[1]) != -1:
-			kalan.append(e)
-			continue
-		var n = e[0]
-		if is_instance_valid(n) and (n as Node).is_inside_tree():
-			uyumla_tek(n as GeometryInstance3D)
+		# kurucular (pişirme, lod) aynı çağrıda biter; bu düğüm en son işler (process_priority 1000). Sur taşına
+		# dönüşecek "ashlar" desenli yüzey beklemeye alınır (sur_doku.uygula kurucunun sonraki adımında çevirir).
+		_tek(e[0])
 		if Time.get_ticks_usec() - t0 > 4000:
 			break
 	kalan.append_array(_kuyruk.slice(i))
 	_kuyruk = kalan
 
 
+var _bekleyen := {}               # düğüm kimliği → [düğüm, ilk kare]
+const BEKLE_KARE := 30          # sur_doku.uygula en geç 1–2 kare sonra çevirir; ötesi sur olmayan "ashlar" yüzey
+
+
+func _tek(n: Variant) -> void:
+	if not is_instance_valid(n) or not (n as Node).is_inside_tree():
+		return
+	var gi := n as GeometryInstance3D
+	if _sur_bekler(gi):
+		if not _bekleyen.has(gi.get_instance_id()):
+			_bekleyen[gi.get_instance_id()] = [gi, _kare]
+		return
+	uyumla_tek(gi)
+
+
+## Bekleyenler: sur taşına dönmüşse işle; zaman aşımında (ya da zorla) genel kurala çek
+func _bekleyenler(zorla: bool) -> void:
+	for id in _bekleyen.keys():
+		var e: Array = _bekleyen[id]
+		var gi = e[0]
+		if not is_instance_valid(gi):
+			_bekleyen.erase(id)
+			continue
+		if not (gi as Node).is_inside_tree():
+			continue
+		var sure := _kare - int(e[1])
+		if not _sur_bekler(gi):
+			uyumla_tek(gi)
+			_bekleyen.erase(id)
+		elif (zorla and sure > 10) or sure > BEKLE_KARE:
+			_sur_tasina(gi)       # sur_doku.uygula'nın yapacağını yap (dış çizgisiz sur taşı); sonra kural
+			uyumla_tek(gi)
+			_bekleyen.erase(id)
+
+
+## Bekleme süresi dolan sur kuşağı yüzeyi: sur_doku.uygula ile aynı çeviri (tur: Galata 2, kara suru kuşağı 0, deniz 1).
+## Kuşak dışındaki "ashlar" yüzey (sur olmayan yapı) olduğu gibi kalır; genel kurala uyumla_tek çeker.
+static func _sur_tasina(gi: GeometryInstance3D) -> void:
+	var p := gi.global_position
+	var tur := 2 if IstGeo.galata_ici(p.x, p.z) else (0 if OTURTMA.kusakta(p.x, p.z, 30.0) else -1)
+	if tur < 0:
+		var y := IstGeo.yol("marmara_suru")
+		var y2 := IstGeo.yol("halic_suru")
+		var yak := (y.size() > 1 and IstGeo.cizgi_uzak(Vector2(p.x, p.z), y) < 60.0) or (y2.size() > 1 and IstGeo.cizgi_uzak(Vector2(p.x, p.z), y2) < 60.0)
+		if not yak:
+			return
+		tur = 1
+	# sur_doku.uygula ile aynı kural (o yalnız çocukları gezer; burada düğümün kendisi)
+	var n := 0
+	if gi.material_override != null:
+		if SURDOKU._desen_mi(gi.material_override):
+			var sm := gi.material_override as StandardMaterial3D
+			gi.material_override = SURDOKU.mat(tur, Color.WHITE if sm.vertex_color_use_as_albedo else sm.albedo_color)
+			n += 1
+	elif gi is MeshInstance3D and (gi as MeshInstance3D).mesh != null:
+		var mi := gi as MeshInstance3D
+		for si in mi.mesh.get_surface_count():
+			var m := mi.get_active_material(si)
+			if SURDOKU._desen_mi(m):
+				var sm2 := m as StandardMaterial3D
+				mi.set_surface_override_material(si, SURDOKU.mat(tur, Color.WHITE if sm2.vertex_color_use_as_albedo else sm2.albedo_color))
+				n += 1
+	_say("sur_tasina", n)
+
+
+## Sur kurucusunun (sehir.gd _sur_tas) henüz çevirmediği "ashlar" desenli yüzey var mı
+static func _sur_bekler(gi: GeometryInstance3D) -> bool:
+	# yalnız şehir kurucusunun (sehir.gd) sur/kapı/kule parçaları; mahalle dokusu ve evler sur değildir
+	var p := gi.get_parent()
+	var sehir := false
+	while p != null:
+		var nm := String(p.name)
+		if nm.begins_with("IstMahalleDoku") or nm.begins_with("IstEvler") or nm.begins_with("IstOrdugah") or nm.begins_with("IstHayat"):
+			return false
+		if nm == "IstSehir":
+			sehir = true
+			break
+		p = p.get_parent()
+	if not sehir:
+		return false
+	var ms: Array = []
+	if gi.material_override != null:
+		ms.append(gi.material_override)
+	elif gi is MeshInstance3D and (gi as MeshInstance3D).mesh != null:
+		for si in (gi as MeshInstance3D).mesh.get_surface_count():
+			ms.append((gi as MeshInstance3D).get_active_material(si))
+	for m in ms:
+		if m is StandardMaterial3D and not _uyumlu.has(m.get_instance_id()) and _desen(m as BaseMaterial3D) in ["ashlar", "ashlar_far"]:
+			return true
+	return false
+
+
 ## Bütün kuyruğu hemen işle (sondalar: kareden önce)
 func bitir() -> void:
 	if not _ilk:
 		_ilk = true
-		uyumla(kok)
+		for c in kok.find_children("*", "GeometryInstance3D", true, false):
+			_tek(c)
 	for e: Array in _kuyruk:
-		if is_instance_valid(e[0]) and (e[0] as Node).is_inside_tree():
-			uyumla_tek(e[0] as GeometryInstance3D)
+		_tek(e[0])
 	_kuyruk.clear()
+	_bekleyenler(true)        # sur taşına dönmüş olanlar + 10 kareden eski bekleyenler (sur olmayan "ashlar" yüzey)
 	if not _hayat_tamam:
 		_hayat_tamam = _hayat_duzen()
 	if not _isik_tamam:
@@ -521,8 +613,9 @@ static func _kural_ver(sm: ShaderMaterial, kat: String, kir: bool, dokulu := tru
 
 ## StandardMaterial3D → ortak toon gölgelendirici
 static func _std_cevir(s: StandardMaterial3D, kat: String, kir: bool) -> Material:
-	if s.transparency != BaseMaterial3D.TRANSPARENCY_DISABLED and s.transparency != BaseMaterial3D.TRANSPARENCY_ALPHA_SCISSOR:
-		# saydam (gölge lekesi, cam, su birikintisi): yalnız rengi tavana
+	var saydam := s.transparency in [BaseMaterial3D.TRANSPARENCY_ALPHA, BaseMaterial3D.TRANSPARENCY_ALPHA_DEPTH_PRE_PASS]
+	if s.transparency != BaseMaterial3D.TRANSPARENCY_DISABLED and s.transparency != BaseMaterial3D.TRANSPARENCY_ALPHA_SCISSOR and not saydam:
+		# karışım türü bilinmeyen saydam (hash vb.): yalnız rengi tavana
 		var d := s.duplicate() as StandardMaterial3D
 		d.albedo_color = sikistir(s.albedo_color, kat)
 		return d
@@ -531,11 +624,19 @@ static func _std_cevir(s: StandardMaterial3D, kat: String, kir: bool) -> Materia
 	var bay := {
 		"vc": s.vertex_color_use_as_albedo, "srgb": s.vertex_color_is_srgb, "tex": tex != null, "tri": tri,
 		"dunya": s.uv1_world_triplanar, "cull": int(s.cull_mode), "makas": s.transparency == BaseMaterial3D.TRANSPARENCY_ALPHA_SCISSOR,
-		"isik": s.emission_enabled, "toon": s.diffuse_mode == BaseMaterial3D.DIFFUSE_TOON or kat in ["kumas", "kisi", "tas", "ahsap", "siva", "kiremit", "metal", "yapi"],
+		"isik": s.emission_enabled, "saydam": saydam, "dif": int(s.diffuse_mode), "spec": int(s.specular_mode),
+		"golge_alma": s.disable_receive_shadows, "golgesiz": s.shading_mode == BaseMaterial3D.SHADING_MODE_UNSHADED, "toon": s.diffuse_mode == BaseMaterial3D.DIFFUSE_TOON or kat in ["kumas", "tas", "ahsap", "siva", "kiremit", "metal", "yapi"],
 	}
+	var alb := s.albedo_color
+	if s == IstOrdugahYonetici._umat and s != null:
+		# ordugâhın uzak pişmiş hücre ağı: yakın malzemenin (ordugah_kit vmat) renk uzayı ve çarpanı — köşe rengi doğrusal,
+		# 0,78 / 0,76 / 0,72. Kaynakta sRGB ve çarpansızdı: uzaklaşınca çadırlar beyaza patlıyordu.
+		bay["srgb"] = false
+		alb = Color(0.78, 0.76, 0.72)
+		_say("orduuzak_renk", 1)
 	var sm := ShaderMaterial.new()
 	sm.shader = std_shader(bay)
-	sm.set_shader_parameter("albedo", s.albedo_color)
+	sm.set_shader_parameter("albedo", alb)
 	if tex != null:
 		sm.set_shader_parameter("tex", tex)
 		sm.set_shader_parameter("tex_karsit", KURAL[kat]["karsit"])
@@ -556,7 +657,7 @@ static func _std_cevir(s: StandardMaterial3D, kat: String, kir: bool) -> Materia
 static func _sh_cevir(m: ShaderMaterial, kat: String, kir: bool) -> Material:
 	if m.shader == null:
 		return null
-	var toon := kat in ["kisi", "kumas"]
+	var toon := kat == "kumas"      # kişi kendi gölgelemesinde kalır (zorla toon: güneş arkadayken kapkara siluet)
 	var sur := m.shader == SURDOKU._shader()
 	var sh := enjekte(m.shader, toon)
 	if sh == null:
@@ -571,7 +672,7 @@ static func _sh_cevir(m: ShaderMaterial, kat: String, kir: bool) -> Material:
 	if kat == "tas" and sur:
 		# sur taşı: blok blok sert ton farkı ("piksel/dama") ölçüye iner; taşın ortalaması korunur
 		out.set_shader_parameter("b9_karsit", KURAL["tas"]["karsit"])
-		out.set_shader_parameter("b9_ort", renk("tas_kirec"))
+		out.set_shader_parameter("b9_ort", renk("tas_kirec_koyu"))
 		out.set_shader_parameter("b9_guc", 0.10)
 	return out
 
@@ -593,7 +694,17 @@ static func sikistir(c: Color, kat: String) -> Color:
 	if not KURAL.has(kat):
 		return c
 	var r: Dictionary = KURAL[kat]
-	return Color.from_hsv(c.h, minf(c.s, float(r["sat"])), clampf(c.v, float(r["v0"]), float(r["v1"])), c.a)
+	return Color.from_hsv(c.h, _ust(c.s, float(r["sat"])), _alt(_ust(c.v, float(r["v1"])), float(r["v0"])), c.a)
+
+
+static func _ust(x: float, hi: float) -> float:
+	var k := hi * 0.7
+	return x if x <= k else k + (hi - k) * (1.0 - exp(-(x - k) / maxf(hi - k, 1e-3)))
+
+
+static func _alt(x: float, lo: float) -> float:
+	var k := lo * 2.0
+	return x if x >= k else lo + (k - lo) * (x / maxf(k, 1e-3))
 
 
 # ------------------------------------------------------------------ gölgelendiriciler
@@ -627,6 +738,15 @@ vec3 b9_rgb(vec3 c) {
 	vec3 p = abs(fract(c.xxx + vec3(1.0, 2.0 / 3.0, 1.0 / 3.0)) * 6.0 - 3.0);
 	return c.z * mix(vec3(1.0), clamp(p - 1.0, 0.0, 1.0), c.y);
 }
+// yumuşak dirsek: tavanın %70'inden sonra üstel sıkıştırma (sert kırpma dokuyu siler); altta doğrusal kaldırma
+float b9_ust(float x, float hi) {
+	float k = hi * 0.7;
+	return x <= k ? x : k + (hi - k) * (1.0 - exp(-(x - k) / max(hi - k, 1e-3)));
+}
+float b9_alt(float x, float lo) {
+	float k = lo * 2.0;
+	return x >= k ? x : lo + (k - lo) * (x / max(k, 1e-3));
+}
 vec3 b9_uygula(vec3 c, vec3 vtx, vec3 nrm, mat4 ivm, float ly) {
 	vec3 wp = (ivm * vec4(vtx, 1.0)).xyz;
 	vec3 wn = normalize((ivm * vec4(nrm, 0.0)).xyz);
@@ -652,8 +772,8 @@ vec3 b9_uygula(vec3 c, vec3 vtx, vec3 nrm, mat4 ivm, float ly) {
 	c *= b9_ton.rgb;
 	vec3 s = pow(max(c, vec3(0.0)), vec3(1.0 / 2.2));
 	vec3 h = b9_hsv(s);
-	h.y = min(h.y, b9_sat);
-	h.z = clamp(h.z, b9_vmin, b9_vmax);
+	h.y = b9_ust(h.y, b9_sat);
+	h.z = b9_alt(b9_ust(h.z, b9_vmax), b9_vmin);
 	return pow(b9_rgb(h), vec3(2.2));
 }
 // ---- BİRLİK sonu ----
@@ -666,8 +786,14 @@ static func std_shader(bay: Dictionary) -> Shader:
 	if _shaders.has(key):
 		return _shaders[key]
 	var cull: String = ["cull_back", "cull_front", "cull_disabled"][clampi(int(bay["cull"]), 0, 2)]
-	var dif: String = "diffuse_toon, specular_toon" if bay["toon"] else "diffuse_lambert, specular_disabled"
-	var c := "shader_type spatial;\nrender_mode %s, %s, depth_draw_opaque;\n" % [dif, cull]
+	# dağınık ışık ve parlama kaynağınki (kumaş/taş/ahşap/sıva/kiremit/metal/yapı toon'a çekilir); gölge almayan kaynak
+	# (kişi: CharKit.vc_mat) gölge almaz — yoksa figürler çadır ve öz gölgede kararıyor
+	var DIF := ["diffuse_burley", "diffuse_lambert", "diffuse_lambert_wrap", "diffuse_toon"]
+	var SPC := ["specular_schlick_ggx", "specular_toon", "specular_disabled"]
+	var dif: String = "diffuse_toon, specular_toon" if bay["toon"] else "%s, %s" % [DIF[clampi(int(bay.get("dif", 1)), 0, 3)], SPC[clampi(int(bay.get("spec", 2)), 0, 2)]]
+	if bay.get("golge_alma", false):
+		dif += ", shadows_disabled"
+	var c := "shader_type spatial;\nrender_mode %s, %s, %s;\n" % [dif, cull, "blend_mix, depth_draw_never" if bay.get("saydam", false) else "depth_draw_opaque"]
 	c += "uniform vec4 albedo : source_color = vec4(1.0);\n"
 	c += "uniform sampler2D tex : source_color, filter_linear_mipmap_anisotropic, repeat_enable;\n"
 	c += "uniform float tex_karsit = 1.0;\nuniform vec3 uv1_scale = vec3(1.0);\nuniform vec3 uv1_offset = vec3(0.0);\n"
@@ -676,6 +802,10 @@ static func std_shader(bay: Dictionary) -> Shader:
 	if bay["tri"]:
 		c += "varying vec3 b9_tp;\nvarying vec3 b9_tw;\n"
 	c += "void vertex() {\n\tb9_ly = VERTEX.y;\n"
+	if bay["vc"] and bay["srgb"]:
+		# Godot'nun kendi dönüşümü, vertex()'te (örnek rengi bundan SONRA çarpılır: fragment'te yapılırsa kaftan rengi de
+		# gama'dan geçip koyulaşıyor ve doyuyordu)
+		c += "\tCOLOR.rgb = mix(pow((COLOR.rgb + vec3(0.055)) * (1.0 / (1.0 + 0.055)), vec3(2.4)), COLOR.rgb * (1.0 / 12.92), lessThan(COLOR.rgb, vec3(0.04045)));\n"
 	if bay["tri"]:
 		if bay["dunya"]:
 			c += "\tvec3 n = normalize((MODEL_MATRIX * vec4(NORMAL, 0.0)).xyz);\n\tvec3 p = (MODEL_MATRIX * vec4(VERTEX, 1.0)).xyz;\n"
@@ -687,11 +817,7 @@ static func std_shader(bay: Dictionary) -> Shader:
 		c += "\tUV = UV * uv1_scale.xy + uv1_offset.xy;\n"
 	c += "}\n\nvoid fragment() {\n\tvec4 a = albedo;\n"
 	if bay["vc"]:
-		if bay["srgb"]:
-			c += "\ta.rgb *= pow(COLOR.rgb, vec3(2.2));\n"
-		else:
-			c += "\ta.rgb *= COLOR.rgb;\n"
-		c += "\ta.a *= COLOR.a;\n"
+		c += "\ta.rgb *= COLOR.rgb;\n\ta.a *= COLOR.a;\n"
 	if bay["tex"]:
 		if bay["tri"]:
 			c += "\tvec4 t = texture(tex, b9_tp.xy) * b9_tw.z + texture(tex, b9_tp.xz) * b9_tw.y + texture(tex, b9_tp.zy * vec2(-1.0, 1.0)) * b9_tw.x;\n"
@@ -703,6 +829,8 @@ static func std_shader(bay: Dictionary) -> Shader:
 	c += "\tROUGHNESS = 0.9;\n\tSPECULAR = 0.2;\n\tRIM = 0.2;\n\tRIM_TINT = 0.6;\n"
 	if bay["makas"]:
 		c += "\tALPHA = a.a;\n\tALPHA_SCISSOR_THRESHOLD = makas_esik;\n"
+	elif bay.get("saydam", false):
+		c += "\tALPHA = a.a;\n"
 	if bay["isik"]:
 		c += "\tEMISSION = isik_renk.rgb;\n"
 	c += "}\n"
@@ -801,9 +929,10 @@ static func detay_doku(tur: String) -> Texture2D:
 					d += 0.05 * sin(fy * TAU)
 					d += 0.06 * (float((x + y) % 2) - 0.5)   # ince dokuma (mip ile yakında söner)
 				"toprak":
-					d = 0.5 + 0.32 * (_pn(u, v, 5, 41) - 0.5) + 0.2 * (_pn(u, v, 14, 42) - 0.5)
+					# iri leke hafif (kamuflaj olmasın), ince taneli toprak/çakıl belirgin (yakında okunur, mip ile söner)
+					d = 0.5 + 0.18 * (_pn(u, v, 5, 41) - 0.5) + 0.16 * (_pn(u, v, 16, 42) - 0.5) + 0.22 * (_pn(u, v, 64, 44) - 0.5)
 					var b := _pn(u, v, 32, 43)
-					d += 0.2 * smoothstep(0.66, 0.86, b) - 0.12 * (1.0 - smoothstep(0.14, 0.3, b))
+					d += 0.18 * smoothstep(0.66, 0.86, b) - 0.12 * (1.0 - smoothstep(0.14, 0.3, b))
 				"ahsap":
 					var fx := fposmod(u * 8.0, 1.0)            # 1,6 m döşemede 0,2 m tahta
 					d = 0.5 + 0.18 * (_pn(u, v * 0.25, 8, 51) - 0.5) + 0.05 * sin((u * 48.0 + _pn(u, v, 8, 52) * 3.0) * TAU)
@@ -929,6 +1058,16 @@ func _hayat_duzen() -> bool:
 				v["mesh"] = alacik()
 				if v.has("mm"):
 					(v["mm"] as MultiMesh).mesh = v["mesh"]
+	# KUTU YASAĞI: insan katmanının kutu gövdeli ağları (hayat_mesh.gd insan / insan_uzak) yuvarlak gövdeyle değişir
+	# (aynı bölge ve renk kodu düzeni: ist_insan gölgelendiricisi bacağı y < 0,8, kolu |x| > 0,215 bandında sallar)
+	if K.has("insan"):
+		var vs: Array = K["insan"].views
+		for j in vs.size():
+			var v: Dictionary = vs[j]
+			v["mesh"] = insan_yuvarlak(j > 0)
+			if v.has("mm"):
+				(v["mm"] as MultiMesh).mesh = v["mesh"]
+		_say("hayat_insan_agi", vs.size())
 	if h.has_method("yenile_hepsi"):
 		h.call("yenile_hepsi")
 	_say("hayat_kaldirilan", kaldir)
@@ -1006,18 +1145,95 @@ static func alacik() -> ArrayMesh:
 	return m
 
 
+## İnsan (IstHayat insan katmanı): yuvarlak gövde, kutu yok. Renk alfa kodu hayat_mesh.gd ile aynı: 0 sabit (pantolon,
+## ten, çizme), 1 tunik (örnek paleti), 0,5 başlık, 0,25 alet (alet işareti yoksa gölgelendirici sıfıra çökertir).
+## Yakın ≈ 130, uzak ≈ 40 üçgen.
+static func insan_yuvarlak(uzak: bool) -> ArrayMesh:
+	var key := "insan_uzak" if uzak else "insan"
+	if _cache.has(key):
+		return _cache[key]
+	var st := SurfaceTool.new()
+	st.begin(Mesh.PRIMITIVE_TRIANGLES)
+	var hose := Color(0.2, 0.17, 0.14, 0.0)
+	var skin := Color(0.86, 0.66, 0.52, 0.0)
+	var tun := Color(1, 1, 1, 1.0)
+	var cap := Color(1, 1, 1, 0.5)
+	if uzak:
+		_silindir(st, Vector3(0, 0.0, 0), 0.0, 0.9, 0.12, 0.15, 5, hose, false)
+		_silindir(st, Vector3(0, 0.0, 0), 0.82, 1.5, 0.2, 0.16, 5, tun, true)
+		_kure(st, Vector3(0, 1.62, 0), Vector3(0.13, 0.15, 0.13), 5, 2, cap)
+	else:
+		for sx: float in [-1.0, 1.0]:
+			_silindir(st, Vector3(sx * 0.1, 0, 0), 0.06, 0.8, 0.06, 0.075, 5, hose, false)
+			_kure(st, Vector3(sx * 0.1, 0.05, -0.04), Vector3(0.075, 0.05, 0.13), 5, 2, Color(0.16, 0.11, 0.08, 0.0))
+		_silindir(st, Vector3.ZERO, 0.74, 0.96, 0.21, 0.19, 6, tun.darkened(0.12), false)
+		_silindir(st, Vector3.ZERO, 0.94, 1.42, 0.19, 0.17, 6, tun, true)
+		for sx: float in [-1.0, 1.0]:
+			_silindir(st, Vector3(sx * 0.28, 0, 0), 0.86, 1.4, 0.045, 0.055, 5, tun.darkened(0.06), false)
+			_kure(st, Vector3(sx * 0.28, 0.8, 0), Vector3(0.05, 0.06, 0.05), 4, 2, skin)
+		_kure(st, Vector3(0, 1.53, 0), Vector3(0.11, 0.13, 0.115), 6, 3, skin)
+		_silindir(st, Vector3(0, 0, 0), 1.6, 1.72, 0.125, 0.11, 6, cap, true)
+		_silindir(st, Vector3(0.34, 0, -0.06), 0.0, 2.1, 0.02, 0.02, 4, Color(0.45, 0.32, 0.2, 0.25), false)
+		_silindir(st, Vector3(0.34, 0, -0.06), 2.1, 2.3, 0.035, 0.0, 4, Color(0.7, 0.72, 0.75, 0.25), false)
+	st.generate_normals()
+	var m := st.commit()
+	_cache[key] = m
+	return m
+
+
+## Dikey kesik koni (merkez c'nin x/z'si; y0..y1; yarıçap r0 → r1; n kenar; kapak: üst kapak)
+static func _silindir(st: SurfaceTool, c: Vector3, y0: float, y1: float, r0: float, r1: float, n: int, col: Color, kapak: bool) -> void:
+	for i in n:
+		var a0 := TAU * i / n
+		var a1 := TAU * (i + 1) / n
+		var d0 := Vector3(cos(a0), 0, sin(a0))
+		var d1 := Vector3(cos(a1), 0, sin(a1))
+		var p0 := Vector3(c.x, y0, c.z) + d0 * r0
+		var p1 := Vector3(c.x, y0, c.z) + d1 * r0
+		var q0 := Vector3(c.x, y1, c.z) + d0 * r1
+		var q1 := Vector3(c.x, y1, c.z) + d1 * r1
+		_tri(st, p0, q0, p1, col)
+		if r1 > 0.0:
+			_tri(st, p1, q0, q1, col)
+		if kapak and r1 > 0.0:
+			_tri(st, Vector3(c.x, y1, c.z), q1, q0, col)
+
+
+## Alçak çokgen elipsoit (merkez, yarıçaplar, boylam n, enlem m)
+static func _kure(st: SurfaceTool, c: Vector3, r: Vector3, n: int, m: int, col: Color) -> void:
+	var halka: Array = []
+	for j in m + 1:
+		var t := PI * float(j) / m - PI * 0.5
+		var h: Array = []
+		for i in n:
+			var a := TAU * i / n
+			h.append(c + Vector3(cos(a) * cos(t) * r.x, sin(t) * r.y, sin(a) * cos(t) * r.z))
+		halka.append(h)
+	for j in m:
+		for i in n:
+			var a: Vector3 = halka[j][i]
+			var b: Vector3 = halka[j][(i + 1) % n]
+			var d: Vector3 = halka[j + 1][i]
+			var e: Vector3 = halka[j + 1][(i + 1) % n]
+			if j > 0:
+				_tri(st, a, d, b, col)
+			if j < m - 1:
+				_tri(st, b, d, e, col)
+
+
 static func _dq(st: SurfaceTool, a: Vector3, b: Vector3, c: Vector3, d: Vector3, col: Color) -> void:
 	_tri(st, a, c, b, col)
 	_tri(st, a, d, c, col)
 
 
+## (Godot ön yüzü saat yönünde: dışarıdan bakınca a → c → b sırası)
 static func _tri(st: SurfaceTool, a: Vector3, b: Vector3, c: Vector3, col: Color) -> void:
 	st.set_color(col)
 	st.add_vertex(a)
 	st.set_color(col)
-	st.add_vertex(b)
-	st.set_color(col)
 	st.add_vertex(c)
+	st.set_color(col)
+	st.add_vertex(b)
 
 
 # ------------------------------------------------------------------ denetim
