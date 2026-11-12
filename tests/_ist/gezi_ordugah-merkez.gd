@@ -63,7 +63,7 @@ func _yuru() -> void:
 		var t0 := Time.get_ticks_msec()
 		var kare := 0
 		var takil := 0
-		while Time.get_ticks_msec() - t0 < 60000 and kare < 2400:
+		while Time.get_ticks_msec() - t0 < 30000 and kare < 1000:
 			await get_tree().physics_frame
 			kare += 1
 			var p := player.global_position
