@@ -15,6 +15,15 @@ Kaynak kareler: `docs/_kanit_ist2_sehir/tur_5_*.jpg`, `yer_5_*.jpg` (dal `wip/is
    tarla). Ölçüt: `IstGeo` ızgarasında 40 m'lik karelerin "boş" (içinde hiçbir öğe olmayan) oranı şehir içinde %0, sur
    dışı 600 m kuşakta ≤ %5, karşı kıyıların görünen yamaçlarında ≤ %15; sayım denetime eklenecek (`ISTBOS`).
 
+0b. **ŞEHİR SURA KADAR DOLU (sahibin sözü, 12 Kasım: "içinin scale büyütüp sura yaslayabiliriz").** Yerleşik doku
+   yalnız Ayasofya–Mese–Haliç üçgeninde kalmayacak: şehrin içi büyütülüp surlara YASLANACAK. `IstGeo.mahalle`
+   yoğunlukları yeniden dağıtılır: sık çekirdek (çarşı, liman, Mese boyu) genişler; yarımadanın kalanı kara surlarının
+   ve deniz surlarının iç yüzüne kadar mahalle dokusuyla dolar (orta yoğunluk: sıra evler + avlu/bahçe + mahalle
+   kilisesi + meydan/kuyu); sur dibinde evler surun iç yüzüne yaslı sıralar hâlinde (arada savunma yolu 4–6 m).
+   Bostan, bağ, meyve bahçesi, manastır ve harabeler bu dokunun İÇİNDE adalar olarak kalır (büyük boş kuşak olarak
+   değil; en büyük kesintisiz evsiz alan ~120 × 120 m, açık sarnıç bostanları ve Hipodrom/Büyük Saray harabesi dışında).
+   Hedef ev sayısı ~9–12 bin (akışla; bütçe aynı). Galata da surlarına kadar dolu.
+
 1. **Surlar cılız.** Kara surları dışarıdan alçak kahverengi bir çit gibi (k = 0,5 ile iç sur ~6 m; evlerden alçak).
    Oyunun var olan surları gerçek yükseklikte (`Blachernae.WALL_H` ~11–12 m). Karar: bütün surların KESİTİ gerçek boyda
    (k = 1,0: iç sur ~12 m, kuleler ~18–20 m, dış sur ~8,5 m, hendek ~18 m), yalnız UZUNLUK hat boyunca yarı ölçek
