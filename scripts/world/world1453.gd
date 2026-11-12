@@ -239,6 +239,9 @@ static func horn_n_x(z: float) -> float:
 ## kalabalık, çadır, ev konmaz ve zemin düz kalır. Dönen bölgelerde dikdörtgenin dünyadaki sınır kutusu kullanılır.
 ## blend_local: rampanın ölçüldüğü düz oynanış alanı (bölgenin kendi arazisi keep'in tamamını kaplıyorsa)
 static func build(parent: Node3D, region_name: String, keep_local: Array, night := true, blend_local: Array = []) -> SiegeField:
+	# İstanbul v2 bağlaması (Bölüm 7, 11; güvenlik anahtarı IstBaglama.acik / --eski-dunya): bölümün çevresi v2 dünyası
+	if IstBaglama.istek(region_name):
+		return IstBaglama.build(parent, region_name, keep_local, night, blend_local)
 	var xf := region(region_name)
 	var f := SiegeField.new()
 	f.transform = xf.affine_inverse()
