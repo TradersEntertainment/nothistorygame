@@ -205,7 +205,7 @@ static func _quay(root: Node3D, L: float, T: float, lod: int) -> void:
 	K.barrel_stack(root, Vector3(xs[2], QUAY_Y, z0 + 1.8), 3, 2, 1)
 	K.bale_stack(root, Vector3(xs[3], QUAY_Y, z0 + 1.8), 2, 1, 2, Color("c9b68a"))
 	# Yığınlara çıkış: sandık basamakları rıhtımdan
-	K.crate_steps(root, Vector3(xs[1] + 3.0, QUAY_Y, z0 + 1.2), Vector3(1, 0, 0), 2)
+	K.crate_steps(root, Vector3(xs[1] + 4.0, QUAY_Y, z0 + 1.8), Vector3(-1, 0, 0), 3)
 	# Rıhtımdan şehre: kapı önünde 0,4 m rıhtım -> zemin: eşik rampası
 	Props.ramp(root, Vector3(0, QUAY_Y, z1), Vector3(0, 0, z1 + 3.0), 3.0, Color("a89878"))
 
@@ -240,4 +240,7 @@ static func climbs(k: float) -> Array:
 	var n := int(ceil(top / K.STEP_RISE))
 	out.append([Vector3(tw[2], 0, d["TD"] * 0.5 + 0.34 * n + 0.4), Vector3(tw[2], top, d["TD"] * 0.5 - 0.3), "basamak"])
 	out.append([Vector3(L * 0.33, -1.6, -T * 0.5 - QUAY_W - 0.34 * 8 - 0.4), Vector3(L * 0.33, QUAY_Y, -T * 0.5 - QUAY_W + 0.3), "basamak"])
+	var z0 := -T * 0.5 - QUAY_W
+	var x1: float = -L * 0.07
+	out.append([Vector3(x1 + 4.4, QUAY_Y, z0 + 1.8), Vector3(x1 + 0.8, QUAY_Y + 1.5, z0 + 1.8), "sandik"])
 	return out

@@ -140,9 +140,9 @@ static func crate_steps(p: Node3D, base: Vector3, dir: Vector3, n: int) -> Array
 	var d := dir.normalized()
 	var ang := rad_to_deg(atan2(d.x, d.z))
 	for i in n:
-		var h := 0.5 * (n - i)
+		var h := 0.5 * (i + 1)
 		blk(p, Vector3(1.3, h, 1.0), base + d * (1.0 * i + 0.5) + Vector3(0, h * 0.5, 0), Color("8a6a40") if i % 2 == 0 else Color("7a5a38"), "wood", Vector3(0, ang, 0))
-	return [base, base + d * n + Vector3(0, 0.5 * n, 0)]
+	return [base - d * 0.4, base + d * (n - 0.5) + Vector3(0, 0.5 * n, 0)]
 
 
 ## Kemerli kapı çerçevesi görseli (cephe düzleminde, +z'ye bakan): açıklık w x h, y0 tabanda

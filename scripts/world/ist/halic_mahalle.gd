@@ -228,7 +228,7 @@ static func _san_marco(root: Node3D, cx: float, cz: float) -> void:
 	Props.box(root, Vector3(0.12, 1.2, 0.12), Vector3(cx, H + 10.1, cz), Color("b8932f"))
 	Props.box(root, Vector3(0.7, 0.12, 0.12), Vector3(cx, H + 10.3, cz), Color("b8932f"))
 	# Çan kulesi: kilisenin ön solunda (kule tabanı dolu; tepe odası dolu çan taşıyıcı)
-	var tx := cx - W * 0.5 - 3.4
+	var tx := cx - W * 0.5 - 2.0
 	var tz := cz - D * 0.5 + 2.5
 	var th := 19.0
 	K.blk(root, Vector3(4.0, th, 4.0), Vector3(tx, th * 0.5, tz), Color("d3c4a2"), "ashlar").name = "CanKulesi"
@@ -341,7 +341,7 @@ static func _pisa_church(root: Node3D, cx: float, cz: float) -> Dictionary:
 		Props.box(root, Vector3(0.5, 0.9, 0.06), Vector3(cx - 2.8 + i * 1.4, 5.4, cz - D * 0.5 - 0.05), Color("3a3a42"))
 	K.gable_roof(root, cx, H, cz, W + 0.6, D + 0.8, 2.0, Color("a8503a"), true)
 	# Çan kulesi (eğik değil)
-	var tx := cx + W * 0.5 + 2.4
+	var tx := cx + W * 0.5 + 1.6
 	K.blk(root, Vector3(3.2, 12.0, 3.2), Vector3(tx, 6.0, cz - D * 0.5 + 2.0), Color("e6dfd0"), "ashlar")
 	for i in 5:
 		Props.box(root, Vector3(3.26, 0.35, 3.26), Vector3(tx, 1.6 + i * 2.2, cz - D * 0.5 + 2.0), Color("2a2a2e"))
@@ -383,7 +383,7 @@ static func _amalfi_chapel(root: Node3D, cx: float, cz: float) -> void:
 
 static func perches_pisa_amalfi(k: float) -> Array:
 	var span := 38.0 + 30.0 * clampf(k, 0.3, 1.0)
-	return [Vector3(-span * 0.5 + 3.6 + 2.4, 15.2, 20.0 - 7.0 + 2.0), Vector3(span * 0.5, 6.4 + 5.0, 20.0)]
+	return [Vector3(-span * 0.5 + 4.0 + 1.6, 15.2, 20.0 - 7.0 + 2.0), Vector3(span * 0.5, 6.4 + 5.0, 20.0)]
 
 
 static func climbs_pisa_amalfi(k: float) -> Array:
@@ -434,7 +434,7 @@ static func build_ceneviz(host: Node3D, k: float, lod: int) -> void:
 		# Dış ve iç ağaç dalları
 		# Girişe taş basamak (eşik 0,2 yüksek)
 		# Dış duvarın kırık üstüne tırmanış: sandık basamakları dış arka duvar yanına
-		K.crate_steps(root, Vector3(cx - w * 0.5 - 2.4, 0, cz + 0.0), Vector3(1, 0, 0), 2)
+		K.stair(root, Vector3(cx - w * 0.5 - 0.34 * 14, 0, cz - 1.0), Vector3(1, 0, 0), 3.4, 1.8, Color("9a8c70"), "rubble")
 	# İskele ve kıyıdaki yıkık rıhtım: eski Ceneviz iskelesi kazık dizisi (ahşap kazıklar)
 	# Terk edilmiş bayrak direği (bayrak yok)
 	Props.cyl(root, 0.07, 6.0, Vector3(0, 3.0, 8.0), Color("3a2a1a"), Vector3(0, 0, 6), 6)
@@ -449,7 +449,8 @@ static func perches_ceneviz(k: float) -> Array:
 
 static func climbs_ceneviz(k: float) -> Array:
 	var span := 24.0 + 20.0 * clampf(k, 0.3, 1.0)
-	return [[Vector3(-span * 0.5 - 12.0, 0, 16.0), Vector3(-span * 0.5 - 8.4, 1.0, 16.0), "sandik"]]
+	var n := int(ceil(3.4 / K.STEP_RISE))
+	return [[Vector3(-span * 0.5 - 9.0 - 0.34 * n - 0.4, 0, 15.0), Vector3(-span * 0.5 - 9.0 + 0.3, 3.6, 15.0), "merdiven"]]
 
 
 # =========================== YAHUDİ İSKELESİ / VİGLA DEBBAĞLAR ===========================
@@ -481,6 +482,7 @@ static func build_yahudi(host: Node3D, k: float, lod: int) -> void:
 	house(root, -span * 0.7, 20.0, 9.0, 7.0, 6.2, 4, -1.0)
 	house(root, span * 0.7, 21.0, 9.0, 7.0, 6.6, 1, -1.0)
 	var hi := house(root, 0.0, 22.0, 10.0, 7.0, 6.4, 5, -1.0)
+	roof_stair(root, hi, 2.0)
 	# Havra (sinagog) küçük, sade, doğuya bakan
 	K.blk(root, Vector3(10.0, 6.0, 8.0), Vector3(span * 0.35, 3.0, 28.0), Color("ece2c8"), "plaster").name = "Havra"
 	K.gable_roof(root, span * 0.35, 6.0, 28.0, 10.8, 8.8, 1.6, K.TILE, false)
@@ -504,4 +506,4 @@ static func climbs_yahudi(k: float) -> Array:
 	var span := 26.0 + 16.0 * clampf(k, 0.3, 1.0)
 	var n := int(ceil(6.0 / K.STEP_RISE))
 	return [[Vector3(span * 0.35 - 5.2 - 0.34 * n - 0.4, 0, 29.0), Vector3(span * 0.35 - 5.2, 6.0, 29.0), "merdiven"],
-		[Vector3(span * 0.7 - 6.0 - 0.4, 0, 15.5), Vector3(span * 0.7 - 6.0 + 2.5, 1.5, 15.5), "sandik"]]
+		[Vector3(2.0, 0, 17.6 - 0.34 * int(ceil(6.4 / K.STEP_RISE)) - 0.4), Vector3(2.0, 6.4, 17.6 + 0.3), "merdiven"]]

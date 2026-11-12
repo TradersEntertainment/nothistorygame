@@ -54,7 +54,7 @@ static func build_iskele(host: Node3D, k: float, lod: int) -> void:
 	K.bale_stack(root, Vector3(span * 0.22, QY, qz0 + 2.0), 3, 2, 2)
 	K.barrel_stack(root, Vector3(span * 0.95, QY, qz0 + 2.0), 2, 2, 1)
 	K.bale_stack(root, Vector3(-span * 0.92, QY, qz0 + 2.0), 2, 1, 3, Color("c9b68a"))
-	K.crate_steps(root, Vector3(-span * 0.1, QY, qz1 - 0.6), Vector3(0, 0, -1), 3)
+	K.crate_steps(root, Vector3(span * 0.22, QY, qz0 + 2.6 + 2.0), Vector3(0, 0, -1), 2)
 	# Demirli nao (iskele 1'in sağında): gövde, direk, seren, toplanmış yelken, halat
 	_ship(root, Vector3(jx[1] + 6.0 + 1.2, 0.0, qz0 - 11.0), jx[1] + 1.2)
 	# Rıhtıma ve iskelelere şehir tarafı: taş merdiven çıkışı (rıhtım y=0.4 -> zemin 0 -> 2 basamak 0,2)
@@ -129,7 +129,7 @@ static func perches_iskele(k: float) -> Array:
 
 static func climbs_iskele(k: float) -> Array:
 	var span := 32.0 + 24.0 * clampf(k, 0.3, 1.0)
-	return [[Vector3(-span * 0.1, 0, -1.0), Vector3(-span * 0.1, QY + 1.5, -3.5), "sandik"],
+	return [[Vector3(span * 0.22, QY, -8.0 + 2.6 + 2.4), Vector3(span * 0.22, QY + 1.0, -8.0 + 2.0 - 0.3), "sandik"],
 		[Vector3(-span * 0.4, QY, -8.5), Vector3(-span * 0.4, QY + 1.2, -16.0), "basamak"]]
 
 
@@ -226,7 +226,6 @@ static func build_balik(host: Node3D, k: float, lod: int) -> void:
 	# Tabure/sepet/leğen
 	for j in 7:
 		Props.cyl(root, 0.32, 0.3, Vector3(-w + 1.5 + j * 4.0, 0.21, 1.2 + (j % 3) * 0.7), Color("a07a44"), Vector3.ZERO, 8, 0.26)
-	K.crate_steps(root, Vector3(w + 2.5, 0.06, 6.0), Vector3(-1, 0, 0), 2)
 
 
 static func _stall(p: Node3D, pos: Vector3, awn: Color) -> void:

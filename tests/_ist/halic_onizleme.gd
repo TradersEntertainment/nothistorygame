@@ -70,6 +70,13 @@ func _setup_world() -> void:
 	mi.material_override = Props.mat(Color("8d7f5f"), 0.0, false, "cobble")
 	mi.position = cs.position
 	floor_body.add_child(mi)
+	var sea_floor := MeshInstance3D.new()
+	var spm := PlaneMesh.new()
+	spm.size = Vector2(1600, 800)
+	sea_floor.mesh = spm
+	sea_floor.material_override = Props.mat(Color("5a6a60"), 0.0, false, "")
+	sea_floor.position = Vector3(0, -1.65, -400)
+	add_child(sea_floor)
 	cam = Camera3D.new()
 	cam.fov = 70
 	cam.far = 800
@@ -270,6 +277,11 @@ func _audit(id: String, node: Node3D) -> void:
 			z2 += 0.5
 		x2 += 0.5
 	dar = seen.size()
+	var shown := 0
+	for key in seen.keys():
+		if shown < 6:
+			print("DAR ", id, " x=", key.x * 0.5, " z=", key.y * 0.5)
+		shown += 1
 	# Havada: tabanı >5cm yukarıda ve altında 30 cm içinde destek yok
 	var havada := 0
 	for b in node.find_children("*", "StaticBody3D", true, false):
@@ -339,8 +351,13 @@ func _walk(a: Vector3, b: Vector3) -> bool:
 			body.velocity.y -= 9.8 * dt
 		else:
 			body.velocity.y = 0.0
-			if stuck > 0.25:
-				body.velocity.y = 3.6
+			if stuck > 0.08:
+				# oyuncu: STEP_H (0,42) kadar alçak basamak zıplamadan çıkılır; üstü zıplamayla
+				var up := Transform3D(body.global_transform.basis, body.global_position + Vector3(0, 0.42, 0))
+				if not body.test_move(up, dirv * 0.12) and body.test_move(body.global_transform, dirv * 0.12):
+					body.global_position.y += 0.42
+				elif stuck > 0.25:
+					body.velocity.y = 3.6
 				stuck = 0.0
 		body.move_and_slide()
 		if body.global_position.distance_to(last) < 0.01 * 1.0:
@@ -351,5 +368,7 @@ func _walk(a: Vector3, b: Vector3) -> bool:
 		if absf(body.global_position.y - b.y) < 1.0 and Vector2(to.x, to.z).length() < 1.2:
 			ok = true
 			break
+	if not ok:
+		print("YURUME_TAKILDI ", a, " -> ", b, " son=", body.global_position)
 	body.free()
 	return ok
