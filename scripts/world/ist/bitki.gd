@@ -93,9 +93,21 @@ static func tri(m: Dictionary, a: Vector3, b: Vector3, c: Vector3, ca: Color, cb
 	n = n.normalized()
 	if n.dot((a + b + c) / 3.0 - hint) < 0.0:
 		n = -n
-	(m["v"] as PackedVector3Array).append_array([a, b, c])
-	(m["n"] as PackedVector3Array).append_array([n, n, n])
-	(m["c"] as PackedColorArray).append_array([ca, cb, cc])
+	var pv: PackedVector3Array = m["v"]
+	var pn: PackedVector3Array = m["n"]
+	var pc: PackedColorArray = m["c"]
+	pv.append(a)
+	pv.append(b)
+	pv.append(c)
+	pn.append(n)
+	pn.append(n)
+	pn.append(n)
+	pc.append(ca)
+	pc.append(cb)
+	pc.append(cc)
+	m["v"] = pv
+	m["n"] = pn
+	m["c"] = pc
 
 
 static func quad(m: Dictionary, a: Vector3, b: Vector3, c: Vector3, d: Vector3, col: Color, hint: Vector3) -> void:
