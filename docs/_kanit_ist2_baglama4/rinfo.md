@@ -26,6 +26,19 @@ kırılımı: `ISTDUNYA kurulum_ms=754`, `ISTSEHIR2 kur_ms=3515 hat_ms=1186 doku
 
 Takılma (> 50 ms kare) hub'da: ÖLÇÜLMEDİ (KANITSIZ).
 
+## 1b. Bölüm 10h hub (aynı bakışlar, `pafta_10h_hub.jpg`)
+
+| bakış | ÖNCE çizim | ÖNCE üçgen | SONRA çizim | SONRA üçgen |
+|---|---|---|---|---|
+| 01 | 7 773 | 9,13 M | 5 439 | 3,93 M |
+| 02 | 3 908 | 7,00 M | 2 116 | 2,80 M |
+| 03 | 5 137 | 3,82 M | 5 090 | 4,70 M |
+| 04 | 8 427 | 8,29 M | 6 547 | 4,08 M |
+| 05 | 4 816 | 2,94 M | 6 222 | 3,84 M |
+| 06 | 5 274 | 3,28 M | 6 568 | 3,95 M |
+
+Yükleme (xvfb, yük altında): ÖNCE 10,6 sn · SONRA 47,9 sn. 05 ve 06'da çizim +%29 / +%25 (sur dışı ve üstten bakış).
+
 ## 2. Bölüm 11 (ordugâh, gece; tests/_ist/baglama_ucus kip=kare en_cok=1)
 
 | bakış | ÖNCE çizim | ÖNCE üçgen | SONRA çizim | SONRA üçgen |
