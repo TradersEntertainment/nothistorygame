@@ -1,0 +1,181 @@
+## Bolum 20 --autotest=lose, 20 kosu (basiz, --max-fps 20); ONCE = e551de84 + yalniz _look_audit; SONRA = wip/duzeltme-bakis ucu
+RUNEND sonra c20lose_01 rc=0 sec=68 pass=1 backturn=0
+RUNEND once c20lose_01 rc=0 sec=68 pass=1 backturn=1
+RUNEND sonra c20lose_02 rc=0 sec=50 pass=1 backturn=0
+RUNEND once c20lose_02 rc=0 sec=50 pass=1 backturn=1
+RUNEND sonra c20lose_03 rc=0 sec=51 pass=1 backturn=0
+RUNEND once c20lose_03 rc=0 sec=51 pass=1 backturn=1
+RUNEND once c20lose_04 rc=0 sec=49 pass=1 backturn=1
+RUNEND sonra c20lose_04 rc=0 sec=50 pass=1 backturn=0
+RUNEND sonra c20lose_05 rc=0 sec=50 pass=1 backturn=0
+RUNEND once c20lose_05 rc=0 sec=50 pass=1 backturn=1
+RUNEND once c20lose_06 rc=0 sec=51 pass=1 backturn=0
+RUNEND sonra c20lose_06 rc=0 sec=51 pass=1 backturn=0
+RUNEND sonra c20lose_07 rc=0 sec=50 pass=1 backturn=0
+RUNEND once c20lose_07 rc=0 sec=51 pass=1 backturn=1
+RUNEND once c20lose_08 rc=0 sec=49 pass=1 backturn=0
+RUNEND sonra c20lose_08 rc=0 sec=50 pass=1 backturn=0
+RUNEND once c20lose_09 rc=0 sec=48 pass=1 backturn=0
+RUNEND sonra c20lose_09 rc=0 sec=49 pass=1 backturn=0
+RUNEND sonra c20lose_10 rc=0 sec=49 pass=1 backturn=0
+RUNEND once c20lose_10 rc=0 sec=49 pass=1 backturn=1
+RUNEND sonra c20lose_11 rc=0 sec=49 pass=1 backturn=0
+RUNEND once c20lose_11 rc=0 sec=50 pass=1 backturn=1
+RUNEND once c20lose_12 rc=0 sec=49 pass=1 backturn=1
+RUNEND sonra c20lose_12 rc=0 sec=51 pass=1 backturn=0
+RUNEND sonra c20lose_13 rc=0 sec=49 pass=1 backturn=0
+RUNEND once c20lose_13 rc=0 sec=49 pass=1 backturn=1
+RUNEND once c20lose_14 rc=0 sec=50 pass=1 backturn=0
+RUNEND sonra c20lose_14 rc=0 sec=50 pass=1 backturn=0
+RUNEND sonra c20lose_15 rc=0 sec=48 pass=1 backturn=0
+RUNEND once c20lose_15 rc=0 sec=48 pass=1 backturn=1
+RUNEND once c20lose_16 rc=0 sec=48 pass=1 backturn=0
+RUNEND sonra c20lose_16 rc=0 sec=49 pass=1 backturn=0
+RUNEND once c20lose_17 rc=0 sec=49 pass=1 backturn=0
+RUNEND sonra c20lose_17 rc=0 sec=50 pass=1 backturn=0
+RUNEND sonra c20lose_18 rc=0 sec=48 pass=1 backturn=0
+RUNEND once c20lose_18 rc=0 sec=50 pass=1 backturn=0
+RUNEND once c20lose_19 rc=0 sec=48 pass=1 backturn=0
+RUNEND sonra c20lose_19 rc=0 sec=49 pass=1 backturn=0
+RUNEND sonra c20lose_20 rc=0 sec=49 pass=1 backturn=0
+RUNEND once c20lose_20 rc=0 sec=49 pass=1 backturn=1
+
+## LOOKAUDIT backturn (ONCE)
+once-c20lose_01.log:LOOKAUDIT backturn Person(giustiniani) chapter20.tscn 118 kind=walk act= pose=<null> look=@CharacterBody3D@80 talking=false pos=(7.5, 0.0, 4.7)
+once-c20lose_02.log:LOOKAUDIT backturn Person(giustiniani) chapter20.tscn 123 kind=walk act= pose=<null> look=@CharacterBody3D@80 talking=false pos=(8.400001, 0.0, 5.7)
+once-c20lose_03.log:LOOKAUDIT backturn Person(giustiniani) chapter20.tscn 118 kind=walk act= pose=<null> look=@CharacterBody3D@80 talking=false pos=(8.3, 0.0, 5.8)
+once-c20lose_04.log:LOOKAUDIT backturn Person(giustiniani) chapter20.tscn 129 kind=walk act= pose=<null> look=@CharacterBody3D@80 talking=false pos=(8.400001, 0.0, 5.7)
+once-c20lose_05.log:LOOKAUDIT backturn Person(giustiniani) chapter20.tscn 107 kind=walk act= pose=<null> look=@CharacterBody3D@80 talking=false pos=(8.1, 0.0, 5.7)
+once-c20lose_07.log:LOOKAUDIT backturn Person(giustiniani) chapter20.tscn 130 kind=walk act= pose=<null> look=@CharacterBody3D@80 talking=false pos=(8.400001, 0.0, 5.7)
+once-c20lose_10.log:LOOKAUDIT backturn Person(giustiniani) chapter20.tscn 121 kind=walk act= pose=<null> look=@CharacterBody3D@80 talking=false pos=(8.400001, 0.0, 5.7)
+once-c20lose_11.log:LOOKAUDIT backturn Person(giustiniani) chapter20.tscn 141 kind=walk act= pose=<null> look=@CharacterBody3D@80 talking=false pos=(8.5, 0.0, 5.7)
+once-c20lose_12.log:LOOKAUDIT backturn Person(giustiniani) chapter20.tscn 104 kind=walk act= pose=<null> look=@CharacterBody3D@80 talking=false pos=(8.3, 0.0, 5.7)
+once-c20lose_13.log:LOOKAUDIT backturn Person(giustiniani) chapter20.tscn 138 kind=walk act= pose=<null> look=@CharacterBody3D@80 talking=false pos=(8.400001, 0.0, 5.7)
+once-c20lose_15.log:LOOKAUDIT backturn Person(giustiniani) chapter20.tscn 107 kind=walk act= pose=<null> look=@CharacterBody3D@80 talking=false pos=(8.2, 0.0, 5.7)
+once-c20lose_20.log:LOOKAUDIT backturn Person(giustiniani) chapter20.tscn 108 kind=walk act= pose=<null> look=@CharacterBody3D@80 talking=false pos=(7.9, 0.0, 5.3)
+## LOOKAUDIT backturn (SONRA): 
+toplam 0
+## LOOKAUDIT raw SONRA bolum 20
+      3 LOOKAUDIT raw Person(giustiniani) chapter20.tscn 103 kind=walk act= pose=<null> look=@CharacterBody3D@80 talking=false pos=(8.0, 0.0, 5.4)
+      2 LOOKAUDIT raw Person(giustiniani) chapter20.tscn 104 kind=walk act= pose=<null> look=@CharacterBody3D@80 talking=false pos=(8.0, 0.0, 5.4)
+      1 LOOKAUDIT raw Person(giustiniani) chapter20.tscn 175 kind=walk act= pose=<null> look=@CharacterBody3D@80 talking=false pos=(8.3, 0.0, 5.5)
+      1 LOOKAUDIT raw Person(giustiniani) chapter20.tscn 173 kind=walk act= pose=<null> look=@CharacterBody3D@80 talking=false pos=(8.5, 0.0, 5.5)
+      1 LOOKAUDIT raw Person(giustiniani) chapter20.tscn 172 kind=walk act= pose=<null> look=@CharacterBody3D@80 talking=false pos=(8.3, 0.0, 5.4)
+
+## GATETIME (probe yalniz scratch kopyada; Engine.time_scale baskida)
+once-c4chain2.log:GATETIME 4 open_gate real=0.45 scale=2.50 game=1.13
+sonra-c4chain2.log:GATETIME 4 open_gate real=0.45 scale=2.50 game=1.13
+once-c4pace.log:GATETIME 4 open_gate real=1.15 scale=1.00 game=1.15
+sonra-c4pace.log:GATETIME 4 open_gate real=1.25 scale=1.00 game=1.25
+once-c8y_pace.log:GATETIME 8y open_gate real=7.64 scale=1.00 game=7.64
+sonra-c8y_pace.log:GATETIME 8y open_gate real=7.76 scale=1.00 game=7.76
+
+## Supurme (SONRA, 111 kosu)
+111
+SCRIPT ERROR: 0
+WARN_FX_STUCK: 0
+WARN_FLY_ITEM: 0
+VISAUDIT: 2
+WARN_VOID_TELEPORT: 0
+WALKTHRU: 0
+ARMAUDIT: 0
+HELDAUDIT: 0
+LOOKAUDIT backturn: 0
+JOURNEY_MISS: 0
+JOURNEY_OVERLAP: 0
+LOOKAUDIT raw: 3
+SAYFACE: 4
+sonra-sw_10_fail.log:LOOKAUDIT raw Person(kadri) chapter10.tscn 132 kind=work act=chop pose=<null> look=@CharacterBody3D@80 talking=false pos=(1.6, 0.0, -44.9)
+sonra-sw_10b_boom.log:LOOKAUDIT raw Person(urban)[SPK_URBAN] chapter10b.tscn 129 kind=walk act= pose=<null> look=@CharacterBody3D@80 talking=false pos=(6.2, 0.0, -19.2)
+sonra-sw_10b_untaped.log:LOOKAUDIT raw Person(urban)[SPK_URBAN] chapter10b.tscn 179 kind=walk act= pose=<null> look=@CharacterBody3D@80 talking=false pos=(6.6, 2.1, -17.8)
+sonra-sw_4_chain.log:VISAUDIT insolid scene=chapter4.tscn who=SeaWalls at=(17.0, 0.7, -3.2) by=@Node3D@215 size=(66.2, 13.0, 4.0)@(46.9, 5.2, -5.2) pos=(46.9, 5.2, -5.2) src=Chapter4>SeaWalls>Person|Chapter4>SeaWalls>StaticBody3D
+sonra-sw_4_def.log:SAYFACE key=D4A_HA_END scene=chapter4.tscn speaker=SPK_HASAN d=3.9 dot=-0.97
+sonra-sw_4_def.log:SAYFACE key=D4A_HU_END scene=chapter4.tscn speaker=SPK_HUSEYIN d=3.9 dot=-0.64
+sonra-sw_4_market.log:SAYFACE key=D4A_HA_END scene=chapter4.tscn speaker=SPK_HASAN d=3.9 dot=-0.97
+sonra-sw_4_market.log:SAYFACE key=D4A_HU_END scene=chapter4.tscn speaker=SPK_HUSEYIN d=3.9 dot=-0.60
+sonra-sw_4_nofez.log:VISAUDIT insolid scene=chapter4.tscn who=SeaWalls at=(17.0, 0.7, -3.2) by=@Node3D@215 size=(66.2, 13.0, 4.0)@(46.9, 5.2, -5.2) pos=(46.9, 5.2, -5.2) src=Chapter4>SeaWalls>Person|Chapter4>SeaWalls>StaticBody3D
+
+## VISAUDIT sahte alarm kaniti: yamali scratch ch4 (probe: _wait yerine gercek zamanlayici) -> insolid; HEAD'in ch4'u ile dbg agaci 9 varyant
+sonra-c4chain.log:VISAUDIT insolid scene=chapter4.tscn who=SeaWalls at=(17.0, 0.7, -3.2) by=@Node3D@215 size=(66.2, 13.0
+dbg-c4v_caught.log:0 dbg-c4v_chain.log:0 dbg-c4v_def.log:0 dbg-c4v_fall.log:0 dbg-c4v_fez.log:0 dbg-c4v_item.log:0 dbg-c4v_market.log:0 dbg-c4v_nofez.log:0 dbg-c4v_wet.log:0 
+## ONCE (4,9,10,10b) SAYFACE
+once-ow_4_def.log:SAYFACE key=D4A_HA_END scene=chapter4.tscn speaker=SPK_HASAN d=3.9 dot=-0.97
+once-ow_4_def.log:SAYFACE key=D4A_HU_END scene=chapter4.tscn speaker=SPK_HUSEYIN d=3.9 dot=-0.66
+once-ow_4_market.log:SAYFACE key=D4A_HA_END scene=chapter4.tscn speaker=SPK_HASAN d=3.9 dot=-0.97
+once-ow_4_market.log:SAYFACE key=D4A_HU_END scene=chapter4.tscn speaker=SPK_HUSEYIN d=3.9 dot=-0.77
+
+## yuruyen LOOKAUDIT (17,26,28o,31o,35o) ONCE|SONRA
+once-wk_17.log:LOOKAUDIT raw Person[SPK_RADU] chapter17.tscn 146 kind=walk act= pose=<null> look=@CharacterBody3D@80 talking=true pos=(2986.4, 0.0, -2.2)
+once-wk_17.log:LOOKAUDIT backturn Person[SPK_RADU] chapter17.tscn 156 kind=walk act= pose=<null> look=@CharacterBody3D@80 talking=false pos=(2982.7, 0.0, -3.4)
+once-wk_26.log:LOOKAUDIT raw Person chapter26.tscn 152 kind=walk act=carry pose=<null> look=@CharacterBody3D@80 talking=false pos=(3.1, 0.0, 10.3)
+once-wk_26.log:LOOKAUDIT backturn Person chapter26.tscn 152 kind=walk act=carry pose=<null> look=@CharacterBody3D@80 talking=false pos=(3.5, 0.0, 10.0)
+once-wk_26.log:LOOKAUDIT raw Person chapter26.tscn 165 kind=walk act=carry pose=<null> look=@CharacterBody3D@80 talking=false pos=(3.6, 0.0, 7.2)
+once-wk_26.log:LOOKAUDIT raw Person chapter26.tscn 131 kind=walk act= pose=<null> look=@CharacterBody3D@80 talking=false pos=(0.5, 0.0, 3.4)
+once-wk_26.log:LOOKAUDIT raw Person chapter26.tscn 170 kind=walk act= pose=<null> look=@CharacterBody3D@80 talking=false pos=(-6.0, 0.0, 1.8)
+once-wk_28o.log:LOOKAUDIT raw Person(urban)[SPK_URBAN] chapter28o.tscn 117 kind=walk act= pose=<null> look=@CharacterBody3D@80 talking=false pos=(6.8, 0.0, 128.3)
+once-wk_28o.log:LOOKAUDIT backturn Person(urban)[SPK_URBAN] chapter28o.tscn 137 kind=walk act= pose=<null> look=@CharacterBody3D@80 talking=false pos=(7.3, 0.0, 128.2)
+once-wk_31o.log:LOOKAUDIT raw Person[SPK_KADRI] chapter31o.tscn 147 kind=walk act= pose=<null> look=@Node3D@24693 talking=false pos=(3.0, 0.0, -77.8)
+once-wk_31o.log:LOOKAUDIT raw Person[SPK_DERVISH] chapter31o.tscn 104 kind=walk act= pose=<null> look=@CharacterBody3D@80 talking=false pos=(-12.4, 0.0, -71.1)
+once-wk_31o.log:LOOKAUDIT backturn Person[SPK_DERVISH] chapter31o.tscn 100 kind=walk act= pose=<null> look=@CharacterBody3D@80 talking=false pos=(-12.5, 0.0, -71.1)
+sonra-wk_17.log:LOOKAUDIT raw Person[SPK_RADU] chapter17.tscn 146 kind=walk act= pose=<null> look=@CharacterBody3D@80 talking=true pos=(2986.4, 0.0, -2.2)
+sonra-wk_17.log:LOOKAUDIT raw Person chapter17.tscn 114 kind=grip act= pose=<null> look=- talking=false pos=(-86.3, 1.0, 132.0)
+sonra-wk_17.log:LOOKAUDIT raw Person chapter17.tscn 143 kind=grip act= pose=<null> look=- talking=false pos=(-86.9, 0.9, 129.2)
+sonra-wk_17.log:LOOKAUDIT raw Person chapter17.tscn 158 kind=grip act= pose=<null> look=- talking=false pos=(-84.5, 0.8, 128.8)
+sonra-wk_26.log:LOOKAUDIT raw Person chapter26.tscn 157 kind=work act=stir pose=<null> look=@CharacterBody3D@80 talking=false pos=(-9.5, 8.0, 14.7)
+sonra-wk_28o.log:LOOKAUDIT raw Person(urban)[SPK_URBAN] chapter28o.tscn 140 kind=walk act= pose=<null> look=@CharacterBody3D@80 talking=false pos=(9.1, 0.0, 128.1)
+sonra-wk_31o.log:LOOKAUDIT raw Person[SPK_DERVISH] chapter31o.tscn 105 kind=walk act= pose=<null> look=@CharacterBody3D@80 talking=false pos=(-12.3, 0.0, -71.3)
+sonra-wk_31o.log:LOOKAUDIT backturn Person[SPK_DERVISH] chapter31o.tscn 177 kind=walk act= pose=<null> look=@CharacterBody3D@80 talking=false pos=(-12.2, 0.0, -71.4)
+sonra-wk_35o.log:LOOKAUDIT raw Person chapter35o.tscn 120 kind=grip act= pose=<null> look=- talking=false pos=(-1.4, 0.0, 10.6)
+sonra-wk_35o.log:LOOKAUDIT raw Person chapter35o.tscn 120 kind=grip act= pose=<null> look=- talking=false pos=(1.4, 0.0, 10.6)
+sonra-wk_35o.log:LOOKAUDIT raw Person chapter35o.tscn 116 kind=grip act= pose=<null> look=- talking=false pos=(-1.5, 0.0, 10.7)
+sonra-wk_35o.log:LOOKAUDIT raw Person chapter35o.tscn 116 kind=grip act= pose=<null> look=- talking=false pos=(1.5, 0.0, 10.7)
+sonra-wk_35o.log:LOOKAUDIT raw Person chapter35o.tscn 153 kind=grip act= pose=<null> look=- talking=false pos=(-2.5, -3.1, 60.4)
+sonra-wk_35o.log:LOOKAUDIT raw Person chapter35o.tscn 153 kind=grip act= pose=<null> look=- talking=false pos=(2.5, -3.1, 60.4)
+sonra-wk_35o.log:LOOKAUDIT raw Person chapter35o.tscn 153 kind=grip act= pose=<null> look=- talking=false pos=(-2.5, -1.6, 54.1)
+sonra-wk_35o.log:LOOKAUDIT raw Person chapter35o.tscn 153 kind=grip act= pose=<null> look=- talking=false pos=(2.5, -1.6, 54.1)
+sonra-wk_35o.log:LOOKAUDIT raw Person chapter35o.tscn 153 kind=grip act= pose=<null> look=- talking=false pos=(-2.5, -1.0, 51.0)
+sonra-wk_35o.log:LOOKAUDIT raw Person chapter35o.tscn 153 kind=grip act= pose=<null> look=- talking=false pos=(2.5, -1.0, 51.0)
+sonra-wk_35o.log:LOOKAUDIT raw Person chapter35o.tscn 153 kind=grip act= pose=<null> look=- talking=false pos=(-2.5, -0.2, 44.7)
+sonra-wk_35o.log:LOOKAUDIT raw Person chapter35o.tscn 153 kind=grip act= pose=<null> look=- talking=false pos=(2.5, -0.2, 44.7)
+
+## PUSHDBG/GSERIES (Giustiniani, dbg agaci)
+GSERIES t=26.99 spd=0.00 yaw=108 mvyaw=0 gaze_walk=false
+GSERIES t=27.17 spd=0.00 yaw=108 mvyaw=0 gaze_walk=false
+GSERIES t=27.20 spd=0.00 yaw=108 mvyaw=0 gaze_walk=false
+GSERIES t=27.30 spd=0.00 yaw=108 mvyaw=0 gaze_walk=false
+GSERIES t=27.40 spd=0.00 yaw=108 mvyaw=0 gaze_walk=false
+GSERIES t=27.50 spd=0.00 yaw=108 mvyaw=0 gaze_walk=false
+GSERIES t=27.60 spd=0.00 yaw=108 mvyaw=0 gaze_walk=false
+GSERIES t=27.70 spd=0.00 yaw=108 mvyaw=0 gaze_walk=false
+GSERIES t=27.80 spd=0.00 yaw=108 mvyaw=0 gaze_walk=false
+GSERIES t=27.90 spd=0.00 yaw=108 mvyaw=0 gaze_walk=false
+GSERIES t=28.04 spd=0.00 yaw=108 mvyaw=0 gaze_walk=false
+GSERIES t=28.14 spd=0.00 yaw=108 mvyaw=0 gaze_walk=false
+GSERIES t=28.27 spd=0.00 yaw=108 mvyaw=0 gaze_walk=false
+GSERIES t=28.34 spd=0.00 yaw=108 mvyaw=0 gaze_walk=false
+GSERIES t=28.48 spd=1.09 yaw=108 mvyaw=108 gaze_walk=false
+GSERIES t=28.68 spd=1.18 yaw=108 mvyaw=108 gaze_walk=true
+PUSHDBG t=28.82 pusher=@Node3D@45017 step=(-0.04, 0.0, -0.05)
+GSERIES t=28.83 spd=0.14 yaw=-61 mvyaw=-141 gaze_walk=false
+PUSHDBG t=28.94 pusher=@Node3D@45017 step=(0.0, 0.0, 0.0)
+GSERIES t=29.03 spd=0.00 yaw=-60 mvyaw=-141 gaze_walk=false
+GSERIES t=29.15 spd=0.00 yaw=-60 mvyaw=0 gaze_walk=false
+GSERIES t=29.23 spd=0.00 yaw=-60 mvyaw=0 gaze_walk=false
+GSERIES t=29.39 spd=0.00 yaw=-60 mvyaw=0 gaze_walk=false
+GSERIES t=29.44 spd=0.00 yaw=-60 mvyaw=0 gaze_walk=false
+GSERIES t=29.55 spd=0.00 yaw=-60 mvyaw=0 gaze_walk=false
+GSERIES t=29.67 spd=0.00 yaw=-60 mvyaw=0 gaze_walk=false
+GSERIES t=29.77 spd=0.00 yaw=-60 mvyaw=0 gaze_walk=false
+GSERIES t=29.85 spd=0.00 yaw=-60 mvyaw=0 gaze_walk=false
+GSERIES t=29.98 spd=0.00 yaw=-60 mvyaw=0 gaze_walk=false
+GSERIES t=30.04 spd=0.00 yaw=-60 mvyaw=0 gaze_walk=false
+GSERIES t=30.17 spd=0.00 yaw=-60 mvyaw=0 gaze_walk=false
+GSERIES t=30.25 spd=0.00 yaw=-60 mvyaw=0 gaze_walk=false
+PUSHDBG t=30.37 pusher=@Node3D@45017 step=(0.0, 0.0, 0.0)
+GSERIES t=30.38 spd=0.00 yaw=-60 mvyaw=-141 gaze_walk=false
+PUSHDBG t=30.45 pusher=@Node3D@44910 step=(0.14, 0.0, 0.18)
+PUSHDBG t=30.45 pusher=@Node3D@45017 step=(-0.12, 0.0, -0.15)
+GSERIES t=30.50 spd=0.10 yaw=-60 mvyaw=43 gaze_walk=false
+PUSHDBG t=30.51 pusher=@Node3D@44910 step=(0.21, 0.0, 0.26)
+PUSHDBG t=30.51 pusher=@Node3D@45017 step=(-0.18, 0.0, -0.23)
+PUSHDBG t=30.56 pusher=@Node3D@44910 step=(0.21, 0.0, 0.26)
