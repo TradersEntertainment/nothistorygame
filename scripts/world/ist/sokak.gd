@@ -1090,6 +1090,8 @@ func _meydanlar(foot: Array) -> void:
 		var rad := fr + (26.0 if ad == "ayasofya" else 16.0)
 		zemin_ek.append({"c": w, "r": rad, "tur": "mese"})
 		# çevrede ayrıntı köşeleri (boş hücrelere)
+		if ad == "ayasofya":
+			_patrikhane(w, rad)
 		var sets := ["set_pazar_kosesi", "set_ayin_alayi", "set_meyhane_onu"] if ad != "ayasofya" else ["set_ayin_alayi", "set_pazar_kosesi", "mumcu", "set_manastir_avlusu", "mumcu"]
 		for k in sets.size():
 			var ang := k * TAU / sets.size() + 0.4
@@ -1098,6 +1100,44 @@ func _meydanlar(foot: Array) -> void:
 				oge.append({"tur": String(sets[k]), "c": p, "yaw": ang + PI, "tohum": n * 37 + k, "yer": ad})
 				_stamp_disc(p, 5.0, 5)
 		n += 1
+
+
+## Patrikhane ek yapıları: Ayasofya'nın güney ve güneybatısında, ona bakan avlulu konak/han yapıları (kestirim)
+func _patrikhane(w: Vector2, rad: float) -> void:
+	var n := 0
+	for ang_d: float in [100.0, 125.0, 150.0, 75.0, 175.0]:
+		if n >= 3:
+			break
+		var ang := deg_to_rad(ang_d)
+		var dir := Vector2(cos(ang), sin(ang))            # +z güney
+		var cand := IstEvler.ornekler(2, 10.0, 12.0)
+		if cand.is_empty():
+			return
+		var v: int = cand[n % cand.size()]
+		var dm := IstEvler.dims(v)
+		for rr: float in [rad + 4.0, rad + 10.0, rad + 18.0]:
+			var c := w + dir * (rr + dm.z * 0.5)
+			var nrm := dir                                   # cephe (-nrm) Ayasofya'ya
+			var d := Vector2(-nrm.y, nrm.x)
+			var cells := _rect_cells(c, d, nrm, dm.x * 0.5, dm.z * 0.5, -0.45)
+			if cells.has(-1):
+				continue
+			var ok := true
+			for k in cells:
+				if not occ[k] in [0, 1]:
+					ok = false
+			var pg := _poly(c, d, nrm, dm.x * 0.5, dm.z * 0.5)
+			if not ok or not _gap_ok(pg, -2):
+				continue
+			for k in _rect_cells(c, d, nrm, dm.x * 0.5, dm.z * 0.5, -0.2):
+				occ[k] = 2
+			_rect_add(pg, rows)
+			var fr := c - nrm * dm.z * 0.5
+			houses.append({"c": c, "yaw": atan2(-nrm.x, -nrm.y), "v": v, "tip": "konak" if n != 1 else "han", "sira": rows, "on": fr})
+			rows += 1
+			n += 1
+			break
+	stats["patrikhane"] = n
 
 
 const DT := 40.0

@@ -238,6 +238,14 @@ func _sayim() -> void:
 				img.set_pixel(i, j, pal[sk.occ[j * sk.nx + i]])
 		var yol := shots if shots != "" else "/root/is"
 		img.save_png(yol.path_join(on + "doluluk.png"))
+	# Sokaktan çatıya yol: her sıranın en az bir evinde IstEvler.climbs (dükkân tentesi, sundurma, dış merdiven)
+	var sira_yol := {}
+	var siralar := {}
+	for h: Dictionary in sk.houses:
+		siralar[int(h["sira"])] = true
+		if not IstEvler.climbs(int(h["v"]), String(h["tip"])).is_empty():
+			sira_yol[int(h["sira"])] = true
+	print("DOKU2 cati_yolu sira=%d yolu_olan=%d (%.1f%%)" % [siralar.size(), sira_yol.size(), 100.0 * sira_yol.size() / maxf(siralar.size(), 1)])
 	print("DOKU2 sayim ev=%d sira=%d tip=%s kat=%s sokak=%s doku=%d meydan=%d stats=%s" % [sk.houses.size(), sk.rows, tips, katlar, st,
 		sk.doku.size(), sk.meydan.size(), sk.stats])
 	# Aralıklar: ev tabanı dikdörtgenleri (cumba dahil değil) arasındaki en kısa uzaklık
