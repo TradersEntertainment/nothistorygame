@@ -128,3 +128,16 @@ Düzeltilecekler:
     dayanmalı (`docs/ORDUGAH_1453.md`, dal `wip/ordugah-arastirma`) ve yaşam dolu olmalı: talim eden, nöbet tutan,
     yemek pişiren, top başındaki askerler; at sıraları, develer, erzak arabaları; bataryalar ve Şahi; hendek-set;
     tuğlar ve sancaklar; obalar arası yollar; gece ateşleri. Yakında gerçek kişi modeli (`Person`), uzakta ucuz katman.
+
+## Sahibinin 16:40 sözü (ordugâh yer karesindeki öküzlere bakarak): KUTU YASAĞI
+32. **"Öküzleri kare kare mi yapmışsın????? Şu kare kare sevdandan vazgeç."** Bağlayıcı, bütün oturumlar ve bütün oyun için:
+    - Canlılar (insan, öküz, manda, at, deve, koyun, keçi, köpek, kedi, kuş, balık) ASLA kutu parçalarından kurulmaz.
+      Gövde, boyun, baş, bacak, kuyruk yuvarlak kesitli ve birbirine akan biçimlerdir (kesit halkalarından örülmüş ağ,
+      kapsül/küre/koni birleşimi; kenarlar yumuşak normalli). Uzak katmanda bile siluet hayvan gibi okunur (dört bacak,
+      boyun, baş); "ayaklı sandık" olmaz.
+    - Yuvarlak olması gereken nesneler de kutu olmaz: ağaç tacı, çalı, çuval, fıçı, testi, küp, kazan, gülle, top namlusu,
+      tekerlek, sütun, kubbe, çadır, saman balyası dışındaki yığınlar, kaya, toprak yığını, insan elinden çıkmamış her şey.
+    - Kutu yalnız gerçekten köşeli şeylerde kalır (kesme taş, kiriş, kalas, sandık, tuğla) ve onlarda da çıplak tek kutu
+      değil: pah, derz, aşınma, eğrilik, parça çeşitliliği.
+    - Rapor ölçütü: kendi karelerinde "kutu gibi duran" her şeyi say ve listele (`KUTU kalan=…`); hedef 0. Canlılar için
+      yakın kare (5 m) ve uzak kare (60 m) zorunlu.
