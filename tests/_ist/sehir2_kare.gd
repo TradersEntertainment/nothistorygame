@@ -123,6 +123,11 @@ func _ready() -> void:
 		print("ISTKARE BITTI")
 		get_tree().quit(0)
 		return
+	if set_ == "s3":
+		await _s3()
+		print("ISTKARE BITTI")
+		get_tree().quit(0)
+		return
 	if set_ == "suryuru":
 		await _sur_yuru()
 		print("ISTKARE BITTI")
@@ -374,16 +379,75 @@ func _eserler() -> void:
 		return
 	for it: Dictionary in s.items:
 		var d: Dictionary = it["data"]
-		if not String(it["id"]) in (eser_sec if not eser_sec.is_empty() else ESER_LISTE):
+		var id := String(it["id"])
+		var sec: bool = (id in eser_sec) if not eser_sec.is_empty() else (id in ESER_LISTE or (bool(d.get("gorev", false)) and not id.begins_with("doku_")))
+		if not sec or it.has("hat") or String(it.get("mod", "")) in ["ordugah", "gemiler", "hayat"]:
 			continue
 		var pp: Vector3 = it["pos"]
 		var r := float(it["r"])
 		var sz: Vector3 = d.get("gercek_olcu", Vector3(20, 20, 20))
 		var h := sz.y * float(it["k"])
-		await _shot("eser_%s_15m" % it["id"], pp + Vector3(r * 0.9 + 12.0, h + 15.0, r * 0.9 + 12.0), pp + Vector3(0, h * 0.4, 0), 60)
-		await _shot("eser_%s_tepe" % it["id"], pp + Vector3(0, h + maxf(30.0, r * 2.2), 0.1), pp, 60)
+		if id == "ayasofya":
+			h = 40.0
+		var tp := _tepe_y(it, pp.y + h)
+		h = maxf(h * 0.5, tp - pp.y)
+		var only := OS.get_cmdline_user_args().has("--yalniz-yer")
+		if not only:
+			await _shot("eser_%s_15m" % id, pp + Vector3(r * 0.75 + 10.0, h + 15.0, r * 0.75 + 10.0), pp + Vector3(0, h * 0.45, 0), 60)
+			await _shot("eser_%s_tepe" % id, pp + Vector3(0, h + maxf(28.0, r * 2.0), 0.1), pp + Vector3(0, h * 0.5, 0), 60)
+		await _eser_yer(it, h)
 		if a_uzak:
-			await _shot("eser_%s_uzak" % it["id"], pp + Vector3(0, 700.0, 0.1), pp, 12)
+			await _shot("eser_%s_uzak" % id, pp + Vector3(0, 700.0, 0.1), pp, 12)
+
+
+## Eserin kurulu ağının en yüksek noktası (yoksa varsayılan)
+func _tepe_y(it: Dictionary, def: float) -> float:
+	var top := -INF
+	for c in (it["holder"] as Node3D).find_children("*", "VisualInstance3D", true, false):
+		var vi := c as VisualInstance3D
+		if not vi.is_visible_in_tree():
+			continue
+		var ab := vi.global_transform * vi.get_aabb()
+		if ab.size.length() > 0.0 and ab.size.length() < 2000.0:
+			top = maxf(top, ab.end.y)
+	return top if top > -INF else def
+
+
+## Yerden kapı önü: eserin dört yanından (önce yerel +z cephesi) göz hizasında; ışın eserin kendisine çarpan ilk yönden
+func _eser_yer(it: Dictionary, h: float) -> void:
+	var holder := it["holder"] as Node3D
+	var pp: Vector3 = it["pos"]
+	var r := float(it["r"])
+	var dist := clampf(r * 0.9 + 14.0, 18.0, 90.0)
+	var sec := Vector3.INF
+	var hedef := Vector3.INF
+	for yon: Vector3 in [Vector3(0, 0, 1), Vector3(1, 0, 0), Vector3(-1, 0, 0), Vector3(0, 0, -1), Vector3(0.7, 0, 0.7), Vector3(-0.7, 0, 0.7)]:
+		var dw := (holder.global_transform.basis * yon)
+		dw.y = 0.0
+		dw = dw.normalized()
+		var q := pp + dw * dist
+		if IstGeo.su(q.x, q.z):
+			continue
+		var at := Vector3(q.x, IstGeo.h(q.x, q.z) + 1.7, q.z)
+		var look := pp + Vector3(0, minf(h * 0.35, 14.0), 0)
+		if sec == Vector3.INF:
+			sec = at
+			hedef = look
+		cam.global_position = at
+		for i in 3:
+			await get_tree().physics_frame
+		var g := 0
+		while g < 120 and _yakin_eksik(IstSehir.active, at):
+			await get_tree().process_frame
+			g += 1
+		await get_tree().physics_frame
+		var hit := get_world_3d().direct_space_state.intersect_ray(PhysicsRayQueryParameters3D.create(at, look))
+		if hit.is_empty() or (hit["collider"] is Node and holder.is_ancestor_of(hit["collider"])):
+			sec = at
+			hedef = look
+			break
+	if sec != Vector3.INF:
+		await _shot("eser_%s_yer" % it["id"], sec, hedef, 70)
 
 
 func _yer() -> void:
@@ -1043,3 +1107,38 @@ func _yavas_yol() -> void:
 	print("ISTYAVAS ", s.stats.get("yavas", {}))
 	print("ISTYAVAS_PIS ", s.stats.get("yavas_pis", {}))
 	print("ISTBAGLA bagla_ms_max=%.1f kur_ms_max=%.1f" % [float(s.stats.get("bagla_ms_max", 0.0)), float(s.stats["kur_ms_max"])])
+
+
+# ---------------------------------------------------------------- ŞEHİR-3 kareleri (sur uzak katmanı, ordugâh, hub, meydan)
+
+func _s3() -> void:
+	var p := "s3_" + ("gece_" if gece else "")
+	await _shot_en(p + "galata", -480.0, 1950.0, 60.0, 200.0, 12.0)
+	await _shot_en(p + "kara_disi", -5900.0, 300.0, 70.0, 80.0, 10.0)
+	await _shot_en(p + "marmara", -1500.0, -3300.0, 70.0, 10.0, 10.0)
+	var pl: Array = IstOrdugah.plan()
+	var ot: Vector2 = pl[0]["pos"]
+	var oy := IstGeo.h(ot.x, ot.y)
+	var yaw := float(pl[0]["yaw"])
+	var to_wall := Vector3(sin(yaw), 0, cos(yaw))          # yerel +z sura
+	var o3 := Vector3(ot.x, oy, ot.y)
+	await _shot(p + "ordu_30", o3 - to_wall * 70.0 + Vector3(0, 30, 0), o3 + to_wall * 120.0, 70)
+	await _shot(p + "ordu_70", o3 - to_wall * 140.0 + Vector3(0, 70, 0), o3 + to_wall * 200.0, 70)
+	await _shot(p + "otag_yakin", o3 + to_wall * 40.0 + Vector3(12, 14, 0), o3 + Vector3(0, 5, 0), 70)
+	# hendek ve dış sur: sur dışından 15 m yükseklikte sur boyunca
+	var w := IstOrdugah.at(1350.0, 70.0)
+	var w2 := IstOrdugah.at(1600.0, 20.0)
+	await _shot(p + "hendek", Vector3(w.x, IstGeo.h(w.x, w.y) + 15.0, w.y), Vector3(w2.x, IstGeo.h(w2.x, w2.y) + 4.0, w2.y), 70)
+	if gece:
+		return
+	await _shot_en(p + "tepe", -2000.0, 400.0, 2600.0 * IstGeo.S / 0.5, 0.0, 89.0, 62.0)
+	# hub (Romanos'un iç yanı): 25 m üstünden ve yerden
+	var hx := IstSehir.active.hub_xf()
+	if hx != Transform3D():
+		var hc := hx * Vector3(0, 0, -10)
+		await _shot(p + "hub_25m", hx * Vector3(-70, 25, -10), hc, 70)
+		await _shot(p + "hub_yer", hx * Vector3(-30, 1.7, 2), hx * Vector3(10, 3, 2), 70)
+	var mr := IstSehir._meydan_rect()
+	var mc := mr.get_center()
+	var my := IstGeo.h(mc.x, mc.y)
+	await _shot(p + "aya_meydan", Vector3(mc.x - 45, my + 18, mc.y + 40), Vector3(mc.x + 20, my, mc.y), 70)
