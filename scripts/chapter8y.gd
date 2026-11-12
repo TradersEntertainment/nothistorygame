@@ -1193,6 +1193,18 @@ func _pull_leaves() -> void:
 		rg.lock += 1
 	Audio.sfx("door_open", -6.0, 0.8)
 	Audio.sfx("wood_creak", -10.0, 0.7)
+	if Stage.fast():
+		# Hızlı testte kare sıçraması: nöbetçi kanadın içinden "geçmesin" diye önce yerine, sonra kanatlar açılır
+		var g0 := Vector3(GUARD_AT.x, _gy(GUARD_AT.x, GUARD_AT.z), GUARD_AT.z)
+		guard.global_position = g0
+		_set_leaves(95.0)
+		if rg:
+			rg.lock = maxi(0, rg.lock - 1)
+		guard.remove_meta("walk_back")
+		guard.remove_meta("no_turn")
+		Stage.work_end(guard)
+		Stage.face(guard, Vector3(0, 0, 8.0))
+		return
 	var hand_a := Vector3(LEAF_R - 0.12, 1.3, -0.15)
 	var hand_b := Vector3(LEAF_R + 0.12, 1.15, -0.15)
 	var tw := create_tween()
