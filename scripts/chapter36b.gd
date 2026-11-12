@@ -21,6 +21,8 @@ const BRIDGE_Z1 := 36.9
 const BRIDGE_Y := 1.6
 const MANTLETS := [Vector3(LANE_X - 7.0, 0.0, 47.0), Vector3(LANE_X, 0.0, 50.0), Vector3(LANE_X + 7.0, 0.0, 47.0)]
 const TRENCH_Z := 54.0
+const DIG_FWD_Z := 44.8                                        # öne sürülmüş iki kazıcı (yolun yanı)
+const DIG_Z := 51.0                                            # kazıcıların durduğu yer (setin önü, mantelet destek ayaklarının ötesi)
 const LEON_AT := Vector3(LANE_X + 3.2, 0.0, 45.2)
 const RIDE_TIME := 34.0
 
@@ -110,6 +112,8 @@ func _build() -> void:
 	var earth := Color("6a5a44")
 	Props.solid(self, Vector3(26.0, 0.38, 1.6), Vector3(LANE_X, 0.19, TRENCH_Z - 1.2), earth)
 	Props.box(self, Vector3(26.0, 0.04, 1.4), Vector3(LANE_X, 0.02, TRENCH_Z + 0.4), Color("2a241e"))     # kazılan hendek (koyu)
+	Props.box(self, Vector3(26.0, 0.04, 0.8), Vector3(LANE_X, 0.02, DIG_Z - 0.8), Color("2a241e"))      # kazıcıların önünde açılan çukur (koyu)
+	Props.box(self, Vector3(8.0, 0.04, 0.8), Vector3(LANE_X, 0.02, DIG_FWD_Z - 0.8), Color("2a241e"))   # öne sürülmüş iki kazıcının çukuru
 	for k in 9:
 		var gx := LANE_X - 12.0 + k * 3.0
 		var g := Props.cyl(self, 0.42, 0.9, Vector3(gx, 0.83, TRENCH_Z - 1.2), Color("8a7450"), Vector3.ZERO, 10)
@@ -125,7 +129,10 @@ func _build() -> void:
 	for i in 6:
 		var dg := Person.new({"coat": [Color("8a6a4a"), Color("6a4a3a"), Color("7a5a3a")][i % 3], "pants": Color("e8e0d0"), "hat": "turban",
 			"mustache": true, "beard": i % 2 == 0})
-		dg.position = Vector3(LANE_X - 10.0 + i * 4.0, 0.0, TRENCH_Z + 0.6)
+		# Kazıcılar kazı yerinin önünde, oyuncunun yoluna 3,6 m yakın (alet 14 m'den okunmuyordu); önlerinde koyu çukur şeridi
+		# (ortadaki ikisi, i 2 ve 3, öne sürülmüş bir kazı ağzında: oyuncu köprüden inip siper önüne gelirken 4-5 m'den alet okunur)
+		dg.position = Vector3(LANE_X - 10.0 + i * 4.0, 0.0, DIG_FWD_Z if i == 2 or i == 3 else DIG_Z)
+		dg.set_meta("spawn_z", TRENCH_Z + 2.1)      # çarpışmada rakipler özgündeki yerlerinden (set ardından) koşar
 		dg.rotation.y = PI
 		dg.set_meta("no_talk", true)
 		add_child(dg)
@@ -364,7 +371,7 @@ func _fight() -> void:
 	# Kazıcılar küreği bırakır; yerlerinden kılıçlılar koşar (WaveRunner)
 	var from: Array = []
 	for dg in diggers:
-		from.append(dg.global_position + Vector3(0, 0, 1.5))
+		from.append(Vector3(dg.global_position.x, dg.global_position.y, float(dg.get_meta("spawn_z", dg.global_position.z + 1.5))))
 		dg.queue_free()
 	diggers.clear()
 	player.frozen = false

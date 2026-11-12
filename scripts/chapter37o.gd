@@ -66,6 +66,7 @@ var _plank: Node3D
 var _plank_carried: Node3D
 var _barrels: Array[Node3D] = []
 var _hook: Node3D
+var _lose_strokes := 0      # yalnız autotest lose botu: her 4. vuruş bozuk (rastgele yerine deterministik)
 var _hook_target := -1
 var _pull := 0
 var _bal := 0.0
@@ -78,8 +79,11 @@ var _haulers: Array[Soldier] = []
 var _haul_far: MeshInstance3D
 var _haul_near: MeshInstance3D
 var _haul_held := false
+var _haul_miss := false      # ıska: elden yere düşen kancaya sarkan ip (yakın parça kenevir tüp)
+var _haul_anchor := Vector3.ZERO
 var _sallying := false
 var _haul_from := Vector3.ZERO
+const HAUL_MIN_DIST := 2.4      # ip çeken azabın kameraya en yakın yeri (m)
 const HAUL_L := Vector3(-0.05, -0.14, -0.52)
 const HAUL_R := Vector3(0.05, -0.3, -0.45)
 ## Ellerdeki yakın ip kameranın çerçevesinde kurulur (baş sallanınca ağ yeniden kurulmaz); uzak parçanın son ucu
@@ -537,7 +541,9 @@ func _stockade() -> void:
 	for i in 3:
 		var s := squad[3 + i]
 		s.visible = true
-		s.position = Vector3(-1.6 + i * 1.6, _floor_y(-1.6 + i * 1.6, 24.0), 24.0)      # dilin görünen yüzü
+		# Dilin görünen yüzü; bir metre arkada (z 25): oyuncunun (z 22,6) 1,4 m ardındaki saldırı yeri z 24'tü, Cenevizli düellocu
+		# orada duran azabın üstüne biniyordu (VISAUDIT overlap, 37o lose ~%3-6)
+		s.position = Vector3(-1.6 + i * 1.6, _floor_y(-1.6 + i * 1.6, 25.0), 25.0)
 		s.rotation.y = PI
 		s.pose = "stand"      # özgünde "pull": boşa (ipsiz) çekiyorlardı; yerleri ve çıkıştaki rolleri aynı
 	_make_haulers()
@@ -601,7 +607,8 @@ func _stockade() -> void:
 				meter.press()
 			while _strokes.size() > 0 and _hook != null:
 				var good: bool = _strokes.pop_front()
-				if GameState.autotest and lose and randf() < 0.5:
+				_lose_strokes += 1
+				if GameState.autotest and lose and _lose_strokes % 4 == 0:
 					good = false
 				_heave(good)
 		else:
@@ -678,10 +685,21 @@ func _throw_hook() -> void:
 	if best >= 0:
 		_haul_on(at)
 	else:
+		# Iska: elden yere düşen kancaya sarkan ip. Yakın parça kameraya bağlı kenevir tüp (elin önünde, 25 cm'den uzakta başlar),
+		# uzak parça ondan kancaya (düz şerit kameranın içinden geçip "damalı bant" gibi duruyordu)
 		_haul_make()
-		var hand: Vector3 = player.rig.socket.global_position if player.rig and player.rig.socket else from
-		Bogaz.rope(_haul_far, at, hand, 0.35)
+		_haul_miss = true
+		_haul_anchor = HAUL_R + Vector3(0, 0.03, 0)
+		var mcam := player.camera
+		var mdl := (mcam.global_basis.inverse() * (at - mcam.to_global(_haul_anchor))).normalized()
+		var mdown := mcam.global_basis.inverse() * Vector3.DOWN
+		_haul_near.set_meta("dl", mdl)
+		_haul_near.mesh = ThraceRoad.tube_mesh([_haul_anchor + mdl * 1.0, _haul_anchor, _haul_anchor + mdown * 0.2 + mdl * 0.05, _haul_anchor + mdown * 0.45], 0.009, Color("c8b080"))
+		_haul_near.visible = true
+		_far_join = Vector3.INF
+		_haul_far.set_meta("at", at)
 		_haul_far.visible = true
+		_haul_tick()
 	if best < 0:
 		var tw := _hook.create_tween()
 		tw.tween_interval(1.6)
@@ -707,13 +725,34 @@ func _haul_spots(i: int, from: Vector3) -> Array:
 	var d := Vector3(tgt.x - from.x, 0, tgt.z - from.z)
 	var ln := d.length()
 	d = d / ln if ln > 0.01 else Vector3.FORWARD
+	var yaw := atan2(d.x, d.z)
+	var side := Vector3(d.z, 0, -d.x)
 	var out: Array = []
-	for zt: float in [20.75, 18.8, 18.0]:
-		var k := out.size()
-		var p := from + d * ((from.z - zt) / maxf(0.2, -d.z))
-		p.x += float([0.62, -0.6, 0.5][k])
-		p.z = zt
-		out.append([Vector3(p.x, _floor_y(p.x, p.z), p.z), atan2(d.x, d.z)])
+	for k in 3:
+		# Kameraya en az HAUL_MIN_DIST (düşman gibi üstüne binmesin); sıra basamaklara hizalı, öndekinden ≥0,9 m geride
+		var zt := minf([20.75, 18.8, 18.0][k], from.z - HAUL_MIN_DIST - 0.9 * k)
+		var best := Vector3.ZERO
+		var best_sp := INF
+		# Basamak kenarına denk gelirse ayak izi (±0,18 yan, ±0,22 ön-arka) düz kalana dek geriye (yüke doğru) kaydır
+		for step in 9:
+			var z := zt - 0.12 * step
+			var p := from + d * ((from.z - z) / maxf(0.2, -d.z))
+			p.x += float([0.38, -0.36, 0.3][k])
+			p.z = z
+			var ys: Array = []
+			for off: Vector3 in [side * 0.18, -side * 0.18, d * 0.22, -d * 0.22, Vector3.ZERO]:
+				ys.append(_floor_y(p.x + off.x, p.z + off.z))
+			var lo: float = ys.min()
+			var hi: float = ys.max()
+			if hi - lo < best_sp:
+				best_sp = hi - lo
+				var mean := 0.0
+				for y: float in ys:
+					mean += y
+				best = Vector3(p.x, mean / ys.size(), p.z)
+			if hi - lo <= 0.12:
+				break
+		out.append([best, yaw])
 	return out
 
 
@@ -766,6 +805,7 @@ func _haul_on(at: Vector3) -> void:
 		_haul_place(_haul_spots(_hook_target, _haul_from), false)
 	_far_join = Vector3.INF
 	_haul_make()
+	_haul_miss = false
 	_haul_held = true
 	player.hold_both(HAUL_L, HAUL_R)
 	_haul_far.visible = true
@@ -799,6 +839,7 @@ func _haul_off() -> void:
 		if is_instance_valid(s):
 			s.pose = "stand"
 			s.rope = []
+	_haul_miss = false
 	if _haul_held:
 		_haul_held = false
 		player.release_both()
@@ -811,17 +852,20 @@ func _haul_off() -> void:
 ## oynayınca kurulur. Azaplar yerindeyse iki eli ipin üstünde ("haul"), yürürken ayakta; kancanın ömrü boyunca yer
 ## değiştirmezler (oyuncu taştan kaçıp 0,6 m'den çok yana geçerse yeni yerlerine yürürler).
 func _haul_tick() -> void:
-	if not _haul_held or _haul_far == null:
+	if not (_haul_held or _haul_miss) or _haul_far == null:
 		return
 	var at: Vector3 = _haul_far.get_meta("at")
 	var cam := player.camera
 	_near_root.global_transform = cam.global_transform
 	var dl: Vector3 = _haul_near.get_meta("dl", Vector3.FORWARD)
-	var hi := cam.to_global(HAUL_L + Vector3(0, 0.03, 0))
-	var join := cam.to_global(HAUL_L + Vector3(0, 0.03, 0) + dl * 0.9)
+	var anchor := _haul_anchor if _haul_miss else HAUL_L + Vector3(0, 0.03, 0)
+	var hi := cam.to_global(anchor)
+	var join := cam.to_global(anchor + dl * 0.9)
 	if _far_join.distance_to(join) > 0.1:
 		_far_join = join
-		Bogaz.rope(_haul_far, at, join, 0.0)
+		Bogaz.rope(_haul_far, at, join, 0.25 if _haul_miss else 0.0)
+	if _haul_miss:
+		return
 	if Vector2(player.global_position.x - _haul_from.x, player.global_position.z - _haul_from.z).length() > 0.6 and absf(player.global_position.x) < 3.0:
 		_haul_from = player.global_position
 		_haul_place(_haul_spots(_hook_target, _haul_from), false)

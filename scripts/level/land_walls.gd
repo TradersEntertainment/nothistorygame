@@ -775,11 +775,18 @@ func _wear_props(st: SurfaceTool, gy: Callable) -> void:
 	# Oyuncunun peribolosta en çok baktığı yerde (depo–gedik yolunun iki yanı, dış surun dibi) birer sedye, kova ve kırık
 	# merdiven: rastgele dağılımda hiçbir karede seçilmiyorlardı
 	var fixed := [["stretcher", Vector3(-5.2, 0, 9.2), 0.4], ["bucket", Vector3(4.2, 0, 10.6), 1.1], ["ladder", Vector3(-7.2, 0, 12.7), 1.52],
-		["stretcher", Vector3(14.5, 0, 9.6), -0.3], ["bucket", Vector3(-3.6, 0, 12.9), 0.2]]
+		["stretcher", Vector3(14.5, 0, 9.6), -0.3], ["bucket", Vector3(-3.6, 0, 12.9), 0.2],
+		# Her bölümün açılış yürüyüşünün 2-3 m yanı (3-6 m önde, yürüme çizgisine yan): bölüm 20 (depodan gedike), 22o ve 26o (ova),
+		# 36b (köprü ağzından siper kazısına). Yerde yassı, çarpışmasız; yolu kapatmaz
+		["stretcher", Vector3(7.3, 0, 10.2), 0.35], ["bucket", Vector3(4.6, 0, 9.4), 0.5], ["ladder", Vector3(2.6, 0, 7.3), 1.0],
+		["stretcher", Vector3(8.4, 0, 45.2), 0.5], ["bucket", Vector3(0.6, 0, 47.3), 0.3], ["ladder", Vector3(1.4, 0, 43.2), 1.5],
+		["stretcher", Vector3(4.2, 0, 39.6), 0.9], ["bucket", Vector3(2.6, 0, 41.6), 0.2], ["ladder", Vector3(6.0, 0, 42.5), 1.2],
+		["stretcher", Vector3(-26.9, 0, 42.8), 0.3], ["bucket", Vector3(-21.3, 0, 43.6), 1.2], ["ladder", Vector3(-27.6, 0, 39.3), 1.5]]
 	for f: Array in fixed:
 		var p: Vector3 = f[1]
 		if not _wear_free(p.x, p.z):
 			continue
+		p.y = float(gy.call(p.x, p.z))      # zemin yüksekliğine otursun (ova ve hendek yamacı 0 değil)
 		var b := Basis(Vector3.UP, float(f[2]))
 		match str(f[0]):
 			"stretcher":

@@ -83,7 +83,8 @@ func _process(delta: float) -> void:
 			_tip_pot()
 			_live = fight.pour_from(_pot.global_position + Vector3(0, 0.05, 0.25), foot, 1) > 0.0
 		else:
-			_live = fight.pour(cauldron, foot, 1) > 0.0
+			# Kazan o anda ambiyans dökümüyle (chapter26 _pour_loop) dökülüyorsa da şerit canlı sayılır (yarış: 26o lose)
+			_live = fight.pour(cauldron, foot, 1) > 0.0 or float(cauldron["t"]) >= 0.0
 	if _poured and _live and not _hurt and _t >= WARN + HIT_FROM and _t <= WARN + HIT_TO:
 		if player.ladder == ladder and absf(player.ladder_side) < SAFE_SIDE:
 			_hurt = true

@@ -1,0 +1,72 @@
+# Ham test satırları (docs/_kanit_dp6)
+
+## Başsız regresyon (final ağaç; her satır bir koşu)
+AUTOTEST PASS chapter=0 variant= froze=true
+AUTOTEST PASS chapter=20 variant= outcome=20.1 repair=10 knocks=0 arrows=true gun=3/4 gunner=3/3 niko=0
+AUTOTEST PASS chapter=20 variant= outcome=20.1 repair=10 knocks=0 arrows=true gun=3/4 gunner=3/3 niko=0
+AUTOTEST PASS chapter=20 variant= outcome=20.1 repair=10 knocks=0 arrows=true gun=3/4 gunner=4/4 niko=0
+AUTOTEST PASS chapter=20 variant=hit outcome=20.1 repair=10 knocks=1 arrows=true gun=3/4 gunner=4/4 niko=0
+AUTOTEST PASS chapter=20 variant=idle outcome=20.3 repair=10 knocks=0 arrows=true gun=3/4 gunner=3/3 niko=0
+AUTOTEST PASS chapter=20 variant=late outcome=20.3 repair=10 knocks=0 arrows=false gun=3/4 gunner=3/3 niko=0
+AUTOTEST PASS chapter=20 variant=lose outcome=20.3 repair=10 knocks=0 arrows=true gun=3/4 gunner=0/2 niko=0
+AUTOTEST PASS chapter=20 variant=niko_idle outcome=20.1 repair=10 knocks=0 arrows=true gun=3/4 gunner=3/3 niko=5
+AUTOTEST PASS chapter=20 variant=tape outcome=20.2 repair=10 knocks=0 arrows=true gun=3/4 gunner=3/3 niko=0
+AUTOTEST PASS chapter=21 variant= outcome=21.1 bowls=2 tunnel=leb talk=talk trust=3 captive=false next=
+AUTOTEST PASS chapter=21 variant=captive outcome=21.1 bowls=2 tunnel=leb talk=talk trust=3 captive=true next=chapter22o.tscn
+AUTOTEST PASS chapter=21 variant=ear outcome=21.1 bowls=5 tunnel=leb talk=talk trust=3 captive=false next=
+AUTOTEST PASS chapter=21 variant=fight outcome=21.1 bowls=2 tunnel=fight talk=iron trust=0 captive=false next=
+AUTOTEST PASS chapter=21 variant=grant outcome=21.2 bowls=4 tunnel=leb talk=talk trust=3 captive=false next=
+AUTOTEST PASS chapter=21 variant=thermos outcome=21.1 bowls=5 tunnel=leb talk=talk trust=3 captive=false next=
+AUTOTEST PASS chapter=22 variant= outcome=22.1 hits=2 singed=false window=0.42-0.68
+AUTOTEST PASS chapter=22 variant=blakh_bad outcome=22.3 hits=0 singed=false window=0.46-0.64
+AUTOTEST PASS chapter=22 variant=blakh_ok outcome=22.1 hits=2 singed=false window=0.36-0.74
+AUTOTEST PASS chapter=22 variant=brow outcome=22.2 hits=2 singed=true window=0.42-0.68
+AUTOTEST PASS chapter=22 variant=cologne outcome=22.1 hits=2 singed=false window=0.42-0.68
+AUTOTEST PASS chapter=22 variant=early outcome=22.3 hits=0 singed=false window=0.42-0.68
+AUTOTEST PASS chapter=22 variant=miss outcome=22.3 hits=0 singed=false window=0.42-0.68
+AUTOTEST PASS chapter=22o variant= outcome=22O.1 saved=3 gun=3/4 warn=3 carry=0.75
+AUTOTEST PASS chapter=22o variant=blakh_bad outcome=22O.1 saved=3 gun=3/4 warn=3 carry=0.60
+AUTOTEST PASS chapter=22o variant=blakh_ok outcome=22O.1 saved=3 gun=3/4 warn=5 carry=0.75
+AUTOTEST PASS chapter=22o variant=late outcome=22O.2 saved=2 gun=3/4 warn=3 carry=0.75
+AUTOTEST PASS chapter=22o variant=lose outcome=22O.2 saved=2 gun=3/4 warn=3 carry=0.75
+AUTOTEST PASS chapter=22o variant=twins_late outcome=22O.1 saved=3 gun=3/4 warn=3 carry=0.75
+AUTOTEST PASS chapter=26 variant= outcome=26.1 water=3 repaired=3 cleared=2 world= gun=3/4 gunner=4/4
+AUTOTEST PASS chapter=26o variant= outcome=26.1 water=3 ladders=3 gun=3/4 stones=1/1 gunner=3/3 oil=1/1 turgut=no
+AUTOTEST PASS chapter=26o variant=lose outcome=26.2 water=3 ladders=3 gun=3/4 stones=1/1 gunner=0/1 oil=0/1 turgut=no
+AUTOTEST PASS chapter=26o variant=nophoto outcome=26.2 water=3 ladders=3 gun=3/4 stones=1/1 gunner=6/6 oil=1/1 turgut=no
+AUTOTEST PASS chapter=26o variant=turgut outcome=26.1 water=3 ladders=3 gun=3/4 stones=1/1 gunner=4/4 oil=1/1 turgut=help
+AUTOTEST PASS chapter=26o variant=turgut_bad outcome=26.1 water=3 ladders=3 gun=3/4 stones=1/1 gunner=6/6 oil=1/1 turgut=yes
+AUTOTEST PASS chapter=28o variant= outcome=28O.1 stakes=4 slips=0 hit=true master=false roller_every=4.0 rollers=2
+AUTOTEST PASS chapter=28o variant=edirne outcome=28O.1 stakes=4 slips=0 hit=true master=true roller_every=3.0 rollers=3
+AUTOTEST PASS chapter=28o variant=edirne_ok outcome=28O.1 stakes=4 slips=0 hit=true master=false roller_every=6.0 rollers=1
+AUTOTEST PASS chapter=28o variant=lose outcome=28O.2 stakes=4 slips=1 hit=true master=false roller_every=4.0 rollers=2
+AUTOTEST PASS chapter=36 variant= outcome=36.1 burned=3 fights=1 kills=5
+AUTOTEST PASS chapter=36 variant=leave outcome=36.2 burned=3 fights=1 kills=4
+AUTOTEST PASS chapter=37o variant= outcome=37O.1 beats=12/16 arrows=0 falls=0 barrels=5/5 cuts=0 stones=0 slips=0 burns=0 duel=true caught=0
+AUTOTEST PASS chapter=37o variant=trespass outcome=37O.1 beats=13/16 arrows=0 falls=0 barrels=5/5 cuts=0 stones=0 slips=0 burns=0 duel=true caught=1
+
+## 37o lose x60 (final ağaç): PASS sayısı / FAIL / VISAUDIT / ARMAUDIT
+60 / 0 / 0 / 0
+     30 AUTOTEST PASS chapter=37o variant=lose outcome=37O.2 beats=5/16 arrows=0 falls=1 barrels=2/5 cuts=1 stones=0 slips=0 burns=0 duel=false caught=0
+     20 AUTOTEST PASS chapter=37o variant=lose outcome=37O.2 beats=4/16 arrows=0 falls=1 barrels=2/5 cuts=1 stones=0 slips=0 burns=0 duel=false caught=0
+      6 AUTOTEST PASS chapter=37o variant=lose outcome=37O.2 beats=5/16 arrows=0 falls=1 barrels=2/5 cuts=1 stones=0 slips=0 burns=1 duel=false caught=0
+      4 AUTOTEST PASS chapter=37o variant=lose outcome=37O.2 beats=4/16 arrows=0 falls=1 barrels=2/5 cuts=1 stones=0 slips=0 burns=1 duel=false caught=0
+
+## 26o lose x40 (final ağaç): PASS / FAIL / VISAUDIT / ARMAUDIT
+40 / 0 / 0 / 0
+     30 AUTOTEST PASS chapter=26o variant=lose outcome=26.2 water=3 ladders=3 gun=3/4 stones=1/1 gunner=0/1 oil=0/1 turgut=no
+     10 AUTOTEST PASS chapter=26o variant=lose outcome=26.2 water=3 ladders=3 gun=3/4 stones=1/1 gunner=0/2 oil=0/1 turgut=no
+
+## Denetim satırı taraması (reg klasörü; WARN_FX_STUCK, WARN_FLY_ITEM, VISAUDIT, WARN_VOID_TELEPORT, WALKTHRU, ARMAUDIT, HELDAUDIT, LOOKAUDIT backturn, JOURNEY_*, SCRIPT ERROR)
+(yok)
+
+## RINFO (37o) e551de84 -> son hal
+D37O_T_01        n=1/1 draws 4156->4011 (-3.5%) tri 3154k->3225k (+2.3%)  ilk4: draws -3.5% tri +2.3%
+D37O_T_02        n=1/1 draws 3925->3648 (-7.1%) tri 5729k->5727k (-0.0%)  ilk4: draws -7.1% tri -0.0%
+D37O_AB_02       n=12/11 draws 4401->4289 (-2.5%) tri 2994k->3096k (+3.4%)  ilk4: draws -3.1% tri +2.9%
+D37O_T_PLANK     n=5/5 draws 3992->3834 (-4.0%) tri 2991k->2954k (-1.2%)  ilk4: draws -4.8% tri +0.1%
+D37O_T_03        n=19/34 draws 5061->4330 (-14.4%) tri 3987k->3887k (-2.5%)  ilk4: draws -2.6% tri +5.6%
+D37O_AZ_01       n=10/10 draws 4660->4700 (+0.8%) tri 5347k->5367k (+0.4%)  ilk4: draws +0.4% tri +0.8%
+D37O_N_END       n=1/1 draws 5005->4634 (-7.4%) tri 3338k->3443k (+3.1%)  ilk4: draws -7.4% tri +3.1%
+
+## Olcum: azap uzakligi/kadraj payi (HAULMETRIC), ayak izi (SPOTPROBE) icin rapor.md'ye bakiniz.

@@ -54,6 +54,7 @@ func _ready() -> void:
 	player = Player.new()
 	add_child(player)
 	player.frozen = true
+	player.hands_free = true      # açılışta el boş (eller merdiven, taş, tüfek işinde; elde leblebi dikilmesin); çantadan seçilebilir
 	player.focus_changed.connect(_on_focus)
 	player.interacted.connect(_on_interact)
 	hud.set_fez(GameState.flags.get("fez", true))
