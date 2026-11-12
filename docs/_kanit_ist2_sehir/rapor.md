@@ -13,8 +13,8 @@ deniz, gök, ışık dünya dalından; IstDunya `IstSehir.attach_v2`'yi çağır
   (sonda + denetim).
 - Eski dünya: `IstSehir.enabled` varsayılanı **false** (eski World1453 eski hâliyle; v2 kendi girişinden açar).
 - Ölçek: anıtlar k = 0,5 (`IstGeo.w(e, n)`), evler/sokaklar 1:1, uzun hatlar gerçek uzunluk × 0,5.
-- Sayılar (son koşu): **4 003 ev** (2 830 sıra), 638 sokak, 1 199 doku öğesi (bostan/bağ/tarla/bahçe/harabe/99 mahalle
-  kilisesi-şapel), 12 meydan (kuyu/çeşme), 452 sur dilimi + köşe kulesi, ~95 anıt kaydı.
+- Sayılar (son koşu, IstDunya ile): **3 984 ev** (2 813 sıra), 630 sokak, 1 199 doku öğesi (bostan/bağ/tarla/bahçe/harabe/
+  76 mahalle kilisesi-şapel), 15 meydan (kuyu/çeşme), 451 sur dilimi + köşe kulesi, ~95 anıt kaydı.
 - Bütçe (tur 5, IstDunya ile): uçuşta çizim 363–536 / üçgen ≤ 0,66 M; yerde çizim 192–678 / üçgen ≤ 1,22 M (sınırlar
   1 500 / 3,5 M ve 900 / 2,5 M). Tek işin süresi 6 ms'yi aşıyor (KISMEN, §5).
 
@@ -103,9 +103,9 @@ karelere doku: çarşı/sık/limanda mahalle kilisesi-şapel (kiliseler parças�
 bahçe, şapel; bostan/sur dibinde bostan, bağ, buğday, çayır; harabede kiliseler parçasının harabe tipleri (tonoz, kemer,
 sütun, sarmaşık) + `IstEvler.build_harabe`. Sık dokunun içindeki küçük boşluklar meydan (kuyu ya da çeşme: ayrinti parçası).
 
-**Denetim (ISTAUDIT, 4 003 ev):** iç içe 0 · dar aralık (0 < aralık < 1,4 m, farklı sıralar) **27** · havada 0 ·
+**Denetim (ISTAUDIT, son koşu, 3 984 ev):** iç içe 0 · dar aralık (0 < aralık < 1,4 m, farklı sıralar) **14** · havada 0 ·
 gömülü arka cephe (> 1,0 m) 0 · çatı yolu olmayan sıra 0 (her sıranın ilk evi ≥ 6 m dükkânlı ev: sandık 1,0 → tente 2,2 →
-üst kat duvarı → çatı, `IstEvler.climbs`). Dar aralık 27 (%0,7; halka 2,4 → 2,9 m ile 92'den indi): sokak köşelerinde iki sıranın
+üst kat duvarı → çatı, `IstEvler.climbs`). Dar aralık 14 (%0,4; halka 2,4 → 2,9 m ile 92'den indi): sokak köşelerinde iki sıranın
 arka/yan köşeleri (KISMEN). Zeminde delik / kapalı cep sayımı (`city_audit`'in
 v2 uyarlaması): **YAPILMADI** (ışın ızgarası yerine taban dikdörtgenleriyle denetim yazıldı; beş mahallede ayrı koşu yok).
 Çatıdan çatıya geçiş: bitişik sıralarda saçak farkı ≤ 2,4 m (sıra boyunca düşü sınırı) — oyuncuyla BAKILMADI.
@@ -158,8 +158,8 @@ ayrı paket).
 ## 7. Denetim ve kanıt — KISMEN
 
 Kareler (`docs/_kanit_ist2_sehir/`, hepsi tur 5, IstDunya ile): `tur_5_galata` (Peter'in ilk karesi: Galata üstünden
-Haliç, zincir, karşıda deniz surları ve dolu mahalleler, uzakta Ayasofya, adalar), `tur_5_kara_disi`, `tur_5_ucus70`,
-`tur_5_tepe` (bütün yarımada), `yer_5_mese`, `yer_5_hipodrom`, `yer_5_bostan_koy`, `yer_5_sur_dibi`,
+Haliç, zincir, karşıda deniz surları ve dolu mahalleler, uzakta Ayasofya, adalar), `tur_5_ucus70`,
+`tur_5_tepe` (bütün yarımada), `tur_6_gece_ucus70`, `eser_15m_pafta`, `yer_5_mese`, `yer_5_hipodrom`, `yer_5_bostan_koy`, `yer_5_sur_dibi`,
 `yer_5_halic_iskele`, `yer_5_ayasofya_bati`, `yer_5_cati_0`. Kendi bakışım:
 
 - `yer_5_mese`: revaklı Mese, iki yanda dükkânlar ve cumbalı evler, ortada kaide sırası — iyi.
@@ -176,9 +176,17 @@ Haliç, zincir, karşıda deniz surları ve dolu mahalleler, uzakta Ayasofya, ad
   su değil); büyük olasılıkla kurulmamış bir arazi parçası ya da bir çukur kesimi — kaynağı BAKILMADI (dünya dalına bildirim).
   Tur 4'teki (sondanın kaba arazisi) Yenikapı gölü IstDunya'lı karede yok.
 - Önceki turda `galata` uzak katmanında görülen koyu eğik düzlem tur 5'te yok.
-- `tur_5_gece_galata` (gece, `--gece`; ışık/gök IstDunya'nın gecesi): şehir ve surlar okunuyor; **ev pencerelerinde ve
-  sokakta ışık yok** (ev ağları pişirilirken ışıklı parçalar atılıyor; v2'de gece kandil/pencere ışığı eklenmedi —
-  YAPILMADI). Gece çizim/üçgen: 365–536 / ≤ 0,64 M.
+- `tur_6_gece_ucus70` (gece, `--gece`; gök/ışık IstDunya'nın gecesi): şehir, surlar, Haliç okunuyor; evlerin ~%40'ında
+  üst katta yanan pencere (gece katmanı: 400 m hücre başına tek MultiMesh, 900 m'ye kadar). Gece çizim/üçgen:
+  374–536 / ≤ 0,65 M (ışıklar çizimi artırmadı). Sokak kandili/meşale yok (KISMEN).
+- `eser_15m_pafta` (16 eser, 15 m üstünden, IstDunya ile): Ayasofya, Hipodrom, Konstantin Forumu, Havariyun, Bozdoğan,
+  Galata Kulesi, Blakherna Sarayı, Romanos Kapısı, Aya İrini, Küçük Ayasofya, Khora, Pammakaristos, Arkadius, Studios,
+  Tauri, Eugenios. Bakışım: hepsi tanınır biçimde ve yerinde; tur 5'te bulunan üç kusur düzeltildi (son karede yok):
+  **Arkadius Sütunu ve Studios deniz surunun dibine düşmüştü** (dizindeki n değerleri güneyde 300–450 m sapık; enlem/
+  boylamdan düzeltildi), **Mese'nin revaklı dilimleri Konstantin ve Tauri forumlarının içinden geçiyordu** (dilim beş
+  noktada anıt tabanına karşı sınanıyor). Kalan: **halic/Eugenios: modülün açık mavi deniz plakası kıyının biçimine
+  uymuyor, bir kısmı karanın üstünde** (parça kusuru: halic; kare `eser_15m_pafta`, son satır sağda). Tepeden kareler
+  (16 × "tepe") alındı ve bakıldı: üstü açık kutu ya da çatısız eser yok (Blakherna Sarayı'na çatı tur 3'te eklendi).
 
 Eser kareleri (15 m ve tam tepe): tur 2'de Ayasofya,
 Blakherna, Konstantin (bakıldı: Ayasofya ve Konstantin Forumu iyi; Blakherna Sarayı düz kutu → çatı eklendi);
@@ -207,7 +215,10 @@ ağaç, doku yok (sokak geçebilir).
 - **guneybati/altinkapi** ile **surlar/altin_kapi** aynı yer (biri seçildi).
 - **surlar**: kapıların üstünde yürüme yolu sürekliliği ışınla kopuk (KANITSIZ); kuleler yürüme yolunu 3–4 m keser.
 - **kuzeybati_semt** lod 2 kurulumu 148 ms, **forumlar** lod 2 ~100 ms (uzak siluet için çok pahalı).
-- **galata**: uzak katmanda koyu eğik düzlem (kare `tur_4_galata`, solda).
+- **galata**: tur 4'te uzak katmanda koyu eğik düzlem görüldü; tur 5'te (IstDunya ile) yok — çözüldü mü, ışık mı: KANITSIZ.
+- **halic** (Eugenios): deniz plakası kıyıya uymuyor, kısmen karada.
+- **ISTANBUL_YERLER.csv** (araştırma): güney kıyısı yerlerinin kuzey değerleri 300–450 m güneye kaymış (Studios, Arkadius,
+  Psamathia; YER2'de düzeltildi).
 - **Blachernae.shell_parts("palace")** üstü düz kutu (v2'de çatı eklendi; ortak dosyaya dokunulmadı).
 
 ## 11. BAKILMADI / sıradaki
@@ -217,7 +228,7 @@ ağaç, doku yok (sokak geçebilir).
 - Oyuncuyla (CharacterBody) sur üstü yürüyüş, çatıya çıkış, çatıdan çatıya geçiş: BAKILMADI (yalnız ışın ve ölçü).
 - `city_audit`'in v2'de beş mahallede delik/kapalı cep ışın taraması: YAPILMADI.
 - Tek iş > 6 ms: parça kurucuları bölünemiyor; çözüm önerisi: uzak/orta katmanların önceden pişirilip diske yazılması.
-- Eser karelerinin hepsi (40 eser × 2): tur 4'te IstDunya'lı koşuyla sürüyor; bakılanlar aşağıda listelenir.
+- Eser kareleri: 16 eser (ilk dokuz dahil) × 2 bakıldı; kalan 24 yan görev eseri (`gorev: true`) BAKILMADI.
 
 ## 12. Kurallara uygunluk notu
 

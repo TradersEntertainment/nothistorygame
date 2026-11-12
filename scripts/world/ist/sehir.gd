@@ -48,7 +48,7 @@ static var YER := {
 	# taşıyor (city_check: devriye "evin içinde"); bu turda eskisi kalır
 	"konstantin": {"lm": "column", "quest": false, "skip": true, "dy": -1.0},
 	"tauri": {"lm": "forum_tauri", "dy": -0.5},
-	"arkadius": {"e": -3444.0, "n": -956.0},
+	"arkadius": {"e": -3419.0, "n": -678.0},       # Cerrahpaşa 41,0025 / 28,9395 (dizindeki n −956 kıyıya düşüyordu)
 	"myrelaion": {"e": -1890.0, "n": -400.0},
 	"markianos": {"e": -2243.0, "n": 902.0},
 	"philadelphion": {"e": -1739.0, "n": 545.0},
@@ -925,7 +925,7 @@ static var YER2 := {
 	# forumlar: dizindeki yerler (ISTANBUL_YERLER.csv) ve bilinen enlem/boylamlar (kestirim)
 	"konstantin": {"e": -756.0, "n": -11.0},
 	"tauri": {"e": -1554.0, "n": 211.0},
-	"arkadius": {"e": -3444.0, "n": -956.0},
+	"arkadius": {"e": -3419.0, "n": -678.0},       # Cerrahpaşa 41,0025 / 28,9395 (dizindeki n −956 kıyıya düşüyordu)
 	"myrelaion": {"e": -1890.0, "n": -400.0},
 	"philadelphion": {"e": -1739.0, "n": 545.0},
 	"kapitolion": {"e": -1800.0, "n": 470.0},
@@ -955,12 +955,12 @@ static var YER2 := {
 	"aetios": {"e": -3420.0, "n": 1880.0},
 	"kaligaria": {"e": -2980.0, "n": 2760.0},
 	# guneybati: Studios (İmrahor) dizinden, Andreas (Koca Mustafa Paşa), Mokios (Altımermer), Samatya
-	"studios": {"e": -4495.0, "n": -1790.0},
+	"studios": {"e": -4368.0, "n": -1345.0},       # İmrahor 40,9965 / 28,9282 (dizindeki n −1790 deniz surunun dibi)
 	"andreas": {"e": -3940.0, "n": -570.0},
 	"mokios": {"e": -3600.0, "n": -450.0},
-	"psamathia": {"e": -3377.0, "n": -1124.0},
+	"psamathia": {"e": -3671.0, "n": -1345.0},
 	"peribleptos": {"e": -3050.0, "n": -1250.0},
-	"diomedes": {"e": -4500.0, "n": -1550.0},
+	"diomedes": {"e": -4600.0, "n": -1450.0},
 	"altinkapi": {"skip": true},                  # surlar/altin_kapi ile aynı yer: çifte yapı olurdu (surlarınki seçildi)
 	"kopru": {"e": -3150.0, "n": -500.0},
 	"degirmen": {"e": -3350.0, "n": -650.0},
@@ -972,8 +972,8 @@ static var YER2 := {
 	"sophia": {"kiyi": "marmara_suru"},
 	"bukoleon": {"e": -437.0, "n": -846.0, "kiyi": "marmara_suru"},
 	"kayikhane": {"kiyi": "marmara_suru"},
-	"balikci": {"e": -3600.0, "n": -1300.0, "kiyi": "marmara_suru"},
-	"agsehpa": {"e": -3640.0, "n": -1290.0, "kiyi": "marmara_suru"},
+	"balikci": {"e": -3700.0, "n": -1420.0, "kiyi": "marmara_suru"},
+	"agsehpa": {"e": -3740.0, "n": -1410.0, "kiyi": "marmara_suru"},
 	# halic: modülün konumları Sarayburnu'nda kümelenmişti (doğu −520…470); gerçek sırayla kıyı boyunca (kestirim)
 	"halic_yahudi": {"e": -1193.0, "n": 957.0, "kiyi": "halic_suru"},
 	"halic_iskele": {"e": -1025.0, "n": 900.0, "kiyi": "halic_suru"},
@@ -982,7 +982,7 @@ static var YER2 := {
 	"halic_pisa_amalfi": {"e": -605.0, "n": 840.0, "kiyi": "halic_suru"},
 	"halic_neorion": {"e": -479.0, "n": 801.0, "kiyi": "halic_suru"},
 	"halic_ceneviz": {"e": -353.0, "n": 760.0, "kiyi": "halic_suru"},
-	"halic_eugenios": {"e": -150.0, "n": 790.0, "kiyi": "halic_suru"},
+	"halic_eugenios": {"e": -150.0, "n": 790.0, "kiyi": "halic_suru", "ic": 4.0},   # kule kıyıda, zincir ucu suda
 	"halic_petrion": {"e": -2520.0, "n": 2046.0, "hat": "halic_suru"},
 	"halic_fener": {"e": -2478.0, "n": 2213.0, "hat": "halic_suru"},
 	"ayvansaray_iskele": {"kiyi": "halic_suru"},
@@ -1070,6 +1070,8 @@ func _place2_of(e: Dictionary) -> Dictionary:
 			var tur := String(data.get("tur", ""))
 			# liman suyun kenarına (sur dışı rıhtım), ötekiler surun içine (yarıçap + 10 m)
 			var ic := -(r * 0.6) if tur == "liman" else r + 10.0
+			if fix.has("ic"):
+				ic = float(fix["ic"])
 			w = sn["p"] - o * ic
 			yaw = atan2(o.x, o.y)               # Marmara parçaları: yerel +z denize
 			if String(e["mod"]).begins_with("halic") or String(e["mod"]).begins_with("kuzeybati"):
@@ -1440,7 +1442,12 @@ func _hatlar_v2() -> void:
 			var n := maxi(1, int(L / 70.0))
 			for k in n:
 				var mid := a + d * ((k + 0.5) * L / n)
-				if _near_item(mid, 6.0):
+				# dilimin hiçbir yeri bir anıtın (forum, sütun…) tabanına girmesin: beş noktada sına
+				var hit := false
+				for t in 5:
+					if _near_item(a + d * ((k + t / 4.0) * L / n), 4.0):
+						hit = true
+				if hit:
 					continue
 				var hl := minf(IstGeo.h(mid.x - d.x * L / n * 0.5, mid.y - d.y * L / n * 0.5), IstGeo.h(mid.x + d.x * L / n * 0.5, mid.y + d.y * L / n * 0.5))
 				var ln := L / n - 2.0
@@ -1762,6 +1769,14 @@ func _sehir_dokusu_v2() -> void:
 		var y := yf - 0.04
 		var xf := Transform3D(bas, Vector3(c.x, y, c.y))
 		_add(g0, g1, g2, "ev|%d|%s" % [v, String(h["tip"])], xf)
+		if gece and (n * 7 + v) % 5 < 2 and dm.y > IstEvler.GF + 0.5:
+			# gece: üst katta yanan bir pencere (cephe +z, cumbanın yüzünde)
+			var wx := (float((n * 13) % 3) - 1.0) * dm.x / 3.0
+			var wp := xf * Vector3(wx, IstEvler.GF + IstEvler.UF * 0.5, dm.z * 0.5 + IstEvler.OVER + 0.06)
+			var ck := Vector2i(floori(wp.x / CELL2), floori(wp.z / CELL2))
+			if not _isik.has(ck):
+				_isik[ck] = []
+			_isik[ck].append(Transform3D(bas, wp))
 		if y - lo > 0.15:
 			var drop := y - lo + 0.3
 			_add(g0, g1, g2, "kaide", Transform3D(bas.scaled(Vector3(dm.x, drop, dm.z)), Vector3(c.x, y - drop * 0.5 + 0.02, c.y)))
@@ -1844,6 +1859,7 @@ func _sehir_dokusu_v2() -> void:
 		nm += 1
 	_layers2(g0, g1, g2)
 	_far_doku(far)
+	_isiklar()
 	print("ISTEVLER2 ev=%d doku=%d meydan=%d hucre=%d" % [n, np, nm, _cells0.size()])
 
 
@@ -2052,6 +2068,27 @@ static func _mat_key(m: Material) -> String:
 			bm.vertex_color_use_as_albedo, bm.albedo_color if not bm.vertex_color_use_as_albedo else Color.WHITE, bm.next_pass != null]
 	_mkeys[m] = k
 	return k
+
+
+var _isik := {}
+
+## Gece pencere ışıkları: 400 m hücre başına tek MultiMesh (ışıklı, gölgesiz; 900 m'ye kadar)
+func _isiklar() -> void:
+	if _isik.is_empty():
+		return
+	var bm := BoxMesh.new()
+	bm.size = Vector3(0.8, 1.1, 0.04)
+	var m := StandardMaterial3D.new()
+	m.shading_mode = BaseMaterial3D.SHADING_MODE_UNSHADED
+	m.albedo_color = Color("ffc070")
+	m.emission_enabled = true
+	m.emission = Color("ffb050")
+	m.emission_energy_multiplier = 2.0
+	bm.material = m
+	for ck: Vector2i in _isik:
+		var mm := _mm(bm, _isik[ck])
+		mm.visibility_range_end = 900.0
+	_isik.clear()
 
 
 static var _kaide_mesh: Mesh

@@ -11,6 +11,7 @@ var out := "user://ist2_kare"
 var tur := 1
 var set_ := "hepsi"
 var gece := false
+var eser_sec: Array = []
 var cam: Camera3D
 var root: Node3D
 
@@ -25,6 +26,8 @@ func _ready() -> void:
 			set_ = a.substr(6)
 		elif a == "--gece":
 			gece = true
+		elif a.begins_with("--eser="):
+			eser_sec = Array(a.substr(7).split(","))
 	DirAccess.make_dir_recursive_absolute(out)
 	root = Node3D.new()
 	root.name = "IstV2"
@@ -297,7 +300,7 @@ func _eserler() -> void:
 		return
 	for it: Dictionary in s.items:
 		var d: Dictionary = it["data"]
-		if not String(it["id"]) in ESER_LISTE:
+		if not String(it["id"]) in (eser_sec if not eser_sec.is_empty() else ESER_LISTE):
 			continue
 		var pp: Vector3 = it["pos"]
 		var r := float(it["r"])
