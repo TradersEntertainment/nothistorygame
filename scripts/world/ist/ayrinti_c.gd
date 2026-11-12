@@ -29,7 +29,7 @@ const ITEMS := [
 	["tugla_yigini", "Tuğla yığını", 1.4, 0.9, 1.0, "kutu", "yapi"],
 	["kiremit_yigini", "Kiremit yığını", 1.4, 0.7, 0.8, "kutu", "yapi"],
 	["harc_teknesi", "Harç teknesi", 1.2, 0.5, 0.8, "kutu", "yapi"],
-	["yapi_iskelesi", "Sur onarım iskelesi", 4.6, 3.4, 1.6, "ozel", "yapi"],
+	["yapi_iskelesi", "Sur onarım iskelesi", 4.6, 4.4, 1.6, "ozel", "yapi"],
 	["cikrik_vinc", "Çıkrıklı taş vinci", 1.6, 3.6, 1.4, "ozel", "yapi"],
 	["yikik_duvar", "Yıkık duvar (basamaklı)", 3.2, 1.8, 0.7, "ozel", "harabe"],
 	["saban", "Saban", 1.8, 0.9, 0.5, "yok", "ciftlik"],
@@ -246,7 +246,7 @@ static func build_yapi_iskelesi(h: Node3D) -> void:
 	# iki katlı ahşap şantiye iskelesi: zemin, 1,6 m'de ilk platform, 3,2 m'de ikinci; sandık yığınıyla çıkılır
 	for sx in [-1.4, 1.4]:
 		for sz in [-0.7, 0.7]:
-			L.sol(h, Vector3(0.14, 3.4, 0.14), Vector3(sx, 1.7, sz), L.WOOD_D, Vector3.ZERO, "wood")
+			L.sol(h, Vector3(0.14, 4.4, 0.14), Vector3(sx, 2.2, sz), L.WOOD_D, Vector3.ZERO, "wood")
 	for y in [1.6, 3.2]:
 		L.sol(h, Vector3(3.0, 0.1, 1.6), Vector3(0, y, 0), L.PLANK, Vector3.ZERO, "wood")
 		L.b(h, Vector3(3.0, 0.07, 0.07), Vector3(0, y + 1.0, 0.75), L.WOOD)

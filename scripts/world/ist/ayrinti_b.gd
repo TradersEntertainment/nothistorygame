@@ -151,7 +151,7 @@ static func build_mancinik(h: Node3D) -> void:
 	for z in [-1.3, 1.3]:
 		L.b(h, Vector3(2.9, 0.2, 0.2), Vector3(0, 0.1, z), L.WOOD_D)
 	# kol: uzun taraf -z, kısa taraf +z (yarı kalkık)
-	L.rod(h, Vector3(0, 3.2, 0.7), Vector3(0, 1.1, -3.4), 0.2, L.WOOD_L)
+	L.rod(h, Vector3(0, 3.2, 0.7), Vector3(0, 1.1, -3.4), 0.32, L.WOOD_L)
 	L.rod(h, Vector3(0, 3.2, 0.0), Vector3(0, 3.5, 1.1), 0.18, L.WOOD_L)
 	L.b(h, Vector3(1.3, 1.2, 0.9), Vector3(0, 3.0, 1.55), L.WOOD_D, Vector3.ZERO, "wood")
 	for i in 4:
