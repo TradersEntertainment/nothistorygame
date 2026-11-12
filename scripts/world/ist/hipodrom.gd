@@ -8,7 +8,7 @@ extends RefCounted
 ## güney ucunda (+z) sphendone (yarım daire biçimli kavisli uç). Gerçekte uzun eksen KD–GB'dir (kestirim ~35°).
 ## k yalnız KÜTLEYİ ölçekler; basamak (0,4 × 0,9 m), kapı (2,2 m), yürüme yolu (≥ 1,4 m) gerçek boyda kalır.
 
-const K := IstHipoKit
+const K := preload("res://scripts/world/ist/hipodrom_kit.gd")
 
 # Gerçek ölçüler (metre). Kaynaklar: raporun başı. Kestirim işaretlileri rapor.md'de.
 const REAL_L := 430.0         # toplam uzunluk (kestirim; ~117 × ~430 m)
