@@ -356,6 +356,9 @@ def speak(r, lang, out, model, cast, tone):
         print(f"  UYARI {r['anahtar']} ({lang}): INLINE metni altyazıyla uyuşmuyor, düz metin okunuyor", flush=True)
         il = ""
     if il:
+        # Satır içi yönergeler duyguyu taşır ama mesafeyi bilmez: uzaktan söylenen replik yine bağırılarak okunur
+        if mesafe_of(r["anahtar"]) == "uzak" and not re.search(r"\[(shout|yell|scream|calling)", il):
+            il = ROL_BAGIR + " " + il
         return _speak([(r["konusmaci"], il)], r, out, model, cast, "")
     segs = segments(r["tr" if lang == "tr" else "en"], r["konusmaci"])
     # Sözü olmayan parça okunmaz: "...!" gibi yalnız noktalama (oyunda mırıltıyla çalınır)
