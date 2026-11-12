@@ -364,6 +364,9 @@ func _descend() -> void:
 		# Aşağı bakarken ağız genişler, tonozun karanlığı açılır (replik bu sırada)
 		var tw2 := create_tween()
 		tw2.tween_property(player, "global_position:y", crown - 1.1 - player.eye_height, 5.0).set_trans(Tween.TRANS_SINE)
+		# Ağzın altında karanlık açılırken kuyunun ışığı suya ve sütun diplerine biraz yayılır: sütunlar suyun üstünde
+		# durur, boşlukta asılı gibi değil (denetim 2, D4). Suya düşünce gözler yeniden karanlıkta (hayranlık anı korunur).
+		create_tween().tween_method(_set_ambient, 0.0, 0.38, 3.0).set_delay(1.0)
 		await hud.say("SPK_TOLGA", "D44B_T_DOWN")
 		if tw2.is_running():
 			await tw2.finished
@@ -375,6 +378,7 @@ func _descend() -> void:
 	fall.tween_property(player, "global_position:y", CisternLevel.WATER_Y - 1.25, 0.05 if GameState.autotest else 0.75).set_ease(Tween.EASE_IN)
 	await fall.finished
 	Audio.sfx("splash", -2.0, 0.8)
+	_set_ambient(0.0)
 	cis.call("beam_visible", fw_well, true)
 	cis.call("ring", fw + Vector3(1.2, 0, 0.4), 1.6, 1.8)
 	cis.call("ring", fw + Vector3(-0.8, 0, 1.3), 1.2, 1.5)
@@ -593,9 +597,9 @@ func _ev_fish() -> void:
 	add_child(mi)
 	var f := _fwd()
 	var side := Vector3(-f.z, 0, f.x)
-	var o := boat.global_position
-	# Yol: soldan pruvanın 4 m önüne, ortada 3,5 m, sağda kayığa kıvrılıp altına
-	var pts := [o + f * 4.2 - side * 4.6, o + f * 3.6 - side * 0.6, o + f * 3.2 + side * 2.2, o + f * 0.6 + side * 0.8]
+	# Yol KAYIĞA GÖRE (her karede kayığın o anki yerinden): kayık 2–3 m/sn giderken dünyaya sabit yol sürüyü hemen
+	# geride bırakıyordu. Soldan pruvanın 4 m önüne, ortada 3,6 m, sağda kayığa kıvrılıp altına.
+	var pts := [f * 4.2 - side * 3.6, f * 3.8 - side * 0.6, f * 3.4 + side * 1.8, f * 0.6 + side * 0.6]
 	var offs: Array[Vector3] = []
 	for k in n:
 		offs.append(Vector3(randf_range(-0.7, 0.7), 0.0, randf_range(-0.5, 0.5)))
@@ -613,7 +617,7 @@ func _ev_fish() -> void:
 		var k0 := t / dur
 		var seg := minf(k0 * 3.0, 2.999)
 		var si := int(seg)
-		var c: Vector3 = (pts[si] as Vector3).lerp(pts[si + 1], seg - si)
+		var c: Vector3 = boat.global_position + (pts[si] as Vector3).lerp(pts[si + 1], seg - si)
 		var dir: Vector3 = ((pts[si + 1] as Vector3) - (pts[si] as Vector3)).normalized()
 		var bs := Basis.looking_at(dir, Vector3.UP).rotated(Vector3.UP, PI)
 		var dive := smoothstep(0.62, 1.0, k0)
@@ -891,12 +895,16 @@ func _fall_slab(a: Vector3, b: Vector3, col: Color) -> void:
 	var len := _flat(b - a)
 	var slab := Props.box(cis, Vector3(0.8, 0.7, len), Vector3(mid.x, CisternLevel.IMPOST_Y + 1.6, mid.z), col)
 	slab.look_at_from_position(slab.position, Vector3(b.x, slab.position.y, b.z), Vector3.UP)
-	slab.rotate_object_local(Vector3.FORWARD, randf_range(-0.2, 0.2))
+	slab.rotate_object_local(Vector3.FORWARD, randf_range(-0.25, 0.25))
+	slab.rotate_object_local(Vector3.RIGHT, randf_range(-0.12, 0.12))
+	slab.material_override = cis.call("brick_mat")          # örme tuğla (düz turuncu kutu değil)
 	var tw := slab.create_tween()
-	tw.tween_property(slab, "position:y", CisternLevel.WATER_Y + 0.05, 0.9).set_ease(Tween.EASE_IN).set_trans(Tween.TRANS_QUAD)
+	# Suya gömülür: yalnız sırtı (≈ 0,15 m) su üstünde kalır
+	tw.tween_property(slab, "position:y", CisternLevel.WATER_Y - 0.2, 0.9).set_ease(Tween.EASE_IN).set_trans(Tween.TRANS_QUAD)
 	for k in 3:
-		var bit := Props.box(cis, Vector3(0.4, 0.3, 0.5), a.lerp(b, randf()) + Vector3(randf_range(-0.6, 0.6), CisternLevel.WATER_Y + 0.05, randf_range(-0.6, 0.6)),
+		var bit := Props.box(cis, Vector3(0.4, 0.3, 0.5), a.lerp(b, randf()) + Vector3(randf_range(-0.6, 0.6), CisternLevel.WATER_Y - 0.02, randf_range(-0.6, 0.6)),
 			col.lerp(Color("b8a890"), 0.4), Vector3(randf() * 40, randf() * 180, randf() * 40))
+		bit.material_override = cis.call("brick_mat")
 		bit.visible = false
 		get_tree().create_timer(0.9, false).timeout.connect(func(): if is_instance_valid(bit): bit.visible = true)
 
@@ -915,7 +923,7 @@ func _fall_drum(at: Vector3) -> void:
 	drum.global_position = Vector3(at.x, CisternLevel.WATER_Y + 2.6, at.z)
 	var tw := drum.create_tween().set_parallel()
 	tw.tween_property(drum, "rotation:x", PI * 0.5, 1.1).set_ease(Tween.EASE_IN).set_trans(Tween.TRANS_QUAD)
-	tw.tween_property(drum, "global_position:y", CisternLevel.WATER_Y + 0.05, 1.1).set_ease(Tween.EASE_IN).set_trans(Tween.TRANS_QUAD)
+	tw.tween_property(drum, "global_position:y", CisternLevel.WATER_Y - 0.14, 1.1).set_ease(Tween.EASE_IN).set_trans(Tween.TRANS_QUAD)
 
 
 ## Doruk: çöken gözün yarığından gün ışığı. Geniş huzme, tozlar; güçlü bir ışık sütun ormanını boydan boya aydınlatır,

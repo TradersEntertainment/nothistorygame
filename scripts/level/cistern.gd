@@ -1174,6 +1174,16 @@ func dust_material() -> StandardMaterial3D:
 	return _dust_mat
 
 
+var _debris_mat: ShaderMaterial
+
+
+## Çöken tonozun parçaları için tuğla malzemesi (düz renkli kutu güneşte "turuncu levha" gibi okunuyordu: denetim 2, D7)
+func brick_mat() -> ShaderMaterial:
+	if _debris_mat == null:
+		_debris_mat = _brick_shader(false, false)
+	return _debris_mat
+
+
 func marble_mat(col: Color) -> ShaderMaterial:
 	return _marble_single(col)
 
