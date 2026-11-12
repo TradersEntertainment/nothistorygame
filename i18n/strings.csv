@@ -85,7 +85,7 @@ HIKMET_ITEM_PHONE,Yeter de artar evlât. Orada şarj aleti yok ama priz de yok. 
 HIKMET_ITEM_LIGHTER,At cebine. İnsanoğlu ateşi bulmak için binlerce yıl çakmaktaşı çaktı; sen hazıra konuyorsun.,Take it. Mankind spent millennia discovering fire. You just bring the finished product.
 HIKMET_ITEM_BOOK,"Aç bak, 88. sayfada Fatih'e bıyık çizmişsin. Adamın zaten bıyığı vardı, sen ikinci kat çekmişsin!",Look at page 88. You drew a moustache on the Sultan. He already had one. You gave him a spare.
 HIKMET_ITEM_CHICKPEAS,"Hop, o benim gece leblebim! ...Tamam, al. Diplomasi için.","Don't touch those, that's my midnight snack. ...Fine. For diplomacy."
-HIKMET_ITEM_POWERBANK,Onu kendi icadım olan şarj aletiyle doldurdum. Sadece bir kere alev aldı.,I charged that myself. With a charger of my own design. It only caught fire the once.
+HIKMET_ITEM_POWERBANK,Onu kendi icadım şarj aletiyle doldurdum. Topu topu bir kere alev aldı.,I charged that myself. With a charger of my own design. It only caught fire the once.
 HIKMET_ITEM_TAPE,Bu makinenin yüzde altmışını bu bant tutuyor. Kalanı umut.,Sixty percent of that machine is this. The rest is hope.
 HIKMET_ITEM_THERMOS,"Demleme çay, iki şekerli. Orada çay yoksa bile seninki var.","Proper brewed tea, two sugars. History might not have tea yet. You do."
 HIKMET_ITEM_SELFIE,"Tarihi yazanlarla fotoğraf çekil. Dönünce kimse inanmaz, montaj derler. Olsun.","Take selfies with the history makers. Nobody'll believe you, but still."
@@ -452,7 +452,7 @@ D4A_ITEM_PHONE_1,İçinde minik adam var!,There's a tiny man inside!
 D4A_ITEM_PHONE_2,Minik adam değil. Minik Hasan.,Not a tiny man. A tiny Hasan.
 D4A_ITEM_PHONE_3,Hasan benim!,*I'm* Hasan!
 D4A_ITEM_LIGHTER_1,Büyücü!,Sorcerer!
-D4A_ITEM_LIGHTER_2,"Büyücü değil, çakmaktaşı bu. Sadece küçük ve hızlı.","It's flint, you dolt. Just small and quick."
+D4A_ITEM_LIGHTER_2,"Ne büyücüsü be, çakmaktaşı bu. Ufak ama tez çakar.","It's flint, you dolt. Just small and quick."
 D4A_ITEM_BOOK_1,Resimli kitap! Bizi de çizmişler mi?,A picture book! Did they draw us?
 D4A_ITEM_BOOK_2,"Bak, yeniçeri. Hangisi sensin?","Look, Janissaries. Which one's you?"
 D4A_ITEM_BOOK_3,Soldaki.,Left one.
@@ -655,7 +655,7 @@ UI_CH6A_REFUSE_LETTER,Almayayım,I'd rather not
 UI_CH6B_HINT,"'Niko, Theodoros hangi odada?'","'Niko, which room is Theodoros in?'"
 UI_CH6B_DUNGEON,Kançılaryanın zindanı · Öğleden sonra,The chancery dungeon · Afternoon
 UI_CH6B_WARN,Uyar: '29 Mayıs'ta yaralanacaksınız. Surları bırakmayın.',Warn him: 'On the 29th of May you'll be wounded. Don't leave the walls.'
-UI_CH6B_SILENT,Sus: 'Sadece... dikkatli olun.',Keep quiet: 'Just... be careful.'
+UI_CH6B_SILENT,Sus: 'Şey... dikkatli olun.',Keep quiet: 'Just... be careful.'
 UI_CH6B_OPEN,Mektubu aç,Open the letter
 UI_CH6B_KEEP,Mühre dokunma,Leave the seal alone
 UI_CH6B_OPEN_SURE,Emin misin? İmparatorun mektubu bu. (Aç),Are you sure? This is an emperor's letter. (Open)
@@ -710,13 +710,13 @@ D6_URBAN_ASK,Padişah top denemesine gelecek. Çırağım olursan yanında durur
 D6_KADRI_PHONE,Tencereye sığar mı? Sığmıyor mu? O zaman beni ilgilendirmez.,Does it fit in a pot? No? Then it's none of my business.
 D6_KADRI_LIGHTER,"Ocağı tek hamlede mi yakıyor? ...Evlâdım, sen bu mutfakta kalıyorsun.","Lights the stove in one go? ...Son, you're staying in this kitchen."
 D6_KADRI_BOOK,İçinde yemek tarifi yok mu? Tarifsiz tarih eksik yazılmış tarihtir.,No recipes? History without recipes is history half-written.
-D6_KADRI_CHICKPEAS,Nohut... ama kavrulmuş... ama kuru... ama çıtır! Bu bir devrim. Adı ne?,Chickpeas... roasted... dry... crunchy! This is a revolution. What do you call it?
+D6_KADRI_CHICKPEAS,Nohut... ama kavrulmuş... ama kuru... ama çıtır! Bu ne icat böyle! Adı ne?,Chickpeas... roasted... dry... crunchy! This is a revolution. What do you call it?
 D6_KADRI_CHICKPEAS_T,Leblebi.,Leblebi.
 D6_KADRI_CHICKPEAS_2,Leb-le-bi. Sultan'ın sofrasına!,Leb-le-bi. To the Sultan's table!
 D6_KADRI_POWERBANK,Sıcak taş mı? Hamur bunun üstünde güzel mayalanır.,A warm stone? Dough would rise lovely on that.
 D6_KADRI_TAPE,Siz gelecekte dolmayı bununla mı sarıyorsunuz? Hayırsız yermiş şu gelecek.,"Is this how you wrap dolma in the future? Grim place, the future."
 D6_KADRI_THERMOS,Sıcağı saklayan testi mi? Çorba için isterim. Takas edelim: sana bir kaftan.,A jug that keeps things hot? I need that for soup. Let's trade: one kaftan.
-D6_KADRI_SELFIE,Kepçenin sapı uzun olmuş ama kepçesi yok. Kötü kepçe.,The ladle's all handle and no ladle. Terrible ladle.
+D6_KADRI_SELFIE,Kepçenin sapı uzun olmuş ama kepçesi yok. Hayırsız kepçe!,The ladle's all handle and no ladle. Terrible ladle.
 D6_KADRI_COLOGNE,Mutfağıma limon kokusu mu? ...Fena da olmadı hani.,"Lemon in MY kitchen? ...Actually, that's rather nice."
 D6_KADRI_CUBE,Renkleri ayırıyorsun değil mi? Ben de bütün gün pilavla bulguru ayırıyorum. Aynı iş.,"Sorting colours, is it? I sort rice from bulgur all day. Same job."
 D6_KADRI_FEZ_OFF,Yamak fesli olmaz. Kafandaki o kırmızı tencereyi çıkar. (H),A kitchen boy doesn't wear a fez. Take that red pot off your head. (H)
@@ -802,7 +802,7 @@ D6B_T_KNOW,(Onun ne olacağını biliyorum. 29 Mayıs. Belgeselde bu kısımda m
 D6B_T_WARN,29 Mayıs'ta yaralanacaksınız. Surları bırakmayın. Ne olursa olsun.,On the 29th of May you'll be wounded. Don't leave the walls. Whatever happens.
 D6B_G_WARN,Yaralanmak mı? Sözleşmemde yaralanma yok. ...Bu bilgiyi kaç dukaya aldın? Sana iki katını veririm.,Wounded? There's nothing about wounds in my contract. ...How many ducats did you pay for that information? I'll give you double.
 D6B_NIHAT_ALARM,"(Uzaktan, daktilo sesi) ...Paradoks eşiği aşıldı. Form Z-1453. Üç nüsha.","(From somewhere, the clack of a typewriter) ...Paradox threshold exceeded. Form Z-1453. Three copies."
-D6B_T_SILENT,Sadece... dikkatli olun.,Just... be careful.
+D6B_T_SILENT,Şey... dikkatli olun.,Just... be careful.
 D6B_G_SILENT,"Dikkatli olmak benim mesleğim. Ücretini de alırım. Güle güle, sigortacı.","Being careful is my trade. I charge for it, too. Farewell, insurance man."
 D6B_N_NOT_YET,"İmparator'a şimdi olmaz. Önce izin, sonra surlar, sonra İmparator. Sıra var.","Not the Emperor yet. Permit first, then the walls, then the Emperor. There's an order."
 D6B_E_01,"[Yunanca] Osmanlı'nın elçisi misin? Yoksa yolunu mu kaybettin, yabancı?","[Greek] Are you the Ottoman envoy? Or have you lost your way, stranger?"
@@ -1371,7 +1371,7 @@ D10O_A_Q2,İKİNCİ SORU! Buraya niye geldin?,SECOND QUESTION! Why have you come
 UI_CH10O_Q2_A,'Sultan'ı görmeye.','To see the Sultan.'
 UI_CH10O_Q2_B,'Açıkçası... bilmiyorum. Bir makineden düştüm.','Honestly... I don't know. I fell out of a machine.'
 UI_CH10O_Q2_C,'Tarihi düzeltmeye.','To put history right.'
-UI_CH10O_Q2_D,'Sultan'a Çandarlı'nın gizli mektubunu getirdim.','I've brought the Sultan Çandarlı's secret letter.'
+UI_CH10O_Q2_D,'Sultan'a Çandarlı'nın gizli mektubunu getirdim.',"'A secret letter for the Sultan, from Çandarlı.'"
 D10O_A_Q2_OK,Herkes Sultan'ı görmeye gelir. Sıradan bir cevap. Sıradan cevaplar geçer.,Everyone comes to see the Sultan. An ordinary answer. Ordinary answers pass.
 D10O_A_Q2_OK2,Bir makineden... Tuhaf. Ama bu kapıda ilk kez biri 'bilmiyorum' dedi. Geçer.,Out of a machine... Odd. But this is the first time anyone at this gate has said 'I don't know'. It passes.
 D10O_A_Q2_LIE,Tarih düzeltilmez! Tarih yazılır! Ve burada yazan benim! (Defterine bir şey karalar),History is not put right! History is written! And the one writing here is me! (Scribbles something in his ledger)
@@ -1573,7 +1573,7 @@ D12_F_ITEM_CHICKPEAS,"Kavrulmuş nohut. Askerin taşıması kolay, bozulmaz. Bun
 D12_F_ITEM_POWERBANK,Taş gibi ama taş değil. İçinde ne var?,"Like a stone, yet not a stone. What's inside?"
 D12_T_POWERBANK,Elektrik.,Electricity.
 D12_F_POWERBANK_2,(Not alır) Elektrik.,(Noting it down) Electricity.
-D12_F_ITEM_TAPE,"Yapışıyor, kopuyor, yine yapışıyor. Her mühendisin rüyası. Kaç tane var?","It sticks, it tears, it sticks again. Every engineer's dream. How much do you have?"
+D12_F_ITEM_TAPE,"Yapışıyor, kopuyor, yine yapışıyor. Ustalarım görse bayram eder. Kaç tane var?","It sticks, it tears, it sticks again. Every engineer's dream. How much do you have?"
 D12_F_ITEM_THERMOS,Sıcağı saklayan bir kap. İlginç. Tadı ise... Sizin zamanınızda bunu herkes mi içiyor?,A vessel that keeps its heat. Curious. And the taste... Does everyone in your time drink this?
 D12_F_ITEM_SELFIE,Bu bir asa mı? Sorucu Ağa asalı adamlara bir soru eksik sorar. Ben sormam.,Is this a staff? The Questioning Agha asks men with staffs one question fewer. I don't.
 D12_F_SELFIE_2,(Objektife bakar) Ressamlarım var. Ama hiçbiri bana bu kadar yakından bakmadı.,(Peers into the lens) I have painters. But none of them has ever looked at me this closely.
@@ -1689,7 +1689,7 @@ UI_CH13_PRESS_PAD,[B] basılı tut: KIRMIZI DÜĞME,[B] hold: THE RED BUTTON
 UI_CH13_WINDOW,⏱ Pencere: %d sn,⏱ Window: %d s
 UI_CH13_SWITCH,— Tolga · 1453 —,— Tolga · 1453 —
 UI_CH13_TOGETHER,"'Birlikte dönüyoruz, Hikmet Amca!'","'We're going back together, Uncle Hikmet!'"
-UI_CH13_HE_STAYS,'Sen kal. Urban'ın sana ihtiyacı var.','You stay. Urban needs you.'
+UI_CH13_HE_STAYS,'Sen kal. Urban sensiz yapamaz.','You stay. Urban needs you.'
 UI_CH13_1977,1977 · Mahalle düğünü,1977 · A neighbourhood wedding
 UI_CH13_1977_SUB,Yanlış yıl. Doğru düğün.,Wrong year. Right wedding.
 UI_CH13_STAY_CARD,Hikmet 1453'te kaldı.,Hikmet stayed in 1453.
@@ -2131,7 +2131,7 @@ D10H_K_FRANK,(Tolga'ya döner) Sen. Frenk. Bir Osmanlı heyetinde ne arıyorsun?
 D10H_TH_FRANK,(Fısıldar) Seni soruyor. Neden buradasın? Dikkatli cevap ver.,(Whispers) He is asking about you. Why are you here? Answer carefully.
 UI_CH10H_FRANK_1,'Bonjour.','Bonjour.'
 UI_CH10H_FRANK_2,'Sigortacıyım. Risk değerlendirmesi için buradayım.','I'm in insurance. I'm here for the risk assessment.'
-UI_CH10H_FRANK_3,'Kimse ölmesin istiyorum. Hepsi bu.','I don't want anyone to die. That's all.'
+UI_CH10H_FRANK_3,"'Kimse ölmesin, tek dileğim bu.'",'I don't want anyone to die. That's all.'
 D10H_T_FRANK_1,Bonjour.,Bonjour.
 D10H_T_FRANK_2,"Sigortacıyım, Majeste. Risk değerlendirmesi yapıyorum.","I'm in insurance, Your Majesty. I'm doing a risk assessment."
 D10H_T_FRANK_3,"Kimse ölmesin istiyorum, Majeste. Tek dileğim bu.","I don't want anyone to die, Your Majesty. That's all."
@@ -2184,7 +2184,7 @@ D10H_T_K_DONE,Barikat bantlı. Gedik kapalı. Yarın sabaha kadar.,"The barricad
 D10H_G_1,Frenk sigortacı! Yine sen. Ne satıyorsun bu gece?,The Frankish insurance man! You again. What are you selling tonight?
 UI_CH10H_G_POWERBANK,🔋 Powerbank'ten zırh ısıtıcı: 'Omzunuzu sıcak tutar.',🔋 A power-bank armour warmer: 'Keeps your shoulder warm.'
 UI_CH10H_G_WARN,'Sağ omzunuza dikkat edin. Ciddiyim.','Mind your right shoulder. I'm serious.'
-UI_CH10H_G_NOTHING,'Hiçbir şey. Sadece uğradım.','Nothing. Just dropping by.'
+UI_CH10H_G_NOTHING,'Hiç. Öylesine uğradım.','Nothing. Just dropping by.'
 D10H_T_G_PB,"Bu kutu ısınıyor. Zırhın altına, omzunuza koyun. Soğuk demir kasları tutar. Belgeselde öyle diyordu. Aşağı yukarı.","This box warms up. Put it under your armour, on your shoulder. Cold iron stiffens the muscles. The documentary said so. More or less."
 D10H_G_PB,"(Kutuyu omzuna yerleştirir) Isınıyor! Cenova'da böyle bir şey yok. Kaç duka? ...Bedava mı? Frenk, sen tuhaf bir tüccarsın.","(Fits the box on his shoulder) It's warming up! There's nothing like this in Genoa. How many ducats? ...Free? Frank, you're a strange merchant."
 D10H_T_G_WARN,"Sağ omzunuza dikkat edin. Ciddiyim. Bir gün... neyse, siz dikkat edin.",Mind your right shoulder. I'm serious. One day... just be careful.
@@ -2400,10 +2400,10 @@ D10G_W_EARLY,"Şarap mı? Önce balıkçıya uğra, herkes önce balıkçıya u�
 D10G_W_1,Lomellino'yu arayan çok. Önce şarap al. Galata'da bilgi şarapla gelir.,"Lots of people are looking for Lomellino. Buy some wine first. In Galata, information comes with wine."
 UI_CH10G_W_BUY,'Bir kadeh alayım.','I'll have a glass.'
 UI_CH10G_W_INSURE,💼 'Fıçılarınızı sigortalayayım mı?',💼 'Shall I insure your barrels?'
-UI_CH10G_W_ASK,'Sadece soruyorum.','I'm only asking.'
+UI_CH10G_W_ASK,'Öylesine soruyorum.','I'm only asking.'
 D10G_T_W_1,"Bir kadeh alayım. Sulandırılmış olsun, mesaideyim.","I'll have a glass. Watered down, I'm on duty."
 D10G_T_W_2,"Fıçılarınızı sigortalayayım mı? Yangın, sel, gülle...","Shall I insure your barrels? Fire, flood, cannonballs..."
-D10G_T_W_3,"Sadece soruyorum. Şarap içmem, sigortacıyım.","I'm only asking. I don't drink, I'm in insurance."
+D10G_T_W_3,"Öylesine soruyorum. Şarap içmem, sigortacıyım.","I'm only asking. I don't drink, I'm in insurance."
 D10G_W_R1,"Sulandırılmış! Cenevizli bir şarapçıya bu söylenir mi? ...Olsun, parasını ödedin.","Watered down! Is that what you say to a Genoese wine merchant? ...Never mind, you've paid."
 D10G_W_R2,Gülle mi? Burası tarafsız bölge. Kim tarafsız bölgeye gülle atar? (Gökyüzüne bakar) ...Kaç duka?,Cannonballs? This is neutral territory. Who'd fire a cannonball at neutral territory? (Glances at the sky) ...How many ducats?
 D10G_W_R3,Şarap içmeyen biri Galata'da ne arar? Neyse. Sen tuhafsın ama zararsızsın.,"What's a man who doesn't drink doing in Galata? Anyway. You're strange, but harmless."
@@ -2679,7 +2679,7 @@ REACT_HIKMET_SELFIE,"""Tarihi yazanlarla fotoğraf çekil. Kimse inanmaz ama ols
 REACT_HIKMET_COLOGNE,"""Limon kolonyası. Bizim milletin diplomatik dokunulmazlığı budur.""","""Lemon cologne. It's the closest thing we have to diplomatic immunity."""
 REACT_HIKMET_CUBE,"""Onu 1987'den beri çözemedim. Belki geçmişte biri çözer.""","""Been at it since 1987. Maybe someone in the past can crack it."""
 REACT_GUARDS_PHONE,"Hasan: ""İçinde minik adam var!"" Hüseyin: ""Minik adam değil, minik Hasan."" Hasan: ""Hasan benim!""","Hasan: ""There's a tiny man inside!"" Hüseyin: ""Not a tiny man. A tiny Hasan."" Hasan: ""I'm Hasan!"""
-REACT_GUARDS_LIGHTER,"Hasan: ""Büyücü!"" Hüseyin: ""Büyücü değil, çakmaktaşı bu. Sadece küçük ve hızlı.""","Hasan: ""Sorcerer!"" Hüseyin: ""It's flint, you dolt. Just small and quick."""
+REACT_GUARDS_LIGHTER,"Hasan: ""Büyücü!"" Hüseyin: ""Ne büyücüsü be, çakmaktaşı bu. Ufak ama tez çakar.""","Hasan: ""Sorcerer!"" Hüseyin: ""It's flint, you dolt. Just small and quick."""
 REACT_GUARDS_BOOK,"Hasan: ""Resimli kitap! Bizi de çizmişler mi?"" Hüseyin: ""Bak, yeniçeri. Hangisi sensin?"" Hasan: ""Soldaki."" Hüseyin: ""Soldaki benim.""","Hasan: ""A picture book! Did they draw us?"" Hüseyin: ""Look, Janissaries. Which one's you?"" Hasan: ""Left one."" Hüseyin: ""Left one's me."""
 REACT_GUARDS_CHICKPEAS,"Hasan (yer): ""Nohut ama kuru. Ama güzel."" Hüseyin: ""Bana da uzat. ...Casus böyle güzel şey getirmez.""","Hasan (munching): ""Chickpeas, but dry. But good."" Hüseyin: ""Pass them over. ...Spies don't bring snacks this nice."""
 REACT_GUARDS_POWERBANK,"Hasan: ""Bu taş sıcak!"" Hüseyin: ""Kutsal olabilir. Dokunma."" Hasan: ""Dokundum.""","Hasan: ""This stone is warm!"" Hüseyin: ""Could be holy. Don't touch it."" Hasan: ""Touched it."""
@@ -2691,11 +2691,11 @@ REACT_GUARDS_CUBE,"(İkisi küpü kapar.) ""Sen çevir."" ""Hayır sen."" (Küp 
 REACT_KADRI_PHONE,"""Tencereye sığar mı? Sığmıyor mu? O zaman beni ilgilendirmez.""","""Does it fit in a pot? No? Then it's none of my business."""
 REACT_KADRI_LIGHTER,"""Ocağı tek hamlede mi yakıyor? ...Evlâdım, sen bu mutfakta kalıyorsun.""","""Lights the stove in one go? ...Son, you're staying in this kitchen."""
 REACT_KADRI_BOOK,"""İçinde yemek tarifi yok mu? Tarifsiz tarih eksik yazılmış tarihtir.""","""No recipes? History without recipes is just dates. ...Dates! Now there's a fruit."""
-REACT_KADRI_CHICKPEAS,"""Nohut... ama kavrulmuş... ama kuru... ama çıtır! Bu bir devrim. Adı ne?"" Tolga: ""Leblebi."" Kadri: ""Leb-le-bi. Sultan'ın sofrasına!""","""Chickpeas... roasted... dry... crunchy! This is a revolution. What do you call it?"" Tolga: ""Leblebi."" Kadri: ""Leb-le-bi. To the Sultan's table!"""
+REACT_KADRI_CHICKPEAS,"""Nohut... ama kavrulmuş... ama kuru... ama çıtır! Bu ne icat böyle! Adı ne?"" Tolga: ""Leblebi."" Kadri: ""Leb-le-bi. Sultan'ın sofrasına!""","""Chickpeas... roasted... dry... crunchy! This is a revolution. What do you call it?"" Tolga: ""Leblebi."" Kadri: ""Leb-le-bi. To the Sultan's table!"""
 REACT_KADRI_POWERBANK,"""Sıcak taş mı? Hamur bunun üstünde güzel mayalanır.""","""A warm stone? Dough would rise lovely on that."""
 REACT_KADRI_TAPE,"""Siz gelecekte dolmayı bununla mı sarıyorsunuz? Hayırsız yermiş şu gelecek.""","""Is this how you wrap dolma in the future? Grim place, the future."""
 REACT_KADRI_THERMOS,"""Sıcağı saklayan testi mi? Çorba için isterim. Takas edelim: sana bir kaftan.""","""A jug that keeps things hot? I need that for soup. Let's trade: one kaftan."""
-REACT_KADRI_SELFIE,"""Kepçenin sapı uzun olmuş ama kepçesi yok. Kötü kepçe.""","""The ladle's all handle and no ladle. Terrible ladle."""
+REACT_KADRI_SELFIE,"""Kepçenin sapı uzun olmuş ama kepçesi yok. Hayırsız kepçe!""","""The ladle's all handle and no ladle. Terrible ladle."""
 REACT_KADRI_COLOGNE,"""Mutfağıma limon kokusu mu? ...Fena da olmadı hani.""","""Lemon in my kitchen? ...Actually, that's rather nice."""
 REACT_KADRI_CUBE,"""Renkleri ayırıyorsun değil mi? Ben de bütün gün pilavla bulguru ayırıyorum. Aynı iş.""","""Sorting colours, is it? I sort rice from bulgur all day. Same job."""
 REACT_LUTFI_PHONE,"""Bu kutu hangi dilde konuşuyor? ...Bilmediğim dil yoktur. Demek ki bu dil yok.""","""Which language does this box speak? ...I know every language. So this one doesn't exist."""
@@ -4972,7 +4972,7 @@ UI_DEV_SIEGE_HINT,1–9 ve 0: bölüm · Esc: geri,1–9 and 0: chapter · Esc: 
 UI_DUEL_HINT,"A/D: vuruş yönü (sol/sağ, ikisi de değilse yukarıdan) · Sol tık: vur · Sağ tık basılı: kalkan (kırmızı ok dolarken son anda: karşıla)","A/D: strike direction (left/right, neither = overhead) · Left click: strike · Hold right click: shield (at the last moment of the red arrow: counter)"
 UI_DUEL_PARRY,KARŞILADIN!,COUNTER!
 UI_DUEL_BLOCK,Engellendi,Blocked
-UI_DUEL_BLOCKED,Muhafızda! Başka yönden vur (A/D).,Guarded! Strike from another side (A/D).
+UI_DUEL_BLOCKED,Siperde! Başka yönden vur (A/D).,Guarded! Strike from another side (A/D).
 UI_DUEL_GUARDBREAK,Kalkan düştü!,Shield down!
 UI_DUEL_OPEN,AÇIK,OPEN
 UI_DUEL_DOWN,Yere serildi,Down
@@ -4986,7 +4986,7 @@ D_ARENA_N_O,"Tolga Bey, bu kayıt Büro'nun tatbikatıdır. Tarihe sayılmaz. Ya
 UI_ARENA_WAVE,Dalga %d · rakip: %d,Wave %d · foes: %d
 UI_ARENA_WAVE_DONE,%d. dalga püskürtüldü,Wave %d repelled
 UI_ARENA_OVER,YERE DÜŞTÜN,YOU ARE DOWN
-UI_ARENA_RESULT,Dayanılan dalga: %d   ·   Yere serilen: %d   ·   Savuşturma: %d   ·   Rekor: %d,Waves survived: %d   ·   Foes downed: %d   ·   Parries: %d   ·   Record: %d
+UI_ARENA_RESULT,Geçilen dalga: %d   ·   Yere serilen: %d   ·   Savuşturma: %d   ·   Rekor: %d,Waves survived: %d   ·   Foes downed: %d   ·   Parries: %d   ·   Record: %d
 UI_ARENA_AGAIN,Enter: yeniden · Esc: ana menü,Enter: again · Esc: main menu
 UI_MENU_ARENA,Sonsuz Kuşatma,Endless Siege
 UI_MENU_ARENA_B,Sur Savunması (Bizans),Hold the Wall (Byzantine)
@@ -5562,7 +5562,7 @@ D26_N_HOLD,Tolga Bey. 29 Mayıs 1453 tespit edilemedi. Çünkü... olmadı. Bu d
 D26_T_HOLD,"Sigortada buna 'hasarsız yıl' derler, Nihat Bey. Prim düşer.","In insurance we call that a 'no-claims year', Mr Nihat. The premium goes down."
 D26_N_HOLD_2,"Tarih inatçıdır, Tolga Bey. Bir yıl sonra, belki iki... bir gün gelecek. Ama bugün değil. Kayda geçiyorum: bugün değil.","History is stubborn, Mr Tolga. A year from now, perhaps two... the day will come. But not today. I'm entering it in the record: not today."
 UI_OBJ26_HOLD_PHOTO,Tespit et: gedikte ayakta kalan komutan ve İmparator,Record: the commander and the Emperor standing in the breach
-SIEGE_NOTE_26_3,"Şafakta Giustiniani ayakta kaldı. Son hücum püskürtüldü, şehir o sabah düşmedi. Tespit: fetih bugün değil. Tarih kendi kaydını yeniden deneyecek. — T.",At dawn Giustiniani stayed on his feet. The last assault was thrown back; the city did not fall that morning. Finding: not today. History will try its own record again. — T.
+SIEGE_NOTE_26_3,"Şafakta Giustiniani ayakta kaldı. Son hücum püskürtüldü, şehir o sabah düşmedi. Tespit: fetih bugün değil. Tarih rekor denemesine yeniden girişecek. — T.",At dawn Giustiniani stayed on his feet. The last assault was thrown back; the city did not fall that morning. Finding: not today. History will try its own record again. — T.
 FLOW26_DAWN,Şafak: tüfekçi Giustiniani'ye nişan alıyor,Dawn: a gunner takes aim at Giustiniani
 FLOW_26_3,"Hücum püskürtüldü, şehir düşmedi",The assault thrown back; the city did not fall
 D26O_T_TAPE,"(Gediğin ağzında, taşların arasında... gri bir bant. Kendi bandı. Bu taraftan kimse onu fark etmiyor.)","(At the mouth of the breach, between the stones... a grey strip of tape. His own tape. On this side, nobody notices it.)"

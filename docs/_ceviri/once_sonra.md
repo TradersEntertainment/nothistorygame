@@ -1,8 +1,70 @@
 # Önce | Sonra: çeviri taraması, uygulanan değişiklikler
 
-Uygulanan: 353 Türkçe + 76 İngilizce hücre (toplam 429). Kaynak: `docs/_ceviri/onay_hepsi.csv` (`kabul` + `duzelt`).
+## Sahibine özet (yarım sayfa)
 
-## Türkçe
+**Toplam: 419 replik değişti (371 Türkçe + 77 İngilizce hücre).** Tarama 4.906 anahtarlık oyun metnini çeviri kokusu için okudu; 484 öneriden 461'i onaylandı, 23'ü reddedildi. Birleştirici 429 hücre uyguladı; bu kapanış turu üstüne 19 hücre ekledi (12 çelişen karar çözüldü, 6 arayüz metni ve 1 tutanak cümlesi uygulandı) ve 31 satır içi yönergeli okuma metnini yeni altyazıya göre yeniden yazdı. Dokunmadığımız: 58 bağlı replik çiftinin hepsi okundu, hiçbiri kopmuyor; ses üretilmedi, yalnız yeniden seslendirme listeleri (334 TR + 71 EN anahtar) hazır.
+
+**En iyi 25 örnek (eski → yeni), karakterlere yayılmış:**
+
+1. **Tolga** (`D1_T_05`, tr): Dur dur dur. Şaka yapıyorsun, değil mi? Bu gerçekten çalışıyor mu? → **Dur dur dur. Dalga mı geçiyorsun? Bu alet cidden çalışıyor mu?**
+2. **Tolga** (`D9_T_LUTFI_Q`, tr): Ve bu beni neden ilgilendiriyor? → **Eee, bunun benimle ne alakası var?**
+3. **Hikmet Amca** (`D1_H_06`, tr): Makinenin tek bir arızası var evlât: çalışıyor. Açıkçası ben de beklemiyordum. → **Makinenin tek bir arızası var evlât: çalışıyor. Valla ben de şaştım kaldım.**
+4. **Hikmet Amca** (`D2_H_RADIO_YES`, tr): Oh be. Sesini duymak güzel. Şimdi koş. → **Oh be, sesin geliyor ya. Şimdi koş.**
+5. **Azap başı** (`D26O_AB_LADDER_BAD`, tr): Kâtip... 18 Nisan'da o barikat bize çizik bile vermedi. Bölüğümden kalan bu kadar. Başını kaldırma, taş yağar. → **Kâtip... 18 Nisan'da o barikata çizik bile atamadık. Bölüğümden kalan bu kadar. Başını kaldırma, taş yağar.**
+6. **Niko** (`D7_NIKO_HELLO`, tr): Yeni casus! Şapkan fes değil. İlerleme. Kimsin? → **Yeni casus! Şapkan fes değil. Akıllanıyorsunuz. Kimsin?**
+7. **Hüseyin** (`D16_G_CATCH_3`, tr): Tavuğun bir planı var Hasan. Gözlerinden anlıyorum. → **Bu tavuk bir iş çeviriyor Hasan. Gözünden belli.**
+8. **Hüseyin** (`D4A_ITEM_LIGHTER_2`, tr): Büyücü değil, çakmaktaşı bu. Sadece küçük ve hızlı. → **Ne büyücüsü be, çakmaktaşı bu. Ufak ama tez çakar.**
+9. **Kadri** (`D6_KADRI_CHICKPEAS`, tr): Nohut... ama kavrulmuş... ama kuru... ama çıtır! Bu bir devrim. Adı ne? → **Nohut... ama kavrulmuş... ama kuru... ama çıtır! Bu ne icat böyle! Adı ne?**
+10. **Kadri** (`D6_KADRI_SELFIE`, tr): Kepçenin sapı uzun olmuş ama kepçesi yok. Kötü kepçe. → **Kepçenin sapı uzun olmuş ama kepçesi yok. Hayırsız kepçe!**
+11. **Fatih** (`D12_F_ITEM_TAPE`, tr): Yapışıyor, kopuyor, yine yapışıyor. Her mühendisin rüyası. Kaç tane var? → **Yapışıyor, kopuyor, yine yapışıyor. Ustalarım görse bayram eder. Kaç tane var?**
+12. **Giustiniani** (`D10H_G_NOTHING`, tr): Uğradın mı? Gece yarısı, kuşatmanın ortasında? Frenkler çok tuhaf. → **Öylesine mi uğradın? Gece yarısı, kuşatmanın ortasında? Şu Frenkler de pek tuhaf.**
+13. **Cattaneo** (`D29_C_END`, tr): Zinciri açtılar! İçerideyiz! Dört gemi, yüz kadırga, sıfır kayıp. Bunu Cenova'da kimse inanmayacak. → **Zinciri açtılar! İçerideyiz! Dört gemi, yüz kadırga, bir tek kayıp yok. Buna Cenova'da kimse inanmaz.**
+14. **Balta** (`D29O_B_HOOKS_BAD`, tr): Kesiyorlar! Bir daha! Bu iplere ne oluyor? → **Kesiyorlar! Bir daha! Bu ipler pamuk ipliği mi?**
+15. **Yeniçeri** (`DST_JAN_IDLE_4`, tr): Börkünü düz tut diyorlar. Rüzgâr başka türlü düşünüyor. → **Börkünü düz tut diyorlar. Rüzgâra söylesinler.**
+16. **Rahip** (`DST_PRIEST_AGAIN`, tr): Evladım, sabır bir erdemdir. Benimki şu an sınanıyor. → **Evladım, sabır iyidir, bilirim. Ama benimki de bir yere kadar.**
+17. **Osmanlı askeri** (`DST_OSMSOL_FEZ_1`, tr): Frenk elçisi misin? Elçiler atla gelir. Sen yürüyorsun. Fakir bir krallık. → **Frenk elçisi misin? Elçiler atla gelir. Sen yürüyorsun. Krallığın fukara galiba.**
+18. **Çandarlı** (`REACT_CANDARLI_PHONE`, tr): (Fısıldar) Işığı söndür. Kukuletanın bir anlamı kalmıyor. → **(Fısıldar) Işığı söndür. Yoksa bu kukuletayı niye taktım?**
+19. **Sezar** (`BUR_AMB_G7_7_3`, tr): Ucuz kalmak aşağılayıcıydı. → **Ucuza gitmek gururuma dokundu.**
+20. **Gagarin** (`BUR_FG_GAG_1`, tr): 12 Nisan 1961'de Vostok 1 ile 108 dakikada Dünya'yı dolaştım. Burada 108 dakikada bir sıra bile atlamadım. → **12 Nisan 1961'de Vostok 1 ile 108 dakikada Dünya'yı dolaştım. Burada 108 dakikada bir adım bile ilerlemedim.**
+21. **Einstein** (`BUR_FG_EIN_2`, tr): Ben de Bern'de patent ofisinde memurdum. Gişenin bu tarafı hiç hoş değilmiş. → **Ben de Bern'de patent ofisinde memurdum. Gişenin bu tarafı ne çileymiş.**
+22. **Napolyon** (`BUR_FG_NAP_V2_1`, tr): Yine geldin. Ben hâlâ sandalyedeyim. İnersem kısa görünürüm, inmezsem kibirli. Zor seçim. → **Yine geldin. Ben hâlâ sandalyedeyim. İnersem kısa görünürüm, inmezsem kibirli. İki arada bir derede kaldım.**
+23. **Vlad** (`D17E_V_KEB`, tr): …Bu iyi. → **…Güzelmiş.**
+24. **Çocuk** (`REACT_KID_POWERBANK`, tr): Ağır bir taş! Kaç mermer eder? İki mi? Üç mü? Takas? → **Ağır bir taş! Kaç misket eder? İki mi? Üç mü? Takas?**
+25. **Tutanak** (`SIEGE_NOTE_26_3`, tr): Şafakta Giustiniani ayakta kaldı. Son hücum püskürtüldü, şehir o sabah düşmedi. Tespit: fetih bugün değil. Tarih kendi kaydını yeniden deneyecek. — T. → **Şafakta Giustiniani ayakta kaldı. Son hücum püskürtüldü, şehir o sabah düşmedi. Tespit: fetih bugün değil. Tarih rekor denemesine yeniden girişecek. — T.**
+
+Tam liste aşağıdadır (önce kapanış turunda eklenenler, sonra Türkçe ve İngilizce bölümler; en sonda uygulanmayanlar ve reddedilenler).
+
+## Kapanış turunda eklenenler (`wip/ceviri-kapanis`)
+
+### Çelişen 12 karar: hangisi seçildi
+- `D10G_T_W_3` (tr): Sadece soruyorum. Şarap içmem, sigortacıyım. → **Öylesine soruyorum. Şarap içmem, sigortacıyım.**  _(B seçildi; UI_CH10G_W_ASK ile aynı söz)_
+- `UI_CH10G_W_ASK` (tr): 'Sadece soruyorum.' → **'Öylesine soruyorum.'**  _(B; D10G_T_W_3 ile aynı söz)_
+- `D6B_T_SILENT` (tr): Sadece... dikkatli olun. → **Şey... dikkatli olun.**  _(E seçildi; Giustiniani'nin 'Dikkatli olmak benim mesleğim' cevabı sözü geri alıyor)_
+- `UI_CH6B_SILENT` (tr): Sus: 'Sadece... dikkatli olun.' → **Sus: 'Şey... dikkatli olun.'**  _(E; D6B_T_SILENT ile aynı söz)_
+- `HIKMET_ITEM_POWERBANK` (tr): Onu kendi icadım olan şarj aletiyle doldurdum. Sadece bir kere alev aldı. → **Onu kendi icadım şarj aletiyle doldurdum. Topu topu bir kere alev aldı.**  _(derleme: E'nin 'kendi icadım şarj aletiyle'si + D'nin 'topu topu'su)_
+- `D4A_ITEM_LIGHTER_2` (tr): Büyücü değil, çakmaktaşı bu. Sadece küçük ve hızlı. → **Ne büyücüsü be, çakmaktaşı bu. Ufak ama tez çakar.**  _(derleme: D'nin 'Ne büyücüsü be'si + A'nın çakma oyunu, sadeleştirildi)_
+- `REACT_GUARDS_LIGHTER` (tr): Hasan: "Büyücü!" Hüseyin: "Büyücü değil, çakmaktaşı bu. Sadece küçük ve hızlı." → **Hasan: "Büyücü!" Hüseyin: "Ne büyücüsü be, çakmaktaşı bu. Ufak ama tez çakar."**  _(D4A_ITEM_LIGHTER_2 ile aynı söz)_
+- `D6_KADRI_SELFIE` (tr): Kepçenin sapı uzun olmuş ama kepçesi yok. Kötü kepçe. → **Kepçenin sapı uzun olmuş ama kepçesi yok. Hayırsız kepçe!**  _(A seçildi ('hayırsız evlat' kalıbı kepçeye çevrilmiş); D kepçeyi anmadan 'kendisi yok' dediği için kime dendiği belirsiz)_
+- `REACT_KADRI_SELFIE` (tr): "Kepçenin sapı uzun olmuş ama kepçesi yok. Kötü kepçe." → **"Kepçenin sapı uzun olmuş ama kepçesi yok. Hayırsız kepçe!"**  _(D6_KADRI_SELFIE ile aynı)_
+- `D12_F_ITEM_TAPE` (tr): Yapışıyor, kopuyor, yine yapışıyor. Her mühendisin rüyası. Kaç tane var? → **Yapışıyor, kopuyor, yine yapışıyor. Ustalarım görse bayram eder. Kaç tane var?**  _(B seçildi; Fatih'in ağzında 'ustalarım' (D'nin 'mühendis'i 1453'e daha yabancı))_
+- `D6_KADRI_CHICKPEAS` (tr): Nohut... ama kavrulmuş... ama kuru... ama çıtır! Bu bir devrim. Adı ne? → **Nohut... ama kavrulmuş... ama kuru... ama çıtır! Bu ne icat böyle! Adı ne?**  _(A seçildi; aşçı ağzı, 'devrim' sözü 1453 ağzı değil)_
+- `REACT_KADRI_CHICKPEAS` (tr): "Nohut... ama kavrulmuş... ama kuru... ama çıtır! Bu bir devrim. Adı ne?" Tolga: "Leblebi." Kadri: "Leb-le-bi. Sultan'ın sofrasına!" → **"Nohut... ama kavrulmuş... ama kuru... ama çıtır! Bu ne icat böyle! Adı ne?" Tolga: "Leblebi." Kadri: "Leb-le-bi. Sultan'ın sofrasına!"**  _(D6_KADRI_CHICKPEAS ile aynı)_
+
+### Uygulanmayan arayüz metinleri ve uzun tire
+- `UI_CH10H_G_NOTHING` (tr): 'Hiçbir şey. Sadece uğradım.' → **'Hiç. Öylesine uğradım.'**  _(Giustiniani 'Öylesine mi uğradın?' diyor; eskisinden kısa)_
+- `UI_CH10H_FRANK_3` (tr): 'Kimse ölmesin istiyorum. Hepsi bu.' → **'Kimse ölmesin, tek dileğim bu.'**  _(D10H_T_FRANK_3 'Tek dileğim bu.' ile aynı; eskisinden kısa)_
+- `UI_CH13_HE_STAYS` (tr): 'Sen kal. Urban'ın sana ihtiyacı var.' → **'Sen kal. Urban sensiz yapamaz.'**  _('sana ihtiyacı var' kalıbı gitti; eskisinden kısa)_
+- `UI_CH10O_Q2_D` (en): 'I've brought the Sultan Çandarlı's secret letter.' → **'A secret letter for the Sultan, from Çandarlı.'**  _(bozuk sözdizimi düzeldi; eskisinden kısa)_
+- `UI_DUEL_BLOCKED` (tr): Muhafızda! Başka yönden vur (A/D). → **Siperde! Başka yönden vur (A/D).**  _('Muhafızda' (on guard harfi) yerine kılıç ağzı; eskisinden kısa)_
+- `UI_ARENA_RESULT` (tr): Dayanılan dalga: %d   ·   Yere serilen: %d   ·   Savuşturma: %d   ·   Rekor: %d → **Geçilen dalga: %d   ·   Yere serilen: %d   ·   Savuşturma: %d   ·   Rekor: %d**  _('Dayanılan' edilgeni gitti; eskisinden kısa)_
+- `SIEGE_NOTE_26_3` (tr): Şafakta Giustiniani ayakta kaldı. Son hücum püskürtüldü, şehir o sabah düşmedi. Tespit: fetih bugün değil. Tarih kendi kaydını yeniden deneyecek. — T. → **Şafakta Giustiniani ayakta kaldı. Son hücum püskürtüldü, şehir o sabah düşmedi. Tespit: fetih bugün değil. Tarih rekor denemesine yeniden girişecek. — T.**  _(imzadaki '— T.' özgün metindeki gibi korundu; yalnız son cümle)_
+- `UI_CHOICE_KICK_HIKMET` (en): **eskisi kaldı**, "You kick it, Hikmet!" (20 karakter); "senin ayağın alışık" göndermesini taşıyıp ondan uzun olmayan bir söz bulunamadı.
+
+### Satır içi yönergeli okuma metni (`docs/voice/INLINE.json`)
+31 anahtar yeni altyazıya göre yeniden yazıldı, ayrıntı `kapanis_rapor.md` 4. bölümde. `tests/check_inline.py` PASS (723 anahtar, 0 sorun).
+
+
+## Türkçe (birleştiricinin uyguladıkları)
 
 ### SPK_? (29)
 
@@ -793,7 +855,7 @@ Uygulanan: 353 Türkçe + 76 İngilizce hücre (toplam 429). Kaynak: `docs/_cevi
 - `UI_MENU_SAVED` (tr, grup E): önerilen "Kaydedildi. Hikmet Amca koli bandıyla mühürledi." — gerekçe: RET: 'bir koli bandıyla' burada sayı değil, belirsizlik/halk ağzı ('bir koli bandıyla mühürledi' = şöyle bir koli bandıyla); 'bir'i atmak cümleyi daha resmî ve kuru yapıyor. Eski zaten iyi, Hikmet şakası bozulmuyor.
 - `D6A_C_01_NOFEZ` (tr, grup E): önerilen "Psst. Redingotlu. Bu tarafa. Ben kimse değilim. Beni de kimse göndermedi." — gerekçe: RET: Bu bir ŞAKA. 'Ben kimseyim. Kimse gönderdi.' Çandarlı'nın kendini 'Kimse' adıyla tanıtmasıdır; Tolga'nın cevabı D6A_T_C_02 '...Kimse kim?', D6A_C_03 'Çandarlı Paşa. ...Kimse yani.' ona bağlı. 'Ben kimse değilim' cevap şakasını yıkar. Üstelik ilk tur yalnız _NOFEZ'i değiştiriyordu, D6A_C_01 ile ayrışırdı (varyant tutarsızlığı).
 
-### Çakışan karar (iki grup farklı metin önermiş; ikisi de uygulanmadı, sahibi seçsin)
+### Çakışan karar (iki grup farklı metin önermiş) — ÇÖZÜLDÜ: kararlar yukarıda "Kapanış turunda eklenenler" başlığında; aşağıdaki liste yalnız kayıt için
 
 - `REACT_GUARDS_LIGHTER` (tr): eski "Hasan: "Büyücü!" Hüseyin: "Büyücü değil, çakmaktaşı bu. Sadece küçük ve hızlı.""
   - A: "Hasan: "Büyücü!" Hüseyin: "Büyücü ne be, çakmaktaşı bu. Ufak, çabuk çakanından.""
@@ -832,7 +894,7 @@ Uygulanan: 353 Türkçe + 76 İngilizce hücre (toplam 429). Kaynak: `docs/_cevi
   - D: "Onu kendi icadım olan şarj aletiyle doldurdum. Topu topu bir kere alev aldı."
   - E: "Onu kendi icadım şarj aletiyle doldurdum. Bir kere alev aldı, o kadar."
 
-### Düğme/etiket metni olan `UI_` anahtarında uzayanlar (uygulanmadı)
+### Düğme/etiket metni olan `UI_` anahtarında uzayanlar — ÇÖZÜLDÜ: kısa karşılıkları uygulandı (bkz. yukarıda); aşağıdaki liste yalnız kayıt için
 
 - `UI_CH10H_G_NOTHING` (tr, oran 1.07): "'Hiçbir şey. Sadece uğradım.'" → önerilen "'Hiçbir şey. Öylesine uğradım.'"
 - `UI_CH10H_FRANK_3` (tr, oran 1.17): "'Kimse ölmesin istiyorum. Hepsi bu.'" → önerilen "'Kimse ölmesin istiyorum. Tek dileğim bu.'"
@@ -842,6 +904,6 @@ Uygulanan: 353 Türkçe + 76 İngilizce hücre (toplam 429). Kaynak: `docs/_cevi
 - `UI_DUEL_BLOCKED` (tr, oran 1.06): "Muhafızda! Başka yönden vur (A/D)." → önerilen "Siper almış! Başka yönden vur (A/D)."
 - `UI_ARENA_RESULT` (tr, oran 1.03): "Dayanılan dalga: %d   ·   Yere serilen: %d   ·   Savuşturma: %d   ·   Rekor: %d" → önerilen "Dayandığın dalga: %d   ·   Yere serdiğin: %d   ·   Savuşturma: %d   ·   Rekor: %d"
 
-### Yeni metinde uzun tire (uygulanmadı)
+### Yeni metinde uzun tire — ÇÖZÜLDÜ (imza özgündeki gibi korundu, cümle düzeltildi)
 
 - `SIEGE_NOTE_26_3` (tr): önerilen "Şafakta Giustiniani ayakta kaldı. Son hücum püskürtüldü, şehir o sabah düşmedi. Tespit: fetih bugün değil. Tarih rekor denemesine yeniden girişecek. — T."
