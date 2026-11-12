@@ -377,7 +377,7 @@ static func galata_top(tw: Vector3) -> float:
 const AYA_DOME_TOP := 19.5 + 11.1 * 0.42
 
 ## Ayasofya'nın dokulu yakın kabuğunun menzili (m): ötesi düz renkli, dış çizgisiz kopya (bütçe: yakın kabuk üçgeni dış çizgiyle iki kat)
-const AYA_NEAR := 60.0
+const AYA_NEAR := 50.0
 
 
 ## Ayasofya'nın uzak görünüşü: bölümün kendi dış kabuğu (ByzCity.aya_exterior + Ayasofya.build'in "exterior" parçaları:
@@ -403,10 +403,18 @@ static func far_aya(parent: Node3D) -> MeshInstance3D:
 			var mm := _merge_flat_grid(n.mesh as ArrayMesh, 0.5)
 			if mm != null:
 				n.mesh = mm
+	# Duvara yaslı yassı küreler (pencere ve kapı kemerleri, perçinler): duvarın içine gömülü, binaya bakan yarısı hiç görünmez;
+	# o yarının üçgenleri atılır (dışarıdan görünüş aynı)
+	var aya_c := Vector3(-14.0, 8.0, -82.0)
+	for n: MeshInstance3D in list:
+		if n.mesh is SphereMesh:
+			var hm := _outer_half(n, tmp, aya_c)
+			if hm != null:
+				n.mesh = hm
 	var mi := bake(list, tmp, region("byz_aya"), parent, "FarAyasofya", 0.4)
 	# Uzaklık katmanı: AYA_NEAR m'ye kadar dokulu, dış çizgili kabuk; ötesinde küçük parçasız, tek yüzeyli, dış çizgisiz kopya
 	# (siluet ve renk aynı; uzaktan dış çizgi zaten seçilmez, üçgen yarıya iner)
-	var lo := bake(list, tmp, region("byz_aya"), mi, "FarAyasofyaLo", 1.2, 0, true)
+	var lo := bake(list, tmp, region("byz_aya"), mi, "FarAyasofyaLo", 1.2, 0, true, true)
 	lo.transform = Transform3D.IDENTITY
 	lo.material_override = Scenery._vc_mat()
 	lo.set_meta("no_walk", true)            # çarpışma yakın kabuktan
@@ -425,6 +433,52 @@ static func far_aya(parent: Node3D) -> MeshInstance3D:
 	sh.set_meta("no_walk", true)
 	tmp.free()
 	return mi
+
+
+## Yassı (en ince ekseni öbür ikisinin 0,35'inden küçük) küreyi, bina merkezine (c) bakan yarısı atılmış ağa çevirir; yassı
+## değilse ya da yön belirsizse null
+static func _outer_half(n: MeshInstance3D, top: Node3D, c: Vector3) -> ArrayMesh:
+	var sc := n.scale.abs()
+	var thin := 0
+	for k in 3:
+		if sc[k] < sc[thin]:
+			thin = k
+	var big := 0.0
+	for k in 3:
+		if k != thin:
+			big = maxf(big, sc[k])
+	if sc[thin] > 0.35 * big:
+		return null
+	var rel := Transform3D.IDENTITY
+	var cur: Node = n
+	while cur != null and cur != top:
+		if cur is Node3D:
+			rel = (cur as Node3D).transform * rel
+		cur = cur.get_parent()
+	var dl := rel.affine_inverse() * c        # bina merkezi, kürenin kendi uzayında
+	if absf(dl[thin]) < 0.05:
+		return null
+	var sgn := signf(dl[thin])
+	var arr := n.mesh.surface_get_arrays(0)
+	var v: PackedVector3Array = arr[Mesh.ARRAY_VERTEX]
+	var nr: PackedVector3Array = arr[Mesh.ARRAY_NORMAL]
+	var ia = arr[Mesh.ARRAY_INDEX]
+	var idx: PackedInt32Array = ia if ia != null else PackedInt32Array()
+	var st := SurfaceTool.new()
+	st.begin(Mesh.PRIMITIVE_TRIANGLES)
+	for k in range(0, idx.size(), 3):
+		var a := v[idx[k]]
+		var b := v[idx[k + 1]]
+		var d := v[idx[k + 2]]
+		if (a[thin] + b[thin] + d[thin]) / 3.0 * sgn > 0.0001:
+			continue
+		for q in 3:
+			st.set_normal(nr[idx[k + q]])
+			st.add_vertex(v[idx[k + q]])
+	var am := st.commit()
+	if am == null or am.get_surface_count() == 0:
+		return null
+	return am
 
 
 ## Düz (tek yükseklikte, normali yukarı ya da aşağı) hücre ızgarasını aynı alanı kaplayan en az sayıda dikdörtgene birleştirir
@@ -555,7 +609,7 @@ static var _tex_avg := {}
 ## ortalama rengiyle tek yüzeye (uzak sürüm: tek çizim + dış çizgi). Yakından da yerdekiyle aynı doku; çizim sayısı = farklı doku sayısı + 1
 ## (her biri dış çizgiyle iki). Işıklı (ateş, pencere ışığı), saydam, yazı ve 5 cm'den küçük parçalar atılır; Person
 ## altındakiler (insanlar) atılır.
-static func bake(list: Array, top: Node3D, xf: Transform3D, parent: Node3D, node_name := "Baked", min_size := 0.05, max_tris := 0, flat := false) -> MeshInstance3D:
+static func bake(list: Array, top: Node3D, xf: Transform3D, parent: Node3D, node_name := "Baked", min_size := 0.05, max_tris := 0, flat := false, lin_avg := false) -> MeshInstance3D:
 	var groups := {}           # anahtar -> [v, n, c, malzeme]
 	for n: MeshInstance3D in list:
 		if n.mesh == null or not n.visible:
@@ -637,7 +691,8 @@ static func bake(list: Array, top: Node3D, xf: Transform3D, parent: Node3D, node
 						gm.vertex_color_use_as_albedo = true
 						gmat = gm
 				elif bm.albedo_texture:
-					col = col * _avg(bm.albedo_texture)
+					# lin_avg: dokunun ortalaması doğrusal uzayda (köşe rengi doğrusal okunur; sRGB ortalaması düz kopyayı soluk somon yapıyordu)
+					col = col * (_avg_lin(bm.albedo_texture) if lin_avg else _avg(bm.albedo_texture))
 			if not groups.has(key):
 				var nst := SurfaceTool.new()
 				nst.begin(Mesh.PRIMITIVE_TRIANGLES)
@@ -682,6 +737,33 @@ static func _roofish(n: Node, top: Node) -> bool:
 		cur = cur.get_parent()
 	var m: Mesh = (n as MeshInstance3D).mesh
 	return m != null and (m.resource_path.containsn("roof") or m.resource_name.containsn("roof"))
+
+
+static var _tex_avg_lin := {}
+
+## Desen dokusunun doğrusal uzaydaki ortalama rengi (doku örnekleri doğrusala çevrilip ortalanır)
+static func _avg_lin(tex: Texture2D) -> Color:
+	if tex == null:
+		return Color.WHITE
+	if _tex_avg_lin.has(tex):
+		return _tex_avg_lin[tex]
+	var img := tex.get_image()
+	if img == null or img.is_empty():
+		return Color.WHITE
+	img = img.duplicate()
+	if img.is_compressed():
+		img.decompress()
+	var c := Color(0, 0, 0, 0)
+	var n := 0
+	for j in 24:
+		for i in 24:
+			var px := img.get_pixel(int((i + 0.5) * img.get_width() / 24.0), int((j + 0.5) * img.get_height() / 24.0)).srgb_to_linear()
+			c += px
+			n += 1
+	c /= float(n)
+	c.a = 1.0
+	_tex_avg_lin[tex] = c
+	return c
 
 
 ## Desen dokusunun ortalama rengi (yoksa ya da henüz üretilmediyse beyaz)
