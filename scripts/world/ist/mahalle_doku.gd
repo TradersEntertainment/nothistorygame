@@ -24,14 +24,16 @@ const OGE_YAKIN := 110.0
 const CARP_YAKIN := 150.0
 
 ## Zemin renkleri (ISTANBUL_GORUNUS §2: toprak yol kuru #A89677 / çamurlu #7C6B52; kaldırım iri kesme taş #9A9588)
-const R_MESE := Color("8a8579")
-const R_YOL := Color("7a766a")
+const R_MESE := Color("7a7466")
+const R_YOL := Color("706a5e")
 const R_TOPRAK := Color("8a785c")
 const R_CAMUR := Color("6a5b46")
 const R_AVLU := Color("83775f")
 const R_SAVUNMA := Color("7e725f")
 
+const SOKAK_ESYA := preload("res://scripts/world/ist/ayrinti_sokak.gd")
 static var aktif: IstMahalleDoku
+var sokak_esya: RefCounted
 static var _kuruldu_sokak: IstSokak
 
 var sk: IstSokak
@@ -80,6 +82,8 @@ func _kur() -> void:
 	stats["avlu_ms"] = t2 - t1
 	stats["oge_ms"] = Time.get_ticks_msec() - t2
 	print("ISTDOKU2 ", stats)
+	sokak_esya = SOKAK_ESYA.new(self, sk)
+	sokak_esya.kur()
 
 
 # ================================================================ 1. sokak zemini
@@ -280,7 +284,7 @@ func _renk(t: int, p: Vector2) -> Color:
 	var tane := _hs(floorf(p.x * 0.5), floorf(p.y * 0.5), t) - 0.5
 	var c: Color
 	match t:
-		1: c = R_MESE.lerp(Color("999384"), leke * 0.6)
+		1: c = R_MESE.lerp(Color("85796a"), leke * 0.6)
 		2: c = R_YOL.lerp(Color("6b665c"), leke * 0.5)
 		4: c = R_SAVUNMA.lerp(R_CAMUR, leke * 0.35)
 		5: c = R_AVLU.lerp(Color("7a7653"), leke * 0.45)
@@ -296,14 +300,16 @@ func _zemin_mat(tas: bool) -> StandardMaterial3D:
 	m.specular_mode = BaseMaterial3D.SPECULAR_DISABLED
 	m.roughness = 1.0
 	if tas:
-		var tex := Props._pattern_tex("flagstone")
+		# Prokonnesos/kireçtaşı döşeme (kalite notu 17): düzensiz sıralı kesme taş, derz, kırık, otlu derz; 7,2 m'de bir tekrar
+		var tex := dosek_tex()
 		m.albedo_texture = tex
 		var a := World1453._avg(tex)
-		# doku ortalaması 1'e çekilir: görünen renk köşe rengi olsun
-		m.albedo_color = Color(minf(1.0 / maxf(a.r, 0.3), 1.6), minf(1.0 / maxf(a.g, 0.3), 1.6), minf(1.0 / maxf(a.b, 0.3), 1.6))
+		# doku parlaklığı 1'e çekilir (renk tonu korunur): görünen renk köşe rengi × taşın kendi tonu
+		var l := maxf((a.r + a.g + a.b) / 3.0, 0.3)
+		m.albedo_color = Color(1.0 / l, 1.0 / l, 1.0 / l)
 		m.uv1_triplanar = true
 		m.uv1_world_triplanar = true
-		m.uv1_scale = Vector3(0.3, 0.3, 0.3)
+		m.uv1_scale = Vector3(1.0 / 7.2, 1.0 / 7.2, 1.0 / 7.2)
 	else:
 		# toprak: yumuşak gürültü (sıkışmış toprak, çakıl lekeleri); ortalaması 1'e çekilir
 		var tex := Props._noise("concrete")
@@ -313,6 +319,77 @@ func _zemin_mat(tas: bool) -> StandardMaterial3D:
 		m.uv1_world_triplanar = true
 		m.uv1_scale = Vector3(0.18, 0.18, 0.18)
 	return m
+
+
+static var _dosek: ImageTexture
+
+
+## Döşeme dokusu (512 px = 7,2 m; dikişsiz): sıra yükseklikleri 0,35–0,75 m, taş boyları 0,4–1,3 m (sıra başına kaydırma),
+## taş başına ton (sıcak gri-krem, yer yer pembemsi ve griye kaçan Prokonnesos), aşınma lekesi, kırık çizgisi,
+## 2–3 px koyu derz, derzde ve kırık taşta ot.
+static func dosek_tex() -> ImageTexture:
+	if _dosek != null:
+		return _dosek
+	const N := 512
+	var rng := RandomNumberGenerator.new()
+	rng.seed = 17453
+	var img := Image.create(N, N, false, Image.FORMAT_RGB8)
+	var px := N / 7.2
+	var tonlar := [Color(0.80, 0.76, 0.68), Color(0.76, 0.73, 0.67), Color(0.83, 0.78, 0.69), Color(0.72, 0.69, 0.63),
+		Color(0.79, 0.73, 0.66), Color(0.70, 0.67, 0.60), Color(0.85, 0.81, 0.72), Color(0.75, 0.70, 0.62)]
+	var derz := Color(0.36, 0.33, 0.28)
+	var ot := Color(0.34, 0.40, 0.20)
+	# sıralar
+	var rows: Array = []
+	var y := 0
+	while y < N:
+		var h := int(rng.randf_range(0.35, 0.75) * px)
+		if N - (y + h) < int(0.3 * px):
+			h = N - y
+		rows.append([y, h])
+		y += h
+	for r: Array in rows:
+		var y0: int = r[0]
+		var h: int = r[1]
+		var x := 0
+		var off := rng.randi_range(0, N - 1)
+		while x < N:
+			var w := int(rng.randf_range(0.4, 1.3) * px)
+			if N - (x + w) < int(0.35 * px):
+				w = N - x
+			var ton: Color = tonlar[rng.randi_range(0, tonlar.size() - 1)]
+			ton = ton.lightened(rng.randf_range(0.0, 0.06)) if rng.randf() < 0.5 else ton.darkened(rng.randf_range(0.0, 0.10))
+			var kirik := rng.randf() < 0.22
+			var otlu := rng.randf() < 0.10
+			var ka := rng.randf_range(-0.8, 0.8)
+			var kb := rng.randf_range(0.2, 0.8)
+			var lk := Vector2(rng.randf_range(0, w), rng.randf_range(0, h))
+			var lr := rng.randf_range(4.0, 18.0)
+			for j in h:
+				for i in w:
+					var X := (x + i + off) % N
+					var Y := y0 + j
+					var c := ton
+					var kenar := mini(mini(i, w - 1 - i), mini(j, h - 1 - j))
+					if kenar < 2:
+						var g := sin((X * 0.37 + Y * 0.21)) * 0.5 + 0.5
+						c = derz.lerp(ot, 0.7) if g > 0.86 else derz
+					else:
+						var n := sin(X * 0.9 + Y * 1.3) * sin(X * 0.31 - Y * 0.57) * 0.035 + rng.randf_range(-0.025, 0.025)
+						c = Color(c.r + n, c.g + n, c.b + n * 0.8)
+						if kenar < 4:
+							c = c.darkened(0.08)
+						if Vector2(i, j).distance_to(lk) < lr:
+							c = c.darkened(0.06)
+						if kirik and absf((float(j) / h) - (kb + ka * (float(i) / w - 0.5))) < 0.012 + 0.006 * sin(i * 0.8):
+							c = derz.lerp(c, 0.35)
+						if otlu and kenar < 6 and sin(X * 1.7 + Y * 2.3) > 0.2:
+							c = ot.lerp(c, 0.3)
+					img.set_pixel(X, Y, c)
+			x += w
+	img.generate_mipmaps()
+	_dosek = ImageTexture.create_from_image(img)
+	return _dosek
 
 
 # ================================================================ 2. avlular

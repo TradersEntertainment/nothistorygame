@@ -22,6 +22,12 @@ var _kuyruk: Array = []
 var _day_t := 0.0
 var _mats := {}
 var kur_ms := 0.0
+## Oyuncunun çevresindeki gerçek kişi katmanı (IstHayatYakin): IstHayat.attach zincirinden kurulur (şehre ek çağrı gerekmez).
+## Kapalıysa (yakin_acik = false) küp figürler yakında da görünür (eski davranış).
+static var yakin_acik := true
+const YAKIN_BOS := {0: 88.0, 1: 66.0, 2: 40.0}     # mod → figürün kaybolduğu kamera uzaklığı (insan, dört ayaklı, tavuk)
+var yakin: IstHayatYakin = null
+var _yakin_olacak := false
 
 
 static func attach(dunya_: Node3D, gece_ := false) -> IstHayat:
@@ -43,6 +49,8 @@ func _sh(ad: String, mode := 0) -> ShaderMaterial:
 	if ad == "ist_insan":
 		m.set_shader_parameter("mode", mode)
 	m.set_shader_parameter("gece", 1.0 if gece else 0.0)
+	if ad == "ist_insan" and _yakin_olacak:
+		m.set_shader_parameter("yakin_bos", float(YAKIN_BOS.get(mode, 0.0)))
 	_mats[key] = m
 	return m
 
@@ -59,6 +67,8 @@ func _std(unshaded := false) -> StandardMaterial3D:
 
 func _kur() -> void:
 	var t0 := Time.get_ticks_msec()
+	_yakin_olacak = yakin_acik and not OS.has_environment("NO_CITYLIFE") and not GameState.exitcheck \
+			and not dunya.has_node("CityLife") and IstSehir.sokak != null
 	veri = IstHayatVeri.new()
 	veri.uret(IstSehir.sokak, gece)
 	K = veri.K
@@ -87,6 +97,10 @@ func _kur() -> void:
 		kt.kur(self)
 	kur_ms = Time.get_ticks_msec() - t0
 	print("ISTHAYAT kur_ms=%d %s" % [kur_ms, veri.ist])
+	if _yakin_olacak and yakin == null:
+		var t1 := Time.get_ticks_msec()
+		yakin = IstHayatYakin.attach(dunya, null, gece)
+		print("ISTHAYAT yakin_kur_ms=%d" % (Time.get_ticks_msec() - t1))
 	yenile_hepsi()
 
 

@@ -28,7 +28,8 @@ const P_BADANA := [Color("a19987"), Color("9b9380"), Color("a49d8b")]           
 const P_KERPIC := [Color("7a6850"), Color("71604a"), Color("645947")]                       # sıvasız / kerpiç
 const P_TUGLA := Color("8a4630")
 const P_AHSAP := [Color("584a39"), Color("64523e"), Color("715b41")]
-const P_KIREMIT := [Color("743928"), Color("643427"), Color("6d4230"), Color("5a3024"), Color("794f3e"), Color("683d30")]
+## DOKU-3 (kalite notu 18): ışık altında doygun turuncuya kaçıyordu: soluk kırmızı-kahve Bizans kiremidi, daha az doygun
+const P_KIREMIT := [Color("5c3428"), Color("53302a"), Color("5a3b2f"), Color("4b2d25"), Color("624538"), Color("573b31")]
 const P_DAM := [Color("7a6a52"), Color("85735a"), Color("6e604c")]
 const SHUTTERS := [Color("5a5244"), Color("4e5a4a"), Color("6b4a36"), Color("5a6250")]     # soluk, boyasız ahşap
 ## Eski adlar (başka dosyalar kullanabilir)
