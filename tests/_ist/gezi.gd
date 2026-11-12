@@ -39,6 +39,7 @@ func _ready() -> void:
 			"sehir": IstDunya.sehir_bagla = kv[1] != "0"
 			"sis": _sis = kv[1].to_float()
 			"duz": _duz = kv[1] == "1"
+			"kiyi": IstGeo.kiyi_yumusat = kv[1] != "0"
 	if kip == "harita":
 		_harita.call_deferred()
 		return

@@ -11,7 +11,7 @@ Dal: `wip/ist2-dunya2` (taban `wip/ist2-taban2`; `wip/ist2-sehir2` ve `wip/ist2-
 | 1 | `IstGeo.S = 0,35`; bütün tablolar gerçek koordinattan | DÜZELDİ (ilk gönderim ~25. dakikada) |
 | 2 | `mahalle(x,z)` yeniden dağıtım (sura kadar dolu, adalar, ayrı türler, sur dışı/karşı kıyı türleri) | DÜZELDİ (harita + sayım aşağıda) |
 | 3a | Batıdaki dikdörtgen koyu mavi alan | KISMEN: arazi tarafında yok (şehirsiz tam tepe karesinde mavi dikdörtgen görünmüyor; bütün çekirdek parçalar kuruluyor); şehirli tam tepede görülen koyu dikdörtgenler şehir/parça tarafının (aşağıda ORTAK BİLGİ) |
-| 3b | Kıyı basamaklı | DÜZELDİ (kıyı şeridinde yükseklik kıyı çokgenine işaretli uzaklıkla yeniden kurulur) |
+| 3b | Kıyı basamaklı | DÜZELDİ / küçük dişler KISMEN (kıyı şeridinde yükseklik kıyı çokgenine işaretli uzaklıkla, sürekli profille) |
 | 3c | Zemin tek renk yeşil | DÜZELDİ (türlere göre renk + tarla parselleri; ayrıca uzaklıkla süt beyazına dönme giderildi) |
 | 4 | Karşı kıyılar ve ufuk dolu, Kız Kulesi | DÜZELDİ (31 768 öğe; Kız Kulesi küçük kale) |
 | 5 | `kare40`, gezi `bos=1` (ISTBOS) | DÜZELDİ; şehir içi %5,5 (hedef %0) → ŞEHİR/DOKU'ya rapor |
@@ -64,8 +64,10 @@ gri harabe, koyu yeşil sarnıç, mor ordugâh, pembe köy, zeytin bağ, koyu or
 - **Kıyı basamağı:** kaynağı ızgara verisi (kıyı maskesi 20 m'lik rasterden, `distance_transform_edt`). `h_ham` artık kıyı adayı
   (|y| < 9 saklı m) noktalarda en yakın DENİZE BAKAN kıyı kenarına (yarımada, Trakya, Anadolu çokgenleri; kara suru ve veri sınırı
   kenarları ayıklanır) işaretli uzaklığı ölçer ve 26 m gerçeğin içinde kıyı profilini (kara +0,4 m + %10, deniz −0,6 m − %8) kurar,
-  26–46 m arası eski veriye yumuşak geçer. 80 m'lik hücre dizini; kıyıdan uzakta ek maliyet yok. Kıyı çizgisi çokgeni izliyor
-  (`sahip_01_tam_tepe`, `sahip_13`).
+  40–70 m gerçek arası eski veriye yumuşak geçer. Profil SÜREKLİ (kıyıdan 5 m'ye %30, ötesi kara %12 / deniz %8): ilk denemede
+  kıyıda +0,4 / −0,6 m sıçrama vardı, sıfır çizgisi ağ hücresine kilitlenip yine dişli görünüyordu; ayrıca yatık kıyıyı ±0,25 m
+  dalga kesiyordu. 80 m'lik hücre dizini; kıyıdan uzakta ek maliyet yok. ÖNCE | SONRA: `oncesonra_kiyi.jpg` (aynı bakış, gezi
+  `kiyi=0` ile yumuşatma kapalı). Kalan: çokgenin kendi köşeleri (OSM ilçe sınırı) ve 6 m ağ hücresi ölçeğinde küçük dişler: KISMEN.
 - **Zemin rengi:** `_renk` türe göre: yerleşik doku çiğnenmiş toprak + taşlık lekeleri; bostan/bağ/meyve/tarla için ~150 × 110 m
   gerçek parseller (sürülmüş tarla çizgili kahve, yeşil buğday, nadas, çiçekli çayır, bağ sıraları, bostan tarhları; parsel
   sınırında toprak patika); harabe/saray taşlık; Hipodrom kuru toprak; ordugâh çiğnenmiş toprak; orman koyu. Albedo %20 koyu,
@@ -154,6 +156,11 @@ Sınır kutusu: `IstGeo.kiyi("yarimada")` + Galata + 300 m ≈ x −1750…+300,
 eski World1453 ~1,4 × 1,7 km'ye yakın: bölüm süreleri büyük ölçüde korunur). Bağlama paketi: (1) bölüm 7/11 sahnesinde `World1453`
 yerine `IstDunya.build` + `IstSehir.attach_v2`; (2) `flight_data` çağrıları `IstSehir.flight_data_v2`; (3) tavan 70 → 90 m;
 (4) başlangıç noktası otağ; (5) eski sınır (`SiegeField` dikdörtgeni) yerine yukarıdaki kutu.
+
+## ÖNCE | SONRA paftaları
+
+- `oncesonra_genel.jpg`: tur başı (yalnız S = 0,35 + mahalle; renk, pus, karşı kıyı yok) | şimdiki birleşik dal: tam tepe, Galata, sur dışı.
+- `oncesonra_kiyi.jpg`: Haliç güney kıyısı 60 m'den, kıyı yumuşatması kapalı | açık (şehirsiz).
 
 ## Testler
 
