@@ -479,6 +479,9 @@ func ensure_flight_solids() -> int:
 		var far: bool = top[1] or n.has_meta("far_scenery")
 		if n is CanvasItem or n == player or n.is_in_group("persons") or n.is_in_group("soldiers"):
 			continue
+		# İstanbul v2 kendi çarpışmasını akışla kurar (IstBaglama): binlerce düğümü taramak kalkışta takılma yapıyordu
+		if n.has_meta("ucus_tarama_yok"):
+			continue
 		if n is Node3D and not (n as Node3D).visible:
 			continue
 		for c in n.get_children():

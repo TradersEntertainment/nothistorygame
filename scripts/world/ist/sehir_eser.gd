@@ -177,13 +177,15 @@ void vertex() {
 	wnrm = normalize((MODEL_MATRIX * vec4(NORMAL, 0.0)).xyz);
 }
 void fragment() {
-	vec3 c = COLOR.rgb;
+	// köşe rengi sRGB olarak saklı (albedo_color'dan): doğrusala çevrilir (yoksa uzak sur yakınından açık ve gece
+	// ay ışığında bembeyaz görünüyordu)
+	vec3 c = pow(COLOR.rgb, vec3(2.2));
 	float vert = step(abs(wnrm.y), 0.5);
-	float stone = step(c.r - c.b, 0.24);
+	float stone = step(COLOR.r - COLOR.b, 0.24);
 	float band = step(fract((wpos.y + 0.35) / 1.9), 0.24) * vert * stone;
 	float course = step(fract(wpos.y / 0.62), 0.07) * vert * stone;
 	float joint = step(fract((wpos.x + wpos.z) / 1.3), 0.04) * vert * stone * (1.0 - band);
-	c = mix(c, vec3(0.58, 0.31, 0.22), band * 0.85);
+	c = mix(c, pow(vec3(0.58, 0.31, 0.22), vec3(2.2)), band * 0.85);
 	c *= 1.0 - (course + joint) * 0.10;
 	ALBEDO = c;
 	ROUGHNESS = 0.95;

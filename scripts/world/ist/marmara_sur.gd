@@ -201,7 +201,10 @@ static func _tower(root: Node3D, x: float, d: Dictionary, lod: int) -> void:
 		for i in NST:
 			var top := rise * (i + 1)
 			var c := foot + dir * (0.5 * (i + 0.5))
-			IstMk.S(root, Vector3(0.5 + 0.02, top, wwid), Vector3(c.x, H, c.z), IstMk.STONE, "ashlar")
+			IstMk.V(root, Vector3(0.5 + 0.02, top, wwid), Vector3(c.x, H, c.z), IstMk.STONE, "ashlar")
+		# Çarpışma: basamak ortalarından geçen tek rampa (ŞEHİR-3: oyuncu kutu basamakların önünde takılıyordu)
+		if IstMk._ic(foot.x):
+			rampa(root, foot + Vector3(0, rise * 0.5, 0), foot + dir * (0.5 * NST - 0.25) + Vector3(0, rise * NST, 0), wwid)
 	# ok yarıkları ve pencere: deniz yüzünde iki sıra
 	var slit: Array = []
 	for sx: float in [-0.3, 0.0, 0.3]:
@@ -288,6 +291,8 @@ static func _stair(root: Node3D, d: Dictionary, st: Dictionary, lod: int) -> voi
 	var total := Vector3(RUN * n, rise * n, 0)
 	var length := total.length()
 	var mid := Vector3(xf, 0, zc - 0.85 - 0.11) + total * 0.5 + Vector3(0, 0.55, 0)
+	if not IstMk._ic(mid.x):
+		return
 	var b := Props.solid(root, Vector3(length, 1.1, 0.22), mid, IstMk.STONE_DK)
 	b.rotation = Vector3(0, 0, atan2(total.y, total.x))
 	Props.set_pattern(b, IstMk.STONE_DK, "ashlar")
@@ -367,3 +372,19 @@ static func climbs_msur(k: float = 0.5) -> Array:
 		[Vector3(float(st["x_foot"]) - 0.4, 0.0, zc), Vector3(xt - 0.25, float(d["H"]), zc), "merdiven"],
 		[Vector3(xt - 0.2, float(d["H"]), zc), Vector3(xt - 0.2, float(d["H"]), -T * 0.5 + 0.9), "basamak"],
 	]
+
+
+## Yalnız çarpışma rampası: a (alt) → b (üst), üst yüzü a–b doğrusunda, en w
+static func rampa(root: Node3D, a: Vector3, b: Vector3, w: float) -> StaticBody3D:
+	var body := StaticBody3D.new()
+	body.name = "Rampa"
+	var cs := CollisionShape3D.new()
+	var bs := BoxShape3D.new()
+	var L := a.distance_to(b)
+	bs.size = Vector3(w, 0.3, L)
+	cs.shape = bs
+	body.add_child(cs)
+	var bas := Basis.looking_at((b - a).normalized(), Vector3.UP)
+	body.transform = Transform3D(bas, (a + b) * 0.5 - bas.y * 0.15)
+	root.add_child(body)
+	return body

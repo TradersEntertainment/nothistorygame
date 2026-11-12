@@ -11,8 +11,8 @@ var kuyruk: Array = []            # [öğe indeksi, lod]
 var _t := 0.0
 var _hazir_lod2 := false
 ## Yakın lod eşikleri (öğe yarıçapına eklenir; dünya metre)
-var lod0_m := 230.0
-var lod1_m := 800.0
+var lod0_m := 120.0           # ŞEHİR-3: 230 → 120 (sık çadır denizinde yakın katman 4–5 M üçgen oluyordu)
+var lod1_m := 450.0           # 800 → 450 (ötesi hücre başına pişmiş uzak ağ)
 var butce_us := 9000
 var kurulan := 0
 var bakan: Node3D                 # yoksa etkin kamera
@@ -27,6 +27,11 @@ var uzak_ms := 0
 
 
 func kur(plan: Array) -> void:
+	# yeniden kurulum (IstBaglama._temizle öğe listesini süzüp yeniden çağırır): eski hücre ağları kalkar
+	for h: Dictionary in hucreler:
+		if is_instance_valid(h["mi"]):
+			(h["mi"] as Node).queue_free()
+	hucreler.clear()
 	items = plan
 	var t0 := Time.get_ticks_msec()
 	var by := {}
@@ -73,6 +78,7 @@ static func _uzak_mat() -> StandardMaterial3D:
 	if _umat == null:
 		_umat = StandardMaterial3D.new()
 		_umat.vertex_color_use_as_albedo = true
+		_umat.vertex_color_is_srgb = true
 		_umat.diffuse_mode = BaseMaterial3D.DIFFUSE_TOON
 		_umat.specular_mode = BaseMaterial3D.SPECULAR_DISABLED
 		_umat.roughness = 1.0

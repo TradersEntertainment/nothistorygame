@@ -135,9 +135,14 @@ static func build_kanat(host: Node3D, alan: PackedVector2Array, tur: String, k: 
 				for q in 3:
 					wd.cylp(Vector3(fp2.x + cos(q * 2.1) * 0.9, fy + 0.15, fp2.y + sin(q * 2.1) * 0.9), 0.08, 0.7, K.AHSAP_A, 5, -1.0, Vector3(90, q * 60.0, 0))
 				det.solid_cyl(Vector3(fp2.x, fy + 0.1, fp2.y), 0.6, 0.2)
-	if K.gece:
+	if K.gece and lod == 0:
+		# alev yalnız yakın katmanda ve üç ocaktan birinde (ŞEHİR-3: sık çadır denizinde gece 5–10 bin çizim oluyordu;
+		# uzak ordu ateşleri IstHayat'ın "ordu_ates" katmanında)
+		var fi := 0
 		for fp3 in fire_pts:
-			Flame.add(host, Vector3(fp3.x, K.gy(fp3.x, fp3.y) + 0.22, fp3.y), 0.4, 0.6)
+			fi += 1
+			if fi % 3 == 0:
+				Flame.add(host, Vector3(fp3.x, K.gy(fp3.x, fp3.y) + 0.22, fp3.y), 0.4, 0.6)
 	for bp in flag_pts:
 		var by := K.gy(bp.x, bp.y)
 		var col: Color = info["bant"]
