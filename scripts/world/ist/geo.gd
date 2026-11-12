@@ -94,16 +94,18 @@ static func h_ham(x: float, z: float) -> float:
 	var a := _h[k] + (_h[k + 1] - _h[k]) * tx
 	var b := _h[k + NX] + (_h[k + NX + 1] - _h[k + NX]) * tx
 	var yv := a + (b - a) * tz                     # saklı (VERI_S) ölçek
-	if absf(yv) < KIYI_YV:
+	if kiyi_yumusat and absf(yv) < KIYI_YV:
 		yv = _kiyi_duzelt(x / S, -z / S, yv)
 	return yv * _HK
 
 ## Kıyı yumuşatma: ızgara verisi kıyıyı 20 m'lik raster maskeden aldığı için kıyı çizgisi basamaklıydı. Kıyı şeridinde
 ## (gerçek ≤ KIYI_BANT m) yükseklik, kıyı çokgenine (yarımada, Trakya, Anadolu; yalnız denize bakan kenarlar) işaretli
 ## uzaklıkla yeniden kurulur: kıyı çizgisi çokgeni izler (S'den bağımsız, gerçek metre).
-const KIYI_YV := 9.0                       # saklı yükseklik |y| bundan küçükse kıyı adayı
-const KIYI_BANT := 46.0                    # gerçek m
-const KIYI_IC := 26.0                      # bu uzaklığın içinde tamamen çokgen profili
+## false: kıyı yumuşatması kapalı (yalnız ÖNCE/SONRA sınaması için; gezi kiyi=0)
+static var kiyi_yumusat := true
+const KIYI_YV := 12.0                       # saklı yükseklik |y| bundan küçükse kıyı adayı
+const KIYI_BANT := 70.0                    # gerçek m
+const KIYI_IC := 40.0                      # bu uzaklığın içinde tamamen çokgen profili
 const KIYI_HUCRE := 80.0
 static var _kseg := PackedVector2Array()   # a, b çiftleri (gerçek e,n)
 static var _kyon := PackedFloat32Array()   # kara tarafı işareti (+1: segment yönünün solu kara)
@@ -173,8 +175,10 @@ static func _kiyi_duzelt(e: float, n: float, yv: float) -> float:
 	var d := sqrt(best)
 	if d >= KIYI_BANT:
 		return yv
-	# hedef profil (saklı ölçek = gerçek × VERI_S): kara 0,4 m + %10 eğim, deniz −0,6 m − %8 eğim
-	var hedef := (0.4 + d * 0.1) if yon > 0.0 else (-0.6 - d * 0.08)
+	# hedef profil (gerçek m; SÜREKLİ: sıfır çizgisi ağ hücresine değil kıyı çokgenine düşsün): kıyıdan 5 m içeri %30 dik
+	# (dalga ±0,25 m dünyanın üstüne çabuk çıksın), ötesi kara %12 / deniz %8
+	var hedef := minf(d, 5.0) * 0.3 + maxf(d - 5.0, 0.0) * (0.12 if yon > 0.0 else 0.08)
+	hedef *= yon
 	hedef *= VERI_S
 	var wt := 1.0 - smoothstep(KIYI_IC, KIYI_BANT, d)
 	return lerpf(yv, hedef, wt)

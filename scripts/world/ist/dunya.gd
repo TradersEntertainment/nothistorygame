@@ -120,6 +120,7 @@ func _bakan() -> Vector3:
 func _process(_dt: float) -> void:
 	var t0 := Time.get_ticks_usec()
 	var p := _bakan()
+	_pus(p)
 	_deniz_izle(p)
 	_lod_guncelle(p)
 	_yakalayici(p)
@@ -398,7 +399,8 @@ func _renk(x: float, z: float, y: float, egim: float) -> Color:
 		"hipodrom":
 			c = C_KURU.lerp(C_TOPRAK, 0.5 + 0.3 * g)
 		"ordugah":
-			c = cig.lerp(c, clampf(0.35 + g2 * 0.3 - yog * 0.3, 0.0, 1.0))
+			# ordugâh: çiğnenmiş toprak, yollar ve ocak yerleri; aralarda ot lekeleri
+			c = cig.lerp(c, clampf(0.12 + g2 * 0.35 - yog * 0.1, 0.0, 0.6))
 		"bag":
 			c = _parsel(rr, "bag", c)
 		"orman":
@@ -415,7 +417,9 @@ func _renk(x: float, z: float, y: float, egim: float) -> Color:
 	# kıyı kumu (gerçek 0–3 m)
 	if yr < 3.2:
 		c = C_KUM.lerp(c, smoothstep(1.2, 3.2, yr))
-	return c
+	# ışıkta (güneş + gök ortamı + ground.gdshader'ın ılık çarpanı) açık renkler soluk/süt rengi görünüyordu:
+	# albedo biraz koyulaşır, doygunluk artar (kalite notu 3: canlı, sıcak, okunur)
+	return Color.from_hsv(c.h, clampf(c.s * 1.25, 0.0, 1.0), c.v * 0.8)
 
 
 ## Parsel deseni: ~150 m gerçek hücreler (hafif dönük), her hücreye tür: sürülmüş tarla (çizgili), yeşil buğday,
@@ -819,6 +823,25 @@ func _gok() -> void:
 		SkyBody.attach(self, _sun, true)
 	else:
 		SkyBody.attach(self, _sun)
+
+
+## Pus kamera yüksekliğine göre: yerden ve alçak uçuşta ufuk yumuşak (hava perspektifi), yükseldikçe incelir; tam
+## tepeden (2 km) şehir süt rengine dönmesin. Look.apply_env sahne açılışında sisi ve hava perspektifini (0,3) yeniden
+## kurar: her karede burada sınırlanır.
+var _pus_y := INF
+func _pus(p: Vector3) -> void:
+	if _env == null:
+		return
+	var y := p.y
+	if absf(y - _pus_y) < 5.0 and _env.fog_aerial_perspective <= 0.12:
+		return
+	_pus_y = y
+	var taban := 0.00025 if gece else 0.00008
+	var k := clampf(1.0 - (y - 80.0) / 900.0, 0.18, 1.0)
+	_env.fog_enabled = true
+	_env.fog_density = taban * k
+	_env.fog_aerial_perspective = 0.1
+	_env.fog_sky_affect = 0.0
 
 
 # ------------------------------------------------------------------ uzak ufuk
