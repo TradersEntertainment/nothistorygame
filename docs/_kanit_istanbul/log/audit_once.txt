@@ -1,0 +1,28 @@
+CITYAUDIT kurulum ms=22512 chunks=yok
+CITYAUDIT hub rect=(-140,-330)-(180,-4) grid=0.50 hücre=417280 delik=804 dar=105 cep=11 (30 m²) havada=461 gomulu_kapi=1 ic_ice=6 sokak_kapali=0/3171 kenar=0 agsiz_cisim=56 gorunmez=52 bilincli_sinir=3 cati_yolu_normal=0 cati_yolu_tirmanma=34 ms=35751
+CITYAUDIT hub örnek delik=[(-18.2,-329.2), (-17.8,-329.2), (-17.2,-329.2), (-16.8,-329.2), (-16.2,-329.2), (-15.8,-329.2), (-18.2,-328.8), (-17.8,-328.8)]
+CITYAUDIT hub örnek dar=[(179.8,-329.8), (69.2,-321.2), (-21.8,-304.8), (-69.2,-300.8), (-122.8,-299.2), (-85.8,-297.8), (-38.2,-291.2), (-121.2,-288.2)]
+CITYAUDIT hub örnek cep=[(-5.2,-67.2), (-7.2,-45.8), (13.8,-45.8), (19.2,-45.8), (-7.2,-32.2), (-1.8,-32.2), (-0.2,-32.2), (5.2,-32.2)]
+CITYAUDIT hub örnek havada=[(-28.1,-80.8), (-16.9,-84.8), (-28.1,-160.8), (-16.9,-164.8), (-28.1,-240.8), (-16.9,-244.8), (-28.1,-320.8), (-16.9,-324.8)]
+CITYAUDIT hub örnek gomulu_kapi=[(15.7,-40.8)]
+CITYAUDIT hub örnek ic_ice=[(-13.8,-76.9), (-13.9,-70.2), (-13.9,-18.6), (-12.8,-76.8), (-12.6,-56.0), (-13.0,-19.5)]
+CITYAUDIT hub örnek sokak_kapali=[]
+CITYAUDIT hub örnek agsiz_cisim=[(165.8,-326.7), (149.5,-172.8), (-73.1,-194.0), (73.2,-285.6), (-103.8,-257.3), (-82.5,-80.3), (-29.4,-150.3), (-97.3,-108.6)]
+CITYAUDIT hub örnek gorunmez=[(116.4,-39.3), (71.6,-47.5), (75.6,-47.5), (79.6,-47.5), (83.6,-47.5), (-138.2,-46.6), (-134.2,-46.6), (-130.2,-46.6)]
+CITYAUDIT hub cati_yolu_normal=[]
+CITYAUDIT hub cati_yolu_tirmanma=[(-137.2,-329.8), (49.8,-329.8), (-48.8,-328.8), (-38.2,-305.8), (96.2,-302.2), (53.8,-300.8), (50.8,-254.8), (92.8,-120.8), (170.2,-109.2), (161.2,-92.8), (-14.8,-83.2), (122.8,-78.8)]
+CITYAUDIT hub süre ızgara=31490 ms
+CITYAUDIT mese rect=(-500,-1240)-(-300,-1040) grid=0.50 hücre=160000 delik=370 dar=11 cep=2 (94 m²) havada=154 gomulu_kapi=0 ic_ice=0 sokak_kapali=0/982 kenar=0 agsiz_cisim=16 gorunmez=0 bilincli_sinir=0 cati_yolu_normal=0 cati_yolu_tirmanma=0 ms=11737
+CITYAUDIT mese örnek delik=[(-374.2,-1119.2), (-374.8,-1118.8), (-374.2,-1118.8), (-375.2,-1118.2), (-374.8,-1118.2), (-374.2,-1118.2), (-375.8,-1117.8), (-375.2,-1117.8)]
+CITYAUDIT mese örnek dar=[(-498.8,-1239.8), (-318.2,-1194.2), (-306.8,-1157.2), (-392.2,-1132.2), (-391.8,-1114.8), (-432.8,-1095.2), (-465.8,-1073.8), (-481.2,-1068.2)]
+CITYAUDIT mese örnek cep=[(-390.8,-1131.8), (-368.8,-1124.2)]
+CITYAUDIT mese örnek havada=[(-455.8,-1237.6), (-450.1,-1225.5), (-446.4,-1217.6), (-426.9,-1238.2), (-438.9,-1204.0), (-410.2,-1205.0), (-416.2,-1225.9), (-419.7,-1219.6)]
+CITYAUDIT mese örnek gomulu_kapi=[]
+CITYAUDIT mese örnek ic_ice=[]
+CITYAUDIT mese örnek sokak_kapali=[]
+CITYAUDIT mese örnek agsiz_cisim=[(-400.3,-1071.0), (-348.7,-1191.2), (-471.4,-1111.3), (-320.2,-1122.7), (-396.4,-1076.2), (-332.6,-1202.9), (-476.6,-1100.9), (-474.7,-1059.2)]
+CITYAUDIT mese örnek gorunmez=[]
+CITYAUDIT mese cati_yolu_normal=[]
+CITYAUDIT mese cati_yolu_tirmanma=[]
+CITYAUDIT mese süre ızgara=11090 ms
+real	1m16.219s
