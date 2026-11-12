@@ -580,7 +580,8 @@ func _to_shore() -> void:
 		_outcome = "2.1"
 		# Yakalayanlar kameranın önünde, yüzleri görünür: kıyıya çıkan oyuncunun 2-3 m önünde
 		_show_watchers(false)
-		var guards := _shore_guards(landing, _shore_look(landing))
+		player.look_lock = true       # yakalama bitene dek bakış sabit: askerler, kameranın anlık yönüne göre dizilir
+		var guards := _shore_guards(landing, _cam_look(landing))
 		await hud.fade_to(0.0, 0.45)
 		_seize(guards, landing)
 		await _say("SPK_SOLDIER", "D2_S_14" if GameState.flags.get("fez", true) else "D2_S_14_NOFEZ")
@@ -592,6 +593,7 @@ func _to_shore() -> void:
 		await Handover.wait(self, 0.05 if Stage.fast() else 0.6)
 		await _budget()
 		player.free_hold = Vector3.INF
+		player.look_lock = false
 		for g in guards:
 			g.queue_free()
 
@@ -1166,13 +1168,30 @@ func _spot_clear(p: Vector3) -> bool:
 	return true
 
 
+## Kameranın anlık yatay bakış yönü (birim); kamera yoksa kıyı bakışı.
+func _cam_fwd(at: Vector3) -> Vector3:
+	var fwd := Vector3.ZERO
+	if is_instance_valid(player) and player.camera:
+		fwd = -player.camera.global_transform.basis.z
+	if Vector2(fwd.x, fwd.z).length() < 0.2:
+		fwd = _shore_look(at) - at
+	fwd.y = 0.0
+	return fwd.normalized()
+
+
+## _cam_fwd yönünde, _shore_look ile aynı uzaklıkta nokta (askerlerin diziliş yönü).
+func _cam_look(at: Vector3) -> Vector3:
+	var d := (_shore_look(at) - at)
+	d.y = 0.0
+	return at + _cam_fwd(at) * maxf(d.length(), 1.0) + Vector3(0, _shore_look(at).y - at.y, 0)
+
+
 ## Kıyıda bakılacak nokta: kıyı boyunca, göz hizasının biraz altı (eskiden göğe bakıyordu).
 ## Yakalama: askerler bağırarak koşup gelir, biri Tolga'yı kolundan tutar (eskiden 2.6 m önde belirip bağırıyor,
 ## sonra göz önünde siliniyorlardı; QA_DERSLER "yakalama yüz yüze").
 func _seize(guards: Array[Node3D], at: Vector3) -> void:
-	var fwd := _shore_look(at) - at
-	fwd.y = 0.0
-	fwd = fwd.normalized()
+	player.look_lock = true
+	var fwd := _cam_fwd(at)
 	var side := Vector3(-fwd.z, 0.0, fwd.x)
 	# Kol boyuna gelirler: ayakları her adımda kuma/çimene basar (eskiden doğrusal tween eğimde havada yürütüyordu, bazen
 	# 6 m'de kalıp boşluğa uzanıyorlardı). Oyuncunun önünde, 1 m ileride ve 0,55 m yanda dururlar: yüzleri kadrajda,
@@ -1221,26 +1240,39 @@ func _grab_arms(guards: Array[Node3D], hold: float, lean := 0.22) -> void:
 ## testte (PACE dışı) askerler yürümeden varır (Stage.fast); tutarken öne eğilme de yürüme sayılmaz.
 func _seize_audit(guards: Array[Node3D], seconds: float) -> void:
 	var t := 0.0
+	var worst := {}       # sabit parça adı -> en kötü (en derin) kayıt
+	var closest := INF    # kameraya en yakın parça uzaklığı (bilgi)
 	while t < seconds:
 		await get_tree().process_frame
 		t += get_process_delta_time()
 		if not is_instance_valid(player) or player.camera == null:
-			return
-		for g in guards:
+			break
+		for gi in guards.size():
+			var g := guards[gi]
 			if not is_instance_valid(g):
 				continue
 			var rg := Handover.rig_of(g)
 			if rg == null:
 				continue
-			for part: Node3D in [rg.head, rg.arm_l, rg.arm_r, rg.elbow_l, rg.elbow_r]:
+			var parts := {"head": rg.head, "arm_l": rg.arm_l, "arm_r": rg.arm_r, "elbow_l": rg.elbow_l, "elbow_r": rg.elbow_r}
+			for pn: String in parts:
+				var part: Node3D = parts[pn]
 				if part == null:
 					continue
 				var lp := player.camera.to_local(part.global_position)
+				closest = minf(closest, lp.length())
 				if lp.z > -0.25 and Vector2(lp.x, lp.y).length() < 0.8:
-					print("WALKTHRU scene=chapter2.tscn who=%s at=%s by=player/camera part=%s local=%s src=chapter2.gd:_seize" % [
-						g.get_meta("speaker", g.name), part.global_position.snapped(Vector3.ONE * 0.1), part.name,
-						lp.snapped(Vector3.ONE * 0.01)])
-					return
+					var key := "%d:%s" % [gi, pn]
+					if not worst.has(key) or lp.z > worst[key][1].z:
+						worst[key] = [g.get_meta("speaker", g.name), lp, part.global_position]
+	if worst.is_empty():
+		print("SEIZE_AUDIT ok closest=%.2f" % closest)
+		return
+	# Süre boyunca en kötü değer, parça başına bir kez
+	for key: String in worst:
+		var w: Array = worst[key]
+		print("WALKTHRU scene=chapter2.tscn who=%s at=%s by=player/camera part=%s local=%s src=chapter2.gd:_seize" % [
+			w[0], (w[2] as Vector3).snapped(Vector3.ONE * 0.1), key.get_slice(":", 1), (w[1] as Vector3).snapped(Vector3.ONE * 0.01)])
 
 
 ## Kızaktan uzağa, kıyı boyunca bakar (kadırga arkada kalır).
@@ -1344,7 +1376,8 @@ func _to_chain() -> void:
 		var landing := _land_on_shore()
 		player.face(_shore_look(landing))
 		_show_watchers(false)
-		var guards := _shore_guards(landing, _shore_look(landing))
+		player.look_lock = true
+		var guards := _shore_guards(landing, _cam_look(landing))
 		await hud.fade_to(0.0, 0.8)
 		_seize(guards, landing)
 		await _say("SPK_SOLDIER", "D2_S_23")
@@ -1353,6 +1386,7 @@ func _to_chain() -> void:
 		await Handover.wait(self, 0.15 if Stage.fast() else 1.65)     # eski tek kollu uzanışın süresi (0,35 + 1,0 + 0,3)
 		await _budget()
 		player.free_hold = Vector3.INF
+		player.look_lock = false
 		for g in guards:
 			g.queue_free()
 
