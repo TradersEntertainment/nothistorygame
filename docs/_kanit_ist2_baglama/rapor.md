@@ -124,7 +124,22 @@ Sahip kareleri (DÜNYA-2'nin 14 bakışı, birleşik dal, gezi sahnesi, öteleme
 
 ## 5. Bilinen kusurlar / BAKILMADI
 
-BILINEN
+1. **7b hub yalnız ötelenir (dönmez):** ByzCity'nin kendi sur parçası (yerel x 34, "dış" +x) v2'de DOĞUYA bakar; v2'nin kara
+   surunun 75 m iç yanında, şehrin içinde ikinci bir sur kesiti gibi durur (pafta 09). Hub y 0'da, v2 doğal arazisi orada ~14 m:
+   hub 260 m'lik sığ bir yamanın dibinde (ilk denemede çevresinde deniz düzlemi görünüyordu: giderildi, `deniz_yok`). Kalıcı çözüm
+   dönüşümlü bağlama: kök düğüme dönüş+yükseklik verip v2 parçalarının izleyiciyi `to_local` ile okuması (ORTAK İSTEK 4). KISMEN.
+2. **Ordugâhın yönü:** CampDay'in "sura doğru" ekseni (yerel +z: Urban'ın topu, yol) v2'de güneye bakar (surlar doğuda). Ordugâh
+   y 0'da, v2'de orası ~7 m: 330 m'lik çok sığ çanak (karede seçilmiyor). KISMEN.
+3. **Mini harita yok (v2):** `MapView` eski dünyanın haritası ve `world1453` grubu; v2 kabuğu gruba girmez (yanlış harita
+   göstermesin). v2 haritası (gezi `kip=harita` çıktısı) bağlanmalı: YAPILMADI.
+4. **Yükleme 3,3 kat** (7 → 23 sn) ve **uçuşta 12–16 takılma** (> 50 ms): kaynak v2 şehir dokusu ve akış (ORTAK İSTEK 1-2).
+5. **Bölümün ordugâhının üstünde çizim bütçesi aşılıyor:** 60 m'den 12 483 çizim (kırılım: bölüm sahnesi 3 782, v2 8 956 — v2'nin
+   yeni çadır denizinin yakın katmanı); 7b hub'ının üstünde 7 241 (ByzCity 5 870). ÖNCE: 3 935 / 3 953. Şehrin üstü bütçe içinde.
+6. **Gece Galata'dan şehir karanlık** (Bölüm 11 Night.environment + v2 gece ışıkları seyrek): DOKU'nun gece ışıkları; benim payım
+   sis/hava perspektifi (düzeldi).
+7. `eski_dunya` ayarı: komut satırı yolu sınandı; ayar dosyası / `GameState.settings` yolu KANITSIZ (kod okundu, koşulmadı).
+8. BAKILMADI: gerçek ekran kartıyla ölçüm (hepsi xvfb/llvmpipe ya da başsız); serbest uçuş elle (ekransız ortam); Bölüm 7'nin gün
+   batımı ışığı v2'de; 12b'nin karesi.
 
 ## 6. Görev 6: Tolga'nın şehir bölümleri (döküm)
 
@@ -134,3 +149,25 @@ BILINEN
 | 24, 25, 26, 31o | ByzCity "aya" | byz_aya | Yapılmadı: Ayasofya meydanı oyun alanı (`IstSehir._meydan_rect`, Ayasofya'nın batısı) için `HUB_ORTA` gibi bir çapa (ByzCity.AYA = (−14, −82) → v2 Ayasofya kubbesi) ve v2 Ayasofya öğesinin kaldırılması (bölüm kendi Ayasofya'sını kurar); arazi yamasının y 0'ı birinci tepede (v2 ~12 m) çukur yapar: AYA_Y benzeri bir dikey çözüm gerekir (bkz. kusur 1) |
 | 25 | CampDay + ByzCity "aya" | iki bölge | Yapılmadı (iki bölge aynı sahnede: tek öteleme yetmez) |
 | 10, 10b, 10z | CampDay | camp | Hazır (Bölüm 11 ile aynı yerleşim); `hazirla` eklenip sınanmalı |
+
+
+## 7. ORTAK İSTEK
+
+1. **ŞEHİR-3 / DOKU-3 — yükleme:** v2 kurulumu bölümün `_ready`'sinde ~21 sn (doku 14,3: zemin 2,9, ön-pişirme 4,1, ordugâh uzak
+   hücre 2,2, sokak 1,5 …). Öneri: ilk kareden sonra zaman dilimli kurulum (bölüm kartı + kararma ~3,6 sn var) ya da pişmiş ağ
+   önbelleği (`user://` ya da depo içi `.res`).
+2. **ŞEHİR-3 — uçuş takılmaları:** şehre girerken `sehir<dunya` 300–890 düğüm/kare (66–90 ms, `--hitchaudit`), ordugâh
+   `ordugah_yonetici` 442 düğüm (43 ms); ordugâhın yakın katmanı 60 m'den 8 956 çizim (çadırlar tek tek): MultiMesh.
+3. **Herkes — öteleme kuralı:** dünya konumları `IstGeo.w/w2/ll/yol/kiyi/yerler` üzerinden türesin (sabit dünya sayısı yazılmasın);
+   dünya konumu tutan YENİ durağan önbellek eklenirse `IstBaglama._onbellek_sifirla`'ya eklenmeli (bugün: ordugâh `_plan/_wall/_arcs/_len`,
+   gemiler `_plan_onbellek`). `IstGeo.OX/OZ` (öteleme) ve `IstGeo.deniz_yok`, `dislanan` alanları DÜNYA dosyasında.
+4. **DOKU-3 / ŞEHİR-3 — dönüşümlü bağlama için (7b'nin kalıcı çözümü):** izleyici konumu okunan yerler `global_position` yerine
+   `dunya.to_local(...)`: `mahalle_doku.gd` `_cam()`, `hayat_yakin.gd` (`_pw`, `_cam_at`, `_cam_fwd`), `hayat.gd` `_bakan`,
+   `ordugah_yonetici.gd` `_cam_pos()`. (IstSehir zaten `to_local` kullanıyor.)
+   ```gdscript
+   func _cam() -> Vector3:
+       var c := get_viewport().get_camera_3d()
+       return to_local(c.global_position) if c else Vector3.ZERO
+   ```
+5. **GameState (ortak dosya) — kalıcı ayar:** `settings` sözlüğüne `"eski_dunya": false` (bugün `IstBaglama` ayar dosyasını kendisi
+   okuyor) ve ayarlar menüsüne "Eski İstanbul (v1)" anahtarı.
