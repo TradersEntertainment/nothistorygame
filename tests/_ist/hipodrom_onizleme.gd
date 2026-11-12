@@ -13,6 +13,7 @@ var _k := 0.5
 var _lod := 0
 var _shots := ""
 var _audit := true
+var _only := ""
 var _cam: Camera3D
 var _host: Node3D
 var _ground: StaticBody3D
@@ -26,6 +27,7 @@ func _ready() -> void:
 		elif a.begins_with("k="): _k = a.substr(2).to_float()
 		elif a.begins_with("lod="): _lod = a.substr(4).to_int()
 		elif a.begins_with("shots="): _shots = a.substr(6)
+		elif a.begins_with("only="): _only = a.substr(5)
 		elif a.begins_with("audit="): _audit = a.substr(6) != "0"
 	_ids = IDS if ist == "all" else ist.split(",")
 	_setup_world()
@@ -50,13 +52,17 @@ func _setup_world() -> void:
 	var pm := PlaneMesh.new()
 	pm.size = Vector2(1200, 1200)
 	gm.mesh = pm
-	gm.material_override = Props.mat(Color("9db16a"), 0.0, false, "", false)
+	var gmat := StandardMaterial3D.new()
+	gmat.albedo_color = Color("6f8a48")
+	gmat.roughness = 1.0
+	gmat.metallic_specular = 0.0
+	gm.material_override = gmat
 	gm.position.y = -0.002
 	add_child(gm)
 	var sun := DirectionalLight3D.new()
-	sun.rotation_degrees = Vector3(-42, -50, 0)
+	sun.rotation_degrees = Vector3(-42, 130, 0)
 	sun.light_color = Color("fff0d4")
-	sun.light_energy = 1.25
+	sun.light_energy = 0.55
 	sun.shadow_enabled = true
 	sun.directional_shadow_max_distance = 400.0
 	add_child(sun)
@@ -71,7 +77,10 @@ func _setup_world() -> void:
 	env.sky = sky
 	env.background_mode = Environment.BG_SKY
 	env.ambient_light_source = Environment.AMBIENT_SOURCE_SKY
-	env.ambient_light_energy = 0.9
+	env.ambient_light_energy = 0.3
+	env.reflected_light_source = Environment.REFLECTION_SOURCE_DISABLED
+	env.tonemap_mode = Environment.TONE_MAPPER_LINEAR
+	env.tonemap_exposure = 0.8
 	var we := WorldEnvironment.new()
 	we.environment = env
 	add_child(we)
@@ -126,7 +135,7 @@ func _tris(h: Node3D) -> int:
 
 
 func _shot(name: String, from: Vector3, to: Vector3) -> void:
-	if _shots == "":
+	if _shots == "" or (_only != "" and not _only.contains(name.get_slice("_", 2))):
 		return
 	_cam.global_position = from
 	var up := Vector3.UP
@@ -157,13 +166,15 @@ func _run_one(id: String) -> void:
 	if _audit and _lod == 0:
 		await _run_audit(id, ab, tr)
 	var eye := 1.7
-	var dist := clampf(ext * 0.75, 18.0, 160.0)
+	var dist := clampf(ext * 0.45, 18.0, 110.0)
 	var tag := "%s_k%03d" % [id, int(_k * 100)]
 	if _shots != "" and _lod == 0:
 		var dirs := {"G": Vector3(0, 0, 1), "D": Vector3(1, 0, 0), "K": Vector3(0, 0, -1), "B": Vector3(-1, 0, 0)}
 		for dn: String in dirs:
 			var d3: Vector3 = dirs[dn]
-			await _shot("%s_yaklasma_%s" % [tag, dn], Vector3(c.x, eye, c.z) + d3 * dist, Vector3(c.x, minf(ab.size.y * 0.5, 8.0), c.z))
+			var half := Vector3(ab.size.x, 0, ab.size.z) * 0.5
+			var off := absf(d3.x) * half.x + absf(d3.z) * half.z + 22.0
+			await _shot("%s_yaklasma_%s" % [tag, dn], Vector3(c.x, eye, c.z) + d3 * off, Vector3(c.x, minf(ab.size.y * 0.5, 8.0), c.z))
 		# kapı önü yakın plan: yapının güney yüzü, yakın
 		await _shot("%s_kapi_onu" % tag, Vector3(c.x, eye, ab.end.z + 8.0), Vector3(c.x, 2.0, ab.end.z - 2.0))
 		# üst yüzeyde oyuncu gözü: perches'in altı yaklaşımı

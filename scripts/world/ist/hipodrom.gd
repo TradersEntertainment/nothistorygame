@@ -196,7 +196,7 @@ static func _sphendone_floor(host: Node3D, A: float, cz: float) -> void:
 		var chord := 2.0 * A * sin((a1 - a0) * 0.5) * 1.05
 		var cx := cos(m) * r
 		var cy := cz + sin(m) * r
-		var body := K.sb(host, Vector3(A * 1.02, 0.06, chord * 0.75), Vector3(cx, 0.03, cy), K.SAND, "", Vector3(0, -rad_to_deg(m) + 90.0, 0))
+		var body := K.sb(host, Vector3(A * 1.02, 0.06, chord * 0.75), Vector3(cx, 0.03, cy), K.SAND, "", Vector3(0, -rad_to_deg(m), 0))
 		body.name = "SphFloor"
 
 
@@ -214,14 +214,14 @@ static func _sphendone(host: Node3D, A: float, band: float, wt: float, cz: float
 			var h := (i + 1) * TIER_RISE
 			var chord := 2.0 * (r_in + TIER_RUN) * tan((a1 - a0) * 0.5) + 0.08
 			var pos := Vector3(cos(m) * r_mid, h * 0.5, cz + sin(m) * r_mid)
-			K.sb(host, Vector3(TIER_RUN, h, chord), pos, K.STONE.darkened(0.03 * (i % 3)), "ashlar", Vector3(0, -rad_to_deg(m) + 90.0, 0))
+			K.sb(host, Vector3(TIER_RUN, h, chord), pos, K.STONE.darkened(0.03 * (i % 3)), "ashlar", Vector3(0, -rad_to_deg(m), 0))
 		# alt yapı duvarı (kemerli, iki kat)
 		var r_o := A + band
 		var hh := n * TIER_RISE + 1.6
 		if nr < n:
 			hh = maxf(nr * TIER_RISE + 1.0, 3.0)
 		var chord2 := 2.0 * (r_o + wt) * tan((a1 - a0) * 0.5) + 0.08
-		var rot := Vector3(0, -rad_to_deg(m) + 90.0, 0)
+		var rot := Vector3(0, -rad_to_deg(m), 0)
 		var pos2 := Vector3(cos(m) * (r_o + wt * 0.5), hh * 0.5, cz + sin(m) * (r_o + wt * 0.5))
 		K.sb(host, Vector3(wt, hh, chord2), pos2, K.BRICK2.lerp(K.STONE_D, 0.45), "brick", rot)
 		if lod == 0:
@@ -360,7 +360,7 @@ static func _kathisma(host: Node3D, A: float, band: float, wt: float, k: float, 
 	# zeminden kathisma'ya taş basamak sırası (sokaktan çıkış): her biri 0,4 m
 	var steps := int(hh / 0.4)
 	for s in steps:
-		K.ground_box(host, 1.0, (s + 1) * 0.4, 3.0, x_out + 12.0 + 1.0 + (steps - s) * 0.9 - 0.5, cz + 8.0, K.STONE_D, "ashlar")
+		K.ground_box(host, 0.6, (s + 1) * 0.4, 3.0, x_out + 12.0 + 1.0 + (steps - s) * 0.6 - 0.5, cz + 8.0, K.STONE_D, "ashlar")
 
 
 static func _outer_stairs(host: Node3D, k: float) -> void:
@@ -372,7 +372,7 @@ static func _outer_stairs(host: Node3D, k: float) -> void:
 	# rampa değil: 0,4 m'lik taş basamaklar, duvar yüksekliğine kadar (geniş 2 m)
 	var steps := int(wall_h / 0.4) + 1
 	for s in steps:
-		K.ground_box(host, 0.9, (s + 1) * 0.4, 2.4, -(x_out + 0.45 + (steps - 1 - s) * 0.9) + 0.0, z, K.STONE.darkened(0.08), "ashlar")
+		K.ground_box(host, 0.6, (s + 1) * 0.4, 2.4, -(x_out + 0.3 + (steps - 1 - s) * 0.6), z, K.STONE.darkened(0.08), "ashlar")
 
 
 static func _hayvanlar(host: Node3D, A: float, cz: float, z_n: float, rng: RandomNumberGenerator) -> void:
@@ -419,11 +419,11 @@ static func climbs_hipodrom(k: float = 0.5) -> Array:
 	for sx: float in [-1.0, 1.0]:
 		out.append([Vector3(sx * (A - 0.8), 0, _len(k) * 0.04), Vector3(sx * (A + (n - 1) * TIER_RUN + 0.45), n * TIER_RISE, _len(k) * 0.04), "basamak"])
 	# sokak → dış taş basamak → duvar tepesi
-	out.append([Vector3(-(x_out + wall_h / 0.4 * 0.9 + 1.0), 0, -_len(k) * 0.12), Vector3(-(x_out - 0.6), wall_h, -_len(k) * 0.12), "basamak"])
+	out.append([Vector3(-(x_out + wall_h / 0.4 * 0.6 + 1.0), 0, -_len(k) * 0.12), Vector3(-(x_out - 0.6), wall_h, -_len(k) * 0.12), "basamak"])
 	# kathisma basamakları
 	var hh := n * TIER_RISE + 5.0
 	var steps := int(hh / 0.4)
-	out.append([Vector3(x_out + 12.0 + steps * 0.9 + 1.0, 0, _len(k) * 0.04 + 8.0), Vector3(x_out + 12.0 + 1.0 + 0.4, steps * 0.4, _len(k) * 0.04 + 8.0), "basamak"])
+	out.append([Vector3(x_out + 12.0 + steps * 0.6 + 1.0, 0, _len(k) * 0.04 + 8.0), Vector3(x_out + 12.0 + 1.0 + 0.3, steps * 0.4, _len(k) * 0.04 + 8.0), "basamak"])
 	# spina platformu: uç basamak (0,5 m) → 1,0 m platform
 	var z := _spina_z(k)
 	out.append([Vector3(0, 0, float(z["bas"]) - 2.6), Vector3(0, 1.0, float(z["bas"]) + 1.5), "basamak"])
