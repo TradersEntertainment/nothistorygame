@@ -194,7 +194,7 @@ static func build_blakhernai_kilise(host: Node3D, k: float = 0.5, lod: int = 0) 
 	c.cypress(-12.0, 15.0, 7.0)
 	c.olive(-10.0, -5.0, 0.0, 0.9)
 	# tırmanış: yıkık duvar basamakları (güney duvarı alçak) — dış basamaklar
-	c.crate_steps(10.0, 0.0, Vector2(-1, 0), maxi(1, int(ceil(5.2 * c.k / 0.6))), 5.2 * c.k / maxi(1, int(ceil(5.2 * c.k / 0.6))), 0.0)
+	c.crate_steps(7.8, 0.0, Vector2(-1, 0), maxi(1, int(ceil(5.2 * c.k / 0.6))), 5.2 * c.k / maxi(1, int(ceil(5.2 * c.k / 0.6))), 0.0)
 
 
 # ----------------------------------------------------------------------------------------------------------------

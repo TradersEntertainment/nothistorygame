@@ -205,6 +205,8 @@ func _audit() -> void:
 					var w: float = (h1.position as Vector3).distance_to(h2.position)
 					if w > 0.2 and w < 1.4 and (h1.normal as Vector3).dot(h2.normal) < -0.9:
 						dar_cells["%d,%d" % [int(xx / 2.0), int(zz / 2.0)]] = true
+						if OS.has_environment("ISTDBG"):
+							print("  dar: ", p, " w=", w)
 			zz += st
 		xx += st
 	# --- havada: katı gövdelerin tabanı altındaki yüzeyden > 5 cm yukarıda mı
@@ -230,6 +232,14 @@ func _audit() -> void:
 			pq2.position = Vector3(wab.position.x + wab.size.x * 0.5, bottom - 0.02, wab.position.z + wab.size.z * 0.5)
 			pq2.exclude = [body.get_rid()]
 			if not space.intersect_point(pq2, 1).is_empty():
+				continue
+			var sq := PhysicsShapeQueryParameters3D.new()
+			var sb := BoxShape3D.new()
+			sb.size = wab.size + Vector3(0.1, 0.1, 0.1)
+			sq.shape = sb
+			sq.transform = Transform3D(Basis(), wab.get_center())
+			sq.exclude = [body.get_rid()]
+			if not space.intersect_shape(sq, 1).is_empty():
 				continue
 			if gaps.min() > 0.05:
 				havada += 1

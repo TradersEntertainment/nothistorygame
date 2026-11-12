@@ -79,6 +79,7 @@ static func build_aetios(host: Node3D, k: float = 0.5, lod: int = 0) -> void:
 			var hb := Props.solid(c.root, Vector3(3.0, 2.4, 3.0), hp + Vector3(0, 1.2, 0), Color.WHITE)
 			Props.set_pattern(hb, Color("c8b088"), "plaster")
 			var hr := Props.prism(c.root, Vector3(3.8, 1.0, 3.6), hp + Vector3(0, 2.9, 0), Color("b08a4a"))
+			_prism_solid(hr, Vector3(3.8, 1.0, 3.6))
 			Props.box(c.root, Vector3(0.7, 1.6, 0.05), hp + Vector3(0.6, 0.8, 1.52), IstKbCtx.WOOD)
 		var well := Props.cyl(c.root, 0.9, 0.9, Vector3(10.0 * c.k, 0.45, 2.0 * c.k), IstKbCtx.STONE_D, Vector3.ZERO, 10)
 		Props.make_solid(well)
@@ -133,8 +134,7 @@ static func build_kaligaria(host: Node3D, k: float = 0.5, lod: int = 0) -> void:
 			var rr := Props.prism(c.root, Vector3(hd + 0.9, 1.4, hw + 0.4), Vector3(xc, hh + 0.7, zc), IstKbCtx.TILE_OLD, Vector3(0, 90, 0))
 			rr.material_override = Props.mat(IstKbCtx.TILE, 0.0, false, "tiles" if lod < 2 else "")
 			if lod < 2:
-				# çatı çarpışması: düz tabla (eğimli çatı görsel; yürünür düz yüzey çatı altında)
-				var cap := Props.solid(c.root, Vector3(hw - 0.2, 0.3, hd - 0.2), Vector3(xc, hh + 0.15, zc), Color("5a3a24"))
+				_prism_solid(rr, Vector3(hd + 0.9, 1.4, hw + 0.4))
 			if lod == 0:
 				var fz: float = zc - row * hd * 0.5            # sokak cephesi
 				var nrm := 0.0 if row < 0 else 180.0           # cephe normali: row<0 (kuzey sıra) güneye (+z) bakar
@@ -179,6 +179,8 @@ static func build_kaligaria(host: Node3D, k: float = 0.5, lod: int = 0) -> void:
 	var xe := (n - 1) * 0.5 * hw + hw * 0.5
 	var ze := -(lane * 0.5 + hd)
 	_side_stair(c, (xe + 0.9) / c.k, ze / c.k, hh)
+	var nst := maxi(1, int(ceil(hh / 0.32)))
+	c.add_climb(Vector3(xe + 0.9, 0, ze * 1.0 + 0.34 * nst + 0.9), Vector3(xe + 0.9, hh, ze + 0.1), "basamak")
 
 
 static func _side_stair(c: IstKbCtx, x_real: float, z_back_real: float, h: float) -> void:
@@ -241,6 +243,7 @@ static func build_ayvansaray_iskele(host: Node3D, k: float = 0.5, lod: int = 0) 
 			var bx := (-3.2 if bi == 0 else 3.4)
 			var bz := -6.0 - bi * 7.0
 			var hull := Props.ball(c.root, 1.0, Vector3(bx, 0.22, bz), Color("7a4a2a"), Vector3(0.7, 0.32, 2.2), 8)
+			hull.set_meta("bitki", true)
 			Props.box(c.root, Vector3(0.9, 0.06, 0.4), Vector3(bx, 0.42, bz + 0.3), Color("a88a5a"))
 			Props.cyl(c.root, 0.02, 1.8, Vector3(bx + 0.5, 0.5, bz - 0.5), IstKbCtx.WOOD_D, Vector3(0, 0, 70), 4)
 		# fener: iskele ucunda (Flame)
@@ -248,6 +251,9 @@ static func build_ayvansaray_iskele(host: Node3D, k: float = 0.5, lod: int = 0) 
 		Props.box(c.root, Vector3(0.3, 0.3, 0.3), Vector3(0, 2.8, 5.0 - Lp + 0.4), Color("5a4a38"))
 		c.fire(0, 2.7, 5.0 - Lp + 0.4, 0.2, 0.4)
 	c.cypress(-10.0, 13.0, 7.0)
+	c.add_climb(Vector3(0, 0.0, 14.5), Vector3(0, 0.9, 3.0), "basamak")
+	c.add_perch(Vector3(0, 1.4, 5.0 - Lp + 0.4))
+	c.add_perch(Vector3(0, 0.95, -4.0))
 
 
 static func _nul(k: float, yon: float) -> IstKbCtx:
@@ -281,3 +287,17 @@ static func climbs_ayvansaray_iskele(k: float = 0.5) -> Array:
 	return IstKbCtx.harvest("ayvansaray_iskele", build_ayvansaray_iskele, k)[0]
 
 
+
+
+## Prizma çatıya dışbükey çarpışma ekler (sırt Z boyunca; Props.prism boyutu size)
+static func _prism_solid(mi: MeshInstance3D, size: Vector3) -> void:
+	var body := StaticBody3D.new()
+	var cs := CollisionShape3D.new()
+	var cv := ConvexPolygonShape3D.new()
+	var hx := size.x * 0.5
+	var hy := size.y * 0.5
+	var hz := size.z * 0.5
+	cv.points = PackedVector3Array([Vector3(-hx, -hy, -hz), Vector3(hx, -hy, -hz), Vector3(0, hy, -hz), Vector3(-hx, -hy, hz), Vector3(hx, -hy, hz), Vector3(0, hy, hz)])
+	cs.shape = cv
+	body.add_child(cs)
+	mi.add_child(body)

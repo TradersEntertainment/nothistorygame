@@ -537,9 +537,9 @@ func rubble(x: float, z: float, n: int, spread: float, y := 0.0) -> void:
 	for i in n:
 		var rx := x * k + rng.randf_range(-spread, spread) * k
 		var rz := z * k + rng.randf_range(-spread, spread) * k
-		var sz := rng.randf_range(0.25, 0.7)
+		var sz := rng.randf_range(0.25, 0.6)
 		var mi := Props.box(root, Vector3(sz, sz * rng.randf_range(0.5, 0.9), sz * 1.2), Vector3(rx, y * k + sz * 0.3, rz), [STONE_D, BRICK, Color("a99a82")][i % 3], Vector3(rng.randf_range(-8, 8), rng.randf_range(0, 180), rng.randf_range(-8, 8)))
-		if sz > 0.5 and lod == 0:
+		if lod == 0:
 			Props.make_solid(mi)
 
 

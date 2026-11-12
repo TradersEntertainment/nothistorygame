@@ -162,7 +162,7 @@ static func build_kynegion(host: Node3D, k: float = 0.5, lod: int = 0) -> void:
 			var ex := cos(a) * rx * (f0 + f1) * 0.5 * 0.5
 			var ez := sin(a) * rz * (f0 + f1) * 0.5 * 0.5 + 0.0
 			var tang := Vector3(-sin(a) * rx, 0, cos(a) * rz).normalized()
-			var arc := (PI * (rx + rz) * 0.5 * (f0 + f1) * 0.25 / seg) * 1.12
+			var arc := (PI * (rx + rz) * 0.5 * (f0 + f1) * 0.25 / seg) * 1.6
 			var ang := rad_to_deg(atan2(tang.x, tang.z))
 			var depth := rz * 0.16 * 1.1
 			var bd := Props.solid(c.root, Vector3(arc, top, depth), Vector3(ex, top * 0.5, ez), Color.WHITE, Vector3(0, ang, 0))
@@ -177,6 +177,8 @@ static func build_kynegion(host: Node3D, k: float = 0.5, lod: int = 0) -> void:
 		var wb := Props.solid(c.root, Vector3(2.4, wh, 1.0 + maxf(k, 0.5)), Vector3(wx, wh * 0.5, wz), Color.WHITE, Vector3(0, rad_to_deg(atan2(tg.x, tg.z)), 0))
 		Props.set_pattern(wb, Color("c4b290"), "rubble")
 	# moloz, ot, birkaç sütun gövdesi
+	c.add_climb(Vector3(0, 0.1, 1.0), Vector3(0, 0.4 * tiers, rz * (1.0 + (tiers - 0.5) * 0.16) * 0.5), "basamak")
+	c.add_perch(Vector3(0, 0.4 * tiers + 0.05, rz * 0.9))
 	c.rubble(-2.0, 5.0, 14, 7.0, 0.1)
 	c.rubble(6.0, -6.0, 10, 5.0, 0.1)
 	c.olive(-8.0, -12.0, 0.0, 1.0)
