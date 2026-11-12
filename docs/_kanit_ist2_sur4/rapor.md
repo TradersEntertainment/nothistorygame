@@ -1,7 +1,7 @@
 # SUR-4 raporu (İstanbul v2, dördüncü tur) — dal `wip/ist2-sur4`
 
 Taban `wip/ist2-taban4`; son hâlde `wip/ist2-ordugah4`, `wip/ist2-cevre4`, `wip/ist2-doku4`, `wip/ist2-baglama4` birleşik
-(16:46'daki hâlleri; çakışma yok). Kareler yazılımla çizim (xvfb, llvmpipe), 1280×720.
+(16:46'daki hâlleri, `wip/ist2-doku4` 17:25'te yeniden; çakışma yok). Kareler yazılımla çizim (xvfb, llvmpipe), 1280×720.
 
 **Kameralar.** Sahip kareleri DÜNYA-2'nin `tests/_ist/gezi.tscn` + `gezi_sahip.txt` sahnesiyle (sahibinin karesiyle AYNI
 araç ve kamera). Öteki kareler yeni sondamla (`tests/_ist/sur4_kare.tscn`): gezi ile aynı kamera tanımı (gerçek doğu/kuzey,
@@ -113,9 +113,9 @@ Galata (kesme taş, tuğlasız).
   57–107 m), araziyi izleyen örtü (çiğnenmiş toprak, solgun ot yamaları, yanık lekeleri, devriye izi), 265 gülle çukuru
   (yuvarlak, kenarı kabarık), 193 taş gülle, 280 ok/kazık, 123 kalkan, kırık merdiven parçaları (581 parça); ağaç yok
   (benim kurduklarımda). Kapı önleri boş.
-- (b) **Hilalli bayrak:** kaynağı `hayat_veri.gd:595, 596, 638` (`sancak(..., desen = 3)` = `ist_bez.gdshader` hilal deseni;
+- (b) **Hilalli bayrak:** kaynağı `hayat_veri.gd:622, 623, 665` (DOKU-4'ün 17:25 hâlinde; ilk sayımda 595, 596, 638) (`sancak(..., desen = 3)` = `ist_bez.gdshader` hilal deseni;
   ordugâh sancakları rastgele 30–110 m'ye konuyor, hendeğe/sur dibine düşebiliyor). DOKU-4'ün dosyası: ORTAK İSTEK 1.
-  `ISTHILAL sayi=3 hayat_veri.gd:595 hayat_veri.gd:596 hayat_veri.gd:638` (sonda `--set=hilal`; `Props.crescent` v2
+  `ISTHILAL sayi=3 hayat_veri.gd:622 hayat_veri.gd:623 hayat_veri.gd:665` (sonda `--set=hilal`; `Props.crescent` v2
   dosyalarında 0). `s3_hendek` SONRA karesinde hilalli bayrak görünmüyor ama kaynak duruyor: **YAPILMADI (benim dosyam değil)**.
 - (c) **Beyaz-mavi kutular ve yuvarlak ağaçlar:** ağaçlar `IstDunya/Karsi_agac_-2_-1`, `Karsi_cali_-2_-1`
   (`dunya.gd:_karsi_kiyilar`, sur önü "kir/hendek" hücrelerine de ağaç/çalı koyuyor); kutular/çadırlar sur dışı katmanların
@@ -138,8 +138,7 @@ Galata (kesme taş, tuğlasız).
 | Haliç | %64 | 87/123 = **%70,7** | ≥ %90 |
 | Galata | %63 | 36/51 = **%70,6** | ≥ %90 |
 
-(Haliç ve Galata satırları birleştirmeden önceki SUR-4 koduyla `yuru2`; son kodla koşu bitmeden rapor yazıldı: kara,
-Blakherna, Marmara satırları son kod `yuru3` ile aynı çıktı.) Takılma türleri bu turda ayrıştırılmadı.
+(Beş dal birleşik son kodla `yuru3`; birleştirmeden önceki `yuru2` ile aynı sayılar.) Takılma türleri bu turda ayrıştırılmadı.
 
 ### 6. Kapılar — KISMEN
 - Kuşatma: açık kapıların (Pege, Rhegion, Romanos, Pempton, Kharisios, Kaligaria) kanatları artık KAPALI, iç surda ve dış
@@ -200,14 +199,15 @@ Ayrıntı:
 - `PARSECHECK PASS` (son kod).
 - Başsız, bütün varyantlar (birleştirmeden önceki SUR-4 kodu): Bölüm 7 (10 varyant) ve 11 (10 varyant) **20/20 PASS**,
   komşu 6, 12b, 24 **PASS**; yasak satırların (SCRIPT ERROR, WARN_*, VISAUDIT, WALKTHRU, …) hiçbiri yok.
-- Birleştirmeden sonra bölüm testleri yeniden KOŞULMADI (yalnız parse_check ve sondalar).
+- Birleştirmeden sonra (beş dal): Bölüm 7 (boş, `=wall`) ve 11 (boş, `=helpwall`) yeniden **4/4 PASS**, yasak satır yok;
+  öbür 16 varyant birleşik kodla yeniden koşulmadı.
 
 ## ORTAK İSTEK / BİLGİ
 
-1. **DOKU-4 (`hayat_veri.gd`)** — hilal: 595, 596, 638. satırlarda `sancak(..., 0, 1, 3, ...)` desen 3 = hilal; dönem kuralı
+1. **DOKU-4 (`hayat_veri.gd`)** — hilal: 622, 623, 665. satırlarda `sancak(..., 0, 1, 3, ...)` desen 3 = hilal; dönem kuralı
    ve kuşatma: desen 4 (dikey şerit) ya da 2 yapılsın; ayrıca sur dışı sancak/çadır/kutu hendekten 60 m içeri konmasın:
    ```gdscript
-   # hayat_veri.gd:636 civarı (sancak döngüsü)
+   # hayat_veri.gd:663 civarı (sancak döngüsü)
    if IstGeo.sehir_ici(p.x, p.y) or IstGeo.su(p.x, p.y) or String(IstGeo.mahalle(p.x, p.y).get("alt", "")) == "hendek":
        continue
    sancak(Vector3(p.x, _h(p), p.y), rng.randf() * TAU, 6.0, 0, 1, 4, 3.0, 2.0)   # 3 → 4
