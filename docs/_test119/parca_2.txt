@@ -1,0 +1,147 @@
+PARSECHECK PASS scripts=251
+bayrak: 202 yalnız kendi bölümünde okunan: 61 okunmayan: 21 izinli: 21 sorun: 0
+INLINECHECK PASS (725 anahtar, 0 sorun)
+VOICERULES PASS (9786 anahtar, 0 sorun)
+EXPORTREFS PASS
+kuşatma sonucu: 76  okunan: 76  okunmayan: 0  izinli: 1  hiç iz bırakmayan bölüm: 0 ()
+JOURNEY ok: 68 kart
+VOICEGAIN: 0 seslendirilmiş replik seviye tablosunda yok
+AUTOTEST PASS variant= outcome=1.1 bag=["phone", "lighter", "book", "chickpeas", "powerbank"] telsiz=2 bed=true
+AUTOTEST PASS chapter=3 variant= outcome=3.3 sadakat=50 rel=0 baski=0 machine=free
+AUTOTEST PASS chapter=4 variant=chain branch=4b start=chain outcome=4b.1 catches=0 fez=true telsiz=3
+AUTOTEST PASS chapter=6 variant= branch=6a outcome=6a.1 paradox=10 mistakes=0 telsiz=4
+AUTOTEST PASS chapter=7 variant= branch=7a outcome=7.1 extras=[] sadakat=60 baski=0 hour=13.5
+AUTOTEST PASS chapter=8 variant= machine=free outcome=8.1 parts=["capacitor", "antenna", "tape"] catches=0 called=false solid=0
+AUTOTEST PASS chapter=8y variant= outcome=8Y.1 id=seal warnings=0 lowered=0 radio=true
+AUTOTEST PASS chapter=9 variant=y route=Y byz=false offers=["pasha", "miner"] outcome=9.3 telsiz=4 merak=0
+AUTOTEST PASS chapter=10 variant=fail outcome=10O.2 tries=3 envoy=false merak=0
+AUTOTEST PASS chapter=11 variant=help outcome=11.3 persuade=25 sadakat=55 baski=0
+WARN_PORTRAIT_STUDIO speaker=SPK_KADRI key=D12_K_01 scene=chapter12.tscn
+WARN_PORTRAIT_STUDIO speaker=SPK_KADRI key=D12_K_03 scene=chapter12.tscn
+AUTOTEST PASS chapter=12 variant=kitchen outcome=12.5 merak=1 paradox=40 tries=2 key=2 honest=false tezkire=false
+AUTOTEST PASS chapter=13 variant=stay version=1453 outcome=13.5 window=8.4 tolga=T1 hikmet=H3
+AUTOTEST PASS chapter=10b variant=ulighter outcome=10B.1 quality=3 risk=0 calc=phone paradox=15
+AUTOTEST PASS chapter=10l variant= outcome=10L.1 progress=6 candle=3.5 heard=true
+AUTOTEST PASS chapter=10h variant=save1 outcome=10H.1 truth=3 direnc=1 paradox=10
+AUTOTEST PASS chapter=14 variant=forge outcome=14.2 nihat=N2 tolga=T1 sicil= cuma=
+JOURNEY cards=68 path=17 decisions=14 edges=16 overlap=0 final=late_by_49_years route=ch0,ch1,ch2,ch3,ch4a,ch5,ch6a,ch7,ch8,ch9,ch10,ch11,ch12,ch13,ch14,ch15y,fin
+AUTOTEST review cards=27
+AUTOTEST PASS chapter=15 variant=wrong final=late_by_49_years T=T3 H=H1 N=N1 W=W1 fixed=false
+JOURNEY cards=68 path=17 decisions=14 edges=16 overlap=0 final=nobody_noticed route=ch0,ch1,ch2,ch3,ch4a,ch5,ch6a,ch7,ch8,ch9,ch10,ch11,ch12,ch13,ch14,ch15,fin
+AUTOTEST review cards=27
+AUTOTEST PASS chapter=15 variant=leblebi final=nobody_noticed T=T1 H=H1 N=N2 W=W2 fixed=false
+JOURNEY cards=68 path=17 decisions=14 edges=16 overlap=0 final=one_more_year route=ch0,ch1,ch2,ch3,ch4a,ch5,ch6a,ch7,ch8,ch9,ch10,ch11,ch12b,ch13,ch14,ch15,fin
+AUTOTEST review cards=27
+AUTOTEST PASS chapter=15 variant=w10 final=one_more_year T=T1 H=H1 N=N1 W=W10 fixed=false
+JOURNEY cards=68 path=27 decisions=22 edges=27 overlap=0 final=ordinary_monday route=ch0,ch1,ch2,ch3,ch4a,ch5,ch6a,ch7,ch8,ch9,ch10z,ch11,ch12,bureau,ch17o,ch18,ch20o,ch22o,ch24o,ch32o,ch26o,ch27,ret,ch13,ch14,ch15,fin
+AUTOTEST review cards=27
+AUTOTEST PASS chapter=15 variant=people_osm final=ordinary_monday T=T1 H=H1 N=N1 W=W1 fixed=false
+AUTOTEST PASS chapter=17 variant=edirne_none vlad=none who=time answer=dunno caesar=veni future=silent side=B
+AUTOTEST PASS chapter=19 variant= outcome=19.1 suspicion=0 tezkire=false saved=false grain=0
+AUTOTEST PASS chapter=20 variant=late outcome=20.3 repair=10 knocks=0 arrows=false gun=3/4 gunner=4/4 niko=0
+AUTOTEST PASS chapter=21 variant=captive outcome=21.1 bowls=2 tunnel=leb talk=talk trust=3 captive=true next=chapter22o.tscn
+AUTOTEST PASS chapter=23 variant=pass outcome=23.1 deviation=0 card=true singed=false letter=false
+AUTOTEST PASS chapter=25 variant=caught outcome=25.2 caught=0 candle=true tezkire=false marco=false
+AUTOTEST PASS chapter=26 variant=hold outcome=26.3 water=3 repaired=3 cleared=0 world=W10 gun=3/4 gunner=3/3
+AUTOTEST PASS chapter=26 variant=council_ok outcome=26.1 water=3 repaired=3 cleared=2 world= gun=3/4 gunner=5/5
+AUTOTEST PASS chapter=19o variant=hooks_bad outcome=19O.1 gap=8 gun=2/2 rifle=2
+AUTOTEST PASS chapter=20o variant=edirne_ok outcome=20O.1 hits=3 cracks=0 gun=3/4 gunner=2/2 duel=true bed=sound
+AUTOTEST PASS chapter=22o variant=blakh_bad outcome=22O.1 saved=3 gun=3/4 warn=3 carry=0.60
+AUTOTEST PASS chapter=26o variant=turgut outcome=26.1 water=3 ladders=3 gun=3/4 stones=1/1 gunner=2/2 oil=1/1 turgut=help
+AUTOTEST PASS chapter=44 variant=dark outcome=44.1 light=remote battery=0.0 bumps=1 hits=0 rescued=true kid=false
+WARN_PORTRAIT_STUDIO speaker=SPK_SOLDIER key=D28O_S_BALL scene=chapter28o.tscn
+AUTOTEST PASS chapter=28o variant=edirne outcome=28O.1 stakes=4 slips=0 hit=true master=true roller_every=3.0 rollers=3
+AUTOTEST PASS chapter=30o variant=sprint outcome=30O.1 stones=4/4 gunner=3/3 tower=true fell=false guards=10 pokes=0 flee=made pushed=true
+AUTOTEST PASS chapter=37o variant=lose outcome=37O.2 beats=5/16 arrows=0 falls=1 barrels=2/5 cuts=0 stones=0 slips=0 burns=0 duel=false caught=0
+AUTOTEST PASS chapter=39o variant=sailor_ok outcome=39O.1 flags=6/6 lost=0 wrong=0 door=99 broke=false tez=1 struggle=0 lowered=true roof=83 answer=write called=false axes=1
+AUTOTEST PASS chapter=34o variant=bad outcome=34O.2 nicks=3 slips=1 calls=5/8 stopped=0 crowd=6 sparks=1 blast=false jam=true hit=false
+AUTOTEST PASS chapter=27 variant=isidore outcome=27.1 stayed=3 brig=false genoese=false
+AUTOTEST PASS ladder y=6.00 z=-2.67
+AUTOTEST PASS arena side=B waves=3 kills=5 parries=5 kicks=0 finishers=4 cannon_hits=0 gun_hits=0 gunner=0/0 hp=82
+AUTOTEST PASS arena side=O waves=3 kills=5 parries=4 kicks=2 finishers=4 cannon_hits=0 gun_hits=0 gunner=0/0 hp=82
+AUTOTEST PASS arena side=B waves=3 kills=5 parries=5 kicks=0 finishers=2 cannon_hits=0 gun_hits=0 gunner=0/0 hp=82
+AUTOTEST PASS arena side=B waves=3 kills=4 parries=4 kicks=0 finishers=4 cannon_hits=3 gun_hits=0 gunner=0/0 hp=82
+AUTOTEST PASS arena side=O waves=3 kills=4 parries=3 kicks=2 finishers=3 cannon_hits=3 gun_hits=0 gunner=0/0 hp=82
+AUTOTEST PASS arena side=B waves=3 kills=4 parries=4 kicks=0 finishers=3 cannon_hits=0 gun_hits=4 gunner=0/0 hp=100
+AUTOTEST PASS arena side=O waves=3 kills=6 parries=6 kicks=2 finishers=5 cannon_hits=0 gun_hits=3 gunner=0/0 hp=44
+AUTOTEST PASS arena side=B waves=3 kills=5 parries=4 kicks=0 finishers=5 cannon_hits=0 gun_hits=0 gunner=3/3 hp=82
+AUTOTEST PASS arena side=O waves=3 kills=5 parries=4 kicks=2 finishers=4 cannon_hits=0 gun_hits=0 gunner=3/3 hp=82
+FXCHECK base=1.0 during=0.020 after=1.00 slow=0.30 back=1.00 ok
+FXCHECK base=3.0 during=0.060 after=3.00 slow=0.90 back=3.00 ok
+FXCHECK override=2.00 ok
+FXCHECK PASS
+CAMCHECK PASS
+PORTRAITCHECK PASS speakers=140 generic=
+PLAYTESTCHECK PASS
+SMOOTHCHECK frames=358 mean_step=0.0222 cv=0.00 still_frames=0
+SMOOTHCHECK PASS
+UIFIT ekran (1280.0, 720.0)
+UIFIT kök main tr: panel [P: (80.0, 91.5), S: (563.0, 537.0)]
+UIFIT kök pause tr: panel [P: (358.5, 57.5), S: (563.0, 605.0)]
+UIFIT kök main en: panel [P: (80.0, 91.5), S: (573.0, 537.0)]
+UIFIT kök pause en: panel [P: (353.5, 57.5), S: (573.0, 605.0)]
+UIFIT PASS
+PLAYCHECK 35o köprü 79 sn, düşüş 0, gevşek 0, kalaslar ["tight", "tight", "tight", "tight", "tight", "tight"]
+PLAYCHECK PASS
+ACHCHECK PASS
+ROUTE side=B seq=[42, 36, 29, 17, 18, 19, 20, 30, 21, 22, 23, 24, 44, 25, 26, 27] numbers=13..28 after13=29
+ROUTE side=O seq=[33, 34, 35, 28, 41, 37, 29, 17, 18, 19, 20, 30, 21, 22, 23, 24, 43, 25, 32, 26, 38, 39, 31, 27] numbers=13..36 after13=37
+ROUTECHECK PASS
+SNAP B: Büro → [42, 36, 29] → 17
+SNAP B (eski kayıt): Büro → [42, 36, 29] → 17
+SNAP O: Büro → [33, 34, 35, 28, 41, 37, 29] → 17
+SNAP O (eski kayıt): Büro → [33, 34, 35, 28, 41, 37, 29] → 17
+SNAPCHECK PASS
+WORLDCHECK PASS regions=13 landmarks=35
+FLIGHTCHECK camp landmarks=9 forms=12 perches=3
+FLIGHTCHECK walls landmarks=9 forms=12 perches=3
+FLIGHTCHECK PASS
+WALKCHECK landwalls noktalar=384 zeminsiz=0 aşağıda=0 ev ışını=126/199 şekil=10324 kutu=9581 üçgen=285402
+WALKCHECK horn_wall_o noktalar=383 zeminsiz=0 aşağıda=0 ev ışını=126/199 şekil=10318 kutu=9571 üçgen=280692
+WALKCHECK byz_aya noktalar=383 zeminsiz=0 aşağıda=0 ev ışını=124/199 şekil=10289 kutu=9541 üçgen=263240
+WALKCHECK yürüyüş: yol=12.7 m, ayak=-4.0 zemin≈-4.0
+WALKCHECK su: dönüş=(-680, 18.5, -900)
+WALKCHECK galata zemin aşağıda: dünya (-1025, -1275) görünen≈26.5 çarpma 22.3
+WALKCHECK galata noktalar=383 zeminsiz=0 aşağıda=1 ev ışını=126/199 şekil=10316 kutu=9575 üçgen=282147
+WALKCHECK PASS
+MAPCHECK su uyuşmuyor: piksel (633, 1433) dünya (700, -0) doku=kara dünya=su
+MAPCHECK doku 2267x1600, su/kara uyumu 100.0%
+MAPCHECK 24: alan=byz_walls oyuncu (31, -35) piksel (657.0, 988.0) mini=true
+MAPCHECK 20: alan= oyuncu (9, 5) piksel (630.0, 973.0) mini=true
+MAPCHECK 27: alan=galata oyuncu (-917, -1300) piksel (1500.0, 355.0) mini=true
+MAPCHECK 14: alan=false mini=false
+MAPCHECK PASS
+QUIPCHECK kovalar=52
+QUIPCHECK PASS
+CREATORCHECK PASS cards=69 story=20 siege_B=16 siege_O=24 finale=4 cols=5
+CITYCHECK 24: kaynak=plan dönem=siege gece=false yoğunluk=0.85 düğüm=1026 meydan=19 yapı=23
+CITYCHECK 24 @(-479, -1237): sivil=32 devriye=3 kötü=0 roller={ "vendor": 5, "porter": 5, "priest": 2, "monk": 1, "woman": 8, "child": 2, "man": 9 } µs=585 (en uzun kare 2411, 796 kare)
+CITYCHECK 24 @(-313, -930): sivil=28 devriye=3 kötü=0 roller={ "porter": 5, "priest": 2, "monk": 1, "woman": 8, "child": 3, "man": 9 } µs=583 (en uzun kare 2266, 794 kare)
+CITYCHECK 24 @(-131, -533): sivil=28 devriye=3 kötü=0 roller={ "porter": 5, "priest": 2, "monk": 1, "woman": 8, "child": 3, "man": 9 } µs=542 (en uzun kare 2612, 796 kare)
+CITYCHECK 24 @(230, -250): sivil=31 devriye=3 kötü=0 roller={ "vendor": 5, "porter": 4, "priest": 2, "monk": 1, "woman": 8, "child": 2, "man": 9 } µs=573 (en uzun kare 2436, 793 kare)
+CITYCHECK 24 @(-611, -1043): sivil=28 devriye=3 kötü=0 roller={ "porter": 5, "priest": 2, "monk": 1, "woman": 8, "child": 3, "man": 9 } µs=608 (en uzun kare 1483, 798 kare)
+CITYCHECK 24 @(-348, -1317): sivil=21 devriye=3 kötü=0 roller={ "fisher": 3, "porter": 4, "priest": 2, "monk": 1, "woman": 5, "child": 1, "man": 5 } µs=523 (en uzun kare 1950, 792 kare)
+CITYCHECK 24: kare süresi (en kötü nokta ortalaması) 608 µs, kurulan gövde 48
+CITYCHECK 24: sokak düğümleri açık 390/395
+CITYCHECK 31o: kaynak=plan dönem=conquest gece=false yoğunluk=0.42 düğüm=1026 meydan=19 yapı=23
+CITYCHECK 31o @(-479, -1237): sivil=15 devriye=4 kötü=0 roller={ "vendor": 5, "porter": 4, "priest": 2, "monk": 1, "woman": 2, "child": 1 } µs=486 (en uzun kare 1336, 798 kare)
+CITYCHECK 31o @(-313, -930): sivil=16 devriye=4 kötü=0 roller={ "porter": 4, "priest": 2, "woman": 3, "child": 2, "man": 5 } µs=475 (en uzun kare 2263, 797 kare)
+CITYCHECK 31o @(-131, -533): sivil=14 devriye=4 kötü=0 roller={ "porter": 3, "priest": 1, "monk": 1, "woman": 4, "child": 1, "man": 4 } µs=515 (en uzun kare 3436, 797 kare)
+CITYCHECK 31o @(230, -250): sivil=15 devriye=4 kötü=0 roller={ "vendor": 2, "porter": 3, "priest": 1, "woman": 4, "child": 1, "man": 4 } µs=383 (en uzun kare 721, 797 kare)
+CITYCHECK 31o @(-611, -1043): sivil=15 devriye=4 kötü=0 roller={ "porter": 4, "priest": 1, "monk": 1, "woman": 5, "man": 4 } µs=513 (en uzun kare 1725, 798 kare)
+CITYCHECK 31o @(-348, -1317): sivil=15 devriye=4 kötü=0 roller={ "fisher": 2, "porter": 3, "priest": 1, "woman": 5, "child": 2, "man": 2 } µs=456 (en uzun kare 3387, 798 kare)
+CITYCHECK 31o: kare süresi (en kötü nokta ortalaması) 515 µs, kurulan gövde 48
+CITYCHECK 31o: sokak düğümleri açık 392/397
+CITYCHECK PASS
+STREETCHECK PASS
+FOCUSCHECK PASS
+AUTOTEST PASS traversal checks=16
+AUTOTEST chapter=6 -> 7 outcome=6a.1
+AUTOTEST PASS chapter=7 variant= branch=7a outcome=7.1 extras=[] sadakat=60 baski=0 hour=13.5
+AUTOTEST chapter=10h -> 11 outcome=10H.1
+AUTOTEST PASS chapter=11 variant= outcome=11.2 persuade=25 sadakat=55 baski=1
+AUTOTEST chapter=14 -> 15 outcome=14.1
+JOURNEY cards=68 path=17 decisions=14 edges=16 overlap=0 final=ordinary_monday route=ch0,ch1,ch2,ch3,ch4a,ch5,ch6a,ch7,ch8,ch9,ch10,ch11,ch12,ch13,ch14,ch15,fin
+AUTOTEST review cards=27
+AUTOTEST PASS chapter=15 variant= final=ordinary_monday T=T1 H=H1 N=N1 W=W1 fixed=false
+SHARD 2/10 BITTI fail=0
