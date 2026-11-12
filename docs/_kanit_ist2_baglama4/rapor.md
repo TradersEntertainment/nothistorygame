@@ -10,7 +10,7 @@ Dal: `wip/ist2-baglama4` (taban `wip/ist2-taban4`; `wip/ist2-sur4`, `wip/ist2-or
 | 7 (7a ordugâh + 7b hub) | **AÇIK** (v2; üçüncü turdan) | dönüşümlü bağlama: 7b hub'ı 12b ile aynı hub ve aynı dönüşüm (kareler `pafta_12b_hub.jpg`); 7a ordugâhı 11 ile aynı (`pafta_11_ordugah.jpg`). 7b'nin kendi bölüm anından karesi ALINMADI (KANITSIZ: 7b'ye özgü) | 10/10 · 10/10 |
 | 11 | **AÇIK** (v2; üçüncü turdan) | ordugâh v2'de döndürülmüş: "sura doğru" ekseni kara suruna (yaw 61,1°), y 0 v2 arazisinde | 10/10 · 10/10 |
 | 12b (mektup) | **AÇIK** (bu tur; `TOLGA_ACIK`) | 6 karenin 6'sı temiz: çifte sur yok, boşluk yok, kişi havada/duvarda yok, ufukta eski dünya yok (`pafta_12b_hub.jpg`) | 5/5 (varsayılan yol, bayraksız) · 5/5 |
-| 10h | KAPALI (`--ist2-deneme=10h`) | başsız 7/7 PASS ama oyun içi kare ALINMADI (süre); karesiz açılmaz | 7/7 · BAKILMADI |
+| 10h | **AÇIK** (bu tur, son dakikada; `TOLGA_ACIK`) | aynı hub, aynı bağlama; 6 kare (`pafta_10h_hub.jpg`): çifte sur yok, boşluk yok, kişi havada/duvarda yok, ufukta eski dünya yok. Kalan kusurlar §2'de (soluk kutu kuleler; 05'te sur dışında koyu eğik levha: ordugâhın ön hattı, kaynağı BAKILMADI) | 7/7 (varsayılan yol, bayraksız) · 7/7 |
 | 23 | KAPALI (`--ist2-deneme=23`) | başsız 6/6 PASS ama kare ALINMADI | 6/6 · BAKILMADI |
 | 6 (6b) | KAPALI (`--ist2-deneme=6`) | koşulmadı (BAKILMADI) | – |
 | 24 | KAPALI | ilk yarısı hub (bağlanabilir), ikinci yarısı Ayasofya parçası (`byz_aya`): bağlanmadı → bölüm içinde iki dünya; YAPILMADI | – |
@@ -23,7 +23,7 @@ Son birleşik dal (`515819e8` + düzeltmeler; SUR-4, ORDUGÂH-4, ÇEVRE-4, DOKU-
 
 ## 2. Kendi karelerime bakınca hâlâ kötü olanlar
 
-Sahibinin gözüyle, kendi SONRA karelerimde:
+Sahibinin gözüyle, kendi SONRA karelerimde (sıra önem sırası değil):
 1. **Hub'ın arkasındaki v2 kuleleri koyu, düz kutu** (`pafta_12b_hub.jpg` 01 ve 02, SONRA): içeriden bakınca v2 iç surunun
    kuleleri dokusuz koyu gri-kahve bloklar; ÖNCE'deki eski kuleler mazgallı ve pencereliydi. Hub'ın kendi kuleleri v2'nin
    kalın suru içinde kalıyor (gömülme istenen şey ama hub'ın pencereli kulesi görünmüyor). Sur görünüşü SUR-4'ün işi;
@@ -35,7 +35,11 @@ Sahibinin gözüyle, kendi SONRA karelerimde:
 4. **Yerde çizim bütçesi** hub'da ÖNCE'de de SONRA'da da aşılıyor (3 633–10 601 çizim; bütçe 1 200): bölümün kendi
    hub'ı ağır (`rinfo.md`).
 5. **Yükleme** v2'de belirgin uzun (xvfb, yük altında ÖNCE 29,6 sn → SONRA 49,5 sn).
-6. **Bölüm 11'de çizim bazı bakışlarda arttı** (`rinfo.md` §2): ordugâhın üstü 3 830 → 4 222 (+%10), eve dönüş
+6. **Surun hattında dokusuz soluk kutular** (`pafta_12b_hub.jpg` 04 SONRA, `pafta_10h_hub.jpg` 04 SONRA): hub'ın iki yanında
+   v2 kara surunun bazı kule/dilimleri şeritsiz, mazgalsız soluk bej-beyaz kutu (kalite notu 30'daki "düz beyaz dilim").
+   Bağlamanın dört açılış ölçütünü (çifte sur, boşluk, havada/duvarda kişi, ufukta eski dünya) bozmuyor, ama sahibinin
+   gözüyle KÖTÜ. Kaynak (sur dilimi katmanı mı, köşe dolgusu mu) BAKILMADI → SUR-4.
+6b. **Bölüm 11'de çizim bazı bakışlarda arttı** (`rinfo.md` §2): ordugâhın üstü 3 830 → 4 222 (+%10), eve dönüş
    3 203 → 3 833 (+%20), Ayasofya 595 → 1 011; "çizim artmaz" kuralı bu üç bakışta SAĞLANMIYOR (kalkış ve Galata dönüşünde
    belirgin azaldı: 4 399 → 2 170, 5 883 → 811).
 7. Gökte asılı gri levha bu turun ortasında BENİM dönüşümümle ortaya çıktı ve giderildi (`sonda_levha_once_sonra.jpg`:
@@ -104,7 +108,7 @@ adları pişirmede boş döndü; BAKILMADI), Üsküdar kıyısı çerçevenin do
 ### Madde 3 — Tolga'nın şehir bölümleri
 
 Bölüm dosyalarına dokunulmadı: `IstBaglama.tolga_istek()` sahnedeki bölüm betiğinin adından (chapter<id>.gd) tanır;
-`TOLGA = [6, 10h, 12b, 23, 24]`, varsayılan açık olanlar `TOLGA_ACIK`, öbürleri `--ist2-deneme=<id>`. Bölüm 7'nin 7b'si
+`TOLGA = [6, 10h, 12b, 23, 24]`, varsayılan açık olanlar `TOLGA_ACIK = [12b, 10h]`, öbürleri `--ist2-deneme=<id>`. Bölüm 7'nin 7b'si
 (Nihat bölümü) zaten v2'de (varsayılan).
 
 **12b'de üçüncü turdaki görsel kusurlar ve bu turdaki karşılığı:**
@@ -120,13 +124,13 @@ Bölüm dosyalarına dokunulmadı: `IstBaglama.tolga_istek()` sahnedeki bölüm 
 | bölüm | v2 başsız | eski başsız | kare | hüküm |
 |---|---|---|---|---|
 | 12b | 5/5 (deneme) + 5/5 (varsayılan) | 5/5 | `pafta_12b_hub.jpg` (6 bakış ÖNCE \| SONRA) | **AÇIK** |
-| 10h | 7/7 (deneme; `open` birleşim anında 2 SCRIPT ERROR verdi — dosyalar koşu sırasında değişti; son kodla yeniden: PASS, yasak 0) | BAKILMADI | yok | KAPALI (KANITSIZ kare) |
+| 10h | 7/7 (deneme; `open` birleşim anında 2 SCRIPT ERROR verdi — dosyalar koşu sırasında değişti; son kodla yeniden: PASS, yasak 0) + 7/7 varsayılan (son kod) | 7/7 | `pafta_10h_hub.jpg` | **AÇIK** |
 | 23 | 6/6 (deneme; son kodla `23` yeniden PASS) | BAKILMADI | yok | KAPALI (KANITSIZ kare) |
 | 6b | – | – | – | KAPALI (BAKILMADI) |
 | 24, 25, 26, 31o | – | – | – | KAPALI (YAPILMADI: `byz_aya`) |
 
-10h ve 23 aynı hub'ı ve aynı bağlamayı kullanıyor (12b'nin kareleri onların da hub'ı), ama bölümlerin kendi anları
-(gece? kalabalık? sahne) karede görülmeden AÇIK yazmadım.
+23 aynı hub'ı ve aynı bağlamayı kullanıyor, ama bölümün kendi anı karede görülmeden ve eski yolu koşulmadan AÇIK
+yazmadım.
 
 ### Madde 4 — Ordugâhta geçen bölümler (döküm; kod yok)
 
@@ -153,13 +157,14 @@ Bağlamak için gereken: `BOLUMLER`'e numara ya da `tolga_istek` benzeri sahne t
 | pafta | içerik |
 |---|---|
 | `pafta_12b_hub.jpg` | Bölüm 12b hub: 6 sabit yerel bakış (cadde → sur, sur içi → kapı, sur üstünden şehre, 45 m'den sura, dışarıdan sura, dışarıdan şehre), ÖNCE eski dünya \| SONRA v2, HUD'lu (seçenek kutusu bölümün açılış seçimi) |
+| `pafta_10h_hub.jpg` | Bölüm 10h hub: aynı 6 bakış, ÖNCE \| SONRA |
 | `pafta_11_ordugah.jpg` | Bölüm 11 (gece): kalkış, ordugâhın üstü, şehrin üstü, Ayasofya, Galata'dan dönüş, eve dönüş; ÖNCE \| SONRA, HUD ve mini haritayla |
 | `sonda_levha_once_sonra.jpg` | dönüşümle ortaya çıkan asılı levha (üst) ve giderilmiş hâli (alt), sur üstünden şehre bakış |
 | `harita_ist2_onizleme.jpg` | v2 mini harita dokusu (pişmiş) |
 | `rinfo.md` | çizim/üçgen ÖNCE \| SONRA, yükleme, takılma |
 | `sahip_<n>_<ad>.jpg` | DÜNYA-2'nin 14 sahip bakışı (gezi, son birleşik dal) |
 
-10h, 23, 6b, 24, 25, 26, 31o için pafta YOK (KAPALI).
+23, 6b, 24, 25, 26, 31o için pafta YOK (KAPALI).
 
 ## 4. Testler
 
@@ -179,6 +184,8 @@ WARN_VOID_TELEPORT|WALKTHRU|ARMAUDIT|HELDAUDIT|LOOKAUDIT backturn|JOURNEY_MISS|J
 | Bölüm 10h v2 `--ist2-deneme=10h` (7) | dönüşüm-sonra düzeltmesiyle (+ `open` son kodla) | 7/7 PASS (yasak: bkz. §3 madde 3 tablosu) |
 | Bölüm 23 v2 `--ist2-deneme=23` (6) | dönüşüm-sonra düzeltmesiyle (+ varsayılan son kodla) | 6/6 PASS, yasak 0 |
 | EN SON birleşim (`ab8054ba`: ÇEVRE-4 ve DOKU-4'ün son işleri dahil): 11, 7, 7 byz, 12b, 12b d3 (v2, bayraksız), 12b lie `--eski-dunya` | en son | 6/6 PASS, yasak 0 |
+| Bölüm 10h v2 varsayılan (bayraksız, `TOLGA_ACIK`): `- shame save save1 honest open pass` | en son | 7/7 PASS, yasak 0 |
+| Bölüm 10h `--eski-dunya` (7) | en son | 7/7 PASS, yasak 0, v2 kurulmadı |
 | `flight_check` (eski camp + walls; v2 camp + walls) | son birleşik | PASS: v2'de 28 işaret, 12 form, 3 konma; 43/43 nokta; Haliç ortası su |
 
 Bu turun ilk koşusunda 7 byz'de `VISAUDIT insolid … IstHayatYakin` 2 satır (v2 kişileri hub binalarının içinde) çıktı;
