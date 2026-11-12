@@ -160,13 +160,15 @@ static func build(host: Node3D, alan: PackedVector2Array, tur: String, k: float,
 				var lw := rot * lp0
 				if not bool(K.filtre.call(lw.x, lw.y)):
 					continue
-			OC.leke(zs, lp0, r5.randf_range(16.0, 26.0), Color("9c8d5e").lerp(Color("7d6e4c"), r5.randf() * 0.5), r5, rot, 0.55, 12)
+			# TUR-6: büyük saydam leke düz zeytin renginde örtü oluyordu (zemin dokusunu siliyordu; "yeşil halı"); arazi artık
+			# ordugâhta kendisi ezilmiş toprak (zemin_v2 çıplaklık ipucu). Yalnız hafif, koyu-toprak nem lekesi kalır.
+			OC.leke(zs, lp0, r5.randf_range(9.0, 15.0), Color("6e5a40").lerp(Color("5c4b38"), r5.randf() * 0.5), r5, rot, 0.22, 12)
 	for o: Array in obalar:
 		var oc: Vector2 = o[0]
 		var R: float = o[1]
 		# obanın altı: çiğnenmiş toprak/çamur lekesi (düzensiz on dört köşe, arazi izler)
 		if lod <= 1:
-			OC.leke(zs, oc, R + 5.0, Color("86714f").lerp(Color("6e5c40"), r.randf() * 0.6), r5, rot, 0.9, 16)
+			OC.leke(zs, oc, R + 5.0, Color("86714f").lerp(Color("6e5c40"), r.randf() * 0.6), r5, rot, 0.38, 16)      # TUR-6: 0,9 → 0,38 (arazinin dokusu görünsün)
 			for q in 14:
 				r.randf()          # ÖNCE ile aynı yerleşim: eski _leke'nin rastgele dizisi korunur (yeni karar r5'te)
 		else:

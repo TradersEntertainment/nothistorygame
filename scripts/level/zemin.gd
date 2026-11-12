@@ -134,6 +134,8 @@ static var _v2: ShaderMaterial
 static func v2_malzeme() -> ShaderMaterial:
 	if _v2 == null:
 		_v2 = kopya("trakya")
+		# TUR-6: v2'nin kendi gölgelendirici kopyası (scripts/world/ist/zemin_v2.gdshader; yayındaki bölümler ortak dosyada)
+		_v2.shader = load("res://scripts/world/ist/zemin_v2.gdshader")
 		_v2.set_shader_parameter("su_y", 0.0)
 		_v2.set_shader_parameter("asinma_yerel", 1.0)
 	return _v2

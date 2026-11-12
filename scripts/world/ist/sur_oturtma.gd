@@ -271,10 +271,20 @@ static func renk(x: float, z: float) -> Array:
 	w = clampf(1.0 - best / 8.0, 0.0, 1.0)
 	if w <= 0.0:
 		return [Color.BLACK, 0.0]
+	# TUR-6: üçüncü öğe çıplaklık (zemin_v2: 1 ezilmiş toprak). Hendek omzu 0–8 m: ot seyrelir, çıplak toprak, moloz,
+	# ayak izi (jilet gibi biten çimen yok); ateş alanı çiğnenmiş (top, asker, at); sur dibi çıplak.
+	var n3 := _gur(x + 71.0, z - 5.0, 0.19)
 	if dis_c > 6.0:
 		# ateş alanı: çiğnenmiş toprak, ot lekeleri, ~25 m'de devriye izi; dışa doğru doğal renge (ağırlık 0,75 → 0)
-		return [_ates_renk(x, z, dis_c), w * 0.8 * clampf(1.0 - (dis_c - ATES + 10.0) / 18.0, 0.0, 1.0)]
-	return [_kusak_renk(x, z, c_en), w]
+		var wa := w * 0.8 * clampf(1.0 - (dis_c - ATES + 10.0) / 18.0, 0.0, 1.0)
+		return [_ates_renk(x, z, dis_c), wa, clampf(0.62 + (n3 - 0.5) * 0.5 + clampf(1.0 - (dis_c - 6.0) / 10.0, 0.0, 1.0) * 0.25, 0.3, 0.95)]
+	var cp := 0.92
+	if dis_c > -1.0:
+		# hendek dış omzu (0 … 6 m): kıyıda tamamen çıplak, dışa doğru ot öbekleri (düzensiz kenar)
+		cp = clampf(1.0 - maxf(dis_c, 0.0) / 9.0 * (0.4 + n3 * 0.6), 0.55, 1.0)
+	elif _yuz_uzak(c_en) > 4.0:
+		cp = clampf(0.62 + (n3 - 0.5) * 0.6, 0.35, 0.9)       # peribolos / teras ortası: yer yer ot
+	return [_kusak_renk(x, z, c_en), w, cp]
 
 
 static func _ates_renk(x: float, z: float, dc: float) -> Color:

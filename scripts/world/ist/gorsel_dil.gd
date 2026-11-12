@@ -291,6 +291,10 @@ func _isik() -> bool:
 		Look.refresh(gok)
 	else:
 		e.ambient_light_energy = ISIK["ortam"]
+	# TUR-6: ortam ışığının yarısı gökten (mavi tepe), yarısı sıcak toprak yansıması: gölgedeki hendek iç yüzü, dibi ve
+	# sur eteği teal/kara şerit okunmasın (yayındaki bölümlerin gölgesi sıcak gri)
+	e.ambient_light_color = Color("b9a988")
+	e.ambient_light_sky_contribution = 0.55
 	var g := kok.get_node_or_null("Gunes") as DirectionalLight3D
 	if g != null:
 		g.light_color = ISIK["gunes"]
@@ -401,7 +405,7 @@ static func kategori(gi: Node, m: Material) -> String:
 				return "efekt"
 			"water.gdshader":
 				return "su"
-			"zemin.gdshader", "ground.gdshader":
+			"zemin.gdshader", "zemin_v2.gdshader", "ground.gdshader":
 				return "zemin"
 			"grass.gdshader":
 				return "bitki"
@@ -683,6 +687,8 @@ static func _v2_malzemesi(m: ShaderMaterial) -> bool:
 		return true
 	var p := sh.resource_path.get_file()
 	if p in ["ist_insan.gdshader", "ist_bez.gdshader", "ist_kus.gdshader"]:
+		return true
+	if p == "zemin_v2.gdshader":
 		return true
 	if p == "zemin.gdshader":
 		return m == load("res://scripts/level/zemin.gd").v2_malzeme()
@@ -1033,7 +1039,9 @@ func _hayat_duzen() -> bool:
 				var o := i * stride
 				var x := a[o + 3]
 				var z := a[o + 11]
-				if OTURTMA.kusakta(x, z, 12.0):
+				# TUR-6: hendekte ve sur dibinden 15 m'lik kuşakta çadır/tezgâh/sancak yok; çadır ve sancak ateş alanında da yok
+				# (hendek dış kıyısından 60 m: top menzili, ordugâh oradan başlar)
+				if OTURTMA.kusakta(x, z, 15.0, OTURTMA.ATES if ad != "kutu" else 15.0):
 					kaldir += 1
 					continue
 				var rec := a.slice(o, o + stride)

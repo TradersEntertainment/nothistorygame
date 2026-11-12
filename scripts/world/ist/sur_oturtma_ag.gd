@@ -57,7 +57,9 @@ static func arazi_renk(x: float, z: float) -> Color:
 static func _kose(x: float, z: float) -> Color:
 	var kr: Array = OTURTMA.renk(x, z)
 	var c: Color = kr[0] if float(kr[1]) > 0.0 else OTURTMA.R_TOPRAK
-	return Color.from_hsv(c.h, clampf(c.s * 1.25, 0.0, 1.0), c.v * 0.8)
+	# TUR-6: etek çıplak toprak (köşe alfası = çıplaklık; arazinin aynı ipucu)
+	var cp := float(kr[2]) if kr.size() > 2 and float(kr[1]) > 0.0 else 0.9
+	return Color.from_hsv(c.h, clampf(c.s * 1.25, 0.0, 1.0), c.v * 0.8, 1.0 - maxf(cp, 0.8))
 
 
 static func _isik(c: Color) -> Color:

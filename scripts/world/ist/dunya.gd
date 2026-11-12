@@ -140,6 +140,8 @@ func _process(_dt: float) -> void:
 	var p := _bakan()
 	_pus(p)
 	_deniz_izle(p)
+	if _kuru_tex == null and not OTURTMA.bantlar.is_empty():
+		_kuru_kur()
 	_lod_guncelle(p)
 	_yakalayici(p)
 	# çarpışma önce (oyuncu düşmesin), sonra arazi ayrıntısı
@@ -473,11 +475,15 @@ func _renk(x: float, z: float, y: float, egim: float) -> Color:
 	var alt := String(m.get("alt", ""))
 	var yog: float = m["yogunluk"]
 	var cig := C_CIGNEN.lerp(C_TOPRAK, clampf(0.5 + g * 0.5, 0.0, 1.0))
+	# TUR-6: köşe alfası = ÇIPLAKLIK ipucu (zemin_v2.gdshader: 0 ezilmiş toprak … 1 doğal). Ordugâhta on binlerce insan ve
+	# hayvan var: ot kalmaz (yalnız kenar öbekleri); sur önü ve yerleşik doku da çiğnenmiş.
+	var cip := 0.0
 	match tur:
 		"carsi", "sik", "liman", "sur_dibi", "koy":
 			# yerleşik doku: çiğnenmiş toprak, aralarda taşlık ve ot lekeleri
 			c = c.lerp(cig, clampf(0.35 + yog * 0.8, 0.0, 1.0))
 			c = c.lerp(C_TASLIK, clampf(g2, 0.0, 1.0) * 0.35)
+			cip = clampf(0.3 + yog * 0.5, 0.0, 0.8)
 		"seyrek":
 			c = c.lerp(cig, 0.35).lerp(C_CICEK, clampf(g2, 0.0, 1.0) * 0.4)
 		"bostan", "sarnic":
@@ -489,6 +495,7 @@ func _renk(x: float, z: float, y: float, egim: float) -> Color:
 		"ordugah":
 			# ordugâh: çiğnenmiş toprak, yollar ve ocak yerleri; aralarda ot lekeleri
 			c = cig.lerp(c, clampf(0.12 + g2 * 0.35 - yog * 0.1, 0.0, 0.6))
+			cip = clampf(0.62 + yog * 0.4 - maxf(g2, 0.0) * 0.25, 0.45, 0.95)
 		"bag":
 			c = _parsel(rr, "bag", c)
 		"orman":
@@ -496,6 +503,7 @@ func _renk(x: float, z: float, y: float, egim: float) -> Color:
 		_:
 			if alt == "hendek":
 				c = C_CIGNEN.lerp(C_TOPRAK, 0.4 + 0.3 * g2)
+				cip = clampf(0.6 - g2 * 0.2, 0.35, 0.8)
 			else:
 				c = _parsel(rr, "tarla", c)
 	if b == IstGeo.B_TRAKYA or b == IstGeo.B_ANADOLU:
@@ -509,9 +517,10 @@ func _renk(x: float, z: float, y: float, egim: float) -> Color:
 	var kr: Array = OTURTMA.renk(x, z)
 	if float(kr[1]) > 0.0:
 		c = c.lerp(kr[0], float(kr[1]))
+		cip = maxf(cip, float(kr[2]) * float(kr[1]) if kr.size() > 2 else float(kr[1]) * 0.85)
 	# ışıkta (güneş + gök ortamı + ground.gdshader'ın ılık çarpanı) açık renkler soluk/süt rengi görünüyordu:
 	# albedo biraz koyulaşır, doygunluk artar (kalite notu 3: canlı, sıcak, okunur)
-	return Color.from_hsv(c.h, clampf(c.s * 1.25, 0.0, 1.0), c.v * 0.8)
+	return Color.from_hsv(c.h, clampf(c.s * 1.25, 0.0, 1.0), c.v * 0.8, 1.0 - clampf(cip, 0.0, 1.0))
 
 
 ## Parsel deseni: ~150 m gerçek hücreler (hafif dönük), her hücreye tür: sürülmüş tarla (çizgili), yeşil buğday,
@@ -855,7 +864,7 @@ func _kiz_kulesi() -> void:
 
 func _deniz() -> void:
 	_water_mat = ShaderMaterial.new()
-	_water_mat.shader = load("res://assets/shaders/water.gdshader")
+	_water_mat.shader = _su_shader()
 	_water_mat.set_shader_parameter("foam_width", 0.0)
 	_water_mat.set_shader_parameter("wave_height", 0.25)
 	_water_mat.set_shader_parameter("ripple", 0.07)       # uzakta hare (moiré) yapmasın
@@ -887,6 +896,77 @@ func _deniz() -> void:
 		add_child(m)
 		_sea_far.append(m)
 	_deniz_izle(merkez)
+
+
+## TUR-6: KURU HENDEK. Kara surlarının hendeği büyük ölçüde kuruydu; hendek tabanı deniz düzeyinin altına inen yerlerde
+## (Lykos, Marmara ucu) deniz düzlemi hendeği dolu kanal gibi gösteriyordu. Su gölgelendiricisinin v2 kopyası, hendek
+## bandının (OTURTMA.bantlar) ham arazisi karada kalan kesiminde suyu çizmez (maske dokusu, 1 m/piksel, dünya kökü
+## uzayında). Alçak yerlerde dipte sığ birikinti ve saz (sur_zemin.hendek_dibi) kalır.
+static var _su_sh: Shader
+var _kuru_tex: ImageTexture
+
+static func _su_shader() -> Shader:
+	if _su_sh != null:
+		return _su_sh
+	var kaynak: Shader = load("res://assets/shaders/water.gdshader")
+	var kod := kaynak.code
+	kod = kod.replace("varying vec3 world_pos;", "varying vec3 world_pos;\nvarying vec2 kok_xz;\nuniform sampler2D kuru_maske : hint_default_black, filter_nearest, repeat_disable;\nuniform vec4 kuru_alan = vec4(0.0, 0.0, 0.0, 0.0);\nuniform mat4 kok_ters = mat4(1.0);")
+	kod = kod.replace("\tworld_pos = w;", "\tworld_pos = w;\n\tkok_xz = (kok_ters * vec4(w, 1.0)).xz;")
+	kod = kod.replace("void fragment() {", "void fragment() {\n\tif (kuru_alan.z > 0.0) {\n\t\tvec2 kuv = (kok_xz - kuru_alan.xy) / kuru_alan.zw;\n\t\tif (kuv.x > 0.0 && kuv.y > 0.0 && kuv.x < 1.0 && kuv.y < 1.0 && texture(kuru_maske, kuv).r > 0.5) { discard; }\n\t}")
+	_su_sh = Shader.new()
+	_su_sh.code = kod
+	return _su_sh
+
+
+func _kuru_kur() -> void:
+	var alan := Rect2()
+	var ilk := true
+	for b: Array in OTURTMA.bantlar:
+		for q: Vector2 in OTURTMA._dikd(b):
+			if ilk:
+				alan = Rect2(q, Vector2.ZERO)
+				ilk = false
+			else:
+				alan = alan.expand(q)
+	alan = alan.grow(4.0)
+	var W := mini(int(ceil(alan.size.x)), 8192)
+	var H := mini(int(ceil(alan.size.y)), 8192)
+	var px := alan.size.x / W
+	var pz := alan.size.y / H
+	var img := Image.create(W, H, false, Image.FORMAT_R8)
+	var say := 0
+	for b: Array in OTURTMA.bantlar:
+		var A: Vector2 = b[0]
+		var dv: Vector2 = b[1]
+		var o: Vector2 = b[2]
+		var u := float(b[3]) - 1.0
+		while u <= float(b[4]) + 1.0:
+			var c := float(b[5]) - 0.5
+			while c <= float(b[6]) + 0.5:
+				var q := A + dv * u + o * c
+				var ix := int((q.x - alan.position.x) / px)
+				var iz := int((q.y - alan.position.y) / pz)
+				if ix >= 0 and iz >= 0 and ix < W - 1 and iz < H - 1 and IstGeo.h_ham(q.x, q.y) > 0.0:
+					for ex in 2:
+						for ez in 2:
+							img.set_pixel(ix + ex, iz + ez, Color(1, 0, 0))
+					say += 1
+				c += 1.0
+			u += 1.0
+	_kuru_tex = ImageTexture.create_from_image(img)
+	for m: ShaderMaterial in _su_matlar():
+		m.set_shader_parameter("kuru_maske", _kuru_tex)
+		m.set_shader_parameter("kuru_alan", Vector4(alan.position.x, alan.position.y, alan.size.x, alan.size.y))
+		m.set_shader_parameter("kok_ters", Projection(global_transform.affine_inverse()))
+	print("TUR6 kuru_hendek piksel=%d alan=%s" % [say, alan])
+
+
+func _su_matlar() -> Array:
+	var o: Array = [_water_mat]
+	for m: MeshInstance3D in _sea_far:
+		if m.material_override is ShaderMaterial and not (m.material_override in o):
+			o.append(m.material_override)
+	return o
 
 
 func _deniz_izle(p: Vector3) -> void:

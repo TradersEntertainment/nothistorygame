@@ -157,6 +157,8 @@ static var _m: ShaderMaterial
 static func _mat() -> Material:
 	if _m == null:
 		_m = load("res://scripts/level/zemin.gd").kopya("kusatma")
+		if IstSehir.v2:
+			_m.shader = load("res://scripts/world/ist/zemin_v2.gdshader")     # TUR-6: v2 zemin dili
 		_m.set_shader_parameter("su_y", -10000.0)
 	return _m
 
@@ -173,7 +175,9 @@ static func hendek_dibi(p: Node3D, x0: float, x1: float, z0: float, z1: float, y
 		var w := rng.randf_range(2.0, (z1 - z0) * 0.55)
 		var zc := rng.randf_range(z0 + w * 0.5 + 1.0, z1 - w * 0.5 - 1.0)
 		var xc := x + l * 0.5
-		if xc >= pencere.x and xc < pencere.y and xc + l * 0.5 < x1 - 2.0:
+		# TUR-6 (v2): kuru hendek — birikinti seyrek (üçte bir), çamurlu koyu; saz öbekleri kalır
+		var kuru := IstSehir.v2 and rng.randf() > 0.33
+		if xc >= pencere.x and xc < pencere.y and xc + l * 0.5 < x1 - 2.0 and not kuru:
 			su.append(Transform3D(Basis.from_euler(Vector3(0, rng.randf_range(-0.2, 0.2), 0)).scaled(Vector3(l, 0.04, w)), Vector3(xc, y + 0.03, zc)))
 			for k in rng.randi_range(2, 6):
 				var a := rng.randf() * TAU
@@ -185,7 +189,7 @@ static func hendek_dibi(p: Node3D, x0: float, x1: float, z0: float, z1: float, y
 					saz.append(Transform3D(Basis.from_euler(Vector3(rng.randf_range(-0.25, 0.25), rng.randf() * TAU, rng.randf_range(-0.25, 0.25))).scaled(Vector3(0.05, h, 0.05)), q))
 		x += l + rng.randf_range(4.0, 16.0)
 	if su.size() > 0:
-		Scenery.scatter(p, _disk(), su, [], Props.mat(Color("4a4a3e"), 0.0, false, "", false))
+		Scenery.scatter(p, _disk(), su, [], Props.mat(Color("4a4a3e") if not IstSehir.v2 else Color("4e4a3c"), 0.0, false, "", false))
 	if saz.size() > 0:
 		Scenery.scatter(p, _saz(), saz, [], Props.mat(Color("7a7a3c"), 0.0, false, "", false))
 
@@ -407,6 +411,12 @@ static func hendek_kesit(p: Node3D, x0: float, x1: float, z0: float, z1: float, 
 		[W * 0.5, -md - 0.12], [W - 3.0, -md + 0.06], [W - 2.05, -md + 0.3], [W - 1.5, -md + 0.9], [W - 1.0, -md * 0.5],
 		[W - 0.6, -0.2], [W - 0.45, 0.08], [W, 0.08]]
 	var tas_j := {0: true, 1: true, 2: true, 3: true, 10: true, 11: true, 12: true, 13: true}       # j..j+1 bandı taş kaplama
+	# TUR-6: v2'de harpuşta (j 0 ve 13 bandı) ayrı kesme taş bloklarıyla kurulur (harpuşta_kur); bant altta toprak yatağı.
+	# Düz 0,45 m'lik yatay şerit sur gölgelendiricisinin 0,9 m'lik döşeme ızgarasıyla "tahta kalas" okunuyordu.
+	var v2 := IstSehir.v2
+	if v2:
+		tas_j.erase(0)
+		tas_j.erase(13)
 	var rows: Array = []
 	var crow: Array = []
 	var kay: Array = []          # bu x'te karşı yaka kaymış mı (0..1)
@@ -428,6 +438,8 @@ static func hendek_kesit(p: Node3D, x0: float, x1: float, z0: float, z1: float, 
 				y += (hz - 0.5) * 0.22
 			if j <= 1 or j >= kes.size() - 2:
 				y += hz * 0.05                           # harpuşta: hep arazinin üstünde, hafif düzensiz
+				if v2:
+					y = -0.04 + hz * 0.03                # TUR-6: blok yatağı (blok altında; aralarda toprak/harç)
 			if kk > 0.0 and j >= 9 and j <= kes.size() - 3:
 				# kayan toprak: karşı yaka eğimi yatıklaşır (1:1,6), dibe yayılır
 				var zt := float(kes[j][0])
@@ -438,6 +450,16 @@ static func hendek_kesit(p: Node3D, x0: float, x1: float, z0: float, z1: float, 
 			var col := CAMUR.lerp(TOPRAK2, hz * 0.6)
 			if j >= 6 and j <= 8 and hz > 0.7:
 				col = col.lerp(Color("4a4a3c"), 0.5)        # ıslak çamur
+			if v2 and j >= 4 and j <= 10:
+				# TUR-6: kuru hendek dibi: açık kuru toprak, yer yer ot/saz öbeği (yeşil ipucu), alçak yerde nemli koyu leke
+				var hb := _hash(tohum * 13 + i / 3, j * 7 + 2)
+				col = Color("8a7154").lerp(Color("9c8662"), hz)
+				col.a = 0.35
+				if hb > 0.62:
+					col = Color("6e7a44").lerp(Color("7f8550"), hz)
+					col.a = 1.0
+				elif hb < 0.12:
+					col = Color("5f4f3c")
 			if kk > 0.3 and j >= 9:
 				col = TOPRAK.lerp(OT, hz * 0.3)
 			cr.append(col)
@@ -466,6 +488,9 @@ static func hendek_kesit(p: Node3D, x0: float, x1: float, z0: float, z1: float, 
 				var hedef := Vector3(0, 0.3, 1.0 if j < 7 else -1.0)
 				if fn.dot(hedef) < 0.0:
 					fn = -fn
+				if v2:
+					# TUR-6: iç yüzler surla aynı aydınlıkta (gölgelendirme normali yukarı yatık: kara şerit okunmasın)
+					fn = (fn + Vector3.UP * 0.9).normalized()
 				_ucgen_n(tst, vv, [cc, cc, cc, cc, cc, cc], [fn, fn, fn, fn, fn, fn])
 				anyt = true
 			else:
@@ -483,8 +508,14 @@ static func hendek_kesit(p: Node3D, x0: float, x1: float, z0: float, z1: float, 
 		mt.name = "HendekKaplama"
 		mt.mesh = tst.commit()
 		mt.material_override = Props.mat(Color("a49a86"), 0.0, false, "ashlar" if lod < 2 else "ashlar_far")
+		if v2 and lod < 2:
+			# TUR-6: sur taşı gölgelendiricisi, ama "dipte koyulaşma" yerel y'ye göre (hendek kesiti hep y < 0: bütün yüz
+			# koyu + yosunlu kara şerit oluyordu) kapalı; yalnız uzak katman çarpanı yok (renk 0,93)
+			mt.material_override = SURDOKU.mat(0, Color("a49a86") * Color(0.93, 0.93, 0.93), false)
 		mt.set_meta("no_walk", true)
 		p.add_child(mt)
+	if v2:
+		harpusta_kur(p, x0, x1, z0, z1, kay, lod, tohum, pencere)
 	# kayan kesimlerde dibe düşmüş kaplama taşları (düzensiz kaya, kutu değil)
 	if lod == 0:
 		var kl: Array = []
@@ -500,6 +531,78 @@ static func hendek_kesit(p: Node3D, x0: float, x1: float, z0: float, z1: float, 
 		if kl.size() > 0:
 			Scenery.scatter(p, KULE.kaya_mesh(), kl, [], Props.mat(Color("948a76"), 0.0, false, "rubble"))
 
+
+
+const SURDOKU := preload("res://scripts/world/ist/sur_doku.gd")
+static var _hmat: StandardMaterial3D
+
+## TUR-6: harpuşta (hendek yakalarının üst taş sırası) — kesme taş bloklar: 0,8–1,4 m boy, 0,5 m en, 0,26 m yükseklik,
+## üst kenarları pahlı (aşınmış), aralarında 3–6 cm derz; blok blok ton (kireçtaşı / gri / kumtaşı); %10 eksik, %12
+## kaymış (hendeğe doğru 5–25 cm, 3–12° yatık); karşı yakanın toprak kayması kesimlerinde yok (dibe düşmüş). kay: kesit
+## satırı başına kayma (0..1). Yerel: x boyunca, iç yaka z0, karşı yaka z1 (kesitle aynı).
+static func harpusta_kur(p: Node3D, x0: float, x1: float, z0: float, z1: float, kay: Array, lod: int, tohum: int, pencere := Vector2(-1e9, 1e9)) -> void:
+	var ag = KULE.Ag.new()
+	var nk := kay.size() - 1
+	var tonlar := [Color("a29c90"), Color("98948c"), Color("8e8a84"), Color("9c968a"), Color("a09a90")]
+	for yaka in 2:
+		var x := x0 + 0.05
+		var k := 0
+		while x < x1 - 0.3:
+			var hb := _hash(tohum * 31 + yaka * 977 + k, 5)
+			var L := lerpf(0.6, 1.1, hb)
+			if x + L > x1 - 0.05:
+				L = x1 - 0.05 - x
+			if L < 0.35:
+				break
+			var xm := x + L * 0.5
+			x += L + lerpf(0.03, 0.06, _hash(k, tohum + yaka))
+			k += 1
+			if xm < pencere.x or xm >= pencere.y:
+				continue
+			var ii := clampi(int((xm - x0) / (x1 - x0) * nk), 0, nk)
+			if yaka == 1 and float(kay[ii]) > 0.2:
+				continue                          # toprak kayması: harpuşta dibe düşmüş
+			var hm := _hash(tohum + k * 3, yaka + 11)
+			if hm < 0.1 and lod == 0:
+				continue                          # eksik taş
+			var kayik := hm > 0.88
+			var W := 0.5
+			var zi := z0 - 0.04 if yaka == 0 else z1 - W + 0.04
+			var ic := 1.0 if yaka == 0 else -1.0     # hendeğe doğru +z (iç yaka) / −z (karşı yaka)
+			var hgt := 0.26 + (_hash(k, 77 + yaka) - 0.5) * 0.06
+			var dz := 0.0
+			var tilt := 0.0
+			if kayik:
+				dz = lerpf(0.05, 0.25, _hash(k, 91)) * ic
+				tilt = deg_to_rad(lerpf(3.0, 12.0, _hash(k, 93)))
+			var yaw := (_hash(k, 95 + yaka) - 0.5) * 0.05
+			var bas := Basis(Vector3.UP, yaw) * Basis(Vector3.RIGHT, tilt * ic)
+			var o := Vector3(xm, -0.08, zi + W * 0.5 + dz)
+			var col: Color = tonlar[int(_hash(k * 7, tohum + yaka) * tonlar.size()) % tonlar.size()]
+			col = col.darkened((_hash(k, 3) - 0.5) * 0.12)
+			var ust := col.lightened(0.06)            # üst yüz: güneş solması
+			# köşe rengi doğrusal uzayda okunur (Compatibility, OUTPUT_IS_SRGB): palet rengi çevrilir (yoksa bembeyaz)
+			col = col.srgb_to_linear()
+			ust = ust.srgb_to_linear()
+			var hx := L * 0.5
+			var hz := W * 0.5
+			var pa := 0.05                            # pah
+			var b := [Vector3(-hx, 0, -hz), Vector3(hx, 0, -hz), Vector3(hx, 0, hz), Vector3(-hx, 0, hz)]
+			var m := [Vector3(-hx, hgt - pa, -hz), Vector3(hx, hgt - pa, -hz), Vector3(hx, hgt - pa, hz), Vector3(-hx, hgt - pa, hz)]
+			var t := [Vector3(-hx + pa, hgt, -hz + pa), Vector3(hx - pa, hgt, -hz + pa), Vector3(hx - pa, hgt, hz - pa), Vector3(-hx + pa, hgt, hz - pa)]
+			for arr: Array in [b, m, t]:
+				for q in 4:
+					arr[q] = o + bas * (arr[q] as Vector3)
+			var mer := o + bas * Vector3(0, hgt * 0.5, 0)
+			for q in 4:
+				var q2 := (q + 1) % 4
+				ag.quad_auto(b[q], b[q2], m[q2], m[q], ((b[q] + b[q2]) * 0.5 - mer) * Vector3(1, 0, 1), col)
+				ag.quad_auto(m[q], m[q2], t[q2], t[q], ((m[q] + m[q2]) * 0.5 - mer) + Vector3.UP * 0.2, col.lerp(ust, 0.5))
+			ag.quad_auto(t[0], t[1], t[2], t[3], Vector3.UP, ust)
+	if _hmat == null:
+		_hmat = Props.mat(Color.WHITE, 0.0, false, "", true).duplicate() as StandardMaterial3D
+		_hmat.vertex_color_use_as_albedo = true
+	ag.mesh_ekle(p, _hmat, "Harpusta", lod == 0)
 
 
 static var _sz: Mesh
