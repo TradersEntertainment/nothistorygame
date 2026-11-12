@@ -1,0 +1,220 @@
+# Ham AUTOTEST/denetim satirlari (baslik: dosya)
+== s_20o_v_.log
+AUTOTEST PASS chapter=20o variant= outcome=20O.1 hits=3 cracks=0 gun=3/4 gunner=1/2 duel=true bed=
+exit=0 sure=43
+== s_20o_v_edirne.log
+AUTOTEST PASS chapter=20o variant=edirne outcome=20O.1 hits=3 cracks=1 gun=3/4 gunner=2/2 duel=true bed=crooked
+exit=0 sure=41
+== s_20o_v_edirne_ok.log
+AUTOTEST PASS chapter=20o variant=edirne_ok outcome=20O.1 hits=3 cracks=0 gun=3/4 gunner=2/2 duel=true bed=sound
+exit=0 sure=43
+== s_20o_v_flawed.log
+AUTOTEST PASS chapter=20o variant=flawed outcome=20O.1 hits=3 cracks=1 gun=3/4 gunner=1/2 duel=true bed=
+exit=0 sure=43
+== s_20o_v_hot.log
+AUTOTEST PASS chapter=20o variant=hot outcome=20O.1 hits=3 cracks=2 gun=3/4 gunner=2/2 duel=true bed=
+exit=0 sure=46
+== s_20o_v_hot_tape.log
+AUTOTEST PASS chapter=20o variant=hot_tape outcome=20O.1 hits=3 cracks=0 gun=3/4 gunner=1/3 duel=true bed=
+exit=0 sure=48
+== s_20o_v_hot_taped.log
+AUTOTEST PASS chapter=20o variant=hot_taped outcome=20O.1 hits=3 cracks=1 gun=3/4 gunner=1/2 duel=true bed=
+exit=0 sure=47
+== s_20o_v_lose.log
+AUTOTEST PASS chapter=20o variant=lose outcome=20O.1 hits=3 cracks=0 gun=3/4 gunner=0/1 duel=false bed=
+exit=0 sure=33
+== s_20o_v_named.log
+AUTOTEST PASS chapter=20o variant=named outcome=20O.1 hits=3 cracks=0 gun=3/4 gunner=2/2 duel=true bed=
+exit=0 sure=43
+== s_20o_v_wide.log
+AUTOTEST PASS chapter=20o variant=wide outcome=20O.2 hits=0 cracks=0 gun=3/4 gunner=2/4 duel=true bed=
+exit=0 sure=51
+== s_32o_v_.log
+AUTOTEST PASS chapter=32o variant= outcome=32O.1 bundles=6/6 earth=2 arrows=0 rungs=6 bad=0 hits=3/3 fires=6 greek=2/2 hasan=water
+exit=0 sure=47
+== s_32o_v_council_bad.log
+AUTOTEST PASS chapter=32o variant=council_bad outcome=32O.1 bundles=6/6 earth=2 arrows=0 rungs=6 bad=0 hits=3/3 fires=6 greek=2/2 hasan=water
+exit=0 sure=46
+== s_32o_v_council_ok.log
+AUTOTEST PASS chapter=32o variant=council_ok outcome=32O.1 bundles=6/6 earth=2 arrows=0 rungs=6 bad=0 hits=3/3 fires=6 greek=2/2 hasan=water
+exit=0 sure=43
+== s_32o_v_cracked.log
+AUTOTEST PASS chapter=32o variant=cracked outcome=32O.1 bundles=6/6 earth=2 arrows=0 rungs=6 bad=0 hits=3/3 fires=6 greek=2/2 hasan=water
+exit=0 sure=44
+== s_32o_v_gunner.log
+AUTOTEST PASS chapter=32o variant=gunner outcome=32O.1 bundles=6/6 earth=2 arrows=0 rungs=6 bad=0 hits=3/3 fires=6 greek=2/2 hasan=water
+exit=0 sure=43
+== s_32o_v_late.log
+AUTOTEST PASS chapter=32o variant=late outcome=32O.2 bundles=4/6 earth=1 arrows=0 rungs=6 bad=0 hits=0/3 fires=6 greek=1/1 hasan=water
+exit=0 sure=43
+== s_32o_v_named.log
+AUTOTEST PASS chapter=32o variant=named outcome=32O.1 bundles=6/6 earth=2 arrows=0 rungs=6 bad=0 hits=3/3 fires=6 greek=2/2 hasan=water
+exit=0 sure=45
+== s_41o_v_.log
+AUTOTEST PASS chapter=41 variant= outcome=41O.1 dir=4 bumps=0 blocks=3 parries=2 kick=true down=true fins=thrust,slash,ground spar=3/0 bags=0/1 water=0
+exit=0 sure=57
+== s_41o_v_lose.log
+AUTOTEST PASS chapter=41 variant=lose outcome=41O.2 dir=4 bumps=0 blocks=3 parries=2 kick=true down=true fins=thrust,slash,ground spar=1/7 bags=0/0 water=0
+exit=0 sure=60
+== s_42b_10.log
+AUTOTEST PASS chapter=42 variant= outcome=42.1 dir=4 bumps=1 blocks=3 parries=2 kick=true down=true fins=thrust,slash,ground spar=3/0 pushed=2 late=0
+exit=0 sure=58
+== s_42b_11.log
+AUTOTEST PASS chapter=42 variant= outcome=42.1 dir=4 bumps=1 blocks=3 parries=2 kick=true down=true fins=thrust,slash,ground spar=1/0 pushed=2 late=0
+exit=0 sure=59
+== s_42b_12.log
+AUTOTEST PASS chapter=42 variant= outcome=42.1 dir=4 bumps=1 blocks=3 parries=2 kick=true down=true fins=thrust,slash,ground spar=3/0 pushed=2 late=0
+exit=0 sure=61
+== s_42b_13.log
+AUTOTEST PASS chapter=42 variant= outcome=42.1 dir=5 bumps=1 blocks=3 parries=2 kick=true down=true fins=thrust,slash,ground spar=2/0 pushed=2 late=0
+exit=0 sure=61
+== s_42b_14.log
+AUTOTEST PASS chapter=42 variant= outcome=42.1 dir=4 bumps=1 blocks=3 parries=2 kick=true down=true fins=thrust,slash,ground spar=4/0 pushed=2 late=0
+exit=0 sure=61
+== s_42b_15.log
+AUTOTEST PASS chapter=42 variant= outcome=42.1 dir=4 bumps=0 blocks=3 parries=2 kick=true down=true fins=thrust,slash,ground spar=1/0 pushed=2 late=0
+exit=0 sure=63
+== s_42b_16.log
+AUTOTEST PASS chapter=42 variant= outcome=42.1 dir=4 bumps=1 blocks=3 parries=2 kick=true down=true fins=thrust,slash,ground spar=4/0 pushed=2 late=0
+exit=0 sure=61
+== s_42b_17.log
+AUTOTEST PASS chapter=42 variant= outcome=42.1 dir=4 bumps=0 blocks=3 parries=2 kick=true down=true fins=thrust,slash,ground spar=4/0 pushed=2 late=0
+exit=0 sure=62
+== s_42b_18.log
+AUTOTEST PASS chapter=42 variant= outcome=42.1 dir=4 bumps=0 blocks=3 parries=2 kick=true down=true fins=thrust,slash,ground spar=2/0 pushed=2 late=0
+exit=0 sure=60
+== s_42b_19.log
+AUTOTEST PASS chapter=42 variant= outcome=42.1 dir=4 bumps=0 blocks=3 parries=2 kick=true down=true fins=thrust,slash,ground spar=4/0 pushed=2 late=0
+exit=0 sure=55
+== s_42b_2.log
+AUTOTEST PASS chapter=42 variant= outcome=42.1 dir=4 bumps=0 blocks=3 parries=2 kick=true down=true fins=thrust,slash,ground spar=3/0 pushed=2 late=0
+exit=0 sure=61
+== s_42b_20.log
+AUTOTEST PASS chapter=42 variant= outcome=42.1 dir=4 bumps=0 blocks=3 parries=2 kick=true down=true fins=thrust,slash,ground spar=3/0 pushed=2 late=0
+exit=0 sure=59
+== s_42b_3.log
+AUTOTEST PASS chapter=42 variant= outcome=42.1 dir=4 bumps=0 blocks=3 parries=2 kick=true down=true fins=thrust,slash,ground spar=2/0 pushed=2 late=0
+exit=0 sure=59
+== s_42b_4.log
+AUTOTEST PASS chapter=42 variant= outcome=42.1 dir=5 bumps=1 blocks=3 parries=2 kick=true down=true fins=thrust,slash,ground spar=4/0 pushed=2 late=0
+exit=0 sure=56
+== s_42b_5.log
+AUTOTEST PASS chapter=42 variant= outcome=42.1 dir=4 bumps=2 blocks=3 parries=2 kick=true down=true fins=thrust,slash,ground spar=1/0 pushed=2 late=0
+exit=0 sure=64
+== s_42b_6.log
+VISAUDIT overlap scene=chapter42b.tscn a=CityLife b=CityLife at=(-42.4, 0.0, -44.7) src=Chapter42b>LandWalls>SiegeField>CityLife>Person|Chapter42b>LandWalls>SiegeField>CityLife>Person
+AUTOTEST PASS chapter=42 variant= outcome=42.1 dir=4 bumps=0 blocks=3 parries=2 kick=true down=true fins=thrust,slash,ground spar=3/0 pushed=2 late=0
+exit=0 sure=58
+== s_42b_7.log
+AUTOTEST PASS chapter=42 variant= outcome=42.1 dir=4 bumps=0 blocks=3 parries=2 kick=true down=true fins=thrust,slash,ground spar=3/0 pushed=2 late=0
+exit=0 sure=63
+== s_42b_8.log
+AUTOTEST PASS chapter=42 variant= outcome=42.1 dir=5 bumps=1 blocks=3 parries=2 kick=true down=true fins=thrust,slash,ground spar=1/0 pushed=2 late=0
+exit=0 sure=60
+== s_42b_9.log
+AUTOTEST PASS chapter=42 variant= outcome=42.1 dir=4 bumps=1 blocks=3 parries=2 kick=true down=true fins=thrust,slash,ground spar=2/0 pushed=2 late=0
+exit=0 sure=62
+== s_42b_t.log
+AUTOTEST PASS chapter=42 variant= outcome=42.1 dir=4 bumps=0 blocks=3 parries=2 kick=true down=true fins=thrust,slash,ground spar=4/0 pushed=2 late=0
+exit=0 sure=70
+== s_42b_v_lose.log
+AUTOTEST PASS chapter=42 variant=lose outcome=42.2 dir=4 bumps=0 blocks=3 parries=2 kick=true down=true fins=thrust,slash,ground spar=1/7 pushed=2 late=0
+exit=0 sure=63
+== s_c20.log
+AUTOTEST PASS chapter=20 variant= outcome=20.1 repair=10 knocks=0 arrows=true gun=3/4 gunner=5/5 niko=0
+exit=0 sure=48
+== s_c28o.log
+AUTOTEST PASS chapter=28o variant= outcome=28O.1 stakes=4 slips=0 hit=true master=false roller_every=4.0 rollers=2
+exit=0 sure=22
+== s_c35o.log
+AUTOTEST PASS chapter=35o variant= outcome=35O.1 loose=0 swept=0 broke=false slips=0 snaps=0 logs=0/0 oxen=3
+exit=0 sure=60
+== o_20o_v_.log
+AUTOTEST PASS chapter=20o variant= outcome=20O.1 hits=3 cracks=0 gun=3/4 gunner=2/2 duel=true bed=
+exit=0 sure=41
+== o_32o_v_.log
+AUTOTEST PASS chapter=32o variant= outcome=32O.1 bundles=6/6 earth=2 arrows=0 rungs=6 bad=0 hits=3/3 fires=6 greek=2/2 hasan=water
+exit=0 sure=46
+== o_42b_10.log
+AUTOTEST PASS chapter=42 variant= outcome=42.1 dir=4 bumps=1 blocks=3 parries=2 kick=true down=true fins=thrust,slash,ground spar=2/0 pushed=2 late=0
+exit=0 sure=60
+== o_42b_11.log
+AUTOTEST PASS chapter=42 variant= outcome=42.1 dir=5 bumps=0 blocks=3 parries=2 kick=true down=true fins=thrust,slash,ground spar=3/0 pushed=2 late=0
+exit=0 sure=62
+== o_42b_12.log
+AUTOTEST PASS chapter=42 variant= outcome=42.1 dir=4 bumps=2 blocks=3 parries=2 kick=true down=true fins=thrust,slash,ground spar=4/0 pushed=2 late=0
+exit=0 sure=60
+== o_42b_13.log
+AUTOTEST PASS chapter=42 variant= outcome=42.1 dir=4 bumps=0 blocks=3 parries=2 kick=true down=true fins=thrust,slash,ground spar=1/0 pushed=2 late=0
+exit=0 sure=61
+== o_42b_14.log
+AUTOTEST PASS chapter=42 variant= outcome=42.1 dir=4 bumps=0 blocks=3 parries=2 kick=true down=true fins=thrust,slash,ground spar=4/0 pushed=2 late=0
+exit=0 sure=56
+== o_42b_15.log
+AUTOTEST PASS chapter=42 variant= outcome=42.1 dir=4 bumps=1 blocks=3 parries=2 kick=true down=true fins=thrust,slash,ground spar=4/0 pushed=2 late=0
+exit=0 sure=59
+== o_42b_16.log
+AUTOTEST PASS chapter=42 variant= outcome=42.1 dir=4 bumps=2 blocks=3 parries=2 kick=true down=true fins=thrust,slash,ground spar=0/0 pushed=2 late=0
+exit=0 sure=62
+== o_42b_17.log
+AUTOTEST PASS chapter=42 variant= outcome=42.1 dir=4 bumps=0 blocks=3 parries=2 kick=true down=true fins=thrust,slash,ground spar=3/0 pushed=2 late=0
+exit=0 sure=63
+== o_42b_18.log
+AUTOTEST PASS chapter=42 variant= outcome=42.1 dir=4 bumps=0 blocks=3 parries=2 kick=true down=true fins=thrust,slash,ground spar=4/0 pushed=2 late=0
+exit=0 sure=61
+== o_42b_19.log
+VISAUDIT overlap scene=chapter42b.tscn a=CityLife b=CityLife at=(-7.4, 0.0, -42.8) src=Chapter42b>LandWalls>SiegeField>CityLife>Person|Chapter42b>LandWalls>SiegeField>CityLife>Person
+AUTOTEST PASS chapter=42 variant= outcome=42.1 dir=4 bumps=2 blocks=3 parries=2 kick=true down=true fins=thrust,slash,ground spar=3/0 pushed=2 late=0
+exit=0 sure=62
+== o_42b_2.log
+AUTOTEST PASS chapter=42 variant= outcome=42.1 dir=4 bumps=0 blocks=3 parries=2 kick=true down=true fins=thrust,slash,ground spar=3/0 pushed=2 late=0
+exit=0 sure=59
+== o_42b_20.log
+AUTOTEST PASS chapter=42 variant= outcome=42.1 dir=4 bumps=2 blocks=3 parries=2 kick=true down=true fins=thrust,slash,ground spar=2/0 pushed=2 late=0
+exit=0 sure=60
+== o_42b_3.log
+AUTOTEST PASS chapter=42 variant= outcome=42.1 dir=4 bumps=1 blocks=3 parries=2 kick=true down=true fins=thrust,slash,ground spar=3/0 pushed=2 late=0
+exit=0 sure=58
+== o_42b_4.log
+AUTOTEST PASS chapter=42 variant= outcome=42.1 dir=4 bumps=0 blocks=3 parries=2 kick=true down=true fins=thrust,slash,ground spar=3/0 pushed=2 late=0
+exit=0 sure=64
+== o_42b_5.log
+AUTOTEST PASS chapter=42 variant= outcome=42.1 dir=4 bumps=0 blocks=3 parries=2 kick=true down=true fins=thrust,slash,ground spar=4/0 pushed=2 late=0
+exit=0 sure=62
+== o_42b_6.log
+AUTOTEST PASS chapter=42 variant= outcome=42.1 dir=4 bumps=0 blocks=3 parries=2 kick=true down=true fins=thrust,slash,ground spar=3/0 pushed=2 late=0
+exit=0 sure=58
+== o_42b_7.log
+AUTOTEST PASS chapter=42 variant= outcome=42.1 dir=4 bumps=2 blocks=3 parries=2 kick=true down=true fins=thrust,slash,ground spar=3/0 pushed=2 late=0
+exit=0 sure=61
+== o_42b_8.log
+AUTOTEST PASS chapter=42 variant= outcome=42.1 dir=4 bumps=1 blocks=3 parries=2 kick=true down=true fins=thrust,slash,ground spar=4/0 pushed=2 late=0
+exit=0 sure=64
+== o_42b_9.log
+AUTOTEST PASS chapter=42 variant= outcome=42.1 dir=4 bumps=0 blocks=3 parries=2 kick=true down=true fins=thrust,slash,ground spar=4/0 pushed=2 late=0
+exit=0 sure=54
+== o_42b_t.log
+AUTOTEST PASS chapter=42 variant= outcome=42.1 dir=4 bumps=0 blocks=3 parries=2 kick=true down=true fins=thrust,slash,ground spar=3/0 pushed=2 late=0
+exit=0 sure=75
+== shot_once_20o.log
+AUTOTEST PASS chapter=20o variant= outcome=20O.1 hits=3 cracks=0 gun=1/4 gunner=2/3 duel=true bed=
+exit=0 sure=1011
+== shot_once_32o.log
+AUTOTEST PASS chapter=32o variant= outcome=32O.1 bundles=6/6 earth=2 arrows=0 rungs=6 bad=0 hits=3/3 fires=6 greek=2/2 hasan=water
+exit=0 sure=1314
+== shot_once_41o.log
+AUTOTEST PASS chapter=41 variant= outcome=41O.1 dir=5 bumps=1 blocks=3 parries=2 kick=true down=true fins=thrust,slash,ground spar=1/0 bags=0/0 water=0
+exit=0 sure=1100
+== shot_once_42b.log
+AUTOTEST PASS chapter=42 variant= outcome=42.1 dir=4 bumps=2 blocks=3 parries=2 kick=true down=true fins=thrust,slash,ground spar=4/0 pushed=2 late=0
+exit=0 sure=1254
+== shot_sonra_20o.log
+AUTOTEST PASS chapter=20o variant= outcome=20O.1 hits=3 cracks=0 gun=3/4 gunner=1/2 duel=true bed=
+exit=0 sure=949
+== shot_sonra_32o.log
+AUTOTEST PASS chapter=32o variant= outcome=32O.1 bundles=6/6 earth=2 arrows=0 rungs=6 bad=0 hits=3/3 fires=6 greek=2/2 hasan=water
+exit=0 sure=1285
+== shot_sonra_41o.log
+== shot_sonra_42b.log
+AUTOTEST PASS chapter=42 variant= outcome=42.1 dir=5 bumps=1 blocks=3 parries=2 kick=true down=true fins=thrust,slash,ground spar=4/0 pushed=2 late=0
+exit=0 sure=1388

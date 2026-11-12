@@ -1,0 +1,20 @@
+### 41o
+ortak an: 34
+cizim fark ortanca -180, en iyi -270, en kotu -85; artan an: 0
+ucgen % ortanca -0.30 en kotu 1.69; >8% an: 0
+  D41O_H_PARRY_2           draws 2763->2668 (-95) prims 2283557->2322244 (+1.7%)
+### 42b
+ortak an: 44
+cizim fark ortanca -132, en iyi -1234, en kotu 1483; artan an: 18
+ucgen % ortanca 1.83 en kotu 54.57; >8% an: 10
+  D42B_H_FIN_GROUND        draws 1370->2853 (+1483) prims 3743135->5785881 (+54.6%)
+### 20o
+ortak an: 17
+cizim fark ortanca -109, en iyi -194, en kotu -51; artan an: 0
+ucgen % ortanca 1.33 en kotu 4.39; >8% an: 0
+  D20O_U_HIT_1             draws 3718->3555 (-163) prims 2463285->2571414 (+4.4%)
+### 32o
+ortak an: 41
+cizim fark ortanca -293, en iyi -750, en kotu 174; artan an: 1
+ucgen % ortanca 0.91 en kotu 9.92; >8% an: 1
+  D32O_U_END               draws 3800->3974 (+174) prims 2511555->2760704 (+9.9%)
