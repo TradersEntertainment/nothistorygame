@@ -2692,20 +2692,36 @@ func _ates_alani(pl: PackedVector2Array) -> void:
 
 ## SUR-5 (D): Mesoteikhion (Lykos vadisi; IstSurlar.catalog "mesoteikhion" noktası) çevresinde üç top gediği: dilimin
 ## yerel x'leri (yaw: dilimin dönüşü; yerel +x = Basis(UP, yaw) * X). Dilim ucuna 9 m'den yakın gedik atlanır.
+var _gedik_nok: Array = []
+
 func _gedik_x(mid: Vector2, yaw: float, L: float) -> Array:
-	var pg := Vector2(-5241.70, -434.15)
-	var rm := Vector2(-4939.29, 1113.20)
-	var dr := (rm - pg).normalized()
+	if _gedik_nok.is_empty():
+		# hat üstünde Romanos kapısına en yakın noktadan güneye 110, 215, 330 m (kapı koşusunun dışında)
+		var pl := _sade(IstGeo.yol("kara_suru"))
+		var rmw := IstGeo.w2(-4939.29, 1113.20)
+		var acc := 0.0
+		var best := 0.0
+		var bd := INF
+		for i in pl.size() - 1:
+			var l := pl[i].distance_to(pl[i + 1])
+			var k := 0.0
+			while k <= l:
+				var q := pl[i].lerp(pl[i + 1], k / maxf(l, 0.001))
+				if q.distance_to(rmw) < bd:
+					bd = q.distance_to(rmw)
+					best = acc + k
+				k += 2.0
+			acc += l
+		# hat yönü Marmara'dan Haliç'e: güney = küçük yay boyu
+		for ds: float in [110.0, 215.0, 330.0]:
+			_gedik_nok.append(_hat_nokta(pl, best - ds)["p"])
 	var ex := Vector2(cos(yaw), -sin(yaw))
 	var ez := Vector2(sin(yaw), cos(yaw))
 	var out: Array = []
-	# hat üstünde Romanos'tan güneye (kapı koşusunun dışında)
-	for s: float in [-330.0, -215.0, -110.0]:
-		var r := rm + dr * s
-		var q := IstGeo.w2(r.x, r.y)
+	for q: Vector2 in _gedik_nok:
 		var lx := (q - mid).dot(ex)
 		var lz := (q - mid).dot(ez)
-		if absf(lz) < 60.0 and absf(lx) < L * 0.5 - 9.0:
+		if absf(lz) < 15.0 and absf(lx) < L * 0.5 - 9.0:
 			out.append(lx)
 	return out
 
