@@ -1,7 +1,7 @@
 extends Node
 ## ZEMİN sondası (docs/_kanit_zemin): eski bölümlerde aynı kamerayla zemin kareleri.
 ##   godot --path . --resolution 1280x720 res://tests/_ist/zemin_kare.tscn -- bolum=N shots=KLASÖR liste=DOSYA [bekle=sn]
-## liste satırı: "ad dx dz yon [gece]" ('#' yorum). dx, dz: oyuncunun başlangıç konumuna göre (m); yon: dünya yönü
+## liste satırı: "ad dx dz yon" ('#' yorum). dx, dz: oyuncunun başlangıç konumuna göre (m; "@" önekiyle mutlak); yon: dünya yönü
 ## (derece, 0 = -z). Her satır için dört kare: <ad>_ufuk (1,7 m, ufka), <ad>_asagi (1,7 m, 25° aşağı),
 ## <ad>_yakin (1 m, 55° aşağı), <ad>_30m (30 m yukarıdan ve geriden, 38° aşağı). Bölüm mantığı kareler öncesi
 ## dondurulur (process_mode kapalı), arayüz katmanları gizlenir. Sonda: oyun koduna dokunmaz.
@@ -60,8 +60,8 @@ func _calis() -> void:
 			continue
 		var p := l.split(" ", false)
 		var ad := p[0]
-		var x := p0.x + p[1].to_float()
-		var z := p0.z + p[2].to_float()
+		var x := p[1].substr(1).to_float() if p[1].begins_with("@") else p0.x + p[1].to_float()
+		var z := p[2].substr(1).to_float() if p[2].begins_with("@") else p0.z + p[2].to_float()
 		var yon := deg_to_rad(p[3].to_float())
 		var fwd := Vector3(sin(yon), 0, -cos(yon))
 		var gy := _yer(x, z)

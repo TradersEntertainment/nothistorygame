@@ -22,26 +22,26 @@ const IS := 2        # B: ocak isi, yanık
 const TEMAS := 3     # A: yapı dibi temas kararması + toprak eteği
 
 const YORELER := {
-	"trakya": {"c_ot": Color("6c7c44"), "c_ot2": Color("566838"), "c_kuru": Color("968c5a"), "c_toprak": Color("7c6146"),
-		"c_camur": Color("47392b"), "c_cakil": Color("8a8272"), "c_kum": Color("b29f7e"), "c_kaya": Color("7a7468"),
+	"trakya": {"c_ot": Color("5b6d2d"), "c_ot2": Color("475c25"), "c_kuru": Color("8a7f4b"), "c_toprak": Color("765a3d"),
+		"c_camur": Color("433526"), "c_cakil": Color("8a8272"), "c_kum": Color("b29f7e"), "c_kaya": Color("7a7468"),
 		"kuruluk": 0.36, "cignenme": 0.0},
-	"ordugah": {"c_ot": Color("6c7a44"), "c_ot2": Color("586638"), "c_kuru": Color("988c5c"), "c_toprak": Color("7c6044"),
-		"c_camur": Color("45372a"), "c_cakil": Color("888070"), "c_kum": Color("b09c7c"), "c_kaya": Color("7a7468"),
+	"ordugah": {"c_ot": Color("5b6b2e"), "c_ot2": Color("4a5a25"), "c_kuru": Color("8c7f4c"), "c_toprak": Color("76593b"),
+		"c_camur": Color("423325"), "c_cakil": Color("888070"), "c_kum": Color("b09c7c"), "c_kaya": Color("7a7468"),
 		"kuruluk": 0.5, "cignenme": 0.55},
-	"kusatma": {"c_ot": Color("6a7646"), "c_ot2": Color("56623a"), "c_kuru": Color("928860"), "c_toprak": Color("745a42"),
-		"c_camur": Color("40342b"), "c_cakil": Color("847c70"), "c_kum": Color("ac9a7c"), "c_kaya": Color("767066"),
+	"kusatma": {"c_ot": Color("5a6831"), "c_ot2": Color("495628"), "c_kuru": Color("867c51"), "c_toprak": Color("6e533a"),
+		"c_camur": Color("3d3027"), "c_cakil": Color("847c70"), "c_kum": Color("ac9a7c"), "c_kaya": Color("767066"),
 		"kuruluk": 0.5, "cignenme": 0.8},
-	"kiyi": {"c_ot": Color("6a7c48"), "c_ot2": Color("566a3c"), "c_kuru": Color("9a9064"), "c_toprak": Color("7e6850"),
-		"c_camur": Color("45392e"), "c_cakil": Color("8e877a"), "c_kum": Color("b8a684"), "c_kaya": Color("7e786e"),
+	"kiyi": {"c_ot": Color("596d32"), "c_ot2": Color("465d29"), "c_kuru": Color("8e8355"), "c_toprak": Color("786148"),
+		"c_camur": Color("42352a"), "c_cakil": Color("8e877a"), "c_kum": Color("b8a684"), "c_kaya": Color("7e786e"),
 		"kuruluk": 0.3, "cignenme": 0.1},
-	"sehir": {"c_ot": Color("6a7a4a"), "c_ot2": Color("566640"), "c_kuru": Color("948a64"), "c_toprak": Color("7e684e"),
-		"c_camur": Color("473d31"), "c_cakil": Color("8e8676"), "c_kum": Color("b09e80"), "c_kaya": Color("807a70"),
+	"sehir": {"c_ot": Color("596b34"), "c_ot2": Color("475a2e"), "c_kuru": Color("887e55"), "c_toprak": Color("786146"),
+		"c_camur": Color("43392c"), "c_cakil": Color("8e8676"), "c_kum": Color("b09e80"), "c_kaya": Color("807a70"),
 		"kuruluk": 0.42, "cignenme": 0.35},
-	"kurak": {"c_ot": Color("767c4c"), "c_ot2": Color("626840"), "c_kuru": Color("a09260"), "c_toprak": Color("84684a"),
-		"c_camur": Color("4a3d30"), "c_cakil": Color("8e8574"), "c_kum": Color("b6a27e"), "c_kaya": Color("7e776a"),
+	"kurak": {"c_ot": Color("666d36"), "c_ot2": Color("555c2e"), "c_kuru": Color("93844f"), "c_toprak": Color("7d6041"),
+		"c_camur": Color("46392b"), "c_cakil": Color("8e8574"), "c_kum": Color("b6a27e"), "c_kaya": Color("7e776a"),
 		"kuruluk": 0.62, "cignenme": 0.2},
-	"kar": {"c_ot": Color("626e4c"), "c_ot2": Color("525e40"), "c_kuru": Color("888060"), "c_toprak": Color("665242"),
-		"c_camur": Color("3a322c"), "c_cakil": Color("807c76"), "c_kum": Color("9e978a"), "c_kaya": Color("706c68"),
+	"kar": {"c_ot": Color("53613a"), "c_ot2": Color("455330"), "c_kuru": Color("7d7553"), "c_toprak": Color("614c3b"),
+		"c_camur": Color("372f28"), "c_cakil": Color("807c76"), "c_kum": Color("9e978a"), "c_kaya": Color("706c68"),
 		"kuruluk": 0.3, "cignenme": 0.3, "kar": 0.62},
 }
 
@@ -126,6 +126,27 @@ static func kutu_zemin(sahip: Node, ipucu: Color, yore_ad := "kusatma", ek := {}
 		if n is MeshInstance3D:
 			(n as MeshInstance3D).material_override = m
 	return sahip
+
+
+## v2 dünyasının arazi malzemesi (IstDunya kullanır; tek örnek). Deniz seviyesi v2'nin kendi uzayında 0. Maske v2'nin
+## kendi uzayında (asinma_yerel): ORDUGÂH/SUR-4 yolları ve çiğnenmiş alanları buraya boyar (bkz. v2_asinma).
+static var _v2: ShaderMaterial
+static func v2_malzeme() -> ShaderMaterial:
+	if _v2 == null:
+		_v2 = kopya("trakya")
+		_v2.set_shader_parameter("su_y", 0.0)
+		_v2.set_shader_parameter("asinma_yerel", 1.0)
+	return _v2
+
+
+## v2 aşınma maskesi (paylaşılan): sur dışı + ordugâh kuşağı (gerçek doğu −9570…−4710, kuzey −1500…3570), v2 yerel
+## x-z (dünya m: x = e·S, z = −n·S), 1 m/piksel. Herkes aynı sözlüğe
+## boyar, sonunda asinma_uygula(Zemin.v2_asinma()) çağırır. alan: v2 yerel dikdörtgen (ilk çağıranınki geçerli).
+static var _v2a: Dictionary = {}
+static func v2_asinma(alan := Rect2(-3350.0, -1250.0, 1700.0, 1800.0), m_px := 1.0) -> Dictionary:
+	if _v2a.is_empty():
+		_v2a = asinma_baslat(null, alan, m_px, v2_malzeme())
+	return _v2a
 
 
 # ------------------------------------------------------------------ aşınma maskesi
@@ -388,7 +409,7 @@ static func _ag(tur: String) -> ArrayMesh:
 				var a := TAU * i / 6.0 + rng.randf_range(-0.4, 0.4)
 				var d := Vector3(cos(a), 0, sin(a))
 				_yaprak(st, d * rng.randf_range(0.0, 0.05), d, rng.randf_range(0.2, 0.38), rng.randf_range(0.018, 0.028),
-					rng.randf_range(0.25, 0.6), Color(0.5, 0.56, 0.4), Color(1.0, 1.0, 0.84))
+					rng.randf_range(0.25, 0.6), Color(0.46, 0.52, 0.36), Color(0.86, 0.88, 0.7))
 		"papatya", "gelincik":
 			var tac := Color("f4f0e2") if tur == "papatya" else Color("c8321e")
 			var orta := Color("e8c030") if tur == "papatya" else Color("201814")
@@ -714,7 +735,7 @@ class Ortu extends Node3D:
 						continue
 					var y: float = yukseklik.call(x, z)
 					var kuru := clampf(obek.x * 1.2 - 0.2 + rng.randf_range(-0.2, 0.2), 0.0, 1.0)
-					var c := Color("8a9a62").lerp(Color("b4a874"), kuru) * rng.randf_range(0.85, 1.08)
+					var c := Color("76864e").lerp(Color("a69a66"), kuru) * rng.randf_range(0.85, 1.05)
 					c.a = 1.0
 					var s := rng.randf_range(0.7, 1.35)
 					_ekle(out["ot"], Vector3(x, y - 0.02, z), rng.randf() * TAU, Vector3(s, s * rng.randf_range(0.8, 1.2), s), c, rng.randf())

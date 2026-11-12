@@ -351,14 +351,10 @@ func _izgara_agi(x0: float, z0: float, cell: float, nx: int, nz: int, hs: Packed
 	return _ag_ilerle(st, 1 << 62)
 
 
-## ZEMİN (scripts/level/zemin.gd): v2 arazisinin malzemesi; eski bölümlerle paylaşılmaz (deniz seviyesi v2'nin kendi
-## uzayında 0, yöre Trakya).
-var _zm: ShaderMaterial
+## ZEMİN (scripts/level/zemin.gd): v2 arazisinin malzemesi (Zemin.v2_malzeme); eski bölümlerle paylaşılmaz (deniz
+## seviyesi ve aşınma maskesi v2'nin kendi uzayında, yöre Trakya).
 func _zemin_mat() -> ShaderMaterial:
-	if _zm == null:
-		_zm = load("res://scripts/level/zemin.gd").kopya("trakya")
-		_zm.set_shader_parameter("su_y", 0.0)
-	return _zm
+	return load("res://scripts/level/zemin.gd").v2_malzeme()
 
 
 ## ZEMİN yer örtüsü (ot tutamı, çiçek, taş, dal, birikinti): izleyicinin 48 m çevresinde akışlı, çarpışmasız; yerleşik

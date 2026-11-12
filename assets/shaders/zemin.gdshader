@@ -18,6 +18,7 @@ uniform sampler2D gurultu : hint_default_white, filter_linear_mipmap, repeat_ena
 uniform sampler2D asinma : hint_default_black, filter_linear, repeat_disable;
 uniform vec4 asinma_alan = vec4(0.0, 0.0, 1.0, 1.0);    // x0, z0, genişlik, derinlik (dünya m)
 uniform float asinma_acik = 0.0;
+uniform float asinma_yerel = 0.0;   // 1: maske ağın kendi uzayında (v2: dünya kökü dönüşümlü bağlansa da)
 
 uniform vec4 c_ot : source_color = vec4(0.49, 0.54, 0.35, 1.0);      // solgun bahar yeşili
 uniform vec4 c_ot2 : source_color = vec4(0.41, 0.47, 0.29, 1.0);     // gölgeli/yoğun ot
@@ -41,6 +42,7 @@ uniform float yama_kenar = 2.0;          // yama türevi: kenarın gürültüyle
 varying vec3 wpos;
 varying vec3 wnor;
 varying float ly;
+varying vec2 lxz;
 
 float lum(vec3 c) { return dot(c, vec3(0.2126, 0.7152, 0.0722)); }
 
@@ -48,6 +50,7 @@ void vertex() {
 	wpos = (MODEL_MATRIX * vec4(VERTEX, 1.0)).xyz;
 	wnor = normalize((MODEL_MATRIX * vec4(NORMAL, 0.0)).xyz);
 	ly = VERTEX.y;
+	lxz = VERTEX.xz;
 }
 
 // iki ölçekte, döndürülmüş örnek (yalnız yumuşak kanallar R, G)
@@ -83,6 +86,10 @@ void fragment() {
 	// ---- makro: kuruluk ve nem
 	float kur = clamp(kuruluk + (M.x - 0.5) * 1.4, 0.0, 1.0);
 	float nem = clamp((M.y - 0.5) * 1.6 + 0.4 - kuruluk * 0.45, 0.0, 1.0);
+	// dipte nem: suya yakın alçak yerde (su_y tanımlıysa) toprak koyulaşır, ot gürleşir, çamur artar
+	float dip = 1.0 - smoothstep(0.5, 7.0, ly - su_y);
+	nem = clamp(nem + dip * 0.35, 0.0, 1.0);
+	kur = clamp(kur - dip * 0.3, 0.0, 1.0);
 
 	// ---- ot katmanı (paletten; ipucunun parlaklığına hafif uyar)
 	vec3 ot = mix(c_ot2.rgb, c_ot.rgb, smoothstep(0.35, 0.65, O.y + (T.y - 0.5) * 0.3 * mikro));
@@ -92,7 +99,7 @@ void fragment() {
 	// ---- toprak katmanı: ipucunun tonu (yol, kum, taş) korunur; yeşil ipucunda palet toprağı
 	vec3 topr = c_toprak.rgb * (0.9 + 0.2 * M.y);
 	topr = mix(topr, h * (0.9 + 0.2 * Q.y), ipucu_guc * (1.0 - yesil));
-	topr = mix(topr, c_cakil.rgb * clamp(L / max(lum(c_cakil.rgb), 0.01), 0.6, 1.3), gri * (1.0 - yesil) * 0.4);
+	topr = mix(topr, c_cakil.rgb * clamp(L / max(lum(c_cakil.rgb), 0.01), 0.6, 1.3), gri * (1.0 - yesil) * 0.25);
 
 	// ---- ot ↔ toprak sınırı: ipucunun yeşilliği + bükme + çiğnenme + öbekler
 	float otluk = yesil + bukme;
@@ -109,7 +116,7 @@ void fragment() {
 	c = mix(c, mix(c_camur.rgb, c, 0.25), camur_m * orta);
 	// ---- çakıl öbekleri (renk değil, taneleri sıklaşır; burada yalnız hafif gri ton)
 	float cakil_m = smoothstep(0.66, 0.78, (1.0 - O.y) * 0.55 + W.y * 0.45 + gri * 0.25) * (1.0 - ot_m) * (1.0 - camur_m);
-	c = mix(c, mix(c, c_cakil.rgb, 0.45), cakil_m * 0.6 * orta);
+	c = mix(c, mix(c, c_cakil.rgb, 0.35), cakil_m * 0.5 * orta);
 	// ---- dik yamaç kayası
 	float kaya_m = smoothstep(0.45, 0.72, egim + (O.x - 0.5) * 0.3);
 	c = mix(c, c_kaya.rgb * (0.85 + 0.3 * Q.x), kaya_m);
@@ -117,7 +124,7 @@ void fragment() {
 	// ---- aşınma maskesi
 	vec4 a = vec4(0.0);
 	if (asinma_acik > 0.5) {
-		vec2 uv = (wpos.xz + (W - 0.5) * 1.6 - asinma_alan.xy) / asinma_alan.zw;
+		vec2 uv = (mix(wpos.xz, lxz, asinma_yerel) + (W - 0.5) * 1.6 - asinma_alan.xy) / asinma_alan.zw;
 		if (uv.x > 0.0 && uv.y > 0.0 && uv.x < 1.0 && uv.y < 1.0) {
 			a = texture(asinma, uv);
 		}
