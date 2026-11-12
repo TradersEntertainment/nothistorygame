@@ -664,6 +664,18 @@
   "tarif": "Novo Brdo miner",
   "same_as": "SPK_KASIM"
  },
+ "SPK_EUDOKIA": {
+  "tarif": "Kyra Eudokia; neighbourhood woman whose well suddenly yields fish; middle-aged, practical, dry humour, warm",
+  "gender": "female",
+  "age": "middle_aged",
+  "same_as": "SPK_WOMAN_BYZ"
+ },
+ "SPK_YAKOVOS": {
+  "tarif": "Fisherman Yakovos; old fisherman who has counted columns in the dark for forty years; calm, low voice, dry humour",
+  "gender": "male",
+  "age": "old",
+  "same_as": "SPK_FISHMONGER"
+ },
  "SPK_USTA": {
   "tarif": "Master carpenter Mahmud",
   "same_as": "SPK_CEMIL"

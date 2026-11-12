@@ -239,7 +239,7 @@ func _build_yard() -> void:
 	Props.interactable(yard, "well", Vector3(1.8, 1.6, 1.8), WELL + Vector3(0, 0.8, 0))
 	eudokia = Person.new({"coat": Color("4a4a5a"), "pants": Color("3a3028"), "robe": Color("3a3a48"), "skirt": true,
 		"hat": "scarf", "scarf": Color("2a2a30"), "hair": Color("b0aca4"), "skin": Color("e0b896")})
-	eudokia.set_meta("spk", "SPK_WOMAN_BYZ")
+	eudokia.set_meta("spk", "SPK_EUDOKIA")
 	eudokia.position = EUDOKIA_AT
 	add_child(eudokia)
 	neighbors.append(eudokia)
@@ -274,14 +274,14 @@ func _run() -> void:
 	await hud.say("SPK_NIHAT", "D44B_N_01")
 	await hud.say("SPK_TOLGA", "D44B_T_01")
 	eudokia.talking = true
-	await hud.say("SPK_WOMAN_BYZ", "D44B_E_01")
-	await hud.say("SPK_WOMAN_BYZ", "D44B_E_02")
+	await hud.say("SPK_EUDOKIA", "D44B_E_01")
+	await hud.say("SPK_EUDOKIA", "D44B_E_02")
 	eudokia.talking = false
 	await hud.say("SPK_TOLGA", "D44B_T_02")
 	if kid:
 		await hud.say("SPK_KID", "D44B_K_01")
 		await hud.say("SPK_TOLGA", "D44B_T_KID")
-	await hud.say("SPK_WOMAN_BYZ", "D44B_E_03")
+	await hud.say("SPK_EUDOKIA", "D44B_E_03")
 	phase = "yard"
 	player.frozen = false
 	_capture_mouse()
@@ -683,15 +683,15 @@ func _meet_yakovos() -> void:
 	player.frozen = true          # konuşma; sarsıntı evresinin hedefi gelince serbest
 	yakovos.look_target = player
 	await _turn_to(yakovos.global_position + Vector3(0, 1.3, 0), 1.2)
-	await hud.say("SPK_FISHMONGER", "D44B_Y_01")
+	await hud.say("SPK_YAKOVOS", "D44B_Y_01")
 	await hud.say("SPK_TOLGA", "D44B_T_Y_01")
-	await hud.say("SPK_FISHMONGER", "D44B_Y_02")
+	await hud.say("SPK_YAKOVOS", "D44B_Y_02")
 	await hud.say("SPK_TOLGA", "D44B_T_Y_02")
-	await hud.say("SPK_FISHMONGER", "D44B_Y_03")
+	await hud.say("SPK_YAKOVOS", "D44B_Y_03")
 	await hud.say("SPK_TOLGA", "D44B_T_Y_03")
-	await hud.say("SPK_FISHMONGER", "D44B_Y_04_KID" if _kid_on else "D44B_Y_04")
+	await hud.say("SPK_YAKOVOS", "D44B_Y_04_KID" if _kid_on else "D44B_Y_04")
 	await hud.say("SPK_TOLGA", "D44B_T_Y_04")
-	await hud.say("SPK_FISHMONGER", "D44B_Y_05")
+	await hud.say("SPK_YAKOVOS", "D44B_Y_05")
 
 
 ## Sarsıntı: yukarıda kuşatma; her top atışında tavan inler, dalga kayığı yana iter, tonozdan parçalar düşer (önce toz
@@ -703,7 +703,7 @@ func _quake() -> void:
 	phase = "quake"
 	await _tremor(0.6)
 	await _turn_to(yakovos.global_position + Vector3(0, 1.3, 0), 0.8)
-	await hud.say("SPK_FISHMONGER", "D44B_Y_QUAKE")
+	await hud.say("SPK_YAKOVOS", "D44B_Y_QUAKE")
 	await hud.say("SPK_NIHAT", "D44B_N_QUAKE")
 	# Kemer çöker, meşale suya düşer
 	var fall_at := yboat.global_position + Vector3(1.6, 0, -0.6)
@@ -714,12 +714,12 @@ func _quake() -> void:
 	Audio.sfx("splash", -6.0, 1.3)
 	cis.call("ring", yboat.global_position + Vector3(0.6, 0, 0.3), 1.0, 1.4)
 	await _turn_to(yakovos.global_position + Vector3(0, 1.3, 0), 0.8)
-	await hud.say("SPK_FISHMONGER", "D44B_Y_TORCH")
+	await hud.say("SPK_YAKOVOS", "D44B_Y_TORCH")
 	await hud.say("SPK_TOLGA", "D44B_T_LEAD")
 	# Yakovos küçük kandilini yakar: ancak kendini gösterir; Tolga'nın ışığı söndüğünde yön budur
 	yakovos.unequip("Spear")
 	yakovos.equip("lamp")                # kandil eşyasının kendi küçük ışığı var
-	await hud.say("SPK_FISHMONGER", "D44B_Y_LAMP")
+	await hud.say("SPK_YAKOVOS", "D44B_Y_LAMP")
 	_yk_follow = true
 	meter.enabled = true
 	var goal: Vector3 = cis.get("exit_well")
@@ -969,7 +969,7 @@ func _rescue(goal: Vector3) -> void:
 	cis.set("daylight", 0.25)
 	await hud.say("SPK_TOLGA", "D44B_T_LOST")
 	await _turn_to(yakovos.global_position + Vector3(0, 1.3, 0), 1.0)
-	await hud.say("SPK_FISHMONGER", "D44B_Y_RESCUE")
+	await hud.say("SPK_YAKOVOS", "D44B_Y_RESCUE")
 	await hud.fade_to(1.0, 0.8)
 	_boat_place(goal, _boat_yaw)
 	yboat.global_position = goal + Vector3(-2.4, 0, 0.3)
@@ -977,7 +977,7 @@ func _rescue(goal: Vector3) -> void:
 	cis.set("daylight", 1.0)
 	await _turn_to(yakovos.global_position + Vector3(0, 1.3, 0), 0.1)
 	await hud.fade_to(0.0, 0.8)
-	await hud.say("SPK_FISHMONGER", "D44B_Y_RESCUE_2")
+	await hud.say("SPK_YAKOVOS", "D44B_Y_RESCUE_2")
 
 
 ## Medusa köşesi: kayık iki sütunun MEDUSA_STOP m güneyine yan yanaşır (kürekler içeride; iki taş yüz aynı kadrajda).
@@ -1023,7 +1023,7 @@ func _medusa() -> void:
 	var look_mid := Vector3(mid.x, CisternLevel.MEDUSA_Y - 0.1, mid.z + 0.4)
 	var fov0 := player.camera.fov
 	await _turn_to(look_mid, 1.4)
-	await hud.say("SPK_FISHMONGER", "D44B_Y_STONE")
+	await hud.say("SPK_YAKOVOS", "D44B_Y_STONE")
 	hud.set_objective(GameState.tr_pad("UI_OBJ44_MEDUSA"), aim.global_position)
 	player.frozen = false
 	# Tespit: telefonun kamerası yakınlaştırır (yüz kadrajın beşte biri kadar: göz, burun, ağız seçilir)
@@ -1057,7 +1057,7 @@ func _medusa() -> void:
 	await _turn_to(look_mid, 0.8)
 	await hud.say("SPK_TOLGA", "D44B_T_MEDUSA_2")
 	await _turn_to(yakovos.global_position + Vector3(0, 1.3, 0), 1.0)
-	await hud.say("SPK_FISHMONGER", "D44B_Y_MEDUSA")
+	await hud.say("SPK_YAKOVOS", "D44B_Y_MEDUSA")
 	await _turn_to(look_mid, 0.8)
 	await hud.say("SPK_NIHAT", "D44B_N_MEDUSA")
 	player.camera.fov = fov0
@@ -1206,9 +1206,9 @@ func _yard_end() -> void:
 		neighbors.append(n)
 	await hud.fade_to(0.0, 0.8)
 	eudokia.talking = true
-	await hud.say("SPK_WOMAN_BYZ", "D44B_E_BACK")
+	await hud.say("SPK_EUDOKIA", "D44B_E_BACK")
 	eudokia.talking = false
-	await hud.say("SPK_FISHMONGER", "D44B_Y_BUCKET_KID" if _kid_on else "D44B_Y_BUCKET")
+	await hud.say("SPK_YAKOVOS", "D44B_Y_BUCKET_KID" if _kid_on else "D44B_Y_BUCKET")
 	if _kid_on:
 		await hud.say("SPK_KID", "D44B_K_HORSE")
 	await hud.say("SPK_TOWNSMAN", "D44B_TW_DJINN")
@@ -1219,14 +1219,14 @@ func _yard_end() -> void:
 		GameState.paradox += 5
 		await hud.say("SPK_TOLGA", "D44B_T_BLAB")
 		await hud.say("SPK_TOWNSMAN", "D44B_TW_LAUGH")
-		await hud.say("SPK_WOMAN_BYZ", "D44B_E_BLAB")
-		await hud.say("SPK_FISHMONGER", "D44B_Y_BLAB")
+		await hud.say("SPK_EUDOKIA", "D44B_E_BLAB")
+		await hud.say("SPK_YAKOVOS", "D44B_Y_BLAB")
 		await hud.say("SPK_NIHAT", "D44B_N_BLAB")
 	else:
 		_outcome = "44.1"
 		await hud.say("SPK_TOLGA", "D44B_T_KEEP")
-		await hud.say("SPK_WOMAN_BYZ", "D44B_E_KEEP")
-		await hud.say("SPK_FISHMONGER", "D44B_Y_KEEP")
+		await hud.say("SPK_EUDOKIA", "D44B_E_KEEP")
+		await hud.say("SPK_YAKOVOS", "D44B_Y_KEEP")
 		await hud.say("SPK_NIHAT", "D44B_N_KEEP")
 	await hud.say("SPK_TOLGA", "D44B_T_END")
 	GameState.flags["cistern_rescued"] = rescued
@@ -1279,7 +1279,7 @@ func _build_boats() -> void:
 func _make_yakovos() -> Person:
 	var y := Person.new({"coat": Color("5a4a38"), "pants": Color("3a3028"), "hat": "hood", "beard": true, "mustache": true,
 		"hair": Color("8a8478"), "skin": Color("d8a888")})
-	y.set_meta("spk", "SPK_FISHMONGER")
+	y.set_meta("spk", "SPK_YAKOVOS")
 	return y
 
 

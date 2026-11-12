@@ -732,7 +732,7 @@ func _cistern_neighbor() -> void:
 		return
 	var e := Person.new({"coat": Color("4a4a5a"), "pants": Color("3a3028"), "robe": Color("3a3a48"), "skirt": true,
 		"hat": "scarf", "scarf": Color("2a2a30"), "hair": Color("b0aca4"), "skin": Color("e0b896")})
-	e.set_meta("spk", "SPK_WOMAN_BYZ")
+	e.set_meta("spk", "SPK_EUDOKIA")
 	var fwd := -player.global_transform.basis.z
 	var side := player.global_transform.basis.x
 	# Sol önde (45°): İmparator ortadan, Isidoros sağdan gelir; Eudokia ikisinin görüş çizgisine girmez
@@ -743,7 +743,7 @@ func _cistern_neighbor() -> void:
 	e.look_target = player
 	await get_tree().process_frame
 	e.talking = true
-	await hud.say("SPK_WOMAN_BYZ", "D25_E_CISTERN_1" if o44 == "44.1" else "D25_E_CISTERN_2")
+	await hud.say("SPK_EUDOKIA", "D25_E_CISTERN_1" if o44 == "44.1" else "D25_E_CISTERN_2")
 	e.talking = false
 	_cistern_spoke = true
 

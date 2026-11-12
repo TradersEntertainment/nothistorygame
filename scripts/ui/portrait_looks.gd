@@ -101,6 +101,7 @@ const LOOKS := {
 	"SPK_SUTLER": {"coat": Color("8a6a3a"), "pants": Color("3a2a1e"), "hat": "turban", "beard": true, "apron": Color("e8dcc0"), "hair": Color("a8a49c"), "skin": Color("c89070")},
 	# Şehir, Galata, Venedik ve Ceneviz
 	"SPK_WOMAN_BYZ": {"coat": Color("3a6a8a"), "pants": Color("4a3a30"), "skirt": true, "hat": "scarf", "scarf": Color("e8e0d0"), "skin": Color("e0b08a")},
+	"SPK_EUDOKIA": {"coat": Color("3a6a8a"), "pants": Color("4a3a30"), "skirt": true, "hat": "scarf", "scarf": Color("e8e0d0"), "skin": Color("e0b08a")},
 	"SPK_CHILD_BYZ": {"coat": Color("a84a3a"), "pants": Color("3a3a5a"), "hair": Color("4a3020"), "skin": Color("f0c8a0"), "child": true},
 	"SPK_PORTER": {"coat": Color("8a7050"), "pants": Color("4a3a2a"), "mustache": true, "skin": Color("c89070")},
 	"SPK_STREET_MONK": {"coat": Color("2a2226"), "pants": Color("2a2226"), "robe": Color("2a2226"), "hat": "hood", "beard": true, "skin": Color("d8b090")},
@@ -142,6 +143,7 @@ const LOOKS := {
 	"SPK_DOUBLE": {"coat": Color("c98a3a"), "pants": Color("4a3a2a"), "hat": "turban", "mustache": true},
 	"SPK_CAPTAIN": {"coat": Color("1a2a4a"), "pants": Color("2a2a30"), "hat": "plume", "beard": true, "mustache": true, "skin": Color("e0a57e")},
 	"SPK_FISHMONGER": {"coat": Color("5a6a7a"), "pants": Color("3a3a3a"), "apron": Color("d8d0c0"), "mustache": true, "hat": "none"},
+	"SPK_YAKOVOS": {"coat": Color("5a6a7a"), "pants": Color("3a3a3a"), "apron": Color("d8d0c0"), "mustache": true, "hat": "none"},
 }
 
 ## Hem Bizans hem Osmanlı tarafında konuşan genel askerler/halk: sahneye göre giyinir

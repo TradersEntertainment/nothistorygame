@@ -385,6 +385,8 @@ D3_N_LOOK_PLANT,Zaman dışında bitkiler büyümez. Ölmez de. Bu saksı dokuz 
 D3_N_LOOK_FEZSHELF,Fes. 1829 rafında olması gerekirken 1453 rafında. Depoda da anomali var.,"A fez. It should be on the 1829 shelf, but it's on 1453. Even the storeroom has anomalies."
 SPK_NIKO,Niko,Niko
 SPK_KADRI,Aşçıbaşı Kadri,Head Cook Kadri
+SPK_EUDOKIA,Kadın,Woman
+SPK_YAKOVOS,Balıkçı,The fishmonger
 SPK_GUARDS,Hasan ile Hüseyin,Hasan and Hüseyin
 UI_CH4_TITLE,BÖLÜM 4 — İLK GECE,CHAPTER 4 — THE FIRST NIGHT
 UI_CH4_SUB_4A,"Tolga · 22 Nisan 1453, gece · Ordugâh","Tolga · 22 April 1453, night · The Ottoman camp"
