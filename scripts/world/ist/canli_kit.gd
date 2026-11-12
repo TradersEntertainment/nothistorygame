@@ -832,6 +832,16 @@ static func mat_ordu() -> StandardMaterial3D:
 	return _mat_ordu
 
 
+static var _mat_ordu_u: StandardMaterial3D
+
+## Ordugâhın orta mesafe ağı: dış hatsız (32 m ötesinde çizgi piksel altı; ikinci çizim geçişi yok)
+static func mat_ordu_uzak() -> StandardMaterial3D:
+	if _mat_ordu_u == null:
+		_mat_ordu_u = mat_ordu().duplicate() as StandardMaterial3D
+		_mat_ordu_u.next_pass = null
+	return _mat_ordu_u
+
+
 ## Eklemli düğüm ağacı (yakın katman). Her parça bir Node3D (pivotunda) + MeshInstance3D (köşe renkli ağ).
 ## Döndürür {"root", "p": {ad: Node3D}}. opt.lod (varsayılan 0). opt.birlestir: ["kulak"] → kulaklar başa pişer.
 static func dugum(tur: String, opt := {}) -> Dictionary:
@@ -862,10 +872,12 @@ static func dugum(tur: String, opt := {}) -> Dictionary:
 	for ad: String in parts:
 		var p: Dictionary = parts[ad]
 		var acc := _parca_acc(p, lod)
+		# birleşen parça, birleşmeyen ilk atasının ağına pişer (ör. "boyun","bas","kulak" → govde; "d" → "b")
 		var hedef := ad
-		for bb: String in birles:
-			if ad.begins_with(bb):
-				hedef = String(p["ust"])
+		var guard := 0
+		while guard < 6 and _birlesir(hedef, birles):
+			hedef = String(parts[hedef]["ust"])
+			guard += 1
 		var pv: Vector3 = parts[hedef]["pv"]
 		var a2 := Acc.new()
 		a2.add(acc, Transform3D(Basis.IDENTITY, -pv))
@@ -888,15 +900,26 @@ static func dugum(tur: String, opt := {}) -> Dictionary:
 		if mi:
 			mi.mesh = (mi.get_meta("canli_acc") as Acc).mesh()
 			mi.remove_meta("canli_acc")
-	for ad: String in birles:
+	# birleşmiş (ağsız, çocuksuz) parça düğümleri kalkar
+	var sil := true
+	while sil:
+		sil = false
 		for k: String in nodes.keys():
-			if k.begins_with(ad):
+			if _birlesir(k, birles):
 				var n: Node3D = nodes[k]
 				if n.get_child_count() == 0:
 					n.get_parent().remove_child(n)
 					n.free()
 					nodes.erase(k)
+					sil = true
 	return {"root": root, "p": nodes}
+
+
+static func _birlesir(ad: String, birles: Array) -> bool:
+	for bb: String in birles:
+		if ad.begins_with(bb):
+			return true
+	return false
 
 
 ## Ordugâhın Bld'sine (IstOrdugahKit.Bld) ekler: desensiz Bld'ye doğrudan (çizim eklenmez); desenli (ahşap) Bld'ye
@@ -906,8 +929,12 @@ static func bld_ekle(b: Object, tur: String, pos: Vector3, yaw_deg: float, opt :
 	var lod: int = int(opt.get("lod", -1))
 	var xf := Transform3D(Basis(Vector3.UP, deg_to_rad(yaw_deg)), pos)
 	var pattern: String = b.get("pattern")
-	if pattern == "":
-		var acc := birikim_ob(tur, 1 if lod < 0 else lod, opt)
+	# yalnız ahşap desenli Bld ayrı ağ alır (ahşap dokusu canlıya geçmesin); öbürleri (düz, orta katmanın "rubble"
+	# tek ağı) Bld'nin içine: çizim sayısı artmaz
+	if pattern != "wood":
+		# "rubble" deseni ordugâhın orta katman (lod ≥ 1, ≥ 120 m) tek ağıdır: orada uzak siluet yeter (bütçe)
+		var L0 := lod if lod >= 0 else (2 if pattern == "rubble" else 1)
+		var acc := birikim_ob(tur, L0, opt)
 		var bv: PackedVector3Array = b.get("v")
 		var bn: PackedVector3Array = b.get("n")
 		var bc: PackedColorArray = b.get("c")
@@ -932,14 +959,15 @@ static func bld_ekle(b: Object, tur: String, pos: Vector3, yaw_deg: float, opt :
 		if mi == null:
 			mi = MeshInstance3D.new()
 			mi.name = nm
-			mi.material_override = mat_ordu()
+			mi.material_override = mat_ordu() if L == 0 else mat_ordu_uzak()
 			mi.set_meta("no_walk", true)
 			mi.set_meta("canli_acc", Acc.new())
 			if lods.size() > 1:
 				if L == 0:
-					mi.visibility_range_end = 32.0
+					mi.visibility_range_end = 24.0
 				else:
-					mi.visibility_range_begin = 32.0
+					mi.visibility_range_begin = 24.0
+					mi.visibility_range_end = 300.0
 			if L > 0:
 				mi.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
 			body.add_child(mi)

@@ -253,7 +253,8 @@ static func animal(kind: String, seed: int) -> Node3D:
 	var legs: Array = []
 	# CANLI (kalite notu 32): köpek, kedi, eşek canli_kit'ten (kesit halkalı gövde, türün başı, eklemli bacak); kutu yok.
 	var fur: Color
-	var opt := {"lod": 0, "birlestir": ["kulak"], "golge": kind == "donkey"}
+	# çizim bütçesi: gövde + boyun + baş + kulak tek ağ, alt bacak üst bacağa pişer (hayvan başına 6 ağ)
+	var opt := {"lod": 0, "birlestir": ["kulak", "boyun", "bas", "d"], "golge": kind == "donkey"}
 	var tur := "kopek"
 	match kind:
 		"dog":
