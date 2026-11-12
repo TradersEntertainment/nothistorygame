@@ -68,7 +68,9 @@ static func attach(parent: Node3D, sokak: IstSokak, gece_ := false) -> IstMahall
 
 ## Bekleyen iş sayısı (kare sondaları akışın bitmesini bekler)
 static func bekleyen() -> int:
-	return aktif._is_kuyrugu.size() if aktif != null and is_instance_valid(aktif) else 0
+	if aktif == null or not is_instance_valid(aktif):
+		return 0
+	return aktif._is_kuyrugu.size() + (aktif.sokak_esya.bekleyen() if aktif.sokak_esya != null else 0)
 
 
 func _kur() -> void:
@@ -767,6 +769,8 @@ func _process(dt: float) -> void:
 	while not _is_kuyrugu.is_empty() and (n == 0 or Time.get_ticks_usec() - t0 < butce):
 		_is_yap(_is_kuyrugu.pop_front())
 		n += 1
+	if sokak_esya != null:
+		sokak_esya.akis(_cam(), maxi(1500, butce - int(Time.get_ticks_usec() - t0)))
 
 
 func _is_yap(job: Array) -> void:
