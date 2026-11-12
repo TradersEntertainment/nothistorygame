@@ -274,7 +274,8 @@ hükümdardan 2,5 m geriye konur), **bölüm sürer** (repliği, sonucu aynı). 
 
 ### 6.5 Tekrarı ve karşı tarafın hükümdarı
 
-- Karşı tarafın hükümdarına el kaldıran (26'nın sonunda Fatih, 30o'da İmparator; Osmanlı tarafında 23/25'te İmparator):
+- Atlı hükümdar hedef değildir (26'nın sonunda Fatih Ayasofya'ya at üstünde girer: yaya Tolga ancak üzengiye yetişir).
+- Karşı tarafın hükümdarına el kaldıran (30o'da İmparator; Osmanlı tarafında 23/25'te İmparator):
   vuramaz (aynı karşı hamle/muhafız), hüküm "Geldiği yere götürün. Dövüşecekse kendi safında dövüşsün." / "Geri itin.
   Bugün esir besleyecek ekmeğimiz yok."; geri itilir, **sürgün yok**, bölüm sürer.
 - İkinci sürgün (öbür tarafın hükümdarına, artık kendi hükümdarı): yeniden sürgün, geri.

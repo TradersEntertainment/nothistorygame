@@ -153,7 +153,11 @@ static func ruler_side(p: Person) -> String:
 
 
 func _visible_ruler(p) -> bool:
-	return is_instance_valid(p) and (p as Person) != null and p.is_inside_tree() and p.is_visible_in_tree() and not p.get_meta("hologram", false)
+	if not (is_instance_valid(p) and (p as Person) != null and p.is_inside_tree() and p.is_visible_in_tree()):
+		return false
+	# Atlı hükümdar (26'nın sonunda Fatih Ayasofya'ya at üstünde girer) hedef değil: yaya Tolga'nın eli ancak üzengiye
+	# yetişir, karşı hamle yapılamaz; o anda zaten fotoğraf ara sahnesi
+	return not p.get_meta("hologram", false) and not hud._is_mounted(p)
 
 
 ## Bakılan ve uzanılabilen hükümdar (yoksa null)
