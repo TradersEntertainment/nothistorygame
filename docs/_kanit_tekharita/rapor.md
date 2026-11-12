@@ -358,7 +358,7 @@ kalkar, ağızlar `FAR_REGIONS`'a girer.
   dalından birleşimle geldi (bu oturumda dokunulmadı).
 - Sonda ve ölçüm araçları: `tests/_tmp/sonda_th.gd/.tscn` (git dışı, `tests/_tmp/` .gitignore'da) iş bitince silindi; ÖNCE
   kopyası (`git worktree`, `/home/user/once`) kaldırıldı. Oyun koduna kanca konmadı (`git grep -n "sonda_\|SONDA" -- scripts` boş; `tests/` altındaki `sonda_g7`, `sonda_otag`,
-  `sonda_load_g7`, `otag_door_bake` paketlerin kendi araçları, birleşimle geldi). Godot'nun içe aktarmada ürettiği `.uid` dosyaları (paketlerin yeni test betikleri için 4 adet ve `scripts/player/shadow_body.gd.uid`) kaydedilmedi: depo `.uid`'leri izliyor (299 kayıtlı), bunları eklemek bir sonraki kaydın işi (dosya sınırım dışında: `scripts/player`).
+  `sonda_load_g7`, `otag_door_bake` paketlerin kendi araçları, birleşimle geldi). Godot'nun içe aktarmada ürettiği `.uid` dosyaları (paketlerin 4 test betiği ve `scripts/player/shadow_body.gd.uid`) depo düzenine uyularak (299 `.uid` kayıtlı) son kayıtta eklendi.
 - `.import`: §1. Yerel içe aktarmanın değiştirdiği `i18n/*.translation` geri alındı (kaydedilmedi).
 - `pkill` bir kez kullanıldı (kendi sonda kuyruğumun kabuk betiğini durdurmak için; kural "yalnız kill <pid>"): kural ihlali,
   sonrasında yalnız `kill <pid>`.
