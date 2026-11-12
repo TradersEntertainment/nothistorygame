@@ -138,38 +138,41 @@ hayvan gövdem (sayı 18). `.uid` çakışmaları karşı tarafın hâli.
 Ağaç tacı, kaya ve gülle ordugâh dosyalarında `sph`/`cyl` ile (kutu değil); sur dışındaki "oyuncak ağaçlar" SUR-4/ÇEVRE-4
 dosyalarında: BAKILMADI.
 
-## 7. Bütçe (oyunun RINFO'su; aynı kamera, aynı akış: `ordu_kare.tscn -- --kisa`)
+## 7. Bütçe (oyunun RINFO'su; ordugâhta ORDUGÂH-4 sondasının `_olc` ölçüsü)
 
-ORDUGÂH-4 sondasının `_olc` ölçüsü (ordugâh düğümü gizlenip farkı alınır: `ordu_cizim`, `ordu_ucgen`):
+`_olc`: aynı kamera, önce toplam, sonra ordugâh düğümü gizlenip fark alınır (`ordu_cizim`, `ordu_ucgen`). İki ayrı akış
+(kısa: `--kisa`, sahibin iki karesinden sonra; tam: yakın karelerden sonra), her biri ÖNCE ve SONRA aynı akışla:
 
-| nokta | ÖNCE çizim / üçgen | SONRA çizim / üçgen | fark |
-|---|---|---|---|
-| ucus60_otag | 747 / 1,49 M | 751 / 1,50 M | +4 / +%0,7 |
-| yer_otag | 601 / 1,27 M | 605 / 1,27 M | +4 / %0 |
-| ucus60_sahi_top | 321 / 0,57 M | 323 / 0,57 M | +2 / %0 |
-| yer_sahi_top | 116 / 0,29 M | 116 / 0,28 M | 0 / −%3 |
-| ucus60_anadolu_4_1 | 380 / 0,62 M | 381 / 0,64 M | +1 / +%3 |
-| yer_anadolu_4_1 | 348 / 0,87 M | 348 / 0,88 M | 0 / +%1 |
-| ucus60_rumeli_3_1 | 1 047 / 2,93 M | 1 046 / 3,01 M | −1 / +%2,7 |
-| ucus60_batarya_02 | 166 / 0,33 M | 167 / 0,33 M | +1 / %0 |
-| ucus60_yeniceri_2_1 | 660 / 1,44 M | 662 / 1,45 M | +2 / +%0,7 |
+| nokta | kısa ÖNCE | kısa SONRA | tam ÖNCE | tam SONRA | üçgen farkı (en kötü) |
+|---|---|---|---|---|---|
+| ucus60_otag | 747 / 1,49 M | 751 / 1,50 M | 582 / 1,14 M | 586 / 1,15 M | +%0,9 |
+| yer_otag | 601 / 1,27 M | 605 / 1,27 M | 456 / 0,99 M | 460 / 0,99 M | %0 |
+| ucus60_sahi_top | 321 / 0,57 M | 323 / 0,57 M | 245 / 0,47 M | 247 / 0,47 M | %0 |
+| yer_sahi_top | 116 / 0,29 M | 116 / 0,28 M | 104 / 0,34 M | 104 / 0,33 M | −%3 |
+| ucus60_anadolu_4_1 | 380 / 0,62 M | 381 / 0,64 M | 332 / 0,56 M | 332 / 0,57 M | +%3,2 |
+| yer_anadolu_4_1 | 348 / 0,87 M | 348 / 0,88 M | 334 / 0,87 M | 334 / 0,88 M | +%1,1 |
+| ucus60_rumeli_3_1 | 1 047 / 2,93 M | 1 046 / 3,01 M | 985 / 2,81 M | 1 023 / 2,90 M | +%3,2 |
+| ucus60_batarya_02 | 166 / 0,33 M | 167 / 0,33 M | 145 / 0,31 M | 146 / 0,31 M | %0 |
+| ucus60_yeniceri_2_1 | 660 / 1,44 M | 662 / 1,45 M | 623 / 1,35 M | 625 / 1,37 M | +%1,5 |
 
-Ordugâhta üçgen her noktada ≤ +%3. Çizim 0…+4 (ahşap Bld'li bataryaların ayrı canlı ağı): "çizim artmaz" tam
-tutmadı: KISMEN. ORTAK DOSYA ÖNERİSİ (ORDUGÂH-4): `ordugah_yapi.gd:build_batarya` (s. 319–320),
-`build_sahi_top` (s. 458) ve `ordugah_cephe.gd` (s. 166) öküzleri ahşap Bld yerine desensiz Bld'ye versin:
+- Üçgen: her noktada ≤ +%3,2 (sınır +%8): TAMAM.
+- Çizim: +0…+4 (ahşap Bld'li bataryalarda canlının ayrı ağı); tam akışta `ucus60_rumeli_3_1` +38 (kısa akışta −1:
+  akış/yükleme sırası farkı, aynı noktada iki akış çelişiyor). "Çizim artmaz" tam tutmadı: KISMEN. ORTAK DOSYA
+  ÖNERİSİ (ORDUGÂH-4): `ordugah_yapi.gd:build_batarya` (s. 319–320), `build_sahi_top` (s. 458),
+  `ordugah_cephe.gd` (s. 166) öküzleri ahşap Bld yerine desensiz Bld'ye versin (ayrı ağ kalkar, çizim 0):
 
 ```gdscript
-var hay_b := B.new("")            # öküzler için desensiz Bld (canlı ahşap dokusu almasın, ayrı ağ kurulmasın)
-_okuz(hay_b, Vector3(-W * 0.25 + 2.7, 0, -D / 2.0 - 8.5), 90.0, r)
-_okuz(hay_b, Vector3(-W * 0.25 + 2.7, 0, -D / 2.0 - 10.5), 90.0, r)
-hay_b.done(host, "okuz")
+var okz := B.new("")              # öküzler için desensiz Bld (canlı ahşap dokusu almasın, ayrı ağ kurulmasın)
+_okuz(okz, Vector3(-W * 0.25 + 2.7, 0, -D / 2.0 - 8.5), 90.0, r)
+_okuz(okz, Vector3(-W * 0.25 + 2.7, 0, -D / 2.0 - 10.5), 90.0, r)
+okz.done(host, "okuz")
 ```
 
-Toplam kare çizimi (`yer_sahi` 892 → 948, `yer_at_bagi` 1 128 → 1 139) ÖNCE kopyası `wip/ist2-doku4` birleşmesinden
-ÖNCE olduğu için karşılaştırılamaz: fark ordugâh dışında (ordugâh payı yukarıda eşit). Şehrin yakın hayvanları 6 ağa
-pişirildikten sonra da aynı kaldı (`ordu_sonra5`): fark birleşen dalların. KANITSIZ (taban ayrı ölçülmedi).
-
-28o: RINFO_28O
+- Karedeki TOPLAM çizim (`yer_sahi` 892 → 948, `yer_at_bagi` 1 128 → 1 139) karşılaştırılamaz: ÖNCE kopyası
+  `wip/ist2-doku4` birleşmesinden önceki kayıt (`e106a7e1`); fark ordugâhın dışında (ordugâh payı yukarıda eşit).
+  Şehrin yakın hayvanları 6 ağa pişirildikten sonra da toplam aynı kaldı: fark birleşen dallardan. KANITSIZ (birleşik
+  taban ayrıca ölçülmedi).
+- 28o: RINFO_28O
 
 ## 8. Testler
 
