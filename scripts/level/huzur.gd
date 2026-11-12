@@ -813,6 +813,8 @@ func _guards(p: Person, kind: String, rs: String) -> bool:
 		var to := _safe(me, me + side)
 		if _headroom(to):
 			await Stage.approach(g, to, 0.7, 4.6)      # duvarın/katının içine yürümesin
+			if is_instance_valid(g):
+				g.set_meta("huzur_put", g.global_position)
 		else:
 			Stage.face(g, player.global_position)      # başının üstünde kat var (kapı eşiği): yerinden bağırır, yürümez
 		if is_instance_valid(g):
@@ -904,10 +906,14 @@ func _put_out(origin: Vector3, p: Person) -> void:
 	_spawned.clear()
 	for it: Array in _borrowed:
 		var g: Node3D = it[0]
-		if is_instance_valid(g):
+		if not is_instance_valid(g):
+			continue
+		# Yalnız bu sahnenin taşıdığı ve o arada bölümün başka yere yürütmediği muhafız eski yerine döner
+		if g.has_meta("huzur_put") and (g.get_meta("huzur_put") as Vector3).distance_to(g.global_position) < 0.6:
 			g.global_position = it[1]
 			g.global_rotation = it[2]
-			g.set("look_target", it[3])
+		g.remove_meta("huzur_put")
+		g.set("look_target", it[3])
 	_borrowed.clear()
 	var away := origin - p.global_position
 	away.y = 0.0
