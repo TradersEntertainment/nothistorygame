@@ -144,6 +144,7 @@ func _srun() -> void:
 		_start_field_s()
 		hud.set_objective(tr("UI_OBJ8S_WALLS"), Vector3(0, 2.0, O_GATE_Z))
 	player.frozen = false
+	_cshot("surgun_baslangic")
 	if GameState.autotest:
 		_sauto()
 	while _outcome == "":
@@ -289,6 +290,7 @@ func _warn_s(reason: String) -> void:
 	land.y = _gy(land.x, land.z)
 	var back := 1.0 if from_wall else -1.0
 	_shoot_arrow(land + Vector3((1.2 if _warnings % 2 == 0 else -1.2), 10.0, -12.0 * back), land)
+	_cshot("surgun_uyari_%d" % _warnings, 0.9)
 	var line: Array
 	if reason == "run":
 		line = ["SPK_LOOKOUT", "D8Y_WALL_WARN_2"] if from_wall else ["SPK_HUSEYIN", "D8Y_HUSEYIN_WARN_2"]
@@ -336,6 +338,7 @@ func _gate_b2o() -> void:
 	await _say("SPK_CITY_GUARD", "HZR_GATE_B2")
 	await _open_gate()
 	player.face(Vector3(0, 1.6, 30.0))
+	_cshot("surgun_kapi_acildi")
 	for a: Soldier in _archers:
 		a.look_target = player
 	phase = "out"
@@ -392,6 +395,7 @@ func _trench_b2o() -> void:
 	await _say("SPK_HASAN", "HZR_HASAN_MEET_MET" if met else "HZR_HASAN_MEET_NEW")
 	await _say("SPK_HUSEYIN", "HZR_HUSEYIN_MEET")
 	await _t("HZR_T_MEET_O")
+	_cshot("surgun_karsilama_hasan")
 	await _say("SPK_HASAN", "HZR_HASAN_TAKE")
 	GameState.meet("guards")
 	_set_hands(false)
@@ -440,6 +444,7 @@ func _gate_o2b() -> void:
 	var met := GameState.has_met("niko")
 	await _say("SPK_NIKO", "HZR_NIKO_MEET_MET" if met else "HZR_NIKO_MEET_NEW")
 	await _t("HZR_T_MEET_B")
+	_cshot("surgun_karsilama_niko")
 	await _say("SPK_NIKO", "HZR_NIKO_TAKE")
 	GameState.meet("niko")
 	_set_hands(false)

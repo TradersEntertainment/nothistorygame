@@ -194,3 +194,149 @@ Sürgünün kuralı (§6.3): **kendi tarafının hükümdarına** el kaldıran k
 geri" itilir, bölüm sürer. Kuşatma öncesi bölümlerde (Perde II, 34o) karşı taraf yok: §6.4.
 
 (Bu tablo ilk hâl; ölçülen uzaklıklar ve "açıldı mı" sütununun kesin hâli uygulama bitince §6.6'da.)
+
+### 6.2 VURAMAZ: tetik ve karşı hamle (`scripts/level/huzur.gd`)
+
+Bölüm tek satır bağlar (`preload("res://scripts/level/huzur.gd").watch(self, hud, player)`); düğüm sahnedeki hükümdarları
+(`Person.face_id` "fatih" / "emperor"; çocuk Mehmed sayılmaz) kendisi bulur. Yeni tuş yok:
+
+| Durum | Girdi | Uzaklık |
+|---|---|---|
+| Serbest yürürken | tekme (F / sol tık) | `FREE_REACH` 2,4 m, bakış konisi ~30° |
+| Replikte ya da replik arasında (oyuncu donuk) | yalnız F (sol tık replik ilerletir; kaza olmasın) | `LUNGE_REACH` 7,5 m: birkaç hızlı adım ve atılış (`DASH_SPEED` 8 m/sn) |
+| Elde çantadan sert eşya (telefon, küp, termos, powerbank, çakmak, kitap, kolonya, bant) | tekme tuşu: eşyayla vurmaya kalkar | aynı |
+| Elde kılıç (dövüşte ya da dövüşten sonra elde kalan) | kılıç sallama (sol tık / F; replikte yalnız F) | `SWORD_REACH` 3 m (donukken 7,5) |
+
+Seçim kutusu açıkken, menüde, merdivende, yerdeyken, kamera başkasındayken tetik yok. Açık replik varsa sesi kesilir
+ve bölümün sıradaki repliği sahne bitene kadar sırada bekler (Hud'un replik yeri tutulur; bölümün metni kaybolmaz).
+
+**Kim karşılar** (`COUNTER_DIST` 3,4 m, `BEHIND_DOT`): hükümdar yakın ve oyuncu önündeyse kendisi; uzaksa ya da
+arkadan gelindiyse en yakın iki muhafız (sahnede duran askerler; yoksa görüş dışından koşarak gelen iki muhafız; o da
+yoksa hükümdarın kendisi).
+
+| Kim | Boş el / eşya / tekme | Kılıçla gelene |
+|---|---|---|
+| **Mehmed** (genç, çevik) | Bileği (tekmede ayak bileğini) havada yakalar, yarım adım yana çekilir, çevirir; Tolga omzundan yanına yere iner. "Elini indir, kâtip. O el kalem tutmak için." | Kendi kılıcını çeker, tek parad; Tolga'nın kılıcı elinden fırlayıp yere düşer, sonra aynı çevirme. "Kılıcı kınından çıkaran, nereye ineceğini bilmeli." |
+| **Konstantinos** (tecrübeli asker) | Sol eli göğse, sağ ayağı çeler; Tolga sırtüstü. "Otuz yıldır kılıç taşırım. Yerde kal biraz; kalkınca daha akıllı olursun." | Kılıcının kabzasıyla süpürür, kılıç düşer; sonra aynı çelme. "O kılıç sana Şehir için verildi, bana karşı değil." |
+| **Muhafızlar** | İki muhafız iki yandan koşar, mızrak sapları/kalkanla iter: "Huzurda el kalkmaz, kâtip! Yere!" (yeniçeri) · "Basileus'a el! Yere, yabancı!" (Bizans) | aynı, kılıç düşer |
+
+Gövde: hükümdarın eli her karede oyuncunun bileğinde/ayağında/göğsünde (Rig.reach), ayakları yerde (yalnız yatay yarım
+adım); oyuncu duvarın içine düşmez (iniş noktası ışınla kısaltılır). Kamera sarsılır, yana yatar, göz hizası yere iner;
+bakış `LOOK_BACK` 1,2 sn sonra geri gelir (donukken de fare serbest). Ölümsüz, kansız. Tolga yerden bir söz söyler
+("Hasar tespiti: tek taraflı, sigortalı kusurlu." / "Yerdeyim. Gökyüzü güzelmiş bu arada." / "Yine yerdeyim..." /
+kılıçta "Kılıç gitti. Poliçede 'silah teslimi' diye bir madde vardı; şimdi anladım.").
+`ACH_TARIHE_TEKME` karşı hamle anında (sayaç `tarihe_tekme`). Eski davranış (Büro acil iadesi, bölüm baştan) KALDIRILDI.
+
+### 6.3 SÜRGÜN (`scripts/chapter8s.gd`, sahne `scenes/chapter8s.tscn`)
+
+Hüküm (sakin, tek cümle; öldürtmez):
+- Sultan: "Kan dökülmesin. Sancaksız çıkarın, surlara salın. Ayağını orada denesin."
+- İmparator: "Kimse ona dokunmasın. Kapıyı açın, karşıya yollayın. Sultan'ın ordusunda bir ayak fazla olsun."
+
+Kararır; sürgün yürüyüşü açılır. Ara Bölüm "Beyaz Havlu"nun (8y) kapısı, ölü bölgesi, siperi ve kişileri aynen
+kullanılır (`extends chapter8y.gd`); bu kez **beyaz bez yok**:
+- **Bizans → Osmanlı (B2O):** nöbetçi şehrin içinden kapıya götürür ("Kapı arkandan kapanacak. Ellerini kaldır, yavaş
+  yürü. Bizim okçular da seni artık tanımıyor."), sürgüyü kaldırıp kapıyı açar ("İmparator'un emri: dokunmayacağız. Ama
+  bu kapıyı bir daha senin için açmayacağız."); surdaki gözcü "Yayları indirin. Bu bizim kâtipti; artık değil."; ovada
+  siperden Hasan "Dur orada! Ellerin havada kalsın!", Hüseyin "Tamam, gördük. Gel. Yavaş gel."; siperde karşılama:
+  "Seni karşıdan yolladılar, öyle mi?" (Tolga'yı tanıyorsa "Bre, bizim Frenk kâtip!", tanımıyorsa "Bre, karşıdan biri
+  geldi!"), Hüseyin: "İmparator'una el kaldırmışsın diyorlar...", Hasan: "Gel. Ağam karar versin. Ama önce bir tas çorba."
+- **Osmanlı → Bizans (O2B):** Hasan ile Hüseyin siperin geçidinden ovaya salar ("Yürü bakalım, kâtip. Sancak yok, bez
+  yok; ellerin havada olsun, yeter." / "Sultan'ım 'kan dökülmesin' dedi. Surdakiler de aynısını desin diye dua et.");
+  sur önünde gözcü durdurur ("Dur! Ellerini göster! Kimsin sen?" · Tolga: "Kâtip! Eski Osmanlı kâtibi! Sultan yolladı.
+  Uzun hikâye!" · "Sultan'a el kaldıran adam, ha? Gel. Yavaş gel."); nöbetçi kapıyı açar, Niko karşılar ("Seni
+  karşıdan yolladılar demek. Sultan'a el kaldıran adama bu şehirde bir tas çorba çıkar." / tanışmamışsa "...Ben Niko.").
+
+Ovada kural (oynanır): **E ile eller havaya** (iki el kadrajın üstünde açık; adım yavaşlar). Eller inikken
+`WARN_GRACE` 2,5 sn, koşarken ya da koridorun kenarına sapınca uyarı oku ayağının dibine saplanır (yakın taraf atar:
+surdan "Ellerini kaldır! Bir dahaki ok uyarı olmaz!" / siperden "Ellerini göster, bre! Ne saklıyorsun?"; koşana 8y'nin
+"Yavaşla, Latin!" / "Teslim olmaya kimse koşmaz!" sözleri). Üst üste `HIT_AFTER` 3 uyarıda ok **sıyırır**: Tolga yere
+(Nihat'ın var olan "yere serildi" sözü), kararır, **son geçtiği siper sırasında** eller havada kalkar ("Omzuma değdi.
+Kayda geçsin: tek parça, biraz delik."). Ölüm yok. Eller havada `STREAK_CALM` 6 sn yürümek ya da terk edilmiş perde
+sırasının dibinde (`COVER_DIST` 1,6 m) durmak ("siper almak") sayacı sıfırlar. Süre: kuralı tutan oyuncu için 2–3 dk.
+
+Bitişte Nihat telsizden: "Dosyanız karşı nüshaya taşındı, Tolga Bey. Kaldığınız günden devam; tarih aynı, taraf
+değil." → akış şeması (SÜRGÜN · Bayraksız Geçiş: hangi taraftan hangisine, uyarı/sıyıran ok sayısı, sıradaki bölüm ve
+tarihi) → karşı tarafın sıradaki sayfası.
+
+### 6.4 Kuşatma öncesi ve iki tarafın olmadığı bölümler
+
+Perde II'de (6, 7, 10, 10b, 10g, 10h, 10z, 12, 12b) ve kuşatmanın kış sayfasında (34o) karşı taraf yok. Uygulanan:
+karşı hamle aynen; hüküm "Bırakın. Bu adamı kuşatmada karşımda görmek isterim." (Sultan) / "Bırakın onu. Kuşatma
+gelince karşı safta dursun; orada daha az zarar verir." (İmparator); kararır, muhafızlar kapı dışarı eder (oyuncu
+hükümdardan 2,5 m geriye konur), **bölüm sürer** (repliği, sonucu aynı). Sürgün bekletilir (`flags.surgun_pending`):
+- Perde II'den: **Büro'da** taraf seçilmez; Nihat: "Dosyanızda bir not var, Tolga Bey: 'Bu adamı kuşatmada karşımda
+  görmek isterim.' Altında tuğra. Bizans nüshasına yazıldınız." (İmparator'unki: "...Osmanlı nüshasına yazıldınız.")
+  Tolga: "Yani tayinim çıktı. Tekmeyle tayin diye bir şey varmış." İki hükümdara da el kalktıysa: "İki hükümdardan da
+  not var... Tarafınızı seçin; huzura çıkmayacaksınız." (taraf serbest, ban).
+- 34o'dan (Ocak 1453): 35o olduğu gibi oynanır; iki tarafın aynı günlerde yürüdüğü ilk sayfaya (7 Nisan, `TWO_SIDED_FROM`
+  = 42) geçerken sürgün yürüyüşü (O2B), hedef 42b.
+
+### 6.5 Tekrarı ve karşı tarafın hükümdarı
+
+- Karşı tarafın hükümdarına el kaldıran (26'nın sonunda Fatih, 30o'da İmparator; Osmanlı tarafında 23/25'te İmparator):
+  vuramaz (aynı karşı hamle/muhafız), hüküm "Geldiği yere götürün. Dövüşecekse kendi safında dövüşsün." / "Geri itin.
+  Bugün esir besleyecek ekmeğimiz yok."; geri itilir, **sürgün yok**, bölüm sürer.
+- İkinci sürgün (öbür tarafın hükümdarına, artık kendi hükümdarı): yeniden sürgün, geri.
+- Üçüncü kez (`EXILE_LIMIT` 2 sürgünden sonra): "Bu adamı bir daha huzuruma getirmeyin." (ikisi de); sürgün yok, bölüm
+  sürer; bundan sonra hükümdara `BAN_DIST` 3 m'den fazla yaklaşılamaz: muhafız önünü keser ("Geri dur, kâtip. Huzur sana
+  kapalı." / "Bir adım daha yok. Emir böyle."). Hükümdarlı sahneler kilitlenmez.
+
+### 6.6 İki tarafın bölüm–tarih eşlemesi ve "sürgünden sonra hangi bölüm"
+
+`Siege.ORDER` iki tarafın ortak tarih sırasıdır; bir sayfanın sahnesi o tarafta yoksa taraf onu atlar.
+
+| Sıra | Tarih | Osmanlı | Bizans |
+|---|---|---|---|
+| 1 | Ağustos–Kasım 1452 | 33o | — |
+| 2 | Ocak 1453 | 34o (Fatih) | — |
+| 3 | Şubat–Mart 1453 | 35o | — |
+| 4 | 7 Nisan 1453 | — | 42b |
+| 5 | 9 Nisan 1453 | — | 36b |
+| 6 | 6–12 Nisan 1453 | 28o (Fatih) | — |
+| 7 | 17 Nisan 1453 | 41o | — |
+| 8 | 18 Nisan 1453, gece | 37o | — |
+| 9 | 20 Nisan 1453 | 29o | 29 |
+| 10 | 28 Nisan 1453, gece | 17o | 17 |
+| 11 | Mayıs başı 1453 | 18 | 18b |
+| 12 | 3–23 Mayıs 1453 | 19o | 19 |
+| 13 | 7 Mayıs 1453, gece | 20o | 20 |
+| 14 | 12 Mayıs 1453, gece yarısı | 30o (İmparator, karşı) | 30 (İmparator, kılıç) |
+| 15 | 16 Mayıs 1453, gece | 21o | 21 |
+| 16 | 18 Mayıs 1453 | 22o | 22 |
+| 17 | 21 Mayıs 1453 | 23 (ortak sahne) | 23 (İmparator) |
+| 18 | 22–25 Mayıs 1453 | 24o | 24 |
+| 19 | 25 Mayıs 1453 | 43o | — |
+| 20 | 27–28 Mayıs 1453 | 25 (ortak sahne) | 25 (İmparator) |
+| 21 | 28 Mayıs 1453 | 32o (Fatih) | — |
+| 22 | 29 Mayıs 1453 | 26o | 26 (İmparator, kılıç; sonda Fatih: karşı) |
+| 23 | 29 Mayıs 1453, Haliç | 38o | — |
+| 24 | 29 Mayıs 1453, akşam | 39o | — |
+| 25 | 30 Mayıs – 1 Haziran 1453 | 31o | — |
+| 26 | 1 Haziran 1453 | 27 (ortak) | 27 |
+
+Sürgünün hedefi: **karşı tarafın bu sayfadan SONRAKİ ilk sayfası** (`Huzur.next_on`; `tests/huzur_check.gd` denetler):
+
+| Hükümdarlı sayfa | Sürgün | Sonraki sayfa (karşı taraf) |
+|---|---|---|
+| 34o (Ocak 1453, Fatih) | bekletilir → 35o'dan sonra O2B | 42b (7 Nisan) |
+| 28o (6–12 Nisan, Fatih) | O2B | 29 (20 Nisan, Bizans) |
+| 32o (28 Mayıs, Fatih) | O2B | 26 (29 Mayıs şafağı, Bizans) |
+| 30 (12 Mayıs, İmparator) | B2O | 21o (16 Mayıs) |
+| 23 (21 Mayıs, Bizans tarafı) | B2O | 24o (22–25 Mayıs) |
+| 25 (27–28 Mayıs, Bizans tarafı) | B2O | 32o (28 Mayıs) |
+| 26 (29 Mayıs, İmparator) | B2O | 38o (29 Mayıs, Haliç); şafak tutmaz (`Siege.resolve(false)`) |
+| Perde II (6, 7, 10*, 12, 12b) | Büro'da taraf karşıya yazılır | kuşatmanın o taraftaki ilk sayfası |
+
+**Taşınan / taşınmayan:** çanta eşyaları, bayraklar, sonuçlar, başarımlar, sayaçlar taşınır (aynı oyun); **paradoks
+sayacına dokunulmaz**; sürgünün olduğu sayfanın sonucu YAZILMAZ (yarım kaldı; tanığın sicilinde sayılmaz); kaza rotası
+(`siege_detour`) sürüyorsa kapanır. Yeni bayraklar: `siege_side` (yeni taraf), `surgun_log` ([{ch, from, to, next, ruler,
+hits, warnings}]), `surgun_n`, `surgun_pending`, `surgun_bureau`, `huzur_ban`; sayaçlar `tarihe_tekme`, `surgun`.
+Karşı tarafta tanışılmamış karakterler (Niko, Hasan-Hüseyin) karşılamada "seni karşıdan yolladılar" bilgisini taşır.
+
+**Kayıt, liste, şema, akıbet:** sürgün yürüyüşünün kendi kaydı yok (ortasında çıkılırsa hükümdarlı bölümün başı
+açılır); karşı tarafın sayfası açılınca onun kaydı alınır. Sürgünlü yolda `Siege.chapters()` iki tarafın sayfalarını tek
+sırada sayar (`Siege.side_at`): bölüm numaraları ardışık, eski tarafın oynanmış sayfası listede "—" değil kendi
+numarasıyla görünür. Akış şeması: sürgün sahnesinin kendi şeması. Akıbet (Bölüm 15, "İnsanların Akıbeti"): "İki
+hükümdar" satırı (sürgün(ler), Büro notu, ban; 2026 izi).
+

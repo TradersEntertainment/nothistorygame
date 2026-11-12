@@ -64,7 +64,7 @@ var scene: Node3D
 var hud: Hud
 var player: Player
 var busy := false
-var rulers: Array[Person] = []
+var rulers: Array = []           # Person; sahne silebilir (her kullanımda is_instance_valid)
 var _scan_t := 0.0
 var _bot := ""
 var _bot_t := 0.0
@@ -96,12 +96,24 @@ static func watch(p_scene: Node3D, p_hud: Hud, p_player: Player) -> Node:
 
 func _ready() -> void:
 	process_mode = Node.PROCESS_MODE_PAUSABLE
+	if GameState.autotest and GameState.flags.has("huzur_bot"):
+		# Bölümün kendi varyantıyla birlikte (ör. 6'nın Bizans yolu): --autotest=byz --flag=huzur_bot:huzur
+		GameState.autotest_variant = str(GameState.flags["huzur_bot"]) + "|" + GameState.autotest_variant
+		GameState.flags.erase("huzur_bot")
 	if GameState.autotest and GameState.autotest_variant.begins_with("huzur"):
 		# Bölüm kendi varsayılan yolunu oynar (bilinmeyen varyant sonucunu bozmasın); bot burada, sürgün sahnesi
 		# (chapter8s) zinciri flags.huzur_test'ten okur
-		_bot = GameState.autotest_variant
+		var parts := GameState.autotest_variant.split("|")
+		_bot = parts[0]
 		GameState.flags["huzur_test"] = _bot
-		GameState.autotest_variant = ""
+		GameState.autotest_variant = parts[1] if parts.size() > 1 else ""
+		# huzur2: daha önce bir kez sürülmüş (28o'dan Bizans'a) · huzur3: iki kez (üçüncü deneme: ban)
+		if _bot == "huzur2":
+			GameState.flags["surgun_n"] = 1
+			GameState.flags["surgun_log"] = [{"ch": 28, "from": "O", "to": "B", "next": 29, "ruler": "fatih"}]
+			GameState.flags["siege_side"] = "B"
+		elif _bot == "huzur3":
+			GameState.flags["surgun_n"] = 2
 	elif GameState.autotest and GameState.flags.has("huzur_test") and GameState.autotest_variant == "":
 		_bot = ""          # sürgünden sonra açılan sayfa: bot yeniden saldırmaz
 
@@ -110,6 +122,17 @@ func _log(s: String) -> void:
 	log_lines.append(s)
 	if GameState.autotest:
 		print("HUZUR " + s)
+
+
+## Denetim karesi (yalnız --dialogshots ile ve ekranlıyken; chapter8y._cshot gibi): <dialogshots>/c_huzur_<ad>.jpg
+func _cshot(nm: String) -> void:
+	if GameState.dialog_shots_dir == "" or DisplayServer.get_name() == "headless":
+		return
+	await RenderingServer.frame_post_draw
+	if not is_inside_tree():
+		return
+	DirAccess.make_dir_recursive_absolute(GameState.dialog_shots_dir)
+	get_viewport().get_texture().get_image().save_jpg(GameState.dialog_shots_dir.path_join("c_huzur_%s.jpg" % nm), 0.85)
 
 
 # ================================================================ hükümdarları bul
@@ -127,8 +150,8 @@ static func ruler_side(p: Person) -> String:
 	return "O" if p.face_id == "fatih" else "B"
 
 
-func _visible_ruler(p: Person) -> bool:
-	return is_instance_valid(p) and p.is_inside_tree() and p.is_visible_in_tree() and not p.get_meta("hologram", false)
+func _visible_ruler(p) -> bool:
+	return is_instance_valid(p) and (p as Person) != null and p.is_inside_tree() and p.is_visible_in_tree() and not p.get_meta("hologram", false)
 
 
 ## Bakılan ve uzanılabilen hükümdar (yoksa null)
@@ -141,9 +164,10 @@ func _target(reach: float, cone := CONE) -> Person:
 	fwd = fwd.normalized()
 	var best: Person = null
 	var bd := reach
-	for p in rulers:
-		if not _visible_ruler(p):
+	for q in rulers:
+		if not _visible_ruler(q):
 			continue
+		var p := q as Person
 		var to := p.global_position - player.global_position
 		var dy := absf(to.y)
 		to.y = 0.0
@@ -534,14 +558,17 @@ func _counter_mehmed(p: Person, kind: String) -> void:
 		var swing := own.create_tween()
 		swing.tween_property(own, "rotation_degrees:x", own.rotation_degrees.x - 70.0, 0.05 if Stage.fast() else 0.16)
 		_disarm()
+	_cshot("mehmed_%s_1_hamle" % kind)
 	_grip(p, kind, false, 0.9)
 	await get_tree().create_timer(0.05 if Stage.fast() else 0.35, false).timeout
+	_cshot("mehmed_%s_2_yakalar" % kind)
 	# Çevirir ve bırakır: oyuncu hükümdarın yanından geçip yere (hükümdarın arkasına değil, yanına) iner
 	var fwd := p0 - player.global_position
 	fwd.y = 0.0
 	var dest := p0 + side * 1.2 + fwd.normalized() * 0.4
 	await _limb_back()
 	await _fall(dest, deg_to_rad(-58.0), p.global_position + side * 0.42 + Vector3(0, 1.65, 0))
+	_cshot("mehmed_%s_3_yerde" % kind)
 	if own:
 		var tw := own.create_tween()
 		tw.tween_property(own, "rotation_degrees:x", own.rotation_degrees.x + 70.0, 0.05 if Stage.fast() else 0.4)
@@ -574,13 +601,16 @@ func _counter_konstantinos(p: Person, kind: String) -> void:
 		lt.tween_property(rg.leg_r, "rotation:x", deg_to_rad(-38.0), 0.05 if Stage.fast() else 0.22).set_trans(Tween.TRANS_BACK)
 		lt.tween_interval(0.05 if Stage.fast() else 0.35)
 		lt.tween_property(rg.leg_r, "rotation", l0, 0.05 if Stage.fast() else 0.4)
+	_cshot("kostantin_%s_1_hamle" % kind)
 	_grip_chest(p, 0.8)
 	await get_tree().create_timer(0.05 if Stage.fast() else 0.3, false).timeout
+	_cshot("kostantin_%s_2_iter" % kind)
 	var away := player.global_position - p.global_position
 	away.y = 0.0
 	var dest := player.global_position + away.normalized() * 1.1
 	await _limb_back()
 	await _fall(dest, deg_to_rad(18.0), p.global_position + Vector3(0, 1.7, 0), 0.6)
+	_cshot("kostantin_%s_3_yerde" % kind)
 	await _say(_spk(p), "HZR_EMP_COUNTER_SWORD" if kind == "sword" else "HZR_EMP_COUNTER")
 	p.face_toward(player.global_position)
 
@@ -701,6 +731,7 @@ func _guards(p: Person, kind: String, rs: String) -> bool:
 		if is_instance_valid(g):
 			g.set("look_target", player)
 		i += 1
+	_cshot("muhafiz_1_gelir")
 	if not gs.is_empty():
 		_say("SPK_JANISSARY" if rs == "O" else "SPK_CITY_GUARD", "HZR_JAN_GUARD" if rs == "O" else "HZR_BYZ_GUARD")
 		for g in gs:
@@ -709,7 +740,9 @@ func _guards(p: Person, kind: String, rs: String) -> bool:
 	await _limb_back()
 	var away := player.global_position - p.global_position
 	away.y = 0.0
+	_cshot("muhafiz_2_mizrak")
 	await _fall(player.global_position + away.normalized() * 1.3, deg_to_rad(12.0), p.global_position + Vector3(0, 1.6, 0), 0.5)
+	_cshot("muhafiz_3_yerde")
 	while hud.is_talking():
 		await get_tree().process_frame
 	for g in spawned:
@@ -854,9 +887,10 @@ func _ban_tick(delta: float) -> void:
 	_block_t = maxf(0.0, _block_t - delta)
 	if player.frozen or _block_t > 0.0:
 		return
-	for p in rulers:
-		if not _visible_ruler(p) or ruler_side(p) != _own_side():
+	for q in rulers:
+		if not _visible_ruler(q) or ruler_side(q as Person) != _own_side():
 			continue
+		var p := q as Person
 		var to := player.global_position - p.global_position
 		to.y = 0.0
 		if to.length() < BAN_DIST and to.length() > 0.05:
@@ -870,7 +904,12 @@ func _ban_tick(delta: float) -> void:
 
 
 func _own_side() -> String:
-	return Siege.side() if GameState.current_chapter in Siege.ORDER else ruler_side(rulers[0]) if not rulers.is_empty() else ""
+	if GameState.current_chapter in Siege.ORDER:
+		return Siege.side()
+	for r in rulers:
+		if _visible_ruler(r):
+			return ruler_side(r)
+	return ""
 
 
 # ================================================================ ölçüm ve test
@@ -886,9 +925,10 @@ var _blade_t := 0.0               # hükümdar görünür ve elde kılıç varke
 func _measure() -> void:
 	var dt := get_physics_process_delta_time()
 	var any := false
-	for p in rulers:
-		if not _visible_ruler(p):
+	for q in rulers:
+		if not _visible_ruler(q):
 			continue
+		var p := q as Person
 		any = true
 		var d := Vector2(p.global_position.x - player.global_position.x, p.global_position.z - player.global_position.z).length()
 		nearest_any = minf(nearest_any, d)
@@ -941,7 +981,7 @@ func _bot_tick(delta: float) -> void:
 	if _bot == "huzur_guard":
 		spot = p.global_position - fwd * 1.8
 	spot = _safe(player.global_position, Vector3(spot.x, player.global_position.y, spot.z))
-	if _bot in ["huzur", "huzur_guard", "huzur_next", "huzur_save"] and not player.frozen and player.held != 0:
+	if _bot in ["huzur", "huzur2", "huzur3", "huzur_guard", "huzur_next", "huzur_save"] and not player.frozen and player.held != 0:
 		player.select_item(0)          # boş el (kumanda cepte değil elde: eşya sayılmaz)
 	if _bot == "huzur_item":
 		for it in HARD_ITEMS:
