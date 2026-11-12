@@ -580,6 +580,9 @@ render_mode blend_mix, depth_draw_always, cull_disabled, specular_schlick_ggx;
 uniform vec4 deep : source_color = vec4(0.012, 0.03, 0.03, 1.0);
 uniform vec4 murk : source_color = vec4(0.05, 0.11, 0.09, 1.0);
 uniform float calm = 1.0;
+// Işık tutulan yerde su berraklaşır (kandil, Medusa köşesi): dipteki taşlar seçilsin
+uniform vec3 clear_pos = vec3(0.0, -999.0, 0.0);
+uniform float clear_r = 0.0;
 varying vec3 wp;
 float h(vec2 p) { return fract(sin(dot(p, vec2(12.9898, 78.233))) * 43758.5453); }
 float n2(vec2 p) { vec2 i = floor(p); vec2 f = fract(p); vec2 u = f * f * (3.0 - 2.0 * f);
@@ -600,6 +603,10 @@ void fragment() {
 	ALBEDO = mix(murk.rgb, deep.rgb, 0.5 + 0.5 * fres);
 	// Yukarıdan bakınca bulanık su (dipteki taşlar ışıkla seçilir), yatay bakışta yansıma (alttaki ters sütunlar) baskın
 	ALPHA = mix(0.62, 0.16, smoothstep(0.0, 0.85, fres));
+	if (clear_r > 0.0) {
+		float cd = length(wp.xz - clear_pos.xz);
+		ALPHA *= mix(0.22, 1.0, smoothstep(clear_r * 0.45, clear_r, cd));
+	}
 	ROUGHNESS = 0.06;
 	SPECULAR = 0.9;
 	METALLIC = 0.0;
@@ -668,8 +675,10 @@ void fragment() {
 	_dust_mat.albedo_texture = dt
 	var stone := Props.mat(Color("4a463e"), 0.0, false, "", false)
 	var crown := IMPOST_Y + VAULT_H
-	for w: Array in WELLS:
+	for wi in WELLS.size():
+		var w: Array = WELLS[wi]
 		var c := bay(w[0], w[1])
+		var cellar := wi == 1          # Yakovos'un kuyusu: evin kilerine açılır (gün ışığı yok)
 		# Baca: tonozun tepesinden 5 m yukarı, içi taş; ağzında gün ışığı
 		var shaft := MeshInstance3D.new()
 		var cm := CylinderMesh.new()
@@ -693,9 +702,11 @@ void fragment() {
 		dm.radial_segments = 12
 		sky.mesh = dm
 		sky.position = Vector3(c.x, crown + 4.6, c.z)
-		sky.material_override = Props.mat(Color("fff2d8"), 3.0, false, "", false)
+		sky.material_override = Props.mat(Color("ffb060") if cellar else Color("fff2d8"), 0.8 if cellar else 3.0, false, "", false)
 		sky.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
 		add_child(sky)
+		if cellar:
+			continue
 		# Huzme: kuyu ağzından suya inen ışık kartı (dikey eksende kameraya döner; ortası parlak, kenarları ve dibi
 		# saydam). Silindir huzme bu ışıkta "aydınlık bir sütun" gibi okunuyordu.
 		var top_p := Vector3(c.x, crown + 1.2, c.z)
@@ -853,7 +864,7 @@ func _medusa_mat() -> ShaderMaterial:
 		_medusa_shader = Shader.new()
 		_medusa_shader.code = """
 shader_type spatial;
-uniform vec4 stone : source_color = vec4(0.42, 0.45, 0.38, 1.0);
+uniform vec4 stone : source_color = vec4(0.58, 0.6, 0.52, 1.0);
 float h(vec2 p) { return fract(sin(dot(p, vec2(12.9898, 78.233))) * 43758.5453); }
 float n2(vec2 p) { vec2 i = floor(p); vec2 f = fract(p); vec2 u = f * f * (3.0 - 2.0 * f);
 	return mix(mix(h(i), h(i + vec2(1, 0)), u.x), mix(h(i + vec2(0, 1)), h(i + vec2(1, 1)), u.x), u.y); }
@@ -1112,6 +1123,13 @@ func ring(at: Vector3, size := 0.6, secs := 1.4) -> void:
 	tw.chain().tween_callback(func(): mi.visible = false)
 
 
+## Suyu bir noktanın çevresinde berraklaştırır (r = 0: kapalı)
+func clear_water(at: Vector3, r: float) -> void:
+	var m := water.material_override as ShaderMaterial
+	m.set_shader_parameter("clear_pos", at)
+	m.set_shader_parameter("clear_r", r)
+
+
 func _process(delta: float) -> void:
 	_t += delta
 	# Balıklar: evlerinin çevresinde dolanır; ışığın yakınındakiler hızlanır
@@ -1146,7 +1164,7 @@ func _process(delta: float) -> void:
 		l.visible = daylight > 0.05
 	if _beam_card:
 		_beam_card.albedo_color.a = 0.5 * daylight
-	_pool_mat.set_shader_parameter("strength", 1.0 * daylight)
+	_pool_mat.set_shader_parameter("strength", 0.55 * daylight)
 
 
 # ================================================================ çarpışma

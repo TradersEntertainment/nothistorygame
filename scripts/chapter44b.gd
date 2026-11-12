@@ -83,7 +83,7 @@ var _bot_hold := 0.0
 var _my_grip: OarGrip
 var _oars: Array = []
 var _yk_follow := false
-var _dust_fx: Array[CPUParticles3D] = []
+var _battery_shown := false
 
 
 func _ready() -> void:
@@ -162,9 +162,9 @@ func _build_yard() -> void:
 	for dx: float in [-1.0, 1.0, 4.0]:
 		Props.box(yard, Vector3(0.7, 0.8, 0.08), YARD + Vector3(dx, 3.6, -3.58), Color("3a3028"))
 	# Çamaşır ipi, saksılar, yer döşemesi
-	Props.cyl(yard, 0.012, 7.4, YARD + Vector3(0, 2.1, -1.0), Color("c8b898"), Vector3(0, 0, 90), 4)
+	Props.cyl(yard, 0.012, 6.6, YARD + Vector3(3.9, 2.1, 0.0), Color("c8b898"), Vector3(90, 0, 0), 4)
 	for k in 3:
-		Props.box(yard, Vector3(0.6, 0.7, 0.02), YARD + Vector3(-2.2 + k * 1.4, 1.72, -1.0), [Color("e8e0d0"), Color("7a8aa0"), Color("c8a070")][k])
+		Props.box(yard, Vector3(0.02, 0.7, 0.6), YARD + Vector3(3.9, 1.72, -2.0 + k * 1.5), [Color("e8e0d0"), Color("7a8aa0"), Color("c8a070")][k])
 	for p: Vector3 in [Vector3(3.6, 0, -3.0), Vector3(-3.8, 0, 2.9), Vector3(3.8, 0, 2.8)]:
 		Props.cyl(yard, 0.22, 0.4, YARD + p + Vector3(0, 0.2, 0), Color("a0583a"), Vector3.ZERO, 8, 0.28)
 		Props.ball(yard, 0.3, YARD + p + Vector3(0, 0.55, 0), Color("4a6a34"), Vector3(1, 0.8, 1), 6)
@@ -409,7 +409,6 @@ func _to_boat() -> void:
 	player.rotation.y = _boat_yaw
 	_player_yaw_last = player.rotation.y
 	await hud.fade_to(0.0, 0.3)
-	await hud.say("SPK_TOLGA", "D44B_T_BOAT")
 
 
 func _row_to_torch() -> void:
@@ -418,6 +417,7 @@ func _row_to_torch() -> void:
 	_torch_light.visible = true
 	meter.enabled = true
 	hud.set_objective(GameState.tr_pad("UI_OBJ44_ROW"), yboat.global_position + Vector3(0, 1.6, 0))
+	await hud.say("SPK_TOLGA", "D44B_T_BOAT")
 	_route = _plan(boat.global_position, yboat.global_position + Vector3(2.9, 0, 0))
 	# Yakovos'un kayığının yanına (kürek boyu): konuşma yakın mesafede
 	while Vector2(boat.global_position.x - yboat.global_position.x, boat.global_position.z - yboat.global_position.z).length() > 3.4:
@@ -428,6 +428,7 @@ func _row_to_torch() -> void:
 
 func _meet_yakovos() -> void:
 	phase = "yakovos"
+	player.frozen = true          # konuşma; sarsıntı evresinin hedefi gelince serbest
 	yakovos.look_target = player
 	await _turn_to(yakovos.global_position + Vector3(0, 1.3, 0), 1.2)
 	await hud.say("SPK_FISHMONGER", "D44B_Y_01")
@@ -464,6 +465,7 @@ func _quake() -> void:
 	meter.enabled = true
 	var goal: Vector3 = cis.get("exit_well")
 	hud.set_objective(GameState.tr_pad("UI_OBJ44_CORNER"), goal + Vector3(0, 1.0, 0))
+	player.frozen = false
 	_route = _plan(boat.global_position, goal)
 	_quake_left = QUAKE_TIME
 	_next_brick = 4.0
@@ -509,22 +511,47 @@ func _rescue(goal: Vector3) -> void:
 ## Medusa köşesi: ışığı suya tut, dipteki taş yüzü kayda geçir (tespit karesi)
 func _medusa() -> void:
 	phase = "medusa"
-	player.frozen = false
+	player.frozen = true
 	var heads: Array = cis.get("medusa")
 	var head: Node3D = heads[0]
 	var aim := head.get_node("Aim") as Node3D
 	if not light_on:
 		_toggle_light()
-	# Yakovos kayığını yanına yanaştırır (doğu yanı, kürek boyu); Tolga ona döner
+	# Kayık köşeye yan yanaşır (burnu doğuya): taş yüzlere küpeşteden bakılır, burun ve kürekler kadrajı kapatmaz.
+	# Yakovos kayığını arkaya (güneye) çeker.
 	_yk_follow = false
-	var side_at := boat.global_position + boat.global_transform.basis.x * 2.4
-	var tw := create_tween()
-	tw.tween_property(yboat, "global_position", Vector3(side_at.x, yboat.global_position.y, side_at.z), 0.3 if GameState.autotest else 2.0)
+	var h2: Node3D = heads[1]
+	var mid := (head.global_position + h2.global_position) * 0.5
+	var stop := Vector3(mid.x, boat.global_position.y, mid.z + 2.6)
+	var yaw1 := _boat_yaw + wrapf(-PI * 0.5 - _boat_yaw, -PI, PI)
+	var d := 0.3 if GameState.autotest else 2.0
+	var tw := create_tween().set_parallel()
+	tw.tween_method(func(k: float):
+		var y := lerpf(_boat_yaw, yaw1, k)
+		player.rotation.y += y - _boat_yaw
+		_boat_yaw = y
+		boat.global_position = boat.global_position.lerp(stop, k), 0.0, 1.0, d)
+	var side_at := stop + Vector3(0.4, 0, 2.6)
+	tw.tween_property(yboat, "global_position", Vector3(side_at.x, yboat.global_position.y, side_at.z), d)
 	await tw.finished
+	# Yakovos kuyusunun dibindeki taş rafta duran kandili yakıp suya eğer: taş yüzler sıcak ışıkta seçilir (fener bu
+	# noktada çoğu zaman sönmüş ya da zayıftır; bölümün ödül anı karanlıkta kalmasın)
+	yakovos.unequip("Spear")
+	yakovos.equip("lamp")
+	var glow := OmniLight3D.new()
+	glow.light_color = Color("ffb868")
+	glow.light_energy = 3.2
+	glow.omni_range = 4.2
+	glow.shadow_enabled = false
+	glow.name = "MedusaLamp"
+	cis.add_child(glow)
+	glow.global_position = mid + Vector3(0, 1.05, 1.2)        # suyun hemen altında, yüzlerin önünde
+	cis.call("clear_water", mid + Vector3(0, 0, 0.6), 3.4)
 	await _turn_to(yakovos.global_position + Vector3(0, 1.3, 0), 1.0)
 	await hud.say("SPK_FISHMONGER", "D44B_Y_STONE")
 	await _turn_to(aim.global_position, 1.2)
 	hud.set_objective(GameState.tr_pad("UI_OBJ44_MEDUSA"), aim.global_position)
+	player.frozen = false
 	cam = TespitCam.new(player, hud, aim, "siege44")
 	hud.add_child(cam)
 	cam.max_dist = 14.0
@@ -538,6 +565,7 @@ func _medusa() -> void:
 			continue
 		t += get_process_delta_time()
 	cam.stop()
+	player.frozen = true          # konuşma boyunca; tırmanma hedefi gelince yeniden serbest
 	hud.set_objective("")
 	await hud.say("SPK_TOLGA", "D44B_T_MEDUSA_1")
 	await hud.say("SPK_TOLGA", "D44B_T_MEDUSA_2")
@@ -572,6 +600,7 @@ func _climb() -> void:
 	for k in 12:
 		Props.box(cis, Vector3(0.36, 0.035, 0.05), goal + Vector3(0, CisternLevel.IMPOST_Y - 2.2 + k * 0.5, -0.56), Color("3a3430"))
 	hud.set_objective(tr("UI_OBJ44_CLIMB"), goal + Vector3(0, 2.0, 0))
+	player.frozen = false
 	if GameState.autotest:
 		_on_interact("rungs")
 	while phase == "exit":
@@ -922,6 +951,13 @@ func _light_off() -> void:
 func _light_tick(delta: float) -> void:
 	if _spot == null:
 		return
+	# Pil yazısı yalnız kürekte, konuşma ve etkileşim istemi yokken; evre değişince silinir
+	var show := phase in ["row", "quake"] and player.focus_id == "" and light_kind == "phone" and light_on and not hud.is_talking()
+	if show:
+		hud.set_prompt(tr("UI_CH44_BATTERY") % ceili(battery))
+	elif _battery_shown:
+		hud.set_prompt("")
+	_battery_shown = show
 	if phase in ["dark", "awe", "swim", "board", "row", "yakovos", "quake", "medusa", "exit"]:
 		var want := Input.is_action_just_pressed("kick") and not Input.is_mouse_button_pressed(MOUSE_BUTTON_LEFT) and not player.frozen
 		if want and phase != "medusa":
@@ -948,8 +984,6 @@ func _light_tick(delta: float) -> void:
 				_light_off()
 				_lighter_cool = LIGHTER_COOL
 				hud.bark("SPK_TOLGA", "D44B_T_THUMB", 2.0)
-	if phase in ["row", "quake"] and player.focus_id == "":
-		hud.set_prompt(tr("UI_CH44_BATTERY") % ceili(battery) if light_kind == "phone" else "")
 
 
 # ================================================================ sarsıntı ve düşen tuğlalar
@@ -1048,7 +1082,10 @@ func _brick_fall(b: Dictionary) -> void:
 			return
 		Audio.sfx("splash", -4.0 if b["big"] else -9.0, 0.9)
 		cis.call("ring", at, 2.2 if b["big"] else 1.3, 1.6)
-		Vfx.splash(self, at + Vector3(0, 0.05, 0), 1.2 if b["big"] else 0.7)
+		# Köpük küresi yok (kameraya yakın düşüşte "buz kütlesi" gibi görünüyordu): iç içe halkalar
+		get_tree().create_timer(0.25, false).timeout.connect(func():
+			if cis:
+				cis.call("ring", at + Vector3(0.3, 0, -0.2), 0.9 if b["big"] else 0.6, 1.3))
 		if boat and is_instance_valid(boat) and Vector2(boat.global_position.x - at.x, boat.global_position.z - at.z).length() < 1.5 and not b["big"]:
 			hits += 1
 			_boat_speed = 0.0
@@ -1154,7 +1191,8 @@ func _run_shots() -> void:
 	_build_cistern()
 	_set_ambient(1.0)
 	await get_tree().process_frame
-	player.pinned = true
+	player.pinned = false        # kayığa oturtulmasın (_process oturağa taşıyordu): yerinde donuk
+	player.frozen = true
 	player.gravity_on = false
 	var fw: Vector3 = cis.get("fall_well")
 	var shots := [
@@ -1187,4 +1225,13 @@ func _run_shots() -> void:
 			_toggle_light()
 			_lighter_t = 99.0
 		await _shot(s[0])
+	# Bölüm kapağı (assets/art/covers/ch44b.png): hayranlık anı, el ve telefon görünmez
+	player.stow_hands(true)
+	player.global_position = Vector3(fw.x, CisternLevel.WATER_Y + 0.45, fw.z + 0.6) - Vector3(0, player.eye_height, 0)
+	player.face(Vector3(fw.x - 3, CisternLevel.WATER_Y + 3.2, fw.z - 18))
+	light_kind = "phone"
+	_light_off()
+	_toggle_light()
+	player.stow_hands(true)
+	await _shot("ch44b_cover.png")
 	get_tree().quit()
