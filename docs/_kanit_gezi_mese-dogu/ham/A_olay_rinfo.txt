@@ -1,0 +1,17 @@
+ISTSEHIR2 yer=845 hat=555 kur_ms=2898 hat_ms=903 doku_ms=10097 parca_ms=6352
+RINFO gezi aya_r45_000 cizim=588 ucgen=1082883 kare_ms=875.1 dunya_tris=133694 dunya_draws=37 lod=[4, 0, 24, 2] kare_us=114
+GEZI kare /root/gezi/kA/aya_r45_000.png
+RINFO gezi aya_r45_045 cizim=777 ucgen=2101014 kare_ms=1396.2 dunya_tris=133694 dunya_draws=37 lod=[4, 0, 24, 2] kare_us=93
+GEZI kare /root/gezi/kA/aya_r45_045.png
+RINFO gezi aya_r45_090 cizim=894 ucgen=3116691 kare_ms=1857.7 dunya_tris=133694 dunya_draws=37 lod=[4, 0, 24, 2] kare_us=98
+GEZI kare /root/gezi/kA/aya_r45_090.png
+RINFO gezi aya_r45_135 cizim=904 ucgen=3210686 kare_ms=1873.5 dunya_tris=133694 dunya_draws=37 lod=[4, 0, 24, 2] kare_us=119
+GEZI kare /root/gezi/kA/aya_r45_135.png
+RINFO gezi aya_r45_180 cizim=792 ucgen=2137432 kare_ms=1320.6 dunya_tris=133694 dunya_draws=37 lod=[4, 0, 24, 2] kare_us=103
+GEZI kare /root/gezi/kA/aya_r45_180.png
+RINFO gezi aya_r45_225 cizim=699 ucgen=1489562 kare_ms=1171.6 dunya_tris=133694 dunya_draws=37 lod=[4, 0, 24, 2] kare_us=98
+GEZI kare /root/gezi/kA/aya_r45_225.png
+RINFO gezi aya_r45_270 cizim=629 ucgen=1312415 kare_ms=982.6 dunya_tris=133694 dunya_draws=37 lod=[4, 0, 24, 2] kare_us=100
+GEZI kare /root/gezi/kA/aya_r45_270.png
+RINFO gezi aya_r45_315 cizim=508 ucgen=1132464 kare_ms=929.5 dunya_tris=133694 dunya_draws=37 lod=[4, 0, 24, 2] kare_us=90
+GEZI kare /root/gezi/kA/aya_r45_315.png

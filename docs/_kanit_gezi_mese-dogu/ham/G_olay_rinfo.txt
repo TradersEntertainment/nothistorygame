@@ -1,0 +1,19 @@
+ISTSEHIR2 yer=845 hat=555 kur_ms=2741 hat_ms=774 doku_ms=10086 parca_ms=7938
+RINFO sur4 n_-0900_-258_D cizim=776 ucgen=1515710
+SUR4 kare /root/gezi/kG/n_-0900_-258_D.png
+RINFO sur4 n_-0900_-258_B cizim=685 ucgen=2800764
+SUR4 kare /root/gezi/kG/n_-0900_-258_B.png
+RINFO sur4 n_-0387_-258_D cizim=726 ucgen=1261842
+SUR4 kare /root/gezi/kG/n_-0387_-258_D.png
+RINFO sur4 n_-0387_-258_B cizim=673 ucgen=2748160
+SUR4 kare /root/gezi/kG/n_-0387_-258_B.png
+RINFO sur4 n_+0126_-258_D cizim=663 ucgen=1214316
+SUR4 kare /root/gezi/kG/n_+0126_-258_D.png
+RINFO sur4 n_+0126_-258_B cizim=940 ucgen=3071287
+SUR4 kare /root/gezi/kG/n_+0126_-258_B.png
+RINFO sur4 n_-0729_-087_D cizim=752 ucgen=1398904
+SUR4 kare /root/gezi/kG/n_-0729_-087_D.png
+RINFO sur4 n_-0729_-087_B cizim=670 ucgen=2828620
+SUR4 kare /root/gezi/kG/n_-0729_-087_B.png
+RINFO sur4 n_-0216_-087_D cizim=792 ucgen=1535192
+SUR4 kare /root/gezi/kG/n_-0216_-087_D.png

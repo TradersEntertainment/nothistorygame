@@ -1,0 +1,35 @@
+ISTSEHIR2 yer=845 hat=555 kur_ms=2770 hat_ms=854 doku_ms=9766 parca_ms=6310
+RINFO sur4 h20_-0900 cizim=778 ucgen=2053886
+SUR4 kare /root/gezi/kH/h20_-0900.png
+RINFO sur4 h20_-0900_k cizim=544 ucgen=1279292
+SUR4 kare /root/gezi/kH/h20_-0900_k.png
+RINFO sur4 h60_-0900 cizim=689 ucgen=1937306
+SUR4 kare /root/gezi/kH/h60_-0900.png
+RINFO sur4 h60_-0900_k cizim=515 ucgen=1181671
+SUR4 kare /root/gezi/kH/h60_-0900_k.png
+RINFO sur4 h20_-0560 cizim=864 ucgen=1972089
+SUR4 kare /root/gezi/kH/h20_-0560.png
+RINFO sur4 h20_-0560_k cizim=660 ucgen=1301958
+SUR4 kare /root/gezi/kH/h20_-0560_k.png
+RINFO sur4 h60_-0560 cizim=862 ucgen=1848528
+SUR4 kare /root/gezi/kH/h60_-0560.png
+RINFO sur4 h60_-0560_k cizim=592 ucgen=1139944
+SUR4 kare /root/gezi/kH/h60_-0560_k.png
+RINFO sur4 h20_-0220 cizim=941 ucgen=1821889
+SUR4 kare /root/gezi/kH/h20_-0220.png
+RINFO sur4 h20_-0220_k cizim=835 ucgen=1367972
+SUR4 kare /root/gezi/kH/h20_-0220_k.png
+RINFO sur4 h60_-0220 cizim=935 ucgen=1791009
+SUR4 kare /root/gezi/kH/h60_-0220.png
+RINFO sur4 h60_-0220_k cizim=677 ucgen=976166
+SUR4 kare /root/gezi/kH/h60_-0220_k.png
+RINFO sur4 h20_+0120 cizim=839 ucgen=1686590
+SUR4 kare /root/gezi/kH/h20_+0120.png
+RINFO sur4 h20_+0120_k cizim=712 ucgen=1261779
+SUR4 kare /root/gezi/kH/h20_+0120_k.png
+RINFO sur4 h60_+0120 cizim=809 ucgen=1511852
+SUR4 kare /root/gezi/kH/h60_+0120.png
+RINFO sur4 h60_+0120_k cizim=637 ucgen=1107365
+SUR4 kare /root/gezi/kH/h60_+0120_k.png
+RINFO sur4 tepe_bolge cizim=466 ucgen=1266662
+SUR4 kare /root/gezi/kH/tepe_bolge.png

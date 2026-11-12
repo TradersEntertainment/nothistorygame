@@ -1,0 +1,15 @@
+ISTSEHIR2 yer=845 hat=555 kur_ms=3123 hat_ms=855 doku_ms=10026 parca_ms=6312
+RINFO yuru r1_konstantin_mese_milion_01 cizim=884 ucgen=1547199 konum=-261.5,-0.8
+GEZI_OLAY takili -247.3 -1.7 rota=r1_konstantin_mese_milion nokta=1 hedef=-245.0,-1.8
+GEZI_OLAY takili -247.3 -1.7 rota=r1_konstantin_mese_milion nokta=1 hedef=-245.0,-1.8
+GEZI_OLAY takili -247.3 -1.7 rota=r1_konstantin_mese_milion nokta=2 hedef=-196.0,-3.5
+GEZI_OLAY takili -247.3 -1.7 rota=r1_konstantin_mese_milion nokta=2 hedef=-196.0,-3.5
+GEZI_OLAY takili -247.3 -1.7 rota=r1_konstantin_mese_milion nokta=3 hedef=-147.0,-1.8
+GEZI_OLAY takili -247.3 -1.7 rota=r1_konstantin_mese_milion nokta=3 hedef=-147.0,-1.8
+GEZI_OLAY takili -247.3 -1.7 rota=r1_konstantin_mese_milion nokta=4 hedef=-105.0,0.0
+GEZI_OLAY takili -247.3 -1.7 rota=r1_konstantin_mese_milion nokta=4 hedef=-105.0,0.0
+GEZI_OLAY takili -247.3 -1.4 rota=r1_konstantin_mese_milion nokta=5 hedef=-70.0,14.0
+GEZI_OLAY takili -247.3 -1.4 rota=r1_konstantin_mese_milion nokta=5 hedef=-70.0,14.0
+GEZI_OLAY takili -247.3 -1.4 rota=r1_konstantin_mese_milion nokta=6 hedef=-45.5,31.5
+GEZI_OLAY takili -247.3 -1.4 rota=r1_konstantin_mese_milion nokta=6 hedef=-45.5,31.5
+GEZI_ROTA r1_konstantin_mese_milion yol=29 m olay=12 kare=1

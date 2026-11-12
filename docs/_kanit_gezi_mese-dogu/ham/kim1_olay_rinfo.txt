@@ -1,0 +1,4 @@
+ISTSEHIR2 yer=845 hat=555 kur_ms=2734 hat_ms=842 doku_ms=8998 parca_ms=6279
+GEZI_KIM -60,60 r=60 IstDunya/IstSehir/Ist_ayasofya/L0 = 12
+GEZI_KIM 0,-120 r=50 IstDunya/IstSehir/Ist_ayasofya/L0 = 2
+GEZI_KIM bitti

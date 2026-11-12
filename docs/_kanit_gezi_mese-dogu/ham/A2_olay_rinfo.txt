@@ -1,0 +1,141 @@
+ISTSEHIR2 yer=845 hat=555 kur_ms=3150 hat_ms=983 doku_ms=9833 parca_ms=5957
+RINFO gezi aya_r180_000 cizim=679 ucgen=1109055 kare_ms=1131.2 dunya_tris=133694 dunya_draws=37 lod=[4, 0, 24, 2] kare_us=101
+GEZI kare /root/gezi/kA2/aya_r180_000.png
+RINFO gezi aya_r180_045 cizim=783 ucgen=2077646 kare_ms=1503.1 dunya_tris=133694 dunya_draws=37 lod=[4, 0, 24, 2] kare_us=104
+GEZI kare /root/gezi/kA2/aya_r180_045.png
+RINFO gezi aya_r180_090 cizim=968 ucgen=3019217 kare_ms=1982.5 dunya_tris=133694 dunya_draws=37 lod=[4, 0, 24, 2] kare_us=120
+GEZI kare /root/gezi/kA2/aya_r180_090.png
+RINFO gezi aya_r180_135 cizim=961 ucgen=3210736 kare_ms=1975.8 dunya_tris=133694 dunya_draws=37 lod=[4, 0, 24, 2] kare_us=97
+GEZI kare /root/gezi/kA2/aya_r180_135.png
+RINFO gezi aya_r180_180 cizim=938 ucgen=2305162 kare_ms=1496.4 dunya_tris=133694 dunya_draws=37 lod=[4, 0, 24, 2] kare_us=108
+GEZI kare /root/gezi/kA2/aya_r180_180.png
+RINFO gezi aya_r180_225 cizim=796 ucgen=1619623 kare_ms=1184.9 dunya_tris=133694 dunya_draws=37 lod=[4, 0, 24, 2] kare_us=100
+GEZI kare /root/gezi/kA2/aya_r180_225.png
+RINFO gezi aya_r180_270 cizim=717 ucgen=1373676 kare_ms=1199.6 dunya_tris=133694 dunya_draws=37 lod=[4, 0, 24, 2] kare_us=115
+GEZI kare /root/gezi/kA2/aya_r180_270.png
+RINFO gezi aya_r180_315 cizim=634 ucgen=1095252 kare_ms=999.5 dunya_tris=133694 dunya_draws=37 lod=[4, 0, 24, 2] kare_us=94
+GEZI kare /root/gezi/kA2/aya_r180_315.png
+RINFO gezi aya_r260_000 cizim=718 ucgen=1254049 kare_ms=929.6 dunya_tris=143936 dunya_draws=37 lod=[4, 2, 22, 2] kare_us=102
+GEZI kare /root/gezi/kA2/aya_r260_000.png
+RINFO gezi aya_r260_045 cizim=790 ucgen=2205155 kare_ms=1399.6 dunya_tris=143936 dunya_draws=37 lod=[4, 2, 22, 2] kare_us=122
+GEZI kare /root/gezi/kA2/aya_r260_045.png
+RINFO gezi aya_r260_090 cizim=956 ucgen=3024126 kare_ms=1660.4 dunya_tris=142596 dunya_draws=37 lod=[4, 2, 22, 2] kare_us=96
+GEZI kare /root/gezi/kA2/aya_r260_090.png
+RINFO gezi aya_r260_135 cizim=975 ucgen=3178329 kare_ms=1897.8 dunya_tris=142596 dunya_draws=37 lod=[4, 2, 22, 2] kare_us=113
+GEZI kare /root/gezi/kA2/aya_r260_135.png
+RINFO gezi aya_r260_180 cizim=985 ucgen=2365490 kare_ms=1404.7 dunya_tris=133694 dunya_draws=37 lod=[4, 2, 22, 2] kare_us=88
+GEZI kare /root/gezi/kA2/aya_r260_180.png
+RINFO gezi aya_r260_225 cizim=810 ucgen=1612550 kare_ms=1198.3 dunya_tris=133694 dunya_draws=37 lod=[4, 2, 22, 2] kare_us=95
+GEZI kare /root/gezi/kA2/aya_r260_225.png
+RINFO gezi aya_r260_270 cizim=923 ucgen=1609392 kare_ms=1136.0 dunya_tris=143026 dunya_draws=37 lod=[4, 2, 22, 2] kare_us=115
+GEZI kare /root/gezi/kA2/aya_r260_270.png
+RINFO gezi aya_r260_315 cizim=688 ucgen=1168020 kare_ms=891.4 dunya_tris=143026 dunya_draws=37 lod=[4, 2, 22, 2] kare_us=124
+GEZI kare /root/gezi/kA2/aya_r260_315.png
+RINFO gezi aya_hava60_000 cizim=722 ucgen=1229827 kare_ms=977.9 dunya_tris=143936 dunya_draws=37 lod=[4, 2, 22, 2] kare_us=102
+GEZI kare /root/gezi/kA2/aya_hava60_000.png
+RINFO gezi aya_hava20_000 cizim=676 ucgen=1147521 kare_ms=1024.2 dunya_tris=143936 dunya_draws=37 lod=[4, 2, 22, 2] kare_us=118
+GEZI kare /root/gezi/kA2/aya_hava20_000.png
+RINFO gezi aya_hava60_090 cizim=1000 ucgen=2965382 kare_ms=2171.5 dunya_tris=142596 dunya_draws=37 lod=[4, 2, 22, 2] kare_us=125
+GEZI kare /root/gezi/kA2/aya_hava60_090.png
+RINFO gezi aya_hava20_090 cizim=991 ucgen=3039711 kare_ms=2064.2 dunya_tris=142596 dunya_draws=37 lod=[4, 2, 22, 2] kare_us=87
+GEZI kare /root/gezi/kA2/aya_hava20_090.png
+RINFO gezi aya_hava60_180 cizim=1003 ucgen=2260986 kare_ms=1658.8 dunya_tris=133694 dunya_draws=37 lod=[4, 2, 22, 2] kare_us=113
+GEZI kare /root/gezi/kA2/aya_hava60_180.png
+RINFO gezi aya_hava20_180 cizim=958 ucgen=2370589 kare_ms=1599.3 dunya_tris=133694 dunya_draws=37 lod=[4, 2, 22, 2] kare_us=97
+GEZI kare /root/gezi/kA2/aya_hava20_180.png
+RINFO gezi aya_hava60_270 cizim=784 ucgen=1337489 kare_ms=1096.5 dunya_tris=143026 dunya_draws=37 lod=[4, 2, 22, 2] kare_us=106
+GEZI kare /root/gezi/kA2/aya_hava60_270.png
+RINFO gezi aya_hava20_270 cizim=722 ucgen=1376090 kare_ms=1114.5 dunya_tris=143026 dunya_draws=37 lod=[4, 2, 22, 2] kare_us=135
+GEZI kare /root/gezi/kA2/aya_hava20_270.png
+RINFO gezi aya_tam_tepe cizim=356 ucgen=725097 kare_ms=896.8 dunya_tris=102006 dunya_draws=37 lod=[0, 4, 24, 2] kare_us=102
+GEZI kare /root/gezi/kA2/aya_tam_tepe.png
+RINFO gezi irini_y000 cizim=544 ucgen=1076081 kare_ms=918.0 dunya_tris=133694 dunya_draws=37 lod=[4, 0, 24, 2] kare_us=100
+GEZI kare /root/gezi/kA2/irini_y000.png
+RINFO gezi irini_y045 cizim=880 ucgen=2296400 kare_ms=1332.4 dunya_tris=133694 dunya_draws=37 lod=[4, 0, 24, 2] kare_us=100
+GEZI kare /root/gezi/kA2/irini_y045.png
+RINFO gezi irini_y090 cizim=1045 ucgen=3168282 kare_ms=1799.9 dunya_tris=142596 dunya_draws=37 lod=[4, 2, 22, 2] kare_us=111
+GEZI kare /root/gezi/kA2/irini_y090.png
+RINFO gezi irini_y135 cizim=875 ucgen=3172432 kare_ms=1802.1 dunya_tris=142596 dunya_draws=37 lod=[4, 2, 22, 2] kare_us=91
+GEZI kare /root/gezi/kA2/irini_y135.png
+RINFO gezi irini_y180 cizim=736 ucgen=2033574 kare_ms=1268.4 dunya_tris=142596 dunya_draws=37 lod=[4, 2, 22, 2] kare_us=116
+GEZI kare /root/gezi/kA2/irini_y180.png
+RINFO gezi irini_y225 cizim=625 ucgen=1392903 kare_ms=1017.0 dunya_tris=133694 dunya_draws=37 lod=[4, 0, 24, 2] kare_us=101
+GEZI kare /root/gezi/kA2/irini_y225.png
+RINFO gezi irini_y270 cizim=561 ucgen=1102911 kare_ms=964.3 dunya_tris=133694 dunya_draws=37 lod=[4, 0, 24, 2] kare_us=94
+GEZI kare /root/gezi/kA2/irini_y270.png
+RINFO gezi irini_y315 cizim=473 ucgen=954871 kare_ms=857.8 dunya_tris=133694 dunya_draws=37 lod=[4, 0, 24, 2] kare_us=114
+GEZI kare /root/gezi/kA2/irini_y315.png
+RINFO gezi irini_hava cizim=582 ucgen=1116739 kare_ms=1169.8 dunya_tris=133694 dunya_draws=37 lod=[4, 0, 24, 2] kare_us=115
+GEZI kare /root/gezi/kA2/irini_hava.png
+RINFO gezi milion_y000 cizim=540 ucgen=1002095 kare_ms=953.0 dunya_tris=133694 dunya_draws=37 lod=[4, 0, 24, 2] kare_us=108
+GEZI kare /root/gezi/kA2/milion_y000.png
+RINFO gezi milion_y045 cizim=703 ucgen=2059143 kare_ms=1400.0 dunya_tris=133694 dunya_draws=37 lod=[4, 0, 24, 2] kare_us=101
+GEZI kare /root/gezi/kA2/milion_y045.png
+RINFO gezi milion_y090 cizim=871 ucgen=3083007 kare_ms=1931.8 dunya_tris=133694 dunya_draws=37 lod=[4, 0, 24, 2] kare_us=100
+GEZI kare /root/gezi/kA2/milion_y090.png
+RINFO gezi milion_y135 cizim=980 ucgen=3361851 kare_ms=1832.0 dunya_tris=133694 dunya_draws=37 lod=[4, 0, 24, 2] kare_us=105
+GEZI kare /root/gezi/kA2/milion_y135.png
+RINFO gezi milion_y180 cizim=994 ucgen=2444177 kare_ms=1463.8 dunya_tris=133694 dunya_draws=37 lod=[4, 0, 24, 2] kare_us=96
+GEZI kare /root/gezi/kA2/milion_y180.png
+RINFO gezi milion_y225 cizim=847 ucgen=1624384 kare_ms=1113.7 dunya_tris=133694 dunya_draws=37 lod=[4, 0, 24, 2] kare_us=135
+GEZI kare /root/gezi/kA2/milion_y225.png
+RINFO gezi milion_y270 cizim=905 ucgen=1614552 kare_ms=1168.2 dunya_tris=143026 dunya_draws=37 lod=[4, 2, 22, 2] kare_us=85
+GEZI kare /root/gezi/kA2/milion_y270.png
+RINFO gezi milion_y315 cizim=675 ucgen=1225059 kare_ms=914.1 dunya_tris=143026 dunya_draws=37 lod=[4, 2, 22, 2] kare_us=95
+GEZI kare /root/gezi/kA2/milion_y315.png
+RINFO gezi milion_hava cizim=864 ucgen=1422754 kare_ms=1138.1 dunya_tris=143026 dunya_draws=37 lod=[4, 2, 22, 2] kare_us=114
+GEZI kare /root/gezi/kA2/milion_hava.png
+RINFO gezi augustaion_y000 cizim=564 ucgen=967941 kare_ms=883.9 dunya_tris=133694 dunya_draws=37 lod=[4, 0, 24, 2] kare_us=95
+GEZI kare /root/gezi/kA2/augustaion_y000.png
+RINFO gezi augustaion_y045 cizim=796 ucgen=2102362 kare_ms=1322.7 dunya_tris=133694 dunya_draws=37 lod=[4, 0, 24, 2] kare_us=99
+GEZI kare /root/gezi/kA2/augustaion_y045.png
+RINFO gezi augustaion_y090 cizim=890 ucgen=3057135 kare_ms=2022.2 dunya_tris=133694 dunya_draws=37 lod=[4, 0, 24, 2] kare_us=115
+GEZI kare /root/gezi/kA2/augustaion_y090.png
+RINFO gezi augustaion_y135 cizim=974 ucgen=3291201 kare_ms=1991.4 dunya_tris=133694 dunya_draws=37 lod=[4, 0, 24, 2] kare_us=98
+GEZI kare /root/gezi/kA2/augustaion_y135.png
+RINFO gezi augustaion_y180 cizim=988 ucgen=2405746 kare_ms=1447.4 dunya_tris=133694 dunya_draws=37 lod=[4, 0, 24, 2] kare_us=116
+GEZI kare /root/gezi/kA2/augustaion_y180.png
+RINFO gezi augustaion_y225 cizim=812 ucgen=1634823 kare_ms=1192.0 dunya_tris=133694 dunya_draws=37 lod=[4, 0, 24, 2] kare_us=111
+GEZI kare /root/gezi/kA2/augustaion_y225.png
+RINFO gezi augustaion_y270 cizim=753 ucgen=1452006 kare_ms=1115.6 dunya_tris=133694 dunya_draws=37 lod=[4, 0, 24, 2] kare_us=109
+GEZI kare /root/gezi/kA2/augustaion_y270.png
+RINFO gezi augustaion_y315 cizim=506 ucgen=1053657 kare_ms=993.8 dunya_tris=133694 dunya_draws=37 lod=[4, 0, 24, 2] kare_us=113
+GEZI kare /root/gezi/kA2/augustaion_y315.png
+RINFO gezi augustaion_hava cizim=723 ucgen=1381664 kare_ms=1188.6 dunya_tris=133694 dunya_draws=37 lod=[4, 0, 24, 2] kare_us=117
+GEZI kare /root/gezi/kA2/augustaion_hava.png
+RINFO gezi khalke_y000 cizim=529 ucgen=992501 kare_ms=935.9 dunya_tris=133694 dunya_draws=37 lod=[4, 0, 24, 2] kare_us=131
+GEZI kare /root/gezi/kA2/khalke_y000.png
+RINFO gezi khalke_y045 cizim=705 ucgen=2033773 kare_ms=1392.6 dunya_tris=133694 dunya_draws=37 lod=[4, 0, 24, 2] kare_us=117
+GEZI kare /root/gezi/kA2/khalke_y045.png
+RINFO gezi khalke_y090 cizim=863 ucgen=3040336 kare_ms=1850.3 dunya_tris=133694 dunya_draws=37 lod=[4, 0, 24, 2] kare_us=92
+GEZI kare /root/gezi/kA2/khalke_y090.png
+RINFO gezi khalke_y135 cizim=984 ucgen=3329216 kare_ms=2193.0 dunya_tris=133694 dunya_draws=37 lod=[4, 2, 22, 2] kare_us=135
+GEZI kare /root/gezi/kA2/khalke_y135.png
+RINFO gezi khalke_y180 cizim=986 ucgen=2408019 kare_ms=1483.9 dunya_tris=133694 dunya_draws=37 lod=[4, 2, 22, 2] kare_us=94
+GEZI kare /root/gezi/kA2/khalke_y180.png
+RINFO gezi khalke_y225 cizim=815 ucgen=1585692 kare_ms=1329.0 dunya_tris=133694 dunya_draws=37 lod=[4, 2, 22, 2] kare_us=127
+GEZI kare /root/gezi/kA2/khalke_y225.png
+RINFO gezi khalke_y270 cizim=728 ucgen=1415248 kare_ms=1025.2 dunya_tris=133694 dunya_draws=37 lod=[4, 2, 22, 2] kare_us=92
+GEZI kare /root/gezi/kA2/khalke_y270.png
+RINFO gezi khalke_y315 cizim=462 ucgen=1031811 kare_ms=877.6 dunya_tris=133694 dunya_draws=37 lod=[4, 2, 22, 2] kare_us=100
+GEZI kare /root/gezi/kA2/khalke_y315.png
+RINFO gezi khalke_hava cizim=703 ucgen=1370141 kare_ms=1185.5 dunya_tris=133694 dunya_draws=37 lod=[4, 2, 22, 2] kare_us=166
+GEZI kare /root/gezi/kA2/khalke_hava.png
+RINFO gezi konstantin_y000 cizim=445 ucgen=1023748 kare_ms=774.5 dunya_tris=135580 dunya_draws=37 lod=[2, 4, 20, 4] kare_us=110
+GEZI kare /root/gezi/kA2/konstantin_y000.png
+RINFO gezi konstantin_y045 cizim=592 ucgen=1846858 kare_ms=1095.6 dunya_tris=135580 dunya_draws=37 lod=[2, 4, 20, 4] kare_us=100
+GEZI kare /root/gezi/kA2/konstantin_y045.png
+RINFO gezi konstantin_y090 cizim=790 ucgen=2958737 kare_ms=1683.3 dunya_tris=135580 dunya_draws=37 lod=[2, 4, 20, 4] kare_us=182
+GEZI kare /root/gezi/kA2/konstantin_y090.png
+RINFO gezi konstantin_y135 cizim=760 ucgen=3074060 kare_ms=1728.1 dunya_tris=135580 dunya_draws=37 lod=[2, 4, 20, 4] kare_us=102
+GEZI kare /root/gezi/kA2/konstantin_y135.png
+RINFO gezi konstantin_y180 cizim=689 ucgen=2355635 kare_ms=1327.8 dunya_tris=135580 dunya_draws=37 lod=[2, 4, 20, 4] kare_us=117
+GEZI kare /root/gezi/kA2/konstantin_y180.png
+RINFO gezi konstantin_y225 cizim=802 ucgen=1628048 kare_ms=1073.0 dunya_tris=135580 dunya_draws=37 lod=[2, 4, 20, 4] kare_us=117
+GEZI kare /root/gezi/kA2/konstantin_y225.png
+RINFO gezi konstantin_y270 cizim=896 ucgen=1554035 kare_ms=989.6 dunya_tris=135580 dunya_draws=37 lod=[2, 4, 20, 4] kare_us=96
+GEZI kare /root/gezi/kA2/konstantin_y270.png
+RINFO gezi konstantin_y315 cizim=825 ucgen=1381570 kare_ms=828.5 dunya_tris=135580 dunya_draws=37 lod=[2, 4, 20, 4] kare_us=113
+GEZI kare /root/gezi/kA2/konstantin_y315.png
+RINFO gezi konstantin_hava cizim=738 ucgen=1323512 kare_ms=1153.4 dunya_tris=135580 dunya_draws=37 lod=[2, 4, 20, 4] kare_us=120
+GEZI kare /root/gezi/kA2/konstantin_hava.png

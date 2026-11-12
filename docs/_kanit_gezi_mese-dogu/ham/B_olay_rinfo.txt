@@ -1,0 +1,257 @@
+ISTSEHIR2 yer=845 hat=555 kur_ms=2770 hat_ms=915 doku_ms=10407 parca_ms=6321
+RINFO sur4 g_-0900_-258_K cizim=765 ucgen=2673504
+SUR4 kare /root/gezi/kB/g_-0900_-258_K.png
+RINFO sur4 g_-0900_-258_D cizim=757 ucgen=1434672
+SUR4 kare /root/gezi/kB/g_-0900_-258_D.png
+RINFO sur4 g_-0900_-258_G cizim=412 ucgen=873348
+SUR4 kare /root/gezi/kB/g_-0900_-258_G.png
+RINFO sur4 g_-0900_-258_B cizim=687 ucgen=2760213
+SUR4 kare /root/gezi/kB/g_-0900_-258_B.png
+RINFO sur4 g_-0729_-258_K cizim=830 ucgen=2678557
+SUR4 kare /root/gezi/kB/g_-0729_-258_K.png
+RINFO sur4 g_-0729_-258_D cizim=765 ucgen=1351847
+SUR4 kare /root/gezi/kB/g_-0729_-258_D.png
+RINFO sur4 g_-0729_-258_G cizim=418 ucgen=850463
+SUR4 kare /root/gezi/kB/g_-0729_-258_G.png
+RINFO sur4 g_-0729_-258_B cizim=728 ucgen=2813668
+SUR4 kare /root/gezi/kB/g_-0729_-258_B.png
+RINFO sur4 g_-0558_-258_K cizim=791 ucgen=2570060
+SUR4 kare /root/gezi/kB/g_-0558_-258_K.png
+RINFO sur4 g_-0558_-258_D cizim=755 ucgen=1359607
+SUR4 kare /root/gezi/kB/g_-0558_-258_D.png
+RINFO sur4 g_-0558_-258_G cizim=366 ucgen=695121
+SUR4 kare /root/gezi/kB/g_-0558_-258_G.png
+RINFO sur4 g_-0558_-258_B cizim=718 ucgen=2830645
+SUR4 kare /root/gezi/kB/g_-0558_-258_B.png
+RINFO sur4 g_-0387_-258_K cizim=811 ucgen=2358758
+SUR4 kare /root/gezi/kB/g_-0387_-258_K.png
+RINFO sur4 g_-0387_-258_D cizim=721 ucgen=1210578
+SUR4 kare /root/gezi/kB/g_-0387_-258_D.png
+RINFO sur4 g_-0387_-258_G cizim=380 ucgen=583280
+SUR4 kare /root/gezi/kB/g_-0387_-258_G.png
+RINFO sur4 g_-0387_-258_B cizim=688 ucgen=2713282
+SUR4 kare /root/gezi/kB/g_-0387_-258_B.png
+RINFO sur4 g_-0216_-258_K cizim=921 ucgen=2419756
+SUR4 kare /root/gezi/kB/g_-0216_-258_K.png
+RINFO sur4 g_-0216_-258_D cizim=726 ucgen=1324556
+SUR4 kare /root/gezi/kB/g_-0216_-258_D.png
+RINFO sur4 g_-0216_-258_G cizim=530 ucgen=710284
+SUR4 kare /root/gezi/kB/g_-0216_-258_G.png
+RINFO sur4 g_-0216_-258_B cizim=702 ucgen=2797129
+SUR4 kare /root/gezi/kB/g_-0216_-258_B.png
+RINFO sur4 g_-0045_-258_K cizim=990 ucgen=2380321
+SUR4 kare /root/gezi/kB/g_-0045_-258_K.png
+RINFO sur4 g_-0045_-258_D cizim=635 ucgen=1186297
+SUR4 kare /root/gezi/kB/g_-0045_-258_D.png
+RINFO sur4 g_-0045_-258_G cizim=542 ucgen=661376
+SUR4 kare /root/gezi/kB/g_-0045_-258_G.png
+RINFO sur4 g_-0045_-258_B cizim=873 ucgen=3067927
+SUR4 kare /root/gezi/kB/g_-0045_-258_B.png
+RINFO sur4 g_+0126_-258_K cizim=989 ucgen=2201181
+SUR4 kare /root/gezi/kB/g_+0126_-258_K.png
+RINFO sur4 g_+0126_-258_D cizim=542 ucgen=891694
+SUR4 kare /root/gezi/kB/g_+0126_-258_D.png
+RINFO sur4 g_+0126_-258_G cizim=545 ucgen=603550
+SUR4 kare /root/gezi/kB/g_+0126_-258_G.png
+RINFO sur4 g_+0126_-258_B cizim=945 ucgen=2960573
+SUR4 kare /root/gezi/kB/g_+0126_-258_B.png
+RINFO sur4 g_+0297_-258_K cizim=945 ucgen=2094257
+SUR4 kare /root/gezi/kB/g_+0297_-258_K.png
+RINFO sur4 g_+0297_-258_D cizim=446 ucgen=655474
+SUR4 kare /root/gezi/kB/g_+0297_-258_D.png
+RINFO sur4 g_+0297_-258_G cizim=592 ucgen=761992
+SUR4 kare /root/gezi/kB/g_+0297_-258_G.png
+RINFO sur4 g_+0297_-258_B cizim=1188 ucgen=3063592
+SUR4 kare /root/gezi/kB/g_+0297_-258_B.png
+RINFO sur4 g_-0900_-087_K cizim=708 ucgen=2385456
+SUR4 kare /root/gezi/kB/g_-0900_-087_K.png
+RINFO sur4 g_-0900_-087_D cizim=713 ucgen=1318218
+SUR4 kare /root/gezi/kB/g_-0900_-087_D.png
+RINFO sur4 g_-0900_-087_G cizim=453 ucgen=926035
+SUR4 kare /root/gezi/kB/g_-0900_-087_G.png
+RINFO sur4 g_-0900_-087_B cizim=681 ucgen=2825491
+SUR4 kare /root/gezi/kB/g_-0900_-087_B.png
+RINFO sur4 g_-0729_-087_K cizim=672 ucgen=2355597
+SUR4 kare /root/gezi/kB/g_-0729_-087_K.png
+RINFO sur4 g_-0729_-087_D cizim=709 ucgen=1322658
+SUR4 kare /root/gezi/kB/g_-0729_-087_D.png
+RINFO sur4 g_-0729_-087_G cizim=406 ucgen=790941
+SUR4 kare /root/gezi/kB/g_-0729_-087_G.png
+RINFO sur4 g_-0729_-087_B cizim=717 ucgen=2806961
+SUR4 kare /root/gezi/kB/g_-0729_-087_B.png
+RINFO sur4 g_-0558_-087_K cizim=772 ucgen=2432885
+SUR4 kare /root/gezi/kB/g_-0558_-087_K.png
+RINFO sur4 g_-0558_-087_D cizim=820 ucgen=1414775
+SUR4 kare /root/gezi/kB/g_-0558_-087_D.png
+RINFO sur4 g_-0558_-087_G cizim=499 ucgen=836387
+SUR4 kare /root/gezi/kB/g_-0558_-087_G.png
+RINFO sur4 g_-0558_-087_B cizim=758 ucgen=2887877
+SUR4 kare /root/gezi/kB/g_-0558_-087_B.png
+RINFO sur4 g_-0387_-087_K cizim=899 ucgen=2480891
+SUR4 kare /root/gezi/kB/g_-0387_-087_K.png
+RINFO sur4 g_-0387_-087_D cizim=769 ucgen=1398281
+SUR4 kare /root/gezi/kB/g_-0387_-087_D.png
+RINFO sur4 g_-0387_-087_G cizim=447 ucgen=766866
+SUR4 kare /root/gezi/kB/g_-0387_-087_G.png
+RINFO sur4 g_-0387_-087_B cizim=816 ucgen=2941149
+SUR4 kare /root/gezi/kB/g_-0387_-087_B.png
+RINFO sur4 g_-0216_-087_K cizim=823 ucgen=2316374
+SUR4 kare /root/gezi/kB/g_-0216_-087_K.png
+RINFO sur4 g_-0216_-087_D cizim=968 ucgen=1719520
+SUR4 kare /root/gezi/kB/g_-0216_-087_D.png
+RINFO sur4 g_-0216_-087_G cizim=512 ucgen=827579
+SUR4 kare /root/gezi/kB/g_-0216_-087_G.png
+RINFO sur4 g_-0216_-087_B cizim=860 ucgen=2957615
+SUR4 kare /root/gezi/kB/g_-0216_-087_B.png
+RINFO sur4 g_-0045_-087_K cizim=803 ucgen=2175590
+SUR4 kare /root/gezi/kB/g_-0045_-087_K.png
+RINFO sur4 g_-0045_-087_D cizim=570 ucgen=1208038
+SUR4 kare /root/gezi/kB/g_-0045_-087_D.png
+RINFO sur4 g_-0045_-087_G cizim=539 ucgen=1010182
+SUR4 kare /root/gezi/kB/g_-0045_-087_G.png
+RINFO sur4 g_-0045_-087_B cizim=850 ucgen=3117103
+SUR4 kare /root/gezi/kB/g_-0045_-087_B.png
+RINFO sur4 g_+0126_-087_K cizim=782 ucgen=2055501
+SUR4 kare /root/gezi/kB/g_+0126_-087_K.png
+RINFO sur4 g_+0126_-087_D cizim=538 ucgen=1028529
+SUR4 kare /root/gezi/kB/g_+0126_-087_D.png
+RINFO sur4 g_+0126_-087_G cizim=564 ucgen=931744
+SUR4 kare /root/gezi/kB/g_+0126_-087_G.png
+RINFO sur4 g_+0126_-087_B cizim=990 ucgen=3112757
+SUR4 kare /root/gezi/kB/g_+0126_-087_B.png
+RINFO sur4 g_+0297_-087_K cizim=869 ucgen=2103016
+SUR4 kare /root/gezi/kB/g_+0297_-087_K.png
+RINFO sur4 g_+0297_-087_D cizim=557 ucgen=791356
+SUR4 kare /root/gezi/kB/g_+0297_-087_D.png
+RINFO sur4 g_+0297_-087_G cizim=649 ucgen=838473
+SUR4 kare /root/gezi/kB/g_+0297_-087_G.png
+RINFO sur4 g_+0297_-087_B cizim=1100 ucgen=3147438
+SUR4 kare /root/gezi/kB/g_+0297_-087_B.png
+RINFO sur4 g_-0900_+084_K cizim=695 ucgen=2258391
+SUR4 kare /root/gezi/kB/g_-0900_+084_K.png
+RINFO sur4 g_-0900_+084_D cizim=662 ucgen=1351594
+SUR4 kare /root/gezi/kB/g_-0900_+084_D.png
+RINFO sur4 g_-0900_+084_G cizim=492 ucgen=1096200
+SUR4 kare /root/gezi/kB/g_-0900_+084_G.png
+RINFO sur4 g_-0900_+084_B cizim=767 ucgen=3061085
+SUR4 kare /root/gezi/kB/g_-0900_+084_B.png
+RINFO sur4 g_-0729_+084_K cizim=665 ucgen=2147505
+SUR4 kare /root/gezi/kB/g_-0729_+084_K.png
+RINFO sur4 g_-0729_+084_D cizim=718 ucgen=1329101
+SUR4 kare /root/gezi/kB/g_-0729_+084_D.png
+RINFO sur4 g_-0729_+084_G cizim=412 ucgen=890136
+SUR4 kare /root/gezi/kB/g_-0729_+084_G.png
+RINFO sur4 g_-0729_+084_B cizim=748 ucgen=2872704
+SUR4 kare /root/gezi/kB/g_-0729_+084_B.png
+RINFO sur4 g_-0558_+084_K cizim=687 ucgen=2090065
+SUR4 kare /root/gezi/kB/g_-0558_+084_K.png
+RINFO sur4 g_-0558_+084_D cizim=807 ucgen=1441725
+SUR4 kare /root/gezi/kB/g_-0558_+084_D.png
+RINFO sur4 g_-0558_+084_G cizim=604 ucgen=1182313
+SUR4 kare /root/gezi/kB/g_-0558_+084_G.png
+RINFO sur4 g_-0558_+084_B cizim=731 ucgen=2986451
+SUR4 kare /root/gezi/kB/g_-0558_+084_B.png
+RINFO sur4 g_-0387_+084_K cizim=866 ucgen=2391543
+SUR4 kare /root/gezi/kB/g_-0387_+084_K.png
+RINFO sur4 g_-0387_+084_D cizim=837 ucgen=1466316
+SUR4 kare /root/gezi/kB/g_-0387_+084_D.png
+RINFO sur4 g_-0387_+084_G cizim=691 ucgen=1407153
+SUR4 kare /root/gezi/kB/g_-0387_+084_G.png
+RINFO sur4 g_-0387_+084_B cizim=863 ucgen=3116473
+SUR4 kare /root/gezi/kB/g_-0387_+084_B.png
+RINFO sur4 g_-0216_+084_K cizim=721 ucgen=2142263
+SUR4 kare /root/gezi/kB/g_-0216_+084_K.png
+RINFO sur4 g_-0216_+084_D cizim=695 ucgen=1293184
+SUR4 kare /root/gezi/kB/g_-0216_+084_D.png
+RINFO sur4 g_-0216_+084_G cizim=582 ucgen=1199917
+SUR4 kare /root/gezi/kB/g_-0216_+084_G.png
+RINFO sur4 g_-0216_+084_B cizim=880 ucgen=3143095
+SUR4 kare /root/gezi/kB/g_-0216_+084_B.png
+RINFO sur4 g_-0045_+084_K cizim=735 ucgen=2087320
+SUR4 kare /root/gezi/kB/g_-0045_+084_K.png
+RINFO sur4 g_-0045_+084_D cizim=565 ucgen=1219254
+SUR4 kare /root/gezi/kB/g_-0045_+084_D.png
+RINFO sur4 g_-0045_+084_G cizim=651 ucgen=1135247
+SUR4 kare /root/gezi/kB/g_-0045_+084_G.png
+RINFO sur4 g_-0045_+084_B cizim=864 ucgen=3009787
+SUR4 kare /root/gezi/kB/g_-0045_+084_B.png
+RINFO sur4 g_+0126_+084_K cizim=667 ucgen=1981864
+SUR4 kare /root/gezi/kB/g_+0126_+084_K.png
+RINFO sur4 g_+0126_+084_D cizim=572 ucgen=1192688
+SUR4 kare /root/gezi/kB/g_+0126_+084_D.png
+RINFO sur4 g_+0126_+084_G cizim=547 ucgen=937370
+SUR4 kare /root/gezi/kB/g_+0126_+084_G.png
+RINFO sur4 g_+0126_+084_B cizim=942 ucgen=3046652
+SUR4 kare /root/gezi/kB/g_+0126_+084_B.png
+RINFO sur4 g_+0297_+084_K cizim=759 ucgen=1955017
+SUR4 kare /root/gezi/kB/g_+0297_+084_K.png
+RINFO sur4 g_+0297_+084_D cizim=532 ucgen=841557
+SUR4 kare /root/gezi/kB/g_+0297_+084_D.png
+RINFO sur4 g_+0297_+084_G cizim=674 ucgen=1232768
+SUR4 kare /root/gezi/kB/g_+0297_+084_G.png
+RINFO sur4 g_+0297_+084_B cizim=1084 ucgen=3271436
+SUR4 kare /root/gezi/kB/g_+0297_+084_B.png
+RINFO sur4 g_-0900_+255_K cizim=741 ucgen=2224339
+SUR4 kare /root/gezi/kB/g_-0900_+255_K.png
+RINFO sur4 g_-0900_+255_D cizim=771 ucgen=1502642
+SUR4 kare /root/gezi/kB/g_-0900_+255_D.png
+RINFO sur4 g_-0900_+255_G cizim=566 ucgen=1382726
+SUR4 kare /root/gezi/kB/g_-0900_+255_G.png
+RINFO sur4 g_-0900_+255_B cizim=765 ucgen=3056105
+SUR4 kare /root/gezi/kB/g_-0900_+255_B.png
+RINFO sur4 g_-0729_+255_K cizim=725 ucgen=2101494
+SUR4 kare /root/gezi/kB/g_-0729_+255_K.png
+RINFO sur4 g_-0729_+255_D cizim=821 ucgen=1521570
+SUR4 kare /root/gezi/kB/g_-0729_+255_D.png
+RINFO sur4 g_-0729_+255_G cizim=534 ucgen=1195969
+SUR4 kare /root/gezi/kB/g_-0729_+255_G.png
+RINFO sur4 g_-0729_+255_B cizim=788 ucgen=3006500
+SUR4 kare /root/gezi/kB/g_-0729_+255_B.png
+RINFO sur4 g_-0558_+255_K cizim=670 ucgen=2045326
+SUR4 kare /root/gezi/kB/g_-0558_+255_K.png
+RINFO sur4 g_-0558_+255_D cizim=816 ucgen=1474322
+SUR4 kare /root/gezi/kB/g_-0558_+255_D.png
+RINFO sur4 g_-0558_+255_G cizim=592 ucgen=1351468
+SUR4 kare /root/gezi/kB/g_-0558_+255_G.png
+RINFO sur4 g_-0558_+255_B cizim=760 ucgen=3013522
+SUR4 kare /root/gezi/kB/g_-0558_+255_B.png
+RINFO sur4 g_-0387_+255_K cizim=661 ucgen=2063137
+SUR4 kare /root/gezi/kB/g_-0387_+255_K.png
+RINFO sur4 g_-0387_+255_D cizim=749 ucgen=1259136
+SUR4 kare /root/gezi/kB/g_-0387_+255_D.png
+RINFO sur4 g_-0387_+255_G cizim=654 ucgen=1351514
+SUR4 kare /root/gezi/kB/g_-0387_+255_G.png
+RINFO sur4 g_-0387_+255_B cizim=777 ucgen=3083076
+SUR4 kare /root/gezi/kB/g_-0387_+255_B.png
+RINFO sur4 g_-0216_+255_K cizim=693 ucgen=2193178
+SUR4 kare /root/gezi/kB/g_-0216_+255_K.png
+RINFO sur4 g_-0216_+255_D cizim=680 ucgen=1392530
+SUR4 kare /root/gezi/kB/g_-0216_+255_D.png
+RINFO sur4 g_-0216_+255_G cizim=739 ucgen=1379015
+SUR4 kare /root/gezi/kB/g_-0216_+255_G.png
+RINFO sur4 g_-0216_+255_B cizim=920 ucgen=3239406
+SUR4 kare /root/gezi/kB/g_-0216_+255_B.png
+RINFO sur4 g_-0045_+255_K cizim=676 ucgen=1994192
+SUR4 kare /root/gezi/kB/g_-0045_+255_K.png
+RINFO sur4 g_-0045_+255_D cizim=529 ucgen=1284149
+SUR4 kare /root/gezi/kB/g_-0045_+255_D.png
+RINFO sur4 g_-0045_+255_G cizim=722 ucgen=1263387
+SUR4 kare /root/gezi/kB/g_-0045_+255_G.png
+RINFO sur4 g_-0045_+255_B cizim=1023 ucgen=3232950
+SUR4 kare /root/gezi/kB/g_-0045_+255_B.png
+RINFO sur4 g_+0126_+255_K cizim=659 ucgen=1966153
+SUR4 kare /root/gezi/kB/g_+0126_+255_K.png
+RINFO sur4 g_+0126_+255_D cizim=647 ucgen=1373521
+SUR4 kare /root/gezi/kB/g_+0126_+255_D.png
+RINFO sur4 g_+0126_+255_G cizim=651 ucgen=1114812
+SUR4 kare /root/gezi/kB/g_+0126_+255_G.png
+RINFO sur4 g_+0126_+255_B cizim=903 ucgen=3069847
+SUR4 kare /root/gezi/kB/g_+0126_+255_B.png
+RINFO sur4 g_+0297_+255_K cizim=619 ucgen=1536525
+SUR4 kare /root/gezi/kB/g_+0297_+255_K.png
+RINFO sur4 g_+0297_+255_D cizim=618 ucgen=798094
+SUR4 kare /root/gezi/kB/g_+0297_+255_D.png
+RINFO sur4 g_+0297_+255_G cizim=668 ucgen=1033056
+SUR4 kare /root/gezi/kB/g_+0297_+255_G.png
+RINFO sur4 g_+0297_+255_B cizim=966 ucgen=3008760
+SUR4 kare /root/gezi/kB/g_+0297_+255_B.png
