@@ -243,7 +243,7 @@ static func item(key: String) -> ArrayMesh:
 			IstBitki.add_blob(m, Vector3(0.05, 2.0, 0), Vector3(0.07, 0.2, 0.07), 1, Color("8a6a40"), Color("b08a54"), 5, 3, 0.8, 0.1)
 		"kaya":
 			IstBitki.add_blob(m, Vector3(0, 0.22, 0), Vector3(0.5, 0.34, 0.45), 3, Color("6a665a"), Color("9c9684"), 7, 4, 0.55, 0.25)
-			IstBitki.add_blob(m, Vector3(0.1, 0.5, 0.0), Vector3(0.28, 0.12, 0.26), 4, Color("5e8a38"), Color("86ae4c"), 6, 2, 0.8, 0.2)   # tepede yosun
+			IstBitki.add_blob(m, Vector3(0.1, 0.5, 0.0), Vector3(0.28, 0.12, 0.26), 4, Color("4a6a30"), Color("6a8a3c"), 6, 2, 0.8, 0.2)   # tepede yosun
 		"cali":
 			IstBitki.add_blob(m, Vector3(0, 0.38, 0), Vector3(0.62, 0.46, 0.58), 5, Color("3e6a2c"), Color("7aa844"), 7, 4, 0.55, 0.22)
 		"tas":

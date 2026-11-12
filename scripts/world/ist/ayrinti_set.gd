@@ -47,7 +47,7 @@ const PLACE := {
 	"sur_onarim_santiyesi": [
 		["yapi_iskelesi", -2.0, 0, -2.5, 0], ["cikrik_vinc", 4.5, 0, -2.0, 0], ["tas_yigini", -5.5, 0, 2.0, 0], ["tugla_yigini", 1.0, 0, 3.0, 0],
 		["harc_teknesi", 3.4, 0, 3.0, 0], ["kirec_ocagi", -2.5, 0, 3.2, 0], ["kazma_kurek", 5.8, 0, 3.2, 0], ["sandik_yigini", -6.0, 0, -1.0, 0],
-		["el_arabasi", 1.2, 0, 0.2, 40], ["kiremit_yigini", 6.0, 0, 1.0, 0], ["yikik_duvar", 0.0, 0, 5.3, 0], ["merdiven", -0.8, 0, -4.8, 0],
+		["el_arabasi", 1.2, 0, 0.2, 40], ["kiremit_yigini", 6.0, 0, 1.0, 0], ["yikik_duvar", 3.5, 0, 6.4, 0], ["merdiven", -0.8, 0, -4.8, 0],
 	],
 	"manastir_avlusu": [
 		["tas_havuz", 0, 0, 0, 0], ["can_cercevesi", -5.0, 0, -4.0, 0], ["kandil", 3.6, 0, -1.0, 0], ["mum_sehpasi", 3.5, 0, -3.0, 0],

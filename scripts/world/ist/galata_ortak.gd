@@ -19,7 +19,7 @@ const RED := Color("b32b2b")
 const WHITE := Color("f2eee4")
 const GREEN := Color("5f7a3c")
 const GREEN_D := Color("3f5a2a")
-const SEA := Color("2c5a6c")
+const SEA := Color("1c4254")
 
 static var col := true
 
@@ -37,8 +37,7 @@ static func sol(h: Node3D, size: Vector3, base: Vector3, c: Color, pat := "", ya
 			Props.set_pattern(b, c, pat)
 		return b
 	var mi := Props.box(h, size, pos, c, Vector3(0, yaw, 0))
-	if pat != "":
-		Props.set_pattern(mi, c, pat)
+	Props.set_pattern(mi, c, pat if pat != "" else "plaster")
 	return mi
 
 
@@ -205,3 +204,23 @@ static func ramp(h: Node3D, base: Vector3, dir: Vector3, run: float, rise: float
 			Props.set_pattern(b, c, pat)
 	else:
 		Props.box(h, Vector3(w, 0.3, ln + 0.2), mid, c, rot)
+
+
+## Aynı küreden çok kopya (çalı, bağ asması).
+static func mm_ball(h: Node3D, r: float, xforms: Array, c: Color) -> MultiMeshInstance3D:
+	var sm := SphereMesh.new()
+	sm.radius = r
+	sm.height = r * 2.0
+	sm.radial_segments = 6
+	sm.rings = 3
+	var m := MultiMesh.new()
+	m.transform_format = MultiMesh.TRANSFORM_3D
+	m.mesh = sm
+	m.instance_count = xforms.size()
+	for i in xforms.size():
+		m.set_instance_transform(i, xforms[i])
+	var mi := MultiMeshInstance3D.new()
+	mi.multimesh = m
+	mi.material_override = Props.mat(c, 0.0, false, "")
+	h.add_child(mi)
+	return mi

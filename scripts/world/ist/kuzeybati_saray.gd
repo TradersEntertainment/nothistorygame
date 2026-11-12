@@ -31,21 +31,21 @@ static func build_tekfur(host: Node3D, k: float = 0.5, lod: int = 0) -> void:
 	var T := Color("e8d8b4")
 	var W := Color("d8c8a4")
 	# sur kesiti (arkada) ve uç kuleleri
-	c.block(0, -7.5, 56, 4, 13, 0, W, "ashlar_far")
+	c.block(0, -8.5, 56, 6, 13, 0, W, "ashlar_far")
 	c.block(-26, -6.5, 7, 7, 17, 0, W, "ashlar")
 	c.block(26, -6.5, 7, 7, 17, 0, W, "ashlar")
 	c.gable(-26, -6.5, 7, 7, 17, 2.0, true)
 	c.gable(26, -6.5, 7, 7, 17, 2.0, true)
 	# saray gövdesi: üç kat, "tekfur" deseni (kırmızı-beyaz geometrik)
 	c.block(0, 0, 20, 11, 17, 0, T, "tekfur")
-	c.gable(0, 0, 20, 11, 17, 3.0, false)
+	c.gable(0, 0, 20, 11, 17, 2.2, false)
 	# doğu merdiven kulesi (sur yürüme yolu ile saray çatısı arasında geçit)
-	c.block(11.75, -3.5, 3.5, 4, 15, 0, W, "ashlar")
+	c.block(13.0, -3.5, 6, 4, 15, 0, W, "ashlar")
 	# sur yürüme yolu siperliği (kuzey kenarı) ve uç kule tepeleri
 	if lod < 2:
-		c.parapet(-29.5, -9.5, 29.5, -9.5, 13.0 * c.k)
+		c.parapet(-29.5, -11.5, 29.5, -11.5, 13.0 * c.k)
 		c.parapet(-23.0, -5.5, 10.0, -5.5, 13.0 * c.k)
-		c.parapet(14.5, -5.5, 22.5, -5.5, 13.0 * c.k)
+		c.parapet(23.0, -5.5, 28.0, -5.5, 13.0 * c.k)
 	# cephe: zemin katta beş kemerli revak (mermer sütunlu), iki kat cephe bantları, pencereler, geometrik rozetler
 	if lod == 0:
 		var offs := [-8.0, -4.0, 0.0, 4.0, 8.0]
@@ -70,7 +70,7 @@ static func build_tekfur(host: Node3D, k: float = 0.5, lod: int = 0) -> void:
 				var xx2 := (-9.0 + i * 2.25)
 				var rz := Props.box(c.root, Vector3(0.5, 0.5, 0.05), Vector3(xx2 * k, fl * k, 5.5 * k + 0.02), IstKbCtx.BRICK, Vector3(0, 0, 45))
 				rz.material_override = Props.mat(Color("b8523a"))
-		c.door_on(11.75, -3.5, 0, 2.0, 0.0, 15.0)
+		c.door_on(13.0, -3.5, 0, 2.0, 0.0, 15.0)
 		c.cypress(-14.0, 11.0, 9.0)
 		c.cypress(15.0, 12.0, 9.5)
 		c.olive(-10.0, 15.0, 0.0, 1.0)
@@ -81,25 +81,11 @@ static func build_tekfur(host: Node3D, k: float = 0.5, lod: int = 0) -> void:
 		Props.cyl(c.root, 0.7, 0.04, Vector3(-8.0 * k, 0.92, 13.0 * k), Color("2a3a46"), Vector3.ZERO, 10)
 	# tırmanış: yerden sur yürüme yoluna dış merdiven (batıdan), sonra kuleye ve saray çatısına sandık basamakları
 	var hw := 13.0 * k
-	c.stair(16.0, -5.5, Vector2(0, -1), hw, 1.6, IstKbCtx.STONE_D, 0.34, 0.0)
-	var n1 := maxi(1, int(ceil(2.0 * k / 0.5)))
-	c.crate_steps(11.75, -5.5, Vector2(0, 1), n1, 2.0 * k / n1, hw)
-	var n2 := maxi(1, int(ceil(2.0 * k / 0.5)))
-	c.crate_steps(10.0, -2.5, Vector2(-1, 0), n2, 2.0 * k / n2, 15.0 * k)
-
-
-static func perches_tekfur(k: float = 0.5) -> Array:
-	var c := _nul(k, 20.0)
-	return [c.to_local(Vector3(0, 17.0 * k + 3.0 * k * 0.0 + _rise(k, 3.0, 11.0) + 0.05, 0)),
-		c.to_local(Vector3(-26.0 * k, 17.0 * k + _rise(k, 2.0, 7.0), -6.5 * k)),
-		c.to_local(Vector3(26.0 * k, 17.0 * k + _rise(k, 2.0, 7.0), -6.5 * k))]
-
-
-static func climbs_tekfur(k: float = 0.5) -> Array:
-	return _climbs(k, 20.0, [
-		[Vector3(23.0, 0, -5.5 + 0.0), Vector3(16.0, 13.0 * k, -5.5), "basamak"],
-		[Vector3(11.75, 13.0 * k, -7.4), Vector3(11.75, 15.0 * k, -3.7), "sandik"],
-		[Vector3(13.2, 15.0 * k, -2.5), Vector3(8.5, 17.0 * k, -2.5), "sandik"]])
+	c.stair(19.8, -5.5, Vector2(0, -1), hw, 1.6, IstKbCtx.STONE_D, 0.34, 0.0)
+	var n1 := maxi(1, int(ceil(2.0 * k / 0.6)))
+	c.crate_steps(13.0, -5.5, Vector2(0, 1), n1, 2.0 * k / n1, hw)
+	var n2 := maxi(1, int(ceil(2.0 * k / 0.6)))
+	c.crate_steps(10.0, -4.5, Vector2(-1, 0), n2, 2.0 * k / n2, 15.0 * k)
 
 
 # ----------------------------------------------------------------------------------------------------------------
@@ -125,8 +111,10 @@ static func build_anemas(host: Node3D, k: float = 0.5, lod: int = 0) -> void:
 		c.parapet(8.0, -5.5, 15.0, -5.5, sy)
 		c.parapet(15.0, -5.5, 15.0, 1.5, sy)
 		c.parapet(8.0, 1.5, 15.0, 1.5, sy)
-		c.parapet(8.0, -5.5, 8.0, -0.7, sy)
-		c.parapet(-16.5, 5.5, 16.5, 5.5, 5.2 * c.k)
+		c.parapet(8.0, -5.5, 8.0, -4.0, sy)
+		var gh := 1.5 / c.k
+		c.parapet(-16.5, 5.5, 2.25 - gh, 5.5, 5.2 * c.k)
+		c.parapet(2.25 + gh, 5.5, 16.5, 5.5, 5.2 * c.k)
 	if lod == 0:
 		# zindan kemerleri: yedi koyu açıklık + demir parmaklık
 		var offs := [-13.5, -9.0, -4.5, 0.0, 4.5, 9.0, 13.5]
@@ -143,21 +131,9 @@ static func build_anemas(host: Node3D, k: float = 0.5, lod: int = 0) -> void:
 	c.olive(20.0, 8.0, 0.0, 0.9)
 	# tırmanış: batı uçtan taraça üstüne dış merdiven, taraçadan kareli kule tepesine ikinci merdiven (yan boyda)
 	var th := 5.2 * k
-	c.stair(-17.0, 0.0, Vector2(1, 0), th, 1.6, IstKbCtx.STONE_D, 0.5, 0.0)
+	c.stair(2.25, 6.5, Vector2(0, -1), th, 1.6, IstKbCtx.STONE_D, 0.5, 0.0)
 	var kh := (15.0 - 5.2) * k
-	c.stair(8.0, 2.5, Vector2(1, 0), kh, 1.6, IstKbCtx.STONE_D, 0.33, th)
-
-
-static func perches_anemas(k: float = 0.5) -> Array:
-	var c := _nul(k, 20.0)
-	return [c.to_local(Vector3(-12.0 * k, 24.0 * k + 0.05, -3.0 * k)), c.to_local(Vector3(11.5 * k, 15.0 * k + 0.05, -2.0 * k))]
-
-
-static func climbs_anemas(k: float = 0.5) -> Array:
-	var th := 5.2 * k
-	return _climbs(k, 20.0, [
-		[Vector3(-25.0, 0, 0.0), Vector3(-16.0, th, 0.0), "basamak"],
-		[Vector3(0.0, th, 2.5), Vector3(7.0, 15.0 * k, 2.5), "basamak"]])
+	c.stair(8.0, -0.5, Vector2(1, 0), kh, 1.6, IstKbCtx.STONE_D, 0.33, th)
 
 
 # ----------------------------------------------------------------------------------------------------------------
@@ -175,47 +151,68 @@ static func build_kynegion(host: Node3D, k: float = 0.5, lod: int = 0) -> void:
 	# kum zemin
 	var sand := Props.solid(c.root, Vector3(rx * 1.35, 0.1, rz * 1.35), Vector3(0, 0.05, 0), Color.WHITE)
 	Props.set_pattern(sand, Color("cdb88a"), "flagstone")
-	# güney yarı: kademeli oturma sıraları; her kademe elips yayı boyunca dönük kutu (katı), altı dolu
+	# güney yarı: kademeli oturma sıraları; her parça tam bitişik yamuk prizma (dışbükey), parçalar köşe paylaşır: aralık yok
+	var ring_step := 0.12
 	for t in tiers:
 		var top := tier_h * (t + 1)
-		var ring := 0.62 + t * 0.9                 # kademe halkasının iç yarıçap oranı
+		var r_in := 0.45 + t * ring_step
+		var r_out := 0.45 + (t + 1) * ring_step
 		for i in seg:
-			var a := PI * (float(i) + 0.5) / seg                       # 0..PI: güney yarı (+z)
-			var f0 := 1.0 + (t + 0.0) * 0.16
-			var f1 := 1.0 + (t + 1.0) * 0.16
-			var ex := cos(a) * rx * (f0 + f1) * 0.5 * 0.5
-			var ez := sin(a) * rz * (f0 + f1) * 0.5 * 0.5 + 0.0
-			var tang := Vector3(-sin(a) * rx, 0, cos(a) * rz).normalized()
-			var arc := (PI * (rx + rz) * 0.5 * (f0 + f1) * 0.25 / seg) * 1.12
-			var ang := rad_to_deg(atan2(tang.x, tang.z))
-			var depth := rz * 0.16 * 1.1
-			var bd := Props.solid(c.root, Vector3(arc, top, depth), Vector3(ex, top * 0.5, ez), Color.WHITE, Vector3(0, ang, 0))
-			Props.set_pattern(bd, Color("d4c4a2") if (t + i) % 5 else Color("c9b690"), "ashlar")
-	# dış duvar kalıntısı: kuzey yarı alçak/yıkık, parça parça (kemer köklerinden kalan dikmeler)
-	for i in 9:
-		var a2 := PI + PI * (float(i) + 0.5) / 9.0
-		var wx := cos(a2) * rx * 0.62 * 1.42
-		var wz := sin(a2) * rz * 0.62 * 1.42 * 1.0
-		var wh: float = [4.2, 3.0, 2.2, 3.6, 1.6, 2.8, 4.0, 2.0, 3.2][i] * maxf(k, 0.5)
-		var tg := Vector3(-sin(a2) * rx, 0, cos(a2) * rz).normalized()
-		var wb := Props.solid(c.root, Vector3(2.4, wh, 1.0 + maxf(k, 0.5)), Vector3(wx, wh * 0.5, wz), Color.WHITE, Vector3(0, rad_to_deg(atan2(tg.x, tg.z)), 0))
-		Props.set_pattern(wb, Color("c4b290"), "rubble")
+			var a0 := PI * float(i) / seg
+			var a1 := PI * float(i + 1) / seg
+			var pts: Array = []
+			for yy in [0.0, top]:
+				pts.append(Vector3(cos(a0) * rx * r_in, yy, sin(a0) * rz * r_in))
+				pts.append(Vector3(cos(a1) * rx * r_in, yy, sin(a1) * rz * r_in))
+				pts.append(Vector3(cos(a1) * rx * r_out, yy, sin(a1) * rz * r_out))
+				pts.append(Vector3(cos(a0) * rx * r_out, yy, sin(a0) * rz * r_out))
+			_frustum(c.root, pts, Color("d4c4a2") if (t + i) % 5 else Color("c9b690"))
+	# dış duvar kalıntısı: kuzey yarı, bitişik yamuk parçalar (aralık yok), yükseklikleri düzensiz (yıkık)
+	var hs := [4.2, 3.0, 2.2, 3.6, 1.6, 2.8, 4.0, 2.0, 3.2, 1.4, 3.8, 2.4, 3.4, 1.8, 4.0, 2.6, 3.0, 2.2]
+	var r_in2 := 0.45 + tiers * ring_step + 0.02
+	var r_out2 := r_in2 + 0.16
+	for i in seg:
+		var a0 := PI + PI * float(i) / seg
+		var a1 := PI + PI * float(i + 1) / seg
+		var wh: float = float(hs[i % hs.size()]) * maxf(k, 0.5)
+		var pts2: Array = []
+		for yy in [0.0, wh]:
+			pts2.append(Vector3(cos(a0) * rx * r_in2, yy, sin(a0) * rz * r_in2))
+			pts2.append(Vector3(cos(a1) * rx * r_in2, yy, sin(a1) * rz * r_in2))
+			pts2.append(Vector3(cos(a1) * rx * r_out2, yy, sin(a1) * rz * r_out2))
+			pts2.append(Vector3(cos(a0) * rx * r_out2, yy, sin(a0) * rz * r_out2))
+		_frustum(c.root, pts2, Color("c4b290"))
 	# moloz, ot, birkaç sütun gövdesi
-	c.rubble(-2.0, 5.0, 14, 7.0, 0.1)
-	c.rubble(6.0, -6.0, 10, 5.0, 0.1)
+	var rmid := 0.45 + (tiers - 0.5) * ring_step
+	c.add_climb(Vector3(0, 0.1, 0.8), Vector3(0, tier_h * tiers, rz * rmid), "basamak")
+	c.add_perch(Vector3(0, tier_h * tiers + 0.05, rz * rmid))
+	c.rubble(-14.0, -2.0, 14, 5.0, 0.1)
+	c.rubble(13.0, -6.0, 10, 4.0, 0.1)
 	c.olive(-8.0, -12.0, 0.0, 1.0)
 	c.cypress(14.0, -14.0, 8.0)
 	# ön sahne: kuzeyden iki basamaklı giriş boşluğu zaten açık (kuzey yarı alçak); oturma kademeleri doğal merdiven
 
 
-static func perches_kynegion(k: float = 0.5) -> Array:
-	var tiers := maxi(2, int(ceil(5.0 * k / 0.4)))
-	return [Vector3(0, 0.4 * tiers + 0.05, 17.0 * k * 0.2 + 13.0 * k * 0.45), Vector3(-14.0 * k * 0.6, 3.0, -9.0 * k)]
-
-
-static func climbs_kynegion(k: float = 0.5) -> Array:
-	var tiers := maxi(2, int(ceil(5.0 * k / 0.4)))
-	return [[Vector3(0, 0.1, 1.0), Vector3(0, 0.4 * tiers, 13.0 * k * (1.0 + (tiers - 0.5) * 0.16) * 0.5), "basamak"]]
+static func _frustum(parent: Node3D, p: Array, col: Color) -> void:
+	# p: 4 alt köşe (0..3), 4 üst köşe (4..7); dışbükey katı + görsel
+	var st := SurfaceTool.new()
+	st.begin(Mesh.PRIMITIVE_TRIANGLES)
+	var faces := [[0, 1, 2], [0, 2, 3], [4, 6, 5], [4, 7, 6], [0, 5, 1], [0, 4, 5], [1, 6, 2], [1, 5, 6], [2, 7, 3], [2, 6, 7], [3, 4, 0], [3, 7, 4]]
+	for f in faces:
+		for q in f:
+			st.add_vertex(p[q])
+	st.generate_normals()
+	var mi := MeshInstance3D.new()
+	mi.mesh = st.commit()
+	mi.material_override = Props.mat(col, 0.0, false, "ashlar")
+	parent.add_child(mi)
+	var body := StaticBody3D.new()
+	var cs := CollisionShape3D.new()
+	var cv := ConvexPolygonShape3D.new()
+	cv.points = PackedVector3Array(p)
+	cs.shape = cv
+	body.add_child(cs)
+	mi.add_child(body)
 
 
 # ----------------------------------------------------------------------------------------------------------------
@@ -238,3 +235,29 @@ static func _climbs(k: float, yon: float, steps: Array) -> Array:
 		var b: Vector3 = e[1]
 		out.append([c.to_local(Vector3(a.x * k, a.y, a.z * k)), c.to_local(Vector3(b.x * k, b.y, b.z * k)), e[2]])
 	return out
+
+# Tırmanış ve konma noktaları kurucudan toplanır (IstKbCtx.harvest): kurulumla birebir tutarlı.
+static func perches_tekfur(k: float = 0.5) -> Array:
+	return IstKbCtx.harvest("tekfur", build_tekfur, k)[1]
+
+
+static func climbs_tekfur(k: float = 0.5) -> Array:
+	return IstKbCtx.harvest("tekfur", build_tekfur, k)[0]
+
+
+static func perches_anemas(k: float = 0.5) -> Array:
+	return IstKbCtx.harvest("anemas", build_anemas, k)[1]
+
+
+static func climbs_anemas(k: float = 0.5) -> Array:
+	return IstKbCtx.harvest("anemas", build_anemas, k)[0]
+
+
+static func perches_kynegion(k: float = 0.5) -> Array:
+	return IstKbCtx.harvest("kynegion", build_kynegion, k)[1]
+
+
+static func climbs_kynegion(k: float = 0.5) -> Array:
+	return IstKbCtx.harvest("kynegion", build_kynegion, k)[0]
+
+

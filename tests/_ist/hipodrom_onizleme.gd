@@ -135,7 +135,7 @@ func _tris(h: Node3D) -> int:
 
 
 func _shot(name: String, from: Vector3, to: Vector3) -> void:
-	if _shots == "" or (_only != "" and not _only.contains(name.get_slice("_", 2))):
+	if _shots == "" or (_only != "" and not _only_ok(name)):
 		return
 	_cam.global_position = from
 	var up := Vector3.UP
@@ -239,7 +239,7 @@ func _run_audit(id: String, ab: AABB, tr: int) -> void:
 				delik += 1
 				if dlist.size() < 5: dlist.append(Vector3(x, hv, z).snapped(Vector3.ONE * 0.1))
 			# dar aralık: 1 m yükseklikte ±x doğrultusunda iki katı arası 0,2–1,4 m
-			var from := Vector3(x, 1.0, z)
+			var from := Vector3(x, 1.3, z)
 			var pq := PhysicsPointQueryParameters3D.new()
 			pq.position = from
 			pq.collision_mask = 1
@@ -342,3 +342,10 @@ func _walk(a: Vector3, b: Vector3) -> bool:
 			pos = body.global_position
 	body.queue_free()
 	return ok
+
+
+func _only_ok(name: String) -> bool:
+	for t in _only.split(","):
+		if name.contains(t):
+			return true
+	return false

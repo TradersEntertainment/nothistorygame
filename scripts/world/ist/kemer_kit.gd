@@ -7,7 +7,7 @@ const STONE := Color("d8c7a4")        # kesme taş, sıcak
 const STONE_D := Color("b9a47c")
 const BRICK := Color("c0795a")        # Bizans tuğlası
 const BRICK_D := Color("9c5a42")
-const LEAD := Color("8b94a0")         # kurşun kubbe
+const LEAD := Color("77828f")         # kurşun kubbe
 const TILE := Color("b4553a")         # kiremit
 const MOSS := Color("6f8a4a")
 const SOIL := Color("7a6446")
@@ -62,13 +62,14 @@ static func dome(host: Node3D, r: float, base: Vector3, col: Color, ribs := 16, 
 			for i in ribs:
 				var a := TAU * i / ribs
 				for j in 3:
-					var el := 0.35 + j * 0.42
-					var rr := r * cos(el) * 1.005
-					var yy := r * hy * sin(el)
-					var t := Transform3D(Basis.from_euler(Vector3(deg_to_rad(90.0 - rad_to_deg(el) * 0.9), a, 0)), base + Vector3(sin(a) * rr, yy, cos(a) * rr))
-					xs.append(t)
+					var el := 0.3 + j * 0.42
+					var pp := Vector3(r * cos(el) * sin(a), r * hy * sin(el), r * cos(el) * cos(a))
+					var tg := Vector3(-r * sin(el) * sin(a), r * hy * cos(el), -r * sin(el) * cos(a)).normalized()
+					var nr := Vector3(sin(a) * cos(el), sin(el) / hy, cos(a) * cos(el)).normalized()
+					var bs := Basis.looking_at(tg, nr)
+					xs.append(Transform3D(bs, base + pp * 1.004))
 			var rib_mat := Props.mat(col.lightened(0.22), 0.0, false, "", false)
-			multi(host, _box_mesh(Vector3(0.12, 0.08, r * 0.42)), rib_mat, xs)
+			multi(host, _box_mesh(Vector3(0.12, 0.08, r * 0.5)), rib_mat, xs)
 		if cross:
 			# Düz katı tepe kapağı + haç
 			var cap := Props.cyl(host, 0.7, 0.3, Vector3(base.x, top - 0.05, base.z), STONE_D, Vector3.ZERO, 10)
@@ -156,10 +157,9 @@ static func _box_mesh(size: Vector3) -> BoxMesh:
 
 ## Çatı sırtı: eğimli kiremit (görsel prizma) + altında düz katı levha. L: sırt boyu (z), W: genişlik (x).
 static func gable(host: Node3D, W: float, L: float, rise: float, base: Vector3, col: Color) -> void:
-	var slab := blk(host, Vector3(W, 0.3, L), base, col.darkened(0.3))
-	slab.get_child(0).visible = false
-	var pm := Props.prism(host, Vector3(W + 0.4, rise, L + 0.4), base + Vector3(0, rise * 0.5 + 0.3, 0), col)
+	var pm := Props.prism(host, Vector3(W + 0.4, rise, L + 0.4), base + Vector3(0, rise * 0.5, 0), col)
 	pm.material_override = Props.mat(col, 0.0, false, "tiles")
+	Props.make_solid(pm)
 
 
 ## Moloz öbeği (tırmanılabilir basamaklı): merkez base, yarıçap r, yükseklik h. Üst üste küçülen katı tabakalar.
@@ -181,9 +181,9 @@ static func tree(host: Node3D, base: Vector3, h: float, kind := "selvi") -> void
 	var trunk := Props.cyl(host, 0.18, h * 0.35, base + Vector3(0, h * 0.175, 0), Color("5a4630"), Vector3.ZERO, 6)
 	Props.make_solid(trunk)
 	if kind == "selvi":
-		Props.cyl(host, 0.01, h * 0.8, base + Vector3(0, h * 0.6, 0), Color("3e5a35"), Vector3.ZERO, 7, h * 0.14)
+		Props.make_solid(Props.cyl(host, h * 0.14, h * 0.8, base + Vector3(0, h * 0.6, 0), Color("3e5a35"), Vector3.ZERO, 7, 0.02), 1.0)
 	else:
-		Props.ball(host, h * 0.3, base + Vector3(0, h * 0.62, 0), Color("6c8d44"), Vector3(1, 0.8, 1), 8)
+		Props.make_solid(Props.ball(host, h * 0.3, base + Vector3(0, h * 0.62, 0), Color("6c8d44"), Vector3(1, 0.8, 1), 8), 0.8)
 
 
 ## Bostan tarhası (alçak toprak tarla, yürünür, görsel): w×d, 0,12 m yüksek katı.

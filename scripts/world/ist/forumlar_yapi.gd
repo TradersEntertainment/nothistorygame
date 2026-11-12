@@ -13,7 +13,8 @@ const KIREMIT := Color("b9593b")
 const OT := Color("6f8e3e")
 const OT_K := Color("587a30")
 const KURSUN := Color("8e969c")
-const BRONZ := Color("a9803a")
+const BRONZ := Color("8a6a30")
+const PATINA := Color("4f7566")
 const DEMIR := Color("2c2a2a")
 const TOPRAK := Color("9a7a52")
 const MOLOZ := Color("a89a80")
@@ -42,7 +43,7 @@ static func cyl(h: Node3D, r: float, height: float, pos: Vector3, col: Color, to
 	if pat != "":
 		mi.material_override = Props.mat(col.lerp(Color.WHITE, 0.5), 0.0, false, pat)
 	if solid:
-		Props.make_solid(mi, 0.93)
+		Props.make_solid(mi, 0.98)
 	return mi
 
 
@@ -55,6 +56,13 @@ static func disk(h: Node3D, rx: float, rz: float, height: float, pos: Vector3, c
 	if solid:
 		Props.make_solid(mi, 1.0)
 	return mi
+
+
+## Yaprak/süs küresi: çarpışmasız, denetimde "delik" sayılmaz (meta dekor).
+static func yaprak(h: Node3D, r: float, pos: Vector3, col: Color, sc := Vector3.ONE, segs := 8) -> MeshInstance3D:
+	var m := Props.ball(h, r, pos, col, sc, segs)
+	m.set_meta("dekor", true)
+	return m
 
 
 static func ball(h: Node3D, r: float, pos: Vector3, col: Color, sc := Vector3.ONE, segs := 8) -> MeshInstance3D:
@@ -138,7 +146,8 @@ static func kemer_taslar(h: Node3D, c: Vector3, r: float, kalin: float, derin: f
 
 ## Zafer takı / kapı kemeri. Açıklık genişliği ac, yaydan önce serbest yükseklik yay (>= 3 m). Dönüş: üst yüzey y.
 ## Çarpışma: iki ayak + yay üstü gövde; açıklıkta delik yok ama geçilir. tam = false: bir ayağı yıkık (moloz).
-static func kapi_kemeri(h: Node3D, pos: Vector3, ac: float, yay: float, ust: float, derin: float, ayak_w: float, col: Color, yikik := 0, solid := true) -> void:
+static func kapi_kemeri(h: Node3D, pos: Vector3, ac: float, yay: float, ust: float, derin: float, ayak_w: float, col: Color, yikik := 0, solid := true) -> Dictionary:
+	var yol := {}
 	var tw := ac + ayak_w * 2.0
 	var r := ac * 0.5
 	var tepe := yay + r
@@ -154,8 +163,11 @@ static func kapi_kemeri(h: Node3D, pos: Vector3, ac: float, yay: float, ust: flo
 			var hh := maxf(ust - yay, 0.5)
 			box(h, Vector3(ayak_w, hh, derin), pos + Vector3(sd * (ac * 0.5 + ayak_w * 0.5), yay + hh * 0.5, 0), col, "ashlar", solid)
 		else:
-			# yıkık ayağın üstü: kırık taş yığını (basamak gibi çıkılır)
-			box(h, Vector3(ayak_w * 0.9, 0.5, derin * 0.7), pos + Vector3(sd * (ac * 0.5 + ayak_w * 0.5), ph + 0.25, 0.1), MOLOZ, "rubble", solid, Vector3(0, 12, 6))
+			# yıkık ayak: kırık taş basamaklar dıştan çıkar (yıkık duvar basamakları), üstü düz kütük
+			var xo := sd * (ac * 0.5 + ayak_w)
+			var run := ceili(ph / ADIM_H) * ADIM_D
+			stairs(h, pos + Vector3(xo + sd * run, 0, 0), Vector3(-sd, 0, 0), ph, derin * 0.8, MOLOZ, solid, "rubble")
+			yol = {"alt": pos + Vector3(xo + sd * (run + 0.6), 0.02, 0), "ust": pos + Vector3(xo - sd * 0.5, ph + 0.02, 0)}
 	# kemer taşları + üst gövde
 	kemer_taslar(h, pos + Vector3(0, yay, 0), r, 0.55, derin, TAS_K, 13)
 	if yikik == 0:
@@ -174,6 +186,7 @@ static func kapi_kemeri(h: Node3D, pos: Vector3, ac: float, yay: float, ust: flo
 		bd.position = pos + Vector3(0, yay + (ust - yay) * 0.5, 0)
 		bd.add_child(cs)
 		h.add_child(bd)
+	return yol
 
 
 ## Moloz yığını: üst üste basamaklanan alçak kutular (adım ≤ 0,28), çıkılabilir.
@@ -183,12 +196,12 @@ static func moloz(h: Node3D, pos: Vector3, w: float, d: float, kat: int, rng: Ra
 		var ww := w * (1.0 - 0.28 * i)
 		var dd := d * (1.0 - 0.28 * i)
 		box(h, Vector3(ww, sh * (i + 1), dd), pos + Vector3(rng.randf_range(-0.1, 0.1) * i, sh * (i + 1) * 0.5, rng.randf_range(-0.1, 0.1) * i),
-			MOLOZ if i % 2 == 0 else TAS_K, "rubble", solid, Vector3(0, rng.randf_range(-20, 20), 0))
+			MOLOZ if i % 2 == 0 else TAS_K, "rubble", solid, Vector3(0, rng.randf_range(-6, 6), 0))
 
 
 ## Ot/çalı tutamı (görsel).
 static func ot(h: Node3D, pos: Vector3, r: float, rng: RandomNumberGenerator) -> void:
-	ball(h, r, pos + Vector3(0, r * 0.45, 0), OT if rng.randf() < 0.5 else OT_K, Vector3(1, 0.6, 1), 6)
+	yaprak(h, r, pos + Vector3(0, r * 0.45, 0), OT if rng.randf() < 0.5 else OT_K, Vector3(1, 0.6, 1), 6)
 
 
 ## Haç: bronz, dikilebilir (görsel).
@@ -305,8 +318,11 @@ static func sutun(n: Node3D, p: Vector3, k: float, o: Dictionary, lod: int) -> D
 		var hh := ky - 0.3
 		var run := ceili(hh / ADIM_H) * ADIM_D
 		var start := p + dirv.normalized() * (edge + run)
-		start.y = 0.0
+		start.y = p.y
 		stairs(n, start, -dirv, hh, 1.8, TAS, col)
+		# kaide yüzü ile son basamak arasındaki 0,25 m yarığı kapat (korniş altı dolgu)
+		var fd := dirv.normalized() * (kw * 0.5 + 0.125)
+		box(n, Vector3(1.8 if absf(dirv.x) < 0.5 else 0.25, hh - 0.36, 0.25 if absf(dirv.x) < 0.5 else 1.8), p + fd + Vector3(0, (hh - 0.36) * 0.5, 0), TAS, "", col)
 		out["merdiven_alt"] = start + dirv.normalized() * 0.8 + Vector3(0, 0.02, 0)
 		out["merdiven_ust"] = p + dirv.normalized() * (kw * 0.5 - 0.3) + Vector3(0, ky + 0.02, 0)
 	return out

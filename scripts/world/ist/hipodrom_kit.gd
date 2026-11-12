@@ -82,14 +82,15 @@ static func lead_dome(host: Node3D, r: float, h: float, base: Vector3, ribs := 1
 				var a := TAU * (i + 0.5) / ribs
 				vb(host, Vector3(0.7, minf(drum_h * 0.6, 1.8), 0.14), Vector3(base.x + cos(a) * (r + 0.02), y + drum_h * 0.55, base.z + sin(a) * (r + 0.02)), DARK, Vector3(0, -rad_to_deg(a) + 90.0, 0))
 		y += drum_h
-		vb(host, Vector3(r * 2.1, 0.25, r * 2.1), Vector3(base.x, y + 0.12, base.z), STONE_D)
+		sc(host, r * 1.04, 0.25, Vector3(base.x, y + 0.12, base.z), STONE_D, ribs, r * 1.04)
 		y += 0.25
 	dome(host, r * 0.99, h, Vector3(base.x, y, base.z), LEAD, 14)
 	for i in ribs:
-		var a := TAU * i / ribs
-		var rr := r * 0.5
-		# kaburga: kubbe yüzeyine yaslı ince çıta (eğik kutu)
-		vb(host, Vector3(0.12, h * 1.05, 0.12), Vector3(base.x + cos(a) * rr * 0.98, y + h * 0.5, base.z + sin(a) * rr * 0.98), LEAD.darkened(0.25), Vector3(0, -rad_to_deg(a), -rad_to_deg(atan2(rr * 0.9, h)) * 0.0))
+		var ang := TAU * i / ribs
+		var rad := Vector3(cos(ang), 0, sin(ang))
+		var d := (-rad * r * 0.707 + Vector3.UP * h * 0.707).normalized()
+		var rib := Props.box(host, Vector3(0.1, 0.42 * (r + h), 0.1), Vector3(base.x, y, base.z) + rad * r * 0.707 * 1.02 + Vector3.UP * h * 0.707 * 1.02, LEAD.darkened(0.25))
+		rib.basis = Basis(Quaternion(Vector3.UP, d))
 	# tepede küre ve haç
 	vb(host, Vector3(0.12, 0.9, 0.12), Vector3(base.x, y + h + 0.5, base.z), GOLD)
 	vb(host, Vector3(0.55, 0.1, 0.1), Vector3(base.x, y + h + 0.7, base.z), GOLD)
