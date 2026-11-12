@@ -349,7 +349,7 @@ func _evler() -> void:
 		if gece:
 			var floors := maxi(1, int(round((H - GF) / UF)))
 			var wn := 2 if L < 6.0 else 3
-			var pl := 0.55 if tur == "carsi" else (0.45 if tur == "sik" or tur == "liman" else 0.3)
+			var pl := 0.7 if tur == "carsi" else (0.6 if tur == "sik" or tur == "liman" else 0.42)
 			var fz := D * 0.5
 			if H > GF + 0.1:
 				for fl in floors:
@@ -364,7 +364,9 @@ func _evler() -> void:
 				if rr.randf() < pl:
 					var wp := o3 + bas * Vector3(L * 0.25, 1.9, fz + 0.06)
 					K["pencere"].add(Transform3D(bas, wp), Color(1.0, 0.65, 0.28))
-			if rr.randf() < 0.14 and (tur == "carsi" or tur == "sik" or tur == "liman"):
+			# DOKU-3: gece sokaklar kandil ve meşaleyle (çarşı/liman sık, mahallede seyrek, sur dibinde nöbet meşalesi)
+			var kp_o: float = {"carsi": 0.34, "liman": 0.3, "sik": 0.22, "sur_dibi": 0.2, "seyrek": 0.1}.get(tur, 0.06)
+			if rr.randf() < kp_o:
 				var kp := o3 + bas * Vector3(-L * 0.35, 2.5, fz + 0.45)
 				alev(kp, 0.16, 0.26, 1.7)
 	ist["baca"] = nb
