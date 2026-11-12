@@ -237,13 +237,25 @@ func _carry_ladder() -> void:
 		if c.rig:
 			c.rig.activity = ""
 		c.pose = "push"
-		# Merdiven ayağının iki yanında ve yanında (oyuncunun görüşünün önüne değil, kenarlarına)
-		var at := ladder.global_position + Vector3([-1.15, 1.15, 2.1][k], 0, [0.7, 0.7, 1.3][k])
+		# Merdiven ayağının iki yanında ve arkasında (oyuncunun görüşünün önüne değil, kenarlarına); dikmeye yetişecek
+		# kadar yakın: eller dikmede, ayaklar yerde (yayma P9)
+		var at := ladder.global_position + Vector3([-0.68, 0.68, 0.0][k], 0, [0.32, 0.32, 0.5][k])
 		at.y = Blachernae.slope_y(at.z)
 		var tw := c.create_tween()
 		tw.tween_property(c, "global_position", at, 0.6)
+		tw.tween_callback(_carry_grip.bind(c, k, _carry_lad))
 		c.look_at(Vector3(at.x, at.y, Blachernae.WALL_Z1), Vector3.UP)
 		c.rotate_object_local(Vector3.UP, PI)
+	# Oyuncu ayağı kaldıranların önünden üç metre geri çekilip merdivene döner (yumuşak, 0,9 sn; eskiden merdiven ayağında
+	# sırtı dönük dururdu: ittirenler görüşün dışında, biri kafasının içinde kalıyordu)
+	var from_p := player.global_position
+	var to_p := Vector3(ladder.global_position.x, from_p.y, ladder.global_position.z + 3.6)
+	var gaze0 := player.camera.global_position + (-player.camera.global_transform.basis.z) * 8.0
+	var gaze1 := ladder.point_at(2.6)
+	var back := create_tween()
+	back.tween_method(func(u: float) -> void:
+		player.global_position = from_p.lerp(to_p, u)
+		player.face(gaze0.lerp(gaze1, u)), 0.0, 1.0, 0.9).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_IN_OUT)
 	var target := Transform3D(ladder.global_transform.basis * Basis.from_euler(Vector3(deg_to_rad(-ladder.tilt), 0, 0)), ladder.global_position)
 	var start := _carry_lad.global_transform
 	var rt := create_tween()
@@ -251,15 +263,44 @@ func _carry_ladder() -> void:
 		.set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_IN_OUT)
 	hud.bark("SPK_ZAGANOS", "D30O_Z_PLANT", 3.5)
 	await rt.finished
+	for k in carriers.size():
+		_carry_grip(carriers[k], k, ladder.get_child(0) as Node3D)       # dayanan merdivenin eğik çerçevesi
 	ladder.visible = true
 	_carry_lad.queue_free()
 	Audio.sfx("land_thud", -2.0, 0.8)
 	await get_tree().create_timer(1.2, false).timeout
 	for c in carriers:
+		_carry_release(c)
 		c.visible = false
 
 
 var _carry_lad: Node3D
+var _plant_tw: Dictionary = {}
+
+
+## Merdiveni kaldıran asker: iki eli dikmede (Stage.grip_hold; k < 2 yandaki dikmeyi iki elle, üçüncü alttaki basamağı iki
+## yumrukla), ayakları yerde (Stage.plant_feet her karede, pozdan sonra), gövde öne yaslı. frame: merdivenin dikmelerinin
+## yerel çerçevesi (taşınan görsel ya da dayanan merdivenin eğik çerçevesi: y dikme boyunca, x enine).
+func _carry_grip(c: Soldier, k: int, frame: Node3D) -> void:
+	if not is_instance_valid(c) or not is_instance_valid(frame):
+		return
+	if not _plant_tw.has(c):
+		c.look_at(c.global_position + Vector3(0, 0, -1), Vector3.UP)        # yüzü sura: varırken bakışı eski yerinden hesaplanmıştı
+		c.rotate_object_local(Vector3.UP, PI)
+		var tp := c.create_tween().set_loops()       # grip_hold'dan ÖNCE kurulur: önce ayak, sonra el
+		tp.tween_method(func(_u: float) -> void: Stage.plant_feet(c, func(_x: float, _z: float) -> float: return Blachernae.slope_y(0.0)), 0.0, 1.0, 0.5)
+		_plant_tw[c] = tp
+	var half := Ladder.WIDTH * 0.5
+	var pts: Array = [Vector3(-half if k == 0 else half, 0.95, 0.0), Vector3(-half if k == 0 else half, 1.3, 0.0)] if k < 2 \
+		else [Vector3(-0.3, 1.38, 0.0), Vector3(0.3, 1.38, 0.0)]
+	Stage.grip_hold(c, frame, pts, -1.0, 0.24)
+
+
+func _carry_release(c: Soldier) -> void:
+	Stage.grip_release(c)
+	if _plant_tw.has(c):
+		(_plant_tw[c] as Tween).kill()
+		_plant_tw.erase(c)
 var _wounded_hand_back := false
 var _slow_t := 0.0
 var arrow_hits := 0

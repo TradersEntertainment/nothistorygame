@@ -63,12 +63,47 @@ func _process(delta: float) -> void:
 func _ground() -> void:
 	# İçeride avlu (katı, düz)
 	Props.set_pattern(Props.solid(self, Vector3(140, 0.4, 60), Vector3(0, -0.2, -30.0), Color.WHITE), Color("7a6e5a"), "cobble")
-	# Dışarıda yamaç: üç kademeli katı parçalar (yürünür)
-	for k in 6:
-		var z0 := WALL_Z1 + k * 10.0
-		var y0 := slope_y(z0 + 5.0)
-		var b := Props.solid(self, Vector3(140, 0.4, 10.2), Vector3(0, y0 - 0.2, z0 + 5.0), Color.WHITE)
-		Props.set_pattern(b, Color("4e4a36"), "dirt")
+	# Dışarıda ova: tek katı levha (dış zemin düz; eskiden altı ayrı levhaydı, desen dünya üçgenlemeli: görünüş aynı,
+	# çizim çağrısı beş eksik; ayrıntı ağlarına yer açtı)
+	var b := Props.solid(self, Vector3(140, 0.4, 60.4), Vector3(0, slope_y(WALL_Z1 + 30.0) - 0.2, WALL_Z1 + 30.0), Color.WHITE)
+	Props.set_pattern(b, Color("4e4a36"), "dirt")
+	_field_wear()
+
+
+## Gece ovasının ayrıntısı (yayma P9): ayak izleri (hücum şeritleri sura doğru), taş ve çakıl, yere saplı oklar, birkaç
+## çiğnenmiş çamur yaması. İki ağa pişirilir (sert: taş, ok; yumuşak: iz, çamur): iki çizim çağrısı. Çarpışmasız, gölgesiz;
+## seyrek ve düzensiz (ızgara ya da leke değil). LandWalls.bake_detail ile 22o ve kara surlarındaki gibi.
+func _field_wear() -> void:
+	var flat0 := func(_x: float, _z: float) -> float: return slope_y(0.0)
+	var area := Rect2(-58.0, WALL_Z1 + 1.6, 116.0, 46.0)
+	# Sur dibindeki sıra: merdiven ayakları (bölümün kendi merdiveni x CLIMB) ve kule önleri çoğu yerde izli
+	var hard := SurfaceTool.new()
+	hard.begin(Mesh.PRIMITIVE_TRIANGLES)
+	var soft := SurfaceTool.new()
+	soft.begin(Mesh.PRIMITIVE_TRIANGLES)
+	var dark_stone := [Color("6e685c")]
+	LandWalls.bake_detail(hard, Nature.ground_detail(self, area, "pebble", 0.16, 3051, flat0), [Color("7a7466")])
+	LandWalls.bake_detail(hard, Nature.ground_detail(self, area, "stone", 0.03, 3052, flat0), dark_stone)
+	LandWalls.bake_detail(hard, Nature.ground_detail(self, area, "arrows", 0.012, 3053, flat0), [Color("6a5234")])
+	LandWalls.bake_detail(soft, Nature.ground_detail(self, area, "camp_mud", 0.012, 3054, flat0), [Color("3e3426")])
+	# Hücum şeritleri: ordudan sur dibine inen ayak izleri (altı şerit; biri merdiven yerine kıvrılır)
+	var lanes := [[-48.0, -44.0], [-30.0, -26.0], [-8.0, -4.0], [10.0, 6.0], [30.0, 33.0], [50.0, 46.0]]
+	for i in lanes.size():
+		var ln: Array = lanes[i]
+		LandWalls.bake_detail(soft, Nature.trail(self, [Vector3(float(ln[0]), 0, WALL_Z1 + 46.0), Vector3(float(ln[0]) * 0.5 + float(ln[1]) * 0.5 + 2.0, 0, WALL_Z1 + 24.0),
+			Vector3(float(ln[1]), 0, WALL_Z1 + 3.0)], "footprint", flat0, 1.5, 3060 + i, 0.8), [Color("4a4034")])
+	for pair: Array in [[hard, Nature._detail()], [soft, Nature._soft(false)]]:
+		var mesh := (pair[0] as SurfaceTool).commit()
+		if mesh.get_surface_count() == 0:
+			continue
+		var mi := MeshInstance3D.new()
+		mi.name = "FieldWear"
+		mi.mesh = mesh
+		mi.material_override = pair[1]
+		mi.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
+		mi.set_meta("no_walk", true)        # WorldWalk: dekor, zemin değil
+		mi.set_meta("soft", true)
+		add_child(mi)
 
 
 func _wall() -> void:

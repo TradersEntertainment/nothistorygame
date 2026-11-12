@@ -191,7 +191,7 @@ func _ladders_phase() -> void:
 				var l: Dictionary = up[0]
 				player.global_position = Vector3(float(l["x"]), WALK + 0.05, Blachernae.WALL_Z1 - 1.0)
 				_hold += dt
-				_pole_show(_hold / PUSH_NEED)
+				_pole_show(_hold / PUSH_NEED, l)
 				hud.set_chase(tr("UI_CH30_PUSH"), _hold / PUSH_NEED)
 				if _hold >= PUSH_NEED:
 					_pole_show(-1.0)
@@ -203,7 +203,7 @@ func _ladders_phase() -> void:
 					near = l
 			if not near.is_empty() and Input.is_action_pressed("interact"):
 				_hold += dt
-				_pole_show(_hold / PUSH_NEED)
+				_pole_show(_hold / PUSH_NEED, near)
 				hud.set_chase(tr("UI_CH30_PUSH"), _hold / PUSH_NEED)
 				if _hold >= PUSH_NEED:
 					_pole_show(-1.0)
@@ -220,39 +220,57 @@ func _ladders_phase() -> void:
 	hud.set_objective("")
 
 
-## Merdiveni itmek için çatallı sırık: iki elde, ucu merdivenin başına dayanır; E basılı tutuldukça ileri itilir ve
-## titrer (eskiden elde hiçbir şey yokken merdiven kendiliğinden devriliyordu, sağ elde kumanda duruyordu).
-## p < 0: sırık bırakılır.
-var _pole: Node3D
+## Merdiveni itmek: oyuncunun iki eli merdivenin tepedeki iki dikmesinde (Player.hold_both; eldeki eşya ve kumanda
+## cebe girer), bakış merdiven başına yumuşakça döner (başı kadrajda); E basılı tutuldukça merdiven titrer. Eskiden
+## ellerde yalnız havada bir sırık vardı, merdiven kadrajda değildi. p < 0: eller bırakılır.
 var _pole_hand_back := false
+var _push_on := false
+var _push_lad: Ladder
 
 
-func _pole_show(p: float) -> void:
+func _pole_show(p: float, l: Dictionary = {}) -> void:
 	if p < 0.0:
-		if is_instance_valid(_pole) and _pole.visible:
-			_pole.visible = false
-			player.free_hold = Vector3.INF
+		if _push_on:
+			_push_on = false
+			player.release_both()
+			player.stow_hands(false)
+			if is_instance_valid(_push_lad):
+				_push_lad.rotation.x = 0.0
 			if _pole_hand_back:
 				player.show_remote(true)
 		return
-	if not is_instance_valid(_pole):
-		_pole = Node3D.new()
-		_pole.visible = false          # aşağıdaki "eller sırıkta" dalı ilk itişte de çalışsın (yeni düğüm görünür doğar:
-		                               # ilk merdivende kumanda sağ elde kalıyordu)
-		_pole.set_meta("transient", true)
-		player.camera.add_child(_pole)
-		Props.cyl(_pole, 0.035, 2.4, Vector3(0, 0, -1.0), Color("7a5a3a"), Vector3(-90, 0, 0), 6)
-		for sx: float in [-0.09, 0.09]:
-			Props.cyl(_pole, 0.022, 0.3, Vector3(sx, 0, -2.3), Color("5a5a60"), Vector3(-90, 0, sx * 120.0), 5)
-		Props.strip_outlines(_pole)
-	if not _pole.visible:
-		_pole.visible = true
-		_pole_hand_back = player._hand_shown
-		player.show_remote(false)                             # sırık iki elde: sağ eldeki eşya ve el görünmez
-		player.free_hold = Vector3(0.08, -0.37, -0.62)        # sol el sırığın üstünde
+	var lad: Ladder = l["node"]
 	var k := clampf(p, 0.0, 1.0)
-	_pole.position = Vector3(0.12, -0.42 + k * 0.06, -0.35 - k * 0.3) + Vector3(randf_range(-1, 1), randf_range(-1, 1), 0) * 0.006 * k
-	_pole.rotation_degrees = Vector3(14.0 + k * 4.0, -6.0, 0)
+	if _push_on and _push_lad != lad:
+		_pole_show(-1.0)           # başka merdivene geçildi: eller önce bırakılır
+	if not _push_on:
+		_push_on = true
+		_push_lad = lad
+		_pole_hand_back = player._hand_shown
+		player.stow_hands(true)       # eldeki eşya ve kumanda cebe (iç içe sayaç: hold_both ile birlikte)
+	# Eller merdivenin eğik çerçevesinde (ilk çocuk), tepeye yakın iki dikmede. Oyuncu sura bakıp dışa (+z) döner: sol eli
+	# ekranın solundaki dikmede. Eller kameraya 0,75 m'den yakın çizilemez, merdiven
+	# başı ise 1,5 m'de: dikme aralığı aynı oranda daraltılır ki eller ekranda dikmelerin üstünde dursun.
+	var fr := lad.get_child(0) as Node3D
+	var hy := lad.height - 0.55
+	var dist := player.camera.global_position.distance_to(lad.point_at(lad.height - 0.55))
+	var hx := Ladder.WIDTH * 0.5 * clampf(0.75 / maxf(dist, 0.75), 0.35, 1.0)
+	# Hangi dikme solda: kameranın yerelinde x'i küçük olan sol el (bakış dönerken eller çaprazlanmasın)
+	var pa := Vector3(hx, hy, -0.03)
+	var pb := Vector3(-hx, hy, -0.03)
+	if player.camera.to_local(fr.to_global(pa)).x > player.camera.to_local(fr.to_global(pb)).x:
+		var tmp := pa
+		pa = pb
+		pb = tmp
+	player.hold_both(pa, pb, fr)
+	# Bakış merdiven başına yumuşakça döner
+	var dt := get_process_delta_time()
+	var to := lad.point_at(lad.height - 0.8) - player.camera.global_position
+	var w := clampf(dt * 5.0, 0.0, 1.0)
+	player.rotation.y = lerp_angle(player.rotation.y, atan2(-to.x, -to.z), w)
+	player.camera.rotation.x = lerpf(player.camera.rotation.x, atan2(to.y, Vector2(to.x, to.z).length()) * 0.6, w)
+	# İtildikçe merdiven titrer
+	lad.rotation.x = sin(_t * 38.0) * 0.012 * k
 
 
 func _spawn_ladder(x: float, delay: float) -> void:
