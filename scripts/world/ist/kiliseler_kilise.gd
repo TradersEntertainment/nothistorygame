@@ -129,8 +129,8 @@ static func sapel(b: IstKB) -> void:
 	b.sc(Vector3(0, h * 0.82, -l * 0.5), ap_r + 0.1, 0.9, IstKB.TILE, "tiles", 9, 0.05)
 	# güney sundurma: ahşap-taş sundurma, düz damı yürünebilir (merdivenle)
 	var pz := l * 0.5 + pd * 0.5
-	b.sb(Vector3(-w * 0.5 + 0.35, 0, l * 0.5 + pd - 0.35), Vector3(0.7, ph, 0.7), st, "ashlar")      # sütun payeleri
-	b.sb(Vector3(w * 0.5 - 0.35, 0, l * 0.5 + pd - 0.35), Vector3(0.7, ph, 0.7), st, "ashlar")
+	b.sb(Vector3(-w * 0.5 + 0.35, 0, pz), Vector3(0.7, ph, pd), st, "ashlar")      # yan payeler (duvara yaslı)
+	b.sb(Vector3(w * 0.5 - 0.35, 0, pz), Vector3(0.7, ph, pd), st, "ashlar")
 	b.sb(Vector3(0, ph, pz), Vector3(w + 0.3, 0.25, pd + 0.1), IstKB.TILE, "tiles")                 # sundurma damı
 	# yan duvarlar: sundurmanın yanlarını kapat (sundurma içine girilir; iki pay arası ≥ 1,4)
 	var run := b.stair_run(ph + 0.25)
@@ -246,7 +246,7 @@ static func orta(b: IstKB) -> void:
 	b.ridge(Vector3(0, hb + gr, 0), W + 0.5, false)
 	b.semantron(Vector3(-W * 0.5 + 1.4, nH - 0.4, L * 0.5 + nd), Vector3(0, 0, 1))
 	b.lamp(Vector3(1.4, 1.7, L * 0.5 + nd + 0.07), 0.9)
-	b.tree_cypress(Vector3(-W * 0.5 - 3.4, 0, nz + 1.5), 6.0)
+	b.tree_cypress(Vector3(-W * 0.5 - 3.4, 0, nz + 4.0), 6.0)
 	b.tree_cypress(Vector3(W * 0.5 + 3.0, 0, nz + 2.0), 5.5)
 	b.flush()
 
@@ -308,8 +308,9 @@ static func bazilika(b: IstKB) -> void:
 	b.add_climb(sn[0], Vector3(W * 0.5 - 0.8, nH, nz), "basamak")
 	# yer → revak damı: batı ucundan merdiven
 	var run := b.stair_run(ph)
-	var sres := b.stair(Vector3(-W * 0.5 - 0.1 - run, 0, pz), Vector3.RIGHT, 1.5, ph, IstKB.STONE_D)
-	b.add_climb(sres[0], Vector3(-W * 0.5 + 0.8, ph, pz), "basamak")
+	var sz := L * 0.5 + nd + 0.8
+	var sres := b.stair(Vector3(-W * 0.5 + 0.3 - run, 0, sz), Vector3.RIGHT, 1.5, ph, IstKB.STONE_D)
+	b.add_climb(sres[0], Vector3(-W * 0.5 + 0.9, ph, sz), "basamak")
 	b.add_perch(Vector3(0, ph, pz))
 	b.add_perch(Vector3(0, nH, nz - 0.2))
 	# mahya sonu akroter kaidesi (tepe konma noktası)

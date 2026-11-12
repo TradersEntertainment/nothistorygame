@@ -37,8 +37,8 @@ static func manastir(b: IstKB) -> void:
 	b.sb(Vector3(0, wh, -E - wt * 0.5), Vector3(full, 1.05, par), IstKB.STONE_D, "ashlar")
 	# doğu / batı duvarı
 	for sgn in [-1.0, 1.0]:
-		b.sb(Vector3(sgn * E, 0, 0), Vector3(wt + par, wh, 2.0 * E - (wt + par)), st, "ashlar")
-		b.sb(Vector3(sgn * (E + wt * 0.5), wh, 0), Vector3(par, 1.05, 2.0 * E - (wt + par)), IstKB.STONE_D, "ashlar")
+		b.sb(Vector3(sgn * E, 0, 0), Vector3(wt + par, wh, 2.0 * E - (wt + par) + 0.2), st, "ashlar")
+		b.sb(Vector3(sgn * (E + wt * 0.5), wh, 0), Vector3(par, 1.05, full), IstKB.STONE_D, "ashlar")
 	# güney duvarı: kule + iki kanat (geçit boş)
 	var wing := (full - tw) * 0.5
 	for sgn in [-1.0, 1.0]:
@@ -48,7 +48,7 @@ static func manastir(b: IstKB) -> void:
 	var jamb := (tw - gate_w) * 0.5
 	for sgn in [-1.0, 1.0]:
 		b.sb(Vector3(sgn * (gate_w * 0.5 + jamb * 0.5), 0, E), Vector3(jamb, th, td), st, "ashlar")
-	b.sb(Vector3(0, arch_h, E), Vector3(gate_w + 0.02, th - arch_h, td), st, "ashlar")
+	b.sb(Vector3(0, arch_h, E), Vector3(gate_w + 0.5, th - arch_h, td), st, "ashlar")
 	# kule çatısı: yürünebilir düz tepe + kenarlık değil; ince kiremit alın
 	b.sb(Vector3(0, th, E), Vector3(tw + 0.3, 0.3, td + 0.3), IstKB.TILE, "tiles")
 	b.add_perch(Vector3(0, th + 0.3, E))
@@ -76,15 +76,15 @@ static func manastir(b: IstKB) -> void:
 	b.sb(Vector3(cx0 + cd * 0.5, 0, cz), Vector3(cd, ch - 0.14, clen), st, "ashlar")
 	b.sb(Vector3(cx0 + cd * 0.5, ch - 0.14, cz), Vector3(cd + 0.3, 0.14, clen + 0.3), IstKB.TILE, "tiles")
 	# revak: sütun sırası + düz dam
-	var rv := 2.0
+	var rv := 2.4
 	var ncol := maxi(3, int(floor(clen / 2.8)) + 1)
 	for i in ncol:
 		var zz := cz - clen * 0.5 + 0.4 + (clen - 0.8) * float(i) / (ncol - 1)
 		b.sb(Vector3(cx0 + cd + rv - 0.35, 0, zz), Vector3(0.55, 2.5, 0.55), st, "ashlar")
 	b.sb(Vector3(cx0 + cd + rv * 0.5, 2.5, cz), Vector3(rv + 0.05, 0.25, clen), IstKB.TILE, "tiles")
 	# hücre damına merdiven (güney uçtan)
-	var cs := b.stair(Vector3(cx0 + cd * 0.5, 0, cz + clen * 0.5 + b.stair_run(ch) + 0.2), Vector3(0, 0, -1), 1.5, ch, IstKB.STONE_D)
-	b.add_climb(cs[0], Vector3(cx0 + cd * 0.5, ch, cz + clen * 0.5 - 0.8), "basamak")
+	var cs := b.stair(Vector3(cx0 + cd * 0.5, 0, cz - clen * 0.5 - b.stair_run(ch) + 0.15), Vector3(0, 0, 1), cd, ch, IstKB.STONE_D)
+	b.add_climb(cs[0], Vector3(cx0 + cd * 0.5, ch, cz - clen * 0.5 + 0.8), "basamak")
 	b.add_perch(Vector3(cx0 + cd * 0.5, ch, cz - clen * 0.25))
 	# ---- yemekhane (trapeza): doğu tarafta, apsisli uzun yapı
 	var rw := maxf(b.S(7.0), 5.4)
@@ -96,11 +96,18 @@ static func manastir(b: IstKB) -> void:
 	b.gable(Vector3(rx, rh, rz), rw + 0.5, clampf(b.S(2.4), 1.2, 2.4), rl + 0.5, IstKB.TILE, true)
 	b.sc(Vector3(rx, 0, rz - rl * 0.5), rw * 0.4, rh * 0.8, st, "ashlar", 9)
 	b.sc(Vector3(rx, rh * 0.8, rz - rl * 0.5), rw * 0.4 + 0.1, 1.0, IstKB.TILE, "tiles", 9, 0.05)
-	# yemekhane damına dış merdiven: duvar kenarına yaslı yan sundurma (düz basamaklı)
-	var rrun := b.stair_run(2.4)
-	var rs := b.stair(Vector3(rx + rw * 0.5 + 0.1 + rrun + 0.0, 0, rz + rl * 0.5 - 1.6), Vector3.LEFT, 1.4, 2.4, IstKB.STONE_D)
-	b.sb(Vector3(rx + rw * 0.5 - 0.7, 0, rz + rl * 0.5 - 1.6), Vector3(1.4, 2.4, 1.4), IstKB.STONE_D, "ashlar")         # sahanlık
-	b.add_climb(rs[0], Vector3(rx + rw * 0.5 - 0.7, 2.4, rz + rl * 0.5 - 1.6), "basamak")
+	# yemekhane yanında düz damlı ek bina (mutfak): damına güneyden merdivenle çıkılır
+	var aw2 := 2.6
+	var ah2 := 3.0
+	var az := rz + rl * 0.1
+	var al2 := 6.0
+	var ax := rx + rw * 0.5 + aw2 * 0.5
+	b.sb(Vector3(ax, 0, az), Vector3(aw2, ah2 - 0.12, al2), st, "ashlar")
+	b.sb(Vector3(ax, ah2 - 0.12, az), Vector3(aw2 + 0.2, 0.12, al2 + 0.2), IstKB.TILE, "tiles")
+	var arun := b.stair_run(ah2)
+	var as_ := b.stair(Vector3(ax, 0, az + al2 * 0.5 + 0.1 + arun), Vector3(0, 0, -1), aw2, ah2, IstKB.STONE_D)
+	b.add_climb(as_[0], Vector3(ax, ah2, az + al2 * 0.5 - 0.8), "basamak")
+	b.add_perch(Vector3(ax, ah2, az - 1.0))
 	# ---- phiale (pınar köşkü): meydanın güneyinde
 	var px := 0.0
 	var pz := E * 0.55
@@ -108,8 +115,8 @@ static func manastir(b: IstKB) -> void:
 	var wmesh := b.sc(Vector3(px, 0.85, pz), 1.05, 0.05, IstKB.WATER, "", 12)
 	var pr := 3.2
 	for i in 6:
-		var a := TAU * i / 6.0 + 0.2
-		b.sc(Vector3(px + cos(a) * pr, 0, pz + sin(a) * pr), 0.16, 3.0, IstKB.MARBLE, "marble", 8)
+		var a := TAU * i / 6.0
+		b.sc(Vector3(px + sin(a) * pr, 0, pz + cos(a) * pr), 0.16, 3.0, IstKB.MARBLE, "marble", 8)
 	b.sc(Vector3(px, 3.0, pz), pr + 0.5, 1.1, IstKB.TILE, "tiles", 12, 0.12)
 	b.add_perch(Vector3(px, 4.1, pz))
 	# ---- bostan yatakları (kuzey duvar dibi), selvi ve zeytin
@@ -118,7 +125,7 @@ static func manastir(b: IstKB) -> void:
 	b.tree_cypress(Vector3(E * 0.8, 0, -E * 0.7), 6.5)
 	b.tree_cypress(Vector3(E * 0.8, 0, -E * 0.45), 6.0)
 	b.tree_cypress(Vector3(-E * 0.8, 0, -E * 0.75), 6.5)
-	b.tree_plane(Vector3(-E * 0.3, 0, E * 0.55), 6.0)
+	b.tree_plane(Vector3(-E * 0.45, 0, E * 0.28), 6.0)
 	if b.lod == 1:
 		return
 	# ---- ayrıntılar
@@ -154,8 +161,8 @@ static func manastir(b: IstKB) -> void:
 	b.ridge(Vector3(rx, rh + clampf(b.S(2.4), 1.2, 2.4), rz), rl + 0.5)
 	b.band_ring(Vector3(rx, 0, rz), rw * 0.5, rl * 0.5, rh - 0.5, 0.16)
 	# kuyu başı vb.: avluda taş ağızlıklı kuyu + gülle yığını yerine küp (testi) dizisi
-	b.sc(Vector3(-E * 0.55, 0, E * 0.4), 0.8, 0.9, IstKB.STONE_D, "ashlar", 10)
-	b.sc(Vector3(-E * 0.55, 0.9, E * 0.4), 0.6, 0.05, IstKB.DARK, "", 10)
+	b.sc(Vector3(-E * 0.32, 0, E * 0.62), 0.8, 0.9, IstKB.STONE_D, "ashlar", 10)
+	b.sc(Vector3(-E * 0.32, 0.9, E * 0.62), 0.6, 0.05, IstKB.DARK, "", 10)
 	b.grass_patch(Vector3(E * 0.8, 0, E * 0.5), 3.0, 2.0)
 	b.grass_patch(Vector3(-E * 0.75, 0, -E * 0.3), 2.0, 2.6)
 	b.flush()
@@ -192,8 +199,8 @@ static func ayazma(b: IstKB) -> void:
 	b.add_perch(apex + Vector3(0.15, 0, 0))
 	b.add_perch(Vector3(0, h, l * 0.3))
 	# pınar kovuğu: arka duvarda mermer niş + oluk + havuz (dolu mermer blok: içine düşülmez)
-	b.sb(Vector3(0, 0.1, -l * 0.5 + wt + 0.55), Vector3(1.6, 0.7, 1.0), IstKB.MARBLE, "marble")
-	b.sb(Vector3(0, 0.8, -l * 0.5 + wt + 0.55), Vector3(1.3, 0.05, 0.7), IstKB.WATER)
+	b.sb(Vector3(0, 0.1, -l * 0.5 + wt + 0.55), Vector3(w - 2.0 * wt + 0.1, 0.7, 1.0), IstKB.MARBLE, "marble")
+	b.sb(Vector3(0, 0.8, -l * 0.5 + wt + 0.55), Vector3(w - 2.0 * wt - 0.3, 0.05, 0.7), IstKB.WATER)
 	# batı merdiveni (dama)
 	var run := b.stair_run(h)
 	var sres := b.stair(Vector3(-w * 0.5 - 0.2 - run, 0, 0.6), Vector3.RIGHT, 1.5, h, IstKB.STONE_D)
@@ -287,9 +294,9 @@ static func kule(b: IstKB) -> void:
 	b.vc(Vector3(plat * 0.5 + 1.4, th - 0.2, 0.0), 0.32, 0.38, IstKB.WOOD, 8, Vector3.ZERO, 0.24, true)               # sepet
 	b.cross(Vector3(0, th + 3.5, 0), 0.9)
 	# kayalık taban: kulenin dibinde taş toprak yığınları, otlar
-	b.rubble_heap(Vector3(-tw * 0.5 - 1.6, 0, -tw * 0.4), 1.4, 0.8, IstKB.STONE_D)
+	b.grass_patch(Vector3(-tw * 0.5 - 1.2, 0, -tw * 0.4), 1.4, 1.0)
 	b.grass_patch(Vector3(tw * 0.5 + 2.0, 0, -1.5), 1.8, 1.4)
-	b.tree_cypress(Vector3(tw * 0.5 + 4.0, 0, tw * 0.5 + 3.0), 5.0)
+	b.tree_cypress(Vector3(tw * 0.5 + 4.0, 0, tw * 0.5 + 6.5), 5.0)
 	b.flush()
 
 
