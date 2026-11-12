@@ -167,7 +167,7 @@ yerine `IstDunya.build` + `IstSehir.attach_v2`; (2) `flight_data` çağrıları 
 - `parse_check`: PASS (322 betik, birleşik dal). `world_check` PASS (13 bölge, 35 işaret), `city_check` PASS, `flight_check` PASS
   (eski dünya; dosyalarına dokunulmadı).
 - Yürüme sınaması (`kip=yuru_sina`, şehirsiz, S = 0,35): `yol=130 m alt_dusme=0 yerde_en_buyuk_fark=0.01`, yakalayıcı PASS.
-- Bölüm 6, 7, 11 başsız `--autotest`: PASS (6a.1, 7.1, 11.2; yasak satır 0). 12b, 24: BAKILMADI.
+- Bölüm 6, 7, 11, 12b, 24 başsız `--autotest`: PASS (6a.1, 7.1, 11.2, 12B.1, 24.1; yasak satır 0).
 
 ## ORTAK BİLGİ / İSTEK
 
