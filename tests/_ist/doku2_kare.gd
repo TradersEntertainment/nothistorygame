@@ -25,7 +25,7 @@ const BAKIS := [
 	["sokak", -1150.0, 330.0, "1.7", 0.0, -4.0, "sokak"],
 	["sokak_bati", -3300.0, 400.0, "1.7", 0.0, -4.0, "sokak"],
 	["cati", -950.0, 380.0, "1.7", 200.0, -12.0, "cati"],
-	["sur_dibi30", -4250.0, 1100.0, "30", 250.0, -28.0, ""],
+	["sur_dibi30", -4300.0, 150.0, "30", 255.0, -26.0, ""],
 	["sur_dibi_yer", -4400.0, 400.0, "1.7", 0.0, -3.0, "sur"],
 ]
 
@@ -83,6 +83,7 @@ func _kareler() -> void:
 		var dc := RenderingServer.get_rendering_info(RenderingServer.RENDERING_INFO_TOTAL_DRAW_CALLS_IN_FRAME)
 		var pr := RenderingServer.get_rendering_info(RenderingServer.RENDERING_INFO_TOTAL_PRIMITIVES_IN_FRAME)
 		print("RINFO doku2 %s cizim=%d ucgen=%d konum=%s" % [ad, dc, pr, cam.global_position])
+		print("DOKU2 dagilim %s %s" % [ad, _dagilim()])
 		if shots != "":
 			var img := get_viewport().get_texture().get_image()
 			img.save_png(shots.path_join(on + ad + ".png"))
@@ -145,6 +146,48 @@ func _kam(b: Array) -> bool:
 	return true
 
 
+## Kabaca: kameranın önünde ve görünürlük aralığında olan çizim yüzeyleri, katmana göre (IstSehir altında ad önekiyle)
+func _dagilim() -> Dictionary:
+	var out := {}
+	var cp := cam.global_position
+	var fw := -cam.global_transform.basis.z
+	for n in get_tree().root.find_children("*", "GeometryInstance3D", true, false):
+		var g := n as GeometryInstance3D
+		if not g.is_visible_in_tree():
+			continue
+		var p := g.global_position
+		var aabb := g.get_aabb()
+		var gc := g.global_transform * aabb.get_center()
+		var d := cp.distance_to(gc)
+		var rad := aabb.size.length() * 0.5
+		if g.visibility_range_end > 0.0 and d > g.visibility_range_end + rad * 0.0:
+			continue
+		if d < g.visibility_range_begin:
+			continue
+		if (gc - cp).dot(fw) < -rad:
+			continue
+		var surf := 1
+		if g is MeshInstance3D and (g as MeshInstance3D).mesh:
+			surf = (g as MeshInstance3D).mesh.get_surface_count()
+		var key := ""
+		var cur: Node = g
+		while cur != null and cur.get_parent() != null:
+			var par := cur.get_parent()
+			if par.name in ["IstSehir", "IstMahalleDoku"] or par is IstDunya:
+				key = String(par.name) + "/" + String(cur.name).rstrip("0123456789_").left(14)
+				break
+			cur = par
+		if key == "":
+			key = "diger"
+		out[key] = int(out.get(key, 0)) + surf
+	var top: Array = []
+	for k in out:
+		top.append([out[k], k])
+	top.sort()
+	top.reverse()
+	return {"ilk": top.slice(0, 12)}
+
+
 ## Sayım: ev ve tip dağılımı, aralıklar, 40 m'lik karelerde boşluk
 func _sayim() -> void:
 	var sk: IstSokak = IstSehir.sokak
@@ -162,6 +205,39 @@ func _sayim() -> void:
 	var st := {}
 	for s: Dictionary in sk.streets:
 		st[String(s["tur"])] = int(st.get(String(s["tur"]), 0)) + 1
+	var hist := {}
+	var nic := 0
+	for j in range(0, sk.nz, 2):
+		for i in range(0, sk.nx, 2):
+			var c := sk.cell_c(i, j)
+			if not IstGeo.sehir_ici(c.x, c.y):
+				continue
+			nic += 1
+			var o := sk.occ[j * sk.nx + i]
+			hist[o] = int(hist.get(o, 0)) + 1
+	var hp := {}
+	for o in hist:
+		hp[["bos", "yol", "ev", "anit_sur", "dis", "doku", "avlu"][int(o)]] = "%.1f%%" % (100.0 * hist[o] / maxf(nic, 1))
+	print("DOKU2 doluluk sehir_ici ", hp)
+	if IstSehir.active and OS.get_cmdline_user_args().has("anit=1"):
+		var lst: Array = []
+		for it: Dictionary in IstSehir.active.items:
+			if it.has("hat"):
+				continue
+			var dt: Dictionary = it.get("data", {})
+			lst.append([float(it["r"]), String(it["id"]), dt.get("gercek_olcu", Vector3.ZERO), float(it.get("k", 0.0)), it.keys()])
+		lst.sort()
+		lst.reverse()
+		for e in lst.slice(0, 25):
+			print("DOKU2 anit ", e)
+	if shots != "" or OS.get_cmdline_user_args().has("--harita=1") or OS.get_cmdline_user_args().has("harita=1"):
+		var img := Image.create(sk.nx, sk.nz, false, Image.FORMAT_RGB8)
+		var pal := [Color("6a8a4a"), Color("d8d0b8"), Color("b05030"), Color("404040"), Color("203050"), Color("90b050"), Color("c8a060")]
+		for j in sk.nz:
+			for i in sk.nx:
+				img.set_pixel(i, j, pal[sk.occ[j * sk.nx + i]])
+		var yol := shots if shots != "" else "/root/is"
+		img.save_png(yol.path_join(on + "doluluk.png"))
 	print("DOKU2 sayim ev=%d sira=%d tip=%s kat=%s sokak=%s doku=%d meydan=%d stats=%s" % [sk.houses.size(), sk.rows, tips, katlar, st,
 		sk.doku.size(), sk.meydan.size(), sk.stats])
 	# Aralıklar: ev tabanı dikdörtgenleri (cumba dahil değil) arasındaki en kısa uzaklık
@@ -244,6 +320,13 @@ func _sayim() -> void:
 				if not IstGeo.sehir_ici(c.x + o.x, c.y + o.y) or IstGeo.su(c.x + o.x, c.y + o.y):
 					ic = false
 			if not ic or sk.cell(c.x, c.y) == 3:
+				continue
+			var oyun := false
+			if IstSehir.active:
+				for a: Rect2 in IstSehir.active.oyun_alanlari():
+					if a.grow(20.0).has_point(c):
+						oyun = true
+			if oyun:
 				continue
 			top += 1
 			if not dolu.has(Vector2i(i, j)):

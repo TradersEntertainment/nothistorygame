@@ -24,12 +24,12 @@ const OGE_YAKIN := 110.0
 const CARP_YAKIN := 150.0
 
 ## Zemin renkleri (ISTANBUL_GORUNUS §2: toprak yol kuru #A89677 / çamurlu #7C6B52; kaldırım iri kesme taş #9A9588)
-const R_MESE := Color("a29d8f")
-const R_YOL := Color("8f8a7d")
-const R_TOPRAK := Color("a89677")
-const R_CAMUR := Color("7c6b52")
-const R_AVLU := Color("9a8c70")
-const R_SAVUNMA := Color("948670")
+const R_MESE := Color("8a8579")
+const R_YOL := Color("7a766a")
+const R_TOPRAK := Color("8f8065")
+const R_CAMUR := Color("6a5b46")
+const R_AVLU := Color("83775f")
+const R_SAVUNMA := Color("7e725f")
 
 static var aktif: IstMahalleDoku
 static var _kuruldu_sokak: IstSokak
@@ -280,10 +280,10 @@ func _renk(t: int, p: Vector2) -> Color:
 	var tane := _hs(floorf(p.x * 0.5), floorf(p.y * 0.5), t) - 0.5
 	var c: Color
 	match t:
-		1: c = R_MESE.lerp(Color("b4ad9c"), leke * 0.6)
-		2: c = R_YOL.lerp(Color("7e786c"), leke * 0.5)
+		1: c = R_MESE.lerp(Color("999384"), leke * 0.6)
+		2: c = R_YOL.lerp(Color("6b665c"), leke * 0.5)
 		4: c = R_SAVUNMA.lerp(R_CAMUR, leke * 0.35)
-		5: c = R_AVLU.lerp(Color("8f8a62"), leke * 0.45)
+		5: c = R_AVLU.lerp(Color("7a7653"), leke * 0.45)
 		_: c = R_TOPRAK.lerp(R_CAMUR, clampf(leke * 0.7 - 0.1, 0.0, 1.0))
 	return c.lightened(tane * 0.08) if tane > 0.0 else c.darkened(-tane * 0.08)
 
@@ -305,21 +305,57 @@ func _zemin_mat(tas: bool) -> StandardMaterial3D:
 		m.uv1_world_triplanar = true
 		m.uv1_scale = Vector3(0.3, 0.3, 0.3)
 	else:
-		var tex := Props._pattern_tex("cobble")
+		# toprak: yumuşak gürültü (sıkışmış toprak, çakıl lekeleri); ortalaması 1'e çekilir
+		var tex := Props._noise("concrete")
 		m.albedo_texture = tex
-		var a := World1453._avg(tex)
-		# toprak: kaldırım dokusu çok soluk (taneli toprak izi)
-		m.albedo_color = Color(minf(1.0 / maxf(a.r, 0.3), 1.6), minf(1.0 / maxf(a.g, 0.3), 1.6), minf(1.0 / maxf(a.b, 0.3), 1.6))
+		m.albedo_color = Color(1.15, 1.15, 1.15)
 		m.uv1_triplanar = true
 		m.uv1_world_triplanar = true
-		m.uv1_scale = Vector3(0.12, 0.12, 0.12)
-		m.detail_enabled = false
+		m.uv1_scale = Vector3(0.18, 0.18, 0.18)
 	return m
 
 
 # ================================================================ 2. avlular
 
 const AVLU_AGAC := ["erguvan", "incir", "nar", "dut", "servi", "badem", "zeytin"]
+const BAHCE_AGAC := ["incir", "dut", "zeytin", "servi", "nar", "erguvan", "badem", "kiraz", "defne"]
+
+
+## Sebze tarhları ve çalılar (alçak, çarpışmasız): 192 m hücre başına tek ağ (köşe renkli)
+func _tarhlar(tarh: Dictionary) -> void:
+	var renk := [Color("4f6a2e"), Color("5e7a34"), Color("6b7a3a"), Color("7a6a48")]
+	var mat := StandardMaterial3D.new()
+	mat.vertex_color_use_as_albedo = true
+	mat.vertex_color_is_srgb = true
+	mat.diffuse_mode = BaseMaterial3D.DIFFUSE_TOON
+	mat.roughness = 1.0
+	for tk: Vector2i in tarh:
+		var st := SurfaceTool.new()
+		st.begin(Mesh.PRIMITIVE_TRIANGLES)
+		var cen := Vector3((tk.x + 0.5) * DUVAR_HUCRE, 0, (tk.y + 0.5) * DUVAR_HUCRE)
+		for e: Array in tarh[tk]:
+			var c: Vector2 = e[0]
+			var hsh: float = e[1]
+			var y := IstGeo.h(c.x, c.y)
+			var bas := Basis(Vector3.UP, hsh * 23.0)
+			if hsh < 0.52:
+				# üç sıra sebze tarhı (toprak + yeşil sıra)
+				_kutu(st, Transform3D(bas, Vector3(c.x, y + 0.04, c.y)), Vector3(3.4, 0.12, 3.0), Color("6a5a40"), cen)
+				for r in 3:
+					_kutu(st, Transform3D(bas, Vector3(c.x, y + 0.2, c.y) + bas * Vector3(0, 0, (r - 1) * 0.95)), Vector3(3.0, 0.22, 0.45), renk[(r + int(hsh * 100.0)) % 3], cen)
+			else:
+				# çalı kümesi
+				for r in 3:
+					var o := bas * Vector3((r - 1) * 0.9, 0, (r % 2) * 0.6)
+					_kutu(st, Transform3D(bas.rotated(Vector3.UP, r * 0.7), Vector3(c.x, y + 0.35, c.y) + o), Vector3(1.0, 0.75, 0.9), renk[(r + 1) % 4], cen)
+		var mi := MeshInstance3D.new()
+		mi.mesh = st.commit()
+		mi.material_override = mat
+		mi.position = cen
+		mi.visibility_range_end = DUVAR_UZAK
+		mi.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
+		mi.set_meta("no_walk", true)
+		add_child(mi)
 
 func _avlular() -> void:
 	var gruplar := {}                 # Vector2i(192) → SurfaceTool
@@ -404,28 +440,79 @@ func _avlular() -> void:
 		mi.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_ON
 		mi.set_meta("no_walk", true)
 		add_child(mi)
-	# avlu ağaçları: 64 m hücre başına tür başına MultiMesh (orta ayrıntı; 380 m'ye kadar)
+	# blok içlerinde kalan boş yerler: bahçe ağaçları ve tarhlar (her 6 m'de; çevresi 3 × 3 hücre boşsa: geçit tıkanmaz)
+	var nb := 0
+	var tarh := {}
+	for j in range(1, sk.nz - 1, 3):
+		for i in range(1, sk.nx - 1, 3):
+			var k := j * sk.nx + i
+			if sk.occ[k] != 0:
+				continue
+			var bos := true
+			for dj in range(-1, 2):
+				for di in range(-1, 2):
+					if sk.occ[k + dj * sk.nx + di] != 0:
+						bos = false
+			if not bos:
+				continue
+			var c := sk.cell_c(i, j)
+			if not (IstGeo.sehir_ici(c.x, c.y) or IstGeo.galata_ici(c.x, c.y)):
+				continue
+			var hsh := _hs(float(i), float(j), 3)
+			c += Vector2(_hs(float(i), float(j), 5) - 0.5, _hs(float(i), float(j), 6) - 0.5) * 1.6
+			if hsh < 0.42:
+				var ak := Vector2i(floori(c.x / OGE_HUCRE), floori(c.y / OGE_HUCRE))
+				var tur: String = BAHCE_AGAC[int(hsh * 1000.0) % BAHCE_AGAC.size()]
+				if not agac.has(ak):
+					agac[ak] = {}
+				if not agac[ak].has(tur):
+					agac[ak][tur] = []
+				agac[ak][tur].append(Transform3D(Basis(Vector3.UP, hsh * 40.0).scaled(Vector3.ONE * (0.75 + hsh * 0.5)), Vector3(c.x, IstGeo.h(c.x, c.y) - 0.05, c.y)))
+				nb += 1
+			elif hsh < 0.62:
+				var tk := Vector2i(floori(c.x / DUVAR_HUCRE), floori(c.y / DUVAR_HUCRE))
+				if not tarh.has(tk):
+					tarh[tk] = []
+				tarh[tk].append([c, hsh])
+	stats["bahce_agac"] = nb
+	_tarhlar(tarh)
+	# avlu ağaçları: 192 m hücre başına TEK ağ (bütün türler birleşik; IstBitki tek malzeme), 380 m'ye kadar
+	var ag2 := {}
 	for ak: Vector2i in agac:
 		for tur: String in agac[ak]:
-			var m: Mesh = IstBitki.tree_mesh(tur, 1)
+			for x: Transform3D in agac[ak][tur]:
+				var k2 := Vector2i(floori(x.origin.x / DUVAR_HUCRE), floori(x.origin.z / DUVAR_HUCRE))
+				if not ag2.has(k2):
+					ag2[k2] = []
+				ag2[k2].append([tur, x])
+	for k2: Vector2i in ag2:
+		if not _duvar_cells.has(k2):
+			_duvar_cells[k2] = {"boxes": [], "body": null}
+		for e: Array in ag2[k2]:
+			var x: Transform3D = e[1]
+			(_duvar_cells[k2]["boxes"] as Array).append([Transform3D(Basis.IDENTITY, x.origin + Vector3(0, 1.1, 0)), Vector3(0.45, 2.2, 0.45)])
+		var st := SurfaceTool.new()
+		st.begin(Mesh.PRIMITIVE_TRIANGLES)
+		var cen := Vector3((k2.x + 0.5) * DUVAR_HUCRE, 0, (k2.y + 0.5) * DUVAR_HUCRE)
+		var mat: Material = null
+		for e: Array in ag2[k2]:
+			var m: Mesh = IstBitki.tree_mesh(String(e[0]), 1)
 			if m == null:
 				continue
-			var mm := MultiMesh.new()
-			mm.transform_format = MultiMesh.TRANSFORM_3D
-			mm.mesh = m
-			var xs: Array = agac[ak][tur]
-			mm.instance_count = xs.size()
-			var cen := Vector3((ak.x + 0.5) * OGE_HUCRE, 0, (ak.y + 0.5) * OGE_HUCRE)
-			for i in xs.size():
-				var x: Transform3D = xs[i]
-				mm.set_instance_transform(i, Transform3D(x.basis, x.origin - cen))
-			var mmi := MultiMeshInstance3D.new()
-			mmi.multimesh = mm
-			mmi.position = cen
-			mmi.visibility_range_end = OGE_ORTA
-			mmi.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
-			mmi.set_meta("no_walk", true)
-			add_child(mmi)
+			var x: Transform3D = e[1]
+			for si in m.get_surface_count():
+				if mat == null:
+					mat = m.surface_get_material(si)
+				st.append_from(m, si, Transform3D(x.basis, x.origin - cen))
+		var mi := MeshInstance3D.new()
+		mi.mesh = st.commit()
+		if mat:
+			mi.material_override = mat
+		mi.position = cen
+		mi.visibility_range_end = OGE_ORTA
+		mi.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_ON
+		mi.set_meta("no_walk", true)
+		add_child(mi)
 	stats["avlu"] = n
 	stats["duvar_hucre"] = gruplar.size()
 
