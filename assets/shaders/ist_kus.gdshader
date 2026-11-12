@@ -1,7 +1,7 @@
 // İstanbul v2: martı ve güvercin sürüleri (MultiMesh). Örnek dönüşümü = sürü merkezi (ölçek 1 ya da kuş boyu);
 // özel veri: x = yarıçap, y = yükseklik (merkezden), z = açısal hız (rad/sn, işaretli), w = evre.
 shader_type spatial;
-render_mode cull_disabled, diffuse_lambert, specular_disabled;
+render_mode cull_disabled, unshaded;
 
 varying vec3 v_col;
 

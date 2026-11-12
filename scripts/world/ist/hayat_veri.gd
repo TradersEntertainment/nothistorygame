@@ -312,8 +312,6 @@ func _evler() -> void:
 			duman(cp + Vector3(0, 1.1, 0), 2, 1.0)
 			var fw := o3 + bas * Vector3(-L * 0.3, 0.9, D * 0.5 + 0.7)
 			alev(fw, 0.55, 0.85, 2.4)
-			var ps := Vector2(fw.x, fw.z) + Vector2(sin(yaw) , cos(yaw)) * 0.0
-			var dir := Vector2(-sin(yaw), -cos(yaw)) * -1.0
 			# usta ocağın yanında, sokağa dönük değil ocağa dönük
 			var pu := Vector2(fw.x, fw.z) + Vector2(cos(yaw), -sin(yaw)) * 1.0 + Vector2(sin(yaw), cos(yaw)) * 0.6
 			insan(pu, Vector2(-cos(yaw), sin(yaw)), 0.0, 0.0, 2, R_HAMAL, 0, 1.0, -1.0, y + 0.0)
