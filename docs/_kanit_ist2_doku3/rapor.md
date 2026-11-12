@@ -39,6 +39,9 @@ Kareler: kendi sondam `tests/_ist/doku2_kare.tscn -- tur=3 [gece=1]` (IstDunya i
   `Crowd._bake` pişmiş ikiz) artık her v2 kurulumunda `IstHayat.attach` içinden kuruluyor (`ISTHAYAT yakin_kur_ms=797–1 087`,
   önbellekle; ilk açılış 5,4 sn). Küp figürler gölgelendiricide 88 m'den yakında yok olur: `y_carsi_once_sonra`,
   `y_ayasofya_once_sonra`: ÖNCE ön planda küp figürler, SONRA oyunun gerçek kişileri (kadın, sakallı adam, çocuk…).
+- **Havadan:** gizleme yalnız yerdeki kamerada: kamera figürün 15–26 m üstüne çıkınca küp figür yakında da görünür
+  (`p08_hava30`: SONRA'da Mese kalabalığı ÖNCE'den yoğun: yakın kişiler + küp figürler). İlk denememde 30 m'den kalabalık
+  azalmıştı (gece paftası `p11` o kayıttan; düzeltme sonrası gece karesi BAKILMADI).
 - **Geçiş:** yakın katman 18–85 m'de doğar (görüşte ≥ 50 m, kapı dibinde ≥ 22 m), 105 m'de havuza döner; küp figür 88–98 m
   bandında boyu 0 → 1 büyür. Örtüşme bandında iki katman birlikte (çakışma değil, sayı artışı). Hareketli gözlem:
   BAKILMADI (durağan karelerle).
@@ -145,9 +148,9 @@ Kendi bakışım (karelerden):
 ## 7. Testler
 
 - `PARSECHECK PASS scripts=327` (birleşik dal).
-- Başsız bölüm testleri (ŞEHİR-3/BAĞLAMA-3 birleşmeden ÖNCE, benim değişikliklerimle): Bölüm 11, 7, 12 `AUTOTEST PASS`, yasak
-  satır yok. Birleşik dalda (BAĞLAMA'nın v2 uçuş bölümleri) bölüm testi: BAKILMADI (süre) → BAĞLAMA'nın koşularında
-  `CityLife` düğümü artık v2 dünyasının altında: ORTAK İSTEK 2.
+- Başsız bölüm testleri: birleşmeden önce Bölüm 11, 7, 12 `AUTOTEST PASS`; ŞEHİR-3 + BAĞLAMA-3'ün son kayıtlarıyla birleşik
+  dalda (v2 dünyası bölümde kuruluyor; `ISTHAYAT yakin_kur_ms=650–744`) Bölüm 11 ve Bölüm 7 (varsayılan varyant) `AUTOTEST PASS`;
+  yasak satırların hiçbiri yok. Öbür varyantlar: BAKILMADI (süre).
 
 ## 8. ORTAK İSTEK
 
@@ -168,4 +171,5 @@ Kendi bakışım (karelerden):
 ## 9. BAKILMADI / KANITSIZ
 - Hareketli gözlemde belirme/kaybolma (yalnız durağan kareler); oyuncu ile sokak eşyası çarpışması (eşya çarpışmasız).
 - Birleşik dalda bölüm testleri; gerçek oyuncuyla çatı/sur yürüyüşü (bu turda koşulmadı).
-- Sahip karelerinin son kayıtla (Ayasofya meydanı + gece ışıkları) yenilenmesi: yalnız 07 ve 14 son kayıtla (bkz. dosya adları).
+- Sahip karelerinin son kayıtla yenilenmesi: 07 ve 14 Ayasofya meydanı + gece ışığı düzeltmesinden sonra; 01–06, 08–13 ondan
+  önce (aynı gün, birleşik dal). `sahip_14` gece listesinden ayrı koşuyla (`gece=1`).
