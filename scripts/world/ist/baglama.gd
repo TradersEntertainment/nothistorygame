@@ -33,7 +33,7 @@ const BOLGELER := ["camp", "byz_walls"]
 const CAMP_OTAG := Vector2(0.0, -62.0)
 const HUB_ORTA := Vector2(-4.0, -13.0)
 ## Bölümün kendi zemini ve süsü bu yarıçapa kadar (yerel çapa çevresi); ötesi v2 arazisine yumuşak geçer
-const YAMA := {"camp": [Vector2(0.0, -20.0), 170.0, 330.0], "byz_walls": [Vector2(-4.0, -13.0), 62.0, 170.0]}
+const YAMA := {"camp": [Vector2(0.0, -20.0), 170.0, 330.0], "byz_walls": [Vector2(-4.0, -13.0), 62.0, 260.0]}
 ## v2 yapılarının kaldırıldığı alan (yerel; bölümün oynanış alanı + pay)
 const TEMIZ := {"camp": Rect2(-150.0, -175.0, 300.0, 300.0), "byz_walls": Rect2(-56.0, -58.0, 104.0, 90.0)}
 ## Uçuş sisi (NihatPowers._thin_fog hedefi): v2'nin km ölçeği için incelir (eski 0,0007)
@@ -100,6 +100,10 @@ static func etkin() -> bool:
 		var st = gs.root.get_node("GameState").get("settings")
 		if st is Dictionary and bool((st as Dictionary).get("eski_dunya", false)):
 			return false
+	# GameState yalnız bilinen ayar anahtarlarını yükler: kayıtlı ayar dosyasından da okunur (set_setting kalıcı olsun)
+	var cfg := ConfigFile.new()
+	if cfg.load("user://settings.cfg") == OK and bool(cfg.get_value("settings", "eski_dunya", false)):
+		return false
 	return true
 
 
@@ -248,6 +252,16 @@ static func build(parent: Node3D, region_name: String, keep_local: Array, _night
 			return -0.35 if zr.has_point(Vector2(x, z)) else -0.05)
 	var temiz: Rect2 = TEMIZ[region_name]
 	IstGeo.dislanan = [temiz]
+	# deniz düzeyindeki zemin ve geçiş halkası denizin altında kalmasın (bölüm alanı karada)
+	var yr: float = ym[2]
+	IstGeo.deniz_yok = [Rect2(ym[0] - Vector2(yr, yr), Vector2(yr, yr) * 2.0).merge(temiz)]
+	var n_su := 0
+	var dy: Rect2 = IstGeo.deniz_yok[0]
+	for i in int(dy.size.x / 20.0):
+		for j in int(dy.size.y / 20.0):
+			if IstGeo.su(dy.position.x + i * 20.0, dy.position.y + j * 20.0):
+				n_su += 1
+	print("ISTBAGLAMA deniz_yok=%s gercek_deniz_nokta=%d" % [dy, n_su])
 	# Ordugâh planı (önbellekli; IstOrdugah.attach aynı diziyi okur) kurulmadan süzülür: bölümün alanındaki öğeler çıkar
 	_ordu_suzulen = 0
 	var oscr = load("res://scripts/world/ist/ordugah.gd") if ResourceLoader.exists("res://scripts/world/ist/ordugah.gd") else null

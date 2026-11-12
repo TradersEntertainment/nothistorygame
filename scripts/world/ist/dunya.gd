@@ -767,7 +767,7 @@ func _deniz_izle(p: Vector3) -> void:
 	# Bölümün kendi zemini (IstGeo.dislanan; deniz düzeyinde, y ≈ 0) denizin altında kalmasın: izleyici yakınken yakın deniz
 	# gizlenir, uzak parçalar o alanın çevresine dizilir (alan karada; arada kalan deniz dalgasız)
 	_sea_near.visible = true
-	for dr: Rect2 in IstGeo.dislanan:
+	for dr: Rect2 in IstGeo.deniz_yok:
 		if dr.grow(SEA_NEAR * 0.5 + 100.0).has_point(c):
 			_sea_near.visible = false
 			var a := dr.position

@@ -237,6 +237,8 @@ static func duzle_temizle() -> void:
 static var _yama: Array = []
 ## Dünya süslerinin (karşı kıyı öğeleri, ordugâh çadırları) konmadığı dünya dikdörtgenleri (bölümün kendi alanı)
 static var dislanan: Array = []
+## Denizin çizilmediği dünya dikdörtgenleri (bölümün deniz düzeyindeki zemini ve yamanın geçiş halkası; karada)
+static var deniz_yok: Array = []
 
 static func yama_ekle(merkez: Vector2, r_ic: float, r_dis: float, fn: Callable) -> void:
 	_yama.append([merkez, r_ic, maxf(r_dis, r_ic + 1.0), fn])
@@ -288,6 +290,7 @@ static func kaydir(o: Vector2) -> void:
 	duzle_temizle()
 	_yama.clear()
 	dislanan.clear()
+	deniz_yok.clear()
 
 ## Bölge kodu (en yakın hücre)
 static func bolge(x: float, z: float) -> int:

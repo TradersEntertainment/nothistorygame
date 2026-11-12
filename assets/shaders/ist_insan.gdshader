@@ -10,7 +10,8 @@ render_mode cull_back, diffuse_lambert, specular_disabled;
 uniform int mode = 0;           // 0 insan, 1 dört ayaklı, 2 tavuk
 uniform float gece = 0.0;
 // Yakında gerçek kişi katmanı (IstHayatYakin) varken: kameraya bu uzaklıktan (m) yakın figürler küçülerek kaybolur
-// (yakin_bos .. yakin_bos + 10 m arasında boy 0 → 1; 0: kapalı). Küp figür yalnız uzakta ve havadan görünür.
+// (yakin_bos .. yakin_bos + 10 m arasında boy 0 → 1; 0: kapalı). Küp figür yalnız uzakta ve havadan (kamera 15–26 m
+// yukarıdaysa) görünür.
 uniform float yakin_bos = 0.0;
 
 const vec3 TUNIK[16] = vec3[](
@@ -131,8 +132,11 @@ void vertex() {
 	if (yakin_bos > 0.0) {
 		vec3 foot = vec3(0.0, slope * s * L, -s * L);
 		vec3 wf = (MODEL_MATRIX * vec4(foot, 1.0)).xyz;
-		float dc = distance(wf, INV_VIEW_MATRIX[3].xyz);
+		vec3 cp = INV_VIEW_MATRIX[3].xyz;
+		float dc = distance(wf, cp);
 		float f = smoothstep(yakin_bos, yakin_bos + 10.0, dc);
+		// havadan (kamera figürün 15–26 m üstünde) küp figür yakında da görünür: uçuşta kalabalık seçilsin
+		f = max(f, smoothstep(15.0, 26.0, cp.y - wf.y));
 		v = foot + (v - foot) * f;
 	}
 	VERTEX = v;
