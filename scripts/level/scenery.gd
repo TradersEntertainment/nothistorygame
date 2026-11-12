@@ -593,7 +593,9 @@ static func ground_detail(parent: Node3D, area: Rect2, count: int, height: Calla
 			# Rüzgârda salınan çimen öbeği (Nature.tuft): koyu zeytin - saman arası tonlar
 			var s := rng.randf_range(0.7, 1.5)
 			tx.append(_t(p, Vector3(0, rng.randf() * TAU, 0), Vector3(s, s * rng.randf_range(0.8, 1.3), s)))
-			tc.append(grass.darkened(0.12).lerp(Color("b0a468"), rng.randf() * 0.45))
+			# ZEMİN: oyuncak yeşili yok; Nisan sonu solgun bahar yeşili ↔ sarımsı kuru ot (grass yalnız tonu hafif kaydırır)
+			var gz := Color("76844f").lerp(Color(grass.r, grass.g, grass.b).darkened(0.1), 0.2)
+			tc.append(gz.lerp(Color("aa9e6a"), rng.randf() * 0.6))
 		else:
 			# Köşeli kaya, yarısı toprağa gömülü
 			var s := rng.randf_range(0.25, 0.9)

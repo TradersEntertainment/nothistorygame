@@ -2083,6 +2083,9 @@ static func _acik(m: Mesh, f: float) -> Mesh:
 			var krem := Color("d2c3a3")
 			for i in pc.size():
 				var c := pc[i]
+				if c.get_luminance() < 0.5:
+					# SUR-4: toprak (peribolos, teras, set, hendek tabanı) açılmaz: uzakta bembeyaz şerit okunuyordu
+					continue
 				if c.r > c.b + 0.18 and c.r > c.g + 0.1:
 					# tuğla şeritleri ve kiremit: kızıl kalır, biraz açılır
 					pc[i] = Color(minf(c.r * f, 1.0), minf(c.g * f, 1.0), minf(c.b * f, 1.0), c.a)

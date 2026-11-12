@@ -32,24 +32,47 @@ static func terrain(x0: float, x1: float, z0: float, z1: float, nx: int, nz: int
 			var z := z0 + j * dz
 			row.append(Vector3(x, height.call(x, z), z))
 		hs.append(row)
+	# ZEMİN: renk köşe başına (ızgara köşesinde bir kez; eğim komşu yüksekliklerden): yüz başına düz renk keskin
+	# kenarlı çokgen yamalar veriyordu; köşe rengi yumuşak geçer, zemin gölgelendiricisi geçişi gürültüyle büker.
+	var cs: Array = []
+	for j in nz + 1:
+		var row: Array = []
+		for i in nx + 1:
+			var v: Vector3 = hs[j][i]
+			var l: Vector3 = hs[j][maxi(i - 1, 0)]
+			var r: Vector3 = hs[j][mini(i + 1, nx)]
+			var u: Vector3 = hs[maxi(j - 1, 0)][i]
+			var d: Vector3 = hs[mini(j + 1, nz)][i]
+			var gx := (r.y - l.y) / maxf(r.x - l.x, 0.001)
+			var gz := (d.y - u.y) / maxf(d.z - u.z, 0.001)
+			var ny := 1.0 / sqrt(1.0 + gx * gx + gz * gz)
+			row.append(color.call(v.x, v.z, v.y, 1.0 - ny))
+		cs.append(row)
 	for j in nz:
 		for i in nx:
 			var a: Vector3 = hs[j][i]
 			var b: Vector3 = hs[j][i + 1]
 			var c: Vector3 = hs[j + 1][i]
 			var d: Vector3 = hs[j + 1][i + 1]
-			for tri in [[a, b, c], [b, d, c]]:
+			var ca: Color = cs[j][i]
+			var cb: Color = cs[j][i + 1]
+			var cc: Color = cs[j + 1][i]
+			var cd: Color = cs[j + 1][i + 1]
+			for tri in [[a, b, c, ca, cb, cc], [b, d, c, cb, cd, cc]]:
 				var n: Vector3 = (tri[2] - tri[0]).cross(tri[1] - tri[0]).normalized()
-				var center: Vector3 = (tri[0] + tri[1] + tri[2]) / 3.0
-				var col: Color = color.call(center.x, center.z, center.y, 1.0 - absf(n.y))
-				for v in tri:
-					st.set_color(col)
+				for k in 3:
+					st.set_color(tri[3 + k])
 					st.set_normal(n if n.y >= 0.0 else -n)
-					st.add_vertex(v)
+					st.add_vertex(tri[k])
 	var mi := MeshInstance3D.new()
 	mi.mesh = st.commit()
 	# Dokulu arazi (Nature/ground.gdshader): yüz rengine lekeler, çimen sapları, çakıl
 	mi.material_override = Nature.ground_material()
+	# ZEMİN yer örtüsü (ot tutamı, çiçek öbeği, taş, dal, birikinti): ayrıntılı arazide oyuncunun çevresinde akışlı
+	if dx <= 5.0 and dz <= 5.0:
+		var sy := func(x: float, z: float) -> float: return surface_y(x, z, x0, x1, z0, z1, nx, nz, height)
+		var ip := func(x: float, z: float) -> Color: return color.call(x, z, sy.call(x, z), 0.0)
+		load("res://scripts/level/zemin.gd").ortu_ekle(mi, Rect2(x0, z0, x1 - x0, z1 - z0), sy, ip)
 	mi.set_meta("terrain", true)          # WorldWalk: görünen arazi çarpışmaya üçgen üçgen alınır
 	mi.add_to_group("lp_terrain")         # Player: dünyanın dışındaki çarpışmasız araziler kendiliğinden katılaşır
 	return mi

@@ -69,7 +69,8 @@ void fragment() {
 	float bant_g = 1.0 - smoothstep(0.30, 0.9, fy);    // tuğla hatılı
 	vec3 c;
 	// tuğla/kiremit/ahşap rengi yüzey (uzak pişmiş ağda köşe rengi): desen yok, yalnız yıpranma
-	float duz = step(0.22, COLOR.r * renk.r - COLOR.b * renk.b);
+	// (kızıllık oranı: tuğla r/g ≈ 1,9; koyu kesme taş r/g ≈ 1,1–1,25 — fark eşiği koyu taşı da tuğla sanıyordu)
+	float duz = step(1.4 * COLOR.g * renk.g + 0.02, COLOR.r * renk.r);
 	if (duz > 0.5) {
 		c = base;
 	} else if (dikey > 0.5) {
@@ -136,7 +137,7 @@ void fragment() {
 		float tn = h21(floor(q));
 		vec2 fq = fract(q);
 		float j = max(step(fq.x, 0.05), step(fq.y, 0.05));
-		c = mix(tas * (0.80 + 0.18 * tn), harc * 0.8, j * ince);
+		c = mix(tas * vec3(1.08, 1.02, 0.92) * (0.84 + 0.18 * tn), harc * 0.85, j * ince);
 	}
 	// yıpranma: dikey akıntı, is lekesi, dipte koyulaşma ve yosun
 	float aki = vn(vec2(u * 1.7, y * 0.09));

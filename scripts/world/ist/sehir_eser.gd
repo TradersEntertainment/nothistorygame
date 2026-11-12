@@ -59,8 +59,9 @@ static func ton(c: Color) -> Color:
 		return Color.from_hsv(lerpf(h, 0.25, 0.3), minf(s, 0.42), minf(v, 0.60), c.a)
 	if h < 0.72:
 		# mavi: kurşun kubbe (gök mavisi kubbe → mavi-gri), mavi boya
-		if s < 0.35 or v > 0.6:
-			return Color.from_hsv(0.58, minf(s, 0.08), clampf(v * 0.85, 0.46, 0.55), c.a)
+		if s < 0.6 or v > 0.6 or v < 0.4:
+			# koyu lacivert kubbe (Khora, Pammakaristos) de kurşun: alt sınır yüksek (toon gölgede siyaha kaçmasın)
+			return Color.from_hsv(0.58, minf(s, 0.08), clampf(v * 0.78, 0.44, 0.50), c.a)
 		return Color.from_hsv(h, minf(s, 0.40), minf(v, 0.55), c.a)
 	# mor-macenta: porfir
 	return Color.from_hsv(0.99, minf(s, 0.42), minf(v, 0.42), c.a)
@@ -89,7 +90,10 @@ static func _tex_of(t: Texture2D) -> Texture2D:
 	for y in hgt:
 		for x in w:
 			var c := img.get_pixel(x, y)
-			if c.s > 0.12:
+			if c.s > 0.12 and c.h > 0.46 and c.h < 0.72:
+				# mavi/lacivert (kurşun dokusu): mavi-gri, toon gölgede siyaha kaçmayacak açıklıkta
+				img.set_pixel(x, y, Color.from_hsv(0.58, 0.08, clampf(c.v * 1.5, 0.42, 0.62), c.a))
+			elif c.s > 0.12:
 				var hh := c.h
 				if hh < 0.105 or hh > 0.965:
 					hh = lerpf(hh if hh < 0.5 else hh - 1.0, 0.035, 0.5)
@@ -120,6 +124,10 @@ static func _mat_of(m: Material) -> Material:
 		# döşeme: her meydanda aynı sıcak gri-krem (kalite notu 28)
 		nc = P_DOSEME.lerp(nc, 0.25)
 	var nt := _tex_of(sm.albedo_texture) if sm.albedo_texture != null else null
+	if nt != null and nc.s > 0.2:
+		# desen dokusu rengini kendisi taşır: kızıl renk × kızıl doku çarpımı doygunluğu yeniden yükseltiyordu
+		# (Galata Kulesi külahı, Studios çatısı koyu kırmızı kalıyordu): renk ağırlıklı olarak açıklık verir
+		nc = Color.from_hsv(nc.h, nc.s * 0.35, minf(nc.v * 1.12, 0.88), nc.a)
 	if nc.is_equal_approx(c) and nt == sm.albedo_texture:
 		_palet_mat[key] = m
 		return m
@@ -448,11 +456,11 @@ static func manastir(n: Node3D, lod: int, hx: float, hz: float, seed: int) -> vo
 	var gate := 3.6
 	# avlu zemini: çakıl-toprak + döşeli yollar
 	# (ÇEVRE-4: kalın levha; arazi avlu içinde levhanın üstüne çıkıp avluyu yeşile boğuyordu)
-	var zem := Props.box(n, Vector3(hx * 2.0, 0.9, hz * 2.0), Vector3(0, 0.12 - 0.45, 0), Color("b9ab8c"))
+	var zem := Props.box(n, Vector3(hx * 2.0, 0.9, hz * 2.0), Vector3(0, 0.17 - 0.45, 0), Color("b9ab8c"))
 	zem.set_meta("no_walk", true)
 	if lod == 0:
 		Props.set_pattern(zem, Color("bfb194"), "cobble")
-	Props.box(n, Vector3(3.0, 0.1, hz - 6.0), Vector3(0, 0.16, hz * 0.5 + 3.0), Color("cfc2a8")).set_meta("no_walk", true)
+	Props.box(n, Vector3(3.0, 0.1, hz - 6.0), Vector3(0, 0.2, hz * 0.5 + 3.0), Color("cfc2a8")).set_meta("no_walk", true)
 	# duvarlar (kapı +z ortada, arka kapı −z)
 	for sx: float in [-1.0, 1.0]:
 		_sol(n, Vector3(t, wh, hz * 2.0), Vector3(sx * hx, wh * 0.5, 0), wall, "ashlar", lod)
@@ -526,7 +534,7 @@ static func manastir(n: Node3D, lod: int, hx: float, hz: float, seed: int) -> vo
 static func meydan(n: Node3D, lod: int, sx: float, sz: float) -> void:
 	var tas := P_DOSEME
 	# kalın levha (ÇEVRE-4): ince levhanın üstüne arazi çıkıp meydanı çimene boğuyordu
-	var f := Props.box(n, Vector3(sx, 0.9, sz), Vector3(0, 0.14 - 0.45, 0), tas if lod == 0 else tas.darkened(0.3))
+	var f := Props.box(n, Vector3(sx, 0.9, sz), Vector3(0, 0.17 - 0.45, 0), tas if lod == 0 else tas.darkened(0.3))
 	f.set_meta("no_walk", true)
 	if lod == 0:
 		Props.set_pattern(f, tas, "flagstone")
@@ -603,7 +611,7 @@ static func aya_cevre(n: Node3D, lod: int, yh: Callable, bos: Array) -> void:
 				y = maxf(y, float(yh.call(c.x + o.x * T * 0.5, c.y + o.y * T * 0.5)))
 			# uzak katman düz renk: dokunun ortalaması kadar koyu (düz yatay yüz toon ışıkta bembeyaz görünüyordu)
 			var dc := P_DOSEME if lod == 0 else P_DOSEME.darkened(0.3)
-			var f := Props.box(n, Vector3(T + 0.02, 1.2, T + 0.02), Vector3(c.x, y + 0.13 - 0.6, c.y), dc.darkened(rng.randf() * 0.05))
+			var f := Props.box(n, Vector3(T + 0.02, 1.2, T + 0.02), Vector3(c.x, y + 0.17 - 0.6, c.y), dc.darkened(rng.randf() * 0.05))
 			f.set_meta("no_walk", true)
 			if lod == 0:
 				Props.set_pattern(f, P_DOSEME, "flagstone")
@@ -708,7 +716,7 @@ static func aya_cevre(n: Node3D, lod: int, yh: Callable, bos: Array) -> void:
 		for k in 3:
 			var sp := Vector3(14.0 + k * 3.2, float(yh.call(14.0, -48.0)) + 0.13, -48.0)
 			for j in 3:
-				Props.box(n, Vector3(1.2 - j * 0.25, 0.45, 0.8), sp + Vector3(rng.randf_range(-0.3, 0.3), 0.22 + j * 0.45, rng.randf_range(-0.2, 0.2)), P_TAS_K.darkened(0.12 + j * 0.04), Vector3(0, rng.randf_range(-25, 25), 0))
+				Props.box(n, Vector3(1.2 - j * 0.25, 0.45, 0.8), sp + Vector3(rng.randf_range(-0.3, 0.3), 0.22 + j * 0.45, rng.randf_range(-0.2, 0.2)), Color("857a66").darkened(j * 0.05), Vector3(0, rng.randf_range(-25, 25), 0))
 		for k in 4:
 			Props.cyl(n, 0.4, 1.0, Vector3(-8.0 + k * 0.9, float(yh.call(-8.0, -46.0)) + 0.63, -46.0), P_AHSAP, Vector3.ZERO, 8)
 

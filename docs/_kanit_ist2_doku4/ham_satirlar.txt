@@ -153,3 +153,39 @@ BAGLAMA_TAKILMA evre=ucus_60sn kare=3546 ust50=18 en_uzun=107ms
 BAGLAMA_YUKLE bolum=11 dal= v2=true ms=21011
 BAGLAMA_TAKILMA evre=acilis_20sn kare=1106 ust50=16 en_uzun=157ms
 BAGLAMA_TAKILMA evre=ucus_60sn kare=3559 ust50=19 en_uzun=79ms
+## Son ölçüm (birleşik)
+f_yaz:
+BAGLAMA_TAKILMA evre=acilis_20sn kare=973 ust50=35 en_uzun=390ms
+BAGLAMA_TAKILMA evre=ucus_60sn kare=3530 ust50=26 en_uzun=148ms
+BAGLAMA_YUKLE bolum=11 dal= v2=true ms=42738
+ISTPROF hayat { "n": 4506, "ust16": 0, "ust33": 0, "en_ms": 6.8 }
+ISTPROF hayat_yakin en_ms=26.6 ort_ms=0.46
+ISTPROF mahalle_doku { "n": 4506, "ust16": 98, "ust33": 25, "en_ms": 130.2 }
+f_o1:
+BAGLAMA_TAKILMA evre=acilis_20sn kare=953 ust50=44 en_uzun=395ms
+BAGLAMA_TAKILMA evre=ucus_60sn kare=3505 ust50=31 en_uzun=129ms
+BAGLAMA_YUKLE bolum=11 dal= v2=true ms=26470
+ISTPROF hayat { "n": 4461, "ust16": 0, "ust33": 0, "en_ms": 10.0 }
+ISTPROF hayat_yakin en_ms=23.4 ort_ms=0.51
+ISTPROF mahalle_doku { "n": 4461, "ust16": 106, "ust33": 31, "en_ms": 112.0 }
+f_o2:
+BAGLAMA_TAKILMA evre=acilis_20sn kare=973 ust50=34 en_uzun=377ms
+BAGLAMA_TAKILMA evre=ucus_60sn kare=3539 ust50=29 en_uzun=100ms
+BAGLAMA_YUKLE bolum=11 dal= v2=true ms=25357
+ISTPROF hayat { "n": 4515, "ust16": 0, "ust33": 0, "en_ms": 6.5 }
+ISTPROF hayat_yakin en_ms=23.2 ort_ms=0.44
+ISTPROF mahalle_doku { "n": 4515, "ust16": 92, "ust33": 29, "en_ms": 84.7 }
+f_o3:
+BAGLAMA_TAKILMA evre=acilis_20sn kare=958 ust50=37 en_uzun=520ms
+BAGLAMA_TAKILMA evre=ucus_60sn kare=3526 ust50=31 en_uzun=136ms
+BAGLAMA_YUKLE bolum=11 dal= v2=true ms=27073
+ISTPROF hayat { "n": 4487, "ust16": 0, "ust33": 0, "en_ms": 8.6 }
+ISTPROF hayat_yakin en_ms=30.1 ort_ms=0.47
+ISTPROF mahalle_doku { "n": 4487, "ust16": 103, "ust33": 33, "en_ms": 113.3 }
+f_d1:
+BAGLAMA_TAKILMA evre=acilis_20sn kare=978 ust50=34 en_uzun=392ms
+BAGLAMA_TAKILMA evre=ucus_60sn kare=3550 ust50=33 en_uzun=113ms
+BAGLAMA_YUKLE bolum=11 dal= v2=true ms=34645
+ISTPROF hayat { "n": 4531, "ust16": 0, "ust33": 0, "en_ms": 7.2 }
+ISTPROF hayat_yakin en_ms=25.8 ort_ms=0.47
+ISTPROF mahalle_doku { "n": 4531, "ust16": 97, "ust33": 30, "en_ms": 103.5 }

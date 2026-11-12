@@ -211,6 +211,7 @@ func _terrain() -> void:
 		var c := grass.lerp(Color("5a4a34"), trampled * 0.9).darkened(clampf(steep * 0.6, 0.0, 0.3))
 		# Uzak tepeler havanın rengine çalar (hava perspektifi): ufukta koyu bant kalmasın
 		return c.lerp(Color("7a8a80"), smoothstep(420.0, 860.0, z) * 0.55)
+	load("res://scripts/level/zemin.gd").yore("kusatma", self)      # ZEMİN: yöre paleti
 	add_child(LowPoly.terrain(-EXT, EXT, 36.0, 900.0, 56, 36, ground, cf))
 	var ccf := func(x: float, z: float, y: float, steep: float) -> Color:
 		return Color("7a7050").lerp(Color("5a6a40"), clampf(0.5 + 0.5 * sin(x * 0.05 - z * 0.04), 0.0, 1.0) * 0.6).darkened(clampf(steep * 0.5, 0.0, 0.25))
