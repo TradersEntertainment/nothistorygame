@@ -778,7 +778,7 @@ class Ortu extends Node3D:
 				var cig := maxf(as_.r, as_.g)
 				if kar_var:
 					otp = 0.0
-				var deneme := int(round((1.2 + 4.8 * smoothstep(0.35, 0.7, obek.y)) * otp * yog * (1.0 - cig)))
+				var deneme := int(round((1.0 + 4.0 * smoothstep(0.35, 0.7, obek.y)) * otp * yog * (1.0 - cig)))
 				for q in deneme:
 					var x := cx + rng.randf_range(-1.0, 1.0)
 					var z := cz + rng.randf_range(-1.0, 1.0)

@@ -121,6 +121,12 @@ void fragment() {
 	ot_m = mix(yesil, ot_m, orta) * ot_carpan;
 	vec3 c = mix(topr, ot, ot_m);
 
+	// ---- makro alaca (30–60 m): toprakta yer yer yeşillenen nadas/çayır lekesi, her yerde ton dalgası (uzaktan da düz
+	//      renk okunmaz)
+	float alaca = smoothstep(0.52, 0.72, M.y * 0.6 + O.y * 0.4);
+	c = mix(c, mix(c, ot * 0.96, 0.5), (1.0 - ot_m) * alaca * (1.0 - cignenme * 0.7) * (1.0 - acik * 0.5));
+	c *= 0.88 + 0.24 * smoothstep(0.25, 0.75, M.x * 0.6 + O.x * 0.4);
+
 	// ---- çamur öbekleri (nemli dipte, çiğnenmiş yerde)
 	float camur_m = smoothstep(0.66, 0.78, nem * 0.6 + (1.0 - Q.y) * 0.45 + cignenme * 0.12 + bukme * 0.25) * (1.0 - ot_m * 0.8);
 	c = mix(c, mix(c_camur.rgb, c, 0.25), camur_m * orta);
@@ -155,7 +161,7 @@ void fragment() {
 	// ---- su kıyısı: köpük çizgisi, ıslak koyu bant, kum/çakıl şeridi
 	float dy = ly - su_y;          // ağın kendi uzayında (v2 dönüşümlü bağlansa da)
 	if (dy > -0.6 && dy < 3.0) {
-		float serit = 1.0 - smoothstep(0.12, 0.45 + O.x * 0.45 + (W.y - 0.5) * 0.2, dy);
+		float serit = 1.0 - smoothstep(0.05, 0.24 + O.x * 0.22 + (W.y - 0.5) * 0.1, dy);
 		c = mix(c, mix(c_kum.rgb, c_cakil.rgb, smoothstep(0.55, 0.72, Q.y)), serit * (1.0 - kaya_m * 0.5));
 		ot_m *= 1.0 - serit;
 		float islak = 1.0 - smoothstep(0.03, 0.18 + W.x * 0.12, dy);
