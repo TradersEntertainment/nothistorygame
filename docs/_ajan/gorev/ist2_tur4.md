@@ -66,6 +66,13 @@ Dosyaların: `scripts/world/ist/surlar*.gd`, `marmara*.gd`, `halic*.gd`, `galata
    çiğnenmiş toprak; sur dışında hendeğe kadar 150–200 m "ateş alanı": ağaçsız, çiğnenmiş, top güllesi çukurlu, kırık
    kalkan/ok/merdiven parçalı toprak (parlak çimen değil; solgun ot + toprak yamaları). Arazi yaması yumuşak eğimli;
    düz renkli tek parça yeşil levha görünmeyecek.
+   **Sahibinin ikinci sözü** (`docs/_kanit_ist2_sehir3/pafta_ordugah.jpg`, alt orta "hendek" karesi): **"o yeşil alan
+   yükseltileri ne öyle"**. O karede: (a) hendeğin dış yanında parlak yeşil, keskin köşeli uzun PRİZMA (set/yama); kaynağını
+   bul (hangi dosya:işlev), toprak set ise toprak renkli, yumuşak eğimli, düzensiz tepeli yap; arazi yaması ise yumuşat;
+   (b) surun dibinde HİLALLİ kırmızı bayrak: kuşatma sürerken Bizans surunda Osmanlı bayrağı olamaz, hilal dönem kuralına
+   da aykırı: kaldır, kaynağını yaz (bütün dosyalarda hilal ara: `ISTHILAL sayi=0`); (c) yerde duran beyaz-mavi kutular
+   ve yuvarlak "oyuncak" ağaçlar: ne olduklarını bul; ateş alanında ağaç olmaz, kutu ise ya gerçek nesneye çevrilir ya
+   kalkar. Bu karenin aynı kamerayla yenisi raporun ilk paftasında.
 4. **Uzak deniz surları (kalite notu 24):** beyaz blok yığını değil; madde 1–2'nin uzak karşılığı.
 5. **Sur üstü yürüyüş** (üçüncü turdan devreden; ikincil): kara ≥ %97, Blakherna ≥ %95, Marmara/Haliç/Galata ≥ %90.
    Süreklilik düzeltmesi bunu bozmasın; ölç ve yaz.
