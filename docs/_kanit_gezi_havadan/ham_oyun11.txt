@@ -1,0 +1,20 @@
+BAGLAMA_YUKLE bolum=11 dal= v2=true ms=53014
+BAGLAMA_TAKILMA evre=acilis_20sn kare=149 ust50=149 en_uzun=3641ms
+BAGLAMA_RINFO ad=01_kalkis cizim=2162 ucgen=3838420 nesne=2518 konum=(1, 8, 4) gercek=(-5443.373, 1400.331)
+BAGLAMA_RINFO ad=02_ordugah_ustu cizim=3994 ucgen=2041673 nesne=4113 konum=(-49, 60, 74) gercek=(-5337.203, 1178.664)
+BAGLAMA_RINFO ad=03_sehrin_ustu cizim=1025 ucgen=1998368 nesne=1288 konum=(271, 102, 1052) gercek=(-2449.518, 630.1487)
+BAGLAMA_RINFO ad=04_eser_ayasofya cizim=999 ucgen=1297041 nesne=1298 konum=(482, 51, 1873) gercek=(-105.1479, 27.04973)
+BAGLAMA_RINFO ad=05_eser_hipodrom cizim=853 ucgen=1307563 nesne=1095 konum=(339, 30, 1805) gercek=(-473.1703, -237.6597)
+BAGLAMA_RINFO ad=06_eser_konstantin cizim=1103 ucgen=1520027 nesne=1415 konum=(352, 54, 1642) gercek=(-859.9616, 20.30195)
+BAGLAMA_RINFO ad=07_eser_havariyun cizim=1480 ucgen=2595854 nesne=1790 konum=(417, 36, 892) gercek=(-2648.339, 1217.102)
+BAGLAMA_RINFO ad=08_eser_bozdogan cizim=1231 ucgen=2432436 nesne=1414 konum=(401, 31, 1105) gercek=(-2137.26, 881.822)
+BAGLAMA_RINFO ad=09_eser_zincir cizim=876 ucgen=1117126 nesne=1207 konum=(760, 2, 1539) gercek=(-555.1133, 1182.484)
+BAGLAMA_RINFO ad=10_eser_galata cizim=1073 ucgen=1177079 nesne=1425 konum=(965, 64, 1404) gercek=(-612.0375, 1881.246)
+BAGLAMA_RINFO ad=11_eser_blakherna cizim=966 ucgen=1247174 nesne=1225 konum=(922, 36, 342) gercek=(-3328.071, 3238.852)
+BAGLAMA_RINFO ad=12_eser_surlar cizim=1507 ucgen=3077223 nesne=1844 konum=(-45, 40, 236) gercek=(-4927.741, 965.9967)
+BAGLAMA_RINFO ad=13_eser_tauri cizim=917 ucgen=1907553 nesne=1168 konum=(293, 42, 1353) gercek=(-1666.015, 271.8832)
+BAGLAMA_RINFO ad=14_eser_arkadius cizim=1035 ucgen=1540272 nesne=1316 konum=(-283, 52, 940) gercek=(-3494.756, -600.2254)
+BAGLAMA_RINFO ad=15_eser_markianos cizim=1238 ucgen=2792137 nesne=1493 konum=(322, 32, 937) gercek=(-2666.973, 918.5621)
+BAGLAMA_RINFO ad=16_galata_donus cizim=813 ucgen=2672869 nesne=1049 konum=(969, 62, 1411) gercek=(-589.2927, 1883.51)
+BAGLAMA_RINFO ad=17_eve_donus cizim=3570 ucgen=1846507 nesne=3673 konum=(41, 25, 159) gercek=(-5000.645, 1286.437)
+BAGLAMA_BITTI

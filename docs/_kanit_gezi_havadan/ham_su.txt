@@ -1,0 +1,5 @@
+HVD_SU hat=kara_suru ornek=416 suda=0 oran=0% gecisler=
+HVD_SU hat=marmara_suru ornek=497 suda=5 oran=1% gecisler= SU@(-4834,-1784) KARA@(-4824,-1808) SU@(-3503,-775) KARA@(-3484,-759) SU@(-3460,-824) KARA@(-3469,-834)
+HVD_SU hat=halic_suru ornek=344 suda=0 oran=0% gecisler=
+HVD_SU hat=galata_suru ornek=109 suda=26 oran=24% gecisler= SU@(-126,1669) KARA@(-255,1573) SU@(-272,1562) KARA@(-411,1513) SU@(-545,1544) KARA@(-689,1553) SU@(-811,1587) KARA@(-840,1608)
+HVD_SU hat=blakherna_suru ornek=53 suda=0 oran=0% gecisler=

@@ -25,6 +25,12 @@ var gece := false
 var bak := "ikisi"
 var kim_nokta := "0,0"          # mod=kim: gerçek doğu,kuzey (nokta çevresindeki düğümleri listeler)
 var kim_r := 45.0
+var _t_bas := 0
+var _script_us := 0
+func _on_bas() -> void:
+	_t_bas = Time.get_ticks_usec()
+func _on_bit() -> void:
+	_script_us = Time.get_ticks_usec() - _t_bas
 var cam: Camera3D
 var dunya: Node3D
 
@@ -64,7 +70,8 @@ func _ready() -> void:
 	if yol.size() > 0 and mod != "eser" and mod != "eserler":
 		ilk = Vector3(yol[0].x, 60.0, yol[0].y)
 	dunya = IstDunya.build(self, gece, ilk)
-	IstDunya.butce_us = 250000
+	if mod != "ucus":
+		IstDunya.butce_us = 250000       # ucus kipinde oyunun kendi bütçesi (BUDGET_US) kalır
 	cam.global_position = ilk if ilk != Vector3.ZERO else Vector3(0, 80, 0)
 	for i in 3:
 		await get_tree().process_frame
@@ -74,6 +81,8 @@ func _ready() -> void:
 		"eser": await _eser()
 		"eserler": await _eserler()
 		"kim": await _kim()
+		"suda": await _suda()
+		"su": _su_hat()
 	print("HVD BITTI kurulum_ms=%.0f" % dunya.olcum()["kurulum_ms"])
 	get_tree().quit(0)
 
@@ -216,6 +225,8 @@ func _ucus() -> void:
 	if pts.is_empty():
 		return
 	# ilk konum: tam akış (uçuş başlamadan sahne kurulu olsun)
+	get_tree().process_frame.connect(_on_bas)
+	RenderingServer.frame_pre_draw.connect(_on_bit)
 	var e0: Array = pts[clampi(int(a0), 0, pts.size() - 1)]
 	_kam_yerles(e0[0], e0[1], y, -12.0)
 	await _bekle()
@@ -225,8 +236,8 @@ func _ucus() -> void:
 		_kam_yerles(e[0], e[1], y, -12.0)
 		var t0 := Time.get_ticks_usec()
 		await get_tree().process_frame
-		var s_ms := Performance.get_monitor(Performance.TIME_PROCESS) * 1000.0
 		await RenderingServer.frame_post_draw
+		var s_ms := _script_us / 1000.0       # kare içi betik süresi (process_frame → frame_pre_draw); çizim hariç
 		var dc := RenderingServer.get_rendering_info(RenderingServer.RENDERING_INFO_TOTAL_DRAW_CALLS_IN_FRAME)
 		var pr := RenderingServer.get_rendering_info(RenderingServer.RENDERING_INFO_TOTAL_PRIMITIVES_IN_FRAME)
 		var o: Dictionary = dunya.olcum()
@@ -241,14 +252,14 @@ func _ucus() -> void:
 			yavas += 1
 		kare += 1
 		if kare % 4 == 0 or s_ms > 50.0:
-			print("HVD_UCUS k=%d ark=%.1f cizim=%d ucgen=%d surec_ms=%.1f dunya_us=%d isler=%d sehir_kuyruk=%d lod=%s" % [
+			print("HVD_UCUS k=%d ark=%.1f cizim=%d ucgen=%d betik_ms=%.1f dunya_us=%d isler=%d sehir_kuyruk=%d lod=%s" % [
 				kare, ark, dc, pr, s_ms, o["kare_us"], o["isler"], q, str(o["lod"])])
 		if shots != "" and kare % kayit == 0:
 			var ad := "ucus_%s_%03d_k%04d" % [tur, int(y), kare]
 			print("HVD_KAM ", _kam_satir(ad))
 			get_viewport().get_texture().get_image().save_png(shots.path_join(ad + ".png"))
 		ark += hiz * dt
-	print("HVD_UCUS_OZET tur=%s yuk=%.0f kare=%d en_cok_cizim=%d en_cok_ucgen=%d surec_ort_ms=%.1f surec_max_ms=%.1f yavas50=%d" % [
+	print("HVD_UCUS_OZET tur=%s yuk=%.0f kare=%d en_cok_cizim=%d en_cok_ucgen=%d betik_ort_ms=%.1f betik_max_ms=%.1f yavas50=%d" % [
 		tur, y, kare, cmax, tmax, sure_top / maxf(kare, 1), sure_max, yavas])
 
 
@@ -359,3 +370,59 @@ func _kim() -> void:
 		if say > 60:
 			break
 	print("HVD_KIM_BITTI nokta=%s dugum=%d" % [kim_nokta, say])
+
+
+# ------------------------------------------------------------------ mod=suda: suyun içinde ev / eser
+func _suda() -> void:
+	await _bekle()
+	var sk := IstSehir.sokak
+	var n := 0
+	var su := 0
+	var orn: Array = []
+	if sk != null:
+		for h: Dictionary in sk.houses:
+			var c: Vector2 = h["c"]
+			n += 1
+			if IstGeo.su(c.x, c.y):
+				su += 1
+				if orn.size() < 8:
+					var r := IstGeo.real(c.x, c.y)
+					orn.append("(%.0f,%.0f)" % [r.x, r.y])
+	print("HVD_SUDA ev=%d suda=%d ornek_gercek=%s" % [n, su, " ".join(orn)])
+	var kn := 0
+	var ksu := 0
+	var lst: Array = []
+	for it: Dictionary in IstSehir.active.items:
+		var pp: Vector3 = it["pos"]
+		kn += 1
+		if IstGeo.su(pp.x, pp.z):
+			ksu += 1
+			var r2 := IstGeo.real(pp.x, pp.z)
+			lst.append("%s(%.0f,%.0f)" % [it["id"], r2.x, r2.y])
+	print("HVD_SUDA eser=%d suda=%d liste=%s" % [kn, ksu, " ".join(lst.slice(0, 30))])
+
+
+# ------------------------------------------------------------------ mod=su: sur hatlarının kaçı suyun içinde (IstGeo.su)
+func _su_hat() -> void:
+	for ad in ["kara_suru", "marmara_suru", "halic_suru", "galata_suru", "blakherna_suru"]:
+		var y := IstGeo.yol(ad)
+		var n := 0
+		var su := 0
+		var son_su := false
+		var seg := ""
+		for i in y.size() - 1:
+			var a := y[i]
+			var b := y[i + 1]
+			var L := a.distance_to(b)
+			var k := maxi(1, int(L / 5.0))
+			for j in k:
+				var p := a.lerp(b, float(j) / k)
+				n += 1
+				var s := IstGeo.su(p.x, p.y)
+				if s:
+					su += 1
+				if s != son_su:
+					var r := IstGeo.real(p.x, p.y)
+					seg += " %s@(%.0f,%.0f)" % ["SU" if s else "KARA", r.x, r.y]
+					son_su = s
+		print("HVD_SU hat=%s ornek=%d suda=%d oran=%.0f%% gecisler=%s" % [ad, n, su, 100.0 * su / maxf(n, 1), seg.substr(0, 400)])

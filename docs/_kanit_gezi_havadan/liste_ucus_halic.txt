@@ -1,0 +1,8 @@
+ucus_halic_galata_060_k0030 -385 821 60.0 305.1 -12.0
+ucus_halic_galata_060_k0060 -408 833 60.0 296.6 -12.0
+ucus_halic_galata_060_k0090 -431 845 60.0 296.6 -12.0
+ucus_halic_galata_060_k0120 -454 856 60.0 296.6 -12.0
+ucus_halic_galata_060_k0150 -477 868 60.0 296.6 -12.0
+ucus_halic_galata_060_k0180 -500 879 60.0 296.6 -12.0
+ucus_halic_galata_060_k0210 -523 891 60.0 296.6 -12.0
+ucus_halic_galata_060_k0240 -546 902 60.0 296.6 -12.0
