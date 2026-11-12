@@ -827,7 +827,7 @@ func _breakthrough() -> void:
 	var head_z := _face.global_position.z - 0.05
 	tip.global_position = Vector3(_face.global_position.x + 0.2, _face.global_position.y + 1.35 - 0.64, head_z)
 	var poke := create_tween()
-	poke.tween_property(tip, "global_position:z", _face.global_position.z + 0.2, _d(0.12))
+	poke.tween_property(tip, "global_position:z", _face.global_position.z + 0.6, _d(0.12))
 	Audio.sfx("land_thud", -2.0, 1.4)
 	# Toz ucun altından dökülür (eskiden ucun önünde bulut olup kazmayı örtüyordu)
 	Vfx.dust(self, _face.global_position + Vector3(0.25, 1.05, 0.3), 0.3)
