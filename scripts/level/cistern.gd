@@ -20,6 +20,7 @@ const VAULT_H := 2.6
 const SHAFT_R := 0.34
 ## Medusa sütunları (kuzeybatı köşe): [sütun i, sütun j, "side" | "inv"]
 const MEDUSA := [[1, 1, "side"], [2, 1, "inv"]]
+const MEDUSA_Y := 1.36          # başın (yüzün ortası) yüksekliği: bloğun tepesi su yüzünün 4 cm altında
 ## Tavus gözü ("gözyaşı") sütunu: sarsıntı evresinin rotası (tonoz gözü sırası 2, batıya) bu sütunun 2,5 m yanından geçer
 const HEN_EYE := [9, 2]
 ## Uzak sis: sıralar karanlığa değil, sönük mavimsi griye gömülür (138 × 65 m derinliği okunur)
@@ -56,6 +57,8 @@ var obstacles: Array[Dictionary] = []
 var cellar_light: OmniLight3D
 var _mud_floor: MeshInstance3D
 var _cellar_glow: Array[MeshInstance3D] = []
+var _cellar_door_light: OmniLight3D
+var _rope_ladder: MeshInstance3D
 
 
 static func col_x(i: int) -> float:
@@ -162,7 +165,11 @@ void vertex() {
 }
 void fragment() {
 	// Berraklaşan suyun (Medusa köşesi) altında ters kopya görünmesin: orada dip ve taş yüzler seçilir
-	if (reflected > 0.5 && clear_zone.w > 0.0 && length(wp.xz - clear_zone.xz) < clear_zone.w) { discard; }
+	if (reflected > 0.5 && clear_zone.w > 0.0) {
+		// Berrak bölgenin kenarı yumuşak: içte yok, dışa doğru ekran titreşimiyle (dither) yavaşça geri gelir
+		float k = smoothstep(clear_zone.w * 0.55, clear_zone.w * 1.25, length(wp.xz - clear_zone.xz));
+		if (k < h(floor(FRAGCOORD.xy))) { discard; }
+	}
 	float y = reflected > 0.5 ? 2.0 * water_y - wp.y : wp.y;
 	float a = atan(lp.x, lp.z) + tint.r * 17.0;
 	// Mermer: yumuşak bulut ve ince, soluk damar
@@ -397,7 +404,10 @@ float bricks(vec2 p) {
 	return m;
 }
 void fragment() {
-	if (reflected > 0.5 && clear_zone.w > 0.0 && length(wp.xz - clear_zone.xz) < clear_zone.w) { discard; }
+	if (reflected > 0.5 && clear_zone.w > 0.0) {
+		float k = smoothstep(clear_zone.w * 0.55, clear_zone.w * 1.25, length(wp.xz - clear_zone.xz));
+		if (k < h(floor(FRAGCOORD.xy))) { discard; }
+	}
 	float y = reflected > 0.5 ? 2.0 * water_y - wp.y : wp.y;
 	vec2 uv;
 	if (vault > 0.5) {
@@ -439,10 +449,12 @@ void fragment() {
 		if (!FRONT_FACING) { NORMAL = -NORMAL; }
 	}
 	ALBEDO = col;
+	// Duvar ve payeler gölgede de tuğla olarak okunsun (fener konisinin dışında kapkara kalmasın): hafif dolgu
+	if (vault < 0.5) { EMISSION = col * 0.07; }
 	ROUGHNESS = 0.9;
 	SPECULAR = 0.2;
 }
-""" % ["cull_front" if reflected else "cull_back", WATER_Y, 1.0 if reflected else 0.0, 1.0 if vault else 0.0]
+""" % [_brick_cull(reflected, vault), WATER_Y, 1.0 if reflected else 0.0, 1.0 if vault else 0.0]
 	var m := ShaderMaterial.new()
 	m.shader = sh
 	if vault and not reflected:
@@ -450,6 +462,15 @@ void fragment() {
 	if reflected:
 		_reflected_mats.append(m)
 	return m
+
+
+## Yansıyan duvar kopyası iki yüzlü çizilir: aynalanmış payelerin ön yüzü ayıklanıyor, duvara yapışık arka yüzü
+## (normali duvarın içine bakan, ışıksız) kalıyordu: su çizgisinin altında kapkara dikdörtgenler (denetim 2, D1).
+## FRONT_FACING ile normal kameraya çevrilir; derinlik sınaması öndeki yüzü seçer.
+func _brick_cull(reflected: bool, vault: bool) -> String:
+	if not reflected:
+		return "cull_back"
+	return "cull_front" if vault else "cull_disabled"
 
 
 func _vault_h(u: float, v: float) -> float:
@@ -639,7 +660,7 @@ void fragment() {
 	ALPHA = mix(0.62, 0.16, smoothstep(0.0, 0.85, fres));
 	if (clear_r > 0.0) {
 		float cd = length(wp.xz - clear_pos.xz);
-		ALPHA *= mix(0.22, 1.0, smoothstep(clear_r * 0.45, clear_r, cd));
+		ALPHA *= mix(0.55, 1.0, smoothstep(clear_r * 0.3, clear_r * 1.3, cd));
 	}
 	float sparkle = pow(n2(p * 3.1 + vec2(t * 1.7, -t * 1.3)), 5.0) * 2.5;
 	float far = smoothstep(0.35, 0.95, fres);
@@ -882,73 +903,112 @@ void fragment() {
 	return m
 
 
-## Yakovos'un evinin kileri (çıkış kuyusunun üstü): tahta döşeme, ortasında kuyu ağzı; duvar rafında turşu küpleri,
-## köşede fıçı, güneyde açık kapıdan avlunun gün ışığı. Kuyuda ip merdiven (sudan tonoza) ve demir basamaklar (bacada).
-## Hepsi tek ağ (renkler köşe rengi). Kilerin ışığı tırmanışta yanar (cellar_on).
+## Yakovos'un evinin kileri (çıkış kuyusunun üstü): tahta döşeme (tek tek kalaslar), ortasında kuyu bileziği; batı
+## duvarında iki raf turşu küpü, kuzeyde asılı sarımsak/soğan örgüleri ve çuvallar, güneybatı köşede fıçı; güneyde içeri
+## açılmış kapıdan avlunun gün ışığı ve döşemeye düşen ışık lekesi; tavanda kirişler. Kuyuda demir basamaklar (bacada).
+## İp merdiven (tonozdan suya) ayrı ağ: tırmanış başlayınca salınır (ladder_down); Medusa'ya bakarken kadrajı kapatmaz.
+## Kilerin ışıkları tırmanışta yanar (cellar_on).
 func _build_cellar(c: Vector3, crown: float) -> void:
 	var st := SurfaceTool.new()
 	st.begin(Mesh.PRIMITIVE_TRIANGLES)
 	var y0 := crown + 4.6
 	var W := 3.6
 	var H := 2.5
-	var wood := Color("6a4a2c")
-	var plaster := Color("6e6250")
-	# Döşeme (ortada 1,3 m'lik ağız)
 	var hw := W * 0.5
 	var hole := 0.65
-	st.set_color(wood)
-	_box(st, Vector3(c.x - (hw + hole) * 0.5, y0 - 0.06, c.z), Vector3(hw - hole, 0.12, W))
-	_box(st, Vector3(c.x + (hw + hole) * 0.5, y0 - 0.06, c.z), Vector3(hw - hole, 0.12, W))
-	_box(st, Vector3(c.x, y0 - 0.06, c.z - (hw + hole) * 0.5), Vector3(hole * 2.0, 0.12, hw - hole))
-	_box(st, Vector3(c.x, y0 - 0.06, c.z + (hw + hole) * 0.5), Vector3(hole * 2.0, 0.12, hw - hole))
-	# Kuyu bileziği (ağzın çevresinde alçak taş)
-	st.set_color(Color("8a8070"))
+	# Döşeme: kuzey–güney giden kalaslar (0,3 m), renkleri birbirinden ayrı; ortada kuyunun ağzı
+	var plank_cols := [Color("7a5634"), Color("6a4a2c"), Color("845e3a"), Color("5e4228")]
+	var nx := 12
+	for k in nx:
+		var x0 := -hw + k * W / nx
+		var x1 := x0 + W / nx - 0.012
+		var xm := (x0 + x1) * 0.5
+		st.set_color(plank_cols[k % 4])
+		if absf(xm) < hole:
+			_box(st, Vector3(c.x + xm, y0 - 0.06, c.z - (hw + hole) * 0.5), Vector3(x1 - x0, 0.12, hw - hole))
+			_box(st, Vector3(c.x + xm, y0 - 0.06, c.z + (hw + hole) * 0.5), Vector3(x1 - x0, 0.12, hw - hole))
+		else:
+			_box(st, Vector3(c.x + xm, y0 - 0.06, c.z), Vector3(x1 - x0, 0.12, W))
+	# Kuyu bileziği (ağzın çevresinde alçak taş) ve üstünde tahta kapak (yana çekilmiş)
+	st.set_color(Color("9a907e"))
 	for k in 4:
 		var a := k * PI * 0.5
 		var d := Vector3(sin(a), 0, cos(a))
 		_box(st, Vector3(c.x, y0 + 0.18, c.z) + d * (hole + 0.1), Vector3(absf(d.z) * 1.5 + 0.2, 0.36, absf(d.x) * 1.5 + 0.2))
-	# Duvarlar ve tavan; güney duvarında kapı (1,0 × 2,0)
+	st.set_color(Color("5a3e26"))
+	_box(st, Vector3(c.x + 0.95, y0 + 0.39, c.z - 0.55), Vector3(0.9, 0.05, 0.9))
+	# Duvarlar: sıva, altta nemden koyulaşmış bant; köşelerde ve ortada ahşap dikmeler; güney duvarında kapı (1,0 × 2,0)
+	var plaster := Color("a8987c")
+	var damp := Color("6e624e")
+	for spec: Array in [
+			[Vector3(c.x, 0, c.z - hw), Vector3(W, 0, 0.2)], [Vector3(c.x - hw, 0, c.z), Vector3(0.2, 0, W)],
+			[Vector3(c.x + hw, 0, c.z), Vector3(0.2, 0, W)],
+			[Vector3(c.x - (hw + 0.5) * 0.5, 0, c.z + hw), Vector3(hw - 0.5, 0, 0.2)],
+			[Vector3(c.x + (hw + 0.5) * 0.5, 0, c.z + hw), Vector3(hw - 0.5, 0, 0.2)]]:
+		var pc: Vector3 = spec[0]
+		var sz: Vector3 = spec[1]
+		st.set_color(damp)
+		_box(st, Vector3(pc.x, y0 + 0.3, pc.z), Vector3(sz.x, 0.6, sz.z))
+		st.set_color(plaster)
+		_box(st, Vector3(pc.x, y0 + 0.6 + (H - 0.6) * 0.5, pc.z), Vector3(sz.x, H - 0.6, sz.z))
 	st.set_color(plaster)
-	_box(st, Vector3(c.x, y0 + H * 0.5, c.z - hw), Vector3(W, H, 0.2))
-	_box(st, Vector3(c.x - hw, y0 + H * 0.5, c.z), Vector3(0.2, H, W))
-	_box(st, Vector3(c.x + hw, y0 + H * 0.5, c.z), Vector3(0.2, H, W))
-	_box(st, Vector3(c.x - (hw + 0.5) * 0.5, y0 + H * 0.5, c.z + hw), Vector3(hw - 0.5, H, 0.2))
-	_box(st, Vector3(c.x + (hw + 0.5) * 0.5, y0 + H * 0.5, c.z + hw), Vector3(hw - 0.5, H, 0.2))
 	_box(st, Vector3(c.x, y0 + 2.0 + (H - 2.0) * 0.5, c.z + hw), Vector3(1.0, H - 2.0, 0.2))
+	st.set_color(Color("4a3220"))
+	for pp: Vector2 in [Vector2(-1, -1), Vector2(1, -1), Vector2(-1, 1), Vector2(1, 1), Vector2(-1, 0.0), Vector2(1, 0.0)]:
+		_box(st, Vector3(c.x + pp.x * (hw - 0.14), y0 + H * 0.5, c.z + pp.y * (hw - 0.14)), Vector3(0.14, H, 0.14))
+	# Kapı çerçevesi ve içeri açılmış kanat (avluya bakan derinlik)
+	_box(st, Vector3(c.x - 0.56, y0 + 1.0, c.z + hw - 0.02), Vector3(0.12, 2.04, 0.26))
+	_box(st, Vector3(c.x + 0.56, y0 + 1.0, c.z + hw - 0.02), Vector3(0.12, 2.04, 0.26))
+	_box(st, Vector3(c.x, y0 + 2.06, c.z + hw - 0.02), Vector3(1.24, 0.12, 0.26))
+	_box(st, Vector3(c.x, y0 + 0.02, c.z + hw - 0.02), Vector3(1.1, 0.05, 0.3))
+	st.set_color(Color("6a4a2c"))
+	_box(st, Vector3(c.x + 0.5 + 0.03, y0 + 1.0, c.z + hw - 0.55), Vector3(0.05, 1.95, 0.95))
+	# Tavan ve kirişler
 	st.set_color(Color("5a3e26"))
 	_box(st, Vector3(c.x, y0 + H + 0.08, c.z), Vector3(W + 0.2, 0.16, W + 0.2))
-	for dz: float in [-1.0, 0.0, 1.0]:
-		_box(st, Vector3(c.x, y0 + H - 0.08, c.z + dz), Vector3(W, 0.14, 0.16))
-	# Raf, küpler, fıçı
-	st.set_color(wood)
-	for yy: float in [0.7, 1.4]:
-		_box(st, Vector3(c.x - hw + 0.3, y0 + yy, c.z - 0.2), Vector3(0.4, 0.05, 2.4))
-	var jar_cols := [Color("7a5a3a"), Color("9a6a40"), Color("6a6a48"), Color("a07850")]
-	for k in 8:
-		st.set_color(jar_cols[k % 4])
-		var yy := 0.7 if k < 4 else 1.4
-		_lathe(st, [[0.0, 0.08], [0.1, 0.15], [0.26, 0.13], [0.34, 0.07], [0.38, 0.07]], 8, Vector3(c.x - hw + 0.3, y0 + yy + 0.03, c.z - 1.1 + (k % 4) * 0.6))
-	st.set_color(Color("5a3a20"))
-	_lathe(st, [[0.0, 0.3], [0.45, 0.36], [0.9, 0.3]], 10, Vector3(c.x + hw - 0.45, y0, c.z - hw + 0.45))
+	st.set_color(Color("3e2a1a"))
+	for dz: float in [-1.2, -0.4, 0.4, 1.2]:
+		_box(st, Vector3(c.x, y0 + H - 0.08, c.z + dz), Vector3(W, 0.16, 0.16))
+	# Batı duvarı: iki raf, üstünde turşu küpleri (renk renk, sırlı ağızlı)
+	st.set_color(Color("7a5634"))
+	for yy: float in [0.75, 1.5]:
+		_box(st, Vector3(c.x - hw + 0.32, y0 + yy, c.z - 0.25), Vector3(0.42, 0.05, 2.6))
+		for zz: float in [-1.45, -0.25, 0.95]:
+			_box(st, Vector3(c.x - hw + 0.32, y0 + yy * 0.5, c.z + zz), Vector3(0.05, yy, 0.05))
+	var jar_cols := [Color("b06a3a"), Color("6a7a48"), Color("c08850"), Color("8a4a2a"), Color("a89060")]
+	for k in 10:
+		var yy := 0.75 if k < 5 else 1.5
+		var zz := -1.35 + (k % 5) * 0.55
+		st.set_color(jar_cols[(k * 3) % 5])
+		_lathe(st, [[0.0, 0.09], [0.1, 0.16], [0.26, 0.14], [0.34, 0.075], [0.4, 0.08]], 10, Vector3(c.x - hw + 0.32, y0 + yy + 0.03, c.z + zz))
+		st.set_color(Color("d8c8a0"))
+		_lathe(st, [[0.4, 0.085], [0.43, 0.06], [0.44, 0.0]], 8, Vector3(c.x - hw + 0.32, y0 + yy + 0.03, c.z + zz))
+	# Kuzey duvarı: asılı sarımsak ve soğan örgüleri; dipte çuvallar
+	for k in 4:
+		var px := c.x - 0.9 + k * 0.6
+		st.set_color(Color("8a7450"))
+		_box(st, Vector3(px, y0 + 1.9, c.z - hw + 0.16), Vector3(0.02, 0.5, 0.02))
+		for b in 5:
+			st.set_color(Color("e0d4b8") if k % 2 == 0 else Color("b8783a"))
+			_lathe(st, [[0.0, 0.0], [0.03, 0.06], [0.1, 0.065], [0.15, 0.0]], 6, Vector3(px + (b % 2) * 0.05 - 0.025, y0 + 1.25 + b * 0.11, c.z - hw + 0.2))
+	for k in 3:
+		st.set_color([Color("b8a888"), Color("a8987a"), Color("c0b090")][k])
+		_lathe(st, [[0.0, 0.2], [0.25, 0.26], [0.5, 0.2], [0.62, 0.08]], 8, Vector3(c.x - 0.3 + k * 0.55, y0, c.z - hw + 0.4))
+	# Fıçı: güneybatı köşede, kapının yanında
+	var bp := Vector3(c.x - hw + 0.5, y0, c.z + hw - 0.55)
+	st.set_color(Color("6a4626"))
+	_lathe(st, [[0.0, 0.3], [0.45, 0.36], [0.9, 0.3]], 12, bp)
 	st.set_color(Color("3a3a3a"))
-	_lathe(st, [[0.2, 0.37], [0.24, 0.37]], 10, Vector3(c.x + hw - 0.45, y0, c.z - hw + 0.45))
-	_lathe(st, [[0.66, 0.37], [0.7, 0.37]], 10, Vector3(c.x + hw - 0.45, y0, c.z - hw + 0.45))
-	# Kuyuda ip merdiven (tonozun ağzından suya) ve bacada demir basamaklar (kuzey yüzde)
-	var lz := c.z - 0.42
-	st.set_color(Color("8a7450"))
+	_lathe(st, [[0.18, 0.345], [0.24, 0.35]], 12, bp)
+	_lathe(st, [[0.66, 0.35], [0.72, 0.345]], 12, bp)
+	# Bacada demir basamaklar (kuzey yüzde): paslı, kalın
 	var top := crown - 0.6
-	var bot := WATER_Y + 0.35
-	for sx: float in [-0.22, 0.22]:
-		_box(st, Vector3(c.x + sx, (top + bot) * 0.5, lz), Vector3(0.03, top - bot, 0.03))
-	st.set_color(Color("7a5a38"))
-	var yy2 := bot + 0.2
-	while yy2 < top:
-		_box(st, Vector3(c.x, yy2, lz), Vector3(0.5, 0.045, 0.06))
-		yy2 += 0.4
-	st.set_color(Color("3a3430"))
+	st.set_color(Color("7a6050"))
 	var yy3 := crown - 0.3
 	while yy3 < y0 - 0.2:
-		_box(st, Vector3(c.x, yy3, c.z - 0.5), Vector3(0.38, 0.035, 0.1))
+		_box(st, Vector3(c.x, yy3, c.z - 0.5), Vector3(0.44, 0.05, 0.12))
+		for sx: float in [-0.2, 0.2]:
+			_box(st, Vector3(c.x + sx, yy3 + 0.04, c.z - 0.54), Vector3(0.04, 0.1, 0.06))
 		yy3 += 0.45
 	st.generate_normals()
 	var mi := MeshInstance3D.new()
@@ -960,15 +1020,53 @@ func _build_cellar(c: Vector3, crown: float) -> void:
 	mi.material_override = m
 	mi.name = "Cellar"
 	add_child(mi)
-	# Kapının ardında avlunun gün ışığı (parlak düzlem) ve odaya düşen ışık kartı; kilerin ışığı
+	# İp merdiven: tonozun ağzından suya (ayrı ağ; tepesi dayanak, salınınca aşağı uzanır)
+	var lst := SurfaceTool.new()
+	lst.begin(Mesh.PRIMITIVE_TRIANGLES)
+	var bot := WATER_Y + 0.35
+	lst.set_color(Color("8a7450"))
+	for sx: float in [-0.22, 0.22]:
+		_box(lst, Vector3(sx, -(top - bot) * 0.5, 0), Vector3(0.03, top - bot, 0.03))
+	lst.set_color(Color("7a5a38"))
+	var yy2 := 0.2
+	while yy2 < top - bot:
+		_box(lst, Vector3(0, -(top - bot) + yy2, 0), Vector3(0.5, 0.045, 0.06))
+		yy2 += 0.4
+	lst.generate_normals()
+	_rope_ladder = MeshInstance3D.new()
+	_rope_ladder.mesh = lst.commit()
+	_rope_ladder.material_override = m
+	_rope_ladder.position = Vector3(c.x, top, c.z - 0.42)
+	_rope_ladder.name = "RopeLadder"
+	_rope_ladder.visible = false
+	add_child(_rope_ladder)
+	# Kapının ardında avlunun gün ışığı: duvara sıvalı parlak düzlem değil, alt yarısı taş avlu, üstü sıvalı karşı
+	# duvar (yumuşak, kısık); döşemeye düşen ışık lekesi; kilerin ışıkları
 	var door := MeshInstance3D.new()
 	var dq := QuadMesh.new()
 	dq.size = Vector2(1.0, 2.0)
 	door.mesh = dq
-	door.position = Vector3(c.x, y0 + 1.0, c.z + hw + 0.15)
+	door.position = Vector3(c.x, y0 + 1.0, c.z + hw + 0.2)
 	door.rotation_degrees = Vector3(0, 180, 0)
-	door.material_override = Props.mat(Color("ffe8c0"), 1.2, false, "", false)
+	var dsh := Shader.new()
+	dsh.code = """
+shader_type spatial;
+render_mode unshaded, cull_disabled, fog_disabled;
+void fragment() {
+	float y = 1.0 - UV.y;
+	vec3 ground = vec3(0.86, 0.80, 0.68);
+	vec3 wall = vec3(0.95, 0.88, 0.74);
+	vec3 sky = vec3(0.62, 0.78, 0.95);
+	vec3 col = mix(ground * (0.85 + 0.15 * step(0.5, fract(UV.x * 5.0 + floor(y * 10.0) * 0.5))), wall, smoothstep(0.3, 0.33, y));
+	col = mix(col, sky, smoothstep(0.82, 0.85, y));
+	ALBEDO = col * 0.95;
+}
+"""
+	var dmat := ShaderMaterial.new()
+	dmat.shader = dsh
+	door.material_override = dmat
 	door.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
+	door.name = "CellarDoorView"
 	add_child(door)
 	_cellar_glow.append(door)
 	var shaft_beam := MeshInstance3D.new()
@@ -981,24 +1079,74 @@ func _build_cellar(c: Vector3, crown: float) -> void:
 	shaft_beam.visible = false
 	add_child(shaft_beam)
 	_cellar_glow.append(shaft_beam)
+	var patch := MeshInstance3D.new()
+	var pq := QuadMesh.new()
+	pq.size = Vector2(1.0, 1.5)
+	patch.mesh = pq
+	patch.rotation_degrees = Vector3(-90, 0, 0)
+	patch.position = Vector3(c.x - 0.12, y0 + 0.012, c.z + hw - 0.8)
+	var pmat := StandardMaterial3D.new()
+	pmat.shading_mode = BaseMaterial3D.SHADING_MODE_UNSHADED
+	pmat.transparency = BaseMaterial3D.TRANSPARENCY_ALPHA
+	pmat.blend_mode = BaseMaterial3D.BLEND_MODE_ADD
+	var pg := Gradient.new()
+	pg.set_color(0, Color(1.0, 0.86, 0.6, 0.0))
+	pg.set_color(1, Color(1.0, 0.86, 0.6, 0.55))
+	var pt := GradientTexture2D.new()
+	pt.gradient = pg
+	pt.fill_from = Vector2(0.5, 0.0)
+	pt.fill_to = Vector2(0.5, 1.0)
+	pmat.albedo_texture = pt
+	patch.material_override = pmat
+	patch.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
+	patch.visible = false
+	patch.name = "CellarSunPatch"
+	add_child(patch)
+	_cellar_glow.append(patch)
 	cellar_light = OmniLight3D.new()
-	cellar_light.light_color = Color("ffe0b0")
-	cellar_light.light_energy = 0.9
-	cellar_light.omni_range = 9.5
-	cellar_light.omni_attenuation = 0.8
+	cellar_light.light_color = Color("ffe2b8")
+	cellar_light.light_energy = 0.75
+	cellar_light.omni_range = 10.0
+	cellar_light.omni_attenuation = 0.6
 	cellar_light.shadow_enabled = false
-	cellar_light.position = Vector3(c.x, y0 + 1.6, c.z + 0.6)
+	cellar_light.position = Vector3(c.x + 0.3, y0 + 2.2, c.z)
 	cellar_light.visible = false
 	cellar_light.name = "CellarLight"
 	add_child(cellar_light)
+	_cellar_door_light = OmniLight3D.new()
+	_cellar_door_light.light_color = Color("fff0d8")
+	_cellar_door_light.light_energy = 1.1
+	_cellar_door_light.omni_range = 4.2
+	_cellar_door_light.shadow_enabled = false
+	_cellar_door_light.position = Vector3(c.x, y0 + 1.3, c.z + hw - 0.35)
+	_cellar_door_light.visible = false
+	_cellar_door_light.name = "CellarDoorLight"
+	add_child(_cellar_door_light)
 
 
-## Kilerin ışığı (tırmanışta yanar; ışık bütçesi: öbür evrelerde kapalı)
-func cellar_on(on: bool) -> void:
+## Kilerin ışıkları (tırmanışta yanar; ışık bütçesi: öbür evrelerde kapalı). door: kapıdan gelen gün ışığı (yalnız
+## kilere çıkınca; bacada tırmanırken kilerin genel ışığı yeter)
+func cellar_on(on: bool, door := true) -> void:
 	if cellar_light:
 		cellar_light.visible = on
-	if _cellar_glow.size() > 1:
+	if _cellar_door_light:
+		_cellar_door_light.visible = on and door
+	if _cellar_glow.size() > 2:
 		_cellar_glow[1].visible = on
+		_cellar_glow[2].visible = on and door
+
+
+## İp merdiveni salar: tepesinden aşağı uzanır (secs sn; 0: hemen)
+func ladder_down(secs: float) -> void:
+	if _rope_ladder == null:
+		return
+	_rope_ladder.visible = true
+	if secs <= 0.0:
+		_rope_ladder.scale = Vector3.ONE
+		return
+	_rope_ladder.scale = Vector3(1, 0.05, 1)
+	var tw := _rope_ladder.create_tween()
+	tw.tween_property(_rope_ladder, "scale:y", 1.0, secs).set_trans(Tween.TRANS_BOUNCE).set_ease(Tween.EASE_OUT)
 
 
 ## Kuyu ağzının ışığı (yalnız iniş ve karanlık anında gerekir)
@@ -1222,6 +1370,24 @@ void fragment() {
 	col = mix(col, vec3(0.13, 0.2, 0.12), algae * 0.6);
 	// Oyukların dibi koyu (kir, çamur): göz çukurları, ağız, saç kıvrımlarının arası
 	col *= 0.3 + 0.7 * smoothstep(0.02, 0.42, c);
+	// Yüzün çizgileri uzaktan da (640 × 360'ta) seçilsin: göz çukurunun gölgesi, göz bebeği oyuğu, burun delikleri,
+	// ağız yarığı ve kaşın altı kirle koyulaşmış (denetim 2, K4)
+	vec2 p = UV * 2.0 - 1.0;
+	p.y = -p.y;
+	float dark = 0.0;
+	for (int k = 0; k < 2; k++) {
+		float sx = k == 0 ? -0.2 : 0.2;
+		float sock = bump(p, vec2(sx, 0.135), vec2(0.17, 0.115));
+		float ball = bump(p, vec2(sx, 0.13), vec2(0.095, 0.062));
+		dark = max(dark, smoothstep(0.0, 0.35, sock) * (1.0 - smoothstep(0.0, 0.25, ball)) * 0.8);
+		dark = max(dark, smoothstep(0.2, 0.7, bump(p, vec2(sx, 0.125), vec2(0.032, 0.03))) * 0.85);
+		dark = max(dark, smoothstep(0.1, 0.6, bump(p, vec2(sx * 0.22, -0.125), vec2(0.03, 0.022))) * 0.8);
+		float bx = (p.x - sx) / 0.17;
+		float by = p.y - (0.235 - 0.06 * bx * bx);
+		dark = max(dark, max(0.0, 1.0 - abs(bx)) * max(0.0, 1.0 - abs(by) / 0.025) * 0.5);
+	}
+	dark = max(dark, max(0.0, 1.0 - abs(p.y + 0.29) / 0.022) * max(0.0, 1.0 - abs(p.x) / 0.15) * 0.9);
+	col *= 1.0 - dark;
 	ALBEDO = col;
 	ROUGHNESS = 0.8;
 	SPECULAR = 0.3;
@@ -1308,6 +1474,7 @@ func _medusa_head(kind: String) -> Node3D:
 	var stone := Color("4a5044")
 	var blk := Props.box(root, Vector3(1.62, 1.62, 0.8), Vector3(0, 0, -0.32), stone.darkened(0.15))
 	blk.name = "Block"
+	Props.box(root, Vector3(1.8, 1.0, 1.1), Vector3(0, -1.3, -0.3), stone.darkened(0.3))
 	var q := MeshInstance3D.new()
 	q.mesh = _medusa_face_mesh()
 	q.position = Vector3(0, 0, 0.08)
@@ -1322,8 +1489,9 @@ func _build_medusa() -> void:
 	for m: Array in MEDUSA:
 		var c := column(m[0], m[1])
 		var head := _medusa_head(m[2])
-		# Kaide: bloğun tepesi suyun ~0,4 m altında; yüzler güneye (kayığın yanaşacağı tonoz gözüne) dönük
-		head.position = Vector3(c.x, 1.0, c.z)
+		# Kaide: bloğun tepesi suyun hemen altında (yüz su yüzünün 0,1–1,6 m altında, kandille seçilir); yüzler güneye
+		# (kayığın yanaşacağı tonoz gözüne) dönük
+		head.position = Vector3(c.x, MEDUSA_Y, c.z)
 		var ex := bay(WELLS[1][0], WELLS[1][1])
 		head.rotation.y = atan2(ex.x - c.x, (ex.z + 2.0) - c.z) * 0.45
 		head.name = "Medusa_" + String(m[2])
@@ -1335,24 +1503,37 @@ func _build_medusa() -> void:
 		head.add_child(aim)
 		medusa.append(head)
 		var mi := MeshInstance3D.new()
-		mi.mesh = _shaft_mesh_from(1.82)
+		mi.mesh = _shaft_mesh_from(MEDUSA_Y + 0.8)
 		mi.position = Vector3(c.x, 0, c.z)
 		mi.material_override = _marble_single(Color("c8c4b8"))
 		add_child(mi)
-		# Çevresinde çamur tümseği (suyun altında, ışıkla seçilir)
-		var mud := Props.ball(self, 1.2, Vector3(c.x, 0.15, c.z), Color("1e1e16"), Vector3(1.0, 0.22, 1.0), 10)
-		mud.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
 	# Köşenin dibi: su berraklaşınca görünen çamurlu taban (yalnız orada; yansımanın yerine)
 	var c0 := (column(MEDUSA[0][0], MEDUSA[0][1]) + column(MEDUSA[1][0], MEDUSA[1][1])) * 0.5
+	# Kenarı saydamlaşan çamur (dairesel sert kenar "kuru çukur" gibi okunuyordu: denetim 2, D6); ortada kaba dalgalı
 	_mud_floor = MeshInstance3D.new()
-	var dm := CylinderMesh.new()
-	dm.top_radius = 6.0
-	dm.bottom_radius = 6.0
-	dm.height = 0.1
-	dm.radial_segments = 20
+	var dm := PlaneMesh.new()
+	dm.size = Vector2(13.0, 13.0)
 	_mud_floor.mesh = dm
 	_mud_floor.position = Vector3(c0.x, 0.05, c0.z + 1.0)
-	_mud_floor.material_override = Props.mat(Color("2e2c20"), 0.0, false, "concrete", false)
+	var msh := Shader.new()
+	msh.code = """
+shader_type spatial;
+render_mode blend_mix, depth_draw_never, cull_disabled;
+float h(vec2 p) { return fract(sin(dot(p, vec2(12.9898, 78.233))) * 43758.5453); }
+float n2(vec2 p) { vec2 i = floor(p); vec2 f = fract(p); vec2 u = f * f * (3.0 - 2.0 * f);
+	return mix(mix(h(i), h(i + vec2(1, 0)), u.x), mix(h(i + vec2(0, 1)), h(i + vec2(1, 1)), u.x), u.y); }
+void fragment() {
+	vec2 c = UV - vec2(0.5);
+	float r = length(c) * 2.0 + 0.18 * (n2(UV * 7.0) - 0.5);
+	float m = n2(UV * 26.0) * 0.6 + n2(UV * 61.0) * 0.4;
+	ALBEDO = mix(vec3(0.13, 0.12, 0.08), vec3(0.24, 0.22, 0.15), m);
+	ALPHA = 1.0 - smoothstep(0.3, 0.95, r);
+	ROUGHNESS = 0.95;
+}
+"""
+	var mm := ShaderMaterial.new()
+	mm.shader = msh
+	_mud_floor.material_override = mm
 	_mud_floor.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
 	_mud_floor.visible = false
 	add_child(_mud_floor)
@@ -1464,6 +1645,35 @@ func _build_fish() -> void:
 	mi.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
 	mi.name = "Fish"
 	add_child(mi)
+
+
+## Olay balığı (ilk kürek evresi): yassı sazan gövdesi yandan okunur (boy 0,45 m, yükseklik 0,15, en 0,07), sırt ve
+## kuyruk yüzgeci dikey. +z burun.
+func carp_mesh() -> Mesh:
+	var st := SurfaceTool.new()
+	st.begin(Mesh.PRIMITIVE_TRIANGLES)
+	var prof := [[0.22, 0.0], [0.17, 0.045], [0.08, 0.075], [-0.04, 0.072], [-0.13, 0.045], [-0.19, 0.018]]
+	var seg := 8
+	for i in prof.size() - 1:
+		var z0: float = prof[i][0]
+		var z1: float = prof[i + 1][0]
+		var h0: float = prof[i][1]
+		var h1: float = prof[i + 1][1]
+		for k in seg:
+			var a0 := TAU * k / seg
+			var a1 := TAU * (k + 1) / seg
+			var p00 := Vector3(cos(a0) * h0 * 0.45, sin(a0) * h0, z0)
+			var p01 := Vector3(cos(a1) * h0 * 0.45, sin(a1) * h0, z0)
+			var p10 := Vector3(cos(a0) * h1 * 0.45, sin(a0) * h1, z1)
+			var p11 := Vector3(cos(a1) * h1 * 0.45, sin(a1) * h1, z1)
+			for v: Vector3 in [p00, p10, p11, p00, p11, p01]:
+				st.add_vertex(v)
+	for tri: Array in [[Vector3(0, 0, -0.18), Vector3(0, 0.09, -0.28), Vector3(0, -0.08, -0.27)],
+			[Vector3(0, 0.07, 0.04), Vector3(0, 0.12, -0.02), Vector3(0, 0.06, -0.11)]]:
+		for v: Vector3 in tri:
+			st.add_vertex(v)
+	st.generate_normals()
+	return st.commit()
 
 
 func _build_rings() -> void:

@@ -57,7 +57,8 @@ const SUN_PEAK_SECS := 3.5         # sütun ormanını boydan boya aydınlattı�
 const SUN_REST := 1.3              # sonra yarıktan kalıcı huzme (ışık enerjisi)
 const AMBIENT_DARK := 0.08         # gözler alışmadan ortam ışığı
 const AMBIENT_LIT := 0.75          # gözler alışınca (fener konisinin dışı tam siyah olmasın)
-const MEDUSA_STOP := 4.4           # kayık Medusa'lı iki sütunun kaç m güneyinde durur (iki yüz aynı kadrajda)
+const MEDUSA_STOP := 3.3           # kayık Medusa'lı iki sütunun kaç m güneyinde durur (iki yüz aynı kadrajda)
+const MEDUSA_FOV := 46.0           # tespit karesi ve yakın bakış: telefonun kamerası yakınlaştırır (görüş açısı, derece)
 const CLIMB_SECS := 6.5            # ip merdiven + demir basamaklar, sudan kilere
 
 const SEAT := Vector3(0.0, 0.42, 0.35)
@@ -131,6 +132,7 @@ var events: Array[String] = []      # olay günlüğü (test raporu)
 var _max_lights := 0                # test: sarnıçta aynı anda görünür Omni/Spot ışık sayısının en yükseği
 var _max_lights_at := ""
 var _light_probe := 0.0
+var _look_seq := 0
 
 
 func _ready() -> void:
@@ -353,7 +355,9 @@ func _descend() -> void:
 		# Yukarı bakarak iner: ağzın ışığı küçülür
 		var tw := create_tween()
 		tw.tween_property(player, "global_position:y", crown + 1.3 - player.eye_height, 3.4).set_trans(Tween.TRANS_SINE)
-		tw.parallel().tween_property(player.camera, "rotation:x", deg_to_rad(-58.0), 2.2).set_delay(2.0).set_trans(Tween.TRANS_SINE)
+		# Aşağı dönüş dik değil (-34°): ağzın altında sütun sıraları ve su çizgisi birlikte görünür; dik bakışta gövdeler
+		# zeminsiz, boşlukta yatık çubuklar gibi okunuyordu (denetim 2, D4)
+		tw.parallel().tween_property(player.camera, "rotation:x", deg_to_rad(-34.0), 2.2).set_delay(2.0).set_trans(Tween.TRANS_SINE)
 		for k in 4:
 			get_tree().create_timer(0.9 * k + 0.4, false).timeout.connect(Audio.sfx.bind("wood_creak", -14.0, 0.7 + 0.05 * k))
 		await tw.finished
@@ -510,13 +514,23 @@ func _to_boat() -> void:
 	hud.set_prompt("")
 	player.floating = false
 	player.speed_mult = 1.0
-	await hud.fade_to(1.0, 0.3)
+	# Kararma yok: kamera 0,3 sn'de kayıktaki oturağa süzülür, bakış kayığın burnuna döner (denetim 2, D5)
+	var was := player.frozen
+	player.frozen = true
+	var yaw0 := player.rotation.y
+	var bd := 0.3 if (not GameState.autotest or GameState.pace) else 0.05
+	var btw := create_tween().set_parallel()
+	btw.tween_property(player, "global_position", boat.to_global(SEAT), bd).set_trans(Tween.TRANS_SINE)
+	btw.tween_property(player, "rotation:y", yaw0 + wrapf(_boat_yaw - yaw0, -PI, PI), bd).set_trans(Tween.TRANS_SINE)
+	btw.tween_property(player, "eye_height", 1.12, bd)
+	btw.tween_property(player.camera, "rotation:x", deg_to_rad(-6.0), bd)
+	await btw.finished
 	player.pinned = true
 	player.eye_height = 1.12
 	_seat_player()
 	player.rotation.y = _boat_yaw
 	_player_yaw_last = player.rotation.y
-	await hud.fade_to(0.0, 0.3)
+	player.frozen = was
 
 
 ## İlk kürek evresi: Yakovos'un meşalesi ~45 m ötede. Yolda üç küçük olay (yolun kesirlerine bağlı; kürek çeken her
@@ -554,57 +568,79 @@ func _fwd() -> Vector3:
 	return -Vector3(sin(_boat_yaw), 0, cos(_boat_yaw))
 
 
-## Olay 1: bir balık sürüsü kayığın önünden altına dalıp öbür yana geçer (fenerin ışığında gümüş sırtlar, halkalar)
+## Olay 1: bir sazan sürüsü pruvanın 3,5–4 m önünden soldan sağa geçer (sırtları suyu yarar, beşi sıçrar: fenerin
+## konisinde gümüş gövdeler, halkalar, şıpırtı), sonra kayığa kıvrılıp altına dalar; Tolga'nın repliği geçtikten sonra.
+## Balıklar yandan okunur gövdeli (yassı sazan: boyu 45 cm, eni 7 cm); eski düz üçgenler yatay bakışta ince çizgiydi
+## (denetim 2, D9).
 func _ev_fish() -> void:
 	events.append("fish")
-	var fish_mm: MultiMesh = cis.get("_fish_mm")
+	var n := 14
 	var mm := MultiMesh.new()
 	mm.transform_format = MultiMesh.TRANSFORM_3D
-	mm.mesh = fish_mm.mesh
-	mm.instance_count = 26
+	mm.mesh = cis.call("carp_mesh")
+	mm.instance_count = n
 	var mi := MultiMeshInstance3D.new()
 	mi.multimesh = mm
 	var fm := StandardMaterial3D.new()
-	fm.albedo_color = Color("c8c0a0")
-	fm.metallic = 0.5
-	fm.roughness = 0.25
+	fm.albedo_color = Color("c8b88a")
+	fm.metallic = 0.45
+	fm.roughness = 0.3
 	fm.emission_enabled = true
-	fm.emission = Color("8a8460")
+	fm.emission = Color("5e5640")
 	fm.cull_mode = BaseMaterial3D.CULL_DISABLED
 	mi.material_override = fm
 	mi.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
 	add_child(mi)
 	var f := _fwd()
 	var side := Vector3(-f.z, 0, f.x)
-	# Pruvanın 6–8 m önünden çapraz geçer, sonra kayığa doğru kıvrılıp altına dalar (fenerin konisinde, altyazının üstünde)
-	var a := boat.global_position + f * 9.5 - side * 4.5
-	var b := boat.global_position + f * 2.5 + side * 4.5
+	var o := boat.global_position
+	# Yol: soldan pruvanın 4 m önüne, ortada 3,5 m, sağda kayığa kıvrılıp altına
+	var pts := [o + f * 4.2 - side * 4.6, o + f * 3.6 - side * 0.6, o + f * 3.2 + side * 2.2, o + f * 0.6 + side * 0.8]
 	var offs: Array[Vector3] = []
-	for k in 26:
-		offs.append(Vector3(randf_range(-1.0, 1.0), randf_range(-0.25, 0.1), randf_range(-0.9, 0.9)))
-	var dur := 3.2
+	for k in n:
+		offs.append(Vector3(randf_range(-0.7, 0.7), 0.0, randf_range(-0.5, 0.5)))
+	var leap_at := [0.18, 0.27, 0.36, 0.44, 0.52]          # yol kesri: sıçrayan beş balık
+	var leap_k := [2, 7, 4, 11, 9]
+	var dur := 4.2
 	var t := 0.0
-	Audio.sfx("splash", -16.0, 1.9)
-	hud.bark("SPK_TOLGA", "D44B_T_FISH", 3.5)
 	var rang := 0.0
+	var barked := false
+	Audio.sfx("splash", -16.0, 1.9)
 	while t < dur and is_instance_valid(mi):
 		await get_tree().process_frame
 		var dt := get_process_delta_time()
 		t += dt
 		var k0 := t / dur
-		var c := a.lerp(b, k0)
-		var dir := (b - a).normalized()
+		var seg := minf(k0 * 3.0, 2.999)
+		var si := int(seg)
+		var c: Vector3 = (pts[si] as Vector3).lerp(pts[si + 1], seg - si)
+		var dir: Vector3 = ((pts[si + 1] as Vector3) - (pts[si] as Vector3)).normalized()
 		var bs := Basis.looking_at(dir, Vector3.UP).rotated(Vector3.UP, PI)
-		for k in 26:
-			var wob := Vector3(sin(t * 6.0 + k) * 0.08, 0, cos(t * 5.0 + k * 1.3) * 0.08)
-			var depth := lerpf(-0.04, -0.45, pow(k0, 3.0))          # önce sırtları suyu yarar, kayığın altına dalarken derinleşir
-			mm.set_instance_transform(k, Transform3D(bs.rotated(dir, sin(t * 11.0 + k) * 0.2).scaled(Vector3.ONE * 1.7), Vector3(c.x, CisternLevel.WATER_Y + depth, c.z) + offs[k] * Vector3(1, 0.3, 1) + wob))
+		var dive := smoothstep(0.62, 1.0, k0)
+		for k in n:
+			var wob := side * sin(t * 6.0 + k) * 0.06
+			var y := lerpf(-0.07, -0.55, dive) + sin(t * 4.0 + k * 1.7) * 0.03
+			var b := bs.rotated(dir, sin(t * 11.0 + k) * 0.12)
+			for q in leap_k.size():
+				if leap_k[q] == k:
+					var lk := (k0 - float(leap_at[q])) / 0.14
+					if lk > 0.0 and lk < 1.0:
+						y = 0.62 * 4.0 * lk * (1.0 - lk) - 0.05
+						b = bs.rotated(bs.x, (0.5 - lk) * 1.6)
+						if lk < dt / (0.14 * dur) * 1.5 or absf(lk - 1.0) < dt / (0.14 * dur) * 1.5:
+							cis.call("ring", c + offs[k], 0.7, 1.1)
+							Audio.sfx("splash", -14.0, 1.6 + randf() * 0.4)
+			mm.set_instance_transform(k, Transform3D(b, Vector3(c.x, CisternLevel.WATER_Y + y, c.z) + offs[k] + wob))
 		rang += dt
-		if rang > 0.18:
+		if rang > 0.16 and dive < 0.5:
 			rang = 0.0
-			cis.call("ring", c + Vector3(randf_range(-0.9, 0.9), 0, randf_range(-0.9, 0.9)), 0.5, 0.9)
-		if absf(k0 - 0.6) < dt / dur:
+			cis.call("ring", c + Vector3(randf_range(-0.8, 0.8), 0, randf_range(-0.6, 0.6)), 0.45, 0.9)
+		if not barked and k0 > 0.74:
+			barked = true
 			_roll = 0.05
+			hud.bark("SPK_TOLGA", "D44B_T_FISH", 3.5)
+	if not barked:
+		hud.bark("SPK_TOLGA", "D44B_T_FISH", 3.5)
 	mi.queue_free()
 
 
@@ -962,21 +998,26 @@ func _medusa() -> void:
 	var side_at := stop + Vector3(2.2, 0, 1.4)
 	tw.tween_property(yboat, "global_position", Vector3(side_at.x, yboat.global_position.y, side_at.z), d)
 	await tw.finished
-	# Yakovos'un kandili suya eğilir: ışık iki yüzün önünde, su berraklaşır
+	# Yakovos'un kandili suya eğilir: ışık iki yüzün ARASINDA ve hemen önünde, yüzlere yandan (sıyırarak) vurur:
+	# kaş, göz çukuru, burun ve dudak gölge verir (önden düz ışıkta yüz "yumurta" gibi okunuyordu: denetim 2, K4)
 	var glow := OmniLight3D.new()
-	glow.light_color = Color("ffb868")
-	glow.light_energy = 3.4
-	glow.omni_range = 6.5
+	glow.light_color = Color("ffbe78")
+	glow.light_energy = 3.0
+	glow.omni_range = 5.5
+	glow.omni_attenuation = 1.3
 	glow.shadow_enabled = false
 	glow.name = "MedusaLamp"
 	cis.add_child(glow)
-	glow.global_position = Vector3(mid.x, CisternLevel.WATER_Y + 0.3, mid.z + 1.9)
+	glow.global_position = Vector3(mid.x, CisternLevel.WATER_Y + 0.12, mid.z + 1.05)
 	cis.call("clear_water", mid + Vector3(0, 0, 0.4), 4.4)
-	var look_mid := Vector3(mid.x, 1.1, mid.z + 0.4)
+	var look_mid := Vector3(mid.x, CisternLevel.MEDUSA_Y - 0.1, mid.z + 0.4)
+	var fov0 := player.camera.fov
 	await _turn_to(look_mid, 1.4)
 	await hud.say("SPK_FISHMONGER", "D44B_Y_STONE")
 	hud.set_objective(GameState.tr_pad("UI_OBJ44_MEDUSA"), aim.global_position)
 	player.frozen = false
+	# Tespit: telefonun kamerası yakınlaştırır (yüz kadrajın beşte biri kadar: göz, burun, ağız seçilir)
+	_zoom(MEDUSA_FOV, 0.6)
 	cam = TespitCam.new(player, hud, aim, "siege44")
 	hud.add_child(cam)
 	cam.max_dist = 14.0
@@ -994,14 +1035,36 @@ func _medusa() -> void:
 	cam.stop()
 	player.frozen = true          # konuşma boyunca; tırmanma hedefi gelince yeniden serbest
 	hud.set_objective("")
-	await _turn_to(look_mid, 0.8)
+	# "Biri yan, biri ters": bakış önce yan yatık başa, sonra ters başa (yakın); ikinci replikte ikisi birden
+	var face1 := head.to_global(Vector3(0, 0, 0.3))
+	var face2 := h2.to_global(Vector3(0, 0, 0.3))
+	await _turn_to(face1, 0.8)
+	_look_seq += 1
+	_turn_later(face2, 2.4, 0.9, _look_seq)
 	await hud.say("SPK_TOLGA", "D44B_T_MEDUSA_1")
+	_look_seq += 1
+	_zoom(fov0, 0.8)
+	await _turn_to(look_mid, 0.8)
 	await hud.say("SPK_TOLGA", "D44B_T_MEDUSA_2")
 	await _turn_to(yakovos.global_position + Vector3(0, 1.3, 0), 1.0)
 	await hud.say("SPK_FISHMONGER", "D44B_Y_MEDUSA")
 	await _turn_to(look_mid, 0.8)
 	await hud.say("SPK_NIHAT", "D44B_N_MEDUSA")
+	player.camera.fov = fov0
 	glow.visible = false
+
+
+## Gecikmeli bakış (replik sürerken ikinci başa döner); arada başka bir bakış başladıysa (seq değişti) yapılmaz
+func _turn_later(point: Vector3, delay: float, secs: float, seq: int) -> void:
+	await get_tree().create_timer(delay, false).timeout
+	if seq == _look_seq and phase == "medusa":
+		await _turn_to(point, secs)
+
+
+## Görüş açısını yumuşakça değiştirir (Medusa'da telefonun yakınlaştırması)
+func _zoom(fov: float, secs: float) -> void:
+	var tw := create_tween()
+	tw.tween_property(player.camera, "fov", fov, 0.05 if GameState.autotest and not GameState.pace else secs).set_trans(Tween.TRANS_SINE)
 
 
 ## Bakışı yumuşakça bir noktaya çevirir (ani dönüş yok; denetim en çok secs saniye alınır)
@@ -1029,7 +1092,8 @@ func _climb() -> void:
 	var goal: Vector3 = cis.get("exit_well")
 	var rungs := Props.interactable(cis, "rungs", Vector3(1.4, 2.4, 1.4), goal + Vector3(0, 1.2, 0))
 	rungs.name = "Rungs"
-	cis.call("cellar_on", true)
+	cis.call("cellar_on", true, false)
+	cis.call("ladder_down", 0.0 if GameState.autotest and not GameState.pace else 1.2)          # Yakovos ip merdiveni salar
 	if _sun_light:
 		_sun_light.visible = false          # ışık bütçesi: kilerin ışığı yanar, yarığın ışığı söner (uzakta kaldı)
 	hud.set_objective(tr("UI_OBJ44_CLIMB"), goal + Vector3(0, 2.0, 0))
@@ -1049,26 +1113,34 @@ func _climb() -> void:
 	player.eye_height = Player.EYE
 	player.global_position = Vector3(goal.x, CisternLevel.WATER_Y + 0.25, goal.z + 0.12)
 	player.rotation.y = 0.0            # merdiven kuzey yüzde: ona dönük
-	player.camera.rotation.x = deg_to_rad(62.0)
+	player.camera.rotation.x = deg_to_rad(52.0)
+	# Fener cebe: bacanın taşına 0,5 m'den vuran spot ekranda dev bir "yumurta" ışık lekesi yapıyordu (denetim 2, D3).
+	# Bacayı yukarıdaki kilerin ışığı ve tavandaki ağızdan inen ışık kartı aydınlatır; basamaklar paslı demir, açık renk.
+	_light_off()
+	# Kilerde durulacak yer ve bakış: kuzeydoğudan güneybatıya; sağda raflar ve turşu küpleri, ortada kuyu bileziği ve
+	# fıçı, solda içeri açılmış kapıdan avlunun ışığı (denetim 2, D2: eskiden düz duvara ve beyaz kapıya bakılıyordu)
+	var stand := Vector3(goal.x + 1.3, floor_y, goal.z - 0.9)
+	var look_dir := Vector3(-0.78, 0.0, 0.63).normalized()
+	var stand_yaw := atan2(-look_dir.x, -look_dir.z)
 	if not GameState.autotest or GameState.pace:
 		var tw := create_tween()
 		tw.tween_property(player, "global_position:y", floor_y + 0.05, CLIMB_SECS).set_trans(Tween.TRANS_SINE)
 		tw.parallel().tween_property(player.camera, "rotation:x", deg_to_rad(20.0), CLIMB_SECS * 0.5).set_delay(CLIMB_SECS * 0.5)
 		for k in int(CLIMB_SECS / 0.45):
 			get_tree().create_timer(0.45 * k, false).timeout.connect(Audio.sfx.bind("footstep_stone_%d" % (k % 4 + 1), -10.0, 0.8))
+		get_tree().create_timer(CLIMB_SECS * 0.6, false).timeout.connect(cis.call.bind("cellar_on", true, true))
 		await tw.finished
-		# Kilerin ağzından çıkar: kapıdan gün ışığı (fener cebe: kilerin duvarında leke yapmasın)
-		_light_off()
+		# Kilerin ağzından çıkar, bileziğin yanına basar, kileri görür
 		var tw2 := create_tween().set_parallel()
-		tw2.tween_property(player, "global_position", Vector3(goal.x, floor_y, goal.z + 0.9), 0.8).set_trans(Tween.TRANS_SINE)
-		tw2.tween_property(player, "rotation:y", PI, 0.8).set_trans(Tween.TRANS_SINE)
-		tw2.tween_property(player.camera, "rotation:x", deg_to_rad(-4.0), 0.8)
+		tw2.tween_property(player, "global_position", stand, 1.0).set_trans(Tween.TRANS_SINE)
+		tw2.tween_property(player, "rotation:y", stand_yaw, 1.0).set_trans(Tween.TRANS_SINE)
+		tw2.tween_property(player.camera, "rotation:x", deg_to_rad(-13.0), 1.0)
 		await tw2.finished
 	else:
-		player.global_position = Vector3(goal.x, floor_y, goal.z + 0.9)
-		player.rotation.y = PI
-		player.camera.rotation.x = deg_to_rad(-4.0)
-	_light_off()                       # kilerde gün ışığı var: fener cebe
+		cis.call("cellar_on", true, true)
+		player.global_position = stand
+		player.rotation.y = stand_yaw
+		player.camera.rotation.x = deg_to_rad(-13.0)
 	await hud.say("SPK_TOLGA", "D44B_T_CLIMB")
 	await hud.fade_to(1.0, 0.5)
 
@@ -1096,13 +1168,21 @@ func _yard_end() -> void:
 	Audio.music("byzantium_evening")
 	_build_city()
 	await get_tree().process_frame
-	player.global_position = HOUSE_DOOR + Vector3(0.3, 0, 1.4)
-	player.face(WELL + Vector3(0, 1.0, 0))
+	# Konuşanlar oyuncunun önünde, kuyunun SOLUNDA bir yay üstünde (oyuncudan 3–3,6 m): kuyunun çatkısının arkasında
+	# kalmazlar (denetim 2, D8: Eudokia ve komşular kuyunun ardında, ayakları bileziğin arkasında kalıyordu). Kuyu
+	# kadrajın sağ yanında; bakış yayın ortasına.
+	var pp := HOUSE_DOOR + Vector3(0.3, 0, 1.4)
+	player.global_position = pp
+	var arc := func(deg: float, r: float) -> Vector3:
+		return pp + Vector3(cos(deg_to_rad(deg)), 0, sin(deg_to_rad(deg))) * r
+	player.face(arc.call(64.0, 3.2) + Vector3(0, 1.2, 0))
+	eudokia.position = arc.call(56.0, 3.4)
+	eudokia.look_target = player
 	if kid:
-		kid.position = HOUSE_DOOR + Vector3(1.7, 0, 2.9)      # oyuncunun önünde, Eudokia'nın görüş çizgisinin dışında
+		kid.position = arc.call(47.0, 2.2)      # oyuncunun önünde, kuyunun solunda (Eudokia'nın önünde değil, yanında)
 		kid.look_target = player
 	yakovos = _make_yakovos()
-	yakovos.position = HOUSE_DOOR + Vector3(-0.9, 0, 1.1)
+	yakovos.position = arc.call(69.0, 3.0)
 	yakovos.look_target = player
 	add_child(yakovos)
 	neighbors.append(yakovos)
@@ -1110,7 +1190,7 @@ func _yard_end() -> void:
 		var n := Person.new({"coat": [Color("6a5040"), Color("5a6a7a")][k], "pants": Color("3a3028"), "hat": "none" if k == 0 else "hood",
 			"beard": k == 0, "mustache": true, "hair": Color("3a2a1e")})
 		n.set_meta("spk", "SPK_TOWNSMAN")
-		n.position = YARD + Vector3(2.8 - k * 1.1, 0, 2.4)
+		n.position = arc.call(82.0 + k * 13.0, 3.5)
 		n.look_target = player
 		add_child(n)
 		neighbors.append(n)
@@ -1220,9 +1300,11 @@ func _skiff(col: Color) -> Node3D:
 
 func _boat_place(p: Vector3, yaw: float) -> void:
 	_boat_yaw = yaw
-	boat.global_position = Vector3(p.x, CisternLevel.WATER_Y - 0.12 + sin(_t * 1.3) * 0.02 - 0.03 * _bilge, p.z)
-	# Yalpa: atışın dalgası, düşen parça (sönümlü salınım)
-	boat.rotation = Vector3(sin(_t * 0.9) * 0.01 + _roll * 0.4 * sin(_t * 5.0), yaw, sin(_t * 1.1) * 0.015 + _roll * sin(_t * 4.2))
+	boat.global_position = Vector3(p.x, CisternLevel.WATER_Y - 0.12 + sin(_t * 1.3) * 0.02 - 0.03 * _bilge + _roll * 0.9 * sin(_t * 4.2), p.z)
+	# Yalpa: atışın dalgası, düşen parça (sönümlü salınım). Yan yatma (z) küçük tutulur: kürekler (ortak OarGrip)
+	# dünya ekseninde durur, kayık 2°'den çok yan yatınca kürek mili borda tahtasının içinden geçiyor ve borda kameranın
+	# önüne dev bir levha gibi kalkıyordu (denetim 2, D7). Sarsıntı baş-kıç salınımı ve dikey çalkantı olarak verilir.
+	boat.rotation = Vector3(sin(_t * 0.9) * 0.01 + _roll * 0.7 * sin(_t * 5.0), yaw, sin(_t * 1.1) * 0.008 + minf(_roll, 0.02) * sin(_t * 4.2))
 
 
 func _seat_player() -> void:
