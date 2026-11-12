@@ -480,6 +480,8 @@ func _civilian(n: Node3D, role: String, ctx: Dictionary) -> void:
 	if p and p.activity != "":
 		if not p.has_meta("street_role"):
 			p.set_meta("street_role", role)      # rolü işinden çıkıyordu (ordugâhta işçi): iş bırakınca asker sanılmasın
+		p.set_meta("krl_act", p.activity)
+		p.set_meta("krl_rot", p.global_rotation.y)
 		p.set_activity("")          # vurulan elindeki işi bırakır
 	if p:
 		p.face_toward(player.global_position)
@@ -513,6 +515,7 @@ func _civilian(n: Node3D, role: String, ctx: Dictionary) -> void:
 	_hits.clear()
 	if is_instance_valid(n) and n.get("look_target") == player:
 		n.set("look_target", null)
+	_back_to_work(n)
 
 
 ## Oyuncuya bakış: baş omuz üstünden döner, gövde dönmez (Rig.stare_t; sokak gözünün yolu). Yürüyen ya da iş başındaki
@@ -533,6 +536,16 @@ func _release_later(n: Node3D, secs: float) -> void:
 	await get_tree().create_timer(secs, false).timeout
 	if is_instance_valid(n) and n.get("look_target") == player:
 		n.set("look_target", null)
+	_back_to_work(n)
+
+
+## Vurulan, bakışı bırakınca elindeki işe döner (ressam boyamaya)
+func _back_to_work(n: Node3D) -> void:
+	if n is Person and is_instance_valid(n) and n.has_meta("krl_act"):
+		n.global_rotation.y = float(n.get_meta("krl_rot", n.global_rotation.y))     # işine dönük
+		(n as Person).set_activity(str(n.get_meta("krl_act")))
+		n.remove_meta("krl_act")
+		n.remove_meta("krl_rot")
 
 
 func _kicked_back() -> void:
@@ -911,6 +924,7 @@ func _bot_tick(delta: float) -> void:
 				var p := area_center + away * far
 				p.y = _ground(p, player.global_position.y)
 				player.global_position = p + Vector3(0, 0.05, 0)
+				player.face(area_center + Vector3(0, 1.5, 0))     # kaçan geriye, meydana bakar (seslenen ve koşan görünsün)
 
 
 func _bot_victim(mode: String) -> Person:
