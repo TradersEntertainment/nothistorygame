@@ -35,8 +35,13 @@ Sahibinin gözüyle, kendi SONRA karelerimde:
 4. **Yerde çizim bütçesi** hub'da ÖNCE'de de SONRA'da da aşılıyor (3 633–10 601 çizim; bütçe 1 200): bölümün kendi
    hub'ı ağır (`rinfo.md`).
 5. **Yükleme** v2'de belirgin uzun (xvfb, yük altında ÖNCE 29,6 sn → SONRA 49,5 sn).
-6. Gökte asılı gri levha bu turun ortasında BENİM dönüşümümle ortaya çıktı ve giderildi (`sonda_levha_once_sonra.jpg`:
+6. **Bölüm 11'de çizim bazı bakışlarda arttı** (`rinfo.md` §2): ordugâhın üstü 3 830 → 4 222 (+%10), eve dönüş
+   3 203 → 3 833 (+%20), Ayasofya 595 → 1 011; "çizim artmaz" kuralı bu üç bakışta SAĞLANMIYOR (kalkış ve Galata dönüşünde
+   belirgin azaldı: 4 399 → 2 170, 5 883 → 811).
+7. Gökte asılı gri levha bu turun ortasında BENİM dönüşümümle ortaya çıktı ve giderildi (`sonda_levha_once_sonra.jpg`:
    üstte levha, altta yok). Kaynağı (Ayasofya uzak katmanı) ÇEVRE-4'te duruyor (ORTAK İSTEK 2).
+
+Süre: kareli ilk gönderim 17:34'te (görev başı 15:43; 90 dakika sınırı ~20 dakika aşıldı); kodlu ilk gönderim 16:26.
 
 ## 3. Madde madde hüküm
 
@@ -173,6 +178,7 @@ WARN_VOID_TELEPORT|WALKTHRU|ARMAUDIT|HELDAUDIT|LOOKAUDIT backturn|JOURNEY_MISS|J
 | Bölüm 12b v2 `--ist2-deneme=12b` (5) | dönüşüm-sonra düzeltmesiyle | 5/5 PASS |
 | Bölüm 10h v2 `--ist2-deneme=10h` (7) | dönüşüm-sonra düzeltmesiyle (+ `open` son kodla) | 7/7 PASS (yasak: bkz. §3 madde 3 tablosu) |
 | Bölüm 23 v2 `--ist2-deneme=23` (6) | dönüşüm-sonra düzeltmesiyle (+ varsayılan son kodla) | 6/6 PASS, yasak 0 |
+| EN SON birleşim (`ab8054ba`: ÇEVRE-4 ve DOKU-4'ün son işleri dahil): 11, 7, 7 byz, 12b, 12b d3 (v2, bayraksız), 12b lie `--eski-dunya` | en son | 6/6 PASS, yasak 0 |
 | `flight_check` (eski camp + walls; v2 camp + walls) | son birleşik | PASS: v2'de 28 işaret, 12 form, 3 konma; 43/43 nokta; Haliç ortası su |
 
 Bu turun ilk koşusunda 7 byz'de `VISAUDIT insolid … IstHayatYakin` 2 satır (v2 kişileri hub binalarının içinde) çıktı;
@@ -194,6 +200,14 @@ to_global(…)`); `baglama.gd` (dönüşüm, yerleşim, harita, Tolga anahtarı)
 (`carpisma_yenile(kok.to_local(p))`), `tests/_ist/baglama_ucus.gd` (v2 yüksekliği/gerçek konum kök çerçevesinde);
 yeni: `tests/_ist/hub_kare.*`, `tests/_ist/harita_v2.*`, `assets/ui/harita_ist2.res`. Bölüm dosyalarına,
 `world1453.gd`'ye, `nihat_powers.gd`'ye, `world_flight.gd`'ye bu turda dokunulmadı.
+
+## 5b. Sahip kareleri (DÜNYA-2'nin 14 bakışı)
+
+`sahip_01_tam_tepe.jpg` … `sahip_14_gece_galata.jpg`: `tests/_ist/gezi.tscn` (`liste=gezi_sahip.txt`, gece
+`gezi_sahip_gece.txt`), son birleşik dal (`711b3774` + `ab8054ba` öncesi kod), öteleme/dönüşüm yok (gezi). Bunlar
+bağlamanın değil şehrin kareleri; bağlamanın etkisi yalnız `sahip_05_romanos_ic_ayasofya`'da olurdu: gezide bağlama
+olmadığı için orada hub ŞEHİR'in eski kuralıyla (75 m içerde, yaw 0) duruyor — ORTAK İSTEK 1 uygulanınca gezide de
+bölümdeki gibi olur. 03/04 (sur dışı) karelerinde surun dibi hâlâ düz yeşil (SUR-4 / ORDUGÂH-4 alanı).
 
 ## 6. ORTAK İSTEK / ORTAK BİLGİ
 
