@@ -130,7 +130,7 @@ static func perches_iskele(k: float) -> Array:
 static func climbs_iskele(k: float) -> Array:
 	var span := 32.0 + 24.0 * clampf(k, 0.3, 1.0)
 	return [[Vector3(span * 0.22, QY, -8.0 + 2.6 + 2.4), Vector3(span * 0.22, QY + 1.0, -8.0 + 2.0 - 0.3), "sandik"],
-		[Vector3(-span * 0.4, QY, -8.5), Vector3(-span * 0.4, QY + 1.2, -16.0), "basamak"]]
+		[Vector3(-span * 0.4, QY, -8.5), Vector3(-span * 0.4, QY, -16.0), "basamak"]]
 
 
 # =========================== NEORİON ===========================

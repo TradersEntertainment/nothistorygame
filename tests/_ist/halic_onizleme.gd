@@ -351,14 +351,16 @@ func _walk(a: Vector3, b: Vector3) -> bool:
 			body.velocity.y -= 9.8 * dt
 		else:
 			body.velocity.y = 0.0
-			if stuck > 0.08:
+			if dirv != Vector3.ZERO and body.test_move(body.global_transform, dirv * 0.06):
 				# oyuncu: STEP_H (0,42) kadar alçak basamak zıplamadan çıkılır; üstü zıplamayla
-				var up := Transform3D(body.global_transform.basis, body.global_position + Vector3(0, 0.42, 0))
-				if not body.test_move(up, dirv * 0.12) and body.test_move(body.global_transform, dirv * 0.12):
-					body.global_position.y += 0.42
-				elif stuck > 0.25:
-					body.velocity.y = 3.6
-				stuck = 0.0
+				var up := Transform3D(body.global_transform.basis, body.global_position + Vector3(0, 0.46, 0))
+				if not body.test_move(up, dirv * 0.12):
+					body.global_position = body.global_position + Vector3(0, 0.46, 0) + dirv * 0.1
+				else:
+					stuck += dt
+					if stuck > 0.25:
+						body.velocity.y = 3.6
+						stuck = 0.0
 		body.move_and_slide()
 		if body.global_position.distance_to(last) < 0.01 * 1.0:
 			stuck += dt
@@ -369,6 +371,9 @@ func _walk(a: Vector3, b: Vector3) -> bool:
 			ok = true
 			break
 	if not ok:
-		print("YURUME_TAKILDI ", a, " -> ", b, " son=", body.global_position)
+		var dd := Vector3(b.x - body.global_position.x, 0, b.z - body.global_position.z).normalized()
+		var up2 := Transform3D(body.global_transform.basis, body.global_position + Vector3(0, 0.46, 0))
+		print("DBG blk_now=", body.test_move(body.global_transform, dd * 0.12), " blk_up=", body.test_move(up2, dd * 0.12), " floor=", body.is_on_floor(), " n=", body.get_last_slide_collision().get_normal() if body.get_last_slide_collision() != null else "-")
+		print("YURUME_TAKILDI ", a, " -> ", b, " son=", body.global_position, " engel=", (body.get_last_slide_collision().get_collider() as Node).name if body.get_last_slide_collision() != null else "-", " ", body.get_last_slide_collision().get_position() if body.get_last_slide_collision() != null else "")
 	body.free()
 	return ok
