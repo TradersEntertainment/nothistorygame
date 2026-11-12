@@ -4,7 +4,7 @@ sahip_03_sur_disi_30m -5022 889 2 92 6
 sahip_04_sur_disi_70m -5136 889 2 92 4
 sahip_05_romanos_ic_ayasofya -4700 850 2 100 2
 sahip_06_mese_yuruyus -1100 95 2 80 0
-sahip_07_ayasofya_meydani -250 -150 2 59 10
+sahip_07_ayasofya_meydani -470 -20 28 88 -10
 sahip_08_hipodrom -378 -60 25 190 -18
 sahip_09_halic_iskelesi -700 1075 4 205 2
 sahip_10_sur_dibi_mahallesi -3520 2420 2 280 4

@@ -522,7 +522,7 @@ func _latin(p: Vector2) -> bool:
 	if IstGeo.galata_ici(p.x, p.y):
 		return true
 	var r := IstGeo.real(p.x, p.y)
-	return r.x > -950.0 and r.x < -250.0 and _halic.size() >= 2 and IstGeo.cizgi_uzak(p, _halic) < 260.0 * IstGeo.S
+	return r.x > -1250.0 and r.x < -200.0 and _halic.size() >= 2 and IstGeo.cizgi_uzak(p, _halic) < 520.0 * IstGeo.S
 
 
 func _densify(pl: PackedVector2Array, step: float) -> PackedVector2Array:
@@ -816,6 +816,12 @@ func _sec(tur: String, latin: bool, idx: int, onceki: int, kalan: float, rng: Ra
 			tip = "teras"
 			kat = 1
 			minw = 5.0
+	elif rng.randf() < (0.3 if tur == "harabe" else 0.045):
+		# 1453: terk edilmiş / harap ev
+		tip = "harap"
+		kat = clampi(kat, 1, 2)
+	elif latin and kat >= 2 and rng.randf() < 0.55:
+		tip = "latin"
 	else:
 		if tur == "carsi" and r2 < 0.45 and kat >= 1:
 			tip = "dukkan"; minw = 6.0
@@ -957,12 +963,25 @@ func _row(p0: Vector2, d: Vector2, nrm: Vector2, w: float, rowlen: float, tur: S
 		return 0.0
 	var front := w * 0.5 + 0.9                     # cephe sokak kenarından 0,4 m geride; çıkma 0,7 taşar
 	var yaw := atan2(-nrm.x, -nrm.y)
+	# Dış taş merdivenli ev (teras/kule): merdiven evin yerel +x yanında; sıranın DIŞ ucuna gelsin, sıra içinde 1,0 m pay
+	var lx := Vector2(cos(yaw), -sin(yaw))
+	var merd := String((vs[0] as Array)[1]) in ["teras", "kule"]
+	var merd_son := merd and lx.dot(d) > 0.0
+	if merd_son:
+		vs.append(vs.pop_front())
+	var bas_pay := 1.0 if merd and not merd_son else 0.0
+	var son_pay := 1.0 if merd_son else 0.0
 	while not vs.is_empty():
+		if merd_son and String((vs[vs.size() - 1] as Array)[1]) not in ["teras", "kule"]:
+			son_pay = 0.0
+		if merd and not merd_son and String((vs[0] as Array)[1]) not in ["teras", "kule"]:
+			bas_pay = 0.0
 		var dep := 0.0
 		for sv: Array in vs:
 			dep = maxf(dep, IstEvler.dims(int(sv[0])).z)
-		var c := p0 + d * (total * 0.5) + nrm * (front + dep * 0.5)
-		var cells := _rect_cells(c, d, nrm, total * 0.5, dep * 0.5, -0.45)
+		var tl := total + bas_pay + son_pay
+		var c := p0 + d * (tl * 0.5) + nrm * (front + dep * 0.5)
+		var cells := _rect_cells(c, d, nrm, tl * 0.5, dep * 0.5, -0.45)
 		var ok := not cells.has(-1)
 		if ok:
 			for k in cells:
@@ -971,7 +990,7 @@ func _row(p0: Vector2, d: Vector2, nrm: Vector2, w: float, rowlen: float, tur: S
 					break
 		var pgs: Array = []
 		if ok:
-			var x0_ := 0.0
+			var x0_ := bas_pay
 			for sv: Array in vs:
 				var dm0 := IstEvler.dims(int(sv[0]))
 				var hc0 := p0 + d * (x0_ + dm0.x * 0.5) + nrm * (front + dm0.z * 0.5)
@@ -981,23 +1000,31 @@ func _row(p0: Vector2, d: Vector2, nrm: Vector2, w: float, rowlen: float, tur: S
 				if not _gap_ok(pg0, -2):
 					ok = false
 					break
+			# merdiven payı (1,0 m × ev derinliği): sıranın ucunda, komşuya ya bitişik ya ≥ 1,4 m
+			if ok and (bas_pay > 0.0 or son_pay > 0.0):
+				var mx := 0.5 if bas_pay > 0.0 else tl - 0.5
+				var mdep := IstEvler.dims(int((vs[0] if bas_pay > 0.0 else vs[vs.size() - 1])[0])).z
+				var pgm := _poly(p0 + d * mx + nrm * (front + mdep * 0.5), d, nrm, 0.5, mdep * 0.5)
+				pgs.append(pgm)
+				if not _gap_ok(pgm, -2):
+					ok = false
 		if ok:
 			# Eğim sınırı: sıra boyunca 2,4 m'den fazla düşü yok; arka köşeler cephe tabanından en çok 1,0 m yüksek
 			var ha := IstGeo.h(p0.x + nrm.x * front, p0.y + nrm.y * front)
-			var hb := IstGeo.h(p0.x + d.x * total + nrm.x * front, p0.y + d.y * total + nrm.y * front)
+			var hb := IstGeo.h(p0.x + d.x * tl + nrm.x * front, p0.y + d.y * tl + nrm.y * front)
 			if absf(ha - hb) > 2.4:
 				ok = false
 			var back := front + dep
-			for tt in [0.0, total]:
+			for tt in [0.0, tl]:
 				var hq := IstGeo.h(p0.x + d.x * tt + nrm.x * back, p0.y + d.y * tt + nrm.y * back)
 				if hq - minf(ha, hb) > 1.0:
 					ok = false
 		if ok:
-			for k in _rect_cells(c, d, nrm, total * 0.5, dep * 0.5, -0.2):
+			for k in _rect_cells(c, d, nrm, tl * 0.5, dep * 0.5, -0.2):
 				occ[k] = 2
 			for pg0: PackedVector2Array in pgs:
 				_rect_add(pg0, rows)
-			var x := 0.0
+			var x := bas_pay
 			for sv: Array in vs:
 				var v: int = sv[0]
 				var dm := IstEvler.dims(v)
@@ -1005,10 +1032,15 @@ func _row(p0: Vector2, d: Vector2, nrm: Vector2, w: float, rowlen: float, tur: S
 				var fr := p0 + d * (x + dm.x * 0.5) + nrm * front
 				houses.append({"c": hc, "yaw": yaw, "v": v, "tip": String(sv[1]), "sira": rows, "on": fr})
 				x += dm.x
-			_sira_bilgi.append([c, d, nrm, total, dep, tur, rows])
+			_sira_bilgi.append([c, d, nrm, tl, dep, tur, rows])
 			rows += 1
-			return total
-		total -= IstEvler.dims(int((vs.pop_back() as Array)[0])).x
+			return tl
+		# küçült: merdivenli ev (sokaktan çatıya yol) sırada kalsın
+		var ci := vs.size() - 1
+		if merd_son and vs.size() > 1:
+			ci = vs.size() - 2
+		total -= IstEvler.dims(int((vs[ci] as Array)[0])).x
+		vs.remove_at(ci)
 	return 0.0
 
 
@@ -1090,6 +1122,8 @@ func _meydanlar(foot: Array) -> void:
 		var rad := fr + (26.0 if ad == "ayasofya" else 16.0)
 		zemin_ek.append({"c": w, "r": rad, "tur": "mese"})
 		# çevrede ayrıntı köşeleri (boş hücrelere)
+		if ad == "ayasofya":
+			_patrikhane(w, rad)
 		var sets := ["set_pazar_kosesi", "set_ayin_alayi", "set_meyhane_onu"] if ad != "ayasofya" else ["set_ayin_alayi", "set_pazar_kosesi", "mumcu", "set_manastir_avlusu", "mumcu"]
 		for k in sets.size():
 			var ang := k * TAU / sets.size() + 0.4
@@ -1098,6 +1132,44 @@ func _meydanlar(foot: Array) -> void:
 				oge.append({"tur": String(sets[k]), "c": p, "yaw": ang + PI, "tohum": n * 37 + k, "yer": ad})
 				_stamp_disc(p, 5.0, 5)
 		n += 1
+
+
+## Patrikhane ek yapıları: Ayasofya'nın güney ve güneybatısında, ona bakan avlulu konak/han yapıları (kestirim)
+func _patrikhane(w: Vector2, rad: float) -> void:
+	var n := 0
+	for ang_d: float in [100.0, 125.0, 150.0, 75.0, 175.0]:
+		if n >= 3:
+			break
+		var ang := deg_to_rad(ang_d)
+		var dir := Vector2(cos(ang), sin(ang))            # +z güney
+		var cand := IstEvler.ornekler(2, 10.0, 12.0)
+		if cand.is_empty():
+			return
+		var v: int = cand[n % cand.size()]
+		var dm := IstEvler.dims(v)
+		for rr: float in [rad + 4.0, rad + 10.0, rad + 18.0]:
+			var c := w + dir * (rr + dm.z * 0.5)
+			var nrm := dir                                   # cephe (-nrm) Ayasofya'ya
+			var d := Vector2(-nrm.y, nrm.x)
+			var cells := _rect_cells(c, d, nrm, dm.x * 0.5, dm.z * 0.5, -0.45)
+			if cells.has(-1):
+				continue
+			var ok := true
+			for k in cells:
+				if not occ[k] in [0, 1]:
+					ok = false
+			var pg := _poly(c, d, nrm, dm.x * 0.5, dm.z * 0.5)
+			if not ok or not _gap_ok(pg, -2):
+				continue
+			for k in _rect_cells(c, d, nrm, dm.x * 0.5, dm.z * 0.5, -0.2):
+				occ[k] = 2
+			_rect_add(pg, rows)
+			var fr := c - nrm * dm.z * 0.5
+			houses.append({"c": c, "yaw": atan2(-nrm.x, -nrm.y), "v": v, "tip": "konak" if n != 1 else "han", "sira": rows, "on": fr})
+			rows += 1
+			n += 1
+			break
+	stats["patrikhane"] = n
 
 
 const DT := 40.0

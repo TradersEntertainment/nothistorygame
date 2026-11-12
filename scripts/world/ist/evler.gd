@@ -17,7 +17,7 @@ extends RefCounted
 ##
 ## Tırmanma (player.gd: JUMP 3,6 m/sn, STEP_H 0,42 m, g 9,8 → zıplama 0,66 m; Traversal: REACH 2,3, VAULT_MAX 1,1):
 ##   basamak 0,40 (yürüyerek) · sandık/sıra 1,0 (tırmanma kipinde atlanır) · sundurma/tente 2,2 (tutunup çıkılır) ·
-##   saçak 2,8 (kulübe) / 3,4 / 5,8 / 8,4 (sundurmadan duvara tutunulur; kule ev, teras ve konak dış taş merdivenle).
+##   saçak 2,2 (kulübe: sundurma gibi tutunulur) / 3,4 / 5,8 / 8,4 (sundurmadan duvara tutunulur; kule ev, teras ve konak dış taş merdivenle).
 ##   Ara yükseklik yok (0,66–0,95 ve 1,1–2,1 m'de üst yüzey kullanılmaz: yarım tutunma olmasın); teras korkuluğu 1,0 m.
 ## Şehirde toplu kullanım: mesh(v, tip, lod) ile pişmiş ağ, shapes(v, tip) ile çarpışma (IstSehir).
 
@@ -29,7 +29,7 @@ const P_KERPIC := [Color("7a6850"), Color("71604a"), Color("645947")]           
 const P_TUGLA := Color("8a4630")
 const P_AHSAP := [Color("584a39"), Color("64523e"), Color("715b41")]
 const P_KIREMIT := [Color("743928"), Color("643427"), Color("6d4230"), Color("5a3024"), Color("794f3e"), Color("683d30")]
-const P_DAM := [Color("736857"), Color("7a705c"), Color("696051")]                          # düz dam (toprak/sıva)
+const P_DAM := [Color("7a6a52"), Color("85735a"), Color("6e604c")]
 const SHUTTERS := [Color("5a5244"), Color("4e5a4a"), Color("6b4a36"), Color("5a6250")]     # soluk, boyasız ahşap
 ## Eski adlar (başka dosyalar kullanabilir)
 const PLASTERS := P_SIVA
@@ -44,7 +44,7 @@ const RISE := 1.7           # çatı sırtı (eğim ≤ 25°: yürünür)
 const STEP := 0.40
 const CRATE := 1.0
 const SHED := 2.2
-const KULUBE_H := 2.8
+const KULUBE_H := 2.2
 
 ## CityPlan'ın eski ev ölçüleri (CityHouses.VARIANTS) v < ESKI için aynen (eski dünya); v2 yeni tabloyu kullanır.
 ## YENI: [cephe m, derinlik m, kat] (kat 0: kulübe). Her ölçü üç kez (üç farklı duvar/çatı biçimi) sıralanır.
@@ -282,7 +282,7 @@ static func plan(L: float, D: float, H: float, tohum: int, tip: String) -> Dicti
 	p["kepenk"] = SHUTTERS[(tohum * 3) % SHUTTERS.size()]
 	p["ahsap"] = P_AHSAP[tohum % P_AHSAP.size()]
 	# Sundurma (2,2 m, cephede): sokaktan çatıya ikinci yol; dükkânda tente var
-	p["sundurma"] = tip in ["sira", "konak", "harap", "latin"] and tohum % 4 == 1 and L >= 5.0
+	p["sundurma"] = (tip in ["sira", "harap", "latin"] and tohum % 4 == 1 and L >= 5.0) or tip in ["konak", "han"]
 	p["baca"] = tip in ["firin", "demirci"] or (cati == "kiremit" and rng.randf() < 0.45)
 	# Dış merdiven (teras ve kule dama; konakta üst kat sofaya)
 	p["merdiven"] = tip in ["teras", "kule"]
@@ -344,7 +344,7 @@ static func ev(host: Node3D, L: float, D: float, H: float, tohum: int, lod: int,
 				var x := -L * 0.5 + (i + 0.5) * L / wn
 				_window(host, Vector3(x, wy, fz + over + 0.03), p, rng, lod, tip == "konak" and fl == 0)
 	elif tip != "demirci":
-		_window(host, Vector3(L * 0.25, 1.9, fz + 0.03), p, rng, lod, false)
+		_window(host, Vector3(L * 0.25, 1.9 if H > 3.0 else 1.2, fz + 0.03), p, rng, lod, false)
 	# Kapı
 	var dx := rng.randf_range(-L * 0.2, L * 0.2)
 	if tip == "dukkan":
@@ -352,7 +352,7 @@ static func ev(host: Node3D, L: float, D: float, H: float, tohum: int, lod: int,
 	var kapi_w := 1.1
 	var kapi_h := 1.9
 	match tip:
-		"kulube": kapi_w = 0.9; kapi_h = 1.7
+		"kulube": kapi_w = 0.9; kapi_h = 1.65
 		"han", "ambar": kapi_w = 2.4; kapi_h = 2.6; dx = 0.0
 		"konak": kapi_w = 1.6; kapi_h = 2.4
 	if tip != "demirci":
@@ -429,7 +429,7 @@ static func _cati(host: Node3D, p: Dictionary, lod: int) -> void:
 					Props.box(host, Vector3(L * 0.6, 0.18, 2.2), Vector3(0, H + 2.5, -D * 0.1), Color("6f8a48"))
 			elif lod == 0:
 				# düz damda saman/odun ya da küp
-				Props.box(host, Vector3(1.2, 0.5, 0.9), Vector3(-L * 0.2, H + 0.43, -D * 0.15), Color("b8a268"))
+				Props.box(host, Vector3(1.2, 0.5, 0.9), Vector3(-L * 0.2, H + 0.43, -D * 0.15), Color("8a7a50"))
 		_:
 			_roof(host, L + 0.8, D + over + 1.0, Vector3(0, H, over * 0.5), p["kiremit"], lod, String(p["tip"]) == "harap", int(p["tohum"]))
 			if bool(p["baca"]):
@@ -741,6 +741,8 @@ static func climbs(v: int, tip: String) -> Array:
 		out.append([Vector3(sx + 1.85, 0, d.z * 0.5 + 1.0), Vector3(sx, d.y + RISE * 0.5, 0), "sandik"])
 	if bool(p["merdiven"]):
 		out.append([Vector3(d.x * 0.5 + 0.5, 0, -d.z * 0.5), Vector3(0, d.y + 0.2, 0), "merdiven"])
+	if tip == "kulube":
+		out.append([Vector3(0, 0, d.z * 0.5 + 0.8), Vector3(0, d.y + RISE * 0.5, 0), "tutunma"])
 	return out
 
 

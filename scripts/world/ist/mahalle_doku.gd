@@ -26,7 +26,7 @@ const CARP_YAKIN := 150.0
 ## Zemin renkleri (ISTANBUL_GORUNUS §2: toprak yol kuru #A89677 / çamurlu #7C6B52; kaldırım iri kesme taş #9A9588)
 const R_MESE := Color("8a8579")
 const R_YOL := Color("7a766a")
-const R_TOPRAK := Color("8f8065")
+const R_TOPRAK := Color("8a785c")
 const R_CAMUR := Color("6a5b46")
 const R_AVLU := Color("83775f")
 const R_SAVUNMA := Color("7e725f")
@@ -308,7 +308,7 @@ func _zemin_mat(tas: bool) -> StandardMaterial3D:
 		# toprak: yumuşak gürültü (sıkışmış toprak, çakıl lekeleri); ortalaması 1'e çekilir
 		var tex := Props._noise("concrete")
 		m.albedo_texture = tex
-		m.albedo_color = Color(1.15, 1.15, 1.15)
+		m.albedo_color = Color(0.92, 0.9, 0.86)
 		m.uv1_triplanar = true
 		m.uv1_world_triplanar = true
 		m.uv1_scale = Vector3(0.18, 0.18, 0.18)
@@ -663,7 +663,7 @@ func _is_yap(job: Array) -> void:
 	holder.name = "Oge_%d_%d" % [ck.x, ck.y]
 	add_child(holder)
 	if not list.is_empty():
-		var mi := World1453.bake(list, tmp, Transform3D.IDENTITY, holder, "Ag", 0.03, 0, false)
+		var mi := World1453.bake(list, tmp, Transform3D.IDENTITY, holder, "Ag", 0.03, 0, lod >= 1)
 		mi.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_ON if lod == 0 else GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
 		mi.set_meta("no_walk", true)
 	# MultiMesh (ot, sürü) olduğu gibi taşınır
