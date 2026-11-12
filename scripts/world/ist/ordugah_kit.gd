@@ -300,41 +300,28 @@ static func bld_mesh(b: Bld) -> ArrayMesh:
 
 
 static var _mesh_cache := {}
+const CADIR = preload("res://scripts/world/ist/ordugah_cadir.gd")
 
-## Çadır ağları (birim ölçek, taban y = 0): yarıçap/boy ölçeği örnek dönüşümünde
-## "yuvarlak": duvar + koni çatı + kapı + alem; "cati": dikdörtgen sırtlı çadır (çatma); "sade": uzak koni
+## Çadır ağları (birim ölçek, taban y = 0,1): ORDUGÂH-5'ten beri KUMAŞ çadırlar ordugah_cadir.gd'de (sarkık çatı,
+## taraklı saçak, ip-kazık, toplanmış kapı perdesi, iç). Eski adlar eşlenir: "yuvarlak" → koni, "cati" → çatma,
+## "bark" → barınak, "sade"/"sade_cati" → orta katman. Yeni adlar: koni, can, catma, buyuk, pasa, kil, barinak
+## (önekler "orta_", "uzak_"). Uzak (pişmiş) katman için tent_lod(tür, lod).
+const _ESKI := {"yuvarlak": "koni", "cati": "catma", "bark": "barinak", "sade": "orta_koni", "sade_cati": "orta_catma"}
+
 static func tent_mesh(kind: String) -> ArrayMesh:
 	if _mesh_cache.has(kind):
 		return _mesh_cache[kind]
-	var b := Bld.new()
-	match kind:
-		"yuvarlak":
-			b.cyl(Bld.xf(Vector3(0, 0.55, 0)), 1.0, 1.1, Color(0.93, 0.9, 0.8), 10, 1.0, false)
-			b.cyl(Bld.xf(Vector3(0, 1.82, 0)), 1.05, 1.45, Color(0.85, 0.8, 0.68), 10, 0.12)
-			b.cyl(Bld.xf(Vector3(0, 0.02, 0)), 1.12, 0.05, Color(0.6, 0.5, 0.36), 10)
-			# ORDUGÂH-4: kırmızı bant kalktı (kırmızı yalnız otağ/paşa hakkı, §2.5); yerine koyu kıl şerit ve yarı açık kapı perdesi
-			b.cyl(Bld.xf(Vector3(0, 1.12, 0)), 1.012, 0.1, Color(0.5, 0.42, 0.3), 10, 1.012, false)
-			b.box(Vector3(0, 0.55, 1.0), Vector3(0.6, 1.0, 0.08), Color(0.12, 0.09, 0.07))
-			b.box(Vector3(0.2, 0.6, 1.03), Vector3(0.32, 1.05, 0.04), Color(0.82, 0.77, 0.64), 0.0, Vector3(0, 0, -6))
-			b.cylp(Vector3(0, 2.75, 0), 0.025, 0.7, Color(0.28, 0.2, 0.12), 4)
-			b.sph(Vector3(0, 3.1, 0), 0.07, Color(0.8, 0.65, 0.25), 4)
-		"cati":
-			# boy x = 1.0 (ölçekle), en z = 1.0, yan duvar 0.9, sırt 2.0 (birim)
-			b.box(Vector3(0, 0.45, 0), Vector3(1.0, 0.9, 1.0), Color(0.92, 0.88, 0.76))
-			b.prism(Bld.xf(Vector3(0, 0.9, 0)), Vector3(1.04, 0.95, 1.08), Color(0.85, 0.8, 0.66))
-			b.box(Vector3(0.0, 0.5, 0.505), Vector3(0.36, 0.78, 0.04), Color(0.12, 0.09, 0.07))
-			b.box(Vector3(0, 0.97, 0.0), Vector3(1.08, 0.04, 0.14), Color(0.4, 0.3, 0.2))
-		"bark":
-			# başıbozuk barınağı: alçak, yamuk, eğik çatı (ters yan yatmış sırt)
-			b.prism(Bld.xf(Vector3(0, 0, 0)), Vector3(1.0, 0.9, 1.0), Color(0.62, 0.54, 0.4))
-			b.box(Vector3(0, 0.4, 0.46), Vector3(0.5, 0.7, 0.05), Color(0.1, 0.08, 0.06))
-		"sade":
-			b.cyl(Bld.xf(Vector3(0, 0.9, 0)), 1.0, 1.8, Color(0.88, 0.83, 0.7), 4, 0.1, false)   # ŞEHİR-3: 6 → 4 kenar (çadır denizi üçgen bütçesi)
-		"sade_cati":
-			b.prism(Bld.xf(Vector3(0, 0, 0)), Vector3(1.0, 1.7, 1.0), Color(0.86, 0.8, 0.66))
-	var m := bld_mesh(b)
+	var m: ArrayMesh = CADIR.mesh(String(_ESKI.get(kind, kind)))
 	_mesh_cache[kind] = m
 	return m
+
+
+## Katmana göre çadır ağı: lod 0 yakın (≤ 900 üçgen), 1 orta (≤ 120), 2 uzak (≤ 40; hücre ağına pişer)
+static func tent_lod(kind: String, lod: int) -> ArrayMesh:
+	var k: String = _ESKI.get(kind, kind)
+	if k.begins_with("orta_"):
+		k = k.substr(5)
+	return tent_mesh(k if lod == 0 else (("orta_" if lod == 1 else "uzak_") + k))
 
 
 ## Ağ üçgen sayısı (denetim için)

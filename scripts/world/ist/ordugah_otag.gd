@@ -168,8 +168,9 @@ static func build(host: Node3D, k: float, lod: int) -> void:
 		if p2.y > ZZ and absf(p2.x) < 22.0:
 			continue          # kapı önü açık (tuğ ve mehterhane)
 		var cap := r.randf_range(5.0, 7.6)
-		var hs := r.randf_range(1.15, 1.45)
-		ring_x.append(Transform3D(Basis.from_euler(Vector3(0, -a + PI / 2.0, 0)).scaled(Vector3(cap * 0.5, hs, cap * 0.5)), Vector3(p2.x, K.gy(p2.x, p2.y) - 0.1, p2.y)))
+		var hs := r.randf_range(0.95, 1.15)
+		# ORDUGÂH-5: çan çadır (yeniçeri orta çadırı), kapı (+z) dışa, kazana bakar
+		ring_x.append(Transform3D(Basis(Vector3.UP, atan2(dir.x, dir.y)).scaled(Vector3(cap * 0.5, hs, cap * 0.5)), Vector3(p2.x, K.gy(p2.x, p2.y) - 0.1, p2.y)))
 		ring_c.append(K.ton(OB._sec(r, pal), r, 0.03))
 		shapes.append(Vector3(p2.x, cap * 0.5, p2.y))
 		if i % 2 == 0:
@@ -184,7 +185,7 @@ static func build(host: Node3D, k: float, lod: int) -> void:
 				var pp := kp2 + Vector2.from_angle(aa) * 2.1
 				var fc := kp2 - pp
 				kisi.append([Vector3(pp.x, K.gy(pp.x, pp.y), pp.y), atan2(fc.x, fc.y), "otur" if q != 0 else "asci"])
-	K.mm(host, K.tent_mesh("yuvarlak" if lod == 0 else "sade"), ring_x, ring_c, "ring", "plaster", lod == 0)
+	K.mm(host, K.tent_lod("can", lod), ring_x, ring_c, "ring", "", lod == 0)
 	if lod == 0:
 		for s: Vector3 in shapes:
 			cloth.solid_cyl(Vector3(s.x, K.gy(s.x, s.z) + 1.6, s.z), s.y * 0.97, 3.2)
