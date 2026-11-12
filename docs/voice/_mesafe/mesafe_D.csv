@@ -99,3 +99,103 @@ BUR_LOSTSHELF,SPK_NIHAT,ic_ses,,"bureau.gd:2859 nesne incelemesi, _say(...) -> h
 BUR_LOSTSHELF_2,SPK_NIHAT,ic_ses,,"bureau.gd:2859 nesne incelemesi, _say(...) -> hud.bark(bark_speaker) (bureau.gd:427)",Nihat nesneye bakıp kendi kendine yorum; muhatap yok
 BUR_LOSTSHELF_3,SPK_NIHAT,ic_ses,,"bureau.gd:2859 nesne incelemesi, _say(...) -> hud.bark(bark_speaker) (bureau.gd:427)",Nihat nesneye bakıp kendi kendine yorum; muhatap yok
 BUR_LOSTSHELF_4,SPK_NIHAT,ic_ses,,"bureau.gd:2859 nesne incelemesi, _say(...) -> hud.bark(bark_speaker) (bureau.gd:427)",Nihat nesneye bakıp kendi kendine yorum; muhatap yok
+BUR_TOLGA_FILE,SPK_NIHAT,ic_ses,,"bureau.gd:3057 nesne incelemesi, _say(...) -> hud.bark(bark_speaker) (bureau.gd:427)",Nihat nesneye bakıp kendi kendine yorum; muhatap yok
+BUR_TOLGA_FILE_2,SPK_NIHAT,ic_ses,,"bureau.gd:3057 nesne incelemesi, _say(...) -> hud.bark(bark_speaker) (bureau.gd:427)",Nihat nesneye bakıp kendi kendine yorum; muhatap yok
+BUR_ARCHDRAWER,SPK_NIHAT,ic_ses,,"bureau.gd:3064 nesne incelemesi, _say(...) -> hud.bark(bark_speaker) (bureau.gd:427)",Nihat nesneye bakıp kendi kendine yorum; muhatap yok
+BUR_ARCHDRAWER_2,SPK_NIHAT,ic_ses,,"bureau.gd:3064 nesne incelemesi, _say(...) -> hud.bark(bark_speaker) (bureau.gd:427)",Nihat nesneye bakıp kendi kendine yorum; muhatap yok
+BUR_HATICE,SPK_HATICE,yakin,2,"bureau.gd:3052 _say(...,""SPK_HATICE"") yanındaki oyuncuya","memur/görevli E ile yaklaşılan oyuncuya konuşuyor (_ld_talk/_rb_talk 3,5 sn)"
+BUR_HATICE_2,SPK_HATICE,yakin,2,"bureau.gd:3052 _say(...,""SPK_HATICE"") yanındaki oyuncuya","memur/görevli E ile yaklaşılan oyuncuya konuşuyor (_ld_talk/_rb_talk 3,5 sn)"
+BUR_PARADOKS,SPK_NURAN,yakin,2,"bureau.gd:3126 _say(...,""SPK_NURAN"") yanındaki oyuncuya","memur/görevli E ile yaklaşılan oyuncuya konuşuyor (_ld_talk/_rb_talk 3,5 sn)"
+BUR_PARADOKS_2,SPK_NURAN,yakin,2,"bureau.gd:3126 _say(...,""SPK_NURAN"") yanındaki oyuncuya","memur/görevli E ile yaklaşılan oyuncuya konuşuyor (_ld_talk/_rb_talk 3,5 sn)"
+BUR_PARADOKS_3,SPK_NURAN,yakin,2,"bureau.gd:3126 _say(...,""SPK_NURAN"") yanındaki oyuncuya","memur/görevli E ile yaklaşılan oyuncuya konuşuyor (_ld_talk/_rb_talk 3,5 sn)"
+BUR_DIRECTOR,SPK_NIHAT,ic_ses,,"bureau.gd:3206 nesne incelemesi, _say(...) -> hud.bark(bark_speaker) (bureau.gd:427)",Nihat nesneye bakıp kendi kendine yorum; muhatap yok
+BUR_DIRECTOR_2,SPK_NIHAT,ic_ses,,"bureau.gd:3206 nesne incelemesi, _say(...) -> hud.bark(bark_speaker) (bureau.gd:427)",Nihat nesneye bakıp kendi kendine yorum; muhatap yok
+BUR_DIRECTOR_3,SPK_NIHAT,ic_ses,,"bureau.gd:3206 nesne incelemesi, _say(...) -> hud.bark(bark_speaker) (bureau.gd:427)",Nihat nesneye bakıp kendi kendine yorum; muhatap yok
+BUR_REGWALL,SPK_NIHAT,ic_ses,,"bureau.gd:3226 nesne incelemesi, _say(...) -> hud.bark(bark_speaker) (bureau.gd:427)",Nihat nesneye bakıp kendi kendine yorum; muhatap yok
+BUR_REGWALL_2,SPK_NIHAT,ic_ses,,"bureau.gd:3226 nesne incelemesi, _say(...) -> hud.bark(bark_speaker) (bureau.gd:427)",Nihat nesneye bakıp kendi kendine yorum; muhatap yok
+BUR_ATRIUMWIN,SPK_NIHAT,ic_ses,,"bureau.gd:3632 nesne incelemesi, _say(...) -> hud.bark(bark_speaker) (bureau.gd:427)",Nihat nesneye bakıp kendi kendine yorum; muhatap yok
+BUR_ATRIUMWIN_2,SPK_NIHAT,ic_ses,,"bureau.gd:3632 nesne incelemesi, _say(...) -> hud.bark(bark_speaker) (bureau.gd:427)",Nihat nesneye bakıp kendi kendine yorum; muhatap yok
+BUR_ORNITHOPTER,SPK_NIHAT,ic_ses,,"bureau.gd:3280 nesne incelemesi, _say(...) -> hud.bark(bark_speaker) (bureau.gd:427)",Nihat nesneye bakıp kendi kendine yorum; muhatap yok
+BUR_ORNITHOPTER_2,SPK_NIHAT,ic_ses,,"bureau.gd:3280 nesne incelemesi, _say(...) -> hud.bark(bark_speaker) (bureau.gd:427)",Nihat nesneye bakıp kendi kendine yorum; muhatap yok
+BUR_COIL,SPK_NIHAT,ic_ses,,"bureau.gd:3296 nesne incelemesi, _say(...) -> hud.bark(bark_speaker) (bureau.gd:427)",Nihat nesneye bakıp kendi kendine yorum; muhatap yok
+BUR_COIL_2,SPK_NIHAT,ic_ses,,"bureau.gd:3296 nesne incelemesi, _say(...) -> hud.bark(bark_speaker) (bureau.gd:427)",Nihat nesneye bakıp kendi kendine yorum; muhatap yok
+BUR_PHONO,SPK_NIHAT,ic_ses,,"bureau.gd:3311 nesne incelemesi, _say(...) -> hud.bark(bark_speaker) (bureau.gd:427)",Nihat nesneye bakıp kendi kendine yorum; muhatap yok
+BUR_PHONO_2,SPK_NIHAT,ic_ses,,"bureau.gd:3311 nesne incelemesi, _say(...) -> hud.bark(bark_speaker) (bureau.gd:427)",Nihat nesneye bakıp kendi kendine yorum; muhatap yok
+BUR_APPLETREE,SPK_NIHAT,ic_ses,,"bureau.gd:3335 nesne incelemesi, _say(...) -> hud.bark(bark_speaker) (bureau.gd:427)",Nihat nesneye bakıp kendi kendine yorum; muhatap yok
+BUR_APPLETREE_2,SPK_NIHAT,ic_ses,,"bureau.gd:3335 nesne incelemesi, _say(...) -> hud.bark(bark_speaker) (bureau.gd:427)",Nihat nesneye bakıp kendi kendine yorum; muhatap yok
+BUR_HOURGLASS,SPK_NIHAT,ic_ses,,"bureau.gd:3368 nesne incelemesi, _say(...) -> hud.bark(bark_speaker) (bureau.gd:427)",Nihat nesneye bakıp kendi kendine yorum; muhatap yok
+BUR_HOURGLASS_2,SPK_NIHAT,ic_ses,,"bureau.gd:3368 nesne incelemesi, _say(...) -> hud.bark(bark_speaker) (bureau.gd:427)",Nihat nesneye bakıp kendi kendine yorum; muhatap yok
+BUR_CLOCKS,SPK_NIHAT,ic_ses,,"bureau.gd:3385 nesne incelemesi, _say(...) -> hud.bark(bark_speaker) (bureau.gd:427)",Nihat nesneye bakıp kendi kendine yorum; muhatap yok
+BUR_CLOCKS_2,SPK_NIHAT,ic_ses,,"bureau.gd:3385 nesne incelemesi, _say(...) -> hud.bark(bark_speaker) (bureau.gd:427)",Nihat nesneye bakıp kendi kendine yorum; muhatap yok
+BUR_TIMELINE,SPK_NIHAT,ic_ses,,"bureau.gd:3494 nesne incelemesi, _say(...) -> hud.bark(bark_speaker) (bureau.gd:427)",Nihat nesneye bakıp kendi kendine yorum; muhatap yok
+BUR_TIMELINE_2,SPK_NIHAT,ic_ses,,"bureau.gd:3494 nesne incelemesi, _say(...) -> hud.bark(bark_speaker) (bureau.gd:427)",Nihat nesneye bakıp kendi kendine yorum; muhatap yok
+BUR_PENDULUM,SPK_NIHAT,ic_ses,,"bureau.gd:3651 nesne incelemesi, _say(...) -> hud.bark(bark_speaker) (bureau.gd:427)",Nihat nesneye bakıp kendi kendine yorum; muhatap yok
+BUR_PENDULUM_2,SPK_NIHAT,ic_ses,,"bureau.gd:3651 nesne incelemesi, _say(...) -> hud.bark(bark_speaker) (bureau.gd:427)",Nihat nesneye bakıp kendi kendine yorum; muhatap yok
+BUR_FG_NAP_1,SPK_NAPOLEON,yakin,2,bureau.gd:264 BUR_FG_NAP_1; _fg_talk bureau.gd:4349,oyuncu figüre E ile yaklaşınca konuşur
+BUR_FG_NAP_2,SPK_NAPOLEON,yakin,2,bureau.gd:264 BUR_FG_NAP_2; _fg_talk bureau.gd:4349,oyuncu figüre E ile yaklaşınca konuşur
+BUR_FG_NAP_3,SPK_NAPOLEON,yakin,2,bureau.gd:265 BUR_FG_NAP_3; _fg_talk bureau.gd:4349,"Hitler ile atışma, ~3,6 m"
+BUR_FG_HIT_R,SPK_HITLER,yakin,2,bureau.gd:265 BUR_FG_HIT_R; _fg_talk bureau.gd:4349,"Napolyon/Hitler ya da Sezar/Shakespeare atışması içinde karşılık, iki figür ~1,5-3,6 m"
+BUR_FG_NAP_4,SPK_NAPOLEON,yakin,2,bureau.gd:265 BUR_FG_NAP_4; _fg_talk bureau.gd:4349,"Hitler ile atışma, ~3,6 m"
+BUR_FG_HIT_1,SPK_HITLER,yakin,2,bureau.gd:266 BUR_FG_HIT_1; _fg_talk bureau.gd:4349,oyuncu figüre E ile yaklaşınca konuşur
+BUR_FG_HIT_2,SPK_HITLER,yakin,2,bureau.gd:266 BUR_FG_HIT_2; _fg_talk bureau.gd:4349,oyuncu figüre E ile yaklaşınca konuşur
+BUR_FG_CLE_1,SPK_CLEOPATRA,yakin,2,bureau.gd:266 BUR_FG_CLE_1; _fg_talk bureau.gd:4349,oyuncu figüre E ile yaklaşınca konuşur
+BUR_FG_CLE_2,SPK_CLEOPATRA,yakin,2,bureau.gd:267 BUR_FG_CLE_2; _fg_talk bureau.gd:4349,oyuncu figüre E ile yaklaşınca konuşur
+BUR_FG_CAE_1,SPK_CAESAR,yakin,2,bureau.gd:267 BUR_FG_CAE_1; _fg_talk bureau.gd:4349,oyuncu figüre E ile yaklaşınca konuşur
+BUR_FG_CAE_2,SPK_CAESAR,yakin,2,bureau.gd:267 BUR_FG_CAE_2; _fg_talk bureau.gd:4349,oyuncu figüre E ile yaklaşınca konuşur
+BUR_FG_CAE_3,SPK_CAESAR,yakin,2,bureau.gd:268 BUR_FG_CAE_3; _fg_talk bureau.gd:4349,oyuncu figüre E ile yaklaşınca konuşur
+BUR_FG_SHK_R,SPK_SHAKESPEARE,yakin,2,bureau.gd:268 BUR_FG_SHK_R; _fg_talk bureau.gd:4349,"Napolyon/Hitler ya da Sezar/Shakespeare atışması içinde karşılık, iki figür ~1,5-3,6 m"
+BUR_FG_SHK_1,SPK_SHAKESPEARE,yakin,2,bureau.gd:268 BUR_FG_SHK_1; _fg_talk bureau.gd:4349,oyuncu figüre E ile yaklaşınca konuşur
+BUR_FG_SHK_2,SPK_SHAKESPEARE,yakin,2,bureau.gd:269 BUR_FG_SHK_2; _fg_talk bureau.gd:4349,oyuncu figüre E ile yaklaşınca konuşur
+BUR_FG_LEO_1,SPK_LEONARDO,yakin,2,bureau.gd:269 BUR_FG_LEO_1; _fg_talk bureau.gd:4349,oyuncu figüre E ile yaklaşınca konuşur
+BUR_FG_LEO_2,SPK_LEONARDO,yakin,2,bureau.gd:269 BUR_FG_LEO_2; _fg_talk bureau.gd:4349,oyuncu figüre E ile yaklaşınca konuşur
+BUR_FG_LEO_3,SPK_LEONARDO,yakin,2,bureau.gd:270 BUR_FG_LEO_3; _fg_talk bureau.gd:4349,oyuncu figüre E ile yaklaşınca konuşur
+BUR_FG_EIN_1,SPK_EINSTEIN,yakin,2,bureau.gd:270 BUR_FG_EIN_1; _fg_talk bureau.gd:4349,oyuncu figüre E ile yaklaşınca konuşur
+BUR_FG_EIN_2,SPK_EINSTEIN,yakin,2,bureau.gd:270 BUR_FG_EIN_2; _fg_talk bureau.gd:4349,oyuncu figüre E ile yaklaşınca konuşur
+BUR_FG_GEN_1,SPK_GENGHIS,yakin,2,bureau.gd:271 BUR_FG_GEN_1; _fg_talk bureau.gd:4349,oyuncu figüre E ile yaklaşınca konuşur
+BUR_FG_GEN_2,SPK_GENGHIS,yakin,2,bureau.gd:271 BUR_FG_GEN_2; _fg_talk bureau.gd:4349,oyuncu figüre E ile yaklaşınca konuşur
+BUR_FG_COL_1,SPK_COLUMBUS,yakin,2,bureau.gd:271 BUR_FG_COL_1; _fg_talk bureau.gd:4349,oyuncu figüre E ile yaklaşınca konuşur
+BUR_FG_COL_2,SPK_COLUMBUS,yakin,2,bureau.gd:272 BUR_FG_COL_2; _fg_talk bureau.gd:4349,oyuncu figüre E ile yaklaşınca konuşur
+BUR_FG_SUL_1,SPK_SULEYMAN,yakin,2,bureau.gd:261 BUR_FG_SUL_1; _fg_talk bureau.gd:4349,oyuncu figüre E ile yaklaşınca konuşur
+BUR_FG_SUL_2,SPK_SULEYMAN,yakin,2,bureau.gd:261 BUR_FG_SUL_2; _fg_talk bureau.gd:4349,oyuncu figüre E ile yaklaşınca konuşur
+BUR_FG_SUL_3,SPK_SULEYMAN,yakin,2,bureau.gd:262 BUR_FG_SUL_3; _fg_talk bureau.gd:4349,oyuncu figüre E ile yaklaşınca konuşur
+BUR_FG_GUI_1,SPK_GUIDE,yakin_yuksek,2,bureau.gd:262 BUR_FG_GUI_1; _fg_talk bureau.gd:4349,"rehber tur grubuna sesleniyor (""Grup, buraya!"")"
+BUR_FG_GUI_2,SPK_GUIDE,yakin,2,bureau.gd:262 BUR_FG_GUI_2; _fg_talk bureau.gd:4349,oyuncu figüre E ile yaklaşınca konuşur
+BUR_FG_ROB_1,SPK_ROBOT,yakin,2,bureau.gd:263 BUR_FG_ROB_1; _fg_talk bureau.gd:4349,oyuncu figüre E ile yaklaşınca konuşur
+BUR_FG_ROB_2,SPK_ROBOT,yakin,2,bureau.gd:263 BUR_FG_ROB_2; _fg_talk bureau.gd:4349,oyuncu figüre E ile yaklaşınca konuşur
+BUR_FG_ARC_1,SPK_ARCHAEOLOGIST,yakin,2,bureau.gd:263 BUR_FG_ARC_1; _fg_talk bureau.gd:4349,oyuncu figüre E ile yaklaşınca konuşur
+BUR_FG_ARC_2,SPK_ARCHAEOLOGIST,yakin,2,bureau.gd:264 BUR_FG_ARC_2; _fg_talk bureau.gd:4349,oyuncu figüre E ile yaklaşınca konuşur
+BUR_FG_TES_1,SPK_TESLA,yakin,2,bureau.gd:213 BUR_FG_TES_1; _fg_talk bureau.gd:4349,oyuncu figüre E ile yaklaşınca konuşur
+BUR_FG_TES_2,SPK_TESLA,yakin,2,bureau.gd:213 BUR_FG_TES_2; _fg_talk bureau.gd:4349,oyuncu figüre E ile yaklaşınca konuşur
+BUR_FG_TES_3,SPK_TESLA,yakin,2,bureau.gd:213 BUR_FG_TES_3; _fg_talk bureau.gd:4349,oyuncu figüre E ile yaklaşınca konuşur
+BUR_FG_EDI_1,SPK_EDISON,yakin,2,bureau.gd:213 BUR_FG_EDI_1; _fg_talk bureau.gd:4349,oyuncu figüre E ile yaklaşınca konuşur
+BUR_FG_EDI_2,SPK_EDISON,yakin,2,bureau.gd:214 BUR_FG_EDI_2; _fg_talk bureau.gd:4349,oyuncu figüre E ile yaklaşınca konuşur
+BUR_FG_EDI_3,SPK_EDISON,yakin,2,bureau.gd:214 BUR_FG_EDI_3; _fg_talk bureau.gd:4349,oyuncu figüre E ile yaklaşınca konuşur
+BUR_FG_SOK_1,SPK_SOCRATES,yakin,2,bureau.gd:214 BUR_FG_SOK_1; _fg_talk bureau.gd:4349,oyuncu figüre E ile yaklaşınca konuşur
+BUR_FG_SOK_2,SPK_SOCRATES,yakin,2,bureau.gd:214 BUR_FG_SOK_2; _fg_talk bureau.gd:4349,oyuncu figüre E ile yaklaşınca konuşur
+BUR_FG_SOK_3,SPK_SOCRATES,yakin,2,bureau.gd:215 BUR_FG_SOK_3; _fg_talk bureau.gd:4349,oyuncu figüre E ile yaklaşınca konuşur
+BUR_FG_DIO_1,SPK_DIOGENES,yakin,2,bureau.gd:215 BUR_FG_DIO_1; _fg_talk bureau.gd:4349,oyuncu figüre E ile yaklaşınca konuşur
+BUR_FG_DIO_2,SPK_DIOGENES,yakin,2,bureau.gd:215 BUR_FG_DIO_2; _fg_talk bureau.gd:4349,oyuncu figüre E ile yaklaşınca konuşur
+BUR_FG_DIO_3,SPK_DIOGENES,yakin,2,bureau.gd:215 BUR_FG_DIO_3; _fg_talk bureau.gd:4349,oyuncu figüre E ile yaklaşınca konuşur
+BUR_FG_NEW_1,SPK_NEWTON,yakin,2,bureau.gd:216 BUR_FG_NEW_1; _fg_talk bureau.gd:4349,oyuncu figüre E ile yaklaşınca konuşur
+BUR_FG_NEW_2,SPK_NEWTON,yakin,2,bureau.gd:216 BUR_FG_NEW_2; _fg_talk bureau.gd:4349,oyuncu figüre E ile yaklaşınca konuşur
+BUR_FG_NEW_3,SPK_NEWTON,yakin,2,bureau.gd:216 BUR_FG_NEW_3; _fg_talk bureau.gd:4349,oyuncu figüre E ile yaklaşınca konuşur
+BUR_FG_EVL_1,SPK_EVLIYA,yakin,2,bureau.gd:216 BUR_FG_EVL_1; _fg_talk bureau.gd:4349,oyuncu figüre E ile yaklaşınca konuşur
+BUR_FG_EVL_2,SPK_EVLIYA,yakin,2,bureau.gd:217 BUR_FG_EVL_2; _fg_talk bureau.gd:4349,oyuncu figüre E ile yaklaşınca konuşur
+BUR_FG_EVL_3,SPK_EVLIYA,yakin,2,bureau.gd:217 BUR_FG_EVL_3; _fg_talk bureau.gd:4349,oyuncu figüre E ile yaklaşınca konuşur
+BUR_FG_NAP_V2_1,SPK_NAPOLEON,yakin,2,bureau.gd:244 BUR_FG_NAP_V2_1; _fg_talk bureau.gd:4349,oyuncu figüre E ile yaklaşınca konuşur
+BUR_FG_NAP_V2_2,SPK_NAPOLEON,yakin,2,bureau.gd:244 BUR_FG_NAP_V2_2; _fg_talk bureau.gd:4349,oyuncu figüre E ile yaklaşınca konuşur
+BUR_FG_NAP_V3_1,SPK_NAPOLEON,yakin,2,bureau.gd:244 BUR_FG_NAP_V3_1; _fg_talk bureau.gd:4349,oyuncu figüre E ile yaklaşınca konuşur
+BUR_FG_NAP_V3_2,SPK_NAPOLEON,yakin,2,bureau.gd:245 BUR_FG_NAP_V3_2; _fg_talk bureau.gd:4349,oyuncu figüre E ile yaklaşınca konuşur
+BUR_FG_HIT_V2_1,SPK_HITLER,yakin,2,bureau.gd:245 BUR_FG_HIT_V2_1; _fg_talk bureau.gd:4349,oyuncu figüre E ile yaklaşınca konuşur
+BUR_FG_HIT_V2_2,SPK_HITLER,yakin,2,bureau.gd:245 BUR_FG_HIT_V2_2; _fg_talk bureau.gd:4349,oyuncu figüre E ile yaklaşınca konuşur
+BUR_FG_HIT_V3_1,SPK_HITLER,yakin,2,bureau.gd:246 BUR_FG_HIT_V3_1; _fg_talk bureau.gd:4349,oyuncu figüre E ile yaklaşınca konuşur
+BUR_FG_HIT_V3_2,SPK_HITLER,yakin,2,bureau.gd:246 BUR_FG_HIT_V3_2; _fg_talk bureau.gd:4349,oyuncu figüre E ile yaklaşınca konuşur
+BUR_FG_CLE_V2_1,SPK_CLEOPATRA,yakin,2,bureau.gd:246 BUR_FG_CLE_V2_1; _fg_talk bureau.gd:4349,oyuncu figüre E ile yaklaşınca konuşur
+BUR_FG_CLE_V2_2,SPK_CLEOPATRA,yakin,2,bureau.gd:247 BUR_FG_CLE_V2_2; _fg_talk bureau.gd:4349,oyuncu figüre E ile yaklaşınca konuşur
+BUR_FG_CLE_V3_1,SPK_CLEOPATRA,yakin,2,bureau.gd:247 BUR_FG_CLE_V3_1; _fg_talk bureau.gd:4349,oyuncu figüre E ile yaklaşınca konuşur
+BUR_FG_CLE_V3_2,SPK_CLEOPATRA,yakin,2,bureau.gd:247 BUR_FG_CLE_V3_2; _fg_talk bureau.gd:4349,oyuncu figüre E ile yaklaşınca konuşur
+BUR_FG_CAE_V2_1,SPK_CAESAR,yakin,2,bureau.gd:248 BUR_FG_CAE_V2_1; _fg_talk bureau.gd:4349,oyuncu figüre E ile yaklaşınca konuşur
+BUR_FG_CAE_V2_2,SPK_CAESAR,yakin,2,bureau.gd:248 BUR_FG_CAE_V2_2; _fg_talk bureau.gd:4349,oyuncu figüre E ile yaklaşınca konuşur
+BUR_FG_CAE_V3_1,SPK_CAESAR,yakin,2,bureau.gd:248 BUR_FG_CAE_V3_1; _fg_talk bureau.gd:4349,oyuncu figüre E ile yaklaşınca konuşur
+BUR_FG_CAE_V3_2,SPK_CAESAR,yakin,2,bureau.gd:249 BUR_FG_CAE_V3_2; _fg_talk bureau.gd:4349,oyuncu figüre E ile yaklaşınca konuşur
+BUR_FG_SHK_V2_1,SPK_SHAKESPEARE,yakin,2,bureau.gd:249 BUR_FG_SHK_V2_1; _fg_talk bureau.gd:4349,oyuncu figüre E ile yaklaşınca konuşur
