@@ -1071,9 +1071,9 @@ func _place2_of(e: Dictionary) -> Dictionary:
 			# liman suyun kenarına (sur dışı rıhtım), ötekiler surun içine (yarıçap + 10 m)
 			var ic := -(r * 0.6) if tur == "liman" else r + 10.0
 			w = sn["p"] - o * ic
-			yaw = atan2(-o.x, -o.y) + PI        # yerel −z denize
-			if String(e["mod"]).begins_with("halic"):
-				yaw = atan2(o.x, o.y)
+			yaw = atan2(o.x, o.y)               # Marmara parçaları: yerel +z denize
+			if String(e["mod"]).begins_with("halic") or String(e["mod"]).begins_with("kuzeybati"):
+				yaw = atan2(-o.x, -o.y)         # Haliç parçaları: yerel −z denize, +z şehre
 	# Suya düştüyse en yakın karaya (liman hariç)
 	if String(data.get("tur", "")) != "liman" and IstGeo.su(w.x, w.y):
 		w = _to_land(w)

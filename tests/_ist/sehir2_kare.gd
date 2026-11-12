@@ -204,7 +204,45 @@ func _shot(name: String, at: Vector3, look: Vector3, fov := 62.0) -> void:
 	img.save_jpg(out.path_join(name + ".jpg"), 0.82)
 	var draws := RenderingServer.get_rendering_info(RenderingServer.RENDERING_INFO_TOTAL_DRAW_CALLS_IN_FRAME)
 	var tris := RenderingServer.get_rendering_info(RenderingServer.RENDERING_INFO_TOTAL_PRIMITIVES_IN_FRAME)
+	if name.begins_with("yer_"):
+		_kirilim(at)
 	print("ISTKARE %s at=(%.0f,%.0f,%.0f) cizim=%d ucgen=%d bekleme=%d kur_ms_max=%.1f" % [name, at.x, at.y, at.z, draws, tris, guard, s.stats["kur_ms_max"] if s else 0.0])
+
+
+## Çizim kırılımı (kestirim): görünür, görünürlük aralığında ve kameranın önündeki geometri; öğe/küme başına yüzey
+func _kirilim(at: Vector3) -> void:
+	var s := IstSehir.active
+	var groups := {}
+	for gi in s.find_children("*", "GeometryInstance3D", true, false):
+		var g := gi as GeometryInstance3D
+		if not g.is_visible_in_tree():
+			continue
+		var d := g.global_position.distance_to(at)
+		if g.visibility_range_end > 0.0 and d > g.visibility_range_end:
+			continue
+		if d < g.visibility_range_begin:
+			continue
+		var n := 1
+		if g is MeshInstance3D and (g as MeshInstance3D).mesh:
+			n = (g as MeshInstance3D).mesh.get_surface_count()
+		var top: Node = g
+		while top.get_parent() != s:
+			top = top.get_parent()
+		var key := String(top.name)
+		if key.begins_with("Ist_"):
+			key = key.substr(4).get_slice("_", 0)
+		elif key.begins_with("doku_"):
+			key = "doku_" + key.get_slice("_", 1)
+		elif top is MultiMeshInstance3D:
+			key = "mm"
+		elif top is MeshInstance3D:
+			key = "agMI"
+		groups[key] = int(groups.get(key, 0)) + n
+	var arr: Array = []
+	for k in groups:
+		arr.append([groups[k], k])
+	arr.sort_custom(func(a: Array, b: Array) -> bool: return int(a[0]) > int(b[0]))
+	print("ISTKIRILIM ", arr.slice(0, 12))
 
 
 func _yakin_eksik(s: IstSehir, at: Vector3) -> bool:
