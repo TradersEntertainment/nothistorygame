@@ -126,6 +126,10 @@ func _kareler() -> void:
 	_sayim()
 	if OS.get_cmdline_user_args().has("oyuncu=1"):
 		await _cati_sina()
+	if OS.get_cmdline_user_args().has("cati2=1"):
+		await _cati_cati()
+		get_tree().quit(0)
+		return
 	if shots != "":
 		DirAccess.make_dir_recursive_absolute(shots)
 	var liste: Array = BAKIS3 if tur3 else BAKIS
@@ -540,3 +544,95 @@ func _istbos(bolge: String, sk: IstSokak, dolu: Dictionary) -> void:
 				if bos_ornek.size() < 12:
 					bos_ornek.append(IstGeo.real(c.x, c.y).round())
 	print("ISTBOS %s kare=%d bos=%d oran=%.1f%% ornek=%s" % [bolge, top, bos, 100.0 * bos / maxf(top, 1), bos_ornek])
+
+
+## DOKU-4: çatıdan çatıya (ŞEHİR'in `--set=oyun` sınamasıyla aynı seçim: evler x'e göre sıralı, %10/30/50/70/90'daki evin
+## 35 m çevresinde aynı sıradan bitişik ilk çift) + her mahallede ek 4 çift (toplam 25). Gerçek oyuncu A'nın çatısından
+## B'nin çatısına yürür (2,4 m/sn, 7 sn). Satır: DOKU4 cati … GECTI|KALDI · DOKU4 cati_toplam n= gecti=
+func _cati_cati() -> void:
+	var sk: IstSokak = IstSehir.sokak
+	var hs: Array = sk.houses.duplicate()
+	hs.sort_custom(func(a: Dictionary, b: Dictionary) -> bool: return (a["c"] as Vector2).x < (b["c"] as Vector2).x)
+	var P = load("res://scripts/player/player.gd")
+	var pl: CharacterBody3D = P.new()
+	add_child(pl)
+	if "izle" in dunya:
+		dunya.izle = pl
+	var n := 0
+	var ok_n := 0
+	var ilk_n := 0
+	var ilk_ok := 0
+	for q: float in [0.1, 0.3, 0.5, 0.7, 0.9]:
+		var m: Vector2 = (hs[int(q * (hs.size() - 1))] as Dictionary)["c"]
+		var ciftler: Array = []
+		for a: Dictionary in sk.houses:
+			if (a["c"] as Vector2).distance_to(m) > 35.0 + 25.0 * float(ciftler.size() > 0):
+				continue
+			for b: Dictionary in sk.houses:
+				if b == a or int(b["sira"]) != int(a["sira"]):
+					continue
+				var da := IstEvler.dims(int(a["v"]))
+				var db := IstEvler.dims(int(b["v"]))
+				var dd := (a["c"] as Vector2).distance_to(b["c"])
+				if dd < (da.x + db.x) * 0.5 + 0.3 and dd > 2.0:
+					ciftler.append([a, b])
+					break
+			if ciftler.size() >= 5:
+				break
+		cam.global_position = Vector3(m.x, IstGeo.h(m.x, m.y) + 40.0, m.y)
+		if dunya.has_method("carpisma_yenile"):
+			dunya.call("carpisma_yenile", Vector3(m.x, IstGeo.h(m.x, m.y), m.y))
+		var s := IstSehir.active
+		for c: Dictionary in s._cells0:
+			var cc: Vector3 = c["c"]
+			if Vector2(cc.x - m.x, cc.z - m.y).length() < 110.0 and not c["up"]:
+				s._cell_up(c)
+		await _bekle(20.0)
+		for ci in ciftler.size():
+			var A: Dictionary = ciftler[ci][0]
+			var B: Dictionary = ciftler[ci][1]
+			var ca: Vector2 = A["c"]
+			var cb: Vector2 = B["c"]
+			pl.global_position = Vector3(ca.x, IstGeo.h(ca.x, ca.y) + 30.0, ca.y)
+			for i in 30:
+				await get_tree().physics_frame
+			var sp := get_world_3d().direct_space_state
+			var rq := PhysicsRayQueryParameters3D.create(Vector3(ca.x, 90, ca.y), Vector3(ca.x, -5, ca.y))
+			rq.exclude = [pl.get_rid()]
+			var ra := sp.intersect_ray(rq)
+			if ra.is_empty():
+				print("DOKU4 cati A_yok")
+				continue
+			pl.global_position = (ra["position"] as Vector3) + Vector3(0, 0.6, 0)
+			pl.velocity = Vector3.ZERO
+			for i in 6:
+				await get_tree().physics_frame
+			var y_a := pl.global_position.y
+			pl.set("move_mode", "script")
+			var t := 0.0
+			var en_y := y_a
+			while t < 7.0:
+				await get_tree().physics_frame
+				t += get_physics_process_delta_time()
+				var p2 := Vector2(pl.global_position.x, pl.global_position.z)
+				var to := Vector3(cb.x - p2.x, 0, cb.y - p2.y)
+				pl.rotation.y = atan2(-to.x, -to.z)
+				pl.set("script_velocity", to.normalized() * 2.4 if to.length() > 0.4 else Vector3.ZERO)
+				en_y = maxf(en_y, pl.global_position.y)
+			pl.set("script_velocity", Vector3.ZERO)
+			var son := pl.global_position
+			var gecti := Vector2(son.x, son.z).distance_to(cb) < 1.5 and son.y > IstGeo.h(cb.x, cb.y) + 2.5
+			var ua: Dictionary = IstMahalleDoku.aktif._ev_ust(A)
+			var ub: Dictionary = IstMahalleDoku.aktif._ev_ust(B)
+			n += 1
+			if gecti:
+				ok_n += 1
+			if ci == 0:
+				ilk_n += 1
+				if gecti:
+					ilk_ok += 1
+			print("DOKU4 cati mah=%s i=%d A=%s/%s B=%s/%s ust_a=%.1f/%.1f ust_b=%.1f/%.1f y_a=%.1f en=%.1f son=%s kalan=%.1f %s" % [
+				IstGeo.mahalle(m.x, m.y).get("ad", ""), ci, A["tip"], ua["cati"], B["tip"], ub["cati"], ua["yuz"], ua["engel"], ub["yuz"], ub["engel"],
+				y_a, en_y, son.snapped(Vector3.ONE * 0.1), Vector2(son.x, son.z).distance_to(cb), "GECTI" if gecti else "KALDI"])
+	print("DOKU4 cati_toplam n=%d gecti=%d ilk_cift(sehir2 secimi)=%d/%d" % [n, ok_n, ilk_ok, ilk_n])
+	pl.queue_free()

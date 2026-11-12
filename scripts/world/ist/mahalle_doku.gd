@@ -778,7 +778,21 @@ func _cati_gecitleri() -> void:
 	var gr := {}
 	var n := 0
 	var sigmadi := 0
+	var mahya_n := 0
+	var mahyali := {}
 	var hs: Array = sk.houses
+	var parca_ekle := func(m: Vector2, y_alt: float, y_ust: float, boy_u: float, en: float, bas: Basis, renk: Color) -> void:
+		var boy := Vector3(boy_u, y_ust - y_alt, en)
+		var xf := Transform3D(bas, Vector3(m.x, (y_alt + y_ust) * 0.5, m.y))
+		var ck := Vector2i(floori(m.x / DUVAR_HUCRE), floori(m.y / DUVAR_HUCRE))
+		if not gr.has(ck):
+			var st := SurfaceTool.new()
+			st.begin(Mesh.PRIMITIVE_TRIANGLES)
+			gr[ck] = st
+		if not _duvar_cells.has(ck):
+			_duvar_cells[ck] = {"boxes": [], "body": null}
+		_kutu(gr[ck], xf, boy, renk, Vector3((ck.x + 0.5) * DUVAR_HUCRE, 0, (ck.y + 0.5) * DUVAR_HUCRE))
+		(_duvar_cells[ck]["boxes"] as Array).append([xf, boy])
 	for i in hs.size() - 1:
 		var A: Dictionary = hs[i]
 		var B: Dictionary = hs[i + 1]
@@ -797,8 +811,6 @@ func _cati_gecitleri() -> void:
 		var P := maxf(float(ua["engel"]), float(ub["engel"]))
 		var sa := float(ua["yuz"])
 		var sb := float(ub["yuz"])
-		if P - sa <= 0.35 and P - sb <= 0.35 and ua["cati"] not in ["teras", "mazgal"] and ub["cati"] not in ["teras", "mazgal"]:
-			continue
 		var ra: Vector2 = ua["sirt"]
 		var rb: Vector2 = ub["sirt"]
 		var u := (rb - ra).normalized()
@@ -806,47 +818,44 @@ func _cati_gecitleri() -> void:
 		if ux < 0.5:
 			continue
 		var Q := ra + u * (la * 0.5 / ux)
-		var parcalar: Array = []                        # [konum (x,z), alt y, üst y, boy (u yönünde)]
+		var bas := Basis(Vector3.UP, atan2(u.x, u.y) + PI * 0.5)
+		var parcalar: Array = []                        # [konum, alt y, üst y, boy (u yönünde)]
 		var sigdi := true
 		for yan: int in [-1, 1]:
-			var s := sa if yan < 0 else sb
+			var s0 := sa if yan < 0 else sb
 			var L := la if yan < 0 else lb
-			var dy := P - s
-			if dy <= 0.35:
+			var dy := P - s0
+			if dy <= 0.2:
 				continue
 			var nb := ceili(dy / GECIT_RISE)
 			var rise := dy / nb
-			var tread := 0.30
-			if nb * tread + 0.45 > L / ux - 0.3:
+			var yer := L / ux - 0.75                   # sınırdan evin öbür ucuna kalan boy (sahanlık ve pay düşülür)
+			var tread := minf(0.55, yer / maxf(nb - 1, 1))
+			if tread < 0.3:
 				sigdi = false
 				break
-			for k in nb:
-				# k = 0 sınıra en yakın (en yüksek) basamak
+			for k in range(1, nb):
+				# k = 1 sınıra en yakın (en yüksek) basamak; en üstü sahanlık
 				var top := P - k * rise
-				if k == 0:
-					continue                            # en üstü sahanlık
 				var mid := Q + u * float(yan) * (0.45 + (k - 0.5) * tread)
-				parcalar.append([mid, top - maxf(rise, 0.3), top, tread])
+				parcalar.append([mid, top - 0.3, top, tread + 0.02])
 		if not sigdi:
 			sigmadi += 1
 			continue
 		parcalar.append([Q, P - 0.3, P, 0.9])
-		var bas := Basis(Vector3.UP, atan2(u.x, u.y) + PI * 0.5)
 		for pc: Array in parcalar:
-			var m: Vector2 = pc[0]
-			var y_alt := float(pc[1])
-			var y_ust := float(pc[2])
-			var boy := Vector3(float(pc[3]), y_ust - y_alt, GECIT_EN)
-			var xf := Transform3D(bas, Vector3(m.x, (y_alt + y_ust) * 0.5, m.y))
-			var ck := Vector2i(floori(m.x / DUVAR_HUCRE), floori(m.y / DUVAR_HUCRE))
-			if not gr.has(ck):
-				var st := SurfaceTool.new()
-				st.begin(Mesh.PRIMITIVE_TRIANGLES)
-				gr[ck] = st
-			if not _duvar_cells.has(ck):
-				_duvar_cells[ck] = {"boxes": [], "body": null}
-			_kutu(gr[ck], xf, boy, GECIT_RENK.darkened(0.08 * float(int(m.x * 7.0) % 3)), Vector3((ck.x + 0.5) * DUVAR_HUCRE, 0, (ck.y + 0.5) * DUVAR_HUCRE))
-			(_duvar_cells[ck]["boxes"] as Array).append([xf, boy])
+			parca_ekle.call(pc[0], float(pc[1]), float(pc[2]), float(pc[3]), GECIT_EN, bas, GECIT_RENK.darkened(0.08 * float(int((pc[0] as Vector2).x * 7.0) % 3)))
+		# mahya: kiremit sırtının üstünde yürünür kalas (bıçak sırtta kapsül kayıyordu); evin boyunca, 0,5 m
+		for e: Array in [[A, ua, la], [B, ub, lb]]:
+			var h: Dictionary = e[0]
+			var uu: Dictionary = e[1]
+			var key: Vector2 = h["c"]
+			if mahyali.has(key) or String(uu["cati"]) != "kiremit":
+				continue
+			mahyali[key] = true
+			var by := float(uu["yuz"])
+			parca_ekle.call(uu["sirt"], by - 0.08, by + 0.06, float(e[2]) + 0.1, 0.5, Basis(Vector3.UP, float(h["yaw"])), Color("5a3a2e"))
+			mahya_n += 1
 		n += 1
 	for ck: Vector2i in gr:
 		var mi := MeshInstance3D.new()
@@ -858,6 +867,7 @@ func _cati_gecitleri() -> void:
 		mi.set_meta("no_walk", true)
 		add_child(mi)
 	stats["cati_gecit"] = n
+	stats["mahya"] = mahya_n
 	stats["cati_gecit_sigmadi"] = sigmadi
 
 
