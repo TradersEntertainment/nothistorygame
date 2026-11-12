@@ -59,6 +59,7 @@ var _mud_floor: MeshInstance3D
 var _cellar_glow: Array[MeshInstance3D] = []
 var _cellar_door_light: OmniLight3D
 var _rope_ladder: MeshInstance3D
+var _exit_shaft_mat: ShaderMaterial
 
 
 static func col_x(i: int) -> float:
@@ -177,7 +178,11 @@ void fragment() {
 	float vein = abs(n2(vec2(a * 3.0 + y * 0.45, y * 0.9)) - 0.5);
 	vein = 1.0 - smoothstep(0.0, 0.035, vein);
 	vec3 base = tint * (0.9 + 0.16 * (cloud - 0.5));
-	base = mix(base, base * 0.9, vein * 0.15);
+	// Damar yakında okunur (uzak sıralar sakin kalır); ikinci, daha ince damar ağı
+	float cd = length(wp - CAMERA_POSITION_WORLD);
+	float near_k = 1.0 - smoothstep(4.0, 12.0, cd);
+	float vein2 = 1.0 - smoothstep(0.0, 0.025, abs(n2(vec2(a * 6.0 - y * 0.8, y * 2.3 + 5.0)) - 0.5));
+	base = mix(base, base * vec3(0.8, 0.8, 0.82), vein * (0.15 + 0.22 * near_k) + vein2 * 0.1 * near_k);
 	// Su çizgisi: yosun bandı, üstünde kışın yükselen suyun bıraktığı kireç bantları, dipte koyu
 	float wl = water_y;
 	float algae = 1.0 - smoothstep(wl + 0.05, wl + 0.55, y);
@@ -187,13 +192,39 @@ void fragment() {
 	base = mix(base, vec3(0.86, 0.85, 0.78), lime * 0.35);
 	float drip = smoothstep(0.7, 0.95, n2(vec2(a * 6.0, y * 0.12))) * smoothstep(wl + 3.0, wl + 0.8, y);
 	base = mix(base, base * vec3(0.86, 0.84, 0.78), drip * 0.25);
+	// Islak bant: suyun hemen üstü koyu ve parlak (sütun suya net girer)
+	float wet = 1.0 - smoothstep(wl, wl + 0.2, y);
+	base *= 1.0 - 0.6 * wet;
+	// Suyun altındaki gövde: bulanık yeşile gömülür, aşağı indikçe kaybolur
+	if (reflected < 0.5 && y < wl) {
+		base = mix(base * vec3(0.45, 0.55, 0.5), vec3(0.06, 0.11, 0.095), smoothstep(wl, wl - 0.9, y));
+	}
 	if (reflected > 0.5) {
 		base *= vec3(0.62, 0.72, 0.70);
+		// Yansıma: temas çizgisinde koyu (ıslak bandın aynası), kameranın dibinde sönük (ekranın altında bej bant olmasın)
+		base *= mix(0.45, 1.0, smoothstep(0.05, 0.7, wp.y < water_y ? water_y - wp.y : 0.0));
+		base *= mix(0.4, 1.0, smoothstep(3.0, 9.0, cd));
 		if (!FRONT_FACING) { NORMAL = -NORMAL; }
 	}
 	ALBEDO = base;
-	ROUGHNESS = 0.55 - 0.3 * algae;
+	ROUGHNESS = 0.55 - 0.3 * algae - 0.2 * wet;
 	SPECULAR = 0.35;
+}
+// Yumuşak doyma: yakın ışık (telefon feneri 1–2 m'de, Yakovos'un meşalesi dibinde) mermeri düz beyaza yakmasın
+// (denetim 3, k08/k16). Her ışığın katkısı x / (1 + x / K) ile sıkıştırılır; sönük ışıkta Lambert'le aynıdır.
+void light() {
+	float ndl = max(dot(NORMAL, LIGHT), 0.0);
+	vec3 l = ATTENUATION * LIGHT_COLOR / PI * ndl;
+	// Toplam üstünden: birikmiş değer sıkıştırılmış tutulur (tersine çevir, ekle, yeniden sıkıştır), meşale + kandil +
+	// fener aynı yüzeyde toplanınca da düz beyaza varmaz
+	const float K = 0.8;
+	vec3 prev = min(DIFFUSE_LIGHT, vec3(K * 0.995));
+	vec3 raw = prev / (vec3(1.0) - prev / K) + l;
+	DIFFUSE_LIGHT = raw / (vec3(1.0) + raw / K);
+	vec3 hv = normalize(LIGHT + VIEW);
+	float sp = pow(max(dot(NORMAL, hv), 0.0), 24.0) * 0.12 * ndl;
+	vec3 s = ATTENUATION * LIGHT_COLOR / PI * sp;
+	SPECULAR_LIGHT += s / (vec3(1.0) + s / 0.25);
 }
 """ % ["cull_front" if reflected else "cull_back", WATER_Y, 1.0 if reflected else 0.0]
 	var m := ShaderMaterial.new()
@@ -204,10 +235,14 @@ void fragment() {
 
 
 ## Gövde: hafif konik, 12 yüzlü; altta kaide halkası, üstte boyun halkası
-func _shaft_mesh() -> Mesh:
+## submerged: gövde suyun altında dibe kadar iner (bulanık suyun ardında koyulaşarak seçilir: sütun suyun içinden çıkar);
+## yansıma kopyası için false (aynada suyun üstüne taşmasın)
+func _shaft_mesh(submerged := false) -> Mesh:
 	var st := SurfaceTool.new()
 	st.begin(Mesh.PRIMITIVE_TRIANGLES)
 	var y0 := WATER_Y - 0.05
+	if submerged:
+		_lathe(st, [[0.0, SHAFT_R + 0.03], [y0, SHAFT_R + 0.01]], 12)
 	var rings := [[y0, SHAFT_R + 0.01], [CAP_Y - 0.35, SHAFT_R - 0.035], [CAP_Y - 0.3, SHAFT_R + 0.025], [CAP_Y - 0.15, SHAFT_R + 0.025], [CAP_Y - 0.1, SHAFT_R - 0.03], [CAP_Y, SHAFT_R - 0.03]]
 	_lathe(st, rings, 12)
 	st.generate_normals()
@@ -315,7 +350,8 @@ func _lathe_x(st: SurfaceTool, c: Vector3, r: float, length: float) -> void:
 func _build_columns() -> void:
 	var rng := RandomNumberGenerator.new()
 	rng.seed = 532
-	var shaft := _shaft_mesh()
+	var shaft := _shaft_mesh(true)
+	var shaft_r := _shaft_mesh(false)
 	var caps: Array[Mesh] = [_capital_mesh(0), _capital_mesh(1), _capital_mesh(2)]
 	var slots: Array = [[], [], []]
 	var shaft_xf: Array[Transform3D] = []
@@ -339,7 +375,8 @@ func _build_columns() -> void:
 			var kind := 0 if r < 0.55 else (1 if r < 0.8 else 2)
 			(slots[kind] as Array).append([Transform3D(Basis(Vector3.UP, roundf(yaw / (PI * 0.5)) * PI * 0.5), p), tone.lightened(0.04)])
 	_mm(shaft, shaft_xf, shaft_col, _marble_shader(false), false, "Shafts")
-	_mm(shaft, shaft_xf, shaft_col, _marble_shader(true), true, "ShaftsReflected")
+	_mm(shaft_r, shaft_xf, shaft_col, _marble_shader(true), true, "ShaftsReflected")
+	_build_waterlines()
 	for k in 3:
 		var xs: Array[Transform3D] = []
 		var cs: Array[Color] = []
@@ -348,6 +385,58 @@ func _build_columns() -> void:
 			cs.append(s[1])
 		_mm(caps[k], xs, cs, _marble_shader(false), false, "Capitals%d" % k)
 		_mm(caps[k], xs, cs, _marble_shader(true), true, "CapitalsReflected%d" % k)
+
+
+## Su çizgisi: her sütunun suya girdiği yerde ince halka (tek MultiMesh, tek çizim): dipte koyu ıslak gölge, gövdeye
+## değen yerde ince parlak menisküs, dışa doğru yumuşakça kaybolur. Sütun suyun içinden çıkar, üstünde durmaz.
+func _build_waterlines() -> void:
+	var st := SurfaceTool.new()
+	st.begin(Mesh.PRIMITIVE_TRIANGLES)
+	var n := 16
+	var r0 := SHAFT_R + 0.005
+	var r1 := SHAFT_R + 0.2
+	for s in n:
+		var a0 := TAU * s / n
+		var a1 := TAU * (s + 1) / n
+		var p := [Vector3(sin(a0) * r0, 0, cos(a0) * r0), Vector3(sin(a1) * r0, 0, cos(a1) * r0),
+			Vector3(sin(a1) * r1, 0, cos(a1) * r1), Vector3(sin(a0) * r1, 0, cos(a0) * r1)]
+		var uv := [Vector2(0, 0), Vector2(0, 0), Vector2(1, 0), Vector2(1, 0)]
+		for k: int in [0, 2, 1, 0, 3, 2]:
+			st.set_uv(uv[k])
+			st.add_vertex(p[k])
+	var sh := Shader.new()
+	sh.code = """
+shader_type spatial;
+render_mode unshaded, blend_mix, depth_draw_never, cull_disabled, shadows_disabled;
+void fragment() {
+	float r = UV.x;
+	float dark = (1.0 - smoothstep(0.0, 1.0, r)) * 0.35;
+	float rim = 0.0;
+	ALBEDO = mix(vec3(0.0, 0.01, 0.01), vec3(0.55, 0.6, 0.58), rim / max(0.001, rim + dark));
+	ALPHA = clamp(dark + rim, 0.0, 0.8);
+}
+"""
+	var m := ShaderMaterial.new()
+	m.shader = sh
+	var mm := MultiMesh.new()
+	mm.transform_format = MultiMesh.TRANSFORM_3D
+	mm.mesh = st.commit()
+	var xs: Array[Transform3D] = []
+	for i in NX:
+		for j in NZ:
+			var cp := column(i, j)
+			if Vector2i(i, j) == Vector2i(MEDUSA[0][0], MEDUSA[0][1]) or Vector2i(i, j) == Vector2i(MEDUSA[1][0], MEDUSA[1][1]):
+				continue
+			xs.append(Transform3D(Basis(), Vector3(cp.x, WATER_Y + 0.012, cp.z)))
+	mm.instance_count = xs.size()
+	for k in xs.size():
+		mm.set_instance_transform(k, xs[k])
+	var mi := MultiMeshInstance3D.new()
+	mi.multimesh = mm
+	mi.material_override = m
+	mi.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
+	mi.name = "Waterlines"
+	add_child(mi)
 
 
 ## Su yüzeyine göre ters kopya: y → 2·WATER_Y − y
@@ -669,6 +758,16 @@ void fragment() {
 	SPECULAR = 0.9;
 	METALLIC = 0.0;
 }
+// Su dağınık ışığı az tutar: telefon feneri kameranın dibindeki suyu bej bir levha gibi aydınlatıyordu (denetim 3,
+// ekranın altındaki bant). Dağınık katkı kısık ve sıkıştırılmış; parıltı (meşale, kandil yansıması) keskin kalır.
+void light() {
+	float ndl = max(dot(NORMAL, LIGHT), 0.0);
+	vec3 l = ATTENUATION * LIGHT_COLOR / PI * ndl * 0.3;
+	DIFFUSE_LIGHT += l / (vec3(1.0) + l / 0.25);
+	vec3 hv = normalize(LIGHT + VIEW);
+	vec3 s = ATTENUATION * LIGHT_COLOR * pow(max(dot(NORMAL, hv), 0.0), 220.0) * 0.6 * ndl;
+	SPECULAR_LIGHT += s / (vec3(1.0) + s / 1.5);
+}
 """
 	var m := ShaderMaterial.new()
 	m.shader = sh
@@ -704,11 +803,16 @@ shader_type spatial;
 render_mode unshaded, blend_add, depth_draw_never, cull_disabled, shadows_disabled, fog_disabled;
 uniform vec4 col : source_color = vec4(1.0, 0.9, 0.7, 1.0);
 uniform float strength = 0.6;
+varying vec3 wpos;
+void vertex() { wpos = (MODEL_MATRIX * vec4(VERTEX, 1.0)).xyz; }
 void fragment() {
 	vec2 c = UV - vec2(0.5);
 	float r = length(c) * 2.0;
 	float ring = 0.5 + 0.5 * sin(r * 22.0 - TIME * 2.0);
 	float a = (1.0 - smoothstep(0.0, 1.0, r)) * (0.75 + 0.25 * ring);
+	// Kamera lekenin içindeyken (kuyudan düşüşün dibi) ekranın altını bej bir bant gibi kaplıyordu (denetim 3): yakında
+	// söner, 4 m'den ötede tam
+	a *= smoothstep(1.2, 4.0, length(wpos - CAMERA_POSITION_WORLD));
 	ALBEDO = col.rgb * strength * a;
 }
 """
@@ -753,6 +857,8 @@ void fragment() {
 		shaft.position = Vector3(c.x, crown - 0.4, c.z)
 		shaft.material_override = _well_stone_mat()
 		shaft.name = "WellShaft%d" % wi
+		if cellar:
+			_exit_shaft_mat = shaft.material_override
 		add_child(shaft)
 		if cellar:
 			_build_cellar(c, crown)
@@ -875,6 +981,9 @@ varying vec3 lp;
 float h(vec2 p) { return fract(sin(dot(p, vec2(12.9898, 78.233))) * 43758.5453); }
 float n2(vec2 p) { vec2 i = floor(p); vec2 f = fract(p); vec2 u = f * f * (3.0 - 2.0 * f);
 	return mix(mix(h(i), h(i + vec2(1, 0)), u.x), mix(h(i + vec2(0, 1)), h(i + vec2(1, 1)), u.x), u.y); }
+// Dolgu: tırmanış bacasında (kilerin ışığı yanınca) duvar karanlıkta kaybolmasın; yukarıdan aşağı solan gün ışığı
+uniform float fill = 0.0;
+uniform float fill_top = 5.0;
 void vertex() { lp = VERTEX; }
 void fragment() {
 	float arc = (atan(lp.x, lp.z) + 3.14159) * 0.62;
@@ -892,8 +1001,9 @@ void fragment() {
 	col = mix(col, vec3(0.10, 0.17, 0.09), moss * 0.7);
 	if (!FRONT_FACING) { NORMAL = -NORMAL; }
 	// Taşların kabarıklığı: harç derzinde normal içe kırılır
-	NORMAL = normalize(NORMAL + (VIEW_MATRIX * vec4(0.0, (f.y < 0.1 ? -0.35 : (f.y > 0.9 ? 0.35 : 0.0)), 0.0, 0.0)).xyz);
+	NORMAL = normalize(NORMAL + (VIEW_MATRIX * vec4(0.0, (f.y < 0.1 ? -0.2 : (f.y > 0.9 ? 0.2 : 0.0)), 0.0, 0.0)).xyz);
 	ALBEDO = col;
+	EMISSION = col * fill * mix(0.25, 1.0, smoothstep(-0.5, fill_top, lp.y)) * vec3(1.0, 0.92, 0.8);
 	ROUGHNESS = 0.95 - 0.4 * wet;
 	SPECULAR = 0.2 + 0.3 * wet;
 }
@@ -929,14 +1039,12 @@ func _build_cellar(c: Vector3, crown: float) -> void:
 			_box(st, Vector3(c.x + xm, y0 - 0.06, c.z + (hw + hole) * 0.5), Vector3(x1 - x0, 0.12, hw - hole))
 		else:
 			_box(st, Vector3(c.x + xm, y0 - 0.06, c.z), Vector3(x1 - x0, 0.12, W))
-	# Kuyu bileziği (ağzın çevresinde alçak taş) ve üstünde tahta kapak (yana çekilmiş)
-	st.set_color(Color("9a907e"))
-	for k in 4:
-		var a := k * PI * 0.5
-		var d := Vector3(sin(a), 0, cos(a))
-		_box(st, Vector3(c.x, y0 + 0.18, c.z) + d * (hole + 0.1), Vector3(absf(d.z) * 1.5 + 0.2, 0.36, absf(d.x) * 1.5 + 0.2))
+	# Kuyu bileziği: yuvarlak, üst kenarı pahlı alçak taş halka (dört düz taş üstten "boş bej levha" gibi okunuyordu,
+	# denetim 3 k21); yanında yere indirilmiş tahta kapak
+	st.set_color(Color("8a8070"))
+	_lathe(st, [[y0 - 0.12, 0.98], [y0 + 0.3, 0.98], [y0 + 0.36, 0.93], [y0 + 0.37, 0.82], [y0 + 0.36, 0.71], [y0 + 0.3, 0.66], [y0 - 0.3, 0.66]], 20, Vector3(c.x, 0, c.z))
 	st.set_color(Color("5a3e26"))
-	_box(st, Vector3(c.x + 0.95, y0 + 0.39, c.z - 0.55), Vector3(0.9, 0.05, 0.9))
+	_box(st, Vector3(c.x + 1.25, y0 + 0.03, c.z - 0.75), Vector3(0.7, 0.05, 0.7))
 	# Duvarlar: sıva, altta nemden koyulaşmış bant; köşelerde ve ortada ahşap dikmeler; güney duvarında kapı (1,0 × 2,0)
 	var plaster := Color("a8987c")
 	var damp := Color("6e624e")
@@ -983,14 +1091,34 @@ func _build_cellar(c: Vector3, crown: float) -> void:
 		_lathe(st, [[0.0, 0.09], [0.1, 0.16], [0.26, 0.14], [0.34, 0.075], [0.4, 0.08]], 10, Vector3(c.x - hw + 0.32, y0 + yy + 0.03, c.z + zz))
 		st.set_color(Color("d8c8a0"))
 		_lathe(st, [[0.4, 0.085], [0.43, 0.06], [0.44, 0.0]], 8, Vector3(c.x - hw + 0.32, y0 + yy + 0.03, c.z + zz))
-	# Kuzey duvarı: asılı sarımsak ve soğan örgüleri; dipte çuvallar
+	# Kuzeyde tavan kirişine iple asılı sarımsak ve soğan hevenkleri: ipin ucunda saç örgüsü gibi sap (zikzak), sapın
+	# çevresine sarmal dizilmiş yuvarlak başlar (soğan iri, sarımsak küçük ve ak); dipte çuvallar
+	var beam_z := c.z - 1.2
+	var beam_y := y0 + H - 0.16
+	var rng := RandomNumberGenerator.new()
+	rng.seed = 4421
 	for k in 4:
 		var px := c.x - 0.9 + k * 0.6
+		var garlic := k % 2 == 0
+		var drop := 0.32 + 0.1 * (k % 3)
 		st.set_color(Color("8a7450"))
-		_box(st, Vector3(px, y0 + 1.9, c.z - hw + 0.16), Vector3(0.02, 0.5, 0.02))
-		for b in 5:
-			st.set_color(Color("e0d4b8") if k % 2 == 0 else Color("b8783a"))
-			_lathe(st, [[0.0, 0.0], [0.03, 0.06], [0.1, 0.065], [0.15, 0.0]], 6, Vector3(px + (b % 2) * 0.05 - 0.025, y0 + 1.25 + b * 0.11, c.z - hw + 0.2))
+		_lathe(st, [[0.0, 0.012], [drop, 0.012]], 5, Vector3(px, beam_y - drop, beam_z))
+		_lathe(st, [[0.0, 0.04], [0.05, 0.04]], 6, Vector3(px, beam_y - 0.04, beam_z))          # kirişe dolanan düğüm
+		var top_y := beam_y - drop
+		var n := 9
+		for b in n:
+			var t := float(b) / (n - 1)
+			var yy := top_y - 0.06 - t * 0.62
+			# Örgü sapı: sağa sola dolanan kuru yaprak
+			st.set_color(Color("a08a5a"))
+			_lathe(st, [[0.0, 0.016], [0.08, 0.016]], 5, Vector3(px + 0.018 * sin(b * 2.1), yy, beam_z + 0.018 * cos(b * 2.1)))
+			var a := b * 2.4 + k
+			var rr := (0.05 if garlic else 0.065) * (0.6 + 0.4 * sin(t * PI))
+			var hs := (0.75 if garlic else 1.0) * rng.randf_range(0.85, 1.1)
+			var col := Color("e6dcc6").lerp(Color("d8c8b0"), rng.randf()) if garlic else Color("b8702e").lerp(Color("9a5426"), rng.randf())
+			st.set_color(col)
+			_lathe(st, [[0.0, 0.0], [0.015 * hs, 0.04 * hs], [0.045 * hs, 0.058 * hs], [0.08 * hs, 0.045 * hs], [0.105 * hs, 0.012 * hs], [0.13 * hs, 0.0]], 8,
+				Vector3(px + sin(a) * rr, yy - 0.06, beam_z + cos(a) * rr))
 	for k in 3:
 		st.set_color([Color("b8a888"), Color("a8987a"), Color("c0b090")][k])
 		_lathe(st, [[0.0, 0.2], [0.25, 0.26], [0.5, 0.2], [0.62, 0.08]], 8, Vector3(c.x - 0.3 + k * 0.55, y0, c.z - hw + 0.4))
@@ -1127,6 +1255,8 @@ void fragment() {
 ## Kilerin ışıkları (tırmanışta yanar; ışık bütçesi: öbür evrelerde kapalı). door: kapıdan gelen gün ışığı (yalnız
 ## kilere çıkınca; bacada tırmanırken kilerin genel ışığı yeter)
 func cellar_on(on: bool, door := true) -> void:
+	if _exit_shaft_mat:
+		_exit_shaft_mat.set_shader_parameter("fill", 0.55 if on else 0.0)
 	if cellar_light:
 		cellar_light.visible = on
 	if _cellar_door_light:
@@ -1310,10 +1440,18 @@ func _bucket(p: Vector3) -> Node3D:
 
 # ================================================================ Medusa başları ve tavus gözü sütunu
 
-## Taş Medusa yüzü: kaide bloğu, cephesinde kabartma yüz (yükseklik alanından normal: ışıkla kabartma seçilir):
-## yanaklar, göz çukurları ve göz kapakları, kaşlar, burun, dudaklar, saçta kıvrılan yılanlar; altta yosun.
-## "side": yüz yan yatık, "inv": baş aşağı. (Gerçekte iki yüz de bloğun ortasında, kaba işçilikte; köken bilinmiyor.)
+## Medusa başları: iki dev mermer blok, sütun kaidesi olarak kullanılmış (devşirme). Her bloğun bir yüzünden kabartma
+## olarak ÇIKAN, bloğun yüksekliğini neredeyse dolduran kadın başı: dolgun yanaklar, kalın dudaklar, iri göz kapakları,
+## geniş burun; başın çevresinde birbirine dolanan kalın yılan saçlar (birkaçının başı seçilir), kulak hizasında yılan
+## düğümü, çenenin altında düğümlenen iki yılan. Baş ve blok TEK ağdır (çerçeve/panel yok): bloğun ön yüzü kabartmanın
+## yükseklik alanıyla dışarı itilir; oyukların kiri köşe renginde (kandil yandan vurunca kabartma gölgeyle okunur).
+## "side": baş yan yatık, "inv": baş aşağı. Ağlar bir kez kurulur (statik önbellek).
+const MEDUSA_HALF := Vector3(0.81, 0.81, 0.6)     # bloğun yarı ölçüleri (1,62 × 1,62 × 1,2 m)
+const MEDUSA_G := 128                               # kabartma ızgarası (baş koordinatları [-1, 1]²)
 static var _medusa_shader: Shader
+static var _medusa_relief: PackedFloat32Array
+static var _medusa_dirt: PackedFloat32Array
+static var _medusa_meshes := {}
 
 
 func _medusa_mat() -> ShaderMaterial:
@@ -1321,86 +1459,35 @@ func _medusa_mat() -> ShaderMaterial:
 		_medusa_shader = Shader.new()
 		_medusa_shader.code = """
 shader_type spatial;
-uniform vec4 stone : source_color = vec4(0.58, 0.6, 0.52, 1.0);
+varying vec3 lp;
+varying vec3 wpos;
 float h(vec2 p) { return fract(sin(dot(p, vec2(12.9898, 78.233))) * 43758.5453); }
 float n2(vec2 p) { vec2 i = floor(p); vec2 f = fract(p); vec2 u = f * f * (3.0 - 2.0 * f);
 	return mix(mix(h(i), h(i + vec2(1, 0)), u.x), mix(h(i + vec2(0, 1)), h(i + vec2(1, 1)), u.x), u.y); }
-float bump(vec2 p, vec2 c, vec2 r) { vec2 d = (p - c) / r; return max(0.0, 1.0 - dot(d, d)); }
-float relief(vec2 uv) {
-	vec2 p = uv * 2.0 - 1.0;
-	p.y = -p.y;
-	float f = 0.0;
-	// Yüz: geniş oval kubbe
-	f += 0.55 * sqrt(bump(p, vec2(0.0, -0.02), vec2(0.5, 0.64)));
-	// Göz çukurları ve iri, bebeksiz gözler
-	for (int k = 0; k < 2; k++) {
-		float sx = k == 0 ? -0.2 : 0.2;
-		f -= 0.22 * bump(p, vec2(sx, 0.14), vec2(0.16, 0.1));
-		f += 0.14 * sqrt(bump(p, vec2(sx, 0.13), vec2(0.1, 0.065)));
-		// Kaş: kalın kemer
-		float bx = (p.x - sx) / 0.17;
-		float by = p.y - (0.27 - 0.06 * bx * bx);
-		f += 0.12 * max(0.0, 1.0 - abs(bx)) * max(0.0, 1.0 - abs(by) / 0.035);
-		// Yanak
-		f += 0.08 * bump(p, vec2(sx * 1.4, -0.12), vec2(0.17, 0.16));
-	}
-	// Burun: dikey sırt, ucu yuvarlak
-	f += 0.18 * max(0.0, 1.0 - abs(p.x) / (0.045 + 0.05 * clamp(0.18 - p.y, 0.0, 0.3))) * step(-0.12, p.y) * step(p.y, 0.22);
-	f += 0.1 * bump(p, vec2(0.0, -0.1), vec2(0.08, 0.05));
-	// Dudaklar ve ağız yarığı
-	f += 0.1 * bump(p, vec2(0.0, -0.25), vec2(0.15, 0.045));
-	f -= 0.08 * max(0.0, 1.0 - abs(p.y + 0.29) / 0.012) * max(0.0, 1.0 - abs(p.x) / 0.14);
-	f += 0.08 * bump(p, vec2(0.0, -0.34), vec2(0.12, 0.045));
-	// Çene
-	f += 0.06 * bump(p, vec2(0.0, -0.48), vec2(0.18, 0.1));
-	// Yılan saçlar: yüzün çevresinde halka biçiminde kıvrılan kalın şeritler
-	float r = length(p * vec2(1.0, 0.85));
-	float a = atan(p.y, p.x);
-	float ring = smoothstep(0.52, 0.6, r) * (1.0 - smoothstep(0.86, 0.95, r));
-	float coil = 0.5 + 0.5 * sin(a * 9.0 + r * 18.0);
-	float coil2 = 0.5 + 0.5 * sin(a * 9.0 - r * 14.0 + 1.3);
-	float snake = ring * max(coil, coil2 * 0.8) * step(-0.35, p.y + 0.0 * a);
-	f += 0.2 * snake * snake;
-	// İki yılan başı çenenin altında düğümlenir
-	f += 0.1 * bump(p, vec2(-0.22, -0.62), vec2(0.09, 0.06)) + 0.1 * bump(p, vec2(0.22, -0.62), vec2(0.09, 0.06));
-	// Aşınma: kaba yüzey
-	f += 0.025 * n2(uv * 40.0) + 0.04 * n2(uv * 9.0);
-	return f;
+void vertex() {
+	lp = VERTEX;
+	wpos = (MODEL_MATRIX * vec4(VERTEX, 1.0)).xyz;
 }
 void fragment() {
-	float e = 0.004;
-	float c = relief(UV);
-	float dx = relief(UV + vec2(e, 0.0)) - c;
-	float dy = relief(UV + vec2(0.0, e)) - c;
-	vec3 n = normalize(vec3(-dx * 120.0, dy * 120.0, 1.0));
-	NORMAL_MAP = n * 0.5 + 0.5;
-	NORMAL_MAP_DEPTH = 0.45;
-	vec3 col = stone.rgb * (0.75 + 0.5 * c);
-	float algae = smoothstep(0.55, 0.85, n2(UV * 5.0 + vec2(2.0, 7.0))) * (0.4 + 0.6 * (1.0 - UV.y));
-	col = mix(col, vec3(0.13, 0.2, 0.12), algae * 0.6);
-	// Oyukların dibi koyu (kir, çamur): göz çukurları, ağız, saç kıvrımlarının arası
-	col *= 0.3 + 0.7 * smoothstep(0.02, 0.42, c);
-	// Yüzün çizgileri uzaktan da (640 × 360'ta) seçilsin: göz çukurunun gölgesi, göz bebeği oyuğu, burun delikleri,
-	// ağız yarığı ve kaşın altı kirle koyulaşmış (denetim 2, K4)
-	vec2 p = UV * 2.0 - 1.0;
-	p.y = -p.y;
-	float dark = 0.0;
-	for (int k = 0; k < 2; k++) {
-		float sx = k == 0 ? -0.2 : 0.2;
-		float sock = bump(p, vec2(sx, 0.135), vec2(0.17, 0.115));
-		float ball = bump(p, vec2(sx, 0.13), vec2(0.095, 0.062));
-		dark = max(dark, smoothstep(0.0, 0.35, sock) * (1.0 - smoothstep(0.0, 0.25, ball)) * 0.8);
-		dark = max(dark, smoothstep(0.2, 0.7, bump(p, vec2(sx, 0.125), vec2(0.032, 0.03))) * 0.85);
-		dark = max(dark, smoothstep(0.1, 0.6, bump(p, vec2(sx * 0.22, -0.125), vec2(0.03, 0.022))) * 0.8);
-		float bx = (p.x - sx) / 0.17;
-		float by = p.y - (0.235 - 0.06 * bx * bx);
-		dark = max(dark, max(0.0, 1.0 - abs(bx)) * max(0.0, 1.0 - abs(by) / 0.025) * 0.5);
-	}
-	dark = max(dark, max(0.0, 1.0 - abs(p.y + 0.29) / 0.022) * max(0.0, 1.0 - abs(p.x) / 0.15) * 0.9);
-	col *= 1.0 - dark;
+	// Köşe rengi: mermer tonu × oyuk kiri (CPU'da kabartmadan); üstüne aşınmış mermer bulutu ve ince damar
+	vec2 q = vec2(lp.x + lp.z * 0.7, lp.y);
+	float cloud = n2(q * 3.0) * 0.6 + n2(q * 9.0 + 4.0) * 0.4;
+	float vein = 1.0 - smoothstep(0.0, 0.05, abs(n2(vec2(q.x * 2.0 + q.y * 1.3, q.y * 2.4)) - 0.5));
+	vec3 col = COLOR.rgb * (0.9 + 0.2 * (cloud - 0.5));
+	col = mix(col, col * 0.78, vein * 0.35);
+	// Dünya yüksekliğine göre: alt kısım çamur ve yosun, eski su çizgilerinin lekesi (yatay bantlar)
+	float wy = wpos.y;
+	float mud = 1.0 - smoothstep(0.35, 1.05, wy + 0.25 * (n2(wpos.xz * 3.0 + lp.xy * 2.0) - 0.5));
+	col = mix(col, vec3(0.16, 0.14, 0.09), mud * 0.8);
+	float algae = smoothstep(0.62, 0.9, n2(lp.xy * 3.0 + lp.zx * 3.0 + 7.0)) * (1.0 - smoothstep(0.9, 1.5, wy));
+	col = mix(col, vec3(0.15, 0.21, 0.12), algae * 0.45);
+	float band = 1.0 - smoothstep(0.0, 0.035, abs(wy - 1.62 - 0.03 * sin(wpos.x * 4.0)));
+	band += 0.6 * (1.0 - smoothstep(0.0, 0.025, abs(wy - 1.94 - 0.02 * sin(wpos.z * 5.0))));
+	// Leke bandı yalnız yanlarda ve arkada belirgin (ön yüzde kabartmanın üstünden çatlak gibi geçiyordu)
+	col = mix(col, col * vec3(0.7, 0.68, 0.58), clamp(band, 0.0, 1.0) * mix(0.6, 0.15, step(0.5, lp.z / 0.6)));
 	ALBEDO = col;
-	ROUGHNESS = 0.8;
-	SPECULAR = 0.3;
+	ROUGHNESS = 0.78 - 0.2 * mud;
+	SPECULAR = 0.28;
 }
 """
 	var m := ShaderMaterial.new()
@@ -1408,90 +1495,303 @@ void fragment() {
 	return m
 
 
-## Kabartmanın yükseklik alanı (gölgelendiricideki relief'in CPU eşi, gürültüsüz): p ∈ [-1, 1]², y yukarı
-static func _relief_cpu(p: Vector2) -> float:
-	var bump := func(c: Vector2, r: Vector2) -> float:
-		var d := (p - c) / r
-		return maxf(0.0, 1.0 - d.dot(d))
-	var f := 0.0
-	f += 0.55 * sqrt(bump.call(Vector2(0.0, -0.02), Vector2(0.5, 0.64)))
-	for k in 2:
-		var sx := -0.2 if k == 0 else 0.2
-		f -= 0.22 * bump.call(Vector2(sx, 0.14), Vector2(0.16, 0.1))
-		f += 0.14 * sqrt(bump.call(Vector2(sx, 0.13), Vector2(0.1, 0.065)))
-		var bx := (p.x - sx) / 0.17
-		var by := p.y - (0.27 - 0.06 * bx * bx)
-		f += 0.12 * maxf(0.0, 1.0 - absf(bx)) * maxf(0.0, 1.0 - absf(by) / 0.035)
-		f += 0.08 * bump.call(Vector2(sx * 1.4, -0.12), Vector2(0.17, 0.16))
-	f += 0.18 * maxf(0.0, 1.0 - absf(p.x) / (0.045 + 0.05 * clampf(0.18 - p.y, 0.0, 0.3))) * (1.0 if p.y > -0.12 and p.y < 0.22 else 0.0)
-	f += 0.1 * bump.call(Vector2(0.0, -0.1), Vector2(0.08, 0.05))
-	f += 0.1 * bump.call(Vector2(0.0, -0.25), Vector2(0.15, 0.045))
-	f -= 0.08 * maxf(0.0, 1.0 - absf(p.y + 0.29) / 0.012) * maxf(0.0, 1.0 - absf(p.x) / 0.14)
-	f += 0.08 * bump.call(Vector2(0.0, -0.34), Vector2(0.12, 0.045))
-	f += 0.06 * bump.call(Vector2(0.0, -0.48), Vector2(0.18, 0.1))
-	var r := (p * Vector2(1.0, 0.85)).length()
-	var a := atan2(p.y, p.x)
-	var ring := smoothstep(0.52, 0.6, r) * (1.0 - smoothstep(0.86, 0.95, r))
-	var coil := 0.5 + 0.5 * sin(a * 9.0 + r * 18.0)
-	var coil2 := 0.5 + 0.5 * sin(a * 9.0 - r * 14.0 + 1.3)
-	var snake := ring * maxf(coil, coil2 * 0.8) * (1.0 if p.y > -0.35 else 0.0)
-	f += 0.2 * snake * snake
-	f += 0.1 * bump.call(Vector2(-0.22, -0.62), Vector2(0.09, 0.06)) + 0.1 * bump.call(Vector2(0.22, -0.62), Vector2(0.09, 0.06))
-	return f
+## Izgaraya damga: elips tümsek (toplanır)
+static func _rl_add(g: PackedFloat32Array, c: Vector2, r: Vector2, amp: float, soft := false) -> PackedFloat32Array:
+	var n := MEDUSA_G
+	var i0 := clampi(int((c.x - r.x + 1.0) * 0.5 * n) - 1, 0, n - 1)
+	var i1 := clampi(int((c.x + r.x + 1.0) * 0.5 * n) + 1, 0, n - 1)
+	var j0 := clampi(int((c.y - r.y + 1.0) * 0.5 * n) - 1, 0, n - 1)
+	var j1 := clampi(int((c.y + r.y + 1.0) * 0.5 * n) + 1, 0, n - 1)
+	for j in range(j0, j1 + 1):
+		var y := (j + 0.5) / n * 2.0 - 1.0
+		for i in range(i0, i1 + 1):
+			var x := (i + 0.5) / n * 2.0 - 1.0
+			var dx := (x - c.x) / r.x
+			var dy := (y - c.y) / r.y
+			var d2 := dx * dx + dy * dy
+			if d2 < 1.0:
+				g[j * n + i] += amp * ((1.0 - d2) * (1.0 - d2) if soft else sqrt(1.0 - d2))
+	return g
 
 
-## Yüzün ağı: w × h'lik alanda ızgara; z = kubbe zarfı + kabartma (gerçek derinlik: yandan bakınca burun, kaş, yanak,
-## yılan saçlar çıkıntı yapar). UV gölgelendiricideki relief'le aynı yerleşimde (renk, kir, yosun).
-static var _face_mesh: Mesh
+## Yılan gövdesi: eğri boyunca yuvarlak kesitli boru (en yüksek değer alınır: dolanan yılanlar üst üste biner).
+## pts: eğrinin noktaları, w0 → w1 kalınlık, z: borunun dibinin yüksekliği
+static func _rl_tube(g: PackedFloat32Array, pts: PackedVector2Array, w0: float, w1: float, z0: float, z1: float) -> PackedFloat32Array:
+	var n := MEDUSA_G
+	var cell := 2.0 / n
+	for k in pts.size():
+		var t := float(k) / maxf(1.0, pts.size() - 1.0)
+		var w := lerpf(w0, w1, t)
+		var z := lerpf(z0, z1, t)
+		var c := pts[k]
+		var rc := int(ceil(w / cell)) + 1
+		var ci := int((c.x + 1.0) * 0.5 * n)
+		var cj := int((c.y + 1.0) * 0.5 * n)
+		for j in range(maxi(cj - rc, 0), mini(cj + rc, n - 1) + 1):
+			var y := (j + 0.5) / n * 2.0 - 1.0
+			for i in range(maxi(ci - rc, 0), mini(ci + rc, n - 1) + 1):
+				var x := (i + 0.5) / n * 2.0 - 1.0
+				var d := Vector2(x, y).distance_to(c) / w
+				if d < 1.0:
+					var v := z + w * 0.85 * sqrt(1.0 - d * d)
+					if v > g[j * n + i]:
+						g[j * n + i] = v
+	return g
 
 
-static func _medusa_face_mesh() -> Mesh:
-	if _face_mesh:
-		return _face_mesh
-	var w := 1.3
-	var hgt := 1.56
-	var n := 44
-	var st := SurfaceTool.new()
-	st.begin(Mesh.PRIMITIVE_TRIANGLES)
-	var pts: Array = []
-	for j in n + 1:
-		var row: Array = []
-		for i in n + 1:
-			var u := float(i) / n
-			var v := float(j) / n
-			var p := Vector2(u * 2.0 - 1.0, v * 2.0 - 1.0)
-			var e := sqrt(maxf(0.0, 1.0 - p.length_squared()))
-			var z := 0.16 * e + 0.42 * _relief_cpu(p) * smoothstep(0.0, 0.25, e)
-			row.append([Vector3(p.x * w * 0.5, p.y * hgt * 0.5, z), Vector2(u, 1.0 - v)])
-		pts.append(row)
+## Yılan: gövde + uçta baş (gövdeden biraz iri, sivri burunlu damla) ve gözleri (kir haritasına koyu nokta)
+## (Packed diziler değerle geçer: ikisi birlikte döner)
+static func _rl_snake(g: PackedFloat32Array, dirt: PackedFloat32Array, pts: PackedVector2Array, w: float, z: float, head := true) -> Array:
+	g = _rl_tube(g, pts, w, w * 0.8, z, z + 0.01)
+	if not head or pts.size() < 2:
+		return [g, dirt]
+	var tip := pts[pts.size() - 1]
+	var dir := (tip - pts[pts.size() - 2]).normalized()
+	var side := Vector2(-dir.y, dir.x)
+	var hp := PackedVector2Array()
+	for k in 7:
+		hp.append(tip + dir * (k * w * 0.32))
+	# Baş: arkası geniş, burnu sivri (kalınlık azalarak)
+	g = _rl_tube(g, hp, w * 1.5, w * 0.6, z + 0.02, z + 0.01)
+	for s: float in [-1.0, 1.0]:
+		var e := tip + dir * w * 0.8 + side * s * w * 0.8
+		var n := MEDUSA_G
+		var i := clampi(int((e.x + 1.0) * 0.5 * n), 0, n - 1)
+		var j := clampi(int((e.y + 1.0) * 0.5 * n), 0, n - 1)
+		for dj in range(-1, 2):
+			for di in range(-1, 2):
+				var ii := clampi(i + di, 0, n - 1)
+				var jj := clampi(j + dj, 0, n - 1)
+				dirt[jj * n + ii] = maxf(dirt[jj * n + ii], 0.85 if di == 0 and dj == 0 else 0.4)
+	return [g, dirt]
+
+
+## Sinüslü eğri: a noktasından b noktasına, yanlara dalgalanarak (amp, kaç dalga, evre)
+static func _wavy(a: Vector2, b: Vector2, amp: float, waves: float, ph: float, n := 40) -> PackedVector2Array:
+	var out := PackedVector2Array()
+	var d := b - a
+	var side := Vector2(-d.y, d.x).normalized()
+	for k in n + 1:
+		var t := float(k) / n
+		out.append(a + d * t + side * amp * sin(t * TAU * waves + ph) * (0.35 + 0.65 * t))
+	return out
+
+
+## Kabartmanın yükseklik alanı (metre; baş koordinatları p ∈ [-1, 1]², y yukarı, ±1 = bloğun yarı yüksekliği) ve
+## oyuk kiri haritası (0 temiz … 1 koyu). Bir kez hesaplanır.
+static func _medusa_fields() -> void:
+	if not _medusa_relief.is_empty():
+		return
+	var n := MEDUSA_G
+	var face := PackedFloat32Array()
+	face.resize(n * n)
+	var hair := PackedFloat32Array()
+	hair.resize(n * n)
+	var dirt := PackedFloat32Array()
+	dirt.resize(n * n)
+	# Yüz özellikleri "yüz biriminde" yazılır, sonra ölçeklenir (S): yüz bloğun yüksekliğinin üçte ikisini doldurur
+	var S := 1.18
+	var fc := Vector2(0.0, -0.04)
+	# Başın kütlesi: saçın altında geniş, alçak kubbe
+	face = _rl_add(face, Vector2(0.0, 0.0), Vector2(0.97, 0.98), 0.08)
+	# Yüz: dolgun oval (alın – çene)
+	face = _rl_add(face, fc + Vector2(0.0, -0.06) * S, Vector2(0.46, 0.6) * S, 0.2)
+	for sx: float in [-1.0, 1.0]:
+		# Dolgun yanaklar
+		face = _rl_add(face, fc + Vector2(0.25 * sx, -0.2) * S, Vector2(0.19, 0.19) * S, 0.07, true)
+		# Göz çukuru (kaşın altı oyuk) ve iri, ağır göz kapaklı göz küresi (bebeksiz)
+		face = _rl_add(face, fc + Vector2(0.19 * sx, 0.11) * S, Vector2(0.16, 0.11) * S, -0.075, true)
+		face = _rl_add(face, fc + Vector2(0.19 * sx, 0.095) * S, Vector2(0.115, 0.068) * S, 0.06)
+		# Üst göz kapağı: gözün üstünde kalın kıvrım, altında torba
+		face = _rl_add(face, fc + Vector2(0.19 * sx, 0.145) * S, Vector2(0.13, 0.04) * S, 0.03)
+		face = _rl_add(face, fc + Vector2(0.19 * sx, 0.035) * S, Vector2(0.1, 0.03) * S, 0.015)
+		# Kaş kemeri
+		var brow := PackedVector2Array()
+		for k in 13:
+			var t := float(k) / 12.0 * 2.0 - 1.0
+			brow.append(fc + Vector2(0.19 * sx + t * 0.16, 0.245 - 0.06 * t * t) * S)
+		face = _rl_tube(face, brow, 0.04 * S, 0.032 * S, 0.06, 0.06)
+		# Burun kanatları (geniş burun)
+		face = _rl_add(face, fc + Vector2(0.08 * sx, -0.17) * S, Vector2(0.06, 0.05) * S, 0.05)
+		# Ağız köşesi çukuru
+		face = _rl_add(face, fc + Vector2(0.17 * sx, -0.34) * S, Vector2(0.045, 0.05) * S, -0.04, true)
+	# Burun sırtı: kaşların arasından aşağı genişleyerek
+	var nose := PackedVector2Array()
+	for k in 11:
+		nose.append(fc + Vector2(0.0, 0.17 - 0.033 * k) * S)
+	face = _rl_tube(face, nose, 0.045 * S, 0.085 * S, 0.14, 0.2)
+	face = _rl_add(face, fc + Vector2(0.0, -0.16) * S, Vector2(0.075, 0.06) * S, 0.04)
+	# Kalın dudaklar (üst ve alt) ve aralarındaki ağız yarığı
+	face = _rl_add(face, fc + Vector2(0.0, -0.31) * S, Vector2(0.155, 0.05) * S, 0.07)
+	face = _rl_add(face, fc + Vector2(0.0, -0.395) * S, Vector2(0.135, 0.058) * S, 0.08)
+	face = _rl_add(face, fc + Vector2(0.0, -0.352) * S, Vector2(0.15, 0.016) * S, -0.07, true)
+	# Çene
+	face = _rl_add(face, fc + Vector2(0.0, -0.53) * S, Vector2(0.17, 0.1) * S, 0.05)
+	# Saç: yüzün çevresinde 9 kalın yılan; alından ve yanlardan dalgalanarak dışa uzanır, çoğunun ucunda baş
+	for k in 9:
+		var a := deg_to_rad(lerpf(-30.0, 210.0, k / 8.0))
+		var d := Vector2(cos(a), sin(a))
+		var from := fc + d * Vector2(0.5, 0.66) * S
+		var to := fc + d * Vector2(0.94 / S, 0.94 / S) * S
+		var sr := _rl_snake(hair, dirt, _wavy(from, to, 0.08, 1.0, k * 1.9), 0.075, 0.12, k % 4 != 2)
+		hair = sr[0]
+		dirt = sr[1]
+	# Alın çevresinde birbirine dolanan iki kalın yılan (dalga evreleri ters: örgü gibi üst üste biner)
+	for row in 2:
+		var arc := PackedVector2Array()
+		for k in 120:
+			var t := float(k) / 119.0
+			var a := deg_to_rad(lerpf(-25.0, 205.0, t))
+			var rr := 0.6 + 0.05 * sin(t * TAU * 4.0 + PI * row)
+			arc.append(fc + Vector2(cos(a) * rr * 0.86, sin(a) * rr * 1.1) * S)
+		hair = _rl_tube(hair, arc, 0.058, 0.058, 0.13 + 0.02 * row, 0.13 + 0.02 * row)
+	# Kulak hizasında yılan düğümü: iki kısa yılan çaprazlanır, üstünde küçük kanat tüyleri
+	for sx: float in [-1.0, 1.0]:
+		var c := fc + Vector2(0.53 * sx, -0.08) * S
+		var sr := _rl_snake(hair, dirt, _wavy(c + Vector2(-0.08 * sx, 0.12), c + Vector2(0.12 * sx, -0.16), 0.03, 1.0, 0.0, 18), 0.05, 0.16, false)
+		hair = sr[0]
+		dirt = sr[1]
+		sr = _rl_snake(hair, dirt, _wavy(c + Vector2(-0.06 * sx, -0.14), c + Vector2(0.14 * sx, 0.1), 0.03, 1.0, 1.0, 18), 0.05, 0.19, true)
+		hair = sr[0]
+		dirt = sr[1]
+		for f in 4:
+			var fa := deg_to_rad(50.0 + f * 15.0)
+			var root := c + Vector2(0.03 * sx, 0.17)
+			var tip := root + Vector2(cos(fa) * sx, sin(fa)) * (0.19 - f * 0.025)
+			hair = _rl_tube(hair, PackedVector2Array([root, root.lerp(tip, 0.5), tip]), 0.03, 0.014, 0.15, 0.12)
+	# Çenenin altında düğümlenen iki yılan (başları yanlara bakar)
+	for sx: float in [-1.0, 1.0]:
+		var pts := _wavy(Vector2(-0.4 * sx, -0.62), Vector2(0.32 * sx, -0.88), 0.04, 1.0, 0.5, 30)
+		var sr := _rl_snake(hair, dirt, pts, 0.06, 0.07 + (0.035 if sx > 0.0 else 0.0), true)
+		hair = sr[0]
+		dirt = sr[1]
+	# Birleşim: yüz ve saçın büyüğü; kenarlarda sıfıra iner (bloğun yuvarlatılmış köşesine dokunmaz)
+	var rel := PackedFloat32Array()
+	rel.resize(n * n)
+	for j in n:
+		var y := (j + 0.5) / n * 2.0 - 1.0
+		for i in n:
+			var x := (i + 0.5) / n * 2.0 - 1.0
+			var edge := 1.0 - smoothstep(0.86, 0.99, maxf(absf(x), absf(y)))
+			rel[j * n + i] = maxf(face[j * n + i], hair[j * n + i]) * edge
+	# Oyuk kiri: çevresinin ortalamasından alçak yerler (göz çukuru, dudak arası, yılanların arası) koyu
 	for j in n:
 		for i in n:
-			for q: Array in [[pts[j][i], pts[j + 1][i + 1], pts[j][i + 1]], [pts[j][i], pts[j + 1][i], pts[j + 1][i + 1]]]:
-				for vtx: Array in q:
-					st.set_uv(vtx[1])
+			var s := 0.0
+			var c := 0
+			for dj in range(-4, 5, 4):
+				for di in range(-4, 5, 4):
+					var ii := clampi(i + di, 0, n - 1)
+					var jj := clampi(j + dj, 0, n - 1)
+					s += rel[jj * n + ii]
+					c += 1
+			var cav := clampf((s / c - rel[j * n + i]) * 22.0, 0.0, 1.0)
+			dirt[j * n + i] = maxf(dirt[j * n + i], cav * 0.85)
+	_medusa_relief = rel
+	_medusa_dirt = dirt
+
+
+static func _rl_sample(g: PackedFloat32Array, p: Vector2) -> float:
+	var n := MEDUSA_G
+	var fx := clampf((p.x + 1.0) * 0.5 * n - 0.5, 0.0, n - 1.001)
+	var fy := clampf((p.y + 1.0) * 0.5 * n - 0.5, 0.0, n - 1.001)
+	var i := int(fx)
+	var j := int(fy)
+	var u := fx - i
+	var v := fy - j
+	return lerpf(lerpf(g[j * n + i], g[j * n + i + 1], u), lerpf(g[(j + 1) * n + i], g[(j + 1) * n + i + 1], u), v)
+
+
+## Köşeleri yuvarlanmış, kaba yontulmuş taş blok (yarı ölçü hx, köşe yarıçapı r). Ön yüz (+z) yüksek çözünürlüklü
+## ve kabartmalı (relief true), öteki yüzler seyrek. Bir iki köşe kırık (çentik). kind: "side" | "inv" | "" (kabartmasız)
+static func _rounded_block(half: Vector3, r: float, front_n: int, side_n: int, kind: String, tone: Color, seed_i: int) -> Mesh:
+	var st := SurfaceTool.new()
+	st.begin(Mesh.PRIMITIVE_TRIANGLES)
+	var rng := RandomNumberGenerator.new()
+	rng.seed = seed_i
+	# Kırık köşeler: iki köşe rastgele çentikli
+	var chips: Array[Vector3] = []
+	for k in 3:
+		chips.append(Vector3(half.x * (1.0 if rng.randf() < 0.5 else -1.0), half.y * (1.0 if k != 1 else -1.0), half.z * (1.0 if rng.randf() < 0.5 else -1.0)))
+	var faces := [[Vector3(0, 0, 1), Vector3(1, 0, 0), Vector3(0, 1, 0)], [Vector3(0, 0, -1), Vector3(-1, 0, 0), Vector3(0, 1, 0)],
+		[Vector3(1, 0, 0), Vector3(0, 0, -1), Vector3(0, 1, 0)], [Vector3(-1, 0, 0), Vector3(0, 0, 1), Vector3(0, 1, 0)],
+		[Vector3(0, 1, 0), Vector3(1, 0, 0), Vector3(0, 0, -1)], [Vector3(0, -1, 0), Vector3(1, 0, 0), Vector3(0, 0, 1)]]
+	var inner := half - Vector3(r, r, r)
+	for f: Array in faces:
+		var nrm: Vector3 = f[0]
+		var au: Vector3 = f[1]
+		var av: Vector3 = f[2]
+		var front := nrm.z > 0.5 and kind != ""
+		var n := front_n if front else side_n
+		var grid: Array = []
+		for j in n + 1:
+			var row: Array = []
+			for i in n + 1:
+				var u := float(i) / n * 2.0 - 1.0
+				var v := float(j) / n * 2.0 - 1.0
+				var s := (nrm + au * u + av * v) * half
+				var c := s.clamp(-inner, inner)
+				var dn := (s - c)
+				var nn := dn.normalized() if dn.length() > 0.0001 else nrm
+				var p := c + nn * r
+				# Kaba yontu: hafif dalgalı yüzey; kırık köşelerde içe çentik
+				var wob := sin(p.x * 7.1 + p.y * 3.3) * sin(p.y * 5.7 - p.z * 4.1) * 0.012
+				for ch: Vector3 in chips:
+					var kc := maxf(0.0, 1.0 - p.distance_to(ch) / 0.34)
+					wob -= 0.07 * kc * kc
+				p += nn * wob
+				var col := tone
+				if front:
+					var lp := Vector2(p.x, p.y) / half.y
+					var hp := Vector2(lp.y, -lp.x) if kind == "side" else -lp
+					var rel := _rl_sample(_medusa_relief, hp)
+					p += nrm * rel
+					col = tone * (1.0 - 0.68 * _rl_sample(_medusa_dirt, hp))
+					col = col.lerp(tone.lightened(0.12), clampf(rel * 2.5, 0.0, 1.0) * 0.4)
+				else:
+					col = tone.darkened(0.06 + 0.05 * sin(p.x * 3.0 + p.z * 2.0))
+				row.append([p, col])
+			grid.append(row)
+		for j in n:
+			for i in n:
+				var a: Array = grid[j][i]
+				var b: Array = grid[j][i + 1]
+				var c2: Array = grid[j + 1][i + 1]
+				var d: Array = grid[j + 1][i]
+				for vtx: Array in [a, c2, b, a, d, c2]:
+					st.set_color(vtx[1])
 					st.add_vertex(vtx[0])
 	st.index()
 	st.generate_normals()
-	st.generate_tangents()
-	_face_mesh = st.commit()
-	return _face_mesh
+	return st.commit()
 
 
-## Medusa başı: kaba yontulmuş taş blok (sütunun kaidesi), cephesinde blokdan dışarı taşan kabartma yüz. "side": yüz yan
-## yatık (90°), "inv": baş aşağı (180°). Yüz +z'ye bakar.
+static func _medusa_mesh(kind: String) -> Mesh:
+	if _medusa_meshes.has(kind):
+		return _medusa_meshes[kind]
+	_medusa_fields()
+	var m := _rounded_block(MEDUSA_HALF, 0.12, 64, 5, kind, Color("a9a596"), 71 if kind == "side" else 93)
+	_medusa_meshes[kind] = m
+	return m
+
+
+## Medusa başı: blok + altında çamura gömülü temel taşı. Yüz +z'ye bakar; blok merkezi kök düğümün ortasında.
 func _medusa_head(kind: String) -> Node3D:
 	var root := Node3D.new()
-	var stone := Color("4a5044")
-	var blk := Props.box(root, Vector3(1.62, 1.62, 0.8), Vector3(0, 0, -0.32), stone.darkened(0.15))
+	var mat := _medusa_mat()
+	var blk := MeshInstance3D.new()
+	blk.mesh = _medusa_mesh(kind)
+	blk.material_override = mat
 	blk.name = "Block"
-	Props.box(root, Vector3(1.8, 1.0, 1.1), Vector3(0, -1.3, -0.3), stone.darkened(0.3))
-	var q := MeshInstance3D.new()
-	q.mesh = _medusa_face_mesh()
-	q.position = Vector3(0, 0, 0.08)
-	q.rotation_degrees = Vector3(0, 0, 90.0 if kind == "side" else 180.0)
-	q.material_override = _medusa_mat()
-	q.name = "Face"
-	root.add_child(q)
+	root.add_child(blk)
+	if not _medusa_meshes.has("base"):
+		_medusa_meshes["base"] = _rounded_block(Vector3(0.92, 0.32, 0.58), 0.1, 1, 3, "", Color("7d7a6c"), 17)
+	var base := MeshInstance3D.new()
+	base.mesh = _medusa_meshes["base"]
+	base.material_override = mat
+	base.position = Vector3(0, -MEDUSA_HALF.y - 0.3, -0.05)
+	base.name = "Footing"
+	root.add_child(base)
 	return root
 
 
@@ -1509,11 +1809,11 @@ func _build_medusa() -> void:
 		# Nişan noktası: yüzün ortası (tespit karesi bu düğümü hedefler; kare denetimi başı özne sayar)
 		var aim := Node3D.new()
 		aim.name = "Aim"
-		aim.position = Vector3(0, 0, 0.45)
+		aim.position = Vector3(0, 0, MEDUSA_HALF.z + 0.15)
 		head.add_child(aim)
 		medusa.append(head)
 		var mi := MeshInstance3D.new()
-		mi.mesh = _shaft_mesh_from(MEDUSA_Y + 0.8)
+		mi.mesh = _shaft_mesh_from(MEDUSA_Y + MEDUSA_HALF.y - 0.02, true)
 		mi.position = Vector3(c.x, 0, c.z)
 		mi.material_override = _marble_single(Color("c8c4b8"))
 		add_child(mi)
@@ -1552,13 +1852,22 @@ void fragment() {
 func _marble_single(col: Color) -> ShaderMaterial:
 	var m := _marble_shader(false)
 	# Tek ağ: INSTANCE_CUSTOM yok; renk uniformla değil, varsayılan beyaz yerine sabit ton
-	m.shader.code = m.shader.code.replace("tint = INSTANCE_CUSTOM.rgb;", "tint = vec3(%f, %f, %f);" % [col.r, col.g, col.b])
+	m.shader.code = m.shader.code.replace("tint = INSTANCE_CUSTOM.rgb;", "tint = vec3(%f, %f, %f);" % [col.r, col.g, col.b]).replace("render_mode cull_back;", "render_mode cull_disabled;")
 	return m
 
 
-func _shaft_mesh_from(y0: float) -> Mesh:
+## Gövde y0'dan başlar; base: altında Attik sütun kaidesi (iki torus arası oyuk; blok üstüne oturur)
+func _shaft_mesh_from(y0: float, base := false) -> Mesh:
 	var st := SurfaceTool.new()
 	st.begin(Mesh.PRIMITIVE_TRIANGLES)
+	var rings := []
+	if base:
+		for q: Array in [[0.0, 0.44], [0.03, 0.5], [0.08, 0.53], [0.14, 0.5], [0.17, 0.44], [0.2, 0.41], [0.25, 0.4],
+				[0.28, 0.43], [0.31, 0.44], [0.34, 0.42], [0.37, SHAFT_R + 0.03]]:
+			rings.append([y0 + q[0], q[1]])
+		_lathe(st, [[y0 - 0.01, 0.0], [y0, 0.44]], 16)
+		_lathe(st, rings, 16)
+		y0 += 0.37
 	_lathe(st, [[y0, SHAFT_R + 0.02], [CAP_Y - 0.35, SHAFT_R - 0.035], [CAP_Y - 0.3, SHAFT_R + 0.025], [CAP_Y - 0.15, SHAFT_R + 0.025], [CAP_Y - 0.1, SHAFT_R - 0.03], [CAP_Y, SHAFT_R - 0.03]], 12)
 	st.generate_normals()
 	return st.commit()
@@ -1598,13 +1907,13 @@ void fragment() {
 	var m := ShaderMaterial.new()
 	m.shader = sh
 	hen_eye = MeshInstance3D.new()
-	hen_eye.mesh = _shaft_mesh()
+	hen_eye.mesh = _shaft_mesh(true)
 	hen_eye.position = c
 	hen_eye.material_override = m
 	hen_eye.name = "HenEye"
 	add_child(hen_eye)
 	var rf := MeshInstance3D.new()
-	rf.mesh = hen_eye.mesh
+	rf.mesh = _shaft_mesh(false)
 	rf.transform = _mirror(Transform3D(Basis(), c))
 	var rsh := Shader.new()
 	rsh.code = sh.code.replace("shader_type spatial;", "shader_type spatial;\nrender_mode cull_front;").replace("ALBEDO = col;", "ALBEDO = col * vec3(0.62, 0.72, 0.7);\n\tif (!FRONT_FACING) { NORMAL = -NORMAL; }")

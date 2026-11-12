@@ -1,0 +1,29 @@
+== 44b autotest
+AUTOTEST PASS chapter=44 variant= outcome=44.1 light=phone battery=3.6 bumps=2 hits=0 rescued=false kid=false
+== 44b autotest=blab
+AUTOTEST PASS chapter=44 variant=blab outcome=44.2 light=phone battery=3.4 bumps=2 hits=0 rescued=false kid=false
+== 44b autotest=dark
+AUTOTEST PASS chapter=44 variant=dark outcome=44.1 light=remote battery=0.0 bumps=0 hits=0 rescued=true kid=false
+== 44b autotest=kid
+AUTOTEST PASS chapter=44 variant=kid outcome=44.1 light=phone battery=3.9 bumps=1 hits=0 rescued=false kid=true
+== 44b autotest=nophone
+AUTOTEST PASS chapter=44 variant=nophone outcome=44.1 light=remote battery=14.0 bumps=0 hits=0 rescued=false kid=false
+== 44b autotest=hit
+AUTOTEST PASS chapter=44 variant=hit outcome=44.1 light=phone battery=3.2 bumps=2 hits=2 rescued=false kid=false
+== 24 autotest
+AUTOTEST PASS chapter=24 variant= outcome=24.1 stumbles=0 kid=true niko=false steadied=0 kid_t=0.2
+== 25 autotest
+AUTOTEST PASS chapter=25 variant= outcome=25.1 caught=0 candle=true tezkire=false marco=false
+== 43o autotest
+AUTOTEST PASS chapter=43 variant= outcome=43O.1 bad=0 lessons=3 soup=true flown=1069 battery=22
+BITTI
+== son kod üstünde yeniden (gölgelendirici/ağ düzeltmelerinden sonra)
+PARSECHECK PASS scripts=250
+AUTOTEST PASS chapter=44 variant=hit outcome=44.1 light=phone battery=2.4 bumps=3 hits=3 rescued=false kid=false
+AUTOTEST PASS chapter=44 variant=dark outcome=44.1 light=remote battery=0.0 bumps=0 hits=0 rescued=true kid=false
+anahtar: 6888 sorun: 0
+SPEAKERCHECK PASS
+VOICERULES PASS (9786 anahtar, 0 sorun)
+INLINECHECK PASS (725 anahtar, 0 sorun)
+== ekranlı gerçek hız (PACE=1, xvfb, opengl3) son koşu
+608.6 AUTOTEST PASS chapter=44 variant= outcome=44.1 light=phone battery=4.1 bumps=1 hits=0 rescued=false kid=false

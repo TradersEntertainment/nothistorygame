@@ -56,6 +56,9 @@ func _ready() -> void:
 		["sonda_medusa_pair.png", Vector3((mc.x + mc2.x) * 0.5, w + 1.55, mc.z + 4.4), Vector3((mc.x + mc2.x) * 0.5, 1.1, mc.z + 0.4), true],
 		["sonda_medusa_side.png", mc + Vector3(0.3, w + 0.9, 2.4), mc + Vector3(0, 1.0, 0.4), true],
 		["sonda_medusa_inv.png", mc2 + Vector3(-0.3, w + 0.9, 2.4), mc2 + Vector3(0, 1.0, 0.4), true],
+		["sonda_medusa_side_yakin.png", mc + Vector3(0.9, w - 0.25, 2.9), mc + Vector3(0, 1.36, 0.6), true],
+		["sonda_medusa_inv_yakin.png", mc2 + Vector3(-0.9, w - 0.25, 2.9), mc2 + Vector3(0, 1.36, 0.6), true],
+		["sonda_medusa_ikisi_kandil.png", Vector3((mc.x + mc2.x) * 0.5, w + 0.9, mc.z + 4.6), Vector3((mc.x + mc2.x) * 0.5, 1.4, mc.z + 0.5), false],
 		["sonda_heneye.png", he + Vector3(1.5, w + 0.6, 1.8), he + Vector3(0, 4.0, 0), true],
 		["sonda_cellar.png", Vector3(ex.x, crown + 4.6 + 1.5, ex.z + 0.9), Vector3(ex.x, crown + 4.6 + 1.2, ex.z + 4.0), false],
 		["sonda_ladder.png", Vector3(ex.x, w + 1.5, ex.z + 0.15), Vector3(ex.x, crown + 3.0, ex.z - 0.4), false],
@@ -68,7 +71,14 @@ func _ready() -> void:
 	add_child(lamp)
 	lamp.global_position = Vector3((mc.x + mc2.x) * 0.5, w + 0.3, mc.z + 1.9)
 	cis.call("clear_water", (mc + mc2) * 0.5 + Vector3(0, 0, 0.4), 4.4)
+	# --only=önek: yalnız adı bu önekle başlayan kareler (ayar için hızlı koşu)
+	var only := ""
+	for a: String in OS.get_cmdline_user_args():
+		if a.begins_with("--only="):
+			only = a.trim_prefix("--only=")
 	for s: Array in shots:
+		if only != "" and not String(s[0]).begins_with(only):
+			continue
 		cam.global_position = s[1]
 		cam.look_at(s[2], Vector3.UP if absf((s[2] - s[1]).normalized().y) < 0.98 else Vector3.FORWARD)
 		cis.set("focus", s[1])
@@ -77,6 +87,9 @@ func _ready() -> void:
 		cis.call("well_mouth_light", String(s[0]).begins_with("sonda_well"))
 		cis.call("beam_visible", Vector2i(CisternLevel.WELLS[0][0], CisternLevel.WELLS[0][1]), not String(s[0]).begins_with("sonda_well"))
 		await _shot(dir, s[0])
+	if only != "":
+		get_tree().quit()
+		return
 	# Bölüm kapağı (assets/art/covers/ch44b.png): hayranlık anı
 	cis.call("cellar_on", false)
 	cam.global_position = Vector3(fw.x, w + 0.45 + 1.12, fw.z + 0.6)
