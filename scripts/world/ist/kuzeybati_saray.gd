@@ -174,7 +174,7 @@ static func build_kynegion(host: Node3D, k: float = 0.5, lod: int = 0) -> void:
 		var wz := sin(a2) * rz * 0.62 * 1.42 * 1.0
 		var wh: float = [4.2, 3.0, 2.2, 3.6, 1.6, 2.8, 4.0, 2.0, 3.2][i] * maxf(k, 0.5)
 		var tg := Vector3(-sin(a2) * rx, 0, cos(a2) * rz).normalized()
-		var wb := Props.solid(c.root, Vector3(2.4, wh, 1.0 + maxf(k, 0.5)), Vector3(wx, wh * 0.5, wz), Color.WHITE, Vector3(0, rad_to_deg(atan2(tg.x, tg.z)), 0))
+		var wb := Props.solid(c.root, Vector3(3.8, wh, 1.0 + maxf(k, 0.5)), Vector3(wx, wh * 0.5, wz), Color.WHITE, Vector3(0, rad_to_deg(atan2(tg.x, tg.z)), 0))
 		Props.set_pattern(wb, Color("c4b290"), "rubble")
 	# moloz, ot, birkaç sütun gövdesi
 	var rmid := 0.45 + (tiers - 0.5) * ring_step

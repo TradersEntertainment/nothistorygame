@@ -247,7 +247,7 @@ static func dome_mesh(R: float, H: float, ribs: int, rings := 7) -> ArrayMesh:
 ## Kubbe: kasnak (silindir + pencereler) + kurşun kubbe + haç. base_y: kasnağın altı (gerçek m).
 ## R: kasnak yarıçapı (gerçek m), drum_h: kasnak boyu, dome_h: kubbe yüksekliği.
 func dome(x: float, z: float, base_y: float, R: float, drum_h: float, dome_h: float, windows := 12, ribs := 12, cross := true, col_drum := Color.WHITE) -> void:
-	var drum := tower(x, z, R, drum_h, base_y, col_drum, "ashlar", 16 if lod == 0 else 10, R * 0.985)
+	var drum := tower(x, z, R, drum_h, base_y, col_drum, "ashlar", 16 if lod == 0 else 8, R * 0.985)
 	var top_y := (base_y + drum_h) * k
 	if lod >= 2:
 		var dm := MeshInstance3D.new()
@@ -259,7 +259,7 @@ func dome(x: float, z: float, base_y: float, R: float, drum_h: float, dome_h: fl
 	# kasnak üst silmesi
 	var cor := Props.cyl(root, R * k * 1.04, 0.12, Vector3(x * k, top_y - 0.06, z * k), STONE_D, Vector3.ZERO, 16 if lod == 0 else 10)
 	var dm := MeshInstance3D.new()
-	dm.mesh = dome_mesh(R * k * 0.97, dome_h * k, ribs, 7 if lod == 0 else 4)
+	dm.mesh = dome_mesh(R * k * 0.97, dome_h * k, ribs if lod == 0 else 6, 7 if lod == 0 else 3)
 	dm.material_override = Props.mat(LEAD)
 	dm.position = Vector3(x * k, top_y, z * k)
 	root.add_child(dm)
@@ -267,7 +267,7 @@ func dome(x: float, z: float, base_y: float, R: float, drum_h: float, dome_h: fl
 	var body := StaticBody3D.new()
 	var cs := CollisionShape3D.new()
 	var cv := ConvexPolygonShape3D.new()
-	cv.points = (dome_mesh(R * k * 0.97, dome_h * k, ribs, 4) as ArrayMesh).get_faces()
+	cv.points = (dome_mesh(R * k * 0.97, dome_h * k, 6, 3) as ArrayMesh).get_faces()
 	cs.shape = cv
 	body.add_child(cs)
 	dm.add_child(body)
@@ -442,8 +442,8 @@ func buttress(x: float, z: float, nrm_deg: float, w: float, proj: float, h: floa
 
 ## Yarım silindir apsis (cephe -z'ye açılır; model eksen yönü), içine gömülü katı silindir + yarı kubbe çatı.
 func apse(x: float, z: float, r: float, h: float, y0 := 0.0, col := Color.WHITE, cap := true) -> void:
-	var mi := tower(x, z, r, h, y0, col, "ashlar", 14 if lod == 0 else 8)
-	if cap and lod < 2:
+	var mi := tower(x, z, r, h, y0, col, "ashlar", 14 if lod == 0 else 6)
+	if cap and lod == 0:
 		var dm := MeshInstance3D.new()
 		dm.mesh = dome_mesh(r * k * 1.0, minf(r * k * 0.55, 1.6), 8, 4)
 		dm.material_override = Props.mat(LEAD)
