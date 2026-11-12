@@ -12,6 +12,9 @@ var ch: Node3D
 var city: Node3D
 var cam: Camera3D
 var _n := 0
+## Sonda (isin=AD:px,py;…): o karede o pikselden geçen ışının değdiği görünür nesneler (kaynak bulma)
+var isin := {}
+var yalniz := ""
 
 ## [ad, göz (yerel), bakılan (yerel)] — hub yereli: iç sur x 34 (dış yüz +x), kapı z ≈ −31,5, cadde z 12 → −40
 const BAKISLAR := [
@@ -32,6 +35,12 @@ func _ready() -> void:
 		match kv[0]:
 			"bolum": bolum = kv[1]
 			"shots": shots = kv[1]
+			"yalniz": yalniz = kv[1]
+			"isin":
+				for parca: String in kv[1].split(";"):
+					var ab := parca.split(":")
+					var xy := ab[1].split(",")
+					isin[ab[0]] = Vector2(xy[0].to_float(), xy[1].to_float())
 	if shots != "":
 		DirAccess.make_dir_recursive_absolute(shots)
 	GameState.autotest = false
@@ -66,6 +75,8 @@ func _surus() -> void:
 	cam.far = 4000.0
 	city.add_child(cam)
 	for b: Array in BAKISLAR:
+		if yalniz != "" and not (String(b[0]) in yalniz.split(",")):
+			continue
 		cam.position = b[1]
 		cam.look_at(city.to_global(b[2]) , Vector3.UP)
 		cam.make_current()
@@ -77,6 +88,9 @@ func _surus() -> void:
 		await _akis_bekle(8.0)
 		cam.make_current()
 		await _cek(String(b[0]))
+		if isin.has(String(b[0])):
+			_sonda(isin[String(b[0])])
+			await _deney(String(b[0]))
 	print("HUBKARE_BITTI")
 	get_tree().quit()
 
@@ -122,3 +136,74 @@ func _cek(ad: String) -> void:
 		RenderingServer.get_rendering_info(RenderingServer.RENDERING_INFO_TOTAL_PRIMITIVES_IN_FRAME), IstBaglama.aktif()])
 	if shots != "":
 		get_viewport().get_texture().get_image().save_png(shots.path_join(dosya + ".png"))
+
+
+func _sonda(px: Vector2) -> void:
+	var o := cam.project_ray_origin(px)
+	var d := cam.project_ray_normal(px)
+	var fiz := cam.get_world_3d().direct_space_state.intersect_ray(PhysicsRayQueryParameters3D.create(o, o + d * 2000.0))
+	if not fiz.is_empty():
+		print("HUBSONDA fizik px=%s nokta=%s %s" % [px, fiz["position"], (fiz["collider"] as Node).get_path()])
+	var hits: Array = []
+	for n in get_tree().root.find_children("*", "GeometryInstance3D", true, false):
+		var gi := n as GeometryInstance3D
+		if not gi.is_visible_in_tree():
+			continue
+		var ab := gi.global_transform * gi.get_aabb()
+		if ab.size.length() > 120.0 or ab.has_point(o):
+			continue
+		var hit = ab.intersects_ray(o, d)
+		if hit != null:
+			hits.append([o.distance_to(hit), gi, ab])
+	hits.sort_custom(func(a: Array, b: Array) -> bool: return a[0] < b[0])
+	for i in mini(hits.size(), 12):
+		var gi: GeometryInstance3D = hits[i][1]
+		print("HUBSONDA px=%s d=%.1f %s aabb=%s" % [px, hits[i][0], gi.get_path(), hits[i][2]])
+
+
+## Sonda: v2 altındaki görünür ağlar arasında pikseli değiştiren düğümü ikili aramayla bulur (piksel, v2 tümden gizliyken
+## alınan renkle karşılaştırılır)
+func _deney(_ad: String) -> void:
+	var px: Vector2 = isin.values()[0]
+	var kok := IstBaglama.kok
+	kok.visible = false
+	var c0 := await _piksel(px)
+	kok.visible = true
+	var L: Array = []
+	for n in kok.find_children("*", "GeometryInstance3D", true, false):
+		if (n as GeometryInstance3D).is_visible_in_tree():
+			L.append(n)
+	var H: Array = []
+	var cand := L.duplicate()
+	print("HUBDENEY ilk=%d c0=%s simdi=%s" % [L.size(), c0, await _piksel(px)])
+	var tur := 0
+	while cand.size() > 1 and tur < 40:
+		tur += 1
+		var A := cand.slice(0, cand.size() / 2)
+		var B := cand.slice(cand.size() / 2)
+		if not await _var_mi(H + A, px, c0):
+			cand = A
+		elif not await _var_mi(H + B, px, c0):
+			cand = B
+		else:
+			H += A
+			cand = B
+	for n in cand:
+		var gi := n as GeometryInstance3D
+		var m = gi.get("mesh") if "mesh" in gi else gi.get("multimesh")
+		print("HUBDENEY SUCLU %s tur=%s aabb=%s mesh=%s H=%d" % [gi.get_path(), gi.get_class(), gi.global_transform * gi.get_aabb(), m, H.size()])
+
+
+func _piksel(px: Vector2) -> Color:
+	for i in 3:
+		await RenderingServer.frame_post_draw
+	return get_viewport().get_texture().get_image().get_pixelv(Vector2i(px))
+
+
+func _var_mi(gizli: Array, px: Vector2, c0: Color) -> bool:
+	for n in gizli:
+		(n as Node3D).visible = false
+	var c := await _piksel(px)
+	for n in gizli:
+		(n as Node3D).visible = true
+	return absf(c.r - c0.r) + absf(c.g - c0.g) + absf(c.b - c0.b) > 0.06

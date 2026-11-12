@@ -33,8 +33,8 @@ const BOLUMLER := [7, 11]
 const BOLGELER := ["camp", "byz_walls"]
 ## Tolga'nın şehir bölümleri (ByzCity "walls" hub'ı; bölüm dosyasına dokunulmaz: sahnenin betiğinden tanınır). Varsayılan
 ## AÇIK olanlar yalnız kareleri temiz olanlar (docs/_kanit_ist2_baglama4/rapor.md); öbürleri `--ist2-deneme=<id>` ile denenir.
-const TOLGA := ["6", "7", "10h", "12b", "23", "24", "13"]
-const TOLGA_ACIK: Array = []
+const TOLGA := ["6", "10h", "12b", "23", "24"]
+const TOLGA_ACIK: Array = ["12b"]
 ## Bölüm yereli → v2 (dönüşümlü bağlama). kok.transform bunun tersi.
 static var xf := Transform3D()
 ## Bölümün yerel çapası: CampDay.OTAG_POS (v2 otağının yerine), ByzCity sur parçasının ortası (oyun alanının ortasına)
@@ -393,7 +393,6 @@ static func build(parent: Node3D, region_name: String, keep_local: Array, _night
 	f.world = false
 	f.set("_smoke_root", Node3D.new())
 	f.add_child(f.get("_smoke_root"))
-	f.transform = xf.affine_inverse()
 	parent.add_child(f)
 	kok = f
 	f.set_meta("ucus_tarama_yok", true)       # NihatPowers.ensure_flight_solids v2'yi taramaz (v2 çarpışması kendinde)
@@ -414,6 +413,10 @@ static func build(parent: Node3D, region_name: String, keep_local: Array, _night
 	dunya = IstDunya.build(f, gece, merkez) as IstDunya
 	f.child_entered_tree.disconnect(dinle)
 	IstDunya.gok_kur = true
+	# Dönüşüm kurulumdan SONRA: v2 parçalarının bir kısmı kurulurken/pişirirken global çerçeveyi v2 sanıyor (gezide doğru):
+	# Ayasofya'nın uzak katmanında bir parça dünya başlangıcına, sur dilimlerinin dış kademesi h.global_transform'a göre.
+	# Kurulum birim dönüşümde biter, kök sonra bölümün çerçevesine oturur (ORTAK İSTEK 2)
+	f.transform = xf.affine_inverse()
 	_hub_dondur(hub_x)
 	# harita (MiniMap, WorldMap): kabuğun dönüşümü (xf⁻¹) oyuncuyu v2 çerçevesine çevirir
 	f.night_build = gece
