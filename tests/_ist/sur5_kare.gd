@@ -622,6 +622,12 @@ func _gedik() -> void:
 	print("SURGEDIK sayi=%d" % IstSurlar.gedik_dunya.size())
 	var k := 0
 	var tek: Array = []
+	# gedik ağları yalnız yakın katmanda kurulur: önce kamerayı şehrin seçtiği gedik noktalarına götür
+	var gn: Array = IstSehir.active._gedik_nok
+	print("SURGEDIK secilen=%d" % gn.size())
+	for q: Vector2 in gn:
+		cam.global_position = Vector3(q.x, IstGeo.h(q.x, q.y) + 20.0, q.y)
+		await _bekle()
 	for g: Vector3 in IstSurlar.gedik_dunya:
 		var var_ := false
 		for t: Vector3 in tek:
