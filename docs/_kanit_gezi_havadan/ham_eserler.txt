@@ -1,0 +1,72 @@
+HVD_ESER 00 AYASOFYA dunya=(0.0, 57.83357, 0.0) gercek=0,-0 r=60
+HVD_ESER 01 HIPODROM dunya=(-129.519, 36.20686, 95.07494) gercek=-370,-272 r=77
+HVD_ESER 02 KONSTANTIN dunya=(-264.6, 60.3154, 3.85) gercek=-756,-11 r=55
+HVD_ESER 03 HAVARIYUN dunya=(-889.0, 42.66133, -423.5) gercek=-2540,1210 r=60
+HVD_ESER 04 BOZDOGAN dunya=(-710.5, 37.37737, -302.75) gercek=-2030,865 r=34
+HVD_ESER 05 ZINCIR dunya=(-156.3275, 8.0, -412.1775) gercek=-447,1178 r=45
+HVD_ESER 06 GALATA dunya=(-176.4, 70.78032, -662.2) gercek=-504,1892 r=70
+HVD_ESER 07 BLAKHERNA dunya=(-1136.144, 42.31375, -1158.526) gercek=-3246,3310 r=34
+HVD_ESER 08 SURLAR dunya=(-1695.646, 46.20818, -313.6179) gercek=-4845,896 r=44
+HVD_ESER 09 TAURI dunya=(-546.6953, 48.90778, -84.28201) gercek=-1562,241 r=55
+HVD_ESER 10 ARKADIUS dunya=(-1196.65, 58.66497, 237.3) gercek=-3419,-678 r=60
+HVD_ESER 11 MARKIANOS dunya=(-896.0, 37.99219, -315.0) gercek=-2560,900 r=30
+HVD_ESER 12 ANEMODOULION dunya=(-580.7846, 41.6072, -104.9385) gercek=-1659,300 r=40
+HVD_ESER 13 GALATA_SUR dunya=(-170.4699, 35.40839, -683.7407) gercek=-487,1954 r=50
+HVD_ESER 14 SAN_DOMENICO dunya=(-198.4, 44.16367, -566.35) gercek=-567,1618 r=40
+HVD_ESER 15 PALAZZO_COMUNE dunya=(-154.6, 33.23629, -562.4) gercek=-442,1607 r=36
+HVD_ESER 16 STUDIOS dunya=(-1528.8, 31.32487, 481.8669) gercek=-4368,-1377 r=70
+HVD_ESER 17 MOKIOS dunya=(-1257.121, 34.56761, 154.022) gercek=-3592,-440 r=90
+HVD_ESER 18 HALIC_EUGENIOS dunya=(-53.75204, 30.81557, -263.278) gercek=-154,752 r=50
+HVD_ESER 19 HALIC_VENEDIK dunya=(-307.837, 44.44194, -264.5386) gercek=-880,756 r=45
+HVD_ESER 20 HALIC_PETRION dunya=(-817.5423, 23.31853, -796.7115) gercek=-2336,2276 r=30
+HVD_ESER 21 AUGUSTAION dunya=(-50.11031, 40.74928, 47.12754) gercek=-143,-135 r=40
+HVD_ESER 22 MILION dunya=(-76.48975, 28.70739, 40.93542) gercek=-219,-117 r=25
+HVD_ESER 23 AYA_IRINI dunya=(51.26654, 42.74525, -61.88102) gercek=146,177 r=45
+HVD_ESER 24 SERGIOS dunya=(-185.9321, 35.31761, 231.019) gercek=-531,-660 r=40
+HVD_ESER 25 BUYUK_SARAY dunya=(-2.01211, 24.49363, 100.1537) gercek=-6,-286 r=60
+HVD_ESER 26 KHALKE dunya=(29.52223, 32.68978, 58.88562) gercek=84,-168 r=30
+HVD_ESER 27 ZEUKSIPPOS dunya=(-35.33186, 25.2745, 82.58844) gercek=-101,-236 r=35
+HVD_ESER 28 NEA dunya=(50.00756, 31.28041, 103.8372) gercek=143,-297 r=35
+HVD_ESER 29 PANTOKRATOR dunya=(-709.4673, 37.10728, -495.0716) gercek=-2027,1414 r=55
+HVD_ESER 30 KHORA dunya=(-1205.4, 44.31717, -880.6) gercek=-3444,2516 r=40
+HVD_ESER 31 PAMMAKARISTOS dunya=(-991.3572, 35.44497, -818.2799) gercek=-2832,2338 r=40
+HVD_ESER 32 BLAKHERNAI_KILISE dunya=(-1104.409, 19.73191, -1121.222) gercek=-3155,3203 r=34
+HVD_ESER 33 TEKFUR dunya=(-1161.545, 35.73037, -988.9941) gercek=-3319,2826 r=36
+HVD_ESER 34 ANEMAS dunya=(-1104.542, 30.60033, -1191.585) gercek=-3156,3405 r=36
+HVD_ESER 35 ALTIN_KAPI dunya=(-1720.005, 41.19998, 563.9838) gercek=-4914,-1611 r=40
+HVD_ESER 36 PEGE dunya=(-1749.114, 48.29213, 434.997) gercek=-4997,-1243 r=36
+HVD_ESER 37 KHARISIOS dunya=(-1279.086, 50.58424, -901.8171) gercek=-3655,2577 r=44
+HVD_ESER 38 KERKOPORTA dunya=(-1205.022, 38.38643, -1055.133) gercek=-3443,3015 r=26
+HVD_KONMA aya dunya=(-1.180993, 47.89484, 5.115443) gercek=-3,-15 r=5
+HVD_KONMA ist_blakherna dunya=(-1134.899, 26.71375, -1157.521) gercek=-3243,3307 r=4
+HVD_KONMA ist_konstantin dunya=(-264.6, 50.01539, 3.85) gercek=-756,-11 r=4
+HVD_KONMA ist_tauri dunya=(-546.6953, 40.80777, -84.282) gercek=-1562,241 r=4
+HVD_KONMA ist_arkadius dunya=(-1196.65, 50.66497, 237.3) gercek=-3419,-678 r=4
+HVD_KONMA ist_markianos dunya=(-896.0, 29.99219, -315.0) gercek=-2560,900 r=4
+HVD_KONMA ist_anemodoulion dunya=(-581.0, 32.05721, -105.0) gercek=-1660,300 r=4
+HVD_KONMA ist_galata_kulesi dunya=(-175.1037, 45.93032, -655.6829) gercek=-500,1873 r=4
+HVD_KONMA ist_galata_sur dunya=(-138.6761, 26.55839, -680.099) gercek=-396,1943 r=4
+HVD_KONMA ist_san_domenico dunya=(-198.4, 36.41367, -566.35) gercek=-567,1618 r=4
+HVD_KONMA ist_palazzo_comune dunya=(-139.25, 21.38629, -554.25) gercek=-398,1584 r=4
+HVD_KONMA ist_studios dunya=(-1528.8, 23.34487, 478.25) gercek=-4368,-1366 r=4
+HVD_KONMA ist_mokios dunya=(-1260.0, 26.06761, 119.25) gercek=-3600,-341 r=4
+HVD_KONMA ist_halic_eugenios dunya=(-54.38613, 18.86557, -262.7973) gercek=-155,751 r=4
+HVD_KONMA ist_halic_venedik dunya=(-305.7158, 31.04195, -254.1463) gercek=-873,726 r=4
+HVD_KONMA ist_halic_petrion dunya=(-807.4894, 12.36853, -788.2829) gercek=-2307,2252 r=4
+HVD_KONMA ist_hipodrom dunya=(-129.519, 28.20685, 95.07495) gercek=-370,-272 r=4
+HVD_KONMA ist_augustaion dunya=(-50.19535, 31.19928, 46.94408) gercek=-143,-134 r=4
+HVD_KONMA ist_milion dunya=(-78.54057, 20.80739, 38.70312) gercek=-224,-111 r=4
+HVD_KONMA ist_aya_irini dunya=(51.26654, 34.84525, -61.88102) gercek=146,177 r=4
+HVD_KONMA ist_sergios dunya=(-185.9321, 27.26761, 231.019) gercek=-531,-660 r=4
+HVD_KONMA ist_buyuk_saray dunya=(21.9723, 13.78063, 72.77654) gercek=63,-208 r=4
+HVD_KONMA ist_khalke dunya=(27.16094, 24.78978, 58.53723) gercek=78,-167 r=4
+HVD_KONMA ist_zeuksippos dunya=(-40.83618, 15.32325, 90.5759) gercek=-117,-259 r=4
+HVD_KONMA ist_nea dunya=(49.58621, 22.4304, 104.3695) gercek=142,-298 r=4
+HVD_KONMA ist_havariyun dunya=(-889.0, 36.94883, -423.5) gercek=-2540,1210 r=4
+HVD_KONMA ist_pantokrator dunya=(-721.15, 29.22378, -494.9) gercek=-2060,1414 r=4
+HVD_KONMA ist_altin_kapi dunya=(-1742.493, 33.21998, 515.827) gercek=-4979,-1474 r=4
+HVD_KONMA ist_pege dunya=(-1756.67, 35.31213, 387.4594) gercek=-5019,-1107 r=4
+HVD_KONMA ist_romanos dunya=(-1679.958, 33.22818, -358.0334) gercek=-4800,1023 r=4
+HVD_KONMA ist_kharisios dunya=(-1233.877, 37.60424, -929.6435) gercek=-3525,2656 r=4
+HVD_KONMA ist_kerkoporta dunya=(-1197.067, 30.40643, -1101.288) gercek=-3420,3147 r=4
+HVD_KONMA ist_bozdogan dunya=(-710.5, 28.67736, -302.75) gercek=-2030,865 r=4
