@@ -44,7 +44,7 @@ const ITEMS := [
 	["tezgah_kepengi", "Tezgâh kepengi", 2.2, 2.2, 0.15, "kutu", "carsi"],
 	["tabela", "Yunanca harfli tabela", 1.2, 2.4, 0.3, "ozel", "carsi"],
 	["ikona_nisi", "İkona nişi", 0.8, 1.9, 0.5, "kutu", "kutsal"],
-	["kandil", "Asma kandil", 0.4, 2.3, 0.4, "yok", "kutsal"],
+	["kandil", "Asma kandil (direkli)", 0.7, 2.4, 0.4, "ozel", "kutsal"],
 	["mum_sehpasi", "Mum sehpası", 0.7, 1.2, 0.5, "kutu", "kutsal"],
 	["hacli_tas", "Haçlı taş", 0.6, 1.5, 0.3, "kutu", "kutsal"],
 	["lahit", "Lahit", 2.2, 1.0, 1.0, "kutu", "kutsal"],
@@ -81,7 +81,7 @@ static func build_tente(h: Node3D) -> void:
 	L.b(h, Vector3(3.1, 0.04, 2.5), Vector3(0, 2.45, 0), L.LINEN, Vector3(-9, 0, 0))
 	for i in 5:
 		L.b(h, Vector3(0.28, 0.045, 2.5), Vector3(-1.32 + i * 0.66, 2.455, 0), L.RED, Vector3(-9, 0, 0))
-	L.b(h, Vector3(3.1, 0.25, 0.04), Vector3(0, 2.2, 1.24), L.LINEN)
+	L.b(h, Vector3(3.1, 0.25, 0.04), Vector3(0, 2.2, 1.24), L.RED)
 	L.b(h, Vector3(3.1, 0.07, 0.1), Vector3(0, 2.5, -1.24), L.ROPE)
 
 
@@ -221,8 +221,8 @@ static func build_guvercinlik(h: Node3D) -> void:
 	L.cb(h, 0.08, 1.9, 0.35, 0, -0.35, L.WOOD_D, 6)
 	L.cb(h, 0.08, 1.9, -0.35, 0, 0.35, L.WOOD_D, 6)
 	L.cb(h, 0.08, 1.9, 0.35, 0, 0.35, L.WOOD_D, 6)
-	for q in [Vector2(-0.35, -0.35), Vector2(0.35, -0.35), Vector2(-0.35, 0.35), Vector2(0.35, 0.35)]:
-		L.col_box(h, Vector3(0.16, 1.9, 0.16), Vector3(q.x, 0.95, q.y))
+	L.col_box(h, Vector3(0.9, 1.9, 0.9), Vector3(0, 0.95, 0))
+	L.b(h, Vector3(0.7, 1.7, 0.7), Vector3(0, 0.9, 0), L.WOOD_D.darkened(0.1))
 	L.b(h, Vector3(1.0, 0.8, 1.0), Vector3(0, 2.2, 0), L.PLANK, Vector3.ZERO, "wood")
 	L.col_box(h, Vector3(1.0, 0.8, 1.0), Vector3(0, 2.2, 0))
 	L.pr(h, Vector3(1.3, 0.55, 1.3), Vector3(0, 2.85, 0), L.TERRA_D)
@@ -306,9 +306,10 @@ static func build_kagni(h: Node3D) -> void:
 	L.b(h, Vector3(2.0, 0.35, 0.06), Vector3(0, 1.05, 0.6), L.WOOD)
 	L.b(h, Vector3(0.06, 0.35, 1.2), Vector3(-1.0, 1.05, 0), L.WOOD)
 	L.b(h, Vector3(0.06, 0.35, 1.2), Vector3(1.0, 1.05, 0), L.WOOD)
-	L.b(h, Vector3(1.8, 0.05, 0.07), Vector3(2.0, 0.85, 0.3), L.WOOD_D)
-	L.b(h, Vector3(1.8, 0.05, 0.07), Vector3(2.0, 0.85, -0.3), L.WOOD_D)
+	L.b(h, Vector3(2.0, 0.05, 0.07), Vector3(1.95, 0.85, 0.3), L.WOOD_D)
+	L.b(h, Vector3(2.0, 0.05, 0.07), Vector3(1.95, 0.85, -0.3), L.WOOD_D)
 	L.b(h, Vector3(0.08, 0.08, 0.7), Vector3(2.9, 0.85, 0), L.WOOD_D)
+	L.b(h, Vector3(0.3, 0.4, 1.6), Vector3(0.2, 0.62, 0), L.WOOD_D)
 	L.b(h, Vector3(1.4, 0.35, 0.9), Vector3(-0.05, 1.3, 0), L.HAY)
 
 
@@ -324,10 +325,10 @@ static func build_esek_semeri(h: Node3D) -> void:
 
 static func build_odun_yigini(h: Node3D) -> void:
 	for row in 4:
-		var n := 6 - row
+		var n := 5 - row
 		for i in n:
 			var x := -0.85 + (6 - n) * 0.15 + i * 0.3
-			L.c(h, 0.13, 0.9, Vector3(x, 0.14 + row * 0.24, 0), L.WOOD if (i + row) % 2 == 0 else L.WOOD_L, Vector3(90, 0, 0), 7)
+			L.c(h, 0.13, 0.9, Vector3(x, 0.14 + row * 0.24, 0), L.WOOD if (i + row) % 2 == 0 else L.WOOD_L, Vector3(90, 0, 0), 5)
 	# ucu görünen kesitler
 	for i in 4:
 		L.c(h, 0.1, 0.02, Vector3(-0.6 + i * 0.4, 0.14, 0.46), L.WOOD_L, Vector3(90, 0, 0), 7)
@@ -404,9 +405,11 @@ static func build_firin(h: Node3D) -> void:
 	L.b(h, Vector3(0.8, 0.5, 0.1), Vector3(0, 0.95, 0.74), L.BLACK)
 	L.b(h, Vector3(0.95, 0.07, 0.15), Vector3(0, 1.22, 0.78), L.STONE_D)
 	L.cb(h, 0.13, 0.9, 0.5, 1.2, -0.5, L.STONE_D, 6, 0.1)
-	L.bb(h, Vector3(1.2, 0.1, 0.6), 0, 0.5, 1.3, L.PLANK)
+	L.bb(h, Vector3(1.2, 0.1, 0.6), 0, 0.5, 1.05, L.PLANK)
+	L.bb(h, Vector3(0.1, 0.5, 0.1), -0.5, 0, 1.2, L.WOOD_D)
+	L.bb(h, Vector3(0.1, 0.5, 0.1), 0.5, 0, 1.2, L.WOOD_D)
 	for i in 3:
-		L.s(h, 0.14, Vector3(-0.35 + i * 0.35, 0.62, 1.3), L.TERRA, Vector3(1.0, 0.45, 1.2), 7)
+		L.s(h, 0.14, Vector3(-0.35 + i * 0.35, 0.65, 1.05), L.TERRA, Vector3(1.0, 0.45, 1.2), 7)
 
 
 static func build_tandir(h: Node3D) -> void:
@@ -473,12 +476,12 @@ static func build_tezgah_kepengi(h: Node3D) -> void:
 static func build_tabela(h: Node3D) -> void:
 	L.cb(h, 0.05, 2.4, -0.5, 0, 0, L.WOOD_D, 6)
 	L.col_box(h, Vector3(0.12, 2.4, 0.12), Vector3(-0.5, 1.2, 0))
-	L.b(h, Vector3(0.9, 0.5, 0.06), Vector3(0.1, 2.05, 0), L.PLANK, Vector3.ZERO, "wood")
-	L.b(h, Vector3(0.08, 0.06, 0.08), Vector3(-0.35, 2.32, 0), L.IRON)
-	L.b(h, Vector3(0.94, 0.06, 0.09), Vector3(0.1, 2.32, 0), L.WOOD_D)
-	L.b(h, Vector3(0.94, 0.06, 0.09), Vector3(0.1, 1.78, 0), L.WOOD_D)
-	L.lbl(h, "ΑΡΤΟΣ", Vector3(0.1, 2.05, 0.04), 36, Color("2b1a0c"))
-	L.lbl(h, "ΑΡΤΟΣ", Vector3(0.1, 2.05, -0.04), 36, Color("2b1a0c"), Vector3(0, 180, 0))
+	L.b(h, Vector3(0.9, 0.5, 0.06), Vector3(-0.05, 2.05, 0), L.PLANK, Vector3.ZERO, "wood")
+	L.b(h, Vector3(0.08, 0.06, 0.08), Vector3(-0.35, 2.4, 0), L.IRON)
+	L.b(h, Vector3(0.94, 0.06, 0.09), Vector3(-0.05, 2.32, 0), L.WOOD_D)
+	L.b(h, Vector3(0.94, 0.06, 0.09), Vector3(-0.05, 1.78, 0), L.WOOD_D)
+	L.lbl(h, "ΑΡΤΟΣ", Vector3(-0.05, 2.05, 0.04), 36, Color("2b1a0c"))
+	L.lbl(h, "ΑΡΤΟΣ", Vector3(-0.05, 2.05, -0.04), 36, Color("2b1a0c"), Vector3(0, 180, 0))
 
 
 static func build_ikona_nisi(h: Node3D) -> void:
@@ -492,6 +495,9 @@ static func build_ikona_nisi(h: Node3D) -> void:
 
 
 static func build_kandil(h: Node3D) -> void:
+	L.cb(h, 0.04, 2.35, -0.3, 0, 0, L.WOOD_D, 6)
+	L.col_box(h, Vector3(0.1, 2.35, 0.1), Vector3(-0.3, 1.18, 0))
+	L.b(h, Vector3(0.62, 0.04, 0.04), Vector3(0, 2.33, 0), L.IRON)
 	L.b(h, Vector3(0.012, 0.9, 0.012), Vector3(0, 1.85, 0), L.IRON)
 	L.cb(h, 0.1, 0.16, 0, 1.4, 0, L.GOLD.darkened(0.15), 7, 0.05)
 	L.cb(h, 0.12, 0.02, 0, 1.55, 0, L.GOLD, 7)
@@ -579,10 +585,13 @@ static func build_asma_cardagi(h: Node3D) -> void:
 		L.b(h, Vector3(3.0, 0.06, 0.07), Vector3(0, 2.52, -1.35 + i * 0.45), L.WOOD_D)
 	var rnd := RandomNumberGenerator.new()
 	rnd.seed = 3
-	for i in 14:
+	for i in 7:
 		L.s(h, 0.3, Vector3(rnd.randf_range(-1.3, 1.3), 2.6 + rnd.randf() * 0.1, rnd.randf_range(-1.3, 1.3)), L.GREEN if i % 2 == 0 else L.GREEN_D, Vector3(1.2, 0.35, 1.2), 6)
 	for i in 5:
-		L.s(h, 0.06, Vector3(rnd.randf_range(-1.1, 1.1), 2.32, rnd.randf_range(-1.1, 1.1)), L.PURPLE.lightened(0.1), Vector3(1, 1.3, 1), 5)
+		var gx := rnd.randf_range(-1.1, 1.1)
+		var gz := rnd.randf_range(-1.1, 1.1)
+		L.s(h, 0.06, Vector3(gx, 2.3, gz), L.PURPLE.lightened(0.1), Vector3(1, 1.3, 1), 5)
+		L.b(h, Vector3(0.02, 0.14, 0.02), Vector3(gx, 2.4, gz), L.GREEN_D)
 	L.col_box(h, Vector3(3.1, 0.1, 3.1), Vector3(0, 2.6, 0))
 	L.bb(h, Vector3(2.0, 0.45, 0.5), 0, 0, -1.0, L.PLANK, 0, "wood")
 	L.col_box(h, Vector3(2.0, 0.45, 0.5), Vector3(0, 0.22, -1.0))

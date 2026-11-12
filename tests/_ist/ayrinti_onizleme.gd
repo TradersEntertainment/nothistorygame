@@ -106,8 +106,8 @@ func _grid(k: float, lod: int) -> void:
 	var grup: String = _args.get("grup", "")
 	if grup != "":
 		ids = ids.filter(func(i): return _grup_of(i) == grup)
-	var per := int(_args.get("per", "5"))
-	var sp := float(_args.get("sp", "3.2"))
+	var per := int(_args.get("per", "4"))
+	var sp := float(_args.get("sp", "3.4"))
 	var n := 0
 	var i := 0
 	while i < ids.size():
@@ -119,7 +119,7 @@ func _grid(k: float, lod: int) -> void:
 			_root.add_child(host)
 			A.build(chunk[j], host, k, lod)
 		await get_tree().process_frame
-		_look(Vector3(0, 3.4, 8.4 + sp * 0.4), Vector3(0, 0.9, 0))
+		_look(Vector3(0, 2.6, 5.6 + sp * 0.8), Vector3(0, 0.9, 0))
 		await _snap("grid_%02d" % n)
 		print("GRID %02d: %s" % [n, ", ".join(chunk)])
 		n += 1
@@ -228,20 +228,34 @@ func _floating(parts: Array) -> int:
 	return c
 
 
-## İki katı kutu arasında 0,2–1,4 m girilebilir yatay aralık (yüksekliği örtüşenler).
+## İki katı kutu arasında 0,2–1,4 m girilebilir yatay aralık. Yalnız ortak yüksekliği ≥ 1,0 m olan ve arasında
+## başka bir kutu bulunmayan çiftler sayılır (masa ayakları arası, bitişik tahtalar sayılmaz).
 func _narrow(boxes: Array) -> int:
 	var c := 0
 	for i in boxes.size():
 		for j in range(i + 1, boxes.size()):
 			var a: AABB = boxes[i]
 			var b: AABB = boxes[j]
-			if a.end.y < 0.3 or b.end.y < 0.3 or a.position.y > 1.8 or b.position.y > 1.8:
+			var y0 := maxf(a.position.y, b.position.y)
+			var y1 := minf(a.end.y, b.end.y)
+			if y1 - y0 < 1.0 or y0 > 1.0:
 				continue
 			var gx := maxf(a.position.x - b.end.x, b.position.x - a.end.x)
 			var gz := maxf(a.position.z - b.end.z, b.position.z - a.end.z)
-			var g := maxf(gx, gz)
-			if gx <= 0.0 and gz <= 0.0:
+			if gx > 0.0 and gz > 0.0:
 				continue
-			if g >= 0.2 and g < 1.4 and minf(maxf(gx, 0.0), maxf(gz, 0.0)) <= 0.0:
+			var g := maxf(gx, gz)
+			if g < 0.2 or g >= 1.4:
+				continue
+			# aradaki boşluk kutusu
+			var lo := Vector3(minf(a.end.x, b.end.x) if gx > 0.0 else maxf(a.position.x, b.position.x), y0, minf(a.end.z, b.end.z) if gz > 0.0 else maxf(a.position.z, b.position.z))
+			var hi := Vector3(maxf(a.position.x, b.position.x) if gx > 0.0 else minf(a.end.x, b.end.x), y1, maxf(a.position.z, b.position.z) if gz > 0.0 else minf(a.end.z, b.end.z))
+			var gap := AABB(lo, (hi - lo).max(Vector3.ZERO))
+			var blocked := false
+			for k in boxes.size():
+				if k != i and k != j and (boxes[k] as AABB).grow(0.01).intersects(gap.grow(0.01)):
+					blocked = true
+					break
+			if not blocked:
 				c += 1
 	return c

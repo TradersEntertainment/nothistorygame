@@ -20,7 +20,7 @@ const TERRA_D := Color("94512c")
 const STONE := Color("9d978b")
 const STONE_D := Color("77726a")
 const STONE_L := Color("b9b3a5")
-const MARBLE := Color("e4ded0")
+const MARBLE := Color("c4bcaa")
 const BRICK := Color("a8553a")
 const ROPE := Color("c3a56b")
 const IRON := Color("484a52")
@@ -68,7 +68,7 @@ static func bb(p: Node3D, size: Vector3, x: float, y0: float, z: float, col: Col
 static func c(p: Node3D, r: float, h: float, pos: Vector3, col: Color, rot := Vector3.ZERO, seg := 8, top := -1.0, pat := "") -> Node3D:
 	if _small(Vector3(r * 2.0, h, r * 2.0)):
 		return null
-	return _pat(Props.cyl(p, r, h, pos, col, rot, seg if lod == 0 else maxi(5, seg / 2), top), col, pat)
+	return _pat(Props.cyl(p, r, h, pos, col, rot, (mini(seg, 6) if r < 0.15 else mini(seg, 8)) if lod == 0 else 5, top), col, pat)
 
 
 ## Silindir, dibi y0'da.
@@ -79,7 +79,7 @@ static func cb(p: Node3D, r: float, h: float, x: float, y0: float, z: float, col
 static func s(p: Node3D, r: float, pos: Vector3, col: Color, sc := Vector3.ONE, seg := 8) -> Node3D:
 	if _small(Vector3.ONE * r * 2.0):
 		return null
-	return Props.ball(p, r, pos, col, sc, seg if lod == 0 else maxi(5, seg / 2))
+	return Props.ball(p, r, pos, col, sc, (5 if r < 0.12 else mini(seg, 6)) if lod == 0 else 4)
 
 
 static func pr(p: Node3D, size: Vector3, pos: Vector3, col: Color, rot := Vector3.ZERO) -> Node3D:
