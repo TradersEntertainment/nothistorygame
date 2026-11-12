@@ -79,6 +79,38 @@ Kanıt:
 Ne kuruldu, ne kalmadı, ölçümler, bilinen kusurlar, paket listesi (plan belgesindeki), ortak dosyalara eklenen her
 satır (dosya:satır). Bakamadığını BAKILMADI yaz.
 
+## GÜNCELLEME: şehir BUGÜN bitecek, on iki oturum parça kuruyor (sahibin sözü: "gerekirse çalışan sayısını arttır
+## ama bu istanbulu bugün bitir")
+Sen ŞEHİR MİMARI ve BİRLEŞTİRİCİSİN. Anıtları ve özel yapıları sen kurma: on iki ayrı oturum şu an paralel olarak
+parça (modül) yazıyor. Arayüz dondurulmuş: `docs/_ajan/gorev/_istanbul_ortak.md` (OKU); parça listesi:
+`docs/_ajan/gorev/istanbul_parcalar.md`. Dallar: `wip/ist-surlar`, `wip/ist-marmara`, `wip/ist-halic`, `wip/ist-galata`,
+`wip/ist-hipodrom`, `wip/ist-forumlar`, `wip/ist-kemer`, `wip/ist-kuzeybati`, `wip/ist-guneybati`, `wip/ist-kiliseler`,
+`wip/ist-ayrinti`, `wip/ist-bitki`. Her biri yalnız YENİ dosya yazar (`scripts/world/ist/<ad>*.gd`), yaklaşık 60. dakikada
+ilk kaba hâlini gönderir, sonra derinleştirir. Sen:
+1. Zamanı şöyle kullan: ilk 60 dakika ana planın ÇEKİRDEĞİ (ölçek ve koordinat dönüşümü, mahalle çizelgesi, bölüm
+   yerleşim tablosu: kısa ve kesin; uzun düzyazı yok) + ev kiti (mektup bölümünün evlerinden, tırmanma/düşmezlik
+   kurallarıyla; `scripts/world/ist/evler.gd`, aynı arayüz kalıbında: `build_<tip>(host, k, lod)` + tohumlu çeşitleme)
+   + parça ızgarası/akış iskeleti (`scripts/world/ist/sehir.gd`: `catalog()` kayıtlarını ölçek dönüşümüyle dünyaya
+   yerleştirir, mesafeye göre lod 2 → 1 → 0 kurar/boşaltır, zaman dilimli).
+2. Sonra her 30–45 dakikada bir parça dallarını çek (`git fetch origin wip/ist-<ad>:refs/remotes/origin/wip/ist-<ad>`;
+   yoksa atla), `git merge` et (yalnız yeni dosyalar, çakışma olmaz), `catalog()` kayıtlarını şehre yerleştir.
+   Yerleşim çakışmalarını (iki yapı üst üste, sokağın ortasında yapı, suya düşen yapı, havada/gömülü taban) sen çöz
+   (konum/yön düzeltmesi yerleştirme tablosunda; modül dosyasına dokunma, kusurunu raporda modül adıyla yaz).
+3. Mahalle dokusu: anıtların arasını ev kiti + `ayrinti` + `bitki` parçalarıyla, mahalle karakterine göre doldur (sık
+   çarşı / seyrek köy / bostan / harabe / liman). Nisan 1453: şehrin büyük kısmı seyrek, tarla-bağ-harabe; Mese
+   boyunca, Haliç kıyısında ve Ayasofya çevresinde sık.
+4. Var olan dünya katmanlarını (CityPlan, CityHouses, Landmarks1453'ün kaba anıtları, HornWorld'ün şehir yarısı)
+   yeni şehirle DEĞİŞTİR: aynı yerde iki şehir çizilmesin. Eski kaba anıt, yenisi yerleşince kaldırılır (çifte yapı
+   yok). Bölümlerin kendi oynanış alanları (hub, Ayasofya meydanı, Blakherna, Petrion, Galata rıhtımı, sur dibi)
+   `keep`/`FAR_REGIONS` düzeniyle aynen korunur ve yeni şehre gömülür.
+5. Bugünün kabul ölçütü: Nihat'ın uçuşunda (Bölüm 11 gece, 7 gündüz) surdan Sarayburnu'na, Haliç'ten Marmara'ya ve
+   Galata'ya kadar bütün şehir yeni hâliyle, boşluksuz, tanınır anıtlarla; Tolga'nın şehir bölümlerinde (6b, 7b, 10h,
+   12b, 23, 24, 25) oynanış aynen çalışırken çevrede aynı şehir; `city_audit` delik/dar aralık/kapalı cep = 0;
+   bütçe içinde. Bölümlerin kalanının şehre taşınması sonraki iş (plan belgesinde listele).
+6. Her birleştirme turundan sonra testleri koş (aşağıdaki liste) ve `wip/istanbul` dalına gönder; yönetici ara
+   durumu sahibine gösterecek. Havadan dört yönden ve tam tepeden kareleri her turda yenile
+   (`docs/_kanit_istanbul/tur_<n>_*.jpg`).
+
 ## Sınırlar
 - Bölüm betiklerinde oynanışa (replik, süre, sayaç, sonuç, bot yolu, kalabalık sayısı) dokunma.
 - Başka bir oturum `wip/tekharita` dalında ordugâh, otağ, kıyı surları ve tünel göçlerini birleştiriyor:
