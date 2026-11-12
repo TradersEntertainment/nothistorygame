@@ -23,7 +23,7 @@ const KEEP := Rect2(-46.0, -24.0, 92.0, 80.0)
 ## Esir alanının kendi zemini (çiğnenmiş çamur; ötesi dünyanın arazisi)
 const PATCH := Rect2(-22.0, -20.0, 44.0, 50.0)
 ## Gece sisinde ordugâhın çadır katmanlarının çizildiği yarıçap (esir alanından)
-const NEAR_R := 210.0
+const NEAR_R := 170.0
 
 var hasan: Soldier
 var huseyin: Soldier

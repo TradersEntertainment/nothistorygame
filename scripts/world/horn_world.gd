@@ -581,25 +581,18 @@ func _horn_shore() -> void:
 		return _free(x, z, 12.0)
 	var qfree := func(x: float, z: float) -> bool:
 		return _free(x, z, 12.0) and not (boating and Vector2(-750.0 - ro.x, z - ro.z).length() < 500.0)
-	# Kıyı suru: kule ve kapı açıklıklarının z'si (yan kapılar ve eşya bunlardan uzak durur; _wall_run ile aynı bölme)
+	# Kıyı suru: kule ve kapı açıklıklarının z'si (yan kapılar ve eşya bunlardan uzak durur). Tek kaynak: surun kurucusu
+	# (SeaWalls._runs, ilk koşu x −700 boyunca): kule ızgarası, kapılar ve kapıların iki yanındaki kuleler aynı yerde
 	var avoid: Array = []
 	var gates: Array = []
-	var hg: Array = [World1453.LANDMARKS["petrion_gate"]]
-	for gz: float in World1453.HORN_GATE_Z:
-		hg.append(Vector3(World1453.HORN_S_X, 0.0, gz))
-	var wn := int(ceil(absf(World1453.SHORE_END_Z - World1453.HORN_IN_Z) / 40.0))
-	for wk in wn:
-		var mz := lerpf(World1453.HORN_IN_Z, World1453.SHORE_END_Z, (wk + 0.5) / wn)
-		var is_gate := false
-		for g: Vector3 in hg:
-			is_gate = is_gate or Vector3(World1453.HORN_S_X, 0.0, mz).distance_to(g) < 22.0
-		if is_gate:
-			gates.append(mz)
-			avoid.append_array([mz - 14.0, mz, mz + 14.0])
-	var wt := 22.0
-	while wt < absf(World1453.SHORE_END_Z - World1453.HORN_IN_Z):
-		avoid.append(World1453.HORN_IN_Z - wt)
-		wt += 44.0
+	var run0: Array = SeaWalls._runs()[0]
+	var ra: Vector3 = run0[0]
+	for ts: float in run0[4]:
+		avoid.append(ra.z - ts)
+	for g: Array in run0[5]:
+		var gz: float = ra.z - float(g[0])
+		gates.append(gz)
+		avoid.append_array([gz - 14.0, gz, gz + 14.0])
 	# İskele konumları (Venedik, Amalfi, Ceneviz iskelelerinin ve kapıların yanı hariç)
 	var piers: Array = []
 	var pz := -380.0
