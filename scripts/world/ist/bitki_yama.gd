@@ -137,10 +137,22 @@ static func ground_tex(tur: String) -> ImageTexture:
 	return ImageTexture.create_from_image(img)
 
 
-static func ground_mat(tur: String, alan: Vector2) -> StandardMaterial3D:
+## ZEMİN (scripts/level/zemin.gd): doğal yamalar (çayır, sazlık, kum, kaya, mezarlık, bahçe, patika, toprak yol)
+## ortak zemin malzemesiyle: 4 m'lik yinelenen doku damgası ve keskin dikdörtgen kenar yerine dünya uzayında gürültülü
+## zemin, kenarı erir. Ekin sıraları (bağ, bostan, buğday) ve taş döşeme kendi dokusunu korur.
+const ZEMIN_IPUCU := {"cayir": Color("6c8a44"), "bahce": Color("6c8a44"), "mezarlik": Color("6e8646"), "sazlik": Color("5e6a3c"),
+	"kumsal": Color("c2ae80"), "kaya": Color("8a8474"), "patika": Color("94785a"), "toprak_yol": Color("8e7254")}
+
+static func ground_mat(tur: String, alan: Vector2) -> Material:
 	var key := "%s|%.1f|%.1f" % [tur, alan.x, alan.y]
 	if _gmats.has(key):
 		return _gmats[key]
+	if ZEMIN_IPUCU.has(tur):
+		var zm: ShaderMaterial = load("res://scripts/level/zemin.gd").yama_malzeme(ZEMIN_IPUCU[tur], alan, 2.5 if tur not in ["patika", "toprak_yol"] else 0.4)
+		if tur in ["patika", "toprak_yol"]:
+			zm.set_shader_parameter("cignenme", 0.9)
+		_gmats[key] = zm
+		return zm
 	var m := StandardMaterial3D.new()
 	m.albedo_texture = ground_tex(tur)
 	m.uv1_scale = Vector3(alan.x / 4.0, alan.y / 4.0, 1.0)

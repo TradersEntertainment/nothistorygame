@@ -102,13 +102,14 @@ func _kur() -> void:
 			var k := Vector2i(i, j)
 			var mi := MeshInstance3D.new()
 			mi.name = "Arazi_%d_%d" % [i, j]
-			mi.material_override = Nature.ground_material()
+			mi.material_override = _zemin_mat()
 			mi.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
 			add_child(mi)
 			_chunks[k] = {"mi": mi, "lod": -1}
 			var job := _is_baslat(k, 3)
 			while not _is_ilerle(job, 1 << 62):
 				pass
+	_zemin_ortu()
 	_dis_halka()
 	_karsi_kiyilar()
 	_kiz_kulesi()
@@ -350,6 +351,26 @@ func _izgara_agi(x0: float, z0: float, cell: float, nx: int, nz: int, hs: Packed
 	return _ag_ilerle(st, 1 << 62)
 
 
+## ZEMİN (scripts/level/zemin.gd): v2 arazisinin malzemesi; eski bölümlerle paylaşılmaz (deniz seviyesi v2'nin kendi
+## uzayında 0, yöre Trakya).
+var _zm: ShaderMaterial
+func _zemin_mat() -> ShaderMaterial:
+	if _zm == null:
+		_zm = load("res://scripts/level/zemin.gd").kopya("trakya")
+		_zm.set_shader_parameter("su_y", 0.0)
+	return _zm
+
+
+## ZEMİN yer örtüsü (ot tutamı, çiçek, taş, dal, birikinti): izleyicinin 48 m çevresinde akışlı, çarpışmasız; yerleşik
+## mahallelerde (döşeli sokak, çarşı) yok, açık arazide (kır, bostan, harabe, ordugâh, sur dışı) var.
+func _zemin_ortu() -> void:
+	var acik := ["kir", "seyrek", "bostan", "sarnic", "harabe", "ordugah", "bag", "orman", ""]
+	load("res://scripts/level/zemin.gd").ortu_ekle(self, Rect2(-100000.0, -100000.0, 200000.0, 200000.0),
+		func(x: float, z: float) -> float: return IstGeo.h(x, z),
+		func(x: float, z: float) -> Color: return _renk(x, z, IstGeo.h(x, z), 0.0),
+		{"temas": false, "tut": func(x: float, z: float) -> bool: return String(_mah(x, z).get("tur", "")) in acik and IstGeo.h(x, z) > 0.4})
+
+
 ## Mahalle türü (20 m önbellek; IstGeo.mahalle pahalı)
 func _mah(x: float, z: float) -> Dictionary:
 	var k := Vector2i(floori(x / 20.0), floori(z / 20.0))
@@ -488,7 +509,7 @@ func _dis_halka() -> void:
 		var mi := MeshInstance3D.new()
 		mi.name = "AraziDis"
 		mi.mesh = _izgara_agi(r.position.x, r.position.y, C, nx, nz, hs, true)
-		mi.material_override = Nature.ground_material()
+		mi.material_override = _zemin_mat()
 		mi.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
 		add_child(mi)
 

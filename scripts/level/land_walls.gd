@@ -176,10 +176,12 @@ func _build_ground() -> void:
 	peri.name = "Peribolos"
 	# Toprak deseni (yayma P6): düz boyalı peribolos ve hendek dibi gece ışığında tek renk levha gibi duruyordu
 	Props.set_pattern(peri, Color("6e6452"), "dirt")
+	load("res://scripts/level/zemin.gd").kutu_zemin(peri, Color("7a6a50"))      # ZEMİN: çiğnenmiş toprak (düz levha değil)
+	load("res://scripts/level/zemin.gd").yore("kusatma", self)                                     # ZEMİN: yöre paleti
 	# Dış taraf: korkuluklu set, hendek (çukur), ova
 	# Set ve hendek dibi katı: dışarıda dövüşen ya da yürüyen (20o gedik hücumu) boşluğa düşmesin
 	# Kalın (1,2 m): surdan ya da merdivenden düşen oyuncu ince zeminin içinden geçmesin
-	Props.solid(self, Vector3(100, 1.2, 3.0), Vector3(0, -0.6, 17.5), Color("6e6452"))
+	load("res://scripts/level/zemin.gd").kutu_zemin(Props.solid(self, Vector3(100, 1.2, 3.0), Vector3(0, -0.6, 17.5), Color("6e6452")), Color("7a6a50"))
 	# Korkuluk (dış siper duvarı): gediğin önünde yıkık, moloz oradan hendeğe dökülür
 	var bw := (100.0 - TONGUE_W) * 0.5
 	if ditch_filled:
@@ -199,7 +201,8 @@ func _build_ground() -> void:
 			Props.box(self, Vector3(bw, 1.6, 0.8), Vector3(sx * (TONGUE_W * 0.5 + bw * 0.5), 0.6, 19.2), C_STONE.darkened(0.1))
 	# Hendek dibi kalın (üstü -2,9): merdivenden 11 m düşen oyuncu 20 cm'lik dibin içinden geçip haritanın altına
 	# düşüyordu (Bölüm 26o)
-	Props.set_pattern(Props.solid(self, Vector3(100, 1.2, 17.0), Vector3(0, -3.5, 27.5), Color.WHITE), Color("3a3a30"), "dirt")
+	load("res://scripts/level/zemin.gd").kutu_zemin(Props.solid(self, Vector3(100, 1.2, 17.0), Vector3(0, -3.5, 27.5), Color.WHITE), Color("4a4234"), "kusatma",
+		{"kuruluk": 0.15, "cignenme": 0.6})      # ZEMİN: hendek dibi kuru çamur, birikinti, seyrek saz
 	if ditch_filled:
 		_build_fill()
 	# Hendeğin iki yüzü katı (eskiden yalnız görüntüydü: dış yüzün içinden geçip hendek dibinin bittiği yerde

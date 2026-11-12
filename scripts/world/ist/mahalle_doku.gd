@@ -361,7 +361,7 @@ func _renk(t: int, p: Vector2) -> Color:
 	return c.lightened(tane * 0.08) if tane > 0.0 else c.darkened(-tane * 0.08)
 
 
-func _zemin_mat(tas: bool) -> StandardMaterial3D:
+func _zemin_mat(tas: bool) -> Material:
 	var m := StandardMaterial3D.new()
 	m.vertex_color_use_as_albedo = true
 	m.vertex_color_is_srgb = true
@@ -380,13 +380,12 @@ func _zemin_mat(tas: bool) -> StandardMaterial3D:
 		m.uv1_world_triplanar = true
 		m.uv1_scale = Vector3(1.0 / 7.2, 1.0 / 7.2, 1.0 / 7.2)
 	else:
-		# toprak: yumuşak gürültü (sıkışmış toprak, çakıl lekeleri); ortalaması 1'e çekilir
-		var tex := Props._noise("concrete")
-		m.albedo_texture = tex
-		m.albedo_color = Color(0.92, 0.9, 0.86)
-		m.uv1_triplanar = true
-		m.uv1_world_triplanar = true
-		m.uv1_scale = Vector3(0.18, 0.18, 0.18)
+		# ZEMİN (scripts/level/zemin.gd): ara sokak ve avlu toprağı ortak zemin malzemesiyle: sıkışık toprak, çakıl
+		# öbekleri, çamur birikintisi, kenarda seyrek ot; köşe rengi (tür rengi) ipucu, yöre "sehir"
+		var zm: ShaderMaterial = load("res://scripts/level/zemin.gd").kopya("sehir")
+		zm.set_shader_parameter("ot_carpan", 0.3)
+		zm.set_shader_parameter("cignenme", 0.9)
+		return zm
 	return m
 
 

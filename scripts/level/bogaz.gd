@@ -119,6 +119,7 @@ func _ground() -> void:
 		return ground_y(x, minf(z, -16.2))
 	# Yamaç katıdır: iskeleden, kuleden ya da rıhtımın arkasından düşen yamaca basar (eskiden yalnız görüntüydü,
 	# içinden geçilip haritanın altına düşülüyordu)
+	load("res://scripts/level/zemin.gd").yore("kiyi", self, {"su_y": 0.0})      # ZEMİN: yöre paleti, kıyı bantları
 	var slope := LowPoly.terrain(-260.0, 260.0, -260.0, -15.0, 52, 30, hf, cf)
 	add_child(slope)
 	LowPoly.solid(slope)

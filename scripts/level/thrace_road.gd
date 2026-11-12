@@ -234,6 +234,7 @@ func _ground() -> void:
 		return ground_y(x, z)
 	var cf := func(x: float, z: float, y: float, steep: float) -> Color:
 		return _col(x, z, y, steep)
+	load("res://scripts/level/zemin.gd").yore("trakya", self, {"su_y": WATER_Y})      # ZEMİN: yöre paleti, dere kıyısı
 	var near := LowPoly.terrain(-40.0, 40.0, -80.0, 180.0, 80, 260, hf, cf)
 	add_child(near)
 	near.set_meta("solid_terrain", true)    # aynı ızgaradan yükseklik gövdesi var (ikinci üçgen gövde gerekmez)

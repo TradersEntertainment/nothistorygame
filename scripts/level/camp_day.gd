@@ -393,6 +393,7 @@ func _build_ground() -> void:
 		var soil := Color("6a4e34").lerp(Color("7e6242"), n).lerp(Color("4a3826"), clampf(0.3 - n, 0.0, 0.3) * 1.6)
 		var d := Vector2(x, z + 4.0).length()
 		return soil.lerp(Color("76704a"), clampf((d - 40.0) / 40.0, 0.0, 0.6))
+	load("res://scripts/level/zemin.gd").yore("ordugah", self)      # ZEMİN: yöre paleti
 	add_child(LowPoly.solid(LowPoly.terrain(GRID_X0, GRID_X0 + GRID_N * GRID_STEP, GRID_Z0, GRID_Z0 + GRID_N * GRID_STEP, GRID_N, GRID_N, hf, cf)))
 	var floor_body := StaticBody3D.new()
 	var shape := CollisionShape3D.new()

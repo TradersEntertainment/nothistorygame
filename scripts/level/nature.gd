@@ -9,10 +9,11 @@ static var _tuft: ArrayMesh
 static var _rocks: Array = []
 
 
+## Oyunun ortak zemini (ZEMİN kitaplığı: scripts/level/zemin.gd, assets/shaders/zemin.gdshader). Köşe rengi ipucu,
+## görünüş yöre paletinden; eski ground.gdshader yalnız geri dönüş için depoda.
 static func ground_material() -> ShaderMaterial:
 	if _ground_mat == null:
-		_ground_mat = ShaderMaterial.new()
-		_ground_mat.shader = load("res://assets/shaders/ground.gdshader")
+		_ground_mat = load("res://scripts/level/zemin.gd").malzeme()
 	return _ground_mat
 
 
@@ -150,6 +151,9 @@ const SOFT := ["mud", "grease", "wet", "footprint", "camp_mud", "hoofprint", "as
 ## Bölüm 2 (kızak kenarı, kıyı), ordugâh, köy yolu, sur dibi, liman.
 static func ground_detail(parent: Node3D, area: Rect2, kind: String, density: float, seed: int, height: Callable,
 		keep := Callable(), max_count := 4000) -> MultiMeshInstance3D:
+	# ZEMİN: leke türleri yassı çıkartma değil, sahnenin aşınma maskesine boyanır (scripts/level/zemin.gd)
+	if kind in SOFT and load("res://scripts/level/zemin.gd").sahne_boya(parent, area, kind, density, seed, keep, max_count):
+		return null
 	var spec: Array = DETAIL.get(kind, DETAIL["stone"])
 	var rng := RandomNumberGenerator.new()
 	rng.seed = seed
