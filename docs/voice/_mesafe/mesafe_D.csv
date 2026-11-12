@@ -1,0 +1,101 @@
+anahtar,konusmaci,mesafe,metre,kanit,not
+QUEST_AYASOFYA_DONE,SPK_TOLGA,ic_ses,,"hud.gd:1381 quest_update: görev bitince 1,2 sn sonra bark(SPK_TOLGA/NIHAT,""QUEST_*_DONE"")",görev tamamlama yorumu; kimseye seslenmiyor
+QUEST_GALATA_DONE,SPK_TOLGA,ic_ses,,"hud.gd:1381 quest_update: görev bitince 1,2 sn sonra bark(SPK_TOLGA/NIHAT,""QUEST_*_DONE"")",görev tamamlama yorumu; kimseye seslenmiyor
+QUEST_BIGBANG_DONE,SPK_TOLGA,ic_ses,,"hud.gd:1381 quest_update: görev bitince 1,2 sn sonra bark(SPK_TOLGA/NIHAT,""QUEST_*_DONE"")",görev tamamlama yorumu; kimseye seslenmiyor
+QUEST_ENGINEER_DONE,SPK_TOLGA,ic_ses,,"hud.gd:1381 quest_update: görev bitince 1,2 sn sonra bark(SPK_TOLGA/NIHAT,""QUEST_*_DONE"")",görev tamamlama yorumu; kimseye seslenmiyor
+QUEST_FRIENDS_DONE,SPK_TOLGA,ic_ses,,"hud.gd:1381 quest_update: görev bitince 1,2 sn sonra bark(SPK_TOLGA/NIHAT,""QUEST_*_DONE"")",görev tamamlama yorumu; kimseye seslenmiyor
+QUEST_KITCHEN_DONE,SPK_TOLGA,ic_ses,,"hud.gd:1381 quest_update: görev bitince 1,2 sn sonra bark(SPK_TOLGA/NIHAT,""QUEST_*_DONE"")",görev tamamlama yorumu; kimseye seslenmiyor
+QUEST_DIVER_DONE,SPK_TOLGA,ic_ses,,"hud.gd:1381 quest_update: görev bitince 1,2 sn sonra bark(SPK_TOLGA/NIHAT,""QUEST_*_DONE"")",görev tamamlama yorumu; kimseye seslenmiyor
+QUEST_SELFIE_DONE,SPK_TOLGA,ic_ses,,"hud.gd:1381 quest_update: görev bitince 1,2 sn sonra bark(SPK_TOLGA/NIHAT,""QUEST_*_DONE"")",görev tamamlama yorumu; kimseye seslenmiyor
+QUEST_CUBE_DONE,SPK_TOLGA,ic_ses,,"hud.gd:1381 quest_update: görev bitince 1,2 sn sonra bark(SPK_TOLGA/NIHAT,""QUEST_*_DONE"")",görev tamamlama yorumu; kimseye seslenmiyor
+QUEST_TAPE_DONE,SPK_TOLGA,ic_ses,,"hud.gd:1381 quest_update: görev bitince 1,2 sn sonra bark(SPK_TOLGA/NIHAT,""QUEST_*_DONE"")",görev tamamlama yorumu; kimseye seslenmiyor
+QUEST_CHICKPEAS_DONE,SPK_TOLGA,ic_ses,,"hud.gd:1381 quest_update: görev bitince 1,2 sn sonra bark(SPK_TOLGA/NIHAT,""QUEST_*_DONE"")",görev tamamlama yorumu; kimseye seslenmiyor
+QUEST_LIGHTER_DONE,SPK_TOLGA,ic_ses,,"hud.gd:1381 quest_update: görev bitince 1,2 sn sonra bark(SPK_TOLGA/NIHAT,""QUEST_*_DONE"")",görev tamamlama yorumu; kimseye seslenmiyor
+QUEST_THERMOS_DONE,SPK_TOLGA,ic_ses,,"hud.gd:1381 quest_update: görev bitince 1,2 sn sonra bark(SPK_TOLGA/NIHAT,""QUEST_*_DONE"")",görev tamamlama yorumu; kimseye seslenmiyor
+QUEST_COLOGNE_DONE,SPK_TOLGA,ic_ses,,"hud.gd:1381 quest_update: görev bitince 1,2 sn sonra bark(SPK_TOLGA/NIHAT,""QUEST_*_DONE"")",görev tamamlama yorumu; kimseye seslenmiyor
+QUEST_PHONE_DONE,SPK_TOLGA,ic_ses,,"hud.gd:1381 quest_update: görev bitince 1,2 sn sonra bark(SPK_TOLGA/NIHAT,""QUEST_*_DONE"")",görev tamamlama yorumu; kimseye seslenmiyor
+QUEST_BOOK_DONE,SPK_TOLGA,ic_ses,,"hud.gd:1381 quest_update: görev bitince 1,2 sn sonra bark(SPK_TOLGA/NIHAT,""QUEST_*_DONE"")",görev tamamlama yorumu; kimseye seslenmiyor
+QUEST_POWERBANK_DONE,SPK_TOLGA,ic_ses,,"hud.gd:1381 quest_update: görev bitince 1,2 sn sonra bark(SPK_TOLGA/NIHAT,""QUEST_*_DONE"")",görev tamamlama yorumu; kimseye seslenmiyor
+QUEST_GOATHERD_DONE,SPK_TOLGA,ic_ses,,"hud.gd:1381 quest_update: görev bitince 1,2 sn sonra bark(SPK_TOLGA/NIHAT,""QUEST_*_DONE"")",görev tamamlama yorumu; kimseye seslenmiyor
+QUEST_CHICKENS_DONE,SPK_TOLGA,ic_ses,,"hud.gd:1381 quest_update: görev bitince 1,2 sn sonra bark(SPK_TOLGA/NIHAT,""QUEST_*_DONE"")",görev tamamlama yorumu; kimseye seslenmiyor
+QUEST_COLUMN_DONE,SPK_TOLGA,ic_ses,,"hud.gd:1381 quest_update: görev bitince 1,2 sn sonra bark(SPK_TOLGA/NIHAT,""QUEST_*_DONE"")",görev tamamlama yorumu; kimseye seslenmiyor
+QUEST_CALLIGRAPHY_DONE,SPK_TOLGA,ic_ses,,"hud.gd:1381 quest_update: görev bitince 1,2 sn sonra bark(SPK_TOLGA/NIHAT,""QUEST_*_DONE"")",görev tamamlama yorumu; kimseye seslenmiyor
+QUEST_CAT_DONE,SPK_TOLGA,ic_ses,,"hud.gd:1381 quest_update: görev bitince 1,2 sn sonra bark(SPK_TOLGA/NIHAT,""QUEST_*_DONE"")",görev tamamlama yorumu; kimseye seslenmiyor
+QUEST_COUNCIL_DONE,SPK_TOLGA,ic_ses,,"hud.gd:1381 quest_update: görev bitince 1,2 sn sonra bark(SPK_TOLGA/NIHAT,""QUEST_*_DONE"")",görev tamamlama yorumu; kimseye seslenmiyor
+QUEST_ENVOY_DONE,SPK_TOLGA,ic_ses,,"hud.gd:1381 quest_update: görev bitince 1,2 sn sonra bark(SPK_TOLGA/NIHAT,""QUEST_*_DONE"")",görev tamamlama yorumu; kimseye seslenmiyor
+QUEST_FORMS_DONE,SPK_TOLGA,ic_ses,,"hud.gd:1381 quest_update: görev bitince 1,2 sn sonra bark(SPK_TOLGA/NIHAT,""QUEST_*_DONE"")",görev tamamlama yorumu; kimseye seslenmiyor
+QUEST_SEYYAH_DONE,SPK_TOLGA,ic_ses,,"hud.gd:1381 quest_update: görev bitince 1,2 sn sonra bark(SPK_TOLGA/NIHAT,""QUEST_*_DONE"")",görev tamamlama yorumu; kimseye seslenmiyor
+QUEST_PERCH_DONE,SPK_TOLGA,ic_ses,,"hud.gd:1381 quest_update: görev bitince 1,2 sn sonra bark(SPK_TOLGA/NIHAT,""QUEST_*_DONE"")",görev tamamlama yorumu; kimseye seslenmiyor
+BUR_BLIND,SPK_NIHAT,ic_ses,,"bureau.gd:1001 nesne incelemesi, _say(...) -> hud.bark(bark_speaker) (bureau.gd:427)",Nihat nesneye bakıp kendi kendine yorum; muhatap yok
+BUR_BLIND_2,SPK_NIHAT,ic_ses,,"bureau.gd:1001 nesne incelemesi, _say(...) -> hud.bark(bark_speaker) (bureau.gd:427)",Nihat nesneye bakıp kendi kendine yorum; muhatap yok
+BUR_CLOCKKNOB,SPK_NIHAT,ic_ses,,"bureau.gd:1293 nesne incelemesi, _say(...) -> hud.bark(bark_speaker) (bureau.gd:427)",Nihat nesneye bakıp kendi kendine yorum; muhatap yok
+BUR_CLOCKKNOB_2,SPK_NIHAT,ic_ses,,"bureau.gd:1293 nesne incelemesi, _say(...) -> hud.bark(bark_speaker) (bureau.gd:427)",Nihat nesneye bakıp kendi kendine yorum; muhatap yok
+BUR_TYPEWRITER,SPK_NIHAT,ic_ses,,"bureau.gd:1064 nesne incelemesi, _say(...) -> hud.bark(bark_speaker) (bureau.gd:427)",Nihat nesneye bakıp kendi kendine yorum; muhatap yok
+BUR_TYPEWRITER_2,SPK_NIHAT,ic_ses,,"bureau.gd:1064 nesne incelemesi, _say(...) -> hud.bark(bark_speaker) (bureau.gd:427)",Nihat nesneye bakıp kendi kendine yorum; muhatap yok
+BUR_STAMP_OK,SPK_NIHAT,ic_ses,,"bureau.gd:1089 nesne incelemesi, _say(...) -> hud.bark(bark_speaker) (bureau.gd:427)",Nihat nesneye bakıp kendi kendine yorum; muhatap yok
+BUR_STAMP_NO,SPK_NIHAT,ic_ses,,"bureau.gd:1089 nesne incelemesi, _say(...) -> hud.bark(bark_speaker) (bureau.gd:427)",Nihat nesneye bakıp kendi kendine yorum; muhatap yok
+BUR_STAMP_MISSING,SPK_NIHAT,ic_ses,,"bureau.gd:1089 nesne incelemesi, _say(...) -> hud.bark(bark_speaker) (bureau.gd:427)",Nihat nesneye bakıp kendi kendine yorum; muhatap yok
+BUR_TUBE,SPK_NIHAT,ic_ses,,"bureau.gd:1119 nesne incelemesi, _say(...) -> hud.bark(bark_speaker) (bureau.gd:427)",Nihat nesneye bakıp kendi kendine yorum; muhatap yok
+BUR_TUBE_2,SPK_NIHAT,ic_ses,,"bureau.gd:1119 nesne incelemesi, _say(...) -> hud.bark(bark_speaker) (bureau.gd:427)",Nihat nesneye bakıp kendi kendine yorum; muhatap yok
+BUR_DRAWER,SPK_NIHAT,ic_ses,,"bureau.gd:1182 nesne incelemesi, _say(...) -> hud.bark(bark_speaker) (bureau.gd:427)",Nihat nesneye bakıp kendi kendine yorum; muhatap yok
+BUR_DRAWER_2,SPK_NIHAT,ic_ses,,"bureau.gd:1182 nesne incelemesi, _say(...) -> hud.bark(bark_speaker) (bureau.gd:427)",Nihat nesneye bakıp kendi kendine yorum; muhatap yok
+BUR_DRAWER_3,SPK_NIHAT,ic_ses,,"bureau.gd:1182 nesne incelemesi, _say(...) -> hud.bark(bark_speaker) (bureau.gd:427)",Nihat nesneye bakıp kendi kendine yorum; muhatap yok
+BUR_FOUNDER,SPK_NIHAT,ic_ses,,"bureau.gd:1247 nesne incelemesi, _say(...) -> hud.bark(bark_speaker) (bureau.gd:427)",Nihat nesneye bakıp kendi kendine yorum; muhatap yok
+BUR_FOUNDER_2,SPK_NIHAT,ic_ses,,"bureau.gd:1247 nesne incelemesi, _say(...) -> hud.bark(bark_speaker) (bureau.gd:427)",Nihat nesneye bakıp kendi kendine yorum; muhatap yok
+BUR_CALENDAR,SPK_NIHAT,ic_ses,,"bureau.gd:1297 nesne incelemesi, _say(...) -> hud.bark(bark_speaker) (bureau.gd:427)",Nihat nesneye bakıp kendi kendine yorum; muhatap yok
+BUR_CALENDAR_2,SPK_NIHAT,ic_ses,,"bureau.gd:1297 nesne incelemesi, _say(...) -> hud.bark(bark_speaker) (bureau.gd:427)",Nihat nesneye bakıp kendi kendine yorum; muhatap yok
+BUR_GLOBE,SPK_NIHAT,ic_ses,,"bureau.gd:1433 nesne incelemesi, _say(...) -> hud.bark(bark_speaker) (bureau.gd:427)",Nihat nesneye bakıp kendi kendine yorum; muhatap yok
+BUR_GLOBE_2,SPK_NIHAT,ic_ses,,"bureau.gd:1433 nesne incelemesi, _say(...) -> hud.bark(bark_speaker) (bureau.gd:427)",Nihat nesneye bakıp kendi kendine yorum; muhatap yok
+BUR_GLOBE_3,SPK_NIHAT,ic_ses,,"bureau.gd:1433 nesne incelemesi, _say(...) -> hud.bark(bark_speaker) (bureau.gd:427)",Nihat nesneye bakıp kendi kendine yorum; muhatap yok
+BUR_SECOND_1,SPK_NIHAT,ic_ses,,"bureau.gd:512 hud.bark(bark_speaker,""BUR_SECOND_.."") kayıp saniye bulununca",Nihat bulguyu mırıldanıyor
+BUR_SECOND_2,SPK_NIHAT,ic_ses,,"bureau.gd:512 hud.bark(bark_speaker,""BUR_SECOND_.."") kayıp saniye bulununca",Nihat bulguyu mırıldanıyor
+BUR_SECOND_3,SPK_NIHAT,ic_ses,,"bureau.gd:512 hud.bark(bark_speaker,""BUR_SECOND_.."") kayıp saniye bulununca",Nihat bulguyu mırıldanıyor
+BUR_SECOND_4,SPK_NIHAT,ic_ses,,"bureau.gd:512 hud.bark(bark_speaker,""BUR_SECOND_.."") kayıp saniye bulununca",Nihat bulguyu mırıldanıyor
+BUR_SECOND_ALL,SPK_NIHAT,ic_ses,,"bureau.gd:512 hud.bark(bark_speaker,""BUR_SECOND_.."") kayıp saniye bulununca",Nihat bulguyu mırıldanıyor
+BUR_NOTICE_A,SPK_NIHAT,ic_ses,,"bureau.gd:2089 nesne incelemesi, _say(...) -> hud.bark(bark_speaker) (bureau.gd:427)",Nihat nesneye bakıp kendi kendine yorum; muhatap yok
+BUR_NOTICE_A_2,SPK_NIHAT,ic_ses,,"bureau.gd:2089 nesne incelemesi, _say(...) -> hud.bark(bark_speaker) (bureau.gd:427)",Nihat nesneye bakıp kendi kendine yorum; muhatap yok
+BUR_NOTICE_B,SPK_NIHAT,ic_ses,,"bureau.gd:2090 nesne incelemesi, _say(...) -> hud.bark(bark_speaker) (bureau.gd:427)",Nihat nesneye bakıp kendi kendine yorum; muhatap yok
+BUR_NOTICE_C,SPK_NIHAT,ic_ses,,"bureau.gd:2091 nesne incelemesi, _say(...) -> hud.bark(bark_speaker) (bureau.gd:427)",Nihat nesneye bakıp kendi kendine yorum; muhatap yok
+BUR_NOTICE_D,SPK_NIHAT,ic_ses,,"bureau.gd:2092 nesne incelemesi, _say(...) -> hud.bark(bark_speaker) (bureau.gd:427)",Nihat nesneye bakıp kendi kendine yorum; muhatap yok
+BUR_CCLOCK0,SPK_NIHAT,ic_ses,,"bureau.gd:2068 _say(""BUR_CCLOCK%d"") saat incelemesi",Nihat nesneye bakıp yorumluyor
+BUR_CCLOCK1,SPK_NIHAT,ic_ses,,"bureau.gd:2068 _say(""BUR_CCLOCK%d"") saat incelemesi",Nihat nesneye bakıp yorumluyor
+BUR_CCLOCK2,SPK_NIHAT,ic_ses,,"bureau.gd:2068 _say(""BUR_CCLOCK%d"") saat incelemesi",Nihat nesneye bakıp yorumluyor
+BUR_CCLOCK3,SPK_NIHAT,ic_ses,,"bureau.gd:2068 _say(""BUR_CCLOCK%d"") saat incelemesi",Nihat nesneye bakıp yorumluyor
+BUR_CCLOCK4,SPK_NIHAT,ic_ses,,"bureau.gd:2068 _say(""BUR_CCLOCK%d"") saat incelemesi",Nihat nesneye bakıp yorumluyor
+BUR_COOLER,SPK_NIHAT,ic_ses,,"bureau.gd:2193 nesne incelemesi, _say(...) -> hud.bark(bark_speaker) (bureau.gd:427)",Nihat nesneye bakıp kendi kendine yorum; muhatap yok
+BUR_COOLER_2,SPK_NIHAT,ic_ses,,"bureau.gd:2193 nesne incelemesi, _say(...) -> hud.bark(bark_speaker) (bureau.gd:427)",Nihat nesneye bakıp kendi kendine yorum; muhatap yok
+BUR_PALM,SPK_NIHAT,ic_ses,,"bureau.gd:2200 nesne incelemesi, _say(...) -> hud.bark(bark_speaker) (bureau.gd:427)",Nihat nesneye bakıp kendi kendine yorum; muhatap yok
+BUR_PALM_2,SPK_NIHAT,ic_ses,,"bureau.gd:2200 nesne incelemesi, _say(...) -> hud.bark(bark_speaker) (bureau.gd:427)",Nihat nesneye bakıp kendi kendine yorum; muhatap yok
+BUR_CEMAL,SPK_CEMAL,yakin,2,"bureau.gd:2300 _say(...,""SPK_CEMAL"") yanındaki oyuncuya","memur/görevli E ile yaklaşılan oyuncuya konuşuyor (_ld_talk/_rb_talk 3,5 sn)"
+BUR_CEMAL_2,SPK_CEMAL,yakin,2,"bureau.gd:2300 _say(...,""SPK_CEMAL"") yanındaki oyuncuya","memur/görevli E ile yaklaşılan oyuncuya konuşuyor (_ld_talk/_rb_talk 3,5 sn)"
+BUR_TROLLEY,SPK_ZEKI,yakin,2,"bureau.gd:2305 _say(...,""SPK_ZEKI"") yanındaki oyuncuya","memur/görevli E ile yaklaşılan oyuncuya konuşuyor (_ld_talk/_rb_talk 3,5 sn)"
+BUR_TROLLEY_2,SPK_ZEKI,yakin_yuksek,2,"bureau.gd:2305 _say(...,""SPK_ZEKI"") yanındaki oyuncuya","yolu açtırmak için seslenir (emir), oyuncu yakında"
+BUR_MEHTER,SPK_NIHAT,ic_ses,,"bureau.gd:2361 nesne incelemesi, _say(...) -> hud.bark(bark_speaker) (bureau.gd:427)",Nihat nesneye bakıp kendi kendine yorum; muhatap yok
+BUR_MEHTER_2,SPK_NIHAT,ic_ses,,"bureau.gd:2361 nesne incelemesi, _say(...) -> hud.bark(bark_speaker) (bureau.gd:427)",Nihat nesneye bakıp kendi kendine yorum; muhatap yok
+BUR_TEAPOT,SPK_NIHAT,ic_ses,,"bureau.gd:2553 nesne incelemesi, _say(...) -> hud.bark(bark_speaker) (bureau.gd:427)",Nihat nesneye bakıp kendi kendine yorum; muhatap yok
+BUR_TEAPOT_2,SPK_NIHAT,ic_ses,,"bureau.gd:2553 nesne incelemesi, _say(...) -> hud.bark(bark_speaker) (bureau.gd:427)",Nihat nesneye bakıp kendi kendine yorum; muhatap yok
+BUR_NECMI,SPK_NECMI,yakin,2,"bureau.gd:2560 _say(...,""SPK_NECMI"") yanındaki oyuncuya","memur/görevli E ile yaklaşılan oyuncuya konuşuyor (_ld_talk/_rb_talk 3,5 sn)"
+BUR_NECMI_2,SPK_NECMI,yakin,2,"bureau.gd:2560 _say(...,""SPK_NECMI"") yanındaki oyuncuya","memur/görevli E ile yaklaşılan oyuncuya konuşuyor (_ld_talk/_rb_talk 3,5 sn)"
+BUR_NECMI_3,SPK_NECMI,yakin,2,"bureau.gd:2560 _say(...,""SPK_NECMI"") yanındaki oyuncuya","memur/görevli E ile yaklaşılan oyuncuya konuşuyor (_ld_talk/_rb_talk 3,5 sn)"
+BUR_APPEALS_1,SPK_NIHAT,ic_ses,,"bureau.gd:2712 nesne incelemesi, _say(...) -> hud.bark(bark_speaker) (bureau.gd:427)",Nihat nesneye bakıp kendi kendine yorum; muhatap yok
+BUR_APPEALS_2,SPK_NIHAT,ic_ses,,"bureau.gd:2712 nesne incelemesi, _say(...) -> hud.bark(bark_speaker) (bureau.gd:427)",Nihat nesneye bakıp kendi kendine yorum; muhatap yok
+BUR_APPEALS_3,SPK_NIHAT,ic_ses,,"bureau.gd:2712 nesne incelemesi, _say(...) -> hud.bark(bark_speaker) (bureau.gd:427)",Nihat nesneye bakıp kendi kendine yorum; muhatap yok
+BUR_APPEALS_4,SPK_NIHAT,ic_ses,,"bureau.gd:2712 nesne incelemesi, _say(...) -> hud.bark(bark_speaker) (bureau.gd:427)",Nihat nesneye bakıp kendi kendine yorum; muhatap yok
+BUR_DISPLAY,SPK_NIHAT,ic_ses,,"bureau.gd:2717 nesne incelemesi, _say(...) -> hud.bark(bark_speaker) (bureau.gd:427)",Nihat nesneye bakıp kendi kendine yorum; muhatap yok
+BUR_DISPLAY_2,SPK_NIHAT,ic_ses,,"bureau.gd:2717 nesne incelemesi, _say(...) -> hud.bark(bark_speaker) (bureau.gd:427)",Nihat nesneye bakıp kendi kendine yorum; muhatap yok
+BUR_TICKET,SPK_NIHAT,ic_ses,,"bureau.gd:2690 nesne incelemesi, _say(...) -> hud.bark(bark_speaker) (bureau.gd:427)",Nihat nesneye bakıp kendi kendine yorum; muhatap yok
+BUR_TICKET_2,SPK_NIHAT,ic_ses,,"bureau.gd:2690 nesne incelemesi, _say(...) -> hud.bark(bark_speaker) (bureau.gd:427)",Nihat nesneye bakıp kendi kendine yorum; muhatap yok
+BUR_TICKET_3,SPK_NIHAT,ic_ses,,"bureau.gd:2690 nesne incelemesi, _say(...) -> hud.bark(bark_speaker) (bureau.gd:427)",Nihat nesneye bakıp kendi kendine yorum; muhatap yok
+BUR_GHOST,SPK_NIHAT,ic_ses,,"bureau.gd:2722 nesne incelemesi, _say(...) -> hud.bark(bark_speaker) (bureau.gd:427)",Nihat nesneye bakıp kendi kendine yorum; muhatap yok
+BUR_GHOST_2,SPK_NIHAT,ic_ses,,"bureau.gd:2722 nesne incelemesi, _say(...) -> hud.bark(bark_speaker) (bureau.gd:427)",Nihat nesneye bakıp kendi kendine yorum; muhatap yok
+BUR_GHOST_3,SPK_NIHAT,ic_ses,,"bureau.gd:2722 nesne incelemesi, _say(...) -> hud.bark(bark_speaker) (bureau.gd:427)",Nihat nesneye bakıp kendi kendine yorum; muhatap yok
+BUR_BELL,SPK_SABRI,yakin,2,"bureau.gd:2839 _say(...,""SPK_SABRI"") yanındaki oyuncuya","memur/görevli E ile yaklaşılan oyuncuya konuşuyor (_ld_talk/_rb_talk 3,5 sn)"
+BUR_BELL_2,SPK_SABRI,yakin,2,"bureau.gd:2839 _say(...,""SPK_SABRI"") yanındaki oyuncuya","memur/görevli E ile yaklaşılan oyuncuya konuşuyor (_ld_talk/_rb_talk 3,5 sn)"
+BUR_NOKIA,SPK_NIHAT,ic_ses,,"bureau.gd:2847 nesne incelemesi, _say(...) -> hud.bark(bark_speaker) (bureau.gd:427)",Nihat nesneye bakıp kendi kendine yorum; muhatap yok
+BUR_NOKIA_2,SPK_NIHAT,ic_ses,,"bureau.gd:2847 nesne incelemesi, _say(...) -> hud.bark(bark_speaker) (bureau.gd:427)",Nihat nesneye bakıp kendi kendine yorum; muhatap yok
+BUR_SANDAL,SPK_NIHAT,ic_ses,,"bureau.gd:2854 nesne incelemesi, _say(...) -> hud.bark(bark_speaker) (bureau.gd:427)",Nihat nesneye bakıp kendi kendine yorum; muhatap yok
+BUR_SANDAL_2,SPK_NIHAT,ic_ses,,"bureau.gd:2854 nesne incelemesi, _say(...) -> hud.bark(bark_speaker) (bureau.gd:427)",Nihat nesneye bakıp kendi kendine yorum; muhatap yok
+BUR_LOSTSHELF,SPK_NIHAT,ic_ses,,"bureau.gd:2859 nesne incelemesi, _say(...) -> hud.bark(bark_speaker) (bureau.gd:427)",Nihat nesneye bakıp kendi kendine yorum; muhatap yok
+BUR_LOSTSHELF_2,SPK_NIHAT,ic_ses,,"bureau.gd:2859 nesne incelemesi, _say(...) -> hud.bark(bark_speaker) (bureau.gd:427)",Nihat nesneye bakıp kendi kendine yorum; muhatap yok
+BUR_LOSTSHELF_3,SPK_NIHAT,ic_ses,,"bureau.gd:2859 nesne incelemesi, _say(...) -> hud.bark(bark_speaker) (bureau.gd:427)",Nihat nesneye bakıp kendi kendine yorum; muhatap yok
+BUR_LOSTSHELF_4,SPK_NIHAT,ic_ses,,"bureau.gd:2859 nesne incelemesi, _say(...) -> hud.bark(bark_speaker) (bureau.gd:427)",Nihat nesneye bakıp kendi kendine yorum; muhatap yok
