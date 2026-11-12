@@ -298,7 +298,8 @@ static func _konstantin(n: Node3D, k: float, lod: int) -> void:
 	rng.seed = 330
 	var a := 75.0 * k
 	var b := 52.0 * k
-	Y.disk(n, a, b, 0.1, Vector3(0, 0.05, 0), Y.TAS, 56 if lod < 2 else 24, col, "flagstone" if lod < 2 else "")
+	# ÇEVRE-4: kalın levha, üstü 0,16 m (DOKU-4'ün zemin katmanı ince döşemenin üstüne çıkıyordu)
+	Y.disk(n, a, b, 0.6, Vector3(0, 0.16 - 0.3, 0), Y.TAS, 56 if lod < 2 else 24, col, "flagstone" if lod < 2 else "")
 	if lod >= 1:
 		pass
 	var o := {"kaide_w": 7.0, "kaide_h": 6.5, "govde_r": 1.6, "govde_h": 27.0, "tambur": 8, "renk": Y.PORFIR, "cember": true,
@@ -337,11 +338,50 @@ static func _konstantin(n: Node3D, k: float, lod: int) -> void:
 		if lod == 0:
 			Y.moloz(n, p + Vector3(rng.randf_range(-1.5, 1.5), 0, 1.8), 1.8, 1.4, 2, rng, col)
 	_zemin_serpinti(n, rng, a, b, 40, lod)
+	_forum_dolgu(n, rng, a, b, lod, col)
 	# devşirme mermer bloklar
 	if lod == 0:
 		for i in 6:
 			var ang := rng.randf() * TAU
 			Y.box(n, Vector3(rng.randf_range(1.2, 2.4), 0.5, rng.randf_range(0.8, 1.4)), Vector3(cos(ang) * a * 0.55, 0.35, sin(ang) * b * 0.55), Y.MERMER, "marble", col, Vector3(0, rng.randf() * 180, 0))
+
+
+## ÇEVRE-4 (görev 5): forum ovalinin içi boş kalmasın: çeşme (sekizgen havuz + ortada su taşı), heykel kaideleri
+## (bronz figürlü/kırık), taş sekiler, kuyu bileziği, devşirme sütun tamburu yığını. Merkez (sütun) ve +z merdiven
+## yolu boş kalır. Tezgâh ve kişiler DOKU-4'ün katmanından.
+static func _forum_dolgu(n: Node3D, rng: RandomNumberGenerator, rx: float, rz: float, lod: int, col: bool) -> void:
+	if lod >= 2:
+		return
+	# çeşme
+	var cp := Vector3(-rx * 0.45, 0.1, -rz * 0.4)
+	Y.cyl(n, 3.2, 0.7, cp + Vector3(0, 0.35, 0), Y.MERMER, 3.2, 8, col, "marble")
+	Y.cyl(n, 2.8, 0.08, cp + Vector3(0, 0.66, 0), Color("4f6670"), 2.8, 8, false, "")
+	Y.cyl(n, 0.7, 2.4, cp + Vector3(0, 1.2, 0), Y.MERMER, 0.55, 8, col, "marble")
+	Y.cyl(n, 1.2, 0.3, cp + Vector3(0, 2.4, 0), Y.MERMER, 1.0, 8, false, "marble")
+	# heykel kaideleri: iki yanda ikişer (biri kırık, figürsüz)
+	for i in 4:
+		var sx := -1.0 if i < 2 else 1.0
+		var sz := -1.0 if i % 2 == 0 else 1.0
+		var p := Vector3(sx * rx * 0.62, 0.1, sz * rz * 0.5)
+		Y.box(n, Vector3(1.8, 2.4, 1.8), p + Vector3(0, 1.2, 0), Y.MERMER, "marble", col)
+		Y.box(n, Vector3(2.1, 0.3, 2.1), p + Vector3(0, 2.5, 0), Y.TAS_K, "", false)
+		if i != 2:
+			Y.box(n, Vector3(0.8, 2.2, 0.6), p + Vector3(0, 3.75, 0), Y.BRONZ, "", false, Vector3(0, rng.randf() * 90.0, 0))
+			Y.box(n, Vector3(0.45, 0.5, 0.45), p + Vector3(0, 5.1, 0), Y.BRONZ, "", false)
+	if lod == 1:
+		return
+	# taş sekiler
+	for i in 6:
+		var t := TAU * (i + 0.5) / 6.0
+		var q := Vector3(cos(t) * rx * 0.78, 0.1, sin(t) * rz * 0.78)
+		if q.z > rz * 0.5 and absf(q.x) < rx * 0.3:
+			continue
+		Y.box(n, Vector3(3.0, 0.45, 0.7), q + Vector3(0, 0.22, 0), Y.TAS, "", col, Vector3(0, -rad_to_deg(t) + 90.0, 0))
+	# kuyu bileziği ve tambur yığını
+	var kq := Vector3(rx * 0.4, 0.1, -rz * 0.55)
+	Y.cyl(n, 0.9, 0.8, kq + Vector3(0, 0.4, 0), Y.TAS_K, 0.9, 10, col, "")
+	for i in 4:
+		Y.cyl(n, 0.6, 0.9, Vector3(rx * 0.55 + i * 1.3, 0.55, rz * 0.25), Y.MERMER, 0.6, 10, col, "marble")
 
 
 # ---------------------------------------------------------------------------------------------------------
@@ -353,7 +393,7 @@ static func _tauri(n: Node3D, k: float, lod: int) -> void:
 	rng.seed = 386
 	var wx := 60.0 * k
 	var wz := 45.0 * k
-	Y.box(n, Vector3(wx * 2.0, 0.1, wz * 2.0), Vector3(0, 0.05, 0), Y.TAS, "flagstone" if lod < 2 else "", col)
+	Y.box(n, Vector3(wx * 2.0, 0.6, wz * 2.0), Vector3(0, 0.16 - 0.3, 0), Y.TAS, "flagstone" if lod < 2 else "", col)
 	# Theodosius Sütunu (ortada, doğuya kayık)
 	var o := {"kaide_w": 8.0, "kaide_h": 8.0, "govde_r": 1.5, "govde_h": 30.0, "tambur": 10, "renk": Y.MERMER,
 		"baslik": "duz", "desen": "spiral", "sarim": 8, "kaide_renk": Y.MERMER, "merdiven_yon": Vector3(0, 0, 1)}
@@ -392,6 +432,7 @@ static func _tauri(n: Node3D, k: float, lod: int) -> void:
 			continue
 		Y.box(n, Vector3(rng.randf_range(0.8, 1.8), 0.4, rng.randf_range(0.6, 1.2)), p + Vector3(0, 0.3, 0), Y.MERMER, "marble", col, Vector3(0, rng.randf() * 180, 0))
 	_zemin_serpinti(n, rng, wx, wz, 28, lod)
+	_forum_dolgu(n, rng, wx * 0.9, wz * 0.9, lod, col)
 
 
 # ---------------------------------------------------------------------------------------------------------

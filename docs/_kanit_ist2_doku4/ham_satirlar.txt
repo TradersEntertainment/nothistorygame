@@ -1,0 +1,191 @@
+DOKU4 cati mah=Psamathia i=0 A=sira/kiremit B=sira/duz ust_a=23.4/23.4 ust_b=22.0/22.0 y_a=23.9 en=23.9 son=(-1583.2, 22.6, 197.5) kalan=0.4 GECTI
+DOKU4 cati mah=Psamathia i=1 A=sira/kiremit B=sira/kiremit ust_a=23.3/23.3 ust_b=25.7/25.7 y_a=24.7 en=25.8 son=(-1608.3, 25.8, 197.9) kalan=0.4 GECTI
+DOKU4 cati mah=Psamathia i=2 A=sira/kiremit B=sira/kiremit ust_a=25.7/25.7 ust_b=23.3/23.3 y_a=26.2 en=26.2 son=(-1612.5, 24.4, 201.0) kalan=0.4 GECTI
+DOKU4 cati mah=Psamathia i=3 A=sira/kiremit B=sira/kiremit ust_a=23.4/23.4 ust_b=25.7/25.7 y_a=25.1 en=25.1 son=(-1604.5, 25.1, 195.9) kalan=3.9 KALDI
+DOKU4 cati mah=Psamathia i=4 A=teras/teras B=sira/kiremit ust_a=22.0/23.0 ust_b=23.4/23.4 y_a=22.8 en=24.3 son=(-1603.0, 24.3, 195.1) kalan=0.5 GECTI
+DOKU4 cati mah=Kariye (Khora) i=0 A=sira/kiremit B=teras/teras ust_a=27.9/27.9 ust_b=24.3/25.3 y_a=28.5 en=28.5 son=(-1291.2, 26.3, -672.5) kalan=0.4 GECTI
+DOKU4 cati mah=Kariye (Khora) i=1 A=teras/teras B=sira/kiremit ust_a=24.3/25.3 ust_b=27.9/27.9 y_a=26.5 en=28.0 son=(-1295.8, 28.0, -669.0) kalan=0.4 GECTI
+DOKU4 cati mah=Kariye (Khora) i=2 A=sira/kiremit B=teras/teras ust_a=26.1/26.1 ust_b=24.9/25.9 y_a=26.5 en=26.5 son=(-1275.6, 24.9, -682.7) kalan=0.4 GECTI
+DOKU4 cati mah=Kariye (Khora) i=3 A=teras/teras B=sira/kiremit ust_a=24.9/25.9 ust_b=26.1/26.1 y_a=25.4 en=26.1 son=(-1281.8, 26.1, -679.6) kalan=0.4 GECTI
+DOKU4 cati mah=Kariye (Khora) i=4 A=dukkan/kiremit B=sira/kiremit ust_a=28.9/28.9 ust_b=29.0/29.0 y_a=29.4 en=29.4 son=(-1263.1, 28.8, -692.5) kalan=0.4 GECTI
+DOKU4 cati mah=Havariyun i=0 A=sira/kiremit B=teras/teras ust_a=16.1/16.1 ust_b=14.9/15.9 y_a=16.6 en=16.6 son=(-1059.0, 15.4, -403.1) kalan=0.4 GECTI
+DOKU4 cati mah=Havariyun i=1 A=teras/teras B=sira/kiremit ust_a=14.9/15.9 ust_b=16.1/16.1 y_a=15.7 en=16.2 son=(-1060.9, 16.2, -407.5) kalan=0.4 GECTI
+DOKU4 cati mah=Havariyun i=2 A=dukkan/kiremit B=sira/kiremit ust_a=23.3/23.3 ust_b=23.1/23.1 y_a=23.7 en=23.7 son=(-997.0, 23.1, -417.2) kalan=0.4 GECTI
+DOKU4 cati mah=Havariyun i=3 A=sira/kiremit B=dukkan/kiremit ust_a=23.1/23.1 ust_b=23.3/23.3 y_a=23.5 en=23.5 son=(-994.7, 23.1, -413.5) kalan=0.4 GECTI
+DOKU4 cati mah=Havariyun i=4 A=sira/kiremit B=sira/kiremit ust_a=22.9/22.9 ust_b=23.1/23.1 y_a=23.3 en=23.3 son=(-997.4, 23.1, -417.8) kalan=0.4 GECTI
+DOKU4 cati mah=Zeugma (Unkapanı) i=0 A=dukkan/kiremit B=dukkan/kiremit ust_a=16.8/16.8 ust_b=18.9/18.9 y_a=17.2 en=17.2 son=(-729.1, 17.1, -685.2) kalan=7.5 KALDI
+DOKU4 cati mah=Zeugma (Unkapanı) i=1 A=dukkan/kiremit B=dukkan/kiremit ust_a=18.9/18.9 ust_b=16.8/16.8 y_a=19.3 en=19.3 son=(-729.1, 17.1, -685.1) kalan=0.4 GECTI
+DOKU4 cati mah=Zeugma (Unkapanı) i=2 A=sira/kiremit B=dukkan/kiremit ust_a=15.8/15.8 ust_b=18.9/18.9 y_a=18.0 en=18.9 son=(-728.1, 18.9, -693.1) kalan=0.4 GECTI
+DOKU4 cati mah=Zeugma (Unkapanı) i=3 A=teras/teras B=teras/teras ust_a=16.5/17.5 ust_b=16.1/17.1 y_a=17.0 en=17.5 son=(-739.0, 16.6, -637.1) kalan=0.4 GECTI
+DOKU4 cati mah=Zeugma (Unkapanı) i=4 A=teras/teras B=teras/teras ust_a=16.1/17.1 ust_b=16.5/17.5 y_a=16.9 en=17.5 son=(-743.6, 16.5, -638.6) kalan=0.4 GECTI
+DOKU4 cati mah=Konstantin Forumu i=0 A=dukkan/kiremit B=dukkan/kiremit ust_a=23.2/23.2 ust_b=25.8/25.8 y_a=24.6 en=25.9 son=(-339.6, 25.9, -33.1) kalan=0.4 GECTI
+DOKU4 cati mah=Konstantin Forumu i=1 A=dukkan/kiremit B=dukkan/kiremit ust_a=25.8/25.8 ust_b=23.2/23.2 y_a=26.3 en=26.3 son=(-333.9, 24.3, -30.5) kalan=0.4 GECTI
+DOKU4 cati mah=Konstantin Forumu i=2 A=dukkan/kiremit B=dukkan/kiremit ust_a=23.1/23.1 ust_b=25.8/25.8 y_a=24.5 en=25.9 son=(-340.4, 25.9, -33.3) kalan=0.4 GECTI
+DOKU4 cati mah=Konstantin Forumu i=3 A=dukkan/kiremit B=dukkan/kiremit ust_a=20.6/20.6 ust_b=22.9/22.9 y_a=21.4 en=22.9 son=(-369.4, 22.8, -40.3) kalan=0.4 GECTI
+DOKU4 cati mah=Konstantin Forumu i=4 A=dukkan/kiremit B=dukkan/kiremit ust_a=22.9/22.9 ust_b=20.6/20.6 y_a=23.4 en=23.4 son=(-363.2, 21.2, -38.9) kalan=0.4 GECTI
+DOKU4 cati_toplam n=25 gecti=23 ilk_cift(sehir2 secimi)=4/5
+
+## ISTKISI / RINFO ÖNCE (taban4)
+ISTKISI y4_carsi_1 y30=5 y60=23 gorunen=25 hayvan=6 etkin=34 yuruyen=20 duran=14 evde=0 havada=0 suda=0 ms=1.72 ms_ort=1.89 ms_max=6.34 hedef=34 esyada=0
+RINFO doku2 y4_carsi_1 cizim=957 ucgen=3357672 konum=(-385.4355, 16.67308, -31.61606)
+ISTKISI y4_carsi_2 y30=2 y60=16 gorunen=6 hayvan=6 etkin=34 yuruyen=22 duran=12 evde=0 havada=0 suda=0 ms=1.43 ms_ort=1.68 ms_max=6.34 hedef=34 esyada=0
+RINFO doku2 y4_carsi_2 cizim=691 ucgen=1981868 konum=(-480.7142, 19.52749, -67.87485)
+ISTKISI y4_carsi_3 y30=1 y60=15 gorunen=12 hayvan=4 etkin=22 yuruyen=14 duran=8 evde=0 havada=0 suda=0 ms=0.99 ms_ort=1.48 ms_max=6.34 hedef=22 esyada=0
+RINFO doku2 y4_carsi_3 cizim=610 ucgen=2525370 konum=(-285.7422, 17.91575, -49.18169)
+ISTKISI y4_carsi_4 y30=16 y60=29 gorunen=15 hayvan=6 etkin=34 yuruyen=22 duran=12 evde=1 havada=0 suda=0 ms=1.63 ms_ort=1.51 ms_max=6.34 hedef=34 esyada=1
+RINFO doku2 y4_carsi_4 cizim=967 ucgen=3202072 konum=(-595.4453, 18.25958, -119.8832)
+ISTKISI y4_sik_1 y30=5 y60=9 gorunen=8 hayvan=4 etkin=23 yuruyen=10 duran=13 evde=0 havada=0 suda=0 ms=1.05 ms_ort=1.42 ms_max=6.34 hedef=22 esyada=0
+RINFO doku2 y4_sik_1 cizim=671 ucgen=1556757 konum=(-522.1262, 22.4797, -190.3228)
+ISTKISI y4_sik_2 y30=4 y60=9 gorunen=11 hayvan=4 etkin=23 yuruyen=11 duran=12 evde=0 havada=0 suda=0 ms=0.98 ms_ort=1.37 ms_max=6.34 hedef=22 esyada=0
+RINFO doku2 y4_sik_2 cizim=635 ucgen=1602785 konum=(-683.7566, 20.38739, -320.9922)
+ISTKISI y4_sik_3 y30=7 y60=20 gorunen=11 hayvan=4 etkin=23 yuruyen=14 duran=9 evde=0 havada=0 suda=0 ms=1.09 ms_ort=1.33 ms_max=6.34 hedef=22 esyada=0
+RINFO doku2 y4_sik_3 cizim=769 ucgen=2528886 konum=(-380.3952, 19.14614, -249.5394)
+ISTKISI y4_sik_4 y30=8 y60=16 gorunen=10 hayvan=6 etkin=31 yuruyen=22 duran=9 evde=0 havada=0 suda=0 ms=1.62 ms_ort=1.37 ms_max=6.34 hedef=31 esyada=0
+RINFO doku2 y4_sik_4 cizim=925 ucgen=2165317 konum=(-892.8647, 21.78699, -461.1882)
+ISTKISI y4_surdibi_1 y30=5 y60=11 gorunen=7 hayvan=2 etkin=14 yuruyen=8 duran=6 evde=0 havada=0 suda=0 ms=0.89 ms_ort=1.33 ms_max=9.25 hedef=13 esyada=0
+RINFO doku2 y4_surdibi_1 cizim=1430 ucgen=2690387 konum=(-1697.641, 19.59695, -126.4907)
+ISTKISI y4_surdibi_2 y30=0 y60=11 gorunen=5 hayvan=2 etkin=13 yuruyen=9 duran=4 evde=0 havada=0 suda=0 ms=0.69 ms_ort=1.27 ms_max=9.25 hedef=13 esyada=0
+RINFO doku2 y4_surdibi_2 cizim=1261 ucgen=2434201 konum=(-1571.059, 17.20021, -524.3821)
+ISTKISI y4_surdibi_3 y30=0 y60=14 gorunen=11 hayvan=4 etkin=20 yuruyen=15 duran=5 evde=0 havada=0 suda=0 ms=0.92 ms_ort=1.24 ms_max=9.25 hedef=20 esyada=0
+RINFO doku2 y4_surdibi_3 cizim=1068 ucgen=2499717 konum=(-1406.885, 2.84182, 410.8928)
+ISTKISI y4_surdibi_4 y30=5 y60=14 gorunen=6 hayvan=3 etkin=16 yuruyen=8 duran=8 evde=0 havada=0 suda=0 ms=0.84 ms_ort=1.22 ms_max=9.25 hedef=16 esyada=0
+RINFO doku2 y4_surdibi_4 cizim=884 ucgen=2680936 konum=(-1329.09, 25.24938, -800.0708)
+ISTKISI y4_bostan_1 y30=2 y60=3 gorunen=1 hayvan=1 etkin=9 yuruyen=5 duran=4 evde=0 havada=0 suda=0 ms=0.60 ms_ort=1.17 ms_max=9.25 hedef=8 esyada=0
+RINFO doku2 y4_bostan_1 cizim=487 ucgen=598891 konum=(-804.62, 3.018075, 194.7163)
+ISTKISI y4_bostan_2 y30=3 y60=14 gorunen=6 hayvan=4 etkin=21 yuruyen=14 duran=7 evde=0 havada=0 suda=0 ms=1.09 ms_ort=1.16 ms_max=9.25 hedef=21 esyada=0
+RINFO doku2 y4_bostan_2 cizim=590 ucgen=1116237 konum=(-1092.419, 16.18662, 238.3455)
+ISTKISI y4_bostan_3 y30=3 y60=7 gorunen=8 hayvan=3 etkin=19 yuruyen=11 duran=8 evde=0 havada=0 suda=0 ms=1.10 ms_ort=1.16 ms_max=9.25 hedef=19 esyada=0
+RINFO doku2 y4_bostan_3 cizim=646 ucgen=2253462 konum=(-1013.013, 4.887209, -107.8281)
+ISTKISI y4_bostan_4 y30=3 y60=14 gorunen=11 hayvan=4 etkin=22 yuruyen=10 duran=12 evde=0 havada=0 suda=0 ms=1.27 ms_ort=1.17 ms_max=9.25 hedef=22 esyada=0
+RINFO doku2 y4_bostan_4 cizim=851 ucgen=2476765 konum=(-1262.452, 9.714353, -353.8632)
+RINFO doku2 h4_hub_30 cizim=801 ucgen=3182209 konum=(-1645.0, 44.78054, -297.5)
+RINFO doku2 h4_carsi_30 cizim=743 ucgen=1716361 konum=(-402.5, 43.92156, -21.0)
+RINFO doku2 h4_mahalle_70 cizim=506 ucgen=1116221 konum=(-525.0, 86.88777, -87.5)
+RINFO doku2 h4_bati_70 cizim=669 ucgen=2244756 konum=(-1260.0, 75.39173, -210.0)
+
+## ISTKISI / RINFO SONRA (birleşik)
+ISTKISI y4_carsi_1 y30=10 y60=21 gorunen=20 hayvan=3 etkin=33 yuruyen=22 duran=11 evde=0 havada=0 suda=0 ms=13.26 ms_ort=11.59 ms_max=33.26 hedef=39 esyada=0
+RINFO doku2 y4_carsi_1 cizim=948 ucgen=3477995 konum=(-385.4355, 16.67308, -31.61606)
+ISTKISI y4_carsi_2 y30=4 y60=23 gorunen=11 hayvan=6 etkin=39 yuruyen=29 duran=10 evde=0 havada=0 suda=0 ms=3.86 ms_ort=8.92 ms_max=33.26 hedef=39 esyada=1
+RINFO doku2 y4_carsi_2 cizim=529 ucgen=1470573 konum=(-490.468, 18.17378, -46.91245)
+ISTKISI y4_carsi_3 y30=1 y60=12 gorunen=22 hayvan=5 etkin=26 yuruyen=14 duran=12 evde=0 havada=0 suda=0 ms=1.22 ms_ort=6.42 ms_max=33.26 hedef=26 esyada=0
+RINFO doku2 y4_carsi_3 cizim=655 ucgen=1582387 konum=(-301.589, 17.62716, -63.44343)
+ISTKISI y4_carsi_4 y30=15 y60=32 gorunen=21 hayvan=6 etkin=39 yuruyen=22 duran=17 evde=0 havada=0 suda=0 ms=1.63 ms_ort=5.24 ms_max=33.26 hedef=39 esyada=0
+RINFO doku2 y4_carsi_4 cizim=953 ucgen=3118966 konum=(-595.4453, 18.25958, -119.8832)
+ISTKISI y4_sik_1 y30=1 y60=7 gorunen=6 hayvan=5 etkin=26 yuruyen=10 duran=16 evde=0 havada=0 suda=0 ms=1.11 ms_ort=4.44 ms_max=33.26 hedef=26 esyada=0
+RINFO doku2 y4_sik_1 cizim=607 ucgen=1589728 konum=(-507.6656, 22.85037, -179.8672)
+ISTKISI y4_sik_2 y30=2 y60=9 gorunen=5 hayvan=5 etkin=26 yuruyen=19 duran=7 evde=0 havada=0 suda=0 ms=1.13 ms_ort=3.90 ms_max=33.26 hedef=26 esyada=0
+RINFO doku2 y4_sik_2 cizim=642 ucgen=2401926 konum=(-704.2837, 20.51863, -327.1619)
+ISTKISI y4_sik_3 y30=7 y60=22 gorunen=10 hayvan=5 etkin=26 yuruyen=21 duran=5 evde=0 havada=0 suda=0 ms=1.37 ms_ort=3.55 ms_max=33.26 hedef=26 esyada=0
+RINFO doku2 y4_sik_3 cizim=718 ucgen=1591916 konum=(-393.6781, 20.19666, -236.0898)
+ISTKISI y4_sik_4 y30=1 y60=20 gorunen=12 hayvan=6 etkin=33 yuruyen=27 duran=6 evde=0 havada=0 suda=0 ms=1.47 ms_ort=3.30 ms_max=33.26 hedef=33 esyada=0
+RINFO doku2 y4_sik_4 cizim=700 ucgen=2288217 konum=(-943.2637, 20.79812, -442.1566)
+ISTKISI y4_surdibi_1 y30=1 y60=11 gorunen=11 hayvan=3 etkin=16 yuruyen=11 duran=5 evde=0 havada=0 suda=0 ms=0.90 ms_ort=3.05 ms_max=33.26 hedef=16 esyada=0
+RINFO doku2 y4_surdibi_1 cizim=1500 ucgen=3238103 konum=(-1697.641, 19.59695, -126.4907)
+ISTKISI y4_surdibi_2 y30=2 y60=10 gorunen=6 hayvan=3 etkin=16 yuruyen=12 duran=4 evde=0 havada=0 suda=0 ms=0.95 ms_ort=2.84 ms_max=33.26 hedef=16 esyada=0
+RINFO doku2 y4_surdibi_2 cizim=1264 ucgen=2692689 konum=(-1571.059, 17.20021, -524.3821)
+ISTKISI y4_surdibi_3 y30=1 y60=17 gorunen=13 hayvan=4 etkin=25 yuruyen=20 duran=5 evde=0 havada=0 suda=0 ms=0.97 ms_ort=2.67 ms_max=33.26 hedef=24 esyada=0
+RINFO doku2 y4_surdibi_3 cizim=1034 ucgen=2591400 konum=(-1406.885, 2.84182, 410.8928)
+ISTKISI y4_surdibi_4 y30=6 y60=17 gorunen=10 hayvan=4 etkin=20 yuruyen=10 duran=10 evde=0 havada=0 suda=0 ms=0.98 ms_ort=2.53 ms_max=33.26 hedef=20 esyada=0
+RINFO doku2 y4_surdibi_4 cizim=1008 ucgen=2275129 konum=(-1329.09, 25.24938, -800.0708)
+ISTKISI y4_bostan_1 y30=1 y60=10 gorunen=14 hayvan=3 etkin=16 yuruyen=14 duran=2 evde=0 havada=0 suda=0 ms=1.01 ms_ort=2.42 ms_max=33.26 hedef=16 esyada=0
+RINFO doku2 y4_bostan_1 cizim=649 ucgen=1317895 konum=(-775.5089, 3.544392, 145.8846)
+ISTKISI y4_bostan_2 y30=4 y60=18 gorunen=8 hayvan=5 etkin=27 yuruyen=13 duran=14 evde=0 havada=0 suda=0 ms=1.06 ms_ort=2.33 ms_max=33.26 hedef=26 esyada=0
+RINFO doku2 y4_bostan_2 cizim=463 ucgen=774474 konum=(-1114.392, 20.3597, 219.5771)
+ISTKISI y4_bostan_3 y30=6 y60=17 gorunen=11 hayvan=4 etkin=23 yuruyen=10 duran=13 evde=0 havada=0 suda=0 ms=1.04 ms_ort=2.25 ms_max=33.26 hedef=23 esyada=0
+RINFO doku2 y4_bostan_3 cizim=593 ucgen=1881800 konum=(-1019.568, 4.824869, -100.7641)
+ISTKISI y4_bostan_4 y30=4 y60=23 gorunen=11 hayvan=5 etkin=27 yuruyen=16 duran=11 evde=0 havada=0 suda=0 ms=1.47 ms_ort=2.20 ms_max=33.26 hedef=26 esyada=0
+RINFO doku2 y4_bostan_4 cizim=665 ucgen=2298357 konum=(-1268.401, 9.773001, -348.8367)
+RINFO doku2 h4_hub_30 cizim=865 ucgen=3307655 konum=(-1645.0, 44.78054, -297.5)
+RINFO doku2 h4_carsi_30 cizim=729 ucgen=1785349 konum=(-402.5, 43.92156, -21.0)
+RINFO doku2 h4_mahalle_70 cizim=495 ucgen=1232392 konum=(-525.0, 86.88777, -87.5)
+RINFO doku2 h4_bati_70 cizim=705 ucgen=2395528 konum=(-1260.0, 75.39173, -210.0)
+RINFO doku2 h4_forum_konstantin cizim=578 ucgen=1872182 konum=(-406.0, 51.58133, 140.0)
+RINFO doku2 h4_forum_tauri cizim=670 ucgen=2001555 konum=(-612.5, 49.32533, 157.5)
+ISTKISI y4_cati_1 y30=4 y60=16 gorunen=11 hayvan=5 etkin=27 yuruyen=14 duran=13 evde=0 havada=0 suda=0 ms=1.25 ms_ort=2.00 ms_max=33.26 hedef=26 esyada=0
+RINFO doku2 y4_cati_1 cizim=559 ucgen=1720740 konum=(-753.2565, 12.45718, -15.47576)
+RINFO doku2 h4_cati_15 cizim=686 ucgen=3074204 konum=(-742.0, 18.53283, -7.0)
+
+## Varyantlar (birleşik dal, başsız)
+VARYANT_BITTI
+b10_-: AUTOTEST PASS yasak=0
+b11_-: AUTOTEST PASS yasak=0
+b11_arrest: AUTOTEST PASS yasak=0
+b11_escape: AUTOTEST PASS yasak=0
+b11_fired: AUTOTEST PASS yasak=0
+b11_help: AUTOTEST PASS yasak=0
+b11_helpwall: AUTOTEST PASS yasak=0
+b11_hikmet: AUTOTEST PASS yasak=0
+b11_lost: AUTOTEST PASS yasak=0
+b11_niko: AUTOTEST PASS yasak=0
+b11_persuade: AUTOTEST PASS yasak=0
+b12b_-: AUTOTEST PASS yasak=0
+b6_-: AUTOTEST PASS yasak=0
+b7_-: AUTOTEST PASS yasak=0
+b7_byz: AUTOTEST PASS yasak=0
+b7_byzcell: AUTOTEST PASS yasak=0
+b7_byzniko: AUTOTEST PASS yasak=0
+b7_byzniko: YOK yasak=0
+b7_fez: AUTOTEST PASS yasak=0
+b7_form: AUTOTEST PASS yasak=0
+b7_lost: AUTOTEST PASS yasak=0
+b7_tea: AUTOTEST PASS yasak=0
+b7_wall: AUTOTEST PASS yasak=0
+b7_wallkeep: AUTOTEST PASS yasak=0
+
+## Yükleme ölçümü ÖNCE
+BAGLAMA_TAKILMA evre=acilis_20sn kare=1064 ust50=29 en_uzun=225ms
+BAGLAMA_TAKILMA evre=ucus_60sn kare=3540 ust50=22 en_uzun=114ms
+BAGLAMA_YUKLE bolum=11 dal= v2=true ms=44556
+BAGLAMA_TAKILMA evre=acilis_20sn kare=1115 ust50=14 en_uzun=142ms
+BAGLAMA_TAKILMA evre=ucus_60sn kare=3549 ust50=22 en_uzun=86ms
+BAGLAMA_YUKLE bolum=11 dal= v2=true ms=37792
+BAGLAMA_TAKILMA evre=acilis_20sn kare=1129 ust50=11 en_uzun=138ms
+BAGLAMA_TAKILMA evre=ucus_60sn kare=3548 ust50=20 en_uzun=104ms
+BAGLAMA_YUKLE bolum=11 dal= v2=true ms=34393
+## SONRA-1 (yalnız DOKU-4)
+BAGLAMA_YUKLE bolum=11 dal= v2=true ms=20667
+BAGLAMA_TAKILMA evre=acilis_20sn kare=1103 ust50=16 en_uzun=159ms
+BAGLAMA_TAKILMA evre=ucus_60sn kare=3574 ust50=12 en_uzun=88ms
+BAGLAMA_YUKLE bolum=11 dal= v2=true ms=19745
+BAGLAMA_TAKILMA evre=acilis_20sn kare=1104 ust50=15 en_uzun=161ms
+BAGLAMA_TAKILMA evre=ucus_60sn kare=3546 ust50=18 en_uzun=107ms
+BAGLAMA_YUKLE bolum=11 dal= v2=true ms=21011
+BAGLAMA_TAKILMA evre=acilis_20sn kare=1106 ust50=16 en_uzun=157ms
+BAGLAMA_TAKILMA evre=ucus_60sn kare=3559 ust50=19 en_uzun=79ms
+## Son ölçüm (birleşik)
+f_yaz:
+BAGLAMA_TAKILMA evre=acilis_20sn kare=973 ust50=35 en_uzun=390ms
+BAGLAMA_TAKILMA evre=ucus_60sn kare=3530 ust50=26 en_uzun=148ms
+BAGLAMA_YUKLE bolum=11 dal= v2=true ms=42738
+ISTPROF hayat { "n": 4506, "ust16": 0, "ust33": 0, "en_ms": 6.8 }
+ISTPROF hayat_yakin en_ms=26.6 ort_ms=0.46
+ISTPROF mahalle_doku { "n": 4506, "ust16": 98, "ust33": 25, "en_ms": 130.2 }
+f_o1:
+BAGLAMA_TAKILMA evre=acilis_20sn kare=953 ust50=44 en_uzun=395ms
+BAGLAMA_TAKILMA evre=ucus_60sn kare=3505 ust50=31 en_uzun=129ms
+BAGLAMA_YUKLE bolum=11 dal= v2=true ms=26470
+ISTPROF hayat { "n": 4461, "ust16": 0, "ust33": 0, "en_ms": 10.0 }
+ISTPROF hayat_yakin en_ms=23.4 ort_ms=0.51
+ISTPROF mahalle_doku { "n": 4461, "ust16": 106, "ust33": 31, "en_ms": 112.0 }
+f_o2:
+BAGLAMA_TAKILMA evre=acilis_20sn kare=973 ust50=34 en_uzun=377ms
+BAGLAMA_TAKILMA evre=ucus_60sn kare=3539 ust50=29 en_uzun=100ms
+BAGLAMA_YUKLE bolum=11 dal= v2=true ms=25357
+ISTPROF hayat { "n": 4515, "ust16": 0, "ust33": 0, "en_ms": 6.5 }
+ISTPROF hayat_yakin en_ms=23.2 ort_ms=0.44
+ISTPROF mahalle_doku { "n": 4515, "ust16": 92, "ust33": 29, "en_ms": 84.7 }
+f_o3:
+BAGLAMA_TAKILMA evre=acilis_20sn kare=958 ust50=37 en_uzun=520ms
+BAGLAMA_TAKILMA evre=ucus_60sn kare=3526 ust50=31 en_uzun=136ms
+BAGLAMA_YUKLE bolum=11 dal= v2=true ms=27073
+ISTPROF hayat { "n": 4487, "ust16": 0, "ust33": 0, "en_ms": 8.6 }
+ISTPROF hayat_yakin en_ms=30.1 ort_ms=0.47
+ISTPROF mahalle_doku { "n": 4487, "ust16": 103, "ust33": 33, "en_ms": 113.3 }
+f_d1:
+BAGLAMA_TAKILMA evre=acilis_20sn kare=978 ust50=34 en_uzun=392ms
+BAGLAMA_TAKILMA evre=ucus_60sn kare=3550 ust50=33 en_uzun=113ms
+BAGLAMA_YUKLE bolum=11 dal= v2=true ms=34645
+ISTPROF hayat { "n": 4531, "ust16": 0, "ust33": 0, "en_ms": 7.2 }
+ISTPROF hayat_yakin en_ms=25.8 ort_ms=0.47
+ISTPROF mahalle_doku { "n": 4531, "ust16": 97, "ust33": 30, "en_ms": 103.5 }
