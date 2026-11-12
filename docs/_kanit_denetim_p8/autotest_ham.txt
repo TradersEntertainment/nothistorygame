@@ -1,0 +1,87 @@
+## S1_24_base
+AUTOTEST PASS chapter=24 variant= outcome=24.1 stumbles=0 kid=true niko=false steadied=0 kid_t=0.2
+## S1_24_eclipse
+AUTOTEST PASS chapter=24 variant=eclipse outcome=24.1 stumbles=0 kid=true niko=false steadied=0 kid_t=0.3
+## S1_24_late
+AUTOTEST PASS chapter=24 variant=late outcome=24.2 stumbles=0 kid=false niko=false steadied=0 kid_t=0.2
+## S1_24_niko
+AUTOTEST PASS chapter=24 variant=niko outcome=24.1 stumbles=0 kid=true niko=true steadied=1 kid_t=0.2
+## S1_24_niko_slow
+AUTOTEST PASS chapter=24 variant=niko_slow outcome=24.1 stumbles=0 kid=true niko=true steadied=1 kid_t=23.7
+## S1_25_base
+AUTOTEST PASS chapter=25 variant= outcome=25.1 caught=0 candle=true tezkire=false marco=false
+## S1_25_caught
+AUTOTEST PASS chapter=25 variant=caught outcome=25.2 caught=0 candle=true tezkire=false marco=false
+## S1_25_kid
+AUTOTEST PASS chapter=25 variant=kid outcome=25.1 caught=0 candle=true tezkire=false marco=true
+## S1_25_osm
+AUTOTEST PASS chapter=25 variant=osm outcome=25.1 caught=0 candle=false tezkire=false marco=false
+## S1_25_osm_caught
+AUTOTEST PASS chapter=25 variant=osm_caught outcome=25.2 caught=2 candle=false tezkire=false marco=false
+## S1_25_osm_tez
+AUTOTEST PASS chapter=25 variant=osm_tez outcome=25.1 caught=1 candle=false tezkire=true marco=false
+## S1_25_pass
+AUTOTEST PASS chapter=25 variant=pass outcome=25.1 caught=0 candle=true tezkire=false marco=false
+## S1_26_base
+AUTOTEST PASS chapter=26 variant= outcome=26.1 water=3 repaired=3 cleared=2 world= gun=3/4 gunner=3/3
+## S1_6_base
+AUTOTEST PASS chapter=6 variant= branch=6a outcome=6a.1 paradox=10 mistakes=0 telsiz=4
+## S2_10h_base
+AUTOTEST PASS chapter=10h variant= outcome=10H.1 truth=3 direnc=0 paradox=0
+## S2_10h_honest
+AUTOTEST PASS chapter=10h variant=honest outcome=10H.1 truth=3 direnc=0 paradox=10
+## S2_10h_open
+AUTOTEST PASS chapter=10h variant=open outcome=10H.1 truth=3 direnc=0 paradox=10
+## S2_10h_pass
+AUTOTEST PASS chapter=10h variant=pass outcome=10H.1 truth=1 direnc=0 paradox=0
+## S2_10h_save
+AUTOTEST PASS chapter=10h variant=save outcome=10H.1 truth=3 direnc=3 paradox=10
+## S2_10h_save1
+AUTOTEST PASS chapter=10h variant=save1 outcome=10H.1 truth=3 direnc=1 paradox=10
+## S2_10h_shame
+AUTOTEST PASS chapter=10h variant=shame outcome=10H.2 truth=0 direnc=0 paradox=0
+## S2_12b_base
+AUTOTEST PASS chapter=12b variant= outcome=12B.1 world= honest=true
+## S2_12b_d2
+AUTOTEST PASS chapter=12b variant=d2 outcome=12B.1 world= honest=true
+## S2_12b_d3
+AUTOTEST PASS chapter=12b variant=d3 outcome=12B.1 world= honest=true
+## S2_12b_lie
+AUTOTEST PASS chapter=12b variant=lie outcome=12B.2 world= honest=false
+## S2_12b_year
+AUTOTEST PASS chapter=12b variant=year outcome=12B.3 world= honest=false
+## S2_23_base
+AUTOTEST PASS chapter=23 variant= outcome=23.1 deviation=0 card=true singed=false letter=false
+## S2_23_creative
+AUTOTEST PASS chapter=23 variant=creative outcome=23.2 deviation=3 card=true singed=false letter=false
+## S2_23_letter
+AUTOTEST PASS chapter=23 variant=letter outcome=23.1 deviation=0 card=true singed=false letter=true
+## S2_23_osm
+AUTOTEST PASS chapter=23 variant=osm outcome=23.1 deviation=0 card=true singed=false letter=false
+## S2_23_pass
+AUTOTEST PASS chapter=23 variant=pass outcome=23.1 deviation=0 card=true singed=false letter=false
+## S2_23_singed
+AUTOTEST PASS chapter=23 variant=singed outcome=23.1 deviation=0 card=true singed=true letter=false
+## S2_30_base
+AUTOTEST PASS chapter=30 variant= outcome=30.1 gun=3/4 pushed=2 boarders=0 duel=true rifle=4
+## S2_31o_base
+AUTOTEST PASS chapter=31o variant= outcome=31O.1 house=true(163) falls=0 signs=3 wrong=0 sun=true lashes=3 miss=0 scaff=true mats=8/8 err=0
+## S2_31o_late
+AUTOTEST PASS chapter=31o variant=late outcome=31O.2 house=true(159) falls=1 signs=3 wrong=2 sun=false lashes=3 miss=1 scaff=true mats=5/8 err=50
+## S2_31o_petrion_bad
+AUTOTEST PASS chapter=31o variant=petrion_bad outcome=31O.1 house=true(163) falls=0 signs=3 wrong=0 sun=true lashes=3 miss=0 scaff=true mats=8/8 err=0
+## S2_31o_petrion_ok
+AUTOTEST PASS chapter=31o variant=petrion_ok outcome=31O.1 house=true(203) falls=0 signs=3 wrong=0 sun=true lashes=3 miss=0 scaff=true mats=8/8 err=1
+## S2_39o_base
+AUTOTEST PASS chapter=39o variant= outcome=39O.1 flags=6/6 lost=0 wrong=0 door=98 broke=false tez=1 struggle=0 lowered=true roof=83 answer=write called=false axes=2
+## S2_39o_late
+WARN_PORTRAIT_STUDIO speaker=SPK_SAILOR key=D39O_SA_FLAG scene=chapter39o.tscn
+AUTOTEST PASS chapter=39o variant=late outcome=39O.2 flags=4/6 lost=2 wrong=0 door=0 broke=true tez=0 struggle=0 lowered=true roof=83 answer=write called=false axes=2
+## S2_39o_pass
+AUTOTEST PASS chapter=39o variant=pass outcome=39O.1 flags=6/6 lost=0 wrong=0 door=98 broke=false tez=1 struggle=0 lowered=true roof=83 answer=write called=true axes=2
+## S2_39o_sailor_bad
+AUTOTEST PASS chapter=39o variant=sailor_bad outcome=39O.1 flags=6/6 lost=0 wrong=0 door=98 broke=false tez=1 struggle=0 lowered=true roof=83 answer=write called=false axes=2
+## S2_39o_sailor_ok
+AUTOTEST PASS chapter=39o variant=sailor_ok outcome=39O.1 flags=6/6 lost=0 wrong=0 door=99 broke=false tez=1 struggle=0 lowered=true roof=83 answer=write called=false axes=1
+## S2_39o_tezkire
+AUTOTEST PASS chapter=39o variant=tezkire outcome=39O.1 flags=6/6 lost=0 wrong=0 door=98 broke=false tez=3 struggle=0 lowered=true roof=83 answer=write called=false axes=2
