@@ -73,6 +73,8 @@ func _ready() -> void:
 			await _hendek4()
 		"gedik":
 			await _gedik()
+		"piksel":
+			await _piksel()
 		"deniz":
 			await _deniz()
 		"uzak":
@@ -672,3 +674,41 @@ func _ucg(n: Node) -> int:
 			var ia = arr[Mesh.ARRAY_INDEX]
 			t += ((ia as PackedInt32Array).size() if ia != null and (ia as PackedInt32Array).size() > 0 else (arr[Mesh.ARRAY_VERTEX] as PackedVector3Array).size()) / 3
 	return t
+
+
+
+## Karedeki bir pikselin (--px=x,y; liste ilk satırının kamerası) çevresinde görünen öğeler: düğüm yolu, uzaklık, boyut
+func _piksel() -> void:
+	var px := Vector2(760, 430)
+	for a: String in OS.get_cmdline_user_args():
+		if a.begins_with("--px="):
+			var t := a.substr(5).split(",")
+			px = Vector2(t[0].to_float(), t[1].to_float())
+	var s := _satirlar()
+	_kam_koy(_kam_coz(s[0]))
+	await _bekle()
+	var sc := get_viewport().get_visible_rect().size / Vector2(1280, 720)
+	for c in get_tree().root.find_children("*", "GeometryInstance3D", true, false):
+		var gi := c as GeometryInstance3D
+		if not gi.is_visible_in_tree():
+			continue
+		var yol := String(gi.get_path()).replace("/root/Sur5Kare/", "")
+		var noktalar: Array = []
+		if gi is MultiMeshInstance3D:
+			var mm := (gi as MultiMeshInstance3D).multimesh
+			if mm == null:
+				continue
+			for j in mm.instance_count:
+				noktalar.append([gi.global_transform * mm.get_instance_transform(j).origin, mm.get_instance_transform(j).basis.get_scale()])
+		elif gi is MeshInstance3D and (gi as MeshInstance3D).mesh != null:
+			var ab := gi.global_transform * (gi as MeshInstance3D).mesh.get_aabb()
+			if ab.size.length() > 40.0:
+				continue
+			noktalar.append([ab.get_center(), ab.size])
+		for q: Array in noktalar:
+			var w: Vector3 = q[0]
+			if cam.is_position_behind(w):
+				continue
+			var sp := cam.unproject_position(w) / sc
+			if sp.distance_to(px) < 25.0:
+				print("SURPIKSEL %s uzak=%.0f boyut=%s ekran=%s" % [yol, cam.global_position.distance_to(w), q[1], sp])
