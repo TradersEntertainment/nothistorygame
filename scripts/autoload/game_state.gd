@@ -561,6 +561,13 @@ const _LOOK_FREE_ACT := ["", "carry", "sit", "sit_ground", "write", "write_desk"
 const _LOOK_SKIP_ACT := ["ride", "row", "swim", "fly", "hover", "lie", "sleep", "doze", "crouch"]
 
 
+## Başkasının ittiği kişinin kayması kendi yürüyüşü değildir: bakış denetiminin son konumunu o kadar kaydırır.
+func look_audit_shift(p: Node3D, local_step: Vector3) -> void:
+	var d = _look_data.get(p.get_instance_id())
+	if d is Dictionary and d.get("pos", Vector3.INF) != Vector3.INF:
+		d["pos"] = d["pos"] + local_step
+
+
 func _look_audit(delta: float) -> void:
 	var sc := get_tree().current_scene
 	if sc == null or sc.scene_file_path == "" or sc.scene_file_path.contains("/tests/") or get_tree().paused:
@@ -588,8 +595,8 @@ func _look_audit(delta: float) -> void:
 			d["pos"] = lp
 			_look_data[id] = d
 			if prev == Vector3.INF or not p.is_visible_in_tree() or not p.can_process() or p.get_meta("hologram", false) \
-					or p.has_meta("corpse") or p.has_meta("climber") or p.has_meta("no_audit"):
-				continue
+					or p.has_meta("corpse") or p.has_meta("climber") or p.has_meta("no_look_audit"):
+				continue      # "no_audit" (zemin/içinden geçme muafiyeti) bakış denetimini susturmaz; yalnız "no_look_audit"
 			var rg = p.get("rig")
 			var act := str(p.get("activity")) if grp == "persons" else (str(rg.activity) if rg != null else "")
 			if act in _LOOK_SKIP_ACT:
@@ -617,12 +624,14 @@ func _look_audit(delta: float) -> void:
 			mvg.y = 0.0
 			var spd := mvg.length() / dt
 			var cands: Array = []        # [tür, açı]
+			var walk_now: bool = spd > (0.25 if d.get("walking", false) else 0.35) and mvg.length() < 2.0      # gaze_dir ile aynı eşik/histerezis
+			d["walking"] = walk_now
 			if p.has_meta("grip_tw") and p.get("work_at") is Vector3 and p.get("work_at") != Vector3.INF:
 				var to: Vector3 = p.get("work_at") - gpos
 				to.y = 0.0
 				if to.length() > 0.5:      # kalçadaki ip tutamağı gibi gövdenin dibindeki iş noktası ölçülmez
 					cands.append(["grip", rad_to_deg(fwd.angle_to(to.normalized()))])
-			if lt != null and spd > 0.6 and mvg.length() < 2.0 and not p.get_meta("walk_back", false):
+			if lt != null and walk_now and not p.get_meta("walk_back", false):
 				cands.append(["walk", rad_to_deg(fwd.angle_to(mvg.normalized()))])
 			if not (act in _LOOK_FREE_ACT) and grp == "persons":
 				if lt == null and spd < 0.3:

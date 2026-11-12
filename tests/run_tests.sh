@@ -48,7 +48,16 @@ if empty:
     print("VOICEGAIN FAIL: boş ses dosyası: " + ", ".join(empty))
     sys.exit(1)
 PYEOF
+# Parçalı koşu (tam paket birkaç makineye bölünür): SHARD=k SHARDS=n — koşuların sıra numarası n'e bölününce k kalanı
+# verenler bu makinede koşar; ön denetimler her parçada, paket sonu denetimleri (menü dönüşü, titreşen yüzey) yalnız
+# SHARD=0'da koşar. LIST=1: hiçbir şey koşmadan bu parçanın koşu satırlarını yazar.
+_run_n=0
 run() {
+  if [ -n "${SHARD:-}" ]; then
+    _run_n=$((_run_n + 1))
+    [ $((_run_n % ${SHARDS:-8})) -eq "$SHARD" ] || return
+  fi
+  if [ "${LIST:-0}" = "1" ]; then echo "RUN $*"; return; fi
   if [ "${QUICK:-0}" = "1" ]; then
     case " $* " in
       *" --autotest "*|*" --autotest=byz "*|*" --autotest=osm "*|*"--chapter=12 --autotest=next "*|*"--chapter=12b --autotest=next "*) ;;
@@ -292,6 +301,8 @@ run --chapter=13 --autotest=wrong_next
 run --chapter=13 --autotest=gidak
 run --chapter=16 --autotest=next
 run --chapter=14 --autotest=next
+if [ -n "${SHARD:-}" ] && [ "$SHARD" != "0" ]; then echo "SHARD $SHARD/${SHARDS:-8} BITTI fail=$fail"; exit $fail; fi
+[ "${LIST:-0}" = "1" ] && exit 0
 # Ana menüye dönüş (v0.99): ağır bölümden duraklatma menüsüyle iki kez dönülür; menü açılmalı, kalıntı kalmamalı
 for ch in 26 20o; do
   mout=$(timeout 300 "$GODOT" --headless --path . res://tests/menu_return.tscn -- --chapter=$ch 2>&1)

@@ -834,7 +834,6 @@ func _run_shots() -> void:
 	await _shot("c10_01_kapi.png")
 	player.global_position = _at(CAMEL_POS + Vector3(2.4, 0, 2.6)) + Vector3(0, 0.1, 0)
 	player.face(cameleer.global_position + Vector3(0, 1.4, 0))
-	cameleer.face_toward(player.global_position)      # ışınlanma kesmesi: iş başındaki deveci konuşmaya dönük başlar
 	cameleer.talking = true
 	hud.bark("SPK_CAMELEER", "D10O_CAMELEER_2", 30.0)
 	await get_tree().create_timer(0.4, false).timeout
