@@ -171,7 +171,9 @@ func _wall(size: Vector3, pos: Vector3, color := C_STONE) -> StaticBody3D:
 
 
 func _build_ground() -> void:
-	Props.set_pattern(Props.solid(self, Vector3(100, 0.4, 40), Vector3(0, -0.2, -24.0), Color.WHITE), Color("8a7a60"), "cobble")
+	var sokak := Props.solid(self, Vector3(100, 0.4, 40), Vector3(0, -0.2, -24.0), Color.WHITE)
+	Props.set_pattern(sokak, Color("8a7a60"), "cobble")
+	load("res://scripts/level/zemin.gd").doseme_kir_dugum(sokak)      # ZEMİN: kir/aşınma
 	var peri := Props.solid(self, Vector3(100, 0.4, OUTER_Z0 - INNER_Z1 + 0.2), Vector3(0, -0.2, (INNER_Z1 + OUTER_Z0) * 0.5), Color("6e6452"))
 	peri.name = "Peribolos"
 	# Toprak deseni (yayma P6): düz boyalı peribolos ve hendek dibi gece ışığında tek renk levha gibi duruyordu

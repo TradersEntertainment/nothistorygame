@@ -149,6 +149,45 @@ static func v2_asinma(alan := Rect2(-3350.0, -1250.0, 1700.0, 1800.0), m_px := 1
 	return _v2a
 
 
+## Taş döşeme/kaldırım (Props "cobble" desenli StandardMaterial3D): malzeme türü aynı kalır (ıslaklık kodu onu bekler);
+## dünya uzayında ayrıntı katmanı eklenir: 2–10 m'lik kir/aşınma lekeleri, derzlerde koyulaşma, sıcak ton (düz,
+## yinelenen soğuk gri desen kırılır). Döner: aynı malzeme.
+static var _kir: ImageTexture
+static func doseme_kir(m: StandardMaterial3D) -> StandardMaterial3D:
+	if _kir == null:
+		malzeme()
+		var src := _gurultu.get_image()
+		if src.is_compressed():
+			src.decompress()
+		var n := src.get_width()
+		var img := Image.create(n, n, false, Image.FORMAT_RGB8)
+		for y in n:
+			for x in n:
+				var c := src.get_pixel(x, y)
+				var c2 := src.get_pixel((x * 3 + 17) % n, (y * 3 + 41) % n)
+				var k := 0.8 + 0.24 * (c.r * 0.65 + c2.g * 0.35) - 0.1 * smoothstep(0.62, 0.8, c2.r)
+				img.set_pixel(x, y, Color(k * 1.03, k * 1.0, k * 0.9))
+		img.generate_mipmaps()
+		_kir = ImageTexture.create_from_image(img)
+	m.detail_enabled = true
+	m.detail_blend_mode = BaseMaterial3D.BLEND_MODE_MUL
+	m.detail_albedo = _kir
+	m.detail_uv_layer = BaseMaterial3D.DETAIL_UV_2
+	m.uv2_triplanar = true
+	m.uv2_world_triplanar = true
+	m.uv2_scale = Vector3(1.0 / 13.0, 1.0 / 13.0, 1.0 / 13.0)
+	return m
+
+
+## Düğümün (Props.solid/box) döşeme malzemesini kopyalayıp doseme_kir uygular (paylaşılan desen malzemesi bozulmaz).
+static func doseme_kir_dugum(sahip: Node) -> Node:
+	for n in ([sahip] + sahip.find_children("*", "MeshInstance3D", true, false)):
+		if n is MeshInstance3D and (n as MeshInstance3D).material_override is StandardMaterial3D:
+			var mi := n as MeshInstance3D
+			mi.material_override = doseme_kir((mi.material_override as StandardMaterial3D).duplicate())
+	return sahip
+
+
 # ------------------------------------------------------------------ aşınma maskesi
 
 static func asinma_baslat(sahip: Node, alan: Rect2, m_px := 0.5, mat: ShaderMaterial = null) -> Dictionary:
@@ -386,7 +425,7 @@ static func ot_payi(x: float, z: float, ipucu: Color) -> float:
 	var otluk := yesil + (w.x - 0.5) * 0.6 + (q.y - 0.5) * 0.35
 	otluk -= cig * 0.45 * smoothstep(0.4, 0.7, o.x)
 	otluk -= smoothstep(0.6, 0.78, q.x) * 0.5 * (1.0 - yesil * 0.5)
-	otluk += smoothstep(0.62, 0.8, o.y) * 0.45 * (1.0 - acik) * (1.0 - cig * 0.6)
+	otluk += smoothstep(0.62, 0.8, o.y) * 0.45 * (1.0 - acik * 0.55) * (1.0 - cig * 0.5)
 	return smoothstep(0.44, 0.56, otluk)
 
 

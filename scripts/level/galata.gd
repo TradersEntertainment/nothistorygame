@@ -103,7 +103,9 @@ func _build_sky() -> void:
 
 func _build_ground() -> void:
 	# Rıhtım ve sokak: arnavut kaldırımı; mahalle hafifçe yokuş (basamaklarla)
-	Props.set_pattern(Props.solid(self, Vector3(90, 0.4, 30), Vector3(0, -0.2, -13.0), Color.WHITE), Color("b8aa94"), "cobble")
+	var rihtim := Props.solid(self, Vector3(90, 0.4, 30), Vector3(0, -0.2, -13.0), Color.WHITE)
+	Props.set_pattern(rihtim, Color("b8aa94"), "cobble")
+	load("res://scripts/level/zemin.gd").doseme_kir_dugum(rihtim)      # ZEMİN: kir/aşınma
 	# Rıhtım duvarı
 	Props.set_pattern(Props.solid(self, Vector3(90, 1.6, 1.2), Vector3(0, -0.82, 0.6), Color.WHITE), Color("a89880"), "ashlar")
 	for x in range(-40, 41, 8):
