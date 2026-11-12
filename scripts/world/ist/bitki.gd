@@ -203,21 +203,16 @@ static func add_box(m: Dictionary, c: Vector3, s: Vector3, col: Color, top_col :
 	quad(m, v[0], v[1], v[2], v[3], col.darkened(0.3), c)
 
 
-## Yaprak/çiçek benekleri: tepe küre yüzeyine dağılmış küçük renkli dörtgenler.
+## Çiçek öbekleri: taç yüzeyine yarı gömülü küçük renkli parçalar (dışa bakan, doğru ışık alır).
 static func add_flecks(m: Dictionary, c: Vector3, rad: Vector3, n: int, size: float, col1: Color, col2: Color, seed: int) -> void:
 	for i in n:
-		var u := Vector3(hash_f(float(i), 1.0, 0.0, seed) - 0.5, hash_f(float(i), 2.0, 0.0, seed) - 0.15, hash_f(float(i), 3.0, 0.0, seed) - 0.5)
+		var u := Vector3(hash_f(float(i), 1.0, 0.0, seed) - 0.5, hash_f(float(i), 2.0, 0.0, seed) - 0.1, hash_f(float(i), 3.0, 0.0, seed) - 0.5)
 		if u.length() < 0.05:
 			continue
 		u = u.normalized()
-		var p := c + Vector3(u.x * rad.x, u.y * rad.y, u.z * rad.z) * 1.2
-		var t := u.cross(Vector3.UP)
-		if t.length() < 0.1:
-			t = Vector3.RIGHT
-		t = t.normalized() * size
-		var b := u.cross(t).normalized() * size
-		var col := col1.lerp(col2, hash_f(float(i), 4.0, 0.0, seed))
-		quad(m, p - t - b, p + t - b, p + t + b, p - t + b, col, c)
+		var p := c + Vector3(u.x * rad.x, u.y * rad.y, u.z * rad.z) * 0.97
+		var cc := col1.lerp(col2, hash_f(float(i), 4.0, 0.0, seed))
+		add_blob(m, p, Vector3(size, size * 0.8, size), seed + i, cc, cc.lightened(0.15), 5, 2, 0.9, 0.2)
 
 
 # ------------------------------------------------------------------ ağaç ağı
@@ -262,7 +257,7 @@ static func tree_mesh(tur: String, lod: int) -> ArrayMesh:
 			add_blob(m, c, rad, seed + ti, t[2], t[3], seg, rings, 0.62, 0.2)
 			if lod == 0 and d.has("cicek"):
 				var n := int(rad.x * rad.y * 5.0)
-				add_flecks(m, c, rad, mini(n, 34), 0.17 + rad.x * 0.03, d["cicek"], d["cicek2"], seed + 7 + ti)
+				add_flecks(m, c, rad, mini(n, 22), 0.2 + rad.x * 0.03, d["cicek"], d["cicek2"], seed + 7 + ti)
 		ti += 1
 	var am := finish(m)
 	_cache[key] = am
