@@ -670,8 +670,9 @@ static func _build_moat(root: Node3D, lay: Dictionary, lod: int, stone: Color, o
 	_wedge(root, Vector3(ax - ramp_len * 0.5, -MD, zm0 + 1.3), ramp_len, MD, 2.6, 0.0, stone.darkened(0.1))
 	_wedge(root, Vector3(bx + ramp_len * 0.5, -MD, zm1 - 1.3), ramp_len, MD, 2.6, 180.0, stone.darkened(0.1))
 	# kuru çamur tabanında yer yer su birikintisi ve saz (SUR-4; eskiden boydan boya tek su levhası)
-	if lod == 0:
-		ZEMIN.hendek_dibi(root, x0 + cw, x1 - cw, zm0, zm1, -MD, int(lay["rng_seed"]), pencere)
+	if lod == 0 and _ic(0.0):
+		# bütün dilim için tek pencerede (pencere başına iki MultiMesh çizimi olmasın)
+		ZEMIN.hendek_dibi(root, x0 + cw, x1 - cw, zm0, zm1, -MD, int(lay["rng_seed"]))
 
 
 # ------------------------------------------------------------------ KAYIT

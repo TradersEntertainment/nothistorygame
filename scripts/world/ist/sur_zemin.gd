@@ -223,7 +223,10 @@ static func ates_alani(parent: Node3D, pl: PackedVector2Array, dis: Callable, ba
 			var r := IstGeo.real(w.x, w.y)
 			var g := sin(r.x * 0.031 + r.y * 0.017) * sin(r.x * 0.013 - r.y * 0.029)
 			var t := _hash(si * 3 + 1, j * 5 + 2)
-			var c := TOPRAK.lerp(OT, clampf(0.25 + g * 0.9 + float(j) / nz * 0.45, 0.0, 0.9))
+			var c := TOPRAK.lerp(OT, clampf(0.2 + g * 0.9 + float(j) / nz * 0.45 + (t - 0.5) * 0.6, 0.0, 0.9))
+			# sur boyunca çiğnenmiş yol (ikmal/devriye izi): hendekten ~25 m'de koyu toprak şerit
+			if j == 4 or j == 5:
+				c = c.lerp(TOPRAK2, 0.55)
 			if t > 0.9:
 				c = c.lerp(YANIK, 0.55)
 			elif t < 0.12:
@@ -246,7 +249,7 @@ static func ates_alani(parent: Node3D, pl: PackedVector2Array, dis: Callable, ba
 				kapida = true
 		if kapida:
 			continue
-		if rng.randf() < 0.55:
+		if rng.randf() < 0.75:
 			var dz2 := bas + rng.randf_range(2.0, ATES_EN - 4.0)
 			var w2 := p + o * dz2 + d * rng.randf_range(-2.0, 2.0)
 			var y2 := IstGeo.h(w2.x, w2.y) + 0.14 + 0.04 * dz2 / ATES_ADIM

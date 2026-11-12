@@ -2489,10 +2489,40 @@ func _kose_dolgu(ad: String, kur: String) -> void:
 		var dya := ya + _dis_dy(A) - y0 if kur == "kara" else 0.0
 		var dyb := yb + _dis_dy(B) - y0 if kur == "kara" else 0.0
 		var bi := 0
+		# Şerit: iki uç arasında hattın kendisini izler (kırık noktalarında gönye); aralık yoksa (kulesiz köşe) tek kama
+		var sA := float(A["s1"])
+		var sB := float(B["s0"])
+		var izp: Array = [[pa, oa]]
+		if sB - sA > 0.5:
+			var hp := _sade(IstGeo.yol(ad))
+			var acc := 0.0
+			var ss: Array = []
+			var nn := int(ceil((sB - sA) / 2.5))
+			for k in range(1, nn):
+				ss.append(sA + (sB - sA) * k / nn)
+			for vi in range(1, hp.size() - 1):
+				acc += hp[vi - 1].distance_to(hp[vi])
+				if acc > sA + 0.3 and acc < sB - 0.3:
+					ss.append(acc)
+			ss.sort()
+			for sv: float in ss:
+				var qd := _hat_nokta(hp, sv)
+				izp.append([qd["p"], _out(qd["d"], qd["p"], ad) * float(qd["m"])])
+		izp.append([pb, ob])
+		var qs: Array = []
 		for bd: Array in bands:
 			var z0 := float(bd[0])
 			var z1 := float(bd[1])
-			var q := PackedVector2Array([pa + oa * z0 - cen, pa + oa * z1 - cen, pb + ob * z1 - cen, pb + ob * z0 - cen])
+			var ql: Array = []
+			for k in izp.size() - 1:
+				var P0: Vector2 = izp[k][0]
+				var N0: Vector2 = izp[k][1]
+				var P1: Vector2 = izp[k + 1][0]
+				var N1: Vector2 = izp[k + 1][1]
+				ql.append(PackedVector2Array([P0 + N0 * z0 - cen, P0 + N0 * z1 - cen, P1 + N1 * z1 - cen, P1 + N1 * z0 - cen]))
+			qs.append(ql)
+		for bd: Array in bands:
+			var q: Array = qs[bi]
 			var yb0 := float(bd[2])
 			var yt: float = (wtop - y0) if bd[3] is String else float(bd[3]) + top_off
 			if kur == "kara" and bi >= 3:
@@ -2505,13 +2535,31 @@ func _kose_dolgu(ad: String, kur: String) -> void:
 			bi += 1
 		var mk := func(n: Node3D, lod: int) -> void:
 			for pq: Array in polys:
-				_prizma(n, pq[0], float(pq[1]), float(pq[2]), pq[3], String(pq[4]), lod)
+				for qq: PackedVector2Array in pq[0]:
+					_prizma(n, qq, float(pq[1]), float(pq[2]), pq[3], String(pq[4]), lod)
 		var it := _v2_item("kdolgu_%s_%d" % [ad, i], Vector3(cen.x, y0, cen.y), 0.0, maxf(pa.distance_to(pb), 6.0) + 30.0, mk, {}, true)
 		it["hat"] = ad
 		it["walk"] = wtop
 		it["kd_s"] = Vector2(float(A["s1"]), float(B["s0"]))
 		hat_items.append(it)
 		kose_dolgu_n += 1
+
+
+## Hat üstünde yay boyu sv'deki nokta, yön ve gönye çarpanı (kırık noktasında dış öteleme 1/cos(yarım açı))
+static func _hat_nokta(pl: PackedVector2Array, sv: float) -> Dictionary:
+	var acc := 0.0
+	for i in pl.size() - 1:
+		var l := pl[i].distance_to(pl[i + 1])
+		if acc + l >= sv or i == pl.size() - 2:
+			var d := (pl[i + 1] - pl[i]) / maxf(l, 0.001)
+			var t := sv - acc
+			if t > l - 0.35 and i < pl.size() - 2:
+				var d2 := (pl[i + 2] - pl[i + 1]).normalized()
+				var dm := (d + d2).normalized()
+				return {"p": pl[i + 1], "d": dm, "m": 1.0 / maxf(dm.dot(d), 0.5)}
+			return {"p": pl[i] + d * clampf(t, 0.0, l), "d": d, "m": 1.0}
+		acc += l
+	return {"p": pl[0], "d": Vector2.RIGHT, "m": 1.0}
 
 
 ## Dörtgen taban (yerel x,z; dışbükey sırayla) üstünde dik prizma: alt y0, üst y1. lod 0: çarpışmalı.
@@ -2632,7 +2680,7 @@ func _ates_alani(pl: PackedVector2Array) -> void:
 		if String(it.get("kapi_hat", "")) == "kara_suru":
 			kp.append(Vector2(it["pos"].x, it["pos"].z))
 	var dm := IstSurlar.dims(K_SUR)
-	var bas := float(dm["zm1"]) + 12.0
+	var bas := float(dm["zm1"]) + 7.0
 	var n := SURZEMIN.ates_alani(self, pl, func(d: Vector2, p: Vector2) -> Vector2: return _out(d, p, "kara_suru"), bas, kp)
 	stats["ates_alani"] = n.get_meta("say", {})
 	stats["ates_alani_ms"] = (Time.get_ticks_usec() - t0) / 1000.0
