@@ -22,14 +22,14 @@ extends RefCounted
 ## Şehirde toplu kullanım: mesh(v, tip, lod) ile pişmiş ağ, shapes(v, tip) ile çarpışma (IstSehir).
 
 # ---------------------------------------------------------------- palet (ISTANBUL_GORUNUS §2; görünen renkler)
-const P_TAS := [Color("a39c88"), Color("968f7c"), Color("aca38c"), Color("8f8775")]          # kireçtaşı / kesme taş
-const P_SIVA := [Color("b8a98c"), Color("b3a689"), Color("bdb095"), Color("a99b7f"), Color("b09f83"), Color("a39275")]
-const P_BADANA := [Color("c4bba5"), Color("bdb39c"), Color("c8bfa9")]                       # kirli kireç beyazı
-const P_KERPIC := [Color("957f62"), Color("8a755a"), Color("7a6c57")]                       # sıvasız / kerpiç
-const P_TUGLA := Color("a8553a")
-const P_AHSAP := [Color("6b5a46"), Color("7a644c"), Color("8a6f4f")]
-const P_KIREMIT := [Color("8e4631"), Color("7a3f30"), Color("85503b"), Color("6e3a2c"), Color("94604c"), Color("7f4a3a")]
-const P_DAM := [Color("8c7f6a"), Color("958870"), Color("807563")]                          # düz dam (toprak/sıva)
+const P_TAS := [Color("868070"), Color("7b7566"), Color("8d8673"), Color("756f60")]          # kireçtaşı / kesme taş
+const P_SIVA := [Color("978b73"), Color("938870"), Color("9b907a"), Color("8b7f68"), Color("90826b"), Color("867860")]
+const P_BADANA := [Color("a19987"), Color("9b9380"), Color("a49d8b")]                       # kirli kireç beyazı
+const P_KERPIC := [Color("7a6850"), Color("71604a"), Color("645947")]                       # sıvasız / kerpiç
+const P_TUGLA := Color("8a4630")
+const P_AHSAP := [Color("584a39"), Color("64523e"), Color("715b41")]
+const P_KIREMIT := [Color("743928"), Color("643427"), Color("6d4230"), Color("5a3024"), Color("794f3e"), Color("683d30")]
+const P_DAM := [Color("736857"), Color("7a705c"), Color("696051")]                          # düz dam (toprak/sıva)
 const SHUTTERS := [Color("5a5244"), Color("4e5a4a"), Color("6b4a36"), Color("5a6250")]     # soluk, boyasız ahşap
 ## Eski adlar (başka dosyalar kullanabilir)
 const PLASTERS := P_SIVA
@@ -49,11 +49,12 @@ const KULUBE_H := 2.8
 ## CityPlan'ın eski ev ölçüleri (CityHouses.VARIANTS) v < ESKI için aynen (eski dünya); v2 yeni tabloyu kullanır.
 ## YENI: [cephe m, derinlik m, kat] (kat 0: kulübe). Her ölçü üç kez (üç farklı duvar/çatı biçimi) sıralanır.
 const YENI := [
-	[4.0, 6.0, 1], [5.0, 6.0, 1], [6.0, 7.0, 1], [7.0, 8.0, 1], [8.0, 8.0, 1], [5.0, 8.0, 1],
-	[5.0, 7.0, 2], [6.0, 8.0, 2], [7.0, 8.0, 2], [8.0, 9.0, 2], [6.0, 9.0, 2], [4.0, 7.0, 2], [9.0, 9.0, 2],
-	[6.0, 9.0, 3], [7.0, 10.0, 3], [8.0, 10.0, 3],
-	[4.0, 5.0, 0], [5.0, 5.0, 0], [6.0, 6.0, 0],
-	[10.0, 10.0, 2], [12.0, 10.0, 2],                     # han, konak
+	[4.0, 8.0, 1], [5.0, 8.0, 1], [5.0, 9.0, 1], [6.0, 9.0, 1], [7.0, 10.0, 1], [8.0, 10.0, 1],
+	[4.0, 8.0, 2], [5.0, 9.0, 2], [6.0, 9.0, 2], [6.0, 10.0, 2], [7.0, 10.0, 2], [8.0, 11.0, 2], [5.0, 10.0, 2],
+	[5.0, 6.0, 1], [6.0, 7.0, 1], [7.0, 7.0, 1], [5.0, 7.0, 2], [6.0, 7.0, 2],
+	[5.0, 10.0, 3], [6.0, 11.0, 3], [7.0, 12.0, 3],
+	[4.0, 5.0, 0], [5.0, 6.0, 0], [6.0, 6.0, 0],
+	[10.0, 12.0, 2], [12.0, 12.0, 2],                     # han, konak
 ]
 const BICIM := 3
 
@@ -62,11 +63,11 @@ static func eski_sayi() -> int:
 
 
 ## v2 örnekleri: kat (0 kulübe, 1, 2, 3) ve en az/en çok cepheye göre süzülmüş liste (sokak dizicisi kullanır)
-static func ornekler(kat: int, min_w := 0.0, max_w := 99.0) -> Array:
+static func ornekler(kat: int, min_w := 0.0, max_w := 99.0, max_d := 99.0) -> Array:
 	var out: Array = []
 	for i in YENI.size():
 		var r: Array = YENI[i]
-		if int(r[2]) == kat and float(r[0]) >= min_w and float(r[0]) <= max_w:
+		if int(r[2]) == kat and float(r[0]) >= min_w and float(r[0]) <= max_w and float(r[1]) <= max_d:
 			for b in BICIM:
 				out.append(eski_sayi() + i * BICIM + b)
 	return out

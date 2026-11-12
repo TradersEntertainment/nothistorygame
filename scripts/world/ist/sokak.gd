@@ -42,6 +42,8 @@ var _mcache := {}
 var _rects := {}                      # Vector2i(16 m) → [[PackedVector2Array, sıra]]
 var _halic := PackedVector2Array()
 var stats := {}
+var _son_red := ""
+var _sira_bilgi: Array = []           # avlu için: [merkez, d, nrm, boy, derinlik, tür, sıra]
 
 
 # ---------------------------------------------------------------- ızgara
@@ -155,9 +157,13 @@ func _gap_ok(pg: PackedVector2Array, own: int) -> bool:
 				for o: PackedVector2Array in ov:
 					alan += absf(_area(o))
 				if alan > 0.02:
+					_son_red = "ortusme_%s" % ("ayni_sokak" if int(r[1]) >= 0 else "x")
+					stats["red_" + _son_red] = int(stats.get("red_" + _son_red, 0)) + (1 if own >= 0 else 0)
 					return false
 				var d := poly_gap(pg, q) if alan <= 0.02 else 0.0
 				if d > 0.05 and d < GECIT:
+					if own >= 0:
+						stats["red_dar_%d" % int(d * 10.0)] = int(stats.get("red_dar_%d" % int(d * 10.0), 0)) + 1
 					return false
 	return true
 
@@ -231,8 +237,9 @@ func build(foot: Array, bands: Array, gates: Array, tohum := 1453) -> void:
 		for i in pl.size() - 1:
 			_stamp_seg(pl[i], pl[i + 1], float(b[1]) * 2.0, 3)
 	_sur_ic_ac(bands)
-	for f: Vector3 in foot:
-		_stamp_disc(Vector2(f.x, f.z), f.y, 3)
+	if not _taban_kayitlardan():
+		for f: Vector3 in foot:
+			_stamp_disc(Vector2(f.x, f.z), f.y, 3)
 	stats["izgara_ms"] = Time.get_ticks_msec() - t0
 	var rng := RandomNumberGenerator.new()
 	rng.seed = tohum
@@ -256,9 +263,6 @@ func build(foot: Array, bands: Array, gates: Array, tohum := 1453) -> void:
 	var n1 := streets.size()
 	for s in range(n0, n1):
 		_lanes_from(s, rng, 1)
-	var n2 := streets.size()
-	for s in range(n1, n2):
-		_lanes_from(s, rng, 2)
 	for pass_i in 3:
 		_dolgu_sokaklari(rng, pass_i)
 	stats["sokak"] = streets.size()
@@ -276,6 +280,9 @@ func build(foot: Array, bands: Array, gates: Array, tohum := 1453) -> void:
 	# ikinci geçiş: kısa kalan yerlere (sokak sonlarında) tek ev / kısa sıra
 	for s: int in order:
 		_houses_along(s, rng, true)
+	# avlular bütün sıralardan sonra (karşı sıranın derinliğini çalmasın)
+	for sb: Array in _sira_bilgi:
+		_avlu_ekle(sb[0], sb[1], sb[2], sb[3], sb[4], sb[5], sb[6], rng)
 	stats["ev"] = houses.size()
 	stats["sira"] = rows
 	stats["avlu"] = avlu.size()
@@ -287,6 +294,60 @@ func build(foot: Array, bands: Array, gates: Array, tohum := 1453) -> void:
 	stats["oge"] = oge.size()
 	stats["ms"] = Time.get_ticks_msec() - t0
 	katman_bagla()
+
+
+## Anıt tabanları: IstSehir v2 kayıtlarından (salt okunur) döndürülmüş dikdörtgen = gerçek ölçü × k + 6 m pay. Sınır
+## çemberi (r) uzun/ince yapılarda (Bozdoğan kemeri r 158 m, zincir r 129 m) koca mahalleleri boşaltıyordu.
+## Kayıt yoksa (eski çağrı) false: çağıran çemberleri damgalar.
+func _taban_kayitlardan() -> bool:
+	var s: Node = IstSehir.active
+	if s == null or not is_instance_valid(s) or not IstSehir.v2:
+		return false
+	var n := 0
+	for it: Dictionary in s.items:
+		if it.has("hat"):
+			continue
+		var id := String(it["id"])
+		var p: Vector3 = it["pos"]
+		var c := Vector2(p.x, p.z)
+		var r := float(it["r"])
+		if id == "zincir" or id.begins_with("doku_") or id.begins_with("meydan_"):
+			continue
+		if id == "bozdogan":
+			var pl := IstGeo.yol("bozdogan")
+			for i in pl.size() - 1:
+				_stamp_seg(pl[i], pl[i + 1], 16.0, 3)
+			n += 1
+			continue
+		if id.begins_with("mese_"):
+			_stamp_disc(c, r * 0.3, 3)
+			n += 1
+			continue
+		var dt: Dictionary = it.get("data", {})
+		var go: Vector3 = dt.get("gercek_olcu", Vector3.ZERO)
+		var k := float(it.get("k", 1.0))
+		if go.x <= 0.0 or go.z <= 0.0 or id == "ayasofya":
+			_stamp_disc(c, r + 4.0, 3)
+			n += 1
+			continue
+		var yaw := float(it.get("yaw", 0.0))
+		var u := Vector2(cos(yaw), -sin(yaw))
+		var v := Vector2(sin(yaw), cos(yaw))
+		var hx := minf(go.x * k * 0.5 + 6.0, r + 4.0)
+		var hz := minf(go.z * k * 0.5 + 6.0, r + 4.0)
+		for kk in _rect_cells(c, u, v, hx, hz, 1.0):
+			if kk >= 0 and occ[kk] != 4:
+				occ[kk] = 3
+		n += 1
+	# Bölümlerin oynanış alanları (boş kalır)
+	if s.has_method("oyun_alanlari"):
+		for a: Rect2 in s.oyun_alanlari():
+			var cc := a.get_center()
+			for kk in _rect_cells(cc, Vector2.RIGHT, Vector2.DOWN, a.size.x * 0.5 + 2.0, a.size.y * 0.5 + 2.0):
+				if kk >= 0 and occ[kk] != 4:
+					occ[kk] = 3
+	stats["taban"] = n
+	return n > 0
 
 
 func _sur_ic_ac(bands: Array) -> void:
@@ -486,7 +547,7 @@ func _add_street(pts: PackedVector2Array, w: float, tur: String, ad: String, for
 				steep = true
 	streets.append({"pts": pts, "w": w, "tur": "basamak" if steep else tur, "ad": ad})
 	for i in pts.size() - 1:
-		_stamp_seg(pts[i], pts[i + 1], w + 1.0, 1, id, not force)
+		_stamp_seg(pts[i], pts[i + 1], w + 0.4, 1, id, not force)
 	return id
 
 
@@ -575,9 +636,9 @@ func _gate_road(g: Vector2, tur: String, rng: RandomNumberGenerator) -> void:
 ## Sokak aralığı (m): yoğunluğa göre (ada derinliği ≈ aralık: iki sıra + avlu)
 func _aralik(tur: String, yog: float) -> float:
 	match tur:
-		"carsi": return 26.0
-		"sik", "liman": return 30.0
-		"orta", "sur_dibi": return 36.0
+		"carsi": return 30.0
+		"sik", "liman": return 36.0
+		"orta", "sur_dibi": return 44.0
 		"seyrek": return 46.0 if yog >= 0.3 else 60.0
 		"harabe": return 70.0
 		"bostan": return 110.0
@@ -634,7 +695,7 @@ func _walk_lane(start: Vector2, head: float, maxlen: float, parent: int, rng: Ra
 	var wl := SOKAK_W + (1.0 if yog > 0.8 else 0.0)
 	var joined := false
 	while total < maxlen:
-		head += rng.randf_range(-0.18, 0.18) + sin(total * 0.05 + ph) * 0.05
+		head += rng.randf_range(-0.07, 0.07) + sin(total * 0.035 + ph) * 0.045
 		var q := p + Vector2.from_angle(head) * 7.0
 		var c := cell(q.x, q.y)
 		if c == 4 or c == 3 or c == 2 or c == 5 or c == 6:
@@ -646,6 +707,12 @@ func _walk_lane(start: Vector2, head: float, maxlen: float, parent: int, rng: Ra
 			break
 		if near >= 0 and total <= 10.0:
 			break
+		# 12 m içinde başka yol: ona doğru gidiyorsa sürsün (birleşir), paralel koşuyorsa dur
+		if total > 14.0:
+			var yk := _road_near(q + Vector2.from_angle(head) * 9.0, 4.0, parent)
+			var yan := _road_near(q, 11.0, parent)
+			if yan >= 0 and yk < 0:
+				break
 		pts.append(q)
 		p = q
 		total += 7.0
@@ -671,7 +738,7 @@ func _dolgu_sokaklari(rng: RandomNumberGenerator, pass_i: int) -> void:
 			var yog := _yog(p)
 			if tur in ["kir", "bostan"] or yog < 0.18:
 				continue
-			var hal := _aralik(tur, yog) * 0.55
+			var hal := _aralik(tur, yog) * 0.62
 			# karenin büyük kısmı boş mu
 			var cells := _rect_cells(p, Vector2.RIGHT, Vector2.DOWN, hal, hal)
 			if cells.has(-1):
@@ -712,7 +779,7 @@ func _dolgu_sokaklari(rng: RandomNumberGenerator, pass_i: int) -> void:
 
 ## Mahalleye göre ev seçimi: [v, tip]. idx: sıradaki yeri (0 ilk ev: sokaktan çatıya yolu taşır), onceki: önceki evin
 ## katı (sıra boyunca kat farkı ≤ 1)
-func _sec(tur: String, latin: bool, idx: int, onceki: int, kalan: float, rng: RandomNumberGenerator) -> Array:
+func _sec(tur: String, latin: bool, idx: int, onceki: int, kalan: float, rng: RandomNumberGenerator, maxd := 99.0) -> Array:
 	var r := rng.randf()
 	var kat := 1
 	var tip := "sira"
@@ -775,12 +842,20 @@ func _sec(tur: String, latin: bool, idx: int, onceki: int, kalan: float, rng: Ra
 	var maxw := 10.0 if tip in ["han", "konak"] else 9.0
 	if tip in ["han", "konak"]:
 		maxw = 12.0
-	var cand := IstEvler.ornekler(kat, minw, minf(maxw, kalan))
+	var cand := IstEvler.ornekler(kat, minw, minf(maxw, kalan), maxd)
 	if cand.is_empty() and tip in ["han", "konak"]:
 		tip = "sira"
-		cand = IstEvler.ornekler(kat, 0.0, minf(9.0, kalan))
+		cand = IstEvler.ornekler(kat, 0.0, minf(9.0, kalan), maxd)
+	if cand.is_empty() and kat >= 2:
+		kat = 1
+		if tip in ["latin", "ambar"]:
+			tip = "sira"
+		cand = IstEvler.ornekler(kat, minw, kalan, maxd)
 	if cand.is_empty():
-		cand = IstEvler.ornekler(kat, 0.0, kalan)
+		cand = IstEvler.ornekler(kat, 0.0, kalan, maxd)
+	if cand.is_empty() and kat == 1 and maxd >= 5.0:
+		tip = "kulube"
+		cand = IstEvler.ornekler(0, 0.0, kalan, maxd)
 	if cand.is_empty():
 		return []
 	return [cand[rng.randi() % cand.size()], tip]
@@ -792,7 +867,7 @@ func _houses_along(s: int, rng: RandomNumberGenerator, ikinci := false) -> void:
 	var w := float(st["w"])
 	var stur := String(st["tur"])
 	for side: float in [1.0, -1.0]:
-		var runs := _straight_runs(pl, 0.16)
+		var runs := _straight_runs(pl, 0.2)
 		for r: Array in runs:
 			var a: Vector2 = r[0]
 			var b: Vector2 = r[1]
@@ -810,7 +885,7 @@ func _houses_along(s: int, rng: RandomNumberGenerator, ikinci := false) -> void:
 				if stur == "savunma":
 					tur = "sur_dibi" if tur in ["bostan", "harabe", "kir", "seyrek"] else tur
 					yog = maxf(yog, 0.9)
-				var dolu := clampf(yog * 1.25, 0.0, 1.0)
+				var dolu := clampf(yog * 1.5, 0.0, 1.0)
 				if ikinci:
 					dolu = clampf(yog, 0.0, 0.9)
 				if rng.randf() > dolu:
@@ -825,7 +900,7 @@ func _houses_along(s: int, rng: RandomNumberGenerator, ikinci := false) -> void:
 					t += 2.0
 					continue
 				var dense := tur in ["carsi", "sik", "liman", "sur_dibi", "orta"]
-				if dense and rng.randf() < 0.55:
+				if dense and rng.randf() < 0.7:
 					t += used                           # sıra bitişik sürer (aralık 0)
 				elif dense:
 					t += used + rng.randf_range(GECIT + 0.2, 3.6)
@@ -853,8 +928,23 @@ func _row(p0: Vector2, d: Vector2, nrm: Vector2, w: float, rowlen: float, tur: S
 	var vs: Array = []                     # [v, tip]
 	var total := 0.0
 	var onceki := -1
+	var front0 := w * 0.5 + 0.9
+	# arkadaki boş derinlik (sıra boyunca üç örnek): ev derinliği buna göre; arkada ≥ 1,4 m geçit kalır
+	var maxd := 12.0
+	for tt: float in [0.5, rowlen * 0.5, maxf(rowlen - 0.5, 0.5)]:
+		var q0 := p0 + d * tt + nrm * front0
+		var dd := 0.0
+		while dd < 13.5:
+			var qq := q0 + nrm * (dd + 0.5)
+			var cv := cell(qq.x, qq.y)
+			if cv != 0 and not (cv == 1 and dd < 2.0):
+				break
+			dd += 1.0
+		maxd = minf(maxd, dd - (0.0 if dd >= 13.5 else 1.8))
+	if maxd < 4.9:
+		return 0.0
 	while total < rowlen:
-		var sec := _sec(tur, latin, vs.size(), onceki, rowlen - total, rng)
+		var sec := _sec(tur, latin, vs.size(), onceki, rowlen - total, rng, maxd)
 		if sec.is_empty():
 			break
 		var dm := IstEvler.dims(int(sec[0]))
@@ -915,7 +1005,7 @@ func _row(p0: Vector2, d: Vector2, nrm: Vector2, w: float, rowlen: float, tur: S
 				var fr := p0 + d * (x + dm.x * 0.5) + nrm * front
 				houses.append({"c": hc, "yaw": yaw, "v": v, "tip": String(sv[1]), "sira": rows, "on": fr})
 				x += dm.x
-			_avlu_ekle(c, d, nrm, total, dep, tur, rows, rng)
+			_sira_bilgi.append([c, d, nrm, total, dep, tur, rows])
 			rows += 1
 			return total
 		total -= IstEvler.dims(int((vs.pop_back() as Array)[0])).x
@@ -927,10 +1017,33 @@ func _avlu_ekle(c: Vector2, d: Vector2, nrm: Vector2, total: float, dep: float, 
 	if tur in ["kir"] or total < 5.0:
 		return
 	var dense := tur in ["carsi", "sik", "liman", "sur_dibi", "orta"]
-	var hz_list := [rng.randf_range(4.0, 7.0), 3.0] if dense else [rng.randf_range(6.0, 11.0), 4.0]
+	# arkadaki boş derinlik (iki örnek): avlu bloğun içini doldursun, karşıdaki yapıyla arada ≥ 1,4 m kalsın
+	var bos := 16.0
+	for tt: float in [-0.35, 0.35]:
+		var q0 := c + d * (total * tt) + nrm * (dep * 0.5)
+		var dd := 0.0
+		while dd < 16.0:
+			var qq := q0 + nrm * (dd + 0.5)
+			if cell(qq.x, qq.y) != 0:
+				break
+			dd += 1.0
+		bos = minf(bos, dd - (0.0 if dd >= 16.0 else 1.7))
+	var hz_list: Array = []
+	var az0 := minf(bos, 14.0 if dense else 16.0)
+	while az0 >= 2.5:
+		hz_list.append(az0)
+		az0 -= 1.25
+	var denemeler: Array = []
 	for az: float in hz_list:
+		for ic: float in [0.0, 2.0]:
+			denemeler.append([az, ic])
+	for dn: Array in denemeler:
+		var az: float = dn[0]
+		var ic: float = dn[1]
+		if az < 2.5 or az > bos + 0.01 or total * 0.5 - ic < 3.0:
+			continue
 		var ac := c + nrm * (dep * 0.5 + az * 0.5)
-		var cells := _rect_cells(ac, d, nrm, total * 0.5, az * 0.5, -0.45)
+		var cells := _rect_cells(ac, d, nrm, total * 0.5 - ic, az * 0.5, -0.45)
 		if cells.has(-1):
 			continue
 		var ok := true
@@ -939,19 +1052,22 @@ func _avlu_ekle(c: Vector2, d: Vector2, nrm: Vector2, total: float, dep: float, 
 				ok = false
 				break
 		if not ok:
+			stats["avlu_red_hucre"] = int(stats.get("avlu_red_hucre", 0)) + 1
 			continue
-		var pg := _poly(ac, d, nrm, total * 0.5, az * 0.5)
+		var pg := _poly(ac, d, nrm, total * 0.5 - ic, az * 0.5)
 		if not _gap_ok(pg, row):
+			stats["avlu_red_aralik"] = int(stats.get("avlu_red_aralik", 0)) + 1
 			continue
 		# yamaç: avlunun arka kenarı en çok 1,6 m yüksekte (duvar ve kapı ağzı oturur)
 		var hf := IstGeo.h(ac.x - nrm.x * az * 0.5, ac.y - nrm.y * az * 0.5)
 		var hb := IstGeo.h(ac.x + nrm.x * az * 0.5, ac.y + nrm.y * az * 0.5)
 		if absf(hb - hf) > 1.6:
+			stats["avlu_red_egim"] = int(stats.get("avlu_red_egim", 0)) + 1
 			continue
 		for k in cells:
 			occ[k] = 6
 		_rect_add(pg, row)
-		avlu.append({"c": ac, "u": d, "v": nrm, "hx": total * 0.5, "hz": az * 0.5, "kapi": rng.randi() % 3,
+		avlu.append({"c": ac, "u": d, "v": nrm, "hx": total * 0.5 - ic, "hz": az * 0.5, "kapi": rng.randi() % 3,
 			"tohum": rng.randi() % 9973, "h": 2.4 if dense else 1.0, "mt": tur})
 		return
 
@@ -998,7 +1114,7 @@ func _kilise_yerleri(rng: RandomNumberGenerator) -> void:
 				continue
 			for deneme in 8:
 				var p := c0 + Vector2(rng.randf_range(-55, 55), rng.randf_range(-55, 55))
-				var cells := _rect_cells(p, Vector2.RIGHT, Vector2.DOWN, 12.0, 12.0)
+				var cells := _rect_cells(p, Vector2.RIGHT, Vector2.DOWN, 9.0, 9.0)
 				if cells.has(-1):
 					continue
 				var ok := true
@@ -1006,13 +1122,13 @@ func _kilise_yerleri(rng: RandomNumberGenerator) -> void:
 					if occ[k] != 0:
 						ok = false
 						break
-				if not ok or _road_near(p, 20.0, -1) < 0:
+				if not ok or _road_near(p, 14.0, -1) < 0:
 					continue
 				for k in cells:
 					occ[k] = 5
-				var pick: String = ["kilise_kucuk", "sapel", "kilise_orta", "kilise_kucuk"][rng.randi() % 4]
-				doku.append({"tur": pick, "c": p, "alan": Vector2(22.0, 22.0), "yaw": rng.randf_range(-0.2, 0.2), "tohum": rng.randi() % 9973, "mt": tur})
-				zemin_ek.append({"c": p, "r": 14.0, "tur": "mese"})
+				var pick: String = ["kilise_kucuk", "sapel", "kilise_kucuk"][rng.randi() % 3]
+				doku.append({"tur": pick, "c": p, "alan": Vector2(16.0, 16.0), "yaw": rng.randf_range(-0.2, 0.2), "tohum": rng.randi() % 9973, "mt": tur})
+				zemin_ek.append({"c": p, "r": 11.0, "tur": "mese"})
 				n += 1
 				break
 	stats["kilise_yeri"] = n
