@@ -84,7 +84,8 @@ func guard_spot(idx: int) -> Vector3:
 
 
 func _ground() -> void:
-	Props.set_pattern(Props.solid(self, Vector3(HALF * 2.0 + 0.2, 0.4, GATE_Z - END_Z + 6.0), Vector3(0, -0.2, (GATE_Z + END_Z) * 0.5), Color.WHITE),
+	# Kapının ucu surun dış yüzünün 0,1 m içinde biter (dış yüzle aynı düzlemde titremesin)
+	Props.set_pattern(Props.solid(self, Vector3(HALF * 2.0 + 0.2, 0.4, GATE_Z - END_Z + 5.9), Vector3(0, -0.2, (GATE_Z + END_Z) * 0.5 - 0.05), Color.WHITE),
 		Color("8a7c62"), "cobble")
 	# Cadde dışı: görünmez sınır yok, evler gövdeleriyle kapatır; caddenin iki ucunda duvar
 
@@ -215,12 +216,10 @@ func set_door_damage(stage: int) -> void:
 
 func _gate() -> void:
 	# Haliç surunun iç yüzü ve açık deniz kapısı (caddenin başı)
-	var c := Color("cdbd9e")
-	# Tek haritada surun boşluğu (40 m'lik parça) kapansın diye kanatlar uzar
-	var wing := 18.0 if in_world else 14.0
-	for sx: float in [-1.0, 1.0]:
-		Props.set_pattern(Props.solid(self, Vector3(wing, 9.6, 3.0), Vector3(sx * (2.0 + wing * 0.5), 4.8, GATE_Z + 1.5), Color.WHITE), c, "ashlar")
-	Props.set_pattern(Props.solid(self, Vector3(4.0, 5.0, 3.0), Vector3(0, 7.1, GATE_Z + 1.5), Color.WHITE), c, "ashlar")
+	# Sur, kapı açıklığı (4 × 4,6 m) ve kapının iki yanındaki kuleler Haliç kıyı surunun tek kurucusundan: dünya aynı
+	# parçaları kurar (yükseklik, kule, renk her bölümde aynı); bölümün dilimi kapının iki yanında 20'şer metre
+	for p: Vector3 in SeaWalls.build_span(self, "petrion"):
+		Night.torch(self, p, 0.8, false)
 	if not in_world:
 		Props.box(self, Vector3(4.0, 4.6, 0.1), Vector3(0, 2.3, GATE_Z + 3.05), Color("4a6a8a"))       # kapının ötesi: Haliç
 	for sx: float in [-1.0, 1.0]:

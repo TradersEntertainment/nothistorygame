@@ -446,26 +446,40 @@ func _wall_top(p: Vector3, side: Vector3, h: float) -> float:
 
 
 func _horn_walls() -> void:
-	var d := Dressing.new(351)
-	d.chunk = 240.0
+	# Haliç kıyı suru tek kurucudan (SeaWalls.horn_wall_parts): bölümlerin (17, 19, 29, 39o) kendi dilimleri dahil aynı
+	# parçalar, aynı yerde, aynı ölçüde; burada birleşik ağ (240 m'lik parça ve desen başına tek çizim). Aktif bölgenin kendi
+	# dilimi (SPANS) bölümde kurulur; Horn.build'in suruyla oynanan bölgelerde (18, 18b, 31o, 38o) o dilim atlanır ve
+	# komşu sur Horn'un yüksekliğine iner.
 	var nd := Dressing.new(352)
 	nd.chunk = 240.0
 	var merl: Array = []
-	var a := Vector3(World1453.HORN_S_X, 0.0, World1453.HORN_IN_Z)
-	var e: Vector3 = World1453.LANDMARKS["eugenius"]
-	var b := Vector3(World1453.HORN_S_X, 0.0, World1453.SHORE_END_Z)
-	var hg: Array = [World1453.LANDMARKS["petrion_gate"]]
-	for gz: float in World1453.HORN_GATE_Z:
-		hg.append(Vector3(World1453.HORN_S_X, 0.0, gz))
-	_wall_run(a, b, 10.0, 44.0, d, merl, nd, hg)
-	# Eugenius kulesi (zincirin şehir ucu) ve burna dönen sur
-	if _free(e.x, e.z, 8.0):
-		d.cyl(7.0, 22.0, Vector3(e.x, 10.0, e.z), STONE.darkened(0.2), Vector3.ZERO, 14)
-		d.cyl(7.4, 0.6, Vector3(e.x, 21.3, e.z), Color("9a5040"), Vector3.ZERO, 14)
-	_wall_run(b, World1453.TIP, 9.0, 60.0, d, merl, nd)
-	d.build(self)
+	var parts: Array = []
+	var skip: Array = []
+	var ease: Array = []
+	if SeaWalls.SPANS.has(region_name):
+		skip.append(SeaWalls.SPANS[region_name])
+	else:
+		for r: Rect2 in keep:
+			if r.position.x <= World1453.HORN_S_X + 3.0 and r.end.x >= World1453.HORN_S_X - 3.0:
+				skip.append(Vector2(r.position.y, r.end.y))
+				ease.append(Vector2(r.position.y, r.end.y))
+	var emit := func(kind: String, size: Vector3, xf: Transform3D, color: Color, pattern: String, solid: bool) -> void:
+		match kind:
+			"merlon":
+				merl.append(Transform3D(xf.basis * Basis.from_scale(size), xf.origin))
+			"torch":
+				if int(absf(xf.origin.z)) % 2 == 0:
+					nd.glow(Vector3(0.4, 0.6, 0.4), xf.origin + Vector3(0, 0.5, 0), Color("ffb040"))
+			"man":
+				_wall_men.append(xf)
+			_:
+				parts.append([kind, size, xf, color, pattern])
+				if solid and kind == "box" and size.y > 3.0:
+					flight_boxes.append([xf, size])
+	SeaWalls.horn_wall_parts(emit, Vector2.INF, skip, ease)
+	SeaWalls.bake_parts(parts, self, "HornWall")
 	_night.append(nd.build(self))
-	Scenery.scatter(self, Scenery._boxm(Vector3.ONE), merl, [], Props.mat(STONE.darkened(0.2), 0.0, false, "ashlar"))
+	Scenery.scatter(self, Scenery._boxm(Vector3.ONE), merl, [], Props.mat(SeaWalls.C_MERL, 0.0, false, "ashlar"))
 
 
 ## Haliç kıyısı (surun dışı): su çizgisinde alçak taş rıhtım ve rıhtım yolu (bağlama babaları, fıçı, sandık, balya, ağ, balıkçı
