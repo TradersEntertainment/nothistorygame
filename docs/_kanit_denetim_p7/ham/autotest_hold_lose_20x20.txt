@@ -1,0 +1,40 @@
+[S_hold_lose_1.log] AUTOTEST PASS chapter=26 variant=hold_lose outcome=26.1 water=3 repaired=3 cleared=2 world=W1 gun=3/4 gunner=1/2 
+[S_hold_lose_10.log] AUTOTEST PASS chapter=26 variant=hold_lose outcome=26.1 water=3 repaired=3 cleared=2 world=W1 gun=3/4 gunner=0/1 
+[S_hold_lose_11.log] AUTOTEST PASS chapter=26 variant=hold_lose outcome=26.1 water=3 repaired=3 cleared=2 world=W1 gun=3/4 gunner=1/2 
+[S_hold_lose_12.log] AUTOTEST PASS chapter=26 variant=hold_lose outcome=26.1 water=3 repaired=3 cleared=2 world=W1 gun=3/4 gunner=0/2 
+[S_hold_lose_13.log] AUTOTEST PASS chapter=26 variant=hold_lose outcome=26.1 water=3 repaired=3 cleared=2 world=W1 gun=3/4 gunner=1/2 
+[S_hold_lose_14.log] AUTOTEST PASS chapter=26 variant=hold_lose outcome=26.1 water=3 repaired=3 cleared=2 world=W1 gun=3/4 gunner=0/3 
+[S_hold_lose_15.log] ARMAUDIT unarmed scene=chapter26.tscn foe_dist=6.8 duel_active=false AUTOTEST PASS chapter=26 variant=hold_lose outcome=26.1 water=3 repaired=3 cleared=2 world=W1 gun=3/4 gunner=0/3 
+[S_hold_lose_16.log] AUTOTEST PASS chapter=26 variant=hold_lose outcome=26.1 water=3 repaired=3 cleared=2 world=W1 gun=3/4 gunner=0/2 
+[S_hold_lose_17.log] ARMAUDIT unarmed scene=chapter26.tscn foe_dist=3.0 duel_active=false AUTOTEST PASS chapter=26 variant=hold_lose outcome=26.1 water=3 repaired=3 cleared=2 world=W1 gun=3/4 gunner=0/1 
+[S_hold_lose_18.log] AUTOTEST PASS chapter=26 variant=hold_lose outcome=26.1 water=3 repaired=3 cleared=2 world=W1 gun=3/4 gunner=0/1 
+[S_hold_lose_19.log] AUTOTEST PASS chapter=26 variant=hold_lose outcome=26.1 water=3 repaired=3 cleared=2 world=W1 gun=3/4 gunner=0/1 
+[S_hold_lose_2.log] AUTOTEST PASS chapter=26 variant=hold_lose outcome=26.1 water=3 repaired=3 cleared=2 world=W1 gun=3/4 gunner=0/1 
+[S_hold_lose_20.log] AUTOTEST PASS chapter=26 variant=hold_lose outcome=26.1 water=3 repaired=3 cleared=2 world=W1 gun=3/4 gunner=0/1 
+[S_hold_lose_3.log] AUTOTEST PASS chapter=26 variant=hold_lose outcome=26.1 water=3 repaired=3 cleared=2 world=W1 gun=3/4 gunner=0/3 
+[S_hold_lose_4.log] AUTOTEST PASS chapter=26 variant=hold_lose outcome=26.1 water=3 repaired=3 cleared=2 world=W1 gun=3/4 gunner=0/1 
+[S_hold_lose_5.log] AUTOTEST PASS chapter=26 variant=hold_lose outcome=26.1 water=3 repaired=3 cleared=2 world=W1 gun=3/4 gunner=1/2 
+[S_hold_lose_6.log] ARMAUDIT unarmed scene=chapter26.tscn foe_dist=1.9 duel_active=false AUTOTEST PASS chapter=26 variant=hold_lose outcome=26.1 water=3 repaired=3 cleared=2 world=W1 gun=3/4 gunner=0/1 
+[S_hold_lose_7.log] ARMAUDIT unarmed scene=chapter26.tscn foe_dist=2.2 duel_active=false AUTOTEST PASS chapter=26 variant=hold_lose outcome=26.1 water=3 repaired=3 cleared=2 world=W1 gun=3/4 gunner=0/1 
+[S_hold_lose_8.log] AUTOTEST PASS chapter=26 variant=hold_lose outcome=26.1 water=3 repaired=3 cleared=2 world=W1 gun=3/4 gunner=0/3 
+[S_hold_lose_9.log] ARMAUDIT unarmed scene=chapter26.tscn foe_dist=6.8 duel_active=false AUTOTEST PASS chapter=26 variant=hold_lose outcome=26.1 water=3 repaired=3 cleared=2 world=W1 gun=3/4 gunner=0/3 
+[O_hold_lose_1.log] AUTOTEST PASS chapter=26 variant=hold_lose outcome=26.1 water=3 repaired=3 cleared=2 world=W1 gun=3/4 gunner=0/3 
+[O_hold_lose_10.log] ARMAUDIT unarmed scene=chapter26.tscn foe_dist=2.0 duel_active=false AUTOTEST PASS chapter=26 variant=hold_lose outcome=26.1 water=3 repaired=3 cleared=2 world=W1 gun=3/4 gunner=0/1 
+[O_hold_lose_11.log] AUTOTEST PASS chapter=26 variant=hold_lose outcome=26.1 water=3 repaired=3 cleared=2 world=W1 gun=3/4 gunner=1/2 
+[O_hold_lose_12.log] AUTOTEST PASS chapter=26 variant=hold_lose outcome=26.1 water=3 repaired=3 cleared=2 world=W1 gun=3/4 gunner=0/1 
+[O_hold_lose_13.log] AUTOTEST PASS chapter=26 variant=hold_lose outcome=26.1 water=3 repaired=3 cleared=2 world=W1 gun=3/4 gunner=0/1 
+[O_hold_lose_14.log] AUTOTEST PASS chapter=26 variant=hold_lose outcome=26.1 water=3 repaired=3 cleared=2 world=W1 gun=3/4 gunner=0/1 
+[O_hold_lose_15.log] AUTOTEST PASS chapter=26 variant=hold_lose outcome=26.1 water=3 repaired=3 cleared=2 world=W1 gun=3/4 gunner=0/1 
+[O_hold_lose_16.log] AUTOTEST PASS chapter=26 variant=hold_lose outcome=26.1 water=3 repaired=3 cleared=2 world=W1 gun=3/4 gunner=0/2 
+[O_hold_lose_17.log] AUTOTEST PASS chapter=26 variant=hold_lose outcome=26.1 water=3 repaired=3 cleared=2 world=W1 gun=3/4 gunner=1/2 
+[O_hold_lose_18.log] ARMAUDIT unarmed scene=chapter26.tscn foe_dist=2.6 duel_active=false AUTOTEST PASS chapter=26 variant=hold_lose outcome=26.1 water=3 repaired=3 cleared=2 world=W1 gun=3/4 gunner=0/2 
+[O_hold_lose_19.log] AUTOTEST PASS chapter=26 variant=hold_lose outcome=26.1 water=3 repaired=3 cleared=2 world=W1 gun=3/4 gunner=1/2 
+[O_hold_lose_2.log] ARMAUDIT unarmed scene=chapter26.tscn foe_dist=2.5 duel_active=false AUTOTEST PASS chapter=26 variant=hold_lose outcome=26.1 water=3 repaired=3 cleared=2 world=W1 gun=3/4 gunner=0/1 
+[O_hold_lose_20.log] ARMAUDIT unarmed scene=chapter26.tscn foe_dist=6.8 duel_active=false AUTOTEST PASS chapter=26 variant=hold_lose outcome=26.1 water=3 repaired=3 cleared=2 world=W1 gun=3/4 gunner=0/3 
+[O_hold_lose_3.log] AUTOTEST PASS chapter=26 variant=hold_lose outcome=26.1 water=3 repaired=3 cleared=2 world=W1 gun=3/4 gunner=1/2 
+[O_hold_lose_4.log] ARMAUDIT unarmed scene=chapter26.tscn foe_dist=3.1 duel_active=false AUTOTEST PASS chapter=26 variant=hold_lose outcome=26.1 water=3 repaired=3 cleared=2 world=W1 gun=3/4 gunner=0/1 
+[O_hold_lose_5.log] AUTOTEST PASS chapter=26 variant=hold_lose outcome=26.1 water=3 repaired=3 cleared=2 world=W1 gun=3/4 gunner=0/1 
+[O_hold_lose_6.log] AUTOTEST PASS chapter=26 variant=hold_lose outcome=26.1 water=3 repaired=3 cleared=2 world=W1 gun=3/4 gunner=0/3 
+[O_hold_lose_7.log] AUTOTEST PASS chapter=26 variant=hold_lose outcome=26.1 water=3 repaired=3 cleared=2 world=W1 gun=3/4 gunner=0/1 
+[O_hold_lose_8.log] AUTOTEST PASS chapter=26 variant=hold_lose outcome=26.1 water=3 repaired=3 cleared=2 world=W1 gun=3/4 gunner=0/2 
+[O_hold_lose_9.log] ARMAUDIT unarmed scene=chapter26.tscn foe_dist=2.2 duel_active=false AUTOTEST PASS chapter=26 variant=hold_lose outcome=26.1 water=3 repaired=3 cleared=2 world=W1 gun=3/4 gunner=0/1 

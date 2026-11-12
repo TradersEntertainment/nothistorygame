@@ -1,0 +1,25 @@
+[T_0.log] AUTOTEST PASS chapter=0 variant= froze=true
+[T_0_next.log] AUTOTEST PASS chapter=0 variant=next froze=true
+[T_20.log] AUTOTEST PASS chapter=20 variant= outcome=20.1 repair=10 knocks=0 arrows=true gun=3/4 gunner=4/4 niko=0
+[T_21_.log] AUTOTEST PASS chapter=21 variant= outcome=21.1 bowls=2 tunnel=leb talk=talk trust=3 captive=false next=
+[T_21_captive.log] AUTOTEST PASS chapter=21 variant=captive outcome=21.1 bowls=2 tunnel=leb talk=talk trust=3 captive=true next=chapter22o.tscn
+[T_21_ear.log] AUTOTEST PASS chapter=21 variant=ear outcome=21.1 bowls=5 tunnel=leb talk=talk trust=3 captive=false next=
+[T_21_fight.log] AUTOTEST PASS chapter=21 variant=fight outcome=21.1 bowls=2 tunnel=fight talk=iron trust=0 captive=false next=
+[T_21_grant.log] AUTOTEST PASS chapter=21 variant=grant outcome=21.2 bowls=4 tunnel=leb talk=talk trust=3 captive=false next=
+[T_21_thermos.log] AUTOTEST PASS chapter=21 variant=thermos outcome=21.1 bowls=5 tunnel=leb talk=talk trust=3 captive=false next=
+[T_22.log] AUTOTEST PASS chapter=22 variant= outcome=22.1 hits=2 singed=false window=0.42-0.68
+[T_26_.log] AUTOTEST PASS chapter=26 variant= outcome=26.1 water=3 repaired=3 cleared=2 world= gun=3/4 gunner=3/3
+[T_26_candle.log] AUTOTEST PASS chapter=26 variant=candle outcome=26.1 water=3 repaired=3 cleared=2 world= gun=3/4 gunner=2/2
+[T_26_council_bad.log] AUTOTEST PASS chapter=26 variant=council_bad outcome=26.1 water=3 repaired=3 cleared=2 world= gun=3/4 gunner=3/3
+[T_26_council_ok.log] AUTOTEST PASS chapter=26 variant=council_ok outcome=26.1 water=3 repaired=3 cleared=2 world= gun=3/4 gunner=4/4
+[T_26_hold.log] AUTOTEST PASS chapter=26 variant=hold outcome=26.3 water=3 repaired=3 cleared=0 world=W10 gun=3/4 gunner=4/4
+[T_26_hold23.log] AUTOTEST PASS chapter=26 variant=hold23 outcome=26.3 water=3 repaired=3 cleared=0 world=W12 gun=3/4 gunner=4/4
+[T_26_hold3.log] AUTOTEST PASS chapter=26 variant=hold3 outcome=26.3 water=3 repaired=3 cleared=0 world=W11 gun=3/4 gunner=3/3
+[T_26_hold_box.log] AUTOTEST PASS chapter=26 variant=hold_box outcome=26.3 water=3 repaired=3 cleared=0 world=W10 gun=3/4 gunner=3/3
+[T_26_isidore.log] AUTOTEST PASS chapter=26 variant=isidore outcome=26.1 water=3 repaired=3 cleared=2 world= gun=3/4 gunner=3/3
+[T_26_kasim.log] AUTOTEST PASS chapter=26 variant=kasim outcome=26.1 water=3 repaired=3 cleared=2 world= gun=3/4 gunner=3/3
+[T_26_lighter.log] AUTOTEST PASS chapter=26 variant=lighter outcome=26.1 water=3 repaired=3 cleared=2 world= gun=3/4 gunner=2/2
+[T_26_nophoto.log] AUTOTEST PASS chapter=26 variant=nophoto outcome=26.2 water=3 repaired=3 cleared=2 world= gun=3/4 gunner=3/3
+[T_26_warn_notrust.log] AUTOTEST PASS chapter=26 variant=warn_notrust outcome=26.1 water=3 repaired=3 cleared=2 world= gun=3/4 gunner=4/4
+[T_26o.log] AUTOTEST PASS chapter=26o variant= outcome=26.1 water=3 ladders=3 gun=3/4 stones=1/1 gunner=4/4 oil=1/1 turgut=no
+[T_30.log] AUTOTEST PASS chapter=30 variant= outcome=30.1 gun=3/4 pushed=2 boarders=0 duel=true rifle=4

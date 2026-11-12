@@ -1,0 +1,150 @@
+RUNOK S_hold_lose_1
+RUNOK O_hold_lose_1
+RUNOK S_hold_lose_2
+RUNFAIL O_hold_lose_2
+  [O_hold_lose_2] ARMAUDIT unarmed scene=chapter26.tscn foe_dist=2.5 duel_active=false
+  [O_hold_lose_2] AUTOTEST PASS chapter=26 variant=hold_lose outcome=26.1 water=3 repaired=3 cleared=2 world=W1 gun=3/4 gunner=0/1
+RUNOK O_hold_lose_3
+RUNOK S_hold_lose_3
+RUNOK S_hold_lose_4
+RUNFAIL O_hold_lose_4
+  [O_hold_lose_4] ARMAUDIT unarmed scene=chapter26.tscn foe_dist=3.1 duel_active=false
+  [O_hold_lose_4] AUTOTEST PASS chapter=26 variant=hold_lose outcome=26.1 water=3 repaired=3 cleared=2 world=W1 gun=3/4 gunner=0/1
+RUNOK S_hold_lose_5
+RUNOK O_hold_lose_5
+SCREENDONE c26_after 0
+RUNFAIL S_hold_lose_6
+  [S_hold_lose_6] ARMAUDIT unarmed scene=chapter26.tscn foe_dist=1.9 duel_active=false
+  [S_hold_lose_6] AUTOTEST PASS chapter=26 variant=hold_lose outcome=26.1 water=3 repaired=3 cleared=2 world=W1 gun=3/4 gunner=0/1
+RUNOK O_hold_lose_6
+RUNFAIL S_hold_lose_7
+  [S_hold_lose_7] ARMAUDIT unarmed scene=chapter26.tscn foe_dist=2.2 duel_active=false
+  [S_hold_lose_7] AUTOTEST PASS chapter=26 variant=hold_lose outcome=26.1 water=3 repaired=3 cleared=2 world=W1 gun=3/4 gunner=0/1
+RUNOK O_hold_lose_7
+RUNOK S_hold_lose_8
+RUNOK O_hold_lose_8
+RUNFAIL O_hold_lose_9
+  [O_hold_lose_9] ARMAUDIT unarmed scene=chapter26.tscn foe_dist=2.2 duel_active=false
+  [O_hold_lose_9] AUTOTEST PASS chapter=26 variant=hold_lose outcome=26.1 water=3 repaired=3 cleared=2 world=W1 gun=3/4 gunner=0/1
+RUNFAIL S_hold_lose_9
+  [S_hold_lose_9] ARMAUDIT unarmed scene=chapter26.tscn foe_dist=6.8 duel_active=false
+  [S_hold_lose_9] AUTOTEST PASS chapter=26 variant=hold_lose outcome=26.1 water=3 repaired=3 cleared=2 world=W1 gun=3/4 gunner=0/3
+RUNFAIL O_hold_lose_10
+  [O_hold_lose_10] ARMAUDIT unarmed scene=chapter26.tscn foe_dist=2.0 duel_active=false
+  [O_hold_lose_10] AUTOTEST PASS chapter=26 variant=hold_lose outcome=26.1 water=3 repaired=3 cleared=2 world=W1 gun=3/4 gunner=0/1
+RUNOK S_hold_lose_10
+RUNOK O_hold_lose_11
+RUNOK S_hold_lose_11
+RUNOK O_hold_lose_12
+RUNOK S_hold_lose_12
+RUNOK O_hold_lose_13
+RUNOK S_hold_lose_13
+RUNOK O_hold_lose_14
+RUNOK S_hold_lose_14
+RUNOK O_hold_lose_15
+RUNFAIL S_hold_lose_15
+  [S_hold_lose_15] ARMAUDIT unarmed scene=chapter26.tscn foe_dist=6.8 duel_active=false
+  [S_hold_lose_15] AUTOTEST PASS chapter=26 variant=hold_lose outcome=26.1 water=3 repaired=3 cleared=2 world=W1 gun=3/4 gunner=0/3
+RUNOK O_hold_lose_16
+RUNOK S_hold_lose_16
+RUNOK O_hold_lose_17
+RUNFAIL S_hold_lose_17
+  [S_hold_lose_17] ARMAUDIT unarmed scene=chapter26.tscn foe_dist=3.0 duel_active=false
+  [S_hold_lose_17] AUTOTEST PASS chapter=26 variant=hold_lose outcome=26.1 water=3 repaired=3 cleared=2 world=W1 gun=3/4 gunner=0/1
+RUNFAIL O_hold_lose_18
+  [O_hold_lose_18] ARMAUDIT unarmed scene=chapter26.tscn foe_dist=2.6 duel_active=false
+  [O_hold_lose_18] AUTOTEST PASS chapter=26 variant=hold_lose outcome=26.1 water=3 repaired=3 cleared=2 world=W1 gun=3/4 gunner=0/2
+RUNOK S_hold_lose_18
+RUNOK O_hold_lose_19
+RUNOK S_hold_lose_19
+RUNFAIL O_hold_lose_20
+  [O_hold_lose_20] ARMAUDIT unarmed scene=chapter26.tscn foe_dist=6.8 duel_active=false
+  [O_hold_lose_20] AUTOTEST PASS chapter=26 variant=hold_lose outcome=26.1 water=3 repaired=3 cleared=2 world=W1 gun=3/4 gunner=0/3
+CHAINDONE O_hold_lose
+RUNOK S_hold_lose_20
+CHAINDONE S_hold_lose
+RUNOK T_0
+RUNOK T_0_next
+RUNOK T_21_
+RUNOK T_21_grant
+RUNOK T_21_fight
+RUNOK T_21_thermos
+RUNOK T_21_ear
+RUNOK T_21_captive
+RUNOK T_26_
+RUNOK T_26_nophoto
+RUNOK T_26_hold
+RUNOK T_26_hold_box
+RUNOK T_26_hold23
+RUNOK T_26_hold3
+RUNOK T_26_warn_notrust
+RUNOK T_26_lighter
+RUNOK T_26_isidore
+RUNOK T_26_kasim
+RUNOK T_26_candle
+RUNOK T_26_council_ok
+SCREENDONE c26_before 0
+RUNOK T_26_council_bad
+RUNOK T_20
+RUNOK T_22
+RUNOK T_26o
+RUNOK T_30
+CHAINDONE tests
+RUNOK OT_0
+RUNOK OT_0_next
+RUNOK OT_21_
+RUNOK OT_21_grant
+RUNOK OT_21_fight
+RUNOK OT_21_thermos
+RUNOK OT_21_ear
+RUNOK OT_21_captive
+RUNOK OT_26_
+RUNOK OT_26_nophoto
+RUNOK OT_26_hold
+RUNOK OT_26_hold_box
+RUNOK OT_26_hold23
+RUNOK OT_26_hold3
+RUNFAIL OT_26_warn_notrust
+  [OT_26_warn_notrust] VISAUDIT sunk scene=chapter26.tscn who=Person/@Node3D@58589 spk=SPK_AZAP feet=(-2.7, 1.8, 15.4) floor=2.28 by=@Node3D@175/@StaticBody3D@1046 act= meta=no_talk,spk,no_chat,no_yield src=Chapter26>Duelist>Person shape=(8.599999, 0.55, 2.4)@(0.0, 2.0, 15.6) lp=(0.0, 0.0, 0.0)
+  [OT_26_warn_notrust] AUTOTEST PASS chapter=26 variant=warn_notrust outcome=26.1 water=3 repaired=3 cleared=2 world= gun=3/4 gunner=2/2
+RUNOK OT_26_lighter
+RUNOK OT_26_isidore
+RUNOK OT_26_kasim
+RUNOK OT_26_candle
+RUNOK OT_26_council_ok
+RUNOK OT_26_council_bad
+CHAINDONE otests
+SCREENDONE c26_before 0
+SCREENDONE c26_after 0
+SCREENDONE c21_before 1
+SCREENDONE c21_after 1
+SCREENDONE c0_before 1
+SCREENDONE c0_after 1
+CHAINDONE screens
+SCREENDONE c26b_before 0
+SCREENDONE c26b_after 0
+CHAINDONE screens2
+SCREENDONE c21b_before 1
+SCREENDONE c21b_after 1
+CHAINDONE screens3
+SCREENDONE c0b_before 1
+SCREENDONE c0b_after 0
+CHAINDONE screens4
+SCREENDONE c21c_before 1
+SCREENDONE c21c_after 0
+CHAINDONE screens5
+SCREENDONE c0c_before 1
+SCREENDONE c0c_after 1
+CHAINDONE screens6
+SCREENDONE c21d_before 1
+SCREENDONE c21d_after 1
+CHAINDONE screens7
+SCREENDONE c0d_before 1
+SCREENDONE c0d_after 0
+CHAINDONE screens8
+SCREENDONE c21e_before 1
+SCREENDONE c21e_after 1
+CHAINDONE screens9
+SCREENDONE c0e_before 1
+SCREENDONE c0e_after 1
+CHAINDONE screens10
