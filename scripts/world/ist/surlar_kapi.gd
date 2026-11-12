@@ -5,7 +5,7 @@ extends RefCounted
 
 const C_WOOD := Color("7a5634")
 const C_IRON := Color("3a3634")
-const C_BRICK := Color("a8583a")
+const C_BRICK := Color("96503a")
 const C_DARK := Color("15120f")
 
 
@@ -54,10 +54,10 @@ static func build(root: Node3D, lay: Dictionary, lod: int, o: Dictionary) -> voi
 		# sütun çiftleri (mermer) ve silme
 		for i in 4:
 			var sx: float = [-gw * 1.3, -gw * 0.65, gw * 0.65, gw * 1.3][i]
-			var col := Props.cyl(root, 0.32, HW * 0.62, Vector3(sx, HW * 0.31, zf + 0.34), marble.lightened(0.04), Vector3.ZERO, 10)
+			var col := Props.cyl(root, 0.32, HW * 0.62, Vector3(sx, HW * 0.31, zf + 0.3), marble.lightened(0.04), Vector3.ZERO, 10)
 			Props.make_solid(col, 0.9)
-			Props.box(root, Vector3(0.9, 0.22, 0.9), Vector3(sx, HW * 0.62 + 0.11, zf + 0.34), marble.darkened(0.05))
-			Props.box(root, Vector3(0.8, 0.22, 0.8), Vector3(sx, 0.11, zf + 0.34), marble.darkened(0.05))
+			Props.box(root, Vector3(0.9, 0.22, 0.9), Vector3(sx, HW * 0.62 + 0.11, zf + 0.3), marble.darkened(0.05))
+			Props.box(root, Vector3(0.8, 0.22, 0.8), Vector3(sx, 0.11, zf + 0.3), marble.darkened(0.05))
 		IstSurlar._s(root, Vector3(-gw * 1.55, HW * 0.62 + 0.22, zf), Vector3(gw * 1.55, HW * 0.62 + 0.9, zf + 0.7), marble.darkened(0.04), "marble", lod)
 		IstSurlar._d(root, Vector3(-gw * 1.5, HW * 0.62 + 0.95, zf + 0.0), Vector3(gw * 1.5, HW * 0.62 + 1.7, zf + 0.06), C_BRICK, "brick")
 		return

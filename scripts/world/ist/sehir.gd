@@ -291,6 +291,11 @@ func _build(it: Dictionary, lod: int) -> void:
 	var ms := (Time.get_ticks_usec() - t0) / 1000.0
 	stats["kur_ms_max"] = maxf(stats["kur_ms_max"], ms)
 	stats["kur_n"] += 1
+	if ms > 6.0:
+		if not stats.has("yavas"):
+			stats["yavas"] = {}
+		var key := "%s/%d" % [String(it["mod"]) if String(it["mod"]) != "v2" else String(it["id"]).get_slice("_", 0), lod]
+		stats["yavas"][key] = maxf(float(stats["yavas"].get(key, 0.0)), ms)
 	if lod > 0:
 		_bake_lod(n, lod >= 2)
 		for c in n.find_children("*", "GeometryInstance3D", true, false):
@@ -416,7 +421,7 @@ const NEAR := 70.0
 const MID := 430.0
 static var houses_on := true
 ## Bütün İstanbul 1453 katmanını kapatır (ÖNCE kareleri ve karşılaştırma için)
-static var enabled := true
+static var enabled := false            # eski dünyada (World1453) KAPALI: v2 kendi girişinden (attach_v2) açar
 
 ## CityHouses.build'in yerine: aynı ev listesi (CityPlan), aynı yerler, mektup bölümünün ev dili. true dönerse
 ## CityHouses kendi evlerini kurmaz.
@@ -1258,9 +1263,24 @@ func _hatlar_v2() -> void:
 				# Eğimde kısa dilim: dilim boyunca 1,6 m'den fazla düşü olmasın
 				var dh := absf(IstGeo.h(a.x + d.x * v[0], a.y + d.y * v[0]) - IstGeo.h(a.x + d.x * v[1], a.y + d.y * v[1]))
 				n = maxi(n, mini(int(ceil(dh / 1.6)), int(span / 30.0)))
-				var pl_len := span / n
-				for k in n:
-					var s0 := float(v[0]) + k * pl_len
+				var lens: Array = []
+				var hl := float(IstHalicSur.dims(K2)["L"])
+				if String(cfg["kur"]) == "halic" and dh < 2.5 and span >= hl:
+					# Haliç: modülün 80 m'lik parçaları (kapı, rıhtım) + kalanı parametreli deniz suru
+					var kk := int(span / hl)
+					var rem := span - kk * hl
+					if rem > 0.05 and rem < 8.0:
+						kk -= 1
+						rem += hl
+					for q in kk:
+						lens.append(hl)
+					if rem > 0.05:
+						lens.insert(kk / 2, rem)
+				else:
+					for q in n:
+						lens.append(span / n)
+				var s0 := float(v[0])
+				for pl_len: float in lens:
 					var mid := a + d * (s0 + pl_len * 0.5)
 					seed += 1
 					var pc := _hat_piece(ad, String(cfg["kur"]), mid, d, pl_len, seed)
@@ -1268,6 +1288,7 @@ func _hatlar_v2() -> void:
 					pc["s1"] = s_acc + s0 + pl_len
 					pc["a2"] = a + d * s0
 					pc["b2"] = a + d * (s0 + pl_len)
+					s0 += pl_len
 			# Köşe kulesi (iç köşe ve dış köşedeki kopukluğu örter; tepesi yürüme yolu hizasında)
 			if i > 0:
 				var kc := _kose(ad, String(cfg["kur"]), a)
@@ -1327,6 +1348,26 @@ func _hatlar_v2() -> void:
 		hat_items.append(it)
 
 
+## Tolga'nın şehir bölümlerinin v2'de oturacağı alanlar (dünya dikdörtgenleri): hub (6b, 7b, 10h, 12b, 23, 24) Romanos
+## Kapısı'nın iç yanında, kapıdan Mese koluna giden cadde yönünde; Ayasofya meydanı (24, 25, 26, 31o) Ayasofya'nın batısında.
+var _oyun: Array = []
+
+func oyun_alanlari() -> Array:
+	if not _oyun.is_empty():
+		return _oyun
+	for it: Dictionary in items:
+		if String(it["id"]) == "romanos":
+			var p: Vector3 = it["pos"]
+			var h := it["holder"] as Node3D
+			# kapının yerel −z'si şehir (surlar: dış yüz +z)
+			var inn := (h.transform.basis * Vector3(0, 0, -1)).normalized()
+			var c := Vector2(p.x, p.z) + Vector2(inn.x, inn.z) * 75.0
+			_oyun.append(Rect2(c - Vector2(45, 45), Vector2(90, 90)))
+	var aw := IstGeo.w2(0, 0)
+	_oyun.append(Rect2(aw + Vector2(-95, -25), Vector2(55, 50)))
+	return _oyun
+
+
 func _near_item(p: Vector2, pad: float) -> bool:
 	for it: Dictionary in items:
 		if String(it["mod"]) == "v2":
@@ -1353,10 +1394,11 @@ func _hat_piece(ad: String, kur: String, mid: Vector2, d: Vector2, L: float, see
 			make = func(n: Node3D, lod: int) -> void: _blakherna_wall(n, L, lod)
 		"halic":
 			# Haliç suru: modülün 80 m'lik parçası (deniz −z) sığıyorsa; değilse parametreli deniz suru
-			if L >= float(IstHalicSur.dims(K2)["L"]) - 0.5 and L <= float(IstHalicSur.dims(K2)["L"]) * 1.25:
+			if absf(L - float(IstHalicSur.dims(K2)["L"])) < 0.05:
 				yaw += PI
 				make = func(n: Node3D, lod: int) -> void: IstHalicSur.build(n, K2, lod)
 			else:
+				kur = "marmara"
 				make = func(n: Node3D, lod: int) -> void: IstMarmaraSur.build_run(n, L, K2, lod, {})
 		_:
 			make = func(n: Node3D, lod: int) -> void: IstMarmaraSur.build_run(n, L, K2, lod, {})
@@ -1539,6 +1581,10 @@ func _sehir_dokusu_v2() -> void:
 		if String(it["id"]).begins_with("mese_"):
 			rr = float(it["r"]) * 0.3
 		foot.append(Vector3(p.x, rr, p.z))
+	# Bölümlerin oynanış alanları (ayrı pakette bağlanacak): BOŞ bırakılır (ev/ağaç/doku yok)
+	for a: Rect2 in oyun_alanlari():
+		var c := a.get_center()
+		foot.append(Vector3(c.x, a.size.length() * 0.5, c.y))
 	var bands: Array = []
 	for ad: String in HAT:
 		var hw := 26.0 if ad == "kara_suru" else (16.0 if ad == "blakherna_suru" else 9.0)
@@ -1740,7 +1786,6 @@ func _far_doku(far: Array) -> void:
 					col = Color("c88a6a")
 				_box_st(st, Vector3(c.x, lo, c.y) - cen, bas, sz, col)
 		var mi := MeshInstance3D.new()
-		st.generate_normals()
 		mi.mesh = st.commit()
 		mi.material_override = mat
 		mi.position = cen
@@ -1760,6 +1805,7 @@ static func _box_st(st: SurfaceTool, base: Vector3, bas: Basis, sz: Vector3, col
 		var b: Vector3 = base + bas * c[f[1]]
 		var cc: Vector3 = base + bas * c[f[2]]
 		var d: Vector3 = base + bas * c[f[3]]
+		st.set_normal((b - a).cross(d - a).normalized() * -1.0)
 		for v: Vector3 in [a, cc, b, a, d, cc]:
 			st.add_vertex(v)
 

@@ -166,6 +166,32 @@ func build(foot: Array, bands: Array, gates: Array, tohum := 1453) -> void:
 		var pl := IstGeo.yol(ad)
 		if pl.size() >= 2:
 			_add_street(_densify(pl, 14.0), MESE_W, "mese", ad, true)
+	# 1b) Galata: rıhtımdan (zincirin ucu) kuleye çıkan ana yokuş ve onu kesen kıyı caddesi
+	var zc := IstGeo.yol("zincir")
+	var kule := IstGeo.w2(-487.0, 1890.0)
+	if zc.size() >= 2:
+		var rh := zc[zc.size() - 1]
+		var gpts := PackedVector2Array()
+		for k in 13:
+			var t := k / 12.0
+			var q := rh.lerp(kule, t) + Vector2(-(kule - rh).y, (kule - rh).x).normalized() * sin(t * PI * 2.0) * 12.0
+			if cell(q.x, q.y) == 0:
+				gpts.append(q)
+		if gpts.size() >= 3:
+			_add_street(gpts, YOL_W, "yol", "galata")
+			var mid := gpts[gpts.size() / 2]
+			var dd := (kule - rh).normalized()
+			var cr := PackedVector2Array()
+			for k in range(-10, 11):
+				var q := mid + Vector2(-dd.y, dd.x) * k * 24.0 + dd * sin(k * 0.6) * 6.0
+				if cell(q.x, q.y) == 0:
+					cr.append(q)
+				elif cr.size() >= 3:
+					break
+				else:
+					cr.clear()
+			if cr.size() >= 3:
+				_add_street(cr, YOL_W, "yol", "galata")
 	# 2) Kapılardan Mese'ye inen yollar ve Haliç yokuşları
 	for g: Array in gates:
 		_gate_road(g[0] as Vector2, String(g[1]), rng)
@@ -176,6 +202,9 @@ func build(foot: Array, bands: Array, gates: Array, tohum := 1453) -> void:
 	var n1 := streets.size()
 	for s in range(n0, n1):
 		_lanes_from(s, rng, 1)
+	var n2 := streets.size()
+	for s in range(n1, n2):
+		_lanes_from(s, rng, 2)
 	stats["sokak"] = streets.size()
 	stats["sokak_ms"] = Time.get_ticks_msec() - t0
 	# 4) Evler
@@ -323,9 +352,12 @@ func _lanes_from(s: int, rng: RandomNumberGenerator, kusak: int) -> void:
 			var m := _mah(p)
 			var yog := float(m["yogunluk"])
 			var tur := String(m["tur"])
-			var spacing := 34.0 if tur == "carsi" else (42.0 if tur in ["sik", "liman"] else (95.0 if tur == "seyrek" else 190.0))
+			var spacing := 28.0 if tur == "carsi" else (34.0 if tur in ["sik", "liman"] else (80.0 if tur == "seyrek" else 170.0))
 			if kusak > 0:
-				spacing *= 1.5
+				spacing *= 1.35
+			if kusak > 1 and not tur in ["carsi", "sik", "liman"]:
+				t += 20.0
+				continue
 			if tur == "kir" or yog < 0.08:
 				t += 20.0
 				continue
