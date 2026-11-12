@@ -23,7 +23,7 @@ const ITEMS := [
 	["ok_sandigi", "Ok sandığı", 1.0, 0.6, 0.45, "kutu", "savas"],
 	["kalkan_askisi", "Kalkan askısı", 1.6, 1.8, 0.3, "ozel", "savas"],
 	["mizraklik", "Mızraklık", 1.0, 2.4, 0.5, "ozel", "savas"],
-	["nobetci_kulubesi", "Nöbetçi kulübesi", 1.6, 2.6, 1.6, "ozel", "savas"],
+	["nobetci_kulubesi", "Nöbetçi kulübesi", 2.4, 2.6, 2.4, "ozel", "savas"],
 	["barikat", "Barikat", 3.4, 1.7, 1.0, "kutu", "savas"],
 	["fici_toprak", "Fıçı-toprak tahkimat", 3.0, 1.5, 1.2, "kutu", "savas"],
 	["top", "Top (dövme demir)", 1.4, 1.2, 3.4, "kutu", "savas"],
@@ -168,7 +168,7 @@ static func build_gulle_yigini(h: Node3D) -> void:
 	var pos := [Vector3(-0.35, 0.2, 0.35), Vector3(0.0, 0.2, 0.35), Vector3(0.35, 0.2, 0.35), Vector3(-0.35, 0.2, -0.0), Vector3(0.0, 0.2, 0.0), Vector3(0.35, 0.2, 0.0),
 			Vector3(-0.17, 0.52, 0.17), Vector3(0.17, 0.52, 0.17), Vector3(0.0, 0.55, -0.1), Vector3(-0.2, 0.2, -0.35), Vector3(0.2, 0.2, -0.35), Vector3(0.0, 0.2, -0.35)]
 	for i in pos.size():
-		L.s(h, 0.18, pos[i], L.STONE if i % 2 == 0 else L.STONE_D, Vector3.ONE, 7)
+		L.s(h, 0.18, pos[i], L.STONE if i % 2 == 0 else L.STONE_D, Vector3.ONE, 5)
 	L.s(h, 0.16, Vector3(0.0, 0.8, 0.08), L.STONE_L, Vector3.ONE, 7)
 
 
@@ -202,21 +202,21 @@ static func build_mizraklik(h: Node3D) -> void:
 	for i in 5:
 		var x := -0.4 + i * 0.2
 		L.rod(h, Vector3(x, 0.1, 0.1 - (i % 2) * 0.12), Vector3(x + 0.04, 2.1, -0.04), 0.035, L.WOOD_L)
-		L.b(h, Vector3(0.05, 0.22, 0.02), Vector3(x + 0.04, 2.25, -0.04), L.IRON_L)
+		L.b(h, Vector3(0.05, 0.22, 0.02), Vector3(x + 0.04, 2.2, -0.04), L.IRON_L)
 	L.b(h, Vector3(1.0, 0.05, 0.05), Vector3(0, 1.1, -0.2), L.WOOD_D)
 
 
 static func build_nobetci_kulubesi(h: Node3D) -> void:
-	for sx in [-0.7, 0.7]:
-		for sz in [-0.7, 0.7]:
+	for sx in [-0.9, 0.9]:
+		for sz in [-0.9, 0.9]:
 			L.sol(h, Vector3(0.12, 2.0, 0.12), Vector3(sx, 1.0, sz), L.WOOD_D)
-	L.sol(h, Vector3(1.4, 0.1, 0.1), Vector3(0, 1.0, -0.7), L.WOOD)
-	L.sol(h, Vector3(1.5, 1.0, 0.06), Vector3(0, 1.5, -0.74), L.PLANK, Vector3.ZERO, "wood")
-	L.sol(h, Vector3(0.06, 1.0, 1.5), Vector3(-0.74, 1.5, 0), L.PLANK, Vector3.ZERO, "wood")
-	L.sol(h, Vector3(0.06, 1.0, 1.5), Vector3(0.74, 1.5, 0), L.PLANK, Vector3.ZERO, "wood")
-	L.pr(h, Vector3(1.9, 0.6, 1.9), Vector3(0, 2.3, 0), L.TERRA_D)
-	L.col_box(h, Vector3(1.8, 0.1, 1.8), Vector3(0, 2.06, 0))
-	L.sol(h, Vector3(1.3, 0.1, 1.3), Vector3(0, 0.05, 0), L.WOOD_D)
+	L.sol(h, Vector3(1.8, 0.1, 0.1), Vector3(0, 1.0, -0.9), L.WOOD)
+	L.sol(h, Vector3(1.9, 1.0, 0.06), Vector3(0, 1.5, -0.94), L.PLANK, Vector3.ZERO, "wood")
+	L.sol(h, Vector3(0.06, 1.0, 1.9), Vector3(-0.94, 1.5, 0), L.PLANK, Vector3.ZERO, "wood")
+	L.sol(h, Vector3(0.06, 1.0, 1.9), Vector3(0.94, 1.5, 0), L.PLANK, Vector3.ZERO, "wood")
+	L.pr(h, Vector3(2.4, 0.6, 2.4), Vector3(0, 2.3, 0), L.TERRA_D)
+	L.col_box(h, Vector3(2.2, 0.1, 2.2), Vector3(0, 2.06, 0))
+	L.sol(h, Vector3(1.9, 0.1, 1.9), Vector3(0, 0.05, 0), L.WOOD_D)
 	L.b(h, Vector3(0.4, 0.25, 0.4), Vector3(0.0, 0.2, 0.3), L.WOOD_L)
 
 
@@ -231,32 +231,32 @@ static func build_barikat(h: Node3D) -> void:
 
 
 static func build_fici_toprak(h: Node3D) -> void:
-	for i in 5:
-		L.cb(h, 0.3, 0.9, -1.2 + i * 0.6, 0, 0.0, L.WOOD if i % 2 == 0 else L.WOOD_L, 9, 0.28, "wood")
-		L.cb(h, 0.31, 0.05, -1.2 + i * 0.6, 0.35, 0.0, L.IRON, 9)
-		L.cb(h, 0.26, 0.04, -1.2 + i * 0.6, 0.9, 0.0, L.SOIL, 9)
+	for i in 4:
+		L.cb(h, 0.3, 0.9, -0.9 + i * 0.6, 0, 0.0, L.WOOD if i % 2 == 0 else L.WOOD_L, 9, 0.28, "wood")
+		L.cb(h, 0.31, 0.05, -0.9 + i * 0.6, 0.35, 0.0, L.IRON, 9)
+		L.cb(h, 0.26, 0.04, -0.9 + i * 0.6, 0.9, 0.0, L.SOIL, 9)
 	L.b(h, Vector3(3.0, 0.5, 1.0), Vector3(0, 1.15, 0.0), L.SOIL, Vector3.ZERO, "rubble")
 	L.s(h, 0.5, Vector3(0, 1.3, 0.0), L.SOIL.lightened(0.05), Vector3(3.0, 0.6, 1.1), 8)
 
 
 static func build_top(h: Node3D) -> void:
 	# kuşatma topu: ahşap kızakta uzun dövme demir namlu (Urban tipi), yanında gülle
-	L.sol(h, Vector3(1.4, 0.35, 3.3), Vector3(0, 0.38, 0.0), L.WOOD_D, Vector3.ZERO, "wood")
+	L.sol(h, Vector3(1.4, 0.35, 3.3), Vector3(0, 0.175, 0.0), L.WOOD_D, Vector3.ZERO, "wood")
 	L.c(h, 0.35, 3.0, Vector3(0, 0.95, 0), L.IRON, Vector3(90, 0, 0), 12, 0.28)
 	for z in [-1.2, -0.4, 0.4, 1.2]:
 		L.c(h, 0.37, 0.07, Vector3(0, 0.95, z), L.IRON_L, Vector3(90, 0, 0), 12)
 	L.c(h, 0.2, 0.2, Vector3(0, 0.95, -1.55), L.BLACK, Vector3(90, 0, 0), 10)
 	L.b(h, Vector3(0.14, 0.14, 0.3), Vector3(0, 1.36, 1.2), L.IRON)
 	for sx in [-0.55, 0.55]:
-		L.b(h, Vector3(0.15, 0.5, 2.0), Vector3(sx, 0.75, 0), L.WOOD, Vector3.ZERO, "wood")
+		L.b(h, Vector3(0.15, 0.5, 2.0), Vector3(sx * 0.78, 0.6, 0), L.WOOD, Vector3.ZERO, "wood")
 
 
 static func build_balista(h: Node3D) -> void:
-	L.cb(h, 0.1, 0.9, 0, 0, 0.1, L.WOOD_D, 6)
+	L.cb(h, 0.1, 1.0, 0, 0, 0.1, L.WOOD_D, 6)
 	L.b(h, Vector3(0.9, 0.12, 0.12), Vector3(0, 1.0, -0.0), L.WOOD)
 	L.b(h, Vector3(0.12, 0.14, 1.6), Vector3(0, 1.1, -0.2), L.WOOD_L)
 	for sx in [-1, 1]:
-		L.rod(h, Vector3(sx * 0.12, 1.2, -0.8), Vector3(sx * 0.7, 1.15, -0.55), 0.06, L.WOOD_D)
+		L.rod(h, Vector3(sx * 0.06, 1.2, -0.8), Vector3(sx * 0.7, 1.15, -0.55), 0.06, L.WOOD_D)
 		L.rod(h, Vector3(sx * 0.7, 1.15, -0.55), Vector3(sx * 0.1, 1.15, 0.3), 0.012, L.ROPE)
 	L.b(h, Vector3(0.04, 0.04, 1.2), Vector3(0, 1.2, -0.4), L.WOOD_L)
 	L.b(h, Vector3(0.06, 0.08, 0.18), Vector3(0, 1.2, -1.0), L.IRON_L)
@@ -280,10 +280,10 @@ static func build_kazan_yag(h: Node3D) -> void:
 
 static func build_okcu_siperi(h: Node3D) -> void:
 	for sx in [-0.55, 0.55]:
-		L.sol(h, Vector3(0.1, 1.8, 0.1), Vector3(sx, 0.9, 0.2), L.WOOD_D)
-	L.sol(h, Vector3(1.4, 1.5, 0.12), Vector3(0, 0.85, 0), L.STRAW, Vector3.ZERO, "wood")
+		L.sol(h, Vector3(0.1, 1.8, 0.1), Vector3(sx, 0.9, 0.08), L.WOOD_D)
+	L.sol(h, Vector3(1.4, 1.7, 0.12), Vector3(0, 0.85, 0), L.STRAW, Vector3.ZERO, "wood")
 	for i in 6:
-		L.b(h, Vector3(0.04, 1.5, 0.15), Vector3(-0.6 + i * 0.24, 0.85, 0), L.STRAW.darkened(0.25))
+		L.b(h, Vector3(0.04, 1.7, 0.15), Vector3(-0.6 + i * 0.24, 0.85, 0), L.STRAW.darkened(0.25))
 	for y in [0.3, 0.8, 1.3]:
 		L.b(h, Vector3(1.45, 0.05, 0.17), Vector3(0, y, 0), L.HAY.darkened(0.2))
 
