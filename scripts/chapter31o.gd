@@ -178,6 +178,8 @@ func _house_phase() -> void:
 	await hud.say("SPK_TOLGA", "D31O_T_01")
 	# Caddeden aşağı yürü: Kadri'nin kazanı (bark), tellal (yürüyerek gelir, bark)
 	player.frozen = false
+	if GameState.autotest:
+		await kural.bot_window()      # yalnız krl_* varyantlarında bir şey yapar (denetim ZORUNLU 6)
 	hud.set_objective(tr("UI_OBJ31O_WALK"), PALACE_FRONT + Vector3(0, 1.6, 0))
 	var t := 0.0
 	var said_k := false
@@ -1534,8 +1536,10 @@ func _autotest_report() -> void:
 		ok = ok and house_ok and _petrion_bonus > 0.0 and _petrion_said
 	elif v == "petrion_bad":
 		ok = ok and house_ok and _petrion_bonus == 0.0 and _petrion_said
-	elif v == "":
+	elif v == "" or v == "krl_hit":
 		ok = ok and house_ok and sun_ok and scaff_ok and mats_ok and beam_falls == 0 and wrong_signs == 0 and cam.done
+		if v == "krl_hit":
+			ok = ok and kural.test_ok()
 	else:
 		ok = ok and beam_falls >= 1 and wrong_signs >= 2 and lash_misses >= 1
 	if not ok:

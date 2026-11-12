@@ -153,7 +153,7 @@ for v in "" "=late" "=cracked" "=gunner" "=named" "=council_ok" "=council_bad"; 
 for v in "" "=lose" "=trespass"; do run --chapter=37o --autotest$v; done
 for v in "" "=lose" "=hooks_ok" "=hooks_bad"; do run --chapter=38o --autotest$v; done
 for v in "" "=late" "=tezkire" "=pass" "=sailor_ok" "=sailor_bad"; do run --chapter=39o --autotest$v; done
-for v in "" "=late" "=petrion_ok" "=petrion_bad"; do run --chapter=31o --autotest$v; done
+for v in "" "=late" "=petrion_ok" "=petrion_bad" "=krl_hit"; do run --chapter=31o --autotest$v; done
 for v in "" "=wide" "=fall"; do run --chapter=33o --autotest$v; done
 for v in "" "=bad"; do run --chapter=34o --autotest$v; done
 for v in "" "=slip"; do run --chapter=35o --autotest$v; done

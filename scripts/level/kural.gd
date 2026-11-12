@@ -138,6 +138,19 @@ func _ready() -> void:
 	_bot = GameState.autotest_variant if GameState.autotest and GameState.autotest_variant in ["krl_hit", "krl_soft", "krl_soldier", "krl_animal", "kacak", "kacak_iade"] else ""
 
 
+## Denetim karesi (yalnız --dialogshots ile ve ekranlıyken; kart sırasında da: denetim ZORUNLU 6)
+func _cshot(nm: String, delay := 0.0) -> void:
+	if GameState.dialog_shots_dir == "" or DisplayServer.get_name() == "headless":
+		return
+	if delay > 0.0:
+		await get_tree().create_timer(delay, true, false, true).timeout
+	await RenderingServer.frame_post_draw
+	if not is_inside_tree():
+		return
+	DirAccess.make_dir_recursive_absolute(GameState.dialog_shots_dir)
+	get_viewport().get_texture().get_image().save_jpg(GameState.dialog_shots_dir.path_join("c_kural_%s.jpg" % nm), 0.85)
+
+
 func _log(s: String) -> void:
 	log_lines.append(s)
 	if GameState.autotest:
@@ -181,6 +194,8 @@ func _area_tick(delta: float) -> void:
 	if d <= area_r:
 		_exit_at = player.global_position
 		if _step > 0 and _runner_tw == null:
+			if _step == 1:
+				escapes = maxi(0, escapes - 1)      # lafta döndü: kaçmış sayılmaz (denetim ZORUNLU 3)
 			_step = 0          # kendi döndü: laf yetti
 		_out_t = 0.0
 		return
@@ -188,10 +203,9 @@ func _area_tick(delta: float) -> void:
 	if _step == 0 and _out_t > 2.0:
 		_step = 1
 		escapes += 1
-		GameState.bump_stat("firar")
-		GameState.flags["firar_" + ("41o" if side == "O" else "42b")] = escapes
 		if escapes >= 2:
 			_step = 2          # üstelemek: ilk basamak atlanır
+			_count_firar()
 			_say_giver("KRL_TALIM_%s_AGAIN" % side)
 			_send_runner()
 		else:
@@ -199,6 +213,7 @@ func _area_tick(delta: float) -> void:
 		_log("area step=%d escapes=%d d=%.1f" % [_step, escapes, d])
 	elif _step == 1 and (_out_t > 7.0 or d > area_r + 10.0):
 		_step = 2
+		_count_firar()
 		_say_giver("KRL_TALIM_%s_2" % side)
 		_send_runner()
 		_log("area step=2 runner")
@@ -207,6 +222,12 @@ func _area_tick(delta: float) -> void:
 			_caught()
 		elif d > area_r + 45.0 or _out_t > 45.0:
 			_buro_return()
+
+
+## Firar ancak seslenmeden (kovalayan koştuktan) sonra sayılır: 2 sn çıkıp lafta dönen kaçmış sayılmaz (denetim ZORUNLU 3)
+func _count_firar() -> void:
+	GameState.bump_stat("firar")
+	GameState.flags["firar_" + ("41o" if side == "O" else "42b")] = escapes
 
 
 func _say_giver(key: String) -> void:
@@ -256,6 +277,12 @@ func _chase_loop() -> void:
 	_runner_tw = null
 
 
+func _has_ground(p: Vector3, near_y: float) -> bool:
+	var space := scene.get_world_3d().direct_space_state
+	var q := PhysicsRayQueryParameters3D.create(Vector3(p.x, near_y + 2.0, p.z), Vector3(p.x, near_y - 3.0, p.z), 1)
+	return not space.intersect_ray(q).is_empty()
+
+
 func _ground(p: Vector3, fallback: float) -> float:
 	var space := scene.get_world_3d().direct_space_state
 	var q := PhysicsRayQueryParameters3D.create(Vector3(p.x, fallback + 2.0, p.z), Vector3(p.x, fallback - 6.0, p.z), 1)
@@ -276,6 +303,7 @@ func _caught() -> void:
 	_log("area caught n=%d" % caught)
 	await hud.say("SPK_AZAP" if side == "O" else "SPK_DEFENDER", "KRL_TALIM_%s_CATCH" % side)
 	await hud.fade_to(1.0, 0.5)
+	_cshot("kart_ceza", 1.2)
 	await hud.card([[tr("UI_KRL_CARD_PUN"), 40, Color("f2e6c9")],
 		[tr("UI_KRL_CARD_KAZAN" if side == "O" else "UI_KRL_CARD_TAS"), 22, Color(1, 1, 1, 0.8)]], 2.4)
 	await hud.say(giver_spk, "KRL_TALIM_%s_PUN_1" % side)
@@ -302,6 +330,7 @@ func _buro_return() -> void:
 	await hud.say("SPK_NIHAT", "KRL_IADE_N")
 	await hud.say("SPK_TOLGA", "KRL_IADE_T")
 	await hud.fade_to(1.0, 0.4, Color(0.92, 0.92, 0.86))
+	_cshot("kart_iade", 1.2)
 	await hud.card([[tr("UI_KRL_CARD_IADE"), 40, Color("2a2a2a")], [tr("UI_KRL_CARD_IADE_SUB"), 22, Color(0.1, 0.1, 0.1, 0.8)]], 2.4)
 	hud.clear_card()
 	_home_back()
@@ -342,11 +371,15 @@ func _hits_tick(delta: float) -> void:
 	if not _free_to_act():
 		return
 	var pressed := Input.is_action_just_pressed("kick") or _bot_kick
+	_bot_was = _bot_kick
 	_bot_kick = false
 	if not pressed:
 		return
 	if player.focus_id.begins_with("mg:") or player.focus_id.begins_with("ev:"):
 		return            # bölümün kendi işi (mini oyun, olay)
+	# Tıklama tırmanmaya gidiyorsa (önünde tırmanılabilir duvar) tekme değildir (denetim ZORUNLU 4)
+	if not _bot_was and player.can_climb and player.traversal != null and player.focus_id == "" and player.traversal.wall_ahead():
+		return
 	var t := _target()
 	if t.is_empty():
 		return
@@ -354,6 +387,9 @@ func _hits_tick(delta: float) -> void:
 
 
 var _bot_kick := false
+var _animals: Array = []
+var _bot_was := false
+var _animals_t := -1.0
 
 
 ## Önündeki kişi ya da hayvan: {"node", "kind": person/soldier/animal, "role"}
@@ -378,9 +414,16 @@ func _target() -> Dictionary:
 			bd = d
 			best = c
 			kind = "soldier" if c is Soldier else "person"
-	# Hayvanlar (yalnız basışta taranır: her kare maliyet yok)
-	for n in scene.find_children("*", "Node3D", true, false):
-		if not (n is Goat or n is Chicken or n is Horse or n is Ox or n is Cat):
+	# Hayvanlar: sahne ağacı yalnız ilk basışta ve 10 sn'de bir taranır, liste saklanır (her tıkta bütün ağaç gezilmez:
+	# denetim ZORUNLU 4)
+	if _clock - _animals_t > 10.0 or _animals_t < 0.0:
+		_animals_t = _clock
+		_animals.clear()
+		for m in scene.find_children("*", "Node3D", true, false):
+			if m is Goat or m is Chicken or m is Horse or m is Ox or m is Cat:
+				_animals.append(m)
+	for n in _animals:
+		if not is_instance_valid(n):
 			continue
 		var c := n as Node3D
 		if not c.is_visible_in_tree():
@@ -486,7 +529,7 @@ func _civilian(n: Node3D, role: String, ctx: Dictionary) -> void:
 		p.set_activity("")          # vurulan elindeki işi bırakır
 	if p:
 		p.face_toward(player.global_position)
-		p.look_target = player
+		_look(p, 6.0)          # baş çevirme (Rig.stare_t); look_target yürüyeni yolundan çeviriyordu (denetim ZORUNLU 1)
 	if step == 1:
 		last = "hit1"
 		if p:
@@ -597,6 +640,7 @@ func _arrest(ctx: Dictionary, catch_key: String) -> void:
 	last = "arrest"
 	await hud.fade_to(1.0, 0.6)
 	var card: String = {"B": "UI_KRL_CARD_ZINDAN", "O": "UI_KRL_CARD_KADI", "G": "UI_KRL_CARD_PODESTA"}[who]
+	_cshot("kart_" + card.to_lower(), 1.2)
 	await hud.card([[tr(card), 40, Color("f2e6c9")], [tr(card + "_SUB"), 22, Color(1, 1, 1, 0.8)]], 2.4)
 	match who:
 		"B":
@@ -666,8 +710,22 @@ func _guard_run(who: String, role: String) -> Node3D:
 		return _ground(Vector3(x, 0, z), me.y))
 	if is_instance_valid(g):
 		g.look_target = player
-		player.face(g.global_position + Vector3(0, 1.5, 0))
+		await _turn_to(g.global_position + Vector3(0, 1.5, 0), 0.45)      # yumuşak dönüş (denetim ZORUNLU 5)
 	return g
+
+
+## Bakış hedefe yumuşakça döner (tek karede 180° sıçrama yok)
+func _turn_to(target: Vector3, secs: float) -> void:
+	if Stage.fast():
+		player.face(target)
+		return
+	var cam := player.camera.global_transform
+	var from := cam.origin - cam.basis.z * cam.origin.distance_to(target)
+	var tw := player.create_tween()
+	tw.tween_method(func(v: Vector3) -> void:
+		if is_instance_valid(player):
+			player.face(v), from, target, secs).set_trans(Tween.TRANS_SINE)
+	await tw.finished
 
 
 func _soft(n: Node3D, role: String) -> void:
@@ -926,7 +984,12 @@ func _bot_tick(delta: float) -> void:
 			var away := _bot_dir
 			var far := area_r + (5.0 if _step < 2 else (47.0 if _bot == "kacak_iade" else 3.0))
 			if _flat_dist(player.global_position, area_center) < far - 0.5:
+				# Zemini olan en uzak nokta (zeminsiz boşluğa ışınlanmasın: denetim ZORUNLU 2)
 				var p := area_center + away * far
+				var f2 := far
+				while f2 > area_r + 3.0 and not _has_ground(p, player.global_position.y):
+					f2 -= 4.0
+					p = area_center + away * f2
 				p.y = _ground(p, player.global_position.y)
 				player.global_position = p + Vector3(0, 0.05, 0)
 				player.face(area_center + Vector3(0, 1.5, 0))     # kaçan geriye, meydana bakar (seslenen ve koşan görünsün)
