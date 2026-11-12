@@ -497,12 +497,18 @@ func _kursun(n: Node3D) -> void:
 static var _cizgisiz_mat := {}
 
 static func _cizgisiz_of(m: Material) -> Material:
-	if m == null or m.next_pass == null:
+	if m == null:
+		return m
+	var vc := m is BaseMaterial3D and (m as BaseMaterial3D).vertex_color_use_as_albedo and not (m as BaseMaterial3D).vertex_color_is_srgb
+	if m.next_pass == null and not vc:
 		return m
 	var key := m.get_instance_id()
 	if not _cizgisiz_mat.has(key):
 		var d := m.duplicate() as Material
 		d.next_pass = null
+		if vc:
+			# pişmiş köşe rengi sRGB (albedo_color'dan): doğrusal sayılınca uzak katman yakınından açık görünüyordu
+			(d as BaseMaterial3D).vertex_color_is_srgb = true
 		_cizgisiz_mat[key] = d
 	return _cizgisiz_mat[key]
 
@@ -519,7 +525,7 @@ static func _cizgisiz(n: Node) -> void:
 				for si in mesh.get_surface_count():
 					var om := (gi as MeshInstance3D).get_surface_override_material(si)
 					var sm := om if om != null else mesh.surface_get_material(si)
-					if sm != null and sm.next_pass != null:
+					if sm != null and _cizgisiz_of(sm) != sm:
 						(gi as MeshInstance3D).set_surface_override_material(si, _cizgisiz_of(sm))
 		elif gi is MultiMeshInstance3D and (gi as MultiMeshInstance3D).multimesh and (gi as MultiMeshInstance3D).multimesh.mesh:
 			mesh = (gi as MultiMeshInstance3D).multimesh.mesh
@@ -2090,14 +2096,28 @@ func _hatlar_v2() -> void:
 		for g: Array in gaps.get(ad, []):
 			var sn := _snap(pl, g[0])
 			cuts.append([float(sn["s"]) - float(g[1]) * 0.5, float(sn["s"]) + float(g[1]) * 0.5])
+		# Köşe kuleleri: hangi köşede (kapı koşusunun içine ya da önceki köşeye 15 m'den yakın düşen kurulmaz; ŞEHİR-3:
+		# Altın Kapı kümesinde kapının yürüme yolunu 11 m'lik dolu kule kesiyordu). Kulesiz köşede dilimler uç uca biter.
+		var kose_var := {}
+		var sv := 0.0
+		var son_kose := -INF
+		for i in range(1, pl.size() - 1):
+			sv += pl[i - 1].distance_to(pl[i])
+			var kapida := false
+			for c: Array in cuts:
+				if sv > float(c[0]) - 6.0 and sv < float(c[1]) + 6.0:
+					kapida = true
+			if not kapida and sv - son_kose > 15.0:
+				kose_var[i] = true
+				son_kose = sv
 		var s_acc := 0.0
 		for i in pl.size() - 1:
 			var a := pl[i]
 			var b := pl[i + 1]
 			var L := a.distance_to(b)
 			var d := (b - a) / L
-			var corner := 4.5 if i > 0 else 0.0
-			var end_c := 4.5 if i < pl.size() - 2 else 0.0
+			var corner := 4.5 if kose_var.has(i) else 0.0
+			var end_c := 4.5 if kose_var.has(i + 1) else 0.0
 			# Bu kenarın kapılarla bölünmüş aralıkları
 			var iv: Array = [[corner, L - end_c]]
 			for c: Array in cuts:
@@ -2148,8 +2168,10 @@ func _hatlar_v2() -> void:
 					pc["a2"] = a + d * s0
 					pc["b2"] = a + d * (s0 + pl_len)
 					s0 += pl_len
-			# Köşe kulesi (iç köşe ve dış köşedeki kopukluğu örter; tepesi yürüme yolu hizasında)
-			if i > 0:
+			# Köşe kulesi (iç köşe ve dış köşedeki kopukluğu örter; tepesi yürüme yolu hizasında). Kapı koşusunun içine
+			# ya da bir önceki köşeye 15 m'den yakın düşen kurulmaz (ŞEHİR-3: Altın Kapı kümesinde kapının yürüme yolunu
+			# 11 m'lik dolu kule kesiyordu)
+			if kose_var.has(i):
 				var kc := _kose(ad, String(cfg["kur"]), a, _son_walk(ad, s_acc - 4.5))
 				kc["s0"] = s_acc - 4.5
 				kc["s1"] = s_acc + 4.5

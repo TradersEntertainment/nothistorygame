@@ -327,7 +327,7 @@ static func tent_mesh(kind: String) -> ArrayMesh:
 			b.prism(Bld.xf(Vector3(0, 0, 0)), Vector3(1.0, 0.9, 1.0), Color(0.62, 0.54, 0.4))
 			b.box(Vector3(0, 0.4, 0.46), Vector3(0.5, 0.7, 0.05), Color(0.1, 0.08, 0.06))
 		"sade":
-			b.cyl(Bld.xf(Vector3(0, 0.9, 0)), 1.0, 1.8, Color(0.88, 0.83, 0.7), 6, 0.1, false)
+			b.cyl(Bld.xf(Vector3(0, 0.9, 0)), 1.0, 1.8, Color(0.88, 0.83, 0.7), 4, 0.1, false)   # ŞEHİR-3: 6 → 4 kenar (çadır denizi üçgen bütçesi)
 		"sade_cati":
 			b.prism(Bld.xf(Vector3(0, 0, 0)), Vector3(1.0, 1.7, 1.0), Color(0.86, 0.8, 0.66))
 	var m := bld_mesh(b)

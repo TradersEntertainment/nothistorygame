@@ -78,6 +78,7 @@ static func _uzak_mat() -> StandardMaterial3D:
 	if _umat == null:
 		_umat = StandardMaterial3D.new()
 		_umat.vertex_color_use_as_albedo = true
+		_umat.vertex_color_is_srgb = true
 		_umat.diffuse_mode = BaseMaterial3D.DIFFUSE_TOON
 		_umat.specular_mode = BaseMaterial3D.SPECULAR_DISABLED
 		_umat.roughness = 1.0
