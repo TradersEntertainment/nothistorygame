@@ -725,6 +725,8 @@ var _tile_t := 6.0
 var _holder: Person                  # ipi aşağıda tutan sokak tayfası (pencere altı)
 var _rope_top: Node3D                # pencereden adamın başına
 var _rope_low: Node3D                # adamın ellerinden tayfanın ellerine
+var _holder_grip := Vector3.ZERO     # tayfanın ipi tuttuğu yer (dünya)
+var _rope_extra: Array = []          # tayfanın elinden yere inen artan ip ve kangal
 
 
 ## İp: pencerenin kenarından sokaktaki tayfaya uzanır; adam ipin ucunda iner (önceden yalnız adam ışınlanıp düşüyordu).
@@ -735,20 +737,46 @@ func _start_rope() -> void:
 	add_child(_holder)
 	_holder.global_position = Vector3(wx * 2.6, 0.0, city.lower_window.z)
 	_holder.face_toward(Vector3(city.lower_window.x, 0.0, city.lower_window.z))
-	_rope_top = Props.cyl(self, 0.03, 1.0, Vector3.ZERO, Color("8a6a40"), Vector3.ZERO, 5)
-	_rope_low = Props.cyl(self, 0.03, 1.0, Vector3.ZERO, Color("8a6a40"), Vector3.ZERO, 5)
+	# P8: burgulu, iki ucu bağlı ip (Stage.rope; eskiden iki nokta arasına gerilmiş düz silindir): Tolga'nın elleri →
+	# pencere direği → adamın göğsü; adamın göğsünden tayfanın ellerine kılavuz ip, artanı tayfanın ayağının dibinde kangal
+	_rope_top = Stage.rope(self, city.lower_window, city.lower_window + Vector3.DOWN, 0.0, 0.024, Color("8a6a40"))
+	_rope_low = Stage.rope(self, city.lower_window, city.lower_window + Vector3.DOWN, 0.0, 0.024, Color("8a6a40"))
+	var fwd := _holder.global_transform.basis.z
+	_holder_grip = _holder.global_position + fwd * 0.34 + Vector3(0, 1.08, 0)
+	Stage.grip_hold(_holder, null, [_holder_grip + Vector3(0, 0.08, 0) + fwd * 0.04, _holder_grip])
+	var side := _holder.global_transform.basis.x
+	_rope_extra.append(Stage.rope_coil(self, _holder.global_position + side * 0.45 + fwd * 0.15, 0.22))
+	_rope_extra.append(Stage.rope(self, _holder_grip, _holder.global_position + side * 0.45 + fwd * 0.15 + Vector3(0, 0.08, 0), 0.25, 0.024, Color("8a6a40")))
+	player.hold_both(Vector3(-0.07, -0.3, -0.46), Vector3(0.08, -0.33, -0.5))
 
 
-## İki nokta arasına silindiri yerleştirir (silindir yüksekliği 1: y ekseni boyunca uzatılır).
-func _rope_between(n: Node3D, a: Vector3, b: Vector3) -> void:
-	var d := b - a
-	var len := d.length()
-	if n == null or not is_instance_valid(n) or len < 0.01:
+## İpi noktalardan geçirir (Stage.rope_to; ip düğümü sahnenin kökünde, dünya = yerel). Yük taşıyan parçalar gergin, eller ile
+## direk arasındaki parça az sarkar. a → b; via verilirse a → via → b (ip direğin üstünden döner).
+func _rope_between(n: Node3D, a: Vector3, b: Vector3, via := Vector3.INF, sag := 0.02) -> void:
+	if n == null or not is_instance_valid(n) or not n is MeshInstance3D:
 		return
-	var up := d / len
-	var side := up.cross(Vector3.FORWARD if absf(up.dot(Vector3.FORWARD)) < 0.95 else Vector3.RIGHT).normalized()
-	var fwd := side.cross(up)
-	n.global_transform = Transform3D(Basis(side, up * len, fwd), (a + b) * 0.5)
+	var pts: Array = []
+	if via != Vector3.INF:
+		pts = Stage.sag_points(a, via, 0.06, 4)
+		pts.pop_back()
+		pts.append_array(Stage.sag_points(via, b, sag, 4))
+	else:
+		pts = Stage.sag_points(a, b, sag, 6)
+	# Uçlardan biri saçma uzaktaysa (ışınlanma, hızlandırılmış koşuda kamera salınımı) ağ kurulmaz: 9 cm'de bir halka,
+	# yüzlerce metrelik ip belleği doldururdu
+	for i in pts.size() - 1:
+		if (pts[i] as Vector3).distance_to(pts[i + 1]) > 12.0:
+			return
+	Stage.rope_to(n as MeshInstance3D, pts)
+
+
+## Tolga'nın iki elinin arası (dünya): gövdenin önünde, göğüs hizasının altında (kameradan değil gövdeden: kamera
+## yüksekliği yumuşatılır, hızlandırılmış koşuda salınır).
+func _hands_point() -> Vector3:
+	var fwd := -player.global_transform.basis.z
+	fwd.y = 0.0
+	fwd = fwd.normalized() if fwd.length() > 0.01 else Vector3.FORWARD
+	return player.global_position + Vector3(0, player.eye_height - 0.42, 0) + fwd * 0.46
 
 
 func _fire() -> void:
@@ -832,8 +860,9 @@ func _fire() -> void:
 				if lower_prog >= 1.0:
 					_lowered = true
 		if _holder != null and is_instance_valid(old_man):
-			_rope_between(_rope_top, city.lower_window + Vector3(0, 0.1, 0), old_man.global_position + Vector3(0, 1.5, 0))
-			_rope_between(_rope_low, old_man.global_position + Vector3(0, 1.5, 0), _holder.global_position + Vector3(0, 1.2, 0))
+			var bar := Vector3(city.lower_window.x - signf(city.lower_window.x) * 0.2, Petrion.ROOM_Y + 1.17, city.lower_window.z)
+			_rope_between(_rope_top, _hands_point(), old_man.global_position + Vector3(0, 1.3, 0), bar, 0.01)
+			_rope_between(_rope_low, old_man.global_position + Vector3(0, 1.25, 0), _holder_grip, Vector3.INF, 0.12)
 		# Bot
 		if GameState.autotest:
 			if not inside and not _man_follow:
@@ -876,9 +905,11 @@ func _fire() -> void:
 		hud.bark("SPK_SAILOR", "D39O_SA_ROPE", 2.5)
 		await get_tree().create_timer(1.6, false).timeout
 	await hud.fade_to(1.0, 0.5)
-	for n in [_rope_top, _rope_low, _holder]:
+	player.release_both()
+	for n in [_rope_top, _rope_low, _holder] + _rope_extra:
 		if is_instance_valid(n):
 			n.queue_free()
+	_rope_extra.clear()
 	_rope_top = null
 	_rope_low = null
 	_holder = null

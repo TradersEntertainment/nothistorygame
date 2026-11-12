@@ -122,9 +122,12 @@ func _build_wall_walk() -> void:
 		t.add_child(l)
 		_torches.append(t)
 	# Seyrek nöbetçiler: yolun ucunda biri, kule tepelerinde birer gözcü (koca surda bir avuç insan)
-	Garrison.man(self, Vector3(33.9, 12.0, -14.2), PI * 0.5, 1210, "spear")
-	Garrison.man(self, Vector3(34.6, 16.0, -18.0), PI * 0.5, 1211, "bow")
-	Garrison.man(self, Vector3(34.6, 16.0, -1.2), PI * 0.5, 1212, "spear")
+	var watch: Array = []
+	watch.append(Garrison.man(self, Vector3(33.9, 12.0, -14.2), PI * 0.5, 1210, "spear"))
+	watch.append(Garrison.man(self, Vector3(34.6, 16.0, -18.0), PI * 0.5, 1211, "bow"))
+	watch.append(Garrison.man(self, Vector3(34.6, 16.0, -1.2), PI * 0.5, 1212, "spear"))
+	# P8: nöbetçiler donuktu: kendi zamanlarında başını sallar, iç çeker (ordugâha bakarken; aynı anda değil)
+	Crowd.idle_vary(watch, {"every": Vector2(6.0, 14.0), "emotes": ["nod", "sigh", "nod"]})
 	# Sfrancis: koyu mavi kaftan, sakallı; elinde sayım listesi (rulo)
 	sphrantzes = Person.new({"coat": Color("2a3a5a"), "robe": Color("2a3a5a"), "pants": Color("2a2a30"), "beard": true, "mustache": true,
 		"hair": Color("5a4a3a"), "hat": "skiadion", "skin": Color("e0b894")})
@@ -132,9 +135,12 @@ func _build_wall_walk() -> void:
 	sphrantzes.set_meta("no_talk", true)
 	add_child(sphrantzes)
 	sphrantzes.face_toward(EMP_AT)
-	var arm: Node3D = sphrantzes.rig.arm_r if sphrantzes.rig else null
-	if arm:
-		Props.cyl(arm, 0.05, 0.34, Vector3(0.02, -0.6, 0.1), Color("efe6cf"), Vector3(0, 0, 90), 8)
+	# Rulo avucunda (P8: üst kola bağlıydı; dirsek bükülünce elin altında havada kalıyordu): önkolun ucunda, avucun
+	# içinden enine geçer
+	var el: Node3D = sphrantzes.rig.elbow_r if sphrantzes.rig else null
+	if el:
+		var hp: Vector3 = el.get_meta("hand", Vector3(0, -0.27, 0.01))
+		Props.cyl(el, 0.045, 0.34, hp + Vector3(0.0, -0.005, 0.03), Color("efe6cf"), Vector3(0, 0, 90), 8)
 
 
 ## Surların dışı: ovada Osmanlı ordugâhı. Gün batımında çadırlar ve yanmaya başlayan ateşler (boş ufuk yok).

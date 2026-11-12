@@ -95,6 +95,8 @@ func _build() -> void:
 	add_child(envoy)
 	Props.cyl(envoy, 0.025, 2.4, Vector3(0.35, 1.2, 0.1), Color("6a4a2c"), Vector3.ZERO, 5)
 	Props.box(envoy, Vector3(0.02, 0.6, 0.9), Vector3(0.35, 2.1, 0.55), Color("f4f1ea"))
+	# P8: beyaz bayrağın sırığı elde (sırık gövdenin yanında havada duruyordu): yakın eli sırığı göğüs hizasında kavrar
+	Stage.grip_hold(envoy, envoy, [Vector3(0.35, 1.08, 0.1)])
 	theodoros = Person.new({"coat": Color("5a3a6a"), "pants": Color("3a2a4a"), "hat": "kamelaukion", "robe": Color("5a3a6a"),
 		"beard": true, "hair": Color("6a6a6a"), "skin": Color("e0b08a")})
 	theodoros.set_meta("spk", "SPK_THEODOROS")
@@ -129,6 +131,12 @@ func _build() -> void:
 
 func _place_audience() -> void:
 	var c := HALL
+	# P8: huzurdaki saray muhafızları donuk duruyordu: kendi zamanlarında kıpırdar (Crowd.idle_vary, rastgele faz)
+	var court: Array = []
+	for n in city.get_children():
+		if n is Person and n != city.emperor and not n.has_meta("spk") and (n as Node3D).global_position.distance_to(c) < 7.0:
+			court.append(n)
+	Crowd.idle_vary(court, {"every": Vector2(5.0, 13.0), "emotes": ["nod", "whisper", "nod", "sigh"]})
 	lutfi.position = c + Vector3(1.4, 0, -1.1)
 	envoy.position = c + Vector3(1.4, 0, 1.1)
 	theodoros.position = c + Vector3(2.3, 0, 1.7)      # Tolga'nın önünde, yanında fısıldar: kadrajda (kenarda yarım kesikti)

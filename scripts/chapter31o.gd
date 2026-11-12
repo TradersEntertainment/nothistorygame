@@ -269,16 +269,39 @@ func _lower_obj() -> String:
 	return tr("UI_OBJ31O_LOWER" if _petrion_bonus > 0.0 else "UI_OBJ31O_LOWER_SASH")
 
 
-## İp çizgisi: ince silindiri iki nokta arasına her karede yerleştirir (y ekseni a→b doğrultusunda)
-func _rope_between(m: MeshInstance3D, a: Vector3, b: Vector3) -> void:
-	var d := b - a
-	var len := d.length()
-	if len < 0.05 or not is_instance_valid(m):
+## İp (P8: eskiden iki nokta arasına gerilmiş düz silindir, üst ucu pencerenin dışında havadaydı): Tolga'nın iki
+## elinin arasından pencerenin eşiğine, eşikten çocuğun göğsüne inen burgulu ip (Stage.rope). Çocuğun ağırlığıyla
+## gergin; eşik ile eller arasında az sarkar. a: eski üst uç (kullanılmaz, imza aynı kalsın diye), b: çocuktaki uç.
+func _rope_between(m: MeshInstance3D, _a: Vector3, b: Vector3) -> void:
+	if not is_instance_valid(m):
 		return
-	var dir := d / len
-	var up := Vector3.FORWARD if absf(dir.y) > 0.95 else Vector3.UP
-	var rot := Basis.looking_at(dir, up) * Basis(Vector3.RIGHT, -PI * 0.5)
-	m.transform = Transform3D(rot * Basis.from_scale(Vector3(1.0, len, 1.0)), (a + b) * 0.5)
+	# Tolga'nın iki elinin arası: gövdenin önünde (kameradan değil gövdeden: kamera yüksekliği yumuşatılır, salınır)
+	var fwd := -player.global_transform.basis.z
+	fwd.y = 0.0
+	fwd = fwd.normalized() if fwd.length() > 0.01 else Vector3.FORWARD
+	var hands := player.global_position + Vector3(0, player.eye_height - 0.42, 0) + fwd * 0.46
+	if hands.distance_to(b) > 12.0:
+		return
+	var sill := Vector3(WINDOW.x - 0.1, ROOM_Y + 0.53, WINDOW.z + clampf(b.z - WINDOW.z, -0.4, 0.4))
+	var pts: Array = []
+	for q in Stage.sag_points(hands, sill, 0.06, 4):
+		pts.append(q)
+	pts.pop_back()
+	for q in Stage.sag_points(sill, b, 0.015, 3):
+		pts.append(q)
+	Stage.rope_to(m, pts)
+
+
+## Kirişi kaldırırken iki el kirişin altında (P8: kiriş kara bir levha gibi havada kalkıyordu, el değmiyordu): Tolga'ya
+## en yakın noktasının iki yanından, alt yüzünden kavrar; eller kirişle birlikte kalkar (hold_both hedefi kiriş).
+func _hands_under_beam() -> void:
+	var eye := player.camera.global_position
+	var dir := Basis(Vector3.UP, deg_to_rad(30.0)) * Vector3(0, 0, 1)        # kirişin ekseni (yerelde)
+	var c := Vector3(0, 0, -1.2)
+	var loc := _fallen_beam.to_local(eye)
+	var t := clampf((loc - c).dot(dir), -2.0, 2.0)
+	var near := c + dir * t
+	player.hold_both(near - dir * 0.28 + Vector3(0, -0.13, 0), near + dir * 0.28 + Vector3(0, -0.13, 0), _fallen_beam)
 
 
 func _petrion_memory() -> float:
@@ -388,6 +411,7 @@ func _build_street_people() -> void:
 	kadri.position = pot + Vector3(-0.9, 0, 0.2)
 	kadri.rotation.y = PI * 0.5
 	kadri.set_activity("stir")
+	kadri.give_tool("ladle", {"aim": Vector3(0, 0.95, 0.9)})      # P8: kepçe elde, kazanın içinde (eli boş karıştırıyordu)
 	for i in 5:
 		var q := Person.new({"coat": [Color("6a5040"), Color("4a5a6a"), Color("7a4a3a"), Color("5a5040"), Color("3a5a3a")][i], "pants": Color("2a2a30"),
 			"beard": i % 2 == 0, "skin": Color("d8b090"), "skirt": i == 3, "hat": "bun" if i == 3 else "none"})
@@ -494,6 +518,7 @@ func _house_loop() -> bool:
 					player.face(_fallen_beam.global_position + Vector3(0, 0.5, 0))
 					_strokes.clear()
 					meter.enabled = true
+					_hands_under_beam()
 					hud.set_qte(tr("UI_QTE31O_LIFT"))       # tuş Boşluk (gösterge); istem "E basılı" diyordu
 					if azap.rig:
 						azap.rig.lock += 1
@@ -523,6 +548,7 @@ func _house_loop() -> bool:
 						Audio.sfx("land_thud", -6.0, 0.9)
 				if lift >= 3:
 					meter.enabled = false
+					player.release_both()
 					hud.set_qte("")
 					var tw3 := _fallen_beam.create_tween()
 					tw3.tween_property(_fallen_beam, "position", _fallen_beam.position + Vector3(1.6, -0.1, 0), 0.5)
@@ -570,7 +596,9 @@ func _house_loop() -> bool:
 				hud.set_objective(_lower_obj(), kadri.global_position + Vector3(0, 1.6, 0))
 				child.visible = true
 				if rope_mi == null:
-					rope_mi = Props.cyl(_stage, 0.025, 1.0, Vector3.ZERO, Color("a08a5a") if _petrion_bonus > 0.0 else Color("a8402a"))
+					# P8: burgulu, iki ucu bağlı ip (Stage.rope): Tolga'nın iki elinden pencerenin eşiğine, eşikten çocuğa
+					rope_mi = Stage.rope(_stage, WINDOW, WINDOW + Vector3.DOWN, 0.0, 0.022, Color("a08a5a") if _petrion_bonus > 0.0 else Color("a8402a"))
+					player.hold_both(Vector3(-0.07, -0.3, -0.46), Vector3(0.08, -0.33, -0.5))
 				var hold := Input.is_action_pressed("interact") or GameState.autotest
 				var input2 := Input.get_axis("move_left", "move_right")
 				if GameState.autotest:
@@ -589,6 +617,7 @@ func _house_loop() -> bool:
 					if is_instance_valid(rope_mi):
 						rope_mi.queue_free()
 					rope_mi = null
+					player.release_both()
 					balance.visible = false
 					# Kadri uzanıp çocuğu ipten alır, yanına indirir (çocuk Kadri'nin yanına ışınlanıyordu)
 					Stage.reach(kadri, child.global_position + Vector3(0, 0.9, 0), 0.4)
@@ -615,6 +644,7 @@ func _house_loop() -> bool:
 				if GameState.autotest:
 					off = Vector3(1.4, 0, 0).rotated(Vector3.UP, randf() * TAU)
 				_ember_drop(player.global_position + off)
+	player.release_both()            # süre dolduysa kirişte ya da ipte tutan eller bırakır
 	return false
 
 
@@ -712,6 +742,10 @@ func _eyup_phase() -> void:
 	# Kazı: üç katman, her katmanda bir kök (Space ile kes)
 	_pit = Props.cyl(_stage, 0.9, 0.02, DIG + Vector3(0, 0.02, 0), Color("3a2a1c"), Vector3.ZERO, 16)
 	_mound = Props.ball(_stage, 0.5, DIG + Vector3(1.6, 0.0, 0.4), Color("6a5034"), Vector3(1.0, 0.3, 1.0), 8)
+	# P8: çukurun çevresi çiğnenmiş çamur, yığının eteğine dökülen toprak (çukur yeşil çimenin ortasında düz bir diskti)
+	var gy := func(_x: float, _z: float) -> float: return DIG.y
+	Nature.ground_detail(_stage, Rect2(DIG.x - 1.6, DIG.z - 1.5, 4.2, 3.2), "camp_mud", 1.1, 3131, gy,
+		func(x: float, z: float) -> bool: return Vector2(x - DIG.x, z - DIG.z).length() > 0.75)
 	Props.interactable(_stage, "dig", Vector3(2.0, 1.4, 2.0), DIG + Vector3(0, 0.6, 0))
 	player.frozen = false
 	var layer := 0
@@ -727,6 +761,7 @@ func _eyup_phase() -> void:
 		hud.set_objective((tr("UI_OBJ31O_DIG") % [layer + 1]) if not root_on else tr("UI_OBJ31O_ROOTS"), DIG + Vector3(0, 1.0, 0))
 		var near := player.global_position.distance_to(DIG) < 2.6
 		var hold := (Input.is_action_pressed("interact") and near) or GameState.autotest
+		_shovel_tick(dt, hold and not root_on, near)
 		if GameState.autotest and not near:
 			player.global_position = DIG + Vector3(1.3, 0.1, 1.3)
 		if root_on:
@@ -767,6 +802,7 @@ func _eyup_phase() -> void:
 	meter.enabled = false
 	hud.set_qte("")
 	hud.set_objective("")
+	_shovel_tick(0.0, false, false)
 	player.frozen = true
 	sun_ok = layer >= 3
 	# Levha: üstündeki toprak silinir, yazı belirir
@@ -786,6 +822,58 @@ func _eyup_phase() -> void:
 	await hud.fade_to(1.0, 0.8)
 	sun_tw.kill()
 	await _clear_stage()
+
+
+## Kazı küreği (P8: Tolga eli boş, elde leblebi kesesiyle "kazıyordu"): çukurun başındayken iki el kürekte (sağ el
+## sapın tutamağında, sol el sapın ortasında), E basılıyken ağız çukura iner, toprağı alıp yığına savurur; uzaklaşınca
+## kürek çukurun kenarına, yere bırakılır.
+var _shovel: Node3D
+var _shovel_t := 0.0
+var _shovel_on := false
+
+
+func _shovel_tick(dt: float, digging: bool, near: bool) -> void:
+	if near and not _shovel_on:
+		_shovel_on = true
+		if _shovel == null:
+			_shovel = Items.tool_model("shovel")
+		if _shovel.get_parent():
+			_shovel.get_parent().remove_child(_shovel)
+		_stage.add_child(_shovel)
+		_shovel_t = 0.0
+		_shovel_place(0.0, 0.0)
+		player.hold_both(Vector3(0, 0, 0.42), Vector3(0, 0, 0.02), _shovel)
+	elif not near and _shovel_on:
+		_shovel_on = false
+		player.release_both()
+		if is_instance_valid(_shovel):
+			# Çukurun kenarına, yere yatırılır
+			_shovel.global_position = DIG + Vector3(0.6, 0.025, -1.3)
+			_shovel.global_rotation = Vector3(0, deg_to_rad(70), 0)
+	if not _shovel_on or not is_instance_valid(_shovel):
+		return
+	if digging:
+		_shovel_t += dt
+	# Bir kürek darbesi 1,2 sn: ağız toprağa itilir, kaldırılır ve yığına doğru savrulur
+	var k := fmod(_shovel_t, 1.2) / 1.2
+	var push := sin(minf(k / 0.45, 1.0) * PI) if digging else 0.0
+	var toss := sin(clampf((k - 0.5) / 0.5, 0.0, 1.0) * PI) if digging else 0.0
+	_shovel_place(push, toss)
+	if digging and k > 0.62 and fmod(_shovel_t - dt, 1.2) / 1.2 <= 0.62:
+		Vfx.dust(self, DIG + Vector3(1.5, 0.3, 0.4), 0.3)      # savrulan toprak yığına düşer
+
+
+## Kürek dünyada: sapın ucu Tolga'nın belinin önünde ve biraz sağında, ağzı çukura (çukurun ortasının biraz önüne) iner.
+func _shovel_place(push: float, toss: float) -> void:
+	var fwd := DIG - player.global_position
+	fwd.y = 0.0
+	fwd = fwd.normalized() if fwd.length() > 0.05 else -player.global_transform.basis.z
+	var right := fwd.cross(Vector3.UP).normalized()
+	var top := player.global_position + Vector3(0, 1.0 + toss * 0.18, 0) + fwd * (0.3 + push * 0.12) + right * (0.16 + toss * 0.1)
+	var aim := player.global_position.lerp(DIG, 0.62) + Vector3(0, -0.05, 0) + right * toss * 0.35
+	aim.y = DIG.y - 0.04 + toss * 0.4
+	var dir := (aim - top).normalized()
+	_shovel.global_transform = Transform3D(Basis.looking_at(-dir, Vector3.UP), top)
 
 
 ## Gün ışığı: Night.environment'ı alır, gündüz renklerine çevirir. sun_rot: güneşin başlangıç açısı.
@@ -843,13 +931,44 @@ func _build_eyup() -> void:
 					Props.box(st, Vector3(0.2, 0.14, 0.02), Vector3(0, 0.0, 0.13), Color("5a5246"))
 		_signs[sp[0]] = [at, right, sp[3]]
 		Props.interactable(_stage, sp[0], Vector3(2.2, 2.4, 2.2), at + Vector3(0, 1.0, 0))
-	# Mezar taşları, devrik sütun, çalılar
+	# Mezar taşları, devrik sütun, çalılar. Taşlar tek çoklu ağ (P8: 18 ayrı ağdı; yamaca eklenen ot ve taş çizim
+	# sayısını artırmasın), dış çizgili ip malzemesiyle (örnek rengi)
+	var graves: Array = []
 	for i in 18:
 		var p := Vector3(rng.randf_range(-36.0, 36.0), 0.29, rng.randf_range(-58.0, -6.0))
 		if p.distance_to(DIG) < 6.0:
 			continue
-		Props.box(_stage, Vector3(0.35, rng.randf_range(0.6, 1.1), 0.12), p + Vector3(0, 0.4, 0), Color("c8c0b0").darkened(rng.randf() * 0.3), Vector3(rng.randf_range(-12, 12), rng.randf() * 180.0, rng.randf_range(-10, 10)))
+		var sz := Vector3(0.35, rng.randf_range(0.6, 1.1), 0.12)
+		var col := Color("c8c0b0").darkened(rng.randf() * 0.3)
+		var rot := Vector3(rng.randf_range(-12, 12), rng.randf() * 180.0, rng.randf_range(-10, 10))
+		graves.append([Transform3D(Basis.from_euler(rot * PI / 180.0) * Basis.from_scale(sz), p + Vector3(0, 0.4, 0)), col])
+	var gmm := MultiMesh.new()
+	gmm.transform_format = MultiMesh.TRANSFORM_3D
+	gmm.use_colors = true
+	gmm.mesh = BoxMesh.new()
+	gmm.instance_count = graves.size()
+	for i in graves.size():
+		gmm.set_instance_transform(i, graves[i][0])
+		gmm.set_instance_color(i, graves[i][1])
+	var gmi := MultiMeshInstance3D.new()
+	gmi.multimesh = gmm
+	gmi.material_override = Stage.rope_material()
+	_stage.add_child(gmi)
 	Props.cyl(_stage, 0.35, 3.6, Vector3(-10.0, 0.6, -26.0), Color("d8d0c0"), Vector3(0, 40, 90), 10)
+	# P8: mezarlık yamacı çıplak düz zemindi: seyrek çimen öbekleri, uzun ot, taş (her tür tek çoklu ağ, gölgesiz);
+	# kazı yerinin, işaretlerin ve yürüme yolunun dibi boş
+	var gy := func(_x: float, _z: float) -> float: return 0.29
+	var keep := func(x: float, z: float) -> bool:
+		if Vector2(x - DIG.x, z - DIG.z).length() < 2.4:
+			return false
+		for id: String in _signs:
+			var at: Vector3 = _signs[id][0]
+			if Vector2(x - at.x, z - at.z).length() < 1.4:
+				return false
+		return true
+	Nature.ground_detail(_stage, Rect2(-36, -58, 72, 52), "grass", 0.16, 3141, gy, keep, 700)
+	Nature.ground_detail(_stage, Rect2(-36, -58, 72, 52), "tall_grass", 0.03, 3142, gy, keep, 160)
+	Nature.ground_detail(_stage, Rect2(-36, -58, 72, 52), "stone", 0.02, 3143, gy, keep, 90)
 	aksem = Person.new({"coat": Color("e8e0d0"), "pants": Color("d8d0c0"), "robe": Color("6a7a5a"), "hat": "turban", "beard": true, "hair": Color("e0e0d8"),
 		"skin": Color("d8b090")})
 	aksem.set_meta("spk", "SPK_AKSEMSEDDIN")

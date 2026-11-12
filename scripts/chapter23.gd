@@ -110,11 +110,12 @@ func _build() -> void:
 	# Kabul töreni: heyetin geçtiği yolun iki yanında mızrak-kalkanlı muhafız sırası (içe bakar), arkalarında
 	# saray erkânı; mangala masasının önü boş
 	var k := 0
+	var court: Array = [aide]
 	for x: float in [0.4, 2.2, 4.0, 5.8, 7.6]:
-		Garrison.man(self, c + Vector3(x, 0, -4.9), 0.0, 230 + k, "spear_shield")
+		court.append(Garrison.man(self, c + Vector3(x, 0, -4.9), 0.0, 230 + k, "spear_shield"))
 		k += 1
 	for x: float in [2.4, 4.2, 6.0, 7.8]:
-		Garrison.man(self, c + Vector3(x, 0, 5.3), PI, 230 + k, "spear_shield")
+		court.append(Garrison.man(self, c + Vector3(x, 0, 5.3), PI, 230 + k, "spear_shield"))
 		k += 1
 	for i in 5:
 		var cx := Person.new({"coat": [Color("5a3a6a"), Color("2a4a6a"), Color("6a2a2a"), Color("4a5a3a"), Color("6a5a3a")][i],
@@ -125,6 +126,14 @@ func _build() -> void:
 		cx.position = c + Vector3(1.2 + i * 1.7, 0, -6.4 if i % 2 == 0 else 6.7)
 		cx.rotation.y = 0.0 if i % 2 == 0 else PI
 		add_child(cx)
+		court.append(cx)
+	# P8: muhafız sırası ve saray erkânı donuk duruyordu: herkes kendi zamanında başını sallar, iç çeker, yanındakine
+	# fısıldar (Crowd.idle_vary: rastgele faz, aynı anda aynı hareket yok); sarayın iki kapı
+	# muhafızı da (ByzCity) aynı kıpırtıya katılır
+	for n in city.get_children():
+		if n is Person and n != city.emperor and not n.has_meta("spk") and (n as Node3D).global_position.distance_to(c) < 7.0:
+			court.append(n)
+	Crowd.idle_vary(court, {"every": Vector2(5.0, 13.0), "emotes": ["nod", "whisper", "nod", "sigh"]})
 	# Sapma göstergesi (sağ üst): tercümanın sözden ne kadar saptığı
 	_meter = VBoxContainer.new()
 	_meter.anchor_left = 1.0
@@ -356,10 +365,11 @@ func _card_step() -> void:
 		_card_given = true
 		GameState.flags["ismail_card"] = true
 		# Kartvizit elde, sonra İsmail'in eline (kart hiç görünmüyordu; aradaki 4,4 m'yi İsmail yürür)
-		player.show_prop("tolga_card", 1.8)
+		# P8: kart iki elle uzatılır (elsiz, havada asılı duruyordu: show_prop); İsmail uzanıp parmaklarından alır
+		var card := _offer_card()
 		await _t("D23_T_CARD")
 		await _approach(ismail)
-		await Handover.pass_to(self, player, ismail, _card_model())
+		await _give_card(card)
 		await _say("SPK_ISMAIL", "D23_I_CARD")
 
 
@@ -387,12 +397,42 @@ func _approach(who: Person) -> void:
 	player.face(who.global_position + Vector3(0, 1.5, 0))
 
 
-## Sigortacı kartviziti (Tolga'nın): beyaz, kırmızı kenar şeritli; elde gösterilenle aynı.
-func _card_model() -> Node3D:
-	var c := Node3D.new()
-	Props.box(c, Vector3(0.09, 0.055, 0.003), Vector3.ZERO, Color("fbf8f0"), Vector3(90, 0, 0))
-	Props.box(c, Vector3(0.006, 0.055, 0.0035), Vector3(-0.042, 0.0005, 0), Color("b3262d"), Vector3(90, 0, 0))
-	return c
+## Kartvizit iki elde (P8): Tolga kartı iki elinin parmak uçlarıyla, yüzü karşıya dönük uzatır (kartın iki kısa kenarı
+## parmaklarda). Kart kameranın önünde; eller hold_both ile kenarlarında.
+const CARD_AT := Vector3(0.03, -0.14, -0.44)
+
+
+func _offer_card() -> Node3D:
+	var card := Node3D.new()
+	Props.box(card, Vector3(0.09, 0.055, 0.003), Vector3.ZERO, Color("fbf8f0"))
+	Props.box(card, Vector3(0.006, 0.055, 0.0035), Vector3(-0.042, 0, 0.0005), Color("b3262d"))
+	for spec in [["TOLGA", Vector3(0.003, 0.012, 0.002), Color("2a2a30"), 0.07],
+			["Sigorta · Hayat, Kasko, Konut", Vector3(0.003, -0.004, 0.002), Color("5a5a64"), 0.07],
+			["Tel: 0532 ···", Vector3(0.003, -0.018, 0.002), Color("8a8a94"), 0.03]]:
+		Props.label(card, spec[0], spec[1], 32, spec[2], Vector3.ZERO, spec[3])
+	player.camera.add_child(card)
+	card.position = CARD_AT
+	card.rotation_degrees = Vector3(-8, 6, 0)
+	# Bilekler kartın iki yanında ve biraz gerisinde: parmak uçları kartın kenarlarını kavrar
+	player.hold_both(CARD_AT + Vector3(-0.085, -0.035, 0.07), CARD_AT + Vector3(0.085, -0.035, 0.07))
+	return card
+
+
+## Kartvizit elden ele (P8): İsmail eğilip uzanır, eli kartın kenarına değer, kartı Tolga'nın parmaklarından alır; ancak
+## ondan sonra kart onun elinde göğsüne çekilir. Eskiden kart iki el arasında 0,45 sn havada uçuyordu (Handover.pass_to).
+func _give_card(card: Node3D) -> void:
+	var fast := Handover.instant()
+	# İsmail'in sağ eli kartın sağ kenarına uzanır (gövdesi biraz öne eğilir: arada bir adımlık boşluk var)
+	Stage.grip_hold(ismail, card, [Vector3(0.03, 0, 0.0)], 0.05 if fast else 0.9, 0.22)
+	await get_tree().create_timer(0.05 if fast else 0.8, false).timeout
+	player.release_both()
+	if is_instance_valid(card):
+		card.rotation = Vector3.ZERO
+		ismail.hold_item(card, false, false)
+	# Uzanırken öne eğilen gövde doğrulur (kart elde: iskelet kilitli, kendi kendine dönmez)
+	if ismail.rig and ismail.rig.body:
+		ismail.create_tween().tween_property(ismail.rig.body, "rotation:x", 0.0, 0.05 if fast else 0.35)
+	await get_tree().create_timer(0.05 if fast else 0.3, false).timeout
 
 
 # ================================================================ bölüm sonu

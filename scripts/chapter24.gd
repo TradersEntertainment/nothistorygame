@@ -119,6 +119,9 @@ func _build() -> void:
 		b.set_activity("carry")
 		litter.add_child(b)
 		bearers.append(b)
+		# Eli sırıkta (P8): omzunun hemen önünde sırığı kavrar; sırık omuzdan kayıp elin yanından geçmesin
+		var sx: float = spec.x + 0.42
+		Stage.grip_hold(b, litter, [Vector3(sx, LITTER_Y + 0.035, spec.z) + b.basis.z * 0.2])
 		if spec.z > 0.0:
 			b.set_meta("spk", "SPK_MONK")       # Tolga'nın yanındaki (arka sağ) keşiş konuşur
 		else:
@@ -276,41 +279,89 @@ func _build_icon(root: Node3D) -> void:
 
 
 ## Islak zemin ve su birikintileri (fırtına): kaldırım koyulaşır ve parlar, alayın yolunda birikintiler.
+## P8: birikintiler tek çoklu ağ (eskiden 34 ayrı düz disk: 34 çizim, kara delik gibi koyu); içi gökyüzünü yansıtan
+## açık gri-mavi, kenarı yumuşak ve koyu ıslak hale.
+## Yağmur birikintilere halka açar.
 var _puddles: Node3D
+var _puddle_pts: Array = []          # [dünya konumu, yarıçap]: yağmur halkası açılacak birikintiler
+var _ring_t := 0.0
 
 
 func _wet(on: bool) -> void:
 	city.set_wet(1.0 if on else 0.0)
 	if on and _puddles == null:
-		var mat := StandardMaterial3D.new()
-		mat.albedo_color = Color(0.2, 0.22, 0.26, 0.82)
-		mat.transparency = BaseMaterial3D.TRANSPARENCY_ALPHA
-		mat.roughness = 0.04
-		mat.metallic = 0.3
-		mat.metallic_specular = 1.0
 		_puddles = Node3D.new()
 		add_child(_puddles)
 		var rng := RandomNumberGenerator.new()
 		rng.seed = 2405
+		var xf: Array = []
 		for i in 34:
 			var z := rng.randf_range(-34.0, 12.0)
-			var p := Vector3(_route_at(clampf((z - ROUTE_A.z) / (ROUTE_B.z - ROUTE_A.z), 0.0, 1.0)).x + rng.randf_range(-3.6, 3.6), 0.012, z)
-			var d := MeshInstance3D.new()
-			var cm := CylinderMesh.new()
-			cm.top_radius = 1.0
-			cm.bottom_radius = 1.0
-			cm.height = 0.01
-			cm.radial_segments = 14
-			d.mesh = cm
-			d.material_override = mat
-			d.position = p
+			var p := Vector3(_route_at(clampf((z - ROUTE_A.z) / (ROUTE_B.z - ROUTE_A.z), 0.0, 1.0)).x + rng.randf_range(-3.6, 3.6), 0.014, z)
 			var r := rng.randf_range(0.35, 1.1)
-			d.scale = Vector3(r, 1.0, r * rng.randf_range(0.45, 0.85))
-			d.rotation.y = rng.randf() * TAU
-			d.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
-			_puddles.add_child(d)
+			var b := Basis(Vector3.UP, rng.randf() * TAU).scaled(Vector3(r, 1.0, r * rng.randf_range(0.45, 0.85)))
+			xf.append(Transform3D(b, p))
+			_puddle_pts.append([p, r * 0.6])
+		var mm := MultiMesh.new()
+		mm.transform_format = MultiMesh.TRANSFORM_3D
+		mm.mesh = _puddle_mesh()
+		mm.instance_count = xf.size()
+		for i in xf.size():
+			mm.set_instance_transform(i, xf[i])
+		var mmi := MultiMeshInstance3D.new()
+		mmi.multimesh = mm
+		var mat := StandardMaterial3D.new()
+		mat.vertex_color_use_as_albedo = true
+		mat.transparency = BaseMaterial3D.TRANSPARENCY_ALPHA
+		mat.roughness = 0.03
+		mat.metallic = 0.35
+		mat.metallic_specular = 1.0
+		mat.depth_draw_mode = BaseMaterial3D.DEPTH_DRAW_DISABLED
+		mmi.material_override = mat
+		mmi.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
+		mmi.set_meta("no_walk", true)
+		_puddles.add_child(mmi)
 	if _puddles:
 		_puddles.visible = on
+
+
+## Birikinti ağı: içi gökyüzünü yansıtan açık gri-mavi su, kenara doğru koyu ıslak taşa ve saydama geçer (yumuşak kenar).
+static func _puddle_mesh() -> ArrayMesh:
+	var st := SurfaceTool.new()
+	st.begin(Mesh.PRIMITIVE_TRIANGLES)
+	var radii := [0.0, 0.72, 0.86, 1.0]
+	var tint := [Color(0.5, 0.55, 0.63, 0.9), Color(0.42, 0.47, 0.55, 0.88), Color(0.12, 0.12, 0.14, 0.5), Color(0.12, 0.12, 0.14, 0.0)]
+	var n := 18
+	for i in n:
+		var a0 := TAU * i / n
+		var a1 := TAU * (i + 1) / n
+		for r in 3:
+			var q := [[r, a0], [r + 1, a0], [r, a1], [r, a1], [r + 1, a0], [r + 1, a1]]
+			for k: Array in q:
+				var rr: float = radii[k[0]]
+				st.set_color(tint[k[0]])
+				st.set_normal(Vector3.UP)
+				st.add_vertex(Vector3(cos(k[1]) * rr, 0.0, sin(k[1]) * rr))
+	return st.commit()
+
+
+## Yağmur birikintilere halka açar (oyuncunun 14 m çevresinde, aynı anda birkaç halka: Vfx.water_ring sınırlı).
+func _rain_rings(delta: float) -> void:
+	if rain == null or not rain.emitting or _puddle_pts.is_empty() or not (_puddles and _puddles.visible):
+		return
+	_ring_t -= delta
+	if _ring_t > 0.0:
+		return
+	_ring_t = 0.12
+	var pp := player.global_position
+	for tries in 4:
+		var e: Array = _puddle_pts[randi() % _puddle_pts.size()]
+		var at: Vector3 = e[0]
+		if Vector2(at.x - pp.x, at.z - pp.z).length() > 14.0:
+			continue
+		var off := Vector3(randf_range(-1.0, 1.0), 0, randf_range(-1.0, 1.0)) * float(e[1])
+		Vfx.water_ring(self, at + off, at.y - 0.048, 0.03, randf_range(0.18, 0.32), 0.55, 0.45)
+		return
 
 
 func _storm(on: bool, hail_on := false) -> void:
@@ -319,13 +370,15 @@ func _storm(on: bool, hail_on := false) -> void:
 		rain = _particles(2800, Vector3(0.02, 1.1, 0.02), Color(0.78, 0.84, 0.95, 0.55), -40.0, 1.0)
 		rain.emission_box_extents = Vector3(16, 1, 16)
 		hail = _particles(160, Vector3(0.06, 0.06, 0.06), Color("f4f6fa"), -30.0, 1.4)
-		splash = _particles(520, Vector3(0.035, 0.035, 0.035), Color(0.86, 0.9, 0.98, 0.6), -9.0, 0.28)
+		# Yere çarpan damla: kaldırımdan sıçrayan ince, beyazımsı taç (P8: 3,5 cm'lik soluk küp karede seçilmiyordu)
+		splash = _particles(520, Vector3(0.016, 0.075, 0.016), Color(0.9, 0.94, 1.0, 0.85), -9.0, 0.24)
 		splash.position = Vector3(0, 0.03, 0)
-		splash.emission_box_extents = Vector3(11, 0.01, 11)
+		splash.emission_box_extents = Vector3(9, 0.01, 9)
 		splash.direction = Vector3.UP
-		splash.spread = 35.0
-		splash.initial_velocity_min = 0.9
-		splash.initial_velocity_max = 1.7
+		splash.spread = 38.0
+		splash.initial_velocity_min = 0.8
+		splash.initial_velocity_max = 1.5
+		splash.particle_flag_align_y = true
 	rain.emitting = on
 	splash.emitting = on
 	hail.emitting = hail_on
@@ -561,6 +614,7 @@ func _seat() -> void:
 
 func _process(delta: float) -> void:
 	_t += delta
+	_rain_rings(delta)
 	match phase:
 		"carry":
 			_route = minf(_route + delta / (12.0 if GameState.autotest else 38.0), 1.0)

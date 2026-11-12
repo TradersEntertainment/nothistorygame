@@ -571,6 +571,7 @@ func _liturgy() -> void:
 		var tmp := spots[k]
 		spots[k] = spots[j]
 		spots[j] = tmp
+	var flock: Array[Person] = []
 	for i in 22:
 		var latin := i % 4 == 0
 		var p := Person.new({"coat": ([Color("5a3a2a"), Color("3a4a5a"), Color("6a5a4a"), Color("4a3a4a")][i % 4]) if not latin else Color("2a3a6a"),
@@ -580,6 +581,7 @@ func _liturgy() -> void:
 		p.position = AYA + spots[i]
 		p.rotation.y = PI + rng.randf_range(-0.3, 0.3)
 		add_child(p)
+		flock.append(p)
 	var isidore := Person.new({"coat": Color("b3262d"), "robe": Color("b3262d"), "hat": "galero", "face": "cardinal", "beard": true,
 		"hair": Color("e8e8e8"), "skin": Color("e8c0a0")})
 	isidore.position = isi_pos
@@ -590,12 +592,15 @@ func _liturgy() -> void:
 	var stand := AYA + Vector3(-5.5, 0, 7.5)
 	Props.cyl(self, 0.05, 1.0, stand + Vector3(0, 0.5, 0), Color("c8a040"), Vector3.ZERO, 6)
 	Props.cyl(self, 0.5, 0.08, stand + Vector3(0, 1.02, 0), Color("c8a040"), Vector3.ZERO, 16)
+	# Mumluğun mumları ve cemaatin elindeki mumlar tek çoklu ağda (P8: 18 ayrı ağ yerine 2 çizim; eldeki mumlar eklenince
+	# çizim sayısı artmasın)
+	var cps: Array = []
 	for k in 9:
 		var a := k * TAU / 9.0
-		var cp := stand + Vector3(sin(a) * 0.35, 1.15, cos(a) * 0.35)
-		Props.cyl(self, 0.012, 0.2, cp, Color("f4ecd0"), Vector3.ZERO, 5)
-		var fl := Props.ball(self, 0.02, cp + Vector3(0, 0.12, 0), Color("ffc860"), Vector3(1, 1.6, 1), 5, 3.0)
-		fl.material_override = Props.mat(Color("ffc860"), 3.0, false, "", false)
+		cps.append(stand + Vector3(sin(a) * 0.35, 1.15, cos(a) * 0.35))
+	_candles(cps)
+	_merge_lamp_flames()
+	_congregation(flock)
 	var cl := OmniLight3D.new()
 	cl.position = stand + Vector3(0, 1.5, 0)
 	cl.light_color = Color("ffc070")
@@ -673,6 +678,137 @@ func _liturgy() -> void:
 	_outcome = "25.1" if _heard_all else "25.2"
 	GameState.flags["siege_candle"] = candle_lit
 	Siege.record(25, _photo, ("SIEGE_NOTE_25B_%s" if byz else "SIEGE_NOTE_25_%s") % _outcome.split(".")[1])
+
+
+## Mumlar (mumluktakiler + cemaatin elindekiler) ve polikandela alevleri: tek çoklu ağ, tek yüzey (tek çizim). Eskiden
+## mumluğun 18 ayrı ağı vardı; Ayasofya'nın kandil alevleri de (ayasofya.gd, ~100 ayrı küre) aynı ağa alınır, eldeki
+## mumlar çizim sayısını artırmasın. Birim küre, örnek başına ölçek ve renk. pts: mum gövdesinin ortası (dünya).
+var _candle_mm: MultiMesh
+
+
+func _candle_mesh() -> void:
+	var sp := SphereMesh.new()
+	sp.radius = 0.5
+	sp.height = 1.0
+	sp.radial_segments = 6
+	sp.rings = 3
+	_candle_mm = MultiMesh.new()
+	_candle_mm.transform_format = MultiMesh.TRANSFORM_3D
+	_candle_mm.use_colors = true
+	_candle_mm.mesh = sp
+	var mmi := MultiMeshInstance3D.new()
+	mmi.multimesh = _candle_mm
+	var m := StandardMaterial3D.new()
+	m.shading_mode = BaseMaterial3D.SHADING_MODE_UNSHADED
+	m.vertex_color_use_as_albedo = true
+	mmi.material_override = m
+	mmi.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
+	add_child(mmi)
+
+
+func _candle_put(items: Array) -> void:
+	if _candle_mm == null:
+		_candle_mesh()
+	var old: Array = []
+	for i in _candle_mm.instance_count:
+		old.append([_candle_mm.get_instance_transform(i), _candle_mm.get_instance_color(i)])
+	_candle_mm.instance_count = old.size() + items.size()
+	for i in old.size():
+		_candle_mm.set_instance_transform(i, old[i][0])
+		_candle_mm.set_instance_color(i, old[i][1])
+	for i in items.size():
+		_candle_mm.set_instance_transform(old.size() + i, items[i][0])
+		_candle_mm.set_instance_color(old.size() + i, items[i][1])
+
+
+func _candles(pts: Array) -> void:
+	var items: Array = []
+	for p: Vector3 in pts:
+		items.append([Transform3D(Basis.from_scale(Vector3(0.024, 0.2, 0.024)), p), Color("e8dcbc")])
+		items.append([Transform3D(Basis.from_scale(Vector3(0.034, 0.07, 0.034)), p + Vector3(0, 0.13, 0)), Color(2.4, 1.9, 0.9)])
+	_candle_put(items)
+
+
+## Ayasofya'nın kandil alevleri (Props.ball, ortak alev malzemesi) gizlenir, aynı yer ve boyda çoklu ağa girer.
+func _merge_lamp_flames() -> void:
+	var items: Array = []
+	for n in city.find_children("*", "MeshInstance3D", true, false):
+		var mi := n as MeshInstance3D
+		var mat := mi.material_override as StandardMaterial3D
+		if mat == null or not mi.visible or not (mi.mesh is SphereMesh) or mat.albedo_color != Color("ffc860"):
+			continue
+		var bb := mi.get_aabb()
+		if bb.size.length() > 0.4 or mi.global_position.y < 2.5:
+			continue
+		items.append([mi.global_transform * Transform3D(Basis.from_scale(bb.size), bb.get_center()), Color(2.4, 1.9, 0.9)])
+		mi.visible = false
+	_candle_put(items)
+
+
+## Cemaat kıpırdar ama hep birden değil (P8): bir kısmı diz çöker ve ellerini kavuşturup başını eğer, birkaçı elinde
+## yanan mum tutar, ötekiler kendi zamanlarında haç çıkarır, başını sallar, iç çeker (Crowd.idle_vary: rastgele faz).
+## Boyları biraz farklı (sıra sıra aynı boydaydı).
+func _congregation(flock: Array[Person]) -> void:
+	var rng := RandomNumberGenerator.new()
+	rng.seed = 2525
+	var free: Array = []
+	var held: Array[Person] = []
+	for i in flock.size():
+		var p := flock[i]
+		p.scale = Vector3.ONE * rng.randf_range(0.93, 1.05)
+		if i % 4 == 1:
+			_kneel(p, rng.randf() * TAU)
+		elif i % 4 == 2 and i < 16:
+			held.append(p)
+		else:
+			free.append(p)
+	Crowd.idle_vary(free, {"every": Vector2(4.0, 12.0), "emotes": ["cross_self", "nod", "cross_self", "sigh", "cross_self"]})
+	# Mum tutanlar: sağ önkol kalkık, mum avuçta dik; poz oturunca mumlar ellerine konur
+	for p in held:
+		if p.rig:
+			p.rig.lock += 1
+			p.rig.arm_r.rotation = Vector3(-0.42, 0, -0.08)
+			p.rig.elbow_r.rotation.x = -1.35
+			p.rig.arm_l.rotation = Vector3(-0.3, 0, 0.18)
+			p.rig.elbow_l.rotation.x = -1.2
+			if p.rig.head:
+				p.rig.head.rotation.x = 0.18
+	await get_tree().process_frame
+	var pts: Array = []
+	for p in held:
+		if is_instance_valid(p) and p.rig and p.rig.elbow_r:
+			var el := p.rig.elbow_r
+			pts.append(el.to_global(el.get_meta("hand", Vector3(0, -0.27, 0.01)) + Vector3(0, 0.0, 0.02)) + Vector3(0, 0.1, 0))
+	_candles(pts)
+
+
+## Diz çöker (iki diz yerde, kalçalar topuklardan yukarıda), eller göğüs önünde kavuşuk, baş eğik; ara sıra
+## başını kaldırıp yeniden eğer (faz kişiye göre: hepsi birden eğilmez).
+func _kneel(p: Person, ph: float) -> void:
+	if p.rig == null:
+		return
+	var rg := p.rig
+	rg.lock += 1
+	if rg.leg_l:
+		rg.leg_l.rotation = Vector3(-0.12, 0, -0.06)
+	if rg.leg_r:
+		rg.leg_r.rotation = Vector3(-0.12, 0, 0.06)
+	for kn: Node3D in [rg.knee_l, rg.knee_r]:
+		if kn:
+			kn.rotation.x = 1.62
+	rg.body.position.y = -0.4      # kalça baldır boyu kadar iner: dizler ve ayak üstleri yerde
+	rg.arm_r.rotation = Vector3(-0.62, 0, -0.32)
+	rg.arm_l.rotation = Vector3(-0.62, 0, 0.32)
+	if rg.elbow_r:
+		rg.elbow_r.rotation.x = -1.55
+	if rg.elbow_l:
+		rg.elbow_l.rotation.x = -1.55
+	if rg.head:
+		var tw := p.create_tween().set_loops()
+		tw.tween_interval(fmod(ph, 3.0) + 1.0)
+		tw.tween_property(rg.head, "rotation:x", 0.42, 1.6).set_trans(Tween.TRANS_SINE)
+		tw.tween_interval(randf_range(2.0, 5.0))
+		tw.tween_property(rg.head, "rotation:x", 0.1, 1.4).set_trans(Tween.TRANS_SINE)
 
 
 func _process(delta: float) -> void:
