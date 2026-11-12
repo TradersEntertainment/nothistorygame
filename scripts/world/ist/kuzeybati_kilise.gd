@@ -81,8 +81,8 @@ static func _khora(c: IstKbCtx) -> void:
 	c.windows_on(0, 0, 270, 5.55, [-3.0, 3.0], 7.0, 0.9, 1.9)
 	c.windows_on(0, -9.0, 180, 2.7, [-1.6, 0.0, 1.6], 4.5, 0.5, 1.3)
 	# yerden: güneş ve ağaç
-	c.cypress(12.5, 5.5, 8.0)
-	c.cypress(-11.8, -6.0, 9.0)
+	c.cypress(15.5, 5.5, 8.0)
+	c.cypress(-14.0, -6.0, 9.0)
 	c.olive(13.5, -9.0, 0.0, 0.9)
 	# tırmanış: dış merdiven (güney uç), sandık basamakları ikişer kademe
 	c.stair(9.7, 12.0, Vector2(-1, 0), 6.2 * c.k, 1.5, IstKbCtx.STONE_D, 0.5, 0.0)

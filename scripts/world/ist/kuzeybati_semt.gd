@@ -140,7 +140,7 @@ static func build_kaligaria(host: Node3D, k: float = 0.5, lod: int = 0) -> void:
 				var nrm := 0.0 if row < 0 else 180.0           # cephe normali: row<0 (kuzey sıra) güneye (+z) bakar
 				# dükkân tezgâhı (sabit boy)
 				var tz: float = fz - row * 0.45
-				var cnt := Props.solid(c.root, Vector3(hw * 0.7, 0.95, 0.6), Vector3(xc - hw * 0.1, 0.475, tz - row * 0.05), Color.WHITE)
+				var cnt := Props.solid(c.root, Vector3(hw * 0.7, 0.95, 0.6), Vector3(xc - hw * 0.1, 0.475, fz - row * 0.3), Color.WHITE)
 				Props.set_pattern(cnt, IstKbCtx.WOOD, "wood")
 				# sundurma: 2,2 m yükseklikte, 1,3 m çıkıntılı katı tabla (alçak sundurma = tırmanış yolu)
 				var aw_y: float = minf(2.3, hh - 0.4)
@@ -205,7 +205,8 @@ static func build_ayvansaray_iskele(host: Node3D, k: float = 0.5, lod: int = 0) 
 	var Lp := 22.0                                   # iskele uzunluğu (k'siz kabul: yapı ince, uzunluk insan ölçüsünde yürünür)
 	# su: geniş saydam levha (görsel)
 	if lod < 2:
-		Props.box(c.root, Vector3(40, 0.02, 40), Vector3(0, 0.12, -22.0), Color(0.22, 0.42, 0.5, 0.78))
+		var wtr := Props.box(c.root, Vector3(40, 0.02, 40), Vector3(0, 0.12, -22.0), Color(0.22, 0.42, 0.5, 0.78))
+		wtr.set_meta("bitki", true)
 	# rıhtım (taş, y 0–0,5) ve ona çıkan iki basamak
 	var q := Props.solid(c.root, Vector3(18, 0.5, 6), Vector3(0, 0.25, 8.0), Color.WHITE)
 	Props.set_pattern(q, Color("d2c3a2"), "ashlar")

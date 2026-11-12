@@ -151,22 +151,22 @@ static func build_kynegion(host: Node3D, k: float = 0.5, lod: int = 0) -> void:
 	# kum zemin
 	var sand := Props.solid(c.root, Vector3(rx * 1.35, 0.1, rz * 1.35), Vector3(0, 0.05, 0), Color.WHITE)
 	Props.set_pattern(sand, Color("cdb88a"), "flagstone")
-	# güney yarı: kademeli oturma sıraları; her kademe elips yayı boyunca dönük kutu (katı), altı dolu
+	# güney yarı: kademeli oturma sıraları; her parça tam bitişik yamuk prizma (dışbükey), parçalar köşe paylaşır: aralık yok
+	var ring_step := 0.12
 	for t in tiers:
 		var top := tier_h * (t + 1)
-		var ring := 0.62 + t * 0.9                 # kademe halkasının iç yarıçap oranı
+		var r_in := 0.45 + t * ring_step
+		var r_out := 0.45 + (t + 1) * ring_step
 		for i in seg:
-			var a := PI * (float(i) + 0.5) / seg                       # 0..PI: güney yarı (+z)
-			var f0 := 1.0 + (t + 0.0) * 0.16
-			var f1 := 1.0 + (t + 1.0) * 0.16
-			var ex := cos(a) * rx * (f0 + f1) * 0.5 * 0.5
-			var ez := sin(a) * rz * (f0 + f1) * 0.5 * 0.5 + 0.0
-			var tang := Vector3(-sin(a) * rx, 0, cos(a) * rz).normalized()
-			var arc := (PI * (rx + rz) * 0.5 * (f0 + f1) * 0.25 / seg) * 1.6
-			var ang := rad_to_deg(atan2(tang.x, tang.z))
-			var depth := rz * 0.16 * 1.1
-			var bd := Props.solid(c.root, Vector3(arc, top, depth), Vector3(ex, top * 0.5, ez), Color.WHITE, Vector3(0, ang, 0))
-			Props.set_pattern(bd, Color("d4c4a2") if (t + i) % 5 else Color("c9b690"), "ashlar")
+			var a0 := PI * float(i) / seg
+			var a1 := PI * float(i + 1) / seg
+			var pts: Array = []
+			for yy in [0.0, top]:
+				pts.append(Vector3(cos(a0) * rx * r_in, yy, sin(a0) * rz * r_in))
+				pts.append(Vector3(cos(a1) * rx * r_in, yy, sin(a1) * rz * r_in))
+				pts.append(Vector3(cos(a1) * rx * r_out, yy, sin(a1) * rz * r_out))
+				pts.append(Vector3(cos(a0) * rx * r_out, yy, sin(a0) * rz * r_out))
+			_frustum(c.root, pts, Color("d4c4a2") if (t + i) % 5 else Color("c9b690"))
 	# dış duvar kalıntısı: kuzey yarı alçak/yıkık, parça parça (kemer köklerinden kalan dikmeler)
 	for i in 9:
 		var a2 := PI + PI * (float(i) + 0.5) / 9.0
@@ -177,13 +177,36 @@ static func build_kynegion(host: Node3D, k: float = 0.5, lod: int = 0) -> void:
 		var wb := Props.solid(c.root, Vector3(2.4, wh, 1.0 + maxf(k, 0.5)), Vector3(wx, wh * 0.5, wz), Color.WHITE, Vector3(0, rad_to_deg(atan2(tg.x, tg.z)), 0))
 		Props.set_pattern(wb, Color("c4b290"), "rubble")
 	# moloz, ot, birkaç sütun gövdesi
-	c.add_climb(Vector3(0, 0.1, 1.0), Vector3(0, 0.4 * tiers, rz * (1.0 + (tiers - 0.5) * 0.16) * 0.5), "basamak")
-	c.add_perch(Vector3(0, 0.4 * tiers + 0.05, rz * 0.9))
-	c.rubble(-2.0, 5.0, 14, 7.0, 0.1)
-	c.rubble(6.0, -6.0, 10, 5.0, 0.1)
+	var rmid := 0.45 + (tiers - 0.5) * ring_step
+	c.add_climb(Vector3(0, 0.1, 0.8), Vector3(0, tier_h * tiers, rz * rmid), "basamak")
+	c.add_perch(Vector3(0, tier_h * tiers + 0.05, rz * rmid))
+	c.rubble(-14.0, -2.0, 14, 5.0, 0.1)
+	c.rubble(13.0, -6.0, 10, 4.0, 0.1)
 	c.olive(-8.0, -12.0, 0.0, 1.0)
 	c.cypress(14.0, -14.0, 8.0)
 	# ön sahne: kuzeyden iki basamaklı giriş boşluğu zaten açık (kuzey yarı alçak); oturma kademeleri doğal merdiven
+
+
+static func _frustum(parent: Node3D, p: Array, col: Color) -> void:
+	# p: 4 alt köşe (0..3), 4 üst köşe (4..7); dışbükey katı + görsel
+	var st := SurfaceTool.new()
+	st.begin(Mesh.PRIMITIVE_TRIANGLES)
+	var faces := [[0, 2, 1], [0, 3, 2], [4, 5, 6], [4, 6, 7], [0, 1, 5], [0, 5, 4], [1, 2, 6], [1, 6, 5], [2, 3, 7], [2, 7, 6], [3, 0, 4], [3, 4, 7]]
+	for f in faces:
+		for q in f:
+			st.add_vertex(p[q])
+	st.generate_normals()
+	var mi := MeshInstance3D.new()
+	mi.mesh = st.commit()
+	mi.material_override = Props.mat(col, 0.0, false, "ashlar")
+	parent.add_child(mi)
+	var body := StaticBody3D.new()
+	var cs := CollisionShape3D.new()
+	var cv := ConvexPolygonShape3D.new()
+	cv.points = PackedVector3Array(p)
+	cs.shape = cv
+	body.add_child(cs)
+	mi.add_child(body)
 
 
 # ----------------------------------------------------------------------------------------------------------------
