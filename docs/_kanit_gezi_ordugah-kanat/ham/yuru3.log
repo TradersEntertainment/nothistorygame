@@ -1,0 +1,24 @@
+GEZI_OLAY takilma -4859 2159 h0.25=/root/Gezi/IstDunya/IstOrdugah/basibozuk_19_0_lod0/cadirlar_kati h0.90=/root/Gezi/IstDunya/IstOrdugah/basibozuk_19_0_lod0/cadirlar_kati h1.60=/root/Gezi/IstDunya/IstOrdugah/basibozuk_19_0_lod0/cadirlar_kati 
+GEZI_OLAY takilma -4760 2258 h0.25=/root/Gezi/IstDunya/IstOrdugah/rumeli_2_0_lod0/cadirlar_kati h0.90=/root/Gezi/IstDunya/IstOrdugah/rumeli_2_0_lod0/cadirlar_kati h1.60=/root/Gezi/IstDunya/IstOrdugah/rumeli_2_0_lod0/cadirlar_kati 
+GEZI_OLAY takilma -4745 2271 h0.25=/root/Gezi/IstDunya/IstOrdugah/basibozuk_19_0_lod0/cadirlar_kati h0.90=/root/Gezi/IstDunya/IstOrdugah/basibozuk_19_0_lod0/cadirlar_kati h1.60=/root/Gezi/IstDunya/IstOrdugah/basibozuk_19_0_lod0/cadirlar_kati 
+GEZI_OLAY takilma -4724 2299 h0.25=/root/Gezi/IstDunya/IstOrdugah/basibozuk_19_0_lod0/cadirlar_kati h0.90=/root/Gezi/IstDunya/IstOrdugah/basibozuk_19_0_lod0/cadirlar_kati h1.60=/root/Gezi/IstDunya/IstOrdugah/basibozuk_19_0_lod0/cadirlar_kati 
+GEZI_YURU route=3 bacak=1 bitti t=71 sn konum_hedefe=1.9 m
+GEZI_OLAY takilma -4636 2414 h0.25=/root/Gezi/IstDunya/IstOrdugah/basibozuk_18_0_lod0/cadirlar_kati h0.90=/root/Gezi/IstDunya/IstOrdugah/basibozuk_18_0_lod0/cadirlar_kati h1.60=/root/Gezi/IstDunya/IstOrdugah/basibozuk_18_0_lod0/cadirlar_kati 
+GEZI_OLAY takilma -4460 2598 h0.25=/root/Gezi/IstDunya/IstOrdugah/rumeli_7_1_lod0/cadirlar_kati h0.90=/root/Gezi/IstDunya/IstOrdugah/rumeli_7_1_lod0/cadirlar_kati h1.60=/root/Gezi/IstDunya/IstOrdugah/rumeli_7_1_lod0/cadirlar_kati 
+GEZI_YURU route=3 bacak=2 bitti t=68 sn konum_hedefe=1.9 m
+GEZI_OLAY takilma -4343 2722 h0.90=/root/Gezi/IstDunya/IstOrdugah/rumeli_5_0_lod0/cadirlar_kati h1.60=/root/Gezi/IstDunya/IstOrdugah/rumeli_5_0_lod0/cadirlar_kati 
+GEZI_OLAY takilma -4320 2745 h0.90=/root/Gezi/IstDunya/IstOrdugah/rumeli_8_1_lod0/cadirlar_kati h1.60=/root/Gezi/IstDunya/IstOrdugah/rumeli_8_1_lod0/cadirlar_kati 
+GEZI_OLAY takilma -4314 2756 h0.25=/root/Gezi/IstDunya/IstOrdugah/rumeli_5_0_lod0/cadirlar_kati h0.90=/root/Gezi/IstDunya/IstOrdugah/rumeli_5_0_lod0/cadirlar_kati h1.60=/root/Gezi/IstDunya/IstOrdugah/rumeli_5_0_lod0/cadirlar_kati 
+GEZI_OLAY takilma -4258 2812 h0.25=/root/Gezi/IstDunya/IstOrdugah/rumeli_8_0_lod0/cadirlar_kati h0.90=/root/Gezi/IstDunya/IstOrdugah/rumeli_8_0_lod0/cadirlar_kati h1.60=/root/Gezi/IstDunya/IstOrdugah/rumeli_8_0_lod0/cadirlar_kati 
+GEZI_OLAY takilma -4225 2843 h0.25=/root/Gezi/IstDunya/IstOrdugah/rumeli_5_0_lod0/cadirlar_kati h0.90=/root/Gezi/IstDunya/IstOrdugah/rumeli_5_0_lod0/cadirlar_kati h1.60=/root/Gezi/IstDunya/IstOrdugah/rumeli_5_0_lod0/cadirlar_kati 
+GEZI_OLAY takilma -4195 2864 h0.25=/root/Gezi/IstDunya/IstOrdugah/rumeli_8_0_lod0/cadirlar_kati h0.90=/root/Gezi/IstDunya/IstOrdugah/rumeli_8_0_lod0/cadirlar_kati h1.60=/root/Gezi/IstDunya/IstOrdugah/rumeli_8_0_lod0/cadirlar_kati 
+GEZI_OLAY yuksekte -4190 2870 y=9.2 zemin=6.0 (çatı/duvar/çadır üstü?)
+GEZI_OLAY yuksekte -4189 2871 y=9.2 zemin=6.0 (çatı/duvar/çadır üstü?)
+GEZI_OLAY yuksekte -4189 2871 y=9.2 zemin=6.0 (çatı/duvar/çadır üstü?)
+GEZI_OLAY yuksekte -4189 2872 y=9.2 zemin=6.0 (çatı/duvar/çadır üstü?)
+GEZI_OLAY yuksekte -4189 2872 y=9.1 zemin=6.0 (çatı/duvar/çadır üstü?)
+GEZI_OLAY takilma -4170 2909 h0.90=/root/Gezi/IstDunya/IstOrdugah/rumeli_8_0_lod0/cadirlar_kati h1.60=/root/Gezi/IstDunya/IstOrdugah/rumeli_8_0_lod0/cadirlar_kati 
+GEZI_YURU route=3 bacak=3 bitti t=98 sn konum_hedefe=1.9 m
+GEZI_OLAY takilma -4006 3202 h0.90=/root/Gezi/IstDunya/IstOrdugah/rumeli_9_0_lod0/cadirlar_kati h1.60=/root/Gezi/IstDunya/IstOrdugah/rumeli_9_0_lod0/cadirlar_kati 
+GEZI_YURU route=3 bacak=4 bitti t=42 sn konum_hedefe=2.0 m
+GEZI_YURU route=3 toplam_dunya_m=541 gercek_m=1546 olaylar={ "takilma": 14, "yuksekte": 5 } sure_ms=95387

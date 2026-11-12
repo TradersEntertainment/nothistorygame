@@ -1,0 +1,8 @@
+GEZI_OLAY takilma -5252 -402 h0.25=/root/Gezi/IstDunya/IstOrdugah/siper_580_lod0/cit_katı h0.90=/root/Gezi/IstDunya/IstOrdugah/siper_580_lod0/cit_katı 
+GEZI_OLAY takilma -5268 -404 h0.25=/root/Gezi/IstDunya/IstOrdugah/siper_580_lod0/sedde_katı h0.90=/root/Gezi/IstDunya/IstOrdugah/siper_580_lod0/sedde_katı 
+GEZI_YURU route=2 bacak=1 bitti t=62 sn konum_hedefe=1.9 m
+GEZI_OLAY takilma -5982 -408 h0.25=/root/Gezi/IstDunya/IstOrdugah/anadolu_4_1_lod0/cadirlar_kati h0.90=/root/Gezi/IstDunya/IstOrdugah/anadolu_4_1_lod0/cadirlar_kati h1.60=/root/Gezi/IstDunya/IstOrdugah/anadolu_4_1_lod0/cadirlar_kati 
+GEZI_YURU route=2 bacak=2 bitti t=54 sn konum_hedefe=2.0 m
+GEZI_OLAY takilma -6426 -403 h0.25=/root/Gezi/IstDunya/IstOrdugah/basibozuk_2_0_lod0/cadirlar_kati h0.90=/root/Gezi/IstDunya/IstOrdugah/basibozuk_2_0_lod0/cadirlar_kati h1.60=/root/Gezi/IstDunya/IstOrdugah/basibozuk_2_0_lod0/cadirlar_kati 
+GEZI_YURU route=2 bacak=3 bitti t=54 sn konum_hedefe=1.9 m
+GEZI_YURU route=2 toplam_dunya_m=432 gercek_m=1234 olaylar={ "takilma": 4 } sure_ms=57617

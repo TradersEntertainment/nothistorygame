@@ -1,0 +1,60 @@
+GEZI_OLAY takilma -4539 2448 h0.25=/root/Gezi/IstDunya/IstOrdugah/rumeli_8_1_lod0/cadirlar_kati h0.90=/root/Gezi/IstDunya/IstOrdugah/rumeli_8_1_lod0/cadirlar_kati h1.60=/root/Gezi/IstDunya/IstOrdugah/rumeli_8_1_lod0/cadirlar_kati 
+GEZI_OLAY takilma -4524 2490 h0.25=/root/Gezi/IstDunya/IstOrdugah/rumeli_3_0_lod0/cadirlar_kati h0.90=/root/Gezi/IstDunya/IstOrdugah/rumeli_3_0_lod0/cadirlar_kati h1.60=/root/Gezi/IstDunya/IstOrdugah/rumeli_3_0_lod0/cadirlar_kati 
+GEZI_OLAY takilma -4514 2509 h0.25=/root/Gezi/IstDunya/IstOrdugah/rumeli_3_0_lod0/cadirlar_kati h0.90=/root/Gezi/IstDunya/IstOrdugah/rumeli_3_0_lod0/cadirlar_kati h1.60=/root/Gezi/IstDunya/IstOrdugah/rumeli_3_0_lod0/cadirlar_kati 
+GEZI_OLAY takilma -4510 2562 h0.90=/root/Gezi/IstDunya/IstOrdugah/rumeli_8_1_lod0/cadirlar_kati h1.60=/root/Gezi/IstDunya/IstOrdugah/rumeli_8_1_lod0/cadirlar_kati 
+GEZI_OLAY yuksekte -4509 2571 y=8.6 zemin=5.6 (çatı/duvar/çadır üstü?)
+GEZI_OLAY yuksekte -4509 2572 y=8.6 zemin=5.6 (çatı/duvar/çadır üstü?)
+GEZI_OLAY yuksekte -4509 2572 y=8.6 zemin=5.6 (çatı/duvar/çadır üstü?)
+GEZI_OLAY yuksekte -4509 2573 y=8.6 zemin=5.6 (çatı/duvar/çadır üstü?)
+GEZI_OLAY yuksekte -4509 2573 y=8.6 zemin=5.6 (çatı/duvar/çadır üstü?)
+GEZI_OLAY yuksekte -4509 2574 y=8.6 zemin=5.6 (çatı/duvar/çadır üstü?)
+GEZI_OLAY yuksekte -4509 2574 y=8.6 zemin=5.6 (çatı/duvar/çadır üstü?)
+GEZI_OLAY yuksekte -4509 2574 y=8.6 zemin=5.6 (çatı/duvar/çadır üstü?)
+GEZI_OLAY yuksekte -4508 2575 y=8.6 zemin=5.6 (çatı/duvar/çadır üstü?)
+GEZI_OLAY yuksekte -4508 2575 y=8.6 zemin=5.6 (çatı/duvar/çadır üstü?)
+GEZI_OLAY yuksekte -4508 2576 y=8.6 zemin=5.6 (çatı/duvar/çadır üstü?)
+GEZI_OLAY yuksekte -4508 2576 y=8.6 zemin=5.6 (çatı/duvar/çadır üstü?)
+GEZI_OLAY yuksekte -4508 2577 y=8.6 zemin=5.6 (çatı/duvar/çadır üstü?)
+GEZI_OLAY yuksekte -4508 2577 y=8.6 zemin=5.6 (çatı/duvar/çadır üstü?)
+GEZI_OLAY yuksekte -4508 2578 y=8.6 zemin=5.6 (çatı/duvar/çadır üstü?)
+GEZI_OLAY yuksekte -4508 2578 y=8.6 zemin=5.6 (çatı/duvar/çadır üstü?)
+GEZI_OLAY yuksekte -4508 2579 y=8.6 zemin=5.6 (çatı/duvar/çadır üstü?)
+GEZI_OLAY yuksekte -4508 2579 y=8.6 zemin=5.6 (çatı/duvar/çadır üstü?)
+GEZI_OLAY takilma -4480 2681 h0.25=/root/Gezi/IstDunya/IstOrdugah/mescit_rumeli_lod0/bez_katı h0.90=/root/Gezi/IstDunya/IstOrdugah/mescit_rumeli_lod0/bez_katı h1.60=/root/Gezi/IstDunya/IstOrdugah/mescit_rumeli_lod0/bez_katı 
+GEZI_YURU route=7 bacak=1 bitti t=69 sn konum_hedefe=1.4 m
+GEZI_OLAY takilma -4518 2766 h0.25=/root/Gezi/IstDunya/IstOrdugah/rumeli_8_1_lod0/cadirlar_kati h0.90=/root/Gezi/IstDunya/IstOrdugah/rumeli_8_1_lod0/cadirlar_kati h1.60=/root/Gezi/IstDunya/IstOrdugah/rumeli_8_1_lod0/cadirlar_kati 
+GEZI_OLAY takilma -4579 2873 h0.90=/root/Gezi/IstDunya/IstOrdugah/rumeli_8_1_lod0/cadirlar_kati h1.60=/root/Gezi/IstDunya/IstOrdugah/rumeli_8_1_lod0/cadirlar_kati 
+GEZI_OLAY takilma -4606 2928 h0.25=/root/Gezi/IstDunya/IstOrdugah/karaca_pasa_lod0/bez_katı h0.90=/root/Gezi/IstDunya/IstOrdugah/karaca_pasa_lod0/bez_katı h1.60=/root/Gezi/IstDunya/IstOrdugah/karaca_pasa_lod0/bez_katı 
+GEZI_OLAY takilma -4606 2929 h0.25=/root/Gezi/IstDunya/IstOrdugah/karaca_pasa_lod0/bez_katı h0.90=/root/Gezi/IstDunya/IstOrdugah/karaca_pasa_lod0/bez_katı h1.60=/root/Gezi/IstDunya/IstOrdugah/karaca_pasa_lod0/bez_katı 
+GEZI_OLAY takilma -4606 2929 h0.25=/root/Gezi/IstDunya/IstOrdugah/karaca_pasa_lod0/bez_katı h0.90=/root/Gezi/IstDunya/IstOrdugah/karaca_pasa_lod0/bez_katı h1.60=/root/Gezi/IstDunya/IstOrdugah/karaca_pasa_lod0/bez_katı 
+GEZI_OLAY takilma -4606 2929 h0.25=/root/Gezi/IstDunya/IstOrdugah/karaca_pasa_lod0/bez_katı h0.90=/root/Gezi/IstDunya/IstOrdugah/karaca_pasa_lod0/bez_katı h1.60=/root/Gezi/IstDunya/IstOrdugah/karaca_pasa_lod0/bez_katı 
+GEZI_OLAY takilma -4606 2929 h0.25=/root/Gezi/IstDunya/IstOrdugah/karaca_pasa_lod0/bez_katı h0.90=/root/Gezi/IstDunya/IstOrdugah/karaca_pasa_lod0/bez_katı h1.60=/root/Gezi/IstDunya/IstOrdugah/karaca_pasa_lod0/bez_katı 
+GEZI_OLAY takilma -4606 2929 h0.25=/root/Gezi/IstDunya/IstOrdugah/karaca_pasa_lod0/bez_katı h0.90=/root/Gezi/IstDunya/IstOrdugah/karaca_pasa_lod0/bez_katı h1.60=/root/Gezi/IstDunya/IstOrdugah/karaca_pasa_lod0/bez_katı 
+GEZI_OLAY takilma -4606 2929 h0.25=/root/Gezi/IstDunya/IstOrdugah/karaca_pasa_lod0/bez_katı h0.90=/root/Gezi/IstDunya/IstOrdugah/karaca_pasa_lod0/bez_katı h1.60=/root/Gezi/IstDunya/IstOrdugah/karaca_pasa_lod0/bez_katı 
+GEZI_OLAY takilma -4606 2929 h0.25=/root/Gezi/IstDunya/IstOrdugah/karaca_pasa_lod0/bez_katı h0.90=/root/Gezi/IstDunya/IstOrdugah/karaca_pasa_lod0/bez_katı h1.60=/root/Gezi/IstDunya/IstOrdugah/karaca_pasa_lod0/bez_katı 
+GEZI_OLAY takilma -4606 2929 h0.25=/root/Gezi/IstDunya/IstOrdugah/karaca_pasa_lod0/bez_katı h0.90=/root/Gezi/IstDunya/IstOrdugah/karaca_pasa_lod0/bez_katı h1.60=/root/Gezi/IstDunya/IstOrdugah/karaca_pasa_lod0/bez_katı 
+GEZI_OLAY takilma -4606 2929 h0.25=/root/Gezi/IstDunya/IstOrdugah/karaca_pasa_lod0/bez_katı h0.90=/root/Gezi/IstDunya/IstOrdugah/karaca_pasa_lod0/bez_katı h1.60=/root/Gezi/IstDunya/IstOrdugah/karaca_pasa_lod0/bez_katı 
+GEZI_OLAY takilma -4606 2929 h0.25=/root/Gezi/IstDunya/IstOrdugah/karaca_pasa_lod0/bez_katı h0.90=/root/Gezi/IstDunya/IstOrdugah/karaca_pasa_lod0/bez_katı h1.60=/root/Gezi/IstDunya/IstOrdugah/karaca_pasa_lod0/bez_katı 
+GEZI_OLAY takilma -4606 2929 h0.25=/root/Gezi/IstDunya/IstOrdugah/karaca_pasa_lod0/bez_katı h0.90=/root/Gezi/IstDunya/IstOrdugah/karaca_pasa_lod0/bez_katı h1.60=/root/Gezi/IstDunya/IstOrdugah/karaca_pasa_lod0/bez_katı 
+GEZI_OLAY takilma -4606 2929 h0.25=/root/Gezi/IstDunya/IstOrdugah/karaca_pasa_lod0/bez_katı h0.90=/root/Gezi/IstDunya/IstOrdugah/karaca_pasa_lod0/bez_katı h1.60=/root/Gezi/IstDunya/IstOrdugah/karaca_pasa_lod0/bez_katı 
+GEZI_OLAY takilma -4606 2929 h0.25=/root/Gezi/IstDunya/IstOrdugah/karaca_pasa_lod0/bez_katı h0.90=/root/Gezi/IstDunya/IstOrdugah/karaca_pasa_lod0/bez_katı h1.60=/root/Gezi/IstDunya/IstOrdugah/karaca_pasa_lod0/bez_katı 
+GEZI_OLAY takilma -4606 2929 h0.25=/root/Gezi/IstDunya/IstOrdugah/karaca_pasa_lod0/bez_katı h0.90=/root/Gezi/IstDunya/IstOrdugah/karaca_pasa_lod0/bez_katı h1.60=/root/Gezi/IstDunya/IstOrdugah/karaca_pasa_lod0/bez_katı 
+GEZI_OLAY takilma -4606 2929 h0.25=/root/Gezi/IstDunya/IstOrdugah/karaca_pasa_lod0/bez_katı h0.90=/root/Gezi/IstDunya/IstOrdugah/karaca_pasa_lod0/bez_katı h1.60=/root/Gezi/IstDunya/IstOrdugah/karaca_pasa_lod0/bez_katı 
+GEZI_OLAY takilma -4606 2929 h0.25=/root/Gezi/IstDunya/IstOrdugah/karaca_pasa_lod0/bez_katı h0.90=/root/Gezi/IstDunya/IstOrdugah/karaca_pasa_lod0/bez_katı h1.60=/root/Gezi/IstDunya/IstOrdugah/karaca_pasa_lod0/bez_katı 
+GEZI_OLAY takilma -4606 2929 h0.25=/root/Gezi/IstDunya/IstOrdugah/karaca_pasa_lod0/bez_katı h0.90=/root/Gezi/IstDunya/IstOrdugah/karaca_pasa_lod0/bez_katı h1.60=/root/Gezi/IstDunya/IstOrdugah/karaca_pasa_lod0/bez_katı 
+GEZI_OLAY takilma -4606 2929 h0.25=/root/Gezi/IstDunya/IstOrdugah/karaca_pasa_lod0/bez_katı h0.90=/root/Gezi/IstDunya/IstOrdugah/karaca_pasa_lod0/bez_katı h1.60=/root/Gezi/IstDunya/IstOrdugah/karaca_pasa_lod0/bez_katı 
+GEZI_OLAY takilma -4606 2929 h0.25=/root/Gezi/IstDunya/IstOrdugah/karaca_pasa_lod0/bez_katı h0.90=/root/Gezi/IstDunya/IstOrdugah/karaca_pasa_lod0/bez_katı h1.60=/root/Gezi/IstDunya/IstOrdugah/karaca_pasa_lod0/bez_katı 
+GEZI_OLAY takilma -4606 2929 h0.25=/root/Gezi/IstDunya/IstOrdugah/karaca_pasa_lod0/bez_katı h0.90=/root/Gezi/IstDunya/IstOrdugah/karaca_pasa_lod0/bez_katı h1.60=/root/Gezi/IstDunya/IstOrdugah/karaca_pasa_lod0/bez_katı 
+GEZI_OLAY takilma -4606 2929 h0.25=/root/Gezi/IstDunya/IstOrdugah/karaca_pasa_lod0/bez_katı h0.90=/root/Gezi/IstDunya/IstOrdugah/karaca_pasa_lod0/bez_katı h1.60=/root/Gezi/IstDunya/IstOrdugah/karaca_pasa_lod0/bez_katı 
+GEZI_OLAY takilma -4606 2929 h0.25=/root/Gezi/IstDunya/IstOrdugah/karaca_pasa_lod0/bez_katı h0.90=/root/Gezi/IstDunya/IstOrdugah/karaca_pasa_lod0/bez_katı h1.60=/root/Gezi/IstDunya/IstOrdugah/karaca_pasa_lod0/bez_katı 
+GEZI_OLAY takilma -4606 2929 h0.25=/root/Gezi/IstDunya/IstOrdugah/karaca_pasa_lod0/bez_katı h0.90=/root/Gezi/IstDunya/IstOrdugah/karaca_pasa_lod0/bez_katı h1.60=/root/Gezi/IstDunya/IstOrdugah/karaca_pasa_lod0/bez_katı 
+GEZI_OLAY takilma -4606 2929 h0.25=/root/Gezi/IstDunya/IstOrdugah/karaca_pasa_lod0/bez_katı h0.90=/root/Gezi/IstDunya/IstOrdugah/karaca_pasa_lod0/bez_katı h1.60=/root/Gezi/IstDunya/IstOrdugah/karaca_pasa_lod0/bez_katı 
+GEZI_YURU route=7 bacak=2 bitti t=200 sn konum_hedefe=4.1 m
+GEZI_OLAY takilma -4592 3021 h0.25=/root/Gezi/IstDunya/IstOrdugah/basibozuk_18_0_lod0/cadirlar_kati h0.90=/root/Gezi/IstDunya/IstOrdugah/basibozuk_18_0_lod0/cadirlar_kati h1.60=/root/Gezi/IstDunya/IstOrdugah/basibozuk_18_0_lod0/cadirlar_kati 
+GEZI_OLAY takilma -4587 3127 h0.25=/root/Gezi/IstDunya/IstOrdugah/rumeli_5_1_lod0/cadirlar_kati h0.90=/root/Gezi/IstDunya/IstOrdugah/rumeli_5_1_lod0/cadirlar_kati h1.60=/root/Gezi/IstDunya/IstOrdugah/rumeli_5_1_lod0/cadirlar_kati 
+GEZI_OLAY takilma -4574 3193 h0.25=/root/Gezi/IstDunya/IstOrdugah/rumeli_5_1_lod0/cadirlar_kati h0.90=/root/Gezi/IstDunya/IstOrdugah/rumeli_5_1_lod0/cadirlar_kati h1.60=/root/Gezi/IstDunya/IstOrdugah/rumeli_5_1_lod0/cadirlar_kati 
+GEZI_OLAY takilma -4567 3221 (ışın yok: görünmez)
+GEZI_OLAY takilma -4551 3333 h0.25=/root/Gezi/IstDunya/IstOrdugah/rumeli_9_1_lod0/cadirlar_kati h0.90=/root/Gezi/IstDunya/IstOrdugah/rumeli_9_1_lod0/cadirlar_kati h1.60=/root/Gezi/IstDunya/IstOrdugah/rumeli_9_1_lod0/cadirlar_kati 
+GEZI_OLAY takilma -4527 3466 h0.25=/root/Gezi/IstDunya/IstOrdugah/rumeli_5_1_lod0/cadirlar_kati h0.90=/root/Gezi/IstDunya/IstOrdugah/rumeli_5_1_lod0/cadirlar_kati h1.60=/root/Gezi/IstDunya/IstOrdugah/rumeli_5_1_lod0/cadirlar_kati 
+GEZI_YURU route=7 bacak=3 bitti t=119 sn konum_hedefe=1.9 m
+GEZI_YURU route=7 toplam_dunya_m=460 gercek_m=1315 olaylar={ "takilma": 38, "yuksekte": 18 } sure_ms=131367

@@ -1,0 +1,10 @@
+GEZI_OLAY takilma -5639 -1114 h0.25=/root/Gezi/IstDunya/IstOrdugah/anadolu_2_0_lod0/cadirlar_kati h0.90=/root/Gezi/IstDunya/IstOrdugah/anadolu_2_0_lod0/cadirlar_kati h1.60=/root/Gezi/IstDunya/IstOrdugah/anadolu_2_0_lod0/cadirlar_kati 
+GEZI_YURU route=1 bacak=1 bitti t=82 sn konum_hedefe=1.9 m
+GEZI_YURU route=1 bacak=2 bitti t=71 sn konum_hedefe=1.8 m
+GEZI_OLAY takilma -5649 -105 h0.25=/root/Gezi/IstDunya/IstOrdugah/anadolu_5_0_lod0/cadirlar_kati h0.90=/root/Gezi/IstDunya/IstOrdugah/anadolu_5_0_lod0/cadirlar_kati h1.60=/root/Gezi/IstDunya/IstOrdugah/anadolu_5_0_lod0/cadirlar_kati 
+GEZI_OLAY takilma -5655 -80 h0.25=/root/Gezi/IstDunya/IstOrdugah/anadolu_6_0_lod0/cadirlar_kati h0.90=/root/Gezi/IstDunya/IstOrdugah/anadolu_6_0_lod0/cadirlar_kati h1.60=/root/Gezi/IstDunya/IstOrdugah/anadolu_6_0_lod0/cadirlar_kati 
+GEZI_YURU route=1 bacak=3 bitti t=68 sn konum_hedefe=2.0 m
+GEZI_OLAY takilma -5647 99 h0.25=/root/Gezi/IstDunya/IstOrdugah/anadolu_7_0_lod0/cadirlar_kati h0.90=/root/Gezi/IstDunya/IstOrdugah/anadolu_7_0_lod0/cadirlar_kati h1.60=/root/Gezi/IstDunya/IstOrdugah/anadolu_7_0_lod0/cadirlar_kati 
+GEZI_OLAY takilma -5650 490 h0.25=/root/Gezi/IstDunya/IstOrdugah/anadolu_9_0_lod0/cadirlar_kati h0.90=/root/Gezi/IstDunya/IstOrdugah/anadolu_9_0_lod0/cadirlar_kati h1.60=/root/Gezi/IstDunya/IstOrdugah/anadolu_9_0_lod0/cadirlar_kati 
+GEZI_YURU route=1 bacak=4 bitti t=70 sn konum_hedefe=1.9 m
+GEZI_YURU route=1 toplam_dunya_m=694 gercek_m=1983 olaylar={ "takilma": 5 } sure_ms=97935

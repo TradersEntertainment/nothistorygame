@@ -1,0 +1,7 @@
+GEZI_YURU route=6 bacak=1 bitti t=46 sn konum_hedefe=2.0 m
+GEZI_OLAY takilma -324 3126 (ışın yok: görünmez)
+GEZI_YURU route=6 bacak=2 bitti t=57 sn konum_hedefe=2.0 m
+GEZI_YURU route=6 bacak=3 bitti t=54 sn konum_hedefe=2.0 m
+GEZI_OLAY takilma 605 3463 h0.25=/root/Gezi/IstDunya/IstOrdugah/zaganos_2_2_lod0/cadirlar_kati h0.90=/root/Gezi/IstDunya/IstOrdugah/zaganos_2_2_lod0/cadirlar_kati h1.60=/root/Gezi/IstDunya/IstOrdugah/zaganos_2_2_lod0/cadirlar_kati 
+GEZI_YURU route=6 bacak=4 bitti t=52 sn konum_hedefe=1.9 m
+GEZI_YURU route=6 toplam_dunya_m=597 gercek_m=1706 olaylar={ "takilma": 2 } sure_ms=70253

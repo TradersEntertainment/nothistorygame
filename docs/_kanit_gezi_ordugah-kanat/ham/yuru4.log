@@ -1,0 +1,7 @@
+GEZI_OLAY takilma -4928 2390 h0.25=/root/Gezi/IstDunya/IstOrdugah/basibozuk_19_0_lod0/cadirlar_kati h0.90=/root/Gezi/IstDunya/IstOrdugah/basibozuk_19_0_lod0/cadirlar_kati h1.60=/root/Gezi/IstDunya/IstOrdugah/basibozuk_19_0_lod0/cadirlar_kati 
+GEZI_OLAY takilma -4984 2393 h0.25=/root/Gezi/IstDunya/IstOrdugah/rumeli_1_1_lod0/cadirlar_kati h0.90=/root/Gezi/IstDunya/IstOrdugah/rumeli_1_1_lod0/cadirlar_kati h1.60=/root/Gezi/IstDunya/IstOrdugah/rumeli_1_1_lod0/cadirlar_kati 
+GEZI_YURU route=4 bacak=1 bitti t=58 sn konum_hedefe=1.9 m
+GEZI_YURU route=4 bacak=2 bitti t=35 sn konum_hedefe=1.9 m
+GEZI_OLAY takilma -5490 2471 (ışın yok: görünmez)
+GEZI_YURU route=4 bacak=3 bitti t=52 sn konum_hedefe=2.0 m
+GEZI_YURU route=4 toplam_dunya_m=340 gercek_m=973 olaylar={ "takilma": 3 } sure_ms=50119
