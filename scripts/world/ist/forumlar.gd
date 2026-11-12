@@ -105,6 +105,10 @@ static func build(id: String, host: Node3D, k: float = 0.5, lod: int = 0) -> voi
 	_kur(id, host, k, lod)
 
 
+static func perches(id: String, k: float = 0.5, opt := {}) -> Array: return _meta(id, k, "perches", opt)
+static func climbs(id: String, k: float = 0.5, opt := {}) -> Array: return _meta(id, k, "climbs", opt)
+
+
 static func _kur(id: String, host: Node3D, k: float, lod: int, opt := {}) -> Node3D:
 	var n := Node3D.new()
 	n.name = "Ist_" + id
