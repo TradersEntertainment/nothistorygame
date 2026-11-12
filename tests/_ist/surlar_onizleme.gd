@@ -79,7 +79,8 @@ func _env() -> void:
 	_cam.current = true
 
 
-func _build(lod: int) -> void:
+func _build(lod: int, bake := true) -> void:
+	IstSurlar.bake = bake
 	if _host:
 		_host.queue_free()
 		await get_tree().process_frame
@@ -104,10 +105,14 @@ func _run() -> void:
 	_d = IstSurlar.dims(_k)
 	var o: Dictionary = IstSurlar.OPTS.get(_id, {})
 	_lay = IstSurlar._layout(_L, _k, 1453 if _id == "sur" else 1000 + _id.hash() % 997, o)
-	await _build(_lod)
+	await _build(_lod, false)
 	for i in 3:
 		await get_tree().physics_frame
 	await _audit()
+	await _build(_lod, true)
+	for i in 3:
+		await get_tree().physics_frame
+	_stats(_lod)
 	if _audit_only:
 		get_tree().quit(0)
 		return

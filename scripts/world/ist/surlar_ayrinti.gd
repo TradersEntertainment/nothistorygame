@@ -121,9 +121,9 @@ static func _crater(root: Node3D, p: Vector3, nz: float, r: float, rng: RandomNu
 	var b := Props.box(root, Vector3(r * 1.1, r * 1.0, 0.03), p + Vector3(0, -r * 0.05, nz * 0.025), C_DARK, Vector3(0, 0, 45.0 + rng.randf_range(-15.0, 15.0)))
 	a.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
 	b.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
-	for k in 4:
+	for k in 3:
 		var ang := rng.randf_range(-PI, PI)
-		var ln := rng.randf_range(0.8, 1.8) * r * 1.4
+		var ln := rng.randf_range(0.6, 1.2) * r * 1.0
 		var c := Props.box(root, Vector3(0.05, ln, 0.025), p + Vector3(cos(ang) * (r + ln * 0.5), sin(ang) * (r + ln * 0.5), nz * 0.02), C_DARK, Vector3(0, 0, rad_to_deg(ang) + 90.0))
 		c.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
 

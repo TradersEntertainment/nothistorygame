@@ -25,6 +25,8 @@ const PARAPET_H := 1.2
 const PARAPET_T := 0.45
 const STEP_RISE := 0.26
 const SPAN_NAME := "IstSurlar"
+## lod 0'da durağan görsel parçalar tek ağda birleştirilir (çizim çağrısı azalır). Denetim kapatır (kütle kutusu bakar).
+static var bake := true
 
 
 # ------------------------------------------------------------------ ölçüler
@@ -476,9 +478,40 @@ static func _run(host: Node3D, L: float, k: float, lod: int, seed: int, o: Dicti
 		IstSurlarKapi.build(root, lay, lod, o)
 	if lod == 0:
 		IstSurlarAyrinti.build(root, lay, o)
-	elif lod == 1:
-		pass
+		_wall_niches(root, lay, mer_niche_dummy())
+		if bake and root.is_inside_tree():
+			Props.bake_static(root, [root])
 	return root
+
+
+static func mer_niche_dummy() -> int:
+	return 0
+
+
+## Sur yüzlerinde sıralı ok yarığı/niş (MultiMesh): iç surun ova yüzünde ve dış surun ova yüzünde
+static func _wall_niches(root: Node3D, lay: Dictionary, _unused: int) -> void:
+	var d: Dictionary = lay["d"]
+	var L: float = lay["L"]
+	var gw: float = lay["gw"]
+	var dark: Array = []
+	var lint: Array = []
+	var rows: Array = [[float(d["zi1"]) + 0.02, float(d["HW"]) - 1.9, 1.0], [float(d["zo1"]) + 0.02, float(d["OH"]) * 0.5, 0.9]]
+	for r in rows:
+		var z: float = r[0]
+		var y: float = r[1]
+		var x := -L * 0.5 + 3.0
+		while x < L * 0.5 - 2.0:
+			var skip := gw > 0.0 and absf(x) < gw * 0.5 + 2.5
+			for tw in lay["itx"]:
+				if absf(float(tw["x"]) - x) < float(tw["w"]) * 0.5 + 0.8:
+					skip = true
+			if not skip:
+				dark.append(Transform3D(Basis.from_scale(Vector3(0.5, float(r[2]) * 1.1, 0.06)), Vector3(x, y, z)))
+				lint.append(Transform3D(Basis.from_scale(Vector3(0.85, 0.16, 0.08)), Vector3(x, y + float(r[2]) * 0.55 + 0.1, z)))
+			x += 3.4
+	if dark.size() > 0:
+		Scenery.scatter(root, Scenery._boxm(Vector3.ONE), dark, [], Props.mat(C_DARK, 0.0, false, ""))
+		Scenery.scatter(root, Scenery._boxm(Vector3.ONE), lint, [], Props.mat(C_BRICK, 0.0, false, "brick"))
 
 
 static func _build_moat(root: Node3D, lay: Dictionary, lod: int, stone: Color, open_gate: bool, mer: Array, o: Dictionary) -> void:
@@ -503,7 +536,7 @@ static func _build_moat(root: Node3D, lay: Dictionary, lod: int, stone: Color, o
 	for sg in _segs(x0, x1, pcut):
 		_s(root, Vector3(sg[0], 0, zm0 - 1.8), Vector3(sg[1], 1.6, zm0 - 0.9), stone.darkened(0.08), "ashlar", lod, true)
 		if lod == 0 and sg[1] - sg[0] > 1.0:
-			_d(root, Vector3(sg[0], 1.6, zm0 - 1.75), Vector3(sg[1], 1.72, zm0 - 0.95), stone.darkened(0.04))
+			_d(root, Vector3(sg[0], 1.6, zm0 - 1.75), Vector3(sg[1], 1.72, zm0 - 0.95), stone.darkened(0.04), "ashlar")
 	# uç dolguları (tam yükseklik): hendek bölmesi/geçit
 	var cw := 3.0
 	_s(root, Vector3(x0, -MD, zm0), Vector3(x0 + cw, 0, zm1), scarp.lightened(0.04), "ashlar", lod, true)
