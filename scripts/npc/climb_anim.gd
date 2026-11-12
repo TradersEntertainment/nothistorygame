@@ -329,7 +329,7 @@ func _pose(limbs := true) -> void:
 	# Kalça hareketli ayak tarafına salınır (a çiftinde sol ayak kalkar: kalça sağa)
 	var dir := 1.0 if n % 2 == 0 else -1.0
 	var sway := sin(p * PI) * 0.035 * dir * (1.0 - brace)
-	var hip_out := 0.48 - clampf(0.53 - _arm_len, 0.0, 0.05) * 2.5 - brace * 0.03
+	var hip_out := 0.47 - clampf(0.53 - _arm_len, 0.0, 0.05) * 2.5 - brace * 0.03
 	var sc := who.global_basis.get_scale()
 	var basis := Basis(_u.cross(-_f).normalized(), _u, -_f)
 	var pos := _o + _u * root_u + _f * hip_out + _r * side
