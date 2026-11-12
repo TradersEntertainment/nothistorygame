@@ -112,6 +112,8 @@ func _wake(i: int) -> void:
 	match str(sp["do"]):
 		"sit_ground", "stir", "hammer", "chop":
 			p.set_activity(str(sp["do"]))
+	if Rig.DurusKit.var_mi(str(sp["do"])):
+		p.set_activity(str(sp["do"]))       # DURUŞ (bağdaş, sırtüstü yatan yaralı…): canlanınca da aynı duruş
 	# Figürü gizle (poz döngüsündeki ya da duran kalabalıktaki kopyaları)
 	if sp.has("crew"):
 		_pc(sp).suppress(int(sp["crew"]), true)
