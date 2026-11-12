@@ -13,6 +13,7 @@ var dal := ""
 var shots := ""
 var kip := "kare"
 var en_cok := 16
+var kirilim := false      # kirilim=1: bazı karelerde çizim kırılımı (v2 gizli / bölüm sahnesi gizli)
 var ch: Node3D
 var pl: Player
 var pw: NihatPowers
@@ -35,6 +36,7 @@ func _ready() -> void:
 			"shots": shots = kv[1]
 			"kip": kip = kv[1]
 			"en_cok": en_cok = kv[1].to_int()
+			"kirilim": kirilim = kv[1] == "1"
 	if shots != "":
 		DirAccess.make_dir_recursive_absolute(shots)
 	GameState.autotest = false
@@ -76,7 +78,8 @@ func _surus() -> void:
 	get_tree().root.add_child(ch)
 	get_tree().current_scene = ch
 	await get_tree().process_frame
-	await RenderingServer.frame_post_draw
+	if DisplayServer.get_name() != "headless":
+		await RenderingServer.frame_post_draw
 	print("BAGLAMA_YUKLE bolum=%d dal=%s v2=%s ms=%d" % [bolum, dal, IstBaglama.aktif(), Time.get_ticks_msec() - t0])
 	pl = get_tree().get_first_node_in_group("player") as Player
 	if pl == null:
@@ -164,6 +167,27 @@ func _cek(ad: String) -> void:
 		IstGeo.real(pl.global_position.x, pl.global_position.z) if IstBaglama.aktif() else "-"])
 	if shots != "":
 		vp.get_texture().get_image().save_png(shots.path_join(dosya + ".png"))
+	if kirilim and IstBaglama.kok != null and ad in ["kalkis", "ordugah_ustu", "galata_donus", "eve_donus", "sehrin_ustu"]:
+		var cz := func() -> int:
+			await RenderingServer.frame_post_draw
+			await RenderingServer.frame_post_draw
+			return RenderingServer.get_rendering_info(RenderingServer.RENDERING_INFO_TOTAL_DRAW_CALLS_IN_FRAME)
+		IstBaglama.kok.visible = false
+		var sahne: int = await cz.call()
+		IstBaglama.kok.visible = true
+		var gizli: Array = []
+		for c in ch.get_children():
+			if c is Node3D and c != pl and (c as Node3D).visible and not (c as Node3D).is_ancestor_of(IstBaglama.kok):
+				(c as Node3D).visible = false
+				gizli.append(c)
+		for c in IstBaglama.kok.get_parent().get_children():
+			if c is Node3D and c != IstBaglama.kok and (c as Node3D).visible:
+				(c as Node3D).visible = false
+				gizli.append(c)
+		var v2: int = await cz.call()
+		for c in gizli:
+			(c as Node3D).visible = true
+		print("BAGLAMA_KIRILIM ad=%s yalniz_sahne=%d yalniz_v2=%d" % [dosya, sahne, v2])
 
 
 func _kareler() -> void:

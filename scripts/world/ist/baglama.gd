@@ -42,6 +42,47 @@ const PERCH_ESLE := {"ist_galata_kulesi": "galata", "ist_konstantin": "column", 
 
 var oyuncu: Player
 var _yakala_t := 0.0
+## Bölüm sahnesinin (CampDay/ByzCity ve bölüm kökü) uzaklık sınırı olmayan çizimleri bu uzaklıkta biter: uçarken 2 km
+## ötedeki ordugâhın binlerce süsü çizilmesin (eski dünyada da böyleydi; v2'nin kendi katmanları zaten uzaklıklı)
+const SAHNE_UZAK := 650.0
+const SAHNE_UZAK_KUCUK := 260.0
+
+
+func _ready() -> void:
+	# Bölüm sahnesi bu düğümden sonra kurulmaya devam eder (CampDay._ready'nin kalanı, bölümün _build'i): iki kare sonra
+	for i in 2:
+		await get_tree().process_frame
+	if is_inside_tree():
+		sahne_uzaklik(get_tree().current_scene if get_tree().current_scene else get_parent().get_parent())
+
+
+## Uzaklık sınırı (görünürlük aralığı): v2 kökünün dışındaki her GeometryInstance3D (oyuncu ve el hariç), küçükler daha
+## erken. Döndürür: sınır verilen sayısı
+func sahne_uzaklik(kok_: Node) -> int:
+	if kok_ == null:
+		return 0
+	var n := 0
+	var yigin: Array = [kok_]
+	while not yigin.is_empty():
+		var d: Node = yigin.pop_back()
+		if d == kok or d is Player or d is CanvasItem or d is CanvasLayer:
+			continue
+		for c in d.get_children():
+			yigin.append(c)
+		if d is GeometryInstance3D:
+			var gi := d as GeometryInstance3D
+			if gi.visibility_range_end > 0.0 or gi.visibility_range_begin > 0.0:
+				continue
+			var ab := gi.get_aabb()
+			var buyuk := ab.size.length() * gi.global_basis.get_scale().length() / 1.732
+			if gi is MultiMeshInstance3D:
+				buyuk = maxf(buyuk, 40.0)
+			gi.visibility_range_end = SAHNE_UZAK if buyuk > 6.0 else SAHNE_UZAK_KUCUK
+			gi.visibility_range_end_margin = 30.0
+			gi.visibility_range_fade_mode = GeometryInstance3D.VISIBILITY_RANGE_FADE_DISABLED
+			n += 1
+	print("ISTBAGLAMA sahne_uzaklik=%d" % n)
+	return n
 
 
 # ------------------------------------------------------------------ anahtar
@@ -198,6 +239,7 @@ static func build(parent: Node3D, region_name: String, keep_local: Array, _night
 	f.add_child(f.get("_smoke_root"))
 	parent.add_child(f)
 	kok = f
+	f.set_meta("ucus_tarama_yok", true)       # NihatPowers.ensure_flight_solids v2'yi taramaz (v2 çarpışması kendinde)
 	# v2: gök bölümün (gündüz CampDay/ByzCity, gece Night.environment); öbür her şey v2'nin
 	IstDunya.gok_kur = false
 	var merkez := Vector3(ym[0].x, 2.0, ym[0].y)
