@@ -1,154 +1,129 @@
-# Bölüm 44 — Sarnıç (Yerebatan) · tasarım belgesi
+# Bölüm 44 (yalnız Bizans tarafı) — SARNIÇ · 26 Mayıs 1453 · Ayasofya'nın batısı, toprağın altı
 
-> Sahibin sözü (12 Kasım): "bizansa yerebatan sarnıcı bölümü ekleyelim hem manzara hayranlık yaratsın hem de heyecanlı bi
-> bölüm olsun". Bu belge bölümün yerini, akışını, düzeneklerini, sonuçlarını ve replik taslağını verir. Dal:
-> `wip/bolum-yerebatan`. Kimlik: **44** (yalnız Bizans tarafı, `scenes/chapter44b.tscn`, `scripts/chapter44b.gd`,
-> mekân `scripts/level/cistern.gd`).
+Sahibinin isteği (12 Kasım): "hem manzara hayranlık yaratsın hem de heyecanlı bi bölüm olsun"; "ne bizans ne osmanlı
+bilmiyordu … tolga kazara bulacak ya da halktan birisi bir şey isterken ona yardım ederken oraya varacak".
 
-## 1. Hikâyedeki yeri (karar ve gerekçe)
+## 1. Araştırma (kaynaklı; çelişenler yan yana)
 
-**Perde IV (Hasar Tespit), Bizans kayıtlarının yeni sayfası: 26 Mayıs 1453, gece.** `Siege.ORDER`'da 43'ün ardına,
-25'in (Son Akşam, 27–28 Mayıs) önüne girer: `… 23, 24, 43, 44, 25 …`. Osmanlı tarafında sahnesi yoktur, o tarafta
-kendiliğinden atlanır (28o, 43o ve 36b ile aynı düzen).
-
-- Neden burası: 24 (Alametler) 23–24 Mayıs fırtınasıyla ve selle biter, ertesi akşam Ayasofya'nın çevresi sistedir.
-  Sarnıç Ayasofya'nın 150 m güneybatısındadır; selin suyu sarnıca dolar. 25'in ikinci yarısı Ayasofya'daki son
-  ayindir. Sarnıç bu iki Ayasofya sayfasının arasında, şehrin "son tedbirler" günündedir: şehir düşerse ne kalır?
-- Neden Perde IV: kuşatmaya yeni sayfa eklemek oyunun var olan düzeneğidir (28, 29, 30, 36, 41, 42, 43 böyle girdi);
-  bağlantı, bölüm listesi, numara ("Bölüm N"), Hasar Tespit Dosyası ve kayıt `Siege` üstünden kendiliğinden yürür.
-  Öteki bölümlerin akışına dokunulmaz: 24'ün sonu `Siege.next_path(24)` ile artık 44'e, 44'ün sonu 25'e gider.
-- Kayıt uyumu: eski kayıtlar çalışır. 24'ü bitirmiş ama 25'e geçmemiş kayıt "devam" deyince 44'ü oynar; 25 ve sonrası
-  kayıtlarında 44 dosyada boş sayfa olarak görünür (Bölüm seçme ekranından oynanabilir). Sayfa sayısı (Bizans) bir artar.
-- Perde IV'te Tolga'nın kulağındaki ses Nihat'tır (zamanın dışındaki Büro); Hikmet bu perdede telsizden ulaşamaz
-  (EVREN §2). Görev metnindeki "Hikmet'in telsiz yorumları" bu yüzden **Nihat'ın Büro yorumlarına** dönüştü
-  (sahibin kararına açık: §8).
-
-## 2. Kısa öykü
-
-Logothetes Theodoros her belgeyi yedi nüsha tutar. Altısı sarayın arşivinde; **yedinci nüsha** her zaman başka bir
-yerde durur. Şehrin son günlerinde Theodoros yedinci nüshaları, İustinianos'un sarnıcında, eski logothetlerin
-kullandığı kuru bir nişe saklamak ister: "Şehir düşerse kâğıt yanar. Taş yanmaz, su yanmaz." Nişin yeri eski bir
-kayıtta yazılıdır: "**Biri yana bakar, biri yere. Bakışları bir taşta buluşur.**" Sarnıcın üstündeki evlerden birinin
-mahzeninden inerler, sandala sandığı koyarlar. Sel suyu sarnıca dolmaktadır: niş birkaç dakika sonra su altında
-kalacak. Tolga kürek çeker; Theodoros kandili tutar. Sonra kandil söner.
-
-Büro'nun tespit karesi: **suyun altındaki Medusa** (Nihat: "1985'e kadar kimse görmeyecek. Siz görüyorsunuz.").
-
-## 3. Akış (vuruş vuruş, ~12–15 dk)
-
-1. **İniş (karanlık → ışık).** Bir evin mahzeni (dar, sıcak, kandil). Kapak açılır, taş merdiven aşağı iner; yankı
-   büyür. Theodoros önde. Nihat: kayıt cümlesi. Tolga: "Abi burası Yerebatan. Ben buraya bilet aldım, kuyruk vardı."
-2. **Hayranlık anı (oyuncu durur).** Merdivenin sahanlığı sarnıcın kuzeydoğu köşesinde, su çizgisinin 1,5 m
-   üstünde. Önde 12 × 28 sütunluk orman: tuğla çapraz tonozlar, Korint/İon/yalın başlıklar, sütunların durgun suda
-   tam yansıması, tavandaki kuyu ağızlarından inen 6 ışık huzmesi ve içlerinde toz, tavanda suyun kıpırtılı yansıması
-   (kostik), uzakta karanlığa gömülen sıralar, damlalar ve halkalar, yankı. Denetim oyuncuda: kamera elden alınmaz;
-   hedef yazısı 6 sn boş, müzik susar, ortamda yalnız damla ve yankı. Oyuncu bakmayı bırakıp merdiveni inince sürer.
-   (Kanıt kareleri üç açıdan: sahanlık, sandaldan, uzak sıradan geri.)
-3. **Sandal.** Sandık sandalda. Tolga küreğe geçer (var olan `RowMeter` ritmi: hız) ve sandalı A/D ile döndürür
-   (sütunlar arasında 4,9 m aralık; sütuna sürtünme: sandal durur, yankılı "tok"). Yol: Theodoros'un sayımı ("dokuzuncu
-   sıra, sola"). Sütunlarda tebeşirle Yunan rakamları (sıra işaretleri) vardır; yalnız ışıkta okunur.
-   Gözyaşı sütunu (tavus gözü/gözyaşı oymaları) yolun üstündedir: Theodoros'un ve Tolga'nın tek samimi anı (≥ 3 sn).
-4. **Karanlık.** Bir kuyu ağzından düşen tuğla kandili suya düşürür. **Işık yönetimi** başlar:
-   - **Telefon feneri**: geniş, uzun menzil; şarj (yüzde) yandıkça düşer. %0'da "tuğla" (oyunun şakası).
-   - **Çakmak**: kısa menzil, titrek; uzun yakılınca başparmak yanar (6 sn sonra kendiliğinden söner, 2 sn soğur).
-   - Işık yokken yalnız huzmelerin aydınlattığı sütunlar ve suyun parıltısı görünür. Tebeşir işaretleri yalnız ışıkta.
-5. **Gerilim: çöken kuyu ve yükselen su.** Selin suyu batıdaki kanaldan gürleyerek girer; ekranda **su sayacı**
-   (nişin dibine kalan santim). Tavandan tozla haber veren parçalar düşer: önce damlalar suda halka yapar, 1,2 sn sonra
-   tuğla iner. Halkayı gören sandalı durdurur ya da yana kırar; vurulursa sandal sarsılır, su alır, sayaç hızlanır.
-   Bir kuyu bacası çöker (büyük düşüş, köpük, dalga): yol kapanır, Theodoros başka sıra söyler.
-6. **Medusa köşesi (bulmaca, süreli).** Kuzeybatı köşede iki sütun Medusa başları üstüne oturur: biri **yan**, biri
-   **ters**; yüzleri yarı yarıya suyun içinde. Herkesin bir teorisi var (Tolga: "Tersi, taşa dönmesin diye"; Theodoros:
-   "Taş ölçüye uysun diye"; Nihat: "Kayıtlarda gerekçe yok. Kimse form doldurmamış."). Bulmaca: ışığı yan Medusa'nın
-   yüzüne tut → gözündeki cam parıltı duvarda bir çizgi verir. Ters Medusa'yı suda doğrult: sandalı onun yansımasını
-   düz gösteren yere getir (sudaki halka), ışığı yansımaya tut → ikinci çizgi. İki çizginin buluştuğu duvar taşı parlar:
-   yanına yanaş, E basılı it → niş açılır, sandığı koy (E). Tespit karesi: suyun altındaki Medusa (telefonla).
-7. **Çıkış (iki farklı yer).**
-   - **44.1 Niş kuru kaldı:** Theodoros'la en yakın kuyunun ipinden yukarı (tırmanma, `Ladder` düzeni). Kuyu bir evin
-     mutfağına çıkar: kova sallayan bir kadın kovada balık yerine Tolga'yı bulur. 24.1'de selde saçağa götürülen çocuk
-     (siege_kid) bu evdeyse çocuk Tolga'yı tanır.
-   - **44.2 Su nişe yetişti:** niş taşar; Theodoros sandığı "Medusa bekçilik etsin" diye ters başın dibine batırır.
-     Sel kanalının yanındaki eski bakım merdiveniyle **Ayasofya'nın alt yapısına** (tonozlu bodrum) çıkılır; yukarıdan
-     ilahi sesi gelir.
-
-## 4. Oynanış düzenekleri (var olanlardan)
-
-| Düzenek | Kaynak | Bu bölümde |
-|---|---|---|
-| Kürek ritmi | `RowMeter` (17, 19, 38o) | Sandalın hızı; ritimsiz kürek gürültü yapar, yankı büyür |
-| Yön | yeni, bölüm içinde | A/D sandalın burnunu çevirir; sütuna sürtme durdurur |
-| Işık | `Player._phone_light` düzeni + bölüm içi şarj/çakmak | Işık yönetimi, tebeşir işaretleri ve bulmaca |
-| Tırmanma | `Ladder`, `enable_climb` | 44.1 çıkışı: kuyu ipi |
-| Süre çubuğu | `Hud.set_chase` | Su sayacı, taşı itme |
-| Tespit karesi | `TespitCam` | Su altındaki Medusa |
-| Dosya sayfası, akış şeması | `Siege.record`, `Flowchart` | Sayfa 44, iki sonuç |
-
-## 5. Sonuçlar ve etkileri
-
-| ID | Sonuç | Bayrak | Etki |
+| Konu | Ne biliniyor | Kaynak | Güven |
 |---|---|---|---|
-| **44.1** | Yedinci nüsha kuru nişte; kuyudan bir evin mutfağına | `cistern_chest = "niche"` | Bölüm 15 İnsanların Akıbeti: Theodoros satırı ("yedinci nüsha nişte; 2026'da turistler üstünden geçiyor") |
-| **44.2** | Niş taştı; sandık ters Medusa'nın dibinde; Ayasofya'nın altından çıkış | `cistern_chest = "medusa"` | Akıbet: "1987 temizliğinde 50 bin ton çamurdan bir kurşun mühür çıktı; müzede 'kökeni bilinmiyor'" |
+| Yapım | Iustinianus; Nika ayaklanmasında (532) yanan Stoa Basilika'nın (mahkemeler, kütüphane) altında. Bazı yerler 532, bazıları 542, Byzantine Legacy "işe 527–28'de başlanmış olabilir". | Prokopios, *De Aedificiis* I.11; Wikipedia "Basilica Cistern"; thebyzantinelegacy.com/basilica-cistern | Iustinianus ve Basilika kesin; yıl BELİRSİZ (527–542) |
+| Ölçü | ~138 × 65 m, ~80.000 m³, 336 sütun, 12 sıra × 28, sütun ~9 m. Gyllius: "336 foot long, 182 broad … 336 marble pillars … twelve ranges [by] twenty eight … above forty foot high", aralık 12 ayak; başlıkların bir kısmı Korint, bir kısmı işlenmemiş; her başlığın üstünde ikinci bir yastık taşı ve dört kemer. | İBB / Kültür Bakanlığı (Wikipedia'dan); Gyllius (Ball çevirisi 1729, Gutenberg #53083) | Sütun sayısı ve dizilişte iki kaynak birebir aynı; Gyllius'un ayak ölçüsü bugünkü metreyle tutmuyor (onun "foot"u farklı) |
+| Su kaynağı | Wikipedia: Belgrad Ormanı → Valens (Bozdoğan) kemeri. Byzantine Legacy: büyük olasılıkla Hadrianus su yolu (Iustinianus 528'de onardı). Prokopios: suyu yazın kullanmak için, kışın su yollarından doldurulur. Gyllius kışın dolarken "büyük bir borudan gürültüyle inen suyu" görmüş. | Wikipedia; Byzantine Legacy; Gyllius | Su yolu ÇELİŞKİLİ (Valens / Hadrianus) |
+| Geç Bizans | Büyük Saray 12. yüzyılda Blakherna'ya taşınınca sarnıcın önemi azaldı (Harvard ders sergisi; zayıf kaynak). Valens kemerine son bakımın I. Andronikos Komnenos'a (1183–85) ya da I. Manuel'e (~1170) ait olduğu söylenir; Kastilyalı elçi Clavijo 1403'te kemeri hâlâ çalışır görmüş. | hum54-15.omeka.fas.harvard.edu; Wikipedia "Valens Aqueduct"; istanbul-su.rich.ru.nl | 1453'te sarnıcın resmî kullanımı KANITSIZ; "sarayın unuttuğu" yorumdur ama Gyllius'un tanıklığıyla uyumlu |
+| 1453'te kim biliyordu | Doğrudan kaynak YOK. Gyllius (~1544–47): "Ahali, içine açılmış kuyulardan her gün su çektiği hâlde ondan en küçük bir şüphe duymuyordu"; "üstü tamamen evlerle kaplıydı". Yani 90 yıl sonra yalnız üstteki evler, o da "kuyu" olarak biliyordu. | Gyllius II.20 (Ball) | 1453 için çıkarım; oyunun kurgusu buna dayanır |
+| Osmanlı | Wikipedia (Tonguç & Yale 2010): "varlığı, ondan hâlâ su çeken yerliler dışında herkesçe unutuldu". Başka siteler fetihten sonra Topkapı bahçelerine su verdiğini söyler (kaynaksız). III. Ahmed döneminde 1723'te Kayserili Mehmed Ağa onarmış. Fatih fetihten hemen sonra su yollarını onarttı (Tursun Bey, Kritovulos). | Wikipedia; istanbul-su.rich.ru.nl | Topkapı bağlantısı ÇELİŞKİLİ (Gyllius'un "kimse bilmiyordu"suyla çatışır); 1723 onarımı tutarlı |
+| Gyllius'un keşfi | Tarih 1544, 1545 ya da 1544–47 diye değişir. Kendi sözü: "Tesadüfen içinden inilen bir eve girdim, küçük bir kayığa bindim. Ev sahibi meşaleler yaktı, beni sütunların arasında, derin suda oraya buraya kürekledi. Sarnıçta bolca bulunan balıklarını tutmaya pek hevesliydi, birkaçını meşale ışığında zıpkınladı. Kuyunun ağzından inen küçük bir ışık suya vurur; balıklar hava almaya oraya gelir." | Gyllius II.20 (Ball) | Kesin (birincil kaynak) |
+| Medusa başları | Kuzeybatı köşesinde iki sütunun kaidesi (biri yan, biri ters). Kökeni bilinmiyor (Konstantin Forumu'ndan devşirme olabilir). Bugünkü görünüşleri 1985–87 İBB temizliğinden: 50.000 ton çamur çıkarılırken ortaya çıktılar. | Wikipedia; Milliyet (C. Sadiç); İBB Atatürk Kitaplığı; Byzantine Legacy | 1453'te çamur ve su altındaydılar: GÖRÜNMÜYORLARDI (kesine yakın) |
+| "Tavus gözü / ağlayan" sütun | Gözyaşı ve dal kabartmalı tek sütun (Wikipedia, sarnıç müdürlüğü). Ünü ve "yapımda ölen köleler" anlatısı modern rehber anlatısı. | Wikipedia | Sütun var; hikâyesi rivayet |
+| Balık, su, hava | Gyllius: balık bol, zıpkınla avlanır; kuyu ağzından ışık iner. Bugünkü sazanlar modern; 1453'teki tür BELİRSİZ (oyunda "balık", Tolga "sazan" der, Yakovos güler). Su derin: Gyllius "sütunlar suda çok derin duruyordu"; kışın başlıkların ortasına dek dolmuş. | Gyllius | Su düzeyi mevsime bağlı; Mayıs sonunda oyunda başlıkların ~4 m altı (uydurma ama Gyllius'la uyumlu) |
 
-Ek bayraklar: `cistern_battery` (telefonun bölüm sonundaki yüzdesi, sonraki sayfada değil yalnız dosya notunda),
-`cistern_kid` (44.1 + siege_kid). Başarım: **"Medusa'ya Bakan"** (iki parıltıyı tek seferde buluşturdu, su sayacı
-yarıdan önce). Var olan sonuçlar, denge ve öteki bölümlerin replikleri değişmez.
+**Sonuç (kurgu için):** 1453'te sarnıç, sarayın ve ordunun unuttuğu bir yeraltı gölüdür. Üstündeki mahalleli
+evinin dibindeki "kuyu"dan su (ve balık) çeker, altında 336 sütunluk bir orman olduğunu bilmez. Medusa başları
+suyun ve çamurun altında görünmez; 1545'te bir Fransız (Gyllius) bir ev sahibinin kayığında meşaleyle dolaşıp bunu
+"bulacak". Bölüm bu bilinmezlik üstüne kurulur: Tolga'nın gördüğü şeyi 2026'da bilet kuyruğu olan bir müze olarak
+biliyor olması, 1453'te ise kimsenin bilmemesi.
 
-## 6. Replik taslağı (tr; anahtar biçimi `D44B_<K>_<AD>`, K: T Tolga, TH Theodoros, N Nihat, W kadın, K çocuk)
+> **Önceki taslak (92e190b7) hakkında:** Görev metni düzeltilmeden önce yazılan ilk taslakta sarnıcı Theodoros
+> biliyordu (yedinci nüshayı saklama). Düzeltilmiş görev ve araştırma "kimse bilmiyordu" dediği için o kurgu
+> bırakıldı; ondan alınanlar: Perde IV'te kulaktaki sesin **Nihat** olması (Hikmet bu perdede telsizden yoktur;
+> hiçbir kuşatma bölümünde Hikmet konuşmaz), düşen tuğladan önce suda halka uyarısı, telefonun %0'da "tuğla" şakası.
 
-- N: "Bugünkü kayıt yerin altında, Tolga Bey. Logothetes Theodoros şehrin son kâğıtlarını saklayacak. Siz kürek çekin."
-- TH: "Altı nüsha sarayda. Yedincisi her zaman başka yerde durur. Kural benim değil; benden önceki altı logothetin."
-- T: "Abi burası Yerebatan. Ben buraya bilet aldım, yarım saat kuyruk bekledim. Şimdi bedava giriyorum, üstüne kürek."
-- T (hayranlık, kendi kendine): "…Tamam. Bunu fotoğraf anlatmıyormuş."
-- TH: "İustinianos yaptırdı. Üç yüz otuz altı sütun. Hepsini başka binalardan topladılar; hiçbiri ötekine benzemez."
-- T: "Devşirme sütun. Bizde buna 'muadil parça' denir, hasar dosyasında sevmeyiz."
-- TH (gözyaşı sütunu): "Bunu yapan ustalar ağlamış derler. Bin yüz yıldır da ağlıyor." (ciddi an)
-- T (kandil sönünce): "Tamam, sakin. Benim fenerim var. Yüzde on dört. …Yüzde on üç."
-- TH (telefona): "Işık bir taşın içinde mi yanıyor? Mühür var mı üstünde?"
-- T (çakmak): "Çakmak, iki saniye. Başparmağım da sigortalı değil."
-- N (su sayacı): "Su nişin dibine otuz santim. Kayıtlara 'zamanında' yazmak isterim."
-- T (Medusa): "Neden ters? Bence taşa dönmesin diye. Rehber de öyle dedi, ama rehber her şeye öyle diyor."
-- TH: "Ters değil. Taş ölçüye uysun diye konmuş. Ustalar ölçüye bakar, yüze bakmaz."
-- N: "Kayıtlarda gerekçe yok. Kimse form doldurmamış. Ben de doldurmayacağım."
-- W (mutfak): "Her gece kovaya bir şey takılır. Genelde sazan."
-- T: "Ben sigortacıyım. Sazanla aynı poliçeye girmem ama… teşekkür ederim."
-- N (son, 44.1): "Yedinci nüsha kuru. Bazı kâğıtlar kurtulur, Tolga Bey. Çoğu değil."
+Kaynaklar: Gyllius/Ball 1729 (gutenberg.org/ebooks/53083, II. kitap 20. bölüm); en.wikipedia.org/wiki/Basilica_Cistern;
+thebyzantinelegacy.com/basilica-cistern; en.wikipedia.org/wiki/Valens_Aqueduct; istanbul-su.rich.ru.nl;
+milliyet.com.tr (Cüneyt Sadiç, "Yerebatan Sarayı: bir sarnıcın yaşam öyküsü"); ataturkkitapligi.ibb.gov.tr;
+hum54-15.omeka.fas.harvard.edu (zayıf).
 
-(İngilizce karşılıklar betikle birlikte `i18n/strings.csv`'ye yazılır; espri İngilizcede yeniden kurulur.)
+## 2. Yer ve zaman
 
-## 7. Mekân, bütçe, araştırma (kısa)
+- **Kimlik 44, sahne `chapter44b` (yalnız Bizans tarafı)**, `Siege.ORDER` içinde 24'ün hemen ardına: Bizans sırası
+  `… 23 → 24 → 44 → 25 …` (43 Osmanlı'ya özgü, Bizans'ta atlanır). Tarih **26 Mayıs 1453**: 24 Mayıs fırtınasından
+  (Bölüm 24, Hodegetria alayı ve sel) iki gün sonra, 27 Mayıs Son Akşam'dan (25) bir gün önce; bombardıman
+  sürüyor (kaynaklarda son günlerde aralıksız). Gerekçe: Bölüm 24'ün seli kuyuları taşırmış, balıklar kovaya
+  çıkıyor (giriş kurgusunun bahanesi); Bölüm 24 ve 25 zaten Ayasofya çevresinde: mekân sürekliliği.
+- Osmanlı sırası ve sayfa sayısı değişmez. Bizans tarafının sonraki ekran numaraları bir kayar ("{N}" düzeni bunu
+  zaten yapıyor). Eski kayıtlar: kimlik yalnız ORDER'a eklenir, var olan kimlik değişmez; 24'ü geçmiş bir kayıt
+  44'ü görmeden sürer (bölüm seçiminden açılabilir).
 
-- **Ölçü:** 138 × 65 m, 12 sıra × 28 sütun = 336; sütun 9 m (oyunda 8,6 m gövde + başlık), aralık ~4,9 m; dış duvar
-  4 m kalınlık; tuğla çapraz tonoz (her göz tek ağda). Su çizgisi oyunda 1,2 m (tarihteki düzey bilinmiyor; sığ su
-  oyuncunun düşüp sıkışmasını engeller: suya düşen yürür, sandala ya da merdivene döner).
-- **Çizim/üçgen:** 336 sütun + 336 başlık + 336 kaide tek MultiMesh'lerde (başlık türüne göre 3 MultiMesh), tonoz tek
-  birleşik ağ, ters yansıma (aynı MultiMesh'ler y'de ters, suyun altında) + saydam su; huzmeler ışık değil katkı
-  (additive) koni ağ + toz parçacığı; kostik tavan gölgelendiricisi. Işık: 1 yönsüz ortam, ≤ 4 OmniLight (kandil,
-  mahzen, kuyu dipleri), telefonun SpotLight'ı. Hedef: çizim ≤ 600, üçgen ≤ 1,5 M.
-- **Araştırma notu (kaynaklı):**
-  - İustinianos döneminde (6. yy) yapıldı; ~138 × 65 m, ~80 bin m³; 12 × 28 = 336 sütun, ~9 m; çoğu İon ve Korint
-    başlıklı, birkaçı yalın; bir sütunda "tavus gözü", eğik dallar ve gözyaşı oymaları; kuzeybatı köşede iki sütun
-    Medusa başlı bloklara oturur; 4 m tuğla duvar ve su geçirmez harç; su Belgrad Ormanı'ndan Valens Kemeri'yle
-    gelirdi; 1985–87'de 50 bin tondan çok çamur çıkarıldı, Medusa kaideleri ortaya çıktı.
-    ([Wikipedia: Basilica Cistern](https://en.wikipedia.org/wiki/Basilica_Cistern))
-  - Petrus Gyllius (1540'lar; *De Topographia Constantinopoleos* II.20): üstteki evlerin halkı mahzenlerindeki
-    kuyulardan kovayla su ve balık çekiyordu; ev sahibi meşale yakıp onu sütunların arasında sandalla gezdirdi,
-    meşale ışığında balık zıpkınladı (J. Ball çevirisi, 1729: "The Master of the House, after having lighted some
-    Torches, rowing me here and there across, through the Pillars…"). ([Byzantine Legacy](https://www.thebyzantinelegacy.com/basilica-cistern);
-    [Project Gutenberg, Ball çevirisi](https://gutenberg.org/files/53083/53083-h/53083-h.htm);
-    [Istanbul Su projesi](https://istanbul-su.rich.ru.nl/event/details/48/))
-  - 1204'ten sonra su yolları onarılmadı; şehir sarnıçlara dayandı ([Byzantine Legacy: Cisterns](https://www.thebyzantinelegacy.com/cisterns)).
-    1453'te Osmanlıların kemerleri kestiğine dair kaynak bulamadım: oyunda kesilmez.
-  - **Uydurma (oyun için):** 1453'te sarnıcın dolu ve evlerden kullanıldığı (Gyllius'un 16. yy anlatısından
-    geriye çıkarım, görevin varsayımı); Theodoros'un yedinci nüshası ve niş; 23–24 Mayıs fırtınasının (kaynaklı, 24)
-    suyunun sarnıca dolması; çöken kuyu bacası; Medusa gözlerindeki cam.
+## 3. Giriş kurgusu (kazara + yardım)
 
-## 8. Riskler ve sahibin kararı gereken yerler
+Ayasofya'nın batısında bir avlu (var olan `ByzCity(part="aya")`). **Kyra Eudokia** (yaşlı dul, yeni karakter,
+uydurma) avlunun kuyusunun başında: "Selden beri kuyumdan balık çıkıyor. Dün kovamı biri aşağı çekti. Cin var bu
+kuyuda." Bölüm 24'te çocuk saçağa alındıysa (24.1, `siege_kid`) çocuk Eudokia'nın torunudur ve tahta atını da kuyuya
+düşürmüştür (iki iş). Tolga "hasar tespiti yaparım" diye ipe sarılıp iner; ip çürük, kopar: karanlıkta suya düşer.
 
-1. **Yer:** Perde IV sayfası (26 Mayıs) mı, yoksa Perde II/III'te 12b/10'un Bizans dalından açılan yan yol mu? Seçilen
-   yer akışı bozmaz ama Bizans tarafı bir sayfa uzar (~12–15 dk).
-2. **Hikmet:** Perde IV'te telsiz yok; komedi Nihat ve Theodoros'tan. Hikmet istenirse yer Perde II/III olmalı.
-3. **Sonuçların ağırlığı:** iki sonuç yalnız akıbet sayfasını ve başarımı etkiler (dünya sonucu değil). Daha ağır
-   istenirse 25'teki son ayinde Theodoros'a tek satır eklenebilir (öteki bölüme dokunur: şimdi yapılmadı).
-4. **Performans:** 336 sütun + yansıması + huzmeler gl_compatibility'de ağır olabilir; yansıma ve toz kademeli
-   düşürülür (ayarlardaki kalite düzeyine göre).
-5. **Ses:** yeni ses üretilmez; yeni replikler sessiz altyazıyla oynar (liste `docs/_kanit_yerebatan/yeni_replikler.txt`).
+## 4. Akış (vuruş vuruş)
+
+1. **Avlu** (1–2 dk): Eudokia, kuyu, kopmuş ip. Tolga iner, ip kopar. Kısa karartma, şıpırtı, yankı.
+2. **Karanlık** (20–40 sn): ekran neredeyse kara; yalnız kuyu ağzından inen ince bir huzme ve suyun parıltısı.
+   Tolga yüzer (var olan yüzme), "telefonun fenerini aç" ipucu.
+3. **HAYRANLIK ANI**: fener açılınca ışık ileri doğru açılır; ilk sütun, arkasında ikincisi, sonra sıra sıra
+   karanlığa uzanan 336 sütun, sudaki ters yansımaları, tavanda kıpırdayan su ışığı (kostik). Denetim oyuncuda kalır;
+   kamera zorla çevrilmez. Tolga fısıltıyla: "Yerebatan… Burası Yerebatan. Okul gezisinde gelmiştik. Bilet kuyruğu
+   vardı." Kulaktaki Büro'dan Nihat: "Tolga Bey, kayda geçirmeyin. Bunu doksan yıl sonra bir Fransız bulacak."
+4. **Kayık** (oynanış 1): sütun dibindeki eski bir kayığa çıkar (Gyllius'un "küçük kayık"ı; ev sahibinin). Kürek
+   (Bölüm 17'nin kayık düzeni). Işık bütçesi: telefon %14 (var olan pil); fener pili yer, çakmak az yakar,
+   kuyu huzmeleri bedava. Hedef: uzaktaki ışık (bir meşale).
+5. **"Cin"** (karşılaşma): meşale, sütunların arasında zıpkınla balık tutan **Yakovos**'unkidir (Gyllius'un ev
+   sahibinin dedesi; uydurma). Mahallenin "cin"i odur: kovaları balık için o çeker. Korkar, sonra pazarlık: "Kimseye
+   söyleme, balığım gider." Eudokia'nın kovası onun kayığındadır.
+6. **Gerilim** (oynanış 2): top atışlarının sarsıntısı (26 Mayıs bombardımanı). Her sarsıntıda tonozdan tuğla ve
+   harç düşer; düşmeden önce toz süzülür (uyarı, ~1,5 sn): kayığı uzaklaştır. Bir tonoz kemeri çöker, Yakovos'un
+   meşalesi suya düşer: karanlık. Çıkış kuyusu kuzeybatı köşede ("Medusa köşesi"). Işık bütçesiyle sütun
+   sıralarında yön bulmak (çakmak + fener + huzmeler). Süre baskısı: sarsıntılar sıklaşır.
+7. **Medusa köşesi** (bulmaca/geçit): fener suya tutulunca dipte çamurun içinde iki taş yüz: biri yan, biri ters.
+   Tolga rehber ezberini okur ("biri yan biri ters; nazar için diyorlar, bir de malzeme artığı diyenler var"), Yakovos
+   "taş kadın" der, Nihat "Kayıtlarda gerekçe yok. Kimse form doldurmamış." Çıkış kuyusunun ayak delikleri bu köşededir;
+   kayığı iki sütun arasına sıkıştırıp (E basılı) tırmanılır.
+8. **Çıkış**: kuyu bir evin değil, **Yakovos'un evinin kileri**ne açılır (Gyllius'un "içinden inilen ev"). Avluya
+   dönüş: Eudokia, kova (+ tahta at), mahalleli "Cin var mı?" diye sorar. **Seçim:**
+   - **44.1 Sırrı korudu**: "Cin yok. Kuyu derin, ip çürük. Balık da Allah'ın." Tespit karesi sarnıcın içinden
+     (kayıktan sütun ormanı) dosyaya girer, Tolga'nın notu: "Kayda geçmedi. Doksan yıl sonra bir Fransız yazacak."
+   - **44.2 Ağzından kaçırdı**: "Altınızda saray var! Üç yüz otuz altı sütun!" Kimse inanmaz (gülerler: "cin
+     çarpmış"), Yakovos'un yüzü düşer; Paradoks +5, Nihat paylar. Dosya karesi aynı, not başka.
+   - Karanlıkta kalınırsa (ışık bitti) başarısız sayılmaz: Yakovos onu ipiyle çeker; seçim yine yapılır ama
+     Tolga'nın "keşfi" Yakovos'un rehberliğinde olur (bayrak `cistern_dark`).
+
+## 5. Sonuçların etkisi
+
+- **Bölüm 25** (27–28 Mayıs, Ayasofya'daki son ayin): Eudokia mumluğun yanındadır; 44.1'de Tolga'ya göz kırpar ("Cin
+  bugün balık yollamadı"), 44.2'de mahalleli fısıldar: "Bodrumunda saray var diyen deli bu."
+- **Bölüm 15 / İnsanların Akıbeti**: Yakovos — 44.1: "Torununun torunu 1545'te kayığına bir Fransız aldı." 44.2:
+  "Mahalle kuyusunu taşla doldurdu; Yakovos balığa başka kuyudan indi."
+- Sicil: 44.1 iyi, 44.2 kötü (dosyadaki öteki sayfalar gibi). Dünya seçimine (W10–W12) etkisi yok: tarih inatçıdır.
+
+## 6. Oynanış düzenekleri (var olanlardan)
+
+Yüzme (oyuncu), kayık ve kürek (17), telefon pili ve feneri / çakmak (eşya), sarsıntı ve düşen parça (20, 22
+kuşatma etkileri), tespit karesi (`TespitCam`), seçim kartı, `Siege.record`. Yeni sınıf (class_name) yok.
+
+## 7. Mekân (teknik)
+
+`scripts/level/cistern.gd`: 138 × 65 m, 12 × 28 = 336 sütun (aralık ~4,9 m) **MultiMesh** (gövde + başlık türleri:
+Korint / İon / yalın; 3 MultiMesh), tonoz tek pişirilmiş ağ, su düzlemi + **ters çevrilmiş sütun MultiMesh'i** (sahte
+yansıma) + saydam koyu su, tavanda kıpırdayan kostik (gölgelendirici, ışık değil), kuyu huzmeleri (toplamsal koni
+ağ + toz parçacıkları), ışık bütçesi: telefon feneri (SpotLight), meşale (Omni), en çok 3–4 dinamik ışık. Hedef:
+çizim ≤ 600, üçgen ≤ 1,5 M, 60 fps.
+
+## 8. Replik taslağı (tr; tamamı strings.csv'de, tr/en)
+
+- Eudokia: "Selden beri kuyumdan balık çıkıyor. Dün kovamı biri aşağı çekti. Bu kuyuda cin var, evlâdım."
+- Tolga: "Hanımefendi, ben hasar tespitçisiyim. Cin kapsam dışı ama kovanıza bakarım."
+- Tolga (fener açılınca, fısıltı): "Yerebatan… Burası Yerebatan Sarnıcı. Okul gezisinde gelmiştik. Bilet kuyruğu vardı."
+- Nihat: "Tolga Bey, kayda geçirmeyin. Bunu doksan yıl sonra bir Fransız bulacak. Tarihi bozmayalım."
+- Tolga: "Üç yüz otuz altı sütun. Rehber söylemişti. Bir de Medusa varmış, nerede bu Medusa?"
+- Yakovos: "Bağırma! Balıklar kaçar. Sen cin misin, Türk mü?" / Tolga: "Sigortacıyım." / Yakovos: "O hangisi?"
+- Tolga (Medusa): "İşte! Biri yan, biri ters. Neden ters? Rehber üç ayrı teori anlatmıştı, hiçbirini dinlemedim."
+- Nihat (sarsıntı): "Top sizi duymuyor, Tolga Bey. Tavan duyuyor. Çıkın oradan."
+
+## 9. Riskler ve sahibin kararı
+
+- **Hikmet:** görevde "Hikmet'in telsizden paylaması" isteniyor; ama kanonda Perde IV zamanın dışında geçer ve hiçbir
+  kuşatma sayfasında Hikmet konuşmaz. Bu yüzden aynı replikleri Nihat söyler. Hikmet istenirse bölüm Perde II/III'e
+  (ör. 12b öncesi bir yan yol) taşınmalı.
+
+- Işık/su görüntüsü gl_compatibility'de sınırlı (düzlem yansıması yok): sahte yansımanın inandırıcılığı kareyle
+  denenecek. Karanlık sahnede "hiçbir şey görünmüyor" ile "gizem" arasındaki çizgi ince.
+- Bizans sırası bir sayfa uzar (sayfa sayısı, ekran numaraları); başarım/sayfa sayısı sabitleri kontrol edilecek.
+- Ses: yeni replikler seslendirilmemiş olacak (ses üretilmez); altyazıyla oynanır, liste teslim edilir.
+- Süre hedefi 8–12 dakika.
