@@ -376,6 +376,9 @@ static func galata_top(tw: Vector3) -> float:
 ## basıklık 0,42). Uçuşun konma noktası, parçası ve yer işareti buna göre.
 const AYA_DOME_TOP := 19.5 + 11.1 * 0.42
 
+## Ayasofya'nın dokulu yakın kabuğunun menzili (m): ötesi düz renkli, dış çizgisiz kopya (bütçe: yakın kabuk üçgeni dış çizgiyle iki kat)
+const AYA_NEAR := 60.0
+
 
 ## Ayasofya'nın uzak görünüşü: bölümün kendi dış kabuğu (ByzCity.aya_exterior + Ayasofya.build'in "exterior" parçaları:
 ## gövde duvarları, narteks, apsis, kurşun çatı) sahne dışında kurulur ve bölgenin dünyadaki yerine tek birleşik ağ
@@ -395,15 +398,26 @@ static func far_aya(parent: Node3D) -> MeshInstance3D:
 		if not inner.is_ancestor_of(n) or n.has_meta("exterior") or n.get_parent().has_meta("exterior"):
 			list.append(n)
 	var mi := bake(list, tmp, region("byz_aya"), parent, "FarAyasofya")
-	# Uzaklık katmanı: 90 m'ye kadar dokulu, dış çizgili kabuk; ötesinde küçük parçasız, tek yüzeyli, dış çizgisiz kopya
+	# Uzaklık katmanı: AYA_NEAR m'ye kadar dokulu, dış çizgili kabuk; ötesinde küçük parçasız, tek yüzeyli, dış çizgisiz kopya
 	# (siluet ve renk aynı; uzaktan dış çizgi zaten seçilmez, üçgen yarıya iner)
 	var lo := bake(list, tmp, region("byz_aya"), mi, "FarAyasofyaLo", 1.2, 0, true)
 	lo.transform = Transform3D.IDENTITY
 	lo.material_override = Scenery._vc_mat()
 	lo.set_meta("no_walk", true)            # çarpışma yakın kabuktan
 	# Kenar payı (hysteresis) yok: iki katman da gizliyken arada bir ölü bant kalıyordu (ikisi de görünmüyordu)
-	mi.visibility_range_end = 90.0
-	lo.visibility_range_begin = 90.0
+	mi.visibility_range_end = AYA_NEAR
+	lo.visibility_range_begin = AYA_NEAR
+	# Gölge: yakın kabuk ve düz kopya gölge atmaz (ayrıntılı ağın her gölge kademesinde yeniden çizilmesi, ve dış çizgi, sayaçtaki
+	# üçgeni ~6 katına çıkarıyordu); gölgeyi yalnız büyük parçalardan (duvar, narteks, apsis, kubbeler) pişirilmiş çok düşük
+	# üçgenli vekil atar: yerdeki gölgenin biçimi aynı kalır
+	mi.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
+	lo.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
+	var sh := bake(list, tmp, region("byz_aya"), mi, "FarAyasofyaShadow", 5.0, 0, true)
+	sh.transform = Transform3D.IDENTITY
+	sh.material_override = Scenery._vc_mat()
+	sh.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_SHADOWS_ONLY
+	sh.visibility_range_end = 400.0
+	sh.set_meta("no_walk", true)
 	tmp.free()
 	return mi
 
