@@ -115,8 +115,13 @@ static func build_hipodrom(host: Node3D, k: float = 0.5, lod: int = 0) -> void:
 		K.ground_box(host, 3.0, 20.0 * k + 6.0, 3.0, 0, -L * 0.16, K.GRANITE)
 		return
 	# ---- pist: kumlu ot döşeme (zemin y=0'ın 3 cm üstünde ince katı) ----
-	K.sb(host, Vector3(A * 2.0, 0.06, cz - z_n), Vector3(0, 0.03, (cz + z_n) * 0.5), K.SAND, "")
+	# ÇEVRE-4 (1453'te harap): pist kum değil, ot basmış çiğnenmiş toprak; yer yer çıplak toprak ve taş yamaları
+	K.sb(host, Vector3(A * 2.0, 0.06, cz - z_n), Vector3(0, 0.03, (cz + z_n) * 0.5), K.GRASS_D.lerp(K.SOIL, 0.4), "")
 	_sphendone_floor(host, A, cz)
+	if lod == 0:
+		for i in 18:
+			var gp := Vector2(rng.randf_range(-A * 0.85, A * 0.85), rng.randf_range(z_n + 10.0, cz - 8.0))
+			K.vb(host, Vector3(rng.randf_range(3.0, 8.0), 0.03, rng.randf_range(4.0, 12.0)), Vector3(gp.x, 0.075, gp.y), [K.SOIL, K.GRASS_D.darkened(0.1), K.STONE_D.darkened(0.1)][i % 3], Vector3(0, rng.randf() * 60.0 - 30.0, 0))
 	# ---- oturma basamakları (iki uzun kenar), yıkık ----
 	var seg := maxf(14.0, 40.0 * k)
 	for sx: float in [-1.0, 1.0]:
@@ -126,8 +131,9 @@ static func build_hipodrom(host: Node3D, k: float = 0.5, lod: int = 0) -> void:
 			var len := minf(seg * rng.randf_range(0.7, 1.4), cz - z)
 			# orta kesim (z ≈ 0 çevresi) her iki kenarda sağlam: tırmanma yolu
 			var near_mid: bool = absf(z + len * 0.5 - L * 0.04) < seg * 0.9
-			var keep: float = 1.0 if near_mid else rng.randf_range(0.35, 1.0)
-			var gap := (not near_mid) and rng.randf() < 0.2
+			# 1453: oturma sıralarının çoğu sökülmüş (taşı yapılara gitmiş); orta kesim tırmanma yolu için sağlam
+			var keep: float = 1.0 if near_mid else rng.randf_range(0.15, 0.7)
+			var gap := (not near_mid) and rng.randf() < 0.45
 			if gap:
 				keep = 0.3
 			var nr := _fix_nr(maxi(2, roundi(n * keep)), n)
@@ -381,23 +387,36 @@ static func _outer_stairs(host: Node3D, k: float) -> void:
 
 
 static func _hayvanlar(host: Node3D, A: float, cz: float, z_n: float, rng: RandomNumberGenerator) -> void:
-	# otlayan koyun/at: basit kutu gövde (katı, küçük)
-	for i in 9:
+	# otlayan koyun/at. CANLI (kalite notu 32): görünüş canli_kit'ten (kesit halkalı, orta katman); kutu yok. Çarpışma
+	# kutuları, yerleri, RNG tüketimi ve sayısı eskisi gibi (görünmez katı).
+	const CK = preload("res://scripts/world/ist/canli_kit.gd")
+	for i in 18:
 		var p := Vector3(rng.randf_range(-A * 0.8, A * 0.8), 0.0, rng.randf_range(z_n + 20.0, cz - 10.0))
 		var horse := (i % 3) == 0
 		var bc := Color("8a6a4a") if horse else Color("ece4d2")
 		var sz := Vector3(0.5, 0.7, 1.4) if horse else Vector3(0.45, 0.5, 0.8)
-		var body := K.sb(host, sz, Vector3(p.x, sz.y * 0.5 + (0.45 if horse else 0.0), p.z), bc)
+		var body := _gorunmez_kati(host, sz, Vector3(p.x, sz.y * 0.5 + (0.45 if horse else 0.0), p.z))
 		if horse:
-			K.sb(host, Vector3(0.4, 0.45, 1.0), Vector3(p.x, 0.225, p.z), bc.darkened(0.3)).rotation.y = rng.randf() * TAU
+			_gorunmez_kati(host, Vector3(0.4, 0.45, 1.0), Vector3(p.x, 0.225, p.z)).rotation.y = rng.randf() * TAU
 		body.rotation.y = rng.randf() * TAU
-		var head_off := Vector3(0, 0.1, sz.z * 0.55).rotated(Vector3.UP, body.rotation.y)
-		K.vb(host, Vector3(0.28, 0.3, 0.42) if horse else Vector3(0.22, 0.24, 0.3), Vector3(p.x + head_off.x, sz.y + (0.5 if horse else 0.1), p.z + head_off.z), bc.darkened(0.15), Vector3(0, rad_to_deg(body.rotation.y), 0))
-		if horse:
-			for lx: float in [-0.18, 0.18]:
-				for lz: float in [-0.5, 0.5]:
-					var lo := Vector3(lx, 0, lz).rotated(Vector3.UP, body.rotation.y)
-					K.vb(host, Vector3(0.1, 0.45, 0.1), Vector3(p.x + lo.x, 0.22, p.z + lo.z), bc.darkened(0.3))
+		var mi := MeshInstance3D.new()
+		mi.mesh = CK.mesh("at" if horse else "koyun", 1, {"renk": bc, "poz": "otla" if i % 2 == 0 else "dur"})
+		mi.material_override = CK.mat()
+		mi.position = p
+		mi.rotation.y = body.rotation.y
+		host.add_child(mi)
+
+
+static func _gorunmez_kati(host: Node3D, size: Vector3, pos: Vector3) -> StaticBody3D:
+	var b := StaticBody3D.new()
+	var cs := CollisionShape3D.new()
+	var bs := BoxShape3D.new()
+	bs.size = size
+	cs.shape = bs
+	b.add_child(cs)
+	b.position = pos
+	host.add_child(b)
+	return b
 
 
 # ---- konma noktaları ve tırmanma yolları -------------------------------------------------------------------------

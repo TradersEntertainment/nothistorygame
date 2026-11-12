@@ -4,9 +4,11 @@ extends Node
 ## oynanır. Bölümün kendi sahnesi (ordugâh: CampDay; şehrin sur tarafı: ByzCity) olduğu gibi kurulur; çevresindeki dünya
 ## eski World1453 yerine İstanbul v2'dir (IstDunya + IstSehir + parçalar).
 ##
-## Nasıl oturur: v2 dünyası yatayda ötelenir (IstGeo.kaydir): bölümün yerel çerçevesi = sahne = dünya çerçevesi (dönüşüm
-## yok; bütün parçalar global konumla doğru çalışır). Yalnız öteleme olduğu için yönler v2'ninkidir (+x doğu, −z kuzey) ve
-## deniz düzeyi y = 0'dır: bölümün zemini (y 0) v2 arazisine bölge yamasıyla (IstGeo.yama_ekle) yumuşak geçer.
+## Nasıl oturur (BAĞLAMA-4, dönüşümlü): v2 kendi çerçevesinde kurulur (IstGeo kaydırmasız); v2'nin kökü (SiegeField kabuğu)
+## bölümün çerçevesinde bir dönüşümle durur: kok.transform = xf⁻¹ (xf: bölüm yereli → v2). Eski World1453 de böyleydi
+## (f.transform = region⁻¹). Dönüş: bölümün "dış" ekseni v2'de gerçekten dışa bakar (hub'ın iç suru v2 kara surunun
+## içine, ordugâhın "sura doğru" ekseni v2 surlarına); yükseklik: bölümün y 0'ı v2 arazisine oturur (çanak yok).
+## v2 parçaları izleyiciyi kendi çerçevelerinde okur (to_local; dunya, hayat, hayat_yakin, mahalle_doku, ordugah_yonetici).
 ##   · camp (Bölüm 11, 7a): CampDay'in otağı (yerel 0, −62) v2 ordugâhının otağının yerinde (sur dışı, Mesoteikhion
 ##     karşısı); v2'nin otağ çevresindeki ordugâh yapıları ve çadır kanatları kaldırılır (bölümün kendi ordugâhı var).
 ##   · byz_walls (Bölüm 7b): ByzCity'nin sur parçası Romanos Kapısı'nın iç yanındaki oyun alanında (IstSehir.oyun_alanlari);
@@ -29,6 +31,12 @@ static var _ordu_suzulen := 0
 
 const BOLUMLER := [7, 11]
 const BOLGELER := ["camp", "byz_walls"]
+## Tolga'nın şehir bölümleri (ByzCity "walls" hub'ı; bölüm dosyasına dokunulmaz: sahnenin betiğinden tanınır). Varsayılan
+## AÇIK olanlar yalnız kareleri temiz olanlar (docs/_kanit_ist2_baglama4/rapor.md); öbürleri `--ist2-deneme=<id>` ile denenir.
+const TOLGA := ["6", "7", "10h", "12b", "23", "24", "13"]
+const TOLGA_ACIK: Array = []
+## Bölüm yereli → v2 (dönüşümlü bağlama). kok.transform bunun tersi.
+static var xf := Transform3D()
 ## Bölümün yerel çapası: CampDay.OTAG_POS (v2 otağının yerine), ByzCity sur parçasının ortası (oyun alanının ortasına)
 const CAMP_OTAG := Vector2(0.0, -62.0)
 const HUB_ORTA := Vector2(-4.0, -13.0)
@@ -122,31 +130,58 @@ static func birak() -> void:
 	son = null
 	dunya = null
 	kok = null
+	xf = Transform3D()
+	MapView.v2 = false
 	IstGeo.kaydir(Vector2.ZERO)
 	_onbellek_sifirla()
 
 
 static func istek(region_name: String) -> bool:
-	if region_name == "byz_walls" and bolum == 0 and deneme_12b():
+	if region_name == "byz_walls" and bolum == 0 and tolga_istek():
 		return true
 	return bolum in BOLUMLER and region_name in BOLGELER and etkin()
 
 
-## Görev 6 denemesi (KAPALI; yalnız `--ist2-deneme=12b` ile): Tolga'nın mektup bölümü (12b) hub'ı v2'de. Bölüm dosyasına
-## dokunulmaz: hub ByzCity'nin "walls" parçası, bölüm GameState.current_chapter 12.
+## Tolga'nın şehir bölümleri: hub (ByzCity "walls") v2'de. Bölüm, sahnedeki bölüm betiğinin adından (chapter<id>.gd)
+## tanınır; TOLGA_ACIK'ta ise varsayılan, değilse yalnız `--ist2-deneme=<id>` ile (eski ad: deneme_12b).
 static func deneme_12b() -> bool:
+	return tolga_istek()
+
+
+static func tolga_istek() -> bool:
 	if not etkin():
 		return false
-	var var_ := false
-	for a: String in OS.get_cmdline_user_args() + OS.get_cmdline_args():
-		if a.trim_prefix("--") == "ist2-deneme=12b":
-			var_ = true
-	if not var_:
+	var id := sahne_bolumu()
+	if id == "" or not (id in TOLGA):
 		return false
-	var gs := Engine.get_main_loop() as SceneTree
-	if gs and gs.root.has_node("GameState"):
-		return int(gs.root.get_node("GameState").get("current_chapter")) == 12
+	if id in TOLGA_ACIK:
+		return true
+	for a: String in OS.get_cmdline_user_args() + OS.get_cmdline_args():
+		if a.trim_prefix("--") == "ist2-deneme=" + id:
+			return true
 	return false
+
+
+## Sahnedeki bölümün kimliği (betik adı chapter<id>.gd): "12b", "10h", "23" …; yoksa ""
+static func sahne_bolumu() -> String:
+	var gs := Engine.get_main_loop() as SceneTree
+	if gs == null or gs.root == null:
+		return ""
+	var yigin: Array = [gs.root]
+	var derin := 0
+	while not yigin.is_empty() and derin < 400:
+		derin += 1
+		var d: Node = yigin.pop_front()
+		var sc = d.get_script()
+		if sc is Script:
+			var f := (sc as Script).resource_path.get_file()
+			if f.begins_with("chapter") and f.ends_with(".gd"):
+				return f.trim_prefix("chapter").trim_suffix(".gd")
+		if d == gs.root or d == gs.current_scene or d.get_parent() == gs.root:
+			for c in d.get_children():
+				if not (c is CanvasLayer):
+					yigin.append(c)
+	return ""
 
 
 static func aktif() -> bool:
@@ -155,16 +190,86 @@ static func aktif() -> bool:
 
 # ------------------------------------------------------------------ yerleşim
 
-## Ötelemeden önceki (kaydırmasız) v2'de bölümün çapasının yeri → öteleme
-static func ofset(region_name: String) -> Vector2:
+## Hub'ın iç suru (ByzCity yerel x 34) ve Romanos Kapısı (ByzCity._build_walls'ın kapısı: World1453.LAND_GATES'ten)
+const HUB_SUR_X := 34.0
+static func hub_kapi_z() -> float:
+	for g: float in World1453.LAND_GATES:
+		var lz: float = (World1453.region("byz_walls").affine_inverse() * Vector3(g, 0.0, -2.3)).z
+		if lz > -13.0 - 35.0 + 4.0 and lz < -13.0 + 35.0 - 4.0:
+			return lz
+	return -31.5
+
+
+## Bölümün yereli → kaydırmasız v2 (dönüşümlü bağlama). camp: CampDay'in "sura doğru" ekseni (yerel +z) otağdan en yakın
+## kara suru noktasına; otağ v2 ordugâhının otağında. byz_walls: hub'ın iç suru (yerel x 34, dış yüz +x) v2 kara surunun
+## iç suru üstünde (dış yanı dışa), hub'ın kapısı v2'nin Romanos Kapısı'nda. Yükseklik: bölümün y 0'ı çapanın v2 arazisi.
+static func donusum(region_name: String) -> Transform3D:
 	IstGeo.kaydir(Vector2.ZERO)
 	_onbellek_sifirla()
 	match region_name:
 		"camp":
-			return CAMP_OTAG - _otag_v2()
+			var o := _otag_v2()
+			var kp := _en_yakin(IstGeo.yol("kara_suru"), o)
+			var dir: Vector2 = (kp[0] as Vector2 - o).normalized()
+			var b := Basis(Vector3.UP, atan2(dir.x, dir.y))          # yerel +z → dir
+			var t := Vector3(o.x, IstGeo.h(o.x, o.y), o.y) - b * Vector3(CAMP_OTAG.x, 0.0, CAMP_OTAG.y)
+			return Transform3D(b, t)
 		"byz_walls":
-			return HUB_ORTA - _hub_v2()
+			var kp := _hub_kapi_v2()
+			var p: Vector2 = kp[0]
+			var dis: Vector2 = kp[1]
+			var b := Basis(Vector3.UP, atan2(-dis.y, dis.x))         # yerel +x → dış
+			var t := Vector3(p.x, IstGeo.h(p.x, p.y), p.y) - b * Vector3(HUB_SUR_X, 0.0, hub_kapi_z())
+			return Transform3D(b, t)
+	return Transform3D()
+
+
+## Eski arayüz (öteleme): artık dönüşüm kullanılır; öteleme hep 0
+static func ofset(_region_name: String) -> Vector2:
 	return Vector2.ZERO
+
+
+static func v2(p: Vector3) -> Vector3:
+	return xf * p
+
+
+static func yerel(p: Vector3) -> Vector3:
+	return xf.affine_inverse() * p
+
+
+## Yerel dikdörtgen → v2'deki sınır kutusu
+static func v2_rect(r: Rect2) -> Rect2:
+	return _rect_xf(xf, r)
+
+
+## v2 noktası bölümün yerel dikdörtgeninde mi (döndürülmüş dikdörtgen)
+static func yerel_icinde(r: Rect2, x: float, z: float) -> bool:
+	var q := yerel(Vector3(x, 0.0, z))
+	return r.has_point(Vector2(q.x, q.z))
+
+
+static func _en_yakin(poly: PackedVector2Array, g: Vector2) -> Array:
+	var best := INF
+	var p := g
+	var d := Vector2(0, 1)
+	for i in poly.size() - 1:
+		var q := Geometry2D.get_closest_point_to_segment(g, poly[i], poly[i + 1])
+		if q.distance_to(g) < best:
+			best = q.distance_to(g)
+			p = q
+			d = (poly[i + 1] - poly[i]).normalized()
+	return [p, d]
+
+
+## v2'nin Romanos Kapısı (kara suru hattında; IstSehir'in kapı kaydıyla aynı gerçek konum) ve dış yön
+static func _hub_kapi_v2() -> Array:
+	var kara := IstGeo.yol("kara_suru")
+	var kp := _en_yakin(kara, IstGeo.w2(-4621.0, 823.0))
+	var d: Vector2 = kp[1]
+	var n := Vector2(-d.y, d.x)
+	if IstGeo.sehir_ici(kp[0].x + n.x * 40.0, kp[0].y + n.y * 40.0):
+		n = -n
+	return [kp[0], n]
 
 
 ## v2 ordugâhının otağı (kaydırmasız dünya x,z). Parça yoksa DÜNYA-2 dökümündeki yer.
@@ -217,10 +322,12 @@ static func _onbellek_sifirla() -> void:
 ## kabuktur (bölümün `world` değişkeni ve set_mode için); v2 onun çocuğu.
 static func build(parent: Node3D, region_name: String, keep_local: Array, _night := true, blend_local: Array = []) -> SiegeField:
 	var t0 := Time.get_ticks_msec()
-	var ofs := ofset(region_name)
-	IstGeo.kaydir(ofs)
+	var hub_x := donusum("byz_walls")
+	xf = donusum(region_name)
+	IstGeo.kaydir(Vector2.ZERO)
 	_onbellek_sifirla()
 	aktif_bolge = region_name
+	MapView.v2 = true
 	# Eski dünyanın arazi işlevleri (CampDay.height ızgara dışında World1453/SiegeField.surf okur): World1453.build ile aynı
 	# durağan ayarlar (kurulmadan); bölge yamasının işlevi bunlarla sürekli olur
 	var oxf := World1453.region(region_name)
@@ -236,32 +343,36 @@ static func build(parent: Node3D, region_name: String, keep_local: Array, _night
 	for r: Rect2 in blend_local:
 		br.append(World1453.world_rect(oxf, r))
 	SiegeField.blend_rects = br
-	# Arazi yaması: bölümün zemini (yerel = dünya)
+	# Arazi yaması (v2 çerçevesinde): içte bölümün zemini (yerel y → v2 y = yerel + xf.origin.y), dışta v2'ye yumuşak geçiş
 	var ym: Array = YAMA[region_name]
 	var ic := Rect2()
 	for r: Rect2 in keep_local:
 		ic = r if ic.size == Vector2.ZERO else ic.merge(r)
+	var dy := xf.origin.y
+	var mv := xf * Vector3(ym[0].x, 0.0, ym[0].y)
 	if region_name == "camp":
 		var grid := Rect2(CampDay.GRID_X0, CampDay.GRID_Z0, CampDay.GRID_N * CampDay.GRID_STEP, CampDay.GRID_N * CampDay.GRID_STEP)
-		IstGeo.yama_ekle(ym[0], ym[1], ym[2], func(x: float, z: float) -> float:
+		IstGeo.yama_ekle(Vector2(mv.x, mv.z), ym[1], ym[2], func(x: float, z: float) -> float:
 			# ızgaranın içinde bölümün kendi arazisi görünür (v2 0,35 m altında); dışında bölümün süsünün oturduğu yüzey
-			return CampDay.height(x, z) - (0.35 if grid.grow(-0.5).has_point(Vector2(x, z)) else 0.03))
+			var q := IstBaglama.yerel(Vector3(x, 0.0, z))
+			return dy + CampDay.height(q.x, q.z) - (0.35 if grid.grow(-0.5).has_point(Vector2(q.x, q.z)) else 0.03))
 	else:
 		var zr := ic.grow(4.0)
-		IstGeo.yama_ekle(ym[0], ym[1], ym[2], func(x: float, z: float) -> float:
-			return -0.35 if zr.has_point(Vector2(x, z)) else -0.05)
+		IstGeo.yama_ekle(Vector2(mv.x, mv.z), ym[1], ym[2], func(x: float, z: float) -> float:
+			var q := IstBaglama.yerel(Vector3(x, 0.0, z))
+			return dy + (-0.35 if zr.has_point(Vector2(q.x, q.z)) else -0.05))
 	var temiz: Rect2 = TEMIZ[region_name]
-	IstGeo.dislanan = [temiz]
-	# deniz düzeyindeki zemin ve geçiş halkası denizin altında kalmasın (bölüm alanı karada)
+	IstGeo.dislanan = [v2_rect(temiz)]
+	# bölümün zemini ve geçiş halkası denizin altında kalmasın (bölüm alanı karada)
 	var yr: float = ym[2]
-	IstGeo.deniz_yok = [Rect2(ym[0] - Vector2(yr, yr), Vector2(yr, yr) * 2.0).merge(temiz)]
+	IstGeo.deniz_yok = [Rect2(Vector2(mv.x, mv.z) - Vector2(yr, yr), Vector2(yr, yr) * 2.0).merge(v2_rect(temiz))]
 	var n_su := 0
-	var dy: Rect2 = IstGeo.deniz_yok[0]
-	for i in int(dy.size.x / 20.0):
-		for j in int(dy.size.y / 20.0):
-			if IstGeo.su(dy.position.x + i * 20.0, dy.position.y + j * 20.0):
+	var dr: Rect2 = IstGeo.deniz_yok[0]
+	for i in int(dr.size.x / 20.0):
+		for j in int(dr.size.y / 20.0):
+			if IstGeo.su(dr.position.x + i * 20.0, dr.position.y + j * 20.0):
 				n_su += 1
-	print("ISTBAGLAMA deniz_yok=%s gercek_deniz_nokta=%d" % [dy, n_su])
+	print("ISTBAGLAMA deniz_yok=%s gercek_deniz_nokta=%d" % [dr, n_su])
 	# Ordugâh planı (önbellekli; IstOrdugah.attach aynı diziyi okur) kurulmadan süzülür: bölümün alanındaki öğeler çıkar
 	_ordu_suzulen = 0
 	var oscr = load("res://scripts/world/ist/ordugah.gd") if ResourceLoader.exists("res://scripts/world/ist/ordugah.gd") else null
@@ -269,10 +380,11 @@ static func build(parent: Node3D, region_name: String, keep_local: Array, _night
 		var pl: Array = oscr.call("plan")
 		for i in range(pl.size() - 1, -1, -1):
 			var it: Dictionary = pl[i]
-			if temiz.grow(float(it.get("r", 0.0))).has_point(it["pos"] as Vector2):
+			var pp: Vector2 = it["pos"]
+			if yerel_icinde(temiz.grow(float(it.get("r", 0.0))), pp.x, pp.y):
 				pl.remove_at(i)
 				_ordu_suzulen += 1
-	# Kabuk
+	# Kabuk: v2'nin kökü bölümün çerçevesinde xf⁻¹ ile durur (World1453: region⁻¹)
 	var f := SiegeField.new()
 	f.name = "IstBaglamaKok"
 	f.region_name = region_name
@@ -281,23 +393,68 @@ static func build(parent: Node3D, region_name: String, keep_local: Array, _night
 	f.world = false
 	f.set("_smoke_root", Node3D.new())
 	f.add_child(f.get("_smoke_root"))
+	f.transform = xf.affine_inverse()
 	parent.add_child(f)
 	kok = f
 	f.set_meta("ucus_tarama_yok", true)       # NihatPowers.ensure_flight_solids v2'yi taramaz (v2 çarpışması kendinde)
 	# v2: gök bölümün (gündüz CampDay/ByzCity, gece Night.environment); öbür her şey v2'nin
 	IstDunya.gok_kur = false
-	var merkez := Vector3(ym[0].x, 2.0, ym[0].y)
+	var merkez := Vector3(mv.x, dy + 2.0, mv.z)
+	# Hub'ın v2'deki yeri ve yönü (bütün bölümlerde aynı; uçuşta görülen hub = Tolga'nın oynadığı hub): IstSehir kurulurken
+	# oyun alanı ve hub dönüşümü önbelleği (oyun_alanlari / hub_xf) bu dönüşümle önceden dolar; sokak, ev ve yaşam
+	# katmanları hub'ın alanını boş bırakır, hub şehri (ŞEHİR'in uzak hub'ı) surun içine dönük ve sura gömülü durur
+	var hub_alan := _rect_xf(hub_x, Rect2(-46.0, -48.0, 84.0, 70.0).grow(2.0))
+	var dinle := func(n: Node) -> void:
+		if n is IstDunya:
+			(n as Node).child_entered_tree.connect(func(m: Node) -> void:
+				if m is IstSehir and (m as IstSehir).get("_oyun") is Array and ((m as IstSehir).get("_oyun") as Array).is_empty():
+					m.set("_hub_xf", hub_x)
+					m.set("_oyun", [hub_alan, IstSehir._meydan_rect()]))
+	f.child_entered_tree.connect(dinle)
 	dunya = IstDunya.build(f, gece, merkez) as IstDunya
+	f.child_entered_tree.disconnect(dinle)
 	IstDunya.gok_kur = true
+	_hub_dondur(hub_x)
+	# harita (MiniMap, WorldMap): kabuğun dönüşümü (xf⁻¹) oyuncuyu v2 çerçevesine çevirir
+	f.night_build = gece
+	f.add_to_group(MapView.GROUP)
 	_temizle(region_name, temiz)
 	var b := IstBaglama.new()
 	b.name = "IstBaglama"
 	f.add_child(b)
 	son = b
 	kurulum_ms = Time.get_ticks_msec() - t0
-	print("ISTBAGLAMA bolge=%s bolum=%d gece=%s ofset=(%.1f, %.1f) kurulum_ms=%.0f" % [region_name, bolum, gece, ofs.x, ofs.y, kurulum_ms])
+	var yaw := rad_to_deg(xf.basis.get_euler().y)
+	print("ISTBAGLAMA bolge=%s bolum=%s gece=%s xf=(%.1f, %.1f, %.1f) yaw=%.1f kurulum_ms=%.0f" % [region_name, bolum if bolum != 0 else sahne_bolumu(), gece, xf.origin.x, xf.origin.y, xf.origin.z, yaw, kurulum_ms])
 	return f
 
+
+static func _rect_xf(t: Transform3D, r: Rect2) -> Rect2:
+	var out := Rect2()
+	for i in 4:
+		var q := t * Vector3(r.position.x + (r.size.x if i & 1 else 0.0), 0.0, r.position.y + (r.size.y if i & 2 else 0.0))
+		out = Rect2(Vector2(q.x, q.z), Vector2.ZERO) if i == 0 else out.expand(Vector2(q.x, q.z))
+	return out
+
+
+## ŞEHİR'in uzak hub öğesi (hub_sehir) yaw 0 ile kurulur: tutucusu hub dönüşümüne çevrilir (ByzCity yereli → v2)
+static func _hub_dondur(hub_x: Transform3D) -> void:
+	var s := IstSehir.active
+	if s == null:
+		return
+	for it: Dictionary in s.items:
+		if String(it.get("id", "")) == "hub_sehir":
+			var h = it.get("holder")
+			if h is Node3D and is_instance_valid(h):
+				(h as Node3D).transform = hub_x
+				it["yaw"] = hub_x.basis.get_euler().y
+				it["pos"] = hub_x.origin
+				print("ISTBAGLAMA hub_sehir dondu yaw=%.1f" % rad_to_deg(float(it["yaw"])))
+
+
+## Bölümün alanında kalsa da kaldırılmayan v2 öğeleri: Romanos Kapısı (hub'ın kapısı onun iç yanına oturur; dış sur, hendek
+## köprüsü kesintisiz kalır)
+const KORU := ["romanos"]
 
 ## Bölümün alanındaki v2 yapıları (IstSehir öğeleri, ordugâh öğeleri) kaldırılır: bölüm orada kendi sahnesini kurar
 static func _temizle(region_name: String, alan: Rect2) -> void:
@@ -308,7 +465,9 @@ static func _temizle(region_name: String, alan: Rect2) -> void:
 			var it: Dictionary = s.items[i]
 			var p: Vector3 = it["pos"]
 			var r := float(it.get("r", 0.0))
-			if alan.grow(r * 0.5).has_point(Vector2(p.x, p.z)):
+			if String(it.get("id", "")) in KORU:
+				continue
+			if yerel_icinde(alan.grow(r * 0.5), p.x, p.z):
 				it["want"] = 99            # kuyrukta bekleyen işi kurulmaz
 				var h = it.get("holder")
 				if h is Node and is_instance_valid(h):
@@ -363,9 +522,12 @@ static func flight_data() -> Dictionary:
 ## Uçuşun yumuşak sınırı (dünya x,z): yarımada + Galata + bölümün alanı + yan görev noktaları, 300 m pay
 static func sinir() -> Rect2:
 	var r := Rect2()
+	var bos := true
 	for poly in [IstGeo.kiyi("yarimada"), IstGeo.kiyi("galata")]:
 		for p: Vector2 in poly:
-			r = Rect2(p, Vector2.ZERO) if r.size == Vector2.ZERO and r.position == Vector2.ZERO else r.expand(p)
+			var q := yerel(Vector3(p.x, 0.0, p.y))          # v2 → bölümün çerçevesi (sınır sahne koordinatında)
+			r = Rect2(Vector2(q.x, q.z), Vector2.ZERO) if bos else r.expand(Vector2(q.x, q.z))
+			bos = false
 	r = r.merge(TEMIZ.get(aktif_bolge, Rect2()))
 	var fd := flight_data()
 	for k in ["landmarks", "forms"]:
@@ -424,9 +586,12 @@ func _process(dt: float) -> void:
 func _physics_process(_dt: float) -> void:
 	if oyuncu == null or not is_instance_valid(oyuncu) or not oyuncu.is_inside_tree():
 		return
-	var p := oyuncu.global_position
+	# v2 çerçevesinde (dönüşümlü bağlama); sahneye dönüşte kok.to_global
+	var gp := oyuncu.global_position
+	var p := kok.to_local(gp) if kok != null and is_instance_valid(kok) else gp
 	# Bölümün kendi alanında bölümün zemini geçerli (yakalayıcı yok)
-	if IstGeo.dislanan_mi(p.x, p.z) and TEMIZ.has(aktif_bolge) and (TEMIZ[aktif_bolge] as Rect2).grow(-20.0).has_point(Vector2(p.x, p.z)):
+	var lp := (kok.get_parent() as Node3D).to_local(gp) if kok != null and is_instance_valid(kok) and kok.get_parent() is Node3D else gp
+	if TEMIZ.has(aktif_bolge) and (TEMIZ[aktif_bolge] as Rect2).grow(-20.0).has_point(Vector2(lp.x, lp.z)):
 		return
 	_yakala_t -= _dt
 	var g := IstGeo.h(p.x, p.z)
@@ -438,14 +603,14 @@ func _physics_process(_dt: float) -> void:
 				oyuncu.powers.on_water()
 			else:
 				var k := IstDunya.kiyi_bul(p)
-				oyuncu.global_position = k + Vector3(0, 1.0, 0)
+				oyuncu.global_position = kok.to_global(k + Vector3(0, 1.0, 0))
 				oyuncu.velocity = Vector3.ZERO
 	elif not IstGeo.su(p.x, p.z) and p.y < g - 1.2:
 		# Arazinin altına düştü (çarpışma akışı yetişmedi): yüzeye çıkar
-		oyuncu.global_position = Vector3(p.x, g + 0.6, p.z)
+		oyuncu.global_position = kok.to_global(Vector3(p.x, g + 0.6, p.z))
 		oyuncu.velocity.y = maxf(oyuncu.velocity.y, 0.0)
 		if dunya != null:
-			dunya.carpisma_yenile(oyuncu.global_position)
+			dunya.carpisma_yenile(Vector3(p.x, g + 0.6, p.z))
 		print("ISTBAGLAMA zemin_yakalayici %s" % p)
 
 

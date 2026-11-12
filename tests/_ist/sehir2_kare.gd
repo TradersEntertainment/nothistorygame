@@ -127,6 +127,33 @@ func _ready() -> void:
 		await _beyaz()
 		get_tree().quit(0)
 		return
+	if set_ == "palet":
+		var s0 := IstSehir.active
+		print("ISTPALET palet_n=", s0.stats.get("palet_n", 0))
+		for it: Dictionary in s0.items:
+			if String(it["id"]) != ("ayasofya" if eser_sec.is_empty() else String(eser_sec[0])):
+				continue
+			print("ISTPALET oge mod=", it.get("mod", ""), " hat=", it.has("hat"), " tek=", it.get("tek", false), " paletli=", s0._paletli(it))
+			for lv in 3:
+				if it["have"][lv] == null:
+					s0._build(it, lv)
+			var seen := {}
+			for c in (it["holder"] as Node3D).find_children("*", "GeometryInstance3D", true, false):
+				var gi := c as GeometryInstance3D
+				var m: Material = gi.material_override
+				if m == null and gi is MeshInstance3D and (gi as MeshInstance3D).mesh:
+					m = (gi as MeshInstance3D).get_active_material(0)
+				var key := "%s|%s|%s" % [gi.get_parent().name, m.get_class() if m else "-", (m as BaseMaterial3D).albedo_color.to_html() if m is BaseMaterial3D else ""]
+				if not seen.has(key):
+					seen[key] = true
+					print("ISTPALET ", key, " vc=", (m as BaseMaterial3D).vertex_color_use_as_albedo if m is BaseMaterial3D else false)
+		get_tree().quit(0)
+		return
+	if set_ == "aya":
+		await _aya_cevre()
+		print("ISTKARE BITTI")
+		get_tree().quit(0)
+		return
 	if set_ == "s3":
 		await _s3()
 		print("ISTKARE BITTI")
@@ -404,6 +431,56 @@ func _eserler() -> void:
 			await _shot("eser_%s_uzak" % id, pp + Vector3(0, 700.0, 0.1), pp, 12)
 
 
+## ÇEVRE-4: Ayasofya'nın dört yanı (kalite notu 20): komşu öğe dökümü + dört yandan 15 m ve yerden, tepeden kare
+func _aya_cevre() -> void:
+	var s := IstSehir.active
+	var aya: Dictionary = {}
+	for it: Dictionary in s.items:
+		if String(it["id"]) == "ayasofya":
+			aya = it
+	if aya.is_empty():
+		return
+	var h := aya["holder"] as Node3D
+	var p: Vector3 = aya["pos"]
+	cam.global_position = p + Vector3(0, 30, 0)
+	for i in 60:
+		await get_tree().process_frame
+	var ab := AABB()
+	var ilk := true
+	for c in h.find_children("*", "VisualInstance3D", true, false):
+		var vi := c as VisualInstance3D
+		if not vi.is_visible_in_tree():
+			continue
+		var b := h.global_transform.affine_inverse() * vi.global_transform * vi.get_aabb()
+		ab = b if ilk else ab.merge(b)
+		ilk = false
+	print("ISTAYA yerel_aabb=", ab, " yaw=", rad_to_deg(float(aya["yaw"])))
+	for it: Dictionary in s.items:
+		var q: Vector3 = it["pos"]
+		if it.has("hat") or Vector2(q.x - p.x, q.z - p.z).length() > 170.0:
+			continue
+		var lq := h.global_transform.affine_inverse() * q
+		print("ISTAYA_KOMSU %s yerel=(%.0f,%.0f) r=%.0f" % [it["id"], lq.x, lq.z, float(it["r"])])
+	var yonler := {"bati": Vector3(0, 0, 1), "guney": Vector3(1, 0, 0), "dogu": Vector3(0, 0, -1), "kuzey": Vector3(-1, 0, 0)}
+	for ad: String in yonler:
+		var dw: Vector3 = h.global_transform.basis * yonler[ad]
+		dw.y = 0.0
+		dw = dw.normalized()
+		var at := p + dw * 78.0
+		at.y = IstGeo.h(at.x, at.z) + 15.0 + 22.0
+		await _shot("aya_%s_15m" % ad, at, p + Vector3(0, 8, 0), 64)
+		var g := p + dw * 52.0
+		g.y = IstGeo.h(g.x, g.z) + 1.7
+		var side := Vector3(-dw.z, 0, dw.x)
+		await _shot("aya_%s_yer" % ad, g + side * 14.0, p + side * 4.0 + Vector3(0, 10, 0), 72)
+	await _shot("aya_tepe", p + Vector3(0, 190, 0.1), p, 60)
+	# Blakherna'daki kapalı cep (ŞEHİR-3 oyun denetimi: 128 hücre, örnek −1040, −1192)
+	var cp := Vector3(-1040.0, IstGeo.h(-1040.0, -1192.0), -1192.0)
+	await _shot("blakherna_cep_tepe", cp + Vector3(0, 60, 0.1), cp, 60)
+	await _shot("blakherna_cep_30m", cp + Vector3(30, 30, 30), cp, 64)
+	await _shot("blakherna_cep_yer", cp + Vector3(0, 1.7, 0), cp + Vector3(10, 1.7, 0), 75)
+
+
 ## Eserin kurulu ağının en yüksek noktası (yoksa varsayılan)
 func _tepe_y(it: Dictionary, def: float) -> float:
 	var top := -INF
@@ -422,7 +499,8 @@ func _eser_yer(it: Dictionary, h: float) -> void:
 	var holder := it["holder"] as Node3D
 	var pp: Vector3 = it["pos"]
 	var r := float(it["r"])
-	var dist := clampf(r * 0.9 + 14.0, 18.0, 90.0)
+	# ÇEVRE-4: yüksek ve dar eserlerde (kule, sütun) kamera eserin dibine yapışıyordu: en az yüksekliğin 0,8'i kadar geri
+	var dist := clampf(maxf(r * 0.9 + 14.0, h * 0.8), 18.0, 90.0)
 	var sec := Vector3.INF
 	var hedef := Vector3.INF
 	var yonler: Array = [Vector3(0, 0, 1), Vector3(1, 0, 0), Vector3(-1, 0, 0), Vector3(0, 0, -1), Vector3(0.7, 0, 0.7), Vector3(-0.7, 0, 0.7)]
@@ -430,6 +508,14 @@ func _eser_yer(it: Dictionary, h: float) -> void:
 		# saray sura yaslı (yerel +z sur dışı): avlu kapısı önünden (şehir yanı)
 		yonler = [Vector3(0, 0, -1), Vector3(0.6, 0, -1), Vector3(-0.6, 0, -1)]
 		dist = 62.0
+	elif String(it["id"]) in ["aya_irini", "khora", "pammakaristos", "studios"]:
+		# ÇEVRE-4: atrium/avlu kapısının dibine düşüyordu: yandan ve daha geriden
+		yonler = [Vector3(0.7, 0, 0.7), Vector3(1, 0, 0), Vector3(-0.7, 0, 0.7), Vector3(-1, 0, 0), Vector3(0, 0, 1)]
+		dist = clampf(r * 1.4 + 16.0, 30.0, 80.0)
+	elif String(it["id"]) == "ayasofya":
+		# ÇEVRE-4: güneyden (Augustaion yanı, yerel +x), döşeli meydandan
+		yonler = [Vector3(1, 0, 0), Vector3(0.7, 0, -0.7), Vector3(-1, 0, 0)]
+		dist = 66.0
 	for yon: Vector3 in yonler:
 		var dw := (holder.global_transform.basis * yon)
 		dw.y = 0.0
@@ -454,6 +540,11 @@ func _eser_yer(it: Dictionary, h: float) -> void:
 		# kamera bir yapının içinde/altında mı (üstünde tavan): o yön atlanır
 		var tavan := get_world_3d().direct_space_state.intersect_ray(PhysicsRayQueryParameters3D.create(at, at + Vector3(0, 40, 0)))
 		if not tavan.is_empty():
+			continue
+		# kamera bir katının (sütun, duvar) içinde mi (ÇEVRE-4: eser_hipodrom_yer sütunun içindeydi)
+		var pq := PhysicsPointQueryParameters3D.new()
+		pq.position = at
+		if not get_world_3d().direct_space_state.intersect_point(pq, 1).is_empty():
 			continue
 		if hit.is_empty() or (hit["collider"] is Node and holder.is_ancestor_of(hit["collider"])):
 			sec = at

@@ -626,13 +626,10 @@ static func _deve_cokegi(an: B, r: RandomNumberGenerator, rot: Transform2D, ok_a
 
 
 static func _deve_yatan(b: B, p: Vector3, yaw: float, col: Color) -> void:
-	var f := func(v: Vector3) -> Vector3:
-		return p + v.rotated(Vector3.UP, deg_to_rad(yaw))
-	b.box(f.call(Vector3(0, 0.45, 0)), Vector3(0.95, 0.75, 2.0), col, yaw)
-	b.sph(f.call(Vector3(0, 1.0, -0.1)), 0.48, col.darkened(0.05), 5, Vector3(1.0, 0.9, 1.3))
-	b.rod(f.call(Vector3(0, 0.7, 0.9)), f.call(Vector3(0, 1.6, 1.4)), 0.26, col)
-	b.box(f.call(Vector3(0, 1.65, 1.65)), Vector3(0.28, 0.28, 0.6), col.darkened(0.08), yaw)
-	b.box(f.call(Vector3(0, 0.12, 0)), Vector3(1.4, 0.22, 2.2), col.darkened(0.2), yaw)     # kıvrık bacaklar
+	# CANLI (kalite notu 32): çökmüş deve canli_kit'ten (bacaklar dizden katlı, gövde yerde, boyun kalkık); kutu yok.
+	const CK = preload("res://scripts/world/ist/canli_kit.gd")
+	var hs := absi(int(p.x * 9.0 + p.z * 13.0))
+	CK.bld_ekle(b, "deve", p, yaw, {"renk": col, "poz": "yat", "bas_yaw": float(hs % 5 - 2) * 14.0, "tohum": hs})
 
 
 ## Koyun sürüsü (12–24) + çoban + köpek
@@ -648,11 +645,10 @@ static func _koyun(an: B, r: RandomNumberGenerator, rot: Transform2D, ok_at: Cal
 		var y := K.gy(w.x, w.y)
 		var c := Color("e4dccb").lerp(Color("8a7a66"), r.randf() * r.randf())
 		var yaw := yon + r.randf_range(-40, 40)
-		var f := func(v: Vector3) -> Vector3:
-			return Vector3(w.x, y, w.y) + v.rotated(Vector3.UP, deg_to_rad(yaw))
-		an.sph(f.call(Vector3(0, 0.5, 0)), 0.38, c, 5, Vector3(0.85, 0.75, 1.3))
-		an.box(f.call(Vector3(0, 0.55, 0.5)), Vector3(0.18, 0.2, 0.28), Color("3a3028"), yaw)
-		an.box(f.call(Vector3(0, 0.17, 0)), Vector3(0.36, 0.34, 0.6), Color("4a3e34"), yaw)
+		# CANLI: koyun canli_kit'ten (yün hacimli gövde, koyu baş ve ince bacaklar); otlayan, duran, yatan karışık
+		var hs := absi(int(w.x * 17.0 + w.y * 7.0))
+		const CK = preload("res://scripts/world/ist/canli_kit.gd")
+		CK.bld_ekle(an, "koyun", Vector3(w.x, y, w.y), yaw, {"renk": c, "poz": ["otla", "otla", "dur", "yat", "otla", "dur"][hs % 6], "bas_yaw": float(hs % 5 - 2) * 15.0, "tohum": hs})
 		hay.append(Vector3(w.x, y, w.y))
 	var cw := rot * (lp + Vector2(4.5, 0))
 	kisi.append([Vector3(cw.x, K.gy(cw.x, cw.y), cw.y), r.randf() * TAU, "seyis"])
@@ -662,12 +658,8 @@ static func _koyun(an: B, r: RandomNumberGenerator, rot: Transform2D, ok_at: Cal
 
 
 static func _kopek(b: B, p: Vector3, yaw: float, r: RandomNumberGenerator) -> void:
+	# CANLI (kalite notu 32): çoban köpeği canli_kit'ten; RNG tüketimi aynı (1 randi).
+	const CK = preload("res://scripts/world/ist/canli_kit.gd")
 	var c: Color = [Color("8a6a46"), Color("a89a80"), Color("5a4a3a"), Color("c8a468")][r.randi() % 4]
-	var f := func(v: Vector3) -> Vector3:
-		return p + v.rotated(Vector3.UP, deg_to_rad(yaw))
-	b.box(f.call(Vector3(0, 0.42, 0)), Vector3(0.26, 0.26, 0.7), c, yaw)
-	b.box(f.call(Vector3(0, 0.58, 0.42)), Vector3(0.2, 0.2, 0.3), c.darkened(0.08), yaw)
-	for sx in [-1, 1]:
-		for sz in [-0.25, 0.25]:
-			b.box(f.call(Vector3(sx * 0.09, 0.15, sz)), Vector3(0.07, 0.3, 0.07), c.darkened(0.2), yaw)
-	b.box(f.call(Vector3(0, 0.55, -0.42)), Vector3(0.05, 0.05, 0.3), c, yaw, Vector3(-40, 0, 0))
+	var hs := absi(int(p.x * 7.0 + p.z * 3.0))
+	CK.bld_ekle(b, "kopek", p, yaw, {"renk": c, "poz": "dur", "bas_yaw": float(hs % 5 - 2) * 18.0, "tohum": hs})

@@ -182,11 +182,10 @@ static func build_agil(host: Node3D, k: float, lod: int, tohum := 1) -> void:
 		var y2 := K.gy(q.x, q.y)
 		var col := Color("e4dccb").lerp(Color("7a6a56"), r.randf() * r.randf())
 		var yw := r.randf() * 360.0
-		var f := func(v: Vector3) -> Vector3:
-			return Vector3(q.x, y2, q.y) + v.rotated(Vector3.UP, deg_to_rad(yw))
-		an.sph(f.call(Vector3(0, 0.5, 0)), 0.38, col, 5, Vector3(0.85, 0.75, 1.3))
-		an.box(f.call(Vector3(0, 0.55, 0.5)), Vector3(0.18, 0.2, 0.28), Color("3a3028"), yw)
-		an.box(f.call(Vector3(0, 0.17, 0)), Vector3(0.36, 0.34, 0.6), Color("4a3e34"), yw)
+		# CANLI (kalite notu 32): koyun canli_kit'ten (yün hacimli, eklemli duruş); RNG tüketimi aynı
+		const CK = preload("res://scripts/world/ist/canli_kit.gd")
+		var hs := absi(int(q.x * 17.0 + q.y * 7.0))
+		CK.bld_ekle(an, "koyun", Vector3(q.x, y2, q.y), yw, {"renk": col, "poz": ["otla", "dur", "otla", "yat", "otla"][hs % 5], "bas_yaw": float(hs % 5 - 2) * 15.0, "tohum": hs})
 		hay.append(Vector3(q.x, y2, q.y))
 	for i in 6:
 		var q2 := Vector3(-8.0 + i * 3.2, 0, 4.5 + (i % 2) * 1.5)

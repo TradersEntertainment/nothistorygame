@@ -125,7 +125,10 @@ func _yer(x: float, z: float) -> float:
 	var hit := pl.get_world_3d().direct_space_state.intersect_ray(q)
 	if not hit.is_empty():
 		return (hit["position"] as Vector3).y
-	return IstGeo.h(x, z) if IstBaglama.aktif() else 0.0
+	if IstBaglama.aktif() and IstBaglama.kok != null:
+		var q := IstBaglama.kok.to_local(Vector3(x, 0.0, z))       # v2 çerçevesi (dönüşümlü bağlama)
+		return IstBaglama.kok.to_global(Vector3(q.x, IstGeo.h(q.x, q.z), q.z)).y
+	return 0.0
 
 
 ## Uçarken bakış: konum ve bakılan nokta
@@ -154,6 +157,11 @@ func _akis_bekle(en_az: float, en_cok_sn: float) -> void:
 			break
 
 
+func _gercek() -> Vector2:
+	var q := IstBaglama.kok.to_local(pl.global_position) if IstBaglama.kok != null else pl.global_position
+	return IstGeo.real(q.x, q.z)
+
+
 func _cek(ad: String) -> void:
 	await RenderingServer.frame_post_draw
 	_n += 1
@@ -164,7 +172,7 @@ func _cek(ad: String) -> void:
 		RenderingServer.get_rendering_info(RenderingServer.RENDERING_INFO_TOTAL_PRIMITIVES_IN_FRAME),
 		RenderingServer.get_rendering_info(RenderingServer.RENDERING_INFO_TOTAL_OBJECTS_IN_FRAME),
 		pl.global_position.x, pl.global_position.y, pl.global_position.z,
-		IstGeo.real(pl.global_position.x, pl.global_position.z) if IstBaglama.aktif() else "-"])
+		_gercek() if IstBaglama.aktif() else "-"])
 	if shots != "":
 		vp.get_texture().get_image().save_png(shots.path_join(dosya + ".png"))
 	if kirilim and IstBaglama.kok != null and ad in ["kalkis", "ordugah_ustu", "galata_donus", "eve_donus", "sehrin_ustu"]:

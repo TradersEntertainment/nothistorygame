@@ -796,6 +796,9 @@ static func build_filo_marmara(host: Node3D, lod := 0, tohum := 1453) -> Node3D:
 static func build_filo_nisan20(host: Node3D, lod := 0, tohum := 1453) -> Node3D: return filo_kur(host, plan("nisan20", tohum), "nisan20", lod)
 
 
+## Bölümde (IstBaglama etkin) filolar ilk karelerden sonra kurulur (yükleme süresi); gezi/önizlemede hemen
+static var ertele := true
+
 ## Şehre bağlama: IstGemiler.attach(dunya, gece). İsteğe bağlı 20 Nisan sahnesi varsayılan KAPALI.
 static func attach(dunya: Node3D, gece := false, nisan20 := false, lod := 0) -> Node3D:
 	if not enabled:
@@ -804,6 +807,31 @@ static func attach(dunya: Node3D, gece := false, nisan20 := false, lod := 0) -> 
 	kok.name = "IstGemiler"
 	dunya.add_child(kok)
 	var t0 := Time.get_ticks_usec()
+	var tree := Engine.get_main_loop() as SceneTree
+	if ertele and tree != null and IstBaglama.aktif():
+		# DOKU-4 (yükleme): bölümde filolar ilk karelerden sonra, karede bir filo kurulur (bölüm kartı/kararma sırasında)
+		var isler: Array = [build_filo_zincir, build_filo_halic_iskele, build_filo_galata, build_filo_cifte_sutunlar,
+			build_filo_bogaz_agzi, build_filo_balikci, build_filo_marmara]
+		if nisan20:
+			isler.append(build_filo_nisan20)
+		var adim: Array = []
+		adim.append(func() -> void:
+			if not is_instance_valid(kok):
+				tree.process_frame.disconnect(adim[0])
+				return
+			if isler.is_empty():
+				tree.process_frame.disconnect(adim[0])
+				var top := 0
+				for c in kok.get_children():
+					top += int(c.get_meta("gemi_sayisi", 0))
+				kok.set_meta("gemi_sayisi", top)
+				print("ISTGEMILER gemi=%d ertelendi" % top)
+				return
+			(isler.pop_front() as Callable).call(kok, lod))
+		kok.set_meta("gemi_sayisi", 0)
+		tree.process_frame.connect(adim[0])
+		print("ISTGEMILER ertelendi kurulum_ms=%.0f" % ((Time.get_ticks_usec() - t0) / 1000.0))
+		return kok
 	build_filo_zincir(kok, lod)
 	build_filo_halic_iskele(kok, lod)
 	build_filo_galata(kok, lod)

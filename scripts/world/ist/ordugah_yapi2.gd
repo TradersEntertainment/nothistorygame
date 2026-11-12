@@ -164,26 +164,17 @@ static func build_mutfak(host: Node3D, k: float, lod: int, tohum := 4) -> void:
 # ------------------------------------------------------------------ At ve deve bağı
 
 static func _at(b: B, p: Vector3, yaw: float, col: Color, deve := false) -> void:
-	var f := func(v: Vector3) -> Vector3:
-		return p + v.rotated(Vector3.UP, deg_to_rad(yaw))
+	# CANLI (kalite notu 32): at ve ayakta deve canli_kit'ten (kesit halkalı gövde, eklemli bacak, yele, kuyruk); kutu yok.
+	const CK = preload("res://scripts/world/ist/canli_kit.gd")
+	var hs := absi(int(p.x * 11.0 + p.z * 5.0))
+	var pz: String = ["dur", "otla", "dur", "dur", "otla"][hs % 5]
+	if deve:
+		CK.bld_ekle(b, "deve", p, yaw, {"renk": col, "poz": pz, "bas_yaw": float(hs % 3 - 1) * 15.0, "takim": ["yular"], "tohum": hs})
+	else:
+		CK.bld_ekle(b, "at", p, yaw, {"renk": col, "poz": pz, "bas_yaw": float(hs % 5 - 2) * 10.0, "takim": ["cul", "yular"], "tohum": hs})
 	var h := 1.5 if deve else 1.15
 	var ln := 2.2 if deve else 1.9
-	b.box(f.call(Vector3(0, h, 0)), Vector3(0.75, 0.8, ln), col, yaw)
-	if deve:
-		b.sph(f.call(Vector3(0, h + 0.65, -0.35)), 0.42, col.darkened(0.04), 5, Vector3(0.9, 1.2, 1.0))
-		b.sph(f.call(Vector3(0, h + 0.6, 0.55)), 0.4, col.darkened(0.04), 5, Vector3(0.9, 1.2, 1.0))
-		b.rod(f.call(Vector3(0, h + 0.3, 1.0)), f.call(Vector3(0, h + 1.4, 1.5)), 0.28, col)
-		b.box(f.call(Vector3(0, h + 1.5, 1.7)), Vector3(0.3, 0.3, 0.6), col.darkened(0.05), yaw)
-	else:
-		b.rod(f.call(Vector3(0, h + 0.2, 0.8)), f.call(Vector3(0, h + 0.85, 1.15)), 0.3, col)
-		b.box(f.call(Vector3(0, h + 0.9, 1.35)), Vector3(0.28, 0.32, 0.6), col.darkened(0.06), yaw)
-		b.box(f.call(Vector3(0, h + 0.2, -1.05)), Vector3(0.12, 0.9, 0.12), col.darkened(0.4), yaw, Vector3(-15, 0, 0))   # kuyruk
-		b.box(f.call(Vector3(0, h + 0.98, 1.1)), Vector3(0.1, 0.25, 0.4), col.darkened(0.4), yaw)                       # yele
-	for sx in [-1, 1]:
-		for sz in [-1, 1]:
-			b.box(f.call(Vector3(sx * 0.25, (h - 0.4) * 0.5, sz * (ln * 0.38))), Vector3(0.15, h - 0.4, 0.15), col.darkened(0.25), yaw)
-	b.box(f.call(Vector3(0, h + 0.46, 0)), Vector3(0.8, 0.12, 0.9), K.KIRMIZI2, yaw)       # semer örtüsü
-	b.solid_box(f.call(Vector3(0, h * 0.5 + 0.1, 0.2)), Vector3(0.9, h + 0.4, ln + 1.0), yaw)
+	b.solid_box(p + Vector3(0, h * 0.5 + 0.1, 0.2).rotated(Vector3.UP, deg_to_rad(yaw)), Vector3(0.9, h + 0.4, ln + 1.0), yaw)
 
 
 static func build_ahir(host: Node3D, k: float, lod: int, tohum := 6) -> void:
