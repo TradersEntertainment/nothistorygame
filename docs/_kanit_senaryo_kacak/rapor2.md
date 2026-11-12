@@ -13,7 +13,8 @@ dövüşte elde, o sırada Kural kapalı; hükümdarlı anların çoğu diyalog 
 Bizans yolunda tetiklenebiliyordu). Ölçüm (bütün eski varyantlar, `HUZUR summary`, §6.7): kılıç elde ve hükümdar
 sahnede yalnız **30**'da (İmparator 6,3 m, 6 sn). 26'da hükümdarlar 2,4 m'ye kadar geliyor ama kılıç o anlarda kınında;
 Mehmed'e kılıçla yaklaşılan an oyunda **hiç yok**. Bu tur fırsat bilerek açıldı (replik sırasında F ile atılış 7,5 m).
-Yöneticinin ön bulgusu doğrulandı; düzeltmeler: 26'nın sonunda Fatih **atlı** (hedef dışı bırakıldı), 10g'de Fatih
+Yöneticinin ön bulgusu doğrulandı; düzeltmeler: kuşatma sayfalarında Sultan hep **atlı** (28o, 34o, 26 sonu: onu
+muhafızlar karşılar, hükmü yeniçeri aktarır; Mehmed'in kendi karşı hamlesi yalnız Perde II'de, 10 ve 10z'de yaya), 10g'de Fatih
 varsayılan yolda 53 m uzakta (yalnız `fatih`/`late` yolunda 3,2 m), 7'de İmparator hep 9 m'den uzak (açılamadı), 32o'da
 Sultan botun yolundan 23 m.
 
@@ -24,7 +25,7 @@ Sultan botun yolundan 23 m.
 | Hükümdar izleyicisi: serbestte tekme, replikte/arada F ile atılış, sert eşya, kılıç | DÜZELDİ | `scripts/level/huzur.gd` `_physics_process`, `_input_kind`, `_target` |
 | Sol tık replik ilerletir: replik açıkken yalnız F saldırı | DÜZELDİ | `huzur.gd` `_input_kind` (`advancing`) |
 | Bölümün sıradaki repliği sahne bitene kadar sırada (Hud replik yeri tutulur) | DÜZELDİ | `huzur.gd` `_hold_dialogue`, `_say` |
-| Mehmed karşı hamlesi (bilek/ayak bileği havada, yarım adım, çevirip yere) | DÜZELDİ | `huzur.gd` `_counter_mehmed`, `_grip` |
+| Mehmed karşı hamlesi (bilek/ayak bileği havada, yarım adım, çevirip yere); atlı/oturan hükümdarı muhafız karşılar, atlı Sultan'ın hükmünü yeniçeri aktarır | DÜZELDİ | `huzur.gd` `_counter_mehmed`, `_grip` |
 | Konstantinos karşı hamlesi (göğse el, çelme; kılıçlıyı kolla süpürür) | DÜZELDİ | `huzur.gd` `_counter_konstantinos`, `_grip_chest` |
 | Kılıç düşer (oyuncunun kılıcı yere iner, sürgünsüz sonuçta geri verilir) | DÜZELDİ | `huzur.gd` `_disarm`, `_restore_blade` |
 | Muhafızlar (sahnedeki iki asker, yoksa görüş dışından koşarak; kararmada yerlerine döner) | DÜZELDİ | `huzur.gd` `_guards`, `_nearest_guards`, `_put_out` |
@@ -40,7 +41,7 @@ Sultan botun yolundan 23 m.
 | Eski davranış (bölüm baştan) kaldırıldı; Kural hükümdarı Huzur'a verir | DÜZELDİ | `scripts/level/kural.gd` `_ruler`, `_on_kick` (çocuk Mehmed hükümdar sayılmaz) |
 | `ACH_TARIHE_TEKME` karşı hamle anında; yeni `ACH_SURGUN` | DÜZELDİ | `huzur.gd` `attempt` (`tarihe_tekme`), `prepare_walk`/`bureau_side` (`surgun`); `scripts/achievements.gd`; `docs/STEAM_ACHIEVEMENTS.md`; `tests/ach_check.gd` |
 | Bölümlere tek satır bağlantı | DÜZELDİ | `scripts/chapter{6:77,7:66,10:64,10b:59,10g:39,10h:42,10z:44,12:44,12b:36,23:48,25:66,26:75,28o:87,30:50,30o:82,32o:112,34o:67}.gd` |
-| Yeni replikler TR+EN, konuşmacı, okuma notu | DÜZELDİ | `docs/_kanit_senaryo_kacak/yeni_replikler2.txt` (80 anahtar; 51 seslendirilecek), `i18n/strings.csv`, `docs/voice/VOICE_MAP.csv`. Ses ÜRETİLMEDİ |
+| Yeni replikler TR+EN, konuşmacı, okuma notu | DÜZELDİ | `docs/_kanit_senaryo_kacak/yeni_replikler2.txt` (84 anahtar; 55 seslendirilecek), `i18n/strings.csv`, `docs/voice/VOICE_MAP.csv`. Ses ÜRETİLMEDİ |
 | Birim testi (hedefler, bekleyen sürgün, yol/numara, hüküm, Büro, akıbet) | DÜZELDİ | `tests/huzur_check.gd/.tscn` |
 
 **Başarım önerisi:** `ACH_SURGUN` **"Bayraksız Geçiş" / "The Flagless Crossing"**: "Hükümdarına el kaldır, karşı tarafa
@@ -54,22 +55,23 @@ kitap, kolonya, bant) · `TWO_SIDED_FROM` 42 (7 Nisan).
 `scripts/chapter8s.gd`: `WARN_GRACE` 2,5 sn · `HIT_AFTER` 3 · `STREAK_CALM` 6 sn · `COVER_DIST` 1,6 m · `HANDS_L/R`
 (el kadrajın üstünde) · `O_HALT_Z` 40 · `O_GATE_Z` 17,5. 8y'den devralınan: `WARN_GAP` 5 sn, `LANE_HALF` 13,8 m.
 
-## 3. Kareler (gerçek oyuncu kamerası, ekranlı oynanış koşusu; paftalar bu klasörde)
+## 3. Kareler (gerçek oyuncu kamerası, ekranlı PACE oynanış koşuları; paftalar bu klasörde, JPEG ≤ 300 KB)
 | Pafta | İçerik | Kaynak koşu |
 |---|---|---|
-| `pafta2_01_mehmed_bos_el.jpg` | Mehmed: atılış → bilek/ayak havada → yerde, "Elini indir, kâtip." (ÖNCE: özgün kod, aynı an) | 28o `huzur_next` · ÖNCE kopyası |
-| `pafta2_02_konstantin_bos_el.jpg` | Konstantinos: atılış → göğse el/çelme → yerde, "Otuz yıldır kılıç taşırım..." | 23 `huzur` |
-| `pafta2_03_konstantin_kilic.jpg` | Kılıçla (30, replik arasında F): kolla süpürme, kılıç düşer, "O kılıç sana Şehir için verildi..." | 30 `huzur_sword` |
-| `pafta2_04_muhafiz.jpg` | Arkadan gelince iki muhafız: "Basileus'a el! Yere, yabancı!" → mızraklar iki yanda | 12b `huzur` |
-| `pafta2_05_kapidan_cikis.jpg` | Hüküm + kapıdan salınış: B2O (nöbetçi, kapı açılır) ve O2B (Hasan-Hüseyin siperden salar) | 8s `b2o_warn`, 28o zinciri |
-| `pafta2_06_gecis_o2b.jpg` | Bayraksız geçiş O2B: eller havada, gözcü "Dur! Ellerini göster!", ok sıyırması ve geri dönüş | 28o zinciri, 8s `hit` |
-| `pafta2_07_gecis_b2o.jpg` | Bayraksız geçiş B2O: eller inik → uyarı oku "Ellerini kaldır!", siperde "Dur orada!" | 8s `b2o_warn` |
-| `pafta2_08_karsilama.jpg` | Karşılama: Niko ("Seni karşıdan yolladılar...") ve Hasan ("Bre, bizim Frenk kâtip!") | 28o zinciri, 8s `b2o_warn` |
-| `pafta2_09_sonraki_bolum_akis.jpg` | Karşı tarafın sıradaki bölümünün açılışı (29) ve sürgünün akış şeması | 28o zinciri, 8s `hit` |
+| `pafta2_01_mehmed_bos_el.jpg` | **ÖNCE | SONRA**: 10z'de replik arasında F ile Sultan'a atılış. ÖNCE (özgün kod `db6e50dd`, depo dışı kopya + yalnız kare alan sonda): hiçbir şey olmaz, bölüm sürer. SONRA: Mehmed bileği havada yakalar, yarım adım, Tolga yerde, "Elini indir, kâtip. O el kalem tutmak için." | 10z `huzur` (iki kopya) |
+| `pafta2_02_konstantin.jpg` | Konstantinos boş elle (23: göğse el, çelme, "Otuz yıldır kılıç taşırım...") ve kılıçla (30: kolla süpürür, kılıç düşer, "O kılıç sana Şehir için verildi...") | 23 `huzur`, 30 `huzur_sword` |
+| `pafta2_03_muhafiz.jpg` | Muhafızlar: 12b (arkadan gelince, "Basileus'a el! Yere, yabancı!", iki muhafız iki yanda) ve 34o (atlı Sultan, yeniçeri "Huzurda el kalkmaz, kâtip!") | 12b, 34o `huzur` |
+| `pafta2_04_kapidan_cikis.jpg` | Hüküm ve kapı dışarı: 28o Sultan'ın hükmü, Hüseyin/Hasan siperden salar (O2B); nöbetçi, kapı açılır, gözcü (B2O) | 28o zinciri, 8s `b2o_warn` |
+| `pafta2_05_gecis.jpg` | Bayraksız geçiş iki yön: eller havada, gözcü durdurur, eller inikken uyarı oku, ok sıyırır → son siperde kalkış | 28o zinciri, 8s `hit`, 8s `b2o_warn` |
+| `pafta2_06_karsilama_sonraki.jpg` | Karşılama (Niko "Seni karşıdan yolladılar"; Hasan "Bre, bizim Frenk kâtip!", Hüseyin "İmparator'una el kaldırmışsın") ve karşı tarafın sıradaki bölümünün (29) açılışı | 28o zinciri, 8s `b2o_warn` |
+| `pafta2_07_akis_semasi.jpg` | Sürgünün akış şeması: taraf, uyarı/sıyırma, sıradaki bölüm ve tarihi; numaralar sürgünlü yola göre (16 → 17) | 8s varsayılan |
 
-Mehmed'in **kılıçlı** karşı hamlesinin karesi YOK: oyunda Mehmed'e kılıçla yaklaşılan an yok (§0); kod yolu birim
-düzeyinde aynı (`_counter_mehmed` kind="sword"): **KANITSIZ**. Akıbet sayfasının karesi yok (Bölüm 15'e sürgünlü bir
-oyunla varılmadı); satır `tests/huzur_check.gd` ile denetlendi: **KISMEN**.
+Zayıf/eksik kareler (dürüstçe): 28o'daki ilk karşı hamle kareleri atlı Sultan düzeltmesinden ÖNCEki koddan (Sultan atlıyken
+kaydırılıyordu: düzeltildi, o kareler paftaya alınmadı); 34o "yerde" karesinde atlı Sultan kadrajda değil (Tolga topun
+yanına iner): KISMEN. Yerdeyken Tolga'nın eli kadrajın kenarında kalabiliyor (`stow_hands` eli tam indirmiyor):
+KISMEN. Mehmed'in **kılıçlı** karşı hamlesinin karesi yok (oyunda anı yok): KANITSIZ. Akıbet sayfasının karesi yok
+(satır `tests/huzur_check.gd` ile denetlendi): KISMEN. ÖNCE | SONRA çifti yalnız pafta 1'de (öbür maddeler bugün hiç
+yoktu: sürgün sahnesi yeni).
 
 ## 4. Testler (ham satırlar: `testler2.txt`)
 - `parse_check` PASS (251 betik). `tests/check_*.py` hepsi PASS (keys 0 sorun, speakers, voice_rules, inline,
