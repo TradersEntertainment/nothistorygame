@@ -153,7 +153,10 @@
   "style": 0.3,
   "voice_id": "SMrp8T943o5MqNgZtFa8",
   "design": "Very young Ottoman soldier, about 18. Innocent, homesick, soft-spoken, talks about his mother, earnest.",
-  "voice_name": "NHG Soldier"
+  "voice_name": "NHG Soldier",
+  "model": "eleven_v3",
+  "v3_stability": 0.5,
+  "ton_mode": "rol:asker"
  },
  "SPK_CLERK": {
   "tarif": "Bizans memuru; kuru, törensel, burnundan",
@@ -201,7 +204,10 @@
   "style": 0.15,
   "voice_id": "3CuixtzkOJDK19790EvQ",
   "design": "Byzantine emperor in his late 40s. Dignified, weary, warm, noble and restrained, speaks softly with gravity. Must sound respectful and human.",
-  "voice_name": "NHG Emperor"
+  "voice_name": "NHG Emperor",
+  "model": "eleven_v3",
+  "v3_stability": 0.5,
+  "ton_mode": "rol:saray"
  },
  "SPK_FATIH": {
   "tarif": "Genç Sultan Mehmed; 21 yaşında, sakin, keskin, otoriter (saygılı)",
@@ -612,7 +618,9 @@
  },
  "SPK_AZAP": {
   "tarif": "Azap bölükbaşı; yaralı bacaklı, sert ama sıcak, bağıran",
-  "same_as": "SPK_SOLDIER"
+  "same_as": "SPK_SOLDIER",
+  "v3_stability": 0.0,
+  "ton_mode": "rol:asker"
  },
  "SPK_AZAPBASI": {
   "tarif": "Azap Bölükbaşı Turgut; kırklarında, Rumelili, boğuk, kaba ama sıcak",

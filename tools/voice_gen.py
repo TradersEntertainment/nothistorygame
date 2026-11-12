@@ -168,10 +168,19 @@ def load_cast(lang="tr"):
     return out
 
 
+# Sesi paylaşan karakter (same_as) kendi okuma biçimini taşıyabilir: aynı ses, başka rol (ör. Azap Hızır, Asker'in sesiyle
+# ama daha serbest okur).
+OKUMA_ALANLARI = ("ton_mode", "v3_stability", "model")
+
+
 def resolve(cast, spk):
-    c = cast.get(spk) or {}
+    c0 = cast.get(spk) or {}
+    c = c0
     while "same_as" in c:
         c = cast[c["same_as"]]
+    over = {k: c0[k] for k in OKUMA_ALANLARI if k in c0}
+    if over and c is not c0:
+        c = dict(c); c.update(over)
     return c
 
 
@@ -758,9 +767,70 @@ VARIANTS = [
 ]
 
 
+# Rol okuması (0.99.119, sahibin "spiker gibi olmasın, oradan bir asker gibi hissettirsin" notu): Tolga dışındaki
+# karakterlerin çoğu etiketsiz, düz okunuyordu. cast.json'da "ton_mode": "rol:<ad>" olan karakterin her repliği,
+# replik tipine göre o role uygun yönlendirmeyle okunur. Sahibi sahne içinde dinleyip seçti (Azap, Asker, İmparator).
+def role_tone(text, role):
+    ex, q, dots = "!" in text, "?" in text, ("…" in text or "..." in text)
+    short = len(text) < 60
+    if role == "asker":
+        if ex: return "[shouting] [hoarse]" if short else "[shouting over the noise] [rough voice]"
+        if q: return "[gruff] [suspicious]"
+        if dots: return "[tired] [muttering]"
+        return "[tired] [low rough voice] [talking to a comrade next to him]"
+    if role == "asker_genc":
+        if ex: return "[shouting] [nervous]" if short else "[calling out] [breathless]"
+        if q: return "[curious] [shy]"
+        if dots: return "[homesick] [quiet]"
+        return "[quiet] [earnest] [talking to someone next to him]"
+    if role == "cavus":
+        if ex: return "[barking orders] [hoarse]"
+        if q: return "[gruff] [impatient]"
+        if dots: return "[sighs] [weary]"
+        return "[gruff] [low voice] [dry humour]"
+    if role == "nobetci":
+        if ex: return "[startled] [calling out]"
+        if q: return "[confused] [slow]"
+        if dots: return "[bored] [trailing off]"
+        return "[bored] [casual] [talking to his friend]"
+    if role == "asker_neseli":
+        if ex: return "[booming] [laughing]" if short else "[shouting] [hearty]"
+        if q: return "[gruff] [teasing]"
+        if dots: return "[tired] [muttering]"
+        return "[hearty] [rough voice] [talking to a friend]"
+    if role == "usta":
+        if ex: return "[shouting orders] [proud]"
+        if q: return "[gruff] [impatient]"
+        if dots: return "[grumbling]"
+        return "[gruff] [busy] [talking while working]"
+    if role == "komutan":
+        if ex: return "[commanding] [urgent]"
+        if q: return "[sly] [amused]"
+        if dots: return "[weary] [low voice]"
+        return "[confident] [low voice] [talking to someone right next to him]"
+    if role == "saray":
+        if ex: return "[firm] [restrained]"
+        if q: return "[weary] [gentle]"
+        if dots: return "[weary] [sighs]"
+        return "[weary] [quiet] [speaking to a trusted man]"
+    if role == "telsiz":
+        if ex: return "[dry] [alarmed but restrained]"
+        if q: return "[deadpan] [sceptical]"
+        if dots: return "[deadpan] [sighs]"
+        return "[deadpan] [dry] [talking quietly into a radio]"
+    if role == "amca":
+        if ex: return "[excited] [chuckles]"
+        if q: return "[curious] [warm]"
+        if dots: return "[thinking aloud]"
+        return "[warm] [chatty] [old man talking to his nephew]"
+    return ""
+
+
 def scene_tone(text, mode):
     """Okuma modu -> v3 ton etiketi. 'scene'/'scene_fast': replik tipine göre; 'comic': gergin komik
     (her replikte telaş, sinirli gülüş yaklaşık iki replikte bir: 400 replikte hep gülüş bıktırır); aksi: sabit etiket."""
+    if mode.startswith("rol:"):
+        return role_tone(text, mode[4:])
     if mode == "none":
         return ""          # etiketsiz: İngilizce ton etiketleri Türkçe okumaya yabancı aksan katıyordu (FB6 A/B, v0.99.13)
     if mode == "comic":
