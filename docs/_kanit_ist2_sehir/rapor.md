@@ -176,8 +176,11 @@ Haliç, zincir, karşıda deniz surları ve dolu mahalleler, uzakta Ayasofya, ad
   su değil); büyük olasılıkla kurulmamış bir arazi parçası ya da bir çukur kesimi — kaynağı BAKILMADI (dünya dalına bildirim).
   Tur 4'teki (sondanın kaba arazisi) Yenikapı gölü IstDunya'lı karede yok.
 - Önceki turda `galata` uzak katmanında görülen koyu eğik düzlem tur 5'te yok.
+- `tur_5_gece_galata` (gece, `--gece`; ışık/gök IstDunya'nın gecesi): şehir ve surlar okunuyor; **ev pencerelerinde ve
+  sokakta ışık yok** (ev ağları pişirilirken ışıklı parçalar atılıyor; v2'de gece kandil/pencere ışığı eklenmedi —
+  YAPILMADI). Gece çizim/üçgen: 365–536 / ≤ 0,64 M.
 
-Gece karesi: `tur_4g_*` (sondanın gece ışığı; IstDunya'nın gecesi değil). Eser kareleri (15 m ve tam tepe): tur 2'de Ayasofya,
+Eser kareleri (15 m ve tam tepe): tur 2'de Ayasofya,
 Blakherna, Konstantin (bakıldı: Ayasofya ve Konstantin Forumu iyi; Blakherna Sarayı düz kutu → çatı eklendi);
 öteki eserler: aşağıdaki "tur 4 eser" bölümü.
 
