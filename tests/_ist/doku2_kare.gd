@@ -29,6 +29,22 @@ const BAKIS := [
 	["sur_dibi_yer", -4400.0, 400.0, "1.7", 0.0, -3.0, "sur"],
 ]
 
+## DOKU-3 (tur=3): yerden sokak kareleri (gece=1 ile gece) + havadan 30/70 m. "mese": en yakın Mese şeridi.
+const BAKIS3 := [
+	["y_carsi", -1100.0, 95.0, "1.7", 80.0, -3.0, "mese"],
+	["y_sik", -1450.0, 520.0, "1.7", 0.0, -3.0, "sokak"],
+	["y_sur_dibi", -4400.0, 400.0, "1.7", 0.0, -3.0, "sur"],
+	["y_iskele", -700.0, 1040.0, "1.7", 205.0, -3.0, "sokak"],
+	["y_galata", -560.0, 1700.0, "1.7", 0.0, -3.0, "sokak"],
+	["y_bostan", -2250.0, -560.0, "1.7", 0.0, -3.0, "sokak"],
+	["y_ayasofya", -470.0, -20.0, "1.7", 88.0, -4.0, ""],
+	["h30_carsi", -1150.0, 60.0, "30", 80.0, -35.0, ""],
+	["h70_mahalle", -1500.0, 250.0, "70", 125.0, -32.0, ""],
+	["h70_ayasofya", -700.0, -150.0, "70", 60.0, -30.0, ""],
+]
+var tur3 := false
+var gece := false
+
 
 func _ready() -> void:
 	for a: String in OS.get_cmdline_user_args():
@@ -39,6 +55,9 @@ func _ready() -> void:
 			"shots": shots = kv[1]
 			"on": on = kv[1]
 			"sadece": sadece = Array(kv[1].split(","))
+			"tur": tur3 = kv[1] == "3"
+			"gece": gece = kv[1] == "1"
+			"yakin": IstHayat.yakin_acik = kv[1] != "0"
 	cam = Camera3D.new()
 	cam.far = 30000.0
 	cam.near = 0.1
@@ -48,7 +67,7 @@ func _ready() -> void:
 	var w := IstGeo.w2(-1500.0, 250.0)
 	cam.global_position = Vector3(w.x, 80.0, w.y)
 	IstDunya.butce_us = 250000
-	dunya = IstDunya.build(self, false, cam.global_position) as IstDunya
+	dunya = IstDunya.build(self, gece, cam.global_position) as IstDunya
 	_kareler.call_deferred()
 
 
@@ -72,7 +91,7 @@ func _kareler() -> void:
 		await _cati_sina()
 	if shots != "":
 		DirAccess.make_dir_recursive_absolute(shots)
-	for b: Array in BAKIS:
+	for b: Array in (BAKIS3 if tur3 else BAKIS):
 		var ad: String = b[0]
 		if not sadece.is_empty() and not ad in sadece:
 			continue
@@ -80,6 +99,11 @@ func _kareler() -> void:
 			print("DOKU2 bakis_yok ", ad)
 			continue
 		await _bekle()
+		if IstHayatYakin.aktif != null and is_instance_valid(IstHayatYakin.aktif):
+			IstHayatYakin.aktif.doldur(8)
+			for i in 40:
+				await get_tree().process_frame
+			print(IstHayatYakin.aktif.sayim_satiri(ad))
 		await get_tree().process_frame
 		await RenderingServer.frame_post_draw
 		var dc := RenderingServer.get_rendering_info(RenderingServer.RENDERING_INFO_TOTAL_DRAW_CALLS_IN_FRAME)
@@ -99,7 +123,7 @@ func _kam(b: Array) -> bool:
 	var yaw := -deg_to_rad(float(b[4]))
 	var kip: String = b[6]
 	var sk: IstSokak = IstSehir.sokak
-	if kip == "sokak" or kip == "sur":
+	if kip == "sokak" or kip == "sur" or kip == "mese":
 		if sk == null:
 			return false
 		var best := Vector2.INF
@@ -107,6 +131,8 @@ func _kam(b: Array) -> bool:
 		var dir := Vector2.RIGHT
 		for s: Dictionary in sk.streets:
 			var t := String(s["tur"])
+			if kip == "mese" and t != "mese":
+				continue
 			if kip == "sokak" and not t in ["sokak", "basamak"]:
 				continue
 			if kip == "sur" and t != "savunma":
@@ -377,10 +403,15 @@ func _sayim() -> void:
 					var q := Vector2(p.x + di * 40.0, p.z + dj * 40.0)
 					if q.distance_to(Vector2(p.x, p.z)) <= r * 0.8:
 						dolu[Vector2i(floori(q.x / 40.0), floori(q.y / 40.0))] = true
+	for bolge: String in ["sehir_ici", "galata"]:
+		_istbos(bolge, sk, dolu)
+
+
+func _istbos(bolge: String, sk: IstSokak, dolu: Dictionary) -> void:
 	var top := 0
 	var bos := 0
 	var bos_ornek: Array = []
-	var poly := IstGeo.kiyi("yarimada")
+	var poly := IstGeo.kiyi("yarimada") if bolge == "sehir_ici" else IstGeo.yol("galata_suru")
 	var lo := Vector2(INF, INF)
 	var hi := Vector2(-INF, -INF)
 	for p in poly:
@@ -392,7 +423,8 @@ func _sayim() -> void:
 			# karenin tamamı sur içinde ve karada
 			var ic := true
 			for o: Vector2 in [Vector2(-18, -18), Vector2(18, -18), Vector2(18, 18), Vector2(-18, 18)]:
-				if not IstGeo.sehir_ici(c.x + o.x, c.y + o.y) or IstGeo.su(c.x + o.x, c.y + o.y):
+				var ici := IstGeo.sehir_ici(c.x + o.x, c.y + o.y) if bolge == "sehir_ici" else IstGeo.galata_ici(c.x + o.x, c.y + o.y)
+				if not ici or IstGeo.su(c.x + o.x, c.y + o.y):
 					ic = false
 			if not ic or sk.cell(c.x, c.y) == 3:
 				continue
@@ -408,4 +440,4 @@ func _sayim() -> void:
 				bos += 1
 				if bos_ornek.size() < 12:
 					bos_ornek.append(IstGeo.real(c.x, c.y).round())
-	print("ISTBOS sehir_ici kare=%d bos=%d oran=%.1f%% ornek=%s" % [top, bos, 100.0 * bos / maxf(top, 1), bos_ornek])
+	print("ISTBOS %s kare=%d bos=%d oran=%.1f%% ornek=%s" % [bolge, top, bos, 100.0 * bos / maxf(top, 1), bos_ornek])

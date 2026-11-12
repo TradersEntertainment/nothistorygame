@@ -36,6 +36,7 @@ var doku: Array = []                  # {tur, c: Vector2, alan: Vector2, yaw, to
 var meydan: Array = []                # {c: Vector2, yaw, tohum}
 var avlu: Array = []                  # {c, u, v, hx, hz, kapi: int (0 sol, 1 sağ, 2 arka), tohum, h: duvar yüksekliği, mt}
 var oge: Array = []                   # {tur, c: Vector2, yaw, tohum} (IstMahalleDoku kurar)
+var eser_meydan: Array = []           # [{id, c, r0 (taban), R (meydan dış), unlu}] (DOKU-3)
 var zemin_ek: Array = []              # [{c, r, tur}] döşeli meydan diskleri (Augustaion, forumlar, kapı/iskele önleri)
 var rows := 0
 var _mcache := {}
@@ -269,6 +270,8 @@ func build(foot: Array, bands: Array, gates: Array, tohum := 1453) -> void:
 	stats["sokak_ms"] = Time.get_ticks_msec() - t0
 	# 3b) Mahalle kiliseleri ve meydanları için yer (evlerden önce: sık dokuda da kalsın)
 	_kilise_yerleri(rng)
+	# 3c) Eser çevresi meydanları (DOKU-3, kalite notu 13): ünlü eserlerin çevresi evden önce ayrılır (döşeli meydan/avlu)
+	_eser_meydanlari()
 	# 4) Evler: önce savunma yolu ve büyük yollar (sıralar sura ve caddeye yaslansın), sonra sokaklar
 	var order: Array = []
 	for s in streets.size():
@@ -288,6 +291,7 @@ func build(foot: Array, bands: Array, gates: Array, tohum := 1453) -> void:
 	stats["avlu"] = avlu.size()
 	# 5) Doku ve meydanlar
 	_meydanlar(foot)
+	_eser_meydan_doldur()
 	_doku(rng)
 	_ogeler(rng)
 	stats["doku"] = doku.size()
@@ -1134,6 +1138,131 @@ func _meydanlar(foot: Array) -> void:
 		n += 1
 
 
+## DOKU-3: ünlü eserlerin (yan görev eserleri, UNLU listesi, k ≥ 0,6 kiliseler/anıtlar) çevresinde evden ÖNCE meydan halkası
+## ayrılır (boş hücre → 5): taş döşeme (zemin_ek), sonra (_meydanlar) köşe grupları, ağaç kümesi, kuyu/çeşme (meydan kaydı:
+## ŞEHİR kurar; IstHayatYakin gezinenleri buraya da doğar). Ayasofya: 30 m'lik meydan (Augustaion + atrium + kuzey avlu).
+const ESER_ATLA := ["zincir", "bozdogan", "hipodrom", "buyuk_saray", "bukoleon", "zeuksippos", "kontoskalion", "langa", "sophia",
+	"aetios", "aspar", "mokios", "halic_neorion", "halic_iskele", "augustaion"]
+func _eser_meydanlari() -> void:
+	var s: Node = IstSehir.active
+	if s == null or not is_instance_valid(s) or not IstSehir.v2:
+		return
+	for it: Dictionary in s.items:
+		if it.has("hat"):
+			continue
+		var id := String(it["id"])
+		if id in ESER_ATLA or id.begins_with("doku_") or id.begins_with("meydan_") or id.begins_with("mese_"):
+			continue
+		var dt: Dictionary = it.get("data", {})
+		var tur := String(dt.get("tur", ""))
+		if tur in ["kapi", "sur", "liman", "ev", "ayrinti", "bitki", "su", "gemi"]:
+			continue
+		var unlu: bool = id == "ayasofya" or id in IstSehir.UNLU or bool(dt.get("gorev", false))
+		if not unlu and float(it.get("k", 0.0)) < 0.6:
+			continue
+		var r := float(it["r"])
+		if r > 95.0 and id != "ayasofya":
+			continue
+		var p: Vector3 = it["pos"]
+		var c := Vector2(p.x, p.z)
+		if not (IstGeo.sehir_ici(c.x, c.y) or IstGeo.galata_ici(c.x, c.y)):
+			continue
+		var pay := 30.0 if id == "ayasofya" else (14.0 if unlu else 9.0)
+		var R := r + 4.0 + pay
+		var n := 0
+		for j in range(maxi(0, int((c.y - R - z0) / G)), mini(nz, int((c.y + R - z0) / G) + 1)):
+			for i in range(maxi(0, int((c.x - R - x0) / G)), mini(nx, int((c.x + R - x0) / G) + 1)):
+				var k := j * nx + i
+				if occ[k] == 0 and cell_c(i, j).distance_to(c) <= R:
+					occ[k] = 5
+					n += 1
+		if n == 0:
+			continue
+		zemin_ek.append({"c": c, "r": R, "tur": "mese"})
+		eser_meydan.append({"id": id, "c": c, "r0": r + 4.0, "R": R, "unlu": unlu})
+	stats["eser_meydan"] = eser_meydan.size()
+
+
+## Eser meydanlarının içini doldurur (evlerden sonra): köşe grupları, ağaç kümesi, kuyu/çeşme + gezinme noktaları
+func _eser_meydan_doldur() -> void:
+	var nset := 0
+	for e: Dictionary in eser_meydan:
+		var c: Vector2 = e["c"]
+		var r0 := float(e["r0"])
+		var R := float(e["R"])
+		var aya := String(e["id"]) == "ayasofya"
+		var sets: Array = ["mumcu", "set_ayin_alayi", "set_pazar_kosesi", "agac_kumesi", "mumcu", "set_manastir_avlusu", "agac_kumesi",
+			"set_pazar_kosesi", "kuyu", "agac_kumesi", "set_meyhane_onu", "mumcu"] if aya else (
+			["mumcu", "set_pazar_kosesi", "agac_kumesi", "set_ayin_alayi"] if bool(e["unlu"]) else ["agac_kumesi", "mumcu"])
+		var rr := (r0 + R) * 0.5
+		var h0 := absi(hash(String(e["id"]))) % 997
+		for k in sets.size():
+			var ang := k * TAU / sets.size() + 0.3 + (h0 % 7) * 0.1
+			for dr: float in [0.0, 4.0, -4.0]:
+				var q := c + Vector2.from_angle(ang) * (rr + dr)
+				var ok := true
+				for a in 5:
+					var qq := q + Vector2.from_angle(a * 1.2566) * (3.5 if a > 0 else 0.0)
+					if not cell(qq.x, qq.y) in [0, 1, 5]:
+						ok = false
+						break
+				if not ok:
+					continue
+				oge.append({"tur": String(sets[k]), "c": q, "yaw": ang + PI, "tohum": h0 * 13 + k, "yer": String(e["id"])})
+				_stamp_disc(q, 4.0, 5)
+				nset += 1
+				break
+		# halkada öğesiz kalan 40 m'lik kareler (büyük meydanlar): ağaç kümesi / mumcu / kuyu
+		var dolu := {}
+		for o: Dictionary in oge:
+			var oc: Vector2 = o["c"]
+			if oc.distance_to(c) < R + 60.0:
+				dolu[Vector2i(floori(oc.x / DT), floori(oc.y / DT))] = true
+		for h: Dictionary in houses:
+			var hc: Vector2 = h["c"]
+			if hc.distance_to(c) < R + 60.0:
+				dolu[Vector2i(floori(hc.x / DT), floori(hc.y / DT))] = true
+		for j in range(floori((c.y - R) / DT), floori((c.y + R) / DT) + 1):
+			for i in range(floori((c.x - R) / DT), floori((c.x + R) / DT) + 1):
+				if dolu.has(Vector2i(i, j)):
+					continue
+				var sc := Vector2((i + 0.5) * DT, (j + 0.5) * DT)
+				var best := Vector2.INF
+				for dd: float in [0.0, 8.0, 14.0]:
+					for a in 6:
+						var q := sc + Vector2.from_angle(a * 1.047) * dd
+						var dq := q.distance_to(c)
+						if dq < r0 + 3.0 or dq > R - 2.0:
+							continue
+						var ok := true
+						for b in 5:
+							var qq := q + Vector2.from_angle(b * 1.2566) * (3.0 if b > 0 else 0.0)
+							if not cell(qq.x, qq.y) in [0, 1, 5]:
+								ok = false
+								break
+						if ok:
+							best = q
+							break
+						if dd == 0.0:
+							break
+					if best != Vector2.INF:
+						break
+				if best == Vector2.INF:
+					continue
+				oge.append({"tur": ["agac_kumesi", "mumcu", "kuyu", "agac_kumesi"][(i + j * 3) & 3], "c": best, "yaw": float(i * 1.7 + j), "tohum": h0 * 11 + i * 31 + j, "yer": String(e["id"])})
+				_stamp_disc(best, 3.5, 5)
+				dolu[Vector2i(i, j)] = true
+				nset += 1
+		# gezinme ve kuyu/çeşme noktaları (meydan kaydı)
+		var nm := 4 if aya else 2
+		for k in nm:
+			var ang := (k + 0.5) * TAU / nm + 0.3
+			var q := c + Vector2.from_angle(ang) * (r0 + 5.0)
+			if cell(q.x, q.y) in [0, 1, 5]:
+				meydan.append({"c": q, "yaw": ang + PI, "tohum": h0 * 7 + k})
+	stats["eser_oge"] = nset
+
+
 ## Patrikhane ek yapıları: Ayasofya'nın güney ve güneybatısında, ona bakan avlulu konak/han yapıları (kestirim)
 func _patrikhane(w: Vector2, rad: float) -> void:
 	var n := 0
@@ -1156,7 +1285,7 @@ func _patrikhane(w: Vector2, rad: float) -> void:
 				continue
 			var ok := true
 			for k in cells:
-				if not occ[k] in [0, 1]:
+				if not occ[k] in [0, 1, 5]:
 					ok = false
 			var pg := _poly(c, d, nrm, dm.x * 0.5, dm.z * 0.5)
 			if not ok or not _gap_ok(pg, -2):

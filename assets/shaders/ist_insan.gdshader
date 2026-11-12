@@ -9,6 +9,9 @@ render_mode cull_back, diffuse_lambert, specular_disabled;
 
 uniform int mode = 0;           // 0 insan, 1 dört ayaklı, 2 tavuk
 uniform float gece = 0.0;
+// Yakında gerçek kişi katmanı (IstHayatYakin) varken: kameraya bu uzaklıktan (m) yakın figürler küçülerek kaybolur
+// (yakin_bos .. yakin_bos + 10 m arasında boy 0 → 1; 0: kapalı). Küp figür yalnız uzakta ve havadan görünür.
+uniform float yakin_bos = 0.0;
 
 const vec3 TUNIK[16] = vec3[](
 	vec3(0.55, 0.40, 0.27), vec3(0.78, 0.66, 0.45), vec3(0.24, 0.30, 0.50), vec3(0.62, 0.22, 0.18),
@@ -125,6 +128,13 @@ void vertex() {
 	}
 	v.z -= s * L;
 	v.y += slope * s * L;
+	if (yakin_bos > 0.0) {
+		vec3 foot = vec3(0.0, slope * s * L, -s * L);
+		vec3 wf = (MODEL_MATRIX * vec4(foot, 1.0)).xyz;
+		float dc = distance(wf, INV_VIEW_MATRIX[3].xyz);
+		float f = smoothstep(yakin_bos, yakin_bos + 10.0, dc);
+		v = foot + (v - foot) * f;
+	}
 	VERTEX = v;
 	NORMAL = nn;
 	// renk
