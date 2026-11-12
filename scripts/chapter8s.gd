@@ -478,7 +478,6 @@ func _end_walk() -> void:
 	if from_ch == 26 and String(walk.get("from", "")) == "B" and not f.has("siege_held"):
 		Siege.resolve(false)
 	f.erase("surgun_walk")
-	f["surgun_last"] = hist.back()
 	await hud.fade_to(1.0, 0.8)
 	player.radio_listen(3.0)
 	await hud.say("SPK_NIHAT", "HZR_N_RADIO_BRIDGE")
