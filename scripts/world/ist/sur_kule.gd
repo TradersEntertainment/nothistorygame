@@ -14,10 +14,10 @@ extends RefCounted
 
 const C_STONE := Color("cdbd9e")
 const C_DARK := Color("1a1612")
-const C_BRICK := Color("7a4a3a")
+const C_BRICK := Color("6a4a3e")
 const C_WOOD := Color("6e4e30")
 const C_ROOF := Color("6e5446")          # soluk, eskimiş kiremit (doygun kırmızı değil)
-const C_MARBLE := Color("ddd6c6")
+const C_MARBLE := Color("b4ac9c")
 const PARAPET_H := 1.2
 
 static var _mat_cache := {}
@@ -425,7 +425,7 @@ static func ic_kule(p: Node3D, g: Dictionary, lod: int) -> void:
 	rng.seed = seed
 	var yamalar: Array = []
 	for i in 3 + int(hasar * 2.0):
-		yamalar.append([rng.randi_range(0, poly.size() - 1), rng.randf_range(1.0, HT - 3.0), rng.randf_range(0.2, 0.8), rng.randf_range(1.2, 3.0), rng.randf_range(0.6, 0.86)])
+		yamalar.append([rng.randi_range(0, poly.size() - 1), rng.randf_range(1.0, HT - 3.0), rng.randf_range(0.2, 0.8), rng.randf_range(1.2, 3.0), rng.randf_range(0.84, 0.93)])
 	var tint := func(e: int, y: float, t: float) -> Color:
 		for ym: Array in yamalar:
 			if int(ym[0]) == e and absf(y - float(ym[1])) < float(ym[3]) and absf(t - float(ym[2])) < 0.3:
@@ -748,7 +748,7 @@ static func dis_kule(p: Node3D, g: Dictionary, lod: int) -> void:
 	if lod == 0:
 		var prof: Array = [[y0, bat + 0.3], [0.6, bat + 0.3], [0.85, bat], [ys, _sev2(bat, OTH, ys)], [ys, _sev2(bat, OTH, ys) + 0.14],
 			[ys + 0.28, _sev2(bat, OTH, ys) + 0.14], [ys + 0.28, _sev2(bat, OTH, ys + 0.28)], [OTH - 0.55, 0.0], [OTH - 0.55, 0.16],
-			[OTH - 0.3, 0.16], [OTH - 0.3, 0.3]]
+			[OTH - 0.3, 0.16], [OTH - 0.3, 0.3], [OTH, 0.3]]
 		var tint := func(e: int, y: float, t: float) -> Color:
 			var h := fposmod(sin(float(e) * 7.1 + floor(y / 2.0) * 3.3 + floor(t * 3.0) * 1.9 + seed) * 4371.3, 1.0)
 			return Color(0.78, 0.76, 0.72) if h < 0.1 else Color.WHITE

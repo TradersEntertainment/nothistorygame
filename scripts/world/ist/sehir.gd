@@ -2696,12 +2696,12 @@ func _gedik_x(mid: Vector2, yaw: float, L: float) -> Array:
 	var pg := Vector2(-5241.70, -434.15)
 	var rm := Vector2(-4939.29, 1113.20)
 	var dr := (rm - pg).normalized()
-	var meso := Vector2(rm.x + 60.0, rm.y - 170.0)
 	var ex := Vector2(cos(yaw), -sin(yaw))
 	var ez := Vector2(sin(yaw), cos(yaw))
 	var out: Array = []
-	for s: float in [-130.0, -10.0, 105.0]:
-		var r := meso + dr * s
+	# hat üstünde Romanos'tan güneye (kapı koşusunun dışında)
+	for s: float in [-330.0, -215.0, -110.0]:
+		var r := rm + dr * s
 		var q := IstGeo.w2(r.x, r.y)
 		var lx := (q - mid).dot(ex)
 		var lz := (q - mid).dot(ez)
