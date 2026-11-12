@@ -38,7 +38,12 @@ func _scene() -> void:
 	e.sky = sky
 	e.ambient_light_source = Environment.AMBIENT_SOURCE_SKY
 	e.ambient_light_energy = 0.5
-	e.tonemap_mode = Environment.TONE_MAPPER_FILMIC
+	e.tonemap_mode = Environment.TONE_MAPPER_LINEAR
+	e.fog_enabled = false
+	e.glow_enabled = false
+	e.ssao_enabled = false
+	e.ssil_enabled = false
+	e.adjustment_enabled = false
 	env.environment = e
 	add_child(env)
 	var sun := DirectionalLight3D.new()
