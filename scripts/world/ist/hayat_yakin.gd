@@ -974,20 +974,20 @@ func _spawn_edge(g: int, prol: String) -> bool:
 			pr.process_mode = Node.PROCESS_MODE_INHERIT
 			pr.position = Vector3(c.x, IstGeo.h(c.x, c.y), c.y)
 			pr.rotation = Vector3(0, atan2(toroad.x, toroad.y), 0)
-			_stand(ag, c, c + toroad * 3.0, "sit")
+			_stand(ag, c, c + toroad * 3.0, "otur_tabure")
 		"washer":
 			var lp := c + toroad * 0.55
 			pr.visible = true
 			pr.process_mode = Node.PROCESS_MODE_INHERIT
 			pr.position = Vector3(lp.x, IstGeo.h(c.x, c.y), lp.y)
 			pr.rotation = Vector3(0, atan2(toroad.x, toroad.y), 0)
-			_stand(ag, c, c + toroad * 3.0, "stir")
+			_stand(ag, c, c + toroad * 3.0, "camasir")
 		"beggar":
 			var bp := c + toroad * 0.7
 			pr.visible = true
 			pr.process_mode = Node.PROCESS_MODE_INHERIT
 			pr.position = Vector3(bp.x, IstGeo.h(c.x, c.y), bp.y)
-			_stand(ag, c, c + toroad * 3.0, "sit_ground")
+			_stand(ag, c, c + toroad * 3.0, "bagdas")
 		_:
 			return false
 	return true
@@ -1048,7 +1048,7 @@ func _spawn_fisher(g: int) -> bool:
 	var cf := _coast_from(_P[g])
 	if cf.is_empty() or _crowded(cf["sp"], 3.0):
 		return false
-	_stand(ag, cf["sp"], cf["face"], "sit_ground")
+	_stand(ag, cf["sp"], cf["face"], "bagdas_olta")
 	return true
 
 
@@ -1174,7 +1174,7 @@ func _spawn_quay(sp: Vector2, dv: Vector2) -> int:
 	var n := 0
 	var fa := _free_agent(["fisher"])
 	if fa != null:
-		_stand(fa, sp, sp + dv * 3.0, "sit_ground")
+		_stand(fa, sp, sp + dv * 3.0, "bagdas_olta")
 		n += 1
 	var pa := _free_agent(["porter", "man", "woman"])
 	if pa != null:
@@ -1302,7 +1302,7 @@ func _spawn_wall(g: int, force := "") -> bool:
 		pr.process_mode = Node.PROCESS_MODE_INHERIT
 		pr.position = Vector3(rp.x, IstGeo.h(c.x, c.y), rp.y)
 		pr.rotation = Vector3(0, atan2(dv.x, dv.y), 0)
-		_stand(ag, c, face, "hammer" if ag.idx % 2 == 0 else "chop")
+		_stand(ag, c, face, "tas_kir" if ag.idx % 2 == 0 else "yuk_kaldir")
 	else:
 		_stand(ag, c, face, "")
 	return true

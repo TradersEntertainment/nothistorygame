@@ -170,6 +170,34 @@ func update(delta: float, talking: bool, busy: bool, ext := true) -> void:
 	_update_core(delta, talking, busy)
 	if ext:
 		extremities()
+		if lock == 0 and DurusKit.var_mi(activity):
+			DurusKit.bilekler(self)
+	_egim_denet(delta)
+
+
+## DURUŞ takımı (scripts/npc/durus_kit.gd): eklem açılarıyla kurulan oturma/yatma/iş duruşları (bağdaş, diz üstü,
+## çömelme, yan/sırtüstü uzanma, kütüğe oturma, kazan karıştırma…; adlar DurusKit.ADLAR). Kişinin kökü YATIRILMAZ;
+## gövde kalçadan bükülür, bacak ve kollar IK ile zemine/hedefe uzanır. Eski işlerin (sit_ground, doze, stir…)
+## davranışı aynı kalır. _durus: takımın kişi başına durumu (geçiş zamanı, eşyalar, denetim).
+const DurusKit := preload("res://scripts/npc/durus_kit.gd")
+var _durus := {}
+## Eğim denetimi (POSEAUDIT tilt, susturulamaz): kişinin kökü dünya dikeyinden 20°'den çok sapmışsa bir kez yazar.
+## Bilinçli düşme/taşınma/uyuma/uçma işleri hariç (açık liste).
+const EGIM_SERBEST := ["fly", "hover", "swim", "fall", "dead", "lie", "sleep"]
+var _egim_t := 0.0
+var _egim_bildi := false
+
+
+func _egim_denet(delta: float) -> void:
+	_egim_t -= delta
+	if _egim_t > 0.0 or _egim_bildi or owner == null or not owner.is_inside_tree():
+		return
+	_egim_t = 0.5
+	var up := owner.global_basis.y.normalized()
+	var deg := rad_to_deg(acos(clampf(up.dot(Vector3.UP), -1.0, 1.0)))
+	if deg > 20.0 and not activity in EGIM_SERBEST:
+		_egim_bildi = true
+		print("POSEAUDIT tilt %s %.0f %s" % [owner.name, deg, activity])
 
 
 ## El ve ayak bilekleri (CharKit'in üçüncü eklemleri): ayak tabanı karakterin zeminine paralel kalır (baldır ne açıda
@@ -305,6 +333,11 @@ func _update_core(delta: float, talking: bool, busy: bool) -> void:
 		brows.rotation.z = _m_roll
 	if lock > 0 or busy:
 		return
+	if DurusKit.var_mi(activity):
+		DurusKit.uygula(self, delta, talking)
+		return
+	elif not _durus.is_empty():
+		DurusKit.birak(self, delta)
 	# Oturan ya da suda olan (kayıkta taşınan kürekçi, yüzen) yürümez: taşınmak adım sayılmaz
 	if speed > 0.35 and not activity in ["sit", "sit_ground", "write", "row", "swim", "ride", "halay", "halay_lead", "fly", "hover", "whittle", "read_ground", "doze", "write_desk", "sit_astride"]:
 		_walk_phase += delta * (3.0 + speed * 1.6)

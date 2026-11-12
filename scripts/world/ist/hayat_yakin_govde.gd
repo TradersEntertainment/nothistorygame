@@ -311,7 +311,7 @@ static func _cached(key: String, build: Callable) -> ArrayMesh:
 
 ## Kişinin donuk ikizi: rolün çalışma duruşunda (oturan oturur, işçi çekiç tutar)
 static func twin_mesh(prol: String, idx: int, gece: bool) -> ArrayMesh:
-	var pose := {"fisher": "sit_ground", "beggar": "sit_ground", "worker": "hammer", "washer": "stir", "sitter": "sit"}.get(prol, "") as String
+	var pose := {"fisher": "bagdas_olta", "beggar": "bagdas", "worker": "tas_kir" if idx % 2 == 0 else "yuk_kaldir", "washer": "camasir", "sitter": "otur_tabure"}.get(prol, "") as String
 	return _cached(_key("kisi|%s|%d|%s" % [prol, idx, gece]), func() -> ArrayMesh:
 		var pr := body(prol, idx, gece)
 		return Crowd._bake(pr, func():
