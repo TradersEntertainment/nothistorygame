@@ -4,8 +4,9 @@ Dal: `wip/senaryo-kacak` (önceki tur `db6e50dd` üstüne). Senaryo belgesi: `do
 tablosu ilk hâl · 6.2 VURAMAZ · 6.3 SÜRGÜN · 6.4 kuşatma öncesi · 6.5 tekrar ve karşı hükümdar · 6.6 iki taraf
 tarih eşlemesi ve "sürgünden sonra hangi bölüm" · 6.7 ölçülen fırsat tablosu ve sahibin sorusunun cevabı).
 
-**Denetçi raporu:** iş başında ve bitişte `git fetch origin wip/denetim-senaryo:...` denendi: "couldn't find remote ref
-wip/denetim-senaryo". **Denetçi raporu henüz yok**; ZORUNLU listesi kapatılacak bir şey yok.
+**Denetçi raporu:** iş başında yoktu ("couldn't find remote ref"); bitişte geldi (`origin/wip/denetim-senaryo` `f1fd7e94`,
+`docs/_kanit_denetim_senaryo/rapor.md`, önceki turun paketini denetliyor): **KÜÇÜK DÜZELTMELERLE KABUL**, 6 ZORUNLU madde.
+Hepsi bu turda kapatıldı (§9).
 
 ## 0. Sahibin sorusunun cevabı (ölçülmüş)
 "Hangi bölümlerde elimizde kılıç vs varken hükümdara yaklaşma şansımız var?" Bu turdan önce: **hiçbirinde** (kılıç yalnız
@@ -64,6 +65,7 @@ kitap, kolonya, bant) · `TWO_SIDED_FROM` 42 (7 Nisan).
 | `pafta2_04_kapidan_cikis.jpg` | Hüküm ve kapı dışarı: 28o Sultan'ın hükmü, Hüseyin/Hasan siperden salar (O2B); nöbetçi, kapı açılır, gözcü (B2O) | 28o zinciri, 8s `b2o_warn` |
 | `pafta2_05_gecis.jpg` | Bayraksız geçiş iki yön: eller havada, gözcü durdurur, eller inikken uyarı oku, ok sıyırır → son siperde kalkış | 28o zinciri, 8s `hit`, 8s `b2o_warn` |
 | `pafta2_06_karsilama_sonraki.jpg` | Karşılama (Niko "Seni karşıdan yolladılar"; Hasan "Bre, bizim Frenk kâtip!", Hüseyin "İmparator'una el kaldırmışsın") ve karşı tarafın sıradaki bölümünün (29) açılışı | 28o zinciri, 8s `b2o_warn` |
+| `pafta2_08_kural_kart.jpg` | Denetim ZORUNLU 6: tutuklanma kartı karede (24 `krl_hit`) | 24 `krl_hit` |
 | `pafta2_07_akis_semasi.jpg` | Sürgünün akış şeması: taraf, uyarı/sıyırma, sıradaki bölüm ve tarihi; numaralar sürgünlü yola göre (16 → 17) | 8s varsayılan |
 
 Zayıf/eksik kareler (dürüstçe): 28o'daki ilk karşı hamle kareleri atlı Sultan düzeltmesinden ÖNCEki koddan (Sultan atlıyken
@@ -81,7 +83,8 @@ yoktu: sürgün sahnesi yeni).
   sürer), 34o `huzur` (kuşatma öncesi: bekleyen sürgün), 12b `huzur` (Perde II: bekleyen), 6 `byz` + `huzur_bot`
   (Perde II, muhafız), 28o `huzur_save` (sürgünden sonra kaydet-yükle), 28o `huzur_guard` (muhafız), 26 `huzur`
   (karşı hükümdar: geri itilme), 12/10h `huzur` (eşyayla atılış), 8s doğrudan: varsayılan, `b2o`, `hit`, `b2o_warn`,
-  `save`, `b2o_save`, `b2o_next` (21o'nun kendi testi PASS). Hepsi PASS, yasak satır 0 (son kodla). Sayılar §4 sonu.
+  `save`, `b2o_save`, `b2o_next` (21o'nun kendi testi PASS). **Son kodla tam koşu: 76/76 PASS, yasak satır 0**
+  (yeni varyantlar üçer kez + 10/10z/10b/12/10h/23 `huzur` üçer kez + bağlı 17 bölümün varsayılanı).
 - **Dokunulan bölümlerin bütün eski varyantları** (122 koşu; 6, 7, 10, 10b, 10g, 10h, 10z, 12, 12b, 23, 25, 26, 28o,
   30, 30o, 32o, 34o + `next` zincirleri): 122/122 PASS (ayrıştırma penceresinde başlayan 6 `y`/`letter` ve hükümdar
   düğümü kusuru düzeltilmeden koşan 32o yeniden koşuldu: PASS, yasak 0).
@@ -134,3 +137,20 @@ karede birkaç karşılaştırma). RINFO ölçülmedi: **BAKILMADI**. Sürgün s
   zinciri PACE'te süre sınırına takıldı; B2O kareleri doğrudan 8s koşusundan.
 - ÖNCE | SONRA çifti yalnız Mehmed karşı hamlesinde (özgün kod + depo dışı sonda); öbür maddelerin ÖNCE'si yok (bugün
   o sahneler hiç yok: sürgün sahnesi yeni).
+
+## 9. Denetçinin ZORUNLU listesi (bu turda kapatıldı; `scripts/level/kural.gd`)
+| # | Madde | Durum | Nerede · kanıt |
+|---|---|---|---|
+| 1 | Vurulana `look_target` verilmesin, baş çevirme | DÜZELDİ | `_civilian` ve `_guard_run` → `_look()` (Rig.stare_t). 24/6/10g/24o `krl_hit` (24 üç kez, 6 ve 10g iki kez): `LOOKAUDIT raw` **0** (krl2). |
+| 2 | `kacak_iade` zeminsiz noktaya ışınlanmasın | DÜZELDİ | `_bot_tick` + `_has_ground` (yukarıdan inen ışın, oyuncunun boşluk denetimiyle aynı ölçüt). 41o `kacak_iade` **10 koşu**, 42b 2 koşu: `WARN_VOID_TELEPORT` **0** (ilk denemede 5'te 3 vardı, düzeltildi). |
+| 3 | `firar` 2 sn çıkıp dönende sayılmasın | DÜZELDİ | `_count_firar()` yalnız seslenme basamağında (kovalayan koşarken); lafta dönende `escapes` geri alınır (`_area_tick`). |
+| 4 | Tık başına bütün ağaç taranmasın; tırmanma tıkı tekme sayılmasın | DÜZELDİ | Hayvan listesi 10 sn'de bir (`_animals`); `_hits_tick`: `traversal.wall_ahead()` doluysa çıkar. RINFO ölçülmedi: KANITSIZ. |
+| 5 | Muhafız gelince kamera sıçramasın | DÜZELDİ | `_turn_to()` 0,45 sn yumuşak dönüş (`_guard_run`). Ekranlı karede seçilmedi: KISMEN. |
+| 6 | Kart karesi; 31o'ya `krl_hit` | DÜZELDİ | Kart anında `_cshot` (`c_kural_kart_*`): `pafta2_08_kural_kart.jpg` (24 zindan kartı). 31o `krl_hit` varyantı (`chapter31o.gd`: `bot_window` + rapor) 3/3 PASS, `tests/run_tests.sh`'e eklendi. 39o'ya varyant eklenmedi (sokakta rol taşıyan kişi yok: önceki turdaki gibi). |
+
+Denetçinin K7'si (24'te "Lambda capture" ERROR, 41o VISAUDIT offview) ve 31o varsayılanındaki derviş/Kadri `LOOKAUDIT raw`
+satırları ÖNCE kopyasında da var (31o: özgün kodla 2/2): bu turun işi değil.
+Kural düzeltmelerinden sonra koşulanlar (son kod): 41o `kacak_iade` ×10, 42b `kacak_iade` ×2, 24 `krl_hit` ×3, 6 ve 10g
+`krl_hit` ×2, 24o `krl_hit`, 31o `krl_hit` ×3, 41o/42b `kacak`, 24 `krl_soft`, 6 `krl_soldier`/`krl_animal`, bağlı
+bölümlerin varsayılanları (41o, 42b, 24, 31o, 6, 10g, 24o, 36b, 37o, 39o) ve 41o/42b `lose`, 31o `late`: **52/52 PASS**,
+yasak satır 0.
