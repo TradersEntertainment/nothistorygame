@@ -202,6 +202,8 @@ func _planla() -> void:
 			var want := 2
 			var cur: int = it["lod"]
 			var k0 := lod0_m + r
+			if it["kind"] == "kanat":
+				k0 = 75.0 + r          # ORDUGÂH-5: kumaş çadırlar yakında ~600 üçgen; çadır kanadı yakın katmana daha geç girer
 			if cur == 0:
 				k0 *= 1.15
 			if h["yakin"]:
