@@ -279,7 +279,7 @@ def tts(voice, text, out, model, tone=""):
     if model.startswith("eleven_v3"):
         # v3: ton etiketi metnin başına; stability yalnız 0 (yaratıcı) / 0.5 (doğal) / 1 (sabit)
         st = min((0.0, 0.5, 1.0), key=lambda x: abs(x - voice.get("v3_stability", voice.get("stability", 0.5))))
-        if tone.startswith(("[shouting", "[calling out")):
+        if tone.startswith(("[shouts", "[shouting", "[calling out", "[barking", "[commanding")):
             st = 0.0      # bağırma/seslenme: serbest okuma (dengeli ayarda bağırış düzleşiyor)
         body = {"text": (tone + " " + text).strip() if tone else text, "model_id": model,
                 "voice_settings": {"stability": st},
@@ -446,7 +446,7 @@ def tone_of(r, cast):
         return r["ton"]
     mode = resolve(cast, r["konusmaci"]).get("ton_mode", "")
     if mode.startswith("rol:"):
-        return role_tone(clean(r.get("tr", "")), mode[4:], r.get("ton", ""))
+        return role_tone(clean(r.get("tr", "")), mode[4:], r.get("ton", ""), mesafe_of(r.get("anahtar", "")))
     if mode:
         return scene_tone(clean(r.get("tr", "")), mode)
     return r.get("ton", "") or resolve(cast, r["konusmaci"]).get("ton", "")
@@ -802,25 +802,64 @@ ROL_YAKIN = {    # (ünlem, soru, üç nokta, düz): yanındakine konuşur; bağ
 }
 
 
-def role_tone(text, role, taban=""):
-    """Rol okuması. MESAFE repliğin kendi ton etiketinden gelir (VOICE_MAP 'ton' sütunu; sahibin notu: "uzağa bağırması
-    lazım, yakındayken normal konuşması lazım"): [shouting]/[screaming] = uzaktan, gerçekten bağırır; [excited] + ünlem =
-    yakında seslenir; [whispers] = fısıltı; etiketsiz = yanındakine NORMAL sesle konuşur (ünlem olsa da bağırmaz).
-    Öbür duygu etiketleri ([sad], [tired], [hesitant]…) korunur ve rolün yakın okumasına eklenir."""
+ROL_BAGIR = "[shouts] [yelling at the top of his lungs]"     # ölçüldü: en belirgin bağırış bu yönergeyle çıkıyor
+MESAFE_PATH = os.path.join(ROOT, "docs/voice/MESAFE.csv")
+_MESAFE = None
+
+
+def mesafe_of(key):
+    """docs/voice/MESAFE.csv: repliğin sahnedeki mesafe/şiddet sınıfı (uzak, yakin_yuksek, yakin, fisilti, telsiz,
+    ic_ses, belirsiz). Sahneler tek tek okunarak çıkarıldı (kanıt sütunu: dosya:satır)."""
+    global _MESAFE
+    if _MESAFE is None:
+        _MESAFE = {}
+        if os.path.exists(MESAFE_PATH):
+            for r in csv.DictReader(open(MESAFE_PATH, encoding="utf-8")):
+                _MESAFE[r["anahtar"]] = r["mesafe"]
+    return _MESAFE.get(key, "")
+
+
+def role_tone(text, role, taban="", mesafe=""):
+    """Rol okuması. Sahibin notu: "bağırması lazım uzağa, yakındayken normal konuşması lazım".
+    MESAFE haritası varsa o belirler: uzak = gerçekten bağırır; yakin_yuksek = yanında ama sesini yükseltir;
+    yakin = NORMAL konuşma sesi (ünlem olsa da bağırmaz); fisilti; telsiz = mikrofona yakın, normal; ic_ses = kendi
+    kendine. Harita yoksa repliğin ton etiketine bakılır ([shouting] = yüksek ses). Öbür duygu etiketleri korunur."""
     if role not in ROL_YAKIN:
         return taban
     etiketler = re.findall(r"\[[^\]]+\]", taban or "")
-    if any(t in ("[shouting]", "[screaming]") for t in etiketler):
-        return ROL_UZAK[role]
     ex, q, dots = "!" in text, "?" in text, ("…" in text or "..." in text)
-    if "[excited]" in etiketler and ex:
-        return ROL_SESLEN[role]
     y = ROL_YAKIN[role]
-    t = y[0] if ex else y[1] if q else y[2] if dots else y[3]
-    if "[whispers]" in etiketler:
-        return "[whispers] " + t
-    duygu = " ".join(e for e in etiketler if e not in ("[excited]",))
-    return (duygu + " " + t).strip()
+    yakin = y[0] if ex else y[1] if q else y[2] if dots else y[3]
+    duygu = " ".join(e for e in etiketler if e not in ("[excited]", "[shouting]", "[screaming]", "[whispers]"))
+    if mesafe in ("", "belirsiz"):
+        if any(t in ("[shouting]", "[screaming]") for t in etiketler):
+            mesafe = "yakin_yuksek"
+        elif "[excited]" in etiketler and ex:
+            mesafe = "yakin_yuksek"
+        elif "[whispers]" in etiketler:
+            mesafe = "fisilti"
+        else:
+            mesafe = "yakin"
+    if mesafe == "uzak":
+        return ROL_BAGIR
+    if mesafe == "yakin_yuksek":
+        return ROL_SESLEN[role]
+    if mesafe == "fisilti":
+        return "[whispers] " + yakin
+    if mesafe == "telsiz":
+        return _tekil("[normal speaking voice] [close to the microphone] " + duygu + " " + yakin)
+    if mesafe == "ic_ses":
+        return ("[muttering to himself] [low voice] " + duygu).strip()
+    return _tekil("[normal speaking voice] " + duygu + " " + yakin)
+
+
+def _tekil(t):
+    """Yinelenen yönerge etiketlerini atar, sırayı korur."""
+    gor, out = set(), []
+    for e in re.findall(r"\[[^\]]+\]", t):
+        if e not in gor:
+            gor.add(e); out.append(e)
+    return " ".join(out)
 
 
 def scene_tone(text, mode):
