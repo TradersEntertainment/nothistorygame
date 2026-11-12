@@ -1,4 +1,4 @@
-# İstanbul v2 — Gezi denetimi: `marmara` bölgesi (ARA GÖNDERİM)
+# İstanbul v2 — Gezi denetimi: `marmara` bölgesi (SON)
 
 Denetçi gezgin; oyun kodu DEĞİŞTİRİLMEDİ (yalnız `tests/_ist/gezi_marmara.gd/.tscn` sonda dosyası ve bu klasör).
 
@@ -57,15 +57,60 @@ Sahibi bu kıyıya baktığında ilk olarak **sur dibindeki parlak yeşil kareli
 | 35 | KUTU | 2 | Kontoskalion (Kadırga) kıyısı | -953, -670 | s030_sur_deniz.jpg | Duvarsız, yalnız kırmızı kiremitli çatıdan oluşan kutu yapı sur önünde su üstünde asılı; altı düz kahverengi | düğüm bulunamadı (pişmiş/MultiMesh); olası: sehir.gd:marmara_suru kıyı şeridi, marmara_kiyi.gd (ŞÜPHELİ) | yapıya duvar ve zemin bağla |
 | 36 | PERFORMANS | 2 | Samatya/Psamathia kıyısı | -4067, -1019 | s007_ic150_boyu.jpg (+ s006_ic150_boyu.jpg, s005_ic150_boyu.jpg) | Yer karelerinde üçgen bütçesi aşılıyor: 144 yer karesinin 31'inde > 2,5 M üçgen (en yüksek 3,17 M, çizim ≤ 1 150) | pişmiş sur dilimi /IstSehir/@MeshInstance3D@13016-13020 (sehir.gd:marmara_suru kur=marmara; marmara_sur.gd:build_run) | kıyı katmanında uzak sur ve ağaç MultiMesh LOD'unu sıkılaştır |
 | 37 | GÖRSEL | 3 | ? | ?, ? | g000_op100_y0.jpg | Havada asılı iki ahşap kalas/levha (üst solda): sokağın üstünde yüzüyor | düğüm bulunamadı (pişmiş/MultiMesh); olası: sehir.gd:marmara_suru kıyı şeridi, marmara_kiyi.gd (ŞÜPHELİ) | asılı kalas kaynağını bul (iskele/şantiye çatısı?) |
+| 38 | GÖRSEL | 1 | Kadırga–Bukoleon kıyısı | -437, -816 | lm2_bukoleon_000.jpg (+ lm2_bukoleon_090.jpg, lm2_bukoleon_180.jpg, lm2_bukoleon_20m.jpg, lm2_bukoleon_tepe.jpg) | Bukoleon limanı: su yerine düz, parlak CAMGÖBEĞİ levha; üstünde krem silindir kütükler, limon yeşili küpler ve yeşil çubuklar yüzüyor; ortada suya bakan taş kapı. Çevre deniz mavisi, liman ise oyuncak plastik gibi (iki ayrı su) | düğüm bulunamadı; marmara_bukoleon.gd / marmara_liman.gd (Bukoleon lagünü; ŞÜPHELİ) | lagün suyunu deniz malzemesiyle aynı yap; kütük/küpü kaldır ya da tekne/direk/kalas yap |
+| 39 | KUTU | 2 | Kontoskalion (Kadırga) kıyısı | -941, -620 | lm2_kontoskalion_000.jpg (+ lm2_kontoskalion_090.jpg, lm2_kontoskalion_tepe.jpg) | Kontoskalion kıyısında sur arasına oturmuş dokusuz devasa krem prizma (duvar yüksekliğinde); tepeden limanda iki beyaz kutu daha; iskeleler ve tekneler iyi ama sur kuleleri beyaz kutu | pişmiş sur dilimi /IstSehir/@MeshInstance3D@13016-13020 (sehir.gd:marmara_suru kur=marmara; marmara_sur.gd:build_run) | beyaz dolgu prizmalarını taş duvarla değiştir |
+| 40 | MANTIK | 2 | Yedikule–Mermer Kule kıyısı | -4630, -1450 | lm2_diomedes_270.jpg (+ lm2_diomedes_000.jpg) | Kilisenin önünden pencerelerinin arasındaki kapıya DEĞİL, düz duvara çıkan tek renk koyu kahverengi merdiven; kilise çıplak kutu + kırmızı çatı (kapı yan cephede) | kiliseler_kilise.gd:67/203 (batı merdiveni; ŞÜPHELİ) | merdiven kapıya ya da yürünebilir dama çıksın; cephe dokusu |
+| 41 | KUTU | 2 | Yedikule–Mermer Kule kıyısı | -4570, -1450 | lm2_diomedes_090.jpg | Kamera ev/ağaç içine düşmüş: lacivert boşlukta beyaz kristal çokgenler ve ince çizgiler (ağaç tacı içi / ağın tellenmiş yüzü); ağaç taçları dışarıdan da buz parçası gibi beyaz | düğüm bulunamadı (MultiMesh); karsi_kiyilar/ağaç ağı dunya.gd:_karsi_ag ya da bitki.gd (ŞÜPHELİ) | MultiMesh ağaç örnek rengi/beyaz taç; iç yüzleri kapat |
+| 42 | MANTIK | 2 | Kontoskalion (Kadırga) kıyısı | -1145, -564 | tak_F_r3_000.jpg | Yol ortasında havada tek bir alev (odunsuz, külsüz) ve altında beyaz yumurta/çuval kümesi; sağda kahverengi basamaklı kutu blok havada asılı, hiçbir şeye bağlı değil | düğüm bulunamadı (MultiMesh); karsi_kiyilar/ağaç ağı dunya.gd:_karsi_ag ya da bitki.gd (ŞÜPHELİ) / ateş: ordugâh dışı sokak ateşi (ŞÜPHELİ) | alevi odun/ateş çukuruna otur; basamak bloğunu yere bağla |
+| 43 | ZEMİN | 2 | Yedikule–Mermer Kule kıyısı | -4555, -1629 | tak_A_r1_000.jpg (+ tak_A_r1_270.jpg, tak_C_r3_270.jpg) | Yapı ile zemin arasında siyah bıçak çizgisi (duvar eteğinde ince boşluk); duvar dokusuz düz bej yüz | düğüm bulunamadı (pişmiş/MultiMesh); olası: sehir.gd:marmara_suru kıyı şeridi, marmara_kiyi.gd (ŞÜPHELİ) | duvar tabanını zemine göm; bej yüze taş/badana dokusu |
+| 44 | GÖRSEL | 3 | Kadırga–Bukoleon kıyısı | -726, -703 | tak_C_r3_000.jpg | Tek renk bej, dokusuz, kutu basamaklı dev merdiven (derz yok) | düğüm bulunamadı (pişmiş/MultiMesh); olası: sehir.gd:marmara_suru kıyı şeridi, marmara_kiyi.gd (ŞÜPHELİ) | basamağa taş doku ve pah |
+| 45 | KUTU | 3 | Langa–Yenikapı kıyısı | -2259, -559 | tak_E_r5_090.jpg (+ tak_E_r5_180.jpg, tak_E_r5_270.jpg) | Bostanda parlak beyaz küp/levha sıraları (çit/duvar?) ve yer yer limon yeşili tek küp parçaları; çit gibi değil, dizili kutu | düğüm bulunamadı (pişmiş/MultiMesh); olası: sehir.gd:marmara_suru kıyı şeridi, marmara_kiyi.gd (ŞÜPHELİ) | bostan sınırını çit/taş yığını yap, limon küpleri sil |
+| 46 | GÖRSEL | 3 | Narlıkapı–Davutpaşa kıyısı | -3475, -750 | tak_D_r4_tepe.jpg | Tepeden kulelerin üstünde beyaz kesik çizgili kareler (mazgal küpleri) ve hendek/suyla sur arası bulanık geçiş | pişmiş sur dilimi /IstSehir/@MeshInstance3D@13016-13020 (sehir.gd:marmara_suru kur=marmara; marmara_sur.gd:build_run) | mazgal rengi taşla eşle |
+| 47 | OYNANIŞ | 2 | Narlıkapı–Davutpaşa kıyısı | -3475, -750 | tak_D_r4_270.jpg (+ tak_D_r4_000.jpg) | Gerçek oyuncu sur dibi rotasında suya girdi (1) ve zemin altına düştü (2: −3505,−748); sur-su-çimen şeridi iki katmanlı, oyuncu hendek kenarında kayıyor | yürüyüş sondası (tests/_ist/gezi_marmara.gd) GEZI_OLAY suya_girdi/dusme | kıyı çizgisini yürünebilir kıyıyla hizala; su kenarında yakalayıcı |
+| 48 | OYNANIŞ | 3 | Yedikule–Mermer Kule kıyısı | -4555, -1629 | tak_A_r1_180.jpg (+ tak_B_r2_090.jpg, tak_C_r3_090.jpg) | Yürüyüşte 43 'takıldı' olayı: kareler oyuncunun dar sokak/ev duvarına doğrusal yürüdüğünü gösteriyor (A −4555,−1629; B −1972,−610; C −726,−703). ŞÜPHELİ: sondanın düz hat yürüyüşü, yol bulma yok; görünmez duvar KANITLANMADI | yürüyüş sondası; Player çarpışması | oyun içi gerçek yolla (sokak ağı) yeniden sına |
 
 ## 4. Tür başına sayım
 
 - BOŞLUK: 3
-- GÖRSEL: 15
-- KUTU: 9
-- MANTIK: 4
+- GÖRSEL: 18
+- KUTU: 12
+- MANTIK: 6
+- OYNANIŞ: 2
 - PERFORMANS: 1
-- ZEMİN: 5
+- ZEMİN: 6
 
-**KUTU kalan=9** (listelenen kutu bulgusu; hedef 0). Toplam bulgu: 37 (hedef ≥ 40: KARŞILANMADI, kalan bölge taranamadı).
+**KUTU kalan=12** (listelenen kutu bulgusu; hedef 0). Toplam bulgu: 48 (hedef ≥ 40: karşılandı).
 
+## 5. En kötü 12 kare (`kare/` içinde)
+1. `lm2_bukoleon_000.jpg` (+ _090, _180, _20m, _tepe): Bukoleon limanı düz camgöbeği plastik su, kütükler ve limon küpler.
+2. `s018_sur_deniz.jpg`: denizin üstünde havada asılı mermer levha; altta yeşil kare kıyı şeridi.
+3. `lm_psamatya_kapi_135.jpg`: parlak yeşil kareli kıyı şeridi + beyaz bıçak çizgisi (hat boyunca).
+4. `s007_su120_sur.jpg`: surun dibinde suyun içinde yüzen iki çatı; sur yüzünde beyaz küçük kareler.
+5. `h004_20m_capraz.jpg` / `h010_20m_capraz.jpg`: havadan kule aralarında devasa beyaz kutular.
+6. `s000_ic60_deniz.jpg`: iki kule arasında dokusuz krem kutu.
+7. `n001_gece_ic.jpg`: geceleyin aynı kutu ışıyor.
+8. `s013_ic150_boyu.jpg`: kutudan yük eşeği (KUTU YASAĞI).
+9. `lm2_kontoskalion_000.jpg`: sur arasında devasa krem prizma.
+10. `h015_20m_capraz.jpg`: denizde kıyıdan kopuk iskele / kiriş havada.
+11. `tak_F_r3_000.jpg`: havada tek alev + havada asılı basamaklı blok.
+12. `s009_ic150_boyu.jpg`: beyaz kristal ağaç taçları ve beyaz sivri kule.
+
+## 6. İYİ olan 5 kare (korunacaklar)
+1. `kare/s024_su120_sur.jpg`: denizden sur + galeri gemisi; taş dokusu ve kule silüeti iyi okunuyor.
+2. `kare/lm2_diomedes_20m.jpg`: Diomedes çevresi tepeden: sokak ağı, evler, tezgâh ve kişiler; yaşam dolu (ev kümeleri doğal).
+3. `kare/lm2_kontoskalion_tepe.jpg`: Kontoskalion limanı: iskeleler ve tekneler okunaklı (iki beyaz kutu hariç).
+4. `kare/lm_psamatya_kapi_135.jpg`: ağ sehpası, balıkçı iskelesi, kayık: yaşam hissi (yeşil şerit hariç).
+5. `kare/s025_su120_sur.jpg`: denizden sur, tekneler ve gemi silüeti, ufukta şehir.
+
+## 7. Yürüyüş ve oyunculu sonuç (dürüst özet)
+- Altı rota (r1…r6), dünya ölçeğinde toplam 599 m ≈ gerçek ~1,7 km (S=0,35); ancak çoğu rota duvara çarpıp ilerleyemedi: 43 `takildi`, 2 `dusme`, 1 `suya_girdi`. Rota başına: r1 70 m, r2 2 m, r3 244 m, r4 7 m, r5 163 m, r6 113 m.
+- Hüküm: sonda düz hatla yürüdüğü için çoğu "takıldı" ev/sur duvarına çarpma (L6 kareleri A, B, C); gerçek görünmez duvar KANITLANAMADI. Yalnız r4'te (−3505,−748) suya girme + 2 düşme gerçek bulgudur.
+- Boşluğa basma/çıkılamayan basamak/kapalı cep: sınanamadı.
+
+## 8. Bakamadıklarım ve dürüst sınırlar
+- 60 m ızgara (≈ 3 000 kare) ve her kapıya 8 kare yürüyüş yapılmadı (yazılımla çizim ≈ 1,9 sn/kare). Kontoskalion/Eleutherios limanları yalnız `lm2_*` halkalarıyla, Marmara kapıları kısmen (Yenikapı kare kamerası duvar içine düştü) görüldü.
+- İlk katalog koordinatlı 126 karelik L4 yanlıştı (denize bakan kareler), bulgu sayılmadı.
+- Kaynak sütunu: pişmiş/MultiMesh nesnelerin düğüm adları anonim; ŞÜPHELİ yazılanlar kesin değil.
+- Gece kareleri yalnız iç/su yönü; ordugâh bu bölgede değil.
+- Performans: 144 yer karesinde 31'i >2,5 M üçgen; çizim ≤ 1 200 (1 kare üstü); `RINFO` ham satırları `ham_rinfo.txt`.
+- Bir kısım bulgu açıklaması 3×3 paftadan okundu (tam boy yalnız şüpheli karelerde). Önem sıralaması öznel.
