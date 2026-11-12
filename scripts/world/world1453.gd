@@ -289,6 +289,8 @@ static func build(parent: Node3D, region_name: String, keep_local: Array, night 
 		match fr:
 			"byz_walls":
 				ByzCity.far_hub(f, region(fr))
+	# İstanbul 1453 parçaları (scripts/world/ist: anıtlar, surlar, limanlar, ayrıntı): mesafeyle kurulur/boşaltılır
+	IstSehir.attach(f)
 	# Ateşler: Dressing.glow kutuları (ordugâhın, ovanın, surların, kıyının gece ateşleri) alev ve haleye çevrilir
 	Flame.from_glow_boxes(f)
 	# Gölgelendiriciler yüklemede derlensin (yaklaşınca donma olmasın)
