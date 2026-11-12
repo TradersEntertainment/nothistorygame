@@ -1199,3 +1199,103 @@ DST_DERV_FEZ_1,SPK_DERVISH,yakin,2,side_events.gd:423 FEZ havuzu (street_talk si
 DST_WOMB_IDLE_1,SPK_WOMAN_BYZ,yakin,2,side_events.gd:432 IDLE havuzu (street_talk side_events.gd:496) -> hud.street_bark hud.gd:1232,"oyuncu E ile konuşur (street_talk), TALK_R 4 m"
 DST_WOMB_IDLE_2,SPK_WOMAN_BYZ,yakin,2,side_events.gd:432 IDLE havuzu (street_talk side_events.gd:496) -> hud.street_bark hud.gd:1232,"oyuncu E ile konuşur (street_talk), TALK_R 4 m"
 DST_WOMB_IDLE_3,SPK_WOMAN_BYZ,yakin,2,side_events.gd:432 IDLE havuzu (street_talk side_events.gd:496) -> hud.street_bark hud.gd:1232,"oyuncu E ile konuşur (street_talk), TALK_R 4 m"
+DST_WOMB_IDLE_4,SPK_WOMAN_BYZ,yakin,2,side_events.gd:432 IDLE havuzu (street_talk side_events.gd:496) -> hud.street_bark hud.gd:1232,"oyuncu E ile konuşur (street_talk), TALK_R 4 m"
+DST_WOMB_IDLE_5,SPK_WOMAN_BYZ,yakin,2,side_events.gd:432 IDLE havuzu (street_talk side_events.gd:496) -> hud.street_bark hud.gd:1232,"oyuncu E ile konuşur (street_talk), TALK_R 4 m"
+DST_WOMB_IDLE_6,SPK_WOMAN_BYZ,yakin,2,side_events.gd:432 IDLE havuzu (street_talk side_events.gd:496) -> hud.street_bark hud.gd:1232,"oyuncu E ile konuşur (street_talk), TALK_R 4 m"
+DST_WOMB_FEZ_1,SPK_WOMAN_BYZ,yakin,2,side_events.gd:423 FEZ havuzu (street_talk side_events.gd:496) -> hud.street_bark hud.gd:1232,"oyuncu E ile konuşur (street_talk), TALK_R 4 m"
+DST_WOMB_GAL_1,SPK_WOMAN_BYZ,yakin,2,side_events.gd:431 GAL havuzu (street_talk side_events.gd:496) -> hud.street_bark hud.gd:1232,"oyuncu E ile konuşur (street_talk), TALK_R 4 m"
+DST_WOMB_GAL_2,SPK_WOMAN_BYZ,yakin,2,side_events.gd:431 GAL havuzu (street_talk side_events.gd:496) -> hud.street_bark hud.gd:1232,"oyuncu E ile konuşur (street_talk), TALK_R 4 m"
+DST_CHILDB_FEZ_1,SPK_CHILD_BYZ,yakin,2,side_events.gd:423 FEZ havuzu (street_talk side_events.gd:496) -> hud.street_bark hud.gd:1232,"oyuncu E ile konuşur (street_talk), TALK_R 4 m"
+DST_CHILDB_IDLE_1,SPK_CHILD_BYZ,yakin,2,side_events.gd:432 IDLE havuzu (street_talk side_events.gd:496) -> hud.street_bark hud.gd:1232,"oyuncu E ile konuşur (street_talk), TALK_R 4 m"
+DST_CHILDB_IDLE_2,SPK_CHILD_BYZ,yakin,2,side_events.gd:432 IDLE havuzu (street_talk side_events.gd:496) -> hud.street_bark hud.gd:1232,"oyuncu E ile konuşur (street_talk), TALK_R 4 m"
+DST_CHILDB_IDLE_3,SPK_CHILD_BYZ,yakin,2,side_events.gd:432 IDLE havuzu (street_talk side_events.gd:496) -> hud.street_bark hud.gd:1232,"oyuncu E ile konuşur (street_talk), TALK_R 4 m"
+DST_CHILDB_IDLE_4,SPK_CHILD_BYZ,yakin,2,side_events.gd:432 IDLE havuzu (street_talk side_events.gd:496) -> hud.street_bark hud.gd:1232,"oyuncu E ile konuşur (street_talk), TALK_R 4 m"
+DST_CHILDB_IDLE_5,SPK_CHILD_BYZ,yakin,2,side_events.gd:432 IDLE havuzu (street_talk side_events.gd:496) -> hud.street_bark hud.gd:1232,"oyuncu E ile konuşur (street_talk), TALK_R 4 m"
+DST_FISHER_IDLE_1,SPK_FISHMONGER,yakin,2,side_events.gd:432 IDLE havuzu (street_talk side_events.gd:496) -> hud.street_bark hud.gd:1232,"oyuncu E ile konuşur (street_talk), TALK_R 4 m"
+DST_FISHER_IDLE_2,SPK_FISHMONGER,yakin,2,side_events.gd:432 IDLE havuzu (street_talk side_events.gd:496) -> hud.street_bark hud.gd:1232,"oyuncu E ile konuşur (street_talk), TALK_R 4 m"
+DST_FISHER_IDLE_3,SPK_FISHMONGER,yakin,2,side_events.gd:432 IDLE havuzu (street_talk side_events.gd:496) -> hud.street_bark hud.gd:1232,"oyuncu E ile konuşur (street_talk), TALK_R 4 m"
+DST_FISHER_IDLE_4,SPK_FISHMONGER,yakin,2,side_events.gd:432 IDLE havuzu (street_talk side_events.gd:496) -> hud.street_bark hud.gd:1232,"oyuncu E ile konuşur (street_talk), TALK_R 4 m"
+DST_FISHER_IDLE_5,SPK_FISHMONGER,yakin,2,side_events.gd:432 IDLE havuzu (street_talk side_events.gd:496) -> hud.street_bark hud.gd:1232,"oyuncu E ile konuşur (street_talk), TALK_R 4 m"
+DST_TOWNB_IDLE_1,SPK_TOWNSMAN,yakin,2,side_events.gd:432 IDLE havuzu (street_talk side_events.gd:496) -> hud.street_bark hud.gd:1232,"oyuncu E ile konuşur (street_talk), TALK_R 4 m"
+DST_TOWNB_IDLE_2,SPK_TOWNSMAN,yakin,2,side_events.gd:432 IDLE havuzu (street_talk side_events.gd:496) -> hud.street_bark hud.gd:1232,"oyuncu E ile konuşur (street_talk), TALK_R 4 m"
+DST_TOWNB_IDLE_3,SPK_TOWNSMAN,yakin,2,side_events.gd:432 IDLE havuzu (street_talk side_events.gd:496) -> hud.street_bark hud.gd:1232,"oyuncu E ile konuşur (street_talk), TALK_R 4 m"
+DST_TOWNB_IDLE_4,SPK_TOWNSMAN,yakin,2,side_events.gd:432 IDLE havuzu (street_talk side_events.gd:496) -> hud.street_bark hud.gd:1232,"oyuncu E ile konuşur (street_talk), TALK_R 4 m"
+DST_TOWNB_IDLE_5,SPK_TOWNSMAN,yakin,2,side_events.gd:432 IDLE havuzu (street_talk side_events.gd:496) -> hud.street_bark hud.gd:1232,"oyuncu E ile konuşur (street_talk), TALK_R 4 m"
+DST_TOWNB_IDLE_6,SPK_TOWNSMAN,yakin,2,side_events.gd:432 IDLE havuzu (street_talk side_events.gd:496) -> hud.street_bark hud.gd:1232,"oyuncu E ile konuşur (street_talk), TALK_R 4 m"
+DST_JAN_CONQ_1,SPK_JANISSARY,yakin,2,side_events.gd:409 CONQ havuzu (street_talk side_events.gd:496) -> hud.street_bark hud.gd:1232,"oyuncu E ile konuşur (street_talk), TALK_R 4 m"
+DST_JAN_CONQ_2,SPK_JANISSARY,yakin,2,side_events.gd:409 CONQ havuzu (street_talk side_events.gd:496) -> hud.street_bark hud.gd:1232,"oyuncu E ile konuşur (street_talk), TALK_R 4 m"
+DST_JAN_CONQ_3,SPK_JANISSARY,yakin,2,side_events.gd:409 CONQ havuzu (street_talk side_events.gd:496) -> hud.street_bark hud.gd:1232,"oyuncu E ile konuşur (street_talk), TALK_R 4 m"
+DST_TOWNB_CONQ_1,SPK_TOWNSMAN,yakin,2,side_events.gd:409 CONQ havuzu (street_talk side_events.gd:496) -> hud.street_bark hud.gd:1232,"oyuncu E ile konuşur (street_talk), TALK_R 4 m"
+DST_TOWNB_CONQ_2,SPK_TOWNSMAN,yakin,2,side_events.gd:409 CONQ havuzu (street_talk side_events.gd:496) -> hud.street_bark hud.gd:1232,"oyuncu E ile konuşur (street_talk), TALK_R 4 m"
+DST_WOMB_CONQ_1,SPK_WOMAN_BYZ,yakin,2,side_events.gd:409 CONQ havuzu (street_talk side_events.gd:496) -> hud.street_bark hud.gd:1232,"oyuncu E ile konuşur (street_talk), TALK_R 4 m"
+DST_PRIEST_CONQ_1,SPK_PRIEST,yakin,2,side_events.gd:409 CONQ havuzu (street_talk side_events.gd:496) -> hud.street_bark hud.gd:1232,"oyuncu E ile konuşur (street_talk), TALK_R 4 m"
+DST_GENMERC_CONQ_1,SPK_GENOESE,yakin,2,side_events.gd:409 CONQ havuzu (street_talk side_events.gd:496) -> hud.street_bark hud.gd:1232,"oyuncu E ile konuşur (street_talk), TALK_R 4 m"
+DST_BYZSOL_AGAIN_1,SPK_CITY_GUARD,yakin,2,side_events.gd:400 AGAIN havuzu (street_talk side_events.gd:496) -> hud.street_bark hud.gd:1232,"oyuncu E ile konuşur (street_talk), TALK_R 4 m"
+DST_BYZSOL_AGAIN_2,SPK_CITY_GUARD,yakin,2,side_events.gd:400 AGAIN havuzu (street_talk side_events.gd:496) -> hud.street_bark hud.gd:1232,"oyuncu E ile konuşur (street_talk), TALK_R 4 m"
+DST_BYZSOL_AGAIN,SPK_CITY_GUARD,yakin,2,side_events.gd:400 AGAIN havuzu (street_talk side_events.gd:496) -> hud.street_bark hud.gd:1232,"oyuncu E ile konuşur (street_talk), TALK_R 4 m"
+DST_OSMSOL_AGAIN_1,SPK_SOLDIER,yakin,2,side_events.gd:400 AGAIN havuzu (street_talk side_events.gd:496) -> hud.street_bark hud.gd:1232,"oyuncu E ile konuşur (street_talk), TALK_R 4 m"
+DST_OSMSOL_AGAIN_2,SPK_SOLDIER,yakin,2,side_events.gd:400 AGAIN havuzu (street_talk side_events.gd:496) -> hud.street_bark hud.gd:1232,"oyuncu E ile konuşur (street_talk), TALK_R 4 m"
+DST_OSMSOL_AGAIN,SPK_SOLDIER,yakin,2,side_events.gd:400 AGAIN havuzu (street_talk side_events.gd:496) -> hud.street_bark hud.gd:1232,"oyuncu E ile konuşur (street_talk), TALK_R 4 m"
+DST_JAN_AGAIN_1,SPK_JANISSARY,yakin,2,side_events.gd:400 AGAIN havuzu (street_talk side_events.gd:496) -> hud.street_bark hud.gd:1232,"oyuncu E ile konuşur (street_talk), TALK_R 4 m"
+DST_JAN_AGAIN,SPK_JANISSARY,yakin,2,side_events.gd:400 AGAIN havuzu (street_talk side_events.gd:496) -> hud.street_bark hud.gd:1232,"oyuncu E ile konuşur (street_talk), TALK_R 4 m"
+DST_CIVB_AGAIN_1,SPK_TOWNSMAN,yakin,2,side_events.gd:400 AGAIN havuzu (street_talk side_events.gd:496) -> hud.street_bark hud.gd:1232,"oyuncu E ile konuşur (street_talk), TALK_R 4 m"
+DST_CIVB_AGAIN_2,SPK_TOWNSMAN,yakin,2,side_events.gd:400 AGAIN havuzu (street_talk side_events.gd:496) -> hud.street_bark hud.gd:1232,"oyuncu E ile konuşur (street_talk), TALK_R 4 m"
+DST_CIVB_AGAIN,SPK_TOWNSMAN,yakin,2,side_events.gd:400 AGAIN havuzu (street_talk side_events.gd:496) -> hud.street_bark hud.gd:1232,"oyuncu E ile konuşur (street_talk), TALK_R 4 m"
+DST_WOMB_AGAIN_1,SPK_WOMAN_BYZ,yakin,2,side_events.gd:400 AGAIN havuzu (street_talk side_events.gd:496) -> hud.street_bark hud.gd:1232,"oyuncu E ile konuşur (street_talk), TALK_R 4 m"
+DST_WOMB_AGAIN,SPK_WOMAN_BYZ,yakin,2,side_events.gd:400 AGAIN havuzu (street_talk side_events.gd:496) -> hud.street_bark hud.gd:1232,"oyuncu E ile konuşur (street_talk), TALK_R 4 m"
+DST_CHILDB_AGAIN_1,SPK_CHILD_BYZ,yakin,2,side_events.gd:400 AGAIN havuzu (street_talk side_events.gd:496) -> hud.street_bark hud.gd:1232,"oyuncu E ile konuşur (street_talk), TALK_R 4 m"
+DST_CHILDB_AGAIN,SPK_CHILD_BYZ,yakin_yuksek,2,side_events.gd:400 AGAIN havuzu (street_talk side_events.gd:496) -> hud.street_bark hud.gd:1232,"çocuk annesine seslenir (""Anneee!"")"
+DST_PRIEST_AGAIN,SPK_PRIEST,yakin,2,side_events.gd:400 AGAIN havuzu (street_talk side_events.gd:496) -> hud.street_bark hud.gd:1232,"oyuncu E ile konuşur (street_talk), TALK_R 4 m"
+DST_DERV_AGAIN,SPK_DERVISH,yakin,2,side_events.gd:400 AGAIN havuzu (street_talk side_events.gd:496) -> hud.street_bark hud.gd:1232,"oyuncu E ile konuşur (street_talk), TALK_R 4 m"
+DST_VEND_AGAIN,SPK_TOWNSMAN,yakin,2,side_events.gd:400 AGAIN havuzu (street_talk side_events.gd:496) -> hud.street_bark hud.gd:1232,"oyuncu E ile konuşur (street_talk), TALK_R 4 m"
+DST_ODD_JUMP_B_1,SPK_TOWNSMAN,yakin,3-6,"street_eye.gd:613 _bark/_line_for DST_ODD_* tepki sözü; yarıçap tür başına 6-14 m (KINDS), hud.gd _say_staging ünlemi bağırış sayar","yan tepki, söylenir"
+DST_ODD_JUMP_B_2,SPK_CITY_GUARD,yakin_yuksek,4-10,"street_eye.gd:613 _bark/_line_for DST_ODD_* tepki sözü; yarıçap tür başına 6-14 m (KINDS), hud.gd _say_staging ünlemi bağırış sayar",ünlemli/sesli tepki
+DST_ODD_JUMP_O_1,SPK_SOLDIER,yakin,3-6,"street_eye.gd:613 _bark/_line_for DST_ODD_* tepki sözü; yarıçap tür başına 6-14 m (KINDS), hud.gd _say_staging ünlemi bağırış sayar","yan tepki, söylenir"
+DST_ODD_JUMP_O_2,SPK_AZAP,yakin_yuksek,4-10,"street_eye.gd:613 _bark/_line_for DST_ODD_* tepki sözü; yarıçap tür başına 6-14 m (KINDS), hud.gd _say_staging ünlemi bağırış sayar",ünlemli/sesli tepki
+DST_ODD_BUMP_B_1,SPK_TOWNSMAN,yakin_yuksek,4-10,"street_eye.gd:613 _bark/_line_for DST_ODD_* tepki sözü; yarıçap tür başına 6-14 m (KINDS), hud.gd _say_staging ünlemi bağırış sayar",ünlemli/sesli tepki
+DST_ODD_BUMP_B_2,SPK_PORTER,yakin_yuksek,4-10,"street_eye.gd:613 _bark/_line_for DST_ODD_* tepki sözü; yarıçap tür başına 6-14 m (KINDS), hud.gd _say_staging ünlemi bağırış sayar",ünlemli/sesli tepki
+DST_ODD_BUMP_O_1,SPK_SOLDIER,yakin_yuksek,4-10,"street_eye.gd:613 _bark/_line_for DST_ODD_* tepki sözü; yarıçap tür başına 6-14 m (KINDS), hud.gd _say_staging ünlemi bağırış sayar",ünlemli/sesli tepki
+DST_ODD_BUMP_O_2,SPK_WORKER,yakin,3-6,"street_eye.gd:613 _bark/_line_for DST_ODD_* tepki sözü; yarıçap tür başına 6-14 m (KINDS), hud.gd _say_staging ünlemi bağırış sayar","yan tepki, söylenir"
+DST_ODD_PHONE_B_1,SPK_CITY_GUARD,yakin_yuksek,4-10,"street_eye.gd:613 _bark/_line_for DST_ODD_* tepki sözü; yarıçap tür başına 6-14 m (KINDS), hud.gd _say_staging ünlemi bağırış sayar",ünlemli/sesli tepki
+DST_ODD_PHONE_B_2,SPK_WOMAN_BYZ,yakin,3-6,"street_eye.gd:613 _bark/_line_for DST_ODD_* tepki sözü; yarıçap tür başına 6-14 m (KINDS), hud.gd _say_staging ünlemi bağırış sayar","yan tepki, söylenir"
+DST_ODD_PHONE_O_1,SPK_SOLDIER,yakin_yuksek,4-10,"street_eye.gd:613 _bark/_line_for DST_ODD_* tepki sözü; yarıçap tür başına 6-14 m (KINDS), hud.gd _say_staging ünlemi bağırış sayar",ünlemli/sesli tepki
+DST_ODD_PHONE_O_2,SPK_AZAP,yakin,3-6,"street_eye.gd:613 _bark/_line_for DST_ODD_* tepki sözü; yarıçap tür başına 6-14 m (KINDS), hud.gd _say_staging ünlemi bağırış sayar","yan tepki, söylenir"
+DST_ODD_SELFIE_B_1,SPK_TOWNSMAN,yakin,3-6,"street_eye.gd:613 _bark/_line_for DST_ODD_* tepki sözü; yarıçap tür başına 6-14 m (KINDS), hud.gd _say_staging ünlemi bağırış sayar","yan tepki, söylenir"
+DST_ODD_SELFIE_B_2,SPK_WOMAN_BYZ,yakin_yuksek,4-10,"street_eye.gd:613 _bark/_line_for DST_ODD_* tepki sözü; yarıçap tür başına 6-14 m (KINDS), hud.gd _say_staging ünlemi bağırış sayar",ünlemli/sesli tepki
+DST_ODD_SELFIE_O_1,SPK_SOLDIER,yakin,3-6,"street_eye.gd:613 _bark/_line_for DST_ODD_* tepki sözü; yarıçap tür başına 6-14 m (KINDS), hud.gd _say_staging ünlemi bağırış sayar","yan tepki, söylenir"
+DST_ODD_SELFIE_O_2,SPK_AZAP,yakin,3-6,"street_eye.gd:613 _bark/_line_for DST_ODD_* tepki sözü; yarıçap tür başına 6-14 m (KINDS), hud.gd _say_staging ünlemi bağırış sayar","yan tepki, söylenir"
+DST_ODD_STARE_B_1,SPK_TOWNSMAN,yakin,3-6,"street_eye.gd:613 _bark/_line_for DST_ODD_* tepki sözü; yarıçap tür başına 6-14 m (KINDS), hud.gd _say_staging ünlemi bağırış sayar","yan tepki, söylenir"
+DST_ODD_STARE_B_2,SPK_WOMAN_BYZ,yakin,3-6,"street_eye.gd:613 _bark/_line_for DST_ODD_* tepki sözü; yarıçap tür başına 6-14 m (KINDS), hud.gd _say_staging ünlemi bağırış sayar","yan tepki, söylenir"
+DST_ODD_STARE_O_1,SPK_SOLDIER,yakin,3-6,"street_eye.gd:613 _bark/_line_for DST_ODD_* tepki sözü; yarıçap tür başına 6-14 m (KINDS), hud.gd _say_staging ünlemi bağırış sayar","yan tepki, söylenir"
+DST_ODD_STARE_O_2,SPK_JANISSARY,yakin,3-6,"street_eye.gd:613 _bark/_line_for DST_ODD_* tepki sözü; yarıçap tür başına 6-14 m (KINDS), hud.gd _say_staging ünlemi bağırış sayar","yan tepki, söylenir"
+DST_ODD_SPIN_B_1,SPK_TOWNSMAN,yakin,3-6,"street_eye.gd:613 _bark/_line_for DST_ODD_* tepki sözü; yarıçap tür başına 6-14 m (KINDS), hud.gd _say_staging ünlemi bağırış sayar","yan tepki, söylenir"
+DST_ODD_SPIN_O_1,SPK_SOLDIER,yakin_yuksek,4-10,"street_eye.gd:613 _bark/_line_for DST_ODD_* tepki sözü; yarıçap tür başına 6-14 m (KINDS), hud.gd _say_staging ünlemi bağırış sayar",ünlemli/sesli tepki
+DST_ODD_SPIN_O_2,SPK_AZAP,yakin_yuksek,4-10,"street_eye.gd:613 _bark/_line_for DST_ODD_* tepki sözü; yarıçap tür başına 6-14 m (KINDS), hud.gd _say_staging ünlemi bağırış sayar",ünlemli/sesli tepki
+DST_ODD_CLIMB_B_1,SPK_TOWNSMAN,yakin_yuksek,4-10,"street_eye.gd:613 _bark/_line_for DST_ODD_* tepki sözü; yarıçap tür başına 6-14 m (KINDS), hud.gd _say_staging ünlemi bağırış sayar",ünlemli/sesli tepki
+DST_ODD_CLIMB_B_2,SPK_WOMAN_BYZ,yakin,3-6,"street_eye.gd:613 _bark/_line_for DST_ODD_* tepki sözü; yarıçap tür başına 6-14 m (KINDS), hud.gd _say_staging ünlemi bağırış sayar","yan tepki, söylenir"
+DST_ODD_CLIMB_O_1,SPK_SOLDIER,yakin_yuksek,4-10,"street_eye.gd:613 _bark/_line_for DST_ODD_* tepki sözü; yarıçap tür başına 6-14 m (KINDS), hud.gd _say_staging ünlemi bağırış sayar",ünlemli/sesli tepki
+DST_ODD_CLIMB_O_2,SPK_WORKER,yakin,3-6,"street_eye.gd:613 _bark/_line_for DST_ODD_* tepki sözü; yarıçap tür başına 6-14 m (KINDS), hud.gd _say_staging ünlemi bağırış sayar","yan tepki, söylenir"
+DST_ODD_SWORD_B_1,SPK_CITY_GUARD,yakin_yuksek,4-10,"street_eye.gd:613 _bark/_line_for DST_ODD_* tepki sözü; yarıçap tür başına 6-14 m (KINDS), hud.gd _say_staging ünlemi bağırış sayar",ünlemli/sesli tepki
+DST_ODD_SWORD_O_1,SPK_JANISSARY,yakin,3-6,"street_eye.gd:613 _bark/_line_for DST_ODD_* tepki sözü; yarıçap tür başına 6-14 m (KINDS), hud.gd _say_staging ünlemi bağırış sayar","yan tepki, söylenir"
+DST_ODD_SWORD_O_2,SPK_SOLDIER,yakin,3-6,"street_eye.gd:613 _bark/_line_for DST_ODD_* tepki sözü; yarıçap tür başına 6-14 m (KINDS), hud.gd _say_staging ünlemi bağırış sayar","yan tepki, söylenir"
+DST_ODD_FEZ_B_1,SPK_TOWNSMAN,yakin,3-6,"street_eye.gd:613 _bark/_line_for DST_ODD_* tepki sözü; yarıçap tür başına 6-14 m (KINDS), hud.gd _say_staging ünlemi bağırış sayar","yan tepki, söylenir"
+DST_ODD_FEZ_O_1,SPK_SOLDIER,yakin,3-6,"street_eye.gd:613 _bark/_line_for DST_ODD_* tepki sözü; yarıçap tür başına 6-14 m (KINDS), hud.gd _say_staging ünlemi bağırış sayar","yan tepki, söylenir"
+DST_ODD_COLOGNE_B_1,SPK_WOMAN_BYZ,yakin,3-6,"street_eye.gd:613 _bark/_line_for DST_ODD_* tepki sözü; yarıçap tür başına 6-14 m (KINDS), hud.gd _say_staging ünlemi bağırış sayar","yan tepki, söylenir"
+DST_ODD_COLOGNE_O_1,SPK_SOLDIER,yakin_yuksek,4-10,"street_eye.gd:613 _bark/_line_for DST_ODD_* tepki sözü; yarıçap tür başına 6-14 m (KINDS), hud.gd _say_staging ünlemi bağırış sayar",ünlemli/sesli tepki
+DST_ODD_LIGHTER_B_1,SPK_PRIEST,yakin_yuksek,4-10,"street_eye.gd:613 _bark/_line_for DST_ODD_* tepki sözü; yarıçap tür başına 6-14 m (KINDS), hud.gd _say_staging ünlemi bağırış sayar",ünlemli/sesli tepki
+DST_ODD_LIGHTER_O_1,SPK_JANISSARY,yakin_yuksek,4-10,"street_eye.gd:613 _bark/_line_for DST_ODD_* tepki sözü; yarıçap tür başına 6-14 m (KINDS), hud.gd _say_staging ünlemi bağırış sayar",ünlemli/sesli tepki
+DST_ODD_CHICK_B_1,SPK_TOWNSMAN,yakin_yuksek,4-10,"street_eye.gd:613 _bark/_line_for DST_ODD_* tepki sözü; yarıçap tür başına 6-14 m (KINDS), hud.gd _say_staging ünlemi bağırış sayar",ünlemli/sesli tepki
+DST_ODD_CHICK_O_1,SPK_SOLDIER,yakin_yuksek,4-10,"street_eye.gd:613 _bark/_line_for DST_ODD_* tepki sözü; yarıçap tür başına 6-14 m (KINDS), hud.gd _say_staging ünlemi bağırış sayar",ünlemli/sesli tepki
+DST_ODD_CUBE_B_1,SPK_TOWNSMAN,yakin,3-6,"street_eye.gd:613 _bark/_line_for DST_ODD_* tepki sözü; yarıçap tür başına 6-14 m (KINDS), hud.gd _say_staging ünlemi bağırış sayar","yan tepki, söylenir"
+DST_ODD_CUBE_O_1,SPK_SOLDIER,yakin,3-6,"street_eye.gd:613 _bark/_line_for DST_ODD_* tepki sözü; yarıçap tür başına 6-14 m (KINDS), hud.gd _say_staging ünlemi bağırış sayar","yan tepki, söylenir"
+DST_ODD_CROUCH_B_1,SPK_CITY_GUARD,yakin,3-6,"street_eye.gd:613 _bark/_line_for DST_ODD_* tepki sözü; yarıçap tür başına 6-14 m (KINDS), hud.gd _say_staging ünlemi bağırış sayar","yan tepki, söylenir"
+DST_ODD_CROUCH_O_1,SPK_JANISSARY,yakin,3-6,"street_eye.gd:613 _bark/_line_for DST_ODD_* tepki sözü; yarıçap tür başına 6-14 m (KINDS), hud.gd _say_staging ünlemi bağırış sayar","yan tepki, söylenir"
+DST_WARN_B_1,SPK_CITY_GUARD,yakin_yuksek,5-18,"street_eye.gd:678 _warn: nöbetçi 8 m içinde ya da görmüş en çok 18 m, işaret edip uyarır","uyarı/emir; mesafe 8 m üstü olabilir, sahnede yerini bilmek gerek"
+DST_WARN_B_2,SPK_CITY_GUARD,yakin_yuksek,5-18,"street_eye.gd:678 _warn: nöbetçi 8 m içinde ya da görmüş en çok 18 m, işaret edip uyarır","uyarı/emir; mesafe 8 m üstü olabilir, sahnede yerini bilmek gerek"
+DST_WARN_B_3,SPK_CITY_GUARD,yakin_yuksek,5-18,"street_eye.gd:678 _warn: nöbetçi 8 m içinde ya da görmüş en çok 18 m, işaret edip uyarır","uyarı/emir; mesafe 8 m üstü olabilir, sahnede yerini bilmek gerek"
+DST_WARN_O_1,SPK_JANISSARY,yakin_yuksek,5-18,"street_eye.gd:678 _warn: nöbetçi 8 m içinde ya da görmüş en çok 18 m, işaret edip uyarır","uyarı/emir; mesafe 8 m üstü olabilir, sahnede yerini bilmek gerek"
+DST_WARN_O_2,SPK_JANISSARY,yakin_yuksek,5-18,"street_eye.gd:678 _warn: nöbetçi 8 m içinde ya da görmüş en çok 18 m, işaret edip uyarır","uyarı/emir; mesafe 8 m üstü olabilir, sahnede yerini bilmek gerek"
+DST_WARN_O_3,SPK_JANISSARY,yakin_yuksek,5-18,"street_eye.gd:678 _warn: nöbetçi 8 m içinde ya da görmüş en çok 18 m, işaret edip uyarır","uyarı/emir; mesafe 8 m üstü olabilir, sahnede yerini bilmek gerek"
+DST_WARN_G_1,SPK_GENOESE,yakin_yuksek,5-18,"street_eye.gd:678 _warn: nöbetçi 8 m içinde ya da görmüş en çok 18 m, işaret edip uyarır","uyarı/emir; mesafe 8 m üstü olabilir, sahnede yerini bilmek gerek"
+DST_WHISPER_B_1,SPK_WOMAN_BYZ,fisilti,1.5,"street_eye.gd:610 c[""whisper""] -> DST_WHISPER_*; yanındakine fısıldar (<2,4 m, street_eye.gd:550)",komşuya fısıltı
+DST_WHISPER_B_2,SPK_TOWNSMAN,fisilti,1.5,"street_eye.gd:610 c[""whisper""] -> DST_WHISPER_*; yanındakine fısıldar (<2,4 m, street_eye.gd:550)",komşuya fısıltı
