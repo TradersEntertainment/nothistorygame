@@ -282,7 +282,7 @@ static func plan(L: float, D: float, H: float, tohum: int, tip: String) -> Dicti
 	p["kepenk"] = SHUTTERS[(tohum * 3) % SHUTTERS.size()]
 	p["ahsap"] = P_AHSAP[tohum % P_AHSAP.size()]
 	# Sundurma (2,2 m, cephede): sokaktan çatıya ikinci yol; dükkânda tente var
-	p["sundurma"] = tip in ["sira", "konak", "harap", "latin"] and tohum % 4 == 1 and L >= 5.0
+	p["sundurma"] = (tip in ["sira", "harap", "latin"] and tohum % 4 == 1 and L >= 5.0) or tip in ["konak", "han"]
 	p["baca"] = tip in ["firin", "demirci"] or (cati == "kiremit" and rng.randf() < 0.45)
 	# Dış merdiven (teras ve kule dama; konakta üst kat sofaya)
 	p["merdiven"] = tip in ["teras", "kule"]
