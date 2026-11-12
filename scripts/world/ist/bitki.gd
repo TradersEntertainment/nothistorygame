@@ -12,10 +12,10 @@ static var _mat_cache: StandardMaterial3D
 ## Ağaç tanımı: gövde yüksekliği/yarıçapı/rengi + taçlar [merkez(y gövde tepesinden), yarıçap xyz, renk1, renk2]
 const AGAC := {
 	"erguvan": {"ad": "Erguvan", "th": 2.0, "tr": 0.16, "tc": Color("4a3428"), "boy": 5.0,
-		"cicek": Color("c0388c"), "cicek2": Color("e070b8"),
-		"taclar": [[Vector3(0, 1.2, 0), Vector3(2.0, 1.4, 2.0), Color("b04888"), Color("d070b0")],
-			[Vector3(1.1, 0.5, 0.4), Vector3(1.3, 1.0, 1.3), Color("a03c84"), Color("cc68a8")],
-			[Vector3(-1.0, 0.7, -0.5), Vector3(1.4, 1.0, 1.3), Color("b8509a"), Color("dc78b8")]]},
+		"cicek": Color("b02c80"), "cicek2": Color("d85aa8"),
+		"taclar": [[Vector3(0, 1.2, 0), Vector3(2.0, 1.4, 2.0), Color("8c3a74"), Color("b05c98")],
+			[Vector3(1.1, 0.5, 0.4), Vector3(1.3, 1.0, 1.3), Color("843068"), Color("a85490")],
+			[Vector3(-1.0, 0.7, -0.5), Vector3(1.4, 1.0, 1.3), Color("943e7c"), Color("b86ca0")]]},
 	"badem": {"ad": "Badem (çiçekte)", "th": 1.8, "tr": 0.15, "tc": Color("4e3a2c"), "boy": 4.6,
 		"cicek": Color("fbe6ec"), "cicek2": Color("f4b8c8"),
 		"taclar": [[Vector3(0, 1.1, 0), Vector3(1.7, 1.3, 1.7), Color("f4d4de"), Color("fff0f4")],
@@ -78,6 +78,7 @@ static func mat() -> StandardMaterial3D:
 		m.diffuse_mode = BaseMaterial3D.DIFFUSE_TOON
 		m.specular_mode = BaseMaterial3D.SPECULAR_DISABLED
 		m.roughness = 1.0
+		m.albedo_color = Color(0.8, 0.8, 0.78)
 		_mat_cache = m
 	return _mat_cache
 
@@ -209,7 +210,7 @@ static func add_flecks(m: Dictionary, c: Vector3, rad: Vector3, n: int, size: fl
 		if u.length() < 0.05:
 			continue
 		u = u.normalized()
-		var p := c + Vector3(u.x * rad.x, u.y * rad.y, u.z * rad.z) * 1.04
+		var p := c + Vector3(u.x * rad.x, u.y * rad.y, u.z * rad.z) * 1.2
 		var t := u.cross(Vector3.UP)
 		if t.length() < 0.1:
 			t = Vector3.RIGHT
