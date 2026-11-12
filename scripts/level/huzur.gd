@@ -207,7 +207,7 @@ func _physics_process(delta: float) -> void:
 		return
 	_scan_t -= delta
 	if _scan_t <= 0.0:
-		_scan_t = 0.5
+		_scan_t = 0.2          # hükümdar bazı sahnelerde yalnız ~1 sn görünür (28o)
 		_scan()
 	if rulers.is_empty() or busy:
 		return
