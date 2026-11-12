@@ -181,9 +181,9 @@ static func figur(kind: String) -> ArrayMesh:
 	var B := IstOrdugahKit.Bld
 	match kind:
 		"govde":
-			b.cyl(B.xf(Vector3(0, 0.55, 0)), 0.26, 1.1, Color(0.92, 0.92, 0.92), 6, 0.2)        # dolama (etek)
-			b.cyl(B.xf(Vector3(0, 1.22, 0)), 0.2, 0.36, Color.WHITE, 6, 0.17)                    # göğüs
-			b.cyl(B.xf(Vector3(0, 1.0, 0)), 0.215, 0.07, Color(0.55, 0.5, 0.42), 6)              # kuşak
+			b.cyl(B.xf(Vector3(0, 0.55, 0)), 0.26, 1.1, Color(0.92, 0.92, 0.92), 5, 0.2, false)  # dolama (etek)  ORDUGÂH-5: 5 kenar, kapaksız
+			b.cyl(B.xf(Vector3(0, 1.22, 0)), 0.2, 0.36, Color.WHITE, 5, 0.17)                    # göğüs
+			b.cyl(B.xf(Vector3(0, 1.0, 0)), 0.215, 0.07, Color(0.55, 0.5, 0.42), 5, -1.0, false)  # kuşak
 			b.box(Vector3(-0.24, 1.1, 0.04), Vector3(0.09, 0.5, 0.1), Color(0.88, 0.88, 0.88), 0.0, Vector3(0, 0, 8))
 			b.box(Vector3(0.24, 1.1, 0.04), Vector3(0.09, 0.5, 0.1), Color(0.88, 0.88, 0.88), 0.0, Vector3(0, 0, -8))
 			b.box(Vector3(0, 0.04, 0.04), Vector3(0.34, 0.08, 0.24), Color(0.3, 0.24, 0.2))        # çizme

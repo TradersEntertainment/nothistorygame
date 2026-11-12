@@ -463,7 +463,15 @@ static func build(host: Node3D, alan: PackedVector2Array, tur: String, k: float,
 		var xs: Array = cad[ck][0]
 		if xs.is_empty():
 			continue
-		K.mm(host, K.tent_lod(ck, lod), xs, cad[ck][1], ck, "", lod == 0)
+		# ORDUGÂH-5: kanat çadırları gölge düşürmez (yönlü ışığın 4 bölmesinde ~600 üçgenlik çadır × yüzlerce = milyonlarca
+		# üçgen); yerine her çadırın altında yumuşak koyu "temas gölgesi" lekesi (zs)
+		K.mm(host, K.tent_lod(ck, lod), xs, cad[ck][1], ck, "", false)
+		if lod <= 1:
+			for xf3: Transform3D in xs:
+				var sx3 := xf3.basis.x.length()
+				var sz3 := xf3.basis.z.length()
+				var rr3 := maxf(sx3, sz3) * (1.0 if ck in ["koni", "can"] else 0.5)
+				OC.leke(zs, Vector2(xf3.origin.x, xf3.origin.z), rr3 * 1.15, Color("3e3428"), r5, Transform2D.IDENTITY, 0.42, 8)
 	if lod == 0:
 		var body := StaticBody3D.new()
 		body.name = "cadirlar_kati"

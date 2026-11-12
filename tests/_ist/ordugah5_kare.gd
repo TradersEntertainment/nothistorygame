@@ -674,11 +674,19 @@ func _teshis() -> void:
 		cam.global_position = _g(c - tw * 60.0, 60.0)
 		cam.look_at(_g(c + tw * 60.0, 0.0), Vector3.UP)
 		await _bekle(cam.global_position)
+		for i in 60:
+			await get_tree().process_frame
+		await _bekle(cam.global_position)
 		var rows: Array = []
 		var bytur := {}
 		for n in _ordu().find_children("*", "GeometryInstance3D", true, false):
 			var g := n as GeometryInstance3D
 			if not g.is_visible_in_tree():
+				continue
+			var gd := g.global_position.distance_to(cam.global_position)
+			if g.visibility_range_end > 0.0 and gd > g.visibility_range_end:
+				continue
+			if g.visibility_range_begin > 0.0 and gd < g.visibility_range_begin:
 				continue
 			var t := 0
 			if g is MeshInstance3D and (g as MeshInstance3D).mesh:
