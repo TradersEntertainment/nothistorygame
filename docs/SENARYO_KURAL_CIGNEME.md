@@ -274,7 +274,10 @@ hükümdardan 2,5 m geriye konur), **bölüm sürer** (repliği, sonucu aynı). 
 
 ### 6.5 Tekrarı ve karşı tarafın hükümdarı
 
-- Atlı hükümdar hedef değildir (26'nın sonunda Fatih Ayasofya'ya at üstünde girer: yaya Tolga ancak üzengiye yetişir).
+- **Atlı ya da oturan hükümdar** (28o ve 34o'da Sultan baştan sona at üstünde, 26'nın sonunda Ayasofya'da atlı; 12'de
+  yere oturmuş): kendisi karşılamaz, **muhafızlar** karşılar; atlı Sultan'ın hükmünü yanındaki yeniçeri aktarır ("Sultan'ım
+  buyurdu: kan dökülmeyecek. Sancaksız çık, surlara yürü!" / "...seni kuşatmada karşısında görmek istermiş." / "...geldiği
+  yere götürün." / "...bu adam bir daha huzura çıkmayacak.").
 - Karşı tarafın hükümdarına el kaldıran (30o'da İmparator; Osmanlı tarafında 23/25'te İmparator):
   vuramaz (aynı karşı hamle/muhafız), hüküm "Geldiği yere götürün. Dövüşecekse kendi safında dövüşsün." / "Geri itin.
   Bugün esir besleyecek ekmeğimiz yok."; geri itilir, **sürgün yok**, bölüm sürer.
@@ -352,25 +355,26 @@ serbest evrelerde bottan daha yakına yürüyebilir. "Açıldı" sütunu bu turu
 |---|---|---|---|---|
 | 6 (byz) | İmparator | 19 / 10 / 0 | 26,1 / 5,1 m | EVET: replikte atılış (5,1 m) → muhafız, bekleyen sürgün; `6 byz + huzur` 3/3 PASS |
 | 7 (byz, byzniko, byzcell) | İmparator | 3–7 / 0 / 0 | — / 9,3–40,3 m | HAYIR (bağlı ama hükümdar hep 7,5 m'den uzak ve oyuncu donuk) |
-| 10 | Fatih | 1 / 0 / 0 | — / 1,8 m | EVET (replikte atılış); varyant koşulmadı: KANITSIZ |
-| 10b (boom, untaped) | Fatih | 3–6 / 0 / 0 | — / 1,6–5,6 m | EVET (replikte); varyant koşulmadı: KANITSIZ |
+| 10 | Fatih (yaya, otağın içi) | 1 / 0 / 0 | — / 1,8 m | EVET: `10 huzur` PASS (Mehmed karşı hamlesi) |
+| 10b (boom, untaped) | Fatih | 3–6 / 0 / 0 | — / 1,6–5,6 m | EVET: `10b huzur` PASS (5,6 m: muhafız) |
 | 10g (fatih, late) | Fatih | 4 / 0 / 0 | — / 3,2 m (varsayılan yolda 53,7) | EVET yalnız `fatih`/`late` yolunda; KANITSIZ |
 | 10h | İmparator | 6–11 / 0 / 0 | — / 1,8 m | EVET: `10h huzur` PASS (eşyayla, muhafız, bekleyen sürgün) |
-| 10z | Fatih | 2 / 0 / 0 | — / 3,3 m | EVET (replikte); KANITSIZ |
+| 10z | Fatih (yaya) | 2 / 0 / 0 | — / 3,3 m | EVET: `10z huzur` PASS, **Mehmed'in kendi karşı hamlesi** (ekranlı ÖNCE/SONRA) |
 | 12 | Fatih (tahtta) | 3–6 / 0 / 0 | — / 6,1 m | EVET: `12 huzur` PASS (atılış 6,1 m, eşyayla, bekleyen sürgün) |
 | 12b | İmparator | 4–5 / 0 / 0 | — / 2,9 m | EVET: `12b huzur` 3/3 PASS (arkadan: muhafız) |
 | Edirne ara bölümü | çocuk Mehmed | — | — | HAYIR (çocuk: §2b) |
-| 34o | Fatih | 32 / 21 / 0 | 8,1 / 5,9 m | EVET: `34o huzur` 3/3 PASS (Mehmed karşı hamlesi, bekleyen sürgün) |
-| 28o | Fatih | 3 / 1 / 0 | 6,1 / 6,1 m | EVET: `28o huzur` PASS (Mehmed, sürgün → 29), `huzur_guard` (muhafız), `huzur_save` |
+| 34o | Fatih (atlı) | 32 / 21 / 0 | 8,1 / 5,9 m | EVET: `34o huzur` PASS (muhafız + yeniçeri aktarır, bekleyen sürgün) |
+| 28o | Fatih (atlı) | 3 / 1 / 0 | 6,1 / 6,1 m | EVET: `28o huzur` PASS (muhafız + aktarma, sürgün → 29), `huzur_guard`, `huzur_save` |
 | 32o | Fatih | 14 / 14 / 0 | 23,7 / 23,3 m | BAĞLI ama botun yolunda erişilmez (Sultan ateşlerin ötesinde); yürüyerek yaklaşılırsa çalışır: KANITSIZ |
 | 23 | İmparator | 6 / 2 / 0 | 8,2 / 8,2 m | EVET (serbest anda yürüyüp): `23 huzur` (rapor2) |
 | 25 | İmparator | 11–13 / 0 / 0 | — / 2,0–4,0 m | EVET: `25 huzur` (sürgün → 32o), `huzur2`, `huzur3` |
-| 26 | İmparator (gedik), Fatih (Ayasofya, yaya) | 77 / 57 / **0** | 2,4 / 2,4 m | EVET boş elle; Fatih karşı taraf (geri itilir). **Kılıç hükümdarın yanında hiç elde değil** (dalga sonunda kınına giriyor) |
+| 26 | İmparator (gedik), Fatih (Ayasofya, atlı) | 77 / 57 / **0** | 2,4 / 2,4 m | EVET boş elle; Fatih karşı taraf (geri itilir). **Kılıç hükümdarın yanında hiç elde değil** (dalga sonunda kınına giriyor) |
 | 30 | İmparator | 7 / 0 / **6** | 6,3 / 6,3 m | EVET kılıçla: `30 huzur_sword` PASS (replikte F ile atılış → Konstantinos kolla süpürür, kılıç düşer; sürgün → 21o) |
 | 30o | İmparator (surda, karşı taraf) | 20 / 10 / 0 | 13,1 / 13,1 m | BAĞLI (karşı taraf: geri itilir); botun yolunda erişilmez: KANITSIZ |
 
 **Sahibin sorusunun cevabı ("hangi bölümlerde elimizde kılıç varken hükümdara yaklaşma şansımız var?"):** ölçüme göre
 yalnız **30** (12 Mayıs, Blakherna; düellodan sonra kılıç elde, İmparator 6 m'de, replik arasında). 26'da hükümdarlar
 2,4 m'ye kadar yaklaşıyor ama o anlarda kılıç kınında; Mehmed'e kılıçla yaklaşılan bir an oyunda **hiç yok**
-(Osmanlı tarafında kılıçlı bölümlerde Sultan sahnede değil). Mehmed'in kılıçlıya karşı hamlesi kodda var, ama oyunun
+(Osmanlı tarafında kılıçlı bölümlerde Sultan sahnede değil). Ayrıca Sultan kuşatma sayfalarında (28o, 34o, 26 sonu) hep
+**atlı**: kendi karşı hamlesi yalnız Perde II'de (10, 10z: yaya) görülür; kuşatmada onu muhafızlar karşılar. Mehmed'in kılıçlıya karşı hamlesi kodda var, ama oyunun
 doğal akışında tetiklenemez.
