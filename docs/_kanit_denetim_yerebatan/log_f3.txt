@@ -1,0 +1,16 @@
+Godot Engine v4.4.1.stable.official.49a5bc7b6 - https://godotengine.org
+
+LORE key=36b placed=3
+HANDS stowed=@Node3D@84
+HANDS stowed=@Node3D@84
+WORLDWALK region= shapes=10290 boxes=9572 tris=277670 ms=1743
+CITYLIFE region= src=plan era=siege night=true density=0.50 nodes=1026 plazas=19 landmarks=23
+FINISHER kind=bash cam=third
+KICK result=stagger
+FINISHER kind=thrust cam=third
+FINISHER kind=thrust cam=third
+WAVERUNNER wave=1/1 won=true t=22.2 pw=0.28 foe_dmg=18.0 allies=0+3 rally_foes=0 thrown=0
+TESPITBLOCK who=siege36 blocker=@Node3D@27614/@Node3D@27613 (person) at=(-22.2, 0.0, 48.4) eye=(-17.0, 1.6, 44.8) dist=8.7
+AUTOTEST PASS chapter=36 variant= outcome=36.1 burned=3 fights=1 kills=5
+ERROR: 2 resources still in use at exit (run with --verbose for details).
+exit=0

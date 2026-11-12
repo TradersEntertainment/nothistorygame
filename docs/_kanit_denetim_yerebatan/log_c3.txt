@@ -1,0 +1,16 @@
+Godot Engine v4.4.1.stable.official.49a5bc7b6 - https://godotengine.org
+
+ITEM gain guest_pass permit_6b left=0
+HELDDEFAULT scene=chapter25 item=remote
+TESPITBLOCK who=siege25 blocker=Skeleton/Mesh (MeshInstance3D) at=(-9.2, 8.0, 14.9) eye=(-9.2, 9.6, 14.9) dist=315.2
+LORE key=25 placed=3
+CYPRESS planted=4 skipped=2
+WORLDWALK region=byz_aya shapes=10328 boxes=9577 tris=266080 ms=1594
+CITYLIFE region=byz_aya src=plan era=siege night=false density=0.85 nodes=1026 plazas=19 landmarks=23
+LOOKAUDIT raw Person(emperor) chapter25.tscn 141 kind=walk act= pose=<null> look=@CharacterBody3D@80 talking=true pos=(-14.0, 0.0, -78.0)
+ITEM use guest_pass pass_25 left=0
+SAYDIST key=D25_I_1 scene=chapter25.tscn speaker=SPK_ISIDORE d=6.5
+AUTOTEST PASS chapter=25 variant=pass outcome=25.1 caught=0 candle=true tezkire=false marco=false
+ERROR: 1 resources still in use at exit (run with --verbose for details).
+ERROR: Pages in use exist at exit in PagedAllocator: N7Variant5Pools12BucketMediumE
+exit=0

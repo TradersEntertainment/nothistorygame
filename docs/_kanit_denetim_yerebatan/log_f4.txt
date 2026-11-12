@@ -1,0 +1,14 @@
+Godot Engine v4.4.1.stable.official.49a5bc7b6 - https://godotengine.org
+
+HELDDEFAULT scene=chapter43o item=remote
+SAYDIST key=D43O_Z_01 scene=chapter43o.tscn speaker=SPK_ZAGANOS d=6.8
+SAYDIST key=D43O_F_01 scene=chapter43o.tscn speaker=SPK_FATIH d=6.6
+SAYDIST key=D43O_F_02 scene=chapter43o.tscn speaker=SPK_FATIH d=6.6
+SAYDIST key=D43O_F_03 scene=chapter43o.tscn speaker=SPK_FATIH d=6.6
+SAYDIST key=D43O_Z_03 scene=chapter43o.tscn speaker=SPK_ZAGANOS d=6.8
+WORLDWALK region=camp shapes=10143 boxes=9405 tris=281386 ms=1497
+CITYLIFE region=camp src=plan era=siege night=false density=0.85 nodes=1026 plazas=19 landmarks=23
+TESPITBLOCK who=siege43o blocker=Skeleton/Mesh (MeshInstance3D) at=(-0.9, 0.0, -49.3) eye=(-0.9, 1.6, -49.3) dist=2.1
+AUTOTEST PASS chapter=43 variant= outcome=43O.1 bad=0 lessons=3 soup=true flown=1069 battery=22
+ERROR: 1 resources still in use at exit (run with --verbose for details).
+exit=0

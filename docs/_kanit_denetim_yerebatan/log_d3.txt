@@ -1,0 +1,12 @@
+Godot Engine v4.4.1.stable.official.49a5bc7b6 - https://godotengine.org
+
+CYPRESS planted=4 skipped=2
+TESPITBLOCK who=siege44 blocker=Skeleton/Mesh (MeshInstance3D) at=(-57.3, 2.5, -19.9) eye=(-57.3, 4.1, -19.9) dist=4.3
+CYPRESS planted=4 skipped=2
+SAYDIST key=D44B_E_BACK scene=chapter44b.tscn speaker=SPK_WOMAN_BYZ d=5.0
+SAYFACE key=D44B_E_BACK scene=chapter44b.tscn speaker=SPK_WOMAN_BYZ d=5.0 dot=-0.50
+SAYDIST key=D44B_TW_DJINN scene=chapter44b.tscn speaker=SPK_TOWNSMAN d=5.7
+SAYDIST key=D44B_E_KEEP scene=chapter44b.tscn speaker=SPK_WOMAN_BYZ d=5.0
+AUTOTEST PASS chapter=44 variant=dark outcome=44.1 light=remote battery=0.0 bumps=1 hits=0 rescued=true kid=false
+ERROR: Pages in use exist at exit in PagedAllocator: N7Variant5Pools12BucketMediumE
+exit=0

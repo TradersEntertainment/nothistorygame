@@ -1,0 +1,13 @@
+Godot Engine v4.4.1.stable.official.49a5bc7b6 - https://godotengine.org
+
+CYPRESS planted=10 skipped=5
+LORE key=24 placed=3
+WORLDWALK region=byz_walls shapes=10329 boxes=9577 tris=284364 ms=2137
+CITYLIFE region=byz_walls src=plan era=siege night=false density=0.85 nodes=1026 plazas=19 landmarks=23
+HELDDEFAULT scene=chapter24 item=remote
+CYPRESS planted=4 skipped=2
+TESPITBLOCK who=siege24 blocker=AyasofyaInterior/@StaticBody3D@64585 (StaticBody3D) at=(-14.0, 11.0, -65.5) eye=(-12.0, 1.6, -44.0) dist=45.2
+AUTOTEST PASS chapter=24 variant=late outcome=24.2 stumbles=0 kid=false niko=false steadied=0 kid_t=0.3
+ERROR: 1 resources still in use at exit (run with --verbose for details).
+ERROR: Pages in use exist at exit in PagedAllocator: N7Variant5Pools12BucketMediumE
+exit=0

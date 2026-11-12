@@ -1,0 +1,14 @@
+Godot Engine v4.4.1.stable.official.49a5bc7b6 - https://godotengine.org
+
+HELDDEFAULT scene=chapter23 item=cologne
+CYPRESS planted=10 skipped=5
+SAYDIST key=D23_TH_01 scene=chapter23.tscn speaker=SPK_THEODOROS d=4.8
+SAYDIST key=D23_TH_PHOTO scene=chapter23.tscn speaker=SPK_THEODOROS d=4.8
+LORE key=23 placed=3
+TESPITBLOCK who=siege23 blocker=Skeleton/Mesh (MeshInstance3D) at=(-21.4, 0.0, -14.3) eye=(-21.4, 1.6, -14.3) dist=6.2
+WORLDWALK region=byz_walls shapes=10329 boxes=9577 tris=284364 ms=2369
+CITYLIFE region=byz_walls src=plan era=siege night=false density=0.85 nodes=1026 plazas=19 landmarks=23
+AUTOTEST PASS chapter=23 variant= outcome=23.1 deviation=0 card=true singed=false letter=false
+ERROR: 1 resources still in use at exit (run with --verbose for details).
+ERROR: Pages in use exist at exit in PagedAllocator: N7Variant5Pools12BucketMediumE
+exit=0

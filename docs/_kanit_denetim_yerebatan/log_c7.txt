@@ -1,0 +1,13 @@
+Godot Engine v4.4.1.stable.official.49a5bc7b6 - https://godotengine.org
+
+ITEM gain tezkire tezkire_12 left=0
+HELDDEFAULT scene=chapter25 item=remote
+LORE key=25 placed=3
+SAYDIST key=D25_K_01 scene=chapter25.tscn speaker=SPK_KADRI d=4.9
+SAYDIST key=D25_K_02 scene=chapter25.tscn speaker=SPK_KADRI d=4.9
+WORLDWALK region=camp shapes=10134 boxes=9405 tris=277970 ms=1715
+CITYLIFE region=camp src=plan era=siege night=true density=0.50 nodes=1026 plazas=19 landmarks=23
+ITEM use tezkire tezkire_25 left=0
+TESPITBLOCK who=siege25 blocker=Skeleton/Mesh (MeshInstance3D) at=(4.0, 0.0, -44.0) eye=(4.0, 1.6, -44.0) dist=64.2
+AUTOTEST PASS chapter=25 variant=osm_tez outcome=25.1 caught=1 candle=false tezkire=true marco=false
+exit=0

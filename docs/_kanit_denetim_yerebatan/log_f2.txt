@@ -1,0 +1,86 @@
+Godot Engine v4.4.1.stable.official.49a5bc7b6 - https://godotengine.org
+
+HELDDEFAULT scene=chapter42b item=chickpeas
+DRILL phase=dir
+HANDS stowed=@Node3D@84
+SAYDIST key=D42B_H_DIR_1 scene=chapter42b.tscn speaker=SPK_GIUST d=5.2
+SAYDIST key=D42B_H_DIR_2 scene=chapter42b.tscn speaker=SPK_GIUST d=5.2
+DRILL swing phase=dir dir=0 result=hit on=kukla
+DRILL swing phase=dir dir=0 result=hit on=kukla
+WORLDWALK region= shapes=10300 boxes=9572 tris=284916 ms=1418
+CITYLIFE region= src=plan era=siege night=false density=0.85 nodes=1026 plazas=19 landmarks=23
+DRILL swing phase=dir dir=0 result=blocked on=kukla
+DRILL swing phase=dir dir=1 result=hit on=kukla
+DRILL swing phase=dir dir=1 result=blocked on=kukla
+DRILL swing phase=dir dir=2 result=hit on=kukla
+DRILL phase=block
+HANDS stowed=@Node3D@84
+KICK result=stagger
+DRILL swing phase=block dir=0 result=hit on=partner
+DRILL swing phase=block dir=0 result=hit on=partner
+KICK result=down
+KICK result=stagger
+DRILL swing phase=block dir=0 result=hit on=partner
+DRILL swing phase=block dir=0 result=hit on=partner
+DRILL swing phase=block dir=0 result=hit on=partner
+DRILL swing phase=block dir=0 result=hit on=partner
+KICK result=down
+DRILL swing phase=block dir=0 result=hit on=partner
+DRILL swing phase=block dir=0 result=hit on=partner
+DRILL swing phase=block dir=0 result=hit on=partner
+DRILL swing phase=block dir=0 result=hit on=partner
+DRILL swing phase=block dir=0 result=hit on=partner
+DRILL swing phase=block dir=0 result=hit on=partner
+DRILL swing phase=block dir=0 result=hit on=partner
+DRILL swing phase=block dir=0 result=hit on=partner
+SAYDIST key=D42B_H_BLOCK_OK scene=chapter42b.tscn speaker=SPK_GIUST d=6.5
+SAYDIST key=D42B_H_BLOCK_TURTLE scene=chapter42b.tscn speaker=SPK_GIUST d=6.5
+DRILL phase=parry
+SAYDIST key=D42B_H_PARRY_1 scene=chapter42b.tscn speaker=SPK_GIUST d=6.5
+DRILL swing phase=parry dir=0 result=hit on=partner
+SAYDIST key=D42B_H_PARRY_2 scene=chapter42b.tscn speaker=SPK_GIUST d=6.5
+DRILL swing phase=parry dir=0 result=hit on=partner
+DRILL swing phase=parry dir=0 result=hit on=partner
+DRILL swing phase=parry dir=0 result=hit on=partner
+DRILL swing phase=parry dir=0 result=hit on=partner
+KICK result=stagger
+DRILL swing phase=parry dir=0 result=hit on=partner
+DRILL swing phase=parry dir=0 result=hit on=partner
+DRILL swing phase=parry dir=0 result=hit on=partner
+KICK result=down
+DRILL phase=kick
+HANDS stowed=@Node3D@84
+DRILL swing phase=kick dir=0 result=hit on=partner
+KICK result=stagger
+DRILL kick ok=true follow=true kicks=7 t=0.7
+DRILL swing phase=kick dir=1 result=hit on=partner
+DRILL swing phase=kick dir=1 result=hit on=partner
+DRILL swing phase=kick dir=0 result=hit on=partner
+KICK result=down
+DRILL kick_down ok=true tries=1 t=3.0
+SAYDIST key=D42B_H_KICK_DOWN_OK scene=chapter42b.tscn speaker=SPK_GIUST d=5.4
+DRILL phase=finish
+DRILL swing phase=finish dir=0 result=miss on=partner
+KICK result=stagger
+FINISHER kind=thrust cam=third
+DRILL finisher step=thrust kind=thrust wrong=0
+SAYDIST key=D42B_H_FIN_SLASH scene=chapter42b.tscn speaker=SPK_GIUST d=5.0
+DRILL swing phase=finish dir=0 result=hit on=partner
+FINISHER kind=slash cam=third
+DRILL finisher step=slash kind=slash wrong=0
+SAYDIST key=D42B_H_FIN_GROUND scene=chapter42b.tscn speaker=SPK_GIUST d=5.8
+KICK result=down
+FINISHER kind=ground cam=third
+DRILL finisher step=ground kind=ground wrong=0
+SAYDIST key=D42B_H_FIN_OK scene=chapter42b.tscn speaker=SPK_GIUST d=7.5
+SAYDIST key=D42B_H_PUSH_OK scene=chapter42b.tscn speaker=SPK_GIUST d=15.6
+SAYDIST key=D42B_H_PUSH_TWO scene=chapter42b.tscn speaker=SPK_GIUST d=15.6
+DRILL phase=spar
+HANDS stowed=@Node3D@84
+DRILL swing phase=spar dir=0 result=miss on=partner
+FINISHER kind=slash cam=third
+DRILL spar won=true hits=0 fin=slash taken=0 t=2.9
+TESPITBLOCK who=siege42 blocker=Skeleton/Mesh (MeshInstance3D) at=(-17.4, 0.0, -24.2) eye=(-17.4, 1.6, -24.2) dist=2.9
+AUTOTEST PASS chapter=42 variant= outcome=42.1 dir=4 bumps=2 blocks=3 parries=2 kick=true down=true fins=thrust,slash,ground spar=0/0 pushed=2 late=0
+ERROR: 2 resources still in use at exit (run with --verbose for details).
+exit=0
