@@ -19,7 +19,7 @@ static func stair_info(k: float) -> Dictionary:
 	var n := int(ceil(float(dm["H"]) / 0.34))
 	var l := n * 0.46
 	var zt := -float(dm["D"]) * 0.5 + 3.0
-	return {"n": n, "len": l, "z_top": zt, "z_foot": zt + l, "x": float(dm["W"]) * 0.5 + 1.0}
+	return {"n": n, "len": l, "z_top": zt, "z_foot": zt + l, "x": float(dm["W"]) * 0.5 + 0.86}
 
 
 static func build_bukoleon(host: Node3D, k: float = 0.5, lod: int = 0) -> void:
@@ -287,7 +287,7 @@ static func _roofs(root: Node3D, dm: Dictionary, k: float, lod: int) -> void:
 	IstMk.S(root, Vector3(0.5, 1.1, D), Vector3(-W * 0.5 + 0.25, H, 0), IstMk.STONE, "ashlar")
 	# doğu parapet: merdiven ağzı (z_top … z_top+2.2) açık
 	var ea := -zf
-	var eb := zt - 0.0
+	var eb := zt - 0.8
 	var ec := zt + 2.4
 	var ed := zf
 	if eb - ea > 0.3:
@@ -401,4 +401,9 @@ static func climbs_bukoleon(k: float = 0.5) -> Array:
 	var st := stair_info(k)
 	var H: float = dm["H"]
 	var W: float = dm["W"]
-	return [[Vector3(float(st["x"]), 0.0, float(st["z_foot"]) + 0.3), Vector3(W * 0.5 - 1.5, H, float(st["z_top"]) + 1.2), "merdiven"]]
+	var sx: float = st["x"]
+	var zt: float = st["z_top"]
+	return [
+		[Vector3(sx, 0.0, float(st["z_foot"]) + 0.5), Vector3(sx, H, zt + 0.25), "merdiven"],
+		[Vector3(sx, H, zt + 0.2), Vector3(W * 0.5 - 1.5, H, zt + 0.2), "basamak"],
+	]

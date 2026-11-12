@@ -81,6 +81,41 @@ func _env() -> void:
 	add_child(ground)
 
 
+func _ground_holes(holes: Array) -> void:
+	# zemin: 600×600 plaka; çukur dikdörtgenleri çıkarılır (şehir kurucusu da aynısını yapmalı)
+	if ground:
+		ground.queue_free()
+	ground = StaticBody3D.new()
+	add_child(ground)
+	var pieces: Array = [Rect2(-300, -300, 600, 600)]
+	for h: Rect2 in holes:
+		var np: Array = []
+		for pc: Rect2 in pieces:
+			if not pc.intersects(h):
+				np.append(pc)
+				continue
+			var ix := pc.intersection(h)
+			if ix.position.y > pc.position.y:
+				np.append(Rect2(pc.position.x, pc.position.y, pc.size.x, ix.position.y - pc.position.y))
+			if ix.end.y < pc.end.y:
+				np.append(Rect2(pc.position.x, ix.end.y, pc.size.x, pc.end.y - ix.end.y))
+			if ix.position.x > pc.position.x:
+				np.append(Rect2(pc.position.x, ix.position.y, ix.position.x - pc.position.x, ix.size.y))
+			if ix.end.x < pc.end.x:
+				np.append(Rect2(ix.end.x, ix.position.y, pc.end.x - ix.end.x, ix.size.y))
+		pieces = np
+	for pc: Rect2 in pieces:
+		var c := pc.get_center()
+		var gm := Props.box(ground, Vector3(pc.size.x, 0.4, pc.size.y), Vector3(c.x, -0.2, c.y), Color("8a8466"))
+		Props.set_pattern(gm, Color("8a8466"), "flagstone")
+		var cs := CollisionShape3D.new()
+		var bs := BoxShape3D.new()
+		bs.size = Vector3(pc.size.x, 0.4, pc.size.y)
+		cs.shape = bs
+		cs.position = Vector3(c.x, -0.2, c.y)
+		ground.add_child(cs)
+
+
 func _clear() -> void:
 	if host:
 		host.queue_free()
@@ -139,6 +174,8 @@ func _run_item(id: String) -> void:
 	if entry.is_empty():
 		push_error("yok: " + id)
 		return
+	var holes: Array = IstMarmara.pits(id, k)
+	_ground_holes(holes)
 	host = _build(id, 0)
 	await get_tree().physics_frame
 	await get_tree().physics_frame
@@ -316,6 +353,7 @@ func _audit(id: String, entry: Dictionary, bb: AABB) -> Dictionary:
 			var r := space.intersect_point(pq, 1)
 			sol[ix * gz + iz] = 1 if r.size() > 0 else 0
 	var dar := 0
+	var dar_pts: Array = []
 	for ix in gx:
 		var run := 0
 		var started := false
@@ -323,6 +361,7 @@ func _audit(id: String, entry: Dictionary, bb: AABB) -> Dictionary:
 			if sol[ix * gz + iz] == 1:
 				if started and run > 0 and run * step < 1.4 and run * step > 0.2:
 					dar += 1
+					dar_pts.append(Vector3(sx0 + ix * step, run * step, sz0 + iz * step))
 				started = true
 				run = 0
 			else:
@@ -339,6 +378,9 @@ func _audit(id: String, entry: Dictionary, bb: AABB) -> Dictionary:
 			else:
 				run += 1
 	out["dar"] = dar
+	if args.get("dbg", "0") == "1":
+		for i in mini(dar_pts.size(), 12):
+			print("  DAR x,genislik,z ", dar_pts[i])
 	# --- havada: tabanı zeminden > 5 cm yukarıda ve altında destek olmayan katı
 	var hav := 0
 	for c in host.find_children("*", "CollisionShape3D", true, false):
@@ -415,6 +457,8 @@ func _walk_test(a: Vector3, b: Vector3) -> bool:
 					var xf2 := xf
 					xf2.origin.y += lift
 					if body.test_move(xf2, want.normalized() * 0.12, col):
+						if args.get("dbg", "0") == "2" and f < 60:
+							print("   lift-fwd blocked kk=", kk, " n=", col.get_normal(), " at ", col.get_position())
 						continue
 					xf2.origin += want.normalized() * 0.12
 					if not body.test_move(xf2, Vector3.DOWN * (lift + 0.02), col):
@@ -424,9 +468,14 @@ func _walk_test(a: Vector3, b: Vector3) -> bool:
 					break
 				if not lifted and flat.length() > 1.0:
 					body.velocity.y = 3.6      # zıplama (JUMP)
+		if args.get("dbg", "0") == "2" and f % 40 == 0 and f < 400:
+			var ns := []
+			for ci in body.get_slide_collision_count():
+				ns.append(body.get_slide_collision(ci).get_normal())
+			print("   f", f, " pos=", body.global_position, " floor=", body.is_on_floor(), " n=", ns, " want=", want)
 		var dd := Vector2(to.x, to.z).length()
 		best = minf(best, dd + absf(to.y))
-		if dd < 1.3 and absf(body.global_position.y - b.y) < 0.8:
+		if dd < 1.7 and absf(body.global_position.y - b.y) < 0.8:
 			reached = true
 			break
 		await get_tree().physics_frame

@@ -360,4 +360,8 @@ static func climbs_msur(k: float = 0.5) -> Array:
 	var st := stair_pos(run_len(k), k)
 	var T: float = d["T"]
 	var zc := -T * 0.5 - 0.85
-	return [[Vector3(float(st["x_foot"]) - 0.4, 0.0, zc), Vector3(float(st["x_top"]) - 0.3, float(d["H"]), -T * 0.5 + 0.9), "merdiven"]]
+	var xt: float = st["x_top"]
+	return [
+		[Vector3(float(st["x_foot"]) - 0.4, 0.0, zc), Vector3(xt - 0.25, float(d["H"]), zc), "merdiven"],
+		[Vector3(xt - 0.2, float(d["H"]), zc), Vector3(xt - 0.2, float(d["H"]), -T * 0.5 + 0.9), "basamak"],
+	]
