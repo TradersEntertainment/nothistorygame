@@ -37,6 +37,8 @@ const YAMA := {"camp": [Vector2(0.0, -20.0), 170.0, 330.0], "byz_walls": [Vector
 const TEMIZ := {"camp": Rect2(-150.0, -175.0, 300.0, 300.0), "byz_walls": Rect2(-56.0, -58.0, 104.0, 90.0)}
 ## Uçuş sisi (NihatPowers._thin_fog hedefi): v2'nin km ölçeği için incelir (eski 0,0007)
 const UCUS_SIS := 0.00035
+## v2 konma noktası kimliği → yan görevin kimliği
+const PERCH_ESLE := {"ist_galata_kulesi": "galata", "ist_konstantin": "column", "ist_ayasofya": "aya"}
 
 var oyuncu: Player
 var _yakala_t := 0.0
@@ -283,6 +285,17 @@ static func flight_data() -> Dictionary:
 		if i < NihatPowers.LANDMARK_IDS.size() or TranslationServer.translate("LM_" + String(l[0])) != "LM_" + String(l[0]):
 			lms.append(l)
 	fd["landmarks"] = lms
+	# Konma noktaları: yan görevin kimlikleri (aya, galata, column: D_PERCH_* replikleri ve "perch" bayrakları) v2'deki
+	# yapılara eşlenir; repliği olmayan v2 konma noktaları yan göreve girmez (ham anahtar balonu çıkmasın)
+	var per: Array = []
+	var var_ := {}
+	for pe: Array in fd["perches"]:
+		var id := String(PERCH_ESLE.get(String(pe[0]), pe[0]))
+		if var_.has(id) or TranslationServer.translate("D_PERCH_" + id.to_upper()) == "D_PERCH_" + id.to_upper():
+			continue
+		var_[id] = true
+		per.append([id, pe[1], pe[2]])
+	fd["perches"] = per
 	return fd
 
 
@@ -347,9 +360,11 @@ static func _bosalt(v: Variant, derin := 0) -> int:
 	if derin > 4:
 		return 0
 	var n := 0
-	if v is Node:
+	if typeof(v) == TYPE_OBJECT:
+		if not is_instance_valid(v) or not (v is Node):
+			return 0
 		var nd := v as Node
-		if is_instance_valid(nd) and not nd.is_inside_tree() and nd.get_parent() == null:
+		if not nd.is_inside_tree() and nd.get_parent() == null:
 			nd.free()
 			return 1
 		return 0
