@@ -324,7 +324,8 @@ func _audit(id: String, host: Node3D, ab: AABB) -> void:
 			var j1 := mini(int((gb.end.z - ab.position.z) / step), nz - 1)
 			for ii in range(i0, i1 + 1):
 				for jj in range(j0, j1 + 1):
-					top[jj * nx + ii] = maxf(top[jj * nx + ii], gb.end.y * 0.9)
+					if absf(ii * step + ab.position.x - gb.get_center().x) < gb.size.x * 0.3 and absf(jj * step + ab.position.z - gb.get_center().z) < gb.size.z * 0.3:
+						top[jj * nx + ii] = maxf(top[jj * nx + ii], gb.end.y * 0.8)
 	var delik := 0
 	var gorunmez := 0
 	var cells := 0

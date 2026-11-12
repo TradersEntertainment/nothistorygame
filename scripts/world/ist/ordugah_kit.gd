@@ -68,7 +68,7 @@ class Bld:
 			return _mats[pattern]
 		var m := Props.mat(Color.WHITE, 0.0, false, pattern, true).duplicate() as StandardMaterial3D
 		m.vertex_color_use_as_albedo = true
-		m.albedo_color = Color(0.78, 0.76, 0.72)
+		m.albedo_color = Color(0.78, 0.76, 0.72) if pattern != "wood" else Color(0.56, 0.52, 0.48)
 		m.cull_mode = BaseMaterial3D.CULL_BACK
 		_mats[pattern] = m
 		return m

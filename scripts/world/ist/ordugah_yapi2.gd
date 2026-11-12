@@ -288,8 +288,8 @@ static func build_siper(host: Node3D, k: float, lod: int, tohum := 8, line := Pa
 			if lod == 0 or s % 2 == 0:
 				var cp := pm + fr * 6.6
 				var cy := K.gy(cp.x, cp.y)
-				w.box(Vector3(cp.x, cy + 0.8, cp.y), Vector3(sl, 1.6, 0.35), K.AHSAP, yaw)
-				w.solid_box(Vector3(cp.x, cy + 0.8, cp.y), Vector3(sl, 1.6, 0.35), yaw)
+				w.box(Vector3(cp.x, cy + 0.65, cp.y), Vector3(sl, 1.3, 0.3), K.AHSAP2, yaw)
+				w.solid_box(Vector3(cp.x, cy + 0.65, cp.y), Vector3(sl, 1.3, 0.3), yaw)
 				if lod == 0:
 					for q in int(sl / 0.5):
 						var cq := cp + dn * (-sl / 2 + 0.25 + q * 0.5)
