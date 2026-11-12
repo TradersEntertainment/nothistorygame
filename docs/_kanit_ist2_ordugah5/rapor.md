@@ -18,7 +18,7 @@ ocakların yer kaplaması sonraki dağınık çadırları kaydırır).
 | `pafta_ocak_gece.jpg` | aynı üç ocak ve aynı iki 70 m karesi gece |
 | `pafta_ordugah4_kameralar.jpg` | ORDUGÂH-4'ün altı kamerası (30 m, 70 m, otağ yakın, sur dışı, hendek) + gece 70 m ve gece 30 m |
 | `pafta_yer_1.jpg`, `pafta_yer_2.jpg` | 12 yer karesi (kamera en yakın kişiye ≥ 2,5 m) |
-| `sonda_cadir_turleri.jpg` | sonda (düz zemin, `tests/_ist/ordugah5_cadir.tscn`): türler ve katmanlar (yakın/orta/uzak) yan yana |
+| `ilk/sonda_cadir_turleri.jpg` | sonda (düz zemin, `tests/_ist/ordugah5_cadir.tscn`): türler ve katmanlar (yakın/orta/uzak) yan yana |
 | `ilk/` | ilk kareli ara gönderim (60. dakikadan sonra; geç kaldı) |
 
 ## 2. Kendi karelerime bakınca hâlâ kötü olanlar
@@ -65,7 +65,7 @@ topuz) eşit olmayan örnek ölçeğinde kalınlaşmasın diye birim/ölçek den
   `catma` (iki direk + mahya), `buyuk` (büyük orta/bey çadırı, iki direk, saçaklı), `pasa` (üç direk, kırmızı, altın saçak,
   **sayebân** iki direkli sarkık gölgelik + taraklı saçak + halı), `otag` (otağ-ı hümayun, 18 direk, kırmızı-altın), `kil` (koyu
   kıl, alçak, dört direk dalgalı sırt, ön yüz açık), `barinak` (yamalı örtü + çalı demetleri + eğri dallar).
-- Kareler: `pafta_cadir_5m.jpg`, `pafta_cadir_25m_kapi.jpg`, `sonda_cadir_turleri.jpg`. Kumaş mı kulübe mi: koni, çan, çatma,
+- Kareler: `pafta_cadir_5m.jpg`, `pafta_cadir_25m_kapi.jpg`, `ilk/sonda_cadir_turleri.jpg`. Kumaş mı kulübe mi: koni, çan, çatma,
   büyük, kıl, paşa, otağ **kumaş** okunuyor; barınak okunmuyor.
 - Çevre (§7b 8, 10, 11): çadır önlerinde kilim/hasır, mızrak çatkısı, çadıra yaslı yuvarlak kalkan, eyer, torba, su kırbası;
   obada çamaşır ipi (iki sırık, sarkan bezler); ocakta odun yığını ve kütüğe saplı balta (`ordugah_oba.gd:_cadir_onu`, `_camasir`).
@@ -87,7 +87,7 @@ silah bileyen, aşçı (kepçe). Duman: host başına tek çoklu ağ, üç çapr
 (gündüz açık gri, gece koyu ve soluk). **70 m'den sayım (ekranda): gündüz duman 354 (Anadolu) / 641 (yeniçeri); ÖNCE 0.**
 Gece: alev + hale yakın ve orta katmanda; ana ocakta gerçek ışık (OmniLight, gölgesiz, en çok 2/oba) yüzlere ve çadıra vuruyor;
 bey çadırı kapısında **meşale** (sırık + alev); uzak hücrelerde ocaklar ışıyan nokta (hücre başına tek çoklu ağ).
-**70 m gece sayım: ateş noktası yakın 556 / 1 042, uzak 0 / 481; ÖNCE gece: §4.** Otağ çevresi fenerli (ORDUGÂH-4'ün 8 gece ateşi).
+**70 m gece sayım (ekranda): ateş noktası yakın 556 / 1 042, uzak 0 / 481; ÖNCE gece yakın 258 / 476, uzak 0, duman 0.** Otağ çevresi fenerli (ORDUGÂH-4'ün 8 gece ateşi).
 
 **C. Zemin — KISMEN** (`pafta_yer_*`, `pafta_ocak_gunduz.jpg`). Yumuşak kenarlı (köşe saydamlığı) zemin ağı (host başına tek
 çizim): kanat boyunca büyük solgun/çiğnenmiş ot lekeleri, oba altında çiğnenmiş toprak, ocak çevresi isli, her çadırın altında koyu
@@ -129,15 +129,15 @@ Gece:
 
 | nokta | ÖNCE gece ordugâh çizim (üçgen) | SONRA gece v2 / ordugâh çizim (üçgen) | hedef |
 |---|---|---|---|
-| uçuş 60 m otağ | ÖNCEGECE_OTAG | 1 325 / 806 (2,85 M) | ✔ |
-| yer otağ | ÖNCEGECE_YOTAG | 1 198 / 669 (2,07 M) | ✔ |
-| uçuş 60 m Şahi | ÖNCEGECE_SAHI | 1 028 / 307 (0,87 M) | ✔ |
-| yer Şahi | ÖNCEGECE_YSAHI | 953 / 138 (0,37 M) | ✔ |
-| uçuş 60 m Anadolu | ÖNCEGECE_ANA | 477 / 415 (1,81 M) | ✔ |
-| yer Anadolu | ÖNCEGECE_YANA | 403 / 352 (1,37 M) | ✔ |
-| uçuş 60 m Rumeli | ÖNCEGECE_RUM | 1 495 / **1 270** (7,88 M) | ✘ |
-| uçuş 60 m batarya 2 | ÖNCEGECE_BAT | 851 / 197 (0,80 M) | ✔ |
-| uçuş 60 m yeniçeri | ÖNCEGECE_YEN | 886 / 723 (2,89 M) | ✔ |
+| uçuş 60 m otağ | 814 (1,58 M) | 1 325 / 806 (2,85 M) | ✔ |
+| yer otağ | 643 (1,26 M) | 1 198 / 669 (2,07 M) | ✔ |
+| uçuş 60 m Şahi | 344 (0,56 M) | 1 028 / 307 (0,87 M) | ✔ |
+| yer Şahi | 143 (0,42 M) | 953 / 138 (0,37 M) | ✔ |
+| uçuş 60 m Anadolu | 465 (1,01 M) | 477 / 415 (1,81 M) | ✔ |
+| yer Anadolu | 379 (0,89 M) | 403 / 352 (1,37 M) | ✔ |
+| uçuş 60 m Rumeli | **1 133** (2,91 M) | 1 495 / **1 270** (7,88 M) | ✘ |
+| uçuş 60 m batarya 2 | 196 (0,40 M) | 851 / 197 (0,80 M) | ✔ |
+| uçuş 60 m yeniçeri | 726 (1,55 M) | 886 / 723 (2,89 M) | ✔ |
 
 Not: SONRA gündüz tablosu son kodun bir önceki hâliyle (gündüz orta katman alevi açık, kişi karosu 36 m) ölçüldü; son kodda bu iki
 şey çizimi yalnız AZALTIR (yeniden ölçüm: BAKILMADI). Gece tablosu son kodla. Yapılanlar: kanat çadırları gölge düşürmez (yerine
