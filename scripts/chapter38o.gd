@@ -533,50 +533,74 @@ var _hold_left := HOLD_TIME
 
 
 ## Merdivenin ayağını tutuş (yayma P3): Tolga ayağın dibine çömelir, iki eli iki dikmede (eskiden 1,6 m geride
-## duruyordu; sol el havada, sağ elde makine). Bakış merdivenin alt yarısında: tırmanan tayfa ve eller birlikte görünür.
-const BRACE_AT := Vector3(0.0, 0.0, -9.08)     # galley yereli: ayağın (z −9,4) 0,32 m önü (gövde merdivene girmez)
-const BRACE_LOOK := 2.2                         # merdiven boyunca bakılan nokta (m)
-const BRACE_HANDS := 1.35                       # ellerin dikmelerde tuttuğu yer (m)
+## duruyordu; sol el havada, sağ elde makine). Bakış girişte bir kez, yumuşakça merdivenin yukarısına çevrilir (tırmanan
+## tayfa ve çatalın geldiği mazgal kadrajda); sonra oyuncu serbestçe bakar (eller dikmede kalır, kadraj dışına inebilir).
+const BRACE_AT := Vector3(0.0, 0.0, -9.18)     # galley yereli: ayağın (z −9,4) 0,22 m önü
+const BRACE_EYE := 1.15                         # çömelmiş göz yüksekliği
+const BRACE_LOOK := 2.75                        # girişte bakılan nokta: merdiven boyunca (m)
+const BRACE_HANDS := 1.42                       # ellerin dikmelerde tuttuğu yer (m): kolun uzandığı yer
+## Tırmanan iki tayfanın merdivendeki yeri (m): merdivenin üst yarısında. Ayağın dibinden bakınca 2,6 m'deki tayfa tam
+## tepede kalıyordu (yalnız bacakları kadrajda); üst yarıdakiler eller dikmedeyken baştan ayağa ve mazgalla birlikte görünür.
+const CLIMB_AT := 4.4
+const CLIMB_GAP := 3.0
+
+
+## Tırmananlar basamağın biri sola, biri sağa yakın (alttaki, üsttekini ayaktan bakınca tümüyle kapatmasın)
+func _climb_side(k: int) -> Vector3:
+	return ladder.global_transform.basis.x.normalized() * (0.1 if k == 0 else -0.1)
 var _both_on := false
+var _braced := false
+var _look_tw: Tween
 
 
 func _brace() -> void:
 	_stand(BRACE_AT)
-	player.eye_height = 1.15
-	player.face(ladder.point_at(BRACE_LOOK))
+	player.eye_height = BRACE_EYE
+	_braced = true                   # _process: eller dikmelere (bir sonraki karede)
+	_look_soft(ladder.point_at(BRACE_LOOK), 0.8)
 
 
-## Merdiven tutuşunda bakış: up true iken merdivenin tepesine (çatal), değilse ayağın üstüne (BRACE_LOOK) yumuşakça döner.
-## Döner: bakış aşağıda mı (eller dikmeye uzanabilir mi).
-func _brace_look(delta: float, up: bool) -> bool:
-	if not is_instance_valid(ladder) or not _holding or not balance.visible:
-		return true
-	var tgt := ladder.point_at(ladder.height * 0.85 if up else BRACE_LOOK)
-	var to := tgt - player.camera.global_position
-	var pitch := atan2(to.y, Vector2(to.x, to.z).length())
-	var k := clampf(delta * 4.0, 0.0, 1.0)
-	player.camera.rotation.x = lerpf(player.camera.rotation.x, pitch, k)
-	return not up and absf(player.camera.rotation.x - pitch) < deg_to_rad(4.0)
+## Bakışı yumuşakça bir noktaya çevirir (≤ 1 sn); sonra bakış yine oyuncunundur.
+func _look_soft(point: Vector3, dur := 0.8) -> void:
+	if _look_tw and _look_tw.is_valid():
+		_look_tw.kill()
+	var to := point - player.global_position
+	var yaw := atan2(-to.x, -to.z)
+	var pitch := atan2(to.y - player.eye_height, Vector2(to.x, to.z).length())
+	var y0 := player.rotation.y
+	yaw = y0 + wrapf(yaw - y0, -PI, PI)
+	_look_tw = create_tween()
+	_look_tw.tween_property(player, "rotation:y", yaw, dur).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_IN_OUT)
+	_look_tw.parallel().tween_property(player.camera, "rotation:x", pitch, dur).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_IN_OUT)
 
 
-## İki el iki dikmede (her kare: merdiven dalgayla yatar); false: bırakır
+## İki el iki dikmede (her kare: merdiven dalgayla yatar, oyuncu başını çevirebilir); false: bırakır. Tutuş yeri
+## görüşün dışına çıkınca eller dikmede kalır sayılır: kadrajın altına iner (havada, kameraya yapışık durmaz).
 func _ladder_grip(on: bool) -> void:
 	if not on or not is_instance_valid(ladder):
 		if _both_on:
 			_both_on = false
 			player.release_both()
-			if is_instance_valid(world):
-				world.visible = true
+			player.stow_hands(false)
+			player.free_look = false
 		return
-	if not _both_on and is_instance_valid(world):
-		# Merdivenin dibinden sura bakarken surun ardındaki şehir görünmez (sur kapatır) ama alçak bakışta görüş
-		# konisine girip çiziliyordu (RINFO: bu evrede çizim ×2): tutuş boyunca gizli, el bırakınca geri
-		world.visible = false
+	if not _both_on:
+		player.stow_hands(true)          # tutuş boyunca el eşyası ve kumanda cepte (eller inince telsiz belirmez)
+		player.free_look = true          # donmuşken de başını çevirir (A/D ibreyi tutar)
 	_both_on = true
 	var right := ladder.global_transform.basis.x.normalized()
 	var mid := ladder.point_at(BRACE_HANDS) + ladder.front_dir() * 0.04
 	var c := player.camera
-	player.hold_both(c.to_local(mid - right * (Ladder.WIDTH * 0.5)), c.to_local(mid + right * (Ladder.WIDTH * 0.5)))
+	var l := c.to_local(mid - right * (Ladder.WIDTH * 0.5))
+	var r := c.to_local(mid + right * (Ladder.WIDTH * 0.5))
+	var inside := true
+	for q: Vector3 in [l, r]:
+		if q.y < -0.47 or q.y > 0.08 or q.z > -0.28 or q.z < -0.82 or absf(q.x) > 0.5:
+			inside = false
+	if not inside:
+		l = Vector3(-0.2, -0.42, -0.3)        # görüşün altında (FOV 72'de bu derinlikte kadraj ±0,22)
+		r = Vector3(0.2, -0.42, -0.3)
+	player.hold_both(l, r)
 
 
 func _ladder_phase() -> void:
@@ -602,7 +626,7 @@ func _ladder_phase() -> void:
 		cl.set_meta("climber", true)
 		cl.set_meta("no_talk", true)
 		add_child(cl)
-		cl.global_position = ladder.point_at(2.6 + k * 2.8) + ladder.front_dir() * 0.4
+		cl.global_position = ladder.point_at(CLIMB_AT + k * CLIMB_GAP) + ladder.front_dir() * 0.4 + _climb_side(k)
 		cl.rotation.y = 0.0        # sura (+z) dönük tırmanır: oyuncu sırtını görür
 		cl.set_activity("climb_a")
 		climbers.append(cl)
@@ -638,7 +662,7 @@ func _ladder_phase() -> void:
 		ladder.rotation.z = _bal * 0.05
 		# Tayfa merdivende; kayıştan sonra güverteden yeniden tırmanır (yerine ışınlanmaz)
 		for k in climbers.size():
-			var on := ladder.point_at(2.6 + k * 2.8) + ladder.front_dir() * 0.4
+			var on := ladder.point_at(CLIMB_AT + k * CLIMB_GAP) + ladder.front_dir() * 0.4 + _climb_side(k)
 			climbers[k].global_position = climbers[k].global_position.lerp(on, minf(1.0, dt * 1.6))
 		if absf(_bal) >= 1.0:
 			# Merdiven kayar: tırmanan iki tayfa güverteye düşer
@@ -706,6 +730,7 @@ func _ladder_phase() -> void:
 	hud.set_objective("")
 	_holding = true
 	player.frozen = true
+	_braced = false
 	_ladder_grip(false)
 	if Siege.outcome(29) == "29O.2":
 		hud.bark("SPK_SAILOR2", "D38O_S2_HOOKS_EVEN" if ladder_slips == 0 else "D38O_S2_HOOKS_AGAIN", 3.0)
@@ -726,7 +751,7 @@ func _hooks_memory() -> void:
 	# Tolga döner, sonra yine merdivenin ayağına bakar
 	await _old_sailor_to(Vector3(0.3, 0.0, -6.5), "")
 	old_sailor.look_target = player
-	player.face(old_sailor.global_position + Vector3(0, 1.5, 0))
+	_look_soft(old_sailor.global_position + Vector3(0, 1.5, 0), 0.6)
 	match o:
 		"29O.1":
 			await hud.say("SPK_SAILOR2", "D38O_S2_HOOKS_OK")
@@ -739,7 +764,7 @@ func _hooks_memory() -> void:
 			await hud.say("SPK_SAILOR2", "D38O_S2_HOOKS_BAD")
 			_old_sailor_to(OLD_POST, "")
 	old_sailor.look_target = null
-	player.face(ladder.point_at(BRACE_LOOK))
+	_look_soft(ladder.point_at(BRACE_LOOK), 0.8)
 
 
 func _old_sailor_to(local: Vector3, act: String) -> void:
@@ -754,18 +779,27 @@ func _old_sailor_to(local: Vector3, act: String) -> void:
 
 func _fork_visual(on: bool) -> void:
 	if on:
+		# Çatal siperin üstünden yan çapraz iner, iki dişi sağ dikmenin ucunu kavrar (yayma P3: dişler merdivenin önünde
+		# havadaydı; mazgalın içinden gelince siperin ve tırmanan tayfanın gövdesinin ardında kalıyordu)
 		_fork = Node3D.new()
 		add_child(_fork)
-		_fork.global_position = ladder.point_at(ladder.height) + Vector3(0, 0.6, 1.4)
-		Props.cyl(_fork, 0.04, 3.0, Vector3(0, 0, -1.4), Color("6a4a2c"), Vector3(90, 0, 0), 5)
-		for sx: float in [-0.12, 0.12]:
-			Props.cyl(_fork, 0.02, 0.4, Vector3(sx, 0, -3.0), Color("3a3a40"), Vector3(90, 0, 0), 4)
+		var rx := ladder.global_transform.basis.x.normalized()
+		var tip := ladder.point_at(ladder.height - 0.2) + rx * (Ladder.WIDTH * 0.5)
+		_fork.global_position = tip + rx * 1.1 + Vector3(0, 2.1, 0.5)      # siperin üstünden, gökyüzünün önünde iner
+		_fork.look_at(tip, Vector3.UP)          # −z yerel: dişlerin yönü
+		var reach := (_fork.global_position - tip).length()
+		Props.cyl(_fork, 0.055, 3.2, Vector3(0, 0, -reach + 1.75), Color("9a7a50"), Vector3(90, 0, 0), 5)
+		Props.cyl(_fork, 0.025, 0.24, Vector3(0, 0, -reach + 0.16), Color("3a3a40"), Vector3(0, 0, 90), 4)      # çatalın kolu
+		for sx: float in [-0.1, 0.1]:
+			Props.cyl(_fork, 0.018, 0.3, Vector3(sx, 0, -reach + 0.02), Color("3a3a40"), Vector3(90, 0, 0), 4)
+		var back := _fork.global_transform.basis.z * 0.9
+		_fork.global_position += back       # siperin ardından uzanarak gelir
 		var tw := _fork.create_tween()
-		tw.tween_property(_fork, "position:z", _fork.position.z - 0.8, 1.2)
+		tw.tween_property(_fork, "global_position", _fork.global_position - back, 1.0).set_trans(Tween.TRANS_SINE)
 	elif is_instance_valid(_fork):
 		var f := _fork
 		var tw := f.create_tween()
-		tw.tween_property(f, "position:z", f.position.z + 1.4, 0.3)
+		tw.tween_property(f, "global_position", f.global_position + f.global_transform.basis.z * 1.4, 0.3)
 		tw.tween_callback(f.queue_free)
 
 
@@ -774,6 +808,7 @@ var _fork: Node3D
 
 func _start_deck_fire() -> void:
 	_holding = false
+	_braced = false
 	_ladder_grip(false)                # merdiveni bırakır, kovaya koşar
 	player.frozen = false
 	balance.visible = false            # merdiveni bırakınca ibre de kalkar: gözler ateşte
@@ -1040,6 +1075,11 @@ func _dawn() -> void:
 			keep_r.append(r)
 	galley.set_meta("rowers", keep_r)
 	_stand(stand_at)
+	# Yaşlı tayfa direk dibindeyse (OLD_POST) karartmada direğin iskele yanına geçer: oyuncunun durduğu yerden kıçtaki
+	# tayfaya (D38O_S_03) bakış çizgisinin 0,3 m yanındaydı, "kuşkulu" dönüşünde (hooks_bad) başı çizgiye giriyordu
+	# (VISAUDIT personhidden; e551de84'te de 10 koşuda 1 kez)
+	if is_instance_valid(old_sailor) and old_sailor.position.distance_to(OLD_POST + Vector3(0, DECK, 0)) < 0.3:
+		old_sailor.position = OLD_POST + Vector3(-0.7, DECK, 0)
 	player.face(Vector3(-86.0, 26.0, WALL_Z + 32.0))       # sancakların olduğu yöne (batı)
 	await hud.fade_to(0.0, 0.8)
 	await hud.say("SPK_SAILOR2", "D38O_S2_02")
@@ -1653,11 +1693,9 @@ func _process(delta: float) -> void:
 		player.free_hold = Vector3.INF
 	# Merdivenin ayağını tutarken sol el sol sırıkta (26O ile aynı); ateşe koşarken bırakır, kova alınca kovada
 	if phase == "ladder" and not _has_sand:
-		# İki el dikmelerde (yayma P3; sol el havadaydı). Çatal mazgaldan uzanınca bakış yumuşakça merdivenin tepesine
-		# kalkar (eller dikmede kalamaz: bırakır), çatal gidince ayağa iner ve eller yeniden dikmeye
-		var up := is_instance_valid(_fork) and _holding and balance.visible
-		var low_ok := _brace_look(delta, up)
-		_ladder_grip(_holding and balance.visible and low_ok)
+		# İki el dikmelerde (yayma P3; sol el havadaydı). Bakış oyuncunun: girişte merdivenin yukarısına çevrildi,
+		# çatal merdivenin tepesine iner (kadrajda)
+		_ladder_grip(_holding and _braced)
 	elif phase == "climb" and _ladder_hand:
 		_ladder_hand = false
 		player.free_hold = Vector3.INF

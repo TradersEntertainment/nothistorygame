@@ -317,7 +317,7 @@ func _fly_hook(from: Vector3, to: Vector3) -> void:
 			var c := player.camera
 			var hand := c.global_transform * Vector3(0.14, -0.3, -0.55)
 			var pts: Array = Stage.sag_points(hand, m.global_position, 0.1 + 0.4 * k, 8)
-			line.mesh = ThraceRoad.tube_mesh(pts, 0.014, Color("c8a878")), 0.0, 1.0, dur)
+			_tube_to(line, pts, 0.014), 0.0, 1.0, dur)
 	await tw.finished
 	m.queue_free()
 	line.queue_free()
@@ -347,7 +347,10 @@ func _climb() -> void:
 	player.global_position = foot
 	player.face(carrack.to_global(Vector3(-SeaBattle.RAIL_X, SeaBattle.RAIL_TOP + 1.0, 0.4)))
 	var rail_pt := carrack.to_global(Vector3(-SeaBattle.RAIL_X - 0.1, SeaBattle.RAIL_TOP, 0.4))
-	var hook := SeaBattle.hook_line(self, rail_pt, foot + Vector3(0, 0.3, 0), 0.0)
+	# İpin alt ucu kadırganın küpeştesindeki halkada (oyuncunun 0,55 m önü): düşerken ip kameranın önünden geçer,
+	# içinden değil (yayma P3 düzeltme turu: alt uç ayağın dibindeydi, düşüşte ip kameranın yanında krem şeritti)
+	var low_pt := galley.to_global(Vector3(SeaBattle.GALLEY_RAIL_X, DECK + 0.5, 0.4))
+	var hook := SeaBattle.hook_line(self, rail_pt, low_pt, 0.0)
 	# Tırmanırken iki el ipte (yayma P3): kameranın önündeki parça yuvarlak kesitli, dış çizgisiz ip; küpeşteden üst
 	# yumruğa, alt yumruğa, oradan kadırganın güvertesine
 	hook.get_node("Line").visible = false
@@ -358,18 +361,18 @@ func _climb() -> void:
 	hook.add_child(line)
 	line.top_level = true
 	line.global_transform = Transform3D.IDENTITY
-	line.mesh = ThraceRoad.tube_mesh([rail_pt, foot + Vector3(0, 0.3, 0)], 0.017, Color("c8a878"))
+	_tube_to(line, [rail_pt, low_pt], 0.017)
 	var on_rope := func(_k: float) -> void:
 		var c := player.camera
 		var a := c.to_local(rail_pt)
-		var b := c.to_local(foot + Vector3(0, 0.3, 0))
+		var b := c.to_local(low_pt)
 		var lp := a.lerp(b, clampf((a.y - (-0.18)) / maxf(a.y - b.y, 0.01), 0.0, 1.0))
 		var rp := a.lerp(b, clampf((a.y - (-0.02)) / maxf(a.y - b.y, 0.01), 0.0, 1.0))
 		player.hold_both(lp + Vector3(-0.03, 0, 0), rp + Vector3(0.03, 0, 0))
 		var fl: Vector3 = player.free_rig.socket.global_position if player.free_rig and player.free_rig.socket else c.to_global(lp)
 		var fr: Vector3 = player.rig.socket.global_position if player.rig and player.rig.socket else c.to_global(rp)
 		var upv := c.global_transform.basis.y * 0.035      # avucun ortası
-		line.mesh = ThraceRoad.tube_mesh([rail_pt, fr + upv, fl + upv, foot + Vector3(0, 0.3, 0)], 0.017, Color("c8a878"))
+		_tube_to(line, [rail_pt, fr + upv, fl + upv, low_pt], 0.017)
 	var tw := create_tween()
 	tw.tween_property(player, "global_position", up, 2.2).set_trans(Tween.TRANS_SINE)
 	tw.parallel().tween_method(on_rope, 0.0, 1.0, 2.2)
@@ -399,16 +402,56 @@ func _climb() -> void:
 	climbed = true
 	await get_tree().create_timer(0.5, false).timeout
 	player.release_both()            # taş isabet eder: eller ipten kayar
-	line.mesh = ThraceRoad.tube_mesh([rail_pt, foot + Vector3(0, 0.3, 0)], 0.017, Color("c8a878"))
 	Audio.sfx("land_thud", -2.0)
+	# Düşüş: eller ipten kayar, ip gerilip kameranın önünde (en az 25 cm) kalır, ince kesit
 	var fall := create_tween()
 	fall.tween_property(player, "global_position", foot, 0.45).set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_IN)
+	fall.parallel().tween_method(func(_k: float):
+		_tube_to(line, _rope_clear([rail_pt, low_pt], player.camera, 0.3), 0.012), 0.0, 1.0, 0.45)
 	await fall.finished
+	_tube_to(line, [rail_pt, low_pt], 0.017)
 	Fx.trauma(0.6)
 	hook.queue_free()
 	_stand()
 	await hud.say("SPK_TOLGA", "D29O_T_FELL")
 	await hud.say("SPK_NIHAT", "D29O_N_FELL")
+
+
+## Boru ipi yeniden kurar; noktalar 5 mm'den az oynadıysa kurmaz (33o _guide_lay, 38o _rope_hands ile aynı koruma).
+func _tube_to(mi: MeshInstance3D, pts: Array, r: float) -> void:
+	if not is_instance_valid(mi) or pts.size() < 2:
+		return
+	var last: Array = mi.get_meta("tube_pts", [])
+	if last.size() == pts.size() and float(mi.get_meta("tube_r", 0.0)) == r:
+		var same := true
+		for i in pts.size():
+			if (last[i] as Vector3).distance_squared_to(pts[i]) > 0.000025:
+				same = false
+				break
+		if same:
+			return
+	mi.set_meta("tube_pts", pts.duplicate())
+	mi.set_meta("tube_r", r)
+	mi.mesh = ThraceRoad.tube_mesh(pts, r, Color("c8a878"))
+
+
+## İki uçlu ip kameraya min'den yakın geçiyorsa, en yakın noktasında kameranın önüne doğru itilir (üç noktalı ip).
+func _rope_clear(ends: Array, cam: Camera3D, min_d: float) -> Array:
+	var a: Vector3 = ends[0]
+	var b: Vector3 = ends[1]
+	var e := cam.global_position
+	var ab := b - a
+	var t := clampf((e - a).dot(ab) / maxf(ab.length_squared(), 0.0001), 0.05, 0.95)
+	var q := a + ab * t
+	var off := q - e
+	if off.length() >= min_d:
+		return ends
+	var fwd := -cam.global_transform.basis.z
+	fwd.y = 0.0
+	fwd = fwd.normalized() if fwd.length() > 0.01 else Vector3.FORWARD
+	var push := off + fwd * min_d
+	push = push.normalized() * min_d
+	return [a, e + push, b]
 
 
 ## 4. Sultan kıyıdan atını denize sürer. Tespit karesi.

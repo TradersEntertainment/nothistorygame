@@ -35,6 +35,7 @@ var phase := "intro"
 var _outcome := ""
 var cut := 0
 var spawned := 0
+var _bot_look := ""
 var boarders := 0
 var _duel_won := true
 var fires_left := 0
@@ -143,16 +144,30 @@ func _crew_jobs() -> void:
 				piles.ball(0.12, Vector3(p.position.x + 0.28, p.position.y + 0.08, z + 0.3 + (k - 1) * 0.22), Color("4a4640").lerp(Color("5a544a"), k * 0.5), Vector3(1.1 - k * 0.1, 0.7, 0.9 + k * 0.1), 8)
 			_stone_loop(p)
 		elif ship2 and int(round((z + 5.6) / 2.9)) % 2 == 1:
-			# Halat: yandaki geminin iskele küpeştesinden bizim küpeştenin üstünden ellere, oradan basamakta kangala
+			# Halat: yandaki geminin iskele küpeştesinden bizim küpeştenin üstünden ellere, oradan güvertedeki babaya
+			# (yayma P3 düzeltme turu: ip kollar yana açık tutuluyordu, ucu bacağın arkasında bitiyordu). Tayfa küpeşteye
+			# dönük; ip gövdesinin sağ yanından geçer (iki el ipte, biri önde biri belde): içeriden, sırttan bakınca eller
+			# ve ip gövdenin yanında görünür. İpin ucu basamağın dibindeki babaya sarılır, artanı babanın yanında kangal.
 			var far_pt := carrack.to_local(ship2.to_global(Vector3(-SeaBattle.RAIL_X, SeaBattle.RAIL_TOP - 0.1, z - 1.5)))
-			var rail := Vector3(SeaBattle.RAIL_X + 0.02, SeaBattle.RAIL_TOP + 0.04, z)
-			var hy := p.position.y + 1.05
-			var hr := Vector3(p.position.x + 0.42, hy, z + 0.12)
-			var hl := Vector3(p.position.x + 0.2, hy - 0.04, z + 0.1)
-			var coil := Vector3(p.position.x - 0.35, p.position.y + 0.0, z - 0.45)
+			var side := 0.24            # tayfanın sağı (+z: küpeşteye, +x'e dönük kişinin sağı)
+			var rail := Vector3(SeaBattle.RAIL_X + 0.02, SeaBattle.RAIL_TOP + 0.04, z + side)
+			var hy := p.position.y + 0.98
+			var hr := Vector3(p.position.x + 0.36, hy + 0.08, z + side)          # öndeki el (sağ)
+			var hl := Vector3(p.position.x + 0.02, hy - 0.06, z + side + 0.02)   # belindeki el (sol)
+			var post := Vector3(SeaBattle.RAIL_X - 1.12, SeaBattle.CARRACK_DECK, z + side + 0.1)       # baba: basamağın dibinde
+			var post_top := post + Vector3(0, 0.46, 0)
+			piles.cyl(0.09, 0.5, post + Vector3(0, 0.25, 0), Color("5a3e26"), Vector3.ZERO, 8)
+			piles.cyl(0.035, 0.34, post_top - Vector3(0, 0.08, 0), Color("6a4a2c"), Vector3(0, 0, 90), 6)      # babanın çaprazı
 			var pts: Array = Stage.sag_points(far_pt, rail, 0.02, 4)
-			pts.append_array([hr, hl, hl + Vector3(-0.15, -0.35, 0.0)])
-			pts.append_array(Stage.sag_points(hl + Vector3(-0.15, -0.35, 0.0), coil + Vector3(0, 0.08, 0), 0.05, 3).slice(1))
+			pts.append_array([hr, hl])
+			pts.append_array(Stage.sag_points(hl, post_top + Vector3(0.05, 0.0, 0.0), 0.04, 3).slice(1))
+			# Babaya bir tur (sarılı), ucu babanın dibindeki kangala
+			for k in 5:
+				var a := TAU * k / 4.0 + PI * 0.5
+				pts.append(post_top + Vector3(cos(a) * 0.11, -0.03 - k * 0.025, sin(a) * 0.11))
+			var coil := post + Vector3(-0.42, 0.0, 0.12)
+			pts.append(post + Vector3(-0.12, 0.04, 0.08))
+			pts.append(coil + Vector3(0.2, 0.05, 0.0))
 			var r := Stage.rope(carrack, pts[0], pts[1], 0.0, 0.024)
 			Stage.rope_to(r, pts)
 			Stage.rope_coil(carrack, coil, 0.24, 3.0, 0.024)
@@ -234,8 +249,12 @@ func _hooks_phase() -> void:
 			if float(h["life"]) <= 0.0:
 				_board(id)
 		if GameState.autotest and GameState.autotest_variant != "lose" and not _hooks.is_empty():
-			# Bot en eski kancaya gider ve keser
+			# Bot en eski kancaya gider ve keser. Keseceği kancaya bakar (oyuncu E'ye basmak için ona bakmak zorunda;
+			# bot bakmadan kesiyordu, kancalı ip oynanış karesine hiç girmiyordu). Yolu ve zamanlaması aynı.
 			var id: String = _hooks.keys()[0]
+			if _bot_look != id:
+				_bot_look = id
+				player.face((_hooks[id]["node"] as Node3D).global_position + Vector3(0, -0.15, 0))
 			if float(_hooks[id]["life"]) < HOOK_LIFE - 1.5:
 				player.global_position = Person.clear_spot(get_tree(), _hooks[id]["stand"], null, 0.5)    # güvertedeki topun, fıçının içine değil
 				_cut(id)
@@ -251,7 +270,9 @@ func _spawn_hook() -> void:
 	var z := -5.4 + ((spawned * 7) % 6) * 2.0
 	var top := _deck(Vector3(-SeaBattle.RAIL_X - 0.1, SeaBattle.RAIL_TOP - DECK, z))
 	var bottom := carrack.to_global(Vector3(-(SeaBattle.RAIL_X + 2.4), SeaBattle.GALLEY_DECK + 0.6, z))
-	var n := SeaBattle.hook_line(self, top, bottom)      # burgulu ip, kadırganın küpeştesine bağlı (yayma P3)
+	# Burgulu ip, kadırganın küpeştesine bağlı (yayma P3). Kanca küpeştenin üstüne oturur, ipin düğümü ve gergin
+	# parçası küpeştenin üstünden geçer: kesmeye gelen oyuncu (küpeştenin 1 m içi) ipi görür
+	var n := SeaBattle.hook_line(self, top, bottom, 0.06, carrack.global_transform.basis.x * 0.22)
 	Props.interactable(n, id, Vector3(1.0, 1.4, 1.0), Vector3(0.6, -0.4, 0)).global_position = top + carrack.global_transform.basis.x * 0.6 - Vector3(0, 0.4, 0)
 	_hooks[id] = {"node": n, "life": HOOK_LIFE, "stand": _deck(Vector3(-SeaBattle.RAIL_X + 1.0, 0.05, z))}
 	Audio.sfx("kick_metal", -6.0, 1.5)
@@ -315,7 +336,8 @@ func _board_fight() -> void:
 			"hat": ["azap", "bork", "turban"][k], "mustache": true, "beard": k == 1}})
 		var top := carrack.to_global(Vector3(-(SeaBattle.RAIL_X + 0.5), SeaBattle.RAIL_TOP - 1.3, z))
 		var bottom := carrack.to_global(Vector3(-(SeaBattle.RAIL_X + 2.4), SeaBattle.GALLEY_DECK, z))
-		SeaBattle.hook_line(self, _deck(Vector3(-SeaBattle.RAIL_X - 0.1, SeaBattle.RAIL_TOP - DECK, z)), bottom + Vector3(0, 0.6, 0))
+		SeaBattle.hook_line(self, _deck(Vector3(-SeaBattle.RAIL_X - 0.1, SeaBattle.RAIL_TOP - DECK, z)), bottom + Vector3(0, 0.6, 0), 0.06,
+			carrack.global_transform.basis.x * 0.22)
 		lanes.append({"base": bottom, "top": top, "land": _deck(Vector3(-SeaBattle.RAIL_X + 1.0, 0, z))})
 	player.frozen = false
 	var r: Dictionary = await StoryDuel.fight(self, hud, player, specs, "spathion", 0.38, 75.0, {"ladders": lanes})
