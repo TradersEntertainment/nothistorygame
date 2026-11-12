@@ -297,7 +297,9 @@ func attempt(p: Person, kind: String) -> void:
 	var to_pl := player.global_position - p.global_position
 	to_pl.y = 0.0
 	var front := rf.normalized().dot(to_pl.normalized()) if rf.length() > 0.01 and to_pl.length() > 0.01 else 1.0
-	var counter := "ruler" if dist <= COUNTER_DIST and front >= BEHIND_DOT and _bot != "huzur_guard" else "guards"
+	# Oturan hükümdar (tahtta: 12, 23) çelme atamaz, yarım adım çekilemez: muhafızlar karşılar
+	var seated := str(p.activity).begins_with("sit") or (p.rig != null and str(p.rig.activity).begins_with("sit"))
+	var counter := "ruler" if dist <= COUNTER_DIST and front >= BEHIND_DOT and not seated and _bot != "huzur_guard" else "guards"
 	_log("attempt ruler=%s kind=%s dist=%.1f front=%.2f counter=%s mode=%s ch=%d side=%s" % [p.face_id, kind, dist, front,
 		counter, mode, GameState.current_chapter, Siege.side()])
 	GameState.bump_stat("tarihe_tekme")      # ACH_TARIHE_TEKME karşı hamle anında (Hud saniyede bir bakar)
@@ -413,13 +415,14 @@ var _holding := false
 ## Açık replik kısa sürede kapanır (sesi kesilir); sonra Hud'un replik yeri tutulur: bölümün sıradaki repliği
 ## (Hud.say "line_open" bekler) bu sahne bitene kadar sırada kalır. Seçim kutusu açıkken tetik yoktur.
 func _hold_dialogue() -> void:
-	if hud.line_open:
+	# Bölümün sıradaki repliği aynı karede araya girebilir: açık replik her seferinde kesilir, boş bir karede yer tutulur
+	var t := 0.0
+	while hud.line_open and t < HOLD_LINE_MAX * 3.0:
 		hud.cut_voice()
-		var t := 0.0
-		while hud.line_open and t < HOLD_LINE_MAX:
-			await get_tree().process_frame
-			t += get_process_delta_time()
+		await get_tree().process_frame
+		t += get_process_delta_time()
 	hud.line_open = true
+	hud._sub_box.visible = false
 	_holding = true
 
 
