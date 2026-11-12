@@ -1,0 +1,98 @@
+GEZI_ROTA r1_hipodrom_boyu yol_dunya_m=163 gercek_m=466 olay=0
+GEZI_OLAY takilma -330 -38
+GEZI_OLAY takilma -330 -38
+GEZI_OLAY takilma -330 -38
+GEZI_OLAY vazgec -330 -38 hedef=-224,-111
+GEZI_OLAY takilma -330 -38
+GEZI_OLAY takilma -330 -38
+GEZI_OLAY takilma -330 -38
+GEZI_OLAY vazgec -330 -38 hedef=-143,-134
+GEZI_OLAY takilma -330 -38
+GEZI_OLAY takilma -330 -38
+GEZI_OLAY takilma -330 -38
+GEZI_OLAY vazgec -330 -38 hedef=-104,-241
+GEZI_OLAY takilma -330 -38
+GEZI_OLAY takilma -330 -38
+GEZI_OLAY takilma -330 -38
+GEZI_OLAY vazgec -330 -38 hedef=19,-271
+GEZI_OLAY takilma -330 -38
+GEZI_OLAY takilma -330 -38
+GEZI_OLAY takilma -330 -38
+GEZI_OLAY vazgec -330 -38 hedef=78,-167
+GEZI_ROTA r2_mese_saray yol_dunya_m=9 gercek_m=27 olay=0
+GEZI_OLAY takilma -564 -698
+GEZI_OLAY takilma -564 -698
+GEZI_OLAY takilma -564 -698
+GEZI_OLAY vazgec -564 -698 hedef=-440,-690
+GEZI_OLAY takilma -564 -698
+GEZI_OLAY takilma -564 -698
+GEZI_OLAY takilma -564 -698
+GEZI_OLAY vazgec -564 -698 hedef=-300,-680
+GEZI_OLAY takilma -565 -697
+GEZI_OLAY takilma -565 -697
+GEZI_OLAY takilma -565 -697
+GEZI_OLAY vazgec -565 -697 hedef=-160,-640
+GEZI_OLAY takilma -565 -697
+GEZI_OLAY takilma -565 -697
+GEZI_OLAY takilma -565 -697
+GEZI_OLAY vazgec -565 -697 hedef=-17,-560
+GEZI_OLAY takilma -565 -697
+GEZI_OLAY takilma -565 -697
+GEZI_OLAY takilma -565 -697
+GEZI_OLAY vazgec -565 -697 hedef=60,-520
+GEZI_ROTA r3_marmara_ici yol_dunya_m=13 gercek_m=37 olay=0
+GEZI_OLAY takilma -531 -623
+GEZI_OLAY takilma -531 -623
+GEZI_OLAY takilma -531 -623
+GEZI_OLAY vazgec -531 -623 hedef=-531,-660
+GEZI_OLAY takilma -516 -623
+GEZI_OLAY takilma -516 -623
+GEZI_OLAY takilma -516 -623
+GEZI_OLAY vazgec -516 -623 hedef=-470,-700
+GEZI_OLAY takilma -516 -623
+GEZI_OLAY takilma -516 -623
+GEZI_OLAY takilma -516 -623
+GEZI_OLAY vazgec -516 -623 hedef=-439,-706
+GEZI_OLAY takilma -516 -623
+GEZI_OLAY takilma -516 -623
+GEZI_OLAY takilma -516 -623
+GEZI_OLAY vazgec -516 -623 hedef=-440,-780
+GEZI_ROTA r4_sergios_bukoleon yol_dunya_m=13 gercek_m=38 olay=0
+GEZI_OLAY takilma 122 -326
+GEZI_OLAY takilma 122 -326
+GEZI_OLAY takilma 122 -326
+GEZI_OLAY vazgec 122 -326 hedef=120,-380
+GEZI_OLAY takilma 102 -326
+GEZI_OLAY takilma 102 -326
+GEZI_OLAY takilma 102 -326
+GEZI_OLAY vazgec 102 -326 hedef=19,-350
+GEZI_OLAY takilma 102 -326
+GEZI_OLAY takilma 102 -326
+GEZI_OLAY takilma 102 -326
+GEZI_OLAY vazgec 102 -326 hedef=-60,-420
+GEZI_OLAY takilma 102 -305
+GEZI_OLAY takilma 102 -305
+GEZI_OLAY takilma 102 -305
+GEZI_OLAY vazgec 102 -305 hedef=-20,-300
+GEZI_OLAY takilma 136 -270
+GEZI_OLAY takilma 136 -270
+GEZI_OLAY takilma 136 -270
+GEZI_OLAY vazgec 136 -270 hedef=138,-230
+GEZI_ROTA r5_nea_saray_cevre yol_dunya_m=47 gercek_m=136 olay=0
+GEZI_OLAY takilma 250 443
+GEZI_OLAY takilma 250 443
+GEZI_OLAY takilma 250 443
+GEZI_OLAY vazgec 250 443 hedef=250,450
+GEZI_OLAY takilma 250 443
+GEZI_OLAY takilma 250 443
+GEZI_OLAY takilma 250 443
+GEZI_OLAY vazgec 250 443 hedef=300,600
+GEZI_OLAY takilma 250 443
+GEZI_OLAY takilma 250 443
+GEZI_OLAY takilma 250 443
+GEZI_OLAY vazgec 250 443 hedef=350,750
+GEZI_OLAY takilma 250 443
+GEZI_OLAY takilma 250 443
+GEZI_OLAY takilma 250 443
+GEZI_OLAY vazgec 250 443 hedef=300,820
+GEZI_ROTA r6_sarayburnu yol_dunya_m=72 gercek_m=206 olay=0

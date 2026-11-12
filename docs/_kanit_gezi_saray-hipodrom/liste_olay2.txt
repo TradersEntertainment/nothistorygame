@@ -1,0 +1,7 @@
+olay2_hipodrom_-467_-304_a -467 -304 1.7 90 0
+olay2_hipodrom_-467_-304_b -467 -304 1.7 180 -5
+olay2_hipodrom_-480_-295_c -480 -295 1.7 270 0
+olay2_hipodrom_-450_-300_d -450 -300 1.7 0 0
+olay2_takilma_225_425_a 225 425 1.7 0 0
+olay2_takilma_225_425_b 225 425 1.7 90 0
+olay2_takilma_225_425_c 225 425 1.7 180 -4

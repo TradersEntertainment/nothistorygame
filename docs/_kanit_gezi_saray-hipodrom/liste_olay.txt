@@ -10,3 +10,9 @@ olay_takilma_136_-270_a 136 -278 1.7 0 0
 olay_takilma_250_443_a 250 436 1.7 0 0
 olay_takilma_250_443_b 250 443 1.7 20 -5
 olay_hipodrom_sphendone_4_yeniden -520 -470 1.7 40 0
+olay_takilma_-180_-120 -180 -120 1.7 111 0
+olay_takilma_-180_-120_b -190 -115 1.7 111 -6
+olay_takilma_80_-270 80 -270 1.7 148 0
+olay_takilma_-220_-90 -220 -90 1.7 131 0
+olay_takilma_-300_-40 -300 -40 1.7 180 0
+olay_takilma_-30_-490 -30 -490 1.7 156 0
