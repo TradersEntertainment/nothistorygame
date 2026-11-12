@@ -199,7 +199,7 @@ Blakherna, Konstantin (bakıldı: Ayasofya ve Konstantin Forumu iyi; Blakherna S
 | parse_check | PASS (308 betik) |
 | world_check | PASS (regions=13 landmarks=35) |
 | flight_check | PASS |
-| city_check | **FAIL** iki koşuda da: `31o: CityLife kare süresi 3 866 / 3 919 µs > 1 500` (ilk örnekte tek sıçrama; öteki noktalar 1 075–1 405 µs). Koşular aynı anda çalışan ekranlı sondayla birlikteydi; IstSehir eski dünyada kapalı olduğu için benim katmanım devrede değil. Yalnız başına koşu: BAKILMADI |
+| city_check | **FAIL** (four runs on this branch, including one run alone on the machine): `31o: CityLife kare süresi 3 439–4 737 µs > 1 500` (a single spike at the first measurement point; the other points are 1 075–1 405 µs). **The base (`wip/istanbul`, 0279e3cb), checked out in a separate worktree, fails the same way** (3 759 and 4 693 µs, two runs): the failure exists in the base and is not caused by this branch (on this machine; it was PASS in the previous merger's report) |
 | Bölüm 6, 7, 11, 12b, 24 | AUTOTEST PASS, yasak satır 0 |
 
 ## 9. Oyun alanları (sonraki paket için) — TAMAM (boş bırakıldı)
