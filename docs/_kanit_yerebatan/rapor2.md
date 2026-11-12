@@ -95,7 +95,7 @@ dümen botun alt sınırı; okuma süreleri). Gizli süre eklenmedi; tek sayaç 
 | İstek | Durum | Yer | Kanıt |
 |---|---|---|---|
 | Meşaleye varış ≤ 60 sn | DÜZELDİ: bot 56,8 sn (PACE duvar saati, T_BOAT dahil); Yakovos 45 m'de | `YAKOVOS_BAY`, `chapter44b.gd:524` | `s3` PACE satırları |
-| İlk kürekte ≥ 2 küçük olay | DÜZELDİ: 3 olay, yolun %20/%45/%70'inde (her oyuncu görür) | `_ev_fish` :558, `_ev_far_shot` :612, `_ev_splash` :628 | `p05_ilk_kurek_olaylari.jpg` |
+| İlk kürekte ≥ 2 küçük olay | DÜZELDİ (balık KISMEN): 3 olay, yolun %20/%45/%70'inde (her oyuncu görür); uzak top/toz ve şıpırtı/Nihat net, **balık sürüsü kadrajda küçük** (≈10 px'lik lekeler, kürek göstergesinin altında; `s5 t0264`) | `_ev_fish` :558, `_ev_far_shot` :612, `_ev_splash` :628 | `p05_ilk_kurek_olaylari.jpg` |
 | Büyük, görünür düşen parçalar 2–3 m yakına; önce gölge/toz; sütun gibi sıçrama, halka; kayık sallanır | DÜZELDİ | `_cannon_shot` :741, `_drop` :1551 (toz sütunu + sudaki büyüyen gölge + halka), `_brick_fall` :1602, `_splash_column` :1638, yalpa `_roll` | `p06_sarsinti_dusen.jpg` |
 | Top atışlarının ritmiyle dalga; tavan inler | DÜZELDİ: her atışta gümbürtü + tonozun inlemesi + yana iten dalga (`WAVE_PUSH`) ve yalpa; atış arası 8 → 4,5 sn | `_cannon_shot`, `_row_tick` | `p06` |
 | Kasnak/payanda çöküp rotayı kapatır, daralan geçitten dümen kırarak geçiş | DÜZELDİ: rotadaki tonoz gözü çöker; kuzey ve güney kemerleri tümüyle, batı kemeri kuzey ucunda 1,8 m geçit bırakarak suya iner; devrilen kasnak; engeller kayığın çarpışmasına eklenir (sıkışma yok: itilir) | `_check_collapse` :770, `_collapse` :791, `cistern.gd:1020 add_obstacle`, `push_out` :1592 | `p07_cokus_gunisigi.jpg` (`t0564` geçit) |
@@ -165,7 +165,7 @@ Mekân sabitleri (`cistern.gd`): `HAZE`, `FOG_DENSITY` 0,03, `HEN_EYE` [9, 2].
   tween_await temiz, voice_rules PASS.
 - Yasak satırlar (`SCRIPT ERROR`, `WARN_*`, `VISAUDIT`, `WALKTHRU`, `ARMAUDIT`, `HELDAUDIT`, `LOOKAUDIT backturn`, `JOURNEY_*`): sıfır.
 
-**44b, son kod (`01d82066` sonrası), her varyant 3×: 18/18 PASS, yasak satır 0.**
+**44b her varyant 3× (`01d82066`): 18/18 PASS, yasak satır 0.** Sonraki küçük değişiklikler (hit test botu, balık yolu) üstüne ek: `hit` 3× + son kodla `""` ve `hit` birer kez PASS; ekranlı son koşu (`s5`, son kod) PASS.
 
 | Koşu | Varyant | Sonuç | ışık | pil | çarpma | isabet | kurtarıldı | en çok ışık | olaylar | yasak |
 |---|---|---|---|---|---|---|---|---|---|---|
@@ -195,6 +195,7 @@ Mekân sabitleri (`cistern.gd`): `HAZE`, `FOG_DENSITY` 0,03, `HEN_EYE` [9, 2].
   `StyleBoxFlat` yerine radyal `GradientTexture2D` (bu bölümdeki `_soft_wet` gibi). UYGULANMADI.
 
 ## YAPILAMAYAN / KISMEN / BAKILMADI (dürüst liste)
+- **Balık sürüsü zayıf okunuyor**: iki deneme (yol, derinlik, boy ×1,7, ışıma) sonrası bile 1280×720'de küçük lekeler; replik ve halkalar olayı taşıyor. Daha iri/yakın geçiş sahibin isteğine göre (`_ev_fish`).
 - **Su yükselmesi YAPILMADI** (yalnız sürükleyen dalga var): su düzlemi, sahte yansıma ve kayıklar `WATER_Y` sabitine bağlı.
 - **Bot hiç isabet almıyor** (varsayılan varyantta `hits=0`; bot uyarıda durur). İsabet yolu yalnız `hit` varyantında sınanıyor.
   Gerçek oyuncunun isabet sıklığı BAKILMADI (zorluk sahibin kararı: `HIT_RADIUS`, `WARN_SECS`, atış arası).
