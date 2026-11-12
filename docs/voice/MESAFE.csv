@@ -2540,6 +2540,8 @@ D24_NK_GUST,yakin_yuksek,3,"chapter24.gd:579 yağmur/rüzgâr gürültüsü, ün
 D24_NK_KID,yakin_yuksek,3,"chapter24.gd:833 yağmur/rüzgâr gürültüsü, ünlem"
 D24_NK_LATE,yakin,3,chapter24.gd:826 Niko Tolga yanında yürür
 D24_NK_SAVED,yakin,3,chapter24.gd:819 Niko Tolga yanında yürür
+D24_NK_VEDA,yakin,3,"chapter24.gd:840 Niko vedası: saçağın önünde Tolga'ya yüz yüze, sonra Petrion'a yürür"
+D24_NK_VEDA_LATE,yakin,3,"chapter24.gd:840 Niko vedası (çocuk kaçtıysa): saçağın önünde Tolga'ya yüz yüze, sonra Petrion'a yürür"
 D24_N_01,yakin,2,"chapter24.gd:436 chapter24.gd ikona alayı, Nihat/Tolga yan yana"
 D24_N_END,yakin,2,"chapter24.gd:913 chapter24.gd ikona alayı, Nihat/Tolga yan yana"
 D24_N_FOG,yakin,2,"chapter24.gd:877 chapter24.gd ikona alayı, Nihat/Tolga yan yana"
@@ -4035,6 +4037,7 @@ D4B_NIKO_THERMOS,yakin,2,chapter4.gd:875 Niko kapıda/zindanda Tolga ile yüz y�
 D4B_N_01,uzak,12,chapter4.gd:726 Niko surun tepesinden aşağıya seslenir/fırlatır (afar işaretli / bark)
 D4B_N_01_NOFEZ,uzak,12,chapter4.gd:726 Niko surun tepesinden aşağıya seslenir/fırlatır (afar işaretli / bark)
 D4B_N_02,uzak,12,chapter4.gd:729 Niko surun tepesinden aşağıya seslenir/fırlatır (afar işaretli / bark)
+D4B_N_02_NOFEZ,uzak,12,chapter4.gd:729 D4B_N_02'nin fessiz eşi (GameState.line_variant seçer); aynı an aynı mesafe
 D4B_N_03,uzak,12,chapter4.gd:672 Niko surun tepesinden aşağıya seslenir/fırlatır (afar işaretli / bark)
 D4B_N_03_NOFEZ,uzak,12,chapter4.gd:672 Niko surun tepesinden aşağıya seslenir/fırlatır (afar işaretli / bark)
 D4B_N_CELL,yakin,2,chapter4.gd:1034 Niko kapıda/zindanda Tolga ile yüz yüze

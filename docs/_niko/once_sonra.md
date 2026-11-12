@@ -4,7 +4,7 @@ Sahibin seçtiği yön: **B, eski nöbetçi: hepsini gördü, hiçbirine şaşı
 kısa cümle, düz söyleyiş, bağırmaz (gerektiğinde nöbetçi çağrısı yapar). Komedi onun şaşırmamasından ve her şeyi deftere geçirmesinden
 doğar; isteği maaşı ve uyku, korkusu bu sefer "geçmeyecek" olması (alamette ve Bölüm 19-24'te belli olur).
 
-**Sayılar:** Niko'nun 125 anahtarından metni değişen 82, aynen kalan 43; ayrıca 1 yeni anahtar (D4B_N_02'nin fessiz eşi). Sahibin dinleyip seçtiği 12 örnek replik ('ÖRNEK' notlu) aynen kullanıldı.
+**Sayılar:** Niko'nun 125 anahtarından metni değişen 82, aynen kalan 43; ayrıca 3 yeni anahtar (D4B_N_02'nin fessiz eşi; Bölüm 24 sonunda veda: `D24_NK_VEDA`, `D24_NK_VEDA_LATE`). Başka konuşmacıdan 1 replik değişti: Tolga'nın `D9_T_DEPORTED`'ı (çelişki giderildi). Sahibin dinleyip seçtiği 12 örnek replik ('ÖRNEK' notlu) aynen kullanıldı.
 
 **Okuma:** her sahne oyundaki sırayla. Küçük italik satırlar karşı repliklerdir (bağlam; değişmedi). Niko'nun her repliğinde üstü çizili ESKİ, kalın YENİ Türkçe, altında yeni İngilizce ve espri notu (TR'de neden / EN'de neden).
 İngilizce çeviri değildir: aynı işi gören, İngilizce düşünülmüş replik.
@@ -611,6 +611,14 @@ doğar; isteği maaşı ve uyku, korkusu bu sefer "geçmeyecek" olması (alamett
 
 <sub>*Tolga: Genelde.*</sub>
 
+#### Bölüm 9 · Ordugâhta, 8Y oynanmadıysa (6b.3): Tolga'nın repliği (sahibin onayıyla: soru 4)
+
+**`D9_T_DEPORTED`** (Tolga)
+- ESKİ: ~~Niko sabah beni zindandan çıkardı: 'Sınır dışı.' Kapıdan itti. Şimdi Osmanlı ordugâhındayım. Formum hâlâ açık.~~
+- **YENİ: Niko sabah beni zindandan çıkardı: 'Sınır dışı.' Kapıya kadar götürdü. Gerisini bana bıraktı. Şimdi Osmanlı ordugâhındayım. Formum hâlâ açık.**
+- EN: Niko let me out of the dungeon this morning: 'Deported.' He saw me to the gate. Past that, I wasn't covered. Now I'm in the Ottoman camp. My form's still open.  <sub>(eski: …He pushed me through the gate. …)</sub>
+- <sub>Not: 'Kapıdan itti' yön B'nin Niko'suyla (ve `D8Y_NIKO_DEP`: 'Kapıya kadar ben götürüyorum, ötesi Tanrı'ya emanet') çelişiyordu; yalnız o iki cümle değişti. TR: 'Gerisini bana bıraktı' Tolga'nın kendine acıyan kuru mizahı: iki ordu arasındaki yol 'geri kalan iş' gibi devredilmiş. / EN: 'Past that, I wasn't covered.' Tolga'nın sigortacı ağzı: poliçe kapıda bitiyor.</sub>
+
 #### Mektupla
 
 **`D8Y_NIKO_1`**
@@ -820,6 +828,21 @@ doğar; isteği maaşı ve uyku, korkusu bu sefer "geçmeyecek" olması (alamett
 **`D24_NK_LATE`**
 - AYNEN: Kaçtı! ...Yukarı, kuru tarafa koştu. Kurtulur, Tolga. Kurtulur.
 - EN (aynen): He ran! ...Uphill, to the dry side. He'll make it, Tolga. He'll make it.
+
+#### Veda (yeni, sahibin onayıyla: rapordaki soru 8)
+
+Niko'nun son repliğinden (`SAVED` ya da `LATE`) sonra, sis gününe geçmeden: söyler, sonra Petrion yönüne (kuzeye, şehrin
+içine) yürüyerek uzaklaşır; ekran sis gününe kararırken hâlâ yürüyor. Tolga cevap vermez.
+
+**`D24_NK_VEDA`** (çocuk kurtarıldıysa, `SAVED`'den sonra)
+- YENİ ANAHTAR: **Ben anneme, Petrion'a. Bu da geçer, Tolga. …Geçer.**
+- EN: Petrion. My mother's. It'll blow over, Tolga. …It'll blow over.
+- <sub>Not: TR: 'Bu da geçer' Türkçenin eski avuntu sözü (Niko'nun Türkçesi kayıkçılardan); ikincisinde 'Bu da' düşüyor, söz yarıya iniyor, inancı da. 'Ben anneme' fiilsiz gidiş bildirimi, kahvede kalkan adamın lafı. / EN: 'blow over' fırtınanın deyimi; selin ortasında hem yağmur için düz anlamıyla, hem kuşatma için umutla söyleniyor; tekrarı daha düz.</sub>
+
+**`D24_NK_VEDA_LATE`** (çocuk kaçtıysa, `LATE`'ten sonra)
+- YENİ ANAHTAR: **Ben anneme, Petrion'a. …Geçer.**
+- EN: Petrion. My mother's. …It'll blow over.
+- <sub>Not: `LATE` zaten 'Kurtulur, Tolga. Kurtulur.' tekrarıyla bitiyor; ikinci bir 'X, Tolga. X.' kalıbı üst üste düşerdi. Burada 'Bu da'sı bile yok: çocuğa harcanan umuttan geriye tek kelime kalıyor. / EN: aynı; adıyla seslenmeden tek 'It'll blow over.'</sub>
 
 ## Serbest dolaşımda eşya gösterme (hud.gd, bark 5,5 sn)
 

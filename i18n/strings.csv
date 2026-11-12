@@ -1194,7 +1194,7 @@ D9_T_C,Kulaklarımda hâlâ pamuk var. Dün top denendi. Bugün kulaklarım dene
 D9_T_Y,Kaftanım üstümde. Sigorta sattığım keçi beni görünce başını çevirdi. Poliçesinden memnun değil.,I'm still in my kaftan. The goat I sold a policy to turned its head away when it saw me. It isn't happy with its cover.
 D9_T_Y_PLAIN,"Kaftanım üstümde. Aşçıya bir testi verdim, kaftanı aldım. Takası sigortalamayı unuttum.",I'm still in my kaftan. I gave the cook a jug and got a kaftan for it. I forgot to insure the trade.
 D9_T_BYZ,"Beyaz bayrakla surlardan çıktım, Osmanlı ordugâhına yürüdüm. Cebimde bir imparatorun mektubu. Kimse beni durdurmadı. Bayrak bir havluydu.",I left the walls under a white flag and walked to the Ottoman camp. An emperor's letter in my pocket. Nobody stopped me. The flag was a towel.
-D9_T_DEPORTED,Niko sabah beni zindandan çıkardı: 'Sınır dışı.' Kapıdan itti. Şimdi Osmanlı ordugâhındayım. Formum hâlâ açık.,Niko let me out of the dungeon this morning: 'Deported.' He pushed me through the gate. Now I'm in the Ottoman camp. My form's still open.
+D9_T_DEPORTED,Niko sabah beni zindandan çıkardı: 'Sınır dışı.' Kapıya kadar götürdü. Gerisini bana bıraktı. Şimdi Osmanlı ordugâhındayım. Formum hâlâ açık.,"Niko let me out of the dungeon this morning: 'Deported.' He saw me to the gate. Past that, I wasn't covered. Now I'm in the Ottoman camp. My form's still open."
 D9_T_GOAL,Bugün bir şey olacak. Herkes bana bir şey teklif edecek gibi bakıyor. Sigortacı olarak bu bakışı tanırım.,"Something's going to happen today. Everyone's looking at me like they're about to make me an offer. As an insurance man, I know that look."
 D9_T_RADIO_DEAD,Telsiz sessiz. Hikmet Amca'dan ses yok.,The radio's silent. Nothing from Uncle Hikmet.
 D9_H_CALL,(Telsiz) Evlât? Sabah oldu mu? Burada pazartesi oldu.,(Radio) Son? Is it morning there? It's Monday here.
@@ -7657,6 +7657,8 @@ D24_T_NK_01,"Niko. İyi ki geldin. Bugün espri yok, söz verdim; sen de beni g�
 D24_NK_GUST,Tuttum! Bırakma!,Got it! Don't let go!
 D24_NK_KID,Kapı kanadını saçağın önüne yatırıyorum! Su geç gelir. Sen çocuğu getir!,I'm laying a door across the porch! It'll hold the water back. You fetch the boy!
 D24_NK_SAVED,Çocuk kuru. Otuz yıldır bu surdayım; böyle gün az gördüm.,The boy's dry. Thirty years on this wall. Not many days like this one.
+D24_NK_VEDA,"Ben anneme, Petrion'a. Bu da geçer, Tolga. …Geçer.","Petrion. My mother's. It'll blow over, Tolga. …It'll blow over."
+D24_NK_VEDA_LATE,"Ben anneme, Petrion'a. …Geçer.",Petrion. My mother's. …It'll blow over.
 D24_NK_LATE,"Kaçtı! ...Yukarı, kuru tarafa koştu. Kurtulur, Tolga. Kurtulur.","He ran! ...Uphill, to the dry side. He'll make it, Tolga. He'll make it."
 D20O_U_TAPED,Tık... Dur. Tutmuş! (Namlunun belindeki gri şeride vurur.) Senin o yapışkan şeridin! Hâlâ yerinde. Tunç sızlandı ama şerit bırakmadı.,"Tick... Wait. It held! (He slaps the grey strip round the barrel's waist.) That sticky strip of yours! Still there. The bronze complained, but the strip didn't let go."
 UI_C20O_TAPE,(Çatlağı koli bandıyla sar),(Wrap the crack with duct tape)

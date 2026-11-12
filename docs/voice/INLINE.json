@@ -1614,6 +1614,12 @@
  "D24_NK_SAVED": {
   "en": "[out of breath] [relieved] The boy's dry. [quiet] Thirty years on this wall. [softly] Not many days like this one."
  },
+ "D24_NK_VEDA": {
+  "en": "[quiet] Petrion. My mother's. [tired] It'll blow over, Tolga. [softly] …It'll blow over."
+ },
+ "D24_NK_VEDA_LATE": {
+  "en": "[quiet] Petrion. My mother's. [softly] …It'll blow over."
+ },
  "D24_T_ECLIPSE": {
   "en": "[to himself] [uneasy] They say the moon went dark two nights ago. I saw it a month early, in April, at the foot of the sea walls, next to Niko. [whispers] Did this city's moon go dark twice, or did I come too early?"
  },

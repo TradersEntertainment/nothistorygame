@@ -460,6 +460,7 @@ func _run() -> void:
 		await get_tree().process_frame
 	await _slip()
 	await _kid_step()
+	await _niko_veda()
 	await _fog_day()
 	await _end_chapter()
 
@@ -825,6 +826,29 @@ func _kid_step() -> void:
 			niko.talking = true
 			await hud.say("SPK_NIKO", "D24_NK_LATE")
 			niko.talking = false
+
+
+## Niko'nun vedası (dostsa; son repliğinden, SAVED ya da LATE'ten sonra): "Petrion'a, anneme." Söyler, sonra şehrin
+## içine (kuzeye, alayın geldiği cadde boyunca) yürüyerek uzaklaşır; sis gününe geçişin kararmasında hâlâ yürür
+## (birden yok olmaz), ertesi gün surdadır (_fog_day onu gizler).
+func _niko_veda() -> void:
+	if niko == null or not niko.visible:
+		return
+	player.face(niko.global_position + Vector3(0, 1.55, 0))
+	niko.look_target = player
+	niko.talking = true
+	await hud.say("SPK_NIKO", "D24_NK_VEDA" if _kid_saved else "D24_NK_VEDA_LATE")
+	niko.talking = false
+	niko.leave(niko.global_position + Vector3(0, 0, 1.0), 14.0, 2.3)     # kuzeye, ~2 m/sn: beklenmez, kararmada sürer
+	# Bakış uzaklaşan Niko'yu izler (kilit en çok 1,4 sn; sonra sis gününe kararma)
+	var lock := 0.05 if (GameState.autotest and not GameState.pace) else 1.4
+	var lt := 0.0
+	while lt < lock:
+		await get_tree().process_frame
+		if get_tree().paused:
+			continue
+		lt += get_process_delta_time()
+		player.face(niko.global_position + Vector3(0, 1.4, 0))
 
 
 ## Niko'nun kapı kanadı repliği: çocuğun "Anne!" çağrısından sonra (üstüne yazılmasın), çocuk henüz alınmadıysa.
