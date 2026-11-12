@@ -1,0 +1,11 @@
+ISTAUDIT id=sur tris=5750/362/60 draws=333 delik=0 dar=0 havada=8 cati_yolu=4/4 basamak:OK basamak:OK basamak:OK sandik:OK
+ISTAUDIT id=eugenios tris=5992/398/24 draws=197 delik=0 dar=0 havada=0 cati_yolu=1/1 basamak:OK
+ISTAUDIT id=venedik tris=12100/1748/12 draws=626 delik=0 dar=4 havada=2 cati_yolu=2/2 merdiven:OK merdiven:OK
+ISTAUDIT id=pisa_amalfi tris=10532/1004/12 draws=592 delik=0 dar=0 havada=0 cati_yolu=2/2 merdiven:OK merdiven:OK
+ISTAUDIT id=ceneviz tris=1982/392/12 draws=105 delik=0 dar=0 havada=0 cati_yolu=1/1 merdiven:OK
+ISTAUDIT id=yahudi tris=7992/1200/12 draws=392 delik=0 dar=2 havada=1 cati_yolu=2/2 merdiven:OK merdiven:OK
+ISTAUDIT id=neorion tris=1924/316/12 draws=59 delik=0 dar=0 havada=0 cati_yolu=1/1 basamak:OK
+ISTAUDIT id=iskele tris=6202/454/24 draws=130 delik=0 dar=3 havada=5 cati_yolu=2/2 sandik:OK basamak:OK
+ISTAUDIT id=balik tris=2652/1032/12 draws=106 delik=0 dar=0 havada=0 cati_yolu=1/1 basamak:OK
+ISTAUDIT id=petrion tris=1626/228/12 draws=110 delik=0 dar=0 havada=1 cati_yolu=1/1 basamak:OK
+ISTAUDIT id=fener tris=1590/228/12 draws=107 delik=0 dar=0 havada=1 cati_yolu=1/1 basamak:OK
