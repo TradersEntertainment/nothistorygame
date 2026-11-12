@@ -32,6 +32,7 @@ func _ready() -> void:
 			"shots": shots = kv[1]
 			"liste": liste = kv[1]
 			"kip": kip = kv[1]
+			"sehir": IstDunya.sehir_bagla = kv[1] != "0"
 	if kip == "":
 		kip = "kare" if liste != "" else "ucus"
 	cam = Camera3D.new()

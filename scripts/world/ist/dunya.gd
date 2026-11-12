@@ -29,6 +29,9 @@ const COL_N := 160            # hücre
 const COL_STEP := 2.0         # m
 const COL_MOVE := 70.0        # bu kadar uzaklaşınca yenilenir
 
+## false: IstSehir.attach_v2 çağrılmaz (yalnız arazi denetimi)
+static var sehir_bagla := true
+
 var gece := false
 var merkez := Vector3.ZERO
 ## İzlenen düğüm (oyuncu ya da kamera); yoksa etkin kamera
@@ -62,7 +65,7 @@ static func build(parent: Node3D, gece_ := false, merkez_ := Vector3.ZERO) -> No
 	parent.add_child(d)
 	d._kur()
 	var S = load("res://scripts/world/ist/sehir.gd")
-	if S != null:
+	if S != null and sehir_bagla:
 		for m in (S as Script).get_script_method_list():
 			if m.get("name", "") == "attach_v2":
 				S.call("attach_v2", d, gece_)
@@ -114,8 +117,7 @@ func _process(_dt: float) -> void:
 	# çarpışma önce (oyuncu düşmesin), sonra arazi ayrıntısı
 	var p2 := Vector2(p.x, p.z)
 	if _col_job.is_empty() and p2.distance_to(_col_center) > COL_MOVE:
-		_col_job = {"c": _snap(p2, COL_STEP), "row": 0, "data": PackedFloat32Array()}
-		(_col_job["data"] as PackedFloat32Array).resize((COL_N + 1) * (COL_N + 1))
+		_col_job = _col_is(p2)
 	if not _col_job.is_empty():
 		_carpisma_ilerle(t0 + BUDGET_US / 2)
 	while Time.get_ticks_usec() - t0 < BUDGET_US:
@@ -282,11 +284,11 @@ func _izgara_agi(x0: float, z0: float, cell: float, nx: int, nz: int, hs: Packed
 
 
 ## Mahalle türü (20 m önbellek; IstGeo.mahalle pahalı)
-func _tur(x: float, z: float) -> String:
+func _mah(x: float, z: float) -> Dictionary:
 	var k := Vector2i(floori(x / 20.0), floori(z / 20.0))
 	var t = _tur_cache.get(k)
 	if t == null:
-		t = IstGeo.mahalle(k.x * 20.0 + 10.0, k.y * 20.0 + 10.0)["tur"]
+		t = IstGeo.mahalle(k.x * 20.0 + 10.0, k.y * 20.0 + 10.0)
 		_tur_cache[k] = t
 	return t
 
@@ -311,16 +313,16 @@ func _renk(x: float, z: float, y: float, egim: float) -> Color:
 	var b := IstGeo.bolge(x, z)
 	var yakin := absf(x + 600.0) < 2600.0 and absf(z + 200.0) < 2400.0
 	if b == IstGeo.B_YARIMADA or b == IstGeo.B_GALATA:
-		var t := _tur(x, z) if yakin else "seyrek"
-		match t:
-			"carsi", "sik", "liman":
-				c = C_CIGNEN.lerp(C_TOPRAK, clampf(0.5 + g * 0.5, 0.0, 1.0))
-			"seyrek", "sur_dibi":
-				c = C_TOPRAK.lerp(C_CAYIR, clampf(0.4 + g * 0.4, 0.0, 1.0))
+		var m := _mah(x, z) if yakin else {"tur": "seyrek", "yogunluk": 0.3}
+		var yog: float = m["yogunluk"]
+		var cig := C_CIGNEN.lerp(C_TOPRAK, clampf(0.5 + g * 0.5, 0.0, 1.0))
+		match m["tur"]:
 			"bostan":
 				c = C_BOSTAN.lerp(C_CAYIR, clampf(0.3 + g * 0.5, 0.0, 1.0))
 			"harabe":
 				c = C_TASLIK.lerp(C_TOPRAK, clampf(0.4 + g * 0.4, 0.0, 1.0))
+			_:
+				c = c.lerp(cig, clampf(0.25 + yog * 0.9, 0.0, 1.0))
 	elif b == IstGeo.B_TRAKYA and yakin:
 		# kuşatma ovası: surların önü çiğnenmiş toprak, ötesi kuru çayır
 		var dk := IstGeo.cizgi_uzak(Vector2(x, z), IstGeo.Y_KARA) if x < -1700.0 and x > -3400.0 and z > -2000.0 and z < 1200.0 else 999.0
@@ -369,6 +371,7 @@ func _deniz() -> void:
 	_water_mat.shader = load("res://assets/shaders/water.gdshader")
 	_water_mat.set_shader_parameter("foam_width", 0.0)
 	_water_mat.set_shader_parameter("wave_height", 0.25)
+	_water_mat.set_shader_parameter("ripple", 0.07)       # uzakta hare (moiré) yapmasın
 	if gece:
 		_water_mat.set_shader_parameter("shallow_color", Color(0.05, 0.13, 0.2))
 		_water_mat.set_shader_parameter("deep_color", Color(0.02, 0.05, 0.1))
@@ -386,6 +389,8 @@ func _deniz() -> void:
 	add_child(_sea_near)
 	var far_mat := _water_mat.duplicate() as ShaderMaterial
 	far_mat.set_shader_parameter("wave_height", 0.0)
+	far_mat.set_shader_parameter("ripple", 0.0)
+	far_mat.set_shader_parameter("glint", 0.0)
 	for i in 4:
 		var m := MeshInstance3D.new()
 		m.name = "DenizUzak%d" % i
@@ -586,9 +591,14 @@ func _carpisma_kur() -> void:
 	_col_body.add_child(_col_shape)
 	add_child(_col_body)
 	var p := _bakan()
-	_col_job = {"c": _snap(Vector2(p.x, p.z), COL_STEP), "row": 0, "data": PackedFloat32Array()}
-	(_col_job["data"] as PackedFloat32Array).resize((COL_N + 1) * (COL_N + 1))
+	_col_job = _col_is(Vector2(p.x, p.z))
 	_carpisma_ilerle(1 << 62)
+
+
+func _col_is(p2: Vector2) -> Dictionary:
+	var d := PackedFloat32Array()
+	d.resize((COL_N + 1) * (COL_N + 1))
+	return {"c": _snap(p2, COL_STEP), "row": 0, "data": d}
 
 
 func _carpisma_ilerle(bitis: int) -> void:
@@ -614,8 +624,7 @@ func _carpisma_ilerle(bitis: int) -> void:
 
 ## Çarpışma merkezini zorla yeniler (ışınlama sonrası); hemen kurar.
 func carpisma_yenile(p: Vector3) -> void:
-	_col_job = {"c": _snap(Vector2(p.x, p.z), COL_STEP), "row": 0, "data": PackedFloat32Array()}
-	(_col_job["data"] as PackedFloat32Array).resize((COL_N + 1) * (COL_N + 1))
+	_col_job = _col_is(Vector2(p.x, p.z))
 	_carpisma_ilerle(1 << 62)
 
 
