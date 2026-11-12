@@ -1,15 +1,134 @@
-ISTSEHIR2 yer=845 hat=555 kur_ms=3123 hat_ms=855 doku_ms=10026 parca_ms=6312
-RINFO yuru r1_konstantin_mese_milion_01 cizim=884 ucgen=1547199 konum=-261.5,-0.8
+ISTSEHIR2 yer=845 hat=555 kur_ms=2941 hat_ms=849 doku_ms=10135 parca_ms=5952
+RINFO yuru r1_konstantin_mese_milion_01 cizim=811 ucgen=1436323 konum=-261.5,-0.8
 GEZI_OLAY takili -247.3 -1.7 rota=r1_konstantin_mese_milion nokta=1 hedef=-245.0,-1.8
-GEZI_OLAY takili -247.3 -1.7 rota=r1_konstantin_mese_milion nokta=1 hedef=-245.0,-1.8
-GEZI_OLAY takili -247.3 -1.7 rota=r1_konstantin_mese_milion nokta=2 hedef=-196.0,-3.5
-GEZI_OLAY takili -247.3 -1.7 rota=r1_konstantin_mese_milion nokta=2 hedef=-196.0,-3.5
-GEZI_OLAY takili -247.3 -1.7 rota=r1_konstantin_mese_milion nokta=3 hedef=-147.0,-1.8
-GEZI_OLAY takili -247.3 -1.7 rota=r1_konstantin_mese_milion nokta=3 hedef=-147.0,-1.8
-GEZI_OLAY takili -247.3 -1.7 rota=r1_konstantin_mese_milion nokta=4 hedef=-105.0,0.0
-GEZI_OLAY takili -247.3 -1.7 rota=r1_konstantin_mese_milion nokta=4 hedef=-105.0,0.0
-GEZI_OLAY takili -247.3 -1.4 rota=r1_konstantin_mese_milion nokta=5 hedef=-70.0,14.0
-GEZI_OLAY takili -247.3 -1.4 rota=r1_konstantin_mese_milion nokta=5 hedef=-70.0,14.0
-GEZI_OLAY takili -247.3 -1.4 rota=r1_konstantin_mese_milion nokta=6 hedef=-45.5,31.5
-GEZI_OLAY takili -247.3 -1.4 rota=r1_konstantin_mese_milion nokta=6 hedef=-45.5,31.5
-GEZI_ROTA r1_konstantin_mese_milion yol=29 m olay=12 kare=1
+RINFO yuru r1_konstantin_mese_milion_02 cizim=829 ucgen=1970481 konum=-247.1,4.3
+RINFO yuru r1_konstantin_mese_milion_03 cizim=1105 ucgen=1871965 konum=-233.0,-1.0
+RINFO yuru r1_konstantin_mese_milion_04 cizim=946 ucgen=1713673 konum=-217.9,-2.0
+RINFO yuru r1_konstantin_mese_milion_05 cizim=925 ucgen=1611876 konum=-202.9,-3.0
+GEZI_OLAY takili -189.7 -3.0 rota=r1_konstantin_mese_milion nokta=3 hedef=-147.0,-1.8
+RINFO yuru r1_konstantin_mese_milion_06 cizim=835 ucgen=1461290 konum=-189.1,2.9
+RINFO yuru r1_konstantin_mese_milion_07 cizim=927 ucgen=1523525 konum=-174.2,1.2
+RINFO yuru r1_konstantin_mese_milion_08 cizim=967 ucgen=1665106 konum=-159.2,-0.1
+GEZI_OLAY zaman_asimi -155.6 0.1 rota=r1_konstantin_mese_milion nokta=3
+GEZI_OLAY takili -153.7 0.2 rota=r1_konstantin_mese_milion nokta=4 hedef=-105.0,0.0
+RINFO yuru r1_konstantin_mese_milion_09 cizim=832 ucgen=1443025 konum=-145.1,5.0
+RINFO yuru r1_konstantin_mese_milion_10 cizim=888 ucgen=1527431 konum=-130.1,4.3
+GEZI_OLAY takili -115.6 4.5 rota=r1_konstantin_mese_milion nokta=4 hedef=-105.0,0.0
+RINFO yuru r1_konstantin_mese_milion_11 cizim=818 ucgen=1562220 konum=-113.3,10.0
+GEZI_OLAY zaman_asimi -113.3 10.0 rota=r1_konstantin_mese_milion nokta=4
+GEZI_OLAY takili -113.3 10.0 rota=r1_konstantin_mese_milion nokta=5 hedef=-70.0,14.0
+RINFO yuru r1_konstantin_mese_milion_12 cizim=800 ucgen=1406900 konum=-99.3,15.4
+GEZI_OLAY takili -87.3 15.6 rota=r1_konstantin_mese_milion nokta=5 hedef=-70.0,14.0
+RINFO yuru r1_konstantin_mese_milion_13 cizim=812 ucgen=1471633 konum=-85.6,21.5
+GEZI_OLAY takili -83.9 21.6 rota=r1_konstantin_mese_milion nokta=5 hedef=-70.0,14.0
+GEZI_OLAY zaman_asimi -74.3 19.1 rota=r1_konstantin_mese_milion nokta=5
+RINFO yuru r1_konstantin_mese_milion_14 cizim=747 ucgen=1395939 konum=-70.5,20.4
+RINFO yuru r1_konstantin_mese_milion_15 cizim=604 ucgen=1245679 konum=-56.8,26.5
+GEZI_ROTA r1_konstantin_mese_milion yol=229 m olay=10 kare=15
+RINFO yuru r2_milion_augustaion_khalke_01 cizim=488 ucgen=1107704 konum=-30.2,30.3
+RINFO yuru r2_milion_augustaion_khalke_02 cizim=459 ucgen=731786 konum=-20.4,41.7
+GEZI_ROTA r2_milion_augustaion_khalke yol=47 m olay=0 kare=2
+RINFO yuru r3_ayasofya_bati_giris_01 cizim=637 ucgen=1292779 konum=-27.0,-6.5
+RINFO yuru r3_ayasofya_bati_giris_02 cizim=465 ucgen=945576 konum=-13.8,0.7
+GEZI_ROTA r3_ayasofya_bati_giris yol=34 m olay=0 kare=2
+GEZI_OLAY takili -20.8 23.3 rota=r4_ayasofya_cevre_guney nokta=1 hedef=-7.0,26.2
+RINFO yuru r4_ayasofya_cevre_guney_01 cizim=538 ucgen=1184472 konum=-6.8,26.7
+GEZI_OLAY takili 3.0 27.2 rota=r4_ayasofya_cevre_guney nokta=2 hedef=10.5,26.2
+RINFO yuru r4_ayasofya_cevre_guney_02 cizim=734 ucgen=1477656 konum=6.3,34.1
+GEZI_OLAY takili 10.1 28.8 rota=r4_ayasofya_cevre_guney nokta=2 hedef=10.5,26.2
+GEZI_OLAY takili 10.8 29.0 rota=r4_ayasofya_cevre_guney nokta=2 hedef=10.5,26.2
+GEZI_OLAY dusme 16.8 27.9 y=10.26 zemin=12.06 rota=r4_ayasofya_cevre_guney
+RINFO yuru r4_ayasofya_cevre_guney_03 cizim=548 ucgen=1195560 konum=16.6,23.1
+GEZI_OLAY takili 20.1 18.2 rota=r4_ayasofya_cevre_guney nokta=3 hedef=26.2,17.5
+GEZI_OLAY takili 25.6 15.1 rota=r4_ayasofya_cevre_guney nokta=4 hedef=26.2,3.5
+RINFO yuru r4_ayasofya_cevre_guney_04 cizim=812 ucgen=2523042 konum=31.6,15.4
+GEZI_OLAY takili 30.5 13.1 rota=r4_ayasofya_cevre_guney nokta=4 hedef=26.2,3.5
+GEZI_OLAY takili 34.2 6.6 rota=r4_ayasofya_cevre_guney nokta=4 hedef=26.2,3.5
+RINFO yuru r4_ayasofya_cevre_guney_05 cizim=927 ucgen=2935929 konum=36.4,1.0
+GEZI_OLAY takili 33.4 2.1 rota=r4_ayasofya_cevre_guney nokta=4 hedef=26.2,3.5
+GEZI_OLAY takili 30.5 -1.7 rota=r4_ayasofya_cevre_guney nokta=4 hedef=26.2,3.5
+GEZI_OLAY zaman_asimi 24.9 -1.0 rota=r4_ayasofya_cevre_guney nokta=4
+GEZI_ROTA r4_ayasofya_cevre_guney yol=89 m olay=12 kare=5
+GEZI_OLAY takili 26.2 -1.3 rota=r5_ayasofya_cevre_kuzey nokta=1 hedef=26.2,-12.2
+RINFO yuru r5_ayasofya_cevre_kuzey_01 cizim=984 ucgen=3151034 konum=29.0,-10.9
+GEZI_OLAY takili 29.2 -11.6 rota=r5_ayasofya_cevre_kuzey nokta=1 hedef=26.2,-12.2
+GEZI_OLAY takili 31.9 -13.4 rota=r5_ayasofya_cevre_kuzey nokta=1 hedef=26.2,-12.2
+GEZI_OLAY zaman_asimi 29.2 -22.1 rota=r5_ayasofya_cevre_kuzey nokta=1
+GEZI_OLAY takili 20.5 -22.0 rota=r5_ayasofya_cevre_kuzey nokta=2 hedef=10.5,-21.0
+RINFO yuru r5_ayasofya_cevre_kuzey_02 cizim=818 ucgen=2480595 konum=19.9,-28.0
+GEZI_OLAY takili 10.8 -24.0 rota=r5_ayasofya_cevre_kuzey nokta=2 hedef=10.5,-21.0
+RINFO yuru r5_ayasofya_cevre_kuzey_03 cizim=495 ucgen=1029395 konum=5.0,-25.3
+GEZI_OLAY takili 10.5 -24.1 rota=r5_ayasofya_cevre_kuzey nokta=2 hedef=10.5,-21.0
+GEZI_OLAY zaman_asimi 4.5 -24.0 rota=r5_ayasofya_cevre_kuzey nokta=2
+GEZI_OLAY takili -6.1 -18.9 rota=r5_ayasofya_cevre_kuzey nokta=4 hedef=-21.0,-14.0
+RINFO yuru r5_ayasofya_cevre_kuzey_04 cizim=784 ucgen=2350433 konum=-9.8,-23.0
+GEZI_OLAY takili -20.5 -17.4 rota=r5_ayasofya_cevre_kuzey nokta=4 hedef=-21.0,-14.0
+RINFO yuru r5_ayasofya_cevre_kuzey_05 cizim=582 ucgen=1098751 konum=-26.3,-18.7
+GEZI_OLAY takili -21.1 -17.5 rota=r5_ayasofya_cevre_kuzey nokta=4 hedef=-21.0,-14.0
+GEZI_ROTA r5_ayasofya_cevre_kuzey yol=93 m olay=11 kare=5
+GEZI_OLAY takili -6.5 -26.7 rota=r6_irini_patrikhane nokta=1 hedef=14.0,-29.8
+RINFO yuru r6_irini_patrikhane_01 cizim=567 ucgen=1158576 konum=4.5,-23.3
+GEZI_OLAY takili 12.0 -21.6 rota=r6_irini_patrikhane nokta=1 hedef=14.0,-29.8
+GEZI_OLAY takili 15.6 -20.7 rota=r6_irini_patrikhane nokta=1 hedef=14.0,-29.8
+RINFO yuru r6_irini_patrikhane_02 cizim=862 ucgen=3140241 konum=21.5,-21.8
+GEZI_OLAY zaman_asimi 20.9 -24.0 rota=r6_irini_patrikhane nokta=1
+GEZI_OLAY takili 31.1 -31.5 rota=r6_irini_patrikhane nokta=2 hedef=35.0,-31.5
+GEZI_OLAY takili 31.1 -31.5 rota=r6_irini_patrikhane nokta=2 hedef=35.0,-31.5
+GEZI_OLAY takili 31.1 -31.5 rota=r6_irini_patrikhane nokta=2 hedef=35.0,-31.5
+GEZI_OLAY zaman_asimi 31.1 -31.5 rota=r6_irini_patrikhane nokta=2
+GEZI_OLAY takili 32.0 -25.2 rota=r6_irini_patrikhane nokta=3 hedef=49.0,-24.5
+RINFO yuru r6_irini_patrikhane_03 cizim=554 ucgen=1150706 konum=36.4,-20.1
+GEZI_OLAY takili 46.9 -24.7 rota=r6_irini_patrikhane nokta=3 hedef=49.0,-24.5
+RINFO yuru r6_irini_patrikhane_04 cizim=437 ucgen=894906 konum=50.8,-15.7
+GEZI_ROTA r6_irini_patrikhane yol=99 m olay=10 kare=4
+RINFO yuru r7_mese_kuzey_sokaklar_01 cizim=846 ucgen=1572952 konum=-230.0,-42.8
+RINFO yuru r7_mese_kuzey_sokaklar_02 cizim=793 ucgen=1471455 konum=-214.9,-44.0
+GEZI_OLAY takili -201.7 -45.1 rota=r7_mese_kuzey_sokaklar nokta=1 hedef=-196.0,-45.5
+RINFO yuru r7_mese_kuzey_sokaklar_03 cizim=706 ucgen=1519618 konum=-200.5,-39.7
+GEZI_OLAY zaman_asimi -199.3 -39.2 rota=r7_mese_kuzey_sokaklar nokta=1
+RINFO yuru r7_mese_kuzey_sokaklar_04 cizim=785 ucgen=1419943 konum=-186.2,-35.3
+RINFO yuru r7_mese_kuzey_sokaklar_05 cizim=822 ucgen=1434968 konum=-171.2,-36.4
+RINFO yuru r7_mese_kuzey_sokaklar_06 cizim=853 ucgen=1386543 konum=-157.0,-41.5
+GEZI_OLAY zaman_asimi -153.4 -43.9 rota=r7_mese_kuzey_sokaklar nokta=2
+GEZI_OLAY takili -151.3 -45.3 rota=r7_mese_kuzey_sokaklar nokta=3 hedef=-105.0,-45.5
+GEZI_OLAY takili -148.7 -36.6 rota=r7_mese_kuzey_sokaklar nokta=3 hedef=-105.0,-45.5
+GEZI_OLAY takili -146.6 -32.1 rota=r7_mese_kuzey_sokaklar nokta=3 hedef=-105.0,-45.5
+RINFO yuru r7_mese_kuzey_sokaklar_07 cizim=831 ucgen=1577375 konum=-144.8,-26.4
+GEZI_OLAY takili -144.1 -31.5 rota=r7_mese_kuzey_sokaklar nokta=3 hedef=-105.0,-45.5
+GEZI_OLAY zaman_asimi -143.2 -29.5 rota=r7_mese_kuzey_sokaklar nokta=3
+GEZI_OLAY takili -143.3 -29.8 rota=r7_mese_kuzey_sokaklar nokta=4 hedef=-70.0,-42.0
+GEZI_OLAY takili -143.4 -23.0 rota=r7_mese_kuzey_sokaklar nokta=4 hedef=-70.0,-42.0
+GEZI_OLAY takili -140.1 -18.5 rota=r7_mese_kuzey_sokaklar nokta=4 hedef=-70.0,-42.0
+RINFO yuru r7_mese_kuzey_sokaklar_08 cizim=964 ucgen=1677605 konum=-137.1,-12.8
+GEZI_OLAY takili -135.0 -13.8 rota=r7_mese_kuzey_sokaklar nokta=4 hedef=-70.0,-42.0
+RINFO yuru r7_mese_kuzey_sokaklar_09 cizim=806 ucgen=1547644 konum=-122.1,-14.0
+RINFO yuru r7_mese_kuzey_sokaklar_10 cizim=799 ucgen=1533367 konum=-108.8,-21.1
+GEZI_OLAY zaman_asimi -103.5 -24.0 rota=r7_mese_kuzey_sokaklar nokta=4
+GEZI_ROTA r7_mese_kuzey_sokaklar yol=157 m olay=13 kare=10
+RINFO yuru r8_mese_guney_sokaklar_01 cizim=857 ucgen=1451627 konum=-229.7,43.0
+RINFO yuru r8_mese_guney_sokaklar_02 cizim=845 ucgen=1390078 konum=-214.7,44.1
+RINFO yuru r8_mese_guney_sokaklar_03 cizim=814 ucgen=1390366 konum=-199.8,45.2
+GEZI_OLAY takili -196.9 44.3 rota=r8_mese_guney_sokaklar nokta=2 hedef=-147.0,38.5
+GEZI_OLAY takili -197.8 48.2 rota=r8_mese_guney_sokaklar nokta=2 hedef=-147.0,38.5
+GEZI_OLAY takili -197.0 54.4 rota=r8_mese_guney_sokaklar nokta=2 hedef=-147.0,38.5
+RINFO yuru r8_mese_guney_sokaklar_04 cizim=892 ucgen=1519315 konum=-195.2,60.1
+RINFO yuru r8_mese_guney_sokaklar_05 cizim=806 ucgen=1438360 konum=-180.3,58.0
+GEZI_OLAY zaman_asimi -169.6 60.4 rota=r8_mese_guney_sokaklar nokta=2
+GEZI_OLAY takili -165.8 61.2 rota=r8_mese_guney_sokaklar nokta=3 hedef=-105.0,45.5
+RINFO yuru r8_mese_guney_sokaklar_06 cizim=753 ucgen=1265414 konum=-164.3,67.0
+RINFO yuru r8_mese_guney_sokaklar_07 cizim=770 ucgen=1296609 konum=-150.1,61.8
+RINFO yuru r8_mese_guney_sokaklar_08 cizim=764 ucgen=1390296 konum=-137.5,53.7
+GEZI_OLAY zaman_asimi -134.1 48.8 rota=r8_mese_guney_sokaklar nokta=3
+GEZI_OLAY takili -132.1 46.0 rota=r8_mese_guney_sokaklar nokta=4 hedef=-70.0,42.0
+RINFO yuru r8_mese_guney_sokaklar_09 cizim=754 ucgen=1385333 konum=-122.8,50.5
+GEZI_OLAY takili -119.0 48.2 rota=r8_mese_guney_sokaklar nokta=4 hedef=-70.0,42.0
+RINFO yuru r8_mese_guney_sokaklar_10 cizim=787 ucgen=1433412 konum=-107.8,51.5
+GEZI_OLAY zaman_asimi -98.2 51.7 rota=r8_mese_guney_sokaklar nokta=4
+GEZI_ROTA r8_mese_guney_sokaklar yol=156 m olay=9 kare=10
+RINFO yuru r9_konstantin_cevre_01 cizim=878 ucgen=1620382 konum=-265.4,18.4
+RINFO yuru r9_konstantin_cevre_02 cizim=835 ucgen=1590626 konum=-253.9,8.6
+GEZI_OLAY takili -255.2 2.4 rota=r9_konstantin_cevre nokta=3 hedef=-259.0,-10.5
+RINFO yuru r9_konstantin_cevre_03 cizim=676 ucgen=2884468 konum=-255.4,-6.3
+RINFO yuru r9_konstantin_cevre_04 cizim=837 ucgen=3012086 konum=-270.0,-10.0
+GEZI_ROTA r9_konstantin_cevre yol=66 m olay=1 kare=4
+GEZI_YURU_SONUC toplam=970 m olay=66

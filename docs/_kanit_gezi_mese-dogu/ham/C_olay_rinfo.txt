@@ -1,0 +1,57 @@
+ISTSEHIR2 yer=845 hat=555 kur_ms=2926 hat_ms=921 doku_ms=10512 parca_ms=6466
+RINFO sur4 yak_aya_0000 cizim=701 ucgen=1208527
+SUR4 kare /root/gezi/kC/yak_aya_0000.png
+RINFO sur4 yak_aya_0225 cizim=724 ucgen=1463024
+SUR4 kare /root/gezi/kC/yak_aya_0225.png
+RINFO sur4 yak_aya_0450 cizim=774 ucgen=2056644
+SUR4 kare /root/gezi/kC/yak_aya_0450.png
+RINFO sur4 yak_aya_0675 cizim=930 ucgen=2852662
+SUR4 kare /root/gezi/kC/yak_aya_0675.png
+RINFO sur4 yak_aya_0900 cizim=962 ucgen=3019913
+SUR4 kare /root/gezi/kC/yak_aya_0900.png
+RINFO sur4 yak_aya_1125 cizim=1008 ucgen=3092307
+SUR4 kare /root/gezi/kC/yak_aya_1125.png
+RINFO sur4 yak_aya_1350 cizim=989 ucgen=3257750
+SUR4 kare /root/gezi/kC/yak_aya_1350.png
+RINFO sur4 yak_aya_1575 cizim=952 ucgen=2720776
+SUR4 kare /root/gezi/kC/yak_aya_1575.png
+RINFO sur4 yak_aya_1800 cizim=964 ucgen=2362818
+SUR4 kare /root/gezi/kC/yak_aya_1800.png
+RINFO sur4 yak_aya_2025 cizim=894 ucgen=1823128
+SUR4 kare /root/gezi/kC/yak_aya_2025.png
+RINFO sur4 yak_aya_2250 cizim=810 ucgen=1653027
+SUR4 kare /root/gezi/kC/yak_aya_2250.png
+RINFO sur4 yak_aya_2475 cizim=875 ucgen=1601265
+SUR4 kare /root/gezi/kC/yak_aya_2475.png
+RINFO sur4 yak_aya_2700 cizim=761 ucgen=1446144
+SUR4 kare /root/gezi/kC/yak_aya_2700.png
+RINFO sur4 yak_aya_2925 cizim=658 ucgen=1241985
+SUR4 kare /root/gezi/kC/yak_aya_2925.png
+RINFO sur4 yak_aya_3150 cizim=686 ucgen=1195648
+SUR4 kare /root/gezi/kC/yak_aya_3150.png
+RINFO sur4 yak_aya_3375 cizim=703 ucgen=1111217
+SUR4 kare /root/gezi/kC/yak_aya_3375.png
+RINFO sur4 yak_aya_yukari_0225 cizim=708 ucgen=1435638
+SUR4 kare /root/gezi/kC/yak_aya_yukari_0225.png
+RINFO sur4 yak_aya_yukari_0675 cizim=989 ucgen=2890021
+SUR4 kare /root/gezi/kC/yak_aya_yukari_0675.png
+RINFO sur4 yak_aya_yukari_1125 cizim=989 ucgen=3122143
+SUR4 kare /root/gezi/kC/yak_aya_yukari_1125.png
+RINFO sur4 yak_aya_yukari_1575 cizim=932 ucgen=2728141
+SUR4 kare /root/gezi/kC/yak_aya_yukari_1575.png
+RINFO sur4 yak_aya_yukari_2025 cizim=886 ucgen=1779836
+SUR4 kare /root/gezi/kC/yak_aya_yukari_2025.png
+RINFO sur4 yak_aya_yukari_2475 cizim=815 ucgen=1551371
+SUR4 kare /root/gezi/kC/yak_aya_yukari_2475.png
+RINFO sur4 yak_aya_yukari_2925 cizim=620 ucgen=1215253
+SUR4 kare /root/gezi/kC/yak_aya_yukari_2925.png
+RINFO sur4 yak_aya_yukari_3375 cizim=779 ucgen=1275652
+SUR4 kare /root/gezi/kC/yak_aya_yukari_3375.png
+RINFO sur4 yak_aya_doku_045 cizim=778 ucgen=2083482
+SUR4 kare /root/gezi/kC/yak_aya_doku_045.png
+RINFO sur4 yak_aya_doku_135 cizim=987 ucgen=3250526
+SUR4 kare /root/gezi/kC/yak_aya_doku_135.png
+RINFO sur4 yak_aya_doku_225 cizim=785 ucgen=1620927
+SUR4 kare /root/gezi/kC/yak_aya_doku_225.png
+RINFO sur4 yak_aya_doku_315 cizim=638 ucgen=1106758
+SUR4 kare /root/gezi/kC/yak_aya_doku_315.png

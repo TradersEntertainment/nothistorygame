@@ -17,3 +17,29 @@ RINFO sur4 n_-0729_-087_B cizim=670 ucgen=2828620
 SUR4 kare /root/gezi/kG/n_-0729_-087_B.png
 RINFO sur4 n_-0216_-087_D cizim=792 ucgen=1535192
 SUR4 kare /root/gezi/kG/n_-0216_-087_D.png
+RINFO sur4 n_-0216_-087_B cizim=764 ucgen=2871883
+SUR4 kare /root/gezi/kG/n_-0216_-087_B.png
+RINFO sur4 n_+0297_-087_D cizim=634 ucgen=941912
+SUR4 kare /root/gezi/kG/n_+0297_-087_D.png
+RINFO sur4 n_+0297_-087_B cizim=1050 ucgen=3166456
+SUR4 kare /root/gezi/kG/n_+0297_-087_B.png
+RINFO sur4 n_-0558_+084_D cizim=846 ucgen=1541911
+SUR4 kare /root/gezi/kG/n_-0558_+084_D.png
+RINFO sur4 n_-0558_+084_B cizim=721 ucgen=2965653
+SUR4 kare /root/gezi/kG/n_-0558_+084_B.png
+RINFO sur4 n_-0045_+084_D cizim=557 ucgen=1262930
+SUR4 kare /root/gezi/kG/n_-0045_+084_D.png
+RINFO sur4 n_-0045_+084_B cizim=825 ucgen=3033759
+SUR4 kare /root/gezi/kG/n_-0045_+084_B.png
+RINFO sur4 n_-0900_+255_D cizim=779 ucgen=1573151
+SUR4 kare /root/gezi/kG/n_-0900_+255_D.png
+RINFO sur4 n_-0900_+255_B cizim=751 ucgen=3090766
+SUR4 kare /root/gezi/kG/n_-0900_+255_B.png
+RINFO sur4 n_-0387_+255_D cizim=690 ucgen=1263428
+SUR4 kare /root/gezi/kG/n_-0387_+255_D.png
+RINFO sur4 n_-0387_+255_B cizim=759 ucgen=3088442
+SUR4 kare /root/gezi/kG/n_-0387_+255_B.png
+RINFO sur4 n_+0126_+255_D cizim=517 ucgen=1273064
+SUR4 kare /root/gezi/kG/n_+0126_+255_D.png
+RINFO sur4 n_+0126_+255_B cizim=982 ucgen=3284673
+SUR4 kare /root/gezi/kG/n_+0126_+255_B.png

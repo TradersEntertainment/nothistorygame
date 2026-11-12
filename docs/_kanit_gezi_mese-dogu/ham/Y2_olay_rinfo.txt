@@ -1,0 +1,91 @@
+ISTSEHIR2 yer=845 hat=555 kur_ms=2885 hat_ms=874 doku_ms=9870 parca_ms=6176
+RINFO yuru r10_mese_tam_01 cizim=629 ucgen=1442436 konum=-370.2,-30.6
+RINFO yuru r10_mese_tam_02 cizim=791 ucgen=1602545 konum=-355.3,-28.0
+RINFO yuru r10_mese_tam_03 cizim=667 ucgen=1382300 konum=-340.5,-25.4
+GEZI_OLAY zaman_asimi -330.2 -23.4 rota=r10_mese_tam nokta=1
+RINFO yuru r10_mese_tam_04 cizim=656 ucgen=1282543 konum=-325.8,-21.8
+RINFO yuru r10_mese_tam_05 cizim=710 ucgen=1328368 konum=-311.6,-17.0
+RINFO yuru r10_mese_tam_06 cizim=647 ucgen=1251931 konum=-297.6,-11.7
+RINFO yuru r10_mese_tam_07 cizim=641 ucgen=1149989 konum=-283.0,-7.9
+GEZI_OLAY zaman_asimi -276.5 -6.2 rota=r10_mese_tam nokta=2
+RINFO yuru r10_mese_tam_08 cizim=687 ucgen=1290233 konum=-268.1,-6.1
+RINFO yuru r10_mese_tam_09 cizim=867 ucgen=1543327 konum=-253.0,-5.9
+RINFO yuru r10_mese_tam_10 cizim=810 ucgen=1502273 konum=-237.9,-5.7
+RINFO yuru r10_mese_tam_11 cizim=924 ucgen=1717937 konum=-222.8,-5.4
+GEZI_OLAY zaman_asimi -218.2 -5.4 rota=r10_mese_tam nokta=3
+RINFO yuru r10_mese_tam_12 cizim=889 ucgen=1556203 konum=-207.8,-5.1
+RINFO yuru r10_mese_tam_13 cizim=1013 ucgen=1699336 konum=-192.7,-4.7
+GEZI_OLAY takili -191.7 -4.7 rota=r10_mese_tam nokta=4 hedef=-147.0,-3.5
+RINFO yuru r10_mese_tam_14 cizim=837 ucgen=1449961 konum=-178.4,-0.1
+GEZI_OLAY zaman_asimi -174.2 -0.6 rota=r10_mese_tam nokta=4
+GEZI_OLAY takili -165.6 -0.5 rota=r10_mese_tam nokta=5 hedef=-87.5,0.0
+RINFO yuru r10_mese_tam_15 cizim=917 ucgen=1430984 konum=-164.4,5.4
+RINFO yuru r10_mese_tam_16 cizim=1068 ucgen=1728245 konum=-149.3,4.3
+RINFO yuru r10_mese_tam_17 cizim=871 ucgen=1455401 konum=-134.3,4.1
+GEZI_OLAY zaman_asimi -127.9 4.4 rota=r10_mese_tam nokta=5
+RINFO yuru r10_mese_tam_18 cizim=811 ucgen=1410927 konum=-119.3,4.7
+GEZI_OLAY takili -115.7 4.8 rota=r10_mese_tam nokta=6 hedef=-38.5,7.0
+GEZI_OLAY takili -115.8 10.7 rota=r10_mese_tam nokta=6 hedef=-38.5,7.0
+RINFO yuru r10_mese_tam_19 cizim=918 ucgen=1540765 konum=-109.1,15.7
+GEZI_OLAY takili -101.8 14.6 rota=r10_mese_tam nokta=6 hedef=-38.5,7.0
+GEZI_OLAY takili -98.3 21.0 rota=r10_mese_tam nokta=6 hedef=-38.5,7.0
+RINFO yuru r10_mese_tam_20 cizim=956 ucgen=1636784 konum=-96.9,26.8
+GEZI_OLAY zaman_asimi -93.8 25.7 rota=r10_mese_tam nokta=6
+GEZI_ROTA r10_mese_tam yol=289 m olay=12 kare=20
+RINFO yuru r11_aya_dis_halka_01 cizim=512 ucgen=1156278 konum=15.1,-77.4
+RINFO yuru r11_aya_dis_halka_02 cizim=432 ucgen=1003226 konum=29.8,-74.3
+GEZI_OLAY takili 35.1 -74.2 rota=r11_aya_dis_halka nokta=2 hedef=57.0,-57.0
+RINFO yuru r11_aya_dis_halka_03 cizim=389 ucgen=980048 konum=41.3,-64.6
+RINFO yuru r11_aya_dis_halka_04 cizim=378 ucgen=982472 konum=54.9,-58.1
+GEZI_OLAY takili 67.7 -51.4 rota=r11_aya_dis_halka nokta=3 hedef=74.2,-30.8
+RINFO yuru r11_aya_dis_halka_05 cizim=682 ucgen=1158766 konum=64.2,-46.3
+RINFO yuru r11_aya_dis_halka_06 cizim=502 ucgen=901845 konum=72.4,-33.6
+RINFO yuru r11_aya_dis_halka_07 cizim=508 ucgen=1008519 konum=76.2,-19.1
+RINFO yuru r11_aya_dis_halka_08 cizim=469 ucgen=945919 konum=80.0,-4.5
+RINFO yuru r11_aya_dis_halka_09 cizim=588 ucgen=1073655 konum=78.0,10.5
+GEZI_OLAY takili 74.4 23.0 rota=r11_aya_dis_halka nokta=5 hedef=74.2,30.8
+RINFO yuru r11_aya_dis_halka_10 cizim=536 ucgen=607097 konum=68.4,22.9
+RINFO yuru r11_aya_dis_halka_11 cizim=687 ucgen=1199586 konum=68.2,37.9
+RINFO yuru r11_aya_dis_halka_12 cizim=618 ucgen=1186512 konum=60.7,50.9
+GEZI_OLAY takili 52.3 58.5 rota=r11_aya_dis_halka nokta=7 hedef=30.8,74.2
+RINFO yuru r11_aya_dis_halka_13 cizim=736 ucgen=1570716 konum=46.6,56.2
+GEZI_OLAY takili 38.7 58.5 rota=r11_aya_dis_halka nokta=7 hedef=30.8,74.2
+RINFO yuru r11_aya_dis_halka_14 cizim=597 ucgen=725808 konum=32.5,61.5
+GEZI_OLAY takili 31.2 65.6 rota=r11_aya_dis_halka nokta=7 hedef=30.8,74.2
+GEZI_OLAY zaman_asimi 27.7 69.2 rota=r11_aya_dis_halka nokta=7
+GEZI_OLAY takili 26.9 69.7 rota=r11_aya_dis_halka nokta=8 hedef=0.0,80.5
+GEZI_OLAY takili 21.0 65.6 rota=r11_aya_dis_halka nokta=8 hedef=0.0,80.5
+GEZI_OLAY takili 18.2 63.7 rota=r11_aya_dis_halka nokta=8 hedef=0.0,80.5
+RINFO yuru r11_aya_dis_halka_15 cizim=699 ucgen=1232296 konum=14.1,59.3
+GEZI_OLAY takili 13.4 60.3 rota=r11_aya_dis_halka nokta=8 hedef=0.0,80.5
+RINFO yuru r11_aya_dis_halka_16 cizim=633 ucgen=967494 konum=3.7,70.1
+GEZI_OLAY takili 2.7 72.0 rota=r11_aya_dis_halka nokta=8 hedef=0.0,80.5
+GEZI_OLAY zaman_asimi -3.0 70.5 rota=r11_aya_dis_halka nokta=8
+RINFO yuru r11_aya_dis_halka_17 cizim=875 ucgen=3045862 konum=-11.2,71.7
+GEZI_OLAY takili -20.6 73.2 rota=r11_aya_dis_halka nokta=9 hedef=-30.8,74.2
+GEZI_OLAY takili -20.1 71.1 rota=r11_aya_dis_halka nokta=9 hedef=-30.8,74.2
+GEZI_OLAY zaman_asimi -19.6 68.6 rota=r11_aya_dis_halka nokta=9
+GEZI_OLAY takili -19.5 68.3 rota=r11_aya_dis_halka nokta=10 hedef=-57.0,57.0
+RINFO yuru r11_aya_dis_halka_18 cizim=866 ucgen=3133643 konum=-22.5,61.8
+RINFO yuru r11_aya_dis_halka_19 cizim=844 ucgen=3137482 konum=-37.5,59.8
+GEZI_OLAY takili -41.1 58.8 rota=r11_aya_dis_halka nokta=10 hedef=-57.0,57.0
+GEZI_OLAY zaman_asimi -46.3 54.4 rota=r11_aya_dis_halka nokta=10
+RINFO yuru r11_aya_dis_halka_20 cizim=852 ucgen=3234413 konum=-50.2,51.7
+GEZI_OLAY takili -62.9 47.7 rota=r11_aya_dis_halka nokta=11 hedef=-74.2,30.8
+GEZI_OLAY takili -61.3 41.7 rota=r11_aya_dis_halka nokta=11 hedef=-74.2,30.8
+RINFO yuru r11_aya_dis_halka_21 cizim=972 ucgen=3282141 konum=-57.5,37.1
+GEZI_OLAY zaman_asimi -58.1 36.8 rota=r11_aya_dis_halka nokta=11
+GEZI_OLAY takili -60.3 33.2 rota=r11_aya_dis_halka nokta=12 hedef=-80.5,0.0
+RINFO yuru r11_aya_dis_halka_22 cizim=883 ucgen=3296535 konum=-61.5,22.6
+RINFO yuru r11_aya_dis_halka_23 cizim=1032 ucgen=3459429 konum=-71.2,11.0
+GEZI_OLAY zaman_asimi -72.7 9.2 rota=r11_aya_dis_halka nokta=12
+RINFO yuru r11_aya_dis_halka_24 cizim=754 ucgen=2212496 konum=-73.3,-3.8
+RINFO yuru r11_aya_dis_halka_25 cizim=807 ucgen=2294261 konum=-73.8,-18.9
+RINFO yuru r11_aya_dis_halka_26 cizim=750 ucgen=1543466 konum=-71.2,-33.7
+RINFO yuru r11_aya_dis_halka_27 cizim=650 ucgen=1396639 konum=-63.4,-46.6
+RINFO yuru r11_aya_dis_halka_28 cizim=653 ucgen=1414414 konum=-53.9,-58.3
+RINFO yuru r11_aya_dis_halka_29 cizim=596 ucgen=1300832 konum=-41.7,-67.1
+RINFO yuru r11_aya_dis_halka_30 cizim=545 ucgen=1268113 konum=-28.3,-74.1
+RINFO yuru r11_aya_dis_halka_31 cizim=595 ucgen=1331102 konum=-13.5,-77.0
+GEZI_ROTA r11_aya_dis_halka yol=489 m olay=24 kare=31
+GEZI_YURU_SONUC toplam=778 m olay=36

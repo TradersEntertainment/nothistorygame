@@ -13,6 +13,8 @@ const ROTALAR := {
 	"r6_irini_patrikhane": [[-30, 70], [40, 85], [100, 90], [140, 70], [150, 30]],
 	"r7_mese_kuzey_sokaklar": [[-700, 120], [-560, 130], [-420, 110], [-300, 130], [-200, 120]],
 	"r8_mese_guney_sokaklar": [[-700, -120], [-560, -130], [-420, -110], [-300, -130], [-200, -120]],
+	"r10_mese_tam": [[-1100, 95], [-900, 60], [-760, 10], [-600, 15], [-420, 10], [-250, 0], [-110, -20]],
+	"r11_aya_dis_halka": [[0, 230], [88, 212], [163, 163], [212, 88], [230, 0], [212, -88], [163, -163], [88, -212], [0, -230], [-88, -212], [-163, -163], [-212, -88], [-230, 0], [-212, 88], [-163, 163], [-88, 212], [0, 230]],
 	"r9_konstantin_cevre": [[-800, -40], [-760, -60], [-720, -20], [-740, 30], [-790, 30]],
 }
 
@@ -71,8 +73,13 @@ func _yuru() -> void:
 	var toplam := 0.0
 	var olay := 0
 	for ad: String in ROTALAR:
-		if sec != "" and not ad.begins_with(sec):
-			continue
+		if sec != "":
+			var ok := false
+			for pre: String in sec.split(","):
+				if ad.begins_with(pre + "_"):
+					ok = true
+			if not ok:
+				continue
 		var pts: Array = ROTALAR[ad]
 		var w := IstGeo.w2(pts[0][0], pts[0][1])
 		player.global_position = Vector3(w.x, IstGeo.h(w.x, w.y) + 0.6, w.y)
