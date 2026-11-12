@@ -4,10 +4,15 @@ extends "res://tests/_ist/ordugah4_kare.gd"
 ## Satırlar: ISTORDUKARE (miras), ISTORDUBUTCE (miras), CANLIORDU ad cizim ucgen
 
 
+var kisa := false        # --kisa: yalnız sahibin iki karesi + bütçe (hızlı ölçüm)
+
+
 func _ready() -> void:
 	for a: String in OS.get_cmdline_user_args():
 		if a.begins_with("--out="):
 			out = a.substr(6)
+		elif a == "--kisa":
+			kisa = true
 	DirAccess.make_dir_recursive_absolute(out)
 	root = Node3D.new()
 	root.name = "IstV2"
@@ -30,8 +35,17 @@ func _ready() -> void:
 		var back := Vector2(-sin(yaw), -cos(yaw))
 		var at := _bos_yer(c + back * float(n[2]))
 		await _shot(n[0], _g(at, 1.7), _g(c, 1.5), 70)
+		var nc := 0
+		var nv := 0
+		for m in get_tree().root.find_children("Canli_l*", "MeshInstance3D", true, false):
+			nc += 1
+			var dd := (m as Node3D).global_position.distance_to(cam.global_position)
+			var mi := m as MeshInstance3D
+			if mi.is_visible_in_tree() and dd >= mi.visibility_range_begin and (mi.visibility_range_end == 0.0 or dd <= mi.visibility_range_end):
+				nv += 1
+		print("CANLIORDU %s ayri_ag=%d gorunur=%d" % [n[0], nc, nv])
 	# yakın hayvan kareleri: öğenin yakınındaki ilk hayvan, 6 m yandan ve 60 m'den
-	for n: Array in [["sahi_top", "yakin_sahi_okuz"], ["ahir_otag", "yakin_at_bagi"], ["anadolu_4_1", "yakin_oba_anadolu"], ["rumeli_3_1", "yakin_oba_rumeli"], ["yeniceri_1_1", "yakin_oba_yeniceri"], ["agil_anadolu", "yakin_agil"]]:
+	for n: Array in ([] if kisa else [["sahi_top", "yakin_sahi_okuz"], ["ahir_otag", "yakin_at_bagi"], ["anadolu_4_1", "yakin_oba_anadolu"], ["rumeli_3_1", "yakin_oba_rumeli"], ["yeniceri_1_1", "yakin_oba_yeniceri"], ["agil_anadolu", "yakin_agil"]]):
 		var it := _plan_it(n[0])
 		if it.is_empty():
 			continue

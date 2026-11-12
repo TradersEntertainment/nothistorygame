@@ -116,7 +116,7 @@ static func build_hipodrom(host: Node3D, k: float = 0.5, lod: int = 0) -> void:
 		return
 	# ---- pist: kumlu ot döşeme (zemin y=0'ın 3 cm üstünde ince katı) ----
 	# ÇEVRE-4 (1453'te harap): pist kum değil, ot basmış çiğnenmiş toprak; yer yer çıplak toprak ve taş yamaları
-	K.sb(host, Vector3(A * 2.0, 0.06, cz - z_n), Vector3(0, 0.03, (cz + z_n) * 0.5), K.GRASS_D.lerp(K.SOIL, 0.4), "")
+	K.sb(host, Vector3(A * 2.0, 0.06, cz - z_n), Vector3(0, 0.03, (cz + z_n) * 0.5), Color("766c4c") if lod == 0 else Color("5f5840"), "")
 	_sphendone_floor(host, A, cz)
 	if lod == 0:
 		for i in 18:
@@ -207,7 +207,7 @@ static func _sphendone_floor(host: Node3D, A: float, cz: float) -> void:
 		var chord := 2.0 * A * sin((a1 - a0) * 0.5) * 1.05
 		var cx := cos(m) * r
 		var cy := cz + sin(m) * r
-		var body := K.sb(host, Vector3(A * 1.02, 0.06, chord * 0.75), Vector3(cx, 0.03, cy), K.SAND, "", Vector3(0, -rad_to_deg(m), 0))
+		var body := K.sb(host, Vector3(A * 1.02, 0.06, chord * 0.75), Vector3(cx, 0.03, cy), Color("766c4c"), "", Vector3(0, -rad_to_deg(m), 0))
 		body.name = "SphFloor"
 
 

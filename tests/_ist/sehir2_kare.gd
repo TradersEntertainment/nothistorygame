@@ -146,7 +146,14 @@ func _ready() -> void:
 				var key := "%s|%s|%s" % [gi.get_parent().name, m.get_class() if m else "-", (m as BaseMaterial3D).albedo_color.to_html() if m is BaseMaterial3D else ""]
 				if not seen.has(key):
 					seen[key] = true
-					print("ISTPALET ", key, " vc=", (m as BaseMaterial3D).vertex_color_use_as_albedo if m is BaseMaterial3D else false)
+					var ek := ""
+					if gi is MeshInstance3D and (gi as MeshInstance3D).mesh:
+						var mm: Mesh = (gi as MeshInstance3D).mesh
+						ek = " mesh=" + mm.get_class() + " yuzey=" + str(mm.get_surface_count())
+						if mm.get_surface_count() > 0:
+							var ca = mm.surface_get_arrays(0)[Mesh.ARRAY_COLOR]
+							ek += " renk0=" + (str((ca as PackedColorArray)[0]) if ca is PackedColorArray and ca.size() > 0 else "-")
+					print("ISTPALET ", key, " vc=", (m as BaseMaterial3D).vertex_color_use_as_albedo if m is BaseMaterial3D else false, ek, " yol=", gi.get_path())
 		get_tree().quit(0)
 		return
 	if set_ == "aya":
@@ -512,6 +519,10 @@ func _eser_yer(it: Dictionary, h: float) -> void:
 		# ÇEVRE-4: atrium/avlu kapısının dibine düşüyordu: yandan ve daha geriden
 		yonler = [Vector3(0.7, 0, 0.7), Vector3(1, 0, 0), Vector3(-0.7, 0, 0.7), Vector3(-1, 0, 0), Vector3(0, 0, 1)]
 		dist = clampf(r * 1.4 + 16.0, 30.0, 80.0)
+	elif String(it["id"]) == "hipodrom":
+		# uzun eksen boyunca spina/sütunların içine düşüyordu: yanlardan, oturma sıralarının dışından
+		yonler = [Vector3(1, 0, 0.3), Vector3(-1, 0, 0.3), Vector3(1, 0, -0.3), Vector3(-1, 0, -0.3), Vector3(0, 0, 1)]
+		dist = 75.0
 	elif String(it["id"]) == "ayasofya":
 		# ÇEVRE-4: güneyden (Augustaion yanı, yerel +x), döşeli meydandan
 		yonler = [Vector3(1, 0, 0), Vector3(0.7, 0, -0.7), Vector3(-1, 0, 0)]
@@ -525,9 +536,6 @@ func _eser_yer(it: Dictionary, h: float) -> void:
 			continue
 		var at := Vector3(q.x, IstGeo.h(q.x, q.z) + 1.7, q.z)
 		var look := pp + Vector3(0, minf(h * 0.35, 14.0), 0)
-		if sec == Vector3.INF:
-			sec = at
-			hedef = look
 		cam.global_position = at
 		for i in 3:
 			await get_tree().physics_frame
@@ -546,12 +554,44 @@ func _eser_yer(it: Dictionary, h: float) -> void:
 		pq.position = at
 		if not get_world_3d().direct_space_state.intersect_point(pq, 1).is_empty():
 			continue
-		if hit.is_empty() or (hit["collider"] is Node and holder.is_ancestor_of(hit["collider"])):
+		# yukarıdan aşağı ışın kameranın hizasına kadar bir katıya çarpıyorsa (sütun, kule içi) o yön atlanır
+		var ust := get_world_3d().direct_space_state.intersect_ray(PhysicsRayQueryParameters3D.create(at + Vector3(0, 45, 0), at - Vector3(0, 1.0, 0)))
+		if not ust.is_empty() and (ust["position"] as Vector3).y > at.y - 1.2:
+			continue
+		if sec == Vector3.INF:
 			sec = at
 			hedef = look
-			break
-	if sec != Vector3.INF:
-		await _shot("eser_%s_yer" % it["id"], sec, hedef, 70)
+		if hit.is_empty() or (hit["collider"] is Node and holder.is_ancestor_of(hit["collider"])):
+			# ÇEVRE-4: kare tekdüze çıkarsa (kamera çarpışmasız bir ağaç tacının/örtünün içinde) sonraki yön
+			await _shot("eser_%s_yer" % it["id"], at, look, 70)
+			if not _tekduze():
+				return
+			sec = Vector3.INF
+	if sec == Vector3.INF:
+		# yedek: eserin önünden daha geriden ve 6 m yüksekten (bütün yönler kapalıysa)
+		var dw := (holder.global_transform.basis * Vector3(0.7, 0, 0.7))
+		dw.y = 0.0
+		var q := pp + dw.normalized() * (dist * 1.3)
+		sec = Vector3(q.x, IstGeo.h(q.x, q.z) + 6.0, q.z)
+		hedef = pp + Vector3(0, minf(h * 0.35, 14.0), 0)
+	await _shot("eser_%s_yer" % it["id"], sec, hedef, 70)
+
+
+## Son karenin tekdüzeliği: 8 × 8 örnek pikselin parlaklık sapması çok küçükse true
+func _tekduze() -> bool:
+	var img := get_viewport().get_texture().get_image()
+	var vals: Array = []
+	for j in 8:
+		for i in 8:
+			vals.append(img.get_pixel(int((i + 0.5) * img.get_width() / 8.0), int((j + 0.5) * img.get_height() / 8.0)).get_luminance())
+	var ort := 0.0
+	for v: float in vals:
+		ort += v
+	ort /= vals.size()
+	var sap := 0.0
+	for v: float in vals:
+		sap += (v - ort) * (v - ort)
+	return sqrt(sap / vals.size()) < 0.035
 
 
 func _yer() -> void:
