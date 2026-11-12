@@ -192,7 +192,7 @@ func _build_throne() -> void:
 	# Katip masası
 	var d := Vector3(-4.2, 0, -2.5)
 	Props.solid(self, Vector3(1.4, 0.5, 0.8), d + Vector3(0, 0.25, 0), Color("6a4a30"))
-	Props.box(self, Vector3(0.5, 0.02, 0.35), d + Vector3(0, 0.51, 0), Color("efe6cf"), Vector3(0, 10, 0))
+	Props.box(self, Vector3(0.5, 0.03, 0.35), d + Vector3(0, 0.515, 0.1), Color("efe6cf"), Vector3(0, 10, 0))      # kâtibin kalem ucunun altında
 	Props.cyl(self, 0.05, 0.08, d + Vector3(0.4, 0.55, 0.1), Color("1a1a1e"), Vector3.ZERO, 6)
 
 
@@ -209,7 +209,7 @@ func _build_people() -> void:
 	page.set_meta("no_chat", true)
 	add_child(page)
 	scribe = Person.new({"coat": Color("3a4a3a"), "pants": Color("2a2a24"), "hat": "turban", "beard": true, "robe": Color("3a4a3a"), "skin": Color("d9a07a")})
-	scribe.position = Vector3(-4.2, 0, -1.75)
+	scribe.position = Vector3(-3.85, 0, -1.65)      # kalem ucu kâğıdın üstünde (x -4,2), dizler masa önünün (z -2,1) gerisinde
 	scribe.rotation.y = PI          # alçak masaya döner (arkası masaya bakıyordu, elinde kalem yoktu)
 	add_child(scribe)
 	scribe.set_activity("write")     # bağdaş kurmuş yazar: kalem sağ elde, defter solda (Person "write")

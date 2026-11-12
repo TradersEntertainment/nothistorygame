@@ -164,14 +164,23 @@ func _open_window(line: String) -> void:
 		await _h("D13_H_WRONG")
 	else:
 		await _h("D13_H_TUNED")
-	await _h("D13_H_LEVER")
-	# Hikmet'in eli kolun topuzunu tutar (el havada "uzanıyordu", kol kadrajda değildi)
+	# Kol 3,6 m öteden tutulamazdı: oyuncu (Hikmet'in eli) replik sürerken kola yaklaşır; topuz kol boyunda (62 cm) durur
 	var knob := _lever_knob()
+	var approach: Tween = _approach_lever(knob) if knob != Vector3.INF else null
+	await _h("D13_H_LEVER")
+	if approach and approach.is_running():
+		await approach.finished
+	# Hikmet'in eli kolun topuzunu gerçekten tutar: el topuzun dünya konumuna bağlı (QTE boyunca zorlanırken titrer)
+	var trem: Tween = null
 	if knob != Vector3.INF:
-		player.reach_grab(knob)
+		_hold_knob(0.0)
+		trem = create_tween().set_loops()
+		trem.tween_method(func(t: float) -> void: _hold_knob(1.0, t), 0.0, TAU, 0.45)
 	else:
 		player.hand_gesture("reach")
 	await _hold_qte("UI_CH13_LEVER", "interact", 1.5, true, "UI_CH13_LEVER_BAR")
+	if trem:
+		trem.kill()
 	Audio.sfx("kick_metal", -10.0, 0.7)          # kol yerine oturur (kol, makine ve pencere sessizdi)
 	if garage:
 		var tw := create_tween()
@@ -179,14 +188,14 @@ func _open_window(line: String) -> void:
 		garage.machine_light.light_energy = 2.5
 		if garage.lever:
 			create_tween().tween_property(garage.lever, "rotation:z", deg_to_rad(-70.0), _d(0.35)).set_trans(Tween.TRANS_BACK)
-			# El kolla birlikte iner (kol çekilirken el yerinde kalmasın)
+			# El kolla birlikte iner (her karede topuzun gerçek yerini izler; kol çekilirken el yerinde kalmasın)
 			if knob != Vector3.INF:
 				var ht := create_tween()
 				ht.tween_method(func(_t: float) -> void:
 					if player and is_instance_valid(garage) and garage.lever:
-						player.reach_grab(_lever_knob()), 0.0, 1.0, _d(0.4))
-				ht.tween_interval(_d(0.8))
-				ht.tween_callback(func() -> void: if player: player.release_grab())      # kol indi, el çekilir
+						_hold_knob(0.0), 0.0, 1.0, _d(0.5))
+				ht.tween_interval(_d(0.3))
+				ht.tween_callback(func() -> void: if player: player.free_hold = Vector3.INF)      # kol indi, el çekilir
 		# Pencere gerçekten açılır: halkanın içinde parıltı (yalnız makine hızlanıyordu)
 		create_tween().tween_property(garage, "portal", 1.0, _d(1.2))
 	Audio.sfx("machine_spin", -6.0)
@@ -199,6 +208,38 @@ func _lever_knob() -> Vector3:
 	if garage == null or not is_instance_valid(garage) or garage.lever == null:
 		return Vector3.INF
 	return garage.lever.to_global(Vector3(-0.1, 0.39, 0.0))
+
+
+## Oyuncu topuza yaklaşır (1,3 sn, yumuşak): konum ve bakış birlikte akar; topuz ekranın sol altında kalır.
+## Otomatik testte (PACE dışında) anında. Döner: süren tween (anında bittiyse null).
+func _approach_lever(knob: Vector3) -> Tween:
+	var p0 := player.global_position
+	var flat := Vector3(p0.x - knob.x, 0.0, p0.z - knob.z)
+	var p1 := Vector3(knob.x, p0.y, knob.z) + flat.normalized() * 0.62
+	var right := player.camera.global_transform.basis.x
+	var look0 := garage.panel_node.global_position + Vector3(0, 1.2, 0)
+	var look1 := knob + right * 0.14 + Vector3(0, 0.2, 0)
+	if Handover.instant():
+		player.global_position = p1
+		player.face(look1)
+		return null
+	var tw := create_tween()
+	tw.tween_method(func(t: float) -> void:
+		player.global_position = p0.lerp(p1, t)
+		player.face(look0.lerp(look1, t)), 0.0, 1.0, 1.3).set_trans(Tween.TRANS_SINE)
+	return tw
+
+
+## Sol el topuzun üstünde (kamera yerelinde, elin uzanabileceği kutuda); jit > 0 ise zorlanma titremesi.
+func _hold_knob(jit: float, ph := 0.0) -> void:
+	var k := _lever_knob()
+	if k == Vector3.INF or player == null:
+		return
+	var l := player.camera.to_local(k)
+	l = Vector3(clampf(l.x, -0.45, 0.45), clampf(l.y, -0.42, 0.05), clampf(l.z, -0.75, -0.3))
+	if jit > 0.0:
+		l += Vector3(sin(ph * 7.0) * 0.004, cos(ph * 5.0) * 0.005, 0.0)
+	player.free_hold = l
 
 
 ## Kontrol Tolga'ya geçer: pencere açıkken kırmızı düğmeyi basılı tut.

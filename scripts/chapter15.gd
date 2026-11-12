@@ -1599,8 +1599,12 @@ func _meeting_nods() -> void:
 		_nod_later(mon, c)
 
 
+## Baş sallama zamanlayıcıları kendi RNG'sini kullanır (genel RNG akışını tüketmez).
+var _nod_rng := RandomNumberGenerator.new()
+
+
 func _nod_later(mon: Monday, c: Person) -> void:
-	get_tree().create_timer(randf_range(3.0, 9.0), false).timeout.connect(func() -> void:
+	get_tree().create_timer(_nod_rng.randf_range(3.0, 9.0), false).timeout.connect(func() -> void:
 		if mon != monday or not is_instance_valid(c) or not c.is_inside_tree():
 			return
 		var rg := Handover.rig_of(c)

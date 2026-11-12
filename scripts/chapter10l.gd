@@ -18,6 +18,7 @@ const START := Vector3(0.0, 0.0, 0.0)
 
 var _pick: Node3D
 var _dragan_pick: Node3D
+var _miners: Array[Person] = []         # karşı lağımın iki kazmacısı
 var player: Player
 var hud: Hud
 var phase := "intro"
@@ -128,8 +129,8 @@ func _build() -> void:
 	_dragan_pick = Items.attach_tool(dragan, "pickaxe", {"hand": "l"})
 	if _dragan_pick:
 		dragan.set_meta("armed", true)
-		# Kazma sol elinde dik durur (ağzı yukarıda): ağız aşağıda sarkınca altyazı kutusunun, sağ elde de Tolga'nın elindeki paketin arkasında kalıyordu
-		_dragan_pick.basis = Basis(Vector3(0, 0, 1), deg_to_rad(35.0)) * Basis(Vector3.RIGHT, Vector3(0, 0, -1), Vector3(0, 1, 0))
+		# Kazma sol elinde dik durur (baş yukarıda, yana dönük): ağız aşağıda sarkınca altyazı kutusunun, sağ elde de Tolga'nın elindeki paketin arkasında kalıyordu
+		_dragan_pick.basis = _dragan_pick_basis()
 	_lamp = OmniLight3D.new()
 	_lamp.light_color = Color("ffb060")
 	_lamp.light_energy = 1.6
@@ -149,11 +150,11 @@ func _build() -> void:
 	add_child(grant)
 	for sx in [-1.4, 1.4]:
 		var d := Person.new({"coat": Color("7a6a58"), "pants": Color("3a3028"), "hat": "helm", "mustache": true, "skin": Color("d9a07a")})
-		d.position = ch + Vector3(sx, 0, -1.6)
-		d.rotation.y = PI          # duvara döner: kazarken kazması elinde (eli boş duruyorlardı)
+		d.position = ch + Vector3(sx, 0, -1.0)      # kazma başı arka duvarın iç yüzünün (ch-2,35) önünde kalır (-1,6'da duvara gömülüyordu)
+		d.rotation.y = PI          # duvara döner (kazı kazmaları _breakthrough'da kurulur: çizim sayısı artmasın)
 		add_child(d)
 		d.set_activity("chop")
-		d.give_tool("pickaxe")
+		_miners.append(d)
 	var cl := OmniLight3D.new()
 	cl.position = ch + Vector3(0, 2.4, 0.2)
 	cl.light_color = Color("ffc070")
@@ -376,12 +377,15 @@ func _breakthrough() -> void:
 	_face.position.y = -20.0
 	grant.visible = true
 	grant.look_target = player
+	for m in _miners:
+		m.give_tool("pickaxe")          # oda açılınca görünürler: kazma elde, duvara vurur
 	hud.set_chase("", 0.0)
 	hud.set_objective("")
 	var tw := create_tween()
 	tw.tween_property(player, "global_position", Vector3(0, 0.1, -SEG * GOAL - 0.6), _d(1.2))
 	await tw.finished
 	player.face(grant.global_position + Vector3(0, 1.5, 0))
+	_miners_freeze()
 	await _t("D10L_T_MEET_1")
 	await _g("D10L_G_MEET_2")
 	await _t("D10L_T_MEET_3" if _heard else "D10L_T_MEET_3B")
@@ -420,6 +424,26 @@ func _breakthrough() -> void:
 			await _t("D10L_T_RETREAT")
 			await _g("D10L_G_RETREAT")
 			_outcome = "10L.2"
+
+
+## "Herkes donup kalır": kazmacılar vurmayı bırakır, yumuşakça oyuncuya döner; kazma elde sarkık kalır.
+func _miners_freeze() -> void:
+	for m in _miners:
+		if not is_instance_valid(m):
+			continue
+		m.set_activity("")
+		var tl := Items.attach_tool(m, "pickaxe", {"hand": "l"})
+		if tl:
+			m.set_meta("armed", true)
+			tl.basis = _dragan_pick_basis()
+		var ang := wrapf(0.0 - m.rotation.y, -PI, PI)
+		create_tween().tween_property(m, "rotation:y", m.rotation.y + ang, 0.5).set_trans(Tween.TRANS_SINE)
+
+
+## Elde dik duran kazma: sap yukarıda, T başı yana (karşıdan bakana iki ucu da görünür: eskiden baş öne bakıyor, kazma
+## uçtan mızrak gibi okunuyordu); sap hafif yana yatık.
+func _dragan_pick_basis() -> Basis:
+	return Basis(Vector3(0, 0, 1), deg_to_rad(35.0)) * Basis(Vector3(0, 0, 1), Vector3(1, 0, 0), Vector3(0, 1, 0))
 
 
 ## Tünel Sulhu: iki taraf karanlıkta ekmek bölüşür, kimse kimseyi görmemiş sayılır.

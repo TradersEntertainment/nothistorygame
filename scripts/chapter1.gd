@@ -174,13 +174,19 @@ func _run() -> void:
 	var rm := _remote_prop()
 	if rm and Handover.rig_of(hikmet):
 		Handover.rig_of(hikmet).hold_item(rm, false, false)
+	# Hikmet bir adım yaklaşıp kumandayı uzatır (kol boyu 65 cm: 1,5 m öteden uzanamazdı; 30 cm yeter); Tolga'nın eli de kumandaya gider
+	var home := hikmet.position
+	var step := (player.global_position - hikmet.global_position)
+	step.y = 0.0
+	step = step.normalized() * 0.3
+	var tw_in := create_tween()
+	tw_in.tween_property(hikmet, "position", home + step, 0.05 if Handover.instant() else 0.9).set_trans(Tween.TRANS_SINE)
 	await _h("D1_H_16")
-	# Hikmet uzatır, Tolga alır (kumanda elde kendiliğinden beliriyordu)
-	player.reach_grab(hikmet.global_position + Vector3(0, 1.1, 0))
-	player.hand_gesture("reach")
-	await Handover.wait(self, 0.6)
-	await _pass_remote(rm)
-	player.release_grab()         # kumandayı alan el çekilir (sol el bölüm boyunca Hikmet'e uzanık kalıyordu)
+	if tw_in.is_running():
+		await tw_in.finished
+	# Hikmet uzatır, Tolga alır: iki el kumandada buluşur (kumanda elde kendiliğinden beliriyordu)
+	await _meet_remote(rm)
+	create_tween().tween_property(hikmet, "position", home, 0.05 if Handover.instant() else 0.7).set_trans(Tween.TRANS_SINE)
 	remote_given = true
 	player.show_remote(true)
 	hud.set_signal(GameState.telsiz_bag)
@@ -946,26 +952,34 @@ func _remote_prop() -> Node3D:
 	return m
 
 
-## Kumanda Hikmet'in elinden çıkar, Tolga'nın uzanan eline gelir (kol boyu: Handover.audit_distance), sonra elde belirir.
-func _pass_remote(rm: Node3D) -> void:
+## Tolga'nın sol eli kumandanın olduğu yere gider, Hikmet'in kolu da oraya uzanır: kumanda Hikmet'in avucundayken iki el
+## buluşur (havada süzülme yok); temastan sonra kumanda Tolga'nın elinde kalır, Hikmet çekilir. Toplam süre eskisi gibi 0,95 sn.
+func _meet_remote(rm: Node3D) -> void:
 	var rg := Handover.rig_of(hikmet)
-	if rm == null or rg == null or not is_instance_valid(rm) or not rm.is_inside_tree():
-		if rg:
-			rg.release_item()
-		return
-	var from := rm.global_position
-	var gt := rm.global_transform
-	rm.get_parent().remove_child(rm)
-	add_child(rm)
-	rm.global_transform = gt
-	rg.release_item()
-	var dest := player.camera.global_transform * Vector3(0.08, -0.25, -0.5)
-	Handover.audit_distance(hikmet, from, dest)
-	var tw := create_tween()
-	tw.tween_property(rm, "global_position", dest, 0.05 if Handover.instant() else 0.4).set_trans(Tween.TRANS_SINE)
-	await tw.finished
-	rm.queue_free()
-
+	var ok: bool = rm != null and rg != null and is_instance_valid(rm) and rm.is_inside_tree()
+	if ok:
+		# El, kumandanın kamerada düştüğü yere (el kutusunun içinde: kamera yerelinde) gider
+		var l := player.camera.to_local(rm.global_position)
+		player.free_hold = Vector3(clampf(l.x, -0.45, 0.45), clampf(l.y, -0.42, 0.05), clampf(l.z, -0.75, -0.3))
+		Stage.reach(hikmet, player.camera.to_global(player.free_hold), 0.4)
+	else:
+		player.hand_gesture("reach")
+	await Handover.wait(self, 0.55)
+	if ok and is_instance_valid(rm):
+		# Temas: kumanda Hikmet'in avucundan Tolga'nın eline geçer, el onu geri çeker
+		var gt := rm.global_transform
+		rg.release_item()
+		if rm.get_parent():
+			rm.get_parent().remove_child(rm)
+		player.free_hand.add_child(rm)
+		rm.global_transform = gt
+		var tw := rm.create_tween()
+		tw.tween_property(rm, "position", Vector3(0, -0.04, 0.0), 0.05 if Handover.instant() else 0.2)
+		await Handover.wait(self, 0.4)
+		rm.queue_free()
+	elif rg:
+		rg.release_item()
+	player.free_hold = Vector3.INF
 
 
 func _h(key: String) -> void:

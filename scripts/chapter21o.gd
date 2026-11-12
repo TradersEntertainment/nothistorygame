@@ -177,7 +177,7 @@ func _place_crew() -> void:
 	var fz := -SEG * (dug + 1) - 0.2      # yüzün varacağı yer (yüz o sırada geri çekiliyor olabilir)
 	# Kazı ilerledikçe yürüyerek yeni yerlerine geçerler (her kazıda tek karede 2 m ileri sıçrıyorlardı)
 	var first := digger.position == Vector3.ZERO or Stage.fast()
-	for pr: Array in [[digger, Vector3(0.5, 0, fz + 1.0)], [dragan, Vector3(-0.8, 0, fz + 3.3)]]:
+	for pr: Array in [[digger, Vector3(0.5, 0, fz + 1.5)], [dragan, Vector3(-0.8, 0, fz + 3.3)]]:
 		var n: Node3D = pr[0]
 		if first:
 			n.position = pr[1]
@@ -538,12 +538,25 @@ func _give_pick() -> void:
 	_pick.position = Vector3(-0.24, -0.34, -0.55)
 	_pick.rotation_degrees.x = -20.0
 	player.camera.add_child(_pick)
-	# Madencinin kazması (Items.tool_model): sivri ve düz uçlu çift başlı, sap yukarıda (eskiden düz gri levha: tokmak gibiydi)
+	# Madencinin kazması (Items.tool_model): sivri ve düz uçlu çift başlı. Sol elin (Player.free_hand) avucu sapı sarar:
+	# sap avucun altından geçer, T başı sağda görünür (eskiden sap elden 20 cm yanda, havada duruyordu)
 	var pm := Items.tool_model("pickaxe")
-	pm.basis = Basis(Vector3.UP, deg_to_rad(90.0)) * Basis(Vector3.RIGHT, deg_to_rad(-90.0))
-	pm.scale = Vector3.ONE * 0.8
 	_pick.add_child(pm)
+	pm.transform = _pick.transform.affine_inverse() * _pick_in_hand(_pick.position)
+	pm.scale = Vector3.ONE * 0.8
 	player.free_hold = Vector3(-0.24, -0.34, -0.55)
+
+
+## Sol elin kamera yerelindeki dönüşü (Player._animate_free_hand'in formülü: omuzdan tutuş noktasına bakar, roll -20, tilt 30)
+## ve avuç altından geçen sapın dönüşü. Sap avuca enine yakın yatar (parmaklar sapı sarar), baş yukarı-aşağı.
+func _pick_in_hand(hold: Vector3) -> Transform3D:
+	var q := Quaternion(Basis.looking_at((hold - Vector3(-0.2, -0.45, 0.12)).normalized(), Vector3.UP)) \
+		* Quaternion(Vector3(0, 0, 1), deg_to_rad(-20.0)) * Quaternion(Vector3(1, 0, 0), deg_to_rad(30.0))
+	var hb := Basis(q)
+	var d := Vector3(0.8, 0.2, -0.56).normalized()
+	var y := (Vector3.UP - d * d.dot(Vector3.UP)).normalized()
+	var x := y.cross(d)
+	return Transform3D(hb * Basis(x, y, d), hold + hb * Vector3(-0.02, -0.075, -0.06))
 
 
 func _drop_pick() -> void:
