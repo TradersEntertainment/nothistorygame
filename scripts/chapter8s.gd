@@ -481,6 +481,7 @@ func _end_walk() -> void:
 	await hud.fade_to(1.0, 0.8)
 	player.radio_listen(3.0)
 	await hud.say("SPK_NIHAT", "HZR_N_RADIO_BRIDGE")
+	_cshot("surgun_akis_semasi", 1.0)
 	var result := await hud.show_flowchart(_make_chart_s(), true)
 	Engine.time_scale = 1.0
 	var to_path := String(walk.get("to_path", ""))
