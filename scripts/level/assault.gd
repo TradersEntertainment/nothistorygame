@@ -569,11 +569,14 @@ func _climber_step(c: Dictionary, s: Soldier, delta: float) -> void:
 		var ca: Node = CLIMB.of(s)
 		if ca == null:
 			ca = CLIMB.attach(s, null, 0.0, "assault")
-			var lad: Node3D = _ladder_nodes[clampi(int(c["i"]) / 3, 0, _ladder_nodes.size() - 1)]
+			var lad: Node3D = _ladder_nodes[0]
+			for ln: Node3D in _ladder_nodes:      # bu tırmananın merdiveni: dibi base'in 0,22 m gerisinde
+				if ln.position.distance_to(base - Vector3(0, 0, 0.22)) < lad.position.distance_to(base - Vector3(0, 0, 0.22)):
+					lad = ln
 			var ll := base.distance_to(top)
 			ca.set_line(Vector3.ZERO, Vector3(0, ll, 0), Vector3(0, 0, 1), 0.3, 0.45, 0.68, lad)
 			ca.blend_from(s.global_position, 0.4)
-		ca.follow(floor(rung) * 0.45 + smoothstep(0.1, 0.85, ph) * 0.45)
+		ca.follow_frac((floor(rung) + smoothstep(0.1, 0.85, ph)) * 0.45 / len)
 		var cam := get_viewport().get_camera_3d()
 		ca.full = cam == null or cam.global_position.distance_to(s.global_position) < 30.0
 		if t > 0.45 and rng.randf() < delta * 0.08 * intensity:

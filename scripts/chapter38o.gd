@@ -569,14 +569,17 @@ func _crew_tick(t: float, dt: float) -> void:
 			continue
 		if t < float(c["next"]):
 			continue
-		# Hamle: 2-3 basamak çıkar, sonra kısa soluklanır (üstteki tepeye varınca orada tutunur)
+		# Hamle: 1-2 basamak çıkar, sonra soluklanır: alttaki 3,5 m'den tutma süresi boyunca yavaş yavaş yükselir, üstteki
+		# çatalın geldiği tepenin iki basamak altında bekler, son çeyrekte en üst basamaklara çıkar (mazgala geçişe hazır)
 		var lim: float = ca.max_step()
+		if i == 1 and t < HOLD_TIME * 0.75:
+			lim -= 2.0
 		if i == 0 and _crew.size() > 1:
 			var up: Node = (_crew[1] as Dictionary)["ca"]
 			if is_instance_valid(up) and up.state == "climb":
 				lim = minf(lim, up.s - roundf(2.9 / Ladder.RUNG))
-		ca.goal = clampf(floorf(ca.s) + float(randi_range(2, 3)), 0.0, maxf(floorf(ca.s), lim))
-		c["next"] = t + 2.6 + randf() * 1.6
+		ca.goal = clampf(floorf(ca.s) + float(randi_range(1, 2)), 0.0, maxf(floorf(ca.s), lim))
+		c["next"] = t + 3.4 + randf() * 1.6
 
 
 ## Kayıştan sonra: güvertede doğrulup merdivene yeniden tutunur (oyuncunun başının üstünden; eski yerinden merdivene geçer)
@@ -586,7 +589,7 @@ func _crew_remount(climbers: Array) -> void:
 		if not is_instance_valid(cl) or not is_instance_valid(ladder):
 			continue
 		var ca := CLIMB.attach(cl, ladder, 2.3 + k * 1.1, "38o")
-		ca.side = 0.1 if k == 0 else -0.1
+		ca.side = 0.16 if k == 0 else -0.16
 		ca.speed = 1.1
 		ca.blend_from(cl.global_position, 0.7)
 		if k < _crew.size():
@@ -716,7 +719,7 @@ func _ladder_phase() -> void:
 		# Merdivenin ÜSTÜNDE tırmanır (ortak tırmanma animasyonu): gövde yatık merdivene paralel, eller ve ayaklar
 		# gerçek basamaklarda; yüzü sura dönük (oyuncu sırtını görür)
 		var ca := CLIMB.attach(cl, ladder, CLIMB_AT + k * CLIMB_GAP, "38o")
-		ca.side = 0.1 if k == 0 else -0.1
+		ca.side = 0.16 if k == 0 else -0.16
 		ca.speed = 1.1
 		climbers.append(cl)
 		_crew.append({"ca": ca, "next": 1.5 + k * 1.1, "over": false})

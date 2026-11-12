@@ -72,6 +72,7 @@ var _audit_next := {}
 var _mantle := {}
 var _parts := {}
 var _scale := 1.0
+var _hand_x := HAND_X
 var _arm_len := 0.53             # omuz–avuç (kısa kollu gövde merdivene biraz daha yakın durur)
 var _blend := 1.0                # bağlanırken eski yerinden merdivene geçiş (0 → 1)
 var _from := Vector3.ZERO
@@ -93,7 +94,10 @@ static func attach(p_who: Node3D, p_ladder: Node3D, at := 0.0, p_tag := "") -> N
 	a.tag = p_tag
 	p_who.add_child(a)
 	a._setup()
-	a.set_at(at)
+	if p_ladder:
+		a.set_at(at)
+	else:
+		a._at0 = at          # genel hat: set_line gelince yerleşir (önce dünyanın ortasına konmasın)
 	return a
 
 
@@ -103,6 +107,7 @@ func blend_from(from: Vector3, dur := 0.6) -> void:
 	_blend = 0.0
 	_blend_dur = maxf(0.05, dur)
 var _blend_dur := 0.6
+var _at0 := INF
 
 
 ## Kişi üzerindeki tırmanma animasyonu (yoksa null)
@@ -123,6 +128,11 @@ func set_line(base: Vector3, top: Vector3, front: Vector3, p_rung0: float, p_gap
 	width = p_width
 	_refresh()
 	_fit_gait()
+	if _at0 != INF:
+		var a0 := _at0
+		_at0 = INF
+		s = maxf(0.0, roundf((a0 - rung0 - _root_off) / gap))
+		goal = s
 
 
 ## İp: eller üst üste ipte (basamak yerine ip üstünde gap aralıklı tutuş yerleri), ayaklar ipin arkasındaki duvara
@@ -146,6 +156,8 @@ func _setup() -> void:
 	if rig and rig.elbow_l:
 		var hm: Vector3 = rig.elbow_l.get_meta("hand", Vector3(0, -0.27, 0.01))
 		_arm_len = rig.elbow_l.position.length() + hm.length()
+	if rig and rig.arm_r:
+		_hand_x = clampf(absf(rig.arm_r.position.x) - 0.07, 0.18, 0.34)     # el omzun hemen içinde (geniş omuzlu asker)
 	set_process(true)
 	_refresh()
 	_fit_gait()
@@ -183,6 +195,13 @@ func go_to(at: float, mps := -1.0) -> void:
 ## karede buradan verilir; adım evresi bu metreden çıkar (yürütme aynı, yalnız gövde basamaklara oturur).
 func follow(at: float) -> void:
 	s = clampf((at - rung0 - _root_off) / gap, 0.0, max_step())
+	goal = s
+
+
+## follow'un oranlı biçimi: sahnenin tırmanış ilerlemesi k (0 dip, 1 tepe) merdivenin çıkılabilir boyuna (en yüksek
+## adım) eşlenir. Aynı merdivende arka arkaya çıkanlar tepede aynı adıma sıkışıp iç içe girmez (aralık oranla korunur).
+func follow_frac(k: float) -> void:
+	s = clampf(k, 0.0, 1.0) * max_step()
 	goal = s
 
 
@@ -300,7 +319,7 @@ func _pose() -> void:
 	# Kalça hareketli ayak tarafına salınır (a çiftinde sol ayak kalkar: kalça sağa)
 	var dir := 1.0 if n % 2 == 0 else -1.0
 	var sway := sin(p * PI) * 0.035 * dir * (1.0 - brace)
-	var hip_out := 0.48 - clampf(0.53 - _arm_len, 0.0, 0.05) * 1.5 - brace * 0.03
+	var hip_out := 0.48 - clampf(0.53 - _arm_len, 0.0, 0.05) * 2.5 - brace * 0.03
 	var sc := who.global_basis.get_scale()
 	var basis := Basis(_u.cross(-_f).normalized(), _u, -_f)
 	var pos := _o + _u * root_u + _f * hip_out + _r * side
@@ -368,7 +387,7 @@ func _slide_limbs(root_u: float) -> void:
 func _hand_at(k: float, sd: float) -> Vector3:
 	if rope:
 		return _o + _u * (_rung_u(k) + 0.0) + _f * 0.05 + _r * sd * 0.03
-	return _o + _u * (_rung_u(k) + GRIP_UP) + _f * GRIP_OUT + _r * clampf(sd * HAND_X + side * 0.6, -width * 0.45, width * 0.45)
+	return _o + _u * (_rung_u(k) + GRIP_UP) + _f * GRIP_OUT + _r * clampf(sd * _hand_x + side * 0.6, -width * 0.45, width * 0.45)
 
 
 func _foot_at(k: float, sd: float) -> Vector3:

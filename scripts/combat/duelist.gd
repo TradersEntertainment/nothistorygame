@@ -1239,8 +1239,9 @@ const CLIMB := preload("res://scripts/npc/climb_anim.gd")
 
 
 ## Tırmanan gövdeyi merdivene oturtur: dibi base'e en yakın Ladder bulunur (Melee.add_ladder: base = dip + ön × 0,35);
-## yoksa base–top hattı 0,36 m aralıklı basamaklı merdiven sayılır. at: dipten metre.
-func _climb_pose(base: Vector3, top: Vector3, at: float) -> void:
+## yoksa base–top hattı 0,36 m aralıklı basamaklı merdiven sayılır. k: tırmanış ilerlemesi (0 dip, 1 tepe; arka
+## arkaya çıkanlar tepede aynı basamağa sıkışmasın diye oranlı).
+func _climb_pose(base: Vector3, top: Vector3, k: float) -> void:
 	if not body or not body.rig:
 		return
 	var ca: Node = CLIMB.of(body)
@@ -1250,11 +1251,11 @@ func _climb_pose(base: Vector3, top: Vector3, at: float) -> void:
 			if n is Ladder and is_instance_valid(n) and ((n as Ladder).point_at(0.0) + (n as Ladder).front_dir() * 0.35).distance_to(base) < 0.6:
 				lad = n
 				break
-		ca = CLIMB.attach(body, lad, at, "")
+		ca = CLIMB.attach(body, lad, 0.0, "")
 		if lad == null:
 			var out := global_transform.basis.z * -1.0
 			ca.set_line(base - out * 0.35, top - out * 0.3, out, 0.3, 0.36, 0.8)
-	ca.follow(at)
+	ca.follow_frac(k)
 
 
 func _climb_unpose() -> void:
@@ -1285,7 +1286,7 @@ func _climb_tick(delta: float) -> void:
 		var ph := fmod(rung, 1.0)
 		global_position = base.lerp(top, minf((floorf(rung) + smoothstep(0.1, 0.85, ph)) * 0.45 / maxf(len, 0.1), 1.0))
 		# Gövde merdivenin üstünde (ortak tırmanma animasyonu): merdivene paralel, eller ve ayaklar basamaklarda
-		_climb_pose(base, top, global_position.distance_to(base))
+		_climb_pose(base, top, global_position.distance_to(base) / maxf(len, 0.1))
 		if h >= len:
 			c["vault"] = 0.0
 			c["from"] = global_position
