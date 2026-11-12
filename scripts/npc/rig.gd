@@ -180,10 +180,16 @@ func update(delta: float, talking: bool, busy: bool, ext := true) -> void:
 ## gövde kalçadan bükülür, bacak ve kollar IK ile zemine/hedefe uzanır. Eski işlerin (sit_ground, doze, stir…)
 ## davranışı aynı kalır. _durus: takımın kişi başına durumu (geçiş zamanı, eşyalar, denetim).
 const DurusKit := preload("res://scripts/npc/durus_kit.gd")
+## Kalabalık pişirme önbelleği (Crowd._cache_path) rig.gd'nin içeriğini tuzlar ama durus_kit.gd'yi saymaz: duruş
+## takımında pişmiş görünümü değiştiren her değişiklikte bu sayı artırılır (yoksa diskte eski duruş kalır).
+const DURUS_SURUM := 3
 var _durus := {}
 ## Eğim denetimi (POSEAUDIT tilt, susturulamaz): kişinin kökü dünya dikeyinden 20°'den çok sapmışsa bir kez yazar.
 ## Bilinçli düşme/taşınma/uyuma/uçma işleri hariç (açık liste).
 const EGIM_SERBEST := ["fly", "hover", "swim", "fall", "dead", "lie", "sleep"]
+## Etkinlik adı vermeden kökü bilerek yatıran düşme sahneleri (açık liste; kişinin üst düğümünün betiği, kilitliyken):
+##   wall_fight.gd: ateş alan asker koşar, sonra yüzüstü düşer (_burn, ~1,45 rad)
+const EGIM_SERBEST_BETIK := ["res://scripts/level/wall_fight.gd"]
 var _egim_t := 0.0
 var _egim_bildi := false
 
@@ -196,8 +202,11 @@ func _egim_denet(delta: float) -> void:
 	var up := owner.global_basis.y.normalized()
 	var deg := rad_to_deg(acos(clampf(up.dot(Vector3.UP), -1.0, 1.0)))
 	if deg > 20.0 and not activity in EGIM_SERBEST:
+		var par := owner.get_parent()
+		if lock > 0 and par and par.get_script() and (par.get_script() as Script).resource_path in EGIM_SERBEST_BETIK:
+			return
 		_egim_bildi = true
-		print("POSEAUDIT tilt %s %.0f %s" % [owner.name, deg, activity])
+		print("POSEAUDIT tilt %s %.0f %s (%s/%s)" % [owner.name, deg, activity, par.get_parent().name if par and par.get_parent() else "", par.name if par else ""])
 
 
 ## El ve ayak bilekleri (CharKit'in üçüncü eklemleri): ayak tabanı karakterin zeminine paralel kalır (baldır ne açıda

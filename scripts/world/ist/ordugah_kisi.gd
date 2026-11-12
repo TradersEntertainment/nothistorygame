@@ -73,20 +73,25 @@ static func kur(host: Node3D, kisiler: Array, lod: int) -> int:
 	else:
 		# Hafif figür: duruşun sadeleştirilmiş silueti (ayakta / bağdaş / diz üstü / yatan / belden eğik). Bütün kişiler
 		# tek ağda (renk köşe renginde): eskiden iki MultiMesh (gövde + baş) idi, oturan "y'si basık" dik çubuktu.
-		var ar := [PackedVector3Array(), PackedVector3Array(), PackedColorArray()]
+		# (Packed diziler değer türüdür: dizi içinde tutulup "as" ile eklenirse kopyaya eklenir, ağ boş kalırdı)
+		var pv := PackedVector3Array()
+		var pn := PackedVector3Array()
+		var pc := PackedColorArray()
 		for k: Array in kisiler:
 			var t: String = k[2]
 			var sp: Array = TIP.get(t, TIP["azap"])
 			var fk := fig_tur(String(sp[3]))
 			var xf := Transform3D(Basis(Vector3.UP, float(k[1])), k[0])
-			_ekle(ar, figur("govde" + fk), xf, sp[0])
-			_ekle(ar, figur("bas_baslik" + fk), xf, BASLIK.get(sp[1], BASLIK["azap"]))
+			for e: Array in [_ekle(figur("govde" + fk), xf, sp[0]), _ekle(figur("bas_baslik" + fk), xf, BASLIK.get(sp[1], BASLIK["azap"]))]:
+				pv.append_array(e[0])
+				pn.append_array(e[1])
+				pc.append_array(e[2])
 			pts.append(k[0])
 		var arr := []
 		arr.resize(Mesh.ARRAY_MAX)
-		arr[Mesh.ARRAY_VERTEX] = ar[0]
-		arr[Mesh.ARRAY_NORMAL] = ar[1]
-		arr[Mesh.ARRAY_COLOR] = ar[2]
+		arr[Mesh.ARRAY_VERTEX] = pv
+		arr[Mesh.ARRAY_NORMAL] = pn
+		arr[Mesh.ARRAY_COLOR] = pc
 		var am := ArrayMesh.new()
 		am.add_surface_from_arrays(Mesh.PRIMITIVE_TRIANGLES, arr)
 		var mi := MeshInstance3D.new()
@@ -114,15 +119,16 @@ static func fig_tur(pose: String) -> String:
 	return ""
 
 
-static func _ekle(ar: Array, m: ArrayMesh, xf: Transform3D, col: Color) -> void:
+static func _ekle(m: ArrayMesh, xf: Transform3D, col: Color) -> Array:
 	var a := m.surface_get_arrays(0)
 	var v: PackedVector3Array = a[Mesh.ARRAY_VERTEX]
 	var n: PackedVector3Array = a[Mesh.ARRAY_NORMAL]
 	var c: PackedColorArray = a[Mesh.ARRAY_COLOR]
-	for i in v.size():
-		(ar[0] as PackedVector3Array).append(xf * v[i])
-		(ar[1] as PackedVector3Array).append(xf.basis * n[i])
-		(ar[2] as PackedColorArray).append(c[i] * col)
+	var c2 := PackedColorArray()
+	c2.resize(c.size())
+	for i in c.size():
+		c2[i] = c[i] * col
+	return [xf * v, Transform3D(xf.basis, Vector3.ZERO) * n, c2]
 
 
 static var _fmat: StandardMaterial3D
