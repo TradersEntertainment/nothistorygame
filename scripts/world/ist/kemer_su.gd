@@ -268,7 +268,7 @@ static func _details(root: Node3D, p: Dictionary) -> void:
 		var xc := -L * 0.5 + bay * (i + 0.5)
 		var top := top_at_x(p, xc)
 		var b := KIT.blk(root, Vector3(1.2, 2.0, 1.2), Vector3(xc, top + 0.6, 0), KIT.STONE, "ashlar")
-		Props.prism(root, Vector3(1.6, 0.5, 1.6), Vector3(xc, top + 0.6 + 2.25, 0), KIT.TILE)
+		Props.make_solid(Props.prism(root, Vector3(1.6, 0.5, 1.6), Vector3(xc, top + 0.6 + 2.25, 0), KIT.TILE))
 		Props.box(root, Vector3(0.3, 0.5, 0.05), Vector3(xc, top + 0.6 + 1.0, 0.61), KIT.DARK)
 		i += 12
 	# Ot ve yosun tutamları, pilye diplerinde; birkaç incir kökü
@@ -276,7 +276,7 @@ static func _details(root: Node3D, p: Dictionary) -> void:
 		var xc := -L * 0.5 + bay * (j + 0.5)
 		var top := top_at_x(p, xc)
 		var side := 1.0 if rng.randf() > 0.5 else -1.0
-		Props.box(root, Vector3(rng.randf_range(0.8, 1.6), 0.12, 0.7), Vector3(xc + rng.randf_range(-1, 1), top + 0.04 + 0.6 + 0.7 + 0.0, side * (DECK_W * 0.5 - 1.0)), KIT.MOSS)
+		Props.box(root, Vector3(rng.randf_range(0.8, 1.6), 0.12, 0.7), Vector3(xc + rng.randf_range(-1, 1), top + 0.07, side * (DECK_W * 0.5 - 1.0)), KIT.MOSS)
 
 
 ## Uzak LOD: kalın duvar parçaları + koyu kemer dörtgenleri + eğimli döşeme (çarpışmasız)

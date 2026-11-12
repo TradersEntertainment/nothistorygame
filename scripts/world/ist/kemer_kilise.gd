@@ -16,6 +16,9 @@ static func _rot(v: Vector3, deg: float) -> Vector3:
 ## ext (kolların köşeden fazlası), dome_d, narthex (m, 0 = yok), col (BRICK/STONE), roof (LEAD/TILE),
 ## five (beş kubbeli haç), ruin (0–1), seed, apses (0–3), tag
 static func church(host: Node3D, o: Dictionary, k: float, lod: int) -> Dictionary:
+	if lod >= 1:
+		_church_far(host, o, k, lod)
+		return {"perches": [], "climbs": [], "top": 0.0}
 	var c := Node3D.new()
 	c.name = String(o.get("tag", "Kilise"))
 	c.position = o.get("pos", Vector3.ZERO)
@@ -48,10 +51,10 @@ static func church(host: Node3D, o: Dictionary, k: float, lod: int) -> Dictionar
 
 	# --- Köşe çatıları: düz kiremit (yürünür), kuzey-güney tarafında eğimli görünüm yok; üstü bitmiş
 	if lod < 2:
-		var cr := KIT.vis(c, Vector3(W - 0.2, 0.15, D - 0.2), Vector3(0, Hc, 0), KIT.TILE, "tiles")
+		var cr := KIT.vis(c, Vector3(W - 0.2, 0.15, D - 0.2), Vector3(0, Hc - 0.13, 0), KIT.TILE, "tiles")
 		cr.name = "KöşeÇatı"
 		# kiremit kenar saçağı
-		KIT.vis(c, Vector3(W + 0.5, 0.18, D + 0.5), Vector3(0, Hc - 0.02, 0), KIT.TILE.darkened(0.2))
+		KIT.vis(c, Vector3(W - 0.1, 0.18, D + 0.5), Vector3(0, Hc - 0.17, 0), KIT.TILE.darkened(0.2))
 
 	# --- Kollar ve kubbeler
 	var domes_top := Hw
@@ -74,22 +77,27 @@ static func church(host: Node3D, o: Dictionary, k: float, lod: int) -> Dictionar
 		arm_z.name = "KolZ"
 		for ax in [true, false]:
 			var len: float = W if ax else D
-			var mi := Props.cyl(c, s * 0.5, len - 0.1, Vector3(0, Hw, 0), roof, Vector3(0, 0, 90) if ax else Vector3(90, 0, 0), 14)
-			mi.material_override = Props.mat(roof, 0.0, false, "tiles" if roof == KIT.TILE else "")
-			# yassı: dikeyde 0,42
-			if ax:
-				mi.scale = Vector3(0.42, 1.0, 1.0)
-			else:
-				mi.scale = Vector3(1.0, 1.0, 0.42)
+			var rot := Vector3(0, 0, 90) if ax else Vector3(90, 0, 0)
+			var flat := Vector3(0.42, 1.0, 1.0) if ax else Vector3(1.0, 1.0, 0.42)
+			var arm_col := roof.darkened(0.1)
+			var mi := Props.cyl(c, s * 0.5, len - 1.0, Vector3(0, Hw, 0), arm_col, rot, 14)
+			mi.material_override = Props.mat(arm_col, 0.0, false, "tiles" if roof == KIT.TILE else "")
+			mi.scale = flat
 			Props.make_solid(mi, 1.0)
-			# alınlıkta kemerli üçlü pencere + tuğla çerçeve (kol uçları)
-			if lod == 0:
-				for sg in [-1.0, 1.0]:
-					var wp := Vector3(sg * (len * 0.5 + 0.04), Hw + 0.2, 0) if ax else Vector3(0, Hw + 0.2, sg * (len * 0.5 + 0.04))
-					var face := Vector3(0.12, 1.0, 0.45) if ax else Vector3(0.45, 1.0, 0.12)
+			# alınlık (tympanon): tuğla kapaklar + üçlü kemerli pencere
+			for sg in [-1.0, 1.0]:
+				var cp := Vector3(sg * (len * 0.5 - 0.5), Hw, 0) if ax else Vector3(0, Hw, sg * (len * 0.5 - 0.5))
+				var cap := Props.cyl(c, s * 0.5 + 0.04, 1.0, cp, col, rot, 14)
+				cap.material_override = Props.mat(col, 0.0, false, "brick")
+				cap.scale = flat
+				Props.make_solid(cap, 1.0)
+				if lod == 0:
+					var wp := cp + (Vector3(sg * 0.54, 0.25, 0) if ax else Vector3(0, 0.25, sg * 0.54))
+					var face := Vector3(0.1, 0.9, 0.38) if ax else Vector3(0.38, 0.9, 0.1)
 					for j in [-1, 0, 1]:
-						var off := (Vector3(0, 0, j * 0.6) if ax else Vector3(j * 0.6, 0, 0))
+						var off := (Vector3(0, 0, j * 0.55) if ax else Vector3(j * 0.55, 0, 0))
 						Props.box(c, face, wp + off, KIT.DARK)
+						Props.ball(c, 0.19, wp + off + Vector3(0, 0.45, 0), KIT.DARK, Vector3(0.3, 1, 1) if ax else Vector3(1, 1, 0.3), 6)
 		# merkez tambur + kubbe
 		var dr := s * 0.5 * 1.04
 		var dh := s * 0.5 * 0.42 + 2.4
@@ -116,13 +124,13 @@ static func church(host: Node3D, o: Dictionary, k: float, lod: int) -> Dictionar
 				var a: float = float(j) * 0.5
 				Props.box(c, Vector3(0.5, 1.4, 0.14), Vector3(apx + cos(a) * (ar + 0.04), ah * 0.55, sin(a) * (ar + 0.04)), KIT.DARK, Vector3(0, -rad_to_deg(a), 0))
 		if ap >= 3:
+			# yan odalar (prothesis / diakonikon): apsise bindirmeli kutular (aralarında girilebilir daracık boşluk kalmaz)
 			for sg in [-1.0, 1.0]:
-				var sr := ar * 0.55
-				KIT.cylinder_solid(c, sr, Hc * 0.9, Vector3(apx - 0.2, 0, sg * (ar + sr + 0.5)), cw, pat, 10)
-				# apsis arası dolgu: iki apsis arasında girilebilir daracık aralık bırakma
-				KIT.blk(c, Vector3(1.2, Hc * 0.9, sr * 2.0 + 0.6), Vector3(apx - 1.0, 0, sg * (ar + sr + 0.5)), cw, pat)
-				if ar + sr + 0.5 - sr - ar > 0.0:
-					KIT.blk(c, Vector3(1.0, Hc * 0.9, 0.5 + 0.05), Vector3(apx - 0.5, 0, sg * (ar + 0.25)), cw, pat)
+				var zc: float = sg * (ar + 0.35)
+				KIT.blk(c, Vector3(2.0, Hc * 0.9, 2.3), Vector3(apx - 0.2 + 0.0, 0, zc), cw, pat)
+				var rp := Props.prism(c, Vector3(2.2, 0.8, 2.5), Vector3(apx + 0.0, Hc * 0.9 + 0.4 + 0.02, zc), KIT.TILE)
+				rp.material_override = Props.mat(KIT.TILE, 0.0, false, "tiles")
+				Props.make_solid(rp)
 
 	# --- Narteks (batı)
 	if nd > 0.0:
@@ -164,24 +172,12 @@ static func church(host: Node3D, o: Dictionary, k: float, lod: int) -> Dictionar
 					continue
 				xs.append(Transform3D(Basis.IDENTITY, Vector3(wx, Hc * 0.55, sg * (D * 0.5 + 0.03))))
 		KIT.multi(c, _bm(Vector3(0.55, minf(Hc * 0.5, 2.2), 0.1)), Props.mat(KIT.DARK, 0.0, false, "", false), xs)
-		var buttress: Array = []
+		var pil: Array = []
 		for sg in [-1.0, 1.0]:
 			for j in 4:
 				var bx := -W * 0.5 + (j + 0.5) * W / 4.0
-				buttress.append(Transform3D(Basis.IDENTITY, Vector3(bx, Hc * 0.5, sg * (D * 0.5 + 0.25))))
-		KIT.multi(c, _bm(Vector3(0.5, Hc, 0.5)), Props.mat(col.darkened(0.1), 0.0, false, "", false), buttress)
-		# payandalar ayrıca katı: 0,5 m çıkıntı, dışa taşan gövde ile bitişik
-		for sg in [-1.0, 1.0]:
-			for j in 4:
-				var bx2 := -W * 0.5 + (j + 0.5) * W / 4.0
-				var b := StaticBody3D.new()
-				var cs := CollisionShape3D.new()
-				var bs := BoxShape3D.new()
-				bs.size = Vector3(0.5, Hc, 0.5)
-				cs.shape = bs
-				b.add_child(cs)
-				b.position = Vector3(bx2, Hc * 0.5, sg * (D * 0.5 + 0.25))
-				c.add_child(b)
+				pil.append(Transform3D(Basis.IDENTITY, Vector3(bx, Hc * 0.5, sg * (D * 0.5 + 0.06))))
+		KIT.multi(c, _bm(Vector3(0.5, Hc, 0.12)), Props.mat(col.darkened(0.12), 0.0, false, "", false), pil)
 
 	# --- Harabe: moloz ve ot, sütun kütükleri, üstü yıkık duvar dişleri
 	if ruin > 0.0:
@@ -261,3 +257,50 @@ static func _ruin_dress(c: Node3D, W: float, D: float, Hc: float, ruin: float, r
 		# ot tutamları köşe çatıda
 		for i in 5:
 			Props.box(c, Vector3(rng.randf_range(0.8, 1.8), 0.14, rng.randf_range(0.6, 1.2)), Vector3(rng.randf_range(-W * 0.4, W * 0.4), Hc + 0.22, rng.randf_range(-D * 0.4, D * 0.4)), KIT.MOSS)
+
+
+## Uzak LOD: ana kütleler (gövde, kollar, tambur, kubbe, apsis, narteks) yalın; çarpışmasız
+static func _church_far(host: Node3D, o: Dictionary, k: float, lod: int) -> void:
+	var c := Node3D.new()
+	c.name = String(o.get("tag", "Kilise")) + "_uzak"
+	c.position = o.get("pos", Vector3.ZERO)
+	c.rotation_degrees.y = float(o.get("rot", 0.0))
+	host.add_child(c)
+	var W: float = float(o["W"]) * k
+	var D: float = float(o["D"]) * k
+	var Hc: float = maxf(float(o["Hc"]) * k, 3.2)
+	var ext: float = maxf(float(o.get("ext", 5.0)) * k, 1.6)
+	var Hw := Hc + ext
+	var s := maxf(float(o["dome_d"]) * k + 1.0, 3.2)
+	var col: Color = o.get("col", KIT.BRICK)
+	var roof: Color = o.get("roof", KIT.LEAD)
+	var five: bool = o.get("five", false)
+	var ruin: float = float(o.get("ruin", 0.0))
+	var nd: float = float(o.get("narthex", 0.0)) * k
+	var seg := 10 if lod == 1 else 5
+	Props.box(c, Vector3(W, Hc, D), Vector3(0, Hc * 0.5, 0), col.lightened(0.1))
+	Props.box(c, Vector3(W - 0.2, 0.2, D - 0.2), Vector3(0, Hc + 0.02, 0), KIT.TILE)
+	var dome_pts: Array = []
+	if five:
+		for b: Vector3 in [Vector3.ZERO, Vector3(s, 0, 0), Vector3(-s, 0, 0), Vector3(0, 0, s), Vector3(0, 0, -s)]:
+			Props.box(c, Vector3(s, Hw - Hc, s), b + Vector3(0, (Hc + Hw) * 0.5, 0), col.lightened(0.1))
+			dome_pts.append([b, s * 0.5 * (1.04 if b == Vector3.ZERO else 0.9), s * 0.3 + 1.6 if b == Vector3.ZERO else s * 0.25 + 1.2])
+	else:
+		Props.box(c, Vector3(W, ext + 0.4, s), Vector3(0, Hc + (ext + 0.4) * 0.5 - 0.2 + 0.2, 0), roof.darkened(0.1))
+		Props.box(c, Vector3(s, ext + 0.4, D), Vector3(0, Hc + (ext + 0.4) * 0.5 - 0.2 + 0.2, 0), roof.darkened(0.1))
+		dome_pts.append([Vector3.ZERO, s * 0.5 * 1.04, s * 0.5 * 0.42 + 2.4])
+		if o.get("second", false):
+			dome_pts.append([Vector3(-W * 0.5 + s * 0.9, 0, 0), s * 0.5 * 0.95, s * 0.5 * 0.42 + 2.0])
+	for dp: Array in dome_pts:
+		var bp: Vector3 = dp[0]
+		var r: float = dp[1]
+		var dh: float = dp[2] * (0.5 if ruin > 0.45 else 1.0)
+		Props.cyl(c, r, dh, bp + Vector3(0, Hw + dh * 0.5, 0), col, Vector3.ZERO, seg)
+		if ruin <= 0.45 or bp == Vector3.ZERO:
+			var d := Props.ball(c, r + 0.12, bp + Vector3(0, Hw + dh, 0), roof, Vector3(1, 0.55, 1), seg)
+			d.material_override = Props.mat(roof, 0.0, false, "", false)
+	if int(o.get("apses", 1)) >= 1:
+		var ar := minf(s * 0.5, D * 0.4)
+		Props.cyl(c, ar, Hc + ext * 0.7, Vector3(W * 0.5, (Hc + ext * 0.7) * 0.5, 0), col, Vector3.ZERO, seg)
+	if nd > 0.0:
+		Props.box(c, Vector3(nd, Hc * 0.85, D), Vector3(-W * 0.5 - nd * 0.5, Hc * 0.425, 0), col.lightened(0.1))
