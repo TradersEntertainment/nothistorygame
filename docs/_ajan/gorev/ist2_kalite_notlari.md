@@ -24,6 +24,14 @@ Kaynak kareler: `docs/_kanit_ist2_sehir/tur_5_*.jpg`, `yer_5_*.jpg` (dal `wip/is
    değil; en büyük kesintisiz evsiz alan ~120 × 120 m, açık sarnıç bostanları ve Hipodrom/Büyük Saray harabesi dışında).
    Hedef ev sayısı ~9–12 bin (akışla; bütçe aynı). Galata da surlarına kadar dolu.
 
+0c. **SOKAKLAR YAŞAM DOLU (sahibin sözü, 12 Kasım: "yaşam dolu olacak sokaklar").** Yerden yürürken her sokakta, her
+   meydanda, her iskelede insan ve hareket: yürüyen, taşıyan, pazarlık eden, tezgâh başında duran, kapı önünde oturan,
+   çocuklar, keşişler, askerler, hamallar, balıkçılar; eşek/at/kedi/köpek/tavuk; tezgâhlar dolu, bacalar tütüyor,
+   çamaşır ve sancak dalgalanıyor, martılar. Havadan bakınca sokaklarda ve meydanlarda kıpırdayan kalabalık seçiliyor.
+   Parçalar: `wip/ist-hayat` (uzak/hava katmanı), `wip/ist-hayat-yakin` (oyuncunun çevresinde gerçek kişiler: oyunun
+   `CityLife` sivil akışı ve "herkesle konuşma" düzeni v2 sokaklarına bağlanır). Ölçüt: yerde her bakışta en az 8–12
+   kişi (çarşıda 25+), boş sokak karesi yok; uçuşta 70 m'den her mahallede hareket seçilir.
+
 1. **Surlar cılız.** Kara surları dışarıdan alçak kahverengi bir çit gibi (k = 0,5 ile iç sur ~6 m; evlerden alçak).
    Oyunun var olan surları gerçek yükseklikte (`Blachernae.WALL_H` ~11–12 m). Karar: bütün surların KESİTİ gerçek boyda
    (k = 1,0: iç sur ~12 m, kuleler ~18–20 m, dış sur ~8,5 m, hendek ~18 m), yalnız UZUNLUK hat boyunca yarı ölçek
