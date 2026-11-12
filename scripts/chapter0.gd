@@ -433,8 +433,6 @@ func _place_out() -> void:
 	# Yazı tam yazıldıktan (PLACE_WRITE) en az 2,0 sn ekranda kalır; ama patlamadan (top ateşinden 1,56 sn sonra) 0,26 sn
 	# önce sönmüş olur: bekleme en çok 1,0 sn. Yürüyen oyuncuda bekleme 0 (eski süre), koşanda ~0,3 sn.
 	var hold := clampf(PLACE_WRITE + 2.0 - _place_age, 0.0, 1.0) if _place_age >= 0.0 else 0.0
-	if GameState.autotest:
-		print("PLACE_OUT age=%.2f hold=%.2f full_visible=%.2f" % [_place_age, hold, maxf(_place_age - PLACE_WRITE, 0.0) + hold + 0.3])
 	_place_tw = create_tween()
 	if hold > 0.0:
 		_place_tw.tween_interval(hold)

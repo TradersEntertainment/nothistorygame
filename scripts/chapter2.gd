@@ -1465,7 +1465,7 @@ func _to_chain() -> void:
 		player.floating = false
 		var landing := _land_on_shore()
 		player.face(_shore_look(landing))
-			_show_watchers(false)
+		_show_watchers(false)
 		player.look_lock = true
 		_lock_t0 = Time.get_ticks_msec()
 		var guards := _shore_guards(landing, _cam_look(landing))
