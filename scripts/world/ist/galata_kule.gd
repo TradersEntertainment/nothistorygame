@@ -41,7 +41,7 @@ static func build(h: Node3D, k: float, lod: int, out: Dictionary) -> void:
 	for f: float in [0.3, 0.55, 0.8]:
 		var yb := (H1 - 3.0) * f
 		var rb := lerpf(R, R * 0.93, f) + 0.07
-		O.cyl(h, rb, 0.35, Vector3(0, yb, 0), O.LIGHT, "", 16, -1.0, false)
+		O.cyl(h, rb, 0.35, Vector3(0, yb, 0), Color("a89878"), "", 16, -1.0, false)
 	# konsol dişleri
 	var cor: Array = []
 	for i in 24:

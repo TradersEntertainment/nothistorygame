@@ -115,7 +115,7 @@ static func _church(h: Node3D, k: float, lod: int, out: Dictionary, p: Dictionar
 	else:
 		# çan çatısı (campanile a vela): alın duvarında iki gözlü çan alınlığı
 		O.sol(h, Vector3(W * 0.55, 2.2, 0.6), Vector3(0, E + rise - 0.6, fz - 0.5), wc, "ashlar")
-		Props.prism(h, Vector3(W * 0.55, 1.0, 0.6), Vector3(0, E + rise + 1.6 - 0.6, fz - 0.5), p["roof"])
+		Props.prism(h, Vector3(W * 0.55, 1.0, 0.6), Vector3(0, E + rise + 2.1, fz - 0.5), p["roof"])
 		for sdx: float in [-1.0, 1.0]:
 			Props.box(h, Vector3(0.5, 1.1, 0.7), Vector3(sdx * W * 0.12, E + rise + 0.0, fz - 0.5), O.DARK)
 		Props.cyl(h, 0.25, 0.4, Vector3(-W * 0.12, E + rise - 0.2, fz - 0.5), Color("8a6a3a"), Vector3.ZERO, 8, 0.12)
@@ -482,9 +482,9 @@ static func _bag(h: Node3D, k: float, lod: int, out: Dictionary) -> void:
 			var x := -W * 0.5 + 3.0 + i * 2.2
 			if x > W * 0.25 and t == 1:
 				continue
-			vines.append(Transform3D(Basis(Vector3.UP, rng.randf() * 3.0), Vector3(x, y + 0.5, z + 1.8)))
+			vines.append(Transform3D(Basis(Vector3.UP, rng.randf() * 3.0).scaled(Vector3(1.0, 0.8, 1.0)), Vector3(x, y + 0.5, z + 1.8)))
 			vines.append(Transform3D(Basis(Vector3.UP, rng.randf() * 3.0), Vector3(x, y + 0.5, z - 1.8)))
-	O.mm(h, Vector3(1.0, 1.0, 1.0), vines, O.GREEN)
+	O.mm_ball(h, 0.6, vines, Color("4a6e30"))
 	var posts: Array = []
 	for t in 3:
 		var y := 0.4 * (t + 1)
