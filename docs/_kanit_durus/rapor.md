@@ -23,6 +23,7 @@ seçtiği aynı tür bakış kullanıldı.
 | `05_sonda_gecis_ayakta_bagdas.jpg` | Ayaktan bağdaşa geçiş, 6 kare (zamanlaması bozuk: bkz. 2. başlık). |
 | `06_sonda_crowd_pismis.jpg` | Ordugâhın donmuş kalabalığı (Crowd pişirmesi) aynı duruşlarla: bağdaş, kâseden yiyen, diz üstü, çömelen, sırtüstü, yan uzanan, kazan karıştıran, sırtını yüke dayamış. |
 | `07_once_sonra_sehir.jpg` | Şehirden beş yakın kare ÖNCE \| SONRA: tabureye oturan, çamaşır yıkayan, dilenci, sur dibi işçi, iskelede balıkçı. |
+| `09_birlesik_ocaklar_6m.jpg` | ORDUGÂH-5 + CANLI birleştirmesinden SONRA üç ocak başı 6 m'den (sonda bugünkü düzende yeniden seçti; ÖNCE'si yok): uyuyan bohçaya başını koymuş sırtüstü, bağdaş ve diz üstü oturanlar, kazana eğilen aşçı. |
 | `08_sonda_diger_duruslar.jpg` | Diğer 12 duruş (ateşe üfleme, tek diz, kütüğe oturma, sırtı dayalı, yemek, bileme, yazma, eyere oturma, odun atma, balta, kürek, yük kaldırma). |
 
 ## 2. Kendi karelerime bakınca hâlâ kötü olanlar
@@ -42,7 +43,9 @@ seçtiği aynı tür bakış kullanıldı.
 - **anadolu 4_1 ocağı** (`02` sağ alt): ÖNCE'de sağda kütüklerin üstünde yatan uyuyan, SONRA'da çadırın arkasında
   kalıp görünmüyor (yere yattığı için alçaldı); kare onu göstermiyor.
 - Birleştirme sonrası (ORDUGÂH-5 karo düzeni) çadır yerleri değişti; `01`/`02` birleştirme ÖNCESİ koddan.
-  Birleşik kodun ocak kareleri ayrıca çekildi (bkz. 6. başlık), paftaya konmadı.
+  Birleşik kodun ocak kareleri `09`'da (ÖNCE'si yok). `09` sağ karede (rumeli 3_1) sağ kenarda yatan kişinin ayakları
+  çadır eteğine giriyor gibi: yer seçimi ORDUGÂH-5'in (kişi yeri değişmedi, yalnız duruşu yatık oldu; ayakta iken çadıra
+  değmiyordu). KISMEN.
 
 ## 3. Maddeler
 
