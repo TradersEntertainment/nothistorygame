@@ -60,3 +60,32 @@ Kaynak kareler: `docs/_kanit_ist2_sehir/tur_5_*.jpg`, `yer_5_*.jpg` (dal `wip/is
    çatıdan çatıya geçiş oyuncuyla; kapıların üstünde sur yürüme yolu kesik (kara surunda %9 boşluk).
 10. **Halic parçasının konumları yanlıştı** (hepsi Sarayburnu'nda kümelenmiş; şehir oturumu düzeltti): parça kaydı da
     düzeltilmeli. Kiliseler parçasının adlı kiliseleri konumsuz: mahalle kilisesi olarak kullanılıyor (uygun).
+
+---
+
+# TUR 2 kareleri (09:26 UTC, `docs/_kanit_ist2_dunya2/sahip_*.jpg`) — yöneticinin notları (3. tura girecek)
+
+İyi: yarımadanın biçimi ve derli topluluğu; Galata'dan bakışta filo, zincir, ufukta Ayasofya; Mese'de taş döşeme ve
+yürüyen insanlar; sur dibi mahallesi (taş-tuğla şeritli sur, döşeli meydan, dükkânlar); karşı kıyılar dolu; gece.
+
+Düzeltilecekler:
+11. **Uzak sur katmanı kaba kutular:** Galata'dan ve sur dışından bakışta deniz/kara surlarının uzak hâli ten rengi,
+    beyaz ve siyah düz bloklar (dokusuz, mazgalsız; gece siyah-beyaz). Uzak katman da şeritli taş rengi, mazgallı
+    silüet, kule ritmi olmalı.
+12. **Yakındaki kutu insanlar:** uzak yaşam katmanının küp figürleri yakından görünüyor (Mese'de ön planda, sur dışında
+    çadırın önünde): ≤ 60–90 m'de oyunun gerçek kişi modeli (`Person`; `wip/ist-hayat-yakin`), küp figür yalnız uzakta.
+13. **Ayasofya meydanı ve çevresi hâlâ çayır:** Ayasofya'nın dört yanı, Augustaion, Mese'nin iki yanı ve evlerin arası
+    yeşil; taş döşeli meydan, avlu duvarları, patrikhane ekleri, tezgâhlar, ağaçlı avlular olmalı. Evler Ayasofya
+    çevresinde aralıklı ve tek tek; bitişik adalar yok.
+14. **Romanos'un iç yanı boş çayır** (hub oyun alanı 90 × 90 m boş bırakılmış): oraya Tolga'nın mektup bölümünün
+    şehri (hub: `ByzCity.far_hub` / aynı kurucular) yerleşmeli; boş alan kalmasın.
+15. **Sur dışı hâlâ seyrek:** tek büyük beyaz çadır (kutu gibi, dokusuz) ve birkaç küçük çadır; "çadır denizi", toplar,
+    tabyalar, hendek, sancaklar yok ya da görünmüyor; kara suru önünde hendek ve dış sur okunmuyor. Sur dışındaki
+    zemin düz yeşil.
+16. **Tam tepeden siyah dikdörtgenler** sürüyor (≥ 8 adet: uzak katmanda kararan çatı/parça). Kaynağı bulunup
+    giderilmeli (şehir/parça tarafı).
+17. **Döşeme çok beyaz ve iri:** Mese ve meydan döşemesi nane-beyaz, 1 m'lik dev karolar; Prokonnesos mermeri/kireçtaşı
+    tonu (sıcak gri-krem), düzensiz derzler, yer yer kırık/otlu olmalı.
+18. **Ev renkleri hâlâ tek tip** (parlak turuncu çatı + açık duvar): görünüş kılavuzundaki palet (soluk kırmızı-kahve
+    Bizans kiremidi, taş-tuğla şerit, kireç badana tonları) uygulanmalı; çatılar daha az doygun.
+19. **ISTBOS şehir içi %5,5** (hedef %0).
