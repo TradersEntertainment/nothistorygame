@@ -59,7 +59,7 @@ static func build(parent: Node3D, wall_z: float, work: Rect2, wall_gap := Vector
 			g = Color("6e5e42").lerp(g, smoothstep(-4.0, 22.0, d))
 		return g.lerp(Color("8a9a98"), smoothstep(-240.0, -520.0, z) * 0.5)    # uzak tepeler havaya karışır
 	var shore_side := not world or with_shore
-	load("res://scripts/level/zemin.gd").yore("kiyi", parent, {"su_y": 0.0})      # ZEMİN: yöre paleti, kıyı bantları
+	load("res://scripts/level/zemin.gd").yore("kiyi", parent, {"su_y": 0.0, "ipucu_guc": 0.35})      # ZEMİN: yöre paleti, kıyı bantları
 	if shore_side:
 		parent.add_child(LowPoly.solid(LowPoly.terrain(-E, E, -E if world else -520.0, 0.5, int(E / 10.0), 40 if not world else 22, shore, scf)))
 	var bcf := func(x: float, z: float, y: float, steep: float) -> Color:

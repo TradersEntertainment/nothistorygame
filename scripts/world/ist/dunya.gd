@@ -364,7 +364,7 @@ func _zemin_ortu() -> void:
 	load("res://scripts/level/zemin.gd").ortu_ekle(self, Rect2(-100000.0, -100000.0, 200000.0, 200000.0),
 		func(x: float, z: float) -> float: return IstGeo.h(x, z),
 		func(x: float, z: float) -> Color: return _renk(x, z, IstGeo.h(x, z), 0.0),
-		{"temas": false, "tut": func(x: float, z: float) -> bool: return not (String(_mah(x, z).get("tur", "")) in yerlesik) and IstGeo.h(x, z) > 0.4})
+		{"temas": false, "yogunluk": 0.8, "tut": func(x: float, z: float) -> bool: return not (String(_mah(x, z).get("tur", "")) in yerlesik) and IstGeo.h(x, z) > 0.4})
 
 
 ## Mahalle türü (20 m önbellek; IstGeo.mahalle pahalı)
