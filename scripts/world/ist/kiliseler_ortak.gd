@@ -10,7 +10,7 @@ const STONE_D := Color("b3a280")
 const BRICK := Color("b4684a")
 const TILE := Color("b3552f")
 const TILE_D := Color("8f4226")
-const LEAD := Color("8d939b")
+const LEAD := Color("7c828b")
 const MARBLE := Color("d8cdb6")
 const WOOD := Color("5e4129")
 const WOOD_D := Color("3e2a1a")
@@ -252,8 +252,8 @@ static func wedge_mesh(run: float, rise: float, depth: float) -> ArrayMesh:
 
 static func _tri(st: SurfaceTool, a: Vector3, b: Vector3, c: Vector3) -> void:
 	st.add_vertex(a)
-	st.add_vertex(b)
 	st.add_vertex(c)
+	st.add_vertex(b)
 
 
 ## Dilimli kubbe ağı: gores dilim, her dilimin ortası çukur, kenarı (kaburga) hafif kabarık; vertex rengi dilimlere göre

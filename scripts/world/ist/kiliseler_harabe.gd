@@ -228,7 +228,8 @@ static func kemer(b: IstKB) -> void:
 	for i in 2:
 		b.sb(Vector3(-px - pw * 0.5 - 0.5 - i * 1.0, 0, 0), Vector3(1.0, (2.4 - i * 0.9) * hp / 3.2, pd * 0.6), st, "ashlar")
 	# moloz yığını doğu duvar kolundan 2,6 m'lik uca çıkış
-	b.rubble_heap(Vector3(px + pw * 0.5 + 0.5, 0, pd * 0.6 + 1.2), 2.2, 2.3, IstKB.STONE_D)
+	var wt_h := 2.6 * hp / 3.2
+	b.rubble_heap(Vector3(px + pw * 0.5 + 0.5, 0, pd * 0.6 + 1.2), wt_h * 0.9 + 0.4, wt_h - 0.15, IstKB.STONE_D)
 	b.add_climb(Vector3(px + 0.5, 0, pd * 0.6 + 4.2), Vector3(px + pw * 0.5 + 0.5, 2.6 * hp / 3.2, 0.0), "sandik")
 	b.add_perch(Vector3(-px, hp + span * 0.5 + 0.2, 0.0))
 	b.add_perch(Vector3(px, hp + span * 0.5 + 0.2, 0.0))
