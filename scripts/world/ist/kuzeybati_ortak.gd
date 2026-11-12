@@ -29,6 +29,10 @@ var seed_i := 1
 var rng := RandomNumberGenerator.new()
 var tris_hint := 0
 var _mm_cache := {}
+var climb_list: Array = []        # [alt, ust, tür] yerel koordinat (tırmanış yolları; stair/crate_steps kendiliğinden ekler)
+var perch_list: Array = []        # yerel konma noktaları (dome kendiliğinden ekler)
+static var last: IstKbCtx
+static var _harvest_cache := {}
 
 
 static func create(host: Node3D, name: String, k_: float, lod_: int, yon_deg: float, seed_ := 1) -> IstKbCtx:
@@ -41,7 +45,29 @@ static func create(host: Node3D, name: String, k_: float, lod_: int, yon_deg: fl
 	c.root.name = name
 	c.root.rotation_degrees.y = -yon_deg
 	host.add_child(c.root)
+	last = c
 	return c
+
+
+## Kurucuyu geçici bir düğümde çalıştırıp tırmanış/konma listelerini toplar (önbellekli). builder(host, k, lod).
+static func harvest(key: String, builder: Callable, k_: float) -> Array:
+	var ck := "%s|%.3f" % [key, k_]
+	if _harvest_cache.has(ck):
+		return _harvest_cache[ck]
+	var h := Node3D.new()
+	builder.call(h, k_, 2)
+	var res: Array = [last.climb_list.duplicate(), last.perch_list.duplicate()]
+	h.free()
+	_harvest_cache[ck] = res
+	return res
+
+
+func add_climb(alt_scaled: Vector3, ust_scaled: Vector3, kind: String) -> void:
+	climb_list.append([to_local(alt_scaled), to_local(ust_scaled), kind])
+
+
+func add_perch(p_scaled: Vector3) -> void:
+	perch_list.append(to_local(p_scaled))
 
 
 ## Model -> yerel (pivot dönüşü uygulanmış) dönüşümü, perch/climb noktaları için
@@ -117,7 +143,7 @@ func gable(x: float, z: float, w: float, d: float, y0: float, rise: float, axis_
 	var rs := minf(rise * k, half * 0.5)
 	var ww := w * k + (over * 2.0 if axis_z else 0.0)
 	var dd := d * k + (0.0 if axis_z else over * 2.0)
-	var ll := d * k + over * 2.0 if axis_z else w * k + over * 2.0
+	var ll := d * k if axis_z else w * k
 	var wid := half * 2.0
 	var pm := PrismMesh.new()
 	pm.size = Vector3(wid, rs, ll)
@@ -248,6 +274,7 @@ func dome(x: float, z: float, base_y: float, R: float, drum_h: float, dome_h: fl
 	# tepe fenerliği: küçük katı silindir (konma yeri) + haç
 	var ty := top_y + dome_h * k
 	var fr := maxf(0.22, 0.05 * R * k)
+	perch_list.append(to_local(Vector3(x * k, ty + 0.19, z * k)))
 	var lan := Props.cyl(root, fr, 0.5, Vector3(x * k, ty - 0.08, z * k), LEAD_D, Vector3.ZERO, 8)
 	Props.make_solid(lan)
 	if cross:
@@ -450,6 +477,9 @@ func stair(fx: float, fz: float, dir: Vector2, height_m: float, width := 1.5, co
 		var pos := Vector3(fx * k, y0 + top * 0.5, fz * k) + Vector3(d.x, 0, d.y) * (-along)
 		var b := Props.solid(root, Vector3(width, top, tread), pos, Color.WHITE, Vector3(0, ang, 0))
 		Props.set_pattern(b, col, "flagstone")
+	var base := Vector3(fx * k, 0, fz * k)
+	var d3 := Vector3(d.x, 0, d.y)
+	add_climb(base - d3 * (tread * n + 0.9) + Vector3(0, y0, 0), base + d3 * 0.9 + Vector3(0, y0 + height_m, 0), "basamak")
 
 
 ## Yığılmış sandık/fıçı basamakları (insan ölçüsü): zeminden başlayıp duvara dayalı, her basamak katı.
@@ -458,12 +488,15 @@ func crate_steps(x: float, z: float, dir: Vector2, count: int, rise := 0.5, y0 :
 	var ang := rad_to_deg(atan2(d.x, d.y))
 	for i in count:
 		var top := rise * (i + 1)
-		var along := 0.9 * (count - i - 0.5)
+		var along := 0.6 * (count - i - 1) + 0.45
 		var pos := Vector3(x * k, y0 + top * 0.5, z * k) - Vector3(d.x, 0, d.y) * along
 		var b := Props.solid(root, Vector3(1.1, top, 0.9), pos, Color.WHITE, Vector3(0, ang, 0))
 		Props.set_pattern(b, WOOD if i % 2 == 0 else Color("7e5a38"), "wood")
 		# kasa şeritleri
 		Props.box(root, Vector3(1.12, 0.06, 0.92), pos + Vector3(0, top * 0.5 - 0.08, 0), WOOD_D, Vector3(0, ang, 0))
+	var base := Vector3(x * k, 0, z * k)
+	var d3 := Vector3(d.x, 0, d.y)
+	add_climb(base - d3 * (0.6 * (count - 1) + 1.3) + Vector3(0, y0, 0), base + d3 * 0.8 + Vector3(0, y0 + count * rise, 0), "sandik")
 
 
 ## Dekor: tuğla bandı (opus mixtum şeridi) bir cephenin üstüne
@@ -480,22 +513,24 @@ func band(cx: float, cz: float, nrm_deg: float, fd: float, w: float, y: float, h
 
 func cypress(x: float, z: float, h := 7.0, y := 0.0) -> void:
 	if lod >= 2:
-		Props.cyl(root, 0.02, h * 0.9, Vector3(x * k, y * k + h * 0.45, z * k), Color("34502c"), Vector3.ZERO, 5, 0.9 * 0.0 + 0.0)
 		return
 	var hh := h * maxf(k, 0.55)
-	Props.cyl(root, 0.09, hh * 0.15, Vector3(x * k, y * k + hh * 0.075, z * k), WOOD_D, Vector3.ZERO, 5)
-	var b := Props.cyl(root, 0.0, hh * 0.9, Vector3(x * k, y * k + hh * 0.55, z * k), Color("34502c"), Vector3.ZERO, 7, 0.0)
-	b.scale = Vector3.ONE
-	var c := Props.ball(root, hh * 0.1, Vector3(x * k, y * k + hh * 0.45, z * k), Color("3a5a30"), Vector3(1, hh * 0.9 / (hh * 0.2), 1), 7)
-	c.name = "cypress"
+	var tr := Props.cyl(root, 0.1, 0.5, Vector3(x * k, y * k + 0.25, z * k), WOOD_D, Vector3.ZERO, 5)
+	Props.make_solid(tr)
+	var b := Props.ball(root, hh * 0.1, Vector3(x * k, y * k + hh * 0.5, z * k), Color("3a5a30"), Vector3(1.0, 4.4, 1.0), 7)
+	b.set_meta("bitki", true)
+	b.name = "cypress"
 
 
 func olive(x: float, z: float, y := 0.0, sc := 1.0) -> void:
 	if lod >= 2:
 		return
-	Props.cyl(root, 0.14 * sc, 1.5 * sc, Vector3(x * k, y * k + 0.75 * sc, z * k), Color("5e4a36"), Vector3(4, 0, 3), 6, 0.1 * sc)
-	Props.ball(root, 1.3 * sc, Vector3(x * k, y * k + 2.0 * sc, z * k), Color("7f9060"), Vector3(1.2, 0.7, 1.2), 7)
-	Props.ball(root, 0.9 * sc, Vector3(x * k + 0.7 * sc, y * k + 1.8 * sc, z * k - 0.3), Color("8a9a68"), Vector3(1, 0.7, 1), 6)
+	var tr := Props.cyl(root, 0.14 * sc, 1.5 * sc, Vector3(x * k, y * k + 0.75 * sc, z * k), Color("5e4a36"), Vector3.ZERO, 6, 0.1 * sc)
+	Props.make_solid(tr)
+	var a := Props.ball(root, 1.3 * sc, Vector3(x * k, y * k + 2.0 * sc, z * k), Color("7f9060"), Vector3(1.2, 0.7, 1.2), 7)
+	var b := Props.ball(root, 0.9 * sc, Vector3(x * k + 0.7 * sc, y * k + 1.8 * sc, z * k - 0.3), Color("8a9a68"), Vector3(1, 0.7, 1), 6)
+	a.set_meta("bitki", true)
+	b.set_meta("bitki", true)
 
 
 func rubble(x: float, z: float, n: int, spread: float, y := 0.0) -> void:

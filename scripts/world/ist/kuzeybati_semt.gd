@@ -103,17 +103,6 @@ static func build_aetios(host: Node3D, k: float = 0.5, lod: int = 0) -> void:
 		Props.ramp(c.root, a, b, 3.0, Color("8a7a5a"))
 
 
-static func perches_aetios(k: float = 0.5) -> Array:
-	var c := _nul(k, 100.0)
-	return [c.to_local(Vector3(-122.0 * k, 9.0 * k + 0.1, -44.0 * k)), c.to_local(Vector3(122.0 * k, 9.0 * k + 0.1, 44.0 * k))]
-
-
-static func climbs_aetios(k: float = 0.5) -> Array:
-	var c := _nul(k, 100.0)
-	var hh := 9.0 * k
-	return [[c.to_local(Vector3(-122.0 * k - 8.0, 0.0, 0.0)), c.to_local(Vector3(-122.0 * k - 1.0, hh, 0.0)), "basamak"]]
-
-
 # ----------------------------------------------------------------------------------------------------------------
 ## KALIGARİA — ayakkabıcılar çarşısı. Dar sokağın iki yanı, tezgâhlı dükkânlar, sundurma altında asılı ayakkabılar.
 ## Ev ölçüleri k'den bağımsız alt sınırlı (insan ölçüsü): taban 5,5×6,5 × max(k, 0,7); k < 0,7 iken tek kat (3,8),
@@ -204,23 +193,6 @@ static func _side_stair(c: IstKbCtx, x_real: float, z_back_real: float, h: float
 		Props.set_pattern(b, IstKbCtx.WOOD, "wood")
 
 
-static func perches_kaligaria(k: float = 0.5) -> Array:
-	var c := _nul(k, 60.0)
-	var fk := maxf(k, 0.7)
-	var hh := 6.4 if k >= 0.7 else 3.8
-	return [c.to_local(Vector3(0, hh + 0.05, -(4.5 * 0.5 + 6.5 * fk * 0.5))), c.to_local(Vector3(0, hh + 0.05, 4.5 * 0.5 + 6.5 * fk * 0.5))]
-
-
-static func climbs_kaligaria(k: float = 0.5) -> Array:
-	var c := _nul(k, 60.0)
-	var fk := maxf(k, 0.7)
-	var hh := 6.4 if k >= 0.7 else 3.8
-	var xe := (4 * 0.5 * 5.5 * fk) + 5.5 * fk * 0.5 + 0.9
-	var ze := -(4.5 * 0.5 + 6.5 * fk)
-	var nst := maxi(1, int(ceil(hh / 0.32)))
-	return [[c.to_local(Vector3(xe, 0, ze + 0.34 * nst + 0.4)), c.to_local(Vector3(xe, hh, ze + 0.2)), "basamak"]]
-
-
 # ----------------------------------------------------------------------------------------------------------------
 ## AYVANSARAY İSKELESİ (Haliç, Blakhernai/Kaligaria önü). Taş rıhtım + uzun ahşap iskele, kazıklar, babalar, ağ
 ## çerçeveleri, balıkçı kayıkları, çuval-fıçı yığınları. Deniz: y = 0,12 (yüzeyde ince saydam plaka, çarpışmasız).
@@ -278,18 +250,34 @@ static func build_ayvansaray_iskele(host: Node3D, k: float = 0.5, lod: int = 0) 
 	c.cypress(-10.0, 13.0, 7.0)
 
 
-static func perches_ayvansaray_iskele(k: float = 0.5) -> Array:
-	var c := _nul(k, 50.0)
-	return [c.to_local(Vector3(0, 1.4, 5.0 - 22.0 + 0.4)), c.to_local(Vector3(0, 0.95, -4.0))]
-
-
-static func climbs_ayvansaray_iskele(k: float = 0.5) -> Array:
-	var c := _nul(k, 50.0)
-	return [[c.to_local(Vector3(0, 0.0, 14.5)), c.to_local(Vector3(0, 0.9, 3.0)), "basamak"]]
-
-
 static func _nul(k: float, yon: float) -> IstKbCtx:
 	var c := IstKbCtx.new()
 	c.k = k
 	c.yon = yon
 	return c
+
+# Tırmanış ve konma noktaları kurucudan toplanır (IstKbCtx.harvest): kurulumla birebir tutarlı.
+static func perches_aetios(k: float = 0.5) -> Array:
+	return IstKbCtx.harvest("aetios", build_aetios, k)[1]
+
+
+static func climbs_aetios(k: float = 0.5) -> Array:
+	return IstKbCtx.harvest("aetios", build_aetios, k)[0]
+
+
+static func perches_kaligaria(k: float = 0.5) -> Array:
+	return IstKbCtx.harvest("kaligaria", build_kaligaria, k)[1]
+
+
+static func climbs_kaligaria(k: float = 0.5) -> Array:
+	return IstKbCtx.harvest("kaligaria", build_kaligaria, k)[0]
+
+
+static func perches_ayvansaray_iskele(k: float = 0.5) -> Array:
+	return IstKbCtx.harvest("ayvansaray_iskele", build_ayvansaray_iskele, k)[1]
+
+
+static func climbs_ayvansaray_iskele(k: float = 0.5) -> Array:
+	return IstKbCtx.harvest("ayvansaray_iskele", build_ayvansaray_iskele, k)[0]
+
+

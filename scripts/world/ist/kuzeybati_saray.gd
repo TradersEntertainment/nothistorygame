@@ -38,14 +38,14 @@ static func build_tekfur(host: Node3D, k: float = 0.5, lod: int = 0) -> void:
 	c.gable(26, -6.5, 7, 7, 17, 2.0, true)
 	# saray gövdesi: üç kat, "tekfur" deseni (kırmızı-beyaz geometrik)
 	c.block(0, 0, 20, 11, 17, 0, T, "tekfur")
-	c.gable(0, 0, 20, 11, 17, 3.0, false)
+	c.gable(0, 0, 20, 11, 17, 2.2, false)
 	# doğu merdiven kulesi (sur yürüme yolu ile saray çatısı arasında geçit)
-	c.block(11.75, -3.5, 3.5, 4, 15, 0, W, "ashlar")
+	c.block(12.5, -3.5, 5, 4, 15, 0, W, "ashlar")
 	# sur yürüme yolu siperliği (kuzey kenarı) ve uç kule tepeleri
 	if lod < 2:
 		c.parapet(-29.5, -9.5, 29.5, -9.5, 13.0 * c.k)
 		c.parapet(-23.0, -5.5, 10.0, -5.5, 13.0 * c.k)
-		c.parapet(14.5, -5.5, 22.5, -5.5, 13.0 * c.k)
+		c.parapet(19.0, -5.5, 24.5, -5.5, 13.0 * c.k)
 	# cephe: zemin katta beş kemerli revak (mermer sütunlu), iki kat cephe bantları, pencereler, geometrik rozetler
 	if lod == 0:
 		var offs := [-8.0, -4.0, 0.0, 4.0, 8.0]
@@ -70,7 +70,7 @@ static func build_tekfur(host: Node3D, k: float = 0.5, lod: int = 0) -> void:
 				var xx2 := (-9.0 + i * 2.25)
 				var rz := Props.box(c.root, Vector3(0.5, 0.5, 0.05), Vector3(xx2 * k, fl * k, 5.5 * k + 0.02), IstKbCtx.BRICK, Vector3(0, 0, 45))
 				rz.material_override = Props.mat(Color("b8523a"))
-		c.door_on(11.75, -3.5, 0, 2.0, 0.0, 15.0)
+		c.door_on(12.5, -3.5, 0, 2.0, 0.0, 15.0)
 		c.cypress(-14.0, 11.0, 9.0)
 		c.cypress(15.0, 12.0, 9.5)
 		c.olive(-10.0, 15.0, 0.0, 1.0)
@@ -82,24 +82,10 @@ static func build_tekfur(host: Node3D, k: float = 0.5, lod: int = 0) -> void:
 	# tırmanış: yerden sur yürüme yoluna dış merdiven (batıdan), sonra kuleye ve saray çatısına sandık basamakları
 	var hw := 13.0 * k
 	c.stair(16.0, -5.5, Vector2(0, -1), hw, 1.6, IstKbCtx.STONE_D, 0.34, 0.0)
-	var n1 := maxi(1, int(ceil(2.0 * k / 0.5)))
-	c.crate_steps(11.75, -5.5, Vector2(0, 1), n1, 2.0 * k / n1, hw)
-	var n2 := maxi(1, int(ceil(2.0 * k / 0.5)))
-	c.crate_steps(10.0, -2.5, Vector2(-1, 0), n2, 2.0 * k / n2, 15.0 * k)
-
-
-static func perches_tekfur(k: float = 0.5) -> Array:
-	var c := _nul(k, 20.0)
-	return [c.to_local(Vector3(0, 17.0 * k + 3.0 * k * 0.0 + _rise(k, 3.0, 11.0) + 0.05, 0)),
-		c.to_local(Vector3(-26.0 * k, 17.0 * k + _rise(k, 2.0, 7.0), -6.5 * k)),
-		c.to_local(Vector3(26.0 * k, 17.0 * k + _rise(k, 2.0, 7.0), -6.5 * k))]
-
-
-static func climbs_tekfur(k: float = 0.5) -> Array:
-	return _climbs(k, 20.0, [
-		[Vector3(23.0, 0, -5.5 + 0.0), Vector3(16.0, 13.0 * k, -5.5), "basamak"],
-		[Vector3(11.75, 13.0 * k, -7.4), Vector3(11.75, 15.0 * k, -3.7), "sandik"],
-		[Vector3(13.2, 15.0 * k, -2.5), Vector3(8.5, 17.0 * k, -2.5), "sandik"]])
+	var n1 := maxi(1, int(ceil(2.0 * k / 0.6)))
+	c.crate_steps(12.5, -5.5, Vector2(0, 1), n1, 2.0 * k / n1, hw)
+	var n2 := maxi(1, int(ceil(2.0 * k / 0.6)))
+	c.crate_steps(10.0, -4.5, Vector2(-1, 0), n2, 2.0 * k / n2, 15.0 * k)
 
 
 # ----------------------------------------------------------------------------------------------------------------
@@ -125,8 +111,10 @@ static func build_anemas(host: Node3D, k: float = 0.5, lod: int = 0) -> void:
 		c.parapet(8.0, -5.5, 15.0, -5.5, sy)
 		c.parapet(15.0, -5.5, 15.0, 1.5, sy)
 		c.parapet(8.0, 1.5, 15.0, 1.5, sy)
-		c.parapet(8.0, -5.5, 8.0, -0.7, sy)
-		c.parapet(-16.5, 5.5, 16.5, 5.5, 5.2 * c.k)
+		c.parapet(8.0, -5.5, 8.0, -4.0, sy)
+		var gh := 1.5 / c.k
+		c.parapet(-16.5, 5.5, 2.25 - gh, 5.5, 5.2 * c.k)
+		c.parapet(2.25 + gh, 5.5, 16.5, 5.5, 5.2 * c.k)
 	if lod == 0:
 		# zindan kemerleri: yedi koyu açıklık + demir parmaklık
 		var offs := [-13.5, -9.0, -4.5, 0.0, 4.5, 9.0, 13.5]
@@ -143,21 +131,9 @@ static func build_anemas(host: Node3D, k: float = 0.5, lod: int = 0) -> void:
 	c.olive(20.0, 8.0, 0.0, 0.9)
 	# tırmanış: batı uçtan taraça üstüne dış merdiven, taraçadan kareli kule tepesine ikinci merdiven (yan boyda)
 	var th := 5.2 * k
-	c.stair(-17.0, 0.0, Vector2(1, 0), th, 1.6, IstKbCtx.STONE_D, 0.5, 0.0)
+	c.stair(2.25, 6.5, Vector2(0, -1), th, 1.6, IstKbCtx.STONE_D, 0.5, 0.0)
 	var kh := (15.0 - 5.2) * k
-	c.stair(8.0, 2.5, Vector2(1, 0), kh, 1.6, IstKbCtx.STONE_D, 0.33, th)
-
-
-static func perches_anemas(k: float = 0.5) -> Array:
-	var c := _nul(k, 20.0)
-	return [c.to_local(Vector3(-12.0 * k, 24.0 * k + 0.05, -3.0 * k)), c.to_local(Vector3(11.5 * k, 15.0 * k + 0.05, -2.0 * k))]
-
-
-static func climbs_anemas(k: float = 0.5) -> Array:
-	var th := 5.2 * k
-	return _climbs(k, 20.0, [
-		[Vector3(-25.0, 0, 0.0), Vector3(-16.0, th, 0.0), "basamak"],
-		[Vector3(0.0, th, 2.5), Vector3(7.0, 15.0 * k, 2.5), "basamak"]])
+	c.stair(8.0, -0.5, Vector2(1, 0), kh, 1.6, IstKbCtx.STONE_D, 0.33, th)
 
 
 # ----------------------------------------------------------------------------------------------------------------
@@ -208,16 +184,6 @@ static func build_kynegion(host: Node3D, k: float = 0.5, lod: int = 0) -> void:
 	# ön sahne: kuzeyden iki basamaklı giriş boşluğu zaten açık (kuzey yarı alçak); oturma kademeleri doğal merdiven
 
 
-static func perches_kynegion(k: float = 0.5) -> Array:
-	var tiers := maxi(2, int(ceil(5.0 * k / 0.4)))
-	return [Vector3(0, 0.4 * tiers + 0.05, 17.0 * k * 0.2 + 13.0 * k * 0.45), Vector3(-14.0 * k * 0.6, 3.0, -9.0 * k)]
-
-
-static func climbs_kynegion(k: float = 0.5) -> Array:
-	var tiers := maxi(2, int(ceil(5.0 * k / 0.4)))
-	return [[Vector3(0, 0.1, 1.0), Vector3(0, 0.4 * tiers, 13.0 * k * (1.0 + (tiers - 0.5) * 0.16) * 0.5), "basamak"]]
-
-
 # ----------------------------------------------------------------------------------------------------------------
 static func _rise(k: float, rise: float, half_w: float) -> float:
 	return minf(rise * k, (half_w * 0.5 * k + 0.35) * 0.5)
@@ -238,3 +204,29 @@ static func _climbs(k: float, yon: float, steps: Array) -> Array:
 		var b: Vector3 = e[1]
 		out.append([c.to_local(Vector3(a.x * k, a.y, a.z * k)), c.to_local(Vector3(b.x * k, b.y, b.z * k)), e[2]])
 	return out
+
+# Tırmanış ve konma noktaları kurucudan toplanır (IstKbCtx.harvest): kurulumla birebir tutarlı.
+static func perches_tekfur(k: float = 0.5) -> Array:
+	return IstKbCtx.harvest("tekfur", build_tekfur, k)[1]
+
+
+static func climbs_tekfur(k: float = 0.5) -> Array:
+	return IstKbCtx.harvest("tekfur", build_tekfur, k)[0]
+
+
+static func perches_anemas(k: float = 0.5) -> Array:
+	return IstKbCtx.harvest("anemas", build_anemas, k)[1]
+
+
+static func climbs_anemas(k: float = 0.5) -> Array:
+	return IstKbCtx.harvest("anemas", build_anemas, k)[0]
+
+
+static func perches_kynegion(k: float = 0.5) -> Array:
+	return IstKbCtx.harvest("kynegion", build_kynegion, k)[1]
+
+
+static func climbs_kynegion(k: float = 0.5) -> Array:
+	return IstKbCtx.harvest("kynegion", build_kynegion, k)[0]
+
+
