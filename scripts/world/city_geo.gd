@@ -27,31 +27,32 @@ const T := Vector2(-445.5678, -1553.3154)
 ## İnce levha eğrisi (thin plate spline, km cinsinden): dünya = TPS_A0 + TPS_AE · e + TPS_AN · n + Σ wᵢ · U(|r − rᵢ|),
 ## U(d) = d² ln d. Dayanaklar TAM yerine düşer; 100 m'lik ızgarada (5676 nokta) katlanma yok (Jacobian işareti hep
 ## aynı). Katsayılar dayanaklardan hesaplandı (docs/_kanit_istanbul/arac/geo_tps.py); dayanak değişirse yeniden üretilir.
-const TPS_A0 := Vector2(-1008.0482795, -1490.6414513)
-const TPS_AE := Vector2(-38.7639933, -329.1139373)
-const TPS_AN := Vector2(-150.2894599, 59.9582432)
-## Dayanaklar: [ad, gerçek (e, n) m, dünya (x, z), TPS ağırlığı]. Gerçek konumlar enlem/boylamdan (±50 m; araştırma
-## dizini gelince güncellenir), dünya konumları World1453.LANDMARKS ve bölge kayıtlarından.
+const TPS_A0 := Vector2(-664.6437987, -1682.7540127)
+const TPS_AE := Vector2(-4.3740836, -310.4996522)
+const TPS_AN := Vector2(-146.3458367, 81.6633108)
+## Dayanaklar: [ad, gerçek (e, n) m, dünya (x, z), TPS ağırlığı]. Gerçek konumlar araştırma dizininden
+## (docs/ISTANBUL_YERLER.csv; damalis ve eyup dizinde yok: eski kestirim), dünya konumları World1453.LANDMARKS ve bölge
+## kayıtlarından. Katsayılar: docs/_kanit_istanbul/arac/geo_tps2.py (tek katlanma noktası şehir dışında, Altınkapı'nın güneyi).
 const ANCHORS := [
-	["ayasofya", Vector2(0.00, 0.00), Vector2(-560.0, -1480.0), Vector2(0.6355646, 21.3682274)],
-	["hippodrome", Vector2(-420.01, -289.43), Vector2(-470.0, -1440.0), Vector2(-62.8653099, -93.1659592)],
-	["column", Vector2(-756.01, 0.00), Vector2(-470.0, -1300.0), Vector2(35.2491574, 56.7461793)],
-	["forum_tauri", Vector2(-1360.82, 211.51), Vector2(-390.0, -1130.0), Vector2(9.4141317, -10.5104160)],
-	["apostles", Vector2(-2562.05, 1191.12), Vector2(-330.0, -760.0), Vector2(32.9450650, -48.9518350)],
-	["pantokrator", Vector2(-1974.04, 1246.78), Vector2(-540.0, -930.0), Vector2(-34.2931493, 44.8672912)],
-	["pammakaristos", Vector2(-2830.85, 2337.72), Vector2(-575.0, -470.0), Vector2(109.1956865, 89.8375277)],
-	["petrion_gate", Vector2(-2536.85, 2404.51), Vector2(-700.0, -650.0), Vector2(-86.8764917, -168.4347758)],
-	["khora", Vector2(-3444.06, 2515.83), Vector2(-500.0, -85.0), Vector2(369.0835366, -8.4303823)],
-	["blachernae_palace", Vector2(-3326.46, 2816.40), Vector2(-668.0, -72.0), Vector2(-258.7358929, 92.5080938)],
-	["harisios", Vector2(-3771.67, 2337.72), Vector2(-460.0, 0.0), Vector2(-179.9154239, 24.1647287)],
-	["romanos", Vector2(-4939.29, 1113.20), Vector2(0.0, 0.0), Vector2(16.9971077, -33.6052621)],
-	["pege", Vector2(-5241.70, -434.15), Vector2(340.0, 0.0), Vector2(-50.4911884, -35.2225069)],
-	["golden_gate", Vector2(-4838.49, -1636.40), Vector2(650.0, -10.0), Vector2(-9.5129397, 10.4827934)],
-	["studios", Vector2(-4309.28, -923.96), Vector2(540.0, -158.0), Vector2(67.7573089, 42.7955467)],
-	["eugenius", Vector2(630.01, 857.16), Vector2(-690.0, -1525.0), Vector2(2.3424608, 67.8569296)],
-	["galata_tower", Vector2(-504.01, 1892.44), Vector2(-971.0, -1330.0), Vector2(-32.0765589, -24.5368960)],
-	["damalis", Vector2(2007.64, 1391.50), Vector2(-560.0, -2072.0), Vector2(29.5664904, -21.8874412)],
-	["eyup", Vector2(-3880.87, 4363.74), Vector2(-690.0, 250.0), Vector2(41.5804452, -5.8818433)],
+	["ayasofya", Vector2(0.00, 0.00), Vector2(-560.0, -1480.0), Vector2(-46.6760709, 160.8775387)],
+	["hippodrome", Vector2(-378.00, -289.00), Vector2(-470.0, -1440.0), Vector2(-14.5435673, -182.0617869)],
+	["column", Vector2(-756.00, -11.00), Vector2(-470.0, -1300.0), Vector2(35.8356052, 164.0138865)],
+	["forum_tauri", Vector2(-1554.00, 211.00), Vector2(-390.0, -1130.0), Vector2(-36.6592631, -46.7070975)],
+	["apostles", Vector2(-2394.00, 1156.00), Vector2(-330.0, -760.0), Vector2(249.2203381, 44.0060980)],
+	["pantokrator", Vector2(-2016.00, 1212.00), Vector2(-540.0, -930.0), Vector2(-115.1181057, -8.4766064)],
+	["pammakaristos", Vector2(-2730.00, 2213.00), Vector2(-575.0, -470.0), Vector2(476.9372130, 269.6746247)],
+	["petrion_gate", Vector2(-2520.00, 2046.00), Vector2(-700.0, -650.0), Vector2(-517.5230729, -277.8780471)],
+	["khora", Vector2(-3444.00, 2491.00), Vector2(-500.0, -85.0), Vector2(-154.3583570, -587.3637502)],
+	["blachernae_palace", Vector2(-3402.00, 3436.00), Vector2(-668.0, -72.0), Vector2(-1.5974567, -23.2446851)],
+	["harisios", Vector2(-3545.00, 2413.00), Vector2(-460.0, 0.0), Vector2(70.0387913, 602.5340632)],
+	["romanos", Vector2(-4621.00, 823.00), Vector2(0.0, 0.0), Vector2(11.7856053, -36.9569860)],
+	["pege", Vector2(-5251.00, -1401.00), Vector2(340.0, 0.0), Vector2(-353.3257604, -169.6704596)],
+	["golden_gate", Vector2(-4797.00, -1679.00), Vector2(650.0, -10.0), Vector2(776.1452864, 370.1894701)],
+	["studios", Vector2(-4495.00, -1790.00), Vector2(540.0, -158.0), Vector2(-439.6328773, -199.5085090)],
+	["eugenius", Vector2(-336.00, 878.00), Vector2(-690.0, -1525.0), Vector2(50.9165380, -150.9391017)],
+	["galata_tower", Vector2(-487.00, 1890.00), Vector2(-971.0, -1330.0), Vector2(-35.1625376, 65.4384211)],
+	["damalis", Vector2(2007.64, 1391.50), Vector2(-560.0, -2072.0), Vector2(26.1726183, -6.3091107)],
+	["eyup", Vector2(-3880.87, 4363.74), Vector2(-690.0, 250.0), Vector2(17.5450732, 12.3820380)],
 ]
 
 
