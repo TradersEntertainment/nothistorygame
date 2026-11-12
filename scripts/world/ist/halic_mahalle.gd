@@ -78,7 +78,7 @@ static func house(p: Node3D, cx: float, cz: float, w: float, d: float, h: float,
 	Props.box(p, Vector3(0.6, 1.4, 0.6), Vector3(cx + w * 0.3, h + rise + 0.2, uz), Color("8a5a40"))
 	Props.box(p, Vector3(0.75, 0.12, 0.75), Vector3(cx + w * 0.3, h + rise + 0.95, uz), Color("a98a70"))
 	# Çatı merdiveni: sokak tarafında (cephenin çevresinde) cumbaya kadar çıkan dış merdiven yan duvardan yapılır
-	return {"roof_y": h, "x": cx, "z_edge": uz + face * (ud * 0.5 + 0.4), "face": face, "w": w, "z": cz}
+	return {"roof_y": h, "x": cx, "z_edge": uz + face * (ud * 0.5 + 0.4), "face": face, "w": w, "z": cz, "z_wall": cz + face * d * 0.5}
 
 
 ## Çatıya dış merdiven: cephenin önünden başlayıp çatı saçağına biter. Döner: climbs girdisi.
@@ -91,6 +91,11 @@ static func roof_stair(p: Node3D, info: Dictionary, xoff: float) -> Array:
 	var dir := Vector3(0, 0, -face)
 	var base := Vector3(x, 0, ze + face * 0.34 * n)
 	K.stair(p, base, dir, h, 1.8, Color("b8a688"))
+	# Merdiven başı ile alt cephe arasında kalan dar yarık: çatı seviyesinde dolu sahanlık
+	var zw: float = info["z_wall"]
+	var gap := absf(ze - zw)
+	if gap > 0.05:
+		K.blk(p, Vector3(1.8, h, gap), Vector3(x, h * 0.5, (ze + zw) * 0.5), Color("b8a688"), "ashlar")
 	# merdiven yanı korkuluğu yok; tepe basamağı saçak köşesinde
 	return [base + Vector3(0, 0, face * 0.4), Vector3(x, h, ze - face * 0.3), "merdiven"]
 
@@ -253,7 +258,7 @@ static func _san_marco(root: Node3D, cx: float, cz: float) -> void:
 	Props.ball(root, 0.45, Vector3(cx + 6.5, 6.5, cz - D * 0.5 - 4.2), Color("b8932f"), Vector3(1, 1, 1.4), 8)
 	# Kilise çatısına: dış merdiven (cephe önünden, yan duvar)
 	var n := int(ceil(H / K.STEP_RISE))
-	K.stair(root, Vector3(cx + W * 0.5 + 0.34 * n, 0, cz + D * 0.25), Vector3(-1, 0, 0), H, 1.8, Color("b8a688"))
+	K.stair(root, Vector3(cx + W * 0.5 + 0.34 * n, 0, cz + D * 0.5 - 1.2), Vector3(-1, 0, 0), H, 1.8, Color("b8a688"))
 
 
 static func _loca(root: Node3D, cx: float, cz: float) -> Dictionary:
@@ -290,7 +295,7 @@ static func climbs_venedik(k: float) -> Array:
 	var cx := span * 0.5
 	var n := int(ceil(9.0 / K.STEP_RISE))
 	var out: Array = []
-	out.append([Vector3(cx + 5.5 + 0.34 * n + 0.4, 0, 30.0 - 3.0 + 20.0 * 0.25), Vector3(cx + 5.5, 9.0, 27.0 + 5.0 - 0.5), "merdiven"])
+	out.append([Vector3(cx + 5.5 + 0.34 * n + 0.4, 0, 27.0 + 10.0 - 1.2), Vector3(cx + 5.5, 9.0, 27.0 + 10.0 - 1.2), "merdiven"])
 	var n2 := int(ceil(4.8 / K.STEP_RISE))
 	out.append([Vector3(-span * 0.2 + 9.0 + 0.34 * n2 + 0.4, 0, 11.0), Vector3(-span * 0.2 + 9.0, 4.8, 11.0), "merdiven"])
 	return out
@@ -376,9 +381,13 @@ static func _amalfi_chapel(root: Node3D, cx: float, cz: float) -> void:
 	# Teras parapeti (1,05) ve dış merdiven
 	for s in [-1.0, 1.0]:
 		K.blk(root, Vector3(W + 0.4, 1.05, 0.3), Vector3(cx, H + 0.4 + 0.52, cz + s * (D * 0.5 + 0.05)), Color("e0d8c8"), "ashlar")
-		K.blk(root, Vector3(0.3, 1.05, D - 0.4), Vector3(cx + s * (W * 0.5 + 0.05), H + 0.4 + 0.52, cz), Color("e0d8c8"), "ashlar")
+		if s > 0.0:
+			K.blk(root, Vector3(0.3, 1.05, D - 0.4), Vector3(cx + W * 0.5 + 0.05, H + 0.4 + 0.52, cz), Color("e0d8c8"), "ashlar")
+	# batı parapeti: merdiven başında 2 m boşluk (z = cz+2)
+	K.blk(root, Vector3(0.3, 1.05, (D - 0.4) * 0.5 - 1.0 + 0.0), Vector3(cx - W * 0.5 - 0.05, H + 0.4 + 0.52, cz - (D - 0.4) * 0.25 - 0.2), Color("e0d8c8"), "ashlar")
+	K.blk(root, Vector3(0.3, 1.05, (D - 0.4) * 0.5 - 3.0), Vector3(cx - W * 0.5 - 0.05, H + 0.4 + 0.52, cz + 3.0 + ((D - 0.4) * 0.5 - 3.0) * 0.5), Color("e0d8c8"), "ashlar")
 	var n := int(ceil((H + 0.4) / K.STEP_RISE))
-	K.stair(root, Vector3(cx - W * 0.5 - 1.0 - 0.34 * n, 0, cz + 2.0), Vector3(1, 0, 0), H + 0.4, 1.8, Color("b8a688"))
+	K.stair(root, Vector3(cx - W * 0.5 - 0.2 - 0.34 * n, 0, cz + 2.0), Vector3(1, 0, 0), H + 0.4, 1.8, Color("b8a688"))
 
 
 static func perches_pisa_amalfi(k: float) -> Array:
@@ -389,7 +398,9 @@ static func perches_pisa_amalfi(k: float) -> Array:
 static func climbs_pisa_amalfi(k: float) -> Array:
 	var span := 38.0 + 30.0 * clampf(k, 0.3, 1.0)
 	var n := int(ceil(7.0 / K.STEP_RISE))
-	return [[Vector3(-span * 0.5 - 4.0 - 0.34 * n - 0.4, 0, 22.0), Vector3(-span * 0.5 - 4.0, 7.0, 22.0), "merdiven"]]
+	var n2 := int(ceil(6.4 / K.STEP_RISE))
+	return [[Vector3(-span * 0.5 - 4.0 - 0.34 * n - 0.4, 0, 22.0), Vector3(-span * 0.5 - 4.0, 7.0, 22.0), "merdiven"],
+		[Vector3(span * 0.5 - 4.2 - 0.34 * n2 - 0.4, 0, 22.0), Vector3(span * 0.5 - 4.2, 6.4, 22.0), "merdiven"]]
 
 
 # =========================== CENEVİZ (HARAP) ===========================

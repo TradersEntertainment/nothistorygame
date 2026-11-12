@@ -279,7 +279,7 @@ func _audit(id: String, node: Node3D) -> void:
 	dar = seen.size()
 	var shown := 0
 	for key in seen.keys():
-		if shown < 6:
+		if shown < 40:
 			print("DAR ", id, " x=", key.x * 0.5, " z=", key.y * 0.5)
 		shown += 1
 	# Havada: tabanı >5cm yukarıda ve altında 30 cm içinde destek yok

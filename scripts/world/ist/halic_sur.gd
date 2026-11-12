@@ -69,7 +69,7 @@ static func build(host: Node3D, k: float, lod: int) -> void:
 	for tx: float in tower_xs(L):
 		_tower(root, tx, d, col, tx > 0.0)
 	# Yürüme yolu merdiveni (şehir yüzü) ve rıhtım
-	var sx := -L * 0.29 - 8.0
+	var sx := L * 0.29
 	K.stair(root, Vector3(sx, 0, T * 0.5 + 0.34 * ceil(H / K.STEP_RISE)), Vector3(0, 0, -1), H, 1.8, Color("b4a384"))
 	_quay(root, L, T, lod)
 	# Fenerler ana kapının iki yanında
@@ -122,7 +122,7 @@ static func _parapets(root: Node3D, d: Dictionary, gates: Array, gw: Array) -> v
 		segs.append(Vector2(edges[i], edges[i + 1]))
 	var zs: float = -T * 0.5 + 0.25
 	var zl: float = T * 0.5 - 0.25
-	var stair_x: float = -L * 0.29 - 8.0
+	var stair_x: float = L * 0.29
 	for sg: Vector2 in segs:
 		if sg.y - sg.x < 0.3:
 			continue
@@ -233,7 +233,7 @@ static func climbs(k: float) -> Array:
 	var T: float = d["T"]
 	var out: Array = []
 	var L: float = d["L"]
-	var sx: float = -L * 0.29 - 8.0
+	var sx: float = L * 0.29
 	out.append([Vector3(sx, 0, T * 0.5 + 0.34 * ceil(H / K.STEP_RISE) + 0.4), Vector3(sx, H, T * 0.5 - 0.3), "basamak"])
 	var tw: Array = tower_xs(L)
 	var top: float = H + d["TH"]
