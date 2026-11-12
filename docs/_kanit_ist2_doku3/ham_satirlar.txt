@@ -1,0 +1,171 @@
+# ÖNCE gündüz (wip/ist2-taban3)
+DOKU2 sayim ev=9595 sira=3851 tip={ "demirci": 183, "sira": 3570, "kule": 67, "kulube": 1698, "teras": 1446, "dukkan": 2158, "latin": 50, "harap": 198, "ambar": 11, "firin": 176, "konak": 36, "han": 2 } kat={ "1": 6895, "2": 2567, "3+": 133 } sokak={ "mese": 3, "yol": 35, "savunma": 51, "sokak": 942, "basamak": 65 } doku=115 meydan=40 stats={ "taban": 94, "izgara_ms": 415, "dolgu_0": 521, "dolgu_1
+ISTBOS sehir_ici kare=909 bos=0 oran=0.0% ornek=[]
+RINFO doku2 y_carsi cizim=1347 ucgen=3066202 konum=(-385.4355, 16.67308, -31.61606)
+RINFO doku2 y_sik cizim=633 ucgen=1482440 konum=(-509.3558, 22.81869, -179.1131)
+RINFO doku2 y_sur_dibi cizim=1003 ucgen=1980725 konum=(-1697.641, 19.59695, -126.4907)
+RINFO doku2 y_iskele cizim=1003 ucgen=2107063 konum=(-245.0, 1.7, -376.25)
+RINFO doku2 y_galata cizim=564 ucgen=953442 konum=(-200.7504, 15.24436, -625.3266)
+RINFO doku2 y_bostan cizim=376 ucgen=482061 konum=(-794.2205, 2.771483, 199.8116)
+RINFO doku2 y_ayasofya cizim=728 ucgen=1365053 konum=(-164.5, 14.90292, 7.0)
+RINFO doku2 h30_carsi cizim=715 ucgen=1578276 konum=(-402.5, 43.92156, -21.0)
+RINFO doku2 h70_mahalle cizim=506 ucgen=1136232 konum=(-525.0, 86.88777, -87.5)
+RINFO doku2 h70_ayasofya cizim=796 ucgen=1284577 konum=(-245.0, 85.47545, 52.5)
+# ÖNCE gece
+RINFO doku2 y_carsi cizim=2067 ucgen=3023479 konum=(-385.4355, 16.67308, -31.61606)
+RINFO doku2 y_sik cizim=653 ucgen=1538018 konum=(-507.2134, 22.85817, -177.7877)
+RINFO doku2 y_iskele cizim=656 ucgen=1320702 konum=(-269.4387, 12.91039, -215.3549)
+RINFO doku2 y_galata cizim=703 ucgen=1254868 konum=(-227.6909, 12.16592, -585.79)
+RINFO doku2 y_ayasofya cizim=735 ucgen=1370895 konum=(-164.5, 14.90292, 7.0)
+RINFO doku2 h30_carsi cizim=854 ucgen=1619925 konum=(-402.5, 43.92156, -21.0)
+# SONRA gündüz (s4)
+ISTDOKU2 { "zemin_kare": 310535, "zemin_hucre": 22, "bahce_agac": 1911, "avlu": 1077, "duvar_hucre": 64, "oge": 328, "oge_hucre": 360, "zemin_ms": 3245, "avlu_ms": 875, "oge_ms": 799 }
+ISTDOKU3 sokak_esyasi { "meydan_oge": 361, "oge": 7216, "hucre": 758, "tur": 0, "kur_ms": 610 } { "harc_teknesi": 17, "tugla_yigini": 48, "balik_kasasi": 43, "balik_agi": 16, "halat_rulo": 52, "fici": 569, "yelken_bezi": 23, "sepet": 849, "kurek": 13, "cuval": 110, "kedi": 491, "gulle_yigini": 38, "testi": 773, "kutuk": 216, "odun_yigini": 556, "tavuk": 409, "amfora": 323, "gabyon": 29, "saksi": 924, "tas_yigini": 59, "kazma_kurek": 18, "ari_kovani": 15, "kutuk_kutugu": 220, "ok_sandigi": 31, "yun_balyasi": 16, "sandik": 290, "kase_tezgahi": 36, "kumas_topu": 40, "tabure": 718, "mum_sehpasi": 
+ISTSOKAK { "taban": 94, "izgara_ms": 353, "dolgu_0": 511, "dolgu_1": 28, "dolgu_2": 12, "sokak": 1071, "sokak_ms": 1890, "kilise_yeri": 34, "eser_meydan": 36, "red_ortusme_ayni_sokak": 756, "avlu_red_hucre": 724, "avlu_red_aralik": 2356, "red_dar_0": 71, "avlu_red_egim": 133, "red_dar_13": 162, "red_dar_12": 164, "red_dar_11": 121, "red_dar_9": 140, "red_dar_10": 175, "red_dar_4": 80, "red_dar_8": 117, "red_dar_3": 73, "red_dar_7": 121, "red_dar_6": 98, "red_dar_1": 107, "red_dar_2": 82, "red_dar_5": 89, "ev": 9232, "sira": 3637, "avlu": 1077, "patrikhane": 1, "eser_oge": 102, "kilise": 0, "me
+ISTHAYAT kur_ms=249 { "aday": 925, "ret_hucre": 33, "yuruyen": 939, "baca": 2128, "duman_sutun": 2128, "camasir": 100, "doku_isi": 61, "alay": 16, "nobetci": 69, "isci": 109, "cadir": 201, "ordu_ates": 66, "ordu_asker": 258, "siginmaci_kamp": 2, "kesis": 19, "liman_isi": 26, "kus_suru": 37, "insan": 3207, "hayvan": 55, "yuklu": 99, "tavuk": 270, "marti": 174, "guvercin": 533, "duman": 8692, "bez": 314, "kutu": 2364, "pencere": 0, "alev": 113, "parilti": 113, "ms": 237 }
+ISTKISI kur noktalar=19750 sokak=1071 meydan=84 kiyi=14 havuz=49 hayvan=10 kur_ms=1087
+ISTHAYAT yakin_kur_ms=1087
+DOKU2 sayim ev=9233 sira=3638 tip={ "teras": 1391, "sira": 3368, "demirci": 168, "kule": 54, "harap": 215, "dukkan": 2033, "kulube": 1712, "latin": 71, "firin": 165, "konak": 50, "ambar": 6 } kat={ "1": 6585, "2": 2500, "3+": 148 } sokak={ "mese": 3, "yol": 35, "savunma": 50, "sokak": 906, "basamak": 77 } doku=103 meydan=84 stats={ "taban": 94, "izgara_ms": 353, "dolgu_0": 511, "dolgu_1": 28, "dolgu_2": 12, "sokak": 1071, "sokak_ms": 1890, "kilise_yeri": 34, "eser_meydan": 36, "red_ortusme_ayni_sokak": 756, "avlu_red_hucre": 724, "avlu_red_aralik": 2356, "red_dar_0": 71, "avlu_red_egim": 133, 
+DOKU2 aralik bitisik=5812 dar=0 ornek=[]
+ISTBOS sehir_ici kare=906 bos=0 oran=0.0% ornek=[]
+ISTBOS galata kare=10 bos=0 oran=0.0% ornek=[]
+ISTKISI y_carsi y30=15 y60=28 gorunen=15 hayvan=6 etkin=34 yuruyen=23 duran=11 evde=0 havada=0 suda=0 ms=2.04 ms_ort=2.21 ms_max=5.54 hedef=34 esyada=0
+RINFO doku2 y_carsi cizim=1148 ucgen=3452340 konum=(-385.4355, 16.67308, -31.61606)
+RINFO katman y_carsi kisi cizim=279 ucgen=346608
+RINFO katman y_carsi esya cizim=7 ucgen=1434
+ISTKISI y_sik y30=4 y60=13 gorunen=6 hayvan=4 etkin=22 yuruyen=10 duran=12 evde=0 havada=0 suda=0 ms=1.04 ms_ort=1.72 ms_max=5.54 hedef=22 esyada=1
+RINFO doku2 y_sik cizim=571 ucgen=1347823 konum=(-518.8539, 22.59329, -172.6155)
+RINFO katman y_sik kisi cizim=8 ucgen=12400
+RINFO katman y_sik esya cizim=-44 ucgen=-38318
+ISTKISI y_sur_dibi y30=4 y60=10 gorunen=12 hayvan=2 etkin=14 yuruyen=11 duran=3 evde=0 havada=0 suda=0 ms=1.14 ms_ort=1.53 ms_max=5.54 hedef=13 esyada=0
+RINFO doku2 y_sur_dibi cizim=1248 ucgen=2897472 konum=(-1697.641, 19.59695, -126.4907)
+RINFO katman y_sur_dibi kisi cizim=94 ucgen=87240
+RINFO katman y_sur_dibi esya cizim=-31 ucgen=-65446
+ISTKISI y_iskele y30=4 y60=20 gorunen=9 hayvan=4 etkin=23 yuruyen=11 duran=12 evde=0 havada=0 suda=0 ms=1.09 ms_ort=1.43 ms_max=5.54 hedef=22 esyada=0
+RINFO doku2 y_iskele cizim=803 ucgen=1669422 konum=(-269.4387, 12.91039, -215.3549)
+RINFO katman y_iskele kisi cizim=15 ucgen=24960
+RINFO katman y_iskele esya cizim=-42 ucgen=-36782
+ISTKISI y_galata y30=18 y60=29 gorunen=11 hayvan=6 etkin=38 yuruyen=16 duran=22 evde=0 havada=0 suda=0 ms=1.92 ms_ort=1.53 ms_max=5.54 hedef=38 esyada=0
+RINFO doku2 y_galata cizim=919 ucgen=1287117 konum=(-227.6909, 12.16592, -585.79)
+RINFO katman y_galata kisi cizim=216 ucgen=209576
+RINFO katman y_galata esya cizim=-2 ucgen=-800
+ISTKISI y_bostan y30=0 y60=3 gorunen=0 hayvan=1 etkin=5 yuruyen=3 duran=2 evde=0 havada=0 suda=0 ms=0.69 ms_ort=1.42 ms_max=5.54 hedef=5 esyada=0
+RINFO doku2 y_bostan cizim=625 ucgen=2178848 konum=(-783.8097, 2.884471, 189.0339)
+RINFO katman y_bostan kisi cizim=0 ucgen=0
+RINFO katman y_bostan esya cizim=3 ucgen=190
+ISTKISI y_ayasofya y30=9 y60=28 gorunen=18 hayvan=6 etkin=34 yuruyen=23 duran=11 evde=0 havada=0 suda=0 ms=1.32 ms_ort=1.41 ms_max=5.54 hedef=34 esyada=0
+RINFO doku2 y_ayasofya cizim=810 ucgen=1422323 konum=(-164.5, 14.90292, 7.0)
+RINFO katman y_ayasofya kisi cizim=39 ucgen=53464
+RINFO katman y_ayasofya esya cizim=4 ucgen=1192
+ISTKISI h30_carsi y30=12 y60=25 gorunen=22 hayvan=6 etkin=34 yuruyen=23 duran=11 evde=0 havada=0 suda=0 ms=1.87 ms_ort=1.47 ms_max=5.54 hedef=34 esyada=0
+RINFO doku2 h30_carsi cizim=776 ucgen=1704791 konum=(-402.5, 43.92156, -21.0)
+RINFO katman h30_carsi kisi cizim=99 ucgen=98472
+RINFO katman h30_carsi esya cizim=9 ucgen=10984
+ISTKISI h70_mahalle y30=12 y60=20 gorunen=19 hayvan=6 etkin=34 yuruyen=20 duran=14 evde=0 havada=0 suda=0 ms=1.60 ms_ort=1.49 ms_max=5.54 hedef=34 esyada=0
+RINFO doku2 h70_mahalle cizim=466 ucgen=1081375 konum=(-525.0, 86.88777, -87.5)
+RINFO katman h70_mahalle kisi cizim=38 ucgen=17760
+RINFO katman h70_mahalle esya cizim=5 ucgen=380
+ISTKISI h70_ayasofya y30=1 y60=16 gorunen=20 hayvan=5 etkin=25 yuruyen=14 duran=11 evde=0 havada=0 suda=0 ms=1.26 ms_ort=1.48 ms_max=5.54 hedef=25 esyada=0
+RINFO doku2 h70_ayasofya cizim=734 ucgen=1317333 konum=(-245.0, 85.47545, 52.5)
+RINFO katman h70_ayasofya kisi cizim=21 ucgen=9448
+RINFO katman h70_ayasofya esya cizim=2 ucgen=80
+# SONRA gece (s3_n, kandil artışından önce)
+ISTKISI y_carsi y30=7 y60=15 gorunen=14 hayvan=3 etkin=19 yuruyen=14 duran=5 evde=0 havada=0 suda=0 ms=1.24 ms_ort=1.23 ms_max=3.54 hedef=19 esyada=0
+RINFO doku2 y_carsi cizim=1518 ucgen=3198920 konum=(-385.4355, 16.67308, -31.61606)
+RINFO katman y_carsi kisi cizim=105 ucgen=115786
+RINFO katman y_carsi esya cizim=7 ucgen=3270
+ISTKISI y_sik y30=2 y60=11 gorunen=4 hayvan=2 etkin=12 yuruyen=11 duran=1 evde=0 havada=0 suda=0 ms=0.95 ms_ort=1.14 ms_max=8.82 hedef=12 esyada=0
+RINFO doku2 y_sik cizim=612 ucgen=1481489 konum=(-518.8539, 22.59329, -172.6155)
+RINFO katman y_sik kisi cizim=10 ucgen=9080
+RINFO katman y_sik esya cizim=4 ucgen=3450
+ISTKISI y_sur_dibi y30=1 y60=6 gorunen=3 hayvan=1 etkin=8 yuruyen=6 duran=2 evde=0 havada=0 suda=0 ms=0.70 ms_ort=1.01 ms_max=8.82 hedef=7 esyada=0
+RINFO doku2 y_sur_dibi cizim=8744 ucgen=2873854 konum=(-1697.641, 19.59695, -126.4907)
+RINFO katman y_sur_dibi kisi cizim=27 ucgen=-344
+RINFO katman y_sur_dibi esya cizim=-511 ucgen=-43286
+ISTKISI y_iskele y30=7 y60=11 gorunen=0 hayvan=2 etkin=13 yuruyen=4 duran=9 evde=0 havada=0 suda=0 ms=0.74 ms_ort=0.95 ms_max=8.82 hedef=12 esyada=1
+RINFO doku2 y_iskele cizim=2827 ucgen=1630377 konum=(-269.4387, 12.91039, -215.3549)
+RINFO katman y_iskele kisi cizim=2 ucgen=288
+RINFO katman y_iskele esya cizim=4 ucgen=2900
+ISTKISI y_galata y30=4 y60=12 gorunen=6 hayvan=4 etkin=21 yuruyen=10 duran=11 evde=0 havada=0 suda=0 ms=1.04 ms_ort=0.99 ms_max=8.82 hedef=21 esyada=0
+RINFO doku2 y_galata cizim=763 ucgen=1158618 konum=(-227.6909, 12.16592, -585.79)
+RINFO katman y_galata kisi cizim=4 ucgen=4368
+RINFO katman y_galata esya cizim=3 ucgen=4152
+ISTKISI y_bostan y30=0 y60=1 gorunen=0 hayvan=1 etkin=3 yuruyen=3 duran=0 evde=0 havada=0 suda=0 ms=0.57 ms_ort=0.92 ms_max=8.82 hedef=3 esyada=0
+RINFO doku2 y_bostan cizim=918 ucgen=2178814 konum=(-783.8097, 2.884471, 189.0339)
+RINFO katman y_bostan kisi cizim=2 ucgen=288
+RINFO katman y_bostan esya cizim=3 ucgen=190
+ISTKISI y_ayasofya y30=5 y60=18 gorunen=6 hayvan=3 etkin=19 yuruyen=6 duran=13 evde=0 havada=0 suda=0 ms=0.69 ms_ort=0.89 ms_max=8.82 hedef=19 esyada=0
+RINFO doku2 y_ayasofya cizim=769 ucgen=1369378 konum=(-164.5, 14.90292, 7.0)
+RINFO katman y_ayasofya kisi cizim=14 ucgen=14224
+RINFO katman y_ayasofya esya cizim=4 ucgen=1152
+RINFO doku2 h30_carsi cizim=771 ucgen=1713718 konum=(-402.5, 43.92156, -21.0)
+RINFO katman h30_carsi kisi cizim=77 ucgen=85852
+RINFO katman h30_carsi esya cizim=7 ucgen=6888
+RINFO doku2 h70_mahalle cizim=459 ucgen=1117432 konum=(-525.0, 86.88777, -87.5)
+RINFO katman h70_mahalle kisi cizim=16 ucgen=5632
+RINFO katman h70_mahalle esya cizim=3 ucgen=-900
+RINFO doku2 h70_ayasofya cizim=1124 ucgen=1299257 konum=(-245.0, 85.47545, 52.5)
+RINFO katman h70_ayasofya kisi cizim=10 ucgen=4464
+RINFO katman h70_ayasofya esya cizim=4 ucgen=1104
+# sahip (gezi bos=1)
+/root/is/k/sahip.log:RINFO gezi sahip_01_tam_tepe cizim=779 ucgen=1999218 kare_ms=1489.4 dunya_tris=70014 dunya_draws=37 lod=[0, 0, 7, 23] kare_us=108
+/root/is/k/sahip.log:RINFO gezi sahip_02_galata_yarimada cizim=623 ucgen=1866149 kare_ms=1710.5 dunya_tris=164280 dunya_draws=37 lod=[2, 5, 20, 3] kare_us=104
+/root/is/k/sahip.log:RINFO gezi sahip_03_sur_disi_30m cizim=1115 ucgen=3109937 kare_ms=2190.0 dunya_tris=141326 dunya_draws=37 lod=[1, 5, 12, 12] kare_us=141
+/root/is/k/sahip.log:RINFO gezi sahip_04_sur_disi_70m cizim=1035 ucgen=2885283 kare_ms=2203.0 dunya_tris=141326 dunya_draws=37 lod=[1, 5, 12, 12] kare_us=117
+/root/is/k/sahip.log:RINFO gezi sahip_05_romanos_ic_ayasofya cizim=976 ucgen=3148481 kare_ms=2501.3 dunya_tris=166414 dunya_draws=37 lod=[2, 4, 12, 12] kare_us=120
+/root/is/k/sahip.log:RINFO gezi sahip_06_mese_yuruyus cizim=818 ucgen=1817557 kare_ms=1424.4 dunya_tris=133920 dunya_draws=37 lod=[2, 4, 19, 5] kare_us=121
+/root/is/k/sahip.log:RINFO gezi sahip_07_ayasofya_meydani cizim=575 ucgen=1236517 kare_ms=1261.9 dunya_tris=138398 dunya_draws=37 lod=[2, 4, 22, 2] kare_us=179
+/root/is/k/sahip.log:RINFO gezi sahip_08_hipodrom cizim=455 ucgen=775908 kare_ms=1047.7 dunya_tris=143030 dunya_draws=37 lod=[4, 2, 22, 2] kare_us=114
+/root/is/k/sahip.log:RINFO gezi sahip_09_halic_iskelesi cizim=790 ucgen=1916666 kare_ms=1359.5 dunya_tris=145746 dunya_draws=37 lod=[1, 8, 19, 2] kare_us=153
+/root/is/k/sahip.log:RINFO gezi sahip_10_sur_dibi_mahallesi cizim=531 ucgen=2401102 kare_ms=1765.3 dunya_tris=170754 dunya_draws=37 lod=[2, 5, 12, 11] kare_us=126
+/root/is/k/sahip.log:RINFO gezi sahip_11_bostan_adasi cizim=510 ucgen=1610094 kare_ms=2046.7 dunya_tris=123756 dunya_draws=37 lod=[2, 4, 18, 6] kare_us=146
+/root/is/k/sahip.log:RINFO gezi sahip_12_marmaradan cizim=1038 ucgen=4329991 kare_ms=2437.5 dunya_tris=106268 dunya_draws=37 lod=[1, 7, 12, 10] kare_us=124
+/root/is/k/sahip.log:RINFO gezi sahip_13_sarayburnu_acigi cizim=465 ucgen=1918869 kare_ms=1522.5 dunya_tris=127060 dunya_draws=37 lod=[1, 8, 19, 2] kare_us=111
+/root/is/k/sahip.log:ISTBOS bolge=uzak kare=73 bos=0 oran=0.0% ornek_gercek_en=
+/root/is/k/sahip.log:ISTBOS bolge=karsi_kiyi kare=3906 bos=7 oran=0.2% ornek_gercek_en=(-3257,5314) (2685,1885) (3828,-3142)
+/root/is/k/sahip.log:ISTBOS bolge=sur_disi_600 kare=803 bos=3 oran=0.4% ornek_gercek_en=(-4971,-2114)
+/root/is/k/sahip.log:ISTBOS bolge=sehir_ici kare=1109 bos=18 oran=1.6% ornek_gercek_en=(-2685,-514) (-2685,-628)
+/root/is/k/sahip.log:ISTBOS bolge=galata kare=24 bos=0 oran=0.0% ornek_gercek_en=
+/root/is/k/sahip.log:ISTBOS sure_ms=4329 dolu_kare=14209
+/root/is/k/sahip2.log:RINFO gezi sahip_07_ayasofya_meydani cizim=800 ucgen=1354185 kare_ms=1404.1 dunya_tris=138398 dunya_draws=37 lod=[2, 4, 22, 2] kare_us=99
+/root/is/k/sahip2.log:RINFO gezi sahip_14_gece_galata cizim=631 ucgen=1876559 kare_ms=1874.8 dunya_tris=164626 dunya_draws=37 lod=[2, 6, 19, 3] kare_us=111
+/root/is/k/sahip3.log:RINFO gezi sahip_14_gece_galata cizim=642 ucgen=1883139 kare_ms=2011.0 dunya_tris=164280 dunya_draws=37 lod=[2, 5, 20, 3] kare_us=130
+# bölüm testleri
+== --chapter=11 --autotest
+AUTOTEST PASS chapter=11 variant= outcome=11.2 persuade=25 sadakat=55 baski=1
+== --chapter=7 --autotest
+AUTOTEST PASS chapter=7 variant= branch=7a outcome=7.1 extras=[] sadakat=60 baski=0 hour=13.5
+== --chapter=12 --autotest
+AUTOTEST PASS chapter=12 variant= outcome=12.1 merak=4 paradox=0 tries=0 key=1 honest=true tezkire=true
+# SONRA gece (s5_n, son kayıt)
+ISTKISI y_carsi y30=7 y60=15 gorunen=14 hayvan=3 etkin=19 yuruyen=14 duran=5 evde=0 havada=0 suda=0 ms=1.16 ms_ort=1.16 ms_max=3.45 hedef=19 esyada=0
+RINFO doku2 y_carsi cizim=1518 ucgen=3204560 konum=(-385.4355, 16.67308, -31.61606)
+RINFO katman y_carsi kisi cizim=105 ucgen=115786
+RINFO katman y_carsi esya cizim=7 ucgen=3270
+ISTKISI y_sik y30=0 y60=10 gorunen=4 hayvan=2 etkin=12 yuruyen=9 duran=3 evde=0 havada=0 suda=0 ms=0.84 ms_ort=1.09 ms_max=10.35 hedef=12 esyada=0
+RINFO doku2 y_sik cizim=606 ucgen=1486463 konum=(-518.8539, 22.59329, -172.6155)
+RINFO katman y_sik kisi cizim=4 ucgen=6144
+RINFO katman y_sik esya cizim=4 ucgen=3450
+ISTKISI y_iskele y30=8 y60=9 gorunen=5 hayvan=2 etkin=12 yuruyen=4 duran=8 evde=0 havada=0 suda=0 ms=0.88 ms_ort=1.05 ms_max=10.35 hedef=12 esyada=0
+RINFO doku2 y_iskele cizim=2930 ucgen=1741121 konum=(-269.4387, 12.91039, -215.3549)
+RINFO katman y_iskele kisi cizim=105 ucgen=106152
+RINFO katman y_iskele esya cizim=4 ucgen=2938
+ISTKISI y_galata y30=4 y60=10 gorunen=7 hayvan=4 etkin=21 yuruyen=3 duran=18 evde=0 havada=0 suda=0 ms=0.72 ms_ort=1.00 ms_max=10.35 hedef=21 esyada=0
+RINFO doku2 y_galata cizim=763 ucgen=1170072 konum=(-227.6909, 12.16592, -585.79)
+RINFO katman y_galata kisi cizim=4 ucgen=9216
+RINFO katman y_galata esya cizim=3 ucgen=3360
+ISTKISI y_ayasofya y30=7 y60=17 gorunen=6 hayvan=3 etkin=19 yuruyen=12 duran=7 evde=0 havada=0 suda=0 ms=0.95 ms_ort=1.02 ms_max=10.65 hedef=19 esyada=0
+RINFO doku2 y_ayasofya cizim=854 ucgen=1474831 konum=(-164.5, 14.90292, 7.0)
+RINFO katman y_ayasofya kisi cizim=82 ucgen=98998
+RINFO katman y_ayasofya esya cizim=4 ucgen=1192
+RINFO doku2 h30_carsi cizim=740 ucgen=1674689 konum=(-402.5, 43.92156, -21.0)
+RINFO katman h30_carsi kisi cizim=42 ucgen=35028
+RINFO katman h30_carsi esya cizim=7 ucgen=6888
+# SONRA (s6, havadan küp figür düzeltmesi)
+ISTKISI y_carsi y30=13 y60=27 gorunen=14 hayvan=6 etkin=34 yuruyen=23 duran=11 evde=0 havada=0 suda=0 ms=2.10 ms_ort=2.20 ms_max=5.67 hedef=34 esyada=0
+RINFO doku2 y_carsi cizim=1139 ucgen=3415892 konum=(-385.4355, 16.67308, -31.61606)
+RINFO katman y_carsi kisi cizim=270 ucgen=310160
+RINFO katman y_carsi esya cizim=7 ucgen=2602
+RINFO doku2 h30_carsi cizim=723 ucgen=1649385 konum=(-402.5, 43.92156, -21.0)
+RINFO katman h30_carsi kisi cizim=49 ucgen=45696
+RINFO katman h30_carsi esya cizim=7 ucgen=6888
