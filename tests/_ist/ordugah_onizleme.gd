@@ -342,8 +342,12 @@ func _audit(id: String, host: Node3D, ab: AABB) -> void:
 			var vy := top[jj * nx + ii]
 			if vy > cy + 1.0 and vy > 0.5:
 				delik += 1
+				if delik % 400 == 1:
+					print("ISTDEBUG delik x=%.1f z=%.1f gorsel=%.2f kati=%.2f" % [x, z, vy, cy])
 			elif cy > vy + 0.6 and cy > 0.5:
 				gorunmez += 1
+				if gorunmez % 100 == 1:
+					print("ISTDEBUG gorunmez x=%.1f z=%.1f gorsel=%.2f kati=%.2f" % [x, z, vy, cy])
 	# 2) dar: iki katı arası 0,2–1,4 m (1,0 m yükseklikte küre sorgusu)
 	var sph := SphereShape3D.new()
 	sph.radius = 0.1
@@ -465,6 +469,7 @@ func _tirman(a: Vector3, u: Vector3) -> bool:
 			break
 		if stall > 3.0:
 			break
+	print("ISTDEBUG tirman a=%s u=%s son=%s basari=%s" % [a, u, body.global_position, success])
 	body.queue_free()
 	return success
 
