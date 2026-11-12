@@ -149,6 +149,15 @@ func _build_walls_scene() -> void:
 		var fr := l.get_child(0) as Node3D
 		if fr and l.is_inside_tree():
 			Props.bake_static(fr, fr.get_children())
+			# Katı gövde eski boyunda (9 m: ucu mazgal taşının altında) kalır; yalnız sırıkların ucu taşın üstüne çıkar.
+			# Uzayan gövde sur yolunun kenarında görünmez bir engel oluyordu (dövüşenler takılıyordu).
+			for cs in fr.find_children("*", "CollisionShape3D", true, false):
+				var bx := (cs as CollisionShape3D).shape as BoxShape3D
+				if bx and bx.size.y > 9.0:
+					var b2 := bx.duplicate() as BoxShape3D
+					b2.size.y = 9.0
+					(cs as CollisionShape3D).shape = b2
+					(cs as Node3D).position.y -= (bx.size.y - 9.0) * 0.5
 		l.visible = false
 		ladders.append(l)
 	# Surların önündeki hücum: ova boyunca sancaklı ordu, sura koşan dalgalar, merdivenlerde tırmananlar,
@@ -2085,27 +2094,33 @@ var _push_t := 0.0
 var _push_state := ""
 var _push_back := Vector3.INF
 var _push_look := Vector2.ZERO
+var _push_hand: Array = []
 var _push_hid: Array = []
 var _push_duel: Duel
 
 
 func _ladder_push_tick(delta: float) -> void:
+	# Yalnız sürmekte olan çarpışmanın Melee'si (bitmiş dalganın Melee'si ağaçta kalabilir; kaydındaki "hold" bayat)
 	var melee: Melee = null
 	for c in get_children():
-		if c is Melee and not c.is_queued_for_deletion():
+		if c is Melee and not c.is_queued_for_deletion() and (c as Melee).duel and is_instance_valid((c as Melee).duel) \
+				and (c as Melee).duel.active:
 			melee = c
 	if _push.is_empty():
-		if melee == null or player == null or player.frozen:
+		if melee == null or player == null or player.frozen or player.is_down:
 			return
+		var pp := player.global_position
 		for l: Dictionary in melee.ladders:
-			if float(l["hold"]) > 0.0 and float(l["down"]) <= 0.0 and is_instance_valid(l["node"]):
+			var land: Vector3 = l["land"]
+			if float(l["hold"]) > 0.0 and float(l["down"]) <= 0.0 and is_instance_valid(l["node"]) \
+					and Vector2(pp.x - land.x, pp.z - land.z).length() < 2.4 and absf(pp.y - land.y) < 1.5:
 				_push_begin(melee, l)
 				break
 		return
 	_push_t += delta
 	var lad := _push["node"] as Ladder
 	# Devrilirken bir anlık donma (atılanların öldürme sayımı) tutuşu bitirmez; tutarken donarsa bırakır
-	if melee == null or not is_instance_valid(lad) or (player.frozen and _push_state == "grip"):
+	if melee == null or not is_instance_valid(lad) or ((player.frozen or player.is_down) and _push_state == "grip"):
 		_push_end()
 		return
 	match _push_state:
@@ -2151,6 +2166,7 @@ func _push_begin(melee: Melee, l: Dictionary) -> void:
 	player.pinned = true
 	_push_hid.clear()
 	_push_duel = melee.duel
+	_push_hand = [player.get("_hand_shown"), player.hand.visible]      # bitince aynen geri konur
 	player.set("_hand_shown", true)
 	player.hand.visible = true
 	var pts := _push_grip_pts(lad)
@@ -2187,9 +2203,10 @@ func _push_end() -> void:
 			(pv as Node3D).visible = true
 	_push_hid.clear()
 	player.release_both()
-	player.set("_hand_shown", false)
-	if player.hand:
-		player.hand.visible = false
+	if _push_hand.size() == 2:
+		player.set("_hand_shown", _push_hand[0])
+		if player.hand:
+			player.hand.visible = _push_hand[1]
 	# Sur yoluna geri adım (mazgal taşının başından), doğrulur ve bakışı itmeden önceki yere (dövüşe) yumuşakça döner
 	create_tween().tween_property(player, "eye_height", player.eye_rest, 0.35).set_trans(Tween.TRANS_SINE)
 	var lk := create_tween().set_parallel()
