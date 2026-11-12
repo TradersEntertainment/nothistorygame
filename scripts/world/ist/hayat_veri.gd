@@ -372,20 +372,23 @@ func _evler() -> void:
 	# çamaşır ipi: dar sokakta iki cephe arasında
 	var n_c := 0
 	for st: Dictionary in sokak.streets:
-		if String(st["tur"]) != "sokak" or float(st["w"]) > 4.6:
+		if not String(st["tur"]) in ["sokak", "basamak", "yol"] or float(st["w"]) > 6.2:
 			continue
 		var pts: PackedVector2Array = st["pts"]
 		for i in pts.size() - 1:
 			var a := pts[i]
 			var b := pts[i + 1]
 			var seg := a.distance_to(b)
-			if seg < 7.0 or rng.randf() > 0.28:
+			if seg < 6.0 or rng.randf() > 0.45:
 				continue
 			var d := (b - a) / seg
 			var perp := Vector2(-d.y, d.x)
 			var q := a + d * rng.randf_range(2.5, seg - 2.5)
 			var w2 := float(st["w"]) * 0.5
-			if _cell(q + perp * (w2 + 1.0)) != 2 or _cell(q - perp * (w2 + 1.0)) != 2:
+			# DOKU-3: iki yanda ev/avlu/doku (en az bir yanda ev): çamaşır ipi daha çok sokakta
+			var c1 := _cell(q + perp * (w2 + 1.0))
+			var c2 := _cell(q - perp * (w2 + 1.0))
+			if not (c1 in [2, 5, 6] and c2 in [2, 5, 6]) or (c1 != 2 and c2 != 2):
 				continue
 			var yy := _h(q) + 3.7
 			var half := w2 + 0.1

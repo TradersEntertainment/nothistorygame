@@ -103,7 +103,7 @@ func _kareler() -> void:
 			IstHayatYakin.aktif.doldur(8)
 			for i in 40:
 				await get_tree().process_frame
-			print(IstHayatYakin.aktif.sayim_satiri(ad))
+			print(IstHayatYakin.aktif.sayim_satiri(ad), " esyada=%d" % _esyada())
 		await get_tree().process_frame
 		await RenderingServer.frame_post_draw
 		var dc := RenderingServer.get_rendering_info(RenderingServer.RENDERING_INFO_TOTAL_DRAW_CALLS_IN_FRAME)
@@ -115,6 +115,19 @@ func _kareler() -> void:
 			img.save_png(shots.path_join(on + ad + ".png"))
 	print("DOKU2 bitti")
 	get_tree().quit(0)
+
+
+## Etkin yakın kişilerden sokak eşyasının (0,35 m) içinde duranlar
+func _esyada() -> int:
+	var d := IstMahalleDoku.aktif
+	if d == null or d.sokak_esya == null:
+		return -1
+	var n := 0
+	for ag in IstHayatYakin.aktif.active_list():
+		var p: Vector3 = ag.pos
+		if d.sokak_esya.esya_yakin(Vector2(p.x, p.z), 0.35):
+			n += 1
+	return n
 
 
 func _kam(b: Array) -> bool:
