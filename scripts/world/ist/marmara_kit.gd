@@ -29,9 +29,28 @@ const RED := Color("a8272c")
 
 const MAXVIS := 0.0
 
+## Kurulum penceresi (ŞEHİR-3, zaman dilimi): yalnız x'i [pencere.x, pencere.y) içinde kalan parçalar kurulur (şehir
+## kurucusu uzun sur dilimini pencere pencere ayrı karelerde kurar). Dışarıda kalan çağrılar boş bir yer tutucu döndürür.
+static var pencere := Vector2(-1e9, 1e9)
+static var _bos_s: StaticBody3D
+static var _bos_m: MeshInstance3D
+static var _bos_mm: MultiMeshInstance3D
+
+static func _ic(x: float) -> bool:
+	return x >= pencere.x and x < pencere.y
+
+static func _bos() -> MeshInstance3D:
+	if _bos_m == null:
+		_bos_m = MeshInstance3D.new()
+	return _bos_m
+
 
 ## Katı kutu (taban ortası verilir).
 static func S(p: Node3D, size: Vector3, base: Vector3, col: Color, pat := "", rot_y := 0.0) -> StaticBody3D:
+	if not _ic(base.x):
+		if _bos_s == null:
+			_bos_s = StaticBody3D.new()
+		return _bos_s
 	var b := Props.solid(p, size, base + Vector3(0, size.y * 0.5, 0), col, Vector3(0, rot_y, 0))
 	if pat != "":
 		Props.set_pattern(b, col, pat)
@@ -40,6 +59,8 @@ static func S(p: Node3D, size: Vector3, base: Vector3, col: Color, pat := "", ro
 
 ## Çarpışmasız görsel kutu (taban ortası).
 static func V(p: Node3D, size: Vector3, base: Vector3, col: Color, pat := "", rot := Vector3.ZERO) -> MeshInstance3D:
+	if not _ic(base.x):
+		return _bos()
 	var m := Props.box(p, size, base + Vector3(0, size.y * 0.5, 0), col, rot)
 	if pat != "":
 		Props.set_pattern(m, col, pat)
@@ -48,6 +69,8 @@ static func V(p: Node3D, size: Vector3, base: Vector3, col: Color, pat := "", ro
 
 ## Silindir (görsel ya da katı), taban ortası.
 static func CY(p: Node3D, r: float, h: float, base: Vector3, col: Color, pat := "", seg := 10, solid := false, top_r := -1.0) -> MeshInstance3D:
+	if not _ic(base.x):
+		return _bos()
 	var m := Props.cyl(p, r, h, base + Vector3(0, h * 0.5, 0), col, Vector3.ZERO, seg, top_r)
 	if pat != "":
 		Props.set_pattern(m, col, pat)
@@ -58,6 +81,8 @@ static func CY(p: Node3D, r: float, h: float, base: Vector3, col: Color, pat := 
 
 ## Yatık silindir (sütun kütüğü, direk, kereste): merkez + dönüş.
 static func CYR(p: Node3D, r: float, h: float, center: Vector3, col: Color, rot_deg: Vector3, pat := "", seg := 8, solid := false) -> MeshInstance3D:
+	if not _ic(center.x):
+		return _bos()
 	var m := Props.cyl(p, r, h, center, col, rot_deg, seg)
 	if pat != "":
 		Props.set_pattern(m, col, pat)
@@ -78,6 +103,11 @@ static func ROOF(p: Node3D, size: Vector3, base: Vector3, col: Color, pat := "ti
 
 ## Birçok aynı kutu: MultiMesh. xf: [[merkez Vector3, yaw_derece], …] ya da Transform3D.
 static func MM(p: Node3D, size: Vector3, xf: Array, col: Color, pat := "", shadow := false) -> MultiMeshInstance3D:
+	xf = xf.filter(func(e) -> bool: return _ic((e as Transform3D).origin.x if e is Transform3D else (e[0] as Vector3).x))
+	if xf.is_empty() and pencere.x > -1e8:
+		if _bos_mm == null:
+			_bos_mm = MultiMeshInstance3D.new()
+		return _bos_mm
 	var mm := MultiMesh.new()
 	mm.transform_format = MultiMesh.TRANSFORM_3D
 	var bm := BoxMesh.new()
@@ -101,6 +131,11 @@ static func MM(p: Node3D, size: Vector3, xf: Array, col: Color, pat := "", shado
 
 ## Birçok aynı silindir (direk, bacak, sütunçe): xf = [[merkez, yaw], …]
 static func MMC(p: Node3D, r: float, h: float, xf: Array, col: Color, seg := 6, pat := "") -> MultiMeshInstance3D:
+	xf = xf.filter(func(e) -> bool: return _ic((e as Transform3D).origin.x if e is Transform3D else (e[0] as Vector3).x))
+	if xf.is_empty() and pencere.x > -1e8:
+		if _bos_mm == null:
+			_bos_mm = MultiMeshInstance3D.new()
+		return _bos_mm
 	var mm := MultiMesh.new()
 	mm.transform_format = MultiMesh.TRANSFORM_3D
 	var cm := CylinderMesh.new()

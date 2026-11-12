@@ -18,15 +18,140 @@ var kurulan := 0
 var bakan: Node3D                 # yoksa etkin kamera
 
 
+## Uzak katman (ŞEHİR-3): öğelerin lod 2'si açılışta kurulup HÜCRE başına tek ağa pişirilir (önce öğe başına 3–5 çizim:
+## şehrin ortasından bile ~500 çizim). Hücre yakına gelince (lod1_m + hücre yarıçapı) içindeki öğeler tek tek lod 1/0
+## kurulur, hepsi kurulunca hücre ağı gizlenir; uzaklaşınca öğeler boşaltılır, hücre ağı yine görünür.
+const HUCRE := 320.0
+var hucreler: Array = []          # {c: Vector2, r, mi: MeshInstance3D, idx: [i]}
+var uzak_ms := 0
+
+
 func kur(plan: Array) -> void:
+	# yeniden kurulum (IstBaglama._temizle öğe listesini süzüp yeniden çağırır): eski hücre ağları kalkar
+	for h: Dictionary in hucreler:
+		if is_instance_valid(h["mi"]):
+			(h["mi"] as Node).queue_free()
+	hucreler.clear()
 	items = plan
+	var t0 := Time.get_ticks_msec()
+	var by := {}
 	for i in items.size():
 		var it: Dictionary = items[i]
 		var p: Vector2 = it["pos"]
 		it["y"] = IstGeo.h(p.x, p.y)
-		it["lod"] = -1
+		it["lod"] = 2
 		it["host"] = null
-		kuyruk.append([i, 2])
+		var ck := Vector2i(floori(p.x / HUCRE), floori(p.y / HUCRE))
+		if not by.has(ck):
+			by[ck] = []
+		by[ck].append(i)
+	for ck: Vector2i in by:
+		var cen := Vector2((ck.x + 0.5) * HUCRE, (ck.y + 0.5) * HUCRE)
+		var st := SurfaceTool.new()
+		st.begin(Mesh.PRIMITIVE_TRIANGLES)
+		var rmax := 0.0
+		var n := 0
+		for i: int in by[ck]:
+			var it: Dictionary = items[i]
+			var host := _kur_host(i, 2)
+			var base := Transform3D(Basis(Vector3.UP, float(it["yaw"])), Vector3((it["pos"] as Vector2).x - cen.x, float(it["y"]), (it["pos"] as Vector2).y - cen.y))
+			n += _pisir(host, host, base, st)
+			host.free()
+			rmax = maxf(rmax, (it["pos"] as Vector2).distance_to(cen) + float(it["r"]))
+		var mi := MeshInstance3D.new()
+		mi.name = "OrduUzak_%d_%d" % [ck.x, ck.y]
+		if n > 0:
+			mi.mesh = st.commit()
+		mi.material_override = _uzak_mat()
+		mi.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
+		mi.position = Vector3(cen.x, 0, cen.y)
+		mi.set_meta("no_walk", true)
+		add_child(mi)
+		hucreler.append({"c": cen, "r": rmax, "mi": mi, "idx": by[ck], "yakin": false})
+	uzak_ms = Time.get_ticks_msec() - t0
+	print("ISTORDU uzak_hucre=%d ms=%d" % [hucreler.size(), uzak_ms])
+
+
+static var _umat: StandardMaterial3D
+
+static func _uzak_mat() -> StandardMaterial3D:
+	if _umat == null:
+		_umat = StandardMaterial3D.new()
+		_umat.vertex_color_use_as_albedo = true
+		_umat.diffuse_mode = BaseMaterial3D.DIFFUSE_TOON
+		_umat.specular_mode = BaseMaterial3D.SPECULAR_DISABLED
+		_umat.roughness = 1.0
+	return _umat
+
+
+## host altındaki görünür ağları (MeshInstance3D ve MultiMesh örnekleri) st'ye köşe renkli üçgen olarak ekler
+func _pisir(top: Node, n: Node, xf: Transform3D, st: SurfaceTool) -> int:
+	var cnt := 0
+	for c in n.get_children():
+		if c is Node3D and not (c as Node3D).visible:
+			continue
+		var cx := xf * ((c as Node3D).transform if c is Node3D else Transform3D.IDENTITY)
+		if c is GeometryInstance3D and _parlak((c as GeometryInstance3D).material_override):
+			continue
+		if c is MeshInstance3D and (c as MeshInstance3D).mesh != null:
+			var mi := c as MeshInstance3D
+			if _parlak(mi.get_active_material(0)):
+				continue
+			for si in mi.mesh.get_surface_count():
+				cnt += _ekle(st, mi.mesh, si, cx, _renk(mi.get_active_material(si)), false)
+		elif c is MultiMeshInstance3D and (c as MultiMeshInstance3D).multimesh != null:
+			var mm := (c as MultiMeshInstance3D).multimesh
+			if mm.mesh == null:
+				continue
+			var mcol := _renk((c as MultiMeshInstance3D).material_override if (c as MultiMeshInstance3D).material_override else mm.mesh.surface_get_material(0))
+			for k in mm.instance_count:
+				var ic := mm.get_instance_color(k) if mm.use_colors else Color.WHITE
+				for si in mm.mesh.get_surface_count():
+					cnt += _ekle(st, mm.mesh, si, cx * mm.get_instance_transform(k), mcol * ic, true)
+		if c is Node3D and not (c is GeometryInstance3D):
+			cnt += _pisir(top, c, cx, st)
+	return cnt
+
+
+## alev, ışık, saydam: pişmiş uzak ağa girmez
+static func _parlak(m: Material) -> bool:
+	if m is ShaderMaterial:
+		return true
+	if m is BaseMaterial3D:
+		var bm := m as BaseMaterial3D
+		return (bm.emission_enabled and bm.emission_energy_multiplier > 0.5) or (bm.transparency != BaseMaterial3D.TRANSPARENCY_DISABLED and bm.transparency != BaseMaterial3D.TRANSPARENCY_ALPHA_SCISSOR)
+	return false
+
+
+static func _renk(m: Material) -> Color:
+	if m is BaseMaterial3D:
+		var bm := m as BaseMaterial3D
+		if bm.vertex_color_use_as_albedo:
+			return Color.WHITE
+		return bm.albedo_color * World1453._avg(bm.albedo_texture)
+	return Color(0.8, 0.75, 0.65)
+
+
+static func _ekle(st: SurfaceTool, m: Mesh, si: int, xf: Transform3D, col: Color, _mm: bool) -> int:
+	var arr := m.surface_get_arrays(si)
+	var vs: PackedVector3Array = arr[Mesh.ARRAY_VERTEX]
+	var ns = arr[Mesh.ARRAY_NORMAL]
+	var cs = arr[Mesh.ARRAY_COLOR]
+	var ia = arr[Mesh.ARRAY_INDEX]
+	var idx: PackedInt32Array = ia if ia is PackedInt32Array else PackedInt32Array()
+	var cnt := idx.size() if idx.size() > 0 else vs.size()
+	var nb := xf.basis.inverse().transposed()
+	var hasn: bool = ns is PackedVector3Array and (ns as PackedVector3Array).size() == vs.size()
+	var hasc: bool = cs is PackedColorArray and (cs as PackedColorArray).size() == vs.size()
+	for k in cnt:
+		var i: int = idx[k] if idx.size() > 0 else k
+		var c := col
+		if hasc:
+			c = col * (cs as PackedColorArray)[i]
+		st.set_color(Color(c.r, c.g, c.b, 1.0))
+		st.set_normal((nb * ((ns as PackedVector3Array)[i] if hasn else Vector3.UP)).normalized())
+		st.add_vertex(xf * vs[i])
+	return cnt / 3
 
 
 func _cam_pos() -> Vector3:
@@ -52,25 +177,29 @@ func _process(delta: float) -> void:
 func _planla() -> void:
 	var cp := _cam_pos()
 	var istek: Array = []
-	for i in items.size():
-		var it: Dictionary = items[i]
-		var p: Vector2 = it["pos"]
-		var d := Vector2(cp.x, cp.z).distance_to(p)
-		var r: float = it["r"]
-		var want := 2
-		var cur: int = it["lod"]
-		var k0 := lod0_m + r
-		var k1 := lod1_m + r
-		if cur >= 0 and cur <= 0:
-			k0 *= 1.15
-		if cur >= 0 and cur <= 1:
-			k1 *= 1.15
-		if d < k0:
-			want = 0
-		elif d < k1:
-			want = 1
-		if cur != want and not _kuyrukta(i):
-			istek.append([d, i, want])
+	for h: Dictionary in hucreler:
+		var dh := Vector2(cp.x, cp.z).distance_to(h["c"]) - float(h["r"])
+		var lim := lod1_m * (1.15 if h["yakin"] else 1.0)
+		h["yakin"] = dh < lim
+		var hepsi := true
+		for i: int in h["idx"]:
+			var it: Dictionary = items[i]
+			var p: Vector2 = it["pos"]
+			var d := Vector2(cp.x, cp.z).distance_to(p)
+			var r: float = it["r"]
+			var want := 2
+			var cur: int = it["lod"]
+			var k0 := lod0_m + r
+			if cur == 0:
+				k0 *= 1.15
+			if h["yakin"]:
+				want = 0 if d < k0 else 1
+			if cur != want and not _kuyrukta(i):
+				istek.append([d, i, want])
+			if want < 2 and cur == 2:
+				hepsi = false
+		# hücrenin pişmiş uzak ağı: yakınken öğelerin hepsi kurulunca gizlenir (delik kalmaz), uzakta görünür
+		(h["mi"] as MeshInstance3D).visible = not (h["yakin"] and hepsi)
 	istek.sort_custom(func(a, b): return a[0] < b[0])
 	for e in istek:
 		if kuyruk.size() > 24:
@@ -89,6 +218,28 @@ func _kur_item(i: int, lod: int) -> void:
 	var it: Dictionary = items[i]
 	if it["lod"] == lod:
 		return
+	if lod == 2:
+		# uzak: hücrenin pişmiş ağı çizer; öğenin kendi katmanı boşaltılır (hücre ağı önce görünür olur)
+		for h: Dictionary in hucreler:
+			if i in (h["idx"] as Array):
+				(h["mi"] as MeshInstance3D).visible = true
+		var e2 = it["host"]
+		if e2 != null and is_instance_valid(e2):
+			(e2 as Node).queue_free()
+		it["host"] = null
+		it["lod"] = 2
+		return
+	var host := _kur_host(i, lod)
+	var eski = it["host"]
+	it["host"] = host
+	it["lod"] = lod
+	if eski != null and is_instance_valid(eski):
+		(eski as Node).queue_free()
+	kurulan += 1
+
+
+func _kur_host(i: int, lod: int) -> Node3D:
+	var it: Dictionary = items[i]
 	var p: Vector2 = it["pos"]
 	var host := Node3D.new()
 	host.name = "%s_lod%d" % [it["id"], lod]
@@ -122,9 +273,6 @@ func _kur_item(i: int, lod: int) -> void:
 	IstOrdugah.uret(it, host, lod)
 	K.zemin = Callable()
 	K.filtre = Callable()
-	var eski = it["host"]
-	it["host"] = host
-	it["lod"] = lod
-	if eski != null and is_instance_valid(eski):
-		(eski as Node).queue_free()
-	kurulan += 1
+	if lod == 2:
+		remove_child(host)
+	return host

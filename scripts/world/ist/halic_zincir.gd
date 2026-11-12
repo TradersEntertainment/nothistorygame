@@ -107,7 +107,9 @@ static func build(host: Node3D, k: float, lod: int) -> void:
 	K.stair(root, Vector3(-W * 0.5 - 8.0, -1.6, qz0 - 0.34 * sn2), Vector3(0, 0, 1), QUAY_Y + 1.6, 2.0, Color("958870"))
 	# Deniz: tüm zincir hattı
 	var cl: float = d["chain"]
-	K.sea(root, -cl * 0.55, cl * 0.55, -cl - 8.0, qz0, 1.6)
+	# önizleme denizi: v2 dünyasının kendi denizi var (ŞEHİR-3: plaka kıyı kıvrımında karanın üstüne taşıyordu)
+	if not IstSehir.v2:
+		K.sea(root, -cl * 0.55, cl * 0.55, -cl - 8.0, qz0, 1.6)
 	if lod >= 1:
 		return
 	_chain(root, d, qz0)

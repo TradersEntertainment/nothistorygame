@@ -14,6 +14,7 @@ extends Node3D
 ## Bağlantı: World1453.build → IstSehir.attach(f); CityHouses.build → IstSehir.houses(...) (ikisi de tek satır ekleme).
 
 const DIR := "res://scripts/world/ist/"
+const ESER := preload("res://scripts/world/ist/sehir_eser.gd")
 const SELF := ["sehir", "evler"]
 ## Uzaklık eşikleri (parçanın yarıçapı eklenir): lod 0 < R0, lod 1 < R1, ötesi lod 2
 const R0 := 90.0
@@ -278,8 +279,14 @@ func _place_all() -> void:
 	print("ISTSEHIR yer=%d kur_ms=%.1f" % [items.size(), (Time.get_ticks_usec() - t0) / 1000.0])
 
 
-func _build(it: Dictionary, lod: int) -> void:
+func _build(it: Dictionary, lod: int, bol := false) -> void:
 	if it["have"][lod] != null:
+		return
+	if lod == 0 and it.has("pis_n"):
+		_pis(it)
+		return
+	if lod == 0 and (it.has("sub") or (bol and v2 and _pencereli(it))):
+		_pencere_is(it)
 		return
 	# Ön-pişirilmiş katman (v2: açılışta kurulmuş, ağaçtan ayrık bekler): yalnız ağaca bağlanır
 	if it.has("pre") and it["pre"][lod] != null:
@@ -301,26 +308,29 @@ func _build(it: Dictionary, lod: int) -> void:
 		(it["make"] as Callable).call(n, lod)
 	else:
 		(it["script"] as GDScript).call("build_" + String(it["id"]), n, float(it["k"]), lod)
+		if v2 and MANASTIR.has(String(it["id"])):
+			var mv: Vector2 = MANASTIR[String(it["id"])]
+			ESER.manastir(n, lod, mv.x, mv.y, String(it["id"]).hash())
 	if v2 and not it.has("hat") and String(it.get("mod", "")) != "doku":
 		_kursun(n)
 	if v2 and lod == 0 and it.has("glen"):
 		var hw0 := float(IstSurlar.dims(K_SUR)["HW"])
 		_kapi_gecit(n, hw0 - 0.35, hw0 + 0.35)
 	elif v2 and lod == 0 and it.has("hat") and it.has("len"):
-		# Deniz surları: yürüme yolu kule tepelerine basamakla çıkar; kule tepe korkuluğu yolu enine kesiyordu
-		var kur := String(HAT.get(String(it["hat"]), {}).get("kur", ""))
-		if kur in ["marmara", "halic"]:
-			var dm := IstMarmaraSur.dims(K_SUR)
-			var hh := float(dm["H"])
-			var top := float(dm["TH"])
-			if kur == "halic" and absf(float(it["len"]) - float(IstHalicSur.dims(K_SUR)["L"])) < 0.05:
-				hh = float(IstHalicSur.dims(K_SUR)["H"])
-				top = hh + float(IstHalicSur.dims(K_SUR)["TH"])
-			var lo_y := float(it["walk"]) - float(it["pos"].y) - hh
-			_kapi_gecit(n, hh + lo_y - 0.35, top + lo_y + 0.35)
+		_kapi_gecit_hat(it, n)
 	var t_kur := Time.get_ticks_usec()
+	if bol and v2 and lod == 0:
+		# Zaman dilimi (kalite notu 8 / görev 7): yakın katmanın kurulması ve pişirilmesi iki ayrı iş (ayrı karelerde)
+		n.visible = false
+		it["pis_n"] = n
+		var kms := (Time.get_ticks_usec() - t0) / 1000.0
+		_cost["%s/0" % String(it.get("mod", ""))] = kms
+		_yavas_say(it, "0k", kms, 0.0)
+		return
 	if lod > 0:
 		_bake_lod(n, lod >= 2)
+		if v2:
+			_cizgisiz(n)
 		for c in n.find_children("*", "GeometryInstance3D", true, false):
 			c.set_meta("no_walk", true)
 		# Orta/uzak katmanın çarpışması yok: gizliyken de fizikte duran kaba kütleler (dolu kule bloğu, kapısız
@@ -338,28 +348,111 @@ func _build(it: Dictionary, lod: int) -> void:
 	stats["kur_ms_max"] = maxf(stats["kur_ms_max"], ms)
 	stats["kur_n"] += 1
 	_cost["%s/%d" % [String(it.get("mod", "")), lod]] = ms
-	if ms > 6.0:
-		if not stats.has("yavas"):
-			stats["yavas"] = {}
-		var mk := String(it["mod"])
-		if mk == "v2":
-			mk = String(it["id"]).get_slice("_", 0)
-		elif mk == "doku":
-			mk = "doku_" + String(it["id"]).get_slice("_", 1)
-		var key := "%s/%d" % [mk, lod]
-		stats["yavas"][key] = maxf(float(stats["yavas"].get(key, 0.0)), ms)
-		if not stats.has("yavas_pis"):
-			stats["yavas_pis"] = {}
-		stats["yavas_pis"][key] = maxf(float(stats["yavas_pis"].get(key, 0.0)), pis_ms)
+	_yavas_say(it, str(lod), ms, pis_ms)
 	it["have"][lod] = n
 	_show(it)
+
+
+## İkinci iş: bekleyen yakın katmanın pişirilmesi ve gösterilmesi
+func _pis(it: Dictionary) -> void:
+	var n: Node3D = it["pis_n"]
+	it.erase("pis_n")
+	if not is_instance_valid(n):
+		return
+	var t0 := Time.get_ticks_usec()
+	_bake_lod(n, false)
+	n.visible = true
+	var ms := (Time.get_ticks_usec() - t0) / 1000.0
+	_cost["%s/0" % String(it.get("mod", ""))] = ms
+	_yavas_say(it, "0p", ms, ms)
+	it["have"][0] = n
+	_show(it)
+
+
+## Pencereyle (kurucunun x penceresi) kurulan uzun sur dilimleri: kara suru (IstSurlar) ve deniz surları (IstMk)
+const PENCERE_M := 7.0
+
+func _pencereli(it: Dictionary) -> bool:
+	if not it.has("hat") or not it.has("len"):
+		return false
+	var kur := String(HAT.get(String(it["hat"]), {}).get("kur", ""))
+	return kur == "kara" or it.get("mk", false)
+
+
+## Yakın katmanın bir penceresi (kur + pişir); hepsi bitince katman görünür olur
+func _pencere_is(it: Dictionary) -> void:
+	var L := float(it["len"])
+	var N := maxi(1, ceili(L / PENCERE_M))
+	if not it.has("sub"):
+		var n0 := Node3D.new()
+		n0.name = "L0"
+		n0.visible = false
+		(it["holder"] as Node3D).add_child(n0)
+		it["sub"] = {"n": n0, "i": 0, "N": N}
+	var sb: Dictionary = it["sub"]
+	var i := int(sb["i"])
+	var t0 := Time.get_ticks_usec()
+	var x0 := -1e9 if i == 0 else -L * 0.5 + L * i / N
+	var x1 := 1e9 if i == N - 1 else -L * 0.5 + L * (i + 1) / N
+	var w := Node3D.new()
+	w.name = "W%d" % i
+	(sb["n"] as Node3D).add_child(w)
+	IstSurlar.pencere = Vector2(x0, x1)
+	IstMk.pencere = Vector2(x0, x1)
+	(it["make"] as Callable).call(w, 0)
+	IstSurlar.pencere = Vector2(-1e9, 1e9)
+	IstMk.pencere = Vector2(-1e9, 1e9)
+	_kapi_gecit_hat(it, w)
+	_bake_lod(w, false)
+	var ms := (Time.get_ticks_usec() - t0) / 1000.0
+	_cost["%s/0" % String(it.get("mod", ""))] = ms
+	_yavas_say(it, "0w", ms, 0.0)
+	sb["i"] = i + 1
+	if i + 1 >= N:
+		it.erase("sub")
+		(sb["n"] as Node3D).visible = true
+		it["have"][0] = sb["n"]
+		_show(it)
+
+
+func _yavas_say(it: Dictionary, lk: String, ms: float, pis_ms: float) -> void:
+	stats["kur_ms_max"] = maxf(stats["kur_ms_max"], ms)
+	if ms <= 6.0:
+		return
+	if not stats.has("yavas"):
+		stats["yavas"] = {}
+	var mk := String(it["mod"])
+	if mk == "v2":
+		mk = String(it["id"]).get_slice("_", 0)
+	elif mk == "doku":
+		mk = "doku_" + String(it["id"]).get_slice("_", 1)
+	var key := "%s/%s" % [mk, lk]
+	stats["yavas"][key] = maxf(float(stats["yavas"].get(key, 0.0)), ms)
+	if not stats.has("yavas_pis"):
+		stats["yavas_pis"] = {}
+	stats["yavas_pis"][key] = maxf(float(stats["yavas_pis"].get(key, 0.0)), pis_ms)
+
+
+## Deniz surları: yürüme yolu kule tepelerine basamakla çıkar; kule tepe korkuluğu yolu enine kesiyordu
+func _kapi_gecit_hat(it: Dictionary, n: Node3D) -> void:
+	var kur := String(HAT.get(String(it["hat"]), {}).get("kur", ""))
+	if not kur in ["marmara", "halic"]:
+		return
+	var dm := IstMarmaraSur.dims(K_SUR)
+	var hh := float(dm["H"])
+	var top := float(dm["TH"])
+	if kur == "halic" and absf(float(it["len"]) - float(IstHalicSur.dims(K_SUR)["L"])) < 0.05:
+		hh = float(IstHalicSur.dims(K_SUR)["H"])
+		top = hh + float(IstHalicSur.dims(K_SUR)["TH"])
+	var lo_y := float(it["walk"]) - float(it["pos"].y) - hh
+	_kapi_gecit(n, hh + lo_y - 0.35, top + lo_y + 0.35)
 
 
 ## Kurşun kubbe ve çatılar (kalite notu 3; docs/ISTANBUL_GORUNUS.md: mat kurşun gri #6E7276): parçaların açık mavi-gri
 ## kurşun tonları güneş ve gök ışığında açık maviye kaçıyor, ufukta ev çatılarının arasında kayboluyordu. Mavimsi açık griler
 ## koyu kurşuna çevrilir, hafif metal parıltı (silüette seçilsin). Malzeme önbellekli (pişirmede tek yüzeyde birleşir).
 static var _kursun_mat := {}
-const KURSUN := Color("4c525a")
+const KURSUN := Color("6a7078")          # ŞEHİR-3: #4C525A toon ışıkta lacivert-siyah görünüyordu (Khora, Pammakaristos)
 
 func _kursun(n: Node3D) -> void:
 	for c in n.find_children("*", "MeshInstance3D", true, false):
@@ -381,9 +474,9 @@ func _kursun(n: Node3D) -> void:
 				var d := sm.duplicate() as StandardMaterial3D
 				d.albedo_color = KURSUN.lerp(col, 0.1)
 				d.rim_enabled = false
-				d.metallic = 0.35
-				d.metallic_specular = 0.6
-				d.roughness = 0.45
+				d.metallic = 0.15
+				d.metallic_specular = 0.5
+				d.roughness = 0.55
 				_kursun_mat[key] = d
 			stats["kursun_n"] = int(stats.get("kursun_n", 0)) + 1
 			# material_override yüzey başına malzemeden önce gelir
@@ -391,6 +484,49 @@ func _kursun(n: Node3D) -> void:
 				mi.material_override = _kursun_mat[key]
 			else:
 				mi.set_surface_override_material(si, _kursun_mat[key])
+
+
+## Kalite notu 16 (tam tepeden ve uzaktan siyah düz yüzeyler) — KÖK NEDEN: Props/Dressing malzemelerinin dış çizgi
+## geçişi (next_pass: siyah, CULL_FRONT, grow, derinlik yazmaz). Uzakta (≥ 300 m) derinlik ara belleğinin çözünürlüğü
+## ince levhanın (forum döşemesi 0,1 m, sarnıç tabanı, çatı levhası) üst yüzüyle büyütülmüş alt yüzünü ayıramaz:
+## arka yüzlerin siyah çizgi kopyası üst yüzün önüne geçer (düz kenarlı yarım kara alanlar; yakında yok). Orta ve uzak
+## katmanda dış çizgi zaten piksel altıdır: bu katmanların malzemelerinden söküldü (malzeme önbellekli).
+static var _cizgisiz_mat := {}
+
+static func _cizgisiz_of(m: Material) -> Material:
+	if m == null or m.next_pass == null:
+		return m
+	var key := m.get_instance_id()
+	if not _cizgisiz_mat.has(key):
+		var d := m.duplicate() as Material
+		d.next_pass = null
+		_cizgisiz_mat[key] = d
+	return _cizgisiz_mat[key]
+
+
+static func _cizgisiz(n: Node) -> void:
+	for c in n.find_children("*", "GeometryInstance3D", true, false):
+		var gi := c as GeometryInstance3D
+		if gi.material_override != null:
+			gi.material_override = _cizgisiz_of(gi.material_override)
+		var mesh: Mesh = null
+		if gi is MeshInstance3D:
+			mesh = (gi as MeshInstance3D).mesh
+			if mesh != null:
+				for si in mesh.get_surface_count():
+					var om := (gi as MeshInstance3D).get_surface_override_material(si)
+					var sm := om if om != null else mesh.surface_get_material(si)
+					if sm != null and sm.next_pass != null:
+						(gi as MeshInstance3D).set_surface_override_material(si, _cizgisiz_of(sm))
+		elif gi is MultiMeshInstance3D and (gi as MultiMeshInstance3D).multimesh and (gi as MultiMeshInstance3D).multimesh.mesh:
+			mesh = (gi as MultiMeshInstance3D).multimesh.mesh
+			if gi.material_override == null:
+				for si in mesh.get_surface_count():
+					var sm := mesh.surface_get_material(si)
+					if sm != null and sm.next_pass != null:
+						# MultiMesh paylaşılan ağ: yüzey malzemesi yerine örnek başına geçersiz kılma (tek yüzeyli ağlarda)
+						if mesh.get_surface_count() == 1:
+							gi.material_override = _cizgisiz_of(sm)
 
 
 ## Uzak/orta katmanın ilkel parçaları tek ağa pişirilir (World1453.bake: doku başına bir yüzey; uzakta tek yüzey):
@@ -524,13 +660,19 @@ func _process(delta: float) -> void:
 		# Ağır iş (önceki ölçümü bütçenin kalanını aşan) karenin başına ertelenir: aynı karede ikinci iş olmaz
 		if Time.get_ticks_usec() - t0 > 0 and job[0] == "item":
 			var key := "%s/%d" % [String(job[1]["mod"]), int(job[2])]
+			if int(job[2]) == 0 and (job[1] as Dictionary).has("sub") and Time.get_ticks_usec() - t0 > 300:
+				break
 			if float(_cost.get(key, 0.0)) * 1000.0 > BUDGET_US - (Time.get_ticks_usec() - t0) and Time.get_ticks_usec() - t0 > 300:
 				break
 		_queue.pop_front()
 		if job[0] == "item":
 			var it: Dictionary = job[1]
 			if int(it["want"]) <= int(job[2]):
-				_build(it, int(job[2]))
+				_build(it, int(job[2]), true)
+				# pencereli/iki işli yakın katman: kalan iş bir sonraki karede (sıranın başında)
+				if int(job[2]) == 0 and (it.has("sub") or it.has("pis_n")):
+					_queue.push_front(job)
+					break
 		elif job[0] == "cell":
 			_cell_up(job[1])
 
@@ -539,12 +681,21 @@ func _plan(cp: Vector3) -> void:
 	_queue.clear()
 	var jobs: Array = []
 	for it: Dictionary in items:
+		if it.get("tek", false):
+			continue
 		var p: Vector3 = it["pos"]
 		var d := Vector3(p.x - cp.x, (p.y - cp.y) * 1.3, p.z - cp.z).length() - float(it["r"])
 		var r1 := float(it.get("r1", R1))
 		var want := 0 if d < R0 else (1 if d < r1 else 2)
 		it["want"] = want
-		# Boşalt: payın ötesindeki ince katmanlar
+		# Boşalt: payın ötesindeki ince katmanlar (yarım kalmış yakın katman da)
+		if d > R0 + HYST and want > 0:
+			for kk: String in ["pis_n", "sub"]:
+				if it.has(kk):
+					var pn0 = it[kk] if kk == "pis_n" else it[kk]["n"]
+					it.erase(kk)
+					if is_instance_valid(pn0):
+						(pn0 as Node).queue_free()
 		for l in 2:
 			var lim := R0 if l == 0 else r1
 			if it["have"][l] != null and d > lim + HYST and want > l:
@@ -1052,12 +1203,14 @@ const K_SUR := 1.0
 const AYA_K := 1.5
 const K2 := K_OTEKI
 ## Ünlü eserler (k = 0,75); ayrıca catalog() kaydında "gorev": true olan her eser ve kapı türündeki her kayıt
+## Manastır avlusuyla kurulan kiliseler (ŞEHİR-3; "küçük ve yalın" kusuru): kimlik → avlunun yarı eni/boyu (yerel m)
+const MANASTIR := {"khora": Vector2(22.0, 24.0), "pammakaristos": Vector2(23.0, 24.0)}
 const UNLU := ["konstantin", "arkadius", "iustinianus", "havariyun", "pantokrator", "khora", "pammakaristos", "studios",
 	"aya_irini", "tekfur", "galata_kulesi", "tauri", "sergios", "theodosius", "markianos", "halic_eugenios"]
 ## Gerçek yerinden hiç kaymayanlar (silüetin çapaları; öbürleri bunların çevresinden itilir)
 const SABIT_UNLU := ["galata_kulesi", "hipodrom", "konstantin", "havariyun", "pantokrator", "khora", "tekfur", "studios"]
 ## Çok yer kaplayanlar: kimlik → k (Hipodrom, Büyük Saray harabesi, limanlar, açık sarnıç bostanları, forum meydanları)
-const GENIS := {"augustaion": 0.45, "zeuksippos": 0.5, "konstantin": 0.6, "tauri": 0.6, "hipodrom": 0.45, "buyuk_saray": 0.45, "bukoleon": 0.5, "kontoskalion": 0.45, "langa": 0.45, "sophia": 0.45,
+const GENIS := {"augustaion": 0.45, "zeuksippos": 0.5, "konstantin": 0.6, "tauri": 0.6, "hipodrom": 0.45, "buyuk_saray": 0.34, "bukoleon": 0.5, "kontoskalion": 0.45, "langa": 0.45, "sophia": 0.45,
 	"aetios": 0.45, "aspar": 0.45, "mokios": 0.45, "philadelphion": 0.5, "kapitolion": 0.5, "amastrianon": 0.5, "bovis": 0.5,
 	"myrelaion": 0.55, "anemodoulion": 0.5, "halic_neorion": 0.5, "halic_iskele": 0.5}
 
@@ -1118,7 +1271,7 @@ static var YER2 := {
 	"aspar": {"e": -2705.0, "n": 1915.0},
 	# kuzeybati: Tekfur, Anemas, Ayazma (Blakhernai Meryem), Aetios (Karagümrük)
 	"tekfur": {"e": -3335.0, "n": 2827.0},
-	"anemas": {"e": -3251.0, "n": 3384.0},
+	"anemas": {"e": -3170.0, "n": 3360.0},          # Blakherna Sarayı avlusuyla çakışmasın (ŞEHİR-3)
 	"blakhernai_kilise": {"e": -3170.0, "n": 3220.0},
 	"aetios": {"e": -3420.0, "n": 1880.0},
 	"kaligaria": {"e": -2980.0, "n": 2760.0},
@@ -1411,7 +1564,10 @@ func _kapi_gecit(n: Node3D, ymin: float, ymax: float) -> void:
 			var root := n
 			var lp := root.global_transform.affine_inverse() * (cs as Node3D).global_position if root.is_inside_tree() else body.position
 			var bot := lp.y - sz.y * 0.5
-			if sz.x < 0.7 and sz.y < 1.8 and sz.z > 2.0 and bot > ymin and bot < ymax and absf(lp.z) < sz.z * 0.5 - 0.6:
+			# korkuluk: tabanı bant içinde VE tepesi bandın üstünde (yürüme yolunun/kule tepesinin üstüne çıkan duvarcık).
+			# Kule merdiveninin basamakları da ince, enine ve tabanı yürüme yolunda: tepeleri kule tepesini aşmaz, kalır
+			# (ŞEHİR-3: önce ilk altı basamak siliniyordu, oyuncu yedinci basamağın dibinde kalıyordu)
+			if sz.x < 0.7 and sz.y < 1.8 and sz.z > 2.0 and bot > ymin and bot < ymax and bot + sz.y > ymax and absf(lp.z) < sz.z * 0.5 - 0.6:
 				gone.append(Rect2(lp.x - 0.6, lp.z - sz.z * 0.5, 1.2, sz.z))
 				body.get_parent().remove_child(body)
 				body.free()
@@ -1587,17 +1743,24 @@ func _place_v2() -> void:
 	var bl := IstGeo.w2(-3402.0, 3436.0)
 	var bpl := IstGeo.yol("blakherna_suru")
 	var byaw := 0.0
+	var bin := Vector2.ZERO
 	if bpl.size() >= 2:
 		var sn := _snap(bpl, bl)
 		var o := _out(sn["d"], sn["p"], "blakherna_suru")
+		bin = -o
 		bl = (sn["p"] as Vector2) - o * 2.0
 		byaw = _yaw_x(sn["d"], sn["p"], "blakherna_suru")
-	_v2_item("blakherna", Vector3(bl.x, IstGeo.h(bl.x, bl.y) - 0.05, bl.y), byaw, 22.0, _make_blakherna)
+	var bit := _v2_item("blakherna", Vector3(bl.x, IstGeo.h(bl.x, bl.y) - 0.05, bl.y), byaw, 46.0, _make_blakherna)
+	# konma noktası: saray çatısının mahyası (katı kapak; ŞEHİR-3)
+	var bpp: Vector3 = (bit["holder"] as Node3D).transform * Vector3(0, 20.0, -21.0)
+	_pad(bpp, "Konma_blakherna")
+	bit["perch"] = bpp
 	quest2["BLAKHERNA"] = {"p": Vector3(bl.x, IstGeo.h(bl.x, bl.y) + 26.0, bl.y), "r": 34.0}
 	var cand: Array = []
 	# Sabit engeller: Ayasofya, Blakherna Sarayı, oyun alanları (hub alanı Romanos'tan sonra eklenir)
 	cand.append({"id": "ayasofya", "w": aw, "w0": aw, "r": 40.0 * AYA_K * 0.8, "sabit": true, "prio": 3, "tur": "anit"})
-	cand.append({"id": "blakherna", "w": bl, "w0": bl, "r": 22.0, "sabit": true, "prio": 3, "tur": "anit"})
+	# saray + avlu sura yaslı, şehre doğru 44 m: engel dairesi gövdenin ortasında
+	cand.append({"id": "blakherna", "w": bl + bin * 22.0, "w0": bl + bin * 22.0, "r": 27.0, "sabit": true, "prio": 3, "tur": "anit"})
 	var mr := _meydan_rect()
 	cand.append({"id": "oyun_meydan", "w": mr.get_center(), "w0": mr.get_center(), "r": mr.size.length() * 0.42, "sabit": true, "prio": 3, "tur": ""})
 	for e: Dictionary in catalog_all():
@@ -1615,6 +1778,8 @@ func _place_v2() -> void:
 		pl["e"] = e
 		pl["tur"] = tur
 		pl["w"] = Vector2((pl["pos"] as Vector3).x, (pl["pos"] as Vector3).z)
+		if MANASTIR.has(id):
+			pl["r"] = (MANASTIR[id] as Vector2).length() + 1.0
 		pl["prio"] = 3 if id in SABIT_UNLU else (2 if (id in UNLU or data.get("gorev", false) or tur == "kapi") else 1)
 		# Hub (Romanos'un iç yanı) sabit engel
 		if id == "romanos":
@@ -1649,6 +1814,13 @@ func _place_v2() -> void:
 		add_child(holder)
 		var it := {"id": id, "script": e["script"], "pos": p, "yaw": pl["yaw"], "k": pl["k"], "r": pl["r"],
 			"have": [null, null, null], "holder": holder, "data": e["data"], "mod": mod, "r1": R1_V2}
+		if MANASTIR.has(id):
+			# manastır avlusu evlerin taban damgasına girsin (IstSokak gercek_olcu × k'den damgalar)
+			var mv: Vector2 = MANASTIR[id]
+			var dd: Dictionary = (e["data"] as Dictionary).duplicate()
+			var go: Vector3 = dd.get("gercek_olcu", Vector3(30, 20, 30))
+			dd["gercek_olcu"] = Vector3(mv.x * 2.0 / float(pl["k"]), go.y, mv.y * 2.0 / float(pl["k"]))
+			it["data"] = dd
 		if pl.has("glen"):
 			# Sur kapısı: modülün kapı koşusu kısaltılmış boyla (komşu kapılarla üst üste binmesin; kesit 1:1). Taban,
 			# sur dilimleri gibi hat boyunca yedi örneğin ortancası (hendek yanına taşan örnekler kapıyı gömmesin/alçaltmasın)
@@ -1680,6 +1852,43 @@ func _place_v2() -> void:
 		items.append(it)
 		_build(it, 2)
 		_perch_pad(it)
+
+	# Ayasofya meydanı oyun alanı: döşeme, kenar taşı, çınarlar, tezgâhlar, çeşme (orta alan boş; ŞEHİR-3)
+	var mr2 := _meydan_rect()
+	var mc := mr2.get_center()
+	var my := IstGeo.h(mc.x, mc.y)
+	IstGeo.duzle(mc, mr2.size.length() * 0.5, my, 6.0)
+	_v2_item("meydan_aya", Vector3(mc.x, my - 0.02, mc.y), 0.0, mr2.size.length() * 0.5,
+		func(nd: Node3D, lod: int) -> void: ESER.meydan(nd, lod, mr2.size.x, mr2.size.y))
+	# Hub (mektup bölümünün şehri): zemini düzlenir (arazi ağı sonra kurulur)
+	var hx := hub_xf()
+	if hx != Transform3D():
+		var hc := hx * Vector3(0, 0, -10)
+		IstGeo.duzle(Vector2(hc.x, hc.z), 48.0, hx.origin.y, 10.0)
+		# Hub şehri tek katmanlı öğe (kendi uzaklık katmanları var); BAĞLAMA bölümde (7b) alanı temizlerken kalkar
+		var hit := _v2_item_tek("hub_sehir", hx.origin, 50.0, func(nd: Node3D, _lod: int) -> void:
+			var t0 := Time.get_ticks_msec()
+			ByzCity.far_hub(nd, Transform3D.IDENTITY)
+			stats["hub_ms"] = Time.get_ticks_msec() - t0)
+		hit["data"] = {}
+
+
+## Tek katmanlı öğe: kurucusu bir kez (açılışta) çalışır, kendi uzaklık katmanlarını ve çarpışmasını kendisi kurar
+## (ByzCity.far_hub); akış ona lod 0/1 kurmaz, pişirmez, çarpışmasını sökmez.
+func _v2_item_tek(id: String, p: Vector3, r: float, make: Callable) -> Dictionary:
+	var holder := Node3D.new()
+	holder.name = "Ist_" + id
+	holder.position = p
+	add_child(holder)
+	var it := {"id": id, "pos": p, "yaw": 0.0, "k": 1.0, "r": r, "have": [null, null, null], "holder": holder,
+		"data": {}, "mod": "v2", "make": make, "r1": R1_V2, "tek": true, "want": 2}
+	items.append(it)
+	var n := Node3D.new()
+	n.name = "L2"
+	holder.add_child(n)
+	make.call(n, 2)
+	it["have"][2] = n
+	return it
 
 
 func _pad(p: Vector3, nm: String) -> void:
@@ -1723,6 +1932,8 @@ func _hat_far_add(it: Dictionary) -> void:
 		var xf := Transform3D(Basis(Vector3.UP, float(it["yaw"])), p - cen)
 		for si in mi.mesh.get_surface_count():
 			(_hat_far[ck] as SurfaceTool).append_from(mi.mesh, si, xf)
+		# mazgal dişleri (uzak silüet; kalite notu 11)
+		stats["mazgal_uzak"] = int(stats.get("mazgal_uzak", 0)) + ESER.mazgal(_hat_far[ck], mi.mesh, xf, 6.0)
 		if _hat_mat == null:
 			_hat_mat = mi.material_override if mi.material_override else mi.mesh.surface_get_material(0)
 	holder.free()
@@ -1760,8 +1971,8 @@ func _hat_far_commit() -> void:
 	for ck: Vector2i in _hat_far:
 		var mi := MeshInstance3D.new()
 		mi.mesh = _acik(( _hat_far[ck] as SurfaceTool).commit(), 1.3)
-		if _hat_mat:
-			mi.material_override = _hat_mat
+		# şeritli taş malzemesi (tuğla bantları dünya yüksekliğinden; kalite notu 11)
+		mi.material_override = ESER.sur_uzak_mat()
 		mi.position = Vector3((ck.x + 0.5) * HAT_CELL, 0, (ck.y + 0.5) * HAT_CELL)
 		mi.visibility_range_begin = HAT_BEGIN
 		mi.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
@@ -1811,40 +2022,9 @@ func _make_aya(n: Node3D, lod: int) -> void:
 
 
 func _make_blakherna(n: Node3D, lod: int) -> void:
-	var merl: Array = []
-	var emit := func(kind: String, size: Vector3, pos: Vector3, col: Color, pattern: String, solid: bool, tag: String) -> void:
-		match kind:
-			"merl":
-				if lod == 0:
-					Props.box(n, size, pos, col)
-			"glass":
-				Props.box(n, size, pos, col).material_override = Props.mat(Color("ffc070"), 2.2 if gece else 0.6, false, "", false)
-			"dark":
-				Props.box(n, size, pos, col)
-			_:
-				if solid and lod == 0:
-					var b := Props.solid(n, size, pos, Color.WHITE)
-					Props.set_pattern(b, col, pattern)
-				else:
-					Props.box(n, size, pos, col)
-	Blachernae.shell_parts(emit, "palace")
-	# Kabuğun üstü (havadan bakış: düz kutu kalmasın): kiremit beşik çatı, kulelerde mazgallı teras ve piramit külah,
-	# arka cephede pencere sırası
-	var tile := Color("b4532f")
-	Props.prism(n, Vector3(10.8, 3.4, 26.8), Vector3(0, 16.0 + 1.7, -21.0), tile, Vector3(0, 90, 0))
-	Props.box(n, Vector3(26.4, 0.35, 10.4), Vector3(0, 16.1, -21.0), Color("a8583a"))
-	for ox: float in [-14.4, 14.4]:
-		Props.prism(n, Vector3(5.4, 3.0, 5.4), Vector3(ox, 20.0 + 1.5, -20.0), tile.darkened(0.1), Vector3.ZERO)
-		if lod == 0:
-			for k in 4:
-				for sd: float in [-1.0, 1.0]:
-					Props.box(n, Vector3(0.7, 0.8, 0.5), Vector3(ox - 1.9 + k * 1.27, 20.4, -20.0 + sd * 2.3), Color("cdbd9e"))
-	if lod <= 1:
-		for row in 2:
-			for k in 6:
-				Props.box(n, Vector3(1.4, 2.0, 0.08), Vector3(-10.0 + k * 4.0, 7.6 + row * 4.6, -26.04), Color("1c1814"))
-		Props.cyl(n, 0.12, 2.2, Vector3(0, 20.2, -21.0), Color("d8b040"), Vector3.ZERO, 6)
-		Props.box(n, Vector3(1.2, 0.14, 0.14), Vector3(0, 20.7, -21.0), Color("d8b040"))
+	# Blakherna Sarayı (ŞEHİR-3): bölümün düz kutu kabuğu yerine saray gibi kurulur (Tekfur Sarayı dili: üç kat, kemerli
+	# pencere sıraları, revak, balkon, kırma çatı, yan kuleler, şehir yanında avlu): scripts/world/ist/sehir_eser.gd
+	ESER.palace(n, lod, gece)
 
 
 # ---------------------------------------------------------------- uzun hatlar
@@ -2030,6 +2210,26 @@ func oyun_alanlari() -> Array:
 	return _oyun
 
 
+## Hub'ın (Romanos Kapısı'nın iç yanı; Bölüm 6b, 7b, 10h, 12b, 23, 24) ByzCity "walls" parçasının yerel → dünya dönüşümü.
+## BAĞLAMA ile aynı kural (IstBaglama: v2 yalnız ötelenir, dönmez): bölümün çapası (ByzCity yerel HUB_ORTA = (−4, −13))
+## oyun alanının ortasında; eksenler dünya eksenleri. Uçuşta görülen hub ile bölümde oynanan hub aynı yerde ve aynı.
+const HUB_ORTA := Vector2(-4.0, -13.0)
+var _hub_xf := Transform3D()
+
+func hub_xf() -> Transform3D:
+	if _hub_xf != Transform3D():
+		return _hub_xf
+	var ar := oyun_alanlari()
+	if ar.size() < 2:
+		return _hub_xf
+	var c: Vector2 = (ar[0] as Rect2).get_center()
+	var o := Vector3(c.x - HUB_ORTA.x, 0.0, c.y - HUB_ORTA.y)
+	var g := o + Vector3(0, 0, -10)
+	o.y = IstGeo.h(g.x, g.z)
+	_hub_xf = Transform3D(Basis.IDENTITY, o)
+	return _hub_xf
+
+
 ## Ayasofya meydanı oyun alanı (24, 25, 26, 31o): Ayasofya'nın batısında (narteks önü), 55 × 50 m
 static func _meydan_rect() -> Rect2:
 	var aw := IstGeo.w2(0, 0)
@@ -2080,6 +2280,8 @@ func _hat_piece(ad: String, kur: String, mid: Vector2, d: Vector2, L: float, see
 		var drop := lo - dip + 0.4
 		make = func(n: Node3D, lod: int) -> void:
 			inner.call(n, lod)
+			if not IstSurlar._ic(0.0) or not IstMk._ic(0.0):
+				return
 			var fy := -drop * 0.5 + 0.05
 			if lod == 0:
 				Props.set_pattern(Props.solid(n, Vector3(L, drop, tk), Vector3(0, fy, 0), Color.WHITE), Color("b8a888"), "ashlar")
@@ -2091,6 +2293,7 @@ func _hat_piece(ad: String, kur: String, mid: Vector2, d: Vector2, L: float, see
 		var o := _out(d, mid, ad)
 		pos -= Vector3(o.x, 0, o.y) * 2.3
 	var it := _v2_item("%s_%d" % [ad, seed], pos, yaw, L * 0.5 + 6.0, make, {}, true)
+	it["mk"] = kur == "marmara"
 	it["hat"] = ad
 	it["len"] = L
 	it["walk"] = lo - 0.05 + _walk_h(kur)
@@ -2563,7 +2766,7 @@ func _layers2(g0: Dictionary, g1: Dictionary, g2: Dictionary) -> void:
 		var mi := MeshInstance3D.new()
 		mi.mesh = st.commit()
 		if mat:
-			mi.material_override = mat
+			mi.material_override = _cizgisiz_of(mat)
 		mi.position = cen
 		mi.visibility_range_begin = MID
 		mi.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
@@ -2581,8 +2784,10 @@ func _layers2(g0: Dictionary, g1: Dictionary, g2: Dictionary) -> void:
 			var mm := _mm(m1, g1[ck][key])
 			mm.visibility_range_begin = NEAR
 			mm.visibility_range_end = MID * 0.5
+			_cizgisiz(mm)
 		var mi := _merge_groups(g1[ck], 1, cen)
 		if mi:
+			_cizgisiz(mi)
 			mi.visibility_range_begin = NEAR
 			mi.visibility_range_end = MID
 	for ck: Vector2i in g0:
@@ -2739,8 +2944,13 @@ static func flight_data_v2(world: Node3D = null) -> Dictionary:
 			p = (by["ayasofya"]["perch_aya"] as Vector3) + Vector3(0.0, 0.5, 0.0)
 		elif fe[i] != "" and by.has(fe[i]):
 			var it: Dictionary = by[fe[i]]
-			# Konma noktası varsa (çarpışmalı yüzey, ISTKONMA ile sınanır) onun üstü; yoksa en yüksek köşe
-			p = (it["perch"] as Vector3) + Vector3(0, 0.6, 0) if it.has("perch") else s._tepe_nokta(it, 0.6)
+			# Konma noktası varsa (çarpışmalı yüzey, ISTKONMA ile sınanır) onun üstü; yoksa en yüksek köşenin üstüne
+			# katı bir konma kapağı konur (ŞEHİR-3: Bozdoğan/Blakherna formu görsel bir parçanın ucunda havada kalıyordu)
+			if not it.has("perch"):
+				var tp: Vector3 = s._tepe_nokta(it, 0.3)
+				s._pad(tp, "Konma_form_" + String(fe[i]))
+				it["perch"] = tp
+			p = (it["perch"] as Vector3) + Vector3(0, 0.6, 0)
 		elif i == 9:
 			# Kız Kulesi adacığı (Damalis): adacığın zemini
 			var kq := IstGeo.ll(41.0211, 29.0041)
@@ -2750,6 +2960,10 @@ static func flight_data_v2(world: Node3D = null) -> Dictionary:
 			var u := IstGeo.w2(2900.0, 1900.0)
 			p = Vector3(u.x, IstGeo.h(u.x, u.y) + 0.6, u.y)
 		if p != Vector3.INF:
+			if i == 9 or i == 11:
+				# karşı kıyı: arazi çarpışması yalnız oyuncunun çevresinde akıyor; formun altında katı kapak
+				if not s.has_node("Konma_form_%d" % i):
+					s._pad(p - Vector3(0, 0.6, 0), "Konma_form_%d" % i)
 			forms.append([i + 1, g.call(p)])
 	var perches: Array = []
 	if by.has("ayasofya"):
