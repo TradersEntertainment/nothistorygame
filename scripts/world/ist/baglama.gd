@@ -25,6 +25,7 @@ static var dunya: IstDunya
 static var kok: SiegeField
 ## Ölçümler (rapor): v2 kurulum süresi (ms)
 static var kurulum_ms := 0.0
+static var _ordu_suzulen := 0
 
 const BOLUMLER := [7, 11]
 const BOLGELER := ["camp", "byz_walls"]
@@ -228,6 +229,16 @@ static func build(parent: Node3D, region_name: String, keep_local: Array, _night
 			return -0.35 if zr.has_point(Vector2(x, z)) else -0.05)
 	var temiz: Rect2 = TEMIZ[region_name]
 	IstGeo.dislanan = [temiz]
+	# Ordugâh planı (önbellekli; IstOrdugah.attach aynı diziyi okur) kurulmadan süzülür: bölümün alanındaki öğeler çıkar
+	_ordu_suzulen = 0
+	var oscr = load("res://scripts/world/ist/ordugah.gd") if ResourceLoader.exists("res://scripts/world/ist/ordugah.gd") else null
+	if oscr != null:
+		var pl: Array = oscr.call("plan")
+		for i in range(pl.size() - 1, -1, -1):
+			var it: Dictionary = pl[i]
+			if temiz.grow(float(it.get("r", 0.0))).has_point(it["pos"] as Vector2):
+				pl.remove_at(i)
+				_ordu_suzulen += 1
 	# Kabuk
 	var f := SiegeField.new()
 	f.name = "IstBaglamaKok"
@@ -271,32 +282,7 @@ static func _temizle(region_name: String, alan: Rect2) -> void:
 					(h as Node).queue_free()
 				s.items.remove_at(i)
 				n_s += 1
-	var n_o := 0
-	if dunya != null:
-		var oy := dunya.find_child("IstOrdugah", true, false)
-		if oy != null and oy.get("items") is Array:
-			var eski: Array = oy.get("items")
-			var yeni: Array = []
-			for it: Dictionary in eski:
-				var p: Vector2 = it["pos"]
-				var r := float(it.get("r", 0.0))
-				if alan.grow(r).has_point(p):
-					n_o += 1
-					var h = it.get("host")
-					if h is Node and is_instance_valid(h):
-						(h as Node).queue_free()
-					continue
-				it["lod"] = -1
-				it["host"] = null
-				yeni.append(it)
-			# kuyruk eski dizinleri tutar: baştan kurulur (kur() kuyruğa lod 2 ekler)
-			for it: Dictionary in eski:
-				var h = it.get("host")
-				if h is Node and is_instance_valid(h) and not (it in yeni):
-					(h as Node).queue_free()
-			oy.set("items", [])
-			oy.set("kuyruk", [])
-			oy.call("kur", yeni)
+	var n_o := _ordu_suzulen        # ordugâh planı kurulmadan süzüldü (build)
 	print("ISTBAGLAMA temizle bolge=%s sehir_oge=%d ordugah_oge=%d" % [region_name, n_s, n_o])
 
 
