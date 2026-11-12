@@ -1,0 +1,47 @@
+t3 | AUTOTEST PASS chapter=3 variant= outcome=3.3 sadakat=50 rel=0 baski=0 machine=free | yasak_satir=0
+t3tea | AUTOTEST PASS chapter=3 variant=tea outcome=3.5 sadakat=50 rel=1 baski=0 machine=free | yasak_satir=0
+t3confiscate | AUTOTEST PASS chapter=3 variant=confiscate outcome=3.1 sadakat=70 rel=-2 baski=0 machine=confiscated | yasak_satir=0
+t3seal | AUTOTEST PASS chapter=3 variant=seal outcome=3.2 sadakat=60 rel=-1 baski=0 machine=sealed | yasak_satir=0
+t3lie | AUTOTEST PASS chapter=3 variant=lie outcome=3.4 sadakat=60 rel=0 baski=1 machine=free | yasak_satir=0
+t3radio | AUTOTEST PASS chapter=3 variant=radio outcome=3.3 sadakat=55 rel=0 baski=0 machine=free | yasak_satir=0
+t4 | AUTOTEST PASS chapter=4 variant= branch=4a start=tent outcome=4a.1 catches=0 fez=true telsiz=3 | yasak_satir=0
+t4item | AUTOTEST PASS chapter=4 variant=item branch=4a start=tent outcome=4a.2 catches=0 fez=true telsiz=3 | yasak_satir=0
+t4caught | AUTOTEST PASS chapter=4 variant=caught branch=4a start=tent outcome=4a.3 catches=2 fez=true telsiz=3 | yasak_satir=0
+t4market | AUTOTEST PASS chapter=4 variant=market branch=4a start=market outcome=4a.1 catches=0 fez=true telsiz=3 | yasak_satir=0
+t4chain | AUTOTEST PASS chapter=4 variant=chain branch=4b start=chain outcome=4b.1 catches=0 fez=true telsiz=3 | yasak_satir=0
+t4nofez | AUTOTEST PASS chapter=4 variant=nofez branch=4b start=chain outcome=4b.2 catches=0 fez=false telsiz=3 | yasak_satir=0
+t4fall | AUTOTEST PASS chapter=4 variant=fall branch=4b start=chain outcome=4b.3 catches=0 fez=true telsiz=3 | yasak_satir=0
+t4fez | AUTOTEST PASS chapter=4 variant=fez branch=4a start=tent outcome=4a.2 catches=0 fez=true telsiz=3 | yasak_satir=0
+t4wet | AUTOTEST PASS chapter=4 variant=wet branch=4a start=tent outcome=4a.2 catches=0 fez=true telsiz=3 | yasak_satir=0
+t6 | AUTOTEST PASS chapter=6 variant= branch=6a outcome=6a.1 paradox=10 mistakes=0 telsiz=4 | yasak_satir=0
+t6byz | AUTOTEST PASS chapter=6 variant=byz branch=6b outcome=6b.1 paradox=0 mistakes=0 telsiz=4 | yasak_satir=0
+t7 | AUTOTEST PASS chapter=7 variant= branch=7a outcome=7.1 extras=[] sadakat=60 baski=0 hour=13.5 | yasak_satir=0
+t7tea | AUTOTEST PASS chapter=7 variant=tea branch=7a outcome=7.1 extras=["7.4"] sadakat=50 baski=0 hour=13.0 | yasak_satir=0
+t7lost | AUTOTEST PASS chapter=7 variant=lost branch=7a outcome=7.2 extras=[] sadakat=55 baski=2 hour=12.5 | yasak_satir=0
+t7form | AUTOTEST PASS chapter=7 variant=form branch=7a outcome=7.1 extras=[] sadakat=70 baski=0 hour=14.0 | yasak_satir=0
+t7wall | AUTOTEST PASS chapter=7 variant=wall branch=7a outcome=7.1 extras=["7.5a"] sadakat=30 baski=0 hour=13.5 | yasak_satir=0
+t7wallkeep | AUTOTEST PASS chapter=7 variant=wallkeep branch=7a outcome=7.1 extras=["7.5b"] sadakat=50 baski=0 hour=13.5 | yasak_satir=0
+t7byz | AUTOTEST PASS chapter=7 variant=byz branch=7b outcome=7.1 extras=["7.3"] sadakat=50 baski=0 hour=14.0 | yasak_satir=0
+t7byzniko | AUTOTEST PASS chapter=7 variant=byzniko branch=7b outcome=7.2 extras=[] sadakat=55 baski=2 hour=12.5 | yasak_satir=0
+t7byzcell | AUTOTEST PASS chapter=7 variant=byzcell branch=7b outcome=7.1 extras=[] sadakat=60 baski=0 hour=13.0 | yasak_satir=0
+t7fez | AUTOTEST PASS chapter=7 variant=fez branch=7a outcome=7.1 extras=["7.4"] sadakat=50 baski=0 hour=13.0 | yasak_satir=0
+t8 | AUTOTEST PASS chapter=8 variant= machine=free outcome=8.1 parts=["capacitor", "antenna", "tape"] catches=0 called=false solid=0 | yasak_satir=0
+t8y | AUTOTEST PASS chapter=8y variant= outcome=8Y.1 id=seal warnings=0 lowered=0 radio=true | yasak_satir=0
+t9 | AUTOTEST PASS chapter=9 variant= route=A byz=false offers=["kadri", "miner"] outcome=9.1 telsiz=4 merak=0 | yasak_satir=0
+t10 | AUTOTEST PASS chapter=10 variant= outcome=10O.1 tries=0 envoy=false merak=0 | yasak_satir=0
+t11 | AUTOTEST PASS chapter=11 variant= outcome=11.2 persuade=25 sadakat=55 baski=1 | yasak_satir=0
+t11arrest | AUTOTEST PASS chapter=11 variant=arrest outcome=11.1 persuade=25 sadakat=55 baski=0 | yasak_satir=0
+t11escape | AUTOTEST PASS chapter=11 variant=escape outcome=11.2 persuade=70 sadakat=55 baski=1 | yasak_satir=0
+t11persuade | AUTOTEST PASS chapter=11 variant=persuade outcome=11.2 persuade=70 sadakat=55 baski=1 | yasak_satir=0
+t11help | AUTOTEST PASS chapter=11 variant=help outcome=11.3 persuade=25 sadakat=55 baski=0 | yasak_satir=0
+t11helpwall | AUTOTEST PASS chapter=11 variant=helpwall outcome=11.3 persuade=25 sadakat=30 baski=0 | yasak_satir=0
+t11lost | AUTOTEST PASS chapter=11 variant=lost outcome=11.4 persuade=25 sadakat=55 baski=0 | yasak_satir=0
+t11fired | AUTOTEST PASS chapter=11 variant=fired outcome=11.4 persuade=25 sadakat=55 baski=4 | yasak_satir=0
+t11hikmet | AUTOTEST PASS chapter=11 variant=hikmet outcome=11.5 persuade=25 sadakat=55 baski=0 | yasak_satir=0
+t11niko | AUTOTEST PASS chapter=11 variant=niko outcome=11.6 persuade=25 sadakat=55 baski=0 | yasak_satir=0
+t24 | AUTOTEST PASS chapter=24 variant= outcome=24.1 stumbles=0 kid=true niko=false steadied=0 kid_t=0.2 | yasak_satir=0
+t25 | AUTOTEST PASS chapter=25 variant= outcome=25.1 caught=0 candle=true tezkire=false marco=false | yasak_satir=0
+t26 | AUTOTEST PASS chapter=26 variant= outcome=26.1 water=3 repaired=3 cleared=2 world= gun=3/4 gunner=3/3 | yasak_satir=0
+t27 | AUTOTEST PASS chapter=27 variant= outcome=27.1 stayed=3 brig=false genoese=false | yasak_satir=0
+t30 | AUTOTEST PASS chapter=30 variant= outcome=30.1 gun=3/4 pushed=2 boarders=0 duel=true rifle=4 | yasak_satir=0
+t31o | AUTOTEST PASS chapter=31o variant= outcome=31O.1 house=true(163) falls=0 signs=3 wrong=0 sun=true lashes=3 miss=0 scaff=true mats=8/8 err=1 | yasak_satir=0

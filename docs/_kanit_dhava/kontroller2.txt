@@ -1,0 +1,8 @@
+## parse_check
+PARSECHECK PASS scripts=248
+## flight_check
+FLIGHTCHECK PASS
+## world_check
+WORLDCHECK PASS regions=13 landmarks=35
+CITYCHECK FAIL: 31o: CityLife kare süresi 3149 µs > 1500
+CITYCHECK FAIL
