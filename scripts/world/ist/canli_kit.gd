@@ -906,13 +906,13 @@ static func bld_ekle(b: Object, tur: String, pos: Vector3, yaw_deg: float, opt :
 	var lod: int = int(opt.get("lod", -1))
 	var xf := Transform3D(Basis(Vector3.UP, deg_to_rad(yaw_deg)), pos)
 	var pattern: String = b.get("pattern")
-	if pattern == "" and lod >= 0:
+	if pattern == "":
 		var acc := birikim_ob(tur, 1 if lod < 0 else lod, opt)
 		var bv: PackedVector3Array = b.get("v")
 		var bn: PackedVector3Array = b.get("n")
 		var bc: PackedColorArray = b.get("c")
-		# Bld malzemesinin albedo çarpanı (0,78) canlının rengini soldurmasın
-		var k := 1.0 / 0.78
+		# Bld malzemesinin albedo çarpanı (0,78) çevresiyle aynı tonu verir (oyun karesinde telafi parlak duruyordu)
+		var k := 1.0
 		var nb := xf.basis
 		for i in acc.v.size():
 			bv.append(xf * acc.v[i])
