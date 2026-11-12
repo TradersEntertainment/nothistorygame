@@ -1,0 +1,49 @@
+56.2 PACE say t=49.9 len=9.7 key=D44B_N_01
+66.1 PACE say t=59.8 len=8.8 key=D44B_T_01
+75.1 PACE say t=68.8 len=8.3 key=D44B_E_01
+84.0 PACE say t=77.8 len=6.3 key=D44B_E_02
+90.4 PACE say t=84.1 len=5.8 key=D44B_T_02
+96.7 PACE say t=90.4 len=2.7 key=D44B_E_03
+99.8 PACE say t=93.5 len=5.9 key=D44B_T_ROPE
+114.1 LIGHTS44 3 descend Cistern/BeamLight0,Cistern/BeamLight1,Cistern/WellMouthLight
+125.4 PACE say t=119.1 len=7.4 key=D44B_T_DOWN
+141.3 PACE say t=135.0 len=6.0 key=D44B_T_DARK
+155.3 LIGHTS44 5 awe @Camera3D@83/@SpotLight3D@33579,@Camera3D@83/@OmniLight3D@33580,Cistern/BeamLight0,Cistern/BeamLight1,Cistern/WellMouthLight
+158.9 PACE say t=152.7 len=3.3 key=D44B_T_AWE_PHONE
+162.4 PACE say t=156.1 len=7.4 key=D44B_T_AWE_2
+170.0 PACE say t=163.7 len=6.8 key=D44B_N_AWE
+177.0 PACE say t=170.7 len=9.4 key=D44B_T_AWE_3
+191.3 PACE say t=185.0 len=5.3 key=D44B_T_BOAT
+252.6 PACE say t=246.3 len=4.5 key=D44B_Y_01
+257.4 PACE say t=251.2 len=3.3 key=D44B_T_Y_01
+261.1 PACE say t=254.8 len=9.6 key=D44B_Y_02
+271.0 PACE say t=264.7 len=2.7 key=D44B_T_Y_02
+273.9 PACE say t=267.6 len=8.9 key=D44B_Y_03
+283.1 PACE say t=276.8 len=4.6 key=D44B_T_Y_03
+287.7 PACE say t=281.5 len=8.1 key=D44B_Y_04
+295.9 PACE say t=289.6 len=4.8 key=D44B_T_Y_04
+300.9 PACE say t=294.6 len=5.5 key=D44B_Y_05
+310.1 PACE say t=303.8 len=5.1 key=D44B_Y_QUAKE
+315.5 PACE say t=309.2 len=9.6 key=D44B_N_QUAKE
+328.4 PACE say t=322.1 len=8.5 key=D44B_Y_TORCH
+337.0 PACE say t=330.7 len=8.6 key=D44B_T_LEAD
+345.6 PACE say t=339.3 len=6.5 key=D44B_Y_LAMP
+383.9 LIGHTS44 6 quake @Camera3D@83/@SpotLight3D@33579,@Camera3D@83/@OmniLight3D@33580,Cistern/BeamLight0,Cistern/BeamLight1,Cistern/SunBurst,Lamp/Light
+450.4 LIGHTS44 7 medusa @Camera3D@83/@SpotLight3D@33579,@Camera3D@83/@OmniLight3D@33580,Cistern/BeamLight0,Cistern/BeamLight1,Cistern/SunBurst,Cistern/MedusaLamp,Lamp/Light
+450.4 PACE say t=444.1 len=9.3 key=D44B_Y_STONE
+460.0 PACE say t=453.8 len=8.8 key=D44B_T_MEDUSA_1
+468.8 PACE say t=462.6 len=8.1 key=D44B_T_MEDUSA_2
+477.1 PACE say t=470.9 len=7.1 key=D44B_Y_MEDUSA
+484.7 PACE say t=478.4 len=10.3 key=D44B_N_MEDUSA
+503.4 PACE say t=497.1 len=6.6 key=D44B_T_CLIMB
+523.5 PACE say t=517.2 len=4.5 key=D44B_E_BACK
+525.4 HITCHSUM scene=chapter44b frames=1200 over25=1200 over50=1200 max=6068.4ms p99=996.8ms median=376.5ms
+528.3 PACE say t=522.0 len=5.2 key=D44B_Y_BUCKET
+534.2 PACE say t=527.9 len=4.0 key=D44B_TW_DJINN
+549.8 PACE say t=543.5 len=5.7 key=D44B_T_KEEP
+555.6 PACE say t=549.4 len=5.6 key=D44B_E_KEEP
+561.8 PACE say t=555.5 len=5.1 key=D44B_Y_KEEP
+567.6 PACE say t=561.3 len=8.4 key=D44B_N_KEEP
+576.5 PACE say t=570.2 len=9.7 key=D44B_T_END
+625.3 AUTOTEST PASS chapter=44 variant= outcome=44.1 light=phone battery=3.6 bumps=4 hits=0 rescued=false kid=false
+626.4 HITCHSUM scene=chapter44b frames=65 over25=65 over50=65 max=1173.5ms p99=1173.5ms median=990.6ms

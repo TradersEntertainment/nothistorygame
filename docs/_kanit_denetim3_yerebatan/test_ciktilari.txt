@@ -1,0 +1,24 @@
+== autotest 44b std
+AUTOTEST PASS chapter=44 variant= outcome=44.1 light=phone battery=4.1 bumps=0 hits=0 rescued=false kid=false
+exit=0
+== autotest 44b blab
+AUTOTEST PASS chapter=44 variant=blab outcome=44.2 light=phone battery=3.8 bumps=0 hits=0 rescued=false kid=false
+exit=0
+== autotest 44b dark
+AUTOTEST PASS chapter=44 variant=dark outcome=44.1 light=remote battery=0.0 bumps=0 hits=0 rescued=true kid=false
+exit=0
+== autotest 44b kid
+AUTOTEST PASS chapter=44 variant=kid outcome=44.1 light=phone battery=3.4 bumps=1 hits=0 rescued=false kid=true
+exit=0
+== autotest 44b nophone
+AUTOTEST PASS chapter=44 variant=nophone outcome=44.1 light=remote battery=14.0 bumps=2 hits=0 rescued=false kid=false
+exit=0
+== autotest 44b hit
+AUTOTEST PASS chapter=44 variant=hit outcome=44.1 light=phone battery=2.6 bumps=3 hits=3 rescued=false kid=false
+exit=0
+== python denetimleri
+check_keys: anahtar: 6888 sorun: 0
+check_speakers: SPEAKERCHECK PASS
+check_voice_rules: VOICERULES PASS (9783 anahtar, 0 sorun)
+check_inline: INLINECHECK PASS (723 anahtar, 0 sorun)
+parse_check: PARSECHECK PASS scripts=250
