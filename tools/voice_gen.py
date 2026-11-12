@@ -279,6 +279,8 @@ def tts(voice, text, out, model, tone=""):
     if model.startswith("eleven_v3"):
         # v3: ton etiketi metnin başına; stability yalnız 0 (yaratıcı) / 0.5 (doğal) / 1 (sabit)
         st = min((0.0, 0.5, 1.0), key=lambda x: abs(x - voice.get("v3_stability", voice.get("stability", 0.5))))
+        if tone.startswith(("[shouting", "[calling out")):
+            st = 0.0      # bağırma/seslenme: serbest okuma (dengeli ayarda bağırış düzleşiyor)
         body = {"text": (tone + " " + text).strip() if tone else text, "model_id": model,
                 "voice_settings": {"stability": st},
                 # Dili zorla: yoksa Türkçe "Ok!" (ok, okçu) İngilizce "okay" diye okunabiliyor
@@ -443,6 +445,8 @@ def tone_of(r, cast):
     if r.get("ton_elle") == "1" and r.get("ton"):
         return r["ton"]
     mode = resolve(cast, r["konusmaci"]).get("ton_mode", "")
+    if mode.startswith("rol:"):
+        return role_tone(clean(r.get("tr", "")), mode[4:], r.get("ton", ""))
     if mode:
         return scene_tone(clean(r.get("tr", "")), mode)
     return r.get("ton", "") or resolve(cast, r["konusmaci"]).get("ton", "")
@@ -770,60 +774,53 @@ VARIANTS = [
 # Rol okuması (0.99.119, sahibin "spiker gibi olmasın, oradan bir asker gibi hissettirsin" notu): Tolga dışındaki
 # karakterlerin çoğu etiketsiz, düz okunuyordu. cast.json'da "ton_mode": "rol:<ad>" olan karakterin her repliği,
 # replik tipine göre o role uygun yönlendirmeyle okunur. Sahibi sahne içinde dinleyip seçti (Azap, Asker, İmparator).
-def role_tone(text, role):
+ROL_UZAK = {
+    "asker": "[shouting from a distance] [hoarse]", "asker_genc": "[shouting from a distance] [nervous]",
+    "cavus": "[shouting orders across the field] [hoarse]", "nobetci": "[shouting from a distance]",
+    "asker_neseli": "[shouting down from the wall] [hearty]", "usta": "[shouting over the noise]",
+    "komutan": "[shouting commands over battle noise]", "saray": "[calling out firmly] [raised voice]",
+    "saray_genc": "[calling out sharply] [raised voice]", "telsiz": "[raised voice] [alarmed]", "amca": "[calling out] [excited]",
+}
+ROL_SESLEN = {   # orta: yakında ama sesini yükseltir (acele, uyarı)
+    "asker": "[calling out] [urgent]", "asker_genc": "[calling out] [nervous]", "cavus": "[barking an order]",
+    "nobetci": "[calling out] [startled]", "asker_neseli": "[calling out] [hearty]", "usta": "[calling out] [impatient]",
+    "komutan": "[commanding] [urgent]", "saray": "[firm] [restrained]", "saray_genc": "[sharp] [commanding]",
+    "telsiz": "[dry] [alarmed but restrained]", "amca": "[excited] [chuckles]",
+}
+ROL_YAKIN = {    # (ünlem, soru, üç nokta, düz): yanındakine konuşur; bağırmaz
+    "asker": ("[firm] [gruff]", "[gruff] [suspicious]", "[tired] [muttering]", "[low rough voice] [talking to someone right next to him]"),
+    "asker_genc": ("[nervous] [quick]", "[curious] [shy]", "[homesick] [quiet]", "[quiet] [earnest] [talking to someone next to him]"),
+    "cavus": ("[stern] [gruff]", "[gruff] [impatient]", "[sighs] [weary]", "[gruff] [low voice] [dry humour]"),
+    "nobetci": ("[startled] [normal speaking voice]", "[confused] [slow]", "[bored] [trailing off]", "[bored] [casual] [talking to his friend]"),
+    "asker_neseli": ("[amused] [rough voice]", "[gruff] [teasing]", "[tired] [muttering]", "[hearty] [rough voice] [talking to a friend]"),
+    "usta": ("[gruff] [proud]", "[gruff] [impatient]", "[grumbling]", "[gruff] [busy] [talking while working]"),
+    "komutan": ("[firm] [low voice]", "[sly] [amused]", "[weary] [low voice]", "[confident] [low voice] [talking to someone right next to him]"),
+    "saray": ("[firm] [quiet]", "[weary] [gentle]", "[weary] [sighs]", "[weary] [quiet] [speaking to a trusted man]"),
+    "saray_genc": ("[sharp] [quiet authority]", "[curious] [amused] [quiet authority]", "[thoughtful]", "[calm] [quiet authority] [speaking to someone standing before him]"),
+    "telsiz": ("[dry] [exasperated]", "[deadpan] [sceptical]", "[deadpan] [sighs]", "[deadpan] [dry] [talking quietly into a radio]"),
+    "amca": ("[excited] [warm]", "[curious] [warm]", "[thinking aloud]", "[warm] [chatty] [old man talking to his nephew]"),
+}
+
+
+def role_tone(text, role, taban=""):
+    """Rol okuması. MESAFE repliğin kendi ton etiketinden gelir (VOICE_MAP 'ton' sütunu; sahibin notu: "uzağa bağırması
+    lazım, yakındayken normal konuşması lazım"): [shouting]/[screaming] = uzaktan, gerçekten bağırır; [excited] + ünlem =
+    yakında seslenir; [whispers] = fısıltı; etiketsiz = yanındakine NORMAL sesle konuşur (ünlem olsa da bağırmaz).
+    Öbür duygu etiketleri ([sad], [tired], [hesitant]…) korunur ve rolün yakın okumasına eklenir."""
+    if role not in ROL_YAKIN:
+        return taban
+    etiketler = re.findall(r"\[[^\]]+\]", taban or "")
+    if any(t in ("[shouting]", "[screaming]") for t in etiketler):
+        return ROL_UZAK[role]
     ex, q, dots = "!" in text, "?" in text, ("…" in text or "..." in text)
-    short = len(text) < 60
-    if role == "asker":
-        if ex: return "[shouting] [hoarse]" if short else "[shouting over the noise] [rough voice]"
-        if q: return "[gruff] [suspicious]"
-        if dots: return "[tired] [muttering]"
-        return "[tired] [low rough voice] [talking to a comrade next to him]"
-    if role == "asker_genc":
-        if ex: return "[shouting] [nervous]" if short else "[calling out] [breathless]"
-        if q: return "[curious] [shy]"
-        if dots: return "[homesick] [quiet]"
-        return "[quiet] [earnest] [talking to someone next to him]"
-    if role == "cavus":
-        if ex: return "[barking orders] [hoarse]"
-        if q: return "[gruff] [impatient]"
-        if dots: return "[sighs] [weary]"
-        return "[gruff] [low voice] [dry humour]"
-    if role == "nobetci":
-        if ex: return "[startled] [calling out]"
-        if q: return "[confused] [slow]"
-        if dots: return "[bored] [trailing off]"
-        return "[bored] [casual] [talking to his friend]"
-    if role == "asker_neseli":
-        if ex: return "[booming] [laughing]" if short else "[shouting] [hearty]"
-        if q: return "[gruff] [teasing]"
-        if dots: return "[tired] [muttering]"
-        return "[hearty] [rough voice] [talking to a friend]"
-    if role == "usta":
-        if ex: return "[shouting orders] [proud]"
-        if q: return "[gruff] [impatient]"
-        if dots: return "[grumbling]"
-        return "[gruff] [busy] [talking while working]"
-    if role == "komutan":
-        if ex: return "[commanding] [urgent]"
-        if q: return "[sly] [amused]"
-        if dots: return "[weary] [low voice]"
-        return "[confident] [low voice] [talking to someone right next to him]"
-    if role == "saray":
-        if ex: return "[firm] [restrained]"
-        if q: return "[weary] [gentle]"
-        if dots: return "[weary] [sighs]"
-        return "[weary] [quiet] [speaking to a trusted man]"
-    if role == "telsiz":
-        if ex: return "[dry] [alarmed but restrained]"
-        if q: return "[deadpan] [sceptical]"
-        if dots: return "[deadpan] [sighs]"
-        return "[deadpan] [dry] [talking quietly into a radio]"
-    if role == "amca":
-        if ex: return "[excited] [chuckles]"
-        if q: return "[curious] [warm]"
-        if dots: return "[thinking aloud]"
-        return "[warm] [chatty] [old man talking to his nephew]"
-    return ""
+    if "[excited]" in etiketler and ex:
+        return ROL_SESLEN[role]
+    y = ROL_YAKIN[role]
+    t = y[0] if ex else y[1] if q else y[2] if dots else y[3]
+    if "[whispers]" in etiketler:
+        return "[whispers] " + t
+    duygu = " ".join(e for e in etiketler if e not in ("[excited]",))
+    return (duygu + " " + t).strip()
 
 
 def scene_tone(text, mode):
