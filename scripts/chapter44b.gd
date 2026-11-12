@@ -219,8 +219,7 @@ func _build_yard() -> void:
 	_yard_well = Node3D.new()
 	_yard_well.position = WELL
 	yard.add_child(_yard_well)
-	Props.cyl(_yard_well, 0.75, 0.8, Vector3(0, 0.4, 0), Color("9a8e78"), Vector3.ZERO, 12)
-	Props.cyl(_yard_well, 0.58, 0.05, Vector3(0, 0.81, 0), Color("0a0a0a"), Vector3.ZERO, 12)
+	_yard_well.add_child(_well_curb())
 	var curb := StaticBody3D.new()
 	var cs := CollisionShape3D.new()
 	var cyl := CylinderShape3D.new()
@@ -234,7 +233,7 @@ func _build_yard() -> void:
 		Props.cyl(_yard_well, 0.06, 2.0, Vector3(sx, 1.0, 0), Color("6a4a2c"), Vector3.ZERO, 6)
 	Props.cyl(_yard_well, 0.05, 1.6, Vector3(0, 1.95, 0), Color("6a4a2c"), Vector3(0, 0, 90), 6)
 	Props.cyl(_yard_well, 0.12, 0.12, Vector3(0, 1.95, 0), Color("4a3422"), Vector3(0, 0, 90), 10)
-	var rope := Props.cyl(_yard_well, 0.016, 1.6, Vector3(0.1, 1.15, 0), Color("8a7450"), Vector3.ZERO, 5)
+	var rope := Props.cyl(_yard_well, 0.016, 3.4, Vector3(0.1, 0.25, 0), Color("8a7450"), Vector3.ZERO, 5)          # makaradan kuyunun karanlığına iner
 	rope.name = "Rope"
 	Props.interactable(yard, "well", Vector3(1.8, 1.6, 1.8), WELL + Vector3(0, 0.8, 0))
 	eudokia = Person.new({"coat": Color("4a4a5a"), "pants": Color("3a3028"), "robe": Color("3a3a48"), "skirt": true,
@@ -250,6 +249,62 @@ func _build_yard() -> void:
 		kid.position = EUDOKIA_AT + Vector3(0.9, 0, 0.4)
 		add_child(kid)
 		neighbors.append(kid)
+
+
+## Avlu kuyusunun bileziği: yuvarlak (20 kenar), üst kenarı iki yandan pahlı; ağzın içinde örme taş iç duvar aşağı doğru
+## kararır (düz siyah disk "boyalı" okunuyordu: denetim 3 k01). Dipte 3 m aşağıda koyu su parıltısı.
+func _well_curb() -> MeshInstance3D:
+	var st := SurfaceTool.new()
+	st.begin(Mesh.PRIMITIVE_TRIANGLES)
+	var rings := [[-0.02, 0.76], [0.74, 0.76], [0.8, 0.71], [0.81, 0.64], [0.78, 0.59], [0.7, 0.57], [-0.5, 0.57], [-1.6, 0.56], [-3.0, 0.55], [-3.0, 0.0]]
+	var n := 20
+	for k in rings.size() - 1:
+		var ya: float = rings[k][0]
+		var ra: float = rings[k][1]
+		var yb: float = rings[k + 1][0]
+		var rb: float = rings[k + 1][1]
+		for s in n:
+			var a0 := TAU * s / n
+			var a1 := TAU * (s + 1) / n
+			var q := [Vector3(sin(a0) * ra, ya, cos(a0) * ra), Vector3(sin(a1) * ra, ya, cos(a1) * ra),
+				Vector3(sin(a1) * rb, yb, cos(a1) * rb), Vector3(sin(a0) * rb, yb, cos(a0) * rb)]
+			for i: int in [0, 1, 2, 0, 2, 3]:
+				st.set_uv(Vector2(float(s) / n, 0.0))
+				st.add_vertex(q[i])
+	st.generate_normals()
+	var mi := MeshInstance3D.new()
+	mi.mesh = st.commit()
+	var sh := Shader.new()
+	sh.code = """
+shader_type spatial;
+render_mode cull_disabled;
+varying vec3 lp;
+float h(vec2 p) { return fract(sin(dot(p, vec2(12.9898, 78.233))) * 43758.5453); }
+void vertex() { lp = VERTEX; }
+void fragment() {
+	float r = length(lp.xz);
+	float a = atan(lp.x, lp.z);
+	// Örme taş: dışta açık kireç taşı, ağzın içinde sıra sıra taş, harç derzi; aşağı indikçe ıslak ve karanlık
+	float row = floor(lp.y / 0.2);
+	float x = a * r / 0.34 + mod(row, 2.0) * 0.5;
+	vec2 f = vec2(fract(x), fract(lp.y / 0.2));
+	float joint = 1.0 - smoothstep(0.03, 0.08, f.x) * smoothstep(0.97, 0.92, f.x) * smoothstep(0.04, 0.1, f.y) * smoothstep(0.96, 0.9, f.y);
+	vec3 stone = mix(vec3(0.62, 0.57, 0.48), vec3(0.72, 0.67, 0.56), h(vec2(floor(x), row)));
+	vec3 col = mix(stone, stone * 0.62, joint * 0.8);
+	float depth = clamp(-lp.y / 2.2, 0.0, 1.0);
+	float inner = 1.0 - smoothstep(0.585, 0.6, r);
+	col = mix(col, col * vec3(0.5, 0.52, 0.48), inner * smoothstep(0.75, 0.3, lp.y));
+	col *= 1.0 - 0.95 * depth;
+	if (lp.y < -2.95) { col = vec3(0.02, 0.03, 0.035); }
+	ALBEDO = col;
+	ROUGHNESS = 0.9 - 0.4 * depth;
+}
+"""
+	var m := ShaderMaterial.new()
+	m.shader = sh
+	mi.material_override = m
+	mi.name = "Curb"
+	return mi
 
 
 # ================================================================ akış
@@ -378,12 +433,15 @@ func _descend() -> void:
 	player.shake(0.25)
 	var fall := create_tween()
 	fall.tween_property(player, "global_position:y", CisternLevel.WATER_Y - 1.25, 0.05 if GameState.autotest else 0.75).set_ease(Tween.EASE_IN)
+	# Düşüşün itişiyle 1,4 m güneyde yüzeye çıkar: tonoz gözünün tam ortasında ön köşe sütunları ekranın iki kenarında
+	# dev, bulanık levhalar gibi kalıyordu (denetim 3, k05/k07); şimdi 4,6 m ötede, gövde ve su çizgisi okunur
+	fall.parallel().tween_property(player, "global_position:z", fw.z + 1.4, 0.05 if GameState.autotest else 0.75)
 	await fall.finished
 	Audio.sfx("splash", -2.0, 0.8)
 	_set_ambient(0.0)
 	cis.call("beam_visible", fw_well, true)
-	cis.call("ring", fw + Vector3(1.2, 0, 0.4), 1.6, 1.8)
-	cis.call("ring", fw + Vector3(-0.8, 0, 1.3), 1.2, 1.5)
+	cis.call("ring", fw + Vector3(1.2, 0, 1.8), 1.6, 1.8)          # halkalar düşülen yerin (1,4 m güneyde) çevresinde
+	cis.call("ring", fw + Vector3(-0.8, 0, 2.7), 1.2, 1.5)
 	_soft_wet(2.6)
 	player.camera.rotation.x = deg_to_rad(4.0)
 	player.floating = true
@@ -1135,7 +1193,11 @@ func _climb() -> void:
 	if not GameState.autotest or GameState.pace:
 		var tw := create_tween()
 		tw.tween_property(player, "global_position:y", floor_y + 0.05, CLIMB_SECS).set_trans(Tween.TRANS_SINE)
-		tw.parallel().tween_property(player.camera, "rotation:x", deg_to_rad(20.0), CLIMB_SECS * 0.5).set_delay(CLIMB_SECS * 0.5)
+		tw.parallel().tween_property(player.camera, "rotation:x", deg_to_rad(20.0), CLIMB_SECS * 0.3).set_delay(CLIMB_SECS * 0.5)
+		# Ağızdan çıkarken bakış kilerin içine açılır (raflar, fıçı, kapı: denetim 3 k22 kadrajı); bileziğin içine ve
+		# tavana değil
+		tw.parallel().tween_property(player.camera, "rotation:x", deg_to_rad(-8.0), CLIMB_SECS * 0.2).set_delay(CLIMB_SECS * 0.8).set_trans(Tween.TRANS_SINE)
+		tw.parallel().tween_property(player, "rotation:y", stand_yaw, CLIMB_SECS * 0.25).set_delay(CLIMB_SECS * 0.75).set_trans(Tween.TRANS_SINE)
 		for k in int(CLIMB_SECS / 0.45):
 			get_tree().create_timer(0.45 * k, false).timeout.connect(Audio.sfx.bind("footstep_stone_%d" % (k % 4 + 1), -10.0, 0.8))
 		get_tree().create_timer(CLIMB_SECS * 0.6, false).timeout.connect(cis.call.bind("cellar_on", true, true))
@@ -1186,32 +1248,41 @@ func _yard_end() -> void:
 	var arc := func(deg: float, r: float) -> Vector3:
 		return pp + Vector3(cos(deg_to_rad(deg)), 0, sin(deg_to_rad(deg))) * r
 	player.face(arc.call(64.0, 3.2) + Vector3(0, 1.2, 0))
-	eudokia.position = arc.call(56.0, 3.4)
+	# Doğal küme (cetvelle dizilmiş sıra değil: denetim 3 k23): Eudokia önde, Yakovos kuyunun bileziğine yaslanmış,
+	# bir komşu avlu kapısının eşiğinde (geride), öteki duvar dibinde yana dönük; aralar ve uzaklıklar farklı
+	eudokia.position = arc.call(60.0, 3.0)
 	eudokia.look_target = player
 	if kid:
 		kid.position = arc.call(47.0, 2.2)      # oyuncunun önünde, kuyunun solunda (Eudokia'nın önünde değil, yanında)
 		kid.look_target = player
 	yakovos = _make_yakovos()
-	yakovos.position = arc.call(69.0, 3.0)
+	yakovos.position = WELL + (pp - WELL).normalized().rotated(Vector3.UP, 0.55) * 1.02
 	yakovos.look_target = player
 	add_child(yakovos)
 	neighbors.append(yakovos)
+	var tw_spots := [YARD + Vector3(0.35, 0, 3.45), arc.call(84.0, 3.6)]
 	for k in 2:
 		var n := Person.new({"coat": [Color("6a5040"), Color("5a6a7a")][k], "pants": Color("3a3028"), "hat": "none" if k == 0 else "hood",
 			"beard": k == 0, "mustache": true, "hair": Color("3a2a1e")})
 		n.set_meta("spk", "SPK_TOWNSMAN")
-		n.position = arc.call(82.0 + k * 13.0, 3.5)
-		n.look_target = player
+		n.position = tw_spots[k]
+		n.look_target = eudokia
 		add_child(n)
 		neighbors.append(n)
+		_yard_tw.append(n)
 	await hud.fade_to(0.0, 0.8)
 	eudokia.talking = true
+	_heed(eudokia)
 	await hud.say("SPK_EUDOKIA", "D44B_E_BACK")
 	eudokia.talking = false
+	_heed(yakovos)
 	await hud.say("SPK_YAKOVOS", "D44B_Y_BUCKET_KID" if _kid_on else "D44B_Y_BUCKET")
 	if _kid_on:
+		_heed(kid)
 		await hud.say("SPK_KID", "D44B_K_HORSE")
+	_heed(_yard_tw[0])
 	await hud.say("SPK_TOWNSMAN", "D44B_TW_DJINN")
+	_heed(player)
 	var pick := 1 if GameState.autotest and GameState.autotest_variant == "blab" else 0
 	var c := await hud.choose(["UI_CH44_KEEP", "UI_CH44_BLAB"], 0.0, pick)
 	if c == 1:
@@ -1231,6 +1302,16 @@ func _yard_end() -> void:
 	await hud.say("SPK_TOLGA", "D44B_T_END")
 	GameState.flags["cistern_rescued"] = rescued
 	Siege.record(44, _photo, "SIEGE_NOTE_44_%s" % _outcome.split(".")[1])
+
+
+var _yard_tw: Array[Person] = []
+
+
+## Avluda dinleyenler konuşana döner (konuşan Tolga'ya bakar)
+func _heed(who: Node3D) -> void:
+	for n in neighbors:
+		if is_instance_valid(n) and n is Person:
+			(n as Person).look_target = player if n == who else who
 
 
 # ================================================================ kayıklar
@@ -1292,20 +1373,162 @@ func _place_yakovos() -> void:
 	yakovos.equip("spear")
 
 
-## Küçük kayık: gövde (LowPoly.hull), oturak tahtaları, dipte su, pruvada halka
+## Küçük sandal: bordası kavisli, iki ucu sivri gövde (bindirme kaplama: her sıra tahta ayrı tonda), içinde eğri
+## kaburgalar, küpeşte, üç oturak, küpeştede ıskarmozlar, kıçta kova ve pruvada yığılı ağ (denetim 3: düz yüzeyli kama).
+## Tek ağ (köşe rengi) + dipteki su. Ölçüler eski gövdeyle aynı (kürek yuvaları, oturak, meşale yerinde kalır).
 func _skiff(col: Color) -> Node3D:
 	var g := Node3D.new()
-	g.add_child(LowPoly.hull([
-		{"z": -1.9, "w": 0.08, "top": 0.75, "bottom": 0.35},
-		{"z": -0.9, "w": 0.6, "top": 0.62, "bottom": 0.0},
-		{"z": 0.4, "w": 0.66, "top": 0.6, "bottom": -0.05},
-		{"z": 1.7, "w": 0.3, "top": 0.68, "bottom": 0.25},
-	], col, col.lightened(0.15), 0.5))
-	for z: float in [-0.9, 0.35, 1.2]:
-		Props.box(g, Vector3(1.1, 0.05, 0.24), Vector3(0, 0.38, z), Color("8a6a44"))
-	var bilge := Props.box(g, Vector3(0.9, 0.02, 2.4), Vector3(0, 0.08, 0), Color("2a3028"))
+	var mi := MeshInstance3D.new()
+	mi.mesh = _hull_mesh(col)
+	var m := StandardMaterial3D.new()
+	m.vertex_color_use_as_albedo = true
+	m.roughness = 0.85
+	m.cull_mode = BaseMaterial3D.CULL_DISABLED
+	mi.material_override = m
+	mi.name = "Hull"
+	g.add_child(mi)
+	# Dipteki su: gövdenin dibine uyan yassı elips (isabette yükselir)
+	var bilge := MeshInstance3D.new()
+	var bst := SurfaceTool.new()
+	bst.begin(Mesh.PRIMITIVE_TRIANGLES)
+	for s in 16:
+		var a0 := TAU * s / 16.0
+		var a1 := TAU * (s + 1) / 16.0
+		var p0 := Vector3(sin(a0) * 0.31, 0.01, cos(a0) * 1.2)
+		var p1 := Vector3(sin(a1) * 0.31, 0.01, cos(a1) * 1.2)
+		for v: Vector3 in [Vector3(0, 0.01, 0), p0, p1, p0, p1, p1 - Vector3(0, 0.02, 0), p0, p1 - Vector3(0, 0.02, 0), p0 - Vector3(0, 0.02, 0)]:
+			bst.add_vertex(v)
+	bst.generate_normals()
+	bilge.mesh = bst.commit()
+	bilge.position = Vector3(0, 0.08, 0)
+	var bm := StandardMaterial3D.new()
+	bm.albedo_color = Color("2a3028")
+	bm.roughness = 0.2
+	bm.cull_mode = BaseMaterial3D.CULL_DISABLED
+	bilge.material_override = bm
 	bilge.name = "Bilge"
+	g.add_child(bilge)
 	return g
+
+
+static var _hulls := {}
+
+
+static func _hull_mesh(col: Color) -> Mesh:
+	var key := col.to_html()
+	if _hulls.has(key):
+		return _hulls[key]
+	var st := SurfaceTool.new()
+	st.begin(Mesh.PRIMITIVE_TRIANGLES)
+	var ns := 16          # boy istasyonları
+	var nr := 10          # kesit dilimleri (sancak küpeşteden iskele küpeşteye)
+	var z0 := -1.9
+	var z1 := 1.75
+	var sec := func(z: float, s: float, inset: float) -> Vector3:
+		var u := (z - (z0 + z1) * 0.5) / ((z1 - z0) * 0.5)
+		var w := 0.66 * pow(maxf(0.0, 1.0 - u * u), 0.55) + 0.03
+		var top := 0.6 + 0.14 * u * u
+		var bot := -0.05 + 0.42 * pow(absf(u), 3.0)
+		var a := s * PI * 0.5
+		var x := (w - inset) * sin(a)
+		var y := bot + inset + (top - bot - inset) * (1.0 - cos(a))
+		return Vector3(x, minf(y, top), z)
+	var strake := [col, col.lightened(0.08), col.darkened(0.06), col.lightened(0.03), col.darkened(0.1)]
+	# Dış ve iç kaplama
+	for side in 2:
+		var inset := 0.0 if side == 0 else 0.035
+		for i in ns:
+			var za := lerpf(z0, z1, float(i) / ns)
+			var zb := lerpf(z0, z1, float(i + 1) / ns)
+			for j in nr:
+				var sa := float(j) / nr * 2.0 - 1.0
+				var sb := float(j + 1) / nr * 2.0 - 1.0
+				var q := [sec.call(za, sa, inset), sec.call(zb, sa, inset), sec.call(zb, sb, inset), sec.call(za, sb, inset)]
+				var cc: Color = strake[absi(j - nr / 2) % strake.size()]
+				if side == 1:
+					cc = cc.darkened(0.18)
+				# Bindirme: her tahta sırasının alt kenarı hafif koyu
+				for k: int in ([0, 2, 1, 0, 3, 2] if side == 0 else [0, 1, 2, 0, 2, 3]):
+					var edge := (k == 0 or k == 1)
+					st.set_color(cc.darkened(0.12) if edge and side == 0 else cc)
+					st.add_vertex(q[k])
+	# Küpeşte: dış ve iç kaplamanın üst kenarını kapatan kalın kenar
+	var rail := col.lightened(0.18)
+	for sgn: float in [-1.0, 1.0]:
+		for i in ns:
+			var za := lerpf(z0, z1, float(i) / ns)
+			var zb := lerpf(z0, z1, float(i + 1) / ns)
+			var oa: Vector3 = sec.call(za, sgn, 0.0)
+			var ob: Vector3 = sec.call(zb, sgn, 0.0)
+			var ia: Vector3 = sec.call(za, sgn, 0.05)
+			var ib: Vector3 = sec.call(zb, sgn, 0.05)
+			var up := Vector3(0, 0.035, 0)
+			for tri: Array in [[oa + up, ob + up, ib + up], [oa + up, ib + up, ia + up], [oa, ob, ob + up], [oa, ob + up, oa + up]]:
+				for v: Vector3 in tri:
+					st.set_color(rail)
+					st.add_vertex(v)
+	# Kaburgalar: içte, her iki istasyonda bir eğri şerit
+	var rib := col.darkened(0.3)
+	for i in range(2, ns - 1, 2):
+		var z := lerpf(z0, z1, float(i) / ns)
+		for j in nr:
+			var sa := float(j) / nr * 2.0 - 1.0
+			var sb := float(j + 1) / nr * 2.0 - 1.0
+			var a: Vector3 = sec.call(z, sa, 0.06)
+			var b: Vector3 = sec.call(z, sb, 0.06)
+			var d := Vector3(0, 0, 0.025)
+			for tri: Array in [[a - d, b - d, b + d], [a - d, b + d, a + d]]:
+				for v: Vector3 in tri:
+					st.set_color(rib)
+					st.add_vertex(v)
+	# Oturaklar (tahta), ıskarmozlar (küpeştede kürek yuvası: iki ahşap çivi), kova, ağ yığını
+	var wood := Color("8a6a44")
+	for z: float in [-0.9, 0.35, 1.2]:
+		var hw: float = (sec.call(z, 1.0, 0.05) as Vector3).x
+		_hbox(st, Vector3(0, 0.38, z), Vector3(hw * 2.0, 0.05, 0.24), wood)
+	for sx: float in [-1.0, 1.0]:
+		var rp: Vector3 = sec.call(0.05, sx, 0.0)
+		for dz: float in [-0.07, 0.07]:
+			_hcyl(st, Vector3(rp.x, rp.y + 0.03, dz + 0.05), 0.018, 0.14, Color("5a4028"), 6)
+	_hcyl(st, Vector3(0.18, 0.06, 1.35), 0.13, 0.24, Color("6a4a2c"), 10, 0.16)          # kova
+	_hcyl(st, Vector3(0.18, 0.3, 1.35), 0.165, 0.025, Color("3a3a3a"), 10)
+	# Ağ: pruvada yumru yığın (koyu kahve, düğüm lekeli)
+	var rng := RandomNumberGenerator.new()
+	rng.seed = 77
+	var nc := Vector3(0.0, 0.12, -1.25)
+	for b in 7:
+		var o := nc + Vector3(rng.randf_range(-0.22, 0.22), rng.randf_range(0.0, 0.06), rng.randf_range(-0.2, 0.2))
+		_hcyl(st, o, rng.randf_range(0.12, 0.18), rng.randf_range(0.08, 0.14), Color("4a4030").lerp(Color("6a5a40"), rng.randf()), 8, 0.05)
+	st.generate_normals()
+	var mesh := st.commit()
+	_hulls[key] = mesh
+	return mesh
+
+
+static func _hbox(st: SurfaceTool, c: Vector3, s: Vector3, col: Color) -> void:
+	var h := s * 0.5
+	var v := [Vector3(-h.x, -h.y, -h.z), Vector3(h.x, -h.y, -h.z), Vector3(h.x, h.y, -h.z), Vector3(-h.x, h.y, -h.z),
+		Vector3(-h.x, -h.y, h.z), Vector3(h.x, -h.y, h.z), Vector3(h.x, h.y, h.z), Vector3(-h.x, h.y, h.z)]
+	for f: Array in [[0, 3, 2, 1], [4, 5, 6, 7], [0, 4, 7, 3], [1, 2, 6, 5], [3, 7, 6, 2], [0, 1, 5, 4]]:
+		for k: int in [0, 1, 2, 0, 2, 3]:
+			st.set_color(col)
+			st.add_vertex(c + v[f[k]])
+
+
+## Dik silindir / kesik koni (r alt, r2 üst; r2 < 0: aynı), üst kapaklı
+static func _hcyl(st: SurfaceTool, c: Vector3, r: float, hgt: float, col: Color, n: int, r2 := -1.0) -> void:
+	var rt := r if r2 < 0.0 else r2
+	for s in n:
+		var a0 := TAU * s / n
+		var a1 := TAU * (s + 1) / n
+		var p00 := c + Vector3(sin(a0) * r, 0, cos(a0) * r)
+		var p01 := c + Vector3(sin(a1) * r, 0, cos(a1) * r)
+		var p10 := c + Vector3(sin(a0) * rt, hgt, cos(a0) * rt)
+		var p11 := c + Vector3(sin(a1) * rt, hgt, cos(a1) * rt)
+		var top := c + Vector3(0, hgt, 0)
+		for v: Vector3 in [p00, p01, p11, p00, p11, p10, p10, p11, top]:
+			st.set_color(col)
+			st.add_vertex(v)
 
 
 func _boat_place(p: Vector3, yaw: float) -> void:
@@ -1693,27 +1916,39 @@ func _bricks_tick(delta: float) -> void:
 
 ## Düşüş: tuğla ve harç parçaları tonozdan suya (büyükte iri tonoz parçası), suya çarpınca sütun gibi sıçrayan su,
 ## iç içe halkalar, kayık sallanır; küçük parça kayığa HIT_RADIUS'tan yakın düşerse isabet.
+## Parçalar hacimli: köşesi kırık tuğla parçaları (3 boy), harç topakları, büyükte harçlı tuğla öbeği; dönerek düşer,
+## yanında kırıntı yağar; suya çarpınca damlalar sıçrar (denetim 3: kâğıt gibi ince levhalar).
 func _brick_fall(b: Dictionary) -> void:
 	var at: Vector3 = b["at"]
 	var big: bool = b["big"]
 	var top := CisternLevel.IMPOST_Y + CisternLevel.VAULT_H - 0.5
 	var dur := 0.85
 	for k in int(b["n"]):
-		var sz := Vector3(0.34, 0.06, 0.22) * 1.6
-		if big:
-			sz = Vector3(randf_range(0.5, 0.9), randf_range(0.22, 0.4), randf_range(0.35, 0.6)) if k < 3 else Vector3(0.4, 0.1, 0.3)
-		var piece := Props.box(self, sz, Vector3(at.x + randf_range(-0.5, 0.5), top + k * 0.25, at.z + randf_range(-0.5, 0.5)),
-			Color("8a5034").lerp(Color("b8a890"), randf() * 0.5), Vector3(randf() * 90, randf() * 180, randf() * 90))
+		var kind := k % 4
+		if big and k < 3:
+			kind = 4
+		var piece := MeshInstance3D.new()
+		piece.mesh = _chunk_mesh(kind)
+		piece.material_override = _chunk_mat()
+		piece.position = Vector3(at.x + randf_range(-0.5, 0.5), top + k * 0.25, at.z + randf_range(-0.5, 0.5))
+		piece.rotation = Vector3(randf() * TAU, randf() * TAU, randf() * TAU)
+		piece.scale = Vector3.ONE * _vis_rng.randf_range(0.85, 1.2)
+		add_child(piece)
+		var spin := Vector3(_vis_rng.randf_range(4.0, 8.0), _vis_rng.randf_range(2.0, 5.0), _vis_rng.randf_range(3.0, 7.0))
+		if _vis_rng.randf() < 0.5:
+			spin.x = -spin.x
 		var tw := piece.create_tween()
 		tw.tween_property(piece, "position:y", CisternLevel.WATER_Y - 0.6, dur).set_delay(k * 0.05).set_ease(Tween.EASE_IN).set_trans(Tween.TRANS_QUAD)
-		tw.parallel().tween_property(piece, "rotation", piece.rotation + Vector3(2.0, 1.0, 1.5), dur)
+		tw.parallel().tween_property(piece, "rotation", piece.rotation + spin * (1.6 if kind == 4 else 1.0), dur)
 		tw.tween_callback(piece.queue_free)
+	_crumbs(Vector3(at.x, top, at.z), dur, big)
 	get_tree().create_timer(dur - 0.05, false).timeout.connect(func():
 		if cis == null:
 			return
 		Audio.sfx("splash", -1.0 if big else -7.0, 0.75 if big else 0.95)
 		cis.call("ring", at, 2.6 if big else 1.4, 1.7)
 		_splash_column(at, 2.4 if big else 1.3)
+		_droplets(at, big)
 		get_tree().create_timer(0.25, false).timeout.connect(func():
 			if cis:
 				cis.call("ring", at + Vector3(0.3, 0, -0.2), 1.3 if big else 0.7, 1.4))
@@ -1728,25 +1963,191 @@ func _brick_fall(b: Dictionary) -> void:
 			_hit())
 
 
-## Suya çarpan parçanın sıçrattığı su sütunu: dikine, yukarıda incelen parlak bir kart; yükselir, çöker
+var _vis_rng := RandomNumberGenerator.new()          # yalnız görsel çeşitlilik (oyun akışının rastgeleliğine dokunmaz)
+static var _chunks := {}
+static var _chunk_m: StandardMaterial3D
+static var _drop_m: StandardMaterial3D
+
+
+func _chunk_mat() -> StandardMaterial3D:
+	if _chunk_m == null:
+		_chunk_m = StandardMaterial3D.new()
+		_chunk_m.vertex_color_use_as_albedo = true
+		_chunk_m.roughness = 0.92
+	return _chunk_m
+
+
+## Düşen parçanın ağı (önbellekli). kind 0–2: tuğla parçası (üç boy; ince değil, 7–12 cm kalın, bir iki köşesi
+## kırık: köşe düzlemle kesilir), 3: harç topağı (yumru, yuvarlak), 4: harçla tutturulmuş tuğla öbeği (tonoz parçası).
+## Düz gölgelendirme: her yüz ayrı tonda, hacim okunur.
+static func _chunk_mesh(kind: int) -> Mesh:
+	if _chunks.has(kind):
+		return _chunks[kind]
+	var rng := RandomNumberGenerator.new()
+	rng.seed = 4401 + kind * 17
+	var half: Vector3 = [Vector3(0.17, 0.05, 0.11), Vector3(0.12, 0.045, 0.09), Vector3(0.21, 0.06, 0.13), Vector3(0.09, 0.07, 0.08), Vector3(0.34, 0.2, 0.24)][kind]
+	var n := 2 if kind != 4 else 3
+	# Kesme düzlemleri (kırık köşeler): köşeye yakın, içe dönük
+	var cuts: Array = []
+	if kind != 3:
+		for k in (2 if kind != 4 else 3):
+			var cn := Vector3(rng.randf_range(-1, 1), rng.randf_range(-1, 1), rng.randf_range(-1, 1)).sign()
+			if cn.x == 0.0: cn.x = 1.0
+			if cn.y == 0.0: cn.y = 1.0
+			if cn.z == 0.0: cn.z = 1.0
+			var nn := (cn * Vector3(1.0 / half.x, 1.0 / half.y, 1.0 / half.z)).normalized()
+			cuts.append([nn, (cn * half).dot(nn) * rng.randf_range(0.55, 0.75)])
+	var faces := [[Vector3(0, 0, 1), Vector3(1, 0, 0), Vector3(0, 1, 0)], [Vector3(0, 0, -1), Vector3(-1, 0, 0), Vector3(0, 1, 0)],
+		[Vector3(1, 0, 0), Vector3(0, 0, -1), Vector3(0, 1, 0)], [Vector3(-1, 0, 0), Vector3(0, 0, 1), Vector3(0, 1, 0)],
+		[Vector3(0, 1, 0), Vector3(1, 0, 0), Vector3(0, 0, -1)], [Vector3(0, -1, 0), Vector3(1, 0, 0), Vector3(0, 0, 1)]]
+	var brick := Color("9a5636").lerp(Color("b06a44"), rng.randf())
+	var mortar := Color("bdb4a0")
+	var st := SurfaceTool.new()
+	st.begin(Mesh.PRIMITIVE_TRIANGLES)
+	var memo := {}
+	for f: Array in faces:
+		var nrm: Vector3 = f[0]
+		var au: Vector3 = f[1]
+		var av: Vector3 = f[2]
+		var grid: Array = []
+		for j in n + 1:
+			var row: Array = []
+			for i in n + 1:
+				var s := nrm + au * (float(i) / n * 2.0 - 1.0) + av * (float(j) / n * 2.0 - 1.0)
+				var key := Vector3i(roundi(s.x * 8), roundi(s.y * 8), roundi(s.z * 8))
+				if not memo.has(key):
+					var p: Vector3
+					if kind == 3:
+						p = s.normalized() * half * rng.randf_range(0.75, 1.15)
+					else:
+						p = s * half + Vector3(rng.randf_range(-1, 1), rng.randf_range(-1, 1), rng.randf_range(-1, 1)) * half.y * 0.18
+						for cu: Array in cuts:
+							var d: float = p.dot(cu[0]) - float(cu[1])
+							if d > 0.0:
+								p -= (cu[0] as Vector3) * d
+					memo[key] = p
+				row.append(memo[key])
+			grid.append(row)
+		for j in n:
+			for i in n:
+				for tri: Array in [[grid[j][i], grid[j + 1][i + 1], grid[j][i + 1]], [grid[j][i], grid[j + 1][i], grid[j + 1][i + 1]]]:
+					var fn := ((tri[2] as Vector3) - (tri[0] as Vector3)).cross((tri[1] as Vector3) - (tri[0] as Vector3))
+					var mid: Vector3 = ((tri[0] as Vector3) + (tri[1] as Vector3) + (tri[2] as Vector3)) / 3.0
+					var col := brick
+					if kind == 3:
+						col = mortar.darkened(rng.randf_range(0.0, 0.15))
+					elif kind == 4:
+						# Öbek: üç sıra tuğla, aralarında harç bantları
+						var band := fposmod(mid.y + half.y, half.y * 2.0 / 3.0) / (half.y * 2.0 / 3.0)
+						col = mortar if band < 0.22 else brick.darkened(rng.randf_range(0.0, 0.12))
+					elif fn.normalized().y > 0.7 and nrm.y > 0.5:
+						col = brick.lerp(mortar, 0.55)           # üstte yapışık harç kabuğu
+					col = col.darkened(rng.randf_range(0.0, 0.1))
+					for v: Vector3 in tri:
+						st.set_color(col)
+						st.add_vertex(v)
+	st.generate_normals()
+	var m := st.commit()
+	_chunks[kind] = m
+	return m
+
+
+## Düşen parçanın yanında yağan kırıntı (küçük yumru parçacıklar)
+func _crumbs(at: Vector3, dur: float, big: bool) -> void:
+	var p := CPUParticles3D.new()
+	p.amount = 18 if big else 10
+	p.lifetime = dur + 0.3
+	p.one_shot = true
+	p.explosiveness = 0.55
+	p.emission_shape = CPUParticles3D.EMISSION_SHAPE_SPHERE
+	p.emission_sphere_radius = 0.6
+	p.direction = Vector3.DOWN
+	p.spread = 12.0
+	p.gravity = Vector3(0, -11.0, 0)
+	p.initial_velocity_min = 0.2
+	p.initial_velocity_max = 1.2
+	p.angular_velocity_min = -360.0
+	p.angular_velocity_max = 360.0
+	p.scale_amount_min = 0.25
+	p.scale_amount_max = 0.55
+	p.mesh = _chunk_mesh(3)
+	p.material_override = _chunk_mat()
+	p.visibility_aabb = AABB(Vector3(-2, -10, -2), Vector3(4, 11, 4))
+	add_child(p)
+	p.global_position = at
+	p.emitting = true
+	get_tree().create_timer(dur + 1.0, false).timeout.connect(p.queue_free)
+
+
+## Suya çarpışta sıçrayan damlalar (yumuşak yuvarlak zerreler, yukarı ve yanlara)
+func _droplets(at: Vector3, big: bool) -> void:
+	if _drop_m == null:
+		_drop_m = StandardMaterial3D.new()
+		_drop_m.shading_mode = BaseMaterial3D.SHADING_MODE_UNSHADED
+		_drop_m.transparency = BaseMaterial3D.TRANSPARENCY_ALPHA
+		_drop_m.albedo_color = Color(0.78, 0.86, 0.9, 0.7)
+		_drop_m.billboard_mode = BaseMaterial3D.BILLBOARD_ENABLED
+		var g := Gradient.new()
+		g.set_color(0, Color(1, 1, 1, 1))
+		g.set_color(1, Color(1, 1, 1, 0))
+		var gt := GradientTexture2D.new()
+		gt.gradient = g
+		gt.fill = GradientTexture2D.FILL_RADIAL
+		gt.fill_from = Vector2(0.5, 0.5)
+		gt.fill_to = Vector2(0.5, 0.0)
+		gt.width = 16
+		gt.height = 16
+		_drop_m.albedo_texture = gt
+		_drop_m.distance_fade_mode = BaseMaterial3D.DISTANCE_FADE_PIXEL_ALPHA
+		_drop_m.distance_fade_min_distance = 0.4
+		_drop_m.distance_fade_max_distance = 1.2
+	var p := CPUParticles3D.new()
+	p.amount = 40 if big else 22
+	p.lifetime = 1.0
+	p.one_shot = true
+	p.explosiveness = 0.9
+	p.emission_shape = CPUParticles3D.EMISSION_SHAPE_SPHERE
+	p.emission_sphere_radius = 0.3 if big else 0.18
+	p.direction = Vector3.UP
+	p.spread = 38.0
+	p.gravity = Vector3(0, -9.8, 0)
+	p.initial_velocity_min = 2.0
+	p.initial_velocity_max = 5.0 if big else 3.6
+	p.scale_amount_min = 0.6
+	p.scale_amount_max = 1.4
+	var q := QuadMesh.new()
+	q.size = Vector2(0.07, 0.07)
+	q.material = _drop_m
+	p.mesh = q
+	p.visibility_aabb = AABB(Vector3(-3, -1, -3), Vector3(6, 5, 6))
+	add_child(p)
+	p.global_position = Vector3(at.x, CisternLevel.WATER_Y + 0.05, at.z)
+	p.emitting = true
+	get_tree().create_timer(1.6, false).timeout.connect(p.queue_free)
+
+
+## Suya çarpan parçanın sıçrattığı su sütunu: dikine, yukarıda incelen parlak bir kart; yükselir, çöker.
+## Kenarları her yönde yumuşak (yatay degrade yalnız yanları siliyordu: suda sert kenarlı parlak dikdörtgen kalıyordu)
 func _splash_column(at: Vector3, h: float) -> void:
 	var mi := MeshInstance3D.new()
 	var q := QuadMesh.new()
 	q.size = Vector2(0.9, 1.0)
 	mi.mesh = q
 	var g := Gradient.new()
-	g.set_color(0, Color(1, 1, 1, 0))
+	g.set_color(0, Color(1, 1, 1, 1))
 	g.set_color(1, Color(1, 1, 1, 0))
-	g.add_point(0.5, Color(1, 1, 1, 1))
 	var gt := GradientTexture2D.new()
 	gt.gradient = g
+	gt.fill = GradientTexture2D.FILL_RADIAL
+	gt.fill_from = Vector2(0.5, 0.5)
+	gt.fill_to = Vector2(0.5, 0.0)
 	gt.width = 32
-	gt.height = 4
+	gt.height = 32
 	var m := StandardMaterial3D.new()
 	m.shading_mode = BaseMaterial3D.SHADING_MODE_UNSHADED
 	m.transparency = BaseMaterial3D.TRANSPARENCY_ALPHA
 	m.albedo_texture = gt
-	m.albedo_color = Color(0.8, 0.88, 0.92, 0.75)
+	m.albedo_color = Color(0.8, 0.88, 0.92, 0.6)
 	m.billboard_mode = BaseMaterial3D.BILLBOARD_FIXED_Y
 	m.cull_mode = BaseMaterial3D.CULL_DISABLED
 	mi.material_override = m
@@ -1757,8 +2158,8 @@ func _splash_column(at: Vector3, h: float) -> void:
 	var tw := mi.create_tween()
 	tw.tween_method(func(k: float):
 		mi.scale = Vector3(0.5 + 0.7 * k, maxf(0.05, h * sin(k * PI)), 1)
-		mi.global_position.y = CisternLevel.WATER_Y + mi.scale.y * 0.5
-		m.albedo_color.a = 0.75 * (1.0 - k * k), 0.0, 1.0, 0.9)
+		mi.global_position.y = CisternLevel.WATER_Y + mi.scale.y * 0.35
+		m.albedo_color.a = 0.6 * (1.0 - k * k), 0.0, 1.0, 0.9)
 	tw.tween_callback(mi.queue_free)
 
 
