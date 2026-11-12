@@ -444,10 +444,10 @@ static func _ag(tur: String) -> ArrayMesh:
 	match tur:
 		"ot":
 			# eğri yapraklı tutam: 6 yaprak, her biri 3 bölümlü kavisli şerit (dipte geniş, uçta sivri)
-			for i in 6:
-				var a := TAU * i / 6.0 + rng.randf_range(-0.4, 0.4)
+			for i in 5:
+				var a := TAU * i / 5.0 + rng.randf_range(-0.4, 0.4)
 				var d := Vector3(cos(a), 0, sin(a))
-				_yaprak(st, d * rng.randf_range(0.0, 0.05), d, rng.randf_range(0.2, 0.38), rng.randf_range(0.018, 0.028),
+				_yaprak(st, d * rng.randf_range(0.0, 0.05), d, rng.randf_range(0.2, 0.38), rng.randf_range(0.02, 0.03),
 					rng.randf_range(0.25, 0.6), Color(0.46, 0.52, 0.36), Color(0.86, 0.88, 0.7))
 		"papatya", "gelincik":
 			var tac := Color("f4f0e2") if tur == "papatya" else Color("c8321e")
@@ -467,7 +467,7 @@ static func _ag(tur: String) -> ArrayMesh:
 				var d := Vector3(cos(a), 0, sin(a))
 				_yaprak(st, d * 0.03, d, 0.12, 0.016, 0.5, Color(0.42, 0.5, 0.32), Color(0.62, 0.68, 0.45))
 		"tas":
-			_kure(st, Vector3.ZERO, Vector3(1.0, 0.55, 0.85), 7, 4, rng, Color(0.62, 0.6, 0.56), Color(0.4, 0.38, 0.35))
+			_kure(st, Vector3.ZERO, Vector3(1.0, 0.55, 0.85), 6, 3, rng, Color(0.62, 0.6, 0.56), Color(0.4, 0.38, 0.35))
 		"dal":
 			var p0 := Vector3(-0.35, 0.02, 0.0)
 			var p1 := Vector3(0.0, 0.035, 0.04)
@@ -700,8 +700,8 @@ class Ortu extends Node3D:
 			if h.is_empty():
 				continue
 			var dd := (Vector2(k - m)).length() * HUCRE
-			# uzaklığa göre seyrelme: 16 m'ye kadar tam, 48 m'de onda bir (sıra < pay)
-			var pay := 1.0 if dd < 16.0 else lerpf(0.35, 0.1, clampf((dd - 16.0) / 32.0, 0.0, 1.0))
+			# uzaklığa göre seyrelme: 13 m'ye kadar tam, 48 m'de %8 (sıra < pay)
+			var pay := 1.0 if dd < 13.0 else lerpf(0.3, 0.08, clampf((dd - 13.0) / 35.0, 0.0, 1.0))
 			for t: String in TURLER:
 				var a: PackedFloat32Array = h.get(t, PackedFloat32Array())
 				var tp := pay if t == "ot" else minf(1.0, pay * 2.5) if t != "birikinti" else 1.0
@@ -766,7 +766,7 @@ class Ortu extends Node3D:
 				var cig := maxf(as_.r, as_.g)
 				if kar_var:
 					otp = 0.0
-				var deneme := int(round((2.0 + 7.0 * smoothstep(0.35, 0.7, obek.y)) * otp * yog * (1.0 - cig)))
+				var deneme := int(round((1.2 + 4.8 * smoothstep(0.35, 0.7, obek.y)) * otp * yog * (1.0 - cig)))
 				for q in deneme:
 					var x := cx + rng.randf_range(-1.0, 1.0)
 					var z := cz + rng.randf_range(-1.0, 1.0)
