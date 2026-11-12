@@ -527,7 +527,7 @@ func _fall(dest: Vector3, roll: float, up_at: Vector3, secs := 0.55) -> void:
 	player.shake(0.9)
 	Audio.sfx("land_thud", -2.0, 0.85)
 	var t := 0.05 if Stage.fast() else secs
-	dest = _safe(player.global_position, dest)
+	dest = _land_spot(player.global_position, dest, up_at)
 	var tw := player.create_tween().set_parallel()
 	tw.tween_property(player, "global_position", dest, t).set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_IN)
 	tw.tween_property(player, "eye_height", 0.42, t).set_ease(Tween.EASE_IN)
@@ -539,6 +539,29 @@ func _fall(dest: Vector3, roll: float, up_at: Vector3, secs := 0.55) -> void:
 	await tw2.finished
 	_look_at = up_at
 	player.face(up_at)
+
+
+## İniş noktası: duvarın içinde değil ve yerden hükümdarın yüzü görünüyor (sütun, kapı kanadı arada kalmasın: 26'da
+## Ayasofya'nın kapısı). Görünmüyorsa öbür yana, o da olmazsa olduğu yere düşer.
+func _land_spot(from: Vector3, want: Vector3, head: Vector3) -> Vector3:
+	var side := want - from
+	var cands := [want, from - Vector3(side.x, 0, side.z), from]
+	for c: Vector3 in cands:
+		var d := _safe(from, c)
+		if _sees(d + Vector3(0, 0.42, 0), head):
+			return d
+	return from
+
+
+func _sees(eye: Vector3, head: Vector3) -> bool:
+	var space := player.get_world_3d().direct_space_state
+	var hit := space.intersect_ray(PhysicsRayQueryParameters3D.create(eye, head, 1, [player.get_rid()]))
+	if not hit.is_empty() and (hit["position"] as Vector3).distance_to(head) >= 0.5:
+		return false
+	# Çarpışmasız görüntü (sütun süsü): Hud'un görünürlük denetiminin aynısı
+	if _lock_on != null and is_instance_valid(_lock_on):
+		return hud._mesh_between(scene, player, _lock_on, eye, head) == null
+	return true
 
 
 ## Yere iniş noktası duvarın/katının içinde olmasın: aradaki yol kapalıysa kısalt
