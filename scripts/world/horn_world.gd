@@ -838,6 +838,10 @@ func _monuments() -> void:
 	# Havariyun: haç planlı, beş kubbeli (eskiden iki kutu + beş silindir ve top). Haç kolları kiremit beşik çatılı, iki sıra
 	# kemerli pencere ve tuğla hatıllı; beş kubbe pencereli kasnaklı (Landmarks1453._dome), doğu kolunun ucunda apsis,
 	# batı kolunun önünde narteks; orta kubbede altın haç
+	# İstanbul 1453 (IstSehir): yeni Havariyun yerleşince eskisi boş Dressing'e kurulur (çizilmez)
+	var md_ist := md
+	if "apostles" in IstSehir.replaced(region_name):
+		md = Dressing.new(0)
 	var ap: Vector3 = World1453.LANDMARKS["apostles"]
 	if _free(ap.x, ap.z, 30.0):
 		var g := east_surf(ap.x, ap.z) - 0.5
@@ -865,6 +869,7 @@ func _monuments() -> void:
 		md.box(Vector3(6.0, 9.0, 22.0), Vector3(-26.0, 4.5, 0), wall.lightened(0.05))
 		md.prism(Vector3(6.4, 2.2, 22.4), Vector3(-26.0, 10.1, 0), Landmarks1453.TILE)
 		md.at(Vector3.ZERO)
+	md = md_ist
 	# Bozdoğan Kemeri: iki katlı kemer dizisi (eskiden kutu ayaklar ve iki düz kuşak). Her gözde iki ayak arasında yarım
 	# daire kemer (kemer taşları), üstünde dolgu; alt kat yüksek, üst kat basık; tepede su kanalı ve kapak taşları.
 	var a: Vector3 = World1453.LANDMARKS["aqueduct_a"]

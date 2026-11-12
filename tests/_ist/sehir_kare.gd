@@ -22,6 +22,8 @@ func _ready() -> void:
 			tur = a.substr(6).to_int()
 		elif a.begins_with("--set="):
 			set_ = a.substr(6)
+		elif a == "--once":
+			IstSehir.enabled = false
 	if set_ == "liste":
 		for e: Dictionary in IstSehir.catalog_all():
 			var d: Dictionary = e["data"]
@@ -47,6 +49,12 @@ func _ready() -> void:
 	cam.fov = 60.0
 	add_child(cam)
 	cam.make_current()
+	# Havadan kanıt: yer bölümünün sisi kapatılır (uçuş bölümleri kendi göğünü kurar)
+	for we in find_children("*", "WorldEnvironment", true, false):
+		var env := (we as WorldEnvironment).environment
+		if env:
+			env.fog_enabled = false
+			env.volumetric_fog_enabled = false
 	var ww: WorldWalk = f.get_node_or_null("WorldWalk") if f else null
 	var t := 0.0
 	while ww and not ww.done and t < 400.0:

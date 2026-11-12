@@ -63,6 +63,22 @@ static var YER := {
 	"halic_neorion": {"x": -694.0, "z": -1290.0, "yaw_abs": PI * 0.5},
 	"halic_iskele": {"x": -694.0, "z": -1370.0, "yaw_abs": PI * 0.5},
 	"halic_ceneviz": {"x": -694.0, "z": -1452.0, "yaw_abs": PI * 0.5},
+	# kemer (wip/ist-kemer): Bozdoğan modülü 970 m × k; haritadaki kemer (HornWorld) 156 m, uçları Havariyun ile üçüncü
+	# tepe arasında: sığmıyor, bu turda HornWorld'ünki kalır. Aspar k 0,5 (gerçek 152 m).
+	"bozdogan": {"skip": true},
+	"havariyun": {"lm": "apostles", "quest": false},
+	"pantokrator": {"lm": "pantokrator"},
+	"aspar": {"k": 0.5},
+	# kuzeybati (wip/ist-kuzeybati): Tekfur ve Anemas Blakherna surlarının üstünde (bölümün kendi surları ve sarayı
+	# durur), bu turda kurulmaz. Aetios k 0,5.
+	"khora": {"lm": "khora"},
+	"pammakaristos": {"lm": "pammakaristos"},
+	"tekfur": {"skip": true},
+	"anemas": {"skip": true},
+	"aetios": {"k": 0.5},
+	# guneybati (wip/ist-guneybati): Studios eski yerinde; Altın Kapı kara surlarının parçası (surlar modülüyle birlikte)
+	"studios": {"lm": "studios"},
+	"altinkapi": {"skip": true},
 	"halic_sur": {"skip": true},
 	"halic_eugenios": {"skip": true},
 	"halic_petrion": {"skip": true},
@@ -73,10 +89,12 @@ static var YER := {
 const REPLACES := {
 	"hipodrom": "hippodrome", "buyuk_saray": "great_palace", "aya_irini": "aya_irini", "augustaion": "augustaion",
 	"konstantin": "forum_constantine", "tauri": "forum_tauri",
-	"halic_venedik": "quay_venice", "halic_pisa_amalfi": "quay_amalfi", "halic_ceneviz": "quay_genoa",
+	"halic_venedik": "quay_venice", "havariyun": "apostles", "pantokrator": "pantokrator", "khora": "khora",
+	"pammakaristos": "pammakaristos", "studios": "studios", "halic_pisa_amalfi": "quay_amalfi", "halic_ceneviz": "quay_genoa",
 }
 ## Modülün bütünü bu turda kurulmaz (gerekçe raporda): galata → GalataView (HornWorld) ile aynı yerde çifte şehir olurdu
-const MOD_SKIP := ["galata", "galata_kule", "galata_ortak", "galata_sur", "galata_yapi"]
+## surlar → kara surları ve kapıları SiegeField/LandWalls'ta (bölümlerin oynanış alanı; P02 sur şeridi göçüyle değişir)
+const MOD_SKIP := ["galata", "galata_kule", "galata_ortak", "galata_sur", "galata_yapi", "surlar", "surlar_kapi", "surlar_ayrinti"]
 
 
 static func _skipped(id: String, mod: String, region: String) -> bool:
@@ -89,6 +107,8 @@ static func _skipped(id: String, mod: String, region: String) -> bool:
 ## Landmarks1453.build için: yeni parçası şehre yerleşen eski anahtarlar
 static func replaced(region := "") -> Array:
 	var out: Array = []
+	if not enabled:
+		return out
 	for e: Dictionary in catalog_all():
 		if REPLACES.has(e["id"]) and not _skipped(String(e["id"]), String(e["mod"]), region):
 			out.append(REPLACES[e["id"]])
@@ -199,6 +219,8 @@ static func place_of(e: Dictionary) -> Dictionary:
 
 ## Dünyaya bağlar (World1453.build): f dünyanın SiegeField'i (yerel = dünya koordinatı)
 static func attach(f: Node3D) -> IstSehir:
+	if not enabled:
+		return null
 	var s := IstSehir.new()
 	s.name = "IstSehir"
 	s.field = f
@@ -359,11 +381,13 @@ const CELL2 := 400.0
 const NEAR := 70.0
 const MID := 430.0
 static var houses_on := true
+## Bütün İstanbul 1453 katmanını kapatır (ÖNCE kareleri ve karşılaştırma için)
+static var enabled := true
 
 ## CityHouses.build'in yerine: aynı ev listesi (CityPlan), aynı yerler, mektup bölümünün ev dili. true dönerse
 ## CityHouses kendi evlerini kurmaz.
 static func houses(parent: Node3D, list: Array, surf: Callable, free: Callable, nd: Dressing) -> bool:
-	if not houses_on:
+	if not houses_on or not enabled:
 		return false
 	var host: IstSehir = null
 	for c in parent.get_children():
