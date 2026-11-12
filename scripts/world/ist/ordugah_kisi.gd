@@ -167,9 +167,7 @@ static func _kur_parcali(host: Node3D, kisiler: Array, pts: PackedVector3Array) 
 		node.position = cen
 		host.add_child(node)
 		var groups := {}
-		var gx: Array = []
-		var gc: Array = []
-		var hc: Array = []
+		var fg := {}             # DURUŞ: hafif figür duruş türüne göre (fig_tur): ayakta / bağdaş / diz / yatan / eğik
 		for k: Array in liste:
 			var t: String = k[2]
 			var rel: Vector3 = (k[0] as Vector3) - cen
@@ -177,10 +175,12 @@ static func _kur_parcali(host: Node3D, kisiler: Array, pts: PackedVector3Array) 
 				groups[t] = []
 			(groups[t] as Array).append(Transform3D(Basis(Vector3.UP, float(k[1])), rel))
 			var sp: Array = TIP.get(t, TIP["azap"])
-			var oturan := String(sp[3]) in ["sit_ground", "doze", "write"]
-			gx.append(Transform3D(Basis(Vector3.UP, float(k[1])).scaled(Vector3(1, 0.58, 1) if oturan else Vector3.ONE), rel))
-			gc.append(sp[0])
-			hc.append(BASLIK.get(sp[1], BASLIK["azap"]))
+			var fk := fig_tur(String(sp[3]))
+			if not fg.has(fk):
+				fg[fk] = [[], [], []]
+			(fg[fk][0] as Array).append(Transform3D(Basis(Vector3.UP, float(k[1])), rel))
+			(fg[fk][1] as Array).append(sp[0])
+			(fg[fk][2] as Array).append(BASLIK.get(sp[1], BASLIK["azap"]))
 		for t: String in groups:
 			var sp2: Array = TIP.get(t, TIP["azap"])
 			var m: ArrayMesh = Crowd.civilian(sp2[0], sp2[1], sp2[3]) if sp2.size() > 4 else Crowd.ottoman(sp2[0], sp2[1], sp2[2], sp2[3])
@@ -190,10 +190,12 @@ static func _kur_parcali(host: Node3D, kisiler: Array, pts: PackedVector3Array) 
 			mi.set_meta("no_walk", true)
 			mi.visibility_range_end = YAKIN
 			mi.visibility_range_end_margin = 3.0
-		for f in [_mm(node, figur("govde"), gx, gc, "figur_govde"), _mm(node, figur("bas_baslik"), gx, hc, "figur_baslik")]:
-			if f:
-				(f as MultiMeshInstance3D).visibility_range_begin = YAKIN
-				(f as MultiMeshInstance3D).visibility_range_begin_margin = 3.0
+		for fk: String in fg:
+			var g: Array = fg[fk]
+			for f in [_mm(node, figur("govde" + fk), g[0], g[1], "figur_govde" + fk), _mm(node, figur("bas_baslik" + fk), g[0], g[2], "figur_baslik" + fk)]:
+				if f:
+					(f as MultiMeshInstance3D).visibility_range_begin = YAKIN
+					(f as MultiMeshInstance3D).visibility_range_begin_margin = 3.0
 	return pts
 
 
