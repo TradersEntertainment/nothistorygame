@@ -7,7 +7,7 @@ extends Node3D
 ##   5 Kuşatma (0:24)    "KUŞATMA": gece son hücum, gedikte Tolga savunucuların arasında ("İmza istemiyorum, alın!"),
 ##                       hendek kıyısında sura koşanların üstünde Nihat: "Büro personeli ölmez... Madde 9." — ve gündüz
 ##                       Urban'ın büyük topu ateşler, gülle Tolga'nın başının üstünde patlar ("Kulağımda çınlama var.")
-##   6 Büyük Atış (0:40) "KULAKLARI TIKAYIN!" · "...Hmm." · "Bu 'hmm' iyi bir 'hmm' mi?" · ağır çekimde herkes uçar
+##   6 Büyük Atış (0:40) "KULAKLARI TIKAYIN!" · "...Hmm." · "Bu 'hmm' hayra alamet mi?" · ağır çekimde herkes uçar
 ##                       · Fatih: "Urban." · "Efendim." · "Urban'ın topunu sigortalamış mıydın?" · "Hayır." · "Yazık."
 ##   7 Son (0:55)        başlık, "27 final · kuşatma iki taraftan · tamamen seslendirilmiş", "Steam'de istek listene ekle" · tavuk
 ## Kayıt (docs/STEAM.md):
@@ -182,7 +182,7 @@ func _say(spk: String, key: String, cut := 0.0, text_override := "") -> float:
 	if s != null:
 		voice.stream = s
 		voice.volume_db = 2.0 + float(VOICE_DB.get(key, 0.0))
-		# Kaydın başındaki sessizlik atlanır (ör. "Bu 'hmm' iyi bir 'hmm' mi?" 2 sn susup başlıyor)
+		# Kaydın başındaki sessizlik atlanır (ör. "Bu 'hmm' hayra alamet mi?" 2 sn susup başlıyor)
 		var skip := _lead(key)
 		voice.play(skip)
 		dur = s.get_length() - skip
