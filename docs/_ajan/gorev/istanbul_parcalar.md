@@ -132,3 +132,20 @@ fırın ve demirci dumanı, sancak ve çamaşır dalgalanması (rüzgâr gölgel
 ışıkları, kandiller, nöbet ateşleri, ordugâh ateşleri denizi. `IstHayat.attach(dunya: Node3D, gece: bool)` + mesafeye
 göre akış (oyuncunun/uçuşun 150 m çevresinde ayrıntılı, ötesinde MultiMesh nokta-figür). Bütçe: uçuşta ≤ 60 çizim,
 ≤ 150 bin üçgen; yerde ≤ 80 çizim. Kişiler çarpışmasız (içlerinden geçilir; oynanış kişileri bölümlerden gelir).
+
+## hayat-yakin — oyuncunun çevresinde gerçek kişiler (sokaklar yaşam dolu)
+Sahibin sözü: "yaşam dolu olacak sokaklar". Oyunun var olan sivil akışını v2'ye bağla: `scripts/world/city_life.gd`
+(`CityLife`: oyuncunun çevresinde sivilleri akışla kurar; "sokakta herkesle konuşma" ve tuhaflığa tepki düzeni),
+`scripts/npc/person.gd`, `crowd.gd`, `rig.gd` (OKU; değiştirme). Yeni dosya `scripts/world/ist/hayat_yakin.gd`
+(`IstHayatYakin.attach(dunya, oyuncu, gece)`): v2'nin sokak grafiğinde (`scripts/world/ist/sokak.gd`: sokak çizgileri,
+meydanlar, ev sıraları; oku) oyuncunun 60–90 m çevresinde kişiler: sokak boyunca yürüyenler (kaldırımda, evlerin
+içinden geçmeden; karşılaşınca yol verir), duranlar ve iş yapanlar (tezgâhta satıcı ve müşteri, fırın önü kuyruğu,
+kuyudan su çeken, çamaşır asan, yük taşıyan hamal, ağ onaran balıkçı, sur onaran işçi, nöbetçi, dua eden keşiş,
+oynayan çocuklar, dilenci, mülteci aile), hayvanlar; mahalle türüne göre kılık ve yoğunluk (`IstGeo.mahalle`):
+çarşıda 25+, sık mahallede 10–15, seyrek/bostanda 4–6, sur dibinde asker ve işçi. Kişiler oyunun kişi sınıfıyla
+(`Person`), var olan konuşma/tepki düzeni çalışır (yeni replik YAZMA: var olan sokak replik havuzunu kullan); akış:
+oyuncu yaklaşınca belirmez (görüş dışında doğar/kaybolur), kare başına ≤ 2 ms, en çok ~45 etkin kişi; uçuşta
+(Nihat) kişiler aşağıda görünmeye devam eder (uzak katman `IstHayat` ile çakışmasın: 90 m ötesi onun). Denetimler:
+`VISAUDIT`/`WALKTHRU`/`ARMAUDIT` satırı çıkmasın; kişi evin/duvarın içinde, havada ya da suda durmasın. Önizleme:
+`tests/_ist/hayat_yakin_onizleme.*`: v2'de Mese, bir iskele, bir mahalle sokağı, bir meydan, sur dibi: oyuncu gözünden
+kareler (gündüz, gece) + sayım (`ISTKISI gorunen=… etkin=… ms=…`).
