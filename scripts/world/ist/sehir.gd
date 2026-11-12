@@ -16,6 +16,7 @@ extends Node3D
 const DIR := "res://scripts/world/ist/"
 const ESER := preload("res://scripts/world/ist/sehir_eser.gd")
 const SURDOKU := preload("res://scripts/world/ist/sur_doku.gd")
+const SURKULE := preload("res://scripts/world/ist/sur_kule.gd")
 const SELF := ["sehir", "evler"]
 ## Uzaklık eşikleri (parçanın yarıçapı eklenir): lod 0 < R0, lod 1 < R1, ötesi lod 2
 const R0 := 90.0
@@ -2882,25 +2883,23 @@ func _kose(ad: String, kur: String, p: Vector2, walk_y := NAN) -> Dictionary:
 		var nlo := walk_y + 0.05 - walk
 		dip = maxf(0.0, nlo - lo) + 0.3
 		lo = nlo
+	# SUR-5: köşe kulesi kutu değil (kalite notu 32): sekizgen plan, kaide, şev, silme; yürüme yolunun girip çıktığı
+	# yönlerde korkuluk açık, öteki kenarlarda mazgallı korkuluk (eskiden yerde duran dokusuz BEYAZ KÜP dişler: kara_03_ust)
+	var yonler: Array = []
+	var pl := _sade(IstGeo.yol(ad))
+	var en := 0
+	var ed := INF
+	for i in pl.size():
+		var dd := pl[i].distance_to(p)
+		if dd < ed:
+			ed = dd
+			en = i
+	if en > 0:
+		yonler.append((pl[en - 1] - pl[en]).normalized())
+	if en < pl.size() - 1:
+		yonler.append((pl[en + 1] - pl[en]).normalized())
 	var make := func(n: Node3D, lod: int) -> void:
-		var stone := Color("cdbd9e")
-		if dip > 0.0:
-			if lod == 0:
-				Props.set_pattern(Props.solid(n, Vector3(sz, dip, sz), Vector3(0, -dip * 0.5 + 0.02, 0), Color.WHITE), stone.darkened(0.1), "ashlar")
-			else:
-				Props.box(n, Vector3(sz, dip, sz), Vector3(0, -dip * 0.5 + 0.02, 0), stone.darkened(0.1))
-		if lod == 0:
-			var b := Props.solid(n, Vector3(sz, walk, sz), Vector3(0, walk * 0.5, 0), Color.WHITE)
-			Props.set_pattern(b, stone, "ashlar")
-			for sd: Vector2 in [Vector2(1, 0), Vector2(-1, 0), Vector2(0, 1), Vector2(0, -1)]:
-				for t in 3:
-					var off := (t - 1) * sz * 0.33
-					var mp := Vector3(sd.x * (sz * 0.5 - 0.3) + absf(sd.y) * off, walk + 0.55, sd.y * (sz * 0.5 - 0.3) + absf(sd.x) * off)
-					Props.box(n, Vector3(1.0 if sd.y != 0 else 0.6, 1.1, 0.6 if sd.y != 0 else 1.0), mp, stone.darkened(0.08))
-			for y: float in [walk * 0.33, walk * 0.66]:
-				Props.box(n, Vector3(sz + 0.06, 0.4, sz + 0.06), Vector3(0, y, 0), Color("a8583a"))
-		else:
-			Props.box(n, Vector3(sz, walk + 1.1, sz), Vector3(0, (walk + 1.1) * 0.5, 0), stone)
+		SURKULE.kose(n, sz, walk, dip, lod, yonler, hash(ad) % 1000 + int(absf(p.x)))
 	var it := _v2_item("kose_%s_%d" % [ad, hat_items.size()], Vector3(p.x, lo - 0.05, p.y), 0.0, sz, make, {}, true)
 	it["hat"] = ad
 	it["walk"] = lo - 0.05 + walk

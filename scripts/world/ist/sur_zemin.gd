@@ -13,6 +13,7 @@ const TOPRAK2 := Color("554534")
 const OT := Color("5e6a3a")
 const YANIK := Color("4e4438")
 const CAMUR := Color("6a5a44")
+const KULE := preload("res://scripts/world/ist/sur_kule.gd")
 
 
 static func _hash(a: int, b: int) -> float:
@@ -78,19 +79,36 @@ static func set_(p: Node3D, x0: float, x1: float, z0: float, lod: int, tohum: in
 			crow.append(c)
 		pts.append(row)
 		cols.append(crow)
+	# SUR-5: kesit sıklaştırılır (Chaikin) ve köşe normalleri komşulardan (düz renkli üçgen yüzler okunuyordu: kara_05_yer60)
+	for k in 2:
+		for i in pts.size():
+			var r0: Array = pts[i]
+			var c0: Array = cols[i]
+			var r1: Array = [r0[0]]
+			var c1: Array = [c0[0]]
+			for j in r0.size() - 1:
+				var a3: Vector3 = r0[j]
+				var b3: Vector3 = r0[j + 1]
+				r1.append(a3.lerp(b3, 0.25))
+				r1.append(a3.lerp(b3, 0.75))
+				c1.append((c0[j] as Color).lerp(c0[j + 1], 0.25))
+				c1.append((c0[j] as Color).lerp(c0[j + 1], 0.75))
+			r1.append(r0[r0.size() - 1])
+			c1.append(c0[c0.size() - 1])
+			pts[i] = r1
+			cols[i] = c1
+	var m := (pts[0] as Array).size()
+	var nrm := _izgara_normal(pts)
 	var any := false
 	for i in n:
 		var xm := (float(pts[i][0].x) + float(pts[i + 1][0].x)) * 0.5
 		if xm < pencere.x or xm >= pencere.y:
 			continue
 		any = true
-		for j in prof.size() - 1:
-			var a: Vector3 = pts[i][j]
-			var b: Vector3 = pts[i + 1][j]
-			var c: Vector3 = pts[i + 1][j + 1]
-			var d: Vector3 = pts[i][j + 1]
-			_ucgen(st, a, d, b, cols[i][j], cols[i][j + 1], cols[i + 1][j])
-			_ucgen(st, b, d, c, cols[i + 1][j], cols[i][j + 1], cols[i + 1][j + 1])
+		for j in m - 1:
+			_ucgen_n(st, [pts[i][j], pts[i][j + 1], pts[i + 1][j], pts[i + 1][j], pts[i][j + 1], pts[i + 1][j + 1]],
+				[cols[i][j], cols[i][j + 1], cols[i + 1][j], cols[i + 1][j], cols[i][j + 1], cols[i + 1][j + 1]],
+				[nrm[i][j], nrm[i][j + 1], nrm[i + 1][j], nrm[i + 1][j], nrm[i][j + 1], nrm[i + 1][j + 1]])
 	if not any:
 		return
 	var mesh := st.commit()
@@ -176,7 +194,7 @@ static func hendek_dibi(p: Node3D, x0: float, x1: float, z0: float, z1: float, y
 	if su.size() > 0:
 		Scenery.scatter(p, _disk(), su, [], Props.mat(Color("4a4a3e"), 0.0, false, "", false))
 	if saz.size() > 0:
-		Scenery.scatter(p, Scenery._boxm(Vector3.ONE), saz, [], Props.mat(Color("7a7a3c"), 0.0, false, "", false))
+		Scenery.scatter(p, _saz(), saz, [], Props.mat(Color("7a7a3c"), 0.0, false, "", false))
 
 
 # ---------------------------------------------------------------- ateş alanı (kara surunun dışı, hendekten 60 m)
@@ -346,3 +364,161 @@ static func _at(pl: PackedVector2Array, sv: float) -> Dictionary:
 			return {"p": pl[i] + d * clampf(sv - acc, 0.0, l), "d": d}
 		acc += l
 	return {"p": pl[0], "d": Vector2.RIGHT}
+
+## Izgara (pts[i][j]: i sur boyu, j kesit) köşe normalleri: komşu farklarından, yukarı bakan
+static func _izgara_normal(pts: Array) -> Array:
+	var out: Array = []
+	var n := pts.size()
+	for i in n:
+		var row: Array = pts[i]
+		var m := row.size()
+		var nr: Array = []
+		for j in m:
+			var a: Vector3 = pts[mini(i + 1, n - 1)][j]
+			var b: Vector3 = pts[maxi(i - 1, 0)][j]
+			var c: Vector3 = row[mini(j + 1, m - 1)]
+			var d: Vector3 = row[maxi(j - 1, 0)]
+			var v := (a - b).cross(c - d)
+			if v.y < 0.0:
+				v = -v
+			nr.append(v.normalized() if v.length() > 1e-6 else Vector3.UP)
+		out.append(nr)
+	return out
+
+
+## Köşe normalli üçgen dizisi (3'erli); sarım yukarı bakan yüze göre (Godot ön yüzü saat yönü)
+static func _ucgen_n(st: SurfaceTool, v: Array, c: Array, nn: Array) -> void:
+	for t in range(0, v.size(), 3):
+		var a: Vector3 = v[t]
+		var b: Vector3 = v[t + 1]
+		var cc: Vector3 = v[t + 2]
+		var ord := [0, 1, 2]
+		var avg: Vector3 = (nn[t] as Vector3) + (nn[t + 1] as Vector3) + (nn[t + 2] as Vector3)
+		if (b - a).cross(cc - a).dot(avg) > 0.0:
+			ord = [0, 2, 1]
+		for k: int in ord:
+			st.set_color(c[t + k])
+			st.set_normal(nn[t + k])
+			st.add_vertex(v[t + k])
+
+
+## SUR-5 (C): hendek kesiti — bıçak kenarlı kutu çukur yerine tek ağ: iki yanda taş kaplama (hafif şevli, üst kenarı
+## düzensiz; yer yer YIKILMIŞ kaplama ve toprak kayması), dipte yuvarlanmış köşeler ve düzensiz çamur tabanı (orta biraz
+## çukur). Yerel: x0..x1 boyunca, z0 (iç yaka duvarı) … z1 (karşı yaka), dip y = -md. Çarpışma surlar.gd'deki kutular.
+## Dönen: [taş ağı (ashlar; sur taşı gölgelendiricisine çevrilir), toprak ağı]
+static func hendek_kesit(p: Node3D, x0: float, x1: float, z0: float, z1: float, md: float, lod: int, tohum: int, pencere := Vector2(-1e9, 1e9)) -> void:
+	var adim := 2.5 if lod == 0 else 8.0
+	var n := maxi(1, int(ceil((x1 - x0) / adim)))
+	var W := z1 - z0
+	# kesit (z, y): taş iç yaka 0 → 1,1 (şev), dip köşesi yuvarlak, taban, karşı yaka simetrik
+	var kes := [[0.0, 0.05], [0.55, -md * 0.5], [1.05, -md + 0.9], [1.6, -md + 0.32], [2.6, -md + 0.08], [W * 0.5, -md - 0.12],
+		[W - 2.6, -md + 0.06], [W - 1.6, -md + 0.3], [W - 1.05, -md + 0.9], [W - 0.55, -md * 0.5], [W, 0.05]]
+	var tas_j := {0: true, 1: true, 2: true, 8: true, 9: true}       # j..j+1 bandı taş kaplama
+	var rows: Array = []
+	var crow: Array = []
+	var kay: Array = []          # bu x'te karşı yaka kaymış mı (0..1)
+	for i in n + 1:
+		var x := x0 + (x1 - x0) * float(i) / n
+		var r: Array = []
+		var cr: Array = []
+		# toprak kayması: ~45 m'de bir 6–10 m'lik kesimde dış yaka kaplaması yıkık, toprak yamaçtan kaymış
+		var kk := 0.0
+		var ph := fposmod(x * 0.023 + float(tohum % 97) * 0.13, 1.0)
+		if ph < 0.18:
+			kk = sin(ph / 0.18 * PI)
+		kay.append(kk)
+		for j in kes.size():
+			var z: float = z0 + float(kes[j][0])
+			var y: float = kes[j][1]
+			var hz := _hash(tohum * 7 + i, j * 3 + 1)
+			if j >= 3 and j <= 7:
+				y += (hz - 0.5) * 0.22
+			if j == 0 or j == kes.size() - 1:
+				y += (hz - 0.5) * 0.18                   # üst kenar düzensiz
+			if kk > 0.0 and j >= 7:
+				# kayan toprak: karşı yaka eğimi yatıklaşır (1:1,6), dibe yayılır
+				var zt := float(kes[j][0])
+				var t := clampf((zt - (W - 6.0)) / 6.0, 0.0, 1.0)
+				y = lerpf(y, lerpf(-md + 0.3, 0.0, t), kk)
+				z = lerpf(z, z0 + lerpf(W - 6.0, W, t), kk * 0.5)
+			r.append(Vector3(x, y, z))
+			var col := CAMUR.lerp(TOPRAK2, hz * 0.6)
+			if j >= 4 and j <= 6 and hz > 0.7:
+				col = col.lerp(Color("4a4a3c"), 0.5)        # ıslak çamur
+			if kk > 0.3 and j >= 7:
+				col = TOPRAK.lerp(OT, hz * 0.3)
+			cr.append(col)
+		rows.append(r)
+		crow.append(cr)
+	var nrm := _izgara_normal(rows)
+	var st := SurfaceTool.new()
+	st.begin(Mesh.PRIMITIVE_TRIANGLES)
+	var tst := SurfaceTool.new()
+	tst.begin(Mesh.PRIMITIVE_TRIANGLES)
+	var any := false
+	var anyt := false
+	for i in n:
+		var xm := (float(rows[i][0].x) + float(rows[i + 1][0].x)) * 0.5
+		if xm < pencere.x or xm >= pencere.y:
+			continue
+		for j in kes.size() - 1:
+			var vv := [rows[i][j], rows[i][j + 1], rows[i + 1][j], rows[i + 1][j], rows[i][j + 1], rows[i + 1][j + 1]]
+			var nv := [nrm[i][j], nrm[i][j + 1], nrm[i + 1][j], nrm[i + 1][j], nrm[i][j + 1], nrm[i + 1][j + 1]]
+			var tas := tas_j.has(j) and not (j >= 7 and (float(kay[i]) > 0.25 or float(kay[i + 1]) > 0.25))
+			if tas:
+				# taş kaplama: yüz normali (düz duvar), beyaz köşe rengi; onarım/eksik yerler koyu
+				var hh := _hash(tohum + i * 5, j)
+				var cc := Color.WHITE if hh > 0.12 else Color(0.7, 0.68, 0.64)
+				var fn: Vector3 = ((vv[1] as Vector3) - (vv[0] as Vector3)).cross((vv[2] as Vector3) - (vv[0] as Vector3)).normalized()
+				var hedef := Vector3(0, 0.3, 1.0 if j < 5 else -1.0)
+				if fn.dot(hedef) < 0.0:
+					fn = -fn
+				_ucgen_n(tst, vv, [cc, cc, cc, cc, cc, cc], [fn, fn, fn, fn, fn, fn])
+				anyt = true
+			else:
+				_ucgen_n(st, vv, [crow[i][j], crow[i][j + 1], crow[i + 1][j], crow[i + 1][j], crow[i][j + 1], crow[i + 1][j + 1]], nv)
+				any = true
+	if any:
+		var mi := MeshInstance3D.new()
+		mi.name = "HendekToprak"
+		mi.mesh = st.commit()
+		mi.material_override = _mat()
+		mi.set_meta("no_walk", true)
+		p.add_child(mi)
+	if anyt:
+		var mt := MeshInstance3D.new()
+		mt.name = "HendekKaplama"
+		mt.mesh = tst.commit()
+		mt.material_override = Props.mat(Color("a49a86"), 0.0, false, "ashlar" if lod < 2 else "ashlar_far")
+		mt.set_meta("no_walk", true)
+		p.add_child(mt)
+	# kayan kesimlerde dibe düşmüş kaplama taşları (düzensiz kaya, kutu değil)
+	if lod == 0:
+		var kl: Array = []
+		for i in n:
+			if float(kay[i]) > 0.5:
+				var xm2: float = rows[i][0].x
+				if xm2 < pencere.x or xm2 >= pencere.y:
+					continue
+				for k in 3:
+					var hz2 := _hash(tohum + i * 11, k + 40)
+					var sc := 0.35 + hz2 * 0.5
+					kl.append(Transform3D(Basis.from_euler(Vector3(hz2 * 2.0, hz2 * 6.0, 0.3)).scaled(Vector3(sc * 1.3, sc * 0.7, sc)), Vector3(xm2 + (hz2 - 0.5) * 2.0, -md + sc * 0.25, z1 - 2.5 - hz2 * 4.0)))
+		if kl.size() > 0:
+			Scenery.scatter(p, KULE.kaya_mesh(), kl, [], Props.mat(Color("948a76"), 0.0, false, "rubble"))
+
+
+
+static var _sz: Mesh
+
+## Saz sapı: ince koni (SUR-5: kutu değil)
+static func _saz() -> Mesh:
+	if _sz == null:
+		var c := CylinderMesh.new()
+		c.top_radius = 0.0
+		c.bottom_radius = 0.6
+		c.height = 1.0
+		c.radial_segments = 4
+		c.rings = 1
+		_sz = c
+	return _sz

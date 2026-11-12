@@ -52,10 +52,10 @@ void fragment() {
 	// taş: soluk gri-krem (sıcak); taban rengin parlaklığı korunur
 	float kat = clamp(lum / 0.42, 0.55, 1.0);
 	vec3 tas = vec3(0.46, 0.42, 0.34);
-	if (tur > 0.5 && tur < 1.5) { tas = vec3(0.40, 0.39, 0.36); }
+	if (tur > 0.5 && tur < 1.5) { tas = vec3(0.43, 0.395, 0.335); }     // SUR-5: deniz suru sıcak gri (soğuk mavi-gri değil)
 	if (tur > 1.5) { tas = vec3(0.45, 0.42, 0.36); }
 	tas *= kat;
-	vec3 tug = vec3(0.36, 0.15, 0.10) * clamp(kat, 0.7, 1.0);
+	vec3 tug = vec3(0.24, 0.12, 0.08) * clamp(kat, 0.7, 1.0);    // SUR-5: mat, koyu kiremit (parlak kırmızı şerit değil)
 	vec3 harc = vec3(0.52, 0.48, 0.41) * kat;
 	float dikey = 1.0 - step(0.6, abs(wnrm.y));
 	vec2 t2 = normalize(vec2(-wnrm.z, wnrm.x) + vec2(1e-4, 0.0));
@@ -64,7 +64,8 @@ void fragment() {
 	float fy = max(fwidth(y), 1e-4);
 	float fu = max(fwidth(u), 1e-4);
 	float fw = max(fy, fu);
-	float ince = 1.0 - smoothstep(0.015, 0.07, fw);     // derz, tuğla sırası
+	float ince = 1.0 - smoothstep(0.015, 0.07, fw);     // derz, taş sırası
+	float ince_t = 1.0 - smoothstep(0.008, 0.017, fw);   // SUR-5: tek tek tuğla yalnız ~6 m'den yakında
 	float orta = 1.0 - smoothstep(0.06, 0.25, fw);      // blok tonu
 	float bant_g = 1.0 - smoothstep(0.30, 0.9, fy);    // tuğla hatılı
 	vec3 c;
@@ -94,8 +95,8 @@ void fragment() {
 			float harc_m = max(step(fr, 0.34), step(bx, 0.05));
 			float tt = 0.82 + 0.3 * h21(vec2(floor((u + off) / bl), bi + per * 7.0));
 			vec3 bc = mix(tug * tt, harc, harc_m);
-			vec3 ort = mix(tug, harc, 0.40);
-			c = mix(ort, bc, ince);
+			vec3 ort = mix(mix(tug, harc, 0.5), tas, 0.3);      // SUR-5: uzaktan taşla aynı düzlemde mat bant
+			c = mix(ort, bc, ince_t);
 			c = mix(mix(tas, harc, 0.3), c, bant_g);
 		} else {
 			float sy = py - B;
@@ -137,7 +138,11 @@ void fragment() {
 		float tn = h21(floor(q));
 		vec2 fq = fract(q);
 		float j = max(step(fq.x, 0.05), step(fq.y, 0.05));
-		c = mix(tas * vec3(1.08, 1.02, 0.92) * (0.84 + 0.18 * tn), harc * 0.85, j * ince);
+		// SUR-5: sıcak, koyu kireçtaşı döşeme (gölgede gök ışığıyla camgöbeği karo okunuyordu); taş taş ton ve aşınma
+		float tn2 = h21(floor(q) + 7.3);
+		vec3 dos = tas * vec3(1.02, 0.9, 0.72) * (0.74 + 0.2 * tn + 0.06 * tn2);
+		dos *= 1.0 - 0.18 * smoothstep(0.5, 0.9, vn(wpos.xz * 0.35));
+		c = mix(dos, harc * vec3(0.8, 0.72, 0.6), j * ince);
 	}
 	// yıpranma: dikey akıntı, is lekesi, dipte koyulaşma ve yosun
 	float aki = vn(vec2(u * 1.7, y * 0.09));
