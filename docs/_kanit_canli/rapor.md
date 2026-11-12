@@ -25,8 +25,8 @@ Dal `wip/ist2-canli` (taban `wip/ist2-ordugah4`, üstüne `wip/ist2-doku4` birle
 - **Martı:** tünekte katlı kanadın koyu ucu kuyruğun çok gerisine uzanıyor, yandan bıçak gibi (`sonda_07`).
 - **`pafta_01` 60 m karesi:** kamera öküze bakıyor ama öküzler batarya setinin arkasında kalıyor; karede hayvan yok
   (ÖNCE'de de yok). 60 m kanıtı yalnız sonda paftalarında: ordugâh içinde KANITSIZ.
-- **28o uzak sürü:** ilk SONRA karesinde sürü bembeyazdı (kitin açık postu eski yüz gölgesinden parlak); taban rengi
-  koyulaştırıldı, son karesi `pafta_03`'te (aşağıda).
+- **28o:** öküzler oynanışta yalnız çekme anında ve 30 m'den uzakta görünüyor (640 px dialog karesi); uzak sürü
+  koyulaştırılmış tabanla tan renkli, boynuz ve bacak seçiliyor (`pafta_03`), ama bu mesafede ayrıntı okunmuyor.
 - **Öküz önden:** boyunduruk başın üstünden geçen düz çubuk gibi duruyor (ensede değil, alnın üstünde okunuyor).
 - **Koyun:** yatan koyunun bacakları gövdenin altında kayboluyor, iyi; ama otlayan koyunun başı yakında çok koyu leke.
 - **Ordugâhta canlılık yok:** ordugâh hayvanları durağan birleşik ağ (duruş çeşitliliği var: duran, otlayan, yatan,
@@ -206,7 +206,9 @@ okz.done(host, "okuz")
   - Ara koşular: 12 anahtar (28o, 35o, 2, 10, 6, 8y, 11, 16, 7, 26) + 28o dört varyant + 16 üç varyant: PASS 0.
   - SON KODLA (bütün değişikliklerden sonra, `OZET6`): 28o (4 varyant), 35o (2), 2 (2), 10 (2), 6 (2), 8y (2),
     16 (2), 11, 7, 9, 15, 3, 26: 22/22 PASS, yasak 0. Ekranlı 28o (SONRA, son kod): PASS.
-  - Toplam 198 başsız koşu; 197 temiz, 1 rastlantısal (yukarıda).
+  - Son `wip/ist2-doku4` birleşmesinden sonra (DOKU-4 son raporu, ÇEVRE-4/SUR-4/BAĞLAMA-4 içinde): 28o, 35o, 2, 10:
+    4/4 PASS, yasak 0; ayrıştırma PASS. Ekranlı 28o (son kod, son kare): PASS.
+  - Toplam 202 başsız koşu; 201 temiz, 1 rastlantısal (yukarıda).
 - Bakamadıklarım: 1. ve 2. gruptan sonraki değişiklikler (ordugâh Bld kuralı, göz kesimi, halka çerçevesi sürekliliği,
   şehir yakın hayvan birleştirme, 28o sürü, 16 kedisi, at göğüslüğü) son kodla yalnız 22 koşuluk listeyle sınandı;
   157 varyantın hepsi son kodla yeniden koşmadı.
