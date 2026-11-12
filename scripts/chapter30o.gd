@@ -1295,12 +1295,13 @@ func _late_azap() -> Soldier:
 
 ## Merdivende (t: ellerin yüksekliği): yüzü sura dönük, ayakları basamakta. lift: en üstte göğsü mazgal aralığından görünsün
 ## Ortak tırmanma animasyonu: gövde merdivene paralel, eller ve ayaklar basamaklarda (ellerin yüksekliği t → kökün
-## merdiven metresi t − 1,55); tepede (lift) en üst basamaklara kadar çıkar, merdivenin ucunu geçmez.
+## merdiven metresi t − 1,55); lift (0..0,5): tepeden bakış, kalça merdivenin ucuna kadar çıkar, ucunu geçmez.
 func _on_ladder(s: Node3D, t: float, lift := 0.0) -> void:
 	var ca: Node = CLIMB.of(s)
 	if ca == null:
 		ca = CLIMB.attach(s, ladder, t - 1.55, "30o")
-	ca.follow(t - 1.55 + lift)
+	ca.follow(t - 1.55)
+	ca.peek = clampf(lift / 0.5, 0.0, 1.0)      # tepede başını mazgaldan uzatır (merdivenin ucunu geçmeden)
 
 
 func _azap_pop(s: Soldier) -> void:

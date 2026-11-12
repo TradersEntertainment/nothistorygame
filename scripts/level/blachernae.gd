@@ -470,7 +470,7 @@ func _update_climbers(delta: float) -> void:
 			if ca == null:
 				ca = CLIMB.attach(p, lad, t - 0.93, "blachernae")
 				ca.blend_from(p.global_position, 0.5)
-			ca.follow_frac(t / maxf(lad.height - 1.2, 0.1))       # sıradakiler tepede üst üste binmesin
+			ca.follow(t - 0.93)
 			ca.full = cam == null or cam.global_position.distance_to(p.global_position) < 25.0
 		else:
 			if ca:

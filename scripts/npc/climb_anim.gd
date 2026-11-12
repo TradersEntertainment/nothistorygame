@@ -25,7 +25,7 @@ const FOOT_X := 0.13
 const ANKLE_UP := 0.10         # ayak bileği basamağın ekseninden bu kadar yukarıda (taban basamağın üstünde)
 const ANKLE_OUT := 0.07        # ve bu kadar önde (topuk merdivenin önünde, parmak ucu basamağın üstünde)
 const SOLE := Vector3(0, -0.077, 0.07)    # ayak bileği yerelinde tabanın basamağa değen yeri
-const GRIP_OUT := 0.03         # avuç ortası basamak ekseninin önünde ve üstünde (avuç basamağı sarar)
+const GRIP_OUT := 0.04         # avuç ortası basamak ekseninin önünde ve üstünde (avuç basamağı sarar)
 const GRIP_UP := 0.025
 
 ## Ölçüler (her ladder için yeniden hesaplanır)
@@ -59,6 +59,9 @@ var state := "climb"             # climb | mantle | off
 var paused := false              # true: hiç dokunma (çağıran başka iş yaptırıyor)
 ## Kayarak iniş (basamaklara basmadan): eller iki dikmede kayar, ayaklar dikmelerin dışına yaslı; adım döngüsü yok
 var sliding := false
+## Tepeden bakış (0..1): kalça merdivenin ucuna kadar çıkar (geçmez), eller dikmelerin uçlarını tutar, ayaklar en üst
+## basamaklarda; baş ve göğüs mazgalın üstünden görünür (30o: geç kalan azap başını mazgaldan uzatır)
+var peek := 0.0
 
 var _kh := 3                     # alçak elin alçak ayaktan kaç basamak yukarıda olduğu
 var _root_off := -0.17           # kök (ayak tabanı hizası) ile alçak ayağın basamağı arası, merdiven boyunca
@@ -108,6 +111,8 @@ func blend_from(from: Vector3, dur := 0.6) -> void:
 	_blend_dur = maxf(0.05, dur)
 var _blend_dur := 0.6
 var _at0 := INF
+## follow_frac(k, true) (hücum kalabalığı): gövde adım içinde daha düzgün yükselir: arka arkaya çıkanların aralığı korunur
+var _driven := false
 
 
 ## Kişi üzerindeki tırmanma animasyonu (yoksa null)
@@ -200,7 +205,8 @@ func follow(at: float) -> void:
 
 ## follow'un oranlı biçimi: sahnenin tırmanış ilerlemesi k (0 dip, 1 tepe) merdivenin çıkılabilir boyuna (en yüksek
 ## adım) eşlenir. Aynı merdivende arka arkaya çıkanlar tepede aynı adıma sıkışıp iç içe girmez (aralık oranla korunur).
-func follow_frac(k: float) -> void:
+func follow_frac(k: float, even := false) -> void:
+	_driven = even
 	s = clampf(k, 0.0, 1.0) * max_step()
 	goal = s
 
@@ -314,8 +320,10 @@ func _pose() -> void:
 		return
 	var n := int(floorf(s))
 	var p := s - float(n)
-	var rise := smoothstep(0.05, 0.85, p)
+	var rise := smoothstep(0.0, 1.0, p) if _driven else smoothstep(0.05, 0.85, p)
 	var root_u := rung0 + _root_off + gap * (float(n) + rise)
+	if peek > 0.0:
+		root_u = lerpf(root_u, _len - _hip_h - 0.45, peek)     # omuz merdivenin ucunda: eller dikme uçlarına yetişir
 	# Kalça hareketli ayak tarafına salınır (a çiftinde sol ayak kalkar: kalça sağa)
 	var dir := 1.0 if n % 2 == 0 else -1.0
 	var sway := sin(p * PI) * 0.035 * dir * (1.0 - brace)
@@ -345,6 +353,9 @@ func _pose() -> void:
 	if sliding:
 		_slide_limbs(root_u)
 		return
+	if peek > 0.0:
+		_peek_limbs(root_u)
+		return
 	# Uzuvlar
 	for pair in 2:
 		var l := _limb(pair, n, p)
@@ -371,6 +382,25 @@ func _pose() -> void:
 				an.global_basis = Basis(_u.cross(-_f).normalized(), _u, -_f).scaled(an.global_basis.get_scale())
 
 
+func _peek_limbs(root_u: float) -> void:
+	# İki ayak aynı basamakta (bilek kalçanın 0,10–0,46 m altında: bacak erişiminde)
+	var fk := roundf((root_u + _hip_h - 0.28 - ANKLE_UP - rung0) / gap)
+	for sd: float in [1.0, -1.0]:
+		var arm: Node3D = rig.arm_r if sd > 0.0 else rig.arm_l
+		var el: Node3D = rig.elbow_r if sd > 0.0 else rig.elbow_l
+		if arm and el:
+			# Eller dikmelerde omzun biraz üstünde, en çok dikmenin ucunda (tepeye çıkarken dikme boyunca yükselir)
+			var hu := minf(_len - 0.03, root_u + _sh_h + 0.15)
+			Rig.reach(arm, el, _o + _u * hu + _r * sd * width * 0.5 + _f * 0.03, -_u + _r * sd + _f * 0.3)
+		var leg: Node3D = rig.leg_r if sd > 0.0 else rig.leg_l
+		var knee: Node3D = rig.knee_r if sd > 0.0 else rig.knee_l
+		if leg and knee:
+			_leg_reach(leg, knee, _foot_at(fk, sd), -_f + _u * 0.35)
+			var an := knee.get_node_or_null("Ankle") as Node3D
+			if an:
+				an.global_basis = Basis(_u.cross(-_f).normalized(), _u, -_f).scaled(an.global_basis.get_scale())
+
+
 func _slide_limbs(root_u: float) -> void:
 	for sd: float in [1.0, -1.0]:
 		var arm: Node3D = rig.arm_r if sd > 0.0 else rig.arm_l
@@ -387,7 +417,7 @@ func _slide_limbs(root_u: float) -> void:
 func _hand_at(k: float, sd: float) -> Vector3:
 	if rope:
 		return _o + _u * (_rung_u(k) + 0.0) + _f * 0.05 + _r * sd * 0.03
-	return _o + _u * (_rung_u(k) + GRIP_UP) + _f * GRIP_OUT + _r * clampf(sd * _hand_x + side * 0.6, -width * 0.45, width * 0.45)
+	return _o + _u * (_rung_u(k) + GRIP_UP) + _f * GRIP_OUT + _r * clampf(sd * _hand_x + side, -width * 0.45, width * 0.45)
 
 
 func _foot_at(k: float, sd: float) -> Vector3:
@@ -506,7 +536,7 @@ func _audit() -> void:
 			_report("chest_gap", gap_m)
 	for pair in 2:
 		var l := _limb(pair, n, p)
-		var holding := sliding or l.y <= 0.0 or l.y >= 1.0
+		var holding := sliding or peek > 0.0 or l.y <= 0.0 or l.y >= 1.0
 		var elbow: Node3D = rig.elbow_r if pair == 0 else rig.elbow_l
 		if holding and elbow:
 			var hm: Vector3 = elbow.get_meta("hand", Vector3(0, -0.27, 0.01))
@@ -516,7 +546,7 @@ func _audit() -> void:
 				_report("hand_" + ("r" if pair == 0 else "l"), dh)
 		var knee: Node3D = rig.knee_l if pair == 0 else rig.knee_r
 		var fq := _foot_q(pair, n, p)
-		if knee and (fq <= 0.0 or fq >= 1.0) and not rope and not sliding:
+		if knee and (fq <= 0.0 or fq >= 1.0 or peek > 0.0) and not rope and not sliding:
 			var an := knee.get_node_or_null("Ankle") as Node3D
 			var sp := (an if an else knee).global_transform * SOLE
 			var df := _rung_dist(sp)

@@ -589,7 +589,7 @@ func _crew_remount(climbers: Array) -> void:
 		if not is_instance_valid(cl) or not is_instance_valid(ladder):
 			continue
 		var ca := CLIMB.attach(cl, ladder, 2.3 + k * 1.1, "38o")
-		ca.side = 0.16 if k == 0 else -0.16
+		ca.side = 0.12 if k == 0 else -0.12
 		ca.speed = 1.1
 		ca.blend_from(cl.global_position, 0.7)
 		if k < _crew.size():
@@ -719,7 +719,7 @@ func _ladder_phase() -> void:
 		# Merdivenin ÜSTÜNDE tırmanır (ortak tırmanma animasyonu): gövde yatık merdivene paralel, eller ve ayaklar
 		# gerçek basamaklarda; yüzü sura dönük (oyuncu sırtını görür)
 		var ca := CLIMB.attach(cl, ladder, CLIMB_AT + k * CLIMB_GAP, "38o")
-		ca.side = 0.16 if k == 0 else -0.16
+		ca.side = 0.12 if k == 0 else -0.12
 		ca.speed = 1.1
 		climbers.append(cl)
 		_crew.append({"ca": ca, "next": 1.5 + k * 1.1, "over": false})

@@ -576,7 +576,15 @@ func _climber_step(c: Dictionary, s: Soldier, delta: float) -> void:
 			var ll := base.distance_to(top)
 			ca.set_line(Vector3.ZERO, Vector3(0, ll, 0), Vector3(0, 0, 1), 0.3, 0.45, 0.68, lad)
 			ca.blend_from(s.global_position, 0.4)
-		ca.follow_frac((floor(rung) + smoothstep(0.1, 0.85, ph)) * 0.45 / len)
+		ca.follow_frac((floor(rung) + smoothstep(0.1, 0.85, ph)) * 0.45 / len, true)
+		# Aynı merdivende üstündekine görünüşte 0,8 m'den çok yaklaşmaz (mantık yeri değişmez; yalnız gövde bekler)
+		for o: Dictionary in _climb:
+			if o == c or float(o["fall"]) >= 0.0 or float(o["t"]) <= t or not (o["base"] as Vector3).is_equal_approx(base):
+				continue
+			var oca: Node = CLIMB.of(o["node"])
+			if oca and ca.s > oca.s - 0.8 / 0.45:
+				ca.s = maxf(0.0, oca.s - 0.8 / 0.45)
+				ca.goal = ca.s
 		var cam := get_viewport().get_camera_3d()
 		ca.full = cam == null or cam.global_position.distance_to(s.global_position) < 30.0
 		if t > 0.45 and rng.randf() < delta * 0.08 * intensity:
