@@ -165,7 +165,29 @@ Mekân sabitleri (`cistern.gd`): `HAZE`, `FOG_DENSITY` 0,03, `HEN_EYE` [9, 2].
   tween_await temiz, voice_rules PASS.
 - Yasak satırlar (`SCRIPT ERROR`, `WARN_*`, `VISAUDIT`, `WALKTHRU`, `ARMAUDIT`, `HELDAUDIT`, `LOOKAUDIT backturn`, `JOURNEY_*`): sıfır.
 
-TEST_TABLOSU
+**44b, son kod (`01d82066` sonrası), her varyant 3×: 18/18 PASS, yasak satır 0.**
+
+| Koşu | Varyant | Sonuç | ışık | pil | çarpma | isabet | kurtarıldı | en çok ışık | olaylar | yasak |
+|---|---|---|---|---|---|---|---|---|---|---|
+| r1 | "" | PASS 44.1 | phone | 3.9 | 4 | 0 | false | 7 | fish,far_shot,splash,collapse,sun,hen_eye | 0 |
+| r1 | blab | PASS 44.2 | phone | 4.0 | 5 | 0 | false | 7 | fish,far_shot,splash,collapse,sun,hen_eye | 0 |
+| r1 | dark | PASS 44.1 | remote | 0.0 | 1 | 0 | true | 7 | fish,far_shot,splash,collapse,sun | 0 |
+| r1 | kid | PASS 44.1 | phone | 4.0 | 4 | 0 | false | 7 | fish,far_shot,splash,collapse,sun,hen_eye | 0 |
+| r1 | nophone | PASS 44.1 | remote | 14.0 | 8 | 0 | false | 7 | fish,far_shot,splash,collapse,sun,hen_eye | 0 |
+| r1 | hit | PASS 44.1 | phone | 3.1 | 8 | 1 | false | 7 | fish,far_shot,splash,hit,found,collapse,sun,hen_eye | 0 |
+| r2 | "" | PASS 44.1 | phone | 3.3 | 9 | 0 | false | 7 | fish,far_shot,splash,collapse,sun,hen_eye | 0 |
+| r2 | blab | PASS 44.2 | phone | 3.9 | 4 | 0 | false | 7 | fish,far_shot,splash,collapse,sun,hen_eye | 0 |
+| r2 | dark | PASS 44.1 | remote | 0.0 | 1 | 0 | true | 7 | fish,far_shot,splash,collapse,sun | 0 |
+| r2 | kid | PASS 44.1 | phone | 4.2 | 4 | 0 | false | 7 | fish,far_shot,splash,collapse,sun,hen_eye | 0 |
+| r2 | nophone | PASS 44.1 | remote | 14.0 | 4 | 0 | false | 7 | fish,far_shot,splash,collapse,sun,hen_eye | 0 |
+| r2 | hit | PASS 44.1 | phone | 3.8 | 5 | 1 | false | 7 | fish,far_shot,splash,hit,found,collapse,sun,hen_eye | 0 |
+| r3 | "" | PASS 44.1 | phone | 4.6 | 3 | 0 | false | 7 | fish,far_shot,splash,collapse,sun,hen_eye | 0 |
+| r3 | blab | PASS 44.2 | phone | 4.5 | 3 | 0 | false | 7 | fish,far_shot,splash,collapse,sun,hen_eye | 0 |
+| r3 | dark | PASS 44.1 | remote | 0.0 | 1 | 0 | true | 7 | fish,far_shot,splash,collapse,sun | 0 |
+| r3 | kid | PASS 44.1 | phone | 3.8 | 3 | 0 | false | 7 | fish,far_shot,splash,collapse,sun,hen_eye | 0 |
+| r3 | nophone | PASS 44.1 | remote | 14.0 | 4 | 0 | false | 7 | fish,far_shot,splash,collapse,sun,hen_eye | 0 |
+| r3 | hit | PASS 44.1 | phone | 3.4 | 7 | 1 | false | 7 | fish,far_shot,splash,hit,found,collapse,sun,hen_eye | 0 |
+
 
 ## ORTAK DOSYA (en küçük değişiklik)
 - `tests/run_tests.sh`: 44b satırına `"=hit"` varyantı ve yorum satırına açıklaması eklendi (yalnız bu bölümün satırı).
@@ -187,6 +209,6 @@ TEST_TABLOSU
 - İngilizce replikler anadil okumasından geçmedi.
 
 ## Paftalar (`docs/_kanit_yerebatan/`)
-`p01_K1_inis`, `p02_K2_zerre`, `p03_hayranlik_acilis`, `p04_kurek_parlaklik`, `p05_ilk_kurek_olaylari`, `p06_sarsinti_dusen`,
-`p07_cokus_gunisigi`, `p08_gozyasi_sutunu`, `p09_isabet`, `p10_K4_medusa`, `p11_K3_tirmanis`, `p12_K8_pil` (2. tur, 12 pafta;
+`t2_p01_K1_inis`, `t2_p02_K2_zerre`, `t2_p03_hayranlik_acilis`, `t2_p04_kurek_parlaklik`, `t2_p05_ilk_kurek_olaylari`, `t2_p06_sarsinti_dusen`,
+`t2_p07_cokus_gunisigi`, `t2_p08_gozyasi_sutunu`, `t2_p09_isabet`, `t2_p10_K4_medusa`, `t2_p11_K3_tirmanis`, `t2_p12_K8_pil` (2. tur, 12 pafta;
 ilk turun p01–p09'u yerinde).
