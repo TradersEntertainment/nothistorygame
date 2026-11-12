@@ -78,8 +78,24 @@ static func build_buyuk_saray(host: Node3D, k: float = 0.5, lod: int = 0) -> voi
 		K.ground_box(host, sz.x, 0.3, sz.y, 0, 0, K.SOIL)
 		K.ground_box(host, sz.x * 0.4, 5.0, sz.y * 0.25, -sz.x * 0.1, -sz.y * 0.2, K.BRICK.lerp(K.STONE, 0.3))
 		return
-	# zemin: bostan toprağı (yumuşak), üstte yürünür düz
-	K.ground_box(host, sz.x, 0.1, sz.y, 0, 0, K.SOIL, "")
+	# zemin: ot bürümüş harabe toprağı (yamalı: toprak, solgun ot, eski döşeme parçaları), üstte yürünür düz
+	K.ground_box(host, sz.x, 0.1, sz.y, 0, 0, K.GRASS_D.lerp(K.SOIL, 0.45), "")
+	if lod == 0:
+		for i in 26:
+			var gp := Vector2(rng.randf_range(-0.45, 0.45) * sz.x, rng.randf_range(-0.45, 0.45) * sz.y)
+			var gs := Vector2(rng.randf_range(4.0, 11.0), rng.randf_range(4.0, 11.0))
+			var gc: Color = [K.SOIL.darkened(0.08), K.GRASS_D.darkened(0.1), K.STONE_D.darkened(0.12), K.MOSS.darkened(0.2)][i % 4]
+			K.vb(host, Vector3(gs.x, 0.04, gs.y), Vector3(gp.x, 0.11 + (i % 4) * 0.004, gp.y), gc, Vector3(0, rng.randf() * 90.0, 0))
+	# ÇEVRE-4 (kalite notu 23): yıkık kemer dizileri (saray salonlarının ve revakların kalıntısı), devrik sütunlar
+	K.kemer_dizisi(host, Vector2(-sz.x * 0.47, sz.y * 0.05), Vector2(-sz.x * 0.47, sz.y * 0.42), 5.2, K.BRICK.lerp(K.STONE, 0.3), rng, 0.1, 0.35)
+	K.kemer_dizisi(host, Vector2(sz.x * 0.46, -sz.y * 0.12), Vector2(sz.x * 0.46, sz.y * 0.3), 4.4, K.BRICK.lerp(K.STONE, 0.25), rng, 0.1, 0.45)
+	K.kemer_dizisi(host, Vector2(sz.x * 0.05, sz.y * 0.47), Vector2(sz.x * 0.42, sz.y * 0.47), 3.8, K.BRICK.lerp(K.STONE, 0.3), rng, 0.1, 0.5)
+	if lod == 0:
+		for i in 7:
+			var fp := Vector3(rng.randf_range(-0.35, 0.35) * sz.x, 0.55, rng.randf_range(-0.1, 0.4) * sz.y)
+			var fl := rng.randf_range(3.0, 5.5)
+			K.sc(host, 0.45, fl, fp, K.MARBLE.darkened(0.1 + rng.randf() * 0.08) if i % 3 else K.PORPHYRY, 10, 0.42, Vector3(90.0, rng.randf() * 180.0, 0), 1.0)
+			K.vb(host, Vector3(1.2, 0.45, 1.2), fp + Vector3(rng.randf_range(-2, 2), -0.3, rng.randf_range(-2, 2)), K.LIGHT.darkened(0.1), Vector3(rng.randf() * 30.0, rng.randf() * 90.0, rng.randf() * 30.0))
 	# yamaç terası: arka (kuzey) kenarda iki kademeli alt yapı (kemerli destek duvarı), basamaklı çıkış
 	var tw := sz.x * 0.8
 	var tz := -sz.y * 0.5 + 8.0
@@ -103,7 +119,7 @@ static func build_buyuk_saray(host: Node3D, k: float = 0.5, lod: int = 0) -> voi
 			K.vb(host, Vector3(10.0, 0.12, 0.7), Vector3(sz.x * 0.25, 0.16, -sz.y * 0.22 + r * 1.5), K.SOIL.darkened(0.15))
 			for c in 5:
 				if rng.randf() < 0.7:
-					Props.ball(host, 0.22, Vector3(sz.x * 0.25 - 4.0 + c * 2.0, 0.34, -sz.y * 0.22 + r * 1.5), K.GRASS, Vector3(1, 0.8, 1), 6)
+					K.vb(host, Vector3(0.35, 0.3, 0.35), Vector3(sz.x * 0.25 - 4.0 + c * 2.0, 0.37, -sz.y * 0.22 + r * 1.5), K.GRASS_D, Vector3(0, rng.randf() * 90.0, 0))
 		K.ruin_wall(host, Vector2(sz.x * 0.1, -sz.y * 0.25), Vector2(sz.x * 0.4, -sz.y * 0.25), 1.1, 0.5, K.STONE_D, rng, "rubble", 0.1)
 		K.ruin_wall(host, Vector2(sz.x * 0.4, -sz.y * 0.25), Vector2(sz.x * 0.4, 0.0), 1.1, 0.5, K.STONE_D, rng, "rubble", 0.1)
 	# ayakta kalmış üç sütun (porfir/mermer) ve düşmüş başlıklar

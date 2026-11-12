@@ -97,24 +97,103 @@ static func lead_dome(host: Node3D, r: float, h: float, base: Vector3, ribs := 1
 
 
 ## Yıkık duvar parçası: tabanı 0'da, yüksekliği uçlara doğru düşen, üstü moloz/ot kaplı katı. a→b doğrusu üzerinde.
+## Yıkık duvar (ÇEVRE-4; kalite notu 23): "basamak bloğu" değil. Sürekli alt gövde (katı) + üstte komşusuna yumuşak
+## geçen, kırık (sivri/eğik) tepeli parçalar; uzun ve yüksek duvarda kör kemerler (tuğla kemer kaşı + koyu boşluk);
+## seyrek yosun öbekleri ve yüzde sarmaşık lekeleri; dipte moloz yığını. chop: yükseklik çarpanı.
 static func ruin_wall(host: Node3D, a: Vector2, b: Vector2, h: float, th: float, color: Color, rng: RandomNumberGenerator, pattern := "brick", y0 := 0.0, chop := 1.0) -> void:
 	var len := a.distance_to(b)
 	if len < 0.5:
 		return
 	var yaw := rad_to_deg(atan2(b.x - a.x, b.y - a.y))
-	var n := maxi(2, int(len / 3.0))
+	var u := (b - a) / len
+	var nrm := Vector2(-u.y, u.x)
+	var H := maxf(h * chop, 0.8)
+	var hb := maxf(H * 0.42, 0.6)
+	var mid := (a + b) * 0.5
+	var base := sb(host, Vector3(th, hb, len + 0.02), Vector3(mid.x, y0 + hb * 0.5, mid.y), color.darkened(rng.randf() * 0.06), pattern, Vector3(0, yaw, 0))
+	base.name = "RuinWall"
+	# üst parçalar: yumuşak rastgele yürüyüş (komşu farkı ≤ %25 H), kırık tepe (prizma), ara ara gedik
+	var n := maxi(1, int(len / 2.6))
+	var cur := rng.randf_range(0.55, 1.0)
 	for i in n:
 		var t0 := float(i) / n
 		var t1 := float(i + 1) / n
+		cur = clampf(cur + rng.randf_range(-0.25, 0.25), 0.0, 1.0)
+		if cur < 0.12:
+			continue                      # gedik: yalnız alt gövde
 		var m := a.lerp(b, (t0 + t1) * 0.5)
-		var hh := h * lerpf(0.35, 1.0, rng.randf()) * chop
-		hh = maxf(hh, 0.5)
 		var seg := len / n
-		var bd := sb(host, Vector3(th, hh, seg + 0.02), Vector3(m.x, y0 + hh * 0.5, m.y), color.darkened(rng.randf() * 0.1), pattern, Vector3(0, yaw, 0))
-		# üstte ot/moloz tepeciği (görsel)
-		if rng.randf() < 0.6:
-			vb(host, Vector3(th * 0.9, 0.18, seg * 0.7), Vector3(m.x, y0 + hh + 0.09, m.y), MOSS, Vector3(0, yaw, 0))
+		var hh := (H - hb) * cur
+		if hh > 0.3:
+			var bd := sb(host, Vector3(th * 0.96, hh, seg + 0.02), Vector3(m.x, y0 + hb + hh * 0.5, m.y), color.darkened(rng.randf() * 0.08), pattern, Vector3(0, yaw, 0))
+			bd.name = "RuinWall"
+		# kırık tepe: duvar boyunca sivri/eğik taş kırığı (görsel)
+		var pk := rng.randf_range(0.4, 1.3) * minf(1.0, H * 0.3)
+		var pr := Props.prism(host, Vector3(seg * rng.randf_range(0.6, 1.0), pk, th * 0.9), Vector3(m.x, y0 + hb + hh + pk * 0.5 - 0.02, m.y), color.darkened(0.05 + rng.randf() * 0.06), Vector3(0, yaw + 90.0, 0))
+		if pattern != "":
+			Props.set_pattern(pr, color, pattern)
+		if rng.randf() < 0.35:
+			vb(host, Vector3(th * 0.7, 0.16, seg * rng.randf_range(0.25, 0.5)), Vector3(m.x, y0 + hb + hh + 0.08, m.y) + Vector3(0, 0, 0), MOSS.darkened(0.25), Vector3(0, yaw, 0))
+		if rng.randf() < 0.25 and hh + hb > 1.6:
+			# sarmaşık lekesi (bir yüzde)
+			var sd := 1.0 if rng.randf() < 0.5 else -1.0
+			var ih := rng.randf_range(1.0, hh + hb - 0.3)
+			vb(host, Vector3(0.06, ih, seg * rng.randf_range(0.3, 0.7)), Vector3(m.x + nrm.x * sd * (th * 0.5 + 0.03), y0 + hb + hh - ih * 0.5, m.y + nrm.y * sd * (th * 0.5 + 0.03)), Color("4a5e38"), Vector3(0, yaw, 0))
+	# kör kemerler: yüksek ve uzun duvarda
+	if H >= 2.8 and len >= 6.0:
+		var ka := maxi(1, int(len / 5.0))
+		var kw := minf(2.6, len / ka * 0.6)
+		for j in ka:
+			var c := a.lerp(b, (j + 0.5) / ka)
+			for sd2: float in [-1.0, 1.0]:
+				var off := nrm * sd2 * (th * 0.5 + 0.02)
+				var ky := y0 + minf(H * 0.32, hb * 0.9)
+				var kh := minf(H * 0.36, 2.6)
+				vb(host, Vector3(0.05, kh, kw), Vector3(c.x + off.x, ky + kh * 0.5, c.y + off.y), DARK.lightened(0.08), Vector3(0, yaw, 0))
+				Props.cyl(host, kw * 0.5, 0.05, Vector3(c.x + off.x, ky + kh, c.y + off.y), DARK.lightened(0.08), Vector3(0, yaw, 90), 10)
+				Props.cyl(host, kw * 0.5 + 0.3, 0.04, Vector3(c.x + off.x * 0.98, ky + kh, c.y + off.y * 0.98), BRICK2.darkened(0.1), Vector3(0, yaw, 90), 10)
+	# dipte moloz
+	var mo := maxi(1, int(len / 3.0))
+	for j in mo:
+		var c2 := a.lerp(b, rng.randf()) + nrm * (th * 0.5 + rng.randf_range(0.2, 1.2)) * (1.0 if rng.randf() < 0.5 else -1.0)
+		var s2 := rng.randf_range(0.4, 0.9)
+		vb(host, Vector3(s2, s2 * 0.6, s2 * 0.8), Vector3(c2.x, y0 + s2 * 0.25, c2.y), STONE_D.darkened(rng.randf() * 0.1), Vector3(rng.randf() * 20.0, rng.randf() * 180.0, rng.randf() * 20.0))
+
+
+## Yıkık kemer dizisi (serbest duran): ayaklar + yarım daire kemerler (yedi parçalı tuğla kemer taşları); yıkık
+## açıklıklarda kemer yok (yalnız ayak kütüğü). a→b boyunca, açıklık ~4 m. Ayaklar katı, kemerler görsel.
+static func kemer_dizisi(host: Node3D, a: Vector2, b: Vector2, h: float, color: Color, rng: RandomNumberGenerator, y0 := 0.0, yikik := 0.3) -> void:
+	var len := a.distance_to(b)
+	var n := maxi(1, int(len / 4.2))
+	var sp := len / n
+	var u := (b - a) / len
+	var yaw := rad_to_deg(atan2(u.x, u.y))
+	var pw := 1.1
+	var ph: Array = []
+	for i in n + 1:
+		ph.append(h if rng.randf() > yikik * 0.6 else h * rng.randf_range(0.25, 0.6))
+	for i in n + 1:
+		var p := a + u * (sp * i)
+		var hh: float = ph[i]
+		var bd := sb(host, Vector3(1.2, hh, pw), Vector3(p.x, y0 + hh * 0.5, p.y), color.darkened(rng.randf() * 0.08), "brick", Vector3(0, yaw, 0))
 		bd.name = "RuinWall"
+		vb(host, Vector3(1.4, 0.25, pw + 0.2), Vector3(p.x, y0 + minf(hh, h) - 0.12, p.y), STONE, Vector3(0, yaw, 0))
+	for i in n:
+		if float(ph[i]) < h * 0.9 or float(ph[i + 1]) < h * 0.9 or rng.randf() < yikik * 0.5:
+			continue
+		var c := a + u * (sp * (i + 0.5))
+		var r := (sp - pw) * 0.5
+		var segs := 7
+		for j in segs:
+			var t := PI * (j + 0.5) / segs
+			var off := cos(t) * r
+			var up := sin(t) * r
+			var q := c + u * off
+			vb(host, Vector3(1.1, 0.55, r * PI / segs + 0.12), Vector3(q.x, y0 + h + up - 0.1, q.y), BRICK2.darkened(rng.randf() * 0.1), Vector3(-rad_to_deg(t + PI * 0.5), yaw, 0))
+		# kemer üstü dolgu (spandrel) + yosun
+		vb(host, Vector3(1.1, r * 0.55, sp - pw * 0.4), Vector3(c.x, y0 + h + r + r * 0.2, c.y), color.darkened(0.04), Vector3(0, yaw, 0))
+		if rng.randf() < 0.6:
+			vb(host, Vector3(0.9, 0.15, sp * 0.5), Vector3(c.x, y0 + h + r * 1.5, c.y), MOSS.darkened(0.25), Vector3(0, yaw, 0))
 
 
 ## MultiMesh: aynı ağın çok kopyası (mazgal, kiremit, ot demeti, moloz). xforms: Transform3D dizisi.
@@ -216,13 +295,13 @@ static func windows(host: Node3D, origin: Vector3, dir: Vector3, span: float, y:
 
 ## Mozaik/döşeme parçası: yerden 2 cm yukarıda renkli küçük levhalar (görsel; yalnız yürünen zemin üstüne)
 static func mosaic(host: Node3D, center: Vector3, size: Vector2, rng: RandomNumberGenerator, cells := 7) -> void:
-	var cols := [Color("c8a050"), Color("7a3040"), Color("e2d6bc"), Color("3a5a7a"), Color("8a6a3a"), Color("6a8a5a")]
+	var cols := [Color("a89470"), Color("6a4a44"), Color("cfc4ae"), Color("5a6670"), Color("8a7458"), Color("6e7a5e")]   # aşınmış, toprak altından (ÇEVRE-4)
 	var cw := size.x / cells
 	var ch := size.y / cells
 	for i in cells:
 		for j in cells:
-			if rng.randf() < 0.18:
-				continue            # eksik parçalar
+			if rng.randf() < 0.4:
+				continue            # eksik parçalar (toprak/ot altında)
 			var c: Color = cols[(i + j * 2 + int(rng.randf() * 2)) % cols.size()]
 			if (i + j) % 2 == 0:
 				c = cols[0] if (i / 2 + j / 2) % 2 == 0 else cols[2]
