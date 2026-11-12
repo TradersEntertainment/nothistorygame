@@ -1,0 +1,10 @@
+n_mutfak_anadolu_a -5625 -390 1.7 90 -2
+n_mutfak_anadolu_b -5590 -390 1.7 270 -2
+n_ahir_anadolu -5658 264 1.7 270 -3
+n_agil_rumeli -4513 3904 1.7 90 -3
+n_batarya_04 -5242 222 1.7 90 -3
+n_zaganos_ates -100 3211 1.7 0 -2
+n_anadolu_hava_60 -5800 -400 60 90 -30
+n_rumeli_hava_60 -4600 2600 60 45 -30
+n_mutfak_rumeli -4460 2522 1.7 90 -2
+n_esir_cadiri -5486 2484 1.7 90 -2
