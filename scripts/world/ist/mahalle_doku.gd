@@ -368,6 +368,13 @@ func _zemin_mat(tas: bool) -> StandardMaterial3D:
 	m.diffuse_mode = BaseMaterial3D.DIFFUSE_TOON
 	m.specular_mode = BaseMaterial3D.SPECULAR_DISABLED
 	m.roughness = 1.0
+	if not gece:
+		# DOKU-4 (kalite notu 28): gölgede kalan yol/döşeme mavi gök ortam ışığıyla camgöbeğine dönüyordu. Gündüz ortam
+		# ışığı kapalı; yerine sıcak, düşük taban ışıması (gölgedeki toprak koyu kahve-gri okunur)
+		m.disable_ambient_light = true
+		m.emission_enabled = true
+		m.emission = Color(0.27, 0.235, 0.18) if tas else Color(0.27, 0.225, 0.165)
+		m.emission_energy_multiplier = 1.0
 	if tas:
 		# Prokonnesos/kireçtaşı döşeme (kalite notu 17): düzensiz sıralı kesme taş, derz, kırık, otlu derz; 7,2 m'de bir tekrar
 		var tex := dosek_tex()
@@ -466,6 +473,11 @@ static func dosek_tex() -> ImageTexture:
 			x += w
 	if IstSokak._ob_kip() != "yok":
 		DirAccess.make_dir_recursive_absolute(IstSokak.ONBELLEK_DIR)
+		var da := DirAccess.open(IstSokak.ONBELLEK_DIR)
+		if da != null:
+			for fn: String in da.get_files():
+				if fn.begins_with("dosek_") and IstSokak.ONBELLEK_DIR + fn != ob_yol:
+					da.remove(fn)
 		img.save_png(ob_yol)
 	img.generate_mipmaps()
 	_dosek = ImageTexture.create_from_image(img)
@@ -508,11 +520,34 @@ func _tarhlar(tarh: Dictionary) -> void:
 				_kutu(st, Transform3D(bas, Vector3(c.x, y + 0.04, c.y)), Vector3(3.4, 0.12, 3.0), Color("6a5a40"), cen)
 				for r in 3:
 					_kutu(st, Transform3D(bas, Vector3(c.x, y + 0.2, c.y) + bas * Vector3(0, 0, (r - 1) * 0.95)), Vector3(3.0, 0.22, 0.45), renk[(r + int(hsh * 100.0)) % 3], cen)
-			else:
+			elif hsh < 0.62:
 				# çalı kümesi
 				for r in 3:
 					var o := bas * Vector3((r - 1) * 0.9, 0, (r % 2) * 0.6)
 					_kutu(st, Transform3D(bas.rotated(Vector3.UP, r * 0.7), Vector3(c.x, y + 0.35, c.y) + o), Vector3(1.0, 0.75, 0.9), renk[(r + 1) % 4], cen)
+			else:
+				# DOKU-4 ("boş alan yok"; evlerin arası düz yeşil kalıyordu): parsel dokusu, 6 m ızgaranın kalan noktaları
+				var bp := Basis(Vector3.UP, roundf(hsh * 7.0) * 0.08)
+				var t := fposmod(hsh * 37.0, 1.0)
+				if t < 0.5:
+					# sürülmüş bostan toprağı / nadas: yere yatık parsel (köşeler zeminin üstünde), sıra izli
+					var sz := Vector2(5.4, 5.0)
+					var tc: Color = TOPRAK_PARSEL[int(t * 8.0) % TOPRAK_PARSEL.size()]
+					_parsel(st, c, bp, sz, tc, cen)
+					for r in 4:
+						var q := c + Vector2(0, (r - 1.5) * 1.15).rotated(-bp.get_euler().y)
+						_parsel(st, q, bp, Vector2(5.0, 0.35), tc.darkened(0.18), cen, 0.025)
+				elif t < 0.78:
+					# kuru taş bahçe duvarı (diz boyu, parsel kenarı)
+					var cy := IstGeo.h(c.x, c.y)
+					_kutu(st, Transform3D(bp, Vector3(c.x, cy + 0.3, c.y + 2.6)), Vector3(5.8, 0.75, 0.55), Color("7d7466").darkened(t * 0.2), cen)
+					_kutu(st, Transform3D(bp, Vector3(c.x + 2.6, cy + 0.3, c.y)), Vector3(0.55, 0.75, 5.2), Color("756d60"), cen)
+				else:
+					# çiğnenmiş patika + seyrek ot öbeği
+					_parsel(st, c, bp.rotated(Vector3.UP, 0.6), Vector2(1.4, 6.0), Color("8a7a5e"), cen)
+					for r in 3:
+						var o := Vector2((r - 1) * 1.7, (r % 2) * 1.3 - 0.6)
+						_kutu(st, Transform3D(bp, Vector3(c.x + o.x + 1.6, IstGeo.h(c.x, c.y) + 0.12, c.y + o.y)), Vector3(0.6, 0.3, 0.55), Color("6b7342"), cen)
 		var mi := MeshInstance3D.new()
 		mi.mesh = st.commit()
 		mi.material_override = mat
@@ -521,6 +556,21 @@ func _tarhlar(tarh: Dictionary) -> void:
 		mi.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
 		mi.set_meta("no_walk", true)
 		add_child(mi)
+
+const TOPRAK_PARSEL := [Color("6a5640"), Color("725c42"), Color("5e4c36"), Color("7a6448"), Color("665a3c"), Color("6e6244")]
+
+## Yere yatık parsel dörtgeni: köşeler mahalle zemininin (_zy) üstünde (arazi ağının hiçbir bölünmesine gömülmez)
+func _parsel(st: SurfaceTool, c: Vector2, bas: Basis, sz: Vector2, col: Color, cen: Vector3, ek := 0.0) -> void:
+	var k: Array = []
+	for o: Vector2 in [Vector2(-0.5, -0.5), Vector2(0.5, -0.5), Vector2(0.5, 0.5), Vector2(-0.5, 0.5)]:
+		var w := bas * Vector3(o.x * sz.x, 0, o.y * sz.y)
+		var p := Vector2(c.x + w.x, c.y + w.z)
+		k.append(Vector3(p.x, _zy(p.x, p.y) + 0.02 + ek, p.y) - cen)
+	st.set_color(col)
+	st.set_normal(Vector3.UP)
+	for v: Vector3 in [k[0], k[2], k[1], k[0], k[3], k[2]]:
+		st.add_vertex(v)
+
 
 ## DOKU-4 (yükleme): avlu katmanının sonucu (ağ dizileri, çarpışma kutuları, avlu öğeleri) diskte
 var _kayit = null                 # Array: _avlular sırasında eklenen öğeler (önbelleğe)
@@ -685,7 +735,7 @@ func _avlular_hesapla() -> void:
 					agac[ak][tur] = []
 				agac[ak][tur].append(Transform3D(Basis(Vector3.UP, hsh * 40.0).scaled(Vector3.ONE * (0.75 + hsh * 0.5)), Vector3(c.x, IstGeo.h(c.x, c.y) - 0.05, c.y)))
 				nb += 1
-			elif hsh < 0.62:
+			else:
 				var tk := Vector2i(floori(c.x / DUVAR_HUCRE), floori(c.y / DUVAR_HUCRE))
 				if not tarh.has(tk):
 					tarh[tk] = []
@@ -1015,7 +1065,8 @@ func _planla(cp: Vector3) -> void:
 		_is_kuyrugu.append([hd[1], hd[2]])
 	# avlu duvarlarının (ve çatı geçitlerinin) çarpışması: kameranın ve oyuncunun çevresinde
 	var pl := get_tree().get_first_node_in_group("player") as Node3D if is_inside_tree() else null
-	var p2 := Vector2(pl.global_position.x, pl.global_position.z) if pl != null else p
+	var pll := to_local(pl.global_position) if pl != null else Vector3(p.x, 0, p.y)
+	var p2 := Vector2(pll.x, pll.z)
 	for ck: Vector2i in _duvar_cells:
 		var c := Vector2((ck.x + 0.5) * DUVAR_HUCRE, (ck.y + 0.5) * DUVAR_HUCRE)
 		var yakin := minf(c.distance_to(p), c.distance_to(p2)) < CARP_YAKIN + DUVAR_HUCRE * 0.71
@@ -1037,7 +1088,26 @@ func _planla(cp: Vector3) -> void:
 			dc["body"] = null
 
 
+## DOKU-4: kare başına iş süresi (uçuş takılması payı); çıkışta ISTPROF satırı
+var _prof := {"n": 0, "ust16": 0, "ust33": 0, "en_ms": 0.0}
+
+func _exit_tree() -> void:
+	print("ISTPROF mahalle_doku ", _prof)
+
+
 func _process(dt: float) -> void:
+	var tp := Time.get_ticks_usec()
+	_process_ic(dt)
+	var ms := (Time.get_ticks_usec() - tp) / 1000.0
+	_prof["n"] += 1
+	if ms > 16.0:
+		_prof["ust16"] += 1
+	if ms > 33.0:
+		_prof["ust33"] += 1
+	_prof["en_ms"] = maxf(_prof["en_ms"], snappedf(ms, 0.1))
+
+
+func _process_ic(dt: float) -> void:
 	_son_kontrol -= dt
 	if _son_kontrol <= 0.0:
 		_son_kontrol = 0.4

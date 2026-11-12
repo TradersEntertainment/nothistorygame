@@ -669,6 +669,7 @@ static func mesh(v: int, tip: String, lod: int) -> Mesh:
 static var ob_say := {}
 static var _ob_imza := ""
 static var _ob_mat := {}
+static var _ob_temiz := false
 
 
 static func _ob_yol(v: int, tip: String, lod: int) -> String:
@@ -743,6 +744,14 @@ static func _ob_mesh_yaz(v: int, tip: String, lod: int, m: Mesh) -> void:
 		kopya.surface_set_material(i, null)
 	kopya.set_meta("ob_mat", sig)
 	DirAccess.make_dir_recursive_absolute(IstSokak.ONBELLEK_DIR + "ev")
+	if not _ob_temiz:
+		# eski imzalı ev ağları (kod değişmiş) silinir; oturumda bir kez
+		_ob_temiz = true
+		var da := DirAccess.open(IstSokak.ONBELLEK_DIR + "ev")
+		if da != null:
+			for fn: String in da.get_files():
+				if not fn.begins_with(_ob_imza + "_"):
+					da.remove(fn)
 	ResourceSaver.save(kopya, _ob_yol(v, tip, lod), ResourceSaver.FLAG_COMPRESS)
 	# yazılanın da aynı paylaşılan malzemeleri kullanması (çizim çağrısı birleşsin) okunanla aynı görünüş verir
 	for i in sig.size():

@@ -139,6 +139,33 @@ func uret(sokak_: IstSokak, gece_: bool) -> void:
 	sokak = sokak_
 	gece = gece_
 	var t0 := Time.get_ticks_msec()
+	# DOKU-4 (yükleme): kayıtlar diskte (sokak verisi + arazi + kod + gece aynıysa)
+	var imza := ""
+	if sokak != null and sokak.ob_imza != "":
+		imza = IstSokak.onbellek_imza(["res://scripts/world/ist/hayat_veri.gd", "res://scripts/world/ist/hayat_katman.gd",
+			"res://scripts/world/ist/hayat_uzak_isik.gd", sokak.ob_imza, gece, IstGeo.yerler().size(),
+			IstSokak.arazi_ozeti(Rect2(-4500, -4500, 9000, 9000), 40)])
+		var ob = IstSokak.onbellek_oku("hayat", imza)
+		if ob is Dictionary and ob.has("K"):
+			for k: String in ob["K"]:
+				if K.has(k):
+					(K[k] as IstHayatKatman).cells = ob["K"][k][0]
+					(K[k] as IstHayatKatman).n = ob["K"][k][1]
+			ist = ob["ist"]
+			ist["onbellek"] = "okundu"
+			ist["ms"] = Time.get_ticks_msec() - t0
+			return
+	_uret_hesapla()
+	if imza != "":
+		var d := {}
+		for k: String in K:
+			d[k] = [(K[k] as IstHayatKatman).cells, (K[k] as IstHayatKatman).n]
+		IstSokak.onbellek_yaz("hayat", imza, {"K": d, "ist": ist})
+	ist["ms"] = Time.get_ticks_msec() - t0
+
+
+func _uret_hesapla() -> void:
+	var t0 := Time.get_ticks_msec()
 	if sokak != null:
 		_sokak_yuruyusu()
 		_evler()

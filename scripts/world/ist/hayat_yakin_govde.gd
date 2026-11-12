@@ -8,8 +8,8 @@ extends RefCounted
 static var gece_mod := false
 
 const POOL := [
-	["man", 9], ["woman", 8], ["child", 4], ["porter", 5], ["monk", 2], ["priest", 1], ["lantern", 3],
-	["vendor", 5], ["fisher", 2], ["worker", 3], ["guard", 3], ["beggar", 1], ["washer", 1], ["sitter", 2],
+	["man", 9], ["woman", 10], ["child", 6], ["porter", 7], ["monk", 2], ["priest", 2], ["lantern", 3],
+	["vendor", 5], ["fisher", 2], ["worker", 5], ["guard", 3], ["beggar", 1], ["washer", 1], ["sitter", 2],
 ]
 
 ## Rolün StreetEye/SideEvents sokak rolü (konuşma replik havuzu: DST_<ROL>_…)

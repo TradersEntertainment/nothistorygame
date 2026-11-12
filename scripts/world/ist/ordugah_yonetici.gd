@@ -264,6 +264,7 @@ func _kur_host(i: int, lod: int) -> Node3D:
 	# kanat süzgeci: su, Galata içi, yarımada içi ve yapı çevreleri dışlanır (yerel x,z)
 	# ORDUGÂH-4: yalnız bu öğeye yakın yapılar sınanır (oba yerleşimi binlerce nokta sorar; önce her noktada bütün plan)
 	var yakin: Array = []
+	var geo_onb := {}
 	var hr: float = float(it["r"]) + 6.0
 	for j in items.size():
 		var o: Dictionary = items[j]
@@ -275,7 +276,13 @@ func _kur_host(i: int, lod: int) -> Node3D:
 		var v := Vector3(x, 0, z).rotated(Vector3.UP, yaw)
 		var wx := px + v.x
 		var wz := pz + v.z
-		if IstGeo.su(wx, wz) or IstGeo.sehir_ici(wx, wz) or IstGeo.galata_ici(wx, wz):
+		# ORDUGÂH-4: kıyı/şehir sınaması 4 m'lik ızgarada önbellekli (oba yerleşimi binlerce nokta sorar)
+		var ck := Vector2i(floori(wx / 4.0), floori(wz / 4.0))
+		var geo_ok = geo_onb.get(ck)
+		if geo_ok == null:
+			geo_ok = not (IstGeo.su(wx, wz) or IstGeo.sehir_ici(wx, wz) or IstGeo.galata_ici(wx, wz))
+			geo_onb[ck] = geo_ok
+		if not geo_ok:
 			return false
 		var wp := Vector2(wx, wz)
 		for o: Array in yakin:
