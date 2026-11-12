@@ -257,7 +257,7 @@ static func _mese(n: Node3D, k: float, lod: int, uzunluk: float) -> void:
 				Y.box(n, Vector3(0.12, 0.3, 1.9), Vector3(xf_front, 0.28 + dh + 0.15, zc2), Y.MERMER, "", false)
 				if rng.randf() < 0.65:
 					# kepenk/tezgâh
-					Y.box(n, Vector3(0.6, 1.0, 1.4), Vector3(xf_front - s * 0.5, 0.28 + 0.5, zc2 + 0.0), Y.AHSAP, "wood", col)
+					Y.box(n, Vector3(0.6, 1.0, 1.4), Vector3(xf_front - s * 0.3, 0.28 + 0.5, zc2 + 0.0), Y.AHSAP, "wood", col)
 					# tente
 					Y.box(n, Vector3(0.9, 0.06, 2.6), Vector3(xf_front - s * 0.5, 0.28 + 2.55, zc2), [Color("b8452f"), Color("e0b24a"), Color("3f6f8c")][rng.randi() % 3], "", false, Vector3(0, 0, s * 12))
 				# üst pencere sırası: sıva üzerinde
@@ -373,7 +373,7 @@ static func _tauri(n: Node3D, k: float, lod: int) -> void:
 	_perch(n, Vector3(-wx * 0.95, ust + 0.5, 0))
 	# yan kapılar: alçak, ortaya bitişik değil (aradaki boşluk 0 ya da ≥ 1,4 m): 2,4 m aralıklı dış kemerler
 	var yan := ac * 0.5 + ayw + ayw * 0.0 + 3.2
-	Y.kapi_kemeri(g, Vector3(yan + ac * 0.25, 0, 0), maxf(ac * 0.5, 3.0), yay * 0.9, yay * 0.9 + maxf(ac * 0.5, 3.0) * 0.5 + 1.0, maxf(5.0 * k, 3.0), ayw * 0.8, Y.TAS, 0, col)
+	Y.kapi_kemeri(g, Vector3(ac * 0.5 + ayw + ayw * 0.8 + maxf(ac * 0.5, 3.0) * 0.5, 0, 0), maxf(ac * 0.5, 3.0), yay * 0.9, yay * 0.9 + maxf(ac * 0.5, 3.0) * 0.5 + 1.0, maxf(5.0 * k, 3.0), ayw * 0.8, Y.TAS, 0, col)
 	# gözyaşı sütunları (iki adet), takın önünde; biri yarıda kırık
 	var po := {"kaide_w": 3.0, "kaide_h": 3.0, "govde_r": 0.9, "govde_h": 13.0, "tambur": 4, "renk": Y.GRANIT,
 		"baslik": "korint", "desen": "gozyasi", "kaide_renk": Y.MERMER, "merdiven": false}
@@ -636,6 +636,8 @@ static func _myrelaion(n: Node3D, k: float, lod: int) -> void:
 	var sx := -rr * 0.3
 	var sz2 := sqrt(maxf(rr * rr - sx * sx, 1.0)) + run - 0.1
 	var nn := Y.stairs(n, Vector3(sx, 0.1, sz2), Vector3(0, 0, -1), hh, 2.0, Y.TAS, col)
+	var ze := sqrt(maxf(rr * rr - sx * sx, 1.0))
+	Y.box(n, Vector3(2.0, hh - 0.04, 1.6), Vector3(sx, 0.1 + (hh - 0.04) * 0.5, ze - 0.2), Y.TAS, "", col)
 	# merdiven rotunda gövdesine ~ (0,0.1 yükseklik) bitişir; üst basamak terasa kadar gelmeli: teras kenar cw/2+1.0
 	_climb(n, Vector3(sx, 0.12, sz2 + 0.6), Vector3(sx, ty + 0.02, sqrt(maxf(rr * rr - sx * sx, 1.0)) - 0.4))
 	_perch(n, Vector3(0, cy + dh + dr * 0.7 + 1.0, 0))

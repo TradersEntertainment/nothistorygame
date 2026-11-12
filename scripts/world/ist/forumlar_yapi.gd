@@ -196,7 +196,7 @@ static func moloz(h: Node3D, pos: Vector3, w: float, d: float, kat: int, rng: Ra
 		var ww := w * (1.0 - 0.28 * i)
 		var dd := d * (1.0 - 0.28 * i)
 		box(h, Vector3(ww, sh * (i + 1), dd), pos + Vector3(rng.randf_range(-0.1, 0.1) * i, sh * (i + 1) * 0.5, rng.randf_range(-0.1, 0.1) * i),
-			MOLOZ if i % 2 == 0 else TAS_K, "rubble", solid, Vector3(0, rng.randf_range(-20, 20), 0))
+			MOLOZ if i % 2 == 0 else TAS_K, "rubble", solid, Vector3(0, rng.randf_range(-6, 6), 0))
 
 
 ## Ot/çalı tutamı (görsel).
