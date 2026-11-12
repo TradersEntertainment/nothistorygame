@@ -16,6 +16,7 @@ extends Node3D
 const DIR := "res://scripts/world/ist/"
 const ESER := preload("res://scripts/world/ist/sehir_eser.gd")
 const SURDOKU := preload("res://scripts/world/ist/sur_doku.gd")
+const SURKULE := preload("res://scripts/world/ist/sur_kule.gd")
 const SELF := ["sehir", "evler"]
 ## Uzaklık eşikleri (parçanın yarıçapı eklenir): lod 0 < R0, lod 1 < R1, ötesi lod 2
 const R0 := 90.0
@@ -2689,6 +2690,42 @@ func _ates_alani(pl: PackedVector2Array) -> void:
 	stats["ates_alani_ms"] = (Time.get_ticks_usec() - t0) / 1000.0
 
 
+## SUR-5 (D): Mesoteikhion (Lykos vadisi; IstSurlar.catalog "mesoteikhion" noktası) çevresinde üç top gediği: dilimin
+## yerel x'leri (yaw: dilimin dönüşü; yerel +x = Basis(UP, yaw) * X). Dilim ucuna 9 m'den yakın gedik atlanır.
+var _gedik_nok: Array = []
+
+func _gedik_x(mid: Vector2, yaw: float, L: float) -> Array:
+	if _gedik_nok.is_empty():
+		# hat üstünde Romanos kapısına en yakın noktadan güneye 110, 215, 330 m (kapı koşusunun dışında)
+		var pl := _sade(IstGeo.yol("kara_suru"))
+		var rmw := IstGeo.w2(-4939.29, 1113.20)
+		var acc := 0.0
+		var best := 0.0
+		var bd := INF
+		for i in pl.size() - 1:
+			var l := pl[i].distance_to(pl[i + 1])
+			var k := 0.0
+			while k <= l:
+				var q := pl[i].lerp(pl[i + 1], k / maxf(l, 0.001))
+				if q.distance_to(rmw) < bd:
+					bd = q.distance_to(rmw)
+					best = acc + k
+				k += 2.0
+			acc += l
+		# hat yönü Marmara'dan Haliç'e: güney = küçük yay boyu
+		for ds: float in [110.0, 215.0, 330.0]:
+			_gedik_nok.append(_hat_nokta(pl, best - ds)["p"])
+	var ex := Vector2(cos(yaw), -sin(yaw))
+	var ez := Vector2(sin(yaw), cos(yaw))
+	var out: Array = []
+	for q: Vector2 in _gedik_nok:
+		var lx := (q - mid).dot(ex)
+		var lz := (q - mid).dot(ez)
+		if absf(lz) < 15.0 and absf(lx) < L * 0.5 - 9.0:
+			out.append(lx)
+	return out
+
+
 ## Hat dilimi: kur türüne göre parçanın parametreli kurucusu
 func _hat_piece(ad: String, kur: String, mid: Vector2, d: Vector2, L: float, seed: int) -> Dictionary:
 	var yaw := _yaw_x(d, mid, ad)
@@ -2704,7 +2741,9 @@ func _hat_piece(ad: String, kur: String, mid: Vector2, d: Vector2, L: float, see
 	var make: Callable
 	match kur:
 		"kara":
-			make = func(n: Node3D, lod: int) -> void: IstSurlar.build_run(n, L, K_SUR, lod, 1453 + seed)
+			# SUR-5 (D): Mesoteikhion gedikleri bu dilime düşüyorsa yerel x'leri
+			var gk := _gedik_x(mid, yaw, L)
+			make = func(n: Node3D, lod: int) -> void: IstSurlar._run(n, L, K_SUR, lod, 1453 + seed, {"ad": "SurDilimi", "gedik": gk})
 		"blakherna":
 			make = func(n: Node3D, lod: int) -> void: _blakherna_wall(n, L, lod)
 		"halic":
@@ -2882,25 +2921,23 @@ func _kose(ad: String, kur: String, p: Vector2, walk_y := NAN) -> Dictionary:
 		var nlo := walk_y + 0.05 - walk
 		dip = maxf(0.0, nlo - lo) + 0.3
 		lo = nlo
+	# SUR-5: köşe kulesi kutu değil (kalite notu 32): sekizgen plan, kaide, şev, silme; yürüme yolunun girip çıktığı
+	# yönlerde korkuluk açık, öteki kenarlarda mazgallı korkuluk (eskiden yerde duran dokusuz BEYAZ KÜP dişler: kara_03_ust)
+	var yonler: Array = []
+	var pl := _sade(IstGeo.yol(ad))
+	var en := 0
+	var ed := INF
+	for i in pl.size():
+		var dd := pl[i].distance_to(p)
+		if dd < ed:
+			ed = dd
+			en = i
+	if en > 0:
+		yonler.append((pl[en - 1] - pl[en]).normalized())
+	if en < pl.size() - 1:
+		yonler.append((pl[en + 1] - pl[en]).normalized())
 	var make := func(n: Node3D, lod: int) -> void:
-		var stone := Color("cdbd9e")
-		if dip > 0.0:
-			if lod == 0:
-				Props.set_pattern(Props.solid(n, Vector3(sz, dip, sz), Vector3(0, -dip * 0.5 + 0.02, 0), Color.WHITE), stone.darkened(0.1), "ashlar")
-			else:
-				Props.box(n, Vector3(sz, dip, sz), Vector3(0, -dip * 0.5 + 0.02, 0), stone.darkened(0.1))
-		if lod == 0:
-			var b := Props.solid(n, Vector3(sz, walk, sz), Vector3(0, walk * 0.5, 0), Color.WHITE)
-			Props.set_pattern(b, stone, "ashlar")
-			for sd: Vector2 in [Vector2(1, 0), Vector2(-1, 0), Vector2(0, 1), Vector2(0, -1)]:
-				for t in 3:
-					var off := (t - 1) * sz * 0.33
-					var mp := Vector3(sd.x * (sz * 0.5 - 0.3) + absf(sd.y) * off, walk + 0.55, sd.y * (sz * 0.5 - 0.3) + absf(sd.x) * off)
-					Props.box(n, Vector3(1.0 if sd.y != 0 else 0.6, 1.1, 0.6 if sd.y != 0 else 1.0), mp, stone.darkened(0.08))
-			for y: float in [walk * 0.33, walk * 0.66]:
-				Props.box(n, Vector3(sz + 0.06, 0.4, sz + 0.06), Vector3(0, y, 0), Color("a8583a"))
-		else:
-			Props.box(n, Vector3(sz, walk + 1.1, sz), Vector3(0, (walk + 1.1) * 0.5, 0), stone)
+		SURKULE.kose(n, sz, walk, dip, lod, yonler, hash(ad) % 1000 + int(absf(p.x)))
 	var it := _v2_item("kose_%s_%d" % [ad, hat_items.size()], Vector3(p.x, lo - 0.05, p.y), 0.0, sz, make, {}, true)
 	it["hat"] = ad
 	it["walk"] = lo - 0.05 + walk

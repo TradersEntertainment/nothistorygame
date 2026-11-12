@@ -107,6 +107,7 @@ static func build(root: Node3D, lay: Dictionary, o: Dictionary) -> void:
 			y2 += rng.randf_range(0.1, 0.35)
 			var m := Props.box(root, Vector3(ww, hh, 0.04), Vector3(x2 + rng.randf_range(-0.5, 0.5), y2, fz + 0.025), ivy.darkened(rng.randf_range(0.0, 0.3)), Vector3(0, 0, rng.randf_range(-30.0, 30.0)))
 			m.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
+	_beden(root, lay, sd, stone)
 	var bushes: Array = []
 	rng = _rr(sd, 6, 0)
 	for i in int(L * 0.5):
@@ -188,13 +189,16 @@ static func _scaffold(root: Node3D, x: float, z: float, h: float) -> void:
 
 
 static func _hut(root: Node3D, x: float, y: float, z: float, rng: RandomNumberGenerator) -> void:
-	# tahta nöbetçi barınağı: dört duvar tek katı kutu + kiremit çatı + açık ön (karanlık kapı boşluğu)
-	var body := Props.solid(root, Vector3(1.9, 1.7, 1.7), Vector3(x, y + 0.85, z), C_WOOD.lightened(0.05))
+	# SUR-5: yuvarlak nöbetçi barınağı (kutu değil): taş dipli ahşap gövde, konik saz/kiremit çatı, karanlık kapı boşluğu
+	var r := 0.95
+	Props.cyl(root, r + 0.06, 0.5, Vector3(x, y + 0.25, z), Color("8a7f6c"), Vector3.ZERO, 10)
+	var body := Props.cyl(root, r, 1.4, Vector3(x, y + 1.2, z), C_WOOD.lightened(0.05), Vector3.ZERO, 10)
 	Props.set_pattern(body, C_WOOD.lightened(0.05), "wood")
-	var roof := Props.prism(root, Vector3(2.3, 0.9, 2.1), Vector3(x, y + 1.7 + 0.45, z), Color("b4532f"))
-	Props.set_pattern(roof, Color("b4532f"), "tiles")
-	Props.make_solid(roof, 1.0)
-	Props.box(root, Vector3(0.7, 1.2, 0.04), Vector3(x, y + 0.65, z - 0.86), Color("15120f"))
+	Props.make_solid(body, 0.9)
+	var roof := Props.cyl(root, r + 0.35, 1.1, Vector3(x, y + 1.9 + 0.55, z), Color("6e5446"), Vector3.ZERO, 10, 0.05)
+	roof.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_ON
+	var kp := Props.box(root, Vector3(0.62, 1.15, 0.05), Vector3(x, y + 0.98, z - r + 0.02), Color("15120f"))
+	kp.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
 
 
 static func _balls(root: Node3D, x: float, y: float, z: float, n: int, rng: RandomNumberGenerator) -> void:
@@ -226,3 +230,117 @@ static func _mangonel(root: Node3D, x: float, y: float, z: float) -> void:
 	Props.cyl(root, 0.06, 1.8, Vector3(x, y + 1.82, z), Color("3a3634"), Vector3(0, 0, 90), 6)
 	Props.box(root, Vector3(0.12, 0.14, 3.2), Vector3(x, y + 1.9, z), w.lightened(0.05), Vector3(24, 0, 0))
 	Props.box(root, Vector3(0.7, 0.55, 0.6), Vector3(x, y + 0.95, z - 1.45), w.darkened(0.1))
+
+
+
+## SUR-5 (B): beden ayrıntısı ve sur üstü savunma eşyası.
+##   iç sur ova yüzünde su oluğu (çıkıntılı taş oluk + altında is/yosun akıntısı), şehir yüzünde payanda (şevli taş
+##   destek), ova yüzünde örülmüş eski kapı izi (tuğla kemer + farklı tonda dolgu taşı);
+##   yürüme yolunda korkuluğa yaslı ok sepetleri, taş yığınları (düzensiz kaya), kazanlar (yuvarlak; zift/su), kalas
+##   istifi. Görünüm yalnız (çarpışmasız: yürüme yolunu kesmez).
+static func _beden(root: Node3D, lay: Dictionary, sd: int, stone: Color) -> void:
+	var KULE = IstSurlar.KULE
+	var d: Dictionary = lay["d"]
+	var L: float = lay["L"]
+	var zi0: float = d["zi0"]
+	var zi1: float = d["zi1"]
+	var HW: float = d["HW"]
+	var itx: Array = lay["itx"]
+	var gw: float = lay["gw"]
+	var tas = KULE.Ag.new()
+	var koyu = KULE.Ag.new()
+	var tug = KULE.Ag.new()
+	var dolgu = KULE.Ag.new()
+	var kaya: Array = []
+	for i in range(itx.size() - 1):
+		var xa: float = float(itx[i]["x"]) + float(itx[i]["w"]) * 0.5
+		var xb: float = float(itx[i + 1]["x"]) - float(itx[i + 1]["w"]) * 0.5
+		if xb - xa < 10.0:
+			continue
+		var xm := (xa + xb) * 0.5
+		if gw > 0.0 and absf(xm) < gw * 0.5 + 6.0:
+			continue
+		var rng := _rr(sd, 9, i)
+		# su olukları (iki tane)
+		for k in 2:
+			var ox := lerpf(xa, xb, 0.3 + 0.4 * k) + rng.randf_range(-1.0, 1.0)
+			if IstSurlar._ic(ox):
+				tas.kutu(Vector3(ox, HW - 0.55, zi1), Vector3.RIGHT, Vector3.BACK, 0.34, 0.26, 0.7)
+				koyu.quad(Vector3(ox - 0.08, HW - 0.42, zi1 + 0.71), Vector3(ox + 0.08, HW - 0.42, zi1 + 0.71), Vector3(ox + 0.08, HW - 0.3, zi1 + 0.71), Vector3(ox - 0.08, HW - 0.3, zi1 + 0.71), Vector3.BACK)
+				# akıntı izi (koyu ince şerit, aşağı doğru incelir)
+				var y := HW - 0.6
+				var w := 0.22
+				while y > 1.0 and w > 0.04:
+					koyu.quad(Vector3(ox - w, y - 1.2, zi1 + 0.012), Vector3(ox + w, y - 1.2, zi1 + 0.012), Vector3(ox + w * 1.1, y, zi1 + 0.012), Vector3(ox - w * 1.1, y, zi1 + 0.012), Vector3.BACK)
+					y -= 1.2
+					w *= 0.78
+		# payanda (şehir yüzü): şevli taş destek
+		if i % 2 == 0 and IstSurlar._ic(xm):
+			var pb := 1.6
+			var ph := HW * 0.72
+			var a0 := Vector3(xm - 0.9, 0.0, zi0)
+			var a1 := Vector3(xm + 0.9, 0.0, zi0)
+			var f0 := Vector3(xm - 0.9, 0.0, zi0 - pb)
+			var f1 := Vector3(xm + 0.9, 0.0, zi0 - pb)
+			var t0 := Vector3(xm - 0.8, ph, zi0 - 0.25)
+			var t1 := Vector3(xm + 0.8, ph, zi0 - 0.25)
+			var u0 := Vector3(xm - 0.8, ph, zi0)
+			var u1 := Vector3(xm + 0.8, ph, zi0)
+			tas.quad_auto(f0, f1, t1, t0, Vector3(0, 0.3, -1))
+			tas.quad_auto(a0, f0, t0, u0, Vector3.LEFT)
+			tas.quad_auto(a1, f1, t1, u1, Vector3.RIGHT)
+			tas.quad(t0, t1, u1, u0, Vector3.UP)
+		# örülmüş eski kapı izi (ova yüzü, dipte)
+		if i % 3 == 1 and IstSurlar._ic(xm):
+			var bx := xm + rng.randf_range(-3.0, 3.0)
+			var r := 1.3
+			var hy := 2.0
+			dolgu.quad(Vector3(bx - r, 0.0, zi1 + 0.02), Vector3(bx + r, 0.0, zi1 + 0.02), Vector3(bx + r, hy, zi1 + 0.02), Vector3(bx - r, hy, zi1 + 0.02), Vector3.BACK)
+			for k in 8:
+				var a := PI * float(k) / 8.0
+				var b := PI * float(k + 1) / 8.0
+				dolgu.tri(Vector3(bx, hy, zi1 + 0.02), Vector3(bx + cos(a) * r, hy + sin(a) * r, zi1 + 0.02), Vector3(bx + cos(b) * r, hy + sin(b) * r, zi1 + 0.02), Vector3.BACK)
+			for k in 9:
+				var am := PI * (float(k) + 0.5) / 9.0
+				var p := Vector3(bx + cos(am) * (r + 0.18), hy + sin(am) * (r + 0.18) - 0.12, zi1)
+				tug.kutu(p, Vector3(-sin(am), cos(am), 0).normalized(), Vector3.BACK, 0.34, 0.26, 0.08)
+			tas.kutu(Vector3(bx - r - 0.2, 0.0, zi1), Vector3.RIGHT, Vector3.BACK, 0.4, hy, 0.08)
+			tas.kutu(Vector3(bx + r + 0.2, 0.0, zi1), Vector3.RIGHT, Vector3.BACK, 0.4, hy, 0.08)
+		# sur üstü savunma eşyası (dış korkuluğa yaslı)
+		var zp := zi1 - 0.45 - 0.45
+		var ex := lerpf(xa, xb, rng.randf_range(0.2, 0.8))
+		if not IstSurlar._ic(ex):
+			continue
+		match (i + sd) % 4:
+			0:
+				# taş yığını (düzensiz kaya)
+				for k in 9:
+					var sc := rng.randf_range(0.22, 0.42)
+					kaya.append(Transform3D(Basis.from_euler(Vector3(rng.randf(), rng.randf() * TAU, rng.randf())).scaled(Vector3(sc, sc * 0.8, sc)), Vector3(ex + rng.randf_range(-0.6, 0.6), HW + sc * 0.35 + (0.25 if k > 5 else 0.0), zp + rng.randf_range(-0.3, 0.3))))
+			1:
+				# kazan (yuvarlak, demir) üç ayaklı ocak üstünde
+				Props.ball(root, 0.42, Vector3(ex, HW + 0.62, zp), Color("2e2c2a"), Vector3(1.0, 0.7, 1.0), 10)
+				Props.cyl(root, 0.44, 0.06, Vector3(ex, HW + 0.86, zp), Color("3a3634"), Vector3.ZERO, 10)
+				for k in 3:
+					var a := TAU * k / 3.0
+					Props.cyl(root, 0.03, 0.7, Vector3(ex + cos(a) * 0.3, HW + 0.33, zp + sin(a) * 0.3), Color("2a2622"), Vector3(sin(a) * 12.0, 0, -cos(a) * 12.0), 4)
+				for k in 4:
+					Props.ball(root, 0.12, Vector3(ex + rng.randf_range(-0.25, 0.25), HW + 0.08, zp + rng.randf_range(-0.25, 0.25)), Color("3a2a1c"), Vector3(1.6, 0.5, 0.6), 5)
+			2:
+				# ok sepetleri (yuvarlak hasır) ve içinde oklar
+				for k in 2:
+					var bxp := ex + k * 0.7
+					Props.cyl(root, 0.22, 0.75, Vector3(bxp, HW + 0.375, zp), Color("8a6a40"), Vector3.ZERO, 8, 0.26)
+					for m in 5:
+						Props.cyl(root, 0.012, 0.85, Vector3(bxp + rng.randf_range(-0.12, 0.12), HW + 0.95, zp + rng.randf_range(-0.12, 0.12)), Color("6a5a3a"), Vector3(rng.randf_range(-8, 8), 0, rng.randf_range(-8, 8)), 3)
+			_:
+				# taş gülle yığını (yuvarlak)
+				for k in 7:
+					var row := 0 if k < 4 else (1 if k < 6 else 2)
+					Props.ball(root, 0.2, Vector3(ex + (k - (1.5 if row == 0 else (4.5 if row == 1 else 6.0))) * 0.4 + row * 0.0, HW + 0.2 + row * 0.33, zp), Color("6e6a62"), Vector3.ONE, 7)
+	if kaya.size() > 0:
+		Scenery.scatter(root, KULE.kaya_mesh(), kaya, [], Props.mat(stone.darkened(0.15), 0.0, false, "ashlar_far"))
+	tas.mesh_ekle(root, KULE._tas_mat(stone, 0), "BedenTas")
+	dolgu.mesh_ekle(root, KULE._tas_mat(stone.darkened(0.22), 0), "OrulmusKapi")
+	koyu.mesh_ekle(root, Props.mat(Color("2a2620")), "BedenAkinti", false)
+	tug.mesh_ekle(root, Props.mat(Color("7a4a3a"), 0.0, false, "brick"), "BedenTugla")

@@ -21,6 +21,7 @@ const C_ROOF := Color("5c4840")          # SUR-4: kule çatısı soluk eski kire
 const C_EARTH := Color("7a6a4c")
 const C_GRASS := Color("6a7b3c")
 const ZEMIN := preload("res://scripts/world/ist/sur_zemin.gd")
+const KULE := preload("res://scripts/world/ist/sur_kule.gd")
 const C_DARK := Color("1c1814")
 
 const PARAPET_H := 1.2
@@ -32,6 +33,11 @@ static var bake := true
 ## Kurulum penceresi (ŞEHİR-3, zaman dilimi): yalnız ortası x ∈ [pencere.x, pencere.y) olan parçalar kurulur. Şehir
 ## kurucusu uzun dilimin yakın katmanını pencere pencere ayrı karelerde kurar (tek iş ≤ 6 ms). Varsayılan: hepsi.
 static var pencere := Vector2(-1e9, 1e9)
+## SUR-5: true iken _s yalnız çarpışma kutusu kurar (görünen ağ başka yerde)
+static var carp_only := false
+## SUR-5 (D): gedik eni (m) ve kurulan gediklerin dünya konumları (süreklilik ölçütü "belgeli gedik" sayar)
+const GEDIK_W := 8.0
+static var gedik_dunya: Array = []
 
 static func _ic(x: float) -> bool:
 	return x >= pencere.x and x < pencere.y
@@ -152,6 +158,21 @@ static func _s(p: Node3D, lo: Vector3, hi: Vector3, col: Color, pat := "ashlar",
 	if size.x < 0.001 or size.y < 0.001 or size.z < 0.001 or not _ic((lo.x + hi.x) * 0.5):
 		return null
 	var pos := (lo + hi) * 0.5
+	if carp_only:
+		# SUR-5: yalnız çarpışma (görünen ağ ayrı kurulur: hendek kesiti, yıkık korkuluk)
+		if lod >= 2:
+			return null
+		var body := StaticBody3D.new()
+		body.position = pos
+		var cs := CollisionShape3D.new()
+		var bs := BoxShape3D.new()
+		bs.size = size
+		cs.shape = bs
+		body.add_child(cs)
+		if nc:
+			body.set_meta("no_climb", true)
+		p.add_child(body)
+		return body
 	if lod <= 1:
 		var b := Props.solid(p, size, pos, Color.WHITE)
 		Props.set_pattern(b, col, pat)
@@ -237,14 +258,44 @@ static func _segs(x0: float, x1: float, cut: Array) -> Array:
 static func _parapet_x(p: Node3D, x0: float, x1: float, z: float, y: float, col: Color, lod: int, mer: Array) -> void:
 	if x1 - x0 < 0.3:
 		return
-	_s(p, Vector3(x0, y, z - PARAPET_T * 0.5), Vector3(x1, y + PARAPET_H, z + PARAPET_T * 0.5), col, "ashlar", lod)
+	# SUR-5: üst çizgi cetvel değil: uzun kesimlerde yer yer YIKIK korkuluk (görünen alçalmış, üstünde düşmüş taşlar;
+	# çarpışma tam boy kalır: sur üstü yürüyüşte düşme olmasın)
+	var yik := Vector2(1e9, -1e9)
+	if lod == 0 and x1 - x0 > 14.0:
+		var hh := fposmod(sin(x0 * 0.731 + z * 2.17 + y * 0.37) * 4373.17, 1.0)
+		if hh < 0.45:
+			var xc := lerpf(x0 + 4.0, x1 - 4.0, fposmod(hh * 7.31, 1.0))
+			var yw := 2.0 + hh * 4.0
+			yik = Vector2(xc - yw, xc + yw)
+	if yik.x < yik.y:
+		for sg in _segs(x0, x1, [[yik.x, yik.y]]):
+			_s(p, Vector3(sg[0], y, z - PARAPET_T * 0.5), Vector3(sg[1], y + PARAPET_H, z + PARAPET_T * 0.5), col, "ashlar", lod)
+		carp_only = true
+		_s(p, Vector3(yik.x, y, z - PARAPET_T * 0.5), Vector3(yik.y, y + PARAPET_H, z + PARAPET_T * 0.5), col, "ashlar", lod)
+		carp_only = false
+		if _ic((yik.x + yik.y) * 0.5):
+			var ag = KULE.Ag.new()
+			var rng := RandomNumberGenerator.new()
+			rng.seed = int(absf(yik.x * 13.0 + z * 7.0))
+			# kırık profil: dört basamaklı alçak kalıntı
+			var n := 4
+			for i in n:
+				var xa := lerpf(yik.x, yik.y, float(i) / n)
+				var xb := lerpf(yik.x, yik.y, float(i + 1) / n)
+				var hk := PARAPET_H * (0.2 + 0.5 * absf(float(i) - 1.5) / 1.5) + rng.randf_range(-0.08, 0.1)
+				ag.kutu(Vector3((xa + xb) * 0.5, y, z - PARAPET_T * 0.5), Vector3.RIGHT, Vector3.BACK, xb - xa, hk, PARAPET_T)
+			for i in 5:
+				KULE._moloz_tas(ag, Vector3(rng.randf_range(yik.x, yik.y), y, z + rng.randf_range(-0.9, 0.3)), rng)
+			ag.mesh_ekle(p, KULE._tas_mat(col, 0), "YikikKorkuluk")
+	else:
+		_s(p, Vector3(x0, y, z - PARAPET_T * 0.5), Vector3(x1, y + PARAPET_H, z + PARAPET_T * 0.5), col, "ashlar", lod)
 	if lod == 0:
 		# dişler insan boyunda (SUR-4: 1,0 m en, korkulukla 1,8 m; 1,8 m arayla); bin yıllık surda yer yer eksik diş
 		var m := floori((x1 - x0) / 1.8)
 		var off := ((x1 - x0) - m * 1.8) * 0.5
 		for i in m:
 			var xx := x0 + off + 0.9 + i * 1.8
-			if absf(fposmod(xx * 0.37 + z * 1.3, 11.0)) < 0.8:
+			if absf(fposmod(xx * 0.37 + z * 1.3, 11.0)) < 0.8 or (xx > yik.x - 0.6 and xx < yik.y + 0.6):
 				continue
 			mer.append(Transform3D(Basis.from_scale(Vector3(1.0, 0.6, PARAPET_T)), Vector3(xx, y + PARAPET_H + 0.3, z)))
 
@@ -278,134 +329,36 @@ static func _roof_ring(p: Node3D, x0: float, x1: float, z0: float, z1: float, y:
 
 # ------------------------------------------------------------------ kuleler
 
-static func _inner_tower(p: Node3D, d: Dictionary, tw: Dictionary, lod: int, mer: Array, o: Dictionary) -> void:
+static func _inner_tower(p: Node3D, d: Dictionary, tw: Dictionary, lod: int, _mer: Array, o: Dictionary, sira := 0) -> void:
+	## SUR-5: kule artık kutu değil (KULE: plan çokgeni + profil; dönüşümlü kare / sekizgen / altıgen)
 	var cx: float = tw["x"]
-	var w: float = tw["w"]
-	var proj: float = tw["p"]
-	var T: float = d["T"]
-	var HW: float = d["HW"]
-	var HT: float = d["HT"]
-	var x0 := cx - w * 0.5
-	var x1 := cx + w * 0.5
-	var zb := -T * 0.5 - 0.15
-	var zf: float = T * 0.5 + proj
-	var yf := HW + 0.03
-	var stone: Color = o.get("tas", C_STONE)
-	# Kütle (taban döşeme yüksekliğine kadar), eteğinde hafif eğik kaide
-	_s(p, Vector3(x0, 0, zb), Vector3(x1, yf, zf), stone.darkened(0.03), "ashlar", lod, true)
-	# SUR-4: kule kimliği (konuma bağlı tohum): bazılarında ahşap çatı/sundurma, bazılarında çatlak; üst katta
-	# uzaktan okunan kemerli pencereler (eskiden yalnız 16 cm'lik ok yarıkları: kule düz kutu okunuyordu)
-	var kid := int(absf(cx * 7.31 + float(o.get("tohum_k", 0)))) % 7
-	var cati := kid == 1 or kid == 4
-	if lod >= 1:
-		_s(p, Vector3(x0, yf, zb), Vector3(x1, HT, zf), stone, "ashlar", lod)
-		for i in 2:
-			var wx := cx + (i - 0.5) * w * 0.42
-			_d(p, Vector3(wx - 0.5, yf + 1.2, zf), Vector3(wx + 0.5, yf + 3.0, zf + 0.06), C_DARK)
-			_d(p, Vector3(wx - 0.65, yf + 3.0, zf), Vector3(wx + 0.65, yf + 3.35, zf + 0.08), C_BRICK)
-		if cati:
-			for px: float in [x0 + 0.5, x1 - 0.5]:
-				for pz: float in [zb + 0.5, zf - 0.5]:
-					_d(p, Vector3(px - 0.15, HT, pz - 0.15), Vector3(px + 0.15, HT + PARAPET_H + 1.2, pz + 0.15), C_WOOD)
-			var rp := Props.prism(p, Vector3(zf - zb + 0.8, 2.6, w + 0.8), Vector3(cx, HT + PARAPET_H + 2.5, (zb + zf) * 0.5), C_ROOF, Vector3(0, 90, 0))
-			if rp is GeometryInstance3D:
-				(rp as GeometryInstance3D).set_meta("no_walk", true)
+	if not _ic(cx):
 		return
-	_s(p, Vector3(x0 - 0.25, 0, zb - 0.25), Vector3(x1 + 0.25, 0.9, zf + 0.25), stone.darkened(0.12), "ashlar", lod, false)
-	# Oda: dört duvar (yan duvarlarda kapı), tavan/çatı levhası
-	var wt := 0.7
-	var yc := HT - 0.5
-	_s(p, Vector3(x0, yf, zf - wt), Vector3(x1, yc, zf), stone, "ashlar", lod)          # ön
-	_s(p, Vector3(x0, yf, zb), Vector3(x1, yc, zb + wt), stone, "ashlar", lod)          # arka
-	# yürüme yolu geçidi (ŞEHİR-3: 1,8 × 2,4 m'lik kapının lentosu dilim uçlarındaki rampadan gelen oyuncuyu tutuyordu)
-	var dz0 := -1.1
-	var dz1 := 1.1
-	var door_h := 3.0
-	for sx in [0, 1]:
-		var xa: float = x0 if sx == 0 else x1 - wt
-		var xb: float = x0 + wt if sx == 0 else x1
-		var za := zb + wt
-		var zz := zf - wt
-		if dz0 - za > 0.3:
-			_s(p, Vector3(xa, yf, za), Vector3(xb, yc, dz0), stone, "ashlar", lod)
-		else:
-			dz0 = za
-		if zz - dz1 > 0.3:
-			_s(p, Vector3(xa, yf, dz1), Vector3(xb, yc, zz), stone, "ashlar", lod)
-		_s(p, Vector3(xa, yf + door_h, dz0), Vector3(xb, yc, dz1), stone, "ashlar", lod)
-		# kapı lento ve kemer süsü (tuğla)
-		var fx := xa - 0.03 if sx == 0 else xb + 0.03
-		var fx2 := xa if sx == 0 else xb
-		_d(p, Vector3(minf(fx, fx2), yf + door_h - 0.05, dz0 - 0.2), Vector3(maxf(fx, fx2), yf + door_h + 0.3, dz1 + 0.2), C_BRICK, "brick")
-	# Çatı levhası
-	_s(p, Vector3(x0 - 0.15, yc, zb - 0.1), Vector3(x1 + 0.15, HT, zf + 0.15), stone.lightened(0.04), "ashlar", lod)
-	_roof_ring(p, x0 - 0.15, x1 + 0.15, zb - 0.1, zf + 0.15, HT, stone.darkened(0.04), lod, mer)
-	# Süs: tuğla kuşağı, ok yarıkları, konsol sırası (Alman sur kulelerindeki gibi)
-	var yb := HW * 0.55
-	_d(p, Vector3(x0 - 0.04, yb, zf + 0.0), Vector3(x1 + 0.04, yb + 0.22, zf + 0.04), C_BRICK, "brick")
-	_d(p, Vector3(x0 - 0.04, yb, zb - 0.04), Vector3(x1 + 0.04, yb + 0.22, zb + 0.0), C_BRICK, "brick")
-	for sx2 in [x0 - 0.04, x1]:
-		_d(p, Vector3(sx2, yb, zb), Vector3(sx2 + 0.04, yb + 0.22, zf), C_BRICK, "brick")
-	for i in 3:
-		var sx3 := cx - w * 0.25 + i * w * 0.25
-		_d(p, Vector3(sx3 - 0.08, 2.6, zf), Vector3(sx3 + 0.08, 3.8, zf + 0.05), C_DARK)
-		_d(p, Vector3(sx3 - 0.08, HW * 0.5 + 1.2, zf), Vector3(sx3 + 0.08, HW * 0.5 + 2.4, zf + 0.05), C_DARK)
-		_d(p, Vector3(sx3 - 0.14, yf + 1.1, zf - wt - 0.0), Vector3(sx3 + 0.14, yf + 2.0, zf - wt + 0.03), C_DARK)
-	# üst oda ön yüzünde kemerli pencere (kör) ve konsol sırası
-	var m := floori(w / 0.9)
-	for i in m:
-		var kx := x0 + 0.45 + i * ((w - 0.9) / maxf(1.0, m - 1))
-		_d(p, Vector3(kx - 0.2, yf - 0.55, zf), Vector3(kx + 0.2, yf, zf + 0.35), stone.darkened(0.3))
-	# üst katın ön yüzünde iki kemerli pencere (koyu açıklık + tuğla kemer), uzaktan okunur
-	for i in 2:
-		var wx := cx + (i - 0.5) * w * 0.42
-		_d(p, Vector3(wx - 0.5, yf + 1.2, zf), Vector3(wx + 0.5, yf + 3.0, zf + 0.06), C_DARK)
-		_d(p, Vector3(wx - 0.65, yf + 3.0, zf), Vector3(wx + 0.65, yf + 3.35, zf + 0.08), C_BRICK, "brick")
-	# ahşap çatı (bazı kulelerde; kiremit kırma, direkler üstünde: tepe terası altında yürünür kalır)
-	if cati:
-		var ry := HT + PARAPET_H + 1.2
-		for px: float in [x0 + 0.5, x1 - 0.5]:
-			for pz: float in [zb + 0.5, zf - 0.5]:
-				_d(p, Vector3(px - 0.12, HT, pz - 0.12), Vector3(px + 0.12, ry, pz + 0.12), C_WOOD)
-		var rp2 := Props.prism(p, Vector3(zf - zb + 0.9, 2.4, w + 0.9), Vector3(cx, ry + 1.2, (zb + zf) * 0.5), C_ROOF, Vector3(0, 90, 0))
-		if rp2 is GeometryInstance3D:
-			(rp2 as GeometryInstance3D).cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_ON
-	# çatlak (bin yıllık sur; kuşatma topları): ön yüzde kırık çizgi
-	if kid == 2 or kid == 5:
-		var yy := 1.5
-		var xx := cx + (float(kid) - 3.5) * 0.6
-		while yy < HW + 2.0:
-			var nx := xx + (0.5 if int(yy) % 2 == 0 else -0.45)
-			_d(p, Vector3(minf(xx, nx) - 0.06, yy, zf), Vector3(maxf(xx, nx) + 0.06, yy + 1.4, zf + 0.04), C_DARK.lightened(0.08))
-			xx = nx
-			yy += 1.3
-	# şehir yüzünde kör kapı (kule tabanı)
-	_d(p, Vector3(cx - 0.8, 0, zb - 0.04), Vector3(cx + 0.8, 2.3, zb), C_DARK)
-	_d(p, Vector3(cx - 1.0, 2.3, zb - 0.05), Vector3(cx + 1.0, 2.65, zb), C_BRICK, "brick")
+	var T: float = d["T"]
+	var kid := int(absf(cx * 7.31 + float(o.get("tohum_k", 0)))) % 7
+	var buyuk := float(tw["w"]) > float(d["TW"]) * 1.05
+	var tur: int = [0, 1, 0, 2][(sira + int(o.get("tohum_k", 0))) % 4]
+	if buyuk:
+		tur = 1 if bool(o.get("mermer", false)) == false and String(o.get("ad", "")) in ["AzizRomanos", "Kharisios"] else 0
+	KULE.ic_kule(p, {
+		"cx": cx, "w": float(tw["w"]), "zb": -T * 0.5 - 0.15, "zf": T * 0.5 + float(tw["p"]), "zi1": T * 0.5,
+		"yf": float(d["HW"]) + 0.03, "HT": float(d["HT"]), "yc": float(d["HT"]) - 0.5, "tur": tur,
+		"tohum": int(absf(cx * 13.7)) + sira * 31, "hasar": float(o.get("hasar", 1.0)),
+		"cati": kid == 1, "yazit": kid == 3 or kid == 6, "tas": o.get("tas", C_STONE),
+	}, lod)
 
 
-static func _outer_tower(p: Node3D, d: Dictionary, cx: float, lod: int, mer: Array, o: Dictionary) -> void:
-	var w: float = d["OTW"]
+static func _outer_tower(p: Node3D, d: Dictionary, cx: float, lod: int, _mer: Array, o: Dictionary, sira := 0) -> void:
+	if not _ic(cx):
+		return
 	var zo0: float = d["zo0"]
 	var zo1: float = d["zo1"]
-	var OTP: float = d["OTP"]
-	var OTH: float = d["OTH"]
-	var OH: float = d["OH"]
-	var stone: Color = o.get("tas", C_STONE).darkened(0.04)
-	var x0 := cx - w * 0.5
-	var x1 := cx + w * 0.5
-	var zf := zo1 + OTP
-	_s(p, Vector3(x0, float(d.get("dis_dy", 0.0)) - 0.5, zo0), Vector3(x1, OTH, zf), stone, "ashlar", lod, true)
-	if lod >= 1:
-		return
-	_s(p, Vector3(x0 - 0.2, 0, zo0 - 0.0), Vector3(x1 + 0.2, 0.7, zf + 0.2), stone.darkened(0.12), "ashlar", lod)
-	_roof_ring(p, x0, x1, zo0 - 0.0, zf, OTH, stone, lod, mer, 1.8, (zo0 + zo1) * 0.5)
-	# Tuğla bant ve ok yarıkları
-	_d(p, Vector3(x0 - 0.04, OH * 0.5, zf), Vector3(x1 + 0.04, OH * 0.5 + 0.2, zf + 0.04), C_BRICK, "brick")
-	for i in 2:
-		var sx := cx - w * 0.2 + i * w * 0.4
-		_d(p, Vector3(sx - 0.07, OH * 0.35, zf), Vector3(sx + 0.07, OH * 0.35 + 1.0, zf + 0.05), C_DARK)
-		_d(p, Vector3(sx - 0.07, OH * 0.75, zf), Vector3(sx + 0.07, OH * 0.75 + 0.9, zf + 0.05), C_DARK)
+	KULE.dis_kule(p, {
+		"cx": cx, "w": float(d["OTW"]), "z0": zo0, "zf": zo1 + float(d["OTP"]), "y0": float(d.get("dis_dy", 0.0)) - 0.5,
+		"OH": float(d["OH"]), "OTH": float(d["OTH"]), "tur": (sira + int(absf(cx))) % 2, "tohum": int(absf(cx * 11.3)) + sira * 17,
+		"hasar": float(o.get("hasar", 1.0)), "tas": (o.get("tas", C_STONE) as Color).darkened(0.04),
+		"gap_z": (zo0 + zo1) * 0.5, "gap_w": 1.8,
+	}, lod)
 
 
 # ------------------------------------------------------------------ sur dilimi
@@ -510,6 +463,12 @@ static func _run(host: Node3D, L: float, k: float, lod: int, seed: int, o: Dicti
 	var out_cut: Array = []
 	if open_gate:
 		out_cut.append([-gw * 0.5, gw * 0.5])
+	# SUR-5 (D): Mesoteikhion gedikleri (kuşatma hasarı): dış sur yıkık, gedikte moloz + fıçı/kazıklı stauroma
+	var gedikler: Array = o.get("gedik", [])
+	for gx in gedikler:
+		out_cut.append([float(gx) - GEDIK_W * 0.5, float(gx) + GEDIK_W * 0.5])
+	for gx in gedikler:
+		_gedik(root, lay, float(gx), lod, stone)
 	for s in _segs(x0, x1, out_cut):
 		_s(root, Vector3(s[0], 0, zo0), Vector3(s[1], OH, zo1), stone.darkened(0.04), "ashlar", lod, true)
 	if open_gate:
@@ -517,10 +476,16 @@ static func _run(host: Node3D, L: float, k: float, lod: int, seed: int, o: Dicti
 	# ---- kuleler
 	var itx: Array = lay["itx"]
 	var otx: Array = lay["otx"]
-	for tw in itx:
-		_inner_tower(root, d, tw, lod, mer, o)
-	for cx in otx:
-		_outer_tower(root, d, float(cx), lod, mer, o)
+	for ti in itx.size():
+		_inner_tower(root, d, itx[ti], lod, mer, o, ti)
+	for ti in otx.size():
+		var yakin := false
+		for gx in gedikler:
+			if absf(float(gx) - float(otx[ti])) < GEDIK_W * 0.5 + float(d["OTW"]) * 0.5 + 1.0:
+				yakin = true
+		if yakin:
+			continue                      # gedikte dış kule de yıkık (moloz yığınının içinde)
+		_outer_tower(root, d, float(otx[ti]), lod, mer, o, ti)
 	# ---- iç sur üstü: korkuluklar (kule aralarında)
 	if lod == 0:
 		var tcut: Array = []
@@ -544,7 +509,11 @@ static func _run(host: Node3D, L: float, k: float, lod: int, seed: int, o: Dicti
 			o_cut2.append([float(lay["out_x1"]) - 0.5, float(lay["out_x1"]) + 1.0])
 		if open_gate:
 			o_cut2.append([-gw * 0.5, gw * 0.5])
-		for s in _segs(x0, x1, ocut + ([[-gw * 0.5, gw * 0.5]] if open_gate else [])):
+		var gcut: Array = []
+		for gx in gedikler:
+			gcut.append([float(gx) - GEDIK_W * 0.5, float(gx) + GEDIK_W * 0.5])
+		o_cut2.append_array(gcut)
+		for s in _segs(x0, x1, ocut + gcut + ([[-gw * 0.5, gw * 0.5]] if open_gate else [])):
 			_parapet_x(root, s[0], s[1], zo1 - PARAPET_T * 0.5, OH, stone.darkened(0.06), lod, mer)
 		for s in _segs(x0, x1, o_cut2):
 			_parapet_x(root, s[0], s[1], zo0 + PARAPET_T * 0.5, OH, stone.darkened(0.06), lod, mer)
@@ -569,7 +538,9 @@ static func _run(host: Node3D, L: float, k: float, lod: int, seed: int, o: Dicti
 	# ---- mazgallar (tek MultiMesh)
 	mer = mer.filter(func(t) -> bool: return t is Transform3D and _ic((t as Transform3D).origin.x))
 	if lod == 0 and mer.size() > 0:
-		Scenery.scatter(root, Scenery._boxm(Vector3.ONE), mer, [], Props.mat(stone.darkened(0.06), 0.0, false, "ashlar"))
+		# SUR-5: MultiMesh dişleri sur taşı gölgelendiricisinde dokusuz BEYAZ KÜP okunuyordu (kara_03_ust_a/b; sonda
+		# --set=kimust: SurDilimi/@MultiMeshInstance3D ölçek 1,0×0,6×0,45). Artık pişen gerçek ağ: boyu oynak, kırık/eksik.
+		KULE.disler_ag(root, mer, stone.darkened(0.06), int(lay["rng_seed"]))
 	# ---- kapı ve ayrıntı
 	if gw > 0.0:
 		IstSurlarKapi.build(root, lay, lod, o)
@@ -622,9 +593,13 @@ static func _build_moat(root: Node3D, lay: Dictionary, lod: int, stone: Color, o
 	var gw: float = lay["gw"]
 	var scarp := stone.darkened(0.18)
 	# yakın yaka istinat duvarı ve hendek dibi, karşı yaka duvarı, ova
+	# SUR-5 (C): görünen hendek tek ağ (yumuşak kesit, taş kaplı yanlar, çamur taban, yer yer kayma); kutular yalnız çarpışma
+	carp_only = true
 	_s(root, Vector3(x0, -MD - 0.4, zm0 - 0.9), Vector3(x1, 0, zm0), scarp, "ashlar", lod, true)
 	_s(root, Vector3(x0, -MD - 1.2, zm0), Vector3(x1, -MD, zm1), ZEMIN.CAMUR, "dirt", lod)
 	_s(root, Vector3(x0, -MD - 0.4, zm1), Vector3(x1, 0, zm1 + 0.9), scarp, "ashlar", lod, true)
+	carp_only = false
+	ZEMIN.hendek_kesit(root, x0, x1, zm0 - 0.9, zm1 + 0.9, MD, lod, int(lay["rng_seed"]), pencere)
 	# dış yaka: düz yeşil kutu yerine düzensiz tepeli, dışa eğimli toprak set (SUR-4, sahibin "yeşil alan yükseltileri")
 	ZEMIN.set_(root, x0, x1, zm1 + 0.9, lod, int(lay["rng_seed"]), pencere)
 	# parateikhion: terasın ucunda alçak sur; rampa başında ve kapı önünde geçit
@@ -649,8 +624,35 @@ static func _build_moat(root: Node3D, lay: Dictionary, lod: int, stone: Color, o
 	if gw > 0.0:
 		var half := gw * 0.5 + 1.2
 		var ay := 4.5
+		# SUR-5: ayaklar kesme kutu değil: yıkık köprü ayağı (görünen: kademeli kırık taş sıraları, gedik yanına doğru
+		# alçalır, üstünde düşmüş bloklar); çarpışma eski kutu
+		carp_only = true
 		_s(root, Vector3(-half, -MD, zm0), Vector3(half, 0, zm0 + ay), stone.darkened(0.1), "ashlar", lod, true)
 		_s(root, Vector3(-half, -MD, zm1 - ay), Vector3(half, 0, zm1), stone.darkened(0.1), "ashlar", lod, true)
+		carp_only = false
+		if _ic(0.0):
+			var ag = KULE.Ag.new()
+			var rng := RandomNumberGenerator.new()
+			rng.seed = int(lay["rng_seed"]) + 91
+			for side: float in [1.0, -1.0]:
+				var zb := zm0 if side > 0.0 else zm1
+				var nk := 5
+				for k in nk:
+					# yakadan gediğe: her sıra biraz daha alçak ve dar (kırık uç)
+					var t := float(k) / nk
+					var dz := ay / nk
+					var z0k := zb + side * dz * k
+					var w := half * 2.0 * (1.0 - 0.12 * t) + rng.randf_range(-0.4, 0.2)
+					var yt := lerpf(0.0, -MD * 0.55, t * t) + rng.randf_range(-0.25, 0.1)
+					var n2 := 3
+					for m in n2:
+						var xa := -w * 0.5 + w * float(m) / n2
+						var xb := -w * 0.5 + w * float(m + 1) / n2
+						var yy := yt - rng.randf_range(0.0, 0.5) * t
+						ag.kutu(Vector3((xa + xb) * 0.5, -MD - 0.2, z0k if side > 0.0 else z0k - dz), Vector3.RIGHT, Vector3.BACK, xb - xa - 0.04, yy + MD + 0.2, dz - 0.04)
+				for k2 in 6 if lod == 0 else 0:
+					KULE._moloz_tas(ag, Vector3(rng.randf_range(-half, half), -MD, zb + side * (ay + rng.randf_range(0.3, 2.5))), rng)
+			ag.mesh_ekle(root, KULE._tas_mat(stone.darkened(0.1), lod), "YikikKopru")
 		if lod == 0:
 			for k in 3:
 				var kx := -half + 0.6 + k * (half * 2.0 - 1.2) / 2.0
@@ -667,12 +669,109 @@ static func _build_moat(root: Node3D, lay: Dictionary, lod: int, stone: Color, o
 	var ramp_len: float = lay["ramp_len"]
 	var ax: float = lay["ramp_a_x"]
 	var bx: float = lay["ramp_b_x"]
-	_wedge(root, Vector3(ax - ramp_len * 0.5, -MD, zm0 + 1.3), ramp_len, MD, 2.6, 0.0, stone.darkened(0.1))
-	_wedge(root, Vector3(bx + ramp_len * 0.5, -MD, zm1 - 1.3), ramp_len, MD, 2.6, 180.0, stone.darkened(0.1))
+	var w1 := _wedge(root, Vector3(ax - ramp_len * 0.5, -MD, zm0 + 1.3), ramp_len, MD, 2.6, 0.0, stone.darkened(0.1))
+	var w2 := _wedge(root, Vector3(bx + ramp_len * 0.5, -MD, zm1 - 1.3), ramp_len, MD, 2.6, 180.0, stone.darkened(0.1))
+	# SUR-5: kama yalnız çarpışma; görünen toprak döküm rampa (uçtan bakınca "yeşil piramit" okunuyordu)
+	for wm in [w1, w2]:
+		if wm != null:
+			(wm as MeshInstance3D).visible = false
+	if w1 != null:
+		ZEMIN.rampa(root, ax - ramp_len, ax, zm0 + 1.3, -MD, MD, 2.6, int(lay["rng_seed"]))
+	if w2 != null:
+		ZEMIN.rampa(root, bx + ramp_len, bx, zm1 - 1.3, -MD, MD, 2.6, int(lay["rng_seed"]) + 5)
 	# kuru çamur tabanında yer yer su birikintisi ve saz (SUR-4; eskiden boydan boya tek su levhası)
 	if lod == 0 and _ic(0.0):
 		# bütün dilim için tek pencerede (pencere başına iki MultiMesh çizimi olmasın)
 		ZEMIN.hendek_dibi(root, x0 + cw, x1 - cw, zm0, zm1, -MD, int(lay["rng_seed"]))
+
+
+# ------------------------------------------------------------------ GEDİK (Mesoteikhion)
+
+## Dış surda top gediği: beden 0,8 m'ye kadar yıkık (kırık profil, uçlara doğru yükselir); gedikten peribolosa ve
+## parateikhion terasına yayılan moloz yığını (düzensiz kaya + toprak tümsek, kutu değil); gedikte stauroma: toprak dolu
+## fıçılar, kazıklı toprak set, savunmacılar için sehpalar üstünde kalas yürüme tahtası (dış sur yürüme yolu hizasında,
+## iki yandaki sur üstüne bağlanır; çarpışmalı).
+static func _gedik(root: Node3D, lay: Dictionary, gx: float, lod: int, stone: Color) -> void:
+	if not _ic(gx):
+		return
+	var d: Dictionary = lay["d"]
+	var zo0: float = d["zo0"]
+	var zo1: float = d["zo1"]
+	var OH: float = d["OH"]
+	var h := GEDIK_W * 0.5
+	var rng := RandomNumberGenerator.new()
+	rng.seed = int(absf(gx * 17.0)) + 5
+	var ag = KULE.Ag.new()
+	var n := 6
+	for i in n:
+		var xa := gx - h + GEDIK_W * float(i) / n
+		var xb := gx - h + GEDIK_W * float(i + 1) / n
+		var t := absf((xa + xb) * 0.5 - gx) / h
+		var hk := lerpf(0.8, OH * 0.7, t * t) + rng.randf_range(-0.3, 0.3)
+		ag.kutu(Vector3((xa + xb) * 0.5, -0.5, zo0), Vector3.RIGHT, Vector3.BACK, xb - xa, hk + 0.5, zo1 - zo0)
+	if lod <= 1:
+		carp_only = true
+		_s(root, Vector3(gx - h, 0, zo0), Vector3(gx + h, 1.0, zo1), stone, "ashlar", lod, true)
+		carp_only = false
+	# moloz yığını: alçak toprak-taş tümsek (yarım elips koni) + düzensiz taşlar
+	var tm = KULE.Ag.new()
+	var zc := (zo0 + zo1) * 0.5
+	var seg := 10
+	for side: float in [-1.0, 1.0]:
+		for i in seg:
+			var a0 := PI * float(i) / seg
+			var a1 := PI * float(i + 1) / seg
+			var p0 := Vector3(gx + cos(a0) * (h + 1.5), 0.0, zc + side * sin(a0) * 6.5)
+			var p1 := Vector3(gx + cos(a1) * (h + 1.5), 0.0, zc + side * sin(a1) * 6.5)
+			tm.tri(p0, p1, Vector3(gx, 1.6, zc), Vector3(0, 1.0, side * 0.6))
+	tm.mesh_ekle(root, Props.mat(Color("7c705c"), 0.0, false, "rubble"), "GedikMoloz")
+	if lod >= 2:
+		ag.mesh_ekle(root, KULE._tas_mat(stone.darkened(0.05), 2), "GedikBeden")
+		return
+	var kl: Array = []
+	for i in (34 if lod == 0 else 10):
+		var r := rng.randf_range(0.0, 1.0)
+		var ang := rng.randf_range(0.0, TAU)
+		var px := gx + cos(ang) * r * (h + 1.0)
+		var pz := zc + sin(ang) * r * 6.0
+		var sc := rng.randf_range(0.35, 1.1)
+		var yy := 1.6 * (1.0 - r) + sc * 0.2
+		kl.append(Transform3D(Basis.from_euler(Vector3(rng.randf_range(-0.6, 0.6), rng.randf() * TAU, rng.randf_range(-0.6, 0.6))).scaled(Vector3(sc * 1.3, sc * 0.7, sc)), Vector3(px, yy, pz)))
+	Scenery.scatter(root, KULE.kaya_mesh(), kl, [], Props.mat(stone.darkened(0.12), 0.0, false, "ashlar_far"))
+	ag.mesh_ekle(root, KULE._tas_mat(stone.darkened(0.05), lod), "GedikBeden")
+	if lod == 1:
+		return
+	# stauroma: dış surun peribolos yüzü boyunca toprak dolu fıçılar, arkada kazıklı toprak set
+	var zs := zo0 - 1.4
+	var bx := gx - h + 0.6
+	while bx < gx + h - 0.4:
+		IstSurlarAyrinti._barrel(root, Vector3(bx, 0.0, zs + rng.randf_range(-0.15, 0.15)))
+		bx += 0.95
+	var tset := Props.ball(root, 0.5, Vector3(gx, 0.5, zs - 1.3), Color("5e4c36"), Vector3(GEDIK_W + 1.0, 1.4, 2.6), 8)
+	tset.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_ON
+	for i in int(GEDIK_W / 0.55):
+		var kx := gx - h + 0.3 + i * 0.55
+		Props.cyl(root, 0.07, 2.4, Vector3(kx, 1.4, zs + 0.7), C_WOOD.darkened(0.2), Vector3(-28.0 + rng.randf_range(-5.0, 5.0), 0, rng.randf_range(-4.0, 4.0)), 5, 0.02)
+	# yürüme tahtası
+	var yk := OH
+	for sx: float in [-1.0, 0.0, 1.0]:
+		var px2 := gx + sx * (h - 0.8)
+		for sz: float in [zo0 + 0.4, zo1 - 0.4]:
+			Props.cyl(root, 0.09, yk, Vector3(px2, yk * 0.5, sz), C_WOOD.darkened(0.1), Vector3.ZERO, 6)
+		Props.box(root, Vector3(0.18, 0.22, zo1 - zo0), Vector3(px2, yk - 0.22, (zo0 + zo1) * 0.5), C_WOOD.darkened(0.15))
+	for i in 7:
+		var pz2 := zo0 + 0.25 + i * (zo1 - zo0 - 0.5) / 6.0
+		Props.box(root, Vector3(GEDIK_W + 0.6, 0.07, 0.3), Vector3(gx + rng.randf_range(-0.1, 0.1), yk - 0.07, pz2), C_WOOD.lightened(0.04 * (i % 2)), Vector3(0, rng.randf_range(-0.8, 0.8), 0))
+	var body := StaticBody3D.new()
+	var cs := CollisionShape3D.new()
+	var bs := BoxShape3D.new()
+	bs.size = Vector3(GEDIK_W + 0.6, 0.12, zo1 - zo0)
+	cs.shape = bs
+	body.add_child(cs)
+	body.position = Vector3(gx, yk - 0.06, (zo0 + zo1) * 0.5)
+	root.add_child(body)
+	if root.is_inside_tree():
+		gedik_dunya.append(root.global_transform * Vector3(gx, 0.0, zo1))
 
 
 # ------------------------------------------------------------------ KAYIT
