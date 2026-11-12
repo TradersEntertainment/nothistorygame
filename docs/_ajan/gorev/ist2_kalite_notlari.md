@@ -117,3 +117,14 @@ Düzeltilecekler:
     tuğla hatıl (5 sıra tuğla / 1–1,5 m taş) oranı ve renkleri kara surlarındaki gibi olmalı.
 28. **Döşeme tonu** Tauri'de hâlâ nane-beyaz ve gölgede camgöbeği; Konstantin'de iyi: aynı sıcak gri-krem her yerde.
 29. **Yeşil küreler** forum döşemesinin üstünde düzenli aralıkla (ot öbeği mi?): yapay duruyor; seyrek ve derz aralarında.
+
+## Sahibin 12:15 sözleri (sur dışı karesi `s3_kara_disi.jpg` üstüne)
+30. **"Surların arası boş, tam değil bazı yerlerde."** Kara surları kesik dilimler hâlinde: dilimler arasında boşluk,
+    bazı dilimler düz beyaz (şeritsiz, mazgalsız), önlerinde beyaz düz taban levhaları; iç sur / dış sur / peribolos /
+    hendek üçlüsü okunmuyor. Ölçüt: hat boyunca 5 m adımla örnekleme: boşluk sayısı 0 (kapılar dışında), yakın ve uzak
+    katmanın ikisinde de; uzak katman yakınla aynı renk ve şeritte; deniz surları ve Galata suru da aynı ölçütle.
+31. **"Çadırlar böyle mi normalde, ona da çalıştın mı, askerler nerde, eksik bir şeyler var mı?"** Ordugâh tek tip, eş
+    boy, ızgara dizili çadırlar; asker, at, top, tabya, sancak, yol, ateş görünmüyor. Ordugâh ayrı bir araştırmaya
+    dayanmalı (`docs/ORDUGAH_1453.md`, dal `wip/ordugah-arastirma`) ve yaşam dolu olmalı: talim eden, nöbet tutan,
+    yemek pişiren, top başındaki askerler; at sıraları, develer, erzak arabaları; bataryalar ve Şahi; hendek-set;
+    tuğlar ve sancaklar; obalar arası yollar; gece ateşleri. Yakında gerçek kişi modeli (`Person`), uzakta ucuz katman.
