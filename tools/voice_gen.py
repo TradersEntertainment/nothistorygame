@@ -440,11 +440,28 @@ def tone_override(key):
     return ""
 
 
+BAGIR_ETIKET = ("[shouts", "[shouting", "[yelling", "[calling out", "[barking", "[commanding", "[screaming")
+UZAK_SESLEN = "[calling out] [raised voice]"
+# Uzakta ama bağırmayan: Büro'da kendi aralarında atışanlar, hoparlörden konuşan minibüs, toprağın üstünden konuşan Nihat
+UZAK_HARIC = ("BUR_AMB_", "D5_V_", "D8_V_", "D10L_N_DIG")
+
+
 def tone_of(r, cast):
-    """TONES.txt > elle yazılmış ton > karakterin okuma modu (tune ile seçilen, repliğe göre) > karakterin sabit tonu."""
+    """TONES.txt > elle yazılmış ton > karakterin okuma modu (tune ile seçilen, repliğe göre) > karakterin sabit tonu.
+    Mesafe kuralı (sahibi, 0.99.119: "bağırması lazım uzağa, yakındayken normal konuşması lazım"; dinleme sayfasında M'yi
+    seçti): MESAFE.csv'de "uzak" olan replik, konuşmacı kim olursa olsun bağırarak okunur (TONES.txt'deki elle yazım hariç)."""
     over = tone_override(r.get("anahtar", ""))
     if over:
         return over
+    t = _tone_of(r, cast)
+    k = r.get("anahtar", "")
+    if mesafe_of(k) == "uzak" and not k.startswith(UZAK_HARIC) and not any(e in t for e in BAGIR_ETIKET):
+        # Ünlemli replik avazı çıktığı kadar; ünlemsiz (uzaktan ama sakin söylenen: atın üstündeki Sultan, ustanın hükmü) seslenerek
+        t = ((ROL_BAGIR if "!" in r.get("tr", "") else UZAK_SESLEN) + " " + t).strip()
+    return t
+
+
+def _tone_of(r, cast):
     if r.get("ton_elle") == "1" and r.get("ton"):
         return r["ton"]
     mode = resolve(cast, r["konusmaci"]).get("ton_mode", "")
