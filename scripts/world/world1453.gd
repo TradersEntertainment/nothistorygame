@@ -105,7 +105,16 @@ static var REGIONS := {
 	"byz_walls": Transform3D(_TO_NORTH, Vector3(5.5, 0.0, -36.3)),
 	# ByzCity'nin Ayasofya parçası (24, 25, 26, 31o): yerel AYA (−14, −82) = dünyanın Ayasofya'sı
 	"byz_aya": Transform3D(_TO_NORTH, Vector3(-560.0 - 82.0, 0.0, -1480.0 + 14.0)),
+	# G7 lağım ağızları (10L Nisan, 21O Mayıs): ovada, hendeğin dış kenarından (z 36) 8 m ötede, iç sur kulesinin hizasında
+	# (kuleler x 79 + 55k: 134 ve 189). Yerel −z = dünya −z = surlara. Yerel y 0 = tünel zemini; kuyu duvarının tepesi (yerel
+	# 3,0) ovanın yüzeyine (−0,03) oturur. Tünelin kendisi dünyada kurulmaz (yeraltı), yalnız ağız: Ch10L.add_mouth.
+	"tunnel_10l": Transform3D(Basis.IDENTITY, Vector3(134.0, -3.03, 44.0)),
+	"tunnel_21o": Transform3D(Basis.IDENTITY, Vector3(189.0, -3.03, 44.0)),
 }
+
+## G7: lağım ağzı bölgeleri → ağız türü (chapter10l.gd mouth_parts)
+const TUNNEL_MOUTHS := {"tunnel_10l": "10l", "tunnel_21o": "21o"}
+const _CH10L := preload("res://scripts/chapter10l.gd")
 
 
 ## Tepelerin arasındaki bölgeler: dünya zemini düz alana rampayla iner
@@ -321,3 +330,29 @@ static func flight_data(world: SiegeField) -> Dictionary:
 ## Galata Kulesi'nin feneri (GalataView top_y): HornWorld ve uçuş aynı değeri kullanır
 static func galata_top(tw: Vector3) -> float:
 	return HornWorld.north_surf(tw.x, tw.z) + 34.0      # kule görünen yüzeye oturur (GalataView)
+
+
+# ---------------------------------------------------------------- G7: lağım ağızları (uzak bölge)
+
+## SiegeField.build başında çağrılır: ağzın etrafı (yerel MOUTH_KEEP'in dünya sınır kutusu) keep'e eklenir, dünya oraya ev, mantolu
+## okçu, gülle çukuru ya da asker koymaz. Bölümün kendi alanıyla (keep) kesişen ağız kurulmaz. Menü arka planı (lite) atlar.
+static func tunnel_keep(field: SiegeField) -> void:
+	var taken: Array = []
+	if not field.lite:
+		for name: String in TUNNEL_MOUTHS:
+			var wr := world_rect(region(name), _CH10L.MOUTH_KEEP)
+			var clash := false
+			for r: Rect2 in field.keep:
+				if r.intersects(wr):
+					clash = true
+			if not clash:
+				field.keep.append(wr)
+				taken.append(name)
+	field.set_meta("tunnel_mouths", taken)
+
+
+## SiegeField.build içinde, ölü bölgeden sonra: tek birleşik ağ (bir bölge = bir çizim çağrısı), uzakta görünürlük sınırıyla.
+## Alan dönüşümü ağın ebeveyni olduğundan bölge dönüşümü dünya = alan yerel koordinatıdır.
+static func tunnel_build(field: SiegeField) -> void:
+	for name: String in field.get_meta("tunnel_mouths", []):
+		_CH10L.add_mouth(field, region(name), TUNNEL_MOUTHS[name])

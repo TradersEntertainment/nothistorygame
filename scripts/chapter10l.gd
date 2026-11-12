@@ -108,6 +108,7 @@ func _build() -> void:
 	sun.light_color = Color("fff0d0")
 	add_child(sun)
 	Props.box(self, Vector3(1.2, 4.0, 1.2), Vector3(0, 4.5, 2.0), Color("ffe8b0"), Vector3.ZERO, 0.8)
+	add_mouth(self, Transform3D.IDENTITY, "10l", true)       # tek harita: kuyunun üstü dünyadaki ağızla aynı (yalnız set + çıkrık)
 	# İlk bölüm ve kazı yüzü
 	_add_segment(0, true)
 	_face = Node3D.new()
@@ -653,3 +654,87 @@ func _run_shots() -> void:
 	await get_tree().create_timer(0.3, false).timeout
 	await _shot("c10l_02_karsi_lagim.png")
 	get_tree().quit()
+
+
+# ================================================================ tek harita: lağım ağzı (G7)
+
+## Lağımın dünyadaki ağzı. Osmanlı lağımcıları ovadan kara surlarının altına kazar: ağız surların önündeki ovada, hendeğin
+## dış kenarından 8 m ötede (World1453.REGIONS "tunnel_10l" / "tunnel_21o"), ekseni yerel −z = dünya −z = surlara doğru
+## (iç sur kulesinin hizasında). Bölümün kuyusunun duvar tepesi yerel y = MOUTH_SURF; bölge dönüşümünün y'si bu yüzeyi
+## ovanın yüzeyine (−0,03) oturtur. Bölümün içi (rim_only) ve dünya (uzak sürüm) AYNI işlevi çağırır: tek kurucu.
+## Tünelin kendisi dünyada kurulmaz (yeraltı); dünyada yalnız ağız: toprak set, çıkrık, çıkarılmış toprak, sepet siper.
+const MOUTH_SURF := 3.0
+## Ağzın etrafında hiçbir şey konmayacak alan (yerel; ağız + toprak yığını + sepet siper)
+const MOUTH_KEEP := Rect2(-8.0, -3.4, 16.0, 11.0)
+
+
+## variant: "10l" (3 m kuyu) ya da "21o" (4 m kuyu, direk yığını). rim_only: yalnız kuyunun üstünden görünenler (bölümün
+## içi: set, çıkrık, kova); dünya her şeyi kurar. d: yerel çerçeve at() ile ağzın konumuna ayarlanmış olmalı.
+static func mouth_parts(d: Dressing, variant: String, rim_only := false) -> void:
+	var s := MOUTH_SURF
+	var pl := 3.0 if variant == "10l" else 4.0               # kuyunun arka duvarına kadar
+	var inner := pl - 0.15                                   # açıklığın uzunluğu (yerel z 0 … inner)
+	var zc := inner * 0.5
+	var earth := Color("5a4630")
+	var wood := Color("7a5634")
+	# Kuyunun ağzındaki toprak set (kuyu duvarlarının tepesini örter), üstünde kalaslar
+	d.box(Vector3(4.4, 0.33, 0.9), Vector3(0, s + 0.115, -0.45), earth.lightened(0.05))
+	d.box(Vector3(4.4, 0.33, 0.9), Vector3(0, s + 0.115, inner + 0.45), earth.lightened(0.05))
+	for sx: float in [-1.0, 1.0]:
+		d.box(Vector3(1.0, 0.33, inner + 1.8), Vector3(sx * 1.7, s + 0.115, zc), earth.lightened(0.02))
+		d.box(Vector3(0.22, 0.1, inner + 0.5), Vector3(sx * 1.3, s + 0.33, zc), wood)
+	for z: float in [-0.12, inner + 0.12]:
+		d.box(Vector3(2.9, 0.1, 0.22), Vector3(0, s + 0.33, z), wood.darkened(0.1))
+	# Çıkrık: iki dikme, makara, ip ve kova (kuyunun tam üstünde)
+	for sx: float in [-1.0, 1.0]:
+		d.cyl(0.09, 2.3, Vector3(sx * 1.55, s + 1.25, zc), wood.darkened(0.2), Vector3.ZERO, 6)
+		d.cyl(0.06, 1.5, Vector3(sx * 2.0, s + 0.95, zc), wood.darkened(0.3), Vector3(0, 0, sx * -24.0), 5)
+	d.cyl(0.07, 3.6, Vector3(0, s + 2.3, zc), wood.darkened(0.25), Vector3(0, 0, 90), 6)
+	d.cyl(0.17, 0.9, Vector3(0, s + 2.3, zc), wood, Vector3(0, 0, 90), 8)
+	d.box(Vector3(0.06, 0.55, 0.06), Vector3(1.85, s + 2.05, zc), wood.darkened(0.3), Vector3(0, 0, 18))
+	d.cyl(0.015, 1.25, Vector3(0, s + 1.62, zc), Color("b89a60"), Vector3.ZERO, 4)
+	d.cyl(0.2, 0.3, Vector3(0, s + 0.85, zc), Color("5a3e26"), Vector3.ZERO, 8, 1.2)
+	if rim_only:
+		return
+	# Karanlık açıklık (kuyunun ağzı; dünyada arazide delik yok, seyirci koyu levhayı kuyu olarak görür)
+	d.box(Vector3(2.4, 0.04, inner), Vector3(0, s + 0.01, zc), Color("070504"))
+	# Çıkarılmış toprak yığınları (yan tarafta) ve çiğnenmiş yol
+	d.ball(1.0, Vector3(5.2, s - 0.25, zc + 0.3), earth.lightened(0.12), Vector3(3.5, 1.55, 2.9), 8)
+	d.ball(1.0, Vector3(3.7, s - 0.1, inner + 2.0), earth.lightened(0.04), Vector3(1.9, 0.75, 1.6), 7)
+	d.box(Vector3(3.0, 0.03, 1.4), Vector3(2.7, s + 0.015, 0.7), Color("3a2e20"))
+	for p: Vector3 in [Vector3(2.9, 0.0, -0.7), Vector3(-2.9, 0.0, 0.9)]:
+		d.cyl(0.27, 0.32, Vector3(p.x, s + 0.16, p.z), Color("b8904a"), Vector3.ZERO, 9, 1.15)
+		d.ball(0.25, Vector3(p.x, s + 0.3, p.z), earth.darkened(0.1), Vector3(1, 0.4, 1), 6)
+	# Kazma (çıkrık dikmesine dayalı)
+	d.cyl(0.022, 1.15, Vector3(-1.95, s + 0.62, zc - 0.5), Color("6a4a2c"), Vector3(0, 0, 14), 5)
+	d.box(Vector3(0.4, 0.05, 0.06), Vector3(-2.2, s + 1.18, zc - 0.5), Color("5a5a60"), Vector3(0, 0, 14))
+	# Sepet siper: sura bakan yanda (okların karşısında)
+	var i := 0
+	for x: float in [-3.2, -1.9, -0.6, 0.7, 2.0, 3.3]:
+		SiegeField.gabion(d, Vector3(x, s, -1.9), 0.62, 1.5, 0.05 * (i % 3))
+		i += 1
+	for sx: float in [-1.0, 1.0]:
+		SiegeField.gabion(d, Vector3(sx * 3.9, s, -0.7), 0.62, 1.4, 0.04)
+	if variant == "21o":
+		# Destek direkleri yığını (bölümün kuyusundaki yığın): sur yönüne uzanan direkler
+		for k in 4:
+			d.cyl(0.08, 2.2, Vector3(-3.6 + (k % 2) * 0.2, s + 0.09 + (k / 2) * 0.17, 2.4 + (k % 2) * 0.05), Color("6a4a2c"), Vector3(90, 0, 0), 5)
+
+
+## Ağzı sahneye ekler: xf yerel çerçevenin parent içindeki dönüşümü (dünyada World1453.region(), bölümde IDENTITY).
+static func add_mouth(parent: Node3D, xf: Transform3D, variant: String, rim_only := false) -> Node3D:
+	var d := Dressing.new(1453 + (7 if variant == "21o" else 3))
+	d.chunk = 160.0
+	# Dressing parçaları 160 m'lik hücrelere böler; orijinde duran ağız dört hücreye (dört ağ, sekiz çizim) bölünürdü:
+	# bölümün içinde (orijin) ağız hücrenin ortasında kurulur, düğüm geri kaydırılır
+	var base := Vector3(80.0, 0.0, 80.0) if rim_only else xf.origin
+	d.at(base, xf.basis.get_euler().y)
+	mouth_parts(d, variant, rim_only)
+	var root := d.build(parent)
+	root.position = xf.origin - base
+	root.name = "LagimAgzi_" + variant
+	if not rim_only:
+		for mi: Node in root.find_children("*", "MeshInstance3D", true, false):
+			(mi as MeshInstance3D).visibility_range_end = 1500.0        # uzak şey: ufka yakın görünmez (kenar payıyla)
+			(mi as MeshInstance3D).visibility_range_end_margin = 150.0
+	return root

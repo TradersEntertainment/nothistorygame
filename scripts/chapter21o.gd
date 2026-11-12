@@ -15,6 +15,7 @@ const GOAL := 6
 const DIG_TIME := 1.4
 const ESCAPE_TIME := 14.0
 const RAID_AT := 3                 # yarı yolda yan duvardan karşı lağımcılar dalar
+const Ch10L := preload("res://scripts/chapter10l.gd")      # lağım ağzının tek kurucusu (G7: tek harita)
 
 var player: Player
 var hud: Hud
@@ -92,6 +93,7 @@ func _build() -> void:
 	sun.light_color = Color("fff0d0")
 	add_child(sun)
 	Props.box(self, Vector3(1.4, 4.0, 1.4), Vector3(0, 4.6, 2.5), Color("ffe8b0"), Vector3.ZERO, 0.8)
+	Ch10L.add_mouth(self, Transform3D.IDENTITY, "21o", true)      # tek harita: kuyunun üstü dünyadaki ağızla aynı (yalnız set + çıkrık)
 	for i in GOAL + 3:
 		_segment(i)
 	face = Node3D.new()
