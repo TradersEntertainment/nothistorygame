@@ -251,80 +251,27 @@ static func animal(kind: String, seed: int) -> Node3D:
 	var n := Node3D.new()
 	n.name = "Hayvan_%s%d" % [kind, seed]
 	var legs: Array = []
+	# CANLI (kalite notu 32): köpek, kedi, eşek canli_kit'ten (kesit halkalı gövde, türün başı, eklemli bacak); kutu yok.
+	var fur: Color
+	var opt := {"lod": 0, "birlestir": ["kulak"], "golge": kind == "donkey"}
+	var tur := "kopek"
 	match kind:
 		"dog":
-			var fur: Color = [Color("8a6a46"), Color("a89a80"), Color("5a4a3a"), Color("c8a468")][r.randi() % 4]
-			Props.ball(n, 0.17, Vector3(0, 0.38, 0), fur, Vector3(0.75, 0.8, 1.7), 8)
-			var head := Node3D.new()
-			head.position = Vector3(0, 0.5, 0.3)
-			n.add_child(head)
-			Props.ball(head, 0.1, Vector3.ZERO, fur, Vector3(0.9, 0.9, 1.0), 8)
-			Props.box(head, Vector3(0.07, 0.06, 0.11), Vector3(0, -0.03, 0.1), fur.lightened(0.1))
-			Props.ball(head, 0.025, Vector3(0, -0.01, 0.17), Color("1a1414"), Vector3.ONE, 4)
-			for sx: float in [-0.06, 0.06]:
-				Props.box(head, Vector3(0.03, 0.09, 0.06), Vector3(sx, 0.06, -0.01), fur.darkened(0.2), Vector3(0, 0, sx * 300.0))
-			var tail := Node3D.new()
-			tail.position = Vector3(0, 0.44, -0.28)
-			n.add_child(tail)
-			Props.cyl(tail, 0.02, 0.22, Vector3(0, 0.08, -0.04), fur, Vector3(-30, 0, 0), 4, 0.01)
-			n.set_meta("tail", tail)
-			for i in 4:
-				var leg := Node3D.new()
-				leg.position = Vector3(-0.07 + (i % 2) * 0.14, 0.3, -0.18 + (i / 2) * 0.36)
-				n.add_child(leg)
-				Props.cyl(leg, 0.022, 0.3, Vector3(0, -0.15, 0), fur.darkened(0.1), Vector3.ZERO, 4)
-				legs.append(leg)
+			fur = [Color("8a6a46"), Color("a89a80"), Color("5a4a3a"), Color("c8a468")][r.randi() % 4]
 		"cat":
-			var fur: Color = [Color("d8843a"), Color("6a6a70"), Color("e8e2d4"), Color("3a3430")][r.randi() % 4]
-			Props.ball(n, 0.11, Vector3(0, 0.2, 0), fur, Vector3(0.8, 0.85, 1.6), 8)
-			var head := Node3D.new()
-			head.position = Vector3(0, 0.29, 0.17)
-			n.add_child(head)
-			Props.ball(head, 0.075, Vector3.ZERO, fur, Vector3.ONE, 8)
-			for sx: float in [-0.045, 0.045]:
-				Props.prism(head, Vector3(0.04, 0.055, 0.025), Vector3(sx, 0.08, 0), fur, Vector3.ZERO)
-			var tail := Node3D.new()
-			tail.position = Vector3(0, 0.22, -0.16)
-			n.add_child(tail)
-			Props.cyl(tail, 0.014, 0.26, Vector3(0, 0.1, -0.05), fur, Vector3(-50, 0, 0), 4, 0.008)
-			n.set_meta("tail", tail)
-			for i in 4:
-				var leg := Node3D.new()
-				leg.position = Vector3(-0.05 + (i % 2) * 0.1, 0.16, -0.1 + (i / 2) * 0.2)
-				n.add_child(leg)
-				Props.cyl(leg, 0.016, 0.16, Vector3(0, -0.08, 0), fur.darkened(0.1), Vector3.ZERO, 4)
-				legs.append(leg)
+			fur = [Color("d8843a"), Color("6a6a70"), Color("e8e2d4"), Color("3a3430")][r.randi() % 4]
+			tur = "kedi"
 		"donkey":
-			var fur: Color = [Color("7a6e62"), Color("8a7a66"), Color("5e5650")][r.randi() % 3]
-			Props.box(n, Vector3(0.42, 0.46, 1.05), Vector3(0, 0.8, 0), fur)
-			var neck := Node3D.new()
-			neck.position = Vector3(0, 0.95, 0.5)
-			neck.rotation_degrees = Vector3(-30, 0, 0)
-			n.add_child(neck)
-			Props.box(neck, Vector3(0.2, 0.42, 0.22), Vector3(0, 0.12, 0), fur)
-			var head := Node3D.new()
-			head.position = Vector3(0, 1.2, 0.66)
-			n.add_child(head)
-			Props.box(head, Vector3(0.2, 0.2, 0.42), Vector3(0, -0.03, 0.12), fur.lightened(0.08), Vector3(20, 0, 0))
-			Props.box(head, Vector3(0.14, 0.1, 0.1), Vector3(0, -0.12, 0.34), Color("c8b8a0"))
-			for sx: float in [-0.07, 0.07]:
-				Props.box(head, Vector3(0.05, 0.28, 0.04), Vector3(sx, 0.2, -0.05), fur.darkened(0.15), Vector3(0, 0, -sx * 250.0))
-			# palan ve iki küfe
-			Props.box(n, Vector3(0.5, 0.06, 0.6), Vector3(0, 1.06, -0.05), Color("8a3a2a"))
-			for sx: float in [-0.34, 0.34]:
-				Props.cyl(n, 0.19, 0.3, Vector3(sx, 0.86, -0.05), Color("9a7a48"), Vector3.ZERO, 8, 0.23)
-				Props.ball(n, 0.15, Vector3(sx, 1.02, -0.05), [Color("d8a040"), Color("8ab840")][seed % 2], Vector3(1, 0.5, 1), 6)
-			var tail := Node3D.new()
-			tail.position = Vector3(0, 0.95, -0.52)
-			n.add_child(tail)
-			Props.cyl(tail, 0.025, 0.4, Vector3(0, -0.18, -0.03), fur.darkened(0.3), Vector3.ZERO, 4, 0.04)
-			n.set_meta("tail", tail)
-			for i in 4:
-				var leg := Node3D.new()
-				leg.position = Vector3(-0.14 + (i % 2) * 0.28, 0.58, -0.38 + (i / 2) * 0.76)
-				n.add_child(leg)
-				Props.cyl(leg, 0.045, 0.58, Vector3(0, -0.29, 0), fur.darkened(0.12), Vector3.ZERO, 5)
-				legs.append(leg)
+			fur = [Color("7a6e62"), Color("8a7a66"), Color("5e5650")][r.randi() % 3]
+			tur = "esek"
+			opt["takim"] = ["yuk", "yular"]
+	opt["renk"] = fur
+	var kit: Dictionary = preload("res://scripts/world/ist/canli_kit.gd").dugum(tur, opt)
+	n.add_child(kit["root"])
+	var kp: Dictionary = kit["p"]
+	for i in 4:
+		legs.append(kp["b%d" % i])
+	n.set_meta("tail", kp["kuyruk"])
 	n.set_meta("legs", legs)
 	return n
 

@@ -294,6 +294,11 @@ static func parcalar(tur: String, opt := {}) -> Dictionary:
 	if tur in ["tavuk", "marti", "guvercin"]:
 		return _kus(tur, opt)
 	var T := tanim(tur)
+	if opt.has("H"):           # boy ayarı (oyunun eski sınıf ölçüsüne oturtmak için; oran korunur)
+		var k := float(opt["H"]) / float(T["H"])
+		for key in ["L", "W", "D"]:
+			T[key] = float(T[key]) * lerpf(1.0, k, 0.8)
+		T["H"] = opt["H"]
 	var parts := {}
 	var H: float = T["H"]
 	var L: float = T["L"]
@@ -579,6 +584,8 @@ static func parcalar(tur: String, opt := {}) -> Dictionary:
 					_tb(bs, [0], lp2, "k", false, false, 0.3)
 			"semer", "yuk", "cul":
 				var sc := Color("8a3a2a") if tk == "semer" else (Color("7a3a3a") if tk == "cul" else Color("6a4a2c"))
+				if opt.has("cul_renk") and tk == "cul":
+					sc = opt["cul_renk"]
 				var ss: Array = []
 				for i in range(2, 7):
 					var r: Array = rings[i]

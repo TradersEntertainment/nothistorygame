@@ -4,6 +4,8 @@ extends Node3D
 ## peşine takılan tavuk (GDD §5.15). Kanat çırpar, kafasını sallar; follow ayarlanınca
 ## hedefin arkasından sekerek gelir.
 
+const CK = preload("res://scripts/world/ist/canli_kit.gd")
+
 var follow: Node3D
 var flapping := false
 ## Serbest tavuk (ordugâh kümesi): yard boş değilse içinde dolaşır, yaklaşınca kaçar, köşede yakalanır.
@@ -20,24 +22,14 @@ func _ready() -> void:
 	_t = randf() * 5.0
 	_body = Node3D.new()
 	add_child(_body)
-	Props.ball(_body, 0.16, Vector3(0, 0.24, 0), Color("f6f2e8"), Vector3(1.0, 0.9, 1.25), 8)
-	Props.box(_body, Vector3(0.12, 0.16, 0.08), Vector3(0, 0.34, -0.2), Color("f6f2e8"), Vector3(-30, 0, 0))
-	for side in [-1, 1]:
-		Props.cyl(_body, 0.012, 0.14, Vector3(side * 0.06, 0.07, 0.02), Color("e0a020"), Vector3.ZERO, 4)
-		var w := Node3D.new()
-		w.position = Vector3(side * 0.15, 0.27, 0)
-		_body.add_child(w)
-		Props.box(w, Vector3(0.04, 0.12, 0.22), Vector3(side * 0.02, -0.02, 0), Color("e8e2d4"))
-		_wings.append(w)
-	_head = Node3D.new()
-	_head.position = Vector3(0, 0.42, 0.14)
-	_body.add_child(_head)
-	Props.ball(_head, 0.08, Vector3.ZERO, Color("f6f2e8"), Vector3.ONE, 8)
-	Props.box(_head, Vector3(0.025, 0.07, 0.1), Vector3(0, 0.08, -0.01), Color("d8262d"))
-	Props.prism(_head, Vector3(0.05, 0.06, 0.05), Vector3(0, -0.01, 0.09), Color("e0a020"), Vector3(-90, 0, 0))
-	Props.ball(_head, 0.022, Vector3(0, -0.07, 0.05), Color("d8262d"), Vector3.ONE, 5)
-	Props.ball(_head, 0.014, Vector3(-0.05, 0.02, 0.05), Color("141414"), Vector3.ONE, 4)
-	Props.ball(_head, 0.014, Vector3(0.05, 0.02, 0.05), Color("141414"), Vector3.ONE, 4)
+	# CANLI (kalite notu 32): tavuk canli_kit'ten (kesit halkalı gövde ve boyun, ibik, sakal, gaga, kuyruk yelpazesi,
+	# kanatlar ayrı pivotta); kutu yok. Arayüz aynı: _body, _head, _wings (z ekseninde çırpar).
+	var kit: Dictionary = CK.dugum("tavuk", {"lod": 0, "golge": false})
+	_body.add_child(kit["root"])
+	var p: Dictionary = kit["p"]
+	_head = p["bas"]
+	_wings.append(p["kanat_l"])
+	_wings.append(p["kanat_r"])
 
 
 func _process(delta: float) -> void:

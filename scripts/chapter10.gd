@@ -200,20 +200,13 @@ func _build_gate() -> void:
 
 
 func _camel(pos: Vector3) -> void:
+	# CANLI (kalite notu 32): deve canli_kit'ten (tek hörgüç, uzun kavisli boyun, yarık dudak, nasırlı diz); kutu yok.
 	var c := Node3D.new()
 	c.position = pos
 	c.rotation.y = PI * 0.5
 	add_child(c)
-	var col := Color("c8a060")
-	Props.box(c, Vector3(0.7, 0.7, 1.6), Vector3(0, 1.45, 0), col)
-	Props.ball(c, 0.38, Vector3(0, 1.9, 0.1), col, Vector3(1.0, 0.9, 1.3), 8)
-	Props.box(c, Vector3(0.3, 1.0, 0.3), Vector3(0, 2.0, 0.95), col, Vector3(-25, 0, 0))
-	Props.box(c, Vector3(0.3, 0.3, 0.55), Vector3(0, 2.5, 1.25), col)
-	for s in [-1, 1]:
-		Props.ball(c, 0.04, Vector3(s * 0.15, 2.58, 1.35), Color("1d2330"), Vector3.ONE, 5)
-		for z in [-0.6, 0.6]:
-			Props.cyl(c, 0.08, 1.1, Vector3(s * 0.25, 0.55, z), col.darkened(0.15), Vector3.ZERO, 5)
-	Props.box(c, Vector3(0.75, 0.1, 0.8), Vector3(0, 1.82, -0.3), Color("b3262d"))
+	var kit: Dictionary = preload("res://scripts/world/ist/canli_kit.gd").dugum("deve", {"renk": Color("c8a060"), "lod": 0, "takim": ["cul", "yular"], "cul_renk": Color("b3262d")})
+	c.add_child(kit["root"])
 
 
 # ================================================================ ana akış

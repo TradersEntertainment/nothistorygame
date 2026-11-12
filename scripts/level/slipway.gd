@@ -2613,101 +2613,20 @@ func _fray(parent: Node3D, tip: Vector3, dir: Vector3, col: Color) -> Node3D:
 	return g
 
 
-## Öküz modeli (+Z ileri): döndürür {root, legs[4], head, tail}. Gövde köşe renkli tek ağ (omuz yüksek, sağrı alçak,
-## karın sarkık), hörgüç, boyun, gerdan; baş, bacaklar, kuyruk ayrı (canlandırılır), her biri tek ağa pişer.
+## Öküz modeli (+Z ileri): döndürür {root, legs[4], head, tail}. CANLI (kalite notu 32): canli_kit öküzü (kesit
+## halkalı gövde: omuz yüksek, sağrı alçalan, karın sarkık; geniş alınlı baş, lir boynuz, gerdan, diz/bilek eklemli
+## bacaklar, püsküllü kuyruk); kutu parça yok. Gövde gölge atar, küçük parçalar atmaz (eskisi gibi).
 func _ox_model(parent: Node3D, coat: Color, rng: RandomNumberGenerator) -> Dictionary:
-	var root := Node3D.new()
-	parent.add_child(root)          # bake_static ağaçtaki düğümle çalışır
-	var body := Node3D.new()
-	root.add_child(body)
-	var dark := coat.darkened(0.3)
-	var light := coat.lightened(0.18)
-	# Gövde: elips kesitler boyunca (z, merkez y, yarı en, yarı boy)
-	var secs := [[-1.08, 1.2, 0.2, 0.2], [-0.88, 1.16, 0.37, 0.35], [-0.45, 1.1, 0.44, 0.42], [0.0, 1.07, 0.47, 0.45],
-		[0.45, 1.15, 0.45, 0.49], [0.78, 1.21, 0.36, 0.42], [0.98, 1.3, 0.21, 0.25]]
-	var st := SurfaceTool.new()
-	st.begin(Mesh.PRIMITIVE_TRIANGLES)
-	const N := 10
-	var rings: Array = []
-	for sc: Array in secs:
-		var ring: Array = []
-		for k in N:
-			var a := TAU * k / N
-			ring.append(Vector3(cos(a) * float(sc[2]), float(sc[1]) + sin(a) * float(sc[3]) * (1.0 if sin(a) > 0.0 else 1.08), float(sc[0])))
-		rings.append(ring)
-	var tri := func(a: Vector3, b: Vector3, c: Vector3) -> void:
-		var n := (c - a).cross(b - a).normalized()
-		var shade := Color.WHITE.lerp(Color(1.08, 1.05, 1.0), clampf(-n.y, 0.0, 1.0) * 0.6)
-		for v: Vector3 in [a, b, c]:
-			st.set_color(shade)
-			st.set_normal(n)
-			st.add_vertex(v)
-	for i in rings.size() - 1:
-		for k in N:
-			var k2 := (k + 1) % N
-			var a0: Vector3 = rings[i][k]
-			var a1: Vector3 = rings[i][k2]
-			var b0: Vector3 = rings[i + 1][k]
-			var b1: Vector3 = rings[i + 1][k2]
-			tri.call(a0, b0, a1)
-			tri.call(a1, b0, b1)
-	for e in 2:
-		var ring: Array = rings[0] if e == 0 else rings[-1]
-		var c := Vector3.ZERO
-		for v: Vector3 in ring:
-			c += v
-		c /= N
-		c.z += -0.06 if e == 0 else 0.06
-		for k in N:
-			if e == 0:
-				tri.call(c, ring[k], ring[(k + 1) % N])
-			else:
-				tri.call(c, ring[(k + 1) % N], ring[k])
-	var torso := MeshInstance3D.new()
-	torso.mesh = st.commit()
-	torso.material_override = Props.mat(coat)
-	body.add_child(torso)
-	Props.ball(body, 0.27, Vector3(0, 1.62, 0.48), coat.darkened(0.06), Vector3(0.85, 0.75, 1.25), 8)      # hörgüç
-	_rod(body, Vector3(0, 1.36, 0.9), Vector3(0, 1.4, 1.22), 0.21, coat, 8)                               # boyun
-	Props.ball(body, 0.3, Vector3(0, 0.98, 0.98), coat.darkened(0.12), Vector3(0.3, 1.0, 1.15), 8)          # gerdan
-	Props.bake_static(body, body.get_children())
-	# Baş: alnı geniş, burnu açık renk, lir biçimli boynuzlar, yana açık kulaklar
-	var head := Node3D.new()
-	head.position = Vector3(0, 1.4, 1.24)
-	root.add_child(head)
-	_rod(head, Vector3(0, 0.04, -0.04), Vector3(0, -0.24, 0.42), 0.16, coat, 7)
-	Props.ball(head, 0.14, Vector3(0, -0.26, 0.45), Color("d9c4a2"), Vector3(1.0, 0.85, 1.0), 7)
-	Props.ball(head, 0.17, Vector3(0, 0.05, 0.0), coat, Vector3(1.15, 0.9, 1.0), 7)
-	for sx: float in [-1.0, 1.0]:
-		var hc := Color("e6dcc4")
-		_rod(head, Vector3(sx * 0.1, 0.13, 0.0), Vector3(sx * 0.33, 0.22, -0.04), 0.045, hc, 5)
-		_rod(head, Vector3(sx * 0.33, 0.22, -0.04), Vector3(sx * 0.38, 0.45, 0.06), 0.034, hc, 5)
-		_rod(head, Vector3(sx * 0.38, 0.45, 0.06), Vector3(sx * 0.32, 0.56, 0.12), 0.022, Color("3a3028"), 4)
-		Props.ball(head, 0.1, Vector3(sx * 0.22, 0.0, -0.04), dark, Vector3(1.5, 0.45, 0.85), 6)
-		Props.ball(head, 0.03, Vector3(sx * 0.13, -0.02, 0.17), Color("1a1410"), Vector3.ONE, 5)
-		Props.ball(head, 0.022, Vector3(sx * 0.05, -0.3, 0.57), Color("2a1e18"), Vector3.ONE, 4)
-	Props.bake_static(head, head.get_children())
-	# Bacaklar: omuz/kalça ekleminde; arka bacakta diz (hock) geride
+	var kit: Dictionary = preload("res://scripts/world/ist/canli_kit.gd").dugum("okuz", {"renk": coat, "H": 1.5, "lod": 0, "birlestir": ["kulak"]})
+	var root: Node3D = kit["root"]
+	parent.add_child(root)
+	var p: Dictionary = kit["p"]
 	var legs: Array = []
-	for lp: Vector3 in [Vector3(-0.25, 0.98, 0.55), Vector3(0.25, 0.98, 0.55), Vector3(-0.25, 0.98, -0.7), Vector3(0.25, 0.98, -0.7)]:
-		var leg := Node3D.new()
-		leg.position = lp
-		root.add_child(leg)
-		var knee := Vector3(0, -0.5, 0.03) if lp.z > 0.0 else Vector3(0, -0.46, -0.13)
-		_rod(leg, Vector3(0, 0.1, 0), knee, 0.11, coat, 7)
-		_rod(leg, knee, Vector3(0, -0.9, 0.0), 0.06, coat.darkened(0.1), 6)
-		Props.box(leg, Vector3(0.13, 0.08, 0.17), Vector3(0, -0.93, 0.02), Color("2a2420"))
-		Props.bake_static(leg, leg.get_children())
-		legs.append(leg)
-	var tail := Node3D.new()
-	tail.position = Vector3(0, 1.36, -1.08)
-	root.add_child(tail)
-	_rod(tail, Vector3.ZERO, Vector3(0, -0.72, -0.07), 0.026, coat.darkened(0.15), 5)
-	Props.ball(tail, 0.07, Vector3(0, -0.78, -0.07), Color("2a2420"), Vector3(1, 1.9, 1), 5)
-	Props.bake_static(tail, tail.get_children())
+	for i in 4:
+		legs.append(p["b%d" % i])
 	for m in root.find_children("*", "GeometryInstance3D", true, false):
-		(m as GeometryInstance3D).cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF if m.get_parent() != body else GeometryInstance3D.SHADOW_CASTING_SETTING_ON
-	return {"root": root, "legs": legs, "head": head, "tail": tail, "bellow": 0.0, "w": rng.randf() * TAU}
+		(m as GeometryInstance3D).cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_ON if m.get_parent() == p["govde"] else GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
+	return {"root": root, "legs": legs, "head": p["boyun"], "tail": p["kuyruk"], "bellow": 0.0, "w": rng.randf() * TAU}
 
 
 ## Öküzün canlanması: takım yürürken çapraz adım (sol ön + sağ arka birlikte), baş adımla iner kalkar; dururken
