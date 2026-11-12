@@ -36,6 +36,8 @@ const LINES := [
 	["SPK_FATIH", "HZR_FATIH_BAN"], ["SPK_EMPEROR", "HZR_EMP_BAN"],
 	["SPK_JANISSARY", "HZR_JAN_GUARD"], ["SPK_CITY_GUARD", "HZR_BYZ_GUARD"],
 	["SPK_JANISSARY", "HZR_JAN_BLOCK"], ["SPK_CITY_GUARD", "HZR_BYZ_BLOCK"],
+	["SPK_JANISSARY", "HZR_JAN_RELAY_EXILE"], ["SPK_JANISSARY", "HZR_JAN_RELAY_PRE"], ["SPK_JANISSARY", "HZR_JAN_RELAY_ENEMY"],
+	["SPK_JANISSARY", "HZR_JAN_RELAY_BAN"],
 	["SPK_TOLGA", "HZR_T_DOWN_1"], ["SPK_TOLGA", "HZR_T_DOWN_2"], ["SPK_TOLGA", "HZR_T_DOWN_3"],
 	["SPK_TOLGA", "HZR_T_SWORD"],
 	["SPK_NIHAT", "HZR_N_BURO_O"], ["SPK_NIHAT", "HZR_N_BURO_B"],
@@ -340,7 +342,17 @@ func attempt(p: Person, kind: String) -> void:
 		_:
 			line_key = "HZR_FATIH_BAN" if rs == "O" else "HZR_EMP_BAN"
 	p.look_target = player
-	await _say(_spk(p), line_key)
+	# Atlı Sultan hükmü at üstünden yerdeki adama kendisi söylemez: yanındaki yeniçeri aktarır (28o, 26 sonu, 34o)
+	var relay := _relay_guard() if hud._is_mounted(p) and rs == "O" else null
+	if relay:
+		relay.set_meta("spk", "SPK_JANISSARY")
+		relay.set("look_target", player)
+		await _say("SPK_JANISSARY", {"exile": "HZR_JAN_RELAY_EXILE", "pending": "HZR_JAN_RELAY_PRE",
+			"enemy": "HZR_JAN_RELAY_ENEMY"}.get(mode, "HZR_JAN_RELAY_BAN"))
+		if is_instance_valid(relay):
+			relay.remove_meta("spk")
+	else:
+		await _say(_spk(p), line_key)
 	var n_down := int(GameState.stats.get("tarihe_tekme", 1))
 	await _say("SPK_TOLGA", "HZR_T_SWORD" if kind == "sword" else "HZR_T_DOWN_%d" % (1 + (n_down - 1) % 3))
 	match mode:
@@ -798,7 +810,11 @@ func _guards(p: Person, kind: String, rs: String) -> bool:
 	for g in gs:
 		var side := player.camera.global_transform.basis.x * (0.75 if i == 0 else -0.75)
 		side.y = 0.0
-		await Stage.approach(g, _safe(me, me + side), 0.7, 4.6)      # duvarın/katının içine yürümesin
+		var to := _safe(me, me + side)
+		if _headroom(to):
+			await Stage.approach(g, to, 0.7, 4.6)      # duvarın/katının içine yürümesin
+		else:
+			await Stage.approach(g, to, 1.8, 4.6)      # başının üstünde kat var (kapı eşiği, sur yolu): bir adım geride durur
 		if is_instance_valid(g):
 			g.set("look_target", player)
 		i += 1
@@ -822,8 +838,32 @@ func _guards(p: Person, kind: String, rs: String) -> bool:
 	return true
 
 
+## Hükmü aktaracak muhafız: karşı hamleye gelenlerden oyuncuya en yakın, görünen
+func _relay_guard() -> Node3D:
+	var best: Node3D = null
+	var bd := INF
+	var pool: Array = _spawned.duplicate()
+	for it: Array in _borrowed:
+		pool.append(it[0])
+	for g in pool:
+		if not is_instance_valid(g) or not (g as Node3D).is_visible_in_tree():
+			continue
+		var d := (g as Node3D).global_position.distance_to(player.global_position)
+		if d < bd:
+			bd = d
+			best = g
+	return best
+
+
 var _spawned: Array[Node3D] = []
 var _borrowed: Array = []          # [muhafız, yeri, dönüşü, bakışı]: sahnenin askerleri kararmada yerine döner
+
+
+## Bu noktada bir insan boyu boşluk var mı (ayakta durulabilir mi)
+func _headroom(at: Vector3) -> bool:
+	var space := player.get_world_3d().direct_space_state
+	var q := PhysicsRayQueryParameters3D.create(at + Vector3(0, 0.2, 0), at + Vector3(0, 1.9, 0), 1, [player.get_rid()])
+	return space.intersect_ray(q).is_empty()
 
 
 func _nearest_guards(p: Person, n: int) -> Array[Node3D]:

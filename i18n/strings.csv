@@ -9928,3 +9928,7 @@ PF_SURGUN_BURO_O,Sultan'ın notuyla Büro seni Bizans nüshasına yazdı,on the 
 PF_SURGUN_BURO_B,İmparator'un notuyla Büro seni Osmanlı nüshasına yazdı,on the Emperor's note the Bureau put you in the Ottoman copy
 PF_SURGUN_BAN,üçüncüsünde ikisi de 'bir daha huzuruma getirmeyin' dedi,"the third time, both said 'do not bring him before me again'"
 PF26_SURGUN,2026: bir tarih forumunda 'Fatih bir kâtibi sancaksız sürmüş' diye tek satırlık bir kayıt dolaşır; kaynak gösterilemez.,"2026: a one-line claim circulates on a history forum, 'the Conqueror exiled a scribe without a banner'; nobody can cite a source."
+HZR_JAN_RELAY_EXILE,"Sultan'ım buyurdu: kan dökülmeyecek. Sancaksız çıkar, surlara yürü!","My Sultan commands: no blood. Out you go, no banner, and walk to the walls!"
+HZR_JAN_RELAY_PRE,Sultan'ım buyurdu: bırakın. Seni kuşatmada karşısında görmek istermiş.,My Sultan commands: let him go. He would see you facing him at the siege.
+HZR_JAN_RELAY_ENEMY,Sultan'ım buyurdu: geldiği yere götürün.,My Sultan commands: take him back where he came from.
+HZR_JAN_RELAY_BAN,Sultan'ım buyurdu: bu adam bir daha huzura çıkmayacak.,My Sultan commands: this man will not come before him again.

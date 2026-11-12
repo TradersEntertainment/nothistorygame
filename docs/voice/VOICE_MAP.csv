@@ -5929,3 +5929,7 @@ HZR_NIKO_MEET_NEW,,SPK_NIKO,,0,"Sen, karşıdan gelen! Seni karşıdan yolladıl
 HZR_T_MEET_B,,SPK_TOLGA,,0,Bir hamle yaptım; Sultan'ınki daha iyiydi. Raporuma 'karşı tarafın refleksleri yerinde' yazacağım.,I made a move; the Sultan's was better. I'll write 'other party's reflexes intact' in my report.,kod
 HZR_NIKO_TAKE,,SPK_NIKO,,0,"Gel içeri. Kumandan seni görmek ister. Ellerini de indir artık, kimse ateş etmiyor.","Come inside. The commander will want to see you. And put your hands down, nobody's shooting.",kod
 HZR_N_RADIO_BRIDGE,,SPK_NIHAT,[radio],1,"(Telsiz) Dosyanız karşı nüshaya taşındı, Tolga Bey. Kaldığınız günden devam; tarih aynı, taraf değil.","(Radio) Your file's been moved to the other copy, Mr Tolga. You carry on from the same day: same date, different side.",kod
+HZR_JAN_RELAY_EXILE,,SPK_JANISSARY,[stern],1,"Sultan'ım buyurdu: kan dökülmeyecek. Sancaksız çıkar, surlara yürü!","My Sultan commands: no blood. Out you go, no banner, and walk to the walls!",kod
+HZR_JAN_RELAY_PRE,,SPK_JANISSARY,[stern],1,Sultan'ım buyurdu: bırakın. Seni kuşatmada karşısında görmek istermiş.,My Sultan commands: let him go. He would see you facing him at the siege.,kod
+HZR_JAN_RELAY_ENEMY,,SPK_JANISSARY,[stern],1,Sultan'ım buyurdu: geldiği yere götürün.,My Sultan commands: take him back where he came from.,kod
+HZR_JAN_RELAY_BAN,,SPK_JANISSARY,[stern],1,Sultan'ım buyurdu: bu adam bir daha huzura çıkmayacak.,My Sultan commands: this man will not come before him again.,kod
