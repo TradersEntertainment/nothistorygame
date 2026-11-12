@@ -8,6 +8,7 @@ extends Node3D
 ## 170–720 m nokta-figür (≈ 20 üçgen). Hareket (yürüyüş, kol-bacak, sancak, duman, kuş dönüşü) tamamen gölgelendiricide.
 
 const SH := "res://assets/shaders/"
+const UZAK_ISIK := preload("res://scripts/world/ist/hayat_uzak_isik.gd")
 const YAKIN := 170.0
 const UZAK := 720.0
 const KAYMA := 25.0
@@ -95,8 +96,11 @@ func _kur() -> void:
 		if kt.views.is_empty():
 			continue
 		kt.kur(self)
+	if gece:
+		print("ISTUZAKISIK ", UZAK_ISIK.kur(self, K, IstSehir.sokak))
 	kur_ms = Time.get_ticks_msec() - t0
 	print("ISTHAYAT kur_ms=%d %s" % [kur_ms, veri.ist])
+	print("ISTEVONBELLEK ", IstEvler.ob_say)
 	if _yakin_olacak and yakin == null:
 		var t1 := Time.get_ticks_msec()
 		yakin = IstHayatYakin.attach(dunya, null, gece)
