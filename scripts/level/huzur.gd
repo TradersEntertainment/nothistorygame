@@ -71,6 +71,7 @@ var _bot := ""
 var _bot_t := 0.0
 var _bot_done := false
 var _bot_go := false
+var _bot_next := 0.0
 var last := ""                    # son olay (test için): counter_fatih, counter_emperor, guards, exile, pending, enemy, ban
 var mode := ""                    # son hüküm
 var log_lines: Array[String] = []
@@ -223,6 +224,8 @@ func _physics_process(delta: float) -> void:
 		reach = SWORD_REACH
 	var p := _target(reach, cone)
 	if p == null:
+		if _bot != "" and not _bot_done:
+			_log("bot miss kind=%s frozen=%s" % [kind, str(player.frozen)])
 		return
 	attempt(p, kind)
 
@@ -281,6 +284,7 @@ func attempt(p: Person, kind: String) -> void:
 	if busy or not _visible_ruler(p):
 		return
 	busy = true
+	_bot_done = true
 	var rs := ruler_side(p)
 	mode = _verdict_mode(rs)
 	var dist := Vector2(p.global_position.x - player.global_position.x, p.global_position.z - player.global_position.z).length()
@@ -1015,11 +1019,11 @@ func _bot_tick(delta: float) -> void:
 	if hud.is_choosing() or player.is_down or not player.camera.current:
 		return
 	var d := Vector2(p.global_position.x - player.global_position.x, p.global_position.z - player.global_position.z).length()
-	if (player.frozen and d > LUNGE_REACH) or d > 14.0:
+	if (player.frozen and d > LUNGE_REACH) or d > 14.0 or _bot_t < _bot_next:
 		return
 	if player.frozen and not _clear(player.camera.global_position, p.global_position + Vector3(0, 1.5, 0), p):
 		return
-	_bot_done = true
+	_bot_next = _bot_t + 1.5          # ıskalarsa (yol kapalı, bakış dışı) 1,5 sn sonra yeniden dener
 	var fwd := p.global_transform.basis.z
 	fwd.y = 0.0
 	fwd = fwd.normalized()
