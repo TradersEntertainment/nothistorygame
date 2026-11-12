@@ -32,7 +32,7 @@ func _ready() -> void:
 	var ilk := Vector3.ZERO
 	var sat := _satirlar()
 	if set_ == "liste" and sat.size() > 0:
-		var p := sat[0].split(" ", false)
+		var p: PackedStringArray = String(sat[0]).split(" ", false)
 		var w := IstGeo.w2(p[1].to_float(), p[2].to_float())
 		ilk = Vector3(w.x, 10.0, w.y)
 		cam.global_position = ilk
