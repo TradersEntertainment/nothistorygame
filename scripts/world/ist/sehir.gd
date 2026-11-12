@@ -1426,7 +1426,7 @@ func _on_pisir() -> void:
 		var mod := String(it.get("mod", ""))
 		var id := String(it["id"])
 		var hat := it.has("hat") or id.begins_with("kose_")
-		if not hat and mod == "v2" and not id.begins_with("mese_") and id != "ayasofya" and id != "blakherna" and id != "bozdogan" and id != "zincir":
+		if not hat and mod == "v2" and not id.begins_with("mese_") and not id in ["ayasofya", "blakherna", "bozdogan", "zincir", "hub_sehir"]:
 			continue
 		var h := it["holder"] as Node3D
 		_build(it, 1)
@@ -1930,13 +1930,10 @@ func _place_v2() -> void:
 	var hx := hub_xf()
 	if hx != Transform3D():
 		var hc := hx * Vector3(0, 0, -10)
-		IstGeo.duzle(Vector2(hc.x, hc.z), 48.0, hx.origin.y, 10.0)
+		# bölümün kaldırımı (üstü yerel y 0) arazinin üstünde kalsın: arazi 12 cm aşağıda düzlenir
+		IstGeo.duzle(Vector2(hc.x, hc.z), 48.0, hx.origin.y - 0.12, 10.0)
 		# Hub şehri tek katmanlı öğe (kendi uzaklık katmanları var); BAĞLAMA bölümde (7b) alanı temizlerken kalkar
-		var hit := _v2_item_tek("hub_sehir", hx.origin, 50.0, func(nd: Node3D, _lod: int) -> void:
-			var t0 := Time.get_ticks_msec()
-			ByzCity.far_hub(nd, Transform3D.IDENTITY)
-			stats["hub_ms"] = Time.get_ticks_msec() - t0)
-		hit["data"] = {}
+		_v2_item("hub_sehir", hx.origin, 0.0, 50.0, _make_hub)
 
 
 ## Tek katmanlı öğe: kurucusu bir kez (açılışta) çalışır, kendi uzaklık katmanlarını ve çarpışmasını kendisi kurar
@@ -2085,6 +2082,34 @@ func _make_aya(n: Node3D, lod: int) -> void:
 		Ayasofya._narthex(inner)
 		Ayasofya._apse(inner)
 		Ayasofya._domes(inner)
+
+
+## Hub şehri: mektup bölümünün kurucuları (ByzCity "walls": zemin, cadde ve evleri, kançılarya, iç sur ve Romanos kemeri,
+## saray avlusu, kubbeli kiliseler, dolgu evler) — ByzCity.far_hub'ın kurduğu parçaların aynısı; ama şehrin katmanlı
+## pişirmesiyle (ByzCity.far_hub'daki World1453.bake köşe renkli parçaların rengini silip bembeyaz bırakıyordu, ŞEHİR-3).
+## Kişiler, yazılar atılır; ışıklar yalnız yakın katmanda.
+func _make_hub(n: Node3D, lod: int) -> void:
+	var t0 := Time.get_ticks_msec()
+	var c := ByzCity.new()
+	c.part = "walls"
+	c._build_ground()
+	c._build_street()
+	c._build_chancery()
+	c._build_walls()
+	c._build_palace()
+	c._build_small_skyline()
+	c._build_fill()
+	for ch in c.get_children():
+		c.remove_child(ch)
+		n.add_child(ch)
+	c.free()
+	for x in n.find_children("*", "", true, false):
+		if not is_instance_valid(x):
+			continue
+		if x is Person or x is Label3D or x is Area3D or (x is Light3D and lod > 0):
+			x.get_parent().remove_child(x)
+			x.free()
+	stats["hub_ms"] = Time.get_ticks_msec() - t0
 
 
 func _make_blakherna(n: Node3D, lod: int) -> void:
