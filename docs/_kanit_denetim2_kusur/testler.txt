@@ -1,0 +1,342 @@
+######## logA
+### RUN --chapter=2 --autotest rc=0
+SEIZE_AUDIT ok closest=0.70
+AUTOTEST PASS chapter=2 variant= outcome=2.1 stumbles=1 telsiz=3
+### RUN --chapter=2 --autotest rc=0
+SEIZE_AUDIT ok closest=0.73
+AUTOTEST PASS chapter=2 variant= outcome=2.1 stumbles=1 telsiz=3
+### RUN --chapter=2 --autotest=perfect rc=0
+AUTOTEST PASS chapter=2 variant=perfect outcome=2.2 stumbles=0 telsiz=3
+### RUN --chapter=2 --autotest=perfect rc=0
+AUTOTEST PASS chapter=2 variant=perfect outcome=2.2 stumbles=0 telsiz=3
+### RUN --chapter=2 --autotest=chain rc=0
+AUTOTEST PASS chapter=2 variant=chain outcome=2.3 stumbles=0 telsiz=3
+### RUN --chapter=2 --autotest=chain rc=0
+AUTOTEST PASS chapter=2 variant=chain outcome=2.3 stumbles=0 telsiz=3
+### RUN --chapter=2 --autotest=chainfail rc=0
+SEIZE_AUDIT ok closest=0.69
+AUTOTEST PASS chapter=2 variant=chainfail outcome=2.4 stumbles=0 telsiz=3
+### RUN --chapter=2 --autotest=chainfail rc=0
+SEIZE_AUDIT ok closest=0.69
+AUTOTEST PASS chapter=2 variant=chainfail outcome=2.4 stumbles=0 telsiz=3
+### RUN --chapter=2 --autotest=red rc=0
+AUTOTEST PASS chapter=2 variant=red outcome=2.5 stumbles=0 telsiz=3
+### RUN --chapter=2 --autotest=red rc=0
+AUTOTEST PASS chapter=2 variant=red outcome=2.5 stumbles=0 telsiz=3
+### RUN --chapter=2 --autotest=swimshore rc=0
+SEIZE_AUDIT ok closest=0.71
+AUTOTEST PASS chapter=2 variant=swimshore outcome=2.1 stumbles=1 telsiz=3
+### RUN --chapter=2 --autotest=swimshore rc=0
+SEIZE_AUDIT ok closest=0.68
+AUTOTEST PASS chapter=2 variant=swimshore outcome=2.1 stumbles=1 telsiz=3
+### RUN --chapter=2 --autotest=swimchain rc=0
+AUTOTEST PASS chapter=2 variant=swimchain outcome=2.3 stumbles=0 telsiz=3
+### RUN --chapter=2 --autotest=swimchain rc=0
+AUTOTEST PASS chapter=2 variant=swimchain outcome=2.3 stumbles=0 telsiz=3
+### RUN --chapter=2 --autotest=next rc=0
+AUTOTEST chapter=2 -> 3 outcome=2.2
+AUTOTEST PASS chapter=3 variant= outcome=3.3 sadakat=50 rel=0 baski=0 machine=free
+### RUN --chapter=2 --autotest=next rc=0
+AUTOTEST chapter=2 -> 3 outcome=2.2
+AUTOTEST PASS chapter=3 variant= outcome=3.3 sadakat=50 rel=0 baski=0 machine=free
+### RUN --chapter=0 --autotest rc=0
+PLACE_OUT age=2.01 hold=1.00
+AUTOTEST PASS chapter=0 variant= froze=true
+### RUN --chapter=0 --autotest=next rc=0
+PLACE_OUT age=2.00 hold=1.00
+AUTOTEST PASS chapter=0 variant=next froze=true
+AUTOTEST chapter=1 -> 2 outcome=1.1 bag=["phone", "lighter", "book", "chickpeas", "powerbank"]
+SEIZE_AUDIT ok closest=0.70
+AUTOTEST PASS chapter=2 variant= outcome=2.1 stumbles=1 telsiz=3
+### SUITE DONE
+######## logB
+### RUN --chapter=8y --autotest rc=0
+YORUM8Y D8Y_T_MANTLET z=46.4
+YORUM8Y D8Y_T_LADDER z=71.5
+YORUM8Y D8Y_T_ARROWS z=77.8
+YORUM8Y D8Y_T_CRATER z=103.2
+AUTOTEST PASS chapter=8y variant= outcome=8Y.1 id=seal warnings=0 lowered=0 radio=true
+### RUN --chapter=8y --autotest=warn rc=0
+YORUM8Y D8Y_T_MANTLET z=46.4
+YORUM8Y D8Y_T_LADDER z=54.4
+YORUM8Y D8Y_T_ARROWS z=76.5
+YORUM8Y D8Y_T_CRATER z=101.8
+AUTOTEST PASS chapter=8y variant=warn outcome=8Y.2 id=item warnings=2 lowered=2 radio=true
+### RUN --chapter=8y --autotest=dep rc=0
+YORUM8Y D8Y_T_MANTLET z=46.6
+YORUM8Y D8Y_T_LADDER z=71.0
+YORUM8Y D8Y_T_ARROWS z=77.3
+YORUM8Y D8Y_T_CRATER z=102.8
+AUTOTEST PASS chapter=8y variant=dep outcome=8Y.3 id=honest warnings=0 lowered=0 radio=true
+### RUN --chapter=8y --autotest=opened rc=0
+YORUM8Y D8Y_T_MANTLET z=46.4
+YORUM8Y D8Y_T_LADDER z=71.5
+YORUM8Y D8Y_T_ARROWS z=77.8
+YORUM8Y D8Y_T_CRATER z=103.2
+AUTOTEST PASS chapter=8y variant=opened outcome=8Y.1 id=seal warnings=0 lowered=0 radio=true
+### RUN --chapter=8y --autotest=honest rc=0
+YORUM8Y D8Y_T_MANTLET z=46.4
+YORUM8Y D8Y_T_LADDER z=71.5
+YORUM8Y D8Y_T_ARROWS z=77.8
+YORUM8Y D8Y_T_CRATER z=104.2
+AUTOTEST PASS chapter=8y variant=honest outcome=8Y.1 id=honest warnings=0 lowered=0 radio=true
+### RUN --chapter=8y --autotest=hikmet rc=0
+YORUM8Y D8Y_T_MANTLET z=46.1
+YORUM8Y D8Y_T_LADDER z=70.6
+YORUM8Y D8Y_T_ARROWS z=76.9
+YORUM8Y D8Y_T_CRATER z=102.8
+AUTOTEST PASS chapter=8y variant=hikmet outcome=8Y.1 id=seal warnings=0 lowered=0 radio=false
+### RUN --chapter=8y --autotest=sinerji rc=0
+YORUM8Y D8Y_T_MANTLET z=46.1
+YORUM8Y D8Y_T_LADDER z=70.6
+YORUM8Y D8Y_T_ARROWS z=76.9
+YORUM8Y D8Y_T_CRATER z=102.3
+AUTOTEST PASS chapter=8y variant=sinerji outcome=8Y.1 id=seal warnings=0 lowered=0 radio=true
+### RUN --chapter=8y --autotest=next rc=0
+YORUM8Y D8Y_T_MANTLET z=46.4
+YORUM8Y D8Y_T_LADDER z=71.5
+YORUM8Y D8Y_T_ARROWS z=77.8
+YORUM8Y D8Y_T_CRATER z=104.2
+AUTOTEST chapter=8y -> 9 outcome=8Y.1
+AUTOTEST PASS chapter=9 variant=arch route= byz=true offers=["theodoros"] outcome=9.5 telsiz=4 merak=0
+### RUN --chapter=10b --autotest rc=0
+AUTOTEST PASS chapter=10b variant= outcome=10B.1 quality=3 risk=0 calc=phone paradox=15
+### RUN --chapter=10b --autotest=eye rc=0
+AUTOTEST PASS chapter=10b variant=eye outcome=10B.2 quality=3 risk=0 calc=eye paradox=5
+### RUN --chapter=10b --autotest=boom rc=0
+LOOKAUDIT raw Person(urban)[SPK_URBAN] chapter10b.tscn 163 kind=walk act= pose=<null> look=@CharacterBody3D@80 talking=false pos=(6.5, 2.9, -17.8)
+AUTOTEST PASS chapter=10b variant=boom outcome=10B.3 quality=3 risk=2 calc=phone paradox=40
+### RUN --chapter=10b --autotest=untaped rc=0
+LOOKAUDIT raw Person(urban)[SPK_URBAN] chapter10b.tscn 173 kind=walk act= pose=<null> look=@CharacterBody3D@80 talking=false pos=(6.6, 2.4, -17.8)
+AUTOTEST PASS chapter=10b variant=untaped outcome=10B.3 quality=0 risk=3 calc=phone paradox=40
+### RUN --chapter=10b --autotest=tape rc=0
+AUTOTEST PASS chapter=10b variant=tape outcome=10B.1 quality=3 risk=0 calc=phone paradox=15
+### RUN --chapter=10b --autotest=ulighter rc=0
+AUTOTEST PASS chapter=10b variant=ulighter outcome=10B.1 quality=3 risk=0 calc=phone paradox=15
+### RUN --chapter=10b --autotest=cube rc=0
+AUTOTEST PASS chapter=10b variant=cube outcome=10B.1 quality=3 risk=0 calc=cube paradox=15
+### RUN --chapter=10b --autotest=next rc=0
+AUTOTEST chapter=10b -> 11 outcome=10B.1
+AUTOTEST PASS chapter=11 variant= outcome=11.2 persuade=25 sadakat=55 baski=1
+### RUN --chapter=12 --autotest rc=0
+AUTOTEST PASS chapter=12 variant= outcome=12.1 merak=4 paradox=0 tries=0 key=1 honest=true tezkire=true
+### RUN --chapter=12 --autotest=leblebi rc=0
+AUTOTEST PASS chapter=12 variant=leblebi outcome=12.2 merak=3 paradox=80 tries=0 key=1 honest=true tezkire=true
+### RUN --chapter=12 --autotest=twokings rc=0
+AUTOTEST PASS chapter=12 variant=twokings outcome=12.3 merak=4 paradox=45 tries=0 key=1 honest=true tezkire=false
+### RUN --chapter=12 --autotest=repair rc=0
+AUTOTEST PASS chapter=12 variant=repair outcome=12.4 merak=4 paradox=0 tries=0 key=1 honest=true tezkire=true
+### RUN --chapter=12 --autotest=kitchen rc=0
+WARN_PORTRAIT_STUDIO speaker=SPK_KADRI key=D12_K_01 scene=chapter12.tscn
+WARN_PORTRAIT_STUDIO speaker=SPK_KADRI key=D12_K_03 scene=chapter12.tscn
+AUTOTEST PASS chapter=12 variant=kitchen outcome=12.5 merak=1 paradox=40 tries=2 key=2 honest=false tezkire=false
+### RUN --chapter=12 --autotest=retry rc=0
+WARN_PORTRAIT_STUDIO speaker=SPK_KADRI key=D12_K_01 scene=chapter12.tscn
+WARN_PORTRAIT_STUDIO speaker=SPK_KADRI key=D12_K_03 scene=chapter12.tscn
+AUTOTEST PASS chapter=12 variant=retry outcome=12.1 merak=4 paradox=0 tries=1 key=1 honest=true tezkire=true
+### RUN --chapter=12 --autotest=hikmet rc=0
+AUTOTEST PASS chapter=12 variant=hikmet outcome=12.6 merak=4 paradox=0 tries=0 key=1 honest=true tezkire=true
+### RUN --chapter=12 --autotest=nihat rc=0
+AUTOTEST PASS chapter=12 variant=nihat outcome=12.1 merak=4 paradox=0 tries=0 key=1 honest=true tezkire=true
+### RUN --chapter=12 --autotest=urban rc=0
+AUTOTEST PASS chapter=12 variant=urban outcome=12.1 merak=2 paradox=0 tries=0 key=1 honest=true tezkire=true
+### RUN --chapter=12 --autotest=next rc=0
+AUTOTEST chapter=12 -> 17 outcome=12.1
+LOOKAUDIT raw Person[SPK_RADU] chapter17.tscn 177 kind=walk act= pose=<null> look=@CharacterBody3D@3119 talking=false pos=(2984.1, 0.0, -3.9)
+LOOKAUDIT raw Person chapter17.tscn 114 kind=grip act= pose=<null> look=- talking=false pos=(-86.0, 0.9, 132.1)
+LOOKAUDIT raw Person chapter17.tscn 138 kind=grip act= pose=<null> look=- talking=false pos=(-87.2, 0.8, 128.7)
+LOOKAUDIT raw Person chapter17.tscn 157 kind=grip act= pose=<null> look=- talking=false pos=(-83.7, 0.9, 128.4)
+LOOKAUDIT backturn Person chapter17.tscn 114 kind=grip act= pose=<null> look=- talking=false pos=(-86.9, 0.9, 132.0)
+LOOKAUDIT backturn Person chapter17.tscn 138 kind=grip act= pose=<null> look=- talking=false pos=(-87.0, 0.9, 130.2)
+LOOKAUDIT backturn Person chapter17.tscn 157 kind=grip act= pose=<null> look=- talking=false pos=(-85.4, 0.9, 129.5)
+AUTOTEST PASS chapter=17 variant= outcome=17.1 saved=3 fell=false lost=false next=chapter18b.tscn shot=true chain=false rescue_t=40 genoese=0
+### SUITE DONE
+######## logC
+### RUN --chapter=17 --autotest rc=0
+LOOKAUDIT raw Person[SPK_RADU] chapter17.tscn 146 kind=walk act= pose=<null> look=@CharacterBody3D@80 talking=true pos=(2986.4, 0.0, -2.2)
+LOOKAUDIT raw Person chapter17.tscn 115 kind=grip act= pose=<null> look=- talking=false pos=(-86.0, 0.9, 132.1)
+LOOKAUDIT raw Person chapter17.tscn 138 kind=grip act= pose=<null> look=- talking=false pos=(-87.2, 0.9, 128.9)
+LOOKAUDIT raw Person chapter17.tscn 158 kind=grip act= pose=<null> look=- talking=false pos=(-84.1, 0.9, 128.6)
+AUTOTEST PASS chapter=17 variant= outcome=17.1 saved=3 fell=false lost=false next=chapter18b.tscn shot=true chain=false rescue_t=40 genoese=0
+### RUN --chapter=17 --autotest=two rc=0
+LOOKAUDIT raw Person chapter17.tscn 115 kind=grip act= pose=<null> look=- talking=false pos=(-86.5, 0.9, 132.0)
+LOOKAUDIT raw Person chapter17.tscn 142 kind=grip act= pose=<null> look=- talking=false pos=(-87.0, 0.9, 129.6)
+AUTOTEST PASS chapter=17 variant=two outcome=17.2 saved=2 fell=false lost=false next=chapter18b.tscn shot=true chain=false rescue_t=40 genoese=0
+### RUN --chapter=17 --autotest=fall rc=0
+LOOKAUDIT raw Person chapter17.tscn 115 kind=grip act= pose=<null> look=- talking=false pos=(-85.7, 0.7, 132.1)
+LOOKAUDIT raw Person chapter17.tscn 141 kind=grip act= pose=<null> look=- talking=false pos=(-87.1, 0.8, 128.6)
+LOOKAUDIT raw Person chapter17.tscn 157 kind=grip act= pose=<null> look=- talking=false pos=(-83.6, 0.9, 128.3)
+LOOKAUDIT backturn Person chapter17.tscn 116 kind=grip act= pose=<null> look=- talking=false pos=(-87.0, 0.8, 132.0)
+LOOKAUDIT backturn Person chapter17.tscn 142 kind=grip act= pose=<null> look=- talking=false pos=(-87.0, 0.9, 130.5)
+LOOKAUDIT backturn Person chapter17.tscn 157 kind=grip act= pose=<null> look=- talking=false pos=(-85.7, 0.9, 129.8)
+AUTOTEST PASS chapter=17 variant=fall outcome=17.1 saved=3 fell=true lost=false next=chapter18b.tscn shot=true chain=false rescue_t=40 genoese=0
+### RUN --chapter=17 --autotest=nophoto rc=0
+LOOKAUDIT raw Person chapter17.tscn 116 kind=grip act= pose=<null> look=- talking=false pos=(-85.7, 0.5, 132.1)
+LOOKAUDIT raw Person chapter17.tscn 139 kind=grip act= pose=<null> look=- talking=false pos=(-87.2, 0.7, 128.5)
+LOOKAUDIT raw Person chapter17.tscn 159 kind=grip act= pose=<null> look=- talking=false pos=(-83.6, 0.7, 128.3)
+AUTOTEST PASS chapter=17 variant=nophoto outcome=17.1 saved=3 fell=false lost=false next=chapter18b.tscn shot=false chain=false rescue_t=40 genoese=0
+### RUN --chapter=17 --autotest=chain rc=0
+LOOKAUDIT raw Person chapter17.tscn 115 kind=grip act= pose=<null> look=- talking=false pos=(-86.4, 0.8, 132.0)
+LOOKAUDIT raw Person chapter17.tscn 138 kind=grip act= pose=<null> look=- talking=false pos=(-87.1, 0.9, 129.5)
+LOOKAUDIT raw Person chapter17.tscn 159 kind=grip act= pose=<null> look=- talking=false pos=(-84.7, 1.0, 129.0)
+AUTOTEST PASS chapter=17 variant=chain outcome=17.1 saved=3 fell=false lost=false next=chapter18b.tscn shot=true chain=true rescue_t=52 genoese=0
+### RUN --chapter=17 --autotest=ship_ok rc=0
+LOOKAUDIT raw Person chapter17.tscn 115 kind=grip act= pose=<null> look=- talking=false pos=(-86.5, 0.8, 132.0)
+LOOKAUDIT raw Person chapter17.tscn 138 kind=grip act= pose=<null> look=- talking=false pos=(-87.1, 0.9, 129.5)
+LOOKAUDIT raw Person chapter17.tscn 157 kind=grip act= pose=<null> look=- talking=false pos=(-84.7, 1.0, 129.0)
+AUTOTEST PASS chapter=17 variant=ship_ok outcome=17.1 saved=3 fell=false lost=false next=chapter18b.tscn shot=true chain=false rescue_t=48 genoese=2
+### RUN --chapter=17 --autotest=ship_bad rc=0
+LOOKAUDIT raw Person chapter17.tscn 115 kind=grip act= pose=<null> look=- talking=false pos=(-86.2, 0.8, 132.1)
+LOOKAUDIT raw Person chapter17.tscn 142 kind=grip act= pose=<null> look=- talking=false pos=(-87.0, 0.9, 129.2)
+LOOKAUDIT raw Person chapter17.tscn 158 kind=grip act= pose=<null> look=- talking=false pos=(-84.4, 1.0, 128.8)
+AUTOTEST PASS chapter=17 variant=ship_bad outcome=17.1 saved=3 fell=false lost=false next=chapter18b.tscn shot=true chain=false rescue_t=32 genoese=0
+### RUN --chapter=17 --autotest=lost rc=0
+AUTOTEST PASS chapter=17 variant=lost outcome=17.3 saved=0 fell=true lost=true next=chapter18.tscn shot=true chain=false rescue_t=40 genoese=0
+### RUN --chapter=17 --autotest=edirne_policy rc=0
+LOOKAUDIT raw Person[SPK_RADU] chapter17.tscn 132 kind=walk act= pose=<null> look=@CharacterBody3D@80 talking=false pos=(2986.3, 0.0, -1.9)
+AUTOTEST PASS chapter=17 variant=edirne_policy vlad=policy who=greek answer=flat caesar=salad future=told side=B
+### RUN --chapter=17 --autotest=edirne_none rc=0
+LOOKAUDIT raw Person[SPK_RADU] chapter17.tscn 146 kind=walk act= pose=<null> look=@CharacterBody3D@80 talking=true pos=(2986.4, 0.0, -2.2)
+AUTOTEST PASS chapter=17 variant=edirne_none vlad=none who=time answer=dunno caesar=veni future=silent side=B
+### RUN --chapter=17 --autotest=osm rc=0
+AUTOTEST PASS chapter=33o variant=osm outcome=33O.1 stones=4 hits=0 falls=0 water=0 hidden=true gift=refuse warn=ok big=true
+### RUN --chapter=17 --autotest=route rc=0
+AUTOTEST PASS chapter=17 variant=route first=res://scenes/chapter42b.tscn
+### RUN --chapter=17 --autotest=edirne_legend --bag=phone,book,selfie,cube rc=0
+AUTOTEST PASS chapter=17 variant=edirne_legend vlad=legend who=hizir answer=flat caesar=brutus future=book side=B
+### RUN --chapter=3 --autotest rc=0
+AUTOTEST PASS chapter=3 variant= outcome=3.3 sadakat=50 rel=0 baski=0 machine=free
+### RUN --chapter=8 --autotest rc=0
+AUTOTEST PASS chapter=8 variant= machine=free outcome=8.1 parts=["capacitor", "antenna", "tape"] catches=0 called=false solid=0
+### RUN --chapter=9 --autotest rc=0
+AUTOTEST PASS chapter=9 variant= route=A byz=false offers=["kadri", "miner"] outcome=9.1 telsiz=4 merak=0
+### SUITE DONE
+######## logP
+### PACE0 sonra
+PLACE_OUT age=1.68 hold=1.00
+AUTOTEST PASS chapter=0 variant= froze=true
+######## logO
+### RUN --chapter=17 --autotest=fall rc=0
+LOOKAUDIT raw Person chapter17.tscn 114 kind=grip act= pose=<null> look=- talking=false pos=(-86.0, 0.7, 132.1)
+LOOKAUDIT raw Person chapter17.tscn 140 kind=grip act= pose=<null> look=- talking=false pos=(-87.2, 0.8, 128.6)
+LOOKAUDIT raw Person chapter17.tscn 158 kind=grip act= pose=<null> look=- talking=false pos=(-83.7, 0.9, 128.3)
+AUTOTEST PASS chapter=17 variant=fall outcome=17.1 saved=3 fell=true lost=false next=chapter18b.tscn shot=true chain=false rescue_t=40 genoese=0
+### RUN --chapter=12 --autotest=next rc=0
+AUTOTEST chapter=12 -> 17 outcome=12.1
+LOOKAUDIT raw Person[SPK_RADU] chapter17.tscn 177 kind=walk act= pose=<null> look=@CharacterBody3D@3119 talking=false pos=(2984.1, 0.0, -3.9)
+LOOKAUDIT raw Person chapter17.tscn 115 kind=grip act= pose=<null> look=- talking=false pos=(-85.8, 0.9, 132.1)
+LOOKAUDIT raw Person chapter17.tscn 137 kind=grip act= pose=<null> look=- talking=false pos=(-87.2, 0.8, 128.7)
+LOOKAUDIT raw Person chapter17.tscn 158 kind=grip act= pose=<null> look=- talking=false pos=(-83.8, 0.9, 128.4)
+LOOKAUDIT backturn Person chapter17.tscn 115 kind=grip act= pose=<null> look=- talking=false pos=(-86.8, 1.0, 131.9)
+LOOKAUDIT backturn Person chapter17.tscn 137 kind=grip act= pose=<null> look=- talking=false pos=(-87.0, 0.9, 130.2)
+LOOKAUDIT backturn Person chapter17.tscn 158 kind=grip act= pose=<null> look=- talking=false pos=(-85.4, 0.9, 129.5)
+AUTOTEST PASS chapter=17 variant= outcome=17.1 saved=3 fell=false lost=false next=chapter18b.tscn shot=true chain=false rescue_t=40 genoese=0
+### RUN --chapter=17 --autotest rc=0
+LOOKAUDIT raw Person[SPK_RADU] chapter17.tscn 177 kind=walk act= pose=<null> look=@CharacterBody3D@80 talking=false pos=(2984.1, 0.0, -3.9)
+LOOKAUDIT raw Person chapter17.tscn 113 kind=grip act= pose=<null> look=- talking=false pos=(-85.8, 0.6, 132.1)
+LOOKAUDIT raw Person chapter17.tscn 138 kind=grip act= pose=<null> look=- talking=false pos=(-87.2, 0.5, 128.3)
+LOOKAUDIT raw Person chapter17.tscn 160 kind=grip act= pose=<null> look=- talking=false pos=(-83.7, 0.5, 128.1)
+AUTOTEST PASS chapter=17 variant= outcome=17.1 saved=3 fell=false lost=false next=chapter18b.tscn shot=true chain=false rescue_t=40 genoese=0
+### SUITE DONE
+######## once PACE=1 B0 (ÖNCE)
+WARN_VOID_TELEPORT scene=chapter0.tscn pos=(0.2, -415.4871, 9.4)
+AUTOTEST PASS chapter=0 variant= froze=true
+######## q_o_y0
+PLAND yaw=-84.3 t=375.42
+PLOCK_END gt=8.01 lock_span=8.01 frames=60 mouse_changed=0 unchanged=7 lock_now=false
+PGRABEND frames=40 t=82.98 lock=false closest=0.50 bad=156 yawdrift=0.00
+AUTOTEST PASS chapter=2 variant= outcome=2.1 stumbles=1 telsiz=3
+GRIPERR id 741 n 40 max 0.095
+GRIPERR id 100 n 40 max 0.000
+######## q_s_y0
+PLAND yaw=-84.3 t=415.99
+SEIZE_AUDIT ok closest=0.70
+PLOCK_END gt=7.87 lock_span=7.72 frames=59 mouse_changed=0 unchanged=7 lock_now=false
+PGRABEND frames=40 t=86.27 lock=false closest=0.70 bad=0 yawdrift=0.00
+AUTOTEST PASS chapter=2 variant= outcome=2.1 stumbles=1 telsiz=3
+GRIPERR id 938 n 40 max 0.100
+GRIPERR id 157 n 40 max 0.080
+######## q_o_y90
+PLAND yaw=5.7 t=365.54
+PMOUSE_CHANGED n=8 gt=1.07 frozen=true lock=false line_open=true dyaw=-15.13
+PLOCK_END gt=8.15 lock_span=8.15 frames=61 mouse_changed=1 unchanged=6 lock_now=false
+PGRABEND frames=41 t=59.23 lock=false closest=0.42 bad=200 yawdrift=0.00
+AUTOTEST PASS chapter=2 variant= outcome=2.1 stumbles=1 telsiz=3
+GRIPERR id 771 n 41 max 0.174
+GRIPERR id 243 n 41 max 0.389
+######## q_s_y90
+PLAND yaw=5.7 t=377.81
+SEIZE_AUDIT ok closest=0.88
+PLOCK_END gt=8.01 lock_span=7.86 frames=60 mouse_changed=0 unchanged=7 lock_now=false
+PGRABEND frames=41 t=58.64 lock=false closest=0.88 bad=0 yawdrift=0.00
+AUTOTEST PASS chapter=2 variant= outcome=2.1 stumbles=1 telsiz=3
+GRIPERR id 639 n 41 max 0.255
+GRIPERR id 645 n 41 max 0.249
+######## q_o_y180
+PLAND yaw=95.7 t=358.64
+PMOUSE_CHANGED n=8 gt=1.06 frozen=true lock=false line_open=true dyaw=-15.13
+PLOCK_END gt=8.26 lock_span=8.26 frames=62 mouse_changed=1 unchanged=6 lock_now=false
+PGRABEND frames=42 t=34.98 lock=false closest=0.49 bad=231 yawdrift=0.00
+AUTOTEST PASS chapter=2 variant= outcome=2.1 stumbles=1 telsiz=3
+GRIPERR id 309 n 42 max 0.597
+GRIPERR id 537 n 42 max 0.448
+######## q_s_y180
+PLAND yaw=95.7 t=351.30
+SEIZE_AUDIT ok closest=0.72
+PLOCK_END gt=8.00 lock_span=7.86 frames=60 mouse_changed=0 unchanged=7 lock_now=false
+PGRABEND frames=41 t=36.90 lock=false closest=0.72 bad=0 yawdrift=0.00
+AUTOTEST PASS chapter=2 variant= outcome=2.1 stumbles=1 telsiz=3
+GRIPERR id 979 n 41 max 0.153
+GRIPERR id 686 n 41 max 0.255
+######## h_s_chainfail
+PLAND yaw=-84.3 t=94.83
+SEIZE_AUDIT ok closest=0.70
+PLOCK_END gt=9.75 lock_span=9.70 frames=195 mouse_changed=0 unchanged=24 lock_now=false
+PGRABEND frames=126 t=6.29 lock=false closest=0.70 bad=0 yawdrift=0.00
+AUTOTEST PASS chapter=2 variant=chainfail outcome=2.4 stumbles=0 telsiz=3
+GRIPERR id 983 n 126 max 0.100
+GRIPERR id 900 n 126 max 0.080
+######## h_s_swimshore
+PLAND yaw=-84.3 t=89.99
+SEIZE_AUDIT ok closest=0.69
+PLOCK_END gt=14.00 lock_span=13.95 frames=280 mouse_changed=0 unchanged=34 lock_now=false
+PGRABEND frames=140 t=6.98 lock=false closest=0.69 bad=0 yawdrift=0.00
+AUTOTEST PASS chapter=2 variant=swimshore outcome=2.1 stumbles=1 telsiz=3
+GRIPERR id 948 n 140 max 0.101
+GRIPERR id 681 n 140 max 0.084
+######## p8_once
+P8 warn_bark talking=true t=110.20 yl=0.0
+P8 warn_bark talking=true t=118.40 yl=0.0
+P8 yorum_start key=D8Y_T_GOAT t=133.75
+P8 force_warn t=134.35 talking=true
+P8 warn_bark talking=true t=134.35 yl=0.0
+AUTOTEST: beklenen 8Y.2, gelen 8Y.2 (kimlik item, uyarı 3, indirme 2, telsiz true)
+AUTOTEST FAIL chapter=8y variant=warn outcome=8Y.2 id=item warnings=3 lowered=2 radio=true
+######## p8_sonra
+P8 warn_bark talking=true t=111.70 yl=0.0
+P8 warn_bark talking=true t=119.95 yl=0.0
+P8 yorum_start key=D8Y_T_GOAT t=135.25
+P8 force_warn t=135.85 talking=true
+P8 warn_bark talking=false t=139.80 yl=0.00000000000001
+AUTOTEST: beklenen 8Y.2, gelen 8Y.2 (kimlik item, uyarı 3, indirme 2, telsiz true)
+AUTOTEST FAIL chapter=8y variant=warn outcome=8Y.2 id=item warnings=3 lowered=2 radio=true
+######## r_b0_once
+AUTOTEST PASS chapter=0 variant= froze=true
+######## r_b0_sonra
+PLACE_OUT age=1.87 hold=1.00
+AUTOTEST PASS chapter=0 variant= froze=true
+######## r_b10b_once
+VISAUDIT offview key=D10B_U_EARS scene=chapter10b.tscn speaker=SPK_URBAN
+VISAUDIT offview key=D10B_U_B3_1 scene=chapter10b.tscn speaker=SPK_URBAN
+AUTOTEST PASS chapter=10b variant=boom outcome=10B.3 quality=2 risk=2 calc=phone paradox=40
+######## r_b10b_sonra
+VISAUDIT offview key=D10B_U_EARS scene=chapter10b.tscn speaker=SPK_URBAN
+AUTOTEST PASS chapter=10b variant=boom outcome=10B.3 quality=3 risk=2 calc=phone paradox=40
+######## r_b17_once
+AUTOTEST PASS chapter=17 variant=edirne_policy vlad=policy who=greek answer=flat caesar=salad future=told side=B
+######## r_b17_sonra
+AUTOTEST PASS chapter=17 variant=edirne_policy vlad=policy who=greek answer=flat caesar=salad future=told side=B
+######## r_b2k_once
+AUTOTEST PASS chapter=2 variant=perfect outcome=2.2 stumbles=0 telsiz=3
+######## r_b2k_sonra
+AUTOTEST PASS chapter=2 variant=perfect outcome=2.2 stumbles=0 telsiz=3
