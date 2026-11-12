@@ -165,7 +165,8 @@ func _shot(name: String, at: Vector3, look: Vector3, fov := 62.0) -> void:
 		await get_tree().process_frame
 	var guard := 0
 	var s := IstSehir.active
-	while guard < 900 and s and not s._queue.is_empty():
+	# Yakın çevre: kameranın 150 m'si içindeki öğelerin istenen katmanı kurulana dek (en çok 240 kare)
+	while guard < 240 and s and _yakin_eksik(s, at):
 		await get_tree().process_frame
 		guard += 1
 	for i in 8:
@@ -176,6 +177,20 @@ func _shot(name: String, at: Vector3, look: Vector3, fov := 62.0) -> void:
 	var draws := RenderingServer.get_rendering_info(RenderingServer.RENDERING_INFO_TOTAL_DRAW_CALLS_IN_FRAME)
 	var tris := RenderingServer.get_rendering_info(RenderingServer.RENDERING_INFO_TOTAL_PRIMITIVES_IN_FRAME)
 	print("ISTKARE %s at=(%.0f,%.0f,%.0f) cizim=%d ucgen=%d bekleme=%d kur_ms_max=%.1f" % [name, at.x, at.y, at.z, draws, tris, guard, s.stats["kur_ms_max"] if s else 0.0])
+
+
+func _yakin_eksik(s: IstSehir, at: Vector3) -> bool:
+	if s._queue.is_empty():
+		return false
+	for it: Dictionary in s.items:
+		var p: Vector3 = it["pos"]
+		if p.distance_to(at) - float(it["r"]) < 150.0:
+			var want := int(it.get("want", 2))
+			if want == 2 and it.get("no2", false):
+				continue
+			if it["have"][want] == null:
+				return true
+	return false
 
 
 func _hava() -> void:
