@@ -223,7 +223,7 @@ static func build_zeuksippos(host: Node3D, k: float = 0.5, lod: int = 0) -> void
 		K.ground_box(host, 8.0, 0.45, 5.0, 0, d * 0.45, K.MARBLE.darkened(0.1), "marble")
 		K.vb(host, Vector3(7.0, 0.04, 4.0), Vector3(0, 0.49, d * 0.45), Color("5a7a7a"))
 		for i in 3:
-			K.ground_box(host, 1.0, 0.4 * (i + 1), 1.2, w * 0.5 + 2.0 + (2 - i) * 1.0, 0, K.STONE_D, "ashlar")
+			K.ground_box(host, 1.0, 0.4 * (i + 1), 1.2, w * 0.5 + 0.5 + (2 - i) * 1.0, 0, K.STONE_D, "ashlar")
 
 
 static func perches_zeuksippos(k: float = 0.5) -> Array:
@@ -265,7 +265,7 @@ static func build_nea(host: Node3D, k: float = 0.5, lod: int = 0) -> void:
 		K.scatter(host, Rect2(-w * 0.5 - 3.0, d * 0.3, 6.0, 8.0), 20, rng, 0.0, "moloz")
 		K.scatter(host, Rect2(-w, -d, w * 2.0, d * 2.0), 50, rng, 0.0, "ot")
 		for i in 3:
-			K.ground_box(host, 1.0, 0.4 * (i + 1), 1.2, w * 0.5 + 2.0 + (2 - i) * 1.0, 0, K.WOOD, "wood")
+			K.ground_box(host, 1.0, 0.4 * (i + 1), 1.2, w * 0.5 + 0.5 + (2 - i) * 1.0, 0, K.WOOD, "wood")
 
 
 static func perches_nea(k: float = 0.5) -> Array:

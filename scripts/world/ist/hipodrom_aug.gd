@@ -262,12 +262,13 @@ static func build_aya_irini(host: Node3D, k: float = 0.5, lod: int = 0) -> void:
 	if lod == 0:
 		var az := d * 0.5 + 6.0
 		K.ground_box(host, w, 0.15, 12.0, 0, az, K.STONE_D, "flagstone")
-		K.ruin_wall(host, Vector2(-w * 0.5, d * 0.5 + 12.0), Vector2(w * 0.5, d * 0.5 + 12.0), 2.6, 1.0, K.BRICK2, rng, "brick")
+		K.ruin_wall(host, Vector2(-w * 0.5, d * 0.5 + 12.0), Vector2(-2.5, d * 0.5 + 12.0), 2.6, 1.0, K.BRICK2, rng, "brick")
+		K.ruin_wall(host, Vector2(2.5, d * 0.5 + 12.0), Vector2(w * 0.5, d * 0.5 + 12.0), 2.6, 1.0, K.BRICK2, rng, "brick")
 		for i in 4:
 			K.sc(host, 0.36, rng.randf_range(1.0, 3.2), Vector3(-w * 0.35 + i * w * 0.23, 0.15 + 1.0, az), K.MARBLE.darkened(0.1), 8, 0.34)
 		# kemerli dış kapı eşiği ve sandık yığını (çatıya erişim)
 		for i in 3:
-			K.ground_box(host, 1.0, 0.4 * (i + 1), 1.2, -w * 0.5 - 1.6 - (2 - i) * 1.0, 0, K.WOOD, "wood")
+			K.ground_box(host, 1.0, 0.4 * (i + 1), 1.2, -w * 0.5 - 0.5 - (2 - i) * 1.0, 0, K.WOOD, "wood")
 		# yan tuğla payandalar
 		for sz in 4:
 			for sx: float in [-1.0, 1.0]:
