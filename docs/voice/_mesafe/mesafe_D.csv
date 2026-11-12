@@ -199,3 +199,103 @@ BUR_FG_CAE_V2_2,SPK_CAESAR,yakin,2,bureau.gd:248 BUR_FG_CAE_V2_2; _fg_talk burea
 BUR_FG_CAE_V3_1,SPK_CAESAR,yakin,2,bureau.gd:248 BUR_FG_CAE_V3_1; _fg_talk bureau.gd:4349,oyuncu figüre E ile yaklaşınca konuşur
 BUR_FG_CAE_V3_2,SPK_CAESAR,yakin,2,bureau.gd:249 BUR_FG_CAE_V3_2; _fg_talk bureau.gd:4349,oyuncu figüre E ile yaklaşınca konuşur
 BUR_FG_SHK_V2_1,SPK_SHAKESPEARE,yakin,2,bureau.gd:249 BUR_FG_SHK_V2_1; _fg_talk bureau.gd:4349,oyuncu figüre E ile yaklaşınca konuşur
+BUR_FG_SHK_V2_2,SPK_SHAKESPEARE,yakin,2,bureau.gd:249 BUR_FG_SHK_V2_2; _fg_talk bureau.gd:4349,oyuncu figüre E ile yaklaşınca konuşur
+BUR_FG_SHK_V3_1,SPK_SHAKESPEARE,yakin,2,bureau.gd:250 BUR_FG_SHK_V3_1; _fg_talk bureau.gd:4349,oyuncu figüre E ile yaklaşınca konuşur
+BUR_FG_SHK_V3_2,SPK_SHAKESPEARE,yakin,2,bureau.gd:250 BUR_FG_SHK_V3_2; _fg_talk bureau.gd:4349,oyuncu figüre E ile yaklaşınca konuşur
+BUR_FG_LEO_V2_1,SPK_LEONARDO,yakin,2,bureau.gd:250 BUR_FG_LEO_V2_1; _fg_talk bureau.gd:4349,oyuncu figüre E ile yaklaşınca konuşur
+BUR_FG_LEO_V2_2,SPK_LEONARDO,yakin,2,bureau.gd:251 BUR_FG_LEO_V2_2; _fg_talk bureau.gd:4349,oyuncu figüre E ile yaklaşınca konuşur
+BUR_FG_LEO_V3_1,SPK_LEONARDO,yakin,2,bureau.gd:251 BUR_FG_LEO_V3_1; _fg_talk bureau.gd:4349,oyuncu figüre E ile yaklaşınca konuşur
+BUR_FG_LEO_V3_2,SPK_LEONARDO,yakin,2,bureau.gd:251 BUR_FG_LEO_V3_2; _fg_talk bureau.gd:4349,oyuncu figüre E ile yaklaşınca konuşur
+BUR_FG_EIN_V2_1,SPK_EINSTEIN,yakin,2,bureau.gd:252 BUR_FG_EIN_V2_1; _fg_talk bureau.gd:4349,oyuncu figüre E ile yaklaşınca konuşur
+BUR_FG_EIN_V2_2,SPK_EINSTEIN,yakin,2,bureau.gd:252 BUR_FG_EIN_V2_2; _fg_talk bureau.gd:4349,oyuncu figüre E ile yaklaşınca konuşur
+BUR_FG_EIN_V3_1,SPK_EINSTEIN,yakin,2,bureau.gd:252 BUR_FG_EIN_V3_1; _fg_talk bureau.gd:4349,oyuncu figüre E ile yaklaşınca konuşur
+BUR_FG_EIN_V3_2,SPK_EINSTEIN,yakin,2,bureau.gd:253 BUR_FG_EIN_V3_2; _fg_talk bureau.gd:4349,oyuncu figüre E ile yaklaşınca konuşur
+BUR_FG_GEN_V2_1,SPK_GENGHIS,yakin,2,bureau.gd:253 BUR_FG_GEN_V2_1; _fg_talk bureau.gd:4349,oyuncu figüre E ile yaklaşınca konuşur
+BUR_FG_GEN_V2_2,SPK_GENGHIS,yakin,2,bureau.gd:253 BUR_FG_GEN_V2_2; _fg_talk bureau.gd:4349,oyuncu figüre E ile yaklaşınca konuşur
+BUR_FG_GEN_V3_1,SPK_GENGHIS,yakin,2,bureau.gd:254 BUR_FG_GEN_V3_1; _fg_talk bureau.gd:4349,oyuncu figüre E ile yaklaşınca konuşur
+BUR_FG_GEN_V3_2,SPK_GENGHIS,yakin,2,bureau.gd:254 BUR_FG_GEN_V3_2; _fg_talk bureau.gd:4349,oyuncu figüre E ile yaklaşınca konuşur
+BUR_FG_COL_V2_1,SPK_COLUMBUS,yakin,2,bureau.gd:254 BUR_FG_COL_V2_1; _fg_talk bureau.gd:4349,oyuncu figüre E ile yaklaşınca konuşur
+BUR_FG_COL_V2_2,SPK_COLUMBUS,yakin,2,bureau.gd:255 BUR_FG_COL_V2_2; _fg_talk bureau.gd:4349,oyuncu figüre E ile yaklaşınca konuşur
+BUR_FG_COL_V3_1,SPK_COLUMBUS,yakin,2,bureau.gd:255 BUR_FG_COL_V3_1; _fg_talk bureau.gd:4349,oyuncu figüre E ile yaklaşınca konuşur
+BUR_FG_COL_V3_2,SPK_COLUMBUS,yakin,2,bureau.gd:255 BUR_FG_COL_V3_2; _fg_talk bureau.gd:4349,oyuncu figüre E ile yaklaşınca konuşur
+BUR_FG_SUL_V2_1,SPK_SULEYMAN,yakin,2,bureau.gd:256 BUR_FG_SUL_V2_1; _fg_talk bureau.gd:4349,oyuncu figüre E ile yaklaşınca konuşur
+BUR_FG_SUL_V2_2,SPK_SULEYMAN,yakin,2,bureau.gd:256 BUR_FG_SUL_V2_2; _fg_talk bureau.gd:4349,oyuncu figüre E ile yaklaşınca konuşur
+BUR_FG_SUL_V3_1,SPK_SULEYMAN,yakin,2,bureau.gd:256 BUR_FG_SUL_V3_1; _fg_talk bureau.gd:4349,oyuncu figüre E ile yaklaşınca konuşur
+BUR_FG_SUL_V3_2,SPK_SULEYMAN,yakin,2,bureau.gd:257 BUR_FG_SUL_V3_2; _fg_talk bureau.gd:4349,oyuncu figüre E ile yaklaşınca konuşur
+BUR_FG_GUI_V2_1,SPK_GUIDE,yakin,2,bureau.gd:257 BUR_FG_GUI_V2_1; _fg_talk bureau.gd:4349,oyuncu figüre E ile yaklaşınca konuşur
+BUR_FG_GUI_V2_2,SPK_GUIDE,yakin,2,bureau.gd:257 BUR_FG_GUI_V2_2; _fg_talk bureau.gd:4349,oyuncu figüre E ile yaklaşınca konuşur
+BUR_FG_GUI_V3_1,SPK_GUIDE,yakin,2,bureau.gd:258 BUR_FG_GUI_V3_1; _fg_talk bureau.gd:4349,oyuncu figüre E ile yaklaşınca konuşur
+BUR_FG_GUI_V3_2,SPK_GUIDE,yakin,2,bureau.gd:258 BUR_FG_GUI_V3_2; _fg_talk bureau.gd:4349,oyuncu figüre E ile yaklaşınca konuşur
+BUR_FG_ROB_V2_1,SPK_ROBOT,yakin,2,bureau.gd:258 BUR_FG_ROB_V2_1; _fg_talk bureau.gd:4349,oyuncu figüre E ile yaklaşınca konuşur
+BUR_FG_ROB_V2_2,SPK_ROBOT,yakin,2,bureau.gd:259 BUR_FG_ROB_V2_2; _fg_talk bureau.gd:4349,oyuncu figüre E ile yaklaşınca konuşur
+BUR_FG_ROB_V3_1,SPK_ROBOT,yakin,2,bureau.gd:259 BUR_FG_ROB_V3_1; _fg_talk bureau.gd:4349,oyuncu figüre E ile yaklaşınca konuşur
+BUR_FG_ROB_V3_2,SPK_ROBOT,yakin,2,bureau.gd:259 BUR_FG_ROB_V3_2; _fg_talk bureau.gd:4349,oyuncu figüre E ile yaklaşınca konuşur
+BUR_FG_ARC_V2_1,SPK_ARCHAEOLOGIST,yakin,2,bureau.gd:260 BUR_FG_ARC_V2_1; _fg_talk bureau.gd:4349,oyuncu figüre E ile yaklaşınca konuşur
+BUR_FG_ARC_V2_2,SPK_ARCHAEOLOGIST,yakin,2,bureau.gd:260 BUR_FG_ARC_V2_2; _fg_talk bureau.gd:4349,oyuncu figüre E ile yaklaşınca konuşur
+BUR_FG_ARC_V3_1,SPK_ARCHAEOLOGIST,yakin,2,bureau.gd:260 BUR_FG_ARC_V3_1; _fg_talk bureau.gd:4349,oyuncu figüre E ile yaklaşınca konuşur
+BUR_FG_ARC_V3_2,SPK_ARCHAEOLOGIST,yakin,2,bureau.gd:261 BUR_FG_ARC_V3_2; _fg_talk bureau.gd:4349,oyuncu figüre E ile yaklaşınca konuşur
+BUR_FG_POL_1,SPK_MARCOPOLO,yakin,2,bureau.gd:220 BUR_FG_POL_1; _fg_talk bureau.gd:4349,oyuncu figüre E ile yaklaşınca konuşur
+BUR_FG_POL_2,SPK_MARCOPOLO,yakin,2,bureau.gd:221 BUR_FG_POL_2; _fg_talk bureau.gd:4349,oyuncu figüre E ile yaklaşınca konuşur
+BUR_FG_POL_V2_1,SPK_MARCOPOLO,yakin,2,bureau.gd:221 BUR_FG_POL_V2_1; _fg_talk bureau.gd:4349,oyuncu figüre E ile yaklaşınca konuşur
+BUR_FG_POL_V2_2,SPK_MARCOPOLO,yakin,2,bureau.gd:221 BUR_FG_POL_V2_2; _fg_talk bureau.gd:4349,oyuncu figüre E ile yaklaşınca konuşur
+BUR_FG_POL_V3_1,SPK_MARCOPOLO,yakin,2,bureau.gd:222 BUR_FG_POL_V3_1; _fg_talk bureau.gd:4349,oyuncu figüre E ile yaklaşınca konuşur
+BUR_FG_POL_V3_2,SPK_MARCOPOLO,yakin,2,bureau.gd:222 BUR_FG_POL_V3_2; _fg_talk bureau.gd:4349,oyuncu figüre E ile yaklaşınca konuşur
+BUR_FG_GAL_1,SPK_GALILEO,yakin,2,bureau.gd:222 BUR_FG_GAL_1; _fg_talk bureau.gd:4349,oyuncu figüre E ile yaklaşınca konuşur
+BUR_FG_GAL_2,SPK_GALILEO,yakin,2,bureau.gd:223 BUR_FG_GAL_2; _fg_talk bureau.gd:4349,oyuncu figüre E ile yaklaşınca konuşur
+BUR_FG_GAL_V2_1,SPK_GALILEO,yakin,2,bureau.gd:223 BUR_FG_GAL_V2_1; _fg_talk bureau.gd:4349,oyuncu figüre E ile yaklaşınca konuşur
+BUR_FG_GAL_V2_2,SPK_GALILEO,yakin,2,bureau.gd:223 BUR_FG_GAL_V2_2; _fg_talk bureau.gd:4349,oyuncu figüre E ile yaklaşınca konuşur
+BUR_FG_GAL_V3_1,SPK_GALILEO,yakin,2,bureau.gd:224 BUR_FG_GAL_V3_1; _fg_talk bureau.gd:4349,oyuncu figüre E ile yaklaşınca konuşur
+BUR_FG_GAL_V3_2,SPK_GALILEO,yakin,2,bureau.gd:224 BUR_FG_GAL_V3_2; _fg_talk bureau.gd:4349,oyuncu figüre E ile yaklaşınca konuşur
+BUR_FG_CUR_1,SPK_CURIE,yakin,2,bureau.gd:224 BUR_FG_CUR_1; _fg_talk bureau.gd:4349,oyuncu figüre E ile yaklaşınca konuşur
+BUR_FG_CUR_2,SPK_CURIE,yakin,2,bureau.gd:225 BUR_FG_CUR_2; _fg_talk bureau.gd:4349,oyuncu figüre E ile yaklaşınca konuşur
+BUR_FG_CUR_V2_1,SPK_CURIE,yakin,2,bureau.gd:225 BUR_FG_CUR_V2_1; _fg_talk bureau.gd:4349,oyuncu figüre E ile yaklaşınca konuşur
+BUR_FG_CUR_V2_2,SPK_CURIE,yakin,2,bureau.gd:225 BUR_FG_CUR_V2_2; _fg_talk bureau.gd:4349,oyuncu figüre E ile yaklaşınca konuşur
+BUR_FG_CUR_V3_1,SPK_CURIE,yakin,2,bureau.gd:226 BUR_FG_CUR_V3_1; _fg_talk bureau.gd:4349,oyuncu figüre E ile yaklaşınca konuşur
+BUR_FG_CUR_V3_2,SPK_CURIE,yakin,2,bureau.gd:226 BUR_FG_CUR_V3_2; _fg_talk bureau.gd:4349,oyuncu figüre E ile yaklaşınca konuşur
+BUR_FG_MOZ_1,SPK_MOZART,yakin,2,bureau.gd:226 BUR_FG_MOZ_1; _fg_talk bureau.gd:4349,oyuncu figüre E ile yaklaşınca konuşur
+BUR_FG_MOZ_2,SPK_MOZART,yakin,2,bureau.gd:227 BUR_FG_MOZ_2; _fg_talk bureau.gd:4349,oyuncu figüre E ile yaklaşınca konuşur
+BUR_FG_MOZ_V2_1,SPK_MOZART,yakin,2,bureau.gd:227 BUR_FG_MOZ_V2_1; _fg_talk bureau.gd:4349,oyuncu figüre E ile yaklaşınca konuşur
+BUR_FG_MOZ_V2_2,SPK_MOZART,yakin,2,bureau.gd:227 BUR_FG_MOZ_V2_2; _fg_talk bureau.gd:4349,oyuncu figüre E ile yaklaşınca konuşur
+BUR_FG_MOZ_V3_1,SPK_MOZART,yakin,2,bureau.gd:228 BUR_FG_MOZ_V3_1; _fg_talk bureau.gd:4349,oyuncu figüre E ile yaklaşınca konuşur
+BUR_FG_MOZ_V3_2,SPK_MOZART,yakin,2,bureau.gd:228 BUR_FG_MOZ_V3_2; _fg_talk bureau.gd:4349,oyuncu figüre E ile yaklaşınca konuşur
+BUR_FG_SIN_1,SPK_SINAN,yakin,2,bureau.gd:228 BUR_FG_SIN_1; _fg_talk bureau.gd:4349,oyuncu figüre E ile yaklaşınca konuşur
+BUR_FG_SIN_2,SPK_SINAN,yakin,2,bureau.gd:229 BUR_FG_SIN_2; _fg_talk bureau.gd:4349,oyuncu figüre E ile yaklaşınca konuşur
+BUR_FG_SIN_V2_1,SPK_SINAN,yakin,2,bureau.gd:229 BUR_FG_SIN_V2_1; _fg_talk bureau.gd:4349,oyuncu figüre E ile yaklaşınca konuşur
+BUR_FG_SIN_V2_2,SPK_SINAN,yakin,2,bureau.gd:229 BUR_FG_SIN_V2_2; _fg_talk bureau.gd:4349,oyuncu figüre E ile yaklaşınca konuşur
+BUR_FG_SIN_V3_1,SPK_SINAN,yakin,2,bureau.gd:230 BUR_FG_SIN_V3_1; _fg_talk bureau.gd:4349,oyuncu figüre E ile yaklaşınca konuşur
+BUR_FG_SIN_V3_2,SPK_SINAN,yakin,2,bureau.gd:230 BUR_FG_SIN_V3_2; _fg_talk bureau.gd:4349,oyuncu figüre E ile yaklaşınca konuşur
+BUR_FG_NAS_1,SPK_NASREDDIN,yakin,2,bureau.gd:230 BUR_FG_NAS_1; _fg_talk bureau.gd:4349,oyuncu figüre E ile yaklaşınca konuşur
+BUR_FG_NAS_2,SPK_NASREDDIN,yakin,2,bureau.gd:231 BUR_FG_NAS_2; _fg_talk bureau.gd:4349,oyuncu figüre E ile yaklaşınca konuşur
+BUR_FG_NAS_V2_1,SPK_NASREDDIN,yakin,2,bureau.gd:231 BUR_FG_NAS_V2_1; _fg_talk bureau.gd:4349,oyuncu figüre E ile yaklaşınca konuşur
+BUR_FG_NAS_V2_2,SPK_NASREDDIN,yakin,2,bureau.gd:231 BUR_FG_NAS_V2_2; _fg_talk bureau.gd:4349,oyuncu figüre E ile yaklaşınca konuşur
+BUR_FG_NAS_V3_1,SPK_NASREDDIN,yakin,2,bureau.gd:232 BUR_FG_NAS_V3_1; _fg_talk bureau.gd:4349,oyuncu figüre E ile yaklaşınca konuşur
+BUR_FG_NAS_V3_2,SPK_NASREDDIN,yakin,2,bureau.gd:232 BUR_FG_NAS_V3_2; _fg_talk bureau.gd:4349,oyuncu figüre E ile yaklaşınca konuşur
+BUR_FG_GAG_1,SPK_GAGARIN,yakin,2,bureau.gd:232 BUR_FG_GAG_1; _fg_talk bureau.gd:4349,oyuncu figüre E ile yaklaşınca konuşur
+BUR_FG_GAG_2,SPK_GAGARIN,yakin,2,bureau.gd:233 BUR_FG_GAG_2; _fg_talk bureau.gd:4349,oyuncu figüre E ile yaklaşınca konuşur
+BUR_FG_GAG_V2_1,SPK_GAGARIN,yakin,2,bureau.gd:233 BUR_FG_GAG_V2_1; _fg_talk bureau.gd:4349,oyuncu figüre E ile yaklaşınca konuşur
+BUR_FG_GAG_V2_2,SPK_GAGARIN,yakin,2,bureau.gd:233 BUR_FG_GAG_V2_2; _fg_talk bureau.gd:4349,oyuncu figüre E ile yaklaşınca konuşur
+BUR_FG_GAG_V3_1,SPK_GAGARIN,yakin,2,bureau.gd:234 BUR_FG_GAG_V3_1; _fg_talk bureau.gd:4349,oyuncu figüre E ile yaklaşınca konuşur
+BUR_FG_GAG_V3_2,SPK_GAGARIN,yakin,2,bureau.gd:234 BUR_FG_GAG_V3_2; _fg_talk bureau.gd:4349,oyuncu figüre E ile yaklaşınca konuşur
+BUR_DOOR_1453_1,SPK_NIHAT,ic_ses,,"bureau.gd:1591 _door_talk, kapıyı inceleyen Nihat _say/hud.bark(bark_speaker)",Nihat kapı yıl yorumu; kimseye seslenmiyor
+BUR_DOOR_1453_2,SPK_NIHAT,ic_ses,,"bureau.gd:1591 _door_talk, kapıyı inceleyen Nihat _say/hud.bark(bark_speaker)",Nihat kapı yıl yorumu; kimseye seslenmiyor
+BUR_DOOR_1453_3,SPK_NIHAT,ic_ses,,"bureau.gd:1591 _door_talk, kapıyı inceleyen Nihat _say/hud.bark(bark_speaker)",Nihat kapı yıl yorumu; kimseye seslenmiyor
+BUR_DOOR_1453_4,SPK_NIHAT,ic_ses,,"bureau.gd:1591 _door_talk, kapıyı inceleyen Nihat _say/hud.bark(bark_speaker)",Nihat kapı yıl yorumu; kimseye seslenmiyor
+BUR_DOOR_1492_1,SPK_NIHAT,ic_ses,,"bureau.gd:1591 _door_talk, kapıyı inceleyen Nihat _say/hud.bark(bark_speaker)",Nihat kapı yıl yorumu; kimseye seslenmiyor
+BUR_DOOR_1492_2,SPK_NIHAT,ic_ses,,"bureau.gd:1591 _door_talk, kapıyı inceleyen Nihat _say/hud.bark(bark_speaker)",Nihat kapı yıl yorumu; kimseye seslenmiyor
+BUR_DOOR_1492_3,SPK_NIHAT,ic_ses,,"bureau.gd:1591 _door_talk, kapıyı inceleyen Nihat _say/hud.bark(bark_speaker)",Nihat kapı yıl yorumu; kimseye seslenmiyor
+BUR_DOOR_1517_1,SPK_NIHAT,ic_ses,,"bureau.gd:1591 _door_talk, kapıyı inceleyen Nihat _say/hud.bark(bark_speaker)",Nihat kapı yıl yorumu; kimseye seslenmiyor
+BUR_DOOR_1517_2,SPK_NIHAT,ic_ses,,"bureau.gd:1591 _door_talk, kapıyı inceleyen Nihat _say/hud.bark(bark_speaker)",Nihat kapı yıl yorumu; kimseye seslenmiyor
+BUR_DOOR_1517_3,SPK_NIHAT,ic_ses,,"bureau.gd:1591 _door_talk, kapıyı inceleyen Nihat _say/hud.bark(bark_speaker)",Nihat kapı yıl yorumu; kimseye seslenmiyor
+BUR_DOOR_1789_1,SPK_NIHAT,ic_ses,,"bureau.gd:1591 _door_talk, kapıyı inceleyen Nihat _say/hud.bark(bark_speaker)",Nihat kapı yıl yorumu; kimseye seslenmiyor
+BUR_DOOR_1789_2,SPK_NIHAT,ic_ses,,"bureau.gd:1591 _door_talk, kapıyı inceleyen Nihat _say/hud.bark(bark_speaker)",Nihat kapı yıl yorumu; kimseye seslenmiyor
+BUR_DOOR_1789_3,SPK_NIHAT,ic_ses,,"bureau.gd:1591 _door_talk, kapıyı inceleyen Nihat _say/hud.bark(bark_speaker)",Nihat kapı yıl yorumu; kimseye seslenmiyor
+BUR_DOOR_1969_1,SPK_NIHAT,ic_ses,,"bureau.gd:1591 _door_talk, kapıyı inceleyen Nihat _say/hud.bark(bark_speaker)",Nihat kapı yıl yorumu; kimseye seslenmiyor
+BUR_DOOR_1969_2,SPK_NIHAT,ic_ses,,"bureau.gd:1591 _door_talk, kapıyı inceleyen Nihat _say/hud.bark(bark_speaker)",Nihat kapı yıl yorumu; kimseye seslenmiyor
+BUR_DOOR_1969_3,SPK_NIHAT,ic_ses,,"bureau.gd:1591 _door_talk, kapıyı inceleyen Nihat _say/hud.bark(bark_speaker)",Nihat kapı yıl yorumu; kimseye seslenmiyor
+BUR_DOOR_2026_1,SPK_NIHAT,ic_ses,,"bureau.gd:1591 _door_talk, kapıyı inceleyen Nihat _say/hud.bark(bark_speaker)",Nihat kapı yıl yorumu; kimseye seslenmiyor
+BUR_DOOR_2026_2,SPK_NIHAT,ic_ses,,"bureau.gd:1591 _door_talk, kapıyı inceleyen Nihat _say/hud.bark(bark_speaker)",Nihat kapı yıl yorumu; kimseye seslenmiyor
+BUR_DOOR_2026_3,SPK_NIHAT,ic_ses,,"bureau.gd:1591 _door_talk, kapıyı inceleyen Nihat _say/hud.bark(bark_speaker)",Nihat kapı yıl yorumu; kimseye seslenmiyor
+BUR_DOOR_2150_1,SPK_NIHAT,ic_ses,,"bureau.gd:1591 _door_talk, kapıyı inceleyen Nihat _say/hud.bark(bark_speaker)",Nihat kapı yıl yorumu; kimseye seslenmiyor
+BUR_DOOR_2150_2,SPK_NIHAT,ic_ses,,"bureau.gd:1591 _door_talk, kapıyı inceleyen Nihat _say/hud.bark(bark_speaker)",Nihat kapı yıl yorumu; kimseye seslenmiyor
+BUR_DOOR_2150_3,SPK_NIHAT,ic_ses,,"bureau.gd:1591 _door_talk, kapıyı inceleyen Nihat _say/hud.bark(bark_speaker)",Nihat kapı yıl yorumu; kimseye seslenmiyor
+BUR_DOOR_MO44_1,SPK_NIHAT,ic_ses,,"bureau.gd:1591 _door_talk, kapıyı inceleyen Nihat _say/hud.bark(bark_speaker)",Nihat kapı yıl yorumu; kimseye seslenmiyor
