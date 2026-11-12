@@ -356,6 +356,52 @@ static func sinir() -> Rect2:
 	return r.grow(300.0)
 
 
+## Bölümün ortamı (CampDay/ByzCity gökyüzü, gece Night.environment) km ölçeğine uyar: yerdeki sis tavanı (Look.apply_env
+## "fog_cap" ile uyar), hava perspektifi v2'deki gibi 0,1 (Look 0,3 veriyordu: 1-2 km ötedeki şehir gök rengine dönüyordu)
+const SIS_YER := 0.0009
+const SIS_YER_GECE := 0.002
+var _sis_t := 0.0
+var _envler: Array = []
+var _bul_n := 0
+
+
+func _process(dt: float) -> void:
+	_sis_t -= dt
+	if _sis_t > 0.0:
+		return
+	_sis_t = 0.5
+	var cap := SIS_YER_GECE if gece else SIS_YER
+	var sc := get_tree().current_scene
+	if _envler.is_empty() or not is_instance_valid(_envler[0]):
+		_envler.clear()
+		if sc != null:
+			for c in sc.get_children():
+				if c is WorldEnvironment:
+					_envler.append(c)
+				for c2 in c.get_children():
+					if c2 is WorldEnvironment:
+						_envler.append(c2)
+	var ucuyor := oyuncu != null and is_instance_valid(oyuncu) and oyuncu.powers != null and oyuncu.powers.flying
+	for we in _envler:
+		if not is_instance_valid(we):
+			continue
+		var e := (we as WorldEnvironment).environment
+		if e == null:
+			continue
+		we.set_meta("fog_cap", cap)
+		e.fog_aerial_perspective = minf(e.fog_aerial_perspective, 0.1)
+		e.fog_sky_affect = 0.0
+		if not ucuyor:
+			e.fog_density = minf(e.fog_density, cap)
+	if oyuncu != null and is_instance_valid(oyuncu) and oyuncu.powers != null:
+		var f0 = oyuncu.powers.get("_fog0")
+		if f0 is float and float(f0) > cap:
+			oyuncu.powers.set("_fog0", cap)
+	_bul_n += 1
+	if _bul_n % 10 == 0:
+		_envler.clear()        # gece ortamı sonradan kurulabilir (make_night): 5 sn'de bir yeniden bul
+
+
 func _physics_process(_dt: float) -> void:
 	if oyuncu == null or not is_instance_valid(oyuncu) or not oyuncu.is_inside_tree():
 		return
