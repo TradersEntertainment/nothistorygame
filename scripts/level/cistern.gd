@@ -1003,7 +1003,7 @@ func _build_cellar(c: Vector3, crown: float) -> void:
 	_lathe(st, [[0.66, 0.35], [0.72, 0.345]], 12, bp)
 	# Bacada demir basamaklar (kuzey yüzde): paslı, kalın
 	var top := crown - 0.6
-	st.set_color(Color("7a6050"))
+	st.set_color(Color("a08068"))
 	var yy3 := crown - 0.3
 	while yy3 < y0 - 0.2:
 		_box(st, Vector3(c.x, yy3, c.z - 0.5), Vector3(0.44, 0.05, 0.12))
