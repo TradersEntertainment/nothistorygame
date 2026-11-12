@@ -187,6 +187,7 @@ func _audit() -> Dictionary:
 				var r2 := _free(space, o, Vector3.RIGHT)
 				if l > 0.0 and r2 > 0.0 and l < 1.0e5 and r2 < 1.0e5 and l + r2 > 0.2 and l + r2 < 1.4:
 					dar += 1
+					print("DAR ", o, " ", l + r2)
 			z += step * 2.0
 		x += step * 2.0
 	res["dar"] = dar

@@ -756,9 +756,9 @@ static func _b_altinkapi(h: Node3D, k: float, lod: int, out: Dictionary) -> void
 	K.out_add(out, "climb", [Vector3(cxl, 0.0, TW * 0.5 + 0.05 + n * K.STEP_RUN + 0.4), Vector3(cxl, h1, TW * 0.5 + 0.2), "basamak"])
 	# kule tepesinden kapı üstüne: sandıklar kapı bloğunun batı yüzüne dayalı, +x yönünde yükselir
 	var hd: float = GH - h1
-	var n2 := maxi(1, ceili(hd / 0.4))
+	var n2 := maxi(1, ceili(hd / 0.36))
 	var xr: float = cxl + TW * 0.5
-	var dep2 := 0.55
+	var dep2 := 0.5
 	K.crates(h, Vector3(xr - dep2 * n2 - 0.0, h1, 0.0), Vector2(1, 0), n2, 1.6, Callable(), GH, dep2)
 	K.out_add(out, "climb", [Vector3(xr - dep2 * n2 - 0.8, h1, 0.0), Vector3(xr + 0.4, GH, 0.0), "sandik"])
 	# bitki ve moloz
