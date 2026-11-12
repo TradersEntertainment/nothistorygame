@@ -24,6 +24,9 @@ static func approach(who: Node3D, target: Vector3, stop := 1.3, speed := 1.6, si
 	to.y = float(ground.call(to.x, to.z)) if ground.is_valid() else from.y
 	face(who, to)
 	if fast():
+		var jump := to - who.global_position
+		if who is Person:
+			(who as Person).discount_move(jump)      # ışınlama yürüme değil: gövde kayma yönüne dönmesin
 		who.global_position = to      # otomatik testte doğrudan: kısa tween'in ara karesinde havada sayılıyordu (CI VISAUDIT float)
 		face(who, target)
 		return

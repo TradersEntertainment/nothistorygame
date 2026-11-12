@@ -866,6 +866,16 @@ func _process(delta: float) -> void:
 	rig.update(delta, talking or chatting, _busy)
 
 
+## Dünya çerçevesinde `step` kadar başkasınca (itme, ışınlama) kaydırılan kişinin yer değişimi kendi yürüyüşü sayılmaz:
+## yürüme eşiği, gövdenin gidiş yönüne dönmesi ve bakış denetimi bu kaymayı görmez.
+func discount_move(step: Vector3) -> void:
+	var par := get_parent() as Node3D
+	var lstep: Vector3 = (par.global_transform.basis.inverse() * step) if par else step
+	if _last_pos != Vector3.INF:
+		_last_pos += lstep
+	GameState.look_audit_shift(self, lstep)
+
+
 ## Yol açma: bu kişi (sahnede yürütülen Fatih, elçi, imparator; atlıysa atıyla) yürürken önündeki ayaktaki insanlar
 ## yana çekilir; kimse kimsenin içinden geçmez. Oturanlar, yatanlar, atlılar ve "no_yield" işaretliler çekilmez.
 func _clear_way(delta: float) -> void:
@@ -926,11 +936,8 @@ func _clear_way(delta: float) -> void:
 			continue          # adım ışının ötesinde bir katının (sur, siper) içine girerdi
 		mover.global_position += step
 		# İtilmek yürümek değildir: kayma, itilenin kendi yer değişiminden (gövde yönü, bakış, yürüme eşiği) sayılmasın
-		if mover == o and o._last_pos != Vector3.INF:
-			var par := o.get_parent() as Node3D
-			var lstep: Vector3 = (par.global_transform.basis.inverse() * step) if par else step
-			o._last_pos += lstep
-			GameState.look_audit_shift(o, lstep)      # bakış denetimi de itilmeyi yürüyüş saymasın (denetim gevşemez: kişi yürümüyor)
+		if mover == o:
+			o.discount_move(step)
 		# Yana çekildiği yerin GÖRÜNEN zemini (moloz, basamak): gömülmesin, havada kalmasın (görünmez çarpışma kutusunun
 		# üstüne ya da altına değil)
 		var fy := Unclip.floor_y(o, mover.global_position, 1.0, 1.0)
