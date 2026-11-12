@@ -819,7 +819,29 @@ func _exile(p: Person, rs: String) -> void:
 	_log("exile from=%s ch=%d" % [rs, ch])
 	await hud.fade_to(1.0, 0.7)
 	_restore_blade()
-	GameState.change_scene(prepare_walk(ch, rs, to_side, "fatih" if rs == "O" else "emperor"), false)
+	var path := prepare_walk(ch, rs, to_side, "fatih" if rs == "O" else "emperor")
+	# Bölümün akışı (replik, zamanlayıcı) bu sahnenin ortasında bekliyor: sahne ağaçtan çıkıp bir kare canlı kalırsa
+	# eşyordamlar ağaçsız uyanıp hata veriyordu (28o: Hud.say, Vfx._burst, Siege.show_page). Sahne değişimi kare sonunda,
+	# eski sahne anında silinerek (bekleyen eşyordamlar onunla biter): GameState.change_scene'in sürgüne özel kısa hâli.
+	Callable(get_script(), "swap_scene").call_deferred(path)
+
+
+## Eski sahneyi siler, yenisini kurar (kare sonunda, eski sahnenin dışından çağrılır)
+static func swap_scene(path: String) -> void:
+	var tree := Engine.get_main_loop() as SceneTree
+	var ps := load(path) as PackedScene
+	if tree == null or ps == null:
+		return
+	tree.paused = false
+	Engine.time_scale = 1.0
+	Audio.voice_space("outdoor")
+	var old := tree.current_scene
+	if old:
+		tree.root.remove_child(old)
+		old.free()
+	var nw := ps.instantiate()
+	tree.root.add_child(nw)
+	tree.current_scene = nw
 
 
 ## Sürgün yürüyüşünü kurar, sahnesinin yolunu döner (Siege.next_path de çağırır: 34o'dan gelen bekleyen sürgün)
