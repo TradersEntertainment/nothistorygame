@@ -14,7 +14,7 @@ Dal: `wip/ist2-dunya2` (taban `wip/ist2-taban2`; `wip/ist2-sehir2` ve `wip/ist2-
 | 3b | Kıyı basamaklı | DÜZELDİ / küçük dişler KISMEN (kıyı şeridinde yükseklik kıyı çokgenine işaretli uzaklıkla, sürekli profille) |
 | 3c | Zemin tek renk yeşil | DÜZELDİ (türlere göre renk + tarla parselleri; ayrıca uzaklıkla süt beyazına dönme giderildi) |
 | 4 | Karşı kıyılar ve ufuk dolu, Kız Kulesi | DÜZELDİ (31 768 öğe; Kız Kulesi küçük kale) |
-| 5 | `kare40`, gezi `bos=1` (ISTBOS) | DÜZELDİ; şehir içi %5,5 (hedef %0) → ŞEHİR/DOKU'ya rapor |
+| 5 | `kare40`, gezi `bos=1` (ISTBOS) | DÜZELDİ; son birleşimde şehir içi %1,9 (önce %5,5; hedef %0) → ŞEHİR/DOKU'ya rapor |
 | 6 | 14 sahip karesi | DÜZELDİ (`sahip_01…14`, 2. yenileme; 07 meydanın üstünden, 09 iskeleden) |
 | 7 | Uçuş bölümleri (7, 11) v2 dökümü | DÖKÜM (aşağıda; uygulama yok) |
 
@@ -96,13 +96,14 @@ Kıyıda karasının %40'ından azı kara olan kareler sayılmaz.
 
 | bölge | kare | boş | oran | hedef | örnek boş kareler (gerçek e, n) |
 |---|---|---|---|---|---|
-| şehir içi | 1109 | 61 | **%5,5** | %0 | (−2000, 1200) (−2342, 1085) (−1657, 971) (−1200, 971) (−4742, 857) (−628, 857) (−4628, 742) (−2228, 742) |
+| şehir içi | 1109 | 21 | **%1,9** (önceki birleşimde %5,5) | %0 | (−4628, 857) (−971, 857) (−857, 857) (−628, 742) (−57, −285) (−400, −400) (−2685, −514) (−2457, −628) |
 | Galata | 24 | 0 | %0 | %0 | |
-| sur dışı 600 m kuşak | 803 | 3 | %0,4 | ≤ %5 | (−5771, −2457) |
-| karşı kıyılar (3 km) | 3906 | 8 | %0,2 | ≤ %15 | (3028, 3942) (3942, 2914) (−514, 2114) |
+| sur dışı 600 m kuşak | 803 | 3 | %0,4 | ≤ %5 | (−4971, −2114) (−5542, −2342) |
+| karşı kıyılar (3 km) | 3906 | 7 | %0,2 | ≤ %15 | (−3257, 5314) (3600, −3257) |
 
 Harita: `istbos_harita.png` (yeşil dolu, kırmızı boş). **ŞEHİR-2 / DOKU-2'ye:** şehir içindeki boş kareler Haliç kıyısı ile Mese
-arasındaki kuşakta (n 700–1200) ve Romanos iç yanında (−4742, 857; −4628, 742: oyun alanı hub'ı, bilerek boş olabilir) toplanıyor.
+arasındaki kuşakta (n 740–860), Hipodrom/Büyük Saray kenarında (−57, −285; −400, −400), Langa çevresinde ve Romanos iç yanında
+(−4628, 857: oyun alanı hub'ı, bilerek boş olabilir) kalıyor. Son birleşim: ŞEHİR-2 `e322748e`, DOKU-2 `b59e654c`.
 Komut: `xvfb-run … res://tests/_ist/gezi.tscn -- liste=tests/_ist/gezi_sahip.txt shots=KLASÖR bos=1`.
 
 ## 6. Sahip kareleri (her turda aynı 14 bakış)
@@ -112,20 +113,20 @@ güneybatı), sıcak ışık; pus yüksekliğe göre.
 
 | # | bakış | RINFO (çizim / üçgen, birleşik dal, xvfb) |
 |---|---|---|
-| 01 | tam tepe 2300 m | 1193 / 1,63 M |
-| 02 | Galata kulesi üstünden yarımada | 745 / 1,93 M |
-| 03 | kara surlarının dışından 30 m (hendek dışı) | 1108 / 2,53 M |
-| 04 | … 70 m | 1114 / 2,36 M |
-| 05 | Romanos iç yanından Ayasofya yönü | 1071 / 2,53 M |
-| 06 | Mese'de yürüyüş | 736 / 1,37 M |
-| 07 | Ayasofya meydanı | 756 / 1,12 M |
-| 08 | Hipodrom | 367 / 0,61 M |
-| 09 | Haliç iskelesi | 668 / 1,05 M |
-| 10 | sur dibi mahallesi (Edirnekapı iç yanı) | 999 / 1,90 M |
-| 11 | bostan adası (Langa) | 623 / 1,49 M |
-| 12 | Marmara'dan | 1589 / 2,89 M |
-| 13 | Sarayburnu açığından | 1222 / 2,16 M |
-| 14 | gece Galata'dan | 706 / 1,89 M |
+| 01 | tam tepe 2300 m | 1167 / 1,79 M |
+| 02 | Galata kulesi üstünden yarımada | 718 / 2,08 M |
+| 03 | kara surlarının dışından 30 m (hendek dışı) | 1080 / 2,67 M |
+| 04 | … 70 m | 1129 / 2,47 M |
+| 05 | Romanos iç yanından Ayasofya yönü | 910 / 2,69 M |
+| 06 | Mese'de yürüyüş | 689 / 1,47 M |
+| 07 | Ayasofya meydanı | 625 / 1,21 M |
+| 08 | Hipodrom | 441 / 0,76 M |
+| 09 | Haliç iskelesi | 851 / 1,92 M |
+| 10 | sur dibi mahallesi (Edirnekapı iç yanı) | 963 / 1,76 M |
+| 11 | bostan adası (Langa) | 512 / 1,64 M |
+| 12 | Marmara'dan | 1577 / 2,98 M |
+| 13 | Sarayburnu açığından | 1183 / 2,28 M |
+| 14 | gece Galata'dan | 695 / 2,06 M |
 
 IstDunya'nın payı her karede 37 ağ (arazi + deniz + ufuk) ve 70–171 bin üçgen + karşı kıyı öbekleri; kare başına iş 120–270 µs.
 Üçgen bütçesi (uçuşta ≤ 3,5 M, yerde ≤ 2,5 M) toplamda sur dışında ve Marmara'dan sınırda: büyük pay şehir/ordugâh/gemiler.
@@ -173,7 +174,8 @@ yerine `IstDunya.build` + `IstSehir.attach_v2`; (2) `flight_data` çağrıları 
 
 - ŞEHİR-2: Ayasofya meydanı oyun alanının (`_meydan_rect`) içinde yerden (gerçek e −320, n 0) bakınca kamera revaklı bir yapının
   (Mese portiği?) içinde kalıyor: alan boş değil. Tam tepede koyu/siyah dikdörtgenler (sarnıç yerleri ve batıda) sürüyor; `IstGeo.mahalle` → `"sarnic"` kullanılabilir.
-  Sur dışı 30 m karesinde sur yüzünde havada beyaz dörtgenler (bayrak/levha?) var (`sahip_03`).
+  Sur dışı 30 m karesinde sur yüzünde havada beyaz dörtgenler (bayrak/levha?) vardı; son birleşimde kara surunun önünde
+  (gerçek e −5022, n 820–950) dev beyaz düz bir yüzey (çadır örtüsü ya da siper?) kamerayı ve suru kapatıyor: ORDUGÂH/ŞEHİR'e.
 - DOKU-2: şehir içi ISTBOS %5,5 (örnekler yukarıda). `mahalle` yeni alanı `alt` (bag/meyve/bostan/manastir/harabe/mezarlik).
 - Herkes: `IstGeo.X0/Z0/ST` artık `static var` (const değil); `IstDunya.CX0/CZ0/CNX/CNZ` de.
 
