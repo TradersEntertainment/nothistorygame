@@ -71,7 +71,7 @@ static func uygula(rg: Rig, delta: float, talking: bool) -> void:
 	if float(st["t"]) > 3.0:
 		kb = clampf(1.0 - exp(-delta * 14.0), 0.0, 1.0)       # oturduktan sonra canlılık hareketi geç kalmasın
 	_uygula_hedef(rg, h, kb)
-	_etek(rg, bool(h.get("etek", false)))
+	_etek(rg, bool(h.get("etek", false)), delta)
 	_props(rg, ad, h)
 	if not bool(st["denet"]) and float(st["t"]) > 2.2:
 		st["denet"] = true
@@ -110,11 +110,19 @@ static func bilekler(rg: Rig) -> void:
 	var tb: Array = st.get("taban_q", [])
 	if tb.size() < 2:
 		return
+	# extremities() bileği her karede kendi açısına yazar: takımın bilek açısı ayrıca tutulur ve oradan hedefe gider
+	# (yoksa her kare extremities'in açısından küçük bir adım atılır, taban hedefe hiç oturmaz: ayak ucu zemine gömülür)
+	var cur: Array = st.get("bilek_q", [])
+	if cur.size() < 2:
+		cur = [null, null]
 	for side in 2:
 		var an: Node3D = rg._ankles[side]
 		if an and tb[side] is Quaternion:
-			an.quaternion = an.quaternion.slerp(tb[side], clampf(float(st.get("kb", 1.0)), 0.0, 1.0))
+			var q0: Quaternion = cur[side] if cur[side] is Quaternion else an.quaternion
+			cur[side] = q0.slerp(tb[side], clampf(float(st.get("kb", 1.0)), 0.0, 1.0))
+			an.quaternion = cur[side]
 			rg._ank_v[side] = 99.0      # çıkışta extremities yeniden yazsın
+	st["bilek_q"] = cur
 
 
 # ---------------------------------------------------------------- duruş hedefleri (kökün yereli, +z ön, zemin y = 0)
@@ -132,7 +140,7 @@ static func _hedef(rg: Rig, ad: String, t: float, talking: bool) -> Dictionary:
 	var h := {"P": Vector3(0, 0.2, 0), "bel": 0.0, "yan": 0.0, "don": 0.0,
 		"ayak": _s(Vector3(0.16, 0.077, 0.1)), "diz": _s(Vector3(0.3, 0.2, 1.0)),
 		"taban": [[Vector3(0, 0, 1), Vector3.UP], [Vector3(0, 0, 1), Vector3.UP]],
-		"el": [null, null], "dirsek": _s(Vector3(0.7, -0.4, -0.6)), "bas": look, "etek": false}
+		"el": [null, null], "dirsek": _s(Vector3(0.7, -0.4, -0.6)), "bas": look, "etek": true}
 	match ad:
 		"bagdas", "bagdas_ye", "bagdas_bile", "bagdas_ok", "bagdas_yaz", "bagdas_ekmek":
 			h["P"] = Vector3(0, 0.2, -0.04 + br * 0.003)
@@ -181,7 +189,7 @@ static func _hedef(rg: Rig, ad: String, t: float, talking: bool) -> Dictionary:
 			var up := smoothstep(0.0, 0.65, ph) if ph < 0.65 else 1.0 - smoothstep(0.65, 0.78, ph)
 			h["P"] = Vector3(0, 0.43, -0.02)
 			h["bel"] = 0.35 - up * 0.12
-			h["ayak"] = [Vector3(-0.12, 0.11, -0.33), Vector3(0.17, 0.077, 0.3)]
+			h["ayak"] = [Vector3(-0.12, 0.155, -0.33), Vector3(0.17, 0.077, 0.3)]
 			h["diz"] = [Vector3(0, -1.0, 0.35), Vector3(0.3, 0.5, 1.0)]
 			h["taban"] = [[Vector3(0, -0.75, 0.6), Vector3(0, 0.6, 0.75)], [Vector3(0.1, 0, 1), Vector3.UP]]
 			h["el"] = [Vector3(-0.12, 0.42, 0.42), Vector3(0.08, 0.3 + up * 0.62, 0.62 - up * 0.2)]
@@ -200,12 +208,12 @@ static func _hedef(rg: Rig, ad: String, t: float, talking: bool) -> Dictionary:
 			h["etek"] = true
 		"ates_ufle":
 			var blow := smoothstep(0.55, 0.7, fmod(t * 0.4, 1.0)) * (1.0 - smoothstep(0.8, 0.98, fmod(t * 0.4, 1.0)))
-			h["P"] = Vector3(0, 0.36, -0.02)
-			h["bel"] = 0.78 + blow * 0.12
-			h["ayak"] = _s(Vector3(0.11, 0.075, -0.24))
+			h["P"] = Vector3(0, 0.4, -0.02)
+			h["bel"] = 0.74 + blow * 0.12
+			h["ayak"] = _s(Vector3(0.11, 0.095, -0.24))
 			h["diz"] = _s(Vector3(0.15, -0.6, 1.0))
 			h["taban"] = [[Vector3(0, -0.45, -1), Vector3(0, -1, 0)], [Vector3(0, -0.45, -1), Vector3(0, -1, 0)]]
-			h["el"] = _s(Vector3(0.2, 0.2, 0.42 + blow * 0.04))
+			h["el"] = _s(Vector3(0.2, 0.27, 0.42 + blow * 0.04))
 			h["dirsek"] = _s(Vector3(1.0, 0.2, -0.3))
 			h["bas"] = Vector3(-0.35 - blow * 0.1, 0, 0)
 			h["etek"] = true
@@ -222,7 +230,7 @@ static func _hedef(rg: Rig, ad: String, t: float, talking: bool) -> Dictionary:
 		"tek_diz":
 			h["P"] = Vector3(0, 0.43 + br * 0.004, -0.02)
 			h["bel"] = 0.08 + br * 0.015
-			h["ayak"] = [Vector3(-0.12, 0.11, -0.33), Vector3(0.15, 0.077, 0.3)]
+			h["ayak"] = [Vector3(-0.12, 0.155, -0.33), Vector3(0.15, 0.077, 0.3)]
 			h["diz"] = [Vector3(0, -1.0, 0.35), Vector3(0.1, 0.5, 1.0)]
 			h["taban"] = [[Vector3(0, -0.75, 0.6), Vector3(0, 0.6, 0.75)], [Vector3(0.1, 0, 1), Vector3.UP]]
 			h["el"] = [Vector3(-0.15, 0.4, 0.15), Vector3(0.14, 0.55, 0.3)]
@@ -472,48 +480,114 @@ static func _kemik(d: Vector3, s: Vector3, bacak: bool) -> Array:
 
 # ---------------------------------------------------------------- etek (kaftan) ve eşyalar
 
-## Oturuşta gövde ağının (Rig.body'nin "Baked" ağı) kalça altındaki kısmı (kaftan eteği, cüppe, önlük) kucağa ve
-## yana yayılır: dizlerin üstünde kalır, bacakların ve zeminin içinden geçmez. Ağ bir kez bükülüp önbelleğe alınır.
-static func _etek(rg: Rig, on: bool) -> void:
+## Kaftan eteği (Rig.body'nin "Baked" ağında kalçanın altında kalan kısım: kaftan, cüppe, önlük) UYLUKLARA BAĞLANIR:
+## her köşe, x'ine göre sol/sağ uyluğun dönüşünü (ortada ikisinin karışımı) alır; diz boyundan aşağısı dizden sonra
+## yerçekimiyle aşağı sarkar; zeminin (kökün y = 0) altına inen köşe zemine yatırılır. Böylece oturuşta etek kucağa ve
+## dizlerin üstüne yayılır, bacakların ve zeminin içinden geçmez; eğilen gövdeyle de dimdik "çan" gibi öne yatmaz.
+## Geçişte (ilk ~1,3 sn) 0,12 sn'de bir yeniden hesaplanır; sonra son biçim (ağ + duruş adına göre) önbelleğe alınır
+## ve aynı ağlı, aynı duruşlu kişiler onu paylaşır.
+static func _etek(rg: Rig, on: bool, delta := 0.016) -> void:
 	if rg.body == null:
 		return
 	var mi := rg.body.get_node_or_null("Baked") as MeshInstance3D
 	if mi == null or mi.mesh == null:
 		return
-	if on and not mi.has_meta(_ETEK_KEY):
-		var hip_y := (rg.leg_l.position.y + rg.leg_r.position.y) * 0.5 if rg.leg_l and rg.leg_r else 0.66
-		var key := "%d|%.3f" % [mi.mesh.get_instance_id(), hip_y]
+	var st: Dictionary = rg._durus
+	if not on:
+		if mi.has_meta(_ETEK_KEY):
+			mi.mesh = mi.get_meta(_ETEK_KEY)
+			mi.remove_meta(_ETEK_KEY)
+		return
+	if rg.leg_l == null or rg.leg_r == null or rg.knee_l == null:
+		return
+	var src: ArrayMesh = mi.get_meta(_ETEK_KEY) if mi.has_meta(_ETEK_KEY) else mi.mesh as ArrayMesh
+	if src == null:
+		return
+	if bool(st.get("etek_son", false)):
+		return
+	var key := "%d|%s" % [src.get_instance_id(), String(st.get("ad", ""))]
+	var t := float(st.get("t", 0.0))
+	if _etek_cache.has(key) and t < 1.3 and not st.has("etek_t"):
+		# aynı ağ + duruş daha önce çözülmüş: hemen son biçim
+		_etek_tak(mi, src, _etek_cache[key])
+		st["etek_son"] = true
+		return
+	st["etek_t"] = float(st.get("etek_t", 0.0)) - delta
+	if t >= 1.3:
 		if not _etek_cache.has(key):
-			_etek_cache[key] = _etek_mesh(mi.mesh as ArrayMesh, hip_y)
-		if _etek_cache[key] == null:
-			return
-		mi.set_meta(_ETEK_KEY, mi.mesh)
-		mi.mesh = _etek_cache[key]
-	elif not on and mi.has_meta(_ETEK_KEY):
-		mi.mesh = mi.get_meta(_ETEK_KEY)
-		mi.remove_meta(_ETEK_KEY)
+			_etek_cache[key] = _etek_mesh(src, rg)
+		_etek_tak(mi, src, _etek_cache[key])
+		st["etek_son"] = true
+	elif float(st["etek_t"]) <= 0.0:
+		st["etek_t"] = 0.12
+		_etek_tak(mi, src, _etek_mesh(src, rg))
 
 
-static func _etek_mesh(src: ArrayMesh, hip_y: float) -> ArrayMesh:
+static func _etek_tak(mi: MeshInstance3D, src: ArrayMesh, m: ArrayMesh) -> void:
+	if m == null:
+		return
+	if not mi.has_meta(_ETEK_KEY):
+		mi.set_meta(_ETEK_KEY, src)
+	mi.mesh = m
+
+
+static func _etek_mesh(src: ArrayMesh, rg: Rig) -> ArrayMesh:
 	if src == null:
 		return null
+	var legs: Array = [rg.leg_l, rg.leg_r]
+	var knees: Array = [rg.knee_l, rg.knee_r]
+	var M: Array = []
+	var hy: Array = []
+	var l1: Array = []
+	for side in 2:
+		var lg: Node3D = legs[side]
+		var kn: Node3D = knees[side] if knees[side] != null else knees[0]
+		M.append(lg.transform * Transform3D(Basis(), lg.position).affine_inverse())
+		hy.append(lg.position.y)
+		l1.append(-kn.position.y if kn else 0.3)
+	var hip_y := (float(hy[0]) + float(hy[1])) * 0.5
+	var bx := rg.body.transform                     # gövde → kök (kökün zemini y = 0)
+	var bi := bx.affine_inverse()
+	var down := (bi.basis * Vector3.DOWN).normalized()
 	var out := ArrayMesh.new()
 	for si in src.get_surface_count():
 		var arr := src.surface_get_arrays(si)
 		var v: PackedVector3Array = arr[Mesh.ARRAY_VERTEX]
+		var nr = arr[Mesh.ARRAY_NORMAL]
+		var has_n: bool = nr != null and (nr as PackedVector3Array).size() == v.size()
 		for i in v.size():
 			var p := v[i]
-			var dy := hip_y + 0.03 - p.y
+			var dy := hip_y - p.y
 			if dy <= 0.0:
 				continue
-			if p.z > -0.04:
-				# ön: kucağa doğru öne yatar
-				p = Vector3(p.x * (1.0 + dy * 0.45), hip_y + 0.03 - dy * 0.28, p.z + dy * 0.85)
-			else:
-				# arka: kalçanın arkasında zemine doğru kısa iner, geriye açılır
-				p = Vector3(p.x * (1.0 + dy * 0.35), hip_y + 0.03 - dy * 0.4, p.z - dy * 0.35)
-			v[i] = p
+			var wr := smoothstep(-0.07, 0.07, p.x)        # leg_r x > 0
+			var q := Vector3.ZERO
+			var nb := Vector3.ZERO
+			for side in 2:
+				var w := wr if side == 1 else 1.0 - wr
+				if w <= 0.0:
+					continue
+				var m: Transform3D = M[side]
+				var lim: float = float(hy[side]) - float(l1[side]) * 1.05
+				var pk := Vector3(p.x, maxf(p.y, lim), p.z)
+				var qs := m * pk
+				if p.y < lim:
+					qs += down * (lim - p.y) * 0.75
+				q += qs * w
+				if has_n:
+					nb += (m.basis * (nr as PackedVector3Array)[i]) * w
+			# zeminin altına inen köşe zemine yatar (kumaş yere serilir)
+			var g := bx * q
+			if g.y < 0.012:
+				g.y = 0.012 + (0.012 - g.y) * 0.02
+				q = bi * g
+			v[i] = q
+			if has_n and nb.length() > 0.0001:
+				(nr as PackedVector3Array)[i] = nb.normalized()
 		arr[Mesh.ARRAY_VERTEX] = v
+		if has_n:
+			arr[Mesh.ARRAY_NORMAL] = nr
+		arr[Mesh.ARRAY_TANGENT] = null
 		out.add_surface_from_arrays(src.surface_get_primitive_type(si), arr)
 		out.surface_set_material(si, src.surface_get_material(si))
 	return out

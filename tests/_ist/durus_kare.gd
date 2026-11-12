@@ -28,7 +28,7 @@ func _ready() -> void:
 	e.background_color = Color("a9c4dc")
 	e.ambient_light_source = Environment.AMBIENT_SOURCE_COLOR
 	e.ambient_light_color = Color(0.62, 0.62, 0.66)
-	e.ambient_light_energy = 0.75
+	e.ambient_light_energy = 0.4
 	env.environment = e
 	add_child(env)
 	var sun := DirectionalLight3D.new()
@@ -96,12 +96,31 @@ func _pafta() -> void:
 			for i in 75:
 				await get_tree().process_frame
 			var nm := "sonda_%s_%s" % [ad, ["asker", "sivil"][tur]]
-			print("DURUSKARE %s zemin_cm=%s" % [nm, str((rg as Rig)._durus.get("zemin_cm", "?"))])
+			print("DURUSKARE %s zemin_cm=%s %s" % [nm, str((rg as Rig)._durus.get("zemin_cm", "?")), _parca_min(k)])
 			await _cek(nm + "_yan", Vector3(3.0, 1.0, 0.25), Vector3(0, 0.55, 0.15))
 			await _cek(nm + "_on", Vector3(0.4, 1.1, 3.0), Vector3(0, 0.55, 0.0))
 			await _cek(nm + "_capraz", Vector3(-2.1, 1.6, 2.1), Vector3(0, 0.5, 0.1))
 			k.queue_free()
 			await get_tree().process_frame
+
+
+## En alçak üç parça (pişmiş ağın sahibi düğüm adı: cm)
+func _parca_min(k: Node3D) -> String:
+	var a: Array = []
+	for c in k.find_children("Baked*", "MeshInstance3D", true, false):
+		var mi := c as MeshInstance3D
+		if mi.mesh == null or not mi.visible:
+			continue
+		var lo := INF
+		for si in mi.mesh.get_surface_count():
+			for p: Vector3 in mi.mesh.surface_get_arrays(si)[Mesh.ARRAY_VERTEX]:
+				lo = minf(lo, (mi.global_transform * p).y)
+		a.append([lo * 100.0, String(mi.get_parent().name)])
+	a.sort_custom(func(x, y): return x[0] < y[0])
+	var s := ""
+	for i in mini(3, a.size()):
+		s += "%s:%.1f " % [a[i][1], a[i][0]]
+	return s
 
 
 func _gecis() -> void:
