@@ -24,12 +24,17 @@ static func build(root: Node3D, lay: Dictionary, o: Dictionary) -> void:
 	var itx: Array = lay["itx"]
 	var otx: Array = lay["otx"]
 	var gw: float = lay["gw"]
+	# Her öğenin kendi rasgele üreteci (ŞEHİR-3: IstSurlar.pencere ile pencere pencere kurulurken aynı sonuç)
+	var sd := int(lay["rng_seed"]) + 77
 	# ---- top oyukları (dış yüzlerde): koyu oyuk + açık kırık halkası + çatlaklar
 	var hits := int(round(L / 9.0 * dmg))
 	for i in hits:
+		rng = _rr(sd, 1, i)
 		var on_outer := i % 2 == 0
 		var x := rng.randf_range(-L * 0.5 + 3.0, L * 0.5 - 3.0)
 		if gw > 0.0 and absf(x) < gw * 0.5 + 1.6:
+			continue
+		if not IstSurlar._ic(x):
 			continue
 		if on_outer:
 			_crater(root, Vector3(x, rng.randf_range(1.4, OH - 1.0), zo1), 1.0, rng.randf_range(0.35, 0.7), rng)
@@ -40,21 +45,25 @@ static func build(root: Node3D, lay: Dictionary, o: Dictionary) -> void:
 	# ---- stauroma: dış sur tepesinde tahta perde, toprak dolu fıçılar (korkuluk üstünde) ve kazıklar
 	var n_st := 2 + int(dmg * 2.0)
 	for i in n_st:
+		rng = _rr(sd, 2, i)
 		var x := rng.randf_range(-L * 0.5 + 8.0, L * 0.5 - 8.0)
 		if gw > 0.0 and absf(x) < gw * 0.5 + 3.0:
 			continue
-		if _near_tower(otx, x, float(d["OTW"]) * 0.5 + 4.5):
+		if _near_tower(otx, x, float(d["OTW"]) * 0.5 + 4.5) or not IstSurlar._ic(x):
 			continue
 		_stauroma(root, x, zo1 - 0.225, OH + 1.2, rng)
 	# ---- iskele (dış sur yüzünde): direkler, kirişler, tahta
 	if otx.size() > 0:
 		var sx: float = float(otx[0]) + 7.5
-		if absf(sx) < L * 0.5 - 4.0:
+		if absf(sx) < L * 0.5 - 4.0 and IstSurlar._ic(sx):
 			_scaffold(root, sx, zo1 + 0.15, OH * 0.7)
 	# ---- nöbetçi barınağı, taş gülle yığını ve sancak: iç kule tepelerinde
 	for i in itx.size():
+		rng = _rr(sd, 3, i)
 		var tw: Dictionary = itx[i]
 		var cx: float = tw["x"]
+		if not IstSurlar._ic(cx):
+			continue
 		var w: float = tw["w"]
 		var z0: float = -float(d["T"]) * 0.5 - 0.1
 		var z1: float = float(d["T"]) * 0.5 + float(tw["p"]) + 0.15
@@ -73,7 +82,10 @@ static func build(root: Node3D, lay: Dictionary, o: Dictionary) -> void:
 				_hut(root, cx + w * 0.15, HT, (z0 + z1) * 0.5, rng)
 	# ---- dış kule tepelerinde fıçı ve gülle
 	for j in otx.size():
+		rng = _rr(sd, 4, j)
 		var ox: float = otx[j]
+		if not IstSurlar._ic(ox):
+			continue
 		if j % 2 == 0:
 			_balls(root, ox + 0.5, d["OTH"], zo0 + 1.2, 3, rng)
 		else:
@@ -81,9 +93,12 @@ static func build(root: Node3D, lay: Dictionary, o: Dictionary) -> void:
 	# ---- sarmaşık: duvar yüzünde küçük, düzensiz yaprak öbekleri (düz yeşil levha değil)
 	var ivy := Color("4a5f2c")
 	for i in int(L / 12.0):
+		rng = _rr(sd, 5, i)
 		var x2 := rng.randf_range(-L * 0.5 + 2.0, L * 0.5 - 2.0)
 		var fz: float = zo1 if i % 2 == 0 else zi1
 		if gw > 0.0 and absf(x2) < gw * 0.5 + 2.0:
+			continue
+		if not IstSurlar._ic(x2):
 			continue
 		var y2 := 0.2
 		for j in 9:
@@ -93,13 +108,15 @@ static func build(root: Node3D, lay: Dictionary, o: Dictionary) -> void:
 			var m := Props.box(root, Vector3(ww, hh, 0.04), Vector3(x2 + rng.randf_range(-0.5, 0.5), y2, fz + 0.025), ivy.darkened(rng.randf_range(0.0, 0.3)), Vector3(0, 0, rng.randf_range(-30.0, 30.0)))
 			m.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
 	var bushes: Array = []
+	rng = _rr(sd, 6, 0)
 	for i in int(L * 0.5):
 		var bz: float = rng.randf_range(float(d["zo1"]) + 0.8, float(d["zm0"]) - 2.2)
 		var bx := rng.randf_range(-L * 0.5 + 2.0, L * 0.5 - 2.0)
 		if gw > 0.0 and absf(bx) < gw * 0.5 + 2.0:
 			continue
 		var s := rng.randf_range(0.25, 0.6)
-		bushes.append(Transform3D(Basis.from_scale(Vector3(s, s * 0.7, s)), Vector3(bx, s * 0.25, bz)))
+		if IstSurlar._ic(bx):
+			bushes.append(Transform3D(Basis.from_scale(Vector3(s, s * 0.7, s)), Vector3(bx, s * 0.25, bz)))
 	if bushes.size() > 0:
 		var sm := SphereMesh.new()
 		sm.radius = 1.0
@@ -107,6 +124,12 @@ static func build(root: Node3D, lay: Dictionary, o: Dictionary) -> void:
 		sm.radial_segments = 6
 		sm.rings = 3
 		Scenery.scatter(root, sm, bushes, [], Props.mat(Color("5c7a34"), 0.0, false, ""))
+
+
+static func _rr(sd: int, kind: int, i: int) -> RandomNumberGenerator:
+	var r := RandomNumberGenerator.new()
+	r.seed = sd * 131 + kind * 7919 + i * 104729
+	return r
 
 
 static func _near_tower(otx: Array, x: float, r: float) -> bool:

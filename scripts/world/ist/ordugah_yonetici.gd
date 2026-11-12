@@ -11,8 +11,8 @@ var kuyruk: Array = []            # [öğe indeksi, lod]
 var _t := 0.0
 var _hazir_lod2 := false
 ## Yakın lod eşikleri (öğe yarıçapına eklenir; dünya metre)
-var lod0_m := 230.0
-var lod1_m := 800.0
+var lod0_m := 120.0           # ŞEHİR-3: 230 → 120 (sık çadır denizinde yakın katman 4–5 M üçgen oluyordu)
+var lod1_m := 450.0           # 800 → 450 (ötesi hücre başına pişmiş uzak ağ)
 var butce_us := 9000
 var kurulan := 0
 var bakan: Node3D                 # yoksa etkin kamera

@@ -486,8 +486,7 @@ static func _run(host: Node3D, L: float, k: float, lod: int, seed: int, o: Dicti
 	if gw > 0.0:
 		IstSurlarKapi.build(root, lay, lod, o)
 	if lod == 0:
-		if _ic(0.0):
-			IstSurlarAyrinti.build(root, lay, o)
+		IstSurlarAyrinti.build(root, lay, o)
 		_wall_niches(root, lay, mer_niche_dummy())
 		if bake and root.is_inside_tree():
 			Props.bake_static(root, [root])

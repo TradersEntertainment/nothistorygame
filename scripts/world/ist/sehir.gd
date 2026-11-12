@@ -407,6 +407,9 @@ func _pencere_is(it: Dictionary) -> void:
 	var ms := (Time.get_ticks_usec() - t0) / 1000.0
 	_cost["%s/0" % String(it.get("mod", ""))] = ms
 	_yavas_say(it, "0w", ms, 0.0)
+	if ms > float(stats.get("pencere_ms", 0.0)):
+		stats["pencere_ms"] = ms
+		stats["pencere_en"] = "%s i=%d/%d" % [String(it["id"]), i, N]
 	sb["i"] = i + 1
 	if i + 1 >= N:
 		it.erase("sub")
@@ -611,6 +614,10 @@ static func _bakeable(mi: MeshInstance3D, top: Node) -> bool:
 			if bm.transparency != BaseMaterial3D.TRANSPARENCY_DISABLED and bm.transparency != BaseMaterial3D.TRANSPARENCY_ALPHA_SCISSOR:
 				return false
 			if bm.emission_enabled and bm.emission_energy_multiplier > 0.5:
+				return false
+			# Zaten köşe renkli pişmiş ağ (parçanın kendi Props.bake_static'i): World1453.bake köşe rengini malzemenin
+			# beyaz albedo'suyla ezerdi (ŞEHİR-3: kara surlarında gri gürültü dokulu toprak şeritleri bembeyaz çıkıyordu)
+			if bm.vertex_color_use_as_albedo:
 				return false
 	return true
 
@@ -1406,6 +1413,19 @@ func _on_pisir() -> void:
 		it["want"] = 2
 		_show(it)
 	stats["on_pisir_n"] = n
+	# Isınma: her sur kurucusunun yakın katmanı bir kez (desen dokuları, paylaşılan ağlar ve malzemeler önbelleğe girer;
+	# oyunda ilk dilimin ilk penceresi bunları üretirken 40–70 ms sürüyordu). Kurulan atılır.
+	var isin := {}
+	for it: Dictionary in hat_items:
+		var kur := String(HAT.get(String(it.get("hat", "")), {}).get("kur", ""))
+		if kur == "" or isin.has(kur) or not it.has("len"):
+			continue
+		isin[kur] = true
+		var tmp := Node3D.new()
+		add_child(tmp)
+		(it["make"] as Callable).call(tmp, 0)
+		_bake_lod(tmp, false)
+		tmp.free()
 	# açılıştaki ölçümler oyun içi "yavaş iş" sayılmaz
 	stats.erase("yavas")
 	stats["kur_ms_max"] = 0.0
@@ -2100,7 +2120,8 @@ func _hatlar_v2() -> void:
 				var n := maxi(1, int(ceil(span / float(cfg["max"]))))
 				# Eğimde kısa dilim: dilim boyunca 1,6 m'den fazla düşü olmasın
 				var dh := absf(IstGeo.h(a.x + d.x * v[0], a.y + d.y * v[0]) - IstGeo.h(a.x + d.x * v[1], a.y + d.y * v[1]))
-				n = maxi(n, mini(int(ceil(dh / 1.6)), int(span / 30.0)))
+				# (ŞEHİR-3: en kısa dilim 30 → 12 m; Galata/Haliç yamacında dilimler arası 4–9 m'lik basamak kalıyordu)
+				n = maxi(n, mini(int(ceil(dh / 1.4)), int(span / 12.0)))
 				var lens: Array = []
 				var hl := float(IstHalicSur.dims(K_SUR)["L"])
 				if String(cfg["kur"]) == "halic" and dh < 2.5 and span >= hl:
@@ -2129,7 +2150,7 @@ func _hatlar_v2() -> void:
 					s0 += pl_len
 			# Köşe kulesi (iç köşe ve dış köşedeki kopukluğu örter; tepesi yürüme yolu hizasında)
 			if i > 0:
-				var kc := _kose(ad, String(cfg["kur"]), a, _son_walk(ad))
+				var kc := _kose(ad, String(cfg["kur"]), a, _son_walk(ad, s_acc - 4.5))
 				kc["s0"] = s_acc - 4.5
 				kc["s1"] = s_acc + 4.5
 				kc["a2"] = a - (a - pl[i - 1]).normalized() * 4.5
@@ -2378,12 +2399,18 @@ func _basamaklar(ad: String, kur: String) -> void:
 			var bas := Basis(Vector3.UP, atan2(-dir.y, dir.x))
 			var xf := Transform3D(bas.scaled(Vector3(0.61, hgt, ww)), Vector3(c.x, y0 - 0.05 + hgt * 0.5, c.y))
 			_bas_xf.append(xf)
-			var cs := CollisionShape3D.new()
-			var bs := BoxShape3D.new()
-			bs.size = Vector3(0.61, hgt, ww)
-			cs.shape = bs
-			cs.transform = Transform3D(bas, xf.origin)
-			_bas_body.add_child(cs)
+		# Çarpışma: basma ortalarından geçen tek rampa (ŞEHİR-3: kutu basamakların önünde takılma/düşme)
+		var a3 := J - dir * (n * 0.6)
+		var b3 := J - dir * 0.3
+		var A3 := Vector3(a3.x, y0 + dh / n * 0.5, a3.y)
+		var B3 := Vector3(b3.x, y0 + dh, b3.y)
+		var rb := Basis.looking_at((B3 - A3).normalized(), Vector3.UP)
+		var rcs := CollisionShape3D.new()
+		var rbs := BoxShape3D.new()
+		rbs.size = Vector3(ww, 0.3, A3.distance_to(B3))
+		rcs.shape = rbs
+		rcs.transform = Transform3D(rb, (A3 + B3) * 0.5 - rb.y * 0.15)
+		_bas_body.add_child(rcs)
 
 
 func _basamak_ag() -> void:
@@ -2395,11 +2422,13 @@ func _basamak_ag() -> void:
 
 ## Köşe kulesi: iki dilimin birleştiği yerde dolu kule; tepesi yürüme yolu hizasında (yürüyüş kesilmez)
 ## Hattın son kurulan diliminin yürüme yolu yüksekliği (yoksa NAN)
-func _son_walk(ad: String) -> float:
+func _son_walk(ad: String, s_max := INF) -> float:
+	# kapı koşuları da (ŞEHİR-3: köşe kulesi kapıyı görmüyor, eski bir dilimin yüksekliğini alıyordu: 4–8 m'lik basamak)
 	var best := -INF
 	var w := NAN
-	for it: Dictionary in hat_items:
-		if String(it.get("hat", "")) == ad and it.has("s1") and float(it["s1"]) > best:
+	for it: Dictionary in hat_items + items:
+		var on_hat := String(it.get("hat", "")) == ad or String(it.get("kapi_hat", "")) == ad
+		if on_hat and it.has("s1") and it.has("walk") and float(it["s1"]) <= s_max + 0.5 and float(it["s1"]) > best:
 			best = float(it["s1"])
 			w = float(it.get("walk", NAN))
 	return w
