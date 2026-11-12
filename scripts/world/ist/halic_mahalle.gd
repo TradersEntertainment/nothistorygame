@@ -39,9 +39,38 @@ static func house(p: Node3D, cx: float, cz: float, w: float, d: float, h: float,
 		if absf(x2 - dx) > 1.2:
 			K.window(p, Vector3(x2, 1.5, fz + face * 0.0), 0.6, 0.8, sh, face)
 		K.window(p, Vector3(x2, gf + up_h * 0.5, uz_face), 0.6, 0.9, sh, face)
-	var floors := int(round(h / 3.2))
-	for f in range(1, floors - 1):
-		pass
+	# Yan duvarlarda (x yüzleri) iki kat pencere; arka yüzde kapı ve pencere
+	var nz := maxi(1, int(d / 3.0))
+	for sx in [-1.0, 1.0]:
+		for i in nz:
+			var zz := cz - d * 0.5 + (i + 0.5) * d / nz
+			Props.box(p, Vector3(0.05, 0.9, 0.6), Vector3(cx + sx * (w * 0.5 + 0.02), 1.6, zz), Color("1d1a18"))
+			Props.box(p, Vector3(0.05, 0.08, 0.8), Vector3(cx + sx * (w * 0.5 + 0.03), 2.1, zz), Color("5e4e3e"))
+			Props.box(p, Vector3(0.05, 1.0, 0.6), Vector3(cx + sx * (w * 0.5 + 0.02 + (over * 0.0)), gf + up_h * 0.5, zz), Color("1d1a18"))
+			Props.box(p, Vector3(0.06, 0.08, 0.8), Vector3(cx + sx * (w * 0.5 + 0.03), gf + up_h * 0.5 + 0.55, zz), Color("5e4e3e"))
+	var bz := cz - face * d * 0.5
+	K.door(p, Vector3(cx - w * 0.2, 0, bz), -face, 1.1, 2.1)
+	for i in maxi(1, int(w / 3.0)):
+		K.window(p, Vector3(cx - w * 0.5 + (i + 0.5) * w / maxi(1, int(w / 3.0)), gf + up_h * 0.5, bz - face * 0.25 * 0.0), 0.6, 0.9, sh, -face)
+	# Köşe taşları (quoin): zemin kat köşelerinde dönüşümlü iri blok
+	var qx: Array = []
+	for sx in [-1.0, 1.0]:
+		for sz in [-1.0, 1.0]:
+			for i in int(gf / 0.5):
+				var wq := 0.5 if i % 2 == 0 else 0.34
+				qx.append(Transform3D(Basis.IDENTITY, Vector3(cx + sx * (w * 0.5 - wq * 0.5 + 0.03), 0.25 + i * 0.5, cz + sz * (d * 0.5 + 0.03))))
+	K.multi(p, K.box_mesh(Vector3(0.5, 0.46, 0.08)), qx, Color("d8cab0"), "ashlar")
+	# Kapı üstü bez sundurma (tente) ve kapı yanında küp/saksı
+	var awn_c: Color = K.SHUTTER[(ci + 1) % 4].lightened(0.3)
+	Props.box(p, Vector3(1.9, 0.05, 1.0), Vector3(dx, 2.7, fz + face * 0.55), awn_c, Vector3(face * 14, 0, 0))
+	for s2 in [-1.0, 1.0]:
+		Props.cyl(p, 0.03, 2.7, Vector3(dx + s2 * 0.9, 1.35, fz + face * 1.0), K.TIMBER_D, Vector3.ZERO, 5)
+	Props.cyl(p, 0.22, 0.4, Vector3(dx + 1.5, 0.2, fz + face * 0.4), Color("a8703a"), Vector3.ZERO, 8, 0.17)
+	Props.ball(p, 0.26, Vector3(dx + 1.5, 0.52, fz + face * 0.4), Color("4f7f33"), Vector3.ONE, 6)
+	# Üst katta ahşap balkon (cephede, dar; katı: yürünmez 0,35 m çıkıntı yerine çıkma kirişi)
+	if ci % 2 == 1 and w > 8.0:
+		Props.box(p, Vector3(w * 0.4, 0.1, 0.4), Vector3(cx, gf + 1.0, uz_face + face * 0.2), K.TIMBER)
+		Props.box(p, Vector3(w * 0.4, 0.8, 0.06), Vector3(cx, gf + 1.5, uz_face + face * 0.38), K.TIMBER_D)
 	# Çatı
 	var rise := minf(2.2, ud * 0.22)
 	K.gable_roof(p, cx, h, uz, w + 0.8, ud + 0.8, rise, K.TILE, false)

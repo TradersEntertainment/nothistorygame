@@ -15,6 +15,8 @@ const IRON := Color("3a3d42")
 const WATER := Color("3f6f86")
 const SHUTTER := [Color("3a6a5a"), Color("3a5a8a"), Color("6a3a2a"), Color("5a6a3a")]
 const STEP_RISE := 0.26
+## lod>=1 iken merdivenler tek rampa olur (çarpışma lod 0'da anlamlı; lod>=1'de IstHalic.build çarpışmayı da atar)
+static var lod := 0
 
 
 ## Katı kutu + doku. pos kutunun ORTASI.
@@ -37,6 +39,11 @@ static func stair(p: Node3D, base: Vector3, dir: Vector3, h: float, width: float
 	var rise := h / n
 	var run := 0.34
 	var d := dir.normalized()
+	if lod >= 1:
+		var a := base
+		var b := base + d * (run * n) + Vector3(0, h, 0)
+		Props.ramp(p, a, b, width, col)
+		return [a, b]
 	var ang := atan2(d.x, d.z)
 	for i in n:
 		var top := rise * (i + 1)

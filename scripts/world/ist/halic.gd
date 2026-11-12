@@ -26,6 +26,35 @@ static func catalog() -> Array:
 
 
 static func build(id: String, host: Node3D, k: float, lod: int) -> void:
+	IstHalicKit.lod = lod
+	var before := host.get_child_count()
+	_build_inner(id, host, k, lod)
+	IstHalicKit.lod = 0
+	if lod == 1:
+		for i in range(before, host.get_child_count()):
+			_strip_lod1(host.get_child(i))
+
+
+## lod 1: yalnız ana kütleler ve çatılar kalır; küçük ayrıntı, MultiMesh, alev, yazı ve çarpışma atılır.
+static func _strip_lod1(n: Node) -> void:
+	var kill: Array = []
+	for c in n.find_children("*", "", true, false):
+		if c is CollisionShape3D or c is MultiMeshInstance3D or c is Label3D:
+			kill.append(c)
+		elif c.has_meta("flame"):
+			kill.append(c)
+		elif c is MeshInstance3D:
+			var mi := c as MeshInstance3D
+			var sz := mi.mesh.get_aabb().size * mi.scale if mi.mesh != null else Vector3.ZERO
+			if mi.name != "Tile" and maxf(sz.x, maxf(sz.y, sz.z)) < 2.6:
+				kill.append(c)
+	for c in kill:
+		if is_instance_valid(c) and c.get_parent() != null:
+			c.get_parent().remove_child(c)
+			c.free()
+
+
+static func _build_inner(id: String, host: Node3D, k: float, lod: int) -> void:
 	match id:
 		"sur": IstHalicSur.build(host, k, lod)
 		"eugenios": IstHalicZincir.build(host, k, lod)

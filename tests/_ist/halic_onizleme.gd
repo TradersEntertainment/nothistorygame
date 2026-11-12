@@ -39,18 +39,20 @@ func _setup_world() -> void:
 	var sm := ProceduralSkyMaterial.new()
 	sm.sky_top_color = Color("5a8fd0")
 	sm.sky_horizon_color = Color("d8e4ee")
-	sm.ground_horizon_color = Color("c8c0a8")
+	sm.ground_horizon_color = Color("a89c80")
+	sm.ground_bottom_color = Color("6a6048")
 	sky.sky_material = sm
 	env.sky = sky
 	env.ambient_light_source = Environment.AMBIENT_SOURCE_SKY
-	env.ambient_light_energy = 0.9
+	env.ambient_light_energy = 0.45
+	env.tonemap_mode = Environment.TONE_MAPPER_FILMIC
 	var we := WorldEnvironment.new()
 	we.environment = env
 	add_child(we)
 	var sun := DirectionalLight3D.new()
 	sun.rotation_degrees = Vector3(-42, -35, 0)
 	sun.light_color = Color("ffe2b8")
-	sun.light_energy = 1.25
+	sun.light_energy = 0.95
 	sun.shadow_enabled = true
 	add_child(sun)
 	var floor_body := StaticBody3D.new()
@@ -229,22 +231,25 @@ func _audit(id: String, node: Node3D) -> void:
 	var big: Array = []
 	for m in node.find_children("*", "MeshInstance3D", true, false):
 		var mi := m as MeshInstance3D
-		if mi.mesh == null or _in_body(mi) or mi.mesh is PlaneMesh:
+		if mi.mesh == null or _in_body(mi) or mi.mesh is PlaneMesh or mi.mesh is CylinderMesh or mi.mesh is SphereMesh or mi.mesh is PrismMesh or mi.mesh is ArrayMesh:
 			continue
 		var a := mi.global_transform * mi.get_aabb()
 		if a.size.y > 2.5 and minf(a.size.x, a.size.z) > 1.5:
 			big.append(a)
 	for a: AABB in big:
+		var h0 := holes
 		var x := a.position.x + 0.25
 		while x < a.end.x:
 			var z := a.position.z + 0.25
 			while z < a.end.z:
 				var q := PhysicsRayQueryParameters3D.create(Vector3(x, a.end.y + 5.0, z), Vector3(x, a.position.y + 0.1, z))
 				var hit := space.intersect_ray(q)
-				if hit.is_empty() or hit["position"].y < a.end.y - 1.2:
+				if hit.is_empty() or (hit["position"].y < 0.3 and a.end.y > 2.5):
 					holes += 1
 				z += 0.5
 			x += 0.5
+		if holes > h0:
+			print("DELIK ", id, " aabb=", a, " n=", holes - h0)
 	# Dar aralık: y=1.0 yüksekliğinde iki katı arası 0,2-1,4 m
 	var dar := 0
 	var x2 := ab.position.x
