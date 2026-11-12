@@ -397,7 +397,7 @@ static func far_aya(parent: Node3D) -> MeshInstance3D:
 	for n in tmp.find_children("*", "MeshInstance3D", true, false):
 		if not inner.is_ancestor_of(n) or n.has_meta("exterior") or n.get_parent().has_meta("exterior"):
 			list.append(n)
-	var mi := bake(list, tmp, region("byz_aya"), parent, "FarAyasofya")
+	var mi := bake(list, tmp, region("byz_aya"), parent, "FarAyasofya", 0.4)
 	# Uzaklık katmanı: AYA_NEAR m'ye kadar dokulu, dış çizgili kabuk; ötesinde küçük parçasız, tek yüzeyli, dış çizgisiz kopya
 	# (siluet ve renk aynı; uzaktan dış çizgi zaten seçilmez, üçgen yarıya iner)
 	var lo := bake(list, tmp, region("byz_aya"), mi, "FarAyasofyaLo", 1.2, 0, true)
@@ -412,13 +412,63 @@ static func far_aya(parent: Node3D) -> MeshInstance3D:
 	# üçgenli vekil atar: yerdeki gölgenin biçimi aynı kalır
 	mi.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
 	lo.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
-	var sh := bake(list, tmp, region("byz_aya"), mi, "FarAyasofyaShadow", 5.0, 0, true)
-	sh.transform = Transform3D.IDENTITY
+	var sh := _shadow_proxy(list, tmp, region("byz_aya"), mi)
 	sh.material_override = Scenery._vc_mat()
 	sh.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_SHADOWS_ONLY
 	sh.visibility_range_end = 400.0
 	sh.set_meta("no_walk", true)
 	tmp.free()
+	return mi
+
+
+## Yalnız gölge atan çok düşük üçgenli vekil: 5 m'den büyük parçalar; küre ve silindir (kubbe, apsis, kule) seyrek ayrıtlı kopyayla,
+## ötekiler (duvar, narteks) sınır kutusuyla. Çizilmez (yalnız gölge geçişi).
+static func _shadow_proxy(list: Array, top: Node3D, xf: Transform3D, parent: Node3D) -> MeshInstance3D:
+	var st := SurfaceTool.new()
+	st.begin(Mesh.PRIMITIVE_TRIANGLES)
+	for n: MeshInstance3D in list:
+		if n.mesh == null or not n.visible:
+			continue
+		var ab := n.mesh.get_aabb()
+		var sz := ab.size * n.scale.abs()
+		if maxf(sz.x, maxf(sz.y, sz.z)) < 5.0:
+			continue
+		var rel := Transform3D.IDENTITY
+		var cur: Node = n
+		while cur != null and cur != top:
+			if cur is Node3D:
+				rel = (cur as Node3D).transform * rel
+			cur = cur.get_parent()
+		var t := xf * rel
+		var pm: Mesh
+		if n.mesh is SphereMesh:
+			var sm := (n.mesh as SphereMesh).duplicate() as SphereMesh
+			sm.radial_segments = 10
+			sm.rings = 5
+			pm = sm
+		elif n.mesh is CylinderMesh:
+			var cm := (n.mesh as CylinderMesh).duplicate() as CylinderMesh
+			cm.radial_segments = 10
+			cm.rings = 1
+			pm = cm
+		else:
+			var bm := BoxMesh.new()
+			bm.size = ab.size
+			pm = bm
+			t = t * Transform3D(Basis.IDENTITY, ab.get_center())
+		var arr := pm.surface_get_arrays(0)
+		var pv: PackedVector3Array = arr[Mesh.ARRAY_VERTEX]
+		var pn: PackedVector3Array = arr[Mesh.ARRAY_NORMAL]
+		var pidx: PackedInt32Array = arr[Mesh.ARRAY_INDEX]
+		var nb := t.basis.inverse().transposed()
+		for k in pidx:
+			st.set_normal((nb * pn[k]).normalized())
+			st.add_vertex(t * pv[k])
+	var mi := MeshInstance3D.new()
+	mi.name = "FarAyasofyaShadow"
+	st.index()
+	mi.mesh = st.commit()
+	parent.add_child(mi)
 	return mi
 
 
