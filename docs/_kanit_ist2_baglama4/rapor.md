@@ -184,6 +184,7 @@ WARN_VOID_TELEPORT|WALKTHRU|ARMAUDIT|HELDAUDIT|LOOKAUDIT backturn|JOURNEY_MISS|J
 | Bölüm 10h v2 `--ist2-deneme=10h` (7) | dönüşüm-sonra düzeltmesiyle (+ `open` son kodla) | 7/7 PASS (yasak: bkz. §3 madde 3 tablosu) |
 | Bölüm 23 v2 `--ist2-deneme=23` (6) | dönüşüm-sonra düzeltmesiyle (+ varsayılan son kodla) | 6/6 PASS, yasak 0 |
 | EN SON birleşim (`ab8054ba`: ÇEVRE-4 ve DOKU-4'ün son işleri dahil): 11, 7, 7 byz, 12b, 12b d3 (v2, bayraksız), 12b lie `--eski-dunya` | en son | 6/6 PASS, yasak 0 |
+| BEŞ DAL BİRLEŞİK son hâl (`2ca17c3e`: DOKU-4'ün son işi dahil): 12b, 11, 10h open, 7 byz (v2, bayraksız) | teslim | 4/4 PASS, yasak 0 |
 | Bölüm 10h v2 varsayılan (bayraksız, `TOLGA_ACIK`): `- shame save save1 honest open pass` | en son | 7/7 PASS, yasak 0 |
 | Bölüm 10h `--eski-dunya` (7) | en son | 7/7 PASS, yasak 0, v2 kurulmadı |
 | `flight_check` (eski camp + walls; v2 camp + walls) | son birleşik | PASS: v2'de 28 işaret, 12 form, 3 konma; 43/43 nokta; Haliç ortası su |
