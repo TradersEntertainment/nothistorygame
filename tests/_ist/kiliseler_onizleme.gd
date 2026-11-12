@@ -209,6 +209,9 @@ func _audit(id: String, k: float, bb: AABB) -> void:
 	var tris0: int = tc[0]
 	var draws0: int = tc[1]
 	var delik: int = await _delik(space, bb)
+	if args.has("dump"):
+		for bd in host.find_children("*", "StaticBody3D", true, false):
+			print("  GOVDE ", (bd as StaticBody3D).get_parent().name, " ", _shape_aabb(bd as StaticBody3D))
 	var dar := _dar(space, bb, id, k)
 	var havada := _havada(space)
 	var cl: Array = IstKiliseler.climbs(id, k)
@@ -297,8 +300,10 @@ func _dar(space: PhysicsDirectSpaceState3D, bb: AABB, id: String, k: float) -> i
 	var nx := int((bb.size.x + 2.0) / res) + 1
 	var nz := int((bb.size.z + 2.0) / res) + 1
 	var total := 0
-	var pq := PhysicsPointQueryParameters3D.new()
-	pq.collide_with_bodies = true
+	var cellq := PhysicsShapeQueryParameters3D.new()
+	var cellbox := BoxShape3D.new()
+	cellbox.size = Vector3(res * 0.9, 0.2, res * 0.9)
+	cellq.shape = cellbox
 	for base_y: float in levels:
 		var occ: Array = []
 		occ.resize(nx * nz)
@@ -306,12 +311,18 @@ func _dar(space: PhysicsDirectSpaceState3D, bb: AABB, id: String, k: float) -> i
 			for j in nz:
 				var o := false
 				for hy: float in [0.7, 1.5]:
-					pq.position = Vector3(x0 + i * res, base_y + hy, z0 + j * res)
-					if space.intersect_point(pq, 1).size() > 0:
+					cellq.transform = Transform3D(Basis.IDENTITY, Vector3(x0 + i * res, base_y + hy, z0 + j * res))
+					if space.intersect_shape(cellq, 1).size() > 0:
 						o = true
 						break
 				occ[i * nz + j] = o
-		# x yönünde ve z yönünde serbest şeritler
+		# serbest şeritleri işaretle (x ve z yönünde); ince (tek-iki satırlık) teğet yayları ele: ≥ 4 ardışık satırda sürmeli
+		var fx: Array = []
+		var fz: Array = []
+		fx.resize(nx * nz)
+		fz.resize(nx * nz)
+		fx.fill(false)
+		fz.fill(false)
 		for j in nz:
 			var last := -1
 			for i in nx:
@@ -319,7 +330,8 @@ func _dar(space: PhysicsDirectSpaceState3D, bb: AABB, id: String, k: float) -> i
 					if last >= 0 and i - last - 1 > 0:
 						var gap := (i - last - 1) * res
 						if gap >= 0.199 and gap <= 1.4:
-							total += 1
+							for q in range(last + 1, i):
+								fx[q * nz + j] = true
 					last = i
 		for i in nx:
 			var last2 := -1
@@ -328,8 +340,30 @@ func _dar(space: PhysicsDirectSpaceState3D, bb: AABB, id: String, k: float) -> i
 					if last2 >= 0 and j - last2 - 1 > 0:
 						var gap2 := (j - last2 - 1) * res
 						if gap2 >= 0.199 and gap2 <= 1.4:
-							total += 1
+							for q in range(last2 + 1, j):
+								fz[i * nz + q] = true
 					last2 = j
+		var need := int(round(0.4 / res))
+		for i in nx:
+			for j in nz:
+				if fx[i * nz + j]:
+					var run := 0
+					for dj in range(j, mini(nz, j + need)):
+						if fx[i * nz + dj]:
+							run += 1
+					if run >= need and (j == 0 or not fx[i * nz + j - 1]):
+						total += 1
+						if total <= 8:
+							print("  DAR(x): y=", base_y, " x=", x0 + i * res, " z=", z0 + j * res)
+				if fz[i * nz + j]:
+					var run2 := 0
+					for di in range(i, mini(nx, i + need)):
+						if fz[di * nz + j]:
+							run2 += 1
+					if run2 >= need and (i == 0 or not fz[(i - 1) * nz + j]):
+						total += 1
+						if total <= 8:
+							print("  DAR(z): y=", base_y, " x=", x0 + i * res, " z=", z0 + j * res)
 	return total
 
 
@@ -365,11 +399,32 @@ func _shape_aabb(body: StaticBody3D) -> AABB:
 	return out
 
 
+func _bottom_pts(body: StaticBody3D, ymin: float) -> Array:
+	var out: Array = []
+	for c in body.get_children():
+		var cs := c as CollisionShape3D
+		if cs == null or cs.shape == null:
+			continue
+		var pts: PackedVector3Array = []
+		if cs.shape is ConvexPolygonShape3D:
+			pts = (cs.shape as ConvexPolygonShape3D).points
+		elif cs.shape is BoxShape3D:
+			var h := (cs.shape as BoxShape3D).size * 0.5
+			for sx in [-1.0, 1.0]:
+				for sz in [-1.0, 1.0]:
+					pts.append(Vector3(sx * h.x, -h.y, sz * h.z))
+		for p in pts:
+			var g := cs.global_transform * p
+			if g.y <= ymin + 0.03:
+				out.append(g)
+	return out
+
+
 ## Havada duran katı parça: tabanı zeminden > 5 cm yukarıda ve altında başka katı yok.
 func _havada(space: PhysicsDirectSpaceState3D) -> int:
 	var n := 0
 	var probe := BoxShape3D.new()
-	probe.size = Vector3(0.05, 0.08, 0.05)
+	probe.size = Vector3(0.5, 0.08, 0.5)
 	for b in host.find_children("*", "StaticBody3D", true, false):
 		var body := b as StaticBody3D
 		var ab := _shape_aabb(body)
@@ -378,10 +433,17 @@ func _havada(space: PhysicsDirectSpaceState3D) -> int:
 		if ab.position.y <= 0.05:
 			continue
 		var ok := false
-		var fx: Array = [0.5, 0.25, 0.75]
+		var cands: Array = []
+		var fx: Array = [0.5, 0.02, 0.98, 0.12, 0.88, 0.3, 0.7]
 		for fa: float in fx:
 			for fb: float in fx:
-				var p := Vector3(ab.position.x + ab.size.x * fa, ab.position.y - 0.05, ab.position.z + ab.size.z * fb)
+				cands.append(Vector3(ab.position.x + ab.size.x * fa, ab.position.y - 0.05, ab.position.z + ab.size.z * fb))
+		var ctr := ab.get_center()
+		for bp in _bottom_pts(body, ab.position.y):
+			var q2 := Vector3(ctr.x + (bp.x - ctr.x) * 0.88, ab.position.y - 0.05, ctr.z + (bp.z - ctr.z) * 0.88)
+			cands.append(q2)
+		for p: Vector3 in cands:
+			if true:
 				var q := PhysicsShapeQueryParameters3D.new()
 				q.shape = probe
 				q.transform = Transform3D(Basis.IDENTITY, p)
@@ -450,5 +512,7 @@ func _walk_test(alt: Vector3, ust: Vector3) -> bool:
 					vy = JUMP_V
 		else:
 			stuck = 0
+	if not ok:
+		print("  YOL BAŞARISIZ: alt=", alt, " ust=", ust, " son=", body.global_position)
 	body.queue_free()
 	return ok
