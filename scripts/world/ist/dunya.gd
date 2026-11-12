@@ -7,6 +7,8 @@ extends Node3D
 ## Bütçe: kurulum ilk kare ≤ 2 sn (kaba ayrıntı), sonrası kare başına ≤ BUDGET_US (ayrıntı + çarpışma zaman dilimli).
 
 const BUDGET_US := 5000
+## OTURTMA: sur kuşağı (hendek bandında arazi ağı kırpılır; sur dibi rengi; kuşak yerleştirme maskesi)
+const OTURTMA := preload("res://scripts/world/ist/sur_oturtma.gd")
 ## Kare başına iş bütçesi (µs); kare alma sondası büyütebilir
 static var butce_us := BUDGET_US
 ## Çekirdek (şehir ve çevresi) parça ızgarası: GERÇEK kapsam (e −6144…+4608, n −3072…+6144 m) IstGeo.S ile dünyaya
@@ -242,6 +244,16 @@ func _ag_ilerle(st: Dictionary, bitis: int) -> Variant:
 			var base := j * W
 			for i in W:
 				hs[base + i] = IstGeo.h(x0 + i * cell, z)
+			if not OTURTMA.bantlar.is_empty():
+				# OTURTMA: hendek bandının içindeki köşeler (normal hesabında komşu sayılmaz; üçgenler kırpılır)
+				if not st.has("bant"):
+					var bm := PackedByteArray()
+					bm.resize(W * (nz + 1))
+					st["bant"] = bm
+				var bmk: PackedByteArray = st["bant"]
+				for i in W:
+					bmk[base + i] = 1 if OTURTMA.bant_ici(x0 + i * cell, z) else 0
+				st["bant"] = bmk
 			st["row"] = j + 1
 			if Time.get_ticks_usec() > bitis:
 				st["h"] = hs
@@ -269,6 +281,13 @@ func _ag_ilerle(st: Dictionary, bitis: int) -> Variant:
 				var yr := hs[j * W + mini(i + 1, nx)]
 				var yu := hs[maxi(j - 1, 0) * W + i]
 				var yd := hs[mini(j + 1, nz) * W + i]
+				if st.has("bant"):
+					# OTURTMA: hendek oyuğundaki komşu kıyı köşesinin normalini eğmesin (kıyıda koyu/açık şerit olmasın)
+					var bmk: PackedByteArray = st["bant"]
+					if bmk[j * W + maxi(i - 1, 0)] == 1: yl = y
+					if bmk[j * W + mini(i + 1, nx)] == 1: yr = y
+					if bmk[maxi(j - 1, 0) * W + i] == 1: yu = y
+					if bmk[mini(j + 1, nz) * W + i] == 1: yd = y
 				var sx := float(mini(i + 1, nx) - maxi(i - 1, 0)) * cell
 				var sz := float(mini(j + 1, nz) - maxi(j - 1, 0)) * cell
 				var nrm := Vector3(-(yr - yl) / sx, 1.0, -(yd - yu) / sz).normalized()
@@ -286,6 +305,7 @@ func _ag_ilerle(st: Dictionary, bitis: int) -> Variant:
 	if st["evre"] == 2:
 		var hs: PackedFloat32Array = st["h"]
 		var idx: PackedInt32Array = st["ix"]
+		var kes := st.has("bant")
 		while st["row"] < nz:
 			var j: int = st["row"]
 			var a := j * W
@@ -293,6 +313,17 @@ func _ag_ilerle(st: Dictionary, bitis: int) -> Variant:
 				if hs[a] < SU and hs[a + 1] < SU and hs[a + W] < SU and hs[a + W + 1] < SU:
 					a += 1
 					continue
+				if kes:
+					# OTURTMA: hendek bandına değen dörtgenin üçgenleri bandın dikdörtgenleriyle kırpılır (arazi çukurun
+					# üstünden geçmez, çukura sarkmaz; kıyıdaki yeni köşe IstGeo.h'den: harpuşta düzeyi)
+					var qx := x0 + i * cell
+					var qz := z0 + j * cell
+					var ad := OTURTMA.adaylar(qx, qz, qx + cell, qz + cell)
+					if not ad.is_empty():
+						_kirp(st, [a, a + 1, a + W], ad, x0, z0, cell, W)
+						_kirp(st, [a + 1, a + W + 1, a + W], ad, x0, z0, cell, W)
+						a += 1
+						continue
 				idx.push_back(a); idx.push_back(a + 1); idx.push_back(a + W)
 				idx.push_back(a + 1); idx.push_back(a + W + 1); idx.push_back(a + W)
 				a += 1
@@ -349,6 +380,31 @@ const SU := -1.2
 func _izgara_agi(x0: float, z0: float, cell: float, nx: int, nz: int, hs: PackedFloat32Array, _etek: bool) -> ArrayMesh:
 	var st := {"x0": x0, "z0": z0, "cell": cell, "n": nx, "nz": nz, "h": hs}
 	return _ag_ilerle(st, 1 << 62)
+
+
+## OTURTMA: tek üçgeni hendek bandından kırpar; kalan çokgenler yelpaze üçgenlenir (yeni köşeler st dizilerine eklenir)
+func _kirp(st: Dictionary, tri: Array, aday: Array, x0: float, z0: float, cell: float, W: int) -> void:
+	var verts: PackedVector3Array = st["v"]
+	var norms: PackedVector3Array = st["nr"]
+	var cols: PackedColorArray = st["c"]
+	var idx: PackedInt32Array = st["ix"]
+	var tv: Array = []
+	for k: int in tri:
+		var v: Vector3 = verts[k]
+		tv.append([k, Vector2(v.x, v.z)])
+	var ek := func(p: Array, q: Array, t: float) -> Array:
+		var a: int = p[0]
+		var b: int = q[0]
+		var xz := (p[1] as Vector2).lerp(q[1], t)
+		verts.push_back(Vector3(xz.x, IstGeo.h(xz.x, xz.y), xz.y))
+		norms.push_back((norms[a] as Vector3).lerp(norms[b], t).normalized())
+		cols.push_back((cols[a] as Color).lerp(cols[b], t))
+		return [verts.size() - 1, xz]
+	var parcalar: Array = OTURTMA.kes_ucgen(tv, aday, ek)
+	for pc: Array in parcalar:
+		for m in range(1, pc.size() - 1):
+			idx.push_back(int(pc[0][0])); idx.push_back(int(pc[m][0])); idx.push_back(int(pc[m + 1][0]))
+	st["v"] = verts; st["nr"] = norms; st["c"] = cols; st["ix"] = idx
 
 
 ## ZEMİN (scripts/level/zemin.gd): v2 arazisinin malzemesi (Zemin.v2_malzeme); eski bölümlerle paylaşılmaz (deniz
@@ -446,6 +502,10 @@ func _renk(x: float, z: float, y: float, egim: float) -> Color:
 	# kıyı kumu (gerçek 0–3 m)
 	if yr < 3.2:
 		c = C_KUM.lerp(c, smoothstep(1.2, 3.2, yr))
+	# OTURTMA: sur kuşağında arazinin rengi sura yaklaşırken taş tozuna / çıplak toprağa döner (kuşak dışına yumuşak geçiş)
+	var kr: Array = OTURTMA.renk(x, z)
+	if float(kr[1]) > 0.0:
+		c = c.lerp(kr[0], float(kr[1]))
 	# ışıkta (güneş + gök ortamı + ground.gdshader'ın ılık çarpanı) açık renkler soluk/süt rengi görünüyordu:
 	# albedo biraz koyulaşır, doygunluk artar (kalite notu 3: canlı, sıcak, okunur)
 	return Color.from_hsv(c.h, clampf(c.s * 1.25, 0.0, 1.0), c.v * 0.8)
@@ -591,6 +651,9 @@ func _karsi_kiyilar() -> void:
 				var pz := cz + rng.randf_range(-17.0, 17.0)
 				if IstGeo.su(px, pz):
 					continue
+				# OTURTMA: hendekte ve sur dibindeki 12 m'lik kuşakta yabancı süs çıkmaz (yerleştirme maskesi)
+				if OTURTMA.kusakta(px, pz, 12.0 + 4.0 * sc_pay(o[0]), OTURTMA.ATES):
+					continue
 				var y := IstGeo.h(px, pz)
 				var sc: float = o[1]
 				var tf := Transform3D(Basis(Vector3.UP, rng.randf() * TAU).scaled(Vector3.ONE * sc), Vector3(px, y - 0.2, pz))
@@ -627,6 +690,31 @@ func _karsi_kiyilar() -> void:
 			mi.visibility_range_end = 4200.0 if t in ["agac", "ev", "servi"] else 2400.0
 			add_child(mi)
 	print("ISTDUNYA karsi_kiyilar oge=%d kare=%d ms=%.0f" % [_karsi_ogeler, karsi_sayim.size(), (Time.get_ticks_usec() - t0) / 1000.0])
+
+
+## OTURTMA: sur kuşağı kurulduktan sonra (IstSehir) daha önce konmuş karşı kıyı öğelerinden kuşağa düşenler kaldırılır
+## (örnek ölçeği sıfır; öğe kendisi değişmez). Dönen: kaldırılan öğe sayısı
+func kusak_maskele() -> int:
+	var n := 0
+	for c in get_children():
+		if not (c is MultiMeshInstance3D) or not String(c.name).begins_with("Karsi_"):
+			continue
+		var mm := (c as MultiMeshInstance3D).multimesh
+		var t := String(c.name).get_slice("_", 1)
+		for k in mm.instance_count:
+			var xf := mm.get_instance_transform(k)
+			if xf.basis.get_scale().x < 0.001:
+				continue
+			if OTURTMA.kusakta(xf.origin.x, xf.origin.z, 12.0 + 4.0 * sc_pay(t), OTURTMA.ATES):
+				mm.set_instance_transform(k, Transform3D(Basis.from_scale(Vector3.ONE * 0.0001), xf.origin - Vector3(0, 50, 0)))
+				n += 1
+	print("OTURTMA maske karsi=%d" % n)
+	return n
+
+
+## OTURTMA: büyük öğenin (ağaç, ev) taç payı: kuşak maskesine eklenir
+static func sc_pay(t: String) -> float:
+	return 1.0 if t in ["agac", "ev", "servi"] else 0.0
 
 
 ## Düşük çokgen öğe ağları (köşe rengi × örnek rengi)

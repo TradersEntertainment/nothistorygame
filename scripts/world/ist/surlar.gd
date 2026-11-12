@@ -22,6 +22,8 @@ const C_EARTH := Color("7a6a4c")
 const C_GRASS := Color("6a7b3c")
 const ZEMIN := preload("res://scripts/world/ist/sur_zemin.gd")
 const KULE := preload("res://scripts/world/ist/sur_kule.gd")
+const OTURTMA := preload("res://scripts/world/ist/sur_oturtma.gd")
+const OTAG := preload("res://scripts/world/ist/sur_oturtma_ag.gd")
 const C_DARK := Color("1c1814")
 
 const PARAPET_H := 1.2
@@ -340,6 +342,8 @@ static func _inner_tower(p: Node3D, d: Dictionary, tw: Dictionary, lod: int, _me
 	var tur: int = [0, 1, 0, 2][(sira + int(o.get("tohum_k", 0))) % 4]
 	if buyuk:
 		tur = 1 if bool(o.get("mermer", false)) == false and String(o.get("ad", "")) in ["AzizRomanos", "Kharisios"] else 0
+	if o.has("_kuleler"):
+		(o["_kuleler"] as Array).append([KULE.plan_ic(cx, float(tw["w"]), -T * 0.5 - 0.15, T * 0.5 + float(tw["p"]), tur), 0.0, T * 0.5, 1.0])
 	KULE.ic_kule(p, {
 		"cx": cx, "w": float(tw["w"]), "zb": -T * 0.5 - 0.15, "zf": T * 0.5 + float(tw["p"]), "zi1": T * 0.5,
 		"yf": float(d["HW"]) + 0.03, "HT": float(d["HT"]), "yc": float(d["HT"]) - 0.5, "tur": tur,
@@ -353,8 +357,10 @@ static func _outer_tower(p: Node3D, d: Dictionary, cx: float, lod: int, _mer: Ar
 		return
 	var zo0: float = d["zo0"]
 	var zo1: float = d["zo1"]
+	if o.has("_kuleler"):
+		(o["_kuleler"] as Array).append([KULE.plan_dis(cx, float(d["OTW"]), zo0, zo1 + float(d["OTP"]), (sira + int(absf(cx))) % 2, 7), float(d.get("dis_dy", 0.0)), zo1, 1.0])
 	KULE.dis_kule(p, {
-		"cx": cx, "w": float(d["OTW"]), "z0": zo0, "zf": zo1 + float(d["OTP"]), "y0": float(d.get("dis_dy", 0.0)) - 0.5,
+		"cx": cx, "w": float(d["OTW"]), "z0": zo0, "zf": zo1 + float(d["OTP"]), "y0": float(d.get("dis_dy", 0.0)) - 2.0,
 		"OH": float(d["OH"]), "OTH": float(d["OTH"]), "tur": (sira + int(absf(cx))) % 2, "tohum": int(absf(cx * 11.3)) + sira * 17,
 		"hasar": float(o.get("hasar", 1.0)), "tas": (o.get("tas", C_STONE) as Color).darkened(0.04),
 		"gap_z": (zo0 + zo1) * 0.5, "gap_w": 1.8,
@@ -381,6 +387,10 @@ static func _dunya_xf(n: Node3D) -> Array:
 ## Dış bölgenin (hendek kuşağı) kademesi: hendeğin dış yakasında arazi dilim tabanından ne kadar aşağıda (ortanca;
 ## 0 … −14 m; 1,5 m'den azsa 0). xf: dilim kökünün dünya dönüşümü.
 static func dis_dy(xf: Transform3D, L: float, k: float) -> float:
+	# OTURTMA: kuşak arazisi düzlenmeden önce ölçülüp kaydedilen kademe (düzlenmiş araziden yeniden ölçülmez: tek kaynak)
+	var kd := OTURTMA.dy_bul(xf.origin)
+	if not is_nan(kd):
+		return kd
 	var d := dims(k)
 	var hs: Array = []
 	for t: float in [-0.35, 0.0, 0.35]:
@@ -415,6 +425,7 @@ static func _run(host: Node3D, L: float, k: float, lod: int, seed: int, o: Dicti
 	var gh: float = minf(float(o.get("gh", 3.6)), OH - 1.0)
 	o = o.duplicate()
 	o["gh"] = gh
+	o["_kuleler"] = []
 	var closed: bool = bool(o.get("kapali", false))
 	var open_gate := gw > 0.0 and not closed
 	var stone: Color = o.get("tas", C_STONE)
@@ -423,10 +434,13 @@ static func _run(host: Node3D, L: float, k: float, lod: int, seed: int, o: Dicti
 	var x1 := L * 0.5
 	var apr := 12.0
 	# ---- zemin: şehir önü kaldırımı, sur altı, peribolos, dış sur altı, teras
-	_s(root, Vector3(x0, -3.0, zi0 - apr), Vector3(x1, 0, zi0), Color("8a7a60"), "cobble", lod)
-	_s(root, Vector3(x0, -1.5, zi0), Vector3(x1, 0, zi1), stone.darkened(0.2), "dirt", lod)
-	_s(root, Vector3(x0, -3.0, zi1), Vector3(x1, 0, zo0), C_EARTH, "dirt", lod)
-	_s(root, Vector3(x0, -1.5, zo0), Vector3(x1, 0, zo1), stone.darkened(0.2), "dirt", lod)
+	# OTURTMA: zemin artık arazinin kendisi (kuşak düzlük kayıtları: arazi dilim tabanında). Şehir önü kaldırımı, peribolos ve
+	# teras levhaları kalktı (düz gri levha / kalınlığı görünen yatay yüzey olmasın); yerlerinde arazinin 0,12 m altında
+	# yalnız dikiş arkalığı. Duvar altları 3 m'lik temel (arazi dilim ucunda komşu tabana geçerken alt kenar görünmesin).
+	_s(root, Vector3(x0, -3.0, zi0 - 4.0), Vector3(x1, -0.12, zi0), Color("7a6650"), "dirt", lod)
+	_s(root, Vector3(x0, -3.5, zi0), Vector3(x1, 0, zi1), stone.darkened(0.2), "dirt", lod)
+	_s(root, Vector3(x0, -3.0, zi1), Vector3(x1, -0.12, zo0), C_EARTH, "dirt", lod)
+	_s(root, Vector3(x0, -3.5, zo0), Vector3(x1, 0, zo1), stone.darkened(0.2), "dirt", lod)
 	# SUR-4: dış bölge (parateikhion, hendek, set) araziye iner: dilim tabanı iç surun hattındaki ortanca yükseklikte;
 	# arazi dışa doğru düşüyorsa hendek kuşağı 6 m'lik oyuk yerine yerden yüksek bir set üstünde kalıyordu (sahip_03).
 	# Dış sur ve kuleleri bu kademe kadar aşağı uzar (dışarıdan bakınca daha yüksek dış sur; içte peribolos aynı).
@@ -439,11 +453,11 @@ static func _run(host: Node3D, L: float, k: float, lod: int, seed: int, o: Dicti
 	dis.position.y = dy
 	root.add_child(dis)
 	if dy < 0.0:
-		_s(root, Vector3(x0, dy - 0.5, zo0), Vector3(x1, 0.05, zo1), stone.darkened(0.06), "ashlar", lod, true)
+		_s(root, Vector3(x0, dy - 2.5, zo0), Vector3(x1, 0.05, zo1), stone.darkened(0.06), "ashlar", lod, true)
 		lay["dis_dy"] = dy
 		d["dis_dy"] = dy
 	# parateikhion terası: çiğnenmiş toprak (SUR-4: yeşil kutu yamaçta keskin kenarlı prizma okunuyordu; taban derin)
-	_s(dis, Vector3(x0, -4.0, zo1), Vector3(x1, 0, zm0 - 0.9), Color("857158"), "dirt", lod)
+	_s(dis, Vector3(x0, -4.0, zo1), Vector3(x1, -0.12, zm0 - 0.9), Color("857158"), "dirt", lod)
 	# ---- hendek
 	if o.get("hendek", true):
 		_build_moat(dis, lay, lod, stone, open_gate, mer, o)
@@ -541,6 +555,28 @@ static func _run(host: Node3D, L: float, k: float, lod: int, seed: int, o: Dicti
 		# SUR-5: MultiMesh dişleri sur taşı gölgelendiricisinde dokusuz BEYAZ KÜP okunuyordu (kara_03_ust_a/b; sonda
 		# --set=kimust: SurDilimi/@MultiMeshInstance3D ölçek 1,0×0,6×0,45). Artık pişen gerçek ağ: boyu oynak, kırık/eksik.
 		KULE.disler_ag(root, mer, stone.darkened(0.06), int(lay["rng_seed"]))
+	# ---- OTURTMA: sur dibi temas kuşağı (etek, dip bandı, döküntü ve bitki)
+	var kes := {}
+	var kp: Array = [[-gw * 0.5 - 0.6, gw * 0.5 + 0.6]] if open_gate else []
+	kes["kapi"] = kp
+	kes["sehir"] = kp + ([[float(lay["in_x0"]) - 1.0, float(lay["in_x1"]) + 1.8]] if lay.has("in_x0") else [])
+	kes["peri"] = kp + ([[float(lay["out_x0"]) - 1.0, float(lay["out_x1"]) + 1.4]] if lay.has("out_x0") else [])
+	var ki: Array = []
+	for tw in itx:
+		ki.append([float(tw["x"]) - float(tw["w"]) * 0.5, float(tw["x"]) + float(tw["w"]) * 0.5])
+	var kd: Array = []
+	for cx4 in otx:
+		kd.append([float(cx4) - float(d["OTW"]) * 0.5, float(cx4) + float(d["OTW"]) * 0.5])
+	var gk: Array = []
+	for gx in gedikler:
+		gk.append([float(gx) - GEDIK_W * 0.5 - 1.0, float(gx) + GEDIK_W * 0.5 + 1.0])
+	kes["kule_ic"] = ki
+	kes["kule_dis"] = kd
+	kes["gedik"] = gk
+	kes["peri"] = (kes["peri"] as Array) + gk
+	if lay.has("ramp_a_x"):
+		kes["para"] = kp + [[float(lay["ramp_a_x"]) - 2.6, float(lay["ramp_a_x"]) + 1.6]] + gk
+	OTAG.kur(root, lay, lod, xw, dy, o["_kuleler"], kes, bool(o.get("hendek", true)))
 	# ---- kapı ve ayrıntı
 	if gw > 0.0:
 		IstSurlarKapi.build(root, lay, lod, o)
@@ -600,8 +636,8 @@ static func _build_moat(root: Node3D, lay: Dictionary, lod: int, stone: Color, o
 	_s(root, Vector3(x0, -MD - 0.4, zm1), Vector3(x1, 0, zm1 + 0.9), scarp, "ashlar", lod, true)
 	carp_only = false
 	ZEMIN.hendek_kesit(root, x0, x1, zm0 - 0.9, zm1 + 0.9, MD, lod, int(lay["rng_seed"]), pencere)
-	# dış yaka: düz yeşil kutu yerine düzensiz tepeli, dışa eğimli toprak set (SUR-4, sahibin "yeşil alan yükseltileri")
-	ZEMIN.set_(root, x0, x1, zm1 + 0.9, lod, int(lay["rng_seed"]), pencere)
+	# dış yaka: OTURTMA — ayrı toprak set ağı (arazinin üstüne konmuş ikinci zemin, kendi renkleri) kalktı; dış omuz
+	# arazinin kendisi (kuşak düzlük kaydı: hendek kıyısında harpuşta düzeyi, 12 m'de doğal araziye yumuşak geçiş)
 	# parateikhion: terasın ucunda alçak sur; rampa başında ve kapı önünde geçit
 	var pcut: Array = [[float(lay["ramp_a_x"]) - 2.2, float(lay["ramp_a_x"]) + 1.2]]
 	if gw > 0.0:

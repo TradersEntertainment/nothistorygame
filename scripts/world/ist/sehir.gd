@@ -17,6 +17,7 @@ const DIR := "res://scripts/world/ist/"
 const ESER := preload("res://scripts/world/ist/sehir_eser.gd")
 const SURDOKU := preload("res://scripts/world/ist/sur_doku.gd")
 const SURKULE := preload("res://scripts/world/ist/sur_kule.gd")
+const OTURTMA := preload("res://scripts/world/ist/sur_oturtma.gd")
 const SELF := ["sehir", "evler"]
 ## Uzaklık eşikleri (parçanın yarıçapı eklenir): lod 0 < R0, lod 1 < R1, ötesi lod 2
 const R0 := 90.0
@@ -2324,7 +2325,15 @@ func _hatlar_v2() -> void:
 		_basamaklar(ad, String(cfg["kur"]))
 		_kose_dolgu(ad, String(cfg["kur"]))
 		if ad == "kara_suru":
-			_hendek_oy(ad)
+			# OTURTMA: sur kuşağının arazisi tek kaynaktan (düzlük kayıtları), hendek bandında arazi ağı kesilir
+			# (SUR-4'ün hendek oyması _hendek_oy yerine; dış kademe kaydı dilimlerin kendi kurulumunca okunur)
+			OTURTMA.temizle()
+			var alan := OTURTMA.kur(self, ad)
+			var dn := get_parent()
+			if dn != null and dn.has_method("yenile"):
+				dn.call("yenile", alan)
+			if dn != null and dn.has_method("kusak_maskele"):
+				dn.call("kusak_maskele")
 			_ates_alani(pl)
 	# Bozdoğan (iki tepe arası, altından Mese kolu geçer)
 	var bz := IstGeo.yol("bozdogan")
@@ -2454,14 +2463,18 @@ func _kose_dolgu(ad: String, kur: String) -> void:
 		"kara":
 			var d := IstSurlar.dims(K_SUR)
 			var MD := float(d["MD"])
-			bands = [[float(d["zi0"]), float(d["zi1"]), -3.0, "walk", Color("cdbd9e"), "ashlar"],
-				[float(d["zi1"]), float(d["zo0"]), -3.0, 0.0, IstSurlar.C_EARTH, "dirt"],
-				[float(d["zo0"]), float(d["zo1"]), -3.0, float(d["OH"]), Color("c5b597"), "ashlar"],
-				[float(d["zo1"]), float(d["zm0"]) - 1.8, -4.0, 0.0, Color("857158"), "dirt"],
+			# OTURTMA: toprak şeritleri (peribolos, teras) arazinin 0,12 m altında: zemin arazinin kendisi (tek yer); şerit
+			# yalnız kırpma dikişinin arkasını kapatır. Duvar şeritleri temel payıyla 3 m aşağı iner.
+			bands = [[float(d["zi0"]), float(d["zi1"]), -3.5, "walk", Color("cdbd9e"), "ashlar"],
+				[float(d["zi1"]), float(d["zo0"]), -3.0, -0.12, IstSurlar.C_EARTH, "dirt"],
+				[float(d["zo0"]), float(d["zo1"]), -3.5, float(d["OH"]), Color("c5b597"), "ashlar"],
+				[float(d["zo1"]), float(d["zm0"]) - 1.8, -4.0, -0.12, Color("857158"), "dirt"],
 				[float(d["zm0"]) - 1.8, float(d["zm0"]) - 0.9, -1.0, 1.6, Color("b5a585"), "ashlar"],
-				[float(d["zm0"]) - 0.9, float(d["zm0"]), -MD - 0.4, 0.0, Color("a89878"), "ashlar"],
-				[float(d["zm0"]), float(d["zm1"]), -MD - 1.2, -MD, SURZEMIN.CAMUR, "dirt"],
-				[float(d["zm1"]), float(d["zm1"]) + 0.9, -MD - 0.4, 0.0, Color("a89878"), "ashlar"]]
+				# OTURTMA: hendek şeritleri (dik prizma, düz tek renk taban) görünen yüz değil: üstlerinde dilimlerle aynı
+				# hendek kesiti (harpuşta, taş örgü yüz, çamur taban) kurulur; prizmalar kesitin altında yalnız arka dolgu
+				[float(d["zm0"]) - 0.9, float(d["zm0"]), -MD - 0.4, -0.35, Color("a89878"), "ashlar"],
+				[float(d["zm0"]), float(d["zm1"]), -MD - 1.2, -MD - 0.4, SURZEMIN.CAMUR, "dirt"],
+				[float(d["zm1"]), float(d["zm1"]) + 0.9, -MD - 0.4, -0.35, Color("a89878"), "ashlar"]]
 		"blakherna":
 			bands = [[-0.5, 4.6, -3.0, "walk", Color("cdbd9e"), "ashlar"]]
 		_:
@@ -2537,16 +2550,43 @@ func _kose_dolgu(ad: String, kur: String) -> void:
 				yb0 = minf(minf(dya, dyb), 0.0) - 0.5
 			polys.append([q, yb0, yt, bd[4], bd[5]])
 			bi += 1
+		var hk_y := (minf(dya, dyb) + maxf(dya, dyb)) * 0.5
+		var hk_iz := izp.duplicate()
+		var hk_cen := cen
+		var hk_t := i * 7 + 3
 		var mk := func(n: Node3D, lod: int) -> void:
 			for pq: Array in polys:
 				for qq: PackedVector2Array in pq[0]:
 					_prizma(n, qq, float(pq[1]), float(pq[2]), pq[3], String(pq[4]), lod)
+			if kur == "kara" and lod <= 1:
+				_kose_hendek(n, hk_iz, hk_cen, hk_y, lod, hk_t)
 		var it := _v2_item("kdolgu_%s_%d" % [ad, i], Vector3(cen.x, y0, cen.y), 0.0, maxf(pa.distance_to(pb), 6.0) + 30.0, mk, {}, true)
 		it["hat"] = ad
 		it["walk"] = wtop
 		it["kd_s"] = Vector2(float(A["s1"]), float(B["s0"]))
 		hat_items.append(it)
 		kose_dolgu_n += 1
+
+
+## OTURTMA: köşe dolgusunda hendek kesiti (dilimlerinkiyle aynı: SURZEMIN.hendek_kesit) — izp alt parçaları boyunca
+func _kose_hendek(n: Node3D, izp: Array, cen: Vector2, y: float, lod: int, tohum: int) -> void:
+	var d := IstSurlar.dims(K_SUR)
+	var zm0 := float(d["zm0"])
+	var zm1 := float(d["zm1"])
+	for k in izp.size() - 1:
+		var P0: Vector2 = izp[k][0]
+		var P1: Vector2 = izp[k + 1][0]
+		var L := P0.distance_to(P1)
+		if L < 0.05:
+			continue
+		var ex := (P1 - P0) / L
+		var N: Vector2 = (izp[k][1] as Vector2).normalized()
+		var ez := (N - ex * N.dot(ex)).normalized()
+		var nd := Node3D.new()
+		nd.transform = Transform3D(Basis(Vector3(ex.x, 0, ex.y), Vector3.UP, Vector3(ez.x, 0, ez.y)), Vector3(P0.x - cen.x, y, P0.y - cen.y))
+		n.add_child(nd)
+		# alt parçanın iki ucunda gönye payı (komşu parçayla aradaki kama kapanır)
+		SURZEMIN.hendek_kesit(nd, -0.6, L + 0.6, zm0 - 0.9, zm1 + 0.9, float(d["MD"]), lod, tohum + k)
 
 
 ## Hat üstünde yay boyu sv'deki nokta, yön ve gönye çarpanı (kırık noktasında dış öteleme 1/cos(yarım açı))

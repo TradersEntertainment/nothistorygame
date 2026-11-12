@@ -229,7 +229,7 @@ static func ates_alani(parent: Node3D, pl: PackedVector2Array, dis: Callable, ba
 		for j in nz:
 			var dz := bas + j * ATES_ADIM + (_hash(si, j) - 0.5) * 1.5
 			var w := p + o * dz
-			var y := IstGeo.h(w.x, w.y) + 0.12 + 0.04 * j
+			var y := IstGeo.h(w.x, w.y) + 0.12 + 0.04 * j      # (OTURTMA: örtü ağı kurulmuyor; rengi arazinin köşe rengi)
 			row.append(Vector3(w.x, y, w.y))
 			var r := IstGeo.real(w.x, w.y)
 			var g := sin(r.x * 0.031 + r.y * 0.017) * sin(r.x * 0.013 - r.y * 0.029)
@@ -263,7 +263,7 @@ static func ates_alani(parent: Node3D, pl: PackedVector2Array, dis: Callable, ba
 		if rng.randf() < 0.75:
 			var dz2 := bas + rng.randf_range(2.0, ATES_EN - 4.0)
 			var w2 := p + o * dz2 + d * rng.randf_range(-2.0, 2.0)
-			var y2 := IstGeo.h(w2.x, w2.y) + 0.14 + 0.04 * dz2 / ATES_ADIM
+			var y2 := IstGeo.h(w2.x, w2.y) + 0.03
 			var rr := rng.randf_range(1.2, 3.0)
 			cukur.append(Transform3D(Basis.from_euler(Vector3(0, rng.randf() * TAU, 0)).scaled(Vector3(rr * 2.0, 0.06, rr * 1.7)), Vector3(w2.x, y2, w2.y)))
 			cukur_c.append(Transform3D(Basis.from_euler(Vector3(0, rng.randf() * TAU, 0)).scaled(Vector3(rr * 2.6, 0.35, rr * 2.3)), Vector3(w2.x, y2 - 0.12, w2.y)))
@@ -295,13 +295,10 @@ static func ates_alani(parent: Node3D, pl: PackedVector2Array, dis: Callable, ba
 			else:
 				var gr2 := rng.randf_range(0.3, 0.5)
 				tas.append(Transform3D(Basis.IDENTITY.scaled(Vector3.ONE * gr2 * 2.0), Vector3(w3.x, y3 + gr2 * 0.6, w3.y)))
-	var mi := MeshInstance3D.new()
-	mi.name = "AtesAlaniOrtu"
-	mi.mesh = st.commit()
-	mi.material_override = _mat()
-	mi.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
-	mi.set_meta("no_walk", true)
-	root.add_child(mi)
+	# OTURTMA: arazinin 0,12–0,6 m üstünde yüzen ikinci zemin ağı (AtesAlaniOrtu) KALKTI: sur dışında "ayrı iki model"
+	# görünümünün ve büyük düz renkli üçgenlerin kaynağıydı. Ateş alanının rengi artık arazinin köşe rengi (sur_oturtma.gd
+	# _ates_renk: çiğnenmiş toprak, ot lekeleri, devriye izi); döküntü araziye oturur.
+	st.clear()
 	var mm: Array = []
 	if cukur_c.size() > 0:
 		mm.append(Scenery.scatter(root, _kure(), cukur_c, [], Props.mat(TOPRAK2.darkened(0.1), 0.0, false, "", false)))
@@ -404,9 +401,12 @@ static func hendek_kesit(p: Node3D, x0: float, x1: float, z0: float, z1: float, 
 	var n := maxi(1, int(ceil((x1 - x0) / adim)))
 	var W := z1 - z0
 	# kesit (z, y): taş iç yaka 0 → 1,1 (şev), dip köşesi yuvarlak, taban, karşı yaka simetrik
-	var kes := [[0.0, 0.05], [0.55, -md * 0.5], [1.05, -md + 0.9], [1.6, -md + 0.32], [2.6, -md + 0.08], [W * 0.5, -md - 0.12],
-		[W - 2.6, -md + 0.06], [W - 1.6, -md + 0.3], [W - 1.05, -md + 0.9], [W - 0.55, -md * 0.5], [W, 0.05]]
-	var tas_j := {0: true, 1: true, 2: true, 8: true, 9: true}       # j..j+1 bandı taş kaplama
+	# OTURTMA: iki yakada 0,45 m'lik harpuşta (arazi düzeyinin 8–13 cm üstü; arazi ona yaslanır, kırpılmış arazi kenarı
+	# tam harpuştanın dış ucunda biter), sonra taş örgü yüz, yuvarlak dip köşesi, çamur taban
+	var kes := [[0.0, 0.08], [0.45, 0.08], [0.6, -0.2], [1.0, -md * 0.5], [1.5, -md + 0.9], [2.05, -md + 0.32], [3.0, -md + 0.08],
+		[W * 0.5, -md - 0.12], [W - 3.0, -md + 0.06], [W - 2.05, -md + 0.3], [W - 1.5, -md + 0.9], [W - 1.0, -md * 0.5],
+		[W - 0.6, -0.2], [W - 0.45, 0.08], [W, 0.08]]
+	var tas_j := {0: true, 1: true, 2: true, 3: true, 10: true, 11: true, 12: true, 13: true}       # j..j+1 bandı taş kaplama
 	var rows: Array = []
 	var crow: Array = []
 	var kay: Array = []          # bu x'te karşı yaka kaymış mı (0..1)
@@ -424,11 +424,11 @@ static func hendek_kesit(p: Node3D, x0: float, x1: float, z0: float, z1: float, 
 			var z: float = z0 + float(kes[j][0])
 			var y: float = kes[j][1]
 			var hz := _hash(tohum * 7 + i, j * 3 + 1)
-			if j >= 3 and j <= 7:
+			if j >= 5 and j <= 9:
 				y += (hz - 0.5) * 0.22
-			if j == 0 or j == kes.size() - 1:
-				y += (hz - 0.5) * 0.18                   # üst kenar düzensiz
-			if kk > 0.0 and j >= 7:
+			if j <= 1 or j >= kes.size() - 2:
+				y += hz * 0.05                           # harpuşta: hep arazinin üstünde, hafif düzensiz
+			if kk > 0.0 and j >= 9 and j <= kes.size() - 3:
 				# kayan toprak: karşı yaka eğimi yatıklaşır (1:1,6), dibe yayılır
 				var zt := float(kes[j][0])
 				var t := clampf((zt - (W - 6.0)) / 6.0, 0.0, 1.0)
@@ -436,9 +436,9 @@ static func hendek_kesit(p: Node3D, x0: float, x1: float, z0: float, z1: float, 
 				z = lerpf(z, z0 + lerpf(W - 6.0, W, t), kk * 0.5)
 			r.append(Vector3(x, y, z))
 			var col := CAMUR.lerp(TOPRAK2, hz * 0.6)
-			if j >= 4 and j <= 6 and hz > 0.7:
+			if j >= 6 and j <= 8 and hz > 0.7:
 				col = col.lerp(Color("4a4a3c"), 0.5)        # ıslak çamur
-			if kk > 0.3 and j >= 7:
+			if kk > 0.3 and j >= 9:
 				col = TOPRAK.lerp(OT, hz * 0.3)
 			cr.append(col)
 		rows.append(r)
@@ -457,13 +457,13 @@ static func hendek_kesit(p: Node3D, x0: float, x1: float, z0: float, z1: float, 
 		for j in kes.size() - 1:
 			var vv := [rows[i][j], rows[i][j + 1], rows[i + 1][j], rows[i + 1][j], rows[i][j + 1], rows[i + 1][j + 1]]
 			var nv := [nrm[i][j], nrm[i][j + 1], nrm[i + 1][j], nrm[i + 1][j], nrm[i][j + 1], nrm[i + 1][j + 1]]
-			var tas := tas_j.has(j) and not (j >= 7 and (float(kay[i]) > 0.25 or float(kay[i + 1]) > 0.25))
+			var tas := tas_j.has(j) and not (j >= 9 and j <= 12 and (float(kay[i]) > 0.25 or float(kay[i + 1]) > 0.25))
 			if tas:
 				# taş kaplama: yüz normali (düz duvar), beyaz köşe rengi; onarım/eksik yerler koyu
 				var hh := _hash(tohum + i * 5, j)
 				var cc := Color.WHITE if hh > 0.12 else Color(0.7, 0.68, 0.64)
 				var fn: Vector3 = ((vv[1] as Vector3) - (vv[0] as Vector3)).cross((vv[2] as Vector3) - (vv[0] as Vector3)).normalized()
-				var hedef := Vector3(0, 0.3, 1.0 if j < 5 else -1.0)
+				var hedef := Vector3(0, 0.3, 1.0 if j < 7 else -1.0)
 				if fn.dot(hedef) < 0.0:
 					fn = -fn
 				_ucgen_n(tst, vv, [cc, cc, cc, cc, cc, cc], [fn, fn, fn, fn, fn, fn])
