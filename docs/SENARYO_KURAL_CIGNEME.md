@@ -148,3 +148,49 @@ Otomatik test için bölümün güvenli bir anına `if GameState.autotest: await
 
 Kaçmayan, vurmayan oyuncu için hiçbir şey değişmez: izleyici yalnız alandan çıkınca ya da önünde biri varken tekmeye
 basınca çalışır; eski varyantların hepsi aynı sonuçla geçer (§ rapor).
+
+## 6. Hükümdara el kaldırmak: VURAMAZ → SÜRGÜN (sahibin kararı, 12 Kasım, 2. tur)
+
+Sahibin sözü: "hükümdara vurmaya kalkarsa vuramasın bir şekilde: ya hükümdar ya da oradaki askerler düşürsün bizi;
+hükümdarların hamle yapması havalı durabilir. Sonrasında bizi karşı tarafa sürsünler: surların dışına, ordugâha doğru,
+bayraksız; ya da tersinde surlara doğru. Ceza karşı tarafa geçmek; karşı tarafa geçince de o tarihten devam."
+Sorusu: "peki hangi bölümlerde elimizde kılıç vs varken hükümdara yaklaşma şansımız var ki?"
+
+**Kısa cevap:** bugün (bu turdan önce) hemen hiçbirinde. Kılıç yalnız dövüş/talim düzeneğinde elde ve o sırada Kural
+izleyicisi kapalı; hükümdarın karşımızda durduğu sahnelerin çoğu diyalog kilidinde (oyuncu donuk, tekme girdisi yok).
+Eski paketin hükümdar yolu (§2e, "bölüm baştan") yalnız 6. bölümün Bizans yolunda (şehirde İmparator serbest
+dolaşımdayken) gerçekten tetiklenebiliyordu. Bu tur fırsat bilerek AÇILDI (aşağıda "Açıldı mı").
+
+### 6.1 Fırsat tablosu (hükümdarın bulunduğu her bölüm)
+
+Sütunlar: **Uzaklık** hükümdarın oyuncuya en yakın olduğu serbest an (koddaki yerleşimden; ölçülen değerler §6.6'da
+otomatik test sondasından) · **Serbest** oyuncu hükümdarın yanındayken yürüyebiliyor mu · **El** o an elinde ne var ·
+**Bugün** bu turdan önce vurma/tekme girdisi işleniyor muydu · **Kilit** hükümdarlı anlar diyalog kilidinde mi ·
+**Açıldı mı** bu turda.
+
+| Bölüm | Hükümdar | Taraf · tarih | Uzaklık | Serbest | El | Bugün | Kilit | Açıldı mı |
+|---|---|---|---|---|---|---|---|---|
+| 6 (B yolu, şehir) | İmparator (byz_city, konuşulabilir) | Bizans · 23 Nisan (Perde II) | 1–2 m (yanına yürünür) | evet | boş / eşya | **evet** (Kural bağlı: Büro iadesi) | konuşma anında | EVET (serbest an + konuşma) · kuşatma öncesi kuralı |
+| 7 (Niko/şehir) | İmparator (byz_city) | Bizans · 24 Nisan (Perde II) | 1–2 m | evet (Tolga kısmı) | boş / eşya | hayır | konuşma anında | EVET · kuşatma öncesi kuralı (Nihat kısmında kapalı) |
+| 10 (otağ kapısı) | Fatih (perde arkasında gölge; içeride ara sahne) | Osmanlı · Perde II | otağ içinde 3–4 m | hayır (içeride ara sahne) | boş | hayır | evet | EVET (diyalog arası atılma) · kuşatma öncesi kuralı |
+| 10b (top dökümü) | Fatih (sona doğru gelir) | Osmanlı · Perde II | 5–8 m | sonda hayır | boş | hayır | evet | EVET (diyalog arası) |
+| 10g (Galata) | Fatih (sonda) | Galata/Osmanlı · Perde II | 3–6 m | hayır | boş | hayır (Kural bağlı ama hükümdarlı an donuk) | evet | EVET (diyalog arası) |
+| 10z (ziyafet) | Fatih (kapıda, sonda) | Osmanlı · Perde II | ~4 m | hayır | boş | hayır | evet | EVET (diyalog arası) |
+| 12 (otağ, huzur) | Fatih (tahtta) | Osmanlı · 26 Nisan (Perde III sonu) | 2–4 m | hayır | boş / kâğıt | hayır | evet | EVET (diyalog arası) |
+| 10h (heyet) | İmparator | Bizans · Perde II | 2–5 m | kısmen (serbest evre) | boş / eşya | hayır | çoğunlukla | EVET |
+| 12b (Blakherna, sur) | İmparator | Bizans · 26 Nisan | 2–5 m | evet (iki serbest evre) | boş / kandil | hayır | çoğunlukla | EVET |
+| Edirne ara bölümü | çocuk Mehmed | Edirne · 1444 dolayı | — | — | — | — | — | HAYIR (çocuk: "yumuşak" kural §2b; hükümdar sayılmaz) |
+| 34o (Ocak 1453, top) | Fatih | Osmanlı · kuşatma öncesi | 4–8 m | kısmen (ip, gülle evreleri) | boş / ip | hayır | atış anında | EVET · kuşatma öncesi: sürgün ilk iki taraflı bölümde |
+| 28o (Şahi'nin ilk atışı) | Fatih (sultan) | Osmanlı · 6–12 Nisan | 5–10 m | evrelerde evet | boş / kazık / halat | hayır | sultan anlarında | EVET → Bizans |
+| 32o (28 Mayıs, hazırlık) | Fatih (sultan, ateşler) | Osmanlı · 28 Mayıs | 3–6 m | kısmen | boş / eşya | hayır | evet ("sultan" evresi) | EVET → Bizans |
+| 23 (21 Mayıs, tercüme) | İmparator (Bizans tarafı) | ortak sahne · 21 Mayıs | 2–3 m | kısmen | boş / kâğıt | hayır | çoğunlukla | EVET (Bizans tarafında) → Osmanlı |
+| 25 (27–28 Mayıs, Ayasofya) | İmparator | ortak sahne · 27–28 Mayıs | 3–16 m | evet (tepsi, surlar evreleri) | boş / tepsi | hayır | dinleme anında | EVET → Osmanlı |
+| 26 (gedik) | İmparator; sonda Fatih (Ayasofya) | Bizans · 29 Mayıs | 1–4 m | dalgalar arasında evet | **kılıç** (dövüşte) | hayır (dövüşte Kural kapalı) | dalga aralarında kısmen | EVET (kılıçla da) → Osmanlı; Fatih'e: karşı taraf hükümdarı (geri itilir) |
+| 30 (12 Mayıs Blakherna) | İmparator | Bizans · 12 Mayıs | 2–6 m ("emperor" evresi) | evet | **kılıç** (düellodan sonra) | hayır | kısmen | EVET (kılıçla da) → Osmanlı |
+| 30o (Blakherna, Osmanlı) | İmparator (surda, uzakta) | Osmanlı · 12 Mayıs | 5+ m, surda | evet | kılıç / merdiven | hayır | kısmen | EVET (karşı taraf hükümdarı: muhafızlar, geri itilir; sürgün yok) |
+
+Sürgünün kuralı (§6.3): **kendi tarafının hükümdarına** el kaldıran karşı tarafa sürülür. Karşı tarafın hükümdarına
+(26'nın sonunda Fatih, 30o'da İmparator) el kaldıran da vuramaz (karşı hamle / muhafız) ama sürülmez: "geldiği yere
+geri" itilir, bölüm sürer. Kuşatma öncesi bölümlerde (Perde II, 34o) karşı taraf yok: §6.4.
+
+(Bu tablo ilk hâl; ölçülen uzaklıklar ve "açıldı mı" sütununun kesin hâli uygulama bitince §6.6'da.)
