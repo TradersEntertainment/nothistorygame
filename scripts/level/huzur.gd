@@ -342,6 +342,7 @@ func attempt(p: Person, kind: String) -> void:
 		_:
 			line_key = "HZR_FATIH_BAN" if rs == "O" else "HZR_EMP_BAN"
 	p.look_target = player
+	await _clear_sightline(p)
 	# Atlı Sultan hükmü at üstünden yerdeki adama kendisi söylemez: yanındaki yeniçeri aktarır (28o, 26 sonu, 34o)
 	var relay := _relay_guard() if hud._is_mounted(p) and rs == "O" else null
 	if relay:
@@ -841,6 +842,37 @@ func _guards(p: Person, kind: String, rs: String) -> bool:
 		g.set_meta("huzur_spawned", true)
 	_spawned = spawned
 	return true
+
+
+## Hükümden önce: oyuncu ile hükümdarın arasında duran muhafız bir adım yana çekilir (konuşan görünsün)
+func _clear_sightline(p: Person) -> void:
+	var a := player.global_position
+	var b := p.global_position
+	var ab := Vector3(b.x - a.x, 0, b.z - a.z)
+	if ab.length() < 0.1:
+		return
+	var n := ab.normalized()
+	var perp := n.cross(Vector3.UP)
+	var pool: Array = _spawned.duplicate()
+	for it: Array in _borrowed:
+		pool.append(it[0])
+	for g in pool:
+		if not is_instance_valid(g):
+			continue
+		var gp: Vector3 = (g as Node3D).global_position
+		var ap := Vector3(gp.x - a.x, 0, gp.z - a.z)
+		var t := ap.dot(n)
+		if t <= 0.0 or t >= ab.length():
+			continue
+		var off := ap - n * t
+		if off.length() > 0.7:
+			continue
+		var sgn := 1.0 if off.dot(perp) >= 0.0 else -1.0
+		var to := _safe(gp, gp + perp * sgn * (1.3 - off.length()))
+		if _headroom(to):
+			await Stage.approach(g, to, 0.05, 3.0)
+			if is_instance_valid(g) and g.has_meta("huzur_put"):
+				g.set_meta("huzur_put", (g as Node3D).global_position)
 
 
 ## Hükmü aktaracak muhafız: karşı hamleye gelenlerden oyuncuya en yakın, görünen
