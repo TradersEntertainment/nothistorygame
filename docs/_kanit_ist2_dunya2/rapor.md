@@ -15,7 +15,7 @@ Dal: `wip/ist2-dunya2` (taban `wip/ist2-taban2`; `wip/ist2-sehir2` ve `wip/ist2-
 | 3c | Zemin tek renk yeşil | DÜZELDİ (türlere göre renk + tarla parselleri; ayrıca uzaklıkla süt beyazına dönme giderildi) |
 | 4 | Karşı kıyılar ve ufuk dolu, Kız Kulesi | DÜZELDİ (31 768 öğe; Kız Kulesi küçük kale) |
 | 5 | `kare40`, gezi `bos=1` (ISTBOS) | DÜZELDİ; şehir içi %5,5 (hedef %0) → ŞEHİR/DOKU'ya rapor |
-| 6 | 14 sahip karesi | DÜZELDİ (`sahip_01…14`); 07 ve 09'un bakışı bu turun sonunda düzeltildi, kareleri sonraki turda yenilenir |
+| 6 | 14 sahip karesi | DÜZELDİ (`sahip_01…14`, 2. yenileme; 07 meydanın üstünden, 09 iskeleden) |
 | 7 | Uçuş bölümleri (7, 11) v2 dökümü | DÖKÜM (aşağıda; uygulama yok) |
 
 ## 1. Ölçek: `IstGeo.S = 0,35`, tek sabit
@@ -167,11 +167,12 @@ yerine `IstDunya.build` + `IstSehir.attach_v2`; (2) `flight_data` çağrıları 
 - `parse_check`: PASS (322 betik, birleşik dal). `world_check` PASS (13 bölge, 35 işaret), `city_check` PASS, `flight_check` PASS
   (eski dünya; dosyalarına dokunulmadı).
 - Yürüme sınaması (`kip=yuru_sina`, şehirsiz, S = 0,35): `yol=130 m alt_dusme=0 yerde_en_buyuk_fark=0.01`, yakalayıcı PASS.
-- Bölüm 6/7/11/12b/24 başsız: BAKILMADI (bu turda; eski dünya dosyaları değişmedi).
+- Bölüm 6, 7, 11 başsız `--autotest`: PASS (6a.1, 7.1, 11.2; yasak satır 0). 12b, 24: BAKILMADI.
 
 ## ORTAK BİLGİ / İSTEK
 
-- ŞEHİR-2: tam tepede koyu/siyah dikdörtgenler (sarnıç yerleri ve batıda) sürüyor; `IstGeo.mahalle` → `"sarnic"` kullanılabilir.
+- ŞEHİR-2: Ayasofya meydanı oyun alanının (`_meydan_rect`) içinde yerden (gerçek e −320, n 0) bakınca kamera revaklı bir yapının
+  (Mese portiği?) içinde kalıyor: alan boş değil. Tam tepede koyu/siyah dikdörtgenler (sarnıç yerleri ve batıda) sürüyor; `IstGeo.mahalle` → `"sarnic"` kullanılabilir.
   Sur dışı 30 m karesinde sur yüzünde havada beyaz dörtgenler (bayrak/levha?) var (`sahip_03`).
 - DOKU-2: şehir içi ISTBOS %5,5 (örnekler yukarıda). `mahalle` yeni alanı `alt` (bag/meyve/bostan/manastir/harabe/mezarlik).
 - Herkes: `IstGeo.X0/Z0/ST` artık `static var` (const değil); `IstDunya.CX0/CZ0/CNX/CNZ` de.
