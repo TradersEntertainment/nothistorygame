@@ -1,7 +1,7 @@
 # SUR-4 raporu (İstanbul v2, dördüncü tur) — dal `wip/ist2-sur4`
 
 Taban `wip/ist2-taban4`; son hâlde `wip/ist2-ordugah4`, `wip/ist2-cevre4`, `wip/ist2-doku4`, `wip/ist2-baglama4` birleşik
-(16:46'daki hâlleri, `wip/ist2-doku4` 17:25'te yeniden; çakışma yok). Kareler yazılımla çizim (xvfb, llvmpipe), 1280×720.
+(16:46'daki hâlleri, `wip/ist2-doku4` 17:05'te yeniden; çakışma yok). Kareler yazılımla çizim (xvfb, llvmpipe), 1280×720.
 
 **Kameralar.** Sahip kareleri DÜNYA-2'nin `tests/_ist/gezi.tscn` + `gezi_sahip.txt` sahnesiyle (sahibinin karesiyle AYNI
 araç ve kamera). Öteki kareler yeni sondamla (`tests/_ist/sur4_kare.tscn`): gezi ile aynı kamera tanımı (gerçek doğu/kuzey,
@@ -113,7 +113,7 @@ Galata (kesme taş, tuğlasız).
   57–107 m), araziyi izleyen örtü (çiğnenmiş toprak, solgun ot yamaları, yanık lekeleri, devriye izi), 265 gülle çukuru
   (yuvarlak, kenarı kabarık), 193 taş gülle, 280 ok/kazık, 123 kalkan, kırık merdiven parçaları (581 parça); ağaç yok
   (benim kurduklarımda). Kapı önleri boş.
-- (b) **Hilalli bayrak:** kaynağı `hayat_veri.gd:622, 623, 665` (DOKU-4'ün 17:25 hâlinde; ilk sayımda 595, 596, 638) (`sancak(..., desen = 3)` = `ist_bez.gdshader` hilal deseni;
+- (b) **Hilalli bayrak:** kaynağı `hayat_veri.gd:622, 623, 665` (DOKU-4'ün 17:05 hâlinde; ilk sayımda 595, 596, 638) (`sancak(..., desen = 3)` = `ist_bez.gdshader` hilal deseni;
   ordugâh sancakları rastgele 30–110 m'ye konuyor, hendeğe/sur dibine düşebiliyor). DOKU-4'ün dosyası: ORTAK İSTEK 1.
   `ISTHILAL sayi=3 hayat_veri.gd:622 hayat_veri.gd:623 hayat_veri.gd:665` (sonda `--set=hilal`; `Props.crescent` v2
   dosyalarında 0). `s3_hendek` SONRA karesinde hilalli bayrak görünmüyor ama kaynak duruyor: **YAPILMADI (benim dosyam değil)**.
