@@ -864,7 +864,7 @@ func _warn(reason: String) -> void:
 func _warn_lines(line: Array, answer: Array) -> void:
 	# Tolga'nın hikâye yorumu (keçi vb.) sürüyorsa uyarı SÖZÜ bitmesini bekler (ok yine anında saplanır); eskiden
 	# interrupt=true repliği ortasında kesiyordu.
-	while Time.get_ticks_msec() / 1000.0 < _yorum_until and hud.is_talking() and phase == "field":
+	while _yorum_left > 0.0 and hud.is_talking() and phase == "field":
 		await get_tree().process_frame
 	hud.bark(line[0], line[1], 3.6, true)
 	await _wait(1.6)
@@ -1298,13 +1298,14 @@ func _start_field() -> void:
 ## Yürürken tek seferlik olaylar: [z0, z1] aralığında ve konuşma yokken bir kez; aralık geçildiyse atlanır.
 var _queue: Array = []
 var _queue_gap := 0.0
-var _yorum_until := 0.0      # Tolga'nın hikâye yorumunun bitmesi beklenen an (gerçek sn); uyarı sözü o ana dek ertelenir
+var _yorum_left := 0.0       # Tolga'nın hikâye yorumundan kalan süre (oyun sn); uyarı sözü o bitene dek ertelenir
 
 
 ## Yürürken tek seferlik yorumlar: yeri gelince sıraya girer; sıra telsiz ya da başka söz yokken, aralarında 4,5 sn
 ## boşlukla söylenir. Çok geride kalan (yerinden 25 m'den fazla ileride) yorum söylenmez.
 func _events(pz: float, delta: float) -> void:
 	_queue_gap = maxf(0.0, _queue_gap - delta)
+	_yorum_left = maxf(0.0, _yorum_left - delta)
 	if _busy:
 		return
 	_event("mantlet", pz, 46.0, 60.0, "D8Y_T_MANTLET")
@@ -1322,7 +1323,7 @@ func _events(pz: float, delta: float) -> void:
 	var it: Array = _queue.pop_front()
 	_queue_gap = 4.5
 	hud.bark("SPK_TOLGA", it[0], 4.5)
-	_yorum_until = Time.get_ticks_msec() / 1000.0 + 4.5
+	_yorum_left = 4.5
 	_cshot("yorum_" + String(it[0]).trim_prefix("D8Y_T_").to_lower(), 0.4)
 	if GameState.autotest:
 		print("YORUM8Y %s z=%.1f" % [it[0], pz])
