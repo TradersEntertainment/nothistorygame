@@ -23,6 +23,8 @@ var kayit := 12
 var yan := 0.0          # yola dik kaydırma (dünya m; + sol)
 var gece := false
 var bak := "ikisi"
+var kim_nokta := "0,0"          # mod=kim: gerçek doğu,kuzey (nokta çevresindeki düğümleri listeler)
+var kim_r := 45.0
 var cam: Camera3D
 var dunya: Node3D
 
@@ -47,6 +49,8 @@ func _ready() -> void:
 			"yan": yan = kv[1].to_float()
 			"gece": gece = kv[1] == "1"
 			"bak": bak = kv[1]
+			"kim": kim_nokta = kv[1]
+			"kim_r": kim_r = kv[1].to_float()
 	if shots != "":
 		DirAccess.make_dir_recursive_absolute(shots)
 	cam = Camera3D.new()
@@ -69,6 +73,7 @@ func _ready() -> void:
 		"ucus": await _ucus()
 		"eser": await _eser()
 		"eserler": await _eserler()
+		"kim": await _kim()
 	print("HVD BITTI kurulum_ms=%.0f" % dunya.olcum()["kurulum_ms"])
 	get_tree().quit(0)
 
@@ -317,3 +322,40 @@ func _eser() -> void:
 			cam.rotation = Vector3(0.0, -deg_to_rad(float(yn[1])), 0.0)
 			print("HVD_KAM ", _kam_satir("%s_konma%s" % [ad, yn[0]]))
 			await _kare("%s_konma%s" % [ad, yn[0]], false)
+
+
+# ------------------------------------------------------------------ mod=kim: noktanın çevresindeki görünür geometri düğümleri
+func _kim() -> void:
+	var p := kim_nokta.split(",")
+	var w := IstGeo.w2(p[0].to_float(), p[1].to_float())
+	cam.global_position = Vector3(w.x, maxf(IstGeo.h(w.x, w.y), 0.0) + 40.0, w.y)
+	await _bekle()
+	var say := 0
+	if IstSehir.active != null:
+		for it: Dictionary in IstSehir.active.items:
+			var pp: Vector3 = it["pos"]
+			var d := Vector2(pp.x - w.x, pp.z - w.y).length() - float(it["r"])
+			if d < kim_r * 2.0:
+				print("HVD_KIM_ESER id=%s mod=%s hat=%s pos=%s r=%.0f uzak=%.0f" % [it["id"], str(it.get("mod", "")), str(it.has("hat")), str(pp), float(it["r"]), d])
+	for c in get_tree().root.find_children("*", "GeometryInstance3D", true, false):
+		var gi := c as GeometryInstance3D
+		if not gi.is_visible_in_tree() or gi is MultiMeshInstance3D or String(gi.name).begins_with("Karsi") or String(gi.name).begins_with("Arazi"):
+			continue
+		var ab := gi.global_transform * gi.get_aabb()
+		var ctr := Vector2(w.x, w.y)
+		var dx := maxf(maxf(ab.position.x - ctr.x, ctr.x - ab.end.x), 0.0)
+		var dz := maxf(maxf(ab.position.z - ctr.y, ctr.y - ab.end.z), 0.0)
+		if Vector2(dx, dz).length() > kim_r or ab.size.x > 400.0 or ab.size.z > 400.0:
+			continue
+		var mat := ""
+		if gi is MeshInstance3D and (gi as MeshInstance3D).mesh != null:
+			var m := (gi as MeshInstance3D).get_active_material(0)
+			if m is StandardMaterial3D:
+				mat = "albedo=%s" % str((m as StandardMaterial3D).albedo_color)
+			elif m != null:
+				mat = m.get_class()
+		print("HVD_KIM %s %s boyut=%s %s" % [String(gi.get_path()).replace("/root/", ""), gi.get_class(), str(ab.size), mat])
+		say += 1
+		if say > 60:
+			break
+	print("HVD_KIM_BITTI nokta=%s dugum=%d" % [kim_nokta, say])
