@@ -1,4 +1,4 @@
-DURUM: KISMİ (1, 2, 3, 4, 5, 6 yazıldı; 7, 8, 9 yazılıyor)
+DURUM: TAMAM (dokuz bölüm dolu; kaynak sınırlaması nedeniyle birçok madde [Y]/BELİRSİZ işaretli)
 
 # İstanbul, Nisan 1453 NASIL GÖRÜNÜYORDU: görünüş kılavuzu
 
@@ -323,3 +323,91 @@ Her satır: ölçü · renk/malzeme · durum · ayırt edici ayrıntılar · hav
 **Limanlar.** Kontoskalion (Marmara, kayalık), Eleutherios (kumlu), Neorion (Haliç), Prosphorion (eski) [CSV]; hepsi taş iskele+ahşap bağlama. Zincir: Haliç ağzında yüzer tomruk+demir halka; kuzey ucu Galata, güney ucu Eugenios Kulesi [K Wikipedia; Madrid Skylitzes demir gösterir].
 
 ## 7. Kuşatmanın görüntüsü (Nisan 1453)
+Kaynak notu: Barbaro'nun günlüğü (Jones çevirisi 1970) ve Kritovulos tam metnine ulaşılamadı; aşağıdaki cümleler ikinci el aktarımlardır, ham metin yerine [K-ikinci el] yazıldı.
+
+### 7.1 Ordugâh
+- Ordu 2 Nisan'da şehir önünde ordugâh kurdu; genel düzen: Rumeli birlikleri (Karaca Paşa) sur boyunca kuzeyde, Anadolu birlikleri (İshak Paşa) Lykos'un güneyi–Marmara, başıbozuklar cephe gerisi, Zağanos Paşa Haliç ötesi [K Wikipedia Fall].
+- **Sultan'ın otağı kırmızı-altın**, Mesoteichion karşısında, seçkin yeniçeriler ve toplarla birlikte [K Wikipedia Fall]; Kritovulos otağın "orta sur karşısında" olduğunu söyler [K-ikinci el, open.oregonstate.education].
+- Çadır biçimi: koni/dikdörtgen kenar duvarlı çadırlar; renk önerisi: yoksul askerde **ham keten `#CBBE9F`**, kıdemlide **kırmızı `#A33A2E`** ve **yeşil/lacivert şerit**, otağ **kırmızı + altın işleme** [Y; yalnız otağ rengi K]. Ordugâh siperi ve hendek önünde kazılmış toprak sıra [K-ikinci el: warfarehistorynetwork]. Hendek-ordugâh ayrımı ve sayılar (Wikipedia 60–80 bin gerçekçi aralık: BELİRSİZ) abartılmasın.
+- Atlar, develer, katırlar, öküz sürüleri (Urban topu 60 öküz + 400 adamla Edirne'den geldi [K Wikipedia Fall]).
+
+### 7.2 Toplar ve tabyalar
+- Urban topu "Basilica": ~8 m uzunluk (27 ft), ~270 kg taş gülle, yaklaşık 1,6 km menzil, doldurma 3 saat [K Wikipedia Fall]. Kaynaklar 8–9 m arası verir [K-ikinci el].
+- Toplam ~70 büyük parça [K]. Dökme bronz namlu (koyu `#7A6A3A`), taş güllelerin yığıldığı toprak yamaç.
+- **Batarya:** topların önünde kalın toprak siper ve kazık/ağaç gabyon; arkada barut deposu, yanında kütük iskele [Y]. Kritovulos: sultan en büyük üç topu Mesoteichion karşısına kurdurdu [K-ikinci el].
+- 28 Mayıs'a dek yaklaşık 5 000 atış ve 55 000 lb barut [K Wikipedia Fall].
+- Efekt: sur önünde **toz bulutu, siyah duman, taş kıymıkları**; kuleler tepeden kopar, kırık yüzeyi taze krem renkte [Y].
+
+### 7.3 Hendek doldurma ve yaklaşma
+- Hendek bazı yerlerde fıçı, kum, ağaç ve çalı ile doldurulur [Y; BELİRSİZ ayrıntı]. Osmanlı madencileri Mayıs ortasından tünel kazar, savunmacı karşı tünel açar, Yunan ateşi kullanır [K Wikipedia Fall].
+- Büyük kuşatma kulesi (tahta, deri kaplı) Mayıs sonunda görülür: [BELİRSİZ bu belgede].
+
+### 7.4 Sur onarımı
+- Savunmacılar dış surun yıkılan yerini **fıçı ve toprak** ile kapatıp "palisad" gibi tahta+kazık+dal ve toprak yığınıyla yükseltir [K-ikinci el: Barbaro'dan alıntı "repairs of barrels and earth"; Dukas/Kritovulos'tan "stockade of beams, fascines, branches and barrels of earth" (pallasweb)]. Görünüm: kırık taş duvarın üstünde **koyu ahşap kazık çiti + toprak dolu fıçı sırası**.
+- Halk surların onarımına çağrılır; kadınlar, rahipler, çocuklar taşır [Y].
+
+### 7.5 Bayraklar
+- Bizans: kırmızı/altın zemin, çift başlı kartal veya dörtlü "B" (Palaiologos) [K-ikinci el: Buondelmonti nüshalarında dörtlü B]. İmparator sancağı Mesoteichion'da.
+- Ceneviz: beyaz zeminde kırmızı **Haç (Aziz Georg)**. Venedik: kırmızı zeminde altın **kanatlı aslan (San Marco)**. Papalık: haç ve anahtar [Y; renkler genel bilgi].
+- Osmanlı: kırmızı/yeşil sancaklar; hilal kullanımı BELİRSİZ (1453'te hilalli bayrak yaygınlığı tartışmalı).
+
+### 7.6 Zincir ve gemiler
+- Zincir Haliç ağzında, tomruk üstünde yüzer; Osmanlı gemileri giremez [K Wikipedia Fall]. 20 Nisan'da dört Hristiyan gemisi (3 Ceneviz, 1 Bizans) zincir arkasına girer [K]. 22 Nisan'da ~70 (30–80) gemi yağlı tomruk yolundan Galata arkasından Haliç'e indirilir [K Wikipedia Fall; sayı BELİRSİZ]. Müttefik filo 26 gemi [K]. Osmanlı ~110 (kaynağa göre 110–430) [K].
+- Osmanlı yüzer köprüsü: Cibali–Kasımpaşa arası fıçı üstü ahşap yol (CSV) [K-ikinci el].
+- 28 Nisan: yakma gemisi girişimi başarısız; 40 İtalyan kazığa vuruldu [K Wikipedia Fall].
+
+### 7.7 Gece
+- Osmanlı ordugâhı binlerce ocak ateşi: sur dışında turuncu noktalar; hendek hattında meşale. Sur üstünde Hristiyan meşaleleri ve kandiller; Ayasofya kubbesi kuşatma gecelerinde ışıklı [Y]. 26 Mayıs sisinden sonra Ayasofya kubbesi üstünde "garip ışık" (alev) görülür [K Wikipedia Fall]. 22 Mayıs'ta kısmi ay tutulması [K].
+- Duman: kuşatma topçusundan siyah-gri sütun; mutfak dumanı beyaz-gri.
+
+### 7.8 Ses notu (görüntü dışı ama oyun için)
+- Şehirde: **kilise çanı** ve toplu duâ alayları [K: dini alaylar, Wikipedia Fall]; 29 Mayıs öncesi çan çalınır.
+- Osmanlı ordugâhı: davul-zurna-mehter, boru sesi; tellâllar boru eşliğinde askeri heyecanlandırır [K Wikipedia Fall]. **Ezan ordugâhta okunabilir; şehir içinde YOK** (şehir Hristiyan). Top gümbürtüsü gün boyu, gece azalır.
+
+## 8. Olmayanlar ve sık yapılan hatalar
+
+### 8.1 Anakronizm listesi (şehirde YOK)
+1. **Minare ve ezan** (Ayasofya'da minare yok; cami değil). Ayasofya'nın bugünkü dört minaresi ve payandaları sonradan.
+2. **Osmanlı kubbeli cami silüeti** (Sultanahmet, Süleymaniye, Şehzade, Fatih): yok. Çoklu yarım kubbe ve ince minare, "Osmanlı İstanbul" klişesi.
+3. **Galata Köprüsü** ve Karaköy/Eminönü köprüsü (19. yy): yok; tek Osmanlı geçiş inşası **kuşatmada yüzer köprü** [CSV].
+4. **Topkapı Sarayı, Yeni Cami, Kapalıçarşı, Süleymaniye Külliyesi, Yedikule Hisarı** (Fatih sonrası): yok.
+5. **Kız Kulesi** bugünkü biçimiyle yok; ada üzerinde küçük bir kule/fener olabilir (BELİRSİZ); yarım daire barok kule 18. yy.
+6. **Bugünkü Galata Kulesi'nin külahı/balkonu**: 1453'teki Christea Turris'te konik çatı olsa da bugünkü üst katlar Osmanlı yenilemesi [K Wikipedia Galata Tower].
+7. **Marsilya kiremidi, kırmızı-parlak sanayi kiremidi, çatı olukları, çinko**: yok.
+8. **Cam kubbe, beton, demir korkuluk, elektrik teli, tabela, plastik**: yok.
+9. **Domates, patates, mısır, biber, tütün, lale (süs bitkisi)**: yok. (Erguvan, selvi, çınar, zeytin, incir, asma var.)
+10. **Simit, çay, kahve**: yok. Simit/çay kültürü yok; "kahve" yok (15. yy sonu–16. yy). Peter metnindeki martı-simit-çay kültürü BELİRSİZ (simit); çay kesin yok.
+11. **Dolmuş, vapur, feribot, tramvay**: yok.
+12. **Dolgu alanları**: Yenikapı, Sarayburnu sahil yolu, Eminönü dolgusu, Kumkapı dolgusu yok; kıyı 1453'te sur dibinde.
+13. **Yeni Cami, Dolmabahçe, Galata Rıhtımı**: yok.
+14. **Beyaz/pembe boyalı ev, kırmızı çatı fışkırması, Boğaz yalıları**: yok.
+15. **Hilal bayrağı ve ezan şehir içinde**: yok (şehir Hristiyan).
+16. **Hamam/cami kubbeli külliye siluetleri**: yok.
+
+### 8.2 Oyun modelindeki muhtemel aykırılıklar (kareleri göremiyorum; genel uyarı)
+- Pembe/turuncu ev paleti → Böl. 2'ye göre kirli krem/gri-bej + koyu kiremit.
+- Dik/ince "masal" çatılar → 20–25° alçak eğim.
+- Bütün şehrin eşit sıklıkta dolu olması → "çekirdek + bostan/harabe" (Böl. 4–6).
+- Her anıtın bakımlı ve parlak olması → yosun, yıkık parça, eksik kule.
+- Ayasofya sarı-kırmızı sıvalı ya da minareli çizilmesi → tuğla-taş gri-bej.
+- Düz mavi deniz → Haliç yeşilimsi-lacivert, Marmara daha mavi; zincir ve gemiler eklenmeli.
+- Sur kulesi sadece kare → kare + sekizgen/altıgen karışım; tuğla bant 7–11 sıra.
+- Galata sıradan mahalle gibi → hendek+sur+silindirik kule+konik külah.
+- Sur içi ormanlaşmış → tarla/bostan ağırlıklı; ağaçlar tek tek (selvi, incir).
+- Renk doygunluğu → pastel ve gri-kahve ağırlıklı; erguvan ve yeşil Nisan lekeleri vurgu.
+
+## 9. Kaynakça
+
+**Doğrudan okunanlar (bağlantı verilmiş, bu oturumda açıldı):**
+- Pero Tafur 1437 alıntıları: https://www.pallasweb.com/deesis/1427-constantinople-pero-tafur.html (ayrıca Columbia: https://www.columbia.edu/cu/lweb/digital/collections/cul/texts/ldpd_6352599_000/pages/ldpd_6352599_000_00000157.html)
+- Wikipedia: Hagia Sophia, Walls of Constantinople, Hippodrome of Constantinople, Great Palace of Constantinople, Chora Church, Galata Tower, Fall of Constantinople (Siege of Constantinople 1453), Church of the Holy Apostles, Tekfur Palace, Palace of Blachernae, Column of Constantine, Column of Justinian, Pammakaristos Church, Stoudios Monastery, Column of Arcadius, Aqueduct of Valens, Hagia Irene, Myrelaion, Lips Monastery, Golden Horn. (`https://en.wikipedia.org/wiki/<Başlık>`)
+- Buondelmonti görüntü betimi: https://www.roger-pearse.com/weblog/2015/02/16/a-drawing-of-the-church-of-the-holy-apostles-in-constantinople/
+- Vavassore görüntüsü: https://arth780.omeka.net/exhibits/show/sites-of-knowing/portraying-the-city/vavasore-map
+- shadowsofconstantinople.com/constantinople/ (Clavijo ikinci el)
+
+**Yalnız arama özeti olarak görülen (tam metin okunamadı):** Clavijo (Le Strange çevirisi, 1928), Bertrandon de la Broquière (Schefer 1892; Wright 1807), Barbaro (Jones 1970), Kritovulos (open.oregonstate.education/middleearlymodernages/chapter/kritovoulos-siege-of-constantinople/), Matrakçı Nasuh (Beyan-ı Menazil, 1537), Vavassore baskı tarihi.
+
+**Okunması gereken (erişilemedi):** Müller-Wiener, *Bildlexikon zur Topographie Istanbuls*; Mango, *Le développement urbain*; Magdalino, *Constantinople médiévale*; Necipoğlu, *Byzantium between the Ottomans and the Latins*; Ousterhout, *Eastern Medieval Architecture*; Effenberger, *Constantinople/Istanbul: The Early Pictorial Sources*; Kuban, *Istanbul: An Urban History*.
+
+---
+**Not:** Bu oturumda kaynak erişimi kısıtlıydı; bu yüzden belgenin birçok kısmı `[Y]` ya da `BELİRSİZ` işaretlidir. Modelciler `[K]` ve `[Y]` ayrımına bakmalıdır.
