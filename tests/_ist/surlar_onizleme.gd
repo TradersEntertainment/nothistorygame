@@ -14,6 +14,8 @@ var _cam: Camera3D
 var _L := 100.0
 var _d: Dictionary = {}
 var _lay: Dictionary = {}
+var _dbg := 0
+var _dbg_ab := AABB()
 
 
 func _ready() -> void:
@@ -43,23 +45,33 @@ func _env() -> void:
 	var pm := ProceduralSkyMaterial.new()
 	pm.sky_top_color = Color("5f8fc8")
 	pm.sky_horizon_color = Color("e8d9b8")
-	pm.ground_horizon_color = Color("d8c9a4")
-	pm.ground_bottom_color = Color("8a7a5a")
+	pm.ground_horizon_color = Color("9aa86a")
+	pm.ground_bottom_color = Color("6f7a45")
 	sky.sky_material = pm
 	e.sky = sky
 	e.background_mode = Environment.BG_SKY
 	e.ambient_light_source = Environment.AMBIENT_SOURCE_SKY
-	e.ambient_light_energy = 0.9
-	e.tonemap_mode = Environment.TONE_MAPPER_FILMIC
+	e.ambient_light_energy = 0.55
+	e.tonemap_mode = Environment.TONE_MAPPER_LINEAR
+	e.fog_enabled = false
 	we.environment = e
 	add_child(we)
 	var sun := DirectionalLight3D.new()
 	sun.light_color = Color("ffe2b0")
-	sun.light_energy = 1.35
+	sun.light_energy = 0.95
 	sun.rotation_degrees = Vector3(-38, -62, 0)
 	sun.shadow_enabled = true
 	sun.directional_shadow_max_distance = 220.0
 	add_child(sun)
+	var fl := MeshInstance3D.new()
+	var pl := PlaneMesh.new()
+	pl.size = Vector2(1200, 1200)
+	fl.mesh = pl
+	fl.position.y = -1.6
+	var fm := StandardMaterial3D.new()
+	fm.albedo_color = Color("6f7a45")
+	fl.material_override = fm
+	add_child(fl)
 	_cam = Camera3D.new()
 	_cam.fov = 70.0
 	_cam.far = 900.0
@@ -187,14 +199,18 @@ func _audit() -> void:
 			var top := -1e9
 			for ab in masses:
 				var a: AABB = ab
-				if x >= a.position.x and x <= a.end.x and z >= a.position.z and z <= a.end.z:
-					top = maxf(top, a.end.y)
+				if x >= a.position.x + 0.1 and x <= a.end.x - 0.1 and z >= a.position.z + 0.1 and z <= a.end.z - 0.1:
+					if a.end.y > top:
+						top = a.end.y
+						_dbg_ab = a
 			if top > 0.3:
 				var q := PhysicsRayQueryParameters3D.create(Vector3(x, 200, z), Vector3(x, -30, z))
 				var h := space.intersect_ray(q)
 				var hy: float = h["position"].y if not h.is_empty() else -99.0
 				if top - hy > 0.45:
 					delik += 1
+					if delik <= 4:
+						print("  delik: x=%.1f z=%.1f gorunen=%.2f carpisma=%.2f kutu=%s" % [x, z, top, hy, _dbg_ab])
 			z += 0.5
 		x += 0.5
 	# --- dar: 0,2–1,4 m girilebilir aralık (x ve z doğrultusunda, üç yükseklikte)
@@ -237,9 +253,11 @@ func _audit() -> void:
 					continue
 				if ab2.position.y > 0.05:
 					var ok := false
-					var cx := ab2.get_center().x
-					var cz := ab2.get_center().z
-					var pts2: Array = [Vector2(cx, cz), Vector2(ab2.position.x + 0.08, ab2.position.z + 0.08), Vector2(ab2.end.x - 0.08, ab2.position.z + 0.08), Vector2(ab2.position.x + 0.08, ab2.end.z - 0.08), Vector2(ab2.end.x - 0.08, ab2.end.z - 0.08)]
+					var ins := minf(0.35, minf(ab2.size.x, ab2.size.z) * 0.25)
+					var pts2: Array = []
+					for fx in [ab2.position.x + ins, ab2.get_center().x, ab2.end.x - ins]:
+						for fz in [ab2.position.z + ins, ab2.get_center().z, ab2.end.z - ins]:
+							pts2.append(Vector2(fx, fz))
 					for pt in pts2:
 						var q2 := PhysicsRayQueryParameters3D.create(Vector3(pt.x, ab2.position.y + 0.02, pt.y), Vector3(pt.x, ab2.position.y - 0.12, pt.y))
 						q2.exclude = [sb.get_rid()]
@@ -247,9 +265,19 @@ func _audit() -> void:
 							ok = true
 							break
 					if not ok:
+						# yandan destek (kapı üstü lento): kenara yaslı katı var mı
+						var c3 := ab2.get_center()
+						var hs := ab2.size * 0.5
+						for off in [Vector3(hs.x + 0.1, 0, 0), Vector3(-hs.x - 0.1, 0, 0), Vector3(0, 0, hs.z + 0.1), Vector3(0, 0, -hs.z - 0.1)]:
+							var pp := PhysicsPointQueryParameters3D.new()
+							pp.position = Vector3(c3.x, ab2.position.y + 0.1, c3.z) + off
+							if not space.intersect_point(pp, 1).is_empty():
+								ok = true
+								break
+					if not ok:
 						havada += 1
 						if havada <= 6:
-							print("  havada: ", sb.get_path(), " alt=", ab2.position.y)
+							print("  havada: ", sb.get_path(), " ab=", ab2)
 	# --- cati_yolu: climbs_x girişleri gerçek bir CharacterBody3D ile sınanır
 	var climbs: Array = IstSurlar._climbs(L, _k, 1453 if _id == "sur" else 1000 + _id.hash() % 997, IstSurlar.OPTS.get(_id, {}))
 	var okc := 0
@@ -275,6 +303,9 @@ func _scan(space: PhysicsDirectSpaceState3D, pq: PhysicsPointQueryParameters3D, 
 			var gap := t - empty_start
 			if gap > 0.2 and gap < 1.4:
 				cnt += 1
+				if _dbg < 6:
+					_dbg += 1
+					print("  dar: %s=%.2f y=%.1f aralik=%.2f t=%.2f" % ["z" if along_x else "x", fixed, y, gap, t])
 		if not hit and prev_solid:
 			empty_start = t
 		if hit:
@@ -316,5 +347,7 @@ func _walk(from: Vector3, to: Vector3) -> bool:
 		if cb.is_on_floor():
 			cb.velocity.y = 0.0
 		cb.move_and_slide()
+	if not ok:
+		print("  son konum: ", cb.global_position)
 	cb.queue_free()
 	return ok
