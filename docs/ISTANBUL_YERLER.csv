@@ -1,84 +1,173 @@
 ad_tr,ad_bizans,tur,enlem,boylam,dogu_m,kuzey_m,olcu_m,durum_1453,kaynak,not
-Eğrikapı (Kaligaria?),Kaligaria Kapısı?,kapi,41.0338,28.945,-2940,2802,,"Blakhernai suru, Manuel I duvarı",WP-Walls,kestirim; Kaligaria eşleşmesi belirsiz
-Edirnekapı,Karisios (Charisius) Kapısı,kapi,41.0303,28.9378,-3545,2413,,savunma: Giustiniani sonra Bocchiardi,WP-Walls; WP-Fall,kestirim
-Hücum Kapısı / Sulukule,Beşinci Askerî Kapı (Pempton),kapi,41.023,28.9335,-3906,1601,,29 Mayıs yarığı,WP-Walls,kestirim
-Topkapı,Aziz Romanos Kapısı,kapi,41.016,28.925,-4621,823,26.5 gatehouse,Mesoteikhion; en ağır bombardıman,WP-Walls; WP-Fall,kestirim
-Dördüncü Askerî Kapı,Dördüncü Askerî Kapı,kapi,41.012,28.923,-4789,378,,duvarla kapalı,WP-Walls,kestirim
-Mevlanakapı,Rhegion (Rhesios) Kapısı,kapi,41.004,28.922,-4873,-512,,en iyi korunan kapı,WP-Walls,kestirim
-Üçüncü Askerî Kapı,Triton Kapısı,kapi,41.001,28.9205,-4999,-845,,Kalagros olabilir,WP-Walls,kestirim
-Silivrikapı,Pege (Pigi) Kapısı,kapi,40.996,28.9175,-5251,-1401,,Cataneo ve Theophilos Palaiologos,WP-Walls; WP-Fall,kestirim
-İkinci Askerî Kapı,Deuteron Kapısı,kapi,40.995,28.9165,-5335,-1512,,,WP-Walls,kestirim
-Belgratkapı,Xylokerkos Kapısı,kapi,40.9945,28.915,-5461,-1568,,1189'da kapatılmış,WP-Walls,kestirim
-Yedikule Kapısı,Posterna kule 11-12,kapi,40.9938,28.9235,-4747,-1646,,küçük posterna,WP-Walls,kestirim
-Altınkapı,Chryseia Pyle (Porta Aurea),kapi,40.9935,28.9229,-4797,-1679,,tören kapısı; Ceneviz Manuel savundu; kapalı mı BELİRSİZ,WP-Walls; WP-Fall,kestirim
-Tabakkapı,Birinci Askerî Kapı,kapi,40.993,28.9245,-4663,-1735,,kara-deniz sur birleşimi posterna,WP-Walls,kestirim
-Kerkoporta,Kerkoporta,kapi,41.0345,28.9425,-3150,2880,,kule 96 yakını; varlığı kanıtsız,WP-Walls,kestirim; tartışmalı
-Mesoteikhion,Mesoteichion,diger,41.0185,28.9265,-4495,1101,~1500 x - x 12,surun en zayıf kesimi; Lykos vadisi,WP-Walls; WP-Fall,kestirim; sınırı tartışmalı
-Lykos vadisi,Lykos,diger,41.017,28.93,-4201,934,,"dere vadisi, sur boyunca en alçak",WP-Fall,kestirim
-Blakhernai Sarayı,Blakhernai,saray,41.0395,28.9395,-3402,3436,,bakımsız; İmparator sarayı,Bilgi,kestirim
-Anemas Zindanları,Anemas,diger,41.0405,28.94,-3360,3547,,Haliç/kara sur birleşimi,WP-Walls,kestirim
-Tekfur Sarayı,Porphyrogennetos,saray,41.0345,28.937,-3612,2880,,kısmen kullanım BELİRSİZ,Bilgi,kestirim
-Balat Kapısı,Balat (Saray) Kapısı,kapi,41.031,28.9475,-2730,2491,,Haliç deniz suru kapısı,WP-Walls,"kestirim; sıra WP listesinden, konum yaklaşık"
-Fener Kapısı,Phanarion,kapi,41.0285,28.9505,-2478,2213,,Haliç deniz suru kapısı,WP-Walls,"kestirim; sıra WP listesinden, konum yaklaşık"
-Petrion Kapısı,Petrion,kapi,41.027,28.95,-2520,2046,,Haliç deniz suru kapısı,WP-Walls,"kestirim; sıra WP listesinden, konum yaklaşık"
-Yeni Ayakapı,Yeni Ayakapı,kapi,41.0245,28.9535,-2226,1768,,Haliç deniz suru kapısı,WP-Walls,"kestirim; sıra WP listesinden, konum yaklaşık"
-Ayakapı,Ag. Theodosia,kapi,41.0225,28.9545,-2142,1546,,Haliç deniz suru kapısı,WP-Walls,"kestirim; sıra WP listesinden, konum yaklaşık"
-Odun Kapı,Eis Pegas,kapi,41.0195,28.9605,-1638,1212,,Haliç deniz suru kapısı,WP-Walls,"kestirim; sıra WP listesinden, konum yaklaşık"
-Zindan Kapı,Drungaris,kapi,41.0175,28.965,-1260,990,,Haliç deniz suru kapısı,WP-Walls,"kestirim; sıra WP listesinden, konum yaklaşık"
-Cibali Kapısı,Ag. Ioannes,kapi,41.023,28.954,-2184,1601,,Haliç deniz suru kapısı,WP-Walls,"kestirim; sıra WP listesinden, konum yaklaşık"
-Unkapanı Perama,Perama,kapi,41.023,28.955,-2100,1601,,Haliç deniz suru kapısı,WP-Walls,"kestirim; sıra WP listesinden, konum yaklaşık"
-Hikanatissa,Hikanatissa,kapi,41.0195,28.968,-1008,1212,,Haliç deniz suru kapısı,WP-Walls,"kestirim; sıra WP listesinden, konum yaklaşık"
-Neorion (Horaia),Neorion,kapi,41.0175,28.971,-756,990,,Haliç deniz suru kapısı,WP-Walls,"kestirim; sıra WP listesinden, konum yaklaşık"
-Eugenios Kapısı,Marmaroporta,kapi,41.015,28.974,-504,712,,Haliç deniz suru kapısı,WP-Walls,"kestirim; sıra WP listesinden, konum yaklaşık"
-Eugenios Kulesi (zincir ucu),Eugenios,kule,41.0165,28.976,-336,878,,zincirin güney ucu (Sirkeci),WP-Walls,kestirim
-Galata Kastellion (zincir ucu),Kastellion,kule,41.0215,28.974,-504,1434,,zincirin kuzey ucu,WP-Walls,kestirim
-Zincir (Haliç ağzı),Chain/Boom,diger,41.019,28.975,-420,1156,~700 m,yüzer varillerle gerilmiş,WP-Walls,kestirim; uzunluk Bilgi
-Doğu Kapısı (Ag. Barbara),Eastern Gate,kapi,41.0105,28.984,336,211,,Marmara deniz suru kapısı,WP-Walls,"kestirim; sıra WP listesinden, konum yaklaşık"
-Değirmenkapı,Değirmen,kapi,41.007,28.987,588,-178,,Marmara deniz suru kapısı,WP-Walls,"kestirim; sıra WP listesinden, konum yaklaşık"
-Demirkapı,Demirkapı,kapi,41.0045,28.9855,462,-456,,Marmara deniz suru kapısı,WP-Walls,"kestirim; sıra WP listesinden, konum yaklaşık"
-Balıkhane Kapısı,Balıkhane,kapi,41.004,28.9835,294,-512,,Marmara deniz suru kapısı,WP-Walls,"kestirim; sıra WP listesinden, konum yaklaşık"
-Ahırkapı,Ahırkapı,kapi,41.0015,28.9805,42,-790,,Marmara deniz suru kapısı,WP-Walls,"kestirim; sıra WP listesinden, konum yaklaşık"
-Aslan (Boukoleon) Kapısı,Boukoleon,kapi,40.9985,28.9775,-210,-1123,,Marmara deniz suru kapısı,WP-Walls,"kestirim; sıra WP listesinden, konum yaklaşık"
-Demir Kapı (Sophiae),Sophiae,kapi,40.9955,28.976,-336,-1457,,Marmara deniz suru kapısı,WP-Walls,"kestirim; sıra WP listesinden, konum yaklaşık"
-Kontoskalion Kapısı,Kontoskalion,kapi,40.992,28.9725,-630,-1846,,Marmara deniz suru kapısı,WP-Walls,"kestirim; sıra WP listesinden, konum yaklaşık"
-Yenikapı,Yenikapı,kapi,40.988,28.957,-1932,-2291,,Marmara deniz suru kapısı,WP-Walls,"kestirim; sıra WP listesinden, konum yaklaşık"
-Davutpaşa Kapısı,Ag. Aemilianos,kapi,40.9845,28.947,-2772,-2680,,Marmara deniz suru kapısı,WP-Walls,"kestirim; sıra WP listesinden, konum yaklaşık"
-Psamatya Kapısı,Psamathia,kapi,40.983,28.9435,-3066,-2847,,Marmara deniz suru kapısı,WP-Walls,"kestirim; sıra WP listesinden, konum yaklaşık"
-Narlıkapı,Narlıkapı,kapi,40.9895,28.944,-3024,-2124,,Marmara deniz suru kapısı,WP-Walls,"kestirim; sıra WP listesinden, konum yaklaşık"
-Ayasofya,Hagia Sophia,kilise,41.00859,28.98,0,-1,~70 x 75 x 56 (kubbe),kubbe 558'den; minare YOK,Bilgi,"0,0 kabul; ölçü Bilgi"
-Augustaion,Augustaion,forum,41.009,28.9795,-42,44,,Ayasofya önü meydan,Bilgi,kestirim
-Iustinianus Sütunu,Column of Justinian,sutun,41.009,28.9795,-42,44,,Augustaion; at üstünde heykel 1453'te: BELİRSİZ,Bilgi,kestirim
-Hipodrom,Hippodrome,diger,41.006,28.9755,-378,-289,~430 x 120,"harap; dikilitaşlar, Yılanlı Sütun",Bilgi,kestirim
-Büyük Saray,Great Palace,saray,41.004,28.9795,-42,-512,,harabe,Bilgi,kestirim
-Bukoleon Sarayı,Boukoleon,saray,41.0,28.979,-84,-956,,"deniz kıyısı, harap",Bilgi,kestirim
-Konstantin Forumu,Forum of Constantine,forum,41.0085,28.971,-756,-11,,oval forum; Konstantin Sütunu,WP-Cpl,kestirim
-Theodosius (Tauri) Forumu,Forum Tauri,forum,41.0105,28.9615,-1554,211,,,WP-Cpl,kestirim
-Arkadius Sütunu,Forum Arcadii,sutun,41.0,28.939,-3444,-956,,,WP-Cpl,kestirim
-Bozdoğan Kemeri,Aqueduct of Valens,diger,41.0165,28.957,-1932,878,,"su kemeri, Mese'nin kuzeyi",Bilgi,kestirim
-Havariyun Kilisesi,Holy Apostles,kilise,41.019,28.9515,-2394,1156,,harap; nekropol,Bilgi,kestirim
-Pantokrator Manastırı,Pantokrator,manastir,41.0195,28.956,-2016,1212,,,Bilgi,kestirim
-Khora (Kariye),Chora,kilise,41.031,28.939,-3444,2491,,,Bilgi,kestirim
-Pammakaristos,Pammakaristos,kilise,41.0285,28.9475,-2730,2213,,,Bilgi,kestirim
-Studios (Imrahor),Stoudios,manastir,40.9925,28.9265,-4495,-1790,,,Bilgi,kestirim
-Peribleptos,Peribleptos,manastir,40.983,28.9465,-2814,-2847,,,Bilgi,kestirim
-Lips,Lips Manastırı,manastir,41.0165,28.949,-2604,878,,,Bilgi,kestirim
-Myrelaion,Myrelaion,kilise,41.005,28.9575,-1890,-400,,,Bilgi,kestirim
-Venedik mahallesi,Venetian Quarter,mahalle,41.019,28.968,-1008,1156,,Haliç kıyısı iskeleleri,Bilgi,kestirim
-Ceneviz mahallesi (eski Pera/Galata),Pera,mahalle,41.027,28.974,-504,2046,,Galata surlu Ceneviz kolonisi,Bilgi,kestirim
-Christea Turris,Christea Turris,kule,41.0256,28.9742,-487,1890,,1348,Bilgi,kestirim
-Yahudi mahallesi (Vlanga/Haliç),Jewish Quarter,mahalle,41.0165,28.964,-1344,878,,,Bilgi,kestirim
-Petra / Phanar,Petra,mahalle,41.0285,28.9505,-2478,2213,,Notaras yedek,WP-Fall,kestirim
-Kontoskalion Limanı,Harbour of Kontoskalion,liman,40.9925,28.969,-924,-1790,,,Bilgi,kestirim
-Eleutherios Limanı (dolmuş),Harbour of Eleutherios,liman,40.9945,28.952,-2352,-1568,,"dolmuş, bostan",WP-Fall; Bilgi,kestirim
-Neorion Limanı,Neorion,liman,41.0175,28.971,-756,990,,,Bilgi,kestirim
-Prosphorion Limanı,Prosphorion,liman,41.0175,28.976,-336,990,,,Bilgi,kestirim
-Osmanlı Ordugâhı - Sultan'ın otağı,Ottoman tent,ordugah,41.0185,28.923,-4789,1101,,Mesoteikhion yakını,WP-Fall,kestirim
-Karaca Paşa kanadı,Rumeli corps,ordugah,41.025,28.9225,-4831,1824,,kuzey yarı sur önü,WP-Fall,kestirim
-İshak Paşa kanadı,Anatolian corps,ordugah,41.005,28.915,-5461,-400,,Lykos güneyi–Marmara,WP-Fall,kestirim
-Zağanos Paşa kolu,Zaganos,ordugah,41.03,28.98,0,2380,,Haliç ötesi / Galata yamacı,WP-Fall,kestirim
-Çifte Sütunlar (Diplokionion),Diplokionion,ordugah,41.043,29.008,2352,3825,,donanma üssü,Bilgi,kestirim; konum BELİRSİZ
-Şahi topu bataryası (Topkapı karşısı),Urban's cannon,batarya,41.0165,28.919,-5125,878,,Topkapı/Mesoteikhion önü,WP-Fall,kestirim
-Rumeli Hisarı,Rumeli Hisarı,diger,41.085,29.056,6385,8496,,1452,Bilgi,kestirim; konum bilinen
-Anadolu Hisarı,Anadolu Hisarı,diger,41.085,29.065,7141,8496,,1394,Bilgi,kestirim
-Haliç'e gemi yürütme inişi (Kasımpaşa),Ships overland,iskele,41.03,28.968,-1008,2380,,22 Nisan,WP-Fall,kestirim; rota BELİRSİZ
-"Yüzer köprü (Haliç, Cibali-Kasımpaşa)",Pontoon bridge,kopru,41.0245,28.9605,-1638,1768,,köprü varlığı Nisan'da: BELİRSİZ,Bilgi,kestirim
+Anemas Zindanları,Anemas,diger,41.0398,28.9387,-3470,3469,,Blakhernai suyunun Haliç'e vardığı köşe; zindan olarak kullanımı sürüyor,WP-Walls,kestirim ±120 m
+Gyrolimne Postern'i,Gyrolimne,kapi,41.039,28.9405,-3318,3380,,kapalı posterna (Blakhernai deniz suru köşesi),WP-Walls,kestirim ±150 m; WP: kapalı
+Isaakios Angelos Kulesi,Isaakios Angelos kulesi,kule,41.0376,28.9392,-3428,3225,~ 20 yüksek,"Blakhernai dış suru kulesi (1190'lar), Haliç yönü",Bilgi,kestirim ±150 m
+Brakhionion (Pentapyrgion),Brakhionion / Pentapyrgion,kule,41.0357,28.938,-3528,3014,"5 kulelik blok, ~ 220 x 5 (Manuel suru)","Manuel I Komnenos suru, Blakhernai'nin kara cephesi; 1453'te Minotto burada",WP-Walls; WP-Fall,kestirim ±150 m
+Blakhernai Kapısı (Eğrikapı yanı),Blakhernai Kapısı,kapi,41.0349,28.9382,-3512,2925,,Blakhernai kapısı; Venedikliler savundu,WP-Walls; WP-Fall,kestirim ±150 m
+Eğrikapı (Kaligaria?),Kaligaria Kapısı?,kapi,41.0343,28.9384,-3495,2858,,Manuel suru ucundaki kapı; Kaligaria eşleşmesi tartışmalı,WP-Walls,kestirim ±150 m; eski satır lon hatalıydı (Balat'a kümelenmişti)
+Kerkoporta,Kerkoporta,kapi,41.0326,28.9378,-3545,2669,küçük posterna,kule 96 yakını; 29 Mayıs'ta açık kaldığı anlatısı kazıyla kanıtsız,WP-Walls,kestirim ±150 m; tartışmalı
+Edirnekapı,Karisios (Charisius) Kapısı,kapi,41.0292,28.937,-3612,2291,,"iç sur kapısı; Bocchiardi kardeşler (önce Giustiniani); 6. tepe doruğu, surun en yüksek yeri",WP-Walls; WP-Fall,kestirim ±100 m
+Hücum Kapısı / Sulukule,Beşinci Askerî Kapı (Pempton),kapi,41.025,28.9322,-4016,1824,,bombardıman yarığı; 29 Mayıs'a dek savunuldu,WP-Walls,kestirim ±120 m
+Topkapı,Aziz Romanos Kapısı,kapi,41.0185,28.9245,-4663,1101,"26,5 kapı yapısı (WP)",Mesoteikhion'un kuzeyi; Şahi top bölgesi; ağır bombardıman,WP-Walls; WP-Fall,kestirim ±120 m
+Dördüncü Askerî Kapı,Dördüncü Askerî Kapı,kapi,41.015,28.9232,-4772,712,,duvarla kapalı,WP-Walls,kestirim ±120 m
+Mevlanakapı,Rhegion (Rhesios) Kapısı,kapi,41.0112,28.9222,-4856,289,,iyi korunan kapı; Mesoteikhion'un güney ucu,WP-Walls,kestirim ±120 m
+Üçüncü Askerî Kapı,Triton Kapısı,kapi,41.0078,28.921,-4957,-89,,Kalagros olabilir,WP-Walls,kestirim ±120 m
+Silivrikapı,Pege (Pigi) Kapısı,kapi,41.0042,28.92,-5041,-489,,Cataneo ve Theophilos Palaiologos; Balıklı Ayazması dışarda,WP-Walls; WP-Fall,kestirim ±120 m
+İkinci Askerî Kapı,Deuteron Kapısı,kapi,41.0023,28.9198,-5057,-701,,,WP-Walls,kestirim ±120 m
+Belgratkapı,Xylokerkos Kapısı,kapi,41.0,28.9197,-5066,-956,,1189'dan kapatılmış,WP-Walls; WP-geo,WP-geo ile yaklaşık eşleşir; ±100 m
+Yedikule Kapısı (posterna),Posterna kule 11-12,kapi,40.9945,28.9226,-4822,-1568,küçük posterna,,WP-Walls,kestirim ±100 m
+Altınkapı,Chryseia Pyle (Porta Aurea),kapi,40.9933,28.9231,-4780,-1701,3 kemerli mermer tören kapısı; yanında 9. ve 10. kare kule (WP),"Palaiologos döneminde kapalı/küçültülmüş, sur içine kale gibi alınmış; Ceneviz Manuel savundu: WP bilgisi çelişkili",WP-Walls; WP-geo,"WP-geo: Yedikule 40.9933,28.9231"
+Tabakkapı,Birinci Askerî Kapı,kapi,40.9912,28.9238,-4721,-1935,,"kara sur ile Marmara suru birleşimi, küçük kapı",WP-Walls,kestirim ±120 m
+Mesoteikhion (orta sur),Mesoteichion,diger,41.0145,28.923,-4789,656,~ 1500 x - x 12,Lykos vadisi; sur çevresi en zayıf; Sultan'ın top yoğunluğu,WP-Walls; WP-Fall,eski satır 400 m kuzey-doğu kaymıştı; Topkapı–Mevlanakapı arası; kestirim
+Lykos (Bayrampaşa) deresi geçişi,Lykos,diger,41.0145,28.9228,-4805,656,,sur altından Marmara'ya geçen dere,WP-Fall,kestirim; sur kapıları arasında
+Dış sur hendeği (Mesoteikhion önü),Taphros,diger,41.0145,28.921,-4957,656,~ 20 geniş x 10 derin (WP),"su dolu değil, bölmeli; tahta/kum doldurma girişimleri",WP-Walls,kestirim
+Koiliomene Kapısı,Koiliomene,kapi,41.0388,28.9418,-3209,3358,,"Haliç deniz suru kapısı; sur ~10 m yüksek, yer yer kıyıdan içeride",WP-Walls,kestirim ±150 m; sıra WP listesinden. Eski satırlar Ayakapı–Perama aralığında yanlış kümelenmişti; Blakhernai köşesi
+Ag. Anastasia Kapısı,Ag. Anastasia,kapi,41.0368,28.9448,-2957,3136,,"Haliç deniz suru kapısı; sur ~10 m yüksek, yer yer kıyıdan içeride",WP-Walls,kestirim ±150 m; sıra WP listesinden. Eski satırlar Ayakapı–Perama aralığında yanlış kümelenmişti
+Balat Kapısı (Kynegion),Balat (Saray) Kapısı,kapi,41.0338,28.9492,-2588,2802,,"Haliç deniz suru kapısı; sur ~10 m yüksek, yer yer kıyıdan içeride",WP-Walls,kestirim ±150 m; sıra WP listesinden. Eski satırlar Ayakapı–Perama aralığında yanlış kümelenmişti; Balat; Nike kabartmalı üçlü kapı olabilir
+Fener Kapısı,Phanarion,kapi,41.03,28.9523,-2327,2380,,"Haliç deniz suru kapısı; sur ~10 m yüksek, yer yer kıyıdan içeride",WP-Walls,kestirim ±150 m; sıra WP listesinden. Eski satırlar Ayakapı–Perama aralığında yanlış kümelenmişti; Fener; deniz feneri
+Petrion Kapısı,Petrion,kapi,41.0283,28.9545,-2142,2191,,"Haliç deniz suru kapısı; sur ~10 m yüksek, yer yer kıyıdan içeride",WP-Walls,kestirim ±150 m; sıra WP listesinden. Eski satırlar Ayakapı–Perama aralığında yanlış kümelenmişti; Petra mahallesi iskelesi
+Yeni Ayakapı,Yeni Ayakapı,kapi,41.0272,28.9558,-2033,2068,,"Haliç deniz suru kapısı; sur ~10 m yüksek, yer yer kıyıdan içeride",WP-Walls,kestirim ±150 m; sıra WP listesinden. Eski satırlar Ayakapı–Perama aralığında yanlış kümelenmişti
+Ayakapı,Ag. Theodosia,kapi,41.0266,28.9568,-1949,2002,,"Haliç deniz suru kapısı; sur ~10 m yüksek, yer yer kıyıdan içeride",WP-Walls,kestirim ±150 m; sıra WP listesinden. Eski satırlar Ayakapı–Perama aralığında yanlış kümelenmişti; St Theodosia (Gül Camii) yanında
+Odun Kapı,Eis Pegas,kapi,41.0255,28.958,-1848,1879,,"Haliç deniz suru kapısı; sur ~10 m yüksek, yer yer kıyıdan içeride",WP-Walls,kestirim ±150 m; sıra WP listesinden. Eski satırlar Ayakapı–Perama aralığında yanlış kümelenmişti
+Platea Kapısı,Platea,kapi,41.0248,28.9598,-1697,1801,,"Haliç deniz suru kapısı; sur ~10 m yüksek, yer yer kıyıdan içeride",WP-Walls,kestirim ±150 m; sıra WP listesinden. Eski satırlar Ayakapı–Perama aralığında yanlış kümelenmişti
+Ayazma Kapısı,Ayazma,kapi,41.0243,28.9617,-1537,1746,,"Haliç deniz suru kapısı; sur ~10 m yüksek, yer yer kıyıdan içeride",WP-Walls,kestirim ±150 m; sıra WP listesinden. Eski satırlar Ayakapı–Perama aralığında yanlış kümelenmişti
+Zindan Kapı,Drungaris,kapi,41.024,28.964,-1344,1712,,"Haliç deniz suru kapısı; sur ~10 m yüksek, yer yer kıyıdan içeride",WP-Walls,kestirim ±150 m; sıra WP listesinden. Eski satırlar Ayakapı–Perama aralığında yanlış kümelenmişti
+Ag. Ioannes Kapısı (Cibali?),Ag. Ioannes,kapi,41.0238,28.9658,-1193,1690,,"Haliç deniz suru kapısı; sur ~10 m yüksek, yer yer kıyıdan içeride",WP-Walls,kestirim ±150 m; sıra WP listesinden. Eski satırlar Ayakapı–Perama aralığında yanlış kümelenmişti
+Unkapanı Perama,Perama,kapi,41.0234,28.9678,-1025,1646,,"Haliç deniz suru kapısı; sur ~10 m yüksek, yer yer kıyıdan içeride",WP-Walls,"kestirim ±150 m; sıra WP listesinden. Eski satırlar Ayakapı–Perama aralığında yanlış kümelenmişti; Perama iskelesi, feribot/kayık geçişi"
+Balıkpazarı Kapısı,Hikanatissa,kapi,41.0215,28.97,-840,1434,,"Haliç deniz suru kapısı; sur ~10 m yüksek, yer yer kıyıdan içeride",WP-Walls,kestirim ±150 m; sıra WP listesinden. Eski satırlar Ayakapı–Perama aralığında yanlış kümelenmişti
+Neorion (Yemiş) Kapısı,Neorion (Horaia),kapi,41.018,28.9742,-487,1045,,"Haliç deniz suru kapısı; sur ~10 m yüksek, yer yer kıyıdan içeride",WP-Walls,kestirim ±150 m; sıra WP listesinden. Eski satırlar Ayakapı–Perama aralığında yanlış kümelenmişti; tersane/liman kapısı
+Bonus Kapısı,Bonus,kapi,41.0165,28.976,-336,878,,"Haliç deniz suru kapısı; sur ~10 m yüksek, yer yer kıyıdan içeride",WP-Walls,kestirim ±150 m; sıra WP listesinden. Eski satırlar Ayakapı–Perama aralığında yanlış kümelenmişti
+Eugenios Kapısı (Yalıköşkü),Eugenios / Marmaroporta,kapi,41.0155,28.9775,-210,767,,"Haliç deniz suru kapısı; sur ~10 m yüksek, yer yer kıyıdan içeride",WP-Walls,kestirim ±150 m; sıra WP listesinden. Eski satırlar Ayakapı–Perama aralığında yanlış kümelenmişti; zincir ucu kulesine bitişik
+Eugenios Kulesi (zincir güney ucu),Eugenios,kule,41.016,28.9785,-126,823,,zincirin güney ucu (Sirkeci/Yalıköşkü),WP-Walls,kestirim ±100 m
+Galata Kastellion (zincir kuzey ucu),Kastellion (Megalos Pyrgos),kule,41.0227,28.977,-252,1568,,zincirin kuzey ucu; Ceneviz,WP-Walls,kestirim ±100 m; Yeraltı Camii yeri
+Zincir (Haliç ağzı),Chain/Boom,diger,41.0193,28.9778,-185,1190,~ 750 m (kestirim),yüzer kütükler/varillerle gerilmiş; Nisan'da gerilmişti,WP-Walls,uç koordinatlarından hesaplandı; uzunluk kestirim
+Doğu Kapısı (Ag. Barbara),Eastern Gate,kapi,41.013,28.9845,378,489,,Marmara deniz suru kapısı; sur 12-15 m,WP-Walls,kestirim ±150 m; eski satırların çoğu denizde kalıyordu
+Değirmenkapı,Değirmen,kapi,41.01,28.9838,319,156,,Marmara deniz suru kapısı; sur 12-15 m,WP-Walls,kestirim ±150 m; eski satırların çoğu denizde kalıyordu
+Demirkapı,Demirkapı,kapi,41.0075,28.9828,235,-122,,Marmara deniz suru kapısı; sur 12-15 m,WP-Walls,kestirim ±150 m; eski satırların çoğu denizde kalıyordu
+Balıkhane Kapısı,Balıkhane,kapi,41.0055,28.9818,151,-345,,Marmara deniz suru kapısı; sur 12-15 m,WP-Walls,kestirim ±150 m; eski satırların çoğu denizde kalıyordu
+Ahırkapı,Ahırkapı,kapi,41.004,28.9805,42,-512,,Marmara deniz suru kapısı; sur 12-15 m,WP-Walls,kestirim ±150 m; eski satırların çoğu denizde kalıyordu
+Aslan (Boukoleon) Kapısı,Boukoleon,kapi,41.0025,28.9758,-353,-678,,Marmara deniz suru kapısı; sur 12-15 m,WP-Walls,kestirim ±150 m; eski satırların çoğu denizde kalıyordu
+Demir Kapı (Sophiae),Sophiae,kapi,41.0013,28.9722,-655,-812,,Marmara deniz suru kapısı; sur 12-15 m,WP-Walls,kestirim ±150 m; eski satırların çoğu denizde kalıyordu
+Kontoskalion Kapısı,Kontoskalion,kapi,41.0002,28.9672,-1075,-934,,Marmara deniz suru kapısı; sur 12-15 m,WP-Walls,kestirim ±150 m; eski satırların çoğu denizde kalıyordu
+Yenikapı (Theodosius Limanı kapısı),Yenikapı,kapi,41.0,28.9535,-2226,-956,,Marmara deniz suru kapısı; sur 12-15 m,WP-Walls,kestirim ±150 m; eski satırların çoğu denizde kalıyordu
+Davutpaşa Kapısı (Vlanga),Ag. Aemilianos,kapi,40.999,28.9445,-2982,-1068,,Marmara deniz suru kapısı; sur 12-15 m,WP-Walls,kestirim ±150 m; eski satırların çoğu denizde kalıyordu
+Psamatya Kapısı,Psamathia,kapi,40.9988,28.9345,-3822,-1090,,Marmara deniz suru kapısı; sur 12-15 m,WP-Walls,kestirim ±150 m; eski satırların çoğu denizde kalıyordu
+Narlıkapı,Narlıkapı,kapi,40.9955,28.929,-4285,-1457,,Marmara deniz suru kapısı; sur 12-15 m,WP-Walls,kestirim ±150 m; eski satırların çoğu denizde kalıyordu
+Sarayburnu (Akropolis) ucu,Akropolis / Bosporion,diger,41.016,28.984,336,823,,Marmara ve Haliç surlarının buluştuğu burun,WP-Walls,kestirim ±120 m
+Ayasofya,Hagia Sophia,kilise,41.0086,28.98,0,0,"~ 82 x 73 x 55 (kubbe iç yükseklik 55,6; çap ~ 33)",hâlâ patrikhane kilisesi; kubbe 558'den; ayakta 4 payanda; minare YOK; Union'dan sonra birçok Ortodoks küstü,WP-Hagia Sophia,"WP koordinat 0,0 kabul"
+Augustaion,Augustaion,forum,41.008,28.979,-84,-67,~ 100 x 60 (kestirim),Ayasofya önü meydan; Iustinianus Sütunu 1453'te: BELİRSİZ,WP-geo; Bilgi,kestirim
+Iustinianus Sütunu,Column of Justinian,sutun,41.0081,28.9788,-101,-56,~ 35 (Bilgi),at üstünde heykel 1453'te: BELİRSİZ (Fatih'ten sonra söküldü),Bilgi,kestirim
+Milion,Milion,diger,41.0081,28.978,-168,-56,~ 12 (kestirim) tetrapilon,"kutsal mesafe taşı kemeri, harap",WP-geo,WP-geo koordinatı
+Chalke Kapısı,Chalke,kapi,41.0058,28.9772,-235,-311,,Büyük Saray giriş kapısı; harabe,WP-geo,WP-geo
+Hipodrom,Hippodrome,diger,41.0064,28.9758,-353,-245,~ 450 x 130 (WP),"harap, otlak/bostan ve taş ocağı; dikilitaşlar; at heykelleri 1204'te Venedik'e",WP-geo,WP-geo
+Teodosius Dikilitaşı,Obelisk of Theodosius,sutun,41.0059,28.9754,-386,-300,"~ 19,6 yüksek (mermer kaide hariç) (Bilgi)","pembe granit, 390'da; ayakta",WP-geo; Bilgi,WP-geo; yükseklik Bilgi
+Yılanlı Sütun,Serpent Column,sutun,41.0056,28.9751,-412,-334,~ 8 (kestirim; üst üçte biri sonradan 1700'de),"bronz üç yılan, Delfi; üç başı 1453'te var (başlar 1700'de kırıldı)",WP-geo; WP-Hippodrome,başlar için BELİRSİZ; WP: 1700'de kırıldı
+Örme (Konstantin Porphyrogennetos) Dikilitaşı,Walled Obelisk,sutun,41.0054,28.9748,-437,-356,~ 32 (Bilgi),taş çekirdek; yaldızlı bronz levhalar 1204'te sökülmüştü,WP-geo; WP-Hippodrome,
+Sphendone (Hipodrom kavisi),Sphendone,diger,41.005,28.9745,-462,-400,yarım daire ~ 130 çap (kestirim),güney uç kemerleri/kemerli alt yapı hâlâ ayakta,WP-Hippodrome,kestirim
+Büyük Saray (Daphne/Kathisma),Great Palace,saray,41.0058,28.9772,-235,-311,"altı teras, 16 ha (WP)",harabe ve boş; kurşun çatılar 1260'larda satılmış; zindan olarak kemerleri,WP-geo; WP-Great Palace,Sphendone ile Chalke arasındaki yamaç
+Bukoleon Sarayı,Boukoleon Palace,saray,41.0025,28.9756,-370,-678,,"deniz kıyısında, harap; Ceneviz ve Katalan birlikleri bölgeyi savundu (WP-Fall)",WP-geo; WP-Fall,WP-geo
+Bukoleon Limanı,Harbour of Boukoleon,liman,41.0022,28.9762,-319,-712,küçük,kullanımdan düşmüş,Bilgi,kestirim
+Mangana Arsenali,Mangana,saray,41.014,28.9855,462,600,,"eski silah deposu, harap",Bilgi,kestirim
+Hodegon (Hodegetria) Manastırı,Hodegon,manastir,41.0035,28.9795,-42,-567,,Hodegetria ikonası; kuşatmada surlara taşındı,Bilgi; WP-Chora,kestirim ±200 m
+Aya İrini,Hagia Eirene,kilise,41.0096,28.9815,126,111,~ 35 x 25 (kestirim),Saray'ın birinci avlusu; 1453'te kullanım BELİRSİZ,Bilgi,kestirim
+Küçük Ayasofya,Sts Sergios & Bakchos,kilise,41.0028,28.9719,-680,-645,~ 25 x 25 kubbeli sekizgen,Büyük Saray'ın güney kilisesi; hâlâ var,WP-geo,WP-geo; kullanım durumu BELİRSİZ
+Konstantin Forumu,Forum of Constantine,forum,41.009,28.971,-756,44,oval ~ 160 x 130 (Bilgi),"oval forum, kısmen yerleşim",WP-geo,WP-geo
+Konstantin Sütunu (Çemberlitaş),Column of Constantine,sutun,41.0086,28.9711,-748,0,"~ 35 yüksek, porfir tamburlar",1453'te ayakta; Apollon başlı heykel 1105'te devrilmiş; tepesine haç konmuş,WP-geo; Bilgi,WP-geo
+Theodosius Forumu (Tauri),Forum Tauri,forum,41.0097,28.9636,-1378,122,,harap; Beyazıt Meydanı yeri,WP-geo,WP-geo
+Mese yolu (Beyazıt köşesi),Mese,diger,41.0105,28.966,-1176,211,~ 25 geniş (Bilgi),ana cadde; sıra sütunlu revaklar harap,Bilgi,kestirim
+Boğa Forumu (Aksaray),Forum Bovis,forum,41.01,28.9531,-2260,156,,harap; at/öküz heykelleri,WP-geo,WP-geo
+Arkadius Forumu ve Sütunu,Forum Arcadii,sutun,41.0078,28.9431,-3100,-89,~ 50 yüksek (kestirim),7. tepe (Xerolophos); spiral kabartmalı sütun; 1453'te ayakta,WP-geo,WP-geo
+Marcianus Sütunu,Column of Marcian,sutun,41.0154,28.9503,-2495,756,~ 10 (Bilgi),"granit, Havariyun yakını",WP-geo,WP-geo
+Philadelphion,Philadelphion,diger,41.0141,28.9569,-1941,612,,Mese bölünme noktası; harap,WP-geo,WP-geo
+Bozdoğan (Valens) Kemeri,Aqueduct of Valens,diger,41.0159,28.9556,-2050,812,~ 921 x 8 x 29 (WP),3. ve 4. tepe arası; 1403'te çalıştığı bildirilmiş; kuşatmada kısmen çalışıyor: BELİRSİZ,WP-geo; WP-Valens,
+Havariyun Kilisesi,Holy Apostles,kilise,41.0197,28.9497,-2546,1234,"haç planlı, 5 kubbe",harap; Konstantin ve imparatorlar nekropolü; kısmi kullanım BELİRSİZ,WP-geo,N. Palaiologos yakınında savunma yedeği
+Pantokrator Manastırı (Zeyrek),Pantokrator,manastir,41.0197,28.9572,-1915,1234,iki haç planlı kilise + şapel,Palaiologos dönemi; Gennadios Scholarios burada keşişti (WP-Pantokrator),WP-geo; WP-Pantokrator,
+Khora (Kariye),Chora,kilise,41.0312,28.939,-3444,2513,"742,5 m² (WP), 6 kubbe",kara surunun hemen içinde; Hodegetria ikonası kuşatmada getirildi (WP-Chora); mozaikler 14. yy,WP-geo; WP-Chora,
+Pammakaristos,Pammakaristos,kilise,41.0292,28.9464,-2823,2291,,Palaiologos dönemi eklemeli; Notaras bölgesi yakını,WP-geo,WP-geo
+Studios (Imrahor) Manastırı,Stoudios,manastir,40.9961,28.9286,-4318,-1390,~ 25 x 12 bazilika,kıyıya yakın; Jacopo Contarini ve keşişler; Osmanlı ilk günlerde yakınındaki küçük kaleyi aldı (WP-Fall),WP-geo; WP-Fall,WP-geo
+Peribleptos (Sulu Manastır),Peribleptos,manastir,40.9998,28.9345,-3822,-979,,Samatya; harap/kısmi,Bilgi,kestirim ±200 m
+Lips Manastırı (Fenari İsa),Lips,manastir,41.0154,28.944,-3024,756,iki kilise,Faustina; kısmi; Tekfur yönü,WP-geo,WP-geo
+Myrelaion (Bodrum Camii),Myrelaion,kilise,41.0086,28.9556,-2050,0,~ 20 x 25 (kestirim); altında sarnıç,tonoz alt yapı,WP-geo,WP-geo
+Kyriotissa (Kalenderhane),Theotokos Kyriotissa,kilise,41.0131,28.9603,-1655,500,,Zeyrek yanı,WP-geo,WP-geo; 1453'te kullanım BELİRSİZ
+Gül Camii (Ag. Theodosia),Hagia Theodosia,kilise,41.0267,28.9565,-1974,2013,,Haliç kıyısı; Ayakapı yanı,WP-geo,WP-geo
+Rum Patrikhanesi çevresi (Fener),Phanar,mahalle,41.0289,28.9519,-2361,2257,,Rum mahallesi sonradan; 1453'te Petra/Phanar,WP-geo,WP-geo
+Blakhernai Sarayı,Blakhernai,saray,41.0339,28.9403,-3335,2813,,imparatorun asıl sarayı (bakımsız); Bocchiardi; Tekfur Sarayı bitişiği,WP-geo,WP-geo; Tekfur Sarayı: Porphyrogennetos
+Tekfur Sarayı,Porphyrogennetos,saray,41.0339,28.9403,-3335,2813,~ 40 x 15 x 3 kat,kara sur içi sarayı,WP-geo,WP-geo; 1453'te kullanım BELİRSİZ
+Blakhernai Meryem Ana Kilisesi (Ayazma),Blakhernai,kilise,41.0383,28.9425,-3150,3303,,kutsal kaynak; 1434'te yanmıştı,WP-geo,WP-geo; sonrası BELİRSİZ
+Aetios sarnıcı (açık),Cistern of Aetius,sarnic,41.0278,28.9392,-3428,2135,~ 244 x 85 (WP),"açık, bostan/futbol sahası yeri; gövde duvar kalıntısı",WP-geo; Bilgi,WP-geo
+Aspar sarnıcı (açık),Cistern of Aspar,sarnic,41.0258,28.9497,-2546,1913,~ 152 x 130 x 10 (Bilgi),"açık, bostan; Çukurbostan",WP-geo,WP-geo
+Mokios sarnıcı (açık),Cistern of Mocius,sarnic,41.0103,28.9347,-3806,189,~ 170 x 147 (Bilgi),"açık, bostan; Altımermer",WP-geo,WP-geo
+Pulcheria sarnıcı,Cistern of Pulcheria,sarnic,41.025,28.95,-2520,1824,,Aspar yakını,WP-geo,WP-geo; durum BELİRSİZ
+Yerebatan (Bazilika) Sarnıcı,Basilica Cistern,sarnic,41.0081,28.9778,-185,-56,~ 138 x 65 x 9 (Bilgi),"kapalı, yüzlerce sütun, hâlâ su depoluyor: BELİRSİZ",WP-geo,WP-geo
+Binbirdirek (Philoxenos) Sarnıcı,Cistern of Philoxenos,sarnic,41.0075,28.9744,-470,-122,~ 64 x 56 (Bilgi),"kapalı, 224 sütun",WP-geo,WP-geo
+Theodosius Sarnıcı,Theodosian Cistern,sarnic,41.0073,28.9726,-622,-145,,kapalı,WP-geo,WP-geo
+Theodosius (Eleutherios) Limanı,Harbour of Eleutherios,liman,41.0047,28.9522,-2335,-434,~ 400 x 200 (Yenikapı kazısı),"dolmuş, bostan; Prens Orhan buraya yakın savundu",WP-geo; WP-Fall,WP-geo
+Langa (Vlanga) bostanları ve limanı,Langa/Vlanga,liman,40.9985,28.9445,-2982,-1123,~ 1080 m sur (WP),"bostanlar, küçük iskele",WP-Walls,kestirim ±200 m
+Kontoskalion Limanı (Kadırga),Harbour of Kontoskalion,liman,41.001,28.969,-924,-845,~ 300 x 200 (kestirim),hâlâ küçük gemi sığınağı: BELİRSİZ,Bilgi,kestirim
+Neorion Limanı (Haliç),Neorion,liman,41.0167,28.975,-420,901,,"tersane/liman, Haliç içi",WP-geo,WP-geo
+Prosphorion Limanı,Prosphorion,liman,41.016,28.98,0,823,,"Eugenios'un doğusu, Haliç ağzı",WP-geo,WP-geo
+Perama İskelesi (Unkapanı),Perama,iskele,41.0234,28.9678,-1025,1646,,Galata'ya karşı geçiş iskelesi,WP-Walls,kestirim ±120 m
+Venedik mahallesi,Venetian Quarter (Embolos),mahalle,41.02,28.969,-924,1268,,Haliç kıyısı iskeleler; Venedik bailosu Minotto; konum kaynaklarda değişir,Bilgi,kestirim ±300 m; BELİRSİZ
+"Ceneviz iskelesi (eski, sur içi)",Genoese Pier,iskele,41.0215,28.9675,-1050,1434,,"1267 öncesi Ceneviz payı, Pera'ya geçtiler",Bilgi,kestirim; BELİRSİZ
+Pisa mahallesi,Pisan Quarter,mahalle,41.0185,28.9715,-714,1101,,Neorion yakını,Bilgi,kestirim; BELİRSİZ
+Amalfi mahallesi,Amalfitan Quarter,mahalle,41.0235,28.9645,-1302,1657,,Perama yakını,Bilgi,kestirim; BELİRSİZ
+Yahudi mahallesi (Vlanga),Jewish Quarter (Vlanga),mahalle,40.999,28.946,-2856,-1068,,Marmara kıyısı; sonrası Kasımpaşa/Karaköy,Bilgi,kestirim; BELİRSİZ
+"Yahudi mahallesi (Haliç, Pera tarafı)",Jews of Pera,mahalle,41.0245,28.9745,-462,1768,,Pera'da Rum ve Yahudi nüfus,WP-Galata,kestirim
+Petra mahallesi (Balat),Petra,mahalle,41.032,28.9495,-2562,2602,,Notaras yedeği; Haliç kıyısı yoğun,WP-Fall,kestirim ±250 m
+Phanar (Fener) mahallesi,Phanar,mahalle,41.0289,28.9519,-2361,2257,,Haliç kıyısı,WP-geo,WP-geo
+Blakhernai mahallesi,Blakhernai,mahalle,41.036,28.943,-3108,3047,,"sarayın çevresi, sık",Bilgi,kestirim
+Zeyrek/Pantokrator mahallesi,Pantokrator,mahalle,41.0195,28.9565,-1974,1212,,manastır etrafı,Bilgi,kestirim
+Havariyun mahallesi,Holy Apostles,mahalle,41.02,28.949,-2604,1268,,"harap kilise etrafı, sayıklı",Bilgi,kestirim
+Samatya (Psamathia) mahallesi,Psamathia,mahalle,41.0019,28.933,-3948,-745,,"Marmara kıyısı, bağ ve balıkçı",WP-geo,WP-geo
+Studion mahallesi,Stoudios,mahalle,40.9961,28.9286,-4318,-1390,,kıyıya yakın manastır bölgesi,WP-geo,WP-geo
+Aksaray (Boğa Forumu) çevresi,Bous,mahalle,41.01,28.9531,-2260,156,,"Mese, orta yoğun",WP-geo,WP-geo
+Hipodrom çevresi,Hippodrome precinct,mahalle,41.0065,28.9765,-294,-234,,seyrek; bostanlar ve harabeler,WP-geo,WP-geo
+Ayasofya çevresi (Patrikhane),Hagia Sophia precinct,mahalle,41.0095,28.9795,-42,100,,din görevlileri; sık,Bilgi,kestirim
+Kontoskalion mahallesi,Kontoskalion,mahalle,41.002,28.967,-1092,-734,,liman çevresi; balıkçı,Bilgi,kestirim
+Eleutherios bostanları,Eleutherios gardens,mahalle,41.0045,28.9515,-2394,-456,,"dolmuş liman, bostan",WP-geo,WP-geo
+Lykos vadisi bostanları,Lykos vadisi,mahalle,41.015,28.93,-4201,712,,"seyrek, tarla ve bostan",WP-Fall,kestirim
+Yedikule bostanları,Yedikule gardens,mahalle,40.995,28.9265,-4495,-1512,,"Altın Kapı çevresi, tarla",Bilgi,kestirim
+Khora mahallesi,Chora,mahalle,41.0312,28.94,-3360,2513,,"kara sur arkası, tarla",WP-geo,WP-geo
+Aetios bostanı mahallesi,Aetios gardens,mahalle,41.0278,28.9392,-3428,2135,,bostan,WP-geo,WP-geo
+Galata Kulesi (Christea Turris),Christea Turris,kule,41.0256,28.9742,-487,1890,~ 62 yüksek (bugünkü); 1453'te daha alçak,1348'de Ceneviz; külah yok; Galata'nın zirvesi,OSM-Nominatim; WP-Galata,bugünkü külah/üst yapı YOK
+Pera (Galata) Ceneviz kolonisi,Pera / Galata,mahalle,41.025,28.976,-336,1824,"surlu, ~ 14 bin kişi (Bilgi) ",tarafsız,WP-Galata,kestirim
+Galata suru (kuzey kapısı),Porta Pera,kapi,41.029,28.974,-504,2268,,"hendekli sur (Büyük Hendek), Tünel/Şişhane yönü",WP-geo; WP-Galata,kestirim ±200 m; hendek 'Büyük Hendek Caddesi'
+Galata suru (Azapkapı/Haliç kapısı),Porta di Perama,kapi,41.0238,28.97,-840,1690,,Haliç yönü,WP-geo,kestirim ±200 m
+Galata suru (Tophane/Cenova kapısı),Porta Tophane,kapi,41.0265,28.9815,126,1990,,Boğaz yönü,WP-geo,kestirim ±200 m
+San Domenico (San Paolo) Kilisesi,St Paul / Arap Camii,kilise,41.0243,28.971,-756,1746,,1325 Dominiken,WP-geo; WP-Galata,WP-geo
+Saint Benoit,St Benedict,kilise,41.025,28.9766,-286,1824,,Benediktin 1427,WP-geo; WP-Galata,
+Santa Maria Draperis,Draperis,kilise,41.0302,28.9758,-353,2402,,Galata ötesi; 1453'te yeri: BELİRSİZ,WP-geo,
+Podestà Sarayı (Palazzo del Comune),Palazzo del Comune,saray,41.0238,28.9734,-554,1690,,1314,WP-geo; WP-Galata,
+Galata İskelesi (Ostreodes),Ostreodes,iskele,41.0238,28.9766,-286,1690,,Haliç ağzı rıhtım,WP-geo,
+Karaköy iskelesi,Galata quays,iskele,41.0217,28.9767,-277,1457,,"gemi sığınma, tarafsız",WP-geo,
+Osmanlı otağı (Sultan'ın çadırı),Sultan tent,ordugah,41.0178,28.915,-5461,1023,kırmızı-altın otağ,"Mesoteikhion önü, Maltepe tepesi: kestirim",WP-Fall; WP-Fall,kestirim; Panorama 1453 müzesi yakınında
+Karaca Paşa kanadı (Rumeli),Karadja Pasha,ordugah,41.027,28.9272,-4436,2046,,kuzey yarı sur önü,WP-Fall,kestirim
+İshak Paşa kanadı (Anadolu),Ishak Pasha,ordugah,41.005,28.912,-5713,-400,,Lykos güneyi–Marmara,WP-Fall,kestirim
+Başıbozuk toplanma alanı,Bashi-bazouks,ordugah,41.014,28.91,-5881,600,,cephe gerisi,WP-Fall,kestirim
+Zağanos Paşa kolu (Kasımpaşa yamacı),Zaganos,ordugah,41.031,28.97,-840,2491,,Haliç ötesi; Galata yakını,WP-Fall,kestirim; BELİRSİZ
+"Çifte Sütunlar (Diplokionion, Beşiktaş)",Diplokionion,ordugah,41.043,29.007,2268,3825,,donanma üssü; Balta Oğlu,OSM-Nominatim; Bilgi,kestirim; konum bilinen
+Gemilerin kara yürüyüşü: Boğaz ucu,Overland start,iskele,41.0392,29.001,1764,3403,,Dolmabahçe vadisi; 22 Nisan,Bilgi,kestirim; BELİRSİZ
+Gemilerin kara yürüyüşü: tepe geçişi,Overland crest,diger,41.037,28.985,420,3158,~ 80 m kot,Taksim yönü (Barbaro: 3 mil),Bilgi,kestirim; rota BELİRSİZ
+Gemilerin kara yürüyüşü: Haliç ucu (Kasımpaşa),Overland end,iskele,41.03,28.964,-1344,2380,,Kasımpaşa; Haliç'e indirme,WP-Fall,kestirim
+Yüzer köprü (fıçı köprüsü),Pontoon bridge,kopru,41.027,28.9605,-1638,2046,~ 500 x 3,"Cibali–Kasımpaşa, Nisan'ın sonu/Mayıs",WP-Fall,kestirim; BELİRSİZ
+Şahi top bataryası (Topkapı karşısı),Urban's cannon,batarya,41.0182,28.917,-5293,1068,"~ 8 m namlu, 600 libre taş",Mesoteikhion/Topkapı önü,WP-Fall,kestirim
+Batarya: Charisios (Edirnekapı),Edirnekapı batarya,batarya,41.0295,28.93,-4201,2324,3 top,Charisios/Edirnekapı önü,WP-Fall,kestirim; sayı BELİRSİZ
+Batarya: Pempton (Hücum Kapısı),Pempton batarya,batarya,41.025,28.927,-4453,1824,,Hücum Kapısı önü,WP-Fall,kestirim
+Batarya: Mevlanakapı,Rhesios batarya,batarya,41.0112,28.916,-5377,289,,Mevlanakapı önü,WP-Fall,kestirim
+Batarya: Pege (Silivrikapı),Pege batarya,batarya,41.0042,28.914,-5545,-489,,Silivrikapı önü,WP-Fall,kestirim
+Batarya: Blakhernai,Blakhernai batarya,batarya,41.036,28.933,-3948,3047,,Haliç ucuna doğru,WP-Fall,kestirim
+Batarya: Xylokerkos (Belgratkapı),Xylokerkos batarya,batarya,41.0,28.914,-5545,-956,,,WP-Fall,kestirim
+Batarya: Galata yamacı (Zağanos),Galata yamacı,batarya,41.033,28.971,-756,2713,,Haliç içine ateş,WP-Fall,kestirim; BELİRSİZ
+Hendek doldurma noktası,fosse fill,diger,41.0155,28.9215,-4915,767,,Mesoteikhion hendeği,WP-Fall,kestirim
+Terapia (Tarabya) kalesi,Therapia,diger,41.134,29.053,6133,13944,,Boğaz'da; ilk günlerde alındı (WP-Fall),WP-Fall,kestirim
+Stoudios yakını küçük kale,Studius castle,diger,40.9975,28.925,-4621,-1234,,Marmara kıyısı; ilk günlerde alındı (WP-Fall),WP-Fall,kestirim; adı BELİRSİZ
+Rumeli Hisarı,Rumeli Hisarı,diger,41.0849,29.0567,6444,8485,"3 büyük kule: ~ 28/22/21 yüksek, çap ~ 23-27",1452'de tamam; Boğaz kontrol,OSM-Nominatim; WP-Rumeli,
+Anadolu Hisarı,Anadolu Hisarı,diger,41.0844,29.065,7141,8429,,1394,WP-geo,
+Kız Kulesi (Damalis/Arcla),Arcla / Damalis,kule,41.0211,29.0041,2025,1390,"küçük ahşap/taş kule, adacık",Venedikli Gabriele Trevisano'nun tutması (WP-Maiden's Tower); bugünkü biçim YOK,WP-geo; WP-Maiden's,Üsküdar'a 200 m
+Üsküdar (Chrysopolis),Chrysopolis,mahalle,41.026,29.015,2940,1935,,Anadolu kıyısı; Osmanlı kontrolünde,Bilgi,kestirim
+Kadıköy (Khalkedon),Chalcedon,mahalle,40.991,29.027,3948,-1957,,Anadolu kıyısı,Bilgi,kestirim
+Eyüp (Kosmidion),Kosmidion,mahalle,41.0475,28.9338,-3881,4326,,Haliç ucu; manastır; Osmanlı sahası,WP-geo,kestirim
+Hasköy,Hasköy,mahalle,41.0397,28.9497,-2546,3458,,Haliç kuzey kıyısı,WP-geo,kestirim
+Kağıthane deresi ağzı,Cydaris,diger,41.056,28.968,-1008,5271,,Haliç başı,Bilgi,kestirim
+Taşkızak tersanesi yeri,Taşkızak,diger,41.0339,28.9609,-1605,2813,,Kasımpaşa kıyısı (sonrası Osmanlı tersanesi),WP-geo,1453'te yok: tersane sonrası
+Sultan Mehmed'in eski kampı: Davud Paşa,Davud Paşa,ordugah,40.999,28.916,-5377,-1068,,güneybatı sur önü,Bilgi,kestirim; BELİRSİZ
