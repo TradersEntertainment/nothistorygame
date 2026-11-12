@@ -1,0 +1,21 @@
+RINFO (RINFO=1 --hitchaudit, 1280x720 xvfb, ilk ~170 sn; sütunlar: çizim / üçgen k / gölge üçgeni k)
+8y =warn: ÖNCE n=21 medyan 4275 / 5605 / 996   SONRA n=20 medyan 4278 / 5533 / 924
+   t=9: ÖNCE 4458/5835/1355  SONRA 4385/5699/1348  (fark çizim -73, üçgen %-2.3, gölge üçgeni %-0.5)
+   t=18: ÖNCE 4550/5894/1103  SONRA 4437/5696/1057  (fark çizim -113, üçgen %-3.4, gölge üçgeni %-4.2)
+   t=34: ÖNCE 3908/5011/621  SONRA 3882/5020/646  (fark çizim -26, üçgen %+0.2, gölge üçgeni %+4.0)
+20: ÖNCE n=10 medyan 7772 / 10148 / 3381   SONRA n=12 medyan 7718 / 10133 / 3408
+   t=5: ÖNCE 7638/9716/2328  SONRA 7628/9691/2326  (fark çizim -10, üçgen %-0.3, gölge üçgeni %-0.1)
+   t=14: ÖNCE 7895/10170/3427  SONRA 7921/10261/3448  (fark çizim +26, üçgen %+0.9, gölge üçgeni %+0.6)
+   t=18: ÖNCE 8004/10263/3468  SONRA 8012/10328/3485  (fark çizim +8, üçgen %+0.6, gölge üçgeni %+0.5)
+26: ÖNCE n=12 medyan 8136 / 10117 / 5148   SONRA n=12 medyan 8130 / 10038 / 5196
+   t=3: ÖNCE 11824/12913/3197  SONRA 11715/12923/3283  (fark çizim -109, üçgen %+0.1, gölge üçgeni %+2.7)
+   t=10: ÖNCE 6985/9312/5142  SONRA 7097/9663/5142  (fark çizim +112, üçgen %+3.8, gölge üçgeni %+0.0)
+   t=12: ÖNCE 7328/9654/5289  SONRA 7267/9577/5217  (fark çizim -61, üçgen %-0.8, gölge üçgeni %-1.4)
+28o: ÖNCE n=17 medyan 2305 / 2656 / 234   SONRA n=17 medyan 2233 / 2639 / 223
+   t=7: ÖNCE 731/1533/234  SONRA 729/1531/235  (fark çizim -2, üçgen %-0.1, gölge üçgeni %+0.4)
+   t=16: ÖNCE 2322/2813/283  SONRA 2364/2862/306  (fark çizim +42, üçgen %+1.7, gölge üçgeni %+8.1)
+   t=27: ÖNCE 2298/2794/279  SONRA 2309/2789/275  (fark çizim +11, üçgen %-0.2, gölge üçgeni %-1.4)
+2: ÖNCE n=13 medyan 5515 / 7284 / 889   SONRA n=12 medyan 5500 / 7308 / 850
+   t=1: ÖNCE 6709/8938/1994  SONRA 6713/7927/1485  (fark çizim +4, üçgen %-11.3, gölge üçgeni %-25.5)
+   t=3: ÖNCE 1344/1953/822  SONRA 1351/1965/823  (fark çizim +7, üçgen %+0.6, gölge üçgeni %+0.1)
+   t=5: ÖNCE 7031/8530/1347  SONRA 6951/8512/1360  (fark çizim -80, üçgen %-0.2, gölge üçgeni %+1.0)

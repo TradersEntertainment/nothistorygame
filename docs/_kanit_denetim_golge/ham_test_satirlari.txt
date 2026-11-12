@@ -1,0 +1,52 @@
+# Başsız koşu özeti (hl.sh: --headless --max-fps 20; AUTOTEST PASS aranır)
+ch0 PASS
+ch1 PASS
+ch20 PASS
+ch2 PASS
+ch3 PASS
+ch8y PASS
+ch11 PASS
+ch26 PASS
+ch28o PASS
+ch17 PASS
+ch19 PASS
+ch30o PASS
+ch34o PASS
+ch43o PASS
+v11_arrest PASS
+v8y_warn PASS
+v11_escape PASS
+v11_persuade PASS
+v8y_dep PASS
+v11_help PASS
+v8y_opened PASS
+v11_helpwall PASS
+v11_lost PASS
+v8y_honest PASS
+v11_fired PASS
+v11_hikmet PASS
+v8y_hikmet PASS
+v11_niko PASS
+v8y_sinerji PASS
+v8y_next PASS
+once_ch20 PASS
+once_ch28o PASS
+sonra_ch20_r1 PASS
+once_ch20_r1 PASS
+sonra_ch20_r2 PASS
+once_ch20_r2 PASS
+sonra_ch20_r3 PASS
+once_ch20_r3 PASS
+
+# Araç sahneleri
+cam_check: CAMCHECK PASS
+fx_check: FXCHECK base=1.0 during=0.020 after=1.00 slow=0.30 back=1.00 ok
+FXCHECK base=3.0 during=0.060 after=3.00 slow=0.90 back=3.00 ok
+FXCHECK override=2.00 ok
+FXCHECK PASS
+focus_check: FOCUSCHECK PASS
+
+# Yasaklı satır taraması (SCRIPT ERROR|WARN_|VISAUDIT|WALKTHRU|ARMAUDIT|HELDAUDIT|LOOKAUDIT|JOURNEY)
+ch20.txt:LOOKAUDIT backturn Person(giustiniani) chapter20.tscn 112 kind=walk act= pose=<null> look=@CharacterBody3D@80 talking=false pos=(8.3, 0.0, 5.8)
+ch28o.txt:WARN_PORTRAIT_STUDIO speaker=SPK_SOLDIER key=D28O_S_BALL scene=chapter28o.tscn
+once_ch28o.txt:WARN_PORTRAIT_STUDIO speaker=SPK_SOLDIER key=D28O_S_BALL scene=chapter28o.tscn
