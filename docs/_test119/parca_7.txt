@@ -1,0 +1,141 @@
+PARSECHECK PASS scripts=251
+bayrak: 202 yalnız kendi bölümünde okunan: 61 okunmayan: 21 izinli: 21 sorun: 0
+INLINECHECK PASS (725 anahtar, 0 sorun)
+VOICERULES PASS (9786 anahtar, 0 sorun)
+EXPORTREFS PASS
+kuşatma sonucu: 76  okunan: 76  okunmayan: 0  izinli: 1  hiç iz bırakmayan bölüm: 0 ()
+JOURNEY ok: 68 kart
+VOICEGAIN: 0 seslendirilmiş replik seviye tablosunda yok
+AUTOTEST PASS chapter=2 variant=chain outcome=2.3 stumbles=0 telsiz=3
+AUTOTEST PASS chapter=3 variant=radio outcome=3.3 sadakat=55 rel=0 baski=0 machine=free
+AUTOTEST PASS chapter=5 variant= machine=free outcome=5.1 telsiz=4 rel=0
+AUTOTEST PASS chapter=6 variant=byz branch=6b outcome=6b.1 paradox=0 mistakes=0 telsiz=4
+AUTOTEST PASS chapter=7 variant=wallkeep branch=7a outcome=7.1 extras=["7.5b"] sadakat=50 baski=0 hour=13.5
+AUTOTEST PASS chapter=8 variant=call machine=free outcome=8.1 parts=["capacitor", "antenna", "tape"] catches=0 called=true solid=0
+AUTOTEST PASS chapter=8y variant=hikmet outcome=8Y.1 id=seal warnings=0 lowered=0 radio=false
+AUTOTEST PASS chapter=9 variant=hikmet route=A byz=false offers=["kadri", "miner"] outcome=9.1 telsiz=3 merak=0
+AUTOTEST PASS chapter=10 variant=fez outcome=10O.1 tries=0 envoy=false merak=0
+AUTOTEST PASS chapter=11 variant=niko outcome=11.6 persuade=25 sadakat=55 baski=0
+AUTOTEST PASS chapter=13 variant= version=garage outcome=13.1 window=8.4 tolga=T1 hikmet=
+AUTOTEST PASS chapter=10b variant= outcome=10B.1 quality=3 risk=0 calc=phone paradox=15
+AUTOTEST PASS chapter=10g variant= outcome=10G.1 step=3 merak=0
+AUTOTEST PASS chapter=16 variant=leb outcome=16.2 ch13=13.2 pecks=0
+AUTOTEST PASS chapter=12b variant=lie outcome=12B.2 world= honest=false
+AUTOTEST PASS chapter=14 variant=sicil_good outcome=14.1 nihat=N1 tolga=T1 sicil=good cuma=31O.1
+JOURNEY cards=68 path=17 decisions=14 edges=16 overlap=0 final=off_the_books route=ch0,ch1,ch2,ch3,ch4a,ch5,ch6a,ch7,ch8,ch9,ch10,ch11,ch12,ch13,ch14,ch15,fin
+AUTOTEST review cards=27
+AUTOTEST PASS chapter=15 variant=forge final=off_the_books T=T1 H=H1 N=N2 W=W1 fixed=false
+JOURNEY cards=68 path=16 decisions=13 edges=15 overlap=0 final=envoy_to_venice route=ch0,ch1,ch2,ch3,ch4a,ch5,ch6a,ch7,ch8,ch9,ch10g,ch11,ch13,ch14,ch15,fin
+AUTOTEST review cards=27
+AUTOTEST PASS chapter=15 variant=w6 final=envoy_to_venice T=T1 H=H1 N=N1 W=W6 fixed=false
+JOURNEY cards=68 path=22 decisions=17 edges=22 overlap=0 final=eaves_child route=ch0,ch1,ch2,ch3,ch4a,ch5,ch6a,ch7,ch8,ch9,ch10,ch11,ch12,bureau,ch17,ch24,ch27,ret,ch13,ch14,ch15,fin
+AUTOTEST review cards=27
+AUTOTEST PASS chapter=15 variant=eaves final=eaves_child T=T1 H=H1 N=N1 W=W1 fixed=false
+AUTOTEST PASS chapter=17 variant=chain outcome=17.1 saved=3 fell=false lost=false next=chapter18b.tscn shot=true chain=true rescue_t=52 genoese=0
+WARN_FREE_NO_OBJECTIVE scene=chapter18.tscn
+AUTOTEST PASS chapter=18 variant=near outcome=18.2 built=6 misses=12 taped=0 twins=false captive=false next=
+AUTOTEST PASS chapter=19 variant=ship_bad outcome=19.1 suspicion=0 tezkire=false saved=false grain=-1
+AUTOTEST PASS chapter=21 variant= outcome=21.1 bowls=2 tunnel=leb talk=talk trust=3 captive=false next=
+AUTOTEST PASS chapter=22 variant=early outcome=22.3 hits=0 singed=false window=0.42-0.68
+AUTOTEST PASS chapter=24 variant=late outcome=24.2 stumbles=0 kid=false niko=false steadied=0 kid_t=0.3
+AUTOTEST PASS chapter=25 variant=osm outcome=25.1 caught=0 candle=false tezkire=false marco=false
+ARMAUDIT unarmed scene=chapter26.tscn foe_dist=2.0 duel_active=false
+AUTOTEST PASS chapter=26 variant=hold_lose outcome=26.1 water=3 repaired=3 cleared=2 world=W1 gun=3/4 gunner=0/1
+AUTOTEST PASS chapter=17o variant=kadri outcome=17O.1 acc=1.00 water=2 pours=10.1 kadri=true
+AUTOTEST PASS chapter=20o variant=hot_taped outcome=20O.1 hits=3 cracks=1 gun=3/4 gunner=2/2 duel=true bed=
+AUTOTEST PASS chapter=22o variant= outcome=22O.1 saved=3 gun=3/4 warn=3 carry=0.75
+AUTOTEST PASS chapter=24o variant=menu outcome=24O.1 calmed=3 kadri=false tea=0 menu=true eclipse=false
+AUTOTEST PASS chapter=42 variant=lose outcome=42.2 dir=4 bumps=0 blocks=3 parries=2 kick=true down=true fins=thrust,slash,ground spar=1/7 pushed=2 late=0
+AUTOTEST PASS chapter=43 variant=bad outcome=43O.2 bad=3 lessons=0 soup=true flown=1101 battery=22
+AUTOTEST PASS chapter=30 variant=lose outcome=30.2 gun=3/4 pushed=0 boarders=2 duel=false rifle=4
+AUTOTEST PASS chapter=32o variant=gunner outcome=32O.1 bundles=6/6 earth=2 arrows=0 rungs=6 bad=0 hits=3/3 fires=6 greek=2/2 hasan=water
+AUTOTEST PASS chapter=38o variant=hooks_bad outcome=38O.1 oars=11 arrows=0 forks=3/3 fire=true pulled=true oil=false snaps=0 splashes=0 explored=15.3 helper=false slips=0
+AUTOTEST PASS chapter=31o variant=petrion_bad outcome=31O.1 house=true(163) falls=0 signs=3 wrong=0 sun=true lashes=3 miss=0 scaff=true mats=8/8 err=1
+AUTOTEST PASS chapter=17 variant=route first=res://scenes/chapter42b.tscn
+AUTOTEST PASS ladder y=6.00 z=-2.67
+AUTOTEST PASS arena side=B waves=3 kills=5 parries=5 kicks=0 finishers=3 cannon_hits=0 gun_hits=0 gunner=0/0 hp=82
+AUTOTEST PASS arena side=O waves=3 kills=5 parries=5 kicks=2 finishers=4 cannon_hits=0 gun_hits=0 gunner=0/0 hp=82
+AUTOTEST PASS arena side=B waves=3 kills=5 parries=6 kicks=0 finishers=2 cannon_hits=0 gun_hits=0 gunner=0/0 hp=82
+AUTOTEST PASS arena side=B waves=3 kills=4 parries=4 kicks=0 finishers=2 cannon_hits=3 gun_hits=0 gunner=0/0 hp=82
+AUTOTEST PASS arena side=O waves=3 kills=4 parries=3 kicks=2 finishers=4 cannon_hits=3 gun_hits=0 gunner=0/0 hp=82
+AUTOTEST PASS arena side=B waves=3 kills=4 parries=4 kicks=0 finishers=2 cannon_hits=0 gun_hits=4 gunner=0/0 hp=82
+AUTOTEST PASS arena side=O waves=3 kills=6 parries=9 kicks=4 finishers=5 cannon_hits=0 gun_hits=3 gunner=0/0 hp=44
+AUTOTEST PASS arena side=B waves=3 kills=5 parries=6 kicks=0 finishers=3 cannon_hits=0 gun_hits=0 gunner=3/3 hp=100
+AUTOTEST PASS arena side=O waves=3 kills=5 parries=5 kicks=3 finishers=5 cannon_hits=0 gun_hits=0 gunner=3/3 hp=82
+FXCHECK base=1.0 during=0.020 after=1.00 slow=0.30 back=1.00 ok
+FXCHECK base=3.0 during=0.060 after=3.00 slow=0.90 back=3.00 ok
+FXCHECK override=2.00 ok
+FXCHECK PASS
+CAMCHECK PASS
+PORTRAITCHECK PASS speakers=140 generic=
+PLAYTESTCHECK PASS
+SMOOTHCHECK frames=358 mean_step=0.0222 cv=0.00 still_frames=0
+SMOOTHCHECK PASS
+UIFIT ekran (1280.0, 720.0)
+UIFIT kök main tr: panel [P: (80.0, 91.5), S: (563.0, 537.0)]
+UIFIT kök pause tr: panel [P: (358.5, 57.5), S: (563.0, 605.0)]
+UIFIT kök main en: panel [P: (80.0, 91.5), S: (573.0, 537.0)]
+UIFIT kök pause en: panel [P: (353.5, 57.5), S: (573.0, 605.0)]
+UIFIT PASS
+PLAYCHECK 35o köprü 79 sn, düşüş 0, gevşek 0, kalaslar ["tight", "tight", "tight", "tight", "tight", "tight"]
+PLAYCHECK PASS
+ACHCHECK PASS
+ROUTE side=B seq=[42, 36, 29, 17, 18, 19, 20, 30, 21, 22, 23, 24, 44, 25, 26, 27] numbers=13..28 after13=29
+ROUTE side=O seq=[33, 34, 35, 28, 41, 37, 29, 17, 18, 19, 20, 30, 21, 22, 23, 24, 43, 25, 32, 26, 38, 39, 31, 27] numbers=13..36 after13=37
+ROUTECHECK PASS
+SNAP B: Büro → [42, 36, 29] → 17
+SNAP B (eski kayıt): Büro → [42, 36, 29] → 17
+SNAP O: Büro → [33, 34, 35, 28, 41, 37, 29] → 17
+SNAP O (eski kayıt): Büro → [33, 34, 35, 28, 41, 37, 29] → 17
+SNAPCHECK PASS
+WORLDCHECK PASS regions=13 landmarks=35
+FLIGHTCHECK camp landmarks=9 forms=12 perches=3
+FLIGHTCHECK walls landmarks=9 forms=12 perches=3
+FLIGHTCHECK PASS
+WALKCHECK landwalls noktalar=384 zeminsiz=0 aşağıda=0 ev ışını=126/199 şekil=10324 kutu=9581 üçgen=285402
+WALKCHECK horn_wall_o noktalar=383 zeminsiz=0 aşağıda=0 ev ışını=126/199 şekil=10318 kutu=9571 üçgen=280692
+WALKCHECK byz_aya noktalar=383 zeminsiz=0 aşağıda=0 ev ışını=124/199 şekil=10289 kutu=9541 üçgen=263240
+WALKCHECK yürüyüş: yol=12.7 m, ayak=-4.0 zemin≈-4.0
+WALKCHECK su: dönüş=(-680, 18.5, -900)
+WALKCHECK galata zemin aşağıda: dünya (-1025, -1275) görünen≈26.5 çarpma 22.3
+WALKCHECK galata noktalar=383 zeminsiz=0 aşağıda=1 ev ışını=126/199 şekil=10316 kutu=9575 üçgen=282147
+WALKCHECK PASS
+MAPCHECK su uyuşmuyor: piksel (633, 1433) dünya (700, -0) doku=kara dünya=su
+MAPCHECK doku 2267x1600, su/kara uyumu 100.0%
+MAPCHECK 24: alan=byz_walls oyuncu (31, -35) piksel (657.0, 988.0) mini=true
+MAPCHECK 20: alan= oyuncu (9, 5) piksel (630.0, 973.0) mini=true
+MAPCHECK 27: alan=galata oyuncu (-917, -1300) piksel (1500.0, 355.0) mini=true
+MAPCHECK 14: alan=false mini=false
+MAPCHECK PASS
+QUIPCHECK kovalar=52
+QUIPCHECK PASS
+CREATORCHECK PASS cards=69 story=20 siege_B=16 siege_O=24 finale=4 cols=5
+CITYCHECK 24: kaynak=plan dönem=siege gece=false yoğunluk=0.85 düğüm=1026 meydan=19 yapı=23
+CITYCHECK 24 @(-479, -1237): sivil=32 devriye=3 kötü=0 roller={ "vendor": 5, "porter": 5, "priest": 2, "monk": 1, "woman": 8, "child": 3, "man": 8 } µs=1009 (en uzun kare 4040, 524 kare)
+CITYCHECK 24 @(-313, -930): sivil=28 devriye=3 kötü=0 roller={ "porter": 5, "priest": 2, "monk": 1, "woman": 8, "child": 3, "man": 9 } µs=1010 (en uzun kare 4929, 562 kare)
+CITYCHECK 24 @(-131, -533): sivil=28 devriye=3 kötü=0 roller={ "porter": 5, "priest": 2, "monk": 1, "woman": 8, "child": 3, "man": 9 } µs=1026 (en uzun kare 3693, 568 kare)
+CITYCHECK 24 @(230, -250): sivil=32 devriye=3 kötü=0 roller={ "vendor": 5, "porter": 4, "priest": 2, "monk": 1, "woman": 8, "child": 3, "man": 9 } µs=802 (en uzun kare 4480, 753 kare)
+CITYCHECK 24 @(-611, -1043): sivil=28 devriye=3 kötü=0 roller={ "porter": 5, "priest": 2, "monk": 1, "woman": 8, "child": 3, "man": 9 } µs=907 (en uzun kare 3055, 636 kare)
+CITYCHECK 24 @(-348, -1317): sivil=19 devriye=3 kötü=0 roller={ "fisher": 3, "porter": 5, "monk": 1, "woman": 5, "child": 2, "man": 3 } µs=732 (en uzun kare 2517, 748 kare)
+CITYCHECK 24: kare süresi (en kötü nokta ortalaması) 1026 µs, kurulan gövde 48
+CITYCHECK 24: sokak düğümleri açık 390/395
+CITYCHECK 31o: kaynak=plan dönem=conquest gece=false yoğunluk=0.42 düğüm=1026 meydan=19 yapı=23
+CITYCHECK 31o @(-479, -1237): sivil=15 devriye=4 kötü=0 roller={ "vendor": 5, "porter": 4, "priest": 1, "woman": 2, "child": 1, "man": 2 } µs=743 (en uzun kare 4585, 798 kare)
+CITYCHECK 31o @(-313, -930): sivil=16 devriye=4 kötü=0 roller={ "porter": 4, "priest": 1, "woman": 4, "child": 3, "man": 4 } µs=735 (en uzun kare 2180, 798 kare)
+CITYCHECK 31o @(-131, -533): sivil=16 devriye=4 kötü=0 roller={ "porter": 4, "monk": 1, "woman": 3, "child": 2, "man": 6 } µs=760 (en uzun kare 3402, 794 kare)
+CITYCHECK 31o @(230, -250): sivil=15 devriye=4 kötü=0 roller={ "vendor": 3, "porter": 5, "monk": 1, "woman": 2, "child": 1, "man": 3 } µs=677 (en uzun kare 1649, 797 kare)
+CITYCHECK 31o @(-611, -1043): sivil=15 devriye=4 kötü=0 roller={ "porter": 3, "priest": 1, "monk": 1, "woman": 2, "child": 2, "man": 6 } µs=957 (en uzun kare 4800, 767 kare)
+CITYCHECK 31o @(-348, -1317): sivil=15 devriye=4 kötü=0 roller={ "fisher": 2, "porter": 4, "woman": 4, "child": 1, "man": 4 } µs=814 (en uzun kare 4421, 785 kare)
+CITYCHECK 31o: kare süresi (en kötü nokta ortalaması) 957 µs, kurulan gövde 48
+CITYCHECK 31o: sokak düğümleri açık 392/397
+CITYCHECK PASS
+STREETCHECK PASS
+FOCUSCHECK PASS
+AUTOTEST PASS traversal checks=16
+AUTOTEST chapter=1 -> 2 outcome=1.1 bag=["phone", "lighter", "book", "chickpeas", "powerbank"]
+AUTOTEST PASS chapter=2 variant= outcome=2.1 stumbles=1 telsiz=3
+AUTOTEST chapter=9 -> 10 outcome=9.6
+AUTOTEST PASS chapter=10 variant= outcome=10O.1 tries=0 envoy=false merak=0
+AUTOTEST chapter=12b -> 17 outcome=12B.1
+AUTOTEST PASS chapter=17 variant= outcome=17.1 saved=3 fell=false lost=false next=chapter18b.tscn shot=true chain=false rescue_t=40 genoese=0
+SHARD 7/10 BITTI fail=1
