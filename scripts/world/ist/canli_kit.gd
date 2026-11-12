@@ -342,7 +342,7 @@ static func parcalar(tur: String, opt := {}) -> Dictionary:
 	# hörgüç (deve) / sırt
 	for hp: Array in T.get("hor", []):
 		var z: float = float(hp[0]) * L
-		_el(g, [0, 1], Vector3(0, H * 0.985 + float(hp[1]) * 0.45, z), Vector3(float(hp[2]), float(hp[1]) * 0.85, float(hp[3])), coat, "h")
+		_el(g, [0, 1], Vector3(0, H * 0.985 + float(hp[1]) * 0.45, z), Vector3(float(hp[2]), float(hp[1]) * 0.85, float(hp[3])), coat, "k")
 	# --- boyun
 	var nk: Array = T["neck"]
 	var nlen: float = nk[0]
@@ -424,12 +424,12 @@ static func parcalar(tur: String, opt := {}) -> Dictionary:
 	for sx: float in [-1.0, 1.0]:
 		# göz
 		var ep: Vector3 = poll + hdir * hl * 0.2 + side * sx * hw * 0.86 + hup * hdp * 0.18
-		_el(bs, [0], ep, Vector3(hw * 0.12, hw * 0.12, hw * 0.12), Color("15110e"), "k")
+		_el(bs, [0], ep, Vector3(hw * 0.12, hw * 0.12, hw * 0.12), Color("15110e"), "g")
 		# burun deliği
 		var np: Vector3 = poll + hdir * hl * 0.985 + side * sx * mw * 0.42 + hup * md * 0.2
-		_el(bs, [0], np, Vector3(mw * 0.16, mw * 0.12, mw * 0.08), Color("120e0c"), "k")
+		_el(bs, [0], np, Vector3(mw * 0.16, mw * 0.12, mw * 0.08), Color("120e0c"), "g")
 		if T.get("dudak", false):
-			_el(bs, [0, 1], poll + hdir * hl * 0.97 + side * sx * mw * 0.45 - hup * md * 0.55, Vector3(mw * 0.55, md * 0.4, mw * 0.6), muz, "k")
+			_el(bs, [0, 1], poll + hdir * hl * 0.97 + side * sx * mw * 0.45 - hup * md * 0.55, Vector3(mw * 0.55, md * 0.4, mw * 0.6), muz, "g")
 	if T.get("sakal", false):
 		_tb(bs, [0, 1], [_rg(poll + hdir * hl * 0.7 - hup * hdp * 0.7, 0.02, 0.015, coat.darkened(0.25)), _rg(poll + hdir * hl * 0.66 - hup * hdp * 1.5, 0.012, 0.01, coat.darkened(0.3))], "k", true, true)
 	if yun > 0.0:
@@ -722,6 +722,8 @@ static func _sk_seg(sk: String, lod: int) -> int:
 			return SEG_K[lod]
 		"n", "h":
 			return [10, 5, 4][lod]
+		"g":
+			return [6, 3, 3][lod]
 	return SEG[lod]
 
 
@@ -818,6 +820,16 @@ static func mat() -> StandardMaterial3D:
 		_mat.vertex_color_use_as_albedo = true
 		_mat.cull_mode = BaseMaterial3D.CULL_BACK
 	return _mat
+
+
+static var _mat_ordu: StandardMaterial3D
+
+## Ordugâhın Bld malzemesiyle aynı ton (albedo 0,78 çarpanı): canlı çevresindeki çadır/ahşaptan parlak durmasın
+static func mat_ordu() -> StandardMaterial3D:
+	if _mat_ordu == null:
+		_mat_ordu = mat().duplicate() as StandardMaterial3D
+		_mat_ordu.albedo_color = Color(0.8, 0.79, 0.76)
+	return _mat_ordu
 
 
 ## Eklemli düğüm ağacı (yakın katman). Her parça bir Node3D (pivotunda) + MeshInstance3D (köşe renkli ağ).
@@ -920,7 +932,7 @@ static func bld_ekle(b: Object, tur: String, pos: Vector3, yaw_deg: float, opt :
 		if mi == null:
 			mi = MeshInstance3D.new()
 			mi.name = nm
-			mi.material_override = mat()
+			mi.material_override = mat_ordu()
 			mi.set_meta("no_walk", true)
 			mi.set_meta("canli_acc", Acc.new())
 			if lods.size() > 1:

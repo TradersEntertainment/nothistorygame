@@ -552,4 +552,4 @@ static func _kopek(b: B, p: Vector3, yaw: float, r: RandomNumberGenerator) -> vo
 	const CK = preload("res://scripts/world/ist/canli_kit.gd")
 	var c: Color = [Color("8a6a46"), Color("a89a80"), Color("5a4a3a"), Color("c8a468")][r.randi() % 4]
 	var hs := absi(int(p.x * 7.0 + p.z * 3.0))
-	CK.bld_ekle(b, "kopek", p, yaw, {"renk": c, "poz": ["dur", "yat", "dur"][hs % 3], "bas_yaw": float(hs % 5 - 2) * 18.0, "tohum": hs})
+	CK.bld_ekle(b, "kopek", p, yaw, {"renk": c, "poz": "dur", "bas_yaw": float(hs % 5 - 2) * 18.0, "tohum": hs})
