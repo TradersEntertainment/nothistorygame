@@ -1,0 +1,21 @@
+### tekrar 1: --chapter=26 --autotest=hold_box
+AUTOTEST PASS chapter=26 variant=hold_box outcome=26.3 water=3 repaired=3 cleared=0 world=W10 gun=3/4 gunner=4/4
+cikis=0
+### tekrar 1: --chapter=44b --autotest=kid
+VISAUDIT overlap scene=chapter44b.tscn a=Chapter44b(SPK_KID) b=Chapter44b(SPK_YAKOVOS) at=(-9.2, 0.0, -51.6) src=Chapter44b>Person|Chapter44b>Person
+AUTOTEST PASS chapter=44 variant=kid outcome=44.1 light=phone battery=2.8 bumps=9 hits=0 rescued=false kid=true
+cikis=0
+### tekrar 2: --chapter=26 --autotest=hold_box
+AUTOTEST PASS chapter=26 variant=hold_box outcome=26.3 water=3 repaired=3 cleared=0 world=W10 gun=3/4 gunner=4/4
+cikis=0
+### tekrar 2: --chapter=44b --autotest=kid
+VISAUDIT overlap scene=chapter44b.tscn a=Chapter44b(SPK_KID) b=Chapter44b(SPK_YAKOVOS) at=(-9.2, 0.0, -51.6) src=Chapter44b>Person|Chapter44b>Person
+AUTOTEST PASS chapter=44 variant=kid outcome=44.1 light=phone battery=4.4 bumps=4 hits=0 rescued=false kid=true
+cikis=0
+### tekrar 3: --chapter=26 --autotest=hold_box
+AUTOTEST PASS chapter=26 variant=hold_box outcome=26.3 water=3 repaired=3 cleared=0 world=W10 gun=3/4 gunner=5/5
+cikis=0
+### tekrar 3: --chapter=44b --autotest=kid
+VISAUDIT overlap scene=chapter44b.tscn a=Chapter44b(SPK_KID) b=Chapter44b(SPK_YAKOVOS) at=(-9.2, 0.0, -51.6) src=Chapter44b>Person|Chapter44b>Person
+AUTOTEST PASS chapter=44 variant=kid outcome=44.1 light=phone battery=4.5 bumps=3 hits=0 rescued=false kid=true
+cikis=0
