@@ -158,3 +158,9 @@ sur kuşağında pahalılaştı; arazi ağı kırpması bant çevresindeki parç
 - **Kod sürümü notu:** 25 kare (`hava_*`, `dip_00_*`, `dip_11_*`, `hk_10_*`) en son kodla; öteki 107 SONRA karesi deniz
   üstü düzlük düzeltmesinden (son işlem) ÖNCEki kodla alındı. Fark yalnız hattın Marmara ve Haliç uçlarında (kuzey ucunda
   arazinin Haliç'e dil gibi uzaması; `hava_11`'de küçük bir parça hâlâ duruyor).
+
+## Son birleştirme
+
+Teslimden önce `origin/wip/ist2-zemin` ve `origin/wip/ist2-durus` yeniden birleştirildi (yeni işlemler vardı; `dunya.gd`
+kendiliğinden birleşti, çakışma yok; bitki değişmemişti). Birleşmeden sonra `PARSECHECK PASS scripts=344`. Bu son
+birleşmenin getirdiği değişikliklerle kareler ve denetim YENİDEN ALINMADI (kareler bir önceki işlemin kodundan).
