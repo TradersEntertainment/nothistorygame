@@ -852,7 +852,7 @@ func _process(delta: float) -> void:
 		for k in _pushers.size():
 			var ps: Soldier = _pushers[k]
 			var sx := -1.0 if k == 0 else 1.0
-			ps.position = mantlet.position + Vector3(sx * 1.4, 0, 0.8)
+			ps.position = mantlet.position + Vector3(sx * 1.6, 0, 1.0)      # özgün yer (kadraja daha yakın durunca bitişte çizim artıyordu)
 			ps.rotation.y = PI
 			if not ps.visible:
 				ps.visible = true
