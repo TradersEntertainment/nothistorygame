@@ -131,8 +131,12 @@ func _ready() -> void:
 		var s0 := IstSehir.active
 		print("ISTPALET palet_n=", s0.stats.get("palet_n", 0))
 		for it: Dictionary in s0.items:
-			if String(it["id"]) != "ayasofya":
+			if String(it["id"]) != ("ayasofya" if eser_sec.is_empty() else String(eser_sec[0])):
 				continue
+			print("ISTPALET oge mod=", it.get("mod", ""), " hat=", it.has("hat"), " tek=", it.get("tek", false), " paletli=", s0._paletli(it))
+			for lv in 3:
+				if it["have"][lv] == null:
+					s0._build(it, lv)
 			var seen := {}
 			for c in (it["holder"] as Node3D).find_children("*", "GeometryInstance3D", true, false):
 				var gi := c as GeometryInstance3D
@@ -495,7 +499,8 @@ func _eser_yer(it: Dictionary, h: float) -> void:
 	var holder := it["holder"] as Node3D
 	var pp: Vector3 = it["pos"]
 	var r := float(it["r"])
-	var dist := clampf(r * 0.9 + 14.0, 18.0, 90.0)
+	# ÇEVRE-4: yüksek ve dar eserlerde (kule, sütun) kamera eserin dibine yapışıyordu: en az yüksekliğin 0,8'i kadar geri
+	var dist := clampf(maxf(r * 0.9 + 14.0, h * 0.8), 18.0, 90.0)
 	var sec := Vector3.INF
 	var hedef := Vector3.INF
 	var yonler: Array = [Vector3(0, 0, 1), Vector3(1, 0, 0), Vector3(-1, 0, 0), Vector3(0, 0, -1), Vector3(0.7, 0, 0.7), Vector3(-0.7, 0, 0.7)]
@@ -503,6 +508,14 @@ func _eser_yer(it: Dictionary, h: float) -> void:
 		# saray sura yaslı (yerel +z sur dışı): avlu kapısı önünden (şehir yanı)
 		yonler = [Vector3(0, 0, -1), Vector3(0.6, 0, -1), Vector3(-0.6, 0, -1)]
 		dist = 62.0
+	elif String(it["id"]) in ["aya_irini", "khora", "pammakaristos", "studios"]:
+		# ÇEVRE-4: atrium/avlu kapısının dibine düşüyordu: yandan ve daha geriden
+		yonler = [Vector3(0.7, 0, 0.7), Vector3(1, 0, 0), Vector3(-0.7, 0, 0.7), Vector3(-1, 0, 0), Vector3(0, 0, 1)]
+		dist = clampf(r * 1.4 + 16.0, 30.0, 80.0)
+	elif String(it["id"]) == "ayasofya":
+		# ÇEVRE-4: güneyden (Augustaion yanı, yerel +x), döşeli meydandan
+		yonler = [Vector3(1, 0, 0), Vector3(0.7, 0, -0.7), Vector3(-1, 0, 0)]
+		dist = 66.0
 	for yon: Vector3 in yonler:
 		var dw := (holder.global_transform.basis * yon)
 		dw.y = 0.0
@@ -527,6 +540,11 @@ func _eser_yer(it: Dictionary, h: float) -> void:
 		# kamera bir yapının içinde/altında mı (üstünde tavan): o yön atlanır
 		var tavan := get_world_3d().direct_space_state.intersect_ray(PhysicsRayQueryParameters3D.create(at, at + Vector3(0, 40, 0)))
 		if not tavan.is_empty():
+			continue
+		# kamera bir katının (sütun, duvar) içinde mi (ÇEVRE-4: eser_hipodrom_yer sütunun içindeydi)
+		var pq := PhysicsPointQueryParameters3D.new()
+		pq.position = at
+		if not get_world_3d().direct_space_state.intersect_point(pq, 1).is_empty():
 			continue
 		if hit.is_empty() or (hit["collider"] is Node and holder.is_ancestor_of(hit["collider"])):
 			sec = at

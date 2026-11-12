@@ -87,7 +87,12 @@ class Hayvan extends Agent:
 
 
 var sokak: IstSokak
-var gece := false
+var gece := false:
+	set(v):
+		gece = v
+		night = v
+## CityLife ile aynı alan (StreetEye.is_night okur: yokken "bool(null)" SCRIPT ERROR veriyordu)
+var night := false
 var oyuncu: Node3D
 var agents: Array[Agent] = []
 var hayvanlar: Array[Hayvan] = []
@@ -100,6 +105,8 @@ var prof_n := 0
 var prof_max_us := 0.0
 var hemen_isin := true            # attach anında bütün gövdeler kurulsun (yükleme ekranı); false: oyunda karede bir
 var hizli_isinma := false         # önizleme: gövdeler hemen kurulsun
+const ILK_ISIN := 14
+const ILK_HAYVAN := 3
 
 var _P := PackedVector2Array()
 var _PS := PackedInt32Array()
@@ -157,14 +164,23 @@ func _ready() -> void:
 	_kur_ag()
 	_make_agents()
 	if hemen_isin:
-		# yükleme ekranı sırasında (dünya kurulumu zaten saniyeler sürer) bütün gövde, ikiz ve hayvanlar bir kerede
+		# yükleme sırasında ilk ILK_ISIN gövde + ILK_HAYVAN hayvan (açılış karesi dolu olsun); kalanı oyunda iki karede bir
+		# (DOKU-4: bütün havuz açılışta 0,8 sn, önbelleksiz ilk açılışta 6,3 sn sürüyordu; gövde başına 6–17 ms)
 		var saved := hizli_isinma
+		var n_ag := 0
 		for ag in agents:
+			if n_ag >= ILK_ISIN:
+				break
 			_built_frame = 0
-			_ensure_body(ag)
+			if _ensure_body(ag):
+				n_ag += 1
+		var n_h := 0
 		for h in hayvanlar:
+			if n_h >= ILK_HAYVAN:
+				break
 			_built_frame = 0
-			_ensure_animal(h)
+			if _ensure_animal(h):
+				n_h += 1
 		hizli_isinma = saved
 	graph_ready = true
 	print("ISTKISI kur noktalar=%d sokak=%d meydan=%d kiyi=%d havuz=%d hayvan=%d kur_ms=%d" % [_P.size(), _s0.size(), _meydan_c.size(), _kp.size(), agents.size(), hayvanlar.size(), Time.get_ticks_msec() - t0])
@@ -485,7 +501,7 @@ func _process(delta: float) -> void:
 	var ref: Node3D = oyuncu if oyuncu != null else cam
 	if ref == null:
 		return
-	_pw = ref.global_position
+	_pw = to_local(ref.global_position)
 	if _last_pw.distance_to(_pw) > 120.0:
 		_ilk = 6.0            # ışınlanma/bölüm geçişi: yeni yerde de ilk kare dolu olsun
 	_last_pw = _pw
@@ -496,7 +512,7 @@ func _process(delta: float) -> void:
 	if _built < agents.size():
 		_warm_skip -= 1
 		if hizli_isinma or _warm_skip <= 0:
-			_warm_skip = 4
+			_warm_skip = 2
 			var n := 8 if hizli_isinma else 1
 			for ag in agents:
 				if n <= 0:
@@ -535,8 +551,8 @@ func _view_cone(cam: Camera3D) -> void:
 	if cam == null:
 		_cam_at = Vector3.INF
 		return
-	_cam_at = cam.global_position
-	_cam_fwd = (-cam.global_basis.z).normalized()
+	_cam_at = to_local(cam.global_position)
+	_cam_fwd = (global_basis.inverse() * -cam.global_basis.z).normalized()
 	var vs := get_viewport().get_visible_rect().size
 	var aspect := vs.x / maxf(vs.y, 1.0)
 	var half := atan(tan(deg_to_rad(cam.fov) * 0.5) * maxf(aspect, 1.0))
@@ -567,7 +583,7 @@ func doldur(n := 6) -> void:
 	var ref: Node3D = oyuncu if oyuncu != null else cam
 	if ref == null:
 		return
-	_pw = ref.global_position
+	_pw = to_local(ref.global_position)
 	_view_cone(cam)
 	_ilk = float(n)
 	for k in n:

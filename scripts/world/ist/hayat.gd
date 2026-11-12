@@ -8,6 +8,7 @@ extends Node3D
 ## 170–720 m nokta-figür (≈ 20 üçgen). Hareket (yürüyüş, kol-bacak, sancak, duman, kuş dönüşü) tamamen gölgelendiricide.
 
 const SH := "res://assets/shaders/"
+const UZAK_ISIK := preload("res://scripts/world/ist/hayat_uzak_isik.gd")
 const YAKIN := 170.0
 const UZAK := 720.0
 const KAYMA := 25.0
@@ -95,8 +96,11 @@ func _kur() -> void:
 		if kt.views.is_empty():
 			continue
 		kt.kur(self)
+	if gece:
+		print("ISTUZAKISIK ", UZAK_ISIK.kur(self, K, IstSehir.sokak))
 	kur_ms = Time.get_ticks_msec() - t0
 	print("ISTHAYAT kur_ms=%d %s" % [kur_ms, veri.ist])
+	print("ISTEVONBELLEK ", IstEvler.ob_say)
 	if _yakin_olacak and yakin == null:
 		var t1 := Time.get_ticks_msec()
 		yakin = IstHayatYakin.attach(dunya, null, gece)
@@ -106,10 +110,10 @@ func _kur() -> void:
 
 func _bakan() -> Vector3:
 	if izle != null and is_instance_valid(izle) and izle.is_inside_tree():
-		return izle.global_position
+		return to_local(izle.global_position)
 	var c := get_viewport().get_camera_3d() if is_inside_tree() else null
 	if c != null:
-		return c.global_position
+		return to_local(c.global_position)
 	return Vector3.ZERO
 
 

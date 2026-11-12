@@ -222,7 +222,7 @@ func _draw_view() -> void:
 		v.draw_rect(tr_rect, Color(INK, 0.8), false, 2.0)
 	var k := clampf(_zoom / 2.0, 0.8, 1.5)
 	# Bölge adları
-	for r: Array in MapView.REGION_LABELS:
+	for r: Array in MapView.region_labels():
 		var p := _to_view(MapView.world_pixel(r[1]))
 		_label(v, tr(r[0]), p, int(float(r[2]) * k), Color(INK, 0.75), float(r[3]))
 	# Tarihî yapılar

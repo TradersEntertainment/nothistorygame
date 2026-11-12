@@ -70,7 +70,8 @@ static func attach(parent: Node3D, sokak: IstSokak, gece_ := false) -> IstMahall
 static func bekleyen() -> int:
 	if aktif == null or not is_instance_valid(aktif):
 		return 0
-	return aktif._is_kuyrugu.size() + (aktif.sokak_esya.bekleyen() if aktif.sokak_esya != null else 0)
+	return aktif._is_kuyrugu.size() + (aktif.sokak_esya.bekleyen() if aktif.sokak_esya != null else 0) \
+		+ aktif._zemin_bekleyen.size() + (1 if aktif._zemin_is >= 0 else 0)
 
 
 func _kur() -> void:
@@ -158,6 +159,64 @@ var _skod := PackedByteArray()
 
 func _zemin() -> void:
 	_izgaralar()
+	# DOKU-4 (yükleme): hücre ağlarının dizileri diskte (sokak verisi + arazi ızgaraları + kod aynıysa)
+	var imza := IstSokak.onbellek_imza(["res://scripts/world/ist/mahalle_doku.gd", sk.occ, sk.rid, sk.streets.size(), sk.zemin_ek,
+		sk.x0, sk.z0, sk.nx, sk.nz, _yh6, _yh24, _gx0, _gz0])
+	var gruplar := {}                 # Vector2i → [[verts, cols] taş, [verts, cols] toprak]
+	if IstSokak.onbellek_var("zemin", imza):
+		# önbellek var: dosya arka plan iş parçacığında okunur, hücre ağları ilk karelerden sonra (kare bütçesiyle,
+		# kameraya yakından uzağa) kurulur; zemin yalnız görünüştür (çarpışma arazinin ve evlerin)
+		_zemin_imza = imza
+		_zemin_is = WorkerThreadPool.add_task(_zemin_oku_is)
+		stats["zemin_onbellek"] = "arka_plan"
+		return
+	else:
+		gruplar = _zemin_hesapla()
+		IstSokak.onbellek_yaz("zemin", imza, {"gruplar": gruplar, "n_kare": stats.get("zemin_kare", 0)})
+	_zemin_kur(gruplar)
+
+
+var _zemin_imza := ""
+var _zemin_is := -1
+var _zemin_ob = null
+var _zemin_bekleyen: Array = []      # [Vector2i] kurulacak hücreler (okunduktan sonra)
+var _zemin_gruplar := {}
+
+func _zemin_oku_is() -> void:
+	_zemin_ob = IstSokak.onbellek_oku("zemin", _zemin_imza)
+
+
+## Kare başına: arka plan okuması bittiyse zemin hücrelerini kur (bütçe içinde; en az bir hücre)
+func _zemin_akis(butce_us: int) -> void:
+	if _zemin_is >= 0:
+		if not WorkerThreadPool.is_task_completed(_zemin_is):
+			return
+		WorkerThreadPool.wait_for_task_completion(_zemin_is)
+		_zemin_is = -1
+		if _zemin_ob is Dictionary and (_zemin_ob as Dictionary).has("gruplar"):
+			_zemin_gruplar = _zemin_ob["gruplar"]
+			stats["zemin_kare"] = _zemin_ob.get("n_kare", 0)
+		else:
+			# okunamadı: eşzamanlı hesap (yalnız bozuk önbellekte)
+			_zemin_gruplar = _zemin_hesapla()
+		_zemin_ob = null
+		var cp := _cam()
+		_zemin_bekleyen = _zemin_gruplar.keys()
+		_zemin_bekleyen.sort_custom(func(a: Vector2i, b: Vector2i) -> bool:
+			return Vector2((a.x + 0.5) * ZEMIN_HUCRE - cp.x, (a.y + 0.5) * ZEMIN_HUCRE - cp.z).length_squared() < Vector2((b.x + 0.5) * ZEMIN_HUCRE - cp.x, (b.y + 0.5) * ZEMIN_HUCRE - cp.z).length_squared())
+		return
+	if _zemin_bekleyen.is_empty():
+		return
+	var t0 := Time.get_ticks_usec()
+	while not _zemin_bekleyen.is_empty() and Time.get_ticks_usec() - t0 < butce_us:
+		var ck: Vector2i = _zemin_bekleyen.pop_front()
+		_zemin_kur({ck: _zemin_gruplar[ck]})
+		_zemin_gruplar.erase(ck)
+	if _zemin_bekleyen.is_empty():
+		stats["zemin_hucre"] = get_children().filter(func(c: Node) -> bool: return c.name.begins_with("Zemin_")).size()
+
+
+func _zemin_hesapla() -> Dictionary:
 	_skod.resize(sk.streets.size())
 	for i in sk.streets.size():
 		_skod[i] = {"mese": 1, "yol": 2, "savunma": 4}.get(String(sk.streets[i]["tur"]), 3)
@@ -242,8 +301,17 @@ func _zemin() -> void:
 			g[0] = vv
 			g[1] = cc
 			n_kare += 1
-	var mt := _zemin_mat(true)
-	var mt2 := _zemin_mat(false)
+	stats["zemin_kare"] = n_kare
+	return gruplar
+
+
+var _zm: Array = []
+
+func _zemin_kur(gruplar: Dictionary) -> void:
+	if _zm.is_empty():
+		_zm = [_zemin_mat(true), _zemin_mat(false)]
+	var mt: Material = _zm[0]
+	var mt2: Material = _zm[1]
 	for ck: Vector2i in gruplar:
 		var am := ArrayMesh.new()
 		for idx in 2:
@@ -271,7 +339,6 @@ func _zemin() -> void:
 		mi.set_meta("no_walk", true)
 		mi.name = "Zemin_%d_%d" % [ck.x, ck.y]
 		add_child(mi)
-	stats["zemin_kare"] = n_kare
 	stats["zemin_hucre"] = gruplar.size()
 
 
@@ -332,6 +399,14 @@ static var _dosek: ImageTexture
 static func dosek_tex() -> ImageTexture:
 	if _dosek != null:
 		return _dosek
+	# DOKU-4: üretilen doku diskte (aynı kod → aynı doku); piksel döngüsü ~1 sn
+	var ob_yol := IstSokak.ONBELLEK_DIR + "dosek_" + IstSokak.onbellek_imza(["res://scripts/world/ist/mahalle_doku.gd"]) + ".png"
+	if IstSokak._ob_kip() not in ["yok", "yaz"] and FileAccess.file_exists(ob_yol):
+		var oi := Image.load_from_file(ob_yol)
+		if oi != null and not oi.is_empty():
+			oi.generate_mipmaps()
+			_dosek = ImageTexture.create_from_image(oi)
+			return _dosek
 	const N := 512
 	var rng := RandomNumberGenerator.new()
 	rng.seed = 17453
@@ -389,6 +464,9 @@ static func dosek_tex() -> ImageTexture:
 							c = ot.lerp(c, 0.3)
 					img.set_pixel(X, Y, c)
 			x += w
+	if IstSokak._ob_kip() != "yok":
+		DirAccess.make_dir_recursive_absolute(IstSokak.ONBELLEK_DIR)
+		img.save_png(ob_yol)
 	img.generate_mipmaps()
 	_dosek = ImageTexture.create_from_image(img)
 	return _dosek
@@ -401,13 +479,21 @@ const BAHCE_AGAC := ["incir", "dut", "zeytin", "servi", "nar", "erguvan", "badem
 
 
 ## Sebze tarhları ve çalılar (alçak, çarpışmasız): 192 m hücre başına tek ağ (köşe renkli)
+static var _tmat: StandardMaterial3D
+
+static func _tarh_mat() -> StandardMaterial3D:
+	if _tmat == null:
+		_tmat = StandardMaterial3D.new()
+		_tmat.vertex_color_use_as_albedo = true
+		_tmat.vertex_color_is_srgb = true
+		_tmat.diffuse_mode = BaseMaterial3D.DIFFUSE_TOON
+		_tmat.roughness = 1.0
+	return _tmat
+
+
 func _tarhlar(tarh: Dictionary) -> void:
 	var renk := [Color("4f6a2e"), Color("5e7a34"), Color("6b7a3a"), Color("7a6a48")]
-	var mat := StandardMaterial3D.new()
-	mat.vertex_color_use_as_albedo = true
-	mat.vertex_color_is_srgb = true
-	mat.diffuse_mode = BaseMaterial3D.DIFFUSE_TOON
-	mat.roughness = 1.0
+	var mat := _tarh_mat()
 	for tk: Vector2i in tarh:
 		var st := SurfaceTool.new()
 		st.begin(Mesh.PRIMITIVE_TRIANGLES)
@@ -436,7 +522,58 @@ func _tarhlar(tarh: Dictionary) -> void:
 		mi.set_meta("no_walk", true)
 		add_child(mi)
 
+## DOKU-4 (yükleme): avlu katmanının sonucu (ağ dizileri, çarpışma kutuları, avlu öğeleri) diskte
+var _kayit = null                 # Array: _avlular sırasında eklenen öğeler (önbelleğe)
+
 func _avlular() -> void:
+	var imza := IstSokak.onbellek_imza(["res://scripts/world/ist/mahalle_doku.gd", "res://scripts/world/ist/bitki.gd",
+		"res://scripts/world/ist/evler.gd", sk.ob_imza, _yh6])
+	var ob = IstSokak.onbellek_oku("avlu", imza) if sk.ob_imza != "" else null
+	if ob is Dictionary and ob.has("mi"):
+		for r: Array in ob["mi"]:
+			var mi := MeshInstance3D.new()
+			var am := ArrayMesh.new()
+			am.add_surface_from_arrays(Mesh.PRIMITIVE_TRIANGLES, r[4])
+			mi.mesh = am
+			match String(r[3]):
+				"duvar": mi.material_override = _duvar_mat()
+				"tarh": mi.material_override = _tarh_mat()
+				_: mi.material_override = IstBitki.tree_mesh("incir", 1).surface_get_material(0)
+			mi.position = r[0]
+			mi.visibility_range_end = r[1]
+			mi.cast_shadow = r[2]
+			mi.set_meta("no_walk", true)
+			add_child(mi)
+		_duvar_cells = ob["duvar"]
+		for o: Dictionary in ob["oge"]:
+			_oge_ekle(o)
+		for k: String in ob["stats"]:
+			stats[k] = ob["stats"][k]
+		stats["avlu_onbellek"] = "okundu"
+		return
+	var once := get_child_count()
+	_kayit = []
+	_avlular_hesapla()
+	var kayit: Array = _kayit
+	_kayit = null
+	if sk.ob_imza == "":
+		return
+	var mis: Array = []
+	for i in range(once, get_child_count()):
+		var mi := get_child(i) as MeshInstance3D
+		if mi == null or mi.mesh == null or mi.mesh.get_surface_count() != 1:
+			return
+		var mk := "agac"
+		if mi.material_override == _duvar_mat():
+			mk = "duvar"
+		elif mi.material_override == _tarh_mat():
+			mk = "tarh"
+		mis.append([mi.position, mi.visibility_range_end, mi.cast_shadow, mk, mi.mesh.surface_get_arrays(0)])
+	IstSokak.onbellek_yaz("avlu", imza, {"mi": mis, "duvar": _duvar_cells, "oge": kayit,
+		"stats": {"avlu": stats.get("avlu", 0), "duvar_hucre": stats.get("duvar_hucre", 0), "bahce_agac": stats.get("bahce_agac", 0)}})
+
+
+func _avlular_hesapla() -> void:
 	var gruplar := {}                 # Vector2i(192) → SurfaceTool
 	var agac := {}                    # Vector2i(64) → {tür: [Transform3D]}
 	var n := 0
@@ -594,6 +731,144 @@ func _avlular() -> void:
 		add_child(mi)
 	stats["avlu"] = n
 	stats["duvar_hucre"] = gruplar.size()
+	_cati_gecitleri()
+
+
+## DOKU-4 madde 2 (çatıdan çatıya): aynı sıradaki bitişik iki evin yürünür üstü (kiremit sırtı H+1,6; düz dam H+0,18;
+## teras/kule korkuluğu H+1,2) arasında > 0,35 m fark ya da korkuluk varsa iki evin sırt noktalarını birleştiren hat
+## üstünde ahşap basamaklı çatı geçidi: basamak ≤ 0,30 m (evlerin dış merdiveniyle aynı kural; STEP_H 0,42), sınırın
+## üstünde 0,9 m'lik sahanlık. Görünüş avlu duvarı ağına (köşe renkli ahşap), çarpışma avlu duvarı akışına (kutular).
+const GECIT_RISE := 0.30
+const GECIT_EN := 1.3
+const GECIT_RENK := Color("6b5640")
+
+func _ev_ust(h: Dictionary) -> Dictionary:
+	var v := int(h["v"])
+	var tip := String(h["tip"])
+	var d := IstEvler.dims(v)
+	var key := "%d|%s" % [v, tip]
+	var p: Dictionary
+	if _plan_cache.has(key):
+		p = _plan_cache[key]
+	else:
+		p = IstEvler.plan(d.x, d.z, d.y, IstEvler._tohum(v, tip), tip)
+		_plan_cache[key] = p
+	var on: Vector2 = h["on"]
+	var y0 := IstGeo.h(on.x, on.y) - 0.04
+	var cati := String(p["cati"])
+	var yuz := y0 + d.y + 0.18
+	var engel := yuz
+	match cati:
+		"kiremit":
+			yuz = y0 + d.y + IstEvler.RISE - 0.1
+			engel = yuz
+		"teras":
+			engel = y0 + d.y + 1.18
+		"mazgal":
+			yuz = y0 + d.y + 0.2
+			engel = y0 + d.y + 1.2
+	var yaw := float(h["yaw"])
+	var lz := Vector2(sin(yaw), cos(yaw))
+	var c: Vector2 = h["c"]
+	return {"yuz": yuz, "engel": engel, "sirt": c + lz * float(p["over"]) * 0.5, "L": d.x, "cati": cati}
+
+var _plan_cache := {}
+
+func _cati_gecitleri() -> void:
+	var gr := {}
+	var n := 0
+	var sigmadi := 0
+	var mahya_n := 0
+	var mahyali := {}
+	var hs: Array = sk.houses
+	var parca_ekle := func(m: Vector2, y_alt: float, y_ust: float, boy_u: float, en: float, bas: Basis, renk: Color) -> void:
+		var boy := Vector3(boy_u, y_ust - y_alt, en)
+		var xf := Transform3D(bas, Vector3(m.x, (y_alt + y_ust) * 0.5, m.y))
+		var ck := Vector2i(floori(m.x / DUVAR_HUCRE), floori(m.y / DUVAR_HUCRE))
+		if not gr.has(ck):
+			var st := SurfaceTool.new()
+			st.begin(Mesh.PRIMITIVE_TRIANGLES)
+			gr[ck] = st
+		if not _duvar_cells.has(ck):
+			_duvar_cells[ck] = {"boxes": [], "body": null}
+		_kutu(gr[ck], xf, boy, renk, Vector3((ck.x + 0.5) * DUVAR_HUCRE, 0, (ck.y + 0.5) * DUVAR_HUCRE))
+		(_duvar_cells[ck]["boxes"] as Array).append([xf, boy])
+	for i in hs.size() - 1:
+		var A: Dictionary = hs[i]
+		var B: Dictionary = hs[i + 1]
+		if int(A["sira"]) != int(B["sira"]):
+			continue
+		var yaw := float(A["yaw"])
+		var lx := Vector2(cos(yaw), -sin(yaw))
+		var ca: Vector2 = A["c"]
+		var cb: Vector2 = B["c"]
+		var la := IstEvler.dims(int(A["v"])).x
+		var lb := IstEvler.dims(int(B["v"])).x
+		if absf(absf((cb - ca).dot(lx)) - (la + lb) * 0.5) > 0.25:
+			continue                                    # bitişik değil (arada geçit/merdiven payı)
+		var ua := _ev_ust(A)
+		var ub := _ev_ust(B)
+		var P := maxf(float(ua["engel"]), float(ub["engel"]))
+		var sa := float(ua["yuz"])
+		var sb := float(ub["yuz"])
+		var ra: Vector2 = ua["sirt"]
+		var rb: Vector2 = ub["sirt"]
+		var u := (rb - ra).normalized()
+		var ux := absf(u.dot(lx))
+		if ux < 0.5:
+			continue
+		var Q := ra + u * (la * 0.5 / ux)
+		var bas := Basis(Vector3.UP, atan2(u.x, u.y) + PI * 0.5)
+		var parcalar: Array = []                        # [konum, alt y, üst y, boy (u yönünde)]
+		var sigdi := true
+		for yan: int in [-1, 1]:
+			var s0 := sa if yan < 0 else sb
+			var L := la if yan < 0 else lb
+			var dy := P - s0
+			if dy <= 0.2:
+				continue
+			var nb := ceili(dy / GECIT_RISE)
+			var rise := dy / nb
+			var yer := L / ux - 0.75                   # sınırdan evin öbür ucuna kalan boy (sahanlık ve pay düşülür)
+			var tread := minf(0.55, yer / maxf(nb - 1, 1))
+			if tread < 0.3:
+				sigdi = false
+				break
+			for k in range(1, nb):
+				# k = 1 sınıra en yakın (en yüksek) basamak; en üstü sahanlık
+				var top := P - k * rise
+				var mid := Q + u * float(yan) * (0.45 + (k - 0.5) * tread)
+				parcalar.append([mid, top - 0.3, top, tread + 0.02])
+		if not sigdi:
+			sigmadi += 1
+			continue
+		parcalar.append([Q, P - 0.3, P, 0.9])
+		for pc: Array in parcalar:
+			parca_ekle.call(pc[0], float(pc[1]), float(pc[2]), float(pc[3]), GECIT_EN, bas, GECIT_RENK.darkened(0.08 * float(int((pc[0] as Vector2).x * 7.0) % 3)))
+		# mahya: kiremit sırtının üstünde yürünür kalas (bıçak sırtta kapsül kayıyordu); evin boyunca, 0,5 m
+		for e: Array in [[A, ua, la], [B, ub, lb]]:
+			var h: Dictionary = e[0]
+			var uu: Dictionary = e[1]
+			var key: Vector2 = h["c"]
+			if mahyali.has(key) or String(uu["cati"]) != "kiremit":
+				continue
+			mahyali[key] = true
+			var by := float(uu["yuz"])
+			parca_ekle.call(uu["sirt"], by - 0.08, by + 0.06, float(e[2]) + 0.1, 0.5, Basis(Vector3.UP, float(h["yaw"])), Color("5a3a2e"))
+			mahya_n += 1
+		n += 1
+	for ck: Vector2i in gr:
+		var mi := MeshInstance3D.new()
+		mi.mesh = (gr[ck] as SurfaceTool).commit()
+		mi.material_override = _duvar_mat()
+		mi.position = Vector3((ck.x + 0.5) * DUVAR_HUCRE, 0, (ck.y + 0.5) * DUVAR_HUCRE)
+		mi.visibility_range_end = DUVAR_UZAK * 0.6
+		mi.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_ON
+		mi.set_meta("no_walk", true)
+		add_child(mi)
+	stats["cati_gecit"] = n
+	stats["mahya"] = mahya_n
+	stats["cati_gecit_sigmadi"] = sigmadi
 
 
 static var _dmat: StandardMaterial3D
@@ -635,6 +910,8 @@ static func _kutu(st: SurfaceTool, xf: Transform3D, sz: Vector3, col: Color, cen
 # ================================================================ 3. öğeler (akışla)
 
 func _oge_ekle(o: Dictionary) -> void:
+	if _kayit is Array:
+		(_kayit as Array).append(o)
 	var c: Vector2 = o["c"]
 	var ck := Vector2i(floori(c.x / OGE_HUCRE), floori(c.y / OGE_HUCRE))
 	if not _cells.has(ck):
@@ -719,7 +996,7 @@ func _oge_uzak() -> void:
 func _cam() -> Vector3:
 	var vp := get_viewport()
 	if vp and vp.get_camera_3d():
-		return vp.get_camera_3d().global_position
+		return to_local(vp.get_camera_3d().global_position)
 	return Vector3.ZERO
 
 
@@ -736,10 +1013,12 @@ func _planla(cp: Vector3) -> void:
 	hedefler.sort_custom(func(a: Array, b: Array) -> bool: return float(a[0]) < float(b[0]))
 	for hd: Array in hedefler:
 		_is_kuyrugu.append([hd[1], hd[2]])
-	# avlu duvarlarının çarpışması
+	# avlu duvarlarının (ve çatı geçitlerinin) çarpışması: kameranın ve oyuncunun çevresinde
+	var pl := get_tree().get_first_node_in_group("player") as Node3D if is_inside_tree() else null
+	var p2 := Vector2(pl.global_position.x, pl.global_position.z) if pl != null else p
 	for ck: Vector2i in _duvar_cells:
 		var c := Vector2((ck.x + 0.5) * DUVAR_HUCRE, (ck.y + 0.5) * DUVAR_HUCRE)
-		var yakin := c.distance_to(p) < CARP_YAKIN + DUVAR_HUCRE * 0.71
+		var yakin := minf(c.distance_to(p), c.distance_to(p2)) < CARP_YAKIN + DUVAR_HUCRE * 0.71
 		var dc: Dictionary = _duvar_cells[ck]
 		if yakin and dc["body"] == null:
 			var body := StaticBody3D.new()
@@ -764,6 +1043,8 @@ func _process(dt: float) -> void:
 		_son_kontrol = 0.4
 		_planla(_cam())
 	var butce := maxi(IstDunya.butce_us, 4000)
+	if _zemin_is >= 0 or not _zemin_bekleyen.is_empty():
+		_zemin_akis(butce)
 	var t0 := Time.get_ticks_usec()
 	var n := 0
 	while not _is_kuyrugu.is_empty() and (n == 0 or Time.get_ticks_usec() - t0 < butce):
