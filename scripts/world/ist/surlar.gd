@@ -13,7 +13,7 @@ extends RefCounted
 ## ≥ 1,7 m. Bu yüzden k küçükken kalınlıklar ve sur boyu alt sınırlara oturur (dims()).
 
 const C_STONE := Color("cdbd9e")
-const C_BRICK := Color("a8583a")
+const C_BRICK := Color("96503a")
 const C_MARBLE := Color("e6dfcf")
 const C_WOOD := Color("7a5634")
 const C_TILE := Color("b4532f")
@@ -33,12 +33,12 @@ static func dims(k: float) -> Dictionary:
 	var d := {}
 	d["k"] = k
 	d["T"] = maxf(5.0 * k, 3.0)             # iç sur kalınlığı
-	d["OH"] = maxf(8.5 * k, 3.2)            # dış sur yüksekliği
+	d["OH"] = maxf(8.5 * k, 3.6)            # dış sur yüksekliği
 	d["HW"] = maxf(12.0 * k, d["OH"] + 2.4) # iç sur yüksekliği
 	d["TW"] = maxf(9.0 * k, 4.4)            # iç kule eni
 	d["TP"] = maxf(6.0 * k, 3.0)            # iç kule çıkıntısı
 	d["HT"] = maxf(19.0 * k, d["HW"] + 3.4) # iç kule tepesi
-	d["PW"] = maxf(15.0 * k, 4.0)           # peribolos eni
+	d["PW"] = maxf(15.0 * k, 6.8)           # peribolos eni
 	d["OT"] = maxf(2.5 * k, 2.6)            # dış sur kalınlığı
 	d["OTW"] = maxf(4.5 * k, 3.2)
 	d["OTP"] = maxf(4.0 * k, 2.0)
@@ -112,15 +112,20 @@ static func _layout(L: float, k: float, seed: int, o: Dictionary) -> Dictionary:
 	var OH: float = d["OH"]
 	var n_out := ceili(OH / STEP_RISE)
 	lay["out_n"] = n_out
+	var ban: float = gw * 0.5 + 1.8 if gw > 0.0 else -1.0
 	for i in range(otx.size() - 1):
 		var xe: float = 0.5 * (float(otx[i]) + float(otx[i + 1]))
+		var xs: float = xe - 0.42 * n_out
+		if gw > 0.0 and xs < ban and xe + 1.0 > -ban:
+			continue
 		lay["out_x1"] = xe
-		lay["out_x0"] = xe - 0.42 * n_out
+		lay["out_x0"] = xs
 		lay["out_tread"] = 0.42
 		break
-	if otx.size() == 1:
-		lay["out_x1"] = float(otx[0]) + 8.0
-		lay["out_x0"] = float(lay["out_x1"]) - 0.42 * n_out
+	if not lay.has("out_x1") and otx.size() > 0:
+		var xe2: float = float(otx[otx.size() - 1]) + float(d["OTW"]) * 0.5 + ceili(float(d["OTH"] - d["OH"]) / STEP_RISE) * 0.42 + 2.5
+		lay["out_x1"] = xe2
+		lay["out_x0"] = xe2 - 0.42 * n_out
 		lay["out_tread"] = 0.42
 	# Hendek rampaları: yakın yaka (+x'e yükselir) ve uzak yaka (-x'e yükselir)
 	var MD: float = d["MD"]
@@ -240,11 +245,11 @@ static func _parapet_z(p: Node3D, z0: float, z1: float, x: float, y: float, col:
 
 
 ## Tepe çevresi korkuluğu; gap_x: x kenarlarında ortada bırakılan geçit (merdivenin indiği yer) [genişlik] ya da 0
-static func _roof_ring(p: Node3D, x0: float, x1: float, z0: float, z1: float, y: float, col: Color, lod: int, mer: Array, gap := 0.0) -> void:
+static func _roof_ring(p: Node3D, x0: float, x1: float, z0: float, z1: float, y: float, col: Color, lod: int, mer: Array, gap := 0.0, gz := -1e9) -> void:
 	var t := PARAPET_T * 0.5
 	_parapet_x(p, x0, x1, z0 + t, y, col, lod, mer)
 	_parapet_x(p, x0, x1, z1 - t, y, col, lod, mer)
-	var zm := (z0 + z1) * 0.5
+	var zm := (z0 + z1) * 0.5 if gz < -1e8 else gz
 	if gap > 0.0:
 		_parapet_z(p, z0 + PARAPET_T, zm - gap * 0.5, x0 + t, y, col, lod, mer)
 		_parapet_z(p, zm + gap * 0.5, z1 - PARAPET_T, x0 + t, y, col, lod, mer)
@@ -321,7 +326,7 @@ static func _inner_tower(p: Node3D, d: Dictionary, tw: Dictionary, lod: int, mer
 	var m := floori(w / 0.9)
 	for i in m:
 		var kx := x0 + 0.45 + i * ((w - 0.9) / maxf(1.0, m - 1))
-		_d(p, Vector3(kx - 0.2, yf - 0.55, zf), Vector3(kx + 0.2, yf, zf + 0.35), stone.darkened(0.15))
+		_d(p, Vector3(kx - 0.2, yf - 0.55, zf), Vector3(kx + 0.2, yf, zf + 0.35), stone.darkened(0.3))
 	# şehir yüzünde kör kapı (kule tabanı)
 	_d(p, Vector3(cx - 0.8, 0, zb - 0.04), Vector3(cx + 0.8, 2.3, zb), C_DARK)
 	_d(p, Vector3(cx - 1.0, 2.3, zb - 0.05), Vector3(cx + 1.0, 2.65, zb), C_BRICK, "brick")
@@ -342,7 +347,7 @@ static func _outer_tower(p: Node3D, d: Dictionary, cx: float, lod: int, mer: Arr
 	if lod >= 1:
 		return
 	_s(p, Vector3(x0 - 0.2, 0, zo0 - 0.0), Vector3(x1 + 0.2, 0.7, zf + 0.2), stone.darkened(0.12), "ashlar", lod)
-	_roof_ring(p, x0, x1, zo0 - 0.0, zf, OTH, stone, lod, mer, 1.8)
+	_roof_ring(p, x0, x1, zo0 - 0.0, zf, OTH, stone, lod, mer, 1.8, (zo0 + zo1) * 0.5)
 	# Tuğla bant ve ok yarıkları
 	_d(p, Vector3(x0 - 0.04, OH * 0.5, zf), Vector3(x1 + 0.04, OH * 0.5 + 0.2, zf + 0.04), C_BRICK, "brick")
 	for i in 2:
@@ -372,7 +377,9 @@ static func _run(host: Node3D, L: float, k: float, lod: int, seed: int, o: Dicti
 	var MD: float = d["MD"]
 	var PTW: float = d["PTW"]
 	var gw: float = lay["gw"]
-	var gh: float = float(o.get("gh", 3.6))
+	var gh: float = minf(float(o.get("gh", 3.6)), OH - 1.0)
+	o = o.duplicate()
+	o["gh"] = gh
 	var closed: bool = bool(o.get("kapali", false))
 	var open_gate := gw > 0.0 and not closed
 	var stone: Color = o.get("tas", C_STONE)
@@ -496,7 +503,7 @@ static func _build_moat(root: Node3D, lay: Dictionary, lod: int, stone: Color, o
 	for sg in _segs(x0, x1, pcut):
 		_s(root, Vector3(sg[0], 0, zm0 - 1.8), Vector3(sg[1], 1.6, zm0 - 0.9), stone.darkened(0.08), "ashlar", lod, true)
 		if lod == 0 and sg[1] - sg[0] > 1.0:
-			_d(root, Vector3(sg[0], 1.6, zm0 - 1.75), Vector3(sg[1], 1.72, zm0 - 0.95), stone.lightened(0.06))
+			_d(root, Vector3(sg[0], 1.6, zm0 - 1.75), Vector3(sg[1], 1.72, zm0 - 0.95), stone.darkened(0.04))
 	# uç dolguları (tam yükseklik): hendek bölmesi/geçit
 	var cw := 3.0
 	_s(root, Vector3(x0, -MD, zm0), Vector3(x0 + cw, 0, zm1), scarp.lightened(0.04), "ashlar", lod, true)
@@ -619,6 +626,8 @@ static func _climbs(L: float, k: float, seed: int, o: Dictionary) -> Array:
 		var zc := (zo0 + float(d["zo1"])) * 0.5
 		out.append([Vector3(cx - float(d["OTW"]) * 0.5 - lt * 0.42 - 0.4, float(d["OH"]), zc), Vector3(cx, float(d["OTH"]), zc), "basamak"])
 	# hendek: dipten teras ve karşı yakaya rampalar
+	if not o.get("hendek", true):
+		return out
 	var zm0: float = d["zm0"]
 	var zm1: float = d["zm1"]
 	var MD: float = d["MD"]

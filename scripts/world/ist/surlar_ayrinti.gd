@@ -78,15 +78,20 @@ static func build(root: Node3D, lay: Dictionary, o: Dictionary) -> void:
 			_balls(root, ox + 0.5, d["OTH"], zo0 + 1.2, 3, rng)
 		else:
 			_barrel(root, Vector3(ox - 0.7, float(d["OTH"]), zo0 + float(d["OT"]) + 0.8))
-	# ---- sarmaşık ve ot (duvar yüzünde, taban boyunca)
-	var ivy := Color("4f6a2f")
-	for i in int(L / 10.0):
+	# ---- sarmaşık: duvar yüzünde küçük, düzensiz yaprak öbekleri (düz yeşil levha değil)
+	var ivy := Color("4a5f2c")
+	for i in int(L / 12.0):
 		var x2 := rng.randf_range(-L * 0.5 + 2.0, L * 0.5 - 2.0)
-		var h := rng.randf_range(1.5, 3.4)
-		var wd := rng.randf_range(0.8, 1.8)
 		var fz: float = zo1 if i % 2 == 0 else zi1
-		var m := Props.box(root, Vector3(wd, h, 0.05), Vector3(x2, h * 0.5 + 0.05, fz + 0.03), ivy.darkened(rng.randf_range(0.0, 0.25)))
-		m.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
+		if gw > 0.0 and absf(x2) < gw * 0.5 + 2.0:
+			continue
+		var y2 := 0.2
+		for j in 9:
+			var ww := rng.randf_range(0.18, 0.5)
+			var hh := rng.randf_range(0.2, 0.55)
+			y2 += rng.randf_range(0.1, 0.35)
+			var m := Props.box(root, Vector3(ww, hh, 0.04), Vector3(x2 + rng.randf_range(-0.5, 0.5), y2, fz + 0.025), ivy.darkened(rng.randf_range(0.0, 0.3)), Vector3(0, 0, rng.randf_range(-30.0, 30.0)))
+			m.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
 	var bushes: Array = []
 	for i in int(L * 0.5):
 		var bz: float = rng.randf_range(float(d["zo1"]) + 0.8, float(d["zm0"]) - 2.2)
