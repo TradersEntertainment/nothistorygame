@@ -399,7 +399,8 @@ func _renk(x: float, z: float, y: float, egim: float) -> Color:
 		"hipodrom":
 			c = C_KURU.lerp(C_TOPRAK, 0.5 + 0.3 * g)
 		"ordugah":
-			c = cig.lerp(c, clampf(0.35 + g2 * 0.3 - yog * 0.3, 0.0, 1.0))
+			# ordugâh: çiğnenmiş toprak, yollar ve ocak yerleri; aralarda ot lekeleri
+			c = cig.lerp(c, clampf(0.12 + g2 * 0.35 - yog * 0.1, 0.0, 0.6))
 		"bag":
 			c = _parsel(rr, "bag", c)
 		"orman":
