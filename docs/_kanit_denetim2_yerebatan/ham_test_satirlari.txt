@@ -1,0 +1,211 @@
+# Ham test satirlari (denetim 2, kendi kosularim; Godot 4.4.1, --max-fps 20 basssiz; ekranli PACE=1 xvfb 1280x720)
+PARSECHECK PASS scripts=250
+
+## Basssiz ozet (varyant: AUTOTEST PASS sayisi; yasak satir sayisi)
+44b_base: 1 pass; bad=0
+44b_blab: 1 pass; bad=0
+44b_dark: 1 pass; bad=0
+44b_kid: 1 pass; bad=0
+44b_nophone: 1 pass; bad=0
+44b_hit: 1 pass; bad=0
+24_base: 1 pass; bad=0
+24_late: 1 pass; bad=0
+24_niko: 1 pass; bad=0
+24_niko_slow: 1 pass; bad=0
+24_eclipse: 1 pass; bad=0
+25_base: 1 pass; bad=0
+25_caught: 1 pass; bad=0
+25_pass: 1 pass; bad=0
+25_kid: 1 pass; bad=0
+25_cistern: 1 pass; bad=0
+25_cistern_blab: 1 pass; bad=0
+25_osm: 1 pass; bad=0
+43o_base: 1 pass; bad=0
+43o_bad: 1 pass; bad=0
+43o_miss: 1 pass; bad=0
+43o_dive: 1 pass; bad=0
+12b_base: 1 pass; bad=0
+
+## 44b basssiz AUTOTEST/CISTERN44 satirlari
+-- h_44b_base.txt
+CISTERN44 events=fish,far_shot,splash,collapse,sun,hen_eye qt=45.8 max_lights=7 (medusa)
+AUTOTEST PASS chapter=44 variant= outcome=44.1 light=phone battery=3.4 bumps=8 hits=0 rescued=false kid=false
+-- h_44b_blab.txt
+CISTERN44 events=fish,far_shot,splash,collapse,sun,hen_eye qt=39.7 max_lights=7 (medusa)
+AUTOTEST PASS chapter=44 variant=blab outcome=44.2 light=phone battery=4.3 bumps=4 hits=0 rescued=false kid=false
+-- h_44b_dark.txt
+CISTERN44 events=fish,far_shot,splash,collapse,sun qt=96.5 max_lights=7 (medusa)
+AUTOTEST PASS chapter=44 variant=dark outcome=44.1 light=remote battery=0.0 bumps=1 hits=0 rescued=true kid=false
+-- h_44b_hit.txt
+CISTERN44 events=fish,far_shot,splash,hit,found,collapse,sun,hen_eye qt=46.8 max_lights=7 (medusa)
+AUTOTEST PASS chapter=44 variant=hit outcome=44.1 light=phone battery=3.6 bumps=8 hits=1 rescued=false kid=false
+-- h_44b_kid.txt
+CISTERN44 events=fish,far_shot,splash,collapse,sun,hen_eye qt=38.5 max_lights=7 (medusa)
+AUTOTEST PASS chapter=44 variant=kid outcome=44.1 light=phone battery=4.5 bumps=4 hits=0 rescued=false kid=true
+-- h_44b_nophone.txt
+CISTERN44 events=fish,far_shot,splash,collapse,sun,hen_eye qt=40.5 max_lights=7 (medusa)
+AUTOTEST PASS chapter=44 variant=nophone outcome=44.1 light=remote battery=14.0 bumps=6 hits=0 rescued=false kid=false
+
+## Ekranli koşu (base) satirlari
+LIGHTS44 3 descend Cistern/BeamLight0,Cistern/BeamLight1,Cistern/WellMouthLight
+LIGHTS44 5 awe @Camera3D@84/@SpotLight3D@50023,@Camera3D@84/@OmniLight3D@50024,Cistern/BeamLight0,Cistern/BeamLight1,Cistern/WellMouthLight
+LIGHTS44 6 quake @Camera3D@84/@SpotLight3D@50023,@Camera3D@84/@OmniLight3D@50024,Cistern/BeamLight0,Cistern/BeamLight1,Cistern/SunBurst,Lamp/Light
+LIGHTS44 7 medusa @Camera3D@84/@SpotLight3D@50023,@Camera3D@84/@OmniLight3D@50024,Cistern/BeamLight0,Cistern/BeamLight1,Cistern/SunBurst,Cistern/MedusaLamp,Lamp/Light
+TESPITBLOCK who=siege44 blocker=Cistern/Cellar (MeshInstance3D) at=(0.0, 0.0, 0.0) eye=(-57.3, 4.1, -18.1) dist=5.4
+CISTERN44 events=fish,far_shot,splash,collapse,sun,hen_eye qt=52.4 max_lights=7 (medusa)
+AUTOTEST PASS chapter=44 variant= outcome=44.1 light=phone battery=1.0 bumps=11 hits=0 rescued=false kid=false
+
+## Ekranli koşu (hit)
+CISTERN44 events=fish,far_shot,splash,hit,found,collapse,sun,hen_eye qt=50.1 max_lights=7 (medusa)
+AUTOTEST PASS chapter=44 variant=hit outcome=44.1 light=phone battery=2.4 bumps=6 hits=1 rescued=false kid=false
+
+## 25_pass LOOKAUDIT raw (yasak degil: sadece 'LOOKAUDIT backturn' yasak)
+14:LOOKAUDIT raw Person(emperor) chapter25.tscn 141 kind=walk act= pose=<null> look=@CharacterBody3D@80 talking=true pos=(-14.0, 0.0, -78.0)
+
+## RINFO ornekleri (ekranli base)
+RINFO scene=chapter44b t=1 draws=3183 objs=3257 prims=1923k vis=1624k shadow=298k nodes=26577 proc=41308.4ms phys=0.6ms
+RINFO scene=chapter44b t=3 draws=2910 objs=2984 prims=1653k vis=1394k shadow=258k nodes=26618 proc=613.7ms phys=1.8ms
+RINFO scene=chapter44b t=5 draws=4509 objs=4657 prims=1411k vis=742k shadow=668k nodes=27060 proc=730.3ms phys=2.9ms
+RINFO scene=chapter44b t=7 draws=4600 objs=4716 prims=1478k vis=742k shadow=734k nodes=27578 proc=939.1ms phys=1.6ms
+RINFO scene=chapter44b t=9 draws=4593 objs=4664 prims=1534k vis=742k shadow=790k nodes=28033 proc=908.1ms phys=1.5ms
+RINFO scene=chapter44b t=11 draws=50 objs=66 prims=283k vis=283k shadow=0k nodes=717 proc=5533.3ms phys=3.6ms
+RINFO scene=chapter44b t=13 draws=28 objs=44 prims=280k vis=280k shadow=0k nodes=717 proc=107.2ms phys=0.4ms
+RINFO scene=chapter44b t=15 draws=52 objs=68 prims=561k vis=560k shadow=0k nodes=717 proc=535.4ms phys=0.4ms
+RINFO scene=chapter44b t=17 draws=284 objs=400 prims=562k vis=561k shadow=0k nodes=717 proc=449.4ms phys=0.4ms
+RINFO scene=chapter44b t=19 draws=66 objs=82 prims=560k vis=560k shadow=0k nodes=717 proc=435.4ms phys=0.4ms
+RINFO scene=chapter44b t=21 draws=292 objs=420 prims=564k vis=563k shadow=0k nodes=731 proc=364.1ms phys=1.1ms
+RINFO scene=chapter44b t=23 draws=138 objs=190 prims=564k vis=563k shadow=0k nodes=731 proc=362.7ms phys=1.0ms
+RINFO scene=chapter44b t=25 draws=204 objs=277 prims=564k vis=563k shadow=0k nodes=721 proc=391.0ms phys=0.5ms
+RINFO scene=chapter44b t=27 draws=277 objs=387 prims=564k vis=563k shadow=0k nodes=717 proc=379.4ms phys=0.6ms
+RINFO scene=chapter44b t=29 draws=351 objs=498 prims=564k vis=563k shadow=0k nodes=717 proc=409.3ms phys=2.3ms
+RINFO scene=chapter44b t=31 draws=294 objs=412 prims=564k vis=563k shadow=0k nodes=717 proc=437.0ms phys=0.6ms
+RINFO scene=chapter44b t=33 draws=457 objs=634 prims=592k vis=591k shadow=0k nodes=718 proc=659.2ms phys=1.9ms
+RINFO scene=chapter44b t=35 draws=166 objs=259 prims=560k vis=559k shadow=0k nodes=724 proc=288.6ms phys=0.6ms
+RINFO scene=chapter44b t=37 draws=170 objs=262 prims=561k vis=560k shadow=0k nodes=725 proc=326.9ms phys=0.8ms
+RINFO scene=chapter44b t=40 draws=180 objs=272 prims=562k vis=561k shadow=0k nodes=725 proc=387.8ms phys=0.6ms
+RINFO scene=chapter44b t=42 draws=281 objs=375 prims=592k vis=591k shadow=0k nodes=728 proc=506.3ms phys=0.5ms
+RINFO scene=chapter44b t=44 draws=275 objs=367 prims=593k vis=592k shadow=0k nodes=720 proc=560.0ms phys=1.2ms
+RINFO scene=chapter44b t=46 draws=416 objs=577 prims=597k vis=595k shadow=0k nodes=728 proc=588.7ms phys=0.4ms
+RINFO scene=chapter44b t=48 draws=410 objs=570 prims=597k vis=596k shadow=0k nodes=727 proc=592.8ms phys=0.6ms
+RINFO scene=chapter44b t=50 draws=398 objs=552 prims=603k vis=601k shadow=0k nodes=727 proc=516.1ms phys=0.5ms
+RINFO scene=chapter44b t=52 draws=424 objs=593 prims=604k vis=602k shadow=0k nodes=728 proc=482.1ms phys=0.6ms
+RINFO scene=chapter44b t=54 draws=417 objs=583 prims=604k vis=603k shadow=0k nodes=726 proc=473.8ms phys=0.7ms
+RINFO scene=chapter44b t=56 draws=281 objs=364 prims=604k vis=603k shadow=0k nodes=722 proc=562.7ms phys=0.5ms
+RINFO scene=chapter44b t=58 draws=369 objs=496 prims=604k vis=603k shadow=0k nodes=718 proc=572.0ms phys=0.5ms
+RINFO scene=chapter44b t=60 draws=357 objs=478 prims=604k vis=603k shadow=0k nodes=718 proc=461.4ms phys=0.4ms
+RINFO scene=chapter44b t=62 draws=378 objs=510 prims=604k vis=603k shadow=0k nodes=718 proc=479.2ms phys=0.5ms
+RINFO scene=chapter44b t=65 draws=284 objs=369 prims=604k vis=603k shadow=0k nodes=718 proc=428.0ms phys=0.5ms
+RINFO scene=chapter44b t=67 draws=326 objs=432 prims=604k vis=603k shadow=0k nodes=718 proc=554.3ms phys=0.6ms
+RINFO scene=chapter44b t=69 draws=320 objs=432 prims=604k vis=603k shadow=0k nodes=725 proc=576.8ms phys=1.6ms
+RINFO scene=chapter44b t=71 draws=391 objs=540 prims=604k vis=603k shadow=0k nodes=718 proc=499.1ms phys=0.5ms
+RINFO scene=chapter44b t=73 draws=356 objs=488 prims=604k vis=603k shadow=0k nodes=727 proc=517.0ms phys=0.5ms
+RINFO scene=chapter44b t=75 draws=356 objs=493 prims=603k vis=602k shadow=0k nodes=721 proc=528.7ms phys=0.5ms
+RINFO scene=chapter44b t=77 draws=263 objs=407 prims=577k vis=576k shadow=0k nodes=727 proc=505.9ms phys=0.5ms
+RINFO scene=chapter44b t=79 draws=235 objs=379 prims=561k vis=560k shadow=0k nodes=728 proc=474.1ms phys=2.1ms
+RINFO scene=chapter44b t=81 draws=239 objs=382 prims=561k vis=560k shadow=0k nodes=740 proc=373.4ms phys=1.8ms
+RINFO scene=chapter44b t=83 draws=224 objs=368 prims=560k vis=559k shadow=0k nodes=730 proc=296.3ms phys=0.7ms
+RINFO scene=chapter44b t=85 draws=220 objs=364 prims=560k vis=559k shadow=0k nodes=727 proc=328.4ms phys=0.8ms
+RINFO scene=chapter44b t=87 draws=376 objs=589 prims=561k vis=560k shadow=0k nodes=739 proc=218.7ms phys=2.3ms
+RINFO scene=chapter44b t=89 draws=464 objs=693 prims=573k vis=571k shadow=0k nodes=761 proc=519.5ms phys=0.6ms
+RINFO scene=chapter44b t=91 draws=450 objs=679 prims=572k vis=570k shadow=0k nodes=747 proc=513.0ms phys=1.3ms
+RINFO scene=chapter44b t=93 draws=267 objs=411 prims=571k vis=570k shadow=0k nodes=741 proc=471.3ms phys=0.5ms
+RINFO scene=chapter44b t=95 draws=268 objs=412 prims=572k vis=571k shadow=0k nodes=759 proc=462.6ms phys=0.5ms
+RINFO scene=chapter44b t=97 draws=268 objs=416 prims=572k vis=571k shadow=0k nodes=752 proc=503.3ms phys=0.5ms
+RINFO scene=chapter44b t=99 draws=256 objs=401 prims=571k vis=570k shadow=0k nodes=743 proc=495.7ms phys=0.5ms
+RINFO scene=chapter44b t=101 draws=240 objs=384 prims=571k vis=570k shadow=0k nodes=752 proc=456.0ms phys=0.5ms
+RINFO scene=chapter44b t=104 draws=438 objs=671 prims=572k vis=570k shadow=0k nodes=756 proc=594.9ms phys=1.3ms
+RINFO scene=chapter44b t=106 draws=437 objs=672 prims=572k vis=570k shadow=0k nodes=747 proc=456.6ms phys=0.6ms
+RINFO scene=chapter44b t=108 draws=244 objs=388 prims=571k vis=569k shadow=0k nodes=751 proc=515.7ms phys=0.6ms
+RINFO scene=chapter44b t=110 draws=251 objs=395 prims=571k vis=570k shadow=0k nodes=751 proc=433.5ms phys=0.6ms
+RINFO scene=chapter44b t=112 draws=248 objs=394 prims=571k vis=570k shadow=0k nodes=746 proc=501.2ms phys=0.9ms
+RINFO scene=chapter44b t=114 draws=244 objs=388 prims=571k vis=569k shadow=0k nodes=741 proc=474.7ms phys=0.6ms
+RINFO scene=chapter44b t=116 draws=253 objs=397 prims=571k vis=570k shadow=0k nodes=753 proc=395.5ms phys=0.6ms
+RINFO scene=chapter44b t=118 draws=251 objs=397 prims=571k vis=570k shadow=0k nodes=754 proc=419.1ms phys=1.5ms
+RINFO scene=chapter44b t=121 draws=243 objs=387 prims=570k vis=569k shadow=0k nodes=741 proc=439.3ms phys=0.6ms
+RINFO scene=chapter44b t=123 draws=247 objs=391 prims=571k vis=570k shadow=0k nodes=751 proc=442.3ms phys=0.5ms
+RINFO scene=chapter44b t=125 draws=253 objs=397 prims=571k vis=569k shadow=0k nodes=761 proc=312.3ms phys=8.6ms
+RINFO scene=chapter44b t=127 draws=238 objs=380 prims=570k vis=569k shadow=0k nodes=743 proc=316.0ms phys=2.0ms
+RINFO scene=chapter44b t=129 draws=165 objs=183 prims=601k vis=601k shadow=0k nodes=742 proc=234.6ms phys=0.7ms
+RINFO scene=chapter44b t=131 draws=329 objs=478 prims=331k vis=330k shadow=0k nodes=740 proc=303.5ms phys=0.7ms
+RINFO scene=chapter44b t=133 draws=269 objs=389 prims=331k vis=330k shadow=0k nodes=741 proc=274.7ms phys=0.5ms
+RINFO scene=chapter44b t=135 draws=279 objs=403 prims=331k vis=330k shadow=0k nodes=741 proc=284.4ms phys=0.5ms
+RINFO scene=chapter44b t=137 draws=278 objs=402 prims=331k vis=331k shadow=0k nodes=741 proc=334.1ms phys=1.3ms
+RINFO scene=chapter44b t=140 draws=323 objs=470 prims=331k vis=330k shadow=0k nodes=741 proc=328.4ms phys=0.7ms
+RINFO scene=chapter44b t=142 draws=324 objs=471 prims=332k vis=331k shadow=0k nodes=741 proc=316.6ms phys=1.4ms
+RINFO scene=chapter44b t=144 draws=31 objs=47 prims=322k vis=322k shadow=0k nodes=743 proc=189.3ms phys=2.2ms
+RINFO scene=chapter44b t=146 draws=26 objs=42 prims=280k vis=280k shadow=0k nodes=743 proc=156.1ms phys=6.0ms
+RINFO scene=chapter44b t=148 draws=18 objs=34 prims=1k vis=1k shadow=0k nodes=743 proc=137.7ms phys=0.4ms
+RINFO scene=chapter44b t=150 draws=242 objs=350 prims=562k vis=561k shadow=0k nodes=743 proc=420.6ms phys=0.5ms
+RINFO scene=chapter44b t=152 draws=4259 objs=4275 prims=5622k vis=5222k shadow=400k nodes=26693 proc=6297.2ms phys=54.5ms
+RINFO scene=chapter44b t=154 draws=4257 objs=4346 prims=5615k vis=5215k shadow=397k nodes=26730 proc=1894.2ms phys=3.0ms
+RINFO scene=chapter44b t=156 draws=4519 objs=4639 prims=5622k vis=5223k shadow=397k nodes=27175 proc=1704.6ms phys=1.9ms
+RINFO scene=chapter44b t=158 draws=4548 objs=4564 prims=5713k vis=5267k shadow=446k nodes=27819 proc=1789.4ms phys=2.4ms
+RINFO scene=chapter44b t=160 draws=4599 objs=4968 prims=5718k vis=5271k shadow=446k nodes=28687 proc=1655.1ms phys=2.2ms
+RINFO scene=chapter44b t=162 draws=4963 objs=5332 prims=5876k vis=5349k shadow=525k nodes=28693 proc=1536.6ms phys=2.1ms
+
+## HITCH (hepsi avlu/yukleme)
+HITCH scene=chapter44b t=3.6 frame=715.4ms nodes+0 (26766) fade=0.47 added=-
+HITCH scene=chapter44b t=3.7 frame=732.7ms nodes+4 (26770) fade=0.34 added=person<city_life x2
+HITCH scene=chapter44b t=3.8 frame=834.6ms nodes+1 (26771) fade=0.20 added=pose_crew<siege_field x1
+HITCH scene=chapter44b t=4.0 frame=761.0ms nodes+143 (26914) fade=0.06 added=person<city_life x444
+HITCH scene=chapter44b t=4.1 frame=778.3ms nodes+0 (26914) fade=0.00 added=-
+HITCH scene=chapter44b t=4.2 frame=777.5ms nodes+7 (26921) fade=0.00 added=person<city_life x4
+HITCH scene=chapter44b t=4.4 frame=730.8ms nodes+2 (26923) fade=0.00 added=pose_crew<siege_field x2
+HITCH scene=chapter44b t=4.5 frame=739.7ms nodes+137 (27060) fade=0.00 added=person<city_life x470
+HITCH scene=chapter44b t=4.6 frame=700.5ms nodes+0 (27060) fade=0.00 added=-
+HITCH scene=chapter44b t=4.8 frame=777.0ms nodes+4 (27064) fade=0.00 added=person<city_life x4
+HITCH scene=chapter44b t=4.9 frame=734.1ms nodes+0 (27064) fade=0.00 added=-
+HITCH scene=chapter44b t=5.0 frame=857.7ms nodes+148 (27212) fade=0.00 added=person<city_life x441
+HITCHSUM scene=chapter44b frames=1156 over25=1156 over50=1156 max=6354.8ms p99=1883.2ms median=439.0ms
+
+## PACE satirlari
+PACE say t=68.6 len=6.8 key=D44B_N_01
+PACE dead t=20.3 len=49.1 after=D44B_N_01 fade=0.00 card=false
+PACE say t=75.4 len=4.9 key=D44B_T_01
+PACE say t=80.7 len=5.4 key=D44B_E_01
+PACE say t=86.3 len=5.7 key=D44B_E_02
+PACE say t=92.8 len=5.3 key=D44B_T_02
+PACE say t=98.5 len=3.1 key=D44B_E_03
+PACE say t=101.9 len=4.9 key=D44B_T_ROPE
+PACE say t=128.4 len=5.4 key=D44B_T_DOWN
+PACE dead t=108.0 len=20.9 after=D44B_T_DOWN fade=0.00 card=false
+PACE say t=144.7 len=5.6 key=D44B_T_DARK
+PACE dead t=134.5 len=10.5 after=D44B_T_DARK fade=0.00 card=false
+PACE say t=163.1 len=3.3 key=D44B_T_AWE_PHONE
+PACE say t=166.6 len=5.0 key=D44B_T_AWE_2
+PACE say t=171.8 len=6.7 key=D44B_N_AWE
+PACE say t=178.8 len=5.6 key=D44B_T_AWE_3
+PACE say t=190.4 len=4.8 key=D44B_T_BOAT
+PACE say t=273.2 len=3.6 key=D44B_Y_01
+PACE say t=276.9 len=1.9 key=D44B_T_Y_01
+PACE say t=279.0 len=6.0 key=D44B_Y_02
+PACE say t=285.6 len=3.7 key=D44B_T_Y_02
+PACE say t=289.4 len=5.7 key=D44B_Y_03
+PACE say t=295.1 len=3.9 key=D44B_T_Y_03
+PACE say t=299.4 len=6.2 key=D44B_Y_04
+PACE say t=305.8 len=3.8 key=D44B_T_Y_04
+PACE say t=310.1 len=4.8 key=D44B_Y_05
+PACE say t=319.5 len=4.5 key=D44B_Y_QUAKE
+PACE dead t=315.6 len=4.3 after=D44B_Y_QUAKE fade=0.00 card=false
+PACE say t=324.3 len=6.3 key=D44B_N_QUAKE
+PACE say t=334.9 len=5.6 key=D44B_Y_TORCH
+PACE dead t=331.6 len=3.7 after=D44B_Y_TORCH fade=0.00 card=false
+PACE say t=340.8 len=5.5 key=D44B_T_LEAD
+PACE say t=346.6 len=5.8 key=D44B_Y_LAMP
+PACE say t=523.4 len=7.2 key=D44B_Y_STONE
+PACE dead t=521.6 len=2.1 after=D44B_Y_STONE fade=0.00 card=false
+PACE say t=531.1 len=5.7 key=D44B_T_MEDUSA_1
+PACE say t=536.9 len=5.9 key=D44B_T_MEDUSA_2
+PACE say t=543.0 len=6.1 key=D44B_Y_MEDUSA
+PACE say t=549.2 len=6.7 key=D44B_N_MEDUSA
+PACE say t=565.2 len=5.0 key=D44B_T_CLIMB
+PACE dead t=556.1 len=9.4 after=D44B_T_CLIMB fade=0.00 card=false
+PACE say t=592.6 len=4.5 key=D44B_E_BACK
+PACE dead t=570.7 len=23.9 after=D44B_E_BACK fade=0.00 card=false
+PACE say t=598.2 len=4.1 key=D44B_Y_BUCKET
+PACE say t=603.4 len=4.0 key=D44B_TW_DJINN
+PACE say t=624.3 len=4.7 key=D44B_T_KEEP
+PACE say t=629.6 len=4.5 key=D44B_E_KEEP
+PACE say t=634.6 len=5.6 key=D44B_Y_KEEP
+PACE say t=641.3 len=6.4 key=D44B_N_KEEP
+PACE say t=648.7 len=5.8 key=D44B_T_END
