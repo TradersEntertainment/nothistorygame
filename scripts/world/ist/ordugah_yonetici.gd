@@ -158,10 +158,10 @@ static func _ekle(st: SurfaceTool, m: Mesh, si: int, xf: Transform3D, col: Color
 
 func _cam_pos() -> Vector3:
 	if bakan != null and is_instance_valid(bakan):
-		return bakan.global_position
+		return to_local(bakan.global_position)
 	var c := get_viewport().get_camera_3d()
 	if c != null:
-		return c.global_position
+		return to_local(c.global_position)
 	return Vector3.ZERO
 
 
