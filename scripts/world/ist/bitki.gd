@@ -234,7 +234,7 @@ static func add_flecks(m: Dictionary, c: Vector3, rad: Vector3, n: int, size: fl
 
 
 # ------------------------------------------------------------------ ağaç ağı
-## BİTKİ (4. tur): ağaçlar ortak kitten (scripts/level/bitki_kit.gd, KIT_SURUM 4) gelir: incelen eğri gövde, dallar,
+## BİTKİ (4. tur): ağaçlar ortak kitten (scripts/level/bitki_kit.gd, KIT_SURUM 10) gelir: incelen eğri gövde, dallar,
 ## 5–12 yumuşak normalli yaprak öbeği; çiçekli ağaçta kırık beyaz-pembe, parlaklık tavanlı. Eski tek blok taç kalktı.
 const BitkiKit := preload("res://scripts/level/bitki_kit.gd")
 

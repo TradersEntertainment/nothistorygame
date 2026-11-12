@@ -5,6 +5,7 @@ extends RefCounted
 ## Model çerçevesi: eksen -z yönünde (apsis/ön), pivot yon_derece kadar döner; yerel çerçeve pusula hizalıdır
 ## (+x doğu, -z kuzey). lod: 0 tam, 1 ana kütle + çatı (çarpışmalı), 2 siluet (çarpışmasız birkaç kütle).
 
+const BitkiKit := preload("res://scripts/level/bitki_kit.gd")
 const STONE := Color("e9dcc0")
 const STONE_D := Color("cdbd9c")
 const BRICK := Color("c0704a")
@@ -515,22 +516,19 @@ func cypress(x: float, z: float, h := 7.0, y := 0.0) -> void:
 	if lod >= 2:
 		return
 	var hh := h * maxf(k, 0.55)
-	var tr := Props.cyl(root, 0.1, 0.5, Vector3(x * k, y * k + 0.25, z * k), WOOD_D, Vector3.ZERO, 5)
-	Props.make_solid(tr)
-	var b := Props.ball(root, hh * 0.1, Vector3(x * k, y * k + hh * 0.5, z * k), Color("3a5a30"), Vector3(1.0, 4.4, 1.0), 7)
+	# BİTKİ: ortak kit servisi (eski: uzatılmış top); gövde katı
+	BitkiKit.govde(root, Vector3(x * k, y * k, z * k), 0.14, 0.5)
+	var b := BitkiKit.ornek(root, "servi", Vector3(x * k, y * k, z * k), hh, lod, fposmod(x * 0.7 + z * 0.3, TAU))
 	b.set_meta("bitki", true)
-	b.name = "cypress"
 
 
 func olive(x: float, z: float, y := 0.0, sc := 1.0) -> void:
 	if lod >= 2:
 		return
-	var tr := Props.cyl(root, 0.14 * sc, 1.5 * sc, Vector3(x * k, y * k + 0.75 * sc, z * k), Color("5e4a36"), Vector3.ZERO, 6, 0.1 * sc)
-	Props.make_solid(tr)
-	var a := Props.ball(root, 1.3 * sc, Vector3(x * k, y * k + 2.0 * sc, z * k), Color("7f9060"), Vector3(1.2, 0.7, 1.2), 7)
-	var b := Props.ball(root, 0.9 * sc, Vector3(x * k + 0.7 * sc, y * k + 1.8 * sc, z * k - 0.3), Color("8a9a68"), Vector3(1, 0.7, 1), 6)
+	# BİTKİ: ortak kit zeytini (eski: iki top); gövde katı
+	BitkiKit.govde(root, Vector3(x * k, y * k, z * k), 0.2 * sc, 1.5 * sc)
+	var a := BitkiKit.ornek(root, "zeytin", Vector3(x * k, y * k, z * k), 3.0 * sc, lod, fposmod(x * 0.4 + z * 0.8, TAU))
 	a.set_meta("bitki", true)
-	b.set_meta("bitki", true)
 
 
 func rubble(x: float, z: float, n: int, spread: float, y := 0.0) -> void:

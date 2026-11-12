@@ -13,7 +13,7 @@ extends RefCounted
 ##  - Yer teması: gövde dibi kök çıkıntılı, taban zeminin 0,25 m altına iner (yamaçta havada kalmaz).
 ## Ağaçlar köşe renkli TEK ağdır (tek yüzey, tek malzeme): MultiMesh, pişirme (SurfaceTool.append_from) uyumlu.
 
-const SURUM := 4
+const SURUM := 10
 const PARLAK_TAVAN := 0.86          # köşe rengi en büyük bileşeni (V) bu sınırı aşmaz: ISTBITKI beyaz=0
 const UCGEN_SINIR := [900, 180, 40]
 
@@ -32,7 +32,7 @@ const TUR := {
 		"y1": Color("4a6a30"), "y2": Color("a2bc5c"), "kb": Color("9a9480")},
 	"servi": {"ad": "Servi", "boy": 12.0, "gh": 0.9, "gr": 0.2, "egik": 0.35, "dal": 0, "aci": 0.0, "du": 0.0,
 		"kok": 1, "on": 10, "orr": 1.3, "yas": 1.6, "bicim": "sutun",
-		"y1": Color("2c4a30"), "y2": Color("628a52"), "kb": Color("4a3a2c")},
+		"y1": Color("26422a"), "y2": Color("52784a"), "kb": Color("4a3a2c")},
 	"fistik_cami": {"tc": 10.6, "tR": 5.8, "tH": 1.5, "ad": "Fıstık çamı", "boy": 13.0, "gh": 8.0, "gr": 0.36, "egik": 1.4, "dal": 5, "aci": 62.0,
 		"du": 4.6, "kok": 1, "on": 9, "orr": 2.4, "yas": 0.42, "bicim": "semsiye",
 		"y1": Color("324a28"), "y2": Color("6e8c46"), "kb": Color("7a5a40")},
@@ -102,6 +102,7 @@ static func mat() -> ShaderMaterial:
 		sh.code = """shader_type spatial;
 render_mode diffuse_toon, specular_disabled, cull_disabled;
 uniform float salinim = 1.0;
+uniform float isik = 0.1;
 varying vec3 vcol;
 void vertex() {
 	float w = clamp((1.0 - COLOR.a) * 2.0, 0.0, 1.0) * salinim;
@@ -115,6 +116,7 @@ void vertex() {
 void fragment() {
 	ALBEDO = vcol;
 	ROUGHNESS = 1.0;
+	EMISSION = vcol * isik;      // yaprak geçirgenliği: gölge yüzü kapkara olmasın (gece 0'a yakın tutulur)
 }
 """
 		_mat = ShaderMaterial.new()
@@ -128,7 +130,15 @@ class Ag:
 	var n := PackedVector3Array()
 	var c := PackedColorArray()
 
+	## Sarım, verilen yumuşak normale göre düzeltilir (Godot ön yüzü: (c-a)×(b-a) yönü). Tutarsız sarım
+	## cull_disabled ile arka yüz sayılıp normali çevriliyordu: yüz yüz koyu/açık "kristal" görünüm.
 	func t(a: Vector3, b: Vector3, cc: Vector3, na: Vector3, nb: Vector3, nc: Vector3, ca: Color, cb: Color, ccol: Color) -> void:
+		var fn := (cc - a).cross(b - a)
+		if fn.dot(na + nb + nc) < 0.0:
+			v.append(a); v.append(cc); v.append(b)
+			n.append(na); n.append(nc); n.append(nb)
+			c.append(ca); c.append(ccol); c.append(cb)
+			return
 		v.append(a); v.append(b); v.append(cc)
 		n.append(na); n.append(nb); n.append(nc)
 		c.append(ca); c.append(cb); c.append(ccol)
@@ -223,9 +233,13 @@ static func _obek(m: Ag, c: Vector3, r: Vector3, seed: int, alt: Color, ust: Col
 			var nn := Vector3(u.x / r.x, u.y / r.y, u.z / r.z).normalized()
 			# ışık: üst açık, alt koyu; iç taraf koyu; köşe serpintisi
 			var up := u.y * 0.5 + 0.5
-			var col := alt.lerp(ust, clampf(up * 1.1 - ic * 0.35 + (_h(float(i), float(j), seed + 3) - 0.5) * 0.35, 0.0, 1.0))
-			if cio > 0.0 and ciy.a > 0.0 and _h(float(i) * 3.0, float(j) * 5.0, seed + 11) < cio:
-				col = ciy.lerp(col, 0.15 + (1.0 - up) * 0.35)
+			# yumuşak dikey geçiş (üst güneşli, alt gölgeli); köşe gürültüsü düşük: yüz yüz mozaik/kristal okunmasın
+			var col := alt.lerp(ust, clampf(smoothstep(0.0, 1.0, up) * 1.05 - ic * 0.3 + (_h(float(i), float(j), seed + 3) - 0.5) * 0.1, 0.0, 1.0))
+			if cio > 0.0 and ciy.a > 0.0:
+				# serpinti öbeğin bir yanına toplanır (yamalı ama mozaik değil)
+				var yan := 0.5 + 0.5 * sin(th * 2.0 + float(seed % 13))
+				if yan * 0.8 + _h(float(i) * 3.0, float(j) * 5.0, seed + 11) * 0.2 < cio:
+					col = ciy.lerp(col, 0.2 + (1.0 - up) * 0.3)
 			sat.append(p)
 			satn.append(nn)
 			satc.append(_ton(col, 1.0, sway * (0.6 + 0.4 * up)))
@@ -353,8 +367,8 @@ static func _genel(m: Ag, d: Dictionary, lod: int, seed: int) -> void:
 	var cio: float = d.get("cio", 0.0)
 	var yy: float = d.get("yy", 0.0)
 	var cicekli := cio > 0.3
-	var kenar: int = [6, 4, 3][lod]
-	kok = mini(kok, [3, 1, 1][lod])
+	var kenar: int = [5, 4, 3][lod]
+	kok = mini(kok, [2, 1, 1][lod])
 	var tc := Vector3(0, tcy, 0) + egik
 	# öbek yarıçapı: çiçekli ağaçta küçük (dallar arada görünür)
 	var orr := tR * (0.42 if cicekli else 0.5)
@@ -373,9 +387,9 @@ static func _genel(m: Ag, d: Dictionary, lod: int, seed: int) -> void:
 		for i in pts.size():
 			var f := float(i) / (pts.size() - 1)
 			rs.append(r0 * 1.5 if i == 0 else r0 * lerpf(1.25, 0.72, f))
-		_boru(m, pts, rs, kenar, kb.darkened(0.25), kb, 0.0, 0.1, lod == 2)
+		_boru(m, pts, rs, kenar, kb.darkened(0.25), kb, 0.0, 0.1, false)
 		if lod == 0 and g == 0:
-			for k in 4:
+			for k in 3:
 				var ky := _yon(seed, 30.0 + k)
 				_boru(m, [Vector3(0, gr * 1.2, 0), ky * gr * 2.6 + Vector3(0, -0.22, 0)], [r0 * 0.6, r0 * 0.12], 3,
 					kb.darkened(0.3), kb.darkened(0.15), 0.0, 0.0, false)
@@ -383,7 +397,7 @@ static func _genel(m: Ag, d: Dictionary, lod: int, seed: int) -> void:
 			continue
 		var dn := dal_n if kok == 1 else maxi(2, int(ceil(float(dal_n) / kok)) + (1 if g == 0 else 0))
 		if lod == 1:
-			dn = mini(dn, 3)
+			dn = mini(dn, 2)
 		for i in dn:
 			var az := TAU * (float(i) + 0.4 * _h(float(i), 6.0, seed + g)) / dn + float(g) * 1.3
 			var el := lerpf(-0.35, 0.55, _h(float(i), 5.0, seed + g))
@@ -411,14 +425,13 @@ static func _genel(m: Ag, d: Dictionary, lod: int, seed: int) -> void:
 		if cicekli:
 			ust = ust.lerp(ciy.darkened(0.1), 0.7)
 			alt = alt.lerp(ciy1, 0.7)
-		_obek(m, tc, Vector3(tR * 0.78, tH * 0.85, tR * 0.78), seed, alt, ust, 5, 2, 0.12, 0.6)
-		_obek(m, tc + _yon(seed, 40.0) * tR * 0.5 + Vector3(0, tH * 0.25, 0), Vector3(tR, tH, tR) * 0.55, seed + 1,
-			alt, ust, 4, 2, 0.12, 0.6)
-		_obek(m, tc + _yon(seed, 41.0) * tR * 0.55 - Vector3(0, tH * 0.2, 0), Vector3(tR, tH, tR) * 0.5, seed + 2,
+		# iki kayık öbek (≤ 25 üçgen): tek top değil, yan yana iki kütle; siluet düzensiz
+		_obek(m, tc + _yon(seed, 41.0) * tR * 0.25, Vector3(tR * 0.8, tH * 0.85, tR * 0.75), seed, alt, ust, 4, 2, 0.12, 0.6)
+		_obek(m, tc + _yon(seed, 40.0) * tR * 0.45 + Vector3(0, tH * 0.3, 0), Vector3(tR, tH, tR) * 0.55, seed + 1,
 			alt, ust, 4, 2, 0.12, 0.6)
 		return
 	# öbek merkezleri: tepe + dal uçları + zarf kabuğu (üst yarı ağırlıklı); lod 1'de az ama iri
-	var hedef_n := mini(on, 8) if lod == 0 else 4
+	var hedef_n := mini(on, 7) if lod == 0 else 3
 	var merkezler: Array = [tc + Vector3(0, tH * 0.45, 0)]
 	for u: Vector3 in uclar:
 		merkezler.append(u)
@@ -438,13 +451,13 @@ static func _genel(m: Ag, d: Dictionary, lod: int, seed: int) -> void:
 			merkezler.append(q)
 	if merkezler.size() > hedef_n:
 		merkezler.resize(hedef_n)
-	var seg := 8 if lod == 0 else 6
-	var hal := 5 if lod == 0 else 3
+	var seg := 6 if lod == 0 else 5
+	var hal := 4 if lod == 0 else 3
 	var olc := 1.0 if lod == 0 else 1.25
 	# iç kütle: öbekler tek taç olarak okunsun (ayrık toplar değil); çiçekli ağaçta küçük, dallar görünsün
 	var cek := 0.5 if cicekli else 0.72
 	_obek(m, tc + Vector3(0, tH * 0.05, 0), Vector3(tR * cek, tH * cek, tR * cek * 0.92), seed + 99,
-		y1.darkened(0.15), y1.lerp(y2, 0.45), seg, 4 if lod == 0 else 3, 0.1, 0.7, 0.8)
+		y1.darkened(0.15), y1.lerp(y2, 0.45), seg if lod == 0 else 4, 4 if lod == 0 else 3, 0.1, 0.7, 0.8)
 	var mi := 0
 	for p: Vector3 in merkezler:
 		var hf := clampf((p.y - (tc.y - tH)) / (2.0 * tH), 0.0, 1.0)
@@ -468,7 +481,7 @@ static func _genel(m: Ag, d: Dictionary, lod: int, seed: int) -> void:
 		mi += 1
 	# yakında benekler: siluet kenarı pürüzlü (yaprak/çiçek kümeleri)
 	if lod == 0:
-		var bmax := 26 if cicekli else 10
+		var bmax := 16 if cicekli else 6
 		var bn := 0
 		var kk := 0
 		while bn < bmax and kk < 200 and m.ucgen() <= int(UCGEN_SINIR[0]) - 4:
@@ -485,7 +498,8 @@ static func _genel(m: Ag, d: Dictionary, lod: int, seed: int) -> void:
 			bn += 1
 
 
-## Servi: ince, sık, koyu; düz koni değil: dikey fırça dokulu üst üste ince öbekler, tepesi hafif eğik.
+## Servi: ince, sık, koyu; düz koni değil, üst üste fıçı da değil: tek parça "iğ" gövde, yüzeyinde dikey yivler
+## (fırça dokusu: yiv sırtı açık, oluğu koyu), tepesi hafif eğik ve sivri; dışında birkaç ince tutam.
 static func _servi(m: Ag, d: Dictionary, lod: int, seed: int) -> void:
 	var boy: float = d["boy"]
 	var gr: float = d["gr"]
@@ -495,38 +509,69 @@ static func _servi(m: Ag, d: Dictionary, lod: int, seed: int) -> void:
 	var orr: float = d["orr"]
 	var egik := _yon(seed, 1.0) * float(d["egik"])
 	var kenar: int = [5, 4, 3][lod]
-	_boru(m, [Vector3(0, -0.25, 0), Vector3(0, 0.6, 0), Vector3(0, 1.4, 0) + egik * 0.1], [gr * 1.5, gr, gr * 0.8], kenar,
-		kb.darkened(0.2), kb, 0.0, 0.05, false)
 	if lod == 2:
-		_obek(m, Vector3(0, boy * 0.42, 0) + egik * 0.3, Vector3(orr, boy * 0.38, orr), seed, y1, y2, 4, 3, 0.1, 0.5)
-		_obek(m, Vector3(0, boy * 0.8, 0) + egik, Vector3(orr * 0.55, boy * 0.2, orr * 0.55), seed + 1, y1, y2, 3, 2, 0.1, 0.8)
-		return
-	var n := 9 if lod == 0 else 5
-	var seg := 7 if lod == 0 else 5
-	for i in n:
-		var f := float(i) / float(n - 1)
-		var y := lerpf(1.6, boy - 1.0, f)
-		var w := orr * (1.0 - pow(f, 1.8) * 0.68) * (0.9 + 0.2 * _h(float(i), 1.0, seed))
-		var hh := (boy - 1.6) / float(n) * (1.4 if lod == 0 else 1.25)
-		var off := egik * pow(f, 2.0) + _yon(seed, 90.0 + i) * w * 0.12
-		var alt := y1.darkened(0.1 * (1.0 - f))
-		var ust := y2.lerp(y1, 0.35 * (1.0 - f))
-		_obek(m, Vector3(0, y, 0) + off, Vector3(w, hh, w * 0.92), seed + i * 5, alt, ust, seg, 4 if lod == 0 else 3,
-			0.22 if lod == 0 else 0.2, f, 0.3)
+		_boru(m, [Vector3(0, -0.25, 0), Vector3(0, 1.4, 0)], [gr * 1.3, gr * 0.8], kenar, kb.darkened(0.2), kb, 0.0, 0.05, false)
+	else:
+		_boru(m, [Vector3(0, -0.25, 0), Vector3(0, 0.6, 0), Vector3(0, 1.4, 0) + egik * 0.05], [gr * 1.5, gr, gr * 0.8], kenar,
+			kb.darkened(0.2), kb, 0.0, 0.05, false)
+	var seg: int = [11, 7, 4][lod]
+	var hal: int = [10, 6, 3][lod]
+	var y0 := 0.9
+	var noktalar: Array = []
+	var normaller: Array = []
+	var renkler: Array = []
+	for j in hal + 1:
+		var t := float(j) / hal
+		var y := lerpf(y0, boy, t)
+		# profil: dipte dolgun, ortada en geniş (~%35), tepeye sivrilir
+		var pr := pow(sin(PI * clampf(t * 0.92 + 0.04, 0.0, 1.0)), 0.75) * (1.0 - 0.45 * t)
+		if j == hal:
+			pr = 0.0
+		var dpr := (pow(sin(PI * clampf((t + 0.05) * 0.92 + 0.04, 0.0, 1.0)), 0.75) * (1.0 - 0.45 * (t + 0.05)) - pr) / 0.05
+		var off := egik * pow(t, 2.2) + _yon(seed, 90.0 + j) * orr * 0.06 * (1.0 - t)
+		var sat: Array = []
+		var satn: Array = []
+		var satc: Array = []
+		for i in seg:
+			var th := TAU * float(i) / seg + t * 0.9
+			var yiv := 1.0 + (0.16 if lod < 2 else 0.06) * sin(th * 5.0 + float(j) * 0.7) + (_h(float(i), float(j), seed) - 0.5) * (0.18 if lod == 0 else 0.08)
+			var r := orr * pr * yiv
+			var u := Vector3(cos(th), 0, sin(th))
+			sat.append(Vector3(0, y, 0) + off + u * r)
+			satn.append((u - Vector3(0, dpr * orr / boy * 0.6, 0)).normalized())
+			var sirt := clampf((yiv - 0.84) / 0.32, 0.0, 1.0)
+			var col := y1.lerp(y2, clampf(0.25 + t * 0.45 + sirt * 0.35, 0.0, 1.0))
+			satc.append(_ton(col, 1.0, t))
+		noktalar.append(sat)
+		normaller.append(satn)
+		renkler.append(satc)
+	for j in hal:
+		for i in seg:
+			var i2 := (i + 1) % seg
+			m.t(noktalar[j][i], noktalar[j][i2], noktalar[j + 1][i2], normaller[j][i], normaller[j][i2], normaller[j + 1][i2],
+				renkler[j][i], renkler[j][i2], renkler[j + 1][i2])
+			if j < hal - 1:
+				m.t(noktalar[j][i], noktalar[j + 1][i2], noktalar[j + 1][i], normaller[j][i], normaller[j + 1][i2],
+					normaller[j + 1][i], renkler[j][i], renkler[j + 1][i2], renkler[j + 1][i])
+	# alt kapak (gövdenin çıktığı yer koyu; uzakta görünmez)
+	var alt := Vector3(0, y0 - 0.1, 0)
+	for i in (seg if lod < 2 else 0):
+		var i2 := (i + 1) % seg
+		var ca := _ton(y1.darkened(0.3), 1.0, 0.0)
+		m.t(noktalar[0][i2], noktalar[0][i], alt, Vector3.DOWN, Vector3.DOWN, Vector3.DOWN, ca, ca, ca)
 	if lod == 0:
-		# dikey fırça: yüzeye yapışık ince uzun tutamlar
-		for k in 26:
-			var f := 0.08 + 0.8 * _h(float(k), 2.0, seed)
-			var y := lerpf(1.6, boy - 1.0, f)
-			var w := orr * (1.0 - pow(f, 1.6) * 0.78)
-			var a := _h(float(k), 3.0, seed) * TAU
-			var p := Vector3(cos(a) * w * 0.95, y, sin(a) * w * 0.95) + egik * pow(f, 2.0)
-			var col := y2.darkened(0.15 + 0.2 * _h(float(k), 4.0, seed))
-			var top := p + Vector3(0, 1.1, 0) + Vector3(cos(a), 0, sin(a)) * 0.08
-			var yan := Vector3(-sin(a), 0, cos(a)) * w * 0.22
-			var nn := Vector3(cos(a), 0.2, sin(a)).normalized()
-			var ca := _ton(col, 1.0, f)
-			m.t(p - yan, p + yan, top, nn, nn, nn, ca, ca, _ton(col, 1.08, f))
+		# dışa taşan ince tutamlar: siluet pürüzlü
+		for k in 18:
+			var t := 0.12 + 0.72 * _h(float(k), 2.0, seed)
+			var j := clampi(int(t * hal), 0, hal - 1)
+			var i := int(_h(float(k), 3.0, seed) * seg) % seg
+			var p: Vector3 = noktalar[j][i]
+			var nn: Vector3 = normaller[j][i]
+			var col := y2.darkened(0.1 + 0.2 * _h(float(k), 4.0, seed))
+			var yan := nn.cross(Vector3.UP).normalized() * orr * 0.16
+			var top := p + Vector3(0, 0.9, 0) + nn * 0.2
+			var ca := _ton(col, 1.0, t)
+			m.t(p - yan - nn * 0.1, p + yan - nn * 0.1, top, nn, nn, nn, ca, ca, _ton(col, 1.1, t))
 
 
 ## Çalı (böğürtlen/maki): alçak, düzensiz öbek kümesi; dipte koyu, gövdesiz.
@@ -617,3 +662,64 @@ static func beyaz_say(am: Mesh) -> int:
 		if maxf(c.r, maxf(c.g, c.b)) > 0.92:
 			n += 1
 	return n
+
+
+## Toplam boyu `boy` metre olacak biçimde ölçeklenmiş ağ (eski kurucuların boyunu korumak için; önbellekli).
+static func agac_boy(tur: String, lod: int, boy: float) -> ArrayMesh:
+	tur = tur_ad(tur)
+	var key := "%s|%d|%.1f" % [tur, lod, snappedf(boy, 0.5)]
+	if _cache.has(key):
+		return _cache[key]
+	var src := agac(tur, lod)
+	var k := snappedf(boy, 0.5) / maxf(0.1, src.get_aabb().end.y)
+	var arr := src.surface_get_arrays(0)
+	var vs: PackedVector3Array = arr[Mesh.ARRAY_VERTEX]
+	for i in vs.size():
+		vs[i] = vs[i] * k
+	arr[Mesh.ARRAY_VERTEX] = vs
+	var am := ArrayMesh.new()
+	am.add_surface_from_arrays(Mesh.PRIMITIVE_TRIANGLES, arr)
+	am.surface_set_material(0, mat())
+	am.set_meta("bitki_kit", tur)
+	_cache[key] = am
+	return am
+
+
+## Görsel ağaç (çarpışmasız; çağıran kendi gövde çarpışmasını kurar). Aynı düğüme konan bütün kit ağaçları TEK
+## ağda toplanır ("BitkiToplu"): eser/kilise pişiricileri gölgelendiricili ağı birleştirmediği için ağaç başına ayrı
+## çizim olmasın (çizim sayısı artmaz). Konumlar sonda için "bitki_konum" iminde tutulur.
+static func ornek(host: Node3D, tur: String, pos: Vector3, boy: float, lod := 0, yaw := 0.0) -> MeshInstance3D:
+	var mi := host.get_node_or_null("BitkiToplu") as MeshInstance3D
+	if mi == null:
+		mi = MeshInstance3D.new()
+		mi.name = "BitkiToplu"
+		mi.set_meta("dekor", true)
+		mi.set_meta("bitki_konum", [])
+		host.add_child(mi)
+	var src := agac_boy(tur, lod, boy)
+	var st := SurfaceTool.new()
+	st.begin(Mesh.PRIMITIVE_TRIANGLES)
+	if mi.mesh != null and mi.mesh.get_surface_count() > 0:
+		st.append_from(mi.mesh, 0, Transform3D.IDENTITY)
+	st.append_from(src, 0, Transform3D(Basis(Vector3.UP, yaw), pos))
+	var am := st.commit()
+	am.surface_set_material(0, mat())
+	am.set_meta("bitki_kit", tur_ad(tur))
+	mi.mesh = am
+	(mi.get_meta("bitki_konum") as Array).append([pos, tur_ad(tur)])
+	return mi
+
+
+## Gövde çarpışması (katı silindir; taç çarpışmasız). Eski kurucuların katı gövdesinin yerine.
+static func govde(host: Node3D, pos: Vector3, r: float, h: float) -> StaticBody3D:
+	var body := StaticBody3D.new()
+	body.name = "govde_kati"
+	var cs := CollisionShape3D.new()
+	var cy := CylinderShape3D.new()
+	cy.radius = r
+	cy.height = h
+	cs.shape = cy
+	body.position = pos + Vector3(0, h * 0.5, 0)
+	body.add_child(cs)
+	host.add_child(body)
+	return body

@@ -6,6 +6,7 @@ extends RefCounted
 ## ortası, zemin y = 0, +x doğu, -z kuzey. k yalnız kütleyi ölçekler; insan ölçüsü sabit.
 ## Oyuncu: JUMP 3,6 → zıplama 0,66 m; STEP_H 0,42; tırmanma kipinde REACH 2,3 / VAULT 1,1 (bkz. rapor).
 
+const BitkiKit := preload("res://scripts/level/bitki_kit.gd")
 const Y = preload("res://scripts/world/ist/forumlar_yapi.gd")
 
 const IDS := ["mese", "konstantin", "tauri", "amastrianon", "bovis", "arkadius", "markianos", "myrelaion",
@@ -416,8 +417,8 @@ static func _amastrianon(n: Node3D, k: float, lod: int) -> void:
 	# çınarlar
 	for p in [Vector3(-wx * 0.6, 0, -wz * 0.5), Vector3(wx * 0.62, 0, wz * 0.45), Vector3(-wx * 0.55, 0, wz * 0.55), Vector3(wx * 0.5, 0, -wz * 0.6)]:
 		Y.cyl(n, 0.4, 3.0, p + Vector3(0, 1.5, 0), Y.AHSAP, 0.32, 6, col)
-		Y.yaprak(n, 3.2, p + Vector3(0, 5.2, 0), Y.OT, Vector3(1.0, 0.8, 1.0), 8)
-		Y.yaprak(n, 2.2, p + Vector3(1.6, 4.4, 0.9), Y.OT_K, Vector3(1.0, 0.8, 1.0), 6)
+		# BİTKİ: ortak kit çınarı (eski: iki yaprak topu); katı gövde yukarıdaki silindir
+		BitkiKit.ornek(n, "cinar", p + Vector3(0, 0.12, 0), 11.0, 0, p.x * 0.3 + p.z * 0.2)
 	# yıkık revak köşesi (kuzey ve doğu kenar): 4 sütun ve kiriş
 	var d := 0
 	for j in 5:

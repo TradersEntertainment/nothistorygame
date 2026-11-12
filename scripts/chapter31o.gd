@@ -15,6 +15,7 @@ extends Node3D
 ##   (39O.1: sayaca +40 sn); geç kalınan sokağın adamı gelir ama ip vermez (39O.2: yalnız anar).
 ##   --autotest[=late|petrion_ok|petrion_bad]   (varsayılan: 31O.1; petrion_ok: 39O.1, petrion_bad: 39O.2)
 
+const BitkiKit := preload("res://scripts/level/bitki_kit.gd")
 const HOUSE_TIME := 180.0
 const PETRION_ROPE := 40.0
 const SUN_TIME := 180.0
@@ -872,14 +873,15 @@ func _build_eyup() -> void:
 
 func _plane_tree(at: Vector3, split: bool, rng: RandomNumberGenerator) -> void:
 	var trunk := Color("6a5a48")
+	# BİTKİ (4. tur): ortak kit çınarı (eski: silindir + top); gövde katı, taç çarpışmasız
 	if split:
 		for sx: float in [-1.0, 1.0]:
 			Props.make_solid(Props.cyl(_stage, 0.32, 5.0, at + Vector3(sx * 0.35, 2.4, 0), trunk, Vector3(0, 0, -sx * 9.0), 8, 0.22))
-			Props.ball(_stage, 2.0, at + Vector3(sx * 1.8, 5.6, 0), Color("4a6a32"), Vector3(1.2, 0.8, 1.2), 8)
+		BitkiKit.ornek(_stage, "cinar", at, 9.0, 0, 0.6)
 		Props.box(_stage, Vector3(0.12, 3.0, 0.5), at + Vector3(0, 2.0, 0.2), Color("1a1410"))            # yanık yarık
 	else:
-		Props.make_solid(Props.cyl(_stage, 0.42, 5.0, at + Vector3(0, 2.5, 0), trunk, Vector3.ZERO, 8, 0.3))
-		Props.ball(_stage, 3.0, at + Vector3(0, 6.0, 0), Color("4a6a32").darkened(rng.randf() * 0.15), Vector3(1.2, 0.8, 1.2), 8)
+		BitkiKit.govde(_stage, at, 0.5, 5.0)
+		BitkiKit.ornek(_stage, "cinar", at, 9.5, 0, rng.randf() * TAU)
 
 
 # ================================================================ 3. şerefe iskelesi (1 Haziran sabahı)

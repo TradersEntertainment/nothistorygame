@@ -6,6 +6,7 @@ extends RefCounted
 ## Oyuncu: JUMP 3.6 → zıplama 3.6²/(2·9.8) = 0.66 m; STEP_H 0.42 m. Merdiven basamağı 0.24, sandık 0.5 m.
 ## Ölçek: k yalnız kütleyi ölçekler; kapı/basamak/korkuluk/yürüme yolu gerçek boyda (K = IstGbKit).
 
+const BitkiKit := preload("res://scripts/level/bitki_kit.gd")
 const K := preload("res://scripts/world/ist/guneybati_kit.gd")
 
 const IDS := ["studios", "peribleptos", "andreas", "mokios", "psamathia", "altinkapi", "diomedes", "degirmen", "kopru", "bag"]
@@ -134,16 +135,21 @@ static func _stair_to(h: Node3D, x: float, z: float, top: float, dir: Vector2, o
 static func _tree_cypress(h: Node3D, p: Vector3, ht: float) -> void:
 	if h == null:
 		return
-	K.cy(h, 0.18, 1.0, p + Vector3(0, 0.5, 0), K.C_WOOD_D, 6)
-	var c := Props.cyl(h, 0.8, ht, p + Vector3(0, 1.0 + ht * 0.5, 0), Color("3d6a3a"), Vector3.ZERO, 7, 0.05)
-	Props.make_solid(c, 0.55)
+	# BİTKİ: ortak kit servisi; gövde katı, taç çarpışmasız (eski: katı koni)
+	BitkiKit.ornek(h, "servi", p, 1.0 + ht, 0, fposmod(p.x * 0.7 + p.z * 0.3, TAU))
+	BitkiKit.govde(h, p, 0.3, 2.0)
 
 
 static func _tree_round(h: Node3D, p: Vector3, ht: float, col: Color) -> void:
 	if h == null:
 		return
-	K.cy(h, 0.22, ht * 0.5, p + Vector3(0, ht * 0.25, 0), K.C_WOOD_D, 6)
-	K.bl(h, ht * 0.38, p + Vector3(0, ht * 0.62, 0), col, Vector3(1.0, 0.8, 1.0), 8, false)
+	# BİTKİ: ortak kit (renk tonundan tür: açık/sarımsı → incir, gri → zeytin, öteki → dut); eski: silindir + top
+	var tur := "dut"
+	if col.s < 0.25:
+		tur = "zeytin"
+	elif col.v > 0.55:
+		tur = "incir"
+	BitkiKit.ornek(h, tur, p, ht * 1.0, 0, fposmod(p.x * 0.5 + p.z * 0.9, TAU))
 
 
 ## Zemin: ince döşeme (üstü 6 cm; yürünür), z-çakışmasını önlemek için zeminden yüksek.
