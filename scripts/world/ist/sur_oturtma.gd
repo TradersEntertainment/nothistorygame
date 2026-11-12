@@ -121,6 +121,9 @@ static func kur(s: Node, ad: String) -> Rect2:
 		var k := 0
 		for j in n + 1:
 			var q := a + dv * lerpf(u0, u1, float(j) / n) + o * c
+			# denizin üstüne düşen düzlük kurulmaz (kuzey ucunda arazi Haliç'e dil gibi uzuyordu); hendek oyması hariç
+			if y > 0.0 and IstGeo.h_ham(q.x, q.y) < 0.0:
+				continue
 			if koru:
 				var dolu := false
 				for e: Array in onceki:

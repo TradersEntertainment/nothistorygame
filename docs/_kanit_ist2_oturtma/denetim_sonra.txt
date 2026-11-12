@@ -1,0 +1,28 @@
+OTURTMA kur oge=50 duz=1967 bant=88 ms=8.5
+OTURTMA maske karsi=171
+OTURTMA sure_s=83 kule_atla=532
+OTURTMA yer gomuk s=22 ic_sur_sehir arazi duvar tepesinin üstünde (e=-4867 n=-1653)
+OTURTMA yer gomuk s=22 dis_sur_peribolos arazi duvar tepesinin üstünde (e=-4920 n=-1673)
+OTURTMA yer gomuk s=28 ic_sur_sehir arazi duvar tepesinin üstünde (e=-4871 n=-1640)
+OTURTMA yer gomuk s=28 dis_sur_peribolos arazi duvar tepesinin üstünde (e=-4925 n=-1659)
+OTURTMA yer gomuk s=1458 ic_sur_sehir arazi tabanın 2.04 m üstünde (e=-4050 n=1991)
+OTURTMA yer gomuk s=1682 ic_sur_sehir arazi duvar tepesinin üstünde (e=-3699 n=2518)
+OTURTMA yer yarik s=12 dış kıyı açıklık 1.25 m (e=-5001 n=-1732)
+OTURTMA yer yarik s=32 dış kıyı zemin yok (e=-4965 n=-1511)
+OTURTMA yer yarik s=32 iç kıyı zemin yok (e=-4928 n=-1566)
+OTURTMA yer yarik s=1168 dış kıyı açıklık -1.96 m (e=-4676 n=1509)
+OTURTMA yer yarik s=1362 dış kıyı açıklık -2.80 m (e=-4341 n=1876)
+OTURTMA yer yarik s=1408 dış kıyı açıklık -0.24 m (e=-4260 n=1977)
+OTURTMA yer yarik s=1782 dış kıyı açıklık -0.27 m (e=-3552 n=2804)
+OTURTMA yer yarik s=1808 dış kıyı açıklık -0.41 m (e=-3493 n=2844)
+OTURTMA yer yarik s=1812 dış kıyı açıklık -0.51 m (e=-3481 n=2852)
+OTURTMA yer yarik s=1852 dış kıyı açıklık -0.59 m (e=-3500 n=2835)
+OTURTMA yer yarik s=1858 dış kıyı açıklık -1.98 m (e=-3499 n=2850)
+OTURTMA yer yarik s=2038 dış kıyı açıklık -0.30 m (e=-3461 n=3400)
+OTURTMA yer levha s=1372 teras sur yüzeyi arazinin 0.28 m üstünde (e=-4262 n=1850)
+OTURTMA yer levha s=1378 teras sur yüzeyi arazinin 0.28 m üstünde (e=-4253 n=1861)
+OTURTMA yer levha s=1732 peribolos sur yüzeyi arazinin 0.21 m üstünde (e=-3605 n=2627)
+OTURTMA yer levha s=1772 peribolos sur yüzeyi arazinin 0.21 m üstünde (e=-3510 n=2690)
+OTURTMA yer levha s=1858 peribolos sur yüzeyi arazinin 0.86 m üstünde (e=-3381 n=2843)
+OTURTMA yer levha s=2052 teras sur yüzeyi arazinin 0.78 m üstünde (e=-3391 n=3346)
+OTURTMA ornek=3227 bosluk=0 gomuk=6 yarik=25 levha=6
