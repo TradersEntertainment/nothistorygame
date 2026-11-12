@@ -1,0 +1,13 @@
+S_1_base rc=0 pass=1 n=431
+O_1_base rc=0 pass=1 n=411
+S_13_base rc=0 pass=1 n=206
+O_13_base rc=0 pass=1 n=212
+S_10l_base rc=0 pass=1 n=307
+O_10l_base rc=0 pass=1 n=303
+S_21o_base rc=0 pass=1 n=288
+O_21o_base rc=0 pass=1 n=278
+S_12_base rc=0 pass=1 n=406
+O_12_base rc=0 pass=1 n=405
+S_15_base rc=0 pass=1 n=149
+O_15_base rc=0 pass=1 n=138
+DONE

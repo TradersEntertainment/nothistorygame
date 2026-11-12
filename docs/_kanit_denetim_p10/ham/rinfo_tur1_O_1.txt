@@ -1,0 +1,13 @@
+RTRI scene=chapter1 t=1 real=2k prims=2k extra_vis=0k extra_shadow=0k
+RINFO scene=chapter1 t=1 draws=242 objs=314 prims=2k vis=2k shadow=0k nodes=785 proc=152.0ms phys=0.7ms
+RTRI scene=chapter1 t=3 real=177k prims=177k extra_vis=0k extra_shadow=0k
+RINFO scene=chapter1 t=3 draws=449 objs=451 prims=177k vis=59k shadow=117k nodes=689 proc=180.9ms phys=0.7ms
+RTRI scene=chapter1 t=5 real=297k prims=297k extra_vis=0k extra_shadow=0k
+RINFO scene=chapter1 t=5 draws=367 objs=438 prims=297k vis=72k shadow=223k nodes=761 proc=202.0ms phys=0.8ms
+RTRI scene=chapter1 t=7 real=323k prims=323k extra_vis=0k extra_shadow=0k
+RINFO scene=chapter1 t=7 draws=698 objs=919 prims=323k vis=77k shadow=244k nodes=765 proc=279.9ms phys=0.6ms
+RTRI scene=chapter1 t=9 real=729k prims=729k extra_vis=0k extra_shadow=0k
+RINFO scene=chapter1 t=9 draws=1501 objs=1725 prims=729k vis=73k shadow=250k nodes=764 proc=266.5ms phys=0.8ms
+RTRI scene=chapter1 t=11 real=619k prims=619k extra_vis=0k extra_shadow=0k
+RINFO scene=chapter1 t=11 draws=1082 objs=1305 prims=619k vis=72k shadow=238k nodes=764 proc=249.2ms phys=0.9ms
+AUTOTEST PASS variant= outcome=1.1 bag=["phone", "lighter", "book", "chickpeas", "powerbank"] telsiz=2 bed=true

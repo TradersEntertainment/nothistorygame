@@ -1,0 +1,9 @@
+RTRI scene=chapter13 t=1 real=75k prims=75k extra_vis=0k extra_shadow=0k
+RINFO scene=chapter13 t=1 draws=598 objs=686 prims=75k vis=24k shadow=50k nodes=511 proc=146.4ms phys=0.7ms
+RTRI scene=chapter13 t=3 real=76k prims=76k extra_vis=0k extra_shadow=0k
+RINFO scene=chapter13 t=3 draws=622 objs=710 prims=76k vis=23k shadow=52k nodes=511 proc=146.4ms phys=0.7ms
+RTRI scene=chapter13 t=5 real=5354k prims=75k extra_vis=4904k extra_shadow=373k
+RINFO scene=chapter13 t=5 draws=611 objs=705 prims=75k vis=25k shadow=49k nodes=27225 proc=171.5ms phys=1.1ms
+RTRI scene=chapter13 t=7 real=7185k prims=7185k extra_vis=0k extra_shadow=0k
+RINFO scene=chapter13 t=7 draws=7695 objs=7996 prims=7185k vis=5451k shadow=1731k nodes=28117 proc=1994.2ms phys=2.1ms
+AUTOTEST PASS chapter=13 variant= version=garage outcome=13.1 window=8.4 tolga=T1 hikmet=

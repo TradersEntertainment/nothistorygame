@@ -1,0 +1,5 @@
+RTRI scene=chapter14 t=1 real=797k prims=797k extra_vis=0k extra_shadow=0k
+RINFO scene=chapter14 t=1 draws=3446 objs=3579 prims=797k vis=698k shadow=97k nodes=5565 proc=3656.1ms phys=0.8ms
+RTRI scene=chapter14 t=3 real=775k prims=775k extra_vis=0k extra_shadow=0k
+RINFO scene=chapter14 t=3 draws=3441 objs=3563 prims=775k vis=650k shadow=123k nodes=5569 proc=405.0ms phys=0.8ms
+AUTOTEST PASS chapter=14 variant= outcome=14.1 nihat=N1 tolga=T1 sicil= cuma=

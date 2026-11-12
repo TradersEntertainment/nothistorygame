@@ -1,0 +1,15 @@
+RTRI scene=chapter10l t=1 real=96k prims=96k extra_vis=0k extra_shadow=0k
+RINFO scene=chapter10l t=1 draws=489 objs=747 prims=96k vis=94k shadow=0k nodes=460 proc=154.9ms phys=2.3ms
+RTRI scene=chapter10l t=3 real=98k prims=98k extra_vis=0k extra_shadow=0k
+RINFO scene=chapter10l t=3 draws=666 objs=1007 prims=98k vis=96k shadow=0k nodes=485 proc=158.8ms phys=4.5ms
+RTRI scene=chapter10l t=5 real=97k prims=97k extra_vis=0k extra_shadow=0k
+RINFO scene=chapter10l t=5 draws=497 objs=790 prims=97k vis=95k shadow=0k nodes=484 proc=158.8ms phys=4.5ms
+RTRI scene=chapter10l t=7 real=96k prims=96k extra_vis=0k extra_shadow=0k
+RINFO scene=chapter10l t=7 draws=685 objs=1025 prims=96k vis=94k shadow=0k nodes=508 proc=135.4ms phys=0.7ms
+RTRI scene=chapter10l t=9 real=96k prims=96k extra_vis=0k extra_shadow=0k
+RINFO scene=chapter10l t=9 draws=517 objs=809 prims=96k vis=94k shadow=0k nodes=508 proc=158.1ms phys=0.8ms
+RTRI scene=chapter10l t=11 real=105k prims=105k extra_vis=0k extra_shadow=0k
+RINFO scene=chapter10l t=11 draws=483 objs=750 prims=105k vis=103k shadow=0k nodes=530 proc=157.4ms phys=0.7ms
+RTRI scene=chapter10l t=14 real=65k prims=65k extra_vis=0k extra_shadow=0k
+RINFO scene=chapter10l t=14 draws=505 objs=797 prims=65k vis=63k shadow=0k nodes=542 proc=149.1ms phys=0.8ms
+AUTOTEST PASS chapter=10l variant= outcome=10L.1 progress=6 candle=3.5 heard=true

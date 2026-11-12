@@ -1,0 +1,25 @@
+RTRI scene=chapter21o t=1 real=37k prims=37k extra_vis=0k extra_shadow=0k
+RINFO scene=chapter21o t=1 draws=560 objs=912 prims=37k vis=35k shadow=0k nodes=545 proc=156.6ms phys=1.6ms
+RTRI scene=chapter21o t=3 real=75k prims=75k extra_vis=0k extra_shadow=0k
+RINFO scene=chapter21o t=3 draws=584 objs=860 prims=75k vis=73k shadow=0k nodes=575 proc=248.1ms phys=9.3ms
+RTRI scene=chapter21o t=5 real=97k prims=97k extra_vis=0k extra_shadow=0k
+RINFO scene=chapter21o t=5 draws=482 objs=941 prims=97k vis=95k shadow=0k nodes=732 proc=251.7ms phys=4.3ms
+RTRI scene=chapter21o t=7 real=91k prims=91k extra_vis=0k extra_shadow=0k
+RINFO scene=chapter21o t=7 draws=477 objs=936 prims=91k vis=89k shadow=0k nodes=733 proc=178.0ms phys=4.4ms
+RTRI scene=chapter21o t=9 real=89k prims=89k extra_vis=0k extra_shadow=0k
+RINFO scene=chapter21o t=9 draws=476 objs=935 prims=89k vis=87k shadow=0k nodes=738 proc=189.1ms phys=2.0ms
+RTRI scene=chapter21o t=12 real=70k prims=70k extra_vis=0k extra_shadow=0k
+RINFO scene=chapter21o t=12 draws=286 objs=341 prims=70k vis=70k shadow=0k nodes=748 proc=185.7ms phys=0.8ms
+RTRI scene=chapter21o t=14 real=63k prims=63k extra_vis=0k extra_shadow=0k
+RINFO scene=chapter21o t=14 draws=334 objs=539 prims=63k vis=62k shadow=0k nodes=745 proc=152.8ms phys=0.7ms
+RTRI scene=chapter21o t=16 real=128k prims=128k extra_vis=0k extra_shadow=0k
+RINFO scene=chapter21o t=16 draws=593 objs=874 prims=128k vis=127k shadow=0k nodes=667 proc=170.0ms phys=2.3ms
+RTRI scene=chapter21o t=18 real=42k prims=42k extra_vis=0k extra_shadow=0k
+RINFO scene=chapter21o t=18 draws=474 objs=769 prims=42k vis=40k shadow=0k nodes=664 proc=170.0ms phys=2.3ms
+RTRI scene=chapter21o t=20 real=4k prims=4k extra_vis=0k extra_shadow=0k
+RINFO scene=chapter21o t=20 draws=284 objs=512 prims=4k vis=3k shadow=0k nodes=658 proc=181.6ms phys=0.9ms
+RTRI scene=chapter21o t=22 real=4k prims=4k extra_vis=0k extra_shadow=0k
+RINFO scene=chapter21o t=22 draws=226 objs=430 prims=4k vis=3k shadow=0k nodes=657 proc=116.2ms phys=2.9ms
+AUTOTEST PASS chapter=21o variant= outcome=21O.1 dug=6 raid=true ear=false
+RTRI scene=chapter21o t=25 real=16k prims=16k extra_vis=0k extra_shadow=0k
+RINFO scene=chapter21o t=25 draws=260 objs=889 prims=16k vis=14k shadow=0k nodes=658 proc=100.8ms phys=0.8ms

@@ -1,0 +1,138 @@
+[10a_base] AUTOTEST PASS chapter=10a variant= outcome=10A.1 placed=6 mistakes=0
+[10l_base] AUTOTEST PASS chapter=10l variant= outcome=10L.1 progress=6 candle=3.5 heard=true
+[10l_collapse] AUTOTEST PASS chapter=10l variant=collapse outcome=10L.3 progress=3 candle=9.5 heard=false
+[10l_leb] AUTOTEST PASS chapter=10l variant=leb outcome=10L.1 progress=6 candle=3.5 heard=true
+[10l_next] AUTOTEST chapter=10l -> 11 outcome=10L.1
+[10l_next] AUTOTEST PASS chapter=11 variant= outcome=11.2 persuade=25 sadakat=55 baski=1
+[10l_retreat] AUTOTEST PASS chapter=10l variant=retreat outcome=10L.2 progress=6 candle=3.5 heard=true
+[12_base] AUTOTEST PASS chapter=12 variant= outcome=12.1 merak=4 paradox=0 tries=0 honest=true tezkire=true
+[13_base] AUTOTEST PASS chapter=13 variant= version=garage outcome=13.1 window=8.4 tolga=T1 hikmet=
+[13_city] AUTOTEST PASS chapter=13 variant=city version=garage outcome=13.2 window=8.4 tolga=T2 hikmet=
+[13_depot] ERROR: Lambda capture at index 0 was freed. Passed "null" instead.
+[13_depot] AUTOTEST PASS chapter=13 variant=depot version=depot outcome=13.1 window=8.4 tolga=T1 hikmet=
+[13_gidak] AUTOTEST chapter=13 -> 16 outcome=13.2
+[13_gidak] AUTOTEST PASS chapter=16 variant= outcome=16.1 ch13=13.6 pecks=3
+[13_kitchen] AUTOTEST PASS chapter=13 variant=kitchen version=garage outcome=13.1 window=8.4 tolga=T1 hikmet=
+[13_meclis] AUTOTEST PASS chapter=13 variant=meclis version=meclis outcome=13.4 window=8.4 tolga=T1 hikmet=H1
+[13_miss] AUTOTEST PASS chapter=13 variant=miss version=garage outcome=13.2 window=8.4 tolga=T2 hikmet=
+[13_next] AUTOTEST chapter=13 -> 14 outcome=13.1
+[13_next] AUTOTEST PASS chapter=14 variant= outcome=14.1 nihat=N1 tolga=T1 sicil= cuma=
+[13_stay] AUTOTEST PASS chapter=13 variant=stay version=1453 outcome=13.5 window=8.4 tolga=T1 hikmet=H3
+[13_together] AUTOTEST PASS chapter=13 variant=together version=1453 outcome=13.4 window=8.4 tolga=T1 hikmet=H1
+[13_w4] AUTOTEST PASS chapter=13 variant=w4 version=w4 outcome=13.1 window=8.4 tolga=T1 hikmet=
+[13_wrong] AUTOTEST PASS chapter=13 variant=wrong version=garage outcome=13.3 window=8.4 tolga=T3 hikmet=
+[13_wrong_next] AUTOTEST chapter=13 -> 14 outcome=13.3
+[13_wrong_next] AUTOTEST chapter=14 -> 15 outcome=14.1
+[13_wrong_next] JOURNEY cards=67 path=17 decisions=14 edges=16 overlap=0 final=late_by_49_years route=ch0,ch1,ch2,ch3,ch4a,ch5,ch6a,ch7,ch8,ch9,ch10,ch11,ch12,ch13,ch14,ch15y,fin
+[13_wrong_next] AUTOTEST review cards=27
+[13_wrong_next] AUTOTEST PASS chapter=15 variant= final=late_by_49_years T=T3 H=H1 N=N1 W=W1 fixed=false
+[14_base] AUTOTEST PASS chapter=14 variant= outcome=14.1 nihat=N1 tolga=T1 sicil= cuma=
+[15_base] JOURNEY cards=67 path=17 decisions=14 edges=16 overlap=0 final=ordinary_monday route=ch0,ch1,ch2,ch3,ch4a,ch5,ch6a,ch7,ch8,ch9,ch10,ch11,ch12,ch13,ch14,ch15,fin
+[15_base] AUTOTEST review cards=27
+[15_base] AUTOTEST PASS chapter=15 variant= final=ordinary_monday T=T1 H=H1 N=N1 W=W1 fixed=false
+[15_boom] JOURNEY cards=67 path=16 decisions=13 edges=15 overlap=0 final=big_bang route=ch0,ch1,ch2,ch3,ch4a,ch5,ch6a,ch7,ch8,ch9,ch10b,ch11,ch13,ch14,ch15,fin
+[15_boom] AUTOTEST review cards=27
+[15_boom] AUTOTEST PASS chapter=15 variant=boom final=big_bang T=T1 H=H1 N=N1 W=W5B fixed=false
+[15_card] JOURNEY cards=67 path=17 decisions=14 edges=16 overlap=0 final=ordinary_monday route=ch0,ch1,ch2,ch3,ch4a,ch5,ch6a,ch7,ch8,ch9,ch10,ch11,ch12,ch13,ch14,ch15,fin
+[15_card] AUTOTEST review cards=27
+[15_card] AUTOTEST PASS chapter=15 variant=card final=ordinary_monday T=T1 H=H1 N=N1 W=W1 fixed=false
+[15_eaves] JOURNEY cards=67 path=22 decisions=17 edges=22 overlap=0 final=eaves_child route=ch0,ch1,ch2,ch3,ch4a,ch5,ch6a,ch7,ch8,ch9,ch10,ch11,ch12,bureau,ch17,ch24,ch27,ret,ch13,ch14,ch15,fin
+[15_eaves] AUTOTEST review cards=27
+[15_eaves] AUTOTEST PASS chapter=15 variant=eaves final=eaves_child T=T1 H=H1 N=N1 W=W1 fixed=false
+[15_evening] JOURNEY cards=67 path=17 decisions=14 edges=16 overlap=0 final=one_evening route=ch0,ch1,ch2,ch3,ch4a,ch5,ch6a,ch7,ch8,ch9,ch10,ch11,ch12b,ch13,ch14,ch15,fin
+[15_evening] AUTOTEST review cards=27
+[15_evening] AUTOTEST PASS chapter=15 variant=evening final=one_evening T=T1 H=H1 N=N1 W=W1 fixed=false
+[15_fates] JOURNEY cards=67 path=17 decisions=14 edges=16 overlap=0 final=ordinary_monday route=ch0,ch1,ch2,ch3,ch4a,ch5,ch6a,ch7,ch8,ch9,ch10,ch11,ch12,ch13,ch14,ch15,fin
+[15_fates] AUTOTEST review cards=27
+[15_fates] AUTOTEST PASS chapter=15 variant=fates final=ordinary_monday T=T1 H=H1 N=N1 W=W1 fixed=false
+[15_fixed] JOURNEY cards=67 path=17 decisions=14 edges=16 overlap=0 final=fixed_mostly route=ch0,ch1,ch2,ch3,ch4a,ch5,ch6a,ch7,ch8,ch9,ch10,ch11,ch12,ch13,ch14,ch15,fin
+[15_fixed] AUTOTEST review cards=27
+[15_fixed] AUTOTEST PASS chapter=15 variant=fixed final=fixed_mostly T=T1 H=H1 N=N1 W=W2 fixed=true
+[15_forge] JOURNEY cards=67 path=17 decisions=14 edges=16 overlap=0 final=off_the_books route=ch0,ch1,ch2,ch3,ch4a,ch5,ch6a,ch7,ch8,ch9,ch10,ch11,ch12,ch13,ch14,ch15,fin
+[15_forge] AUTOTEST review cards=27
+[15_forge] AUTOTEST PASS chapter=15 variant=forge final=off_the_books T=T1 H=H1 N=N2 W=W1 fixed=false
+[15_founder] JOURNEY cards=67 path=16 decisions=13 edges=15 overlap=0 final=founding_member route=ch0,ch1,ch2,ch3,ch4a,ch5,ch6a,ch7,ch8,ch9,ch10a,ch11,ch13,ch14,ch15,fin
+[15_founder] AUTOTEST review cards=27
+[15_founder] AUTOTEST PASS chapter=15 variant=founder final=founding_member T=T4 H=H1 N=N1 W=W8 fixed=false
+[15_gunner] JOURNEY cards=67 path=16 decisions=13 edges=15 overlap=0 final=master_gunner route=ch0,ch1,ch2,ch3,ch4a,ch5,ch6a,ch7,ch8,ch9,ch10b,ch11,ch13,ch14,ch15,fin
+[15_gunner] AUTOTEST review cards=27
+[15_gunner] AUTOTEST PASS chapter=15 variant=gunner final=master_gunner T=T1 H=H1 N=N1 W=W5 fixed=false
+[15_leblebi] JOURNEY cards=67 path=17 decisions=14 edges=16 overlap=0 final=nobody_noticed route=ch0,ch1,ch2,ch3,ch4a,ch5,ch6a,ch7,ch8,ch9,ch10,ch11,ch12,ch13,ch14,ch15,fin
+[15_leblebi] AUTOTEST review cards=27
+[15_leblebi] AUTOTEST PASS chapter=15 variant=leblebi final=nobody_noticed T=T1 H=H1 N=N2 W=W2 fixed=false
+[15_liar] JOURNEY cards=67 path=17 decisions=14 edges=16 overlap=0 final=ordinary_monday route=ch0,ch1,ch2,ch3,ch4a,ch5,ch6a,ch7,ch8,ch9,ch10,ch11,ch12,ch13,ch14,ch15,fin
+[15_liar] AUTOTEST review cards=27
+[15_liar] AUTOTEST PASS chapter=15 variant=liar final=ordinary_monday T=T1 H=H1 N=N1 W=W1 fixed=false
+[15_missed] JOURNEY cards=67 path=17 decisions=14 edges=16 overlap=0 final=empty_desk route=ch0,ch1,ch2,ch3,ch4a,ch5,ch6a,ch7,ch8,ch9,ch10,ch11,ch12,ch13,ch14,ch15,fin
+[15_missed] AUTOTEST review cards=27
+[15_missed] AUTOTEST PASS chapter=15 variant=missed final=empty_desk T=T2 H=H1 N=N1 W=W1 fixed=false
+[15_newmodel] JOURNEY cards=67 path=17 decisions=14 edges=16 overlap=0 final=new_model route=ch0,ch1,ch2,ch3,ch4a,ch5,ch6a,ch7,ch8,ch9,ch10,ch11,ch12,ch13,ch14,ch15,fin
+[15_newmodel] AUTOTEST review cards=27
+[15_newmodel] AUTOTEST PASS chapter=15 variant=newmodel final=new_model T=T1 H=H1 N=N3 W=W1 fixed=false
+[15_people] PEOPLE PF_GIUST steps=PF_GIUST_WARNED,PF_GIUST_WARN_HURT trace=PF26_GIUST
+[15_people] JOURNEY cards=67 path=28 decisions=23 edges=28 overlap=0 final=ordinary_monday route=ch0,ch1,ch2,ch3,ch4a,ch5,ch6a,ch7,ch8,ch9,ch10,ch11,ch12,bureau,ch17,ch19,ch20,ch21,ch23,ch24,ch25,ch26,ch27,ret,ch13,ch14,ch15,fin
+[15_people] AUTOTEST review cards=27
+[15_people] AUTOTEST PASS chapter=15 variant=people final=ordinary_monday T=T1 H=H1 N=N1 W=W1 fixed=false
+[15_people_osm] JOURNEY cards=67 path=27 decisions=22 edges=27 overlap=0 final=ordinary_monday route=ch0,ch1,ch2,ch3,ch4a,ch5,ch6a,ch7,ch8,ch9,ch10z,ch11,ch12,bureau,ch17o,ch18,ch20o,ch22o,ch24o,ch32o,ch26o,ch27,ret,ch13,ch14,ch15,fin
+[15_people_osm] AUTOTEST review cards=27
+[15_people_osm] AUTOTEST PASS chapter=15 variant=people_osm final=ordinary_monday T=T1 H=H1 N=N1 W=W1 fixed=false
+[15_pyjama] JOURNEY cards=67 path=17 decisions=14 edges=16 overlap=0 final=pyjama_rescue route=ch0,ch1,ch2,ch3,ch4a,ch5,ch6a,ch7,ch8,ch9,ch10,ch11,ch12,ch13,ch14,ch15,fin
+[15_pyjama] AUTOTEST review cards=27
+[15_pyjama] AUTOTEST PASS chapter=15 variant=pyjama final=pyjama_rescue T=T1 H=H1 N=N1 W=W1 fixed=false
+[15_recruit] JOURNEY cards=67 path=17 decisions=14 edges=16 overlap=0 final=night_shift route=ch0,ch1,ch2,ch3,ch4a,ch5,ch6a,ch7,ch8,ch9,ch10,ch11,ch12,ch13,ch14,ch15,fin
+[15_recruit] AUTOTEST review cards=27
+[15_recruit] AUTOTEST PASS chapter=15 variant=recruit final=night_shift T=T4 H=H1 N=N1 W=W1 fixed=false
+[15_resign] JOURNEY cards=67 path=17 decisions=14 edges=16 overlap=0 final=time_repair route=ch0,ch1,ch2,ch3,ch4a,ch5,ch6a,ch7,ch8,ch9,ch10,ch11,ch12,ch13,ch14,ch15,fin
+[15_resign] AUTOTEST review cards=27
+[15_resign] AUTOTEST PASS chapter=15 variant=resign final=time_repair T=T1 H=H1 N=N4 W=W1 fixed=false
+[15_sealed] JOURNEY cards=67 path=17 decisions=14 edges=16 overlap=0 final=sealed_garage route=ch0,ch1,ch2,ch3,ch4a,ch5,ch6a,ch7,ch8,ch9,ch10,ch11,ch12,ch13,ch14,ch15,fin
+[15_sealed] AUTOTEST review cards=27
+[15_sealed] AUTOTEST PASS chapter=15 variant=sealed final=sealed_garage T=T2 H=H2 N=N1 W=W1 fixed=false
+[15_stay] JOURNEY cards=67 path=17 decisions=14 edges=16 overlap=0 final=two_neighbours route=ch0,ch1,ch2,ch3,ch4a,ch5,ch6a,ch7,ch8,ch9,ch10,ch11,ch12,ch13,ch14,ch15,fin
+[15_stay] AUTOTEST review cards=27
+[15_stay] AUTOTEST PASS chapter=15 variant=stay final=two_neighbours T=T2 H=H3 N=N1 W=W1 fixed=false
+[15_w10] JOURNEY cards=67 path=17 decisions=14 edges=16 overlap=0 final=one_more_year route=ch0,ch1,ch2,ch3,ch4a,ch5,ch6a,ch7,ch8,ch9,ch10,ch11,ch12b,ch13,ch14,ch15,fin
+[15_w10] AUTOTEST review cards=27
+[15_w10] AUTOTEST PASS chapter=15 variant=w10 final=one_more_year T=T1 H=H1 N=N1 W=W10 fixed=false
+[15_w11] JOURNEY cards=67 path=17 decisions=14 edges=16 overlap=0 final=long_wait route=ch0,ch1,ch2,ch3,ch4a,ch5,ch6a,ch7,ch8,ch9,ch10,ch11,ch12b,ch13,ch14,ch15,fin
+[15_w11] AUTOTEST review cards=27
+[15_w11] AUTOTEST PASS chapter=15 variant=w11 final=long_wait T=T1 H=H1 N=N1 W=W11 fixed=false
+[15_w12] JOURNEY cards=67 path=17 decisions=14 edges=16 overlap=0 final=missing_paperwork route=ch0,ch1,ch2,ch3,ch4a,ch5,ch6a,ch7,ch8,ch9,ch10,ch11,ch12b,ch13,ch14,ch15,fin
+[15_w12] AUTOTEST review cards=27
+[15_w12] AUTOTEST PASS chapter=15 variant=w12 final=missing_paperwork T=T1 H=H1 N=N1 W=W12 fixed=false
+[15_w13] JOURNEY cards=67 path=16 decisions=13 edges=15 overlap=0 final=tunnel_truce route=ch0,ch1,ch2,ch3,ch4a,ch5,ch6a,ch7,ch8,ch9,ch10l,ch11,ch13,ch14,ch15,fin
+[15_w13] AUTOTEST review cards=27
+[15_w13] AUTOTEST PASS chapter=15 variant=w13 final=tunnel_truce T=T1 H=H1 N=N1 W=W13 fixed=false
+[15_w4] JOURNEY cards=67 path=17 decisions=14 edges=16 overlap=0 final=sultans_repair route=ch0,ch1,ch2,ch3,ch4a,ch5,ch6a,ch7,ch8,ch9,ch10,ch11,ch12,ch13,ch14,ch15,fin
+[15_w4] AUTOTEST review cards=27
+[15_w4] AUTOTEST PASS chapter=15 variant=w4 final=sultans_repair T=T1 H=H1 N=N1 W=W4 fixed=false
+[15_w6] JOURNEY cards=67 path=16 decisions=13 edges=15 overlap=0 final=envoy_to_venice route=ch0,ch1,ch2,ch3,ch4a,ch5,ch6a,ch7,ch8,ch9,ch10g,ch11,ch13,ch14,ch15,fin
+[15_w6] AUTOTEST review cards=27
+[15_w6] AUTOTEST PASS chapter=15 variant=w6 final=envoy_to_venice T=T1 H=H1 N=N1 W=W6 fixed=false
+[15_w7] JOURNEY cards=67 path=16 decisions=13 edges=15 overlap=0 final=sultans_table route=ch0,ch1,ch2,ch3,ch4a,ch5,ch6a,ch7,ch8,ch9,ch10z,ch11,ch13,ch14,ch15,fin
+[15_w7] AUTOTEST review cards=27
+[15_w7] AUTOTEST PASS chapter=15 variant=w7 final=sultans_table T=T1 H=H1 N=N1 W=W7 fixed=false
+[15_w8] JOURNEY cards=67 path=16 decisions=13 edges=15 overlap=0 final=bureau_founding route=ch0,ch1,ch2,ch3,ch4a,ch5,ch6a,ch7,ch8,ch9,ch10a,ch11,ch13,ch14,ch15,fin
+[15_w8] AUTOTEST review cards=27
+[15_w8] AUTOTEST PASS chapter=15 variant=w8 final=bureau_founding T=T1 H=H1 N=N1 W=W8 fixed=false
+[15_water] JOURNEY cards=67 path=22 decisions=17 edges=21 overlap=0 final=water_bearer route=ch0,ch1,ch2,ch3,ch4a,ch5,ch6a,ch7,ch8,ch9,ch10,ch11,ch12,bureau,ch17o,ch22o,ch24o,ret,ch13,ch14,ch15,fin
+[15_water] AUTOTEST review cards=27
+[15_water] AUTOTEST PASS chapter=15 variant=water final=water_bearer T=T1 H=H1 N=N1 W=W1 fixed=false
+[15_wrong] JOURNEY cards=67 path=17 decisions=14 edges=16 overlap=0 final=late_by_49_years route=ch0,ch1,ch2,ch3,ch4a,ch5,ch6a,ch7,ch8,ch9,ch10,ch11,ch12,ch13,ch14,ch15y,fin
+[15_wrong] AUTOTEST review cards=27
+[15_wrong] AUTOTEST PASS chapter=15 variant=wrong final=late_by_49_years T=T3 H=H1 N=N1 W=W1 fixed=false
+[15_wrong_recall] JOURNEY cards=67 path=17 decisions=14 edges=16 overlap=0 final=late_by_49_years route=ch0,ch1,ch2,ch3,ch4a,ch5,ch6a,ch7,ch8,ch9,ch10,ch11,ch12,ch13,ch14,ch15y,fin
+[15_wrong_recall] AUTOTEST review cards=27
+[15_wrong_recall] AUTOTEST PASS chapter=15 variant=wrong_recall final=late_by_49_years T=T3 H=H1 N=N1 W=W1 fixed=false
+[15_wrong_stay] JOURNEY cards=67 path=17 decisions=14 edges=16 overlap=0 final=another_year route=ch0,ch1,ch2,ch3,ch4a,ch5,ch6a,ch7,ch8,ch9,ch10,ch11,ch12,ch13,ch14,ch15y,fin
+[15_wrong_stay] AUTOTEST review cards=27
+[15_wrong_stay] AUTOTEST PASS chapter=15 variant=wrong_stay final=another_year T=T3 H=H1 N=N1 W=W1 fixed=false
+[1_base] AUTOTEST PASS variant= outcome=1.1 bag=["phone", "lighter", "book", "chickpeas", "powerbank"] telsiz=2 bed=true
+[1_kick] AUTOTEST PASS variant=kick outcome=1.2 bag=["phone", "lighter", "book", "chickpeas", "powerbank"] telsiz=3 bed=true
+[1_red] AUTOTEST PASS variant=red outcome=1.3 bag=["phone", "lighter", "book", "chickpeas", "powerbank"] telsiz=2 bed=true
+[21_base] AUTOTEST PASS chapter=21 variant= outcome=21.1 bowls=2 tunnel=leb talk=talk trust=3 captive=false next=
+[21o_base] AUTOTEST PASS chapter=21o variant= outcome=21O.1 dug=6 raid=true ear=false
+[21o_ear] AUTOTEST PASS chapter=21o variant=ear outcome=21O.1 dug=6 raid=true ear=true
+[21o_lose] AUTOTEST PASS chapter=21o variant=lose outcome=21O.1 dug=6 raid=false ear=false
+[21o_smoke] AUTOTEST PASS chapter=21o variant=smoke outcome=21O.2 dug=6 raid=true ear=false
+[3_base] AUTOTEST PASS chapter=3 variant= outcome=3.3 sadakat=50 rel=0 baski=0 machine=free

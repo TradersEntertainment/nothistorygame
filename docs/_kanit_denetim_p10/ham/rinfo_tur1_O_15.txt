@@ -1,0 +1,7 @@
+RTRI scene=chapter15 t=1 real=106k prims=80k extra_vis=25k extra_shadow=0k
+RINFO scene=chapter15 t=1 draws=637 objs=763 prims=80k vis=37k shadow=42k nodes=1019 proc=1382.2ms phys=0.7ms
+RTRI scene=chapter15 t=3 real=520k prims=518k extra_vis=2k extra_shadow=0k
+RINFO scene=chapter15 t=3 draws=554 objs=1151 prims=518k vis=176k shadow=340k nodes=997 proc=298.5ms phys=0.6ms
+AUTOTEST PASS chapter=15 variant= final=ordinary_monday T=T1 H=H1 N=N1 W=W1 fixed=false
+RTRI scene=chapter15 t=5 real=529k prims=527k extra_vis=2k extra_shadow=0k
+RINFO scene=chapter15 t=5 draws=670 objs=3034 prims=527k vis=176k shadow=340k nodes=1339 proc=291.4ms phys=0.7ms
