@@ -213,7 +213,7 @@ func _mesh_tris(m: Mesh) -> int:
 
 ## Kenar etkisini ele: dört komşu noktada da aynı hata varsa gerçek delik.
 func _delik_dogrula(space: PhysicsDirectSpaceState3D, thick: Array, x: float, z: float) -> bool:
-	for off in [Vector2(0.15, 0), Vector2(-0.15, 0), Vector2(0, 0.15), Vector2(0, -0.15)]:
+	for off: Vector2 in [Vector2(0.15, 0), Vector2(-0.15, 0), Vector2(0, 0.15), Vector2(0, -0.15)]:
 		var xx := x + off.x
 		var zz := z + off.y
 		var q := PhysicsRayQueryParameters3D.create(Vector3(xx, 400, zz), Vector3(xx, -5, zz))
@@ -281,7 +281,7 @@ func _audit(id: String, k: float, lod: int, perches: Array, climbs: Array) -> vo
 					var hv: Variant = Geometry3D.ray_intersects_triangle(o, d, fc[fi], fc[fi + 1], fc[fi + 2])
 					if hv != null:
 						vis_top = maxf(vis_top, (mi2.global_transform * (hv as Vector3)).y)
-			if vis_top - col_top > 0.6 and await _delik_dogrula(space, thick, x, z):
+			if vis_top - col_top > 0.6 and _delik_dogrula(space, thick, x, z):
 				delik += 1
 				if delik_ornek == "":
 					delik_ornek = "(%.1f,%.1f vis=%.1f col=%.1f)" % [x, z, vis_top, col_top]
@@ -336,6 +336,18 @@ func _audit(id: String, k: float, lod: int, perches: Array, climbs: Array) -> vo
 				run2 = 0
 			else:
 				run2 += 1
+	if dar > 0 and String(_args.get("dump", "0")) == "1":
+		var shown := 0
+		for i in range(1, nx - 1):
+			for j in range(1, nz - 1):
+				if occ[i * nz + j] == 0 and occ[(i - 1) * nz + j] == 1 and occ[(i + 1) * nz + j] == 1 and shown < 2:
+					shown += 1
+					var txt := "dump @(%.2f,%.2f):\n" % [b.position.x + i * dstep, b.position.z + j * dstep]
+					for jj in range(maxi(j - 6, 0), mini(j + 7, nz)):
+						for ii in range(maxi(i - 8, 0), mini(i + 9, nx)):
+							txt += "#" if occ[ii * nz + jj] == 1 else "."
+						txt += "\n"
+					print(txt)
 	# ---- havada: tabanı zeminden > 5 cm yukarıda ve komşu katıya değmeyen kütle
 	var havada := 0
 	var hv_ornek := ""
@@ -392,47 +404,41 @@ func _audit(id: String, k: float, lod: int, perches: Array, climbs: Array) -> vo
 		_log.append(l2)
 
 
-## CharacterBody3D ile a'dan u'ya yürü (STEP_H 0,42; zıplama 0,66 yalnız "sandik"/"basamak" kısa farklarda).
-func _walk(a: Vector3, u: Vector3, kind: String) -> bool:
-	var body := CharacterBody3D.new()
-	var cs := CollisionShape3D.new()
+## Yol sınaması (oyunun basamak kuralı): a'dan u'ya düz hatta 10 cm adımla yürü; her adımda zemin yüksekliği ışınla
+## bulunur, yükselme ≤ STEP_H (0,42) ve kapsül (r 0,3, boy 1,8) çarpışmasız olmalı. İlk kırılma yeri _walk_son'a yazılır.
+func _walk(a: Vector3, u: Vector3, _kind: String) -> bool:
+	var space := get_world_3d().direct_space_state
 	var cap := CapsuleShape3D.new()
-	cap.radius = 0.35
+	cap.radius = 0.3
 	cap.height = 1.8
-	cs.shape = cap
-	cs.position = Vector3(0, 0.9, 0)
-	body.add_child(cs)
-	add_child(body)
-	body.global_position = a + Vector3(0, 0.05, 0)
-	await get_tree().physics_frame
-	var ok := false
-	var tgt := Vector3(u.x, 0, u.z)
-	for i in 4000:
-		var cur := body.global_position
-		var flat := Vector3(tgt.x - cur.x, 0, tgt.z - cur.z)
-		if flat.length() < 0.5 and absf(cur.y - u.y) < 0.7:
-			ok = true
-			break
-		var mv := flat.normalized() * minf(0.12, flat.length())
-		if body.test_move(body.global_transform, mv):
-			# basamak: yukarı 0,42, ileri
-			var up := Vector3(0, 0.42, 0)
-			if not body.test_move(body.global_transform, up):
-				var raised := body.global_transform
-				raised.origin += up
-				if not body.test_move(raised, mv):
-					body.global_position += up + mv
-				else:
-					break
-			else:
-				break
-		else:
-			body.global_position += mv
-		# zemine in
-		var col := body.move_and_collide(Vector3(0, -0.6, 0))
-		if col == null:
-			body.global_position += Vector3(0, -0.0, 0)
-	if not ok:
-		_walk_son = "son=" + str(body.global_position.snapped(Vector3(0.1, 0.1, 0.1)))
-	body.queue_free()
-	return ok
+	var sq := PhysicsShapeQueryParameters3D.new()
+	sq.shape = cap
+	sq.margin = 0.0
+	var total := Vector2(u.x - a.x, u.z - a.z).length()
+	var n := maxi(1, int(total / 0.1))
+	var y := a.y
+	for i in n + 1:
+		var t := float(i) / n
+		var x := lerpf(a.x, u.x, t)
+		var z := lerpf(a.z, u.z, t)
+		var best := -1000.0
+		for off: Vector2 in [Vector2.ZERO, Vector2(0.3, 0), Vector2(-0.3, 0), Vector2(0, 0.3), Vector2(0, -0.3)]:
+			var q := PhysicsRayQueryParameters3D.create(Vector3(x + off.x, y + 0.45, z + off.y), Vector3(x + off.x, y - 1.5, z + off.y))
+			var h := space.intersect_ray(q)
+			if h.is_empty():
+				continue
+			var hy := (h["position"] as Vector3).y
+			if off == Vector2.ZERO or hy - y <= 0.43:
+				best = maxf(best, hy)
+		if best < -999.0:
+			_walk_son = "yüzey-yok@%.1f,%.1f y=%.2f" % [x, z, y]
+			return false
+		if best - y > 0.43:
+			_walk_son = "yükselme %.2f@%.1f,%.1f" % [best - y, x, z]
+			return false
+		y = best
+		sq.transform = Transform3D(Basis.IDENTITY, Vector3(x, y + 0.93, z))
+		if space.intersect_shape(sq, 1).size() > 0:
+			_walk_son = "kapsül-çarpışma@%.1f,%.1f y=%.2f" % [x, z, y]
+			return false
+	return absf(y - u.y) < 0.7

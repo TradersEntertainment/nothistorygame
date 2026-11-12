@@ -225,7 +225,7 @@ static func _mese(n: Node3D, k: float, lod: int, uzunluk: float) -> void:
 				# yıkık sütun: kütük ve moloz
 				var sh := rng.randf_range(0.7, 1.9)
 				Y.cyl(n, cr, sh, Vector3(cx, 0.28 + sh * 0.5, z), Y.MERMER, cr * 0.95, 8, col, "marble")
-				Y.moloz(n, Vector3(cx + s * 0.4, 0.28, z + rng.randf_range(-1.0, 1.0)), 1.6, 1.4, 2, rng, col)
+				Y.moloz(n, Vector3(cx, 0.28, z), 1.7, 1.5, 2, rng, col)
 		# mimari kiriş (sütun başlığı üzeri): iki ucu da ayakta olan açıklıklar
 		for j in nb:
 			if alive[Vector2i(s, j)] and alive[Vector2i(s, j + 1)]:
@@ -254,8 +254,8 @@ static func _mese(n: Node3D, k: float, lod: int, uzunluk: float) -> void:
 			Y.box(n, Vector3(1.8, 0.18, 1.8), Vector3(0, 0.1 + 1.29, zc3), Y.TAS_K, "", col)
 			zc3 += maxf(28.0 * k, 12.0)
 		for j in 3:
-			var wz := rng.randf_range(-len * 0.4, len * 0.4)
-			Y.box(n, Vector3(0.9, 0.9, 0.9), Vector3(rng.randf_range(-rw * 0.5, rw * 0.5), 0.55, wz), Y.AHSAP, "wood", col)   # sandık
+			var wz := -len * 0.25 + j * len * 0.25 + 7.0 * k
+			Y.box(n, Vector3(0.9, 0.9, 0.9), Vector3((rw * 0.6) * (1 if j % 2 == 0 else -1), 0.55, wz), Y.AHSAP, "wood", col)   # sandık
 	_zemin_serpinti(n, rng, rw + pd, len * 0.5, 14, lod)
 	# dış merdiven: kuzey ucundan sol revak çatısına, güney ucundan sağ dükkân sırasına (revak çatısı üstü)
 	var top_y := ph + 0.2 + 0.8 + 0.2
@@ -286,7 +286,7 @@ static func _konstantin(n: Node3D, k: float, lod: int) -> void:
 		pass
 	var o := {"kaide_w": 7.0, "kaide_h": 6.5, "govde_r": 1.6, "govde_h": 27.0, "tambur": 8, "renk": Y.PORFIR, "cember": true,
 		"baslik": "hac", "kaide_renk": Y.MERMER, "merdiven_yon": Vector3(0, 0, 1)}
-	var r := Y.sutun(n, Vector3.ZERO, k, o, lod)
+	var r := Y.sutun(n, Vector3(0, 0.1, 0), k, o, lod)
 	_perch(n, Vector3(0, float(r["ust"]) - 2.2, 0))
 	_climb(n, r["merdiven_alt"], r["merdiven_ust"])
 	# iki kapı: batıda sağlam, doğuda yıkık
@@ -337,7 +337,7 @@ static func _tauri(n: Node3D, k: float, lod: int) -> void:
 	# Theodosius Sütunu (ortada, doğuya kayık)
 	var o := {"kaide_w": 8.0, "kaide_h": 8.0, "govde_r": 1.5, "govde_h": 30.0, "tambur": 10, "renk": Y.MERMER,
 		"baslik": "duz", "desen": "spiral", "sarim": 8, "kaide_renk": Y.MERMER, "merdiven_yon": Vector3(0, 0, 1)}
-	var r := Y.sutun(n, Vector3(wx * 0.3, 0, 0), k, o, lod)
+	var r := Y.sutun(n, Vector3(wx * 0.3, 0.1, 0), k, o, lod)
 	_perch(n, Vector3(wx * 0.3, float(r["ust"]), 0))
 	_climb(n, r["merdiven_alt"], r["merdiven_ust"])
 	# zafer takı (batı ucu): üç gözlü; ortada yüksek, yanlarda alçak; sağ yarı yıkık
@@ -357,11 +357,11 @@ static func _tauri(n: Node3D, k: float, lod: int) -> void:
 	# gözyaşı sütunları (iki adet), takın önünde; biri yarıda kırık
 	var po := {"kaide_w": 3.0, "kaide_h": 3.0, "govde_r": 0.9, "govde_h": 13.0, "tambur": 4, "renk": Y.GRANIT,
 		"baslik": "korint", "desen": "gozyasi", "kaide_renk": Y.MERMER, "merdiven": false}
-	Y.sutun(n, Vector3(-wx * 0.95 + 5.0 * 0 + 0, 0, -(ac * 0.5 + ayw + 4.5)), k, po, lod)
+	Y.sutun(n, Vector3(-wx * 0.95, 0.1, -(ac * 0.5 + ayw + 4.5)), k, po, lod)
 	var po2 := po.duplicate()
 	po2["govde_h"] = 6.5
 	po2["baslik"] = "yok"
-	Y.sutun(n, Vector3(-wx * 0.95, 0, (ac * 0.5 + ayw + 4.5)), k, po2, lod)
+	Y.sutun(n, Vector3(-wx * 0.95, 0.1, (ac * 0.5 + ayw + 4.5)), k, po2, lod)
 	_climb(n, Vector3(-wx * 0.95 - ayw - 4.0, 0.0, -ac * 0.5 - 1.0), Vector3(-wx * 0.95 - ayw, 0.8, -ac * 0.5 - 1.0), "basamak")
 	if lod == 2:
 		return

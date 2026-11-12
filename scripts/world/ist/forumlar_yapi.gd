@@ -312,8 +312,11 @@ static func sutun(n: Node3D, p: Vector3, k: float, o: Dictionary, lod: int) -> D
 		var hh := ky - 0.3
 		var run := ceili(hh / ADIM_H) * ADIM_D
 		var start := p + dirv.normalized() * (edge + run)
-		start.y = 0.0
+		start.y = p.y
 		stairs(n, start, -dirv, hh, 1.8, TAS, col)
+		# kaide yüzü ile son basamak arasındaki 0,25 m yarığı kapat (korniş altı dolgu)
+		var fd := dirv.normalized() * (kw * 0.5 + 0.125)
+		box(n, Vector3(1.8 if absf(dirv.x) < 0.5 else 0.25, hh - 0.36, 0.25 if absf(dirv.x) < 0.5 else 1.8), p + fd + Vector3(0, (hh - 0.36) * 0.5, 0), TAS, "", col)
 		out["merdiven_alt"] = start + dirv.normalized() * 0.8 + Vector3(0, 0.02, 0)
 		out["merdiven_ust"] = p + dirv.normalized() * (kw * 0.5 - 0.3) + Vector3(0, ky + 0.02, 0)
 	return out
