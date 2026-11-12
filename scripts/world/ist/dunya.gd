@@ -7,15 +7,17 @@ extends Node3D
 ## Bütçe: kurulum ilk kare ≤ 2 sn (kaba ayrıntı), sonrası kare başına ≤ BUDGET_US (ayrıntı + çarpışma zaman dilimli).
 
 const BUDGET_US := 5000
+## Kare başına iş bütçesi (µs); kare alma sondası büyütebilir
+static var butce_us := BUDGET_US
 ## Çekirdek (şehir ve çevresi) parça ızgarası: dünya metre
 const CX0 := -3072.0
 const CZ0 := -3072.0
-const CH := 512.0
-const CNX := 10
-const CNZ := 9
+const CH := 768.0
+const CNX := 7
+const CNZ := 6
 ## Ayrıntı düzeyleri: hücre boyu (m) ve devreye girme uzaklığı (parça dikdörtgenine yatay uzaklık)
-const LOD_CELL := [4.0, 8.0, 16.0, 32.0]
-const LOD_DIST := [180.0, 760.0, 2000.0]
+const LOD_CELL := [6.0, 12.0, 24.0, 48.0]
+const LOD_DIST := [150.0, 700.0, 1900.0]
 const LOD_HYST := 40.0
 ## Dış halka (veri sınırına kadar) hücre boyu
 const OUT_CELL := 64.0
@@ -89,7 +91,7 @@ func _kur() -> void:
 			add_child(mi)
 			_chunks[k] = {"mi": mi, "lod": -1}
 			var job := _is_baslat(k, 3)
-			while not _is_ilerle(job, 1 << 30):
+			while not _is_ilerle(job, 1 << 62):
 				pass
 	_dis_halka()
 	_carpisma_kur()
@@ -119,14 +121,14 @@ func _process(_dt: float) -> void:
 	if _col_job.is_empty() and p2.distance_to(_col_center) > COL_MOVE:
 		_col_job = _col_is(p2)
 	if not _col_job.is_empty():
-		_carpisma_ilerle(t0 + BUDGET_US / 2)
-	while Time.get_ticks_usec() - t0 < BUDGET_US:
+		_carpisma_ilerle(t0 + butce_us / 2)
+	while Time.get_ticks_usec() - t0 < butce_us:
 		if _job.is_empty():
 			if _jobs.is_empty():
 				break
 			var j: Array = _jobs.pop_front()
 			_job = _is_baslat(j[0], j[1])
-		if _is_ilerle(_job, t0 + BUDGET_US):
+		if _is_ilerle(_job, t0 + butce_us):
 			_job = {}
 	_son_kare_us = Time.get_ticks_usec() - t0
 
@@ -179,97 +181,134 @@ func _is_baslat(k: Vector2i, lod: int) -> Dictionary:
 	var r := _rect(k)
 	var cell: float = LOD_CELL[lod]
 	var n := int(CH / cell)
-	return {"k": k, "lod": lod, "x0": r.position.x, "z0": r.position.y, "cell": cell, "n": n, "row": 0,
-		"h": PackedFloat32Array(), "mesh": null}
+	return {"k": k, "lod": lod, "x0": r.position.x, "z0": r.position.y, "cell": cell, "n": n}
 
 
-## Bir işi `bitis` zamanına (µs) kadar ilerletir; bitince true.
+## Bir işi `bitis` zamanına (µs) kadar ilerletir; bitince true. Evreler (hepsi satır satır, zaman dilimli):
+## 0 yükseklik, 1 normal + renk, 2 üçgen dizini, 3 etek + ağın kurulması.
 func _is_ilerle(job: Dictionary, bitis: int) -> bool:
-	var n: int = job["n"]
-	var cell: float = job["cell"]
-	var x0: float = job["x0"]
-	var z0: float = job["z0"]
-	var hs: PackedFloat32Array = job["h"]
-	if hs.is_empty():
-		hs.resize((n + 1) * (n + 1))
-		job["h"] = hs
-	while job["row"] <= n:
-		var j: int = job["row"]
-		var z := z0 + j * cell
-		var base := j * (n + 1)
-		for i in n + 1:
-			hs[base + i] = IstGeo.h(x0 + i * cell, z)
-		job["row"] = j + 1
-		if Time.get_ticks_usec() > bitis:
-			job["h"] = hs
-			return false
-	job["h"] = hs
-	var mesh := _izgara_agi(x0, z0, cell, n, n, hs, true)
+	var m = _ag_ilerle(job, bitis)
+	if m == null:
+		return false
 	var c: Dictionary = _chunks[job["k"]]
-	(c["mi"] as MeshInstance3D).mesh = mesh
+	(c["mi"] as MeshInstance3D).mesh = m
 	c["lod"] = job["lod"]
 	return true
 
 
-## Yükseklik ızgarasından ağ: düzgün gölgeli, köşe renkli; tümü denizin altındaki dörtgenler atlanır; kenarda etek.
-func _izgara_agi(x0: float, z0: float, cell: float, nx: int, nz: int, hs: PackedFloat32Array, etek: bool) -> ArrayMesh:
+## Ağ kurma durumu: x0, z0, cell, n (nx), nz (yoksa n), h (doluysa evre 0 atlanır)
+func _ag_ilerle(st: Dictionary, bitis: int) -> Variant:
+	var nx: int = st["n"]
+	var nz: int = st.get("nz", nx)
 	var W := nx + 1
-	var verts := PackedVector3Array()
-	var norms := PackedVector3Array()
-	var cols := PackedColorArray()
-	var idx := PackedInt32Array()
-	verts.resize(W * (nz + 1))
-	norms.resize(W * (nz + 1))
-	cols.resize(W * (nz + 1))
-	for j in nz + 1:
-		for i in W:
-			var y := hs[j * W + i]
-			var x := x0 + i * cell
+	var cell: float = st["cell"]
+	var x0: float = st["x0"]
+	var z0: float = st["z0"]
+	if not st.has("evre"):
+		st["evre"] = 0
+		if st.has("h") and (st["h"] as PackedFloat32Array).size() == W * (nz + 1):
+			st["evre"] = 1
+		else:
+			var hs0 := PackedFloat32Array()
+			hs0.resize(W * (nz + 1))
+			st["h"] = hs0
+		st["row"] = 0
+	if st["evre"] == 0:
+		var hs: PackedFloat32Array = st["h"]
+		while st["row"] <= nz:
+			var j: int = st["row"]
 			var z := z0 + j * cell
-			var yl := hs[j * W + maxi(i - 1, 0)]
-			var yr := hs[j * W + mini(i + 1, nx)]
-			var yu := hs[maxi(j - 1, 0) * W + i]
-			var yd := hs[mini(j + 1, nz) * W + i]
-			var sx := float(mini(i + 1, nx) - maxi(i - 1, 0)) * cell
-			var sz := float(mini(j + 1, nz) - maxi(j - 1, 0)) * cell
-			var nrm := Vector3(-(yr - yl) / sx, 1.0, -(yd - yu) / sz).normalized()
-			verts[j * W + i] = Vector3(x, y, z)
-			norms[j * W + i] = nrm
-			cols[j * W + i] = _renk(x, z, y, 1.0 - nrm.y)
-	const SU := -1.2
-	for j in nz:
-		for i in nx:
-			var a := j * W + i
-			var b := a + 1
-			var c := a + W
-			var d := c + 1
-			if hs[a] < SU and hs[b] < SU and hs[c] < SU and hs[d] < SU:
-				continue
-			idx.append_array([a, b, c, b, d, c])
-	if etek:
-		var kenar: Array = []
-		for i in W:
-			kenar.append([i, Vector3(0, 0, -1)])
-		for j in nz + 1:
-			kenar.append([j * W + nx, Vector3(1, 0, 0)])
-		for i in range(nx, -1, -1):
-			kenar.append([nz * W + i, Vector3(0, 0, 1)])
-		for j in range(nz, -1, -1):
-			kenar.append([j * W, Vector3(-1, 0, 0)])
-		var s0 := verts.size()
-		for e in kenar:
-			var v: Vector3 = verts[e[0]]
-			verts.append(v - Vector3(0, SKIRT, 0))
-			norms.append(e[1])
-			cols.append(cols[e[0]].darkened(0.15))
-		for q in kenar.size() - 1:
-			var ta: int = kenar[q][0]
-			var tb: int = kenar[q + 1][0]
-			if ta == tb or verts[ta].y < SU and verts[tb].y < SU:
-				continue
-			var ba := s0 + q
-			var bb := s0 + q + 1
-			idx.append_array([ta, ba, tb, tb, ba, bb])
+			var base := j * W
+			for i in W:
+				hs[base + i] = IstGeo.h(x0 + i * cell, z)
+			st["row"] = j + 1
+			if Time.get_ticks_usec() > bitis:
+				st["h"] = hs
+				return null
+		st["h"] = hs
+		st["evre"] = 1
+		st["row"] = 0
+	if st["evre"] == 1:
+		var hs: PackedFloat32Array = st["h"]
+		if not st.has("v"):
+			var v0 := PackedVector3Array(); v0.resize(W * (nz + 1))
+			var n0 := PackedVector3Array(); n0.resize(W * (nz + 1))
+			var c0 := PackedColorArray(); c0.resize(W * (nz + 1))
+			st["v"] = v0; st["nr"] = n0; st["c"] = c0
+		var verts: PackedVector3Array = st["v"]
+		var norms: PackedVector3Array = st["nr"]
+		var cols: PackedColorArray = st["c"]
+		while st["row"] <= nz:
+			var j: int = st["row"]
+			for i in W:
+				var y := hs[j * W + i]
+				var x := x0 + i * cell
+				var z := z0 + j * cell
+				var yl := hs[j * W + maxi(i - 1, 0)]
+				var yr := hs[j * W + mini(i + 1, nx)]
+				var yu := hs[maxi(j - 1, 0) * W + i]
+				var yd := hs[mini(j + 1, nz) * W + i]
+				var sx := float(mini(i + 1, nx) - maxi(i - 1, 0)) * cell
+				var sz := float(mini(j + 1, nz) - maxi(j - 1, 0)) * cell
+				var nrm := Vector3(-(yr - yl) / sx, 1.0, -(yd - yu) / sz).normalized()
+				verts[j * W + i] = Vector3(x, y, z)
+				norms[j * W + i] = nrm
+				cols[j * W + i] = _renk(x, z, y, 1.0 - nrm.y)
+			st["row"] = j + 1
+			if Time.get_ticks_usec() > bitis:
+				st["v"] = verts; st["nr"] = norms; st["c"] = cols
+				return null
+		st["v"] = verts; st["nr"] = norms; st["c"] = cols
+		st["evre"] = 2
+		st["row"] = 0
+		st["ix"] = PackedInt32Array()
+	if st["evre"] == 2:
+		var hs: PackedFloat32Array = st["h"]
+		var idx: PackedInt32Array = st["ix"]
+		while st["row"] < nz:
+			var j: int = st["row"]
+			var a := j * W
+			for i in nx:
+				if hs[a] < SU and hs[a + 1] < SU and hs[a + W] < SU and hs[a + W + 1] < SU:
+					a += 1
+					continue
+				idx.push_back(a); idx.push_back(a + 1); idx.push_back(a + W)
+				idx.push_back(a + 1); idx.push_back(a + W + 1); idx.push_back(a + W)
+				a += 1
+			st["row"] = j + 1
+			if Time.get_ticks_usec() > bitis:
+				st["ix"] = idx
+				return null
+		st["ix"] = idx
+		st["evre"] = 3
+	# evre 3: etek ve ağ
+	var verts: PackedVector3Array = st["v"]
+	var norms: PackedVector3Array = st["nr"]
+	var cols: PackedColorArray = st["c"]
+	var idx: PackedInt32Array = st["ix"]
+	var kenar: Array = []
+	for i in W:
+		kenar.append([i, Vector3(0, 0, -1)])
+	for j in nz + 1:
+		kenar.append([j * W + nx, Vector3(1, 0, 0)])
+	for i in range(nx, -1, -1):
+		kenar.append([nz * W + i, Vector3(0, 0, 1)])
+	for j in range(nz, -1, -1):
+		kenar.append([j * W, Vector3(-1, 0, 0)])
+	var s0 := verts.size()
+	for e in kenar:
+		var v: Vector3 = verts[e[0]]
+		verts.append(v - Vector3(0, SKIRT, 0))
+		norms.append(e[1])
+		cols.append(cols[e[0]].darkened(0.15))
+	for q in kenar.size() - 1:
+		var ta: int = kenar[q][0]
+		var tb: int = kenar[q + 1][0]
+		if ta == tb or verts[ta].y < SU and verts[tb].y < SU:
+			continue
+		var ba := s0 + q
+		var bb := s0 + q + 1
+		idx.append_array([ta, ba, tb, tb, ba, bb])
 	var m := ArrayMesh.new()
 	if idx.is_empty():
 		return m
@@ -283,6 +322,14 @@ func _izgara_agi(x0: float, z0: float, cell: float, nx: int, nz: int, hs: Packed
 	return m
 
 
+const SU := -1.2
+
+
+func _izgara_agi(x0: float, z0: float, cell: float, nx: int, nz: int, hs: PackedFloat32Array, _etek: bool) -> ArrayMesh:
+	var st := {"x0": x0, "z0": z0, "cell": cell, "n": nx, "nz": nz, "h": hs}
+	return _ag_ilerle(st, 1 << 62)
+
+
 ## Mahalle türü (20 m önbellek; IstGeo.mahalle pahalı)
 func _mah(x: float, z: float) -> Dictionary:
 	var k := Vector2i(floori(x / 20.0), floori(z / 20.0))
@@ -293,13 +340,13 @@ func _mah(x: float, z: float) -> Dictionary:
 	return t
 
 
-const C_CAYIR := Color("6f8a45")
-const C_KURU := Color("9a9358")
-const C_TOPRAK := Color("8c7652")
-const C_CIGNEN := Color("7d6a4c")
-const C_TASLIK := Color("8a8478")
+const C_CAYIR := Color("7a8752")
+const C_KURU := Color("a0976a")
+const C_TOPRAK := Color("94805e")
+const C_CIGNEN := Color("86735a")
+const C_TASLIK := Color("948a74")
 const C_KUM := Color("c2ae80")
-const C_BOSTAN := Color("4f7a38")
+const C_BOSTAN := Color("627e46")
 const C_TABAN := Color("6a7a68")
 
 
@@ -329,6 +376,8 @@ func _renk(x: float, z: float, y: float, egim: float) -> Color:
 		c = C_CIGNEN.lerp(c, smoothstep(30.0, 160.0, dk))
 	elif b == IstGeo.B_ANADOLU:
 		c = c.lerp(Color("5f7a40"), 0.35)
+	if b == IstGeo.B_TRAKYA or b == IstGeo.B_ANADOLU:
+		c = c.lerp(C_KURU, 0.25).darkened(0.05)
 	# taşlık yamaç
 	c = c.lerp(C_TASLIK, smoothstep(0.35, 0.7, egim) * 0.8)
 	# kıyı kumu

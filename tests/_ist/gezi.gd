@@ -47,6 +47,7 @@ func _ready() -> void:
 	if kip == "yuru":
 		_oyuncu(k)
 	elif kip == "kare":
+		IstDunya.butce_us = 250000        # yazılımla çizimde kare çok yavaş: akış beklemesin
 		_kareler.call_deferred()
 	else:
 		Input.mouse_mode = Input.MOUSE_MODE_CAPTURED
