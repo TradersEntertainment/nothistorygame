@@ -79,6 +79,7 @@ Replik, süre, sayaç, sonuç ve bot akışı değişmedi (bölüm dosyalarında
 | Bölüm 11, `--eski-dunya` (10 varyant) | 10/10 PASS, yasak 0, v2 kurulmadı |
 | Komşular (eski dünya): 6, 10, 12b, 24 | 4/4 PASS |
 | Son birleşimden (ŞEHİR-3 `af2fe6f1`, DOKU-3 `9c85b4df`) sonra hepsi yeniden: v2 20 + eski 20 + komşu 4 + `flight_check` | 44/44 PASS + PASS, yasak 0 |
+| En son birleşim (ŞEHİR-3 `d0ae708a`: hub bölüm kurucularıyla) sonrası: v2 20 varyant + `flight_check` | 20/20 PASS + PASS, yasak 0 |
 | `flight_check` (eski camp + walls; v2 camp + walls) | PASS: v2'de 28 işaret, 12 form, 3 konma; 43/43 noktanın altında zemin/yapı, konma yüzeyi ≤ 1,5 m; Haliç ortası su; hepsi sınırın içinde |
 | Görev 6 denemesi: 12b `- lie year d2 d3` `--ist2-deneme=12b` | 5/5 PASS (v2 hub) |
 
