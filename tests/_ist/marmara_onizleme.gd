@@ -228,6 +228,8 @@ func _audit(id: String, entry: Dictionary, bb: AABB) -> Dictionary:
 	var out := _audit_tris(host)
 	# --- delik: görünür yüzeyin altında çarpışma yok (yukarıdan 0,5 m ızgara ışını)
 	var vis: Array = []     # [AABB]
+	var vis_nodes: Array = []
+	var culprits := {}
 	for c in host.find_children("*", "MeshInstance3D", true, false):
 		var mi := c as MeshInstance3D
 		if mi.mesh == null:
@@ -237,6 +239,9 @@ func _audit(id: String, entry: Dictionary, bb: AABB) -> Dictionary:
 			continue
 		var wb := mi.global_transform * mi.mesh.get_aabb()
 		if wb.size.y < 0.35 or wb.size.x < 0.3 and wb.size.z < 0.3:
+			continue
+		wb = wb.grow(-0.25)
+		if wb.size.x <= 0.0 or wb.size.z <= 0.0 or wb.size.y <= 0.0:
 			continue
 		# gövdesi bir StaticBody3D'nin çocuğu mu (kendi çarpışması var)?
 		var par := mi.get_parent()
@@ -259,6 +264,7 @@ func _audit(id: String, entry: Dictionary, bb: AABB) -> Dictionary:
 		if sib:
 			continue
 		vis.append(wb)
+		vis_nodes.append(mi)
 	var delik := 0
 	var x0 := bb.position.x
 	var z0 := bb.position.z
@@ -278,12 +284,21 @@ func _audit(id: String, entry: Dictionary, bb: AABB) -> Dictionary:
 			colltop[Vector2i(ix, iz)] = ct
 			# görünür üst yüzey yüksekliği
 			var vt := 0.0
-			for ab: AABB in vis:
+			var vi := -1
+			for j in vis.size():
+				var ab: AABB = vis[j]
 				if px >= ab.position.x and px <= ab.end.x and pz >= ab.position.z and pz <= ab.end.z:
-					vt = maxf(vt, ab.end.y)
+					if ab.end.y > vt:
+						vt = ab.end.y
+						vi = j
 			if vt > ct + 0.5 and vt > 0.4:
 				delik += 1
+				culprits[vi] = culprits.get(vi, 0) + 1
 	out["delik"] = delik
+	if args.get("dbg", "0") == "1":
+		for vi in culprits:
+			var n3: Node3D = vis_nodes[vi]
+			print("  DELIK ", culprits[vi], " ", n3.get_parent().name, "/", n3.name, " ", vis[vi])
 	# --- dar: y = 1,0 m'de 0,2 m ızgarada boş hücre koşuları (iki katı arası 0,2–1,4 m)
 	var step := 0.2
 	var gx := int((bb.size.x + 2.0) / step) + 1
@@ -415,5 +430,7 @@ func _walk_test(a: Vector3, b: Vector3) -> bool:
 			reached = true
 			break
 		await get_tree().physics_frame
+	if args.get("dbg", "0") == "1":
+		print("  YURUME ", a, " -> ", b, " son=", body.global_position, " en_yakin=", best)
 	body.queue_free()
 	return reached

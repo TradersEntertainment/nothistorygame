@@ -8,8 +8,8 @@ const STONE := Color("d9c9a6")        # kireçtaşı (tekfur deseniyle: taş + t
 const STONE_DK := Color("b9a680")
 const BRICK := Color("b4623e")
 const BRICK_DK := Color("8e4a2e")
-const MARBLE := Color("d6cdb8")
-const MARBLE_GREY := Color("b8b6ae")
+const MARBLE := Color("c2b9a2")
+const MARBLE_GREY := Color("a8a69c")
 const ROCK := Color("8d8678")
 const ROCK_DK := Color("6d675c")
 const WOOD := Color("7a5634")
@@ -138,23 +138,30 @@ static func STAIRS(p: Node3D, foot: Vector3, dir: Vector3, n: int, rise: float, 
 	return foot + d * (run * n) + Vector3(0, rise * n, 0) - d * (run * 0.5)
 
 
-## Merdivenin yan korkuluğu: basamak burunlarının üstünde eğimli katı kutu. side: dikey eksende yan kayma (xz).
-static func STAIR_RAIL(p: Node3D, foot: Vector3, dir: Vector3, n: int, rise: float, run: float, side: Vector3, col: Color, pat := "ashlar") -> void:
+## Merdiven uçuşu: height kadar yükselir (n = ceil(height / 0.34), rise ≤ 0,34), foot = alt basamağın ön kenarı (zemin y).
+## dir: çıkış yönü; sides: yan korkuluk taraf işaretleri (+1 sağ, -1 sol; sağ = dir × YUKARI). Dönüş: {n, run_len, top, rise}
+static func FLIGHT(p: Node3D, foot: Vector3, dir: Vector3, height: float, width: float, sides: Array, col: Color, pat := "ashlar", run := 0.46) -> Dictionary:
+	var n := int(ceil(height / 0.34))
+	var rise := height / n
 	var d := Vector3(dir.x, 0, dir.z).normalized()
-	var total := Vector3(d.x * run * n, rise * n, d.z * run * n)
-	var length := total.length()
-	var mid := foot + side + total * 0.5 + Vector3(0, 0.55, 0)
-	var b := Props.solid(p, Vector3(0.22, 1.1, length), mid, col)
-	var up := total.normalized()
-	var right := up.cross(Vector3.UP).normalized()
-	if right.length() < 0.1:
-		right = Vector3.RIGHT
-	var zb := up
-	var xb := right
-	var yb := zb.cross(xb).normalized()
-	b.transform = Transform3D(Basis(xb, yb, zb), mid)
-	if pat != "":
-		Props.set_pattern(b, col, pat)
+	var yaw := rad_to_deg(atan2(d.x, d.z))
+	for i in n:
+		var top := rise * (i + 1)
+		var c := foot + d * (run * (i + 0.5))
+		S(p, Vector3(width, top, run + 0.02), Vector3(c.x, foot.y, c.z), col, pat, yaw)
+	var right := Vector3(d.z, 0, -d.x)
+	for sg in sides:
+		var side := right * float(sg) * (width * 0.5 + 0.11)
+		var total := Vector3(d.x * run * n, rise * n, d.z * run * n)
+		var zb := total.normalized()
+		var xb := Vector3.UP.cross(zb).normalized()
+		var yb := zb.cross(xb)
+		var mid := foot + side + total * 0.5 + Vector3(0, 0.55, 0)
+		var b := Props.solid(p, Vector3(0.22, 1.1, total.length()), mid, col)
+		b.transform = Transform3D(Basis(xb, yb, zb), mid)
+		if pat != "":
+			Props.set_pattern(b, col, pat)
+	return {"n": n, "run_len": run * n, "top": foot + d * (run * n) + Vector3(0, height, 0), "rise": rise}
 
 
 ## Yarım daire kemer halkası (düzlem XY, normal ±Z): kutunun x ekseni radyal
