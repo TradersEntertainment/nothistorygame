@@ -577,10 +577,14 @@ func _horn_shore() -> void:
 	var boats := {"row": [], "fisher": []}
 	var vis := func(x: float, z: float) -> float:
 		return east_surf(x, z) if z < -700.0 else SiegeField.city_surf(x, z)
+	# Zincir rıhtımının dilimi (SeaWalls.SPANS horn_chain): rıhtım gövdesini, geçidi ve kuleleri her bölümde surun tek kurucusu
+	# koyar (SeaWalls.horn_wall_parts). Kıyı şeridi orada hiç kurulmaz: eskiden yalnız bölge etkinken atlanıyordu, öbür
+	# bölümlerde ve uçuşta rıhtımın önüne yamaç ve iskele giriyordu (aynı yer iki biçimde)
+	var chain: Vector2 = SeaWalls.SPANS["horn_chain"]
 	var sfree := func(x: float, z: float) -> bool:
-		return _free(x, z, 12.0)
+		return _free(x, z, 12.0) and (z < chain.x - 5.0 or z > chain.y + 5.0)
 	var qfree := func(x: float, z: float) -> bool:
-		return _free(x, z, 12.0) and not (boating and Vector2(-750.0 - ro.x, z - ro.z).length() < 500.0)
+		return bool(sfree.call(x, z)) and not (boating and Vector2(-750.0 - ro.x, z - ro.z).length() < 500.0)
 	# Kıyı suru: kule ve kapı açıklıklarının z'si (yan kapılar ve eşya bunlardan uzak durur). Tek kaynak: surun kurucusu
 	# (SeaWalls._runs, ilk koşu x −700 boyunca): kule ızgarası, kapılar ve kapıların iki yanındaki kuleler aynı yerde
 	var avoid: Array = []
@@ -602,7 +606,7 @@ func _horn_shore() -> void:
 			near = near or absf(pz - q) < 45.0
 		if boating and Vector2(-750.0 - ro.x, pz - ro.z).length() < 500.0:
 			near = true
-		if not near and _free(-750.0, pz, 30.0):
+		if not near and _free(-750.0, pz, 30.0) and (pz < chain.x - 30.0 or pz > chain.y + 30.0):
 			piers.append(pz)
 		pz -= 115.0
 	avoid.append_array(piers)

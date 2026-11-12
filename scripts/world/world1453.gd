@@ -217,6 +217,11 @@ static var _aya_pad := Rect2()
 
 static func city_ground(x: float, z: float) -> float:
 	var h := SiegeField.city_ground(x, z)
+	# Zincir rıhtımı (SeaWalls.SPANS horn_chain): surun dış yüzünün önü denizdir (rıhtım gövdesini surun kurucusu koyar).
+	# Doğu arazisinin 29 m'lik ızgarasında surun hemen dışındaki köşe (x ≈ −702) şehrin yüksekliğini alıyordu: bölge etkin
+	# değilken rıhtımın önüne surun dibine yaslanan yeşil bir yamaç çiziliyordu (bölümde su). Bölüm etkinken zaten düz.
+	if x < HORN_S_X + 3.0 and z > -1665.0 and z < -1515.0:
+		h = minf(h, SEA_Y - 2.4)
 	if _aya_pad.size == Vector2.ZERO:
 		_aya_pad = world_rect(region("byz_aya"), Rect2(-46.0, -114.0, 64.0, 76.0))
 	var dx := maxf(maxf(_aya_pad.position.x - x, 0.0), x - _aya_pad.end.x)
