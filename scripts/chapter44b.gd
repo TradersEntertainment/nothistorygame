@@ -125,10 +125,12 @@ var _sun_light: OmniLight3D
 var _dark_left := 0.0               # isabetten sonra ışık elden kaymış (sn)
 var _bilge := 0                     # kayığın aldığı su (isabet sayısı, en çok 3)
 var _bilge_mesh: MeshInstance3D
-var _yk_lamp: OmniLight3D
 var _hen_seen := false
 var _row1_done: Array[bool] = [false, false, false]
 var events: Array[String] = []      # olay günlüğü (test raporu)
+var _max_lights := 0                # test: sarnıçta aynı anda görünür Omni/Spot ışık sayısının en yükseği
+var _max_lights_at := ""
+var _light_probe := 0.0
 
 
 func _ready() -> void:
@@ -567,15 +569,16 @@ func _ev_fish() -> void:
 	fm.metallic = 0.5
 	fm.roughness = 0.25
 	fm.emission_enabled = true
-	fm.emission = Color("2a2a20")
+	fm.emission = Color("5a5640")
 	fm.cull_mode = BaseMaterial3D.CULL_DISABLED
 	mi.material_override = fm
 	mi.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
 	add_child(mi)
 	var f := _fwd()
 	var side := Vector3(-f.z, 0, f.x)
-	var a := boat.global_position + f * 3.2 - side * 5.5
-	var b := boat.global_position + f * 0.4 + side * 5.5
+	# Pruvanın 6–8 m önünden çapraz geçer, sonra kayığa doğru kıvrılıp altına dalar (fenerin konisinde, altyazının üstünde)
+	var a := boat.global_position + f * 8.0 - side * 5.0
+	var b := boat.global_position + f * 1.0 + side * 4.0
 	var offs: Array[Vector3] = []
 	for k in 26:
 		offs.append(Vector3(randf_range(-1.0, 1.0), randf_range(-0.25, 0.1), randf_range(-0.9, 0.9)))
@@ -594,11 +597,12 @@ func _ev_fish() -> void:
 		var bs := Basis.looking_at(dir, Vector3.UP).rotated(Vector3.UP, PI)
 		for k in 26:
 			var wob := Vector3(sin(t * 6.0 + k) * 0.08, 0, cos(t * 5.0 + k * 1.3) * 0.08)
-			mm.set_instance_transform(k, Transform3D(bs.rotated(dir, sin(t * 11.0 + k) * 0.2), Vector3(c.x, CisternLevel.WATER_Y - 0.35, c.z) + offs[k] + wob))
+			var depth := lerpf(-0.08, -0.45, k0 * k0)          # önce sırtları suyu yarar, kayığın altına dalarken derinleşir
+			mm.set_instance_transform(k, Transform3D(bs.rotated(dir, sin(t * 11.0 + k) * 0.2).scaled(Vector3.ONE * 1.7), Vector3(c.x, CisternLevel.WATER_Y + depth, c.z) + offs[k] * Vector3(1, 0.3, 1) + wob))
 		rang += dt
-		if rang > 0.35:
+		if rang > 0.18:
 			rang = 0.0
-			cis.call("ring", c + Vector3(randf_range(-0.8, 0.8), 0, randf_range(-0.8, 0.8)), 0.4, 0.9)
+			cis.call("ring", c + Vector3(randf_range(-0.9, 0.9), 0, randf_range(-0.9, 0.9)), 0.5, 0.9)
 		if absf(k0 - 0.6) < dt / dur:
 			_roll = 0.05
 	mi.queue_free()
@@ -672,8 +676,7 @@ func _quake() -> void:
 	await hud.say("SPK_TOLGA", "D44B_T_LEAD")
 	# Yakovos küçük kandilini yakar: ancak kendini gösterir; Tolga'nın ışığı söndüğünde yön budur
 	yakovos.unequip("Spear")
-	yakovos.equip("lamp")
-	_yk_lamp.visible = true
+	yakovos.equip("lamp")                # kandil eşyasının kendi küçük ışığı var
 	await hud.say("SPK_FISHMONGER", "D44B_Y_LAMP")
 	_yk_follow = true
 	meter.enabled = true
@@ -958,7 +961,6 @@ func _medusa() -> void:
 	tw.tween_property(yboat, "global_position", Vector3(side_at.x, yboat.global_position.y, side_at.z), d)
 	await tw.finished
 	# Yakovos'un kandili suya eğilir: ışık iki yüzün önünde, su berraklaşır
-	_yk_lamp.visible = false
 	var glow := OmniLight3D.new()
 	glow.light_color = Color("ffb868")
 	glow.light_energy = 3.4
@@ -1053,7 +1055,8 @@ func _climb() -> void:
 		for k in int(CLIMB_SECS / 0.45):
 			get_tree().create_timer(0.45 * k, false).timeout.connect(Audio.sfx.bind("footstep_stone_%d" % (k % 4 + 1), -10.0, 0.8))
 		await tw.finished
-		# Kilerin ağzından çıkar: kapıdan gün ışığı
+		# Kilerin ağzından çıkar: kapıdan gün ışığı (fener cebe: kilerin duvarında leke yapmasın)
+		_light_off()
 		var tw2 := create_tween().set_parallel()
 		tw2.tween_property(player, "global_position", Vector3(goal.x, floor_y, goal.z + 0.9), 0.8).set_trans(Tween.TRANS_SINE)
 		tw2.tween_property(player, "rotation:y", PI, 0.8).set_trans(Tween.TRANS_SINE)
@@ -1179,15 +1182,6 @@ func _build_boats() -> void:
 	yakovos = _make_yakovos()
 	yboat.add_child(yakovos)
 	_place_yakovos()
-	_yk_lamp = OmniLight3D.new()
-	_yk_lamp.light_color = Color("ffb868")
-	_yk_lamp.light_energy = 1.3
-	_yk_lamp.omni_range = 6.0
-	_yk_lamp.shadow_enabled = false
-	_yk_lamp.position = Vector3(0.25, 1.25, 0.2)
-	_yk_lamp.visible = false
-	_yk_lamp.name = "YakovosLamp"
-	yboat.add_child(_yk_lamp)
 
 
 func _make_yakovos() -> Person:
@@ -1252,6 +1246,23 @@ func _plan(from: Vector3, to: Vector3) -> Array[Vector3]:
 func _process(delta: float) -> void:
 	_t += delta
 	_roll = move_toward(_roll, 0.0, delta * 0.05)
+	if GameState.autotest and cis:
+		_light_probe -= delta
+		if _light_probe <= 0.0:
+			_light_probe = 0.25
+			var n := 0
+			for l: Node in find_children("*", "Light3D", true, false):
+				# HUD'un SubViewport'larındaki ışıklar ayrı dünyada: sahneyi aydınlatmaz, sayılmaz
+				if (l is OmniLight3D or l is SpotLight3D) and (l as Light3D).is_visible_in_tree() and l.get_viewport() == get_viewport():
+					n += 1
+			if n > _max_lights:
+				_max_lights = n
+				_max_lights_at = phase
+				var names: Array[String] = []
+				for l: Node in find_children("*", "Light3D", true, false):
+					if (l is OmniLight3D or l is SpotLight3D) and (l as Light3D).is_visible_in_tree() and l.get_viewport() == get_viewport():
+						names.append(String(l.get_path()).get_slice("/", String(l.get_path()).get_slice_count("/") - 2) + "/" + l.name)
+				print("LIGHTS44 %d %s %s" % [n, phase, ",".join(names)])
 	if cis:
 		cis.set("focus", player.global_position)
 	_light_tick(delta)
@@ -1765,7 +1776,8 @@ func _autotest_report() -> void:
 		ok = ok and events.has("hen_eye")
 	if v == "hit":
 		ok = ok and hits >= 1 and events.has("hit") and _bilge >= 1 and events.has("found")
-	print("CISTERN44 events=%s qt=%.1f" % [",".join(events), _qt])
+	print("CISTERN44 events=%s qt=%.1f max_lights=%d (%s)" % [",".join(events), _qt, _max_lights, _max_lights_at])
+	ok = ok and _max_lights <= 8
 	if not ok:
 		printerr("AUTOTEST: beklenen %s, gelen %s (sayfa=%s, foto=%s, hayranlık=%s, kurtarıldı=%s)" % [expected, _outcome,
 			not page.is_empty(), cam != null and cam.done, awe_seen, rescued])
