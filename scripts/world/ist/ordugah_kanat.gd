@@ -9,12 +9,12 @@ const K = preload("res://scripts/world/ist/ordugah_kit.gd")
 const B = K.Bld
 
 const TURLER := {
-	"yeniceri": {"aralik": 9.0, "ana": [Color("f1ead6"), Color("e8dcc0")], "bant": Color("2c3f7a"), "tip": "yuvarlak", "cati_orani": 0.15},
-	"anadolu": {"aralik": 10.0, "ana": [Color("d9c7a0"), Color("c9b588"), Color("b8c19a")], "bant": Color("3f6b3d"), "tip": "yuvarlak", "cati_orani": 0.35},
-	"rumeli": {"aralik": 10.0, "ana": [Color("e4d8b8"), Color("d6c8a4")], "bant": Color("b3262d"), "tip": "yuvarlak", "cati_orani": 0.3},
-	"basibozuk": {"aralik": 8.0, "ana": [Color("a8987a"), Color("8f8064"), Color("b2a07c")], "bant": Color("5c4a34"), "tip": "bark", "cati_orani": 0.75},
-	"zaganos": {"aralik": 11.0, "ana": [Color("ebe3cc"), Color("d9cfb0")], "bant": Color("3f6b3d"), "tip": "yuvarlak", "cati_orani": 0.25},
-	"hizmet": {"aralik": 9.0, "ana": [Color("cbb98e"), Color("b8a67c")], "bant": Color("7a5634"), "tip": "yuvarlak", "cati_orani": 0.5},
+	"yeniceri": {"aralik": 6.6, "ana": [Color("f1ead6"), Color("e8dcc0")], "bant": Color("2c3f7a"), "tip": "yuvarlak", "cati_orani": 0.15},
+	"anadolu": {"aralik": 7.0, "ana": [Color("d9c7a0"), Color("c9b588"), Color("b8c19a")], "bant": Color("3f6b3d"), "tip": "yuvarlak", "cati_orani": 0.35},
+	"rumeli": {"aralik": 7.0, "ana": [Color("e4d8b8"), Color("d6c8a4")], "bant": Color("b3262d"), "tip": "yuvarlak", "cati_orani": 0.3},
+	"basibozuk": {"aralik": 6.4, "ana": [Color("a8987a"), Color("8f8064"), Color("b2a07c")], "bant": Color("5c4a34"), "tip": "bark", "cati_orani": 0.75},
+	"zaganos": {"aralik": 7.6, "ana": [Color("ebe3cc"), Color("d9cfb0")], "bant": Color("3f6b3d"), "tip": "yuvarlak", "cati_orani": 0.25},
+	"hizmet": {"aralik": 7.0, "ana": [Color("cbb98e"), Color("b8a67c")], "bant": Color("7a5634"), "tip": "yuvarlak", "cati_orani": 0.5},
 }
 
 

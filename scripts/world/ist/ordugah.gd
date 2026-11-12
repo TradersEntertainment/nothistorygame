@@ -41,9 +41,11 @@ static func _wall_init() -> void:
 	_len = acc
 
 
+## u: plan ark uzunluğu (S = 0,5 için yazıldı: kara suru ~3 130 m). Dünya ölçeği IstGeo.S ile oranlanır (ŞEHİR-3:
+## S = 0,35'te 2 190 m'lik hattın sonundaki ~900 m'lik plan kuzey ucunda tek noktaya yığılıyordu)
 static func wpt(u: float) -> Vector2:
 	_wall_init()
-	u = clampf(u, 0.0, _len)
+	u = clampf(u * IstGeo.S / 0.5, 0.0, _len)
 	for i in _wall.size() - 1:
 		if u <= _arcs[i + 1]:
 			return _wall[i].lerp(_wall[i + 1], (u - _arcs[i]) / maxf(0.001, _arcs[i + 1] - _arcs[i]))

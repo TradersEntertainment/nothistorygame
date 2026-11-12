@@ -14,6 +14,7 @@ extends Node3D
 ## Bağlantı: World1453.build → IstSehir.attach(f); CityHouses.build → IstSehir.houses(...) (ikisi de tek satır ekleme).
 
 const DIR := "res://scripts/world/ist/"
+const ESER := preload("res://scripts/world/ist/sehir_eser.gd")
 const SELF := ["sehir", "evler"]
 ## Uzaklık eşikleri (parçanın yarıçapı eklenir): lod 0 < R0, lod 1 < R1, ötesi lod 2
 const R0 := 90.0
@@ -301,6 +302,9 @@ func _build(it: Dictionary, lod: int) -> void:
 		(it["make"] as Callable).call(n, lod)
 	else:
 		(it["script"] as GDScript).call("build_" + String(it["id"]), n, float(it["k"]), lod)
+		if v2 and MANASTIR.has(String(it["id"])):
+			var mv: Vector2 = MANASTIR[String(it["id"])]
+			ESER.manastir(n, lod, mv.x, mv.y, String(it["id"]).hash())
 	if v2 and not it.has("hat") and String(it.get("mod", "")) != "doku":
 		_kursun(n)
 	if v2 and lod == 0 and it.has("glen"):
@@ -321,6 +325,8 @@ func _build(it: Dictionary, lod: int) -> void:
 	var t_kur := Time.get_ticks_usec()
 	if lod > 0:
 		_bake_lod(n, lod >= 2)
+		if v2:
+			_cizgisiz(n)
 		for c in n.find_children("*", "GeometryInstance3D", true, false):
 			c.set_meta("no_walk", true)
 		# Orta/uzak katmanın çarpışması yok: gizliyken de fizikte duran kaba kütleler (dolu kule bloğu, kapısız
@@ -391,6 +397,49 @@ func _kursun(n: Node3D) -> void:
 				mi.material_override = _kursun_mat[key]
 			else:
 				mi.set_surface_override_material(si, _kursun_mat[key])
+
+
+## Kalite notu 16 (tam tepeden ve uzaktan siyah düz yüzeyler) — KÖK NEDEN: Props/Dressing malzemelerinin dış çizgi
+## geçişi (next_pass: siyah, CULL_FRONT, grow, derinlik yazmaz). Uzakta (≥ 300 m) derinlik ara belleğinin çözünürlüğü
+## ince levhanın (forum döşemesi 0,1 m, sarnıç tabanı, çatı levhası) üst yüzüyle büyütülmüş alt yüzünü ayıramaz:
+## arka yüzlerin siyah çizgi kopyası üst yüzün önüne geçer (düz kenarlı yarım kara alanlar; yakında yok). Orta ve uzak
+## katmanda dış çizgi zaten piksel altıdır: bu katmanların malzemelerinden söküldü (malzeme önbellekli).
+static var _cizgisiz_mat := {}
+
+static func _cizgisiz_of(m: Material) -> Material:
+	if m == null or m.next_pass == null:
+		return m
+	var key := m.get_instance_id()
+	if not _cizgisiz_mat.has(key):
+		var d := m.duplicate() as Material
+		d.next_pass = null
+		_cizgisiz_mat[key] = d
+	return _cizgisiz_mat[key]
+
+
+static func _cizgisiz(n: Node) -> void:
+	for c in n.find_children("*", "GeometryInstance3D", true, false):
+		var gi := c as GeometryInstance3D
+		if gi.material_override != null:
+			gi.material_override = _cizgisiz_of(gi.material_override)
+		var mesh: Mesh = null
+		if gi is MeshInstance3D:
+			mesh = (gi as MeshInstance3D).mesh
+			if mesh != null:
+				for si in mesh.get_surface_count():
+					var om := (gi as MeshInstance3D).get_surface_override_material(si)
+					var sm := om if om != null else mesh.surface_get_material(si)
+					if sm != null and sm.next_pass != null:
+						(gi as MeshInstance3D).set_surface_override_material(si, _cizgisiz_of(sm))
+		elif gi is MultiMeshInstance3D and (gi as MultiMeshInstance3D).multimesh and (gi as MultiMeshInstance3D).multimesh.mesh:
+			mesh = (gi as MultiMeshInstance3D).multimesh.mesh
+			if gi.material_override == null:
+				for si in mesh.get_surface_count():
+					var sm := mesh.surface_get_material(si)
+					if sm != null and sm.next_pass != null:
+						# MultiMesh paylaşılan ağ: yüzey malzemesi yerine örnek başına geçersiz kılma (tek yüzeyli ağlarda)
+						if mesh.get_surface_count() == 1:
+							gi.material_override = _cizgisiz_of(sm)
 
 
 ## Uzak/orta katmanın ilkel parçaları tek ağa pişirilir (World1453.bake: doku başına bir yüzey; uzakta tek yüzey):
@@ -1052,12 +1101,14 @@ const K_SUR := 1.0
 const AYA_K := 1.5
 const K2 := K_OTEKI
 ## Ünlü eserler (k = 0,75); ayrıca catalog() kaydında "gorev": true olan her eser ve kapı türündeki her kayıt
+## Manastır avlusuyla kurulan kiliseler (ŞEHİR-3; "küçük ve yalın" kusuru): kimlik → avlunun yarı eni/boyu (yerel m)
+const MANASTIR := {"khora": Vector2(22.0, 24.0), "pammakaristos": Vector2(23.0, 24.0)}
 const UNLU := ["konstantin", "arkadius", "iustinianus", "havariyun", "pantokrator", "khora", "pammakaristos", "studios",
 	"aya_irini", "tekfur", "galata_kulesi", "tauri", "sergios", "theodosius", "markianos", "halic_eugenios"]
 ## Gerçek yerinden hiç kaymayanlar (silüetin çapaları; öbürleri bunların çevresinden itilir)
 const SABIT_UNLU := ["galata_kulesi", "hipodrom", "konstantin", "havariyun", "pantokrator", "khora", "tekfur", "studios"]
 ## Çok yer kaplayanlar: kimlik → k (Hipodrom, Büyük Saray harabesi, limanlar, açık sarnıç bostanları, forum meydanları)
-const GENIS := {"augustaion": 0.45, "zeuksippos": 0.5, "konstantin": 0.6, "tauri": 0.6, "hipodrom": 0.45, "buyuk_saray": 0.45, "bukoleon": 0.5, "kontoskalion": 0.45, "langa": 0.45, "sophia": 0.45,
+const GENIS := {"augustaion": 0.45, "zeuksippos": 0.5, "konstantin": 0.6, "tauri": 0.6, "hipodrom": 0.45, "buyuk_saray": 0.34, "bukoleon": 0.5, "kontoskalion": 0.45, "langa": 0.45, "sophia": 0.45,
 	"aetios": 0.45, "aspar": 0.45, "mokios": 0.45, "philadelphion": 0.5, "kapitolion": 0.5, "amastrianon": 0.5, "bovis": 0.5,
 	"myrelaion": 0.55, "anemodoulion": 0.5, "halic_neorion": 0.5, "halic_iskele": 0.5}
 
@@ -1207,6 +1258,7 @@ static func attach_v2(dunya: Node3D, gece_ := false) -> void:
 	var t4 := Time.get_ticks_msec()
 	print("ISTONPISIR ms=%d adet=%d kursun=%d" % [t4 - t3, s.stats.get("on_pisir_n", 0), s.stats.get("kursun_n", 0)])
 	t3 = t4
+	s._hub_kur()
 	s._parcalar_bagla(dunya, gece_)
 	for r: Rect2 in s.oyun_alanlari():
 		var rc := IstGeo.real(r.get_center().x, r.get_center().y)
@@ -1411,7 +1463,10 @@ func _kapi_gecit(n: Node3D, ymin: float, ymax: float) -> void:
 			var root := n
 			var lp := root.global_transform.affine_inverse() * (cs as Node3D).global_position if root.is_inside_tree() else body.position
 			var bot := lp.y - sz.y * 0.5
-			if sz.x < 0.7 and sz.y < 1.8 and sz.z > 2.0 and bot > ymin and bot < ymax and absf(lp.z) < sz.z * 0.5 - 0.6:
+			# korkuluk: tabanı bant içinde VE tepesi bandın üstünde (yürüme yolunun/kule tepesinin üstüne çıkan duvarcık).
+			# Kule merdiveninin basamakları da ince, enine ve tabanı yürüme yolunda: tepeleri kule tepesini aşmaz, kalır
+			# (ŞEHİR-3: önce ilk altı basamak siliniyordu, oyuncu yedinci basamağın dibinde kalıyordu)
+			if sz.x < 0.7 and sz.y < 1.8 and sz.z > 2.0 and bot > ymin and bot < ymax and bot + sz.y > ymax and absf(lp.z) < sz.z * 0.5 - 0.6:
 				gone.append(Rect2(lp.x - 0.6, lp.z - sz.z * 0.5, 1.2, sz.z))
 				body.get_parent().remove_child(body)
 				body.free()
@@ -1587,17 +1642,20 @@ func _place_v2() -> void:
 	var bl := IstGeo.w2(-3402.0, 3436.0)
 	var bpl := IstGeo.yol("blakherna_suru")
 	var byaw := 0.0
+	var bin := Vector2.ZERO
 	if bpl.size() >= 2:
 		var sn := _snap(bpl, bl)
 		var o := _out(sn["d"], sn["p"], "blakherna_suru")
+		bin = -o
 		bl = (sn["p"] as Vector2) - o * 2.0
 		byaw = _yaw_x(sn["d"], sn["p"], "blakherna_suru")
-	_v2_item("blakherna", Vector3(bl.x, IstGeo.h(bl.x, bl.y) - 0.05, bl.y), byaw, 22.0, _make_blakherna)
+	_v2_item("blakherna", Vector3(bl.x, IstGeo.h(bl.x, bl.y) - 0.05, bl.y), byaw, 46.0, _make_blakherna)
 	quest2["BLAKHERNA"] = {"p": Vector3(bl.x, IstGeo.h(bl.x, bl.y) + 26.0, bl.y), "r": 34.0}
 	var cand: Array = []
 	# Sabit engeller: Ayasofya, Blakherna Sarayı, oyun alanları (hub alanı Romanos'tan sonra eklenir)
 	cand.append({"id": "ayasofya", "w": aw, "w0": aw, "r": 40.0 * AYA_K * 0.8, "sabit": true, "prio": 3, "tur": "anit"})
-	cand.append({"id": "blakherna", "w": bl, "w0": bl, "r": 22.0, "sabit": true, "prio": 3, "tur": "anit"})
+	# saray + avlu sura yaslı, şehre doğru 44 m: engel dairesi gövdenin ortasında
+	cand.append({"id": "blakherna", "w": bl + bin * 22.0, "w0": bl + bin * 22.0, "r": 27.0, "sabit": true, "prio": 3, "tur": "anit"})
 	var mr := _meydan_rect()
 	cand.append({"id": "oyun_meydan", "w": mr.get_center(), "w0": mr.get_center(), "r": mr.size.length() * 0.42, "sabit": true, "prio": 3, "tur": ""})
 	for e: Dictionary in catalog_all():
@@ -1615,6 +1673,8 @@ func _place_v2() -> void:
 		pl["e"] = e
 		pl["tur"] = tur
 		pl["w"] = Vector2((pl["pos"] as Vector3).x, (pl["pos"] as Vector3).z)
+		if MANASTIR.has(id):
+			pl["r"] = (MANASTIR[id] as Vector2).length() + 1.0
 		pl["prio"] = 3 if id in SABIT_UNLU else (2 if (id in UNLU or data.get("gorev", false) or tur == "kapi") else 1)
 		# Hub (Romanos'un iç yanı) sabit engel
 		if id == "romanos":
@@ -1649,6 +1709,13 @@ func _place_v2() -> void:
 		add_child(holder)
 		var it := {"id": id, "script": e["script"], "pos": p, "yaw": pl["yaw"], "k": pl["k"], "r": pl["r"],
 			"have": [null, null, null], "holder": holder, "data": e["data"], "mod": mod, "r1": R1_V2}
+		if MANASTIR.has(id):
+			# manastır avlusu evlerin taban damgasına girsin (IstSokak gercek_olcu × k'den damgalar)
+			var mv: Vector2 = MANASTIR[id]
+			var dd: Dictionary = (e["data"] as Dictionary).duplicate()
+			var go: Vector3 = dd.get("gercek_olcu", Vector3(30, 20, 30))
+			dd["gercek_olcu"] = Vector3(mv.x * 2.0 / float(pl["k"]), go.y, mv.y * 2.0 / float(pl["k"]))
+			it["data"] = dd
 		if pl.has("glen"):
 			# Sur kapısı: modülün kapı koşusu kısaltılmış boyla (komşu kapılarla üst üste binmesin; kesit 1:1). Taban,
 			# sur dilimleri gibi hat boyunca yedi örneğin ortancası (hendek yanına taşan örnekler kapıyı gömmesin/alçaltmasın)
@@ -1680,6 +1747,36 @@ func _place_v2() -> void:
 		items.append(it)
 		_build(it, 2)
 		_perch_pad(it)
+
+	# Ayasofya meydanı oyun alanı: döşeme, kenar taşı, çınarlar, tezgâhlar, çeşme (orta alan boş; ŞEHİR-3)
+	var mr2 := _meydan_rect()
+	var mc := mr2.get_center()
+	var my := IstGeo.h(mc.x, mc.y)
+	IstGeo.duzle(mc, mr2.size.length() * 0.5, my, 6.0)
+	_v2_item("meydan_aya", Vector3(mc.x, my - 0.02, mc.y), 0.0, mr2.size.length() * 0.5,
+		func(nd: Node3D, lod: int) -> void: ESER.meydan(nd, lod, mr2.size.x, mr2.size.y))
+	# Hub (mektup bölümünün şehri): zemini düzlenir (arazi ağı sonra kurulur)
+	var hx := hub_xf()
+	if hx != Transform3D():
+		var hc := hx * Vector3(0, 0, -10)
+		IstGeo.duzle(Vector2(hc.x, hc.z), 48.0, hx.origin.y, 10.0)
+
+
+## Hub'ın bölüm şehri (ByzCity.far_hub: bölümün kendi kurucuları, var olan dosya değiştirilmeden): 300 m'ye kadar dokulu,
+## ötesinde düz renkli; çarpışma bölümün gövdeleri. Açılışta bir kez.
+func _hub_kur() -> void:
+	var hx := hub_xf()
+	if hx == Transform3D():
+		return
+	var t0 := Time.get_ticks_msec()
+	var host := Node3D.new()
+	host.name = "IstHub"
+	add_child(host)
+	var mi := ByzCity.far_hub(host, hx)
+	stats["hub_ms"] = Time.get_ticks_msec() - t0
+	print("ISTHUB ms=%d merkez=%s yon=%.0f" % [stats["hub_ms"], str(hx * Vector3(0, 0, -10)), rad_to_deg(atan2(hx.basis.x.x, hx.basis.x.z))])
+	if mi == null:
+		return
 
 
 func _pad(p: Vector3, nm: String) -> void:
@@ -1723,6 +1820,8 @@ func _hat_far_add(it: Dictionary) -> void:
 		var xf := Transform3D(Basis(Vector3.UP, float(it["yaw"])), p - cen)
 		for si in mi.mesh.get_surface_count():
 			(_hat_far[ck] as SurfaceTool).append_from(mi.mesh, si, xf)
+		# mazgal dişleri (uzak silüet; kalite notu 11)
+		stats["mazgal_uzak"] = int(stats.get("mazgal_uzak", 0)) + ESER.mazgal(_hat_far[ck], mi.mesh, xf, 6.0)
 		if _hat_mat == null:
 			_hat_mat = mi.material_override if mi.material_override else mi.mesh.surface_get_material(0)
 	holder.free()
@@ -1760,8 +1859,8 @@ func _hat_far_commit() -> void:
 	for ck: Vector2i in _hat_far:
 		var mi := MeshInstance3D.new()
 		mi.mesh = _acik(( _hat_far[ck] as SurfaceTool).commit(), 1.3)
-		if _hat_mat:
-			mi.material_override = _hat_mat
+		# şeritli taş malzemesi (tuğla bantları dünya yüksekliğinden; kalite notu 11)
+		mi.material_override = ESER.sur_uzak_mat()
 		mi.position = Vector3((ck.x + 0.5) * HAT_CELL, 0, (ck.y + 0.5) * HAT_CELL)
 		mi.visibility_range_begin = HAT_BEGIN
 		mi.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
@@ -1811,40 +1910,9 @@ func _make_aya(n: Node3D, lod: int) -> void:
 
 
 func _make_blakherna(n: Node3D, lod: int) -> void:
-	var merl: Array = []
-	var emit := func(kind: String, size: Vector3, pos: Vector3, col: Color, pattern: String, solid: bool, tag: String) -> void:
-		match kind:
-			"merl":
-				if lod == 0:
-					Props.box(n, size, pos, col)
-			"glass":
-				Props.box(n, size, pos, col).material_override = Props.mat(Color("ffc070"), 2.2 if gece else 0.6, false, "", false)
-			"dark":
-				Props.box(n, size, pos, col)
-			_:
-				if solid and lod == 0:
-					var b := Props.solid(n, size, pos, Color.WHITE)
-					Props.set_pattern(b, col, pattern)
-				else:
-					Props.box(n, size, pos, col)
-	Blachernae.shell_parts(emit, "palace")
-	# Kabuğun üstü (havadan bakış: düz kutu kalmasın): kiremit beşik çatı, kulelerde mazgallı teras ve piramit külah,
-	# arka cephede pencere sırası
-	var tile := Color("b4532f")
-	Props.prism(n, Vector3(10.8, 3.4, 26.8), Vector3(0, 16.0 + 1.7, -21.0), tile, Vector3(0, 90, 0))
-	Props.box(n, Vector3(26.4, 0.35, 10.4), Vector3(0, 16.1, -21.0), Color("a8583a"))
-	for ox: float in [-14.4, 14.4]:
-		Props.prism(n, Vector3(5.4, 3.0, 5.4), Vector3(ox, 20.0 + 1.5, -20.0), tile.darkened(0.1), Vector3.ZERO)
-		if lod == 0:
-			for k in 4:
-				for sd: float in [-1.0, 1.0]:
-					Props.box(n, Vector3(0.7, 0.8, 0.5), Vector3(ox - 1.9 + k * 1.27, 20.4, -20.0 + sd * 2.3), Color("cdbd9e"))
-	if lod <= 1:
-		for row in 2:
-			for k in 6:
-				Props.box(n, Vector3(1.4, 2.0, 0.08), Vector3(-10.0 + k * 4.0, 7.6 + row * 4.6, -26.04), Color("1c1814"))
-		Props.cyl(n, 0.12, 2.2, Vector3(0, 20.2, -21.0), Color("d8b040"), Vector3.ZERO, 6)
-		Props.box(n, Vector3(1.2, 0.14, 0.14), Vector3(0, 20.7, -21.0), Color("d8b040"))
+	# Blakherna Sarayı (ŞEHİR-3): bölümün düz kutu kabuğu yerine saray gibi kurulur (Tekfur Sarayı dili: üç kat, kemerli
+	# pencere sıraları, revak, balkon, kırma çatı, yan kuleler, şehir yanında avlu): scripts/world/ist/sehir_eser.gd
+	ESER.palace(n, lod, gece)
 
 
 # ---------------------------------------------------------------- uzun hatlar
@@ -2018,16 +2086,52 @@ var _oyun: Array = []
 func oyun_alanlari() -> Array:
 	if not _oyun.is_empty():
 		return _oyun
-	for it: Dictionary in items:
-		if String(it["id"]) == "romanos":
-			var p: Vector3 = it["pos"]
-			var h := it["holder"] as Node3D
-			# kapının yerel −z'si şehir (surlar: dış yüz +z)
-			var inn := (h.transform.basis * Vector3(0, 0, -1)).normalized()
-			var c := Vector2(p.x, p.z) + Vector2(inn.x, inn.z) * 75.0
-			_oyun.append(Rect2(c - Vector2(45, 45), Vector2(90, 90)))
+	var hx := hub_xf()
+	if hx != Transform3D():
+		# Hub (ŞEHİR-3): mektup bölümünün şehri (ByzCity "walls" parçası) burada kurulu; alan, zemininin (90 × 80 m,
+		# yerel merkez (0, −10)) dünya dikdörtgeni (dönük zeminin sınır kutusu)
+		var lo := Vector2(INF, INF)
+		var hi := Vector2(-INF, -INF)
+		for q: Vector2 in [Vector2(-45, -50), Vector2(45, -50), Vector2(45, 30), Vector2(-45, 30)]:
+			var w := hx * Vector3(q.x, 0, q.y)
+			lo = Vector2(minf(lo.x, w.x), minf(lo.y, w.z))
+			hi = Vector2(maxf(hi.x, w.x), maxf(hi.y, w.z))
+		_oyun.append(Rect2(lo, hi - lo))
 	_oyun.append(_meydan_rect())
 	return _oyun
+
+
+## Hub'ın (Romanos Kapısı'nın iç yanı; Bölüm 6b, 7b, 10h, 12b, 23, 24) ByzCity yerel → dünya dönüşümü: bölümün iç suru
+## (yerel x = 34, 3 m kalın) v2 kara surunun iç surunun (hat ekseninde, 5 m kalın) İÇİNE gömülür, kemer kapısı (varsa)
+## v2 Romanos Kapısı'nın açıklığına denk gelir; yerel +x dışarı (sura), +z hat boyunca. Bölüm bağlayıcısı (BAĞLAMA)
+## aynı dönüşümü kullanmalı: IstSehir.active.hub_xf().
+var _hub_xf := Transform3D()
+
+func hub_xf() -> Transform3D:
+	if _hub_xf != Transform3D():
+		return _hub_xf
+	for it: Dictionary in items:
+		if String(it["id"]) != "romanos":
+			continue
+		var h := it["holder"] as Node3D
+		var outd := h.transform.basis * Vector3(0, 0, 1)
+		outd.y = 0.0
+		outd = outd.normalized()
+		var bas := Basis(outd, Vector3.UP, outd.cross(Vector3.UP))
+		var gp: Vector3 = it["pos"]
+		# bölümün kapı açıklığı (ByzCity._build_walls ile aynı hesap: eski dünyanın kapı hizası; yoksa sur kesintisiz
+		# biter: v2 kapısı bölüm surunun ucunun ötesine, yerel z 30'a)
+		var gz := 30.0
+		for g: float in World1453.LAND_GATES:
+			var lz: float = (World1453.region("byz_walls").affine_inverse() * Vector3(g, 0.0, -2.3)).z
+			if lz > -13.0 - 35.0 + 4.0 and lz < -13.0 + 35.0 - 4.0:
+				gz = lz
+		var o := Vector3(gp.x, 0, gp.z) - outd * 34.0 - bas.z * gz
+		var c := o + bas * Vector3(0, 0, -10)
+		o.y = IstGeo.h(c.x, c.z)
+		_hub_xf = Transform3D(bas, o)
+		break
+	return _hub_xf
 
 
 ## Ayasofya meydanı oyun alanı (24, 25, 26, 31o): Ayasofya'nın batısında (narteks önü), 55 × 50 m
@@ -2563,7 +2667,7 @@ func _layers2(g0: Dictionary, g1: Dictionary, g2: Dictionary) -> void:
 		var mi := MeshInstance3D.new()
 		mi.mesh = st.commit()
 		if mat:
-			mi.material_override = mat
+			mi.material_override = _cizgisiz_of(mat)
 		mi.position = cen
 		mi.visibility_range_begin = MID
 		mi.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
@@ -2581,8 +2685,10 @@ func _layers2(g0: Dictionary, g1: Dictionary, g2: Dictionary) -> void:
 			var mm := _mm(m1, g1[ck][key])
 			mm.visibility_range_begin = NEAR
 			mm.visibility_range_end = MID * 0.5
+			_cizgisiz(mm)
 		var mi := _merge_groups(g1[ck], 1, cen)
 		if mi:
+			_cizgisiz(mi)
 			mi.visibility_range_begin = NEAR
 			mi.visibility_range_end = MID
 	for ck: Vector2i in g0:

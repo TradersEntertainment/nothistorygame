@@ -303,7 +303,9 @@ static func _konstantin(n: Node3D, k: float, lod: int) -> void:
 		pass
 	var o := {"kaide_w": 7.0, "kaide_h": 6.5, "govde_r": 1.6, "govde_h": 27.0, "tambur": 8, "renk": Y.PORFIR, "cember": true,
 		"baslik": "hac", "kaide_renk": Y.MERMER, "merdiven_yon": Vector3(0, 0, 1)}
-	var r := Y.sutun(n, Vector3(0, 0.1, 0), k, o, lod)
+	# Sütun forumun meydanından iri (ŞEHİR-3: v2'de forum k 0,6 iken sütun meydanda kayboluyordu; gerçek ~50 m):
+	# sütunun ölçeği k × 1,6 (en az 0,95)
+	var r := Y.sutun(n, Vector3(0, 0.1, 0), maxf(k * 1.6, 0.95), o, lod)
 	_perch(n, Vector3(0, float(r["ust"]) - 2.2, 0))
 	_climb(n, r["merdiven_alt"], r["merdiven_ust"])
 	# iki kapı: batıda sağlam, doğuda yıkık
