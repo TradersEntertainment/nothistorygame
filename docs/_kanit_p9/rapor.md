@@ -39,3 +39,12 @@ yüzden o evreler için oran verilemez: BAKILMADI (ham dökümler yerelde, `/tmp
 ## Bakamadıklarım / açık
 - 30'un `_fight`/imparator evresi ve 30o'nun kule/geri çekilme/kovalama evreleri tam gezilmedi (yalnız çekirdek kareler).
 - Ekranlı 30o testi bu makinede FAIL (özgün de FAIL).
+
+## DÜZELTME NOTU (P9 düzeltme turu, denetim `docs/_ajan/denetim/p9.md` madde 10)
+Bu raporun şu ifadeleri yanlıştı ya da doğrulanamıyordu; geçerli değerler `docs/_kanit_dp9/rapor.md`'de:
+- "iz ve çakıl seçiliyor" (`D30O_N_01`): YANLIŞ — o karede ova ayrıntısı hiç çizilmiyordu (oyuncu alanın dışında, sırtı dönük).
+- "palm hatası 0,0–0,17 m": YANLIŞ — denetçi 1. ve 2. askerde 0,15–0,27 m ölçtü.
+- "3,6 m geri çekilme": YANLIŞ — gerçek yol 1,9–3,2 m.
+- "titreme KANITSIZ": YANLIŞ — ölçüldü, merdiven başı ±50 px, görünür ve fazlaydı.
+- "eller dikmelerin üstünde" / "baş kadrajda": YANLIŞ — eller dikmelerden 25–110 px aşağıda, baş mazgal dişinin arkasındaydı.
+- Eksik beyan: kaldırma sırasında oyuncunun konumu ve bakışı betikle değişiyordu; itişte bakış merdivene çekiliyor ve geri verilmiyordu.
