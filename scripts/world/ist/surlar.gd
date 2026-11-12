@@ -299,9 +299,10 @@ static func _inner_tower(p: Node3D, d: Dictionary, tw: Dictionary, lod: int, mer
 	var yc := HT - 0.5
 	_s(p, Vector3(x0, yf, zf - wt), Vector3(x1, yc, zf), stone, "ashlar", lod)          # ön
 	_s(p, Vector3(x0, yf, zb), Vector3(x1, yc, zb + wt), stone, "ashlar", lod)          # arka
-	var dz0 := -0.9
-	var dz1 := 0.9
-	var door_h := 2.4
+	# yürüme yolu geçidi (ŞEHİR-3: 1,8 × 2,4 m'lik kapının lentosu dilim uçlarındaki rampadan gelen oyuncuyu tutuyordu)
+	var dz0 := -1.1
+	var dz1 := 1.1
+	var door_h := 3.0
 	for sx in [0, 1]:
 		var xa: float = x0 if sx == 0 else x1 - wt
 		var xb: float = x0 + wt if sx == 0 else x1
