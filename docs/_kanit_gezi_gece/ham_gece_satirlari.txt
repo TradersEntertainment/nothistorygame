@@ -1,0 +1,153 @@
+GECE mese_00 ort=17.9 medyan=14.0 karanlik=0.27 cizim=875 ucgen=3072932
+GECE mese_01 ort=24.5 medyan=19.3 karanlik=0.23 cizim=811 ucgen=3054432
+GECE mese_02 ort=11.8 medyan=12.7 karanlik=0.09 cizim=696 ucgen=2894975
+GECE mese_03 ort=18.6 medyan=12.1 karanlik=0.35 cizim=750 ucgen=3210603
+GECE mese_04 ort=22.7 medyan=16.3 karanlik=0.23 cizim=789 ucgen=3248455
+GECE mese_05 ort=27.5 medyan=26.5 karanlik=0.09 cizim=699 ucgen=3113608
+GECE mese_06 ort=21.3 medyan=18.0 karanlik=0.08 cizim=820 ucgen=3079363
+GECE mese_07 ort=7.3 medyan=3.0 karanlik=0.77 cizim=664 ucgen=2772048
+GECE mesek_00 ort=19.5 medyan=14.2 karanlik=0.36 cizim=704 ucgen=2776531
+GECE mesek_01 ort=23.2 medyan=18.4 karanlik=0.20 cizim=796 ucgen=2766186
+GECE mesek_02 ort=23.3 medyan=20.3 karanlik=0.20 cizim=809 ucgen=2510330
+GECE mesek_03 ort=23.0 medyan=17.7 karanlik=0.18 cizim=1107 ucgen=2965052
+GECE mesek_04 ort=25.1 medyan=16.2 karanlik=0.24 cizim=1106 ucgen=2744151
+GECE mesek_05 ort=10.0 medyan=3.2 karanlik=0.77 cizim=672 ucgen=1642613
+GECE meseg_00 ort=25.1 medyan=19.6 karanlik=0.21 cizim=672 ucgen=2504352
+GECE meseg_01 ort=23.8 medyan=21.4 karanlik=0.09 cizim=558 ucgen=1904247
+GECE meseg_02 ort=26.3 medyan=22.4 karanlik=0.18 cizim=548 ucgen=2269887
+GECE meseg_03 ort=23.6 medyan=19.3 karanlik=0.17 cizim=595 ucgen=1924251
+GECE meseg_04 ort=22.4 medyan=14.1 karanlik=0.29 cizim=556 ucgen=1510017
+GECE meseg_05 ort=22.5 medyan=16.3 karanlik=0.03 cizim=612 ucgen=1355773
+GECE meseg_06 ort=7.5 medyan=3.0 karanlik=0.57 cizim=514 ucgen=1122773
+GECE meseg_07 ort=25.5 medyan=20.3 karanlik=0.10 cizim=379 ucgen=849790
+GECE ayasofya_0 ort=20.0 medyan=19.3 karanlik=0.10 cizim=526 ucgen=1116923
+GECE ayasofya_1 ort=22.2 medyan=15.0 karanlik=0.45 cizim=855 ucgen=3126121
+GECE ayasofya_2 ort=25.3 medyan=14.9 karanlik=0.11 cizim=667 ucgen=1360187
+GECE ayasofya_3 ort=14.7 medyan=3.0 karanlik=0.69 cizim=740 ucgen=2172050
+GECE augustaion_0 ort=13.4 medyan=3.0 karanlik=0.74 cizim=677 ucgen=2100235
+GECE augustaion_1 ort=15.2 medyan=3.0 karanlik=0.74 cizim=626 ucgen=1352085
+GECE augustaion_2 ort=13.9 medyan=12.7 karanlik=0.05 cizim=678 ucgen=1204795
+GECE augustaion_3 ort=20.2 medyan=18.3 karanlik=0.12 cizim=806 ucgen=3007903
+GECE konstantin_0 ort=42.7 medyan=34.7 karanlik=0.02 cizim=526 ucgen=1104098
+GECE konstantin_1 ort=29.6 medyan=14.9 karanlik=0.33 cizim=791 ucgen=3003495
+GECE konstantin_2 ort=19.1 medyan=16.1 karanlik=0.15 cizim=786 ucgen=2315952
+GECE konstantin_3 ort=40.7 medyan=34.8 karanlik=0.01 cizim=845 ucgen=1494600
+GECE konstantin_hava ort=26.1 medyan=25.2 karanlik=0.10 cizim=759 ucgen=1978347
+GECE hub_0 ort=13.3 medyan=12.7 karanlik=0.14 cizim=805 ucgen=3224996
+GECE hub_1 ort=46.0 medyan=46.9 karanlik=0.04 cizim=696 ucgen=3045744
+GECE hub_2 ort=30.0 medyan=20.2 karanlik=0.16 cizim=791 ucgen=2169830
+GECE hub_3 ort=12.7 medyan=12.7 karanlik=0.00 cizim=979 ucgen=2541414
+GECE surdisi_0 ort=14.7 medyan=11.9 karanlik=0.03 cizim=1165 ucgen=3053724
+GECE surustu_0 ort=20.7 medyan=18.3 karanlik=0.17 cizim=1242 ucgen=2201737
+GECE surdisi_1 ort=23.3 medyan=21.7 karanlik=0.05 cizim=893 ucgen=2358717
+GECE surustu_1 ort=21.9 medyan=17.6 karanlik=0.17 cizim=1868 ucgen=4553938
+GECE surdisi_2 ort=17.1 medyan=13.9 karanlik=0.01 cizim=721 ucgen=2532132
+GECE surustu_2 ort=17.4 medyan=14.4 karanlik=0.22 cizim=1311 ucgen=3239524
+GECE surdisi_3 ort=8.7 medyan=3.2 karanlik=0.79 cizim=910 ucgen=2496869
+GECE surustu_3 ort=13.2 medyan=8.0 karanlik=0.49 cizim=1114 ucgen=2323445
+GECE surdisi_4 ort=15.5 medyan=7.1 karanlik=0.39 cizim=743 ucgen=1801537
+GECE surustu_4 ort=13.5 medyan=9.5 karanlik=0.46 cizim=897 ucgen=2268030
+GECE surdisi_5 ort=14.0 medyan=11.2 karanlik=0.05 cizim=829 ucgen=1911148
+GECE surustu_5 ort=13.6 medyan=8.9 karanlik=0.36 cizim=2107 ucgen=4658355
+GECE_SU halic_neorion_a
+GECE_SU halic_neorion_b
+GECE_SU halic_prosphorion_a
+GECE_SU halic_prosphorion_b
+GECE_SU halic_venedik_a
+GECE_SU halic_venedik_b
+GECE halic_perama_a ort=12.4 medyan=7.8 karanlik=0.18 cizim=477 ucgen=1866801
+GECE halic_perama_b ort=7.1 medyan=3.0 karanlik=0.77 cizim=943 ucgen=2201233
+GECE_SU halic_zincir_a
+GECE_SU halic_zincir_b
+GECE halic_petra_a ort=9.9 medyan=12.7 karanlik=0.29 cizim=481 ucgen=1582593
+GECE halic_petra_b ort=17.1 medyan=16.2 karanlik=0.22 cizim=730 ucgen=2605660
+GECE_SU marmara_kontoskalion_a
+GECE_SU marmara_kontoskalion_b
+GECE_SU marmara_eleutherios_a
+GECE_SU marmara_eleutherios_b
+GECE_SU marmara_sarayburnu_a
+GECE_SU marmara_sarayburnu_b
+GECE_SU marmara_bukoleon_a
+GECE_SU marmara_bukoleon_b
+GECE galata_kule_a ort=4.2 medyan=3.0 karanlik=0.90 cizim=410 ucgen=1151808
+GECE galata_kule_b ort=13.0 medyan=9.4 karanlik=0.42 cizim=682 ucgen=2276588
+GECE galata_pera_a ort=22.8 medyan=20.3 karanlik=0.01 cizim=269 ucgen=997179
+GECE galata_pera_b ort=19.1 medyan=18.2 karanlik=0.07 cizim=910 ucgen=2246611
+GECE galata_sur_a ort=3.0 medyan=3.0 karanlik=1.00 cizim=379 ucgen=1111125
+GECE galata_sur_b ort=7.4 medyan=3.0 karanlik=0.78 cizim=765 ucgen=2266683
+GECE_SU galata_iskele_a
+GECE_SU galata_iskele_b
+GECE_SU galata_bakis
+GECE ordugah_otag_0 ort=5.3 medyan=3.0 karanlik=0.77 cizim=1000 ucgen=3218263
+GECE ordugah_otag_1 ort=10.0 medyan=12.7 karanlik=0.28 cizim=384 ucgen=1455579
+GECE ordugah_oba1_0 ort=24.5 medyan=23.3 karanlik=0.04 cizim=1061 ucgen=2779584
+GECE ordugah_oba1_1 ort=26.6 medyan=24.4 karanlik=0.04 cizim=351 ucgen=1369050
+GECE ordugah_oba2_0 ort=30.0 medyan=31.4 karanlik=0.01 cizim=1584 ucgen=3595590
+GECE ordugah_oba2_1 ort=25.4 medyan=20.6 karanlik=0.02 cizim=122 ucgen=387656
+GECE ordugah_oba3_0 ort=25.3 medyan=25.2 karanlik=0.17 cizim=664 ucgen=1784949
+GECE ordugah_oba3_1 ort=25.8 medyan=24.9 karanlik=0.03 cizim=1137 ucgen=2260328
+GECE ordugah_on_hat_0 ort=16.0 medyan=11.9 karanlik=0.04 cizim=1137 ucgen=3184578
+GECE ordugah_on_hat_1 ort=18.3 medyan=13.6 karanlik=0.08 cizim=1089 ucgen=1627095
+GECE ordugah_pazar_0 ort=12.2 medyan=11.3 karanlik=0.48 cizim=1569 ucgen=3602976
+GECE ordugah_pazar_1 ort=9.9 medyan=3.0 karanlik=0.54 cizim=668 ucgen=1610732
+GECE ordugah_anadolu_0 ort=22.2 medyan=21.9 karanlik=0.03 cizim=1945 ucgen=4094477
+GECE ordugah_anadolu_1 ort=21.6 medyan=17.3 karanlik=0.01 cizim=161 ucgen=487318
+GECE ordugah_rumeli_0 ort=18.9 medyan=17.1 karanlik=0.20 cizim=519 ucgen=1837939
+GECE ordugah_rumeli_1 ort=21.8 medyan=20.7 karanlik=0.06 cizim=1167 ucgen=2595519
+GECE hava_0 ort=27.9 medyan=23.9 karanlik=0.05 cizim=921 ucgen=2498469
+GECE hava_1 ort=32.6 medyan=28.1 karanlik=0.03 cizim=584 ucgen=1931942
+GECE hava_2 ort=31.4 medyan=26.4 karanlik=0.03 cizim=1000 ucgen=3596051
+GECE_SU hava_3
+GECE hava_4 ort=32.3 medyan=26.9 karanlik=0.11 cizim=1590 ucgen=4293727
+GECE_SU hava_5
+GECE_SU hava_6
+GECE hava_7 ort=23.9 medyan=15.7 karanlik=0.11 cizim=1013 ucgen=2970117
+GECE izgara_000a ort=12.8 medyan=11.9 karanlik=0.14 cizim=2199 ucgen=4629190
+GECE izgara_000b ort=8.5 medyan=7.0 karanlik=0.38 cizim=194 ucgen=340505
+GECE izgara_001a ort=3.4 medyan=3.0 karanlik=0.93 cizim=882 ucgen=2367402
+GECE izgara_001b ort=6.6 medyan=3.0 karanlik=0.61 cizim=439 ucgen=790847
+GECE izgara_002a ort=10.5 medyan=4.1 karanlik=0.63 cizim=698 ucgen=1089258
+GECE izgara_002b ort=3.5 medyan=3.0 karanlik=0.99 cizim=914 ucgen=2126462
+GECE izgara_003a ort=3.1 medyan=3.0 karanlik=1.00 cizim=602 ucgen=1023012
+GECE izgara_003b ort=3.1 medyan=3.0 karanlik=1.00 cizim=1206 ucgen=3197891
+GECE izgara_004a ort=3.0 medyan=3.0 karanlik=1.00 cizim=830 ucgen=1611702
+GECE izgara_004b ort=5.9 medyan=4.1 karanlik=0.63 cizim=1029 ucgen=2453947
+GECE izgara_005a ort=17.0 medyan=20.0 karanlik=0.24 cizim=1095 ucgen=2551652
+GECE izgara_005b ort=16.7 medyan=16.8 karanlik=0.19 cizim=1087 ucgen=1812839
+GECE izgara_006a ort=3.5 medyan=3.0 karanlik=0.97 cizim=1249 ucgen=3323031
+GECE izgara_006b ort=3.8 medyan=3.0 karanlik=0.93 cizim=811 ucgen=1445208
+GECE izgara_007a ort=18.9 medyan=13.4 karanlik=0.05 cizim=955 ucgen=2430332
+GECE izgara_007b ort=22.1 medyan=15.9 karanlik=0.12 cizim=640 ucgen=1720952
+GECE izgara_008a ort=22.6 medyan=21.5 karanlik=0.03 cizim=1130 ucgen=2465980
+GECE izgara_008b ort=30.7 medyan=17.9 karanlik=0.08 cizim=921 ucgen=2583042
+GECE izgara_009a ort=16.2 medyan=15.6 karanlik=0.25 cizim=639 ucgen=2259156
+GECE izgara_009b ort=26.0 medyan=21.8 karanlik=0.04 cizim=1244 ucgen=3537577
+GECE izgara_010a ort=11.2 medyan=3.0 karanlik=0.55 cizim=604 ucgen=2680498
+GECE izgara_010b ort=26.1 medyan=25.5 karanlik=0.05 cizim=1350 ucgen=4022042
+GECE izgara_011a ort=21.8 medyan=21.5 karanlik=0.07 cizim=801 ucgen=3278666
+GECE izgara_011b ort=19.1 medyan=22.7 karanlik=0.17 cizim=755 ucgen=2225853
+GECE izgara_012a ort=18.0 medyan=16.5 karanlik=0.09 cizim=1337 ucgen=4270168
+GECE izgara_012b ort=22.8 medyan=21.4 karanlik=0.08 cizim=183 ucgen=1108992
+GECE izgara_013a ort=13.1 medyan=10.7 karanlik=0.10 cizim=56 ucgen=333247
+GECE izgara_013b ort=16.7 medyan=15.6 karanlik=0.33 cizim=1690 ucgen=4116615
+GECE izgara_014a ort=21.0 medyan=18.4 karanlik=0.08 cizim=517 ucgen=1206687
+GECE izgara_014b ort=18.5 medyan=13.3 karanlik=0.33 cizim=805 ucgen=2325320
+GECE izgara_015a ort=17.2 medyan=18.4 karanlik=0.18 cizim=930 ucgen=2936462
+GECE izgara_015b ort=38.0 medyan=43.5 karanlik=0.06 cizim=427 ucgen=1189625
+GECE izgara_016a ort=4.0 medyan=3.0 karanlik=0.96 cizim=954 ucgen=3370490
+GECE izgara_016b ort=18.7 medyan=16.5 karanlik=0.21 cizim=605 ucgen=1402910
+GECE izgara_017a ort=21.7 medyan=18.3 karanlik=0.07 cizim=828 ucgen=2796321
+GECE izgara_017b ort=14.9 medyan=15.6 karanlik=0.24 cizim=1205 ucgen=2280161
+GECE izgara_018a ort=22.8 medyan=21.7 karanlik=0.16 cizim=932 ucgen=2321629
+GECE izgara_018b ort=20.5 medyan=19.3 karanlik=0.19 cizim=1249 ucgen=3925763
+GECE izgara_019a ort=11.3 medyan=5.6 karanlik=0.48 cizim=908 ucgen=2645793
+GECE izgara_019b ort=41.4 medyan=42.5 karanlik=0.12 cizim=999 ucgen=3514020
+GECE izgara_020a ort=18.5 medyan=18.7 karanlik=0.26 cizim=984 ucgen=2032318
+GECE izgara_020b ort=6.2 medyan=3.8 karanlik=0.67 cizim=820 ucgen=2827013
+GECE izgara_021a ort=16.4 medyan=12.1 karanlik=0.05 cizim=906 ucgen=2434045
+GECE izgara_021b ort=14.8 medyan=10.1 karanlik=0.09 cizim=1204 ucgen=2481261
+GECE izgara_022a ort=22.3 medyan=22.7 karanlik=0.05 cizim=1043 ucgen=3531078
+GECE izgara_022b ort=24.0 medyan=24.1 karanlik=0.03 cizim=714 ucgen=2270976
+GECE izgara_023a ort=21.8 medyan=20.6 karanlik=0.05 cizim=1450 ucgen=4844564
+GECE izgara_023b ort=18.9 medyan=17.9 karanlik=0.16 cizim=802 ucgen=3688044
+GECE izgara_024a ort=17.4 medyan=17.0 karanlik=0.25 cizim=1056 ucgen=3991354
