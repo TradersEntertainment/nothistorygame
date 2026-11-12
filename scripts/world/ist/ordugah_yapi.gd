@@ -173,7 +173,7 @@ static func build_otag(host: Node3D, k: float, lod: int) -> void:
 		ring.append(Transform3D(Basis.from_euler(Vector3(0, -a, 0)).scaled(Vector3(s, 1.35, s)), p))
 		cols.append(K.ton(Color("f1ead6"), r, 0.04))
 		cloth.solid_cyl(p + Vector3(0, 1.6, 0), s * 0.97, 3.2)
-	K.mm(host, K.tent_mesh("yuvarlak"), ring, cols, "ring", "plaster", true)
+	K.mm(host, K.tent_mesh("can"), ring, cols, "ring", "", true)
 	cloth.done(host, "bez")
 	wood.done(host, "ahsap")
 	earth.done(host, "zemin")
@@ -324,7 +324,7 @@ static func build_batarya(host: Node3D, k: float, lod: int, tohum := 7, opt := {
 	tr.append(Transform3D(Basis.from_euler(Vector3(0, 0.3, 0)).scaled(Vector3(2.2, 1.2, 2.2)), Vector3(W * 0.5 - 6.0, 0, -D / 2.0 - 8.0)))
 	tc.append(K.BEZ)
 	cl.solid_cyl(Vector3(W * 0.5 - 6.0, 1.4, -D / 2.0 - 8.0), 2.15, 2.8)
-	K.mm(host, K.tent_mesh("yuvarlak"), tr, tc, "usta_cadiri", "plaster", true)
+	K.mm(host, K.tent_mesh("koni"), tr, tc, "usta_cadiri", "", true)
 	# Sancak
 	var sf := B.new()
 	sancak(wood, sf, Vector3(W * 0.5 - 1.2, TH, 0.5), 5.0, K.KIRMIZI)
@@ -428,19 +428,13 @@ static func _araba(w: B, p: Vector3, yaw: float, r: RandomNumberGenerator) -> vo
 
 
 static func _okuz(w: B, p: Vector3, yaw: float, r: RandomNumberGenerator) -> void:
-	var d := Vector3.UP
-	var f := func(v: Vector3) -> Vector3:
-		return p + v.rotated(d, deg_to_rad(yaw))
+	# CANLI (kalite notu 32): kesit halkalarından örülmüş öküz (canli_kit); kutu parça yok. RNG tüketimi aynı (1 randf).
+	const CK = preload("res://scripts/world/ist/canli_kit.gd")
 	var col := Color("6e5238").lerp(Color("a08462"), r.randf())
-	w.box(f.call(Vector3(0, 1.0, 0)), Vector3(0.9, 0.95, 2.1), col, yaw)
-	w.box(f.call(Vector3(0, 1.15, 1.35)), Vector3(0.55, 0.55, 0.6), col.darkened(0.1), yaw)
-	w.box(f.call(Vector3(0, 1.35, -0.3)), Vector3(0.5, 0.3, 0.6), col.lightened(0.05), yaw)         # hörgüç
-	for sx in [-1, 1]:
-		w.box(f.call(Vector3(sx * 0.35, 1.5, 1.45)), Vector3(0.5, 0.07, 0.07), Color("eee6d0"), yaw, Vector3(0, 0, sx * 25))
-		for sz in [-0.7, 0.7]:
-			w.box(f.call(Vector3(sx * 0.28, 0.35, sz)), Vector3(0.18, 0.7, 0.18), col.darkened(0.2), yaw)
-	w.box(f.call(Vector3(0, 1.45, 0.9)), Vector3(1.0, 0.1, 0.12), K.AHSAP2, yaw)         # boyunduruk
-	w.solid_box(f.call(Vector3(0, 0.95, 0.2)), Vector3(1.0, 1.9, 2.6), yaw)
+	var hs := absi(int(p.x * 13.0 + p.z * 7.0))
+	var pz := "dur" if hs % 4 != 3 else "otla"
+	CK.bld_ekle(w, "okuz", p, yaw, {"renk": col, "poz": pz, "bas_yaw": float(hs % 5 - 2) * 12.0, "takim": ["boyunduruk"], "tohum": hs})
+	w.solid_box(p + Vector3(0, 0.95, 0.2).rotated(Vector3.UP, deg_to_rad(yaw)), Vector3(1.0, 1.9, 2.6), yaw)
 
 
 # ------------------------------------------------------------------ Şahi topu bataryası

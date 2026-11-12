@@ -38,6 +38,7 @@ const TIP := {
 	"esir": [Color("6a6a62"), "none", "", "sit_ground", "C"],   # esir (sivil, başı açık)
 	"tuccar": [Color("3a6a8a"), "turban", "", "", "C"],     # çerçi/tüccar (sivil)
 	"alici": [BEJ, "azap", "", ""],                  # pazarda gezinen asker
+	"sohbet": [BEJ, "turban", "", ""],               # ORDUGÂH-5: ocak başında ayakta konuşan (silahsız)
 }
 
 ## Hafif figürde başlık rengi

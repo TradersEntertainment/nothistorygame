@@ -52,11 +52,18 @@ func kur(plan: Array) -> void:
 		st.begin(Mesh.PRIMITIVE_TRIANGLES)
 		var rmax := 0.0
 		var n := 0
+		var ates_x: Array = []
 		for i: int in by[ck]:
 			var it: Dictionary = items[i]
 			var host := _kur_host(i, 2)
 			var base := Transform3D(Basis(Vector3.UP, float(it["yaw"])), Vector3((it["pos"] as Vector2).x - cen.x, float(it["y"]), (it["pos"] as Vector2).y - cen.y))
 			n += _pisir(host, host, base, st)
+			# ORDUGÂH-5: gece uzak katmanda ocaklar ışıyan nokta (hücre başına tek çoklu ağ hale; ufka kadar ateş)
+			if gece and host.has_meta("ates"):
+				for fp: Vector2 in host.get_meta("ates"):
+					var wp := base * Vector3(fp.x, 0.0, fp.y)
+					var gy := IstGeo.h(cen.x + wp.x, cen.y + wp.z)
+					ates_x.append(Transform3D(Basis().scaled(Vector3.ONE * 7.0), Vector3(wp.x, gy + 0.9, wp.z)))
 			host.free()
 			rmax = maxf(rmax, (it["pos"] as Vector2).distance_to(cen) + float(it["r"]))
 		var mi := MeshInstance3D.new()
@@ -68,6 +75,9 @@ func kur(plan: Array) -> void:
 		mi.position = Vector3(cen.x, 0, cen.y)
 		mi.set_meta("no_walk", true)
 		add_child(mi)
+		if not ates_x.is_empty():
+			var g := Flame.scatter_glows(mi, ates_x, 1.25)
+			g.name = "uzak_ateş"
 		hucreler.append({"c": cen, "r": rmax, "mi": mi, "idx": by[ck], "yakin": false})
 	uzak_ms = Time.get_ticks_msec() - t0
 	print("ISTORDU uzak_hucre=%d ms=%d" % [hucreler.size(), uzak_ms])
@@ -192,6 +202,8 @@ func _planla() -> void:
 			var want := 2
 			var cur: int = it["lod"]
 			var k0 := lod0_m + r
+			if it["kind"] == "kanat":
+				k0 = 75.0 + r          # ORDUGÂH-5: kumaş çadırlar yakında ~600 üçgen; çadır kanadı yakın katmana daha geç girer
 			if cur == 0:
 				k0 *= 1.15
 			if h["yakin"]:

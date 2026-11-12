@@ -9,6 +9,8 @@ extends RefCounted
 ## kapı sancağı (−7,5, 9,1, 17,5).
 
 const K = preload("res://scripts/world/ist/ordugah_kit.gd")
+const CD = preload("res://scripts/world/ist/ordugah_cadir.gd")
+const OC = preload("res://scripts/world/ist/ordugah_ocak.gd")
 const B = K.Bld
 const Y = preload("res://scripts/world/ist/ordugah_yapi.gd")
 const KS = preload("res://scripts/world/ist/ordugah_kisi.gd")
@@ -31,18 +33,16 @@ static func build(host: Node3D, k: float, lod: int) -> void:
 	var kz := Y.kk(k)
 	var kisi: Array = []
 	var fires: Array = []
+	var duman_pts: Array = []
 	# --- zemin: zokak içi çiğnenmiş toprak + halı yolları
 	earth.box(Vector3(0, 0.08, 0), Vector3(ZX * 2.0 - 1.0, 0.16, ZZ * 2.0 - 1.0), Color("8d7a58"))
 	earth.solid_box(Vector3(0, 0.08, 0), Vector3(ZX * 2.0 - 1.0, 0.16, ZZ * 2.0 - 1.0))
 	# --- ana otağ (kırmızı-altın, alem küre)
-	cloth.cylp(Vector3(0, 2.5, 0), R, 5.0, K.KIRMIZI, 18)
-	cloth.cylp(Vector3(0, 7.0, 0), R + 0.7, 4.2, K.KIRMIZI.lightened(0.05), 18, 0.5)
-	cloth.cylp(Vector3(0, 0.3, 0), R + 0.03, 0.55, K.ALTIN, 18)
-	cloth.cylp(Vector3(0, 5.05, 0), R + 0.05, 0.4, K.ALTIN, 18)
+	# ORDUGÂH-5: kumaş otağ (sarkık kırmızı çatı, taraklı altın saçak, ip-kazık, açık kapı ve içi; ordugah_cadir.gd "otag")
+	CD.ekle(host, "otag", Transform3D(Basis().scaled(Vector3(R, 1.0, R)), Vector3(0, 0.06, 0)), Color.WHITE, lod, "otag_cadiri")
 	cloth.cylp(Vector3(0, 9.6, 0), 0.09, 2.6, K.ALTIN, 6)
 	cloth.sph(Vector3(0, 11.0, 0), 0.4, K.ALTIN, 6)
 	cloth.sph(Vector3(0, 11.62, 0), 0.14, K.ALTIN, 4)
-	cloth.box(Vector3(0, 1.7, R + 0.04), Vector3(2.4, 3.4, 0.14), K.KOYU)
 	cloth.box(Vector3(-1.4, 1.9, R + 0.08), Vector3(0.28, 3.8, 0.12), K.ALTIN)
 	cloth.box(Vector3(1.4, 1.9, R + 0.08), Vector3(0.28, 3.8, 0.12), K.ALTIN)
 	cloth.box(Vector3(0, 3.7, R + 0.08), Vector3(3.1, 0.28, 0.12), K.ALTIN)
@@ -56,9 +56,6 @@ static func build(host: Node3D, k: float, lod: int) -> void:
 			cloth.box(wp, Vector3(1.5, 2.8, 0.06), K.KREM, yaw)
 			cloth.box(wp, Vector3(1.0, 2.0, 0.08), K.LACI, yaw)
 			cloth.box(wp + Vector3(0, 1.0, 0), Vector3(0.7, 0.7, 0.09), K.ALTIN, yaw, Vector3(0, 0, 45))
-		for i in 18:
-			var a2 := TAU * i / 18.0
-			cloth.rod(Vector3(cos(a2) * (R + 0.72), 5.05, sin(a2) * (R + 0.72)), Vector3(cos(a2) * 0.55, 9.1, sin(a2) * 0.55), 0.09, K.ALTIN.darkened(0.15))
 	cloth.solid_cyl(Vector3(0, 3.0, 0), R + 0.1, 6.0)
 	cloth.solid_cyl(Vector3(0, 8.0, 0), 4.0, 4.0)
 	cloth.solid_cyl(Vector3(0, 11.0, 0), 0.5, 1.2)
@@ -80,33 +77,26 @@ static func build(host: Node3D, k: float, lod: int) -> void:
 	# --- divan çadırları (iki yan, kırmızı çatma)
 	for sx2 in [-18.0, 18.0]:
 		var pos := Vector3(sx2, 0, 6.0)
-		cloth.box(pos + Vector3(0, 1.3, 0), Vector3(9.0, 2.6, 5.6), K.KIRMIZI2)
-		cloth.prism(B.xf(pos + Vector3(0, 2.6, 0)), Vector3(9.6, 2.0, 6.2), K.KIRMIZI)
-		cloth.box(pos + Vector3(0, 2.62, 0), Vector3(9.7, 0.1, 0.25), K.ALTIN)
-		cloth.box(pos + Vector3(0, 1.1, 2.82), Vector3(2.0, 2.2, 0.08), K.KOYU)
+		CD.ekle(host, "pasa", Transform3D(Basis().scaled(Vector3(9.0, 0.82, 5.6)), pos + Vector3(0, 0.06, 0)), Color.WHITE, lod, "divan")
 		cloth.solid_box(pos + Vector3(0, 2.3, 0), Vector3(9.2, 4.6, 5.8))
 		kisi.append([pos + Vector3(-1.6, 0, 3.6), 0.0, "nobet"])
 		kisi.append([pos + Vector3(1.6, 0, 3.6), 0.0, "nobet"])
 	# --- hazine (krem yuvarlak, sırma bant), kilar (krem çatma), kurba (koyu küçük kubbe), mutfak (turuncu, duman deliği)
 	var tp := Vector3(0, 0, -R - 9.0)
-	cloth.cylp(tp + Vector3(0, 1.4, 0), 3.6, 2.8, K.KREM, 14)
-	cloth.cylp(tp + Vector3(0, 3.6, 0), 3.8, 1.8, K.KREM.darkened(0.08), 14, 0.2)
-	cloth.cylp(tp + Vector3(0, 1.6, 0), 3.62, 0.25, K.ALTIN, 14)
+	CD.ekle(host, "can", Transform3D(Basis().scaled(Vector3(3.6, 1.15, 3.6)), tp + Vector3(0, 0.06, 0)), K.KREM, lod, "hazine")
 	cloth.solid_cyl(tp + Vector3(0, 2.2, 0), 3.7, 4.4)
 	kisi.append([tp + Vector3(-1.2, 0, 4.4), 0.0, "nobet"])
 	kisi.append([tp + Vector3(1.2, 0, 4.4), 0.0, "nobet"])
 	var kl := Vector3(26.0, 0, -14.0)
-	cloth.box(kl + Vector3(0, 1.0, 0), Vector3(8.0, 2.0, 5.0), K.KREM.darkened(0.05))
-	cloth.prism(B.xf(kl + Vector3(0, 2.0, 0)), Vector3(8.4, 1.8, 5.4), Color("d9ccaa"))
+	CD.ekle(host, "catma", Transform3D(Basis().scaled(Vector3(8.0, 1.15, 5.0)), kl + Vector3(0, 0.06, 0)), Color("e4d8b8"), lod, "kilar")
 	cloth.solid_box(kl + Vector3(0, 1.8, 0), Vector3(8.2, 3.6, 5.2))
 	var hm := Vector3(26.0, 0, 6.0) if false else Vector3(28.0, 0, -24.0)
 	cloth.cylp(hm + Vector3(0, 1.0, 0), 2.6, 2.0, Color("8f8064"), 12)
 	cloth.sph(hm + Vector3(0, 2.0, 0), 2.6, Color("7a6c54"), 10, Vector3(1, 0.6, 1))
 	cloth.solid_cyl(hm + Vector3(0, 1.5, 0), 2.7, 3.0)
 	var mu := Vector3(-26.0, 0, -16.0)
-	cloth.box(mu + Vector3(0, 1.2, 0), Vector3(10.0, 2.4, 6.0), TURUNCU)
-	cloth.prism(B.xf(mu + Vector3(0, 2.4, 0)), Vector3(10.4, 2.0, 6.4), TURUNCU.darkened(0.08))
-	cloth.box(mu + Vector3(0, 4.42, 0), Vector3(1.6, 0.06, 0.9), K.KOYU)      # duman deliği
+	CD.ekle(host, "buyuk", Transform3D(Basis().scaled(Vector3(10.0, 1.0, 6.0)), mu + Vector3(0, 0.06, 0)), TURUNCU.lightened(0.15), lod, "mutfak")
+	duman_pts.append(mu + Vector3(0, 3.4, 0))      # tepe ortasında duman (mutfak)
 	cloth.solid_box(mu + Vector3(0, 2.2, 0), Vector3(10.2, 4.4, 6.2))
 	for i in 3:
 		var kp := mu + Vector3(-3.4 + i * 3.4, 0, 5.2)
@@ -120,8 +110,7 @@ static func build(host: Node3D, k: float, lod: int) -> void:
 	kisi.append([mu + Vector3(-6.2, 0, 2.0), PI / 2.0, "balta"])
 	# namazgâh (ak-yeşil küçük çadır, önünde saf)
 	var nz := Vector3(-27.0, 0, 8.0)
-	cloth.box(nz + Vector3(0, 1.1, 0), Vector3(6.0, 2.2, 4.0), K.KREM)
-	cloth.prism(B.xf(nz + Vector3(0, 2.2, 0)), Vector3(6.4, 1.6, 4.4), K.YESIL)
+	CD.ekle(host, "catma", Transform3D(Basis().scaled(Vector3(6.0, 1.0, 4.0)), nz + Vector3(0, 0.06, 0)), Color("f1ead6"), lod, "namazgah")
 	cloth.solid_box(nz + Vector3(0, 1.8, 0), Vector3(6.2, 3.6, 4.2))
 	for i in 5:
 		kisi.append([nz + Vector3(-2.4 + i * 1.2, 0, 3.6), 0.0, "namaz"])
@@ -168,8 +157,9 @@ static func build(host: Node3D, k: float, lod: int) -> void:
 		if p2.y > ZZ and absf(p2.x) < 22.0:
 			continue          # kapı önü açık (tuğ ve mehterhane)
 		var cap := r.randf_range(5.0, 7.6)
-		var hs := r.randf_range(1.15, 1.45)
-		ring_x.append(Transform3D(Basis.from_euler(Vector3(0, -a + PI / 2.0, 0)).scaled(Vector3(cap * 0.5, hs, cap * 0.5)), Vector3(p2.x, K.gy(p2.x, p2.y) - 0.1, p2.y)))
+		var hs := r.randf_range(0.95, 1.15)
+		# ORDUGÂH-5: çan çadır (yeniçeri orta çadırı), kapı (+z) dışa, kazana bakar
+		ring_x.append(Transform3D(Basis(Vector3.UP, atan2(dir.x, dir.y)).scaled(Vector3(cap * 0.5, hs, cap * 0.5)), Vector3(p2.x, K.gy(p2.x, p2.y) - 0.1, p2.y)))
 		ring_c.append(K.ton(OB._sec(r, pal), r, 0.03))
 		shapes.append(Vector3(p2.x, cap * 0.5, p2.y))
 		if i % 2 == 0:
@@ -184,7 +174,7 @@ static func build(host: Node3D, k: float, lod: int) -> void:
 				var pp := kp2 + Vector2.from_angle(aa) * 2.1
 				var fc := kp2 - pp
 				kisi.append([Vector3(pp.x, K.gy(pp.x, pp.y), pp.y), atan2(fc.x, fc.y), "otur" if q != 0 else "asci"])
-	K.mm(host, K.tent_mesh("yuvarlak" if lod == 0 else "sade"), ring_x, ring_c, "ring", "plaster", lod == 0)
+	K.mm(host, K.tent_lod("can", lod), ring_x, ring_c, "ring", "", lod == 0)
 	if lod == 0:
 		for s: Vector3 in shapes:
 			cloth.solid_cyl(Vector3(s.x, K.gy(s.x, s.z) + 1.6, s.z), s.y * 0.97, 3.2)
@@ -201,7 +191,10 @@ static func build(host: Node3D, k: float, lod: int) -> void:
 	sb.done(host, "dir")
 	sf.done(host, "flama")
 	KS.kur(host, kisi, lod)
-	K.ateslar(host, fires, lod)
+	K.ateslar(host, fires, lod, 0.22, true)
+	for f2: Vector2 in fires:
+		duman_pts.append(Vector3(f2.x, K.gy(f2.x, f2.y), f2.y))
+	OC.duman(host, duman_pts, lod, r)
 	if K.gece and lod <= 1:
 		var fx: Array = []
 		for i in 8:

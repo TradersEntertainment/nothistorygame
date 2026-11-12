@@ -212,14 +212,8 @@ static func figure_mesh() -> ArrayMesh:
 
 ## At (basit).
 static func horse_mesh() -> ArrayMesh:
-	var parts := [
-		[_boxm(Vector3(0.5, 0.6, 1.5)), _t(Vector3(0, 1.3, 0)), Color.WHITE],
-		[_boxm(Vector3(0.3, 0.7, 0.35)), _t(Vector3(0, 1.75, 0.8), Vector3(-0.6, 0, 0)), Color.WHITE],
-		[_boxm(Vector3(0.25, 0.3, 0.55)), _t(Vector3(0, 2.05, 1.05)), Color.WHITE],
-	]
-	for p in [Vector3(-0.18, 0.5, 0.55), Vector3(0.18, 0.5, 0.55), Vector3(-0.18, 0.5, -0.55), Vector3(0.18, 0.5, -0.55)]:
-		parts.append([_cyl(0.07, 1.0, -1.0, 4), _t(p), Color.WHITE.darkened(0.2)])
-	return merged(parts)
+	# CANLI (kalite notu 32): canli_kit atı (orta katman, açık post; örnek rengi boyar). Kutu parça yok.
+	return preload("res://scripts/world/ist/canli_kit.gd").mesh("at", 1, {"renk": Color(0.92, 0.9, 0.86), "poz": "dur"})
 
 
 ## Uzaktaki kule ya da ev (ufuk dolgusu).
