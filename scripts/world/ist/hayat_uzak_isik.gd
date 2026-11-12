@@ -36,6 +36,7 @@ void fragment() {
 }
 """
 
+const ORAN := {"carsi": 0.42, "liman": 0.38, "sik": 0.34, "sur_dibi": 0.3}
 const R_PENCERE := Color(1.0, 0.72, 0.34)
 const R_ATES := Color(1.0, 0.52, 0.16)
 
@@ -68,8 +69,7 @@ static func kur(parent: Node3D, K: Dictionary, sokak: IstSokak) -> Dictionary:
 			n += 1
 			var c: Vector2 = h["c"]
 			var on: Vector2 = h["on"]
-			var mah := IstGeo.mahalle(c.x, c.y)
-			var oran := {"carsi": 0.42, "liman": 0.38, "sik": 0.34, "sur_dibi": 0.3}.get(String(mah.get("tur", "")), 0.18) as float
+			var oran := float(ORAN.get(String(sokak._mah(c).get("tur", "")), 0.18))
 			if float((n * 7919 + 13) % 1000) / 1000.0 > oran:
 				continue
 			var dm := IstEvler.dims(int(h["v"]))

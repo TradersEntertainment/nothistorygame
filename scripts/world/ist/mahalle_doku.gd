@@ -1082,7 +1082,26 @@ func _planla(cp: Vector3) -> void:
 			dc["body"] = null
 
 
+## DOKU-4: kare başına iş süresi (uçuş takılması payı); çıkışta ISTPROF satırı
+var _prof := {"n": 0, "ust16": 0, "ust33": 0, "en_ms": 0.0}
+
+func _exit_tree() -> void:
+	print("ISTPROF mahalle_doku ", _prof)
+
+
 func _process(dt: float) -> void:
+	var tp := Time.get_ticks_usec()
+	_process_ic(dt)
+	var ms := (Time.get_ticks_usec() - tp) / 1000.0
+	_prof["n"] += 1
+	if ms > 16.0:
+		_prof["ust16"] += 1
+	if ms > 33.0:
+		_prof["ust33"] += 1
+	_prof["en_ms"] = maxf(_prof["en_ms"], snappedf(ms, 0.1))
+
+
+func _process_ic(dt: float) -> void:
 	_son_kontrol -= dt
 	if _son_kontrol <= 0.0:
 		_son_kontrol = 0.4
