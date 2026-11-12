@@ -5,7 +5,7 @@
 ![p01](p01_38o_once_sonra_oyuncu_kamerasi.jpg)
 
 `p01_38o_once_sonra_oyuncu_kamerasi.jpg` — oyuncunun gerçek kamerası (merdivenin ayağında çömelmiş, bot bakışı), tutma
-sayacı **38 sn** iki karede de; ekranlı koşu, `PACE=1`, 1280×720, kırpılıp 2× büyütüldü. ÖNCE = taban kodu (depo dışında
+sayacı **38 sn** iki karede de (tutma başlangıcından +6,6 sn; ikisi de sonda koşusunun oyuncu kamerası karesi, kamera oynatılmadı); ekranlı koşu, `PACE=1`, 1280×720, kırpılıp 2× büyütüldü. ÖNCE = taban kodu (depo dışında
 `git show` kopyası), SONRA = bu dal.
 
 - ÖNCE: iki tayfa merdivenin ucundan yukarıda, gökyüzünde; bacakları merdivenin dışında, hiçbir şeye değmiyor
@@ -66,8 +66,8 @@ merdivenin ortasında `queue_free` ile birden kayboluyordu.
 ### A. Ortak tırmanma animasyonu — DÜZELDİ (38o'da karede; öbür yerlerde ölçüyle, karede KISMEN)
 `scripts/npc/climb_anim.gd` (yeni; `class_name` yok, `preload` ile). Kişinin çocuğu olarak eklenir, kişinin
 `_process`'inden sonra çalışır, Rig'i `lock` ile durdurur:
-- Kök merdivene paralel (`Basis(sağ, up_dir, −front_dir)`), göğüs merdiven düzlemine ~0,20 m (`hip_out` 0,48; kısa kollu
-  askerde 0,45), gövde merdivene 2° eğik.
+- Kök merdivene paralel (`Basis(sağ, up_dir, −front_dir)`), göğüs merdiven düzlemine ~0,20 m (`hip_out` 0,47; kısa kollu
+  askerde 0,42), gövde merdivene 2° eğik.
 - Eller `Rig.reach` (oyunun var olan kol IK'si) ile **gerçek basamaklara** (basamak ekseninin 4 cm önü, 2,5 cm üstü),
   ayaklar yeni iki kemikli bacak IK'si (`_leg_reach`) ile **gerçek basamaklara** (taban basamağın üstünde, bilek merdivene
   paralel). Basamak yerleri `Ladder.RUNG/WIDTH` ya da `set_line(dip, tepe, ön, ilk basamak, aralık, genişlik, çerçeve)`.
@@ -122,4 +122,62 @@ saniyede bir satır). Susturma işareti yok. Test paketinde `climbaudit=` sütun
 
 ## 5. Testler
 
-(aşağıdaki bölüm koşular bitince dolduruldu)
+- `parse_check`: **PASS** (249 betik).
+- Başsız paket, son kodla (`8cfc996a` + bu dal, son kayıt): değişen ve bağlanan bütün bölümlerin `tests/run_tests.sh`'taki
+  **bütün varyantları** — 38o (4), 30 (4), 30o (4), 33o (3), 42b (2), 29o (2) ve ortak dosyaları (assault, blachernae,
+  duellocu, oyuncu merdiveni) kullanan 0, 20 (7), 20o (10), 21 (6), 22 (7), 22o (6), 25 (7), 26 (14), 26o (5), 28o (4),
+  29 (2), 31o (4), 32o (7), 36b (2), 37o (3), 41o (2): **106 koşu, 106 `AUTOTEST PASS`**, `--max-fps 20`.
+- **`CLIMBAUDIT`: 106 koşunun hepsinde 0 satır.** (Ara koşularda çıkan aşımlar — asker kol erişimi, 30o tepeden bakış,
+  Blakherna 0,061 — düzeltildi; son paket bunlardan sonra baştan koşuldu.)
+- Öbür yasak satırlar (son pakette 3 koşuda birer satır; üçü de tabanla karşılaştırıldı):
+  - `30o =lose`: `ARMAUDIT unarmed foe_dist=2.1` (1 satır). Aynı varyant bu dalda 6 koşunun 2'sinde çıktı, taban
+    kopyasında 3 koşunun 0'ında. Merdiven elleriyle (eşyanın cebe girip çıkışı) ilişkili olabilir; nedenini bulamadım.
+    **AÇIK / KANITSIZ** (bu dalın getirdiği aralıklı bir hata olma olasılığı var).
+  - `42b =lose`: `VISAUDIT overlap` iki `CityLife{carry}` yayası, kuşatma ovasında (-44, 0, -44): tırmanmayla ilgisiz;
+    tabanda bu koşu temiz çıktı, aralıklı sayıyorum (KANITSIZ).
+  - `20 =hit`: `VISAUDIT sunk` düellocu (sur yolunda, tırmanış dışı); tabanda aynı varyantta başka bir `VISAUDIT
+    personhidden` çıktı: bölüm aralıklı.
+- Hücum sahnesinde (assault) ara koşularda bu dalın getirdiği `VISAUDIT insolid` (genel hatta ilk karede kişinin dünya
+  ortasına konup oradan merdivene geçmesi) ve `VISAUDIT overlap` (aynı merdivende tepede sıkışma; ucuz sürümde kökün
+  mantık yerine sıçraması) bulundu ve düzeltildi; son pakette 20/26/26o'da bu satırlar yok.
+
+### Performans (RINFO, ekranlı, `PACE=1 --hitchaudit`)
+38o tutma evresi, tutma başlangıcından sonraki ilk üç örnek (ÖNCE taban | SONRA son kod):
+
+| örnek | çizim | üçgen (prims) | proc |
+|---|---|---|---|
+| 1 | 2773 → 2693 | 2090k → 2083k | 1197 → 822 ms |
+| 2 | 2743 → 2645 | 2080k → 2045k | 1123 → 783 ms |
+| 3 | 2701 → 2599 | 2058k → 2019k | 955 → 646 ms |
+
+Hücum (20, assault 24 tırmanan, oyun saatine hizalı t=5…15):
+
+| t | çizim | üçgen | proc (kare süresi) |
+|---|---|---|---|
+| 5 | 5280 → 5275 | 7745k → 7757k (+0,2%) | 1309 → 1464 ms |
+| 9 | 5397 → 5393 | 7924k → 7946k (+0,3%) | 1397 → 1516 ms |
+| 13 | 6191 → 6123 | 8246k → 8181k | 1351 → 1828 ms |
+
+Çizim artmadı, üçgen en çok +0,3% (yeni ağ yok; animasyon yalnız düğüm döndürür). Kare süresi bu makinede (yazılım
+çizim, xvfb) çok gürültülü; hücumda SONRA 9–35% yüksek çıktı. Ölçülen kişi başı maliyet (`tests/_tmp` sondası, 2000
+tekrar): tam sürüm poz 17–19 µs + denetim 7 µs; eski sabit poz (Rig) 10–11 µs. 24 hücum tırmananı tam sürümde ≈ 0,6
+ms/kare; uzaktakiler ucuz sürümde (uzuv IK + denetim üç karede bir). Yani kare süresindeki farkın büyük kısmı gürültü,
+gerçek ek maliyet < 1 ms/kare — ama kare süresi farkını kesin ayıramadım: **KISMEN**.
+
+## 6. Bakamadıklarım / kurallardan sapmalar
+
+- 30, 30o, 33o, 42b, 29o, Blakherna, hücum ve düellocu tırmanışları için **oynanış** karesinden ÖNCE | SONRA çifti yok:
+  30o ve 42b'de bölümün kendi `--shots` kamerası (p08, p06), hücumda yalnız sonda (p07). 30'da bot merdivenleri kadraj
+  dışında itiyor; 33o'da kırılan merdivendeki işçi, 29o ipteki el üstüne el ve düellocu tırmanışı (melee `reinforce_climb`,
+  `wave_runner`) karede görülmedi: **KANITSIZ**.
+- Düellocunun elindeki kılıcın tırmanırken gövdeye girip girmediği: BAKILMADI.
+- 38o'da kayıştan sonra yeniden tutunma (`_crew_remount`) hiçbir test varyantında tetiklenmedi (`slips=0`, `lose`'da da):
+  KANITSIZ.
+- Fare ile serbest bakış denenmedi (bot fareyi oynatmıyor).
+- ÖNCE | SONRA 38o karesi, oynanış koşusuna eklenen sonda betiğinin (tests/_tmp, depoya girmez) koşusunda alındı; oyuncu
+  kamerası bölümün kendi bakışıydı (sonda yalnız kare aldı). Ayrıca saf oynanış koşularından (`--dialogshots`) aynı anın
+  kareleri de var (çalışma klasöründe; SONRA'nınki ara sürümle: tayfa temposu sonra yavaşlatıldı).
+- Kural sapması: iki kısa yandan sonda koşusu (~20 sn) ekranlı oynanış koşusuyla aynı anda koştu (aynı anda en çok bir
+  ekranlı kuralı). Kanıt kareleri tek ekranlı koşulardan.
+- Ara başsız paketler (106 koşuluk) kod değiştikçe yarıda kesildi; rapordaki sayılar yalnız son paketten.
+- 42b'de gönüllünün `--shots` karesi üstten; elleri karede seçilmiyor.
