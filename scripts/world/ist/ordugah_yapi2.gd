@@ -6,6 +6,7 @@ extends RefCounted
 const K = preload("res://scripts/world/ist/ordugah_kit.gd")
 const B = K.Bld
 const Y = preload("res://scripts/world/ist/ordugah_yapi.gd")
+const KS = preload("res://scripts/world/ist/ordugah_kisi.gd")
 
 
 # ------------------------------------------------------------------ Mescit çadırı
@@ -135,10 +136,25 @@ static func build_mutfak(host: Node3D, k: float, lod: int, tohum := 4) -> void:
 	# yaş yanık tandır höyüğü
 	t.sph(Vector3(13.0, 0.0, 1.0), 1.5, K.TOPRAK2, 7, Vector3(1, 0.7, 1))
 	t.solid_cyl(Vector3(13.0, 0.5, 1.0), 1.4, 1.0)
-	# dumanlık direği yerine ateşler (gece/gündüz hale)
+	# kazan ateşleri (gece/gündüz) tek çoklu ağ (ORDUGÂH-4: önce kazan başına 3 çizim)
 	if lod <= 1:
+		var fp: Array = []
 		for i in n:
-			Flame.add(host, Vector3((i - (n - 1) * 0.5) * 3.4, 0.45, 1.3), 0.35, 0.55)
+			fp.append(Vector2((i - (n - 1) * 0.5) * 3.4, 1.3))
+		K.ateslar(host, fp, lod, 0.45, true, 0.35, 0.55)
+		# aşçılar ve odun taşıyan (gerçek model / figür)
+		var kisi: Array = []
+		for i in n:
+			kisi.append([Vector3((i - (n - 1) * 0.5) * 3.4 + 0.2, 0, -1.25), 0.0, "asci"])
+		kisi.append([Vector3(-10.5, 0, -2.2), PI / 2.0, "saka"])
+		kisi.append([Vector3(9.5, 0, -2.4), -PI / 2.0, "balta"])
+		for q in 6:
+			kisi.append([Vector3(-6.0 + q * 2.4, 0, -5.6), 0.0, "otur"])
+		for kk: Array in kisi:
+			var p0: Vector3 = kk[0]
+			p0.y = K.gy(p0.x, p0.z)
+			kk[0] = p0
+		KS.kur(host, kisi, lod)
 	m.done(host, "kazan")
 	t.done(host, "ocak")
 	w.done(host, "ahsap")

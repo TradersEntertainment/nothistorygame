@@ -7,6 +7,7 @@ extends RefCounted
 
 const K = preload("res://scripts/world/ist/ordugah_kit.gd")
 const B = K.Bld
+const OB = preload("res://scripts/world/ist/ordugah_oba.gd")
 
 const TURLER := {
 	"yeniceri": {"aralik": 6.6, "ana": [Color("f1ead6"), Color("e8dcc0")], "bant": Color("2c3f7a"), "tip": "yuvarlak", "cati_orani": 0.15},
@@ -18,7 +19,12 @@ const TURLER := {
 }
 
 
+## ORDUGÂH-4: ızgara kalktı; alan obalar hâlinde doldurulur (IstOrdugahOba). Eski ızgara build_kanat_izgara'da (kullanılmıyor).
 static func build_kanat(host: Node3D, alan: PackedVector2Array, tur: String, k: float, lod: int, tohum := 1) -> Dictionary:
+	return OB.build(host, alan, tur, k, lod, tohum)
+
+
+static func build_kanat_izgara(host: Node3D, alan: PackedVector2Array, tur: String, k: float, lod: int, tohum := 1) -> Dictionary:
 	var info: Dictionary = TURLER.get(tur, TURLER["rumeli"])
 	var r := K.rr(tohum)
 	var sp: float = info["aralik"]

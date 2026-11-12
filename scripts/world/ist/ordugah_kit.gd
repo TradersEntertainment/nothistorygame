@@ -312,8 +312,10 @@ static func tent_mesh(kind: String) -> ArrayMesh:
 			b.cyl(Bld.xf(Vector3(0, 0.55, 0)), 1.0, 1.1, Color(0.93, 0.9, 0.8), 10, 1.0, false)
 			b.cyl(Bld.xf(Vector3(0, 1.82, 0)), 1.05, 1.45, Color(0.85, 0.8, 0.68), 10, 0.12)
 			b.cyl(Bld.xf(Vector3(0, 0.02, 0)), 1.12, 0.05, Color(0.6, 0.5, 0.36), 10)
-			b.cyl(Bld.xf(Vector3(0, 1.12, 0)), 1.015, 0.16, Color(0.62, 0.22, 0.2), 10, 1.015, false)
+			# ORDUGÂH-4: kırmızı bant kalktı (kırmızı yalnız otağ/paşa hakkı, §2.5); yerine koyu kıl şerit ve yarı açık kapı perdesi
+			b.cyl(Bld.xf(Vector3(0, 1.12, 0)), 1.012, 0.1, Color(0.5, 0.42, 0.3), 10, 1.012, false)
 			b.box(Vector3(0, 0.55, 1.0), Vector3(0.6, 1.0, 0.08), Color(0.12, 0.09, 0.07))
+			b.box(Vector3(0.2, 0.6, 1.03), Vector3(0.32, 1.05, 0.04), Color(0.82, 0.77, 0.64), 0.0, Vector3(0, 0, -6))
 			b.cylp(Vector3(0, 2.75, 0), 0.025, 0.7, Color(0.28, 0.2, 0.12), 4)
 			b.sph(Vector3(0, 3.1, 0), 0.07, Color(0.8, 0.65, 0.25), 4)
 		"cati":
@@ -365,6 +367,24 @@ static func centroid(poly_: PackedVector2Array) -> Vector2:
 	for p in poly_:
 		s += p
 	return s / maxf(poly_.size(), 1)
+
+
+## Ateşler TOPLU (ORDUGÂH-4: Flame.add ateş başına 3 çizimdi; gece 8 956 çizimin kaynağı): host başına tek çoklu ağ alev,
+## yakın katmanda (lod 0) bir de tek çoklu ağ hale. pts: yerel (x, z); yuk: zeminden alev dibi. Gündüz yalnız gunduz ise.
+static func ateslar(host: Node3D, pts: Array, lod: int, yuk := 0.22, gunduz := false, w := 0.5, h := 0.8) -> void:
+	if pts.is_empty() or lod >= 2 or not (gece or gunduz):
+		return
+	var fx: Array = []
+	var gx: Array = []
+	for p: Vector2 in pts:
+		var y := gy(p.x, p.y) + yuk
+		fx.append(Transform3D(Basis().scaled(Vector3(w, h, w)), Vector3(p.x, y, p.y)))
+		gx.append(Transform3D(Basis().scaled(Vector3.ONE * maxf(w, h) * 2.6), Vector3(p.x, y + h * 0.4, p.y)))
+	var f := Flame.scatter_flames(host, fx)
+	f.name = "atesler"
+	if lod == 0 and gece:
+		var g := Flame.scatter_glows(host, gx, 0.55)
+		g.name = "haleler"
 
 
 ## Ateş: yalnız gece ya da istenirse (Flame ile)
