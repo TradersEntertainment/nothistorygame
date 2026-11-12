@@ -307,6 +307,7 @@ func _surekli() -> void:
 		if it.has("hat") or it.has("kapi_hat") or String(it.get("mod", "")) in IstSehir.SUR_MOD:
 			sur_items.append(it)
 	print("SURSUREKLI oge=%d" % sur_items.size())
+	print("SURKURULUM ates_alani_ms=%.1f ates=%s kose_dolgu=%d hendek_oy=%d sur_tas=%d yavas=%s" % [float(s.stats.get("ates_alani_ms", 0.0)), str(s.stats.get("ates_alani", {})), s.kose_dolgu_n, s.hendek_oy_n, int(s.stats.get("sur_tas_n", 0)), str(s.stats.get("yavas", {}))])
 	for katman: String in ["yakin", "orta", "uzak"]:
 		var body := StaticBody3D.new()
 		body.collision_layer = MASK

@@ -44,6 +44,7 @@ var _rects := {}                      # Vector2i(16 m) → [[PackedVector2Array,
 var _halic := PackedVector2Array()
 var stats := {}
 var _son_red := ""
+var ob_imza := ""                     # DOKU-4: bu verinin önbellek imzası (bağlı katmanlar kendi imzalarına katar)
 var _sira_bilgi: Array = []           # avlu için: [merkez, d, nrm, boy, derinlik, tür, sıra]
 
 
@@ -198,6 +199,154 @@ const SUR_IC := {"kara_suru": 2.6, "blakherna_suru": 2.4, "marmara_suru": 1.8, "
 ## foot: [Vector3(x, r, z)] anıt tabanları; bands: [[PackedVector2Array, yarı genişlik]] surlar (iç yanında boş şerit)
 func build(foot: Array, bands: Array, gates: Array, tohum := 1453) -> void:
 	var t0 := Time.get_ticks_msec()
+	# DOKU-4 (yükleme): aynı girdi + aynı arazi + aynı kod için sonuç diskte (user://ist_onbellek); ilk açılışta yazılır
+	var imza := _build_imza(foot, bands, gates, tohum)
+	ob_imza = imza
+	var ob = onbellek_oku("sokak", imza)
+	if ob is Dictionary and _onbellekten(ob):
+		stats["onbellek"] = "okundu"
+		stats["ms"] = Time.get_ticks_msec() - t0
+		katman_bagla()
+		return
+	_build_hesapla(foot, bands, gates, tohum)
+	onbellek_yaz("sokak", imza, _onbellege())
+	stats["onbellek"] = "yazildi" if onbellek_kip == "" else onbellek_kip
+	stats["ms"] = Time.get_ticks_msec() - t0
+	katman_bagla()
+
+
+# ================================================================ DOKU-4: disk önbelleği (ortak yardımcılar)
+## Önbellek user://ist_onbellek/<ad>_<imza>.bin (zstd). İmza: sürüm + oyun sürümü + ilgili betiklerin md5'i + girdiler +
+## arazi örnekleri (IstGeo.h/su/mahalle): kod, arazi, öteleme ya da bölge yaması değişirse yeni imza (eski dosya silinir).
+## Kapatma: komut satırı `--onbellek=yok` (okumaz, yazmaz) ya da `--onbellek=yaz` (okumaz, yazar: soğuk ölçüm).
+const ONBELLEK_DIR := "user://ist_onbellek/"
+const ONBELLEK_SURUM := 1
+static var onbellek_kip := "?"
+static var _md5 := {}
+
+
+static func _ob_kip() -> String:
+	if onbellek_kip == "?":
+		onbellek_kip = ""
+		for a: String in OS.get_cmdline_user_args():
+			if a.begins_with("--onbellek=") or a.begins_with("onbellek="):
+				onbellek_kip = a.get_slice("=", 1)
+		if OS.has_environment("IST_ONBELLEK"):
+			onbellek_kip = OS.get_environment("IST_ONBELLEK")
+	return onbellek_kip
+
+
+static func dosya_md5(yol: String) -> String:
+	if not _md5.has(yol):
+		_md5[yol] = FileAccess.get_md5(yol) if FileAccess.file_exists(yol) else ""
+	return _md5[yol]
+
+
+## parcalar: düz veri (dizi, sözlük, sayı, vektör) ya da "res://…" betik yolu (md5'i girer)
+static func onbellek_imza(parcalar: Array) -> String:
+	var ctx := HashingContext.new()
+	ctx.start(HashingContext.HASH_MD5)
+	ctx.update(var_to_bytes([ONBELLEK_SURUM, str(ProjectSettings.get_setting("application/config/version", "")), Engine.get_version_info().get("hex", 0)]))
+	for p in parcalar:
+		if p is String and (p as String).begins_with("res://"):
+			ctx.update(("%s:%s" % [p, dosya_md5(p)]).to_utf8_buffer())
+		else:
+			ctx.update(var_to_bytes(p))
+	return ctx.finish().hex_encode().substr(0, 20)
+
+
+## Arazinin özeti (dikdörtgen içinde n × n örnek): yükseklik, deniz, mahalle türü; öteleme ve yama dahil
+static func arazi_ozeti(r: Rect2, n := 48) -> PackedFloat32Array:
+	var out := PackedFloat32Array()
+	out.resize(n * n * 2)
+	for j in n:
+		for i in n:
+			var x := r.position.x + r.size.x * (i + 0.5) / n
+			var z := r.position.y + r.size.y * (j + 0.5) / n
+			out[(j * n + i) * 2] = snappedf(IstGeo.h(x, z), 0.01)
+			out[(j * n + i) * 2 + 1] = (1.0 if IstGeo.su(x, z) else 0.0) + 2.0 * float(IstGeo.sehir_ici(x, z))
+	return out
+
+
+static func onbellek_var(ad: String, imza: String) -> bool:
+	return _ob_kip() not in ["yok", "yaz"] and FileAccess.file_exists(ONBELLEK_DIR + ad + "_" + imza + ".bin")
+
+
+static func onbellek_oku(ad: String, imza: String) -> Variant:
+	if _ob_kip() in ["yok", "yaz"]:
+		return null
+	var yol := ONBELLEK_DIR + ad + "_" + imza + ".bin"
+	if not FileAccess.file_exists(yol):
+		return null
+	var f := FileAccess.open_compressed(yol, FileAccess.READ, FileAccess.COMPRESSION_ZSTD)
+	if f == null:
+		return null
+	var v = f.get_var(false)
+	f.close()
+	return v
+
+
+static func onbellek_yaz(ad: String, imza: String, veri: Variant) -> void:
+	if _ob_kip() == "yok" or veri == null:
+		return
+	DirAccess.make_dir_recursive_absolute(ONBELLEK_DIR)
+	var d := DirAccess.open(ONBELLEK_DIR)
+	if d != null:
+		for fn: String in d.get_files():
+			if fn.begins_with(ad + "_") and fn.ends_with(".bin") and fn != ad + "_" + imza + ".bin":
+				d.remove(fn)
+	var f := FileAccess.open_compressed(ONBELLEK_DIR + ad + "_" + imza + ".bin", FileAccess.WRITE, FileAccess.COMPRESSION_ZSTD)
+	if f == null:
+		return
+	f.store_var(veri, false)
+	f.close()
+
+
+func _build_imza(foot: Array, bands: Array, gates: Array, tohum: int) -> String:
+	var tab: Array = []
+	var s: Node = IstSehir.active
+	if s != null and is_instance_valid(s) and IstSehir.v2:
+		for it: Dictionary in s.items:
+			if it.has("hat"):
+				continue
+			var dt: Dictionary = it.get("data", {})
+			tab.append([String(it["id"]), it["pos"], float(it["r"]), float(it.get("k", 1.0)), float(it.get("yaw", 0.0)), dt.get("gercek_olcu", Vector3.ZERO), String(dt.get("tur", ""))])
+		if s.has_method("oyun_alanlari"):
+			tab.append(s.oyun_alanlari())
+	var poly := IstGeo.kiyi("yarimada")
+	var r := Rect2(poly[0], Vector2.ZERO)
+	for p in poly:
+		r = r.expand(p)
+	for p in IstGeo.yol("galata_suru"):
+		r = r.expand(p)
+	var yollar: Array = []
+	for ad: String in ["mese", "mese_kuzey", "mese_guney", "halic_suru", "galata_suru", "kara_suru", "marmara_suru", "blakherna_suru"]:
+		yollar.append(IstGeo.yol(ad))
+	return onbellek_imza(["res://scripts/world/ist/sokak.gd", "res://scripts/world/ist/evler.gd", "res://scripts/world/ist/geo.gd",
+		foot, bands, gates, tohum, tab, poly, yollar, IstGeo.yerler().size(), arazi_ozeti(r, 64)])
+
+
+const _OB_ALANLAR := ["x0", "z0", "nx", "nz", "occ", "rid", "streets", "houses", "doku", "meydan", "avlu", "oge", "eser_meydan",
+	"zemin_ek", "rows", "stats", "_sira_bilgi"]
+
+func _onbellege() -> Dictionary:
+	var d := {}
+	for a: String in _OB_ALANLAR:
+		d[a] = get(a)
+	return d
+
+
+func _onbellekten(d: Dictionary) -> bool:
+	for a: String in _OB_ALANLAR:
+		if not d.has(a):
+			return false
+	for a: String in _OB_ALANLAR:
+		set(a, d[a])
+	return true
+
+
+func _build_hesapla(foot: Array, bands: Array, gates: Array, tohum: int) -> void:
+	var t0 := Time.get_ticks_msec()
 	var poly := IstGeo.kiyi("yarimada")
 	var gal := IstGeo.yol("galata_suru")
 	var lo := Vector2(INF, INF)
@@ -257,6 +406,8 @@ func build(foot: Array, bands: Array, gates: Array, tohum := 1453) -> void:
 	# 2) Kapılardan Mese'ye inen yollar ve deniz kapılarından yokuşlar
 	for g: Array in gates:
 		_gate_road(g[0] as Vector2, String(g[1]), rng)
+	# 2b) DOKU-4 madde 4: bölümlerin oyun alanlarının (hub, Ayasofya meydanı) çevresinde çevre yolu + dört yana bağlantı
+	_oyun_alani_yollari()
 	# 3) Mahalle içi organik sokaklar (üç kuşak) ve boş kalan yerleri dolduran ek sokaklar
 	var n0 := streets.size()
 	for s in range(0, n0):
@@ -296,8 +447,48 @@ func build(foot: Array, bands: Array, gates: Array, tohum := 1453) -> void:
 	_ogeler(rng)
 	stats["doku"] = doku.size()
 	stats["oge"] = oge.size()
-	stats["ms"] = Time.get_ticks_msec() - t0
-	katman_bagla()
+	stats["hesap_ms"] = Time.get_ticks_msec() - t0
+
+
+## Oyun alanının (dikdörtgen) 4,5 m dışında 5 m'lik kaldırım çevre yolu ve her kenarın ortasından dışarı 70 m bağlantı:
+## alanın kenarındaki yeşil şerit kalkar, sokak dokusu (sıra evler, ara sokaklar) çevre yoluna yaslanır.
+func _oyun_alani_yollari() -> void:
+	var s: Node = IstSehir.active
+	if s == null or not is_instance_valid(s) or not s.has_method("oyun_alanlari"):
+		return
+	var n := 0
+	for a: Rect2 in s.oyun_alanlari():
+		var r := a.grow(4.5)
+		var k := [r.position, Vector2(r.end.x, r.position.y), r.end, Vector2(r.position.x, r.end.y)]
+		for i in 4:
+			var p: Vector2 = k[i]
+			var q: Vector2 = k[(i + 1) % 4]
+			n += _add_parcali(_densify(PackedVector2Array([p, q]), 4.0), 5.0, "oyun_cevre")
+			var m := (p + q) * 0.5
+			var dis := (m - a.get_center()).normalized()
+			dis = Vector2(signf(dis.x), 0.0) if absf(dis.x) > absf(dis.y) else Vector2(0.0, signf(dis.y))
+			var uc := m + dis * 70.0
+			if not IstGeo.sehir_ici(uc.x, uc.y):
+				uc = m + dis * 30.0
+			n += _add_parcali(_densify(PackedVector2Array([m + dis * 2.5, uc]), 4.0), 5.0, "oyun_bag")
+	stats["oyun_yol"] = n
+
+
+## Yalnız boş/yol hücrelerinden geçen parçaları ekler (sur bandı, anıt, deniz atlanır); eklenen parça sayısı
+func _add_parcali(pts: PackedVector2Array, w: float, ad: String) -> int:
+	var n := 0
+	var cur := PackedVector2Array()
+	for i in pts.size() + 1:
+		var ok := i < pts.size() and cell(pts[i].x, pts[i].y) in [0, 1] and IstGeo.sehir_ici(pts[i].x, pts[i].y)
+		if ok:
+			cur.append(pts[i])
+		elif cur.size() >= 3:
+			_add_street(cur, w, "yol", ad)
+			n += 1
+			cur = PackedVector2Array()
+		else:
+			cur = PackedVector2Array()
+	return n
 
 
 ## Anıt tabanları: IstSehir v2 kayıtlarından (salt okunur) döndürülmüş dikdörtgen = gerçek ölçü × k + 6 m pay. Sınır
@@ -1218,6 +1409,10 @@ func _eser_meydanlari() -> void:
 
 
 ## Eser meydanlarının içini doldurur (evlerden sonra): köşe grupları, ağaç kümesi, kuyu/çeşme + gezinme noktaları
+## DOKU-4 madde 6: forum meydanlarının içi (yapı ÇEVRE'nin; doku ve kişi DOKU'nun): pazar köşeleri, mumcu, kuyu, ayin
+const FORUM_IDS := ["konstantin", "tauri", "bovis", "amastrianon", "arkadius", "philadelphion", "augustaion"]
+const FORUM_SET := ["set_pazar_kosesi", "mumcu", "set_pazar_kosesi", "kuyu", "set_ayin_alayi", "set_pazar_kosesi", "agac_kumesi", "set_pazar_kosesi"]
+
 func _eser_meydan_doldur() -> void:
 	var nset := 0
 	for e: Dictionary in eser_meydan:
@@ -1225,7 +1420,8 @@ func _eser_meydan_doldur() -> void:
 		var r0 := float(e["r0"])
 		var R := float(e["R"])
 		var aya := String(e["id"]) == "ayasofya"
-		var sets: Array = ["mumcu", "set_ayin_alayi", "set_pazar_kosesi", "agac_kumesi", "mumcu", "set_manastir_avlusu", "agac_kumesi",
+		var forum := String(e["id"]) in FORUM_IDS
+		var sets: Array = FORUM_SET if forum else ["mumcu", "set_ayin_alayi", "set_pazar_kosesi", "agac_kumesi", "mumcu", "set_manastir_avlusu", "agac_kumesi",
 			"set_pazar_kosesi", "kuyu", "agac_kumesi", "set_meyhane_onu", "mumcu"] if aya else (
 			["mumcu", "set_pazar_kosesi", "agac_kumesi", "set_ayin_alayi"] if bool(e["unlu"]) else ["agac_kumesi", "mumcu"])
 		var rr := (r0 + R) * 0.5
@@ -1296,7 +1492,8 @@ func _kare_doldur(c: Vector2, r0: float, R: float, yer: String, h0: int) -> int:
 					break
 			if best == Vector2.INF:
 				continue
-			oge.append({"tur": ["agac_kumesi", "mumcu", "kuyu", "agac_kumesi"][(i + j * 3) & 3], "c": best, "yaw": float(i * 1.7 + j), "tohum": h0 * 11 + i * 31 + j, "yer": yer})
+			var dl: Array = ["set_pazar_kosesi", "mumcu", "kuyu", "set_pazar_kosesi"] if yer in FORUM_IDS else ["agac_kumesi", "mumcu", "kuyu", "agac_kumesi"]
+			oge.append({"tur": dl[(i + j * 3) & 3], "c": best, "yaw": float(i * 1.7 + j), "tohum": h0 * 11 + i * 31 + j, "yer": yer})
 			_stamp_disc(best, 3.5, 5)
 			dolu[Vector2i(i, j)] = true
 			nset += 1

@@ -79,12 +79,12 @@ static func build_buyuk_saray(host: Node3D, k: float = 0.5, lod: int = 0) -> voi
 		K.ground_box(host, sz.x * 0.4, 5.0, sz.y * 0.25, -sz.x * 0.1, -sz.y * 0.2, K.BRICK.lerp(K.STONE, 0.3))
 		return
 	# zemin: ot bürümüş harabe toprağı (yamalı: toprak, solgun ot, eski döşeme parçaları), üstte yürünür düz
-	K.ground_box(host, sz.x, 0.1, sz.y, 0, 0, K.GRASS_D.lerp(K.SOIL, 0.45), "")
+	K.ground_box(host, sz.x, 0.1, sz.y, 0, 0, Color("7a7452"), "")
 	if lod == 0:
 		for i in 26:
 			var gp := Vector2(rng.randf_range(-0.45, 0.45) * sz.x, rng.randf_range(-0.45, 0.45) * sz.y)
 			var gs := Vector2(rng.randf_range(4.0, 11.0), rng.randf_range(4.0, 11.0))
-			var gc: Color = [K.SOIL.darkened(0.08), K.GRASS_D.darkened(0.1), K.STONE_D.darkened(0.12), K.MOSS.darkened(0.2)][i % 4]
+			var gc: Color = [K.SOIL.darkened(0.15), Color("6a6e45"), K.STONE_D.darkened(0.18), Color("5f6640")][i % 4]
 			K.vb(host, Vector3(gs.x, 0.04, gs.y), Vector3(gp.x, 0.11 + (i % 4) * 0.004, gp.y), gc, Vector3(0, rng.randf() * 90.0, 0))
 	# ÇEVRE-4 (kalite notu 23): yıkık kemer dizileri (saray salonlarının ve revakların kalıntısı), devrik sütunlar
 	K.kemer_dizisi(host, Vector2(-sz.x * 0.47, sz.y * 0.05), Vector2(-sz.x * 0.47, sz.y * 0.42), 5.2, K.BRICK.lerp(K.STONE, 0.3), rng, 0.1, 0.35)

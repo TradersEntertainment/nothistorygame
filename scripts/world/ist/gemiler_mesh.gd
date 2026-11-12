@@ -737,7 +737,9 @@ void vertex() {
 	float roll = sin(t + ph) * genlik;
 	float pitch = sin(t * 0.77 + ph * 1.7) * genlik * 0.6;
 	VERTEX.y += VERTEX.x * roll + VERTEX.z * pitch + sin(t * 1.3 + ph) * 0.03;
-	v_renk = COLOR.rgb;
+	// DOKU-4: oyuncak doygunluğu (macenta/sarı gövde) gitsin: doygunluk × 0,68, hafif koyulaşma (eskimiş boya, katran)
+	float l = dot(COLOR.rgb, vec3(0.299, 0.587, 0.114));
+	v_renk = mix(vec3(l), COLOR.rgb, 0.68) * 0.93;
 }
 void fragment() {
 	ALBEDO = v_renk;

@@ -8,6 +8,7 @@ extends Node3D
 ## 170–720 m nokta-figür (≈ 20 üçgen). Hareket (yürüyüş, kol-bacak, sancak, duman, kuş dönüşü) tamamen gölgelendiricide.
 
 const SH := "res://assets/shaders/"
+const UZAK_ISIK := preload("res://scripts/world/ist/hayat_uzak_isik.gd")
 const YAKIN := 170.0
 const UZAK := 720.0
 const KAYMA := 25.0
@@ -95,8 +96,11 @@ func _kur() -> void:
 		if kt.views.is_empty():
 			continue
 		kt.kur(self)
+	if gece:
+		print("ISTUZAKISIK ", UZAK_ISIK.kur(self, K, IstSehir.sokak))
 	kur_ms = Time.get_ticks_msec() - t0
 	print("ISTHAYAT kur_ms=%d %s" % [kur_ms, veri.ist])
+	print("ISTEVONBELLEK ", IstEvler.ob_say)
 	if _yakin_olacak and yakin == null:
 		var t1 := Time.get_ticks_msec()
 		yakin = IstHayatYakin.attach(dunya, null, gece)
@@ -121,7 +125,27 @@ func yenile_hepsi() -> void:
 	_kuyruk.clear()
 
 
+var _prof := {"n": 0, "ust16": 0, "ust33": 0, "en_ms": 0.0}
+
+func _exit_tree() -> void:
+	print("ISTPROF hayat ", _prof)
+	if yakin != null and is_instance_valid(yakin):
+		print("ISTPROF hayat_yakin en_ms=%.1f ort_ms=%.2f" % [yakin.prof_max_us / 1000.0, yakin.prof_sum_us / maxf(yakin.prof_n, 1) / 1000.0])
+
+
 func _process(dt: float) -> void:
+	var tp := Time.get_ticks_usec()
+	_process_ic(dt)
+	var ms := (Time.get_ticks_usec() - tp) / 1000.0
+	_prof["n"] += 1
+	if ms > 16.0:
+		_prof["ust16"] += 1
+	if ms > 33.0:
+		_prof["ust33"] += 1
+	_prof["en_ms"] = maxf(_prof["en_ms"], snappedf(ms, 0.1))
+
+
+func _process_ic(dt: float) -> void:
 	var p := _bakan()
 	if Vector2(p.x - _son.x, p.z - _son.z).length() > KAYMA and _kuyruk.is_empty():
 		_son = p

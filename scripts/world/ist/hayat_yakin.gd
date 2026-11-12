@@ -26,7 +26,8 @@ const NEAR_HYST := 3.0
 const NEAR_CAP := 4               # aynı anda en çok bu kadar gerçek gövde (çizim bütçesi): en yakın ve görüştekiler
 
 ## Mahalle türüne göre hedef kişi sayısı (kalabalık)
-const TARGET := {"carsi": 40, "liman": 28, "sik": 22, "sur_dibi": 17, "seyrek": 10, "bostan": 5, "harabe": 4, "kir": 3}
+## DOKU-4 (madde 5, "ek"): üçüncü turun hedefleri korunup artırıldı (çarşı 40→46, sık 22→26, sur dibi 17→22; havuz 49→58)
+const TARGET := {"carsi": 46, "liman": 30, "sik": 26, "sur_dibi": 22, "seyrek": 11, "bostan": 5, "harabe": 4, "kir": 3}
 ## Doğuş ağırlığı (aynı sokak noktası kabulü)
 const WEIGHT := {"carsi": 1.0, "liman": 0.9, "sik": 0.7, "sur_dibi": 0.55, "seyrek": 0.35, "bostan": 0.2, "harabe": 0.15, "kir": 0.1}
 
@@ -87,7 +88,12 @@ class Hayvan extends Agent:
 
 
 var sokak: IstSokak
-var gece := false
+var gece := false:
+	set(v):
+		gece = v
+		night = v
+## CityLife ile aynı alan (StreetEye.is_night okur: yokken "bool(null)" SCRIPT ERROR veriyordu)
+var night := false
 var oyuncu: Node3D
 var agents: Array[Agent] = []
 var hayvanlar: Array[Hayvan] = []
@@ -100,6 +106,8 @@ var prof_n := 0
 var prof_max_us := 0.0
 var hemen_isin := true            # attach anında bütün gövdeler kurulsun (yükleme ekranı); false: oyunda karede bir
 var hizli_isinma := false         # önizleme: gövdeler hemen kurulsun
+const ILK_ISIN := 14
+const ILK_HAYVAN := 3
 
 var _P := PackedVector2Array()
 var _PS := PackedInt32Array()
@@ -157,14 +165,23 @@ func _ready() -> void:
 	_kur_ag()
 	_make_agents()
 	if hemen_isin:
-		# yükleme ekranı sırasında (dünya kurulumu zaten saniyeler sürer) bütün gövde, ikiz ve hayvanlar bir kerede
+		# yükleme sırasında ilk ILK_ISIN gövde + ILK_HAYVAN hayvan (açılış karesi dolu olsun); kalanı oyunda iki karede bir
+		# (DOKU-4: bütün havuz açılışta 0,8 sn, önbelleksiz ilk açılışta 6,3 sn sürüyordu; gövde başına 6–17 ms)
 		var saved := hizli_isinma
+		var n_ag := 0
 		for ag in agents:
+			if n_ag >= ILK_ISIN:
+				break
 			_built_frame = 0
-			_ensure_body(ag)
+			if _ensure_body(ag):
+				n_ag += 1
+		var n_h := 0
 		for h in hayvanlar:
+			if n_h >= ILK_HAYVAN:
+				break
 			_built_frame = 0
-			_ensure_animal(h)
+			if _ensure_animal(h):
+				n_h += 1
 		hizli_isinma = saved
 	graph_ready = true
 	print("ISTKISI kur noktalar=%d sokak=%d meydan=%d kiyi=%d havuz=%d hayvan=%d kur_ms=%d" % [_P.size(), _s0.size(), _meydan_c.size(), _kp.size(), agents.size(), hayvanlar.size(), Time.get_ticks_msec() - t0])
@@ -496,7 +513,7 @@ func _process(delta: float) -> void:
 	if _built < agents.size():
 		_warm_skip -= 1
 		if hizli_isinma or _warm_skip <= 0:
-			_warm_skip = 4
+			_warm_skip = 2
 			var n := 8 if hizli_isinma else 1
 			for ag in agents:
 				if n <= 0:

@@ -646,6 +646,121 @@ static func mesh(v: int, tip: String, lod: int) -> Mesh:
 	var key := "%d|%s|%d" % [v, tip, lod]
 	if _mesh_cache.has(key):
 		return _mesh_cache[key]
+	var t0 := Time.get_ticks_usec()
+	var om := _ob_mesh_oku(v, tip, lod)
+	if om != null:
+		_mesh_cache[key] = om
+		ob_say["okundu"] = int(ob_say.get("okundu", 0)) + 1
+		ob_say["us"] = int(ob_say.get("us", 0)) + Time.get_ticks_usec() - t0
+		return om
+	var m := _mesh_kur(v, tip, lod)
+	_mesh_cache[key] = m
+	_ob_mesh_yaz(v, tip, lod, m)
+	ob_say["kuruldu"] = int(ob_say.get("kuruldu", 0)) + 1
+	ob_say["us"] = int(ob_say.get("us", 0)) + Time.get_ticks_usec() - t0
+	return m
+
+
+# ---------------------------------------------------------------- DOKU-4: pişmiş ev ağlarının disk önbelleği
+## Ağ (yüzey dizileri + LOD'lar) user://ist_onbellek/ev/ altında .res; malzeme gömülmez: yüzey başına imza
+## ("D": Dressing ortak malzemesi; "T|desen|ölçek": desen dokulu üçdüzlemli malzeme) metada; okurken desen
+## Props'tan yeniden alınır (oturum içinde imza başına TEK malzeme: çizim çağrısı birleşir). Tanınmayan malzeme varsa
+## o ağ yazılmaz. İmza: bu dosyanın, Props'un ve bake'in md5'i.
+static var ob_say := {}
+static var _ob_imza := ""
+static var _ob_mat := {}
+static var _ob_temiz := false
+
+
+static func _ob_yol(v: int, tip: String, lod: int) -> String:
+	if _ob_imza == "":
+		_ob_imza = IstSokak.onbellek_imza(["res://scripts/world/ist/evler.gd", "res://scripts/level/props.gd",
+			"res://scripts/world/world1453.gd", "res://scripts/level/dressing.gd", Props.outlines])
+	return IstSokak.ONBELLEK_DIR + "ev/%s_%d_%s_%d.res" % [_ob_imza, v, tip, lod]
+
+
+static func _ob_mesh_oku(v: int, tip: String, lod: int) -> Mesh:
+	if IstSokak._ob_kip() in ["yok", "yaz"]:
+		return null
+	var yol := _ob_yol(v, tip, lod)
+	if not FileAccess.file_exists(yol):
+		return null
+	var m := ResourceLoader.load(yol, "ArrayMesh", ResourceLoader.CACHE_MODE_IGNORE) as ArrayMesh
+	if m == null or not m.has_meta("ob_mat"):
+		return null
+	var sig: PackedStringArray = m.get_meta("ob_mat")
+	if sig.size() != m.get_surface_count():
+		return null
+	for i in sig.size():
+		var mt := _ob_mat_kur(sig[i])
+		if mt == null:
+			return null
+		m.surface_set_material(i, mt)
+	return m
+
+
+static func _ob_mat_kur(s: String) -> Material:
+	if _ob_mat.has(s):
+		return _ob_mat[s]
+	var mt: Material = null
+	if s == "D":
+		mt = Dressing._material()
+	elif s.begins_with("T|"):
+		var p := s.split("|")
+		var sc: Variant = str_to_var(p[2])
+		var gm := (Props.mat(Color.WHITE, 0.0, false, p[1])).duplicate() as StandardMaterial3D
+		gm.albedo_color = Color.WHITE
+		gm.vertex_color_use_as_albedo = true
+		if sc is Vector3:
+			gm.uv1_scale = sc
+		mt = gm
+	_ob_mat[s] = mt
+	return mt
+
+
+static func _ob_mesh_yaz(v: int, tip: String, lod: int, m: Mesh) -> void:
+	if IstSokak._ob_kip() == "yok" or not (m is ArrayMesh):
+		return
+	var am := m as ArrayMesh
+	var sig := PackedStringArray()
+	for i in am.get_surface_count():
+		var mt := am.surface_get_material(i)
+		if mt == Dressing._material():
+			sig.append("D")
+			continue
+		var bm := mt as StandardMaterial3D
+		if bm == null or bm.albedo_texture == null or not bm.uv1_triplanar:
+			return
+		var desen := ""
+		for k in Props._noise_cache:
+			if Props._noise_cache[k] == bm.albedo_texture:
+				desen = String(k)
+				break
+		if desen == "":
+			return
+		sig.append("T|%s|%s" % [desen, var_to_str(bm.uv1_scale)])
+	var kopya := am.duplicate() as ArrayMesh
+	for i in kopya.get_surface_count():
+		kopya.surface_set_material(i, null)
+	kopya.set_meta("ob_mat", sig)
+	DirAccess.make_dir_recursive_absolute(IstSokak.ONBELLEK_DIR + "ev")
+	if not _ob_temiz:
+		# eski imzalı ev ağları (kod değişmiş) silinir; oturumda bir kez
+		_ob_temiz = true
+		var da := DirAccess.open(IstSokak.ONBELLEK_DIR + "ev")
+		if da != null:
+			for fn: String in da.get_files():
+				if not fn.begins_with(_ob_imza + "_"):
+					da.remove(fn)
+	ResourceSaver.save(kopya, _ob_yol(v, tip, lod), ResourceSaver.FLAG_COMPRESS)
+	# yazılanın da aynı paylaşılan malzemeleri kullanması (çizim çağrısı birleşsin) okunanla aynı görünüş verir
+	for i in sig.size():
+		var mt2 := _ob_mat_kur(sig[i])
+		if mt2 != null:
+			am.surface_set_material(i, mt2)
+
+
+static func _mesh_kur(v: int, tip: String, lod: int) -> Mesh:
 	var tmp := Node3D.new()
 	var d := dims(v)
 	ev(tmp, d.x, d.z, d.y, _tohum(v, tip), lod, tip)
@@ -657,7 +772,6 @@ static func mesh(v: int, tip: String, lod: int) -> Mesh:
 	var m := mi.mesh
 	holder.free()
 	tmp.free()
-	_mesh_cache[key] = m
 	return m
 
 
