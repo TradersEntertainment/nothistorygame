@@ -45,6 +45,7 @@ const LINES := [
 const FREE_REACH := 2.4           # serbest yürürken tekmenin hükümdara yetiştiği uzaklık (Kural.REACH ile aynı aralık)
 const LUNGE_REACH := 7.5          # replik sırasında (donuk) atılabildiği uzaklık: birkaç hızlı adım ve atılış (huzurda
                                   # hükümdar 6 m dolayında: 12'de taht 6,1 m, 30'da İmparator 6,3 m; ölçüm §6.6)
+const LUNGE_STOP := 1.45          # atılış hükümdarın bu kadar önünde durur (ayak/el ona yetişir, kamera gövdeye girmez)
 const DASH_SPEED := 8.0           # atılışın hızı (m/sn): uzaktan atılış ışınlanma gibi görünmesin
 const SWORD_REACH := 3.0          # kılıç sallamanın yetiştiği uzaklık
 const CONE := 0.86                # bakış konisi (cos ~30°): hükümdara bakılıyor olmalı
@@ -297,6 +298,8 @@ func attempt(p: Person, kind: String) -> void:
 	player.frozen = true
 	await _hold_dialogue()
 	var origin := player.global_position
+	_lock_on = p
+	_face_lock()
 	if counter == "ruler":
 		last = "counter_" + p.face_id
 		if p.face_id == "fatih":
@@ -314,6 +317,7 @@ func attempt(p: Person, kind: String) -> void:
 				await _counter_konstantinos(p, kind)
 	# Bakış geri gelir (donukken de fare: Player.free_look)
 	await get_tree().create_timer(LOOK_BACK if not Stage.fast() else 0.05, false).timeout
+	_lock_on = null
 	player.free_look = true
 	var line_key := ""
 	match mode:
@@ -349,6 +353,19 @@ func attempt(p: Person, kind: String) -> void:
 	_log("done mode=%s last=%s surgun_n=%d pending=%s ban=%s" % [mode, last, int(GameState.flags.get("surgun_n", 0)),
 		str(GameState.flags.get("surgun_pending", {})), str(GameState.flags.get("huzur_ban", false))])
 	busy = false
+
+
+var _lock_on: Node3D
+var _look_at := Vector3.INF
+
+
+## Karşı hamle boyunca bakış hükümdarda (bölümün kendi akışı kamerayı başka yere çeviriyorsa bile: 28o'da topun
+## nişanı); yere inişten sonra _look_at (hükümdarın yüzü, aşağıdan). Bakış LOOK_BACK sonra oyuncuya geçer.
+func _face_lock() -> void:
+	while _lock_on != null and is_instance_valid(_lock_on) and is_instance_valid(player):
+		player.face(_look_at if _look_at != Vector3.INF else _lock_on.global_position + Vector3(0, 1.45, 0))
+		await get_tree().process_frame
+	_look_at = Vector3.INF
 
 
 func _spk(p: Person) -> String:
@@ -429,7 +446,7 @@ func _limb_point(kind: String) -> Vector3:
 func _lunge(p: Person, kind: String) -> void:
 	var to := p.global_position - player.global_position
 	to.y = 0.0
-	var stop := 1.05 if kind != "sword" else 1.5
+	var stop := LUNGE_STOP if kind != "sword" else 1.8
 	var dest := player.global_position + to.normalized() * maxf(0.0, to.length() - stop)
 	dest.y = player.global_position.y
 	player.face(p.global_position + Vector3(0, 1.4, 0))
@@ -510,6 +527,7 @@ func _fall(dest: Vector3, roll: float, up_at: Vector3, secs := 0.55) -> void:
 	var tw2 := player.create_tween().set_parallel()
 	tw2.tween_property(player.camera, "rotation:z", roll * 0.25, 0.05 if Stage.fast() else 0.4).set_trans(Tween.TRANS_SINE)
 	await tw2.finished
+	_look_at = up_at
 	player.face(up_at)
 
 
