@@ -23,7 +23,7 @@ const MEDUSA := [[1, 1, "side"], [2, 1, "inv"]]
 ## Tavus gözü ("gözyaşı") sütunu: sarsıntı evresinin rotası (tonoz gözü sırası 2, batıya) bu sütunun 2,5 m yanından geçer
 const HEN_EYE := [9, 2]
 ## Uzak sis: sıralar karanlığa değil, sönük mavimsi griye gömülür (138 × 65 m derinliği okunur)
-const HAZE := Color("141d23")
+const HAZE := Color("1a252c")
 const FOG_DENSITY := 0.03
 ## Kuyular (tonoz gözü bx, bz): ilk ikisi oyunun kuyuları: Eudokia'nın kuyusu (düşüş), Yakovos'un evinin kuyusu (çıkış;
 ## gözün kuzey köşelerindeki iki sütun Medusa'lı)
@@ -1122,6 +1122,11 @@ func _beam_card_mat() -> StandardMaterial3D:
 	_beam_card.cull_mode = BaseMaterial3D.CULL_DISABLED
 	_beam_card.disable_fog = true
 	_beam_card.depth_draw_mode = BaseMaterial3D.DEPTH_DRAW_DISABLED
+	# Kamera huzmenin içindeyken (düşüş kuyusunun dibi) kart bütün ekranı toplamsal ışıkla kaplıyordu (açılış anı
+	# ortalama 94/255, sütunlar beyaz sise gömülü): 2 m'den yakında görünmez, 6 m'den ötede tam
+	_beam_card.distance_fade_mode = BaseMaterial3D.DISTANCE_FADE_PIXEL_ALPHA
+	_beam_card.distance_fade_min_distance = 2.0
+	_beam_card.distance_fade_max_distance = 6.0
 	return _beam_card
 
 

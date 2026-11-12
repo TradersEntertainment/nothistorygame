@@ -56,7 +56,7 @@ const SUN_PEAK := 5.0              # tonoz yarığından giren gün ışığın�
 const SUN_PEAK_SECS := 3.5         # sütun ormanını boydan boya aydınlattığı süre (sn)
 const SUN_REST := 1.3              # sonra yarıktan kalıcı huzme (ışık enerjisi)
 const AMBIENT_DARK := 0.08         # gözler alışmadan ortam ışığı
-const AMBIENT_LIT := 0.6           # gözler alışınca (fener konisinin dışı tam siyah olmasın)
+const AMBIENT_LIT := 0.75          # gözler alışınca (fener konisinin dışı tam siyah olmasın)
 const MEDUSA_STOP := 4.4           # kayık Medusa'lı iki sütunun kaç m güneyinde durur (iki yüz aynı kadrajda)
 const CLIMB_SECS := 6.5            # ip merdiven + demir basamaklar, sudan kilere
 
@@ -347,7 +347,7 @@ func _descend() -> void:
 	cis.call("beam_visible", fw_well, false)
 	await hud.fade_to(0.0, 0.5)
 	Audio.sfx("wood_creak", -8.0, 0.8)
-	if not GameState.autotest:
+	if not GameState.autotest or GameState.pace:
 		# Yukarı bakarak iner: ağzın ışığı küçülür
 		var tw := create_tween()
 		tw.tween_property(player, "global_position:y", crown + 1.3 - player.eye_height, 3.4).set_trans(Tween.TRANS_SINE)
@@ -1046,7 +1046,7 @@ func _climb() -> void:
 	player.global_position = Vector3(goal.x, CisternLevel.WATER_Y + 0.25, goal.z + 0.12)
 	player.rotation.y = 0.0            # merdiven kuzey yüzde: ona dönük
 	player.camera.rotation.x = deg_to_rad(62.0)
-	if not GameState.autotest:
+	if not GameState.autotest or GameState.pace:
 		var tw := create_tween()
 		tw.tween_property(player, "global_position:y", floor_y + 0.05, CLIMB_SECS).set_trans(Tween.TRANS_SINE)
 		tw.parallel().tween_property(player.camera, "rotation:x", deg_to_rad(20.0), CLIMB_SECS * 0.5).set_delay(CLIMB_SECS * 0.5)
@@ -1062,6 +1062,8 @@ func _climb() -> void:
 	else:
 		player.global_position = Vector3(goal.x, floor_y, goal.z + 0.9)
 		player.rotation.y = PI
+		player.camera.rotation.x = deg_to_rad(-4.0)
+	_light_off()                       # kilerde gün ışığı var: fener cebe
 	await hud.say("SPK_TOLGA", "D44B_T_CLIMB")
 	await hud.fade_to(1.0, 0.5)
 
