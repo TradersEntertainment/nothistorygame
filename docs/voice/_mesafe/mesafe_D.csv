@@ -899,3 +899,103 @@ REACT_MINER_TAPE,SPK_MINER,yakin,2,"hud.gd:1363 show_reaction -> bark(SPK_MINER)
 REACT_MINER_THERMOS,SPK_MINER,yakin,2,"hud.gd:1363 show_reaction -> bark(SPK_MINER) 5.5 sn, player.gd:2404 focus_id hedefine gösterme","eşya elde gösterilir (Player E, player.gd:2404), yanında normal konuşma"
 REACT_MINER_SELFIE,SPK_MINER,yakin,2,"hud.gd:1363 show_reaction -> bark(SPK_MINER) 5.5 sn, player.gd:2404 focus_id hedefine gösterme","eşya elde gösterilir (Player E, player.gd:2404), yanında normal konuşma"
 REACT_MINER_COLOGNE,SPK_MINER,yakin,2,"hud.gd:1363 show_reaction -> bark(SPK_MINER) 5.5 sn, player.gd:2404 focus_id hedefine gösterme","eşya elde gösterilir (Player E, player.gd:2404), yanında normal konuşma"
+REACT_MINER_CUBE,SPK_MINER,yakin,2,"hud.gd:1363 show_reaction -> bark(SPK_MINER) 5.5 sn, player.gd:2404 focus_id hedefine gösterme","eşya elde gösterilir (Player E, player.gd:2404), yanında normal konuşma"
+REACT_SOLDIER_PHONE,SPK_SOLDIER,yakin_yuksek,2,"hud.gd:1363 show_reaction -> bark(SPK_SOLDIER) 5.5 sn, player.gd:2404 focus_id hedefine gösterme","""Casus aleti bu!"" ürküp bağırır"
+REACT_SOLDIER_LIGHTER,SPK_SOLDIER,yakin,2,"hud.gd:1363 show_reaction -> bark(SPK_SOLDIER) 5.5 sn, player.gd:2404 focus_id hedefine gösterme","eşya elde gösterilir (Player E, player.gd:2404), yanında normal konuşma"
+REACT_SOLDIER_BOOK,SPK_SOLDIER,yakin,2,"hud.gd:1363 show_reaction -> bark(SPK_SOLDIER) 5.5 sn, player.gd:2404 focus_id hedefine gösterme","eşya elde gösterilir (Player E, player.gd:2404), yanında normal konuşma"
+REACT_SOLDIER_CHICKPEAS,SPK_SOLDIER,yakin,2,"hud.gd:1363 show_reaction -> bark(SPK_SOLDIER) 5.5 sn, player.gd:2404 focus_id hedefine gösterme","eşya elde gösterilir (Player E, player.gd:2404), yanında normal konuşma"
+REACT_SOLDIER_POWERBANK,SPK_SOLDIER,yakin,2,"hud.gd:1363 show_reaction -> bark(SPK_SOLDIER) 5.5 sn, player.gd:2404 focus_id hedefine gösterme","eşya elde gösterilir (Player E, player.gd:2404), yanında normal konuşma"
+REACT_SOLDIER_TAPE,SPK_SOLDIER,yakin,2,"hud.gd:1363 show_reaction -> bark(SPK_SOLDIER) 5.5 sn, player.gd:2404 focus_id hedefine gösterme","eşya elde gösterilir (Player E, player.gd:2404), yanında normal konuşma"
+REACT_SOLDIER_THERMOS,SPK_SOLDIER,yakin,2,"hud.gd:1363 show_reaction -> bark(SPK_SOLDIER) 5.5 sn, player.gd:2404 focus_id hedefine gösterme","eşya elde gösterilir (Player E, player.gd:2404), yanında normal konuşma"
+REACT_SOLDIER_SELFIE,SPK_SOLDIER,yakin,2,"hud.gd:1363 show_reaction -> bark(SPK_SOLDIER) 5.5 sn, player.gd:2404 focus_id hedefine gösterme","eşya elde gösterilir (Player E, player.gd:2404), yanında normal konuşma"
+REACT_SOLDIER_COLOGNE,SPK_SOLDIER,yakin,2,"hud.gd:1363 show_reaction -> bark(SPK_SOLDIER) 5.5 sn, player.gd:2404 focus_id hedefine gösterme","eşya elde gösterilir (Player E, player.gd:2404), yanında normal konuşma"
+REACT_SOLDIER_CUBE,SPK_SOLDIER,yakin,2,"hud.gd:1363 show_reaction -> bark(SPK_SOLDIER) 5.5 sn, player.gd:2404 focus_id hedefine gösterme","eşya elde gösterilir (Player E, player.gd:2404), yanında normal konuşma"
+REACT_CANDARLI_PHONE,SPK_CANDARLI,fisilti,1,"hud.gd:1363 show_reaction -> bark(SPK_CANDARLI); metinde ""(Fısıldar)"" sahne notu",gizli buluşmalı Çandarlı
+REACT_CANDARLI_LIGHTER,SPK_CANDARLI,fisilti,1,"hud.gd:1363 show_reaction -> bark(SPK_CANDARLI); metinde ""(Fısıldar)"" sahne notu",gizli buluşmalı Çandarlı
+REACT_CANDARLI_BOOK,SPK_CANDARLI,yakin,2,"hud.gd:1363 show_reaction -> bark(SPK_CANDARLI) 5.5 sn, player.gd:2404 focus_id hedefine gösterme","eşya elde gösterilir (Player E, player.gd:2404), yanında normal konuşma"
+REACT_CANDARLI_CHICKPEAS,SPK_CANDARLI,fisilti,1,"hud.gd:1363 show_reaction -> bark(SPK_CANDARLI); metinde ""(Fısıldar)"" sahne notu",gizli buluşmalı Çandarlı
+REACT_CANDARLI_POWERBANK,SPK_CANDARLI,yakin,2,"hud.gd:1363 show_reaction -> bark(SPK_CANDARLI) 5.5 sn, player.gd:2404 focus_id hedefine gösterme","eşya elde gösterilir (Player E, player.gd:2404), yanında normal konuşma"
+REACT_CANDARLI_TAPE,SPK_CANDARLI,yakin,2,"hud.gd:1363 show_reaction -> bark(SPK_CANDARLI) 5.5 sn, player.gd:2404 focus_id hedefine gösterme","eşya elde gösterilir (Player E, player.gd:2404), yanında normal konuşma"
+REACT_CANDARLI_THERMOS,SPK_CANDARLI,yakin,2,"hud.gd:1363 show_reaction -> bark(SPK_CANDARLI) 5.5 sn, player.gd:2404 focus_id hedefine gösterme","eşya elde gösterilir (Player E, player.gd:2404), yanında normal konuşma"
+REACT_CANDARLI_SELFIE,SPK_CANDARLI,yakin,2,"hud.gd:1363 show_reaction -> bark(SPK_CANDARLI) 5.5 sn, player.gd:2404 focus_id hedefine gösterme","eşya elde gösterilir (Player E, player.gd:2404), yanında normal konuşma"
+REACT_CANDARLI_COLOGNE,SPK_CANDARLI,yakin,2,"hud.gd:1363 show_reaction -> bark(SPK_CANDARLI) 5.5 sn, player.gd:2404 focus_id hedefine gösterme","eşya elde gösterilir (Player E, player.gd:2404), yanında normal konuşma"
+REACT_CANDARLI_CUBE,SPK_CANDARLI,fisilti,1,"hud.gd:1363 show_reaction -> bark(SPK_CANDARLI); metinde ""(Fısıldar)"" sahne notu",gizli buluşmalı Çandarlı
+REACT_CLERK_PHONE,SPK_CLERK,yakin,2,"hud.gd:1363 show_reaction -> bark(SPK_CLERK) 5.5 sn, player.gd:2404 focus_id hedefine gösterme","eşya elde gösterilir (Player E, player.gd:2404), yanında normal konuşma"
+REACT_CLERK_LIGHTER,SPK_CLERK,yakin,2,"hud.gd:1363 show_reaction -> bark(SPK_CLERK) 5.5 sn, player.gd:2404 focus_id hedefine gösterme","eşya elde gösterilir (Player E, player.gd:2404), yanında normal konuşma"
+REACT_CLERK_BOOK,SPK_CLERK,yakin,2,"hud.gd:1363 show_reaction -> bark(SPK_CLERK) 5.5 sn, player.gd:2404 focus_id hedefine gösterme","eşya elde gösterilir (Player E, player.gd:2404), yanında normal konuşma"
+REACT_CLERK_CHICKPEAS,SPK_CLERK,yakin,2,"hud.gd:1363 show_reaction -> bark(SPK_CLERK) 5.5 sn, player.gd:2404 focus_id hedefine gösterme","eşya elde gösterilir (Player E, player.gd:2404), yanında normal konuşma"
+REACT_CLERK_POWERBANK,SPK_CLERK,yakin,2,"hud.gd:1363 show_reaction -> bark(SPK_CLERK) 5.5 sn, player.gd:2404 focus_id hedefine gösterme","eşya elde gösterilir (Player E, player.gd:2404), yanında normal konuşma"
+REACT_CLERK_TAPE,SPK_CLERK,yakin,2,"hud.gd:1363 show_reaction -> bark(SPK_CLERK) 5.5 sn, player.gd:2404 focus_id hedefine gösterme","eşya elde gösterilir (Player E, player.gd:2404), yanında normal konuşma"
+REACT_CLERK_THERMOS,SPK_CLERK,yakin,2,"hud.gd:1363 show_reaction -> bark(SPK_CLERK) 5.5 sn, player.gd:2404 focus_id hedefine gösterme","eşya elde gösterilir (Player E, player.gd:2404), yanında normal konuşma"
+REACT_CLERK_SELFIE,SPK_CLERK,yakin,2,"hud.gd:1363 show_reaction -> bark(SPK_CLERK) 5.5 sn, player.gd:2404 focus_id hedefine gösterme","eşya elde gösterilir (Player E, player.gd:2404), yanında normal konuşma"
+REACT_CLERK_COLOGNE,SPK_CLERK,yakin,2,"hud.gd:1363 show_reaction -> bark(SPK_CLERK) 5.5 sn, player.gd:2404 focus_id hedefine gösterme","eşya elde gösterilir (Player E, player.gd:2404), yanında normal konuşma"
+REACT_CLERK_CUBE,SPK_CLERK,yakin,2,"hud.gd:1363 show_reaction -> bark(SPK_CLERK) 5.5 sn, player.gd:2404 focus_id hedefine gösterme","eşya elde gösterilir (Player E, player.gd:2404), yanında normal konuşma"
+REACT_WINE_PHONE,SPK_WINE,yakin_yuksek,2,"hud.gd:1363 show_reaction -> bark(SPK_WINE) 5.5 sn, player.gd:2404 focus_id hedefine gösterme","""Sıradaki!"" seslenir"
+REACT_WINE_LIGHTER,SPK_WINE,yakin_yuksek,2,"hud.gd:1363 show_reaction -> bark(SPK_WINE) 5.5 sn, player.gd:2404 focus_id hedefine gösterme","""Fıçıların yanında ateş yok!"" uyarı"
+REACT_WINE_BOOK,SPK_WINE,yakin,2,"hud.gd:1363 show_reaction -> bark(SPK_WINE) 5.5 sn, player.gd:2404 focus_id hedefine gösterme","eşya elde gösterilir (Player E, player.gd:2404), yanında normal konuşma"
+REACT_WINE_CHICKPEAS,SPK_WINE,yakin,2,"hud.gd:1363 show_reaction -> bark(SPK_WINE) 5.5 sn, player.gd:2404 focus_id hedefine gösterme","eşya elde gösterilir (Player E, player.gd:2404), yanında normal konuşma"
+REACT_WINE_POWERBANK,SPK_WINE,yakin,2,"hud.gd:1363 show_reaction -> bark(SPK_WINE) 5.5 sn, player.gd:2404 focus_id hedefine gösterme","eşya elde gösterilir (Player E, player.gd:2404), yanında normal konuşma"
+REACT_WINE_TAPE,SPK_WINE,yakin_yuksek,2,"hud.gd:1363 show_reaction -> bark(SPK_WINE) 5.5 sn, player.gd:2404 focus_id hedefine gösterme","""Kaçma, soruma cevap ver!"" emir"
+REACT_WINE_THERMOS,SPK_WINE,yakin,2,"hud.gd:1363 show_reaction -> bark(SPK_WINE) 5.5 sn, player.gd:2404 focus_id hedefine gösterme","eşya elde gösterilir (Player E, player.gd:2404), yanında normal konuşma"
+REACT_WINE_SELFIE,SPK_WINE,yakin,2,"hud.gd:1363 show_reaction -> bark(SPK_WINE) 5.5 sn, player.gd:2404 focus_id hedefine gösterme","eşya elde gösterilir (Player E, player.gd:2404), yanında normal konuşma"
+REACT_WINE_COLOGNE,SPK_WINE,yakin,2,"hud.gd:1363 show_reaction -> bark(SPK_WINE) 5.5 sn, player.gd:2404 focus_id hedefine gösterme","eşya elde gösterilir (Player E, player.gd:2404), yanında normal konuşma"
+REACT_WINE_CUBE,SPK_WINE,yakin,2,"hud.gd:1363 show_reaction -> bark(SPK_WINE) 5.5 sn, player.gd:2404 focus_id hedefine gösterme","eşya elde gösterilir (Player E, player.gd:2404), yanında normal konuşma"
+REACT_NOTARY_PHONE,SPK_NOTARY,yakin,2,"hud.gd:1363 show_reaction -> bark(SPK_NOTARY) 5.5 sn, player.gd:2404 focus_id hedefine gösterme","eşya elde gösterilir (Player E, player.gd:2404), yanında normal konuşma"
+REACT_NOTARY_LIGHTER,SPK_NOTARY,yakin,2,"hud.gd:1363 show_reaction -> bark(SPK_NOTARY) 5.5 sn, player.gd:2404 focus_id hedefine gösterme","eşya elde gösterilir (Player E, player.gd:2404), yanında normal konuşma"
+REACT_NOTARY_BOOK,SPK_NOTARY,yakin,2,"hud.gd:1363 show_reaction -> bark(SPK_NOTARY) 5.5 sn, player.gd:2404 focus_id hedefine gösterme","eşya elde gösterilir (Player E, player.gd:2404), yanında normal konuşma"
+REACT_NOTARY_CHICKPEAS,SPK_NOTARY,yakin,2,"hud.gd:1363 show_reaction -> bark(SPK_NOTARY) 5.5 sn, player.gd:2404 focus_id hedefine gösterme","eşya elde gösterilir (Player E, player.gd:2404), yanında normal konuşma"
+REACT_NOTARY_POWERBANK,SPK_NOTARY,yakin,2,"hud.gd:1363 show_reaction -> bark(SPK_NOTARY) 5.5 sn, player.gd:2404 focus_id hedefine gösterme","eşya elde gösterilir (Player E, player.gd:2404), yanında normal konuşma"
+REACT_NOTARY_TAPE,SPK_NOTARY,yakin,2,"hud.gd:1363 show_reaction -> bark(SPK_NOTARY) 5.5 sn, player.gd:2404 focus_id hedefine gösterme","eşya elde gösterilir (Player E, player.gd:2404), yanında normal konuşma"
+REACT_NOTARY_THERMOS,SPK_NOTARY,yakin,2,"hud.gd:1363 show_reaction -> bark(SPK_NOTARY) 5.5 sn, player.gd:2404 focus_id hedefine gösterme","eşya elde gösterilir (Player E, player.gd:2404), yanında normal konuşma"
+REACT_NOTARY_SELFIE,SPK_NOTARY,yakin,2,"hud.gd:1363 show_reaction -> bark(SPK_NOTARY) 5.5 sn, player.gd:2404 focus_id hedefine gösterme","eşya elde gösterilir (Player E, player.gd:2404), yanında normal konuşma"
+REACT_NOTARY_COLOGNE,SPK_NOTARY,yakin,2,"hud.gd:1363 show_reaction -> bark(SPK_NOTARY) 5.5 sn, player.gd:2404 focus_id hedefine gösterme","eşya elde gösterilir (Player E, player.gd:2404), yanında normal konuşma"
+REACT_NOTARY_CUBE,SPK_NOTARY,yakin,2,"hud.gd:1363 show_reaction -> bark(SPK_NOTARY) 5.5 sn, player.gd:2404 focus_id hedefine gösterme","eşya elde gösterilir (Player E, player.gd:2404), yanında normal konuşma"
+REACT_DOUBLE_PHONE,SPK_DOUBLE,yakin,2,"hud.gd:1363 show_reaction -> bark(SPK_DOUBLE) 5.5 sn, player.gd:2404 focus_id hedefine gösterme","eşya elde gösterilir (Player E, player.gd:2404), yanında normal konuşma"
+REACT_DOUBLE_LIGHTER,SPK_DOUBLE,yakin,2,"hud.gd:1363 show_reaction -> bark(SPK_DOUBLE) 5.5 sn, player.gd:2404 focus_id hedefine gösterme","eşya elde gösterilir (Player E, player.gd:2404), yanında normal konuşma"
+REACT_DOUBLE_BOOK,SPK_DOUBLE,yakin,2,"hud.gd:1363 show_reaction -> bark(SPK_DOUBLE) 5.5 sn, player.gd:2404 focus_id hedefine gösterme","eşya elde gösterilir (Player E, player.gd:2404), yanında normal konuşma"
+REACT_DOUBLE_CHICKPEAS,SPK_DOUBLE,yakin,2,"hud.gd:1363 show_reaction -> bark(SPK_DOUBLE) 5.5 sn, player.gd:2404 focus_id hedefine gösterme","eşya elde gösterilir (Player E, player.gd:2404), yanında normal konuşma"
+REACT_DOUBLE_POWERBANK,SPK_DOUBLE,yakin,2,"hud.gd:1363 show_reaction -> bark(SPK_DOUBLE) 5.5 sn, player.gd:2404 focus_id hedefine gösterme","eşya elde gösterilir (Player E, player.gd:2404), yanında normal konuşma"
+REACT_DOUBLE_TAPE,SPK_DOUBLE,yakin,2,"hud.gd:1363 show_reaction -> bark(SPK_DOUBLE) 5.5 sn, player.gd:2404 focus_id hedefine gösterme","eşya elde gösterilir (Player E, player.gd:2404), yanında normal konuşma"
+REACT_DOUBLE_THERMOS,SPK_DOUBLE,yakin,2,"hud.gd:1363 show_reaction -> bark(SPK_DOUBLE) 5.5 sn, player.gd:2404 focus_id hedefine gösterme","eşya elde gösterilir (Player E, player.gd:2404), yanında normal konuşma"
+REACT_DOUBLE_SELFIE,SPK_DOUBLE,yakin,2,"hud.gd:1363 show_reaction -> bark(SPK_DOUBLE) 5.5 sn, player.gd:2404 focus_id hedefine gösterme","eşya elde gösterilir (Player E, player.gd:2404), yanında normal konuşma"
+REACT_DOUBLE_COLOGNE,SPK_DOUBLE,yakin,2,"hud.gd:1363 show_reaction -> bark(SPK_DOUBLE) 5.5 sn, player.gd:2404 focus_id hedefine gösterme","eşya elde gösterilir (Player E, player.gd:2404), yanında normal konuşma"
+REACT_DOUBLE_CUBE,SPK_DOUBLE,yakin,2,"hud.gd:1363 show_reaction -> bark(SPK_DOUBLE) 5.5 sn, player.gd:2404 focus_id hedefine gösterme","eşya elde gösterilir (Player E, player.gd:2404), yanında normal konuşma"
+REACT_FISHMONGER_PHONE,SPK_FISHMONGER,yakin_yuksek,2,"hud.gd:1363 show_reaction -> bark(SPK_FISHMONGER) 5.5 sn, player.gd:2404 focus_id hedefine gösterme",balıkçı tezgâh bağırışı (büyük harfli)
+REACT_FISHMONGER_LIGHTER,SPK_FISHMONGER,yakin_yuksek,2,"hud.gd:1363 show_reaction -> bark(SPK_FISHMONGER) 5.5 sn, player.gd:2404 focus_id hedefine gösterme","""Gel, istavrit var!"" çağırır"
+REACT_FISHMONGER_BOOK,SPK_FISHMONGER,yakin_yuksek,2,"hud.gd:1363 show_reaction -> bark(SPK_FISHMONGER) 5.5 sn, player.gd:2404 focus_id hedefine gösterme","tezgâh üslubu, ünlem"
+REACT_FISHMONGER_CHICKPEAS,SPK_FISHMONGER,yakin,2,"hud.gd:1363 show_reaction -> bark(SPK_FISHMONGER) 5.5 sn, player.gd:2404 focus_id hedefine gösterme","eşya elde gösterilir (Player E, player.gd:2404), yanında normal konuşma"
+REACT_FISHMONGER_POWERBANK,SPK_FISHMONGER,yakin_yuksek,2,"hud.gd:1363 show_reaction -> bark(SPK_FISHMONGER) 5.5 sn, player.gd:2404 focus_id hedefine gösterme","""buz getir!"" ünlemli talep"
+REACT_FISHMONGER_TAPE,SPK_FISHMONGER,yakin_yuksek,2,"hud.gd:1363 show_reaction -> bark(SPK_FISHMONGER) 5.5 sn, player.gd:2404 focus_id hedefine gösterme","ünlem, sevinç"
+REACT_FISHMONGER_THERMOS,SPK_FISHMONGER,yakin_yuksek,2,"hud.gd:1363 show_reaction -> bark(SPK_FISHMONGER) 5.5 sn, player.gd:2404 focus_id hedefine gösterme",büyük harfli tezgâh bağırışı
+REACT_FISHMONGER_SELFIE,SPK_FISHMONGER,yakin_yuksek,2,"hud.gd:1363 show_reaction -> bark(SPK_FISHMONGER) 5.5 sn, player.gd:2404 focus_id hedefine gösterme",tezgâh çağrısı
+REACT_FISHMONGER_COLOGNE,SPK_FISHMONGER,yakin_yuksek,2,"hud.gd:1363 show_reaction -> bark(SPK_FISHMONGER) 5.5 sn, player.gd:2404 focus_id hedefine gösterme","ünlem, sevinç"
+REACT_FISHMONGER_CUBE,SPK_FISHMONGER,yakin,2,"hud.gd:1363 show_reaction -> bark(SPK_FISHMONGER) 5.5 sn, player.gd:2404 focus_id hedefine gösterme","eşya elde gösterilir (Player E, player.gd:2404), yanında normal konuşma"
+MG_CAUL_K_GREAT,SPK_KADRI,yakin,1.5,"minigame_cauldron.gd:52 masa/tezgâh başında karşılıklı mini oyun, host replik balonu (minigame.gd:188 say)",mini oyun masasında karşılıklı konuşma
+MG_CAUL_K_OK,SPK_KADRI,yakin,1.5,"minigame_cauldron.gd:52 masa/tezgâh başında karşılıklı mini oyun, host replik balonu (minigame.gd:188 say)",mini oyun masasında karşılıklı konuşma
+MG_CAUL_K_BAD,SPK_KADRI,yakin_yuksek,1.5,"minigame_cauldron.gd:52 masa/tezgâh başında karşılıklı mini oyun, host replik balonu (minigame.gd:188 say)","azar, kovar"
+MG_HAG_WINE_OPEN,SPK_WINE,yakin,1.5,"minigame_haggle.gd:47 masa/tezgâh başında karşılıklı mini oyun, host replik balonu (minigame.gd:188 say)",mini oyun masasında karşılıklı konuşma
+MG_HAG_WINE_LOW,SPK_WINE,yakin,1.5,"minigame_haggle.gd:47 masa/tezgâh başında karşılıklı mini oyun, host replik balonu (minigame.gd:188 say)",mini oyun masasında karşılıklı konuşma
+MG_HAG_WINE_FAIR,SPK_WINE,yakin,1.5,"minigame_haggle.gd:47 masa/tezgâh başında karşılıklı mini oyun, host replik balonu (minigame.gd:188 say)",mini oyun masasında karşılıklı konuşma
+MG_HAG_WINE_SWEET,SPK_WINE,yakin,1.5,"minigame_haggle.gd:47 masa/tezgâh başında karşılıklı mini oyun, host replik balonu (minigame.gd:188 say)",mini oyun masasında karşılıklı konuşma
+MG_HAG_WINE_NOSWEET,SPK_WINE,yakin,1.5,"minigame_haggle.gd:47 masa/tezgâh başında karşılıklı mini oyun, host replik balonu (minigame.gd:188 say)",mini oyun masasında karşılıklı konuşma
+MG_HAG_WINE_WIN,SPK_WINE,yakin_yuksek,1.5,"minigame_haggle.gd:47 masa/tezgâh başında karşılıklı mini oyun, host replik balonu (minigame.gd:188 say)",ünlemli çabuk satış
+MG_HAG_WINE_DEAL,SPK_WINE,yakin,1.5,"minigame_haggle.gd:47 masa/tezgâh başında karşılıklı mini oyun, host replik balonu (minigame.gd:188 say)",mini oyun masasında karşılıklı konuşma
+MG_HAG_WINE_LOSE,SPK_WINE,yakin_yuksek,1.5,"minigame_haggle.gd:47 masa/tezgâh başında karşılıklı mini oyun, host replik balonu (minigame.gd:188 say)","öfkeli, sırayı kovar"
+MG_HAG_DOUBLE_OPEN,SPK_DOUBLE,yakin,1.5,"minigame_haggle.gd:47 masa/tezgâh başında karşılıklı mini oyun, host replik balonu (minigame.gd:188 say)",mini oyun masasında karşılıklı konuşma
+MG_HAG_DOUBLE_LOW,SPK_DOUBLE,yakin,1.5,"minigame_haggle.gd:47 masa/tezgâh başında karşılıklı mini oyun, host replik balonu (minigame.gd:188 say)",mini oyun masasında karşılıklı konuşma
+MG_HAG_DOUBLE_FAIR,SPK_DOUBLE,yakin,1.5,"minigame_haggle.gd:47 masa/tezgâh başında karşılıklı mini oyun, host replik balonu (minigame.gd:188 say)",mini oyun masasında karşılıklı konuşma
+MG_HAG_DOUBLE_SWEET,SPK_DOUBLE,yakin,1.5,"minigame_haggle.gd:47 masa/tezgâh başında karşılıklı mini oyun, host replik balonu (minigame.gd:188 say)",mini oyun masasında karşılıklı konuşma
+MG_HAG_DOUBLE_NOSWEET,SPK_DOUBLE,yakin,1.5,"minigame_haggle.gd:47 masa/tezgâh başında karşılıklı mini oyun, host replik balonu (minigame.gd:188 say)",mini oyun masasında karşılıklı konuşma
+MG_HAG_DOUBLE_WIN,SPK_DOUBLE,yakin,1.5,"minigame_haggle.gd:47 masa/tezgâh başında karşılıklı mini oyun, host replik balonu (minigame.gd:188 say)",mini oyun masasında karşılıklı konuşma
+MG_HAG_DOUBLE_DEAL,SPK_DOUBLE,yakin,1.5,"minigame_haggle.gd:47 masa/tezgâh başında karşılıklı mini oyun, host replik balonu (minigame.gd:188 say)",mini oyun masasında karşılıklı konuşma
+MG_HAG_DOUBLE_LOSE,SPK_DOUBLE,yakin,1.5,"minigame_haggle.gd:47 masa/tezgâh başında karşılıklı mini oyun, host replik balonu (minigame.gd:188 say)",mini oyun masasında karşılıklı konuşma
+MG_HAG_T_WIN,SPK_TOLGA,ic_ses,,"player.gd:2713 hud.bark(SPK_TOLGA,""MG_HAG_T_WIN"") oyundan sonra",Tolga sonucu kendi kendine yorumluyor
+MG_HAG_T_LOSE,SPK_TOLGA,ic_ses,,"player.gd:2713 hud.bark(SPK_TOLGA,""MG_HAG_T_LOSE"") oyundan sonra",Tolga sonucu kendi kendine yorumluyor
+MG_MAN_E_WIN,SPK_EMPEROR,yakin,1.5,"minigame_mangala.gd:33 masa/tezgâh başında karşılıklı mini oyun, host replik balonu (minigame.gd:188 say)",İmparator mangala masasında alçak sesle ([Yunanca] notu)
+MG_MAN_E_LOSE,SPK_EMPEROR,yakin,1.5,"minigame_mangala.gd:33 masa/tezgâh başında karşılıklı mini oyun, host replik balonu (minigame.gd:188 say)",İmparator mangala masasında alçak sesle ([Yunanca] notu)
+REACT_CALLIGRAPHER_PHONE,SPK_CALLIGRAPHER,yakin,2,"hud.gd:1363 show_reaction -> bark(SPK_CALLIGRAPHER) 5.5 sn, player.gd:2404 focus_id hedefine gösterme","eşya elde gösterilir (Player E, player.gd:2404), yanında normal konuşma"
+REACT_CALLIGRAPHER_LIGHTER,SPK_CALLIGRAPHER,yakin,2,"hud.gd:1363 show_reaction -> bark(SPK_CALLIGRAPHER) 5.5 sn, player.gd:2404 focus_id hedefine gösterme","eşya elde gösterilir (Player E, player.gd:2404), yanında normal konuşma"
+REACT_CALLIGRAPHER_BOOK,SPK_CALLIGRAPHER,yakin,2,"hud.gd:1363 show_reaction -> bark(SPK_CALLIGRAPHER) 5.5 sn, player.gd:2404 focus_id hedefine gösterme","eşya elde gösterilir (Player E, player.gd:2404), yanında normal konuşma"
+REACT_CALLIGRAPHER_CHICKPEAS,SPK_CALLIGRAPHER,yakin,2,"hud.gd:1363 show_reaction -> bark(SPK_CALLIGRAPHER) 5.5 sn, player.gd:2404 focus_id hedefine gösterme","eşya elde gösterilir (Player E, player.gd:2404), yanında normal konuşma"
+REACT_CALLIGRAPHER_POWERBANK,SPK_CALLIGRAPHER,yakin,2,"hud.gd:1363 show_reaction -> bark(SPK_CALLIGRAPHER) 5.5 sn, player.gd:2404 focus_id hedefine gösterme","eşya elde gösterilir (Player E, player.gd:2404), yanında normal konuşma"
+REACT_CALLIGRAPHER_TAPE,SPK_CALLIGRAPHER,yakin,2,"hud.gd:1363 show_reaction -> bark(SPK_CALLIGRAPHER) 5.5 sn, player.gd:2404 focus_id hedefine gösterme","eşya elde gösterilir (Player E, player.gd:2404), yanında normal konuşma"
