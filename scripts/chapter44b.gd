@@ -58,7 +58,7 @@ const SUN_REST := 1.3              # sonra yarıktan kalıcı huzme (ışık ene
 const AMBIENT_DARK := 0.08         # gözler alışmadan ortam ışığı
 const AMBIENT_LIT := 0.75          # gözler alışınca (fener konisinin dışı tam siyah olmasın)
 const MEDUSA_STOP := 3.3           # kayık Medusa'lı iki sütunun kaç m güneyinde durur (iki yüz aynı kadrajda)
-const MEDUSA_FOV := 46.0           # tespit karesi ve yakın bakış: telefonun kamerası yakınlaştırır (görüş açısı, derece)
+const MEDUSA_FOV := 36.0           # tespit karesi ve yakın bakış: telefonun kamerası yakınlaştırır (görüş açısı, derece)
 const CLIMB_SECS := 6.5            # ip merdiven + demir basamaklar, sudan kilere
 
 const SEAT := Vector3(0.0, 0.42, 0.35)
@@ -367,6 +367,8 @@ func _descend() -> void:
 		# Ağzın altında karanlık açılırken kuyunun ışığı suya ve sütun diplerine biraz yayılır: sütunlar suyun üstünde
 		# durur, boşlukta asılı gibi değil (denetim 2, D4). Suya düşünce gözler yeniden karanlıkta (hayranlık anı korunur).
 		create_tween().tween_method(_set_ambient, 0.0, 0.38, 3.0).set_delay(1.0)
+		# Ağız tonoza açılınca bakış ufka döner (-12°): sütunlar dik bakışta zeminsiz, yatık çubuklar gibiydi
+		create_tween().tween_property(player.camera, "rotation:x", deg_to_rad(-12.0), 2.4).set_delay(1.6).set_trans(Tween.TRANS_SINE)
 		await hud.say("SPK_TOLGA", "D44B_T_DOWN")
 		if tw2.is_running():
 			await tw2.finished
