@@ -25,7 +25,7 @@ const IC := 0.34                             # iç yüzlerin karanlığı
 static var _cache := {}
 
 
-## Tür adları: "koni", "can", "catma", "buyuk", "pasa", "kil", "barinak"; katman öneki: "" yakın, "orta_", "uzak_"
+## Tür adları: "koni", "can", "catma", "buyuk", "pasa", "otag", "kil", "barinak"; katman öneki: "" yakın, "orta_", "uzak_"
 static func mesh(kind: String) -> ArrayMesh:
 	if _cache.has(kind):
 		return _cache[kind]
@@ -78,6 +78,11 @@ static func _tur(k: String, lod: int) -> Dictionary:
 			o.merge({"ex": 0.5, "ez": 0.5, "m": 2.8, "direk": [-0.3, 0.0, 0.3], "P": 10, "nc": 2, "nr": 3, "hw": 1.9, "H": 4.5,
 				"rs": 0.3, "sp": 1.4, "es": 0.1, "ov": 0.05, "val": 0.4, "serit": Color(0.84, 0.66, 0.24),
 				"bez": Color(0.62, 0.16, 0.15), "ip": 0.12, "skal": 1, "sx": 12.0, "sz": 8.0}, true)
+		"otag":
+			# otağ-ı hümayun: kırmızı çuha, altın sırma saçak, 18 duvar direği (örnek ölçeği 8,5 × 1 × 8,5)
+			o.merge({"P": 18, "nc": 2, "nr": 4, "hw": 5.0, "H": 10.2, "sp": 1.35, "es": 0.3, "ov": 0.06, "val": 0.7,
+				"serit": Color(0.86, 0.68, 0.26), "bez": Color(0.72, 0.16, 0.16), "ip": 0.2, "skal": 1, "sx": 8.5, "sz": 8.5,
+				"topuz": false}, true)
 		"kil":
 			o.merge({"ex": 0.5, "ez": 0.5, "m": 6.0, "direk": [-0.4, -0.13, 0.13, 0.4], "P": 12, "nc": 2, "nr": 3, "hw": 0.7,
 				"H": 1.75, "rs": 0.38, "sp": 1.1, "es": 0.12, "ov": 0.02, "val": 0.0, "bez": Color(0.3, 0.25, 0.21), "ip": 0.22,
@@ -585,3 +590,24 @@ static func _barinak(b: B, lod: int) -> void:
 		b.cylp(p0, 0.008, 0.5, Color(0.36, 0.28, 0.18), 4, 0.004, Vector3(r.randf_range(-50, 50), 0, r.randf_range(-60, 60)))
 	b.sph(Vector3(-0.2, ZEMIN + 0.08, -0.15), 0.12, Color(0.5, 0.42, 0.3), 5, Vector3(1.6, 0.6, 1.0))    # yatak (keçe rulosu)
 	b.sph(Vector3(0.22, ZEMIN + 0.1, -0.05), 0.1, Color(0.62, 0.52, 0.34), 5, Vector3(1.0, 1.0, 1.0))    # torba
+
+
+static var _tmat := {}
+
+## Tek çadır (çoklu ağ değil): host'a ölçekli ağ örneği; renk malzeme tonu (bez beyaza yakın ağlarda). lod 0 gölge düşürür.
+static func ekle(host: Node3D, kind: String, xf: Transform3D, renk: Color, lod: int, ad := "") -> MeshInstance3D:
+	var mi := MeshInstance3D.new()
+	mi.mesh = K.tent_lod(kind, lod)
+	var key := renk.to_html()
+	if not _tmat.has(key):
+		var m := (K.mat("") as StandardMaterial3D).duplicate() as StandardMaterial3D
+		m.albedo_color = Color(0.78, 0.76, 0.72) * renk
+		_tmat[key] = m
+	mi.material_override = _tmat[key]
+	mi.transform = xf
+	if lod > 0:
+		mi.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
+	if ad != "":
+		mi.name = ad
+	host.add_child(mi)
+	return mi

@@ -620,7 +620,8 @@ static func _deve_cokegi(an: B, r: RandomNumberGenerator, rot: Transform2D, ok_a
 	# yük çuvalları
 	var cw := rot * (lp + Vector2(0, 2.5))
 	for i in 4:
-		an.box(Vector3(cw.x + i * 0.65, K.gy(cw.x, cw.y) + 0.25, cw.y), Vector3(0.6, 0.45, 0.85), K.SAMAN.darkened(0.15 * (i % 2)), rad_to_deg(r.randf()))
+		an.sph(Vector3(cw.x + i * 0.65, K.gy(cw.x, cw.y) + 0.24, cw.y), 0.4, K.SAMAN.darkened(0.15 * (i % 2)), 6, Vector3(0.78, 0.6, 1.05))   # ORDUGÂH-5: yük çuvalı yuvarlak
+		r.randf()
 	var dw := rot * (lp + Vector2(1.6, 2.5))
 	kisi.append([Vector3(dw.x, K.gy(dw.x, dw.y), dw.y), r.randf() * TAU, "saka"])
 

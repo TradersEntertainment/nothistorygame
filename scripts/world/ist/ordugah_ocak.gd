@@ -152,7 +152,7 @@ static func duman_mat(gece: bool) -> ShaderMaterial:
 	var m := ShaderMaterial.new()
 	m.shader = sh
 	m.set_shader_parameter("renk", Color(0.2, 0.19, 0.2) if gece else Color(0.83, 0.82, 0.8))
-	m.set_shader_parameter("yogun", 0.26 if gece else 0.4)
+	m.set_shader_parameter("yogun", 0.16 if gece else 0.4)
 	_dmat[key] = m
 	return m
 

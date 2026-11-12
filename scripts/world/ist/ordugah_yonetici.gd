@@ -63,7 +63,7 @@ func kur(plan: Array) -> void:
 				for fp: Vector2 in host.get_meta("ates"):
 					var wp := base * Vector3(fp.x, 0.0, fp.y)
 					var gy := IstGeo.h(cen.x + wp.x, cen.y + wp.z)
-					ates_x.append(Transform3D(Basis().scaled(Vector3.ONE * 4.2), Vector3(wp.x, gy + 0.7, wp.z)))
+					ates_x.append(Transform3D(Basis().scaled(Vector3.ONE * 7.0), Vector3(wp.x, gy + 0.9, wp.z)))
 			host.free()
 			rmax = maxf(rmax, (it["pos"] as Vector2).distance_to(cen) + float(it["r"]))
 		var mi := MeshInstance3D.new()
@@ -76,7 +76,7 @@ func kur(plan: Array) -> void:
 		mi.set_meta("no_walk", true)
 		add_child(mi)
 		if not ates_x.is_empty():
-			var g := Flame.scatter_glows(mi, ates_x, 0.9)
+			var g := Flame.scatter_glows(mi, ates_x, 1.25)
 			g.name = "uzak_ateş"
 		hucreler.append({"c": cen, "r": rmax, "mi": mi, "idx": by[ck], "yakin": false})
 	uzak_ms = Time.get_ticks_msec() - t0
