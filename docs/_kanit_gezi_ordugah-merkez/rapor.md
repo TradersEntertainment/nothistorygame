@@ -1,12 +1,12 @@
-# GEZİ — `ordugah-merkez` (İLK GÖNDERİM, 18:35 UTC; son rapor sonra güncellenecek)
+# GEZİ — `ordugah-merkez` (2. GÖNDERİM: gündüz + gece + yürüyüş)
 
 Denetçi: bağımsız gezgin. Oyun kodu DEĞİŞTİRİLMEDİ (yalnız `tests/_ist/gezi_ordugah-merkez.*` sonda dosyaları). Taban: `wip/ist2-gezi-taban`.
 
 ## 1. Bölge, kare sayıları
 - Bölge (gerçek doğu, kuzey, m): KB (−6100, 2000) · KD (−5000, 2000) · GD (−5000, 700) · GB (−6100, 700). İçinde: otağ (−5611, 1490), Şahi (−5098, 1280), bataryalar 5–8, mescit (−5604, 1163), pazar (−5529, 913), Halil Paşa (−5950, 1157), kazanlar (−5191, 1807), at/deve bağı (−5220, 2119), öküz ağılı (−6298, 1771), dökümhane (−6451, 475), barut (−5328, 1310), esir (−5473, 2485), tercüman (−5779, 1848), siper hattı. Koordinatlar `IstOrdugah.plan()` + `IstGeo.real` ile sondadan alındı (`tests/_ist/gezi_ordugah-merkez.gd`).
-- **Çekilen kare: 171** (pilot 55 + ızgara/ek 116), 1280×720, `sur4_kare --set=liste` (şehir kuyruğu boşaltılarak). Yazılımla çizimde ~11 sn/kare → 60 m'lik tam ızgara (≈1 800 kare) bu sürede MÜMKÜN DEĞİL; **ızgara 180 m (6×7 = 42 düğüm, her düğümde K ve D = 84 kare)** + 11 yapıda 5'er kare (4 yön + havadan) + 32 elle seçilmiş yakın/uzak/havadan/tepeden kare. Madde 2'deki 60 m / 4 yön ızgarası YAPILMADI (bkz. §7).
-- **Bakılan kare: 108** (3×3 paftalarda; pilot 11 paftanın 55'i, ek paftalardan x_00–x_03'ün 35'i, g_03 ve g_06'nın 18'i). Şüpheli olanların tam boyu açıldı (aşağıda dosya adlarıyla). Geri kalan 63 kare (g_00–02, 04, 05, 07–09 paftaları) bu ilk gönderimde BAKILMADI.
-- Yürüyüş: bu gönderimde 0 km (gerçek oyuncu yürüyüşü BAKILMADI; son raporda).
+- **Çekilen kare: 203** (gündüz pilot 55 + gündüz ızgara/ek 116 + gece 32), 1280×720, `sur4_kare --set=liste` (şehir kuyruğu boşaltılarak). Yazılımla çizimde ~11 sn/kare → madde 2'deki 60 m / 4 yön ızgara (≈1 800 kare) bu sürede MÜMKÜN DEĞİL; yerine **180 m ızgara (42 düğüm × K,D = 84 kare)** + 11 yapıda 5'er kare (4 yön + havadan) + 32 elle yakın/uzak/havadan/tepeden kare + gece (her 3. düğümden K,D = 28 + 4 yapı/hava).
+- **Bakılan kare: 177 / 203** (3×3 paftalarda; şüpheli olanların tam boyu ayrıca açıldı: g41_D, g38_D). BAKILMADI: pafta g_07, g_09 (12 kare), gece paftaları 01 ve 02 (14 kare).
+- **Yürüyüş: 849 m** (6 güzergâh, gerçek `player.gd`, başsız; hedef 1,2 km'nin ALTINDA, ağır CPU yüzünden süre 60 sn/rota ile kesildi). Ham olaylar `ham/olay_yuruyus.txt`.
 
 ## 2. GENEL NOT: 3 / 10
 Sahibi buraya yerden bakınca ilk **hayvanlara** kızar: öküz ve develer hâlâ sandık + dört kazık (kutu yasağı 32 ihlali, `k2_agil_otag_yakin`, `k2_hayvan_ahir_yakin`). Hemen ardından **kırmızı fesli askerler** (döneme aykırı, `k1_sahi_G`) ve **elmas gibi gülle yığınları** gelir. Yukarıdan çadır denizi iyi okunuyor, ama yerden bakınca çadır içi dümdüz lacivert/karanlık, zemin tekrar eden koyu çizgi damgasıyla dolu ve bataryaların önü bomboş çayır.
@@ -38,9 +38,16 @@ Kare dosyaları `kare/` altında (`k1_` = pilot koşu, `k2_` = ızgara/ek koşu)
 | 20 | PERFORMANS | 1 | Her yer | – | ham/rinfo_*.txt (en kötü: k1_dokum_D 1861 çizim / 5,03 M) | 171 karenin **108'i** yer bütçesini (1 200 çizim / 2,5 M) aşıyor; ort. 2,72 M üçgen | IstOrdugah* + şehir | MultiMesh/LOD |
 | 21 | KUTU | 3 | Koyun sürüsü | −6298, 1771 | k2_agil_otag_hava | koyunlar küçük kutu (ŞÜPHELİ, yalnız tepeden bakıldı) | ordugah_yerleske.gd:build_agil, ordugah_oba.gd:_koyun | yakın kare gerekir |
 | 22 | GÖRSEL | 3 | Top namlusu | −5200, 951 | k1_bat06_G | namlu düz kereste/boru, yatak kutu; ŞÜPHELİ (yakın tam boy bakılmadı) | ordugah_yapi.gd:_top | – |
+| 23 | DÖNEM | 1 | Pembe çadır üstünde | −5100, 1600 | k2_g41_D | **KIRMIZI ZEMİN ÜSTÜNDE BEYAZ AY-YILDIZ (Türk bayrağı) dalgalanıyor**; ordugâhta hilal/yıldız YASAK (§7c) | KAYNAK ŞÜPHELİ: ordugah_oba.gd:_sancak hilalsiz yazıyor; bayrağı başka bir sistem (Props.crescent / hayat sancak stil 3) koymuş olabilir, düğüm adı bulunamadı | bayrağı kaldır, flama düz kırmızı |
+| 24 | KUTU | 2 | Siper/sepet duvarı | −5100, 1060 | k2_g38_D, k2_g38_K | kameranın yanında ~5 m yüksekliğinde dikdörtgen kahverengi dev levhalar, tepesinde lacivert kontur çıkıntısı: kutu sütun gibi, ölçeği siperin dışına taşmış | KAYNAK ŞÜPHELİ (ordugah_yapi2.gd:build_siper / ordugah_cephe.gd sepet-tomruk istifi) | sepet (gabion) örgülü silindir, 1–1,5 m |
+| 25 | GÖRSEL | 2 | Çadır arası | −5820, 1060 | k2_g10_K | havada yeşil elmas ağaç tacı, gövde yok (gövde çadırın arkasında olabilir; ŞÜPHELİ) | scripts/world/ist/bitki.gd:tree_mesh | taç+gövde birlikte |
+| 26 | OYNANIŞ | 2 | Halil Paşa çadırı | −5951, 1158 | k1_halil_K, k1_halil_D (çadır içi) | oyuncu bu noktada önce 12,9 m düştü, sonra araziden 1,75 m ALTTA durdu; 40 takılma, yürüyüş 0 m: kapalı cep (başlangıç noktasını ben çadır içine koydum; gerçek oyuncu girerse aynı) | ordugah_yerleske.gd:build_pasa (zemin/çarpışma) | çadırın içini yürünebilir yap ya da girişi kapat |
+| 27 | OYNANIŞ | 3 | Rota boyunca takılmalar | −5704,1491 · −5545,913 · −5078,1153 · −4980,774 · −6290,1750 | ham/olay_yuruyus.txt | otağ zokağı, pazar, siper, ağıl çiti önünde yürüyüş durdu (engel çarpması olabilir; görünmez duvar mı gerçek engel mi ŞÜPHELİ) | ordugah_otag.gd:_zokak, ordugah_yapi.gd:build_pazar, ordugah_yerleske.gd:build_agil | geçit/kapı aç |
+| 28 | BOŞLUK | 2 | Gece çadır arası | −5640–−5100, 700–1900 | k3_n_mutfak, k3_n_bat_hava, pafta_gece_00 | gece oba aralarında ateş yok, çadırlar siyah levha; yalnız mutfak ve otağ çevresinde birkaç ateş (BİLİNİYOR: ORDUGÂH-5) | ordugah_oba.gd:K.ateslar çağrısı | her obada ocak + parıltı |
+| 29 | GÖRSEL | 2 | Gece pembe/açık mavi çadırlar | −5700, 900 | k3_n_otag_dis, pafta_gece_00 (ilk kare) | açık mavi-beyaz çadır gece kendi kendine parlıyor (ışıyan yanlış yüzey) | ordugah_kit.gd renk/palet (gece materyal) | gece koyulaşan matlık |
 
-## 4. Sayım (bu gönderim)
-KUTU 11 · GÖRSEL 4 · ZEMİN 2 · MANTIK 1 · DÖNEM 2 · BOŞLUK 1 · PERFORMANS 1 · OYNANIŞ 0 (yürüyüş yok). **KUTU kalan=11** (hedef 0).
+## 4. Sayım
+KUTU 12 · GÖRSEL 6 · ZEMİN 2 · MANTIK 1 · DÖNEM 3 · BOŞLUK 2 · OYNANIŞ 2 · PERFORMANS 1 = 29 bulgu (ŞÜPHELİ işaretliler: 9 kaynak, 11, 21, 22, 23 kaynak, 24 kaynak, 25, 26, 27). **KUTU kalan=12** (hedef 0). Hedef 40 bulguya ulaşılamadı: yeterli ızgara/yürüyüş koşulamadı (§7).
 
 ## 5. En kötü 12 kare
 1 k2_agil_otag_yakin (kutu öküz) · 2 k2_hayvan_ahir_yakin (kutu deve) · 3 k1_sahi_G (fes + elmas gülle) · 4 k1_bat06_K (fes + gülle) · 5 k2_esir (kutu insan) · 6 k2_otag_dis_D (kırmızı hangar) · 7 k2_g15_D (çadır içi düz lacivert) · 8 k2_hava_merkez_tepe (çokgen yamalar) · 9 k2_g29_D (damga + boş çayır) · 10 k1_siper1380_D (dev levha yol + elmas ağaç) · 11 k2_bat08_uzak (pembe/mavi çadır) · 12 k1_mescit_K.
@@ -49,6 +56,9 @@ KUTU 11 · GÖRSEL 4 · ZEMİN 2 · MANTIK 1 · DÖNEM 2 · BOŞLUK 1 · PERFORM
 k1_pazar_D (tezgâhlar, insanlı, canlı) · k1_barut_hava / k1_bat06_hava (hat boyu siper ve nöbetçiler yaşam dolu) · k2_ateş_yakin (kazan sırası, alev, taş kaide) · k2_tepe_genis (sur karşısı bütün çadır denizi + bataryalar: siluet iyi) · k1_siper1380_K (sur+kazık+nöbetçi).
 
 ## 7. Bakamadıklarım / YAPILMADI (dürüst liste)
-- 60 m ızgara / 4 yön (yerine 180 m, 2 yön); gece kareleri henüz YOK; gerçek oyuncuyla ≥1,2 km yürüyüş YOK; 15 m'de bir yol karesi YOK; 120 m'de bir çapraz hava karesi YOK (yalnız 4–5 hava karesi). Bunlar son rapor için sırada.
-- Paftalar g_00–02, 04, 05, 07–09 bu gönderimde incelenmedi.
-- Kaynak sütunu: 9. bulgunun kaynağı kanıtsız (ŞÜPHELİ).
+- 60 m ızgara / 4 yön YAPILMADI (180 m, 2 yön); 15 m'de bir yol karesi YOK; 120 m'de bir çapraz hava karesi YOK (hava 12 kare kadar).
+- Yürüyüş 849 m (<1,2 km); düşme/takılma/kapalı cep sayıları yaklaşık; "duvardan geçme" ve "görünmez duvar" ayrımı kareyle doğrulanmadı.
+- Paftalar g_07, g_09 ve gece_01, gece_02 incelenmedi.
+- Bulgu 9 (zemin damgası), 23 (bayrak) ve 24 (levha) için kaynak dosya kanıtsız; düğüm adı `--set=kim` ile alınmadı.
+- Gece karelerinde ateş sayımı yapılmadı; yalnız görsel.
+- Bu rapor oyun kodunu değiştirmez; `git status` yalnız Godot'un ürettiği .import/.uid/.translation dosyalarını gösterir (kaydedilmedi).

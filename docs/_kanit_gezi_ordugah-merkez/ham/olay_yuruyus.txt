@@ -1,0 +1,67 @@
+GEZI_OLAY TAKILMA -5704 1491 rota=otag_dogu
+GEZI_YOL rota=otag_dogu yol=177 m bitis=-5505,1915 takilma=1
+GEZI_OLAY TAKILMA -5545 913 rota=pazar_batarya
+GEZI_OLAY TAKILMA -5545 914 rota=pazar_batarya
+GEZI_YOL rota=pazar_batarya yol=193 m bitis=-5935,1265 takilma=2
+GEZI_OLAY DUSME -5951 1158 rota=halil_otag fark=-12.90
+GEZI_OLAY TAKILMA -5951 1158 rota=halil_otag
+GEZI_OLAY TAKILMA -5951 1158 rota=halil_otag
+GEZI_OLAY TAKILMA -5951 1158 rota=halil_otag
+GEZI_OLAY TAKILMA -5951 1158 rota=halil_otag
+GEZI_OLAY TAKILMA -5951 1158 rota=halil_otag
+GEZI_OLAY TAKILMA -5951 1158 rota=halil_otag
+GEZI_OLAY TAKILMA -5951 1158 rota=halil_otag
+GEZI_OLAY TAKILMA -5951 1158 rota=halil_otag
+GEZI_OLAY TAKILMA -5951 1158 rota=halil_otag
+GEZI_OLAY TAKILMA -5951 1158 rota=halil_otag
+GEZI_OLAY TAKILMA -5951 1158 rota=halil_otag
+GEZI_OLAY TAKILMA -5951 1158 rota=halil_otag
+GEZI_OLAY TAKILMA -5951 1158 rota=halil_otag
+GEZI_OLAY TAKILMA -5951 1158 rota=halil_otag
+GEZI_OLAY TAKILMA -5951 1158 rota=halil_otag
+GEZI_OLAY TAKILMA -5951 1158 rota=halil_otag
+GEZI_OLAY TAKILMA -5951 1158 rota=halil_otag
+GEZI_OLAY TAKILMA -5951 1158 rota=halil_otag
+GEZI_OLAY TAKILMA -5951 1158 rota=halil_otag
+GEZI_OLAY TAKILMA -5951 1158 rota=halil_otag
+GEZI_OLAY TAKILMA -5951 1158 rota=halil_otag
+GEZI_OLAY TAKILMA -5951 1158 rota=halil_otag
+GEZI_OLAY TAKILMA -5951 1158 rota=halil_otag
+GEZI_OLAY TAKILMA -5951 1158 rota=halil_otag
+GEZI_OLAY TAKILMA -5951 1158 rota=halil_otag
+GEZI_OLAY TAKILMA -5951 1158 rota=halil_otag
+GEZI_OLAY TAKILMA -5951 1158 rota=halil_otag
+GEZI_OLAY TAKILMA -5951 1158 rota=halil_otag
+GEZI_OLAY TAKILMA -5951 1158 rota=halil_otag
+GEZI_OLAY TAKILMA -5951 1158 rota=halil_otag
+GEZI_OLAY TAKILMA -5951 1158 rota=halil_otag
+GEZI_OLAY TAKILMA -5951 1158 rota=halil_otag
+GEZI_OLAY TAKILMA -5951 1158 rota=halil_otag
+GEZI_OLAY TAKILMA -5951 1158 rota=halil_otag
+GEZI_OLAY TAKILMA -5951 1158 rota=halil_otag
+GEZI_OLAY TAKILMA -5951 1158 rota=halil_otag
+GEZI_OLAY TAKILMA -5951 1158 rota=halil_otag
+GEZI_OLAY TAKILMA -5951 1158 rota=halil_otag
+GEZI_OLAY TAKILMA -5951 1158 rota=halil_otag
+GEZI_OLAY TAKILMA -5951 1158 rota=halil_otag
+GEZI_YOL rota=halil_otag yol=0 m bitis=-5951,1158 takilma=40
+GEZI_YOL rota=mutfak_siper yol=187 m bitis=-4921,1617 takilma=0
+GEZI_OLAY TAKILMA -5078 1153 rota=siper_boyu
+GEZI_OLAY TAKILMA -5078 1153 rota=siper_boyu
+GEZI_OLAY TAKILMA -5086 1135 rota=siper_boyu
+GEZI_OLAY TAKILMA -4980 774 rota=siper_boyu
+GEZI_OLAY TAKILMA -4969 772 rota=siper_boyu
+GEZI_OLAY TAKILMA -4965 783 rota=siper_boyu
+GEZI_YOL rota=siper_boyu yol=170 m bitis=-4998,823 takilma=6
+GEZI_OLAY TAKILMA -6262 1795 rota=agil_otag
+GEZI_OLAY TAKILMA -6262 1795 rota=agil_otag
+GEZI_OLAY TAKILMA -6308 1813 rota=agil_otag
+GEZI_OLAY TAKILMA -6335 1747 rota=agil_otag
+GEZI_OLAY TAKILMA -6289 1728 rota=agil_otag
+GEZI_OLAY TAKILMA -6288 1730 rota=agil_otag
+GEZI_OLAY TAKILMA -6272 1781 rota=agil_otag
+GEZI_OLAY TAKILMA -6272 1781 rota=agil_otag
+GEZI_OLAY TAKILMA -6335 1747 rota=agil_otag
+GEZI_YOL rota=agil_otag yol=123 m bitis=-6335,1747 takilma=9
+GEZI_YURUYUS_TOPLAM 849 m olay=2458
+(DUSME -5951 1158 fark=-1.75 satırı 2399 kez tekrarlandı; elenmiştir)
