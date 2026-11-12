@@ -200,8 +200,14 @@ static func moloz(h: Node3D, pos: Vector3, w: float, d: float, kat: int, rng: Ra
 
 
 ## Ot/çalı tutamı (görsel).
+## ÇEVRE-4 (kalite notu 29): döşeme üstünde düzenli "yeşil küre" değil; derz arasından çıkan yassı, uzunca, koyu
+## ot şeridi (iki üç ince parça, yerden ≤ 0,2 m).
 static func ot(h: Node3D, pos: Vector3, r: float, rng: RandomNumberGenerator) -> void:
-	yaprak(h, r, pos + Vector3(0, r * 0.45, 0), OT if rng.randf() < 0.5 else OT_K, Vector3(1, 0.6, 1), 6)
+	var yaw := rng.randf() * 180.0
+	var c := (OT if rng.randf() < 0.5 else OT_K).lerp(Color("8a7a5a"), 0.35)
+	for i in 2 + int(rng.randf() * 2.0):
+		var o := Vector3(rng.randf_range(-r, r) * 0.6, 0.0, rng.randf_range(-r, r) * 0.25).rotated(Vector3.UP, deg_to_rad(yaw))
+		Props.box(h, Vector3(r * rng.randf_range(0.8, 1.6), rng.randf_range(0.06, 0.16), r * 0.25), pos + o + Vector3(0, 0.04, 0), c.darkened(rng.randf() * 0.15), Vector3(0, yaw + rng.randf_range(-15, 15), 0))
 
 
 ## Haç: bronz, dikilebilir (görsel).

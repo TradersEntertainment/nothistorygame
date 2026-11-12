@@ -154,9 +154,9 @@ static func _climb(n: Node3D, a: Vector3, b: Vector3, tip := "merdiven") -> void
 static func _zemin_serpinti(n: Node3D, rng: RandomNumberGenerator, rx: float, rz: float, adet: int, lod: int) -> void:
 	if lod > 0:
 		return
-	for i in adet:
+	for i in adet / 2:
 		var a := rng.randf() * TAU
-		var d := rng.randf_range(0.55, 1.0)
+		var d := rng.randf_range(0.7, 1.0)          # seyrek, kenara yakın (ÇEVRE-4)
 		Y.ot(n, Vector3(cos(a) * rx * d, 0.1, sin(a) * rz * d), rng.randf_range(0.3, 0.7), rng)
 
 

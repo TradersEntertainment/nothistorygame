@@ -57,17 +57,18 @@ static func build(root: Node3D, lay: Dictionary, lod: int, o: Dictionary) -> voi
 		IstSurlar._d(root, Vector3(-gw * 0.5, 0, zi1), Vector3(gw * 0.5, gh, zi1 + 0.06), Color("8a4a35"), "brick")
 		IstSurlar._d(root, Vector3(-gw * 0.5, 0, zi0 - 0.06), Vector3(gw * 0.5, gh, zi0), Color("8a4a35"), "brick")
 		return
-	# ---- açık kapı: kanatlar duvara yaslanmış, demir bağlar
-	var llen := minf(gw * 0.5, T - 0.6)
-	for sx in [-1.0, 1.0]:
-		var xa: float = sx * gw * 0.5
-		var lo := Vector3(minf(xa, xa - sx * 0.12), 0.0, zi0 + 0.3)
-		var hi := Vector3(maxf(xa, xa - sx * 0.12), gh - 0.25, zi0 + 0.3 + llen)
-		var leaf := IstSurlar._s(root, lo, hi, C_WOOD, "wood", 0)
-		if leaf:
-			for yy in [0.7, gh * 0.5, gh - 0.9]:
-				var xs: float = xa - sx * 0.12 - sx * 0.02
-				IstSurlar._d(root, Vector3(minf(xs, xs + sx * 0.02), yy, zi0 + 0.32), Vector3(maxf(xs, xs + sx * 0.02), yy + 0.14, zi0 + 0.3 + llen - 0.02), C_IRON)
+	# ---- kuşatma (SUR-4, madde 6): kanatlar KAPALI (iç surda ve dış surun geçidinde), demir bağlı, arkası sürgülü
+	for zk: float in [zi0 + 0.45, zo0 + 0.45]:
+		var hk := gh - 0.2 if zk < zi1 else minf(gh, OH - 1.0) - 0.2
+		for sx in [-1.0, 1.0]:
+			var xa: float = sx * gw * 0.5
+			var lo := Vector3(minf(xa, 0.0), 0.0, zk)
+			var hi := Vector3(maxf(xa, 0.0), hk, zk + 0.28)
+			IstSurlar._s(root, lo, hi, C_WOOD, "wood", 0)
+			for yy in [0.7, hk * 0.5, hk - 0.7]:
+				IstSurlar._d(root, Vector3(minf(xa, 0.0) + 0.1, yy, zk - 0.03), Vector3(maxf(xa, 0.0) - 0.1, yy + 0.14, zk), C_IRON)
+		# sürgü kirişi (şehir yanında)
+		IstSurlar._d(root, Vector3(-gw * 0.5 - 0.3, hk * 0.45, zk + 0.28), Vector3(gw * 0.5 + 0.3, hk * 0.45 + 0.28, zk + 0.5), C_WOOD.darkened(0.2))
 	# ---- Romanos koridoru: iki yan duvar iç surdan dış sura (kapı yapısı)
 	if o.get("koridor", false):
 		var cw := 1.2

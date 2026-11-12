@@ -19,7 +19,14 @@ const Y = preload("res://scripts/world/ist/ordugah_yapi.gd")
 const Y2 = preload("res://scripts/world/ist/ordugah_yapi2.gd")
 const DN = preload("res://scripts/world/ist/ordugah_donanma.gd")
 const KN = preload("res://scripts/world/ist/ordugah_kanat.gd")
+const OT = preload("res://scripts/world/ist/ordugah_otag.gd")
+const CE = preload("res://scripts/world/ist/ordugah_cephe.gd")
+const YR = preload("res://scripts/world/ist/ordugah_yerleske.gd")
 const S := 0.5
+
+## ORDUGÂH-4: görünümün tarihi (ay × 100 + gün). Varsayılan Nisan sonu (28 Nisan): kuşatma kuleleri (18 Mayıs) ve
+## lağımlar (16–25 Mayıs) YOK, yerlerinde kereste/hazırlık. Bölüm isterse plan()'dan önce değiştirir (önbellek: _plan = []).
+static var tarih := 428
 
 static var _plan: Array = []
 static var _arcs := PackedFloat32Array()
@@ -127,10 +134,22 @@ static func plan() -> Array:
 		o.append(_item("batarya", "batarya_%02d" % (i + 1), "Batarya %d" % (i + 1), at(u, 128.0), yaw_sura(u), 26.0,
 			Vector3(float(bn[i]) * 8.5 + 8.0, 4, 18), "ordugah", "ordugah", {"n": bn[i]}))
 	# --- Mancınık ve kuşatma kuleleri
-	for u in [1180.0, 1460.0, 1700.0, 1930.0]:
-		o.append(_item("mancinik", "mancinik_%d" % int(u), "Mancınık", at(u, 150.0), yaw_sura(u), 12.0, Vector3(9, 12, 16)))
-	for u in [1300.0, 1585.0, 2300.0]:
-		o.append(_item("kule", "kule_%d" % int(u), "Kuşatma kulesi (hazırlık)", at(u, 160.0), yaw_sura(u), 10.0, Vector3(5, 14, 5)))
+	# ORDUGÂH-4 (§7d-9): 1453'te belirleyici silah top; mancınık 4 → 2, arka hatta (kimlikler korunur, 1460/1700 kalktı)
+	for u in [1180.0, 1930.0]:
+		o.append(_item("mancinik", "mancinik_%d" % int(u), "Mancınık", at(u, 235.0), yaw_sura(u), 12.0, Vector3(9, 12, 16)))
+	# ORDUGÂH-4 (§4.5, §7d-10): kule 18 Mayıs'ta bir gecede, Pempton/Romanos karşısında; ikincisi Pege/Üçüncü Askerî
+	# Kapı karşısında. Kimlikler korunur, yerler: kule_1585 → u 1935, kule_1300 → u 900, kule_2300 kereste/hazırlık yeri.
+	# Tarihten önce (varsayılan Nisan sonu) kule yok: yerinde kereste istifi ve yarım iskelet ("hazirlik").
+	var kule_u := {"kule_1300": [900.0, 125.0], "kule_1585": [1935.0, 125.0], "kule_2300": [2300.0, 230.0]}
+	for kid: String in ["kule_1300", "kule_1585", "kule_2300"]:
+		var ku: Array = kule_u[kid]
+		var hazir := tarih >= 518 and kid != "kule_2300"
+		o.append(_item("kule", kid, "Kuşatma kulesi (18 Mayıs)" if hazir else "Kuşatma kulesi (hazırlık)", at(ku[0], ku[1]), yaw_sura(ku[0]), 10.0, Vector3(5, 14, 5),
+			"ordugah", "ordugah", {"hazirlik": not hazir}))
+	# Lağım ağızları (16–25 Mayıs; Edirnekapı–Tekfur arası, siperin ardında): tarih kapılı
+	if tarih >= 516:
+		for lu in [2120.0, 2230.0, 2330.0]:
+			o.append(_item("lagim", "lagim_%d" % int(lu), "Lağım ağzı (Sırp madenciler)", at(lu, 122.0), yaw_sura(lu), 9.0, Vector3(8, 3, 8)))
 	# --- Servis alanları (otağ çevresi)
 	o.append(_item("mescit", "mescit", "Mescit çadırı", at(1380.0, 285.0), yaw_sura(1380.0), 13.0, Vector3(15, 6, 10)))
 	o.append(_item("pazar", "pazar", "Ordugâh pazarı", at(1300.0, 235.0), yaw_sura(1300.0), 22.0, Vector3(40, 3, 24)))
@@ -143,6 +162,23 @@ static func plan() -> Array:
 	o.append(_item("pazar", "pazar_rumeli", "Rumeli pazarı", at(2000.0, 300.0), yaw_sura(2000.0), 22.0, Vector3(40, 3, 24)))
 	o.append(_item("mescit", "mescit_anadolu", "Anadolu mescidi", at(520.0, 280.0), yaw_sura(520.0), 13.0, Vector3(15, 6, 10)))
 	o.append(_item("mescit", "mescit_rumeli", "Rumeli mescidi", at(2200.0, 270.0), yaw_sura(2200.0), 13.0, Vector3(15, 6, 10)))
+	# --- ORDUGÂH-4 (§7e-6): eksik yerleşkeler (yeni kimlikler)
+	o.append(_item("pasa", "halil_pasa", "Çandarlı Halil Paşa çadırı", at(1330.0, 400.0), yaw_sura(1330.0), 14.0, Vector3(12, 6, 9), "ordugah", "ordugah", {"tug": 3}))
+	o.append(_item("pasa", "ishak_pasa", "İshak Paşa çadırı (Anadolu)", at(700.0, 360.0), yaw_sura(700.0), 14.0, Vector3(12, 6, 9), "ordugah", "ordugah", {"tug": 2}))
+	o.append(_item("pasa", "karaca_pasa", "Karaca Paşa çadırı (Rumeli)", at(2250.0, 360.0), yaw_sura(2250.0), 14.0, Vector3(12, 6, 9), "ordugah", "ordugah", {"tug": 2}))
+	o.append(_item("dokumhane", "dokumhane", "Dökümhane ve demirciler", at(1180.0, 540.0), yaw_sura(1180.0), 18.0, Vector3(26, 6, 18)))
+	o.append(_item("barutcu", "barutcu", "Barut çukurları", at(1450.0, 215.0), yaw_sura(1450.0), 12.0, Vector3(16, 2, 12)))
+	o.append(_item("barutcu", "barutcu_rumeli", "Barut çukurları (Rumeli)", at(2080.0, 215.0), yaw_sura(2080.0), 12.0, Vector3(16, 2, 12)))
+	o.append(_item("esir", "esir_cadiri", "Esir çadırı", at(1800.0, 480.0), yaw_sura(1800.0), 13.0, Vector3(18, 3, 14)))
+	o.append(_item("tercuman", "tercuman", "Tercüman ve kâtip çadırı", at(1600.0, 440.0), yaw_sura(1600.0), 9.0, Vector3(10, 4, 8)))
+	o.append(_item("agil", "agil_anadolu", "Koyun ve manda ağılı (Anadolu)", at(520.0, 560.0), yaw_sura(520.0), 20.0, Vector3(30, 2, 22)))
+	o.append(_item("agil", "agil_rumeli", "Koyun ve manda ağılı (Rumeli)", at(2450.0, 560.0), yaw_sura(2450.0), 20.0, Vector3(30, 2, 22)))
+	o.append(_item("agil", "agil_otag", "Öküz ağılı (top çekimi)", at(1500.0, 590.0), yaw_sura(1500.0), 20.0, Vector3(30, 2, 22)))
+	# Galata yamacı bataryası (§1.4, §7d-7): Aziz Theodoros tepesi, Haliç ağzındaki zincir gemilerine
+	var gb := IstGeo.ll(41.0301, 28.9812)
+	var gt := IstGeo.ll(41.0200, 28.9790)
+	var gby := atan2(gt.x - gb.x, gt.z - gb.z)
+	o.append(_item("batarya", "batarya_galata", "Galata yamacı bataryası (Zağanos)", Vector2(gb.x, gb.z), gby, 26.0, Vector3(3 * 8.5 + 8.0, 4, 18), "ordugah", "ordugah", {"n": 3}))
 	# --- Siper hattı: u 80–2500, d = 112, 100 m'lik dilimler
 	var su_ := 80.0
 	while su_ < 2500.0:
@@ -242,10 +278,11 @@ static func _kiyi_bul(p0: Vector2) -> Array:
 	return [best, atan2(kara.x, kara.y)]
 
 
-## Haliç'te Kasımpaşa ile karşı kıyı arasında köprü: [orta, yaw, uzunluk]
+## Haliç'in üst ucunda (Cynegion/Ayvansaray, kara surunun Haliç suruna bağlandığı yer) karşı kıyıya köprü: [orta, yaw, uzunluk]
+## ORDUGÂH-4 (§4.7, §7d-11): önce Kasımpaşa–Cibali arasıydı (Pears ve Kritovulos ile uyumsuz)
 static func _fici_yeri() -> Array:
-	var a := IstGeo.ll(41.0292, 28.9640)       # kuzey kıyı (Kasımpaşa) aranan nokta
-	var b := IstGeo.ll(41.0245, 28.9590)       # güney kıyı (Cibali) aranan nokta
+	var a := IstGeo.ll(41.0475, 28.9445)       # kuzey kıyı (Hasköy/Sütlüce yakası) aranan nokta
+	var b := IstGeo.ll(41.0425, 28.9418)       # güney kıyı (Ayvansaray, Cynegion) aranan nokta
 	var pa := _kara_yakin(Vector2(a.x, a.z), Vector2(b.x, b.z))
 	var pb := _kara_yakin(Vector2(b.x, b.z), Vector2(a.x, a.z))
 	var d := pb - pa
@@ -481,15 +518,36 @@ static func uret(it: Dictionary, host: Node3D, lod: int) -> void:
 	var args: Dictionary = it["args"]
 	var seed_: int = it["tohum"]
 	match String(it["kind"]):
-		"otag": Y.build_otag(host, S, lod)
-		"sahi_top": Y.build_sahi_top(host, S, lod, seed_)
-		"batarya": Y.build_batarya(host, S, lod, seed_, args)
+		"otag": OT.build(host, S, lod)
+		"sahi_top":
+			Y.build_sahi_top(host, S, lod, seed_)
+			CE.batarya(host, 1, true, lod, seed_)
+		"batarya":
+			Y.build_batarya(host, S, lod, seed_, args)
+			CE.batarya(host, int(args.get("n", 3)), false, lod, seed_)
 		"mancinik": Y.build_mancinik(host, S, lod, seed_)
-		"kule": Y.build_kule(host, S, lod, seed_)
-		"mescit": Y2.build_mescit(host, S, lod, seed_)
-		"pazar": Y2.build_pazar(host, S, lod, seed_)
+		"kule":
+			if bool(args.get("hazirlik", false)):
+				YR.build_kule_hazirlik(host, S, lod, seed_)
+			else:
+				Y.build_kule(host, S, lod, seed_)
+		"lagim": YR.build_lagim(host, S, lod, seed_)
+		"pasa": YR.build_pasa(host, S, lod, seed_, int(args.get("tug", 1)))
+		"dokumhane": YR.build_dokumhane(host, S, lod, seed_)
+		"barutcu": YR.build_barutcu(host, S, lod, seed_)
+		"esir": YR.build_esir(host, S, lod, seed_)
+		"tercuman": YR.build_tercuman(host, S, lod, seed_)
+		"agil": YR.build_agil(host, S, lod, seed_)
+		"mescit":
+			Y2.build_mescit(host, S, lod, seed_)
+			YR.mescit_kisi(host, lod)
+		"pazar":
+			Y2.build_pazar(host, S, lod, seed_)
+			YR.pazar_kisi(host, S, lod, seed_)
 		"mutfak": Y2.build_mutfak(host, S, lod, seed_)
-		"ahir": Y2.build_ahir(host, S, lod, seed_)
+		"ahir":
+			Y2.build_ahir(host, S, lod, seed_)
+			YR.ahir_kisi(host, lod)
 		"diplokionion": DN.build_diplokionion(host, S, lod, seed_)
 		"fici_kopru": DN.build_fici_kopru(host, S, lod, seed_, float(args.get("uzunluk", 160.0)))
 		"siper":
@@ -497,6 +555,7 @@ static func uret(it: Dictionary, host: Node3D, lod: int) -> void:
 			for p: Vector2 in args["line"]:
 				loc.append(p - pos)
 			Y2.build_siper(host, S, lod, seed_, loc)
+			CE.siper(host, loc, lod, seed_)
 		"kizak":
 			var loc2 := PackedVector2Array()
 			for p2: Vector2 in args["line"]:

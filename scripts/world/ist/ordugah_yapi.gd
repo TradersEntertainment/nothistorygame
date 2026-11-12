@@ -335,8 +335,11 @@ static func build_batarya(host: Node3D, k: float, lod: int, tohum := 7, opt := {
 	cl.done(host, "bez")
 	sf.done(host, "bayrak")
 	if K.gece:
+		# ORDUGÂH-4: tek çoklu ağ (yerel y; K.gy yerine teras üstü)
+		var fx: Array = []
 		for sx in [-1, 1]:
-			Flame.add(host, Vector3(sx * (W * 0.5 - 0.6), TH + 2.2, fz - 3.0), 0.3, 0.5)
+			fx.append(Transform3D(Basis().scaled(Vector3(0.3, 0.5, 0.3)), Vector3(sx * (W * 0.5 - 0.6), TH + 2.2, fz - 3.0)))
+		Flame.scatter_flames(host, fx).name = "atesler"
 
 
 static func earth_rampa(b: B, a: Vector3, c: Vector3, w: float, col: Color, tirmanis := false) -> void:
