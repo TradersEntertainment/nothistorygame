@@ -1,0 +1,25 @@
+== ch=30 v='' run=1 rc=0
+AUTOTEST PASS chapter=30 variant= outcome=30.1 gun=3/4 pushed=2 boarders=0 duel=true rifle=4
+== ch=30 v='' run=2 rc=0
+AUTOTEST PASS chapter=30 variant= outcome=30.1 gun=3/4 pushed=2 boarders=0 duel=true rifle=4
+== ch=30 v='' run=3 rc=0
+AUTOTEST PASS chapter=30 variant= outcome=30.1 gun=3/4 pushed=2 boarders=0 duel=true rifle=4
+== ch=30 v='=lose' run=1 rc=0
+AUTOTEST PASS chapter=30 variant=lose outcome=30.2 gun=3/4 pushed=0 boarders=2 duel=false rifle=4
+== ch=30 v='=lose' run=2 rc=0
+AUTOTEST PASS chapter=30 variant=lose outcome=30.2 gun=3/4 pushed=0 boarders=2 duel=false rifle=4
+== ch=30 v='=lose' run=3 rc=0
+AUTOTEST PASS chapter=30 variant=lose outcome=30.2 gun=3/4 pushed=0 boarders=2 duel=false rifle=4
+== ch=30 v='=bridge_ok' run=1 rc=0
+AUTOTEST PASS chapter=30 variant=bridge_ok outcome=30.1 gun=4/5 pushed=2 boarders=0 duel=true rifle=5
+== ch=30 v='=bridge_ok' run=2 rc=0
+AUTOTEST PASS chapter=30 variant=bridge_ok outcome=30.1 gun=4/5 pushed=2 boarders=0 duel=true rifle=5
+== ch=30 v='=bridge_ok' run=3 rc=0
+AUTOTEST PASS chapter=30 variant=bridge_ok outcome=30.1 gun=4/5 pushed=2 boarders=0 duel=true rifle=5
+== ch=30 v='=bridge_bad' run=1 rc=0
+AUTOTEST PASS chapter=30 variant=bridge_bad outcome=30.1 gun=3/3 pushed=2 boarders=0 duel=true rifle=3
+== ch=30 v='=bridge_bad' run=2 rc=0
+AUTOTEST PASS chapter=30 variant=bridge_bad outcome=30.1 gun=3/3 pushed=2 boarders=0 duel=true rifle=3
+== ch=30 v='=bridge_bad' run=3 rc=0
+AUTOTEST PASS chapter=30 variant=bridge_bad outcome=30.1 gun=3/3 pushed=2 boarders=0 duel=true rifle=3
+FINISHED

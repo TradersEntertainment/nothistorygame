@@ -1,0 +1,7 @@
+== ch=26 v='' run=1 rc=0
+AUTOTEST PASS chapter=26 variant= outcome=26.1 water=3 repaired=3 cleared=2 world= gun=3/4 gunner=2/2
+== ch=26 v='' run=2 rc=0
+AUTOTEST PASS chapter=26 variant= outcome=26.1 water=3 repaired=3 cleared=2 world= gun=3/4 gunner=4/4
+== ch=26 v='' run=3 rc=0
+AUTOTEST PASS chapter=26 variant= outcome=26.1 water=3 repaired=3 cleared=2 world= gun=3/4 gunner=3/3
+FINISHED

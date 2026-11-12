@@ -1,0 +1,19 @@
+== ch=33o v='' run=1 rc=0
+AUTOTEST PASS chapter=33o variant= outcome=33O.1 stones=4 hits=0 falls=0 water=0 hidden=true gift=refuse warn=ok big=true
+== ch=33o v='' run=2 rc=0
+AUTOTEST PASS chapter=33o variant= outcome=33O.1 stones=4 hits=0 falls=0 water=0 hidden=true gift=refuse warn=ok big=true
+== ch=33o v='' run=3 rc=0
+AUTOTEST PASS chapter=33o variant= outcome=33O.1 stones=4 hits=0 falls=0 water=0 hidden=true gift=refuse warn=ok big=true
+== ch=33o v='=wide' run=1 rc=0
+AUTOTEST PASS chapter=33o variant=wide outcome=33O.2 stones=4 hits=0 falls=0 water=0 hidden=false gift=refuse warn=hit big=false
+== ch=33o v='=wide' run=2 rc=0
+AUTOTEST PASS chapter=33o variant=wide outcome=33O.2 stones=4 hits=0 falls=0 water=0 hidden=false gift=refuse warn=hit big=false
+== ch=33o v='=wide' run=3 rc=0
+AUTOTEST PASS chapter=33o variant=wide outcome=33O.2 stones=4 hits=0 falls=0 water=0 hidden=false gift=refuse warn=hit big=false
+== ch=33o v='=fall' run=1 rc=0
+AUTOTEST PASS chapter=33o variant=fall outcome=33O.1 stones=4 hits=1 falls=2 water=1 hidden=true gift=refuse warn=ok big=true
+== ch=33o v='=fall' run=2 rc=0
+AUTOTEST PASS chapter=33o variant=fall outcome=33O.1 stones=4 hits=1 falls=2 water=1 hidden=true gift=refuse warn=ok big=true
+== ch=33o v='=fall' run=3 rc=0
+AUTOTEST PASS chapter=33o variant=fall outcome=33O.1 stones=4 hits=1 falls=2 water=1 hidden=true gift=refuse warn=ok big=true
+FINISHED

@@ -1,0 +1,7 @@
+== ch=20o v='' run=1 rc=0
+AUTOTEST PASS chapter=20o variant= outcome=20O.1 hits=3 cracks=0 gun=3/4 gunner=2/2 duel=true bed=
+== ch=20o v='' run=2 rc=0
+AUTOTEST PASS chapter=20o variant= outcome=20O.1 hits=3 cracks=0 gun=3/4 gunner=2/2 duel=true bed=
+== ch=20o v='' run=3 rc=0
+AUTOTEST PASS chapter=20o variant= outcome=20O.1 hits=3 cracks=0 gun=3/4 gunner=2/2 duel=true bed=
+FINISHED

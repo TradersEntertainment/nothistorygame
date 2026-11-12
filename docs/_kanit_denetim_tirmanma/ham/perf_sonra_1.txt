@@ -1,0 +1,1 @@
+PERF frames=27 wall_mean_ms=3283.2 wall_p95_ms=4445.8 wall_max_ms=4567.7 proc_mean_ms=3273.10 proc_p95_ms=4433.01 proc_max_ms=4553.05

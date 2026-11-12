@@ -1,0 +1,15 @@
+== ch=38o v='=hooks_bad' run=1 rc=0
+AUTOTEST PASS chapter=38o variant=hooks_bad outcome=38O.1 oars=11 arrows=0 forks=3/3 fire=true pulled=true oil=false snaps=0 splashes=0 explored=14.6 helper=false slips=0
+== ch=38o v='=hooks_bad' run=2 rc=0
+AUTOTEST PASS chapter=38o variant=hooks_bad outcome=38O.1 oars=10 arrows=0 forks=3/3 fire=true pulled=true oil=false snaps=0 splashes=0 explored=15.2 helper=false slips=0
+== ch=38o v='=hooks_bad' run=3 rc=0
+AUTOTEST PASS chapter=38o variant=hooks_bad outcome=38O.1 oars=10 arrows=0 forks=3/3 fire=true pulled=true oil=false snaps=0 splashes=0 explored=14.7 helper=false slips=0
+== ch=38o v='=hooks_bad' run=4 rc=0
+AUTOTEST PASS chapter=38o variant=hooks_bad outcome=38O.1 oars=10 arrows=0 forks=3/3 fire=true pulled=true oil=false snaps=0 splashes=0 explored=14.9 helper=false slips=0
+== ch=38o v='=hooks_bad' run=5 rc=0
+AUTOTEST PASS chapter=38o variant=hooks_bad outcome=38O.1 oars=10 arrows=0 forks=3/3 fire=true pulled=true oil=false snaps=0 splashes=0 explored=14.6 helper=false slips=0
+== ch=38o v='=hooks_bad' run=6 rc=0
+AUTOTEST PASS chapter=38o variant=hooks_bad outcome=38O.1 oars=11 arrows=0 forks=3/3 fire=true pulled=true oil=false snaps=0 splashes=0 explored=14.8 helper=false slips=0
+== ch=38o v='=hooks_bad' run=7 rc=0
+AUTOTEST PASS chapter=38o variant=hooks_bad outcome=38O.1 oars=10 arrows=0 forks=3/3 fire=true pulled=true oil=false snaps=0 splashes=0 explored=14.6 helper=false slips=0
+FINISHED

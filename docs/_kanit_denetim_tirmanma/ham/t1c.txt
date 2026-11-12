@@ -1,0 +1,13 @@
+== ch=29o v='' run=1 rc=0
+AUTOTEST PASS chapter=29o variant= outcome=29O.1 hooks=4/5 gun=4/4
+== ch=29o v='' run=2 rc=0
+AUTOTEST PASS chapter=29o variant= outcome=29O.1 hooks=4/5 gun=4/4
+== ch=29o v='' run=3 rc=0
+AUTOTEST PASS chapter=29o variant= outcome=29O.1 hooks=4/5 gun=4/4
+== ch=29o v='=lose' run=1 rc=0
+AUTOTEST PASS chapter=29o variant=lose outcome=29O.2 hooks=0/0 gun=4/4
+== ch=29o v='=lose' run=2 rc=0
+AUTOTEST PASS chapter=29o variant=lose outcome=29O.2 hooks=0/0 gun=4/4
+== ch=29o v='=lose' run=3 rc=0
+AUTOTEST PASS chapter=29o variant=lose outcome=29O.2 hooks=0/0 gun=4/4
+FINISHED

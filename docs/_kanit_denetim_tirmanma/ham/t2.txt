@@ -1,0 +1,26 @@
+== ch=30o v='' run=1 rc=0
+AUTOTEST PASS chapter=30o variant= outcome=30O.1 stones=4/4 gunner=3/3 tower=true fell=false guards=10 pokes=0 flee=ride pushed=true
+== ch=30o v='' run=2 rc=0
+AUTOTEST PASS chapter=30o variant= outcome=30O.1 stones=4/4 gunner=3/3 tower=true fell=false guards=10 pokes=0 flee=ride pushed=true
+== ch=30o v='' run=3 rc=0
+AUTOTEST PASS chapter=30o variant= outcome=30O.1 stones=4/4 gunner=3/3 tower=true fell=false guards=10 pokes=0 flee=ride pushed=true
+== ch=30o v='=lose' run=1 rc=0
+AUTOTEST PASS chapter=30o variant=lose outcome=30O.2 stones=4/4 gunner=0/1 tower=false fell=true guards=10 pokes=0 flee=fade pushed=false
+== ch=30o v='=lose' run=2 rc=0
+AUTOTEST PASS chapter=30o variant=lose outcome=30O.2 stones=4/4 gunner=0/1 tower=false fell=true guards=10 pokes=0 flee=fade pushed=false
+== ch=30o v='=lose' run=3 rc=0
+ARMAUDIT unarmed scene=chapter30o.tscn foe_dist=2.0 duel_active=false
+AUTOTEST PASS chapter=30o variant=lose outcome=30O.2 stones=4/4 gunner=0/1 tower=false fell=true guards=10 pokes=0 flee=fade pushed=false
+== ch=30o v='=sprint' run=1 rc=0
+AUTOTEST PASS chapter=30o variant=sprint outcome=30O.1 stones=4/4 gunner=3/3 tower=true fell=false guards=10 pokes=0 flee=made pushed=true
+== ch=30o v='=sprint' run=2 rc=0
+AUTOTEST PASS chapter=30o variant=sprint outcome=30O.1 stones=4/4 gunner=3/3 tower=true fell=false guards=10 pokes=0 flee=made pushed=true
+== ch=30o v='=sprint' run=3 rc=0
+AUTOTEST PASS chapter=30o variant=sprint outcome=30O.1 stones=4/4 gunner=3/3 tower=true fell=false guards=10 pokes=0 flee=made pushed=true
+== ch=30o v='=stonehit' run=1 rc=0
+AUTOTEST PASS chapter=30o variant=stonehit outcome=30O.1 stones=0/4 gunner=3/4 tower=true fell=false guards=10 pokes=0 flee=ride pushed=true
+== ch=30o v='=stonehit' run=2 rc=0
+AUTOTEST PASS chapter=30o variant=stonehit outcome=30O.1 stones=0/4 gunner=3/3 tower=true fell=false guards=10 pokes=0 flee=ride pushed=true
+== ch=30o v='=stonehit' run=3 rc=0
+AUTOTEST PASS chapter=30o variant=stonehit outcome=30O.1 stones=0/4 gunner=3/3 tower=true fell=false guards=10 pokes=0 flee=ride pushed=true
+FINISHED

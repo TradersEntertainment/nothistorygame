@@ -1,0 +1,13 @@
+== ch=42b v='' run=1 rc=0
+AUTOTEST PASS chapter=42 variant= outcome=42.1 dir=4 bumps=1 blocks=3 parries=2 kick=true down=true fins=thrust,slash,ground spar=3/0 pushed=2 late=0
+== ch=42b v='' run=2 rc=0
+AUTOTEST PASS chapter=42 variant= outcome=42.1 dir=4 bumps=0 blocks=3 parries=2 kick=true down=true fins=thrust,slash,ground spar=2/0 pushed=2 late=0
+== ch=42b v='' run=3 rc=0
+AUTOTEST PASS chapter=42 variant= outcome=42.1 dir=4 bumps=1 blocks=3 parries=2 kick=true down=true fins=thrust,slash,ground spar=3/0 pushed=2 late=0
+== ch=42b v='=lose' run=1 rc=0
+AUTOTEST PASS chapter=42 variant=lose outcome=42.2 dir=4 bumps=0 blocks=3 parries=2 kick=true down=true fins=thrust,slash,ground spar=1/7 pushed=2 late=0
+== ch=42b v='=lose' run=2 rc=0
+AUTOTEST PASS chapter=42 variant=lose outcome=42.2 dir=4 bumps=0 blocks=3 parries=2 kick=true down=true fins=thrust,slash,ground spar=1/7 pushed=2 late=0
+== ch=42b v='=lose' run=3 rc=0
+AUTOTEST PASS chapter=42 variant=lose outcome=42.2 dir=4 bumps=1 blocks=3 parries=2 kick=true down=true fins=thrust,slash,ground spar=1/7 pushed=2 late=0
+FINISHED

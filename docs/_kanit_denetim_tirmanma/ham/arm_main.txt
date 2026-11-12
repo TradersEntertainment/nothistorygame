@@ -1,0 +1,20 @@
+== ch=30o v='=lose' run=1 rc=0
+AUTOTEST PASS chapter=30o variant=lose outcome=30O.2 stones=4/4 gunner=0/1 tower=false fell=true guards=10 pokes=0 flee=fade pushed=false
+== ch=30o v='=lose' run=2 rc=0
+ARMAUDIT unarmed scene=chapter30o.tscn foe_dist=2.3 duel_active=false
+AUTOTEST PASS chapter=30o variant=lose outcome=30O.2 stones=4/4 gunner=0/1 tower=false fell=true guards=10 pokes=0 flee=fade pushed=false
+== ch=30o v='=lose' run=3 rc=0
+AUTOTEST PASS chapter=30o variant=lose outcome=30O.2 stones=4/4 gunner=0/1 tower=false fell=true guards=10 pokes=0 flee=fade pushed=false
+== ch=30o v='=lose' run=4 rc=0
+ARMAUDIT unarmed scene=chapter30o.tscn foe_dist=2.3 duel_active=false
+AUTOTEST PASS chapter=30o variant=lose outcome=30O.2 stones=4/4 gunner=0/1 tower=false fell=true guards=10 pokes=0 flee=fade pushed=false
+== ch=30o v='=lose' run=5 rc=0
+ARMAUDIT unarmed scene=chapter30o.tscn foe_dist=2.2 duel_active=false
+AUTOTEST PASS chapter=30o variant=lose outcome=30O.2 stones=4/4 gunner=0/1 tower=false fell=true guards=10 pokes=0 flee=fade pushed=false
+== ch=30o v='=lose' run=6 rc=0
+AUTOTEST PASS chapter=30o variant=lose outcome=30O.2 stones=4/4 gunner=0/1 tower=false fell=true guards=10 pokes=0 flee=fade pushed=false
+== ch=30o v='=lose' run=7 rc=0
+AUTOTEST PASS chapter=30o variant=lose outcome=30O.2 stones=4/4 gunner=0/1 tower=false fell=true guards=10 pokes=0 flee=fade pushed=false
+== ch=30o v='=lose' run=8 rc=0
+AUTOTEST PASS chapter=30o variant=lose outcome=30O.2 stones=4/4 gunner=0/1 tower=false fell=true guards=10 pokes=0 flee=fade pushed=false
+FINISHED
