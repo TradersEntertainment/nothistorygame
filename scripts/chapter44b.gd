@@ -747,6 +747,11 @@ func _cannon_shot() -> void:
 	for k in 3:
 		_dust(boat.global_position + f * randf_range(2.0, 9.0) + side * randf_range(-4.0, 4.0), 1.4, 24)
 	var spd := maxf(_boat_speed, 0.6)
+	# Test (hit): bot ilk küçük parçanın altında durur: isabet yolu (su alma, karanlık, ışığın bulunması) sınanır
+	if GameState.autotest and GameState.autotest_variant == "hit" and hits == 0 and _shot_n % 2 == 1:
+		_bot_hold = WARN_SECS + 1.5
+		_drop(boat.global_position, 4)
+		return
 	if _shot_n % 2 == 1:
 		var lat := Vector3(-f.z, 0, f.x) * randf_range(-0.8, 0.8)
 		_drop(boat.global_position + f * randf_range(3.5, 6.0) * spd + lat, 4 + randi() % 3)
@@ -1359,7 +1364,7 @@ func _bot_steer(delta: float) -> float:
 	if absf(diff) > 0.5:
 		_boat_speed = minf(_boat_speed, 0.5)
 	for b: Dictionary in _bricks:
-		if not b["fell"] and (b["at"] as Vector3).distance_to(p + (to - p).normalized() * 2.5) < 2.4:
+		if not b["fell"] and (b["at"] as Vector3).distance_to(p + (to - p).normalized() * 2.5) < 2.4 and GameState.autotest_variant != "hit":
 			_bot_hold = 0.4
 	return clampf(diff * 3.0, -1.0, 1.0)
 
@@ -1677,6 +1682,7 @@ func _hit() -> void:
 	_dark_left = 0.0
 	if phase == "quake" and was_on and not light_on:
 		_toggle_light()
+		events.append("found")
 		hud.bark("SPK_TOLGA", "D44B_T_FOUND", 2.5)
 
 
@@ -1755,6 +1761,8 @@ func _autotest_report() -> void:
 		ok = ok and events.has(e)
 	if v != "dark":
 		ok = ok and events.has("hen_eye")
+	if v == "hit":
+		ok = ok and hits >= 1 and events.has("hit") and _bilge >= 1 and events.has("found")
 	print("CISTERN44 events=%s qt=%.1f" % [",".join(events), _qt])
 	if not ok:
 		printerr("AUTOTEST: beklenen %s, gelen %s (sayfa=%s, foto=%s, hayranlık=%s, kurtarıldı=%s)" % [expected, _outcome,
