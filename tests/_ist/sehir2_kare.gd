@@ -50,6 +50,8 @@ func _ready() -> void:
 		await _eserler()
 	if set_ in ["yer", "hepsi"]:
 		await _yer()
+	if IstSehir.active and IstSehir.active.stats.has("yavas"):
+		print("ISTYAVAS ", IstSehir.active.stats["yavas"])
 	print("ISTKARE BITTI")
 	get_tree().quit(0)
 
@@ -68,12 +70,14 @@ func _kaba_dunya() -> void:
 	env.background_mode = Environment.BG_SKY
 	env.sky = sky
 	env.ambient_light_source = Environment.AMBIENT_SOURCE_SKY
-	env.ambient_light_energy = 0.35 if gece else 0.8
+	env.ambient_light_energy = 0.3 if gece else 0.55
+	env.tonemap_mode = Environment.TONE_MAPPER_FILMIC
+	env.tonemap_exposure = 0.9
 	we.environment = env
 	add_child(we)
 	var sun := DirectionalLight3D.new()
 	sun.rotation_degrees = Vector3(-38, -135, 0)
-	sun.light_energy = 0.25 if gece else 1.25
+	sun.light_energy = 0.2 if gece else 1.1
 	sun.light_color = Color("9ab0ff") if gece else Color("fff0d8")
 	sun.shadow_enabled = true
 	sun.directional_shadow_max_distance = 500.0
@@ -94,7 +98,7 @@ func _kaba_dunya() -> void:
 	for j in nz:
 		for i in nx:
 			var hh := hs[j * nx + i]
-			var c := Color("8a9a5a").lerp(Color("c8b890"), clampf(hh / 25.0, 0, 1)) if hh > 0.5 else Color("d8c8a0")
+			var c := Color("6a7a3e").lerp(Color("9a8a5a"), clampf(hh / 40.0, 0, 1)) if hh > 0.5 else Color("b8a880")
 			m.set_color(c)
 			m.add_vertex(Vector3(x0 + i * st, hh, z0 + j * st))
 	for j in nz - 1:
