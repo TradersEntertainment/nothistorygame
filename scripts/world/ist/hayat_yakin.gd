@@ -21,6 +21,9 @@ const MAX_ACTIVE := 45
 const STEP := 5.0                 # sokak çizgisi sıklaştırma aralığı
 const HC := 32.0                  # nokta karması hücresi
 const SEP_R := 0.6
+const NEAR_BODY := 20.0           # bu uzaklıkta (ve görüşte) gerçek gövde; ötesinde pişmiş ikiz
+const NEAR_HYST := 3.0
+const NEAR_CAP := 4               # aynı anda en çok bu kadar gerçek gövde (çizim bütçesi): en yakın ve görüştekiler
 
 ## Mahalle türüne göre hedef kişi sayısı (kalabalık)
 const TARGET := {"carsi": 38, "liman": 26, "sik": 16, "sur_dibi": 14, "seyrek": 8, "bostan": 5, "harabe": 4, "kir": 3}
@@ -69,6 +72,9 @@ class Agent:
 	var bad := 0.0
 	var bark_t := 0.0
 	var customer_cd := 0.0
+	var twin: MeshInstance3D     # uzaktaki/görünmeyen için pişmiş donuk ikiz (tek çizim)
+	var near := false            # gerçek gövde mi görünür (yoksa ikiz)
+	var allow_near := false      # _think seçer: en yakın NEAR_CAP kişi
 	var anchor := Vector2.ZERO   # gezinen: bağlı olduğu nokta ve yarıçap
 	var arad := 0.0
 	var tgt := Vector2.INF
@@ -92,6 +98,7 @@ var prof_us := 0.0
 var prof_sum_us := 0.0
 var prof_n := 0
 var prof_max_us := 0.0
+var hemen_isin := true            # attach anında bütün gövdeler kurulsun (yükleme ekranı); false: oyunda karede bir
 var hizli_isinma := false         # önizleme: gövdeler hemen kurulsun
 
 var _P := PackedVector2Array()
@@ -107,6 +114,7 @@ var _pw := Vector3.INF
 var _last_pw := Vector3(1e9, 0, 1e9)
 var _ring := PackedInt32Array()
 var _ringw := PackedFloat32Array()
+var _hh := {}                        # ev karması: Vector2i(10 m hücre) -> [ev dizini]
 var _kp := PackedVector2Array()      # kıyı noktaları (kıyıdan 1,4 m içeride)
 var _kd := PackedVector2Array()      # karadan suya yön
 var _cam_at := Vector3.INF
@@ -120,6 +128,7 @@ var _time := 0.0
 var _built := 0
 var _built_frame := 0
 var _warm_skip := 0
+var _hay_near := 0
 var _bark_t := 14.0
 var _ilk := 6.0                   # ilk akış adımları (kare sayılır): görüş içinde de, yakında da doğabilir (açılış karesi boş olmasın)
 var _kapali := false
@@ -142,10 +151,21 @@ static func attach(dunya: Node3D, oyuncu_: Node3D = null, gece_ := false, as_cit
 
 
 func _ready() -> void:
+	IstHayatGovde.gece_mod = gece
 	_rng.seed = 1453771
 	var t0 := Time.get_ticks_msec()
 	_kur_ag()
 	_make_agents()
+	if hemen_isin:
+		# yükleme ekranı sırasında (dünya kurulumu zaten saniyeler sürer) bütün gövde, ikiz ve hayvanlar bir kerede
+		var saved := hizli_isinma
+		for ag in agents:
+			_built_frame = 0
+			_ensure_body(ag)
+		for h in hayvanlar:
+			_built_frame = 0
+			_ensure_animal(h)
+		hizli_isinma = saved
 	graph_ready = true
 	print("ISTKISI kur noktalar=%d sokak=%d meydan=%d kiyi=%d havuz=%d hayvan=%d kur_ms=%d" % [_P.size(), _s0.size(), _meydan_c.size(), _kp.size(), agents.size(), hayvanlar.size(), Time.get_ticks_msec() - t0])
 
@@ -195,6 +215,35 @@ func _kur_ag() -> void:
 	for m: Dictionary in sokak.meydan:
 		_meydan_c.append(m["c"])
 	_kiyi_kur()
+	for hi in sokak.houses.size():
+		var hc: Vector2 = (sokak.houses[hi] as Dictionary)["c"]
+		var hk := Vector2i(floori(hc.x / 10.0), floori(hc.y / 10.0))
+		if not _hh.has(hk):
+			_hh[hk] = []
+		(_hh[hk] as Array).append(hi)
+
+
+## Gerçek ev ayak izi (ızgaradan ince): m payıyla nokta evin içinde mi
+func _in_house(x: float, z: float, m: float) -> bool:
+	var kx := floori(x / 10.0)
+	var kz := floori(z / 10.0)
+	for dx in range(-1, 2):
+		for dz in range(-1, 2):
+			var arr = _hh.get(Vector2i(kx + dx, kz + dz))
+			if arr == null:
+				continue
+			for hi: int in arr:
+				var h: Dictionary = sokak.houses[hi]
+				var c: Vector2 = h["c"]
+				var yw: float = h["yaw"]
+				var wx := x - c.x
+				var wz := z - c.y
+				var lx := wx * cos(yw) - wz * sin(yw)
+				var lz := wx * sin(yw) + wz * cos(yw)
+				var dm := IstEvler.dims(int(h["v"]))
+				if absf(lx) <= dm.x * 0.5 + m and absf(lz) <= dm.z * 0.5 + m:
+					return true
+	return false
 
 
 ## Kıyı çizgisi boyunca 12 m'de bir nokta: sokak olmasa da rıhtımda balıkçı/hamal/sohbet doğabilsin
@@ -245,7 +294,7 @@ func _cands(p: Vector2, r: float) -> PackedInt32Array:
 
 func _ok_cell(x: float, z: float) -> bool:
 	var c := sokak.cell(x, z)
-	return c == 0 or c == 1
+	return (c == 0 or c == 1) and not _in_house(x, z, 0.2)
 
 
 func _tur(x: float, z: float) -> String:
@@ -255,7 +304,7 @@ func _tur(x: float, z: float) -> String:
 # ---------------------------------------------------------------- havuz
 
 func _make_agents() -> void:
-	var roles := IstHayatGovde.pool_roles()
+	var roles := IstHayatGovde.pool_roles(gece)
 	for i in roles.size():
 		var ag := Agent.new()
 		ag.idx = i
@@ -302,7 +351,22 @@ func _ensure_animal(h: Hayvan) -> bool:
 	h.node.visible = false
 	h.node.process_mode = Node.PROCESS_MODE_DISABLED
 	add_child(h.node)
+	var tw := MeshInstance3D.new()
+	tw.name = "HayvanIkiz%d" % h.idx
+	tw.mesh = IstHayatGovde.animal_twin(h.tur, h.idx)
+	tw.material_override = Crowd.material()
+	tw.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
+	tw.visible = false
+	add_child(tw)
+	h.twin = tw
 	return true
+
+
+func _h_near(h: Hayvan, n: bool) -> void:
+	h.near = n
+	h.node.visible = n
+	h.node.process_mode = Node.PROCESS_MODE_INHERIT if n else Node.PROCESS_MODE_DISABLED
+	h.twin.visible = not n
 
 
 func _ensure_body(ag: Agent) -> bool:
@@ -322,6 +386,14 @@ func _ensure_body(ag: Agent) -> bool:
 	ag.rig = pr.get("rig") as Rig
 	ag.mouth = pr.get("_mouth") as MeshInstance3D
 	ag.act0 = pr.activity
+	var tw := MeshInstance3D.new()
+	tw.name = "Ikiz%d" % ag.idx
+	tw.mesh = IstHayatGovde.twin_mesh(ag.prol, ag.idx, gece)
+	tw.material_override = Crowd.material()
+	tw.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
+	tw.visible = false
+	add_child(tw)
+	ag.twin = tw
 	_built += 1
 	return true
 
@@ -329,11 +401,11 @@ func _ensure_body(ag: Agent) -> bool:
 func _prop_for(ag: Agent) -> Node3D:
 	if ag.prop == null:
 		match ag.prol:
-			"vendor": ag.prop = IstHayatGovde.stall(ag.idx)
-			"sitter": ag.prop = IstHayatGovde.stool()
-			"washer": ag.prop = IstHayatGovde.tub()
-			"worker": ag.prop = IstHayatGovde.rubble()
-			"beggar": ag.prop = IstHayatGovde.bowl()
+			"vendor": ag.prop = IstHayatGovde.prop("stall", ag.idx)
+			"sitter": ag.prop = IstHayatGovde.prop("stool", ag.idx)
+			"washer": ag.prop = IstHayatGovde.prop("tub", ag.idx)
+			"worker": ag.prop = IstHayatGovde.prop("rubble", ag.idx)
+			"beggar": ag.prop = IstHayatGovde.prop("bowl", ag.idx)
 		if ag.prop != null:
 			add_child(ag.prop)
 	return ag.prop
@@ -344,11 +416,9 @@ func _activate(ag: Agent) -> void:
 	var b := ag.body
 	b.process_mode = Node.PROCESS_MODE_INHERIT
 	b.set_process(false)
-	b.visible = true
-	b.position = ag.pos
-	b.rotation = Vector3(0, ag.yaw, 0)
-	ag.shown_pos = ag.pos
-	ag.shown_yaw = ag.yaw
+	_set_near(ag, false)
+	ag.shown_pos = Vector3.INF
+	ag.shown_yaw = INF
 	if ag.rig:
 		ag.rig.speed = 0.0
 	ag.rig_dt = 0.0
@@ -370,12 +440,24 @@ func _deactivate(ag: Agent) -> void:
 	if ag.body:
 		ag.body.visible = false
 		ag.body.process_mode = Node.PROCESS_MODE_DISABLED
+	if ag.twin:
+		ag.twin.visible = false
 	if ag is Hayvan and (ag as Hayvan).node:
 		(ag as Hayvan).node.visible = false
 		(ag as Hayvan).node.process_mode = Node.PROCESS_MODE_DISABLED
 	if ag.prop:
 		ag.prop.visible = false
 		ag.prop.process_mode = Node.PROCESS_MODE_DISABLED
+
+
+## Gerçek gövde ↔ pişmiş ikiz
+func _set_near(ag: Agent, n: bool) -> void:
+	ag.near = n
+	ag.body.visible = n
+	if ag.twin:
+		ag.twin.visible = not n
+	ag.shown_pos = Vector3.INF
+	ag.shown_yaw = INF
 
 
 func _set_act(ag: Agent, a: String) -> void:
@@ -438,6 +520,7 @@ func _process(delta: float) -> void:
 	for ag in agents:
 		if ag.active:
 			_update(ag, delta)
+	_hay_near = 0
 	for h in hayvanlar:
 		if h.active:
 			_update_hayvan(h, delta)
@@ -937,7 +1020,7 @@ func _spawn_fisher(g: int) -> bool:
 func _ok_p(q: Vector2, plaza_: bool) -> bool:
 	var c := sokak.cell(q.x, q.y)
 	if c == 0 or c == 1 or (plaza_ and c == 5):
-		return not IstGeo.su(q.x, q.y) and IstGeo.h(q.x, q.y) > 0.2
+		return not IstGeo.su(q.x, q.y) and IstGeo.h(q.x, q.y) > 0.2 and not _in_house(q.x, q.y, 0.2)
 	return false
 
 
@@ -959,8 +1042,7 @@ func _wander_start(ag: Agent, at: Vector2, anchor: Vector2, arad: float, plaza_:
 	ag.bad = 0.0
 	if ag is Hayvan:
 		(ag as Hayvan).node.position = ag.pos
-		(ag as Hayvan).node.visible = true
-		(ag as Hayvan).node.process_mode = Node.PROCESS_MODE_INHERIT
+		_h_near(ag as Hayvan, false)
 		ag.active = true
 		return
 	_activate(ag)
@@ -1113,8 +1195,7 @@ func _spawn_animal() -> bool:
 			h.bad = 0.0
 			h.node.position = h.pos
 			h.node.rotation.y = h.yaw
-			h.node.visible = true
-			h.node.process_mode = Node.PROCESS_MODE_INHERIT
+			_h_near(h, false)
 			h.active = true
 		_:
 			var e := _edge_spot(g, 0.8, 1.0 if _rng.randf() < 0.5 else -1.0)
@@ -1136,15 +1217,25 @@ func _update_hayvan(h: Hayvan, delta: float) -> void:
 	if moved and delta > 0.0:
 		h.yaw = lerp_angle(h.yaw, atan2(mx, mz), clampf(delta * 6.0, 0.0, 1.0))
 		h.pos.y = IstGeo.h(h.pos.x, h.pos.z)
-	h.node.position = h.pos
-	h.node.rotation.y = h.yaw
-	if h.tur != "hen" and _seen(h.pos):
+	var nx := h.pos.x - _pw.x
+	var nz := h.pos.z - _pw.z
+	var d2 := nx * nx + nz * nz
+	var lim := 14.0 + (3.0 if h.near else -3.0)
+	var want_near := d2 < lim * lim and _seen(h.pos) and (h.near or _hay_near < 2)
+	if want_near:
+		_hay_near += 1
+	if want_near != h.near:
+		_h_near(h, want_near)
+	var tgt_node: Node3D = h.node if h.near else h.twin
+	tgt_node.position = h.pos
+	tgt_node.rotation.y = h.yaw
+	if h.near and h.tur != "hen":
 		IstHayatGovde.animate(h.node, _time, moved)
 
 
-func _spawn_wall(g: int) -> bool:
+func _spawn_wall(g: int, force := "") -> bool:
 	var pt := _P[g]
-	var prol := "worker" if _rng.randf() < 0.65 else "guard"
+	var prol := force if force != "" else ("worker" if _rng.randf() < 0.65 else "guard")
 	var ag := _free_agent([prol])
 	if ag == null:
 		return false
@@ -1257,6 +1348,17 @@ func _think() -> void:
 			elif ag.wait <= 0.0:
 				_set_act(ag, ag.act0)
 				ag.face = Vector2.INF
+	# gerçek gövde hakkı: en yakın NEAR_CAP kişi (görüşte ve NEAR_BODY içinde); ötekiler pişmiş ikiz
+	var cand: Array = []
+	for ag: Agent in act:
+		var dn := (_flat(ag.pos) - p2).length_squared()
+		var lim := NEAR_BODY + (NEAR_HYST if ag.near else -NEAR_HYST)
+		ag.allow_near = false
+		if dn < lim * lim and (dn < 25.0 or _seen(ag.pos)):
+			cand.append([dn - (30.0 if ag.near else 0.0), ag])
+	cand.sort_custom(func(a, b): return a[0] < b[0])
+	for k in mini(NEAR_CAP, cand.size()):
+		(cand[k][1] as Agent).allow_near = true
 	# kişisel alan
 	for a in act.size():
 		var A: Agent = act[a]
@@ -1310,8 +1412,23 @@ func _update(ag: Agent, delta: float) -> void:
 	ag.rig_dt += delta
 	var nx := ag.pos.x - _pw.x
 	var nz := ag.pos.z - _pw.z
-	var near := nx * nx + nz * nz < 784.0
+	var d2 := nx * nx + nz * nz
+	var want_near := ag.allow_near
+	if want_near != ag.near:
+		_set_near(ag, want_near)
+	var near := d2 < 784.0
 	ag.tick = near or (_frame + ag.idx) % 3 == 0
+	if not ag.near:
+		# uzak/görünmeyen: yalnız ikiz yerine konur (iskelet sürülmez)
+		if ag.moved:
+			ag.pos.y = IstGeo.h(ag.pos.x, ag.pos.z)
+		if ag.tick and ag.twin:
+			var tp := ag.pos
+			if ag.moved:
+				tp.y += absf(sin(_time * 7.0 + ag.idx)) * 0.035
+			ag.twin.position = tp
+			ag.twin.rotation.y = ag.yaw
+		return
 	if ag.tick:
 		_place(ag)
 		var rg := ag.rig
@@ -1464,7 +1581,7 @@ func sayim() -> Dictionary:
 		if _flat(p).distance_to(_flat(_pw)) <= NEAR and _seen(p):
 			gor += 1
 		var c := sokak.cell(p.x, p.z)
-		if c == 2 or c == 3 or c == 4:
+		if c == 2 or c == 3 or c == 4 or _in_house(p.x, p.z, 0.0):
 			ev += 1
 		if absf(p.y - IstGeo.h(p.x, p.z)) > 0.25:
 			havada += 1
@@ -1480,7 +1597,6 @@ func sayim() -> Dictionary:
 
 func sayim_satiri(ad: String) -> String:
 	var s := sayim()
-	print("ISTKISISAYAC ", sayac)
 	return "ISTKISI %s y30=%d y60=%d gorunen=%d hayvan=%d etkin=%d yuruyen=%d duran=%d evde=%d havada=%d suda=%d ms=%.2f ms_ort=%.2f ms_max=%.2f hedef=%d" % [
 		ad, s["y30"], s["y60"], s["gorunen"], s["hayvan"], s["etkin"], s["yuruyen"], s["duran"], s["evde"], s["havada"], s["suda"], s["ms"], s["ms_ort"], s["ms_max"], hedef_sayi()]
 
@@ -1499,3 +1615,6 @@ func kapat(v := true) -> void:
 		for ag in agents:
 			if ag.active:
 				_deactivate(ag)
+		for h in hayvanlar:
+			if h.active:
+				_deactivate(h)

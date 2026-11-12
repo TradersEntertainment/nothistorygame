@@ -4,6 +4,9 @@ extends RefCounted
 ## "hayat-yakin"). Yalnız kurar; davranış IstHayatYakin'de. Görünüş CityLife._civ_body ile aynı dil (Person parametreleri).
 
 ## Havuz: [rol, adet]. Gövde bir kez kurulur (6-17 ms), rol havuzda sabit kalır; davranışı doğuşta seçilir.
+## Gece: tezgâh direklerine fener (pişirmeden önce IstHayatYakin ayarlar)
+static var gece_mod := false
+
 const POOL := [
 	["man", 9], ["woman", 8], ["child", 4], ["porter", 5], ["monk", 2], ["priest", 1], ["lantern", 3],
 	["vendor", 5], ["fisher", 2], ["worker", 3], ["guard", 3], ["beggar", 1], ["washer", 1], ["sitter", 2],
@@ -17,11 +20,16 @@ const STREET_ROLE := {
 }
 
 
-static func pool_roles() -> Array:
+static func pool_roles(gece := false) -> Array:
 	var out: Array = []
 	var left := {}
 	for e: Array in POOL:
 		left[e[0]] = int(e[1])
+	if gece:
+		# gece sokakta fener taşıyanlar çoğalır: erkek ve kadın sayısının bir kısmı fenerci olur
+		left["man"] = 4
+		left["woman"] = 5
+		left["lantern"] = 3 + 5 + 3
 	# karışık sırada ver: ilk doğanlar da çeşitli olsun
 	var more := true
 	while more:
@@ -166,6 +174,10 @@ static func stall(seed: int) -> Node3D:
 			_:
 				Props.ball(st, 0.15, Vector3(gx, 1.04, gz), Color("b8683a"), Vector3(1, 1.2, 1), 8)
 				Props.cyl(st, 0.06, 0.1, Vector3(gx, 1.22, gz), Color("a8582a"), Vector3.ZERO, 8)
+	if gece_mod:
+		for sx: float in [-0.85, 0.85]:
+			Props.cyl(st, 0.03, 0.14, Vector3(sx, 1.97, 0.55), Color("3a3430"), Vector3.ZERO, 5)
+			Props.box(st, Vector3(0.13, 0.17, 0.13), Vector3(sx, 1.82, 0.55), Color("ffcf80"), Vector3.ZERO, 2.2)
 	var sb := StaticBody3D.new()
 	sb.collision_layer = 1
 	sb.collision_mask = 0
@@ -207,10 +219,12 @@ static func tub() -> Node3D:
 static func rubble() -> Node3D:
 	var n := Node3D.new()
 	n.name = "TasYigini"
-	for i in 6:
+	for i in 9:
 		var a := i * 2.1
-		Props.box(n, Vector3(0.34 + (i % 3) * 0.1, 0.22 + (i % 2) * 0.12, 0.3), Vector3(cos(a) * 0.35, 0.12 + (i % 2) * 0.1, sin(a) * 0.3), [Color("9a8e78"), Color("8a8068"), Color("a89c84")][i % 3], Vector3(0, i * 31, 0))
-	Props.box(n, Vector3(0.5, 0.7, 0.5), Vector3(0.9, 0.35, 0.0), Color("a89c84"))
+		var r := 0.18 + (i % 3) * 0.06
+		Props.box(n, Vector3(r * 1.6, r, r * 1.3), Vector3(cos(a) * 0.32, r * 0.5, sin(a) * 0.26), [Color("9a8e78"), Color("8a8068"), Color("a89c84")][i % 3], Vector3(0, i * 31, i * 7))
+	Props.box(n, Vector3(0.38, 0.3, 0.3), Vector3(0.75, 0.15, 0.1), Color("a89c84"), Vector3(0, 12, 0))
+	Props.box(n, Vector3(0.28, 0.22, 0.26), Vector3(0.7, 0.41, 0.1), Color("b0a48c"), Vector3(0, -20, 0))
 	return n
 
 
@@ -325,3 +339,73 @@ static func animate(n: Node3D, t: float, moving: bool) -> void:
 	var tail := n.get_meta("tail", null) as Node3D
 	if tail:
 		tail.rotation.z = sin(t * 3.0 + n.get_instance_id() % 7) * 0.25
+
+
+# ---------------------------------------------------------------- pişirme (çizim sayısı için)
+## Bir kişi ~40 ağ parçasıdır; 30 kişi + tezgâhlar Mese'de +1300 çizim yapıyordu. Yakın (≤ 26 m) gerçek gövde, uzakta ve
+## görünmeyende Crowd._bake ile tek yüzeye pişmiş donuk ikiz (vertex renkli, LOD'lu); tezgâh ve eşyalar da pişmiş tek ağ.
+## Pişen ağlar user://crowd_cache'te saklanır (Crowd'un düzeni): ikinci açılışta pişirme yok.
+
+static var _salt2 := ""
+
+
+static func _key(kind: String) -> String:
+	if _salt2 == "":
+		_salt2 = FileAccess.get_md5("res://scripts/world/ist/hayat_yakin_govde.gd")
+	return "HY|%s|%s" % [kind, _salt2]
+
+
+static func _cached(key: String, build: Callable) -> ArrayMesh:
+	if not Crowd._meshes.has(key) and not Crowd._from_disk(key):
+		Crowd._meshes[key] = build.call()
+		Crowd._to_disk(key)
+	return Crowd._meshes[key]
+
+
+## Kişinin donuk ikizi: rolün çalışma duruşunda (oturan oturur, işçi çekiç tutar)
+static func twin_mesh(prol: String, idx: int, gece: bool) -> ArrayMesh:
+	var pose := {"fisher": "sit_ground", "beggar": "sit_ground", "worker": "hammer", "washer": "stir", "sitter": "sit"}.get(prol, "") as String
+	return _cached(_key("kisi|%s|%d|%s" % [prol, idx, gece]), func() -> ArrayMesh:
+		var pr := body(prol, idx, gece)
+		return Crowd._bake(pr, func():
+			dress(pr, prol, idx, gece)
+			Crowd._pose(pr, pose))
+	)
+
+
+## Sahne eşyası (tezgâh, tabure, leğen, taş yığını, tas) tek ağ; tezgâhın katı kutusu ayrı
+static func prop(kind: String, seed: int) -> Node3D:
+	var m := _cached(_key("esya|%s|%d|%s" % [kind, seed % 4 if kind == "stall" else 0, gece_mod]), func() -> ArrayMesh:
+		var src: Node3D
+		match kind:
+			"stall": src = stall(seed)
+			"stool": src = stool()
+			"tub": src = tub()
+			"rubble": src = rubble()
+			_: src = bowl()
+		return Crowd._bake(src, Callable())
+	)
+	var n := Node3D.new()
+	n.name = "Esya_" + kind
+	var mi := MeshInstance3D.new()
+	mi.mesh = m
+	mi.material_override = Crowd.material()
+	n.add_child(mi)
+	if kind == "stall":
+		var sb := StaticBody3D.new()
+		sb.collision_layer = 1
+		sb.collision_mask = 0
+		var cs := CollisionShape3D.new()
+		var bs := BoxShape3D.new()
+		bs.size = Vector3(1.95, 1.0, 1.0)
+		cs.shape = bs
+		cs.position = Vector3(0, 0.5, 0)
+		sb.add_child(cs)
+		n.add_child(sb)
+	return n
+
+
+static func animal_twin(kind: String, idx: int) -> ArrayMesh:
+	return _cached(_key("hayvan|%s|%d" % [kind, idx]), func() -> ArrayMesh:
+		return Crowd._bake(animal(kind, idx), Callable())
+	)

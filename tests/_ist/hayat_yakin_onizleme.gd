@@ -8,6 +8,9 @@ var shots := ""
 var sahneler := "mese,sokak,iskele,meydan,sur"
 var bekle := 6.0
 var tekrar := 2
+var yuru := false             # gerçek oyuncu (Player) Mese'de yürür; kişiler akar, sayım basılır
+var denetim := false          # sayısal denetim: çok konumda yürüyüş benzetimi, evde/havada/suda sayımı (kare yok)
+var kapali := false           # hayat katmanı kapalı (RINFO karşılaştırması)
 var cam: Camera3D
 var dunya: IstDunya
 var hy: IstHayatYakin
@@ -25,6 +28,9 @@ func _ready() -> void:
 			"sahne": sahneler = kv[1]
 			"bekle": bekle = kv[1].to_float()
 			"tekrar": tekrar = kv[1].to_int()
+			"kapali": kapali = kv[1] == "1"
+			"denetim": denetim = kv[1] == "1"
+			"yuru": yuru = kv[1] == "1"
 	cam = Camera3D.new()
 	cam.far = 3000.0
 	cam.near = 0.1
@@ -39,6 +45,8 @@ func _ready() -> void:
 	sokak = IstSehir.sokak
 	hy = IstHayatYakin.attach(dunya, cam, gece)
 	hy.hizli_isinma = true
+	if kapali:
+		hy.kapat(true)
 	_calis.call_deferred()
 
 
@@ -145,6 +153,8 @@ func _sahne(ad: String) -> Array:
 ## Zorla yerleştirilen duran kişilerin yakın planı: sahne adı "yakin_<rol>" (satici, oturan, camasir, dilenci, isci, nobetci, sohbet, balikci)
 func _yakin(ad: String) -> void:
 	var rol := ad.trim_prefix("yakin_")
+	var yan := rol.ends_with("_yan")
+	rol = rol.trim_suffix("_yan")
 	var geniş := rol in ["satici"]
 	var c0 := IstGeo.w2(-250.0, 100.0)
 	var g := _en_yakin(c0, func(k): return hy._sw[hy._PS[k]] >= (5.5 if geniş else 3.0) and hy._sn[hy._PS[k]] > 6 and _tur(k) in ["carsi", "sik", "liman"], true)
@@ -157,6 +167,21 @@ func _yakin(ad: String) -> void:
 	hy.kapat(false)
 	var before := hy.active_list().size()
 	var ok := false
+	if rol == "balikci":
+		if hy._kp.size() > 0:
+			ok = hy._spawn_quay(hy._kp[0], hy._kd[0]) > 0
+		print("YAKIN balikci kiyi=%d ok=%s" % [hy._kp.size(), ok])
+		if ok:
+			for a: IstHayatYakin.Agent in hy.active_list():
+				if a.prol == "fisher":
+					var fp2 := Vector2(a.pos.x, a.pos.z)
+					var cp2 := fp2 + Vector2(sin(a.yaw), cos(a.yaw)) * -3.4 + Vector2(1.2, 0)
+					cam.global_position = Vector3(cp2.x, IstGeo.h(cp2.x, cp2.y) + 1.4, cp2.y)
+					cam.look_at(Vector3(fp2.x, a.pos.y + 0.8, fp2.y))
+		hy._ilk = 0.0
+		hy._tick_t = 99.0
+		hy._stream_t = 999.0
+		return
 	for k in 8:
 		var gg: int = g + k * 3
 		match rol:
@@ -164,8 +189,8 @@ func _yakin(ad: String) -> void:
 			"oturan": ok = hy._spawn_edge(gg, "sitter")
 			"camasir": ok = hy._spawn_edge(gg, "washer")
 			"dilenci": ok = hy._spawn_edge(gg, "beggar")
-			"isci": ok = hy._spawn_wall(gg) and true
-			"nobetci": ok = hy._spawn_wall(gg) and true
+			"isci": ok = hy._spawn_wall(gg, "worker")
+			"nobetci": ok = hy._spawn_wall(gg, "guard")
 			"sohbet": ok = hy._spawn_gossip(gg) > 0
 			"balikci": ok = hy._spawn_fisher(gg)
 		if ok:
@@ -182,6 +207,8 @@ func _yakin(ad: String) -> void:
 	var dv := Vector2.from_angle(best.yaw)
 	dv = Vector2(sin(best.yaw), cos(best.yaw))
 	var cp := fp + dv * 3.2
+	if yan:
+		cp = fp + Vector2(dv.y, -dv.x) * 3.0
 	cam.global_position = Vector3(cp.x, IstGeo.h(cp.x, cp.y) + 1.5, cp.y)
 	cam.look_at(Vector3(fp.x, best.pos.y + 1.1, fp.y))
 	hy._ilk = 0.0
@@ -189,7 +216,110 @@ func _yakin(ad: String) -> void:
 	hy._stream_t = 999.0
 
 
+## Denetim: her mahalle türünden birkaç sokak noktasında yürüyüş benzetimi (kamera sokak boyunca 1,6 m/sn); her kare sayım
+func _denetle() -> void:
+	await _bekle_arazi()
+	var turler := {}
+	var secilen: Array = []
+	var N: int = hy._P.size()
+	var rng := RandomNumberGenerator.new()
+	rng.seed = 77
+	for k in 4000:
+		var g := rng.randi() % N
+		var p: Vector2 = hy._P[g]
+		var tur := _tur(g)
+		if int(turler.get(tur, 0)) >= 3 or not _acik(p, _yon(g)):
+			continue
+		turler[tur] = int(turler.get(tur, 0)) + 1
+		secilen.append(g)
+	var top_evde := 0
+	var top_havada := 0
+	var top_suda := 0
+	var top_ms := 0.0
+	var sayi := 0
+	for g: int in secilen:
+		var p: Vector2 = hy._P[g]
+		var d := _yon(g)
+		cam.global_position = Vector3(p.x, IstGeo.h(p.x, p.y) + 1.65, p.y)
+		cam.rotation = Vector3(0.0, atan2(-d.x, -d.y), 0.0)
+		await _bekle_arazi()
+		hy.doldur(8)
+		hy.prof_sum_us = 0.0
+		hy.prof_n = 0
+		hy.prof_max_us = 0.0
+		var ev := 0
+		var hv := 0
+		var sd := 0
+		var etk := 0
+		var kare := 0
+		var t0 := Time.get_ticks_msec()
+		var pos := p
+		while Time.get_ticks_msec() - t0 < 14000:
+			await get_tree().process_frame
+			pos += d * 0.08            # ~yürüyüş (kare başına küçük adım; benzetim hızlı)
+			if _acik(pos, d):
+				cam.global_position = Vector3(pos.x, IstGeo.h(pos.x, pos.y) + 1.65, pos.y)
+			var sy := hy.sayim()
+			ev = maxi(ev, int(sy["evde"]))
+			hv = maxi(hv, int(sy["havada"]))
+			sd = maxi(sd, int(sy["suda"]))
+			etk += int(sy["etkin"])
+			kare += 1
+		top_evde += ev
+		top_havada += hv
+		top_suda += sd
+		top_ms = maxf(top_ms, hy.prof_max_us / 1000.0)
+		sayi += 1
+		print("ISTKISIDENETIM tur=%s konum=%s evde_maks=%d havada_maks=%d suda_maks=%d etkin_ort=%.1f ms_ort=%.2f ms_maks=%.2f kare=%d" % [
+			_tur(g), p.snapped(Vector2(0.1, 0.1)), ev, hv, sd, float(etk) / maxf(kare, 1), hy.prof_sum_us / maxf(hy.prof_n, 1) / 1000.0, hy.prof_max_us / 1000.0, kare])
+	print("ISTKISIDENETIM TOPLAM konum=%d evde=%d havada=%d suda=%d ms_maks=%.2f %s" % [sayi, top_evde, top_havada, top_suda, top_ms,
+		"PASS" if top_evde == 0 and top_havada == 0 and top_suda == 0 else "FAIL"])
+	get_tree().quit(0)
+
+
+## Gerçek oyuncuyla yürüme: Player Mese'de ileri yürür (sprint yok); 30 sn; her 5 sn'de sayım; tezgâha/kişiye çarpma yok sayılır
+func _yurut() -> void:
+	await _bekle_arazi()
+	var sh := _sahne("mese")
+	var p: Vector2 = sh[0]
+	var d: Vector2 = sh[1]
+	var P = load("res://scripts/player/player.gd")
+	var pl: CharacterBody3D = P.new()
+	add_child(pl)
+	pl.global_position = Vector3(p.x, IstGeo.h(p.x, p.y) + 0.5, p.y)
+	pl.rotation.y = atan2(-d.x, -d.y)
+	dunya.izle = pl
+	dunya.carpisma_yenile(pl.global_position)
+	cam.current = false
+	hy.oyuncu = pl
+	hy.hizli_isinma = false
+	IstDunya.butce_us = 20000
+	for i in 30:
+		await get_tree().physics_frame
+	Input.action_press("move_forward")
+	var t0 := Time.get_ticks_msec()
+	var son := pl.global_position
+	var yol := 0.0
+	var k := 0
+	while Time.get_ticks_msec() - t0 < 30000:
+		await get_tree().physics_frame
+		yol += Vector2(pl.global_position.x - son.x, pl.global_position.z - son.z).length()
+		son = pl.global_position
+		k += 1
+		if k % 100 == 0:
+			print(hy.sayim_satiri("yuru_%d yol=%.0f" % [k, yol]))
+	Input.action_release("move_forward")
+	print("YURUME bitti yol=%.0f m %s" % [yol, "PASS" if yol > 8.0 else "FAIL"])
+	get_tree().quit(0)
+
+
 func _calis() -> void:
+	if yuru:
+		await _yurut()
+		return
+	if denetim:
+		await _denetle()
+		return
 	await _bekle_arazi()
 	print("ONIZLEME hazir; havuz=%d" % hy.agents.size())
 	hy.prof_sum_us = 0.0
@@ -228,7 +358,8 @@ func _calis() -> void:
 		await _bekle_arazi()
 		# akış: mevcut herkes uzaktan çekilsin, yeniden dolsun
 		hy._ilk = 6.0
-		hy.doldur(8)
+		if not kapali:
+			hy.doldur(8)
 		hy.prof_sum_us = 0.0
 		hy.prof_n = 0
 		hy.prof_max_us = 0.0
@@ -238,10 +369,13 @@ func _calis() -> void:
 		for r in tekrar:
 			await RenderingServer.frame_post_draw
 			var img := get_viewport().get_texture().get_image()
-			var fn := "%s_%s_%d.png" % ["gece" if gece else "gunduz", ad, r]
+			var fn := "%s_%s_%d%s.png" % ["gece" if gece else "gunduz", ad, r, "_kapali" if kapali else ""]
 			if shots != "":
 				img.save_png(shots.path_join(fn))
 			print(hy.sayim_satiri(ad + "_" + str(r)))
+			print("RINFO hayat_yakin %s %s cizim=%d ucgen=%d" % ["kapali" if kapali else "acik", ad,
+				RenderingServer.get_rendering_info(RenderingServer.RENDERING_INFO_TOTAL_DRAW_CALLS_IN_FRAME),
+				RenderingServer.get_rendering_info(RenderingServer.RENDERING_INFO_TOTAL_PRIMITIVES_IN_FRAME)])
 			if OS.get_cmdline_user_args().has("halka=1"):
 				var fw2 := Vector2(-cam.global_basis.z.x, -cam.global_basis.z.z).normalized()
 				var rt3 := Vector2(-fw2.y, fw2.x)

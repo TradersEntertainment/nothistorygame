@@ -1,0 +1,94 @@
+# Ham satırlar (filtreli)
+
+## Gündüz, hayat AÇIK (k27)
+ISTKISI kur noktalar=16717 sokak=630 meydan=15 kiyi=8 havuz=49 hayvan=10 kur_ms=787
+ISTKISI mese_0 y30=8 y60=24 gorunen=16 hayvan=6 etkin=31 yuruyen=22 duran=9 evde=0 havada=0 suda=0 ms=1.98 ms_ort=1.43 ms_max=1.64 hedef=31
+RINFO hayat_yakin acik mese cizim=708 ucgen=1200932
+ISTKISI sokak_0 y30=4 y60=11 gorunen=0 hayvan=4 etkin=25 yuruyen=18 duran=7 evde=0 havada=0 suda=0 ms=1.42 ms_ort=1.10 ms_max=1.77 hedef=23
+RINFO hayat_yakin acik sokak cizim=287 ucgen=314681
+ISTKISI iskele_0 y30=5 y60=14 gorunen=22 hayvan=4 etkin=22 yuruyen=12 duran=10 evde=0 havada=0 suda=0 ms=1.21 ms_ort=0.88 ms_max=1.42 hedef=21
+RINFO hayat_yakin acik iskele cizim=422 ucgen=672312
+ISTKISI meydan_0 y30=7 y60=16 gorunen=14 hayvan=3 etkin=16 yuruyen=7 duran=9 evde=0 havada=0 suda=0 ms=1.16 ms_ort=0.99 ms_max=1.16 hedef=15
+RINFO hayat_yakin acik meydan cizim=979 ucgen=1207931
+ISTKISI sur_0 y30=3 y60=13 gorunen=0 hayvan=2 etkin=13 yuruyen=10 duran=3 evde=0 havada=0 suda=0 ms=0.92 ms_ort=0.66 ms_max=0.98 hedef=13
+RINFO hayat_yakin acik sur cizim=144 ucgen=350136
+
+## Gündüz, hayat KAPALI (k23)
+RINFO hayat_yakin kapali mese cizim=597 ucgen=1067120
+RINFO hayat_yakin kapali sokak cizim=287 ucgen=314681
+RINFO hayat_yakin kapali iskele cizim=404 ucgen=708520
+RINFO hayat_yakin kapali meydan cizim=676 ucgen=787161
+RINFO hayat_yakin kapali sur cizim=142 ucgen=349776
+
+## Gece, AÇIK (k24)
+ISTKISI kur noktalar=16717 sokak=630 meydan=15 kiyi=8 havuz=49 hayvan=10 kur_ms=27
+ISTKISI mese_0 y30=8 y60=13 gorunen=12 hayvan=3 etkin=17 yuruyen=13 duran=4 evde=0 havada=0 suda=0 ms=425.36 ms_ort=1.05 ms_max=1.25 hedef=17
+RINFO hayat_yakin acik mese cizim=774 ucgen=1259426
+ISTKISI sokak_0 y30=0 y60=7 gorunen=0 hayvan=3 etkin=14 yuruyen=12 duran=2 evde=0 havada=0 suda=0 ms=138.11 ms_ort=0.68 ms_max=0.87 hedef=13
+RINFO hayat_yakin acik sokak cizim=320 ucgen=401849
+ISTKISI iskele_0 y30=3 y60=6 gorunen=11 hayvan=2 etkin=11 yuruyen=5 duran=6 evde=0 havada=0 suda=0 ms=42.99 ms_ort=0.73 ms_max=1.21 hedef=11
+RINFO hayat_yakin acik iskele cizim=518 ucgen=755028
+ISTKISI meydan_0 y30=6 y60=9 gorunen=9 hayvan=1 etkin=9 yuruyen=4 duran=5 evde=0 havada=0 suda=0 ms=16.01 ms_ort=1.11 ms_max=2.76 hedef=8
+RINFO hayat_yakin acik meydan cizim=911 ucgen=1016069
+ISTKISI sur_0 y30=2 y60=5 gorunen=0 hayvan=1 etkin=7 yuruyen=6 duran=1 evde=0 havada=0 suda=0 ms=5.04 ms_ort=0.37 ms_max=0.53 hedef=7
+RINFO hayat_yakin acik sur cizim=156 ucgen=368112
+
+## Başsız sayısal denetim (son kodla, 21 konum × 14 sn yürüyüş benzetimi, --max-fps 20)
+ISTKISIDENETIM tur=liman konum=(-417.3, -875.3) evde_maks=0 havada_maks=0 suda_maks=0 etkin_ort=24.0 ms_ort=0.76 ms_maks=2.10 kare=281
+
+ISTKISIDENETIM tur=carsi konum=(-1126.2, -90.0) evde_maks=0 havada_maks=0 suda_maks=0 etkin_ort=26.4 ms_ort=0.72 ms_maks=1.80 kare=281
+
+ISTKISIDENETIM tur=carsi konum=(-1546.9, -916.3) evde_maks=0 havada_maks=0 suda_maks=0 etkin_ort=30.0 ms_ort=1.24 ms_maks=5.76 kare=281
+
+ISTKISIDENETIM tur=sik konum=(-1131.6, -1017.8) evde_maks=0 havada_maks=0 suda_maks=0 etkin_ort=18.1 ms_ort=0.79 ms_maks=1.93 kare=281
+
+ISTKISIDENETIM tur=sik konum=(-423.6, 125.3) evde_maks=0 havada_maks=0 suda_maks=0 etkin_ort=16.0 ms_ort=0.61 ms_maks=1.51 kare=281
+
+ISTKISIDENETIM tur=sik konum=(-494.9, -89.5) evde_maks=0 havada_maks=0 suda_maks=0 etkin_ort=20.0 ms_ort=0.61 ms_maks=1.82 kare=281
+
+ISTKISIDENETIM tur=carsi konum=(-732.5, -93.6) evde_maks=0 havada_maks=0 suda_maks=0 etkin_ort=31.0 ms_ort=1.24 ms_maks=4.45 kare=281
+
+ISTKISIDENETIM tur=seyrek konum=(-1501.4, 285.0) evde_maks=0 havada_maks=0 suda_maks=0 etkin_ort=8.0 ms_ort=0.49 ms_maks=2.95 kare=281
+
+ISTKISIDENETIM tur=bostan konum=(-2389.9, 729.9) evde_maks=0 havada_maks=0 suda_maks=0 etkin_ort=9.0 ms_ort=0.35 ms_maks=1.26 kare=281
+
+ISTKISIDENETIM tur=seyrek konum=(-1129.3, -910.5) evde_maks=0 havada_maks=0 suda_maks=0 etkin_ort=10.0 ms_ort=0.49 ms_maks=3.19 kare=281
+
+ISTKISIDENETIM tur=seyrek konum=(-1355.6, -1035.5) evde_maks=0 havada_maks=0 suda_maks=0 etkin_ort=7.0 ms_ort=0.33 ms_maks=1.42 kare=281
+
+ISTKISIDENETIM tur=liman konum=(-403.1, -872.6) evde_maks=0 havada_maks=0 suda_maks=0 etkin_ort=21.0 ms_ort=0.94 ms_maks=1.86 kare=281
+
+ISTKISIDENETIM tur=bostan konum=(-2245.4, 564.7) evde_maks=0 havada_maks=0 suda_maks=0 etkin_ort=5.0 ms_ort=0.28 ms_maks=2.44 kare=281
+
+ISTKISIDENETIM tur=bostan konum=(-1413.5, 22.5) evde_maks=0 havada_maks=0 suda_maks=0 etkin_ort=7.0 ms_ort=0.33 ms_maks=1.37 kare=281
+
+ISTKISIDENETIM tur=liman konum=(-1351.4, -1368.3) evde_maks=0 havada_maks=0 suda_maks=0 etkin_ort=20.8 ms_ort=0.94 ms_maks=2.93 kare=281
+
+ISTKISIDENETIM tur=harabe konum=(47.4, 179.5) evde_maks=0 havada_maks=0 suda_maks=0 etkin_ort=4.0 ms_ort=0.35 ms_maks=1.03 kare=279
+
+ISTKISIDENETIM tur=harabe konum=(-1596.4, -907.1) evde_maks=0 havada_maks=0 suda_maks=0 etkin_ort=7.7 ms_ort=0.43 ms_maks=1.10 kare=281
+
+ISTKISIDENETIM tur=harabe konum=(-1780.7, -1112.9) evde_maks=0 havada_maks=0 suda_maks=0 etkin_ort=5.0 ms_ort=0.30 ms_maks=0.95 kare=281
+
+ISTKISIDENETIM tur=sur_dibi konum=(-2324.7, -530.4) evde_maks=0 havada_maks=0 suda_maks=0 etkin_ort=12.5 ms_ort=0.72 ms_maks=1.34 kare=280
+
+ISTKISIDENETIM tur=sur_dibi konum=(-2431.1, 850.0) evde_maks=0 havada_maks=0 suda_maks=0 etkin_ort=30.0 ms_ort=1.26 ms_maks=6.57 kare=281
+
+ISTKISIDENETIM tur=sur_dibi konum=(-2353.1, -504.6) evde_maks=0 havada_maks=0 suda_maks=0 etkin_ort=12.4 ms_ort=0.64 ms_maks=6.06 kare=280
+
+ISTKISIDENETIM TOPLAM konum=21 evde=0 havada=0 suda=0 ms_maks=6.57 PASS
+
+
+## Gerçek Player ile yürüme (k27)
+ISTKISI yuru_100 yol=5 y30=7 y60=25 gorunen=16 hayvan=6 etkin=31 yuruyen=22 duran=9 evde=0 havada=0 suda=0 ms=2.29 ms_ort=1.64 ms_max=4.39 hedef=31
+ISTKISI yuru_200 yol=11 y30=9 y60=25 gorunen=16 hayvan=6 etkin=31 yuruyen=22 duran=9 evde=0 havada=0 suda=0 ms=1.94 ms_ort=1.60 ms_max=4.39 hedef=31
+ISTKISI yuru_300 yol=16 y30=8 y60=26 gorunen=15 hayvan=6 etkin=31 yuruyen=22 duran=9 evde=0 havada=0 suda=0 ms=1.84 ms_ort=1.63 ms_max=4.39 hedef=31
+YURUME bitti yol=18 m PASS
+
+## Başsız bölüm testleri
+AUTOTEST PASS chapter=6 variant= branch=6a outcome=6a.1 paradox=10 mistakes=0 telsiz=4
+AUTOTEST PASS chapter=7 variant= branch=7a outcome=7.1 extras=[] sadakat=60 baski=0 hour=13.5
+AUTOTEST PASS chapter=11 variant= outcome=11.2 persuade=25 sadakat=55 baski=1
+
+## parse_check
+PARSECHECK PASS scripts=310
