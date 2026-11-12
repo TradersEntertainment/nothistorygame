@@ -496,8 +496,7 @@ func rubble_heap(c: Vector3, r: float, h: float, color: Color) -> void:
 		var f := float(layers - i) / layers
 		var rr := r * (0.35 + 0.65 * f)
 		var hh := h * float(i + 1) / layers
-		var jit := Vector3(rng.randf_range(-0.12, 0.12) * r, 0, rng.randf_range(-0.12, 0.12) * r) * (1.0 if i > 0 else 0.0)
-		sb(Vector3(c.x, c.y, c.z) + jit, Vector3(rr * 2.0, hh, rr * 2.0 * rng.randf_range(0.85, 1.0)), color.darkened(rng.randf() * 0.18), "rubble", rng.randf_range(-25, 25) if i > 0 else 0.0)
+		sb(Vector3(c.x, c.y, c.z), Vector3(rr * 2.0, hh, rr * 2.0), color.darkened(0.04 * (i % 4)), "rubble", 0.0)
 	if lod > 0:
 		return
 	for i in 7:

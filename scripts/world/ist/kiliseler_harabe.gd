@@ -39,12 +39,12 @@ static func mezarlik(b: IstKB) -> void:
 		b.vb(Vector3(s * (gap * 0.5 + 0.4), 2.3, l * 0.5), Vector3(0.12, 0.45, 0.12), IstKB.GOLD)
 	b.sb(Vector3(0, 0, 0), Vector3(w - 1.0, 0.05, l - 1.0), IstKB.SOIL, "plaster")
 	# duvara çıkış basamakları (iç tarafta)
-	b.sb(Vector3(w * 0.5 - 1.1, 0, -l * 0.25), Vector3(1.2, 0.4, 1.4), IstKB.STONE_D, "ashlar")
-	b.sb(Vector3(w * 0.5 - 0.65, 0, -l * 0.25), Vector3(0.8, 0.8, 1.4), IstKB.STONE_D, "ashlar")
-	b.add_climb(Vector3(w * 0.5 - 3.0, 0, -l * 0.25), Vector3(w * 0.5 - 0.3, wh, -l * 0.25), "basamak")
+	b.sb(Vector3(w * 0.5 - 1.15, 0, 0), Vector3(1.2, 0.4, 1.4), IstKB.STONE_D, "ashlar")
+	b.sb(Vector3(w * 0.5 - 0.65, 0, 0), Vector3(0.8, 0.8, 1.4), IstKB.STONE_D, "ashlar")
+	b.add_climb(Vector3(w * 0.5 - 3.0, 0, 0), Vector3(w * 0.5 - 0.45, wh, 0), "basamak")
 	# lahitler: gövde + beşik kapak, 3 × 2 düzen (aralık ≥ 2 m)
-	var gx := [-w * 0.3, 0.0, w * 0.3]
-	var gz := [-l * 0.18, l * 0.14]
+	var gx := [-w * 0.3, 0.0]
+	var gz := [-l * 0.2, l * 0.2]
 	var n := 0
 	for xx: float in gx:
 		for zz: float in gz:
@@ -58,22 +58,18 @@ static func mezarlik(b: IstKB) -> void:
 			if b.detail():
 				b.vb(Vector3(xx, 0.45, zz) + Vector3(sin(deg_to_rad(yaw)), 0, cos(deg_to_rad(yaw))) * 0.0 + Vector3(lb * 0.5 + 0.02, 0, 0), Vector3(0.03, 0.4, 0.4), IstKB.DARK)
 			n += 1
-	# lahit yanına basamak taşı (kapağa çıkış)
-	b.sb(Vector3(gx[2] + 1.5, 0, gz[1]), Vector3(0.8, 0.4, 0.8), IstKB.STONE_D, "ashlar")
-	b.sb(Vector3(gx[2] + 0.95, 0, gz[1]), Vector3(0.4, 0.8, 0.8), IstKB.STONE_D, "ashlar")
-	b.add_climb(Vector3(gx[2] + 3.0, 0, gz[1]), Vector3(gx[2] + 0.75, 0.85, gz[1]), "basamak")
 	b.add_perch(Vector3(gx[1], 1.3, gz[0]))
 	# kemikevi (ossuary): küçük taş yapı, beşik çatı, kuzeyde
 	var ow := 3.4
 	var ol := 4.0
-	b.sb(Vector3(-w * 0.5 + 2.6, 0, -l * 0.5 + 3.2), Vector3(ow, 2.8, ol), st, "ashlar")
-	b.gable(Vector3(-w * 0.5 + 2.6, 2.8, -l * 0.5 + 3.2), ow + 0.4, 1.2, ol + 0.4, IstKB.TILE, true)
-	b.add_perch(Vector3(-w * 0.5 + 2.6, 4.0, -l * 0.5 + 3.2))
+	b.sb(Vector3(-w * 0.5 + 1.85, 0, -l * 0.5 + 2.15), Vector3(ow, 2.8, ol), st, "ashlar")
+	b.gable(Vector3(-w * 0.5 + 1.85, 2.8, -l * 0.5 + 2.15), ow + 0.4, 1.2, ol + 0.4, IstKB.TILE, true)
+	b.add_perch(Vector3(-w * 0.5 + 1.85, 4.0, -l * 0.5 + 2.15))
 	if b.lod == 1:
 		return
-	b.door(Vector3(-w * 0.5 + 2.6, 0, -l * 0.5 + 3.2 + ol * 0.5), Vector3(0, 0, 1), 1.1, 1.9)
-	b.win(Vector3(-w * 0.5 + 2.6 + ow * 0.5, 1.5, -l * 0.5 + 3.2), Vector3(1, 0, 0), 0.4, 0.6)
-	b.cross(Vector3(-w * 0.5 + 2.6, 4.0, -l * 0.5 + 3.2), 0.8)
+	b.door(Vector3(-w * 0.5 + 1.85, 0, -l * 0.5 + 2.15 + ol * 0.5), Vector3(0, 0, 1), 1.1, 1.9)
+	b.win(Vector3(-w * 0.5 + 1.85 + ow * 0.5, 1.5, -l * 0.5 + 2.15), Vector3(1, 0, 0), 0.4, 0.6)
+	b.cross(Vector3(-w * 0.5 + 1.85, 4.0, -l * 0.5 + 2.15), 0.8)
 	# mezar taşları (stel) ve selviler
 	for i in 8:
 		var sx := b.rng.randf_range(-w * 0.45, w * 0.45)
@@ -85,11 +81,11 @@ static func mezarlik(b: IstKB) -> void:
 			for zz2: float in gz:
 				if absf(sx - xx2) < 1.6 and absf(sz - zz2) < 2.0:
 					near = true
-		if near or (sx < -w * 0.5 + 5.5 and sz < -l * 0.5 + 6.0):
+		if near or (sx < -w * 0.5 + 5.0 and sz < -l * 0.5 + 6.0) or sx > 2.2 or sx < -w * 0.5 + 1.6 or sz > l * 0.5 - 1.6:
 			continue
 		b.sb(Vector3(sx, 0, sz), Vector3(0.5, 1.1, 0.16), IstKB.MARBLE, "marble", b.rng.randf_range(-12.0, 12.0))
 		b.vb(Vector3(sx, 1.1, sz), Vector3(0.1, 0.3, 0.06), IstKB.GOLD)
-	for p in [Vector2(-w * 0.5 + 2.2, l * 0.35), Vector2(w * 0.5 - 2.0, l * 0.35), Vector2(w * 0.5 - 2.4, -l * 0.35), Vector2(0, -l * 0.5 + 1.6)]:
+	for p in [Vector2(-w * 0.5 + 0.55, l * 0.5 - 0.55), Vector2(w * 0.5 - 0.55, l * 0.5 - 0.55), Vector2(w * 0.5 - 0.55, -l * 0.5 + 0.55)]:
 		b.tree_cypress(Vector3(p.x, 0, p.y), 6.0)
 	b.grass_patch(Vector3(-2.0, 0, l * 0.3), 2.2, 1.6)
 	b.grass_patch(Vector3(w * 0.2, 0, -l * 0.1), 1.8, 1.4)
@@ -111,34 +107,30 @@ static func nymphaion(b: IstKB) -> void:
 		b.sb(Vector3(0, 0, -R * 0.5), Vector3(R * 2.2, hmax * 0.8, wt), st)
 		b.sc(Vector3(0, 0, R * 0.5), 3.0, 0.6, IstKB.MARBLE, "", 10)
 		return
-	for i in nseg:
-		var a := deg_to_rad(-90.0 + 180.0 * (i + 0.5) / nseg)     # -90 (batı) .. +90 (doğu), merkezden kuzeye bakan yay
+	var narc := 18
+	for i in narc:
+		var a := deg_to_rad(-90.0 + 180.0 * (i + 0.5) / narc)
 		var cx := sin(a) * R
 		var cz := -cos(a) * R
-		var chord := 2.0 * R * sin(deg_to_rad(90.0 / nseg)) * 1.14
-		var yaw := rad_to_deg(a)
-		b.sb(Vector3(cx, 0, cz), Vector3(chord, hs[i], wt), st, "ashlar", -yaw)
-		if b.detail():
-			var nrm := Vector3(-sin(a), 0, cos(a))      # yayın içine (merkeze) bakan yön
-			nrm = Vector3(-cx, 0, -cz).normalized()
-			if hs[i] > 3.0:
-				b.win(Vector3(cx, 0.9, cz) + nrm * (wt * 0.5), nrm, 0.9, minf(hs[i] - 2.0, 2.2))
-		var nrm2 := Vector3(-cx, 0, -cz).normalized()
-		if hs[i] <= 2.7:
-			pass
+		var chord := 2.0 * R * sin(deg_to_rad(90.0 / narc)) * 1.04
+		var hh: float = hs[i / 2]
+		b.sb(Vector3(cx, 0, cz), Vector3(chord, hh, wt), st, "ashlar", -rad_to_deg(a))
+		if b.detail() and i % 2 == 0 and hh > 3.0:
+			var nrm := Vector3(-cx, 0, -cz).normalized()
+			b.win(Vector3(cx, 0.9, cz) + nrm * (wt * 0.5), nrm, 0.9, minf(hh - 2.0, 2.2))
 	# havuz: basamaklı mermer kaide (dolu), üstünde su yüzeyi
-	b.sc(Vector3(0, 0, R * 0.25), R * 1.25, 0.3, IstKB.STONE_D, "flagstone", 14)
-	b.sc(Vector3(0, 0.3, R * 0.25), R * 0.85, 0.35, IstKB.MARBLE, "marble", 14)
-	b.sc(Vector3(0, 0.65, R * 0.25), R * 0.7, 0.04, IstKB.WATER, "", 14)
-	b.add_perch(Vector3(0, 0.69, R * 0.3))
+	b.sc(Vector3(0, 0, R * 1.25), R * 0.85, 0.3, IstKB.STONE_D, "flagstone", 14)
+	b.sc(Vector3(0, 0.3, R * 1.25), R * 0.62, 0.35, IstKB.MARBLE, "marble", 14)
+	b.sc(Vector3(0, 0.65, R * 1.25), R * 0.5, 0.04, IstKB.WATER, "", 14)
+	b.add_perch(Vector3(0, 0.69, R * 1.25))
 	# moloz yığını: batı uçta duvara yaslı, tepe duvarın alçak ucu (2,0 m) ile birleşir
-	var hx := sin(deg_to_rad(-90.0 + 180.0 * 0.5 / nseg)) * R
-	var hz := -cos(deg_to_rad(-90.0 + 180.0 * 0.5 / nseg)) * R
-	b.rubble_heap(Vector3(hx - 1.2, 0, hz + 2.0), 2.6, 1.8, IstKB.STONE_D)
-	b.add_climb(Vector3(hx - 4.4, 0, hz + 4.0), Vector3(hx + 0.1, hs[0], hz - 0.1), "sandik")
+	var hx := sin(deg_to_rad(-90.0 + 180.0 * 0.5 / 18.0)) * R
+	var hz := -cos(deg_to_rad(-90.0 + 180.0 * 0.5 / 18.0)) * R
+	b.rubble_heap(Vector3(hx - 2.0, 0, hz + 0.9), 2.4, 1.8, IstKB.STONE_D)
+	b.add_climb(Vector3(hx - 5.4, 0, hz + 1.6), Vector3(hx - 0.2, hs[0], hz + 0.1), "sandik")
 	# düşmüş sütun gövdeleri
-	b.sc(Vector3(2.6, 0.0, R * 0.9), 0.35, 0.7, IstKB.MARBLE, "marble", 8)
-	var drum := b.vc(Vector3(-3.4, 0.38, R * 1.3), 0.38, 1.1, IstKB.MARBLE, 8, Vector3(0, 0, 90), -1.0, true)
+	b.sc(Vector3(R * 1.7, 0.0, R * 1.3), 0.35, 0.7, IstKB.MARBLE, "marble", 8)
+	var drum := b.vc(Vector3(-R * 1.55, 0.38, R * 1.5), 0.38, 1.1, IstKB.MARBLE, 8, Vector3(0, 0, 90), -1.0, true)
 	if drum:
 		drum.set_meta("dekor", false)
 		Props.make_solid(drum as MeshInstance3D)
@@ -147,7 +139,7 @@ static func nymphaion(b: IstKB) -> void:
 	# bezeme: mermer silme, aslan başı oluğu (kutu), yosun, sarmaşık
 	for i in nseg:
 		if hs[i] > 3.0:
-			var aa := deg_to_rad(-90.0 + 180.0 * (i + 0.5) / nseg)
+			var aa := deg_to_rad(-90.0 + 180.0 * (i * 2 + 1.0) / 18.0)
 			var inward := Vector3(-sin(aa), 0, cos(aa))
 			var c0 := Vector3(sin(aa) * R, 0, -cos(aa) * R) + inward * (wt * 0.5 + 0.05)
 			b.vb(c0 + Vector3(0, 0.55, 0), Vector3(0.3, 0.3, 0.2), IstKB.MARBLE, "marble", Vector3(0, -rad_to_deg(aa), 0))
@@ -186,15 +178,11 @@ static func tonoz(b: IstKB) -> void:
 	# kuzey uç duvarı (apsis eli): kemer duvarı
 	b.sb(Vector3(0, 0, -L * 0.5 - 0.5), Vector3(span + 2.0 * wt, hw * 1.0, 1.0), st, "ashlar")
 	# ayakta kalan kemer halkaları (kuzeyde iki halka, güney halkası yarım)
-	_arch(b, 0.0, hw, -L * 0.5 + 1.2, span * 0.5, 0.8, 1.2, 0.0, 180.0, 9, st)
-	_arch(b, 0.0, hw, -L * 0.5 + 3.6, span * 0.5, 0.8, 1.2, 0.0, 180.0, 9, st)
-	# halkaları taşıyan "tavan örtüsü": halkaların üstü kapalı kaplama (üstten düşülmesin)
-	b.sb(Vector3(0, hw + span * 0.5 + 0.8 - 0.2, -L * 0.5 + 2.4), Vector3(span * 0.55, 0.4, 3.6), st, "ashlar")
-	# güneyde yarım kalmış halka (yalnız doğu yarısı)
-	_arch(b, 0.0, hw * 0.78, -L * 0.5 + 6.2, span * 0.5, 0.8, 1.2, 0.0, 75.0, 4, st)
+	_arch(b, 0.0, hw * f[0], -L * 0.5 + 0.6, span * 0.5, 0.8, 1.2, 0.0, 180.0, 9, st)
+	_arch(b, 0.0, hw * f[0], -L * 0.5 + 1.8, span * 0.5, 0.8, 1.2, 0.0, 180.0, 9, st)
 	# ortada moloz yığını (doğu duvara yaslı; tepe duvar parçası 3 ile birleşir)
 	var hh3: float = hw * f[3]
-	b.rubble_heap(Vector3(span * 0.5 - 0.3, 0, L * 0.12), 2.2, hh3 - 0.15, IstKB.STONE_D)
+	b.rubble_heap(Vector3(0, 0, L * 0.12), span * 0.5 + 0.5, hh3 - 0.15, IstKB.STONE_D)
 	b.add_climb(Vector3(-0.8, 0, L * 0.12 + 3.2), Vector3(wx, hh3 * 1.0, -L * 0.5 + seg * 3.5 + 0.0), "sandik")
 	b.add_perch(Vector3(wx, hw * f[0], -L * 0.5 + seg * 0.5))
 	b.add_perch(Vector3(-wx, hw * f[0], -L * 0.5 + seg * 0.5))
@@ -290,9 +278,9 @@ static func sutun(b: IstKB) -> void:
 	b.add_perch(Vector3(0, 0.8 + heights[2] - 0.3 + 0.0, -L * 0.5 + 1.2 + 2 * sp) + Vector3(0, 0.0, 0.0))
 	# kırık sütun 5 (1,7 m) tepesine çıkış: üç basamaklı mermer blok (0,4 m)
 	var z4 := -L * 0.5 + 1.2 + 4 * sp
-	b.sb(Vector3(0, 0.5, z4 + 2.4), Vector3(1.0, 0.4, 1.0), IstKB.MARBLE, "marble")
-	b.sb(Vector3(0, 0.5, z4 + 1.4), Vector3(1.0, 0.8, 1.0), IstKB.MARBLE, "marble")
-	b.add_climb(Vector3(0, 0.5, z4 + 4.2), Vector3(0, 0.8 + heights[4] - 0.3, z4), "basamak")
+	for i in 3:
+		b.sb(Vector3(0, 0.5, z4 + 1.0 + i), Vector3(1.0, 1.2 - 0.4 * i, 1.0), IstKB.MARBLE, "marble")
+	b.add_climb(Vector3(0, 0.5, z4 + 4.4), Vector3(0, 0.8 + heights[4] - 0.3, z4), "basamak")
 	if b.lod == 1:
 		return
 	# yerde yatan gövde parçaları (katı) ve düşmüş başlıklar
@@ -331,6 +319,8 @@ static func mozaik(b: IstKB) -> void:
 	b.add_perch(Vector3(0, 0.2, 0))
 	b.add_climb(Vector3(0, 0, l * 0.5 + 3.0), Vector3(0, 0.2, l * 0.5 - 1.0), "basamak")
 	if b.lod == 1:
+		return
+	if b.dry:
 		return
 	# mozaik dokusu: kaide üstünde ince düzlem
 	var tex := _mosaic_tex()

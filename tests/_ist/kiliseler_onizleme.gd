@@ -316,7 +316,13 @@ func _dar(space: PhysicsDirectSpaceState3D, bb: AABB, id: String, k: float) -> i
 						o = true
 						break
 				occ[i * nz + j] = o
-		# x yönünde ve z yönünde serbest şeritler
+		# serbest şeritleri işaretle (x ve z yönünde); ince (tek-iki satırlık) teğet yayları ele: ≥ 4 ardışık satırda sürmeli
+		var fx: Array = []
+		var fz: Array = []
+		fx.resize(nx * nz)
+		fz.resize(nx * nz)
+		fx.fill(false)
+		fz.fill(false)
 		for j in nz:
 			var last := -1
 			for i in nx:
@@ -324,9 +330,8 @@ func _dar(space: PhysicsDirectSpaceState3D, bb: AABB, id: String, k: float) -> i
 					if last >= 0 and i - last - 1 > 0:
 						var gap := (i - last - 1) * res
 						if gap >= 0.199 and gap <= 1.4:
-							total += 1
-							if total <= 12:
-								print("  DAR(x): y=", base_y, " x=", x0 + last * res, "..", x0 + i * res, " z=", z0 + j * res, " aralik=", gap)
+							for q in range(last + 1, i):
+								fx[q * nz + j] = true
 					last = i
 		for i in nx:
 			var last2 := -1
@@ -335,10 +340,30 @@ func _dar(space: PhysicsDirectSpaceState3D, bb: AABB, id: String, k: float) -> i
 					if last2 >= 0 and j - last2 - 1 > 0:
 						var gap2 := (j - last2 - 1) * res
 						if gap2 >= 0.199 and gap2 <= 1.4:
-							total += 1
-							if total <= 12:
-								print("  DAR(z): y=", base_y, " x=", x0 + i * res, " z=", z0 + last2 * res, "..", z0 + j * res, " aralik=", gap2)
+							for q in range(last2 + 1, j):
+								fz[i * nz + q] = true
 					last2 = j
+		var need := int(round(0.4 / res))
+		for i in nx:
+			for j in nz:
+				if fx[i * nz + j]:
+					var run := 0
+					for dj in range(j, mini(nz, j + need)):
+						if fx[i * nz + dj]:
+							run += 1
+					if run >= need and (j == 0 or not fx[i * nz + j - 1]):
+						total += 1
+						if total <= 8:
+							print("  DAR(x): y=", base_y, " x=", x0 + i * res, " z=", z0 + j * res)
+				if fz[i * nz + j]:
+					var run2 := 0
+					for di in range(i, mini(nx, i + need)):
+						if fz[di * nz + j]:
+							run2 += 1
+					if run2 >= need and (i == 0 or not fz[(i - 1) * nz + j]):
+						total += 1
+						if total <= 8:
+							print("  DAR(z): y=", base_y, " x=", x0 + i * res, " z=", z0 + j * res)
 	return total
 
 
@@ -487,5 +512,7 @@ func _walk_test(alt: Vector3, ust: Vector3) -> bool:
 					vy = JUMP_V
 		else:
 			stuck = 0
+	if not ok:
+		print("  YOL BAŞARISIZ: alt=", alt, " ust=", ust, " son=", body.global_position)
 	body.queue_free()
 	return ok
