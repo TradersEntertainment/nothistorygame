@@ -51,6 +51,31 @@ static func build(host: Node3D, k: float, lod: int) -> void:
 	# Zincir çıkış penceresi/kirişi: deniz yüzünde iri demir halka ve ağır kiriş
 	Props.box(root, Vector3(0.5, 0.5, 0.6), Vector3(0, 1.6, -W * 0.5 - 0.3), Color("2e3034"))
 	Props.ring(root, 0.2, 0.34, Vector3(0, 1.6, -W * 0.5 - 0.62), K.IRON, Vector3(90, 0, 0))
+	# Konsol (corbel) sırası: üst kuşağın altında dört yüzde taş çıkma dişleri
+	var cb: Array = []
+	var nb := int(W / 0.9)
+	for i in nb:
+		var t := -W * 0.5 + 0.45 + i * (W - 0.9) / maxf(1.0, nb - 1.0)
+		cb.append(Transform3D(Basis.IDENTITY, Vector3(t, H - 0.35, -W * 0.5 - 0.25)))
+		cb.append(Transform3D(Basis.IDENTITY, Vector3(t, H - 0.35, W * 0.5 + 0.25)))
+		cb.append(Transform3D(Basis.from_euler(Vector3(0, PI * 0.5, 0)), Vector3(-W * 0.5 - 0.25, H - 0.35, t)))
+		cb.append(Transform3D(Basis.from_euler(Vector3(0, PI * 0.5, 0)), Vector3(W * 0.5 + 0.25, H - 0.35, t)))
+	K.multi(root, K.box_mesh(Vector3(0.5, 0.7, 0.5)), cb, Color("a99a7c"), "ashlar")
+	# Köşe kuleciklerı: kuşak üstünde dört yuvarlak ocak, konik kiremit başlık (katı)
+	for sx in [-1.0, 1.0]:
+		for sz in [-1.0, 1.0]:
+			var tx: float = sx * (e - 0.95)
+			var tz: float = sz * (e - 0.95)
+			var tc := Props.cyl(root, 0.7, 3.0, Vector3(tx, top + 1.5, tz), Color("c4b494"), Vector3.ZERO, 10)
+			Props.make_solid(tc, 0.97)
+			Props.set_pattern(tc, Color("c4b494"), "ashlar")
+			var cap := Props.prism(root, Vector3(1.7, 1.3, 1.7), Vector3(tx, top + 3.0 + 0.65, tz), Color("96462f"), Vector3(0, 45, 0))
+			Props.make_solid(cap, 0.9)
+			Props.box(root, Vector3(0.2, 0.9, 0.06), Vector3(tx, top + 1.6, tz - 0.71 * sz), Color("17130f"))
+	# Deniz yüzünde mermer haç levhası ve iki başlı kartal (Palaiologos) tabelası
+	Props.box(root, Vector3(1.6, 2.2, 0.1), Vector3(0, H * 0.78, -W * 0.5 - 0.07), Color("e6dfd0"))
+	Props.box(root, Vector3(0.2, 1.8, 0.12), Vector3(0, H * 0.78, -W * 0.5 - 0.12), Color("b8932f"))
+	Props.box(root, Vector3(1.0, 0.2, 0.12), Vector3(0, H * 0.78 + 0.3, -W * 0.5 - 0.12), Color("b8932f"))
 	# Okçu mazgalları
 	for yy in [H * 0.3, H * 0.55, H * 0.8]:
 		for s in [-1.0, 0.0, 1.0]:

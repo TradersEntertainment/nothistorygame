@@ -166,6 +166,16 @@ static func build_neorion(host: Node3D, k: float, lod: int) -> void:
 		K.blk(root, Vector3(1.2, 4.0 - i * 0.6, 3.0), Vector3(ax - 2.0, 2.0 - i * 0.3, -d - ring_w * 0.5), Color("b8a888"), "ashlar").name = "TersaneAyak"
 		K.blk(root, Vector3(1.2, 4.0 - i * 0.6, 3.0), Vector3(ax + 2.0, 2.0 - i * 0.3, -d - ring_w * 0.5), Color("b8a888"), "ashlar").name = "TersaneAyak"
 		Props.box(root, Vector3(4.8, 0.5, 3.1), Vector3(ax, 3.8 - i * 0.6 + 0.0, -d - ring_w * 0.5), Color("a99a7c"))
+	# Yığılmış tomruk ve tahta (tersane malzemesi): iki katı yığın, ağ ve halat kangalları
+	K.blk(root, Vector3(5.0, 0.7, 1.6), Vector3(-w * 0.2, 0.35, d * 0.7), Color("7a5a38"), "wood").name = "TahtaYigin"
+	K.blk(root, Vector3(4.0, 0.7, 1.4), Vector3(-w * 0.2, 1.05, d * 0.7), Color("8a6a40"), "wood")
+	K.blk(root, Vector3(2.0, 0.5, 1.2), Vector3(-w * 0.2 - 3.2, 0.25, d * 0.7), Color("8a6a40"), "wood")
+	for j in 5:
+		Props.ring(root, 0.18, 0.34, Vector3(-w * 0.8 + j * 1.2, 0.05, d * 0.45), Color("b89a6a"))
+	# Batık/yarı gömülü eski teknenin kaburgaları (kumda; yalnız görsel kaburgalar)
+	for j in 6:
+		Props.box(root, Vector3(0.1, 0.9, 0.1), Vector3(-w * 0.45 + j * 0.8, 0.45, -d * 0.7 + sin(j * 0.9) * 0.9), K.TIMBER_D, Vector3(0, 0, (j - 2.5) * 9))
+	Props.box(root, Vector3(0.14, 0.14, 5.0), Vector3(-w * 0.45 + 2.0, 0.12, -d * 0.7), K.TIMBER_D)
 	# Moloz ve ot
 	for j in 14:
 		var rx := -w + 1.0 + fmod(j * 5.3, w - 2.0)

@@ -48,6 +48,8 @@ static func _strip_lod1(n: Node) -> void:
 			var sz := mi.mesh.get_aabb().size * mi.scale if mi.mesh != null else Vector3.ZERO
 			if mi.name != "Tile" and maxf(sz.x, maxf(sz.y, sz.z)) < 2.6:
 				kill.append(c)
+			elif mi.name != "Tile" and sz.y <= 1.3 and mi.global_position.y > 2.0 and not (mi.mesh is PlaneMesh):
+				kill.append(c)   # siper ve mazgal şeritleri
 	for c in kill:
 		if is_instance_valid(c) and c.get_parent() != null:
 			c.get_parent().remove_child(c)
