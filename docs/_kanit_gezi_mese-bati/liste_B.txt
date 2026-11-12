@@ -1,0 +1,11 @@
+B_altinkapi_ic_gb -4820 -1660 1.7 225 0
+B_altinkapi_ic_kd -4820 -1660 1.7 45 0
+B_altinkapi_dis -4900 -1720 1.7 45 0
+B_arkadius_k60 -3420 -900 1.7 200 0
+B_arkadius_d -3400 -940 1.7 270 0
+B_studios_csv_y0 -4318 -1390 1.7 0 0
+B_studios_csv_y90 -4318 -1390 1.7 90 0
+B_studios_csv_y180 -4318 -1390 1.7 180 0
+B_studios_csv_y270 -4318 -1390 1.7 270 0
+B_psam_kapi_y0 -4272 -1475 1.7 0 0
+B_psam_kapi_y90 -4272 -1475 1.7 90 0

@@ -1,0 +1,7 @@
+y1_mese_arkadius_bous -3300 -820 -3050 -560
+y2_mese_bous_tauri -2540 -70 -2250 100
+y3_altinkapi_studios_yolu -4700 -1600 -4450 -1450
+y4_psamathia_sokak -3900 -850 -3650 -700
+y5_mokios_bostan -3750 40 -3600 -120
+y6_xerolophos_kyparission -3400 -480 -3250 -200
+y7_tauri_forumu -1700 150 -1450 250

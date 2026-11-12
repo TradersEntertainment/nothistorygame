@@ -1,0 +1,36 @@
+GEZI_OLAY dusme -3300 -819
+GEZI_OLAY takilma -3300 -819
+GEZI_OLAY takilma -3284 -793
+GEZI_OLAY takilma -3247 -756
+GEZI_OLAY takilma -3174 -681
+GEZI_OLAY takilma -3092 -627
+GEZI_OLAY takilma -3082 -614
+GEZI_OLAY takilma -3064 -601
+GEZI_OLAY takilma -3055 -586
+GEZI_YURU y1_mese_arkadius_bous yol_gercek=370 m takilma=8 dusme=1 oyun_sn=76 duvar_sn=76
+GEZI_OLAY takilma -2476 -34
+GEZI_OLAY takilma -2383 8
+GEZI_OLAY takilma -2342 29
+GEZI_OLAY takilma -2295 68
+GEZI_OLAY takilma -2279 79
+GEZI_YURU y2_mese_bous_tauri yol_gercek=340 m takilma=5 dusme=0 oyun_sn=57 duvar_sn=57
+GEZI_OLAY takilma -4651 -1571
+GEZI_OLAY takilma -4631 -1553
+GEZI_OLAY takilma -4601 -1536
+GEZI_OLAY takilma -4574 -1512
+GEZI_OLAY takilma -4544 -1489
+GEZI_OLAY takilma -4529 -1483
+GEZI_OLAY takilma -4514 -1472
+GEZI_OLAY takilma -4497 -1466
+GEZI_OLAY takilma -4480 -1460
+GEZI_OLAY takilma -4464 -1454
+GEZI_YURU y3_altinkapi_studios_yolu yol_gercek=294 m takilma=10 dusme=0 oyun_sn=84 duvar_sn=84
+GEZI_OLAY takilma -3712 -743
+GEZI_YURU y4_psamathia_sokak yol_gercek=284 m takilma=1 dusme=0 oyun_sn=33 duvar_sn=33
+GEZI_YURU y5_mokios_bostan yol_gercek=208 m takilma=0 dusme=0 oyun_sn=23 duvar_sn=23
+GEZI_OLAY takilma -3355 -441
+GEZI_OLAY takilma -3289 -202
+GEZI_OLAY takilma -3268 -204
+GEZI_YURU y6_xerolophos_kyparission yol_gercek=341 m takilma=3 dusme=0 oyun_sn=60 duvar_sn=60
+GEZI_YURU y7_tauri_forumu yol_gercek=258 m takilma=0 dusme=0 oyun_sn=28 duvar_sn=28
+GEZI_YURU toplam=2095 m
