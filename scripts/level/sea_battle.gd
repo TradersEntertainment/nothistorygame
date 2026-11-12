@@ -213,10 +213,10 @@ static func war_galley(parent: Node3D, pos: Vector3, yaw: float, rowers := true,
 	# Latin yelkenli direk (yelken sarılı: savaşta kürekle gidilir)
 	Props.cyl(g, 0.12, 9.0, Vector3(0, GALLEY_DECK + 4.5, -3.0), Color("5a3e26"), Vector3.ZERO, 6)
 	Props.cyl(g, 0.08, 12.0, Vector3(0, GALLEY_DECK + 8.0, -3.0), Color("6a4a2c"), Vector3(60, 0, 0), 5)
-	# Seren üstünde sarılı yelken: uçlara doğru incelen, güneşte soluk kenevir rengi demet (yayma P3: düz beyaz silindir
-	# karakanın güvertesinden "bordadan fırlayan beyaz sopa" gibi görünüyordu)
-	# Koyu kenevir rengi, uca doğru incelen demet (8 köşe; ince bölmeli boru gemi başına 2 bin üçgendi)
-	Props.cyl(g, 0.19, 6.8, Vector3(0, GALLEY_DECK + 7.0, -2.0), Color("9a8a64"), Vector3(60, 0, 0), 8, 0.07)
+	# Seren boyunca sarılı yelken (yayma P3): serene yaslanmış, serenin altında ve direğin yanında, koyu kenevir rengi
+	# demet. Eskiden serenin 1,4 m altında, ona koşut, havada duran 7 m'lik sivri koni bordadan "mızrak" gibi uzanıyordu.
+	# Seren yönü (0; 0,5; 0,866); altı (0; −0,866; 0,5). Demet serenin orta kısmında, uçları serenin içinde kalır.
+	Props.cyl(g, 0.14, 5.4, Vector3(0.15, GALLEY_DECK + 8.0 - 0.866 * 0.14, -3.0 + 0.5 * 0.14), Color("8a7a58"), Vector3(60, 0, 0), 8, 0.09)
 	if flag:
 		Props.box(g, Vector3(0.04, 1.0, 1.6), Vector3(0, GALLEY_DECK + 9.4, -3.8), Color("b3262d"))
 		Props.crescent(g, Vector3(0, GALLEY_DECK + 9.4, -3.9), 0.24, Color("b3262d"))
@@ -309,7 +309,7 @@ static func hook(parent: Node3D, top: Vector3, bottom: Vector3) -> Node3D:
 ## teknenin küpeştesine bağlıdır (düz silindir çubuk karede seçilmiyordu). Noktalar dünya koordinatı. Döner: düğüm
 ## (meta "bottom": ipin alt ucu; cut_hook ile kesilir). hook()'u kullanan öbür bölümler (37o) değişmez.
 ## Örnek: var h := SeaBattle.hook_line(self, kupeste, kadirga_kupestesi)
-static func hook_line(parent: Node3D, top: Vector3, bottom: Vector3, sag := 0.06) -> Node3D:
+static func hook_line(parent: Node3D, top: Vector3, bottom: Vector3, sag := 0.06, over := Vector3.ZERO) -> Node3D:
 	var h := Node3D.new()
 	parent.add_child(h)
 	h.global_position = top
@@ -317,11 +317,41 @@ static func hook_line(parent: Node3D, top: Vector3, bottom: Vector3, sag := 0.06
 	iron.name = "Iron"
 	h.add_child(iron)
 	var c := Color("3a3a40")
+	h.set_meta("bottom", bottom)
+	if over != Vector3.ZERO:
+		# Küpeşte modu (yayma P3, 29): top küpeştenin dış kenarı, over dış kenardan iç kenara (küpeşte genişliği).
+		# Kanca küpeştenin üstüne oturur: sap küpeştenin üstünde, iki diş iç yüzden aşağı kıvrılır; ip sapın halkasına
+		# düğümlü, kuyruğu küpeştenin üstünde içeri uzanır, gergin parçası dış kenardan aşağıdaki tekneye iner.
+		# İçerideki oyuncu (küpeştenin 1 m içi) düğümü, kuyruğu ve kenardaki gergin ipi görür.
+		var inn := over.normalized()
+		var ring := over * 0.3 + Vector3(0, 0.035, 0)
+		iron.position = ring
+		iron.basis = Basis.looking_at(-inn, Vector3.UP)      # yerel +z: içeri
+		Props.cyl(iron, 0.028, 0.22, Vector3(0, 0.005, 0.09), c, Vector3(90, 0, 0), 5)          # sap küpeştenin üstünde
+		Props.ring(iron, 0.03, 0.05, Vector3(0, 0.0, -0.03), c, Vector3(0, 90, 0))               # sapın halkası
+		for sx: float in [-0.07, 0.07]:
+			Props.cyl(iron, 0.022, 0.22, Vector3(sx, -0.09, 0.21), c, Vector3(-12, 0, 0), 4)    # iç yüzden aşağı kıvrılan dişler
+		Props.cyl(iron, 0.022, 0.2, Vector3(0, 0.08, 0.24), c, Vector3(35, 0, 0), 4)              # üçüncü diş yukarı
+		var side := inn.cross(Vector3.UP).normalized()
+		var w := over.length()            # küpeştenin genişliği: iç kenar inn * w
+		var rr := 0.026                   # ipin yarıçapı + pay: küpeştenin üstünde yatan parça gömülmez
+		# İpin düğümden artan ucu küpeştenin üstünden içeri uzanır, iç kenardan iç yüze sarkar (içeriden açıkça görünür);
+		# düğüm sapın halkasında; gergin parça dış kenardan aşağıdaki tekneye iner
+		var pts: Array = [inn * (w + 0.03) + side * 0.17 + Vector3(0, -0.34, 0),
+			inn * (w + 0.03) + side * 0.16 + Vector3(0, -0.14, 0),
+			inn * (w + 0.005) + side * 0.13 + Vector3(0, rr - 0.004, 0),
+			ring + inn * 0.08 + side * 0.07 + Vector3(0, rr - 0.035, 0),
+			ring + inn * 0.035 + Vector3(0, 0.02, 0), ring + Vector3(0, 0.05, 0), ring - inn * 0.035 + Vector3(0, -0.005, 0),
+			Vector3(0, rr, 0) - inn * 0.005, Vector3(0, -0.07, 0) - inn * 0.05]       # dış kenardan aşağı
+		pts.append_array(Stage.sag_points(pts[pts.size() - 1], h.to_local(bottom), sag, 6).slice(1))
+		var lnc := Stage.rope(h, pts[0], pts[1], 0.0, 0.024, Color("c8a878"))
+		Stage.rope_to(lnc, pts)
+		lnc.name = "Line"
+		return h
 	Props.cyl(iron, 0.035, 0.42, Vector3(0, 0.06, 0), c, Vector3.ZERO, 5)
 	for k in 3:
 		var a := TAU * k / 3.0
 		Props.cyl(iron, 0.026, 0.3, Vector3(cos(a) * 0.11, 0.26, sin(a) * 0.11), c, Vector3(sin(a) * 60.0, 0, -cos(a) * 60.0), 4)
-	h.set_meta("bottom", bottom)
 	var ln := Stage.rope(h, Vector3(0, -0.14, 0), h.to_local(bottom), sag, 0.024, Color("b89a6a"))
 	ln.name = "Line"
 	return h

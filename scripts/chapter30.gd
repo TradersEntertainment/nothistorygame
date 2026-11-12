@@ -13,6 +13,7 @@ extends Node3D
 
 const LADDERS := [-12.0, -4.0, 6.0, 14.0]
 const CLIMB_TIME := 11.0
+const CLIMB := preload("res://scripts/npc/climb_anim.gd")
 const PUSH_NEED := 0.8
 const TILT := 16.0
 const WALK := Blachernae.WALK_Y
@@ -178,10 +179,14 @@ func _ladders_phase() -> void:
 			l["t"] = float(l["t"]) + dt
 			var lad: Ladder = l["node"]
 			var k := clampf(float(l["t"]) / CLIMB_TIME, 0.0, 1.0)
-			(l["climber"] as Node3D).global_position = lad.point_at(lad.height * k * 0.92) + lad.front_dir() * 0.35
+			# Basamak basamak (ortak tırmanma animasyonu): gövde merdivene paralel, eller ve ayaklar basamaklarda;
+			# zamanlama aynı (CLIMB_TIME), merdivenin ucunu geçmez
 			var cs: Soldier = l["climber"]
-			if cs.rig:   # basamak basamak: el ve karşı ayak dönüşümlü (assault.gd ile aynı)
-				cs.rig.activity = "climb_a" if int(lad.height * k * 0.92 / 0.45) % 2 == 0 else "climb_b"
+			var ca: Node = CLIMB.of(cs)
+			if ca == null:
+				ca = CLIMB.attach(cs, lad, 0.0, "30")
+				ca.blend_from(cs.global_position, 0.5)
+			ca.follow(lad.height * k * 0.92)
 			if k >= 1.0:
 				_board(l)
 		if GameState.autotest and GameState.autotest_variant != "lose":
@@ -334,6 +339,9 @@ func _push(l: Dictionary) -> void:
 	Audio.sfx("whoosh_fly", -4.0, 0.6)
 	var lad: Ladder = l["node"]
 	var c: Soldier = l["climber"]
+	var ca: Node = CLIMB.of(c)
+	if ca:
+		ca.release(true, "fall")
 	c.set_meta("no_turn", true)   # +z'ye savrulurken yaw 0'a dönmesin: sırtüstü geriye düşer
 	c.rotation.y = PI
 	if c.rig:
@@ -370,6 +378,9 @@ func _board(l: Dictionary) -> void:
 	var lad: Ladder = l["node"]
 	var top := lad.top_exit()
 	var walk := Vector3(float(l["x"]), WALK, Blachernae.WALL_Z1 - 1.3)
+	var ca: Node = CLIMB.of(c)
+	if ca:
+		ca.release(true, "")
 	if c.rig:
 		c.rig.activity = ""
 	c.equip("sword_shield")
@@ -594,7 +605,7 @@ func _run_shots() -> void:
 	(_ladders[0]["node"] as Node3D).visible = true
 	(_ladders[0]["climber"] as Node3D).visible = true
 	var lad: Ladder = _ladders[0]["node"]
-	(_ladders[0]["climber"] as Node3D).global_position = lad.point_at(lad.height * 0.7) + lad.front_dir() * 0.35
+	CLIMB.attach(_ladders[0]["climber"], lad, lad.height * 0.7, "30")
 	emperor.visible = true
 	hud.visible = false
 	var cv := Camera3D.new()

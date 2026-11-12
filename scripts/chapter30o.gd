@@ -16,6 +16,7 @@ extends Node3D
 ##   --autotest[=lose|sprint]   (varsayılan: 30O.1, merdivenle devrilir; sprint: koşarak iner, merdiven boş devrilir)
 
 const BattleExtras := preload("res://scripts/level/battle_extras.gd")
+const CLIMB := preload("res://scripts/npc/climb_anim.gd")
 const CLIMB_X := 10.0
 const TILT := 16.0
 const START := Vector3(10.0, 0.0, 40.0)
@@ -1289,17 +1290,18 @@ func _late_azap() -> Soldier:
 	s.set_meta("climber", true)
 	add_child(s)
 	_on_ladder(s, ladder.height - 2.6)
-	if s.rig:
-		s.rig.activity = "climb_a"
 	return s
 
 
 ## Merdivende (t: ellerin yüksekliği): yüzü sura dönük, ayakları basamakta. lift: en üstte göğsü mazgal aralığından görünsün
+## Ortak tırmanma animasyonu: gövde merdivene paralel, eller ve ayaklar basamaklarda (ellerin yüksekliği t → kökün
+## merdiven metresi t − 1,55); lift (0..0,5): tepeden bakış, kalça merdivenin ucuna kadar çıkar, ucunu geçmez.
 func _on_ladder(s: Node3D, t: float, lift := 0.0) -> void:
-	var p := ladder.point_at(t) + ladder.front_dir() * 0.35 - Vector3(0, 0.9 - lift, 0)
-	p.y = maxf(p.y, ladder.global_position.y)
-	s.global_position = p
-	s.global_rotation = Vector3(0, PI, 0)
+	var ca: Node = CLIMB.of(s)
+	if ca == null:
+		ca = CLIMB.attach(s, ladder, t - 1.55, "30o")
+	ca.follow(t - 1.55)
+	ca.peek = clampf(lift / 0.5, 0.0, 1.0)      # tepede başını mazgaldan uzatır (merdivenin ucunu geçmeden)
 
 
 func _azap_pop(s: Soldier) -> void:
@@ -1312,8 +1314,6 @@ func _azap_pop(s: Soldier) -> void:
 			return
 		u = minf(u + get_process_delta_time() / 1.3, 1.0)
 		_on_ladder(s, lerpf(t0, ladder.height, u), 0.5 * u)
-		if s.rig:
-			s.rig.activity = "climb_a" if fmod(u * 6.0, 1.0) < 0.5 else "climb_b"
 	s.remove_meta("popping")
 
 
@@ -1322,14 +1322,18 @@ func _azap_slide(s: Soldier, end: Vector3) -> void:
 	Audio.sfx_at("whoosh_fly", s, -4.0)
 	var t0 := ladder.height
 	var u := 0.0
-	if s.rig:
-		s.rig.activity = "climb_a"
+	var sca: Node = CLIMB.of(s)
+	if sca:
+		sca.sliding = true          # basamaklara basmadan: eller dikmelerde kayar
 	while u < 1.0:
 		await get_tree().process_frame
 		if not is_instance_valid(s):
 			return
 		u = minf(u + get_process_delta_time() / 1.1, 1.0)
 		_on_ladder(s, lerpf(t0, 0.9, u * u), 0.5 * (1.0 - u))
+	sca = CLIMB.of(s)
+	if sca:
+		sca.release(true, "")
 	Audio.sfx_at("land_thud", s, -6.0)
 	Vfx.dust(self, s.global_position, 0.35)
 	if s.rig:

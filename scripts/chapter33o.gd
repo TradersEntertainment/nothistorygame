@@ -13,6 +13,7 @@ extends Node3D
 ##   33O.1 uyarı yerinde ve büyük top isabet · 33O.2 aksi
 ##   --autotest[=wide|fall]   (varsayılan 33O.1)
 
+const CLIMB := preload("res://scripts/npc/climb_anim.gd")
 const STONES := 4
 const CRANE_TIME := 240.0
 const ROW_TIME := 60.0
@@ -185,11 +186,13 @@ func _scaffold() -> void:
 					stage = "break"
 					# Önde tırmanan işçinin altında ikinci merdiven kırılır
 					player.frozen = true
+					# Merdivenin üstünde basamak basamak (ortak tırmanma animasyonu; merdiven 2'nin basamak hattı: 0,4 m
+					# aralık, geriye yatık): gövde merdivene paralel, eller ve ayaklar basamaklarda; süre aynı (1,2 sn, 3 m)
+					var ca: Node = CLIMB.attach(climber, null, 0.0, "33o")
+					ca.set_line(Vector3.ZERO, Vector3(0, 8.0, -0.48), Vector3(0, 0, 1), 0.3, 0.4, 0.7, level.ladder2)
+					ca.blend_from(climber.global_position, 0.3)
 					var lt := climber.create_tween()
-					# Merdiven boyunca (geriye yatık: her metrede ~0.1 m -z) basamak basamak tırmanır
-					for i in 3:
-						lt.tween_callback(climber.set_activity.bind("climb_a" if i % 2 == 0 else "climb_b"))
-						lt.tween_property(climber, "position", Vector3(-6.5, Bogaz.DECK2_Y + 1.0 * (i + 1), -19.6 - 0.1 * (i + 1)), 0.4)
+					lt.tween_method(func(v: float): ca.follow(v), 0.0, 3.0, 1.2)
 					await lt.finished
 					_break_ladder()
 					# Merdivene en yakın işçi işini bırakıp düşene döner (yüzü kulenin taşına dönük kalmaz; kartta da yüzü
@@ -205,6 +208,9 @@ func _scaffold() -> void:
 								sh.give_tool("hammer"))          # iş değişince düşen çekici yeniden alır (yayma P3)
 					hud.bark("SPK_SOLDIER", "D33O_S_LADDER_B", 3.0)
 					# Merdivenle birlikte 2. kata düşer (havada yana kaymaz), sırtüstü yatar, kalkıp kenara çekilir
+					var fca: Node = CLIMB.of(climber)
+					if fca:
+						fca.release(true, "fall")
 					climber.set_activity("fall")
 					var ct := climber.create_tween()
 					ct.tween_property(climber, "position", Vector3(-6.2, Bogaz.DECK2_Y, -20.0), 0.45).set_ease(Tween.EASE_IN)
