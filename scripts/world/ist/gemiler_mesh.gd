@@ -236,9 +236,26 @@ static func _guverte_yuku(k: MeshKit, tip: String) -> void:
 		for q in 3:
 			k.cyl(Transform3D(Basis(), Vector3(0.0, yd, L * 0.28 - q * 1.0)), 0.3, 0.7, Color("8a6a40"), 8)
 		_kutu(k, Vector3(0.0, yd + 0.3, L * 0.1), Vector3(0.9, 0.6, 0.7), Color("7a5a38"))
-	elif tip == "parandarya":
-		for q in 3:
-			_kutu(k, Vector3(-1.4 + q * 1.4, yd + 0.4, 6.0), Vector3(1.0, 0.8, 1.0), Color("b8a060"))
+
+## Güverte yükünün çarpışma kutuları (_guverte_yuku ile aynı yerler)
+static func _yuk_kutular(tip: String) -> Array:
+	var d: Dictionary = TIPLER[tip]
+	var yd: float = d["D"]
+	var L: float = d["L"]
+	var B: float = d["B"]
+	var kx := B * 0.5 * 0.55
+	if tip == "karaka" or tip == "kog":
+		return [{"c": Vector3(0, yd + 0.55, L * 0.18), "s": Vector3(0.7, 1.1, 0.7)},
+			{"c": Vector3(-kx, yd + 0.4, -0.2), "s": Vector3(0.7, 0.8, 2.5)},
+			{"c": Vector3(kx, yd + 0.35, 1.0), "s": Vector3(0.9, 0.7, 0.8)},
+			{"c": Vector3(kx, yd + 0.35, 2.0), "s": Vector3(0.8, 0.7, 0.7)},
+			{"c": Vector3(kx + 0.05, yd + 1.0, 1.4), "s": Vector3(0.7, 0.6, 0.6)}]
+	if tip in ["kadirga", "kalyata", "fusta"]:
+		return [{"c": Vector3(0, yd + 0.35, L * 0.28 - 1.0), "s": Vector3(0.6, 0.7, 2.6)},
+			{"c": Vector3(0, yd + 0.3, L * 0.1), "s": Vector3(0.9, 0.6, 0.7)}]
+	if tip == "parandarya":
+		return [{"c": Vector3(0, yd + 0.4, 5.6), "s": Vector3(3.8, 0.8, 1.0)}]
+	return []
 
 # ------------------------------------------------------------------ bayraklar
 

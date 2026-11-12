@@ -178,8 +178,12 @@ static func sekiller(tip: String) -> Array:
 	for kas: Dictionary in M._kasaralar(tip):
 		var kutu2 := BoxShape3D.new()
 		var ks: Vector3 = kas["s"]
-		kutu2.size = Vector3(ks.x, ks.y + 0.2, ks.z)
+		kutu2.size = Vector3(ks.x + 0.4, ks.y + 0.2, ks.z + 0.4)
 		out.append({"s": kutu2, "t": Transform3D(Basis(), (kas["c"] as Vector3) + Vector3(0, 0.1, 0))})
+	for y: Dictionary in M._yuk_kutular(tip):
+		var kutu4 := BoxShape3D.new()
+		kutu4.size = y["s"]
+		out.append({"s": kutu4, "t": Transform3D(Basis(), y["c"])})
 	for b: Dictionary in M._basamaklar(tip):
 		var kutu3 := BoxShape3D.new()
 		kutu3.size = b["s"]
