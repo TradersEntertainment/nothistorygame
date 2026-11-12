@@ -1366,6 +1366,10 @@ func _eser_meydanlari() -> void:
 
 
 ## Eser meydanlarının içini doldurur (evlerden sonra): köşe grupları, ağaç kümesi, kuyu/çeşme + gezinme noktaları
+## DOKU-4 madde 6: forum meydanlarının içi (yapı ÇEVRE'nin; doku ve kişi DOKU'nun): pazar köşeleri, mumcu, kuyu, ayin
+const FORUM_IDS := ["konstantin", "tauri", "bovis", "amastrianon", "arkadius", "philadelphion", "augustaion"]
+const FORUM_SET := ["set_pazar_kosesi", "mumcu", "set_pazar_kosesi", "kuyu", "set_ayin_alayi", "set_pazar_kosesi", "agac_kumesi", "set_pazar_kosesi"]
+
 func _eser_meydan_doldur() -> void:
 	var nset := 0
 	for e: Dictionary in eser_meydan:
@@ -1373,7 +1377,8 @@ func _eser_meydan_doldur() -> void:
 		var r0 := float(e["r0"])
 		var R := float(e["R"])
 		var aya := String(e["id"]) == "ayasofya"
-		var sets: Array = ["mumcu", "set_ayin_alayi", "set_pazar_kosesi", "agac_kumesi", "mumcu", "set_manastir_avlusu", "agac_kumesi",
+		var forum := String(e["id"]) in FORUM_IDS
+		var sets: Array = FORUM_SET if forum else ["mumcu", "set_ayin_alayi", "set_pazar_kosesi", "agac_kumesi", "mumcu", "set_manastir_avlusu", "agac_kumesi",
 			"set_pazar_kosesi", "kuyu", "agac_kumesi", "set_meyhane_onu", "mumcu"] if aya else (
 			["mumcu", "set_pazar_kosesi", "agac_kumesi", "set_ayin_alayi"] if bool(e["unlu"]) else ["agac_kumesi", "mumcu"])
 		var rr := (r0 + R) * 0.5
@@ -1444,7 +1449,8 @@ func _kare_doldur(c: Vector2, r0: float, R: float, yer: String, h0: int) -> int:
 					break
 			if best == Vector2.INF:
 				continue
-			oge.append({"tur": ["agac_kumesi", "mumcu", "kuyu", "agac_kumesi"][(i + j * 3) & 3], "c": best, "yaw": float(i * 1.7 + j), "tohum": h0 * 11 + i * 31 + j, "yer": yer})
+			var dl: Array = ["set_pazar_kosesi", "mumcu", "kuyu", "set_pazar_kosesi"] if yer in FORUM_IDS else ["agac_kumesi", "mumcu", "kuyu", "agac_kumesi"]
+			oge.append({"tur": dl[(i + j * 3) & 3], "c": best, "yaw": float(i * 1.7 + j), "tohum": h0 * 11 + i * 31 + j, "yer": yer})
 			_stamp_disc(best, 3.5, 5)
 			dolu[Vector2i(i, j)] = true
 			nset += 1

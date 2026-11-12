@@ -124,10 +124,25 @@ static func finish(m: Dictionary) -> ArrayMesh:
 	arr.resize(Mesh.ARRAY_MAX)
 	arr[Mesh.ARRAY_VERTEX] = m["v"]
 	arr[Mesh.ARRAY_NORMAL] = m["n"]
-	arr[Mesh.ARRAY_COLOR] = m["c"]
+	arr[Mesh.ARRAY_COLOR] = palet(m["c"])
 	am.add_surface_from_arrays(Mesh.PRIMITIVE_TRIANGLES, arr)
 	am.surface_set_material(0, mat())
 	return am
+
+
+## DOKU-4 (sahibin "oyuncak ağaç" sözü, kalite notu 21/29): bitki renkleri toon gölgelemede fosforlu açık yeşile
+## kaçıyordu. Bütün bitki ağlarının köşe renkleri tek yerde soluklaşır: yeşil-sarı tonlarda doygunluk × 0,62 ve
+## parlaklık × 0,86 (Nisan yaprağı zeytinî-yeşil), çiçek ve gövde tonlarında doygunluk × 0,85.
+static func palet(cs: PackedColorArray) -> PackedColorArray:
+	var out := cs.duplicate()
+	for i in out.size():
+		var c := out[i]
+		var hd := c.h * 360.0
+		if hd > 55.0 and hd < 170.0 and c.s > 0.25:
+			out[i] = Color.from_hsv(c.h, c.s * 0.62, c.v * 0.86, c.a)
+		else:
+			out[i] = Color.from_hsv(c.h, c.s * 0.85, c.v, c.a)
+	return out
 
 
 static func hash_f(x: float, y: float, z: float, s: int) -> float:
