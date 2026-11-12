@@ -573,7 +573,6 @@ func _to_shore() -> void:
 	await hud.fade_to(1.0, 0.35)
 	_land_on_shore()
 	player.face(_shore_look(landing))
-	player.rotate_y(deg_to_rad(float(OS.get_environment("PROBE_YAW"))))      # PROBE
 	if hits == 0:
 		_outcome = "2.2"
 		GameState.flags["ch2_sneaked"] = true
@@ -1234,9 +1233,6 @@ func _seize_release_lock(guards: Array[Node3D]) -> void:
 	if is_instance_valid(player):
 		player.look_lock = false
 	_seize_following = true
-	if OS.get_environment("PROBE_TURN") != "":      # PROBE
-		await get_tree().create_timer(2.0).timeout
-		player.rotate_y(deg_to_rad(float(OS.get_environment("PROBE_TURN"))))
 	if GameState.autotest:
 		print("SEIZE_LOCK walk_secs=%.2f total_secs=%.2f" % [t, (Time.get_ticks_msec() - _lock_t0) / 1000.0])
 	while _seize_following and is_instance_valid(player):
@@ -1469,8 +1465,7 @@ func _to_chain() -> void:
 		player.floating = false
 		var landing := _land_on_shore()
 		player.face(_shore_look(landing))
-		player.rotate_y(deg_to_rad(float(OS.get_environment("PROBE_YAW"))))      # PROBE
-		_show_watchers(false)
+			_show_watchers(false)
 		player.look_lock = true
 		_lock_t0 = Time.get_ticks_msec()
 		var guards := _shore_guards(landing, _cam_look(landing))
