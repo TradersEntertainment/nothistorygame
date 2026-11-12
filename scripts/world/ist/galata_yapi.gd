@@ -9,7 +9,7 @@ static func build(id: String, h: Node3D, k: float, lod: int, out: Dictionary) ->
 		"san_domenico": _church(h, k, lod, out, {"w": 16.0, "l": 32.0, "eave": 12.0, "tower": "spire", "tw": 6.0, "th": 26.0, "plaster": O.STONE, "roof": O.TILE})
 		"san_francesco": _church(h, k, lod, out, {"w": 12.0, "l": 24.0, "eave": 9.0, "tower": "spire", "tw": 4.5, "th": 18.0, "plaster": O.PLASTER2, "roof": O.TILE_D})
 		"san_michele": _church(h, k, lod, out, {"w": 10.0, "l": 20.0, "eave": 8.0, "tower": "bellgable", "tw": 0.0, "th": 0.0, "plaster": O.PLASTER, "roof": O.TILE})
-		"san_benedetto": _church(h, k, lod, out, {"w": 9.0, "l": 18.0, "eave": 8.0, "tower": "square", "tw": 4.0, "th": 14.0, "plaster": O.PLASTER3, "roof": O.TILE_D})
+		"san_benedetto": _church(h, k, lod, out, {"w": 9.0, "l": 18.0, "eave": 8.0, "tower": "square", "side": 1.0, "tw": 4.0, "th": 14.0, "plaster": O.STONE, "roof": O.TILE_D})
 		"palazzo_comune": _palazzo(h, k, lod, out)
 		"galata_loca": _loca(h, k, lod, out)
 		"ceneviz_evi": _ev(h, k, lod, out)
@@ -30,15 +30,16 @@ static func _church(h: Node3D, k: float, lod: int, out: Dictionary, p: Dictionar
 	var kind: String = p["tower"]
 	var tw := maxf(p["tw"] * k, 3.4) if kind != "bellgable" else 0.0
 	var th := maxf(p["th"] * k, E + 3.0) if kind != "bellgable" else 0.0
-	var tx := -(W * 0.5 + tw * 0.5) + 0.6 if tw > 0.0 else 0.0
+	var side: float = p.get("side", -1.0)
+	var tx := side * (W * 0.5 + tw * 0.5 - 0.6) if tw > 0.0 else 0.0
 	var tz := L * 0.5 - tw * 0.5
 	var tall := th
-	var spire_h := tw * 1.7
+	var spire_h := tw * (1.7 if kind == "spire" else 0.8)
 	# merdiven: doğu yan duvar boyunca eğik saçağa
 	var sn := ceili(E / 0.3)
 	var sx := W * 0.5 + 0.75
-	var sz0 := L * 0.5 - 2.0
-	out["climbs"].append([Vector3(sx, 0, sz0 + 0.5), Vector3(sx, E, sz0 - sn * 0.36), "basamak"])
+	var sz0 := L * 0.5 - 2.0 if side < 0.0 or tw == 0.0 else L * 0.5 - tw - 0.8
+	out["climbs"].append([Vector3(sx, 0, sz0 + 0.5), Vector3(sx, E, sz0 - (sn - 0.5) * 0.36), "basamak"])
 	if kind == "spire":
 		out["perches"].append(Vector3(tx, th + spire_h + 0.25, tz))
 	elif kind == "square":
@@ -67,8 +68,8 @@ static func _church(h: Node3D, k: float, lod: int, out: Dictionary, p: Dictionar
 	var fz := L * 0.5
 	O.vis(h, Vector3(2.8, 3.4, 0.4), Vector3(0, 0, fz), O.LIGHT, "ashlar")
 	O.vis(h, Vector3(1.6, 2.4, 0.3), Vector3(0, 0, fz + 0.2), O.WOOD_D, "wood")
-	Props.prism(h, Vector3(2.8, 1.6, 0.4), Vector3(0, 3.4 + 0.8, fz + 0.0), O.LIGHT)
-	Props.prism(h, Vector3(1.6, 0.9, 0.3), Vector3(0, 2.4 + 0.45, fz + 0.2), O.WOOD_D)
+	Props.set_pattern(Props.prism(h, Vector3(2.8, 1.6, 0.4), Vector3(0, 3.4 + 0.8, fz + 0.0), O.LIGHT), O.LIGHT, "ashlar")
+	Props.set_pattern(Props.prism(h, Vector3(1.6, 0.9, 0.3), Vector3(0, 2.4 + 0.45, fz + 0.2), O.WOOD_D), O.WOOD_D, "wood")
 	for st in 2:
 		O.sol(h, Vector3(3.2, 0.2 * (st + 1), 0.45), Vector3(0, 0, fz + 0.4 + st * 0.45), O.STONE_D, "ashlar")
 	var rr := clampf(W * 0.14, 0.8, 1.6)
@@ -94,11 +95,13 @@ static func _church(h: Node3D, k: float, lod: int, out: Dictionary, p: Dictionar
 		var bells: Array = []
 		for j in 4:
 			var a := TAU * j / 4.0
-			bells.append(O.xf(a, tw * 0.5 + 0.04, th - 1.5))
+			bells.append(O.xf(a, tw * 0.5 + 0.04, th - 1.5) * Transform3D(Basis(), Vector3.ZERO))
+			bells[bells.size() - 1].origin += Vector3(tx, 0, tz)
 		O.mm(h, Vector3(0.8, 1.7, 0.2), bells, O.DARK)
 		var bt: Array = []
 		for j in 4:
 			bt.append(O.xf(TAU * j / 4.0, tw * 0.5 + 0.04, th - 0.55))
+			bt[bt.size() - 1].origin += Vector3(tx, 0, tz)
 		O.mm(h, Vector3(0.8, 0.5, 0.2), bt, O.DARK)
 		# kule çanı (görünür çan) ve saçak
 		Props.cyl(h, 0.35, 0.6, Vector3(tx, th - 1.6, tz), Color("8a6a3a"), Vector3.ZERO, 8, 0.15)
@@ -132,7 +135,7 @@ static func _palazzo(h: Node3D, k: float, lod: int, out: Dictionary) -> void:
 	var sn := ceili(H / 0.3)
 	var sx := W * 0.5 + 0.75
 	var sz0 := D * 0.5 - 1.0
-	out["climbs"].append([Vector3(sx, 0, sz0 + 0.5), Vector3(sx, H, sz0 - sn * 0.36), "basamak"])
+	out["climbs"].append([Vector3(sx, 0, sz0 + 0.5), Vector3(sx, H, sz0 - (sn - 0.5) * 0.36), "basamak"])
 	out["perches"].append(Vector3(W * 0.5 - 0.25, H + 1.15, D * 0.5 - 0.25))
 	out["perches"].append(Vector3(-W * 0.3, H + 5.6, -D * 0.2 + 0.0))
 	if lod >= 3:
@@ -154,15 +157,15 @@ static func _palazzo(h: Node3D, k: float, lod: int, out: Dictionary) -> void:
 	O.sol(h, Vector3(0.5, 1.1, D - 1.0), Vector3(-W * 0.5 + 0.25, py, 0), O.STONE, "ashlar")
 	O.sol(h, Vector3(0.5, 1.1, D - 1.0), Vector3(W * 0.5 - 0.25, py, 0), O.STONE, "ashlar")
 	O.merlons_rect(h, W - 0.5, D - 0.5, py + 1.1, O.STONE)
-	# giriş sundurması önde: üç büyük sivri kemer (koyu) + armalar
-	var nb := 3
-	for i in nb:
+	# giriş: üç sivri kemer (koyu) ve yan kemerlerin üstünde arma
+	for i in 3:
 		var x := (i - 1) * W / 3.0
-		Props.box(h, Vector3(2.4, 3.6, 0.3), Vector3(x, 1.8, D * 0.5 + 0.02), O.DARK)
-		Props.prism(h, Vector3(2.4, 1.3, 0.3), Vector3(x, 3.6 + 0.65, D * 0.5 + 0.02), O.DARK)
-		Props.box(h, Vector3(0.9, 1.0, 0.12), Vector3(x, H * 0.4 + 1.2, D * 0.5 + 0.07), O.WHITE)
-		Props.box(h, Vector3(0.14, 1.0, 0.14), Vector3(x, H * 0.4 + 1.2, D * 0.5 + 0.13), O.RED)
-		Props.box(h, Vector3(0.9, 0.14, 0.14), Vector3(x, H * 0.4 + 1.2, D * 0.5 + 0.13), O.RED)
+		Props.box(h, Vector3(2.4, 2.6, 0.3), Vector3(x, 1.3, D * 0.5 + 0.02), O.DARK)
+		Props.prism(h, Vector3(2.4, 1.0, 0.3), Vector3(x, 2.6 + 0.5, D * 0.5 + 0.02), O.DARK)
+		if i != 1:
+			Props.box(h, Vector3(0.9, 1.0, 0.12), Vector3(x, 4.5, D * 0.5 + 0.07), O.WHITE)
+			Props.box(h, Vector3(0.14, 1.0, 0.14), Vector3(x, 4.5, D * 0.5 + 0.13), O.RED)
+			Props.box(h, Vector3(0.9, 0.14, 0.14), Vector3(x, 4.5, D * 0.5 + 0.13), O.RED)
 	# giriş kapısı (orta)
 	O.vis(h, Vector3(1.6, 2.4, 0.3), Vector3(0, 0, D * 0.5 + 0.17), O.WOOD_D, "wood")
 	for st in 3:
@@ -171,15 +174,15 @@ static func _palazzo(h: Node3D, k: float, lod: int, out: Dictionary) -> void:
 	var nw := maxi(4, int(W / 3.4))
 	for i in nw:
 		var x := -W * 0.5 + (i + 0.5) * W / nw
-		O.lancet(h, Vector3(x, H * 0.4 + 1.5, D * 0.5 + 0.02), 0.0, 0.8, 2.0)
-		O.lancet(h, Vector3(x, H * 0.4 + 1.5, -D * 0.5 - 0.02), 180.0, 0.8, 2.0)
+		O.lancet(h, Vector3(x, H * 0.4 + 1.1, D * 0.5 + 0.02), 0.0, 0.7, 1.6)
+		O.lancet(h, Vector3(x, H * 0.4 + 1.1, -D * 0.5 - 0.02), 180.0, 0.7, 1.6)
 		if H > 9.0:
 			O.lancet(h, Vector3(x, H * 0.78 + 1.2, D * 0.5 + 0.02), 0.0, 0.6, 1.4)
-	O.sol(h, Vector3(4.0, 0.3, 1.4), Vector3(W * 0.2, H * 0.4, D * 0.5 + 0.7), O.WOOD, "wood")
-	O.vis(h, Vector3(4.0, 1.0, 0.1), Vector3(W * 0.2, H * 0.4 + 0.3, D * 0.5 + 1.35), O.WOOD_D, "wood")
+	O.sol(h, Vector3(3.2, 0.3, 1.4), Vector3(0, 3.9, D * 0.5 + 0.7), O.WOOD, "wood")
+	O.vis(h, Vector3(3.2, 1.0, 0.1), Vector3(0, 4.2, D * 0.5 + 1.35), O.WOOD_D, "wood")
 	# çatıda çan kulesi (katı), küçük külah
 	O.sol(h, Vector3(2.6, 3.4, 2.6), Vector3(-W * 0.3, H, -D * 0.2), O.STONE, "ashlar")
-	O.cyl(h, 2.1, 1.8, Vector3(-W * 0.3, H + 3.4, -D * 0.2), O.TILE_D, "tiles", 4, 0.1, false, 45.0)
+	O.cyl(h, 2.1, 1.8, Vector3(-W * 0.3, H + 3.4, -D * 0.2), O.TILE_D, "tiles", 4, 0.1, true, 45.0)
 	O.sol(h, Vector3(0.7, 0.3, 0.7), Vector3(-W * 0.3, H + 5.2, -D * 0.2), O.STONE_D)
 	Props.box(h, Vector3(0.9, 1.1, 0.2), Vector3(-W * 0.3, H + 2.2, -D * 0.2 + 1.32), O.DARK)
 	O.flag(h, Vector3(W * 0.5 - 1.2, H, -D * 0.5 + 1.0), 5.0, 2.2, 1.4)
@@ -201,7 +204,7 @@ static func _loca(h: Node3D, k: float, lod: int, out: Dictionary) -> void:
 	var sn := ceili(top / 0.3)
 	var sx := W * 0.5 + 0.75
 	var sz0 := -D * 0.5 + 1.0 + sn * 0.36
-	out["climbs"].append([Vector3(sx, 0, sz0 + 0.5), Vector3(sx, top, sz0 - sn * 0.36), "basamak"])
+	out["climbs"].append([Vector3(sx, 0, sz0 + 0.5), Vector3(sx, top, sz0 - (sn - 0.5) * 0.36), "basamak"])
 	out["perches"].append(Vector3(0, top + 1.15, D * 0.5 - 0.25))
 	if lod >= 3:
 		return
@@ -220,7 +223,7 @@ static func _loca(h: Node3D, k: float, lod: int, out: Dictionary) -> void:
 		var z := fz - 0.5 - r * (D * 0.5 - 0.5)
 		for i in range(1, bays):
 			var x := -W * 0.5 + i * sp
-			O.cyl(h, 0.32, colh, Vector3(x, 0.35, z), O.LIGHT, "marble", 10)
+			O.cyl(h, 0.32, colh, Vector3(x, 0.35, z), O.PLASTER3, "marble", 10)
 			O.vis(h, Vector3(0.9, 0.3, 0.9), Vector3(x, 0.35 + colh - 0.3, z), O.LIGHT, "ashlar")
 	# kirişler ve düz katı teras
 	O.sol(h, Vector3(W, top - colh - 0.35 + 0.35, D), Vector3(0, colh + 0.35 - 0.35, 0), O.STONE, "ashlar")
@@ -236,8 +239,8 @@ static func _loca(h: Node3D, k: float, lod: int, out: Dictionary) -> void:
 		ar.append(Transform3D(Basis(), Vector3(-W * 0.5 + (i + 0.5) * sp, colh + 0.35 - 0.3, fz - 0.45)))
 	O.mm(h, Vector3(sp - 0.7, 0.5, 0.25), ar, O.STONE_D, "ashlar")
 	for i in 3:
-		O.sol(h, Vector3(2.6, 0.5, 0.6), Vector3(-W * 0.25 + i * W * 0.25, 0.35, -D * 0.5 + 1.2), O.WOOD, "wood")
-	O.sol(h, Vector3(4.0, 0.9, 1.0), Vector3(0, 0.35, 0), O.WOOD_D, "wood")   # tüccar sehpası (ortada)
+		O.sol(h, Vector3(1.8, 0.5, 0.6), Vector3(-W * 0.3 + i * W * 0.3, 0.35, -D * 0.5 + 1.1), O.WOOD, "wood")
+	O.sol(h, Vector3(1.8, 0.9, 1.0), Vector3(0, 0.35, 0), O.WOOD_D, "wood")   # tüccar sehpası (ortada)
 	O.flag(h, Vector3(-W * 0.5 + 1.0, top, -D * 0.5 + 1.0), 4.5, 2.0, 1.3)
 	O.stair(h, Vector3(sx, 0, sz0), Vector3(0, 0, -1), top, 1.5, O.STONE_D, "ashlar")
 
@@ -252,7 +255,7 @@ static func _ev(h: Node3D, k: float, lod: int, out: Dictionary) -> void:
 	var sn := ceili(E / 0.3)
 	var sx := W * 0.5 + 0.75
 	var sz0 := D * 0.5 - 0.5
-	out["climbs"].append([Vector3(sx, 0, sz0 + 0.5), Vector3(sx, E, sz0 - sn * 0.36), "basamak"])
+	out["climbs"].append([Vector3(sx, 0, sz0 + 0.5), Vector3(sx, E, sz0 - (sn - 0.5) * 0.36), "basamak"])
 	out["perches"].append(Vector3(0, E + W * 0.3 + 0.32, 0))
 	if lod >= 3:
 		return
@@ -290,7 +293,7 @@ static func _ev(h: Node3D, k: float, lod: int, out: Dictionary) -> void:
 		O.sol(h, Vector3(1.6, 0.25, 0.8), Vector3(0, fh, D * 0.5 + 0.7), O.WOOD, "wood")
 	Flame.add(h, Vector3(1.4, 2.2, D * 0.5 + 0.35), 0.25, 0.4)
 	O.stair(h, Vector3(sx, 0, sz0), Vector3(0, 0, -1), E, 1.4, O.WOOD, "wood")
-	O.cargo(h, Vector3(-W * 0.5 - 1.2, 0, D * 0.5 - 0.5), 21)
+	O.cargo(h, Vector3(-W * 0.5 - 0.72, 0, D * 0.5 - 1.0), 21)
 
 
 # ------------------------------------------------------------------ rıhtım
@@ -299,7 +302,7 @@ static func _rihtim(h: Node3D, k: float, lod: int, out: Dictionary) -> void:
 	var Dq := 8.0
 	var qh := 1.2
 	var out_z := 22.0
-	out["climbs"].append([Vector3(-W * 0.25, 0, 3.0), Vector3(-W * 0.25, qh, 1.2), "basamak"])
+	out["climbs"].append([Vector3(-W * 0.25, 0, ceili(qh / 0.3) * 0.36 + 0.5), Vector3(-W * 0.25, qh, 0.18), "basamak"])
 	out["perches"].append(Vector3(-W * 0.3, qh + 3.1, -2.0))
 	if lod >= 3:
 		return
@@ -327,7 +330,7 @@ static func _rihtim(h: Node3D, k: float, lod: int, out: Dictionary) -> void:
 		O.vis(h, Vector3(0.3, 0.8, 0.3), Vector3(px, qh, 16.0), O.WOOD_D, "wood")
 	# demirli kadırga (katı gövde), direk ve sarılı yelken
 	var gx := W * 0.15
-	O.sol(h, Vector3(3.0, 1.5, 15.0), Vector3(gx, 0.1, 9.0), O.WOOD_D, "wood")
+	O.sol(h, Vector3(3.0, 1.6, 15.0), Vector3(gx, 0.0, 9.0), O.WOOD_D, "wood")
 	Props.prism(h, Vector3(3.0, 2.0, 2.0), Vector3(gx, 1.0 + 0.2, 17.5), O.WOOD_D, Vector3(90, 0, 0))
 	O.vis(h, Vector3(2.4, 0.15, 14.0), Vector3(gx, 1.6, 9.0), O.WOOD, "wood")
 	Props.cyl(h, 0.12, 8.0, Vector3(gx, 5.6, 9.0), O.WOOD_D, Vector3.ZERO, 6)
@@ -336,12 +339,12 @@ static func _rihtim(h: Node3D, k: float, lod: int, out: Dictionary) -> void:
 	O.flag(h, Vector3(gx, 1.6, 2.2), 3.0, 1.2, 0.8)
 	# vinç: ahşap ayak, çarkı ve kol
 	var vx := -W * 0.4
-	O.sol(h, Vector3(0.5, 6.0, 0.5), Vector3(vx - 0.9, qh, -0.5), O.WOOD_D, "wood")
-	O.sol(h, Vector3(0.5, 6.0, 0.5), Vector3(vx + 0.9, qh, -0.5), O.WOOD_D, "wood")
+	O.sol(h, Vector3(0.5, 6.0, 0.5), Vector3(vx - 1.1, qh, -0.5), O.WOOD_D, "wood")
+	O.sol(h, Vector3(0.5, 6.0, 0.5), Vector3(vx + 1.1, qh, -0.5), O.WOOD_D, "wood")
 	O.vis(h, Vector3(0.4, 0.4, 4.6), Vector3(vx, qh + 5.6, 1.2), O.WOOD, "wood")
 	Props.ring(h, 1.3, 1.6, Vector3(vx, qh + 2.4, -0.5), O.WOOD, Vector3(0, 0, 90))
 	Props.box(h, Vector3(0.02, 2.5, 0.02), Vector3(vx, qh + 4.3, 3.2), Color("8a7a5a"))
-	O.sol(h, Vector3(0.9, 0.9, 0.9), Vector3(vx, qh, 3.0), O.WOOD, "wood")
+	O.sol(h, Vector3(0.9, 0.9, 0.9), Vector3(vx, qh, -2.0), O.WOOD, "wood")
 	# gümrük kulübesi, çuval ve fıçı yığınları
 	O.sol(h, Vector3(6.0, 3.2, 4.0), Vector3(W * 0.38, qh, -Dq * 0.5), O.PLASTER, "plaster")
 	O.gable(h, 6.0, 4.0, Vector3(W * 0.38, qh + 3.2, -Dq * 0.5), 1.6, O.TILE, false, 0.4, O.PLASTER)
@@ -349,7 +352,7 @@ static func _rihtim(h: Node3D, k: float, lod: int, out: Dictionary) -> void:
 	for i in 5:
 		O.cargo(h, Vector3(-W * 0.15 + i * 2.2, qh, -2.0 - (i % 2) * 1.5), 30 + i)
 	# basamaklı iniş: sahile taş basamaklar
-	O.stair(h, Vector3(-W * 0.25, 0, 3.0), Vector3(0, 0, -1), qh, 2.0, O.STONE, "ashlar")
+	O.stair(h, Vector3(-W * 0.25, 0, ceili(qh / 0.3) * 0.36), Vector3(0, 0, -1), qh, 2.0, O.STONE, "ashlar")
 	Flame.add(h, Vector3(W * 0.38 + 3.3, qh + 2.0, -Dq * 0.5 + 2.0), 0.3, 0.5)
 
 
@@ -362,7 +365,7 @@ static func _ambar(h: Node3D, k: float, lod: int, out: Dictionary) -> void:
 	var sn := ceili(E / 0.3)
 	var sx := W * 0.5 + 0.75
 	var sz0 := D * 0.5 - 0.5
-	out["climbs"].append([Vector3(sx, 0, sz0 + 0.5), Vector3(sx, E, sz0 - sn * 0.36), "basamak"])
+	out["climbs"].append([Vector3(sx, 0, sz0 + 0.5), Vector3(sx, E, sz0 - (sn - 0.5) * 0.36), "basamak"])
 	out["perches"].append(Vector3(0, E + rise + 0.32, 0))
 	if lod >= 3:
 		return
@@ -380,6 +383,12 @@ static func _ambar(h: Node3D, k: float, lod: int, out: Dictionary) -> void:
 		O.vis(h, Vector3(2.8, 3.2, 0.3), Vector3(x, 0, D * 0.5 + 0.18), O.WOOD_D, "wood")
 		Props.cyl(h, 1.4, 0.3, Vector3(x, 3.2, D * 0.5 + 0.18), O.WOOD_D, Vector3(90, 0, 0), 12)
 		Props.box(h, Vector3(0.35, 0.9, 0.1), Vector3(x + 2.4, E - 1.2, D * 0.5 + 0.03), O.DARK)
+	for i in range(nd + 1):
+		var px := (i - nd * 0.5) * W / (nd + 0.4)
+		O.sol(h, Vector3(0.7, E * 0.92, 0.5), Vector3(px, 0, D * 0.5 + 0.25), O.STONE_D, "ashlar")
+	var hoist := O.vis(h, Vector3(1.6, 2.2, 0.15), Vector3(0, 0, 0), O.WOOD_D, "wood")
+	hoist.position = Vector3(-W * 0.5 - 0.05, E * 0.55 + 1.1, 0.0)
+	hoist.rotation_degrees = Vector3(0, 90, 0)
 	var vents: Array = []
 	for i in 8:
 		vents.append(Transform3D(Basis(), Vector3(-W * 0.5 + (i + 0.5) * W / 8.0, E - 1.2, -D * 0.5 - 0.03)))
@@ -399,33 +408,45 @@ static func _tersane(h: Node3D, k: float, lod: int, out: Dictionary) -> void:
 	var hull_l := minf(W * 0.8, 22.0)
 	var deck_y := 3.0
 	var sn := ceili(deck_y / 0.3)
-	out["climbs"].append([Vector3(W * 0.25 + 2.6, 0, -2.0 + 0.5 + sn * 0.36), Vector3(W * 0.25 + 2.6, deck_y, -2.0), "basamak"])
-	out["perches"].append(Vector3(0, 2.8 + 0.1, hull_l * 0.5 - 0.5))
+	var zs := hull_l * 0.45
+	out["climbs"].append([Vector3(3.0, 0, zs + sn * 0.36 + 0.5), Vector3(3.0, deck_y, zs - 0.18), "basamak"])
+	out["perches"].append(Vector3(0, 3.0, hull_l * 0.5 - 0.5))
 	if lod >= 3:
 		return
 	# zemin: kızak (tahta), taş kuru zemin
 	O.sol(h, Vector3(W, 0.15, D), Vector3(0, 0, 0), O.WOOD_D, "wood")
-	# yapım aşamasındaki kadırga: katı gövde (kil ağı kapalı), kaburga süsleri, omurga, tomruk kızaklar
+	if lod == 1 or lod == 2:
+		O.sol(h, Vector3(4.2, 2.8, hull_l), Vector3(0, 0.15, 0), O.WOOD)
+		O.sol(h, Vector3(8.0, 0.3, 8.0), Vector3(-W * 0.3, 3.75, -D * 0.3), O.WOOD)
+		return
+	# yapım aşamasındaki kadırga: kademeli katı karina (4 kat), baş/kıç, yarı kaplanmış kaburgalar, direk kütüğü
 	var hl := hull_l
-	O.sol(h, Vector3(4.2, 2.6, hl), Vector3(0, 0.15, 0), O.WOOD, "wood")
-	Props.prism(h, Vector3(4.2, 2.2, 2.4), Vector3(0, 0.15 + 1.1, -hl * 0.5 - 1.2), O.WOOD, Vector3(90, 0, 0))
+	O.sol(h, Vector3(4.2, 2.8, hl), Vector3(0, 0.15, 0), O.WOOD, "wood")
+	for sdx: float in [-1.0, 1.0]:
+		O.sol(h, Vector3(0.15, 0.9, hl - 1.0), Vector3(sdx * 2.0, 2.95, 0.0), O.WOOD_D, "wood")
+	O.sol(h, Vector3(4.2, 1.3, 3.2), Vector3(0, 2.95, -hl * 0.5 + 1.7), O.WOOD_D, "wood")        # kıç kasarası
+	var stem := Props.box(h, Vector3(0.35, 3.4, 0.5), Vector3(0, 2.3, hl * 0.5 + 0.55), O.WOOD_D, Vector3(-20, 0, 0))
+	Props.set_pattern(stem, O.WOOD_D, "wood")
+	O.sol(h, Vector3(1.6, 2.4, 1.6), Vector3(0, 0.15, hl * 0.5 + 0.8), O.WOOD, "wood")             # baş kütüğü
 	var ribs: Array = []
-	for i in int(hl / 1.1):
-		ribs.append(Transform3D(Basis(), Vector3(0, 2.75 + 0.5, -hl * 0.5 + 0.8 + i * 1.1)))
-	O.mm(h, Vector3(4.0, 1.0, 0.18), ribs, O.WOOD_D, "wood")
-	# iskele: kenarda direkler + güverte (katı) + merdiven
-	var sx := W * 0.25
-	for z: float in [-hl * 0.4, 0.0, hl * 0.4]:
-		O.cyl(h, 0.15, deck_y, Vector3(sx + 2.6, 0.15, z), O.WOOD_D, "wood", 6)
-	O.sol(h, Vector3(1.8, 0.2, hl * 0.9), Vector3(sx + 2.6, deck_y - 0.2, 0), O.WOOD, "wood")
-	O.vis(h, Vector3(0.1, 1.0, hl * 0.9), Vector3(sx + 3.45, deck_y, 0), O.WOOD_D, "wood")
-	O.stair(h, Vector3(sx + 2.6, 0.15, -2.0 + sn * 0.36), Vector3(0, 0, -1), deck_y - 0.15, 1.4, O.WOOD, "wood")
+	for i in int((hl - 5.0) / 1.1):
+		var z := -hl * 0.5 + 4.2 + i * 1.1
+		ribs.append(Transform3D(Basis(Vector3(0, 0, 1), -0.25), Vector3(2.0, 3.7, z)))
+		ribs.append(Transform3D(Basis(Vector3(0, 0, 1), 0.25), Vector3(-2.0, 3.7, z)))
+	O.mm(h, Vector3(0.16, 1.6, 0.16), ribs, O.WOOD_D, "wood")
+	O.cyl(h, 0.35, 5.0, Vector3(0, 2.95, 0.0), O.WOOD_D, "wood", 8)                                 # direk kütüğü
+	O.vis(h, Vector3(0.3, 0.3, 9.0), Vector3(0, 6.5, 0.0), O.WOOD, "wood").rotation_degrees = Vector3(0, 90, 0)
+	# iskele: gövdeye bitişik güverte (yan yana, aralıksız), direkler, merdiven
+	var sx := 0.4
+	O.sol(h, Vector3(1.9, deck_y, hl * 0.9), Vector3(sx + 2.6, 0, 0), O.WOOD, "wood")
+	O.vis(h, Vector3(0.1, 1.0, hl * 0.9), Vector3(sx + 3.5, deck_y, 0), O.WOOD_D, "wood")
+	O.stair(h, Vector3(sx + 2.6, 0, hl * 0.45 + sn * 0.36), Vector3(0, 0, -1), deck_y, 1.9, O.WOOD, "wood")
 	# kereste istifleri (basamak), testere çukuru yerine tezgâh, kazan (zift)
 	for i in 3:
 		O.sol(h, Vector3(5.0, 0.4 * (i + 1), 1.0), Vector3(-W * 0.3, 0.15, D * 0.3 - i * 1.0), O.WOOD, "wood")
-	O.sol(h, Vector3(4.0, 0.9, 1.0), Vector3(-W * 0.3 + 6.0, 0.15, D * 0.3), O.WOOD_D, "wood")
-	O.cyl(h, 0.8, 1.0, Vector3(-W * 0.3 + 9.0, 0.15, D * 0.3), Color("2a2228"), "", 10)
-	Flame.add(h, Vector3(-W * 0.3 + 9.0, 1.4, D * 0.3), 0.5, 0.8)
+	O.sol(h, Vector3(4.0, 0.9, 1.0), Vector3(-W * 0.3 + 6.6, 0.15, D * 0.3), O.WOOD_D, "wood")
+	O.cyl(h, 0.8, 1.0, Vector3(-W * 0.3 + 10.5, 0.15, D * 0.3), Color("2a2228"), "", 10)
+	Flame.add(h, Vector3(-W * 0.3 + 10.5, 1.4, D * 0.3), 0.5, 0.8)
 	# hangar: açık, direkli çatı (altı geçit, ≥ 2,6 m), tahta tavan
 	var hx := -W * 0.3
 	var hz := -D * 0.3
@@ -442,8 +463,8 @@ static func _tersane(h: Node3D, k: float, lod: int, out: Dictionary) -> void:
 static func _bag(h: Node3D, k: float, lod: int, out: Dictionary) -> void:
 	var W := maxf(50.0 * k, 30.0)
 	var D := maxf(40.0 * k, 26.0)
-	out["climbs"].append([Vector3(-W * 0.5 - 1.0, 0, 0.0), Vector3(-W * 0.5 + 3.0, 1.2, 0.0), "basamak"])
-	out["perches"].append(Vector3(W * 0.3, 1.2 + 3.1 + 0.3, -D * 0.2))
+	out["climbs"].append([Vector3(0, 0, D * 0.5 + 0.8), Vector3(0, 1.2, -D / 3.0), "basamak"])
+	out["perches"].append(Vector3(W * 0.32, 5.95, -D * 0.2))
 	if lod >= 3:
 		return
 	# üç kademe sıralı teras: 0,4 m'lik basamaklar, her kademe 6 m derin
@@ -489,7 +510,7 @@ static func _bag(h: Node3D, k: float, lod: int, out: Dictionary) -> void:
 static func _mezarlik(h: Node3D, k: float, lod: int, out: Dictionary) -> void:
 	var W := maxf(36.0 * k, 22.0)
 	var D := maxf(30.0 * k, 20.0)
-	out["climbs"].append([Vector3(-W * 0.5 - 2.0, 0, 6.0), Vector3(-W * 0.5 + 0.2, 0.9, 6.0), "basamak"])
+	out["climbs"].append([Vector3(-W * 0.5 - 3.0, 0, 6.0), Vector3(-W * 0.5, 0.9, 6.0), "basamak"])
 	out["perches"].append(Vector3(2.0, 3.0, 0.0))
 	if lod >= 3:
 		return
@@ -503,6 +524,9 @@ static func _mezarlik(h: Node3D, k: float, lod: int, out: Dictionary) -> void:
 	O.sol(h, Vector3(gl, wh, 0.5), Vector3(W * 0.5 - gl * 0.5, 0, D * 0.5), O.STONE, "rubble")
 	if lod == 1 or lod == 2:
 		return
+	var sn2 := ceili(wh / 0.3)
+	O.stair(h, Vector3(-W * 0.5 - 0.25 - sn2 * 0.36, 0, 6.0), Vector3(1, 0, 0), wh, 1.2, O.STONE_D, "ashlar")
+	O.stair(h, Vector3(-W * 0.5 + 0.25 + sn2 * 0.36, 0, 6.0), Vector3(-1, 0, 0), wh, 1.2, O.STONE_D, "ashlar")
 	for s: float in [-1.0, 1.0]:
 		O.sol(h, Vector3(0.6, 2.4, 0.6), Vector3(s * 1.5, 0, D * 0.5), O.LIGHT, "ashlar")
 		Props.ball(h, 0.3, Vector3(s * 1.5, 2.7, D * 0.5), O.LIGHT)
@@ -521,7 +545,7 @@ static func _mezarlik(h: Node3D, k: float, lod: int, out: Dictionary) -> void:
 	for i in 6:
 		var p := Vector3(-W * 0.4 + i * W * 0.16, 0, -D * 0.2 + (i % 3) * 5.0)
 		O.cyl(h, 0.25, 1.0, p, O.WOOD_D, "wood", 6)
-		O.cyl(h, 0.9, 6.0, p + Vector3(0, 1.0, 0), Color("2c4a2a"), "", 8, 0.08, false)
+		O.cyl(h, 0.9, 6.0, p + Vector3(0, 1.0, 0), Color("2c4a2a"), "", 8, 0.08, true)
 	# küçük mezarlık şapeli (taş, kiremitli)
 	O.sol(h, Vector3(4.0, 3.2, 5.0), Vector3(0, 0, -D * 0.5 + 3.0), O.PLASTER3, "plaster")
 	O.gable(h, 4.0, 5.0, Vector3(0, 3.2, -D * 0.5 + 3.0), 1.5, O.TILE_D, false, 0.4, O.PLASTER3)
