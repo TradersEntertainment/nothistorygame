@@ -232,7 +232,7 @@ static func _kule_ahsap(w: B, p: Vector3, h: float, lod: int) -> void:
 
 static func kule_merdiven_ucu(p: Vector3, h: float) -> Array:
 	var steps := int(ceil(h / 0.27))
-	return [Vector3(p.x - 0.9 + (steps - 1) * 0.34 + 0.6, 0.0, p.z + 3.2 / 2 + 1.0), Vector3(p.x - 0.4, h + 0.2, p.z + 0.6)]
+	return [Vector3(p.x - 0.9 + (steps - 1) * 0.34 + 0.6, 0.0, p.z + 3.2 / 2 + 1.0), Vector3(p.x - 0.9, h + 0.05, p.z + 2.6)]
 
 
 # ------------------------------------------------------------------ Toprak tabya (batarya)
