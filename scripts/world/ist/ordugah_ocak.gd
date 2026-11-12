@@ -23,11 +23,11 @@ static func ocak(det: B, wd: B, met: B, p: Vector3, lod: int, r: RandomNumberGen
 	det.cylp(p + Vector3(0, 0.025, 0), 1.25, 0.02, Color("4a443c"), 10, 1.25)
 	det.cylp(p + Vector3(0, 0.035, 0), 0.62, 0.02, Color("35302a"), 9, 0.62)
 	# taş halka: yuvarlak taşlar (kutu yok)
-	var n := 9 if lod == 0 else 6
+	var n := 7 if lod == 0 else 5
 	for i in n:
 		var a := TAU * i / n + r.randf_range(-0.12, 0.12)
 		var rr := r.randf_range(0.11, 0.16)
-		det.sph(p + Vector3(cos(a) * 0.62, rr * 0.55, sin(a) * 0.62), rr, TAS_R[r.randi() % TAS_R.size()], 5 if lod == 0 else 4, Vector3(1.2, 0.8, 1.0))
+		det.sph(p + Vector3(cos(a) * 0.62, rr * 0.55, sin(a) * 0.62), rr * 1.15, TAS_R[r.randi() % TAS_R.size()], 4, Vector3(1.2, 0.8, 1.0))
 	# kor (koyu kızıl, ortada) ve çatılmış odunlar (yuvarlak kesit)
 	det.cylp(p + Vector3(0, 0.06, 0), 0.38, 0.05, Color("5a2a16"), 8, 0.3)
 	if lod == 0:
@@ -62,9 +62,9 @@ static func ocak(det: B, wd: B, met: B, p: Vector3, lod: int, r: RandomNumberGen
 	if odun_yigini and lod == 0:
 		# odun yığını (yuvarlak kütükler) ve kütüğe saplı balta
 		var o := p + Vector3(1.9, 0, -0.6)
-		for i in 7:
-			var row := 0 if i < 4 else (1 if i < 6 else 2)
-			var k := i - (0 if row == 0 else (4 if row == 1 else 6))
+		for i in 6:
+			var row := 0 if i < 3 else (1 if i < 5 else 2)
+			var k := i - (0 if row == 0 else (3 if row == 1 else 5))
 			var x0 := -0.33 + k * 0.22 + row * 0.11
 			_kutuk(wd, o + Vector3(x0, 0.08 + row * 0.15, -0.55), o + Vector3(x0, 0.08 + row * 0.15, 0.55), 0.075, Color("8c6a40").lerp(Color("6a4a2c"), float(i % 3) / 2.0))
 		var kt := o + Vector3(0.95, 0, 0.3)
@@ -82,7 +82,7 @@ static func _kutuk(b: B, a: Vector3, c: Vector3, r: float, col: Color) -> void:
 	var y := d / L
 	var x := y.cross(Vector3.FORWARD if absf(y.dot(Vector3.UP)) > 0.9 else Vector3.UP).normalized()
 	var z := x.cross(y).normalized()
-	b.cyl(Transform3D(Basis(x, y, z), (a + c) * 0.5), r, L, col, 6, r * 0.9)
+	b.cyl(Transform3D(Basis(x, y, z), (a + c) * 0.5), r, L, col, 5, r * 0.9)
 
 
 # ------------------------------------------------------------------ duman

@@ -43,9 +43,19 @@ func _ready() -> void:
 	for sx: float in [-1.0, 1.0]:
 		Props.cyl(self, 0.012, 0.5, Vector3(sx * 0.4, 1.38, 0.08), Color("3a2a1c"), Vector3.ZERO, 4)
 		Props.cyl(self, 0.05, 0.025, Vector3(sx * 0.4, 1.12, 0.08), Color("8a8480"), Vector3(0, 0, 90), 8, 0.05)
-	# Göğüslük: altın zincir, püskül
-	Props.cyl(self, 0.02, 0.62, Vector3(0, 1.36, 0.98), Color("d8b040"), Vector3(0, 0, 90), 6)
-	Props.ball(self, 0.06, Vector3(0, 1.26, 1.02), cloth, Vector3(1, 1.4, 1), 6)
+	# Göğüslük: göğsü saran altın kayış (kesit halkalı yay) ve püskül
+	var band: Array = []
+	for k in 9:
+		var a := lerpf(-1.25, 1.25, k / 8.0)
+		band.append([Vector3(sin(a) * 0.36, 1.3 - 0.06 * cos(a * 2.0), 0.62 + cos(a) * 0.36), 0.018, 0.018, 0.018, Color("d8b040")])
+	var acc = CK.Acc.new()
+	CK._tube(acc, band, 5, true, true, 0.4)
+	var bm := MeshInstance3D.new()
+	bm.mesh = acc.mesh()
+	bm.material_override = CK.mat()
+	bm.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
+	add_child(bm)
+	Props.ball(self, 0.06, Vector3(0, 1.2, 1.0), cloth, Vector3(1, 1.4, 1), 6)
 
 
 ## Biniciyi eyere oturtur.

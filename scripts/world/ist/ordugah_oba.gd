@@ -128,6 +128,7 @@ static func build(host: Node3D, alan: PackedVector2Array, tur: String, k: float,
 	var ocak3: Array = []          # ocak noktaları (Vector3, yerel): duman, ışık
 	var ana_ocak: Array = []
 	var mesale: Array = []
+	var onler: Array = []          # ORDUGÂH-5: çamaşır ipi için çadır noktaları
 	var zs := B.new("")            # ORDUGÂH-5: yumuşak kenarlı zemin (lod 0–1)
 	var shapes: Array = []
 	var fires: Array = []          # yerel (x, z)
@@ -152,14 +153,14 @@ static func build(host: Node3D, alan: PackedVector2Array, tur: String, k: float,
 		_serit(zem, rot, Vector2(ara_x, ic.position.y - pay), Vector2(ara_x, ic.end.y + pay), 2.6, Color("7d6a4c"), r)
 	# ORDUGÂH-5: obalar arası çiğnenmiş, solgun ot örtüsü (yumuşak kenarlı büyük lekeler; düz yeşil çayır kalmasın)
 	if lod <= 1:
-		var nl := int(clampf(ic.size.x * ic.size.y / 520.0, 6.0, 40.0))
+		var nl := int(clampf(ic.size.x * ic.size.y / 1100.0, 4.0, 16.0)) if lod == 0 else 4
 		for t in nl:
 			var lp0 := Vector2(r5.randf_range(ic.position.x - 3.0, ic.end.x + 3.0), r5.randf_range(ic.position.y - 3.0, ic.end.y + 3.0))
 			if K.filtre.is_valid():
 				var lw := rot * lp0
 				if not bool(K.filtre.call(lw.x, lw.y)):
 					continue
-			OC.leke(zs, lp0, r5.randf_range(12.0, 20.0), Color("9c8d5e").lerp(Color("7d6e4c"), r5.randf() * 0.5), r5, rot, 0.55, 12)
+			OC.leke(zs, lp0, r5.randf_range(16.0, 26.0), Color("9c8d5e").lerp(Color("7d6e4c"), r5.randf() * 0.5), r5, rot, 0.55, 12)
 	for o: Array in obalar:
 		var oc: Vector2 = o[0]
 		var R: float = o[1]
@@ -292,8 +293,8 @@ static func build(host: Node3D, alan: PackedVector2Array, tur: String, k: float,
 					ck = "can"
 					hs *= 0.92
 				if ck == "kil":
-					var ln4 := cap * 1.45
-					var wi4 := cap * 0.8
+					var ln4 := cap * 1.02          # yer dairesine sığsın (kişi/ocak çadırın içine düşmesin)
+					var wi4 := cap * 0.66
 					(cad["kil"][0] as Array).append(Transform3D(Basis(Vector3.UP, yaw4).scaled(Vector3(ln4, r5.randf_range(0.9, 1.1), wi4)), Vector3(pw.x, yg - 0.1, pw.y)))
 					(cad["kil"][1] as Array).append(K.ton(Color(0.95, 0.93, 0.9), r5, 0.06))
 					shapes.append([Vector3(pw.x, yg + 0.9, pw.y), maxf(ln4, wi4) * 0.5, -yaw4, ln4, wi4])
@@ -301,6 +302,9 @@ static func build(host: Node3D, alan: PackedVector2Array, tur: String, k: float,
 					(cad[ck][0] as Array).append(Transform3D(Basis(Vector3.UP, yaw4).scaled(Vector3(tr, hs, tr)), Vector3(pw.x, yg - 0.1, pw.y)))
 					(cad[ck][1] as Array).append(c2)
 					shapes.append([Vector3(pw.x, yg + 1.35 * hs, pw.y), tr, 0.0, 0.0, 0.0])
+					if lod == 0:
+						_cadir_onu(fl, wd, met, Vector2(pw.x, pw.y), Vector2(sin(yaw4), cos(yaw4)), tr, r5)
+						onler.append([Vector2(pw.x, pw.y), tr])
 			# çadır önünde: uyuklayan, kalkan/mızrak yaslı, halı (seyrek)
 			if lod == 0 and r.randf() < 0.18:
 				var dp := pl + (oc - pl).normalized() * (tr + 0.9)
@@ -309,6 +313,10 @@ static func build(host: Node3D, alan: PackedVector2Array, tur: String, k: float,
 					var fc := rot * oc - dw
 					kisi.append([Vector3(dw.x, K.gy(dw.x, dw.y), dw.y), atan2(fc.x, fc.y), "uyuyan" if r.randf() < 0.5 else "bileyen"])
 					yer.ekle(dp, 0.5)
+		# ORDUGÂH-5: çamaşır ipi (iki komşu çadır arasında, iki sırık; asılı bez ve deri)
+		if lod == 0 and onler.size() >= 2:
+			_camasir(wd, fl, onler, r5)
+		onler.clear()
 		# ORDUGÂH-5: §5.3 her 3–5 çadıra bir ocak: çadırların arasına küçük ocaklar (çadır duvarına ≥ 3 m), başında 2–5 kişi
 		var n_oc := maxi(1, int(round(placed / 4.0)))
 		var kon := 0
@@ -432,11 +440,38 @@ static func build(host: Node3D, alan: PackedVector2Array, tur: String, k: float,
 		var dv := rot.basis_xform(Vector2(0, 1 if r.randf() < 0.5 else -1))
 		kisi.append([Vector3(sw.x, K.gy(sw.x, sw.y), sw.y), atan2(dv.x, dv.y), "saka"])
 	# --- çiziciler (ORDUGÂH-5: kumaş çadır ağları, katmana göre; desen yok: bez rengi köşe renginden)
+	if lod >= 1:
+		# orta/uzak katmanda türler iki ağda birleşir (çizim bütçesi): yuvarlaklar koni, dikdörtgenler çatma siluetiyle;
+		# kıl çadırı koyu tonla, barınak alçak ve yamalı tonla
+		var birlesik := {"koni": [[], []], "catma": [[], []]}
+		for ck: String in cad:
+			var hedef := "koni" if ck in ["koni", "can"] else "catma"
+			var xs2: Array = cad[ck][0]
+			var cs2: Array = cad[ck][1]
+			for i in xs2.size():
+				var xf2: Transform3D = xs2[i]
+				var c3: Color = cs2[i]
+				if ck == "kil":
+					c3 = Color(0.36, 0.3, 0.25) * c3
+				elif ck == "barinak":
+					xf2 = Transform3D(xf2.basis * Basis.from_scale(Vector3(1.0, 0.55, 1.0)), xf2.origin)
+					c3 = c3 * Color(0.8, 0.74, 0.62)
+				(birlesik[hedef][0] as Array).append(xf2)
+				(birlesik[hedef][1] as Array).append(c3)
+		cad = birlesik
 	for ck: String in cad:
 		var xs: Array = cad[ck][0]
 		if xs.is_empty():
 			continue
-		K.mm(host, K.tent_lod(ck, lod), xs, cad[ck][1], ck, "", lod == 0)
+		# ORDUGÂH-5: kanat çadırları gölge düşürmez (yönlü ışığın 4 bölmesinde ~600 üçgenlik çadır × yüzlerce = milyonlarca
+		# üçgen); yerine her çadırın altında yumuşak koyu "temas gölgesi" lekesi (zs)
+		K.mm(host, K.tent_lod(ck, lod), xs, cad[ck][1], ck, "", false)
+		if lod <= 1:
+			for xf3: Transform3D in xs:
+				var sx3 := xf3.basis.x.length()
+				var sz3 := xf3.basis.z.length()
+				var rr3 := maxf(sx3, sz3) * (1.0 if ck in ["koni", "can"] else 0.5)
+				OC.leke(zs, Vector2(xf3.origin.x, xf3.origin.z), rr3 * 1.15, Color("3e3428"), r5, Transform2D.IDENTITY, 0.42, 8)
 	if lod == 0:
 		var body := StaticBody3D.new()
 		body.name = "cadirlar_kati"
@@ -664,3 +699,95 @@ static func _kopek(b: B, p: Vector3, yaw: float, r: RandomNumberGenerator) -> vo
 	var c: Color = [Color("8a6a46"), Color("a89a80"), Color("5a4a3a"), Color("c8a468")][r.randi() % 4]
 	var hs := absi(int(p.x * 7.0 + p.z * 3.0))
 	CK.bld_ekle(b, "kopek", p, yaw, {"renk": c, "poz": "dur", "bas_yaw": float(hs % 5 - 2) * 18.0, "tohum": hs})
+
+## ORDUGÂH-5: çadır önü (kapı yönünde): kilim/hasır, mızrak çatkısı, yaslı kalkan, eyer, torba, su kırbası (hepsi yuvarlak
+## ya da düz örtü; kutu yok). p: çadır merkezi (yerel), d: kapı yönü, tr: yarıçap.
+static func _cadir_onu(det: B, wd: B, met: B, p: Vector2, d: Vector2, tr: float, r: RandomNumberGenerator) -> void:
+	var s := d.orthogonal()
+	var on := p + d * (tr + 0.9)
+	var y := K.gy(on.x, on.y)
+	if r.randf() < 0.35:
+		# kilim ya da hasır: kapı önünde düz örtü (zemini izler)
+		var kc: Color = [Color("7a2a22"), Color("2c3a6a"), Color("b89a5a"), Color("8a6a3a")][r.randi() % 4]
+		var w := r.randf_range(0.7, 1.0)
+		var L := r.randf_range(1.1, 1.6)
+		var q: Array = []
+		for v: Vector2 in [on - s * w - d * L * 0.5, on + s * w - d * L * 0.5, on + s * w + d * L * 0.5, on - s * w + d * L * 0.5]:
+			q.append(Vector3(v.x, K.gy(v.x, v.y) + 0.035, v.y))
+		det.poly(q, Vector3.UP, kc)
+		var q2: Array = []
+		for v: Vector2 in [on - s * w * 0.7 - d * L * 0.35, on + s * w * 0.7 - d * L * 0.35, on + s * w * 0.7 + d * L * 0.35, on - s * w * 0.7 + d * L * 0.35]:
+			q2.append(Vector3(v.x, K.gy(v.x, v.y) + 0.04, v.y))
+		det.poly(q2, Vector3.UP, kc.lightened(0.25))
+	var u := r.randf()
+	var yan := p + d * (tr + 0.5) + s * (tr * 0.75 + 0.4) * (1.0 if r.randf() < 0.5 else -1.0)
+	var yy := K.gy(yan.x, yan.y)
+	if u < 0.16:
+		# mızrak çatkısı: üç mızrak tepede birleşik
+		for i in 3:
+			var a := TAU * i / 3.0
+			var dp := Vector3(cos(a) * 0.45, 0, sin(a) * 0.45)
+			OC._kutuk(wd, Vector3(yan.x, yy, yan.y) + dp, Vector3(yan.x, yy + 2.3, yan.y) - dp * 0.15, 0.022, K.AHSAP2)
+			met.cyl(Transform3D(Basis(), Vector3(yan.x, yy + 2.42, yan.y) - dp * 0.2), 0.03, 0.22, Color("8a8a90"), 4, 0.0)
+	elif u < 0.28:
+		# kalkan çadıra yaslı (yuvarlak, ahşap, ortası demir göbek)
+		var kp := p + d * (tr + 0.15) + s * 0.9
+		var ky := K.gy(kp.x, kp.y)
+		var t := Transform3D(Basis.looking_at(Vector3(d.x, -0.35, d.y), Vector3.UP).rotated(Vector3(s.x, 0, s.y), 0.0), Vector3(kp.x, ky + 0.42, kp.y))
+		met.cyl(t * Transform3D(Basis(Vector3.RIGHT, PI / 2.0), Vector3.ZERO), 0.4, 0.05, Color("8a5a34"), 10)
+		met.cyl(t * Transform3D(Basis(Vector3.RIGHT, PI / 2.0), Vector3(0, 0, -0.03)), 0.09, 0.05, Color("5a5a5e"), 6)
+	elif u < 0.38:
+		# eyer: yere konmuş (yuvarlak gövde + eyer örtüsü)
+		met.sph(Vector3(yan.x, yy + 0.18, yan.y), 0.32, Color("6a4428"), 6, Vector3(1.0, 0.55, 0.7))
+		det.sph(Vector3(yan.x, yy + 0.1, yan.y), 0.4, Color("8a2a22"), 6, Vector3(1.0, 0.25, 0.9))
+	elif u < 0.62:
+		# torba(lar)
+		for i in r.randi_range(1, 3):
+			det.sph(Vector3(yan.x + i * 0.35, yy + 0.22, yan.y + i * 0.12), 0.24, Color("b8a072").darkened(0.08 * i), 6, Vector3(0.9, 1.1, 0.8))
+	elif u < 0.72:
+		# su kırbası (deri, şişkin)
+		met.sph(Vector3(yan.x, yy + 0.2, yan.y), 0.26, Color("6a4a2e"), 6, Vector3(1.3, 0.75, 0.8))
+
+
+static func _camasir(wd: B, det: B, onler: Array, r: RandomNumberGenerator) -> void:
+	var a: Array = onler[r.randi() % onler.size()]
+	var en: Array = []
+	var ed := 999.0
+	for o: Array in onler:
+		var dd := (o[0] as Vector2).distance_to(a[0])
+		if dd > 1.0 and dd < ed:
+			ed = dd
+			en = o
+	if en.is_empty() or ed > 14.0:
+		return
+	var pa: Vector2 = a[0]
+	var pb: Vector2 = en[0]
+	var dv := (pb - pa).normalized()
+	var s := dv.orthogonal() * 1.2
+	var p0 := pa + dv * (float(a[1]) + 0.6) + s
+	var p1 := pb - dv * (float(en[1]) + 0.6) + s
+	if p0.distance_to(p1) < 2.0:
+		return
+	var y0 := K.gy(p0.x, p0.y)
+	var y1 := K.gy(p1.x, p1.y)
+	OC._kutuk(wd, Vector3(p0.x, y0, p0.y), Vector3(p0.x, y0 + 1.9, p0.y), 0.03, K.AHSAP2)
+	OC._kutuk(wd, Vector3(p1.x, y1, p1.y), Vector3(p1.x, y1 + 1.9, p1.y), 0.03, K.AHSAP2)
+	var n := 6
+	var renk := [Color("d9ccaa"), Color("8c3a2e"), Color("e8e0c8"), Color("6a563c"), Color("3a4f78")]
+	var onceki := Vector3(p0.x, y0 + 1.85, p0.y)
+	for i in range(1, n + 1):
+		var t := float(i) / n
+		var q := p0.lerp(p1, t)
+		var yq := lerpf(y0, y1, t) + 1.85 - 0.25 * sin(PI * t)
+		var cur := Vector3(q.x, yq, q.y)
+		OC._kutuk(wd, onceki, cur, 0.008, Color("8a7a58"))
+		if i < n and r.randf() < 0.75:
+			# asılı bez: ipten sarkan ince örtü (iki yüzlü)
+			var w := 0.17
+			var h := r.randf_range(0.35, 0.6)
+			var c: Color = renk[r.randi() % renk.size()]
+			var dd3 := Vector3(dv.x, 0, dv.y) * w
+			var q4: Array = [cur - dd3, cur + dd3, cur + dd3 - Vector3(0, h, 0), cur - dd3 - Vector3(0, h * 0.92, 0)]
+			det.poly(q4, Vector3(-dv.y, 0, dv.x), c)
+			det.poly(q4, Vector3(dv.y, 0, -dv.x), c.darkened(0.15))
+		onceki = cur

@@ -51,6 +51,8 @@ func _ready() -> void:
 	var p := ("gece_" if gece else "")
 	if poz_oku != "":
 		await _poz_tekrar(p)
+	if "teshis" in set_.split(","):
+		await _teshis()
 	if "cadir" in set_.split(","):
 		await _cadirlar()
 	if "ocak" in set_.split(","):
@@ -540,7 +542,7 @@ func _cadir_ornekleri(nm: String, ag: bool) -> Array:
 			continue
 		if ag and n is MeshInstance3D:
 			var g := (n as MeshInstance3D).global_transform
-			res.append([g, g.basis.z.length() * 0.5 + 0.2])
+			res.append([g, g.basis.z.length() * 0.95])
 		elif n is MultiMeshInstance3D:
 			var mm := (n as MultiMeshInstance3D).multimesh
 			var hx := (n as Node3D).global_transform
@@ -658,3 +660,50 @@ func _ust_say(nm: String) -> void:
 			else:
 				uzak += 1
 	print("ISTORDUUST %s duman=%d ates_yakin=%d ates_uzak=%d" % [nm, duman, ates, uzak])
+
+
+## Teşhis: bir noktada ordugâhın en çok üçgen çizen düğümleri (ağ üçgeni × örnek sayısı; görünür olanlar)
+func _teshis() -> void:
+	for id: String in ["rumeli_3_1", "otag"]:
+		var it := _plan_it(id)
+		if it.is_empty():
+			continue
+		var c: Vector2 = it["pos"]
+		var yaw := float(it["yaw"])
+		var tw := Vector2(sin(yaw), cos(yaw))
+		cam.global_position = _g(c - tw * 60.0, 60.0)
+		cam.look_at(_g(c + tw * 60.0, 0.0), Vector3.UP)
+		await _bekle(cam.global_position)
+		for i in 60:
+			await get_tree().process_frame
+		await _bekle(cam.global_position)
+		var rows: Array = []
+		var bytur := {}
+		for n in _ordu().find_children("*", "GeometryInstance3D", true, false):
+			var g := n as GeometryInstance3D
+			if not g.is_visible_in_tree():
+				continue
+			var gd := g.global_position.distance_to(cam.global_position)
+			if g.visibility_range_end > 0.0 and gd > g.visibility_range_end:
+				continue
+			if g.visibility_range_begin > 0.0 and gd < g.visibility_range_begin:
+				continue
+			var t := 0
+			if g is MeshInstance3D and (g as MeshInstance3D).mesh:
+				t = IstOrdugahKit.mesh_tris((g as MeshInstance3D).mesh)
+			elif g is MultiMeshInstance3D and (g as MultiMeshInstance3D).multimesh and (g as MultiMeshInstance3D).multimesh.mesh:
+				var mm := (g as MultiMeshInstance3D).multimesh
+				t = IstOrdugahKit.mesh_tris(mm.mesh) * mm.instance_count
+			var host := String(g.get_parent().name)
+			rows.append([t, host + "/" + String(g.name)])
+			var key := String(g.name) + ("@" + host.substr(host.length() - 4) if host.contains("_lod") else "")
+			bytur[key] = int(bytur.get(key, 0)) + t
+		rows.sort_custom(func(a, b): return a[0] > b[0])
+		for i in mini(15, rows.size()):
+			print("ISTORDUTESHIS %s %d %s" % [id, rows[i][0], rows[i][1]])
+		var bl: Array = []
+		for k2 in bytur:
+			bl.append([bytur[k2], k2])
+		bl.sort_custom(func(a, b): return a[0] > b[0])
+		for i in mini(15, bl.size()):
+			print("ISTORDUTESHIS_TUR %s %d %s" % [id, bl[i][0], bl[i][1]])

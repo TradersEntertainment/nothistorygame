@@ -98,6 +98,8 @@ static func _tube(acc: Acc, rings: Array, segs: int, cap0: bool, cap1: bool, ton
 	var N: Array = []
 	var C: Array = []
 	var Ts: Array = []
+	var prev_s := Vector3.ZERO
+	var prev_u := Vector3.ZERO
 	for i in nr:
 		var r: Array = rings[i]
 		var c: Vector3 = r[0]
@@ -111,9 +113,16 @@ static func _tube(acc: Acc, rings: Array, segs: int, cap0: bool, cap1: bool, ton
 		if absf(t.dot(ref)) > 0.92:
 			ref = Vector3.BACK if absf(t.dot(Vector3.BACK)) < 0.92 else Vector3.UP
 		var s := (ref - t * t.dot(ref)).normalized()
+		if prev_s != Vector3.ZERO and s.dot(prev_s) < 0.0:
+			s = -s            # yan eksen halkadan halkaya sürekli (bükülme yok)
 		var u := t.cross(s).normalized()
-		if u.y < -0.2 or (absf(u.y) <= 0.2 and u.z < 0.0):
-			u = -u            # üst eksen yukarı/ileri baksın (ryt üstte kalsın)
+		if prev_u == Vector3.ZERO:
+			if u.y < -0.2 or (absf(u.y) <= 0.2 and u.z < 0.0):
+				u = -u        # ilk halkada üst eksen yukarı/ileri (ryt üstte)
+		elif u.dot(prev_u) < 0.0:
+			u = -u            # sonraki halkalar öncekine göre sürekli: dik yükselen boyunda kesit ters dönmesin
+		prev_s = s
+		prev_u = u
 		var rx: float = r[1]
 		var ryt: float = r[2]
 		var ryb: float = r[3]
@@ -245,16 +254,16 @@ static func tanim(tur: String) -> Dictionary:
 				"sakal": true, "kuyruk": ["kisa", 0.12, 0.025], "coat": Color("e8e2d4"), "post": [Color("e8e2d4"), Color("3a3430"), Color("8a6a4a"), Color("5a4a3a")],
 				"burun": Color("c8beb0"), "toynak": Color("3a3028"), "koyu": 0.1}
 		"kopek":
-			return {"H": 0.56, "L": 0.62, "W": 0.13, "D": 0.27, "prof": PROF_KOPEK, "leg": 0.03, "pati": true,
-				"neck": [0.2, 40.0, 48.0, Vector2(0.08, 0.1), Vector2(0.06, 0.07)],
-				"head": [0.24, 12.0, 0.07, 0.07, 0.035, 0.04], "kulak": ["kopek", 0.09, 0.045],
-				"kuyruk": ["kalkik", 0.32, 0.025], "coat": Color("8a6a46"), "post": [Color("8a6a46"), Color("a89a80"), Color("5a4a3a"), Color("c8a468")],
+			return {"H": 0.56, "L": 0.6, "W": 0.15, "D": 0.3, "prof": PROF_KOPEK, "leg": 0.038, "pati": true,
+				"neck": [0.15, 38.0, 42.0, Vector2(0.1, 0.12), Vector2(0.075, 0.08)],
+				"head": [0.22, 18.0, 0.08, 0.08, 0.042, 0.045], "kulak": ["kopek", 0.1, 0.055],
+				"kuyruk": ["kalkik", 0.3, 0.03], "coat": Color("8a6a46"), "post": [Color("8a6a46"), Color("a89a80"), Color("5a4a3a"), Color("c8a468")],
 				"burun": Color("1a1414"), "toynak": Color("3a3028"), "koyu": 0.12}
 		"kedi":
-			return {"H": 0.26, "L": 0.36, "W": 0.075, "D": 0.13, "prof": PROF_KOPEK, "leg": 0.016, "pati": true,
-				"neck": [0.08, 40.0, 50.0, Vector2(0.05, 0.055), Vector2(0.04, 0.045)],
-				"head": [0.11, 8.0, 0.05, 0.048, 0.022, 0.022], "kulak": ["kedi", 0.05, 0.03],
-				"kuyruk": ["kedi", 0.3, 0.014], "coat": Color("d8843a"), "post": [Color("d8843a"), Color("6a6a70"), Color("e8e2d4"), Color("3a3430")],
+			return {"H": 0.26, "L": 0.32, "W": 0.085, "D": 0.14, "prof": PROF_KOPEK, "leg": 0.022, "pati": true,
+				"neck": [0.05, 40.0, 50.0, Vector2(0.06, 0.065), Vector2(0.05, 0.055)],
+				"head": [0.09, 6.0, 0.065, 0.058, 0.03, 0.028], "kulak": ["kedi", 0.06, 0.04],
+				"kuyruk": ["kedi", 0.28, 0.018], "coat": Color("d8843a"), "post": [Color("d8843a"), Color("6a6a70"), Color("e8e2d4"), Color("3a3430")],
 				"burun": Color("d86a6a"), "toynak": Color("3a3028"), "koyu": 0.05, "kisa_bas": true}
 	return tanim("okuz")
 
@@ -342,7 +351,9 @@ static func parcalar(tur: String, opt := {}) -> Dictionary:
 	# hörgüç (deve) / sırt
 	for hp: Array in T.get("hor", []):
 		var z: float = float(hp[0]) * L
-		_el(g, [0, 1], Vector3(0, H * 0.985 + float(hp[1]) * 0.45, z), Vector3(float(hp[2]), float(hp[1]) * 0.85, float(hp[3])), coat, "k")
+		# hörgüç sırta gömülü (tabanı gövdenin içinde, yanları sırtın eğrisine akar)
+		_el(g, [0], Vector3(0, H * 0.93 + float(hp[1]) * 0.25, z), Vector3(W * 0.82, float(hp[1]) * 0.95, float(hp[3]) * 1.1), coat, "h")
+		_el(g, [1], Vector3(0, H * 0.93 + float(hp[1]) * 0.25, z), Vector3(W * 0.82, float(hp[1]) * 0.95, float(hp[3]) * 1.1), coat, "g")
 	# --- boyun
 	var nk: Array = T["neck"]
 	var nlen: float = nk[0]
@@ -558,7 +569,7 @@ static func parcalar(tur: String, opt := {}) -> Dictionary:
 			dr.append(_rg(Vector3(x, 0.004, fz + lr * 0.25), lr * 0.78, lr * 0.85, hoof))
 			_tb(alt, [0, 1], dr, "l", false, true, 0.5)
 		if T.get("nasir", false) and on:
-			_el(alt, [0], knee + Vector3(0, 0, lr * 0.55), Vector3(lr * 0.7, lr * 0.75, lr * 0.4), coat.darkened(0.25), "k")
+			_el(alt, [0], knee + Vector3(0, 0, lr * 0.55), Vector3(lr * 0.7, lr * 0.75, lr * 0.4), coat.darkened(0.25), "g")
 	# --- koşum takımı (ayrı parçalar; gövdeye/boyna bağlı)
 	for tk in takim:
 		match tk:
@@ -612,7 +623,7 @@ static func _kus(tur: String, opt: Dictionary) -> Dictionary:
 		var c: Color = opt.get("renk", Color("f6f2e8"))
 		var dark := c.darkened(0.2)
 		_tb(g, [0, 1, 2], [_rg(Vector3(0, 0.3, -0.17), 0.05, 0.05, c), _rg(Vector3(0, 0.27, -0.09), 0.11, 0.11, c), _rg(Vector3(0, 0.25, 0.02), 0.13, 0.12, c, 0.13),
-			_rg(Vector3(0, 0.27, 0.11), 0.1, 0.11, c), _rg(Vector3(0, 0.36, 0.15), 0.06, 0.06, c), _rg(Vector3(0, 0.42, 0.14), 0.05, 0.05, c)], "b", true, false)
+			_rg(Vector3(0, 0.27, 0.11), 0.1, 0.11, c), _rg(Vector3(0, 0.36, 0.15), 0.06, 0.06, c), _rg(Vector3(0, 0.42, 0.14), 0.05, 0.05, c)], "b", true, true)
 		# kuyruk tüyü (yelpaze)
 		_tb(g, [0, 1], [_rg(Vector3(0, 0.3, -0.15), 0.035, 0.05, c), _rg(Vector3(0, 0.38, -0.22), 0.03, 0.08, dark), _rg(Vector3(0, 0.46, -0.24), 0.015, 0.05, dark)], "k", false, true, 0.6, 0.0, [], Vector3.RIGHT)
 		for sx: float in [-1.0, 1.0]:
