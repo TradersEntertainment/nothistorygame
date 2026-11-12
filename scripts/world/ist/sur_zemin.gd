@@ -304,13 +304,22 @@ static func ates_alani(parent: Node3D, pl: PackedVector2Array, dis: Callable, ba
 	# _ates_renk: çiğnenmiş toprak, ot lekeleri, devriye izi); döküntü araziye oturur.
 	st.clear()
 	var mm: Array = []
-	if cukur_c.size() > 0:
+	if cukur_c.size() > 0 and IstSehir.v2:
+		# TUR-6: top çukuru düz koyu DİSK değil: kabarık kenarlı sığ çanak (zemin malzemesi; dibi yanık toprak, kenarı
+		# dışarı savrulmuş açık toprak, dış eteği araziye iner). Ölçek: disk örneğinin yarıçapı.
+		var cx: Array = []
+		for t: Transform3D in cukur:
+			var sc := t.basis.get_scale()
+			cx.append(Transform3D(t.basis.orthonormalized().scaled(Vector3(sc.x * 0.62, 1.0, sc.z * 0.62)), t.origin - Vector3(0, 0.03, 0)))
+		mm.append(Scenery.scatter(root, _cukur_ag(), cx, [], _mat()))
+	elif cukur_c.size() > 0:
 		mm.append(Scenery.scatter(root, _kure(), cukur_c, [], Props.mat(TOPRAK2.darkened(0.1), 0.0, false, "", false)))
 		mm.append(Scenery.scatter(root, _disk(), cukur, [], Props.mat(YANIK.darkened(0.25), 0.0, false, "", false)))
 	if tas.size() > 0:
 		mm.append(Scenery.scatter(root, _kure(), tas, [], Props.mat(Color("a49a88"), 0.0, false, "", false)))
 	if cubuk.size() > 0:
-		mm.append(Scenery.scatter(root, Scenery._boxm(Vector3.ONE), cubuk, [], Props.mat(Color("6a5434"), 0.0, false, "", false)))
+		# TUR-6 (v2): kazık/ok yuvarlak: kutu değil, ince silindir
+		mm.append(Scenery.scatter(root, _cubuk_ag() if IstSehir.v2 else Scenery._boxm(Vector3.ONE), cubuk, [], Props.mat(Color("6a5434"), 0.0, false, "", false)))
 	if kalkan.size() > 0:
 		mm.append(Scenery.scatter(root, _disk(), kalkan, [], Props.mat(Color("7a4a30"), 0.0, false, "", false)))
 	if merdiven.size() > 0:
@@ -325,6 +334,56 @@ static func ates_alani(parent: Node3D, pl: PackedVector2Array, dis: Callable, ba
 
 static var _km: Mesh
 static var _dm: Mesh
+static var _cm: ArrayMesh
+static var _cbm: Mesh
+
+static func _cubuk_ag() -> Mesh:
+	if _cbm == null:
+		var c := CylinderMesh.new()
+		c.top_radius = 0.4
+		c.bottom_radius = 0.5
+		c.height = 1.0
+		c.radial_segments = 6
+		c.rings = 1
+		_cbm = c
+	return _cbm
+
+
+## TUR-6: birim top çukuru (yarıçap 1 = kenar tepesi; dış etek 1,45'e kadar araziye iner). Köşe rengi zemin ipucu, alfa
+## çıplaklık (zemin_v2): dip yanık koyu toprak, kenar savrulmuş açık toprak.
+static func _cukur_ag() -> ArrayMesh:
+	if _cm != null:
+		return _cm
+	var halka := [[0.0, -0.22, Color("4e4438")], [0.35, -0.2, Color("54493a")], [0.7, -0.08, Color("6a5a44")],
+		[1.0, 0.24, Color("8a7458")], [1.2, 0.12, Color("806b50")], [1.45, -0.06, Color("7a6650")]]
+	var n := 14
+	var st := SurfaceTool.new()
+	st.begin(Mesh.PRIMITIVE_TRIANGLES)
+	var rows: Array = []
+	for h: Array in halka:
+		var r: Array = []
+		for i in n:
+			var a := TAU * i / n
+			var jit := 1.0 + 0.08 * sin(a * 3.0 + 1.3) + 0.05 * sin(a * 5.0)
+			r.append(Vector3(cos(a) * float(h[0]) * jit, float(h[1]) * (1.0 + 0.15 * sin(a * 2.0)), sin(a) * float(h[0]) * jit))
+		rows.append(r)
+	for k in halka.size() - 1:
+		var c0: Color = halka[k][2]
+		var c1: Color = halka[k + 1][2]
+		c0.a = 0.05
+		c1.a = 0.05
+		for i in n:
+			var j := (i + 1) % n
+			var a0: Vector3 = rows[k][i]
+			var a1: Vector3 = rows[k][j]
+			var b0: Vector3 = rows[k + 1][i]
+			var b1: Vector3 = rows[k + 1][j]
+			for e: Array in [[a0, c0], [b0, c1], [b1, c1], [a0, c0], [b1, c1], [a1, c0]]:
+				st.set_color(e[1])
+				st.add_vertex(e[0])
+	st.generate_normals()
+	_cm = st.commit()
+	return _cm
 
 static func _kure() -> Mesh:
 	if _km == null:

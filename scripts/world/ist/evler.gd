@@ -340,7 +340,9 @@ static func ev(host: Node3D, L: float, D: float, H: float, tohum: int, lod: int,
 		wn = int(L / 2.6)
 	if H > gf + 0.1:
 		for fl in floors:
-			var wy := gf + UF * (fl + 0.5)
+			var wy := pencere_y(gf, H, fl)
+			if wy < 0.0:
+				continue
 			for i in wn:
 				var x := -L * 0.5 + (i + 0.5) * L / wn
 				_window(host, Vector3(x, wy, fz + over + 0.03), p, rng, lod, tip == "konak" and fl == 0)
@@ -472,6 +474,18 @@ static func _roof(host: Node3D, w: float, d: float, base: Vector3, col: Color, l
 			Props.box(host, Vector3(w * 0.35, 0.04, d * 0.3), base + Vector3(hx, RISE * 0.55 + 0.04, d * 0.17), Color("1e1a18"), Vector3(-rad_to_deg(ang), 0, 0))
 			for i in 4:
 				Props.box(host, Vector3(0.12, 0.12, d * 0.34), base + Vector3(hx - w * 0.15 + i * w * 0.1, RISE * 0.55 + 0.1, d * 0.17), Color("4a3a2a"), Vector3(-rad_to_deg(ang), 0, 0))
+
+
+## Üst kat penceresinin orta yüksekliği (fl: kat sırası). TUR-6 (v2): üst bant bir kattan alçaksa pencere bandın ortasına
+## iner; sığmıyorsa −1 (konmaz). Önceden max(1, …) kat sayısıyla pencere/kepenk/saksı saçağın üstünde havada kalıyordu
+## (dip_03, hava_05). Yayındaki bölümde (v2 değil) eski davranış. Denetim: tests/_ist/havada_denetim.tscn.
+static func pencere_y(gf: float, H: float, fl: int, v2 := IstSehir.v2) -> float:
+	var wy := gf + UF * (fl + 0.5)
+	if v2 and wy + 0.75 > H - 0.15:
+		wy = gf + (H - gf) * 0.5 if fl == 0 else -1.0
+		if wy < 0.0 or wy + 0.75 > H - 0.1 or wy - 0.75 < gf - 0.3:
+			return -1.0
+	return wy
 
 
 ## Kemerli, kepenkli pencere (cephe +z). bifora: iki kemerli, orta sütunlu (konak)
@@ -676,7 +690,7 @@ static func _ob_yol(v: int, tip: String, lod: int) -> String:
 	if _ob_imza == "":
 		_ob_imza = IstSokak.onbellek_imza(["res://scripts/world/ist/evler.gd", "res://scripts/level/props.gd",
 			"res://scripts/world/world1453.gd", "res://scripts/level/dressing.gd", Props.outlines])
-	return IstSokak.ONBELLEK_DIR + "ev/%s_%d_%s_%d.res" % [_ob_imza, v, tip, lod]
+	return IstSokak.ONBELLEK_DIR + "ev/%s%s_%d_%s_%d.res" % [_ob_imza, "v2" if IstSehir.v2 else "", v, tip, lod]
 
 
 static func _ob_mesh_oku(v: int, tip: String, lod: int) -> Mesh:

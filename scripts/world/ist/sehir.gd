@@ -2180,7 +2180,89 @@ func _make_hub(n: Node3D, lod: int) -> void:
 		if x is Person or x is Label3D or x is Area3D or (x is Light3D and lod > 0):
 			x.get_parent().remove_child(x)
 			x.free()
+	_hub_palet(n)
 	stats["hub_ms"] = Time.get_ticks_msec() - t0
+
+
+## TUR-6: hub şehrinin (yayındaki bölümün kurucuları) pastel duvarları ve parlak turuncu çatıları havadan "oyuncak" küme
+## okunuyordu (hava_05). Yalnız v2'deki kopyasında malzeme renkleri v2 paletine çekilir (kaynak malzeme değişmez: kopya).
+## Turuncu çatı → soluk kiremit; pembe/sarı/açık pastel sıva → kireç/aşı/gül sıva; çok doygun her şey yarı doygunluğa.
+static var _hub_mat := {}
+const HUB_KIREMIT := Color("9a5a44")
+const HUB_SIVA := [Color("cbbea4"), Color("b99467"), Color("b48c7a")]
+
+static func _hub_renk(c: Color) -> Color:
+	if c.s > 0.45 and c.h > 0.015 and c.h < 0.11 and c.v > 0.45:
+		return c.lerp(HUB_KIREMIT, 0.75)
+	if c.v > 0.62 and c.s > 0.12:
+		var hedef: Color = HUB_SIVA[0]
+		if c.h > 0.9 or c.h < 0.03:
+			hedef = HUB_SIVA[2]
+		elif c.h > 0.08 and c.h < 0.17:
+			hedef = HUB_SIVA[1]
+		return c.lerp(hedef, 0.65)
+	if c.s > 0.5:
+		return Color.from_hsv(c.h, c.s * 0.6, c.v * 0.92, c.a)
+	return c
+
+
+static func _hub_palet(n: Node) -> void:
+	for x in n.find_children("*", "GeometryInstance3D", true, false):
+		var gi := x as GeometryInstance3D
+		if gi.material_override is StandardMaterial3D:
+			gi.material_override = _hub_kopya(gi.material_override as StandardMaterial3D)
+		if gi is MeshInstance3D and (gi as MeshInstance3D).mesh is ArrayMesh:
+			_hub_kose(gi as MeshInstance3D)
+		if gi is MeshInstance3D and (gi as MeshInstance3D).mesh != null:
+			var mi := gi as MeshInstance3D
+			for si in mi.mesh.get_surface_count():
+				var m := mi.get_surface_override_material(si)
+				if m == null:
+					m = mi.mesh.surface_get_material(si)
+				if m is StandardMaterial3D:
+					mi.set_surface_override_material(si, _hub_kopya(m as StandardMaterial3D))
+
+
+## Köşe renkli ağlar (LowPoly çatı/duvar): renkler aynı eşlemeden geçer (ağın kopyası; kaynak ağ paylaşılıyorsa bozulmaz)
+static var _hub_ag := {}
+static func _hub_kose(mi: MeshInstance3D) -> void:
+	var am := mi.mesh as ArrayMesh
+	var id := am.get_instance_id()
+	if _hub_ag.has(id):
+		mi.mesh = _hub_ag[id]
+		return
+	var yeni := ArrayMesh.new()
+	var degisti := false
+	for si in am.get_surface_count():
+		var arr := am.surface_get_arrays(si)
+		var cols = arr[Mesh.ARRAY_COLOR]
+		if cols is PackedColorArray and (cols as PackedColorArray).size() > 0:
+			var pc := cols as PackedColorArray
+			for i in pc.size():
+				var c2 := _hub_renk(pc[i])
+				if c2 != pc[i]:
+					pc[i] = c2
+					degisti = true
+			arr[Mesh.ARRAY_COLOR] = pc
+		yeni.add_surface_from_arrays(am.surface_get_primitive_type(si), arr)
+		yeni.surface_set_material(si, am.surface_get_material(si))
+	_hub_ag[id] = yeni if degisti else am
+	if degisti:
+		mi.mesh = yeni
+
+
+static func _hub_kopya(m: StandardMaterial3D) -> StandardMaterial3D:
+	var id := m.get_instance_id()
+	if _hub_mat.has(id):
+		return _hub_mat[id]
+	var yeni := _hub_renk(m.albedo_color)
+	if yeni == m.albedo_color:
+		_hub_mat[id] = m
+		return m
+	var d := m.duplicate() as StandardMaterial3D
+	d.albedo_color = yeni
+	_hub_mat[id] = d
+	return d
 
 
 func _make_blakherna(n: Node3D, lod: int) -> void:
@@ -3082,10 +3164,10 @@ func _sehir_dokusu_v2() -> void:
 		var y := yf - 0.04
 		var xf := Transform3D(bas, Vector3(c.x, y, c.y))
 		_add(g0, g1, g2, "ev|%d|%s" % [v, String(h["tip"])], xf)
-		if gece and (n * 7 + v) % 5 < 2 and dm.y > IstEvler.GF + 0.5:
+		if gece and (n * 7 + v) % 5 < 2 and IstEvler.pencere_y(IstEvler.GF, dm.y, 0) > 0.0:     # TUR-6: saçak üstünde yanan pencere yok
 			# gece: üst katta yanan bir pencere (cephe +z, cumbanın yüzünde)
 			var wx := (float((n * 13) % 3) - 1.0) * dm.x / 3.0
-			var wp := xf * Vector3(wx, IstEvler.GF + IstEvler.UF * 0.5, dm.z * 0.5 + IstEvler.OVER + 0.06)
+			var wp := xf * Vector3(wx, IstEvler.pencere_y(IstEvler.GF, dm.y, 0), dm.z * 0.5 + IstEvler.OVER + 0.06)
 			var ck := Vector2i(floori(wp.x / CELL2), floori(wp.z / CELL2))
 			if not _isik.has(ck):
 				_isik[ck] = []

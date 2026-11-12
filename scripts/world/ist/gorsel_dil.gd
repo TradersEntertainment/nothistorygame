@@ -104,6 +104,7 @@ static func kur(dunya: Node3D) -> Node:
 	if OS.has_environment("BIRLIK_YOK"):      # sondalar: ÖNCE kareleri (aynı kod yolu, uyum yok)
 		return null
 	var g = load("res://scripts/world/ist/gorsel_dil.gd").new()
+	gece_mod = bool(dunya.get("gece"))
 	g.name = "GorselDil"
 	g.kok = dunya
 	dunya.add_child(g)
@@ -599,8 +600,16 @@ static func _say(k: String, n: int) -> void:
 
 
 ## Kuralın uniformları (ortak)
+## TUR-6: gece payları (kategori başına ay ışığı tabanı; kumaşta sızan ışık). Görsel birlik gecede çadır parlaklık ortasını
+## 0,18 → 0,07'ye indirmişti (toon + taban sıkıştırması ay ışığında koyu tarafı eziyordu).
+static var gece_mod := false
+const GECE := {"kumas": 0.16, "zemin": 0.42, "tas": 0.16, "siva": 0.14, "kiremit": 0.12, "ahsap": 0.14, "bitki": 0.12,
+	"kisi": 0.14, "metal": 0.1, "yapi": 0.14}
+
 static func _kural_ver(sm: ShaderMaterial, kat: String, kir: bool, dokulu := true) -> void:
 	var r: Dictionary = KURAL[kat]
+	sm.set_shader_parameter("b9_gece", float(GECE.get(kat, 0.12)) if gece_mod else 0.0)
+	sm.set_shader_parameter("b9_sizma", 0.3 if gece_mod and kat == "kumas" else 0.0)
 	sm.set_shader_parameter("b9_sat", r["sat"])
 	sm.set_shader_parameter("b9_vmin", r["v0"])
 	sm.set_shader_parameter("b9_vmax", r["v1"])
@@ -731,6 +740,8 @@ uniform float b9_kir_h = 0.7;
 uniform vec4 b9_kir_renk : source_color = vec4(0.36, 0.29, 0.23, 1.0);
 uniform float b9_gunes = 0.0;
 uniform vec4 b9_ton : source_color = vec4(1.0);
+uniform float b9_gece = 0.0;      // TUR-6: gece ay ışığı tabanı (öz-ışık payı; gündüz 0)
+uniform float b9_sizma = 0.0;     // TUR-6: gece çadır içinden sızan sıcak ışık (kumaş)
 varying float b9_ly;
 
 vec3 b9_hsv(vec3 c) {
@@ -781,6 +792,20 @@ vec3 b9_uygula(vec3 c, vec3 vtx, vec3 nrm, mat4 ivm, float ly) {
 	h.y = b9_ust(h.y, b9_sat);
 	h.z = b9_alt(b9_ust(h.z, b9_vmax), b9_vmin);
 	return pow(b9_rgb(h), vec3(2.2));
+}
+// TUR-6: gece okunurluğu — ay ışığı tabanı (soğuk, düşük) + kumaşta alt kısımdan sızan ocak/kandil ışığı (çadır başına
+// rastgele: her çadır yanmaz)
+vec3 b9_gece_isik(vec3 alb, vec3 vtx, mat4 ivm, float ly) {
+	if (b9_gece <= 0.0) { return vec3(0.0); }
+	vec3 wp = (ivm * vec4(vtx, 1.0)).xyz;
+	vec3 e = alb * vec3(0.62, 0.7, 0.95) * b9_gece;
+	if (b9_sizma > 0.0) {
+		vec2 hc = floor(wp.xz / 7.0);
+		float hs = fract(sin(dot(hc, vec2(127.1, 311.7))) * 43758.5453);
+		float alt = 1.0 - smoothstep(0.1, 1.5, ly);
+		e += vec3(1.0, 0.56, 0.24) * step(0.68, hs) * alt * b9_sizma * (0.55 + 0.45 * alb.r);
+	}
+	return e;
 }
 // ---- BİRLİK sonu ----
 """
@@ -840,6 +865,8 @@ static func std_shader(bay: Dictionary) -> Shader:
 		c += "\tALPHA = a.a;\n"
 	if bay["isik"]:
 		c += "\tEMISSION = isik_renk.rgb;\n"
+	if not bay.get("golgesiz", false):
+		c += "\tEMISSION += b9_gece_isik(ALBEDO, VERTEX, INV_VIEW_MATRIX, b9_ly);\n"
 	c += "}\n"
 	var sh := Shader.new()
 	sh.code = c
@@ -862,7 +889,8 @@ static func enjekte(src: Shader, toon := false) -> Shader:
 		var govde := code.substr(a, e - a) if e > a else ""
 		var donus := RegEx.create_from_string("\\breturn\\b").search(govde) != null
 		if e > a and not donus and govde.contains("ALBEDO"):
-			code = code.substr(0, e) + "\tALBEDO = b9_uygula(ALBEDO, VERTEX, NORMAL, INV_VIEW_MATRIX, b9_ly);\n" + code.substr(e)
+			var gece_s := "" if code.contains("unshaded") else "\tEMISSION += b9_gece_isik(ALBEDO, VERTEX, INV_VIEW_MATRIX, b9_ly);\n"
+			code = code.substr(0, e) + "\tALBEDO = b9_uygula(ALBEDO, VERTEX, NORMAL, INV_VIEW_MATRIX, b9_ly);\n" + gece_s + code.substr(e)
 			var vi := code.find("void vertex()")
 			if vi >= 0:
 				var va := code.find("{", vi)
@@ -1067,6 +1095,14 @@ func _hayat_duzen() -> bool:
 				v["mesh"] = alacik()
 				if v.has("mm"):
 					(v["mm"] as MultiMesh).mesh = v["mesh"]
+	# TUR-6 (KUTU YASAĞI, "küp eşya = 0"): kutu katmanının (sandık, yük, tezgâh, baca, direk, ip) düz birim küpü yuvarlak
+	# köşeli, şişkin, pahlı yük ağıyla değişir (çuval/balya/kasa okunur; ince direk ve ip sekizgen olur)
+	if K.has("kutu"):
+		for j in (K["kutu"].views as Array).size():
+			var vk: Dictionary = K["kutu"].views[j]
+			vk["mesh"] = yuk_yuvarlak(j > 0)
+			if vk.has("mm"):
+				(vk["mm"] as MultiMesh).mesh = vk["mesh"]
 	# KUTU YASAĞI: insan katmanının kutu gövdeli ağları (hayat_mesh.gd insan / insan_uzak) yuvarlak gövdeyle değişir
 	# (aynı bölge ve renk kodu düzeni: ist_insan gölgelendiricisi bacağı y < 0,8, kolu |x| > 0,215 bandında sallar)
 	if K.has("insan"):
@@ -1107,6 +1143,60 @@ func _cadir_renk(c: Color, olcek2: float, x: float, z: float) -> Color:
 ## Alaçık / yuvarlak çadır: sekizgen hafif eğik duvar + konik çatı + etek saçağı + alem direği (yerde y = 0; çap ~4 m,
 ## duvar 1,5, tepe 3,3 m — IstHayat cadir ağıyla aynı ölçü). Köşe rengi: duvar/çatı beyaz (örnek rengiyle çarpılır),
 ## etek saçağı ve tepe şeridi kök boya, alem pirinç. Dikiş: dilim dilim hafif ton farkı.
+## TUR-6: birim yük (merkezli, 1 m³ sınır kutusu): kesit köşeleri yuvarlatılmış kare (12 kenar), ortası hafif şişkin,
+## alt ve üst pahlı; üst yüz biraz açık, alt kenar koyu (kir). uzak: 8 kenar, pahsız.
+static func yuk_yuvarlak(uzak := false) -> ArrayMesh:
+	var key := "yuk_%s" % uzak
+	if _cache.has(key):
+		return _cache[key]
+	var st := SurfaceTool.new()
+	st.begin(Mesh.PRIMITIVE_TRIANGLES)
+	var n := 8 if uzak else 12
+	var kes: Array = []           # her kenar köşesi (birim kare içinde yuvarlak köşe)
+	for i in n:
+		var a := TAU * (float(i) + 0.5) / n
+		var c := Vector2(cos(a), sin(a))
+		# süper elips (|x|^4 + |y|^4 = 1): köşeli ama yuvarlak
+		var k := pow(pow(absf(c.x), 4.0) + pow(absf(c.y), 4.0), -0.25)
+		kes.append(c * k * 0.5)
+	var hs := [[-0.5, 0.86], [-0.42, 1.0], [0.0, 1.04], [0.42, 1.0], [0.5, 0.86]] if not uzak else [[-0.5, 1.0], [0.5, 1.0]]
+	var ton := [0.72, 0.9, 1.0, 1.0, 1.06] if not uzak else [0.85, 1.02]
+	for r in hs.size() - 1:
+		for i in n:
+			var a0: Vector2 = kes[i]
+			var a1: Vector2 = kes[(i + 1) % n]
+			var y0: float = hs[r][0]
+			var y1: float = hs[r + 1][0]
+			var s0: float = hs[r][1]
+			var s1: float = hs[r + 1][1]
+			var c0 := Color(ton[r], ton[r], ton[r])
+			var c1 := Color(ton[r + 1], ton[r + 1], ton[r + 1])
+			var p00 := Vector3(a0.x * s0, y0, a0.y * s0)
+			var p10 := Vector3(a1.x * s0, y0, a1.y * s0)
+			var p01 := Vector3(a0.x * s1, y1, a0.y * s1)
+			var p11 := Vector3(a1.x * s1, y1, a1.y * s1)
+			for e: Array in [[p00, c0], [p10, c0], [p11, c1], [p00, c0], [p11, c1], [p01, c1]]:
+				st.set_color(e[1])
+				st.add_vertex(e[0])
+	# kapaklar
+	for yy: Array in [[hs[0][0], hs[0][1], ton[0], -1.0], [hs[hs.size() - 1][0], hs[hs.size() - 1][1], ton[ton.size() - 1], 1.0]]:
+		var cc := Color(float(yy[2]), float(yy[2]), float(yy[2]))
+		for i in n:
+			var a0: Vector2 = kes[i] * float(yy[1])
+			var a1: Vector2 = kes[(i + 1) % n] * float(yy[1])
+			var m := Vector3(0, float(yy[0]), 0)
+			var q0 := Vector3(a0.x, float(yy[0]), a0.y)
+			var q1 := Vector3(a1.x, float(yy[0]), a1.y)
+			var tri := [m, q1, q0] if float(yy[3]) > 0.0 else [m, q0, q1]
+			for v: Vector3 in tri:
+				st.set_color(cc)
+				st.add_vertex(v)
+	st.generate_normals()
+	var mm := st.commit()
+	_cache[key] = mm
+	return mm
+
+
 static func alacik() -> ArrayMesh:
 	if _cache.has("alacik"):
 		return _cache["alacik"]

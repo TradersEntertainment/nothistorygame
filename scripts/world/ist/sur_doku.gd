@@ -97,7 +97,10 @@ void fragment() {
 			vec3 bc = mix(tug * tt, harc, harc_m);
 			vec3 ort = mix(mix(tug, harc, 0.5), tas, 0.3);      // SUR-5: uzaktan taşla aynı düzlemde mat bant
 			c = mix(ort, bc, ince_t);
-			c = mix(mix(tas, harc, 0.3), c, bant_g);
+			// TUR-6: hatıl uzakta sönmez (opus mixtum yakın/orta/uzakta okunur): bant pikselden kalınken kızıl-kahve mat
+			// şerit kalır; ancak bant piksel altına inince (fy > B) dönemin ortalamasına karışır (titreşim/dama yok)
+			vec3 uzak_b = mix(mix(tug * 1.35, harc, 0.42), tas, 0.12);
+			c = mix(uzak_b, c, bant_g);
 		} else {
 			float sy = py - B;
 			float si = floor(sy / kh);
@@ -143,6 +146,13 @@ void fragment() {
 		vec3 dos = tas * vec3(1.06, 0.9, 0.74) * (0.72 + 0.18 * tn + 0.06 * tn2);   // gök ışığı (mavi) × sarı = yeşile kaçmasın: kızıla çekik
 		dos *= 1.0 - 0.18 * smoothstep(0.5, 0.9, vn(wpos.xz * 0.35));
 		c = mix(dos, harc * vec3(0.8, 0.72, 0.6), j * ince);
+	}
+	if (dikey > 0.5 && duz < 0.5 && tur < 1.5) {
+		float Pp = tur > 0.5 ? 3.4 : 2.5;
+		float Bb = tur > 0.5 ? 0.30 : 0.42;
+		float kap = smoothstep(Bb * 0.8, Bb * 2.0, fy);
+		vec3 ortalama = mix(tas * 0.95, mix(mix(tug * 1.35, harc, 0.42), tas, 0.12), Bb / Pp * 1.4);
+		c = mix(c, ortalama, kap);
 	}
 	// yıpranma: dikey akıntı, is lekesi, dipte koyulaşma ve yosun
 	float aki = vn(vec2(u * 1.7, y * 0.09));

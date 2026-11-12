@@ -99,14 +99,18 @@ varying float faz;
 void vertex() {
 	faz = MODEL_MATRIX[3].x * 0.37 + MODEL_MATRIX[3].z * 0.71;
 	float h = UV.y;
-	VERTEX.x += (sin(TIME * 0.55 + faz + h * 3.0) * 0.35 + h * 0.9) * h * h * 4.0;
-	VERTEX.z += cos(TIME * 0.45 + faz * 1.3 + h * 2.5) * 0.3 * h * h * 4.0;
+	// TUR-6: rüzgârla eğilen (güneydoğuya), yukarıda kıvrılıp dağılan ince tutam (beyaz dikey çubuk değil)
+	VERTEX.x += (sin(TIME * 0.55 + faz + h * 3.0) * 0.5 + h * 2.2) * h * h * 5.0;
+	VERTEX.z += (cos(TIME * 0.45 + faz * 1.3 + h * 2.5) * 0.45 - h * 0.8) * h * h * 5.0;
 }
 void fragment() {
 	float h = UV.y;
-	float kenar = smoothstep(0.0, 0.75, 1.0 - abs(UV.x * 2.0 - 1.0));
-	float dalga = 0.6 + 0.4 * sin(h * 17.0 - TIME * 1.3 + faz) * sin(h * 6.0 - TIME * 0.8 + faz * 2.0);
-	float a = kenar * smoothstep(0.0, 0.08, h) * (1.0 - smoothstep(0.35, 1.0, h)) * dalga * yogun;
+	float kenar = smoothstep(0.0, 0.9, 1.0 - abs(UV.x * 2.0 - 1.0));
+	kenar *= kenar;
+	// kopuk tutamlar: iki eğik dalganın çarpımı yukarı akar; tepede seyrelir
+	float n = 0.5 + 0.5 * sin(UV.x * 7.0 + h * 11.0 - TIME * 0.9 + faz) * sin(UV.x * 3.0 - h * 7.0 + TIME * 0.6 + faz * 1.7);
+	float dalga = 0.3 + 0.7 * n * n;
+	float a = kenar * smoothstep(0.0, 0.1, h) * (1.0 - smoothstep(0.12, 0.8, h)) * dalga * yogun;
 	ALBEDO = renk.rgb * (0.92 + 0.08 * h);
 	ALPHA = clamp(a, 0.0, 1.0);
 }
@@ -152,7 +156,7 @@ static func duman_mat(gece: bool) -> ShaderMaterial:
 	var m := ShaderMaterial.new()
 	m.shader = sh
 	m.set_shader_parameter("renk", Color(0.2, 0.19, 0.2) if gece else Color(0.83, 0.82, 0.8))
-	m.set_shader_parameter("yogun", 0.16 if gece else 0.4)
+	m.set_shader_parameter("yogun", 0.14 if gece else 0.26)      # TUR-6: 0,4 → 0,26 (seyrek, ince)
 	_dmat[key] = m
 	return m
 
@@ -165,6 +169,11 @@ static func duman(host: Node3D, pts: Array, lod: int, r: RandomNumberGenerator) 
 	for p: Vector3 in pts:
 		var h := r.randf_range(14.0, 26.0)
 		var s := r.randf_range(0.8, 1.2)
+		# TUR-6: duman seyrek (her ocak tütmez: yarısı), boy 9–16 m, ince
+		if fposmod(sin(p.x * 12.9898 + p.z * 78.233) * 43758.5453, 1.0) < 0.5:
+			continue          # (konum karması: rastgele dizisi ve yerleşim ÖNCE ile aynı)
+		h *= 0.62
+		s *= 0.7
 		xs.append(Transform3D(Basis(Vector3.UP, r.randf() * TAU).scaled(Vector3(s, h, s)), p + Vector3(0, 0.5, 0)))
 	var mm := MultiMesh.new()
 	mm.transform_format = MultiMesh.TRANSFORM_3D
