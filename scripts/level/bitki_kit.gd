@@ -723,3 +723,23 @@ static func govde(host: Node3D, pos: Vector3, r: float, h: float) -> StaticBody3
 	body.add_child(cs)
 	host.add_child(body)
 	return body
+
+
+## Sarmaşık kümesi (duvara yapışık; birim yarıçap, çağıran ölçekler): üç yassı yaprak öbeği + taşan yaprak benekleri,
+## koyu-açık yeşil; tek yassı top değil (≤ 40 üçgen; MultiMesh için).
+static func sarmasik() -> ArrayMesh:
+	if _cache.has("sarmasik"):
+		return _cache["sarmasik"]
+	var m := Ag.new()
+	var y1 := Color("2e4a26")
+	var y2 := Color("6a8a40")
+	_obek(m, Vector3(0, 0, 0), Vector3(0.75, 0.55, 0.75), 7, y1, y2, 4, 2, 0.25, 0.2)
+	_obek(m, Vector3(0.55, -0.25, 0.2), Vector3(0.5, 0.4, 0.5), 8, y1, y2.darkened(0.1), 4, 2, 0.25, 0.2)
+	_obek(m, Vector3(-0.5, 0.15, -0.25), Vector3(0.5, 0.42, 0.5), 9, y1, y2, 4, 2, 0.25, 0.2)
+	for k in 4:
+		var a := float(k) * 1.6
+		_benek(m, Vector3(cos(a) * 0.85, -0.35 + 0.2 * float(k % 2), sin(a) * 0.85), 0.28, y2.darkened(0.1 * float(k)), 20 + k, 0.2)
+	var am := _bitir(m)
+	am.set_meta("bitki_kit", "sarmasik")
+	_cache["sarmasik"] = am
+	return am
