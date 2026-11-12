@@ -429,13 +429,19 @@ func _walk_test(a: Vector3, b: Vector3) -> bool:
 	var grav := 9.8
 	var reached := false
 	var best := 1e9
+	var still := 0
+	var last_pos := body.global_position
+	var jump_req := false
 	for f in 1500:
 		var to := b - body.global_position
 		var flat := Vector3(to.x, 0, to.z)
 		var want := flat.normalized() * 4.0 if flat.length() > 0.3 else Vector3.ZERO
 		body.velocity.x = want.x
 		body.velocity.z = want.z
-		if not body.is_on_floor():
+		if jump_req:
+			body.velocity.y = 3.6
+			jump_req = false
+		elif not body.is_on_floor():
 			body.velocity.y -= grav / 60.0
 		else:
 			body.velocity.y = -0.1
@@ -467,12 +473,20 @@ func _walk_test(a: Vector3, b: Vector3) -> bool:
 					lifted = true
 					break
 				if not lifted and flat.length() > 1.0:
-					body.velocity.y = 3.6      # zıplama (JUMP)
+					jump_req = true      # zıplama (JUMP)
 		if args.get("dbg", "0") == "2" and f % 40 == 0 and f < 400:
 			var ns := []
 			for ci in body.get_slide_collision_count():
 				ns.append(body.get_slide_collision(ci).get_normal())
 			print("   f", f, " pos=", body.global_position, " floor=", body.is_on_floor(), " n=", ns, " want=", want)
+		if body.global_position.distance_to(last_pos) < 0.01 and flat.length() > 1.0:
+			still += 1
+			if still > 15 and body.is_on_floor():
+				jump_req = true
+				still = 0
+		else:
+			still = 0
+		last_pos = body.global_position
 		var dd := Vector2(to.x, to.z).length()
 		best = minf(best, dd + absf(to.y))
 		if dd < 1.7 and absf(body.global_position.y - b.y) < 0.8:

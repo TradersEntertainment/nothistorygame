@@ -35,7 +35,7 @@ static func tower_xs(length: float, k: float) -> Array:
 
 
 ## Merdivenin alt ucu (x) ve üst ucu: ilk iki kule arasındaki aralığın ortasında; tek kuleli parçada kulenin doğusunda.
-static func stair_pos(length: float, k: float) -> Dictionary:
+static func stair_pos(length: float, k: float, opts := {}) -> Dictionary:
 	var d := dims(k)
 	var xs := tower_xs(length, k)
 	var h: float = d["H"]
@@ -46,6 +46,8 @@ static func stair_pos(length: float, k: float) -> Dictionary:
 		mid = (float(xs[0]) + float(xs[1])) * 0.5
 	else:
 		mid = float(xs[0]) + float(d["S"]) * 0.5
+	if opts.has("stair_mid"):
+		mid = float(opts["stair_mid"])
 	mid = clampf(mid, -length * 0.5 + l * 0.5 + 1.0, length * 0.5 - l * 0.5 - 1.0)
 	return {"n": n, "x_top": mid + l * 0.5, "x_foot": mid - l * 0.5, "len": l}
 
@@ -100,7 +102,7 @@ static func build_run(host: Node3D, length: float, k: float, lod: int, opts := {
 	# --- yürüme yolu: parapetler, mazgallar
 	var gap_x0 := -1e9
 	var gap_x1 := -1e9
-	var st := stair_pos(length, k)
+	var st := stair_pos(length, k, opts)
 	var stair_on: bool = opts.get("merdiven", true)
 	if stair_on:
 		gap_x0 = float(st["x_top"]) - 3.0 * RUN - 0.8

@@ -8,6 +8,7 @@ extends RefCounted
 
 const SUR := preload("res://scripts/world/ist/marmara_sur.gd")
 const LIM := preload("res://scripts/world/ist/marmara_liman.gd")
+const KIY := preload("res://scripts/world/ist/marmara_kiyi.gd")
 const BUK := preload("res://scripts/world/ist/marmara_bukoleon.gd")
 
 const MODS := {
@@ -16,6 +17,12 @@ const MODS := {
 	"kontoskalion": LIM,
 	"langa": LIM,
 	"sophia": LIM,
+	"mermerkule": KIY,
+	"ahirkapi": KIY,
+	"balikci": KIY,
+	"kayikhane": KIY,
+	"agsehpa": KIY,
+	"kayalar": KIY,
 }
 
 
@@ -37,6 +44,36 @@ static func catalog() -> Array:
 		"id": "sophia", "ad": "Sophia (Iulianos) limanı kalıntısı", "dogu_m": -420.0, "kuzey_m": -930.0,
 		"gercek_olcu": Vector3(150.0, 6.0, 90.0), "yon_derece": 0.0, "durum": "harap", "tur": "liman",
 		"bakis": Vector3(0, 14.0, 0), "bakis_r": 50.0, "gorev": false, "kapi_onu": Vector3(5.0, 0, 20.0),
+	})
+	out.append({
+		"id": "mermerkule", "ad": "Mermer Kule (kara ve deniz surlarının birleştiği köşe)", "dogu_m": -4790.0, "kuzey_m": -1560.0,
+		"gercek_olcu": Vector3(14.0, 20.0, 14.0), "yon_derece": 0.0, "durum": "saglam", "tur": "kapi",
+		"bakis": Vector3(0, 28.0, 0), "bakis_r": 50.0, "gorev": false, "kapi_onu": Vector3(-4.4, 0.0, 14.0),
+	})
+	out.append({
+		"id": "ahirkapi", "ad": "Ahırkapı çevresi: küçük deniz kapısı, çeşme, kıyı", "dogu_m": 80.0, "kuzey_m": -880.0,
+		"gercek_olcu": Vector3(116.0, 14.0, 14.0), "yon_derece": 90.0, "durum": "saglam", "tur": "kapi",
+		"bakis": Vector3(0, 22.0, 0), "bakis_r": 50.0, "gorev": false, "kapi_onu": Vector3(0.0, 0.0, 12.0),
+	})
+	out.append({
+		"id": "balikci", "ad": "Balıkçı barınakları (kamış kulübeler, ateş, kayıklar)", "dogu_m": -4100.0, "kuzey_m": -1500.0,
+		"gercek_olcu": Vector3(28.0, 4.0, 20.0), "yon_derece": 0.0, "durum": "saglam", "tur": "ev",
+		"bakis": Vector3(0, 12.0, 0), "bakis_r": 30.0, "gorev": false, "kapi_onu": Vector3(0.5, 0.0, 8.0),
+	})
+	out.append({
+		"id": "kayikhane", "ad": "Kayıkhane (taş-ahşap kayık sundurması)", "dogu_m": -900.0, "kuzey_m": -1180.0,
+		"gercek_olcu": Vector3(18.0, 9.0, 9.0), "yon_derece": 90.0, "durum": "saglam", "tur": "ev",
+		"bakis": Vector3(0, 16.0, 0), "bakis_r": 30.0, "gorev": false, "kapi_onu": Vector3(0.0, 0.0, 9.0),
+	})
+	out.append({
+		"id": "agsehpa", "ad": "Ağ kurutma sehpaları", "dogu_m": -4050.0, "kuzey_m": -1490.0,
+		"gercek_olcu": Vector3(18.0, 3.0, 8.0), "yon_derece": 90.0, "durum": "saglam", "tur": "ayrinti",
+		"bakis": Vector3(0, 10.0, 0), "bakis_r": 20.0, "gorev": false, "kapi_onu": Vector3(0.0, 0.0, 9.0),
+	})
+	out.append({
+		"id": "kayalar", "ad": "Kıyı kayaları", "dogu_m": -3000.0, "kuzey_m": -1250.0,
+		"gercek_olcu": Vector3(24.0, 4.0, 14.0), "yon_derece": 0.0, "durum": "saglam", "tur": "ayrinti",
+		"bakis": Vector3(0, 12.0, 0), "bakis_r": 25.0, "gorev": false, "kapi_onu": Vector3(-8.0, 0.0, 8.0),
 	})
 	return out
 
@@ -135,3 +172,75 @@ static func perches_sophia(k: float = 0.5) -> Array:
 
 static func climbs_sophia(k: float = 0.5) -> Array:
 	return LIM.climbs_sophia(k)
+
+
+static func build_mermerkule(host: Node3D, k: float = 0.5, lod: int = 0) -> void:
+	KIY.build_mermerkule(host, k, lod)
+
+
+static func perches_mermerkule(k: float = 0.5) -> Array:
+	return KIY.perches_mermerkule(k)
+
+
+static func climbs_mermerkule(k: float = 0.5) -> Array:
+	return KIY.climbs_mermerkule(k)
+
+
+static func build_ahirkapi(host: Node3D, k: float = 0.5, lod: int = 0) -> void:
+	KIY.build_ahirkapi(host, k, lod)
+
+
+static func perches_ahirkapi(k: float = 0.5) -> Array:
+	return KIY.perches_ahirkapi(k)
+
+
+static func climbs_ahirkapi(k: float = 0.5) -> Array:
+	return KIY.climbs_ahirkapi(k)
+
+
+static func build_balikci(host: Node3D, k: float = 0.5, lod: int = 0) -> void:
+	KIY.build_balikci(host, k, lod)
+
+
+static func perches_balikci(k: float = 0.5) -> Array:
+	return KIY.perches_balikci(k)
+
+
+static func climbs_balikci(k: float = 0.5) -> Array:
+	return KIY.climbs_balikci(k)
+
+
+static func build_kayikhane(host: Node3D, k: float = 0.5, lod: int = 0) -> void:
+	KIY.build_kayikhane(host, k, lod)
+
+
+static func perches_kayikhane(k: float = 0.5) -> Array:
+	return KIY.perches_kayikhane(k)
+
+
+static func climbs_kayikhane(k: float = 0.5) -> Array:
+	return KIY.climbs_kayikhane(k)
+
+
+static func build_agsehpa(host: Node3D, k: float = 0.5, lod: int = 0) -> void:
+	KIY.build_agsehpa(host, k, lod)
+
+
+static func perches_agsehpa(k: float = 0.5) -> Array:
+	return KIY.perches_agsehpa(k)
+
+
+static func climbs_agsehpa(k: float = 0.5) -> Array:
+	return KIY.climbs_agsehpa(k)
+
+
+static func build_kayalar(host: Node3D, k: float = 0.5, lod: int = 0) -> void:
+	KIY.build_kayalar(host, k, lod)
+
+
+static func perches_kayalar(k: float = 0.5) -> Array:
+	return KIY.perches_kayalar(k)
+
+
+static func climbs_kayalar(k: float = 0.5) -> Array:
+	return KIY.climbs_kayalar(k)
