@@ -222,6 +222,14 @@ static func people() -> Array:
 			ln.append("PF_LEON_TAKEN")
 		_add(out, "PF_LEON", ln, "PF26_LEON_TAKEN" if o36 == "36.2" else "PF26_LEON")
 
+	# Balıkçı Yakovos (44, yalnız Bizans tarafı): Yerebatan'ın unutulmuş suyunda balık tutan "cin"
+	var o44 := str(o.get(44, ""))
+	if o44 != "":
+		var yk: Array = ["PF_YAKOVOS_KEEP" if o44 == "44.1" else "PF_YAKOVOS_BLAB"]
+		if f.get("cistern_rescued", false):
+			yk.append("PF_YAKOVOS_RESCUE")
+		_add(out, "PF_YAKOVOS", yk, "PF26_YAKOVOS" if o44 == "44.1" else "PF26_YAKOVOS_BLAB")
+
 	# Kardinal Isidoros: yalnız esir kafilesinden çıktıysa (26)
 	if f.get("isidore_freed", false):
 		var by_kasim := str(f.get("isidore_by", "")) == "kasim"

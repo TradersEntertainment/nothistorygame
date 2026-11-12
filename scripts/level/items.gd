@@ -58,6 +58,7 @@ const CHAPTER_HOLD := {
 	"chapter35o": ["chickpeas", "thermos"], "chapter36b": ["lighter", "tape"], "chapter37o": ["lighter", "chickpeas"],
 	"chapter38o": ["lighter", "thermos"], "chapter39o": ["lighter", "book"], "chapter41o": ["chickpeas", "cube"],
 	"chapter42b": ["thermos", "chickpeas"],
+	"chapter44b": ["lighter", "tape"],          # Sarnıç: karanlıkta çakmak (telefon yalnız fener olarak çıkar)
 }
 
 

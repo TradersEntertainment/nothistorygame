@@ -1136,6 +1136,30 @@
   "tarif": "Sokaktaki keşiş (genel); yaşlı, yumuşak",
   "same_as": "SPK_DERVISH"
  },
+ "SPK_EUDOKIA": {
+  "tarif": "Kyra Eudokia; kuyusundan balık çıkan mahalleli kadın, yaşlıca, pratik, kuru mizah, içten",
+  "gender": "female",
+  "age": "middle_aged",
+  "voice_id": "quItPmQPZt4P59hTbppP",
+  "voice_name": "NHG aday Eudokia E1a",
+  "model": "eleven_v3",
+  "v3_stability": 0.5,
+  "ton_mode": "rol:mahalleli",
+  "design": "Greek townswoman of Constantinople, about fifty, practical and sharp-tongued with warmth underneath. Slightly husky alto; brisk, talks like a neighbour over the garden wall.",
+  "not_secim": "0.99.119: sahibi dinleme sayfasında E1a'yı seçti"
+ },
+ "SPK_YAKOVOS": {
+  "tarif": "Balıkçı Yakovos; sarnıcı kırk yıldır karanlıkta sayan yaşlı balıkçı, sakin, kısık sesli, kuru mizah",
+  "gender": "male",
+  "age": "old",
+  "voice_id": "qnPteu5iy66lRdfdJYeW",
+  "voice_name": "NHG aday Yakovos Y2a",
+  "model": "eleven_v3",
+  "v3_stability": 0.5,
+  "ton_mode": "rol:balikci",
+  "design": "Sturdy fisherman about fifty-five, gruff but kindly. Raspy chest voice, short sentences, a chuckle hiding behind the words; calm even when the ceiling shakes.",
+  "not_secim": "0.99.119: sahibi dinleme sayfasında Y2a'yı seçti"
+ },
  "SPK_WOMAN_BYZ": {
   "tarif": "Konstantinopolisli kadın (genel); orta yaşlı, pratik, kuru mizah",
   "same_as": "SPK_MUFIDE"

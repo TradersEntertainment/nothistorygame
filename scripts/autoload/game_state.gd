@@ -536,7 +536,7 @@ func last_place() -> String:
 	# Galata) değil. Tolga 26 Nisan'da Büro'dan ayrıldığı yere geri döner.
 	if flags.get("siege_done", false) and flags.has("pre_siege_scene"):
 		k = str(flags["pre_siege_scene"])
-	if k in ["chapter6b", "chapter10a", "chapter10h", "chapter12b", "chapter23", "chapter24", "chapter25", "chapter26", "chapter26o", "chapter18b"]:
+	if k in ["chapter6b", "chapter10a", "chapter10h", "chapter12b", "chapter23", "chapter24", "chapter25", "chapter26", "chapter26o", "chapter18b", "chapter44b"]:
 		return "city"
 	if k == "chapter6" and str(chapter_outcomes.get(6, "")).begins_with("6b"):
 		return "city"
