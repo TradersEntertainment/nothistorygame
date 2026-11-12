@@ -115,6 +115,7 @@ func _kaba_dunya() -> void:
 	mi.mesh = m.commit()
 	var mat := StandardMaterial3D.new()
 	mat.vertex_color_use_as_albedo = true
+	mat.vertex_color_is_srgb = true
 	mat.roughness = 1.0
 	mi.material_override = mat
 	root.add_child(mi)
@@ -169,6 +170,12 @@ func _shot(name: String, at: Vector3, look: Vector3, fov := 62.0) -> void:
 	while guard < 240 and s and _yakin_eksik(s, at):
 		await get_tree().process_frame
 		guard += 1
+	for we in get_tree().root.find_children("*", "WorldEnvironment", true, false):
+		var env := (we as WorldEnvironment).environment
+		if env and env.fog_enabled:
+			print("ISTSIS kapatildi: ", we.get_path())
+			env.fog_enabled = false
+			env.volumetric_fog_enabled = false
 	for i in 8:
 		await get_tree().process_frame
 	await RenderingServer.frame_post_draw
@@ -299,14 +306,18 @@ func _denetim() -> void:
 		if pl.size() < 2:
 			continue
 		# Bu hattın bütün dilimlerini lod 0 kur (çarpışma)
-		for it: Dictionary in s.hat_items:
-			if String(it.get("hat", "")) == ad:
+		for it: Dictionary in s.items:
+			var fx: Dictionary = IstSehir.YER2.get(String(it["id"]), {})
+			if String(it.get("hat", "")) == ad or String(fx.get("hat", "")) == ad:
 				s._build(it, 1)
 				s._build(it, 0)
 		await get_tree().physics_frame
 		await get_tree().physics_frame
 		var prev := NAN
 		var bosluk := 0
+		var runs: Array = []
+		var run0 := -1.0
+		var sacc := 0.0
 		var basamak := 0
 		var adim := 0
 		var maxstep := 0.0
@@ -321,10 +332,17 @@ func _denetim() -> void:
 				var rq := PhysicsRayQueryParameters3D.create(from, from - Vector3(0, 80, 0))
 				var hit := space.intersect_ray(rq)
 				adim += 1
+				var sq := sacc + float(k) / n * L
 				if hit.is_empty() or (hit["position"] as Vector3).y < IstGeo.h(q.x, q.y) + 2.0:
 					bosluk += 1
 					prev = NAN
+					if run0 < 0.0:
+						run0 = sq
 					continue
+				if run0 >= 0.0:
+					if sq - run0 > 3.0:
+						runs.append("%.0f+%.0f@(%.0f,%.0f)" % [run0, sq - run0, q.x, q.y])
+					run0 = -1.0
 				var y := (hit["position"] as Vector3).y
 				if not is_nan(prev):
 					var dy := absf(y - prev)
@@ -332,7 +350,9 @@ func _denetim() -> void:
 					if dy > 0.45 and dy < 3.0:
 						basamak += 1
 				prev = y
+			sacc += L
 		print("ISTSUR %s adim=%d bosluk=%d yuksek_basamak=%d en_buyuk_basamak=%.2f" % [ad, adim, bosluk, basamak, maxstep])
+		print("ISTSURBOS %s %s" % [ad, " ".join(runs.slice(0, 40))])
 	# 5) Konma noktaları gerçek çarpışmalı yüzeyde mi
 	var fd := IstSehir.flight_data_v2()
 	var ok := 0

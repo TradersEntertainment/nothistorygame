@@ -133,6 +133,7 @@ var _cells0: Array = []                  # ev hücreleri: {c: Vector3, mm: [Mult
 var _last_cam := Vector3.INF
 var _t := 0.0
 var stats := {"kur_ms_max": 0.0, "kur_n": 0}
+var _cost := {}                          # "mod/lod" → son kurma süresi (ms)
 
 
 # ---------------------------------------------------------------- modüller
@@ -291,6 +292,7 @@ func _build(it: Dictionary, lod: int) -> void:
 	var ms := (Time.get_ticks_usec() - t0) / 1000.0
 	stats["kur_ms_max"] = maxf(stats["kur_ms_max"], ms)
 	stats["kur_n"] += 1
+	_cost["%s/%d" % [String(it.get("mod", "")), lod]] = ms
 	if ms > 6.0:
 		if not stats.has("yavas"):
 			stats["yavas"] = {}
@@ -300,6 +302,9 @@ func _build(it: Dictionary, lod: int) -> void:
 		_bake_lod(n, lod >= 2)
 		for c in n.find_children("*", "GeometryInstance3D", true, false):
 			c.set_meta("no_walk", true)
+	elif v2:
+		# v2 yakın katman: görüntü doku başına pişirilir (çizim sayısı), çarpışma gövdeleri olduğu gibi kalır
+		_bake_lod(n, false)
 	it["have"][lod] = n
 	_show(it)
 
@@ -310,7 +315,7 @@ func _bake_lod(n: Node3D, flat: bool) -> void:
 	var list: Array = []
 	for c in n.find_children("*", "MeshInstance3D", true, false):
 		var mi := c as MeshInstance3D
-		if mi.mesh != null and mi.visible and not (mi.material_override is ShaderMaterial):
+		if mi.mesh != null and mi.visible and _bakeable(mi, n):
 			list.append(mi)
 	if list.size() < 3:
 		return
@@ -325,6 +330,26 @@ func _bake_lod(n: Node3D, flat: bool) -> void:
 		c.get_parent().remove_child(c)
 		c.queue_free()
 	n.add_child(mi)
+
+
+## Pişiriciye girecek parça: gölgelendiricili, saydam, ışıklı, gizli ya da insan (Person) altındaki parçalar kalır
+static func _bakeable(mi: MeshInstance3D, top: Node) -> bool:
+	var cur: Node = mi
+	while cur != null and cur != top:
+		if cur is Person or (cur is Node3D and not (cur as Node3D).visible):
+			return false
+		cur = cur.get_parent()
+	for si in mi.mesh.get_surface_count():
+		var m := mi.get_active_material(si)
+		if m is ShaderMaterial:
+			return false
+		if m is BaseMaterial3D:
+			var bm := m as BaseMaterial3D
+			if bm.transparency != BaseMaterial3D.TRANSPARENCY_DISABLED and bm.transparency != BaseMaterial3D.TRANSPARENCY_ALPHA_SCISSOR:
+				return false
+			if bm.emission_enabled and bm.emission_energy_multiplier > 0.5:
+				return false
+	return true
 
 
 ## En ince kurulu katman görünür, ötekiler gizli (kurulmadan önce eskisi gizlenmez)
@@ -368,7 +393,13 @@ func _process(delta: float) -> void:
 		_plan(cp)
 	var t0 := Time.get_ticks_usec()
 	while not _queue.is_empty() and Time.get_ticks_usec() - t0 < BUDGET_US:
-		var job: Array = _queue.pop_front()
+		var job: Array = _queue.front()
+		# Ağır iş (önceki ölçümü bütçenin kalanını aşan) karenin başına ertelenir: aynı karede ikinci iş olmaz
+		if Time.get_ticks_usec() - t0 > 0 and job[0] == "item":
+			var key := "%s/%d" % [String(job[1]["mod"]), int(job[2])]
+			if float(_cost.get(key, 0.0)) * 1000.0 > BUDGET_US - (Time.get_ticks_usec() - t0) and Time.get_ticks_usec() - t0 > 300:
+				break
+		_queue.pop_front()
 		if job[0] == "item":
 			var it: Dictionary = job[1]
 			if int(it["want"]) <= int(job[2]):
@@ -610,10 +641,17 @@ func _cell_up(c: Dictionary) -> void:
 	var body := StaticBody3D.new()
 	body.name = "EvCarpisma"
 	add_child(body)
+	if v2:
+		# v2: evler, kaideler ve sokak taşları hücre başına tek ağ (malzeme başına bir yüzey); ağaçlar MultiMesh
+		var mi := _merge_groups(c["groups"], 0, c["c"])
+		if mi:
+			mi.visibility_range_end = NEAR
+			c["mm"].append(mi)
 	for key: String in c["groups"]:
-		var mm := _mm(_mesh_for(key, 0), c["groups"][key])
-		mm.visibility_range_end = NEAR
-		c["mm"].append(mm)
+		if not (v2 and _mergeable(key)):
+			var mm := _mm(_mesh_for(key, 0), c["groups"][key])
+			mm.visibility_range_end = NEAR
+			c["mm"].append(mm)
 		if key == "kaide" or key == "tas":
 			for xf: Transform3D in c["groups"][key]:
 				var bcs := CollisionShape3D.new()
@@ -873,6 +911,8 @@ func perch_marks() -> Array:
 static var v2 := false
 static var sokak: IstSokak
 const K2 := 0.5
+## v2 orta katman yarıçapı (yarıçap eklenir): uzak siluetten orta katmana geçiş
+const R1_V2 := 300.0
 ## v2'de kayıttan kurulmayan modüller: kiliseler tip örnekleridir (konumları kestirim; mahalle dokusunda kullanılır)
 const MOD_SKIP2 := ["kiliseler", "kiliseler_kilise", "kiliseler_harabe", "kiliseler_manastir", "kiliseler_ortak"]
 ## Uzun hatlarla kurulanlar: tek kayıt olarak kurulmaz
@@ -990,6 +1030,7 @@ static func attach_v2(dunya: Node3D, gece_ := false) -> void:
 	s._place_v2()
 	var t1 := Time.get_ticks_msec()
 	s._hatlar_v2()
+	s._hat_far_commit()
 	s._basamak_ag()
 	var t2 := Time.get_ticks_msec()
 	s._sehir_dokusu_v2()
@@ -1101,7 +1142,7 @@ func _place_v2() -> void:
 	if bpl.size() >= 2:
 		var sn := _snap(bpl, bl)
 		var o := _out(sn["d"], sn["p"], "blakherna_suru")
-		bl = (sn["p"] as Vector2) - o * 16.0
+		bl = (sn["p"] as Vector2) - o * 2.0
 		byaw = _yaw_x(sn["d"], sn["p"], "blakherna_suru")
 	_v2_item("blakherna", Vector3(bl.x, IstGeo.h(bl.x, bl.y) - 0.05, bl.y), byaw, 22.0, _make_blakherna)
 	quest2["BLAKHERNA"] = {"p": Vector3(bl.x, IstGeo.h(bl.x, bl.y) + 26.0, bl.y), "r": 34.0}
@@ -1115,7 +1156,8 @@ func _place_v2() -> void:
 			continue
 		var p: Vector3 = pl["pos"]
 		# Yapının tabanı düzlenir (arazi ağı bu kayıtlardan sonra kurulur; IstGeo.duzle)
-		if float(pl["r"]) <= 130.0 and String((e["data"] as Dictionary).get("tur", "")) != "liman":
+		# (kıyıdaki alçak yapılar düzlenmez: taban deniz düzeyine yakınsa arazi göl gibi suya iner)
+		if float(pl["r"]) <= 130.0 and p.y > 2.0 and not String((e["data"] as Dictionary).get("tur", "")) in ["liman", "bitki"] and not (YER2.get(id, {}) as Dictionary).has("kiyi"):
 			IstGeo.duzle(Vector2(p.x, p.z), float(pl["r"]) * 0.85, p.y + 0.03)
 		var holder := Node3D.new()
 		holder.name = "Ist_" + id
@@ -1124,7 +1166,7 @@ func _place_v2() -> void:
 		holder.set_meta("ist_id", id)
 		add_child(holder)
 		var it := {"id": id, "script": e["script"], "pos": p, "yaw": pl["yaw"], "k": pl["k"], "r": pl["r"],
-			"have": [null, null, null], "holder": holder, "data": e["data"], "mod": mod}
+			"have": [null, null, null], "holder": holder, "data": e["data"], "mod": mod, "r1": R1_V2}
 		items.append(it)
 		_build(it, 2)
 		_perch_pad(it)
@@ -1142,16 +1184,70 @@ func _pad(p: Vector3, nm: String) -> void:
 	add_child(body)
 
 
-func _v2_item(id: String, p: Vector3, yaw: float, r: float, make: Callable, data := {}) -> Dictionary:
+## Sur dilimlerinin uzak katmanı: 160 m'lik parçalarda tek ağ (dilim başına çizim yerine); parçanın merkezine 360 m'den
+## yakınken gizlenir, dilimin kendi orta katmanı 420 m'de kurulur
+const HAT_CELL := 160.0
+const HAT_BEGIN := 360.0
+var _hat_far := {}             # Vector2i → SurfaceTool
+var _hat_mat: Material
+
+func _hat_far_add(it: Dictionary) -> void:
+	var tmp := Node3D.new()
+	(it["make"] as Callable).call(tmp, 2)
+	var list: Array = []
+	for c in tmp.find_children("*", "MeshInstance3D", true, false):
+		list.append(c)
+	if list.is_empty():
+		tmp.free()
+		return
+	var holder := Node3D.new()
+	var mi := World1453.bake(list, tmp, Transform3D.IDENTITY, holder, "HatUzak", 0.05, 0, true)
+	var p: Vector3 = it["pos"]
+	var ck := Vector2i(floori(p.x / HAT_CELL), floori(p.z / HAT_CELL))
+	var cen := Vector3((ck.x + 0.5) * HAT_CELL, 0, (ck.y + 0.5) * HAT_CELL)
+	if mi.mesh != null:
+		if not _hat_far.has(ck):
+			var st := SurfaceTool.new()
+			st.begin(Mesh.PRIMITIVE_TRIANGLES)
+			_hat_far[ck] = st
+		var xf := Transform3D(Basis(Vector3.UP, float(it["yaw"])), p - cen)
+		for si in mi.mesh.get_surface_count():
+			(_hat_far[ck] as SurfaceTool).append_from(mi.mesh, si, xf)
+		if _hat_mat == null:
+			_hat_mat = mi.material_override if mi.material_override else mi.mesh.surface_get_material(0)
+	holder.free()
+	tmp.free()
+
+
+func _hat_far_commit() -> void:
+	for ck: Vector2i in _hat_far:
+		var mi := MeshInstance3D.new()
+		mi.mesh = (_hat_far[ck] as SurfaceTool).commit()
+		if _hat_mat:
+			mi.material_override = _hat_mat
+		mi.position = Vector3((ck.x + 0.5) * HAT_CELL, 0, (ck.y + 0.5) * HAT_CELL)
+		mi.visibility_range_begin = HAT_BEGIN
+		mi.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
+		mi.set_meta("no_walk", true)
+		add_child(mi)
+	_hat_far.clear()
+
+
+func _v2_item(id: String, p: Vector3, yaw: float, r: float, make: Callable, data := {}, far_merge := false) -> Dictionary:
 	var holder := Node3D.new()
 	holder.name = "Ist_" + id
 	holder.position = p
 	holder.rotation.y = yaw
 	add_child(holder)
 	var it := {"id": id, "pos": p, "yaw": yaw, "k": K2, "r": r, "have": [null, null, null], "holder": holder,
-		"data": data, "mod": "v2", "make": make}
+		"data": data, "mod": "v2", "make": make, "r1": R1_V2}
 	items.append(it)
-	_build(it, 2)
+	if far_merge:
+		it["no2"] = true
+		it["r1"] = HAT_BEGIN + HAT_CELL * 0.75 - r
+		_hat_far_add(it)
+	else:
+		_build(it, 2)
 	return it
 
 
@@ -1188,7 +1284,23 @@ func _make_blakherna(n: Node3D, lod: int) -> void:
 				else:
 					Props.box(n, size, pos, col)
 	Blachernae.shell_parts(emit, "palace")
-	Blachernae.shell_parts(emit, "join")
+	# Kabuğun üstü (havadan bakış: düz kutu kalmasın): kiremit beşik çatı, kulelerde mazgallı teras ve piramit külah,
+	# arka cephede pencere sırası
+	var tile := Color("b4532f")
+	Props.prism(n, Vector3(10.8, 3.4, 26.8), Vector3(0, 16.0 + 1.7, -21.0), tile, Vector3(0, 90, 0))
+	Props.box(n, Vector3(26.4, 0.35, 10.4), Vector3(0, 16.1, -21.0), Color("a8583a"))
+	for ox: float in [-14.4, 14.4]:
+		Props.prism(n, Vector3(5.4, 3.0, 5.4), Vector3(ox, 20.0 + 1.5, -20.0), tile.darkened(0.1), Vector3.ZERO)
+		if lod == 0:
+			for k in 4:
+				for sd: float in [-1.0, 1.0]:
+					Props.box(n, Vector3(0.7, 0.8, 0.5), Vector3(ox - 1.9 + k * 1.27, 20.4, -20.0 + sd * 2.3), Color("cdbd9e"))
+	if lod <= 1:
+		for row in 2:
+			for k in 6:
+				Props.box(n, Vector3(1.4, 2.0, 0.08), Vector3(-10.0 + k * 4.0, 7.6 + row * 4.6, -26.04), Color("1c1814"))
+		Props.cyl(n, 0.12, 2.2, Vector3(0, 20.2, -21.0), Color("d8b040"), Vector3.ZERO, 6)
+		Props.box(n, Vector3(1.2, 0.14, 0.14), Vector3(0, 20.7, -21.0), Color("d8b040"))
 
 
 # ---------------------------------------------------------------- uzun hatlar
@@ -1407,7 +1519,7 @@ func _hat_piece(ad: String, kur: String, mid: Vector2, d: Vector2, L: float, see
 		# Blakherna kabuğunun suru yerel z 0…4,6'da (dış yüz +z): sur ekseni hatta otursun
 		var o := _out(d, mid, ad)
 		pos -= Vector3(o.x, 0, o.y) * 2.3
-	var it := _v2_item("%s_%d" % [ad, seed], pos, yaw, L * 0.5 + 6.0, make)
+	var it := _v2_item("%s_%d" % [ad, seed], pos, yaw, L * 0.5 + 6.0, make, {}, true)
 	it["hat"] = ad
 	it["len"] = L
 	it["walk"] = lo - 0.05 + _walk_h(kur)
@@ -1541,7 +1653,7 @@ func _kose(ad: String, kur: String, p: Vector2) -> Dictionary:
 				Props.box(n, Vector3(sz + 0.06, 0.4, sz + 0.06), Vector3(0, y, 0), Color("a8583a"))
 		else:
 			Props.box(n, Vector3(sz, walk + 1.1, sz), Vector3(0, (walk + 1.1) * 0.5, 0), stone)
-	var it := _v2_item("kose_%s_%d" % [ad, hat_items.size()], Vector3(p.x, lo - 0.05, p.y), 0.0, sz, make)
+	var it := _v2_item("kose_%s_%d" % [ad, hat_items.size()], Vector3(p.x, lo - 0.05, p.y), 0.0, sz, make, {}, true)
 	it["hat"] = ad
 	it["walk"] = lo - 0.05 + walk
 	hat_items.append(it)
@@ -1729,30 +1841,36 @@ func _item_lazy(it: Dictionary) -> void:
 	add_child(holder)
 	it["holder"] = holder
 	it["no2"] = true
-	it["r1"] = 310.0
+	it["r1"] = 210.0
 	items.append(it)
 
 
 const FAR_DOKU_CELL := 144.0
-const FAR_DOKU_BEGIN := 200.0
+const FAR_DOKU_BEGIN := 115.0
 const DOKU_RENK := {"bostan": Color("7a7a3a"), "bag": Color("4a6a2a"), "bugday": Color("b8b060"), "cayir": Color("7a9a4a"),
 	"bahce": Color("5a8a3a")}
 
 ## Doku öğelerinin uzak görünüşü: 144 m hücre başına tek ağ (yama: zemine yatık renkli dörtgen; kilise: gövde + çatı;
 ## harabe: alçak taş kütle). Hücrenin merkezine 200 m'den yakınken gizlenir (öğeler 310 m'de orta katmana geçer).
 func _far_doku(far: Array) -> void:
+	_far_doku_cells(far, FAR_DOKU_CELL, FAR_DOKU_BEGIN, MID)
+	_far_doku_cells(far, CELL2, MID, 0.0)
+
+
+func _far_doku_cells(far: Array, size: float, begin: float, end: float) -> void:
 	var cells := {}
 	for f: Array in far:
 		var c: Vector2 = f[1]
-		var ck := Vector2i(floori(c.x / FAR_DOKU_CELL), floori(c.y / FAR_DOKU_CELL))
+		var ck := Vector2i(floori(c.x / size), floori(c.y / size))
 		if not cells.has(ck):
 			cells[ck] = []
 		cells[ck].append(f)
 	var mat := StandardMaterial3D.new()
 	mat.vertex_color_use_as_albedo = true
+	mat.vertex_color_is_srgb = true
 	mat.roughness = 1.0
 	for ck: Vector2i in cells:
-		var cen := Vector3((ck.x + 0.5) * FAR_DOKU_CELL, 0, (ck.y + 0.5) * FAR_DOKU_CELL)
+		var cen := Vector3((ck.x + 0.5) * size, 0, (ck.y + 0.5) * size)
 		var st := SurfaceTool.new()
 		st.begin(Mesh.PRIMITIVE_TRIANGLES)
 		for f: Array in cells[ck]:
@@ -1789,7 +1907,8 @@ func _far_doku(far: Array) -> void:
 		mi.mesh = st.commit()
 		mi.material_override = mat
 		mi.position = cen
-		mi.visibility_range_begin = FAR_DOKU_BEGIN
+		mi.visibility_range_begin = begin
+		mi.visibility_range_end = end
 		mi.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
 		mi.set_meta("no_walk", true)
 		add_child(mi)
@@ -1844,44 +1963,62 @@ func _layers2(g0: Dictionary, g1: Dictionary, g2: Dictionary) -> void:
 		add_child(mi)
 	for ck: Vector2i in g1:
 		# Evler ve kaideler: hücre başına tek ağ (malzeme başına bir yüzey); ağaçlar MultiMesh
-		var by_mat := {}
 		var cen := Vector3((ck.x + 0.5) * CELL1, 0, (ck.y + 0.5) * CELL1)
 		for key: String in g1[ck]:
+			if _mergeable(key):
+				continue
 			var m1 := _mesh_for(key, 1)
 			if m1 == null:
 				continue
-			if key.begins_with("ev|") or key == "kaide":
-				for si in m1.get_surface_count():
-					var sm: Material = m1.surface_get_material(si)
-					if sm == null and m1 is PrimitiveMesh:
-						sm = (m1 as PrimitiveMesh).material
-					if not by_mat.has(sm):
-						var nst := SurfaceTool.new()
-						nst.begin(Mesh.PRIMITIVE_TRIANGLES)
-						by_mat[sm] = nst
-					for xf: Transform3D in g1[ck][key]:
-						(by_mat[sm] as SurfaceTool).append_from(m1, si, Transform3D(xf.basis, xf.origin - cen))
-				continue
 			var mm := _mm(m1, g1[ck][key])
 			mm.visibility_range_begin = NEAR
-			mm.visibility_range_end = MID * 0.6
-		if not by_mat.is_empty():
-			var am := ArrayMesh.new()
-			for sm in by_mat:
-				(by_mat[sm] as SurfaceTool).commit(am)
-				am.surface_set_material(am.get_surface_count() - 1, sm)
-			var mi := MeshInstance3D.new()
-			mi.mesh = am
-			mi.position = cen
+			mm.visibility_range_end = MID * 0.5
+		var mi := _merge_groups(g1[ck], 1, cen)
+		if mi:
 			mi.visibility_range_begin = NEAR
 			mi.visibility_range_end = MID
-			mi.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
-			mi.set_meta("no_walk", true)
-			add_child(mi)
 	for ck: Vector2i in g0:
 		var cx := (ck.x + 0.5) * CELL0
 		var cz := (ck.y + 0.5) * CELL0
 		_cells0.append({"c": Vector3(cx, _hh(cx, cz), cz), "groups": g0[ck], "mm": [], "col": null, "up": false})
+
+
+static func _mergeable(key: String) -> bool:
+	return key.begins_with("ev|") or key == "kaide" or key == "tas"
+
+
+## Grupların (ev, kaide, taş) örneklerini tek ağa toplar: malzeme başına bir yüzey. cen: ağın dünya konumu.
+func _merge_groups(groups: Dictionary, lod: int, cen: Vector3) -> MeshInstance3D:
+	var by_mat := {}
+	for key: String in groups:
+		if not _mergeable(key):
+			continue
+		var m := _mesh_for(key, lod)
+		if m == null:
+			continue
+		for si in m.get_surface_count():
+			var sm: Material = m.surface_get_material(si)
+			if sm == null and m is PrimitiveMesh:
+				sm = (m as PrimitiveMesh).material
+			if not by_mat.has(sm):
+				var nst := SurfaceTool.new()
+				nst.begin(Mesh.PRIMITIVE_TRIANGLES)
+				by_mat[sm] = nst
+			for xf: Transform3D in groups[key]:
+				(by_mat[sm] as SurfaceTool).append_from(m, si, Transform3D(xf.basis, xf.origin - cen))
+	if by_mat.is_empty():
+		return null
+	var am := ArrayMesh.new()
+	for sm in by_mat:
+		(by_mat[sm] as SurfaceTool).commit(am)
+		am.surface_set_material(am.get_surface_count() - 1, sm)
+	var mi := MeshInstance3D.new()
+	mi.mesh = am
+	mi.position = cen
+	mi.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF if lod > 0 else GeometryInstance3D.SHADOW_CASTING_SETTING_ON
+	mi.set_meta("no_walk", true)
+	add_child(mi)
+	return mi
 
 
 static var _kaide_mesh: Mesh
