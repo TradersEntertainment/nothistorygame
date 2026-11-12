@@ -304,11 +304,7 @@ func _fly_hook(from: Vector3, to: Vector3) -> void:
 	var dur := 0.05 if GameState.autotest and not GameState.pace else 0.4
 	var mid := from.lerp(to, 0.5) + Vector3(0, 1.2, 0)
 	# Kancanın ardından ip elden açılır (yayma P3): elden çıkan parça kameranın önünde ve altında, yuvarlak kesitli
-	var line := MeshInstance3D.new()
-	line.set_meta("no_walk", true)
-	line.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
-	line.material_override = ThraceRoad.tube_material()
-	add_child(line)
+	var line := _rope_pool(self, 8, 0.014)      # sarkık ip: 9 nokta = 8 parça (ağ bir kez kurulur, kare başı yalnız Transform3D)
 	var tw := create_tween()
 	tw.tween_method(func(k: float):
 		if is_instance_valid(m):
@@ -317,10 +313,11 @@ func _fly_hook(from: Vector3, to: Vector3) -> void:
 			var c := player.camera
 			var hand := c.global_transform * Vector3(0.14, -0.3, -0.55)
 			var pts: Array = Stage.sag_points(hand, m.global_position, 0.1 + 0.4 * k, 8)
-			_tube_to(line, pts, 0.014), 0.0, 1.0, dur)
+			_rope_set(line, pts), 0.0, 1.0, dur)
 	await tw.finished
 	m.queue_free()
-	line.queue_free()
+	for seg: MeshInstance3D in line:
+		seg.queue_free()
 
 
 ## Yukarıdan balta: ip kopar, kanca suya
@@ -354,14 +351,8 @@ func _climb() -> void:
 	# Tırmanırken iki el ipte (yayma P3): kameranın önündeki parça yuvarlak kesitli, dış çizgisiz ip; küpeşteden üst
 	# yumruğa, alt yumruğa, oradan kadırganın güvertesine
 	hook.get_node("Line").visible = false
-	var line := MeshInstance3D.new()
-	line.set_meta("no_walk", true)
-	line.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
-	line.material_override = ThraceRoad.tube_material()
-	hook.add_child(line)
-	line.top_level = true
-	line.global_transform = Transform3D.IDENTITY
-	_tube_to(line, [rail_pt, low_pt], CLIMB_ROPE_R)
+	var line := _rope_pool(hook, 3, CLIMB_ROPE_R)      # küpeşte → üst yumruk → alt yumruk → halka: 3 parça
+	_rope_set(line, [rail_pt, low_pt])
 	var on_rope := func(_k: float) -> void:
 		var c := player.camera
 		var a := c.to_local(rail_pt)
@@ -372,7 +363,7 @@ func _climb() -> void:
 		var fl: Vector3 = player.free_rig.socket.global_position if player.free_rig and player.free_rig.socket else c.to_global(lp)
 		var fr: Vector3 = player.rig.socket.global_position if player.rig and player.rig.socket else c.to_global(rp)
 		var upv := c.global_transform.basis.y * 0.035      # avucun ortası
-		_tube_to(line, [rail_pt, fr + upv, fl + upv, low_pt], CLIMB_ROPE_R)
+		_rope_set(line, [rail_pt, fr + upv, fl + upv, low_pt])
 	var tw := create_tween()
 	tw.tween_property(player, "global_position", up, 2.2).set_trans(Tween.TRANS_SINE)
 	tw.parallel().tween_method(on_rope, 0.0, 1.0, 2.2)
@@ -407,9 +398,9 @@ func _climb() -> void:
 	var fall := create_tween()
 	fall.tween_property(player, "global_position", foot, 0.45).set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_IN)
 	fall.parallel().tween_method(func(_k: float):
-		_tube_to(line, _rope_clear([rail_pt, low_pt], player.camera, 0.3), 0.012), 0.0, 1.0, 0.45)
+		_rope_set(line, _rope_clear([rail_pt, low_pt], player.camera, 0.3)), 0.0, 1.0, 0.45)
 	await fall.finished
-	_tube_to(line, [rail_pt, low_pt], CLIMB_ROPE_R)
+	_rope_set(line, [rail_pt, low_pt])
 	Fx.trauma(0.6)
 	hook.queue_free()
 	_stand()
@@ -421,22 +412,49 @@ func _climb() -> void:
 const CLIMB_ROPE_R := 0.012
 
 
-## Boru ipi yeniden kurar; noktalar 5 mm'den az oynadıysa kurmaz (33o _guide_lay, 38o _rope_hands ile aynı koruma).
-func _tube_to(mi: MeshInstance3D, pts: Array, r: float) -> void:
-	if not is_instance_valid(mi) or pts.size() < 2:
-		return
-	var last: Array = mi.get_meta("tube_pts", [])
-	if last.size() == pts.size() and float(mi.get_meta("tube_r", 0.0)) == r:
-		var same := true
-		for i in pts.size():
-			if (last[i] as Vector3).distance_squared_to(pts[i]) > 0.000025:
-				same = false
-				break
-		if same:
-			return
-	mi.set_meta("tube_pts", pts.duplicate())
-	mi.set_meta("tube_r", r)
-	mi.mesh = ThraceRoad.tube_mesh(pts, r, Color("c8a878"))
+## İp parçaları (tırmanışta ve kanca uçuşunda ip her karede yeniden kurulmuyordu: nokta kayması 5 mm korumasını aşıyordu):
+## birim boy (−z yönünde 1 m) yuvarlak kesitli tek silindir ağı yarıçap başına bir kez kurulur; her ip parçası bu ağı paylaşır
+## ve kare başı yalnız Transform3D ile (uzunluk = z ölçeği) yerleşir. Ağ kurma çağrısı kare sayısından bağımsız.
+var _seg_meshes := {}
+
+
+func _seg_mesh(r: float) -> ArrayMesh:
+	if not _seg_meshes.has(r):
+		_seg_meshes[r] = ThraceRoad.tube_mesh([Vector3.ZERO, Vector3(0, 0, -1)], r, Color("c8a878"))
+	return _seg_meshes[r]
+
+
+## n parçalık ip havuzu: dünya uzayında (top_level), dış çizgisiz yuvarlak kesit, yürüme/çarpışma ağı değil
+func _rope_pool(parent: Node, n: int, r: float) -> Array:
+	var segs: Array = []
+	for i in n:
+		var mi := MeshInstance3D.new()
+		mi.set_meta("no_walk", true)
+		mi.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
+		mi.material_override = ThraceRoad.tube_material()
+		mi.mesh = _seg_mesh(r)
+		parent.add_child(mi)
+		mi.top_level = true
+		mi.visible = false
+		segs.append(mi)
+	return segs
+
+
+## İpi noktalar boyunca yerleştirir: pts.size()−1 parça kullanılır, fazlası gizlenir
+func _rope_set(segs: Array, pts: Array) -> void:
+	for i in segs.size():
+		var mi: MeshInstance3D = segs[i]
+		if not is_instance_valid(mi):
+			continue
+		var d: Vector3 = (pts[i + 1] - pts[i]) if i + 1 < pts.size() else Vector3.ZERO
+		var ln := d.length()
+		if ln < 0.001:
+			mi.visible = false
+			continue
+		var zu := -d / ln           # ağın −z yönü ipin yönüne gelir
+		var xu := zu.cross(Vector3.UP if absf(zu.y) < 0.95 else Vector3.RIGHT).normalized()
+		mi.global_transform = Transform3D(Basis(xu, zu.cross(xu), zu * ln), pts[i])
+		mi.visible = true
 
 
 ## İki uçlu ip kameraya min'den yakın geçiyorsa, en yakın noktasında kameranın önüne doğru itilir (üç noktalı ip).

@@ -158,7 +158,10 @@ func _build_wall() -> void:
 			continue
 		if absf(x - ROW_TO.x) < 2.6:
 			continue          # merdivenin ağzı boş (oyuncu buraya çıkar)
-		_guard_spots.append(Transform3D(Basis(Vector3.UP, PI), Vector3(x, WALK_Y, WALL_Z - 1.4)))
+		# Askerin yeri en yakın mazgal boşluğunun ortasına çekilir (en çok 0,85 m): merlonlar (1,2 m, 2,5 m aralık) alttan
+		# bakınca 1,1 m'lik siper gibi askeri arkasına alıyordu; boşluktaki asker ayaktan merdivenin dibinden de görünür
+		var gap_x := roundf((x + 21.25) / 2.5) * 2.5 - 21.25
+		_guard_spots.append(Transform3D(Basis(Vector3.UP, PI), Vector3(gap_x, WALK_Y, WALL_Z - 1.4)))
 	# Deniz kapısı ve önündeki dar taş rıhtım (üstü y 1,2), iki demir baba
 	Props.set_pattern(Props.solid(self, QUAY.size.x * Vector3(1, 0, 0) + Vector3(0, QUAY_Y + 1.0, QUAY.size.y),
 		Vector3(QUAY.get_center().x, QUAY_Y * 0.5 - 0.5, QUAY.get_center().y), Color.WHITE), Color("b8a888"), "ashlar")
@@ -537,17 +540,19 @@ var _hold_left := HOLD_TIME
 ## tayfa ve çatalın geldiği mazgal kadrajda); sonra oyuncu serbestçe bakar (eller dikmede kalır, kadraj dışına inebilir).
 const BRACE_AT := Vector3(0.0, 0.0, -9.18)     # galley yereli: ayağın (z −9,4) 0,22 m önü
 const BRACE_EYE := 1.15                         # çömelmiş göz yüksekliği
-const BRACE_LOOK := 2.75                        # girişte bakılan nokta: merdiven boyunca (m)
+const BRACE_LOOK := 3.2                         # girişte bakılan nokta: merdiven boyunca (m)
 const BRACE_HANDS := 1.42                       # ellerin dikmelerde tuttuğu yer (m): kolun uzandığı yer
-## Tırmanan iki tayfanın merdivendeki yeri (m): merdivenin üst yarısında. Ayağın dibinden bakınca 2,6 m'deki tayfa tam
-## tepede kalıyordu (yalnız bacakları kadrajda); üst yarıdakiler eller dikmedeyken baştan ayağa ve mazgalla birlikte görünür.
-const CLIMB_AT := 4.4
-const CLIMB_GAP := 3.0
+## Tırmanan iki tayfanın merdivendeki yeri (m): 3,5 ve 7,0 m (merdiven 10 m). Ayağın dibinden (kamera 2 m'de, merdiven 25°
+## yaslı) bakınca ikisi de 58-71° yükseklik açısında; bakış 42°'ye çevrilince baştan ayağa kadrajın üst üçte birinde, mazgalla
+## birlikte görünür (4,4 ve 7,4 m'de ikincisi öndekinin arkasında kapalı kalıyordu). Bakış bu yüzden BRACE_LOOK = 3,2 m.
+const CLIMB_AT := 3.5
+const CLIMB_GAP := 3.5
 
 
-## Tırmananlar basamağın biri sola, biri sağa yakın (alttaki, üsttekini ayaktan bakınca tümüyle kapatmasın)
+## Tırmananlar iki dikmeye yakın, biri solda biri sağda (±0,3 m; dikme ±0,4): alttaki, üsttekini ayaktan bakınca
+## kapatmasın; iki gövde (omuz ≈ 0,5 m) birbirine ve merdivene girmez, yan yana aralık 0,6 m
 func _climb_side(k: int) -> Vector3:
-	return ladder.global_transform.basis.x.normalized() * (0.1 if k == 0 else -0.1)
+	return ladder.global_transform.basis.x.normalized() * (0.3 if k == 0 else -0.3)
 var _both_on := false
 var _braced := false
 var _look_tw: Tween
@@ -785,13 +790,15 @@ func _fork_visual(on: bool) -> void:
 		add_child(_fork)
 		var rx := ladder.global_transform.basis.x.normalized()
 		var tip := ladder.point_at(ladder.height - 0.2) + rx * (Ladder.WIDTH * 0.5)
-		_fork.global_position = tip + rx * 1.1 + Vector3(0, 2.1, 0.5)      # siperin üstünden, gökyüzünün önünde iner
+		# Yandan, siperin üstünden uzanır (2,4 m yanda, 1,9 m yukarıda): ayaktan bakınca çatal gökyüzüne karşı yatay bir sırık
+		# olarak seçilir (eskiden 2,1 m yukarıdan inince sırık bakış çizgisine paralel kalıp bir noktaya düşüyordu)
+		_fork.global_position = tip + rx * 2.4 + Vector3(0, 1.9, 0.6)
 		_fork.look_at(tip, Vector3.UP)          # −z yerel: dişlerin yönü
 		var reach := (_fork.global_position - tip).length()
-		Props.cyl(_fork, 0.055, 3.2, Vector3(0, 0, -reach + 1.75), Color("9a7a50"), Vector3(90, 0, 0), 5)
-		Props.cyl(_fork, 0.025, 0.24, Vector3(0, 0, -reach + 0.16), Color("3a3a40"), Vector3(0, 0, 90), 4)      # çatalın kolu
+		Props.cyl(_fork, 0.11, 3.2, Vector3(0, 0, -reach + 1.75), Color("f0e0b0"), Vector3(90, 0, 0), 5)
+		Props.cyl(_fork, 0.025, 0.24, Vector3(0, 0, -reach + 0.16), Color("e8ecf0"), Vector3(0, 0, 90), 4)      # çatalın kolu
 		for sx: float in [-0.1, 0.1]:
-			Props.cyl(_fork, 0.018, 0.3, Vector3(sx, 0, -reach + 0.02), Color("3a3a40"), Vector3(90, 0, 0), 4)
+			Props.cyl(_fork, 0.035, 0.3, Vector3(sx, 0, -reach + 0.02), Color("e8ecf0"), Vector3(90, 0, 0), 4)
 		var back := _fork.global_transform.basis.z * 0.9
 		_fork.global_position += back       # siperin ardından uzanarak gelir
 		var tw := _fork.create_tween()

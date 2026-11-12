@@ -1,0 +1,15 @@
+# RINFO (ekranli, PACE=1, --hitchaudit)
+## 29o ONCE (once29o.txt) / SONRA (sonra29o.txt), D29O_T_CLIMB sonrasi ilk 3 ornek
+once29o
+RINFO scene=chapter29o t=36 draws=2782 objs=3077 prims=1257k vis=886k shadow=368k nodes=29660 proc=375.8ms phys=3.0ms
+RINFO scene=chapter29o t=38 draws=630 objs=837 prims=403k vis=210k shadow=191k nodes=29670 proc=233.9ms phys=2.9ms
+RINFO scene=chapter29o t=40 draws=1381 objs=1672 prims=1213k vis=510k shadow=701k nodes=29661 proc=236.8ms phys=3.5ms
+sonra29o
+RINFO scene=chapter29o t=36 draws=2792 objs=3087 prims=1264k vis=886k shadow=375k nodes=29659 proc=433.4ms phys=2.9ms
+RINFO scene=chapter29o t=38 draws=626 objs=833 prims=393k vis=206k shadow=185k nodes=29671 proc=231.7ms phys=2.7ms
+RINFO scene=chapter29o t=40 draws=1336 objs=1627 prims=1149k vis=476k shadow=670k nodes=29664 proc=307.1ms phys=3.3ms
+## 38o SONRA (son38o.txt), D38O_T_02 sonrasi ilk 3 ornek
+RINFO scene=chapter38o t=56 draws=2669 objs=3144 prims=2059k vis=1362k shadow=693k nodes=27171 proc=697.7ms phys=7.2ms
+RINFO scene=chapter38o t=58 draws=2622 objs=3097 prims=2024k vis=1333k shadow=688k nodes=27166 proc=834.0ms phys=5.2ms
+RINFO scene=chapter38o t=60 draws=2545 objs=3020 prims=1973k vis=1307k shadow=662k nodes=27171 proc=724.0ms phys=2.5ms
+## 38o ONCE (bu dalin ucu 613a3019) = denetci ham_rinfo.txt sonra_38o D38O_T_02: (cizim,nesne,ucgen_bin,gorunur_bin,golge_bin) (2726,3026,2205,1486,716) (2991,3466,2196,1484,708) (2958,3433,2154,1468,682)
