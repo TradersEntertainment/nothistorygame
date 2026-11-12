@@ -293,7 +293,7 @@ static func _b_studios(h: Node3D, k: float, lod: int, out: Dictionary) -> void:
 	for sg in [0.0, 1.0]:
 		K.sb(h, Vector3(0.25, 1.0, cl), Vector3(cx0 + sg * cw - (tc * 0.5 - 0.12) * (1.0 if sg > 0.5 else -1.0), Hcis + 0.5, cc.y), K.C_STONE, "ashlar")
 	# --- dış merdivenler ve tırmanış yolları ---
-	var xs := x0 + Lb * 0.35
+	var xs := x0 + 1.4
 	var n1 := _nsteps(Ha)
 	var rise1 := Ha / n1
 	for i in n1:
@@ -305,12 +305,13 @@ static func _b_studios(h: Node3D, k: float, lod: int, out: Dictionary) -> void:
 	# yan nef çatısından nave saçağına sandık basamakları (yüzey eğimli: y_of)
 	var aisle_y := func(_x: float, z: float) -> float:
 		return Ha + ar * clampf((hz + 0.2 - z) / (hz + 0.2 - (nw * 0.5 + 0.1)), 0.0, 1.0)
-	var zc3 := nw * 0.5 + 0.4 + 0.35
-	var n2 := maxi(1, ceili((Hn - aisle_y.call(0.0, zc3 + 1.5)) / 0.58))
-	var zbase := zc3 + 0.45 * n2
-	var xc3 := x0 + Lb * 0.35
-	var tp := K.crates(h, Vector3(xc3, 0.0, zbase), Vector2(0, -1), n2, 1.4, aisle_y, Hn, 0.45)
-	K.out_add(out, "climb", [Vector3(xc3, aisle_y.call(0.0, zbase + 0.9), zbase + 0.9), Vector3(tp.x, Hn, nw * 0.5 + 0.5), "sandik"])
+	var zcr := nw * 0.5 + 0.4 + 0.7
+	var y_c: float = aisle_y.call(0.0, zcr)
+	var n2 := maxi(1, ceili((Hn - y_c) / 0.46))
+	var xc3 := x0 + Lb * 0.55
+	var dep2 := 0.7
+	var tp := K.crates(h, Vector3(xc3 - dep2 * n2, 0.0, zcr), Vector2(1, 0), n2, 1.4, aisle_y, Hn, dep2)
+	K.out_add(out, "climb", [Vector3(xc3 - dep2 * n2 - 0.9, y_c, zcr), Vector3(tp.x, Hn, nw * 0.5 + 0.5), "sandik"])
 	# kuzey: hücre çatısına merdiven, hücre çatısından revak çatısına adım
 	var xa_mid := (xa0 + xn0) * 0.5
 	var n3 := _nsteps(Hcell + 0.1)

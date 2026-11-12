@@ -204,8 +204,8 @@ func _audit() -> Dictionary:
 				if bottom > 0.05:
 					var supported := false
 					for off in [Vector2.ZERO, Vector2(1, 1), Vector2(-1, 1), Vector2(1, -1), Vector2(-1, -1)]:
-						var px := gt.origin.x + off.x * (bs.size.x * 0.5 - 0.1)
-						var pz := gt.origin.z + off.y * (bs.size.z * 0.5 - 0.1)
+						var px: float = gt.origin.x + off.x * (bs.size.x * 0.5 - 0.1)
+						var pz: float = gt.origin.z + off.y * (bs.size.z * 0.5 - 0.1)
 						var q2 := PhysicsRayQueryParameters3D.create(Vector3(px, bottom - 0.02, pz), Vector3(px, -1.0, pz))
 						q2.exclude = [sb.get_rid()]
 						q2.hit_from_inside = true
