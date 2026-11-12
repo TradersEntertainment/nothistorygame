@@ -329,13 +329,14 @@ func _wet(on: bool) -> void:
 static func _puddle_mesh() -> ArrayMesh:
 	var st := SurfaceTool.new()
 	st.begin(Mesh.PRIMITIVE_TRIANGLES)
-	var radii := [0.0, 0.72, 0.86, 1.0]
-	var tint := [Color(0.5, 0.55, 0.63, 0.9), Color(0.42, 0.47, 0.55, 0.88), Color(0.12, 0.12, 0.14, 0.5), Color(0.12, 0.12, 0.14, 0.0)]
+	# Düzeltme turu: düz gri diskti; ortası gökyüzü açığı, kenara doğru belirgin koyulaşan ıslak halka, dışı saydam
+	var radii := [0.0, 0.34, 0.74, 0.88, 1.0]
+	var tint := [Color(0.66, 0.72, 0.80, 0.93), Color(0.56, 0.62, 0.71, 0.91), Color(0.32, 0.37, 0.46, 0.9), Color(0.09, 0.09, 0.11, 0.62), Color(0.09, 0.09, 0.11, 0.0)]
 	var n := 18
 	for i in n:
 		var a0 := TAU * i / n
 		var a1 := TAU * (i + 1) / n
-		for r in 3:
+		for r in 4:
 			var q := [[r, a0], [r + 1, a0], [r, a1], [r, a1], [r + 1, a0], [r + 1, a1]]
 			for k: Array in q:
 				var rr: float = radii[k[0]]
@@ -354,10 +355,17 @@ func _rain_rings(delta: float) -> void:
 		return
 	_ring_t = 0.12
 	var pp := player.global_position
-	for tries in 4:
+	var look := -player.camera.global_transform.basis.z
+	look.y = 0.0
+	look = look.normalized() if look.length() > 0.01 else Vector3.FORWARD
+	for tries in 8:
 		var e: Array = _puddle_pts[randi() % _puddle_pts.size()]
 		var at: Vector3 = e[0]
-		if Vector2(at.x - pp.x, at.z - pp.z).length() > 14.0:
+		var to := Vector2(at.x - pp.x, at.z - pp.z)
+		if to.length() > 14.0:
+			continue
+		# Düzeltme turu: halkalar oyuncunun önündeki birikintilerde açılır (arkada açılanlar görünmüyordu)
+		if tries < 6 and to.length() > 0.5 and Vector2(look.x, look.z).dot(to.normalized()) < 0.35:
 			continue
 		var off := Vector3(randf_range(-1.0, 1.0), 0, randf_range(-1.0, 1.0)) * float(e[1])
 		Vfx.water_ring(self, at + off, at.y - 0.048, 0.03, randf_range(0.18, 0.32), 0.55, 0.45)

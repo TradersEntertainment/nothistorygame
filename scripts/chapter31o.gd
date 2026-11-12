@@ -270,17 +270,14 @@ func _lower_obj() -> String:
 
 
 ## İp (P8: eskiden iki nokta arasına gerilmiş düz silindir, üst ucu pencerenin dışında havadaydı): Tolga'nın iki
-## elinin arasından pencerenin eşiğine, eşikten çocuğun göğsüne inen burgulu ip (Stage.rope). Çocuğun ağırlığıyla
-## gergin; eşik ile eller arasında az sarkar. a: eski üst uç (kullanılmaz, imza aynı kalsın diye), b: çocuktaki uç.
+## yumruğunun arasından pencerenin eşiğine, eşikten çocuğun göğsüne inen burgulu ip (Stage.rope). Çocuğun ağırlığıyla
+## gergin; eşik ile eller arasında az sarkar. İp ucu elin GERÇEK dünya konumundan alınır (_hands_tip). a: eski üst uç
+## (kullanılmaz, imza aynı kalsın diye), b: çocuktaki uç.
 func _rope_between(m: MeshInstance3D, _a: Vector3, b: Vector3) -> void:
 	if not is_instance_valid(m):
 		return
-	# Tolga'nın iki elinin arası: gövdenin önünde (kameradan değil gövdeden: kamera yüksekliği yumuşatılır, salınır)
-	var fwd := -player.global_transform.basis.z
-	fwd.y = 0.0
-	fwd = fwd.normalized() if fwd.length() > 0.01 else Vector3.FORWARD
-	var hands := player.global_position + Vector3(0, player.eye_height - 0.42, 0) + fwd * 0.46
-	if hands.distance_to(b) > 12.0:
+	var hands := _hands_tip()
+	if hands.distance_to(b) > 12.0:      # hızlandırılmış koşuda kamera salınımı ipi yüzlerce metreye uzatmasın
 		return
 	var sill := Vector3(WINDOW.x - 0.1, ROOM_Y + 0.53, WINDOW.z + clampf(b.z - WINDOW.z, -0.4, 0.4))
 	var pts: Array = []
@@ -292,16 +289,162 @@ func _rope_between(m: MeshInstance3D, _a: Vector3, b: Vector3) -> void:
 	Stage.rope_to(m, pts)
 
 
-## Kirişi kaldırırken iki el kirişin altında (P8: kiriş kara bir levha gibi havada kalkıyordu, el değmiyordu): Tolga'ya
-## en yakın noktasının iki yanından, alt yüzünden kavrar; eller kirişle birlikte kalkar (hold_both hedefi kiriş).
+## İki yumruğun ortası (dünya): sağ ve sol elin avuç içlerinden (HandRig.palm) okunur; ip tam elde biter. El yoksa
+## hold_both'un kamera-yerel noktalarının ortası.
+func _hands_tip() -> Vector3:
+	var r: HandRig = player.rig
+	var l: HandRig = player.free_rig
+	if r != null and l != null and r.palm != null and l.palm != null and r.is_inside_tree() and l.is_inside_tree():
+		var g := Vector3(0, -0.01, -0.07)        # yumruğun ortası (avuç uzayında: parmaklar -Z)
+		return (r.palm.to_global(g) + l.palm.to_global(g)) * 0.5
+	return player.camera.to_global(Vector3(0.005, -0.315, -0.48))
+
+
+## İki el nesnede (P8 düzeltme turu): player.hold_both + sol elin ağlarını tek ağda birleştirme. Sol el (free_hand) avuç,
+## parmak boğumları, başparmak ve kolluk olarak ~20 ayrı ağdır; iki elli üç anda (kiriş, ip, kazı) çizim sayısını
+## artırıyordu. Sol el görünür olunca (2 kare) yumruk pozunda ağlar köşe renkli tek ağa pişirilir, asıllar gizlenir; bırakınca geri.
+var _hand_bake: MeshInstance3D
+var _hand_hidden: Array = []
+var _hand_tok := 0
+var _hand_mat: StandardMaterial3D
+
+
+func _two_hands(left: Vector3, right: Vector3, target: Node3D = null) -> void:
+	player.hold_both(left, right, target)
+	_hand_tok += 1
+	var tok := _hand_tok
+	# Sol el görünür olunca (2 kare) yumruk hâlinde pişirilir: eller iki kare içinde tek ağa iner (eskiden 0,6 sn boyunca
+	# ~20 ayrı ağ çiziliyordu; bu üç-dört karelik sürede ağır ışıklı sahnelerde ek çizim +150'ye çıkıyordu)
+	for i in 2:
+		await get_tree().process_frame
+	if tok == _hand_tok and is_inside_tree():
+		_bake_free_hand(true)
+
+
+func _free_hands() -> void:
+	_hand_tok += 1
+	_bake_free_hand(false)
+	player.release_both()
+
+
+func _bake_free_hand(on: bool) -> void:
+	if not on:
+		if is_instance_valid(_hand_bake):
+			_hand_bake.queue_free()
+		_hand_bake = null
+		for mi in _hand_hidden:
+			if is_instance_valid(mi):
+				(mi as MeshInstance3D).visible = true
+		_hand_hidden.clear()
+		return
+	var fh: Node3D = player.free_hand
+	if _hand_bake != null or fh == null or not fh.is_inside_tree():
+		return
+	if player.free_rig != null and player.free_rig.palm != null:
+		player.free_rig.palm.rotation_degrees = Vector3.ZERO      # yumruk: Player._animate_free_hand'in tutuş pozu (curl −85)
+		player.free_rig.curl(-85.0)
+	var inv := fh.global_transform.affine_inverse()
+	var verts := PackedVector3Array()
+	var norms := PackedVector3Array()
+	var cols := PackedColorArray()
+	var idx := PackedInt32Array()
+	for node in fh.find_children("*", "MeshInstance3D", true, false):
+		var mi := node as MeshInstance3D
+		var sm := mi.material_override as StandardMaterial3D
+		if mi.mesh == null or sm == null or not mi.is_visible_in_tree():
+			continue
+		var xf := inv * mi.global_transform
+		var nb := xf.basis.inverse().transposed()
+		for si in mi.mesh.get_surface_count():
+			var arr := mi.mesh.surface_get_arrays(si)
+			var v: PackedVector3Array = arr[Mesh.ARRAY_VERTEX]
+			var n: PackedVector3Array = arr[Mesh.ARRAY_NORMAL]
+			var ix: PackedInt32Array = arr[Mesh.ARRAY_INDEX] if arr[Mesh.ARRAY_INDEX] != null else PackedInt32Array()
+			var base := verts.size()
+			for i in v.size():
+				verts.append(xf * v[i])
+				norms.append((nb * n[i]).normalized())
+				cols.append(sm.albedo_color)
+			if ix.size() == 0:
+				ix = PackedInt32Array(range(v.size()))
+			var mirror := xf.basis.determinant() < 0.0      # sol el aynalı (scale −1): üçgen sırası ters, yoksa arka yüz atılır
+			for i in range(0, ix.size() - 2, 3):
+				idx.append(base + ix[i])
+				idx.append(base + ix[i + 2 if mirror else i + 1])
+				idx.append(base + ix[i + 1 if mirror else i + 2])
+		_hand_hidden.append(mi)
+	if verts.is_empty():
+		return
+	var arrays := []
+	arrays.resize(Mesh.ARRAY_MAX)
+	arrays[Mesh.ARRAY_VERTEX] = verts
+	arrays[Mesh.ARRAY_NORMAL] = norms
+	arrays[Mesh.ARRAY_COLOR] = cols
+	arrays[Mesh.ARRAY_INDEX] = idx
+	var am := ArrayMesh.new()
+	am.add_surface_from_arrays(Mesh.PRIMITIVE_TRIANGLES, arrays)
+	if _hand_mat == null:
+		_hand_mat = Props.mat(Color.WHITE, 0.0, false, "", false).duplicate() as StandardMaterial3D
+		_hand_mat.vertex_color_use_as_albedo = true
+		_hand_mat.vertex_color_is_srgb = true
+	_hand_bake = MeshInstance3D.new()
+	_hand_bake.mesh = am
+	_hand_bake.material_override = _hand_mat
+	_hand_bake.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
+	fh.add_child(_hand_bake)
+	for mi in _hand_hidden:
+		(mi as MeshInstance3D).visible = false
+
+
+## Kirişi kaldırırken iki el kirişin altında (P8: kiriş kara bir levha gibi havada kalkıyordu, el değmiyordu; düzeltme
+## turu: eller kadrajın alt yarısında kirişi tutsun diye Tolga kirişin yanına çömelir). hold_both kutusu kolu 0,75 m ile
+## sınırlar; bu yüzden Tolga çömelir: göz kirişin kavranan yüzünün 0,3 m yanına ve ~0,45 m üstüne iner (diz hizası, göz 0,55 m),
+## bakış 40° aşağı olur: yüz kameranın yerelinde ≈ (0, −0,15, −0,52)'ye, yani iki elin ortasına düşer. Eller yüzün iki yanından (±0,26 m), kendine
+## bakan yüzün alt kenarından kavrar ve kirişle birlikte kalkar (hold_both hedefi kiriş); Tolga da kirişle birlikte doğrulur.
+const BEAM_EYE := 0.55
+const BEAM_PITCH := 40.0
+const BEAM_DIST := 0.3
+var _beam_face_w := Vector3.ZERO         # kavranan yüzün dünya konumu (kaldırmadan önce)
+var _beam_yaw_dir := Vector3.ZERO        # Tolga'nın bakış yönü (yatay)
+var _beam_stand := Vector3.ZERO          # Tolga'nın durduğu yer (dünya, yatay)
+
+
 func _hands_under_beam() -> void:
-	var eye := player.camera.global_position
 	var dir := Basis(Vector3.UP, deg_to_rad(30.0)) * Vector3(0, 0, 1)        # kirişin ekseni (yerelde)
 	var c := Vector3(0, 0, -1.2)
-	var loc := _fallen_beam.to_local(eye)
-	var t := clampf((loc - c).dot(dir), -2.0, 2.0)
+	var loc := _fallen_beam.to_local(player.global_position)
+	var t := clampf((loc - c).dot(dir), -1.6, 1.6)
 	var near := c + dir * t
-	player.hold_both(near - dir * 0.28 + Vector3(0, -0.13, 0), near + dir * 0.28 + Vector3(0, -0.13, 0), _fallen_beam)
+	var perp := Vector3.UP.cross(dir)
+	var sgn := 1.0 if (loc - c).dot(perp) >= 0.0 else -1.0
+	var face_pt := near + perp * sgn * 0.15 + Vector3(0, -0.05, 0)          # kendine bakan yüzün alt kenarı
+	_beam_face_w = _fallen_beam.to_global(face_pt)
+	# Yüze bakan yatay yön: kirişin yüz normali (dünyada)
+	_beam_yaw_dir = -(_fallen_beam.global_transform.basis * (perp * sgn)).normalized()
+	_beam_yaw_dir.y = 0.0
+	_beam_yaw_dir = _beam_yaw_dir.normalized()
+	# Tolga yüzün BEAM_DIST gerisine, kirişin kendine bakan tarafına iner (donuk oyuncu; QTE boyunca burada kalır)
+	_beam_stand = _beam_face_w - _beam_yaw_dir * BEAM_DIST
+	player.global_position = Vector3(_beam_stand.x, player.global_position.y, _beam_stand.z)
+	player.eye_height = BEAM_EYE
+	_beam_stoop(0.0, 0, true)
+	# Bilekler yüzün 10 cm ÖNÜNDE (yumruk bileğin 9 cm ilerisindedir: yüzün üstünde değil, yüze dayanır; eskiden yumruklar
+	# kirişin içinde kalıp bazı karelerde görünmüyordu)
+	var grip := face_pt + perp * sgn * 0.1 + Vector3(0, -0.02, 0)
+	_two_hands(grip - dir * 0.26, grip + dir * 0.26, _fallen_beam)
+
+
+## Kiriş kaldırılırken göz hizası kirişle birlikte yükselir (her kaldırışta ~0,27 m), bakış 35° aşağıda kalır (her karede).
+func _beam_stoop(dt: float, lifts: int, on: bool) -> void:
+	var goal := BEAM_EYE + 0.27 * lifts if on else Player.EYE
+	player.eye_height = goal if dt <= 0.0 else lerpf(player.eye_height, goal, clampf(dt * 8.0, 0.0, 1.0))
+	if on:
+		# Otomatik testin botu kaldırma başlarken oyuncuyu eski yerine ışınlar: kirişin yanına geri koyulur (donuk oyuncu)
+		player.global_position = Vector3(_beam_stand.x, player.global_position.y, _beam_stand.z)
+		var flat := 10.0
+		var tgt := player.global_position + _beam_yaw_dir * flat
+		tgt.y = player.global_position.y + player.eye_height - tan(deg_to_rad(BEAM_PITCH)) * flat
+		player.face(tgt)
 
 
 func _petrion_memory() -> float:
@@ -527,6 +670,7 @@ func _house_loop() -> bool:
 					player.global_position = azap.global_position + Vector3(-1.2, 0.05, 0.8)
 			"lift":
 				hud.set_objective(tr("UI_OBJ31O_LIFT") % lift, _fallen_beam.global_position + Vector3(0, 1.0, 0))
+				_beam_stoop(dt, lift, true)
 				if Input.is_action_just_pressed("jump"):
 					meter.press()
 				while _strokes.size() > 0:
@@ -548,7 +692,9 @@ func _house_loop() -> bool:
 						Audio.sfx("land_thud", -6.0, 0.9)
 				if lift >= 3:
 					meter.enabled = false
-					player.release_both()
+					_free_hands()
+					player.eye_height = Player.EYE
+					player.camera.rotation.x = deg_to_rad(-8.0)       # doğrulunca bakış kiriş için eğik kalmasın
 					hud.set_qte("")
 					var tw3 := _fallen_beam.create_tween()
 					tw3.tween_property(_fallen_beam, "position", _fallen_beam.position + Vector3(1.6, -0.1, 0), 0.5)
@@ -598,7 +744,7 @@ func _house_loop() -> bool:
 				if rope_mi == null:
 					# P8: burgulu, iki ucu bağlı ip (Stage.rope): Tolga'nın iki elinden pencerenin eşiğine, eşikten çocuğa
 					rope_mi = Stage.rope(_stage, WINDOW, WINDOW + Vector3.DOWN, 0.0, 0.022, Color("a08a5a") if _petrion_bonus > 0.0 else Color("a8402a"))
-					player.hold_both(Vector3(-0.07, -0.3, -0.46), Vector3(0.08, -0.33, -0.5))
+					_two_hands(Vector3(-0.07, -0.3, -0.46), Vector3(0.08, -0.33, -0.5))
 				var hold := Input.is_action_pressed("interact") or GameState.autotest
 				var input2 := Input.get_axis("move_left", "move_right")
 				if GameState.autotest:
@@ -617,7 +763,7 @@ func _house_loop() -> bool:
 					if is_instance_valid(rope_mi):
 						rope_mi.queue_free()
 					rope_mi = null
-					player.release_both()
+					_free_hands()
 					balance.visible = false
 					# Kadri uzanıp çocuğu ipten alır, yanına indirir (çocuk Kadri'nin yanına ışınlanıyordu)
 					Stage.reach(kadri, child.global_position + Vector3(0, 0.9, 0), 0.4)
@@ -644,7 +790,8 @@ func _house_loop() -> bool:
 				if GameState.autotest:
 					off = Vector3(1.4, 0, 0).rotated(Vector3.UP, randf() * TAU)
 				_ember_drop(player.global_position + off)
-	player.release_both()            # süre dolduysa kirişte ya da ipte tutan eller bırakır
+	_free_hands()            # süre dolduysa kirişte ya da ipte tutan eller bırakır
+	player.eye_height = Player.EYE
 	return false
 
 
@@ -741,6 +888,7 @@ func _eyup_phase() -> void:
 	await hud.say("SPK_AKSEMSEDDIN", "D31O_AK_03")
 	# Kazı: üç katman, her katmanda bir kök (Space ile kes)
 	_pit = Props.cyl(_stage, 0.9, 0.02, DIG + Vector3(0, 0.02, 0), Color("3a2a1c"), Vector3.ZERO, 16)
+	Props.cyl(_stage, 0.62, 0.02, DIG + Vector3(0, 0.032, 0), Color("21160e"), Vector3.ZERO, 16)       # düzeltme turu: çukurun derin içi (düz diskti)
 	_mound = Props.ball(_stage, 0.5, DIG + Vector3(1.6, 0.0, 0.4), Color("6a5034"), Vector3(1.0, 0.3, 1.0), 8)
 	# P8: çukurun çevresi çiğnenmiş çamur, yığının eteğine dökülen toprak (çukur yeşil çimenin ortasında düz bir diskti)
 	var gy := func(_x: float, _z: float) -> float: return DIG.y
@@ -842,10 +990,10 @@ func _shovel_tick(dt: float, digging: bool, near: bool) -> void:
 		_stage.add_child(_shovel)
 		_shovel_t = 0.0
 		_shovel_place(0.0, 0.0)
-		player.hold_both(Vector3(0, 0, 0.42), Vector3(0, 0, 0.02), _shovel)
+		_two_hands(Vector3(0, 0, 0.42), Vector3(0, 0, 0.02), _shovel)
 	elif not near and _shovel_on:
 		_shovel_on = false
-		player.release_both()
+		_free_hands()
 		if is_instance_valid(_shovel):
 			# Çukurun kenarına, yere yatırılır
 			_shovel.global_position = DIG + Vector3(0.6, 0.025, -1.3)
@@ -863,16 +1011,19 @@ func _shovel_tick(dt: float, digging: bool, near: bool) -> void:
 		Vfx.dust(self, DIG + Vector3(1.5, 0.3, 0.4), 0.3)      # savrulan toprak yığına düşer
 
 
-## Kürek dünyada: sapın ucu Tolga'nın belinin önünde ve biraz sağında, ağzı çukura (çukurun ortasının biraz önüne) iner.
+## Kürek dünyada (düzeltme turu: ağız yerden ~20 cm yukarıda kalıyordu): ağzın ortası çukurun ortasının biraz önüne, ZEMİNE
+## (itme anında toprağın içine) iner; sap başı ağızdan geriye, 1,06 m (Items "shovel": ağız sapın 0,98-1,11 m'sinde)
+## eğik doğrultuda, Tolga'nın belinin önünde ve biraz sağındadır. Savurmada ağız yığına doğru kalkar.
 func _shovel_place(push: float, toss: float) -> void:
 	var fwd := DIG - player.global_position
 	fwd.y = 0.0
 	fwd = fwd.normalized() if fwd.length() > 0.05 else -player.global_transform.basis.z
 	var right := fwd.cross(Vector3.UP).normalized()
-	var top := player.global_position + Vector3(0, 1.0 + toss * 0.18, 0) + fwd * (0.3 + push * 0.12) + right * (0.16 + toss * 0.1)
-	var aim := player.global_position.lerp(DIG, 0.62) + Vector3(0, -0.05, 0) + right * toss * 0.35
-	aim.y = DIG.y - 0.04 + toss * 0.4
-	var dir := (aim - top).normalized()
+	var aim := player.global_position.lerp(DIG, 0.75) + right * toss * 0.35
+	aim.y = DIG.y - 0.03 - push * 0.04 + toss * 0.45
+	var th := deg_to_rad(46.0 + push * 16.0 - toss * 14.0)        # sapın yere eğimi
+	var dir := fwd * cos(th) + Vector3.DOWN * sin(th)             # sap başından ağza
+	var top := aim - dir * 1.06 + right * 0.14
 	_shovel.global_transform = Transform3D(Basis.looking_at(-dir, Vector3.UP), top)
 
 

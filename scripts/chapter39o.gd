@@ -726,7 +726,8 @@ var _holder: Person                  # ipi aşağıda tutan sokak tayfası (penc
 var _rope_top: Node3D                # pencereden adamın başına
 var _rope_low: Node3D                # adamın ellerinden tayfanın ellerine
 var _holder_grip := Vector3.ZERO     # tayfanın ipi tuttuğu yer (dünya)
-var _rope_extra: Array = []          # tayfanın elinden yere inen artan ip ve kangal
+var _rope_extra: Array = []          # tayfanın ayağının dibindeki kangal
+var _coil_end := Vector3.ZERO        # kılavuz ipin kangaldaki ucu (dünya)
 
 
 ## İp: pencerenin kenarından sokaktaki tayfaya uzanır; adam ipin ucunda iner (önceden yalnız adam ışınlanıp düşüyordu).
@@ -745,19 +746,22 @@ func _start_rope() -> void:
 	_holder_grip = _holder.global_position + fwd * 0.34 + Vector3(0, 1.08, 0)
 	Stage.grip_hold(_holder, null, [_holder_grip + Vector3(0, 0.08, 0) + fwd * 0.04, _holder_grip])
 	var side := _holder.global_transform.basis.x
-	_rope_extra.append(Stage.rope_coil(self, _holder.global_position + side * 0.45 + fwd * 0.15, 0.22))
-	_rope_extra.append(Stage.rope(self, _holder_grip, _holder.global_position + side * 0.45 + fwd * 0.15 + Vector3(0, 0.08, 0), 0.25, 0.024, Color("8a6a40")))
-	player.hold_both(Vector3(-0.07, -0.3, -0.46), Vector3(0.08, -0.33, -0.5))
+	# Artan ip ayrı bir ağ değil: kılavuz ipin (_rope_low) devamı, tayfanın elinden kangalın üstüne iner (düzeltme turu: tek ağ);
+	# kangal 2,5 tur (eskiden 3,5: üçgen bütçesi)
+	var coil_at := _holder.global_position + side * 0.45 + fwd * 0.15
+	_rope_extra.append(Stage.rope_coil(self, coil_at, 0.22, 2.5))
+	_coil_end = coil_at + Vector3(0, 0.08, 0)
+	_two_hands(Vector3(-0.07, -0.3, -0.46), Vector3(0.08, -0.33, -0.5))
 
 
 ## İpi noktalardan geçirir (Stage.rope_to; ip düğümü sahnenin kökünde, dünya = yerel). Yük taşıyan parçalar gergin, eller ile
 ## direk arasındaki parça az sarkar. a → b; via verilirse a → via → b (ip direğin üstünden döner).
-func _rope_between(n: Node3D, a: Vector3, b: Vector3, via := Vector3.INF, sag := 0.02) -> void:
+func _rope_between(n: Node3D, a: Vector3, b: Vector3, via := Vector3.INF, sag := 0.02, sag_a := 0.06) -> void:
 	if n == null or not is_instance_valid(n) or not n is MeshInstance3D:
 		return
 	var pts: Array = []
 	if via != Vector3.INF:
-		pts = Stage.sag_points(a, via, 0.06, 4)
+		pts = Stage.sag_points(a, via, sag_a, 4)
 		pts.pop_back()
 		pts.append_array(Stage.sag_points(via, b, sag, 4))
 	else:
@@ -770,13 +774,112 @@ func _rope_between(n: Node3D, a: Vector3, b: Vector3, via := Vector3.INF, sag :=
 	Stage.rope_to(n as MeshInstance3D, pts)
 
 
-## Tolga'nın iki elinin arası (dünya): gövdenin önünde, göğüs hizasının altında (kameradan değil gövdeden: kamera
-## yüksekliği yumuşatılır, hızlandırılmış koşuda salınır).
+## İki el nesnede (P8 düzeltme turu): player.hold_both + sol elin ağlarını tek ağda birleştirme. Sol el (free_hand) avuç,
+## parmak boğumları, başparmak ve kolluk olarak ~20 ayrı ağdır; iki elli üç anda (kiriş, ip, kazı) çizim sayısını
+## artırıyordu. Sol el görünür olunca (2 kare) yumruk pozunda ağlar köşe renkli tek ağa pişirilir, asıllar gizlenir; bırakınca geri.
+var _hand_bake: MeshInstance3D
+var _hand_hidden: Array = []
+var _hand_tok := 0
+var _hand_mat: StandardMaterial3D
+
+
+func _two_hands(left: Vector3, right: Vector3, target: Node3D = null) -> void:
+	player.hold_both(left, right, target)
+	_hand_tok += 1
+	var tok := _hand_tok
+	# Sol el görünür olunca (2 kare) yumruk hâlinde pişirilir: eller iki kare içinde tek ağa iner (eskiden 0,6 sn boyunca
+	# ~20 ayrı ağ çiziliyordu; bu üç-dört karelik sürede ağır ışıklı sahnelerde ek çizim +150'ye çıkıyordu)
+	for i in 2:
+		await get_tree().process_frame
+	if tok == _hand_tok and is_inside_tree():
+		_bake_free_hand(true)
+
+
+func _free_hands() -> void:
+	_hand_tok += 1
+	_bake_free_hand(false)
+	player.release_both()
+
+
+func _bake_free_hand(on: bool) -> void:
+	if not on:
+		if is_instance_valid(_hand_bake):
+			_hand_bake.queue_free()
+		_hand_bake = null
+		for mi in _hand_hidden:
+			if is_instance_valid(mi):
+				(mi as MeshInstance3D).visible = true
+		_hand_hidden.clear()
+		return
+	var fh: Node3D = player.free_hand
+	if _hand_bake != null or fh == null or not fh.is_inside_tree():
+		return
+	if player.free_rig != null and player.free_rig.palm != null:
+		player.free_rig.palm.rotation_degrees = Vector3.ZERO      # yumruk: Player._animate_free_hand'in tutuş pozu (curl −85)
+		player.free_rig.curl(-85.0)
+	var inv := fh.global_transform.affine_inverse()
+	var verts := PackedVector3Array()
+	var norms := PackedVector3Array()
+	var cols := PackedColorArray()
+	var idx := PackedInt32Array()
+	for node in fh.find_children("*", "MeshInstance3D", true, false):
+		var mi := node as MeshInstance3D
+		var sm := mi.material_override as StandardMaterial3D
+		if mi.mesh == null or sm == null or not mi.is_visible_in_tree():
+			continue
+		var xf := inv * mi.global_transform
+		var nb := xf.basis.inverse().transposed()
+		for si in mi.mesh.get_surface_count():
+			var arr := mi.mesh.surface_get_arrays(si)
+			var v: PackedVector3Array = arr[Mesh.ARRAY_VERTEX]
+			var n: PackedVector3Array = arr[Mesh.ARRAY_NORMAL]
+			var ix: PackedInt32Array = arr[Mesh.ARRAY_INDEX] if arr[Mesh.ARRAY_INDEX] != null else PackedInt32Array()
+			var base := verts.size()
+			for i in v.size():
+				verts.append(xf * v[i])
+				norms.append((nb * n[i]).normalized())
+				cols.append(sm.albedo_color)
+			if ix.size() == 0:
+				ix = PackedInt32Array(range(v.size()))
+			var mirror := xf.basis.determinant() < 0.0      # sol el aynalı (scale −1): üçgen sırası ters, yoksa arka yüz atılır
+			for i in range(0, ix.size() - 2, 3):
+				idx.append(base + ix[i])
+				idx.append(base + ix[i + 2 if mirror else i + 1])
+				idx.append(base + ix[i + 1 if mirror else i + 2])
+		_hand_hidden.append(mi)
+	if verts.is_empty():
+		return
+	var arrays := []
+	arrays.resize(Mesh.ARRAY_MAX)
+	arrays[Mesh.ARRAY_VERTEX] = verts
+	arrays[Mesh.ARRAY_NORMAL] = norms
+	arrays[Mesh.ARRAY_COLOR] = cols
+	arrays[Mesh.ARRAY_INDEX] = idx
+	var am := ArrayMesh.new()
+	am.add_surface_from_arrays(Mesh.PRIMITIVE_TRIANGLES, arrays)
+	if _hand_mat == null:
+		_hand_mat = Props.mat(Color.WHITE, 0.0, false, "", false).duplicate() as StandardMaterial3D
+		_hand_mat.vertex_color_use_as_albedo = true
+		_hand_mat.vertex_color_is_srgb = true
+	_hand_bake = MeshInstance3D.new()
+	_hand_bake.mesh = am
+	_hand_bake.material_override = _hand_mat
+	_hand_bake.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
+	fh.add_child(_hand_bake)
+	for mi in _hand_hidden:
+		(mi as MeshInstance3D).visible = false
+
+
+## Tolga'nın iki yumruğunun ortası (dünya): sağ ve sol elin avuç içlerinden (HandRig.palm) okunur, ip tam elde biter.
+## El yoksa hold_both'un kamera-yerel noktalarının ortası (kameradan değil gövdeden hesap, hızlandırılmış koşuda
+## kamera yüksekliği salındığı için ipi yüzlerce metreye uzatıyordu: _rope_between 12 m'yi aşan parçayı kurmaz).
 func _hands_point() -> Vector3:
-	var fwd := -player.global_transform.basis.z
-	fwd.y = 0.0
-	fwd = fwd.normalized() if fwd.length() > 0.01 else Vector3.FORWARD
-	return player.global_position + Vector3(0, player.eye_height - 0.42, 0) + fwd * 0.46
+	var r: HandRig = player.rig
+	var l: HandRig = player.free_rig
+	if r != null and l != null and r.palm != null and l.palm != null and r.is_inside_tree() and l.is_inside_tree():
+		var g := Vector3(0, -0.01, -0.07)        # yumruğun ortası (avuç uzayında: parmaklar -Z)
+		return (r.palm.to_global(g) + l.palm.to_global(g)) * 0.5
+	return player.camera.to_global(Vector3(0.005, -0.315, -0.48))
 
 
 func _fire() -> void:
@@ -862,7 +965,7 @@ func _fire() -> void:
 		if _holder != null and is_instance_valid(old_man):
 			var bar := Vector3(city.lower_window.x - signf(city.lower_window.x) * 0.2, Petrion.ROOM_Y + 1.17, city.lower_window.z)
 			_rope_between(_rope_top, _hands_point(), old_man.global_position + Vector3(0, 1.3, 0), bar, 0.01)
-			_rope_between(_rope_low, old_man.global_position + Vector3(0, 1.25, 0), _holder_grip, Vector3.INF, 0.12)
+			_rope_between(_rope_low, old_man.global_position + Vector3(0, 1.25, 0), _coil_end, _holder_grip, 0.2, 0.12)
 		# Bot
 		if GameState.autotest:
 			if not inside and not _man_follow:
@@ -905,7 +1008,7 @@ func _fire() -> void:
 		hud.bark("SPK_SAILOR", "D39O_SA_ROPE", 2.5)
 		await get_tree().create_timer(1.6, false).timeout
 	await hud.fade_to(1.0, 0.5)
-	player.release_both()
+	_free_hands()
 	for n in [_rope_top, _rope_low, _holder] + _rope_extra:
 		if is_instance_valid(n):
 			n.queue_free()

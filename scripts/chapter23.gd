@@ -406,10 +406,11 @@ func _offer_card() -> Node3D:
 	var card := Node3D.new()
 	Props.box(card, Vector3(0.09, 0.055, 0.003), Vector3.ZERO, Color("fbf8f0"))
 	Props.box(card, Vector3(0.006, 0.055, 0.0035), Vector3(-0.042, 0, 0.0005), Color("b3262d"))
-	for spec in [["TOLGA", Vector3(0.003, 0.012, 0.002), Color("2a2a30"), 0.07],
-			["Sigorta · Hayat, Kasko, Konut", Vector3(0.003, -0.004, 0.002), Color("5a5a64"), 0.07],
-			["Tel: 0532 ···", Vector3(0.003, -0.018, 0.002), Color("8a8a94"), 0.03]]:
-		Props.label(card, spec[0], spec[1], 32, spec[2], Vector3.ZERO, spec[3])
+	# Kartın yazıları (düzeltme turu: strings.csv dışı sabit metin kalmasın): üç satır şerit, kalın başlık + iki ince satır
+	for spec in [[Vector3(-0.013, 0.012, 0.002), Vector3(0.034, 0.0075, 0.001), Color("2a2a30")],
+			[Vector3(-0.005, -0.004, 0.002), Vector3(0.05, 0.004, 0.001), Color("5a5a64")],
+			[Vector3(-0.016, -0.018, 0.002), Vector3(0.028, 0.004, 0.001), Color("8a8a94")]]:
+		Props.box(card, spec[1], spec[0], spec[2])
 	player.camera.add_child(card)
 	card.position = CARD_AT
 	card.rotation_degrees = Vector3(-8, 6, 0)

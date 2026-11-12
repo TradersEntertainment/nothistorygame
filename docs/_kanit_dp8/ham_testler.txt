@@ -1,0 +1,100 @@
+# dP8 başsız test özeti (Godot 4.4.1, --headless --max-fps 20, timeout 900)
+# sütunlar: bölüm varyant tur | sonuç | yasaklı satır sayısı | AUTOTEST satırı (kısaltılmış)
+24   (varsayılan) r1  | PASS | yasak=0 | AUTOTEST PASS chapter=24 variant= outcome=24.1 stumbles=0 kid=true niko=false steadied=0 kid_t=0.3
+24   (varsayılan) r2  | PASS | yasak=0 | AUTOTEST PASS chapter=24 variant= outcome=24.1 stumbles=0 kid=true niko=false steadied=0 kid_t=0.3
+24   eclipse      r1  | PASS | yasak=0 | AUTOTEST PASS chapter=24 variant=eclipse outcome=24.1 stumbles=0 kid=true niko=false steadied=0 kid_t=0.2
+24   eclipse      r2  | PASS | yasak=0 | AUTOTEST PASS chapter=24 variant=eclipse outcome=24.1 stumbles=0 kid=true niko=false steadied=0 kid_t=0.2
+24   late         r1  | PASS | yasak=0 | AUTOTEST PASS chapter=24 variant=late outcome=24.2 stumbles=0 kid=false niko=false steadied=0 kid_t=0.3
+24   late         r2  | PASS | yasak=0 | AUTOTEST PASS chapter=24 variant=late outcome=24.2 stumbles=0 kid=false niko=false steadied=0 kid_t=0.2
+24   niko         r1  | PASS | yasak=0 | AUTOTEST PASS chapter=24 variant=niko outcome=24.1 stumbles=0 kid=true niko=true steadied=0 kid_t=0.2
+24   niko         r2  | PASS | yasak=0 | AUTOTEST PASS chapter=24 variant=niko outcome=24.1 stumbles=0 kid=true niko=true steadied=0 kid_t=0.2
+24   niko_slow    r1  | PASS | yasak=0 | AUTOTEST PASS chapter=24 variant=niko_slow outcome=24.1 stumbles=0 kid=true niko=true steadied=1 kid_t=23.8
+24   niko_slow    r2  | PASS | yasak=0 | AUTOTEST PASS chapter=24 variant=niko_slow outcome=24.1 stumbles=0 kid=true niko=true steadied=1 kid_t=23.7
+25   (varsayılan) r1  | PASS | yasak=0 | AUTOTEST PASS chapter=25 variant= outcome=25.1 caught=0 candle=true tezkire=false marco=false
+25   (varsayılan) r2  | PASS | yasak=0 | AUTOTEST PASS chapter=25 variant= outcome=25.1 caught=0 candle=true tezkire=false marco=false
+25   caught       r1  | PASS | yasak=0 | AUTOTEST PASS chapter=25 variant=caught outcome=25.2 caught=0 candle=true tezkire=false marco=false
+25   caught       r2  | PASS | yasak=0 | AUTOTEST PASS chapter=25 variant=caught outcome=25.2 caught=0 candle=true tezkire=false marco=false
+25   kid          r1  | PASS | yasak=0 | AUTOTEST PASS chapter=25 variant=kid outcome=25.1 caught=0 candle=true tezkire=false marco=true
+25   kid          r2  | PASS | yasak=0 | AUTOTEST PASS chapter=25 variant=kid outcome=25.1 caught=0 candle=true tezkire=false marco=true
+25   osm          r1  | PASS | yasak=0 | AUTOTEST PASS chapter=25 variant=osm outcome=25.1 caught=0 candle=false tezkire=false marco=false
+25   osm          r2  | PASS | yasak=0 | AUTOTEST PASS chapter=25 variant=osm outcome=25.1 caught=0 candle=false tezkire=false marco=false
+25   osm_caught   r1  | PASS | yasak=0 | AUTOTEST PASS chapter=25 variant=osm_caught outcome=25.2 caught=2 candle=false tezkire=false marco=false
+25   osm_caught   r2  | PASS | yasak=0 | AUTOTEST PASS chapter=25 variant=osm_caught outcome=25.2 caught=2 candle=false tezkire=false marco=false
+25   osm_tez      r1  | PASS | yasak=0 | AUTOTEST PASS chapter=25 variant=osm_tez outcome=25.1 caught=1 candle=false tezkire=true marco=false
+25   osm_tez      r2  | PASS | yasak=0 | AUTOTEST PASS chapter=25 variant=osm_tez outcome=25.1 caught=1 candle=false tezkire=true marco=false
+25   pass         r1  | PASS | yasak=0 | AUTOTEST PASS chapter=25 variant=pass outcome=25.1 caught=0 candle=true tezkire=false marco=false
+25   pass         r2  | PASS | yasak=0 | AUTOTEST PASS chapter=25 variant=pass outcome=25.1 caught=0 candle=true tezkire=false marco=false
+23   (varsayılan) r1  | PASS | yasak=0 | AUTOTEST PASS chapter=23 variant= outcome=23.1 deviation=0 card=true singed=false letter=false
+23   (varsayılan) r2  | PASS | yasak=0 | AUTOTEST PASS chapter=23 variant= outcome=23.1 deviation=0 card=true singed=false letter=false
+23   creative     r1  | PASS | yasak=0 | AUTOTEST PASS chapter=23 variant=creative outcome=23.2 deviation=3 card=true singed=false letter=false
+23   creative     r2  | PASS | yasak=0 | AUTOTEST PASS chapter=23 variant=creative outcome=23.2 deviation=3 card=true singed=false letter=false
+23   letter       r1  | PASS | yasak=0 | AUTOTEST PASS chapter=23 variant=letter outcome=23.1 deviation=0 card=true singed=false letter=true
+23   letter       r2  | PASS | yasak=0 | AUTOTEST PASS chapter=23 variant=letter outcome=23.1 deviation=0 card=true singed=false letter=true
+23   osm          r1  | PASS | yasak=0 | AUTOTEST PASS chapter=23 variant=osm outcome=23.1 deviation=0 card=true singed=false letter=false
+23   osm          r2  | PASS | yasak=0 | AUTOTEST PASS chapter=23 variant=osm outcome=23.1 deviation=0 card=true singed=false letter=false
+23   pass         r1  | PASS | yasak=0 | AUTOTEST PASS chapter=23 variant=pass outcome=23.1 deviation=0 card=true singed=false letter=false
+23   pass         r2  | PASS | yasak=0 | AUTOTEST PASS chapter=23 variant=pass outcome=23.1 deviation=0 card=true singed=false letter=false
+23   singed       r1  | PASS | yasak=0 | AUTOTEST PASS chapter=23 variant=singed outcome=23.1 deviation=0 card=true singed=true letter=false
+23   singed       r2  | PASS | yasak=0 | AUTOTEST PASS chapter=23 variant=singed outcome=23.1 deviation=0 card=true singed=true letter=false
+10h  (varsayılan) r1  | PASS | yasak=0 | AUTOTEST PASS chapter=10h variant= outcome=10H.1 truth=3 direnc=0 paradox=0
+10h  (varsayılan) r2  | PASS | yasak=0 | AUTOTEST PASS chapter=10h variant= outcome=10H.1 truth=3 direnc=0 paradox=0
+10h  honest       r1  | PASS | yasak=0 | AUTOTEST PASS chapter=10h variant=honest outcome=10H.1 truth=3 direnc=0 paradox=10
+10h  honest       r2  | PASS | yasak=0 | AUTOTEST PASS chapter=10h variant=honest outcome=10H.1 truth=3 direnc=0 paradox=10
+10h  open         r1  | PASS | yasak=0 | AUTOTEST PASS chapter=10h variant=open outcome=10H.1 truth=3 direnc=0 paradox=10
+10h  open         r2  | PASS | yasak=0 | AUTOTEST PASS chapter=10h variant=open outcome=10H.1 truth=3 direnc=0 paradox=10
+10h  pass         r1  | PASS | yasak=0 | AUTOTEST PASS chapter=10h variant=pass outcome=10H.1 truth=1 direnc=0 paradox=0
+10h  pass         r2  | PASS | yasak=0 | AUTOTEST PASS chapter=10h variant=pass outcome=10H.1 truth=1 direnc=0 paradox=0
+10h  save         r1  | PASS | yasak=0 | AUTOTEST PASS chapter=10h variant=save outcome=10H.1 truth=3 direnc=3 paradox=10
+10h  save         r2  | PASS | yasak=0 | AUTOTEST PASS chapter=10h variant=save outcome=10H.1 truth=3 direnc=3 paradox=10
+10h  save1        r1  | PASS | yasak=0 | AUTOTEST PASS chapter=10h variant=save1 outcome=10H.1 truth=3 direnc=1 paradox=10
+10h  save1        r2  | PASS | yasak=0 | AUTOTEST PASS chapter=10h variant=save1 outcome=10H.1 truth=3 direnc=1 paradox=10
+10h  shame        r1  | PASS | yasak=0 | AUTOTEST PASS chapter=10h variant=shame outcome=10H.2 truth=0 direnc=0 paradox=0
+10h  shame        r2  | PASS | yasak=0 | AUTOTEST PASS chapter=10h variant=shame outcome=10H.2 truth=0 direnc=0 paradox=0
+12b  (varsayılan) r1  | PASS | yasak=0 | AUTOTEST PASS chapter=12b variant= outcome=12B.1 world= honest=true
+12b  (varsayılan) r2  | PASS | yasak=0 | AUTOTEST PASS chapter=12b variant= outcome=12B.1 world= honest=true
+12b  d2           r1  | PASS | yasak=0 | AUTOTEST PASS chapter=12b variant=d2 outcome=12B.1 world= honest=true
+12b  d2           r2  | PASS | yasak=0 | AUTOTEST PASS chapter=12b variant=d2 outcome=12B.1 world= honest=true
+12b  d3           r1  | PASS | yasak=0 | AUTOTEST PASS chapter=12b variant=d3 outcome=12B.1 world= honest=true
+12b  d3           r2  | PASS | yasak=0 | AUTOTEST PASS chapter=12b variant=d3 outcome=12B.1 world= honest=true
+12b  lie          r1  | PASS | yasak=0 | AUTOTEST PASS chapter=12b variant=lie outcome=12B.2 world= honest=false
+12b  lie          r2  | PASS | yasak=0 | AUTOTEST PASS chapter=12b variant=lie outcome=12B.2 world= honest=false
+12b  year         r1  | PASS | yasak=0 | AUTOTEST PASS chapter=12b variant=year outcome=12B.3 world= honest=false
+12b  year         r2  | PASS | yasak=0 | AUTOTEST PASS chapter=12b variant=year outcome=12B.3 world= honest=false
+31o  (varsayılan) r1  | PASS | yasak=0 | AUTOTEST PASS chapter=31o variant= outcome=31O.1 house=true(163) falls=0 signs=3 wrong=0 sun=true lashes=3 mis
+31o  (varsayılan) r2  | PASS | yasak=0 | AUTOTEST PASS chapter=31o variant= outcome=31O.1 house=true(163) falls=0 signs=3 wrong=0 sun=true lashes=3 mis
+31o  late         r1  | PASS | yasak=0 | AUTOTEST PASS chapter=31o variant=late outcome=31O.2 house=true(158) falls=1 signs=3 wrong=2 sun=false lashes=
+31o  late         r2  | PASS | yasak=0 | AUTOTEST PASS chapter=31o variant=late outcome=31O.2 house=true(159) falls=1 signs=3 wrong=2 sun=false lashes=
+31o  petrion_bad  r1  | PASS | yasak=0 | AUTOTEST PASS chapter=31o variant=petrion_bad outcome=31O.1 house=true(163) falls=0 signs=3 wrong=0 sun=true l
+31o  petrion_bad  r2  | PASS | yasak=0 | AUTOTEST PASS chapter=31o variant=petrion_bad outcome=31O.1 house=true(163) falls=0 signs=3 wrong=0 sun=true l
+31o  petrion_bad  r3  | PASS | yasak=0 | AUTOTEST PASS chapter=31o variant=petrion_bad outcome=31O.1 house=true(163) falls=0 signs=3 wrong=0 sun=true l
+31o  petrion_bad  r4  | PASS | yasak=0 | AUTOTEST PASS chapter=31o variant=petrion_bad outcome=31O.1 house=true(163) falls=0 signs=3 wrong=0 sun=true l
+31o  petrion_bad  r5  | PASS | yasak=0 | AUTOTEST PASS chapter=31o variant=petrion_bad outcome=31O.1 house=true(163) falls=0 signs=3 wrong=0 sun=true l
+31o  petrion_bad  r6  | PASS | yasak=0 | AUTOTEST PASS chapter=31o variant=petrion_bad outcome=31O.1 house=true(162) falls=0 signs=3 wrong=0 sun=true l
+31o  petrion_bad  r7  | PASS | yasak=0 | AUTOTEST PASS chapter=31o variant=petrion_bad outcome=31O.1 house=true(163) falls=0 signs=3 wrong=0 sun=true l
+31o  petrion_bad  r8  | PASS | yasak=0 | AUTOTEST PASS chapter=31o variant=petrion_bad outcome=31O.1 house=true(163) falls=0 signs=3 wrong=0 sun=true l
+31o  petrion_bad  r9  | PASS | yasak=0 | AUTOTEST PASS chapter=31o variant=petrion_bad outcome=31O.1 house=true(163) falls=0 signs=3 wrong=0 sun=true l
+31o  petrion_bad  r10 | PASS | yasak=0 | AUTOTEST PASS chapter=31o variant=petrion_bad outcome=31O.1 house=true(163) falls=0 signs=3 wrong=0 sun=true l
+31o  petrion_bad  r11 | PASS | yasak=0 | AUTOTEST PASS chapter=31o variant=petrion_bad outcome=31O.1 house=true(163) falls=0 signs=3 wrong=0 sun=true l
+31o  petrion_bad  r12 | PASS | yasak=0 | AUTOTEST PASS chapter=31o variant=petrion_bad outcome=31O.1 house=true(163) falls=0 signs=3 wrong=0 sun=true l
+31o  petrion_ok   r1  | PASS | yasak=0 | AUTOTEST PASS chapter=31o variant=petrion_ok outcome=31O.1 house=true(203) falls=0 signs=3 wrong=0 sun=true la
+31o  petrion_ok   r2  | PASS | yasak=0 | AUTOTEST PASS chapter=31o variant=petrion_ok outcome=31O.1 house=true(203) falls=0 signs=3 wrong=0 sun=true la
+39o  (varsayılan) r1  | PASS | yasak=0 | AUTOTEST PASS chapter=39o variant= outcome=39O.1 flags=6/6 lost=0 wrong=0 door=98 broke=false tez=1 struggle=0
+39o  (varsayılan) r2  | PASS | yasak=0 | AUTOTEST PASS chapter=39o variant= outcome=39O.1 flags=6/6 lost=0 wrong=0 door=98 broke=false tez=1 struggle=0
+39o  late         r1  | PASS | yasak=1 | AUTOTEST PASS chapter=39o variant=late outcome=39O.2 flags=4/6 lost=2 wrong=0 door=0 broke=true tez=0 struggle
+      >> VISAUDIT overlap scene=chapter39o.tscn a=CityLife b=CityLife{carry} at=(-33.4, 2.6, -50.3) src=Chapter39o>Petrion>SiegeField>CityLife>Person|Chapter39o>Petrion>SiegeField>CityLife>Person
+39o  late         r2  | PASS | yasak=0 | AUTOTEST PASS chapter=39o variant=late outcome=39O.2 flags=4/6 lost=2 wrong=0 door=0 broke=true tez=0 struggle
+39o  pass         r1  | PASS | yasak=0 | AUTOTEST PASS chapter=39o variant=pass outcome=39O.1 flags=6/6 lost=0 wrong=0 door=98 broke=false tez=1 strugg
+39o  pass         r2  | PASS | yasak=0 | AUTOTEST PASS chapter=39o variant=pass outcome=39O.1 flags=6/6 lost=0 wrong=0 door=98 broke=false tez=1 strugg
+39o  sailor_bad   r1  | PASS | yasak=0 | AUTOTEST PASS chapter=39o variant=sailor_bad outcome=39O.1 flags=6/6 lost=0 wrong=0 door=98 broke=false tez=1 
+39o  sailor_bad   r2  | PASS | yasak=0 | AUTOTEST PASS chapter=39o variant=sailor_bad outcome=39O.1 flags=6/6 lost=0 wrong=0 door=98 broke=false tez=1 
+39o  sailor_ok    r1  | PASS | yasak=0 | AUTOTEST PASS chapter=39o variant=sailor_ok outcome=39O.1 flags=6/6 lost=0 wrong=0 door=99 broke=false tez=1 s
+39o  sailor_ok    r2  | PASS | yasak=0 | AUTOTEST PASS chapter=39o variant=sailor_ok outcome=39O.1 flags=6/6 lost=0 wrong=0 door=99 broke=false tez=1 s
+39o  tezkire      r1  | PASS | yasak=0 | AUTOTEST PASS chapter=39o variant=tezkire outcome=39O.1 flags=6/6 lost=0 wrong=0 door=98 broke=false tez=3 str
+39o  tezkire      r2  | PASS | yasak=0 | AUTOTEST PASS chapter=39o variant=tezkire outcome=39O.1 flags=6/6 lost=0 wrong=0 door=98 broke=false tez=3 str
+6    (varsayılan) r1  | PASS | yasak=0 | AUTOTEST PASS chapter=6 variant= branch=6a outcome=6a.1 paradox=10 mistakes=0 telsiz=4
+6    (varsayılan) r2  | PASS | yasak=0 | AUTOTEST PASS chapter=6 variant= branch=6a outcome=6a.1 paradox=10 mistakes=0 telsiz=4
+26   (varsayılan) r1  | PASS | yasak=0 | AUTOTEST PASS chapter=26 variant= outcome=26.1 water=3 repaired=3 cleared=2 world= gun=3/4 gunner=2/2
+26   (varsayılan) r2  | PASS | yasak=0 | AUTOTEST PASS chapter=26 variant= outcome=26.1 water=3 repaired=3 cleared=2 world= gun=3/4 gunner=3/3
+30   (varsayılan) r1  | PASS | yasak=0 | AUTOTEST PASS chapter=30 variant= outcome=30.1 gun=3/4 pushed=2 boarders=0 duel=true rifle=4
+30   (varsayılan) r2  | PASS | yasak=0 | AUTOTEST PASS chapter=30 variant= outcome=30.1 gun=3/4 pushed=2 boarders=0 duel=true rifle=4
+# toplam koşu=96  PASS=96  yasaklı satır içeren koşu=1

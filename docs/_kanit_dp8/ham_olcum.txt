@@ -1,0 +1,128 @@
+# dP8 ölçümleri (ham). Yöntem: olay-hizalı sonda (aynı kod noktası, ilk 2 kare atılır, kare başına okunur); draws = toplam çizim çağrısı, vis = ana geçiş çizim çağrısı, prims = toplam ilkel (üçgen). xvfb + llvmpipe, 1280x720, --autotest.
+
+## 31o — TABAN 1e3a9b60, koşu 1 (vs_base0_31o.txt)
+beam_lift0     n= 2 draws=   894 (892-897) vis=   530 sh=     0 prims=    970k
+beam_lift1     n= 2 draws=   892 (891-893) vis=   527 sh=     0 prims=    968k
+beam_lift2     n= 2 draws=   885 (884-886) vis=   521 sh=     0 prims=    967k
+rope_lower     n=13 draws=  3478 (3451-3518) vis=  3176 sh=     0 prims=   4292k
+dig            n=19 draws=   609 (536-623) vis=   332 sh=     0 prims=    780k
+dig_root       n=10 draws=   703 (677-723) vis=   350 sh=     0 prims=    783k
+
+## 31o — TABAN 1e3a9b60, koşu 2 (fin3_base0_31o_p2.txt)
+beam_lift0     n= 1 draws=  1007 (1007-1007) vis=   642 sh=     0 prims=   1015k
+beam_lift1     n= 2 draws=  1031 (1030-1032) vis=   667 sh=     0 prims=   1041k
+beam_lift2     n= 2 draws=  1079 (1077-1081) vis=   715 sh=     0 prims=   1072k
+rope_lower     n=13 draws=  3486 (3460-3519) vis=  3184 sh=     0 prims=   4352k
+dig            n=19 draws=   609 (537-619) vis=   332 sh=     0 prims=    784k
+dig_root       n=10 draws=   699 (681-718) vis=   347 sh=     0 prims=    779k
+
+## 31o — SONRA (kiriş tutuşu eski: yüze bitişik), koşu 1 (fin2_31o_p1.txt)
+beam_lift0     n= 1 draws=   900 (900-900) vis=   535 sh=     0 prims=   1067k
+beam_lift1     n= 2 draws=   934 (933-934) vis=   570 sh=     0 prims=   1112k
+beam_lift2     n= 2 draws=   956 (955-956) vis=   592 sh=     0 prims=   1100k
+rope_lower     n=13 draws=  3624 (3583-3645) vis=  3322 sh=     0 prims=   4270k
+dig            n=19 draws=   606 (561-623) vis=   329 sh=     0 prims=    807k
+dig_root       n=10 draws=   700 (683-719) vis=   348 sh=     0 prims=    808k
+
+## 31o — SONRA (kiriş tutuşu eski), koşu 2 (fin2_31o_p2.txt)
+beam_lift0     n= 2 draws=   822 (822-823) vis=   458 sh=     0 prims=   1030k
+beam_lift1     n= 2 draws=   829 (817-841) vis=   465 sh=     0 prims=   1043k
+beam_lift2     n= 2 draws=   822 (821-823) vis=   458 sh=     0 prims=   1030k
+rope_lower     n=13 draws=  3554 (3501-3586) vis=  3252 sh=     0 prims=   4006k
+dig            n=19 draws=   607 (557-620) vis=   331 sh=     0 prims=    799k
+dig_root       n=10 draws=   704 (679-734) vis=   351 sh=     0 prims=    808k
+
+## 31o — SONRA (son kod), koşu 1 (fin3_31o_p1.txt)
+beam_lift0     n= 2 draws=   819 (814-824) vis=   455 sh=     0 prims=   1037k
+beam_lift1     n= 2 draws=   828 (827-830) vis=   464 sh=     0 prims=   1048k
+beam_lift2     n= 2 draws=   820 (818-823) vis=   456 sh=     0 prims=   1019k
+rope_lower     n=13 draws=  3542 (3461-3580) vis=  3240 sh=     0 prims=   4072k
+dig            n=19 draws=   608 (561-623) vis=   331 sh=     0 prims=    809k
+dig_root       n=10 draws=   700 (679-719) vis=   347 sh=     0 prims=    805k
+
+## 31o — SONRA (son kod), koşu 2 (fin3_31o_p2.txt)
+beam_lift0     n= 2 draws=   813 (810-816) vis=   448 sh=     0 prims=   1016k
+beam_lift1     n= 2 draws=   818 (817-819) vis=   453 sh=     0 prims=   1013k
+beam_lift2     n= 2 draws=   820 (820-820) vis=   456 sh=     0 prims=   1017k
+rope_lower     n=14 draws=  3598 (3562-3644) vis=  3296 sh=     0 prims=   4190k
+dig            n=19 draws=   607 (565-619) vis=   331 sh=     0 prims=    800k
+dig_root       n= 6 draws=   688 (679-692) vis=   334 sh=     0 prims=    798k
+
+## 31o — ÖNCE 10c615b0 (prev_31o.txt; bu koşuda vis/sh okunmuyordu)
+beam_lift0     n= 2 draws=  1038 (1027-1048) prims=   1025k
+beam_lift1     n= 2 draws=  1066 (1050-1083) prims=   1052k
+beam_lift2     n= 2 draws=  1104 (1103-1105) prims=   1076k
+rope_lower     n=13 draws=  3562 (3549-3578) prims=   4381k
+dig            n=19 draws=   622 (551-642) prims=    795k
+dig_root       n=10 draws=   721 (697-740) prims=    804k
+
+## 39o — fin2_base0_39o_p1
+fire39_0_1     n= 1 draws=   526 (526-526) vis=   225 sh=     0 prims=    626k
+fire39_1_1     n=15 draws=   346 (335-402) vis=    41 sh=     0 prims=     36k
+
+## 39o — fin2_39o_p1
+fire39_0_1     n= 1 draws=   530 (530-530) vis=   229 sh=     0 prims=    626k
+fire39_1_1     n=14 draws=   338 (327-390) vis=    33 sh=     0 prims=     30k
+P8TRI rope_top=1140 rope_low=648 kangal+ek=492 (ucgen)
+P8HP ip ucu ekranda=(645, 616) / (1280.0, 720.0) ; ip ucu - avuc: 0.000 m
+P8HP ip ucu ekranda=(645, 616) / (1280.0, 720.0) ; ip ucu - avuc: 0.000 m
+
+## 39o — fin2_39o_p2
+fire39_0_1     n= 1 draws=   522 (522-522) vis=   221 sh=     0 prims=    626k
+fire39_1_1     n=16 draws=   337 (327-391) vis=    32 sh=     0 prims=     31k
+P8TRI rope_top=1296 rope_low=648 kangal+ek=492 (ucgen)
+P8HP ip ucu ekranda=(645, 616) / (1280.0, 720.0) ; ip ucu - avuc: 0.000 m
+P8HP ip ucu ekranda=(645, 616) / (1280.0, 720.0) ; ip ucu - avuc: 0.000 m
+
+## 39o — ÖNCE 10c615b0 (prev_39o.txt)
+fire39_0_1     n= 1 draws=   526 (526-526) prims=    626k
+fire39_1_1     n=17 draws=   364 (347-411) prims=     45k
+
+## Eller kapalı/açık deneyi (31o kiriş, eski poz 0,72/35°/0,35; toplam çizim)
+beam_noh:
+beam_lift0     n= 2 draws=  1266 (1261-1272) prims=   1451k
+beam_lift1     n= 2 draws=  1276 (1270-1281) prims=   1444k
+beam_lift2     n= 2 draws=  1278 (1277-1279) prims=   1455k
+beam_h:
+beam_lift0     n= 1 draws=  1418 (1418-1418) prims=   1520k
+beam_lift1     n= 2 draws=  1424 (1423-1425) prims=   1525k
+beam_lift2     n= 2 draws=  1416 (1411-1420) prims=   1505k
+
+## Poz taraması (eller kapalı, toplam çizim)
+beam3_0.72_35_0.35:
+beam_lift0     n= 2 draws=  1536 (1534-1537) prims=   1569k
+beam_lift1     n= 2 draws=  1542 (1539-1545) prims=   1588k
+beam_lift2     n= 2 draws=  1535 (1533-1537) prims=   1562k
+beam3_0.55_40_0.3:
+beam_lift0     n= 2 draws=   900 (897-903) prims=   1072k
+beam_lift1     n= 2 draws=   938 (933-943) prims=   1114k
+beam_lift2     n= 2 draws=   953 (949-957) prims=   1094k
+
+## 39o RINFO (denetçinin yöntemi: ekranlı, her 2 sn; ÖNCE#1/#2 = 1e3a9b60'ın iki ayrı koşusu; SONRA#1 = ip birleştirme öncesi sürüm, SONRA#2 = ip birleştirmeli sürüm (kılavuz ip tek ağ, kangal 2,5 tur); ikisi de sol el pişirmesinden önceki ara sürümdür)
+t     ÖNCE#1(çizim/üçgen k)  ÖNCE#2          SONRA#1         SONRA#2
+30     5386/ 7050k    4680/ 5008k    4533/ 4970k    3725/ 3876k
+32     3533/ 3437k    3499/ 3855k    3546/ 3498k    3330/ 3415k
+35     3070/ 3210k    2861/ 3134k    2767/ 3084k    3078/ 3349k
+37     2967/ 3294k    2455/ 2311k    2469/ 2479k    2358/ 2237k
+39     2503/ 2350k    2389/ 2300k    2670/ 2522k    2324/ 2269k
+42     1937/ 1838k     895/ 1069k    2148/ 2079k    1277/ 1342k
+44      732/  758k     340/   34k     367/  372k     385/  103k
+46      338/   22k     335/    4k     327/    6k     332/   25k
+48      338/   22k     338/   22k     332/   25k     228/    6k
+50     4588/ 5209k    4568/ 5308k    4578/ 5253k    4588/ 5332k
+53     6861/ 8282k    6767/ 8070k    6535/ 8074k    7013/ 8233k
+55     2162/ 2313k    2224/ 2345k    2625/ 2449k    2230/ 2329k
+
+ÖNCE#1 -> ÖNCE#2: n=25  çizim medyan -1.0% (en çok +4.1%)  üçgen medyan +0.0% (en çok +12.2%, >+%8: 1 örnek)
+ÖNCE#1 -> SONRA#1: n=25  çizim medyan +0.0% (en çok +21.4%)  üçgen medyan +0.2% (en çok +13.6%, >+%8: 2 örnek)
+ÖNCE#2 -> SONRA#2: n=26  çizim medyan +0.3% (en çok +42.7%)  üçgen medyan +0.3% (en çok +525.0%, >+%8: 4 örnek)
+ÖNCE#1 -> SONRA#2: n=25  çizim medyan -0.6% (en çok +3.1%)  üçgen medyan +0.0% (en çok +13.6%, >+%8: 1 örnek)
+(ÖNCE#1 -> ÖNCE#2 aynı kodun iki koşusudur: gürültü tabanı. t=42 civarı yangın sahnesine geçiş anıdır, ±%100 oynar.)
+
+## 24 yağmur halkası görüşte oranı (başsız, --autotest; is_position_in_frustum ile)
+ÖNCE 10c615b0: toplam=50 görüşte=5 (%10)
+SONRA        : toplam=40 görüşte=7 (%18)   [küçük örnek: sağanak evresi otomatik testte kısa]
+
+## Hareket sınaması (repo dışı sahne, 12 Person + 6 muhafız, Crowd.idle_vary ile ve ayrı kontrol grubu idle_vary'siz, 60 sn oyun süresi)
+eşik 0,04 rad: 18/18 kişi hareket etti (kontrol grubu da 18/18); eşik 0,15 rad: 18/18 (kontrol grubu da 18/18)
+=> Person'lar zaten sürekli hafif sallanıyor; idle_vary'nin ayrık jestleri (baş sallama, iç çekme) bu ölçütle ayrışmıyor: KANITSIZ.
