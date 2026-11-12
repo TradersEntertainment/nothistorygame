@@ -1,0 +1,67 @@
+{
+  "aciklama": "Niko için üç karakter yönü: her yönde aynı 12 anahtarın önerilen yeni metni. Yalnız öneri: i18n/strings.csv değişmedi. Ayrıntı ve gerekçe: docs/NIKO_YENIDEN.md",
+  "anahtarlar": ["D4B_N_01", "D4B_N_02", "D4B_N_03", "D6B_N_GULL", "D4B_N_GATE", "D4B_N_SPY", "D4B_N_CELL", "D6B_N_PERMIT", "D6B_N_E_03", "MG_HAG_NIKO_OPEN", "D6B_N_BYE", "D24_NK_SAVED"],
+  "oneri": "b",
+  "yonler": [
+    {
+      "id": "a",
+      "ad": "Esnaf nöbetçi (her şeyin bir hesabı var)",
+      "ses_tarifi_en": "A Greek man in his late thirties from the Constantinople waterfront, a fishmonger and boat-hirer drafted onto the sea walls; he speaks a quick, practical market Turkish with a light Greek lilt, mid-pitched and a little hoarse from calling out prices. Not a narrator, not an announcer, not a cartoon: a real man recorded where he stands, on a cold stone wall at night, tired and hungry but still quick on his feet. He raises his voice only to carry across distance, never for effect.",
+      "okuma_notu": "Konuşma sesi pazarlık temposunda: hızlı, yuvarlak, gülümseyerek ama gülmeden. Uzaktan seslenirken (zincir, rıhtım) sesi bağırmaz, taşır: çarşıda karşı tezgâha seslenir gibi. Tehditlerini bile fiyat söyler gibi söyler. Para dışı bir şey söylediğinde (çocuk kuru, sağ dön) hız düşer ve ses alçalır; o anlar az ve kısa.",
+      "replikler": {
+        "D4B_N_01": "Hey, fesli! Zincir yol değil! Geçeceksen geçiş parası var!",
+        "D4B_N_02": "Gece geçişi iki katı! Düşersen seni ben çıkarırım, o da ayrı hesap!",
+        "D4B_N_03": "Kapı şu dipte, fesli. Gel. Yolda üstüne ne gelirse hesaba yazarım.",
+        "D6B_N_GULL": "Koş, casus! Martı iznini kaptı! O kâğıt olmadan seni zindana atarlar, ben de kefil olamam!",
+        "D4B_N_GATE": "Dur. Kimsin? Cebinde ne var? Göster, ona göre konuşuruz.",
+        "D4B_N_SPY": "Fes mi o? Türk casusu! Saray casus başına ödül veriyor!",
+        "D4B_N_CELL": "Zindan defteri: adın, baban, fesin rengi. Yatak parası yok, sevin.",
+        "D6B_N_PERMIT": "Şehirde kalacaksan Misafir İzni lazım. Theodoros verir, en sondaki oda. Öbür altı odaya hiç girme; orada mühür sayarlar, para saymazlar, iş çıkmaz.",
+        "D6B_N_E_03": "İmparator diyor: mektubu Sultan'a götür. Yol parası yok.",
+        "MG_HAG_NIKO_OPEN": "Kayık kuzenimin, ama kuzen bugün nöbette. Elli akçe, bir gün. Güneş batmadan getir; kuzen akşam sayar.",
+        "D6B_N_BYE": "Git, casus! Bayrağın parasını almadım, unutma! Sağ dön de ödersin!",
+        "D24_NK_SAVED": "Çocuk kuru. Bunun parasını kimseden almam. Senden de almam."
+      }
+    },
+    {
+      "id": "b",
+      "ad": "Eski nöbetçi (hepsini gördü, hiçbirine şaşırmıyor)",
+      "ses_tarifi_en": "A Greek soldier around fifty who has stood watch on the sea walls of Constantinople for thirty years; low, dry, slightly rough baritone, unhurried, with a light Greek accent in his Turkish and the flatness of a man on his third night without proper sleep. Not a narrator, not an announcer, not a jolly giant: a real guard recorded on the wall, speaking to the person in front of him, not to an audience. Mostly quiet and clipped; when he calls out, it is a trained sentry's call, short and practical.",
+      "okuma_notu": "Varsayılan: alçak, tek nefeste, kısa cümleler arasında kısa duruşlar; espriyi vurgulamaz, düz söyler (komedi düzlükten gelir). Surdan seslenme bir nöbetçi çağrısıdır: yüksek ama sakin, öfkesiz, iki kelimede biter. Hiç gülmez; yalnız Bölüm 19-24'te sesi bir parça yumuşar. 'Olur.' ve 'Geçer.' her seferinde aynı düz tonda.",
+      "replikler": {
+        "D4B_N_01": "Kim var orada? ...Fesli. Zincirde. Gece yarısı. Olur.",
+        "D4B_N_02": "Zincirden in, fesli. Ben ok atmam. Ok bitti. Tavuk var, onu atarım.",
+        "D4B_N_03": "Kapı şu dipte. Yürü. Başını eğ; elime ne geçerse atacağım, kusura bakma.",
+        "D6B_N_GULL": "Martı. İznin gitti. Koş, casus; kâğıtsız yakalanırsan seni yine bana getirirler, ben de yine yazarım.",
+        "D4B_N_GATE": "Dur. Adın sonra. Cebinde ne var, önce onu göster.",
+        "D4B_N_SPY": "Fes. Türk casusu. Bu ay üçüncü. Öbür ikisi balıkçıydı.",
+        "D4B_N_CELL": "Zindan defteri. Adın, baban, fesin rengi. Acelesi yok, sabah yazarız.",
+        "D6B_N_PERMIT": "Kalacaksan Misafir İzni lazım. Theodoros verir, en sondaki oda. Öbür altı oda bugün yalnız mühür sayıyor. Sayar dururlar. Sen sona git.",
+        "D6B_N_E_03": "İmparator diyor: mektup. Sultan'a. Git.",
+        "MG_HAG_NIKO_OPEN": "Kayık kuzenimin. Kuzen bilmiyor, bilmesin. Elli akçe, bir gün. Akşama getir, kuzen nöbetten dönmeden.",
+        "D6B_N_BYE": "Git, casus. Dümdüz yürü, koşma. ...Annene selam söyle.",
+        "D24_NK_SAVED": "Çocuk kuru. Otuz yıldır bu surdayım. Bu iyi bir gündü."
+      }
+    },
+    {
+      "id": "c",
+      "ad": "Acemi nöbetçi (korkusunu sesiyle örtüyor)",
+      "ses_tarifi_en": "A Greek youth of about twenty, a fisherwoman's son from the Petrion quarter, given a helmet too big for him and his first real night watch on the walls; light, slightly reedy tenor that cracks upward when he bluffs, quick and breathless, light Greek accent in his market Turkish. Not a narrator, not an announcer, not a cartoon kid: a real scared young man recorded on the wall at night, trying to sound like the veterans. His loudness is fear, so it drops the moment he is not afraid.",
+      "okuma_notu": "Blöf yaparken (zincir, rıhtım, yakalama) yüksek ve hızlı, cümle sonunda ses inceliyor; kendini düzelttiği yerde ('...Yok, okum yok') ses birden normal konuşmaya düşer. Korkunca Rumca bir kelime kaçar. Bölüm 6'dan sonra bağırmaz; Bölüm 19-24'te sesi yaşından büyük, sakin. Bağırmanın bir sebebi var: sebebi yoksa bağırmaz.",
+      "replikler": {
+        "D4B_N_01": "Kim var orada?! Dur! Ben nöbetçiyim! Fesli! Kımıldama!",
+        "D4B_N_02": "Okum var! ...Yok, okum yok. Ama tavuğum var! Ciddiyim!",
+        "D4B_N_03": "Kapıya yürü, fesli! Ben buradayım! ...Korktuğumdan değil, nöbet bu.",
+        "D6B_N_GULL": "Martı kaptı! Koş, casus, koş! İzinsiz yakalanırsan zindan, beni de nöbetten alırlar!",
+        "D4B_N_GATE": "Dur! Kimsin? Ne getirdin? Elindekini göster, yavaş!",
+        "D4B_N_SPY": "Fes! Türk casusu! Benim ilk casusum! Annem inanmayacak!",
+        "D4B_N_CELL": "Zindan formu. Adın, baban, fesin rengi. Yazmayı yeni öğrendim, yavaş söyle.",
+        "D6B_N_PERMIT": "Şehirde kalmak için Misafir İzni lazım. Theodoros verir, en sondaki oda. Öbür altı odaya girme; ben girdim, bütün gün mühür saydım.",
+        "D6B_N_E_03": "İmparator diyor: mektubu Sultan'a götür. ...Lütfen dedi, duydun mu?",
+        "MG_HAG_NIKO_OPEN": "Kuzenimin kayığı. Kuzenim bilmiyor. Elli akçe, bir gün. Akşama getir; yoksa annem beni öldürür, kuzenimi de.",
+        "D6B_N_BYE": "Git, casus! Sağ git! Seni ben yakaladım, unutma! Başkası yakalamasın!",
+        "D24_NK_SAVED": "Çocuk kuru. Bağırmadım bak, Tolga. Bütün gün hiç bağırmadım."
+      }
+    }
+  ]
+}
