@@ -292,9 +292,15 @@ func _pole_show(p: float, l: Dictionary = {}) -> void:
 	# kaymış durur: o kayma da düşülür.
 	var fr := lad.get_child(0) as Node3D
 	var s := HOLD_Y / up.y
+	# Oyuncu eli hedefe bir kare sonra koyar (Player._process bu döngüden önce işler); o karede bakış bir adım daha dönmüş
+	# olur: dikme noktası o adımın kamerasıyla izdüşürülür (yoksa dönerken eller dikmeden kayar)
+	var yaw1 := lerp_angle(player.rotation.y, atan2(-to.x, -to.z), w)
+	var pitch1 := lerpf(player.camera.rotation.x, clampf(atan2(to.y, Vector2(to.x, to.z).length()), deg_to_rad(-30.0), deg_to_rad(10.0)), w)
+	var cam1 := Transform3D(Basis.from_euler(Vector3(0.0, yaw1, 0.0)) * Basis.from_euler(Vector3(pitch1, 0.0, 0.0)), player.camera.global_position)
+	var cam1_inv := cam1.affine_inverse()
 	var pts: Array = []
 	for sx: float in [-Ladder.WIDTH * 0.5, Ladder.WIDTH * 0.5]:
-		var q := player.camera.to_local(fr.to_global(Vector3(sx, s, -0.05)))
+		var q := cam1_inv * fr.to_global(Vector3(sx, s, -0.05))
 		pts.append(q * (HAND_D / maxf(-q.z, 0.05)))
 	if (pts[0] as Vector3).x > (pts[1] as Vector3).x:
 		pts.reverse()                    # sol el ekranın solundaki dikmede (eller çaprazlanmaz)
