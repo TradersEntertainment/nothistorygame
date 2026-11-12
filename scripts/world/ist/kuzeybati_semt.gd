@@ -79,6 +79,7 @@ static func build_aetios(host: Node3D, k: float = 0.5, lod: int = 0) -> void:
 			var hb := Props.solid(c.root, Vector3(3.0, 2.4, 3.0), hp + Vector3(0, 1.2, 0), Color.WHITE)
 			Props.set_pattern(hb, Color("c8b088"), "plaster")
 			var hr := Props.prism(c.root, Vector3(3.8, 1.0, 3.6), hp + Vector3(0, 2.9, 0), Color("b08a4a"))
+			_prism_solid(hr, Vector3(3.8, 1.0, 3.6))
 			Props.box(c.root, Vector3(0.7, 1.6, 0.05), hp + Vector3(0.6, 0.8, 1.52), IstKbCtx.WOOD)
 		var well := Props.cyl(c.root, 0.9, 0.9, Vector3(10.0 * c.k, 0.45, 2.0 * c.k), IstKbCtx.STONE_D, Vector3.ZERO, 10)
 		Props.make_solid(well)
@@ -101,17 +102,6 @@ static func build_aetios(host: Node3D, k: float = 0.5, lod: int = 0) -> void:
 	var b := Vector3((-L * 0.5 - t * 1.0) * c.k + 0.0, hh, 14.0)
 	if lod < 2:
 		Props.ramp(c.root, a, b, 3.0, Color("8a7a5a"))
-
-
-static func perches_aetios(k: float = 0.5) -> Array:
-	var c := _nul(k, 100.0)
-	return [c.to_local(Vector3(-122.0 * k, 9.0 * k + 0.1, -44.0 * k)), c.to_local(Vector3(122.0 * k, 9.0 * k + 0.1, 44.0 * k))]
-
-
-static func climbs_aetios(k: float = 0.5) -> Array:
-	var c := _nul(k, 100.0)
-	var hh := 9.0 * k
-	return [[c.to_local(Vector3(-122.0 * k - 8.0, 0.0, 0.0)), c.to_local(Vector3(-122.0 * k - 1.0, hh, 0.0)), "basamak"]]
 
 
 # ----------------------------------------------------------------------------------------------------------------
@@ -144,14 +134,13 @@ static func build_kaligaria(host: Node3D, k: float = 0.5, lod: int = 0) -> void:
 			var rr := Props.prism(c.root, Vector3(hd + 0.9, 1.4, hw + 0.4), Vector3(xc, hh + 0.7, zc), IstKbCtx.TILE_OLD, Vector3(0, 90, 0))
 			rr.material_override = Props.mat(IstKbCtx.TILE, 0.0, false, "tiles" if lod < 2 else "")
 			if lod < 2:
-				# çatı çarpışması: düz tabla (eğimli çatı görsel; yürünür düz yüzey çatı altında)
-				var cap := Props.solid(c.root, Vector3(hw - 0.2, 0.3, hd - 0.2), Vector3(xc, hh + 0.15, zc), Color("5a3a24"))
+				_prism_solid(rr, Vector3(hd + 0.9, 1.4, hw + 0.4))
 			if lod == 0:
 				var fz: float = zc - row * hd * 0.5            # sokak cephesi
 				var nrm := 0.0 if row < 0 else 180.0           # cephe normali: row<0 (kuzey sıra) güneye (+z) bakar
 				# dükkân tezgâhı (sabit boy)
 				var tz: float = fz - row * 0.45
-				var cnt := Props.solid(c.root, Vector3(hw * 0.7, 0.95, 0.6), Vector3(xc - hw * 0.1, 0.475, tz - row * 0.05), Color.WHITE)
+				var cnt := Props.solid(c.root, Vector3(hw * 0.7, 0.95, 0.6), Vector3(xc - hw * 0.1, 0.475, fz - row * 0.3), Color.WHITE)
 				Props.set_pattern(cnt, IstKbCtx.WOOD, "wood")
 				# sundurma: 2,2 m yükseklikte, 1,3 m çıkıntılı katı tabla (alçak sundurma = tırmanış yolu)
 				var aw_y: float = minf(2.3, hh - 0.4)
@@ -189,7 +178,9 @@ static func build_kaligaria(host: Node3D, k: float = 0.5, lod: int = 0) -> void:
 	# çatıya yol: kuzey sıranın doğu ucunda dış merdiven (sokaktan, sıranın yan duvarına dayalı)
 	var xe := (n - 1) * 0.5 * hw + hw * 0.5
 	var ze := -(lane * 0.5 + hd)
-	_side_stair(c, (xe + 0.9) / c.k, ze / c.k, hh)
+	_side_stair(c, (xe + 0.7) / c.k, ze / c.k, hh)
+	var nst := maxi(1, int(ceil(hh / 0.32)))
+	c.add_climb(Vector3(xe + 0.7, 0, ze * 1.0 + 0.34 * nst + 0.9), Vector3(xe + 0.7, hh, ze + 0.1), "basamak")
 
 
 static func _side_stair(c: IstKbCtx, x_real: float, z_back_real: float, h: float) -> void:
@@ -204,23 +195,6 @@ static func _side_stair(c: IstKbCtx, x_real: float, z_back_real: float, h: float
 		Props.set_pattern(b, IstKbCtx.WOOD, "wood")
 
 
-static func perches_kaligaria(k: float = 0.5) -> Array:
-	var c := _nul(k, 60.0)
-	var fk := maxf(k, 0.7)
-	var hh := 6.4 if k >= 0.7 else 3.8
-	return [c.to_local(Vector3(0, hh + 0.05, -(4.5 * 0.5 + 6.5 * fk * 0.5))), c.to_local(Vector3(0, hh + 0.05, 4.5 * 0.5 + 6.5 * fk * 0.5))]
-
-
-static func climbs_kaligaria(k: float = 0.5) -> Array:
-	var c := _nul(k, 60.0)
-	var fk := maxf(k, 0.7)
-	var hh := 6.4 if k >= 0.7 else 3.8
-	var xe := (4 * 0.5 * 5.5 * fk) + 5.5 * fk * 0.5 + 0.9
-	var ze := -(4.5 * 0.5 + 6.5 * fk)
-	var nst := maxi(1, int(ceil(hh / 0.32)))
-	return [[c.to_local(Vector3(xe, 0, ze + 0.34 * nst + 0.4)), c.to_local(Vector3(xe, hh, ze + 0.2)), "basamak"]]
-
-
 # ----------------------------------------------------------------------------------------------------------------
 ## AYVANSARAY İSKELESİ (Haliç, Blakhernai/Kaligaria önü). Taş rıhtım + uzun ahşap iskele, kazıklar, babalar, ağ
 ## çerçeveleri, balıkçı kayıkları, çuval-fıçı yığınları. Deniz: y = 0,12 (yüzeyde ince saydam plaka, çarpışmasız).
@@ -231,7 +205,8 @@ static func build_ayvansaray_iskele(host: Node3D, k: float = 0.5, lod: int = 0) 
 	var Lp := 22.0                                   # iskele uzunluğu (k'siz kabul: yapı ince, uzunluk insan ölçüsünde yürünür)
 	# su: geniş saydam levha (görsel)
 	if lod < 2:
-		Props.box(c.root, Vector3(40, 0.02, 40), Vector3(0, 0.12, -22.0), Color(0.22, 0.42, 0.5, 0.78))
+		var wtr := Props.box(c.root, Vector3(40, 0.02, 40), Vector3(0, 0.12, -22.0), Color(0.22, 0.42, 0.5, 0.78))
+		wtr.set_meta("bitki", true)
 	# rıhtım (taş, y 0–0,5) ve ona çıkan iki basamak
 	var q := Props.solid(c.root, Vector3(18, 0.5, 6), Vector3(0, 0.25, 8.0), Color.WHITE)
 	Props.set_pattern(q, Color("d2c3a2"), "ashlar")
@@ -269,6 +244,7 @@ static func build_ayvansaray_iskele(host: Node3D, k: float = 0.5, lod: int = 0) 
 			var bx := (-3.2 if bi == 0 else 3.4)
 			var bz := -6.0 - bi * 7.0
 			var hull := Props.ball(c.root, 1.0, Vector3(bx, 0.22, bz), Color("7a4a2a"), Vector3(0.7, 0.32, 2.2), 8)
+			hull.set_meta("bitki", true)
 			Props.box(c.root, Vector3(0.9, 0.06, 0.4), Vector3(bx, 0.42, bz + 0.3), Color("a88a5a"))
 			Props.cyl(c.root, 0.02, 1.8, Vector3(bx + 0.5, 0.5, bz - 0.5), IstKbCtx.WOOD_D, Vector3(0, 0, 70), 4)
 		# fener: iskele ucunda (Flame)
@@ -276,16 +252,9 @@ static func build_ayvansaray_iskele(host: Node3D, k: float = 0.5, lod: int = 0) 
 		Props.box(c.root, Vector3(0.3, 0.3, 0.3), Vector3(0, 2.8, 5.0 - Lp + 0.4), Color("5a4a38"))
 		c.fire(0, 2.7, 5.0 - Lp + 0.4, 0.2, 0.4)
 	c.cypress(-10.0, 13.0, 7.0)
-
-
-static func perches_ayvansaray_iskele(k: float = 0.5) -> Array:
-	var c := _nul(k, 50.0)
-	return [c.to_local(Vector3(0, 1.4, 5.0 - 22.0 + 0.4)), c.to_local(Vector3(0, 0.95, -4.0))]
-
-
-static func climbs_ayvansaray_iskele(k: float = 0.5) -> Array:
-	var c := _nul(k, 50.0)
-	return [[c.to_local(Vector3(0, 0.0, 14.5)), c.to_local(Vector3(0, 0.9, 3.0)), "basamak"]]
+	c.add_climb(Vector3(0, 0.0, 14.5), Vector3(0, 0.9, 3.0), "basamak")
+	c.add_perch(Vector3(0, 1.4, 5.0 - Lp + 0.4))
+	c.add_perch(Vector3(0, 0.95, -4.0))
 
 
 static func _nul(k: float, yon: float) -> IstKbCtx:
@@ -293,3 +262,43 @@ static func _nul(k: float, yon: float) -> IstKbCtx:
 	c.k = k
 	c.yon = yon
 	return c
+
+# Tırmanış ve konma noktaları kurucudan toplanır (IstKbCtx.harvest): kurulumla birebir tutarlı.
+static func perches_aetios(k: float = 0.5) -> Array:
+	return IstKbCtx.harvest("aetios", build_aetios, k)[1]
+
+
+static func climbs_aetios(k: float = 0.5) -> Array:
+	return IstKbCtx.harvest("aetios", build_aetios, k)[0]
+
+
+static func perches_kaligaria(k: float = 0.5) -> Array:
+	return IstKbCtx.harvest("kaligaria", build_kaligaria, k)[1]
+
+
+static func climbs_kaligaria(k: float = 0.5) -> Array:
+	return IstKbCtx.harvest("kaligaria", build_kaligaria, k)[0]
+
+
+static func perches_ayvansaray_iskele(k: float = 0.5) -> Array:
+	return IstKbCtx.harvest("ayvansaray_iskele", build_ayvansaray_iskele, k)[1]
+
+
+static func climbs_ayvansaray_iskele(k: float = 0.5) -> Array:
+	return IstKbCtx.harvest("ayvansaray_iskele", build_ayvansaray_iskele, k)[0]
+
+
+
+
+## Prizma çatıya dışbükey çarpışma ekler (sırt Z boyunca; Props.prism boyutu size)
+static func _prism_solid(mi: MeshInstance3D, size: Vector3) -> void:
+	var body := StaticBody3D.new()
+	var cs := CollisionShape3D.new()
+	var cv := ConvexPolygonShape3D.new()
+	var hx := size.x * 0.5
+	var hy := size.y * 0.5
+	var hz := size.z * 0.5
+	cv.points = PackedVector3Array([Vector3(-hx, -hy, -hz), Vector3(hx, -hy, -hz), Vector3(0, hy, -hz), Vector3(-hx, -hy, hz), Vector3(hx, -hy, hz), Vector3(0, hy, hz)])
+	cs.shape = cv
+	body.add_child(cs)
+	mi.add_child(body)
