@@ -25,6 +25,7 @@ static var dunya: IstDunya
 static var kok: SiegeField
 ## Ölçümler (rapor): v2 kurulum süresi (ms)
 static var kurulum_ms := 0.0
+static var _ordu_suzulen := 0
 
 const BOLUMLER := [7, 11]
 const BOLGELER := ["camp", "byz_walls"]
@@ -37,9 +38,52 @@ const YAMA := {"camp": [Vector2(0.0, -20.0), 170.0, 330.0], "byz_walls": [Vector
 const TEMIZ := {"camp": Rect2(-150.0, -175.0, 300.0, 300.0), "byz_walls": Rect2(-56.0, -58.0, 104.0, 90.0)}
 ## Uçuş sisi (NihatPowers._thin_fog hedefi): v2'nin km ölçeği için incelir (eski 0,0007)
 const UCUS_SIS := 0.00035
+## v2 konma noktası kimliği → yan görevin kimliği
+const PERCH_ESLE := {"ist_galata_kulesi": "galata", "ist_konstantin": "column", "ist_ayasofya": "aya"}
 
 var oyuncu: Player
 var _yakala_t := 0.0
+## Bölüm sahnesinin (CampDay/ByzCity ve bölüm kökü) uzaklık sınırı olmayan çizimleri bu uzaklıkta biter: uçarken 2 km
+## ötedeki ordugâhın binlerce süsü çizilmesin (eski dünyada da böyleydi; v2'nin kendi katmanları zaten uzaklıklı)
+const SAHNE_UZAK := 650.0
+const SAHNE_UZAK_KUCUK := 260.0
+
+
+func _ready() -> void:
+	# Bölüm sahnesi bu düğümden sonra kurulmaya devam eder (CampDay._ready'nin kalanı, bölümün _build'i): iki kare sonra
+	for i in 2:
+		await get_tree().process_frame
+	if is_inside_tree():
+		sahne_uzaklik(get_tree().current_scene if get_tree().current_scene else get_parent().get_parent())
+
+
+## Uzaklık sınırı (görünürlük aralığı): v2 kökünün dışındaki her GeometryInstance3D (oyuncu ve el hariç), küçükler daha
+## erken. Döndürür: sınır verilen sayısı
+func sahne_uzaklik(kok_: Node) -> int:
+	if kok_ == null:
+		return 0
+	var n := 0
+	var yigin: Array = [kok_]
+	while not yigin.is_empty():
+		var d: Node = yigin.pop_back()
+		if d == kok or d is Player or d is CanvasItem or d is CanvasLayer:
+			continue
+		for c in d.get_children():
+			yigin.append(c)
+		if d is GeometryInstance3D:
+			var gi := d as GeometryInstance3D
+			if gi.visibility_range_end > 0.0 or gi.visibility_range_begin > 0.0:
+				continue
+			var ab := gi.get_aabb()
+			var buyuk := ab.size.length() * gi.global_basis.get_scale().length() / 1.732
+			if gi is MultiMeshInstance3D:
+				buyuk = maxf(buyuk, 40.0)
+			gi.visibility_range_end = SAHNE_UZAK if buyuk > 6.0 else SAHNE_UZAK_KUCUK
+			gi.visibility_range_end_margin = 30.0
+			gi.visibility_range_fade_mode = GeometryInstance3D.VISIBILITY_RANGE_FADE_DISABLED
+			n += 1
+	print("ISTBAGLAMA sahne_uzaklik=%d" % n)
+	return n
 
 
 # ------------------------------------------------------------------ anahtar
@@ -79,7 +123,26 @@ static func birak() -> void:
 
 
 static func istek(region_name: String) -> bool:
+	if region_name == "byz_walls" and bolum == 0 and deneme_12b():
+		return true
 	return bolum in BOLUMLER and region_name in BOLGELER and etkin()
+
+
+## Görev 6 denemesi (KAPALI; yalnız `--ist2-deneme=12b` ile): Tolga'nın mektup bölümü (12b) hub'ı v2'de. Bölüm dosyasına
+## dokunulmaz: hub ByzCity'nin "walls" parçası, bölüm GameState.current_chapter 12.
+static func deneme_12b() -> bool:
+	if not etkin():
+		return false
+	var var_ := false
+	for a: String in OS.get_cmdline_user_args() + OS.get_cmdline_args():
+		if a.trim_prefix("--") == "ist2-deneme=12b":
+			var_ = true
+	if not var_:
+		return false
+	var gs := Engine.get_main_loop() as SceneTree
+	if gs and gs.root.has_node("GameState"):
+		return int(gs.root.get_node("GameState").get("current_chapter")) == 12
+	return false
 
 
 static func aktif() -> bool:
@@ -185,6 +248,16 @@ static func build(parent: Node3D, region_name: String, keep_local: Array, _night
 			return -0.35 if zr.has_point(Vector2(x, z)) else -0.05)
 	var temiz: Rect2 = TEMIZ[region_name]
 	IstGeo.dislanan = [temiz]
+	# Ordugâh planı (önbellekli; IstOrdugah.attach aynı diziyi okur) kurulmadan süzülür: bölümün alanındaki öğeler çıkar
+	_ordu_suzulen = 0
+	var oscr = load("res://scripts/world/ist/ordugah.gd") if ResourceLoader.exists("res://scripts/world/ist/ordugah.gd") else null
+	if oscr != null:
+		var pl: Array = oscr.call("plan")
+		for i in range(pl.size() - 1, -1, -1):
+			var it: Dictionary = pl[i]
+			if temiz.grow(float(it.get("r", 0.0))).has_point(it["pos"] as Vector2):
+				pl.remove_at(i)
+				_ordu_suzulen += 1
 	# Kabuk
 	var f := SiegeField.new()
 	f.name = "IstBaglamaKok"
@@ -196,6 +269,7 @@ static func build(parent: Node3D, region_name: String, keep_local: Array, _night
 	f.add_child(f.get("_smoke_root"))
 	parent.add_child(f)
 	kok = f
+	f.set_meta("ucus_tarama_yok", true)       # NihatPowers.ensure_flight_solids v2'yi taramaz (v2 çarpışması kendinde)
 	# v2: gök bölümün (gündüz CampDay/ByzCity, gece Night.environment); öbür her şey v2'nin
 	IstDunya.gok_kur = false
 	var merkez := Vector3(ym[0].x, 2.0, ym[0].y)
@@ -227,32 +301,7 @@ static func _temizle(region_name: String, alan: Rect2) -> void:
 					(h as Node).queue_free()
 				s.items.remove_at(i)
 				n_s += 1
-	var n_o := 0
-	if dunya != null:
-		var oy := dunya.find_child("IstOrdugah", true, false)
-		if oy != null and oy.get("items") is Array:
-			var eski: Array = oy.get("items")
-			var yeni: Array = []
-			for it: Dictionary in eski:
-				var p: Vector2 = it["pos"]
-				var r := float(it.get("r", 0.0))
-				if alan.grow(r).has_point(p):
-					n_o += 1
-					var h = it.get("host")
-					if h is Node and is_instance_valid(h):
-						(h as Node).queue_free()
-					continue
-				it["lod"] = -1
-				it["host"] = null
-				yeni.append(it)
-			# kuyruk eski dizinleri tutar: baştan kurulur (kur() kuyruğa lod 2 ekler)
-			for it: Dictionary in eski:
-				var h = it.get("host")
-				if h is Node and is_instance_valid(h) and not (it in yeni):
-					(h as Node).queue_free()
-			oy.set("items", [])
-			oy.set("kuyruk", [])
-			oy.call("kur", yeni)
+	var n_o := _ordu_suzulen        # ordugâh planı kurulmadan süzüldü (build)
 	print("ISTBAGLAMA temizle bolge=%s sehir_oge=%d ordugah_oge=%d" % [region_name, n_s, n_o])
 
 
@@ -283,6 +332,17 @@ static func flight_data() -> Dictionary:
 		if i < NihatPowers.LANDMARK_IDS.size() or TranslationServer.translate("LM_" + String(l[0])) != "LM_" + String(l[0]):
 			lms.append(l)
 	fd["landmarks"] = lms
+	# Konma noktaları: yan görevin kimlikleri (aya, galata, column: D_PERCH_* replikleri ve "perch" bayrakları) v2'deki
+	# yapılara eşlenir; repliği olmayan v2 konma noktaları yan göreve girmez (ham anahtar balonu çıkmasın)
+	var per: Array = []
+	var var_ := {}
+	for pe: Array in fd["perches"]:
+		var id := String(PERCH_ESLE.get(String(pe[0]), pe[0]))
+		if var_.has(id) or TranslationServer.translate("D_PERCH_" + id.to_upper()) == "D_PERCH_" + id.to_upper():
+			continue
+		var_[id] = true
+		per.append([id, pe[1], pe[2]])
+	fd["perches"] = per
 	return fd
 
 
@@ -299,6 +359,52 @@ static func sinir() -> Rect2:
 			var p: Vector3 = l[1]
 			r = r.expand(Vector2(p.x, p.z))
 	return r.grow(300.0)
+
+
+## Bölümün ortamı (CampDay/ByzCity gökyüzü, gece Night.environment) km ölçeğine uyar: yerdeki sis tavanı (Look.apply_env
+## "fog_cap" ile uyar), hava perspektifi v2'deki gibi 0,1 (Look 0,3 veriyordu: 1-2 km ötedeki şehir gök rengine dönüyordu)
+const SIS_YER := 0.0009
+const SIS_YER_GECE := 0.002
+var _sis_t := 0.0
+var _envler: Array = []
+var _bul_n := 0
+
+
+func _process(dt: float) -> void:
+	_sis_t -= dt
+	if _sis_t > 0.0:
+		return
+	_sis_t = 0.5
+	var cap := SIS_YER_GECE if gece else SIS_YER
+	var sc := get_tree().current_scene
+	if _envler.is_empty() or not is_instance_valid(_envler[0]):
+		_envler.clear()
+		if sc != null:
+			for c in sc.get_children():
+				if c is WorldEnvironment:
+					_envler.append(c)
+				for c2 in c.get_children():
+					if c2 is WorldEnvironment:
+						_envler.append(c2)
+	var ucuyor := oyuncu != null and is_instance_valid(oyuncu) and oyuncu.powers != null and oyuncu.powers.flying
+	for we in _envler:
+		if not is_instance_valid(we):
+			continue
+		var e := (we as WorldEnvironment).environment
+		if e == null:
+			continue
+		we.set_meta("fog_cap", cap)
+		e.fog_aerial_perspective = minf(e.fog_aerial_perspective, 0.1)
+		e.fog_sky_affect = 0.0
+		if not ucuyor:
+			e.fog_density = minf(e.fog_density, cap)
+	if oyuncu != null and is_instance_valid(oyuncu) and oyuncu.powers != null:
+		var f0 = oyuncu.powers.get("_fog0")
+		if f0 is float and float(f0) > cap:
+			oyuncu.powers.set("_fog0", cap)
+	_bul_n += 1
+	if _bul_n % 10 == 0:
+		_envler.clear()        # gece ortamı sonradan kurulabilir (make_night): 5 sn'de bir yeniden bul
 
 
 func _physics_process(_dt: float) -> void:
@@ -332,6 +438,9 @@ func _physics_process(_dt: float) -> void:
 ## Bölüm biterken v2'nin ağaç dışında bekleyen düğümleri (ön-pişmiş katmanlar, akıştan düşmüş hücre gövdeleri) serbest
 ## bırakılır: sahne değişince bellek ve fizik gövdesi sızmasın
 func _exit_tree() -> void:
+	if bolum == 0 and aktif_bolge != "":
+		# deneme (bölüm hazirla/birak çağırmıyor): sonraki bölümler eski dünyayı kursun
+		birak.call_deferred()
 	var s := IstSehir.active
 	if s == null:
 		return
@@ -347,9 +456,11 @@ static func _bosalt(v: Variant, derin := 0) -> int:
 	if derin > 4:
 		return 0
 	var n := 0
-	if v is Node:
+	if typeof(v) == TYPE_OBJECT:
+		if not is_instance_valid(v) or not (v is Node):
+			return 0
 		var nd := v as Node
-		if is_instance_valid(nd) and not nd.is_inside_tree() and nd.get_parent() == null:
+		if not nd.is_inside_tree() and nd.get_parent() == null:
 			nd.free()
 			return 1
 		return 0

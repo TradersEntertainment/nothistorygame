@@ -764,6 +764,17 @@ func _deniz_izle(p: Vector3) -> void:
 	# kuzey, güney, batı, doğu dikdörtgenleri (yakın parçanın çevresi)
 	var rs := [Rect2(c.x - R, c.y - R, 2 * R, R - h), Rect2(c.x - R, c.y + h, 2 * R, R - h),
 		Rect2(c.x - R, c.y - h, R - h, 2 * h), Rect2(c.x + h, c.y - h, R - h, 2 * h)]
+	# Bölümün kendi zemini (IstGeo.dislanan; deniz düzeyinde, y ≈ 0) denizin altında kalmasın: izleyici yakınken yakın deniz
+	# gizlenir, uzak parçalar o alanın çevresine dizilir (alan karada; arada kalan deniz dalgasız)
+	_sea_near.visible = true
+	for dr: Rect2 in IstGeo.dislanan:
+		if dr.grow(SEA_NEAR * 0.5 + 100.0).has_point(c):
+			_sea_near.visible = false
+			var a := dr.position
+			var b := dr.end
+			rs = [Rect2(a.x - R, a.y - R, b.x - a.x + 2 * R, R), Rect2(a.x - R, b.y, b.x - a.x + 2 * R, R),
+				Rect2(a.x - R, a.y, R, b.y - a.y), Rect2(b.x, a.y, R, b.y - a.y)]
+			break
 	for i in 4:
 		var r: Rect2 = rs[i]
 		var m: MeshInstance3D = _sea_far[i]

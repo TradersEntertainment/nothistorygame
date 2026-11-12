@@ -1128,6 +1128,8 @@ func _meydanlar(foot: Array) -> void:
 		# çevrede ayrıntı köşeleri (boş hücrelere)
 		if ad == "ayasofya":
 			_patrikhane(w, rad)
+		if ad != "ayasofya":
+			_kare_doldur(w, maxf(fr - 2.0, 0.0), rad, ad, n * 101)
 		var sets := ["set_pazar_kosesi", "set_ayin_alayi", "set_meyhane_onu"] if ad != "ayasofya" else ["set_ayin_alayi", "set_pazar_kosesi", "mumcu", "set_manastir_avlusu", "mumcu"]
 		for k in sets.size():
 			var ang := k * TAU / sets.size() + 0.4
@@ -1212,47 +1214,7 @@ func _eser_meydan_doldur() -> void:
 				_stamp_disc(q, 4.0, 5)
 				nset += 1
 				break
-		# halkada öğesiz kalan 40 m'lik kareler (büyük meydanlar): ağaç kümesi / mumcu / kuyu
-		var dolu := {}
-		for o: Dictionary in oge:
-			var oc: Vector2 = o["c"]
-			if oc.distance_to(c) < R + 60.0:
-				dolu[Vector2i(floori(oc.x / DT), floori(oc.y / DT))] = true
-		for h: Dictionary in houses:
-			var hc: Vector2 = h["c"]
-			if hc.distance_to(c) < R + 60.0:
-				dolu[Vector2i(floori(hc.x / DT), floori(hc.y / DT))] = true
-		for j in range(floori((c.y - R) / DT), floori((c.y + R) / DT) + 1):
-			for i in range(floori((c.x - R) / DT), floori((c.x + R) / DT) + 1):
-				if dolu.has(Vector2i(i, j)):
-					continue
-				var sc := Vector2((i + 0.5) * DT, (j + 0.5) * DT)
-				var best := Vector2.INF
-				for dd: float in [0.0, 8.0, 14.0]:
-					for a in 6:
-						var q := sc + Vector2.from_angle(a * 1.047) * dd
-						var dq := q.distance_to(c)
-						if dq < r0 + 3.0 or dq > R - 2.0:
-							continue
-						var ok := true
-						for b in 5:
-							var qq := q + Vector2.from_angle(b * 1.2566) * (3.0 if b > 0 else 0.0)
-							if not cell(qq.x, qq.y) in [0, 1, 5]:
-								ok = false
-								break
-						if ok:
-							best = q
-							break
-						if dd == 0.0:
-							break
-					if best != Vector2.INF:
-						break
-				if best == Vector2.INF:
-					continue
-				oge.append({"tur": ["agac_kumesi", "mumcu", "kuyu", "agac_kumesi"][(i + j * 3) & 3], "c": best, "yaw": float(i * 1.7 + j), "tohum": h0 * 11 + i * 31 + j, "yer": String(e["id"])})
-				_stamp_disc(best, 3.5, 5)
-				dolu[Vector2i(i, j)] = true
-				nset += 1
+		nset += _kare_doldur(c, r0, R, String(e["id"]), h0)
 		# gezinme ve kuyu/çeşme noktaları (meydan kaydı)
 		var nm := 4 if aya else 2
 		for k in nm:
@@ -1261,6 +1223,52 @@ func _eser_meydan_doldur() -> void:
 			if cell(q.x, q.y) in [0, 1, 5]:
 				meydan.append({"c": q, "yaw": ang + PI, "tohum": h0 * 7 + k})
 	stats["eser_oge"] = nset
+
+
+## Halkada (r0 < d < R) öğesiz kalan 40 m'lik kareler (büyük meydanlar, forumlar): ağaç kümesi / mumcu / kuyu
+func _kare_doldur(c: Vector2, r0: float, R: float, yer: String, h0: int) -> int:
+	var nset := 0
+	var dolu := {}
+	for o: Dictionary in oge:
+		var oc: Vector2 = o["c"]
+		if oc.distance_to(c) < R + 60.0:
+			dolu[Vector2i(floori(oc.x / DT), floori(oc.y / DT))] = true
+	for h: Dictionary in houses:
+		var hc: Vector2 = h["c"]
+		if hc.distance_to(c) < R + 60.0:
+			dolu[Vector2i(floori(hc.x / DT), floori(hc.y / DT))] = true
+	for j in range(floori((c.y - R) / DT), floori((c.y + R) / DT) + 1):
+		for i in range(floori((c.x - R) / DT), floori((c.x + R) / DT) + 1):
+			if dolu.has(Vector2i(i, j)):
+				continue
+			var sc := Vector2((i + 0.5) * DT, (j + 0.5) * DT)
+			var best := Vector2.INF
+			for dd: float in [0.0, 8.0, 14.0]:
+				for a in 6:
+					var q := sc + Vector2.from_angle(a * 1.047) * dd
+					var dq := q.distance_to(c)
+					if dq < r0 + 3.0 or dq > R - 2.0:
+						continue
+					var ok := true
+					for b in 5:
+						var qq := q + Vector2.from_angle(b * 1.2566) * (3.0 if b > 0 else 0.0)
+						if not cell(qq.x, qq.y) in [0, 1, 5]:
+							ok = false
+							break
+					if ok:
+						best = q
+						break
+					if dd == 0.0:
+						break
+				if best != Vector2.INF:
+					break
+			if best == Vector2.INF:
+				continue
+			oge.append({"tur": ["agac_kumesi", "mumcu", "kuyu", "agac_kumesi"][(i + j * 3) & 3], "c": best, "yaw": float(i * 1.7 + j), "tohum": h0 * 11 + i * 31 + j, "yer": yer})
+			_stamp_disc(best, 3.5, 5)
+			dolu[Vector2i(i, j)] = true
+			nset += 1
+	return nset
 
 
 ## Patrikhane ek yapıları: Ayasofya'nın güney ve güneybatısında, ona bakan avlulu konak/han yapıları (kestirim)

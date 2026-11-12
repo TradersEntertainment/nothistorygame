@@ -3,11 +3,13 @@ extends RefCounted
 ## IstMahalleDoku preload eder. Her evin önüne (cephe dibine, sokağa taşmadan) mahalle türüne göre 0–3 öğe:
 ## fıçı, sepet, amfora, çuval, odun yığını, el arabası, saksı, tabure, sandık, testi, kütük, kedi, tavuk…; iskelede ağ, halat,
 ## balık kasası, yelken bezi, balya; sur dibinde taş/tuğla yığını, harç teknesi, gülle, ok sandığı.
-## Çizim: her öğe türü Ayrinti kurucusundan BİR KEZ tek ağa pişirilir (Crowd._bake, köşe renkli, LOD'lu); yerleşim 64 m hücre ×
-## tür başına bir MultiMesh (çarpışmasız, gölgesiz, görünürlük 0–UZAK m). Kurulum açılışta bir kez.
+## Çizim: her öğe türü Ayrinti kurucusundan BİR KEZ tek ağa pişirilir (Crowd._bake, köşe renkli); oyuncunun çevresinde (140 m)
+## 48 m'lik hücrenin bütün öğeleri TEK ağa birleşir (hücre başına bir çizim; çarpışmasız, gölgesiz, görünürlük 125 m), kare
+## başına bütçeyle akar, 210 m ötesi silinir. (Tür başına MultiMesh denendi: hücre × tür çizimi yerde bütçeyi aşıyordu.)
 
-const HUCRE := 64.0
-const UZAK := 115.0       # hücre merkezine uzaklık (hücre yarı köşegeni 45 m: 70 m içindeki öğe hep görünür)
+const HUCRE := 48.0
+const ORTA := 66.0        # hücre merkezine bu uzaklıktan öte öğeler sınır kutusu (ortalama renk; 10 üçgen)
+const UZAK := 125.0       # hücre merkezine uzaklık (hücre yarı köşegeni 34 m: 90 m içindeki öğe hep görünür)
 
 ## mahalle türü → [öğe, ağırlık]
 const SEC := {
@@ -35,7 +37,8 @@ var doku: Node3D
 var sk: IstSokak
 var stats := {}
 var _mesh := {}
-var _hucre := {}            # Vector2i → {öğe: PackedFloat32Array (12 kayan / örnek)}
+var noktalar := {}          # Vector2i(8 m) → PackedVector2Array (denetim: kişi eşyanın içinde mi)
+var _hucre := {}            # Vector2i(48 m) → [[öğe, Transform3D]]
 
 
 func _init(doku_: Node3D, sk_: IstSokak) -> void:
@@ -146,12 +149,25 @@ func kur() -> void:
 			_ekle(id, Transform3D(Basis(Vector3.UP, -ang + PI * 0.5 + rng.randf_range(-0.3, 0.3)), Vector3(p.x, y, p.y)))
 			nm += 1
 			tur_say[id] = int(tur_say.get(id, 0)) + 1
-	_cizim()
 	stats = {"meydan_oge": nm, "oge": n, "hucre": _hucre.size(), "tur": _mesh.size(), "kur_ms": Time.get_ticks_msec() - t0}
 	print("ISTDOKU3 sokak_esyasi ", stats, " ", tur_say)
 
 
 var _boylar := {}
+## Denetim: noktaya r'den yakın sokak eşyası var mı
+func esya_yakin(p: Vector2, r: float) -> bool:
+	var k := Vector2i(floori(p.x / 8.0), floori(p.y / 8.0))
+	for dz in range(-1, 2):
+		for dx in range(-1, 2):
+			var na = noktalar.get(k + Vector2i(dx, dz))
+			if na == null:
+				continue
+			for q: Vector2 in na:
+				if q.distance_to(p) < r:
+					return true
+	return false
+
+
 func _boy(id: String) -> Vector3:
 	if _boylar.is_empty():
 		for pr in Ayrinti._rows():
@@ -162,45 +178,176 @@ func _boy(id: String) -> Vector3:
 func _ekle(id: String, xf: Transform3D) -> void:
 	var key := Vector2i(floori(xf.origin.x / HUCRE), floori(xf.origin.z / HUCRE))
 	if not _hucre.has(key):
-		_hucre[key] = {}
-	var d: Dictionary = _hucre[key]
-	var a: PackedFloat32Array = d.get(id, PackedFloat32Array())
-	var b := xf.basis
-	var o := xf.origin
-	a.append_array(PackedFloat32Array([b.x.x, b.y.x, b.z.x, o.x, b.x.y, b.y.y, b.z.y, o.y, b.x.z, b.y.z, b.z.z, o.z]))
-	d[id] = a
+		_hucre[key] = []
+	(_hucre[key] as Array).append([id, xf])
+	var nk := Vector2i(floori(xf.origin.x / 8.0), floori(xf.origin.z / 8.0))
+	var na: PackedVector2Array = noktalar.get(nk, PackedVector2Array())
+	na.append(Vector2(xf.origin.x, xf.origin.z))
+	noktalar[nk] = na
 
 
-func _ag(id: String) -> Mesh:
+## Tür ağı: Ayrinti kurucusundan pişmiş, indekssiz açılmış [köşe, normal, renk] (hücre birleştirmesi yalnız append)
+func _ag(id: String) -> Array:
 	if _mesh.has(id):
 		return _mesh[id]
+	# kendi pişirme: dokulu malzemede (taş, tuğla, sıva desenleri) albedo × dokunun ortalama rengi (Crowd._bake dokuyu
+	# atıyor: taş yığını bembeyaz kalıyordu)
 	var root := Node3D.new()
+	var tree := Engine.get_main_loop() as SceneTree
+	root.visible = false
+	tree.root.add_child(root)
 	Ayrinti.build(id, root, 0.5, 1)
-	var m := Crowd._bake(root, Callable())
-	_mesh[id] = m
-	return m
+	var ov := PackedVector3Array()
+	var on := PackedVector3Array()
+	var oc := PackedColorArray()
+	var inv := root.global_transform.affine_inverse()
+	for c in root.find_children("*", "MeshInstance3D", true, false):
+		var mi := c as MeshInstance3D
+		if mi.mesh == null or not mi.visible:
+			continue
+		var xf := inv * mi.global_transform
+		var nb := Transform3D(xf.basis.inverse().transposed(), Vector3.ZERO)
+		for si in mi.mesh.get_surface_count():
+			var mat := mi.material_override as StandardMaterial3D
+			if mat == null:
+				mat = mi.get_surface_override_material(si) as StandardMaterial3D
+			if mat == null:
+				mat = mi.mesh.surface_get_material(si) as StandardMaterial3D
+			if mat != null and (mat.transparency != BaseMaterial3D.TRANSPARENCY_DISABLED or mat.albedo_color.a < 0.99):
+				continue
+			var tint := Color.WHITE
+			var vcol := true
+			if mat != null:
+				tint = mat.albedo_color
+				vcol = mat.vertex_color_use_as_albedo
+				if mat.albedo_texture != null:
+					var a := World1453._avg(mat.albedo_texture)
+					tint = Color(tint.r * a.r, tint.g * a.g, tint.b * a.b)
+				if mat.emission_enabled:
+					tint = tint.lerp(mat.emission, 0.3)
+			var ar := mi.mesh.surface_get_arrays(si)
+			var v: PackedVector3Array = ar[Mesh.ARRAY_VERTEX]
+			var nr: PackedVector3Array = ar[Mesh.ARRAY_NORMAL] if ar[Mesh.ARRAY_NORMAL] != null else PackedVector3Array()
+			var vc: PackedColorArray = ar[Mesh.ARRAY_COLOR] if ar[Mesh.ARRAY_COLOR] != null and vcol else PackedColorArray()
+			var ix: PackedInt32Array = ar[Mesh.ARRAY_INDEX] if ar[Mesh.ARRAY_INDEX] != null else PackedInt32Array()
+			var n := ix.size() if not ix.is_empty() else v.size()
+			for i in n:
+				var k := ix[i] if not ix.is_empty() else i
+				ov.append(xf * v[k])
+				on.append((nb * nr[k]).normalized() if k < nr.size() else Vector3.UP)
+				var col := vc[k] if k < vc.size() else Color.WHITE
+				oc.append(Color(col.r * tint.r, col.g * tint.g, col.b * tint.b, 1.0))
+	tree.root.remove_child(root)
+	root.queue_free()
+	# uzak hâl: ağın sınır kutusu, ağın ortalama renginde (10 üçgen; alt yüz yok)
+	var lo := Vector3(INF, INF, INF)
+	var hi := Vector3(-INF, -INF, -INF)
+	var ort := Color(0, 0, 0)
+	for i in ov.size():
+		lo = lo.min(ov[i])
+		hi = hi.max(ov[i])
+		ort += oc[i]
+	if ov.is_empty():
+		lo = Vector3.ZERO
+		hi = Vector3(0.1, 0.1, 0.1)
+	ort = ort / maxf(ov.size(), 1)
+	ort.a = 1.0
+	var bv := PackedVector3Array()
+	var bn := PackedVector3Array()
+	var bc := PackedColorArray()
+	var c := [Vector3(lo.x, lo.y, lo.z), Vector3(hi.x, lo.y, lo.z), Vector3(hi.x, lo.y, hi.z), Vector3(lo.x, lo.y, hi.z),
+		Vector3(lo.x, hi.y, lo.z), Vector3(hi.x, hi.y, lo.z), Vector3(hi.x, hi.y, hi.z), Vector3(lo.x, hi.y, hi.z)]
+	for f: Array in [[4, 7, 6, 5, Vector3.UP], [0, 4, 5, 1, Vector3.FORWARD], [2, 6, 7, 3, Vector3.BACK], [3, 7, 4, 0, Vector3.LEFT], [1, 5, 6, 2, Vector3.RIGHT]]:
+		for t: int in [0, 1, 2, 0, 2, 3]:
+			bv.append(c[f[t]])
+			bn.append(f[4])
+			bc.append(ort.darkened(0.12) if f[4] != Vector3.UP else ort)
+	_mesh[id] = [ov, on, oc, bv, bn, bc]
+	return _mesh[id]
 
 
-func _cizim() -> void:
-	var mat := CharKit.vc_mat(false)
-	for key: Vector2i in _hucre:
-		var d: Dictionary = _hucre[key]
-		var host := Node3D.new()
-		host.name = "SokakEsya_%d_%d" % [key.x, key.y]
-		doku.add_child(host)
-		for id: String in d:
-			var a: PackedFloat32Array = d[id]
-			var mm := MultiMesh.new()
-			mm.transform_format = MultiMesh.TRANSFORM_3D
-			mm.mesh = _ag(id)
-			mm.instance_count = a.size() / 12
-			mm.buffer = a
-			var mi := MultiMeshInstance3D.new()
-			mi.multimesh = mm
-			mi.material_override = mat
-			mi.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
+## Akış (IstMahalleDoku._process'ten): YAKIN içindeki hücreler birleştirilip kurulur (kare başına bütçe), SIL ötesi silinir.
+const YAKIN := 140.0
+const SIL := 210.0
+var _kurulu := {}          # Vector2i → MeshInstance3D
+var _kuyruk: Array = []
+var _son := Vector3(1e9, 0, 1e9)
+
+func bekleyen() -> int:
+	return _kuyruk.size()
+
+
+func akis(cp: Vector3, butce_us: int) -> void:
+	if Vector2(cp.x - _son.x, cp.z - _son.z).length() > 12.0:
+		_son = cp
+		_kuyruk.clear()
+		var lst: Array = []
+		var r := int(ceil(YAKIN / HUCRE)) + 1
+		var c0 := Vector2i(floori(cp.x / HUCRE), floori(cp.z / HUCRE))
+		for dz in range(-r, r + 1):
+			for dx in range(-r, r + 1):
+				var k := c0 + Vector2i(dx, dz)
+				if not _hucre.has(k) or _kurulu.has(k):
+					continue
+				var d := Vector2((k.x + 0.5) * HUCRE - cp.x, (k.y + 0.5) * HUCRE - cp.z).length()
+				if d < YAKIN:
+					lst.append([d, k])
+		lst.sort_custom(func(a: Array, b: Array) -> bool: return a[0] < b[0])
+		for e: Array in lst:
+			_kuyruk.append(e[1])
+		for k: Vector2i in _kurulu.keys():
+			var d := Vector2((k.x + 0.5) * HUCRE - cp.x, (k.y + 0.5) * HUCRE - cp.z).length()
+			if d > SIL:
+				(_kurulu[k] as Node).queue_free()
+				_kurulu.erase(k)
+	var t0 := Time.get_ticks_usec()
+	while not _kuyruk.is_empty() and Time.get_ticks_usec() - t0 < butce_us:
+		var k: Vector2i = _kuyruk.pop_front()
+		if not _kurulu.has(k):
+			_hucre_kur(k)
+
+
+func _hucre_kur(k: Vector2i) -> void:
+	var cen := Vector3((k.x + 0.5) * HUCRE, 0.0, (k.y + 0.5) * HUCRE)
+	var host := Node3D.new()
+	host.name = "SokakEsya_%d_%d" % [k.x, k.y]
+	host.position = cen
+	doku.add_child(host)
+	for uzak in 2:
+		var vv := PackedVector3Array()
+		var nn := PackedVector3Array()
+		var cc := PackedColorArray()
+		var o := 3 if uzak == 1 else 0
+		for e: Array in _hucre[k]:
+			var t: Array = _ag(String(e[0]))
+			var xf: Transform3D = e[1]
+			xf.origin -= cen
+			vv.append_array(xf * (t[o] as PackedVector3Array))
+			nn.append_array(Transform3D(xf.basis, Vector3.ZERO) * (t[o + 1] as PackedVector3Array))
+			cc.append_array(t[o + 2])
+		if vv.is_empty():
+			continue
+		var arr := []
+		arr.resize(Mesh.ARRAY_MAX)
+		arr[Mesh.ARRAY_VERTEX] = vv
+		arr[Mesh.ARRAY_NORMAL] = nn
+		arr[Mesh.ARRAY_COLOR] = cc
+		var am := ArrayMesh.new()
+		am.add_surface_from_arrays(Mesh.PRIMITIVE_TRIANGLES, arr)
+		am.surface_set_material(0, CharKit.vc_mat(false))
+		var mi := MeshInstance3D.new()
+		mi.mesh = am
+		mi.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
+		if uzak == 0:
+			mi.visibility_range_end = ORTA
+			mi.visibility_range_end_margin = 4.0
+		else:
+			mi.visibility_range_begin = ORTA
+			mi.visibility_range_begin_margin = 4.0
 			mi.visibility_range_end = UZAK
-			mi.visibility_range_end_margin = 6.0
-			mi.set_meta("no_walk", true)
-			mi.set_meta("soft", true)
-			host.add_child(mi)
+			mi.visibility_range_end_margin = 8.0
+		mi.set_meta("no_walk", true)
+		mi.set_meta("soft", true)
+		host.add_child(mi)
+	_kurulu[k] = host
+	stats["kurulan"] = int(stats.get("kurulan", 0)) + 1

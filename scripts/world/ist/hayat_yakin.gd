@@ -26,7 +26,7 @@ const NEAR_HYST := 3.0
 const NEAR_CAP := 4               # aynı anda en çok bu kadar gerçek gövde (çizim bütçesi): en yakın ve görüştekiler
 
 ## Mahalle türüne göre hedef kişi sayısı (kalabalık)
-const TARGET := {"carsi": 38, "liman": 26, "sik": 16, "sur_dibi": 14, "seyrek": 8, "bostan": 5, "harabe": 4, "kir": 3}
+const TARGET := {"carsi": 40, "liman": 28, "sik": 22, "sur_dibi": 17, "seyrek": 10, "bostan": 5, "harabe": 4, "kir": 3}
 ## Doğuş ağırlığı (aynı sokak noktası kabulü)
 const WEIGHT := {"carsi": 1.0, "liman": 0.9, "sik": 0.7, "sur_dibi": 0.55, "seyrek": 0.35, "bostan": 0.2, "harabe": 0.15, "kir": 0.1}
 
@@ -696,7 +696,8 @@ func _pick_point() -> int:
 		if IstGeo.su(pt.x, pt.y) or y < 0.2:
 			sayac["su"] += 1
 			continue
-		if _ilk <= 0.0 and dd < SPAWN_VIEW and _seen(Vector3(pt.x, y, pt.y)) and not _occluded(p2, pt):
+		if _ilk <= 0.0 and dd < SPAWN_VIEW and _seen(Vector3(pt.x, y, pt.y)) and not _occluded(p2, pt) \
+				and not (dd >= KAPI_MIN and _kapi_yakin(pt)):
 			sayac["gorus"] += 1
 			continue
 		if _crowded(pt, 1.6):
@@ -704,6 +705,23 @@ func _pick_point() -> int:
 			continue
 		return g
 	return -1
+
+
+## DOKU-3: görüşte ama bir evin kapısının dibindeki nokta (kapıdan sokağa çıkan kişi): 22 m'den öte doğabilir
+const KAPI_MIN := 22.0
+func _kapi_yakin(p: Vector2) -> bool:
+	var kx := floori(p.x / 10.0)
+	var kz := floori(p.y / 10.0)
+	for dx in range(-1, 2):
+		for dz in range(-1, 2):
+			var arr = _hh.get(Vector2i(kx + dx, kz + dz))
+			if arr == null:
+				continue
+			for hi: int in arr:
+				var fr: Vector2 = (sokak.houses[hi] as Dictionary)["on"]
+				if fr.distance_to(p) < 2.6:
+					return true
+	return false
 
 
 ## Oyuncu ile nokta arasında ev/sur hücresi (2, 3) varsa görünmez sayılır (yakında da doğabilir)
