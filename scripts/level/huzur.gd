@@ -814,7 +814,7 @@ func _guards(p: Person, kind: String, rs: String) -> bool:
 		if _headroom(to):
 			await Stage.approach(g, to, 0.7, 4.6)      # duvarın/katının içine yürümesin
 		else:
-			await Stage.approach(g, to, 1.8, 4.6)      # başının üstünde kat var (kapı eşiği, sur yolu): bir adım geride durur
+			Stage.face(g, player.global_position)      # başının üstünde kat var (kapı eşiği): yerinden bağırır, yürümez
 		if is_instance_valid(g):
 			g.set("look_target", player)
 		i += 1
