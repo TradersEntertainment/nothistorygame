@@ -140,7 +140,7 @@ void fragment() {
 		float j = max(step(fq.x, 0.05), step(fq.y, 0.05));
 		// SUR-5: sıcak, koyu kireçtaşı döşeme (gölgede gök ışığıyla camgöbeği karo okunuyordu); taş taş ton ve aşınma
 		float tn2 = h21(floor(q) + 7.3);
-		vec3 dos = tas * vec3(1.16, 0.88, 0.64) * (0.8 + 0.2 * tn + 0.06 * tn2);   // gök ışığı (mavi) × sarı = yeşile kaçmasın: kızıla çekik
+		vec3 dos = tas * vec3(1.06, 0.9, 0.74) * (0.72 + 0.18 * tn + 0.06 * tn2);   // gök ışığı (mavi) × sarı = yeşile kaçmasın: kızıla çekik
 		dos *= 1.0 - 0.18 * smoothstep(0.5, 0.9, vn(wpos.xz * 0.35));
 		c = mix(dos, harc * vec3(0.8, 0.72, 0.6), j * ince);
 	}
