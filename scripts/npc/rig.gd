@@ -170,6 +170,43 @@ func update(delta: float, talking: bool, busy: bool, ext := true) -> void:
 	_update_core(delta, talking, busy)
 	if ext:
 		extremities()
+		if lock == 0 and DurusKit.var_mi(activity):
+			DurusKit.bilekler(self)
+	_egim_denet(delta)
+
+
+## DURUŞ takımı (scripts/npc/durus_kit.gd): eklem açılarıyla kurulan oturma/yatma/iş duruşları (bağdaş, diz üstü,
+## çömelme, yan/sırtüstü uzanma, kütüğe oturma, kazan karıştırma…; adlar DurusKit.ADLAR). Kişinin kökü YATIRILMAZ;
+## gövde kalçadan bükülür, bacak ve kollar IK ile zemine/hedefe uzanır. Eski işlerin (sit_ground, doze, stir…)
+## davranışı aynı kalır. _durus: takımın kişi başına durumu (geçiş zamanı, eşyalar, denetim).
+const DurusKit := preload("res://scripts/npc/durus_kit.gd")
+## Kalabalık pişirme önbelleği (Crowd._cache_path) rig.gd'nin içeriğini tuzlar ama durus_kit.gd'yi saymaz: duruş
+## takımında pişmiş görünümü değiştiren her değişiklikte bu sayı artırılır (yoksa diskte eski duruş kalır).
+const DURUS_SURUM := 3
+var _durus := {}
+## Eğim denetimi (POSEAUDIT tilt, susturulamaz): kişinin kökü dünya dikeyinden 20°'den çok sapmışsa bir kez yazar.
+## Bilinçli düşme/taşınma/uyuma/uçma işleri hariç (açık liste).
+const EGIM_SERBEST := ["fly", "hover", "swim", "fall", "dead", "lie", "sleep"]
+## Etkinlik adı vermeden kökü bilerek yatıran düşme sahneleri (açık liste; kişinin üst düğümünün betiği, kilitliyken):
+##   wall_fight.gd: ateş alan asker koşar, sonra yüzüstü düşer (_burn, ~1,45 rad)
+const EGIM_SERBEST_BETIK := ["res://scripts/level/wall_fight.gd"]
+var _egim_t := 0.0
+var _egim_bildi := false
+
+
+func _egim_denet(delta: float) -> void:
+	_egim_t -= delta
+	if _egim_t > 0.0 or _egim_bildi or owner == null or not owner.is_inside_tree():
+		return
+	_egim_t = 0.5
+	var up := owner.global_basis.y.normalized()
+	var deg := rad_to_deg(acos(clampf(up.dot(Vector3.UP), -1.0, 1.0)))
+	if deg > 20.0 and not activity in EGIM_SERBEST:
+		var par := owner.get_parent()
+		if lock > 0 and par and par.get_script() and (par.get_script() as Script).resource_path in EGIM_SERBEST_BETIK:
+			return
+		_egim_bildi = true
+		print("POSEAUDIT tilt %s %.0f %s (%s/%s)" % [owner.name, deg, activity, par.get_parent().name if par and par.get_parent() else "", par.name if par else ""])
 
 
 ## El ve ayak bilekleri (CharKit'in üçüncü eklemleri): ayak tabanı karakterin zeminine paralel kalır (baldır ne açıda
@@ -305,6 +342,11 @@ func _update_core(delta: float, talking: bool, busy: bool) -> void:
 		brows.rotation.z = _m_roll
 	if lock > 0 or busy:
 		return
+	if DurusKit.var_mi(activity):
+		DurusKit.uygula(self, delta, talking)
+		return
+	elif not _durus.is_empty():
+		DurusKit.birak(self, delta)
 	# Oturan ya da suda olan (kayıkta taşınan kürekçi, yüzen) yürümez: taşınmak adım sayılmaz
 	if speed > 0.35 and not activity in ["sit", "sit_ground", "write", "row", "swim", "ride", "halay", "halay_lead", "fly", "hover", "whittle", "read_ground", "doze", "write_desk", "sit_astride"]:
 		_walk_phase += delta * (3.0 + speed * 1.6)
