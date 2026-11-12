@@ -1717,12 +1717,16 @@ func chain_busy() -> bool:
 ## şehzadenin önünde yüksek sesle okunuyordu: "Ali Kuşçu'yu çağıracak"), altyazı soluk. tools/voice_map.py bu çağrıyı
 ## seslendirme listesine almaz.
 var _inner := false
+var _inner_voiced := false
 
 
-func think(speaker_key: String, text_key: String) -> void:
+## voiced: iç ses altyazı rengiyle ama seslendirilerek söylenir (44b: karanlıkta ve hayranlık anında Tolga)
+func think(speaker_key: String, text_key: String, voiced := false) -> void:
 	_inner = true
+	_inner_voiced = voiced
 	await say(speaker_key, text_key)
 	_inner = false
+	_inner_voiced = false
 
 
 func say(speaker_key: String, text_key: String, _from_chain := false) -> void:
@@ -1788,7 +1792,7 @@ func say(speaker_key: String, text_key: String, _from_chain := false) -> void:
 		return
 	var text_len := _sub_text.text.length()
 	var dur := clampf(text_len * 0.028, 0.4, 2.2)
-	var vs: AudioStream = null if _inner else voice_stream(text_key)
+	var vs: AudioStream = null if (_inner and not _inner_voiced) else voice_stream(text_key)
 	if vs:
 		_voice.stream = vs
 		_voice.volume_db = VoiceGain.db(text_key)   # kısık/bağıran kayıtlar dengelenir

@@ -474,7 +474,7 @@ func _set_ambient(k: float) -> void:
 ## Karanlık: yalnız huzme. Fener açılınca hayranlık anı.
 func _dark() -> void:
 	phase = "dark"
-	await hud.think("SPK_TOLGA", "D44B_T_DARK")
+	await hud.think("SPK_TOLGA", "D44B_T_DARK", true)
 	player.frozen = false
 	player.speed_mult = 0.0
 	_capture_mouse()
@@ -493,7 +493,7 @@ func _dark() -> void:
 	_awe_t = 0.0
 	phase = "awe"
 	await get_tree().create_timer(1.6, false).timeout
-	await hud.think("SPK_TOLGA", "D44B_T_AWE_" + light_kind.to_upper())
+	await hud.think("SPK_TOLGA", "D44B_T_AWE_" + light_kind.to_upper(), true)
 	await hud.say("SPK_TOLGA", "D44B_T_AWE_2")
 	await hud.say("SPK_NIHAT", "D44B_N_AWE")
 	await hud.say("SPK_TOLGA", "D44B_T_AWE_3")
