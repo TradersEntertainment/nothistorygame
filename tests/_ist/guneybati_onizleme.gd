@@ -170,6 +170,7 @@ func _audit() -> Dictionary:
 		var hit := space.intersect_ray(q)
 		if hit.is_empty() or (hit["position"] as Vector3).y < a.position.y + a.size.y - 0.35:
 			delik += 1
+			print("DELIK ", a)
 	res["delik"] = delik
 	# girilebilir dar aralık: ızgarada, ayak yüksekliğinde sağ-sol ışınlar (0.2–1.4 m boşluk)
 	var dar := 0
@@ -206,6 +207,7 @@ func _audit() -> Dictionary:
 					var h2 := space.intersect_ray(q2)
 					if h2.is_empty() or (h2["position"] as Vector3).y < bottom - 3.5:
 						hv += 1
+						print("HAVADA ", gt.origin, bs.size)
 	res["havada"] = hv
 	res["yol"] = await _climb_test()
 	return res
@@ -262,5 +264,7 @@ func _climb_test() -> String:
 			await get_tree().physics_frame
 		if reached:
 			ok += 1
+		else:
+			print("CLIMBFAIL ", c[2], " alt=", lo, " ust=", hi, " son=", b.global_position)
 		b.queue_free()
 	return "%d/%d" % [ok, cl.size()]
