@@ -1059,11 +1059,13 @@ func _planla(cp: Vector3) -> void:
 	var pl := get_tree().get_first_node_in_group("player") as Node3D if is_inside_tree() else null
 	var pll := to_local(pl.global_position) if pl != null else Vector3(p.x, 0, p.y)
 	var p2 := Vector2(pll.x, pll.z)
+	var kuruldu := false
 	for ck: Vector2i in _duvar_cells:
 		var c := Vector2((ck.x + 0.5) * DUVAR_HUCRE, (ck.y + 0.5) * DUVAR_HUCRE)
 		var yakin := minf(c.distance_to(p), c.distance_to(p2)) < CARP_YAKIN + DUVAR_HUCRE * 0.71
 		var dc: Dictionary = _duvar_cells[ck]
-		if yakin and dc["body"] == null:
+		if yakin and dc["body"] == null and not kuruldu:
+			kuruldu = true                     # DOKU-4: planlama başına en çok bir hücrenin gövdesi (uçuş takılması)
 			var body := StaticBody3D.new()
 			body.name = "AvluDuvar"
 			for bx: Array in dc["boxes"]:
@@ -1102,7 +1104,7 @@ func _process(dt: float) -> void:
 func _process_ic(dt: float) -> void:
 	_son_kontrol -= dt
 	if _son_kontrol <= 0.0:
-		_son_kontrol = 0.4
+		_son_kontrol = 0.15
 		_planla(_cam())
 	var butce := maxi(IstDunya.butce_us, 4000)
 	if _zemin_is >= 0 or not _zemin_bekleyen.is_empty():
