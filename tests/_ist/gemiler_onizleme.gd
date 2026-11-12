@@ -198,7 +198,17 @@ func _denetle(id: String, rootg: Node3D, bay: String) -> void:
 	var B: float = d["B"]
 	var st := IstGemilerMesh.istasyon(id)
 	var mesh := IstGemilerMesh.mesh(id, bay, 0, acik)
-	var tm := mesh.generate_triangle_mesh()
+	# görsel yüzey için geçici üçgen ağı gövdesi (katman 2, yalnız denetim); gemi ile aynı ölçek
+	var prox := StaticBody3D.new()
+	prox.collision_layer = 2
+	prox.collision_mask = 0
+	var pcs := CollisionShape3D.new()
+	pcs.shape = mesh.create_trimesh_shape()
+	prox.add_child(pcs)
+	prox.scale = Vector3.ONE * k
+	add_child(prox)
+	await get_tree().physics_frame
+	await get_tree().physics_frame
 	var delik := 0
 	var hucre := 0
 	var dar := 0
@@ -216,14 +226,18 @@ func _denetle(id: String, rootg: Node3D, bay: String) -> void:
 		while x <= w:
 			hucre += 1
 			# görsel yüzey: yukarıdan aşağı (yalnız güverte + 1,3 m altı: direk/yelken sayılmaz)
-			var hit_v: Variant = tm.intersect_ray(Vector3(x / k, yd + 1.3, z / k), Vector3.DOWN)
+			var vq := PhysicsRayQueryParameters3D.create(Vector3(x, (yd + 1.3) * k, z), Vector3(x, -3.0, z))
+			vq.collision_mask = 2
+			var hit_v: Variant = space.intersect_ray(vq)
 			var q := PhysicsRayQueryParameters3D.create(Vector3(x, yd * k + 4.0, z), Vector3(x, -3.0, z))
 			q.collision_mask = 1
 			var hit := space.intersect_ray(q)
 			if hit_v is Dictionary:
-				var gy: float = ((hit_v as Dictionary)["position"] as Vector3).y * k
+				var gy: float = ((hit_v as Dictionary)["position"] as Vector3).y
 				if hit.is_empty() or (hit["position"] as Vector3).y < gy - 0.35:
 					delik += 1
+					if delik <= 4:
+						print("  DELIK x=%.2f z=%.2f gorsel_y=%.2f carpisma_y=%s" % [x, z, gy, "yok" if hit.is_empty() else "%.2f" % (hit["position"] as Vector3).y])
 			# adım adım yürünebilirlik: yüzeyin güverteye göre fark > 0.45 ise tırmanılamaz yüzey (kasara üstü gibi)
 			if not hit.is_empty():
 				var hy: float = (hit["position"] as Vector3).y
@@ -252,6 +266,7 @@ func _denetle(id: String, rootg: Node3D, bay: String) -> void:
 		pq2.collision_mask = 1
 		if not space.intersect_ray(pq2).is_empty():
 			kasara_yolu += 1
+	prox.queue_free()
 	var ucg := IstGemilerMesh.ucgen(id, bay, 0, acik)
 	print("ISTAUDIT id=%s k=%.2f tris=%d draws=1 delik=%d dar=%d havada=0 guverte_hucre=%d perch_carpisma=%d/%d cati_yolu=%d" % [
 		id, k, ucg, delik, dar, yuru, kasara_yolu, IstGemiler.perches_tip(id, k).size(), 1 if yuru > 20 else 0])
@@ -289,7 +304,13 @@ func _filo_denetim() -> void:
 					yaln += 1
 		toplam += p.size()
 		kara_ihlal += ihlal + ic_ic
-		print("ISTFILO ad=%s gemi=%d tipler=%s kara_noktasi=%d sur_ici_noktasi=%d cakisan_cift=%d" % [ad, p.size(), say, ihlal, ic_ic, yaln])
+		var mer := Vector2.ZERO
+		for r: Dictionary in p:
+			mer += r["p"] as Vector2
+		if p.size() > 0:
+			mer /= p.size()
+		var re := IstGeo.real(mer.x, mer.y)
+		print("ISTFILO ad=%s gemi=%d tipler=%s kara_noktasi=%d sur_ici_noktasi=%d cakisan_cift=%d merkez_e=%.0f merkez_n=%.0f" % [ad, p.size(), say, ihlal, ic_ic, yaln, re.x, re.y])
 	print("ISTFILO toplam=%d ihlal=%d %s" % [toplam, kara_ihlal, "PASS" if kara_ihlal == 0 else "FAIL"])
 	get_tree().quit(0)
 

@@ -174,11 +174,16 @@ static func sekiller(tip: String) -> Array:
 				kutu.size = Vector3(0.34, h, len + 0.2)
 				var cx := mid.x + sx * (maxf(mid_w - absf(mid.x), 0.0)) * 0.5
 				out.append({"s": kutu, "t": Transform3D(Basis(Vector3.UP, yaw), Vector3(cx, yd + h * 0.5, mid.z))})
-	# Kasaralar
+	# Kasaralar (üst plaka 0,2 m dahil) ve çıkış basamakları
 	for kas: Dictionary in M._kasaralar(tip):
 		var kutu2 := BoxShape3D.new()
-		kutu2.size = kas["s"]
-		out.append({"s": kutu2, "t": Transform3D(Basis(), kas["c"])})
+		var ks: Vector3 = kas["s"]
+		kutu2.size = Vector3(ks.x, ks.y + 0.2, ks.z)
+		out.append({"s": kutu2, "t": Transform3D(Basis(), (kas["c"] as Vector3) + Vector3(0, 0.1, 0))})
+	for b: Dictionary in M._basamaklar(tip):
+		var kutu3 := BoxShape3D.new()
+		kutu3.size = b["s"]
+		out.append({"s": kutu3, "t": Transform3D(Basis(), b["c"])})
 	_sekil_onbellek[tip] = out
 	return out
 
@@ -196,6 +201,40 @@ static func carpisma_govdesi(tip: String) -> StaticBody3D:
 		cs.transform = e["t"]
 		body.add_child(cs)
 	return body
+
+
+## Kıyıdaki iniş noktasından (dünya, geminin konumuna göre kayık) güverteye tahta köprü: çarpışma + görsel (gövdeye eklenir)
+static func tahta_koy(body: StaticBody3D, tip: String, inis_goreli: Vector3, yaw: float) -> void:
+	var d: Dictionary = M.TIPLER[tip]
+	var yd: float = d["D"]
+	var B: float = d["B"]
+	var L: float = d["L"]
+	var loc := Basis(Vector3.UP, yaw).inverse() * inis_goreli
+	var a := Vector3(signf(loc.x) * B * 0.5 * 0.8, yd, clampf(loc.z, -L * 0.2, L * 0.2))
+	var b := Vector3(loc.x, loc.y + 0.05, loc.z)
+	var dv := b - a
+	var len := dv.length()
+	if len < 1.0 or len > 22.0:
+		return
+	var basis := Basis.looking_at(dv.normalized(), Vector3.UP)
+	var mid := (a + b) * 0.5
+	var cs := CollisionShape3D.new()
+	var bs := BoxShape3D.new()
+	bs.size = Vector3(1.6, 0.14, len)
+	cs.shape = bs
+	cs.transform = Transform3D(basis, mid)
+	body.add_child(cs)
+	var mi := MeshInstance3D.new()
+	var bm := BoxMesh.new()
+	bm.size = bs.size
+	mi.mesh = bm
+	var mat := StandardMaterial3D.new()
+	mat.albedo_color = Color("7a5a38")
+	mat.roughness = 0.9
+	mi.material_override = mat
+	mi.transform = Transform3D(basis, mid)
+	mi.name = "Tahta"
+	body.add_child(mi)
 
 
 # ====================================================================== yerleşim yardımcıları
@@ -336,6 +375,104 @@ static func kiyi_yerlestir(poly: PackedVector2Array, tipler: Array, dmin: float,
 	return sonuc
 
 
+## Kıyı poligonundan, gerçek (e,n) dikdörtgeni içindeki en uzun ardışık hat (dünya x,z)
+static func kiyi_hatti(poly: PackedVector2Array, e0: float, n0: float, e1: float, n1: float) -> PackedVector2Array:
+	var en_iyi := PackedVector2Array()
+	var cur := PackedVector2Array()
+	var r := Rect2(Vector2(minf(e0, e1), minf(n0, n1)), Vector2(absf(e1 - e0), absf(n1 - n0)))
+	for q in poly:
+		var re := IstGeo.real(q.x, q.y)
+		if r.has_point(re):
+			cur.append(q)
+		else:
+			if cur.size() > en_iyi.size():
+				en_iyi = cur
+			cur = PackedVector2Array()
+	if cur.size() > en_iyi.size():
+		en_iyi = cur
+	return en_iyi
+
+
+## Hat boyunca (yay uzunluğu t) nokta ve birim teğet
+static func _hat_nokta(hat: PackedVector2Array, t: float) -> Array:
+	var acc := 0.0
+	for i in hat.size() - 1:
+		var sl := hat[i].distance_to(hat[i + 1])
+		if t <= acc + sl and sl > 0.001:
+			var u := (t - acc) / sl
+			return [hat[i].lerp(hat[i + 1], u), (hat[i + 1] - hat[i]).normalized()]
+		acc += sl
+	return []
+
+
+static func _hat_uzun(hat: PackedVector2Array) -> float:
+	var l := 0.0
+	for i in hat.size() - 1:
+		l += hat[i].distance_to(hat[i + 1])
+	return l
+
+
+## Kıyı hattına paralel sıralar: her sıra için kıyıdan uzaklık (mesafe); hiza "dik" (burun karaya) ya da "paralel";
+## tipler sırayla sıralara dağıtılır; gemiler arası boşluk = en + aralik. Döner: kayıtlar (mevcut ile çakışma denetimli).
+static func sira_yerlestir(hat: PackedVector2Array, tipler: Array, mesafeler: Array, hiza: String, aralik: float, rng: RandomNumberGenerator,
+		mevcut: Array, dislama: Array = []) -> Array:
+	var sonuc: Array = []
+	if hat.size() < 2:
+		return sonuc
+	var toplam := _hat_uzun(hat)
+	var sira := 0
+	for md: float in mesafeler:
+		var t := rng.randf_range(2.0, 12.0)
+		while t < toplam - 4.0 and sira < tipler.size():
+			var tb: Array = tipler[sira]
+			var tip: String = tb[0]
+			var lb := _tip_boyut(tip)
+			var hp := _hat_nokta(hat, t)
+			if hp.is_empty():
+				break
+			var q: Vector2 = hp[0]
+			var tv: Vector2 = hp[1]
+			var nv := Vector2(-tv.y, tv.x)
+			if IstGeo.su(q.x + nv.x * 25.0, q.y + nv.y * 25.0) == false:
+				nv = -nv
+			var yer := md + (lb.x * 0.5 if hiza == "dik" else lb.y * 0.5)
+			var p := q + nv * yer
+			var yaw := 0.0
+			if hiza == "dik":
+				yaw = atan2(-nv.x, -nv.y) + rng.randf_range(-0.05, 0.05)
+			else:
+				yaw = atan2(tv.x, tv.y) + (PI if rng.randf() < 0.5 else 0.0) + rng.randf_range(-0.04, 0.04)
+			var adim := (lb.y + aralik) if hiza == "dik" else (lb.x + aralik)
+			var ok := suda(p, yaw, lb.x, lb.y, 2.0)
+			if ok:
+				for dz: Array in dislama:
+					if p.distance_to(dz[0] as Vector2) < (dz[1] as float):
+						ok = false
+						break
+			var kayit := _kayit(tip, tb[1], p, yaw, tb[2])
+			if hiza == "paralel" and md <= 16.0 and tip in YURUNUR:
+				var hy := IstGeo.h(q.x, q.y)
+				if hy < 3.0:
+					kayit["rampa"] = Vector3(q.x, maxf(hy, 0.0), q.y)
+			if ok:
+				for m: Dictionary in mevcut:
+					if _cakisir(kayit["obb"] as Array, m["obb"] as Array, 0.8):
+						ok = false
+						break
+			if ok:
+				for m: Dictionary in sonuc:
+					if _cakisir(kayit["obb"] as Array, m["obb"] as Array, 0.8):
+						ok = false
+						break
+			if ok:
+				sonuc.append(kayit)
+				sira += 1
+				t += adim
+			else:
+				t += 3.0
+	return sonuc
+
+
 static func _kayit(tip: String, bay: String, p: Vector2, yaw: float, acik := false) -> Dictionary:
 	var lb := _tip_boyut(tip)
 	return {"tip": tip, "bay": bay, "p": p, "yaw": yaw, "acik": acik, "obb": _obb(p, yaw, lb.x * 0.5 + 1.0, lb.y * 0.5 + 3.0)}
@@ -415,23 +552,23 @@ static func plan_zincir(tohum := 1453) -> Array:
 	return dizi
 
 
-## 2) Haliç iskeleleri (Venedik, Pisa, Amalfi, Ceneviz): güney kıyıda kıyıya paralel demirli tüccar gemileri
+## 2) Haliç iskeleleri (Venedik, Pisa, Amalfi): güney kıyıda kıyıya paralel demirli tüccar gemileri (iki sıra)
 static func plan_halic_iskele(tohum := 1453) -> Array:
 	var rng := RandomNumberGenerator.new()
 	rng.seed = tohum + 1
-	var poly := _dikdortgen(-1100.0, 880.0, -470.0, 1180.0)
+	var hat := kiyi_hatti(IstGeo.kiyi("yarimada"), -1150.0, 850.0, -430.0, 1150.0)
 	var tl := _liste("karaka", ["venedik", "ceneviz", "bizans"], 3) + _liste("kog", ["venedik", "ceneviz", "katalan", "tuccar"], 9)
-	return kiyi_yerlestir(poly, _karistir(tl, rng), 22.0, 44.0, "paralel", rng, [])
+	return sira_yerlestir(hat, _karistir(tl, rng), [26.0, 62.0], "paralel", 4.0, rng, [])
 
 
-## 3) Galata rıhtımı: Ceneviz'in gemileri kıyıya yakın demirli (rıhtım ve iskele ağzı dışı)
+## 3) Galata rıhtımı: Ceneviz'in gemileri kıyıya paralel demirli (rıhtım ve iskele ağzı dışı)
 static func plan_galata(tohum := 1453) -> Array:
 	var rng := RandomNumberGenerator.new()
 	rng.seed = tohum + 2
-	var poly := _dikdortgen(-1250.0, 1360.0, 150.0, 1700.0)
+	var hat := kiyi_hatti(IstGeo.kiyi("galata"), -1000.0, 1480.0, 100.0, 1800.0)
 	var tl := _liste("karaka", "ceneviz", 5) + _liste("kog", ["ceneviz", "ceneviz", "tuccar"], 6) + _liste("kadirga", "ceneviz", 2)
 	var dis := [[IstGeo.w2(-470.0, 1470.0), 62.0]]
-	return kiyi_yerlestir(poly, _karistir(tl, rng), 20.0, 46.0, "paralel", rng, [], dis)
+	return sira_yerlestir(hat, _karistir(tl, rng), [26.0, 62.0], "paralel", 4.0, rng, [], dis)
 
 
 static func _osmanli_listesi(kad: int, kal: int, fus: int, par: int, rng: RandomNumberGenerator) -> Array:
@@ -443,23 +580,32 @@ static func _osmanli_listesi(kad: int, kal: int, fus: int, par: int, rng: Random
 	return _karistir(tl, rng)
 
 
-## 4) Çifte Sütunlar (Beşiktaş koyu): ~90 Osmanlı gemisi, kıyıya dik (burun denize), üç sıra
+## 4) Çifte Sütunlar (Beşiktaş koyu): ~90 Osmanlı gemisi, kıyı boyunca üç sıra dizili (burun karaya dönük; çekilmiş/demirli)
 static func plan_cifte_sutunlar(tohum := 1453) -> Array:
 	var rng := RandomNumberGenerator.new()
 	rng.seed = tohum + 3
-	var poly := _dikdortgen(1500.0, 3000.0, 3300.0, 4500.0)
-	return kiyi_yerlestir(poly, _osmanli_listesi(8, 24, 40, 18, rng), 24.0, 150.0, "dik", rng, [], [], 9000, 1.0)
+	var hat := kiyi_hatti(IstGeo.kiyi("trakya"), 1500.0, 3000.0, 3200.0, 4300.0)
+	var tl := _osmanli_listesi(8, 24, 40, 18, rng)
+	# Büyük gemiler içte (kıyıya yakın sıra): kadırga, parandarya, kalyata; fusta dış sıralarda
+	var buyuk: Array = []
+	var kucuk: Array = []
+	for tb: Array in tl:
+		if tb[0] == "fusta" or tb[0] == "kalyata":
+			kucuk.append(tb)
+		else:
+			buyuk.append(tb)
+	return sira_yerlestir(hat, buyuk + kucuk, [30.0, 70.0, 110.0, 150.0], "dik", 2.5, rng, [])
 
 
 ## 5) Boğaz ağzı: ~50 Osmanlı gemisi, Avrupa kıyısı (Tophane–Kabataş) ve Üsküdar kıyısı
 static func plan_bogaz_agzi(tohum := 1453) -> Array:
 	var rng := RandomNumberGenerator.new()
 	rng.seed = tohum + 4
-	var avrupa := _dikdortgen(150.0, 1650.0, 1700.0, 3100.0)
-	var anadolu := _dikdortgen(1800.0, 1300.0, 3200.0, 2500.0)
 	var tl := _osmanli_listesi(6, 12, 20, 12, rng)
-	var a: Array = kiyi_yerlestir(avrupa, tl.slice(0, 30), 26.0, 120.0, "paralel", rng, [], [], 6000, 1.0)
-	var b: Array = kiyi_yerlestir(anadolu, tl.slice(30), 26.0, 120.0, "paralel", rng, a, [], 6000, 1.0)
+	var hat_a := kiyi_hatti(IstGeo.kiyi("trakya"), 100.0, 1900.0, 1900.0, 3300.0)
+	var hat_u := kiyi_hatti(IstGeo.kiyi("anadolu"), 1800.0, 1200.0, 3300.0, 2600.0)
+	var a: Array = sira_yerlestir(hat_a, tl.slice(0, 30), [32.0, 72.0], "dik", 2.5, rng, [])
+	var b: Array = sira_yerlestir(hat_u, tl.slice(30), [32.0, 72.0], "dik", 2.5, rng, a)
 	return a + b
 
 
@@ -629,6 +775,8 @@ static func filo_kur(host: Node3D, kayitlar: Array, ad: String, lod := 0, carpis
 			body.position = Vector3(p3.x, 0.0, p3.y)
 			body.rotation.y = r["yaw"]
 			kb.add_child(body)
+			if r.has("rampa"):
+				tahta_koy(body, r["tip"], (r["rampa"] as Vector3) - body.position, r["yaw"])
 	kok.set_meta("kayitlar", kayitlar)
 	kok.set_meta("gemi_sayisi", kayitlar.size())
 	return kok

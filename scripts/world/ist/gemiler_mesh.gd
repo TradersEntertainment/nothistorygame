@@ -118,7 +118,13 @@ static func _govde(k: MeshKit, tip: String, bay: String, gunes_tahta := true) ->
 			var d0 := Vector3(s * w0 * 0.88, yd, z0)
 			var d1 := Vector3(s * w1 * 0.88, yd, z1)
 			Landmarks1453._oq(k, o0, o1, n1, n0, hull.lightened(0.15), Vector3.UP)
-			Landmarks1453._oq(k, n0, n1, d1, d0, hull.darkened(0.12), Vector3(-s, 0, 0))
+			var m0a := d0.lerp(n0, 0.38)
+			var m1a := d1.lerp(n1, 0.38)
+			var m0b := d0.lerp(n0, 0.74)
+			var m1b := d1.lerp(n1, 0.74)
+			Landmarks1453._oq(k, m0a, m1a, d1, d0, hull.darkened(0.2), Vector3(-s, 0, 0))
+			Landmarks1453._oq(k, m0b, m1b, m1a, m0a, hull.darkened(0.09), Vector3(-s, 0, 0))
+			Landmarks1453._oq(k, n0, n1, m1b, m0b, hull.lightened(0.02), Vector3(-s, 0, 0))
 			var dc := SH_DECK if (i % 2 == 0 or not gunes_tahta) else SH_DECK.darkened(0.07)
 			Landmarks1453._oq(k, d0, d1, Vector3(0, yd, z1), Vector3(0, yd, z0), dc, Vector3.UP)
 	# Kıç aynası ve baş
@@ -159,6 +165,80 @@ static func _sil(k: MeshKit, a: Vector3, b: Vector3, r: float, col: Color, seg :
 static func _kutu(k: MeshKit, c: Vector3, s: Vector3, col: Color) -> void:
 	k.box(Transform3D(Basis(), c), s, col)
 
+
+
+## Kasara üstüne çıkan basamaklar (güverteden; kutular hem görsel hem çarpışma): adım ≤ 0,32 m (STEP_H 0,42)
+static func _basamaklar(tip: String) -> Array:
+	var out: Array = []
+	var yd := deck_y(tip)
+	for kas: Dictionary in _kasaralar(tip):
+		var c: Vector3 = kas["c"]
+		var sz: Vector3 = kas["s"]
+		var top := c.y + sz.y * 0.5 + 0.2 - yd
+		var n := int(ceil(top / 0.31))
+		var rise := top / n
+		var dirz := 1.0 if c.z < 0.0 else -1.0
+		var z0 := c.z + dirz * sz.z * 0.5
+		for i in n:
+			var h := rise * (n - i)
+			out.append({"c": Vector3(0, yd + h * 0.5, z0 + dirz * (0.36 * (i + 0.5))), "s": Vector3(1.5, h, 0.36)})
+	return out
+
+
+## Kasara cephe ayrıntıları: kapı, pencereler, tahta bantları, basamaklar
+static func _kasara_ayr(k: MeshKit, tip: String, bay: String, det := true) -> void:
+	var yd := deck_y(tip)
+	var pal := boya(bay)
+	var trim: Color = pal[1]
+	for kas: Dictionary in (_kasaralar(tip) if det else []):
+		var c: Vector3 = kas["c"]
+		var sz: Vector3 = kas["s"]
+		var dirz := 1.0 if c.z < 0.0 else -1.0                 # güverteye bakan yüz
+		var zf := c.z + dirz * (sz.z * 0.5 + 0.02)
+		# kapı: güverteden 2,0 m (kasara yüksekliği izin verdiğince)
+		var kh := minf(sz.y * 0.9, 2.0)
+		_kutu(k, Vector3(sz.x * 0.2, yd + kh * 0.5, zf), Vector3(0.95, kh, 0.06), SH_TAR)
+		_kutu(k, Vector3(sz.x * 0.2, yd + kh + 0.07, zf), Vector3(1.15, 0.12, 0.08), trim)
+		# pencereler
+		for wx: float in [-sz.x * 0.32, -sz.x * 0.12, sz.x * 0.38]:
+			if absf(wx - sz.x * 0.2) < 0.7:
+				continue
+			_kutu(k, Vector3(wx, yd + sz.y * 0.62, zf), Vector3(0.42, 0.5, 0.06), Color("1e1810"))
+		# yatay tahta bantları
+		for q in 3:
+			_kutu(k, Vector3(0, yd + sz.y * (0.2 + 0.28 * q), zf - dirz * 0.005), Vector3(sz.x * 0.98, 0.08, 0.05), SH_HULL.darkened(0.18))
+	for b: Dictionary in _basamaklar(tip):
+		_kutu(k, b["c"], b["s"], SH_DECK.darkened(0.04))
+
+
+## Güverte yükü: ambar kapağı yanında fıçı ve sandıklar, bir ırgat, halat yumağı (lod 0)
+static func _guverte_yuku(k: MeshKit, tip: String) -> void:
+	var d: Dictionary = TIPLER[tip]
+	var yd: float = d["D"]
+	var L: float = d["L"]
+	var B: float = d["B"]
+	var kx := B * 0.5 * 0.55
+	if tip == "karaka" or tip == "kog":
+		# ırgat
+		k.cyl(Transform3D(Basis(), Vector3(0, yd, L * 0.18)), 0.34, 1.1, SH_HULL.lightened(0.1), 8)
+		_kutu(k, Vector3(0, yd + 1.1, L * 0.18), Vector3(1.4, 0.14, 0.14), SH_WOOD)
+		_kutu(k, Vector3(0, yd + 1.1, L * 0.18), Vector3(0.14, 0.14, 1.4), SH_WOOD)
+		# fıçılar ve sandıklar (iki yan)
+		for q in 3:
+			k.cyl(Transform3D(Basis(), Vector3(-kx, yd, -1.0 + q * 0.8)), 0.34, 0.8, Color("8a6a40"), 8)
+			k.cyl(Transform3D(Basis(), Vector3(-kx, yd + 0.8, -1.0 + q * 0.8)), 0.30, 0.04, SH_TAR, 8)
+		_kutu(k, Vector3(kx, yd + 0.35, 1.0), Vector3(0.9, 0.7, 0.8), Color("7a5a38"))
+		_kutu(k, Vector3(kx, yd + 0.35, 2.0), Vector3(0.8, 0.7, 0.7), Color("6a4a2c"))
+		_kutu(k, Vector3(kx + 0.05, yd + 1.0, 1.4), Vector3(0.7, 0.6, 0.6), Color("8a6a44"))
+		# halat yumağı
+		k.cyl(Transform3D(Basis(), Vector3(kx, yd, -2.6)), 0.5, 0.22, SH_ROPE.lightened(0.2), 8)
+	elif tip in ["kadirga", "kalyata", "fusta"]:
+		for q in 3:
+			k.cyl(Transform3D(Basis(), Vector3(0.0, yd, L * 0.28 - q * 1.0)), 0.3, 0.7, Color("8a6a40"), 8)
+		_kutu(k, Vector3(0.0, yd + 0.3, L * 0.1), Vector3(0.9, 0.6, 0.7), Color("7a5a38"))
+	elif tip == "parandarya":
+		for q in 3:
+			_kutu(k, Vector3(-1.4 + q * 1.4, yd + 0.4, 6.0), Vector3(1.0, 0.8, 1.0), Color("b8a060"))
 
 # ------------------------------------------------------------------ bayraklar
 
@@ -256,6 +336,9 @@ static func _karaka(k: MeshKit, tip: String, bay: String, lod: int, acik: bool) 
 				var zz := c.z - s.z * 0.5 + (q + 0.5) * s.z / 4.0
 				for sx: float in [-1.0, 1.0]:
 					_kutu(k, Vector3(c.x + sx * (s.x * 0.5 + 0.04), c.y + 0.1, zz), Vector3(0.08, 0.55, 0.55), trim if q % 2 == 0 else paint.lightened(0.1))
+	_kasara_ayr(k, tip, bay, det)
+	if det:
+		_guverte_yuku(k, tip)
 	if det:
 		# kıç aynası pencereleri ve sancak tahtası
 		for q in 3:
@@ -372,6 +455,9 @@ static func _kog(k: MeshKit, bay: String, lod: int, acik: bool) -> void:
 		var s: Vector3 = kas["s"]
 		_kutu(k, c, s, SH_HULL.lightened(0.05))
 		_kutu(k, c + Vector3(0, s.y * 0.5 + 0.1, 0), Vector3(s.x + 0.4, 0.2, s.z + 0.4), paint)
+	_kasara_ayr(k, "kog", bay, det)
+	if det:
+		_guverte_yuku(k, "kog")
 	var main := Vector3(0, yd, 1.0)
 	_sil(k, main, main + Vector3(0, 15.0, 0), 0.26, SH_WOOD.lightened(0.05), 6)
 	var yard := main + Vector3(0, 12.4, 0.4)
@@ -457,6 +543,9 @@ static func _kadirga(k: MeshKit, tip: String, bay: String, lod: int, acik: bool)
 		if det:
 			for sx: float in [-1.0, 1.0]:
 				_kutu(k, c + Vector3(sx * (s.x * 0.5 + 0.03), 0.1, 0), Vector3(0.06, 0.5, 1.2), trim)
+	_kasara_ayr(k, tip, bay, det)
+	if det:
+		_guverte_yuku(k, tip)
 	# Kıçta tente (renkli, dört direkli)
 	var tz := -L * 0.2 if tip == "kadirga" else -L * 0.3
 	if tip == "kadirga" or tip == "kalyata":
