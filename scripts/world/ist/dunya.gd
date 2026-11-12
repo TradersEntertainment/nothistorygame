@@ -360,11 +360,11 @@ func _zemin_mat() -> ShaderMaterial:
 ## ZEMİN yer örtüsü (ot tutamı, çiçek, taş, dal, birikinti): izleyicinin 48 m çevresinde akışlı, çarpışmasız; yerleşik
 ## mahallelerde (döşeli sokak, çarşı) yok, açık arazide (kır, bostan, harabe, ordugâh, sur dışı) var.
 func _zemin_ortu() -> void:
-	var acik := ["kir", "seyrek", "bostan", "sarnic", "harabe", "ordugah", "bag", "orman", ""]
+	var yerlesik := ["carsi", "sik", "liman", "sur_dibi", "koy", "hipodrom", "saray"]
 	load("res://scripts/level/zemin.gd").ortu_ekle(self, Rect2(-100000.0, -100000.0, 200000.0, 200000.0),
 		func(x: float, z: float) -> float: return IstGeo.h(x, z),
 		func(x: float, z: float) -> Color: return _renk(x, z, IstGeo.h(x, z), 0.0),
-		{"temas": false, "tut": func(x: float, z: float) -> bool: return String(_mah(x, z).get("tur", "")) in acik and IstGeo.h(x, z) > 0.4})
+		{"temas": false, "tut": func(x: float, z: float) -> bool: return not (String(_mah(x, z).get("tur", "")) in yerlesik) and IstGeo.h(x, z) > 0.4})
 
 
 ## Mahalle türü (20 m önbellek; IstGeo.mahalle pahalı)

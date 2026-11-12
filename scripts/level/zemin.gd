@@ -27,10 +27,10 @@ const YORELER := {
 		"kuruluk": 0.36, "cignenme": 0.0},
 	"ordugah": {"c_ot": Color("5b6b2e"), "c_ot2": Color("4a5a25"), "c_kuru": Color("8c7f4c"), "c_toprak": Color("76593b"),
 		"c_camur": Color("423325"), "c_cakil": Color("888070"), "c_kum": Color("b09c7c"), "c_kaya": Color("7a7468"),
-		"kuruluk": 0.5, "cignenme": 0.55},
+		"kuruluk": 0.5, "cignenme": 0.4},
 	"kusatma": {"c_ot": Color("5a6831"), "c_ot2": Color("495628"), "c_kuru": Color("867c51"), "c_toprak": Color("6e533a"),
 		"c_camur": Color("3d3027"), "c_cakil": Color("847c70"), "c_kum": Color("ac9a7c"), "c_kaya": Color("767066"),
-		"kuruluk": 0.5, "cignenme": 0.8},
+		"kuruluk": 0.5, "cignenme": 0.45},
 	"kiyi": {"c_ot": Color("596d32"), "c_ot2": Color("465d29"), "c_kuru": Color("8e8355"), "c_toprak": Color("786148"),
 		"c_camur": Color("42352a"), "c_cakil": Color("8e877a"), "c_kum": Color("b8a684"), "c_kaya": Color("7e786e"),
 		"kuruluk": 0.3, "cignenme": 0.1},
@@ -415,7 +415,7 @@ static func _n2(x: float, z: float, s1: float, s2: float, a: float) -> Vector2:
 
 ## Gölgelendiricinin ot payı (yaklaşık): yer örtüsü otu yalnız otlu yerde çıksın.
 static func ot_payi(x: float, z: float, ipucu: Color) -> float:
-	var yesil := clampf((ipucu.g - maxf(ipucu.r, ipucu.b)) * 7.0, 0.0, 1.0)      # ipucu sRGB
+	var yesil := clampf((ipucu.g - maxf(ipucu.r, ipucu.b)) * 12.0, 0.0, 1.0)      # ipucu sRGB
 	var o := _n2(x, z, 37.0, 23.0, 1.1)
 	var q := _n2(x, z, 17.0, 11.0, 2.3)
 	var w := _n2(x, z, 6.1, 3.7, 0.9)
@@ -424,6 +424,7 @@ static func ot_payi(x: float, z: float, ipucu: Color) -> float:
 	var acik := smoothstep(0.42, 0.62, ipucu.r * 0.2126 + ipucu.g * 0.7152 + ipucu.b * 0.0722)
 	var otluk := yesil + (w.x - 0.5) * 0.6 + (q.y - 0.5) * 0.35
 	otluk -= cig * 0.45 * smoothstep(0.4, 0.7, o.x)
+	otluk -= cig * 0.3 * smoothstep(0.5, 0.72, q.x + (w.y - 0.5) * 0.3)
 	otluk -= smoothstep(0.6, 0.78, q.x) * 0.5 * (1.0 - yesil * 0.5)
 	otluk += smoothstep(0.62, 0.8, o.y) * 0.45 * (1.0 - acik * 0.55) * (1.0 - cig * 0.5)
 	return smoothstep(0.44, 0.56, otluk)
@@ -617,7 +618,7 @@ class Ortu extends Node3D:
 			mi.multimesh = mm
 			mi.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
 			if t == "ot" or t == "papatya" or t == "gelincik":
-				mi.material_override = Nature.grass_material()
+				mi.material_override = Zemin_ot_mat()
 			elif t == "birikinti":
 				var wm := StandardMaterial3D.new()
 				wm.vertex_color_use_as_albedo = true
@@ -629,6 +630,17 @@ class Ortu extends Node3D:
 				mi.material_override = Nature.rock_material()
 			add_child(mi)
 			_mm[t] = mm
+
+	## Örtü otu: rüzgârda salınan çimen gölgelendiricisi, arka ışığı kısık (güneşte "marul yeşili" parlamasın)
+	static var _ot_mat: ShaderMaterial
+	static func Zemin_ot_mat() -> ShaderMaterial:
+		if _ot_mat == null:
+			var base: Shader = load("res://assets/shaders/grass.gdshader")
+			var sh := Shader.new()
+			sh.code = base.code.replace("BACKLIGHT = vec3(0.25, 0.3, 0.15);", "BACKLIGHT = vec3(0.07, 0.08, 0.04);")
+			_ot_mat = ShaderMaterial.new()
+			_ot_mat.shader = sh
+		return _ot_mat
 
 	static func Zemin_ag(t: String) -> ArrayMesh:
 		return load("res://scripts/level/zemin.gd")._ag(t)
@@ -774,7 +786,7 @@ class Ortu extends Node3D:
 						continue
 					var y: float = yukseklik.call(x, z)
 					var kuru := clampf(obek.x * 1.2 - 0.2 + rng.randf_range(-0.2, 0.2), 0.0, 1.0)
-					var c := Color("76864e").lerp(Color("a69a66"), kuru) * rng.randf_range(0.85, 1.05)
+					var c := Color("66744a").lerp(Color("968c62"), kuru) * rng.randf_range(0.85, 1.05)
 					c.a = 1.0
 					var s := rng.randf_range(0.7, 1.35)
 					_ekle(out["ot"], Vector3(x, y - 0.02, z), rng.randf() * TAU, Vector3(s, s * rng.randf_range(0.8, 1.2), s), c, rng.randf())
