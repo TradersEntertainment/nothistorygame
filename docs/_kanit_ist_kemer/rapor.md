@@ -72,7 +72,7 @@ lod 0 üçgen üst sınırı 60 bin: en büyüğü Bozdoğan k=1 → 21 bin.
 
 ## Bilinen kusurlar
 - `delik` sayıları çoğunlukla kubbe/koni yan yüzlerindeki yanlış-pozitif (dik kenarda 3 cm daraltılmış dışbükey kabuk) ve Polyeuktos'un
-  kaba kırık pilye başlıkları; Pantokrator'da avlu ağaç tacı. Polyeuktos k=1 delik=128: kırık pilye görseli ile çarpışması uyuşmuyor (düzeltilecek).
+  kaba kırık pilye başlıkları; Pantokrator'da avlu ağaç tacı. Polyeuktos pilye başlıkları katı yapıldı (k=1 delik=0, k=0,5 delik=2).
 - `dar` (Havariyun 24): Heroon duvar parçaları ve moloz arası aralıklar; düzeltilecek.
 - Aspar'da zemin çukuru yapılamadı (yerel zemin y=0 sarnıç tabanı; sed yükselir). Şehir kurucusu zemini alçaltırsa sed yerine kullanılabilir.
 - `havada` denetimi çok parçalı gövdede (Bozdoğan) atlanır; Havariyun'da 1 kutu (moloz tabakası) işaretli.

@@ -125,7 +125,7 @@ static func build_polyeuktos(host: Node3D, k: float, lod: int) -> void:
 			var pb := KIT.blk(root, Vector3(pw, h, pw), Vector3(x, 0.9, z), KIT.STONE, "marble")
 			# bezeli başlık (oyma sepet başlık): ince kutu
 			if h > 3.0 and lod == 0:
-				KIT.vis(root, Vector3(pw + 0.3, 0.4, pw + 0.3), Vector3(x, 0.9 + h, z), Color("efe6d2"), "marble")
+				KIT.blk(root, Vector3(pw + 0.3, 0.4, pw + 0.3), Vector3(x, 0.9 + h, z), Color("efe6d2"), "marble")
 	# ayakta kalan iki kemer parçası (kırık, yan yana)
 	if lod < 2:
 		var ax := S * 0.25
