@@ -173,7 +173,7 @@ static func build_otag(host: Node3D, k: float, lod: int) -> void:
 		ring.append(Transform3D(Basis.from_euler(Vector3(0, -a, 0)).scaled(Vector3(s, 1.35, s)), p))
 		cols.append(K.ton(Color("f1ead6"), r, 0.04))
 		cloth.solid_cyl(p + Vector3(0, 1.6, 0), s * 0.97, 3.2)
-	K.mm(host, K.tent_mesh("yuvarlak"), ring, cols, "ring", "plaster", true)
+	K.mm(host, K.tent_mesh("can"), ring, cols, "ring", "", true)
 	cloth.done(host, "bez")
 	wood.done(host, "ahsap")
 	earth.done(host, "zemin")
@@ -324,7 +324,7 @@ static func build_batarya(host: Node3D, k: float, lod: int, tohum := 7, opt := {
 	tr.append(Transform3D(Basis.from_euler(Vector3(0, 0.3, 0)).scaled(Vector3(2.2, 1.2, 2.2)), Vector3(W * 0.5 - 6.0, 0, -D / 2.0 - 8.0)))
 	tc.append(K.BEZ)
 	cl.solid_cyl(Vector3(W * 0.5 - 6.0, 1.4, -D / 2.0 - 8.0), 2.15, 2.8)
-	K.mm(host, K.tent_mesh("yuvarlak"), tr, tc, "usta_cadiri", "plaster", true)
+	K.mm(host, K.tent_mesh("koni"), tr, tc, "usta_cadiri", "", true)
 	# Sancak
 	var sf := B.new()
 	sancak(wood, sf, Vector3(W * 0.5 - 1.2, TH, 0.5), 5.0, K.KIRMIZI)

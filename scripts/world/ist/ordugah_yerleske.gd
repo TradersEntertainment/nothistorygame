@@ -28,20 +28,16 @@ static func build_pasa(host: Node3D, k: float, lod: int, tohum := 1, tug := 2) -
 	var f := B.new()
 	c.no_climb = true
 	var y0 := K.gy(0, 0)
-	c.box(Vector3(0, y0 + 1.4, 0), Vector3(12.0, 2.8, 8.0), K.KIRMIZI2)
-	c.prism(B.xf(Vector3(0, y0 + 2.8, 0)), Vector3(12.6, 2.4, 8.6), K.KIRMIZI2.lightened(0.04))
-	c.box(Vector3(0, y0 + 2.82, 0), Vector3(12.7, 0.12, 0.25), K.ALTIN)
-	for sx in [-4.0, 0.0, 4.0]:
-		c.cylp(Vector3(sx, y0 + 5.6, 0), 0.08, 0.8, K.ALTIN, 5)
-		c.sph(Vector3(sx, y0 + 6.05, 0), 0.14, K.ALTIN, 4)
-	c.box(Vector3(0, y0 + 1.2, 4.03), Vector3(2.2, 2.4, 0.08), K.KOYU)
+	# ORDUGÂH-5: kumaş paşa çadırı (üç direkli, sarkık çatı, taraklı kırmızı-altın saçak, sayebânlı, ip-kazık; ordugah_cadir.gd)
+	var cm := MeshInstance3D.new()
+	cm.mesh = K.tent_lod("pasa", lod)
+	cm.material_override = K.mat("")
+	cm.transform = Transform3D(Basis().scaled(Vector3(12.0, 1.0, 8.0)), Vector3(0, y0 - 0.1, 0))
+	cm.name = "pasa_cadiri"
+	if lod > 0:
+		cm.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
+	host.add_child(cm)
 	c.solid_box(Vector3(0, y0 + 2.4, 0), Vector3(12.2, 4.8, 8.2))
-	# sayebân
-	for sx2 in [-3.0, 3.0]:
-		w.cylp(Vector3(sx2, y0 + 1.6, 8.0), 0.07, 3.2, K.AHSAP2, 5)
-	c.box(Vector3(0, y0 + 3.15, 6.0), Vector3(6.4, 0.08, 4.4), Color("e8dcc0"), 0.0, Vector3(-6, 0, 0))
-	c.box(Vector3(0, y0 + 3.0, 8.15), Vector3(6.4, 0.35, 0.04), K.KIRMIZI2)
-	c.box(Vector3(0, y0 + 0.05, 6.0), Vector3(4.0, 0.04, 3.0), K.LACI)
 	for i in tug:
 		OB._sancak(w, f, Vector3(-5.5 + i * 1.3, y0, 9.5), 6.0, K.KIRMIZI, lod, true)
 	OB._sancak(w, f, Vector3(5.5, y0, 9.5), 7.0, OB._sec(r, OB.SANCAK), lod, false)
@@ -131,7 +127,7 @@ static func build_esir(host: Node3D, k: float, lod: int, tohum := 1) -> void:
 		w.box(Vector3(0, y0 + 0.9, sd * 6.0), Vector3(16.0, 0.08, 0.08), K.AHSAP)
 	w.done(host, "cit")
 	var tr: Array = [Transform3D(Basis().scaled(Vector3(2.4, 1.2, 2.4)), Vector3(0, y0 - 0.1, -2.5))]
-	K.mm(host, K.tent_mesh("yuvarlak" if lod == 0 else "sade"), tr, [Color("8f8064")], "esir_cadir", "plaster", lod == 0)
+	K.mm(host, K.tent_lod("koni", lod), tr, [Color("8f8064")], "esir_cadir", "", lod == 0)
 	var kisi: Array = []
 	for i in 9:
 		var p2 := Vector3(-5.0 + (i % 5) * 2.4, 0, 1.0 + (i / 5) * 2.0)

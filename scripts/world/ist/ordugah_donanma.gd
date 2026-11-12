@@ -109,7 +109,7 @@ static func build_diplokionion(host: Node3D, k: float, lod: int, tohum := 12) ->
 		tr.append(Transform3D(Basis.from_euler(Vector3(0, r.randf() * TAU, 0)).scaled(Vector3(2.6, 1.3, 2.6)), p))
 		tc.append(K.BEZ2)
 		c.solid_cyl(p + Vector3(0, 1.5, 0), 2.55, 3.0)
-	K.mm(host, K.tent_mesh("yuvarlak"), tr, tc, "depo", "plaster", true)
+	K.mm(host, K.tent_mesh("koni"), tr, tc, "depo", "", true)
 	for i in 4:
 		for q in 5 - i:
 			w.cylp(Vector3(-30.0 + i * 0.8, 0.22 + i * 0.4, 6.0 + q * 0.5 - 1.0), 0.2, 6.0, K.AHSAP_A, 6, -1.0, Vector3(0, 0, 90), 6.0)

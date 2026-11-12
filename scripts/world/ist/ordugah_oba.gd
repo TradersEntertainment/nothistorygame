@@ -10,6 +10,7 @@ extends RefCounted
 const K = preload("res://scripts/world/ist/ordugah_kit.gd")
 const B = K.Bld
 const KS = preload("res://scripts/world/ist/ordugah_kisi.gd")
+const OC = preload("res://scripts/world/ist/ordugah_ocak.gd")
 
 ## §2.5 paleti: [renk, ağırlık]
 const PALET := {
@@ -72,6 +73,7 @@ class Yer:
 static func build(host: Node3D, alan: PackedVector2Array, tur: String, k: float, lod: int, tohum := 1) -> Dictionary:
 	var info: Dictionary = TUR.get(tur, TUR["rumeli"])
 	var r := K.rr(tohum)
+	var r5 := K.rr(tohum * 7919 + 5)      # ORDUGÂH-5: yeni kararlar ayrı dizide (yerleşim ÖNCE ile aynı kalsın)
 	var palet: Array = PALET[info["palet"]]
 	var ang := 0.0
 	if alan.size() >= 2:
@@ -121,6 +123,12 @@ static func build(host: Node3D, alan: PackedVector2Array, tur: String, k: float,
 	var cati_c: Array = []
 	var bark_x: Array = []
 	var bark_c: Array = []
+	# ORDUGÂH-5: kumaş çadır türleri (ordugah_cadir.gd): tür → [dönüşümler, renkler]
+	var cad := {"koni": [round_x, round_c], "catma": [cati_x, cati_c], "barinak": [bark_x, bark_c], "can": [[], []], "buyuk": [[], []], "kil": [[], []]}
+	var ocak3: Array = []          # ocak noktaları (Vector3, yerel): duman, ışık
+	var ana_ocak: Array = []
+	var mesale: Array = []
+	var zs := B.new("")            # ORDUGÂH-5: yumuşak kenarlı zemin (lod 0–1)
 	var shapes: Array = []
 	var fires: Array = []          # yerel (x, z)
 	var kisi: Array = []
@@ -136,13 +144,32 @@ static func build(host: Node3D, alan: PackedVector2Array, tur: String, k: float,
 	if lod == 0:
 		zem.cast = false
 	# çiğnenmiş ara yol (çamur şeridi) sura koşut ve dik
-	_serit(zem, rot, Vector2(ic.position.x - pay, ara_y), Vector2(ic.end.x + pay, ara_y), 3.6, Color("7a6648"), r)
-	_serit(zem, rot, Vector2(ara_x, ic.position.y - pay), Vector2(ara_x, ic.end.y + pay), 2.6, Color("7d6a4c"), r)
+	if lod <= 1:
+		OC.yol(zs, Vector2(ic.position.x - pay, ara_y), Vector2(ic.end.x + pay, ara_y), 4.2, Color("7a6648"), r, rot)
+		OC.yol(zs, Vector2(ara_x, ic.position.y - pay), Vector2(ara_x, ic.end.y + pay), 3.2, Color("7d6a4c"), r, rot)
+	else:
+		_serit(zem, rot, Vector2(ic.position.x - pay, ara_y), Vector2(ic.end.x + pay, ara_y), 3.6, Color("7a6648"), r)
+		_serit(zem, rot, Vector2(ara_x, ic.position.y - pay), Vector2(ara_x, ic.end.y + pay), 2.6, Color("7d6a4c"), r)
+	# ORDUGÂH-5: obalar arası çiğnenmiş, solgun ot örtüsü (yumuşak kenarlı büyük lekeler; düz yeşil çayır kalmasın)
+	if lod <= 1:
+		var nl := int(clampf(ic.size.x * ic.size.y / 520.0, 6.0, 40.0))
+		for t in nl:
+			var lp0 := Vector2(r5.randf_range(ic.position.x - 3.0, ic.end.x + 3.0), r5.randf_range(ic.position.y - 3.0, ic.end.y + 3.0))
+			if K.filtre.is_valid():
+				var lw := rot * lp0
+				if not bool(K.filtre.call(lw.x, lw.y)):
+					continue
+			OC.leke(zs, lp0, r5.randf_range(12.0, 20.0), Color("9c8d5e").lerp(Color("7d6e4c"), r5.randf() * 0.5), r5, rot, 0.55, 12)
 	for o: Array in obalar:
 		var oc: Vector2 = o[0]
 		var R: float = o[1]
 		# obanın altı: çiğnenmiş toprak/çamur lekesi (düzensiz on dört köşe, arazi izler)
-		_leke(zem, rot, oc, R + 3.5, Color("86714f").lerp(Color("6e5c40"), r.randf() * 0.6), r)
+		if lod <= 1:
+			OC.leke(zs, oc, R + 5.0, Color("86714f").lerp(Color("6e5c40"), r.randf() * 0.6), r5, rot, 0.9, 16)
+			for q in 14:
+				r.randf()          # ÖNCE ile aynı yerleşim: eski _leke'nin rastgele dizisi korunur (yeni karar r5'te)
+		else:
+			_leke(zem, rot, oc, R + 3.5, Color("86714f").lerp(Color("6e5c40"), r.randf() * 0.6), r)
 		# obanın "önü" (ocak, toplanma yeri): rastgele yön
 		var fa := r.randf() * TAU
 		var fv := Vector2.from_angle(fa)
@@ -150,17 +177,25 @@ static func build(host: Node3D, alan: PackedVector2Array, tur: String, k: float,
 		var bey_cap := r.randf_range(6.0, 8.2) if tur != "basibozuk" else r.randf_range(4.6, 5.6)
 		var bc := _sec(r, palet).lerp(Color("efe6cc"), 0.35)
 		var w0 := rot * oc
-		if r.randf() < 0.3 and tur != "basibozuk":
-			var ln := bey_cap * 1.15
-			var wi := bey_cap * 0.7
-			var yaw := ang + fa + PI / 2.0
-			cati_x.append(Transform3D(Basis.from_euler(Vector3(0, -yaw, 0)).scaled(Vector3(ln, 1.9, wi)), Vector3(w0.x, K.gy(w0.x, w0.y) - 0.1, w0.y)))
-			cati_c.append(bc)
-			shapes.append([Vector3(w0.x, K.gy(w0.x, w0.y) + 1.5, w0.y), maxf(ln, wi) * 0.5, -yaw, ln, wi])
+		# ORDUGÂH-5: bey/oda çadırı "büyük orta çadırı" (iki direkli, saçaklı) ya da çan çadır; başıbozukta kıl çadır.
+		# Kapı (+z) ocağa bakar.
+		var fw := rot.basis_xform(fv)
+		var kyaw := atan2(fw.x, fw.y)
+		var u_eski := r.randf()
+		if not (u_eski < 0.3 and tur != "basibozuk"):
+			r.randf()
+			r.randf()
+		if tur == "basibozuk" or r5.randf() < 0.62:
+			var bk := "kil" if tur == "basibozuk" else "buyuk"
+			var ln := bey_cap * (1.15 if bk == "buyuk" else 1.3)
+			var wi := bey_cap * (0.78 if bk == "buyuk" else 0.7)
+			(cad[bk][0] as Array).append(Transform3D(Basis(Vector3.UP, kyaw).scaled(Vector3(ln, r5.randf_range(0.95, 1.12), wi)), Vector3(w0.x, K.gy(w0.x, w0.y) - 0.1, w0.y)))
+			(cad[bk][1] as Array).append(bc if bk == "buyuk" else K.ton(Color(0.95, 0.93, 0.9), r5, 0.05))
+			shapes.append([Vector3(w0.x, K.gy(w0.x, w0.y) + 1.5, w0.y), maxf(ln, wi) * 0.5, -kyaw, ln, wi])
 		else:
 			var rr := bey_cap * 0.5
-			round_x.append(Transform3D(Basis.from_euler(Vector3(0, r.randf() * TAU, 0)).scaled(Vector3(rr, r.randf_range(1.35, 1.6), rr)), Vector3(w0.x, K.gy(w0.x, w0.y) - 0.1, w0.y)))
-			round_c.append(bc)
+			(cad["can"][0] as Array).append(Transform3D(Basis(Vector3.UP, kyaw).scaled(Vector3(rr, r5.randf_range(1.05, 1.2), rr)), Vector3(w0.x, K.gy(w0.x, w0.y) - 0.1, w0.y)))
+			(cad["can"][1] as Array).append(bc)
 			shapes.append([Vector3(w0.x, K.gy(w0.x, w0.y) + 1.6, w0.y), rr, 0.0, 0.0, 0.0])
 		yer.ekle(oc, bey_cap * 0.5 + 0.8)
 		cnt += 1
@@ -174,18 +209,15 @@ static func build(host: Node3D, alan: PackedVector2Array, tur: String, k: float,
 		var ocl := oc + fv * (bey_cap * 0.5 + 4.2)
 		var ocw := rot * ocl
 		var oy := K.gy(ocw.x, ocw.y)
-		det.cylp(Vector3(ocw.x, oy + 0.1, ocw.y), 0.75, 0.22, K.TAS.darkened(0.25), 8)
-		det.cylp(Vector3(ocw.x, oy + 0.22, ocw.y), 0.45, 0.06, Color("2a2420"), 8)
 		var kazanli: bool = info["kazan"] or r.randf() < 0.35
-		if kazanli and lod <= 1:
-			met.cylp(Vector3(ocw.x, oy + 0.62, ocw.y), 0.5, 0.62, K.BRONZ.lightened(0.08), 10, 0.58)
-			met.cylp(Vector3(ocw.x, oy + 0.95, ocw.y), 0.6, 0.06, K.BRONZ.darkened(0.25), 10)
-			if lod == 0:
-				for q in 3:
-					var qa := q * TAU / 3.0
-					wd.rod(Vector3(ocw.x + cos(qa) * 0.9, oy, ocw.y + sin(qa) * 0.9), Vector3(ocw.x, oy + 1.6, ocw.y), 0.06, K.AHSAP2)
+		# ORDUGÂH-5: taş halka, çatılmış odun, kor, kül; sacayağında kazan ya da şişte et; odun yığını ve balta
+		OC.ocak(det, wd, met, Vector3(ocw.x, oy, ocw.y), lod, r5, "kazan" if kazanli else ("sis" if r5.randf() < 0.5 else "sade"))
+		if lod <= 1:
+			OC.leke(zs, ocl, 2.6, Color("3e3830"), r5, rot, 0.75, 10)
 		fires.append(ocw)
-		yer.ekle(ocl, 1.0)
+		ocak3.append(Vector3(ocw.x, oy, ocw.y))
+		ana_ocak.append(Vector3(ocw.x, oy, ocw.y))
+		yer.ekle(ocl, 2.3)
 		# ocak başında oturanlar (halka) + aşçı
 		var nsit := r.randi_range(4, 7) if tur != "basibozuk" else r.randi_range(3, 5)
 		var a0 := r.randf() * TAU
@@ -195,9 +227,17 @@ static func build(host: Node3D, alan: PackedVector2Array, tur: String, k: float,
 			var pw := rot * pl
 			var tl: Array = info["kisi"]
 			var tp: String = "otur" if tur == "yeniceri" else ("otur2" if r.randf() < 0.7 else "otur")
-			if i == 0 and tur in ["yeniceri", "hizmet"]:
+			if i == 0 and (kazanli or tur in ["yeniceri", "hizmet"]):
 				tp = "asci"
 				pl = ocl + Vector2.from_angle(aa) * 1.05
+				pw = rot * pl
+			elif i == nsit - 1 and r5.randf() < 0.5:
+				tp = "sohbet"             # ayakta, ateşe dönük konuşan
+				pl = ocl + Vector2.from_angle(aa) * 2.7
+				pw = rot * pl
+			elif i == 1 and r5.randf() < 0.35:
+				tp = "uyuyan"             # ateş başında uzanmış/uyuklayan
+				pl = ocl + Vector2.from_angle(aa) * 2.9
 				pw = rot * pl
 			var face := (ocw - pw)
 			kisi.append([Vector3(pw.x, K.gy(pw.x, pw.y), pw.y), atan2(face.x, face.y), tp])
@@ -237,16 +277,30 @@ static func build(host: Node3D, alan: PackedVector2Array, tur: String, k: float,
 				# kapı obanın ortasına bakar
 				var to_c := oc - pl
 				var yaw3 := ang + atan2(to_c.y, to_c.x) + PI / 2.0 + r.randf_range(-0.2, 0.2)
-				cati_x.append(Transform3D(Basis.from_euler(Vector3(0, -yaw3, 0)).scaled(Vector3(ln3, r.randf_range(1.2, 1.7), wi3)), Vector3(pw.x, yg - 0.1, pw.y)))
+				cati_x.append(Transform3D(Basis.from_euler(Vector3(0, -yaw3, 0)).scaled(Vector3(ln3, r.randf_range(1.0, 1.35), wi3)), Vector3(pw.x, yg - 0.1, pw.y)))
 				cati_c.append(c2)
 				shapes.append([Vector3(pw.x, yg + 1.2, pw.y), maxf(ln3, wi3) * 0.5, -yaw3, ln3, wi3])
 			else:
-				var hs := lerpf(0.85, 1.3, inverse_lerp(3.0, 7.0, cap)) * r.randf_range(0.92, 1.1)
-				var to_c2 := (oc - pl).normalized()
-				var yaw4 := atan2(-(rot.basis_xform(to_c2)).y, (rot.basis_xform(to_c2)).x) + PI / 2.0
-				round_x.append(Transform3D(Basis.from_euler(Vector3(0, yaw4 + r.randf_range(-0.3, 0.3), 0)).scaled(Vector3(tr, hs, tr)), Vector3(pw.x, yg - 0.1, pw.y)))
-				round_c.append(c2)
-				shapes.append([Vector3(pw.x, yg + 1.35 * hs, pw.y), tr, 0.0, 0.0, 0.0])
+				var hs := lerpf(0.85, 1.2, inverse_lerp(3.0, 7.0, cap)) * r.randf_range(0.92, 1.1)
+				var to_c2 := rot.basis_xform((oc - pl).normalized())
+				var yaw4 := atan2(to_c2.x, to_c2.y) + r.randf_range(-0.3, 0.3)       # kapı (+z) obanın ortasına
+				# ORDUGÂH-5: koni (tek direkli) / çan (duvarlı, saçaklı) / koyu kıl rengiyse kıl çadır (alçak, çok direkli)
+				var ck := "koni"
+				if c2.get_luminance() < 0.36:
+					ck = "kil"
+				elif r5.randf() < (0.55 if tur == "yeniceri" else 0.22):
+					ck = "can"
+					hs *= 0.92
+				if ck == "kil":
+					var ln4 := cap * 1.45
+					var wi4 := cap * 0.8
+					(cad["kil"][0] as Array).append(Transform3D(Basis(Vector3.UP, yaw4).scaled(Vector3(ln4, r5.randf_range(0.9, 1.1), wi4)), Vector3(pw.x, yg - 0.1, pw.y)))
+					(cad["kil"][1] as Array).append(K.ton(Color(0.95, 0.93, 0.9), r5, 0.06))
+					shapes.append([Vector3(pw.x, yg + 0.9, pw.y), maxf(ln4, wi4) * 0.5, -yaw4, ln4, wi4])
+				else:
+					(cad[ck][0] as Array).append(Transform3D(Basis(Vector3.UP, yaw4).scaled(Vector3(tr, hs, tr)), Vector3(pw.x, yg - 0.1, pw.y)))
+					(cad[ck][1] as Array).append(c2)
+					shapes.append([Vector3(pw.x, yg + 1.35 * hs, pw.y), tr, 0.0, 0.0, 0.0])
 			# çadır önünde: uyuklayan, kalkan/mızrak yaslı, halı (seyrek)
 			if lod == 0 and r.randf() < 0.18:
 				var dp := pl + (oc - pl).normalized() * (tr + 0.9)
@@ -255,6 +309,35 @@ static func build(host: Node3D, alan: PackedVector2Array, tur: String, k: float,
 					var fc := rot * oc - dw
 					kisi.append([Vector3(dw.x, K.gy(dw.x, dw.y), dw.y), atan2(fc.x, fc.y), "uyuyan" if r.randf() < 0.5 else "bileyen"])
 					yer.ekle(dp, 0.5)
+		# ORDUGÂH-5: §5.3 her 3–5 çadıra bir ocak: çadırların arasına küçük ocaklar (çadır duvarına ≥ 3 m), başında 2–5 kişi
+		var n_oc := maxi(1, int(round(placed / 4.0)))
+		var kon := 0
+		for t in 40:
+			if kon >= n_oc:
+				break
+			var fa2 := r5.randf() * TAU
+			var fp := oc + Vector2.from_angle(fa2) * r5.randf_range(bey_cap * 0.5 + 3.5, R + 2.5)
+			if not yer.bos(fp, 2.5) or not bool(ok_at.call(fp, 1.2)):
+				continue
+			yer.ekle(fp, 2.2)
+			kon += 1
+			var fpw := rot * fp
+			var fy := K.gy(fpw.x, fpw.y)
+			OC.ocak(det, wd, met, Vector3(fpw.x, fy, fpw.y), lod, r5, "sis" if r5.randf() < 0.35 else ("kazan" if r5.randf() < 0.3 else "sade"), r5.randf() < 0.4)
+			if lod <= 1:
+				OC.leke(zs, fp, 2.2, Color("3e3830"), r5, rot, 0.7, 10)
+			fires.append(fpw)
+			ocak3.append(Vector3(fpw.x, fy, fpw.y))
+			var ns2 := r5.randi_range(2, 5)
+			var b0 := r5.randf() * TAU
+			for i in ns2:
+				var aa2 := b0 + i * TAU / ns2 + r5.randf_range(-0.2, 0.2)
+				var tp3: String = ["otur", "otur2", "otur2", "uyuyan", "sohbet", "bileyen"][r5.randi() % 6] if tur != "yeniceri" else ["otur", "otur", "uyuyan", "sohbet"][r5.randi() % 4]
+				var dd := 1.95 if tp3 in ["otur", "otur2"] else (2.8 if tp3 == "uyuyan" else 2.5)
+				var sp2 := fp + Vector2.from_angle(aa2) * dd
+				var sw2 := rot * sp2
+				var fc3 := fpw - sw2
+				kisi.append([Vector3(sw2.x, K.gy(sw2.x, sw2.y), sw2.y), atan2(fc3.x, fc3.y), tp3])
 		# bey çadırı kapısında nöbetçi çifti, obada ayakta sohbet eden ikili/üçlü
 		for sd in [-1.0, 1.0]:
 			var np_: Vector2 = oc + fv * (bey_cap * 0.5 + 0.9) + fv.orthogonal() * float(sd) * 1.2
@@ -263,6 +346,14 @@ static func build(host: Node3D, alan: PackedVector2Array, tur: String, k: float,
 				var fwv := rot.basis_xform(fv)
 				kisi.append([Vector3(nw.x, K.gy(nw.x, nw.y), nw.y), atan2(fwv.x, fwv.y), "nobet" if tur == "yeniceri" else ("sipahi" if r.randf() < float(info["sipahi"]) else "azap")])
 				yer.ekle(np_, 0.4)
+		# ORDUGÂH-5: gece bey çadırı kapısında meşale (yere çakılı sırık + gerçek alev)
+		if K.gece and lod <= 1:
+			var mp := oc + fv * (bey_cap * 0.5 + 1.0)
+			var mw := rot * mp
+			var my := K.gy(mw.x, mw.y)
+			wd.cylp(Vector3(mw.x, my + 1.05, mw.y), 0.035, 2.1, K.AHSAP2, 5)
+			met.cylp(Vector3(mw.x, my + 2.12, mw.y), 0.07, 0.14, Color("2a2622"), 6, 0.09)
+			mesale.append(mw)
 		var grp := oc + fv.rotated(r.randf_range(-1.2, 1.2)) * (R + 2.5)
 		var ng := r.randi_range(2, 3)
 		var gc := rot * grp
@@ -339,11 +430,12 @@ static func build(host: Node3D, alan: PackedVector2Array, tur: String, k: float,
 			continue
 		var dv := rot.basis_xform(Vector2(0, 1 if r.randf() < 0.5 else -1))
 		kisi.append([Vector3(sw.x, K.gy(sw.x, sw.y), sw.y), atan2(dv.x, dv.y), "saka"])
-	# --- çiziciler
-	var mesh_round := K.tent_mesh("yuvarlak" if lod == 0 else "sade")
-	K.mm(host, mesh_round, round_x, round_c, "yuvarlak", "plaster", lod == 0)
-	K.mm(host, K.tent_mesh("cati" if lod == 0 else "sade_cati"), cati_x, cati_c, "cati", "plaster", lod == 0)
-	K.mm(host, K.tent_mesh("bark" if lod == 0 else "sade_cati"), bark_x, bark_c, "bark", "plaster", lod == 0)
+	# --- çiziciler (ORDUGÂH-5: kumaş çadır ağları, katmana göre; desen yok: bez rengi köşe renginden)
+	for ck: String in cad:
+		var xs: Array = cad[ck][0]
+		if xs.is_empty():
+			continue
+		K.mm(host, K.tent_lod(ck, lod), xs, cad[ck][1], ck, "", lod == 0)
 	if lod == 0:
 		var body := StaticBody3D.new()
 		body.name = "cadirlar_kati"
@@ -374,15 +466,32 @@ static func build(host: Node3D, alan: PackedVector2Array, tur: String, k: float,
 	elif lod == 1:
 		det.cast = false
 		det.done(host, "gerec")
+	var ncad := 0
+	for ck: String in cad:
+		ncad += (cad[ck][0] as Array).size()
 	if lod <= 1:
 		KS.kur(host, kisi, lod)
 		host.set_meta("hayvanlar", hay)
-		K.ateslar(host, fires, lod)
+		# ORDUGÂH-5: alev gündüz de yanar (gerçek alev, Flame), duman sütunu, gece sınırlı gerçek ışık
+		K.ateslar(host, fires, lod, 0.2, true, 0.6, 1.0)
+		OC.duman(host, ocak3, lod, r)
+		OC.isik(host, ana_ocak, lod, 2)
+		if not mesale.is_empty():
+			var mf: Array = []
+			for q: Vector2 in mesale:
+				mf.append(Transform3D(Basis().scaled(Vector3(0.28, 0.5, 0.28)), Vector3(q.x, K.gy(q.x, q.y) + 2.18, q.y)))
+			var mfl := Flame.scatter_flames(host, mf)
+			mfl.name = "mesaleler"
+		OC.zemin_bitir(zs, host)
 	else:
 		det.cast = false
 		det.done(host, "gerec")
-	host.set_meta("cadir_sayisi", round_x.size() + cati_x.size() + bark_x.size())
-	return {"cadir": round_x.size() + cati_x.size() + bark_x.size(), "oba": obalar.size(), "kisi": kisi.size(), "hayvan": hay.size()}
+		host.set_meta("ates", fires)
+	host.set_meta("ocak_sayisi", fires.size())
+	host.set_meta("ocaklar", ana_ocak)
+	host.set_meta("ocaklar_hepsi", ocak3)
+	host.set_meta("cadir_sayisi", ncad)
+	return {"cadir": ncad, "oba": obalar.size(), "kisi": kisi.size(), "hayvan": hay.size()}
 
 
 ## Arazi izleyen düzensiz leke (çiğnenmiş zemin): merkez + n köşe, zeminden 4 cm yukarıda, gölge düşürmez
