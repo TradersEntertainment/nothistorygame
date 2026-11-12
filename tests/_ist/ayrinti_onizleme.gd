@@ -94,6 +94,18 @@ func _run() -> void:
 	var ist: String = _args.get("ist", "grid")
 	if ist == "grid":
 		await _grid(k, lod)
+	elif ist == "sets":
+		for sd in A.SETS.SET_DEFS:
+			_clear()
+			A.build("set_" + sd[0], _root, k, 0)
+			await get_tree().process_frame
+			await get_tree().physics_frame
+			var z: Vector3 = sd[2]
+			_look(Vector3(0, 5.5 + z.z * 0.3, z.z * 0.55 + 7.0), Vector3(0, 0.8, 0))
+			await _snap("set_" + sd[0])
+			_look(Vector3(0.01, z.x * 1.1 + 8.0, 0.01), Vector3.ZERO)
+			await _snap("settepe_" + sd[0])
+			_audit_one("set_" + sd[0], k)
 	elif ist == "audit":
 		for id in A.ids():
 			_audit_one(id, k)
