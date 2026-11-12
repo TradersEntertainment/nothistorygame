@@ -15,6 +15,8 @@ const IRON := Color("3a3d42")
 const WATER := Color("3f6f86")
 const SHUTTER := [Color("3a6a5a"), Color("3a5a8a"), Color("6a3a2a"), Color("5a6a3a")]
 const STEP_RISE := 0.26
+## lod>=1 iken merdivenler tek rampa olur (çarpışma lod 0'da anlamlı; lod>=1'de IstHalic.build çarpışmayı da atar)
+static var lod := 0
 
 
 ## Katı kutu + doku. pos kutunun ORTASI.
@@ -37,6 +39,11 @@ static func stair(p: Node3D, base: Vector3, dir: Vector3, h: float, width: float
 	var rise := h / n
 	var run := 0.34
 	var d := dir.normalized()
+	if lod >= 1:
+		var a := base
+		var b := base + d * (run * n) + Vector3(0, h, 0)
+		Props.ramp(p, a, b, width, col)
+		return [a, b]
 	var ang := atan2(d.x, d.z)
 	for i in n:
 		var top := rise * (i + 1)
@@ -133,9 +140,9 @@ static func crate_steps(p: Node3D, base: Vector3, dir: Vector3, n: int) -> Array
 	var d := dir.normalized()
 	var ang := rad_to_deg(atan2(d.x, d.z))
 	for i in n:
-		var h := 0.5 * (n - i)
+		var h := 0.5 * (i + 1)
 		blk(p, Vector3(1.3, h, 1.0), base + d * (1.0 * i + 0.5) + Vector3(0, h * 0.5, 0), Color("8a6a40") if i % 2 == 0 else Color("7a5a38"), "wood", Vector3(0, ang, 0))
-	return [base, base + d * n + Vector3(0, 0.5 * n, 0)]
+	return [base - d * 0.4, base + d * (n - 0.5) + Vector3(0, 0.5 * n, 0)]
 
 
 ## Kemerli kapı çerçevesi görseli (cephe düzleminde, +z'ye bakan): açıklık w x h, y0 tabanda

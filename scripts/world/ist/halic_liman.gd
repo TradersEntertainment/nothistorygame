@@ -54,9 +54,9 @@ static func build_iskele(host: Node3D, k: float, lod: int) -> void:
 	K.bale_stack(root, Vector3(span * 0.22, QY, qz0 + 2.0), 3, 2, 2)
 	K.barrel_stack(root, Vector3(span * 0.95, QY, qz0 + 2.0), 2, 2, 1)
 	K.bale_stack(root, Vector3(-span * 0.92, QY, qz0 + 2.0), 2, 1, 3, Color("c9b68a"))
-	K.crate_steps(root, Vector3(-span * 0.1, QY, qz1 - 0.6), Vector3(0, 0, -1), 3)
+	K.crate_steps(root, Vector3(span * 0.22, QY, qz0 + 2.6 + 2.0), Vector3(0, 0, -1), 2)
 	# Demirli nao (iskele 1'in sağında): gövde, direk, seren, toplanmış yelken, halat
-	_ship(root, Vector3(jx[1] + 6.0 + 1.2, 0.0, qz0 - 11.0), jx[1] + 1.2)
+	_ship(root, Vector3(jx[1] + 1.2 + 1.5 + 2.1, 0.0, qz0 - 11.0), jx[1])
 	# Rıhtıma ve iskelelere şehir tarafı: taş merdiven çıkışı (rıhtım y=0.4 -> zemin 0 -> 2 basamak 0,2)
 	# Düşük cephe: rıhtımın şehir yüzü 0,4 m basamak
 	K.stair(root, Vector3(0, 0, qz1 + 0.34 * 2), Vector3(0, 0, -1), QY, 3.0, Color("b0a080"))
@@ -85,9 +85,9 @@ static func _crane(p: Node3D, pos: Vector3) -> void:
 
 
 static func _ship(p: Node3D, pos: Vector3, plank_x: float) -> void:
+	# Gemi iskeleye paralel (boyu z ekseninde), iskele kenarından 1,5 m açıkta; gemiden iskeleye 1,6 m'lik tahta köprü
 	var ship := Node3D.new()
 	ship.position = pos
-	ship.rotation.y = PI * 0.5
 	ship.scale = Vector3.ONE * 3.4
 	p.add_child(ship)
 	ship.add_child(LowPoly.hull([
@@ -97,29 +97,23 @@ static func _ship(p: Node3D, pos: Vector3, plank_x: float) -> void:
 		{"z": 2.0, "w": 0.7, "top": 0.7, "bottom": -0.1},
 		{"z": 2.8, "w": 0.4, "top": 0.95, "bottom": 0.15},
 	], Color("5a3a22"), Color("c8a850"), 0.45))
-	# Güverte tahtaları, kıç kasarası (kale), pruva kasarası
 	Props.box(ship, Vector3(1.4, 0.04, 4.8), Vector3(0, 0.6, 0), Color("8a6a40"))
 	Props.box(ship, Vector3(1.2, 0.5, 1.1), Vector3(0, 0.88, 1.9), Color("6a4a2c"))
 	Props.box(ship, Vector3(1.0, 0.4, 0.9), Vector3(0, 0.85, -2.1), Color("6a4a2c"))
-	# Direkler (ana + mizan), seren, toplanmış yelken
 	Props.cyl(ship, 0.04, 3.4, Vector3(0, 2.3, -0.3), K.TIMBER_D, Vector3.ZERO, 6)
 	Props.cyl(ship, 0.03, 2.2, Vector3(0, 1.7, 1.7), K.TIMBER_D, Vector3.ZERO, 6)
 	Props.cyl(ship, 0.025, 2.2, Vector3(0, 3.4, -0.3), K.TIMBER, Vector3(0, 0, 90), 6)
 	Props.cyl(ship, 0.06, 1.9, Vector3(0, 3.28, -0.3), Color("e8e0c8"), Vector3(0, 0, 90), 8)
 	Props.box(ship, Vector3(0.03, 0.5, 0.01), Vector3(0, 3.7, -0.3), Color("a82a2a"))
-	# Halat (sancaktan pruvaya)
 	Props.box(ship, Vector3(0.012, 0.012, 3.2), Vector3(0, 2.0, -1.8), Color("3a2a1a"), Vector3(-36, 0, 0))
-	# Katı: gövde hacmi (kutu), güverte 1,56 m
 	var deck_top := 0.6 * 3.4
-	var hull_block := Props.solid(p, Vector3(16.0, deck_top + 0.5, 4.2), pos + Vector3(0, (deck_top - 0.5) * 0.5, 0), Color("5a3a22"))
+	var hull_block := Props.solid(p, Vector3(4.2, deck_top + 0.5, 18.0), pos + Vector3(0, (deck_top - 0.5) * 0.5, 0.0), Color("5a3a22"))
 	hull_block.visible = false
-	# Mizen kasarası ve pruva kasarası güverteden yükselir: üst yüzler katı kutu
-	Props.solid(p, Vector3(3.6, 0.7, 3.0), pos + Vector3(0, deck_top + 0.4, 0) + Vector3(5.5, 0, 0), Color("6a4a2c")).visible = true
-	# Rampa (iskele -> güverte): 1,6 m genişlik
-	var a := Vector3(plank_x, QY, pos.z + 4.0)
-	var b := Vector3(pos.x - 4.0, deck_top, pos.z + 2.1)
-	b.x = a.x
-	Props.ramp(p, a, Vector3(a.x, deck_top, pos.z + 2.2), 1.6, Color("7a5a38"))
+	# Kıç kasarası (katı, 0,7 m): güverteden yükselir
+	Props.solid(p, Vector3(3.0, 0.7, 3.6), pos + Vector3(0, deck_top + 0.35, 6.4), Color("6a4a2c"))
+	# Tahta köprü: iskele kenarından (x = plank_x + 1,0) güverteye
+	var gx := plank_x + 1.1
+	Props.ramp(p, Vector3(gx, QY, pos.z + 1.0), Vector3(gx + 2.3, deck_top, pos.z + 1.0), 1.6, Color("7a5a38"))
 
 
 static func perches_iskele(k: float) -> Array:
@@ -129,8 +123,8 @@ static func perches_iskele(k: float) -> Array:
 
 static func climbs_iskele(k: float) -> Array:
 	var span := 32.0 + 24.0 * clampf(k, 0.3, 1.0)
-	return [[Vector3(-span * 0.1, 0, -1.0), Vector3(-span * 0.1, QY + 1.5, -3.5), "sandik"],
-		[Vector3(-span * 0.4, QY, -8.5), Vector3(-span * 0.4, QY + 1.2, -16.0), "basamak"]]
+	return [[Vector3(span * 0.22, QY, -8.0 + 2.6 + 2.4), Vector3(span * 0.22, QY + 1.0, -8.0 + 2.0 - 0.3), "sandik"],
+		[Vector3(-span * 0.4, QY, -8.5), Vector3(-span * 0.4, QY, -16.0), "basamak"]]
 
 
 # =========================== NEORİON ===========================
@@ -226,7 +220,6 @@ static func build_balik(host: Node3D, k: float, lod: int) -> void:
 	# Tabure/sepet/leğen
 	for j in 7:
 		Props.cyl(root, 0.32, 0.3, Vector3(-w + 1.5 + j * 4.0, 0.21, 1.2 + (j % 3) * 0.7), Color("a07a44"), Vector3.ZERO, 8, 0.26)
-	K.crate_steps(root, Vector3(w + 2.5, 0.06, 6.0), Vector3(-1, 0, 0), 2)
 
 
 static func _stall(p: Node3D, pos: Vector3, awn: Color) -> void:

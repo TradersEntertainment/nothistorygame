@@ -39,18 +39,20 @@ func _setup_world() -> void:
 	var sm := ProceduralSkyMaterial.new()
 	sm.sky_top_color = Color("5a8fd0")
 	sm.sky_horizon_color = Color("d8e4ee")
-	sm.ground_horizon_color = Color("c8c0a8")
+	sm.ground_horizon_color = Color("a89c80")
+	sm.ground_bottom_color = Color("6a6048")
 	sky.sky_material = sm
 	env.sky = sky
 	env.ambient_light_source = Environment.AMBIENT_SOURCE_SKY
-	env.ambient_light_energy = 0.9
+	env.ambient_light_energy = 0.45
+	env.tonemap_mode = Environment.TONE_MAPPER_FILMIC
 	var we := WorldEnvironment.new()
 	we.environment = env
 	add_child(we)
 	var sun := DirectionalLight3D.new()
 	sun.rotation_degrees = Vector3(-42, -35, 0)
 	sun.light_color = Color("ffe2b8")
-	sun.light_energy = 1.25
+	sun.light_energy = 0.95
 	sun.shadow_enabled = true
 	add_child(sun)
 	var floor_body := StaticBody3D.new()
@@ -68,6 +70,13 @@ func _setup_world() -> void:
 	mi.material_override = Props.mat(Color("8d7f5f"), 0.0, false, "cobble")
 	mi.position = cs.position
 	floor_body.add_child(mi)
+	var sea_floor := MeshInstance3D.new()
+	var spm := PlaneMesh.new()
+	spm.size = Vector2(1600, 800)
+	sea_floor.mesh = spm
+	sea_floor.material_override = Props.mat(Color("5a6a60"), 0.0, false, "")
+	sea_floor.position = Vector3(0, -1.65, -400)
+	add_child(sea_floor)
 	cam = Camera3D.new()
 	cam.fov = 70
 	cam.far = 800
@@ -229,22 +238,25 @@ func _audit(id: String, node: Node3D) -> void:
 	var big: Array = []
 	for m in node.find_children("*", "MeshInstance3D", true, false):
 		var mi := m as MeshInstance3D
-		if mi.mesh == null or _in_body(mi) or mi.mesh is PlaneMesh:
+		if mi.mesh == null or _in_body(mi) or mi.mesh is PlaneMesh or mi.mesh is CylinderMesh or mi.mesh is SphereMesh or mi.mesh is PrismMesh or mi.mesh is ArrayMesh:
 			continue
 		var a := mi.global_transform * mi.get_aabb()
 		if a.size.y > 2.5 and minf(a.size.x, a.size.z) > 1.5:
 			big.append(a)
 	for a: AABB in big:
+		var h0 := holes
 		var x := a.position.x + 0.25
 		while x < a.end.x:
 			var z := a.position.z + 0.25
 			while z < a.end.z:
 				var q := PhysicsRayQueryParameters3D.create(Vector3(x, a.end.y + 5.0, z), Vector3(x, a.position.y + 0.1, z))
 				var hit := space.intersect_ray(q)
-				if hit.is_empty() or hit["position"].y < a.end.y - 1.2:
+				if hit.is_empty() or (hit["position"].y < 0.3 and a.end.y > 2.5):
 					holes += 1
 				z += 0.5
 			x += 0.5
+		if holes > h0:
+			print("DELIK ", id, " aabb=", a, " n=", holes - h0)
 	# Dar aralık: y=1.0 yüksekliğinde iki katı arası 0,2-1,4 m
 	var dar := 0
 	var x2 := ab.position.x
@@ -265,6 +277,11 @@ func _audit(id: String, node: Node3D) -> void:
 			z2 += 0.5
 		x2 += 0.5
 	dar = seen.size()
+	var shown := 0
+	for key in seen.keys():
+		if shown < 40:
+			print("DAR ", id, " x=", key.x * 0.5, " z=", key.y * 0.5)
+		shown += 1
 	# Havada: tabanı >5cm yukarıda ve altında 30 cm içinde destek yok
 	var havada := 0
 	for b in node.find_children("*", "StaticBody3D", true, false):
@@ -334,9 +351,16 @@ func _walk(a: Vector3, b: Vector3) -> bool:
 			body.velocity.y -= 9.8 * dt
 		else:
 			body.velocity.y = 0.0
-			if stuck > 0.25:
-				body.velocity.y = 3.6
-				stuck = 0.0
+			if dirv != Vector3.ZERO and body.test_move(body.global_transform, dirv * 0.06):
+				# oyuncu: STEP_H (0,42) kadar alçak basamak zıplamadan çıkılır; üstü zıplamayla
+				var up := Transform3D(body.global_transform.basis, body.global_position + Vector3(0, 0.46, 0))
+				if not body.test_move(up, dirv * 0.12):
+					body.global_position = body.global_position + Vector3(0, 0.46, 0) + dirv * 0.1
+				else:
+					stuck += dt
+					if stuck > 0.25:
+						body.velocity.y = 3.6
+						stuck = 0.0
 		body.move_and_slide()
 		if body.global_position.distance_to(last) < 0.01 * 1.0:
 			stuck += dt
@@ -346,5 +370,10 @@ func _walk(a: Vector3, b: Vector3) -> bool:
 		if absf(body.global_position.y - b.y) < 1.0 and Vector2(to.x, to.z).length() < 1.2:
 			ok = true
 			break
+	if not ok:
+		var dd := Vector3(b.x - body.global_position.x, 0, b.z - body.global_position.z).normalized()
+		var up2 := Transform3D(body.global_transform.basis, body.global_position + Vector3(0, 0.46, 0))
+		print("DBG blk_now=", body.test_move(body.global_transform, dd * 0.12), " blk_up=", body.test_move(up2, dd * 0.12), " floor=", body.is_on_floor(), " n=", body.get_last_slide_collision().get_normal() if body.get_last_slide_collision() != null else "-")
+		print("YURUME_TAKILDI ", a, " -> ", b, " son=", body.global_position, " engel=", (body.get_last_slide_collision().get_collider() as Node).name if body.get_last_slide_collision() != null else "-", " ", body.get_last_slide_collision().get_position() if body.get_last_slide_collision() != null else "")
 	body.free()
 	return ok
