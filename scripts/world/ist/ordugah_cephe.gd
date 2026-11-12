@@ -19,8 +19,8 @@ static func siper(host: Node3D, line: PackedVector2Array, lod: int, tohum := 8) 
 		return
 	var r := K.rr(tohum + 77)
 	var wd := B.new("wood")
-	var e := B.new("rubble")
-	var m := B.new("")
+	var e := B.new("rubble") if lod == 0 else wd
+	var m := B.new("") if lod == 0 else wd
 	var kisi: Array = []
 	var fires: Array = []
 	var acc := 0.0
@@ -71,7 +71,7 @@ static func siper(host: Node3D, line: PackedVector2Array, lod: int, tohum := 8) 
 				k_ist += 1
 				# yığının başında iş yapan
 				if r.randf() < 0.6:
-					var pk := pi_ + back * 1.8
+					var pk := pi_ + back * 2.8
 					kisi.append([Vector3(pk.x, K.gy(pk.x, pk.y), pk.y), yaw_f, "balta" if k_ist % 4 == 2 else "kazma"])
 			# meşale direği (gece alev)
 			if at >= next_mes:
@@ -93,8 +93,9 @@ static func siper(host: Node3D, line: PackedVector2Array, lod: int, tohum := 8) 
 			s += 1.5
 		acc += L
 	wd.done(host, "cephe_ahsap")
-	e.done(host, "cephe_toprak")
-	m.done(host, "cephe_gulle")
+	if lod == 0:
+		e.done(host, "cephe_toprak")
+		m.done(host, "cephe_gulle")
 	KS.kur(host, kisi, lod)
 	K.ateslar(host, fires, lod, 2.75)
 
@@ -146,14 +147,14 @@ static func batarya(host: Node3D, n: int, buyuk: bool, lod: int, tohum := 7) -> 
 		var gx := x0 + 1.3
 		var tz := fz - 3.2        # top yatağının arka ucu
 		# tokmakçı (namlu ağzına doğru, yan), manivelacı arkada, topçu başı
-		kisi.append([Vector3(gx + (1.6 if buyuk else 1.15), TH, tz + L * 0.55), 0.0, "tokmak"])
-		kisi.append([Vector3(gx - (1.6 if buyuk else 1.15), TH, tz - 0.6), 0.3, "manivela"])
+		kisi.append([Vector3(gx + (1.7 if buyuk else 1.3), TH, minf(tz + L * 0.3, fz - 2.7)), 0.0, "tokmak"])
+		kisi.append([Vector3(gx - (1.7 if buyuk else 1.3), TH, tz - 0.6), 0.3, "manivela"])
 		kisi.append([Vector3(gx + 0.4, TH, tz - 1.7), 0.0, "nobet" if i % 2 == 0 else "azap"])
 		kisi.append([Vector3(gx + 2.6, TH, fz - 5.6), PI * 0.6, "saka"])
 		x0 += seg_w + 2.6
 	# sedde arkası okçular / mızraklılar
 	for q in maxi(2, n):
-		kisi.append([Vector3(-W * 0.5 + 2.0 + q * (W - 4.0) / maxf(1.0, maxi(2, n) - 1.0), TH, fz - 1.1), r.randf_range(-0.2, 0.2), "okcu"])
+		kisi.append([Vector3(-W * 0.5 + 2.0 + q * (W - 4.0) / maxf(1.0, maxi(2, n) - 1.0), TH, fz - 2.6), r.randf_range(-0.2, 0.2), "okcu"])
 	# arkada: gülle arabası başında ve öküzlerin yanında
 	kisi.append([Vector3(-W * 0.25 + 1.6, 0, -D / 2.0 - 3.4), PI, "kazma"])
 	kisi.append([Vector3(-W * 0.25 + 4.2, 0, -D / 2.0 - 9.5), -PI / 2.0, "seyis"])

@@ -123,7 +123,7 @@ static func build(root: Node3D, lay: Dictionary, o: Dictionary) -> void:
 		sm.height = 2.0
 		sm.radial_segments = 6
 		sm.rings = 3
-		Scenery.scatter(root, sm, bushes, [], Props.mat(Color("5c7a34"), 0.0, false, ""))
+		Scenery.scatter(root, sm, bushes, [], Props.mat(Color("5a6236"), 0.0, false, ""))          # SUR-4: solgun ot (parlak yeşil değil)
 
 
 static func _rr(sd: int, kind: int, i: int) -> RandomNumberGenerator:

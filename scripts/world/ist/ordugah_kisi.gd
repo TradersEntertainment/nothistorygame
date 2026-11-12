@@ -85,9 +85,9 @@ static func kur(host: Node3D, kisiler: Array, lod: int) -> int:
 			hc.append(BASLIK.get(sp[1], BASLIK["azap"]))
 			fx.append(xf)
 			pts.append(k[0])
+		# iki çizim: gövde (kaftan rengi) + baş ve başlık (başlık rengi; yüz bu uzaklıkta 1–2 piksel)
 		_mm(host, figur("govde"), gx, gc, "kisi_govde")
-		_mm(host, figur("bas"), fx, [], "kisi_yuz")
-		_mm(host, figur("baslik"), fx, hc, "kisi_baslik")
+		_mm(host, figur("bas_baslik"), fx, hc, "kisi_baslik")
 	host.set_meta("kisiler", pts)
 	return kisiler.size()
 
@@ -129,6 +129,9 @@ static func figur(kind: String) -> ArrayMesh:
 		"bas":
 			b.sph(Vector3(0, 1.5, 0.01), 0.12, Color("c99a74"), 6, Vector3(0.95, 1.1, 1.0))
 			b.box(Vector3(0, 1.43, 0.1), Vector3(0.13, 0.05, 0.04), Color("3a2a1e"))              # bıyık
+		"bas_baslik":
+			b.sph(Vector3(0, 1.5, 0.01), 0.12, Color("e8c2a0"), 5, Vector3(0.95, 1.1, 1.0))
+			b.cyl(B.xf(Vector3(0, 1.64, -0.01)), 0.13, 0.2, Color.WHITE, 6, 0.1)
 		"baslik":
 			b.cyl(B.xf(Vector3(0, 1.64, -0.01)), 0.13, 0.2, Color.WHITE, 6, 0.1)
 			b.box(Vector3(0, 1.6, -0.12), Vector3(0.12, 0.22, 0.03), Color(0.9, 0.9, 0.9), 0.0, Vector3(15, 0, 0))   # yatırtma

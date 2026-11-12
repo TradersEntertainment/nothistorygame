@@ -211,7 +211,7 @@ static func build(host: Node3D, k: float, lod: int) -> void:
 
 
 static func _zokak(c: B, w: B, lod: int) -> void:
-	var beyaz := Color("ece4cc")
+	var beyaz := Color("ddd2b4")        # ağartılmamış keten (parlak beyaz değil, §7c)
 	var kenar := [[Vector2(-ZX, ZZ), Vector2(-3.5, ZZ)], [Vector2(3.5, ZZ), Vector2(ZX, ZZ)], [Vector2(ZX, ZZ), Vector2(ZX, -ZZ)],
 		[Vector2(ZX, -ZZ), Vector2(1.5, -ZZ)], [Vector2(-1.5, -ZZ), Vector2(-ZX, -ZZ)], [Vector2(-ZX, -ZZ), Vector2(-ZX, ZZ)]]
 	for e: Array in kenar:
