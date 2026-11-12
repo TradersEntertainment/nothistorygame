@@ -20,7 +20,7 @@ const THATCH := Color("b99a5c")
 const DARK := Color("2a2622")
 const WATER := Color(0.20, 0.50, 0.62, 0.62)
 const MOSS := Color("6f8a47")
-const GRASS := Color("7e9a4a")
+const GRASS := Color("5f7d38")
 const SOIL := Color("7a5a3c")
 const SAND := Color("d3bf8c")
 const ROPE := Color("8a7248")
@@ -196,7 +196,7 @@ static func ROCKB(p: Node3D, base: Vector3, radius: Vector3, col: Color = ROCK, 
 
 
 ## Ot tutamları (çarpışmasız, çok küçük): MultiMesh prizma.
-static func TUFTS(p: Node3D, rng: RandomNumberGenerator, rect: Rect2, n: int, y: float, col: Color = GRASS, size: float = 0.35) -> void:
+static func TUFTS(p: Node3D, rng: RandomNumberGenerator, rect: Rect2, n: int, y: float, col: Color = GRASS, size: float = 0.22) -> void:
 	var xf: Array = []
 	for i in n:
 		var pos := Vector3(rng.randf_range(rect.position.x, rect.end.x), y + size * 0.3, rng.randf_range(rect.position.y, rect.end.y))

@@ -1,0 +1,33 @@
+ISTAUDIT id=msur k=0.50 lod=0 tris=3276 draws=144 delik=0 dar=0 havada=2 cati_yolu=2/2 boyut=87.1x11.6x7.6
+ISTAUDIT id=msur k=0.50 lod=1 tris=456 draws=38
+ISTAUDIT id=msur k=0.50 lod=2 tris=48 draws=4
+ISTAUDIT id=bukoleon k=0.50 lod=0 tris=9948 draws=273 delik=0 dar=0 havada=6 cati_yolu=2/2 boyut=42.1x16.5x29.3
+ISTAUDIT id=bukoleon k=0.50 lod=1 tris=808 draws=45
+ISTAUDIT id=bukoleon k=0.50 lod=2 tris=80 draws=4
+ISTAUDIT id=kontoskalion k=0.50 lod=0 tris=3046 draws=127 delik=0 dar=21 havada=5 cati_yolu=2/2 boyut=75.0x10.7x64.6
+ISTAUDIT id=kontoskalion k=0.50 lod=1 tris=108 draws=9
+ISTAUDIT id=kontoskalion k=0.50 lod=2 tris=96 draws=8
+ISTAUDIT id=langa k=0.50 lod=0 tris=9692 draws=91 delik=0 dar=0 havada=1 cati_yolu=1/1 boyut=49.3x7.0x36.0
+ISTAUDIT id=langa k=0.50 lod=1 tris=5564 draws=87
+ISTAUDIT id=langa k=0.50 lod=2 tris=24 draws=2
+ISTAUDIT id=sophia k=0.50 lod=0 tris=3900 draws=60 delik=0 dar=9 havada=1 cati_yolu=1/1 boyut=32.2x6.2x23.0
+ISTAUDIT id=sophia k=0.50 lod=1 tris=3528 draws=54
+ISTAUDIT id=sophia k=0.50 lod=2 tris=24 draws=2
+ISTAUDIT id=mermerkule k=0.50 lod=0 tris=4482 draws=217 delik=0 dar=0 havada=3 cati_yolu=3/3 boyut=69.4x15.4x76.4
+ISTAUDIT id=mermerkule k=0.50 lod=1 tris=1032 draws=85
+ISTAUDIT id=mermerkule k=0.50 lod=2 tris=96 draws=8
+ISTAUDIT id=ahirkapi k=0.50 lod=0 tris=3204 draws=149 delik=0 dar=1 havada=2 cati_yolu=2/2 boyut=58.1x13.6x12.3
+ISTAUDIT id=ahirkapi k=0.50 lod=1 tris=444 draws=37
+ISTAUDIT id=ahirkapi k=0.50 lod=2 tris=36 draws=3
+ISTAUDIT id=balikci k=0.50 lod=0 tris=2804 draws=91 delik=0 dar=0 havada=1 cati_yolu=1/1 boyut=28.6x4.6x19.3
+ISTAUDIT id=balikci k=0.50 lod=1 tris=692 draws=43
+ISTAUDIT id=balikci k=0.50 lod=2 tris=12 draws=1
+ISTAUDIT id=kayikhane k=0.50 lod=0 tris=896 draws=48 delik=0 dar=0 havada=4 cati_yolu=1/1 boyut=14.5x6.9x15.6
+ISTAUDIT id=kayikhane k=0.50 lod=1 tris=296 draws=25
+ISTAUDIT id=kayikhane k=0.50 lod=2 tris=296 draws=25
+ISTAUDIT id=agsehpa k=0.50 lod=0 tris=4332 draws=44 delik=0 dar=0 havada=6 cati_yolu=1/1 boyut=18.4x3.2x10.0
+ISTAUDIT id=agsehpa k=0.50 lod=1 tris=504 draws=18
+ISTAUDIT id=agsehpa k=0.50 lod=2 tris=24 draws=2
+ISTAUDIT id=kayalar k=0.50 lod=0 tris=2078 draws=20 delik=0 dar=4 havada=1 cati_yolu=1/1 boyut=23.2x3.7x15.5
+ISTAUDIT id=kayalar k=0.50 lod=1 tris=908 draws=16
+ISTAUDIT id=kayalar k=0.50 lod=2 tris=336 draws=8

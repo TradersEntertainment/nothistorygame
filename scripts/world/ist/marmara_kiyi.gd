@@ -316,10 +316,11 @@ static func build_kayikhane(host: Node3D, k: float = 0.5, lod: int = 0) -> void:
 	IstMk.V(root, Vector3(OW, OW * 0.5, 0.05), Vector3(0, OH, D * 0.5 + 0.0), IstMk.DARK)
 	IstMk.V(root, Vector3(W - 1.4, 0.03, D - 1.2), Vector3(0, 0.0, 0.0), IstMk.SAND, "flagstone")
 	# iç: orta eksende tekne iskeleti (katı), kızak kirişleri, direkler
-	IstMk.S(root, Vector3(1.5, 0.7, 5.6), Vector3(0, 0.5, 0.0), IstMk.WOOD_LT, "wood")
+	var bz := -D * 0.5 + 0.5 + 2.8
+	IstMk.S(root, Vector3(1.5, 0.7, 5.6), Vector3(0, 0.5, bz), IstMk.WOOD_LT, "wood")
 	for i in 3:
-		IstMk.S(root, Vector3(1.0, 0.5, 0.35), Vector3(0, 0.0, -2.0 + i * 2.0), IstMk.WOOD_DK, "wood")
-	IstMk.V(root, Vector3(1.6, 0.1, 0.5), Vector3(0, 1.2, 0.8), IstMk.WOOD)
+		IstMk.S(root, Vector3(1.0, 0.5, 0.35), Vector3(0, 0.0, bz - 2.0 + i * 2.0), IstMk.WOOD_DK, "wood")
+	IstMk.V(root, Vector3(1.6, 0.1, 0.5), Vector3(0, 1.2, bz + 0.8), IstMk.WOOD)
 	# arka duvara yaslı kürek dizisi ve ağ yığını (bitişik: boşluk yok)
 	var oars: Array = []
 	for i in 8:
