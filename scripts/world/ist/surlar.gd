@@ -438,9 +438,11 @@ static func _run(host: Node3D, L: float, k: float, lod: int, seed: int, o: Dicti
 	# teras levhaları kalktı (düz gri levha / kalınlığı görünen yatay yüzey olmasın); yerlerinde arazinin 0,12 m altında
 	# yalnız dikiş arkalığı. Duvar altları 3 m'lik temel (arazi dilim ucunda komşu tabana geçerken alt kenar görünmesin).
 	_s(root, Vector3(x0, -3.0, zi0 - 4.0), Vector3(x1, -0.12, zi0), Color("7a6650"), "dirt", lod)
-	_s(root, Vector3(x0, -3.5, zi0), Vector3(x1, 0, zi1), stone.darkened(0.2), "dirt", lod)
+	# (temel levhaları duvar yüzlerinden 0,15 m içeride: dış kademe uzatmasıyla aynı düzlemde z-çakışması yapıp dış
+	# surun dışında "beyaz/gri levha" bandı çiziyordu)
+	_s(root, Vector3(x0, -3.5, zi0 + 0.15), Vector3(x1, -0.02, zi1 - 0.15), stone.darkened(0.2), "dirt", lod)
 	_s(root, Vector3(x0, -3.0, zi1), Vector3(x1, -0.12, zo0), C_EARTH, "dirt", lod)
-	_s(root, Vector3(x0, -3.5, zo0), Vector3(x1, 0, zo1), stone.darkened(0.2), "dirt", lod)
+	_s(root, Vector3(x0, -3.5, zo0 + 0.15), Vector3(x1, -0.02, zo1 - 0.15), stone.darkened(0.2), "dirt", lod)
 	# SUR-4: dış bölge (parateikhion, hendek, set) araziye iner: dilim tabanı iç surun hattındaki ortanca yükseklikte;
 	# arazi dışa doğru düşüyorsa hendek kuşağı 6 m'lik oyuk yerine yerden yüksek bir set üstünde kalıyordu (sahip_03).
 	# Dış sur ve kuleleri bu kademe kadar aşağı uzar (dışarıdan bakınca daha yüksek dış sur; içte peribolos aynı).
@@ -467,8 +469,9 @@ static func _run(host: Node3D, L: float, k: float, lod: int, seed: int, o: Dicti
 	var in_cut: Array = []
 	if open_gate:
 		in_cut.append([-gw * 0.5, gw * 0.5])
+	# OTURTMA: duvar gövdesi tabanın 1 m altından başlar (komşu dilim geçişinde arazi taban altına inse de yüz sürer)
 	for s in _segs(x0, x1, in_cut):
-		_s(root, Vector3(s[0], 0, zi0), Vector3(s[1], HW, zi1), stone, "ashlar", lod, true)
+		_s(root, Vector3(s[0], -1.0, zi0), Vector3(s[1], HW, zi1), stone, "ashlar", lod, true)
 	if open_gate:
 		_s(root, Vector3(-gw * 0.5, gh, zi0), Vector3(gw * 0.5, HW, zi1), stone, "ashlar", lod, true)
 	elif gw > 0.0:
@@ -484,7 +487,7 @@ static func _run(host: Node3D, L: float, k: float, lod: int, seed: int, o: Dicti
 	for gx in gedikler:
 		_gedik(root, lay, float(gx), lod, stone)
 	for s in _segs(x0, x1, out_cut):
-		_s(root, Vector3(s[0], 0, zo0), Vector3(s[1], OH, zo1), stone.darkened(0.04), "ashlar", lod, true)
+		_s(root, Vector3(s[0], -1.0, zo0), Vector3(s[1], OH, zo1), stone.darkened(0.04), "ashlar", lod, true)
 	if open_gate:
 		_s(root, Vector3(-gw * 0.5, gh, zo0), Vector3(gw * 0.5, OH, zo1), stone.darkened(0.04), "ashlar", lod, true)
 	# ---- kuleler

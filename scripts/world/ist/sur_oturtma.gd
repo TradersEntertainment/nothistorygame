@@ -9,6 +9,7 @@ extends RefCounted
 ## Kuşak maskesi (`kusakta`): hendek ve sur dibindeki 12 m'lik kuşakta yabancı süs (ot piramidi, oyuncak ağaç, kutu) çıkmaz.
 
 const K_SUR := 1.0
+const Y_MIN := 2.0             # kuşak zemininin alt sınırı (deniz düzlemi y = 0; zemin gölgelendiricisi 0–4 m'yi kıyı/ıslak boyar)
 const IZG := 32.0
 ## Hendek bandı (dilim yerel z): iç yaka duvarının dış yüzü … karşı yaka duvarının dış yüzü
 static var bantlar: Array = []          # [A: Vector2, d: Vector2, o: Vector2, t0, t1, c0, c1]
@@ -94,14 +95,20 @@ static func kur(s: Node, ad: String) -> Rect2:
 		var p: Vector3 = it["pos"]
 		var xf := Transform3D(Basis(Vector3.UP, float(it["yaw"])), p)
 		var dy := IstSurlar.dis_dy(xf, L, K_SUR) if hendek else 0.0
+		# kuşak zemini deniz düzeyinin üstünde kalır (Lykos vadisi, Marmara ucu: taban −0,65 m'ye inebiliyor; arazi o
+		# düzeye düzlenince deniz düzlemi şehir yanını ve terası basıyordu). Dilim tabanı aşağıdaysa temel gömülür.
+		dy = maxf(dy, Y_MIN - p.y) if hendek else 0.0
 		var a: Vector2 = it["a2"]
 		var b: Vector2 = it["b2"]
 		var dv := (b - a).normalized()
 		var o := IstSehir._out(dv, (a + b) * 0.5, ad)
-		ogeler.append({"it": it, "a": a, "b": b, "d": dv, "o": o, "L": a.distance_to(b), "y": p.y, "dy": dy, "hendek": hendek})
+		ogeler.append({"it": it, "a": a, "b": b, "d": dv, "o": o, "L": a.distance_to(b), "y": maxf(p.y, Y_MIN), "dy": dy - maxf(Y_MIN - p.y, 0.0), "hendek": hendek})
 	for g: Dictionary in ogeler:
-		dy_kayit.append([Vector2((g["it"]["pos"] as Vector3).x, (g["it"]["pos"] as Vector3).z), float(g["dy"])])
-		(g["it"] as Dictionary)["oturtma_dy"] = float(g["dy"])
+		# kayıt dilim kökü tabanına göre (dilim y'si sabit): dış zemin = kök y + kayıt
+		var py := float((g["it"]["pos"] as Vector3).y)
+		var rel := float(g["y"]) + float(g["dy"]) - py
+		dy_kayit.append([Vector2((g["it"]["pos"] as Vector3).x, (g["it"]["pos"] as Vector3).z), rel])
+		(g["it"] as Dictionary)["oturtma_dy"] = rel
 	# 2) düzlük kayıtları (tek yükseklik kaynağı). Bölümlerin önceden kaydettiği düzlükler (hub) şehir önünde korunur.
 	var onceki: Array = IstGeo._duz.duplicate()
 	var alan := Rect2()
@@ -114,6 +121,9 @@ static func kur(s: Node, ad: String) -> Rect2:
 		var k := 0
 		for j in n + 1:
 			var q := a + dv * lerpf(u0, u1, float(j) / n) + o * c
+			# denizin üstüne düşen düzlük kurulmaz (kuzey ucunda arazi Haliç'e dil gibi uzuyordu); hendek oyması hariç
+			if y > 0.0 and IstGeo.h_ham(q.x, q.y) < 0.0:
+				continue
 			if koru:
 				var dolu := false
 				for e: Array in onceki:
@@ -134,7 +144,8 @@ static func kur(s: Node, ad: String) -> Rect2:
 			n_duz += int(ekle.call(g, zm1 + 12.0, 4.0, y + float(g["dy"]), 12.0, 8.0, 0.0, L, false))
 	for g: Dictionary in ogeler:
 		if g["hendek"]:
-			n_duz += int(ekle.call(g, 25.0, 6.5, float(g["y"]) + float(g["dy"]), 2.0, 6.0, 0.0, float(g["L"]), false))
+			var Lt := float(g["L"])
+			n_duz += int(ekle.call(g, 25.0, 6.5, float(g["y"]) + float(g["dy"]), 2.0, 6.0, minf(4.0, Lt * 0.5), maxf(Lt - 4.0, Lt * 0.5), false))
 	# hendek dış kıyısı: dilimin kendi harpuşta düzeyi (dar, 1 m geçiş: komşu dilimin düzeyi kıyıya taşmasın; basamak bent
 	# duvarının hizasında)
 	for g: Dictionary in ogeler:
@@ -142,7 +153,9 @@ static func kur(s: Node, ad: String) -> Rect2:
 			n_duz += int(ekle.call(g, zm1 + 4.4, 4.0, float(g["y"]) + float(g["dy"]), 1.0, 4.0, minf(3.5, float(g["L"]) * 0.5), maxf(float(g["L"]) - 3.5, float(g["L"]) * 0.5), false))
 	# iç kuşak: kenarı (tarak dişi dahil) dış surun içinde 18,1 … 19,0 m'de; dış kademe kenarı 19,2 m'den dışarıda tam
 	for g: Dictionary in ogeler:
-		n_duz += int(ekle.call(g, 9.0, 9.6, float(g["y"]), 0.4, 6.0, 0.0, float(g["L"]), false))
+		# (merkezler uçlardan 7 m içeride: komşu dilimin peribolosuna en çok 2,6 m taşar; kademe dilim ekleminde kalır)
+		var Lg := float(g["L"])
+		n_duz += int(ekle.call(g, 9.0, 9.6, float(g["y"]), 0.4, 6.0, minf(7.0, Lg * 0.5), maxf(Lg - 7.0, Lg * 0.5), false))
 	# hendek tabanı oyması (yalnız çarpışma / yerleşim): bandın 1,6 m içinde kalır, uçlardan 12 m içeride
 	for g: Dictionary in ogeler:
 		if g["hendek"] and float(g["L"]) > 25.0:
@@ -309,22 +322,22 @@ static func _h2(i: int, j: int) -> float:
 	return float(h & 0xffff) / 65535.0
 
 
-const R_TOZ := Color("7e705c")        # taş tozu (kireç harcı + kumtaşı kırığı)
-const R_TOPRAK := Color("7a6650")     # çıplak / çiğnenmiş toprak
-const R_KOYU := Color("5f513f")       # nemli toprak, çamur
-const R_OT := Color("6b7243")         # seyrek, tozlu ot
-const R_OT2 := Color("7f8550")
+const R_TOZ := Color("a08a68")        # taş tozu (kireç harcı + kumtaşı kırığı)
+const R_TOPRAK := Color("94784f")     # çıplak / çiğnenmiş toprak
+const R_KOYU := Color("6e5a40")       # nemli toprak, çamur
+const R_OT := Color("7a8a45")         # seyrek, tozlu ot
+const R_OT2 := Color("8e9450")
 
 static func _kusak_renk(x: float, z: float, c: float) -> Color:
 	var yz := _yuz_uzak(c)
 	var n1 := _gur(x, z, 0.11)
 	var n2 := _gur(x + 37.0, z - 11.0, 0.29)
 	# temel: çiğnenmiş toprak + ot lekeleri (peribolos ve teras sıkışmış toprak/ot)
-	var col := R_TOPRAK.lerp(R_OT, clampf((n1 - 0.4) * 1.5, 0.0, 0.6))
+	var col := R_TOPRAK.lerp(R_OT, clampf(0.25 + (n1 - 0.4) * 1.5, 0.0, 0.7))
 	col = col.lerp(R_OT2, clampf((n2 - 0.6) * 2.0, 0.0, 0.5))
 	# sur dibine yaklaşınca taş tozu ve çıplak toprak (0–6 m)
 	var t := clampf(1.0 - yz / 6.0, 0.0, 1.0)
-	col = col.lerp(R_TOZ.lerp(R_TOPRAK, n2 * 0.6), t * t * (3.0 - 2.0 * t) * 0.9)
+	col = col.lerp(R_TOZ.lerp(R_TOPRAK, n2 * 0.6), t * t * (3.0 - 2.0 * t) * 0.75)
 	# nemli çamur lekeleri
 	if n2 > 0.72:
 		col = col.lerp(R_KOYU, (n2 - 0.72) * 2.5)

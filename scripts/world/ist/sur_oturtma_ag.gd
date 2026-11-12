@@ -16,6 +16,18 @@ static var _cali: ArrayMesh
 static var _bant_mat: ShaderMaterial
 static var _ot_mat: StandardMaterial3D
 static var _tas_mat: StandardMaterial3D
+static var _etek_mat: ShaderMaterial
+
+
+## Arazinin malzemesi (aynı palet / desen) ama kıyı bandı kapalı: etek ağı dilimin yerel uzayında (y ≈ 0), gölgelendirici
+## onu deniz kıyısı sanıp ıslak/köpüklü boyuyordu
+static func etek_malzeme() -> ShaderMaterial:
+	if _etek_mat == null:
+		_etek_mat = (load("res://scripts/level/zemin.gd").v2_malzeme() as ShaderMaterial).duplicate()
+		_etek_mat.set_shader_parameter("su_y", -10000.0)
+		# yerel uzaydaki aşınma maskesi ve kıyı ipucu etekte anlamsız (dilim yerel y ≈ 0): kapalı
+		_etek_mat.set_shader_parameter("asinma_acik", 0.0)
+	return _etek_mat
 static var sayac := {"etek": 0, "ucgen": 0}
 
 
@@ -428,7 +440,7 @@ static func kur(root: Node3D, lay: Dictionary, lod: int, xw: Array, dy: float, k
 		var mi := MeshInstance3D.new()
 		mi.name = "SurDibiEtek"
 		mi.mesh = st.commit()
-		mi.material_override = load("res://scripts/level/zemin.gd").v2_malzeme()
+		mi.material_override = etek_malzeme()
 		mi.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
 		root.add_child(mi)
 		if lod == 0:
