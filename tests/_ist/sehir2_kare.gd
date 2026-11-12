@@ -83,6 +83,11 @@ func _ready() -> void:
 			n += 1
 		get_tree().quit(0)
 		return
+	if set_ == "isaret":
+		await _isaretler()
+		print("ISTKARE BITTI")
+		get_tree().quit(0)
+		return
 	if set_ == "suryuru":
 		await _sur_yuru()
 		print("ISTKARE BITTI")
@@ -297,7 +302,7 @@ func _hava() -> void:
 	await _shot_en(p + "marmara", -1500.0, -3300.0, 70.0, 10.0, 10.0)
 	await _shot_en(p + "sarayburnu", 1700.0, 900.0, 70.0, 250.0, 10.0)
 	await _shot_en(p + "ucus70", -1500.0, 300.0, 70.0, 80.0, 25.0)
-	await _shot_en(p + "tepe", -2000.0, 400.0, 2600.0, 0.0, 89.0, 62.0)
+	await _shot_en(p + "tepe", -2000.0, 400.0, 2600.0 * IstGeo.S / 0.5, 0.0, 89.0, 62.0)
 	if gece:
 		return
 
@@ -513,6 +518,25 @@ func _denetim() -> void:
 	print("ISTKONMA toplam=%d carpismali=%d eksik=%s" % [fd["perches"].size(), ok, str(bad)])
 	for lm: Array in fd["landmarks"]:
 		print("ISTESER %s p=%s r=%.0f" % [lm[0], str(lm[1]), lm[2]])
+	# Formlar (kâğıt): altında 3 m içinde gerçek bir yüzey (eserin lod 0'ı kurulu olmalı: yakındakileri kur)
+	var fok := 0
+	var fbad: Array = []
+	for f: Array in fd["forms"]:
+		var p: Vector3 = f[1]
+		for it: Dictionary in s.items:
+			if (it["pos"] as Vector3).distance_to(p) < float(it["r"]) + 40.0 and not it.has("hat") and String(it.get("mod", "")) != "doku":
+				s._build(it, 0)
+	await get_tree().physics_frame
+	await get_tree().physics_frame
+	space = get_world_3d().direct_space_state
+	for f: Array in fd["forms"]:
+		var p: Vector3 = f[1]
+		var hit := space.intersect_ray(PhysicsRayQueryParameters3D.create(p + Vector3(0, 0.5, 0), p - Vector3(0, 3.0, 0)))
+		if hit.is_empty():
+			fbad.append("%d@%s" % [f[0], str(p)])
+		else:
+			fok += 1
+	print("ISTFORM toplam=%d yuzeyde=%d eksik=%s" % [fd["forms"].size(), fok, str(fbad)])
 	s.set_process(true)
 
 
@@ -567,58 +591,88 @@ func _sur_yuru() -> void:
 		for a: String in OS.get_cmdline_user_args():
 			if a.begins_with("--surboy="):
 				lim = minf(hat_len, a.substr(9).to_float())
-		var olaylar: Array = []
+		# Dilim dilim: her ADIM metrede bir yürüme yolunun üstüne konur, bir sonraki noktaya en çok 8 sn yürür.
+		# ok: 1,5 m yakına vardı ve yürüme yolundan > 2,5 m düşmedi; dus: düştü; tak: varamadı.
+		var ADIM := 15.0
+		var ok := 0
 		var dus := 0
 		var tak := 0
-		var sv := 2.0
-		var yer_once := -1.0
+		var kotu: Array = []
 		var t_hat := Time.get_ticks_msec()
-		# lod 0 (çarpışma) parça parça: oyuncunun 260 m çevresindeki hat öğeleri kurulur, gerisi boşaltılır
-		await _sur_koy(ad, pl, sv)
-		var son_s := sv
-		var son_t := 0.0
-		var t := 0.0
+		var sv := 4.0
+		for a: String in OS.get_cmdline_user_args():
+			if a.begins_with("--surbas="):
+				sv = a.substr(9).to_float()
 		var kar := 0
-		var walk_y := _pl.global_position.y
-		while sv < lim - 8.0 and t < lim / 3.0 + 120.0:
-			await get_tree().physics_frame
+		while sv < lim - ADIM:
+			await _sur_koy(ad, pl, sv)
+			var y0 := _pl.global_position.y
+			var hedef := _hat_nokta(pl, sv + ADIM)
+			var sonuc := "tak"
+			var t := 0.0
+			while t < 8.0:
+				await get_tree().physics_frame
+				t += get_physics_process_delta_time()
+				var p2 := Vector2(_pl.global_position.x, _pl.global_position.z)
+				var s_now := float(IstSehir._snap(pl, p2)["s"])
+				var hn := _hat_nokta(pl, minf(s_now + 3.0, sv + ADIM))
+				var to := Vector3(hn.x - p2.x, 0, hn.y - p2.y)
+				_pl.rotation.y = atan2(-to.x, -to.z)
+				_pl.set("frozen", false)
+				_pl.set("move_mode", "script")
+				_pl.set("script_velocity", to.normalized() * 3.2)
+				if _pl.global_position.y < y0 - 2.5:
+					sonuc = "dus"
+					break
+				if p2.distance_to(hedef) < 1.5 or s_now > sv + ADIM - 1.0:
+					sonuc = "ok"
+					break
+			if kar < 2:
+				print("ISTSURDBG p0y=%.1f p=%s hedef=%s vel=%s yerde=%s fizik=%s pinned=%s tp=%s" % [y0, str(_pl.global_position), str(hedef), str(_pl.velocity), _pl.is_on_floor(), _pl.is_physics_processing(), str(_pl.get("pinned")), str(_pl.get("_tp_hold"))])
+			_pl.set("script_velocity", Vector3.ZERO)
+			match sonuc:
+				"ok": ok += 1
+				"dus": dus += 1
+				_: tak += 1
+			if sonuc != "ok":
+				var q := _hat_nokta(pl, sv)
+				if kotu.size() < 6 and DisplayServer.get_name() != "headless":
+					var pp := _pl.global_position
+					var bk := Vector3(q.x - hedef.x, 0, q.y - hedef.y).normalized()
+					var yan := bk.cross(Vector3.UP)
+					cam.make_current()
+					await _shot("suryuru_%s_%d" % [ad, kotu.size()], pp + bk * 4.0 + yan * 5.0 + Vector3(0, 6.0, 0), pp + Vector3(0, 0.8, 0), 70)
+				var pp2 := _pl.global_position
+				var fw := Vector3(hedef.x - pp2.x, 0, hedef.y - pp2.z).normalized()
+				var sp3 := get_world_3d().direct_space_state
+				var info := ""
+				for hh: float in [0.25, 0.9, 1.6]:
+					var rq3 := PhysicsRayQueryParameters3D.create(pp2 + Vector3(0, hh, 0), pp2 + Vector3(0, hh, 0) + fw * 1.2)
+					rq3.exclude = [_pl.get_rid()]
+					var h3 := sp3.intersect_ray(rq3)
+					var ek := ""
+					if not h3.is_empty() and h3["collider"] is Node3D:
+						var cb := h3["collider"] as Node3D
+						var sl: Node3D = cb
+						while sl != null and not String(sl.name).begins_with("SurDilimi") and not String(sl.name).begins_with("IstSurlar"):
+							sl = sl.get_parent() as Node3D
+						for cs in cb.get_children():
+							if cs is CollisionShape3D and (cs as CollisionShape3D).shape is BoxShape3D:
+								var lp: Vector3 = sl.global_transform.affine_inverse() * (cs as Node3D).global_position if sl else Vector3.ZERO
+								ek += " kutu=%s yerel=%s ad=%s" % [str(((cs as CollisionShape3D).shape as BoxShape3D).size), str(lp), String(cb.name)]
+					info += "|%.2f:%s%s" % [hh, ("%s@%.2f" % [String((h3["collider"] as Node).get_parent().name) if h3["collider"] is Node else "?", (h3["position"] as Vector3).distance_to(pp2 + Vector3(0, hh, 0))]) if not h3.is_empty() else "-", ek]
+				for it3: Dictionary in IstSehir.active.hat_items:
+					if String(it3.get("hat", "")) == ad and it3.has("s0") and float(it3["s1"]) > sv - 20.0 and float(it3["s0"]) < sv + 35.0:
+						info += " [%s s=%.0f-%.0f walk=%.1f]" % [String(it3["id"]), float(it3["s0"]), float(it3["s1"]), float(it3.get("walk", 0.0))]
+				var sn3 := IstSehir._snap(pl, Vector2(pp2.x, pp2.z))
+				var yanal := (Vector2(pp2.x, pp2.z) - (sn3["p"] as Vector2)).length()
+				kotu.append("%s@%.0f(%.0f,%.0f,y%.1f) son=(%.1f,%.1f,%.1f) yanal=%.2f yerde=%s %s" % [sonuc, sv, q.x, q.y, y0, pp2.x, pp2.y, pp2.z, yanal, _pl.is_on_floor(), info])
+			sv += ADIM
 			kar += 1
-			t += get_physics_process_delta_time()
-			if kar % 30 == 0:
-				_sur_lod(ad, _pl.global_position)
-			var p2 := Vector2(_pl.global_position.x, _pl.global_position.z)
-			var sn := IstSehir._snap(pl, p2)
-			sv = float(sn["s"])
-			var hedef := _hat_nokta(pl, sv + 6.0)
-			var to := Vector3(hedef.x - p2.x, 0, hedef.y - p2.y)
-			_pl.rotation.y = atan2(-to.x, -to.z)
-			Input.action_press("move_forward")
-			Input.action_press("sprint")
-			if _pl.is_on_floor():
-				walk_y = _pl.global_position.y if absf(_pl.global_position.y - walk_y) < 6.0 else walk_y
-			var gy := IstGeo.h(p2.x, p2.y)
-			if _pl.global_position.y < walk_y - 2.5 or _pl.global_position.y < gy + 2.0:
-				dus += 1
-				olaylar.append("dus@%.0f(%.0f,%.0f)" % [sv, p2.x, p2.y])
-				sv += 8.0
-				await _sur_koy(ad, pl, sv)
-				walk_y = _pl.global_position.y
-				son_s = sv
-				son_t = t
-				continue
-			if t - son_t > 4.0:
-				if sv - son_s < 1.0:
-					tak += 1
-					olaylar.append("tak@%.0f(%.0f,%.0f)" % [sv, p2.x, p2.y])
-					sv += 6.0
-					await _sur_koy(ad, pl, sv)
-					walk_y = _pl.global_position.y
-				son_s = sv
-				son_t = t
-		Input.action_release("move_forward")
-		Input.action_release("sprint")
-		print("ISTSURYURU hat=%s uzunluk=%.0f yurunen=%.0f dusme=%d takilma=%d sure_sn=%.0f gercek_ms=%d" % [ad, hat_len, minf(sv, lim), dus, tak, t, Time.get_ticks_msec() - t_hat])
-		print("ISTSURYURU_OLAY %s %s" % [ad, " ".join(olaylar.slice(0, 60))])
+			if kar % 20 == 0:
+				print("ISTSURILERLE %s s=%.0f/%.0f ok=%d dus=%d tak=%d" % [ad, sv, lim, ok, dus, tak])
+		print("ISTSURYURU hat=%s uzunluk=%.0f sinanan=%.0f dilim=%d gecti=%d dusme=%d takilma=%d gercek_ms=%d" % [ad, hat_len, minf(sv, lim), ok + dus + tak, ok, dus, tak, Time.get_ticks_msec() - t_hat])
+		print("ISTSURYURU_OLAY %s %s" % [ad, " ".join(kotu.slice(0, 80))])
 		for it: Dictionary in s.items:
 			if String(it.get("hat", "")) == ad or String((IstSehir.YER2.get(String(it["id"]), {}) as Dictionary).get("hat", "")) == ad:
 				for l in 2:
@@ -690,3 +744,26 @@ func _sur_koy(ad: String, pl: PackedVector2Array, sv: float) -> void:
 	_pl.velocity = Vector3.ZERO
 	for i in 4:
 		await get_tree().physics_frame
+
+
+## Yan görev işaretleri: her eserin işaret noktasına kırmızı küre; 45° yukarıdan kare (işaret eserin tam üstünde mi)
+func _isaretler() -> void:
+	var fd := IstSehir.flight_data_v2()
+	var m := StandardMaterial3D.new()
+	m.albedo_color = Color(1, 0.1, 0.1)
+	m.shading_mode = BaseMaterial3D.SHADING_MODE_UNSHADED
+	var i := 0
+	for lm: Array in fd["landmarks"]:
+		var p: Vector3 = lm[1]
+		var sp := MeshInstance3D.new()
+		var sm := SphereMesh.new()
+		sm.radius = 1.6
+		sm.height = 3.2
+		sp.mesh = sm
+		sp.material_override = m
+		add_child(sp)
+		sp.global_position = p
+		var off := Vector3(1, 0, 1).normalized() * (float(lm[2]) * 0.9 + 25.0) + Vector3(0, 14.0, 0)
+		await _shot("isaret_%02d_%s" % [i, String(lm[0]).to_lower()], p + off, p - Vector3(0, 10.0, 0), 60)
+		sp.queue_free()
+		i += 1
