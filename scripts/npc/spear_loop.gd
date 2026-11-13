@@ -84,7 +84,10 @@ func _next(p: Person) -> void:
 		var q := PhysicsRayQueryParameters3D.create(from, from + dir + dir.normalized() * 0.4) if dir.length() > 0.05 else null
 		# Yanındaki nöbetçinin yerine de yürümez (iki mızraklı iç içe giriyordu)
 		var to_g := (p.get_parent() as Node3D).global_transform * to
-		if q and p.get_world_3d().direct_space_state.intersect_ray(q).is_empty() and not Unclip.crowded(p, to_g, 0.7):
+		# Gizliyken yürümez: Unclip.crowded görünmeyeni saymaz (26: Büro alarmında bölüm gizliyken zamanlayıcılar sürer;
+		# kazanın kolundaki adamın ya da yandaki nöbetçinin içinde bitiyordu)
+		if q and p.is_visible_in_tree() and p.get_world_3d().direct_space_state.intersect_ray(q).is_empty() \
+				and not Unclip.crowded(p, to_g, 0.7):
 			p.create_tween().tween_property(p, "position", to, 0.9)
 
 
