@@ -61,7 +61,25 @@ Ağaç, saksı, rögar: dönel/elipsoid. Kutu kalanlar: bina gövdesi/saçak/bal
 
 ## 6. Testler (`--max-fps 20`)
 Bölüm 1 çeşitleri `--autotest`, `=kick`, `=red` her biri ×2; Bölüm 3, 5, 8, 13, 15, 16 varsayılan; `parse_check`; `zfight_check`.
-Sonuçlar: bkz. `testler.txt`.
+Sonuç (`testler.txt`): hepsi `AUTOTEST PASS`; `SCRIPT ERROR`, `VISAUDIT`, `WALKTHRU`, `HELDAUDIT`, `WARN_FX_STUCK`,
+`WARN_FLY_ITEM`, `WARN_VOID_TELEPORT` satırı yok (12 koşu: 1 ×2, kick ×2, red ×2, 3, 5, 8, 13, 15, 16); `PARSECHECK PASS scripts=252`;
+`ZFIGHT` satırı 0.
+
+## 6b. Kanıt dosyaları
+- `ciftler/`: 12 ÖNCE|SONRA çifti (1280×720 jpg, kalite 85) + `pafta_once_sonra.jpg`.
+- `yakin/`: kedi, araba (ön/yan/arka), geçen araba, lamba, cephe, sokak sol/sağ, gök (sonda kamerası dışarıda; ÖNCE'si de var).
+- `oynanis/`: `PACE=1 --autotest` ekranlı koşudan garaj evresi 4 kare (replik altyazılı). Bot Hikmet'e baktığı için sokak
+  yalnız 3. ve 4. karede kapıdan görünür (4: araba, branda, kedi, yağmur, bina).
+- `butce_*.txt`, `*_macenta_katı.json`, `*_tarama_ham.txt`, `ara_kayit/` (ilk 30 dk kaydı).
+
+## 6c. Her SONRA karesi için bir cümle (ciftler/NN_*_sonra.jpg; hiçbirinde kesik kenar/macenta yok, kutu gibi duran canlı yok)
+01 çömelmiş, yukarı bakış: farklı boyda üç apartman, balkon/yanık pencere, ağaç ve gök dolu. 02 sola bakış: bina sırası, tabela ve park etmiş
+araba yola kadar sürüyor. 03 aşağı/sağ: kaldırım, yol, brandalı Şahin ve cadde sonu kapanıyor. 04 eşikte aşağı: zemin şeridi yok, kaldırım
+yola bağlanıyor. 05 sağ uçta sola: yol boyunca uzayan sıra, park araç, kenar yok. 06 çömelmiş aşağı: eşik, kaldırım, karşı cephe tam.
+07 yukarı-sola: kepenk altından sokak, araba ve cephe tam. 08 kapı önü: yol, Şahin, apartman sırası eksiksiz. 09 3 m yukarı: sokak kepenk
+altından tam görünür. 10 3 m: aynı, Şahin ve binalar yerinde. 11 düz: yol, lamba direği, karşı sıra tam. 12 sol uçtan yola paralel: yol
+sürüyor, apartmanlar sıralanıyor, uç kesik değil.
+
 
 ## 7. Kendi karelerime bakınca hâlâ kötü olanlar (dürüst)
 - Islak yol yansıması zayıf: pencere çizgileri karanlık yolda neredeyse seçilmiyor; asıl parlaklık lamba havuzundan.
