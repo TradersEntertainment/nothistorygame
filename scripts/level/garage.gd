@@ -789,6 +789,63 @@ func _build_mirror() -> void:
 	Props.interactable(self, "mirror", Vector3(0.6, 1.8, 0.9), p + Vector3(-0.3, 1.1, 0))
 
 
+## Kostüm anından sonra: karton kutunun üstünde katlanmış çizgili pijama (üst ve alt; kıvrımlı kumaş ağı). Bölüm 1.
+func set_folded_pyjama(on: bool) -> void:
+	var old := get_node_or_null("FoldedPyjama")
+	if old:
+		old.queue_free()
+	if not on:
+		return
+	var root := Node3D.new()
+	root.name = "FoldedPyjama"
+	add_child(root)
+	root.position = Vector3(2.93, 0.805, 2.28)      # üst karton kutunun üstü (y = 0,63 + 0,175)
+	root.rotation_degrees = Vector3(0, -8, 0)
+	var layers := [[Vector2(0.34, 0.27), 0.05, 0.0, Vector3.ZERO, 0.0], [Vector2(0.3, 0.25), 0.045, 0.05, Vector3(0.012, 0, -0.01), 7.0]]
+	for L in layers:
+		var mi := MeshInstance3D.new()
+		mi.mesh = _folded_cloth(L[0] as Vector2, float(L[1]), int(L[4]))
+		var m := StandardMaterial3D.new()
+		m.vertex_color_use_as_albedo = true
+		m.vertex_color_is_srgb = true
+		m.roughness = 0.9
+		mi.material_override = m
+		mi.position = Vector3(0, float(L[2]), 0) + (L[3] as Vector3)
+		mi.rotation_degrees = Vector3(0, float(L[4]), 0)
+		root.add_child(mi)
+
+
+## Katlanmış kumaş: yuvarlak kenarlı, üstü hafif dalgalı yastık ağı; çizgiler köşe rengi (soluk mavi / krem şerit).
+static func _folded_cloth(size: Vector2, thick: float, seed: int) -> ArrayMesh:
+	var nx := 10
+	var nz := 8
+	var hx := size.x * 0.5
+	var hz := size.y * 0.5
+	var blue := Color("a8c0df")
+	var cream := Color("f1ead6")
+	var height := func(i: int, j: int) -> float:
+		var u := absf(float(i) / nx * 2.0 - 1.0)
+		var v := absf(float(j) / nz * 2.0 - 1.0)
+		var edge := sqrt(maxf(0.0, 1.0 - pow(u, 5.0))) * sqrt(maxf(0.0, 1.0 - pow(v, 5.0)))
+		var wave := 0.007 * sin(i * 1.7 + seed) * cos(j * 1.3 + seed * 0.5) + 0.004 * sin(j * 2.9 + i * 0.6)
+		return thick * edge + wave * edge
+	var st := SurfaceTool.new()
+	st.begin(Mesh.PRIMITIVE_TRIANGLES)
+	for i in nx:
+		for j in nz:
+			var c: Color = cream if (i % 2 == 1) else blue      # dikey şeritler (katın uzun yönü boyunca)
+			st.set_color(c)
+			var p00 := Vector3(lerpf(-hx, hx, float(i) / nx), height.call(i, j), lerpf(-hz, hz, float(j) / nz))
+			var p10 := Vector3(lerpf(-hx, hx, float(i + 1) / nx), height.call(i + 1, j), lerpf(-hz, hz, float(j) / nz))
+			var p01 := Vector3(lerpf(-hx, hx, float(i) / nx), height.call(i, j + 1), lerpf(-hz, hz, float(j + 1) / nz))
+			var p11 := Vector3(lerpf(-hx, hx, float(i + 1) / nx), height.call(i + 1, j + 1), lerpf(-hz, hz, float(j + 1) / nz))
+			for v in [p00, p10, p01, p10, p11, p01]:
+				st.set_color(c)
+				st.add_vertex(v)
+	st.generate_normals()
+	return st.commit()
+
+
 ## Arka duvarda iki çivi üstünde babadan kalma çifte (Bölüm 8: Hikmet 1453'e götürür).
 func add_shotgun() -> Node3D:
 	var g := Blades.shotgun(self)
