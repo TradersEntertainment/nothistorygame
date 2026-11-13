@@ -433,7 +433,9 @@ static func _cati(host: Node3D, p: Dictionary, lod: int) -> void:
 					for sx in [-1, 1]:
 						Props.box(host, Vector3(0.1, 2.2, 0.1), Vector3(sx * L * 0.3, H + 1.28, -D * 0.1), p["ahsap"])
 					Props.box(host, Vector3(L * 0.66, 0.08, 2.4), Vector3(0, H + 2.4, -D * 0.1), p["ahsap"])
-					Props.box(host, Vector3(L * 0.6, 0.18, 2.2), Vector3(0, H + 2.5, -D * 0.1), Color("6f8a48"))
+					# TUR-7 (KUTU YASAĞI): asma yaprağı düz yeşil KUTU levha değil ("havada kare yeşillik"): kirişlere
+					# oturan yassı, kabarık yaprak öbeği (tek ağ: çizim sayısı aynı), solgun zeytin
+					Props.ball(host, 0.5, Vector3(0, H + 2.56, -D * 0.1), Color("55683a"), Vector3(L * 0.64, 0.42, 2.5), 8)
 			elif lod == 0:
 				# düz damda saman/odun ya da küp
 				Props.box(host, Vector3(1.2, 0.5, 0.9), Vector3(-L * 0.2, H + 0.43, -D * 0.15), Color("8a7a50"))

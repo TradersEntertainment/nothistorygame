@@ -27,6 +27,44 @@ sur dibine 4 bakış). Şehir kareleri `tests/_ist/birlik_kare.tscn --set=liste`
 
 @@KUTU@@
 
-@@KOTU@@
+## Hâlâ kötü olanlar (dürüst)
 
-@@DOSYALAR@@
+- **Sur taşı yakından "dama"**: sur taşı gölgelendiricisinin blok blok ton farkı 5 m'den büyük düz renkli dikdörtgenler
+  gibi okunuyor (A 03/04, C c1/c2, B k10). Bu turda ton değiştirildi, desen değiştirilmedi.
+- **Sur dibi 60 m'den hâlâ düz çizgide bitiyor** (A 01, B sahip_03/k13): etek ve leke var ama uzaktan teras/parateikhion
+  kenarı cetvel gibi.
+- **Hendek dış kıyısı cetvel**, karşı yaka yüzü yakından dikey şeritli perde (A 05/07, B k03/k09). Kıyı örtüsü (önceki
+  oturum) üst kenarı saçaklıyor ama çizgi düz.
+- **Gölge kenarları testere dişli** (A 02/05 gündüz, D1 gece): güneş/ay gölge haritası çözünürlüğü; ışık ve proje ayarı bu
+  işin dosyalarında değil, dokunulmadı.
+- **Gedikteki oyun parçaları** (fıçı/kazık aşaması, `sur_oyun_parca.gd`, DOKUNMA): üstten tan topaklar; kırık taşların
+  malzemesi kesim görünüş geçişinde değiştirildi, parçanın kendisine dokunulmadı.
+- **Ordugâh önü**: kahverengi uzun palanka/çit dizileri kutu; zemin çukurları üstten halka (B s3/k04).
+- **Şehirde sokakta limon yeşili ot "^" işaretleri** (B k06, `bitki_yama.gd` ot tutamı): bu turda değiştirilmedi.
+- **Hub yanındaki pastel ev kümesi** (madde 8): yapılmadı.
+- **İkinci grup** (Blakherna, deniz surları, Galata): yapılmadı.
+- B `k10_sur_ustunden_ordugaha` kamerası (önceki oturumun listesi) iki duvar arasındaki dar boşluğa düşüyor; ÖNCE ile aynı
+  kamera olduğu için değiştirilmedi.
+
+
+## Değişen dosyalar (`20948418` → son kayıt; görünüş, çarpışmasız)
+
+| dosya | ne |
+|---|---|
+| `scripts/world/ist/surlar_ayrinti.gd` | sarmaşık örtüsü kalktı; teras ot tutamı + çalı (oturtma kiti); gülle oyuğu (düzensiz, duvarla aynı değerde); dış kademe (dy) düzeltmeleri; fıçı rengi; gedik yanında stauroma/iskele yok |
+| `scripts/world/ist/sur_oturtma_ag.gd` | sur dibi bandı yumuşak geçişli leke (discard yok); ot/çalı tozlu-solgun; sur dibi taşı malzemesi |
+| `scripts/world/ist/sur_gorunus.gd` (yeni) | kesim zemini (şehir zemin kitaplığı, seyrek dış ızgara, iri ölçekli yama, z-çakışmasız şerit), moloz/dolgu zemin dili, kaya malzemesi, poterna ahşabı |
+| `scripts/world/ist/sur_zemin.gd` | rampa uçları kapalı, dik toprak koyu, hendek taş yüzü köşe tonu, ateş alanı döküntüsü kuşakta yok, gülle rengi, kıyı örtüsü (önceki oturum) |
+| `scripts/world/ist/surlar.gd` | kesimde v2 görünüşü, parateikhion dişleri, yıkık dış kule kabuğu, orta/uzak korkuluk (önceki oturum); gedik molozu ve kaya malzemesi |
+| `scripts/world/ist/sur_doku.gd` | gri-krem kireçtaşı, soğuk/sıcak iri leke, koyu kiremit hatıl |
+| `scripts/world/ist/sur_kule.gd` | uzak kule dişleri (önceki oturum) |
+| `scripts/world/ist/gorsel_dil.gd` | kesim sahnesi şehrin ışığı/pusu/parıltısı (fog_cap, Look tabanı) |
+| `scripts/world/ist/dunya.gd` | yer örtüsü (ZeminOrtu) sur kuşağında yok |
+| `scripts/world/ist/evler.gd` | teras asma çardağının yaprağı düz yeşil kutu değil, yassı yaprak öbeği |
+| `scripts/world/ist/ayrinti.gd`, `ayrinti_lib.gd` | uzak bitki/bahçe öğesi kutu değil; lod 1 yeşil öbek ≥ 6 dilim |
+| `scripts/world/ist/ordugah_oba.gd`, `ordugah_ocak.gd` | kıvrık patika, soluk iz, hacimli duman (önceki oturum) |
+| `tests/_ist/tur7_kare.gd/.tscn`, `tur7_kesim.gd/.tscn` | göz yüksekliği kareleri, D kareleri, `--pik` (örnek örnek ışın tanısı), `--kutu_say`, `--isik_tani` |
+
+Dokunulmayanlar: `sur_oyun*.gd`, `sur_set*.gd`, `sur_sozlesme*`, `tests/_ist/sur_*`, `pilot20_*`, `scripts/chapter*.gd`,
+`scripts/combat/`, `scripts/level/`. Yeni ışık yok.
+

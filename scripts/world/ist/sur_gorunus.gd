@@ -140,13 +140,14 @@ static func kesim_zemin(kok: Node3D) -> void:
 
 
 static var _moloz: Dictionary = {}
-static var _kaya_m: StandardMaterial3D
+static var _kaya_m: Material
 
 
-## Düşmüş/kırık taş (kaya ağı): ince taneli kireçtaşı (duvar bloğu deseni değil: kaya üstünde ahşap damarı okunuyordu)
-static func kaya_tas_mat() -> StandardMaterial3D:
+## Düşmüş/kırık taş (kaya ağı): moloz yığınlarıyla aynı zemin dilinde koyu taş-toprak (Props blok deseni kaya üstünde ahşap
+## damarı, düz taş malzemesi görsel dil geçişinde krem topak okunuyordu)
+static func kaya_tas_mat() -> Material:
 	if _kaya_m == null:
-		_kaya_m = Props.mat(Color("8f8574"), 0.0, false, "concrete")
+		_kaya_m = _moloz_mat(Color("6a6052"))
 	return _kaya_m
 
 
