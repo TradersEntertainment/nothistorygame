@@ -66,6 +66,9 @@ var bombard := false
 ## mevziye arkadan, z > GUN_GATE_Z'den girer
 var gun_gate := false
 const GUN_GATE_Z := 121.3
+## Yeni sur seti (SurSetSahne, bölüm bağdaştırıcısı): ova bir düğümle yeni ovaya kaydırılır; sur uzantısı, şehir ve şehir
+## arazisi KURULMAZ (yeni kesimin kendi dilimleri ve şehir önü var). Varsayılan false: davranış aynı.
+var sur_yeni := false
 
 var rng := RandomNumberGenerator.new()
 var _t := 0.0
@@ -111,7 +114,8 @@ func build() -> void:
 		add_to_group(MapView.GROUP)      # harita (MiniMap, WorldMap) bu alanın dönüşümüyle oyuncuyu bulur
 	_terrain()
 	await _step("_terrain()")
-	_wall_extension()
+	if not sur_yeni:
+		_wall_extension()
 	await _step("_wall_extension()")
 	if world:
 		horn = HornWorld.new()
@@ -120,10 +124,11 @@ func build() -> void:
 		horn.night = night_build
 		add_child(horn)
 		horn.build()
-	elif wall_x_min > -EXT:
+	elif wall_x_min > -EXT and not sur_yeni:
 		_horn_end()
 	await _step("horn.build()")
-	_city()
+	if not sur_yeni:
+		_city()
 	await _step("_city()")
 	_no_mans_land()
 	await _step("_no_mans_land()")
@@ -213,6 +218,8 @@ func _terrain() -> void:
 		return c.lerp(Color("7a8a80"), smoothstep(420.0, 860.0, z) * 0.55)
 	load("res://scripts/level/zemin.gd").yore("kusatma", self)      # ZEMİN: yöre paleti
 	add_child(LowPoly.terrain(-EXT, EXT, 36.0, 900.0, 56, 36, ground, cf))
+	if sur_yeni:
+		return
 	var ccf := func(x: float, z: float, y: float, steep: float) -> Color:
 		return Color("7a7050").lerp(Color("5a6a40"), clampf(0.5 + 0.5 * sin(x * 0.05 - z * 0.04), 0.0, 1.0) * 0.6).darkened(clampf(steep * 0.5, 0.0, 0.25))
 	add_child(LowPoly.terrain(-EXT, EXT, -700.0, -3.0, 56, 28, city_ground, ccf))

@@ -13,6 +13,12 @@ var burning: Array = []          # {node, flames, light, t, dir}
 var crew: Array = []             # {node, a, b, t, speed}
 var rng := RandomNumberGenerator.new()
 var _t := 0.0
+## Bölüm bağdaştırıcısı (SurSet): verilirse moloz yamacı yeni setten; null: LandWalls (bugünkü davranış)
+var sur: SurSet = null
+
+
+func _ry(x: float, z: float) -> float:
+	return LandWalls.rubble_y(x, z) if sur == null else sur.moloz_y(x, z)
 
 
 func _ready() -> void:
@@ -358,7 +364,7 @@ func add_builders(site: Vector3, n: int, seed := 0) -> void:
 		p.set_meta("garrison", true)
 		var x := (-1.0 if i % 2 == 0 else 1.0) * (2.4 + (i / 2) * 1.2)
 		p.position = site + Vector3(x, 0, -0.6 - (i / 2) * 0.5)
-		p.position.y = LandWalls.rubble_y(p.position.x, p.position.z)
+		p.position.y = _ry(p.position.x, p.position.z)
 		p.rotation.y = -signf(x) * 0.5
 		add_child(p)
 		p.set_activity(["hammer", "chop"][i % 2])
@@ -378,7 +384,7 @@ func set_crew_active(on: bool) -> void:
 func _crew_pos(c: Dictionary, ph: float) -> Vector3:
 	var k := smoothstep(0.0, 0.45, ph) if ph < 0.5 else 1.0 - smoothstep(0.55, 1.0, ph)
 	var p := (c["a"] as Vector3).lerp(c["b"], k)
-	p.y = LandWalls.rubble_y(p.x, p.z)
+	p.y = _ry(p.x, p.z)
 	return p
 
 
@@ -418,7 +424,7 @@ func dodge(_eye: Vector3, _head: Vector3, _speaker: Node3D) -> void:
 				# Yeni evresinde eski yana çekilme payı onu bir katının içine koyuyor: şeridine döner
 				c["off"] = Vector3.ZERO
 				at = _crew_pos(c, ph)
-			at.y = LandWalls.rubble_y(at.x, at.z)
+			at.y = _ry(at.x, at.z)
 			p.position = at
 
 
@@ -455,7 +461,7 @@ func _update_crew(delta: float) -> void:
 			off = off.lerp(Vector3.ZERO, clampf(delta * 1.5, 0.0, 1.0))
 		c["off"] = off
 		base += off
-		base.y = LandWalls.rubble_y(base.x, base.z)
+		base.y = _ry(base.x, base.z)
 		# Görünen zemin (moloz yamacı, set): hesaplanan yükseklik onunla uyuşmazsa ona basar (gömülmez, havada kalmaz)
 		var fy := Unclip.floor_y(self, global_transform * base, 0.9, 0.9)
 		if not is_nan(fy):

@@ -54,8 +54,12 @@ static func _in(x: float, ranges: Array) -> bool:
 ## busy: uzaktakiler de iş yapar (PoseCrew): sur yolunda okçular yayı gerip ovaya atar, kalkanlılar ok yağmurunda çöker,
 ## dolgudakiler dürter, eğilip bakar, taş atar; iç surdakiler dış surun üstünden ovaya ok atar, bölük bölük çöker
 ## (eskiden donuk, nizam halinde dikiliyorlardı).
+## sur (bölüm bağdaştırıcısı, SurSet): verilirse yeni setin sur yolu, kuleleri ve gediği (_land_walls_sur); null ya da eski
+## set: bugünkü kod yolu (birebir).
 static func land_walls(parent: Node3D, skip: Array, near: Array, inner_near: Array = [], seed := 20, span := 47.0, inner := true, dense := false,
-		busy := false) -> Node3D:
+		busy := false, sur: SurSet = null) -> Node3D:
+	if sur != null and not sur.eski_mi:
+		return _land_walls_sur(parent, sur, skip, near, inner_near, seed, span, inner, dense, busy)
 	var root := _root(parent, "Garrison")
 	var rng := RandomNumberGenerator.new()
 	rng.seed = seed
@@ -162,6 +166,126 @@ static func land_walls(parent: Node3D, skip: Array, near: Array, inner_near: Arr
 			far.append(Transform3D(Basis(Vector3.UP, rng.randf_range(-0.3, 0.3)), Vector3(tx - 1.5 + k * 3.0, LandWalls.INNER_H + 6.0, 1.8)))
 			cols.append(COATS[rng.randi() % COATS.size()])
 			poses.append("")
+	far_men(root, far, cols, poses)
+	if crew:
+		crew.build()
+	return root
+
+
+## Yeni sur seti (SurSet): land_walls'ın aynı düzeni, yerler bağdaştırıcıdan. Dış sur yolu (y, iç/dış korkuluk z'si), gedik
+## boşluğu, dış kuleler (yol üstündeki tepe basamaklarıyla birlikte boş), kule tepesi gözcüleri, iç sur yolu ve iç kule
+## tepeleri. Sayı aynı mantıkla (aynı adım aralıkları) çıkar.
+static func _land_walls_sur(parent: Node3D, sur: SurSet, skip: Array, near: Array, inner_near: Array, seed: int, span: float, inner: bool,
+		dense: bool, busy: bool) -> Node3D:
+	var root := _root(parent, "Garrison")
+	var rng := RandomNumberGenerator.new()
+	rng.seed = seed
+	var rng2 := RandomNumberGenerator.new()
+	rng2.seed = seed + 7
+	var far: Array = []
+	var cols: Array = []
+	var poses: Array = []
+	var crew: PoseCrew = null
+	if busy:
+		crew = PoseCrew.new(seed + 11)
+		root.add_child(crew)
+	var i := 0
+	var half := sur.gedik_bosluk() + 1.0
+	var oy := sur.dis_yol_y()
+	for sx: float in [-1.0, 1.0]:
+		var x := sx * (half + rng.randf_range(0.0, 1.0))
+		while absf(x) < span:
+			if not _in(x, skip) and sur.dis_yol_bos(x):
+				var p := Vector3(x, oy, sur.dis_yol_ic_z() + rng.randf_range(-0.08, 0.08))
+				var yaw := rng.randf_range(-0.35, 0.35)
+				if _in(x, near):
+					man(root, p, yaw, i + seed, ARMS[i % ARMS.size()])
+				elif crew and rng2.randf() < 0.6:
+					var c: Color = COATS[rng2.randi() % COATS.size()]
+					if rng2.randf() < 0.55:
+						crew.add(Transform3D(Basis(Vector3.UP, yaw), p), {"side": "B", "coat": c, "arm": "bow"}, "archer")
+					else:
+						crew.add(Transform3D(Basis(Vector3.UP, yaw), p), {"side": "B", "coat": c, "arm": "spear_shield"}, "cover", int(x / 10.0) + 100)
+				else:
+					far.append(Transform3D(Basis(Vector3.UP, yaw), p))
+					cols.append(COATS[rng.randi() % COATS.size()])
+					poses.append("")
+				i += 1
+			var step := rng.randf_range(1.8, 2.9)
+			var xd := x + sx * step * 0.5
+			if dense and absf(xd) < span and not _in(xd, skip) and sur.dis_yol_bos(xd):
+				var fxf := Transform3D(Basis(Vector3.UP, rng2.randf_range(-0.25, 0.25)), Vector3(xd, oy, sur.dis_yol_on_z()))
+				var fc: Color = COATS[rng2.randi() % COATS.size()]
+				var fp: String = ["lean_down", "thrust_a", "thrust_b", "throw_down"][rng2.randi() % 4]
+				if crew:
+					var cyc: String = {"lean_down": "lean", "thrust_a": "thrust", "thrust_b": "thrust", "throw_down": "throw"}[fp]
+					crew.add(fxf, {"side": "B", "coat": fc, "arm": "spear" if cyc == "thrust" else ""}, cyc)
+				else:
+					far.append(fxf)
+					cols.append(fc)
+					poses.append(fp)
+			x += sx * step
+	# Dış kule tepeleri (kurulu kuleler, alanın içinde): ikişer gözcü
+	for tx: float in sur.dis_kuleler_kurulu():
+		if absf(tx) > span + 4.0:
+			continue
+		var tp := sur.dis_kule_tepe(tx)
+		for k in 2:
+			var p := tp + Vector3(-1.0 + k * 2.0, 0, 0.3)
+			if _in(p.x, skip):
+				continue
+			if _in(p.x, near):
+				var lk := man(root, p, rng.randf_range(-0.3, 0.3), i + seed, ["bow", "spear"][k])
+				lk.set_meta("spk", "SPK_LOOKOUT")
+				lk.set_meta("afar", true)
+			else:
+				far.append(Transform3D(Basis(Vector3.UP, rng.randf_range(-0.3, 0.3)), p))
+				cols.append(COATS[rng.randi() % COATS.size()])
+				poses.append("")
+			i += 1
+	# İç sur yolu: daha seyrek; iç kuleler boş
+	var iy := sur.ic_yol_y()
+	var xi := -46.0 + rng.randf_range(0.0, 2.0)
+	while inner and xi < 47.0:
+		if sur.ic_yol_bos(xi):
+			var p := Vector3(xi, iy, sur.ic_yol_z() + rng.randf_range(-0.1, 0.1))
+			var yaw := rng.randf_range(-0.3, 0.3)
+			if _in(xi, inner_near):
+				var arm: String = ARMS[i % ARMS.size()]
+				var d := man(root, p, yaw, i + seed, arm)
+				if arm == "bow":
+					var al := preload("res://scripts/npc/archer_loop.gd").new()
+					al.reach = Vector2(30.0, 55.0)
+					d.add_child(al)
+				elif arm != "":
+					var rl := preload("res://scripts/npc/reserve_loop.gd").new()
+					rl.wall = true
+					d.add_child(rl)
+			elif crew:
+				var c: Color = COATS[rng2.randi() % COATS.size()]
+				var r := rng2.randf()
+				var xf := Transform3D(Basis(Vector3.UP, yaw), p)
+				if r < 0.42:
+					crew.add(xf, {"side": "B", "coat": c, "arm": "bow"}, "archer", -1, Vector2(30.0, 55.0))
+				elif r < 0.78:
+					crew.add(xf, {"side": "B", "coat": c, "arm": "spear_shield"}, "cover", int((xi + 50.0) / 10.0))
+				else:
+					crew.add(xf, {"side": "B", "coat": c, "arm": "spear"}, "lean")
+			else:
+				far.append(Transform3D(Basis(Vector3.UP, yaw), p))
+				cols.append(COATS[rng.randi() % COATS.size()])
+				poses.append("")
+			i += 1
+		xi += rng.randf_range(2.4, 3.8)
+	if inner:
+		for tx: float in sur.ic_kuleler():
+			if absf(tx) > 50.0:
+				continue
+			var tp := sur.ic_kule_tepe(tx)
+			for k in 2:
+				far.append(Transform3D(Basis(Vector3.UP, rng.randf_range(-0.3, 0.3)), tp + Vector3(-1.5 + k * 3.0, 0, 0)))
+				cols.append(COATS[rng.randi() % COATS.size()])
+				poses.append("")
 	far_men(root, far, cols, poses)
 	if crew:
 		crew.build()
