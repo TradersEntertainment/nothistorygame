@@ -1,0 +1,9 @@
+== tekrar 1 (arena --autotest=mods)
+WARN_PORTRAIT_STUDIO speaker=SPK_LOOKOUT key=D20_L_WARN_1 scene=arena.tscn
+AUTOTEST PASS arena side=B waves=3 kills=5 parries=6 kicks=0 finishers=2 cannon_hits=0 gun_hits=0 gunner=0/0 hp=100
+== tekrar 2 (arena --autotest=mods)
+WARN_PORTRAIT_STUDIO speaker=SPK_LOOKOUT key=D20_L_WARN_1 scene=arena.tscn
+AUTOTEST PASS arena side=B waves=3 kills=5 parries=6 kicks=0 finishers=4 cannon_hits=0 gun_hits=0 gunner=0/0 hp=100
+== tekrar 3 (arena --autotest=mods)
+WARN_PORTRAIT_STUDIO speaker=SPK_LOOKOUT key=D20_L_WARN_1 scene=arena.tscn
+AUTOTEST PASS arena side=B waves=3 kills=5 parries=7 kicks=0 finishers=2 cannon_hits=0 gun_hits=0 gunner=0/0 hp=75

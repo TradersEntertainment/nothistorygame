@@ -1,0 +1,6 @@
+== tekrar 1
+AUTOTEST PASS arena side=O waves=3 kills=5 parries=5 kicks=2 finishers=4 cannon_hits=0 gun_hits=0 gunner=0/0 hp=82
+== tekrar 2
+AUTOTEST PASS arena side=O waves=3 kills=5 parries=4 kicks=2 finishers=3 cannon_hits=0 gun_hits=0 gunner=0/0 hp=82
+== tekrar 3
+AUTOTEST PASS arena side=O waves=3 kills=5 parries=4 kicks=2 finishers=4 cannon_hits=0 gun_hits=0 gunner=0/0 hp=100
