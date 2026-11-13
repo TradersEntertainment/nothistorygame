@@ -467,7 +467,7 @@ func _hold_slipper() -> void:
 	if _held_slipper or player.camera == null:
 		return
 	_held_slipper = _slipper_model()
-	_held_slipper.position = Vector3(-0.12, -0.3, -0.48)
+	_held_slipper.position = Vector3(-0.12, -0.2, -0.48)      # biraz yukarıda: pijama kolu da görünsün
 	player.hold_model(_held_slipper)      # sol el tutar, kumanda cebe girer (bir el iki şey tutmaz)
 	_held_slipper.rotation_degrees = Vector3(20, -30, 70)
 
