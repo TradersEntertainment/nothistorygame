@@ -518,17 +518,12 @@ void fragment() {
 	add_child(dust)
 
 
-## Yağmurlu İstanbul gecesi, 03.00: ıslak sokak, kaldırım, sokak lambası, brandalı Şahin, karşı apartmanın ışıkları,
-## uzakta minare, yağmur ve sıçramalar; arada bir araba geçer, farları kapının altından garaja vurur.
+## Yağmurlu İstanbul gecesi, 03.00: ıslak sokak, kaldırım, sokak lambası, brandalı Şahin, iki yöne giden sokak ve
+## çevresindeki apartmanlar (GarageStreet), yağmur ve sıçramalar; arada bir araba geçer, farları kapının altından
+## garaja vurur. Garajın içinden kapı açıklığına her açıdan bakılabildiği için dış dünya her yöne kapanır.
 func _build_outside() -> void:
-	var wet := StandardMaterial3D.new()
-	wet.albedo_color = Color("24262a")
-	wet.roughness = 0.12
-	wet.metallic_specular = 0.9
-	var road := Props.box(self, Vector3(40, 0.2, 14), Vector3(0, -0.12, 11.0), Color("24262a"))
-	road.material_override = wet
-	Props.box(self, Vector3(40, 0.14, 1.6), Vector3(0, -0.02, 3.9), Color("5a5a5e"))
-	Props.box(self, Vector3(40, 0.16, 0.2), Vector3(0, -0.02, 4.7), Color("7a7a7e"))
+	# Sokağın kendisi (yol, kaldırım, komşu ve karşı binalar, ağaçlar, lamba, araba, kedi, gök): GarageStreet
+	GarageStreet.build(self)
 	var pud := StandardMaterial3D.new()
 	pud.albedo_color = Color(0.1, 0.11, 0.13, 0.9)
 	pud.transparency = BaseMaterial3D.TRANSPARENCY_ALPHA
@@ -539,30 +534,8 @@ func _build_outside() -> void:
 		var pd := Props.cyl(self, 1.0, 0.01, p, Color.WHITE, Vector3.ZERO, 14)
 		pd.material_override = pud
 		pd.scale = Vector3(randf_range(0.6, 1.2), 1.0, randf_range(0.4, 0.8))
-	# Karşı apartman: pencerelerin çoğu karanlık, birkaçı sarı yanık
-	Props.box(self, Vector3(40, 16, 1.0), Vector3(0, 7.8, 17.0), Color("3a3440"))
-	var rng := RandomNumberGenerator.new()
-	rng.seed = 3
-	for fl in 5:
-		for k in 14:
-			var lit := rng.randf() < 0.22
-			var wp := Vector3(-13.0 + k * 2.0, 1.6 + fl * 3.0, 16.48)
-			var w := Props.box(self, Vector3(0.9, 1.2, 0.04), wp, Color("ffd79a") if lit else Color("15161c"), Vector3.ZERO, 1.6 if lit else 0.0)
-			if lit:
-				w.material_override = Props.mat(Color("ffd79a"), 1.6, false, "", false)
-		Props.box(self, Vector3(40, 0.12, 0.5), Vector3(0, 3.0 + fl * 3.0, 16.3), Color("2a2630"))
-	# Uzakta minare silueti ve şehir ışığının vurduğu gök
-	var sil := Color("0e1018")
-	Props.cyl(self, 0.8, 30.0, Vector3(-16.0, 15.0, 42.0), sil, Vector3.ZERO, 10)
-	Props.cyl(self, 1.3, 0.6, Vector3(-16.0, 24.0, 42.0), sil, Vector3.ZERO, 10)
-	Props.cyl(self, 0.8, 4.0, Vector3(-16.0, 32.0, 42.0), sil, Vector3.ZERO, 10, 0.02)
-	Props.box(self, Vector3(120, 60, 1), Vector3(0, 20, 60), Color("1c1c2a"))
-	# Sokak lambası (turuncu)
+	# Sokak lambasının turuncu ışığı (lambanın kendisi GarageStreet'te)
 	var lp := Vector3(-3.4, 0, 5.0)
-	Props.cyl(self, 0.07, 5.2, lp + Vector3(0, 2.6, 0), Color("3a3f48"), Vector3.ZERO, 8)
-	Props.box(self, Vector3(0.08, 0.08, 1.0), lp + Vector3(0, 5.15, -0.45), Color("3a3f48"))
-	var head := Props.box(self, Vector3(0.3, 0.12, 0.45), lp + Vector3(0, 5.05, -0.9), Color("ffb060"))
-	head.material_override = Props.mat(Color("ffb060"), 3.0, false, "", false)
 	var sl := OmniLight3D.new()
 	sl.position = lp + Vector3(0, 4.8, -0.9)
 	sl.light_color = Color("ffa050")
@@ -576,23 +549,6 @@ func _build_outside() -> void:
 	fill.light_energy = 1.4
 	fill.omni_range = 14.0
 	add_child(fill)
-	# Brandası yarım Tofaş Şahin
-	var car := Node3D.new()
-	car.position = Vector3(3.0, 0, 8.6)
-	car.rotation_degrees.y = 90
-	add_child(car)
-	Props.box(car, Vector3(1.66, 0.62, 4.3), Vector3(0, 0.55, 0), Color("7a2420"))
-	Props.box(car, Vector3(1.5, 0.52, 2.0), Vector3(0, 1.1, -0.2), Color("7a2420"))
-	Props.box(car, Vector3(1.52, 0.4, 1.9), Vector3(0, 1.12, -0.2), Color("1c2230"))
-	for q in [Vector3(-0.8, 0.3, 1.35), Vector3(0.8, 0.3, 1.35), Vector3(-0.8, 0.3, -1.35), Vector3(0.8, 0.3, -1.35)]:
-		Props.cyl(car, 0.3, 0.2, q, Color("141414"), Vector3(0, 0, 90), 12)
-	Props.box(car, Vector3(1.8, 0.7, 2.2), Vector3(0, 1.0, -1.2), Color("4a5a6a"), Vector3(4, 0, 0))
-	Props.label(car, "34 HKM 77", Vector3(0, 0.45, 2.16), 24, Color("1a1a1a"), Vector3.ZERO, 0.4)
-	# Kaputun üstünde yağmurdan saklanmayan kedi
-	Props.box(car, Vector3(0.2, 0.18, 0.4), Vector3(0.1, 0.95, 1.3), Color("2a2a2a"))
-	Props.box(car, Vector3(0.18, 0.16, 0.16), Vector3(0.1, 1.08, 1.52), Color("2a2a2a"))
-	for sx: float in [-0.05, 0.05]:
-		Props.ball(car, 0.018, Vector3(0.1 + sx, 1.1, 1.61), Color("d8e060"), Vector3.ONE, 5, 2.0)
 	# Yağmur ve sıçramalar (yalnız dışarıda)
 	var rain := CPUParticles3D.new()
 	rain.position = Vector3(0, 7.0, 10.0)
@@ -631,8 +587,7 @@ func _build_outside() -> void:
 	# Geçen araba: farlar ve ışığı (arada bir, sokağın bir ucundan öbürüne)
 	_car = Node3D.new()
 	add_child(_car)
-	Props.box(_car, Vector3(4.0, 0.8, 1.7), Vector3(0, 0.6, 0), Color("2a2e36"))
-	Props.box(_car, Vector3(2.0, 0.6, 1.5), Vector3(-0.2, 1.2, 0), Color("22262e"))
+	GarageStreet.passing_car(_car)
 	for sz: float in [-0.6, 0.6]:
 		var hl := Props.box(_car, Vector3(0.05, 0.14, 0.3), Vector3(2.02, 0.7, sz), Color("fff4d8"))
 		hl.material_override = Props.mat(Color("fff4d8"), 4.0, false, "", false)
@@ -787,6 +742,63 @@ func _build_mirror() -> void:
 	Mirror.hide_from_reflection(frame)
 	Mirror.hide_from_reflection(_mirror_wall)
 	Props.interactable(self, "mirror", Vector3(0.6, 1.8, 0.9), p + Vector3(-0.3, 1.1, 0))
+
+
+## Kostüm anından sonra: karton kutunun üstünde katlanmış çizgili pijama (üst ve alt; kıvrımlı kumaş ağı). Bölüm 1.
+func set_folded_pyjama(on: bool) -> void:
+	var old := get_node_or_null("FoldedPyjama")
+	if old:
+		old.queue_free()
+	if not on:
+		return
+	var root := Node3D.new()
+	root.name = "FoldedPyjama"
+	add_child(root)
+	root.position = Vector3(2.93, 0.805, 2.28)      # üst karton kutunun üstü (y = 0,63 + 0,175)
+	root.rotation_degrees = Vector3(0, -8, 0)
+	var layers := [[Vector2(0.34, 0.27), 0.05, 0.0, Vector3.ZERO, 0.0], [Vector2(0.3, 0.25), 0.045, 0.05, Vector3(0.012, 0, -0.01), 7.0]]
+	for L in layers:
+		var mi := MeshInstance3D.new()
+		mi.mesh = _folded_cloth(L[0] as Vector2, float(L[1]), int(L[4]))
+		var m := StandardMaterial3D.new()
+		m.vertex_color_use_as_albedo = true
+		m.vertex_color_is_srgb = true
+		m.roughness = 0.9
+		mi.material_override = m
+		mi.position = Vector3(0, float(L[2]), 0) + (L[3] as Vector3)
+		mi.rotation_degrees = Vector3(0, float(L[4]), 0)
+		root.add_child(mi)
+
+
+## Katlanmış kumaş: yuvarlak kenarlı, üstü hafif dalgalı yastık ağı; çizgiler köşe rengi (soluk mavi / krem şerit).
+static func _folded_cloth(size: Vector2, thick: float, seed: int) -> ArrayMesh:
+	var nx := 10
+	var nz := 8
+	var hx := size.x * 0.5
+	var hz := size.y * 0.5
+	var blue := Color("a8c0df")
+	var cream := Color("f1ead6")
+	var height := func(i: int, j: int) -> float:
+		var u := absf(float(i) / nx * 2.0 - 1.0)
+		var v := absf(float(j) / nz * 2.0 - 1.0)
+		var edge := sqrt(maxf(0.0, 1.0 - pow(u, 5.0))) * sqrt(maxf(0.0, 1.0 - pow(v, 5.0)))
+		var wave := 0.007 * sin(i * 1.7 + seed) * cos(j * 1.3 + seed * 0.5) + 0.004 * sin(j * 2.9 + i * 0.6)
+		return thick * edge + wave * edge
+	var st := SurfaceTool.new()
+	st.begin(Mesh.PRIMITIVE_TRIANGLES)
+	for i in nx:
+		for j in nz:
+			var c: Color = cream if (i % 2 == 1) else blue      # dikey şeritler (katın uzun yönü boyunca)
+			st.set_color(c)
+			var p00 := Vector3(lerpf(-hx, hx, float(i) / nx), height.call(i, j), lerpf(-hz, hz, float(j) / nz))
+			var p10 := Vector3(lerpf(-hx, hx, float(i + 1) / nx), height.call(i + 1, j), lerpf(-hz, hz, float(j) / nz))
+			var p01 := Vector3(lerpf(-hx, hx, float(i) / nx), height.call(i, j + 1), lerpf(-hz, hz, float(j + 1) / nz))
+			var p11 := Vector3(lerpf(-hx, hx, float(i + 1) / nx), height.call(i + 1, j + 1), lerpf(-hz, hz, float(j + 1) / nz))
+			for v in [p00, p10, p01, p10, p11, p01]:
+				st.set_color(c)
+				st.add_vertex(v)
+	st.generate_normals()
+	return st.commit()
 
 
 ## Arka duvarda iki çivi üstünde babadan kalma çifte (Bölüm 8: Hikmet 1453'e götürür).

@@ -1096,3 +1096,14 @@ Her bölüm denetiminde ve her düzeltmede bu listeyi baştan uygula. Yeni bir h
     (adlı kameralar, tek sahip, her dosyaya dokunma yetkisi) ve ortak görsel kural (palet, doku yoğunluğu, yayındaki
     bölümle sayısal karşılaştırma) ilk gün yazılır. Canlı ve yuvarlak nesne kutudan yapılmaz; teslimde paftaya değil tam
     boy kareye bakılır.
+- v0.99.120 (küçük güncelleme: Bölüm 1'de iki süreklilik hatası [Sonnet × 2], Bölüm 26 iç içe geçme [Opus, ikiye bölme])
+  - Kıyafet de sürekliliktir: replik "yataktan kalktım" derken ayna takım gösteriyordu. Oyuncu modeli (ayna, kol,
+    kendine bakış, fotoğraf) her bölümün başında "şu an üstünde ne var" sorusuyla denetlenir; kostüm değişimi hangi
+    anda oluyorsa model o anda değişir.
+  - Hata bildirimini senaryoya karşı oku: ilk görev "yatak odasında giyinsin" diye yazıldı, oysa kostümü Hikmet garajda
+    veriyor. Sahibi düzeltti; görev yazmadan önce ilgili replik zinciri okunur.
+  - Tek açıdan bakılsın diye kurulan dekor, oyuncu yürüyebiliyorsa yarım görünür. Ulaşılabilir her duruş ve bakış
+    taranır; arka plan macentaya boyanıp piksel sayılır (Bölüm 1 garaj kapısı: 407/810 bakışta boşluk → 0).
+  - Sahne gizlenip zamanlayıcılar sürüyorsa kişi yürüten döngüler kendi `visible` bayrağına değil
+    `is_visible_in_tree()`'ye bakar: boş yer denetimi görünmeyeni saymaz, adım komşunun içinde biter.
+  - Nadir kusurda suçu son birleşmeye yıkma: ikiye bölme, kusurun yayındaki sürümde de olduğunu gösterdi.

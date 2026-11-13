@@ -469,6 +469,14 @@ static func hair(head: Node3D, c: Color, style: String, hs := Vector3(1.0, 1.06,
 						continue
 					ball(head, r * 0.26, p, c if (i + k) % 2 == 0 else dark, Vector3.ONE, false)
 				k += 1
+		"messy":
+			# Yataktan kalkmış saç: kafa çevresinde farklı yönlere dikilmiş tutamlar
+			for i in 9:
+				var a := TAU * (i + 0.37) / 9.0
+				var up := 0.55 + 0.35 * sin(i * 2.3)
+				var q := Vector3(sin(a) * W * 0.78, H * (0.55 + 0.4 * up), cos(a) * D * 0.62 - D * 0.1)
+				ball(head, r * 0.2, q, c if i % 2 == 0 else dark, Vector3(0.8, 1.7, 0.8), false).rotation_degrees = Vector3(cos(a) * 55.0, 0, -sin(a) * 55.0)
+			ball(head, 1.0, Vector3(W * 0.2, H * 0.92, D * 0.45), c, Vector3(W * 0.55, H * 0.22, D * 0.35), false)
 		"quiff":
 			# Önde kabarık kâkül
 			ball(head, 1.0, Vector3(0, H * 0.98, D * 0.32), c, Vector3(W * 0.72, H * 0.32, D * 0.6), false)
@@ -768,3 +776,99 @@ static func _collect(pivot: Node, n: Node, pivots: Array, keep: Array, out: Arra
 				out.append(mi)
 		if c is Node3D and not (c is CollisionObject3D) and c.get_child_count() > 0:
 			_collect(pivot, c, pivots, keep, out)
+
+
+# ---------------------------------------------------------------- pijama, kravat
+
+const PJ_BLUE := Color("a8c0df")       # soluk mavi pijama
+const PJ_STRIPE := Color("f1ead6")     # krem çizgi
+
+
+## Halka çizgi: uzvun çevresini saran ince, uzvun biraz üstünde kalan silindir (titremesin: yarıçap uzuvdan büyük).
+static func _ring(parent: Node3D, r: float, y: float, c: Color, h := 0.02) -> void:
+	var cm := CylinderMesh.new()
+	cm.top_radius = r
+	cm.bottom_radius = r
+	cm.height = h
+	cm.radial_segments = SEG      # uzuvla aynı çokgen (kapsül SEG dilimli): halka yüzeyden şişip sızmaz
+	cm.rings = 1
+	_mi(parent, cm, Vector3(0, y, 0), c, Vector3.ZERO, Vector3.ONE, false)
+
+
+## Pijama çizgileri (Person._ready, pişirmeden önce): gövde, kollar, bacaklar. Her halka uzvun o yükseklikteki yarıçapının
+## 3 mm üstünde (kapsülün silindir kısmı: yükseklik aralığı ve alt/üst yarıçap); şişkin boncuk gibi durmaz, titremez de.
+static func _stripe(parent: Node3D, y: float, y_lo: float, y_hi: float, r_lo: float, r_hi: float, h := 0.016) -> void:
+	_ring(parent, lerpf(r_lo, r_hi, clampf((y - y_lo) / (y_hi - y_lo), 0.0, 1.0)) + 0.003, y, PJ_STRIPE, h)
+
+
+static func pyjama_stripes(body: Node3D, arm_l: Node3D, elbow_l: Node3D, arm_r: Node3D, elbow_r: Node3D,
+		leg_l: Node3D, knee_l: Node3D, leg_r: Node3D, knee_r: Node3D) -> void:
+	var y := 0.86
+	while y <= 1.16:
+		_stripe(body, y, 0.81, 1.19, 0.225, 0.25, 0.02)
+		y += 0.075
+	for pv: Node3D in [arm_l, arm_r]:
+		for yy: float in [-0.05, -0.11, -0.17]:
+			_stripe(pv, yy, -0.23, -0.01, 0.0646, 0.068)
+	for el: Node3D in [elbow_l, elbow_r]:
+		for yy: float in [-0.04, -0.10, -0.16]:
+			_stripe(el, yy, -0.21, -0.01, 0.0558, 0.0626)
+	for pv: Node3D in [leg_l, leg_r]:
+		for yy: float in [-0.06, -0.14, -0.22]:
+			_stripe(pv, yy, -0.31, -0.02, 0.085, 0.0782)
+	for kn: Node3D in [knee_l, knee_r]:
+		for yy: float in [-0.04, -0.12, -0.20]:
+			_stripe(kn, yy, -0.274, -0.016, 0.0748, 0.068)
+
+
+## Gevşek bağlanmış kravat (pijamanın üstünde): düğüm + kıvrımlı, hafif burulmuş ince şerit ağı (düz kutu şerit değil).
+## Pişirmeden sonra _body'ye eklenir. Gövde yüzeyine (z) göre durur; uç göğüsten hafif ayrılıp sallanır.
+static func tie(body: Node3D, c: Color) -> Node3D:
+	var root := Node3D.new()
+	root.name = "Tie"
+	body.add_child(root)
+	var surf := func(yy: float) -> float:
+		if yy > 1.19:
+			return sqrt(maxf(0.0, 0.0625 - (yy - 1.19) * (yy - 1.19)))
+		return lerpf(0.225, 0.25, clampf((yy - 0.81) / 0.38, 0.0, 1.0))
+	# Düğüm: kısa, geniş bir yumru (gevşek: boynun biraz altında, yan yatık)
+	var knot := ball(root, 0.034, Vector3(0.006, 1.255, surf.call(1.255) + 0.005), c.darkened(0.1), Vector3(1.0, 0.85, 0.7), false)
+	knot.rotation_degrees = Vector3(0, 0, 8)
+	# Şerit: yukarıdan aşağı N kesit; genişlik düğümde dar, uca doğru açılır, ucu sivri
+	var st := SurfaceTool.new()
+	st.begin(Mesh.PRIMITIVE_TRIANGLES)
+	var n := 14
+	var top_y := 1.235
+	var bot_y := 0.80
+	var prev_l := Vector3.ZERO
+	var prev_r := Vector3.ZERO
+	for i in n + 1:
+		var k := float(i) / float(n)
+		var yy := lerpf(top_y, bot_y, k)
+		var sway := sin(k * 3.1) * 0.016 + 0.006                 # gevşek: hafif yana kıvrılır
+		var zz: float = surf.call(yy) + 0.008 + 0.03 * k * k      # alta doğru göğüsten ayrılır
+		var w := lerpf(0.022, 0.05, smoothstep(0.0, 0.45, k)) * (1.0 - 0.92 * pow(maxf(0.0, (k - 0.86) / 0.14), 1.5))
+		var tw := k * 0.55 * sin(k * 5.0)                         # burulma
+		var right := Vector3(cos(tw), 0.0, -sin(tw)) * w
+		var ctr := Vector3(sway, yy, zz)
+		var l := ctr - right
+		var r := ctr + right
+		if i > 0:
+			st.set_color(c)
+			st.add_vertex(prev_l)
+			st.add_vertex(prev_r)
+			st.add_vertex(r)
+			st.add_vertex(prev_l)
+			st.add_vertex(r)
+			st.add_vertex(l)
+		prev_l = l
+		prev_r = r
+	st.generate_normals()
+	var mi := MeshInstance3D.new()
+	mi.name = "TieRibbon"
+	mi.mesh = st.commit()
+	var m := mat(c, false).duplicate() as StandardMaterial3D
+	m.cull_mode = BaseMaterial3D.CULL_DISABLED
+	mi.material_override = m
+	root.add_child(mi)
+	return root
