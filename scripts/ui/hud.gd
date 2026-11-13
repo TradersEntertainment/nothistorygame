@@ -2736,9 +2736,15 @@ func _dialog_shot(text_key: String) -> void:
 	var img := get_viewport().get_texture().get_image()
 	if img == null or img.is_empty():
 		return
-	img.resize(640, int(640.0 * img.get_height() / img.get_width()), Image.INTERPOLATE_BILINEAR)
+	if not _tamboy():
+		img.resize(640, int(640.0 * img.get_height() / img.get_width()), Image.INTERPOLATE_BILINEAR)
 	DirAccess.make_dir_recursive_absolute(GameState.dialog_shots_dir)
-	img.save_jpg(GameState.dialog_shots_dir.path_join(text_key + ".jpg"), 0.78)
+	img.save_jpg(GameState.dialog_shots_dir.path_join(text_key + ".jpg"), 0.85 if _tamboy() else 0.78)
+
+
+## --tamboy (yalnız kare denetimi): diyalog ve oynanış kareleri küçültülmeden, tam boy, kalite 85
+static func _tamboy() -> bool:
+	return "--tamboy" in OS.get_cmdline_user_args()
 
 
 ## Karakterin iş hareketi: kişinin activity'si, yoksa (asker) iskeletinkinin (kürekteki asker yalnız rig.activity'yi kurar)
@@ -4191,6 +4197,7 @@ func _snap_shot() -> void:
 	if img == null or img.is_empty():
 		return
 	_snap_n += 1
-	img.resize(640, int(640.0 * img.get_height() / img.get_width()), Image.INTERPOLATE_BILINEAR)
+	if not _tamboy():
+		img.resize(640, int(640.0 * img.get_height() / img.get_width()), Image.INTERPOLATE_BILINEAR)
 	DirAccess.make_dir_recursive_absolute(GameState.dialog_shots_dir)
-	img.save_jpg(GameState.dialog_shots_dir.path_join("t%04d.jpg" % _snap_n), 0.75)
+	img.save_jpg(GameState.dialog_shots_dir.path_join("t%04d.jpg" % _snap_n), 0.85 if _tamboy() else 0.75)

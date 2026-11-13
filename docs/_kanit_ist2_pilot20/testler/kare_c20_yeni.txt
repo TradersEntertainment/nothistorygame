@@ -1,0 +1,11 @@
+PILOT20KARE an_01_acilis.jpg repair=0 asama=1 phase=work oyuncu=(-9.6, 0.000107, 7.2)
+PILOT20KARE an_02_depo.jpg repair=0 asama=1 phase=work oyuncu=(-11.45, 0.000391, 6.4)
+PILOT20KARE an_03_gedige_tasima.jpg repair=0 asama=1 phase=work oyuncu=(-6.65, 0.000391, 7.8)
+PILOT20KARE an_04_onarim_asama2.jpg repair=4 asama=2 phase=work oyuncu=(-1.366333, 0.214786, 8.321031)
+PILOT20KARE an_05_top_uyarisi_siper.jpg repair=4 asama=2 phase=work oyuncu=(-5.2, 0.000391, 9.3)
+PILOT20KARE an_06_onarim_asama4.jpg repair=9 asama=4 phase=work oyuncu=(-1.366333, 0.214786, 8.321031)
+PILOT20KARE an_07_hucum_baslangici.jpg repair=9 asama=4 phase=assault oyuncu=(0.340922, 0.470193, 9.772616)
+PILOT20KARE an_08_ok_sandigi.jpg repair=9 asama=4 phase=assault oyuncu=(-16.00333, 0.115329, 2.607508)
+PILOT20KARE an_09_okcular.jpg repair=9 asama=4 phase=assault oyuncu=(-9.0, 0.000391, 9.4)
+PILOT20KARE an_10_duello.jpg repair=9 asama=4 phase=assault oyuncu=(0.049932, 0.758755, 11.69648)
+PILOT20KARE BITTI
