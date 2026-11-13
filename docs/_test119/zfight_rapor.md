@@ -7,9 +7,9 @@ Denetim: `godot --headless --path . -s tests/zfight_check.gd -- res://scenes/<sa
 | # | Sahne(ler) | Dosya:satır | Ne değişti |
 |---|---|---|---|
 | 1 | 3, 14, 17 | `scripts/level/bureau.gd:1463` (`_build_corridor`) | Koridor kilimindeki altın kenar şeritleri (0,06 × 0,014) kilimle 1 cm örtüşüyordu; üst yüzleri 2 mm farktaydı. Kenar şeridi 0,014'ten 0,02 m'ye yükseldi (üst yüz 8 mm yukarı). |
-| 2 | 3, 14, 17 | `bureau.gd:2976-2978` (`_rc_archive`) | Arşiv lambrisi (3 parça) çekmece duvarlarıyla duvara bakan yüzde aynı düzlemdeydi. Lambri 0,04'ten 0,048 m'ye kalınlaştı ve duvarın içine doğru 8 mm uzadı; oda tarafındaki yüz yerinde kaldı. Görünüş ve çarpışma aynı. |
+| 2 | 3, 14, 17 | `bureau.gd:2977-2979` (`_rc_archive`) | Arşiv lambrisi (3 parça) çekmece duvarlarıyla duvara bakan yüzde aynı düzlemdeydi. Lambri 0,04'ten 0,048 m'ye kalınlaştı ve duvarın içine doğru 8 mm uzadı; oda tarafındaki yüz yerinde kaldı. Görünüş ve çarpışma aynı. |
 | 3 | 22o | `scripts/chapter22o.gd:320` | Islatma teknesinin su yüzü, tekne kenarıyla aynı yükseklikteydi (0,45). Su kutusu 8 mm yükseldi (0,04 → 0,048 kalınlık, merkez 0,434). |
-| 4 | 43o | `scripts/chapter43o.gd:115-116` | Otağ halısının altın ve bordo katmanları birbirinden ≤2,5 mm farkla üst üsteydi. Katmanlar 8 mm basamakla yükseldi: altın üst yüzü 0,0225 → 0,030; bordo üst yüzü 0,024 → 0,038. |
+| 4 | 43o | `scripts/chapter43o.gd:116-117` | Otağ halısının altın ve bordo katmanları birbirinden ≤2,5 mm farkla üst üsteydi. Katmanlar 8 mm basamakla yükseldi: altın üst yüzü 0,0225 → 0,030; bordo üst yüzü 0,024 → 0,038. |
 | 5 | 44b | `scripts/level/ayasofya.gd:286` (`_floor`) | Omphalion karesi, "cennet ırmağı" şeridiyle 2,5 mm farkla çakışıyordu. Omphalion ve ona bağlı daireler/etkileşim noktası 8 mm yukarı alındı (`om.y` 0,03 → 0,038). |
 | 6 | 8y | `scripts/chapter8y.gd:292` | Kaldırım derz taşları, kaldırım üst yüzünden 2,5 mm yüksekteydi. Üst yüz 8 mm yükseldi (0,045 → 0,048 kalınlık, merkez y 0,004). |
 
