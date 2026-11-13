@@ -8,7 +8,7 @@
 
 **Kapsam.** `scripts/chapter*.gd` taraması: **36 bölüm dosyası** surla/kıyıyla ilgili — **22'sinde asıl sur oynanışı** (sur yolu, sur dibi, gedik, hendek, kapı: 0, 4b, 6b, 8y, 10h, 12b, 18b, 20, 20o, 21, 22, 22o, 25(Bizans yarısı), 26, 26o, 28o, 30, 30o, 32o, 36b, 37o, 38o), **5'inde kıyı/zincir** (17, 19, 19o, 29, 29o), **9'unda yalnız fon** (7b, 13, 23, 24, 21o, 31o, 41o, 42b, 17o). Bölüm içi evre sayısı **≈82** (başlıklardaki numaralı adımlardan; tahmin). Döküm: §1.
 
-**Kaç ayrı eski sur seti?** 6: `LandWalls` (Mesoteichion; **16 bölüm**, + `Assault`/`Garrison`/`WallFight`/`SiegeChaos` yardımcıları), `Blachernae` (2), `SeaWalls` (6), `ByzCity` hub'ı (5), Haliç suru parçası (18b, 38o; bölümün kendi kodu), 8y kapı bölgesi. Yeni harita tek kurucu: `IstSurlar` (`K_SUR = 1,0`). Bölümlerin eski setlere **doğrudan sabit bağlantısı**: 20 → 63, 26 → 61, 30o → 87, 37o → 25, 26o → 23 (`grep`, §4).
+**Kaç ayrı eski sur seti?** 6: `LandWalls` (Mesoteichion; **16 bölüm**, + `Assault`/`Garrison`/`WallFight`/`SiegeChaos` yardımcıları), `Blachernae` (2), `SeaWalls` (6), `ByzCity` hub'ı (4 asıl + 3 fon), Haliç suru parçası (18b, 38o; bölümün kendi kodu), 8y kapı bölgesi. Yeni harita tek kurucu: `IstSurlar` (`K_SUR = 1,0`). Bölümlerin eski setlere **doğrudan sabit bağlantısı**: 20 → 63, 26 → 61, 30o → 87, 37o → 25, 26o → 23 (`grep`, §4).
 
 **En büyük üç fark (ölçülü).**
 1. **Hendek ve sur→ova çizgisi:** 16 m × 2,9 m derin, sur dibinden 4 m → **20 m × 6 m derin, 10 m teras**; ovanın başladığı çizgi 36 → **50 m** (+14 m). Hendek geçişi 8,7 sn → **46 sn** (iki rampa dilimin zıt uçlarında); gedik molozu hendeğe inmiyor; hendek **dolgusu, yürünür köprü, poterna v2'de yok** (22o, 26o, 32o, 36b, 37o, 8y bunlara dayanıyor).
@@ -113,6 +113,7 @@ Yöntem: sayılar önce kodda sabit olarak okundu (dosya:satır), sonra **başs�
 | Merdiven tırmanma süresi | 8,4 m'ye **3,8 sn** (yürüyerek, bot) | sonda `eski_dis_sur_merdiven_x8` |
 | Hendek | korkuluk z=19,2; hendek **z 20…36 = 16 m geniş**, dip üstü **−2,9 (2,9 m derin)**, iki yüzü 3 m taş duvar; kıyı rampaları x=±38…47 (9 m, 3,2 m geniş) **yalnız set uçlarında**; dolu (26o) varyant dip −1,5 + 10×16 m toprak set | `land_walls.gd:19-26,184-232,245-275` |
 | Hendek geçiş süresi | rampadan dibe-karşıya-yukarı **8,7 sn** (27,7 m) | sonda `eski_hendek_gecis` |
+| Dış sur yolu yürüyüşü | merdiven başından (x=8) x=47'ye **39,2 m / 12,3 sn**; batıya yürürken gediğin ağzında yol biter (moloz y=2,3, sur 8 m): **gedik sur yolunu ikiye böler** | sonda `eski_dis_sur_yol_*` |
 | Sur→ova | dış sur dışı z=16, hendek karşı yakası z=36, ova z>36; **sur ile hendek ağzı arası 4 m** | yukarıdaki satırlar |
 | Gedik | x=0, 7 m (+2×3 kırık kenar), moloz tepesi 2,275 m, hendeğe moloz dili z 19,6–25,5; **10 aşamalı onarım** (`set_repair`, STAGES 10) | `land_walls.gd:10-12,28-30,1054` |
 | Zemin | tümü **düz y=0**; arazi eğimi yok | `_build_ground` |
@@ -188,7 +189,7 @@ Dikkat — v2 "oyun" kesimi **tek bir 110/190 m'lik dilim değil**, hat boyunca 
 | Altın Kapı | 16,3 → 10,6 | 7,4 → 6,3 | **~9 m düşüş** |
 | Kerkoporta | 23,8 → 12,4 | 7,7 → 6,6 | **~11 m düşüş** |
 
-Sonuç: eski bölümlerin hepsi "düz ova" varsayar; **Mesoteikhion / Romanos / Pege kesimleri bu varsayımı karşılıyor, Kharisios–Kerkoporta–Altın Kapı karşılamıyor.** Blakherna kesiminin arazisi: ölçülmedi (sonda yarım kaldı, aşağıda).
+Sonuç: eski bölümlerin hepsi "düz ova" varsayar; **Mesoteikhion / Romanos / Pege kesimleri bu varsayımı karşılıyor, Kharisios–Kerkoporta–Altın Kapı karşılamıyor.** Blakherna kesiminin arazisi doğrudan ölçülemedi (sonda koşmadı): `blakherna_suru` hattındaki Kerkoporta (`sehir.gd:1405`) yaklaşık vekil — dışarıya 11–16 m düşüş.
 
 ### 3.3 V2'nin bugünkü "oynanış arayüzü" — var olanlar / EKSİKLER
 
@@ -207,7 +208,7 @@ Var: (1) uçuş konma noktaları `IstSurlar._perches` (kule tepeleri, iç/dış 
 10. Gedik seçimi sabit (3 nokta `sehir.gd:2840`); bölümün hangi gedikte oynanacağını söyleyen bir ayar yok.
 11. `scripts/npc/climb_anim.gd` bu dalda **yok**; tırmanma pozları `rig.gd:83-84,594` (`climb_a/climb_b`) ve `Ladder`/`Player._ladder_physics`'te (`player.gd:617-700`). Taş merdivende "tırman" pozu gerekmez (yürünür); dayalı merdiven (`Ladder`) kalacaksa v2 duvarına dayama kuralı gerekir.
 
-### 3.4 V2 yürünebilirlik ölçümü (bu oturumun gerçek `Player` botu, tek 110 m dilim)
+### 3.4 V2 yürünebilirlik ölçümü (bu oturumun gerçek `Player` botu; 110 m ve 190 m dilim, düz zemin plakasız)
 
 | Ölçüm | Sonuç |
 |---|---|
@@ -218,6 +219,7 @@ Var: (1) uçuş konma noktaları `IstSurlar._perches` (kule tepeleri, iç/dış 
 | Mesoteikhion dilimi (190 m, 3 iç + 2 dış kule, `hasar 3,0`) | iç sur yolu **184,5 m / 57,8 sn** (−x), +x 157,7 m / 46,9 sn; dış sur yolu **191,8 m / 57,2 sn**; kuleler geçilebilir. Ham: `yuru_olcum.txt` |
 | Hendek: yakın rampadan dibe | 4,8 sn |
 | Hendek: karşıya geçiş (dipte 100 m) | toplam **46 sn / 143,6 m** |
+| Hendek, 190 m Mesoteikhion dilimi | dibe inildi (4,8 sn); dipte doğuya yürürken x=60,5'te (karşı rampa tepesinin 0,6 m batısı) **58 sn boyunca ilerlenemedi** — rampa kamasının yanından dolanan bot yolu mu, yoksa dipte engel mi: **ayrıştırılmadı**; 110 m dilimde aynı bot geçti |
 | Merdiven eteğinde takılma (izole dilim) | şehir yakasından −26'dan yürüyen oyuncu ilk basamağın **0,7 m önünde** durdu (6 temas, 400 karede hiç ilerlemedi); −22,9'dan (etek üstünden) başlayınca 5,2 sn'de 12 m çıktı. Şüphe: sur dibi **etek trimesh'i** (`kes["sehir"]` = merdiven başlangıcından 1 m önce başlar, `surlar.gd:565`; `_kanit_ist2_oturtma/rapor.md:53` "etek trimesh çarpışmalı"). Gerçek şehirde ve arazi eğimiyle **doğrulanmadı** |
 | Önceki ölçüm (benim değil) | kara suru üstü yürüyüş %90,3 (131/145, düşme 3, takılma 11), Blakherna %78,9 — `docs/_kanit_ist2_sur4/rapor.md:130-139`; hedef ≥%97 |
 
@@ -320,8 +322,9 @@ Sur görünüşü hâlâ değişiyor (SUR-5, OTURTMA turları); aşağıdakiler 
 
 ## 7. EK — Yöntem, sınırlar, kayıt
 
+- Not: yürüme çıktısının ilk satırları (110 m 'sur' dilimi) aynı sondanın `for id in ["sur","mesoteikhion"]` ve 60 sn sınırlı önceki sürümünden; `probe_yuru.gd.txt` sonraki (yalnız Mesoteikhion + eski set, ilerleme tabanlı takılma) sürümdür. Blakherna arazi sondası (`probe_arazi2`) 100 sn içinde bitmedi, çıktısı yok.
 - Sondalar: `docs/_kanit_sur_dokum/probe_v2.gd.txt` (IstSurlar ışın ölçümü), `probe_eski.gd.txt` (LandWalls/Blachernae/SeaWalls), `probe_yuru.gd.txt` (Player botu); çıktılar `v2_olcum.txt`, `eski_olcum.txt`, `yuru_olcum.txt`, `arazi_olcum.txt`. Sondalar `~/is/` altında koştu; depoya yalnız `.txt` kopyaları girdi (Godot yan dosyası üretmesin).
 - Godot 4.4.1 linux x86_64 `~/is/godot/godot` (başsız). Sondalar bir sahne olarak koştu (`-s` ile otomatik yükleme sınıfları bulamıyor).
-- **Ölçülmedi:** S4/S5/S6 sayıları (başsız kurulum yok), Blakherna kesim arazisi (sonda tamamlanmadı), v2 kuruluş/yükleme süresi, replik metinlerindeki mesafe/yön ifadeleri, `ch8y/36b/37o/32o` botları, fıçı yuvarlanma süresinin mesafe bağı (22), kamera kare koordinatlarının tamamı.
+- **Ölçülmedi:** S4/S5/S6 sayıları (başsız kurulum yok), Blakherna kesim arazisi (sonda koşmadı; vekil: Kerkoporta), v2 kuruluş/yükleme süresi, replik metinlerindeki mesafe/yön ifadeleri, `ch8y/36b/37o/32o` botları, fıçı yuvarlanma süresinin mesafe bağı (22), kamera kare koordinatlarının tamamı.
 - **Tahmin işaretlenenler:** zorluk (K/O/B), yük eşiği 27 m, "çift saray", Mesoteikhion–Blakherna arazi yönleri.
 - Hata bildirimi: oturum sırasında bir kez `pkill -f nothing` komutu yazıldı (yasak listesinde `pkill` vardı); hiçbir sürece uymadı, sonuç boş, sonrasında yalnız `kill <pid>` kullanıldı.
