@@ -24,6 +24,7 @@ static func _tas() -> Color:
 	return IstSurlar.C_STONE
 
 
+
 # ------------------------------------------------------------------ zemin (kesim sahnesi; şehir yokken)
 
 ## Şehir önü ve ova levhaları (şehirde bunlar arazidir; kesim sahnesinde düz levha, Mesoteikhion ovası düz: §3.2)
@@ -35,12 +36,12 @@ static func zemin(kok: Node3D, a: RefCounted, uzak: bool) -> void:
 	var z0 := zi0 - 90.0
 	var z1 := zi0 - 4.0
 	var s := Props.solid(kok, Vector3(Lt, 2.0, z1 - z0), Vector3(0, a.y_peri() - 1.0, (z0 + z1) * 0.5), Color.WHITE)
-	Props.set_pattern(s, Color("7d6c52"), "dirt")
+	Props.set_pattern(s, Color("6c6a45"), "grass")
 	s.name = "Toprak_ZeminSehir"
 	var o0 := zm1 + 0.9
 	var o1 := zm1 + 190.0
 	var s2 := Props.solid(kok, Vector3(Lt, 2.0, o1 - o0), Vector3(0, a.y_ova() - 1.0, (o0 + o1) * 0.5), Color.WHITE)
-	Props.set_pattern(s2, Color("80704f"), "dirt")
+	Props.set_pattern(s2, Color("6c6a45"), "grass")
 	s2.name = "Toprak_ZeminOva"
 
 
@@ -110,6 +111,17 @@ static func kur_hepsi(kok: Node3D, a: RefCounted, sec: Dictionary) -> Dictionary
 		p.add_child(m)
 		mer.append(m)
 	out["merdiven"] = mer
+	for k in ["kalas", "kapi_kopru"]:
+		if out.has(k):
+			for c in (out[k] as Node3D).get_children():
+				if c is Node3D:
+					PARCA_.pis(c)
+			PARCA_.pis(out[k])
+	if out.has("poterna"):
+		(out["poterna"] as Poterna).kanat.set_meta("no_bake", true)
+		PARCA_.pis(out["poterna"])
+	for m in mer:
+		PARCA_.pis((m as HucumMerdiveni).lad)
 	return out
 
 
@@ -324,6 +336,7 @@ class Dolgu extends Node3D:
 			var sz := zm0 - 2.0 - i * 0.7
 			var sp := Props.cyl(self, 0.3, 0.42, Vector3(x - en * 0.5 - 1.2 + i * 0.9, dy + 0.1, sz), Color("8a6d40"), Vector3(70.0 if i == 1 else 0.0, 0, 15.0 * i), 9, 0.36)
 			sp.name = "Ahsap_Sepet_%d" % i
+		PARCA_.pis(self)
 
 
 
@@ -615,6 +628,8 @@ class GedikOnarim extends Node3D:
 				var kx2 := gx - h + 0.2 + i * 0.42
 				KalasKopru._dikme(ag, Vector3(kx2, PARCA_._profil_y(pr["pts"], zo1 - 0.2) - 0.2, zo1 - 0.2), Vector3(kx2 + rng.randf_range(-0.05, 0.05), PARCA_._profil_y(pr["pts"], zo1) + 2.2, zo1 + 0.5), 0.12)
 			ag.mesh_ekle(_katman, Props.mat(C_WOOD.darkened(0.12), 0.0, false, "wood"), "Ahsap_GedikTahta")
+		PARCA_.pis(_katman)
+		if asama_n >= 4:
 			for spec in [[Vector3(gx, OH - 0.06, (zo0 + zo1) * 0.5), Vector3(IstSurlar.GEDIK_W + 0.6, 0.12, zo1 - zo0)],
 					[Vector3(gx, 1.9, zo1 + 0.1), Vector3(IstSurlar.GEDIK_W, 2.4, 0.4)]]:
 				var b2 := StaticBody3D.new()

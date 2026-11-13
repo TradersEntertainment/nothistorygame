@@ -1,0 +1,14 @@
+pencereli SUROLC yeni bakis=ova kurulum_ms=778 cizim=148 ilkel=197362
+pencereli SUROLC yeni bakis=peribolos kurulum_ms=778 cizim=188 ilkel=190634
+pencereli SUROLC yeni bakis=hava kurulum_ms=778 cizim=168 ilkel=198032
+pencereli SUROLC yeni bakis=sur_yolu kurulum_ms=778 cizim=162 ilkel=213498
+pencereli SUROLC eski bakis=ova kurulum_ms=5373 cizim=5195 ilkel=1595642
+pencereli SUROLC eski bakis=peribolos kurulum_ms=5373 cizim=6127 ilkel=3731594
+pencereli SUROLC eski bakis=hava kurulum_ms=5373 cizim=5277 ilkel=1831040
+pencereli SUROLC eski bakis=sur_yolu kurulum_ms=5373 cizim=5277 ilkel=3314550
+bassiz SUROLC yeni bassiz kurulum_ms=813
+bassiz SUROLC eski bassiz kurulum_ms=5918
+bassiz SUROLC yeni bassiz kurulum_ms=781
+bassiz SUROLC eski bassiz kurulum_ms=5188
+bassiz SUROLC yeni bassiz kurulum_ms=767
+bassiz SUROLC eski bassiz kurulum_ms=5241

@@ -479,16 +479,19 @@ static func kur(p_id: String, sec := {}) -> Dictionary:
 	# oyun dilimi
 	var o: Dictionary = SZ.secenek(p_id, a.gx)
 	o["gedik"] = (a.kesim["gedik"]["x"] as Array).duplicate()
+	var kanca := bool(sec.get("kanca", true))      # false: şehirdeki dilimin aynısı (ÖNCE karesi; poterna/geçit/sade gedik yok)
 	var pot := float(a.kesim["oyun"]["poterna"])
-	o["poterna"] = pot
+	if kanca:
+		o["poterna"] = pot
 	var pg: Array = []
 	for g in a.kesim["oyun"]["gecis"]:
 		if String(g["tur"]) != "kapi_kopru":
 			pg.append([float(g["x"]), float(g["en"]) + 0.6])
-	o["para_gecit"] = pg
-	if not is_nan(a.gx):
+	if kanca:
+		o["para_gecit"] = pg
+	if kanca and not is_nan(a.gx):
 		o["gedik_sade"] = [a.gx]
-	if float(a.kesim["kapi"]["gw"]) > 0.0 and not bool(a.kesim["kapi"]["kapali"]) and bool(sec.get("parca", true)):
+	if kanca and float(a.kesim["kapi"]["gw"]) > 0.0 and not bool(a.kesim["kapi"]["kapali"]) and bool(sec.get("parca", true)):
 		o["kanat_disarida"] = true
 	var oyun := Node3D.new()
 	oyun.name = "OyunDilimi"

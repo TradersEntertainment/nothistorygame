@@ -103,3 +103,37 @@ bu rampaları **vermez**; hendek geçişi kapı köprüsü / dolgu / kalasla.
 
 `tests/_ist/sur_sozlesme_beklenen.txt` — 13 kalem: carpisma, gedik, gedik_kural, hendek, kapi, kapi_olcu, kapi_yer,
 kesit, kule, merdiven, oyun, yan, yer.
+
+## Oynanış arayüzü (`scripts/world/ist/sur_oyun.gd`, class_name yok)
+
+```gdscript
+const SurOyun := preload("res://scripts/world/ist/sur_oyun.gd")
+var a = SurOyun.arayuz("mesoteikhion")             # yalnız veri (donmuş tablo), kurulum yok
+var k = SurOyun.kur("mesoteikhion", {"ebeveyn": self, "dunya": false, "asama": 2, "dolgu": 0.5,
+		"kalas": true, "poterna_acik": true, "merdiven": [0, 1, 2]})
+# k = {"kok": Node3D, "arayuz": a, "parca": {...}, "ms": {oyun_ms, yan_ms, uzak_ms, zemin_ms, parca_ms, toplam_ms}}
+```
+
+Her nokta `{"yerel": Vector3, "dunya": Vector3}`; `dunya = a.xf * yerel`. `"dunya": false` ile kök orijinde kurulur
+(bölüm yerel çalışır), `true` ile kesimin şehirdeki yerine. **`ebeveyn` verilmeli**: kurucu dış kademeyi (dy) kurulum
+anında `OTURTMA.dy_kayit`'tan okur; SurOyun bütün dilimler için sözleşmedeki dy'yi oraya yazar.
+
+| Sorgu | Döndürür |
+|---|---|
+| `yol("ic"/"dis")` | `y`, `en`, `z`, `nokta` (çoklu çizgi; dış surda kule tepesine basamakla çıkıp iner), `gecit` (kule geçidi/üstü, dekor gedik tahtası), `kesik` (oyun gediği aşama < 4, yıkık dış kulenin basamakları) |
+| `cikislar()` | taş merdivenler (ana + yan dilimler): `alt`, `ust`, `yol`, `en`, `basamak` [n, derinlik, yükseklik], `taraf` |
+| `dayamalar()` | 5 dayama: `x`, `ayak`, `tepe`, `egim` (Ladder.tilt), `boy` (Ladder.height), `yol`, `basamak_araligi` 0,36, `en` 0,8 |
+| `mazgallar("ic"/"dis")` | diş arası açıklık `p`, savunucu yeri `ayak`, `bakis` (+z) |
+| `bataryalar()` | ovada top yuvası `p`, `bakis` (gediğe) |
+| `gedik()` | `x`, `dikdortgen` (Rect2 x/z), `asama`, `moloz` {peri, tepe, teras, hendek} |
+| `hendek()` | kıyılar, dip, `rampa` (yalnız ayağı dilim içinde olanlar), `gecis` [{tur: dolgu/kalas/kapi_kopru, x, en, yakin, uzak}] |
+| `kapi()` | `en`, `boy`, `kapali`, `ic_esik`, `peri`, `dis_esik`, `kopru_yakin`, `kopru_uzak` |
+| `poterna()` | `x`, `en`, `boy`, `ic`, `esik`, `sahanlik`, `dis` (dış basamağın teras ucu) |
+| `alanlar()` | şehir / peribolos / teras / ova / hendek dibi: Rect2 (x/z) + y (sur dibi eteği şeritleri dışında) |
+| `engeller()` | kişi konamayacak taban dikdörtgenleri |
+| `dogma(alan, n, tohum)` | güvenli doğma noktaları (engeller dışında, ışınla denetlenir) |
+| `noktalar()` | denetim listesi (hepsi, tür etiketiyle) |
+
+Parçalar (`sur_oyun_parca.gd`): `Poterna.ac(bool)`, `KalasKopru.tak()/sok()`, `Dolgu.doluluk(0..1)`,
+`KapiKopru.hal("saglam"|"yikik")`, `KapiKanat.ac(bool)`, `HucumMerdiveni.it()/devir()/dik()/cizgi()` (içinde gerçek
+`Ladder`: `climb_anim.attach(kişi, m.lad, at)` doğrudan çalışır), `GedikOnarim.asama(1..4)`.

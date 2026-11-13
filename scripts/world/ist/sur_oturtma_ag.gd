@@ -231,7 +231,7 @@ static func kule(e: Dictionary, poly: PackedVector2Array, y: float, ic_z: float,
 						yy = -0.03
 					var pp := p + nr * c
 					# SUR-OYUN 4e: merdiven ayak izinde etek yere iner (basamağa taşmaz)
-					if c > 0.0:
+					if c > 0.0 and merdiven_duzelt:
 						for yr: Rect2 in e["yasak"]:
 							if yr.has_point(pp):
 								yy = -0.03
@@ -374,6 +374,9 @@ static func _mm(p: Node3D, mesh: Mesh, xfs: Array, mat: Material, ad: String) ->
 	mi.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
 	p.add_child(mi)
 
+
+## SUR-OYUN 4e: merdiven ayak izinde kule eteği yere iner (yalnız ÖNCE|SONRA karşılaştırma karesi kapatır)
+static var merdiven_duzelt := true
 
 ## surlar.gd _run sonunda: dilimin bütün yüzlerinde etek, kule kaidelerinde etek, dip bandı, döküntü. lay: _layout çıktısı;
 ## kuleler: [[plan, y, iç_z, yön]]; kes_*: atlanacak x aralıkları

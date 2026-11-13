@@ -1,0 +1,28 @@
+SURDEMO kur_ms=769 { "oyun_ms": 493.613, "yan_ms": 237.767, "uzak_ms": 7.759, "zemin_ms": 0.296, "parca_ms": 28.073, "toplam_ms": 768.392 }
+SURDEMO kare 01_ovadan.jpg 1280x720 cizim=402 ilkel=252152
+SURDEMO kare 02_hendek_kiyisindan.jpg 1280x720 cizim=335 ilkel=221922
+SURDEMO kare 03_kopru_ustunden.jpg 1280x720 cizim=294 ilkel=232340
+SURDEMO kare 04_merdiven_dibinden.jpg 1280x720 cizim=191 ilkel=227882
+SURDEMO kare 05_sur_yolundan_asagi.jpg 1280x720 cizim=292 ilkel=271326
+SURDEMO kare 06_peribolostan.jpg 1280x720 cizim=270 ilkel=227642
+SURDEMO kare 07_gedikten.jpg 1280x720 cizim=64 ilkel=139216
+SURDEMO kare 08_poternadan.jpg 1280x720 cizim=95 ilkel=175950
+SURDEMO kare 09_havadan_gedik.jpg 1280x720 cizim=470 ilkel=271420
+SURDEMO kare 10_havadan_kesim.jpg 1280x720 cizim=464 ilkel=323538
+SURDEMO BITTI
+SURDEMO kur_ms=837 { "oyun_ms": 510.225, "yan_ms": 318.612, "uzak_ms": 7.839, "zemin_ms": 0.305, "parca_ms": 0.001, "toplam_ms": 837.673 }
+SURDEMO kare ONCE_01_ovadan.jpg 1280x720 cizim=129 ilkel=191420
+SURDEMO kare ONCE_06_peribolostan.jpg 1280x720 cizim=158 ilkel=191042
+SURDEMO kare ONCE_09_havadan_gedik.jpg 1280x720 cizim=143 ilkel=191912
+SURDEMO kare ONCE_05_sur_yolundan_asagi.jpg 1280x720 cizim=84 ilkel=182322
+SURDEMO BITTI
+SURDEMO kur_ms=706 { "oyun_ms": 448.597, "yan_ms": 222.99, "uzak_ms": 6.985, "zemin_ms": 0.295, "parca_ms": 25.845, "toplam_ms": 705.505 }
+SURDEMO kare SONRA_01_ovadan.jpg 1280x720 cizim=402 ilkel=252152
+SURDEMO kare SONRA_06_peribolostan.jpg 1280x720 cizim=270 ilkel=227642
+SURDEMO kare SONRA_09_havadan_gedik.jpg 1280x720 cizim=470 ilkel=271420
+SURDEMO kare SONRA_05_sur_yolundan_asagi.jpg 1280x720 cizim=292 ilkel=271326
+SURDEMO BITTI
+SURDEMO kur_ms=842 { "oyun_ms": 521.67, "yan_ms": 267.601, "uzak_ms": 11.823, "zemin_ms": 0.434, "parca_ms": 39.006, "toplam_ms": 841.877 }
+SURDEMO kare gece_01_ovadan.jpg 1280x720 cizim=369 ilkel=252152
+SURDEMO kare gece_06_peribolostan.jpg 1280x720 cizim=276 ilkel=227642
+SURDEMO BITTI

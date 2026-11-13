@@ -3,6 +3,12 @@ extends RefCounted
 const KULE := preload("res://scripts/world/ist/sur_kule.gd")
 
 
+## Durağan parçanın ağlarını tek ağa pişirir (çizim çağrısı: pişmeden parçalar kesime +700 çağrı ekliyordu)
+static func pis(n: Node3D) -> void:
+	if n != null and n.is_inside_tree():
+		Props.bake_static(n, [n])
+
+
 ## Gedik molozunun boy kesiti (yerel z → y). Profil noktaları gedik ortasından (x = gx) geçen eğri; en 7 m.
 static func moloz_profil(a: RefCounted) -> Dictionary:
 	var d: Dictionary = a.d
@@ -78,10 +84,25 @@ static func _tumsek(p: Node3D, x: float, pts: Array, w: float, omuz: float, taba
 			var b0: Vector3 = rows[i + 1][j]
 			var b1: Vector3 = rows[i + 1][j + 1]
 			var nrm := (a1 - a0).cross(b0 - a0)
-			if nrm.y < 0.0:
+			# dış yön: orta şeritlerde yukarı, omuzlarda yana (yan yüzler içe dönük kalmasın: güneşte beyaz okunuyordu)
+			var mx := (a0.x + a1.x) * 0.5 - x
+			var dis := Vector3(signf(mx) * (1.0 if absf(mx) > hw * 0.5 else 0.0), 0.6, 0.0)
+			if nrm.dot(dis) < 0.0:
 				nrm = -nrm
 			ekle.call(a0, a1, b1, nrm)
 			ekle.call(a0, b1, b0, nrm)
+	# uçlar kapalı (ilk ve son kesit: yelpaze)
+	for uc in [0, rows.size() - 1]:
+		var row: Array = rows[uc]
+		var dz := -1.0 if uc == 0 else 1.0
+		var tb2: float = taban.call((row[0] as Vector3).z)
+		for j in xs.size() - 1:
+			var p0: Vector3 = row[j]
+			var p1: Vector3 = row[j + 1]
+			if p0.y - tb2 < 0.03 and p1.y - tb2 < 0.03:
+				continue
+			ekle.call(p0, p1, Vector3(p1.x, tb2 - 0.05, p1.z), Vector3(0, 0, dz))
+			ekle.call(p0, Vector3(p1.x, tb2 - 0.05, p1.z), Vector3(p0.x, tb2 - 0.05, p0.z), Vector3(0, 0, dz))
 	var mi: MeshInstance3D = ag.mesh_ekle(p, Props.mat(col, 0.0, false, "rubble"), ad)
 	if mi:
 		mi.remove_meta("no_walk")
