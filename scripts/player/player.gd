@@ -82,6 +82,10 @@ var _prop_item: Node3D
 var leg: Node3D
 ## Birinci şahıs el görünümü: "tolga" (redingot) ya da "hikmet" (çizgili pijama).
 var hand_style := "tolga"
+## Bölüm 1, kostümden önce: Tolga pijamalı (kol, ayna, V, fotoğraf modu). Varsayılan false: başka hiçbir yerde etkisi yok.
+var pyjama := false
+const PJ_SLEEVE := Color("a8c0df")
+const PJ_STRIPE := Color("f1ead6")
 var free_hold := Vector3.INF:  # sol el kameranın yerelindeki bu noktayı tutar (kürek sapı); INF: tutmaz
 	set(v):
 		free_hold = v
@@ -940,13 +944,20 @@ func _animate_hands(delta: float, horiz: float) -> void:
 ## sabit açısı yüzünden uzanınca kolluğun ağzı kameraya dönüyordu).
 const FREE_SHOULDER := Vector3(-0.2, -0.45, 0.12)
 
+## Sol el bir an görünür (kıyafet değişince kolluğa bakılır): bölüm 1'de yataktan kalkınca ve kostümden sonra.
+var _sleeve_t := 0.0
+func show_sleeves(secs := 1.4) -> void:
+	_sleeve_t = secs
+
+
 func _animate_free_hand(delta: float, spd: float) -> void:
 	if free_hand == null:
 		return
+	_sleeve_t = maxf(0.0, _sleeve_t - delta)
 	var holding := is_instance_valid(_prop_item) and _prop_item.is_inside_tree()
 	# Tespit makinesi elde: sol el gövdesinden tutar (makine kameraya asılı duruyordu)
 	var cam_held := is_instance_valid(_cam) and _cam.visible and _cam.get_parent() == camera and not _cam_pocket
-	var show := _grab or _flail_t > 0.0 or floating or holding or _balance != INF or free_hold != Vector3.INF or cam_held
+	var show := _grab or _flail_t > 0.0 or floating or holding or _balance != INF or free_hold != Vector3.INF or cam_held or _sleeve_t > 0.0
 	var pos := _free_base + Vector3(0, -0.45, 0)
 	var roll := 0.0
 	var tilt := 0.0
@@ -984,6 +995,12 @@ func _animate_free_hand(delta: float, spd: float) -> void:
 		roll = sin(_hand_t * 12.0) * 25.0
 		tilt = 25.0 + sin(_hand_t * 16.0) * 18.0
 		curl = -10.0
+	elif _sleeve_t > 0.0:
+		# Kolluğa bakış: sol kol öne, dirsekten hafif kıvrık (kıyafet değişimi fark edilsin)
+		pos = _free_base + Vector3(0.1, 0.17, -0.08)
+		roll = -15.0
+		tilt = 15.0
+		curl = -25.0
 	elif floating:
 		# Kurbağalama: el öne uzanır, yana açılır, göğse döner. Dururken suyu hafifçe iter.
 		var a := 1.0 if spd > 0.3 else 0.35
@@ -1312,18 +1329,66 @@ func flail(seconds := 0.6) -> void:
 	_flail_t = maxf(_flail_t, seconds)
 
 
+## Pijama durumu (Bölüm 1): kollar (sol, sağ, "iki el" kolluğu) ve üçüncü şahıs modeli buna göre. Aynı değerse bir şey yapmaz.
+func set_pyjama(on: bool) -> void:
+	if pyjama == on:
+		return
+	pyjama = on
+	if hand_style != "tolga":
+		return
+	var sl := _sleeve_color()
+	var cuff := _cuff_color()
+	var stripe := PJ_STRIPE if on else Color(0, 0, 0, 0)
+	if free_rig:
+		free_rig.restyle(sl, cuff, stripe)
+	if rig:
+		rig.restyle(sl, cuff, stripe)
+	_build_free_sleeve()
+	var both := hand.get_node_or_null("BothSleeve") if hand else null
+	if both:
+		both.queue_free()
+
+
+func _sleeve_color() -> Color:
+	if pyjama and hand_style == "tolga":
+		return PJ_SLEEVE
+	return {"hikmet": Color("5b7fb3"), "nihat": Color("4a4a52")}.get(hand_style, Color("2b2f38")) as Color
+
+
+func _cuff_color() -> Color:
+	return Color("a9c1e3") if hand_style == "hikmet" else Color("f4f1ea")
+
+
+## Sol elin omza uzanan kolluğu (ve pijamadaysa çizgileri); pijama değişince yeniden kurulur.
+func _build_free_sleeve() -> void:
+	if free_hand == null:
+		return
+	var old := free_hand.get_node_or_null("FreeSleeve")
+	if old:
+		free_hand.remove_child(old)
+		old.queue_free()
+	var set := Node3D.new()
+	set.name = "FreeSleeve"
+	free_hand.add_child(set)
+	# Kolluk omuza doğru uzun: ekranın dışına çıkar, ucu görünmez
+	# Kolluk gölge atmaz: kolun gölgesini ShadowBody atar (çift kol gölgesi olmasın)
+	Props.cyl(set, 0.043, 0.34, Vector3(-0.02, -0.048, 0.3), _sleeve_color(), Vector3(90, 0, 0), 8).cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
+	if pyjama and hand_style == "tolga":
+		for z: float in [0.2, 0.26, 0.32, 0.38, 0.44]:
+			Props.cyl(set, 0.0475, 0.014, Vector3(-0.02, -0.048, z), PJ_STRIPE, Vector3(90, 0, 0), 8).cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
+	Props.strip_outlines(set)
+
+
 func _build_free_hand() -> void:
 	free_hand = Node3D.new()
 	free_hand.position = _free_base + Vector3(0, -0.45, 0)
 	free_hand.rotation_degrees = Vector3(12, 14, 0)
 	free_hand.visible = false
 	camera.add_child(free_hand)
-	var sleeve := {"hikmet": Color("5b7fb3"), "nihat": Color("4a4a52")}.get(hand_style, Color("2b2f38")) as Color
-	var cuff := Color("a9c1e3") if hand_style == "hikmet" else Color("f4f1ea")
+	var sleeve := _sleeve_color()
+	var cuff := _cuff_color()
 	var skin := {"hikmet": Color("e0a57e"), "nihat": Color("ecb892")}.get(hand_style, Color("e6ad88")) as Color
-	# Kolluk omuza doğru uzun: ekranın dışına çıkar, ucu görünmez
-	# Kolluk gölge atmaz: kolun gölgesini ShadowBody atar (çift kol gölgesi olmasın)
-	Props.cyl(free_hand, 0.043, 0.34, Vector3(-0.02, -0.048, 0.3), sleeve, Vector3(90, 0, 0), 8).cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
+	_build_free_sleeve()
 	# Sağ elin (HandRig) aynası: aynı avuç, eklemli parmaklar; tutunurken parmaklar kıvrılır (free_rig.curl)
 	free_rig = HandRig.new(skin, sleeve, cuff)
 	free_rig.position = Vector3(-0.02, -0.05, 0.0)
@@ -1498,9 +1563,9 @@ func _build_hand() -> void:
 	# El (v0.99.70): avuç, iki boğumlu parmaklar, başparmak; her eşyanın kendi tutuşu (HandRig). Eskiden bir top ve
 	# yanında üç boncuktu, eşya elin önünde havada duruyordu
 	var hikmet := hand_style == "hikmet"
-	rig = HandRig.new(Color("e0a57e") if hikmet else Color("e6ad88"), Color("5b7fb3") if hikmet else Color("2b2f38"),
-		Color("a9c1e3") if hikmet else Color("f4f1ea"))
+	rig = HandRig.new(Color("e0a57e") if hikmet else Color("e6ad88"), _sleeve_color(), _cuff_color())
 	hand.add_child(rig)
+
 	_remote_model = Node3D.new()
 	_remote_model.name = "Remote"
 	# TV kumandası (üstte) ve telsiz (altta)
@@ -1727,6 +1792,10 @@ func _me_person(fez := -1) -> Person:
 	if hand_style == "hikmet":
 		return Person.new({"face": {"wrinkles": true, "bags": true, "nose": "bulb", "brow_tilt": -6.0}, "coat": Color("7fa7d6"),
 			"pants": Color("7fa7d6"), "glasses": true, "mustache": true, "hair": Color("e8e8e4"), "skin": Color("e0a57e")})
+	if pyjama:
+		# Kostümden önceki Tolga: çizgili pijama, dağınık saç, terlik, pijamanın üstüne gevşek kravat (fes yok)
+		return Person.new({"face": "tolga", "coat": PJ_SLEEVE, "pants": PJ_SLEEVE, "skin": Color("e6ad88"), "hat": "none",
+			"hair": Color("2a1e14"), "hair_style": "messy", "pyjama": true})
 	var kaftan := wears_kaftan()
 	var opts := {"face": "tolga", "coat": Color("7a3a2a") if kaftan else Color("23262d"), "pants": Color("23262d"), "skin": Color("e6ad88"),
 		"hat": "fez" if (wears_fez() if fez < 0 else fez == 1) else "none", "hair": Color("2a1e14")}
@@ -2852,7 +2921,7 @@ func hold_both(left: Vector3, right: Vector3, target: Node3D = null) -> void:
 			var sl := Node3D.new()
 			sl.name = "BothSleeve"
 			hand.add_child(sl)
-			var sc := {"hikmet": Color("5b7fb3"), "nihat": Color("4a4a52")}.get(hand_style, Color("2b2f38")) as Color
+			var sc := _sleeve_color()
 			Props.cyl(sl, 0.042, 0.36, Vector3(0, 0.002, 0.36), sc, Vector3(90, 0, 0), 8).cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF      # HandRig kolluğunun devamı (gölgeyi ShadowBody atar)
 			Props.strip_outlines(sl)
 	_both_l = left
