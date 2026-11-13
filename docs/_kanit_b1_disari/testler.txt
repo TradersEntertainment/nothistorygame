@@ -1,0 +1,14 @@
+SONUC a [--autotest] -> GEÇTİ
+SONUC a2 [--autotest] -> GEÇTİ
+SONUC k [--autotest=kick] -> GEÇTİ
+SONUC k2 [--autotest=kick] -> GEÇTİ
+SONUC r [--autotest=red] -> GEÇTİ
+SONUC r2 [--autotest=red] -> GEÇTİ
+SONUC c3 [--chapter=3 --autotest] -> GEÇTİ
+SONUC c5 [--chapter=5 --autotest] -> GEÇTİ
+SONUC c8 [--chapter=8 --autotest] -> GEÇTİ
+SONUC c13 [--chapter=13 --autotest] -> GEÇTİ
+SONUC c15 [--chapter=15 --autotest] -> GEÇTİ
+SONUC c16 [--chapter=16 --autotest] -> GEÇTİ
+PARSECHECK PASS scripts=252
+ZFIGHT satir: 0
