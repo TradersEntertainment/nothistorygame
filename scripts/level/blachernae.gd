@@ -11,6 +11,7 @@ extends Node3D
 ##   · dışarıda: sura doğru hafifçe yükselen yamaç (katı), dağınık moloz, çalı; uzakta Osmanlı ordusu ve ateşleri
 
 const BattleExtras := preload("res://scripts/level/battle_extras.gd")
+const CLIMB := preload("res://scripts/npc/climb_anim.gd")
 const WALL_Z0 := 0.0
 const WALL_Z1 := 4.6
 const WALK_Y := 12.0
@@ -431,12 +432,16 @@ func _update_climbers(delta: float) -> void:
 		line.sort_custom(func(a: Dictionary, b: Dictionary) -> bool: return float(a["t"]) > float(b["t"]))
 		for i in range(1, line.size()):
 			line[i]["t"] = minf(float(line[i]["t"]), float(line[i - 1]["t"]) - 2.0)
+	var cam := get_viewport().get_camera_3d() if is_inside_tree() else null
 	for c: Dictionary in _climbers:
 		var p: Person = c["p"]
 		var lad: Ladder = c["lad"]
 		if not is_instance_valid(p):
 			continue
 		if float(c["fall"]) >= 0.0:
+			var fca: Node = CLIMB.of(p)
+			if fca:
+				fca.release(true, "fall")
 			c["fall"] = float(c["fall"]) + delta
 			var f: float = c["fall"]
 			p.position += Vector3(0, -9.0 * f * delta, 1.6 * delta) if p.position.y > 0.15 else Vector3.ZERO
@@ -458,8 +463,19 @@ func _update_climbers(delta: float) -> void:
 		if t >= lad.height - 1.2:
 			c["fall"] = 0.0            # tepede itilir (savunanlar)
 			continue
-		p.position = lad.point_at(maxf(t, 0.0)) + lad.front_dir() * 0.35 - Vector3(0, 0.9, 0) if t > 0.0 else lad.position + Vector3(0, 0, 1.0 - t * 0.4)
-		# İlk basamaklarda ayak yerin altına inmesin (eskiden merdivenin dibinde 0,9 m toprağa gömülü başlıyordu)
-		p.position.y = maxf(p.position.y, lad.position.y)
+		# Merdivende ortak tırmanma animasyonu (gövde merdivene paralel, eller/ayaklar basamakta); sırada ayakta bekler.
+		# Uzaktakiler (kameradan 25 m+) ucuz sürüm: IK üç karede bir
+		var ca: Node = CLIMB.of(p)
+		if t > 0.0:
+			if ca == null:
+				ca = CLIMB.attach(p, lad, t - 0.93, "blachernae")
+				ca.blend_from(p.global_position, 0.5)
+			ca.follow(t - 0.93)
+			ca.full = cam == null or cam.global_position.distance_to(p.global_position) < 25.0
+		else:
+			if ca:
+				ca.release(true, "")
+			p.position = lad.position + Vector3(0, 0, 1.0 - t * 0.4)
+			p.position.y = maxf(p.position.y, lad.position.y)
 		if t > 2.0 and fmod(t * 7.3 + float(lad.position.x), 37.0) < 0.05:
 			c["fall"] = 0.0

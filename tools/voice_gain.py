@@ -19,15 +19,28 @@ def table(csv_name):
     if not os.path.exists(path):
         return {}, 0.0
     rows = [r for r in csv.DictReader(open(path, encoding="utf-8")) if r["anahtar"] in keys]
+    # Mesafe/şiddet sınıfı (docs/voice/MESAFE.csv): eşitleme bağırışı kısıp fısıltıyı açıyordu, her replik aynı düzeyde
+    # çalıyordu (sahibin notu, 0.99.119: "bağırması lazım uzağa, yakındayken normal konuşması lazım"). Artık her replik
+    # konuşmacının ortancasına DEĞİL, ortanca + sınıf payına çekilir.
+    mes = {}
+    mp = os.path.join(ROOT, "docs/voice/MESAFE.csv")
+    if os.path.exists(mp):
+        mes = {r["anahtar"]: r["mesafe"] for r in csv.DictReader(open(mp, encoding="utf-8"))}
+    PAY = {"uzak": 4.0, "yakin_yuksek": 2.0, "fisilti": -4.0, "ic_ses": -1.5}
     by = {}
     for r in rows:
-        by.setdefault(r["konusmaci"], []).append(float(r["seviye"]))
+        if mes.get(r["anahtar"], "yakin") in ("yakin", "telsiz", "belirsiz", ""):   # ortanca: normal konuşma replikleri
+            by.setdefault(r["konusmaci"], []).append(float(r["seviye"]))
+    hepsi = {}
+    for r in rows:
+        hepsi.setdefault(r["konusmaci"], []).append(float(r["seviye"]))
     allmed = statistics.median(float(r["seviye"]) for r in rows)
     gain = {}
     for r in rows:
         lv = float(r["seviye"])
-        smed = statistics.median(by[r["konusmaci"]])
-        g = max(-6.0, min(6.0, (smed - lv) * 0.8)) + max(-4.0, min(4.0, allmed - smed))
+        smed = statistics.median(by.get(r["konusmaci"]) or hepsi[r["konusmaci"]])
+        hedef = smed + PAY.get(mes.get(r["anahtar"], ""), 0.0)
+        g = max(-6.0, min(6.0, (hedef - lv) * 0.8)) + max(-4.0, min(4.0, allmed - smed))
         if abs(g) >= 1.0:
             gain[r["anahtar"]] = round(g, 1)
     return gain, allmed

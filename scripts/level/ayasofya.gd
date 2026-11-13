@@ -283,7 +283,7 @@ static func _floor(root: Node3D) -> void:
 	for zz in [-9.0, -3.0, 3.0, 9.0]:
 		Props.box(root, Vector3(22.0, 0.035, 0.7), Vector3(0, 0.02, zz), VERDE)
 	# Omphalion: kare içinde 32 küçük daire, ortada büyük granit daire
-	var om := Vector3(6.0, 0.03, -6.5)
+	var om := Vector3(6.0, 0.038, -6.5)   # 8 mm yüksek: taç giyme karesi cennet ırmağı şeridinin üstünde, yüzleri çakışıp titremesin
 	Props.box(root, Vector3(5.2, 0.02, 5.2), om, Color("d8d0c0"))
 	var cols := [PORPHYRY, VERDE, Color("5a5a62"), Color("b88a5a")]
 	var k := 0

@@ -1002,7 +1002,6 @@ func _run_shots() -> void:
 		return
 	player.global_position = CampDay.KADRI_FRONT + Vector3(1.6, 0.05, 2.6)
 	player.face(day.kadri.global_position + Vector3(0, 1.3, 0))
-	day.kadri.face_toward(player.global_position)      # ışınlanma kesmesi: doğrayan Kadri konuşmaya dönük başlar
 	day.kadri.talking = true
 	hud.bark("SPK_KADRI", "D9_KADRI_OFFER_1", 30.0)
 	await get_tree().create_timer(0.4, false).timeout

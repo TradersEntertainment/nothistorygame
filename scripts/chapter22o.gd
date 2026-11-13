@@ -317,7 +317,7 @@ func _build_hide_pile() -> void:
 		_pile_hides.append(h)
 	# Islatma teknesi: suda bekleyen deriler, biri kenarından sarkar
 	Props.box(self, Vector3(1.2, 0.45, 0.7), c + Vector3(0, 0.225, 1.15), Color("5a3e26"))
-	Props.box(self, Vector3(1.08, 0.04, 0.58), c + Vector3(0, 0.43, 1.15), Color("2e4a62"))
+	Props.box(self, Vector3(1.08, 0.048, 0.58), c + Vector3(0, 0.434, 1.15), Color("2e4a62"))   # su yüzü tekne kenarından 8 mm yüksek (üst yüzler çakışıp titremesin)
 	Props.box(self, Vector3(0.6, 0.04, 0.5), c + Vector3(0.25, 0.42, 0.85), Color("5e4028"), Vector3(-55, 8, 0))
 	Props.interactable(self, "hidepile", Vector3(1.8, 1.4, 1.5), c + Vector3(0, 0.7, 0.1))
 	var sb := Props.solid(self, Vector3(1.6, 0.9, 1.9), c + Vector3(0, 0.45, 0.5), Color.WHITE)

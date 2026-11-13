@@ -168,10 +168,19 @@ def load_cast(lang="tr"):
     return out
 
 
+# Sesi paylaşan karakter (same_as) kendi okuma biçimini taşıyabilir: aynı ses, başka rol (ör. Azap Hızır, Asker'in sesiyle
+# ama daha serbest okur).
+OKUMA_ALANLARI = ("ton_mode", "v3_stability", "model")
+
+
 def resolve(cast, spk):
-    c = cast.get(spk) or {}
+    c0 = cast.get(spk) or {}
+    c = c0
     while "same_as" in c:
         c = cast[c["same_as"]]
+    over = {k: c0[k] for k in OKUMA_ALANLARI if k in c0}
+    if over and c is not c0:
+        c = dict(c); c.update(over)
     return c
 
 
@@ -270,6 +279,8 @@ def tts(voice, text, out, model, tone=""):
     if model.startswith("eleven_v3"):
         # v3: ton etiketi metnin başına; stability yalnız 0 (yaratıcı) / 0.5 (doğal) / 1 (sabit)
         st = min((0.0, 0.5, 1.0), key=lambda x: abs(x - voice.get("v3_stability", voice.get("stability", 0.5))))
+        if tone.startswith(("[shouts", "[shouting", "[calling out", "[barking", "[commanding")):
+            st = 0.0      # bağırma/seslenme: serbest okuma (dengeli ayarda bağırış düzleşiyor)
         body = {"text": (tone + " " + text).strip() if tone else text, "model_id": model,
                 "voice_settings": {"stability": st},
                 # Dili zorla: yoksa Türkçe "Ok!" (ok, okçu) İngilizce "okay" diye okunabiliyor
@@ -345,6 +356,9 @@ def speak(r, lang, out, model, cast, tone):
         print(f"  UYARI {r['anahtar']} ({lang}): INLINE metni altyazıyla uyuşmuyor, düz metin okunuyor", flush=True)
         il = ""
     if il:
+        # Satır içi yönergeler duyguyu taşır ama mesafeyi bilmez: uzaktan söylenen replik yine bağırılarak okunur
+        if mesafe_of(r["anahtar"]) == "uzak" and not re.search(r"\[(shout|yell|scream|calling)", il):
+            il = ROL_BAGIR + " " + il
         return _speak([(r["konusmaci"], il)], r, out, model, cast, "")
     segs = segments(r["tr" if lang == "tr" else "en"], r["konusmaci"])
     # Sözü olmayan parça okunmaz: "...!" gibi yalnız noktalama (oyunda mırıltıyla çalınır)
@@ -426,14 +440,37 @@ def tone_override(key):
     return ""
 
 
+BAGIR_ETIKET = ("[shouts", "[shouting", "[yelling", "[calling out", "[barking", "[commanding", "[screaming")
+UZAK_SESLEN = "[calling out] [raised voice]"
+# Uzakta ama bağırmayan: Büro'da kendi aralarında atışanlar, hoparlörden konuşan minibüs, toprağın üstünden konuşan Nihat
+UZAK_HARIC = ("BUR_AMB_", "D5_V_", "D8_V_", "D10L_N_DIG")
+
+
 def tone_of(r, cast):
-    """TONES.txt > elle yazılmış ton > karakterin okuma modu (tune ile seçilen, repliğe göre) > karakterin sabit tonu."""
+    """TONES.txt > elle yazılmış ton > karakterin okuma modu (tune ile seçilen, repliğe göre) > karakterin sabit tonu.
+    Mesafe kuralı (sahibi, 0.99.119: "bağırması lazım uzağa, yakındayken normal konuşması lazım"; dinleme sayfasında M'yi
+    seçti): MESAFE.csv'de "uzak" olan replik, konuşmacı kim olursa olsun bağırarak okunur (TONES.txt'deki elle yazım hariç)."""
     over = tone_override(r.get("anahtar", ""))
     if over:
         return over
+    t = _tone_of(r, cast)
+    k = r.get("anahtar", "")
+    if mesafe_of(k) == "uzak" and not k.startswith(UZAK_HARIC) and not any(e in t for e in BAGIR_ETIKET):
+        # Ünlemli replik avazı çıktığı kadar; ünlemsiz (uzaktan ama sakin söylenen: atın üstündeki Sultan, ustanın hükmü) seslenerek
+        t = ((ROL_BAGIR if "!" in r.get("tr", "") else UZAK_SESLEN) + " " + t).strip()
+    return t
+
+
+def _tone_of(r, cast):
     if r.get("ton_elle") == "1" and r.get("ton"):
         return r["ton"]
     mode = resolve(cast, r["konusmaci"]).get("ton_mode", "")
+    if mode.startswith("rol:"):
+        k = r.get("anahtar", "")
+        mes = mesafe_of(k)
+        if mes == "uzak" and k.startswith(UZAK_HARIC):
+            mes = "yakin"      # uzakta ama bağırmıyor (toprağın üstünden konuşan Nihat, hoparlör)
+        return role_tone(clean(r.get("tr", "")), mode[4:], r.get("ton", ""), mes)
     if mode:
         return scene_tone(clean(r.get("tr", "")), mode)
     return r.get("ton", "") or resolve(cast, r["konusmaci"]).get("ton", "")
@@ -758,9 +795,129 @@ VARIANTS = [
 ]
 
 
+# Rol okuması (0.99.119, sahibin "spiker gibi olmasın, oradan bir asker gibi hissettirsin" notu): Tolga dışındaki
+# karakterlerin çoğu etiketsiz, düz okunuyordu. cast.json'da "ton_mode": "rol:<ad>" olan karakterin her repliği,
+# replik tipine göre o role uygun yönlendirmeyle okunur. Sahibi sahne içinde dinleyip seçti (Azap, Asker, İmparator).
+ROL_UZAK = {
+    "asker": "[shouting from a distance] [hoarse]", "asker_genc": "[shouting from a distance] [nervous]",
+    "cavus": "[shouting orders across the field] [hoarse]", "nobetci": "[shouting from a distance]",
+    "asker_neseli": "[shouting down from the wall] [hearty]", "usta": "[shouting over the noise]",
+    "komutan": "[shouting commands over battle noise]", "saray": "[calling out firmly] [raised voice]",
+    "saray_genc": "[calling out sharply] [raised voice]", "telsiz": "[raised voice] [alarmed]", "amca": "[calling out] [excited]",
+    "denetci": "[calling out] [formal] [strained]",
+}
+ROL_SESLEN = {   # orta: yakında ama sesini yükseltir (acele, uyarı)
+    "asker": "[calling out] [urgent]", "asker_genc": "[calling out] [nervous]", "cavus": "[barking an order]",
+    "nobetci": "[calling out] [startled]", "asker_neseli": "[calling out] [hearty]", "usta": "[calling out] [impatient]",
+    "komutan": "[commanding] [urgent]", "saray": "[firm] [restrained]", "saray_genc": "[sharp] [commanding]",
+    "telsiz": "[dry] [alarmed but restrained]", "amca": "[excited] [chuckles]",
+    "denetci": "[raised voice] [exasperated] [dry]",
+    "kondotiyer": "[firm] [commanding] [raised voice]", "mahalleli": "[calling out] [scolding fondly]", "balikci": "[low voice] [urgent but calm]",
+    "eski_nobetci": "[raised voice] [stern]",
+}
+ROL_YAKIN = {    # (ünlem, soru, üç nokta, düz): yanındakine konuşur; bağırmaz
+    "asker": ("[firm] [gruff]", "[gruff] [suspicious]", "[tired] [muttering]", "[low rough voice] [talking to someone right next to him]"),
+    "asker_genc": ("[nervous] [quick]", "[curious] [shy]", "[homesick] [quiet]", "[quiet] [earnest] [talking to someone next to him]"),
+    "cavus": ("[stern] [gruff]", "[gruff] [impatient]", "[sighs] [weary]", "[gruff] [low voice] [dry humour]"),
+    "nobetci": ("[startled] [normal speaking voice]", "[confused] [slow]", "[bored] [trailing off]", "[bored] [casual] [talking to his friend]"),
+    "asker_neseli": ("[amused] [rough voice]", "[gruff] [teasing]", "[tired] [muttering]", "[hearty] [rough voice] [talking to a friend]"),
+    "usta": ("[gruff] [proud]", "[gruff] [impatient]", "[grumbling]", "[gruff] [busy] [talking while working]"),
+    "komutan": ("[firm] [low voice]", "[sly] [amused]", "[weary] [low voice]", "[confident] [low voice] [talking to someone right next to him]"),
+    "saray": ("[firm] [quiet]", "[weary] [gentle]", "[weary] [sighs]", "[weary] [quiet] [speaking to a trusted man]"),
+    "saray_genc": ("[sharp] [quiet authority]", "[curious] [amused] [quiet authority]", "[thoughtful]", "[calm] [quiet authority] [speaking to someone standing before him]"),
+    "telsiz": ("[dry] [exasperated]", "[deadpan] [sceptical]", "[deadpan] [sighs]", "[deadpan] [dry] [talking quietly into a radio]"),
+    "amca": ("[excited] [warm]", "[curious] [warm]", "[thinking aloud]", "[warm] [chatty] [old man talking to his nephew]"),
+    # Nihat (sahibi dinleme sayfasında L5 sesini bu okumayla seçti, 0.99.119): yorgun, alaycı, kendi kendine söylenir
+    "denetci": ("[exasperated] [dry]", "[wry] [tired]", "[tired] [sighs]", "[wry] [tired] [dry]"),
+    # Giustiniani (sahibi dinleme sayfasında K3 sesini bu okumayla seçti, iki tur üst üste): alçak, sıcak, kendinden emin
+    "kondotiyer": ("[low, warm voice] [calm authority] [firm]", "[low, warm voice] [calm authority] [wry]", "[low voice] [weary] [calm]",
+                   "[low, warm voice] [calm authority] [slight smile] [unhurried]"),
+    # Yerebatan: Eudokia (E1a) ve balıkçı Yakovos (Y2a), sahibinin seçtiği okumalar
+    "mahalleli": ("[surprised] [scolding fondly]", "[brisk] [suspicious but friendly]", "[brisk] [thinking aloud]", "[brisk] [matter-of-fact] [neighbourly]"),
+    "balikci": ("[low voice] [urgent but calm]", "[low voice] [wary] [slow]", "[low voice] [slow] [wondering]", "[low voice] [unhurried] [dry humour]"),
+    # Niko, yön B (sahibi B yönünü ve Ses 2'yi seçti): hepsini görmüş, hiçbirine şaşırmayan eski nöbetçi; yakında hep aynı düzlük
+    "eski_nobetci": ("[dry] [low] [tired]", "[dry] [low] [tired]", "[dry] [low] [tired]", "[dry] [low] [tired]"),
+}
+ROL_ONEKSIZ = {"denetci", "kondotiyer", "mahalleli", "balikci"}     # "[normal speaking voice]" eklenmez: seçilen okuma öyleydi
+ROL_UZAK_OZEL = {"kondotiyer": "[shouts] [commanding] [defiant]"}
+DENETCI_DUZ = {"telsiz": "[wry] [tired] [muttering to himself into a radio]", "ic_ses": "[wry] [tired] [muttering to himself]"}
+
+
+ROL_BAGIR = "[shouts] [yelling at the top of his lungs]"     # ölçüldü: en belirgin bağırış bu yönergeyle çıkıyor
+MESAFE_PATH = os.path.join(ROOT, "docs/voice/MESAFE.csv")
+_MESAFE = None
+
+
+def mesafe_of(key):
+    """docs/voice/MESAFE.csv: repliğin sahnedeki mesafe/şiddet sınıfı (uzak, yakin_yuksek, yakin, fisilti, telsiz,
+    ic_ses, belirsiz). Sahneler tek tek okunarak çıkarıldı (kanıt sütunu: dosya:satır)."""
+    global _MESAFE
+    if _MESAFE is None:
+        _MESAFE = {}
+        if os.path.exists(MESAFE_PATH):
+            for r in csv.DictReader(open(MESAFE_PATH, encoding="utf-8")):
+                _MESAFE[r["anahtar"]] = r["mesafe"]
+    return _MESAFE.get(key, "")
+
+
+def role_tone(text, role, taban="", mesafe=""):
+    """Rol okuması. Sahibin notu: "bağırması lazım uzağa, yakındayken normal konuşması lazım".
+    MESAFE haritası varsa o belirler: uzak = gerçekten bağırır; yakin_yuksek = yanında ama sesini yükseltir;
+    yakin = NORMAL konuşma sesi (ünlem olsa da bağırmaz); fisilti; telsiz = mikrofona yakın, normal; ic_ses = kendi
+    kendine. Harita yoksa repliğin ton etiketine bakılır ([shouting] = yüksek ses). Öbür duygu etiketleri korunur."""
+    if role not in ROL_YAKIN:
+        return taban
+    etiketler = re.findall(r"\[[^\]]+\]", taban or "")
+    ex, q, dots = "!" in text, "?" in text, ("…" in text or "..." in text)
+    y = ROL_YAKIN[role]
+    yakin = y[0] if ex else y[1] if q else y[2] if dots else y[3]
+    duygu = " ".join(e for e in etiketler if e not in ("[excited]", "[shouting]", "[screaming]", "[whispers]"))
+    if mesafe in ("", "belirsiz"):
+        if any(t in ("[shouting]", "[screaming]") for t in etiketler):
+            mesafe = "yakin_yuksek"
+        elif "[excited]" in etiketler and ex:
+            mesafe = "yakin_yuksek"
+        elif "[whispers]" in etiketler:
+            mesafe = "fisilti"
+        else:
+            mesafe = "yakin"
+    if role == "denetci" and mesafe in ("yakin", "telsiz", "ic_ses"):
+        # "[normal speaking voice]" eklenmez: seçilen okuma buydu; düz cümlede yere göre mırıldanır
+        yk = yakin if (ex or q or dots) else DENETCI_DUZ.get(mesafe, yakin)
+        return _tekil(duygu + " " + yk)
+    if role in ROL_ONEKSIZ and mesafe in ("yakin", "telsiz"):
+        return _tekil(duygu + " " + yakin)
+    if role in ROL_UZAK_OZEL and mesafe == "uzak":
+        return ROL_UZAK_OZEL[role]
+    if role == "kondotiyer" and mesafe == "yakin_yuksek":
+        return ROL_SESLEN[role] + (" [rallying his men]" if ex else "")
+    if mesafe == "uzak":
+        return ROL_BAGIR
+    if mesafe == "yakin_yuksek":
+        return ROL_SESLEN[role]
+    if mesafe == "fisilti":
+        return "[whispers] " + yakin
+    if mesafe == "telsiz":
+        return _tekil("[normal speaking voice] [close to the microphone] " + duygu + " " + yakin)
+    if mesafe == "ic_ses":
+        return ("[muttering to himself] [low voice] " + duygu).strip()
+    return _tekil("[normal speaking voice] " + duygu + " " + yakin)
+
+
+def _tekil(t):
+    """Yinelenen yönerge etiketlerini atar, sırayı korur."""
+    gor, out = set(), []
+    for e in re.findall(r"\[[^\]]+\]", t):
+        if e not in gor:
+            gor.add(e); out.append(e)
+    return " ".join(out)
+
+
 def scene_tone(text, mode):
     """Okuma modu -> v3 ton etiketi. 'scene'/'scene_fast': replik tipine göre; 'comic': gergin komik
     (her replikte telaş, sinirli gülüş yaklaşık iki replikte bir: 400 replikte hep gülüş bıktırır); aksi: sabit etiket."""
+    if mode.startswith("rol:"):
+        return role_tone(text, mode[4:])
     if mode == "none":
         return ""          # etiketsiz: İngilizce ton etiketleri Türkçe okumaya yabancı aksan katıyordu (FB6 A/B, v0.99.13)
     if mode == "comic":

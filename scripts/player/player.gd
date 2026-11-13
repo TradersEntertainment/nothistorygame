@@ -456,6 +456,8 @@ var _tp_hold := 0.0
 func _physics_process(delta: float) -> void:
 	_health_tick(delta)
 	_fall_guard(delta)
+	if _ladder_hands and (ladder == null or frozen or pinned):
+		_ladder_hands_off()          # merdivenden hangi yoldan çıkılırsa çıkılsın eller ve eşya geri gelir
 	if _frozen_void_hold():
 		_after_move(delta)
 		return
@@ -614,6 +616,54 @@ func _separate_from_persons() -> void:
 
 
 ## Merdiven: alanında ileri basınca tutunur; W/S ile çıkar-iner, Space bırakır, tepede üste çıkar, dipte S ile iner.
+## Merdivende iki el basamaklarda (ortak tırmanma döngüsü, birinci şahıs): çapraz döngü; her basamakta alttaki el
+## bırakır, merdivenden biraz açılıp iki basamak üste uzanır ve tutar, öbür el basamağında kalır (gövde yükseldikçe
+## görüşte aşağı iner). Noktalar merdivenin yerelinde: merdiven sallanınca eller onunla gider. Başka bir iş iki eli
+## tutuyorsa (hold_both) dokunulmaz. Basamak geçişinde var olan adım sesi.
+var _ladder_hands := false
+var _ladder_stowed := false      # eşya bu iş için bir kez cebe girer, bir kez çıkar (stow sayacı dengede)
+var _ladder_rung := -1
+
+
+func _ladder_hands_tick() -> void:
+	if ladder == null or not is_instance_valid(ladder):
+		if _ladder_hands:
+			_ladder_hands_off()
+		return
+	if not _ladder_hands and _both_r != Vector3.INF:
+		return            # bölüm iki eli başka yerde tutturuyor
+	_ladder_hands = true
+	var c := _ladder_t / Ladder.RUNG
+	var n := floori(c)
+	var f := c - float(n)
+	if _ladder_rung >= 0 and n != _ladder_rung:
+		Audio.step(step_voice if step_voice != "" else hand_style)
+	_ladder_rung = n
+	var k0 := float(n) + roundf((eye_height - 0.6) / Ladder.RUNG)
+	var mv := smoothstep(0.15, 0.8, f)
+	var hi := lerpf(k0, k0 + 2.0, mv)             # uzanan el
+	var lift := sin(mv * PI) * 0.08                # kalkan el merdivenden açılır
+	var left_up := n % 2 == 0
+	var lk := hi if left_up else k0 + 1.0
+	var rk := k0 + 1.0 if left_up else hi
+	var lb := Basis.from_euler(Vector3(deg_to_rad(-ladder.tilt), 0, 0))
+	var lp := lb * Vector3(-0.22, 0.3 + lk * Ladder.RUNG + 0.025, 0.03 + (lift if left_up else 0.0))
+	var rp := lb * Vector3(0.22, 0.3 + rk * Ladder.RUNG + 0.025, 0.03 + (0.0 if left_up else lift))
+	if not _ladder_stowed:
+		_ladder_stowed = true
+		stow_hands(true)
+	hold_both(lp, rp, ladder)
+
+
+func _ladder_hands_off() -> void:
+	_ladder_hands = false
+	_ladder_rung = -1
+	release_both()
+	if _ladder_stowed:
+		_ladder_stowed = false
+		stow_hands(false)
+
+
 func _ladder_physics(delta: float) -> bool:
 	if frozen or pinned:
 		if ladder:
@@ -671,6 +721,7 @@ func _ladder_physics(delta: float) -> bool:
 	global_position = ladder.point_at(_ladder_t) + ladder.front_dir() * 0.42 + right * ladder_side
 	velocity = Vector3.ZERO
 	_bob += delta * absf(fwd_in) * 6.0
+	_ladder_hands_tick()
 	return true
 
 

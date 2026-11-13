@@ -397,3 +397,16 @@ bostan ve harabe olduğunu görür (tarihte bilinen ve birkaç gün sonra hücum
 hendeğin ötesine geçirmez. Sultan Urban'a "bundan yüz tane yap" deyince Tolga son bir uçuşla kuşu Kadri'nin kazanına
 indirir, Nihat pili çeker. 25'te (Osmanlı) Zağanos meclisteki sözünde kuşu anar (D25_Z_DRONE / _2). Sonda Nihat:
 bir eksik daha var, saha aydınlatma fişekleri, şehrin içinde (Bizans yarısı: Ayasofya'daki ışık).
+
+## Bölüm 44b — Sarnıç (yalnız Bizans tarafı, 26 Mayıs)
+
+Ayrıntı ve kaynaklar: `docs/BOLUM_YEREBATAN.md`. Sıra: Bizans `… 23 → 24 → 44 → 25 …` (`Siege.ORDER`'da 43'ün ardında;
+43 Osmanlı'ya özgü olduğu için Bizans'ta 24'ten doğrudan 44'e geçilir). Osmanlı sırası değişmez.
+- Eudokia'nın avlusundaki kuyuya inen Tolga'nın ipi kopar; kuyunun altı unutulmuş Bazilika Sarnıcı'dır (Gyllius, 1540'lar:
+  mahalleli "kuyu"dan su ve balık çeker ama altında ne olduğunu bilmez). Fener açılınca 336 sütunluk orman (hayranlık
+  anı), kayıkla meşaleye (Yakovos, balıkçı "cin"), top sarsıntısında düşen tuğlalar (önce toz ve halka), Medusa köşesi
+  (tespit karesi: su altındaki taş yüz), Yakovos'un evinin kuyusundan çıkış.
+- Sonuçlar: 44.1 sırrı korudu · 44.2 ağzından kaçırdı (Paradoks +5). `cistern_rescued`: süre dolup Yakovos çektiyse.
+  Okunduğu yerler: Bölüm 25 son ayin (Eudokia'nın tek repliği), Bölüm 15 İnsanların Akıbeti (Yakovos), başarım
+  `ACH_CISTERN`. Dünya seçimine etkisi yok (tarih inatçıdır).
+- Mekân: `scripts/level/cistern.gd` (gerçek boy 137,8 × 65 m, 12 × 28 sütun MultiMesh, sahte yansıma, kuyu huzmeleri).

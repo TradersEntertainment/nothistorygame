@@ -914,12 +914,13 @@ func _gate() -> void:
 ## (Eskiden Tolga'ya bakarak dururken kanatlar arkasında kendiliğinden açılıyordu.)
 func _niko_opens_gate() -> void:
 	var n: Person = walls.niko
-	var t := 0.05 if GameState.autotest else 1.2
+	var turn_t := 0.05 if GameState.autotest else 0.3      # dönüş + kanatlar açılırken: toplam özgün 1,2 sn
+	var t := 0.05 if GameState.autotest else 0.9
 	var mark := Node3D.new()
 	walls.add_child(mark)
 	mark.position = Vector3(SeaWalls.GATE_X, SeaWalls.QUAY_Y + 1.2, SeaWalls.WALL_Z + 0.12)
 	n.look_target = mark          # gövde (omuzlar) kapıya döner
-	await _wait(0.05 if GameState.autotest else 0.7)
+	await _wait(turn_t)
 	var rg := n.rig
 	if rg:
 		rg.lock += 1
