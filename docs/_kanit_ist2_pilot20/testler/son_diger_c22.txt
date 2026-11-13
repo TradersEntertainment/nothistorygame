@@ -1,0 +1,2 @@
+AUTOTEST PASS chapter=22 variant= outcome=22.1 hits=2 singed=false window=0.42-0.68
+KOSU ad=son_diger_c22 rc=0 sn=18 args=--chapter=22 --autotest

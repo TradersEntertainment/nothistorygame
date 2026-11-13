@@ -11,7 +11,7 @@
 | # | Madde | Durum | Kısa |
 |---|---|---|---|
 | 1 | Kurulum + ayrıştırma | **TAMAM** | Godot 4.4.1 resmi, `--import`, `PARSECHECK PASS scripts=354`; Bölüm 20 yeni sette ilk koşu PASS |
-| 2 | Testler (20 ×3 + eski ×1; 20o ×2 + eski ×1) | **TAMAM** (bir madde KISMEN) | ilk tur 66/66 PASS, denetim 0; bulunan 4 kusur düzeltildi; son tur aşağıda. 20o `=wide` düellosu hâlâ eskiden uzun (KISMEN) |
+| 2 | Testler (20 ×3 + eski ×1; 20o ×2 + eski ×1) | **TAMAM** (düello süresi KISMEN) | ilk tur 66/66, son tur 93/93 PASS, denetim 0; 5 kusur düzeltildi. Gedik aşama 4'te düello eskiden uzun/oynak (20o `=wide`, 20 2. dalga) |
 | 3 | Öteki bölümler | **TAMAM** | 21 bölüm PASS, denetim 0. 26 `=hold_box`'ta seyrek `VISAUDIT overlap` **taban kayıtta da var** (pilot öncesi) |
 | 4 | Sözleşme | **TAMAM** | `SURSOZLESME PASS kalem=13 kesim=8`; `SUROYUN … havada=0 gomuk=0 katida=0`; `WALKTHRU OZET yol=7 tamam=7 takilma=0 dusme=0` |
 | 5 | Gerçek yürüyüş | **TAMAM** | iki sette 10 bacak, takılma 0, düşme 0, etkileşim eksiği 0 |
@@ -29,7 +29,7 @@
 2. **Moloz sırtı yanlış yerdeydi** (20o `=wide` düellosu 41/43 sn ↔ eski 13/11). `SurSet.moloz_sirti()` duvarın ortasını veriyordu;
    eskide sırt dış yüzün 0,2 m DIŞI, bütün barikat aşamalarının ova tarafıydı. Aşama 4'te `GedikOnarim` dış yüze insan boyu kazık
    çit (çarpışmalı) kurar: azaplar çitin içinde, oyuncu dışında kalıyordu. → sırt dış yüz + 1,4 m (çitin bir kişi payı önü).
-   Sonuç: 20o `=wide` 2. dalga 43 → 22 sn; Bölüm 20 2. dalgası 31 → 17 sn (eski 24). **1. dalga hâlâ 35–41 sn (KISMEN)**:
+   Sonuç: 20o `=wide` 2. dalga 43 → 19–22 sn; Bölüm 20 2. dalgası ara sınamada 17 sn, son turda medyan 27 sn, aralık 13–60 (eski medyan 23). **1. dalga hâlâ 35–41 sn (KISMEN)**:
    deneyle kanıtlı neden aşama 4'ün dış çiti (çit çarpışması kapalı denemede 11/15 sn, `testler/ara_deneme_citsiz_wide*.txt`;
    deneme kayda girmedi). Çit sözleşme parçası: bkz. "tur 7'ye istekler".
 3. **Komutan taşıyıcıların arkasında kalıyordu** (`VISAUDIT personhidden key=D20_G_ASSAULT / D20_G_DUEL speaker=SPK_GIUST
@@ -59,7 +59,27 @@ Süzgeç `tests/run_tests.sh`'inki; her dosyada `KOSU … rc=` satırı. Ham ç�
 - **ara koşular** (her düzeltmenin sınaması): `ara_*.txt`.
 - **son tur** (bütün düzeltmelerden sonra, aynı matris): `son_*.txt` → aşağıdaki "Son tur" bölümü.
 
-<!-- SON_TUR -->
+### Son tur (bütün düzeltmelerden sonra; `testler/son_*.txt`, özet `testler/son_ozet.txt`)
+
+**93/93 `AUTOTEST PASS`**, `SCRIPT ERROR|VISAUDIT|WALKTHRU|HELDAUDIT|ARMAUDIT|WARN_FX|WARN_FLY|WARN_VOID` satırı **0**:
+Bölüm 20 yeni ×3 (7 çeşit + `--difficulty=0/2`) = 27, eski ×1 = 9; 20o yeni ×2 (10 çeşit) = 20, eski ×1 = 10; öteki 21 bölüm ×1;
+26 `=hold_box` ×6 (bu turda 6/6 temiz). Tek `WARN_` satırı 28o'da (`WARN_PORTRAIT_STUDIO SPK_SOLDIER D28O_S_BALL`): ilk turda da
+vardı, 28o bağdaştırıcı almıyor (pilot dışı, testi düşürmez). Bölüm 20/20o'da `WARN_` 0.
+
+Düello dalga süreleri (`WAVERUNNER t=`, sn; `=wide` hariç):
+
+| | 1. dalga medyan [aralık] | 2. dalga medyan [aralık] |
+|---|---|---|
+| 20 eski (n 9/8) | 9,0 [8,4–15,6] | 22,7 [18,9–34,2] |
+| 20 yeni (n 27/24) | 4,4 [1,8–12,4] | 27,2 [12,6–**60,1**] |
+| 20o eski (n 9/8) | 11,0 [9,0–13,7] | 14,2 [11,9–15,1] |
+| 20o yeni (n 18/16) | 11,4 [7,2–15,1] | 13,8 [6,2–17,6] |
+| 20o `=wide` eski / yeni | 9,3 / 32,4–35,7 | 22,3 / 19,0 |
+
+20o eskiyle aynı. **Bölüm 20'nin 2. dalgası yeni sette daha oynak** (bir koşuda dalga sınırı 60 sn'ye dayandı, yine kazanıldı):
+2. dalganın azapları moloz sırtından gelir ve gedik o saatte çoğu koşuda aşama 4'tedir; 20o `=wide` ile aynı aile (aşama 4'ün
+dış çiti). Bu madde **KISMEN** (tur 7'ye istek 3).
+
 
 ### AUTOTEST alanları eski ↔ yeni (ilk tur; alanların anlamı iki sette aynı, değerler aynı aralıkta)
 
@@ -93,8 +113,7 @@ Süzgeç `tests/run_tests.sh`'inki; her dosyada `KOSU … rc=` satırı. Ham ç�
 | wide | 20O.2 \| 20O.2 / 20O.2 | 0 \| 0 / 0 | 0 \| 0 / 0 | 3/4 \| 3/4 / 3/4 | 1/2 \| 8/8 / 7/7 | true \| true / true |  \|  /  |
 
 `gunner=a/b` (tüfekçinin atış/kaçınılan) düellonun süresine bağlıdır, iki sette de koşudan koşuya oynar. Düello dalga süreleri
-(`WAVERUNNER t=`): Bölüm 20 eski 1. dalga 8–18 sn ↔ yeni 4–11 sn; 2. dalga eski 16–30 ↔ yeni (son kod) 16–17 sn; 20o eski
-9–18 ↔ yeni 8–17 sn, **20o `=wide` eski 13/11 ↔ yeni 35–41/21–23 sn (KISMEN, kusur 2)**.
+(`WAVERUNNER t=`): Bölüm 20 eski 1. dalga 8–18 sn ↔ yeni 4–11 sn; 2. dalga: son tur tablosu (yukarıda). Bu tablo ilk tur değerleridir.
 
 ## 3. Öteki bölümler
 

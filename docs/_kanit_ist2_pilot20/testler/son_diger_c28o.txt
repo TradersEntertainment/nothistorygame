@@ -1,0 +1,3 @@
+WARN_PORTRAIT_STUDIO speaker=SPK_SOLDIER key=D28O_S_BALL scene=chapter28o.tscn
+AUTOTEST PASS chapter=28o variant= outcome=28O.1 stakes=4 slips=0 hit=true master=false roller_every=4.0 rollers=2
+KOSU ad=son_diger_c28o rc=0 sn=24 args=--chapter=28o --autotest

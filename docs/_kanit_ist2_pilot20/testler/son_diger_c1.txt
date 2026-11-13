@@ -1,0 +1,2 @@
+AUTOTEST PASS variant= outcome=1.1 bag=["phone", "lighter", "book", "chickpeas", "powerbank"] telsiz=2 bed=true
+KOSU ad=son_diger_c1 rc=0 sn=16 args=--autotest

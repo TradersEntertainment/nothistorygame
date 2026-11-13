@@ -1,0 +1,2 @@
+AUTOTEST PASS chapter=32o variant= outcome=32O.1 bundles=6/6 earth=2 arrows=0 rungs=6 bad=0 hits=3/3 fires=6 greek=2/2 hasan=water
+KOSU ad=son_diger_c32o rc=0 sn=45 args=--chapter=32o --autotest

@@ -2,30 +2,11 @@
 
 Taban kayıt: `9f32c394` (önceki oturum; kanıtsız).
 
-## Biten
-- 1. Kurulum + ayrıştırma: Godot 4.4.1, `--import`, `PARSECHECK PASS scripts=354`; Bölüm 20 yeni sette ilk koşu PASS.
-- 2. Test matrisi ilk tur (66 koşu): hepsi `AUTOTEST PASS`, denetim satırı 0 (`testler/`). Bulgular:
-  - yeni sette `=hit`/`=lose`'da `WARN_PORTRAIT_STUDIO SPK_LOOKOUT` → gözcü canlı değildi (en yakın kurulu dış kule x 35,4 >
-    yakın aralık 32). Düzeltildi (`garrison.gd _land_walls_sur`).
-  - 20o `=wide` düellosu 41/43 sn (eski 13/11): `SurSet.moloz_sirti()` duvarın ortasındaydı (aşama 4 çitinin içi).
-    Sırt dış yüz +1,4'e alındı → 2. dalga 22 sn, 1. dalga hâlâ 35–41 sn (KISMEN; neden aşama 4 dış çit, deneyle kanıtlı).
-- 3. Öteki bölümler: 21 bölüm varsayılan PASS, denetim 0. 26 `=hold_box`: 6+8 koşuda 2 `VISAUDIT overlap`; taban
-  kayıtta (20948418) da 12'de 1 (Squad/Squad) → pilot öncesinden. `spear_loop` hedef ayırma eklendi (yarış durumu).
+## Biten (hepsi; ayrıntı `rapor.md`)
+1 kurulum · 2 test matrisi (ilk tur 66/66, son tur 93/93 PASS, denetim 0) · 3 öteki bölümler · 4 sözleşme · 5 yürüyüş ·
+6 kareler (20: 10 çift, 20o: 6 çift) · 7 teşhis (SurDibiEtek → tur 7) · 8 bütçe · 9 rapor.
 
-- 4. Sözleşme: `SURSOZLESME PASS kalem=13 kesim=8`, `SUROYUN nokta=519 havada=0 gomuk=0 katida=0`,
-  `WALKTHRU OZET yol=7 tamam=7 takilma=0 dusme=0`.
-- 5. Yürüyüş: iki sette 10 bacak, takılma 0, düşme 0, etkileşim eksiği 0 (`testler/yuruyus_*.txt`).
-
-- Yerleşim düzeltmeleri: okçular eskideki yerine (gediğe 9,8 m), ok sandığı depo yanında; Giustiniani/Leon taşıyıcı
-  şeridinin karşı yanında (VISAUDIT personhidden kök nedeni); mini harita yeni sette yoktu → `SurSetSahne._harita()` (v2).
-- 7. Teşhis: siyah bant + dikdörtgen yama = sur kesiminin `SurDibiEtek` (sur_oturtma_ag.gd:451) → tur 7'ye istek.
-
-- 6. Kareler: Bölüm 20 10 çift, 20o 6 çift, paftalar (`kare/`).
-- 8. Bütçe: tek başına ölçüldü (`testler/butce_*.txt`).
-- 9. Rapor gövdesi yazıldı.
-
-## Süren
-- Son tam matris (93 koşu, `son_*`), rapora "Son tur" eklenecek.
-
-## Sıradaki
-- son tur sonuçları → rapor, kayıt.
+## Açık kalanlar
+- Gedik aşama 4 dış çiti düelloyu uzatıyor/oynatıyor (20o `=wide`, 20 2. dalga) → tur 7'ye istek 3.
+- 26 `=hold_box` seyrek VISAUDIT overlap: taban kayıtta da var, kök neden bulunmadı.
+- 20o gedik karesindeki yeşil levhaların kaynağı doğrulanmadı.
