@@ -18,10 +18,12 @@ const NIGHT := 170.0
 const ASSAULT_AT := 0.52       # gecenin bu oranında hücum
 const ARCHERS := Vector3(-9.0, 0.0, 11.0)
 const ARROWS := Vector3(6.2, 0.0, 0.2)
-## Yeni sette (iç kule gediğin sağında peribolosa çıkıntı yapar: okçu sırası ve ok sandığı solda). Eski↔yeni yürüme
-## mesafesi: ok sandığı → okçular 18,6 ↔ 17,7 m (docs/_kanit_ist2_pilot20/rapor.md)
-const ARCHERS_YENI := Vector3(-21.0, 0.0, 9.6)
-const ARROWS_YENI := Vector3(-4.6, 0.0, 3.0)
+## Yeni sette (iç kule gediğin sağında peribolosa çıkıntı yapar: okçu sırası ve ok sandığı solda). Okçular eskideki yerinde
+## (gediğe 9,8 m: gedik düellosu oyuncunun durduğu yerde başlar, okçular 21,8 m uzakken düello peribolosun ortasında
+## açılıyordu); ok sandığı depo yanında, iç surun dibinde. Hücumdaki ok koşusu (gedik önü → sandık → okçular) eski 13,0 +
+## 18,6 = 31,6 m ↔ yeni 18,1 + 12,0 = 30,1 m (docs/_kanit_ist2_pilot20/rapor.md)
+const ARCHERS_YENI := Vector3(-9.0, 0.0, 11.0)
+const ARROWS_YENI := Vector3(-16.0, 0.0, 1.2)
 ## Bölüm sabiti: true → eski set (geri dönüş; komut satırında --eskisur ile de)
 const ESKI_SUR := false
 const NIKO_EVERY := 15.0       # Niko'nun bir yükü (gece 170 sn: dost taşıyıcı yarım gedik kadar getirir)
@@ -993,7 +995,9 @@ func _yuru() -> void:
 	if kare:
 		player.face(archers_p + Vector3(0, 1.4, 1.0))
 		await _kare("okcular")
-		# tüfek ve gedik düellosu bölümün akışında (test botu); düello başlayınca kare
+		# tüfek ve gedik düellosu bölümün akışında (test botu); oyuncu gediğin önüne (düello yeri: =yuru'nun son bacağı)
+		await _yb("okcular_gedik_duello", [g_on], Vector3.INF, "")
+		player.face(sur.gedik() + Vector3(0, 1.4, 0))
 		while not _duel_on:
 			await get_tree().process_frame
 		await get_tree().create_timer(2.5, false).timeout
