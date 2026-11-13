@@ -61,6 +61,7 @@ func _ready() -> void:
 	var ovl := (kesim["kok"] as Node).find_child("Toprak_ZeminOva", true, false)
 	if ovl and ovl.get_child_count() > 0 and ovl.get_child(0) is Node3D:
 		(ovl.get_child(0) as Node3D).visible = false
+	_orticuler()
 	var t1 := Time.get_ticks_usec()
 	_build_depot()
 	_build_breach_set()
@@ -68,6 +69,39 @@ func _ready() -> void:
 	ms["set_ms"] = (Time.get_ticks_usec() - t1) / 1000.0
 	ms["sahne_ms"] = (Time.get_ticks_usec() - t0) / 1000.0
 	print("SURSET kesim=%s kurulum_ms=%.0f sur_ms=%.0f set_ms=%.0f" % [kesim_id, float(ms["sahne_ms"]), float(ms["toplam_ms"]), float(ms["set_ms"])])
+
+
+## Görünmez örtücüler (eski setin `_wall` örtücüsünün karşılığı): iç ve dış surun gövdesi. İçeriden bakınca ovadaki ordugâh,
+## dışarıdan bakınca şehir yakası çizilmez (eski LandWalls gövdeleri örtücüydü; yeni kesimin gövdeleri değil: peribolosta
+## 4600 çizim çağrısı ölçüldü). Görünüş değişmez. Gedik, dekor gedik ve yan dilimdeki Romanos kapısı açık bırakılır.
+func _orticuler() -> void:
+	var d: Dictionary = sur.d
+	var a = sur.a
+	var x0 := -float(a.L) * 0.5
+	var x1 := float(a.L) * 0.5
+	for yn in a.kesim["yan"]:
+		x0 = minf(x0, float(yn["x"]) - float(yn["L"]) * 0.5)
+		x1 = maxf(x1, float(yn["x"]) + float(yn["L"]) * 0.5)
+	var acik: Array = []      # yerel x aralıkları (örtücü yok)
+	for g in a.kesim["gedik"]["x"]:
+		acik.append([float(g) - IstSurlar.GEDIK_W * 0.5 - 1.0, float(g) + IstSurlar.GEDIK_W * 0.5 + 1.0])
+	for yn in a.kesim["yan"]:
+		if String(yn["secenek"]) != "SurDilimi":
+			acik.append([float(yn["x"]) - 4.5, float(yn["x"]) + 4.5])      # kapı koşusunun kapısı (orta)
+	var kok: Node3D = get_node("SurCerceve")
+	var o := Node3D.new()
+	o.name = "Orticuler"
+	kok.add_child(o)
+	var yi := float(d["HW"])
+	var yo := float(d["OH"])
+	var yt: float = a.y_teras()
+	for seg in IstSurlar._segs(x0, x1, acik):
+		var sa := float(seg[0])
+		var sb := float(seg[1])
+		if sb - sa < 2.0:
+			continue
+		Props.occluder(o, Vector3(sb - sa, yi, float(d["T"])), Vector3((sa + sb) * 0.5, yi * 0.5, 0.0))
+		Props.occluder(o, Vector3(sb - sa, yo - yt, float(d["OT"])), Vector3((sa + sb) * 0.5, (yo + yt) * 0.5, (float(d["zo0"]) + float(d["zo1"])) * 0.5))
 
 
 ## Depo: LandWalls._build_depot'un aynısı, yeni yerinde (SurSet.depo)
@@ -144,10 +178,10 @@ func _build_field() -> void:
 	_flash.light_energy = 0.0
 	_flash.omni_range = 60.0
 	add_child(_flash)
-	# büyük top ve parlaması ova düğümünde (CANNON eski ova koordinatıdır)
-	for n: Node3D in [far_gun, _flash]:
-		remove_child(n)
-		ova.add_child(n)
+	# büyük top ve parlaması: CANNON eski ova koordinatıdır, ova kaydırmasıyla yeni ovaya (sette doğrudan: bölümler
+	# gun.position'ı bölüm çerçevesinde kullanır, 20o)
+	far_gun.position += sur.ova_ofs()
+	_flash.position += sur.ova_ofs()
 
 
 ## LandWalls.fire_flash'in aynısı; namlu ağzı ova düğümünde (yeni ovada)

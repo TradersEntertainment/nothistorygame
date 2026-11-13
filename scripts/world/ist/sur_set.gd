@@ -572,11 +572,11 @@ func dogma(alan: String, n: int, tohum := 1453) -> Array:
 ## iç kulenin (x 0,2…9,2, eteğiyle −2,8…12,2; z ≤ 8) ve poternanın (x −17,9) dışında.
 
 func depo() -> Vector3:
-	return LandWalls.DEPOT if eski_mi else Vector3(-13.0, 0.0, 3.6)
+	return LandWalls.DEPOT if eski_mi else Vector3(-11.5, 0.0, 4.2)
 
 
 func dogus() -> Vector3:
-	return LandWalls.SPAWN if eski_mi else Vector3(-11.0, 0.05, 6.8)
+	return LandWalls.SPAWN if eski_mi else Vector3(-9.6, 0.05, 7.2)
 
 
 func siperler() -> Array:

@@ -83,6 +83,7 @@ func _ready() -> void:
 	hud.set_fez(false)
 	hud.set_signal(0)
 	hud.chase_music = "tension"
+	var t_kur := Time.get_ticks_usec()
 	sur = SurSet.sec("20", ESKI_SUR)
 	if sur.eski_mi:
 		walls = LandWalls.new()
@@ -93,9 +94,17 @@ func _ready() -> void:
 		archers_p = ARCHERS_YENI
 		arrows_p = ARROWS_YENI
 	add_child(walls)
+	var t_set := Time.get_ticks_usec()
 	_build()
-	if GameState.autotest and GameState.autotest_variant == "yuru":
+	if GameState.autotest:
+		# kurulum ölçümü (karar 12): set (sur + ova + dekor) ve bölümün kendi kurulumu (kişiler, hücum, garnizon)
+		print("PILOT20KURULUM sur=%s set_ms=%.0f bolum_ms=%.0f toplam_ms=%.0f" % ["eski" if sur.eski_mi else "yeni",
+			(t_set - t_kur) / 1000.0, (Time.get_ticks_usec() - t_set) / 1000.0, (Time.get_ticks_usec() - t_kur) / 1000.0])
+	if GameState.autotest and GameState.autotest_variant in ["yuru", "kare"]:
 		_yuru()
+		return
+	if GameState.autotest and GameState.autotest_variant == "butce":
+		_butce()
 		return
 	if GameState.autotest:
 		Engine.time_scale = 3.0
@@ -109,6 +118,9 @@ func _build() -> void:
 	giust = Person.new({"face": "giustiniani", "coat": Color("8a8e96"), "pants": Color("3a3a40"), "hat": "condottiero",
 		"beard": true, "skin": Color("e0b08a")})
 	giust.position = sur.on_rubble(sur.gedik() + Vector3(-4.4, 0, -5.4))     # işçilerin ve taşıyıcı şeritlerinin dışında
+	if not sur.eski_mi:
+		# yeni sette barikatın toprak seti peribolosa 5 m taşar (aşama 3–4): komutan setin önünde, siperin önünde
+		giust.position = sur.gedik_onu() + Vector3(-4.6, 0, -1.6)
 	add_child(giust)
 	giust.look_target = player
 	# Huruçtan dönen Leon (36.1): Giustiniani "gedikte, senin yanında" der; _breach_duel'da oyuncunun solunda durur
@@ -147,7 +159,7 @@ func _build() -> void:
 		niko = fight.swap_carrier(4, Person.new({"face": "niko", "coat": Color("8a2b22"), "pants": Color("4a3a2a"), "hair": Color("2a1e14"),
 			"hat": "helm", "mustache": true, "beard": true, "skin": Color("d9a07a")}), "plank")
 		niko.set_meta("spk", "SPK_NIKO")
-	fight.add_builders(sur.gedik() + Vector3(0, 0, -2.6) if sur.eski_mi else sur.gedik_onu() + Vector3(0, 0, -0.2), 4, 2060)
+	fight.add_builders(sur.gedik() + Vector3(0, 0, -2.6) if sur.eski_mi else sur.gedik_onu() + Vector3(0, 0, 0.4), 4, 2060)
 	fight.set_crew_active(false)
 	# Önceki gecelerin bedeli: peribolosta yerde yatan oklanmış savunucular, düşmüş kalkanlar, surdan kopmuş taşlar,
 	# kırık kılıçlar, dağılmış kalaslar (oyuncunun depo–gedik yolunu ve okçu sırasını kesmeyen yerlerde)
@@ -192,6 +204,16 @@ func _build() -> void:
 			chaos.avoid.append([m + Vector3(0, 0, 0.6), 2.0])
 	chaos.avoid_lines = [[sur.depo(), sur.gedik_onu(), 1.6], [arrows_p, archers_p, 1.4]]
 	add_child(chaos)
+	if GameState.autotest and not sur.eski_mi:
+		# yerleşim denetimi: set noktaları SurOyun.engeller()'in (kule + etek, merdiven, sur gövdesi, poterna…) dışında mı
+		var noktalar := {"depo": sur.depo(), "dogus": sur.dogus(), "ok_sandigi": arrows_p, "okcular": archers_p,
+			"siper0": sur.siperler()[0], "siper1": sur.siperler()[1], "giust": giust.position, "ates0": rings[0][0], "ates1": rings[1][0]}
+		var kotu := 0
+		for ad: String in noktalar:
+			if sur.engelde(noktalar[ad]):
+				kotu += 1
+				print("PILOT20ENGEL %s %s" % [ad, noktalar[ad]])
+		print("PILOT20ENGEL OZET nokta=%d engelde=%d" % [noktalar.size(), kotu])
 
 
 # ================================================================ akış
@@ -495,6 +517,7 @@ func _breach_duel() -> void:
 	var w1 := {"specs": specs, "max_active": 2, "skill": 0.35, "limit": 60.0}
 	if Mentor.current() == "leon" and Siege.outcome(36) == "36.1":
 		w1["intro"] = func(): hud.bark("SPK_LEON", "D20_LN_TALIM", 3.5)
+	_duel_on = true
 	var r: Dictionary = await WaveRunner.run(self, hud, player, [
 		w1,
 		{"specs": more, "max_active": 2, "skill": 0.4, "allies": 2, "limit": 60.0,
@@ -718,7 +741,7 @@ func _dawn() -> void:
 		player.face(LandWalls.BREACH + Vector3(0, 2.4, 0))
 	else:
 		# iç kulenin eteği gediğin sağında: tespit yeri gediğin önünde, biraz solda
-		player.global_position = sur.gedik_onu() + Vector3(-1.5, 0.05, -2.4)
+		player.global_position = sur.gedik_onu() + Vector3(-1.5, 0.05, -4.0)
 		player.face(sur.barikat() + Vector3(0, 0.6, 0))
 	await hud.card([[tr("UI_CH20_DAWN"), 26, Color("f2e6c9")]], 1.8)
 	hud.clear_card()
@@ -849,9 +872,29 @@ func _auto() -> void:
 ## Satır: PILOT20YURU bacak=<ad> sure=… yol=… takilma=… dusme=… etkilesim=… ; son satır PILOT20YURU OZET …
 ## Top atışı ve hücum bu koşuda yok (yalnız yürüme ölçülür); taşıyıcılar ve kalabalık açık.
 var _yz := {"bacak": 0, "takilma": 0, "dusme": 0, "etkilesim_yok": 0, "sure": 0.0, "yol": 0.0}
+## =kare: aynı yürüyüş, oyuncunun kamerasından on anın karesi (--dialogshots klasörüne an_XX_*.jpg): açılış, depo, gediğe
+## taşıma, onarım aşaması 2 ve 4 (dokuz yük), top uyarısında siper, hücum başlangıcı, ok sandığı, okçular, düello. Top
+## uyarısı ve hücum bölümün kendi akışından gelir (_process: _gun_t ve gece saati); tüfek ve düello test botuyla oynanır.
+var _duel_on := false
+var _kare_n := 0
+
+func _kare(ad: String) -> void:
+	var dir := GameState.dialog_shots_dir if GameState.dialog_shots_dir != "" else GameState.shots_dir
+	if dir == "":
+		return
+	DirAccess.make_dir_recursive_absolute(dir)
+	for k in 3:
+		await get_tree().process_frame
+	await RenderingServer.frame_post_draw
+	_kare_n += 1
+	var f := dir.path_join("an_%02d_%s.jpg" % [_kare_n, ad])
+	get_viewport().get_texture().get_image().save_jpg(f, 0.85)
+	print("PILOT20KARE %s repair=%d asama=%d phase=%s oyuncu=%s" % [f.get_file(), repair, SurSet.asama_of(repair), phase, player.global_position])
+
 
 func _yuru() -> void:
 	Engine.time_scale = 1.0
+	var kare := GameState.autotest_variant == "kare"
 	hud.set_fade(0.0)
 	player.global_position = sur.dogus()
 	player.frozen = false
@@ -861,9 +904,8 @@ func _yuru() -> void:
 	_set_crew(true)
 	for i in 10:
 		await get_tree().physics_frame
-	var d := sur.depo()
-	var dep_on := d + Vector3(-1.8, 0, 1.4)                       # fıçı yığınının önü (peribolos yanı)
-	var dep_bak := d + Vector3(-1.8, 1.0, -0.2)
+	var dep_on: Vector3 = _yigin("barrel")[0]                     # fıçı yığınının önü (peribolos yanı)
+	var dep_bak: Vector3 = _yigin("barrel")[1]
 	var g_on := sur.gedik() + Vector3(0, 0, -4.2) if sur.eski_mi else sur.gedik_onu() + Vector3(0, 0, -0.8)
 	var g_bak := sur.gedik() + Vector3(0, 1.5, -1.6) if sur.eski_mi else Vector3(0, 1.2, sur.gedik_onu().z + 1.4)
 	var ok_on := arrows_p + Vector3(0, 0, 1.4)
@@ -872,14 +914,65 @@ func _yuru() -> void:
 	var ar_bak := archers_p + Vector3(0, 1.2, 0.2)
 	var sp: Vector3 = sur.siperler()[0] + Vector3(0.3, 0, -1.2)
 	print("PILOT20YURU set=%s dogus=%s depo=%s gedik_onu=%s ok=%s okcu=%s siper=%s" % ["eski" if sur.eski_mi else "yeni", sur.dogus(), dep_on, g_on, ok_on, ar_on, sp])
-	await _yb("dogus_depo", [dep_on], dep_bak, "pile_barrel")
-	for k in 3:
-		await _yb("depo_gedik_%d" % (k + 1), [g_on], g_bak, "breach")
-		if k < 2:
-			await _yb("gedik_depo_%d" % (k + 1), [dep_on], dep_bak, "pile_barrel")
-	phase = "assault"
-	await _yb("gedik_oksandigi", [ok_on], ok_bak, "pile_arrows")
-	await _yb("oksandigi_okcular", [ar_on], ar_bak, "archers")
+	if kare:
+		player.face(giust.global_position + Vector3(0, 1.5, 0))
+		await _kare("acilis")
+	await _yb("dogus_depo", [dep_on], dep_bak, "pile_barrel", "depo" if kare else "")
+	var yk := 0
+	var siper_ok := false
+	while (kare and repair < 9) or (not kare and yk < 3):
+		await _yb("depo_gedik_%d" % (yk + 1), [g_on], g_bak, "breach", "gedige_tasima" if kare and yk == 0 else "")
+		if kare and repair == 3 and _kare_n < 4:
+			player.face(sur.barikat())
+			await _kare("onarim_asama2")
+		if kare and repair == 9:
+			player.face(sur.barikat())
+			await _kare("onarim_asama4")
+			break
+		if kare and repair >= 4 and not siper_ok:
+			# top uyarısı: bölümün kendi akışı (_process) ateşler; oyuncu siperin ardında
+			siper_ok = true
+			await _yb("gedik_siper", [sp], Vector3.INF, "")
+			_gun_t = 4.6
+			while not _warn:
+				await get_tree().process_frame
+			player.face(sur.top())
+			await _kare("top_uyarisi_siper")
+			while _warn:
+				await get_tree().process_frame
+			await get_tree().create_timer(1.6, false).timeout
+			print("PILOT20YURU siperde_devrilme=%d onarim=%d" % [_knocks, repair])
+			_gun_t = 9999.0
+		yk += 1
+		if (kare and repair < 9) or (not kare and yk < 3):
+			var pl := _yigin(needed())
+			await _yb("gedik_depo_%d" % yk, [pl[0]], pl[1], "pile_" + needed())
+	if kare:
+		# hücum: gece saati gece yarısına (bölümün kendi _start_assault'u, _process'ten)
+		_time = NIGHT * (1.0 - ASSAULT_AT) + 0.2
+		while phase != "assault":
+			await get_tree().process_frame
+		for k in 30:
+			await get_tree().process_frame
+		player.face(sur.gedik() + Vector3(0, 3.0, 8.0))
+		await _kare("hucum_baslangici")
+	else:
+		phase = "assault"
+	await _yb("gedik_oksandigi", [ok_on], ok_bak, "pile_arrows", "")
+	if kare:
+		await _kare("ok_sandigi")
+	await _yb("oksandigi_okcular", [ar_on], ar_bak, "archers", "")
+	if kare:
+		player.face(archers_p + Vector3(0, 1.4, 1.0))
+		await _kare("okcular")
+		# tüfek ve gedik düellosu bölümün akışında (test botu); düello başlayınca kare
+		while not _duel_on:
+			await get_tree().process_frame
+		await get_tree().create_timer(2.5, false).timeout
+		await _kare("duello")
+		print("PILOT20KARE BITTI")
+		get_tree().quit(0)
+		return
 	await _yb("okcular_siper", [sp], Vector3.INF, "")
 	print("PILOT20YURU siper_korunuyor=%s" % (not _exposed()))
 	await _yb("siper_gedik_duello", [g_on], Vector3.INF, "")
@@ -888,7 +981,18 @@ func _yuru() -> void:
 	get_tree().quit(0)
 
 
-func _yb(ad: String, wps: Array, bak: Vector3, etk: String) -> void:
+## Depodaki yığının önü ve bakılacak yeri (etkileşim alanları SurSetSahne/LandWalls._build_depot ile aynı)
+func _yigin(tur: String) -> Array:
+	var d := sur.depo()
+	match tur:
+		"earth":
+			return [d + Vector3(0.9, 0, 2.3), d + Vector3(0.9, 0.8, 0.5)]
+		"plank":
+			return [d + Vector3(3.8, 0, 1.2), d + Vector3(3.8, 0.6, -0.3)]
+	return [d + Vector3(-1.8, 0, 1.4), d + Vector3(-1.8, 1.0, -0.2)]
+
+
+func _yb(ad: String, wps: Array, bak: Vector3, etk: String, ara_kare := "") -> void:
 	var t := 0.0
 	var i := 0
 	var iz := 0.0
@@ -915,6 +1019,10 @@ func _yb(ad: String, wps: Array, bak: Vector3, etk: String) -> void:
 		elif player.velocity.y > -2.0:
 			dus_on = false
 		var dd := Vector2(p.x - wp.x, p.z - wp.z).length()
+		if ara_kare != "" and t > 2.2:
+			Input.action_release("move_forward")
+			await _kare(ara_kare)
+			ara_kare = ""
 		if dd < best - 0.3:
 			best = dd
 			iz = t
@@ -959,6 +1067,46 @@ func _yb(ad: String, wps: Array, bak: Vector3, etk: String) -> void:
 	_yz["yol"] += yol
 	print("PILOT20YURU bacak=%s sure=%.1f yol=%.1f takilma=%d dusme=%d etkilesim=%s yuk=%s onarim=%d %s" % [ad, t, yol, takil, dus,
 		"tamam" if etk_ok else "YOK", carrying, repair, " ".join(notlar)])
+
+
+## Bütçe (=butce, pencereli koşu: çizim çağrısı başsızda 0): dört bakışta kare başına çizim çağrısı ve ilkel sayısı (10 kare
+## ortalaması). Bakışlar iki sette aynı göreli yerden: peribolos (doğuştan gediğe), gedik ağzı (gedikten ovaya), sur yolu
+## (tüfek yeri, hücum görünür), hava (yukarıdan bütün sahne).
+func _butce() -> void:
+	Engine.time_scale = 1.0
+	hud.set_fade(0.0)
+	player.frozen = true
+	_set_crew(true)
+	var hava := Camera3D.new()
+	add_child(hava)
+	var bakis := [
+		["peribolos", sur.dogus() + Vector3(0, 0.05, 0), sur.gedik() + Vector3(0, 2.0, 0), false],
+		["gedik_agzi", (sur.gedik() + Vector3(0, 0, -4.2)) if sur.eski_mi else sur.gedik_onu(), sur.gedik() + Vector3(0, 1.0, 30.0), false],
+		["sur_yolu", Vector3(-10.0, sur.dis_yol_y() + 0.05, 15.3 if sur.eski_mi else sur.dis_yol_z()), Vector3(0, sur.teras_y() - 1.0, 28.0), true],
+		["hava", Vector3(-30.0, 34.0, -16.0), sur.gedik() + Vector3(0, 0, 12.0), true]]
+	for b: Array in bakis:
+		assault.visible = b[3]
+		assault.process_mode = Node.PROCESS_MODE_INHERIT if b[3] else Node.PROCESS_MODE_DISABLED
+		if String(b[0]) == "hava":
+			hava.global_position = b[1]
+			hava.look_at(b[2], Vector3.UP)
+			hava.make_current()
+		else:
+			player.camera.make_current()
+			player.global_position = b[1]
+			player.face(b[2])
+		for k in 40:
+			await get_tree().process_frame
+		var dc := 0.0
+		var pr := 0.0
+		for k in 10:
+			await RenderingServer.frame_post_draw
+			dc += RenderingServer.get_rendering_info(RenderingServer.RENDERING_INFO_TOTAL_DRAW_CALLS_IN_FRAME)
+			pr += RenderingServer.get_rendering_info(RenderingServer.RENDERING_INFO_TOTAL_PRIMITIVES_IN_FRAME)
+		print("PILOT20BUTCE sur=%s bakis=%s cizim=%.0f ilkel=%.0f" % ["eski" if sur.eski_mi else "yeni", b[0], dc / 10.0, pr / 10.0])
+		if GameState.shots_dir != "":
+			get_viewport().get_texture().get_image().save_png(GameState.shots_dir.path_join("butce_%s_%s.png" % ["eski" if sur.eski_mi else "yeni", b[0]]))
+	get_tree().quit(0)
 
 
 # ================================================================ bölüm sonu
@@ -1091,7 +1239,7 @@ func _run_shots() -> void:
 	walls.set_repair(repair)
 	player.camera.make_current()
 	_drop()
-	player.global_position = sur.gedik() + Vector3(1.5, 0.05, -7.5) if sur.eski_mi else sur.gedik_onu() + Vector3(-1.5, 0.05, -2.4)
+	player.global_position = sur.gedik() + Vector3(1.5, 0.05, -7.5) if sur.eski_mi else sur.gedik_onu() + Vector3(-1.5, 0.05, -4.0)
 	player.face(sur.gedik() + Vector3(0, 2.4, 0))
 	await get_tree().create_timer(0.3, false).timeout
 	await _shot("c20_04_dawn.png")
