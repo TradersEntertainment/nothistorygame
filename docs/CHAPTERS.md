@@ -292,6 +292,10 @@ flowchart TD
 
 *Tek oyunda 4a/4b ve 6a/6b'den biri (aynı taraf) ve 10'un altı bölümünden biri oynanır. Süre ≈ 3–3,5 saat.*
 
+*Perde IV (Hasar Tespit, kuşatma sayfaları) ayrı listededir: `docs/SIEGE.md` ve `Siege.ORDER`. Son eklenen sayfa:
+**Bölüm 44b — Sarnıç** / *The Cistern* (yalnız Bizans tarafı, 26 Mayıs 1453; Bizans sırasında 24 ile 25 arasında; 8–12 dk;
+iki sonuç: 44.1 sırrı korudu, 44.2 ağzından kaçırdı). Tasarım ve araştırma: `docs/BOLUM_YEREBATAN.md`.*
+
 ---
 
 ## PERDE I — Düşüş (demo)

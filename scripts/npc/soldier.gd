@@ -16,6 +16,9 @@ var _t := 0.0
 var _last_pos := Vector3.ZERO
 var talking := false
 var look_target: Node3D
+## İş odağı (Stage.grip_hold): >0 iken look_target gövdeyi çevirmez; work_at işin dünya noktasıdır (yoksa Vector3.INF).
+var work_focus := 0
+var work_at := Vector3.INF
 var _mouth: MeshInstance3D
 static var _count := 0
 var rig: Rig
@@ -283,6 +286,7 @@ func _process(delta: float) -> void:
 				if get_parent() is Node3D:   # taşıyıcının (kayık, gemi) dönüşüne göre yerel yön
 					to = (get_parent() as Node3D).global_transform.basis.inverse() * to
 				to.y = 0.0
+				to = Stage.gaze_dir(self, rig.activity if rig else "", talking, to, mv, delta)      # iş/yürüyüş sürerken gövde işine döner
 				if to.length() > 0.1:
 					rotation.y = lerp_angle(rotation.y, atan2(to.x, to.z), clampf(delta * 4.0, 0.0, 1.0))
 			rig.update(delta, talking, false)
@@ -338,6 +342,7 @@ func equip(kind: String, shield_color := Color("8a2b22")) -> void:
 	match kind:
 		"spear":
 			var sp := Node3D.new()
+			sp.name = "Spear"        # sahne betiği (8y nöbetçisi) işe girişirken yere diker
 			_elbow_r.add_child(sp)
 			sp.position = Vector3(0, -0.28, 0.06)
 			sp.rotation_degrees = Vector3(0, 0, -7)      # üst uç dışa yatık (başlığa girmez)

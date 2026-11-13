@@ -36,6 +36,15 @@ var _edge_said := false
 var _after_warranty_said := false
 var _stumble_i := 0
 var _outcome := ""
+## Yakalayan askerlerin durduğu yer (oyuncuya göre: ileri, yan) ve bkz. _seize
+const SEIZE_AHEAD := 1.0
+const SEIZE_SIDE := 0.55
+const GRIP_PTS := [Vector3(0, 0.035, 0.07)]      # oyuncunun görünen bileğinde tutuş noktası (el çerçevesinde)
+const SEIZE_STAND_Y := 0.1       # askerin zemini, oyuncunun ayağından bu kadar yüksek olursa omuz bileğe yetişir
+const SEIZE_LIFT_MAX := 0.35     # alçak zemini en çok bu kadar kabartır (ayak havada görünmez)
+const FREE_HOLD := Vector3(-0.24, -0.2, -0.45)   # Tolga'nın sol elinin kameradaki yeri (_grab_arms)
+const SEIZE_BACK := 0.72         # askerin gövde merkezi, bileğin ışın üzerinde bu kadar ötesinde
+const GRIP_MAX := 0.10                            # avuç-bilek hatası sınırı (m); _seize_audit denetler
 var _arrow_hits := 0
 var _shore_props: Array = []
 var _priority_until := 0.0   # önemli telsiz satırı (garanti) bitene dek tökezleme repliği onu kesmez
@@ -577,7 +586,9 @@ func _to_shore() -> void:
 		_outcome = "2.1"
 		# Yakalayanlar kameranın önünde, yüzleri görünür: kıyıya çıkan oyuncunun 2-3 m önünde
 		_show_watchers(false)
-		var guards := _shore_guards(landing, _shore_look(landing))
+		player.look_lock = true       # askerler yerleşene dek (en çok ~3 sn) bakış sabit; sonra _seize_release_lock
+		_lock_t0 = Time.get_ticks_msec()
+		var guards := _shore_guards(landing, _cam_look(landing))
 		await hud.fade_to(0.0, 0.45)
 		_seize(guards, landing)
 		await _say("SPK_SOLDIER", "D2_S_14" if GameState.flags.get("fez", true) else "D2_S_14_NOFEZ")
@@ -588,7 +599,9 @@ func _to_shore() -> void:
 		await _say("SPK_SOLDIER", "D2_S_16")
 		await Handover.wait(self, 0.05 if Stage.fast() else 0.6)
 		await _budget()
+		_seize_report()
 		player.free_hold = Vector3.INF
+		player.look_lock = false
 		for g in guards:
 			g.queue_free()
 
@@ -1163,19 +1176,100 @@ func _spot_clear(p: Vector3) -> bool:
 	return true
 
 
+## Kameranın anlık yatay bakış yönü (birim); kamera yoksa kıyı bakışı.
+func _cam_fwd(at: Vector3) -> Vector3:
+	var fwd := Vector3.ZERO
+	if is_instance_valid(player) and player.camera:
+		fwd = -player.camera.global_transform.basis.z
+	if Vector2(fwd.x, fwd.z).length() < 0.2:
+		fwd = _shore_look(at) - at
+	fwd.y = 0.0
+	return fwd.normalized()
+
+
+## _cam_fwd yönünde, _shore_look ile aynı uzaklıkta nokta (askerlerin diziliş yönü).
+func _cam_look(at: Vector3) -> Vector3:
+	var d := (_shore_look(at) - at)
+	d.y = 0.0
+	return at + _cam_fwd(at) * maxf(d.length(), 1.0) + Vector3(0, _shore_look(at).y - at.y, 0)
+
+
 ## Kıyıda bakılacak nokta: kıyı boyunca, göz hizasının biraz altı (eskiden göğe bakıyordu).
 ## Yakalama: askerler bağırarak koşup gelir, biri Tolga'yı kolundan tutar (eskiden 2.6 m önde belirip bağırıyor,
 ## sonra göz önünde siliniyorlardı; QA_DERSLER "yakalama yüz yüze").
 func _seize(guards: Array[Node3D], at: Vector3) -> void:
-	var fwd := _shore_look(at) - at
-	fwd.y = 0.0
-	fwd = fwd.normalized()
+	player.look_lock = true
+	var fwd := _cam_fwd(at)
 	var side := Vector3(-fwd.z, 0.0, fwd.x)
-	# Kol boyuna gelirler (tur 4: oyuncunun iki yanında yarım adım geride, 1,05 m açıkta: yüzleri kadrajın kenarında, gövdeleri kameranın yakın düzlemine girmez; gövde öne eğilip kollar bileklere uzanır): ayakları her adımda kuma/çimene basar (eskiden doğrusal
-	# tween eğimde havada yürütüyordu, bazen 6 m'de kalıp boşluğa uzanıyorlardı)
+	# Kol boyuna gelirler: ayakları her adımda kuma/çimene basar (eskiden doğrusal tween eğimde havada yürütüyordu, bazen
+	# 6 m'de kalıp boşluğa uzanıyorlardı). Oyuncunun önünde, 1 m ileride ve 0,55 m yanda dururlar: yüzleri kadrajda,
+	# yolları oyuncuya varmadan biter. Tur 4'te oyuncunun hizasında (0,3 m önde, 1,05 m yanda) duruyorlardı; tutarken
+	# 0,4 rad eğilince başları kameranın 15 cm önüne ve 45 cm yanına, omuzları kameranın arkasına geçiyordu: fragmanda
+	# askerler kameranın içinden geçiyordu (sonuç 2.1 ve 2.4; denetim _seize_audit).
 	for i in guards.size():
-		Stage.walk_on_ground(guards[i], at + fwd * 0.3 + side * (-1.05 if i == 0 else 1.05), _ground_y, 3.2, at + Vector3(0, 1.4, 0))
+		var spot := _seize_spot(at, fwd, i)
+		Stage.walk_on_ground(guards[i], spot, _seize_ground, 3.2, at + Vector3(0, 1.4, 0))
+	_seize_release_lock(guards)
 	await Handover.wait(self, 0.05 if Stage.fast() else 0.3)
+
+
+## Bakış kilidi yalnız askerlerin yürüyerek yerleştiği kısa pencerede tutulur (en çok 2,6 sn; eskiden yakalamanın
+## sonuna dek 8-14 sn'ydi). Sonra oyuncu bakışını çevirebilir: askerler her karede bileğin ışınına yumuşakça taşınır ve
+## kollar bileğe yetişir (_seize_spot). Ölçüm: SEIZE_LOCK satırı (yalnız testte).
+var _seize_following := false
+var _lock_t0 := 0
+
+func _seize_release_lock(guards: Array[Node3D]) -> void:
+	var t := 0.0
+	while t < 2.6:
+		var busy := false
+		for g in guards:
+			if is_instance_valid(g) and g.get_meta("stage_walk", false):
+				busy = true
+		if not busy or not is_instance_valid(player):
+			break
+		await get_tree().process_frame
+		t += get_process_delta_time()
+	if is_instance_valid(player):
+		player.look_lock = false
+	_seize_following = true
+	if GameState.autotest:
+		print("SEIZE_LOCK walk_secs=%.2f total_secs=%.2f" % [t, (Time.get_ticks_msec() - _lock_t0) / 1000.0])
+	while _seize_following and is_instance_valid(player):
+		await get_tree().process_frame
+		var k := clampf(get_process_delta_time() * 8.0, 0.0, 1.0)
+		for i in guards.size():
+			var g := guards[i]
+			if not is_instance_valid(g):
+				continue
+			var sp := _seize_spot(player.global_position, Vector3.ZERO, i)
+			g.global_position = g.global_position.lerp(sp, k)
+			Stage.face(g, player.global_position)
+
+
+## Yakalayan askerin duruş yeri: bileğin kameradan geçen ışını üzerinde, bileğin SEIZE_BACK ötesinde. Eskiden sabit
+## "1 m önde, 0,55 m yanda" idi: omuz bileğe yamaçta ve bakış 90°/180° iken kol boyundan (~0,5 m) uzak kalıyordu, yumruk
+## bileğin yanında havada duruyordu (hata 0,25 m). Omuz ışının üstünde olunca hem bileğe yakın hem kameradan uzaktır.
+func _seize_spot(at: Vector3, fwd: Vector3, i: int) -> Vector3:
+	var cam := player.camera.global_position
+	var w: Vector3
+	if i == 0:
+		w = player.camera.to_global(FREE_HOLD + Vector3(0, 0.035, 0.07))
+	else:
+		w = player.hand.to_global(GRIP_PTS[0]) if player.hand else cam + fwd * 0.45 + Vector3(-fwd.z, 0, fwd.x) * 0.3
+	var d := Vector3(w.x - cam.x, 0.0, w.z - cam.z)
+	var wr := d.length()
+	d = d.normalized() if wr > 0.05 else fwd
+	var q := Vector3(cam.x, 0.0, cam.z) + d * (wr + SEIZE_BACK)
+	return Vector3(q.x, _seize_ground(q.x, q.z), q.z)
+
+
+## Yakalayanların basacağı yer: zemin, oyuncunun ayağından alçaksa en çok SEIZE_LIFT_MAX kadar yükseltilmiş.
+func _seize_ground(x: float, z: float) -> float:
+	var gy := _ground_y(x, z)
+	if is_instance_valid(player):
+		gy += clampf(player.global_position.y + SEIZE_STAND_Y - gy, 0.0, SEIZE_LIFT_MAX)
+	return gy
 
 
 ## Askerler varana dek bekler (en çok 4 sn).
@@ -1195,16 +1289,80 @@ func _seize_done(guards: Array[Node3D]) -> void:
 ## İki asker Tolga'yı iki bileğinden tutar: Tolga'nın sol eli de görünür (yarı kalkık), sağdaki asker sağ bileği,
 ## soldaki sol bileği kavrar; askerler öne eğilir, eller bileklerin üstünde her karede yerinde kalır (Stage.grip_hold).
 ## Eskiden hedef kameranın önünde boşluktaydı: kol boşluğa uzanıyor, yumruk havada kalıyordu.
-func _grab_arms(guards: Array[Node3D], hold: float, lean := 0.4) -> void:
-	player.free_hold = Vector3(-0.24, -0.2, -0.45)
+func _grab_arms(guards: Array[Node3D], hold: float, lean := 0.22) -> void:
+	player.free_hold = FREE_HOLD
+	var hands: Array[Node3D] = []
 	for i in mini(2, guards.size()):
 		var g := guards[i]
 		if g is Soldier:
 			(g as Soldier).pose = "stand"
 		Stage.face(g, player.global_position)
 		var hand: Node3D = player.free_hand if i == 0 else player.hand
+		hands.append(hand)
 		if hand:
-			Stage.grip_hold(g, hand, [Vector3(0, 0.035, 0.07)], hold + 4.0, lean)
+			Stage.grip_hold(g, hand, GRIP_PTS, hold + 4.0, lean)
+	if GameState.autotest:
+		_seize_audit(guards, hold, hands)
+
+
+## Yakalayan askerin gövdesi kameranın içinden ya da yanından geçiyor mu (test). Baş, omuzlar ve dirsekler kameranın
+## yerelinde: kameranın 25 cm önünden geride ve görüş ekseninden 0,8 m'den yakınsa asker kameranın içinde/yanındadır.
+## Unclip.walk_audit (WALKTHRU) bunu göremez: yalnız görünen StaticBody3D'lere ışın atar (oyuncu CharacterBody3D) ve
+## testte (PACE dışı) askerler yürümeden varır (Stage.fast); tutarken öne eğilme de yürüme sayılmaz.
+var _seize_worst := {}       # "asker:parça" (sabit ad) -> süre boyunca en kötü (en derin) kayıt
+var _seize_closest := INF    # kameraya en yakın parça uzaklığı (bilgi)
+var _seize_grip := [0.0, 0.0]    # asker başına süre boyunca en büyük avuç-bilek hatası (m)
+
+
+func _seize_audit(guards: Array[Node3D], seconds: float, hands: Array[Node3D] = []) -> void:
+	var t := 0.0
+	_seize_worst = {}
+	_seize_closest = INF
+	_seize_grip = [0.0, 0.0]
+	while t < seconds:
+		await get_tree().process_frame
+		t += get_process_delta_time()
+		if not is_instance_valid(player) or player.camera == null:
+			break
+		# Avuç-bilek hatası (Stage.grip kolu aynı pozda yeniden kurar; grip_hold her karede aynısını yapıyor)
+		if t > 0.2:
+			for gi in mini(guards.size(), hands.size()):
+				if is_instance_valid(guards[gi]) and is_instance_valid(hands[gi]):
+					_seize_grip[gi] = maxf(_seize_grip[gi], Stage.grip(guards[gi], hands[gi], GRIP_PTS))
+		for gi in guards.size():
+			var g := guards[gi]
+			if not is_instance_valid(g):
+				continue
+			var rg := Handover.rig_of(g)
+			if rg == null:
+				continue
+			var parts := {"head": rg.head, "arm_l": rg.arm_l, "arm_r": rg.arm_r, "elbow_l": rg.elbow_l, "elbow_r": rg.elbow_r}
+			for pn: String in parts:
+				var part: Node3D = parts[pn]
+				if part == null:
+					continue
+				var lp := player.camera.to_local(part.global_position)
+				_seize_closest = minf(_seize_closest, lp.length())
+				if lp.z > -0.25 and Vector2(lp.x, lp.y).length() < 0.8:
+					var key := "%d:%s" % [gi, pn]
+					if not _seize_worst.has(key) or lp.z > _seize_worst[key][1].z:
+						_seize_worst[key] = [g.get_meta("speaker", g.name), lp, part.global_position]
+
+
+## Süre boyunca en kötü değeri parça başına bir kez basar (yalnız testte; iki çağrı yeri askerleri silmeden önce çağırır).
+func _seize_report() -> void:
+	_seize_following = false
+	if not GameState.autotest:
+		return
+	print("SEIZE_GRIP err=%.3f/%.3f max=%.2f %s" % [_seize_grip[0], _seize_grip[1], GRIP_MAX, "ok" if maxf(_seize_grip[0], _seize_grip[1]) <= GRIP_MAX else "OVER"])
+	if _seize_worst.is_empty():
+		print("SEIZE_AUDIT ok closest=%.2f" % _seize_closest)
+		return
+	for key: String in _seize_worst:
+		var w: Array = _seize_worst[key]
+		print("WALKTHRU scene=chapter2.tscn who=%s at=%s by=player/camera part=%s local=%s src=chapter2.gd:_seize" % [
+			w[0], (w[2] as Vector3).snapped(Vector3.ONE * 0.1), key.get_slice(":", 1), (w[1] as Vector3).snapped(Vector3.ONE * 0.01)])
+	_seize_worst = {}
 
 
 ## Kızaktan uzağa, kıyı boyunca bakar (kadırga arkada kalır).
@@ -1308,7 +1466,9 @@ func _to_chain() -> void:
 		var landing := _land_on_shore()
 		player.face(_shore_look(landing))
 		_show_watchers(false)
-		var guards := _shore_guards(landing, _shore_look(landing))
+		player.look_lock = true
+		_lock_t0 = Time.get_ticks_msec()
+		var guards := _shore_guards(landing, _cam_look(landing))
 		await hud.fade_to(0.0, 0.8)
 		_seize(guards, landing)
 		await _say("SPK_SOLDIER", "D2_S_23")
@@ -1316,7 +1476,9 @@ func _to_chain() -> void:
 		_grab_arms(guards, 3.5)
 		await Handover.wait(self, 0.15 if Stage.fast() else 1.65)     # eski tek kollu uzanışın süresi (0,35 + 1,0 + 0,3)
 		await _budget()
+		_seize_report()
 		player.free_hold = Vector3.INF
+		player.look_lock = false
 		for g in guards:
 			g.queue_free()
 

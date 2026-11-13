@@ -142,6 +142,14 @@ func _ground() -> void:
 			Props.set_pattern(sb, C_STONE.darkened(0.12 + 0.05 * j), "ashlar")     # dokusuz açık taş güneşte bembeyaz görünüyordu
 			Props.make_solid(sb)
 	Props.make_solid(Props.box(self, Vector3(2.2, 0.4, 1.2), Vector3(-6.0, QUAY_Y + 0.2, -8.0), Color("6a4a2c")))
+	# Şantiyenin zemini (yayma P3: düz petek taş): taş yığınlarının, iskelenin ve harç teknesinin çevresinde yontu kırığı,
+	# iskele dibinde talaş; seyrek ve düzensiz (yığınlardan uzaklaştıkça azalır)
+	var qy := func(_x: float, _z: float) -> float: return QUAY_Y
+	var near_work := func(x: float, z: float) -> bool:
+		var d := minf(Vector2(x + 6.0, z + 11.0).length() * 0.7, Vector2(x + 4.0, z + 15.5).length())
+		return fposmod(sin(x * 12.9898 + z * 78.233) * 43758.5453, 1.0) < clampf(1.25 - d / 9.0, 0.0, 1.0)
+	Nature.ground_detail(self, Rect2(-20.0, -16.0, 30.0, 13.0), "rubble", 0.32, 3311, qy, near_work)
+	Nature.ground_detail(self, Rect2(-12.0, -16.0, 16.0, 6.0), "chips", 0.22, 3312, qy, near_work)
 	Props.box(self, Vector3(2.0, 0.1, 1.0), Vector3(-6.0, QUAY_Y + 0.42, -8.0), Color("b8b0a0"))
 
 
@@ -210,11 +218,14 @@ func _scaffold() -> void:
 	for x: float in [-10.0, -6.0, -2.0, 2.0]:
 		for z: float in [z0 + 0.2, z1]:
 			Props.make_solid(Props.cyl(self, 0.09, WALK_Y - QUAY_Y + 1.2, Vector3(x, (WALK_Y + QUAY_Y) * 0.5 + 0.6, z), Color("6a4a2c"), Vector3.ZERO, 6))
+	# Yatay kirişler tek ağda (yayma P3: ~40 ayrı çizimdi; şantiyeye eklenen aletlerin ve zemin ayrıntısının çizimini karşılar)
+	var beams := Dressing.new(206)
 	var y := QUAY_Y + 1.2
 	while y < WALK_Y:
-		Props.box(self, Vector3(12.4, 0.1, 0.1), Vector3(-4.0, y, z1), Color("7a5634"))
-		Props.box(self, Vector3(0.1, 0.1, 4.0), Vector3(CLIMB_X - 1.0, y, (z0 + z1) * 0.5), Color("7a5634"))
+		beams.box(Vector3(12.4, 0.1, 0.1), Vector3(-4.0, y, z1), Color("7a5634"))
+		beams.box(Vector3(0.1, 0.1, 4.0), Vector3(CLIMB_X - 1.0, y, (z0 + z1) * 0.5), Color("7a5634"))
 		y += 1.2
+	beams.build(self)
 	# 2. kat döşemesi
 	var deck := Props.solid(self, Vector3(12.4, 0.2, z1 - z0), Vector3(-4.0, DECK2_Y - 0.1, (z0 + z1) * 0.5), Color.WHITE)
 	Props.set_pattern(deck, C_WOOD, "wood")
@@ -257,6 +268,15 @@ func _scaffold() -> void:
 		w.position = Vector3(-1.0 + i * 1.4, DECK2_Y, z0 + 1.0)
 		w.rotation.y = PI
 		w.set_activity(["hammer", "stir", "hammer"][i])
+		# Elde alet (yayma P3: aletsiz havaya vuruyorlardı): ikisi çekiçle kulenin yüzündeki taşı düzeltir, biri yanındaki
+		# teknede harç karıştırır
+		if i == 1:
+			var tub := w.position + Vector3(0.55, 0.0, -0.35)       # kişinin yerelinde (−0,55, 0, 0,35): sol önü
+			Props.cyl(self, 0.26, 0.62, tub + Vector3(0, 0.31, 0), Color("6a4a2c"), Vector3.ZERO, 10, 0.3)
+			Props.cyl(self, 0.24, 0.02, tub + Vector3(0, 0.6, 0), Color("b8b0a0"), Vector3.ZERO, 10)
+			w.give_tool("paddle", {"aim": Vector3(-0.55, 0.62, 0.35)})
+		else:
+			w.give_tool("hammer")
 
 
 ## Çıkrık: kulenin tepesinde dikme ve dışarı uzanan kol (ucunda makara); tambur rıhtımda, iki işçi çevirir
@@ -283,6 +303,9 @@ func _crane() -> void:
 
 ## Zağanos ve Saruca Paşa'nın kuleleri (yamaçta): iskeleleri ve çıkrıkları, yükselen-inen taşlar
 func _rivals() -> void:
+	# İskele dikmeleri, kat kalasları ve çıkrık kolu tek ağda (yayma P3: şantiye ayrıntısının çizim çağrısını karşılar;
+	# 80 m ötede ayrı ayrı ~40 çizimdi)
+	var d := Dressing.new(285)
 	for spec in [[Vector3(78.0, 0, -66.0), 7.5, 22.0], [Vector3(-76.0, 0, -60.0), 7.0, 20.0]]:
 		var c: Vector3 = spec[0]
 		var r: float = spec[1]
@@ -292,13 +315,14 @@ func _rivals() -> void:
 		Props.set_pattern(b, C_STONE.darkened(0.04), "ashlar")
 		Props.make_solid(b)
 		for x: float in [-4.0, 0.0, 4.0]:
-			Props.cyl(self, 0.09, h * 0.8, Vector3(c.x + x, gy + h * 0.4, c.z + r + 1.0), Color("6a4a2c"), Vector3.ZERO, 6)
+			d.cyl(0.09, h * 0.8, Vector3(c.x + x, gy + h * 0.4, c.z + r + 1.0), Color("6a4a2c"), Vector3.ZERO, 6)
 		for y in range(3, int(h * 0.8), 3):
-			Props.box(self, Vector3(9.0, 0.12, 1.2), Vector3(c.x, gy + y, c.z + r + 1.0), C_WOOD)
-		Props.box(self, Vector3(0.25, 0.25, 7.0), Vector3(c.x, gy + h + 2.5, c.z + r - 1.5), Color("6a4a2c"))
+			d.box(Vector3(9.0, 0.12, 1.2), Vector3(c.x, gy + y, c.z + r + 1.0), C_WOOD)
+		d.box(Vector3(0.25, 0.25, 7.0), Vector3(c.x, gy + h + 2.5, c.z + r - 1.5), Color("6a4a2c"))
 		var st := Props.box(self, Vector3(1.0, 0.6, 0.7), Vector3(c.x, gy + 2.0, c.z + r + 2.0), C_STONE)
 		Props.cyl(st, 0.03, 4.0, Vector3(0, 2.3, 0), Color("b89a6a"), Vector3.ZERO, 4)
 		rival_stones.append([st, gy + 2.0, gy + h - 2.0, randf() * TAU])
+	d.build(self)
 
 
 ## Batarya: küçük top (uyarı) ve Urban'ın büyük topu; ikisi de "Pivot/Muzzle" düğümlü (CannonCrew)

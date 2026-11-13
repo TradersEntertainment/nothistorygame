@@ -35,6 +35,7 @@ const SPEAKER_COLORS := {
 	"SPK_RIDER": Color("a8c8f0"),
 	"SPK_ENVOY": Color("d8b878"),
 	"SPK_FISHMONGER": Color("a8c0d0"),
+	"SPK_YAKOVOS": Color("a8c0d0"),
 	"SPK_WINE": Color("d890a0"),
 	"SPK_PODESTA": Color("e0a0a8"),
 	"SPK_NOTARY": Color("b8b8c8"),
@@ -75,12 +76,12 @@ const VOICE := {"SPK_HIKMET": 140.0, "SPK_TOLGA": 210.0, "SPK_NIHAT": 120.0, "SP
 	"SPK_LUTFI": 180.0, "SPK_URBAN": 100.0, "SPK_GIUST": 130.0, "SPK_EMPEROR": 125.0, "SPK_CLERK": 165.0,
 	"SPK_THEODOROS": 145.0, "SPK_CANDARLI": 115.0,
 	"SPK_CEMIL": 105.0, "SPK_PASHA": 100.0, "SPK_AGA": 150.0, "SPK_CAMELEER": 118.0, "SPK_DERVISH": 95.0, "SPK_TAILOR": 200.0, "SPK_FATIH": 112.0, "SPK_MANAGER": 140.0, "SPK_RIDER": 175.0, "SPK_ENVOY": 118.0, "SPK_FISHMONGER": 150.0, "SPK_WINE": 135.0, "SPK_NOTARY": 170.0, "SPK_DOUBLE": 145.0, "SPK_CAPTAIN": 110.0, "SPK_SINERJI": 320.0, "SPK_MINER": 105.0, "SPK_GRANT": 125.0, "SPK_COWORKER_A": 190.0, "SPK_COWORKER_B": 230.0, "SPK_DRIVER": 120.0, "SPK_AGENT1": 135.0, "SPK_AGENT2": 128.0, "SPK_NOTARAS": 100.0, "SPK_ISIDORE": 120.0, "SPK_BAILO": 125.0, "SPK_HUNGARIAN": 150.0, "SPK_SARUCA": 95.0, "SPK_CALLIGRAPHER": 110.0, "SPK_PAINTER": 140.0, "SPK_KID": 280.0, "SPK_TREVISANO": 118.0, "SPK_COCO": 132.0, "SPK_LOOKOUT": 175.0, "SPK_DEFENDER": 160.0, "SPK_HALIL": 105.0, "SPK_ZAGANOS": 98.0, "SPK_USTA": 108.0, "SPK_BRIG": 122.0, "SPK_PATROL": 140.0, "SPK_SAILOR": 150.0, "SPK_SAILOR2": 115.0, "SPK_NOVOMINER": 118.0, "SPK_ISMAIL": 112.0, "SPK_MONK": 128.0, "SPK_PODESTA": 122.0, "SPK_BALTA": 104.0, "SPK_CATTANEO": 120.0, "SPK_HERALD": 112.0, "SPK_AZAP": 150.0, "SPK_AZAPBASI": 98.0, "SPK_CAVUS": 102.0, "SPK_PRIEST": 118.0, "SPK_AKSEMSEDDIN": 96.0, "SPK_MASON": 104.0, "SPK_FIRUZ": 100.0, "SPK_RIZZO": 128.0, "SPK_WOMAN": 205.0, "SPK_DULGER": 112.0, "SPK_DROVER": 96.0, "SPK_KARACA": 106.0,
-	"SPK_WOMAN_BYZ": 215.0, "SPK_CHILD_BYZ": 290.0, "SPK_PORTER": 110.0, "SPK_WORKER": 120.0, "SPK_SUTLER": 108.0,
+	"SPK_EUDOKIA": 215.0, "SPK_WOMAN_BYZ": 215.0, "SPK_CHILD_BYZ": 290.0, "SPK_PORTER": 110.0, "SPK_WORKER": 120.0, "SPK_SUTLER": 108.0,
 	"SPK_STREET_MONK": 125.0}
 ## Bölüm kapakları (başlık kartının arkasında). Şubeli bölümlerde sahne cover_override'ı ayarlar.
 const COVERS := {"chapter1": "ch1", "chapter2": "ch2", "chapter3": "ch3", "chapter4": "ch4a", "chapter5": "ch5",
 	"chapter6": "ch6a", "chapter7": "ch7", "chapter8": "ch8", "chapter9": "ch9", "chapter10": "ch10", "chapter10b": "ch10b", "chapter10h": "ch10h", "chapter10z": "ch10z", "chapter10g": "ch10g", "chapter10a": "ch10a", "chapter16": "ch16", "chapter10l": "ch10l", "chapter12b": "ch12b", "chapter11": "ch11", "chapter12": "ch12",
-	"chapter13": "ch13", "chapter14": "ch14", "chapter15": "ch15", "chapter17": "ch17", "chapter20": "ch20", "chapter22": "ch22", "chapter23": "ch23", "chapter18": "ch18", "chapter19": "ch19", "chapter21": "ch21", "chapter24": "ch24", "chapter25": "ch25", "chapter26": "ch26", "chapter17o": "ch17o", "chapter20o": "ch20o", "chapter21o": "ch21o", "chapter22o": "ch22o", "chapter19o": "ch19o", "chapter24o": "ch24o", "chapter26o": "ch26o", "chapter18b": "ch18b", "chapter36b": "ch36b", "chapter27": "ch27", "chapter29": "ch29", "chapter29o": "ch29o", "chapter28o": "ch28o", "chapter30": "ch30", "chapter30o": "ch30o", "chapter32o": "ch32o", "chapter37o": "ch37o", "chapter38o": "ch38o", "chapter39o": "ch39o", "chapter31o": "ch31o", "chapter33o": "ch33o", "chapter34o": "ch34o", "chapter35o": "ch35o", "chapter41o": "ch41o", "chapter42b": "ch42b"}
+	"chapter13": "ch13", "chapter14": "ch14", "chapter15": "ch15", "chapter17": "ch17", "chapter20": "ch20", "chapter22": "ch22", "chapter23": "ch23", "chapter18": "ch18", "chapter19": "ch19", "chapter21": "ch21", "chapter24": "ch24", "chapter25": "ch25", "chapter26": "ch26", "chapter17o": "ch17o", "chapter20o": "ch20o", "chapter21o": "ch21o", "chapter22o": "ch22o", "chapter19o": "ch19o", "chapter24o": "ch24o", "chapter26o": "ch26o", "chapter18b": "ch18b", "chapter36b": "ch36b", "chapter27": "ch27", "chapter29": "ch29", "chapter29o": "ch29o", "chapter28o": "ch28o", "chapter30": "ch30", "chapter30o": "ch30o", "chapter32o": "ch32o", "chapter37o": "ch37o", "chapter38o": "ch38o", "chapter39o": "ch39o", "chapter31o": "ch31o", "chapter33o": "ch33o", "chapter34o": "ch34o", "chapter35o": "ch35o", "chapter41o": "ch41o", "chapter42b": "ch42b", "chapter44b": "ch44b"}
 const STREET_EYE := preload("res://scripts/street_eye.gd")
 var street_eye: Node
 const FONT_TITLE := "res://assets/fonts/title.ttf"
@@ -1239,7 +1240,82 @@ func street_bark(who: Node3D, role: String, text_key: String, seconds := 4.0, in
 	var vs := voice_stream(_street_tk)
 	if vs:
 		_street_secs = maxf(seconds, GameState.voice_len(vs) + 0.3)
+	_bark_srcs[_street_tk] = who          # ses konuşan kişinin olduğu yerden gelir (uzaklık, sağ/sol)
 	bark(SideEvents.street_speaker(text_key), text_key, seconds, interrupt)
+
+
+## Tanık sözü: Nihat'ı gören KİŞİ söyler (altyazıda adı `name_key`, portresi kendi yüzü, ağzı oynar); konuşmacıyı (ses) çağıran
+## seçer. Ses kişinin olduğu yerden gelir: uzaklaştıkça kısılır (30 m'de ~12 dB), sağ/sol yönü olur.
+func witness_bark(who: Node3D, name_key: String, speaker_key: String, text_key: String, seconds := 2.6) -> void:
+	if who == null or not is_instance_valid(who) or not who.is_inside_tree():
+		return
+	_street_who = who
+	_street_name = name_key
+	_street_tk = GameState.line_variant(text_key)
+	_street_secs = seconds
+	var vs := voice_stream(_street_tk)
+	if vs:
+		_street_secs = maxf(seconds, GameState.voice_len(vs) + 0.3)
+	_bark_srcs[_street_tk] = who
+	bark(speaker_key, text_key, seconds)
+
+
+## Ayak üstü sözün ses kaynağı (söz anahtarı -> konuşan düğüm); bark çalmaya başlarken tüketir
+var _bark_srcs := {}
+var _voice_panner: AudioEffectPanner
+const SRC_NEAR := 3.0
+const SRC_FAR := 30.0
+const SRC_FAR_DB := -12.0
+
+
+## Kaynak düğümün dinleyiciye göre kısılma (dB) ve sağ/sol değeri
+func _src_mix(src: Node3D) -> Vector2:
+	var cam := get_viewport().get_camera_3d()
+	if cam == null or not cam.is_inside_tree():
+		return Vector2.ZERO
+	var at := src.global_position + Vector3(0, 1.4, 0)
+	var d := cam.global_position.distance_to(at)
+	var db := SRC_FAR_DB * smoothstep(SRC_NEAR, SRC_FAR, d)
+	var loc := cam.global_transform.affine_inverse() * at
+	var side := loc.x / maxf(0.001, Vector2(loc.x, loc.z).length())
+	return Vector2(db, clampf(side * 0.8 * smoothstep(1.0, 8.0, d), -0.8, 0.8))
+
+
+func _set_voice_pan(v: float) -> void:
+	if _voice_panner == null:
+		if absf(v) < 0.001:
+			return
+		var bi := AudioServer.get_bus_index("Voice")
+		if bi < 0:
+			return
+		_voice_panner = AudioEffectPanner.new()
+		AudioServer.add_bus_effect(bi, _voice_panner)
+	_voice_panner.pan = v
+
+
+## bark çalmadan hemen önce: kaynak varsa ses kısılır/yönlenir ve söz sürerken izlenir; yoksa yön ortaya döner.
+## (say yolu da aynı oynatıcıyı kullanır: oynatıcı başka sese geçince ya da susunca yön ortaya döner.)
+func _voice_follow(text_key: String) -> void:
+	var src = _bark_srcs.get(text_key)
+	_bark_srcs.erase(text_key)
+	if not (src is Node3D) or not is_instance_valid(src) or not (src as Node3D).is_inside_tree():
+		_set_voice_pan(0.0)
+		return
+	var node := src as Node3D
+	var base := _voice.volume_db
+	var stream := _voice.stream
+	var m := _src_mix(node)
+	_voice.volume_db = base + m.x
+	_set_voice_pan(m.y)
+	await get_tree().process_frame
+	while _voice.playing and _voice.stream == stream and is_instance_valid(node) and node.is_inside_tree():
+		m = _src_mix(node)
+		_voice.volume_db = base + m.x
+		_set_voice_pan(m.y)
+		await get_tree().process_frame
+	if _voice.stream == stream:
+		_voice.volume_db = base
+	_set_voice_pan(0.0)
 
 
 ## Sokak sözü için hud meşgul mü (ayak üstü tepki sözü ancak sessizken söylenir)
@@ -1641,12 +1717,16 @@ func chain_busy() -> bool:
 ## şehzadenin önünde yüksek sesle okunuyordu: "Ali Kuşçu'yu çağıracak"), altyazı soluk. tools/voice_map.py bu çağrıyı
 ## seslendirme listesine almaz.
 var _inner := false
+var _inner_voiced := false
 
 
-func think(speaker_key: String, text_key: String) -> void:
+## voiced: iç ses altyazı rengiyle ama seslendirilerek söylenir (44b: karanlıkta ve hayranlık anında Tolga)
+func think(speaker_key: String, text_key: String, voiced := false) -> void:
 	_inner = true
+	_inner_voiced = voiced
 	await say(speaker_key, text_key)
 	_inner = false
+	_inner_voiced = false
 
 
 func say(speaker_key: String, text_key: String, _from_chain := false) -> void:
@@ -1712,7 +1792,7 @@ func say(speaker_key: String, text_key: String, _from_chain := false) -> void:
 		return
 	var text_len := _sub_text.text.length()
 	var dur := clampf(text_len * 0.028, 0.4, 2.2)
-	var vs: AudioStream = null if _inner else voice_stream(text_key)
+	var vs: AudioStream = null if (_inner and not _inner_voiced) else voice_stream(text_key)
 	if vs:
 		_voice.stream = vs
 		_voice.volume_db = VoiceGain.db(text_key)   # kısık/bağıran kayıtlar dengelenir
@@ -2240,9 +2320,11 @@ func _turn_speaker(speaker_key: String) -> void:
 	var act = who.get("activity")
 	var pose = who.get("pose")
 	var busy = who.get("_busy")
-	if (busy is bool and busy) or (act is String and act != "") or (pose is String and pose != "stand"):
-		return
 	var lt = who.get("look_target")
+	if (busy is bool and busy) or (pose is String and pose != "stand"):
+		return
+	if act is String and act != "" and not (lt == p and _fast()):
+		return      # alet işindeki yalnız testte (ışınlanma) oyuncuya döndürülür; oyunda Stage.gaze_dir yaklaşınca çeviriyor
 	if lt != null and lt != p:
 		return      # bilerek başka birine bakıyor (padişaha, baltacıya)
 	var to := p.global_position - who.global_position
@@ -2995,6 +3077,7 @@ func bark(speaker_key: String, text_key: String, seconds := 4.0, interrupt := fa
 			_voice.stream = vs
 			_voice.volume_db = VoiceGain.db(text_key)
 			_voice.pitch_scale = GameState.voice_speed()
+			_voice_follow(text_key)
 			_voice.play()
 			# Ses süreden uzunsa altyazı sesin sonuna kadar kalır
 			seconds = maxf(seconds, GameState.voice_len(vs) + 0.3) if seconds < 20.0 else seconds

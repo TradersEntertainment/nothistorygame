@@ -957,3 +957,27 @@ func _entry_ground(p: Vector3) -> float:
 func _ally_ladder(l: Ladder) -> Dictionary:
 	return {"base": l.point_at(0.0) + l.front_dir() * 0.35, "top": l.point_at(l.height - 0.3) + l.front_dir() * 0.3,
 		"land": l.top_exit() - Vector3(0, 0.1, 0)}
+
+
+## Girişin sahnesi (yayma P6): yol boyunca dizilen yeniçeriler aynı pozda donup dikiliyordu. Tören sürerken (phase
+## "entry") her biri kendi zamanında kıpırdar (kısa jest) ve Sultan'ı birkaç saniyelik gecikmelerle döner izler;
+## 40 sn sonra bakış serbest kalır, jest döngüsü giriş evresi bitince kendiliğinden durur.
+func _entry_stage() -> Dictionary:
+	var st: Dictionary = super()
+	var men: Array = []
+	for n in st["line"]:
+		if n is Soldier:
+			men.append(n)
+	Crowd.look_at_event(men, st["sultan"], 40.0, 4.0)
+	_entry_vary(men)
+	return st
+
+
+func _entry_vary(men: Array) -> void:
+	get_tree().create_timer(randf_range(0.8, 2.0), false).timeout.connect(func():
+		if phase != "entry" or men.is_empty():
+			return
+		var s = men[randi() % men.size()]
+		if is_instance_valid(s) and (s as Node3D).is_visible_in_tree() and s.rig and s.rig.lock == 0:
+			s.rig.emote(["nod", "shrug", "arms_cross", "nod", "whisper"][randi() % 5])
+		_entry_vary(men))

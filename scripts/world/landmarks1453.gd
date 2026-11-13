@@ -25,13 +25,13 @@ const PORPHYRY := Color("7a3040")
 
 ## [anahtar, LANDMARKS anahtarı, taban yarıçapı, kurulu mu (başka yerde), gözcü noktası yüksekliği (yoksa 0)]
 const DATA := [
-	["ayasofya", "ayasofya", 42.0, true, 50.4],
+	["ayasofya", "ayasofya", 42.0, true, 24.6],          # gözcü: yerdeki Ayasofya'nın kubbesi (World1453.AYA_DOME_TOP)
 	["aya_irini", "aya_irini", 26.0, false, 0.0],
 	["augustaion", "augustaion", 22.0, false, 31.0],
 	["cistern", "cistern", 7.0, false, 0.0],
 	["hippodrome", "hippodrome", 60.0, true, 0.0],
 	["great_palace", "great_palace", 40.0, true, 0.0],
-	["forum_constantine", "column", 24.0, true, 34.0],
+	["forum_constantine", "column", 24.0, true, 29.2],   # gözcü: sütunun tepesi (ByzCity.COLUMN_TOP)
 	["forum_tauri", "forum_tauri", 28.0, false, 34.4],
 	["aqueduct", "aqueduct_a", 20.0, true, 0.0],
 	["apostles", "apostles", 28.0, true, 0.0],
@@ -906,22 +906,23 @@ static func skyline(parent: Node3D, free: Callable, region: String, keep: Array 
 			k.box(Transform3D(b, Vector3(x, y + hh * 0.5 - 1.5, z)), Vector3(w, hh, dd), SK_WALLS[q % SK_WALLS.size()])
 			k.gable(Transform3D(b, Vector3(x, y + hh - 1.5, z)), Vector3(w + 0.8, 2.4, dd + 0.8), SK_ROOFS[q % SK_ROOFS.size()])
 		_sk_mark(k, st, i0, Vector3(hc.x, by, hc.z), -1.0)
-	# Ayasofya (Scenery.hagia_sophia ile aynı ölçüler)
+	# Ayasofya: yerdeki modelin (ByzCity.aya_exterior, World1453.far_aya) silueti, aynı yerde ve yönde: ~35 m gövde, köşe
+	# payandaları, 16 m'de kasnak, basık kurşun kubbe, eksende iki yarım kubbe (eskiden iki kat büyük ayrı bir model)
 	var ay: Vector3 = World1453.LANDMARKS["ayasofya"]
 	if region != "byz_aya" and free.call(ay.x, ay.z, 60.0) and not _sk_never(ay, keep):
 		var i0 := k.v.size()
-		var p := Vector3(ay.x, HornWorld.east_surf(ay.x, ay.z) - 1.0, ay.z)
-		var b := Transform3D(Basis.from_scale(S), p)
-		k.box(b * _sk_at(0, 13, 0), Vector3(70, 26, 76), SK_BRICK)
-		for q in 4:
-			k.box(b * _sk_at((q % 2 - 0.5) * 60.0, 17, (q / 2 - 0.5) * 26.0), Vector3(10, 34, 10), SK_BRICK.darkened(0.08))
-		k.cyl(b * _sk_at(0, 33.5, 0), 17.2, 7.2, SK_BRICK.lightened(0.08), 20)
-		k.dome(b * _sk_at(0, 40.5, 0), 17.7, SK_LEAD, 0.63, 20, 4)
+		var rb := World1453.region("byz_aya")
+		var p := rb * ByzCity.AYA
+		var b := Transform3D(rb.basis.scaled(S), p)
+		var pink := Color("c89a7e")
+		k.box(b * _sk_at(0, 8.4, 0), Vector3(35.0, 16.8, 35.0), pink)
+		for sx: float in [-1.0, 1.0]:
+			for sz: float in [-1.0, 1.0]:
+				k.box(b * _sk_at(sx * 19.0, 9.25, sz * 8.0), Vector3(3.4, 18.5, 3.6), pink.darkened(0.08))
+		k.cyl(b * _sk_at(0, 16.0, 0), 11.4, 3.6, pink.lightened(0.06), 20)
+		k.dome(b * _sk_at(0, 19.5, 0), 11.5, SK_LEAD, 0.43, 20, 4)
 		for side: float in [-1.0, 1.0]:
-			k.cyl(b * _sk_at(0, 26.0, side * 17.0), 16.2, 4.0, SK_LEAD, 16)
-			k.dome(b * _sk_at(0, 30.0, side * 17.0), 16.3, SK_LEAD, 0.56, 16, 3)
-			for q: float in [-1.0, 1.0]:
-				k.dome(b * _sk_at(q * 11.0, 25.0, side * 30.0), 7.3, SK_LEAD, 0.57, 12, 2)
+			k.dome(b * _sk_at(0, 16.0, side * 9.0), 8.4, SK_LEAD, 0.6, 16, 3)
 		_sk_mark(k, st, i0, p, _sk_lift(p.x, p.z))
 	# Iustinianus Sütunu (Augustaion; atlı heykelin kaba kütlesi)
 	var au: Vector3 = World1453.LANDMARKS["augustaion"]
@@ -964,14 +965,13 @@ static func skyline(parent: Node3D, free: Callable, region: String, keep: Array 
 				k.dome(b * _sk_at(ox, h + 5.5, cz + dz), r * 1.04 + 0.25, SK_LEAD, 0.64, 10, 3)
 		k.box(b * _sk_at(0, 5.0, 19.9), Vector3(49.6, 11.0, 8.6), SK_BRICK.lightened(0.04))
 		_sk_mark(k, st, i0, c, _sk_lift(c.x, c.z))
-	# Konstantin Sütunu (porfir)
+	# Konstantin Sütunu (porfir; yerdeki sütunun ölçüsü: ByzCity.column_parts)
 	var col: Vector3 = World1453.LANDMARKS["column"]
 	if region != "byz_aya" and free.call(col.x, col.z, 24.0) and not _sk_never(col, keep):
 		var i0 := k.v.size()
 		var y := HornWorld.east_surf(col.x, col.z)
-		k.cyl(Transform3D(Basis(), Vector3(col.x, y - 0.5, col.z)), 3.15, 35.0, Color("8a4a4a"), 8)
-		k.box(Transform3D(Basis(), Vector3(col.x, y + 35.5, col.z)), Vector3(0.6, 3.0, 0.6), SK_STONE)
-		k.box(Transform3D(Basis(), Vector3(col.x, y + 36.2, col.z)), Vector3(2.0, 0.5, 0.5), SK_STONE)
+		k.box(Transform3D(Basis(), Vector3(col.x, y + 1.5, col.z)), Vector3(4.2, 3.0, 4.2), SK_STONE)
+		k.cyl(Transform3D(Basis(), Vector3(col.x, y + 3.0, col.z)), 1.55, ByzCity.COLUMN_TOP - 3.0, Color("8a4a4a"), 8)
 		_sk_mark(k, st, i0, Vector3(col.x, y - 0.5, col.z), _sk_lift(col.x, col.z))
 	# Bozdoğan Kemeri (HornWorld._monuments: ayaklar ve iki kuşak); tepeler arasındaki vadiyi aşar
 	var a: Vector3 = World1453.LANDMARKS["aqueduct_a"]
@@ -981,13 +981,14 @@ static func skyline(parent: Node3D, free: Callable, region: String, keep: Array 
 		var i0 := k.v.size()
 		var n := int(a.distance_to(e) / 9.0)
 		var yb := Basis(Vector3.UP, atan2(e.x - a.x, e.z - a.z))
+		var top := HornWorld.aqueduct_top()
 		for q in n + 1:
 			var p := a.lerp(e, float(q) / n)
 			if not free.call(p.x, p.z, 6.0):
 				continue
 			var g := HornWorld.east_surf(p.x, p.z)
-			k.box(Transform3D(yb, Vector3(p.x, (20.0 + g) * 0.5 - 1.0, p.z)), Vector3(3.45, 20.0 - g + 2.2, 3.25), SK_STONE)
-		for lvl: float in [11.0, 19.5]:
+			k.box(Transform3D(yb, Vector3(p.x, (top + g) * 0.5 - 1.0, p.z)), Vector3(3.45, top - g + 2.2, 3.25), SK_STONE)
+		for lvl: float in [top - 9.0, top - 0.5]:
 			k.box(Transform3D(yb, Vector3(mid.x, lvl, mid.z)), Vector3(3.6, 1.8, a.distance_to(e) + 3.4), SK_STONE.darkened(0.06))
 		_sk_mark(k, st, i0, Vector3(mid.x, HornWorld.east_surf(mid.x, mid.z), mid.z), _sk_lift(mid.x, mid.z))
 	# Galata Kulesi (GalataView: gövde, şerefe, külah)

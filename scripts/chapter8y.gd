@@ -35,6 +35,7 @@ const BAR_AT := Vector3(0.0, 1.55, 13.62)
 const BAR_DOWN := Vector3(-4.6, 2.72, 12.45)
 const HINGE_X := 3.45
 const GATE_Z := 13.85
+const LEAF_R := 2.2          # nöbetçinin kanadı çektiği tutamak, menteşeden uzaklık (m)
 const GATE_TRIGGER_Z := 8.4
 const BRIDGE_Z := 21.0
 const FIELD_Z := 37.0
@@ -288,7 +289,7 @@ func _build_causeway() -> void:
 	var pave := Props.box(self, Vector3(6.4, 0.04, 16.4), Vector3(0, 0.0, 28.2), Color.WHITE)
 	Props.set_pattern(pave, Color("a08e6e"), "cobble")
 	for k in 9:
-		Props.box(self, Vector3(6.3, 0.045, 0.12), Vector3(0, 0.0, 20.6 + k * 1.9), Color("7e6e54"))
+		Props.box(self, Vector3(6.3, 0.048, 0.12), Vector3(0, 0.004, 20.6 + k * 1.9), Color("7e6e54"))   # derz taşı yüzeyi 8 mm yüksek: kaldırım üst yüzüyle çakışıp titremesin
 	for rx: float in [-0.8, 0.8]:
 		Nature.trail(self, [Vector3(rx, 0, 16.5), Vector3(rx, 0, 37.0)], "wheel_ruts", gy, 1.0, 8130 + int(rx * 10.0), 0.1)
 	for sx: float in [-1.0, 1.0]:
@@ -862,6 +863,10 @@ func _warn(reason: String) -> void:
 
 
 func _warn_lines(line: Array, answer: Array) -> void:
+	# Tolga'nın hikâye yorumu (keçi vb.) sürüyorsa uyarı SÖZÜ bitmesini bekler (ok yine anında saplanır); eskiden
+	# interrupt=true repliği ortasında kesiyordu.
+	while _yorum_left > 0.0 and hud.is_talking() and phase == "field":
+		await get_tree().process_frame
 	hud.bark(line[0], line[1], 3.6, true)
 	await _wait(1.6)
 	if phase == "field":
@@ -1115,9 +1120,12 @@ func _gate_scene() -> void:
 	_busy = false
 
 
-## Nöbetçi sürgüye yürür, kaldırır ve kenara yere bırakır; kanatlar peribolosa doğru açılır.
+## Nöbetçi sürgüye yürür, kaldırır ve kenara yere bırakır; kapının ortasına geçip iki kanadı kendine doğru çeker, sonra
+## yan çekilip Tolga'ya döner. İş boyunca oyuncuya bakmaz (look_target bırakılır): sürgüye, yürüdüğü yöne, kapıya döner.
 func _open_gate() -> void:
 	var gy := Callable(self, "_gy")
+	guard.look_target = null
+	var spear := _plant_spear()        # iki eli işte: mızrağı yanına diker (elde kalırsa kapıdan/sürgüden geçiyordu)
 	await Stage.walk_on_ground(guard, Vector3(-0.9, 0, 12.6), gy, 1.6, BAR_AT)
 	# İki elle sürgüyü yuvalarından kaldırır (eller sürgüde), sürgüyü taşıyarak kulenin dibine götürür, dikine yaslar
 	# Eller sürgünün kendi yerelinde (Stage.grip_hold her karede izler): kaldırırken ve taşırken sürgüde kalır
@@ -1137,13 +1145,103 @@ func _open_gate() -> void:
 	guard.remove_meta("stage_walk")
 	Stage.grip_release(guard)
 	Audio.sfx("land_thud", -12.0, 0.8)
-	await Stage.walk_on_ground(guard, GUARD_AT, gy, 1.6, Vector3(0, 0, 8.0))
+	# Sol kanadın tutamağına yürür (kanada dönük), iki elle kendine çeker, kanat savrulurken önünden çekilip yerine döner.
+	# Toplam süre özgün sahneyle (GUARD_AT'a yürüyüş + kanat açma) aynı: yürüyüş, çekme ve çekilme hepsi tek zincirde.
+	await Stage.walk_on_ground(guard, _leaf_pt(18.0, LEAF_R), gy, 2.2, _leaf_l.to_global(Vector3(LEAF_R, 1.3, -0.15)))
+	await _pull_leaves()
+	if spear != null and is_instance_valid(spear) and guard._elbow_r != null:      # mızrağını geri alır
+		spear.reparent(guard._elbow_r, true)      # yerdeki yerinden (dünya dönüşümü korunur) ele 0,3 sn'de gelir: tek karede ışınlanmaz
+		var stw := create_tween().set_parallel()
+		stw.tween_property(spear, "position", Vector3(0, -0.28, 0.06), _d(0.3)).set_trans(Tween.TRANS_SINE)
+		stw.tween_property(spear, "rotation_degrees", Vector3(0, 0, -7), _d(0.3))
+	guard.look_target = player
+
+
+## Nöbetçinin elindeki mızrağı yanına, yere diker (Soldier.equip "spear" düğümü "Spear"). Mızrak yoksa null.
+func _plant_spear() -> Node3D:
+	if guard._elbow_r == null:
+		return null
+	var sp := guard._elbow_r.get_node_or_null("Spear") as Node3D
+	if sp == null:
+		return null
+	sp.reparent(self, true)
+	var at := guard.global_position + Vector3(0.6, 0.0, 0.1)
+	var ground := _gy(at.x, at.z)
+	var tw := create_tween().set_parallel()
+	tw.tween_property(sp, "global_position", Vector3(at.x, ground + 0.4, at.z), _d(0.3)).set_trans(Tween.TRANS_SINE)
+	tw.tween_property(sp, "global_rotation", Vector3(0.0, 0.0, deg_to_rad(-4.0)), _d(0.3))
+	return sp
+
+
+## Sol kanadın menteşeden `r` metre ötesinde, kanat doğrultusundan `ang` derece "ilerisinde" (kanadın savrulduğu yönde) zemin noktası.
+func _leaf_pt(ang: float, r: float) -> Vector3:
+	var a := deg_to_rad(ang)
+	var h := _leaf_l.global_position
+	var x := h.x + r * cos(a)
+	var z := h.z - r * sin(a)
+	return Vector3(x, _gy(x, z), z)
+
+
+func _set_leaves(deg: float) -> void:
+	_leaf_l.rotation.y = deg_to_rad(deg)
+	_leaf_r.rotation.y = -deg_to_rad(deg)
+
+
+## Nöbetçi sol kanadın tutamağını iki eliyle tutar, ~35 dereceye kadar kendine çeker (geri geri adım atarak, gövdesi kanada dönük);
+## sonra bırakır, kanat savrulurken önünden çekilip GUARD_AT'a gider (kanat süpürme alanından önce çıkar: gövdeye girmez).
+func _pull_leaves() -> void:
+	var rg := guard.rig
+	Stage.work_begin(guard, _leaf_l.to_global(Vector3(LEAF_R, 1.3, -0.15)))      # gövde kanada dönük kalır
+	guard.set_meta("no_turn", true)         # geri geri yürürken yürüdüğü yöne dönmesin
+	guard.set_meta("walk_back", true)
+	if rg:
+		rg.lock += 1
 	Audio.sfx("door_open", -6.0, 0.8)
 	Audio.sfx("wood_creak", -10.0, 0.7)
-	var tw2 := create_tween().set_parallel()
-	tw2.tween_property(_leaf_l, "rotation:y", deg_to_rad(95.0), _d(1.6)).set_trans(Tween.TRANS_SINE)
-	tw2.tween_property(_leaf_r, "rotation:y", deg_to_rad(-95.0), _d(1.6)).set_trans(Tween.TRANS_SINE)
+	if Stage.fast():
+		# Hızlı testte kare sıçraması: nöbetçi kanadın içinden "geçmesin" diye önce yerine, sonra kanatlar açılır
+		var g0 := Vector3(GUARD_AT.x, _gy(GUARD_AT.x, GUARD_AT.z), GUARD_AT.z)
+		guard.global_position = g0
+		_set_leaves(95.0)
+		if rg:
+			rg.lock = maxi(0, rg.lock - 1)
+		guard.remove_meta("walk_back")
+		guard.remove_meta("no_turn")
+		Stage.work_end(guard)
+		Stage.face(guard, Vector3(0, 0, 8.0))
+		return
+	var hand_a := Vector3(LEAF_R - 0.12, 1.3, -0.15)
+	var hand_b := Vector3(LEAF_R + 0.12, 1.15, -0.15)
+	var tw := create_tween()
+	tw.tween_method(func(k: float) -> void:
+		if not is_instance_valid(guard):
+			return
+		var e := sin(k * PI * 0.5)
+		_set_leaves(35.0 * e)
+		var gp := _leaf_pt(35.0 * e + 18.0, LEAF_R)
+		guard.global_position = gp
+		guard.work_at = _leaf_l.to_global(Vector3(LEAF_R, 1.3, -0.15))
+		Stage.grip(guard, null, [_leaf_l.to_global(hand_a), _leaf_l.to_global(hand_b)]), 0.0, 1.0, _d(0.8))
+	await tw.finished
+	if rg:
+		rg.lock = maxi(0, rg.lock - 1)
+	# Bırakır; kanat savrulurken kendisi GUARD_AT'a çekilir (yarıçapı kanat ucundan büyüyene dek kanadın önünde kalır)
+	var from := guard.global_position
+	var gy := Callable(self, "_gy")
+	var to := Vector3(GUARD_AT.x, float(gy.call(GUARD_AT.x, GUARD_AT.z)), GUARD_AT.z)
+	var tw2 := create_tween()
+	tw2.tween_method(func(k: float) -> void:
+		if not is_instance_valid(guard):
+			return
+		_set_leaves(35.0 + 60.0 * k * k)
+		var q := from.lerp(to, k)
+		guard.global_position = Vector3(q.x, float(gy.call(q.x, q.z)), q.z), 0.0, 1.0, _d(1.2))
 	await tw2.finished
+	_set_leaves(95.0)
+	guard.remove_meta("walk_back")
+	guard.remove_meta("no_turn")
+	Stage.work_end(guard)
+	Stage.face(guard, Vector3(0, 0, 8.0))
 
 
 # ---------------------------------------------------------------- hendek köprüsü ve ölü bölge
@@ -1236,12 +1334,14 @@ func _start_field() -> void:
 ## Yürürken tek seferlik olaylar: [z0, z1] aralığında ve konuşma yokken bir kez; aralık geçildiyse atlanır.
 var _queue: Array = []
 var _queue_gap := 0.0
+var _yorum_left := 0.0       # Tolga'nın hikâye yorumundan kalan süre (oyun sn); uyarı sözü o bitene dek ertelenir
 
 
 ## Yürürken tek seferlik yorumlar: yeri gelince sıraya girer; sıra telsiz ya da başka söz yokken, aralarında 4,5 sn
 ## boşlukla söylenir. Çok geride kalan (yerinden 25 m'den fazla ileride) yorum söylenmez.
 func _events(pz: float, delta: float) -> void:
 	_queue_gap = maxf(0.0, _queue_gap - delta)
+	_yorum_left = maxf(0.0, _yorum_left - delta)
 	if _busy:
 		return
 	_event("mantlet", pz, 46.0, 60.0, "D8Y_T_MANTLET")
@@ -1259,6 +1359,7 @@ func _events(pz: float, delta: float) -> void:
 	var it: Array = _queue.pop_front()
 	_queue_gap = 4.5
 	hud.bark("SPK_TOLGA", it[0], 4.5)
+	_yorum_left = 4.5
 	_cshot("yorum_" + String(it[0]).trim_prefix("D8Y_T_").to_lower(), 0.4)
 	if GameState.autotest:
 		print("YORUM8Y %s z=%.1f" % [it[0], pz])

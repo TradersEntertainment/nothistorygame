@@ -536,7 +536,7 @@ func last_place() -> String:
 	# Galata) değil. Tolga 26 Nisan'da Büro'dan ayrıldığı yere geri döner.
 	if flags.get("siege_done", false) and flags.has("pre_siege_scene"):
 		k = str(flags["pre_siege_scene"])
-	if k in ["chapter6b", "chapter10a", "chapter10h", "chapter12b", "chapter23", "chapter24", "chapter25", "chapter26", "chapter26o", "chapter18b"]:
+	if k in ["chapter6b", "chapter10a", "chapter10h", "chapter12b", "chapter23", "chapter24", "chapter25", "chapter26", "chapter26o", "chapter18b", "chapter44b"]:
 		return "city"
 	if k == "chapter6" and str(chapter_outcomes.get(6, "")).begins_with("6b"):
 		return "city"
@@ -549,6 +549,128 @@ var _float_scene := ""
 var _day_t := 0.0
 
 
+## Bakış denetimi (LOOKAUDIT; testi düşürmez, yalnız raporlar): iş yapan kişinin gövdesi işine değil başka yere dönükse
+## "LOOKAUDIT backturn <kişi> <bölüm> <açı> kind=..." basar (kişi başına tür başına bir kez; 0,5 sn sürerse). İlk aşım ayrıca "LOOKAUDIT raw ..." olarak yazılır. Türler: grip (Stage.grip_hold
+## tutuşu: gövde yönü ile tutulan noktanın yönü), work (iş hareketindeki kişi look_target yüzünden işinden >100° döndü:
+## iş başındaki yönüne göre), walk (look_target varken yürüdüğü yöne sırtı dönük; "walk_back" işaretlilerde geri geri çekilmek serbest).
+var _look_acc := 0.0
+var _look_scene := ""
+var _look_data := {}
+var _look_done := {}
+const _LOOK_FREE_ACT := ["", "carry", "sit", "sit_ground", "write", "write_desk", "sit_astride", "read_ground"]
+const _LOOK_SKIP_ACT := ["ride", "row", "swim", "fly", "hover", "lie", "sleep", "doze", "crouch"]
+
+
+## Başkasının ittiği kişinin kayması kendi yürüyüşü değildir: bakış denetiminin son konumunu o kadar kaydırır.
+func look_audit_shift(p: Node3D, local_step: Vector3) -> void:
+	var d = _look_data.get(p.get_instance_id())
+	if d is Dictionary and d.get("pos", Vector3.INF) != Vector3.INF:
+		d["pos"] = d["pos"] + local_step
+
+
+func _look_audit(delta: float) -> void:
+	var sc := get_tree().current_scene
+	if sc == null or sc.scene_file_path == "" or sc.scene_file_path.contains("/tests/") or get_tree().paused:
+		return
+	if _look_scene != sc.scene_file_path:
+		_look_scene = sc.scene_file_path
+		_look_data.clear()
+		_look_done.clear()
+		_look_acc = -1.5
+	_look_acc += delta
+	if _look_acc < 0.25:
+		return
+	var dt := _look_acc
+	_look_acc = 0.0
+	var scene := sc.scene_file_path.get_file()
+	for grp in ["persons", "soldiers"]:
+		for node in get_tree().get_nodes_in_group(grp):
+			var p := node as Node3D
+			if p == null or not p.is_inside_tree():
+				continue
+			var id := p.get_instance_id()
+			var d: Dictionary = _look_data.get(id, {})
+			var lp := p.position
+			var prev: Vector3 = d.get("pos", Vector3.INF)
+			d["pos"] = lp
+			_look_data[id] = d
+			if prev == Vector3.INF or not p.is_visible_in_tree() or not p.can_process() or p.get_meta("hologram", false) \
+					or p.has_meta("corpse") or p.has_meta("climber") or p.has_meta("no_look_audit"):
+				continue      # "no_audit" (zemin/içinden geçme muafiyeti) bakış denetimini susturmaz; yalnız "no_look_audit"
+			var rg = p.get("rig")
+			var act := str(p.get("activity")) if grp == "persons" else (str(rg.activity) if rg != null else "")
+			if act in _LOOK_SKIP_ACT:
+				continue
+			var q: Node = p.get_parent()
+			var skip := false
+			while q:
+				if q is Horse or q is Player:
+					skip = true
+					break
+				q = q.get_parent()
+			if skip:
+				continue
+			var fwd := p.global_transform.basis.z
+			fwd.y = 0.0
+			if fwd.length() < 0.01:
+				continue
+			fwd = fwd.normalized()
+			var lt = p.get("look_target")
+			var gpos := p.global_position
+			var mv := lp - prev
+			var mvg := mv
+			if p.get_parent() is Node3D:
+				mvg = (p.get_parent() as Node3D).global_transform.basis * mv
+			mvg.y = 0.0
+			var spd := mvg.length() / dt
+			var cands: Array = []        # [tür, açı]
+			var walk_now: bool = spd > (0.25 if d.get("walking", false) else 0.35) and mvg.length() < 2.0      # gaze_dir ile aynı eşik/histerezis
+			d["walking"] = walk_now
+			if p.has_meta("grip_tw") and p.get("work_at") is Vector3 and p.get("work_at") != Vector3.INF:
+				var to: Vector3 = p.get("work_at") - gpos
+				to.y = 0.0
+				if to.length() > 0.5:      # kalçadaki ip tutamağı gibi gövdenin dibindeki iş noktası ölçülmez
+					cands.append(["grip", rad_to_deg(fwd.angle_to(to.normalized()))])
+			if lt != null and walk_now and not p.get_meta("walk_back", false):
+				cands.append(["walk", rad_to_deg(fwd.angle_to(mvg.normalized()))])
+			if not (act in _LOOK_FREE_ACT) and grp == "persons":
+				if lt == null and spd < 0.3:
+					d["yaw0"] = fwd
+				elif lt != null and d.has("yaw0"):
+					cands.append(["work", rad_to_deg(fwd.angle_to(d["yaw0"]))])
+			# Sürekli sapma sayılır (2 örnek = 0,5 sn): dönüş geçişinde (yürüyüş ya da tutuş başlarken gövde yarım saniyede
+			# döner) "backturn" basmaz; ilk aşım "raw" satırı olarak her durumda yazılır (sayım karşılaştırması için)
+			var over := {}
+			for c in cands:
+				if float(c[1]) > 100.0:
+					over[c[0]] = c[1]
+			for kn in ["grip", "walk", "work"]:
+				d["n_" + kn] = (int(d.get("n_" + kn, 0)) + 1) if over.has(kn) else 0
+			for c in cands:
+				if float(c[1]) <= 100.0:
+					continue
+				var nn := int(d.get("n_" + str(c[0]), 0))
+				var label := ""
+				var key := "%d:%s" % [id, c[0]]
+				if nn >= 2 and not _look_done.has(key):
+					_look_done[key] = true
+					label = "backturn"
+				elif nn == 1 and not _look_done.has(key + ":raw"):
+					_look_done[key + ":raw"] = true
+					label = "raw"
+				if label != "":
+					var who := "Person" if grp == "persons" else "Soldier"
+					var fid = p.get("face_id")
+					if fid != null and str(fid) != "":
+						who += "(" + str(fid) + ")"
+					if p.has_meta("spk"):
+						who += "[" + str(p.get_meta("spk")) + "]"
+					if str(p.name).begins_with("@") == false:
+						who += ":" + str(p.name).replace(" ", "_")
+					print("LOOKAUDIT %s %s %s %d kind=%s act=%s pose=%s look=%s talking=%s pos=%s" % [label, who, scene, int(c[1]), c[0], act,
+						str(p.get("pose")), (str(lt.name) if lt != null else "-"), str(p.get("talking")), gpos.snapped(Vector3.ONE * 0.1)])
+
+
 func _process(delta: float) -> void:
 	var sc := get_tree().current_scene
 	if sc and sc.scene_file_path != "" and not sc.scene_file_path.contains("/tests/"):
@@ -556,6 +678,8 @@ func _process(delta: float) -> void:
 		if autotest and _float_scene != sc.scene_file_path:
 			_float_scene = sc.scene_file_path
 			get_tree().create_timer(3.0).timeout.connect(_float_audit)
+	if autotest:
+		_look_audit(delta)
 	SteamBridge.tick()
 	_pt_track(sc)
 	if not get_tree().paused:

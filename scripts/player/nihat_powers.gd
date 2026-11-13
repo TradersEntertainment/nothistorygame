@@ -789,6 +789,52 @@ func _look_for_witnesses() -> void:
 		_witness(p)
 
 
+## Tanık sözleri, gören kişinin KENDİ konuşmacısına göre (docs/voice/cast.json'da sesi olan sınıflar). Her sınıfın sözü kendi
+## sesiyle söylenir; bir söz anahtarının tek konuşmacısı vardır. Sınıf, sokak insanlarıyla aynı yoldan bulunur
+## (SideEvents.street_role -> STREET_SPK). Adı olan karakterler (Hasan, Niko, Kadri...) ve sınıfı olmayanlar (derviş, ordu
+## pazarcısı) genel söz söylemez; yalnız aşağıdaki WIT_OWN'daki Büro çalışanları kendi sözünü söyler.
+const WIT_KEYS := {
+	"SPK_SOLDIER": ["D_WIT_SOL_1", "D_WIT_SOL_2", "D_WIT_SOL_3", "D_WIT_SOL_4", "D_WIT_SOL_5"],
+	"SPK_AZAP": ["D_WIT_AZ_1", "D_WIT_AZ_2", "D_WIT_AZ_3", "D_WIT_AZ_4"],
+	"SPK_TOWNSMAN": ["D_WIT_TWN_1", "D_WIT_TWN_2", "D_WIT_TWN_3", "D_WIT_TWN_4", "D_WIT_TWN_5"],
+	"SPK_WOMAN_BYZ": ["D_WIT_WMN_1", "D_WIT_WMN_2", "D_WIT_WMN_3", "D_WIT_WMN_4"],
+	"SPK_CITY_GUARD": ["D_WIT_GRD_1", "D_WIT_GRD_2", "D_WIT_GRD_3", "D_WIT_GRD_4"],
+	"SPK_GENOESE": ["D_WIT_GEN_1", "D_WIT_GEN_2", "D_WIT_GEN_3", "D_WIT_GEN_4"],
+	"SPK_STREET_MONK": ["D_WIT_MNK_1", "D_WIT_MNK_2", "D_WIT_MNK_3", "D_WIT_MNK_4"],
+	"SPK_CHILD_BYZ": ["D_WIT_CHD_1", "D_WIT_CHD_2", "D_WIT_CHD_3"],
+}
+## Sokak rolü -> tanık sözünün konuşmacısı (rolsüz / eşleşmeyen: söz yok)
+const WIT_ROLE_SPK := {"OSMSOL": "SPK_SOLDIER", "JAN": "SPK_SOLDIER", "WORKER": "SPK_SOLDIER", "AZAP": "SPK_AZAP",
+	"BYZSOL": "SPK_CITY_GUARD", "GENMERC": "SPK_GENOESE", "GAL": "SPK_GENOESE", "TOWNB": "SPK_TOWNSMAN",
+	"CIVB": "SPK_TOWNSMAN", "VENDB": "SPK_TOWNSMAN", "VEND": "SPK_TOWNSMAN", "PORTER": "SPK_TOWNSMAN",
+	"FISHER": "SPK_TOWNSMAN", "WOMB": "SPK_WOMAN_BYZ", "CHILDB": "SPK_CHILD_BYZ", "PRIEST": "SPK_STREET_MONK",
+	"MONK": "SPK_STREET_MONK"}
+## Adı olan Büro çalışanlarının kendi sözü (kişinin "spk" işaretine göre)
+const WIT_OWN := {
+	"SPK_RIZA": ["D_WIT_RIZ_1", "D_WIT_RIZ_2"],
+	"SPK_MUFIDE": ["D_WIT_MUF_1", "D_WIT_MUF_2"],
+}
+
+
+## Kişinin tanık sözü: [altyazıdaki ad anahtarı, konuşmacı, söz anahtarı]; söz yoksa boş. Sınıfın sözleri torbadan çıkar:
+## torba bitmeden yinelenmez, art arda aynı söz gelmez.
+func witness_line(p: Node3D) -> Array:
+	var own: String = str(p.get_meta("spk", "")) if p.has_meta("spk") else ""
+	if WIT_OWN.has(own):
+		return [own, own, SideEvents.street_bag("WIT_" + own, WIT_OWN[own].filter(func(k): return SideEvents._has(k)))]
+	var ctx := SideEvents.street_ctx(get_tree())
+	if str(ctx.get("chapter", "")) == "3":
+		return []          # 2026 Büro: sokak insanı sınıfı yok (kimse Bizanslı ya da asker sayılmaz)
+	var role := SideEvents.street_role(p, ctx)
+	var spk: String = WIT_ROLE_SPK.get(role, "")
+	if spk == "":
+		return []
+	var keys: Array = WIT_KEYS[spk].filter(func(k): return SideEvents._has(k))
+	if keys.is_empty():
+		return []
+	return [SideEvents.role_label(role), spk, SideEvents.street_bag("WIT_" + spk, keys)]
+
+
 func _witness(p: Node3D) -> void:
 	if "look_target" in p:
 		p.set("look_target", player)
@@ -798,8 +844,10 @@ func _witness(p: Node3D) -> void:
 	GameState.flags["nihat_seen"] = int(GameState.flags.get("nihat_seen", 0)) + 1
 	var h := _hud()
 	if h and _bark_cd <= 0.0 and not h.is_talking():
-		_bark_cd = 2.8
-		h.bark("SPK_WITNESS", "D_WIT_%d" % (randi() % 10 + 1), 2.6)
+		var wl := witness_line(p)
+		if not wl.is_empty():
+			_bark_cd = 2.8
+			h.witness_bark(p, wl[0], wl[1], wl[2], 2.6)
 	if seen_here == 1:
 		GameState.flags["buro_baskisi"] = int(GameState.flags.get("buro_baskisi", 0)) + 1
 		if h:

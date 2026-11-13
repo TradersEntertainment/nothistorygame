@@ -64,6 +64,7 @@ const LIST: Array[Dictionary] = [
 	{"id": "ACH_OSM_TOWER", "secret": false},     # 22o: kuleden 3 isabet
 	{"id": "ACH_OSM_LORE", "secret": false},      # Osmanlı bölümlerinin bütün tarih sayfaları
 	{"id": "ACH_HORSE_SEA", "secret": false},     # 20 Nisan: Sultan'ın atıyla denize girişini tespit et (29 / 29o)
+	{"id": "ACH_CISTERN", "secret": true},        # 44: Yerebatan'ı Gyllius'tan doksan yıl önce bul
 	{"id": "ACH_FIRST_SHOT", "secret": false},    # 12 Nisan: Şahi'nin ilk güllesini sura indir (28o)
 	{"id": "ACH_BLACHERNAE", "secret": false},    # 12 Mayıs: Blakherna'da sur yolunda tutun (30o)
 	{"id": "ACH_EXPLORER", "secret": false},      # Yaşayan İstanbul: 10 tarihî yapıyı keşfet
@@ -160,6 +161,7 @@ static func met(id: String) -> bool:
 		"ACH_OSM_TOWER": return _stat("osm_tower_gun") >= 3
 		"ACH_OSM_LORE": return osm_lore_found() >= osm_lore_total()
 		"ACH_HORSE_SEA": return _stat("horse_sea") >= 1
+		"ACH_CISTERN": return _seen_prefix("44.")
 		"ACH_FIRST_SHOT": return _stat("first_shot") >= 1
 		"ACH_BLACHERNAE": return _stat("blachernae_held") >= 1
 		"ACH_EXPLORER": return GameState.discovered.size() >= EXPLORER_N

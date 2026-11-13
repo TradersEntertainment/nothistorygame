@@ -907,7 +907,43 @@ func _gate() -> void:
 	await _say("SPK_NIKO", "D4B_N_ISTANBUL")
 	await _t("D4B_T_ISTANBUL_2")
 	# Niko kapıyı açar
-	await walls.open_gate(0.05 if GameState.autotest else 1.2)
+	await _niko_opens_gate()
+
+
+## Niko kanatlara döner, iki elini halkalara koyup iter ve kapıyla birlikte bir adım içeri girer; sonra Tolga'ya döner.
+## (Eskiden Tolga'ya bakarak dururken kanatlar arkasında kendiliğinden açılıyordu.)
+func _niko_opens_gate() -> void:
+	var n: Person = walls.niko
+	var turn_t := 0.05 if GameState.autotest else 0.3      # dönüş + kanatlar açılırken: toplam özgün 1,2 sn
+	var t := 0.05 if GameState.autotest else 0.9
+	var mark := Node3D.new()
+	walls.add_child(mark)
+	mark.position = Vector3(SeaWalls.GATE_X, SeaWalls.QUAY_Y + 1.2, SeaWalls.WALL_Z + 0.12)
+	n.look_target = mark          # gövde (omuzlar) kapıya döner
+	await _wait(turn_t)
+	var rg := n.rig
+	if rg:
+		rg.lock += 1
+	Stage.work_begin(n, mark.global_position)
+	walls.open_gate(t)            # kanatlar iterken açılır (beklenmez: aynı anda)
+	var p0 := n.position
+	var tw := create_tween()
+	tw.tween_method(func(k: float) -> void:
+		if not is_instance_valid(n):
+			return
+		n.position = p0 + Vector3(0, 0, -0.5 * k)
+		if k < 0.6:        # eller halkalarda; kanatlar açıldıkça uzaklaşır, el bırakır
+			var pts: Array = []
+			for i in walls.gate_leaves.size():
+				var sx := -1.0 if i == 0 else 1.0
+				pts.append(walls.gate_leaves[i].to_global(Vector3(-sx * 0.93, 1.25, 0.1)))
+			Stage.grip(n, null, pts), 0.0, 1.0, t)
+	await tw.finished
+	if rg:
+		rg.lock = maxi(0, rg.lock - 1)
+	Stage.work_end(n)
+	n.look_target = player
+	mark.queue_free()
 
 
 ## 4b.3: denize düştü; Bizans nöbetçileri çıkardı, sabahı hücrede bekler.

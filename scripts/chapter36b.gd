@@ -58,6 +58,7 @@ func _ready() -> void:
 	player = Player.new()
 	add_child(player)
 	player.frozen = true
+	player.hands_free = true      # açılışta el boş (yayma P6: elde koli bandı/leblebi dikiliyordu); çantadan seçilebilir
 	player.focus_changed.connect(_on_focus)
 	player.interacted.connect(_on_interact)
 	hud.set_fez(false)
@@ -129,6 +130,8 @@ func _build() -> void:
 		dg.set_meta("no_talk", true)
 		add_child(dg)
 		dg.set_activity("chop")
+		# Elde iş aleti (yayma P6): kazmacı ile kürekçi sırayla; "chop" eskiden boş elle havayı dövüyordu
+		dg.give_tool("pickaxe" if i % 2 == 0 else "shovel")
 		diggers.append(dg)
 	# Giustiniani ve adamları kapının önünde, setin üstünde (dışarı çıkmış, sessiz)
 	giust = Person.new({"face": "giustiniani", "coat": Color("8a8e96"), "pants": Color("3a3a40"), "hat": "condottiero",

@@ -74,6 +74,8 @@ func _ready() -> void:
 		GameState.pocket_add("tezkire", "tezkire_12")
 	if GameState.autotest and v == "kid":
 		GameState.flags["siege_kid"] = true          # Bölüm 24: çocuk saçaktan çekildi
+	if GameState.autotest and v.begins_with("cistern"):
+		GameState.chapter_outcomes[44] = "44.2" if v == "cistern_blab" else "44.1"       # Bölüm 44: sarnıç
 	if GameState.autotest and v == "pass":
 		# 23'te Theodoros yortu iznine ikinci mührü bastı: saray tercümanı (sadık tercüme)
 		GameState.pocket_add("guest_pass", "permit_6b")
@@ -621,6 +623,7 @@ func _liturgy() -> void:
 	Audio.sfx("church_bell", -8.0, 0.7)
 	await hud.say("SPK_NIHAT", "D25_N_AYA")
 	await hud.say("SPK_TOLGA", "D25_T_AYA")
+	await _cistern_neighbor()
 	# İmparator girer, ortaya yürür
 	var tw := create_tween()
 	tw.tween_property(emperor, "position", AYA + Vector3(0, 0, 4.0), 5.0)
@@ -718,6 +721,33 @@ func _on_focus(id: String) -> void:
 
 
 ## Selden çekilen Marco ve annesi: mumluğun kapı tarafında, Tolga'ya dönük (cemaatin ve İmparator'un yolunun dışında).
+## Bölüm 44 (Sarnıç) oynandıysa kuyusuna inilen Eudokia ayindedir, Tolga'nın yanında: sır korunduysa (44.1) fısıltıyla
+## "cin" balığını anar, ağızdan kaçtıysa (44.2) yanındakine Tolga'yı "bodrumda saray var diyen tercüman" diye gösterir.
+var _cistern_spoke := false
+
+
+func _cistern_neighbor() -> void:
+	var o44 := Siege.outcome(44)
+	if o44 == "":
+		return
+	var e := Person.new({"coat": Color("4a4a5a"), "pants": Color("3a3028"), "robe": Color("3a3a48"), "skirt": true,
+		"hat": "scarf", "scarf": Color("2a2a30"), "hair": Color("b0aca4"), "skin": Color("e0b896")})
+	e.set_meta("spk", "SPK_EUDOKIA")
+	var fwd := -player.global_transform.basis.z
+	var side := player.global_transform.basis.x
+	# Sol önde (45°): İmparator ortadan, Isidoros sağdan gelir; Eudokia ikisinin görüş çizgisine girmez
+	var want := player.global_position + fwd * 1.1 - side * 1.1
+	var at := Person.clear_spot(get_tree(), want, e, 0.7)
+	e.position = Vector3(at.x, player.global_position.y, at.z)
+	add_child(e)
+	e.look_target = player
+	await get_tree().process_frame
+	e.talking = true
+	await hud.say("SPK_EUDOKIA", "D25_E_CISTERN_1" if o44 == "44.1" else "D25_E_CISTERN_2")
+	e.talking = false
+	_cistern_spoke = true
+
+
 func _build_marco(stand: Vector3) -> void:
 	var mother := Person.new({"coat": Color("6a4a5a"), "pants": Color("3a2a2a"), "skirt": true, "hat": "scarf", "scarf": Color("8a6a4a"),
 		"skin": Color("f0c8a0"), "n": 2540})
@@ -822,6 +852,9 @@ func _autotest_report() -> void:
 	# Bizans tarafında "caught" = ışıklar kayda geçmedi (tespit karesi çekilmez)
 	var shot_ok: bool = cam != null and (cam.done or (byz and v == "caught"))
 	var ok: bool = _outcome == expected and not page.is_empty() and shot_ok and (candle_lit or v.begins_with("osm"))
+	if _cistern_spoke != v.begins_with("cistern"):
+		printerr("AUTOTEST: Eudokia (44)=%s" % _cistern_spoke)
+		ok = false
 	if _marco_spoke != (v == "kid"):
 		printerr("AUTOTEST: Marco=%s" % _marco_spoke)
 		ok = false

@@ -142,6 +142,80 @@ static func scatter_glows(parent: Node3D, xforms: Array, energy := 0.9, core := 
 	return _scatter(parent, glow_mesh(), mat("glow", energy, core, edge), xforms)
 
 
+## Dressing.glow ile kurulan ateşler (ışıyan turuncu kutular: ordugâhın ve surların uzak ateşleri, nöbet ateşleri) alev
+## ve haleye çevrilir. Kutular Dressing'in ışıyan yüzeylerinde 36 köşelik bloklar hâlinde durur; rengi ateş olanlar
+## (FIRE_COLS) ağdan çıkarılır, yerlerine aynı düğümün altında tek çoklu ağ alev kurulur (gece/gündüz görünürlüğü
+## düğümünkü; hale ayrı bir çizim olurdu, uzak ateşte alevin kendi parıltısı yeter). Pencere ışıkları (ffc870) kutu kalır. Döndürür: çevrilen ateş sayısı.
+const FIRE_COLS := ["ffa030", "ffa040", "ffb040", "ffb050"]
+const FIRE_CORE := "ffd070"         # ordugâh ateşinin çekirdek kutusu: alevin kendi çekirdeği var, atılır
+
+
+static func from_glow_boxes(root: Node) -> int:
+	var gm := Dressing._glow_material()
+	var n := 0
+	for c in root.find_children("*", "MeshInstance3D", true, false):
+		var mi := c as MeshInstance3D
+		if mi.material_override != gm or mi.mesh == null or mi.mesh.get_surface_count() != 1:
+			continue
+		var arr := mi.mesh.surface_get_arrays(0)
+		var v: PackedVector3Array = arr[Mesh.ARRAY_VERTEX]
+		var col: PackedColorArray = arr[Mesh.ARRAY_COLOR]
+		if v.size() % 36 != 0 or col.size() != v.size():
+			continue
+		var keep_v := PackedVector3Array()
+		var keep_n := PackedVector3Array()
+		var keep_c := PackedColorArray()
+		var nrm: PackedVector3Array = arr[Mesh.ARRAY_NORMAL]
+		var flames: Array = []
+		for b in range(0, v.size(), 36):
+			var hx := col[b].to_html(false)
+			if not (hx in FIRE_COLS or hx == FIRE_CORE):
+				keep_v.append_array(v.slice(b, b + 36))
+				keep_n.append_array(nrm.slice(b, b + 36))
+				keep_c.append_array(col.slice(b, b + 36))
+				continue
+			if hx == FIRE_CORE:
+				continue
+			var lo := v[b]
+			var hi := v[b]
+			for k in range(b, b + 36):
+				lo = Vector3(minf(lo.x, v[k].x), minf(lo.y, v[k].y), minf(lo.z, v[k].z))
+				hi = Vector3(maxf(hi.x, v[k].x), maxf(hi.y, v[k].y), maxf(hi.z, v[k].z))
+			var sz := hi - lo
+			var w := maxf(sz.x, sz.z) * 1.35
+			var h := sz.y * 1.7
+			var base := Vector3((lo.x + hi.x) * 0.5, lo.y - sz.y * 0.1, (lo.z + hi.z) * 0.5)
+			flames.append(Transform3D(Basis().scaled(Vector3(w, h, w)), base))
+			flames.append(Transform3D(Basis().scaled(Vector3(w * 0.6, h * 0.65, w * 0.6)), base + Vector3(w * 0.22, 0.0, w * 0.12)))
+		if flames.is_empty():
+			continue
+		n += flames.size() / 2
+		var holder := mi.get_parent() as Node3D
+		if keep_v.is_empty():
+			mi.queue_free()
+		else:
+			var na := []
+			na.resize(Mesh.ARRAY_MAX)
+			na[Mesh.ARRAY_VERTEX] = keep_v
+			na[Mesh.ARRAY_NORMAL] = keep_n
+			na[Mesh.ARRAY_COLOR] = keep_c
+			var am := ArrayMesh.new()
+			am.add_surface_from_arrays(Mesh.PRIMITIVE_TRIANGLES, na)
+			mi.mesh = am
+		var fl: Array = holder.get_meta("flame_xf", [])
+		fl.append_array(flames)
+		holder.set_meta("flame_xf", fl)
+	# Her Dressing kökü için tek alev çoklu ağı (eski parça başına bir çizimin yerine)
+	for c in root.find_children("*", "Node3D", true, false):
+		if not c.has_meta("flame_xf"):
+			continue
+		var f := scatter_flames(c as Node3D, c.get_meta("flame_xf"), 1.6)
+		f.name = "GlowFlames"
+		f.set_meta("soft", true)
+		c.remove_meta("flame_xf")
+	return n
+
+
 ## Parçacık ağı: malzemesi yüzeyde (CPUParticles3D mesh'in malzemesini kullanır)
 static func particle_mesh(kind := "flame", energy := 1.6) -> QuadMesh:
 	var q := QuadMesh.new()

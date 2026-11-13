@@ -36,9 +36,14 @@
   "stability": 0.75,
   "similarity": 0.8,
   "style": 0.1,
-  "voice_id": "ketyAqqchmwgrDzULh9A",
+  "voice_id": "5W74Dom7jqg8P63rrFqK",
   "design": "Turkish man in his late 40s, a time-bureau auditor. Monotone, dry, precise, bureaucratic, deadpan humour, never raises his voice. Clear standard Turkish, slightly nasal.",
-  "voice_name": "NHG Nihat"
+  "voice_name": "NHG aday Nihat L5 (kütüphane: Ozgur Ozturk - Expressive)",
+  "eski_voice_id": "ketyAqqchmwgrDzULh9A",
+  "eski_voice_name": "NHG Nihat",
+  "model": "eleven_v3",
+  "v3_stability": 0.5,
+  "ton_mode": "rol:denetci"
  },
  "SPK_MUFIDE": {
   "tarif": "Başdenetçi, orta yaş kadın; anaç ama kesin",
@@ -69,16 +74,22 @@
   "model": "eleven_v3"
  },
  "SPK_NIKO": {
-  "tarif": "Bizans nöbetçisi; gür, iyi kalpli, hafif kaba",
+  "tarif": "Deniz surunun eski nöbetçisi; hepsini görmüş, hiçbirine şaşırmıyor; kısa, düz, yorgun",
   "gender": "male",
   "age": "middle_aged",
   "search": "hearty rough",
   "stability": 0.4,
   "similarity": 0.8,
   "style": 0.45,
-  "voice_id": "3QACul1xvGwWSYKK3Azb",
-  "design": "Greek Byzantine city guard in his 40s speaking Turkish with a light Greek accent. Loud, booming, good-hearted, a bit rough, jovial.",
-  "voice_name": "NHG Niko"
+  "voice_id": "xQqhiz7D7vCWe9Kzi7Wk",
+  "design": "Byzantine sea-wall sentry of about fifty, thirty years on the same wall. Dry, low, tired, unsurprised by anything; short flat sentences; calls out only when duty requires.",
+  "voice_name": "NHG Niko aday b2",
+  "eski_voice_id": "3QACul1xvGwWSYKK3Azb",
+  "eski_voice_name": "NHG Niko",
+  "model": "eleven_v3",
+  "v3_stability": 0.5,
+  "ton_mode": "rol:eski_nobetci",
+  "not_secim": "0.99.119: sahibi yön B'yi (eski nöbetçi) ve Ses 2'yi seçti; replikler yeniden yazıldı"
  },
  "SPK_KADRI": {
   "tarif": "Aşçıbaşı; kalın, gürleyen, sert ama sevecen",
@@ -120,24 +131,29 @@
   "tarif": "Genç yeniçeri; saf, biraz yavaş",
   "gender": "male",
   "age": "young",
-  "search": "young simple",
-  "stability": 0.45,
-  "similarity": 0.8,
-  "style": 0.35,
-  "voice_id": "vQCFlr2sNXTFIJf7iFOF",
-  "design": "Young Ottoman Janissary, about 20. Naive, a bit slow, sincere, friendly, slightly dopey comedic delivery.",
-  "voice_name": "NHG Hasan"
+  "design": "Young Ottoman janissary sentry, about 20, a village boy. Slow, good-natured, slightly dopey, bored on guard duty; thick country way of speaking, medium-low pitch, a little hoarse from the cold morning.",
+  "voice_id": "IRV62sgJIhdh2WZ6yoje",
+  "voice_name": "NHG Hasan 2",
+  "eski_voice_id": "vQCFlr2sNXTFIJf7iFOF",
+  "eski_voice_name": "NHG Hasan",
+  "model": "eleven_v3",
+  "v3_stability": 0.5,
+  "ton_mode": "rol:nobetci",
+  "not_secim": "0.99.119: sahibi sahne içinde dinleyip seçti (yeni ses 1)"
  },
  "SPK_HUSEYIN": {
   "tarif": "Hasan'ın ikizi gibi genç yeniçeri; biraz daha tiz, daha canlı ve sabırsız (eskiden Büro Ajanı 2'nin 40'lı yaşlardaki düz sesi kullanılıyordu: yanlış) · Özel ses sınırı (30/30) dolu: Tanık'ın sesini kullanır (aynı sahnede konuşmazlar)",
   "gender": "male",
-  "age": "young",
-  "search": "young energetic",
-  "stability": 0.4,
-  "similarity": 0.8,
-  "style": 0.4,
-  "design": "Young Ottoman Janissary guard, about 19, twin-like partner of Hasan. Slightly higher-pitched and quicker than Hasan, eager, nosy, a little suspicious, comedic. Warm Anatolian Turkish.",
-  "same_as": "SPK_WITNESS"
+  "age": "middle_aged",
+  "design": "Young Ottoman janissary sentry, about 19. Quick, impatient, nosy, higher pitched than his friend, talks out of the side of his mouth, street-smart.",
+  "voice_id": "nhnhejv7TiAU2XmGCIBM",
+  "voice_name": "NHG Huseyin",
+  "eski_voice_id": "qUGjOGoUuQBTUqwY8n0e",
+  "eski_voice_name": "NHG Witness l1",
+  "model": "eleven_v3",
+  "v3_stability": 0.5,
+  "ton_mode": "rol:nobetci",
+  "not_secim": "0.99.119: sahibi sahne içinde dinleyip seçti (yeni ses 1)"
  },
  "SPK_GUARDS": {
   "tarif": "Hasan ile Hüseyin birlikte (Hasan'ın sesi kullanılır)",
@@ -153,7 +169,10 @@
   "style": 0.3,
   "voice_id": "SMrp8T943o5MqNgZtFa8",
   "design": "Very young Ottoman soldier, about 18. Innocent, homesick, soft-spoken, talks about his mother, earnest.",
-  "voice_name": "NHG Soldier"
+  "voice_name": "NHG Soldier",
+  "model": "eleven_v3",
+  "v3_stability": 0.5,
+  "ton_mode": "rol:asker"
  },
  "SPK_CLERK": {
   "tarif": "Bizans memuru; kuru, törensel, burnundan",
@@ -183,13 +202,17 @@
   "tarif": "Cenevizli komutan; kendinden emin, tüccar kurnazlığı",
   "gender": "male",
   "age": "middle_aged",
-  "search": "confident commander",
-  "stability": 0.5,
-  "similarity": 0.8,
-  "style": 0.3,
-  "voice_id": "94aHLmRvlOysZfcYAw7N",
-  "design": "Genoese military commander in his 40s speaking Turkish with an Italian accent. Self-assured, charismatic, merchant-like cunning, smooth.",
-  "voice_name": "NHG Giust"
+  "design": "Genoese mercenary commander in his 40s speaking Turkish with an Italian accent. A soldier's voice, not a diplomat's: rough, tired, commanding, hoarse from battle, with a merchant's sly humour. Medium-low pitch.",
+  "voice_id": "0eJPI9GnhoplaJVm643n",
+  "voice_name": "NHG aday Giust K3a",
+  "eski_voice_id": "94aHLmRvlOysZfcYAw7N",
+  "eski_voice_name": "NHG Giust",
+  "model": "eleven_v3",
+  "v3_stability": 0.5,
+  "ton_mode": "rol:kondotiyer",
+  "not_secim": "0.99.119: sahibi iki tur üst üste K3'ü seçti (sıcak, kumlu bariton; karizmatik okuma)",
+  "onceki_voice_id": "DqCBb2FUXKaa0HiJSPAy",
+  "onceki_voice_name": "NHG Giust 2"
  },
  "SPK_EMPEROR": {
   "tarif": "İmparator Konstantinos; ağırbaşlı, yorgun, sıcak (saygılı)",
@@ -201,7 +224,10 @@
   "style": 0.15,
   "voice_id": "3CuixtzkOJDK19790EvQ",
   "design": "Byzantine emperor in his late 40s. Dignified, weary, warm, noble and restrained, speaks softly with gravity. Must sound respectful and human.",
-  "voice_name": "NHG Emperor"
+  "voice_name": "NHG Emperor",
+  "model": "eleven_v3",
+  "v3_stability": 0.5,
+  "ton_mode": "rol:saray"
  },
  "SPK_FATIH": {
   "tarif": "Genç Sultan Mehmed; 21 yaşında, sakin, keskin, otoriter (saygılı)",
@@ -347,7 +373,11 @@
  },
  "SPK_ROWER": {
   "tarif": "Kürekçi",
-  "same_as": "SPK_NIKO"
+  "gender": "male",
+  "age": "middle_aged",
+  "voice_id": "3QACul1xvGwWSYKK3Azb",
+  "voice_name": "NHG Niko",
+  "not_secim": "0.99.119: Niko'nun sesi değişti; bu karakter eski seste (kayıtları o sesle) bırakıldı"
  },
  "SPK_MANAGER": {
   "tarif": "Ofis müdürü; plaza jargonlu, sabırsız (özel sesi slot için silindi)",
@@ -443,7 +473,11 @@
  },
  "SPK_NOTARAS": {
   "tarif": "",
-  "same_as": "SPK_GIUST"
+  "gender": "male",
+  "age": "middle_aged",
+  "voice_id": "94aHLmRvlOysZfcYAw7N",
+  "voice_name": "NHG Giust",
+  "not_secim": "0.99.119: Giustiniani'nin sesi değişti; bu karakter eski seste (kayıtları o sesle) bırakıldı"
  },
  "SPK_ISIDORE": {
   "tarif": "",
@@ -487,7 +521,11 @@
  },
  "SPK_TREVISANO": {
   "tarif": "Venedikli kaptan Trevisano; asil, cesur, kararlı",
-  "same_as": "SPK_GIUST"
+  "gender": "male",
+  "age": "middle_aged",
+  "voice_id": "94aHLmRvlOysZfcYAw7N",
+  "voice_name": "NHG Giust",
+  "not_secim": "0.99.119: Giustiniani'nin sesi değişti; bu karakter eski seste (kayıtları o sesle) bırakıldı"
  },
  "SPK_USTA": {
   "tarif": "Köprücü Usta Mahmud; yaşlı marangoz, öğretmen gibi azarlar, sıcak",
@@ -495,7 +533,11 @@
  },
  "SPK_DEFENDER": {
   "tarif": "Surdaki savunucu; yorgun, kararlı, pürüzlü ses",
-  "same_as": "SPK_NIKO"
+  "gender": "male",
+  "age": "middle_aged",
+  "voice_id": "3QACul1xvGwWSYKK3Azb",
+  "voice_name": "NHG Niko",
+  "not_secim": "0.99.119: Niko'nun sesi değişti; bu karakter eski seste (kayıtları o sesle) bırakıldı"
  },
  "SPK_LOOKOUT": {
   "tarif": "Gözcü; genç, telaşlı, uyarı bağırır",
@@ -548,7 +590,11 @@
  },
  "SPK_PODESTA": {
   "tarif": "Podesta Lomellino; yaşlı Cenevizli yönetici, ağırbaşlı, yorgun",
-  "same_as": "SPK_GIUST"
+  "gender": "male",
+  "age": "middle_aged",
+  "voice_id": "94aHLmRvlOysZfcYAw7N",
+  "voice_name": "NHG Giust",
+  "not_secim": "0.99.119: Giustiniani'nin sesi değişti; bu karakter eski seste (kayıtları o sesle) bırakıldı"
  },
  "SPK_WITNESS": {
   "tarif": "Tanık; Nihat'ı uçarken gören halktan biri, şaşkın, bağıran",
@@ -612,11 +658,23 @@
  },
  "SPK_AZAP": {
   "tarif": "Azap bölükbaşı; yaralı bacaklı, sert ama sıcak, bağıran",
-  "same_as": "SPK_SOLDIER"
+  "same_as": "SPK_SOLDIER",
+  "v3_stability": 0.0,
+  "ton_mode": "rol:asker"
  },
  "SPK_AZAPBASI": {
   "tarif": "Azap Bölükbaşı Turgut; kırklarında, Rumelili, boğuk, kaba ama sıcak",
-  "same_as": "SPK_RIZA"
+  "gender": "male",
+  "age": "middle_aged",
+  "design": "Ottoman infantry sergeant in his mid 40s from Rumelia. Hoarse, gravelly voice worn out from years of shouting orders on the drill field; gruff, blunt, dry humour, fatherly underneath. Low pitch, rough texture.",
+  "voice_id": "XO28O0oCdiD3tuSMv0RQ",
+  "voice_name": "NHG Turgut",
+  "eski_voice_id": "0DihkedLJYKoWg7H1u4d",
+  "eski_voice_name": "Ergun Kalbak",
+  "model": "eleven_v3",
+  "v3_stability": 0.5,
+  "ton_mode": "rol:cavus",
+  "not_secim": "0.99.119: sahibi sahne içinde dinleyip seçti (yeni ses 1)"
  },
  "SPK_CAVUS": {
   "tarif": "Sultan'ın çavuşu Davud; ellilerinde, ağır, sakin, otoriter",
@@ -1048,7 +1106,11 @@
  },
  "SPK_EDISON": {
   "tarif": "Thomas Edison; kendinden emin, iş adamı",
-  "same_as": "SPK_GIUST"
+  "gender": "male",
+  "age": "middle_aged",
+  "voice_id": "94aHLmRvlOysZfcYAw7N",
+  "voice_name": "NHG Giust",
+  "not_secim": "0.99.119: Giustiniani'nin sesi değişti; bu karakter eski seste (kayıtları o sesle) bırakıldı"
  },
  "SPK_SOCRATES": {
   "tarif": "Sokrates; yaşlı, ironik, hep soru soran",
@@ -1073,6 +1135,30 @@
  "SPK_STREET_MONK": {
   "tarif": "Sokaktaki keşiş (genel); yaşlı, yumuşak",
   "same_as": "SPK_DERVISH"
+ },
+ "SPK_EUDOKIA": {
+  "tarif": "Kyra Eudokia; kuyusundan balık çıkan mahalleli kadın, yaşlıca, pratik, kuru mizah, içten",
+  "gender": "female",
+  "age": "middle_aged",
+  "voice_id": "quItPmQPZt4P59hTbppP",
+  "voice_name": "NHG aday Eudokia E1a",
+  "model": "eleven_v3",
+  "v3_stability": 0.5,
+  "ton_mode": "rol:mahalleli",
+  "design": "Greek townswoman of Constantinople, about fifty, practical and sharp-tongued with warmth underneath. Slightly husky alto; brisk, talks like a neighbour over the garden wall.",
+  "not_secim": "0.99.119: sahibi dinleme sayfasında E1a'yı seçti"
+ },
+ "SPK_YAKOVOS": {
+  "tarif": "Balıkçı Yakovos; sarnıcı kırk yıldır karanlıkta sayan yaşlı balıkçı, sakin, kısık sesli, kuru mizah",
+  "gender": "male",
+  "age": "old",
+  "voice_id": "qnPteu5iy66lRdfdJYeW",
+  "voice_name": "NHG aday Yakovos Y2a",
+  "model": "eleven_v3",
+  "v3_stability": 0.5,
+  "ton_mode": "rol:balikci",
+  "design": "Sturdy fisherman about fifty-five, gruff but kindly. Raspy chest voice, short sentences, a chuckle hiding behind the words; calm even when the ceiling shakes.",
+  "not_secim": "0.99.119: sahibi dinleme sayfasında Y2a'yı seçti"
  },
  "SPK_WOMAN_BYZ": {
   "tarif": "Konstantinopolisli kadın (genel); orta yaşlı, pratik, kuru mizah",

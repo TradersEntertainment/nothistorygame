@@ -67,3 +67,4 @@ GodotSteam eklendiğinde `GameState.unlock_achievement(id)` içinde `Steam.setAc
 | `ACH_FIRST_SHOT` | İlk Gülle | The First Ball | Land the great gun's first ball on the unbroken wall. |
 | `ACH_HORSE_SEA` | Denize Giren Atlı | The Rider in the Sea | Record the Sultan riding his horse into the sea on 20 April. |
 | `ACH_OSM_LORE` | Ordunun Kâtibi | Clerk of the Army | Find every history page on the Ottoman side. |
+| `ACH_CISTERN` | Doksan Yıl Erken | Ninety Years Early | Find the forgotten Basilica Cistern beneath a well in 1453. |

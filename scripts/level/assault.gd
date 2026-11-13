@@ -19,6 +19,7 @@ var live_span := 0.0              # dış surda |x| < live_span boş (bölüm or
 var gun_spots: Array = [Vector3(-44, 0, 92), Vector3(-16, 0, 94), Vector3(16, 0, 94), Vector3(44, 0, 92)]
 var rng := RandomNumberGenerator.new()
 const VOLLEY_FLIGHT := 2.4        # okun havada kaldığı süre (yüksek yay, dik iniş)
+const CLIMB := preload("res://scripts/npc/climb_anim.gd")
 
 var _t := 0.0
 var _runners: Array = []          # [[MultiMeshInstance3D (RUN_POSES sırasıyla)], [indeks listesi _run içinde]]
@@ -460,12 +461,16 @@ func _update_climbers(delta: float) -> void:
 		var s: Soldier = c["node"]
 		if not is_instance_valid(s):
 			continue
-		var prev := [s.position, c["t"], c.get("a", 1.0)]
+		# Konum karşılaştırması mantık yeriyle (lp): merdivendeyken gövdeyi tırmanma animasyonu basamaklara oturtur
+		var prev := [c.get("lp", s.position), c["t"], c.get("a", 1.0)]
 		_climber_step(c, s, delta)
+		if CLIMB.of(s) == null:
+			c["lp"] = s.position
 		# Son güvence: yeni yer aynı merdivendeki birinin içine yaklaştırıyorsa bu kare ilerlemez (yaklaşma, dipte bekleme ve
 		# korkuluktan atlama sırasında yan yana gelip iç içe kalıyorlardı)
-		if float(c["fall"]) < 0.0 and _too_close(c, s.position, prev[0]):
+		if float(c["fall"]) < 0.0 and _too_close(c, c["lp"], prev[0]):
 			s.position = prev[0]
+			c["lp"] = prev[0]
 			c["t"] = prev[1]
 			c["a"] = prev[2]
 
@@ -474,7 +479,7 @@ func _too_close(c: Dictionary, now: Vector3, before: Vector3) -> bool:
 	for o: Dictionary in _climb:
 		if o == c or float(o["fall"]) >= 0.0 or not (o["base"] as Vector3).is_equal_approx(c["base"]):
 			continue
-		var op := (o["node"] as Node3D).position
+		var op: Vector3 = o.get("lp", (o["node"] as Node3D).position)
 		if absf(op.y - now.y) > 0.8:
 			continue
 		var dn := Vector2(op.x - now.x, op.z - now.z).length()
@@ -489,6 +494,10 @@ func _climber_step(c: Dictionary, s: Soldier, delta: float) -> void:
 		var top: Vector3 = c["top"]
 		if float(c["fall"]) >= 0.0:
 			# Düşüş: kollar havada, geriye devrilip sur dibine; yerde yatar, sonra toprağa gömülüp gözden çıkar
+			var fca: Node = CLIMB.of(s)
+			if fca:
+				fca.release(true, "fall")
+				s.position = c.get("lp", s.position)
 			c["fall"] = float(c["fall"]) + delta
 			var f: float = c["fall"]
 			var gy := ground_y(s.position.x, s.position.z)
@@ -544,6 +553,9 @@ func _climber_step(c: Dictionary, s: Soldier, delta: float) -> void:
 		if t >= 1.0:
 			# Tepeye vardı: savunan mızrakla iter, geri düşer (ışınlanıp yeniden dipte belirmez)
 			c["fall"] = 0.0
+			var tca: Node = CLIMB.of(s)
+			if tca:
+				tca.release(true, "fall")
 			s.position = top
 			return
 		# Basamak basamak: bir el ve karşı ayak kalkar, gövde bir basamak (0.45 m) yükselir, sonra öbür taraf.
@@ -551,10 +563,30 @@ func _climber_step(c: Dictionary, s: Soldier, delta: float) -> void:
 		var rung := t * len / 0.45
 		var ph := fmod(rung, 1.0)
 		s.position = base.lerp(top, (floor(rung) + smoothstep(0.1, 0.85, ph)) * 0.45 / len)
-		if s.rig:
-			s.rig.activity = "climb_a" if int(rung) % 2 == 0 else "climb_b"
-		if t > 0.93 and s.rig:
-			s.rig.activity = "leap"
+		c["lp"] = s.position
+		# Gövde merdivenin üstünde (ortak tırmanma animasyonu): merdivene paralel, eller/ayaklar basamakta. Kameraya yakın
+		# olanlar tam sürüm, uzaktakiler ucuz sürüm (IK üç karede bir)
+		var ca: Node = CLIMB.of(s)
+		if ca == null:
+			ca = CLIMB.attach(s, null, 0.0, "assault")
+			var lad: Node3D = _ladder_nodes[0]
+			for ln: Node3D in _ladder_nodes:      # bu tırmananın merdiveni: dibi base'in 0,22 m gerisinde
+				if ln.position.distance_to(base - Vector3(0, 0, 0.22)) < lad.position.distance_to(base - Vector3(0, 0, 0.22)):
+					lad = ln
+			var ll := base.distance_to(top)
+			ca.set_line(Vector3.ZERO, Vector3(0, ll, 0), Vector3(0, 0, 1), 0.3, 0.45, 0.68, lad)
+			ca.blend_from(s.global_position, 0.4)
+		ca.follow_frac((floor(rung) + smoothstep(0.1, 0.85, ph)) * 0.45 / len, true)
+		# Aynı merdivende üstündekine görünüşte 0,8 m'den çok yaklaşmaz (mantık yeri değişmez; yalnız gövde bekler)
+		for o: Dictionary in _climb:
+			if o == c or float(o["fall"]) >= 0.0 or float(o["t"]) <= t or not (o["base"] as Vector3).is_equal_approx(base):
+				continue
+			var oca: Node = CLIMB.of(o["node"])
+			if oca and ca.s > oca.s - 0.8 / 0.45:
+				ca.s = maxf(0.0, oca.s - 0.8 / 0.45)
+				ca.goal = ca.s
+		var cam := get_viewport().get_camera_3d()
+		ca.full = cam == null or cam.global_position.distance_to(s.global_position) < 30.0
 		if t > 0.45 and rng.randf() < delta * 0.08 * intensity:
 			c["fall"] = 0.0
 
@@ -600,7 +632,7 @@ func _queue_blocked(c: Dictionary, to: Vector3) -> bool:
 				continue          # arkadaki ya da merdivende yükselmiş olan engel değil
 			if absf(oa - ca) < 0.001 and int(o.get("i", 0)) > int(c.get("i", 0)):
 				continue          # aynı anda düşüp aynı yerden yola çıkan ikisi: önce eklenen gider (ikisi de bekleyip iç içe kalıyordu)
-		var op := (o["node"] as Node3D).position
+		var op: Vector3 = o.get("lp", (o["node"] as Node3D).position)
 		if Vector2(op.x - to.x, op.z - to.z).length() < 0.9 and absf(op.y - to.y) < 1.5:
 			return true
 	return false

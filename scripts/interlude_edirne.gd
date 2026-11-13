@@ -1178,7 +1178,7 @@ func _kebab() -> void:
 	await _settle_player(COOK_SPOT, null)
 	await _turn(_p(EdirnePalace.BRAZIER + Vector3(0, 0.62, 0)))
 	await _until(aside, 4.0)
-	radu.face_toward(_p(EdirnePalace.BRAZIER))
+	# (eskiden burada radu.face_toward(BRAZIER): look_target oyuncuyken anlık dönüp ~1 sn'de geri dönüyordu)
 	palace.light_brazier(0.08)
 	Audio.sfx("fire_crackle", -6.0)
 	# Izgara: beş demir çubuk (doğu-batı); dört şiş (kuzu, soğan, kuzu, soğan, kuzu) çubukların üstüne, Tolga'ya enlemesine
@@ -1327,13 +1327,14 @@ func _policy() -> void:
 	await hud.say("SPK_TOLGA", "D17E_T_POL_3")
 	vlad.release_item()
 	stake.queue_free()
-	# Mühür yüzüğü: Vlad kütüğe eğilip basar, kırmızı mühür kalır
-	vlad.face_toward(sheet.global_position)
+	# Mühür yüzüğü: Vlad kütüğün başında durup yüzüğü basar, kırmızı mühür kalır. Yüzünü Tolga'dan ÇEVİRMEZ:
+	# eskiden burada face_toward(sheet) anlık dönüyor, look_target (oyuncu) onu ~8 kare boyunca geri çeviriyordu
+	# ("Vlad bir an arkasını dönüp geri dönüyor"). Bakış hedefi sabit kalır; dönüş yumuşak ve konuştuğu kişiye.
+	vlad.look_target = player
 	vlad.emote("stamp")
 	await _wait(0.25)
 	Audio.sfx("stamp", -4.0, 0.9)
 	Props.cyl(palace, 0.03, 0.002, EdirnePalace.LOG + Vector3(0.14, 0.668, 0.05), Color("a8182a"), Vector3.ZERO, 10)
-	vlad.face_toward(player.global_position)
 	await hud.say("SPK_VLAD", "D17E_V_POL_3")
 	mehmed.emote("facepalm")
 	await hud.say("SPK_SEHZADE", "D17E_M_POL")

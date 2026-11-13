@@ -48,7 +48,16 @@ if empty:
     print("VOICEGAIN FAIL: boş ses dosyası: " + ", ".join(empty))
     sys.exit(1)
 PYEOF
+# Parçalı koşu (tam paket birkaç makineye bölünür): SHARD=k SHARDS=n — koşuların sıra numarası n'e bölününce k kalanı
+# verenler bu makinede koşar; ön denetimler her parçada, paket sonu denetimleri (menü dönüşü, titreşen yüzey) yalnız
+# SHARD=0'da koşar. LIST=1: hiçbir şey koşmadan bu parçanın koşu satırlarını yazar.
+_run_n=0
 run() {
+  if [ -n "${SHARD:-}" ]; then
+    _run_n=$((_run_n + 1))
+    [ $((_run_n % ${SHARDS:-8})) -eq "$SHARD" ] || return
+  fi
+  if [ "${LIST:-0}" = "1" ]; then echo "RUN $*"; return; fi
   if [ "${QUICK:-0}" = "1" ]; then
     case " $* " in
       *" --autotest "*|*" --autotest=byz "*|*" --autotest=osm "*|*"--chapter=12 --autotest=next "*|*"--chapter=12b --autotest=next "*) ;;
@@ -121,7 +130,7 @@ for v in "" "=brow" "=miss" "=cologne" "=early" "=blakh_ok" "=blakh_bad"; do run
 for v in "" "=creative" "=pass" "=singed" "=letter"; do run --chapter=23 --autotest$v; done
 run --chapter=23 --autotest=osm
 for v in "" "=late" "=niko" "=niko_slow" "=eclipse"; do run --chapter=24 --autotest$v; done
-for v in "" "=caught" "=pass" "=kid"; do run --chapter=25 --autotest$v; done
+for v in "" "=caught" "=pass" "=kid" "=cistern" "=cistern_blab"; do run --chapter=25 --autotest$v; done
 for v in "=osm" "=osm_caught" "=osm_tez"; do run --chapter=25 --autotest$v; done
 for v in "" "=nophoto" "=hold" "=hold_box" "=hold23" "=hold3" "=warn_notrust" "=hold_lose" "=lighter" "=isidore" "=kasim" "=candle" "=council_ok" "=council_bad"; do run --chapter=26 --autotest$v; done
 # Perde IV · Osmanlı tarafı (Büro'da "O" seçilince)
@@ -139,6 +148,9 @@ for v in "" "=leave"; do run --chapter=36b --autotest$v; done
 # bot savunmasız durur
 for v in "" "=lose"; do run --chapter=42b --autotest$v; done
 for v in "" "=lose"; do run --chapter=41o --autotest$v; done
+# Sarnıç (44b, 26 Mayıs; docs/BOLUM_YEREBATAN.md): blab: sır ağızdan kaçar (44.2); dark: süre dolar, Yakovos çeker;
+# kid: 24.1'de kurtarılan Marco avluda; nophone: fener yerine çakmak (ya da kumanda ekranı); hit: bot ilk küçük parçanın altında durur (isabet: su alma, karanlık, ışığı bulma)
+for v in "" "=blab" "=dark" "=kid" "=nophone" "=hit"; do run --chapter=44b --autotest$v; done
 # Kuşbakışı (v0.99.26): Büro'nun dronu Sultan'ın otağında; bad: bahanelerin hepsi kötü (43O.2), miss: kazana yetişilmez
 for v in "" "=bad" "=miss" "=dive"; do run --chapter=43o --autotest$v; done
 for v in "" "=lose" "=edirne" "=edirne_ok"; do run --chapter=28o --autotest$v; done
@@ -289,6 +301,8 @@ run --chapter=13 --autotest=wrong_next
 run --chapter=13 --autotest=gidak
 run --chapter=16 --autotest=next
 run --chapter=14 --autotest=next
+if [ -n "${SHARD:-}" ] && [ "$SHARD" != "0" ]; then echo "SHARD $SHARD/${SHARDS:-8} BITTI fail=$fail"; exit $fail; fi
+[ "${LIST:-0}" = "1" ] && exit 0
 # Ana menüye dönüş (v0.99): ağır bölümden duraklatma menüsüyle iki kez dönülür; menü açılmalı, kalıntı kalmamalı
 for ch in 26 20o; do
   mout=$(timeout 300 "$GODOT" --headless --path . res://tests/menu_return.tscn -- --chapter=$ch 2>&1)

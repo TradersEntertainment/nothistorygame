@@ -17,6 +17,7 @@ extends Node3D
 ##   --autotest[=lose]   (varsayılan: 42.1; lose: serbest talimde bot savunmasız durur)
 
 const YARD_AT := Vector3(-16.0, 0.0, -20.0)
+const CLIMB := preload("res://scripts/npc/climb_anim.gd")
 const GIUST_AT := Vector3(3.4, 0.0, 6.2)
 const LEON_LOOK := {"coat": Color("5a6a7a"), "pants": Color("3a2a22"), "hat": "helm", "mustache": true, "beard": false}
 const GIUST_LOOK := {"face": "giustiniani", "coat": Color("8a8e96"), "pants": Color("3a3a40"), "hat": "condottiero",
@@ -137,6 +138,7 @@ func _build() -> void:
 
 
 func _climber_home() -> void:
+	_unplace_climber("")
 	if climber.get_parent() != self:
 		climber.reparent(self)
 	climber.rotation = Vector3.ZERO
@@ -270,8 +272,6 @@ func _climb_round(speed: float) -> bool:
 		_place_climber()
 		if step_acc > 0.42:
 			step_acc = 0.0
-			if climber.rig:
-				climber.rig.activity = "climb_b" if climber.rig.activity == "climb_a" else "climb_a"
 		var near := _on_head()
 		var press := Input.is_action_pressed("interact")
 		if GameState.autotest:
@@ -294,6 +294,7 @@ func _climb_round(speed: float) -> bool:
 	# Geç kalındı: gönüllü iskeleye çıkar, tahta kılıçla oyuncuyu dürter
 	hud.set_prompt("")
 	hud.set_chase("", 0.0)
+	_unplace_climber("")
 	climber.reparent(self)
 	climber.rotation = Vector3.ZERO
 	var tw := climber.create_tween()
@@ -308,13 +309,21 @@ func _climb_round(speed: float) -> bool:
 	return false
 
 
+## Gönüllü merdivenin üstünde (ortak tırmanma animasyonu): gövde merdivene paralel, eller ve ayaklar basamaklarda;
+## merdiven itilip yatınca onunla birlikte yatar. _climb_t: kökün merdiven metresi (+0,15)
 func _place_climber() -> void:
 	var l := yard.ladder
-	var p := l.point_at(_climb_t) + l.front_dir() * 0.38 + Vector3(0, -0.15, 0)
-	climber.global_position = p
-	var f := -l.front_dir()
-	f.y = 0.0
-	climber.global_rotation = Vector3(0, atan2(f.x, f.z), 0)
+	var ca: Node = CLIMB.of(climber)
+	if ca == null:
+		ca = CLIMB.attach(climber, l, _climb_t - 0.15, "42b")
+		ca.blend_from(climber.global_position, 0.4)
+	ca.follow(_climb_t - 0.15)
+
+
+func _unplace_climber(act: String) -> void:
+	var ca: Node = CLIMB.of(climber)
+	if ca:
+		ca.release(true, act)
 
 
 ## Merdiven devrilir; üstündeki samana düşer; balyada bir an yatar, kalkıp güler. Sonra iki gönüllü merdiveni yeniden dayar.
@@ -328,6 +337,7 @@ func _push() -> void:
 	tw.tween_property(l, "rotation:x", deg_to_rad(76.0), 1.0).set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_IN)
 	await get_tree().create_timer(0.55, false).timeout
 	# Gönüllü merdivenden kopar, samana düşer
+	_unplace_climber("fall")
 	climber.reparent(self)
 	if climber.rig:
 		climber.rig.activity = "fall"

@@ -24,6 +24,7 @@ var _merak := 0
 var _tries := 0
 var _shown: Dictionary = {}
 var _letter_delivered := false
+var _key_asked := 0          # kilit sorunun kaç kez sorulduğu (test raporu: kitchen'da iki kez)
 var _envoy := false
 var hikmet: Hikmet
 var nihat: Person
@@ -234,7 +235,11 @@ func _audience() -> void:
 	# 3. Mühendislik sorusu
 	if not GameState.flags.get("ch12_cannon", false):
 		await _f("D12_F_CANNON")
-		var cp := 0 if v != "kitchen" and not (v == "retry" and _tries == 0) else 2
+		# kitchen: top sorusunu bilir (Merak 1), kilit soruya ulaşır, "Salı" deyip (B) mutfağa gider, dönünce kilit soru
+		# yeniden sorulur, yine B: 12.5 (CHAPTERS "Mutfağa gönderildi, kilit soru yeniden"). Eskiden burada da yanlış
+		# (C) seçiyordu: Merak 0'da kalıyor, merak kapısı (_merak < 1) iki turda da mutfağa yolluyordu; kilit soru hiç
+		# sorulmuyordu. Merak 0 ile mutfak kapısını retry'ın ilk turu sınar.
+		var cp := 0 if not (v == "retry" and _tries == 0) else 2
 		var cc := await hud.choose(["UI_CH12_CANNON_A", "UI_CH12_CANNON_B", "UI_CH12_CANNON_C", "UI_CH12_CANNON_D"], 0.0, cp)
 		await _t("D12_T_CANNON_" + ["A", "B", "C", "D"][maxi(cc, 0)])
 		var fk: String = "D12_F_CANNON_" + ["A", "B", "C", "D"][maxi(cc, 0)]
@@ -380,6 +385,7 @@ func _letters() -> void:
 
 ## ⏱ Kilit soru.
 func _key_question() -> void:
+	_key_asked += 1
 	await _f("D12_F_KEY")
 	if "book" in GameState.bag:
 		await _book_rummage()
@@ -799,6 +805,11 @@ func _autotest_report() -> void:
 	match GameState.autotest_variant:
 		"retry":
 			ok = ok and _tries == 1
+		"kitchen":
+			# 12.5 "kilit soru yeniden": iki turda da kilit soruya ulaşıldı (merak kapısında kalmadı)
+			if _key_asked < 2:
+				printerr("AUTOTEST: kitchen kilit soruya %d kez ulaştı (beklenen 2)" % _key_asked)
+				ok = false
 		"", "nihat":
 			ok = ok and GameState.flags.get("honest_with_sultan", false)
 	if GameState.chapter_outcomes.get(12, "") != _outcome:
@@ -810,8 +821,8 @@ func _autotest_report() -> void:
 		ok = false
 	if not ok:
 		printerr("AUTOTEST: beklenen %s, gelen %s" % [expected, _outcome])
-	print("AUTOTEST %s chapter=12 variant=%s outcome=%s merak=%d paradox=%d tries=%d honest=%s tezkire=%s" % [
-		"PASS" if ok else "FAIL", GameState.autotest_variant, _outcome, _merak, GameState.paradox, _tries,
+	print("AUTOTEST %s chapter=12 variant=%s outcome=%s merak=%d paradox=%d tries=%d key=%d honest=%s tezkire=%s" % [
+		"PASS" if ok else "FAIL", GameState.autotest_variant, _outcome, _merak, GameState.paradox, _tries, _key_asked,
 		str(GameState.flags.get("honest_with_sultan", false)), tez])
 	get_tree().quit(0 if ok else 1)
 

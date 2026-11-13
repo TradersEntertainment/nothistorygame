@@ -113,6 +113,9 @@ static func carrack(parent: Node3D, pos: Vector3, yaw: float, crew_n := 8, seed 
 	Props.solid(g, Vector3(6.0, 1.7, 0.2), Vector3(0, CARRACK_DECK + 0.85, -7.9), C_HULL.lightened(0.05))
 	Props.solid(g, Vector3(6.0, 2.4, 0.2), Vector3(0, CARRACK_DECK + 1.2, 7.2), C_HULL.lightened(0.05))
 	var rails: Array = []
+	# Küpeşte kalkanları tek ağda (yayma P3: 12 ayrı halka + dış çizgi = gemi başına 24 çizimdi; tayfanın iş eşyasının
+	# çizimini karşılar). Halka yerine boyalı yuvarlak kalkan.
+	var shields := Dressing.new(seed + 77)
 	for sx: float in [-1.0, 1.0]:
 		var r := Props.solid(g, Vector3(0.22, 1.15, 15.2), Vector3(sx * RAIL_X, CARRACK_DECK + 0.58, -0.3), C_HULL.lightened(0.12))
 		r.set_meta("rail", true)
@@ -121,7 +124,9 @@ static func carrack(parent: Node3D, pos: Vector3, yaw: float, crew_n := 8, seed 
 		# Küpeştenin iç yanında savaş basamağı: tayfa bunun üstünde, göğsü küpeştenin üstünde (aşağıdan görünür)
 		Props.solid(g, Vector3(0.7, STEP_H, 14.6), Vector3(sx * (RAIL_X - 0.46), CARRACK_DECK + STEP_H * 0.5, -0.3), C_HULL.lightened(0.2))
 		for k in 6:
-			Props.ring(g, 0.32, 0.4, Vector3(sx * (RAIL_X + 0.12), CARRACK_DECK + 0.6, -5.5 + k * 2.2), [C_GENOA, Color("e8e0d0")][k % 2], Vector3(0, 0, 90))
+			shields.cyl(0.4, 0.05, Vector3(sx * (RAIL_X + 0.13), CARRACK_DECK + 0.6, -5.5 + k * 2.2), [C_GENOA, Color("e8e0d0")][k % 2], Vector3(0, 0, 90), 12)
+			shields.cyl(0.1, 0.07, Vector3(sx * (RAIL_X + 0.15), CARRACK_DECK + 0.6, -5.5 + k * 2.2), Color("8a8478"), Vector3(0, 0, 90), 8)
+	shields.build(g)
 	g.set_meta("rails", rails)
 	# Direkler ve kare yelkenler (Cenova'nın kırmızı haçı)
 	var sails: Array = []
@@ -208,7 +213,10 @@ static func war_galley(parent: Node3D, pos: Vector3, yaw: float, rowers := true,
 	# Latin yelkenli direk (yelken sarılı: savaşta kürekle gidilir)
 	Props.cyl(g, 0.12, 9.0, Vector3(0, GALLEY_DECK + 4.5, -3.0), Color("5a3e26"), Vector3.ZERO, 6)
 	Props.cyl(g, 0.08, 12.0, Vector3(0, GALLEY_DECK + 8.0, -3.0), Color("6a4a2c"), Vector3(60, 0, 0), 5)
-	Props.cyl(g, 0.2, 7.0, Vector3(0, GALLEY_DECK + 7.0, -2.0), Color("e6dcc4"), Vector3(60, 0, 0), 6)
+	# Seren boyunca sarılı yelken (yayma P3): serene yaslanmış, serenin altında ve direğin yanında, koyu kenevir rengi
+	# demet. Eskiden serenin 1,4 m altında, ona koşut, havada duran 7 m'lik sivri koni bordadan "mızrak" gibi uzanıyordu.
+	# Seren yönü (0; 0,5; 0,866); altı (0; −0,866; 0,5). Demet serenin orta kısmında, uçları serenin içinde kalır.
+	Props.cyl(g, 0.14, 5.4, Vector3(0.15, GALLEY_DECK + 8.0 - 0.866 * 0.14, -3.0 + 0.5 * 0.14), Color("8a7a58"), Vector3(60, 0, 0), 8, 0.09)
 	if flag:
 		Props.box(g, Vector3(0.04, 1.0, 1.6), Vector3(0, GALLEY_DECK + 9.4, -3.8), Color("b3262d"))
 		Props.crescent(g, Vector3(0, GALLEY_DECK + 9.4, -3.9), 0.24, Color("b3262d"))
@@ -295,6 +303,105 @@ static func hook(parent: Node3D, top: Vector3, bottom: Vector3) -> Node3D:
 	var rope := Props.cyl(h, 0.025, d.length(), Vector3.ZERO, Color("b89a6a"), Vector3.ZERO, 4)
 	rope.global_transform = Transform3D(Basis(Quaternion(Vector3.UP, d.normalized())), top + d * 0.5)
 	return h
+
+
+## Kanca ve ipi (yayma P3): hook() gibi, ama ip Stage'in burgulu, hafif sarkan halatıdır ve kancanın sapından aşağıdaki
+## teknenin küpeştesine bağlıdır (düz silindir çubuk karede seçilmiyordu). Noktalar dünya koordinatı. Döner: düğüm
+## (meta "bottom": ipin alt ucu; cut_hook ile kesilir). hook()'u kullanan öbür bölümler (37o) değişmez.
+## Örnek: var h := SeaBattle.hook_line(self, kupeste, kadirga_kupestesi)
+static func hook_line(parent: Node3D, top: Vector3, bottom: Vector3, sag := 0.06, over := Vector3.ZERO) -> Node3D:
+	var h := Node3D.new()
+	parent.add_child(h)
+	h.global_position = top
+	var iron := Node3D.new()
+	iron.name = "Iron"
+	h.add_child(iron)
+	var c := Color("3a3a40")
+	h.set_meta("bottom", bottom)
+	if over != Vector3.ZERO:
+		# Küpeşte modu (yayma P3, 29): top küpeştenin dış kenarı, over dış kenardan iç kenara (küpeşte genişliği).
+		# Kanca küpeştenin üstüne oturur: sap küpeştenin üstünde, iki diş iç yüzden aşağı kıvrılır; ip sapın halkasına
+		# düğümlü, kuyruğu küpeştenin üstünde içeri uzanır, gergin parçası dış kenardan aşağıdaki tekneye iner.
+		# İçerideki oyuncu (küpeştenin 1 m içi) düğümü, kuyruğu ve kenardaki gergin ipi görür.
+		var inn := over.normalized()
+		var ring := over * 0.3 + Vector3(0, 0.035, 0)
+		iron.position = ring
+		iron.basis = Basis.looking_at(-inn, Vector3.UP)      # yerel +z: içeri
+		Props.cyl(iron, 0.028, 0.22, Vector3(0, 0.005, 0.09), c, Vector3(90, 0, 0), 5)          # sap küpeştenin üstünde
+		Props.ring(iron, 0.03, 0.05, Vector3(0, 0.0, -0.03), c, Vector3(0, 90, 0))               # sapın halkası
+		for sx: float in [-0.07, 0.07]:
+			Props.cyl(iron, 0.022, 0.22, Vector3(sx, -0.09, 0.21), c, Vector3(-12, 0, 0), 4)    # iç yüzden aşağı kıvrılan dişler
+		Props.cyl(iron, 0.022, 0.2, Vector3(0, 0.08, 0.24), c, Vector3(35, 0, 0), 4)              # üçüncü diş yukarı
+		var side := inn.cross(Vector3.UP).normalized()
+		var w := over.length()            # küpeştenin genişliği: iç kenar inn * w
+		var rr := 0.026                   # ipin yarıçapı + pay: küpeştenin üstünde yatan parça gömülmez
+		# İpin düğümden artan ucu küpeştenin üstünden içeri uzanır, iç kenardan iç yüze sarkar (içeriden açıkça görünür);
+		# düğüm sapın halkasında; gergin parça dış kenardan aşağıdaki tekneye iner
+		var pts: Array = [inn * (w + 0.03) + side * 0.17 + Vector3(0, -0.34, 0),
+			inn * (w + 0.03) + side * 0.16 + Vector3(0, -0.14, 0),
+			inn * (w + 0.005) + side * 0.13 + Vector3(0, rr - 0.004, 0),
+			ring + inn * 0.08 + side * 0.07 + Vector3(0, rr - 0.035, 0),
+			ring + inn * 0.035 + Vector3(0, 0.02, 0), ring + Vector3(0, 0.05, 0), ring - inn * 0.035 + Vector3(0, -0.005, 0),
+			Vector3(0, rr, 0) - inn * 0.005, Vector3(0, -0.07, 0) - inn * 0.05]       # dış kenardan aşağı
+		pts.append_array(Stage.sag_points(pts[pts.size() - 1], h.to_local(bottom), sag, 6).slice(1))
+		var lnc := Stage.rope(h, pts[0], pts[1], 0.0, 0.024, Color("c8a878"))
+		Stage.rope_to(lnc, pts)
+		lnc.name = "Line"
+		return h
+	Props.cyl(iron, 0.035, 0.42, Vector3(0, 0.06, 0), c, Vector3.ZERO, 5)
+	for k in 3:
+		var a := TAU * k / 3.0
+		Props.cyl(iron, 0.026, 0.3, Vector3(cos(a) * 0.11, 0.26, sin(a) * 0.11), c, Vector3(sin(a) * 60.0, 0, -cos(a) * 60.0), 4)
+	var ln := Stage.rope(h, Vector3(0, -0.14, 0), h.to_local(bottom), sag, 0.024, Color("b89a6a"))
+	ln.name = "Line"
+	return h
+
+
+## Kancanın ipi kesilir: kanca küpeşteden düşer, kopan ip aşağıdaki teknenin küpeştesinden sarkar, kanca suya düşünce
+## halka ve damla; birkaç saniye sonra silinir. Etkileşim kutusu hemen kalkar. h: hook_line düğümü (değilse silinir).
+static func cut_hook(h: Node3D, water_y := 0.0) -> void:
+	if not is_instance_valid(h):
+		return
+	var ln := h.get_node_or_null("Line") as MeshInstance3D
+	if ln == null or not h.has_meta("bottom"):
+		h.queue_free()
+		return
+	for ch in h.get_children():
+		if ch is StaticBody3D:
+			ch.queue_free()
+	var bottom: Vector3 = h.get_meta("bottom")
+	var top := h.global_position
+	var out := Vector3(top.x - bottom.x, 0, top.z - bottom.z)
+	out = out.normalized() if out.length() > 0.01 else Vector3.RIGHT
+	# Kanca kadırganın bordasıyla karakanın arasındaki suya düşer (ipin boyu kadar uzağa gidemez)
+	var land := Vector3(lerpf(top.x, bottom.x, 0.55), water_y + 0.05, lerpf(top.z, bottom.z, 0.55))
+	var fast := Stage.fast()
+	var tw := h.create_tween()
+	tw.tween_method(func(k: float):
+		if not is_instance_valid(h) or not is_instance_valid(ln):
+			return
+		var p := top.lerp(land, k * k) + out * sin(k * PI) * 0.4
+		h.global_position = p
+		h.rotation.z = k * 2.4
+		var b := h.to_local(bottom)
+		var hp := h.to_local(p)
+		Stage.rope_to(ln, Stage.sag_points(hp, b, 0.15 + 0.5 * k, 8)), 0.0, 1.0, 0.05 if fast else 0.8)
+	tw.tween_callback(func():
+		if not is_instance_valid(h):
+			return
+		var par := h.get_parent()
+		if par:
+			Vfx.water_ring(par, land, water_y, 0.12, 0.9, 1.2, 0.5)
+			Vfx.water_drops(par, land, water_y, 6, 1.4)
+			# İpin kopuk ucu kanca batarken suda yüzer: ikinci, geniş halka
+			par.get_tree().create_timer(0.3, false).timeout.connect(func():
+				if is_instance_valid(par) and par.is_inside_tree():
+					Vfx.water_ring(par, land, water_y, 0.3, 1.5, 1.4, 0.3))
+		var iron := h.get_node_or_null("Iron") as Node3D
+		if iron:
+			iron.visible = false)
+	tw.tween_interval(0.3 if fast else 2.4)
+	tw.tween_callback(h.queue_free)
 
 
 # ================================================================ kıyı

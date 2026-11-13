@@ -11,6 +11,7 @@ extends Node3D
 ##   · dışarıda: sura doğru hafifçe yükselen yamaç (katı), dağınık moloz, çalı; uzakta Osmanlı ordusu ve ateşleri
 
 const BattleExtras := preload("res://scripts/level/battle_extras.gd")
+const CLIMB := preload("res://scripts/npc/climb_anim.gd")
 const WALL_Z0 := 0.0
 const WALL_Z1 := 4.6
 const WALK_Y := 12.0
@@ -72,26 +73,10 @@ func _ground() -> void:
 
 
 func _wall() -> void:
-	var t := WALL_Z1 - WALL_Z0
-	var body := Props.solid(self, Vector3(120, WALL_H, t), Vector3(0, WALL_H * 0.5, (WALL_Z0 + WALL_Z1) * 0.5), Color.WHITE)
-	Props.set_pattern(body, C_STONE, "ashlar")
-	body.set_meta("no_climb", true)
-	# Tuğla bantlar (dış yüz)
-	for y: float in [3.2, 6.6, 10.0]:
-		Props.box(self, Vector3(120, 0.45, 0.06), Vector3(0, y, WALL_Z1 + 0.03), C_BRICK)
-	# Mazgallar dış kenarda
-	var merl: Array = []
-	var x := -59.0
-	while x < 59.0:
-		merl.append(Transform3D(Basis.from_scale(Vector3(1.1, 1.1, 0.6)), Vector3(x, WALK_Y + 0.55, WALL_Z1 - 0.3)))
-		x += 1.9
-	Scenery.scatter(self, Scenery._boxm(Vector3.ONE), merl, [], Props.mat(C_STONE.darkened(0.08), 0.0, false, "ashlar"))
-	# Kuleler (dışa taşar)
+	shell_parts(_emit, "wall")
+	Scenery.scatter(self, Scenery._boxm(Vector3.ONE), _merl, [], _merl_mat)
+	_merl = []
 	for tx: float in TOWERS:
-		var tw := Props.solid(self, Vector3(8.0, WALL_H + 5.0, 8.0), Vector3(tx, (WALL_H + 5.0) * 0.5, WALL_Z1 + 1.6), Color.WHITE)
-		Props.set_pattern(tw, C_STONE.darkened(0.04), "ashlar")
-		for y: float in [4.0, 9.0, 14.0]:
-			Props.box(self, Vector3(8.04, 0.45, 8.04), Vector3(tx, y, WALL_Z1 + 1.6), C_BRICK)
 		lights.append(Night.torch(self, Vector3(tx - 4.6, WALK_Y, WALL_Z0 + 0.6), 1.6))
 	# Yürüyüş yolu boyunca meşaleler
 	for k in 6:
@@ -127,18 +112,7 @@ func build_guards(gaps: Array, inner_open := true) -> void:
 ## Tekfur Sarayı: üç katlı, tuğla-taş bantlı cephe; kemerli pencereler (ışıklı), arkada yamaca tırmanan saray
 func _palace() -> void:
 	var z := -16.0
-	var fac := Props.solid(self, Vector3(26.0, 16.0, 10.0), Vector3(0, 8.0, z - 5.0), Color.WHITE)
-	Props.set_pattern(fac, Color("d8c8a8"), "tekfur")
-	var glow := Props.mat(Color("ffc070"), 2.2, false, "", false)
-	for row in 3:
-		for k in 6:
-			var w := Props.box(self, Vector3(1.4, 2.0 if row > 0 else 2.6, 0.08), Vector3(-10.0 + k * 4.0, 3.0 + row * 4.6, z + 0.02), Color("ffc070"))
-			w.material_override = glow if (row + k) % 3 != 0 else Props.mat(Color("1c1814"))
-			Props.box(self, Vector3(1.8, 0.35, 0.12), Vector3(-10.0 + k * 4.0, 4.3 + (0.3 if row == 0 else 0.0) + row * 4.6, z + 0.03), C_BRICK)
-	for k in 2:
-		var ox := -9.0 + k * 18.0
-		var tw := Props.solid(self, Vector3(5.0, 20.0, 5.0), Vector3(ox * 1.6, 10.0, z - 4.0), Color.WHITE)
-		Props.set_pattern(tw, Color("d8c8a8"), "tekfur")
+	shell_parts(_emit, "palace")
 	var l := OmniLight3D.new()
 	l.light_color = Color("ffb060")
 	l.light_energy = 2.0
@@ -178,11 +152,71 @@ func _outside() -> void:
 ## Blakherna'nın tek suru ile Theodosius'un çifte suru birleştiği yerde köşe kulesi (x +60), ve kuzey ucunda Haliç'e
 ## inen kule (x −60)
 func _join_tower() -> void:
-	for tx: float in [62.0, -62.0]:
-		var tw := Props.solid(self, Vector3(9.0, WALL_H + 7.0, 9.0), Vector3(tx, (WALL_H + 7.0) * 0.5, (WALL_Z0 + WALL_Z1) * 0.5), Color.WHITE)
-		Props.set_pattern(tw, C_STONE.darkened(0.06), "ashlar")
-		for y: float in [4.0, 9.0, 14.0]:
-			Props.box(self, Vector3(9.04, 0.45, 9.04), Vector3(tx, y, (WALL_Z0 + WALL_Z1) * 0.5), C_BRICK)
+	shell_parts(_emit, "join")
+
+
+## Blakherna'nın yapı kabuğu tek yerde (ortak kurucu): bölümün kendi sahnesi (Props: katı, desenli) ve tek haritanın uzak
+## görünüşü (HornWorld._blachernae: birleşik ağ) aynı ölçüleri buradan alır. emit(tür, boyut, konum, renk, desen, katı,
+## işaret): tür "box" ya da "merl" (mazgal dişi), "glass" (ışıklı pencere), "dark" (karanlık pencere). part: "wall" (sur, tuğla
+## bantlar, mazgallar, kuleler), "palace" (Tekfur Sarayı cephesi, pencereler, yan kuleler), "join" (iki uçtaki köşe kuleleri).
+static func shell_parts(emit: Callable, part: String) -> void:
+	match part:
+		"wall":
+			var t := WALL_Z1 - WALL_Z0
+			emit.call("box", Vector3(120, WALL_H, t), Vector3(0, WALL_H * 0.5, (WALL_Z0 + WALL_Z1) * 0.5), C_STONE, "ashlar", true, "no_climb")
+			for y: float in [3.2, 6.6, 10.0]:
+				emit.call("box", Vector3(120, 0.45, 0.06), Vector3(0, y, WALL_Z1 + 0.03), C_BRICK, "", false, "")
+			var x := -59.0
+			while x < 59.0:
+				emit.call("merl", Vector3(1.1, 1.1, 0.6), Vector3(x, WALK_Y + 0.55, WALL_Z1 - 0.3), C_STONE.darkened(0.08), "ashlar", false, "")
+				x += 1.9
+			for tx: float in TOWERS:
+				emit.call("box", Vector3(8.0, WALL_H + 5.0, 8.0), Vector3(tx, (WALL_H + 5.0) * 0.5, WALL_Z1 + 1.6), C_STONE.darkened(0.04), "ashlar", true, "")
+				for y: float in [4.0, 9.0, 14.0]:
+					emit.call("box", Vector3(8.04, 0.45, 8.04), Vector3(tx, y, WALL_Z1 + 1.6), C_BRICK, "", false, "")
+		"palace":
+			var z := -16.0
+			emit.call("box", Vector3(26.0, 16.0, 10.0), Vector3(0, 8.0, z - 5.0), Color("d8c8a8"), "tekfur", true, "")
+			for row in 3:
+				for k in 6:
+					var lit := (row + k) % 3 != 0
+					emit.call("glass" if lit else "dark", Vector3(1.4, 2.0 if row > 0 else 2.6, 0.08), Vector3(-10.0 + k * 4.0, 3.0 + row * 4.6, z + 0.02),
+						Color("ffc070") if lit else Color("1c1814"), "", false, "")
+					emit.call("box", Vector3(1.8, 0.35, 0.12), Vector3(-10.0 + k * 4.0, 4.3 + (0.3 if row == 0 else 0.0) + row * 4.6, z + 0.03), C_BRICK, "", false, "")
+			for k in 2:
+				var ox := -9.0 + k * 18.0
+				emit.call("box", Vector3(5.0, 20.0, 5.0), Vector3(ox * 1.6, 10.0, z - 4.0), Color("d8c8a8"), "tekfur", true, "")
+		"join":
+			for tx: float in [62.0, -62.0]:
+				emit.call("box", Vector3(9.0, WALL_H + 7.0, 9.0), Vector3(tx, (WALL_H + 7.0) * 0.5, (WALL_Z0 + WALL_Z1) * 0.5), C_STONE.darkened(0.06), "ashlar", true, "")
+				for y: float in [4.0, 9.0, 14.0]:
+					emit.call("box", Vector3(9.04, 0.45, 9.04), Vector3(tx, y, (WALL_Z0 + WALL_Z1) * 0.5), C_BRICK, "", false, "")
+
+
+var _merl: Array = []
+var _merl_mat: Material
+
+
+## Bölümün kendi sahnesi için: kabuk parçasını Props ile kurar (eskisiyle aynı: katı gövdeler desenli, mazgallar tek
+## çoklu ağ, ışıklı pencereler parlak)
+func _emit(kind: String, size: Vector3, pos: Vector3, col: Color, pattern: String, solid: bool, tag: String) -> void:
+	match kind:
+		"merl":
+			_merl.append(Transform3D(Basis.from_scale(size), pos))
+			if _merl_mat == null:
+				_merl_mat = Props.mat(col, 0.0, false, pattern)
+		"glass":
+			Props.box(self, size, pos, col).material_override = Props.mat(Color("ffc070"), 2.2, false, "", false)
+		"dark":
+			Props.box(self, size, pos, Color("ffc070")).material_override = Props.mat(col)
+		_:
+			if solid:
+				var b := Props.solid(self, size, pos, Color.WHITE)
+				Props.set_pattern(b, col, pattern)
+				if tag != "":
+					b.set_meta(tag, true)
+			else:
+				Props.box(self, size, pos, col)
 
 
 # ---------------------------------------------------------------- 12 Mayıs gece hücumu (sahne dolgusu)
@@ -354,7 +388,7 @@ func _wall_works(skip: Array, rng: RandomNumberGenerator) -> void:
 			k += 1
 		x += rng.randf_range(3.6, 5.2)
 	d.build(self)
-	nd.build(self)
+	Flame.from_glow_boxes(nd.build(self))     # kazanların altındaki ateşler kutu değil alev
 	if not men.is_empty():
 		Garrison.far_men(self, men, Garrison.COATS)
 	# Kulelerde sancaklar (çift başlı kartal: kırmızı üstüne altın) ve kule tepesinde okçular
@@ -398,12 +432,16 @@ func _update_climbers(delta: float) -> void:
 		line.sort_custom(func(a: Dictionary, b: Dictionary) -> bool: return float(a["t"]) > float(b["t"]))
 		for i in range(1, line.size()):
 			line[i]["t"] = minf(float(line[i]["t"]), float(line[i - 1]["t"]) - 2.0)
+	var cam := get_viewport().get_camera_3d() if is_inside_tree() else null
 	for c: Dictionary in _climbers:
 		var p: Person = c["p"]
 		var lad: Ladder = c["lad"]
 		if not is_instance_valid(p):
 			continue
 		if float(c["fall"]) >= 0.0:
+			var fca: Node = CLIMB.of(p)
+			if fca:
+				fca.release(true, "fall")
 			c["fall"] = float(c["fall"]) + delta
 			var f: float = c["fall"]
 			p.position += Vector3(0, -9.0 * f * delta, 1.6 * delta) if p.position.y > 0.15 else Vector3.ZERO
@@ -425,8 +463,19 @@ func _update_climbers(delta: float) -> void:
 		if t >= lad.height - 1.2:
 			c["fall"] = 0.0            # tepede itilir (savunanlar)
 			continue
-		p.position = lad.point_at(maxf(t, 0.0)) + lad.front_dir() * 0.35 - Vector3(0, 0.9, 0) if t > 0.0 else lad.position + Vector3(0, 0, 1.0 - t * 0.4)
-		# İlk basamaklarda ayak yerin altına inmesin (eskiden merdivenin dibinde 0,9 m toprağa gömülü başlıyordu)
-		p.position.y = maxf(p.position.y, lad.position.y)
+		# Merdivende ortak tırmanma animasyonu (gövde merdivene paralel, eller/ayaklar basamakta); sırada ayakta bekler.
+		# Uzaktakiler (kameradan 25 m+) ucuz sürüm: IK üç karede bir
+		var ca: Node = CLIMB.of(p)
+		if t > 0.0:
+			if ca == null:
+				ca = CLIMB.attach(p, lad, t - 0.93, "blachernae")
+				ca.blend_from(p.global_position, 0.5)
+			ca.follow(t - 0.93)
+			ca.full = cam == null or cam.global_position.distance_to(p.global_position) < 25.0
+		else:
+			if ca:
+				ca.release(true, "")
+			p.position = lad.position + Vector3(0, 0, 1.0 - t * 0.4)
+			p.position.y = maxf(p.position.y, lad.position.y)
 		if t > 2.0 and fmod(t * 7.3 + float(lad.position.x), 37.0) < 0.05:
 			c["fall"] = 0.0

@@ -113,8 +113,8 @@ func _build() -> void:
 	# Otağın önüne serilmiş halı ve dronun Büro kutusu
 	var rug := Props.box(self, Vector3(3.2, 0.02, 2.2), _gy(STAGE) + Vector3(0, 0.01, 0), Color("8a2a2a"))
 	rug.set_meta("no_audit", true)
-	Props.box(self, Vector3(2.8, 0.021, 1.8), _gy(STAGE) + Vector3(0, 0.012, 0), Color("c89a48"))
-	Props.box(self, Vector3(2.5, 0.022, 1.5), _gy(STAGE) + Vector3(0, 0.013, 0), Color("6a1e22"))
+	Props.box(self, Vector3(2.8, 0.028, 1.8), _gy(STAGE) + Vector3(0, 0.016, 0), Color("c89a48"))
+	Props.box(self, Vector3(2.5, 0.036, 1.5), _gy(STAGE) + Vector3(0, 0.02, 0), Color("6a1e22"))   # halı katmanları 8 mm basamakla yükselir (üst yüzler çakışmasın)
 	var box := Props.box(self, Vector3(0.62, 0.22, 0.46), _gy(STAGE) + Vector3(0.9, 0.12, 0.3), Color("d8d4c8"))
 	var tag := Label3D.new()
 	tag.text = "ZAMAN BÜROSU\nZ-DR1 · 1453/7"

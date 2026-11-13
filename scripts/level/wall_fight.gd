@@ -362,6 +362,8 @@ func add_builders(site: Vector3, n: int, seed := 0) -> void:
 		p.rotation.y = -signf(x) * 0.5
 		add_child(p)
 		p.set_activity(["hammer", "chop"][i % 2])
+		# Elde iş aleti (yayma P6): kazık çakan tokmakla, taş yontan baltayla (boş elle havayı dövüyorlardı)
+		p.give_tool(["mallet", "axe"][i % 2])
 
 
 ## Onarım ekibini gösterir / gizler (giriş konuşmasında kameranın önünden geçmesinler; iş başlayınca çıkarlar).

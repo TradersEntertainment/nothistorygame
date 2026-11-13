@@ -3015,6 +3015,15 @@ func _tick_track(delta: float, cam: Camera3D, cam_s: float, ship_s: float) -> vo
 			var lat := Vector2(cam.global_position.x - sol.global_position.x, cam.global_position.z - sol.global_position.z).length()
 			if lat < 3.4 and absf(cam_s - float(o2["s"])) < 3.0:
 				_grab_at(sol, cam.global_position + Vector3(0, -0.55, 0))
+		# Oyuncu başka şeritten yaklaşıyorsa (çarpışma yok: engeli aşıyor) asker 7 m kala görünür biçimde kızağın dışına,
+		# oyuncudan UZAK yana sıçrar; eskiden şeritte "ezilecek gibi" dikilip oyuncu hemen yanından geçiyordu. Aynı şeritten
+		# gelene dokunulmaz (tökezleme ve yakalama aynen: engelin kuralı).
+		if not b["leapt"] and cam and cam_s > float(o2["s"]) - 7.0 and cam_s < float(o2["s"]):
+			var dx: float = track.to_local(cam.global_position).x - (b["sol"] as Node3D).position.x
+			if absf(dx) > 1.4:
+				b["out"] = -signf(dx)
+				b["leapt"] = true
+				_leap_aside(b)
 		if not b["leapt"] and bow > float(o2["s"]) - 7.0:
 			b["leapt"] = true
 			_leap_aside(b)

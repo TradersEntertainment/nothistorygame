@@ -24,6 +24,9 @@ var robe := Color(0, 0, 0, 0)
 var child := false
 var talking := false
 var look_target: Node3D
+## İş odağı (Stage.grip_hold): >0 iken look_target gövdeyi çevirmez; work_at işin dünya noktasıdır (yoksa Vector3.INF).
+var work_focus := 0
+var work_at := Vector3.INF
 
 var _body: Node3D
 var activity := ""
@@ -40,6 +43,7 @@ var _elbow_r: Node3D
 var _eyes: Node3D
 var _brows: Node3D
 var _t := 0.0
+var _walk_face := false      # yürüyüş yönüne bakma histerezisi (0,35 başlar, 0,25 bırakır; Stage.gaze_dir / rig.gd ile aynı)
 var _last_pos := Vector3.INF      # ilk karede ayarlanır (doğduğu yer, sahne merkezinden yürümüş sayılmasın)
 var _last_gpos := Vector3.INF
 var _busy := false
@@ -715,6 +719,9 @@ func reach_to(target: Vector3, hold := 0.4, left := false) -> void:
 	var el := _elbow_l if left else _elbow_r
 	if arm == null or el == null:
 		return
+	var turned := await Stage.work_turn(self, target)      # look_target gövdeyi başka yöne çevirdiyse önce hedefe döner
+	if not is_inside_tree():
+		return
 	rig.lock += 1
 	var r0 := arm.rotation
 	var e0 := el.rotation
@@ -733,6 +740,8 @@ func reach_to(target: Vector3, hold := 0.4, left := false) -> void:
 	tw.parallel().tween_property(el, "rotation", e0, 0.05 if fast else 0.3)
 	await tw.finished
 	rig.lock = maxi(0, rig.lock - 1)
+	if turned:
+		Stage.work_end(self)
 
 
 ## Önünde yük taşır (sandık, sepet ya da çuval) ve "carry" hareketine geçer.
@@ -832,7 +841,8 @@ func _process(delta: float) -> void:
 	_clear_way(delta)
 	if delta > 0.0 and look_target == null and not _busy and activity in ["", "carry"]:
 		var hv := Vector2(mv.x, mv.z)
-		if hv.length() / delta > 0.6 and hv.length() < 2.0:
+		_walk_face = hv.length() / delta > (0.25 if _walk_face else 0.35) and hv.length() < 2.0
+		if _walk_face:
 			chatting = false
 			rotation.y = lerp_angle(rotation.y, atan2(mv.x, mv.z), clampf(delta * 8.0, 0.0, 1.0))
 	var mouth_open := LipSync.mouth(_t, delta) if talking else (absf(sin(_t * 11.0)) * 0.7 if chatting else 0.0)
@@ -848,9 +858,22 @@ func _process(delta: float) -> void:
 		if get_parent() is Node3D:   # taşıyıcının (kayık, gemi) dönüşüne göre yerel yön
 			to = (get_parent() as Node3D).global_transform.basis.inverse() * to
 		to.y = 0.0
+		to = Stage.gaze_dir(self, activity, talking, to, mv, delta)      # iş/yürüyüş sürerken gövde işine döner
 		if to.length() > 0.1:
-			rotation.y = lerp_angle(rotation.y, atan2(to.x, to.z), clampf(delta * 4.0, 0.0, 1.0))
+			# yürüyüşün ilk 0,3 sn'sinde gövde hızlı döner (oyuncuya dönük durandan gidiş yönüne "ay yürüyüşü" yapmasın)
+			var turn := 10.0 if has_meta("gaze_walk_t") and Time.get_ticks_msec() - int(get_meta("gaze_walk_t")) < 300 else 4.0
+			rotation.y = lerp_angle(rotation.y, atan2(to.x, to.z), clampf(delta * turn, 0.0, 1.0))
 	rig.update(delta, talking or chatting, _busy)
+
+
+## Dünya çerçevesinde `step` kadar başkasınca (itme, ışınlama) kaydırılan kişinin yer değişimi kendi yürüyüşü sayılmaz:
+## yürüme eşiği, gövdenin gidiş yönüne dönmesi ve bakış denetimi bu kaymayı görmez.
+func discount_move(step: Vector3) -> void:
+	var par := get_parent() as Node3D
+	var lstep: Vector3 = (par.global_transform.basis.inverse() * step) if par else step
+	if _last_pos != Vector3.INF:
+		_last_pos += lstep
+	GameState.look_audit_shift(self, lstep)
 
 
 ## Yol açma: bu kişi (sahnede yürütülen Fatih, elçi, imparator; atlıysa atıyla) yürürken önündeki ayaktaki insanlar
@@ -912,6 +935,9 @@ func _clear_way(delta: float) -> void:
 		if Unclip.in_solid(o, mover.global_position + step, 0.17) and not Unclip.in_solid(o, mover.global_position, 0.17):
 			continue          # adım ışının ötesinde bir katının (sur, siper) içine girerdi
 		mover.global_position += step
+		# İtilmek yürümek değildir: kayma, itilenin kendi yer değişiminden (gövde yönü, bakış, yürüme eşiği) sayılmasın
+		if mover == o:
+			o.discount_move(step)
 		# Yana çekildiği yerin GÖRÜNEN zemini (moloz, basamak): gömülmesin, havada kalmasın (görünmez çarpışma kutusunun
 		# üstüne ya da altına değil)
 		var fy := Unclip.floor_y(o, mover.global_position, 1.0, 1.0)

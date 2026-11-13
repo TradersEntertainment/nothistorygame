@@ -70,6 +70,9 @@ static var _TO_CITY := Basis(Vector3.UP, PI * 0.5)
 ## Eyüp (31o): yerel −z güney kıyı (surların dışı), +z Haliç'in iç kolu ve karşı kıyı: yerel +z → dünya −x.
 static var _TO_NORTH := Basis(Vector3.UP, -PI * 0.5)
 
+## Ayasofya'nın tepesinin (birinci tepe) görünen yüzeyi: byz_aya bölgesinin yüksekliği
+const AYA_Y := 17.6
+
 ## Bölüm 2'nin kızak yolunun tepesi (Slipway yerel 0): yokuş 130 m, 7°; ucu kıyıda (x −922), su yerelde −16,64
 const SLIP_TOP := Vector3(-1051.0, 15.043, -930.0)
 
@@ -103,9 +106,16 @@ static var REGIONS := {
 	# ByzCity'nin sur parçası (6, 10H, 12B, 13, 23, 24): iç sur (yerel x 34) = kara surlarının iç suru (dünya z −2,3),
 	# Romanos Kapısı (yerel z 5,5) = dünya x 0; yerel +x ova, yerel +z Haliç yönü
 	"byz_walls": Transform3D(_TO_NORTH, Vector3(5.5, 0.0, -36.3)),
-	# ByzCity'nin Ayasofya parçası (24, 25, 26, 31o): yerel AYA (−14, −82) = dünyanın Ayasofya'sı
-	"byz_aya": Transform3D(_TO_NORTH, Vector3(-560.0 - 82.0, 0.0, -1480.0 + 14.0)),
+	# ByzCity'nin Ayasofya parçası (24, 25, 26, 31o): yerel AYA (−14, −82) = dünyanın Ayasofya'sı. Yükseklik birinci
+	# tepenin görünen yüzeyi (AYA_Y): eskiden 0'daydı, bölüm Ayasofya'yı 17 m'lik bir çukura kuruyordu; uçuşta aynı
+	# Ayasofya tepenin üstündeydi (iki bölümde iki farklı yerde)
+	"byz_aya": Transform3D(_TO_NORTH, Vector3(-560.0 - 82.0, AYA_Y, -1480.0 + 14.0)),
 }
+
+
+## Uzak görünüşü dünyada kurulan bölgeler: bölge → oynanış dikdörtgeni (yerel). Bölüm o bölgede değilse dünya, bölgenin
+## kendi kurucusunun pişirilmiş sürümünü koyar (ByzCity.far_hub). Ayasofya (byz_aya) HornWorld'de (World1453.far_aya).
+const FAR_REGIONS := {"byz_walls": Rect2(-46.0, -48.0, 84.0, 70.0)}
 
 
 ## Tepelerin arasındaki bölgeler: dünya zemini düz alana rampayla iner
@@ -174,12 +184,28 @@ static func ground_h(x: float, z: float) -> float:
 	if z < asia_z(x):
 		return HornWorld.asia_h(x, z)
 	if in_city(x, z):
-		return SiegeField.city_ground(x, z)
+		return city_ground(x, z)
 	if is_water(x, z):
 		return SEA_Y - 2.4
 	if x < horn_n_x(z) + 6.0 or (z < TIP.z and x < HORN_N_X):
 		return HornWorld.north_h(x, z, true)
 	return SiegeField.ground(x, z, true)
+
+
+## Şehrin arazisi (SiegeField.city_ground) ve Ayasofya meydanının düzlüğü: byz_aya bölgesinin oynanış alanı her bölümde
+## AYA_Y'de düz, çevresine 40 m'de rampayla iner (bölümün kendi düzlüğüyle aynı; uçuşta Ayasofya yamaca gömülmesin)
+static var _aya_pad := Rect2()
+
+static func city_ground(x: float, z: float) -> float:
+	var h := SiegeField.city_ground(x, z)
+	if _aya_pad.size == Vector2.ZERO:
+		_aya_pad = world_rect(region("byz_aya"), Rect2(-46.0, -114.0, 64.0, 76.0))
+	var dx := maxf(maxf(_aya_pad.position.x - x, 0.0), x - _aya_pad.end.x)
+	var dz := maxf(maxf(_aya_pad.position.y - z, 0.0), z - _aya_pad.end.y)
+	var d := Vector2(dx, dz).length()
+	if d >= 40.0:
+		return h
+	return lerpf(h, AYA_Y - 0.05, 1.0 - smoothstep(0.0, 40.0, d))
 
 
 ## Görünen arazinin yüzeyi (ground_h'nin kaba ızgaralı çizilmiş hâli): dünyaya konan yapılar ve uçuşun noktaları
@@ -230,6 +256,20 @@ static func build(parent: Node3D, region_name: String, keep_local: Array, night 
 		SiegeField.flat_y = FLAT_Y[region_name]
 	if BLEND.has(region_name):
 		SiegeField.flat_y = xf.origin.y - 0.05        # dünya zemini bölgenin zemini olur (yerel y 0'ın hemen altı)
+	# Başka bölgelerin bölümlerde kurulan yapıları (hub: kançılarya, saray avlusu, cadde) burada da durur: dünya oraya kendi
+	# evini, ağacını, kalabalığını koymaz (FAR_REGIONS). Bölümün kendi alanıyla kesişirse kurulmaz.
+	var far: Array = []
+	for fr: String in FAR_REGIONS:
+		if fr == region_name:
+			continue
+		var wr := world_rect(region(fr), FAR_REGIONS[fr])
+		var hit := false
+		for r: Rect2 in keep:
+			if r.grow(20.0).intersects(wr):
+				hit = true
+		if not hit:
+			far.append(fr)
+			f.keep.append(wr)
 	f.near_works = false
 	f.night_build = night
 	SiegeField.flat_blend = BLEND.get(region_name, 0.0)
@@ -245,6 +285,12 @@ static func build(parent: Node3D, region_name: String, keep_local: Array, night 
 	# Yaşayan şehir: oyuncunun çevresinde siviller ve devriyeler (dönem bölümden; testlerin dünyalarına eklenmez)
 	if CityLife.auto_ok(parent):
 		CityLife.attach(f, CityLife.opts_for(parent, night))
+	for fr: String in far:
+		match fr:
+			"byz_walls":
+				ByzCity.far_hub(f, region(fr))
+	# Ateşler: Dressing.glow kutuları (ordugâhın, ovanın, surların, kıyının gece ateşleri) alev ve haleye çevrilir
+	Flame.from_glow_boxes(f)
 	# Gölgelendiriciler yüklemede derlensin (yaklaşınca donma olmasın)
 	ShaderWarmup.after_world(f)
 	return f
@@ -283,9 +329,9 @@ static func flight_data(world: SiegeField) -> Dictionary:
 	var cm: Vector3 = mid.call("chain_s", "chain_n")
 	var aq: Vector3 = mid.call("aqueduct_a", "aqueduct_b")
 	var landmarks := [
-		["AYASOFYA", at.call("ayasofya", 46.0), 48.0],
+		["AYASOFYA", at.call("ayasofya", AYA_DOME_TOP + 6.0), 48.0],
 		["HIPODROM", at.call("hippodrome", 12.0), 60.0],
-		["KONSTANTIN", at.call("column", 30.0), 26.0],
+		["KONSTANTIN", at.call("column", ByzCity.COLUMN_TOP + 1.0), 26.0],
 		["HAVARIYUN", at.call("apostles", 24.0), 38.0],
 		["BOZDOGAN", world.to_global(Vector3(aq.x, ground_h(aq.x, aq.z) + 26.0, aq.z)), 34.0],
 		["ZINCIR", world.to_global(Vector3(cm.x, 8.0, cm.z)), 45.0],
@@ -296,8 +342,8 @@ static func flight_data(world: SiegeField) -> Dictionary:
 	var gc: Vector3 = LANDMARKS["galata_center"]
 	var e: Vector3 = LANDMARKS["eugenius"]
 	var forms := [
-		[1, at.call("ayasofya", 51.4, Vector3(6.0, 0, 0))],
-		[2, at.call("column", 36.5)],
+		[1, at.call("ayasofya", AYA_DOME_TOP + 0.4, Vector3(4.0, 0, 0))],
+		[2, at.call("column", ByzCity.COLUMN_TOP + 2.5)],
 		[3, world.to_global(Vector3(tw.x + 7.6, gallery + 1.0, tw.z))],
 		[4, at.call("hippodrome", 22.0, Vector3(0, 0, -30.0))],
 		[5, world.to_global(Vector3(aq.x, ground_h(aq.x, aq.z) + 21.0, aq.z))],
@@ -311,9 +357,10 @@ static func flight_data(world: SiegeField) -> Dictionary:
 	]
 	var col: Vector3 = LANDMARKS["column"]
 	var perches := [
-		["aya", at.call("ayasofya", 51.4 - 1.0), 8.0],
+		# kubbenin tepesindeki haçın 3,5 m yanında, kubbe yüzeyinde
+		["aya", at.call("ayasofya", 19.5 + 11.1 * 0.42 * sqrt(1.0 - pow(3.5 / 11.1, 2.0)), Vector3(3.5, 0, 0)), 5.0],
 		["galata", world.to_global(Vector3(tw.x, gallery, tw.z)), 9.5],
-		["column", world.to_global(Vector3(col.x, HornWorld.east_surf(col.x, col.z) + 34.0, col.z)), 3.5],
+		["column", world.to_global(Vector3(col.x, HornWorld.east_surf(col.x, col.z) + ByzCity.COLUMN_TOP, col.z)), 3.5],
 	]
 	return {"landmarks": landmarks, "forms": forms, "perches": perches}
 
@@ -321,3 +368,183 @@ static func flight_data(world: SiegeField) -> Dictionary:
 ## Galata Kulesi'nin feneri (GalataView top_y): HornWorld ve uçuş aynı değeri kullanır
 static func galata_top(tw: Vector3) -> float:
 	return HornWorld.north_surf(tw.x, tw.z) + 34.0      # kule görünen yüzeye oturur (GalataView)
+
+
+# ---------------------------------------------------------------- ortak kurucuların uzak sürümü (tek harita)
+
+## Ayasofya'nın kubbesinin tepesi (bölgenin zemininden): ByzCity.aya_exterior'ın kurşun kubbesi (y 19,5, yarıçap 11,1,
+## basıklık 0,42). Uçuşun konma noktası, parçası ve yer işareti buna göre.
+const AYA_DOME_TOP := 19.5 + 11.1 * 0.42
+
+
+## Ayasofya'nın uzak görünüşü: bölümün kendi dış kabuğu (ByzCity.aya_exterior + Ayasofya.build'in "exterior" parçaları:
+## gövde duvarları, narteks, apsis, kurşun çatı) sahne dışında kurulur ve bölgenin dünyadaki yerine tek birleşik ağ
+## olarak pişirilir (iki çizim). Yerdeki Ayasofya ile aynı yer, ölçü, biçim ve renk.
+static func far_aya(parent: Node3D) -> MeshInstance3D:
+	var tmp := Node3D.new()
+	ByzCity.aya_exterior(tmp)
+	var inner := Node3D.new()
+	inner.position = ByzCity.AYA
+	tmp.add_child(inner)
+	Ayasofya._shell_walls(inner)
+	Ayasofya._narthex(inner)
+	Ayasofya._apse(inner)
+	Ayasofya._domes(inner)
+	var list: Array = []
+	for n in tmp.find_children("*", "MeshInstance3D", true, false):
+		if not inner.is_ancestor_of(n) or n.has_meta("exterior") or n.get_parent().has_meta("exterior"):
+			list.append(n)
+	var mi := bake(list, tmp, region("byz_aya"), parent, "FarAyasofya")
+	# Uzaklık katmanı: 90 m'ye kadar dokulu, dış çizgili kabuk; ötesinde küçük parçasız, tek yüzeyli, dış çizgisiz kopya
+	# (siluet ve renk aynı; uzaktan dış çizgi zaten seçilmez, üçgen yarıya iner)
+	var lo := bake(list, tmp, region("byz_aya"), mi, "FarAyasofyaLo", 1.2, 0, true)
+	lo.transform = Transform3D.IDENTITY
+	lo.material_override = Scenery._vc_mat()
+	lo.set_meta("no_walk", true)            # çarpışma yakın kabuktan
+	# Kenar payı (hysteresis) yok: iki katman da gizliyken arada bir ölü bant kalıyordu (ikisi de görünmüyordu)
+	mi.visibility_range_end = 90.0
+	lo.visibility_range_begin = 90.0
+	tmp.free()
+	return mi
+
+
+static var _tex_avg := {}
+
+## Pişirici (ortak arayüz): verilen MeshInstance3D'leri top düğümüne göre dönüşümleriyle, xf (top yereli → parent
+## yereli) ile TEK MeshInstance3D'ye toplar. Düz renkli parçalar köşe rengiyle tek yüzeyde (Dressing malzemesi: toon + dış
+## çizgi); desenli parçalar (taş, sıva, kiremit, tuğla: dünya üçlü düzlem dokusu) doku başına bir yüzeyde, renkleri köşe
+## renginde (malzemenin kendisi, beyaz albedo). min_size: en uzun kenarı bundan kısa parçalar (saksı, çivi) atılır.
+## max_tris > 0: üçgeni bundan çok olan hazır model parçası (Kit kiremit çatısı) kendi kutusunu dolduran beşik çatıyla
+## (aynı siluet, dokusunun ortalama renginde) değiştirilir: uzaktan aynı, üçgeni yüzde biri. flat: desenler de dokunun
+## ortalama rengiyle tek yüzeye (uzak sürüm: tek çizim + dış çizgi). Yakından da yerdekiyle aynı doku; çizim sayısı = farklı doku sayısı + 1
+## (her biri dış çizgiyle iki). Işıklı (ateş, pencere ışığı), saydam, yazı ve 5 cm'den küçük parçalar atılır; Person
+## altındakiler (insanlar) atılır.
+static func bake(list: Array, top: Node3D, xf: Transform3D, parent: Node3D, node_name := "Baked", min_size := 0.05, max_tris := 0, flat := false) -> MeshInstance3D:
+	var groups := {}           # anahtar -> [v, n, c, malzeme]
+	for n: MeshInstance3D in list:
+		if n.mesh == null or not n.visible:
+			continue
+		var sz := n.mesh.get_aabb().size * n.scale.abs()
+		if maxf(sz.x, maxf(sz.y, sz.z)) < min_size:
+			continue
+		var rel := Transform3D.IDENTITY
+		var cur: Node = n
+		var skip := false
+		while cur != null and cur != top:
+			if cur is Person or (cur is Node3D and not (cur as Node3D).visible):
+				skip = true
+				break
+			if cur is Node3D:
+				rel = (cur as Node3D).transform * rel
+			cur = cur.get_parent()
+		if skip:
+			continue
+		var t := xf * rel
+		var nb := t.basis.inverse().transposed()
+		if max_tris > 0 and not (n.mesh is PrimitiveMesh):
+			var tc := 0
+			for si in n.mesh.get_surface_count():
+				tc += n.mesh.surface_get_array_index_len(si) / 3 if n.mesh.surface_get_array_index_len(si) > 0 else n.mesh.surface_get_array_len(si) / 3
+			if tc > max_tris:
+				var ab := n.mesh.get_aabb()
+				var m0 := n.get_active_material(0) as BaseMaterial3D
+				var rc := Color(0.7, 0.36, 0.26)
+				if m0:
+					rc = m0.albedo_color * _avg(m0.albedo_texture)
+				if not groups.has("flat"):
+					var fst := SurfaceTool.new()
+					fst.begin(Mesh.PRIMITIVE_TRIANGLES)
+					groups["flat"] = [fst, Dressing._material()]
+				var pm := PrismMesh.new()
+				pm.size = ab.size
+				var pt := t * Transform3D(Basis.IDENTITY, ab.get_center())
+				var pa := pm.surface_get_arrays(0)
+				var pv: PackedVector3Array = pa[Mesh.ARRAY_VERTEX]
+				var pn: PackedVector3Array = pa[Mesh.ARRAY_NORMAL]
+				var pidx: PackedInt32Array = pa[Mesh.ARRAY_INDEX]
+				var pnb := pt.basis.inverse().transposed()
+				var fst2: SurfaceTool = groups["flat"][0]
+				for k in pidx:
+					fst2.set_color(Color(rc.r, rc.g, rc.b, 1.0))
+					fst2.set_normal((pnb * pn[k]).normalized())
+					fst2.add_vertex(pt * pv[k])
+				continue
+		for si in n.mesh.get_surface_count():
+			var m := n.get_active_material(si)
+			var col := Color(0.8, 0.78, 0.74)
+			var key := "flat"
+			var gmat: Material = null
+			if m is ShaderMaterial:
+				continue                  # alev, su, gölgelendiricili süs: uzak kabuğa girmez
+			if m is BaseMaterial3D:
+				var bm := m as BaseMaterial3D
+				if bm.transparency != BaseMaterial3D.TRANSPARENCY_DISABLED and bm.transparency != BaseMaterial3D.TRANSPARENCY_ALPHA_SCISSOR:
+					continue
+				if bm.emission_enabled and bm.emission_energy_multiplier > 0.5:
+					continue
+				col = bm.albedo_color
+				if bm.albedo_texture and bm.uv1_triplanar and bm.uv1_world_triplanar and not flat:
+					key = "%s|%s" % [bm.albedo_texture.get_rid(), bm.uv1_scale]
+					if not groups.has(key):
+						var gm := bm.duplicate() as StandardMaterial3D
+						gm.albedo_color = Color.WHITE
+						gm.vertex_color_use_as_albedo = true
+						gmat = gm
+				elif bm.albedo_texture:
+					col = col * _avg(bm.albedo_texture)
+			if not groups.has(key):
+				var nst := SurfaceTool.new()
+				nst.begin(Mesh.PRIMITIVE_TRIANGLES)
+				groups[key] = [nst, gmat if gmat else Dressing._material()]
+			var st: SurfaceTool = groups[key][0]
+			var arr := n.mesh.surface_get_arrays(si)
+			var sv: PackedVector3Array = arr[Mesh.ARRAY_VERTEX]
+			var sn: PackedVector3Array = arr[Mesh.ARRAY_NORMAL]
+			var ia = arr[Mesh.ARRAY_INDEX]
+			var idx: PackedInt32Array = ia if ia != null else PackedInt32Array()
+			var count := idx.size() if idx.size() > 0 else sv.size()
+			var c3 := Color(col.r, col.g, col.b, 1.0)
+			for k in count:
+				var i: int = idx[k] if idx.size() > 0 else k
+				st.set_color(c3)
+				st.set_normal((nb * (sn[i] if sn.size() > i else Vector3.UP)).normalized())
+				st.add_vertex(t * sv[i])
+	var mi := MeshInstance3D.new()
+	mi.name = node_name
+	# Ayrıntı düzeyleri (ImporterMesh.generate_lods): uzaklaştıkça motor sadeleştirilmiş üçgen dizisini çizer
+	var im := ImporterMesh.new()
+	for key: String in groups:
+		var g: Array = groups[key]
+		var st: SurfaceTool = g[0]
+		st.index()
+		im.add_surface(Mesh.PRIMITIVE_TRIANGLES, st.commit_to_arrays(), [], {}, g[1])
+	if im.get_surface_count() > 0:
+		im.generate_lods(25.0, 60.0, [])
+		mi.mesh = im.get_mesh()
+	mi.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_ON
+	parent.add_child(mi)
+	return mi
+
+
+## Desen dokusunun ortalama rengi (yoksa ya da henüz üretilmediyse beyaz)
+static func _avg(tex: Texture2D) -> Color:
+	if tex == null:
+		return Color.WHITE
+	if _tex_avg.has(tex):
+		return _tex_avg[tex]
+	var img := tex.get_image()
+	if img == null or img.is_empty():
+		return Color.WHITE
+	img = img.duplicate()
+	if img.is_compressed():
+		img.decompress()
+	# 24×24 örnekle ortalama (tek piksele küçültme yalnız birkaç pikseli örnekliyordu: tuğla dokusu derz renginde çıkıyordu)
+	var c := Color(0, 0, 0, 0)
+	var n := 0
+	for j in 24:
+		for i in 24:
+			c += img.get_pixel(int((i + 0.5) * img.get_width() / 24.0), int((j + 0.5) * img.get_height() / 24.0))
+			n += 1
+	c /= float(n)
+	_tex_avg[tex] = c
+	return c

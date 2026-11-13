@@ -276,7 +276,7 @@ func _throw() -> void:
 		top.y = maxf(top.y, carrack.to_global(Vector3(0, SeaBattle.RAIL_TOP, 0)).y - 0.1)
 		var bottom := galley.to_global(Vector3(SeaBattle.GALLEY_RAIL_X, DECK + 0.5, galley.to_local(top).z))
 		await _fly_hook(c.global_transform * Vector3(0.2, -0.2, -0.5), top)     # kanca elden küpeşteye uçar
-		var h := SeaBattle.hook(self, top, bottom)
+		var h := SeaBattle.hook_line(self, top, bottom)      # burgulu ip küpeşteden kadırganın küpeştesine (yayma P3)
 		_hooks.append(h)
 		hooks_caught += 1
 		Audio.sfx("kick_metal", -8.0, 1.6)
@@ -287,7 +287,7 @@ func _throw() -> void:
 		var miss := to if r.is_empty() else r["position"] as Vector3
 		var splash := Vector3(miss.x, 0.1, miss.z) if r.is_empty() else galley.to_global(Vector3(4.0, 0.1, galley.to_local(miss).z))
 		await _fly_hook(c.global_transform * Vector3(0.2, -0.2, -0.5), splash)
-		Vfx.dust(self, splash, 0.5)
+		Vfx.water_entry(self, splash, 0.0, 0.4)       # kanca suya: halka ve damla (toz bulutu çıkıyordu; yayma P3)
 		Audio.sfx("splash", -8.0, 1.2)
 		hud.bark("SPK_BALTA", "D29O_B_MISS", 2.0)
 
@@ -303,13 +303,21 @@ func _fly_hook(from: Vector3, to: Vector3) -> void:
 	Props.strip_outlines(m)
 	var dur := 0.05 if GameState.autotest and not GameState.pace else 0.4
 	var mid := from.lerp(to, 0.5) + Vector3(0, 1.2, 0)
+	# Kancanın ardından ip elden açılır (yayma P3): elden çıkan parça kameranın önünde ve altında, yuvarlak kesitli
+	var line := _rope_pool(self, 8, 0.014)      # sarkık ip: 9 nokta = 8 parça (ağ bir kez kurulur, kare başı yalnız Transform3D)
 	var tw := create_tween()
 	tw.tween_method(func(k: float):
 		if is_instance_valid(m):
 			m.global_position = from.lerp(mid, k).lerp(mid.lerp(to, k), k)
-			m.rotation.x += 0.4, 0.0, 1.0, dur)
+			m.rotation.x += 0.4
+			var c := player.camera
+			var hand := c.global_transform * Vector3(0.14, -0.3, -0.55)
+			var pts: Array = Stage.sag_points(hand, m.global_position, 0.1 + 0.4 * k, 8)
+			_rope_set(line, pts), 0.0, 1.0, dur)
 	await tw.finished
 	m.queue_free()
+	for seg: MeshInstance3D in line:
+		seg.queue_free()
 
 
 ## Yukarıdan balta: ip kopar, kanca suya
@@ -318,8 +326,7 @@ func _cut_later(h: Node3D, secs: float) -> void:
 	if not is_instance_valid(h):
 		return
 	Audio.sfx("pick_tap", -6.0, 0.8)
-	Vfx.dust(self, h.global_position, 0.25)
-	h.queue_free()
+	SeaBattle.cut_hook(h)        # kopan ip kadırgadan sarkar, kanca suya (yayma P3; anında siliniyordu)
 
 
 ## 3. İpten tırmanma: yukarıdan kova dolusu su ve bir taş. Tolga kadırgaya geri düşer.
@@ -336,9 +343,39 @@ func _climb() -> void:
 	var up := carrack.to_global(Vector3(-SeaBattle.RAIL_X - 0.45, 3.0, 0.4))
 	player.global_position = foot
 	player.face(carrack.to_global(Vector3(-SeaBattle.RAIL_X, SeaBattle.RAIL_TOP + 1.0, 0.4)))
-	var hook := SeaBattle.hook(self, carrack.to_global(Vector3(-SeaBattle.RAIL_X - 0.1, SeaBattle.RAIL_TOP, 0.4)), foot + Vector3(0, 0.3, 0))
+	var rail_pt := carrack.to_global(Vector3(-SeaBattle.RAIL_X - 0.1, SeaBattle.RAIL_TOP, 0.4))
+	# İpin alt ucu kadırganın küpeştesindeki halkada (oyuncunun 0,55 m önü): düşerken ip kameranın önünden geçer,
+	# içinden değil (yayma P3 düzeltme turu: alt uç ayağın dibindeydi, düşüşte ip kameranın yanında krem şeritti)
+	var low_pt := galley.to_global(Vector3(SeaBattle.GALLEY_RAIL_X, DECK + 0.5, 0.4))
+	var hook := SeaBattle.hook_line(self, rail_pt, low_pt, 0.0)
+	# Tırmanırken iki el ipte (yayma P3): kameranın önündeki parça yuvarlak kesitli, dış çizgisiz ip; küpeşteden üst
+	# yumruğa, alt yumruğa, oradan kadırganın güvertesine
+	hook.get_node("Line").visible = false
+	var line := _rope_pool(hook, 3, CLIMB_ROPE_R)      # küpeşte → üst yumruk → alt yumruk → halka: 3 parça
+	_rope_set(line, [rail_pt, low_pt])
+	# El üstüne el (ortak tırmanma döngüsünün ip sürümü): 2,2 sn'de dört çekiş; her çekişte alttaki el ipi bırakıp öbürünün
+	# üstüne uzanır ve tutar, tutan el gövde yükseldikçe görüşte aşağı kayar (ipte yerinde kalır). İki el hep ipte.
+	var on_rope := func(k: float) -> void:
+		var c := player.camera
+		var a := c.to_local(rail_pt)
+		var b := c.to_local(low_pt)
+		var cyc := k * 4.0
+		var f := cyc - floorf(cyc)
+		var hi := lerpf(-0.18, -0.02, smoothstep(0.1, 0.8, f))      # uzanan el: alttan üste
+		var lo := lerpf(-0.02, -0.18, f)                            # tutan el: gövde yükseldikçe aşağı
+		var left_up := int(cyc) % 2 == 0
+		var ly := hi if left_up else lo
+		var ry := lo if left_up else hi
+		var lp := a.lerp(b, clampf((a.y - ly) / maxf(a.y - b.y, 0.01), 0.0, 1.0))
+		var rp := a.lerp(b, clampf((a.y - ry) / maxf(a.y - b.y, 0.01), 0.0, 1.0))
+		player.hold_both(lp + Vector3(-0.03, 0, 0), rp + Vector3(0.03, 0, 0))
+		var fl: Vector3 = player.free_rig.socket.global_position if player.free_rig and player.free_rig.socket else c.to_global(lp)
+		var fr: Vector3 = player.rig.socket.global_position if player.rig and player.rig.socket else c.to_global(rp)
+		var upv := c.global_transform.basis.y * 0.035      # avucun ortası
+		_rope_set(line, [rail_pt, fr + upv, fl + upv, low_pt] if ry >= ly else [rail_pt, fl + upv, fr + upv, low_pt])
 	var tw := create_tween()
 	tw.tween_property(player, "global_position", up, 2.2).set_trans(Tween.TRANS_SINE)
+	tw.parallel().tween_method(on_rope, 0.0, 1.0, 2.2)
 	await tw.finished
 	# Yukarıda bir yüz (küpeşteden eğilen bir Cenevizli), devrilen bir kova (su), düşen bir taş: "Yukarıda bir kova vardı. Sonra bir taş vardı."
 	var rail := carrack.to_global(Vector3(-SeaBattle.RAIL_X, SeaBattle.RAIL_TOP, 0.4))
@@ -364,15 +401,88 @@ func _climb() -> void:
 	Fx.trauma(0.5)
 	climbed = true
 	await get_tree().create_timer(0.5, false).timeout
+	player.release_both()            # taş isabet eder: eller ipten kayar
 	Audio.sfx("land_thud", -2.0)
+	# Düşüş: eller ipten kayar, ip gerilip kameranın önünde (en az 25 cm) kalır, ince kesit
 	var fall := create_tween()
 	fall.tween_property(player, "global_position", foot, 0.45).set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_IN)
+	fall.parallel().tween_method(func(_k: float):
+		_rope_set(line, _rope_clear([rail_pt, low_pt], player.camera, 0.3)), 0.0, 1.0, 0.45)
 	await fall.finished
+	_rope_set(line, [rail_pt, low_pt])
 	Fx.trauma(0.6)
 	hook.queue_free()
 	_stand()
 	await hud.say("SPK_TOLGA", "D29O_T_FELL")
 	await hud.say("SPK_NIHAT", "D29O_N_FELL")
+
+
+## Tırmanış ipinin kesiti (m): elden aşağı inen parça kameraya 35-50 cm'de kalıyor, 0,017'de alt köşede kalın krem şeritti
+const CLIMB_ROPE_R := 0.012
+
+
+## İp parçaları (tırmanışta ve kanca uçuşunda ip her karede yeniden kurulmuyordu: nokta kayması 5 mm korumasını aşıyordu):
+## birim boy (−z yönünde 1 m) yuvarlak kesitli tek silindir ağı yarıçap başına bir kez kurulur; her ip parçası bu ağı paylaşır
+## ve kare başı yalnız Transform3D ile (uzunluk = z ölçeği) yerleşir. Ağ kurma çağrısı kare sayısından bağımsız.
+var _seg_meshes := {}
+
+
+func _seg_mesh(r: float) -> ArrayMesh:
+	if not _seg_meshes.has(r):
+		_seg_meshes[r] = ThraceRoad.tube_mesh([Vector3.ZERO, Vector3(0, 0, -1)], r, Color("c8a878"))
+	return _seg_meshes[r]
+
+
+## n parçalık ip havuzu: dünya uzayında (top_level), dış çizgisiz yuvarlak kesit, yürüme/çarpışma ağı değil
+func _rope_pool(parent: Node, n: int, r: float) -> Array:
+	var segs: Array = []
+	for i in n:
+		var mi := MeshInstance3D.new()
+		mi.set_meta("no_walk", true)
+		mi.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
+		mi.material_override = ThraceRoad.tube_material()
+		mi.mesh = _seg_mesh(r)
+		parent.add_child(mi)
+		mi.top_level = true
+		mi.visible = false
+		segs.append(mi)
+	return segs
+
+
+## İpi noktalar boyunca yerleştirir: pts.size()−1 parça kullanılır, fazlası gizlenir
+func _rope_set(segs: Array, pts: Array) -> void:
+	for i in segs.size():
+		var mi: MeshInstance3D = segs[i]
+		if not is_instance_valid(mi):
+			continue
+		var d: Vector3 = (pts[i + 1] - pts[i]) if i + 1 < pts.size() else Vector3.ZERO
+		var ln := d.length()
+		if ln < 0.001:
+			mi.visible = false
+			continue
+		var zu := -d / ln           # ağın −z yönü ipin yönüne gelir
+		var xu := zu.cross(Vector3.UP if absf(zu.y) < 0.95 else Vector3.RIGHT).normalized()
+		mi.global_transform = Transform3D(Basis(xu, zu.cross(xu), zu * ln), pts[i])
+		mi.visible = true
+
+
+## İki uçlu ip kameraya min'den yakın geçiyorsa, en yakın noktasında kameranın önüne doğru itilir (üç noktalı ip).
+func _rope_clear(ends: Array, cam: Camera3D, min_d: float) -> Array:
+	var a: Vector3 = ends[0]
+	var b: Vector3 = ends[1]
+	var e := cam.global_position
+	var ab := b - a
+	var t := clampf((e - a).dot(ab) / maxf(ab.length_squared(), 0.0001), 0.05, 0.95)
+	var q := a + ab * t
+	var off := q - e
+	if off.length() >= min_d:
+		return ends
+	var fwd := -cam.global_transform.basis.z
+	fwd.y = 0.0
+	fwd = fwd.normalized() if fwd.length() > 0.01 else Vector3.FORWARD
+	var push := off + fwd * min_d
+	push = push.normalized() * min_d
+	return [a, e + push, b]
 
 
 ## 4. Sultan kıyıdan atını denize sürer. Tespit karesi.
@@ -477,7 +587,8 @@ func _process(delta: float) -> void:
 		_seat()
 	# Kürek başında sol el kürekte (kürek hayalet kürekçiyle kendi kendine çekiliyordu)
 	var phs: Array = galley.get_meta("phantoms", []) if galley else []
-	player.oar_hold(phs[0] if phase in ["intro", "row"] and not phs.is_empty() else null)
+	if phase != "climb":                 # tırmanışta iki el ipte (hold_both sol eli kendisi yazar)
+		player.oar_hold(phs[0] if phase in ["intro", "row"] and not phs.is_empty() else null)
 	SeaBattle.row_oars(galley, meter.phase if meter.enabled else fmod(_t * 0.3, 1.0), meter.enabled)
 	if phase == "hooks" and not player.frozen:
 		hud.set_prompt(tr("UI_PROMPT29O_HOOK") if _hook_cd <= 0.0 else "")

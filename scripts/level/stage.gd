@@ -24,6 +24,9 @@ static func approach(who: Node3D, target: Vector3, stop := 1.3, speed := 1.6, si
 	to.y = float(ground.call(to.x, to.z)) if ground.is_valid() else from.y
 	face(who, to)
 	if fast():
+		var jump := to - who.global_position
+		if who is Person:
+			(who as Person).discount_move(jump)      # ışınlama yürüme değil: gövde kayma yönüne dönmesin
 		who.global_position = to      # otomatik testte doğrudan: kısa tween'in ara karesinde havada sayılıyordu (CI VISAUDIT float)
 		face(who, target)
 		return
@@ -65,6 +68,9 @@ static func reach(who: Node3D, target: Vector3, hold := 0.5, left := false) -> v
 	if arm == null or el == null:
 		rg.emote("point")
 		return
+	var turned := await work_turn(who, target)
+	if not is_instance_valid(who):
+		return
 	rg.lock += 1
 	var r0 := arm.rotation
 	var e0 := el.rotation
@@ -83,6 +89,8 @@ static func reach(who: Node3D, target: Vector3, hold := 0.5, left := false) -> v
 	await tw.finished
 	if rg:
 		rg.lock = maxi(0, rg.lock - 1)
+	if turned:
+		work_end(who)
 
 
 ## Oyuncunun kolu/omzu hizası (yakalayan buraya uzanır): kameranın biraz altı ve yanı.
@@ -157,6 +165,115 @@ static func hammer_swings(player: Player, n := 3, on_hit := Callable()) -> void:
 
 
 # ---------------------------------------------------------------- ortak parçalar (Bölüm 2, tur 2; bütün oyuna yayılır)
+# ---------------------------------------------------------------- bakış / iş ayrımı
+# İskelette bel eklemi yok: look_target verilen kişinin BÜTÜN gövdesi hedefe döner. İş yapan (sürgü kaldıran, yük
+# taşıyan, aletle çalışan, yürüyen) kişi oyuncuya bakarken işini sırtında bırakıyordu (8y kapı nöbetçisi). gaze_dir,
+# Person ve Soldier'ın look_target dönüşünü işe göre yönlendirir: konuşma bakışlarına dokunmaz.
+
+## Bu etkinliklerde (boşta, yük taşıma, oturuş) look_target gövdeyi çevirebilir; öbürlerinde (alet işi, kürek, uyku...) çevirmez.
+const GAZE_FREE_ACT := ["", "carry", "sit", "sit_ground", "write", "write_desk", "sit_astride", "read_ground"]
+
+
+## İş odağı aç/kapa (grip_hold dışındaki işler için: kapı kanadı çekmek, kol çevirmek): açıkken look_target gövdeyi
+## çevirmez, gövde at'a (dünya noktası; verilmezse olduğu yerde) döner. Her work_begin için bir work_end.
+static func work_begin(who: Node3D, at := Vector3.INF) -> void:
+	if is_instance_valid(who) and "work_focus" in who:
+		who.work_focus += 1
+		if at != Vector3.INF:
+			who.work_at = at
+
+
+static func work_end(who: Node3D) -> void:
+	if is_instance_valid(who) and "work_focus" in who:
+		who.work_focus = maxi(0, who.work_focus - 1)
+		if who.work_focus == 0:
+			who.work_at = Vector3.INF
+
+
+## Uzanma gibi hedefe kilitli bir işe girerken look_target gövdeyi hedeften başka yöne (oyuncuya) çevirmişse kolun
+## uzanış açısı yanlış kalırdı (hedef omuz arkasında, el havaya): önce gövde hedefe döner (work_begin; çağıran işi bitirince
+## work_end). Döner: work_begin yapıldı mı. Otomatik testte (PACE dışı) hemen döner.
+static func work_turn(who: Node3D, target: Vector3) -> bool:
+	if not is_instance_valid(who) or not ("work_focus" in who) or who.get("look_target") == null or not who.is_inside_tree():
+		return false
+	var to := target - who.global_position
+	to.y = 0.0
+	var fwd := who.global_transform.basis.z
+	fwd.y = 0.0
+	if to.length() < 0.4 or fwd.length() < 0.01 or fwd.normalized().angle_to(to.normalized()) < deg_to_rad(50.0):
+		return false
+	if fast():
+		face(who, target)
+		work_begin(who, target)
+		return true
+	work_begin(who, target)
+	for i in 40:
+		await who.get_tree().process_frame
+		if not is_instance_valid(who):
+			return true
+		var f2 := who.global_transform.basis.z
+		f2.y = 0.0
+		if f2.normalized().angle_to(to.normalized()) < deg_to_rad(15.0):
+			break
+	return true
+
+
+## look_target'in gövdeyi çevireceği yatay yön (kişinin ebeveyn çerçevesinde). Vector3.ZERO: çevirme.
+## to: hedefe yön (yerel, yatay); mv: bu karedeki yerel yer değişimi; act: iş hareketi; talking: kişi konuşuyor.
+##  1) Yürüyen (>0.35 m/s; yürürken 0.25'e dek) kişi (konuşurken de) gittiği yöne bakar (geri geri yürüyecekse meta "walk_back").
+##  2) work_focus > 0 (grip_hold): gövde işin noktasına (work_at) döner; noktası yoksa olduğu yerde kalır.
+##  3) Alet işi yapan ve konuşmayan kişi gövdesini çevirmez (konuşurken döner).
+##  4) Öbürleri: hedefe döner (konuşma bakışı, değişmedi).
+static func gaze_dir(who: Node3D, act: String, talking: bool, to: Vector3, mv: Vector3, delta: float) -> Vector3:
+	if delta > 0.0 and not who.has_meta("walk_back"):
+		var hv := Vector3(mv.x, 0.0, mv.z)
+		# rig.gd yürüme animasyonu 0,35 m/sn'de başlar: eşik aynı (bu hızda gövde "ay yürüyüşü" yapmasın). Histerezis:
+		# yürürken 0,25'e düşene dek yürüyüş sayılır (eşikte yön titremez)
+		var was_walk := who.has_meta("gaze_walk")
+		if hv.length() / delta > (0.25 if was_walk else 0.35) and hv.length() < 2.0:
+			if not was_walk:
+				who.set_meta("gaze_walk", true)
+				who.set_meta("gaze_walk_t", Time.get_ticks_msec())      # yürüyüş başı: Person ilk 0,3 sn gövdeyi hızlı döndürür
+			return hv
+		if was_walk:
+			who.remove_meta("gaze_walk")
+	if int(who.get("work_focus")) > 0:
+		var wa = who.get("work_at")
+		if wa is Vector3 and wa != Vector3.INF:
+			var d: Vector3 = wa - who.global_position
+			var par := who.get_parent() as Node3D
+			if par:
+				d = par.global_transform.basis.inverse() * d
+			d.y = 0.0
+			return d if d.length() > 0.25 else Vector3.ZERO
+		return Vector3.ZERO
+	if not act in GAZE_FREE_ACT:
+		# 3 m içindeki muhatap (Tolga yanındaysa) konuşma sayılır: SAYFACE'e takılmadan dönüp bakar
+		talking = talking or to.length() < 3.0
+		# Alet işi: yalnız konuşurken Tolga'ya döner, konuşma bitince işinin yönüne (dönmeden önceki yön) geri döner
+		if who.has_meta("gaze_seen") and absf(angle_difference(float(who.get_meta("gaze_seen")), who.rotation.y)) > 0.6 * maxf(delta * 60.0, 1.0):
+			who.remove_meta("gaze_home")      # sahne betiği kişiyi başka yöne çevirdi: eski yönü geçersiz
+		who.set_meta("gaze_seen", who.rotation.y)
+		if talking:
+			if not who.has_meta("gaze_home"):
+				who.set_meta("gaze_home", who.rotation.y)
+			who.set_meta("gaze_idle", 0.0)
+			return to
+		if who.has_meta("gaze_home"):
+			# konuşma aralarında (Tolga'nın repliği) dönüp durmasın: 2,5 sn susarsa işine döner
+			var idle := float(who.get_meta("gaze_idle", 0.0)) + delta
+			who.set_meta("gaze_idle", idle)
+			if idle < 2.5:
+				return to
+			var h := float(who.get_meta("gaze_home"))
+			if absf(angle_difference(who.rotation.y, h)) < 0.05:
+				who.remove_meta("gaze_home")
+				return Vector3.ZERO
+			return Vector3(sin(h), 0.0, cos(h))
+		return Vector3.ZERO
+	return to
+
+
 # Eller nesneye, ayaklar zemine, halatın iki ucu bir yere bağlı: havada iş yapan, havada duran, havada gerili ip kalmasın.
 
 static var _rope_mat: StandardMaterial3D
@@ -204,11 +321,18 @@ static func grip_hold(who: Node3D, frame: Node3D, pts: Array, seconds := -1.0, l
 	var rg := Handover.rig_of(who)
 	if rg:
 		rg.lock += 1      # rig'in kendi kol jesti (konuşma, işaret) araya girmesin
+	if "work_focus" in who:
+		who.work_focus += 1      # iş sürerken look_target gövdeyi çevirmez (gaze_dir)
 	var tw := who.create_tween()
 	var apply := func(_t: float) -> void:
 		if is_instance_valid(who) and (frame == null or is_instance_valid(frame)):
 			if lean != 0.0 and rg and rg.body:
 				rg.body.rotation.x = lean
+			if "work_at" in who and not pts.is_empty():
+				var c := Vector3.ZERO
+				for q: Vector3 in pts:
+					c += frame.to_global(q) if frame else q
+				who.work_at = c / float(pts.size())
 			grip(who, frame, pts)
 	if seconds < 0.0:
 		tw.set_loops()
@@ -230,6 +354,10 @@ static func grip_release(who: Node3D) -> void:
 	var rg := Handover.rig_of(who)
 	if rg:
 		rg.lock = maxi(0, rg.lock - 1)
+	if "work_focus" in who:
+		who.work_focus = maxi(0, who.work_focus - 1)
+		if who.work_focus == 0:
+			who.work_at = Vector3.INF
 
 
 ## Ayağı zemine oturt: kişinin iki tabanından alçak olanı zemine değecek kadar kök dikine kayar (yalnız y). ground:

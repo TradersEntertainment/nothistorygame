@@ -53,6 +53,14 @@ var _hide_p := 0.0
 var _pile_hides: Array[Node3D] = []
 var _ropes: Array[MeshInstance3D] = []
 var _pulley: Node3D
+## Halatın ellerdeki parçası (yakın plan) ve ellerin halatta olup olmadığı
+var _rope_near: MeshInstance3D
+var _rope_far: MeshInstance3D
+var _near_root: Node3D
+var _far_join := Vector3.INF
+var _far_top := Vector3.INF
+var _rope_held := false
+var _pulling := false
 var _hammer: Node3D
 var _nail_t := 0.0
 var _auto_e := false
@@ -94,6 +102,7 @@ func _ready() -> void:
 	player = Player.new()
 	add_child(player)
 	player.frozen = true
+	player.hands_free = true      # açılışta el boş (yayma P6: elde koli bandı/leblebi dikiliyordu); çantadan seçilebilir
 	player.focus_changed.connect(_on_focus)
 	player.interacted.connect(_on_interact)
 	hud.set_fez(GameState.flags.get("fez", true))
@@ -228,6 +237,28 @@ func _build() -> void:
 		Props.ball(self, 0.12, fp + Vector3(0, 5.1, 0), Color("d8b040"), Vector3.ONE, 8)
 		Props.box(self, Vector3(0.03, 1.3, 1.9), fp + Vector3(0, 4.2, 0.95), Color("b3262d") if spec[1] == Color("2f5fa8") else Color("2e6a3a"))
 	Scenery.ground_detail(self, Rect2(-32.0, 36.5, 64.0, 41.0), 380, func(_x: float, _z: float) -> float: return 0.0, Color("3a4a2a"), 2205)
+	# Kule önü (yayma P6): bir gecede kurulan kulenin yongası ve kesilmiş tahta artıkları, çiğnenmiş çamur, sepet
+	# taşıyanların yolu (deri yığını ve toprak yığınından hendeğe). Seyrek, düzensiz; çarpışmasız.
+	var flat0 := func(_x: float, _z: float) -> float: return 0.0
+	var off_tower := func(x: float, z: float) -> bool: return absf(x - TOWER.x) > 2.6 or absf(z - TOWER.z) > 2.6
+	# İki ağa pişirilir (LandWalls.bake_detail): çizim yükü iki çağrı
+	var hard := SurfaceTool.new()
+	hard.begin(Mesh.PRIMITIVE_TRIANGLES)
+	var soft := SurfaceTool.new()
+	soft.begin(Mesh.PRIMITIVE_TRIANGLES)
+	LandWalls.bake_detail(hard, Nature.ground_detail(self, Rect2(TOWER.x - 6.5, 36.8, 13.0, 9.0), "chips", 0.22, 2261, flat0, off_tower), [Color("a08860")])
+	LandWalls.bake_detail(hard, Nature.ground_detail(self, Rect2(TOWER.x - 7.0, 37.0, 14.0, 10.0), "plank", 0.025, 2262, flat0, off_tower), [Color("6a5a44")],
+		Vector3(2.0, 1.0, 1.1))
+	LandWalls.bake_detail(soft, Nature.ground_detail(self, Rect2(-14.0, 37.0, 30.0, 22.0), "camp_mud", 0.02, 2263, flat0, off_tower), [Color("3e3426")])
+	LandWalls.bake_detail(soft, Nature.trail(self, [PILE + Vector3(-1.6, 0, -1.2), Vector3(4.0, 0, 46.0), DROP + Vector3(2.2, 0, 0.6)], "footprint", flat0, 1.3, 2264, 0.8),
+		[Color("3a3024")])
+	for pair: Array in [[hard, Nature._detail()], [soft, Nature._soft(false)]]:
+		var gm := MeshInstance3D.new()
+		gm.mesh = (pair[0] as SurfaceTool).commit()
+		gm.material_override = pair[1]
+		gm.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
+		gm.set_meta("no_walk", true)
+		add_child(gm)
 	hasan = Person.new({"coat": Color("b3262d"), "pants": Color("e8e0d0"), "hat": "bork", "mustache": true, "skin": Color("d9a07a")})
 	hasan.set_meta("spk", "SPK_HASAN")
 	hasan.position = TOWER + Vector3(3.6, 0, 3.0)
@@ -260,6 +291,7 @@ func _build() -> void:
 		p.rotation.y = PI
 		add_child(p)
 		p.set_activity("chop")
+		p.give_tool("axe")       # yayma P6: marangoz baltasıyla yontar (boş elle havayı dövüyordu)
 		carpenters.append(p)
 
 
@@ -285,7 +317,7 @@ func _build_hide_pile() -> void:
 		_pile_hides.append(h)
 	# Islatma teknesi: suda bekleyen deriler, biri kenarından sarkar
 	Props.box(self, Vector3(1.2, 0.45, 0.7), c + Vector3(0, 0.225, 1.15), Color("5a3e26"))
-	Props.box(self, Vector3(1.08, 0.04, 0.58), c + Vector3(0, 0.43, 1.15), Color("2e4a62"))
+	Props.box(self, Vector3(1.08, 0.048, 0.58), c + Vector3(0, 0.434, 1.15), Color("2e4a62"))   # su yüzü tekne kenarından 8 mm yüksek (üst yüzler çakışıp titremesin)
 	Props.box(self, Vector3(0.6, 0.04, 0.5), c + Vector3(0.25, 0.42, 0.85), Color("5e4028"), Vector3(-55, 8, 0))
 	Props.interactable(self, "hidepile", Vector3(1.8, 1.4, 1.5), c + Vector3(0, 0.7, 0.1))
 	var sb := Props.solid(self, Vector3(1.6, 0.9, 1.9), c + Vector3(0, 0.45, 0.5), Color.WHITE)
@@ -301,6 +333,7 @@ func _build_hide_pile() -> void:
 		var d := c - p.position
 		p.rotation.y = atan2(d.x, d.z)
 		p.set_activity("chop")
+		p.give_tool("knife")     # yayma P6: deriyi bıçakla sıyırır; işe (germe, çakma) geçince bıçak kalkar
 		# Çekiç (yalnız çakarken görünür)
 		var hm := Node3D.new()
 		hm.name = "Hammer"
@@ -312,9 +345,22 @@ func _build_hide_pile() -> void:
 		hm.visible = false
 		_crew.append(p)
 	for i in 3:
-		var r := Bogaz.make_rope(self, Color("b89a6a"), 0.02)
+		var r := Bogaz.make_rope(self, Color("b89a6a"), 0.02 if i < 2 else 0.016)
 		r.visible = false
 		_ropes.append(r)
+	# Halatın oyuncunun elindeki yakın parçası: ince, yuvarlak, dış çizgisiz ip (ThraceRoad'un yakın plan borusu);
+	# Stage halatının kalın, dış çizgili borusu kameraya yarım metrede kalın bir direk gibi duruyordu (yayma P6)
+	_near_root = Node3D.new()
+	add_child(_near_root)
+	_rope_near = MeshInstance3D.new()
+	_rope_far = MeshInstance3D.new()
+	for m: MeshInstance3D in [_rope_near, _rope_far]:
+		m.set_meta("no_walk", true)
+		m.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
+		m.material_override = LandWalls.hemp_material()
+		m.visible = false
+	_near_root.add_child(_rope_near)
+	add_child(_rope_far)
 	# Makara: üstteki derileri yukarı çekmek için sağ ön direğe bağlı (yeri her deride bir kat yukarı)
 	_pulley = Node3D.new()
 	tower.add_child(_pulley)
@@ -407,7 +453,7 @@ func _give_hide() -> void:
 	_pulley.position = Vector3(0.9, 0.95 + 4.2 * (hides + 1) + 0.3, -2.75)
 	for r in _ropes:
 		r.visible = true
-	_ropes[2].visible = hides > 0
+	_ropes[2].visible = false      # halatın oyuncuya inen parçası _rope_far/_rope_near (ince yuvarlak ip)
 	_pose_hide(hides, 0.0)
 	_update_ropes()
 	Audio.sfx("land_thud", -14.0, 1.3)
@@ -447,11 +493,73 @@ func _update_ropes() -> void:
 		Bogaz.rope(_ropes[1], hand, tr_)
 	else:
 		var pul := _pulley.global_position
-		Bogaz.rope(_ropes[1], pul, tr_)
-		# Oyuncunun elleri: görüşün altından girer (gözün önünde kalın bir direk gibi durmasın)
-		var cb := player.camera.global_basis
-		var ph := player.camera.global_position - cb.z * 0.4 + cb.x * 0.1 - cb.y * 0.55
-		Bogaz.rope(_ropes[2], pul, ph)
+		# İp makaranın tekerinin üstünden geçer: iki kol tekerin iki yanından iner
+		var pb := _pulley.global_basis
+		var to_h := (tr_ - pul).normalized()
+		Bogaz.rope(_ropes[1], pul + pb.y * 0.15 + to_h * 0.1, tr_)
+		_rope_hands(pul + pb.y * 0.15)
+
+
+## Üsttekilerde halat oyuncunun iki elinde (yayma P6): makaradan inen halat üstteki yumruğa girer, alttakinden çıkar,
+## ucu ayağının önüne sarkar. Eller halatı tutar (hold_both; eşya cebe). Yakın parça ince yuvarlak ip, uzak parça
+## Stage halatı; eller ekranın sağ yarısında (ip yüzün önünden değil sağdan yükselir), ellerden çıkan parça kameradan
+## en az 45 cm önde ve aşağıda başlar.
+func _rope_hands(top: Vector3) -> void:
+	# Çekerken eller ipin üstünde el değiştirir (biri aşağı çekerken öbürü yukarı uzanıp yeniden kavrar)
+	var ph := fmod(_t * 1.6, 1.0) if _pulling else 0.0
+	var k := 0.5 - 0.5 * cos(ph * TAU)
+	var lp := Vector3(0.06, -0.14 - 0.12 * k, -0.56 + 0.04 * k)
+	var rp := Vector3(0.15, -0.31 + 0.1 * k, -0.47 - 0.04 * k)
+	_rope_held = true
+	player.hold_both(lp, rp)
+	var cam := player.camera
+	var cb := cam.global_basis
+	var l: Vector3 = player.free_rig.socket.global_position if player.free_rig and player.free_rig.socket else cam.to_global(lp)
+	var r: Vector3 = player.rig.socket.global_position if player.rig and player.rig.socket else cam.to_global(rp)
+	var up := cb.y * 0.03
+	var hi := l + up
+	var lo := r + up
+	if hi.y < lo.y:
+		var sw := hi
+		hi = lo
+		lo = sw
+	# Yakın parça kameranın çerçevesinde (_near_root): üstteki yumruğun 1 m ötesinden yumruklardan geçip ucu aşağı
+	# sarkar; noktalar 1,5 cm'den az oynadıysa ağ yeniden kurulmaz (baş sallanması eşiği aşmaz)
+	_near_root.global_transform = cam.global_transform
+	var hl := cam.to_local(hi)
+	var ll := cam.to_local(lo)
+	var dl := (cb.inverse() * (top - hi)).normalized()
+	var down := cb.inverse() * Vector3.DOWN
+	var pts: Array = [hl + dl * 1.0, hl, ll, ll + down * 0.25 + dl * 0.05, ll + down * 0.6]
+	var last: Array = _rope_near.get_meta("pts", [])
+	var moved := last.size() != pts.size()
+	if not moved:
+		for i in pts.size():
+			if (last[i] as Vector3).distance_to(pts[i]) > 0.015:
+				moved = true
+				break
+	if moved:
+		_rope_near.set_meta("pts", pts)
+		_rope_near.mesh = ThraceRoad.tube_mesh(pts, 0.009, Color("c8b080"))
+	_rope_near.visible = true
+	# Uzak parça (makaraya giden 6–9 m): aynı ince yuvarlak ip (çap 2,4 cm), hafif sarkık; uçlar 2 cm'den az
+	# oynadıysa yeniden kurulmaz. (Stage halatının dış çizgili borusu kadrajı kesen kalın gri direk gibi duruyordu.)
+	var join := cam.to_global(hl + dl * 0.9)
+	if _far_join.distance_to(join) > 0.02 or _far_top.distance_to(top) > 0.02:
+		_far_join = join
+		_far_top = top
+		_rope_far.mesh = ThraceRoad.tube_mesh(Stage.sag_points(top, join, 0.05, 8), 0.012, Color("c8b080"))
+	_rope_far.visible = true
+
+
+func _rope_drop() -> void:
+	if _rope_held:
+		_rope_held = false
+		player.release_both()
+	if _rope_near:
+		_rope_near.visible = false
+		_rope_far.visible = false
+		_far_join = Vector3.INF
 
 
 ## E basılı: ilk deride Tolga çakar (elde çekiç); üsttekilerde halatı çeker, deri yukarı çıkınca ustalar çakar
@@ -495,7 +603,7 @@ func _hammer_show(on: bool) -> void:
 	# Sol el çekici tutar (kameraya asılı duruyordu)
 	if on:
 		player.free_hold = Vector3(-0.01, -0.3, -0.42)
-	elif _carry == null:
+	elif _carry == null and not _rope_held:      # halat elde: free_hold'u hold_both yazar
 		player.free_hold = Vector3.INF
 
 
@@ -743,6 +851,7 @@ func _hide_done() -> void:
 	_hide_set = false
 	_hide_p = 0.0
 	_hammer_show(false)
+	_rope_drop()
 	for r in _ropes:
 		r.visible = false
 	_pulley.visible = false
@@ -1131,6 +1240,7 @@ func _process(delta: float) -> void:
 		_crew_relocate()
 		# Gerili deri: E basılıyken çakılır / çekilir; bırakınca ilerleme kalır (ustalar tutmaya devam eder)
 		if _hide_set:
+			_pulling = hides > 0 and player.focus_id == "hides" and e_down
 			if player.focus_id == "hides" and e_down:
 				_hide_tick(delta)
 			else:
@@ -1352,6 +1462,7 @@ func _run_shots() -> void:
 	await _shot_png("c22o_06b_haul_pov.png")
 	hud.visible = false
 	_hide_set = false
+	_rope_drop()
 	for r in _ropes:
 		r.visible = false
 	_pulley.visible = false

@@ -332,11 +332,15 @@ static func _vary_mm_next(mmi: MultiMeshInstance3D, opts: Dictionary) -> void:
 
 
 ## Olay anı (bağırış, patlama, içeri giren Sultan): herkes 0..max_delay sn gecikmeyle target'a döner (look_target);
-## seconds > 0 ise o kadar sonra eski bakışına döner. Örnek: Crowd.look_at_event(kalabalik, fatih, 4.0)
+## seconds > 0 ise o kadar sonra eski bakışına döner. İş yapanlar (alet işi, grip_hold) gövdelerini çevirmez (Stage.gaze_dir),
+## uyuyan/yatan dönmez. Örnek: Crowd.look_at_event(kalabalik, fatih, 4.0)
 static func look_at_event(people: Array, target: Node3D, seconds := 0.0, max_delay := 1.5) -> void:
 	for w in people:
 		if not (w is Node3D) or not is_instance_valid(w) or not (w as Node3D).is_inside_tree() or not ("look_target" in w):
 			continue
+		var act = w.get("activity")
+		if act is String and act in ["sleep", "lie", "doze", "swim"]:
+			continue      # uyuyan, yatan, yüzen olaya dönmez
 		var old = w.get("look_target")
 		(w as Node3D).get_tree().create_timer(randf_range(0.0, max_delay), false).timeout.connect(func():
 			if is_instance_valid(w) and is_instance_valid(target):

@@ -13,6 +13,7 @@ extends Node3D
 ##   33O.1 uyarı yerinde ve büyük top isabet · 33O.2 aksi
 ##   --autotest[=wide|fall]   (varsayılan 33O.1)
 
+const CLIMB := preload("res://scripts/npc/climb_anim.gd")
 const STONES := 4
 const CRANE_TIME := 240.0
 const ROW_TIME := 60.0
@@ -119,6 +120,10 @@ func _build_people() -> void:
 		u.position = Bogaz.TOWER + Vector3(-3.0 + k * 6.0, Bogaz.TOP_Y, Bogaz.TOWER_R - 2.6)
 		u.rotation.y = 0.0
 		u.set_activity("hammer")
+		# Çekiç elde, önünde yontulan taş (yayma P3: aletsiz havaya vuruyorlardı)
+		var blk := Props.box(self, Vector3(0.7, 0.62, 0.5), u.position + Vector3(0, 0.31, 0.66), Bogaz.C_STONE.darkened(0.04))
+		Props.set_pattern(blk, Bogaz.C_STONE.darkened(0.14), "ashlar")
+		u.give_tool("hammer")
 		_masons_top.append(u)
 
 
@@ -181,11 +186,13 @@ func _scaffold() -> void:
 					stage = "break"
 					# Önde tırmanan işçinin altında ikinci merdiven kırılır
 					player.frozen = true
+					# Merdivenin üstünde basamak basamak (ortak tırmanma animasyonu; merdiven 2'nin basamak hattı: 0,4 m
+					# aralık, geriye yatık): gövde merdivene paralel, eller ve ayaklar basamaklarda; süre aynı (1,2 sn, 3 m)
+					var ca: Node = CLIMB.attach(climber, null, 0.0, "33o")
+					ca.set_line(Vector3.ZERO, Vector3(0, 8.0, -0.48), Vector3(0, 0, 1), 0.3, 0.4, 0.7, level.ladder2)
+					ca.blend_from(climber.global_position, 0.3)
 					var lt := climber.create_tween()
-					# Merdiven boyunca (geriye yatık: her metrede ~0.1 m -z) basamak basamak tırmanır
-					for i in 3:
-						lt.tween_callback(climber.set_activity.bind("climb_a" if i % 2 == 0 else "climb_b"))
-						lt.tween_property(climber, "position", Vector3(-6.5, Bogaz.DECK2_Y + 1.0 * (i + 1), -19.6 - 0.1 * (i + 1)), 0.4)
+					lt.tween_method(func(v: float): ca.follow(v), 0.0, 3.0, 1.2)
 					await lt.finished
 					_break_ladder()
 					# Merdivene en yakın işçi işini bırakıp düşene döner (yüzü kulenin taşına dönük kalmaz; kartta da yüzü
@@ -197,9 +204,13 @@ func _scaffold() -> void:
 						get_tree().create_timer(4.0, false).timeout.connect(func():
 							if is_instance_valid(sh):
 								sh.rotation.y = PI
-								sh.set_activity("hammer"))
+								sh.set_activity("hammer")
+								sh.give_tool("hammer"))          # iş değişince düşen çekici yeniden alır (yayma P3)
 					hud.bark("SPK_SOLDIER", "D33O_S_LADDER_B", 3.0)
 					# Merdivenle birlikte 2. kata düşer (havada yana kaymaz), sırtüstü yatar, kalkıp kenara çekilir
+					var fca: Node = CLIMB.of(climber)
+					if fca:
+						fca.release(true, "fall")
 					climber.set_activity("fall")
 					var ct := climber.create_tween()
 					ct.tween_property(climber, "position", Vector3(-6.2, Bogaz.DECK2_Y, -20.0), 0.45).set_ease(Tween.EASE_IN)
@@ -425,7 +436,12 @@ func _crane() -> void:
 	player.global_position = Vector3(0.0, Bogaz.TOP_Y + 0.1, -25.6)
 	player.face(Bogaz.ARM_TIP + Vector3(0, -6.0, 0))
 	_rope = Bogaz.make_rope(self)
-	_guide = Bogaz.make_rope(self, Color("c8a878"), 0.02)
+	# Kılavuz ipi (yayma P3): taştan Tolga'nın iki yumruğuna, oradan ayağının dibindeki kangala. Yakın planda yuvarlak
+	# kesitli, dış çizgisiz ağ (ip kameranın sol altında havada bitiyordu)
+	_guide = _tube_node()
+	_guide_coil = _tube_node()
+	_guide_coil.mesh = ThraceRoad.tube_mesh(ThraceRoad.coil_points(0.26, 3.0, 0.018), 0.017, GUIDE_COL)
+	_guide_coil.global_position = Vector3(0.5, Bogaz.TOP_Y + 0.0, -25.15)
 	var left := CRANE_TIME
 	var theta := 0.0
 	var omega := 0.0
@@ -488,7 +504,7 @@ func _crane() -> void:
 		_stone.global_position = hang
 		_stone.rotation.z = theta * 0.6
 		Bogaz.rope(_rope, Bogaz.ARM_TIP, hang + Vector3(0, 0.45, 0))
-		Bogaz.rope(_guide, hang + Vector3(0, 0.1, -0.3), player.global_position + Vector3(0.3, 1.2, 0.3))
+		_guide_lay(hang + Vector3(0, 0.1, -0.3), input)
 		var ok := absf(theta) < 0.22
 		hud.set_prompt(tr("UI_PROMPT33O_LOWER") if lift >= 1.0 else "")
 		if lift >= 1.0 and (_lower_req or (GameState.autotest and (ok or (drop_once and crane_hits == 0 and absf(theta) > 0.3)))):
@@ -544,6 +560,8 @@ func _crane() -> void:
 		_stone.queue_free()
 	_rope.visible = false
 	_guide.visible = false
+	_guide_coil.visible = false
+	player.release_both()
 	await hud.say("SPK_MASON", "D33O_M_DONE" if stones_set >= STONES else "D33O_M_DONE_LATE")
 	hud.bark("SPK_FATIH", "D33O_F_01", 4.0)
 	await get_tree().create_timer(2.5, false).timeout
@@ -557,6 +575,51 @@ func _crane() -> void:
 
 
 var _sockets_used := 0
+var _guide_coil: MeshInstance3D
+const GUIDE_COL := Color("c8a878")
+
+
+func _tube_node() -> MeshInstance3D:
+	var mi := MeshInstance3D.new()
+	mi.set_meta("no_walk", true)
+	mi.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
+	mi.material_override = ThraceRoad.tube_material()
+	add_child(mi)
+	return mi
+
+
+## Kılavuz ipi: taştan (stone_pt) iki yumruktan geçip kangala. A/D ile çekerken eller geri ve yana gelir. Uçlar 5 mm'den
+## az oynadıysa ağ yeniden kurulmaz.
+func _guide_lay(stone_pt: Vector3, pull: float) -> void:
+	# İp iki yumruktan bir çizgide geçer: öndeki el hedefe doğru, arkadaki el geride (eller ipe dik bir çubuk tutar
+	# gibi yan yana durmasın)
+	var back := absf(pull) * 0.05
+	var c := player.camera
+	var d := c.to_local(stone_pt)
+	d = (d / maxf(d.length(), 0.01))
+	var base := Vector3(-0.02 + pull * 0.03, -0.25 - back * 0.4, -0.52 + back)
+	player.hold_both(base - d * 0.11 + Vector3(-0.04, 0, 0), base + d * 0.11 + Vector3(0.04, 0, 0))
+	var l: Vector3 = player.free_rig.socket.global_position if player.free_rig and player.free_rig.socket else player.camera.to_global(Vector3(-0.14, -0.22, -0.56))
+	var r: Vector3 = player.rig.socket.global_position if player.rig and player.rig.socket else player.camera.to_global(Vector3(0.09, -0.26, -0.49))
+	var up := player.camera.global_transform.basis.y * 0.035      # avucun ortası
+	l += up
+	r += up
+	var pts: Array = Stage.sag_points(stone_pt, r, 0.08, 10)
+	pts.append(l)
+	var below := l + (l - r).normalized() * 0.08 + Vector3(0, -0.3, 0)
+	pts.append(below)
+	pts.append_array(Stage.sag_points(below, _guide_coil.global_position + Vector3(0, 0.08, 0), 0.0, 1).slice(1))
+	var last: Array = _guide.get_meta("tube_pts", [])
+	if last.size() == pts.size():
+		var same := true
+		for i in pts.size():
+			if (last[i] as Vector3).distance_squared_to(pts[i]) > 0.000025:
+				same = false
+				break
+		if same:
+			return
+	_guide.set_meta("tube_pts", pts.duplicate())
+	_guide.mesh = ThraceRoad.tube_mesh(pts, 0.016, GUIDE_COL)
 
 
 func _new_stone() -> void:
@@ -649,6 +712,7 @@ func _build_boat() -> void:
 	boat = Node3D.new()
 	add_child(boat)
 	boat.position = Vector3(12.0, -0.15, 3.0)
+	Vfx.wake(boat, 0.0, {"stern": Vector3(0, 0, 3.2), "bow": Vector3(0, 0, -3.3), "width": 1.6})      # kayığın izi (yayma P3)
 	boat.add_child(LowPoly.hull([
 		{"z": -3.4, "w": 0.1, "top": 0.95, "bottom": 0.4},
 		{"z": -1.0, "w": 1.0, "top": 0.75, "bottom": -0.1},
@@ -1029,6 +1093,7 @@ func _warn_shot() -> void:
 
 func _splash(at: Vector3, h: float) -> void:
 	Audio.sfx("splash", 0.0, 0.7)
+	Vfx.water_entry(self, at, 0.0, clampf(h * 0.4, 1.0, 2.4))      # dibinde köpük, halka, damla (yayma P3)
 	var col := Props.cyl(self, 0.8, h, Vector3(at.x, h * 0.5, at.z), Color(0.9, 0.95, 1.0, 0.7), Vector3.ZERO, 10, 0.3)
 	col.material_override = Props.mat(Color(0.9, 0.95, 1.0, 0.7), 0.2, true, "", false)
 	var tw := col.create_tween()
@@ -1187,7 +1252,10 @@ func _sink() -> void:
 					c.global_transform = w
 					var jt := c.create_tween()
 					jt.tween_property(c, "global_position", c.global_position + Vector3(randf_range(-2, 2), -c.global_position.y - 0.4, randf_range(-6, -3)), 0.9)
-					jt.tween_callback(func(): Audio.sfx("splash", -8.0, 1.2))
+					jt.tween_callback(func():
+						Audio.sfx("splash", -8.0, 1.2)
+						if is_instance_valid(c):
+							Vfx.water_entry(self, c.global_position, 0.0, 1.0))      # suya atlayan tayfa (yayma P3)
 					c.set_activity("swim"))
 
 
@@ -1284,7 +1352,12 @@ func _fish_out() -> void:
 	player.frozen = true
 	player.pinned = true
 	Audio.sfx("splash", 0.0, 0.9)
-	Vfx.dust(self, Vector3(player.global_position.x, 0.2, player.global_position.z), 0.8)
+	# Oyuncunun kendi düşüşü: kameranın içine köpük küresi değil, çevresinde su hizasında halka ve 1,2 m ötede damla (yayma P3)
+	var wp := Vector3(player.global_position.x, 0.0, player.global_position.z)
+	Vfx.water_ring(self, wp, 0.0, 0.5, 2.4, 1.2, 0.55)
+	for k in 4:
+		var a := k * TAU / 4.0 + 0.4
+		Vfx.water_drops(self, wp + Vector3(cos(a), 0, sin(a)) * 1.2, 0.0, 5)
 	await hud.fade_to(1.0, 0.5)
 	if phase == "hold" and is_instance_valid(genoa):
 		# Gemiden düşen: tayfa ip merdivenden çeker, güverteye
@@ -1296,6 +1369,8 @@ func _fish_out() -> void:
 		player.velocity = Vector3.ZERO
 		player.face(Vector3(x, 2.0, -12.0))
 	player.pinned = false
+	var gy := player.global_position.y - 0.05
+	Vfx.water_exit(player, func(_x: float, _z: float) -> float: return gy, 6.0, player.camera)      # sırılsıklam çıkar
 	await hud.fade_to(0.0, 0.5)
 	hud.bark("SPK_MASON", "D33O_M_WATER", 3.0)
 	player.frozen = was_frozen
