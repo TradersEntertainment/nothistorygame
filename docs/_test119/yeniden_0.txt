@@ -1,0 +1,88 @@
+== 28o tur1
+WARN_PORTRAIT_STUDIO speaker=SPK_SOLDIER key=D28O_S_BALL scene=chapter28o.tscn
+AUTOTEST PASS chapter=28o variant= outcome=28O.1 stakes=4 slips=0 hit=true master=false roller_every=4.0 rollers=2
+== arena mods tur1
+WARN_PORTRAIT_STUDIO speaker=SPK_LOOKOUT key=D20_L_WARN_1 scene=arena.tscn
+AUTOTEST PASS arena side=B waves=3 kills=5 parries=7 kicks=0 finishers=4 cannon_hits=0 gun_hits=0 gunner=0/0 hp=75
+== zfight chapter3 tur1
+ZFIGHT chapter3.tscn axis=1 side=1 area=0.84 face=0.01 A=(-0.7, 0.0, -83.8) (1.4, 0.01, 83
+ZFIGHT chapter3.tscn axis=2 side=1 area=2.52 face=-13.00 A=(-11.0, 0.0, -13.04) (8.8, 0.9,
+ZFIGHT chapter3.tscn axis=2 side=0 area=2.52 face=-24.00 A=(-11.0, 0.0, -24.0) (8.8, 0.9, 
+ZFIGHT chapter3.tscn axis=0 side=0 area=3.87 face=-11.00 A=(-11.0, 0.0, -23.9) (0.04, 0.9,
+== zfight chapter8y tur1
+ZFIGHT chapter8y.tscn axis=1 side=1 area=0.76 face=0.02 A=(-3.2, -0.02, 20.0) (6.4, 0.04, 
+== zfight chapter14 tur1
+ZFIGHT chapter14.tscn axis=1 side=1 area=0.84 face=0.01 A=(-0.7, 0.0, -83.8) (1.4, 0.01, 8
+ZFIGHT chapter14.tscn axis=2 side=1 area=2.52 face=-13.00 A=(-11.0, 0.0, -13.04) (8.8, 0.9
+ZFIGHT chapter14.tscn axis=2 side=0 area=2.52 face=-24.00 A=(-11.0, 0.0, -24.0) (8.8, 0.9,
+ZFIGHT chapter14.tscn axis=0 side=0 area=3.87 face=-11.00 A=(-11.0, 0.0, -23.9) (0.04, 0.9
+== zfight chapter17 tur1
+ZFIGHT chapter17.tscn axis=1 side=1 area=0.84 face=0.01 A=(-0.7, 0.0, -83.8) (1.4, 0.01, 8
+ZFIGHT chapter17.tscn axis=2 side=1 area=2.52 face=-13.00 A=(-11.0, 0.0, -13.04) (8.8, 0.9
+ZFIGHT chapter17.tscn axis=2 side=0 area=2.52 face=-24.00 A=(-11.0, 0.0, -24.0) (8.8, 0.9,
+ZFIGHT chapter17.tscn axis=0 side=0 area=3.87 face=-11.00 A=(-11.0, 0.0, -23.9) (0.04, 0.9
+== zfight chapter22o tur1
+ZFIGHT chapter22o.tscn axis=1 side=1 area=0.63 face=0.45 A=(-8.2, 0.0, 41.8) (1.2, 0.45, 0
+== zfight chapter43o tur1
+ZFIGHT chapter43o.tscn axis=1 side=1 area=5.04 face=0.02 A=(-1.6, 0.0, -48.1) (3.2, 0.02, 
+== zfight chapter44b tur1
+ZFIGHT chapter44b.tscn axis=1 side=1 area=2.34 face=0.04 A=(-25.0, 0.0, -91.35) (22.0, 0.0
+== 28o tur2
+WARN_PORTRAIT_STUDIO speaker=SPK_SOLDIER key=D28O_S_BALL scene=chapter28o.tscn
+AUTOTEST PASS chapter=28o variant= outcome=28O.1 stakes=4 slips=0 hit=true master=false roller_every=4.0 rollers=2
+== arena mods tur2
+WARN_PORTRAIT_STUDIO speaker=SPK_LOOKOUT key=D20_L_WARN_1 scene=arena.tscn
+AUTOTEST PASS arena side=B waves=3 kills=5 parries=6 kicks=0 finishers=4 cannon_hits=0 gun_hits=0 gunner=0/0 hp=82
+== zfight chapter3 tur2
+ZFIGHT chapter3.tscn axis=1 side=1 area=0.84 face=0.01 A=(-0.7, 0.0, -83.8) (1.4, 0.01, 83
+ZFIGHT chapter3.tscn axis=2 side=1 area=2.52 face=-13.00 A=(-11.0, 0.0, -13.04) (8.8, 0.9,
+ZFIGHT chapter3.tscn axis=2 side=0 area=2.52 face=-24.00 A=(-11.0, 0.0, -24.0) (8.8, 0.9, 
+ZFIGHT chapter3.tscn axis=0 side=0 area=3.87 face=-11.00 A=(-11.0, 0.0, -23.9) (0.04, 0.9,
+== zfight chapter8y tur2
+ZFIGHT chapter8y.tscn axis=1 side=1 area=0.76 face=0.02 A=(-3.2, -0.02, 20.0) (6.4, 0.04, 
+== zfight chapter14 tur2
+ZFIGHT chapter14.tscn axis=1 side=1 area=0.84 face=0.01 A=(-0.7, 0.0, -83.8) (1.4, 0.01, 8
+ZFIGHT chapter14.tscn axis=2 side=1 area=2.52 face=-13.00 A=(-11.0, 0.0, -13.04) (8.8, 0.9
+ZFIGHT chapter14.tscn axis=2 side=0 area=2.52 face=-24.00 A=(-11.0, 0.0, -24.0) (8.8, 0.9,
+ZFIGHT chapter14.tscn axis=0 side=0 area=3.87 face=-11.00 A=(-11.0, 0.0, -23.9) (0.04, 0.9
+== zfight chapter17 tur2
+ZFIGHT chapter17.tscn axis=1 side=1 area=0.84 face=0.01 A=(-0.7, 0.0, -83.8) (1.4, 0.01, 8
+ZFIGHT chapter17.tscn axis=2 side=1 area=2.52 face=-13.00 A=(-11.0, 0.0, -13.04) (8.8, 0.9
+ZFIGHT chapter17.tscn axis=2 side=0 area=2.52 face=-24.00 A=(-11.0, 0.0, -24.0) (8.8, 0.9,
+ZFIGHT chapter17.tscn axis=0 side=0 area=3.87 face=-11.00 A=(-11.0, 0.0, -23.9) (0.04, 0.9
+== zfight chapter22o tur2
+ZFIGHT chapter22o.tscn axis=1 side=1 area=0.63 face=0.45 A=(-8.2, 0.0, 41.8) (1.2, 0.45, 0
+== zfight chapter43o tur2
+ZFIGHT chapter43o.tscn axis=1 side=1 area=5.04 face=0.02 A=(-1.6, 0.0, -48.1) (3.2, 0.02, 
+== zfight chapter44b tur2
+ZFIGHT chapter44b.tscn axis=1 side=1 area=2.34 face=0.04 A=(-25.0, 0.0, -91.35) (22.0, 0.0
+== 28o tur3
+WARN_PORTRAIT_STUDIO speaker=SPK_SOLDIER key=D28O_S_BALL scene=chapter28o.tscn
+AUTOTEST PASS chapter=28o variant= outcome=28O.1 stakes=4 slips=0 hit=true master=false roller_every=4.0 rollers=2
+== arena mods tur3
+WARN_PORTRAIT_STUDIO speaker=SPK_LOOKOUT key=D20_L_WARN_1 scene=arena.tscn
+AUTOTEST PASS arena side=B waves=3 kills=5 parries=7 kicks=0 finishers=4 cannon_hits=0 gun_hits=0 gunner=0/0 hp=100
+== zfight chapter3 tur3
+ZFIGHT chapter3.tscn axis=1 side=1 area=0.84 face=0.01 A=(-0.7, 0.0, -83.8) (1.4, 0.01, 83
+ZFIGHT chapter3.tscn axis=2 side=1 area=2.52 face=-13.00 A=(-11.0, 0.0, -13.04) (8.8, 0.9,
+ZFIGHT chapter3.tscn axis=2 side=0 area=2.52 face=-24.00 A=(-11.0, 0.0, -24.0) (8.8, 0.9, 
+ZFIGHT chapter3.tscn axis=0 side=0 area=3.87 face=-11.00 A=(-11.0, 0.0, -23.9) (0.04, 0.9,
+== zfight chapter8y tur3
+ZFIGHT chapter8y.tscn axis=1 side=1 area=0.76 face=0.02 A=(-3.2, -0.02, 20.0) (6.4, 0.04, 
+== zfight chapter14 tur3
+ZFIGHT chapter14.tscn axis=1 side=1 area=0.84 face=0.01 A=(-0.7, 0.0, -83.8) (1.4, 0.01, 8
+ZFIGHT chapter14.tscn axis=2 side=1 area=2.52 face=-13.00 A=(-11.0, 0.0, -13.04) (8.8, 0.9
+ZFIGHT chapter14.tscn axis=2 side=0 area=2.52 face=-24.00 A=(-11.0, 0.0, -24.0) (8.8, 0.9,
+ZFIGHT chapter14.tscn axis=0 side=0 area=3.87 face=-11.00 A=(-11.0, 0.0, -23.9) (0.04, 0.9
+== zfight chapter17 tur3
+ZFIGHT chapter17.tscn axis=1 side=1 area=0.84 face=0.01 A=(-0.7, 0.0, -83.8) (1.4, 0.01, 8
+ZFIGHT chapter17.tscn axis=2 side=1 area=2.52 face=-13.00 A=(-11.0, 0.0, -13.04) (8.8, 0.9
+ZFIGHT chapter17.tscn axis=2 side=0 area=2.52 face=-24.00 A=(-11.0, 0.0, -24.0) (8.8, 0.9,
+ZFIGHT chapter17.tscn axis=0 side=0 area=3.87 face=-11.00 A=(-11.0, 0.0, -23.9) (0.04, 0.9
+== zfight chapter22o tur3
+ZFIGHT chapter22o.tscn axis=1 side=1 area=0.63 face=0.45 A=(-8.2, 0.0, 41.8) (1.2, 0.45, 0
+== zfight chapter43o tur3
+ZFIGHT chapter43o.tscn axis=1 side=1 area=5.04 face=0.02 A=(-1.6, 0.0, -48.1) (3.2, 0.02, 
+== zfight chapter44b tur3
+ZFIGHT chapter44b.tscn axis=1 side=1 area=2.34 face=0.04 A=(-25.0, 0.0, -91.35) (22.0, 0.0
+BITTI
