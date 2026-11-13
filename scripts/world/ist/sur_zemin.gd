@@ -325,7 +325,7 @@ static func ates_alani(parent: Node3D, pl: PackedVector2Array, dis: Callable, ba
 		mm.append(Scenery.scatter(root, _kure(), cukur_c, [], Props.mat(TOPRAK2.darkened(0.1), 0.0, false, "", false)))
 		mm.append(Scenery.scatter(root, _disk(), cukur, [], Props.mat(YANIK.darkened(0.25), 0.0, false, "", false)))
 	if tas.size() > 0:
-		mm.append(Scenery.scatter(root, _kure(), tas, [], Props.mat(Color("8a806e"), 0.0, false, "", false)))      # TUR-7: taş gülle koyu kireçtaşı (güneşte beyaz benek değil)
+		mm.append(Scenery.scatter(root, _kure(), tas, [], load("res://scripts/world/ist/sur_gorunus.gd").kaya_tas_mat()))      # TUR-7: taş gülle koyu taş-toprak (güneşte kar topu gibi beyaz değil)
 	if cubuk.size() > 0:
 		# TUR-6 (v2): kazık/ok yuvarlak: kutu değil, ince silindir
 		mm.append(Scenery.scatter(root, _cubuk_ag() if IstSehir.v2 else Scenery._boxm(Vector3.ONE), cubuk, [], Props.mat(Color("6a5434"), 0.0, false, "", false)))

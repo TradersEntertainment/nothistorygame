@@ -21,8 +21,12 @@
   kuşağında yok (k09 havada taşlar: `ZeminOrtu/Ortu_tas`, tanı `tur7_kare --pik`); kaya ağları (düşmüş/kırık taş) ince
   taneli kireçtaşı (blok deseni ahşap damarı gibi okunuyordu); gülle oyuğu kenarı duvarla aynı değerde.
 
-## Süren
-- Son SONRA kareleri (A, B, C, D), kutu sayımı, ÖNCE şehir bütçesi, bölüm testleri (20, 26, 43o), son denetim, rapor.
+- SON: A 12 + D 4 (kesim), B 17 + 2 gece, C 8 SONRA kareleri `sonra/`, ÖNCE D `once/D`, paftalar `pafta/`;
+  bütçe, kutu sayımı, denetimler, bölüm testleri (20/26/43o PASS) → `rapor.md`.
 
-## Sıradaki
-- Madde 2 gündüz sur dibi, 3 uzak sur, 4 renk ayrıştırma, 5 hendek, 6 ordugâh, 7 ova, 8 poterna/fıçı/ev kümesi.
+## Süren
+- Yok (bu tur kapandı).
+
+## Sıradaki (rapor "hâlâ kötü olanlar")
+- Sur taşı deseninin yakından dama okunması; sur dibi ve hendek kıyısının uzaktan cetvel çizgisi; ordugâh palanka kutuları;
+  k06 çardak rengi; hub yanındaki pastel ev kümesi; k04 bütçe (+%6,8 ilkel); ikinci grup (Blakherna, deniz surları, Galata).
