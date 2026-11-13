@@ -1,0 +1,4 @@
+BUDGET A_orta_1.5m_duz draws=219.0 prims=173766
+BUDGET B_sol_0.4m_-50 draws=149.0 prims=178076
+BUDGET C_sag_3m_+30 draws=968.7 prims=606478
+BUDGET D_egilmis_sag_0.4m_-30_asagi draws=330.2 prims=287442
