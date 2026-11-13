@@ -96,8 +96,10 @@ static func kesim_zemin(kok: Node3D) -> void:
 		var ova := z0 > 0.0
 		_levha(st, xa, xb, z0, z1, y, 1 if ova else -1, yuzler, ot)
 	if xb > xa:
-		_levha(st, xa, xb, float(d["zi1"]), float(d["zo0"]), -0.12 + 0.015, 0, yuzler, ot)
-		_levha(st, xa, xb, float(d["zo1"]), float(d["zm0"]) - 0.9, a.dy - 0.12 + 0.015, 0, yuzler, ot)
+		# TUR-7 (ikinci geçiş): 1,5 cm arayla alttaki "dirt" levhasıyla uzakta z-çakışması (gece testere dişli kenar,
+		# dikdörtgen yamalar) yapıyordu: 4,5 cm yukarıda, engebe ±1,6 cm (yürüme yüksekliği yine ±5 cm içinde)
+		_levha(st, xa, xb, float(d["zi1"]), float(d["zo0"]), -0.12 + 0.045, 0, yuzler, ot)
+		_levha(st, xa, xb, float(d["zo1"]), float(d["zm0"]) - 0.9, a.dy - 0.12 + 0.045, 0, yuzler, ot)
 	var mi := MeshInstance3D.new()
 	mi.name = "Toprak_KesimZemin"
 	mi.mesh = st.commit()
@@ -105,9 +107,35 @@ static func kesim_zemin(kok: Node3D) -> void:
 	mi.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
 	kok.add_child(mi)
 	_ortu(kok, ot)
+	# TUR-7 (ikinci geçiş): oyun parçalarının toprak/moloz yığınları (hendek dolgusu, gedik moloz rampası, gedik seti) Props
+	# "rubble" deseninde kiremit dama gibi okunuyordu: aynı zemin dilinde döküm toprak (otsuz, çiğnenmiş, köşe rengi yok)
+	var rub: Texture2D = Props.mat(Color.WHITE, 0.0, false, "rubble").albedo_texture
+	for n2 in kok.find_children("*", "MeshInstance3D", true, false):
+		var m := n2 as MeshInstance3D
+		if m.mesh == null or not String(m.get_path()).contains("OyunParcalari"):
+			continue
+		for si in m.mesh.get_surface_count():
+			var sm := m.get_active_material(si) as StandardMaterial3D
+			if sm != null and sm.albedo_texture == rub:
+				m.set_surface_override_material(si, _moloz_mat(sm.albedo_color))
 	# poterna kanadı: ahşap okunsun (gölgede griye kaçan koyu-soğuk kahve yerine sıcak meşe; tahta deseni)
 	for n in kok.find_children("Ahsap_PoternaTahta", "MeshInstance3D", true, false):
 		(n as MeshInstance3D).material_override = Props.mat(Color("8c6038"), 0.0, false, "wood")
+
+
+static var _moloz: Dictionary = {}
+
+
+## Döküm toprak / moloz: sur kuşağının zemin malzemesi (zemin_v2), ipucu = yığının rengi, ot yok, tam çiğnenmiş
+static func _moloz_mat(c: Color) -> Material:
+	var k := c.to_html()
+	if not _moloz.has(k):
+		var m: ShaderMaterial = (load("res://scripts/world/ist/sur_zemin.gd")._mat() as ShaderMaterial).duplicate()
+		m.set_shader_parameter("ipucu", Color(c.r, c.g, c.b, 1.0).lerp(Color(0.62, 0.52, 0.40), 0.35))
+		m.set_shader_parameter("ot_carpan", 0.08)
+		m.set_shader_parameter("cignenme", 1.0)
+		_moloz[k] = m
+	return _moloz[k]
 
 
 static func _uzak_sur(z: float, yuzler: Array) -> float:
@@ -140,7 +168,7 @@ static func _levha(st: SurfaceTool, x0: float, x1: float, z0: float, z1: float, 
 	if uzat != 0:
 		for k in [-900.0, -450.0, -180.0]:
 			xs.append(x0 + k)
-	var nx := int(ceil((x1 - x0) / 8.0))
+	var nx := int(ceil((x1 - x0) / (2.5 if uzat == 0 else 4.0)))      # TUR-7: ince ızgara (8 m sütunlar dikdörtgen yama çiziyordu)
 	for i in nx + 1:
 		xs.append(lerpf(x0, x1, float(i) / nx))
 	if uzat != 0:
@@ -159,7 +187,7 @@ static func _levha(st: SurfaceTool, x0: float, x1: float, z0: float, z1: float, 
 		var dx := maxf(0.0, maxf(x0 - x, x - x1))
 		var dz := maxf(0.0, maxf(z0 - z, z - z1))
 		var dd := sqrt(dx * dx + dz * dz)
-		var ic := (gn(x, z, 5.0, 7) - 0.5) * 0.08
+		var ic := (gn(x, z, 5.0, 7) - 0.5) * (0.08 if uzat != 0 else 0.032)
 		if dd <= 0.0:
 			return y + ic
 		var tep := (gn(x, z, 180.0, 8) * 0.7 + gn(x, z, 60.0, 9) * 0.3) * minf(dd * 0.08, 28.0)

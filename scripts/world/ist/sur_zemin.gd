@@ -160,6 +160,9 @@ static func _mat() -> Material:
 		if IstSehir.v2:
 			_m.shader = load("res://scripts/world/ist/zemin_v2.gdshader")     # TUR-6: v2 zemin dili
 		_m.set_shader_parameter("su_y", -10000.0)
+		# TUR-7: dik yüz (rampa omzu, set şevi) "yamaç kayası" paleti açık gri-bej: güneşte beyaz üçgen okunuyordu.
+		# Sur kuşağında dik toprak = koyu, kuru döküm toprak
+		_m.set_shader_parameter("c_kaya", Color(0.43, 0.36, 0.28))
 	return _m
 
 
@@ -269,6 +272,10 @@ static func ates_alani(parent: Node3D, pl: PackedVector2Array, dis: Callable, ba
 			var w2 := p + o * dz2 + d * rng.randf_range(-2.0, 2.0)
 			var y2 := IstGeo.h(w2.x, w2.y) + 0.03
 			var rr := rng.randf_range(1.2, 3.0)
+			# TUR-7: hat çizgisi dilimden sapınca döküntü hendeğin/setin içinde arazi yüksekliğinde havada kalıyordu
+			# (k09: hendek duvarı önünde uçan beyaz gülleler): sur kuşağında (hendek dış kıyısı + 5 m) döküntü yok
+			if load("res://scripts/world/ist/sur_oturtma.gd").kusakta(w2.x, w2.y, 12.0, 5.0 + rr):
+				continue
 			cukur.append(Transform3D(Basis.from_euler(Vector3(0, rng.randf() * TAU, 0)).scaled(Vector3(rr * 2.0, 0.06, rr * 1.7)), Vector3(w2.x, y2, w2.y)))
 			cukur_c.append(Transform3D(Basis.from_euler(Vector3(0, rng.randf() * TAU, 0)).scaled(Vector3(rr * 2.6, 0.35, rr * 2.3)), Vector3(w2.x, y2 - 0.12, w2.y)))
 			if rng.randf() < 0.5:
@@ -279,6 +286,8 @@ static func ates_alani(parent: Node3D, pl: PackedVector2Array, dis: Callable, ba
 			var dz3 := bas + rng.randf_range(0.0, ATES_EN * 0.6)
 			var w3 := p + o * dz3 + d * rng.randf_range(-2.5, 2.5)
 			var y3 := IstGeo.h(w3.x, w3.y) + 0.1
+			if load("res://scripts/world/ist/sur_oturtma.gd").kusakta(w3.x, w3.y, 12.0, 8.0):
+				continue
 			var kind := rng.randf()
 			var yaw := rng.randf() * TAU
 			if kind < 0.5:
@@ -316,7 +325,7 @@ static func ates_alani(parent: Node3D, pl: PackedVector2Array, dis: Callable, ba
 		mm.append(Scenery.scatter(root, _kure(), cukur_c, [], Props.mat(TOPRAK2.darkened(0.1), 0.0, false, "", false)))
 		mm.append(Scenery.scatter(root, _disk(), cukur, [], Props.mat(YANIK.darkened(0.25), 0.0, false, "", false)))
 	if tas.size() > 0:
-		mm.append(Scenery.scatter(root, _kure(), tas, [], Props.mat(Color("a49a88"), 0.0, false, "", false)))
+		mm.append(Scenery.scatter(root, _kure(), tas, [], Props.mat(Color("8a806e"), 0.0, false, "", false)))      # TUR-7: taş gülle koyu kireçtaşı (güneşte beyaz benek değil)
 	if cubuk.size() > 0:
 		# TUR-6 (v2): kazık/ok yuvarlak: kutu değil, ince silindir
 		mm.append(Scenery.scatter(root, _cubuk_ag() if IstSehir.v2 else Scenery._boxm(Vector3.ONE), cubuk, [], Props.mat(Color("6a5434"), 0.0, false, "", false)))

@@ -274,8 +274,8 @@ static func _bant_malzeme() -> ShaderMaterial:
 	var sh := Shader.new()
 	sh.code = """
 shader_type spatial;
-render_mode cull_disabled, specular_disabled;
-uniform vec3 camur : source_color = vec3(0.34, 0.29, 0.22);
+render_mode cull_disabled, specular_disabled, blend_mix, depth_draw_never;
+uniform vec3 camur : source_color = vec3(0.30, 0.26, 0.20);
 uniform vec3 yosun : source_color = vec3(0.27, 0.30, 0.17);
 varying vec3 wp;
 float hs(vec2 p) { return fract(sin(dot(p, vec2(127.1, 311.7))) * 43758.5453); }
@@ -285,18 +285,20 @@ float gn(vec2 p) {
 }
 void vertex() { wp = (MODEL_MATRIX * vec4(VERTEX, 1.0)).xyz; }
 void fragment() {
-	float h = UV.y;                         // dipten yükseklik (m)
-	vec2 q = vec2(UV.x + wp.y * 0.0, h);
-	float n = gn(q * vec2(3.1, 4.3)) * 0.55 + gn(q * vec2(11.0, 13.0)) * 0.3 + gn(q * vec2(29.0, 23.0)) * 0.15;
-	// yukarı doğru seyrelen benekler (toprak sıçraması), dipte tam
-	// TUR-7: ince benek (iri koyu leke değil): dipte sürekli ıslak taban, yukarı doğru seyrek ve küçülen sıçrama
-	float n2 = gn(q * vec2(17.0, 21.0)) * 0.6 + gn(q * vec2(41.0, 37.0)) * 0.4;
-	float esik = smoothstep(0.05, 1.5, h + (gn(vec2(UV.x * 0.35, 3.0)) - 0.5) * 0.5);
-	if (mix(n, n2, smoothstep(0.2, 0.8, h)) < esik * 0.97) { discard; }
-	float ym = smoothstep(0.55, 0.85, gn(q * vec2(1.7, 2.3))) * (1.0 - smoothstep(0.2, 0.9, h));
-	vec3 c = mix(camur, yosun, ym);
-	c *= 0.85 + 0.3 * gn(q * 7.0);
+	float h = UV.y - 0.3;                   // zeminden yükseklik (m; bant zeminin 0,3 m altından başlar)
+	vec2 q = vec2(UV.x, UV.y);
+	float n = gn(q * vec2(1.3, 2.1)) * 0.5 + gn(q * vec2(4.7, 6.1)) * 0.3 + gn(q * vec2(13.0, 11.0)) * 0.2;
+	// TUR-7 (ikinci geçiş): benek/kesik (discard) YOK: sert kenarlı benekler gece "siyah tırtıklı bant" okunuyordu.
+	// Yumuşak geçişli ıslak-toz taban lekesi: dipte yoğun, düzensiz bir üst sınırla (0,5–1,4 m) yukarı doğru söner.
+	float ust = 0.55 + 0.85 * gn(vec2(UV.x * 0.45, 7.0)) + (n - 0.5) * 0.35;
+	float a = 1.0 - smoothstep(0.0, ust, max(h, 0.0));
+	a *= a;
+	a *= 0.62 * (0.75 + 0.25 * n);
+	float ym = smoothstep(0.55, 0.85, gn(q * vec2(0.9, 1.6))) * (1.0 - smoothstep(0.1, 0.7, h));
+	vec3 c = mix(camur, yosun, ym * 0.7);
+	c *= 0.9 + 0.2 * gn(q * 5.0);
 	ALBEDO = c;
+	ALPHA = a;
 	ROUGHNESS = 1.0;
 }
 """
@@ -319,8 +321,9 @@ static func ot_mesh() -> ArrayMesh:
 		var hgt := 0.35 + 0.35 * _h(k, 7)
 		var side := Vector3(-sin(a), 0.0, cos(a)) * 0.035
 		var tip := base + lean + Vector3(0, hgt, 0)
-		var c0 := Color(0.62, 0.66, 0.38)
-		var c1 := Color(0.86, 0.84, 0.55)
+		# TUR-7: tozlu-solgun (uç sarı diken gibi parlamasın)
+		var c0 := Color(0.50, 0.52, 0.32)
+		var c1 := Color(0.68, 0.64, 0.44)
 		for f in 2:
 			var v := [base - side, base + side, tip] if f == 0 else [base + side, base - side, tip]
 			var nr := (Vector3(0, 0.4, 0) + Vector3(cos(a), 0, sin(a)) * (1.0 if f == 0 else -1.0)).normalized()
@@ -353,7 +356,8 @@ static func cali_mesh() -> ArrayMesh:
 			var hh := fposmod(sin(snappedf(v.x, 0.01) * 21.3 + snappedf(v.y, 0.01) * 51.1 + snappedf(v.z, 0.01) * 17.9 + b) * 9341.7, 1.0)
 			var vv := v * (0.75 + 0.45 * hh) + off
 			var g := 0.75 + 0.35 * hh
-			st.set_color(Color(0.32 * g, 0.40 * g, 0.20 * g))
+			# TUR-7: tozlu zeytin-kahve (fosforlu yeşil top okunuyordu)
+			st.set_color(Color(0.30 * g, 0.31 * g, 0.19 * g).lerp(Color(0.36, 0.31, 0.22), 0.25 * hh))
 			st.add_vertex(vv)
 	st.generate_normals()
 	_cali = st.commit()

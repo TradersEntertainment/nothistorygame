@@ -1,7 +1,8 @@
 extends "res://tests/_ist/sur_oyun_demo.gd"
 ## TUR-7 geliştirme sondası (kesim sahnesi; sur_oyun_demo ile AYNI kurulum ve gök): seçili kameralar + tanı.
 ##   xvfb-run -a godot --path . --rendering-driver opengl3 --resolution 1280x720 res://tests/_ist/tur7_kesim.tscn -- \
-##     --out=DIR [--sec=07_gedikten,01_ovadan] [--pik=x,y] [--gizle=ad1,ad2]
+##     --out=DIR [--sec=07_gedikten,01_ovadan] [--pik=x,y] [--gizle=ad1,ad2] [--gece]
+## D kareleri (gece, peribolostan sur dibi) yalnız --sec ile: --gece --sec=D1_peribolos_ic_sur_dibi,D2_peribolos_dis_sur_dibi,D3_peribolos_boyunca,D4_poterna_yani_dip
 ## --pik: ekran pikselinin ışınının geçtiği görünen ağları (AABB) yakından uzağa yazar: "TUR7PIK <yol> <uzaklık>"
 ## --pisirme_yok: dilimler pişirilmez (tanı: --pik düğüm adını verir; çizim sayısı gerçek değil)
 ## --gizle: adı bu parçalardan birini içeren düğümler gizlenir (kaynak bulmak için)
@@ -66,7 +67,15 @@ func _kos() -> void:
 		"09_havadan_gedik": [Vector3(gx + 46.0, 42.0, zm1 + 40.0), Vector3(gx + 6.0, 0.0, zo1 + 4.0)],
 		"10_havadan_kesim": [Vector3(-30.0, 70.0, -60.0), Vector3(-30.0, 0.0, 28.0)],
 	}
+	# D (gece oynanış ışığı: meşale + ay; Bölüm 20'nin yeni suru): peribolostan sur dibine 4 bakış (göz 1,62 m)
+	var zi1 := float(d["zi1"])
+	kam["D1_peribolos_ic_sur_dibi"] = [Vector3(gx + 6.0, 1.62, zo0 - 2.5), Vector3(gx - 4.0, 0.6, zi1)]
+	kam["D2_peribolos_dis_sur_dibi"] = [Vector3(gx + 8.0, 1.62, zi1 + 2.0), Vector3(gx + 18.0, 0.8, zo0)]
+	kam["D3_peribolos_boyunca"] = [Vector3(gx + 22.0, 1.62, (zi1 + zo0) * 0.5), Vector3(gx - 6.0, 0.9, (zi1 + zo0) * 0.5 - 1.0)]
+	kam["D4_poterna_yani_dip"] = [Vector3(pot + 5.0, 1.62, zo0 - 3.0), Vector3(pot - 3.0, 0.5, zo0)]
 	for ad: String in kam.keys():
+		if ad.begins_with("D") and not ad in _sec:
+			continue
 		if not _sec.is_empty() and not ad in _sec:
 			continue
 		var c: Array = kam[ad]

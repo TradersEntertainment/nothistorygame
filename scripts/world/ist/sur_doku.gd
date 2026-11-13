@@ -52,16 +52,16 @@ void fragment() {
 	// taş: soluk gri-krem (sıcak); taban rengin parlaklığı korunur
 	float kat = clamp(lum / 0.42, 0.55, 1.0);
 	// TUR-7: kireçtaşı daha açık; büyük ölçekte soğuk (gri) / sıcak (bal) lekeler: sur, zemin ve çadırdan ayrışır
-	vec3 tas = vec3(0.54, 0.50, 0.42);
+	vec3 tas = vec3(0.56, 0.535, 0.48);     // TUR-7 ikinci geçiş: gri-krem kireçtaşı (sıcak güneşte tereyağı sarısı okunmasın)
 	if (tur > 0.5 && tur < 1.5) { tas = vec3(0.43, 0.395, 0.335); }     // SUR-5: deniz suru sıcak gri (soğuk mavi-gri değil)
 	if (tur > 1.5) { tas = vec3(0.45, 0.42, 0.36); }
 	tas *= kat;
 	if (tur < 0.5) {
 		float sl = vn(vec2(dot(wpos.xz, vec2(0.707, 0.707)) * 0.09, wpos.y * 0.13) + 31.0);
-		tas = mix(tas * vec3(0.93, 0.96, 1.0), tas * vec3(1.05, 0.98, 0.86), smoothstep(0.25, 0.75, sl));
+		tas = mix(tas * vec3(0.92, 0.95, 0.99), tas * vec3(1.04, 0.99, 0.91), smoothstep(0.25, 0.75, sl));
 	}
 	// TUR-7: hatıl belirgin kiremit kırmızısı (yayındaki bölümlerin sur görünüşü)
-	vec3 tug = vec3(0.40, 0.15, 0.09) * clamp(kat, 0.7, 1.0);    // SUR-5: mat, koyu kiremit (parlak kırmızı şerit değil)
+	vec3 tug = vec3(0.37, 0.14, 0.085) * clamp(kat, 0.7, 1.0);    // SUR-5: mat, koyu kiremit (parlak kırmızı şerit değil)
 	vec3 harc = vec3(0.52, 0.48, 0.41) * kat;
 	float dikey = 1.0 - step(0.6, abs(wnrm.y));
 	vec2 t2 = normalize(vec2(-wnrm.z, wnrm.x) + vec2(1e-4, 0.0));

@@ -1,0 +1,12 @@
+SURDEMO kare 01_ovadan.jpg 1280x720 cizim=402 ilkel=252152
+SURDEMO kare 02_hendek_kiyisindan.jpg 1280x720 cizim=335 ilkel=221922
+SURDEMO kare 03_kopru_ustunden.jpg 1280x720 cizim=294 ilkel=232340
+SURDEMO kare 04_merdiven_dibinden.jpg 1280x720 cizim=191 ilkel=227882
+SURDEMO kare 05_sur_yolundan_asagi.jpg 1280x720 cizim=292 ilkel=271326
+SURDEMO kare 06_peribolostan.jpg 1280x720 cizim=270 ilkel=227642
+SURDEMO kare 07_gedikten.jpg 1280x720 cizim=64 ilkel=139216
+SURDEMO kare 08_poternadan.jpg 1280x720 cizim=95 ilkel=175950
+SURDEMO kare 09_havadan_gedik.jpg 1280x720 cizim=470 ilkel=271420
+SURDEMO kare 10_havadan_kesim.jpg 1280x720 cizim=464 ilkel=323538
+SURDEMO kare gece_01_ovadan.jpg 1280x720 cizim=369 ilkel=252152
+SURDEMO kare gece_06_peribolostan.jpg 1280x720 cizim=276 ilkel=227642

@@ -125,52 +125,50 @@ static func build(root: Node3D, lay: Dictionary, o: Dictionary) -> void:
 			_balls(root, ox + 0.5, d["OTH"], zo0 + 1.2, 3, rng)
 		else:
 			_barrel(root, Vector3(ox - 0.7, float(d["OTH"]), zo0 + float(d["OT"]) + 0.8))
-	# ---- sarmaşık (TUR-7): korkuluktan sarkan ya da dipten tırmanan yaprak örtüsü (tek ağ; kutu yaprak yok). Örtü duvar
-	# yüzüne yapışık, kenarı düzensiz, aşağı sarkan uçları incelir; gedik/kule/kapı üstünde yok.
-	var sar := IstSurlar.KULE.Ag.new()
-	for i in int(L / 12.0):
-		rng = _rr(sd, 5, i)
-		var x2 := rng.randf_range(-L * 0.5 + 3.0, L * 0.5 - 3.0)
-		var dis_yuz := i % 2 == 0
-		var fz: float = zo1 if dis_yuz else zi1
-		if gw > 0.0 and absf(x2) < gw * 0.5 + 3.0:
-			continue
-		if not IstSurlar._ic(x2) or gedikte.call(x2):
-			continue
-		if dis_yuz and _near_tower(otx, x2, float(d["OTW"]) * 0.5 + 2.2):
-			continue
-		var kulede := false
-		if not dis_yuz:
-			for tw in itx:
-				if absf(float(tw["x"]) - x2) < float(tw["w"]) * 0.5 + 2.2:
-					kulede = true
-		if kulede:
-			continue
-		var ust: float = (OH + 1.05) if dis_yuz else (OH + 0.05)        # iç surun peribolos yüzü dış surun üstünden görünür
-		var alt: float = (dy if dis_yuz else 0.0)
-		var sarkan := rng.randf() < 0.55
-		var en := rng.randf_range(2.8, 6.0)
-		var boy := rng.randf_range(1.6, (ust - alt) * 0.5)
-		_sarmasik(sar, x2, fz, ust if sarkan else alt, -1.0 if sarkan else 1.0, en, boy, rng)
-	sar.mesh_ekle(root, _sar_mat(), "Sarmasik", false)
+	# ---- sarmaşık YOK (TUR-7 ikinci geçiş): duvar yüzüne yapışık yaprak örtüsü uzaktan yeşil dama/kutu okunuyordu ("havada
+	# duran kare yeşillikler"). Sur yüzünde bitki yalnız dipte (oturtma eteğinin ot / çalı öbekleri) kalır.
 	_beden(root, lay, sd, stone)
-	var bushes: Array = []
+	# ---- teras bitkisi (TUR-7): ince yapraklı ot tutamı ve seyrek alçak çalı (oturtma kitinin ağları; yuvarlak/altıgen
+	# küre "nilüfer yaprağı" değil). Tozlu, solgun: sur ve zeminle aynı palet.
+	var otlar: Array = []
+	var calilar: Array = []
 	rng = _rr(sd, 6, 0)
 	for i in int(L * 0.5):
 		var bz: float = rng.randf_range(float(d["zo1"]) + 0.8, float(d["zm0"]) - 2.2)
 		var bx := rng.randf_range(-L * 0.5 + 2.0, L * 0.5 - 2.0)
 		if gw > 0.0 and absf(bx) < gw * 0.5 + 2.0 or gedikte.call(bx):
 			continue
-		var s := rng.randf_range(0.25, 0.6)
-		if IstSurlar._ic(bx):
-			bushes.append(Transform3D(Basis.from_scale(Vector3(s, s * 0.7, s)), Vector3(bx, dy + s * 0.25, bz)))
-	if bushes.size() > 0:
-		var sm := SphereMesh.new()
-		sm.radius = 1.0
-		sm.height = 2.0
-		sm.radial_segments = 6
-		sm.rings = 3
-		Scenery.scatter(root, sm, bushes, [], Props.mat(Color("5a6236"), 0.0, false, ""))          # SUR-4: solgun ot (parlak yeşil değil)
+		if not IstSurlar._ic(bx):
+			continue
+		var s := rng.randf_range(0.8, 1.5)
+		var bas := Basis(Vector3.UP, rng.randf() * TAU).scaled(Vector3(s, s * rng.randf_range(0.7, 1.1), s))
+		if i % 5 == 0:
+			calilar.append(Transform3D(bas.scaled(Vector3(0.75, 0.6, 0.75)), Vector3(bx, dy - 0.06, bz)))
+		else:
+			otlar.append(Transform3D(bas, Vector3(bx, dy - 0.02, bz)))
+			for k in 2:
+				var s2 := s * rng.randf_range(0.5, 0.8)
+				otlar.append(Transform3D(Basis(Vector3.UP, rng.randf() * TAU).scaled(Vector3(s2, s2, s2)), Vector3(bx + rng.randf_range(-0.7, 0.7), dy - 0.02, bz + rng.randf_range(-0.6, 0.6))))
+	var OTA := load("res://scripts/world/ist/sur_oturtma_ag.gd")
+	if otlar.size() > 0:
+		Scenery.scatter(root, OTA.ot_mesh(), otlar, [], _ot_mat())
+	if calilar.size() > 0:
+		Scenery.scatter(root, OTA.cali_mesh(), calilar, [], _ot_mat())
+
+
+static var _otm: StandardMaterial3D
+
+
+## Teras otu: köşe rengi × tozlu çarpan (ot kuru, çalı solgun zeytin; fosforlu yeşil değil)
+static func _ot_mat() -> StandardMaterial3D:
+	if _otm == null:
+		_otm = StandardMaterial3D.new()
+		_otm.vertex_color_use_as_albedo = true
+		_otm.albedo_color = Color(0.86, 0.82, 0.70)
+		_otm.cull_mode = BaseMaterial3D.CULL_DISABLED
+		_otm.roughness = 1.0
+		_otm.specular_mode = BaseMaterial3D.SPECULAR_DISABLED
+	return _otm
 
 
 static func _rr(sd: int, kind: int, i: int) -> RandomNumberGenerator:
@@ -187,7 +185,6 @@ static func _near_tower(otx: Array, x: float, r: float) -> bool:
 
 
 static var _iz_m: StandardMaterial3D
-static var _sar_m: Material
 
 
 static func _iz_mat() -> StandardMaterial3D:
@@ -198,12 +195,6 @@ static func _iz_mat() -> StandardMaterial3D:
 		_iz_m.specular_mode = BaseMaterial3D.SPECULAR_DISABLED
 		_iz_m.roughness = 1.0
 	return _iz_m
-
-
-static func _sar_mat() -> Material:
-	if _sar_m == null:
-		_sar_m = load("res://scripts/level/bitki_kit.gd").mat()
-	return _sar_m
 
 
 ## TUR-7 gülle oyuğu (düz duvar yüzünde, +z ya da −z'ye bakan): düzensiz çokgen; içi koyu ve duvara gömük görünen kademeli
@@ -217,8 +208,8 @@ static func _oyuk(ag, p: Vector3, r: float, rng: RandomNumberGenerator) -> void:
 		var a := TAU * k / n + rng.randf_range(-0.2, 0.2)
 		var rr := r * rng.randf_range(0.75, 1.3)
 		kenar.append(Vector2(cos(a) * rr * 1.15, sin(a) * rr))
-	var taze := Color(0.70, 0.65, 0.55)
-	var golge := Color(0.36, 0.32, 0.27)
+	var taze := Color(0.56, 0.52, 0.44)       # TUR-7: kırık taşın tozu, duvardan az açık (beyaz leke değil)
+	var golge := Color(0.33, 0.30, 0.25)
 	var is_ := Color(0.16, 0.14, 0.12)
 	var halkalar := [[1.0, 0.012, taze], [0.72, 0.016, golge], [0.4, 0.02, is_]]
 	for h in halkalar.size():
@@ -236,13 +227,13 @@ static func _oyuk(ag, p: Vector3, r: float, rng: RandomNumberGenerator) -> void:
 		var c := p + Vector3(cos(a) * r * 1.2, sin(a) * r * 0.9, 0.008)
 		var w := rng.randf_range(0.35, 0.6)
 		var hh := w * 0.45
-		ag.quad(c + Vector3(-w * 0.5, -hh * 0.5, 0), c + Vector3(w * 0.5, -hh * 0.5, 0), c + Vector3(w * 0.5, hh * 0.5, 0), c + Vector3(-w * 0.5, hh * 0.5, 0), nrm, taze.darkened(0.08))
+		ag.quad(c + Vector3(-w * 0.5, -hh * 0.5, 0), c + Vector3(w * 0.5, -hh * 0.5, 0), c + Vector3(w * 0.5, hh * 0.5, 0), c + Vector3(-w * 0.5, hh * 0.5, 0), nrm, golge.lerp(taze, 0.55))
 	# çatlaklar: oyuktan dışa incelen kırık çizgiler (3 parça)
 	for k in 3:
 		var a := rng.randf_range(-PI, PI)
 		var o := p + Vector3(cos(a) * r * 0.9, sin(a) * r * 0.8, 0.01)
-		var w := 0.05
-		for s in 3:
+		var w := 0.028
+		for s in 2:
 			a += rng.randf_range(-0.5, 0.5)
 			var ln := rng.randf_range(0.25, 0.5) * r * 2.0
 			var e := o + Vector3(cos(a) * ln, sin(a) * ln, 0)
@@ -250,60 +241,6 @@ static func _oyuk(ag, p: Vector3, r: float, rng: RandomNumberGenerator) -> void:
 			ag.quad(o - t * w, o + t * w, e + t * w * 0.5, e - t * w * 0.5, nrm, is_)
 			o = e
 			w *= 0.5
-
-
-## TUR-7 sarmaşık örtüsü: duvar yüzüne (z = fz, +z'ye bakan) yapışık ağ. y0: kök (sarkan: korkuluk üstü, yön −1; tırmanan:
-## dip, yön +1). Sütun sütun boy değişir (uçlar incelir), yüzey hafif kabarık (yaprak yığını), köşe rengi koyu-açık yeşil.
-static func _sarmasik(ag, x: float, fz: float, y0: float, yon: float, en: float, boy: float, rng: RandomNumberGenerator) -> void:
-	var nc := maxi(4, int(en / 0.32))
-	var ad := 0.38
-	var sut: Array = []
-	# alt kenar düzensiz (komşu sütunlar arası yumuşak), uçlar biraz kısa: sivri (selvi gibi) değil, saçak gibi
-	var onceki := boy * 0.8
-	for i in nc + 1:
-		var t := float(i) / nc
-		var kenar := 0.7 + 0.3 * sin(t * PI)
-		var b := lerpf(onceki, boy * kenar * rng.randf_range(0.5, 1.25), 0.75)
-		onceki = b
-		sut.append(b)
-	var koyu := Color(0.24, 0.31, 0.15)
-	var acik := Color(0.40, 0.47, 0.22)
-	var kuru := Color(0.47, 0.42, 0.25)
-	for i in nc:
-		var xa := x - en * 0.5 + en * float(i) / nc
-		var xb := x - en * 0.5 + en * float(i + 1) / nc
-		var ba: float = sut[i]
-		var bb: float = sut[i + 1]
-		var nr := int(ceil(maxf(ba, bb) / ad))
-		for j in nr:
-			var ya0 := minf(j * ad, ba)
-			var ya1 := minf((j + 1) * ad, ba)
-			var yb0 := minf(j * ad, bb)
-			var yb1 := minf((j + 1) * ad, bb)
-			if ya1 - ya0 < 0.01 and yb1 - yb0 < 0.01:
-				continue
-			var kab := func(xx: float, yy: float, bt: float) -> Vector3:
-				var u := clampf(yy / maxf(bt, 0.01), 0.0, 1.0)
-				var dz := 0.03 + 0.14 * sin(u * PI) * (0.6 + 0.4 * sin(xx * 5.3 + yy * 3.1))
-				return Vector3(xx + sin(yy * 2.7 + xx) * 0.06, y0 + yon * yy, fz + dz)
-			var p0: Vector3 = kab.call(xa, ya0, ba)
-			var p1: Vector3 = kab.call(xb, yb0, bb)
-			var p2: Vector3 = kab.call(xb, yb1, bb)
-			var p3: Vector3 = kab.call(xa, ya1, ba)
-			var hz := rng.randf()
-			var c := koyu.lerp(acik, hz)
-			if hz > 0.9:
-				c = kuru
-			c.a = 1.0
-			var nrm := Vector3(rng.randf_range(-0.3, 0.3), rng.randf_range(-0.2, 0.3), 1.0)
-			ag.tri(p0, p1, p2, nrm, c)
-			ag.tri(p0, p2, p3, nrm, c.darkened(0.08))
-			# yaprak tutamı: yüzeyden dışa kalkık küçük üçgen (hacim; kenardan bakınca düz levha değil)
-			if rng.randf() < 0.5:
-				var m := (p0 + p2) * 0.5
-				var a := rng.randf_range(0, TAU)
-				var s := rng.randf_range(0.14, 0.24)
-				ag.tri(m, m + Vector3(cos(a) * s, sin(a) * s, 0.06), m + Vector3(cos(a + 1.3) * s, sin(a + 1.3) * s, 0.12), Vector3(0, 0.2, 1), acik.lerp(kuru, rng.randf() * 0.4))
 
 
 static func _barrel(root: Node3D, p: Vector3) -> void:

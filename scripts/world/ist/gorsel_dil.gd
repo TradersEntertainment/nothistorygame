@@ -290,6 +290,16 @@ func _isik() -> bool:
 				g_ad = String(c.name)
 	if gok == null or gok.environment == null:
 		return false
+	if g_ad != "":
+		# TUR-7: kesim sahnesinin pusu şehrinkiyle aynı (dunya.gd _gok/_pus: 0,00008 gündüz, 0,00025 gece; hava
+		# perspektifi 0,1; parıltı 0,2). Kesim sahnesinin kendi sisi 20 kat kalındı: sur ve ova süt-sarısı soluyordu.
+		var ek := gok.environment
+		ek.fog_enabled = true
+		ek.fog_density = 0.00025 if gece_mod else 0.00008
+		ek.fog_aerial_perspective = 0.1
+		ek.fog_sky_affect = 0.0
+		ek.glow_enabled = true
+		ek.glow_intensity = 0.2
 	if gok.has_meta("look") and String(gok.get_meta("look")) == "night" or gece_mod:
 		return true
 	var e := gok.environment
