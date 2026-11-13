@@ -1,0 +1,5 @@
+SURSET kesim=mesoteikhion kurulum_ms=3508 sur_ms=794 set_ms=2701
+PILOT20ENGEL OZET nokta=9 engelde=0
+PILOT20KURULUM sur=yeni set_ms=3509 bolum_ms=1166 toplam_ms=4675
+AUTOTEST PASS chapter=20 variant=tape outcome=20.2 repair=10 knocks=0 arrows=true gun=3/4 gunner=3/3 niko=0 sur=yeni
+KOSU ad=c20_yeni_tape_r2 rc=0 sn=37 args=--chapter=20 --autotest=tape

@@ -1,0 +1,93 @@
+son_c20_eski_d0 denetim=0 | AUTOTEST PASS chapter=20 variant= outcome=20.1 repair=10 knocks=0 arrows=true gun=3/4 gunner=3/3 niko=0 sur=eski
+son_c20_eski_d2 denetim=0 | AUTOTEST PASS chapter=20 variant= outcome=20.1 repair=10 knocks=0 arrows=true gun=3/4 gunner=4/4 niko=0 sur=eski
+son_c20_eski_def denetim=0 | AUTOTEST PASS chapter=20 variant= outcome=20.1 repair=10 knocks=0 arrows=true gun=3/4 gunner=3/3 niko=0 sur=eski
+son_c20_eski_hit denetim=0 | AUTOTEST PASS chapter=20 variant=hit outcome=20.1 repair=10 knocks=1 arrows=true gun=3/4 gunner=5/5 niko=0 sur=eski
+son_c20_eski_idle denetim=0 | AUTOTEST PASS chapter=20 variant=idle outcome=20.3 repair=10 knocks=0 arrows=true gun=3/4 gunner=3/3 niko=0 sur=eski
+son_c20_eski_late denetim=0 | AUTOTEST PASS chapter=20 variant=late outcome=20.3 repair=10 knocks=0 arrows=false gun=3/4 gunner=4/4 niko=0 sur=eski
+son_c20_eski_lose denetim=0 | AUTOTEST PASS chapter=20 variant=lose outcome=20.3 repair=10 knocks=0 arrows=true gun=3/4 gunner=0/2 niko=0 sur=eski
+son_c20_eski_niko_idle denetim=0 | AUTOTEST PASS chapter=20 variant=niko_idle outcome=20.1 repair=10 knocks=0 arrows=true gun=3/4 gunner=3/3 niko=5 sur=eski
+son_c20_eski_tape denetim=0 | AUTOTEST PASS chapter=20 variant=tape outcome=20.2 repair=10 knocks=0 arrows=true gun=3/4 gunner=5/5 niko=0 sur=eski
+son_c20_yeni_d0_r1 denetim=0 | AUTOTEST PASS chapter=20 variant= outcome=20.1 repair=10 knocks=0 arrows=true gun=3/4 gunner=4/4 niko=0 sur=yeni
+son_c20_yeni_d0_r2 denetim=0 | AUTOTEST PASS chapter=20 variant= outcome=20.1 repair=10 knocks=0 arrows=true gun=3/4 gunner=2/2 niko=0 sur=yeni
+son_c20_yeni_d0_r3 denetim=0 | AUTOTEST PASS chapter=20 variant= outcome=20.1 repair=10 knocks=0 arrows=true gun=3/4 gunner=3/3 niko=0 sur=yeni
+son_c20_yeni_d2_r1 denetim=0 | AUTOTEST PASS chapter=20 variant= outcome=20.1 repair=10 knocks=0 arrows=true gun=3/4 gunner=5/5 niko=0 sur=yeni
+son_c20_yeni_d2_r2 denetim=0 | AUTOTEST PASS chapter=20 variant= outcome=20.1 repair=10 knocks=0 arrows=true gun=3/4 gunner=3/3 niko=0 sur=yeni
+son_c20_yeni_d2_r3 denetim=0 | AUTOTEST PASS chapter=20 variant= outcome=20.1 repair=10 knocks=0 arrows=true gun=3/4 gunner=4/4 niko=0 sur=yeni
+son_c20_yeni_def_r1 denetim=0 | AUTOTEST PASS chapter=20 variant= outcome=20.1 repair=10 knocks=0 arrows=true gun=3/4 gunner=7/7 niko=0 sur=yeni
+son_c20_yeni_def_r2 denetim=0 | AUTOTEST PASS chapter=20 variant= outcome=20.1 repair=10 knocks=0 arrows=true gun=3/4 gunner=4/4 niko=0 sur=yeni
+son_c20_yeni_def_r3 denetim=0 | AUTOTEST PASS chapter=20 variant= outcome=20.1 repair=10 knocks=0 arrows=true gun=3/4 gunner=3/3 niko=0 sur=yeni
+son_c20_yeni_hit_r1 denetim=0 | AUTOTEST PASS chapter=20 variant=hit outcome=20.1 repair=10 knocks=1 arrows=true gun=3/4 gunner=3/4 niko=0 sur=yeni
+son_c20_yeni_hit_r2 denetim=0 | AUTOTEST PASS chapter=20 variant=hit outcome=20.1 repair=10 knocks=1 arrows=true gun=3/4 gunner=3/3 niko=0 sur=yeni
+son_c20_yeni_hit_r3 denetim=0 | AUTOTEST PASS chapter=20 variant=hit outcome=20.1 repair=10 knocks=1 arrows=true gun=3/4 gunner=2/2 niko=0 sur=yeni
+son_c20_yeni_idle_r1 denetim=0 | AUTOTEST PASS chapter=20 variant=idle outcome=20.3 repair=10 knocks=0 arrows=true gun=3/4 gunner=2/2 niko=0 sur=yeni
+son_c20_yeni_idle_r2 denetim=0 | AUTOTEST PASS chapter=20 variant=idle outcome=20.3 repair=10 knocks=0 arrows=true gun=3/4 gunner=3/3 niko=0 sur=yeni
+son_c20_yeni_idle_r3 denetim=0 | AUTOTEST PASS chapter=20 variant=idle outcome=20.3 repair=10 knocks=0 arrows=true gun=3/4 gunner=4/4 niko=0 sur=yeni
+son_c20_yeni_late_r1 denetim=0 | AUTOTEST PASS chapter=20 variant=late outcome=20.3 repair=10 knocks=0 arrows=false gun=3/4 gunner=4/4 niko=0 sur=yeni
+son_c20_yeni_late_r2 denetim=0 | AUTOTEST PASS chapter=20 variant=late outcome=20.3 repair=10 knocks=0 arrows=false gun=3/4 gunner=2/2 niko=0 sur=yeni
+son_c20_yeni_late_r3 denetim=0 | AUTOTEST PASS chapter=20 variant=late outcome=20.3 repair=10 knocks=0 arrows=false gun=3/4 gunner=4/4 niko=0 sur=yeni
+son_c20_yeni_lose_r1 denetim=0 | AUTOTEST PASS chapter=20 variant=lose outcome=20.3 repair=10 knocks=0 arrows=true gun=3/4 gunner=1/1 niko=0 sur=yeni
+son_c20_yeni_lose_r2 denetim=0 | AUTOTEST PASS chapter=20 variant=lose outcome=20.3 repair=10 knocks=0 arrows=true gun=3/4 gunner=1/1 niko=0 sur=yeni
+son_c20_yeni_lose_r3 denetim=0 | AUTOTEST PASS chapter=20 variant=lose outcome=20.3 repair=10 knocks=0 arrows=true gun=3/4 gunner=1/1 niko=0 sur=yeni
+son_c20_yeni_niko_idle_r1 denetim=0 | AUTOTEST PASS chapter=20 variant=niko_idle outcome=20.1 repair=10 knocks=0 arrows=true gun=3/4 gunner=4/4 niko=5 sur=yeni
+son_c20_yeni_niko_idle_r2 denetim=0 | AUTOTEST PASS chapter=20 variant=niko_idle outcome=20.1 repair=10 knocks=0 arrows=true gun=3/4 gunner=2/2 niko=5 sur=yeni
+son_c20_yeni_niko_idle_r3 denetim=0 | AUTOTEST PASS chapter=20 variant=niko_idle outcome=20.1 repair=10 knocks=0 arrows=true gun=3/4 gunner=2/2 niko=5 sur=yeni
+son_c20_yeni_tape_r1 denetim=0 | AUTOTEST PASS chapter=20 variant=tape outcome=20.2 repair=10 knocks=0 arrows=true gun=3/4 gunner=2/2 niko=0 sur=yeni
+son_c20_yeni_tape_r2 denetim=0 | AUTOTEST PASS chapter=20 variant=tape outcome=20.2 repair=10 knocks=0 arrows=true gun=3/4 gunner=2/2 niko=0 sur=yeni
+son_c20_yeni_tape_r3 denetim=0 | AUTOTEST PASS chapter=20 variant=tape outcome=20.2 repair=10 knocks=0 arrows=true gun=3/4 gunner=2/3 niko=0 sur=yeni
+son_c20o_eski_def denetim=0 | AUTOTEST PASS chapter=20o variant= outcome=20O.1 hits=3 cracks=0 gun=3/4 gunner=2/2 duel=true bed= sur=eski
+son_c20o_eski_edirne denetim=0 | AUTOTEST PASS chapter=20o variant=edirne outcome=20O.1 hits=3 cracks=1 gun=3/4 gunner=1/2 duel=true bed=crooked sur=eski
+son_c20o_eski_edirne_ok denetim=0 | AUTOTEST PASS chapter=20o variant=edirne_ok outcome=20O.1 hits=3 cracks=0 gun=3/4 gunner=1/2 duel=true bed=sound sur=eski
+son_c20o_eski_flawed denetim=0 | AUTOTEST PASS chapter=20o variant=flawed outcome=20O.1 hits=3 cracks=1 gun=3/4 gunner=2/2 duel=true bed= sur=eski
+son_c20o_eski_hot denetim=0 | AUTOTEST PASS chapter=20o variant=hot outcome=20O.1 hits=3 cracks=2 gun=3/4 gunner=1/2 duel=true bed= sur=eski
+son_c20o_eski_hot_tape denetim=0 | AUTOTEST PASS chapter=20o variant=hot_tape outcome=20O.1 hits=3 cracks=0 gun=3/4 gunner=2/2 duel=true bed= sur=eski
+son_c20o_eski_hot_taped denetim=0 | AUTOTEST PASS chapter=20o variant=hot_taped outcome=20O.1 hits=3 cracks=1 gun=3/4 gunner=1/2 duel=true bed= sur=eski
+son_c20o_eski_lose denetim=0 | AUTOTEST PASS chapter=20o variant=lose outcome=20O.1 hits=3 cracks=0 gun=3/4 gunner=0/1 duel=false bed= sur=eski
+son_c20o_eski_named denetim=0 | AUTOTEST PASS chapter=20o variant=named outcome=20O.1 hits=3 cracks=0 gun=3/4 gunner=1/2 duel=true bed= sur=eski
+son_c20o_eski_wide denetim=0 | AUTOTEST PASS chapter=20o variant=wide outcome=20O.2 hits=0 cracks=0 gun=3/4 gunner=1/3 duel=true bed= sur=eski
+son_c20o_yeni_def_r1 denetim=0 | AUTOTEST PASS chapter=20o variant= outcome=20O.1 hits=3 cracks=0 gun=3/4 gunner=2/2 duel=true bed= sur=yeni
+son_c20o_yeni_def_r2 denetim=0 | AUTOTEST PASS chapter=20o variant= outcome=20O.1 hits=3 cracks=0 gun=3/4 gunner=2/2 duel=true bed= sur=yeni
+son_c20o_yeni_edirne_ok_r1 denetim=0 | AUTOTEST PASS chapter=20o variant=edirne_ok outcome=20O.1 hits=3 cracks=0 gun=3/4 gunner=2/2 duel=true bed=sound sur=yeni
+son_c20o_yeni_edirne_ok_r2 denetim=0 | AUTOTEST PASS chapter=20o variant=edirne_ok outcome=20O.1 hits=3 cracks=0 gun=3/4 gunner=2/2 duel=true bed=sound sur=yeni
+son_c20o_yeni_edirne_r1 denetim=0 | AUTOTEST PASS chapter=20o variant=edirne outcome=20O.1 hits=3 cracks=1 gun=3/4 gunner=2/2 duel=true bed=crooked sur=yeni
+son_c20o_yeni_edirne_r2 denetim=0 | AUTOTEST PASS chapter=20o variant=edirne outcome=20O.1 hits=3 cracks=1 gun=3/4 gunner=2/2 duel=true bed=crooked sur=yeni
+son_c20o_yeni_flawed_r1 denetim=0 | AUTOTEST PASS chapter=20o variant=flawed outcome=20O.1 hits=3 cracks=1 gun=3/4 gunner=2/2 duel=true bed= sur=yeni
+son_c20o_yeni_flawed_r2 denetim=0 | AUTOTEST PASS chapter=20o variant=flawed outcome=20O.1 hits=3 cracks=1 gun=3/4 gunner=2/2 duel=true bed= sur=yeni
+son_c20o_yeni_hot_r1 denetim=0 | AUTOTEST PASS chapter=20o variant=hot outcome=20O.1 hits=3 cracks=2 gun=3/4 gunner=2/2 duel=true bed= sur=yeni
+son_c20o_yeni_hot_r2 denetim=0 | AUTOTEST PASS chapter=20o variant=hot outcome=20O.1 hits=3 cracks=2 gun=3/4 gunner=1/1 duel=true bed= sur=yeni
+son_c20o_yeni_hot_tape_r1 denetim=0 | AUTOTEST PASS chapter=20o variant=hot_tape outcome=20O.1 hits=3 cracks=0 gun=3/4 gunner=2/2 duel=true bed= sur=yeni
+son_c20o_yeni_hot_tape_r2 denetim=0 | AUTOTEST PASS chapter=20o variant=hot_tape outcome=20O.1 hits=3 cracks=0 gun=3/4 gunner=2/2 duel=true bed= sur=yeni
+son_c20o_yeni_hot_taped_r1 denetim=0 | AUTOTEST PASS chapter=20o variant=hot_taped outcome=20O.1 hits=3 cracks=1 gun=3/4 gunner=2/2 duel=true bed= sur=yeni
+son_c20o_yeni_hot_taped_r2 denetim=0 | AUTOTEST PASS chapter=20o variant=hot_taped outcome=20O.1 hits=3 cracks=1 gun=3/4 gunner=2/2 duel=true bed= sur=yeni
+son_c20o_yeni_lose_r1 denetim=0 | AUTOTEST PASS chapter=20o variant=lose outcome=20O.1 hits=3 cracks=0 gun=3/4 gunner=0/1 duel=false bed= sur=yeni
+son_c20o_yeni_lose_r2 denetim=0 | AUTOTEST PASS chapter=20o variant=lose outcome=20O.1 hits=3 cracks=0 gun=3/4 gunner=0/1 duel=false bed= sur=yeni
+son_c20o_yeni_named_r1 denetim=0 | AUTOTEST PASS chapter=20o variant=named outcome=20O.1 hits=3 cracks=0 gun=3/4 gunner=2/2 duel=true bed= sur=yeni
+son_c20o_yeni_named_r2 denetim=0 | AUTOTEST PASS chapter=20o variant=named outcome=20O.1 hits=3 cracks=0 gun=3/4 gunner=2/2 duel=true bed= sur=yeni
+son_c20o_yeni_wide_r1 denetim=0 | AUTOTEST PASS chapter=20o variant=wide outcome=20O.2 hits=0 cracks=0 gun=3/4 gunner=5/5 duel=true bed= sur=yeni
+son_c20o_yeni_wide_r2 denetim=0 | AUTOTEST PASS chapter=20o variant=wide outcome=20O.2 hits=0 cracks=0 gun=3/4 gunner=5/5 duel=true bed= sur=yeni
+son_c26_hold_box_r1 denetim=0 | AUTOTEST PASS chapter=26 variant=hold_box outcome=26.3 water=3 repaired=3 cleared=0 world=W10 gun=3/4 gunner=2/2
+son_c26_hold_box_r2 denetim=0 | AUTOTEST PASS chapter=26 variant=hold_box outcome=26.3 water=3 repaired=3 cleared=0 world=W10 gun=3/4 gunner=3/3
+son_c26_hold_box_r3 denetim=0 | AUTOTEST PASS chapter=26 variant=hold_box outcome=26.3 water=3 repaired=3 cleared=0 world=W10 gun=3/4 gunner=3/3
+son_c26_hold_box_r4 denetim=0 | AUTOTEST PASS chapter=26 variant=hold_box outcome=26.3 water=3 repaired=3 cleared=0 world=W10 gun=3/4 gunner=5/5
+son_c26_hold_box_r5 denetim=0 | AUTOTEST PASS chapter=26 variant=hold_box outcome=26.3 water=3 repaired=3 cleared=0 world=W10 gun=3/4 gunner=3/3
+son_c26_hold_box_r6 denetim=0 | AUTOTEST PASS chapter=26 variant=hold_box outcome=26.3 water=3 repaired=3 cleared=0 world=W10 gun=3/4 gunner=3/3
+son_diger_c0 denetim=0 | AUTOTEST PASS chapter=0 variant= froze=true
+son_diger_c1 denetim=0 | AUTOTEST PASS variant= outcome=1.1 bag=["phone", "lighter", "book", "chickpeas", "powerbank"] telsiz=2 bed=true
+son_diger_c12b denetim=0 | AUTOTEST PASS chapter=12b variant= outcome=12B.1 world= honest=true
+son_diger_c17o denetim=0 | AUTOTEST PASS chapter=17o variant= outcome=17O.1 acc=1.00 water=4 pours=10.0 kadri=true
+son_diger_c18b denetim=0 | AUTOTEST PASS chapter=18b variant= outcome=18B.1 hits=3 cracks=3
+son_diger_c2 denetim=0 | AUTOTEST PASS chapter=2 variant= outcome=2.1 stumbles=1 telsiz=3
+son_diger_c21 denetim=0 | AUTOTEST PASS chapter=21 variant= outcome=21.1 bowls=2 tunnel=leb talk=talk trust=3 captive=false next=
+son_diger_c22 denetim=0 | AUTOTEST PASS chapter=22 variant= outcome=22.1 hits=2 singed=false window=0.42-0.68
+son_diger_c22o denetim=0 | AUTOTEST PASS chapter=22o variant= outcome=22O.1 saved=3 gun=3/4 warn=3 carry=0.75
+son_diger_c23 denetim=0 | AUTOTEST PASS chapter=23 variant= outcome=23.1 deviation=0 card=true singed=false letter=false
+son_diger_c25 denetim=0 | AUTOTEST PASS chapter=25 variant= outcome=25.1 caught=0 candle=true tezkire=false marco=false
+son_diger_c26 denetim=0 | AUTOTEST PASS chapter=26 variant= outcome=26.1 water=3 repaired=3 cleared=2 world= gun=3/4 gunner=5/5
+son_diger_c26o denetim=0 | AUTOTEST PASS chapter=26o variant= outcome=26.1 water=3 ladders=3 gun=3/4 stones=1/1 gunner=3/3 oil=1/1 turgut=no
+son_diger_c28o denetim=0 | AUTOTEST PASS chapter=28o variant= outcome=28O.1 stakes=4 slips=0 hit=true master=false roller_every=4.0 rollers=2
+son_diger_c30o denetim=0 | AUTOTEST PASS chapter=30o variant= outcome=30O.1 stones=4/4 gunner=3/3 tower=true fell=false guards=10 pokes=0 flee=ride pushed=true
+son_diger_c32o denetim=0 | AUTOTEST PASS chapter=32o variant= outcome=32O.1 bundles=6/6 earth=2 arrows=0 rungs=6 bad=0 hits=3/3 fires=6 greek=2/2 hasan=water
+son_diger_c36b denetim=0 | AUTOTEST PASS chapter=36 variant= outcome=36.1 burned=3 fights=1 kills=3
+son_diger_c37o denetim=0 | AUTOTEST PASS chapter=37o variant= outcome=37O.1 beats=12/16 arrows=0 falls=0 barrels=5/5 cuts=0 stones=0 slips=0 burns=0 duel=true caught=0
+son_diger_c38o denetim=0 | AUTOTEST PASS chapter=38o variant= outcome=38O.1 oars=11 arrows=0 forks=3/3 fire=true pulled=true oil=false snaps=0 splashes=0 explored=14.7 helper=false slips=0
+son_diger_c41o denetim=0 | AUTOTEST PASS chapter=41 variant= outcome=41O.1 dir=4 bumps=0 blocks=3 parries=2 kick=true down=true fins=thrust,slash,ground spar=3/0 bags=0/1 water=0
+son_diger_c8y denetim=0 | AUTOTEST PASS chapter=8y variant= outcome=8Y.1 id=seal warnings=0 lowered=0 radio=true

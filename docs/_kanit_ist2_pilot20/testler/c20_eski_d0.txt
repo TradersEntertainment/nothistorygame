@@ -1,0 +1,3 @@
+PILOT20KURULUM sur=eski set_ms=5641 bolum_ms=1358 toplam_ms=6999
+AUTOTEST PASS chapter=20 variant= outcome=20.1 repair=10 knocks=0 arrows=true gun=3/4 gunner=4/4 niko=0 sur=eski
+KOSU ad=c20_eski_d0 rc=0 sn=45 args=--chapter=20 --autotest --difficulty=0 --eskisur

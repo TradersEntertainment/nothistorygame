@@ -1,0 +1,2 @@
+AUTOTEST PASS chapter=20o variant=edirne outcome=20O.1 hits=3 cracks=1 gun=3/4 gunner=1/2 duel=true bed=crooked sur=eski
+KOSU ad=c20o_eski_edirne rc=0 sn=42 args=--chapter=20o --autotest=edirne --eskisur

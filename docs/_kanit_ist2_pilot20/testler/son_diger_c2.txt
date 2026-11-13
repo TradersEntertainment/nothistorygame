@@ -1,0 +1,2 @@
+AUTOTEST PASS chapter=2 variant= outcome=2.1 stumbles=1 telsiz=3
+KOSU ad=son_diger_c2 rc=0 sn=24 args=--chapter=2 --autotest

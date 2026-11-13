@@ -1,0 +1,2 @@
+AUTOTEST PASS chapter=12b variant= outcome=12B.1 world= honest=true
+KOSU ad=son_diger_c12b rc=0 sn=49 args=--chapter=12b --autotest

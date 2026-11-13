@@ -1,0 +1,62 @@
+SUROYUN_KUR mesoteikhion ms=732 { "oyun_ms": 487.709, "yan_ms": 226.861, "uzak_ms": 0.006, "zemin_ms": 0.613, "parca_ms": 15.597, "toplam_ms": 731.517 }
+SUROYUN_TUR mesoteikhion batarya nokta=2 havada=0 gomuk=0 katida=0
+SUROYUN_TUR mesoteikhion cikis nokta=12 havada=0 gomuk=0 katida=0
+SUROYUN_TUR mesoteikhion dayama_ayak nokta=5 havada=0 gomuk=0 katida=0
+SUROYUN_TUR mesoteikhion dayama_tepe nokta=5 havada=0 gomuk=0 katida=0
+SUROYUN_TUR mesoteikhion dayama_yol nokta=5 havada=0 gomuk=0 katida=0
+SUROYUN_TUR mesoteikhion dogma_ova nokta=10 havada=0 gomuk=0 katida=0
+SUROYUN_TUR mesoteikhion dogma_peribolos nokta=10 havada=0 gomuk=0 katida=0
+SUROYUN_TUR mesoteikhion dogma_sehir nokta=10 havada=0 gomuk=0 katida=0
+SUROYUN_TUR mesoteikhion dogma_teras nokta=10 havada=0 gomuk=0 katida=0
+SUROYUN_TUR mesoteikhion gecis_dolgu nokta=2 havada=0 gomuk=0 katida=0
+SUROYUN_TUR mesoteikhion gecis_kalas nokta=2 havada=0 gomuk=0 katida=0
+SUROYUN_TUR mesoteikhion gedik_moloz nokta=4 havada=0 gomuk=0 katida=0
+SUROYUN_TUR mesoteikhion hendek_rampa nokta=4 havada=0 gomuk=0 katida=0
+SUROYUN_TUR mesoteikhion mazgal_dis nokta=71 havada=0 gomuk=0 katida=0
+SUROYUN_TUR mesoteikhion mazgal_ic nokta=86 havada=0 gomuk=0 katida=0
+SUROYUN_TUR mesoteikhion poterna nokta=4 havada=0 gomuk=0 katida=0
+SUROYUN_TUR mesoteikhion yol_dis nokta=6 havada=0 gomuk=0 katida=0
+SUROYUN_TUR mesoteikhion yol_ic nokta=8 havada=0 gomuk=0 katida=0
+SUROYUN_YER mesoteikhion xf_origin=(-1717.369, 14.414, -190.372) yaw=-98.4 dy=-3.67 gx=-67.7 gedikler_yerel=[(-67.69989, 0.0, 0.0), (34.87364, 0.0, -11.8728), (146.2244, 0.0, -36.50513)]
+SUROYUN_KUR romanos ms=314 { "oyun_ms": 83.685, "yan_ms": 215.938, "uzak_ms": 0.004, "zemin_ms": 0.501, "parca_ms": 13.335, "toplam_ms": 313.592 }
+SUROYUN_TUR romanos batarya nokta=2 havada=0 gomuk=0 katida=0
+SUROYUN_TUR romanos cikis nokta=9 havada=0 gomuk=0 katida=0
+SUROYUN_TUR romanos dayama_ayak nokta=5 havada=0 gomuk=0 katida=0
+SUROYUN_TUR romanos dayama_tepe nokta=5 havada=0 gomuk=0 katida=0
+SUROYUN_TUR romanos dayama_yol nokta=5 havada=0 gomuk=0 katida=0
+SUROYUN_TUR romanos dogma_ova nokta=10 havada=0 gomuk=0 katida=0
+SUROYUN_TUR romanos dogma_peribolos nokta=10 havada=0 gomuk=0 katida=0
+SUROYUN_TUR romanos dogma_sehir nokta=10 havada=0 gomuk=0 katida=0
+SUROYUN_TUR romanos dogma_teras nokta=10 havada=0 gomuk=0 katida=0
+SUROYUN_TUR romanos gecis_dolgu nokta=2 havada=0 gomuk=0 katida=0
+SUROYUN_TUR romanos gecis_kalas nokta=2 havada=0 gomuk=0 katida=0
+SUROYUN_TUR romanos gecis_kapi_kopru nokta=2 havada=0 gomuk=0 katida=0
+SUROYUN_TUR romanos kapi nokta=3 havada=0 gomuk=0 katida=0
+SUROYUN_TUR romanos mazgal_dis nokta=28 havada=0 gomuk=0 katida=0
+SUROYUN_TUR romanos mazgal_ic nokta=14 havada=0 gomuk=0 katida=0
+SUROYUN_TUR romanos poterna nokta=4 havada=0 gomuk=0 katida=0
+SUROYUN_TUR romanos yol_dis nokta=2 havada=0 gomuk=0 katida=0
+SUROYUN_TUR romanos yol_ic nokta=6 havada=0 gomuk=0 katida=0
+SUROYUN_YER romanos xf_origin=(-1691.725, 14.208, -312.337) yaw=-108.1 dy=-3.55 gx=nan gedikler_yerel=[]
+SUROYUN_KUR kharisios ms=403 { "oyun_ms": 90.497, "yan_ms": 294.875, "uzak_ms": 0.005, "zemin_ms": 0.504, "parca_ms": 17.344, "toplam_ms": 403.372 }
+SUROYUN_TUR kharisios batarya nokta=2 havada=0 gomuk=0 katida=0
+SUROYUN_TUR kharisios cikis nokta=12 havada=0 gomuk=0 katida=0
+SUROYUN_TUR kharisios dayama_ayak nokta=5 havada=0 gomuk=0 katida=0
+SUROYUN_TUR kharisios dayama_tepe nokta=5 havada=0 gomuk=0 katida=0
+SUROYUN_TUR kharisios dayama_yol nokta=5 havada=0 gomuk=0 katida=0
+SUROYUN_TUR kharisios dogma_ova nokta=10 havada=0 gomuk=0 katida=0
+SUROYUN_TUR kharisios dogma_peribolos nokta=10 havada=0 gomuk=0 katida=0
+SUROYUN_TUR kharisios dogma_sehir nokta=10 havada=0 gomuk=0 katida=0
+SUROYUN_TUR kharisios dogma_teras nokta=10 havada=0 gomuk=0 katida=0
+SUROYUN_TUR kharisios gecis_dolgu nokta=2 havada=0 gomuk=0 katida=0
+SUROYUN_TUR kharisios gecis_kalas nokta=2 havada=0 gomuk=0 katida=0
+SUROYUN_TUR kharisios gecis_kapi_kopru nokta=2 havada=0 gomuk=0 katida=0
+SUROYUN_TUR kharisios kapi nokta=3 havada=0 gomuk=0 katida=0
+SUROYUN_TUR kharisios mazgal_dis nokta=28 havada=0 gomuk=0 katida=0
+SUROYUN_TUR kharisios mazgal_ic nokta=16 havada=0 gomuk=0 katida=0
+SUROYUN_TUR kharisios poterna nokta=4 havada=0 gomuk=0 katida=0
+SUROYUN_TUR kharisios yol_dis nokta=2 havada=0 gomuk=0 katida=0
+SUROYUN_TUR kharisios yol_ic nokta=6 havada=0 gomuk=0 katida=0
+SUROYUN_YER kharisios xf_origin=(-1276.29, 18.584, -897.641) yaw=-146.2 dy=-11.14 gx=nan gedikler_yerel=[]
+SUROYUN nokta=519 havada=0 gomuk=0 katida=0
+rc=0

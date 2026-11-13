@@ -1,0 +1,7 @@
+TESHIS taban koyu=0.087 renk=(0.3664, 0.2199, 0.2154, 1.0)
+TESHIS yalniz_sur koyu=0.598 renk=(0.0894, 0.0832, 0.1106, 1.0)
+TESHIS gizli=SurOyun_mesoteikhion koyu=1.000 fark=-0.402 parlaklik_fark=0.030
+TESHIS gizli=SurOyun_mesoteikhion/OyunDilimi koyu=0.966 fark=-0.369 parlaklik_fark=0.001
+TESHIS gizli=SurOyun_mesoteikhion/OyunDilimi/Mesoteikhion koyu=1.000 fark=-0.402 parlaklik_fark=0.002
+TESHIS gizli=SurOyun_mesoteikhion/OyunDilimi/Mesoteikhion/SurDibiEtek koyu=0.229 fark=0.368 parlaklik_fark=-0.024
+TESHIS BITTI aday=72 etkili=4

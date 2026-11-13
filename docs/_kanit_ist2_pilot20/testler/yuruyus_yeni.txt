@@ -1,0 +1,14 @@
+PILOT20KURULUM sur=yeni set_ms=3468 bolum_ms=1284 toplam_ms=4752
+PILOT20YURU set=yeni dogus=(-9.6, 0.05, 7.2) depo=(-13.3, 0.0, 5.6) gedik_onu=(0.0, 0.0, 10.0) ok=(-16.0, 0.0, 2.6) okcu=(-9.0, 0.0, 9.4) siper=(-5.2, 0.0, 9.3)
+PILOT20YURU bacak=dogus_depo sure=1.1 yol=3.5 takilma=0 dusme=0 etkilesim=tamam yuk=barrel onarim=0 
+PILOT20YURU bacak=depo_gedik_1 sure=6.3 yol=13.8 takilma=0 dusme=0 etkilesim=tamam yuk= onarim=1 
+PILOT20YURU bacak=gedik_depo_1 sure=4.0 yol=13.3 takilma=0 dusme=0 etkilesim=tamam yuk=barrel onarim=1 
+PILOT20YURU bacak=depo_gedik_2 sure=5.5 yol=13.1 takilma=0 dusme=0 etkilesim=tamam yuk= onarim=2 
+PILOT20YURU bacak=gedik_depo_2 sure=4.0 yol=12.7 takilma=0 dusme=0 etkilesim=tamam yuk=barrel onarim=2 
+PILOT20YURU bacak=depo_gedik_3 sure=5.5 yol=13.0 takilma=0 dusme=0 etkilesim=tamam yuk= onarim=3 
+PILOT20YURU bacak=gedik_oksandigi sure=5.8 yol=17.4 takilma=0 dusme=0 etkilesim=tamam yuk=arrows onarim=3 
+PILOT20YURU bacak=oksandigi_okcular sure=3.7 yol=8.8 takilma=0 dusme=0 etkilesim=tamam yuk= onarim=3 
+PILOT20YURU bacak=okcular_siper sure=1.2 yol=3.6 takilma=0 dusme=0 etkilesim=tamam yuk= onarim=3 
+PILOT20YURU siper_korunuyor=true
+PILOT20YURU bacak=siper_gedik_duello sure=1.7 yol=5.2 takilma=0 dusme=0 etkilesim=tamam yuk= onarim=3 
+PILOT20YURU OZET set=yeni bacak=10 takilma=0 dusme=0 etkilesim_yok=0 sure=38.9 yol=104.4 repair=3 arrows=true

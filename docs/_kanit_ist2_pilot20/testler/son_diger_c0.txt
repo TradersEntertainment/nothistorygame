@@ -1,0 +1,2 @@
+AUTOTEST PASS chapter=0 variant= froze=true
+KOSU ad=son_diger_c0 rc=0 sn=18 args=--chapter=0 --autotest

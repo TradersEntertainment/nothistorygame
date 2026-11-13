@@ -1,0 +1,2 @@
+AUTOTEST PASS chapter=26o variant= outcome=26.1 water=3 ladders=3 gun=3/4 stones=1/1 gunner=6/6 oil=1/1 turgut=no
+KOSU ad=diger_c26o rc=0 sn=89 args=--chapter=26o --autotest

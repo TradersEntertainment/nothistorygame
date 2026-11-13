@@ -1,0 +1,7 @@
+SURSET kesim=mesoteikhion kurulum_ms=3441 sur_ms=802 set_ms=2630
+PILOT20KURULUM sur=yeni set_ms=3443 bolum_ms=1420 toplam_ms=4863
+PILOT20BUTCE sur=yeni bakis=peribolos cizim=3560 ilkel=6220150
+PILOT20BUTCE sur=yeni bakis=gedik_agzi cizim=4346 ilkel=8277624
+PILOT20BUTCE sur=yeni bakis=sur_yolu cizim=4278 ilkel=5268555
+PILOT20BUTCE sur=yeni bakis=hava cizim=9949 ilkel=8282534
+rc=0 sn=329

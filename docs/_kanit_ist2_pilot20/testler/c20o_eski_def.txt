@@ -1,0 +1,2 @@
+AUTOTEST PASS chapter=20o variant= outcome=20O.1 hits=3 cracks=0 gun=3/4 gunner=1/2 duel=true bed= sur=eski
+KOSU ad=c20o_eski_def rc=0 sn=44 args=--chapter=20o --autotest --eskisur

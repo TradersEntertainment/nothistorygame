@@ -1,0 +1,7 @@
+PILOT20KURULUM sur=eski set_ms=5270 bolum_ms=1438 toplam_ms=6708
+CITYLIFE region= src=plan era=siege night=true density=0.50 nodes=1026 plazas=19 landmarks=23
+PILOT20BUTCE sur=eski bakis=peribolos cizim=5741 ilkel=8437866
+PILOT20BUTCE sur=eski bakis=gedik_agzi cizim=5618 ilkel=9193907
+PILOT20BUTCE sur=eski bakis=sur_yolu cizim=7713 ilkel=9257639
+PILOT20BUTCE sur=eski bakis=hava cizim=11671 ilkel=9143668
+rc=0 sn=375

@@ -1,0 +1,2 @@
+AUTOTEST PASS chapter=8y variant= outcome=8Y.1 id=seal warnings=0 lowered=0 radio=true
+KOSU ad=son_diger_c8y rc=0 sn=27 args=--chapter=8y --autotest

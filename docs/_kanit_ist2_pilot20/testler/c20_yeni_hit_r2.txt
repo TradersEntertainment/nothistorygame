@@ -1,0 +1,6 @@
+SURSET kesim=mesoteikhion kurulum_ms=3514 sur_ms=730 set_ms=2778
+PILOT20ENGEL OZET nokta=9 engelde=0
+PILOT20KURULUM sur=yeni set_ms=3515 bolum_ms=1262 toplam_ms=4778
+WARN_PORTRAIT_STUDIO speaker=SPK_LOOKOUT key=D20_L_WARN_3 scene=chapter20.tscn
+AUTOTEST PASS chapter=20 variant=hit outcome=20.1 repair=10 knocks=1 arrows=true gun=3/4 gunner=3/3 niko=0 sur=yeni
+KOSU ad=c20_yeni_hit_r2 rc=0 sn=39 args=--chapter=20 --autotest=hit

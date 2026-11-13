@@ -11,6 +11,10 @@ var _yaw := 0.0
 var _jab := 0.0
 var _stones: Array = []      # [MeshInstance3D, hız]
 var _held: MeshInstance3D    # atılmadan önce baş üstünde tutulan taş
+## Yer değiştirmekte olanların varacağı yerler (global; örnek kimliği → Vector3). Komşu nöbetçi o an yürüyorsa şimdiki yeri
+## değil varacağı yer dolu sayılır: ikisi aynı anda birbirine doğru kayıp aynı noktada kalıyordu (26 =hold_box, 6 koşuda 1
+## VISAUDIT overlap Garrison/Garrison)
+static var _hedefler := {}
 
 
 func _ready() -> void:
@@ -84,12 +88,35 @@ func _next(p: Person) -> void:
 		var q := PhysicsRayQueryParameters3D.create(from, from + dir + dir.normalized() * 0.4) if dir.length() > 0.05 else null
 		# Yanındaki nöbetçinin yerine de yürümez (iki mızraklı iç içe giriyordu)
 		var to_g := (p.get_parent() as Node3D).global_transform * to
-		if q and p.get_world_3d().direct_space_state.intersect_ray(q).is_empty() and not Unclip.crowded(p, to_g, 0.7):
-			p.create_tween().tween_property(p, "position", to, 0.9)
+		if q and p.get_world_3d().direct_space_state.intersect_ray(q).is_empty() and not Unclip.crowded(p, to_g, 0.7) \
+				and not _ayrilmis(p, to_g, 0.7):
+			var id := p.get_instance_id()
+			_hedefler[id] = to_g
+			var tw := p.create_tween()
+			tw.tween_property(p, "position", to, 0.9)
+			tw.finished.connect(func(): _hedefler.erase(id))
+
+
+## Başka bir nöbetçinin varmak üzere olduğu yer (r içinde) mi
+static func _ayrilmis(p: Node3D, at: Vector3, r: float) -> bool:
+	var me := p.get_instance_id()
+	for id: int in _hedefler.keys():
+		if id == me:
+			continue
+		if not is_instance_id_valid(id):
+			_hedefler.erase(id)
+			continue
+		var o: Vector3 = _hedefler[id]
+		if absf(o.y - at.y) < 0.9 and Vector2(o.x - at.x, o.z - at.z).length() < r:
+			return true
+	return false
 
 
 func _exit_tree() -> void:
 	_drop_held()
+	var p := get_parent()
+	if p:
+		_hedefler.erase(p.get_instance_id())
 	for a: Array in _stones:
 		if is_instance_valid(a[0]):
 			(a[0] as Node).queue_free()

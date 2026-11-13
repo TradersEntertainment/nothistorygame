@@ -1,0 +1,9 @@
+WALKTHRU sehir_icmerdiven_icyol_uc sure=48.0 yol=161.4 takilma=0 dusme=0 bitti=true son=(92.2,12.00,-0.0) | wp0 t=1.2 y=0.25 | wp1 t=6.7 y=12.00 | wp2 t=7.5 y=12.00 | wp3 t=48.0 y=12.00
+WALKTHRU peribolos_dismerdiven_disyol_kule sure=20.2 yol=75.0 takilma=0 dusme=0 bitti=true son=(-49.3,8.50,18.8) | wp0 t=1.2 y=0.25 | wp1 t=5.0 y=8.50 | wp2 t=5.5 y=8.50 | wp3 t=20.2 y=8.50
+WALKTHRU teras_eldmerdiven_disyol_kulegecidi sure=14.9 yol=48.2 takilma=0 dusme=0 bitti=true son=(-45.3,8.50,18.8) | wp0 t=0.5 y=-3.78 | wp1 t=7.2 y=9.69 | wp2 t=14.9 y=8.50
+WALKTHRU poterna_dasbasamak_kalas_ova_geri sure=34.9 yol=111.5 takilma=0 dusme=0 bitti=true son=(-85.5,-0.12,15.3) | wp0 t=1.1 y=0.05 | wp1 t=1.7 y=0.05 | wp2 t=4.3 y=-3.22 | wp3 t=7.1 y=-3.79 | wp4 t=14.6 y=-3.71 | wp5 t=17.8 y=-3.69 | wp6 t=20.5 y=-3.69 | wp7 t=28.1 y=-3.80 | wp8 t=31.1 y=-3.79 | wp9 t=32.6 y=-0.02 | wp10 t=34.9 y=-0.12
+WALKTHRU gedik_moloz_dolgu_hendek_gecis sure=14.4 yol=47.4 takilma=0 dusme=0 bitti=true son=(-67.7,-3.69,59.3) | wp0 t=1.5 y=1.17 | wp1 t=3.8 y=-1.70 | wp2 t=6.6 y=-3.64 | wp3 t=12.2 y=-3.69 | wp4 t=14.4 y=-3.69
+WALKTHRU gedik_moloz_hendekdibine_dolgu_yarim sure=6.8 yol=23.6 takilma=0 dusme=0 bitti=true son=(-63.3,-8.53,47.3) | wp0 t=1.9 y=-3.63 | wp1 t=6.8 y=-8.49
+WALKTHRU romanos_kapi_peribolos_diskapi_kopru_ova sure=20.3 yol=66.2 takilma=0 dusme=0 bitti=true son=(-0.0,-3.57,57.3) | wp0 t=1.0 y=-0.12 | wp1 t=5.4 y=-0.12 | wp2 t=9.0 y=-0.00 | wp3 t=13.0 y=-3.67 | wp4 t=16.4 y=-3.53 | wp5 t=20.3 y=-3.57
+WALKTHRU OZET yol=7 tamam=7 takilma=0 dusme=0
+rc=0

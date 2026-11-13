@@ -1,0 +1,4 @@
+WAVERUNNER wave=1/2 won=true t=7.1 pw=0.28 foe_dmg=18.0 allies=3+0 rally_foes=0 thrown=1
+WAVERUNNER wave=2/2 won=true t=16.9 pw=0.28 foe_dmg=18.0 allies=4+0 rally_foes=0 thrown=1
+AUTOTEST PASS chapter=20 variant= outcome=20.1 repair=10 knocks=0 arrows=true gun=3/4 gunner=2/2 niko=0 sur=yeni
+KOSU ad=c20_yeni_def_fixc1 rc=0 sn=35 args=--chapter=20 --autotest

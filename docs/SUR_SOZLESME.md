@@ -137,3 +137,51 @@ anında `OTURTMA.dy_kayit`'tan okur; SurOyun bütün dilimler için sözleşmede
 Parçalar (`sur_oyun_parca.gd`): `Poterna.ac(bool)`, `KalasKopru.tak()/sok()`, `Dolgu.doluluk(0..1)`,
 `KapiKopru.hal("saglam"|"yikik")`, `KapiKanat.ac(bool)`, `HucumMerdiveni.it()/devir()/dik()/cizgi()` (içinde gerçek
 `Ladder`: `climb_anim.attach(kişi, m.lad, at)` doğrudan çalışır), `GedikOnarim.asama(1..4)`.
+
+## Bölüm bağdaştırıcısı (`SurSet`, `scripts/world/ist/sur_set.gd`) — pilot 20
+
+Ortak yardımcılar (`Assault`, `Garrison`, `WallFight`, `SiegeChaos`) ve bölümler sura sabit koordinat yazmaz, `SurSet`'e
+sorar. İki uygulama:
+
+```gdscript
+var sur := SurSet.sec("20", ESKI_SUR)      # --eskisur (ya da --eskisur=20,20o) ya da bölüm sabiti → eski; yoksa yeni
+# sur = SurSet.eski()                → LandWalls sabitlerinin AYNISI (eski set, davranış birebir)
+# sur = SurSet.yeni("mesoteikhion")  → SurOyun.arayuz(kesim) sorguları
+walls = LandWalls.new() if sur.eski_mi else SurSetSahne.new()   # SurSetSahne extends LandWalls (fire_flash, make_dawn… aynı)
+fight.sur = sur; assault.sur = sur; Garrison.land_walls(…, sur)  # verilmezse (null) bugünkü kod yolu
+```
+
+**Bölüm çerçevesi** eski setle hizalıdır: x = 0 oyun gediğinin ortası, y = 0 peribolos toprağı, z = 14 dış surun iç yüzü,
++z ova. Yeni sette `cerceve = SurOyun yereli + ofs`, Mesoteikhion'da `ofs = (67,7; 0,12; −3,5)` (kesim kökü `SurCerceve`
+düğümüne `dunya: false` ile kurulur). Böylece peribolostaki bölüm sayılarının çoğu iki sette de anlamlıdır; surun DIŞI
+(teras, hendek, ova) ancak bağdaştırıcıdan okunursa doğru düşer (yeni sette ova peribolostan 3,57 m aşağıda, hendek 20 × 6).
+
+**Ova kaydırması** (`ova_ofs()`; eski 0, yeni (0; −3,54; 10,6)): eski ovanın koordinatları (z ≥ 36 düz y = 0: SiegeField,
+Assault'un ordusu, bataryaları, mancınıkları, kalkan siperleri, merdiven takımları, büyük top) bir düğümle yeni ovaya
+iner (eski z 36 ↔ yeni hendeğin uzak yakası). Bölümün ova sayıları bu yüzden değişmez; sura yakın olanlar değişir.
+
+| Sorgu (çerçevede) | Eski karşılığı | Yeni (Mesoteikhion) |
+|---|---|---|
+| `gedik()`, `gedik_en()`, `gedik_bosluk()` | `BREACH` (0;0;15), `BREACH_W` 7, `BREACH_W/2+EDGE_W` 6,5 | (0;0;15,3), 8, 4,5 |
+| `gedik_onu()`, `barikat()`, `moloz_sirti()` | `BREACH+(0;0;−3,4)`, `BREACH+(0;2,2;−1,2)`, `on_rubble(BREACH+(0;0;1,2))` | (0;0;9,6), (0;1,5;10,3), sırt z 18,0 (dış yüz + 1,4: aşama 4 çitinin bir kişi payı önü) |
+| `moloz_y(x,z)`, `on_rubble(p)` | `rubble_y`, `on_rubble` | `SurOyunAg.moloz_profil` + `_tumsek` kesiti |
+| `zemin_y(x,z)` / `dis_zemin_y` | `Assault.ground_y` (= `_ground_y_eski`) / `outside_y` | teras, parateikhion (geçişlerde açık), hendek dibi, dolgu ve kalas üstü, ova, moloz |
+| `dis_sur_z0/z1`, `dis_yol_y/z`, `dis_yol_ic_z/on_z` | 14 / 16, 8 / 15, 14,72 / 15,28 | 14 / 16,6, 8,62 / 15,3, 14,77 / 15,83 |
+| `ic_yol_y/z`, `ic_sur_z1` | 12 / −2,1, −0,6 | 12,12 / −1,95, −1,0 |
+| `dis_kuleler()`, `dis_kule_bosluk()`, `dis_kule_tepe(x)` | ±16, 3,3, y 11 | 35,4 (+ yıkık 96,7), 10,4 (tepe basamaklarıyla), y 13,12 |
+| `ic_kuleler()`, `ic_kule_tepe(x)` | ±24, y 18 | 4,7 · 66,1 · … (yan dilimler dâhil), y 19,12 |
+| `dis_yol_x(x)`, `dis_yol_bos(x)`, `ic_yol_bos(x)` | `walk_x`, `|x|−16` boşlukları | gedik + kule + tepe basamakları dışı |
+| `teras()`, `hendek_z0/z1/z(t)`, `hendek_dip_y()`, `ova_z0/y()` | set z 16–18,4, hendek 20–36 / −2,9, ova 36 / 0 | teras 16,6–24,8 y −3,67; hendek 26,6–46,6 / −9,55; ova 46,6 / −3,57 |
+| `gecisler()`, `kosu_yolu(a,b)` | yok, düz çizgi | dolgu (x 0, en 10), kalas (x −17,9); koşu ova → dolgu → teras → hedef |
+| `hucum_merdivenleri(xs, span)` | Assault'un 8 merdiveni (ayak z 18,35, tepe y 7,7) | önce sözleşmenin dayamaları, sonra eski x'ler engelden kaydırılarak (sayı aynı), dayama kuralıyla |
+| `top_yuvalari(liste)` (ova koord.) | `gun_spots` | sözleşmenin 2 bataryası + aynı aralıkla iki yan (4) |
+| `peribolos()`, `peribolos_engelleri()` | `SiegeChaos.area` Rect2(−44;1,4;88;10,6), — | `alanlar()["peribolos"]` (z 2,4–10,6), iç kule + poterna çemberleri |
+| `depo()`, `dogus()`, `siperler()`, `top()` | `DEPOT`, `SPAWN`, `MANTLETS`, `CANNON` | (−11,5;0;4,2), (−9,6;0,05;7,2), (±5,5;0;10,5), CANNON + ova_ofs |
+| `engelde(p)`, `dogma(alan, n)` | — | `SurOyun.engeller()/dogma()` çerçevede |
+| `SurSet.asama_of(n)` | — | onarım sayacı 0–2 → 1, 3–5 → 2, 6–8 → 3, 9–10 → 4 (karar 5-B) |
+
+**Kancalar (varsayılan davranış aynı):** `Assault.sur` (+ statik `Assault.ground_y` → `SurSet.etkin`, yeni set sahnesi
+kurulunca dolar, ağaçtan çıkınca boşalır), `WallFight.sur` (moloz yüksekliği), `Garrison.land_walls(…, sur)` (yeni sette
+`_land_walls_sur`), `SiegeField.sur_yeni` (sur uzantısı, şehir ve şehir arazisi kurulmaz), `SiegeChaos` zaten
+parametreli (`area`, `avoid`). Sahne: `SurSetSahne` (gece ortamı, kesim, depo, teslim alanı, siperler, meşaleler, ova,
+büyük top; `set_repair(n)` → `GedikOnarim.asama(asama_of(n))`).

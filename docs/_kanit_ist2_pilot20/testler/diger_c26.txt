@@ -1,0 +1,2 @@
+AUTOTEST PASS chapter=26 variant= outcome=26.1 water=3 repaired=3 cleared=2 world= gun=3/4 gunner=3/3
+KOSU ad=diger_c26 rc=0 sn=105 args=--chapter=26 --autotest

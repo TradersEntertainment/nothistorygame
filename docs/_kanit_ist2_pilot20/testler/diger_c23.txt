@@ -1,0 +1,2 @@
+AUTOTEST PASS chapter=23 variant= outcome=23.1 deviation=0 card=true singed=false letter=false
+KOSU ad=diger_c23 rc=0 sn=17 args=--chapter=23 --autotest

@@ -1,0 +1,4 @@
+WAVERUNNER wave=1/2 won=true t=8.4 pw=0.22 foe_dmg=23.4 allies=3+0 rally_foes=0 thrown=0
+WAVERUNNER wave=2/2 won=true t=22.7 pw=0.22 foe_dmg=23.4 allies=4+0 rally_foes=0 thrown=0
+AUTOTEST PASS chapter=20 variant= outcome=20.1 repair=10 knocks=0 arrows=true gun=3/4 gunner=4/4 niko=0 sur=eski
+KOSU ad=son_c20_eski_d2 rc=0 sn=41 args=--chapter=20 --autotest --difficulty=2 --eskisur

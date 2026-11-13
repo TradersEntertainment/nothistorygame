@@ -1,0 +1,2 @@
+AUTOTEST PASS chapter=25 variant= outcome=25.1 caught=0 candle=true tezkire=false marco=false
+KOSU ad=son_diger_c25 rc=0 sn=23 args=--chapter=25 --autotest

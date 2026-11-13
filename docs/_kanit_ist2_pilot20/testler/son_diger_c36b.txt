@@ -1,0 +1,3 @@
+WAVERUNNER wave=1/1 won=true t=22.3 pw=0.28 foe_dmg=18.0 allies=0+3 rally_foes=0 thrown=0
+AUTOTEST PASS chapter=36 variant= outcome=36.1 burned=3 fights=1 kills=3
+KOSU ad=son_diger_c36b rc=0 sn=28 args=--chapter=36b --autotest

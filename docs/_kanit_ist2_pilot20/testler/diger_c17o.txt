@@ -1,0 +1,2 @@
+AUTOTEST PASS chapter=17o variant= outcome=17O.1 acc=1.00 water=4 pours=10.0 kadri=true
+KOSU ad=diger_c17o rc=0 sn=17 args=--chapter=17o --autotest

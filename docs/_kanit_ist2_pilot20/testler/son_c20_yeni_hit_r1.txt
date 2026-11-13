@@ -1,0 +1,5 @@
+PILOT20ENGEL OZET nokta=9 engelde=0
+WAVERUNNER wave=1/2 won=true t=8.3 pw=0.28 foe_dmg=18.0 allies=3+0 rally_foes=0 thrown=0
+WAVERUNNER wave=2/2 won=true t=30.3 pw=0.28 foe_dmg=18.0 allies=4+0 rally_foes=0 thrown=0
+AUTOTEST PASS chapter=20 variant=hit outcome=20.1 repair=10 knocks=1 arrows=true gun=3/4 gunner=3/4 niko=0 sur=yeni
+KOSU ad=son_c20_yeni_hit_r1 rc=0 sn=42 args=--chapter=20 --autotest=hit
