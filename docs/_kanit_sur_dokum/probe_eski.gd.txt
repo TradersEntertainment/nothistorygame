@@ -1,0 +1,99 @@
+extends Node3D
+## Eski set sondası: LandWalls (yıkık / sağlam), Blachernae, SeaWalls gerçek kurucularıyla kurulur; ışınla ölçülür.
+var host: Node3D
+
+func _ray(x: float, z: float, y0 := 60.0, y1 := -20.0) -> float:
+	var sp := get_viewport().find_world_3d().direct_space_state
+	var q := PhysicsRayQueryParameters3D.create(Vector3(x, y0, z), Vector3(x, y1, z))
+	var r := sp.intersect_ray(q)
+	return NAN if r.is_empty() else (r["position"] as Vector3).y
+
+func _hray(x0: float, x1: float, y: float, z: float) -> bool:
+	var sp := get_viewport().find_world_3d().direct_space_state
+	var q := PhysicsRayQueryParameters3D.create(Vector3(x0, y, z), Vector3(x1, y, z))
+	return not sp.intersect_ray(q).is_empty()
+
+func _profil(id: String, etiket: String, z: float, a: float, b: float, y_bek: float) -> void:
+	var seg: Array = []
+	var cur := ""
+	var start := a
+	var x := a
+	var n_yur := 0.0
+	while x <= b:
+		var y := _ray(x, z)
+		var t := "yok"
+		if not is_nan(y):
+			if absf(y - y_bek) <= 0.35: t = "yol"
+			elif y > y_bek + 0.35: t = "yuksek"
+			else: t = "alcak"
+		if t != cur:
+			if cur != "": seg.append("%s[%.1f..%.1f]" % [cur, start, x - 0.5])
+			cur = t
+			start = x
+		if t == "yol": n_yur += 0.5
+		x += 0.5
+	seg.append("%s[%.1f..%.1f]" % [cur, start, x - 0.5])
+	print("ISTOLD ", id, " ", etiket, " z=", z, " yol_m=", n_yur, " seg=", " ".join(seg))
+
+func _engel(id: String, etiket: String, z: float, a: float, b: float, y: float) -> void:
+	# yürüme yolunun baş hizasında yatay ışın: kule/duvar engeli aralıkları
+	var seg: Array = []
+	var x := a
+	var cur := false
+	var st := a
+	while x < b:
+		var e := _hray(x, x + 0.5, y, z)
+		if e != cur:
+			if cur: seg.append("[%.1f..%.1f]" % [st, x])
+			cur = e
+			st = x
+		x += 0.5
+	if cur: seg.append("[%.1f..%.1f]" % [st, x])
+	print("ISTOLD ", id, " ", etiket, " engel(y=", y, ",z=", z, ")=", " ".join(seg))
+
+func _kesit(id: String, x: float, z0: float, z1: float) -> void:
+	var kes: Array = []
+	var z := z0
+	while z <= z1:
+		var y := _ray(x, z)
+		kes.append("%.1f:%s" % [z, "-" if is_nan(y) else "%.2f" % y])
+		z += 1.0
+	print("ISTOLD ", id, " enkesit x=", x, " ", " ".join(kes))
+
+func _ready() -> void:
+	for varyant in ["yikik", "saglam", "dolgu"]:
+		LandWalls.ditch_filled = (varyant == "dolgu")
+		var w := LandWalls.new()
+		if varyant == "saglam": w.intact = true
+		w.lite = true
+		add_child(w)
+		for i in 6: await get_tree().physics_frame
+		var id: String = "landwalls_" + varyant
+		print("ISTOLD ", id, " alan_x=-50..50 (kodda sabit)")
+		_profil(id, "dis_sur_yolu", 15.0, -50.0, 50.0, 8.0)
+		_profil(id, "ic_sur_ust", -2.3, -50.0, 50.0, 12.0)
+		_engel(id, "dis_sur", 15.0, -50.0, 50.0, 9.0)
+		_engel(id, "ic_sur", -2.3, -50.0, 50.0, 13.0)
+		for xx in [-20.0, 0.0, 20.0, 44.0]:
+			_kesit(id, xx, -8.0, 40.0)
+		w.queue_free()
+		for i in 3: await get_tree().physics_frame
+	LandWalls.ditch_filled = false
+	# Blachernae
+	var b := Blachernae.new()
+	b.in_world = false
+	add_child(b)
+	for i in 6: await get_tree().physics_frame
+	_profil("blachernae", "sur_yolu", 2.3, -60.0, 60.0, 12.0)
+	_engel("blachernae", "sur", 2.3, -60.0, 60.0, 13.0)
+	for xx in [-30.0, 0.0, 30.0]:
+		_kesit("blachernae", xx, -20.0, 30.0)
+	b.queue_free()
+	for i in 3: await get_tree().physics_frame
+	var s := SeaWalls.new()
+	add_child(s)
+	for i in 6: await get_tree().physics_frame
+	_kesit("seawalls", 5.0, -8.0, 36.0)
+	_profil("seawalls", "rihtim", -1.5, -10.0, 30.0, 0.7)
+	s.queue_free()
+	get_tree().quit(0)
