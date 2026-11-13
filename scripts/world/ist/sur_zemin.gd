@@ -497,8 +497,6 @@ static func hendek_kesit(p: Node3D, x0: float, x1: float, z0: float, z1: float, 
 				y += (hz - 0.5) * 0.22
 			if j <= 1 or j >= kes.size() - 2:
 				y += hz * 0.05                           # harpuşta: hep arazinin üstünde, hafif düzensiz
-				if v2:
-					y = -0.04 + hz * 0.03                # TUR-6: blok yatağı (blok altında; aralarda toprak/harç)
 			if kk > 0.0 and j >= 9 and j <= kes.size() - 3:
 				# kayan toprak: karşı yaka eğimi yatıklaşır (1:1,6), dibe yayılır
 				var zt := float(kes[j][0])
@@ -562,19 +560,20 @@ static func hendek_kesit(p: Node3D, x0: float, x1: float, z0: float, z1: float, 
 		mi.material_override = _mat()
 		mi.set_meta("no_walk", true)
 		p.add_child(mi)
+	if v2 and lod < 2:
+		# TUR-6: harpuşta taşları kaplamayla AYNI ağda (aynı sur taşı malzemesi: ek çizim çağrısı yok)
+		anyt = harpusta_kur(tst, x0, x1, z0, z1, kay, lod, tohum, pencere) > 0 or anyt
 	if anyt:
 		var mt := MeshInstance3D.new()
 		mt.name = "HendekKaplama"
 		mt.mesh = tst.commit()
 		mt.material_override = Props.mat(Color("a49a86"), 0.0, false, "ashlar" if lod < 2 else "ashlar_far")
-		if v2 and lod < 2:
-			# TUR-6: sur taşı gölgelendiricisi, ama "dipte koyulaşma" yerel y'ye göre (hendek kesiti hep y < 0: bütün yüz
-			# koyu + yosunlu kara şerit oluyordu) kapalı; yalnız uzak katman çarpanı yok (renk 0,93)
-			mt.material_override = SURDOKU.mat(0, Color("a49a86") * Color(0.93, 0.93, 0.93), false)
+		if v2:
+			# TUR-6: sur taşı gölgelendiricisinin "dipte koyulaşması" yerel y'ye göre (hendek kesiti hep y < 0: bütün yüz
+			# %28 koyu + yosunlu kara şerit); pişirmede birleşen Props malzemesi kalır (çizim çağrısı), taban rengi açılır
+			mt.material_override = Props.mat(Color("c4b9a2"), 0.0, false, "ashlar" if lod < 2 else "ashlar_far")
 		mt.set_meta("no_walk", true)
 		p.add_child(mt)
-	if v2:
-		harpusta_kur(p, x0, x1, z0, z1, kay, lod, tohum, pencere)
 	# kayan kesimlerde dibe düşmüş kaplama taşları (düzensiz kaya, kutu değil)
 	if lod == 0:
 		var kl: Array = []
@@ -599,10 +598,11 @@ static var _hmat: StandardMaterial3D
 ## üst kenarları pahlı (aşınmış), aralarında 3–6 cm derz; blok blok ton (kireçtaşı / gri / kumtaşı); %10 eksik, %12
 ## kaymış (hendeğe doğru 5–25 cm, 3–12° yatık); karşı yakanın toprak kayması kesimlerinde yok (dibe düşmüş). kay: kesit
 ## satırı başına kayma (0..1). Yerel: x boyunca, iç yaka z0, karşı yaka z1 (kesitle aynı).
-static func harpusta_kur(p: Node3D, x0: float, x1: float, z0: float, z1: float, kay: Array, lod: int, tohum: int, pencere := Vector2(-1e9, 1e9)) -> void:
-	var ag = KULE.Ag.new()
+static func harpusta_kur(st: SurfaceTool, x0: float, x1: float, z0: float, z1: float, kay: Array, lod: int, tohum: int, pencere := Vector2(-1e9, 1e9)) -> int:
+	var ag := {"st": st, "n": 0}
 	var nk := kay.size() - 1
-	var tonlar := [Color("a29c90"), Color("98948c"), Color("8e8a84"), Color("9c968a"), Color("a09a90")]
+	# köşe rengi sur taşı gölgelendiricisinde taban renginin (a49a86 × 0,93) çarpanı: blok blok ton farkı
+	var tonlar := [Color("f2f0ec"), Color("e4e2de"), Color("d6d4d0"), Color("ece6da"), Color("f0ece4")]
 	for yaka in 2:
 		var x := x0 + 0.05
 		var k := 0
@@ -636,13 +636,10 @@ static func harpusta_kur(p: Node3D, x0: float, x1: float, z0: float, z1: float, 
 				tilt = deg_to_rad(lerpf(3.0, 12.0, _hash(k, 93)))
 			var yaw := (_hash(k, 95 + yaka) - 0.5) * 0.05
 			var bas := Basis(Vector3.UP, yaw) * Basis(Vector3.RIGHT, tilt * ic)
-			var o := Vector3(xm, -0.08, zi + W * 0.5 + dz)
+			var o := Vector3(xm, -0.16, zi + W * 0.5 + dz)      # üst yüz arazinin ~0,10 m üstünde (gömülü taban)
 			var col: Color = tonlar[int(_hash(k * 7, tohum + yaka) * tonlar.size()) % tonlar.size()]
 			col = col.darkened((_hash(k, 3) - 0.5) * 0.12)
 			var ust := col.lightened(0.06)            # üst yüz: güneş solması
-			# köşe rengi doğrusal uzayda okunur (Compatibility, OUTPUT_IS_SRGB): palet rengi çevrilir (yoksa bembeyaz)
-			col = col.srgb_to_linear()
-			ust = ust.srgb_to_linear()
 			var hx := L * 0.5
 			var hz := W * 0.5
 			var pa := 0.05                            # pah
@@ -655,13 +652,34 @@ static func harpusta_kur(p: Node3D, x0: float, x1: float, z0: float, z1: float, 
 			var mer := o + bas * Vector3(0, hgt * 0.5, 0)
 			for q in 4:
 				var q2 := (q + 1) % 4
-				ag.quad_auto(b[q], b[q2], m[q2], m[q], ((b[q] + b[q2]) * 0.5 - mer) * Vector3(1, 0, 1), col)
-				ag.quad_auto(m[q], m[q2], t[q2], t[q], ((m[q] + m[q2]) * 0.5 - mer) + Vector3.UP * 0.2, col.lerp(ust, 0.5))
-			ag.quad_auto(t[0], t[1], t[2], t[3], Vector3.UP, ust)
-	if _hmat == null:
-		_hmat = Props.mat(Color.WHITE, 0.0, false, "", true).duplicate() as StandardMaterial3D
-		_hmat.vertex_color_use_as_albedo = true
-	ag.mesh_ekle(p, _hmat, "Harpusta", lod == 0)
+				_hq(ag, b[q], b[q2], m[q2], m[q], ((b[q] + b[q2]) * 0.5 - mer) * Vector3(1, 0, 1), col)
+				_hq(ag, m[q], m[q2], t[q2], t[q], ((m[q] + m[q2]) * 0.5 - mer) + Vector3.UP * 0.2, col.lerp(ust, 0.5))
+			_hq(ag, t[0], t[1], t[2], t[3], Vector3.UP, ust)
+	return int(ag["n"])
+
+
+## Dörtgen (iki üçgen), istenen dış normale göre sarım (Godot ön yüzü saat yönünde); düz normal, köşe rengi
+static func _hq(ag: Dictionary, a: Vector3, b: Vector3, c: Vector3, d: Vector3, dis: Vector3, col: Color) -> void:
+	var nrm := (b - a).cross(d - a)
+	if nrm.length_squared() < 1e-10:
+		return
+	if nrm.dot(dis) < 0.0:
+		nrm = -nrm
+	nrm = nrm.normalized()
+	var st: SurfaceTool = ag["st"]
+	for tr: Array in [[a, b, c], [a, c, d]]:
+		var p0: Vector3 = tr[0]
+		var p1: Vector3 = tr[1]
+		var p2: Vector3 = tr[2]
+		if (p1 - p0).cross(p2 - p0).dot(nrm) > 0.0:
+			var tmp := p1
+			p1 = p2
+			p2 = tmp
+		for v: Vector3 in [p0, p1, p2]:
+			st.set_color(col)
+			st.set_normal(nrm)
+			st.add_vertex(v)
+	ag["n"] = int(ag["n"]) + 2
 
 
 static var _sz: Mesh

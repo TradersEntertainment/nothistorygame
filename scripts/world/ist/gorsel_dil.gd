@@ -1151,7 +1151,7 @@ static func yuk_yuvarlak(uzak := false) -> ArrayMesh:
 		return _cache[key]
 	var st := SurfaceTool.new()
 	st.begin(Mesh.PRIMITIVE_TRIANGLES)
-	var n := 8 if uzak else 12
+	var n := 6 if uzak else 8           # (kayıt sayısı binlerce: üçgen bütçesi)
 	var kes: Array = []           # her kenar köşesi (birim kare içinde yuvarlak köşe)
 	for i in n:
 		var a := TAU * (float(i) + 0.5) / n
@@ -1159,8 +1159,8 @@ static func yuk_yuvarlak(uzak := false) -> ArrayMesh:
 		# süper elips (|x|^4 + |y|^4 = 1): köşeli ama yuvarlak
 		var k := pow(pow(absf(c.x), 4.0) + pow(absf(c.y), 4.0), -0.25)
 		kes.append(c * k * 0.5)
-	var hs := [[-0.5, 0.86], [-0.42, 1.0], [0.0, 1.04], [0.42, 1.0], [0.5, 0.86]] if not uzak else [[-0.5, 1.0], [0.5, 1.0]]
-	var ton := [0.72, 0.9, 1.0, 1.0, 1.06] if not uzak else [0.85, 1.02]
+	var hs := [[-0.5, 0.88], [-0.36, 1.02], [0.36, 1.02], [0.5, 0.88]] if not uzak else [[-0.5, 1.0], [0.5, 1.0]]
+	var ton := [0.72, 0.92, 1.0, 1.06] if not uzak else [0.85, 1.02]
 	for r in hs.size() - 1:
 		for i in n:
 			var a0: Vector2 = kes[i]

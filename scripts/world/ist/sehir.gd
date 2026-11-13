@@ -2180,7 +2180,8 @@ func _make_hub(n: Node3D, lod: int) -> void:
 		if x is Person or x is Label3D or x is Area3D or (x is Light3D and lod > 0):
 			x.get_parent().remove_child(x)
 			x.free()
-	_hub_palet(n)
+	# TUR-6: _hub_palet(n) denendi: karelerde turuncu çatı/pastel küme değişmedi (renk başka yoldan geliyor; bulunamadı) ve
+	# kopya malzeme/ağlar çizim çağrısı ekliyordu → kapalı (rapor: F kısmen)
 	stats["hub_ms"] = Time.get_ticks_msec() - t0
 
 
