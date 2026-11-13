@@ -1,0 +1,20 @@
+extends Node3D
+## Gerçek v2 arazisi: sur hattı kesim noktalarında yüksekliği sur dikeyi (şehir -> ova) boyunca örnekle.
+func _ready() -> void:
+	for c: Dictionary in IstSurlar.catalog():
+		if not (String(c["id"]) in ["mesoteikhion", "romanos", "kharisios", "pege", "altin_kapi", "kerkoporta"]):
+			continue
+		var p: Vector2 = IstGeo.w2(float(c["dogu_m"]), float(c["kuzey_m"]))
+		var yaw := deg_to_rad(float(c["yon_derece"]))
+		# yerel +x yönü: kuzeyden saat yönü yaw; dış yüz (+z) kuzeyden saat yönü yaw+90 (planlanan sehir.gd _out ile aynı değilse: yaklaşık)
+		var ex := Vector2(sin(yaw), -cos(yaw))
+		var ez := Vector2(-ex.y, ex.x)
+		var s := ""
+		for dz in [-60, -40, -20, -10, 0, 10, 17, 20, 30, 40, 50, 60, 80, 100]:
+			s += "%d:%.1f " % [dz, IstGeo.h(p.x + ez.x * dz, p.y + ez.y * dz)]
+		var s2 := ""
+		for dx in [-100, -50, 0, 50, 100]:
+			s2 += "%d:%.1f " % [dx, IstGeo.h(p.x + ex.x * dx, p.y + ex.y * dx)]
+		print("ISTARAZI ", c["id"], " enine(z) ", s)
+		print("ISTARAZI ", c["id"], " boyuna(x) ", s2)
+	get_tree().quit(0)

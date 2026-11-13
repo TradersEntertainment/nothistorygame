@@ -1,0 +1,15 @@
+# walk.txt (sur dilimi, 60 sn sınırlı sürüm)
+ISTWALK v2_sur_ic_merdiven_ve_yol_+x sprint=false sure=23.5 yol=82.5 son=(52.1,12.0,-0.0) wp0 t=0.2 y=0.45 | wp1 t=5.6 y=12.00 | wp2 t=6.5 y=12.00 | wp3 t=23.5 y=12.00
+ISTWALK v2_sur_ic_yol_-x sprint=false sure=32.8 yol=104.5 son=(-52.1,12.0,-0.0) wp0 t=32.8 y=12.00
+ISTWALK v2_sur_dis_merdiven_ve_yol sprint=false sure=17.4 yol=60.6 son=(52.1,8.5,18.8) wp0 t=0.4 y=0.46 | wp1 t=4.1 y=8.50 | wp2 t=4.6 y=8.50 | wp3 t=17.4 y=8.50
+ISTWALK v2_sur_dis_yol_-x sprint=false sure=32.5 yol=108.2 son=(-52.1,8.5,18.8) wp0 t=32.5 y=8.50
+ISTWALK v2_sur_hendek_gecis sprint=false sure=46.0 yol=143.6 son=(35.6,-0.1,48.8) wp0 t=4.8 y=-5.30 | wp1 t=7.3 y=-6.00 | wp2 t=40.6 y=-5.61 | wp3 t=46.0 y=-0.12
+ISTWALK v2_mesoteikhion_ic_merdiven_ve_yol_+x sprint=false sure=60.0 yol=0.5 son=(-57.8,-0.1,-3.5) TAKILDI wp0 at (-57.8,-0.1,-3.5) t=60.0
+ISTWALK v2_mesoteikhion_ic_yol_-x sprint=false sure=60.0 yol=0.0 son=(-57.8,-0.1,-3.5) TAKILDI wp0 at (-57.8,-0.1,-3.5) t=60.0
+# walk2.txt (mesoteikhion dilimi + eski set, ilerleme tabanlı takılma)
+ISTWALK v2_mesoteikhion_ic_merdiven_ve_yol_+x sprint=false sure=46.9 yol=157.7 son=(92.1,12.0,-0.0) wp0 t=0.2 y=0.45 | wp1 t=5.6 y=12.00 | wp2 t=6.5 y=12.00 | wp3 t=46.9 y=12.00
+ISTWALK v2_mesoteikhion_ic_yol_-x sprint=false sure=57.8 yol=184.5 son=(-92.1,12.0,-0.0) wp0 t=57.8 y=12.00
+ISTWALK v2_mesoteikhion_dis_merdiven_ve_yol sprint=false sure=33.6 yol=117.0 son=(92.1,8.5,18.8) wp0 t=0.4 y=0.46 | wp1 t=4.1 y=8.50 | wp2 t=4.6 y=8.50 | wp3 t=33.6 y=8.50
+ISTWALK v2_mesoteikhion_dis_yol_-x sprint=false sure=57.2 yol=191.8 son=(-92.1,8.5,18.8) wp0 t=57.2 y=8.50
+ISTWALK v2_mesoteikhion_hendek_gecis sprint=false sure=58.2 yol=161.8 son=(60.5,-6.0,48.1) wp0 t=4.8 y=-5.30 | wp1 t=7.3 y=-6.00 | TAKILDI wp2 at (60.5,-6.0,48.1) t=58.2
+ISTWALK eski_dis_sur_merdiven_x8 sprint=false sure=3.8 yol=9.7 son=(8.0,8.4,14.6) wp0 t=3.8 y=8.37
