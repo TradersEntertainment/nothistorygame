@@ -1460,7 +1460,7 @@ func _build_corridor() -> void:
 	_floor(Vector2(COR_W, COR_LEN), Vector3(0, 0, mid), Color("c8b88a"), Color("a08a62"), 1.0)
 	Props.box(self, Vector3(1.4, 0.012, COR_LEN - 0.4), Vector3(0, 0.006, mid), C_RUG)
 	for sx in [-0.72, 0.72]:
-		Props.box(self, Vector3(0.06, 0.014, COR_LEN - 0.4), Vector3(sx, 0.007, mid), C_RUG_EDGE)
+		Props.box(self, Vector3(0.06, 0.02, COR_LEN - 0.4), Vector3(sx, 0.01, mid), C_RUG_EDGE)   # kilimin üstünden 8 mm yüksek: üst yüz kilimle çakışıp titremesin
 	Props.solid(self, Vector3(COR_W, 0.2, COR_LEN), Vector3(0, COR_H + 0.1, mid), C_CEIL)
 	# Duvarlar yalnız odaların açıklıkları dışında; açıklıkların üstünde lento (kapı ağzı)
 	for side in [-1, 1]:
@@ -2973,9 +2973,10 @@ func _rc_archive() -> void:
 	_wall(Vector3(9.0, COR_H, 0.2), Vector3(-6.7, COR_H / 2, -12.9), wc)
 	_wall(Vector3(9.0, COR_H, 0.2), Vector3(-6.7, COR_H / 2, -24.1), wc)
 	_wall(Vector3(0.2, COR_H, 11.2), Vector3(-11.1, COR_H / 2, -18.5), wc)
-	Props.box(self, Vector3(8.8, 0.9, 0.04), Vector3(-6.6, 0.45, -13.02), low)
-	Props.box(self, Vector3(8.8, 0.9, 0.04), Vector3(-6.6, 0.45, -23.98), low)
-	Props.box(self, Vector3(0.04, 0.9, 10.8), Vector3(-10.98, 0.45, -18.5), low)
+	# Lambriler duvarın içine 8 mm uzar (iç yüz yerinde): çekmece duvarlarının duvara bakan yüzüyle aynı düzlemde titremesin
+	Props.box(self, Vector3(8.8, 0.9, 0.048), Vector3(-6.6, 0.45, -13.016), low)
+	Props.box(self, Vector3(8.8, 0.9, 0.048), Vector3(-6.6, 0.45, -23.984), low)
+	Props.box(self, Vector3(0.048, 0.9, 10.8), Vector3(-10.984, 0.45, -18.5), low)
 	# soğuk, loş ışık
 	_bulb(Vector3(-6.5, 3.0, -18.0), Color("cfe7ff"), 1.1, 9.5)
 	Props.box(self, Vector3(0.12, 0.05, 1.6), Vector3(-6.5, 3.35, -18.0), Color("dff0ff"), Vector3.ZERO, 1.6)

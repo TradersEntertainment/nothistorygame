@@ -289,7 +289,7 @@ func _build_causeway() -> void:
 	var pave := Props.box(self, Vector3(6.4, 0.04, 16.4), Vector3(0, 0.0, 28.2), Color.WHITE)
 	Props.set_pattern(pave, Color("a08e6e"), "cobble")
 	for k in 9:
-		Props.box(self, Vector3(6.3, 0.045, 0.12), Vector3(0, 0.0, 20.6 + k * 1.9), Color("7e6e54"))
+		Props.box(self, Vector3(6.3, 0.048, 0.12), Vector3(0, 0.004, 20.6 + k * 1.9), Color("7e6e54"))   # derz taşı yüzeyi 8 mm yüksek: kaldırım üst yüzüyle çakışıp titremesin
 	for rx: float in [-0.8, 0.8]:
 		Nature.trail(self, [Vector3(rx, 0, 16.5), Vector3(rx, 0, 37.0)], "wheel_ruts", gy, 1.0, 8130 + int(rx * 10.0), 0.1)
 	for sx: float in [-1.0, 1.0]:
