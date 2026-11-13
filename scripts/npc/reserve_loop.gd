@@ -121,7 +121,10 @@ func _step(p: Person) -> void:
 	if dir.length() < 0.05:
 		return
 	var q := PhysicsRayQueryParameters3D.create(from, from + dir + dir.normalized() * 0.4)
-	if not p.get_world_3d().direct_space_state.intersect_ray(q).is_empty() or Unclip.crowded(p, to_g, 0.7):
+	# Gizliyken adım yok: Unclip.crowded görünmeyeni saymaz. Bölüm gizlenip zamanlayıcıları sürerken (26: Büro alarmı,
+	# sahnenin bütün çocukları gizli) körlemesine atılan adım yanındakinin içinde bitiyordu; görünür olunca iç içe
+	if not p.is_visible_in_tree() or not p.get_world_3d().direct_space_state.intersect_ray(q).is_empty() \
+			or Unclip.crowded(p, to_g, 0.7):
 		return
 	_shift = p.create_tween()
 	_shift.tween_property(p, "position", to, 0.7)
