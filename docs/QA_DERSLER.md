@@ -1070,3 +1070,29 @@ Her bölüm denetiminde ve her düzeltmede bu listeyi baştan uygula. Yeni bir h
     başkasının hatasında bekle ve yeniden koş (ajanlar öyle yaptı).
   - Çalışan ajanlar varken ana dala acil düzeltme: çalışma ağacına dokunmadan `git read-tree` + `commit-tree` ile
     main'in üstüne kayıt; sonra `git merge main` ile çalışma dalına alındı.
+- v0.99.119 (yeni bölüm Yerebatan [Opus kurdu, 3 bağımsız Sonnet denetimi, 4 düzeltme turu]; çeviri kokusu taraması
+  [14 yazar + ikinci okuma]; yeni sesler [Nihat, Giustiniani, Niko, askerler]; tırmanma animasyonu; bakış düzeltmeleri):
+  - Tam test 10 makineye bölündü (`SHARD=k SHARDS=10 tests/run_tests.sh`, 412 koşu, parça başı ~35 dk). Test çıktısında
+    yalnız `AUTOTEST PASS`e bakmak yetmez: `VISAUDIT` satırı PASS'in yanında çıkar ve paketi düşürür. Yönetmen kendi
+    koşusunda yalnız PASS'i süzdü; 44b `=kid`'deki iç içe duran çocuk ancak tam pakette yakalandı. Kural: elle koşuda da
+    betiğin süzgeci (`AUTOTEST|SCRIPT ERROR|WARN_|VISAUDIT|WALKTHRU|HELDAUDIT|ARMAUDIT`) kullanılır.
+  - Bir yerleşimi değiştiren tur (avluda Yakovos kuyuya alındı) o sahnenin BÜTÜN çeşitlerini koşar: çocuklu çeşitte
+    çocuk tam o noktaya konuyordu.
+  - Titreşen yüzey denetimi (ZFIGHT) yalnız tam pakette koşuyor; hızlı pakette olmadığı için yedi sahne yayına
+    çakışan yüzlerle çıkmıştı (0.99.118). Tam paket sürümden önce gerçekten sonuna kadar koşulur.
+  - Seyrek hata için az örnekle hüküm verilmez: 26 `hold_box` iç içe geçmesi 3 yeniden koşuda çıkmadı ("tek seferlik"
+    dendi), 28 koşuda 5 kez çıktı. Şüpheliler (tırmanma, bakış) ikiye bölmeyle aklandı; neden eski koddaydı
+    (`melee.gd`: düelloya giren bölük üyesi yerinde gizlenir, komşusu boş sanıp yerine adım atar). Düzeltme sonraki sürümde.
+  - Denetçinin kanon iddiası kaynakla doğrulanır: "Nihat 1977'den, 1985'i bilemez" bulgusu yanlıştı (EVREN.md: Büro
+    zaman dışıdır). Yönetmen repliği değiştirmeden önce belgeye baktı.
+  - `hud.think` sessizdir (iç ses altyazısı): seslendirilmiş dört replik oyunda hiç çalmıyordu. Yeni bölümde ses
+    dosyası üretilen her anahtarın oyunda gerçekten çalındığı günlükten doğrulanır (`PACE say len=` ses süresiyle eşleşir).
+  - Seslerde ölçüm kulak değildir: perde/tını/seviye tablosu aykırıyı bulur, ama "doğal mı" sorusunu sahibi dinleyerek
+    cevaplar. Dinleme sayfası (aday sesler, aynı replik, iyi/kötü işareti) seçimi bir turda bitirdi.
+  - Uzaktaki konuşan bağırır: replik başına "kim kime kaç metreden" tablosu (MESAFE.csv) çıkarıldı; ünlemli uzak replik
+    bağırır, ünlemsiz seslenir; yakındaki emir bağırmaz.
+  - Yeni İstanbul (bu sürümde YOK) için dersler: iş dosyaya göre paylaştırılınca herkes kendi dosyasını düzeltir, kare
+    bütün olarak kötü kalır ("sur zeminle uyuşmuyor", "sur ile çadır başka oyundan"). İş KAREYE göre sahiplendirilir
+    (adlı kameralar, tek sahip, her dosyaya dokunma yetkisi) ve ortak görsel kural (palet, doku yoğunluğu, yayındaki
+    bölümle sayısal karşılaştırma) ilk gün yazılır. Canlı ve yuvarlak nesne kutudan yapılmaz; teslimde paftaya değil tam
+    boy kareye bakılır.
