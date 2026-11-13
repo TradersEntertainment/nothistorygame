@@ -230,6 +230,11 @@ static func kule(e: Dictionary, poly: PackedVector2Array, y: float, ic_z: float,
 					if c >= Wl:
 						yy = -0.03
 					var pp := p + nr * c
+					# SUR-OYUN 4e: merdiven ayak izinde etek yere iner (basamağa taşmaz)
+					if c > 0.0:
+						for yr: Rect2 in e["yasak"]:
+							if yr.has_point(pp):
+								yy = -0.03
 					row.append(Vector3(pp.x, y + yy, pp.y))
 				rows.append(row)
 			_doldur(e, rows, s)
@@ -385,7 +390,7 @@ static func kur(root: Node3D, lay: Dictionary, lod: int, xw: Array, dy: float, k
 	bst.begin(Mesh.PRIMITIVE_TRIANGLES)
 	var e := {"st": st, "bst": bst, "n": 0, "bn": 0, "lod": lod, "tohum": int(lay["rng_seed"]),
 		"xf": xw[1] if xw[0] else Transform3D(), "dunya": bool(xw[0]) and not OTURTMA.kusak.is_empty(),
-		"ot": [], "tas": [], "cali": [], "_px": 0.0}
+		"ot": [], "tas": [], "cali": [], "_px": 0.0, "yasak": kes.get("yasak", [])}
 	var zi0: float = d["zi0"]
 	var zi1: float = d["zi1"]
 	var zo0: float = d["zo0"]

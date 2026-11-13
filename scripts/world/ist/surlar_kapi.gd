@@ -58,7 +58,8 @@ static func build(root: Node3D, lay: Dictionary, lod: int, o: Dictionary) -> voi
 		IstSurlar._d(root, Vector3(-gw * 0.5, 0, zi0 - 0.06), Vector3(gw * 0.5, gh, zi0), Color("8a4a35"), "brick")
 		return
 	# ---- kuşatma (SUR-4, madde 6): kanatlar KAPALI (iç surda ve dış surun geçidinde), demir bağlı, arkası sürgülü
-	for zk: float in [zi0 + 0.45, zo0 + 0.45]:
+	# SUR-OYUN: o["kanat_disarida"] verilirse kanatları oynanış parçası (sur_oyun_parca KapiKanat, açılır) kurar
+	for zk: float in ([] if o.get("kanat_disarida", false) else [zi0 + 0.45, zo0 + 0.45]):
 		var hk := gh - 0.2 if zk < zi1 else minf(gh, OH - 1.0) - 0.2
 		for sx in [-1.0, 1.0]:
 			var xa: float = sx * gw * 0.5

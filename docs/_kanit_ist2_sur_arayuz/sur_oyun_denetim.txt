@@ -1,4 +1,4 @@
-SUROYUN_KUR mesoteikhion ms=760 { "oyun_ms": 521.305, "yan_ms": 231.725, "uzak_ms": 0.004, "zemin_ms": 0.537, "parca_ms": 5.309, "toplam_ms": 759.606 }
+SUROYUN_KUR mesoteikhion ms=683 { "oyun_ms": 464.704, "yan_ms": 211.604, "uzak_ms": 0.005, "zemin_ms": 0.452, "parca_ms": 5.682, "toplam_ms": 683.148 }
 SUROYUN_TUR mesoteikhion batarya nokta=2 havada=0 gomuk=0 katida=0
 SUROYUN_TUR mesoteikhion cikis nokta=12 havada=0 gomuk=0 katida=0
 SUROYUN_TUR mesoteikhion dayama_ayak nokta=5 havada=0 gomuk=0 katida=0
@@ -14,11 +14,11 @@ SUROYUN_TUR mesoteikhion gedik_moloz nokta=4 havada=0 gomuk=0 katida=0
 SUROYUN_TUR mesoteikhion hendek_rampa nokta=4 havada=0 gomuk=0 katida=0
 SUROYUN_TUR mesoteikhion mazgal_dis nokta=71 havada=0 gomuk=0 katida=0
 SUROYUN_TUR mesoteikhion mazgal_ic nokta=86 havada=0 gomuk=0 katida=0
-SUROYUN_TUR mesoteikhion poterna nokta=3 havada=0 gomuk=0 katida=0
+SUROYUN_TUR mesoteikhion poterna nokta=4 havada=0 gomuk=0 katida=0
 SUROYUN_TUR mesoteikhion yol_dis nokta=6 havada=0 gomuk=0 katida=0
 SUROYUN_TUR mesoteikhion yol_ic nokta=8 havada=0 gomuk=0 katida=0
 SUROYUN_YER mesoteikhion xf_origin=(-1717.369, 14.414, -190.372) yaw=-98.4 dy=-3.67 gx=-67.7 gedikler_yerel=[(-67.69989, 0.0, 0.0), (34.87364, 0.0, -11.8728), (146.2244, 0.0, -36.50513)]
-SUROYUN_KUR romanos ms=348 { "oyun_ms": 94.165, "yan_ms": 249.369, "uzak_ms": 0.004, "zemin_ms": 0.547, "parca_ms": 4.38, "toplam_ms": 348.548 }
+SUROYUN_KUR romanos ms=332 { "oyun_ms": 86.367, "yan_ms": 237.942, "uzak_ms": 0.004, "zemin_ms": 0.522, "parca_ms": 6.99, "toplam_ms": 331.91 }
 SUROYUN_TUR romanos batarya nokta=2 havada=0 gomuk=0 katida=0
 SUROYUN_TUR romanos cikis nokta=9 havada=0 gomuk=0 katida=0
 SUROYUN_TUR romanos dayama_ayak nokta=5 havada=0 gomuk=0 katida=0
@@ -34,11 +34,11 @@ SUROYUN_TUR romanos gecis_kapi_kopru nokta=2 havada=0 gomuk=0 katida=0
 SUROYUN_TUR romanos kapi nokta=3 havada=0 gomuk=0 katida=0
 SUROYUN_TUR romanos mazgal_dis nokta=28 havada=0 gomuk=0 katida=0
 SUROYUN_TUR romanos mazgal_ic nokta=14 havada=0 gomuk=0 katida=0
-SUROYUN_TUR romanos poterna nokta=3 havada=0 gomuk=0 katida=0
+SUROYUN_TUR romanos poterna nokta=4 havada=0 gomuk=0 katida=0
 SUROYUN_TUR romanos yol_dis nokta=2 havada=0 gomuk=0 katida=0
 SUROYUN_TUR romanos yol_ic nokta=6 havada=0 gomuk=0 katida=0
 SUROYUN_YER romanos xf_origin=(-1691.725, 14.208, -312.337) yaw=-108.1 dy=-3.55 gx=nan gedikler_yerel=[]
-SUROYUN_KUR pege ms=336 { "oyun_ms": 86.367, "yan_ms": 244.393, "uzak_ms": 0.004, "zemin_ms": 0.409, "parca_ms": 5.182, "toplam_ms": 336.823 }
+SUROYUN_KUR pege ms=338 { "oyun_ms": 85.733, "yan_ms": 243.4, "uzak_ms": 0.005, "zemin_ms": 0.539, "parca_ms": 7.452, "toplam_ms": 337.702 }
 SUROYUN_TUR pege batarya nokta=2 havada=0 gomuk=0 katida=0
 SUROYUN_TUR pege cikis nokta=12 havada=0 gomuk=0 katida=0
 SUROYUN_TUR pege dayama_ayak nokta=5 havada=0 gomuk=0 katida=0
@@ -54,11 +54,11 @@ SUROYUN_TUR pege gecis_kapi_kopru nokta=2 havada=0 gomuk=0 katida=0
 SUROYUN_TUR pege kapi nokta=3 havada=0 gomuk=0 katida=0
 SUROYUN_TUR pege mazgal_dis nokta=28 havada=0 gomuk=0 katida=0
 SUROYUN_TUR pege mazgal_ic nokta=16 havada=0 gomuk=0 katida=0
-SUROYUN_TUR pege poterna nokta=3 havada=0 gomuk=0 katida=0
+SUROYUN_TUR pege poterna nokta=4 havada=0 gomuk=0 katida=0
 SUROYUN_TUR pege yol_dis nokta=2 havada=0 gomuk=0 katida=0
 SUROYUN_TUR pege yol_ic nokta=6 havada=0 gomuk=0 katida=0
 SUROYUN_YER pege xf_origin=(-1738.981, 15.973, 473.526) yaw=-80.3 dy=-5.53 gx=nan gedikler_yerel=[]
-SUROYUN_KUR rhegion ms=341 { "oyun_ms": 77.661, "yan_ms": 255.794, "uzak_ms": 0.005, "zemin_ms": 0.511, "parca_ms": 5.432, "toplam_ms": 340.057 }
+SUROYUN_KUR rhegion ms=328 { "oyun_ms": 81.754, "yan_ms": 236.465, "uzak_ms": 0.004, "zemin_ms": 0.474, "parca_ms": 7.883, "toplam_ms": 327.185 }
 SUROYUN_TUR rhegion batarya nokta=2 havada=0 gomuk=0 katida=0
 SUROYUN_TUR rhegion cikis nokta=12 havada=0 gomuk=0 katida=0
 SUROYUN_TUR rhegion dayama_ayak nokta=5 havada=0 gomuk=0 katida=0
@@ -74,11 +74,11 @@ SUROYUN_TUR rhegion gecis_kapi_kopru nokta=2 havada=0 gomuk=0 katida=0
 SUROYUN_TUR rhegion kapi nokta=3 havada=0 gomuk=0 katida=0
 SUROYUN_TUR rhegion mazgal_dis nokta=28 havada=0 gomuk=0 katida=0
 SUROYUN_TUR rhegion mazgal_ic nokta=18 havada=0 gomuk=0 katida=0
-SUROYUN_TUR rhegion poterna nokta=3 havada=0 gomuk=0 katida=0
+SUROYUN_TUR rhegion poterna nokta=4 havada=0 gomuk=0 katida=0
 SUROYUN_TUR rhegion yol_dis nokta=2 havada=0 gomuk=0 katida=0
 SUROYUN_TUR rhegion yol_ic nokta=6 havada=0 gomuk=0 katida=0
 SUROYUN_YER rhegion xf_origin=(-1738.75, 15.684, 173.354) yaw=-100.0 dy=-5.33 gx=nan gedikler_yerel=[]
-SUROYUN_KUR pempton ms=362 { "oyun_ms": 126.409, "yan_ms": 229.699, "uzak_ms": 0.004, "zemin_ms": 0.418, "parca_ms": 5.051, "toplam_ms": 361.965 }
+SUROYUN_KUR pempton ms=356 { "oyun_ms": 107.543, "yan_ms": 241.118, "uzak_ms": 0.005, "zemin_ms": 0.472, "parca_ms": 7.287, "toplam_ms": 356.591 }
 SUROYUN_TUR pempton batarya nokta=2 havada=0 gomuk=0 katida=0
 SUROYUN_TUR pempton cikis nokta=12 havada=0 gomuk=0 katida=0
 SUROYUN_TUR pempton dayama_ayak nokta=5 havada=0 gomuk=0 katida=0
@@ -94,11 +94,11 @@ SUROYUN_TUR pempton gecis_kapi_kopru nokta=2 havada=0 gomuk=0 katida=0
 SUROYUN_TUR pempton kapi nokta=3 havada=0 gomuk=0 katida=0
 SUROYUN_TUR pempton mazgal_dis nokta=28 havada=0 gomuk=0 katida=0
 SUROYUN_TUR pempton mazgal_ic nokta=20 havada=0 gomuk=0 katida=0
-SUROYUN_TUR pempton poterna nokta=3 havada=0 gomuk=0 katida=0
+SUROYUN_TUR pempton poterna nokta=4 havada=0 gomuk=0 katida=0
 SUROYUN_TUR pempton yol_dis nokta=2 havada=0 gomuk=0 katida=0
 SUROYUN_TUR pempton yol_ic nokta=6 havada=0 gomuk=0 katida=0
 SUROYUN_YER pempton xf_origin=(-1466.668, 15.997, -640.239) yaw=-128.7 dy=-8.81 gx=nan gedikler_yerel=[]
-SUROYUN_KUR kharisios ms=332 { "oyun_ms": 88.036, "yan_ms": 239.528, "uzak_ms": 0.003, "zemin_ms": 0.506, "parca_ms": 4.483, "toplam_ms": 332.785 }
+SUROYUN_KUR kharisios ms=313 { "oyun_ms": 78.722, "yan_ms": 225.34, "uzak_ms": 0.004, "zemin_ms": 0.505, "parca_ms": 8.101, "toplam_ms": 313.338 }
 SUROYUN_TUR kharisios batarya nokta=2 havada=0 gomuk=0 katida=0
 SUROYUN_TUR kharisios cikis nokta=12 havada=0 gomuk=0 katida=0
 SUROYUN_TUR kharisios dayama_ayak nokta=5 havada=0 gomuk=0 katida=0
@@ -114,11 +114,11 @@ SUROYUN_TUR kharisios gecis_kapi_kopru nokta=2 havada=0 gomuk=0 katida=0
 SUROYUN_TUR kharisios kapi nokta=3 havada=0 gomuk=0 katida=0
 SUROYUN_TUR kharisios mazgal_dis nokta=28 havada=0 gomuk=0 katida=0
 SUROYUN_TUR kharisios mazgal_ic nokta=16 havada=0 gomuk=0 katida=0
-SUROYUN_TUR kharisios poterna nokta=3 havada=0 gomuk=0 katida=0
+SUROYUN_TUR kharisios poterna nokta=4 havada=0 gomuk=0 katida=0
 SUROYUN_TUR kharisios yol_dis nokta=2 havada=0 gomuk=0 katida=0
 SUROYUN_TUR kharisios yol_ic nokta=6 havada=0 gomuk=0 katida=0
 SUROYUN_YER kharisios xf_origin=(-1276.29, 18.584, -897.641) yaw=-146.2 dy=-11.14 gx=nan gedikler_yerel=[]
-SUROYUN_KUR altin_kapi ms=307 { "oyun_ms": 70.689, "yan_ms": 230.973, "uzak_ms": 0.004, "zemin_ms": 0.399, "parca_ms": 4.297, "toplam_ms": 306.709 }
+SUROYUN_KUR altin_kapi ms=278 { "oyun_ms": 64.407, "yan_ms": 209.502, "uzak_ms": 0.004, "zemin_ms": 0.388, "parca_ms": 3.836, "toplam_ms": 278.221 }
 SUROYUN_TUR altin_kapi batarya nokta=2 havada=0 gomuk=0 katida=0
 SUROYUN_TUR altin_kapi cikis nokta=12 havada=0 gomuk=0 katida=0
 SUROYUN_TUR altin_kapi dayama_ayak nokta=5 havada=0 gomuk=0 katida=0
@@ -133,11 +133,11 @@ SUROYUN_TUR altin_kapi gecis_kalas nokta=2 havada=0 gomuk=0 katida=0
 SUROYUN_TUR altin_kapi gecis_kapi_kopru nokta=2 havada=0 gomuk=0 katida=0
 SUROYUN_TUR altin_kapi mazgal_dis nokta=26 havada=0 gomuk=0 katida=0
 SUROYUN_TUR altin_kapi mazgal_ic nokta=13 havada=0 gomuk=0 katida=0
-SUROYUN_TUR altin_kapi poterna nokta=3 havada=0 gomuk=0 katida=0
+SUROYUN_TUR altin_kapi poterna nokta=4 havada=0 gomuk=0 katida=0
 SUROYUN_TUR altin_kapi yol_dis nokta=2 havada=0 gomuk=0 katida=0
 SUROYUN_TUR altin_kapi yol_ic nokta=6 havada=0 gomuk=0 katida=0
 SUROYUN_YER altin_kapi xf_origin=(-1700.055, 9.992, 594.23) yaw=-158.4 dy=0.00 gx=nan gedikler_yerel=[]
-SUROYUN_KUR ksylokerkos ms=313 { "oyun_ms": 72.318, "yan_ms": 235.172, "uzak_ms": 0.005, "zemin_ms": 0.489, "parca_ms": 4.555, "toplam_ms": 313.165 }
+SUROYUN_KUR ksylokerkos ms=300 { "oyun_ms": 65.117, "yan_ms": 224.322, "uzak_ms": 0.005, "zemin_ms": 0.629, "parca_ms": 9.107, "toplam_ms": 299.598 }
 SUROYUN_TUR ksylokerkos batarya nokta=2 havada=0 gomuk=0 katida=0
 SUROYUN_TUR ksylokerkos cikis nokta=12 havada=0 gomuk=0 katida=0
 SUROYUN_TUR ksylokerkos dayama_ayak nokta=5 havada=0 gomuk=0 katida=0
@@ -152,8 +152,8 @@ SUROYUN_TUR ksylokerkos gecis_kalas nokta=2 havada=0 gomuk=0 katida=0
 SUROYUN_TUR ksylokerkos gecis_kapi_kopru nokta=2 havada=0 gomuk=0 katida=0
 SUROYUN_TUR ksylokerkos mazgal_dis nokta=28 havada=0 gomuk=0 katida=0
 SUROYUN_TUR ksylokerkos mazgal_ic nokta=18 havada=0 gomuk=0 katida=0
-SUROYUN_TUR ksylokerkos poterna nokta=3 havada=0 gomuk=0 katida=0
+SUROYUN_TUR ksylokerkos poterna nokta=4 havada=0 gomuk=0 katida=0
 SUROYUN_TUR ksylokerkos yol_dis nokta=2 havada=0 gomuk=0 katida=0
 SUROYUN_TUR ksylokerkos yol_ic nokta=6 havada=0 gomuk=0 katida=0
 SUROYUN_YER ksylokerkos xf_origin=(-1729.621, 14.842, 528.532) yaw=-80.3 dy=-4.77 gx=nan gedikler_yerel=[]
-SUROYUN nokta=1178 havada=0 gomuk=0 katida=0
+SUROYUN nokta=1186 havada=0 gomuk=0 katida=0

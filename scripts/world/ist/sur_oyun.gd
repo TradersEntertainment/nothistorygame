@@ -303,15 +303,21 @@ func kapi() -> Dictionary:
 		return {}
 	return {"en": gw, "boy": float(kesim["kapi"]["gh"]), "kapali": bool(kesim["kapi"]["kapali"]),
 		"ic_esik": n(Vector3(0.0, y_peri(), float(d["zi0"]) - 1.5)), "peri": n(Vector3(0.0, y_peri(), (float(d["zi1"]) + float(d["zo0"])) * 0.5)),
-		"dis_esik": n(Vector3(0.0, y_teras(), float(d["zo1"]) + 1.5)),
+		"dis_esik": n(Vector3(0.0, y_teras() if y_teras() > -0.3 else lerpf(-0.04, dy + 0.02, (1.5 - 0.6) / (float(d["zm0"]) - 0.9 - float(d["zo1"]) - 0.6)), float(d["zo1"]) + 1.5)),
 		"kopru_yakin": n(Vector3(0.0, dy, float(d["zm0"]) + 4.5)), "kopru_uzak": n(Vector3(0.0, dy, float(d["zm1"]) - 4.5))}
 
 
 ## Poterna (karar 10-A): {"x", "en", "boy", "ic" (peribolos tarafı), "dis" (teras tarafı), "esik"}
 func poterna() -> Dictionary:
 	var x := float(kesim["oyun"]["poterna"])
+	var dis := Vector3(x, y_teras(), float(d["zo1"]) + 1.6)
+	var sah := Vector3(x, -0.02, float(d["zo1"]) + 0.65)
+	if y_teras() < -0.3:
+		# dış kuşak aşağıda: kapı önünde sahanlık, sur yüzü boyunca +x'e inen taş basamak (sur_oyun_parca Poterna)
+		var nst := ceili((-0.02 - y_teras()) / IstSurlar.STEP_RISE)
+		dis = Vector3(x + IstSurlar.POTERNA_W * 0.5 + 0.4 + nst * 0.32 + 0.9, y_teras(), float(d["zo1"]) + 0.65)
 	return {"x": x, "en": IstSurlar.POTERNA_W, "boy": IstSurlar.POTERNA_H, "esik": n(Vector3(x, y_peri(), zc_dis())),
-		"ic": n(Vector3(x, y_peri(), float(d["zo0"]) - 1.4)), "dis": n(Vector3(x, y_teras(), float(d["zo1"]) + 1.6))}
+		"ic": n(Vector3(x, y_peri(), float(d["zo0"]) - 1.4)), "sahanlik": n(sah), "dis": n(dis)}
 
 
 ## Yürünür alanlar (yerel Rect2 x/z + y). Engeller ayrı (engeller()).
@@ -356,7 +362,7 @@ func engeller() -> Array:
 	if gw > 0.0:
 		r.append(Rect2(-gw * 0.5 - 2.0, zi0 - 3.0, gw + 4.0, float(d["zm1"]) - zi0 + 6.0))
 	var pt := float(kesim["oyun"]["poterna"])
-	r.append(Rect2(pt - 2.0, zo0 - 3.0, 4.0, float(d["OT"]) + 6.0))
+	r.append(Rect2(pt - 2.0, zo0 - 3.0, 10.0, float(d["OT"]) + 6.0))
 	for dm in dayamalar():
 		var ay: Vector3 = dm["ayak"]["yerel"]
 		r.append(Rect2(float(dm["x"]) - 1.5, zo1, 3.0, ay.z - zo1 + 2.0))
@@ -442,7 +448,7 @@ func noktalar() -> Array:
 		for u in ["ic_esik", "peri", "dis_esik"]:
 			out.append({"tur": "kapi", "ad": u, "n": kp[u], "bek": "zemin"})
 	var pt := poterna()
-	for u in ["ic", "esik", "dis"]:
+	for u in ["ic", "esik", "sahanlik", "dis"]:
 		out.append({"tur": "poterna", "ad": u, "n": pt[u], "bek": "zemin"})
 	for al in ["sehir", "peribolos", "teras", "ova"]:
 		for q in dogma(al, 10):
@@ -482,9 +488,14 @@ static func kur(p_id: String, sec := {}) -> Dictionary:
 	o["para_gecit"] = pg
 	if not is_nan(a.gx):
 		o["gedik_sade"] = [a.gx]
+	if float(a.kesim["kapi"]["gw"]) > 0.0 and not bool(a.kesim["kapi"]["kapali"]) and bool(sec.get("parca", true)):
+		o["kanat_disarida"] = true
 	var oyun := Node3D.new()
 	oyun.name = "OyunDilimi"
 	kok.add_child(oyun)
+	if not kok.is_inside_tree():
+		push_warning("SurOyun.kur: ebeveyn verilmedi; dış kademe (dy) sözleşmeden okunamaz, 0 kabul edilir")
+	a._dy_kaydet(oyun)
 	IstSurlar._run(oyun, a.L, SZ.K, 0, SZ.tohum(p_id), o)
 	olc["oyun_ms"] = (Time.get_ticks_usec() - t1) / 1000.0
 	# yan dilimler
@@ -495,6 +506,7 @@ static func kur(p_id: String, sec := {}) -> Dictionary:
 			yd.name = String(yn["ad"])
 			yd.position.x = float(yn["x"])
 			kok.add_child(yd)
+			a._dy_kaydet(yd)
 			IstSurlar._run(yd, float(yn["L"]), SZ.K, 0, int(yn["tohum"]), yn["secenek"])
 	olc["yan_ms"] = (Time.get_ticks_usec() - t2) / 1000.0
 	# uzak katman
@@ -506,6 +518,7 @@ static func kur(p_id: String, sec := {}) -> Dictionary:
 				ud.name = "Uzak_%d_%d" % [int(s), k]
 				ud.position.x = s * (a.yan_uc(s) + SZ.YAN_L * (0.5 + k))
 				kok.add_child(ud)
+				a._dy_kaydet(ud)
 				IstSurlar._run(ud, SZ.YAN_L, SZ.K, 2, SZ.tohum(p_id) + 31 + k + (0 if s < 0.0 else 5), {"ad": "SurDilimi"})
 	olc["uzak_ms"] = (Time.get_ticks_usec() - t3) / 1000.0
 	# zemin
@@ -532,6 +545,16 @@ func yanlar() -> Array:
 		out.append({"ad": yn["ad"], "x": float(yn["x"]), "L": float(yn["L"]), "tohum": int(yn["tohum"]), "secenek": o,
 			"merdiven": yn["merdiven"], "kule": yn["kule"]})
 	return out
+
+
+## Dilim kurulmadan önce: kurucu dış kademeyi (dy) OTURTMA kaydından okur (IstSurlar.dis_dy → OTURTMA.dy_bul). Kesim
+## sahnesinde bütün dilimler sözleşmedeki tek dy'yi kullanır (teras/hendek dilimden dilime aynı düzde; yerel kipte kök
+## orijinde olsa da doğru).
+func _dy_kaydet(host: Node3D) -> void:
+	if not host.is_inside_tree():
+		return
+	var g := host.global_position
+	IstSurlar.OTURTMA.dy_kayit.append([Vector2(g.x, g.z), dy])
 
 
 ## Yan dilimin dış ucu (|x|)

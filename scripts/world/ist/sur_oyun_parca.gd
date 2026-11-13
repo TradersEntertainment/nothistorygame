@@ -79,6 +79,13 @@ static func kur_hepsi(kok: Node3D, a: RefCounted, sec: Dictionary) -> Dictionary
 					dl.doluluk(float(sec.get("dolgu", 0.0)))
 					out["dolgu"] = dl
 				"kapi_kopru":
+					if not bool(a.kesim["kapi"]["kapali"]):
+						var kn := KapiKanat.new()
+						kn.name = "Ahsap_KapiKanat"
+						kn.kur(a)
+						p.add_child(kn)
+						kn.ac(bool(sec.get("kapi_acik", false)), false)
+						out["kapi_kanat"] = kn
 					var kk := KapiKopru.new()
 					kk.name = "Ahsap_KapiKopru"
 					kk.kur(a)
@@ -113,6 +120,7 @@ class Poterna extends Node3D:
 	var kanat_govde: StaticBody3D
 	var acik := false
 	var x := 0.0
+	var basamak_uc := Vector3.INF      # dış basamağın teras ucu (yoksa INF)
 
 	func kur(a: RefCounted) -> void:
 		var d: Dictionary = a.d
@@ -168,6 +176,17 @@ class Poterna extends Node3D:
 		for yy: float in [0.35, h - 0.55]:
 			dag.kutu(Vector3((w - 0.06) * 0.5, yy, 0.04), Vector3.RIGHT, Vector3.BACK, w - 0.16, 0.07, 0.025)
 		dag.mesh_ekle(kanat, Props.mat(Color("3a3634"), 0.0, false, ""), "Demir_PoternaKusak")
+		# dış kuşak aşağıdaysa (dy < 0; Mesoteikhion −3,7 m): kapının önünde taş sahanlık ve sur yüzü boyunca +x'e
+		# inen taş basamak (0,26 × 0,32), terasa
+		var dis_y: float = a.y_teras()
+		if dis_y < -0.3:
+			var rise := -0.02 - dis_y
+			var nst := ceili(rise / IstSurlar.STEP_RISE)
+			var tr := 0.32
+			var sw := 1.3
+			IstSurlar._s(self, Vector3(x - w * 0.5 - 0.5, dis_y - 0.5, zo1), Vector3(x + w * 0.5 + 0.4, -0.02, zo1 + sw), tas, "flagstone", 0)
+			IstSurlar._stairs_x(self, x + w * 0.5 + 0.4 + nst * tr, -1.0, zo1 + sw * 0.5, sw, dis_y, rise, nst, tr, tas, 0)
+			basamak_uc = Vector3(x + w * 0.5 + 0.4 + nst * tr + 0.9, dis_y, zo1 + sw * 0.5)
 		kanat_govde = StaticBody3D.new()
 		var kc := CollisionShape3D.new()
 		var kb := BoxShape3D.new()
@@ -324,6 +343,15 @@ class KapiKopru extends Node3D:
 		var za := float(d["zm0"]) + 4.3
 		var zb := float(d["zm1"]) - 4.3
 		var y := dy + 0.02
+		# dış kuşak aşağıdaysa (dy < 0): dış kapı eşiğinden terasa toprak rampa (≈ 21°; köprünün hâlinden bağımsız)
+		if a.y_teras() < -0.3:
+			var zo1 := float(d["zo1"])
+			var rp := [Vector2(zo1 - 0.3, -0.02), Vector2(zo1 + 0.6, -0.04), Vector2(float(d["zm0"]) - 0.9, dy + 0.02), Vector2(float(d["zm0"]) + 0.2, dy + 0.02)]
+			var rng0 := RandomNumberGenerator.new()
+			rng0.seed = 5
+			var tb := func(z: float) -> float:
+				return a.y_teras() if z > zo1 else 0.0
+			PARCA_._tumsek(self, 0.0, rp, gw + 0.4, 1.4, tb, C_TOPRAK, "Toprak_KapiRampasi", rng0)
 		saglam = Node3D.new()
 		saglam.name = "Ahsap_KapiKopruSaglam"
 		add_child(saglam)
@@ -382,6 +410,59 @@ class KapiKopru extends Node3D:
 		yikik.visible = not ok
 		for cs in saglam.find_children("*", "CollisionShape3D", true, false):
 			(cs as CollisionShape3D).set_deferred("disabled", not ok)
+
+
+# ------------------------------------------------------------------ KAPI KANATLARI (26 / 8y / 31o: kapı açılır)
+
+## İç surda ve dış surun geçidinde ikişer kanat (IstSurlarKapi'nin kapalı kanatlarıyla aynı yer ve ölçü: zk = zi0/zo0 + 0,45,
+## kalınlık 0,28, boy gh − 0,2); menteşe kenarda, kanat şehir yanına (−z) 95° açılır. Çarpışma kanatla döner.
+class KapiKanat extends Node3D:
+	var kanatlar: Array = []
+	var acik := false
+
+	func kur(a: RefCounted) -> void:
+		var d: Dictionary = a.d
+		var gw := float(a.kesim["kapi"]["gw"])
+		var gh := float(a.kesim["kapi"]["gh"])
+		var OH := float(d["OH"])
+		for zk: float in [float(d["zi0"]) + 0.45, float(d["zo0"]) + 0.45]:
+			var hk := gh - 0.2 if zk < float(d["zi1"]) else minf(gh, OH - 1.0) - 0.2
+			for sx: float in [-1.0, 1.0]:
+				var mente := Node3D.new()
+				mente.position = Vector3(sx * gw * 0.5, 0.0, zk + 0.14)
+				mente.set_meta("yon", sx)
+				add_child(mente)
+				var ag = KULE.Ag.new()
+				var w := gw * 0.5
+				var n := 4
+				for i in n:
+					var x0 := -sx * (w * float(i) / n)
+					var x1 := -sx * (w * float(i + 1) / n)
+					ag.kutu(Vector3((x0 + x1) * 0.5, 0.0, -0.14), Vector3.RIGHT, Vector3.BACK, absf(x1 - x0) - 0.01, hk, 0.28,
+						Color(1, 1, 1) if i % 2 == 0 else Color(0.9, 0.86, 0.8))
+				ag.mesh_ekle(mente, Props.mat(IstSurlarKapi.C_WOOD, 0.0, false, "wood"), "Ahsap_KanatTahta")
+				var dg = KULE.Ag.new()
+				for yy: float in [0.7, hk * 0.5, hk - 0.7]:
+					dg.kutu(Vector3(-sx * w * 0.5, yy, -0.17), Vector3.RIGHT, Vector3.BACK, w - 0.2, 0.14, 0.03)
+				dg.mesh_ekle(mente, Props.mat(IstSurlarKapi.C_IRON, 0.0, false, ""), "Demir_KanatKusak")
+				var b := StaticBody3D.new()
+				var cs := CollisionShape3D.new()
+				var bs := BoxShape3D.new()
+				bs.size = Vector3(w, hk, 0.28)
+				cs.shape = bs
+				b.add_child(cs)
+				b.position = Vector3(-sx * w * 0.5, hk * 0.5, 0.0)
+				mente.add_child(b)
+				kanatlar.append(mente)
+
+	func ac(p_acik: bool, anim := true) -> void:
+		acik = p_acik
+		for m: Node3D in kanatlar:
+			var hedef := deg_to_rad(95.0) * float(m.get_meta("yon")) if acik else 0.0
+			if anim and is_inside_tree():
+				create_tween().tween_property(m, "rotation:y", hedef, 1.6).set_trans(Tween.TRANS_SINE)
+			else:
+				m.rotation.y = hedef
 
 
 # ------------------------------------------------------------------ HÜCUM MERDİVENİ (karar 2-A, 3, 8-A)

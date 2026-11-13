@@ -585,13 +585,25 @@ static func _run(host: Node3D, L: float, k: float, lod: int, seed: int, o: Dicti
 		gk.append([float(gx) - GEDIK_W * 0.5 - 1.0, float(gx) + GEDIK_W * 0.5 + 1.0])
 	kes["kule_ic"] = ki
 	kes["kule_dis"] = kd
+	# SUR-OYUN 4e (§3.4): taş merdivenlerin ayak izi (+1 m): kule kaidesi eteği burada yere iner (iç kulenin eteği
+	# merdivenin ilk basamağının üstüne taşıyordu: 0,28 m etek > 0,255 m basamak → oyuncu basamağın 0,5 m önünde takılıyordu)
+	var yasak: Array = []
+	if lay.has("in_x0"):
+		yasak.append(Rect2(float(lay["in_x0"]) - 1.2, zi0 - 3.2, float(lay["in_x1"]) - float(lay["in_x0"]) + 3.2, 3.4))
+	if lay.has("out_x0"):
+		yasak.append(Rect2(float(lay["out_x0"]) - 1.2, zo0 - 3.2, float(lay["out_x1"]) - float(lay["out_x0"]) + 2.8, 3.4))
+	kes["yasak"] = yasak
 	kes["gedik"] = gk
 	kes["peri"] = (kes["peri"] as Array) + gk
 	if lay.has("ramp_a_x"):
 		kes["para"] = kp + [[float(lay["ramp_a_x"]) - 2.6, float(lay["ramp_a_x"]) + 1.6]] + gk
 	# SUR-OYUN (seçenekle): poterna ve parateikhion geçitlerinin önünde etek kurulmaz (girişte takılma olmasın)
 	if o.has("poterna"):
-		var ptr := [[float(o["poterna"]) - POTERNA_W * 0.5 - 0.8, float(o["poterna"]) + POTERNA_W * 0.5 + 0.8]]
+		# dış kuşak aşağıdaysa poternanın önünde +x'e inen taş basamak var (sur_oyun_parca): etek onun da önünden kalkar
+		var pdx := POTERNA_W * 0.5 + 0.8
+		if dy + -0.12 < -0.3:
+			pdx = POTERNA_W * 0.5 + 0.4 + ceili((-0.02 - (dy - 0.12)) / STEP_RISE) * 0.32 + 1.2
+		var ptr := [[float(o["poterna"]) - POTERNA_W * 0.5 - 0.8, float(o["poterna"]) + pdx]]
 		kes["peri"] = (kes["peri"] as Array) + ptr
 		kes["gedik"] = (kes["gedik"] as Array) + ptr
 	for pg in o.get("para_gecit", []):

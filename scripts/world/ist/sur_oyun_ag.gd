@@ -17,8 +17,9 @@ static func moloz_profil(a: RefCounted) -> Dictionary:
 		Vector2(zo0, 1.12),
 		Vector2((zo0 + zo1) * 0.5, 1.30),
 		Vector2(zo1, 1.12),
-		Vector2(zo1 + 4.0, dy + 0.30),
-		Vector2(zm0 - 1.2, dy + 0.12),
+		# terasa iniş bütün terasa yayılır (dış kademe dy aşağıdaysa şev ≤ ~30°; Mesoteikhion dy −3,7)
+		Vector2(lerpf(zo1, zm0 - 1.0, 0.5), lerpf(1.12, dy + 0.15, 0.55)),
+		Vector2(zm0 - 1.0, dy + 0.15),
 		Vector2(zm0 + 0.2, dy + 0.02),
 		Vector2(zm0 + 13.0, dy - MD + 0.02),
 	]
