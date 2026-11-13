@@ -12,8 +12,13 @@ Taban kayıt: `9f32c394` (önceki oturum; kanıtsız).
 - 3. Öteki bölümler: 21 bölüm varsayılan PASS, denetim 0. 26 `=hold_box`: 6+8 koşuda 2 `VISAUDIT overlap`; taban
   kayıtta (20948418) da 12'de 1 (Squad/Squad) → pilot öncesinden. `spear_loop` hedef ayırma eklendi (yarış durumu).
 
+- 4. Sözleşme: `SURSOZLESME PASS kalem=13 kesim=8`, `SUROYUN nokta=519 havada=0 gomuk=0 katida=0`,
+  `WALKTHRU OZET yol=7 tamam=7 takilma=0 dusme=0`.
+- 5. Yürüyüş: iki sette 10 bacak, takılma 0, düşme 0, etkileşim eksiği 0 (`testler/yuruyus_*.txt`).
+
 ## Süren
-- 4. sözleşme denetimleri.
+- 6. Kareler: `=kare` ışınlamalı (yazılımsal GL'de gerçek yürüyüşle saatler sürüyordu); tüfek evresi bu çeşitte atlanır.
+- 8. Bütçe: ilk ölçüm (eşzamanlı koşu; eski "hava" eksik) `testler/butce_*_ilk.txt`; tek başına yeniden ölçülecek.
 
 ## Sıradaki
 - 5. yürüyüş, 6. kareler, 7. görsel kusurlar (teşhis aracı hazır), 8. bütçe, son tam matris, 9. rapor.

@@ -1,0 +1,7 @@
+OpenGL API 4.5 (Core Profile) Mesa 25.2.8-0ubuntu0.24.04.4 - Compatibility - Using Device: Mesa - llvmpipe (LLVM 20.1.2, 256 bits)
+SURSET kesim=mesoteikhion kurulum_ms=3276 sur_ms=756 set_ms=2514
+PILOT20KURULUM sur=yeni set_ms=3277 bolum_ms=1435 toplam_ms=4712
+PILOT20BUTCE sur=yeni bakis=peribolos cizim=3462 ilkel=5720560
+PILOT20BUTCE sur=yeni bakis=gedik_agzi cizim=4302 ilkel=7763033
+PILOT20BUTCE sur=yeni bakis=sur_yolu cizim=4226 ilkel=5131132
+PILOT20BUTCE sur=yeni bakis=hava cizim=9993 ilkel=8300388

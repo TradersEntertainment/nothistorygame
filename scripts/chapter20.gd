@@ -565,6 +565,8 @@ func _see_giust(back: Vector3) -> void:
 ## Hücumun sonu: Giustiniani bir Ceneviz tüfeği verir; Tolga dış surun yürüyüş yolundan, gediğe koşan dört azabı
 ## vurmaya çalışır (4 atış, 25 sn). Vurulmayanlar gediğe varır ve gedik dövüşünün ikinci dalgasına katılır.
 func _gun_phase() -> void:
+	if GameState.autotest and GameState.autotest_variant == "kare":
+		return          # =kare (yalnız kare çeşidi): tüfek evresi ekranlı yazılımsal GL'de çok uzun; düello karesine geçilir
 	if carrying != "":
 		_drop()
 	var back := player.global_position
@@ -883,13 +885,37 @@ func _kare(ad: String) -> void:
 	if dir == "":
 		return
 	DirAccess.make_dir_recursive_absolute(dir)
+	# =kare: gece saati yürüyüşte 9999'a sabit (top ve hücum kendiliğinden gelmesin); karede saat onarıma göre gerçekçi
+	# görünsün (HUD'da "Saat -9.-31" çıkıyordu)
+	var saat := _time
+	if phase == "work" and _time > NIGHT:
+		_time = NIGHT * (0.92 - 0.04 * repair)
 	for k in 3:
 		await get_tree().process_frame
 	await RenderingServer.frame_post_draw
+	if saat > NIGHT:
+		_time = saat
 	_kare_n += 1
 	var f := dir.path_join("an_%02d_%s.jpg" % [_kare_n, ad])
 	get_viewport().get_texture().get_image().save_jpg(f, 0.85)
 	print("PILOT20KARE %s repair=%d asama=%d phase=%s oyuncu=%s" % [f.get_file(), repair, SurSet.asama_of(repair), phase, player.global_position])
+
+
+var _asama4_ok := false
+
+func _kare_asama4() -> void:
+	_asama4_ok = true
+	await _kare_gedik("onarim_asama4")
+
+
+## Onarım karesi: teslim yerinin 1,6 m gerisinden ve solundan (taşıyıcıların varış noktası teslim yerinin hemen önü:
+## oradan bakınca kamerayı bir taşıyıcı kapatıyordu), barikata bakarak; sonra teslim yerine döner
+func _kare_gedik(ad: String) -> void:
+	var p := player.global_position
+	player.global_position = p + Vector3(-1.4, 0, -1.6)
+	player.face(sur.barikat() + Vector3(0, 0.3, 0))
+	await _kare(ad)
+	player.global_position = p
 
 
 func _yuru() -> void:
@@ -923,11 +949,9 @@ func _yuru() -> void:
 	while (kare and repair < 9) or (not kare and yk < 3):
 		await _yb("depo_gedik_%d" % (yk + 1), [g_on], g_bak, "breach", "gedige_tasima" if kare and yk == 0 else "")
 		if kare and repair == 3 and _kare_n < 4:
-			player.face(sur.barikat())
-			await _kare("onarim_asama2")
-		if kare and repair == 9:
-			player.face(sur.barikat())
-			await _kare("onarim_asama4")
+			await _kare_gedik("onarim_asama2")
+		if kare and repair >= 9:
+			await _kare_asama4()
 			break
 		if kare and repair >= 4 and not siper_ok:
 			# top uyarısı: bölümün kendi akışı (_process) ateşler; oyuncu siperin ardında
@@ -947,6 +971,10 @@ func _yuru() -> void:
 		if (kare and repair < 9) or (not kare and yk < 3):
 			var pl := _yigin(needed())
 			await _yb("gedik_depo_%d" % yk, [pl[0]], pl[1], "pile_" + needed())
+	if kare and not _asama4_ok:
+		# taşıyıcı ekip de yük getirir: sayaç döngünün dışında (depoya dönerken) 9'a varabilir
+		await _yb("depo_gedik_son", [g_on], Vector3.INF, "")
+		await _kare_asama4()
 	if kare:
 		# hücum: gece saati gece yarısına (bölümün kendi _start_assault'u, _process'ten)
 		_time = NIGHT * (1.0 - ASSAULT_AT) + 0.2
@@ -1003,6 +1031,17 @@ func _yb(ad: String, wps: Array, bak: Vector3, etk: String, ara_kare := "") -> v
 	var dus := 0
 	var dus_on := false
 	var notlar: Array = []
+	if GameState.autotest_variant == "kare":
+		# =kare: bacak yürünmez, ışınlanır (yürüyüş =yuru'da ölçülür). Ekranlı yazılımsal GL'de kare başına ≈1,3 sn ve fizik
+		# kare başına en çok 8 adım: gerçek yürüyüşle on an saatler sürüyordu. Ara kare bacağın ortasından, hedefe bakarak.
+		var son_wp: Vector3 = wps[wps.size() - 1]
+		if ara_kare != "":
+			var orta := player.global_position.lerp(son_wp, 0.5)
+			player.global_position = Vector3(orta.x, sur.zemin_y(orta.x, orta.z) + 0.05 if not sur.eski_mi else orta.y, orta.z)
+			player.face(Vector3(son_wp.x, player.global_position.y + 1.2, son_wp.z) if bak == Vector3.INF else bak)
+			await _kare(ara_kare)
+		player.global_position = son_wp + Vector3(0, 0.05, 0)
+		i = wps.size()
 	while i < wps.size() and t < 90.0:
 		var wp: Vector3 = wps[i]
 		player.face(Vector3(wp.x, player.global_position.y + 1.4, wp.z))
