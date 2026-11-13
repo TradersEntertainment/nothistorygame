@@ -609,7 +609,7 @@ static func hendek_kesit(p: Node3D, x0: float, x1: float, z0: float, z1: float, 
 					var sc := 0.35 + hz2 * 0.5
 					kl.append(Transform3D(Basis.from_euler(Vector3(hz2 * 2.0, hz2 * 6.0, 0.3)).scaled(Vector3(sc * 1.3, sc * 0.7, sc)), Vector3(xm2 + (hz2 - 0.5) * 2.0, -md + sc * 0.25, z1 - 2.5 - hz2 * 4.0)))
 		if kl.size() > 0:
-			Scenery.scatter(p, KULE.kaya_mesh(), kl, [], Props.mat(Color("948a76"), 0.0, false, "rubble"))
+			Scenery.scatter(p, KULE.kaya_mesh(), kl, [], load("res://scripts/world/ist/sur_gorunus.gd").kaya_tas_mat())      # TUR-7
 
 
 

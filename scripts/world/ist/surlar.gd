@@ -947,7 +947,7 @@ static func _gedik(root: Node3D, lay: Dictionary, gx: float, lod: int, stone: Co
 		var sc := rng.randf_range(0.35, 1.1)
 		var yy := 1.6 * (1.0 - r) + sc * 0.2
 		kl.append(Transform3D(Basis.from_euler(Vector3(rng.randf_range(-0.6, 0.6), rng.randf() * TAU, rng.randf_range(-0.6, 0.6))).scaled(Vector3(sc * 1.3, sc * 0.7, sc)), Vector3(px, yy, pz)))
-	Scenery.scatter(root, KULE.kaya_mesh(), kl, [], Props.mat(stone.darkened(0.12), 0.0, false, "ashlar_far"))
+	Scenery.scatter(root, KULE.kaya_mesh(), kl, [], load("res://scripts/world/ist/sur_gorunus.gd").kaya_tas_mat())      # TUR-7: kaya üstünde blok deseni yok
 	ag.mesh_ekle(root, KULE._tas_mat(stone.darkened(0.05), lod), "GedikBeden")
 	if lod == 1 or sade:
 		if sade and root.is_inside_tree():

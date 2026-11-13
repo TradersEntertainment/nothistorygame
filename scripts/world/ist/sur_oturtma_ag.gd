@@ -486,5 +486,6 @@ static func kur(root: Node3D, lay: Dictionary, lod: int, xw: Array, dy: float, k
 			_tas_mat.albedo_color = Color("8e8472")
 			_tas_mat.roughness = 1.0
 		_mm(root, ot_mesh(), e["ot"], _ot_mat, "SurDibiOt")
-		_mm(root, KULE.kaya_mesh(), e["tas"], KULE._tas_mat(Color("9a8f7c"), 0), "SurDibiTas")
+		# TUR-7: düşmüş taş ince taneli kireçtaşı (kaya üstünde blok deseni ahşap damarı gibi okunuyordu)
+		_mm(root, KULE.kaya_mesh(), e["tas"], load("res://scripts/world/ist/sur_gorunus.gd").kaya_tas_mat(), "SurDibiTas")
 		_mm(root, cali_mesh(), e["cali"], _ot_mat, "SurDibiCali")

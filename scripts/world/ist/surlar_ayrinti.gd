@@ -68,7 +68,7 @@ static func build(root: Node3D, lay: Dictionary, o: Dictionary) -> void:
 				_oyuk(iz, Vector3(x, rng.randf_range(OH + 0.6, HW - 1.0), zi1), rng.randf_range(0.4, 0.8), rng)
 	iz.mesh_ekle(root, _iz_mat(), "Tas_GulleIzi", false)
 	if dok.size() > 0:
-		Scenery.scatter(root, IstSurlar.KULE.kaya_mesh(), dok, [], IstSurlar.KULE._tas_mat(stone.darkened(0.12), 0))
+		Scenery.scatter(root, IstSurlar.KULE.kaya_mesh(), dok, [], load("res://scripts/world/ist/sur_gorunus.gd").kaya_tas_mat())
 	# ---- stauroma: dış sur tepesinde tahta perde, toprak dolu fıçılar (korkuluk üstünde) ve kazıklar
 	var n_st := 2 + int(dmg * 2.0)
 	for i in n_st:
@@ -208,8 +208,10 @@ static func _oyuk(ag, p: Vector3, r: float, rng: RandomNumberGenerator) -> void:
 		var a := TAU * k / n + rng.randf_range(-0.2, 0.2)
 		var rr := r * rng.randf_range(0.75, 1.3)
 		kenar.append(Vector2(cos(a) * rr * 1.15, sin(a) * rr))
-	var taze := Color(0.56, 0.52, 0.44)       # TUR-7: kırık taşın tozu, duvardan az açık (beyaz leke değil)
-	var golge := Color(0.33, 0.30, 0.25)
+	# TUR-7: kırık taşın tozu duvarla aynı değerde (köşe renkli toon malzeme sur taşı gölgelendiricisinden açık okunuyordu:
+	# güneşte krem altıgen hale), iç gölge ve is koyu
+	var taze := Color(0.45, 0.41, 0.34)
+	var golge := Color(0.27, 0.24, 0.20)
 	var is_ := Color(0.16, 0.14, 0.12)
 	var halkalar := [[1.0, 0.012, taze], [0.72, 0.016, golge], [0.4, 0.02, is_]]
 	for h in halkalar.size():

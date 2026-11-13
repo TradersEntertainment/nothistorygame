@@ -125,12 +125,29 @@ static func kesim_zemin(kok: Node3D) -> void:
 			var sm := m.get_active_material(si) as StandardMaterial3D
 			if sm != null and sm.albedo_texture == rub:
 				m.set_surface_override_material(si, _moloz_mat(sm.albedo_color))
+	# TUR-7: oyun parçalarının kırık taşları (kaya ağı) duvar deseniyle ("ashlar_far") boyanmıştı: yakından ahşap damarlı
+	# tan topak okunuyordu. Sur dibi düşmüş taşlarıyla aynı taş malzemesi
+	var asf: Texture2D = Props.mat(Color.WHITE, 0.0, false, "ashlar_far").albedo_texture
+	var kaya: Mesh = load("res://scripts/world/ist/sur_kule.gd").kaya_mesh()
+	for n3 in kok.find_children("*", "MultiMeshInstance3D", true, false):
+		var mmi := n3 as MultiMeshInstance3D
+		var om2 := mmi.material_override as StandardMaterial3D
+		if mmi.multimesh != null and mmi.multimesh.mesh == kaya and om2 != null and om2.albedo_texture == asf:
+			mmi.material_override = kaya_tas_mat()
 	# poterna kanadı: ahşap okunsun (gölgede griye kaçan koyu-soğuk kahve yerine sıcak meşe; tahta deseni)
 	for n in kok.find_children("Ahsap_PoternaTahta", "MeshInstance3D", true, false):
 		(n as MeshInstance3D).material_override = Props.mat(Color("8c6038"), 0.0, false, "wood")
 
 
 static var _moloz: Dictionary = {}
+static var _kaya_m: StandardMaterial3D
+
+
+## Düşmüş/kırık taş (kaya ağı): ince taneli kireçtaşı (duvar bloğu deseni değil: kaya üstünde ahşap damarı okunuyordu)
+static func kaya_tas_mat() -> StandardMaterial3D:
+	if _kaya_m == null:
+		_kaya_m = Props.mat(Color("8f8574"), 0.0, false, "concrete")
+	return _kaya_m
 
 
 ## Döküm toprak / moloz: sur kuşağının zemin malzemesi (zemin_v2), ipucu = yığının rengi, ot yok, tam çiğnenmiş

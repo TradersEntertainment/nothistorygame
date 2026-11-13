@@ -17,10 +17,12 @@
   (29 bin → ~12 bin üçgen; 07 ilkel +%21 → +%8), şehirde uzak bitki/bahçe öğeleri kutu değil yuvarlak öbek ve lod 1
   yeşil öbek ≥ 6 dilim, sur dibi ot/çalı tozlu, fıçılar yıpranmış gri-kahve, kireçtaşı gri-krem.
 
+- Ara kayıt 4–5: kesim pusu/parıltısı şehirle aynı (Look.apply_env kesimde sisi kalınlaştırıyordu); yer örtüsü sur
+  kuşağında yok (k09 havada taşlar: `ZeminOrtu/Ortu_tas`, tanı `tur7_kare --pik`); kaya ağları (düşmüş/kırık taş) ince
+  taneli kireçtaşı (blok deseni ahşap damarı gibi okunuyordu); gülle oyuğu kenarı duvarla aynı değerde.
+
 ## Süren
-- Şehir k09'da hendek üstünde havada açık renkli taşlar (kaynak aranıyor: örnek örnek ışın tanısı `tur7_kare --pik`).
-- Şehir k06'da limon yeşili düz levhalar (asma çardağı uzak katmanı?) — tanı aynı koşuda.
-- ÖNCE şehir bütçesi (`20948418`) koşuyor.
+- Son SONRA kareleri (A, B, C, D), kutu sayımı, ÖNCE şehir bütçesi, bölüm testleri (20, 26, 43o), son denetim, rapor.
 
 ## Sıradaki
 - Madde 2 gündüz sur dibi, 3 uzak sur, 4 renk ayrıştırma, 5 hendek, 6 ordugâh, 7 ova, 8 poterna/fıçı/ev kümesi.
