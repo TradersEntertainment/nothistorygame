@@ -275,8 +275,8 @@ static func _bant_malzeme() -> ShaderMaterial:
 	sh.code = """
 shader_type spatial;
 render_mode cull_disabled, specular_disabled;
-uniform vec3 camur : source_color = vec3(0.24, 0.20, 0.15);
-uniform vec3 yosun : source_color = vec3(0.22, 0.26, 0.15);
+uniform vec3 camur : source_color = vec3(0.34, 0.29, 0.22);
+uniform vec3 yosun : source_color = vec3(0.27, 0.30, 0.17);
 varying vec3 wp;
 float hs(vec2 p) { return fract(sin(dot(p, vec2(127.1, 311.7))) * 43758.5453); }
 float gn(vec2 p) {
@@ -289,8 +289,10 @@ void fragment() {
 	vec2 q = vec2(UV.x + wp.y * 0.0, h);
 	float n = gn(q * vec2(3.1, 4.3)) * 0.55 + gn(q * vec2(11.0, 13.0)) * 0.3 + gn(q * vec2(29.0, 23.0)) * 0.15;
 	// yukarı doğru seyrelen benekler (toprak sıçraması), dipte tam
-	float esik = smoothstep(0.15, 1.65, h + (gn(vec2(UV.x * 0.35, 3.0)) - 0.5) * 0.7);
-	if (n < esik * 0.95) { discard; }
+	// TUR-7: ince benek (iri koyu leke değil): dipte sürekli ıslak taban, yukarı doğru seyrek ve küçülen sıçrama
+	float n2 = gn(q * vec2(17.0, 21.0)) * 0.6 + gn(q * vec2(41.0, 37.0)) * 0.4;
+	float esik = smoothstep(0.05, 1.5, h + (gn(vec2(UV.x * 0.35, 3.0)) - 0.5) * 0.5);
+	if (mix(n, n2, smoothstep(0.2, 0.8, h)) < esik * 0.97) { discard; }
 	float ym = smoothstep(0.55, 0.85, gn(q * vec2(1.7, 2.3))) * (1.0 - smoothstep(0.2, 0.9, h));
 	vec3 c = mix(camur, yosun, ym);
 	c *= 0.85 + 0.3 * gn(q * 7.0);

@@ -51,11 +51,17 @@ void fragment() {
 	float lum = dot(base, vec3(0.3, 0.55, 0.15));
 	// taş: soluk gri-krem (sıcak); taban rengin parlaklığı korunur
 	float kat = clamp(lum / 0.42, 0.55, 1.0);
-	vec3 tas = vec3(0.46, 0.42, 0.34);
+	// TUR-7: kireçtaşı daha açık; büyük ölçekte soğuk (gri) / sıcak (bal) lekeler: sur, zemin ve çadırdan ayrışır
+	vec3 tas = vec3(0.54, 0.50, 0.42);
 	if (tur > 0.5 && tur < 1.5) { tas = vec3(0.43, 0.395, 0.335); }     // SUR-5: deniz suru sıcak gri (soğuk mavi-gri değil)
 	if (tur > 1.5) { tas = vec3(0.45, 0.42, 0.36); }
 	tas *= kat;
-	vec3 tug = vec3(0.24, 0.12, 0.08) * clamp(kat, 0.7, 1.0);    // SUR-5: mat, koyu kiremit (parlak kırmızı şerit değil)
+	if (tur < 0.5) {
+		float sl = vn(vec2(dot(wpos.xz, vec2(0.707, 0.707)) * 0.09, wpos.y * 0.13) + 31.0);
+		tas = mix(tas * vec3(0.93, 0.96, 1.0), tas * vec3(1.05, 0.98, 0.86), smoothstep(0.25, 0.75, sl));
+	}
+	// TUR-7: hatıl belirgin kiremit kırmızısı (yayındaki bölümlerin sur görünüşü)
+	vec3 tug = vec3(0.40, 0.15, 0.09) * clamp(kat, 0.7, 1.0);    // SUR-5: mat, koyu kiremit (parlak kırmızı şerit değil)
 	vec3 harc = vec3(0.52, 0.48, 0.41) * kat;
 	float dikey = 1.0 - step(0.6, abs(wnrm.y));
 	vec2 t2 = normalize(vec2(-wnrm.z, wnrm.x) + vec2(1e-4, 0.0));
@@ -99,7 +105,7 @@ void fragment() {
 			c = mix(ort, bc, ince_t);
 			// TUR-6: hatıl uzakta sönmez (opus mixtum yakın/orta/uzakta okunur): bant pikselden kalınken kızıl-kahve mat
 			// şerit kalır; ancak bant piksel altına inince (fy > B) dönemin ortalamasına karışır (titreşim/dama yok)
-			vec3 uzak_b = mix(mix(tug * 1.35, harc, 0.42), tas, 0.12);
+			vec3 uzak_b = mix(mix(tug * 1.15, harc, 0.3), tas, 0.08);
 			c = mix(uzak_b, c, bant_g);
 		} else {
 			float sy = py - B;
@@ -151,7 +157,7 @@ void fragment() {
 		float Pp = tur > 0.5 ? 3.4 : 2.5;
 		float Bb = tur > 0.5 ? 0.30 : 0.42;
 		float kap = smoothstep(Bb * 0.8, Bb * 2.0, fy);
-		vec3 ortalama = mix(tas * 0.95, mix(mix(tug * 1.35, harc, 0.42), tas, 0.12), Bb / Pp * 1.4);
+		vec3 ortalama = mix(tas * 0.95, mix(mix(tug * 1.15, harc, 0.3), tas, 0.08), Bb / Pp * 1.4);
 		c = mix(c, ortalama, kap);
 	}
 	// yıpranma: dikey akıntı, is lekesi, dipte koyulaşma ve yosun

@@ -580,6 +580,8 @@ static func ic_kule(p: Node3D, g: Dictionary, lod: int) -> void:
 		var prof2: Array = [[y_base, bat + 0.2], [HT - 0.6, 0.0], [HT - 0.6, 0.38], [HT + PARAPET_H, 0.38]]
 		_or(tas, poly, prof2, {}, Callable(), 0.0, seed, 1, false)
 		_kapak(tas, _otele(poly, 0.38), HT + PARAPET_H, true)
+		# TUR-7: uzak katmanda da diş silueti (mazgalsız düz kutu değil; aynı ağ, ek çizim yok)
+		_disler_orta(tas, _otele(poly, 0.38), _otele(poly, -0.2), HT + PARAPET_H, seed, hasar)
 		var a := poly[3]
 		var b := poly[4]
 		var nn := _dis_normal(a, b, c2)
@@ -817,6 +819,7 @@ static func dis_kule(p: Node3D, g: Dictionary, lod: int) -> void:
 	else:
 		_or(tas, poly, [[y0, bat], [OTH - 0.4, 0.0], [OTH - 0.4, 0.28], [OTH + PARAPET_H, 0.28]], {}, Callable(), 0.0, seed, 1, false)
 		_kapak(tas, _otele(poly, 0.28), OTH + PARAPET_H, true)
+		_disler_orta(tas, _otele(poly, 0.28), _otele(poly, -0.2), OTH + PARAPET_H, seed, hasar)
 	tas.mesh_ekle(p, _tas_mat(stone, lod), "DisKule")
 	koyu.mesh_ekle(p, Props.mat(C_DARK), "DisKuleKoyu", false)
 	if lod <= 1:

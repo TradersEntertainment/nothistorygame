@@ -541,6 +541,16 @@ static func hendek_kesit(p: Node3D, x0: float, x1: float, z0: float, z1: float, 
 				# taş kaplama: yüz normali (düz duvar), beyaz köşe rengi; onarım/eksik yerler koyu
 				var hh := _hash(tohum + i * 5, j)
 				var cc := Color.WHITE if hh > 0.12 else Color(0.7, 0.68, 0.64)
+				if v2:
+					# TUR-7: örgü yüzü tek düz levha değil: sütun sütun ton, yer yer koyu akıntı izi (yukarıdan aşağı),
+					# dibe yakın yosunlu-koyu (hendek duvarı surdan koyu okunur)
+					var sut := _hash(tohum * 5 + i / 2, 77)
+					var ak := 1.0 if _hash(tohum * 3 + i, 91) > 0.82 else 0.0
+					var ton := 0.74 + 0.16 * sut - 0.18 * ak
+					var dip := 1.0 if (j == 3 or j == 10) else 0.0
+					cc = Color(ton * (1.0 - 0.22 * dip), ton * (1.0 - 0.12 * dip), ton * (1.0 - 0.3 * dip))
+					if hh <= 0.12:
+						cc = cc * 0.85
 				var fn: Vector3 = ((vv[1] as Vector3) - (vv[0] as Vector3)).cross((vv[2] as Vector3) - (vv[0] as Vector3)).normalized()
 				var hedef := Vector3(0, 0.3, 1.0 if j < 7 else -1.0)
 				if fn.dot(hedef) < 0.0:
@@ -732,5 +742,86 @@ static func rampa(p: Node3D, xa: float, xb: float, z: float, y0: float, rise: fl
 	mi.name = "HendekRampa"
 	mi.mesh = st.commit()
 	mi.material_override = _mat()
+	mi.set_meta("no_walk", true)
+	p.add_child(mi)
+
+
+## TUR-7: hendek yakası kıyı örtüsü (yalnız görünüm): harpuştanın üstüne taşan düzensiz toprak/ot saçağı; yer yer çökmüş
+## (kenar hendeğe doğru 0,3–1,1 m sarkar, harpuştayı örter), yer yer çıplak taş görünür. ze: yaka çizgisi (harpuşta dış
+## ucu), s: karaya doğru yön (+1 dış yaka, −1 iç yaka). kes: atlanacak x aralıkları (rampa, geçit, kapı).
+static func kiyi_ortu(p: Node3D, x0: float, x1: float, ze: float, s: float, tohum: int, kes: Array, pencere := Vector2(-1e9, 1e9)) -> void:
+	var GOR := load("res://scripts/world/ist/sur_gorunus.gd")
+	var st := SurfaceTool.new()
+	st.begin(Mesh.PRIMITIVE_TRIANGLES)
+	var adim := 1.4
+	var n := int(ceil((x1 - x0) / adim))
+	var prof := [-1.15, -0.6, -0.15, 0.5, 1.3, 2.6]
+	var rows: Array = []
+	var cols: Array = []
+	var aktif: Array = []
+	for i in n + 1:
+		var x := lerpf(x0, x1, float(i) / n)
+		var ok := true
+		for k: Array in kes:
+			if x > float(k[0]) and x < float(k[1]):
+				ok = false
+		aktif.append(ok)
+		var cok: float = clampf((GOR.gn(x, ze, 7.0, tohum % 13) - 0.42) * 3.0, 0.0, 1.0)     # çökme (0..1)
+		var tas_gor: bool = GOR.gn(x, ze, 4.0, tohum % 7 + 3) > 0.62                       # kenar geri çekilmiş: harpuşta açık
+		var r: Array = []
+		var c: Array = []
+		for j in prof.size():
+			var d: float = prof[j]
+			var hz := _hash(tohum + i * 3, j * 5 + 1)
+			var y := 0.12 + hz * 0.08
+			var dd := d
+			if j == 0:
+				y = lerpf(0.02, -1.1, cok) if not tas_gor else 0.1
+				dd = lerpf(-0.25, d, cok) if not tas_gor else 0.05
+			elif j == 1:
+				y = lerpf(0.15, -0.45, cok) if not tas_gor else 0.13
+				dd = lerpf(-0.2, d, maxf(cok, 0.3)) if not tas_gor else 0.15
+			elif j == 2:
+				y = 0.17 + hz * 0.06 - cok * 0.12
+				if tas_gor:
+					dd = 0.3
+			elif j == prof.size() - 1:
+				y = 0.0
+			var z := ze + s * dd
+			r.append(Vector3(x + (hz - 0.5) * 0.4, y, z))
+			var w := maxf(dd, 0.0)
+			var rc: Array = GOR.zemin_renk(x, z, w + 1.5)
+			var col: Color = rc[0]
+			if j <= 1:
+				col = col.lerp(TOPRAK.darkened(0.15), 0.6)          # kopan kenarın çıplak toprağı
+			col.a = 1.0 - float(rc[1]) if j > 1 else 0.05
+			c.append(col)
+		rows.append(r)
+		cols.append(c)
+	var nrm := _izgara_normal(rows)
+	var say := 0
+	for i in n:
+		if not aktif[i] or not aktif[i + 1]:
+			continue
+		var xm := lerpf(x0, x1, (i + 0.5) / n)
+		if xm < pencere.x or xm >= pencere.y:
+			continue
+		for j in prof.size() - 1:
+			var vv := [rows[i][j], rows[i][j + 1], rows[i + 1][j], rows[i + 1][j], rows[i][j + 1], rows[i + 1][j + 1]]
+			var cc := [cols[i][j], cols[i][j + 1], cols[i + 1][j], cols[i + 1][j], cols[i][j + 1], cols[i + 1][j + 1]]
+			var nn := [nrm[i][j], nrm[i][j + 1], nrm[i + 1][j], nrm[i + 1][j], nrm[i][j + 1], nrm[i + 1][j + 1]]
+			if s < 0.0:
+				vv = [vv[0], vv[2], vv[1], vv[3], vv[5], vv[4]]
+				cc = [cc[0], cc[2], cc[1], cc[3], cc[5], cc[4]]
+				nn = [nn[0], nn[2], nn[1], nn[3], nn[5], nn[4]]
+			_ucgen_n(st, vv, cc, nn)
+			say += 1
+	if say == 0:
+		return
+	var mi := MeshInstance3D.new()
+	mi.name = "Toprak_HendekKiyi"
+	mi.mesh = st.commit()
+	mi.material_override = load("res://scripts/world/ist/sur_oturtma_ag.gd").etek_malzeme()
+	mi.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
 	mi.set_meta("no_walk", true)
 	p.add_child(mi)

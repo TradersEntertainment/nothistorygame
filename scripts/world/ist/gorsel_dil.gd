@@ -103,6 +103,9 @@ var _ilk := false
 static func kur(dunya: Node3D) -> Node:
 	if OS.has_environment("BIRLIK_YOK"):      # sondalar: ÖNCE kareleri (aynı kod yolu, uyum yok)
 		return null
+	# TUR-7: kesim sahnesi (SurOyun.kur) zemini şehirdeki zemin kitaplığıyla (sur_gorunus.gd)
+	for n in dunya.find_children("SurOyun_*", "Node3D", true, false):
+		load("res://scripts/world/ist/sur_gorunus.gd").kesim_zemin(n)
 	var g = load("res://scripts/world/ist/gorsel_dil.gd").new()
 	gece_mod = bool(dunya.get("gece"))
 	g.name = "GorselDil"
@@ -277,9 +280,17 @@ const ISIK := {"yer_ufuk": Color("cfc4aa"), "yer_dip": Color("7a6a50"), "ortam":
 
 func _isik() -> bool:
 	var gok := kok.get_node_or_null("Gok") as WorldEnvironment
+	# TUR-7: kesim sahnesi (SurOyun.kur; gök düğümünün adı yok) şehirle aynı ışığı alır
+	var g_ad := ""
+	if gok == null and not kok.find_children("SurOyun_*", "Node3D", false, false).is_empty():
+		for c in kok.get_children():
+			if c is WorldEnvironment:
+				gok = c
+			elif c is DirectionalLight3D and g_ad == "":
+				g_ad = String(c.name)
 	if gok == null or gok.environment == null:
 		return false
-	if gok.has_meta("look") and String(gok.get_meta("look")) == "night":
+	if gok.has_meta("look") and String(gok.get_meta("look")) == "night" or gece_mod:
 		return true
 	var e := gok.environment
 	if e.sky != null and e.sky.sky_material is ProceduralSkyMaterial:
@@ -296,7 +307,7 @@ func _isik() -> bool:
 	# sur eteği teal/kara şerit okunmasın (yayındaki bölümlerin gölgesi sıcak gri)
 	e.ambient_light_color = Color("b9a988")
 	e.ambient_light_sky_contribution = 0.55
-	var g := kok.get_node_or_null("Gunes") as DirectionalLight3D
+	var g := kok.get_node_or_null("Gunes" if g_ad == "" else NodePath(g_ad)) as DirectionalLight3D
 	if g != null:
 		g.light_color = ISIK["gunes"]
 		g.light_energy = ISIK["gunes_e"]

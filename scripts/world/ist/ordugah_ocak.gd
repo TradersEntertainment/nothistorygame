@@ -100,13 +100,14 @@ void vertex() {
 	faz = MODEL_MATRIX[3].x * 0.37 + MODEL_MATRIX[3].z * 0.71;
 	float h = UV.y;
 	// TUR-6: rüzgârla eğilen (güneydoğuya), yukarıda kıvrılıp dağılan ince tutam (beyaz dikey çubuk değil)
-	VERTEX.x += (sin(TIME * 0.55 + faz + h * 3.0) * 0.5 + h * 2.2) * h * h * 5.0;
-	VERTEX.z += (cos(TIME * 0.45 + faz * 1.3 + h * 2.5) * 0.45 - h * 0.8) * h * h * 5.0;
+	// TUR-7: eğilme yumuşak (uzun ince çapraz çizik olmasın): tepe en çok ~2 gövde eni kayar
+	VERTEX.x += (sin(TIME * 0.55 + faz + h * 3.0) * 0.35 + h * 0.9) * h * h * 1.6;
+	VERTEX.z += (cos(TIME * 0.45 + faz * 1.3 + h * 2.5) * 0.3 - h * 0.35) * h * h * 1.6;
 }
 void fragment() {
 	float h = UV.y;
 	float kenar = smoothstep(0.0, 0.9, 1.0 - abs(UV.x * 2.0 - 1.0));
-	kenar *= kenar;
+	kenar = kenar * (0.6 + 0.4 * kenar);      // TUR-7: hacimli (orta dolgun, kenar yumuşak)
 	// kopuk tutamlar: iki eğik dalganın çarpımı yukarı akar; tepede seyrelir
 	float n = 0.5 + 0.5 * sin(UV.x * 7.0 + h * 11.0 - TIME * 0.9 + faz) * sin(UV.x * 3.0 - h * 7.0 + TIME * 0.6 + faz * 1.7);
 	float dalga = 0.3 + 0.7 * n * n;
@@ -130,8 +131,9 @@ static func duman_mesh() -> ArrayMesh:
 		for i in rows:
 			var t0 := float(i) / rows
 			var t1 := float(i + 1) / rows
-			var w0 := 0.2 + 2.2 * t0 * t0 + 0.4 * t0
-			var w1 := 0.2 + 2.2 * t1 * t1 + 0.4 * t1
+			# TUR-7: tabanda bile dolgun (0,7), tepede geniş bulut (3,4): çizik değil
+			var w0 := 0.7 + 2.0 * t0 * t0 + 0.7 * t0
+			var w1 := 0.7 + 2.0 * t1 * t1 + 0.7 * t1
 			var p00 := ax * -w0 + Vector3(0, t0, 0)
 			var p10 := ax * w0 + Vector3(0, t0, 0)
 			var p01 := ax * -w1 + Vector3(0, t1, 0)
@@ -172,8 +174,8 @@ static func duman(host: Node3D, pts: Array, lod: int, r: RandomNumberGenerator) 
 		# TUR-6: duman seyrek (her ocak tütmez: yarısı), boy 9–16 m, ince
 		if fposmod(sin(p.x * 12.9898 + p.z * 78.233) * 43758.5453, 1.0) < 0.5:
 			continue          # (konum karması: rastgele dizisi ve yerleşim ÖNCE ile aynı)
-		h *= 0.62
-		s *= 0.7
+		h *= 0.42
+		s *= 0.95
 		xs.append(Transform3D(Basis(Vector3.UP, r.randf() * TAU).scaled(Vector3(s, h, s)), p + Vector3(0, 0.5, 0)))
 	var mm := MultiMesh.new()
 	mm.transform_format = MultiMesh.TRANSFORM_3D
@@ -277,9 +279,15 @@ static func yol(b: B, a: Vector2, c: Vector2, w: float, col: Color, r: RandomNum
 	var nrm := Vector2(-d.y, d.x)
 	var n := maxi(1, int(L / 6.0))
 	var serit := [[-0.5 - 0.35, 0.0], [-0.5, 0.85], [0.5, 0.85], [0.5 + 0.35, 0.0]]
+	# TUR-7: patika cetvel gibi düz değil: boyunca yumuşak kıvrım (uçlarda sıfır: kavşaklar yerinde)
+	var faz := a.x * 0.13 + a.y * 0.07
+	var kivr := func(t: float) -> Vector2:
+		return nrm * (sin(t * L / 37.0 + faz) * 1.6 + sin(t * L / 13.0 + faz * 2.0) * 0.5) * sin(t * PI)
 	for i in n:
-		var p0 := a + d * (L * i / n)
-		var p1 := a + d * (L * (i + 1) / n)
+		var kv0: Vector2 = kivr.call(float(i) / n)
+		var kv1: Vector2 = kivr.call(float(i + 1) / n)
+		var p0: Vector2 = a + d * (L * i / n) + kv0
+		var p1: Vector2 = a + d * (L * (i + 1) / n) + kv1
 		var mw := rot * ((p0 + p1) * 0.5)
 		if K.filtre.is_valid() and not bool(K.filtre.call(mw.x, mw.y)):
 			continue
@@ -301,9 +309,9 @@ static func yol(b: B, a: Vector2, c: Vector2, w: float, col: Color, r: RandomNum
 			var k1 := Color(cc.r, cc.g, cc.b, al1)
 			_ztri(b, v00, v10, v11, k0, k0, k1)
 			_ztri(b, v00, v11, v01, k0, k1, k1)
-		if izli:
+		if izli and fposmod(sin(float(i) * 7.3 + faz) * 437.1, 1.0) > 0.45:
 			for side: float in [-0.22, 0.22]:
-				var iz := Color(0.3, 0.24, 0.17, 0.55)
+				var iz := Color(0.36, 0.29, 0.21, 0.22)      # TUR-7: soluk, kesik (uzun koyu düz çizgi değil)
 				var t0 := rot * (p0 + nrm * w * (side - 0.03))
 				var t1 := rot * (p0 + nrm * w * (side + 0.03))
 				var t2 := rot * (p1 + nrm * w * (side + 0.03))

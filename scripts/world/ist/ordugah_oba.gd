@@ -560,9 +560,13 @@ static func _serit(b: B, rot: Transform2D, a: Vector2, c: Vector2, w: float, col
 	var d := (c - a) / L
 	var nrm := Vector2(-d.y, d.x)
 	var n := maxi(1, int(L / 6.0))
+	var faz := a.x * 0.13 + a.y * 0.07
 	for i in n:
-		var p0 := a + d * (L * i / n)
-		var p1 := a + d * (L * (i + 1) / n)
+		# TUR-7: OC.yol ile aynı kıvrım (uzak katmanda da cetvel çizgisi yok)
+		var t0 := float(i) / n
+		var t1 := float(i + 1) / n
+		var p0 := a + d * (L * t0) + nrm * (sin(t0 * L / 37.0 + faz) * 1.6 + sin(t0 * L / 13.0 + faz * 2.0) * 0.5) * sin(t0 * PI)
+		var p1 := a + d * (L * t1) + nrm * (sin(t1 * L / 37.0 + faz) * 1.6 + sin(t1 * L / 13.0 + faz * 2.0) * 0.5) * sin(t1 * PI)
 		var mw := rot * ((p0 + p1) * 0.5)
 		if K.filtre.is_valid() and not bool(K.filtre.call(mw.x, mw.y)):
 			continue
