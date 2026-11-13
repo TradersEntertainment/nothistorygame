@@ -1,0 +1,117 @@
+Godot Engine v4.4.1.stable.official.49a5bc7b6 - https://godotengine.org
+
+DBG say key=D26_N_01 frame=0
+WARNING: Screen-space ambient occlusion (SSAO) can only be enabled when using the Forward+ renderer.
+     at: environment_set_ssao (servers/rendering/storage/environment_storage.cpp:586)
+WARNING: Screen-space indirect lighting (SSIL) can only be enabled when using the Forward+ renderer.
+     at: environment_set_ssil (servers/rendering/storage/environment_storage.cpp:661)
+HELDDEFAULT scene=chapter26 item=tape
+SIEGECHAOS segs=48 runners=96 static=47
+DBG say key=D26_T_01 frame=1
+DBG builder id=80511 pos=(-2.4, 0.6, 11.8) lp=(-2.4, 0.6, 11.8) from=<null> phase=intro frame=1 vis=true act=hammer
+DBG builder id=29099 pos=(2.4, 0.6, 11.8) lp=(2.4, 0.6, 11.8) from=<null> phase=intro frame=1 vis=true act=chop
+DBG say key=D26_G_01 frame=2
+LORE key=26 placed=3
+DBG say key=D26_G_LADDER frame=7
+HANDS stowed=@Node3D@84
+HANDS stowed=@Node3D@84
+RALLY scene=chapter26.tscn allies=0 foes=0 cands=3
+WORLDWALK region= shapes=10244 boxes=9580 tris=258010 ms=1643
+CITYLIFE region= src=plan era=conquest night=true density=0.30 nodes=1026 plazas=19 landmarks=23
+THROWN by=player at=(-10.5, 5.5, 17.4)
+THROWN by=player at=(-10.5, 2.3, 18.3)
+LADDER pushed at=(-10.5, 0.1, 18.9)
+DBG builder id=80511 pos=(-2.6, 0.5, 11.6) lp=(-2.6, 0.5, 11.6) from=(-2.4, 0.638888, 11.8) phase=wave1 frame=57 vis=true act=hammer
+DBG wr down frame=218
+WAVERUNNER wave=1/1 won=false t=28.8 pw=0.28 foe_dmg=18.0 allies=0+0 rally_foes=0 thrown=2
+DBG clear_line frame=249 who=@Node3D@23515 id=55586 pos=(-3.2, 1.0, 12.3) -> (-2.9, 1.3, 12.8) from=(-2.4, 1.6, 11.1) target=@Node3D@23375 tpos=(-4.2, 0.8, 12.0) off=0.74 sg=1
+DBG say key=D26_G_REPELLED_1 frame=249
+DBG say key=D26_G_WAVE2 frame=275
+DBG say key=D26_G_BREACH_FIGHT frame=279
+HANDS stowed=@Node3D@84
+HANDS stowed=@Node3D@84
+RALLY scene=chapter26.tscn allies=0 foes=0 cands=12
+DBG wr down frame=353
+WAVERUNNER wave=1/1 won=false t=10.9 pw=0.28 foe_dmg=18.0 allies=0+3 rally_foes=0 thrown=0
+DBG builder id=80511 pos=(-2.7, 0.3, 11.3) lp=(-2.7, 0.3, 11.3) from=(-2.599869, 0.507141, 11.56457) phase=wave2 frame=383 vis=true act=hammer
+DBG clear_line frame=383 who=@Node3D@33876 id=80511 pos=(-2.7, 0.3, 11.3) -> (-2.0, 0.2, 11.1) from=(-2.4, 1.8, 11.0) target=@Node3D@23375 tpos=(-4.2, 0.8, 12.0) off=0.51 sg=1
+DBG clear_line frame=383 who=@Node3D@60033 id=15938 pos=(-2.3, 0.0, 10.4) -> (-2.1, 0.0, 10.0) from=(-2.4, 1.8, 11.0) target=@Node3D@23375 tpos=(-4.2, 0.8, 12.0) off=0.91 sg=1
+DBG clear_line frame=383 who=@Node3D@60168 id=90824 pos=(-3.4, 1.0, 12.4) -> (-4.4, 0.0, 10.6) from=(-2.4, 1.8, 11.0) target=@Node3D@23375 tpos=(-4.2, 0.8, 12.0) off=0.76 sg=-1
+DBG say key=D26_G_REPELLED_2 frame=383
+DBG say key=D26_G_WAVE3 frame=384
+DBG builder id=80511 pos=(-2.0, 0.2, 11.1) lp=(-2.0, 0.2, 11.1) from=(-2.710486, 0.328222, 11.28452) phase=wave3 frame=384 vis=true act=hammer
+DBG builder id=29099 pos=(2.7, 0.4, 11.4) lp=(2.7, 0.4, 11.4) from=(2.4, 0.638888, 11.8) phase=wave3 frame=455 vis=true act=chop
+GUN shots=4 hits=3 missed=1
+DBG say key=D26_G_DUEL frame=515
+GUN extra=1
+HANDS stowed=@Node3D@84
+HANDS stowed=@Node3D@84
+RALLY scene=chapter26.tscn allies=0 foes=0 cands=5
+DBG builder id=29099 pos=(3.1, 0.4, 11.3) lp=(3.1, 0.4, 11.3) from=(2.743146, 0.427776, 11.44035) phase=wave3 frame=557 vis=true act=chop
+DBG builder id=29099 pos=(3.2, 0.2, 11.1) lp=(3.2, 0.2, 11.1) from=(3.135499, 0.352365, 11.32231) phase=wave3 frame=563 vis=true act=chop
+DBG builder id=29099 pos=(3.3, 0.4, 11.3) lp=(3.3, 0.4, 11.3) from=(3.241503, 0.181282, 11.05453) phase=wave3 frame=564 vis=true act=chop
+GUNNER_HIT moved=0.03 perp=0.02 aim=(3.7, 0.0, 10.7) now=(3.7, 0.0, 10.7)
+DBG duel lost(b) frame=565
+DBG arm frame=565 hp=0.0 is_down=false frozen=false duel.active=false pivot=<null> foe=@Node3D@68798 state=IDLE hp=80.0 withdrawn=false
+ARMAUDIT unarmed scene=chapter26.tscn foe_dist=3.2 duel_active=false
+DBG wr down frame=566
+WAVERUNNER wave=1/2 won=false t=7.2 pw=0.28 foe_dmg=18.0 allies=0+0 rally_foes=0 thrown=0
+GUNNER shots=1 dodged=0 hits=1
+DBG say key=D26_T_LOST frame=580
+DBG clear_line frame=581 who=@Node3D@23786 id=71867 pos=(-0.6, 1.0, 12.3) -> (-1.1, 1.1, 12.5) from=(-0.6, 0.1, 9.8) target=@Node3D@70808 tpos=(0.9, 2.2, 14.2) off=0.81 sg=1
+DBG clear_line frame=581 who=@Node3D@23915 id=69842 pos=(0.7, 0.7, 11.9) -> (1.4, 0.7, 11.9) from=(-0.6, 0.1, 9.8) target=@Node3D@70808 tpos=(0.9, 2.2, 14.2) off=0.56 sg=1
+DBG say key=D26_T_SEE_GUN frame=581
+DBG say key=D26_T_TOO_LATE frame=582
+DBG say key=D26_S_GIUST frame=598
+DBG say key=D26_G_HURT frame=599
+ITEM spend cologne giust_wound_26 left=2
+DBG say key=D26_G_WOUND_COLOGNE frame=601
+DBG say key=D26_T_HURT frame=602
+DBG say key=D26_T_LIFT frame=610
+DBG say key=D26_T_GONE frame=632
+DBG say key=D26_L_BANNER frame=649
+DBG say key=D26_N_BANNER frame=650
+DBG say key=D26_K_LAST frame=651
+SAYDIST key=D26_K_LAST scene=chapter26.tscn speaker=SPK_EMPEROR d=10.8
+DBG say key=D26_N_OUT frame=680
+DBG say key=D26_T_OUT frame=681
+DBG say key=D26_N_HIDE frame=682
+DBG say key=D26_T_HIDE frame=683
+DBG say key=D26_N_ENTRY frame=684
+DBG say key=D26_T_ENTRY frame=685
+DBG say key=D26_N_ENTRY_2 frame=763
+DBG say key=D26_T_ENTRY_2 frame=764
+DBG say key=D26_N_CITY frame=837
+DBG say key=D26_T_CITY frame=838
+DBG say key=D26_N_FLAGS frame=936
+DBG say key=D26_T_ISI_O frame=969
+DBG say key=D26_N_ISI_O frame=970
+DBG say key=D26_N_GIUST frame=971
+DBG say key=D26_F_COUPLET frame=1074
+DBG say key=D26_N_COUPLET frame=1075
+DBG say key=D26_F_ENTRY frame=1076
+DBG say key=D26_T_AYA frame=1146
+CYPRESS planted=4 skipped=2
+DBG say key=D26_N_ANGEL frame=1147
+DBG say key=D26_N_EARTH frame=1148
+DBG say key=D26_F_STOP frame=1151
+SAYDIST key=D26_F_STOP scene=chapter26.tscn speaker=SPK_FATIH d=4.9
+SAYFACE key=D26_F_STOP scene=chapter26.tscn speaker=SPK_FATIH d=4.9 dot=-0.62
+DBG say key=D26_S_AXE frame=1152
+SAYDIST key=D26_S_AXE scene=chapter26.tscn speaker=SPK_SOLDIER d=7.4
+DBG say key=D26_F_TRUST frame=1153
+SAYDIST key=D26_F_TRUST scene=chapter26.tscn speaker=SPK_FATIH d=4.9
+SAYFACE key=D26_F_TRUST scene=chapter26.tscn speaker=SPK_FATIH d=4.9 dot=-0.62
+DBG say key=D26_N_AYA frame=1160
+TESPITBLOCK who=siege26 blocker=Skeleton/Mesh (MeshInstance3D) at=(-18.5, 0.0, -76.0) eye=(-18.5, 1.6, -76.0) dist=5.8
+DBG say key=D26_T_PHOTO frame=1163
+DBG say key=D26_N_LIFT frame=1164
+GRADE chapter=26 letter=C points=-48 { "kills": 2, "thrown": 2, "hits_taken": 13, "downs": 3, "gun_shots": 4, "gun_hits": 3, "gunner_shots": 1, "gunner_hits": 1 }
+AUTOTEST PASS chapter=26 variant=hold_lose outcome=26.1 water=3 repaired=3 cleared=2 world=W1 gun=3/4 gunner=0/1
+WARNING: ObjectDB instances leaked at exit (run with --verbose for details).
+     at: cleanup (core/object/object.cpp:2378)
+ERROR: 2 resources still in use at exit (run with --verbose for details).
+   at: clear (core/io/resource.cpp:614)
+ERROR: Pages in use exist at exit in PagedAllocator: N7Variant5Pools12BucketMediumE
+   at: ~PagedAllocator (./core/templates/paged_allocator.h:170)
+exit 0

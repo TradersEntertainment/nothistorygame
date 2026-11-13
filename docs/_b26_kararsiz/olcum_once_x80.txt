@@ -1,0 +1,198 @@
+# Temel olcum (DEGISMEMIS kod 5f8cac6b, ayri kopya): hold_box x80, hold_lose x80
+base_box/hold_box_1.txt:AUTOTEST PASS chapter=26 variant=hold_box outcome=26.3 water=3 repaired=3 cleared=0 world=W10 gun=3/4 gunner=4/4
+base_box/hold_box_10.txt:AUTOTEST PASS chapter=26 variant=hold_box outcome=26.3 water=3 repaired=3 cleared=0 world=W10 gun=3/4 gunner=4/4
+base_box/hold_box_11.txt:AUTOTEST PASS chapter=26 variant=hold_box outcome=26.3 water=3 repaired=3 cleared=0 world=W10 gun=3/4 gunner=5/5
+base_box/hold_box_12.txt:AUTOTEST PASS chapter=26 variant=hold_box outcome=26.3 water=3 repaired=3 cleared=0 world=W10 gun=3/4 gunner=4/4
+base_box/hold_box_13.txt:AUTOTEST PASS chapter=26 variant=hold_box outcome=26.3 water=3 repaired=3 cleared=0 world=W10 gun=3/4 gunner=4/5
+base_box/hold_box_14.txt:AUTOTEST PASS chapter=26 variant=hold_box outcome=26.3 water=3 repaired=3 cleared=0 world=W10 gun=3/4 gunner=4/4
+base_box/hold_box_15.txt:AUTOTEST PASS chapter=26 variant=hold_box outcome=26.3 water=3 repaired=3 cleared=0 world=W10 gun=3/4 gunner=6/6
+base_box/hold_box_16.txt:AUTOTEST PASS chapter=26 variant=hold_box outcome=26.3 water=3 repaired=3 cleared=0 world=W10 gun=3/4 gunner=4/4
+base_box/hold_box_17.txt:AUTOTEST PASS chapter=26 variant=hold_box outcome=26.3 water=3 repaired=3 cleared=0 world=W10 gun=3/4 gunner=5/5
+base_box/hold_box_18.txt:AUTOTEST PASS chapter=26 variant=hold_box outcome=26.3 water=3 repaired=3 cleared=0 world=W10 gun=3/4 gunner=5/5
+base_box/hold_box_19.txt:AUTOTEST PASS chapter=26 variant=hold_box outcome=26.3 water=3 repaired=3 cleared=0 world=W10 gun=3/4 gunner=4/4
+base_box/hold_box_2.txt:AUTOTEST PASS chapter=26 variant=hold_box outcome=26.3 water=3 repaired=3 cleared=0 world=W10 gun=3/4 gunner=7/7
+base_box/hold_box_20.txt:AUTOTEST PASS chapter=26 variant=hold_box outcome=26.3 water=3 repaired=3 cleared=0 world=W10 gun=3/4 gunner=4/4
+base_box/hold_box_21.txt:AUTOTEST PASS chapter=26 variant=hold_box outcome=26.3 water=3 repaired=3 cleared=0 world=W10 gun=3/4 gunner=3/3
+base_box/hold_box_22.txt:AUTOTEST PASS chapter=26 variant=hold_box outcome=26.3 water=3 repaired=3 cleared=0 world=W10 gun=3/4 gunner=4/4
+base_box/hold_box_23.txt:AUTOTEST PASS chapter=26 variant=hold_box outcome=26.3 water=3 repaired=3 cleared=0 world=W10 gun=3/4 gunner=3/3
+base_box/hold_box_24.txt:AUTOTEST PASS chapter=26 variant=hold_box outcome=26.3 water=3 repaired=3 cleared=0 world=W10 gun=3/4 gunner=3/3
+base_box/hold_box_25.txt:AUTOTEST PASS chapter=26 variant=hold_box outcome=26.3 water=3 repaired=3 cleared=0 world=W10 gun=3/4 gunner=7/7
+base_box/hold_box_26.txt:AUTOTEST PASS chapter=26 variant=hold_box outcome=26.3 water=3 repaired=3 cleared=0 world=W10 gun=3/4 gunner=2/3
+base_box/hold_box_27.txt:AUTOTEST PASS chapter=26 variant=hold_box outcome=26.3 water=3 repaired=3 cleared=0 world=W10 gun=3/4 gunner=2/2
+base_box/hold_box_28.txt:AUTOTEST PASS chapter=26 variant=hold_box outcome=26.3 water=3 repaired=3 cleared=0 world=W10 gun=3/4 gunner=4/4
+base_box/hold_box_29.txt:AUTOTEST PASS chapter=26 variant=hold_box outcome=26.3 water=3 repaired=3 cleared=0 world=W10 gun=3/4 gunner=3/3
+base_box/hold_box_3.txt:AUTOTEST PASS chapter=26 variant=hold_box outcome=26.3 water=3 repaired=3 cleared=0 world=W10 gun=3/4 gunner=4/4
+base_box/hold_box_30.txt:AUTOTEST PASS chapter=26 variant=hold_box outcome=26.3 water=3 repaired=3 cleared=0 world=W10 gun=3/4 gunner=2/3
+base_box/hold_box_31.txt:AUTOTEST PASS chapter=26 variant=hold_box outcome=26.3 water=3 repaired=3 cleared=0 world=W10 gun=3/4 gunner=4/4
+base_box/hold_box_32.txt:AUTOTEST PASS chapter=26 variant=hold_box outcome=26.3 water=3 repaired=3 cleared=0 world=W10 gun=3/4 gunner=2/2
+base_box/hold_box_33.txt:AUTOTEST PASS chapter=26 variant=hold_box outcome=26.3 water=3 repaired=3 cleared=0 world=W10 gun=3/4 gunner=3/3
+base_box/hold_box_34.txt:AUTOTEST PASS chapter=26 variant=hold_box outcome=26.3 water=3 repaired=3 cleared=0 world=W10 gun=3/4 gunner=2/4
+base_box/hold_box_35.txt:AUTOTEST PASS chapter=26 variant=hold_box outcome=26.3 water=3 repaired=3 cleared=0 world=W10 gun=3/4 gunner=4/4
+base_box/hold_box_36.txt:AUTOTEST PASS chapter=26 variant=hold_box outcome=26.3 water=3 repaired=3 cleared=0 world=W10 gun=3/4 gunner=3/3
+base_box/hold_box_37.txt:AUTOTEST PASS chapter=26 variant=hold_box outcome=26.3 water=3 repaired=3 cleared=0 world=W10 gun=3/4 gunner=3/3
+base_box/hold_box_38.txt:AUTOTEST PASS chapter=26 variant=hold_box outcome=26.3 water=3 repaired=3 cleared=0 world=W10 gun=3/4 gunner=3/3
+base_box/hold_box_39.txt:AUTOTEST PASS chapter=26 variant=hold_box outcome=26.3 water=3 repaired=3 cleared=0 world=W10 gun=3/4 gunner=5/5
+base_box/hold_box_39.txt:WALKTHRU scene=chapter26.tscn who=@Node3D@67790 at=(7.5, -1.9, 35.7) by=@Node3D@177/@StaticBody3D@210 pos=(0.0, -1.5, 36.0) src=Chapter26>Soldier|Chapter26>LandWalls>StaticBody3D
+base_box/hold_box_4.txt:VISAUDIT personhidden key=D26_G_DUEL scene=chapter26.tscn speaker=SPK_GIUST by=@Node3D@32864/@Node3D@33638(no_talk,garrison,shoulder_load) at=(3.9, 0.0, 9.1) eye=(4.0, 1.6, 9.0) head=(3.0, 1.7, 9.400001) src=Chapter26>WallFight>Person
+base_box/hold_box_4.txt:AUTOTEST PASS chapter=26 variant=hold_box outcome=26.3 water=3 repaired=3 cleared=0 world=W10 gun=3/4 gunner=5/5
+base_box/hold_box_40.txt:AUTOTEST PASS chapter=26 variant=hold_box outcome=26.3 water=3 repaired=3 cleared=0 world=W10 gun=3/4 gunner=7/7
+base_box/hold_box_41.txt:AUTOTEST PASS chapter=26 variant=hold_box outcome=26.3 water=3 repaired=3 cleared=0 world=W10 gun=3/4 gunner=2/3
+base_box/hold_box_42.txt:AUTOTEST PASS chapter=26 variant=hold_box outcome=26.3 water=3 repaired=3 cleared=0 world=W10 gun=3/4 gunner=5/5
+base_box/hold_box_43.txt:AUTOTEST PASS chapter=26 variant=hold_box outcome=26.3 water=3 repaired=3 cleared=0 world=W10 gun=3/4 gunner=4/4
+base_box/hold_box_44.txt:AUTOTEST PASS chapter=26 variant=hold_box outcome=26.3 water=3 repaired=3 cleared=0 world=W10 gun=3/4 gunner=5/5
+base_box/hold_box_45.txt:AUTOTEST PASS chapter=26 variant=hold_box outcome=26.3 water=3 repaired=3 cleared=0 world=W10 gun=3/4 gunner=4/4
+base_box/hold_box_46.txt:AUTOTEST PASS chapter=26 variant=hold_box outcome=26.3 water=3 repaired=3 cleared=0 world=W10 gun=3/4 gunner=5/5
+base_box/hold_box_47.txt:VISAUDIT sunk scene=chapter26.tscn who=Person/@Node3D@60755 spk= feet=(0.4, 1.8, 15.9) floor=2.28 by=@Node3D@177/@StaticBody3D@1048 act= meta=no_talk,no_chat,no_yield src=Chapter26>Duelist>Person shape=(8.599999, 0.55, 2.4)@(0.0, 2.0, 15.6) lp=(0.0, 0.0, 0.0)
+base_box/hold_box_47.txt:AUTOTEST PASS chapter=26 variant=hold_box outcome=26.3 water=3 repaired=3 cleared=0 world=W10 gun=3/4 gunner=3/3
+base_box/hold_box_48.txt:AUTOTEST PASS chapter=26 variant=hold_box outcome=26.3 water=3 repaired=3 cleared=0 world=W10 gun=3/4 gunner=3/3
+base_box/hold_box_49.txt:AUTOTEST PASS chapter=26 variant=hold_box outcome=26.3 water=3 repaired=3 cleared=0 world=W10 gun=3/4 gunner=4/4
+base_box/hold_box_5.txt:AUTOTEST PASS chapter=26 variant=hold_box outcome=26.3 water=3 repaired=3 cleared=0 world=W10 gun=3/4 gunner=3/3
+base_box/hold_box_50.txt:AUTOTEST PASS chapter=26 variant=hold_box outcome=26.3 water=3 repaired=3 cleared=0 world=W10 gun=3/4 gunner=4/4
+base_box/hold_box_51.txt:AUTOTEST PASS chapter=26 variant=hold_box outcome=26.3 water=3 repaired=3 cleared=0 world=W10 gun=3/4 gunner=4/4
+base_box/hold_box_52.txt:AUTOTEST PASS chapter=26 variant=hold_box outcome=26.3 water=3 repaired=3 cleared=0 world=W10 gun=3/4 gunner=4/4
+base_box/hold_box_53.txt:AUTOTEST PASS chapter=26 variant=hold_box outcome=26.3 water=3 repaired=3 cleared=0 world=W10 gun=3/4 gunner=4/4
+base_box/hold_box_54.txt:AUTOTEST PASS chapter=26 variant=hold_box outcome=26.3 water=3 repaired=3 cleared=0 world=W10 gun=3/4 gunner=3/3
+base_box/hold_box_55.txt:VISAUDIT insolid scene=chapter26.tscn who=@Node3D@36529{carry} at=(-19.4, 0.0, 2.2) by=@Node3D@177 size=(9.0, 18.0, 8.2)@(-24.0, 9.0, 0.0) pos=(-24.0, 9.0, 0.0) src=Chapter26>Node3D>Person|Chapter26>LandWalls>StaticBody3D
+base_box/hold_box_55.txt:AUTOTEST PASS chapter=26 variant=hold_box outcome=26.3 water=3 repaired=3 cleared=0 world=W10 gun=3/4 gunner=4/4
+base_box/hold_box_56.txt:AUTOTEST PASS chapter=26 variant=hold_box outcome=26.3 water=3 repaired=3 cleared=0 world=W10 gun=3/4 gunner=4/4
+base_box/hold_box_57.txt:AUTOTEST PASS chapter=26 variant=hold_box outcome=26.3 water=3 repaired=3 cleared=0 world=W10 gun=3/4 gunner=4/4
+base_box/hold_box_58.txt:AUTOTEST PASS chapter=26 variant=hold_box outcome=26.3 water=3 repaired=3 cleared=0 world=W10 gun=3/4 gunner=3/3
+base_box/hold_box_59.txt:AUTOTEST PASS chapter=26 variant=hold_box outcome=26.3 water=3 repaired=3 cleared=0 world=W10 gun=3/4 gunner=4/4
+base_box/hold_box_6.txt:AUTOTEST PASS chapter=26 variant=hold_box outcome=26.3 water=3 repaired=3 cleared=0 world=W10 gun=3/4 gunner=4/5
+base_box/hold_box_60.txt:AUTOTEST PASS chapter=26 variant=hold_box outcome=26.3 water=3 repaired=3 cleared=0 world=W10 gun=3/4 gunner=3/3
+base_box/hold_box_61.txt:AUTOTEST PASS chapter=26 variant=hold_box outcome=26.3 water=3 repaired=3 cleared=0 world=W10 gun=3/4 gunner=4/5
+base_box/hold_box_62.txt:AUTOTEST PASS chapter=26 variant=hold_box outcome=26.3 water=3 repaired=3 cleared=0 world=W10 gun=3/4 gunner=4/4
+base_box/hold_box_63.txt:AUTOTEST PASS chapter=26 variant=hold_box outcome=26.3 water=3 repaired=3 cleared=0 world=W10 gun=3/4 gunner=4/4
+base_box/hold_box_64.txt:AUTOTEST PASS chapter=26 variant=hold_box outcome=26.3 water=3 repaired=3 cleared=0 world=W10 gun=3/4 gunner=2/2
+base_box/hold_box_65.txt:AUTOTEST PASS chapter=26 variant=hold_box outcome=26.3 water=3 repaired=3 cleared=0 world=W10 gun=3/4 gunner=4/4
+base_box/hold_box_66.txt:AUTOTEST PASS chapter=26 variant=hold_box outcome=26.3 water=3 repaired=3 cleared=0 world=W10 gun=3/4 gunner=2/2
+base_box/hold_box_67.txt:AUTOTEST PASS chapter=26 variant=hold_box outcome=26.3 water=3 repaired=3 cleared=0 world=W10 gun=3/4 gunner=4/4
+base_box/hold_box_68.txt:AUTOTEST PASS chapter=26 variant=hold_box outcome=26.3 water=3 repaired=3 cleared=0 world=W10 gun=3/4 gunner=4/4
+base_box/hold_box_69.txt:AUTOTEST PASS chapter=26 variant=hold_box outcome=26.3 water=3 repaired=3 cleared=0 world=W10 gun=3/4 gunner=4/4
+base_box/hold_box_7.txt:AUTOTEST PASS chapter=26 variant=hold_box outcome=26.3 water=3 repaired=3 cleared=0 world=W10 gun=3/4 gunner=3/3
+base_box/hold_box_70.txt:AUTOTEST PASS chapter=26 variant=hold_box outcome=26.3 water=3 repaired=3 cleared=0 world=W10 gun=3/4 gunner=4/4
+base_box/hold_box_71.txt:AUTOTEST PASS chapter=26 variant=hold_box outcome=26.3 water=3 repaired=3 cleared=0 world=W10 gun=3/4 gunner=2/2
+base_box/hold_box_72.txt:AUTOTEST PASS chapter=26 variant=hold_box outcome=26.3 water=3 repaired=3 cleared=0 world=W10 gun=3/4 gunner=3/3
+base_box/hold_box_73.txt:AUTOTEST PASS chapter=26 variant=hold_box outcome=26.3 water=3 repaired=3 cleared=0 world=W10 gun=3/4 gunner=2/2
+base_box/hold_box_74.txt:AUTOTEST PASS chapter=26 variant=hold_box outcome=26.3 water=3 repaired=3 cleared=0 world=W10 gun=3/4 gunner=3/3
+base_box/hold_box_75.txt:AUTOTEST PASS chapter=26 variant=hold_box outcome=26.3 water=3 repaired=3 cleared=0 world=W10 gun=3/4 gunner=4/4
+base_box/hold_box_76.txt:AUTOTEST PASS chapter=26 variant=hold_box outcome=26.3 water=3 repaired=3 cleared=0 world=W10 gun=3/4 gunner=4/4
+base_box/hold_box_77.txt:AUTOTEST PASS chapter=26 variant=hold_box outcome=26.3 water=3 repaired=3 cleared=0 world=W10 gun=3/4 gunner=5/5
+base_box/hold_box_78.txt:AUTOTEST PASS chapter=26 variant=hold_box outcome=26.3 water=3 repaired=3 cleared=0 world=W10 gun=3/4 gunner=4/4
+base_box/hold_box_79.txt:AUTOTEST PASS chapter=26 variant=hold_box outcome=26.3 water=3 repaired=3 cleared=0 world=W10 gun=3/4 gunner=4/4
+base_box/hold_box_8.txt:AUTOTEST PASS chapter=26 variant=hold_box outcome=26.3 water=3 repaired=3 cleared=0 world=W10 gun=3/4 gunner=2/2
+base_box/hold_box_80.txt:AUTOTEST PASS chapter=26 variant=hold_box outcome=26.3 water=3 repaired=3 cleared=0 world=W10 gun=3/4 gunner=3/3
+base_box/hold_box_9.txt:AUTOTEST PASS chapter=26 variant=hold_box outcome=26.3 water=3 repaired=3 cleared=0 world=W10 gun=3/4 gunner=4/4
+base_lose/hold_lose_1.txt:ARMAUDIT unarmed scene=chapter26.tscn foe_dist=3.1 duel_active=false
+base_lose/hold_lose_1.txt:AUTOTEST PASS chapter=26 variant=hold_lose outcome=26.1 water=3 repaired=3 cleared=2 world=W1 gun=3/4 gunner=0/1
+base_lose/hold_lose_10.txt:AUTOTEST PASS chapter=26 variant=hold_lose outcome=26.1 water=3 repaired=3 cleared=2 world=W1 gun=3/4 gunner=0/1
+base_lose/hold_lose_11.txt:AUTOTEST PASS chapter=26 variant=hold_lose outcome=26.1 water=3 repaired=3 cleared=2 world=W1 gun=3/4 gunner=0/2
+base_lose/hold_lose_12.txt:AUTOTEST PASS chapter=26 variant=hold_lose outcome=26.1 water=3 repaired=3 cleared=2 world=W1 gun=3/4 gunner=0/1
+base_lose/hold_lose_13.txt:AUTOTEST PASS chapter=26 variant=hold_lose outcome=26.1 water=3 repaired=3 cleared=2 world=W1 gun=3/4 gunner=1/2
+base_lose/hold_lose_14.txt:AUTOTEST PASS chapter=26 variant=hold_lose outcome=26.1 water=3 repaired=3 cleared=2 world=W1 gun=3/4 gunner=0/2
+base_lose/hold_lose_15.txt:ARMAUDIT unarmed scene=chapter26.tscn foe_dist=1.5 duel_active=false
+base_lose/hold_lose_15.txt:AUTOTEST PASS chapter=26 variant=hold_lose outcome=26.1 water=3 repaired=3 cleared=2 world=W1 gun=3/4 gunner=1/2
+base_lose/hold_lose_16.txt:ARMAUDIT unarmed scene=chapter26.tscn foe_dist=1.5 duel_active=false
+base_lose/hold_lose_16.txt:AUTOTEST PASS chapter=26 variant=hold_lose outcome=26.1 water=3 repaired=3 cleared=2 world=W1 gun=3/4 gunner=0/1
+base_lose/hold_lose_17.txt:AUTOTEST PASS chapter=26 variant=hold_lose outcome=26.1 water=3 repaired=3 cleared=2 world=W1 gun=3/4 gunner=0/1
+base_lose/hold_lose_18.txt:ARMAUDIT unarmed scene=chapter26.tscn foe_dist=5.5 duel_active=false
+base_lose/hold_lose_18.txt:AUTOTEST PASS chapter=26 variant=hold_lose outcome=26.1 water=3 repaired=3 cleared=2 world=W1 gun=3/4 gunner=0/3
+base_lose/hold_lose_19.txt:AUTOTEST PASS chapter=26 variant=hold_lose outcome=26.1 water=3 repaired=3 cleared=2 world=W1 gun=3/4 gunner=0/1
+base_lose/hold_lose_2.txt:ARMAUDIT unarmed scene=chapter26.tscn foe_dist=6.8 duel_active=false
+base_lose/hold_lose_2.txt:AUTOTEST PASS chapter=26 variant=hold_lose outcome=26.1 water=3 repaired=3 cleared=2 world=W1 gun=3/4 gunner=0/3
+base_lose/hold_lose_20.txt:ARMAUDIT unarmed scene=chapter26.tscn foe_dist=3.0 duel_active=false
+base_lose/hold_lose_20.txt:AUTOTEST PASS chapter=26 variant=hold_lose outcome=26.1 water=3 repaired=3 cleared=2 world=W1 gun=3/4 gunner=0/1
+base_lose/hold_lose_21.txt:AUTOTEST PASS chapter=26 variant=hold_lose outcome=26.1 water=3 repaired=3 cleared=2 world=W1 gun=3/4 gunner=1/2
+base_lose/hold_lose_22.txt:ARMAUDIT unarmed scene=chapter26.tscn foe_dist=6.9 duel_active=false
+base_lose/hold_lose_22.txt:AUTOTEST PASS chapter=26 variant=hold_lose outcome=26.1 water=3 repaired=3 cleared=2 world=W1 gun=3/4 gunner=0/3
+base_lose/hold_lose_23.txt:ARMAUDIT unarmed scene=chapter26.tscn foe_dist=6.8 duel_active=false
+base_lose/hold_lose_23.txt:AUTOTEST PASS chapter=26 variant=hold_lose outcome=26.1 water=3 repaired=3 cleared=2 world=W1 gun=3/4 gunner=0/3
+base_lose/hold_lose_24.txt:AUTOTEST PASS chapter=26 variant=hold_lose outcome=26.1 water=3 repaired=3 cleared=2 world=W1 gun=3/4 gunner=0/3
+base_lose/hold_lose_25.txt:AUTOTEST PASS chapter=26 variant=hold_lose outcome=26.1 water=3 repaired=3 cleared=2 world=W1 gun=3/4 gunner=0/3
+base_lose/hold_lose_26.txt:AUTOTEST PASS chapter=26 variant=hold_lose outcome=26.1 water=3 repaired=3 cleared=2 world=W1 gun=3/4 gunner=1/2
+base_lose/hold_lose_27.txt:AUTOTEST PASS chapter=26 variant=hold_lose outcome=26.1 water=3 repaired=3 cleared=2 world=W1 gun=3/4 gunner=0/1
+base_lose/hold_lose_28.txt:AUTOTEST PASS chapter=26 variant=hold_lose outcome=26.1 water=3 repaired=3 cleared=2 world=W1 gun=3/4 gunner=0/1
+base_lose/hold_lose_29.txt:AUTOTEST PASS chapter=26 variant=hold_lose outcome=26.1 water=3 repaired=3 cleared=2 world=W1 gun=3/4 gunner=1/1
+base_lose/hold_lose_3.txt:ARMAUDIT unarmed scene=chapter26.tscn foe_dist=3.8 duel_active=false
+base_lose/hold_lose_3.txt:AUTOTEST PASS chapter=26 variant=hold_lose outcome=26.1 water=3 repaired=3 cleared=2 world=W1 gun=3/4 gunner=0/1
+base_lose/hold_lose_30.txt:AUTOTEST PASS chapter=26 variant=hold_lose outcome=26.1 water=3 repaired=3 cleared=2 world=W1 gun=3/4 gunner=0/3
+base_lose/hold_lose_31.txt:ARMAUDIT unarmed scene=chapter26.tscn foe_dist=2.0 duel_active=false
+base_lose/hold_lose_31.txt:AUTOTEST PASS chapter=26 variant=hold_lose outcome=26.1 water=3 repaired=3 cleared=2 world=W1 gun=3/4 gunner=0/1
+base_lose/hold_lose_32.txt:ARMAUDIT unarmed scene=chapter26.tscn foe_dist=2.1 duel_active=false
+base_lose/hold_lose_32.txt:AUTOTEST PASS chapter=26 variant=hold_lose outcome=26.1 water=3 repaired=3 cleared=2 world=W1 gun=3/4 gunner=0/1
+base_lose/hold_lose_33.txt:AUTOTEST PASS chapter=26 variant=hold_lose outcome=26.1 water=3 repaired=3 cleared=2 world=W1 gun=3/4 gunner=0/1
+base_lose/hold_lose_34.txt:AUTOTEST PASS chapter=26 variant=hold_lose outcome=26.1 water=3 repaired=3 cleared=2 world=W1 gun=3/4 gunner=0/3
+base_lose/hold_lose_35.txt:ARMAUDIT unarmed scene=chapter26.tscn foe_dist=1.6 duel_active=false
+base_lose/hold_lose_35.txt:AUTOTEST PASS chapter=26 variant=hold_lose outcome=26.1 water=3 repaired=3 cleared=2 world=W1 gun=3/4 gunner=0/1
+base_lose/hold_lose_36.txt:ARMAUDIT unarmed scene=chapter26.tscn foe_dist=3.2 duel_active=false
+base_lose/hold_lose_36.txt:AUTOTEST PASS chapter=26 variant=hold_lose outcome=26.1 water=3 repaired=3 cleared=2 world=W1 gun=3/4 gunner=0/1
+base_lose/hold_lose_37.txt:ARMAUDIT unarmed scene=chapter26.tscn foe_dist=2.9 duel_active=false
+base_lose/hold_lose_37.txt:AUTOTEST PASS chapter=26 variant=hold_lose outcome=26.1 water=3 repaired=3 cleared=2 world=W1 gun=3/4 gunner=0/2
+base_lose/hold_lose_38.txt:ARMAUDIT unarmed scene=chapter26.tscn foe_dist=2.4 duel_active=false
+base_lose/hold_lose_38.txt:AUTOTEST PASS chapter=26 variant=hold_lose outcome=26.1 water=3 repaired=3 cleared=2 world=W1 gun=3/4 gunner=0/2
+base_lose/hold_lose_39.txt:ARMAUDIT unarmed scene=chapter26.tscn foe_dist=6.8 duel_active=false
+base_lose/hold_lose_39.txt:AUTOTEST PASS chapter=26 variant=hold_lose outcome=26.1 water=3 repaired=3 cleared=2 world=W1 gun=3/4 gunner=0/3
+base_lose/hold_lose_4.txt:ARMAUDIT unarmed scene=chapter26.tscn foe_dist=3.3 duel_active=false
+base_lose/hold_lose_4.txt:AUTOTEST PASS chapter=26 variant=hold_lose outcome=26.1 water=3 repaired=3 cleared=2 world=W1 gun=3/4 gunner=0/1
+base_lose/hold_lose_40.txt:AUTOTEST PASS chapter=26 variant=hold_lose outcome=26.1 water=3 repaired=3 cleared=2 world=W1 gun=3/4 gunner=0/2
+base_lose/hold_lose_41.txt:AUTOTEST PASS chapter=26 variant=hold_lose outcome=26.1 water=3 repaired=3 cleared=2 world=W1 gun=3/4 gunner=0/3
+base_lose/hold_lose_42.txt:AUTOTEST PASS chapter=26 variant=hold_lose outcome=26.1 water=3 repaired=3 cleared=2 world=W1 gun=3/4 gunner=0/1
+base_lose/hold_lose_43.txt:ARMAUDIT unarmed scene=chapter26.tscn foe_dist=2.6 duel_active=false
+base_lose/hold_lose_43.txt:AUTOTEST PASS chapter=26 variant=hold_lose outcome=26.1 water=3 repaired=3 cleared=2 world=W1 gun=3/4 gunner=0/1
+base_lose/hold_lose_44.txt:AUTOTEST PASS chapter=26 variant=hold_lose outcome=26.1 water=3 repaired=3 cleared=2 world=W1 gun=3/4 gunner=0/2
+base_lose/hold_lose_45.txt:AUTOTEST PASS chapter=26 variant=hold_lose outcome=26.1 water=3 repaired=3 cleared=2 world=W1 gun=3/4 gunner=0/3
+base_lose/hold_lose_46.txt:ARMAUDIT unarmed scene=chapter26.tscn foe_dist=2.8 duel_active=false
+base_lose/hold_lose_46.txt:AUTOTEST PASS chapter=26 variant=hold_lose outcome=26.1 water=3 repaired=3 cleared=2 world=W1 gun=3/4 gunner=0/1
+base_lose/hold_lose_47.txt:ARMAUDIT unarmed scene=chapter26.tscn foe_dist=3.3 duel_active=false
+base_lose/hold_lose_47.txt:AUTOTEST PASS chapter=26 variant=hold_lose outcome=26.1 water=3 repaired=3 cleared=2 world=W1 gun=3/4 gunner=0/1
+base_lose/hold_lose_48.txt:AUTOTEST PASS chapter=26 variant=hold_lose outcome=26.1 water=3 repaired=3 cleared=2 world=W1 gun=3/4 gunner=2/2
+base_lose/hold_lose_49.txt:AUTOTEST PASS chapter=26 variant=hold_lose outcome=26.1 water=3 repaired=3 cleared=2 world=W1 gun=3/4 gunner=0/1
+base_lose/hold_lose_5.txt:AUTOTEST PASS chapter=26 variant=hold_lose outcome=26.1 water=3 repaired=3 cleared=2 world=W1 gun=3/4 gunner=0/1
+base_lose/hold_lose_50.txt:AUTOTEST PASS chapter=26 variant=hold_lose outcome=26.1 water=3 repaired=3 cleared=2 world=W1 gun=3/4 gunner=0/3
+base_lose/hold_lose_51.txt:AUTOTEST PASS chapter=26 variant=hold_lose outcome=26.1 water=3 repaired=3 cleared=2 world=W1 gun=3/4 gunner=0/1
+base_lose/hold_lose_52.txt:ARMAUDIT unarmed scene=chapter26.tscn foe_dist=2.4 duel_active=false
+base_lose/hold_lose_52.txt:AUTOTEST PASS chapter=26 variant=hold_lose outcome=26.1 water=3 repaired=3 cleared=2 world=W1 gun=3/4 gunner=1/2
+base_lose/hold_lose_53.txt:ARMAUDIT unarmed scene=chapter26.tscn foe_dist=4.0 duel_active=false
+base_lose/hold_lose_53.txt:AUTOTEST PASS chapter=26 variant=hold_lose outcome=26.1 water=3 repaired=3 cleared=2 world=W1 gun=3/4 gunner=0/1
+base_lose/hold_lose_54.txt:ARMAUDIT unarmed scene=chapter26.tscn foe_dist=2.9 duel_active=false
+base_lose/hold_lose_54.txt:AUTOTEST PASS chapter=26 variant=hold_lose outcome=26.1 water=3 repaired=3 cleared=2 world=W1 gun=3/4 gunner=0/1
+base_lose/hold_lose_55.txt:AUTOTEST PASS chapter=26 variant=hold_lose outcome=26.1 water=3 repaired=3 cleared=2 world=W1 gun=3/4 gunner=1/1
+base_lose/hold_lose_56.txt:AUTOTEST PASS chapter=26 variant=hold_lose outcome=26.1 water=3 repaired=3 cleared=2 world=W1 gun=3/4 gunner=0/1
+base_lose/hold_lose_57.txt:AUTOTEST PASS chapter=26 variant=hold_lose outcome=26.1 water=3 repaired=3 cleared=2 world=W1 gun=3/4 gunner=0/1
+base_lose/hold_lose_58.txt:AUTOTEST PASS chapter=26 variant=hold_lose outcome=26.1 water=3 repaired=3 cleared=2 world=W1 gun=3/4 gunner=0/1
+base_lose/hold_lose_59.txt:ARMAUDIT unarmed scene=chapter26.tscn foe_dist=3.8 duel_active=false
+base_lose/hold_lose_59.txt:AUTOTEST PASS chapter=26 variant=hold_lose outcome=26.1 water=3 repaired=3 cleared=2 world=W1 gun=3/4 gunner=0/1
+base_lose/hold_lose_6.txt:AUTOTEST PASS chapter=26 variant=hold_lose outcome=26.1 water=3 repaired=3 cleared=2 world=W1 gun=3/4 gunner=0/3
+base_lose/hold_lose_60.txt:AUTOTEST PASS chapter=26 variant=hold_lose outcome=26.1 water=3 repaired=3 cleared=2 world=W1 gun=3/4 gunner=0/1
+base_lose/hold_lose_61.txt:AUTOTEST PASS chapter=26 variant=hold_lose outcome=26.1 water=3 repaired=3 cleared=2 world=W1 gun=3/4 gunner=0/1
+base_lose/hold_lose_62.txt:AUTOTEST PASS chapter=26 variant=hold_lose outcome=26.1 water=3 repaired=3 cleared=2 world=W1 gun=3/4 gunner=0/3
+base_lose/hold_lose_63.txt:ARMAUDIT unarmed scene=chapter26.tscn foe_dist=7.1 duel_active=false
+base_lose/hold_lose_63.txt:AUTOTEST PASS chapter=26 variant=hold_lose outcome=26.1 water=3 repaired=3 cleared=2 world=W1 gun=3/4 gunner=0/3
+base_lose/hold_lose_64.txt:AUTOTEST PASS chapter=26 variant=hold_lose outcome=26.1 water=3 repaired=3 cleared=2 world=W1 gun=3/4 gunner=0/3
+base_lose/hold_lose_65.txt:AUTOTEST PASS chapter=26 variant=hold_lose outcome=26.1 water=3 repaired=3 cleared=2 world=W1 gun=3/4 gunner=0/1
+base_lose/hold_lose_66.txt:AUTOTEST PASS chapter=26 variant=hold_lose outcome=26.1 water=3 repaired=3 cleared=2 world=W1 gun=3/4 gunner=0/1
+base_lose/hold_lose_67.txt:ARMAUDIT unarmed scene=chapter26.tscn foe_dist=2.4 duel_active=false
+base_lose/hold_lose_67.txt:AUTOTEST PASS chapter=26 variant=hold_lose outcome=26.1 water=3 repaired=3 cleared=2 world=W1 gun=3/4 gunner=0/1
+base_lose/hold_lose_68.txt:ARMAUDIT unarmed scene=chapter26.tscn foe_dist=7.2 duel_active=false
+base_lose/hold_lose_68.txt:AUTOTEST PASS chapter=26 variant=hold_lose outcome=26.1 water=3 repaired=3 cleared=2 world=W1 gun=3/4 gunner=0/2
+base_lose/hold_lose_69.txt:ARMAUDIT unarmed scene=chapter26.tscn foe_dist=6.6 duel_active=false
+base_lose/hold_lose_69.txt:AUTOTEST PASS chapter=26 variant=hold_lose outcome=26.1 water=3 repaired=3 cleared=2 world=W1 gun=3/4 gunner=0/3
+base_lose/hold_lose_7.txt:ARMAUDIT unarmed scene=chapter26.tscn foe_dist=3.4 duel_active=false
+base_lose/hold_lose_7.txt:AUTOTEST PASS chapter=26 variant=hold_lose outcome=26.1 water=3 repaired=3 cleared=2 world=W1 gun=3/4 gunner=0/1
+base_lose/hold_lose_70.txt:VISAUDIT personhidden key=D26_G_REPELLED_2 scene=chapter26.tscn speaker=SPK_GIUST by=@Node3D@32863/@Node3D@33876(no_talk,garrison,armed,tool_armed) at=(-2.8, 0.2, 11.2) eye=(-2.3, 1.8, 10.9) head=(-4.2, 2.5, 11.9) src=Chapter26>WallFight>Person
+base_lose/hold_lose_70.txt:AUTOTEST PASS chapter=26 variant=hold_lose outcome=26.1 water=3 repaired=3 cleared=2 world=W1 gun=3/4 gunner=0/1
+base_lose/hold_lose_71.txt:AUTOTEST PASS chapter=26 variant=hold_lose outcome=26.1 water=3 repaired=3 cleared=2 world=W1 gun=3/4 gunner=0/1
+base_lose/hold_lose_72.txt:AUTOTEST PASS chapter=26 variant=hold_lose outcome=26.1 water=3 repaired=3 cleared=2 world=W1 gun=3/4 gunner=0/1
+base_lose/hold_lose_73.txt:ARMAUDIT unarmed scene=chapter26.tscn foe_dist=3.4 duel_active=false
+base_lose/hold_lose_73.txt:AUTOTEST PASS chapter=26 variant=hold_lose outcome=26.1 water=3 repaired=3 cleared=2 world=W1 gun=3/4 gunner=0/1
+base_lose/hold_lose_74.txt:ARMAUDIT unarmed scene=chapter26.tscn foe_dist=6.8 duel_active=false
+base_lose/hold_lose_74.txt:AUTOTEST PASS chapter=26 variant=hold_lose outcome=26.1 water=3 repaired=3 cleared=2 world=W1 gun=3/4 gunner=0/3
+base_lose/hold_lose_75.txt:AUTOTEST PASS chapter=26 variant=hold_lose outcome=26.1 water=3 repaired=3 cleared=2 world=W1 gun=3/4 gunner=0/1
+base_lose/hold_lose_76.txt:AUTOTEST PASS chapter=26 variant=hold_lose outcome=26.1 water=3 repaired=3 cleared=2 world=W1 gun=3/4 gunner=1/2
+base_lose/hold_lose_77.txt:AUTOTEST PASS chapter=26 variant=hold_lose outcome=26.1 water=3 repaired=3 cleared=2 world=W1 gun=3/4 gunner=0/3
+base_lose/hold_lose_78.txt:AUTOTEST PASS chapter=26 variant=hold_lose outcome=26.1 water=3 repaired=3 cleared=2 world=W1 gun=3/4 gunner=0/3
+base_lose/hold_lose_79.txt:AUTOTEST PASS chapter=26 variant=hold_lose outcome=26.1 water=3 repaired=3 cleared=2 world=W1 gun=3/4 gunner=0/1
+base_lose/hold_lose_8.txt:AUTOTEST PASS chapter=26 variant=hold_lose outcome=26.1 water=3 repaired=3 cleared=2 world=W1 gun=3/4 gunner=0/1
+base_lose/hold_lose_80.txt:AUTOTEST PASS chapter=26 variant=hold_lose outcome=26.1 water=3 repaired=3 cleared=2 world=W1 gun=3/4 gunner=0/2
+base_lose/hold_lose_9.txt:ARMAUDIT unarmed scene=chapter26.tscn foe_dist=2.4 duel_active=false
+base_lose/hold_lose_9.txt:AUTOTEST PASS chapter=26 variant=hold_lose outcome=26.1 water=3 repaired=3 cleared=2 world=W1 gun=3/4 gunner=0/1

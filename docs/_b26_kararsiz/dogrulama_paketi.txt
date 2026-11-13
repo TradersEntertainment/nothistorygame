@@ -1,0 +1,92 @@
+# Bolum 26'nin 14 cesidi x2 + ortak dosyayi kullanan bolumlerin varsayilan/lose testi x1
+## --chapter=26 --autotest (exit 0)
+AUTOTEST PASS chapter=26 variant= outcome=26.1 water=3 repaired=3 cleared=2 world= gun=3/4 gunner=4/4
+## --chapter=26 --autotest=nophoto (exit 0)
+AUTOTEST PASS chapter=26 variant=nophoto outcome=26.2 water=3 repaired=3 cleared=2 world= gun=3/4 gunner=4/5
+## --chapter=26 --autotest=hold (exit 0)
+AUTOTEST PASS chapter=26 variant=hold outcome=26.3 water=3 repaired=3 cleared=0 world=W10 gun=3/4 gunner=2/2
+## --chapter=26 --autotest=hold_box (exit 0)
+AUTOTEST PASS chapter=26 variant=hold_box outcome=26.3 water=3 repaired=3 cleared=0 world=W10 gun=3/4 gunner=4/4
+## --chapter=26 --autotest=hold23 (exit 0)
+AUTOTEST PASS chapter=26 variant=hold23 outcome=26.3 water=3 repaired=3 cleared=0 world=W12 gun=3/4 gunner=3/3
+## --chapter=26 --autotest=hold3 (exit 0)
+AUTOTEST PASS chapter=26 variant=hold3 outcome=26.3 water=3 repaired=3 cleared=0 world=W11 gun=3/4 gunner=2/2
+## --chapter=26 --autotest=warn_notrust (exit 0)
+AUTOTEST PASS chapter=26 variant=warn_notrust outcome=26.1 water=3 repaired=3 cleared=2 world= gun=3/4 gunner=3/3
+## --chapter=26 --autotest=hold_lose (exit 0)
+AUTOTEST PASS chapter=26 variant=hold_lose outcome=26.1 water=3 repaired=3 cleared=2 world=W1 gun=3/4 gunner=0/1
+## --chapter=26 --autotest=lighter (exit 0)
+AUTOTEST PASS chapter=26 variant=lighter outcome=26.1 water=3 repaired=3 cleared=2 world= gun=3/4 gunner=2/2
+## --chapter=26 --autotest=isidore (exit 0)
+AUTOTEST PASS chapter=26 variant=isidore outcome=26.1 water=3 repaired=3 cleared=2 world= gun=3/4 gunner=5/5
+## --chapter=26 --autotest=kasim (exit 0)
+AUTOTEST PASS chapter=26 variant=kasim outcome=26.1 water=3 repaired=3 cleared=2 world= gun=3/4 gunner=4/4
+## --chapter=26 --autotest=candle (exit 0)
+AUTOTEST PASS chapter=26 variant=candle outcome=26.1 water=3 repaired=3 cleared=2 world= gun=3/4 gunner=4/4
+## --chapter=26 --autotest=council_ok (exit 0)
+AUTOTEST PASS chapter=26 variant=council_ok outcome=26.1 water=3 repaired=3 cleared=2 world= gun=3/4 gunner=4/4
+## --chapter=26 --autotest=council_bad (exit 0)
+AUTOTEST PASS chapter=26 variant=council_bad outcome=26.1 water=3 repaired=3 cleared=2 world= gun=3/4 gunner=2/2
+## --chapter=26 --autotest (exit 0)
+AUTOTEST PASS chapter=26 variant= outcome=26.1 water=3 repaired=3 cleared=2 world= gun=3/4 gunner=5/5
+## --chapter=26 --autotest=nophoto (exit 0)
+AUTOTEST PASS chapter=26 variant=nophoto outcome=26.2 water=3 repaired=3 cleared=2 world= gun=3/4 gunner=4/4
+## --chapter=26 --autotest=hold (exit 0)
+AUTOTEST PASS chapter=26 variant=hold outcome=26.3 water=3 repaired=3 cleared=0 world=W10 gun=3/4 gunner=3/3
+## --chapter=26 --autotest=hold_box (exit 0)
+AUTOTEST PASS chapter=26 variant=hold_box outcome=26.3 water=3 repaired=3 cleared=0 world=W10 gun=3/4 gunner=3/3
+## --chapter=26 --autotest=hold23 (exit 0)
+AUTOTEST PASS chapter=26 variant=hold23 outcome=26.3 water=3 repaired=3 cleared=0 world=W12 gun=3/4 gunner=3/3
+## --chapter=26 --autotest=hold3 (exit 0)
+AUTOTEST PASS chapter=26 variant=hold3 outcome=26.3 water=3 repaired=3 cleared=0 world=W11 gun=3/4 gunner=4/4
+## --chapter=26 --autotest=warn_notrust (exit 0)
+AUTOTEST PASS chapter=26 variant=warn_notrust outcome=26.1 water=3 repaired=3 cleared=2 world= gun=3/4 gunner=4/4
+## --chapter=26 --autotest=hold_lose (exit 0)
+AUTOTEST PASS chapter=26 variant=hold_lose outcome=26.1 water=3 repaired=3 cleared=2 world=W1 gun=3/4 gunner=0/2
+## --chapter=26 --autotest=lighter (exit 0)
+AUTOTEST PASS chapter=26 variant=lighter outcome=26.1 water=3 repaired=3 cleared=2 world= gun=3/4 gunner=2/2
+## --chapter=26 --autotest=isidore (exit 0)
+AUTOTEST PASS chapter=26 variant=isidore outcome=26.1 water=3 repaired=3 cleared=2 world= gun=3/4 gunner=4/4
+## --chapter=26 --autotest=kasim (exit 0)
+WALKTHRU scene=chapter26.tscn who=@Node3D@43064 at=(31.5, 1.0, 5.0) by=@Node3D@177/@StaticBody3D@237 pos=(32.0, 1.5, 2.2) src=Chapter26>Node3D>Person|Chapter26>LandWalls>StaticBody3D
+AUTOTEST PASS chapter=26 variant=kasim outcome=26.1 water=3 repaired=3 cleared=2 world= gun=3/4 gunner=2/3
+## --chapter=26 --autotest=candle (exit 0)
+AUTOTEST PASS chapter=26 variant=candle outcome=26.1 water=3 repaired=3 cleared=2 world= gun=3/4 gunner=3/3
+## --chapter=26 --autotest=council_ok (exit 0)
+AUTOTEST PASS chapter=26 variant=council_ok outcome=26.1 water=3 repaired=3 cleared=2 world= gun=3/4 gunner=4/4
+## --chapter=26 --autotest=council_bad (exit 0)
+AUTOTEST PASS chapter=26 variant=council_bad outcome=26.1 water=3 repaired=3 cleared=2 world= gun=3/4 gunner=4/4
+## --chapter=0 --autotest (exit 0)
+AUTOTEST PASS chapter=0 variant= froze=true
+## --chapter=8 --autotest (exit 0)
+AUTOTEST PASS chapter=8 variant= machine=free outcome=8.1 parts=["capacitor", "antenna", "tape"] catches=0 called=false solid=0
+## --chapter=20 --autotest (exit 0)
+AUTOTEST PASS chapter=20 variant= outcome=20.1 repair=10 knocks=0 arrows=true gun=3/4 gunner=3/3 niko=0
+## --chapter=20 --autotest=lose (exit 0)
+AUTOTEST PASS chapter=20 variant=lose outcome=20.3 repair=10 knocks=0 arrows=true gun=3/4 gunner=0/2 niko=0
+## --chapter=20o --autotest (exit 0)
+AUTOTEST PASS chapter=20o variant= outcome=20O.1 hits=3 cracks=0 gun=3/4 gunner=1/2 duel=true bed=
+## --chapter=20o --autotest=lose (exit 0)
+AUTOTEST PASS chapter=20o variant=lose outcome=20O.1 hits=3 cracks=0 gun=3/4 gunner=0/1 duel=false bed=
+## --chapter=21o --autotest (exit 0)
+AUTOTEST PASS chapter=21o variant= outcome=21O.1 dug=6 raid=true ear=false
+## --chapter=21o --autotest=lose (exit 0)
+AUTOTEST PASS chapter=21o variant=lose outcome=21O.1 dug=6 raid=false ear=false
+## --chapter=26o --autotest (exit 0)
+AUTOTEST PASS chapter=26o variant= outcome=26.1 water=3 ladders=3 gun=3/4 stones=1/1 gunner=6/6 oil=1/1 turgut=no
+## --chapter=26o --autotest=lose (exit 0)
+AUTOTEST PASS chapter=26o variant=lose outcome=26.2 water=3 ladders=3 gun=3/4 stones=1/1 gunner=0/1 oil=0/1 turgut=no
+## --chapter=30o --autotest (exit 0)
+AUTOTEST PASS chapter=30o variant= outcome=30O.1 stones=4/4 gunner=3/3 tower=true fell=false guards=10 pokes=0 flee=ride pushed=true
+## --chapter=30o --autotest=lose (exit 0)
+AUTOTEST PASS chapter=30o variant=lose outcome=30O.2 stones=4/4 gunner=0/1 tower=false fell=true guards=10 pokes=0 flee=fade pushed=false
+## --chapter=31o --autotest (exit 0)
+AUTOTEST PASS chapter=31o variant= outcome=31O.1 house=true(163) falls=0 signs=3 wrong=0 sun=true lashes=3 miss=0 scaff=true mats=8/8 err=0
+## --chapter=36b --autotest (exit 0)
+AUTOTEST PASS chapter=36 variant= outcome=36.1 burned=3 fights=1 kills=3
+## --chapter=37o --autotest (exit 0)
+AUTOTEST PASS chapter=37o variant= outcome=37O.1 beats=12/16 arrows=0 falls=0 barrels=5/5 cuts=0 stones=0 slips=0 burns=0 duel=true caught=0
+## --chapter=37o --autotest=lose (exit 0)
+AUTOTEST PASS chapter=37o variant=lose outcome=37O.2 beats=5/16 arrows=0 falls=1 barrels=2/5 cuts=5 stones=0 slips=0 burns=0 duel=false caught=0
+# parse_check:
+PARSECHECK PASS scripts=252
