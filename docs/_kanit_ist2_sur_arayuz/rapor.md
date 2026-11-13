@@ -9,7 +9,18 @@
 SURSOZLESME PASS kalem=13 kesim=8
 SUROYUN nokta=1186 havada=0 gomuk=0 katida=0
 WALKTHRU OZET yol=7 tamam=7 takilma=0 dusme=0
-@@DENETIM@@
+OTURTMA ornek=3227 bosluk=0 gomuk=6 yarik=26 levha=6
+BIRLIK malzeme=238 kategorisiz=0 doygunluk_asan=0 duz_buyuk_yuzey=0 saf_beyaz=0
+HAVADA pencere=0 esya=0 cati=0
+PARSECHECK PASS scripts=352
+```
+
+OTURTMA hedefi (hepsi 0) **tutmuyor**, ama bu oturumdan önce de aynıydı: TUR-6 SONRA ölçümü `gomuk=6 yarik=26 levha=6`
+(`docs/_kanit_ist2_tur6/rapor.md:106`). Bu oturumun 4e etek değişikliği sayıları değiştirmedi. Bölüm testleri son kodla
+(`sehir_denetim_ve_bolumler.txt`): 30, 30o, 20, 26, 26o, 12b, 7, 11 → hepsi `AUTOTEST PASS`; SCRIPT ERROR 0, VISAUDIT 0,
+WALKTHRU 0. Birleştirmeden hemen sonra da aynı sonuç alınmıştı.
+
+```
 ```
 
 ## Madde madde

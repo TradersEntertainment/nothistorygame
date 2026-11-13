@@ -1,0 +1,14 @@
+oturtma rc=0 OTURTMA ornek=3227 bosluk=0 gomuk=6 yarik=26 levha=6
+birlik rc=0 BIRLIK malzeme=238 kategorisiz=0 doygunluk_asan=0 duz_buyuk_yuzey=0 saf_beyaz=0
+havada rc=0 HAVADA pencere=0 esya=0 cati=0
+parse PARSECHECK PASS scripts=352
+CH 30 rc=0 script_error=0 AUTOTEST PASS visaudit=0 walkthru=0
+CH 30o rc=0 script_error=0 AUTOTEST PASS visaudit=0 walkthru=0
+CH 20 rc=0 script_error=0 AUTOTEST PASS visaudit=0 walkthru=0
+CH 26 rc=0 script_error=0 AUTOTEST PASS visaudit=0 walkthru=0
+CH 26o rc=0 script_error=0 AUTOTEST PASS visaudit=0 walkthru=0
+CH 12b rc=0 script_error=0 AUTOTEST PASS visaudit=0 walkthru=0
+CH 7 rc=0 script_error=0 AUTOTEST PASS visaudit=0 walkthru=0
+CH 11 rc=0 script_error=0 AUTOTEST PASS visaudit=0 walkthru=0
+
+[exited with code 0]
