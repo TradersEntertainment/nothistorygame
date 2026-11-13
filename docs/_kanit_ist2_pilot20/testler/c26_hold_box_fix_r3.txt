@@ -1,0 +1,3 @@
+VISAUDIT overlap scene=chapter26.tscn a=Garrison b=@Node3D@33137 at=(9.6, 8.0, 14.7) src=Chapter26>Garrison>Person|Chapter26>WallFight>Node3D>Person
+AUTOTEST PASS chapter=26 variant=hold_box outcome=26.3 water=3 repaired=3 cleared=0 world=W10 gun=3/4 gunner=3/3
+KOSU ad=c26_hold_box_fix_r3 rc=0 sn=74 args=--chapter=26 --autotest=hold_box

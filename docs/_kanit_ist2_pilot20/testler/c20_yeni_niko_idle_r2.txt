@@ -1,0 +1,5 @@
+SURSET kesim=mesoteikhion kurulum_ms=3199 sur_ms=789 set_ms=2404
+PILOT20ENGEL OZET nokta=9 engelde=0
+PILOT20KURULUM sur=yeni set_ms=3200 bolum_ms=1366 toplam_ms=4566
+AUTOTEST PASS chapter=20 variant=niko_idle outcome=20.1 repair=10 knocks=0 arrows=true gun=3/4 gunner=3/3 niko=5 sur=yeni
+KOSU ad=c20_yeni_niko_idle_r2 rc=0 sn=58 args=--chapter=20 --autotest=niko_idle

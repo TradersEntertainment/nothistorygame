@@ -3,13 +3,17 @@
 Taban kayıt: `9f32c394` (önceki oturum; kanıtsız).
 
 ## Biten
-- 1. Kurulum + ayrıştırma: Godot 4.4.1 (`~/is/godot/godot`), `--import` tamam, `PARSECHECK PASS scripts=354`.
-  Bölüm 20 yeni sette başsız ilk koşu: `AUTOTEST PASS … sur=yeni`, denetim satırı 0.
+- 1. Kurulum + ayrıştırma: Godot 4.4.1, `--import`, `PARSECHECK PASS scripts=354`; Bölüm 20 yeni sette ilk koşu PASS.
+- 2. Test matrisi ilk tur (66 koşu): hepsi `AUTOTEST PASS`, denetim satırı 0 (`testler/`). Bulgular:
+  - yeni sette `=hit`/`=lose`'da `WARN_PORTRAIT_STUDIO SPK_LOOKOUT` → gözcü canlı değildi (en yakın kurulu dış kule x 35,4 >
+    yakın aralık 32). Düzeltildi (`garrison.gd _land_walls_sur`).
+  - 20o `=wide` düellosu 41/43 sn (eski 13/11): `SurSet.moloz_sirti()` duvarın ortasındaydı (aşama 4 çitinin içi).
+    Sırt dış yüz +1,4'e alındı → 2. dalga 22 sn, 1. dalga hâlâ 35–41 sn (KISMEN; neden aşama 4 dış çit, deneyle kanıtlı).
+- 3. Öteki bölümler: 21 bölüm varsayılan PASS, denetim 0. 26 `=hold_box`: 6+8 koşuda 2 `VISAUDIT overlap`; taban
+  kayıtta (20948418) da 12'de 1 (Squad/Squad) → pilot öncesinden. `spear_loop` hedef ayırma eklendi (yarış durumu).
 
 ## Süren
-- 2. Test matrisi (66 koşu, 4'er paralel; çıktılar `~/is/out`, sonra `testler/` altına).
-- Görsel teşhis aracı `tests/_ist/pilot20_teshis.tscn` (düğüm gizleyerek kusur kaynağı bulma) yazıldı, henüz koşulmadı.
-- Küçük düzeltme: `assault.gd` yeni sette tabya ve mancınık yönü ova kaydırmasını hesaba katıyor (bataryayla aynı).
+- 4. sözleşme denetimleri.
 
 ## Sıradaki
-- 3. öteki bölümler, 4. sözleşme denetimleri, 5. yürüyüş, 6. kareler, 7. görsel kusurlar, 8. bütçe, 9. rapor.
+- 5. yürüyüş, 6. kareler, 7. görsel kusurlar (teşhis aracı hazır), 8. bütçe, son tam matris, 9. rapor.

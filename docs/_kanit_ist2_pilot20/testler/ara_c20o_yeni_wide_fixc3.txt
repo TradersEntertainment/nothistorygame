@@ -1,0 +1,4 @@
+WAVERUNNER wave=1/2 won=true t=34.5 pw=0.28 foe_dmg=18.0 allies=0+0 rally_foes=0 thrown=0
+WAVERUNNER wave=2/2 won=true t=22.9 pw=0.28 foe_dmg=18.0 allies=0+0 rally_foes=0 thrown=0
+AUTOTEST PASS chapter=20o variant=wide outcome=20O.2 hits=0 cracks=0 gun=3/4 gunner=5/5 duel=true bed= sur=yeni
+KOSU ad=c20o_yeni_wide_fixc3 rc=0 sn=51 args=--chapter=20o --autotest=wide

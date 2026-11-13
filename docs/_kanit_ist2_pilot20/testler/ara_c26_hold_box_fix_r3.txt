@@ -1,0 +1,7 @@
+WAVERUNNER wave=1/1 won=true t=31.3 pw=0.28 foe_dmg=18.0 allies=3+0 rally_foes=0 thrown=2
+WAVERUNNER wave=1/1 won=true t=30.2 pw=0.28 foe_dmg=18.0 allies=5+0 rally_foes=0 thrown=0
+WAVERUNNER wave=1/2 won=true t=5.4 pw=0.28 foe_dmg=18.0 allies=3+0 rally_foes=0 thrown=0
+WAVERUNNER wave=2/2 won=true t=23.0 pw=0.28 foe_dmg=18.0 allies=5+0 rally_foes=0 thrown=1
+VISAUDIT overlap scene=chapter26.tscn a=Garrison b=@Node3D@33137 at=(9.6, 8.0, 14.7) src=Chapter26>Garrison>Person|Chapter26>WallFight>Node3D>Person
+AUTOTEST PASS chapter=26 variant=hold_box outcome=26.3 water=3 repaired=3 cleared=0 world=W10 gun=3/4 gunner=3/3
+KOSU ad=c26_hold_box_fix_r3 rc=0 sn=74 args=--chapter=26 --autotest=hold_box

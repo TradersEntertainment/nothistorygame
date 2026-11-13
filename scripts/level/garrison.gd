@@ -225,16 +225,23 @@ static func _land_walls_sur(parent: Node3D, sur: SurSet, skip: Array, near: Arra
 					cols.append(fc)
 					poses.append(fp)
 			x += sx * step
-	# Dış kule tepeleri (kurulu kuleler, alanın içinde): ikişer gözcü
+	# Dış kule tepeleri (kurulu kuleler, alanın içinde): ikişer gözcü. Eski sette gediğin iki yanındaki kuleler (±16) bölümün
+	# "yakın" aralığının içindeydi: gözcüleri canlıydı (SPK_LOOKOUT, bölümün gözcü replikleri onlardan). Yeni kesimde kule
+	# aralığı ≈ 2 kat (gediğe en yakın kurulu kule x 35,4): yakın aralık verilmişse gediğe en yakın kurulu kule(ler)in
+	# gözcüsü yine canlı (aksi hâlde replik sahnede yüzü olmayan birine düşer: WARN_PORTRAIT_STUDIO)
+	var yakin_kule := INF
+	for tx: float in sur.dis_kuleler_kurulu():
+		yakin_kule = minf(yakin_kule, absf(tx))
 	for tx: float in sur.dis_kuleler_kurulu():
 		if absf(tx) > span + 4.0:
 			continue
 		var tp := sur.dis_kule_tepe(tx)
+		var canli := not near.is_empty() and absf(absf(tx) - yakin_kule) < 0.01
 		for k in 2:
 			var p := tp + Vector3(-1.0 + k * 2.0, 0, 0.3)
 			if _in(p.x, skip):
 				continue
-			if _in(p.x, near):
+			if _in(p.x, near) or canli:
 				var lk := man(root, p, rng.randf_range(-0.3, 0.3), i + seed, ["bow", "spear"][k])
 				lk.set_meta("spk", "SPK_LOOKOUT")
 				lk.set_meta("afar", true)

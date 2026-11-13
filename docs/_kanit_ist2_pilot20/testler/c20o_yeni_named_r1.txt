@@ -1,0 +1,3 @@
+SURSET kesim=mesoteikhion kurulum_ms=3214 sur_ms=785 set_ms=2424
+AUTOTEST PASS chapter=20o variant=named outcome=20O.1 hits=3 cracks=0 gun=3/4 gunner=2/2 duel=true bed= sur=yeni
+KOSU ad=c20o_yeni_named_r1 rc=0 sn=42 args=--chapter=20o --autotest=named

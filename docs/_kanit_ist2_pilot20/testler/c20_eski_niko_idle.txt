@@ -1,0 +1,3 @@
+PILOT20KURULUM sur=eski set_ms=5584 bolum_ms=1320 toplam_ms=6904
+AUTOTEST PASS chapter=20 variant=niko_idle outcome=20.1 repair=10 knocks=0 arrows=true gun=3/4 gunner=4/4 niko=5 sur=eski
+KOSU ad=c20_eski_niko_idle rc=0 sn=68 args=--chapter=20 --autotest=niko_idle --eskisur

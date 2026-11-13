@@ -1,0 +1,6 @@
+WAVERUNNER wave=1/1 won=true t=30.9 pw=0.28 foe_dmg=18.0 allies=3+0 rally_foes=0 thrown=2
+WAVERUNNER wave=1/1 won=true t=17.3 pw=0.28 foe_dmg=18.0 allies=5+0 rally_foes=0 thrown=0
+WAVERUNNER wave=1/2 won=true t=18.5 pw=0.28 foe_dmg=18.0 allies=3+0 rally_foes=0 thrown=0
+WAVERUNNER wave=2/2 won=true t=18.6 pw=0.28 foe_dmg=18.0 allies=5+0 rally_foes=0 thrown=0
+AUTOTEST PASS chapter=26 variant=hold_box outcome=26.3 water=3 repaired=3 cleared=0 world=W10 gun=3/4 gunner=4/4
+KOSU ad=c26_hold_box_fix_r5 rc=0 sn=73 args=--chapter=26 --autotest=hold_box

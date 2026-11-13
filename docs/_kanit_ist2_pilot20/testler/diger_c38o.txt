@@ -1,0 +1,2 @@
+AUTOTEST PASS chapter=38o variant= outcome=38O.1 oars=9 arrows=0 forks=3/3 fire=true pulled=true oil=false snaps=0 splashes=0 explored=15.1 helper=false slips=0
+KOSU ad=diger_c38o rc=0 sn=63 args=--chapter=38o --autotest

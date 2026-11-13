@@ -1,0 +1,3 @@
+SURSET kesim=mesoteikhion kurulum_ms=2893 sur_ms=625 set_ms=2262
+AUTOTEST PASS chapter=20o variant=flawed outcome=20O.1 hits=3 cracks=1 gun=3/4 gunner=2/2 duel=true bed= sur=yeni
+KOSU ad=c20o_yeni_flawed_r2 rc=0 sn=43 args=--chapter=20o --autotest=flawed

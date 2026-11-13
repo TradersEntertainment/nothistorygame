@@ -163,7 +163,7 @@ iner (eski z 36 ↔ yeni hendeğin uzak yakası). Bölümün ova sayıları bu y
 | Sorgu (çerçevede) | Eski karşılığı | Yeni (Mesoteikhion) |
 |---|---|---|
 | `gedik()`, `gedik_en()`, `gedik_bosluk()` | `BREACH` (0;0;15), `BREACH_W` 7, `BREACH_W/2+EDGE_W` 6,5 | (0;0;15,3), 8, 4,5 |
-| `gedik_onu()`, `barikat()`, `moloz_sirti()` | `BREACH+(0;0;−3,4)`, `BREACH+(0;2,2;−1,2)`, `on_rubble(BREACH+(0;0;1,2))` | (0;0;9,6), (0;1,5;10,3), sırt z 15,1 |
+| `gedik_onu()`, `barikat()`, `moloz_sirti()` | `BREACH+(0;0;−3,4)`, `BREACH+(0;2,2;−1,2)`, `on_rubble(BREACH+(0;0;1,2))` | (0;0;9,6), (0;1,5;10,3), sırt z 18,0 (dış yüz + 1,4: aşama 4 çitinin bir kişi payı önü) |
 | `moloz_y(x,z)`, `on_rubble(p)` | `rubble_y`, `on_rubble` | `SurOyunAg.moloz_profil` + `_tumsek` kesiti |
 | `zemin_y(x,z)` / `dis_zemin_y` | `Assault.ground_y` (= `_ground_y_eski`) / `outside_y` | teras, parateikhion (geçişlerde açık), hendek dibi, dolgu ve kalas üstü, ova, moloz |
 | `dis_sur_z0/z1`, `dis_yol_y/z`, `dis_yol_ic_z/on_z` | 14 / 16, 8 / 15, 14,72 / 15,28 | 14 / 16,6, 8,62 / 15,3, 14,77 / 15,83 |

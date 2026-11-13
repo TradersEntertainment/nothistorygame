@@ -1,0 +1,2 @@
+AUTOTEST PASS chapter=37o variant= outcome=37O.1 beats=13/16 arrows=0 falls=0 barrels=5/5 cuts=0 stones=0 slips=0 burns=0 duel=true caught=0
+KOSU ad=diger_c37o rc=0 sn=75 args=--chapter=37o --autotest

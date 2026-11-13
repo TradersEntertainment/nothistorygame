@@ -1,0 +1,2 @@
+AUTOTEST PASS chapter=26 variant=hold_box outcome=26.3 water=3 repaired=3 cleared=0 world=W10 gun=3/4 gunner=3/3
+KOSU ad=taban_c26_hold_box_r12 rc=0 sn=75 args=--chapter=26 --autotest=hold_box

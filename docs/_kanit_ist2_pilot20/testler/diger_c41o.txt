@@ -1,0 +1,2 @@
+AUTOTEST PASS chapter=41 variant= outcome=41O.1 dir=4 bumps=0 blocks=3 parries=2 kick=true down=true fins=thrust,slash,ground spar=2/0 bags=0/1 water=0
+KOSU ad=diger_c41o rc=0 sn=59 args=--chapter=41o --autotest

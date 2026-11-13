@@ -1,0 +1,2 @@
+AUTOTEST PASS chapter=36 variant= outcome=36.1 burned=3 fights=1 kills=3
+KOSU ad=diger_c36b rc=0 sn=30 args=--chapter=36b --autotest

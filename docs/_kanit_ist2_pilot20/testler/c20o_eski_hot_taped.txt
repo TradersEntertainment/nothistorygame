@@ -1,0 +1,2 @@
+AUTOTEST PASS chapter=20o variant=hot_taped outcome=20O.1 hits=3 cracks=1 gun=3/4 gunner=1/2 duel=true bed= sur=eski
+KOSU ad=c20o_eski_hot_taped rc=0 sn=45 args=--chapter=20o --autotest=hot_taped --eskisur
