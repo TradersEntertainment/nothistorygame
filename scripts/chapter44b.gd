@@ -1253,7 +1253,7 @@ func _yard_end() -> void:
 	eudokia.position = arc.call(60.0, 3.0)
 	eudokia.look_target = player
 	if kid:
-		kid.position = arc.call(47.0, 2.2)      # oyuncunun önünde, kuyunun solunda (Eudokia'nın önünde değil, yanında)
+		kid.position = arc.call(72.0, 2.3)      # Eudokia'nın yanında, bir adım önde (47°/2,2 m Yakovos'un yaslandığı bileziğin dibine düşüyordu: iç içe)
 		kid.look_target = player
 	yakovos = _make_yakovos()
 	yakovos.position = WELL + (pp - WELL).normalized().rotated(Vector3.UP, 0.55) * 1.02
