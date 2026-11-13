@@ -10,6 +10,8 @@ extends "res://tests/_ist/sur_oyun_demo.gd"
 var _sec: Array = []
 var _pik := Vector2(-1, -1)
 var _gizle: Array = []
+var _isik_tani := ""      # tanı: glow0 | sis0 | ortam0 (kareden önce ortamda kapatılır)
+var _kutu := false        # --kutu_say (--pisirme_yok ile): kutu ağlı görünen öğeler, yeşil kutu (yaprak/bitki) sayısı
 
 
 func _ready() -> void:
@@ -22,6 +24,8 @@ func _ready() -> void:
 				_pik = Vector2(p[0].to_float(), p[1].to_float())
 			"gizle": _gizle = Array(kv[1].split(","))
 			"pisirme_yok": IstSurlar.bake = false
+			"kutu_say": _kutu = true
+			"isik_tani": _isik_tani = kv[1]
 	super._ready()
 
 
@@ -37,6 +41,16 @@ func _kos() -> void:
 	_tirmananlar(k["parca"])
 	for i in 30:
 		await get_tree().process_frame
+	if _kutu:
+		_kutu_yaz()
+	for c in get_children():
+		if c is WorldEnvironment and _isik_tani != "":
+			var e: Environment = (c as WorldEnvironment).environment
+			print("TUR7ISIK fog=%s d=%.5f aer=%.2f glow=%s gi=%.2f amb=%.2f exp=%.2f adj=%s" % [e.fog_enabled, e.fog_density, e.fog_aerial_perspective, e.glow_enabled, e.glow_intensity, e.ambient_light_energy, e.tonemap_exposure, e.adjustment_enabled])
+			if "glow0" in _isik_tani:
+				e.glow_enabled = false
+			if "sis0" in _isik_tani:
+				e.fog_enabled = false
 	for n in find_children("*", "Node3D", true, false):
 		for g: String in _gizle:
 			if g != "" and String(n.name).contains(g):
@@ -110,3 +124,45 @@ func _pik_yaz() -> void:
 	hits.sort_custom(func(p, q): return p[0] < q[0])
 	for h in hits.slice(0, 14):
 		print("TUR7PIK %s %.1f %s" % [h[1], h[0], h[2]])
+
+
+## Kutu sayımı: BoxMesh ağlı (MeshInstance ya da MultiMesh örneği) görünen öğeler; renk yeşilse (g > 1,05 r ve g > b)
+## "yeşil kutu". Satır: TUR7KUTU toplam=<n> yesil=<n> + ilk 40 ad (yol) ve yeşil olanların hepsi
+func _kutu_yaz() -> void:
+	var top := 0
+	var yesil := 0
+	var adlar := {}
+	var yes_ad: Array = []
+	for n in find_children("*", "GeometryInstance3D", true, false):
+		var gi := n as GeometryInstance3D
+		if not gi.is_visible_in_tree():
+			continue
+		var mesh: Mesh = null
+		var adet := 1
+		if gi is MeshInstance3D:
+			mesh = (gi as MeshInstance3D).mesh
+		elif gi is MultiMeshInstance3D and (gi as MultiMeshInstance3D).multimesh != null:
+			mesh = (gi as MultiMeshInstance3D).multimesh.mesh
+			adet = (gi as MultiMeshInstance3D).multimesh.instance_count
+		if not (mesh is BoxMesh):
+			continue
+		var m: Material = gi.material_override
+		if m == null and gi is MeshInstance3D:
+			m = (gi as MeshInstance3D).get_active_material(0)
+		var c := Color.WHITE
+		if m is StandardMaterial3D:
+			c = (m as StandardMaterial3D).albedo_color
+		top += adet
+		var yol := String(gi.get_path()).trim_prefix(String(get_path()))
+		var kisa := yol.get_slice("/", 2) + "/" + String(gi.name).left(24)
+		adlar[kisa] = int(adlar.get(kisa, 0)) + adet
+		if c.g > c.r * 1.05 and c.g > c.b:
+			yesil += adet
+			yes_ad.append("%s %s" % [yol, c.to_html(false)])
+	print("TUR7KUTU toplam=%d yesil=%d" % [top, yesil])
+	var ks: Array = adlar.keys()
+	ks.sort_custom(func(a, b): return adlar[a] > adlar[b])
+	for k in ks.slice(0, 40):
+		print("TUR7KUTU ad %s %d" % [k, adlar[k]])
+	for s in yes_ad:
+		print("TUR7KUTU YESIL %s" % s)

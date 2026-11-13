@@ -293,6 +293,9 @@ func _isik() -> bool:
 	if g_ad != "":
 		# TUR-7: kesim sahnesinin pusu şehrinkiyle aynı (dunya.gd _gok/_pus: 0,00008 gündüz, 0,00025 gece; hava
 		# perspektifi 0,1; parıltı 0,2). Kesim sahnesinin kendi sisi 20 kat kalındı: sur ve ova süt-sarısı soluyordu.
+		# Look.apply_env (bölüm havası) sonradan yeniden kurar: şehirdeki gibi fog_cap ile sınırlanır; hava perspektifi ve
+		# parıltı aşağıda (Look.refresh'ten SONRA) şehrin değerine çekilir.
+		gok.set_meta("fog_cap", 0.00025 if gece_mod else 0.00008)
 		var ek := gok.environment
 		ek.fog_enabled = true
 		ek.fog_density = 0.00025 if gece_mod else 0.00008
@@ -300,6 +303,10 @@ func _isik() -> bool:
 		ek.fog_sky_affect = 0.0
 		ek.glow_enabled = true
 		ek.glow_intensity = 0.2
+		if not ek.has_meta("look_base"):
+			# kesimin kendi ortamında parıltı Godot varsayılanı (0,8) kalmıştı: Look'un tabanı şehirle aynı olsun
+			ek.set_meta("look_base", {"exposure": ek.tonemap_exposure, "ambient": ek.ambient_light_energy,
+				"fog": 0.00008, "glow": 0.2, "fog_enabled": true})
 	if gok.has_meta("look") and String(gok.get_meta("look")) == "night" or gece_mod:
 		return true
 	var e := gok.environment
@@ -310,9 +317,17 @@ func _isik() -> bool:
 	if e.has_meta("look_base"):
 		var b: Dictionary = e.get_meta("look_base")
 		b["ambient"] = ISIK["ortam"]
+		if g_ad != "":
+			b["glow"] = 0.2          # kesim: Godot varsayılan parıltısı (0,8) değil, şehrinki
+			b["fog"] = 0.00008
 		Look.refresh(gok)
 	else:
 		e.ambient_light_energy = ISIK["ortam"]
+	if g_ad != "":
+		# TUR-7: kesim sahnesi şehirle aynı pus (dunya.gd _pus her kare 0,1'e çeker; kesimde o düğüm yok)
+		e.fog_density = minf(e.fog_density, 0.00008)
+		e.fog_aerial_perspective = 0.1
+		e.fog_sky_affect = 0.0
 	# TUR-6: ortam ışığının yarısı gökten (mavi tepe), yarısı sıcak toprak yansıması: gölgedeki hendek iç yüzü, dibi ve
 	# sur eteği teal/kara şerit okunmasın (yayındaki bölümlerin gölgesi sıcak gri)
 	e.ambient_light_color = Color("b9a988")
