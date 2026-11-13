@@ -838,7 +838,7 @@ func _earthwork(gp: Vector3) -> void:
 	var g := Node3D.new()
 	_ova.add_child(g)
 	g.position = gp
-	g.look_at_from_position(gp, Vector3(gp.x * 0.3, 0, 15.0), Vector3.UP)
+	g.look_at_from_position(gp, Vector3(gp.x * 0.3, 0, 15.0 - (_ova.position.z if _ova != self else 0.0)), Vector3.UP)
 	var earth := Color("5e4c36")
 	Props.box(g, Vector3(12.0, 1.8, 3.2), Vector3(0, 0.6, -8.4), earth, Vector3(-14, 0, 0))
 	Props.box(g, Vector3(12.0, 0.8, 2.0), Vector3(0, 1.4, -8.0), earth.lightened(0.06))
@@ -854,7 +854,7 @@ func _trebuchet(p: Vector3) -> void:
 	var r := Node3D.new()
 	_ova.add_child(r)
 	r.position = p
-	r.look_at_from_position(p, Vector3(p.x * 0.4, 0, 15.0), Vector3.UP)
+	r.look_at_from_position(p, Vector3(p.x * 0.4, 0, 15.0 - (_ova.position.z if _ova != self else 0.0)), Vector3.UP)
 	var wood := Color("6b4a2e")
 	for sx: float in [-1.3, 1.3]:
 		Props.box(r, Vector3(0.35, 0.35, 6.5), Vector3(sx, 0.18, 0), wood.darkened(0.15))
