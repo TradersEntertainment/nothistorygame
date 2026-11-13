@@ -550,16 +550,19 @@ static func hendek_kesit(p: Node3D, x0: float, x1: float, z0: float, z1: float, 
 				# taş kaplama: yüz normali (düz duvar), beyaz köşe rengi; onarım/eksik yerler koyu
 				var hh := _hash(tohum + i * 5, j)
 				var cc := Color.WHITE if hh > 0.12 else Color(0.7, 0.68, 0.64)
+				var ccs := [cc, cc, cc, cc, cc, cc]
 				if v2:
-					# TUR-7: örgü yüzü tek düz levha değil: sütun sütun ton, yer yer koyu akıntı izi (yukarıdan aşağı),
-					# dibe yakın yosunlu-koyu (hendek duvarı surdan koyu okunur)
-					var sut := _hash(tohum * 5 + i / 2, 77)
-					var ak := 1.0 if _hash(tohum * 3 + i, 91) > 0.82 else 0.0
-					var ton := 0.74 + 0.16 * sut - 0.18 * ak
-					var dip := 1.0 if (j == 3 or j == 10) else 0.0
-					cc = Color(ton * (1.0 - 0.22 * dip), ton * (1.0 - 0.12 * dip), ton * (1.0 - 0.3 * dip))
-					if hh <= 0.12:
-						cc = cc * 0.85
+					# TUR-7: örgü yüzü tek düz levha / pano değil: ton KÖŞE başına (yumuşak geçiş), yer yer koyu akıntı izi
+					# (yukarıdan aşağı, dibe doğru açılan), dibe doğru yosunlu-koyu (hendek duvarı surdan koyu okunur)
+					var vi := [[i, j], [i, j + 1], [i + 1, j], [i + 1, j], [i, j + 1], [i + 1, j + 1]]
+					for q in 6:
+						var ii: int = vi[q][0]
+						var vy: float = (vv[q] as Vector3).y
+						var dd := clampf(-vy / md, 0.0, 1.0)
+						var s := _hash(tohum * 5 + ii, 77)
+						var ak := 1.0 if _hash(tohum * 3 + ii, 91) > 0.8 else 0.0
+						var ton := 0.80 + 0.14 * s - 0.17 * ak * (0.5 + 0.5 * dd)
+						ccs[q] = Color(ton * (1.0 - 0.30 * dd), ton * (1.0 - 0.17 * dd), ton * (1.0 - 0.38 * dd))
 				var fn: Vector3 = ((vv[1] as Vector3) - (vv[0] as Vector3)).cross((vv[2] as Vector3) - (vv[0] as Vector3)).normalized()
 				var hedef := Vector3(0, 0.3, 1.0 if j < 7 else -1.0)
 				if fn.dot(hedef) < 0.0:
@@ -567,7 +570,7 @@ static func hendek_kesit(p: Node3D, x0: float, x1: float, z0: float, z1: float, 
 				if v2:
 					# TUR-6: iç yüzler surla aynı aydınlıkta (gölgelendirme normali yukarı yatık: kara şerit okunmasın)
 					fn = (fn + Vector3.UP * 0.9).normalized()
-				_ucgen_n(tst, vv, [cc, cc, cc, cc, cc, cc], [fn, fn, fn, fn, fn, fn])
+				_ucgen_n(tst, vv, ccs, [fn, fn, fn, fn, fn, fn])
 				anyt = true
 			else:
 				_ucgen_n(st, vv, [crow[i][j], crow[i][j + 1], crow[i + 1][j], crow[i + 1][j], crow[i][j + 1], crow[i + 1][j + 1]], nv)
@@ -747,6 +750,21 @@ static func rampa(p: Node3D, xa: float, xb: float, z: float, y0: float, rise: fl
 			_ucgen_n(st, [rows[i][j], rows[i][j + 1], rows[i + 1][j], rows[i + 1][j], rows[i][j + 1], rows[i + 1][j + 1]],
 				[cols[i][j], cols[i][j + 1], cols[i + 1][j], cols[i + 1][j], cols[i][j + 1], cols[i + 1][j + 1]],
 				[nrm[i][j], nrm[i][j + 1], nrm[i + 1][j], nrm[i + 1][j], nrm[i][j + 1], nrm[i + 1][j + 1]])
+	# TUR-7: uçlar kapalı (yaka ucunda omzun altı açık kalıyor, içten bakınca açık gri üçgen okunuyordu): kesit dibe
+	# kadar koyu döküm toprakla örülür
+	var koyu := CAMUR.lerp(TOPRAK2, 0.5)
+	koyu.a = 0.15
+	for uc: int in [0, nx]:
+		var r: Array = rows[uc]
+		var dn := Vector3(signf(xa - xb) if uc == 0 else signf(xb - xa), 0.15, 0.0).normalized()
+		for j in kes.size() - 1:
+			var p0: Vector3 = r[j]
+			var p1: Vector3 = r[j + 1]
+			var q0 := Vector3(p0.x, y0 - 0.08, p0.z)
+			var q1 := Vector3(p1.x, y0 - 0.08, p1.z)
+			if p0.y - q0.y < 0.03 and p1.y - q1.y < 0.03:
+				continue
+			_ucgen_n(st, [p0, p1, q1, p0, q1, q0], [koyu, koyu, koyu, koyu, koyu, koyu], [dn, dn, dn, dn, dn, dn])
 	var mi := MeshInstance3D.new()
 	mi.name = "HendekRampa"
 	mi.mesh = st.commit()

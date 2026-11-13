@@ -425,7 +425,15 @@ func _zemin_ortu() -> void:
 	load("res://scripts/level/zemin.gd").ortu_ekle(self, Rect2(-100000.0, -100000.0, 200000.0, 200000.0),
 		func(x: float, z: float) -> float: return IstGeo.h(x, z),
 		func(x: float, z: float) -> Color: return _renk(x, z, IstGeo.h(x, z), 0.0),
-		{"temas": false, "yogunluk": 0.8, "tut": func(x: float, z: float) -> bool: return not (String(_mah(x, z).get("tur", "")) in yerlesik) and IstGeo.h(x, z) > 0.4})
+		{"temas": false, "yogunluk": 0.8, "tut": func(x: float, z: float) -> bool: return not (String(_mah(x, z).get("tur", "")) in yerlesik) and IstGeo.h(x, z) > 0.4 and not _sur_kusak(x, z)})
+
+
+## TUR-7: sur kuşağı (iç sur şehir yüzünden hendek dış kıyısının 6 m ötesine): yer örtüsü arazi yüksekliğine serpilir,
+## hendek/teras/peribolos kazısının içinde HAVADA kalıyordu (k09: hendek üstünde uçan taşlar). Kuşağın kendi örtüsü
+## OTURTMA'da (sur dibi otu, düşmüş taş).
+const _OTURTMA := preload("res://scripts/world/ist/sur_oturtma.gd")
+func _sur_kusak(x: float, z: float) -> bool:
+	return _OTURTMA.kusakta(x, z, 12.0, 6.0)
 
 
 ## Mahalle türü (20 m önbellek; IstGeo.mahalle pahalı)

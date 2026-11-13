@@ -8,6 +8,48 @@ extends "res://tests/_ist/birlik_kare.gd"
 
 const SurOyun := preload("res://scripts/world/ist/sur_oyun.gd")
 const GOZ := 1.62
+## --pik=x1,y1;x2,y2 : her karede bu piksellerin ışınının geçtiği görünen ağlar (AABB, yakından uzağa) → "TUR7PIK"
+var _piks: Array = []
+
+
+func _ready() -> void:
+	for s: String in OS.get_cmdline_user_args():
+		if s.begins_with("--pik="):
+			for q in s.trim_prefix("--pik=").split(";"):
+				var xy := q.split(",")
+				_piks.append(Vector2(xy[0].to_float(), xy[1].to_float()))
+	super._ready()
+
+
+func _shot(ad: String) -> void:
+	await super._shot(ad)
+	for pk: Vector2 in _piks:
+		var o := cam.project_ray_origin(pk)
+		var dr := cam.project_ray_normal(pk)
+		var hits: Array = []
+		for n in get_tree().root.find_children("*", "GeometryInstance3D", true, false):
+			var gi := n as GeometryInstance3D
+			if not gi.is_visible_in_tree():
+				continue
+			if gi is MultiMeshInstance3D and (gi as MultiMeshInstance3D).multimesh != null and (gi as MultiMeshInstance3D).multimesh.mesh != null:
+				# örnek örnek (dev AABB her ışını keser)
+				var mm := (gi as MultiMeshInstance3D).multimesh
+				var mab := mm.mesh.get_aabb()
+				for k in mini(mm.instance_count, 200000):
+					var ab2 := gi.global_transform * mm.get_instance_transform(k) * mab
+					var h2 = ab2.intersects_ray(o, dr)
+					if h2 != null and o.distance_to(h2) < 400.0:
+						hits.append([o.distance_to(h2), "%s#%d" % [gi.get_path(), k], ab2.size])
+				continue
+			var ab := gi.global_transform * gi.get_aabb()
+			if ab.size.length() > 150.0:
+				continue
+			var h = ab.intersects_ray(o, dr)
+			if h != null and o.distance_to(h) < 400.0:
+				hits.append([o.distance_to(h), str(gi.get_path()), ab.size])
+		hits.sort_custom(func(a, b): return a[0] < b[0])
+		for h in hits.slice(0, 12):
+			print("TUR7PIK %s %s %s %.1f %s" % [ad, pk, h[1], h[0], h[2]])
 
 
 func _uret() -> void:

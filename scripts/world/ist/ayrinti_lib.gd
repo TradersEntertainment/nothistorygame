@@ -79,7 +79,10 @@ static func cb(p: Node3D, r: float, h: float, x: float, y0: float, z: float, col
 static func s(p: Node3D, r: float, pos: Vector3, col: Color, sc := Vector3.ONE, seg := 8) -> Node3D:
 	if _small(Vector3.ONE * r * 2.0):
 		return null
-	return Props.ball(p, r, pos, col, sc, (5 if r < 0.12 else mini(seg, 6)) if lod == 0 else 4)
+	# TUR-7: uzak katmanda (lod 1) yeşil öbek 4 dilimle eşkenar dörtgen/kutu okunuyordu (asma çardağı "yeşil levha"):
+	# bitki rengi en az 6 dilim; öteki küçük yuvarlaklar 4 (bütçe)
+	var yesil := col.g > col.r * 1.05 and col.g > col.b
+	return Props.ball(p, r, pos, col, sc, (5 if r < 0.12 else mini(seg, 6)) if lod == 0 else (6 if yesil else 4))
 
 
 static func pr(p: Node3D, size: Vector3, pos: Vector3, col: Color, rot := Vector3.ZERO) -> Node3D:

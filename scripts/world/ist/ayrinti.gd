@@ -78,7 +78,11 @@ static func build(id: String, host: Node3D, k: float = 0.5, lod: int = 0) -> Nod
 	L.lod = lod
 	if lod >= 2:
 		var col: Color = GROUP_COLOR.get(r[6], Color("8a5a35"))
-		Props.box(root, Vector3(r[2], r[3], r[4]), Vector3(0, r[3] * 0.5, 0), col)
+		if r[6] == "bahce" or r[6] == "bitki":
+			# TUR-7 (KUTU YASAĞI): uzak bitki/bahçe öğesi yeşil KUTU değil: alçak, soluk yuvarlak öbek
+			Props.ball(root, 0.5, Vector3(0, r[3] * 0.4, 0), Color("5b6440"), Vector3(r[2] * 0.9, r[3] * 0.8, r[4] * 0.9), 6)
+		else:
+			Props.box(root, Vector3(r[2], r[3], r[4]), Vector3(0, r[3] * 0.5, 0), col)
 	else:
 		pr[0].call("build_" + id, root)
 		if r[5] == "kutu" and lod == 0:

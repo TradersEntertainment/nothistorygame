@@ -12,8 +12,15 @@
   yukarı, ızgara 2,5 m.
 - D kareleri için `tests/_ist/tur7_kesim.gd` gece 4 kamera (D1–D4).
 
+- Ara kayıt 3: hendek rampası ucu kapalı (beyaz/gri üçgen yok), hendek taş yüzü köşe başına ton (pano değil),
+  oyun parçalarının ve gedik molozunun "rubble" deseni yerine zemin dili, kesim zemini oyun alanı dışında seyrek ızgara
+  (29 bin → ~12 bin üçgen; 07 ilkel +%21 → +%8), şehirde uzak bitki/bahçe öğeleri kutu değil yuvarlak öbek ve lod 1
+  yeşil öbek ≥ 6 dilim, sur dibi ot/çalı tozlu, fıçılar yıpranmış gri-kahve, kireçtaşı gri-krem.
+
 ## Süren
-- A/B/C/D SONRA kareleri; bütçe (07_gedikten ilkel +%21: aşım, bakılacak).
+- Şehir k09'da hendek üstünde havada açık renkli taşlar (kaynak aranıyor: örnek örnek ışın tanısı `tur7_kare --pik`).
+- Şehir k06'da limon yeşili düz levhalar (asma çardağı uzak katmanı?) — tanı aynı koşuda.
+- ÖNCE şehir bütçesi (`20948418`) koşuyor.
 
 ## Sıradaki
 - Madde 2 gündüz sur dibi, 3 uzak sur, 4 renk ayrıştırma, 5 hendek, 6 ordugâh, 7 ova, 8 poterna/fıçı/ev kümesi.

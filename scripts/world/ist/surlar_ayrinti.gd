@@ -244,11 +244,12 @@ static func _oyuk(ag, p: Vector3, r: float, rng: RandomNumberGenerator) -> void:
 
 
 static func _barrel(root: Node3D, p: Vector3) -> void:
-	var b := Props.cyl(root, 0.42, 0.95, p + Vector3(0, 0.475, 0), C_WOOD.darkened(0.1), Vector3.ZERO, 10, 0.38)
+	# TUR-7: toprak dolu eski fıçı: yıpranmış gri-kahve tahta (güneşte turuncu kutu/silindir okunmasın); çarpışma aynı
+	var b := Props.cyl(root, 0.42, 0.95, p + Vector3(0, 0.475, 0), Color("665846"), Vector3.ZERO, 10, 0.38)
 	Props.make_solid(b, 0.9)
 	Props.cyl(root, 0.43, 0.06, p + Vector3(0, 0.25, 0), Color("3a3634"), Vector3.ZERO, 10)
 	Props.cyl(root, 0.43, 0.06, p + Vector3(0, 0.75, 0), Color("3a3634"), Vector3.ZERO, 10)
-	Props.cyl(root, 0.36, 0.03, p + Vector3(0, 0.96, 0), Color("5a4630"), Vector3.ZERO, 10)
+	Props.cyl(root, 0.36, 0.05, p + Vector3(0, 0.96, 0), Color("54473a"), Vector3.ZERO, 10)
 
 
 static func _stauroma(root: Node3D, x: float, z: float, y: float, rng: RandomNumberGenerator) -> void:

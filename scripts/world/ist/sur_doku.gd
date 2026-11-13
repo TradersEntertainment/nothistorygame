@@ -52,7 +52,7 @@ void fragment() {
 	// taş: soluk gri-krem (sıcak); taban rengin parlaklığı korunur
 	float kat = clamp(lum / 0.42, 0.55, 1.0);
 	// TUR-7: kireçtaşı daha açık; büyük ölçekte soğuk (gri) / sıcak (bal) lekeler: sur, zemin ve çadırdan ayrışır
-	vec3 tas = vec3(0.56, 0.535, 0.48);     // TUR-7 ikinci geçiş: gri-krem kireçtaşı (sıcak güneşte tereyağı sarısı okunmasın)
+	vec3 tas = vec3(0.51, 0.49, 0.44);     // TUR-7 ikinci geçiş: gri-krem kireçtaşı (sıcak güneşte tereyağı sarısı okunmasın)
 	if (tur > 0.5 && tur < 1.5) { tas = vec3(0.43, 0.395, 0.335); }     // SUR-5: deniz suru sıcak gri (soğuk mavi-gri değil)
 	if (tur > 1.5) { tas = vec3(0.45, 0.42, 0.36); }
 	tas *= kat;

@@ -933,7 +933,8 @@ static func _gedik(root: Node3D, lay: Dictionary, gx: float, lod: int, stone: Co
 			var p0 := Vector3(gx + cos(a0) * (h + 1.5), 0.0, zc + side * sin(a0) * 6.5)
 			var p1 := Vector3(gx + cos(a1) * (h + 1.5), 0.0, zc + side * sin(a1) * 6.5)
 			tm.tri(p0, p1, Vector3(gx, 1.6, zc), Vector3(0, 1.0, side * 0.6))
-	tm.mesh_ekle(root, Props.mat(Color("7c705c"), 0.0, false, "rubble"), "GedikMoloz")
+	# TUR-7: Props "rubble" deseni kiremit dama okunuyordu: sur kuşağının zemin dilinde döküm toprak-moloz
+	tm.mesh_ekle(root, load("res://scripts/world/ist/sur_gorunus.gd")._moloz_mat(Color("7c705c")), "GedikMoloz")
 	if lod >= 2:
 		ag.mesh_ekle(root, KULE._tas_mat(stone.darkened(0.05), 2), "GedikBeden")
 		return

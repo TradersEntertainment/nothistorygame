@@ -44,7 +44,9 @@ static func zemin_renk(x: float, z: float, w: float) -> Array:
 	col = col.lerp(OTURTMA.R_OT2, clampf((n2 - 0.55) * 2.2, 0.0, 0.55))
 	# kuru ot yamaları (saman sarısı) ve çıplak toprak adaları
 	col = col.lerp(Color("a6926e"), clampf((gn(x, z, 17.0, 5) - 0.6) * 2.6, 0.0, 0.7))
-	var cp := clampf(0.8 - (n1 - 0.5) * 2.2 + (n3 - 0.5) * 0.35, 0.12, 0.97)
+	# TUR-7: çıplaklık yalnız iri ölçekli gürültüden (3 m'lik terim 3 m ızgarada köşe köşe sıçrayıp gölgelendiricinin
+	# eşiğinde düz kenarlı dikdörtgen yamalar çiziyordu)
+	var cp := clampf(0.8 - (n1 - 0.5) * 2.2, 0.12, 0.97)
 	# çıplak yerde toprak rengi baskın (ot rengi yalnız ot adasında)
 	col = col.lerp(OTURTMA.R_TOPRAK.lerp(Color("a6926e"), n3 * 0.5), clampf((cp - 0.55) * 1.6, 0.0, 0.7))
 	# sura doğru (0–7 m) taş tozu + çıplak toprak; 0–2 m ıslak koyu taban
@@ -112,7 +114,12 @@ static func kesim_zemin(kok: Node3D) -> void:
 	var rub: Texture2D = Props.mat(Color.WHITE, 0.0, false, "rubble").albedo_texture
 	for n2 in kok.find_children("*", "MeshInstance3D", true, false):
 		var m := n2 as MeshInstance3D
-		if m.mesh == null or not String(m.get_path()).contains("OyunParcalari"):
+		if m.mesh == null:
+			continue
+		var om := m.material_override as StandardMaterial3D
+		if om != null:
+			if om.albedo_texture == rub:
+				m.material_override = _moloz_mat(om.albedo_color)
 			continue
 		for si in m.mesh.get_surface_count():
 			var sm := m.get_active_material(si) as StandardMaterial3D
@@ -131,7 +138,8 @@ static func _moloz_mat(c: Color) -> Material:
 	var k := c.to_html()
 	if not _moloz.has(k):
 		var m: ShaderMaterial = (load("res://scripts/world/ist/sur_zemin.gd")._mat() as ShaderMaterial).duplicate()
-		m.set_shader_parameter("ipucu", Color(c.r, c.g, c.b, 1.0).lerp(Color(0.62, 0.52, 0.40), 0.35))
+		m.set_shader_parameter("ipucu", Color(c.r, c.g, c.b, 1.0).lerp(Color(0.64, 0.50, 0.35), 0.6))
+		m.set_shader_parameter("kuruluk", 0.9)
 		m.set_shader_parameter("ot_carpan", 0.08)
 		m.set_shader_parameter("cignenme", 1.0)
 		_moloz[k] = m
@@ -168,9 +176,20 @@ static func _levha(st: SurfaceTool, x0: float, x1: float, z0: float, z1: float, 
 	if uzat != 0:
 		for k in [-900.0, -450.0, -180.0]:
 			xs.append(x0 + k)
-	var nx := int(ceil((x1 - x0) / (2.5 if uzat == 0 else 4.0)))      # TUR-7: ince ızgara (8 m sütunlar dikdörtgen yama çiziyordu)
-	for i in nx + 1:
-		xs.append(lerpf(x0, x1, float(i) / nx))
+	# TUR-7: ince ızgara yalnız oyun alanında (|x| ≤ 110 m: 8 m sütunlar dikdörtgen yama çiziyordu), ötesinde seyrek
+	# (850 m'lik levhanın tamamı ince ızgarayla 29 bin üçgendi: bütçe)
+	var ince := 3.0 if uzat == 0 else 4.0
+	var seyrek := 12.0 if uzat == 0 else 16.0
+	var sinir := [x0, clampf(-110.0, x0, x1), clampf(110.0, x0, x1), x1]
+	for s in 3:
+		var a0: float = sinir[s]
+		var a1: float = sinir[s + 1]
+		if a1 - a0 < 0.01:
+			continue
+		var n := maxi(1, int(ceil((a1 - a0) / (ince if s == 1 else seyrek))))
+		for i in n:
+			xs.append(lerpf(a0, a1, float(i) / n))
+	xs.append(x1)
 	if uzat != 0:
 		for k in [180.0, 450.0, 900.0]:
 			xs.append(x1 + k)
