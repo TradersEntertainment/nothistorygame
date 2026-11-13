@@ -39,6 +39,9 @@ static var pencere := Vector2(-1e9, 1e9)
 static var carp_only := false
 ## SUR-5 (D): gedik eni (m) ve kurulan gediklerin dünya konumları (süreklilik ölçütü "belgeli gedik" sayar)
 const GEDIK_W := 8.0
+## SUR-OYUN: poterna (dış surun küçük kapısı) boşluğu; yalnız o["poterna"] verilince oyulur
+const POTERNA_W := 1.4
+const POTERNA_H := 2.3
 static var gedik_dunya: Array = []
 
 static func _ic(x: float) -> bool:
@@ -484,8 +487,15 @@ static func _run(host: Node3D, L: float, k: float, lod: int, seed: int, o: Dicti
 	var gedikler: Array = o.get("gedik", [])
 	for gx in gedikler:
 		out_cut.append([float(gx) - GEDIK_W * 0.5, float(gx) + GEDIK_W * 0.5])
+	# SUR-OYUN (seçenekle; şehir kurucusu vermez → görünüş aynı): oyun gediğinde stauroma kurulmaz (onarım aşamalarını
+	# sur_oyun_parca kurar); dış surda poterna boşluğu (kanat ve çerçeve sur_oyun_parca'da)
+	var sade_g: Array = o.get("gedik_sade", [])
 	for gx in gedikler:
-		_gedik(root, lay, float(gx), lod, stone)
+		_gedik(root, lay, float(gx), lod, stone, sade_g.has(gx))
+	if o.has("poterna"):
+		var ptx := float(o["poterna"])
+		out_cut.append([ptx - POTERNA_W * 0.5, ptx + POTERNA_W * 0.5])
+		_s(root, Vector3(ptx - POTERNA_W * 0.5, POTERNA_H, zo0), Vector3(ptx + POTERNA_W * 0.5, OH, zo1), stone.darkened(0.04), "ashlar", lod, true)
 	for s in _segs(x0, x1, out_cut):
 		_s(root, Vector3(s[0], -1.0, zo0), Vector3(s[1], OH, zo1), stone.darkened(0.04), "ashlar", lod, true)
 	if open_gate:
@@ -579,6 +589,13 @@ static func _run(host: Node3D, L: float, k: float, lod: int, seed: int, o: Dicti
 	kes["peri"] = (kes["peri"] as Array) + gk
 	if lay.has("ramp_a_x"):
 		kes["para"] = kp + [[float(lay["ramp_a_x"]) - 2.6, float(lay["ramp_a_x"]) + 1.6]] + gk
+	# SUR-OYUN (seçenekle): poterna ve parateikhion geçitlerinin önünde etek kurulmaz (girişte takılma olmasın)
+	if o.has("poterna"):
+		var ptr := [[float(o["poterna"]) - POTERNA_W * 0.5 - 0.8, float(o["poterna"]) + POTERNA_W * 0.5 + 0.8]]
+		kes["peri"] = (kes["peri"] as Array) + ptr
+		kes["gedik"] = (kes["gedik"] as Array) + ptr
+	for pg in o.get("para_gecit", []):
+		kes["para"] = (kes.get("para", []) as Array) + [[float(pg[0]) - float(pg[1]) * 0.5 - 0.6, float(pg[0]) + float(pg[1]) * 0.5 + 0.6]]
 	OTAG.kur(root, lay, lod, xw, dy, o["_kuleler"], kes, bool(o.get("hendek", true)))
 	# ---- kapı ve ayrıntı
 	if gw > 0.0:
@@ -645,6 +662,8 @@ static func _build_moat(root: Node3D, lay: Dictionary, lod: int, stone: Color, o
 	var pcut: Array = [[float(lay["ramp_a_x"]) - 2.2, float(lay["ramp_a_x"]) + 1.2]]
 	if gw > 0.0:
 		pcut.append([-gw * 0.5 - 1.2, gw * 0.5 + 1.2])
+	for pg in o.get("para_gecit", []):
+		pcut.append([float(pg[0]) - float(pg[1]) * 0.5, float(pg[0]) + float(pg[1]) * 0.5])
 	for sg in _segs(x0, x1, pcut):
 		_s(root, Vector3(sg[0], 0, zm0 - 1.8), Vector3(sg[1], 1.6, zm0 - 0.9), stone.darkened(0.08), "ashlar", lod, true)
 		if lod == 0 and sg[1] - sg[0] > 1.0:
@@ -730,7 +749,7 @@ static func _build_moat(root: Node3D, lay: Dictionary, lod: int, stone: Color, o
 ## parateikhion terasına yayılan moloz yığını (düzensiz kaya + toprak tümsek, kutu değil); gedikte stauroma: toprak dolu
 ## fıçılar, kazıklı toprak set, savunmacılar için sehpalar üstünde kalas yürüme tahtası (dış sur yürüme yolu hizasında,
 ## iki yandaki sur üstüne bağlanır; çarpışmalı).
-static func _gedik(root: Node3D, lay: Dictionary, gx: float, lod: int, stone: Color) -> void:
+static func _gedik(root: Node3D, lay: Dictionary, gx: float, lod: int, stone: Color, sade := false) -> void:
 	if not _ic(gx):
 		return
 	var d: Dictionary = lay["d"]
@@ -778,7 +797,9 @@ static func _gedik(root: Node3D, lay: Dictionary, gx: float, lod: int, stone: Co
 		kl.append(Transform3D(Basis.from_euler(Vector3(rng.randf_range(-0.6, 0.6), rng.randf() * TAU, rng.randf_range(-0.6, 0.6))).scaled(Vector3(sc * 1.3, sc * 0.7, sc)), Vector3(px, yy, pz)))
 	Scenery.scatter(root, KULE.kaya_mesh(), kl, [], Props.mat(stone.darkened(0.12), 0.0, false, "ashlar_far"))
 	ag.mesh_ekle(root, KULE._tas_mat(stone.darkened(0.05), lod), "GedikBeden")
-	if lod == 1:
+	if lod == 1 or sade:
+		if sade and root.is_inside_tree():
+			gedik_dunya.append(root.global_transform * Vector3(gx, 0.0, zo1))
 		return
 	# stauroma: dış surun peribolos yüzü boyunca toprak dolu fıçılar, arkada kazıklı toprak set
 	var zs := zo0 - 1.4

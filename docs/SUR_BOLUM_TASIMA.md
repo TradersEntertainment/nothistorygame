@@ -304,19 +304,33 @@ Sur görünüşü hâlâ değişiyor (SUR-5, OTURTMA turları); aşağıdakiler 
 (Karar yazmıyorum; her birinde öneri ve gerekçe var.)
 
 1. **Süreli evreler mesafeyle mi büyüsün?** Örn. 20'de gece 170 sn ve depo↔gedik gidiş-dönüş 33,8 m (10 yük ≈ 106 sn yürüyerek); yeni yerleşimde depo gediğe >27 m uzaksa süre yetmez. *Seçenekler:* (A) süre sabit, depo gediğe ≤ 20 m yakın konur; (B) süre mesafeyle orantılı uzar; (C) yük sayısı azalır. **Öneri A** — süre tasarımın temposudur; yerleşim kontrol edilebilir.
+   - KARAR (sahibi, 13 Kasım): A — süre sabit; depo gibi yerler hedefe ≤ 20 m konur.
 2. **Merdiven türü.** Yeni surda peribolos→sur geçişi taş merdiven (yürünür, 4,1 sn); hücum merdivenleri (26, 26o, 30, 30o, 38o) bugün dayalı el merdiveni (W ile tırmanma, 3,8 sn). *Seçenekler:* (A) ikisi birlikte (taş merdiven savunma tarafı, dayalı merdiven hücum tarafı); (B) hepsi taş. **Öneri A** — hücum "dayama/itme" mekaniği (30'da itme, 26'da tekmeleme) ancak dayalı merdivenle anlamlı.
+   - KARAR (sahibi, 13 Kasım): A — savunma tarafı taş merdiven, hücum tarafı dayalı el merdiveni (`sur_oyun.gd dayamalar()`, `sur_oyun_parca.gd HucumMerdiveni`).
 3. **26o'da merdiven boyu ve tırmanma.** Eski 8,6 m (dış sur 8); yeni dış sur 8,5 (+%6). *Seçenekler:* boy 9,1'e çıkar, tırmanma süresi aynı kalsın / orantılı uzasın (≈+0,2 sn). **Öneri:** aynı kalsın (fark algılanmaz).
+   - KARAR (sahibi, 13 Kasım): tırmanma süresi aynı kalır (boy dayamadan türer; süre bölümün sabiti).
 4. **Gedik sayısı.** Eski tek gedik (x=0); v2 Mesoteikhion'da üç (110/215/330 m). *Seçenekler:* (A) oyun gediği = 1. gedik, diğer ikisi dekor/kapalı; (B) bölümler farklı gedikleri kullanır (20: 1., 26: 2.). **Öneri A** — "tüm görevler aynı harita" ve bölüm-bölüm süreklilik (gedik her gece kapanır/yarın açılır).
+   - KARAR (sahibi, 13 Kasım): A — oyun gediği = 1. gedik; 2. ve 3. dekor/kapalı (stauromalı). Sözleşmede oyun gediği Mesoteikhion dilimi x = −67,7.
 5. **Gedik onarımı (10 aşama).** V2'de yok. *Seçenekler:* (A) eski 10 aşamayı v2 gediğine uyarla; (B) 3–4 aşamaya indir; (C) yalnız ön/son görüntü. **Öneri B** — okunabilirlik aynı, iş yarı.
+   - KARAR (sahibi, 13 Kasım): B — 4 aşama (açık → kazık/fıçı → toprak dolgu → barikat tam; `GedikOnarim.asama(1..4)`).
 6. **Hendeğe kaç metre?** 16×2,9 → 20×6 ve sur→ova 36→50 m. Kalas köprü (36b, 37o) boyu 16→≥20, düşme derinliği 1,6→6; hendek duvarı tırmanışı 2×. *Seçenekler:* (A) v2 hendeği olduğu gibi, bölüm sayıları uyarlansın; (B) oyun kesitinde hendeği sığlaştır (≈3 m, rampalı uçlar). **Öneri A**, ama düşmenin cezası (can/nefes) 2× olmasın — sahibin zorluk ayarı.
+   - KARAR (sahibi, 13 Kasım): A — hendek 20 × 6 m kalır; düşmenin cezası iki katına ÇIKMAZ.
 7. **Hendeği geçme yolu.** Hendek rampaları dilimin zıt uçlarında: dilimden geçiş 46 sn. *Seçenekler:* (A) kapı dışında her geçiş yürünür **köprü/dolgu** (36b kalas, 37o kalas, 8y kapı köprüsü, 26o/32o dolgu); (B) rampaları sahne içinde karşılıklı konumla yeniden yerleştir. **Öneri A** — bölümlerin kendi mekaniği zaten köprü/dolgu.
+   - KARAR (sahibi, 13 Kasım): A — kapı dışında hendek geçişi köprü/dolgu ile (`KalasKopru`, `Dolgu`, `KapiKopru`).
 8. **Dış kule aralığı 32 → ≈55–61 m.** Hücum merdiveni sayısı (26: 5, 30: 4) ve savunucu yerleşimi aynı kalsın mı? *Seçenekler:* (A) sayı aynı, aralık geniş (savunma daha seyrek hisseder); (B) merdiven/savunucu kule başına orantılı azalır. **Öneri A**, sur yolu askeri yoğunluğu (Garrison) aynı bırakılsın.
+   - KARAR (sahibi, 13 Kasım): A — merdiven ve savunucu SAYISI aynı (dayama 5), aralık geniş.
 9. **Sur yolu kesintisi.** V2 dış sur yolunu kule keser (1,8 m geçit); eskide kuleler yolun arkasında, yol 100 m kesintisiz. Savaş koreografisi (sur yolunda itişme, 26/30) *Seçenekler:* (A) kule geçidiyle yürüyüş; (B) kulelerde yol genişletilsin. **Öneri A** (taşımada koreografi kule aralarına sığdırılsın), ama yeni eksik arayüz (§3.3-1) ilk gelsin.
+   - KARAR (sahibi, 13 Kasım): A — sur yolu kule geçidiyle (iç kule 2,2 × 3,0 geçit; dış kulede basamakla tepe).
 10. **Poterna (36b, 26).** V2'de yok. *Seçenekler:* (A) dış surda küçük kapı eklensin (görsel + çarpışma); (B) bölüm 36b'de çıkış kapıdan olsun. **Öneri A** — iki bölümün hikâyesi (gizli kapı) buna dayanıyor.
+   - KARAR (sahibi, 13 Kasım): A — dış surda poterna eklenir (`Poterna`, yeri sözleşmede).
 11. **26 sonu: iç kapı (Sultan'ın girişi).** Mesoteikhion dilimi kapısız; Romanos kapısı 170 m kuzeyde. *Seçenekler:* (A) kapıyı Romanos'a taşı (26'nın finali orada); (B) Mesoteikhion'da ek iç kapı. **Öneri A** (tarihî doğru, kapı v2'de hazır).
+   - KARAR (sahibi, 13 Kasım): A — 26'nın son kapısı Romanos (ölçüm: oyun gediğinin 57 m kuzeyi; kesim sahnesinde kuzey yan dilim).
 12. **Yükleme/bütçe.** Tek sahnede tüm kesim, her bölümde v2 yeniden kurulumu. *Seçenek:* bölümler arası v2'yi canlı tut / her bölümde kur. **Öneri:** önce ölçülsün (`IstBaglama.kurulum_ms` bu belgede ölçülmedi).
+   - KARAR (sahibi, 13 Kasım): yükleme önce ÖLÇÜLÜR (`docs/_kanit_ist2_sur_arayuz/rapor.md`, kurulum tablosu).
 13. **Anahtar ve geri dönüş.** `--eski-dunya` benzeri bölüm başına güvenlik anahtarı ve eski setlerin en az bir sürüm silinmeden kalması (arena `LandWalls` kullanır). **Öneri:** evet.
+   - KARAR (sahibi, 13 Kasım): bölüm başına geri dönüş anahtarı; eski setler en az bir sürüm silinmez.
 14. **Yön söyleyen replikler** ("gediğin solundaki merdiven" gibi): v2 yerleşimiyle uyuşmazsa yazar/oyun sahibi karar verir; sayıları replikte geçenler **taranmadı** (ölçülmedi).
+   - KARAR (sahibi, 13 Kasım): yön söyleyen replikler taranır, DEĞİŞTİRİLMEZ: liste çıkarılır (`docs/_kanit_ist2_sur_arayuz/yon_replikleri.md`).
 
 ---
 
