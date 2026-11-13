@@ -20,9 +20,12 @@ Taban kayıt: `9f32c394` (önceki oturum; kanıtsız).
   şeridinin karşı yanında (VISAUDIT personhidden kök nedeni); mini harita yeni sette yoktu → `SurSetSahne._harita()` (v2).
 - 7. Teşhis: siyah bant + dikdörtgen yama = sur kesiminin `SurDibiEtek` (sur_oturtma_ag.gd:451) → tur 7'ye istek.
 
+- 6. Kareler: Bölüm 20 10 çift, 20o 6 çift, paftalar (`kare/`).
+- 8. Bütçe: tek başına ölçüldü (`testler/butce_*.txt`).
+- 9. Rapor gövdesi yazıldı.
+
 ## Süren
-- 6. Kareler: `=kare` ışınlamalı (yazılımsal GL'de gerçek yürüyüşle saatler sürüyordu); tüfek evresi bu çeşitte atlanır.
-- 8. Bütçe: ilk ölçüm (eşzamanlı koşu; eski "hava" eksik) `testler/butce_*_ilk.txt`; tek başına yeniden ölçülecek.
+- Son tam matris (93 koşu, `son_*`), rapora "Son tur" eklenecek.
 
 ## Sıradaki
-- 5. yürüyüş, 6. kareler, 7. görsel kusurlar (teşhis aracı hazır), 8. bütçe, son tam matris, 9. rapor.
+- son tur sonuçları → rapor, kayıt.
