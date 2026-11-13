@@ -38,6 +38,28 @@ func _exit_tree() -> void:
 	super._exit_tree()
 	if SurSet.etkin == sur:
 		SurSet.etkin = null
+	if _harita_v2:
+		MapView.v2 = false
+
+
+## Harita alanı (MiniMap, WorldMap; MapView.GROUP): eski sette SiegeField'in `world` kurulumu gruba girerdi, yeni sette ova
+## `world = false` kurulduğu için mini harita hiç görünmüyordu. Kesimin gerçek dünya yeri (SurOyun a.xf: yerel → İstanbul v2)
+## bilindiğinden IstBaglama'nın yaptığı gibi: dönüşümü (çerçeve → v2)⁻¹ olan bir düğüm + MapView.v2.
+class HaritaAlani extends Node3D:
+	var night_build: bool:
+		get:
+			return not bool(get_parent().get("is_day"))
+
+var _harita_v2 := false
+
+func _harita() -> void:
+	var h := HaritaAlani.new()
+	h.name = "HaritaAlani"
+	h.transform = (sur.a.xf * Transform3D(Basis.IDENTITY, -sur.ofs)).affine_inverse()
+	add_child(h)
+	h.add_to_group(MapView.GROUP)
+	MapView.v2 = true
+	_harita_v2 = true
 
 
 func _ready() -> void:
@@ -66,6 +88,7 @@ func _ready() -> void:
 	_build_depot()
 	_build_breach_set()
 	_build_field()
+	_harita()
 	ms["set_ms"] = (Time.get_ticks_usec() - t1) / 1000.0
 	ms["sahne_ms"] = (Time.get_ticks_usec() - t0) / 1000.0
 	print("SURSET kesim=%s kurulum_ms=%.0f sur_ms=%.0f set_ms=%.0f" % [kesim_id, float(ms["sahne_ms"]), float(ms["toplam_ms"]), float(ms["set_ms"])])

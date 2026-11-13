@@ -16,6 +16,10 @@ Taban kayıt: `9f32c394` (önceki oturum; kanıtsız).
   `WALKTHRU OZET yol=7 tamam=7 takilma=0 dusme=0`.
 - 5. Yürüyüş: iki sette 10 bacak, takılma 0, düşme 0, etkileşim eksiği 0 (`testler/yuruyus_*.txt`).
 
+- Yerleşim düzeltmeleri: okçular eskideki yerine (gediğe 9,8 m), ok sandığı depo yanında; Giustiniani/Leon taşıyıcı
+  şeridinin karşı yanında (VISAUDIT personhidden kök nedeni); mini harita yeni sette yoktu → `SurSetSahne._harita()` (v2).
+- 7. Teşhis: siyah bant + dikdörtgen yama = sur kesiminin `SurDibiEtek` (sur_oturtma_ag.gd:451) → tur 7'ye istek.
+
 ## Süren
 - 6. Kareler: `=kare` ışınlamalı (yazılımsal GL'de gerçek yürüyüşle saatler sürüyordu); tüfek evresi bu çeşitte atlanır.
 - 8. Bütçe: ilk ölçüm (eşzamanlı koşu; eski "hava" eksik) `testler/butce_*_ilk.txt`; tek başına yeniden ölçülecek.

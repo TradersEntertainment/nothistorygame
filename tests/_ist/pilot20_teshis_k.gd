@@ -29,7 +29,7 @@ func _kos() -> void:
 	await get_tree().create_timer(4.0).timeout
 	var player: Node3D = ch.get("player")
 	var sur: SurSet = ch.get("sur")
-	var hud: CanvasItem = ch.get("hud")
+	var hud: Node = ch.get("hud")
 	var pos: Vector3
 	var bak: Vector3
 	match bakis:
@@ -42,6 +42,10 @@ func _kos() -> void:
 		"gedik":
 			pos = sur.gedik_onu() + Vector3(-1.5, 0.05, -4.0)
 			bak = sur.barikat() + Vector3(0, 0.6, 0)
+		"okcu":
+			var ap: Vector3 = ch.get("archers_p")
+			pos = ap + Vector3(0, 0.05, -1.6)
+			bak = ap + Vector3(0, 1.2, 0.2)
 		_:
 			pos = sur.depo() + Vector3(-3.0 if sur.eski_mi else 3.0, 0.05, 4.0)
 			bak = sur.gedik() + Vector3(0, 2.0, 0)
@@ -50,42 +54,49 @@ func _kos() -> void:
 		player.global_position = pos
 		player.call("face", bak)
 	if hud:
-		hud.visible = false
+		hud.set("visible", false)
 	tut.call()
 	var taban := await _olc(tut, "taban")
 	print("TESHIS taban koyu=%.3f renk=%s" % [taban[0], taban[1]])
-	# adaylar: bölümün çocukları, set (walls) çocukları, sur kesiminin çocukları (iki kat)
-	var aday: Array = []
-	for c in ch.get_children():
-		if c is Node3D:
-			aday.append(c)
+	# 1) sur kesimi dışındaki her şey gizli (kalabalık, dekor, ova): kusur kalıyorsa kaynak kesimin kendisidir
 	var walls: Node = ch.get("walls")
+	var gizlenen: Array = []
+	for c in ch.get_children():
+		if c is Node3D and c != walls and c != player and (c as Node3D).visible:
+			(c as Node3D).visible = false
+			gizlenen.append(c)
 	for c in walls.get_children():
-		if c is Node3D:
-			aday.append(c)
+		if c is Node3D and c.name != "SurCerceve" and (c as Node3D).visible:
+			(c as Node3D).visible = false
+			gizlenen.append(c)
+	var yalniz := await _olc(tut, "yalniz_sur")
+	print("TESHIS yalniz_sur koyu=%.3f renk=%s" % [yalniz[0], yalniz[1]])
+	# 2) kesimin adlı alt düğümleri (üç kat) tek tek
+	var aday: Array = []
 	var cer := walls.get_node_or_null("SurCerceve")
 	if cer:
-		for c in cer.get_children():
-			aday.append(c)
-			for c2 in c.get_children():
-				if c2 is Node3D:
+		var yig: Array = [[cer, 0]]
+		while not yig.is_empty():
+			var e: Array = yig.pop_back()
+			for c2 in (e[0] as Node).get_children():
+				if c2 is Node3D and not String(c2.name).begins_with("@"):
 					aday.append(c2)
-					for c3 in c2.get_children():
-						if c3 is Node3D:
-							aday.append(c3)
+				if int(e[1]) < 3:
+					yig.append([c2, int(e[1]) + 1])
 	var n := 0
 	for c: Node3D in aday:
-		if not c.visible or c == player:
+		if not is_instance_valid(c) or not c.visible:
 			continue
 		c.visible = false
 		var r := await _olc(tut, "")
-		c.visible = true
-		var fark: float = taban[0] - float(r[0])
-		var renk_f: float = (taban[1] as Color).v - (r[1] as Color).v
-		if absf(fark) > 0.01 or absf(renk_f) > 0.01:
+		if is_instance_valid(c):
+			c.visible = true
+		var fark: float = float(yalniz[0]) - float(r[0])
+		var renk_f: float = (yalniz[1] as Color).v - (r[1] as Color).v
+		if absf(fark) > 0.01 or absf(renk_f) > 0.02:
 			n += 1
-			print("TESHIS gizli=%s koyu=%.3f fark=%.3f parlaklik_fark=%.3f" % [ch.get_path_to(c), r[0], fark, renk_f])
-			if absf(fark) > 0.05:
+			print("TESHIS gizli=%s koyu=%.3f fark=%.3f parlaklik_fark=%.3f" % [cer.get_path_to(c), r[0], fark, renk_f])
+			if absf(fark) > 0.03 and is_instance_valid(c):
 				c.visible = false
 				await _olc(tut, "gizli_%02d_%s" % [n, c.name])
 				c.visible = true
@@ -109,6 +120,6 @@ func _olc(tut: Callable, ad: String) -> Array:
 			var c := img.get_pixel(x, y)
 			top += 1
 			cs += c
-			if c.get_luminance() < 0.06:
+			if c.get_luminance() < 0.10:
 				koyu += 1
 	return [float(koyu) / maxf(top, 1), Color(cs.r / top, cs.g / top, cs.b / top)]
