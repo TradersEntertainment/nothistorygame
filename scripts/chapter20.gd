@@ -121,15 +121,17 @@ func _build() -> void:
 		"beard": true, "skin": Color("e0b08a")})
 	giust.position = sur.on_rubble(sur.gedik() + Vector3(-4.4, 0, -5.4))     # işçilerin ve taşıyıcı şeritlerinin dışında
 	if not sur.eski_mi:
-		# yeni sette barikatın toprak seti peribolosa 5 m taşar (aşama 3–4): komutan setin önünde, siperin önünde
-		giust.position = sur.gedik_onu() + Vector3(-4.6, 0, -1.6)
+		# yeni sette depo ve taşıyıcı şeridi gediğin SOLUNDA: komutan eskideki gibi şeridin karşı yanında (gediğin sağı, iç
+		# kulenin önü; işçilerin ve sağ siperin arası). Solda, şeridin 0,7 m yanındayken gedikten bakan oyuncuya taşıyıcılar
+		# onu örtüyordu (VISAUDIT personhidden D20_G_ASSAULT / D20_G_DUEL). Doğuştan uzaklığı eskiyle aynı (≈14 m).
+		giust.position = sur.on_rubble(sur.gedik_onu() + Vector3(3.6, 0, 1.8))
 	add_child(giust)
 	giust.look_target = player
 	# Huruçtan dönen Leon (36.1): Giustiniani "gedikte, senin yanında" der; _breach_duel'da oyuncunun solunda durur
 	if Siege.outcome(36) == "36.1":
 		_leon = Person.new(LEON_LOOK)
 		_leon.set_meta("spk", "SPK_LEON")
-		_leon.position = sur.on_rubble(sur.gedik() + Vector3(-2.2, 0, -3.6)) if sur.eski_mi else sur.gedik_onu() + Vector3(-2.2, 0, 0.3)
+		_leon.position = sur.on_rubble(sur.gedik() + Vector3(-2.2, 0, -3.6)) if sur.eski_mi else sur.on_rubble(sur.gedik_onu() + Vector3(2.0, 0, 1.2))
 		add_child(_leon)
 		_leon.look_target = giust
 	# Yük taşıyan savunucular: WallFight.add_carriers (aşağıda). Ayrı bir işçi takımı yok: iki takımın yolları
