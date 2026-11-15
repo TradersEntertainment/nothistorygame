@@ -20,6 +20,8 @@ var skirt := false
 var beard := false
 var apron := Color(0, 0, 0, 0)
 var robe := Color(0, 0, 0, 0)
+## Pijama (Bölüm 1, kostümden önce Tolga): çizgili üst/alt, terlik, pijamanın üstüne gevşek kravat. Renkleri çağıran verir.
+var pyjama := false
 ## Çocuk: yuvarlak yüz, küçük burun, iri gözler, ince kaş, gür saç; kafa gövdeye göre büyük (boyu çağıran küçültür)
 var child := false
 var talking := false
@@ -95,6 +97,7 @@ func _init(p := {}) -> void:
 	beard = p.get("beard", beard)
 	apron = p.get("apron", apron)
 	robe = p.get("robe", robe)
+	pyjama = bool(p.get("pyjama", false))
 	armor = str(p.get("armor", ""))
 	_kit = absi(seed + n * 977)
 	if child:
@@ -119,7 +122,7 @@ func _ready() -> void:
 	_body = Node3D.new()
 	add_child(_body)
 	# Bacaklar (kalçadan döner), yuvarlak ayakkabılar — CharKit: yumuşak, karikatür oranlı parçalar
-	var shoe := Color("2a2420")
+	var shoe := Color("b98a5e") if pyjama else Color("2a2420")      # pijamalıda terlik
 	_leg_l = Node3D.new()
 	_leg_l.position = Vector3(-0.1, 0.66, 0)
 	_body.add_child(_leg_l)
@@ -155,6 +158,8 @@ func _ready() -> void:
 	_arm_r.position = Vector3(0.3, 1.28, 0)
 	_body.add_child(_arm_r)
 	_elbow_r = CharKit.arm(_arm_r, coat, skin)
+	if pyjama:
+		CharKit.pyjama_stripes(_body, _arm_l, _elbow_l, _arm_r, _elbow_r, _leg_l, _knee_l, _leg_r, _knee_r)
 	if _pauldrons:
 		for arm: Node3D in [_arm_l, _arm_r]:
 			Props.ball(arm, 0.12, Vector3(0, -0.01, 0), Color("7c828a"), Vector3(1.15, 0.75, 1.15), 10)
@@ -343,6 +348,8 @@ func _ready() -> void:
 	if child:
 		_head.scale = Vector3.ONE * 1.32
 		_head.position.y += 0.04
+	if pyjama:
+		CharKit.tie(_body, Color("8f2430"))
 	_make_rig()
 	Props.share_meshes = false
 

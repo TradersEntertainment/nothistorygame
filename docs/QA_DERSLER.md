@@ -1070,3 +1070,48 @@ Her bölüm denetiminde ve her düzeltmede bu listeyi baştan uygula. Yeni bir h
     başkasının hatasında bekle ve yeniden koş (ajanlar öyle yaptı).
   - Çalışan ajanlar varken ana dala acil düzeltme: çalışma ağacına dokunmadan `git read-tree` + `commit-tree` ile
     main'in üstüne kayıt; sonra `git merge main` ile çalışma dalına alındı.
+- v0.99.119 (yeni bölüm Yerebatan [Opus kurdu, 3 bağımsız Sonnet denetimi, 4 düzeltme turu]; çeviri kokusu taraması
+  [14 yazar + ikinci okuma]; yeni sesler [Nihat, Giustiniani, Niko, askerler]; tırmanma animasyonu; bakış düzeltmeleri):
+  - Tam test 10 makineye bölündü (`SHARD=k SHARDS=10 tests/run_tests.sh`, 412 koşu, parça başı ~35 dk). Test çıktısında
+    yalnız `AUTOTEST PASS`e bakmak yetmez: `VISAUDIT` satırı PASS'in yanında çıkar ve paketi düşürür. Yönetmen kendi
+    koşusunda yalnız PASS'i süzdü; 44b `=kid`'deki iç içe duran çocuk ancak tam pakette yakalandı. Kural: elle koşuda da
+    betiğin süzgeci (`AUTOTEST|SCRIPT ERROR|WARN_|VISAUDIT|WALKTHRU|HELDAUDIT|ARMAUDIT`) kullanılır.
+  - Bir yerleşimi değiştiren tur (avluda Yakovos kuyuya alındı) o sahnenin BÜTÜN çeşitlerini koşar: çocuklu çeşitte
+    çocuk tam o noktaya konuyordu.
+  - Titreşen yüzey denetimi (ZFIGHT) yalnız tam pakette koşuyor; hızlı pakette olmadığı için yedi sahne yayına
+    çakışan yüzlerle çıkmıştı (0.99.118). Tam paket sürümden önce gerçekten sonuna kadar koşulur.
+  - Seyrek hata için az örnekle hüküm verilmez: 26 `hold_box` iç içe geçmesi 3 yeniden koşuda çıkmadı ("tek seferlik"
+    dendi), 28 koşuda 5 kez çıktı. Şüpheliler (tırmanma, bakış) ikiye bölmeyle aklandı; neden eski koddaydı
+    (`melee.gd`: düelloya giren bölük üyesi yerinde gizlenir, komşusu boş sanıp yerine adım atar). Düzeltme sonraki sürümde.
+  - Denetçinin kanon iddiası kaynakla doğrulanır: "Nihat 1977'den, 1985'i bilemez" bulgusu yanlıştı (EVREN.md: Büro
+    zaman dışıdır). Yönetmen repliği değiştirmeden önce belgeye baktı.
+  - `hud.think` sessizdir (iç ses altyazısı): seslendirilmiş dört replik oyunda hiç çalmıyordu. Yeni bölümde ses
+    dosyası üretilen her anahtarın oyunda gerçekten çalındığı günlükten doğrulanır (`PACE say len=` ses süresiyle eşleşir).
+  - Seslerde ölçüm kulak değildir: perde/tını/seviye tablosu aykırıyı bulur, ama "doğal mı" sorusunu sahibi dinleyerek
+    cevaplar. Dinleme sayfası (aday sesler, aynı replik, iyi/kötü işareti) seçimi bir turda bitirdi.
+  - Uzaktaki konuşan bağırır: replik başına "kim kime kaç metreden" tablosu (MESAFE.csv) çıkarıldı; ünlemli uzak replik
+    bağırır, ünlemsiz seslenir; yakındaki emir bağırmaz.
+  - Yeni İstanbul (bu sürümde YOK) için dersler: iş dosyaya göre paylaştırılınca herkes kendi dosyasını düzeltir, kare
+    bütün olarak kötü kalır ("sur zeminle uyuşmuyor", "sur ile çadır başka oyundan"). İş KAREYE göre sahiplendirilir
+    (adlı kameralar, tek sahip, her dosyaya dokunma yetkisi) ve ortak görsel kural (palet, doku yoğunluğu, yayındaki
+    bölümle sayısal karşılaştırma) ilk gün yazılır. Canlı ve yuvarlak nesne kutudan yapılmaz; teslimde paftaya değil tam
+    boy kareye bakılır.
+- v0.99.120 (küçük güncelleme: Bölüm 1'de iki süreklilik hatası [Sonnet × 2], Bölüm 26 iç içe geçme [Opus, ikiye bölme])
+  - Kıyafet de sürekliliktir: replik "yataktan kalktım" derken ayna takım gösteriyordu. Oyuncu modeli (ayna, kol,
+    kendine bakış, fotoğraf) her bölümün başında "şu an üstünde ne var" sorusuyla denetlenir; kostüm değişimi hangi
+    anda oluyorsa model o anda değişir.
+  - Hata bildirimini senaryoya karşı oku: ilk görev "yatak odasında giyinsin" diye yazıldı, oysa kostümü Hikmet garajda
+    veriyor. Sahibi düzeltti; görev yazmadan önce ilgili replik zinciri okunur.
+  - Tek açıdan bakılsın diye kurulan dekor, oyuncu yürüyebiliyorsa yarım görünür. Ulaşılabilir her duruş ve bakış
+    taranır; arka plan macentaya boyanıp piksel sayılır (Bölüm 1 garaj kapısı: 407/810 bakışta boşluk → 0).
+  - Sahne gizlenip zamanlayıcılar sürüyorsa kişi yürüten döngüler kendi `visible` bayrağına değil
+    `is_visible_in_tree()`'ye bakar: boş yer denetimi görünmeyeni saymaz, adım komşunun içinde biter.
+  - Nadir kusurda suçu son birleşmeye yıkma: ikiye bölme, kusurun yayındaki sürümde de olduğunu gösterdi.
+- v0.99.121 (küçük güncelleme: Bölüm 26'nın iki kararsız denetimi [Sonnet, günlükle kök neden])
+  - Kararsız denetim satırı "flake" değildir: günlükle tek tek kare izlenir. Konuşanın önüne çekilen asker: kişi görüş
+    çizgisinin TAM üstündeyken "yana çek" yönü sabit (1, 0) seçiliyordu; çizgi x boyunca uzanınca yana değil çizgi
+    BOYUNCA kayıyordu. Dejenere durumda yön her zaman çizgiye dik hesaplanır.
+  - Bir karelik durum kayması: yenilgide kılıç kına girdiği kare ile oyuncunun yere serilmesi arasında bir kare vardı
+    (ayakta, silahsız, yanında saldırgan). Birbirine bağlı iki durum değişikliği aynı karede yapılır.
+  - Tam pakette çıkan her satır eski sürümle aynı sayıda karşılaştırılır (26 =council_bad Duelist moloz/sur: 0.99.120'de
+    de 1/12, 0.99.121'de 1/12 → bu sürümün getirdiği değil, ayrı iş).

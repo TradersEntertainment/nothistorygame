@@ -72,6 +72,11 @@ static func run(scene: Node3D, hud: Hud, player: Player, waves: Array, p_blade :
 		var on_fin := func(won: bool) -> void:
 			st["won"] = won
 			st["lost"] = not won
+			# Yenilgi anı: Duel kılıcı kınına koyup durdu (stop); oyuncu da AYNI karede yere serilir. Eskiden down()
+			# ancak bir kare sonra (döngü uyanınca) çağrılıyordu: o kare kılıçsız, ayakta, rakipler saldırgan kalıyordu
+			# (26 hold_lose ARMAUDIT; denetim her 0,25 sn'de bir baktığından 3 koşuda 1 yakalıyordu)
+			if not won:
+				player.down()
 		duel.finished.connect(on_fin)
 		player.face(list[0].global_position + Vector3(0, 1.5, 0))
 		hud.set_objective(TranslationServer.translate("UI_OBJ_WAVE") % [wi + 1, waves.size(), (w["specs"] as Array).size()])

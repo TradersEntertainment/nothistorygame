@@ -42,6 +42,8 @@ func _ready() -> void:
 	player.interacted.connect(_on_interact)
 	player.focus_changed.connect(_on_focus)
 	player.frozen = true
+	# Bölümün başından kostüm kararmasına kadar Tolga pijamalı (kol, ayna, V, fotoğraf modu); _dress_up kapatır
+	player.set_pyjama(true)
 	if GameState.shots_dir != "":
 		_run_shots()
 	else:
@@ -144,10 +146,10 @@ func _run() -> void:
 	await hud.fade_to(1.0, 0.8)
 	await hud.card([[tr("UI_FADE_5MIN"), 28, Color(1, 1, 1, 0.85)]], 1.8)
 	hud.clear_card()
-	_set_fez(true)
-	fez_unlocked = true
+	_dress_up()
 	player.global_position = Vector3(-0.6, 0, 0.8)
 	player.face(hikmet.global_position + Vector3(0, 1.3, 0))
+	player.show_sleeves(1.8)      # karartma açılınca kol takım kolu: değişim fark edilsin
 	await hud.fade_to(0.0, 0.6)
 	# Çanta: kostüm şakaları oyuncu çantayı doldururken akar (eskiden dört replik boyunca donuk bekleniyordu)
 	phase = "bag"
@@ -371,6 +373,7 @@ func _bedroom() -> void:
 	player.camera.make_current()
 	cam.queue_free()
 	hud.set_cinematic(false)
+	player.show_sleeves(1.6)      # ayağa kalkınca kolun pijama olduğu görünsün
 	# Kontrol kalkar kalkmaz oyuncuda: Tolga söylenirken ("...kravatımı takayım") terliğe yürünür (eskiden bu söz de
 	# donuk beklenirdi; yatak odası 40 sn girdisizdi). Yürüme tuşları burada da görünür (ilk kez garajda, 90. sn'de çıkıyordu).
 	_bed_slipper_taken = false
@@ -464,7 +467,7 @@ func _hold_slipper() -> void:
 	if _held_slipper or player.camera == null:
 		return
 	_held_slipper = _slipper_model()
-	_held_slipper.position = Vector3(-0.12, -0.3, -0.48)
+	_held_slipper.position = Vector3(-0.12, -0.2, -0.48)      # biraz yukarıda: pijama kolu da görünsün
 	player.hold_model(_held_slipper)      # sol el tutar, kumanda cebe girer (bir el iki şey tutmaz)
 	_held_slipper.rotation_degrees = Vector3(20, -30, 70)
 
@@ -854,7 +857,7 @@ func _on_focus(id: String) -> void:
 		hud.set_prompt(tr("UI_PROMPT_BAG_READY"))
 	elif id == "hikmet" and phase not in ["intro", "departing", "done"] and not hud.is_talking():
 		hud.set_prompt(tr("UI_PROMPT_HIKMET"))
-	elif id == "mirror" and phase not in ["intro", "departing", "done"] and not hud.is_talking():
+	elif id == "mirror" and fez_unlocked and phase not in ["intro", "departing", "done"] and not hud.is_talking():
 		hud.set_prompt(tr("UI_PROMPT_MIRROR"))
 	else:
 		hud.set_prompt("")
@@ -865,7 +868,7 @@ func _on_interact(id: String) -> void:
 		_pick(id.trim_prefix("item:"))
 	elif id == "panel" and phase == "panel":
 		_use_panel()
-	elif id == "mirror" and phase not in ["intro", "departing", "done"] and not hud.is_talking():
+	elif id == "mirror" and fez_unlocked and phase not in ["intro", "departing", "done"] and not hud.is_talking():
 		hud.bark("SPK_TOLGA", "D1_T_MIRROR_FEZ" if fez_on else "D1_T_MIRROR", 3.5)
 	elif id == "hikmet" and phase == "bag" and GameState.bag.size() >= 5:
 		_bag_ready = true
@@ -942,6 +945,14 @@ func _h(key: String) -> void:
 
 func _t(key: String) -> void:
 	await hud.say("SPK_TOLGA", key)
+
+
+## "5 dakika sonra": ekran karanlıkken Tolga pijamayı çıkarıp kostümü giyer (takım + fes). Pijama garajda katlı kalır.
+func _dress_up() -> void:
+	player.set_pyjama(false)
+	garage.set_folded_pyjama(true)
+	_set_fez(true)
+	fez_unlocked = true
 
 
 func _set_fez(on: bool) -> void:
@@ -1083,7 +1094,7 @@ func _run_shots() -> void:
 
 	# 3. Tezgâh, fes ve çanta
 	hikmet.talking = false
-	_set_fez(true)
+	_dress_up()
 	phase = "bag"
 	for id in ["phone", "tape"]:
 		GameState.bag.append(id)

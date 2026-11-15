@@ -54,6 +54,7 @@ const GRIPS := {
 var skin := Color("e6ad88")
 var sleeve := Color("2b2f38")
 var cuff := Color("f4f1ea")
+var stripe := Color(0, 0, 0, 0)      # a > 0: çizgili (pijama) kol
 var palm: Node3D
 var fingers: Array = []          # [[kök, uç], ...] eklem düğümleri
 var thumb: Array = []            # [yön, kök, uç]
@@ -82,10 +83,34 @@ func _seg(parent: Node3D, length: float, r: float, c: Color) -> void:
 	Props._place(parent, m, Vector3(0, 0, -length * 0.5), c, Vector3(90, 0, 0), 0.0)
 
 
+## Kolluk: kol ve manşet bileğin arkasında. stripe.a > 0: pijama kolu (çizgili).
+func _build_sleeve() -> void:
+	var old := get_node_or_null("SleeveSet")
+	if old:
+		remove_child(old)
+		old.queue_free()
+	var set := Node3D.new()
+	set.name = "SleeveSet"
+	add_child(set)
+	Props.cyl(set, 0.042, 0.18, Vector3(0, 0.002, 0.1), sleeve, Vector3(90, 0, 0), 8)
+	Props.cyl(set, 0.04, 0.028, Vector3(0, 0.002, 0.012), cuff, Vector3(90, 0, 0), 8)
+	if stripe.a > 0.0:
+		for z: float in [0.06, 0.11, 0.16]:
+			Props.cyl(set, 0.0455, 0.014, Vector3(0, 0.002, z), stripe, Vector3(90, 0, 0), 8)
+	Props.strip_outlines(set)
+
+
+## Kolu sonradan değiştirir (Tolga pijamayı çıkarıp takıma geçer): yeni renkler ve çizgi.
+func restyle(p_sleeve: Color, p_cuff: Color, p_stripe := Color(0, 0, 0, 0)) -> void:
+	sleeve = p_sleeve
+	cuff = p_cuff
+	stripe = p_stripe
+	if is_node_ready():
+		_build_sleeve()
+
+
 func _build() -> void:
-	# Kol ve manşet bileğin arkasında
-	Props.cyl(self, 0.042, 0.18, Vector3(0, 0.002, 0.1), sleeve, Vector3(90, 0, 0), 8)
-	Props.cyl(self, 0.04, 0.028, Vector3(0, 0.002, 0.012), cuff, Vector3(90, 0, 0), 8)
+	_build_sleeve()
 	palm = Node3D.new()
 	add_child(palm)
 	# Avuç: yassı kutu ve yumuşak kenarlar (bilekte ve parmak köklerinde yuvarlak)
