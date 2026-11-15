@@ -16,6 +16,9 @@ Dal `wip/ist2-tasima4`, taban `wip/ist2-tasima3` 6f92f921.
 - Sondalar `testler/sonda/*_s2*`: 20 → 10,4 / 21,4 sn; 20o =wide → 12,1 / 18,3 sn; düşen 0.
 - §2 Bölüm 0: ek hücum merdivenleri (Assault.ek_merdiven + SurSet.merdiven_dayama), Garrison boşlukları daraltıldı, yaralı şeridi, sur yolu meşaleleri, duman.
 
+- SONRA Bölüm 20 ×3 (27 koşu, `testler/sonra/c20_*`): 27/27 PASS, denetim 0; 1. dalga 11,4 [9,3–18,9], 2. dalga 21,2 [17,7–26,2]; düşen ceset 0/27; tüfekçi çoğunlukla 4/4.
+- Çuval karesi (Bölüm 20 an_06): tuğla dizisi, havada yok; renk bir ton açıldı.
+
 ## Süren
 - §1 Bölüm 20 düello süresi: ŞİMDİ ölçümü (×3 / ×2) sırada.
 - §3 ceset düşmesi: kök neden adayı `Duelist._fall_tick` (görünmez/basılamaz yüzeye çarpınca konmuyor, 4 sn düşüp gizleniyor: −128 m = ½·16·4²); sonda ile doğrulanacak.

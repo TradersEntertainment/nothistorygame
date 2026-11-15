@@ -18,3 +18,15 @@ FINISHER kind=bash cam=third
 WAVERUNNER wave=1/2 won=true t=12.7 pw=0.28 foe_dmg=18.0 allies=3+0 rally_foes=0 thrown=0
 HANDS stowed=@Node3D@84
 RALLY scene=chapter20.tscn allies=4 foes=0 cands=2
+WAVERUNNER wave=2/2 won=true t=20.8 pw=0.28 foe_dmg=18.0 allies=4+0 rally_foes=0 thrown=0
+GUN extra=1
+GUNNER shots=4 dodged=4 hits=0
+TESPITBLOCK who=siege20 blocker=Skeleton/Mesh (MeshInstance3D) at=(2.0, 0.3, 9.3) eye=(2.0, 1.9, 9.3) dist=4.4
+GRADE chapter=20 letter=S points=129 { "gun_shots": 4, "gun_hits": 3, "gunner_shots": 4, "dodged": 4, "parries": 1, "kills": 1 }
+CESET4 bolum=20 variant= n=9 dusen=0 en_derin=-0.4 yer=(-1.978676, 0.699086, 16.38264)
+AUTOTEST PASS chapter=20 variant= outcome=20.1 repair=10 knocks=0 arrows=true gun=3/4 gunner=4/4 niko=0 sur=yeni
+WARNING: ObjectDB instances leaked at exit (run with --verbose for details).
+     at: cleanup (core/object/object.cpp:2378)
+ERROR: 1 resources still in use at exit (run with --verbose for details).
+   at: clear (core/io/resource.cpp:614)
+KOSU rc=0 sure=40 args=--chapter=20 --autotest

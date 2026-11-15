@@ -625,7 +625,7 @@ class GedikOnarim extends Node3D:
 				return _yigin_y(x, z, gx - h - 0.15, gx + h + 0.15, zs + 0.1, zs + 2.2, YIGIN_H, pr["pts"])
 			for duvar: Array in [[zs + 0.6, 3, 2.6], [zs + 1.02, 2, 1.8]]:
 				_cuval_duvar(cag0, gx - h + 0.3, gx + h - 0.3, float(duvar[0]), int(duvar[1]), float(duvar[2]), gx, yf, rng)
-			cag0.mesh_ekle(_katman, Props.mat(C_CUVAL, 0.0, false, "rubble"), "Toprak_Cuval")
+			cag0.mesh_ekle(_katman, Props.mat(C_CUVAL.lightened(0.18), 0.0, false, "rubble"), "Toprak_Cuval")      # çuval bezi topraktan açık (gece karesinde yığınla karışıyordu)
 			# eteğe taşlar (yarı gömülü) ve yığına çakılı kazıklar, yatık kütükler
 			var tl: Array = []
 			for i in 22:

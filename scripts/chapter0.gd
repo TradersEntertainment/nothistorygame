@@ -35,11 +35,13 @@ const SAVUNUCU_YENI := [Vector3(-4.3, 0, 10.8), Vector3(-3.2, 0, 10.4), Vector3(
 	Vector3(3.3, 0, 10.5), Vector3(2.4, 0, 10.1)]
 ## Bölüm sabiti: true → eski set (geri dönüş; komut satırında --eskisur ile de)
 const ESKI_SUR := false
-## Yeni sette açılış kadrajındaki ek hücum merdivenleri (Assault.ek_merdiven): x, korkuluğun üstüne ek taşma (m)
-const EK_MERDIVEN_YENI := [{"x": -6.3, "uzat": 1.3}, {"x": -14.8, "uzat": 1.1}]
-## Yeni sette açılış kadrajındaki yaralılar ve koşanlar (BattleExtras şeridi): [a, b, en, koşan, yatan, siperde, tohum]. Taşıyıcı
-## şeridi (depo → gedik önü) ve oyuncunun yolu (START → LINE) dışında: dış surun eteği önü, gediğin solu
-const SERIT_YENI_EK := [[Vector3(-10.2, 0, 11.2), Vector3(-6.9, 0, 11.4), 0.8, 2, 4, 0, 3150]]
+## Yeni sette ek hücum merdivenleri (Assault.ek_merdiven): x, korkuluğun üstüne ek taşma (m). Açılış kadrajında (START → LINE)
+## dış sur x > 4,5 kadrajın üst ortasında görünür (6,4 ve 14,4; yer yazısının üstünde), donma kadrajında x −20 (−6,3: koşu ortası)
+const EK_MERDIVEN_YENI := [{"x": 6.4, "uzat": 1.8}, {"x": 14.4, "uzat": 1.4}, {"x": -6.3, "uzat": 1.3}, {"x": -20.6, "uzat": 1.3}]
+## Yeni sette açılış kadrajındaki yaralılar ve koşanlar (BattleExtras şeridi): [a, b, en, koşan, yatan, siperde, (yalnız ad)].
+## Taşıyıcı şeridi (depo → gedik önü) ve oyuncunun yolu (START → LINE) dışında: dış surun eteği önü, gediğin iki yanı (kadrajın
+## sağı ve solu; tests/_ist/tasima4_kadraj.gd ile seçildi)
+const SERIT_YENI_EK := [[Vector3(-10.2, 0, 11.2), Vector3(-6.9, 0, 11.4), 0.8, 2, 4, 0, 3150], [Vector3(7.4, 0, 12.4), Vector3(10.6, 0, 12.5), 0.8, 1, 3, 0, 3160]]
 
 ## Bölüm bağdaştırıcısı: sette yer soran her şey buradan (eski: LandWalls sabitleri; yeni: SurOyun sorguları)
 var sur: SurSet
