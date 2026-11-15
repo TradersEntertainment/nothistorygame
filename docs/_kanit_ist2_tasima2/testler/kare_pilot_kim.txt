@@ -1,0 +1,177 @@
+Godot Engine v4.4.1.stable.official.49a5bc7b6 - https://godotengine.org
+WARNING: Could not set V-Sync mode, as changing V-Sync mode is not supported by the graphics driver.
+     at: set_use_vsync (platform/linuxbsd/x11/gl_manager_x11.cpp:360)
+OpenGL API 4.5 (Core Profile) Mesa 25.2.8-0ubuntu0.24.04.4 - Compatibility - Using Device: Mesa - llvmpipe (LLVM 20.1.2, 256 bits)
+ALSA lib confmisc.c:855:(parse_card) cannot find card '0'
+ALSA lib conf.c:5208:(_snd_config_evaluate) function snd_func_card_inum returned error: No such file or directory
+ALSA lib confmisc.c:422:(snd_func_concat) error evaluating strings
+ALSA lib conf.c:5208:(_snd_config_evaluate) function snd_func_concat returned error: No such file or directory
+ALSA lib confmisc.c:1342:(snd_func_refer) error evaluating name
+ALSA lib conf.c:5208:(_snd_config_evaluate) function snd_func_refer returned error: No such file or directory
+ALSA lib conf.c:5731:(snd_config_expand) Evaluate error: No such file or directory
+ALSA lib pcm.c:2721:(snd_pcm_open_noupdate) Unknown PCM default
+ERROR: Condition "status < 0" is true. Returning: ERR_CANT_OPEN
+   at: init_output_device (drivers/alsa/audio_driver_alsa.cpp:90)
+WARNING: All audio drivers failed, falling back to the dummy driver.
+     at: initialize (servers/audio_server.cpp:246)
+
+SURSET kesim=mesoteikhion kurulum_ms=4200 sur_ms=883 set_ms=3311
+PILOT20ENGEL OZET nokta=9 engelde=0
+PILOT20KURULUM sur=yeni set_ms=4202 bolum_ms=1746 toplam_ms=5948
+WARNING: Screen-space ambient occlusion (SSAO) can only be enabled when using the Forward+ renderer.
+     at: environment_set_ssao (servers/rendering/storage/environment_storage.cpp:586)
+WARNING: Screen-space indirect lighting (SSIL) can only be enabled when using the Forward+ renderer.
+     at: environment_set_ssil (servers/rendering/storage/environment_storage.cpp:661)
+TERRAIN_SOLIDIFIED scene=chapter20.tscn node=/root/Chapter20/@Node3D@177/Ova/@Node3D@3811/@MeshInstance3D@3813
+SIEGECHAOS segs=40 runners=80 static=30
+PILOT20YURU set=yeni dogus=(-9.6, 0.05, 7.2) depo=(-13.3, 0.0, 5.6) gedik_onu=(0.0, 0.0, 10.0) ok=(-16.0, 0.0, 2.6) okcu=(-9.0, 0.0, 9.4) siper=(-5.2, 0.0, 9.3)
+KIM px=(760.0, 205.0) n=2
+KIM i=0 d=0.0 yol=@CharacterBody3D@80/ShadowBody/Skeleton/Mesh tur=MeshInstance3D boy=(0.5, 1.7, 0.6) merkez=(-9.6, 0.9, 7.2) betik=res://scripts/player/shadow_body.gd
+KIM i=1 d=4.3 yol=@Node3D@177/@Node3D@3779/@MeshInstance3D@3782 tur=MeshInstance3D boy=(1.0, 1.0, 0.0) merkez=(-6.6, 2.7, 9.6) betik=res://scripts/world/ist/sur_set_sahne.gd
+KIM px=(520.0, 240.0) n=1
+KIM i=0 d=0.0 yol=@CharacterBody3D@80/ShadowBody/Skeleton/Mesh tur=MeshInstance3D boy=(0.5, 1.7, 0.6) merkez=(-9.6, 0.9, 7.2) betik=res://scripts/player/shadow_body.gd
+KIM px=(600.0, 215.0) n=6
+KIM i=0 d=0.0 yol=@CharacterBody3D@80/ShadowBody/Skeleton/Mesh tur=MeshInstance3D boy=(0.5, 1.7, 0.6) merkez=(-9.6, 0.9, 7.2) betik=res://scripts/player/shadow_body.gd
+KIM i=1 d=25.3 yol=Garrison/@Node3D@21159/@Node3D@21160/Baked tur=MeshInstance3D boy=(0.6, 0.9, 0.6) merkez=(13.8, 9.6, 14.8) betik=res://scripts/npc/person.gd
+KIM i=2 d=25.9 yol=Garrison/@Node3D@21159/@Node3D@21160/@Node3D@21172/Baked tur=MeshInstance3D boy=(0.2, 0.5, 0.2) merkez=(13.9, 9.1, 14.8) betik=res://scripts/npc/person.gd
+KIM i=3 d=26.0 yol=Garrison/@Node3D@21159/@Node3D@21160/@Node3D@21211/Elbow/Spear/@MeshInstance3D@21288 tur=MeshInstance3D boy=(0.1, 2.6, 0.3) merkez=(14.1, 10.3, 14.7) betik=res://scripts/npc/person.gd
+KIM i=4 d=26.1 yol=Garrison/@Node3D@21159/@Node3D@21160/@Node3D@21211/Elbow/Baked tur=MeshInstance3D boy=(0.2, 0.3, 0.2) merkez=(14.1, 9.5, 14.8) betik=res://scripts/npc/person.gd
+KIM i=5 d=26.1 yol=Garrison/@Node3D@21159/@Node3D@21160/@Node3D@21211/Elbow/Wrist/Baked tur=MeshInstance3D boy=(0.1, 0.2, 0.1) merkez=(14.1, 9.400001, 14.8) betik=res://scripts/npc/person.gd
+PILOT20KARE an_01_acilis.jpg repair=0 asama=1 phase=work oyuncu=(-9.6, 0.000107, 7.2)
+KIM px=(760.0, 205.0) n=1
+KIM i=0 d=0.0 yol=@CharacterBody3D@80/ShadowBody/Skeleton/Mesh tur=MeshInstance3D boy=(0.6, 1.7, 0.6) merkez=(-11.5, 0.9, 6.4) betik=res://scripts/player/shadow_body.gd
+KIM px=(520.0, 240.0) n=1
+KIM i=0 d=0.0 yol=@CharacterBody3D@80/ShadowBody/Skeleton/Mesh tur=MeshInstance3D boy=(0.6, 1.7, 0.6) merkez=(-11.5, 0.9, 6.4) betik=res://scripts/player/shadow_body.gd
+KIM px=(600.0, 215.0) n=2
+KIM i=0 d=0.0 yol=@CharacterBody3D@80/ShadowBody/Skeleton/Mesh tur=MeshInstance3D boy=(0.6, 1.7, 0.6) merkez=(-11.5, 0.9, 6.4) betik=res://scripts/player/shadow_body.gd
+KIM i=1 d=3.5 yol=@Node3D@177/@MeshInstance3D@3713 tur=MeshInstance3D boy=(0.7, 1.0, 0.7) merkez=(-14.1, 1.4, 3.6) betik=res://scripts/world/ist/sur_set_sahne.gd
+PILOT20KARE an_02_depo.jpg repair=0 asama=1 phase=work oyuncu=(-11.45, 0.000391, 6.4)
+PILOT20YURU bacak=dogus_depo sure=0.0 yol=0.0 takilma=0 dusme=0 etkilesim=tamam yuk= onarim=0 
+KIM px=(760.0, 205.0) n=1
+KIM i=0 d=0.0 yol=@CharacterBody3D@80/ShadowBody/Skeleton/Mesh tur=MeshInstance3D boy=(0.6, 1.7, 0.6) merkez=(-6.6, 0.9, 7.8) betik=res://scripts/player/shadow_body.gd
+KIM px=(520.0, 240.0) n=1
+KIM i=0 d=0.0 yol=@CharacterBody3D@80/ShadowBody/Skeleton/Mesh tur=MeshInstance3D boy=(0.6, 1.7, 0.6) merkez=(-6.6, 0.9, 7.8) betik=res://scripts/player/shadow_body.gd
+KIM px=(600.0, 215.0) n=1
+KIM i=0 d=0.0 yol=@CharacterBody3D@80/ShadowBody/Skeleton/Mesh tur=MeshInstance3D boy=(0.6, 1.7, 0.6) merkez=(-6.6, 0.9, 7.8) betik=res://scripts/player/shadow_body.gd
+PILOT20KARE an_03_gedige_tasima.jpg repair=0 asama=1 phase=work oyuncu=(-6.65, 0.000391, 7.8)
+PILOT20YURU bacak=depo_gedik_1 sure=0.0 yol=0.0 takilma=0 dusme=0 etkilesim=tamam yuk=barrel onarim=0 
+PILOT20YURU bacak=gedik_depo_1 sure=0.0 yol=0.0 takilma=0 dusme=0 etkilesim=tamam yuk= onarim=1 
+PILOT20YURU bacak=depo_gedik_2 sure=0.0 yol=0.0 takilma=0 dusme=0 etkilesim=tamam yuk=barrel onarim=1 
+PILOT20YURU bacak=gedik_depo_2 sure=0.0 yol=0.0 takilma=0 dusme=0 etkilesim=tamam yuk= onarim=2 
+PILOT20YURU bacak=depo_gedik_3 sure=0.0 yol=0.0 takilma=0 dusme=0 etkilesim=tamam yuk=barrel onarim=2 
+PILOT20YURU bacak=gedik_depo_3 sure=0.0 yol=0.0 takilma=0 dusme=0 etkilesim=tamam yuk= onarim=3 
+PILOT20YURU bacak=depo_gedik_4 sure=0.0 yol=0.0 takilma=0 dusme=0 etkilesim=tamam yuk=barrel onarim=3 
+KIM px=(760.0, 205.0) n=1
+KIM i=0 d=0.0 yol=@CharacterBody3D@80/ShadowBody/Skeleton/Mesh tur=MeshInstance3D boy=(0.6, 1.7, 0.5) merkez=(-1.4, 1.1, 8.3) betik=res://scripts/player/shadow_body.gd
+KIM px=(520.0, 240.0) n=1
+KIM i=0 d=0.0 yol=@CharacterBody3D@80/ShadowBody/Skeleton/Mesh tur=MeshInstance3D boy=(0.6, 1.7, 0.5) merkez=(-1.4, 1.1, 8.3) betik=res://scripts/player/shadow_body.gd
+KIM px=(600.0, 215.0) n=1
+KIM i=0 d=0.0 yol=@CharacterBody3D@80/ShadowBody/Skeleton/Mesh tur=MeshInstance3D boy=(0.6, 1.7, 0.5) merkez=(-1.4, 1.1, 8.3) betik=res://scripts/player/shadow_body.gd
+PILOT20KARE an_04_onarim_asama2.jpg repair=4 asama=2 phase=work oyuncu=(-1.366333, 0.214786, 8.321031)
+PILOT20YURU bacak=gedik_siper sure=0.0 yol=0.0 takilma=0 dusme=0 etkilesim=tamam yuk= onarim=4 
+KIM px=(760.0, 205.0) n=3
+KIM i=0 d=0.0 yol=@CharacterBody3D@80/ShadowBody/Skeleton/Mesh tur=MeshInstance3D boy=(0.6, 1.7, 0.4) merkez=(-5.2, 0.9, 9.3) betik=res://scripts/player/shadow_body.gd
+KIM i=1 d=2.2 yol=@Node3D@177/@Node3D@3739/@StaticBody3D@3740/@MeshInstance3D@3741 tur=MeshInstance3D boy=(2.4, 2.2, 0.2) merkez=(-5.5, 1.3, 11.5) betik=res://scripts/world/ist/sur_set_sahne.gd
+KIM i=2 d=2.4 yol=@Node3D@177/@Node3D@3739/@MeshInstance3D@3747 tur=MeshInstance3D boy=(0.3, 2.4, 0.1) merkez=(-5.3, 1.3, 11.6) betik=res://scripts/world/ist/sur_set_sahne.gd
+KIM px=(520.0, 240.0) n=6
+KIM i=0 d=0.0 yol=@CharacterBody3D@80/ShadowBody/Skeleton/Mesh tur=MeshInstance3D boy=(0.6, 1.7, 0.4) merkez=(-5.2, 0.9, 9.3) betik=res://scripts/player/shadow_body.gd
+KIM i=1 d=1.0 yol=@Node3D@177/SurCerceve/SurOyun_mesoteikhion/OyunDilimi/Mesoteikhion/@MultiMeshInstance3D@246 tur=MultiMeshInstance3D boy=(9.7, 2.1, 10.6) merkez=(-0.3, 1.1, 15.5) betik=res://scripts/world/ist/sur_set_sahne.gd
+KIM i=2 d=1.3 yol=@Node3D@177/@Node3D@3739/@MeshInstance3D@3755 tur=MeshInstance3D boy=(0.1, 1.8, 1.0) merkez=(-4.7, 1.0, 10.9) betik=res://scripts/world/ist/sur_set_sahne.gd
+KIM i=3 d=2.3 yol=@Node3D@177/@Node3D@3739/@StaticBody3D@3740/@MeshInstance3D@3741 tur=MeshInstance3D boy=(2.4, 2.2, 0.2) merkez=(-5.5, 1.3, 11.5) betik=res://scripts/world/ist/sur_set_sahne.gd
+KIM i=4 d=2.5 yol=@Node3D@177/@Node3D@3739/@MeshInstance3D@3750 tur=MeshInstance3D boy=(0.3, 2.4, 0.1) merkez=(-4.4, 1.3, 11.6) betik=res://scripts/world/ist/sur_set_sahne.gd
+KIM i=5 d=3.8 yol=@Node3D@177/SurCerceve/SurOyun_mesoteikhion/OyunParcalari/Toprak_GedikOnarim/Asama/Baked tur=MeshInstance3D boy=(7.7, 2.1, 1.9) merkez=(-0.1, 1.8, 13.0) betik=
+KIM px=(600.0, 215.0) n=4
+KIM i=0 d=0.0 yol=@CharacterBody3D@80/ShadowBody/Skeleton/Mesh tur=MeshInstance3D boy=(0.6, 1.7, 0.4) merkez=(-5.2, 0.9, 9.3) betik=res://scripts/player/shadow_body.gd
+KIM i=1 d=0.9 yol=@Node3D@177/SurCerceve/SurOyun_mesoteikhion/OyunDilimi/Mesoteikhion/@MultiMeshInstance3D@246 tur=MultiMeshInstance3D boy=(9.7, 2.1, 10.6) merkez=(-0.3, 1.1, 15.5) betik=res://scripts/world/ist/sur_set_sahne.gd
+KIM i=2 d=2.2 yol=@Node3D@177/@Node3D@3739/@StaticBody3D@3740/@MeshInstance3D@3741 tur=MeshInstance3D boy=(2.4, 2.2, 0.2) merkez=(-5.5, 1.3, 11.5) betik=res://scripts/world/ist/sur_set_sahne.gd
+KIM i=3 d=2.4 yol=@Node3D@177/@Node3D@3739/@MeshInstance3D@3749 tur=MeshInstance3D boy=(0.3, 2.3, 0.1) merkez=(-4.7, 1.3, 11.6) betik=res://scripts/world/ist/sur_set_sahne.gd
+PILOT20KARE an_05_top_uyarisi_siper.jpg repair=4 asama=2 phase=work oyuncu=(-5.2, 0.000391, 9.3)
+PILOT20YURU siperde_devrilme=0 onarim=3
+PILOT20YURU bacak=gedik_depo_4 sure=0.0 yol=0.0 takilma=0 dusme=0 etkilesim=tamam yuk= onarim=3 
+PILOT20YURU bacak=depo_gedik_5 sure=0.0 yol=0.0 takilma=0 dusme=0 etkilesim=tamam yuk=barrel onarim=3 
+PILOT20YURU bacak=gedik_depo_5 sure=0.0 yol=0.0 takilma=0 dusme=0 etkilesim=tamam yuk= onarim=4 
+PILOT20YURU bacak=depo_gedik_6 sure=0.0 yol=0.0 takilma=0 dusme=0 etkilesim=tamam yuk= onarim=4 
+PILOT20YURU bacak=gedik_depo_6 sure=0.0 yol=0.0 takilma=0 dusme=0 etkilesim=tamam yuk= onarim=4 
+PILOT20YURU bacak=depo_gedik_7 sure=0.0 yol=0.0 takilma=0 dusme=0 etkilesim=tamam yuk=earth onarim=4 
+PILOT20YURU bacak=gedik_depo_7 sure=0.0 yol=0.0 takilma=0 dusme=0 etkilesim=tamam yuk= onarim=5 
+PILOT20YURU bacak=depo_gedik_8 sure=0.0 yol=0.0 takilma=0 dusme=0 etkilesim=tamam yuk=earth onarim=5 
+PILOT20YURU bacak=gedik_depo_8 sure=0.0 yol=0.0 takilma=0 dusme=0 etkilesim=tamam yuk= onarim=6 
+PILOT20YURU bacak=depo_gedik_9 sure=0.0 yol=0.0 takilma=0 dusme=0 etkilesim=tamam yuk= onarim=6 
+PILOT20YURU bacak=gedik_depo_9 sure=0.0 yol=0.0 takilma=0 dusme=0 etkilesim=tamam yuk= onarim=6 
+PILOT20YURU bacak=depo_gedik_10 sure=0.0 yol=0.0 takilma=0 dusme=0 etkilesim=tamam yuk=plank onarim=6 
+PILOT20YURU bacak=gedik_depo_10 sure=0.0 yol=0.0 takilma=0 dusme=0 etkilesim=tamam yuk= onarim=7 
+PILOT20YURU bacak=depo_gedik_11 sure=0.0 yol=0.0 takilma=0 dusme=0 etkilesim=tamam yuk=plank onarim=7 
+PILOT20YURU bacak=gedik_depo_11 sure=0.0 yol=0.0 takilma=0 dusme=0 etkilesim=tamam yuk= onarim=8 
+PILOT20YURU bacak=depo_gedik_12 sure=0.0 yol=0.0 takilma=0 dusme=0 etkilesim=tamam yuk=plank onarim=8 
+PILOT20YURU bacak=gedik_depo_12 sure=0.0 yol=0.0 takilma=0 dusme=0 etkilesim=tamam yuk= onarim=9 
+PILOT20YURU bacak=depo_gedik_son sure=0.0 yol=0.0 takilma=0 dusme=0 etkilesim=tamam yuk=plank onarim=9 
+KIM px=(760.0, 205.0) n=3
+KIM i=0 d=0.0 yol=@CharacterBody3D@80/ShadowBody/Skeleton/Mesh tur=MeshInstance3D boy=(0.6, 1.7, 0.5) merkez=(-1.4, 1.1, 8.3) betik=res://scripts/player/shadow_body.gd
+KIM i=1 d=1.9 yol=@Node3D@177/SurCerceve/SurOyun_mesoteikhion/OyunParcalari/Toprak_GedikOnarim/Asama/@MeshInstance3D@33198 tur=MeshInstance3D boy=(8.2, 2.2, 3.8) merkez=(0.0, 1.7, 12.1) betik=
+KIM i=2 d=6.0 yol=@Node3D@177/SurCerceve/SurOyun_mesoteikhion/OyunParcalari/Toprak_GedikOnarim/Asama/Baked tur=MeshInstance3D boy=(8.6, 7.6, 3.2) merkez=(0.0, 4.8, 15.6) betik=
+KIM px=(520.0, 240.0) n=3
+KIM i=0 d=0.0 yol=@CharacterBody3D@80/ShadowBody/Skeleton/Mesh tur=MeshInstance3D boy=(0.6, 1.7, 0.5) merkez=(-1.4, 1.1, 8.3) betik=res://scripts/player/shadow_body.gd
+KIM i=1 d=2.2 yol=@Node3D@177/SurCerceve/SurOyun_mesoteikhion/OyunParcalari/Toprak_GedikOnarim/Asama/@MeshInstance3D@33198 tur=MeshInstance3D boy=(8.2, 2.2, 3.8) merkez=(0.0, 1.7, 12.1) betik=
+KIM i=2 d=6.9 yol=@Node3D@177/SurCerceve/SurOyun_mesoteikhion/OyunParcalari/Toprak_GedikOnarim/Asama/Baked tur=MeshInstance3D boy=(8.6, 7.6, 3.2) merkez=(0.0, 4.8, 15.6) betik=
+KIM px=(600.0, 215.0) n=3
+KIM i=0 d=0.0 yol=@CharacterBody3D@80/ShadowBody/Skeleton/Mesh tur=MeshInstance3D boy=(0.6, 1.7, 0.5) merkez=(-1.4, 1.1, 8.3) betik=res://scripts/player/shadow_body.gd
+KIM i=1 d=2.1 yol=@Node3D@177/SurCerceve/SurOyun_mesoteikhion/OyunParcalari/Toprak_GedikOnarim/Asama/@MeshInstance3D@33198 tur=MeshInstance3D boy=(8.2, 2.2, 3.8) merkez=(0.0, 1.7, 12.1) betik=
+KIM i=2 d=6.4 yol=@Node3D@177/SurCerceve/SurOyun_mesoteikhion/OyunParcalari/Toprak_GedikOnarim/Asama/Baked tur=MeshInstance3D boy=(8.6, 7.6, 3.2) merkez=(0.0, 4.8, 15.6) betik=
+PILOT20KARE an_06_onarim_asama4.jpg repair=9 asama=4 phase=work oyuncu=(-1.366333, 0.214786, 8.321031)
+KIM px=(760.0, 205.0) n=3
+KIM i=0 d=0.0 yol=@CharacterBody3D@80/ShadowBody/Skeleton/Mesh tur=MeshInstance3D boy=(0.5, 1.7, 0.4) merkez=(0.3, 1.3, 9.8) betik=res://scripts/player/shadow_body.gd
+KIM i=1 d=0.4 yol=@Node3D@177/SurCerceve/SurOyun_mesoteikhion/OyunParcalari/Toprak_GedikOnarim/Asama/@MeshInstance3D@33198 tur=MeshInstance3D boy=(8.2, 2.2, 3.8) merkez=(0.0, 1.7, 12.1) betik=
+KIM i=2 d=4.7 yol=@Node3D@177/SurCerceve/SurOyun_mesoteikhion/OyunParcalari/Toprak_GedikOnarim/Asama/Baked tur=MeshInstance3D boy=(8.6, 7.6, 3.2) merkez=(0.0, 4.8, 15.6) betik=
+KIM px=(520.0, 240.0) n=4
+KIM i=0 d=0.0 yol=@CharacterBody3D@80/ShadowBody/Skeleton/Mesh tur=MeshInstance3D boy=(0.5, 1.7, 0.4) merkez=(0.3, 1.3, 9.8) betik=res://scripts/player/shadow_body.gd
+KIM i=1 d=0.4 yol=@Node3D@177/SurCerceve/SurOyun_mesoteikhion/OyunParcalari/Toprak_GedikOnarim/Asama/@MeshInstance3D@33198 tur=MeshInstance3D boy=(8.2, 2.2, 3.8) merkez=(0.0, 1.7, 12.1) betik=
+KIM i=2 d=1.5 yol=@Node3D@22831/@Node3D@23712/@Node3D@23713/@Node3D@23775/Baked tur=MeshInstance3D boy=(0.8, 0.6, 0.8) merkez=(1.0, 2.2, 10.7) betik=res://scripts/npc/person.gd
+KIM i=3 d=4.5 yol=@Node3D@177/SurCerceve/SurOyun_mesoteikhion/OyunParcalari/Toprak_GedikOnarim/Asama/Baked tur=MeshInstance3D boy=(8.6, 7.6, 3.2) merkez=(0.0, 4.8, 15.6) betik=
+KIM px=(600.0, 215.0) n=3
+KIM i=0 d=0.0 yol=@CharacterBody3D@80/ShadowBody/Skeleton/Mesh tur=MeshInstance3D boy=(0.5, 1.7, 0.4) merkez=(0.3, 1.3, 9.8) betik=res://scripts/player/shadow_body.gd
+KIM i=1 d=0.4 yol=@Node3D@177/SurCerceve/SurOyun_mesoteikhion/OyunParcalari/Toprak_GedikOnarim/Asama/@MeshInstance3D@33198 tur=MeshInstance3D boy=(8.2, 2.2, 3.8) merkez=(0.0, 1.7, 12.1) betik=
+KIM i=2 d=4.5 yol=@Node3D@177/SurCerceve/SurOyun_mesoteikhion/OyunParcalari/Toprak_GedikOnarim/Asama/Baked tur=MeshInstance3D boy=(8.6, 7.6, 3.2) merkez=(0.0, 4.8, 15.6) betik=
+PILOT20KARE an_07_hucum_baslangici.jpg repair=9 asama=4 phase=assault oyuncu=(0.314071, 0.467852, 9.773755)
+PILOT20YURU bacak=gedik_oksandigi sure=0.0 yol=0.0 takilma=0 dusme=0 etkilesim=tamam yuk= onarim=9 
+KIM px=(760.0, 205.0) n=2
+KIM i=0 d=0.0 yol=@CharacterBody3D@80/ShadowBody/Skeleton/Mesh tur=MeshInstance3D boy=(0.5, 1.7, 0.4) merkez=(-16.0, 1.0, 2.6) betik=res://scripts/player/shadow_body.gd
+KIM i=1 d=1.3 yol=@MeshInstance3D@19203 tur=MeshInstance3D boy=(0.9, 0.5, 0.5) merkez=(-16.0, 1.1, 1.2) betik=res://scripts/chapter20.gd
+KIM px=(520.0, 240.0) n=2
+KIM i=0 d=0.0 yol=@CharacterBody3D@80/ShadowBody/Skeleton/Mesh tur=MeshInstance3D boy=(0.5, 1.7, 0.4) merkez=(-16.0, 1.0, 2.6) betik=res://scripts/player/shadow_body.gd
+KIM i=1 d=1.3 yol=@MeshInstance3D@19203 tur=MeshInstance3D boy=(0.9, 0.5, 0.5) merkez=(-16.0, 1.1, 1.2) betik=res://scripts/chapter20.gd
+KIM px=(600.0, 215.0) n=2
+KIM i=0 d=0.0 yol=@CharacterBody3D@80/ShadowBody/Skeleton/Mesh tur=MeshInstance3D boy=(0.5, 1.7, 0.4) merkez=(-16.0, 1.0, 2.6) betik=res://scripts/player/shadow_body.gd
+KIM i=1 d=1.2 yol=@MeshInstance3D@19203 tur=MeshInstance3D boy=(0.9, 0.5, 0.5) merkez=(-16.0, 1.1, 1.2) betik=res://scripts/chapter20.gd
+PILOT20KARE an_08_ok_sandigi.jpg repair=9 asama=4 phase=assault oyuncu=(-16.00333, 0.115329, 2.607508)
+PILOT20YURU bacak=oksandigi_okcular sure=0.0 yol=0.0 takilma=0 dusme=0 etkilesim=tamam yuk=arrows onarim=9 
+KIM px=(760.0, 205.0) n=2
+KIM i=0 d=0.0 yol=@CharacterBody3D@80/ShadowBody/Skeleton/Mesh tur=MeshInstance3D boy=(0.5, 1.7, 0.4) merkez=(-9.0, 0.9, 9.400001) betik=res://scripts/player/shadow_body.gd
+KIM i=1 d=11.5 yol=@Node3D@25277/@Node3D@27383/@MeshInstance3D@27385 tur=MeshInstance3D boy=(0.1, 13.8, 4.1) merkez=(-11.7, 3.2, 18.7) betik=res://scripts/level/assault.gd
+KIM px=(520.0, 240.0) n=2
+KIM i=0 d=0.0 yol=@CharacterBody3D@80/ShadowBody/Skeleton/Mesh tur=MeshInstance3D boy=(0.5, 1.7, 0.4) merkez=(-9.0, 0.9, 9.400001) betik=res://scripts/player/shadow_body.gd
+KIM i=1 d=1.8 yol=@Node3D@19329/@Node3D@19330/@Node3D@19392/Baked tur=MeshInstance3D boy=(0.9, 0.6, 0.8) merkez=(-9.0, 1.9, 11.6) betik=res://scripts/npc/person.gd
+KIM px=(600.0, 215.0) n=2
+KIM i=0 d=0.0 yol=@CharacterBody3D@80/ShadowBody/Skeleton/Mesh tur=MeshInstance3D boy=(0.5, 1.7, 0.4) merkez=(-9.0, 0.9, 9.400001) betik=res://scripts/player/shadow_body.gd
+KIM i=1 d=1.8 yol=@Node3D@19329/@Node3D@19330/@Node3D@19392/Baked tur=MeshInstance3D boy=(0.9, 0.6, 0.8) merkez=(-9.0, 1.9, 11.6) betik=res://scripts/npc/person.gd
+PILOT20KARE an_09_okcular.jpg repair=9 asama=4 phase=assault oyuncu=(-9.0, 0.000391, 9.4)
+PILOT20YURU bacak=okcular_gedik_duello sure=0.0 yol=0.0 takilma=0 dusme=0 etkilesim=tamam yuk= onarim=9 
+RALLY scene=chapter20.tscn allies=3 foes=0 cands=5
+KIM px=(760.0, 205.0) n=3
+KIM i=0 d=0.0 yol=@CharacterBody3D@80/ShadowBody/Skeleton/Mesh tur=MeshInstance3D boy=(0.6, 1.7, 0.5) merkez=(0.1, 1.6, 11.7) betik=res://scripts/player/shadow_body.gd
+KIM i=1 d=0.0 yol=@Node3D@177/SurCerceve/SurOyun_mesoteikhion/OyunParcalari/Toprak_GedikOnarim/Asama/@MeshInstance3D@33198 tur=MeshInstance3D boy=(8.2, 2.2, 3.8) merkez=(0.0, 1.7, 12.1) betik=
+KIM i=2 d=2.4 yol=@Node3D@177/SurCerceve/SurOyun_mesoteikhion/OyunParcalari/Toprak_GedikOnarim/Asama/Baked tur=MeshInstance3D boy=(8.6, 7.6, 3.2) merkez=(0.0, 4.8, 15.6) betik=
+KIM px=(520.0, 240.0) n=3
+KIM i=0 d=0.0 yol=@CharacterBody3D@80/ShadowBody/Skeleton/Mesh tur=MeshInstance3D boy=(0.6, 1.7, 0.5) merkez=(0.1, 1.6, 11.7) betik=res://scripts/player/shadow_body.gd
+KIM i=1 d=0.0 yol=@Node3D@177/SurCerceve/SurOyun_mesoteikhion/OyunParcalari/Toprak_GedikOnarim/Asama/@MeshInstance3D@33198 tur=MeshInstance3D boy=(8.2, 2.2, 3.8) merkez=(0.0, 1.7, 12.1) betik=
+KIM i=2 d=2.6 yol=@Node3D@177/SurCerceve/SurOyun_mesoteikhion/OyunParcalari/Toprak_GedikOnarim/Asama/Baked tur=MeshInstance3D boy=(8.6, 7.6, 3.2) merkez=(0.0, 4.8, 15.6) betik=
+KIM px=(600.0, 215.0) n=3
+KIM i=0 d=0.0 yol=@CharacterBody3D@80/ShadowBody/Skeleton/Mesh tur=MeshInstance3D boy=(0.6, 1.7, 0.5) merkez=(0.1, 1.6, 11.7) betik=res://scripts/player/shadow_body.gd
+KIM i=1 d=0.0 yol=@Node3D@177/SurCerceve/SurOyun_mesoteikhion/OyunParcalari/Toprak_GedikOnarim/Asama/@MeshInstance3D@33198 tur=MeshInstance3D boy=(8.2, 2.2, 3.8) merkez=(0.0, 1.7, 12.1) betik=
+KIM i=2 d=2.5 yol=@Node3D@177/SurCerceve/SurOyun_mesoteikhion/OyunParcalari/Toprak_GedikOnarim/Asama/Baked tur=MeshInstance3D boy=(8.6, 7.6, 3.2) merkez=(0.0, 4.8, 15.6) betik=
+PILOT20KARE an_10_duello.jpg repair=9 asama=4 phase=assault oyuncu=(0.114018, 0.756627, 11.6956)
+PILOT20KARE BITTI
+WARNING: ObjectDB instances leaked at exit (run with --verbose for details).
+     at: cleanup (core/object/object.cpp:2378)
+ERROR: 2 resources still in use at exit (run with --verbose for details).
+   at: clear (core/io/resource.cpp:614)
+KOSU rc=0

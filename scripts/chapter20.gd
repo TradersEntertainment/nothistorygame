@@ -759,13 +759,18 @@ func _dawn() -> void:
 		player.global_position = LandWalls.BREACH + Vector3(1.5, 0.05, -7.5)
 		player.face(LandWalls.BREACH + Vector3(0, 2.4, 0))
 	else:
-		# iç kulenin eteği gediğin sağında: tespit yeri gediğin solunda, aşama 4'ün kazık çitinin (savunanın arkası, teslim
-		# yerinin 2,8 m gerisi) ucunun dışından barikata çapraz bakar (barikata 7,2 m; eski 7,6). Eskiden gedik önü − 4 m: çit
-		# kareyi kesiyordu (TESPITBLOCK Ahsap_GedikCit_Carp), Giustiniani'nin son sözü çitin ardında kalıyordu (VISAUDIT hidden)
-		player.global_position = Vector3(-6.5, 0.05, sur.gedik_onu().z - 1.3)
+		# tespit yeri aşama 4'ün kazık çitinin (savunanın arkası, teslim yerinin 2,8 m gerisi) önünde, gediğin hafif sağında:
+		# barikata 4,5 m. Eskiden gedik önü − 4 m: çit kareyi kesiyordu (TESPITBLOCK Ahsap_GedikCit_Carp), Giustiniani'nin son
+		# sözü çitin ardında kalıyordu (VISAUDIT hidden). Solda (−6,5; 9,5) denendi: soldan gelen taşıyıcı şeridi ve sol
+		# işçiler kadraj çizgisindeydi (TESPITBLOCK person 17/18 koşu); sağda ikisi de çizginin ≥1,3 m dışında.
+		player.global_position = Vector3(2.0, 0.05, sur.gedik_onu().z - 1.4)
 		player.face(sur.barikat() + Vector3(0, 0.6, 0))
 		# kararma kesmesinde komutan yerine döner (gece hücumda/tüfekte oyuncunun yanına gelmişti; çitin öbür yanında kalıyordu)
 		giust.global_position = sur.on_rubble(GIUST_YENI)
+		# gece yardıma koşup dövüşten sonra "nefeslenip kalan" dost düellocular şafakta sahnede değil (kararma kesmesi):
+		# yeni tespit yeri gecenin düello alanına yakın, biri oyuncunun 0,5 m önünde kalıp komutanı örtüyordu
+		# (VISAUDIT personhidden D20_G_END by=…(no_talk,no_chat,no_yield))
+		Duelist.dismiss_idle(self)
 	await hud.card([[tr("UI_CH20_DAWN"), 26, Color("f2e6c9")]], 1.8)
 	hud.clear_card()
 	await hud.fade_to(0.0, 1.0)

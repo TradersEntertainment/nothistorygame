@@ -1268,8 +1268,14 @@ func _yuru() -> void:
 		await _kare("kap1_peribolos")
 	await _yb("kap1_lagim", kap_b, Vector3.INF, true)
 	if kare:
-		player.face(MINE + Vector3(0, 0.0, 0))
+		# kabın 2,4 m gerisinden (dibinden bakınca kadrajı kabın tepesi dolduruyordu)
+		var geri := player.global_position
+		var yon := player.global_position - MINE
+		yon.y = 0.0
+		player.global_position = MINE + yon.normalized() * 2.4 + Vector3(0, 0.05, 0)
+		player.face(MINE + Vector3(0, 0.6, 0))
 		await _kare("lagim_kap")
+		player.global_position = geri
 	var best: Vector3 = MINE
 	for bw in bowls:
 		if float(bw["strength"]) > 0.0 and (bw["node"] as Node3D).global_position.distance_to(MINE) < FOUND_R:

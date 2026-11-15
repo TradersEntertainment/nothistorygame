@@ -1,0 +1,31 @@
+Godot Engine v4.4.1.stable.official.49a5bc7b6 - https://godotengine.org
+
+SURSET kesim=mesoteikhion kurulum_ms=4116 sur_ms=970 set_ms=3140
+PILOT20ENGEL OZET nokta=9 engelde=0
+PILOT20KURULUM sur=yeni set_ms=4118 bolum_ms=1454 toplam_ms=5571
+WARNING: Screen-space ambient occlusion (SSAO) can only be enabled when using the Forward+ renderer.
+     at: environment_set_ssao (servers/rendering/storage/environment_storage.cpp:586)
+WARNING: Screen-space indirect lighting (SSIL) can only be enabled when using the Forward+ renderer.
+     at: environment_set_ssil (servers/rendering/storage/environment_storage.cpp:661)
+TERRAIN_SOLIDIFIED scene=chapter20.tscn node=/root/Chapter20/@Node3D@177/Ova/@Node3D@2902/@MeshInstance3D@2904
+SIEGECHAOS segs=40 runners=80 static=30
+LORE key=20 placed=3
+GUN shots=4 hits=3 missed=1
+HANDS stowed=@Node3D@84
+HANDS stowed=@Node3D@84
+RALLY scene=chapter20.tscn allies=3 foes=0 cands=5
+KICK result=stagger
+WAVERUNNER wave=1/2 won=true t=9.6 pw=0.28 foe_dmg=18.0 allies=3+0 rally_foes=0 thrown=0
+HANDS stowed=@Node3D@84
+RALLY scene=chapter20.tscn allies=4 foes=0 cands=2
+WAVERUNNER wave=2/2 won=true t=13.8 pw=0.28 foe_dmg=18.0 allies=4+0 rally_foes=0 thrown=0
+GUN extra=1
+GUNNER shots=3 dodged=3 hits=0
+TESPITBLOCK who=siege20 blocker=@Node3D@21922/@Node3D@23267 (person) at=(-3.6, 0.2, 10.8) eye=(-6.3, 1.6, 9.400001) dist=7.5
+GRADE chapter=20 letter=S points=120 { "gun_shots": 4, "gun_hits": 3, "hits_taken": 1, "gunner_shots": 3, "dodged": 3, "kills": 2, "parries": 1 }
+AUTOTEST PASS chapter=20 variant=hit outcome=20.1 repair=10 knocks=1 arrows=true gun=3/4 gunner=3/3 niko=0 sur=yeni
+WARNING: ObjectDB instances leaked at exit (run with --verbose for details).
+     at: cleanup (core/object/object.cpp:2378)
+ERROR: 1 resources still in use at exit (run with --verbose for details).
+   at: clear (core/io/resource.cpp:614)
+KOSU ad=son_c20_hit rc=0 sn=41 args=--chapter=20 --autotest=hit
