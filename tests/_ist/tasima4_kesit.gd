@@ -11,6 +11,8 @@ func _init() -> void:
 		sur.gedik(), sur.moloz_sirti(), sur.dis_sur_z0(), sur.dis_sur_z1(), sur.teras(), sur.hendek_z0(), sur.hendek_z1(),
 		sur.hendek_dip_y(), sur.ova_y(), sur.ova_ofs()])
 	print("KESIT4 poterna_x=%.2f dis_kuleler=%s gedik_en=%.2f depo=%s dogus=%s siperler=%s" % [sur.poterna_x(), sur.dis_kuleler(), sur.gedik_en(), sur.depo(), sur.dogus(), sur.siperler()])
+	for m: Dictionary in sur.hucum_merdivenleri([-44.0, -33.0, -24.0, -12.0, 12.0, 22.0, 31.0, 42.0], 150.0 * 0.45):
+		print("KESIT4 merdiven x=%.1f ayak=%s tepe=%s" % [m["x"], m["ayak"], m["tepe"]])
 	for g: Dictionary in sur.gecisler():
 		print("KESIT4 gecis=%s" % [g])
 	for x: float in [0.0, -2.0, 2.0, -4.0, 4.0]:

@@ -574,13 +574,15 @@ func _assault() -> void:
 			"mustache": true, "beard": k % 2 == 1}})
 	player.frozen = false
 	var gn := Gunner.spawn(self, Vector3(8.4, y, 15.4) if sur.eski_mi else Vector3(sur.dis_yol_x(8.4), y, sur.dis_yol_z()), player, hud, 6.0, Color("7a2a24"), "helm")
-	var r: Dictionary = await WaveRunner.run(self, hud, player, [
-		{"specs": specs, "max_active": 2, "skill": 0.4, "limit": 60.0},
-		{"specs": more, "max_active": 2, "skill": 0.45, "allies": 2, "limit": 60.0,
+	var w1 := {"specs": specs, "max_active": 2, "skill": 0.4, "limit": 60.0}
+	var w2 := {"specs": more, "max_active": 2, "skill": 0.45, "allies": 2, "limit": 60.0,
 		"intro": func():
 			# Dövüşün ortasında haykırış (Tolga kılıç sallarken Urban'a dönmez)
 			hud.bark("SPK_URBAN", "D20O_U_MORE", 3.5)
-			await get_tree().create_timer(1.5, false).timeout}], "kilij")
+			await get_tree().create_timer(1.5, false).timeout}
+	if not sur.eski_mi and SurSet.asama_of((walls as SurSetSahne).onarim) >= 3:
+		_savunan_yolu(w1, w2)
+	var r: Dictionary = await WaveRunner.run(self, hud, player, [w1, w2], "kilij")
 	await gn.settle_test()
 	gunner_shots = gn.shots
 	gunner_dodged = gn.dodged
@@ -591,6 +593,31 @@ func _assault() -> void:
 	player.frozen = true
 	await hud.say("SPK_TOLGA", "D20O_T_DUEL" if _duel_won else "D20O_T_LOST")
 	await hud.say("SPK_NIHAT", "D20O_N_NIGHT")
+
+
+## Barikat kapalıyken (aşama ≥ 3: 20O.2 "surlar dayandı") savunanların gelişi (TAŞIMA-4, sahibinin kararı: "düello çok
+## kısa"; =wide 1. dalga 3,7–7,6 sn, eski 9,3). Kök neden: savunanın giriş noktası (Melee.auto_entry) düello yerinin
+## ötesinde, gediğin içinde aranır; kapalı barikattan geçen yol bulunamayınca (walkable) giriş yok sayılır ve savunan
+## oyuncunun 3 m önünde, moloz sırtında doğar. Şimdi peribolostan koşarak gelir: siperin ardından, barikatın ucundan
+## dolanıp gedik ağzından sırta çıkar, yamaçtan oyuncuya iner; bölük kademeli katılır, 2. dalgada önce iki kişi gelir
+## ve düşenin yerine sıradaki aynı yoldan koşar. Açık gedikte (20O.1) auto_entry zaten içeriden getiriyor: değişmez.
+const SAVUNAN_ARA_1 := 2.0
+const SAVUNAN_ARA_2 := 2.5
+func _savunan_yolu(w1: Dictionary, w2: Dictionary) -> void:
+	var hw := sur.gedik_en() * 0.5
+	var z0 := sur.dis_sur_z0()
+	var from: Array = []
+	var via: Array = []
+	for yan: float in [-1.0, 1.0]:
+		from.append(sur.on_rubble(Vector3(yan * (hw + 7.5), 0.0, z0 - 4.6)))
+		via.append([sur.on_rubble(Vector3(yan * (hw + 3.4), 0.0, z0 - 1.6)), sur.on_rubble(Vector3(yan * (hw + 0.8), 0.0, z0 - 0.5)),
+			sur.on_rubble(Vector3(yan * (hw - 1.4), 0.0, z0 + 0.6)), sur.on_rubble(Vector3(yan * 1.0, 0.0, sur.moloz_sirti().z))])
+	for w: Dictionary in [w1, w2]:
+		w["from"] = from
+		w["via"] = via
+	w1["stagger"] = SAVUNAN_ARA_1
+	w2["stagger"] = SAVUNAN_ARA_2
+	w2["group"] = 2
 
 
 ## Gece ortamı (22O ile aynı palet). Süren şafak tween'i (make_dawn) gece renklerini ezmesin diye önce durdurulur.

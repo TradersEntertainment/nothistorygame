@@ -11,6 +11,11 @@ Dal `wip/ist2-tasima4`, taban `wip/ist2-tasima3` 6f92f921.
 - §3 ceset kök nedeni bulundu (zemin sondası): yeni setin zemin gövdeleri `visible_body` değil → `Duelist._fall_tick` konmuyor. Düzeltme: `SurSetSahne` bölüm düğümüne `dusus_her_kati` metası, `Duelist._fall_solid` (varsayılan aynı).
 - Kalas yığını (Bölüm 0 donma karesi): tek tek pahlı kalaslar (`SurSetSahne._kalas_yigini`), koşulmadı.
 
+- ŞİMDİ 20o ×2 (`testler/simdi/c20o_*`): def 10,0 / 14,7; `=wide` 6,4 / 11,1; düşen ceset 13/20 koşu.
+- §1 düzeltme: Bölüm 20 `_yaklasma` (ovadan dolgu → teras → moloz sırtı → gedik ağzı → barikat ucu; 2. dalga group 2 + kademeli), 20o `_savunan_yolu` (barikat kapalıyken peribolostan barikat ucundan dolanma). WaveRunner'a `stagger` ve giriş başına `via` (varsayılan aynı).
+- Sondalar `testler/sonda/*_s2*`: 20 → 10,4 / 21,4 sn; 20o =wide → 12,1 / 18,3 sn; düşen 0.
+- §2 Bölüm 0: ek hücum merdivenleri (Assault.ek_merdiven + SurSet.merdiven_dayama), Garrison boşlukları daraltıldı, yaralı şeridi, sur yolu meşaleleri, duman.
+
 ## Süren
 - §1 Bölüm 20 düello süresi: ŞİMDİ ölçümü (×3 / ×2) sırada.
 - §3 ceset düşmesi: kök neden adayı `Duelist._fall_tick` (görünmez/basılamaz yüzeye çarpınca konmuyor, 4 sn düşüp gizleniyor: −128 m = ½·16·4²); sonda ile doğrulanacak.

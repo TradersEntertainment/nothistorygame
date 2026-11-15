@@ -1,0 +1,29 @@
+Godot Engine v4.4.1.stable.official.49a5bc7b6 - https://godotengine.org
+
+SURSET kesim=mesoteikhion kurulum_ms=3274 sur_ms=840 set_ms=2429
+PILOT20ENGEL OZET nokta=9 engelde=0
+PILOT20KURULUM sur=yeni set_ms=3276 bolum_ms=1231 toplam_ms=4506
+WARNING: Screen-space ambient occlusion (SSAO) can only be enabled when using the Forward+ renderer.
+     at: environment_set_ssao (servers/rendering/storage/environment_storage.cpp:586)
+WARNING: Screen-space indirect lighting (SSIL) can only be enabled when using the Forward+ renderer.
+     at: environment_set_ssil (servers/rendering/storage/environment_storage.cpp:661)
+TERRAIN_SOLIDIFIED scene=chapter20.tscn node=/root/Chapter20/@Node3D@177/Ova/@Node3D@2899/@MeshInstance3D@2901
+SIEGECHAOS segs=40 runners=80 static=30
+LORE key=20 placed=3
+GUN shots=4 hits=3 missed=1
+HANDS stowed=@Node3D@84
+HANDS stowed=@Node3D@84
+RALLY scene=chapter20.tscn allies=0 foes=0 cands=5
+GUNNER_HIT moved=0.00 perp=0.00 aim=(-8.7, 0.0, 7.0) now=(-8.7, 0.0, 7.0)
+GUNNER_HIT moved=0.00 perp=0.00 aim=(-8.7, 0.0, 7.0) now=(-8.7, 0.0, 7.0)
+WAVERUNNER wave=1/2 won=false t=18.4 pw=0.28 foe_dmg=18.0 allies=0+0 rally_foes=0 thrown=0
+GUN extra=1
+GUNNER shots=2 dodged=0 hits=2
+GRADE chapter=20 letter=C points=34 { "gun_shots": 4, "gun_hits": 3, "gunner_shots": 2, "gunner_hits": 2, "hits_taken": 6, "downs": 1 }
+CESET4 bolum=20 variant=lose n=2 dusen=0 en_derin=-0.0 yer=(1.6, -3.564198, 27.6)
+AUTOTEST PASS chapter=20 variant=lose outcome=20.3 repair=10 knocks=0 arrows=true gun=3/4 gunner=0/2 niko=0 sur=yeni
+WARNING: ObjectDB instances leaked at exit (run with --verbose for details).
+     at: cleanup (core/object/object.cpp:2378)
+ERROR: 2 resources still in use at exit (run with --verbose for details).
+   at: clear (core/io/resource.cpp:614)
+KOSU rc=0 sure=49 args=--chapter=20 --autotest=lose

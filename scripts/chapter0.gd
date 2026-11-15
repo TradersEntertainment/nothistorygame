@@ -35,6 +35,11 @@ const SAVUNUCU_YENI := [Vector3(-4.3, 0, 10.8), Vector3(-3.2, 0, 10.4), Vector3(
 	Vector3(3.3, 0, 10.5), Vector3(2.4, 0, 10.1)]
 ## Bölüm sabiti: true → eski set (geri dönüş; komut satırında --eskisur ile de)
 const ESKI_SUR := false
+## Yeni sette açılış kadrajındaki ek hücum merdivenleri (Assault.ek_merdiven): x, korkuluğun üstüne ek taşma (m)
+const EK_MERDIVEN_YENI := [{"x": -6.3, "uzat": 1.3}, {"x": -14.8, "uzat": 1.1}]
+## Yeni sette açılış kadrajındaki yaralılar ve koşanlar (BattleExtras şeridi): [a, b, en, koşan, yatan, siperde, tohum]. Taşıyıcı
+## şeridi (depo → gedik önü) ve oyuncunun yolu (START → LINE) dışında: dış surun eteği önü, gediğin solu
+const SERIT_YENI_EK := [[Vector3(-10.2, 0, 11.2), Vector3(-6.9, 0, 11.4), 0.8, 2, 4, 0, 3150]]
 
 ## Bölüm bağdaştırıcısı: sette yer soran her şey buradan (eski: LandWalls sabitleri; yeni: SurOyun sorguları)
 var sur: SurSet
@@ -131,10 +136,25 @@ func _build() -> void:
 	# yeni sette ordu ova kaydırmasıyla aynı yerde dursun: alan hendeğin uzak yakasına kadar (eski 36 ↔ yeni ova_z0)
 	assault.keep = Rect2(-40.0, -10.0, 80.0, 36.0) if sur.eski_mi else Rect2(-40.0, -10.0, 80.0, 36.0 + sur.ova_ofs().z)
 	assault.live_span = 30.0
+	if not sur.eski_mi:
+		# açılış kadrajında (START'tan gediğe bakış: dış sur x −8…−4,5) ve donma karesinde dış sura dayalı hücum merdivenleri;
+		# uçları korkuluğun üstüne taşar, tepeye varan tırmanan savunanın mızrağıyla geri düşer (TAŞIMA-4: açılış eskisi
+		# kadar destansı olsun; eskide sur yolunda merdiven ve tepede çatışma kadrajın ortasındaydı)
+		assault.ek_merdiven = EK_MERDIVEN_YENI
 	world.add_child(assault)
 	assault.build()
-	# Sur yolu dolu, iç surun üstü de (Bölüm 26 gibi)
-	Garrison.land_walls(world, [Vector2(13.0, 19.0), Vector2(-10.4, -6.8), Vector2(6.8, 10.4)], [Vector2(-30.0, 30.0)], [], 26, 46.0, true, true, true, sur)
+	# Sur yolu dolu, iç surun üstü de (Bölüm 26 gibi). Yeni sette yalnız kazanların yeri boş (eskinin x 13–19 kulesi yeni sette
+	# yok; eskinin geniş kazan aralıkları açılış kadrajındaki tek sur yolu parçasını boşaltıyordu: kadrajda 2 m sur yolu kalıyordu)
+	var bos: Array = [Vector2(13.0, 19.0), Vector2(-10.4, -6.8), Vector2(6.8, 10.4)] if sur.eski_mi else [Vector2(-9.5, -7.7), Vector2(7.7, 9.5)]
+	Garrison.land_walls(world, bos, [Vector2(-30.0, 30.0)], [], 26, 46.0, true, true, true, sur)
+	if not sur.eski_mi:
+		# dış sur yolunda meşaleler (kazanların yanı) ve surun ardından (teras, hendek) yükselen dumanlar: gece hücumunun
+		# ışığı ve dumanı kadrajda (eskide sur yolu meşaleleri ve yangın dumanı)
+		for tx: float in [-9.4, 9.4]:          # kazanların yanında (Garrison bu aralıklara adam koymaz)
+			Night.torch(world, Vector3(sur.dis_yol_x(tx), sur.dis_yol_y(), sur.dis_yol_ic_z()), 1.6)
+		for dm: Vector3 in [Vector3(-9.0, sur.teras_y(), sur.dis_sur_z1() + 4.0), Vector3(-2.5, sur.teras_y(), sur.hendek_z0() + 3.0),
+				Vector3(-16.0, sur.teras_y(), sur.dis_sur_z1() + 6.0)]:
+			Vfx.smoke_wisp(world, dm, 14.0, Vector3(0.6, 0, -0.25))
 	var fight := WallFight.new()
 	fight.sur = sur
 	world.add_child(fight)
@@ -168,6 +188,8 @@ func _build() -> void:
 		# kalıyorlardı (yanlarındaki kutu biçimli enkazla; kare/c0_yeni ilk tur an_01)
 		lanes = [[Vector3(-25.0, 0, 3.4), Vector3(-15.6, 0, 3.4), 1.4, 11, 5, 0], [Vector3(8.4, 0, 9.8), Vector3(26, 0, 9.8), 1.2, 6, 3, 0],
 			[Vector3(-26, 0, 9.8), Vector3(-10.5, 0, 9.8), 1.2, 6, 7, 0]]
+		for e: Array in SERIT_YENI_EK:
+			lanes.append(e.slice(0, 6))
 	for lane: Array in lanes:
 		var bx := BattleExtras.new()
 		world.add_child(bx)
