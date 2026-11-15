@@ -56,8 +56,9 @@ static func zemin_renk(x: float, z: float, w: float) -> Array:
 	cp = lerpf(cp, 0.95, t)
 	var ts := clampf(1.0 - w / 2.2, 0.0, 1.0)
 	col = col.lerp(OTURTMA.R_KOYU, ts * 0.5 * (0.6 + 0.4 * n3))
-	if n2 > 0.74:
-		col = col.lerp(OTURTMA.R_KOYU, (n2 - 0.74) * 2.2)
+	# TUR-8: koyu ıslak leke eşikle değil, yumuşak rampayla (n2 > 0,74 eşiği 2,5 m'lik ızgara köşelerinde düz kenarlı
+	# koyu çokgen = gece "sert kenarlı koyu levha" çiziyordu)
+	col = col.lerp(OTURTMA.R_KOYU, smoothstep(0.5, 0.95, n2) * 0.32)
 	return [col, cp]
 
 

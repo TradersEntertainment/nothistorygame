@@ -414,6 +414,10 @@ static func _run(host: Node3D, L: float, k: float, lod: int, seed: int, o: Dicti
 		IstSehir.v2 = true
 	var r := _run_ic(host, L, k, lod, seed, o)
 	IstSehir.v2 = eski_v2
+	if _kesimde(host) and r != null:
+		# TUR-8: bölüm setinde (SurSetSahne) de sur taşı gölgelendiricisi: kesim yalnız gösterim sahnesinde
+		# (sur_oyun_demo) uygula'dan geçiyordu, Bölüm 20'de sur eski "ashlar" dokusuyla çiziliyordu (iki ressam)
+		load("res://scripts/world/ist/sur_doku.gd").uygula(r, 0)
 	return r
 
 

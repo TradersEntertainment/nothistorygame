@@ -104,7 +104,7 @@ void fragment() {
 				+ clamp((min(py + hf + P, B) - max(py - hf + P, 0.0)) / fy, 0.0, 1.0);
 			covB = fy > P * 0.6 ? B / P : clamp(covB, 0.0, 1.0);
 		}
-		vec3 uzak_b = mix(tug * 1.08, harc, 0.28);       // mat kiremit (orta/uzak)
+		vec3 uzak_b = mix(tug * 1.05, harc, 0.38);       // mat kiremit (orta/uzak)
 		vec3 bcol = uzak_b;
 		if (bant) {
 			float r = py / (B / nk);
@@ -133,7 +133,7 @@ void fragment() {
 		float tn = h21(vec2(bid, ci));
 		// TUR-8: blok tonu parlaklık + hafif sıcak/soğuk (eski "kumtaşı" sarısı güneşte düz SARI DİKDÖRTGEN okunuyordu);
 		// blok kenarı içe doğru yumuşak kararır (aşınmış taş, keskin kenarlı levha değil)
-		vec3 tc = tas * (0.90 + 0.16 * tn);
+		vec3 tc = tas * (0.87 + 0.20 * tn);
 		tc *= mix(vec3(0.985, 0.995, 1.02), vec3(1.02, 1.0, 0.965), h21(vec2(bid + 5.3, ci)));
 		// blok ölçeğinde yıpranma yaması: komşu bloklar birlikte koyulaşır (iri gürültü × blok tonu), kenarı yumuşak
 		float yam = vn(vec2(u * 0.35, y * 0.55) + 13.0);
@@ -159,7 +159,7 @@ void fragment() {
 			}
 		}
 		// derzler kutu süzgeçli: yatay sıra derzi ortada ince çizgi olarak kalır (uzakta ortalama), dikey derz yakında
-		float jw = 0.05;
+		float jw = 0.04;
 		float jy0 = sf * kh;
 		float covJ = clamp((min(jy0 + hf, jw * 0.5) - max(jy0 - hf, -jw * 0.5)) / fy, 0.0, 1.0)
 			+ clamp((min(jy0 + hf - kh, jw * 0.5) - max(jy0 - hf - kh, -jw * 0.5)) / fy, 0.0, 1.0);
@@ -171,7 +171,7 @@ void fragment() {
 		covX = fu > bl * 0.6 ? 0.04 / bl : clamp(covX, 0.0, 1.0);
 		float j = clamp(covJ + covX * (1.0 - covJ), 0.0, 1.0);
 		vec3 cs = mix(tas * 0.98, tc, orta);
-		cs = mix(cs, harc * 0.84, j * 0.8);
+		cs = mix(cs, harc * 0.66, j * 0.8);
 		c = mix(cs, bcol, covB);
 	} else {
 		// yatay (yürüme yolu, kule terası): döşeme taşı
