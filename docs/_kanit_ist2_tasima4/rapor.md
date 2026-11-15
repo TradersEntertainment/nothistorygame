@@ -77,3 +77,21 @@
   1. dalga 2,0 sn arayla; 2. dalga önce iki azap (`"group": 2`), 2,5 sn arayla, düşenin yerine sıradaki aynı yoldan.
   20o kapalı barikat: 1. dalga 2,0, 2. dalga 2,5 sn, `group` 2.
 - `Duelist` temposu (c), can, hasar, dalga sınırı, düşman sayısı: **değişmedi**.
+
+## 3b. Çuvallar (`GedikOnarim._cuval`, `_cuval_duvar`; `sur_oyun_parca.gd`, yalnız `GedikOnarim`)
+- Eskiden tek tek basık top (`Props.ball` 0,58×0,33×0,43, yığının sırtına serpiştirilmiş): karede "yassı disk/somun", bir
+  kısmı havada duruyor gibiydi.
+- Şimdi: kendi ağım (A'nın yardımcıları değişmedi; `KULE.Ag`'ye yalnız köşe eklendi). Her çuval: süperelips kesitli dolgun
+  gövde (boy 0,56–0,64, en 0,34–0,39, yükseklik 0,21–0,25 m), altı yükle basık, uçları büzük; bir ucunda büzük boyun, iple
+  sarılı halka ve püskül (ağzı bağlı); yumuşak normaller. **Tuğla dizisi**: alt sıra yığına 3 cm gömülü (çuvalın ayak izinin
+  en alçak zemini), üst sıradaki her çuval alttaki iki komşunun alçak sırtına oturur → havada çuval yok. İki duvar: fıçıların
+  ardında 3 sıra (ortada), yığının sırtında 2 sıra. Bütün çuvallar tek ağ (aşamanın pişmiş ağına katılır; çizim çağrısı
+  aynı). Renk bir ton açık (bez topraktan ayrılsın).
+- Kareler: `kare/c20_once/an_06_onarim_asama3.jpg` ↔ `kare/c20_sonra/an_06_onarim_asama3.jpg`, yakın kırpım
+  `kare/kirp_cuval_once.jpg` ↔ `kare/kirp_cuval_sonra.jpg`; ayrıca `kare/c20_sonra/an_09_hucum_baslangici.jpg` (bu kareler renk açılmadan önce çekildi).
+
+| kare | SONRA tek cümle | hüküm |
+|---|---|---|
+| an_06 (aşama 3) | fıçıların ardında iki-üç sıra, birbirinin üstüne oturan yuvarlak koyu çuvallar; kazıklar aralarından çıkıyor; havada duran yok, kutu yok, toprak yığına oturuyor | iyi (gece karesinde koyu → renk açıldı) |
+| an_09 (hücum, aşama 4) | fıçıların ardında tuğla dizisi gibi üç sıra açık kahverengi dolgun kum çuvalı, üstünde kazık çiti; aynı ressamın elinden | iyi |
+| an_05 (top uyarısı, aşama 2) | aşama 2'de çuval yok (doğru); fıçı sırası ve kazıklar aynı | aynı |
