@@ -163,10 +163,11 @@ func _build() -> void:
 			[Vector3(-26, 0, 12.6), Vector3(-6.5, 0, 12.6), 1.2, 6, 3, 0], [START + Vector3(-2.2, 0, 3.0), LINE + Vector3(2.4, 0, -3.0), 3.0, 0, 4, 0]]
 	if not sur.eski_mi:
 		# yeni peribolos (z 2,4–10,6; sur dibi etekleri dışında): arka şerit deponun solunda biter (iç kulenin ve deponun
-		# içinden geçmesin), sur boyu şeritler dış surun eteğinin önünde (z 9,8), ok yolunun yanındaki yaralılar koşu
-		# çizgisinin sol yanında (eskideki gibi)
+		# içinden geçmesin), sur boyu şeritler dış surun eteğinin önünde (z 9,8). Eskinin ok yolu yanındaki dört yaralısı sol
+		# sur boyu şeride katıldı: yeni START ile iç kule arasında yer yok, koşunun ilk karesinde kameranın dibinde
+		# kalıyorlardı (yanlarındaki kutu biçimli enkazla; kare/c0_yeni ilk tur an_01)
 		lanes = [[Vector3(-25.0, 0, 3.4), Vector3(-15.6, 0, 3.4), 1.4, 11, 5, 0], [Vector3(8.4, 0, 9.8), Vector3(26, 0, 9.8), 1.2, 6, 3, 0],
-			[Vector3(-26, 0, 9.8), Vector3(-10.5, 0, 9.8), 1.2, 6, 3, 0], [Vector3(-5.6, 0, 4.6), Vector3(-3.6, 0, 6.4), 1.4, 0, 4, 0]]
+			[Vector3(-26, 0, 9.8), Vector3(-10.5, 0, 9.8), 1.2, 6, 7, 0]]
 	for lane: Array in lanes:
 		var bx := BattleExtras.new()
 		world.add_child(bx)
@@ -194,7 +195,7 @@ func _build() -> void:
 	if GameState.autotest and not sur.eski_mi:
 		# yerleşim denetimi: set noktaları SurOyun.engeller()'in (kule + etek, merdiven, sur gövdesi, poterna…) dışında mı
 		var noktalar := {"start": start_p, "line": line_p, "stage": stage_p, "giust": GIUST_YENI, "patlama": stage_p + Vector3(-5.8, 0, 1.3),
-			"kamera": stage_p + Vector3(4.2, 0, 0.9), "yarali0": Vector3(-5.6, 0, 4.6), "yarali1": Vector3(-3.6, 0, 6.4), "bolük0": Vector3(-20.0, 0, 7.6), "bolük1": Vector3(22.5, 0, 9.0)}
+			"kamera": stage_p + Vector3(4.2, 0, 0.9), "bolük0": Vector3(-20.0, 0, 7.6), "bolük1": Vector3(22.5, 0, 9.0)}
 		for i in SAVUNUCU_YENI.size():
 			noktalar["savunucu%d" % i] = SAVUNUCU_YENI[i]
 		var kotu := 0
