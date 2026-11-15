@@ -829,15 +829,23 @@ static func kiyi_ortu(p: Node3D, x0: float, x1: float, ze: float, s: float, tohu
 			var y := 0.12 + hz * 0.08
 			var dd := d
 			if j == 0:
-				y = lerpf(0.02, -1.1, cok) if not tas_gor else 0.1
-				dd = lerpf(-0.25, d, cok) if not tas_gor else 0.05
+				# TUR-8: çökmüş kenar hendek yüzünü izler (kesitte yaka çizgisinden 0,6 m'de y −0,2, 1,0 m'de −MD/2): eski
+				# −1,15 m / −1,1 kenar yüzün ~2,5 m üstünde boşlukta sarkıyordu. Kopan kenar 2–3 m'de bir karaya doğru girer
+				# (uzaktan cetvel çizgi okunmasın)
+				var dal: float = GOR.gn(x, ze, 2.4, tohum % 5 + 9)
+				y = lerpf(0.02, -0.75, cok) if not tas_gor else 0.1
+				dd = lerpf(-0.25, -0.68, cok) if not tas_gor else 0.05
+				dd += dal * 0.55
+				y -= dal * 0.12
 			elif j == 1:
-				y = lerpf(0.15, -0.45, cok) if not tas_gor else 0.13
-				dd = lerpf(-0.2, d, maxf(cok, 0.3)) if not tas_gor else 0.15
+				y = lerpf(0.15, -0.3, cok) if not tas_gor else 0.13
+				dd = lerpf(-0.2, -0.45, maxf(cok, 0.3)) if not tas_gor else 0.15
+				dd = maxf(dd, float(r[0].z - ze) * s + 0.05)
 			elif j == 2:
 				y = 0.17 + hz * 0.06 - cok * 0.12
 				if tas_gor:
 					dd = 0.3
+				dd = maxf(dd, float(r[1].z - ze) * s + 0.05)
 			elif j == prof.size() - 1:
 				y = 0.0
 			var z := ze + s * dd
