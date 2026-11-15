@@ -5,6 +5,7 @@ extends "res://tests/_ist/tur7_kare.gd"
 ##       --set=liste --liste=DOSYA --out=KLASÖR [--gizle=kdolgu,Pismis] [--pik=x,y;…]
 ## Listede adı "CIT_<uzaklık>_<yan>" olan satır: kamera önce satırdaki yere gider (alan yüklensin), sonra en yakın ordugâh
 ## kazık çitinin ("cit" ağı) ortasına sur yönünden <uzaklık> m, yana <yan> m (göz 1,62 m) konur, çite bakar.
+## Adı "YER_" ile başlayan satır: y yok sayılır, kamera (x, z)'de zeminin 1,62 m üstüne konur (aşağı ışın).
 var _gz: Array = []
 
 
@@ -16,6 +17,13 @@ func _ready() -> void:
 
 
 func _shot(ad: String) -> void:
+	if ad.begins_with("YER_"):
+		await _bekle()
+		var q := PhysicsRayQueryParameters3D.create(Vector3(cam.global_position.x, 400.0, cam.global_position.z), Vector3(cam.global_position.x, -50.0, cam.global_position.z))
+		var hit := get_viewport().world_3d.direct_space_state.intersect_ray(q)
+		if not hit.is_empty():
+			cam.global_position.y = float(hit["position"].y) + GOZ
+		print("TUR9YER %s %s" % [ad, cam.global_position])
 	if ad.begins_with("CIT_"):
 		await _bekle()
 		var p := ad.split("_")
@@ -35,10 +43,10 @@ func _shot(ad: String) -> void:
 		if en_iyi != null:
 			var ab := en_iyi.global_transform * en_iyi.get_aabb()
 			var c2 := ab.get_center()
-			var hedef := Vector3(-1750.0, c2.y, -334.0)        # sur yönü (Romanos Kapısı)
-			var dr := (hedef - c2)
-			dr.y = 0.0
-			dr = dr.normalized()
+			# hat AABB'nin uzun ekseni boyunca; kamera hatta DİK, sur tarafında (+x: sur doğuda)
+			var dr := Vector3(1, 0, 0) if ab.size.z >= ab.size.x else Vector3(0, 0, 1)
+			if dr.dot(Vector3(-1750.0, 0, -334.0) - c2) < 0.0:
+				dr = -dr
 			var yn := dr.cross(Vector3.UP).normalized()
 			var cp := c2 + dr * uz + yn * yan
 			cp.y = ab.position.y + 0.25 + GOZ

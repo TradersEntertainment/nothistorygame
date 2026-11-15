@@ -1,0 +1,8 @@
+# Blakherna (saray ≈ (−1140, −1195), sur hattı kara surunun iç suruyla ortak): yerden 4 (YER_: zemin + 1,62 m; b4 gece
+# koşusunda --gece ile), havadan 2. Satır: ad x y z pitch yaw (radyan)
+YER_b1_blakherna_ic_yuz -1165.0 0 -1118.0 0.18 1.5708
+YER_b2_saray_yani -1108.0 0 -1178.0 0.16 1.10
+YER_b3_halic_ucundan -1072.0 0 -1228.0 0.12 2.23
+YER_b4_saray_yani -1108.0 0 -1178.0 0.16 1.10
+h1_havadan_halicten -1040.0 80.0 -1270.0 -0.40 2.45
+h2_havadan_sehirden -1040.0 90.0 -1130.0 -0.45 1.5708

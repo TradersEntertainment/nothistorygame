@@ -229,6 +229,7 @@ static func build_siper(host: Node3D, k: float, lod: int, tohum := 8, line := Pa
 	var w := B.new("wood")
 	var strip := B.new("")
 	strip.cast = false
+	var sirt := B.new("")
 	var total := 0.0
 	for i in line.size() - 1:
 		total += line[i].distance_to(line[i + 1])
@@ -258,9 +259,9 @@ static func build_siper(host: Node3D, k: float, lod: int, tohum := 8, line := Pa
 			if gap:
 				next_gap += gap_every
 			var y0 := K.gy(pm.x, pm.y)
-			# hendek şeridi (zemine yapışık koyu toprak, ≥ 2 cm pay): sedde ile çit arası
-			var sp := pm + fr * 4.0
-			strip.box(Vector3(sp.x, K.gy(sp.x, sp.y) + 0.04, sp.y), Vector3(sl + 0.05, 0.06, 3.4), K.CAMUR, yaw)
+			# hendek şeridi (zemine yapışık koyu toprak): sedde ile çit arası. TUR-9: düz kutu levha (3,4 m, cetvel kenarlı,
+			# eğimde ucu havada) değil, zemini köşe köşe izleyen kenarı düzensiz şerit
+			_serit_toprak(strip, p0, p1, fr, 4.0, 1.7)
 			if gap:
 				continue
 			# sedde: yamuk gövde (taban 3,2 / tepe 1,3, yükseklik 1,5), katı
@@ -271,20 +272,9 @@ static func build_siper(host: Node3D, k: float, lod: int, tohum := 8, line := Pa
 				Vector3(-hw, 1.85, -0.7), Vector3(hw, 1.85, -0.7), Vector3(hw, 1.85, 0.7), Vector3(-hw, 1.85, 0.7)]
 			for q in pts.size():
 				pts[q] = xf0 * (pts[q] as Vector3)
-			# ön yön: yerel +z, ancak çağıran fr işaretini yaw ile uyumlandırır (xf0 +z = fr ise)
-			var cc := base_c + Vector3(0, 0.9, 0)
-			var fcs := [[0, 1, 2, 3], [4, 7, 6, 5], [0, 4, 5, 1], [1, 5, 6, 2], [2, 6, 7, 3], [3, 7, 4, 0]]
-			for fi in fcs.size():
-				var q2: Array = []
-				var mm := Vector3.ZERO
-				for jj in fcs[fi]:
-					q2.append(pts[jj])
-					mm += pts[jj]
-				mm /= 4.0
-				var col := K.TOPRAK2.darkened(0.05 * ((s + fi) % 3))
-				if fi == 1:
-					col = K.TOPRAK.lightened(0.05)
-				e.poly(q2, mm - cc, col)
+			# TUR-9: görünen sedde yamuk KUTU prizma değil (yakın karede düz yüzlü, keskin kenarlı kahverengi kutu): yuvarlak
+			# omuzlu, tepesi engebeli, eteği zemine gömülü toprak sırt. Çarpışma aynı yamuk kabuk.
+			_sedde_sirt(sirt, xf0, hw, lod)
 			e.solid_hull(PackedVector3Array(pts))
 			# gabyon (sepet) 12 m'de bir öne dizili; tüm hat boyunca çit
 			if lod <= 1 and s % 4 == 1:
@@ -301,8 +291,73 @@ static func build_siper(host: Node3D, k: float, lod: int, tohum := 8, line := Pa
 				_kazik_dizi(w, cp, dn, fr, sl, lod, r)
 				w.solid_box(Vector3(cp.x, cy + 0.65, cp.y), Vector3(sl, 1.3, 0.3), yaw)
 	e.done(host, "sedde")
+	sirt.done(host, "sedde_sirt")
 	w.done(host, "cit")
 	strip.done(host, "hendek")
+
+
+## TUR-9: sedde görünüşü: yerel çerçevede (xf0: x hat boyu, z enine, y taban = zemin − 0,35) −hw…hw boyunca toprak sırt.
+## Kesit: taban 3,7 m, omuzlar yuvarlak, tepe 1,85 m (kabuğun tepesi) ± 0,11 engebe; 3 × 8 hücrelik ızgara.
+static func _sedde_sirt(b: B, xf0: Transform3D, hw: float, lod: int) -> void:
+	var zs := [-1.85, -1.4, -0.95, -0.5, 0.0, 0.5, 0.95, 1.4, 1.85] if lod == 0 else [-1.85, -0.8, 0.0, 0.8, 1.85]
+	var nx := 3 if lod == 0 else 1
+	var rows: Array = []
+	var cols: Array = []
+	for i in nx + 1:
+		var lx := lerpf(-hw, hw, float(i) / nx)
+		var r: Array = []
+		var c: Array = []
+		for z: float in zs:
+			var t := clampf((absf(z) - 0.55) / 1.3, 0.0, 1.0)
+			var yy := 1.85 * (1.0 - t * t * (3.0 - 2.0 * t))
+			var wp := xf0 * Vector3(lx, 0, z)
+			var hz := fposmod(sin(wp.x * 1.37 + wp.z * 2.11) * 4375.85, 1.0)
+			var hz2 := fposmod(sin(wp.x * 0.53 - wp.z * 1.71) * 2731.17, 1.0)
+			if absf(z) < 1.8:
+				yy += (hz - 0.5) * 0.22 * (1.0 - t * 0.5)
+			else:
+				yy = -0.05
+			r.append(xf0 * Vector3(lx, yy, z + (hz2 - 0.5) * 0.25 * (1.0 if absf(z) < 1.8 else 0.0)))
+			var col := K.TOPRAK2.lerp(K.TOPRAK, hz2 * 0.7)
+			if t < 0.2:
+				col = col.lerp(K.TOPRAK.lightened(0.05), 0.5)          # tepe: kuru açık toprak
+			elif t > 0.85:
+				col = col.lerp(K.CAMUR, 0.4)                          # etek: nemli koyu
+			c.append(col)
+		rows.append(r)
+		cols.append(c)
+	var up := (xf0.basis * Vector3.UP).normalized()
+	for i in nx:
+		for j in zs.size() - 1:
+			var a: Vector3 = rows[i][j]
+			var bb: Vector3 = rows[i + 1][j]
+			var cc: Vector3 = rows[i + 1][j + 1]
+			var d: Vector3 = rows[i][j + 1]
+			for tri: Array in [[a, bb, cc, cols[i][j]], [a, cc, d, cols[i][j + 1]]]:
+				var p0: Vector3 = tri[0]
+				var p1: Vector3 = tri[1]
+				var p2: Vector3 = tri[2]
+				var nn := (p1 - p0).cross(p2 - p0)
+				if nn.dot(up) < 0.0:
+					nn = -nn
+				b.poly([p0, p1, p2], nn, tri[3])
+
+
+## TUR-9: zemini izleyen koyu toprak şerit (p0 → p1 boyunca, hattan fr yönünde off m, yarı en w); kenarlar düzensiz
+static func _serit_toprak(b: B, p0: Vector2, p1: Vector2, fr: Vector2, off: float, w: float) -> void:
+	var n := 3
+	var prev: Array = []
+	for i in n + 1:
+		var q := p0.lerp(p1, float(i) / n) + fr * off
+		var hz := fposmod(sin(q.x * 0.91 + q.y * 1.73) * 4375.85, 1.0)
+		var hz2 := fposmod(sin(q.x * 1.31 - q.y * 0.67) * 2731.17, 1.0)
+		var e0 := q - fr * w * (0.75 + 0.4 * hz)
+		var e1 := q + fr * w * (0.75 + 0.4 * hz2)
+		var row := [Vector3(e0.x, K.gy(e0.x, e0.y) + 0.03, e0.y), Vector3(q.x, K.gy(q.x, q.y) + 0.035, q.y), Vector3(e1.x, K.gy(e1.x, e1.y) + 0.03, e1.y)]
+		if not prev.is_empty():
+			for j in 2:
+				b.poly([prev[j], row[j], row[j + 1], prev[j + 1]], Vector3.UP, K.CAMUR.lerp(K.TOPRAK2, hz * 0.5))
+		prev = row
 
 
 ## TUR-8: kazık perde: sl boyunca sivri uçlu kazıklar (lod 0 üç yüzlü prizma + piramit uç, lod 1 iki yüzlü beşgen);
