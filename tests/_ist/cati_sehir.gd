@@ -481,8 +481,14 @@ func _kareler() -> void:
 			for t: String in a.substr(6).split(";"):
 				var f := t.split(",")
 				kl.append([f[0], Vector3(f[1].to_float(), f[2].to_float(), f[3].to_float()), Vector3(f[4].to_float(), f[5].to_float(), f[6].to_float())])
+	var sec: Array = []
+	for a: String in OS.get_cmdline_user_args():
+		if a.begins_with("--kamsec="):
+			sec = Array(a.substr(9).split(","))
 	for k: Array in kl:
 		var ad := String(k[0])
+		if not sec.is_empty() and not sec.has(ad):
+			continue
 		var at: Vector3 = k[1]
 		var bak: Vector3 = k[2]
 		cam.global_position = at
@@ -491,8 +497,14 @@ func _kareler() -> void:
 			var cc: Vector3 = c["c"]
 			if Vector2(cc.x - at.x, cc.z - at.z).length() < 120.0 and not c["up"]:
 				s._cell_up(c)
-		for i in 90:
+		# belirlenimci bekleme: en az 90 kare ve akış kuyruğu (IstSehir._queue) 10 kare üst üste boş (en çok 400 kare);
+		# yalnız sabit kare sayısı beklenince aynı kameranın çizim sayısı akış durumuna göre ±%20 oynuyordu
+		var bos := 0
+		for i in 400:
 			await get_tree().process_frame
+			bos = bos + 1 if s._queue.is_empty() else 0
+			if i >= 90 and bos >= 10:
+				break
 		var img := get_viewport().get_texture().get_image()
 		img.save_jpg(out.path_join("%s_%s.jpg" % [on_, ad]), 0.85)
 		var rs := RenderingServer

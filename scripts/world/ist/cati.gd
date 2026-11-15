@@ -495,7 +495,7 @@ static func bos_mu(p: Vector2, r := 0.0) -> bool:
 const C_AHSAP := Color("64523e")
 const C_AHSAP_K := Color("4a3a2a")
 const C_HALAT := Color("8a7a5a")
-const C_SAMAN := Color("a8904e")
+const C_SAMAN := Color("85744a")
 
 static func _cozum(v: int) -> Vector3:
 	# merdiven kodu: n·100000 + yükselti(mm)·100 + basamak derinliği (cm)
@@ -559,6 +559,12 @@ static func build_parca(host: Node3D, v: int, tip: String, lod: int) -> void:
 			for i in n:
 				var h2 := (i + 1) * r
 				_kutu(host, Vector3(1.6, h2, KULE_RUN + 0.02), Vector3(0, h2 * 0.5, 1.6 + (n - 1 - i + 0.5) * KULE_RUN), IstEvler.P_TAS[1], "ashlar", lod)
+			# köşk başlığı: korkuluğun dört köşesinde ahşap dikme, üstünde evlerin kiremit beşik çatısı (kutu gibi durmasın;
+			# çatı dikmelere oturur, havada değil; altında 2,3 m baş yüksekliği)
+			for cx in [-1.45, 1.45]:
+				for cz in [-1.45, 1.45]:
+					_kutu(host, Vector3(0.24, 1.4, 0.24), Vector3(cx, hh + 1.0 + 0.7, cz), C_AHSAP_K, "", lod)
+			IstEvler._roof(host, 3.6, 3.6, Vector3(0, hh + 2.4, 0), IstEvler.P_KIREMIT[1], lod, false, 1)
 			if lod < 2:
 				# tuğla şerit ve korniş (sur ve evlerle aynı dil)
 				Props.box(host, Vector3(3.24, 0.22, 3.24), Vector3(0, hh * 0.55, 0), IstEvler._dk(IstEvler.P_TUGLA, ""))
@@ -608,6 +614,9 @@ static func shapes_parca(v: int, tip: String) -> Array:
 			var hh := v / 10.0
 			out.append([IstEvler._bs(Vector3(3.2, hh, 3.2)), Transform3D(Basis.IDENTITY, Vector3(0, hh * 0.5, 0))])
 			out.append([IstEvler._bs(Vector3(3.2, 1.0, 0.3)), Transform3D(Basis.IDENTITY, Vector3(0, hh + 0.5, -1.45))])
+			for cx in [-1.45, 1.45]:
+				for cz in [-1.45, 1.45]:
+					out.append([IstEvler._bs(Vector3(0.24, 1.4, 0.24)), Transform3D(Basis.IDENTITY, Vector3(cx, hh + 1.7, cz))])
 			for sx in [-1, 1]:
 				out.append([IstEvler._bs(Vector3(0.3, 1.0, 2.6)), Transform3D(Basis.IDENTITY, Vector3(sx * 1.45, hh + 0.5, 0.0))])
 				out.append([IstEvler._bs(Vector3(0.4, 1.0, 0.3)), Transform3D(Basis.IDENTITY, Vector3(sx * 1.1, hh + 0.5, 1.45))])

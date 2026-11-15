@@ -7,6 +7,7 @@ extends Node3D
 
 var pl: Player
 var kip := "kapali"
+var bolum: Array = []          # --bolum=1,2,… : yalnız bu ölçümler (boşsa hepsi); zaman aşımına karşı bölüm bölüm koşulur
 var _govdeler: Array = []
 
 
@@ -14,6 +15,8 @@ func _ready() -> void:
 	for a: String in OS.get_cmdline_user_args():
 		if a.begins_with("--kip="):
 			kip = a.substr(6)
+		elif a.begins_with("--bolum="):
+			bolum = Array(a.substr(8).split(","))
 	_kos.call_deferred()
 
 
@@ -36,7 +39,26 @@ func _kos() -> void:
 	get_tree().quit(0)
 
 
+func _b(n: String) -> bool:
+	return bolum.is_empty() or bolum.has(n)
+
+
 func _olc(k: String) -> void:
+	if _b("1"):
+		await _olc1(k)
+	if _b("2"):
+		await _olc2(k)
+	if _b("3"):
+		await _olc3(k)
+	if _b("4"):
+		await _olc4(k)
+	if _b("5"):
+		await _olc5(k)
+	if _b("6"):
+		await _olc6(k)
+
+
+func _olc1(k: String) -> void:
 	# 1) zıplama tepesi (yerinde)
 	_temizle()
 	await _tp(Vector3(0, 0.05, 0))
@@ -64,6 +86,9 @@ func _olc(k: String) -> void:
 		elif h > zip + 0.3:
 			break
 	print("CATIOLC %s zipla_basamak_kosarak %.2f" % [k, zip])
+
+
+func _olc2(k: String) -> void:
 	# 4) düz zeminde koşarak atlama: en uzun aralık (kenardan zıplar)
 	var en := 0.0
 	for gg in range(10, 60, 1):
@@ -82,16 +107,22 @@ func _olc(k: String) -> void:
 		elif g > enw + 0.4:
 			break
 	print("CATIOLC %s yuru_atlama_aralik %.1f" % [k, enw])
+
+
+func _olc3(k: String) -> void:
 	# 5) aşağı atlama: kot farkı dh (alçak karşı yaka) için en uzun yatay aralık
 	for dh: float in [1.0, 2.4, 3.4, 5.8]:
 		var ea := 0.0
-		for gg in range(10, 90, 2):
+		for gg in range(40, 90, 3):
 			var g := gg / 10.0
 			if await _aralik(g, -dh):
 				ea = g
 			elif g > ea + 0.6:
 				break
 		print("CATIOLC %s asagi_atlama dh=%.1f aralik %.1f" % [k, dh, ea])
+
+
+func _olc4(k: String) -> void:
 	# 5b) yukarı atlama: karşı yaka dh yüksekte
 	for dh: float in [0.3, 0.5, 0.6]:
 		var ey := 0.0
@@ -102,6 +133,9 @@ func _olc(k: String) -> void:
 			elif g > ey + 0.4:
 				break
 		print("CATIOLC %s yukari_atlama dh=%.1f aralik %.1f" % [k, dh, ey])
+
+
+func _olc5(k: String) -> void:
 	# 6) eğim: durulabilen (10 sn'de kaymayan) ve yürünerek çıkılan en dik eğim
 	var dur := 0.0
 	var cik := 0.0
@@ -112,6 +146,9 @@ func _olc(k: String) -> void:
 		if r[1]:
 			cik = a
 	print("CATIOLC %s egim_durulan %.0f egim_cikilan %.0f floor_max_angle %.1f" % [k, dur, cik, rad_to_deg(pl.floor_max_angle)])
+
+
+func _olc6(k: String) -> void:
 	# 7) duvar: koşup zıplayarak ya da (açık kipte) tutunarak üstüne çıkılan en yüksek düz duvar (2 m kalın)
 	var duv := 0.0
 	for hh in range(50, 400, 10):
