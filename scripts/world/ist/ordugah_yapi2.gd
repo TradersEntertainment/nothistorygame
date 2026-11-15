@@ -334,7 +334,7 @@ static func _kazik_dizi(w: B, cp: Vector2, dn: Vector2, fr: Vector2, sl: float, 
 				w.poly([alt + kos[k], alt + kos[k2], ust + kos[k2], ust + kos[k]], dis, col.darkened(0.06 * k))
 				w.poly([ust + kos[k], ust + kos[k2], tip], dis + Vector3.UP * 0.3, col_u)
 		else:
-			for yon in [1.0, -1.0]:
+			for yon: float in [1.0, -1.0]:
 				var o := f3 * 0.04 * yon
 				var sd := d3 * rw
 				w.poly([alt - sd + o, alt + sd + o, ust + sd + o, tip + o, ust - sd + o], f3 * yon, col if yon > 0.0 else col.darkened(0.1))

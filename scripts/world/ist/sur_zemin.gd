@@ -611,23 +611,23 @@ static func hendek_kesit(p: Node3D, x0: float, x1: float, z0: float, z1: float, 
 					var hz2 := _hash(tohum + i * 11, k + 40)
 					var sc := 0.35 + hz2 * 0.5
 					kl.append(Transform3D(Basis.from_euler(Vector3(hz2 * 2.0, hz2 * 6.0, 0.3)).scaled(Vector3(sc * 1.3, sc * 0.7, sc)), Vector3(xm2 + (hz2 - 0.5) * 2.0, -md + sc * 0.25, z1 - 2.5 - hz2 * 4.0)))
-			# TUR-8: kaplamadan dökülmüş taşlar iki yüzün dibinde de, seyrek öbekler (yüzde koyu oyuk olan yerlerin altı)
-			if v2:
-				for i in n:
-					var hd := _hash(tohum * 17 + i, 61)
-					if hd < 0.62:
-						continue
-					var xm3: float = rows[i][0].x
-					if xm3 < pencere.x or xm3 >= pencere.y:
-						continue
-					var yaka := 0 if hd < 0.81 else 1
-					if yaka == 1 and float(kay[i]) > 0.25:
-						continue
-					for k in 1 + int(hd * 10.0) % 3:
-						var hz3 := _hash(tohum + i * 13, k + 70)
-						var sc3 := 0.22 + hz3 * 0.3
-						var zf := z0 + 2.9 + hz3 * 1.1 if yaka == 0 else z1 - 2.9 - hz3 * 1.1
-						kl.append(Transform3D(Basis.from_euler(Vector3(hz3 * 3.0, hz3 * 7.0, 0.4)).scaled(Vector3(sc3 * 1.4, sc3 * 0.75, sc3)), Vector3(xm3 + (hz3 - 0.5) * 2.2, -md + 0.02 + sc3 * 0.25, zf)))
+		# TUR-8: kaplamadan dökülmüş taşlar iki yüzün dibinde de, seyrek öbekler (yüzde koyu oyuk olan yerlerin altı)
+		if v2:
+			for i in n:
+				var hd := _hash(tohum * 17 + i, 61)
+				if hd < 0.62:
+					continue
+				var xm3: float = rows[i][0].x
+				if xm3 < pencere.x or xm3 >= pencere.y:
+					continue
+				var yaka := 0 if hd < 0.81 else 1
+				if yaka == 1 and float(kay[i]) > 0.25:
+					continue
+				for k in 1 + int(hd * 10.0) % 3:
+					var hz3 := _hash(tohum + i * 13, k + 70)
+					var sc3 := 0.22 + hz3 * 0.3
+					var zf := z0 + 2.9 + hz3 * 1.1 if yaka == 0 else z1 - 2.9 - hz3 * 1.1
+					kl.append(Transform3D(Basis.from_euler(Vector3(hz3 * 3.0, hz3 * 7.0, 0.4)).scaled(Vector3(sc3 * 1.4, sc3 * 0.75, sc3)), Vector3(xm3 + (hz3 - 0.5) * 2.2, -md + 0.02 + sc3 * 0.25, zf)))
 		if kl.size() > 0:
 			Scenery.scatter(p, KULE.kaya_mesh(), kl, [], load("res://scripts/world/ist/sur_gorunus.gd").kaya_tas_mat())      # TUR-7
 
