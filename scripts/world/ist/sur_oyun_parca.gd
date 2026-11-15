@@ -601,8 +601,11 @@ class GedikOnarim extends Node3D:
 			var kz := Props.cyl(_katman, 0.07, 2.2, Vector3(kx, ys + 0.9, zs + 0.75), C_WOOD.darkened(0.2), Vector3(-26.0 + rng.randf_range(-5.0, 5.0), 0, rng.randf_range(-4.0, 4.0)), 6, 0.015)
 			kz.name = "Ahsap_Kazik"
 		if asama_n >= 3:
-			# toprak set (fıçıların arkasında, yuvarlak toprak yığın) ve çarpışma: gediği kapatır
-			var tset := Props.ball(_katman, 0.5, Vector3(gx, ys + 0.45, zs - 1.25), C_TOPRAK, Vector3(IstSurlar.GEDIK_W + 0.6, 1.5, 2.4), 10)
+			# toprak set (fıçı sırasının ardında, gediğin içinde: fıçılar setin şehir yüzü) ve çarpışma: gediği kapatır.
+			# Eskiden fıçıların ŞEHİR tarafındaydı (zs − 1,25, 2,4 m derin): teslim yerini, işçileri ve komutanı içine alıyordu,
+			# yakından kadrajı kaplayan dev bir hap (docs/_kanit_ist2_pilot20 an_06). Şimdi molozun üstünde, gediğin iç yarısında.
+			var zt := zs + 1.05
+			var tset := Props.ball(_katman, 0.5, Vector3(gx, PARCA_._profil_y(pr["pts"], zt) + 0.35, zt), C_TOPRAK, Vector3(IstSurlar.GEDIK_W + 0.6, 1.5, 2.0), 10)
 			tset.name = "Toprak_GedikSet"
 			var b := StaticBody3D.new()
 			b.name = "Toprak_GedikSet_Carp"
