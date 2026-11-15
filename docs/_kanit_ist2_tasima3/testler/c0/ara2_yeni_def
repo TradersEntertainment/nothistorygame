@@ -1,0 +1,4 @@
+TASIMA0ENGEL OZET nokta=16 engelde=0
+TASIMA0KURULUM sur=yeni set_ms=3133 bolum_ms=1446 toplam_ms=4579
+AUTOTEST PASS chapter=0 variant= froze=true
+KOSU -- --chapter=0 --autotest rc=0

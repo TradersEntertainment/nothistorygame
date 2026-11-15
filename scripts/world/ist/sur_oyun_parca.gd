@@ -16,7 +16,7 @@ const KULE := preload("res://scripts/world/ist/sur_kule.gd")
 const C_WOOD := Color("7a5634")
 const C_TOPRAK := Color("6e5c42")
 const C_MOLOZ := Color("7c705c")
-const C_CUVAL := Color("9a8460")
+const C_CUVAL := Color("806b4c")
 const C_IP := Color("6a5a40")
 const PARCA_ := preload("res://scripts/world/ist/sur_oyun_ag.gd")
 const ASAMALAR := ["", "acik", "kazik_fici", "toprak_dolgu", "barikat_tam"]
@@ -529,6 +529,9 @@ class GedikOnarim extends Node3D:
 	## Aşama 4 kazık çitinin dış surun iç yüzünden (zo0) şehir yanına uzaklığı: teslim yerinin (zo0 − 3,2) 2,8 m gerisi. 5,0 iken
 	## depodan gelen taşıyıcı şeridi çitin sol ucunu sıyırıyordu (VISAUDIT insolid WallFight carry x −4,1); 6,0 ile uçta 1,7 m açık
 	const CIT_Z_PAY := 6.0
+	## Toprak dolgu yığınının sırt yüksekliği (moloz profilinin üstü): fıçıların (≈1 m) üstünden görünsün; tepesi eski hapın
+	## tepesiyle aynı (≈2,1 m; çarpışma kutusu aynı kaldığı için daha yükseği gedikten geçen düellocuyu daha çok örterdi)
+	const YIGIN_H := 1.1
 	var a_ref: RefCounted
 	var asama_n := 1
 	var _katman: Node3D
@@ -612,7 +615,7 @@ class GedikOnarim extends Node3D:
 			# (Props.ball 8,6 × 1,5 × 2,0; docs/_kanit_ist2_tasima2 an_06). Çarpışma aynı yerde, aynı boyda (aşağıda).
 			var zt := zs + 1.05
 			var yag = KULE.Ag.new()
-			_toprak_yigin(yag, gx - h - 0.15, gx + h + 0.15, zs + 0.1, zs + 2.2, 0.95, pr["pts"], rng)
+			_toprak_yigin(yag, gx - h - 0.15, gx + h + 0.15, zs + 0.1, zs + 2.2, YIGIN_H, pr["pts"], rng)
 			yag.mesh_ekle(_katman, Props.mat(C_TOPRAK, 0.0, false, "rubble"), "Toprak_GedikSet")
 			# çuvallar: yığının sırtında bir sıra (yer yer ikinci kat), fıçıların arkasına yaslı bir sıra
 			var cuv: Array = []
@@ -627,10 +630,10 @@ class GedikOnarim extends Node3D:
 				cuv.append(Vector3(cx, -0.12, zs + 0.62))
 				cx += rng.randf_range(0.75, 1.1)
 			for c: Vector3 in cuv:
-				var yy := _yigin_y(c.x, c.z, gx - h - 0.15, gx + h + 0.15, zs + 0.1, zs + 2.2, 0.95, pr["pts"])
-				var cv := Props.ball(_katman, 0.5, Vector3(c.x, yy + 0.1 + c.y, c.z), C_CUVAL.darkened(rng.randf_range(0.0, 0.22)),
-					Vector3(rng.randf_range(0.6, 0.7), 0.27, rng.randf_range(0.38, 0.44)), 8)
-				cv.rotation = Vector3(rng.randf_range(-0.12, 0.12), rng.randf_range(-0.35, 0.35), rng.randf_range(-0.1, 0.1))
+				var yy := _yigin_y(c.x, c.z, gx - h - 0.15, gx + h + 0.15, zs + 0.1, zs + 2.2, YIGIN_H, pr["pts"])
+				var cv := Props.ball(_katman, 0.5, Vector3(c.x, yy + 0.12 + c.y, c.z), C_CUVAL.darkened(rng.randf_range(0.0, 0.25)),
+					Vector3(rng.randf_range(0.58, 0.7), rng.randf_range(0.3, 0.36), rng.randf_range(0.4, 0.46)), 8)
+				cv.rotation = Vector3(rng.randf_range(-0.25, 0.25), rng.randf_range(-0.45, 0.45), rng.randf_range(-0.22, 0.22))
 				cv.name = "Toprak_Cuval"
 			# eteğe taşlar (yarı gömülü) ve yığına çakılı kazıklar, yatık kütükler
 			var tl: Array = []
@@ -638,21 +641,21 @@ class GedikOnarim extends Node3D:
 				var tx := rng.randf_range(gx - h, gx + h)
 				var tz := rng.randf_range(zs + 0.15, zs + 2.15)
 				var sc := rng.randf_range(0.14, 0.32)
-				var ty := _yigin_y(tx, tz, gx - h - 0.15, gx + h + 0.15, zs + 0.1, zs + 2.2, 0.95, pr["pts"])
+				var ty := _yigin_y(tx, tz, gx - h - 0.15, gx + h + 0.15, zs + 0.1, zs + 2.2, YIGIN_H, pr["pts"])
 				tl.append(Transform3D(Basis.from_euler(Vector3(rng.randf_range(-0.5, 0.5), rng.randf() * TAU, rng.randf_range(-0.5, 0.5))).scaled(Vector3(sc * 1.3, sc * 0.7, sc)), Vector3(tx, ty + sc * 0.05, tz)))
 			Scenery.scatter(_katman, KULE.kaya_mesh(), tl, [], Props.mat(IstSurlar.C_STONE.darkened(0.2), 0.0, false, "ashlar_far"))
 			var kag = KULE.Ag.new()
 			for i in 7:
 				var kx := gx - h + 0.7 + i * (2.0 * h - 1.4) / 6.0 + rng.randf_range(-0.25, 0.25)
 				var kz := zs + rng.randf_range(1.2, 1.9)
-				var ky := _yigin_y(kx, kz, gx - h - 0.15, gx + h + 0.15, zs + 0.1, zs + 2.2, 0.95, pr["pts"])
+				var ky := _yigin_y(kx, kz, gx - h - 0.15, gx + h + 0.15, zs + 0.1, zs + 2.2, YIGIN_H, pr["pts"])
 				var boy := rng.randf_range(0.9, 1.5)
 				var ust := Vector3(kx + rng.randf_range(-0.25, 0.25), ky + boy, kz + rng.randf_range(0.15, 0.45))
 				_kazik(kag, Vector3(kx, ky - 0.3, kz), ust, rng.randf_range(0.06, 0.08), 0.22, C_WOOD.darkened(rng.randf_range(0.05, 0.3)))
 			for k in 2:
 				var lx := gx + (-2.2 if k == 0 else 1.6) + rng.randf_range(-0.3, 0.3)
 				var lz := zs + 1.6
-				var ly := _yigin_y(lx, lz, gx - h - 0.15, gx + h + 0.15, zs + 0.1, zs + 2.2, 0.95, pr["pts"])
+				var ly := _yigin_y(lx, lz, gx - h - 0.15, gx + h + 0.15, zs + 0.1, zs + 2.2, YIGIN_H, pr["pts"])
 				_cubuk(kag, Vector3(lx - 1.2, ly + 0.02, lz - 0.2), Vector3(lx + 1.2, ly + 0.18, lz + 0.15), 0.11, 7, C_WOOD.darkened(0.2))
 			kag.mesh_ekle(_katman, Props.mat(C_WOOD, 0.0, false, "wood"), "Ahsap_GedikDolguKazik")
 			var b := StaticBody3D.new()
@@ -671,20 +674,15 @@ class GedikOnarim extends Node3D:
 			_katilar.append(b)
 		if asama_n >= 4:
 			# sur yolu tahtası: iki kırık sur ucuna gömülü iki boyuna kiriş (köprü gibi), üstte enine tahtalar; kirişleri sur
-			# uçlarından çıkan payandalar ve ortada toprak yığınının üstünde duran tek kütük dikme taşır. Eskiden molozdan sur
+			# uçlarından çıkan kısa payandalar taşır. Eskiden molozdan sur
 			# yolu hizasına (7 m) çıkan altı dikme ve kirişler: gece karanlık bir iskele gibi okunuyordu (tasima2 an_07).
 			var ag = KULE.Ag.new()
 			var zk: Array = [zo0 + 0.35, zo1 - 0.35]
 			for z: float in zk:
 				ag.kutu(Vector3(gx, OH - 0.32, z - 0.12), Vector3.RIGHT, Vector3.BACK, 2.0 * h + 0.9, 0.24, 0.24, Color(0.9, 0.86, 0.8))
 				for sx: float in [-1.0, 1.0]:
-					# sur ucundan kirişe çapraz payanda
-					_cubuk(ag, Vector3(gx + sx * (h + 0.05), OH - 2.5, z), Vector3(gx + sx * (h - 1.9), OH - 0.34, z), 0.1, 6, Color(0.82, 0.78, 0.72))
-				# ortada tek kütük dikme (yığının üstünden) ve iki kol
-				var yb := PARCA_._profil_y(pr["pts"], z)
-				_cubuk(ag, Vector3(gx + 0.1, yb - 0.2, z), Vector3(gx, OH - 0.34, z), 0.14, 8, Color(0.86, 0.82, 0.76))
-				for sx: float in [-1.0, 1.0]:
-					_cubuk(ag, Vector3(gx, OH - 1.9, z), Vector3(gx + sx * 1.5, OH - 0.34, z), 0.09, 6, Color(0.82, 0.78, 0.72))
+					# sur ucundan kirişe kısa çapraz payanda (dikme yok: gökyüzüne karşı iskele gibi okunmasın)
+					_cubuk(ag, Vector3(gx + sx * (h + 0.05), OH - 1.7, z), Vector3(gx + sx * (h - 1.3), OH - 0.34, z), 0.1, 6, Color(0.95, 0.9, 0.84))
 			var tx := gx - h - 0.35
 			while tx < gx + h + 0.3:
 				var tw := rng.randf_range(0.24, 0.32)
@@ -711,7 +709,7 @@ class GedikOnarim extends Node3D:
 				var egx := rng.randf_range(-0.1, 0.1) + (rng.randf_range(-0.16, 0.16) if rng.randf() < 0.25 else 0.0)
 				var dip2 := Vector3(kx2, yc - 0.25, zc + rng.randf_range(-0.03, 0.05))
 				var ust2 := Vector3(clampf(kx2 + egx * boy2, gx - h + 0.05, gx + h - 0.05), yc + boy2, zc + 0.14 + rng.randf_range(0.0, 0.14))
-				_kazik(cag, dip2, ust2, rng.randf_range(0.06, 0.085), rng.randf_range(0.18, 0.28), C_WOOD.darkened(rng.randf_range(0.0, 0.3)))
+				_kazik(cag, dip2, ust2, rng.randf_range(0.06, 0.085), rng.randf_range(0.18, 0.28), Color(1, 1, 1).darkened(rng.randf_range(0.0, 0.22)))
 				kaziklar.append([dip2, ust2])
 				kx2 += rng.randf_range(0.27, 0.4)
 			for ky: float in [0.65, 1.45]:
@@ -727,7 +725,7 @@ class GedikOnarim extends Node3D:
 					var orta := (p0 + p1) * 0.5 + Vector3(0, -0.035, 0)
 					_cubuk(iag, p0, orta, 0.018, 4, Color(1, 1, 1))
 					_cubuk(iag, orta, p1, 0.018, 4, Color(1, 1, 1))
-			cag.mesh_ekle(_katman, Props.mat(C_WOOD, 0.0, false, "wood"), "Ahsap_GedikCit")
+			cag.mesh_ekle(_katman, Props.mat(C_WOOD.lightened(0.08), 0.0, false, "wood"), "Ahsap_GedikCit")
 			iag.mesh_ekle(_katman, Props.mat(C_IP, 0.0, false), "Ip_GedikCit")
 		PARCA_.pis(_katman)
 		if asama_n >= 4:

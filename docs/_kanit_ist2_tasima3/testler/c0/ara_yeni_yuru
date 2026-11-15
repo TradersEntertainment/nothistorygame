@@ -1,0 +1,7 @@
+TASIMA0ENGEL OZET nokta=16 engelde=0
+TASIMA0KURULUM sur=yeni set_ms=3066 bolum_ms=3811 toplam_ms=6877
+TASIMA0YURU set=yeni start=(-8.6, 0.05, 4.4) line=(-0.6, 0.0, 10.6) stage=(-3.0, 0.0, 8.6) mesafe=10.1 teslim_mesafe=7.1
+VISAUDIT overlap scene=chapter0.tscn a=@Node3D@177(SPK_DEFENDER) b=WallFight{hammer} at=(-2.3, 0.5, 11.2) src=Chapter0>Node3D>Person|Chapter0>Node3D>WallFight>Person
+TASIMA0YURU bacak=start_line sure=2.5 yol=7.2 takilma=0 dusme=0 teslim=tamam son=(-2.9, 0.2, 8.8)
+TASIMA0YURU OZET set=yeni bacak=1 takilma=0 dusme=0 teslim=tamam sure=2.5 yol=7.2
+KOSU -- --chapter=0 --autotest=yuru rc=0

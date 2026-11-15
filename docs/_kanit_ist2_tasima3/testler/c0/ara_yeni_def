@@ -1,0 +1,5 @@
+TASIMA0ENGEL OZET nokta=16 engelde=0
+TASIMA0KURULUM sur=yeni set_ms=3256 bolum_ms=3706 toplam_ms=6962
+VISAUDIT overlap scene=chapter0.tscn a=@Node3D@177(SPK_DEFENDER) b=WallFight{hammer} at=(-2.3, 0.5, 11.2) src=Chapter0>Node3D>Person|Chapter0>Node3D>WallFight>Person
+AUTOTEST PASS chapter=0 variant= froze=true
+KOSU -- --chapter=0 --autotest rc=0
