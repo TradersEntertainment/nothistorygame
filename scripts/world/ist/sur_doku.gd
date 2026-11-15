@@ -63,8 +63,11 @@ void fragment() {
 	// TUR-7: hatıl belirgin kiremit kırmızısı (yayındaki bölümlerin sur görünüşü)
 	vec3 tug = vec3(0.37, 0.14, 0.085) * clamp(kat, 0.7, 1.0);    // SUR-5: mat, koyu kiremit (parlak kırmızı şerit değil)
 	vec3 harc = vec3(0.52, 0.48, 0.41) * kat;
-	float dikey = 1.0 - step(0.6, abs(wnrm.y));
-	vec2 t2 = normalize(vec2(-wnrm.z, wnrm.x) + vec2(1e-4, 0.0));
+	// TUR-8: desen yönü GEOMETRİK normalden (ekran türevi). Gölgelendirme normali yukarı yatırılmış yüzler (hendek iç
+	// yüzü: fn + UP·0,9 → y 0,78) "yatay döşeme" sanılıyor, 0,9 m'lik xz ızgarası dik yüzde DİKEY ŞERİT (perde) çiziyordu.
+	vec3 gnr = normalize(cross(dFdx(wpos), dFdy(wpos)) + vec3(0.0, 1e-6, 0.0));
+	float dikey = 1.0 - step(0.6, abs(gnr.y));
+	vec2 t2 = normalize(vec2(-gnr.z, gnr.x) + vec2(1e-4, 0.0));
 	float u = dot(wpos.xz, t2);
 	float y = wpos.y;
 	float fy = max(fwidth(y), 1e-4);
@@ -91,6 +94,18 @@ void fragment() {
 		float per = floor(yy / P);
 		float py = yy - per * P;
 		bool bant = py < B;
+		// TUR-8: hatıl kapsaması piksel izdüşümüyle süzülür (kutu süzgeç): yakında keskin, ortada ince kızıl çizgi, uzakta
+		// dönemin ortalaması. Eski eşikli "söndürme" (fy > 0,34) orta mesafede suru tek tona çeviriyordu.
+		float hf = 0.5 * fy;
+		float covB = 0.0;
+		if (B > 0.0) {
+			covB = clamp((min(py + hf, B) - max(py - hf, 0.0)) / fy, 0.0, 1.0)
+				+ clamp((min(py + hf - P, B) - max(py - hf - P, 0.0)) / fy, 0.0, 1.0)
+				+ clamp((min(py + hf + P, B) - max(py - hf + P, 0.0)) / fy, 0.0, 1.0);
+			covB = fy > P * 0.6 ? B / P : clamp(covB, 0.0, 1.0);
+		}
+		vec3 uzak_b = mix(tug * 1.08, harc, 0.28);       // mat kiremit (orta/uzak)
+		vec3 bcol = uzak_b;
 		if (bant) {
 			float r = py / (B / nk);
 			float fr = fract(r);
@@ -101,46 +116,63 @@ void fragment() {
 			float harc_m = max(step(fr, 0.34), step(bx, 0.05));
 			float tt = 0.82 + 0.3 * h21(vec2(floor((u + off) / bl), bi + per * 7.0));
 			vec3 bc = mix(tug * tt, harc, harc_m);
-			vec3 ort = mix(mix(tug, harc, 0.5), tas, 0.3);      // SUR-5: uzaktan taşla aynı düzlemde mat bant
-			c = mix(ort, bc, ince_t);
-			// TUR-6: hatıl uzakta sönmez (opus mixtum yakın/orta/uzakta okunur): bant pikselden kalınken kızıl-kahve mat
-			// şerit kalır; ancak bant piksel altına inince (fy > B) dönemin ortalamasına karışır (titreşim/dama yok)
-			vec3 uzak_b = mix(mix(tug * 1.15, harc, 0.3), tas, 0.08);
-			c = mix(uzak_b, c, bant_g);
-		} else {
-			float sy = py - B;
-			float si = floor(sy / kh);
-			float sf = fract(sy / kh);
-			float ci = si + per * 11.0;
-			float bl = 0.85 + 0.75 * h21(vec2(ci, 3.1));
-			if (tur > 1.5) { bl = 1.15; }
-			float off = h21(vec2(ci, 9.7)) * bl;
-			float bx = (u + off) / bl;
-			float bid = floor(bx);
-			float bf = fract(bx);
-			float tn = h21(vec2(bid, ci));
-			float tint = 0.84 + 0.24 * tn;
-			vec3 tc = tas * tint;
-			if (tn > 0.86) { tc *= vec3(1.04, 0.98, 0.86); }            // kumtaşı (sarımsı)
-			if (tur > 0.5 && tur < 1.5) {
-				// deniz: moloz yamaları (küçük düzensiz taş), daha gri
-				float yama = vn(vec2(u * 0.12, y * 0.15) + 4.0);
-				if (yama > 0.62) {
-					vec2 q = vec2(u, y) * 3.2;
-					float rt = h21(floor(q + vec2(floor(q.y) * 0.5, 0.0)));
-					tc = tas * (0.72 + 0.3 * rt);
-					vec2 fq = fract(q + vec2(floor(q.y) * 0.5, 0.0));
-					float mj = max(step(fq.x, 0.12), step(fq.y, 0.14));
-					tc = mix(tc, harc * 0.95, mj * ince);
-				}
-			}
-			float jy = step(sf, 0.06 / kh * 0.5) + step(1.0 - 0.03 / kh, sf);
-			float jx = step(bf, 0.035 / bl) ;
-			float j = clamp(jy + jx, 0.0, 1.0);
-			vec3 sc = mix(tc, harc * 0.92, j * 0.85);
-			c = mix(tas * 0.96, tc, orta);
-			c = mix(c, sc, ince);
+			bcol = mix(uzak_b, bc, ince_t);
 		}
+		// taş kuşağı (hatıl içindeyken komşu sıranın değerleri: yalnız kenar karışımında kullanılır)
+		float sy = py - B;
+		if (sy < 0.0) { sy += P; }
+		float si = floor(sy / kh);
+		float sf = fract(sy / kh);
+		float ci = si + per * 11.0;
+		float bl = 0.85 + 0.75 * h21(vec2(ci, 3.1));
+		if (tur > 1.5) { bl = 1.15; }
+		float off = h21(vec2(ci, 9.7)) * bl;
+		float bx = (u + off) / bl;
+		float bid = floor(bx);
+		float bf = fract(bx);
+		float tn = h21(vec2(bid, ci));
+		// TUR-8: blok tonu parlaklık + hafif sıcak/soğuk (eski "kumtaşı" sarısı güneşte düz SARI DİKDÖRTGEN okunuyordu);
+		// blok kenarı içe doğru yumuşak kararır (aşınmış taş, keskin kenarlı levha değil)
+		vec3 tc = tas * (0.90 + 0.16 * tn);
+		tc *= mix(vec3(0.985, 0.995, 1.02), vec3(1.02, 1.0, 0.965), h21(vec2(bid + 5.3, ci)));
+		// blok ölçeğinde yıpranma yaması: komşu bloklar birlikte koyulaşır (iri gürültü × blok tonu), kenarı yumuşak
+		float yam = vn(vec2(u * 0.35, y * 0.55) + 13.0);
+		tc *= 1.0 - 0.11 * smoothstep(0.55, 0.85, yam) * (0.6 + 0.4 * tn);
+		float kx = min(bf, 1.0 - bf) * bl;
+		float ky = min(sf, 1.0 - sf) * kh;
+		tc *= mix(1.0, mix(0.9, 1.0, smoothstep(0.0, 0.09, min(kx, ky))), ince);
+		// dökülmüş taş: yer yer blok yerinde yok (koyu oyuk, üst kenarında gölge); hendek yüzünde (yerel y < 0) sık
+		float eh = h21(vec2(bid * 1.7 + 2.0, ci + 3.0));
+		float ez = vn(vec2(u * 0.18, y * 0.3) + 7.0);
+		float eks = (yerel_dip > 0.5 && ly < -0.4) ? step(0.80, eh) * step(0.40, ez) : step(0.965, eh) * step(0.55, ez);
+		tc = mix(tc, harc * mix(0.42, 0.68, sf) * vec3(0.95, 0.92, 0.88), eks * orta);
+		if (tur > 0.5 && tur < 1.5) {
+			// deniz: moloz yamaları (küçük düzensiz taş), daha gri
+			float yama = vn(vec2(u * 0.12, y * 0.15) + 4.0);
+			if (yama > 0.62) {
+				vec2 q = vec2(u, y) * 3.2;
+				float rt = h21(floor(q + vec2(floor(q.y) * 0.5, 0.0)));
+				tc = tas * (0.72 + 0.3 * rt);
+				vec2 fq = fract(q + vec2(floor(q.y) * 0.5, 0.0));
+				float mj = max(step(fq.x, 0.12), step(fq.y, 0.14));
+				tc = mix(tc, harc * 0.95, mj * ince);
+			}
+		}
+		// derzler kutu süzgeçli: yatay sıra derzi ortada ince çizgi olarak kalır (uzakta ortalama), dikey derz yakında
+		float jw = 0.05;
+		float jy0 = sf * kh;
+		float covJ = clamp((min(jy0 + hf, jw * 0.5) - max(jy0 - hf, -jw * 0.5)) / fy, 0.0, 1.0)
+			+ clamp((min(jy0 + hf - kh, jw * 0.5) - max(jy0 - hf - kh, -jw * 0.5)) / fy, 0.0, 1.0);
+		covJ = fy > kh * 0.6 ? jw / kh : clamp(covJ, 0.0, 1.0);
+		float hu = 0.5 * fu;
+		float jx0 = bf * bl;
+		float covX = clamp((min(jx0 + hu, 0.02) - max(jx0 - hu, -0.02)) / fu, 0.0, 1.0)
+			+ clamp((min(jx0 + hu - bl, 0.02) - max(jx0 - hu - bl, -0.02)) / fu, 0.0, 1.0);
+		covX = fu > bl * 0.6 ? 0.04 / bl : clamp(covX, 0.0, 1.0);
+		float j = clamp(covJ + covX * (1.0 - covJ), 0.0, 1.0);
+		vec3 cs = mix(tas * 0.98, tc, orta);
+		cs = mix(cs, harc * 0.84, j * 0.8);
+		c = mix(cs, bcol, covB);
 	} else {
 		// yatay (yürüme yolu, kule terası): döşeme taşı
 		vec2 q = wpos.xz / 0.9;
@@ -152,13 +184,6 @@ void fragment() {
 		vec3 dos = tas * vec3(1.06, 0.9, 0.74) * (0.72 + 0.18 * tn + 0.06 * tn2);   // gök ışığı (mavi) × sarı = yeşile kaçmasın: kızıla çekik
 		dos *= 1.0 - 0.18 * smoothstep(0.5, 0.9, vn(wpos.xz * 0.35));
 		c = mix(dos, harc * vec3(0.8, 0.72, 0.6), j * ince);
-	}
-	if (dikey > 0.5 && duz < 0.5 && tur < 1.5) {
-		float Pp = tur > 0.5 ? 3.4 : 2.5;
-		float Bb = tur > 0.5 ? 0.30 : 0.42;
-		float kap = smoothstep(Bb * 0.8, Bb * 2.0, fy);
-		vec3 ortalama = mix(tas * 0.95, mix(mix(tug * 1.15, harc, 0.3), tas, 0.08), Bb / Pp * 1.4);
-		c = mix(c, ortalama, kap);
 	}
 	// yıpranma: dikey akıntı, is lekesi, dipte koyulaşma ve yosun
 	float aki = vn(vec2(u * 1.7, y * 0.09));

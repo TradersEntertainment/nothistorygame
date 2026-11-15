@@ -363,9 +363,11 @@ static func _cubuk_ag() -> Mesh:
 static func _cukur_ag() -> ArrayMesh:
 	if _cm != null:
 		return _cm
-	var halka := [[0.0, -0.22, Color("4e4438")], [0.35, -0.2, Color("54493a")], [0.7, -0.08, Color("6a5a44")],
-		[1.0, 0.24, Color("8a7458")], [1.2, 0.12, Color("806b50")], [1.45, -0.06, Color("7a6650")]]
-	var n := 14
+	# TUR-8: üstten "halka" okunuyordu (0,24 m kabarık açık renkli kenar güneşte parlak çember, iç şev gölgede kara):
+	# kenar alçak (0,08), renkler dipten dışa yumuşak geçişli ve arazi tonuna yakın, çember düzensiz (savrulmuş toprak)
+	var halka := [[0.0, -0.16, Color("5a4e40")], [0.4, -0.13, Color("5e5242")], [0.75, -0.04, Color("6a5c48")],
+		[1.0, 0.08, Color("75664f")], [1.25, 0.05, Color("7a6a52")], [1.6, -0.06, Color("7a6a52")]]
+	var n := 16
 	var st := SurfaceTool.new()
 	st.begin(Mesh.PRIMITIVE_TRIANGLES)
 	var rows: Array = []
@@ -373,7 +375,7 @@ static func _cukur_ag() -> ArrayMesh:
 		var r: Array = []
 		for i in n:
 			var a := TAU * i / n
-			var jit := 1.0 + 0.08 * sin(a * 3.0 + 1.3) + 0.05 * sin(a * 5.0)
+			var jit := 1.0 + 0.14 * sin(a * 3.0 + 1.3) + 0.08 * sin(a * 5.0 + 0.7) + 0.05 * sin(a * 7.0 + 2.1)
 			r.append(Vector3(cos(a) * float(h[0]) * jit, float(h[1]) * (1.0 + 0.15 * sin(a * 2.0)), sin(a) * float(h[0]) * jit))
 		rows.append(r)
 	for k in halka.size() - 1:
@@ -482,6 +484,7 @@ static func hendek_kesit(p: Node3D, x0: float, x1: float, z0: float, z1: float, 
 	# TUR-6: v2'de harpuşta (j 0 ve 13 bandı) ayrı kesme taş bloklarıyla kurulur (harpuşta_kur); bant altta toprak yatağı.
 	# Düz 0,45 m'lik yatay şerit sur gölgelendiricisinin 0,9 m'lik döşeme ızgarasıyla "tahta kalas" okunuyordu.
 	var v2 := IstSehir.v2
+	var GOR := load("res://scripts/world/ist/sur_gorunus.gd")
 	if v2:
 		tas_j.erase(0)
 		tas_j.erase(13)
@@ -554,14 +557,14 @@ static func hendek_kesit(p: Node3D, x0: float, x1: float, z0: float, z1: float, 
 				if v2:
 					# TUR-7: örgü yüzü tek düz levha / pano değil: ton KÖŞE başına (yumuşak geçiş), yer yer koyu akıntı izi
 					# (yukarıdan aşağı, dibe doğru açılan), dibe doğru yosunlu-koyu (hendek duvarı surdan koyu okunur)
-					var vi := [[i, j], [i, j + 1], [i + 1, j], [i + 1, j], [i, j + 1], [i + 1, j + 1]]
+					# TUR-8: ton sütun başına rastgele değil (2,5 m'lik sütunlar dikey şerit = perde okunuyordu): x ve
+					# derinlikte yumuşak iri gürültü; akıntı lekesi yer yer, kenarı yumuşak (taş deseni gölgelendiricide)
 					for q in 6:
-						var ii: int = vi[q][0]
-						var vy: float = (vv[q] as Vector3).y
-						var dd := clampf(-vy / md, 0.0, 1.0)
-						var s := _hash(tohum * 5 + ii, 77)
-						var ak := 1.0 if _hash(tohum * 3 + ii, 91) > 0.8 else 0.0
-						var ton := 0.80 + 0.14 * s - 0.17 * ak * (0.5 + 0.5 * dd)
+						var vp: Vector3 = vv[q]
+						var dd := clampf(-vp.y / md, 0.0, 1.0)
+						var s: float = GOR.gn(vp.x, vp.y * 3.0 + vp.z, 9.0, tohum % 11)
+						var ak: float = clampf((float(GOR.gn(vp.x, vp.z, 4.5, tohum % 5 + 20)) - 0.6) * 3.0, 0.0, 1.0)
+						var ton := 0.84 + 0.12 * s - 0.15 * ak * (0.4 + 0.6 * dd)
 						ccs[q] = Color(ton * (1.0 - 0.30 * dd), ton * (1.0 - 0.17 * dd), ton * (1.0 - 0.38 * dd))
 				var fn: Vector3 = ((vv[1] as Vector3) - (vv[0] as Vector3)).cross((vv[2] as Vector3) - (vv[0] as Vector3)).normalized()
 				var hedef := Vector3(0, 0.3, 1.0 if j < 7 else -1.0)
@@ -608,6 +611,23 @@ static func hendek_kesit(p: Node3D, x0: float, x1: float, z0: float, z1: float, 
 					var hz2 := _hash(tohum + i * 11, k + 40)
 					var sc := 0.35 + hz2 * 0.5
 					kl.append(Transform3D(Basis.from_euler(Vector3(hz2 * 2.0, hz2 * 6.0, 0.3)).scaled(Vector3(sc * 1.3, sc * 0.7, sc)), Vector3(xm2 + (hz2 - 0.5) * 2.0, -md + sc * 0.25, z1 - 2.5 - hz2 * 4.0)))
+			# TUR-8: kaplamadan dökülmüş taşlar iki yüzün dibinde de, seyrek öbekler (yüzde koyu oyuk olan yerlerin altı)
+			if v2:
+				for i in n:
+					var hd := _hash(tohum * 17 + i, 61)
+					if hd < 0.62:
+						continue
+					var xm3: float = rows[i][0].x
+					if xm3 < pencere.x or xm3 >= pencere.y:
+						continue
+					var yaka := 0 if hd < 0.81 else 1
+					if yaka == 1 and float(kay[i]) > 0.25:
+						continue
+					for k in 1 + int(hd * 10.0) % 3:
+						var hz3 := _hash(tohum + i * 13, k + 70)
+						var sc3 := 0.22 + hz3 * 0.3
+						var zf := z0 + 2.9 + hz3 * 1.1 if yaka == 0 else z1 - 2.9 - hz3 * 1.1
+						kl.append(Transform3D(Basis.from_euler(Vector3(hz3 * 3.0, hz3 * 7.0, 0.4)).scaled(Vector3(sc3 * 1.4, sc3 * 0.75, sc3)), Vector3(xm3 + (hz3 - 0.5) * 2.2, -md + 0.02 + sc3 * 0.25, zf)))
 		if kl.size() > 0:
 			Scenery.scatter(p, KULE.kaya_mesh(), kl, [], load("res://scripts/world/ist/sur_gorunus.gd").kaya_tas_mat())      # TUR-7
 
@@ -623,6 +643,7 @@ static var _hmat: StandardMaterial3D
 static func harpusta_kur(st: SurfaceTool, x0: float, x1: float, z0: float, z1: float, kay: Array, lod: int, tohum: int, pencere := Vector2(-1e9, 1e9)) -> int:
 	var ag := {"st": st, "n": 0}
 	var nk := kay.size() - 1
+	var GOR := load("res://scripts/world/ist/sur_gorunus.gd")
 	# köşe rengi sur taşı gölgelendiricisinde taban renginin (a49a86 × 0,93) çarpanı: blok blok ton farkı
 	var tonlar := [Color("f2f0ec"), Color("e4e2de"), Color("d6d4d0"), Color("ece6da"), Color("f0ece4")]
 	for yaka in 2:
@@ -646,9 +667,14 @@ static func harpusta_kur(st: SurfaceTool, x0: float, x1: float, z0: float, z1: f
 			var hm := _hash(tohum + k * 3, yaka + 11)
 			if hm < 0.1 and lod == 0:
 				continue                          # eksik taş
-			var kayik := hm > 0.88
+			# TUR-8: dış yakada harpuşta öbek öbek sökülmüş/kıyıyla birlikte çökmüş (uzaktan cetvel çizgi okunmasın)
+			var cokuk: float = GOR.gn(xm, z1, 7.0, tohum % 13)
+			if yaka == 1 and lod == 0 and (cokuk > 0.6 or GOR.gn(xm, z1, 3.0, tohum % 7 + 5) > 0.7):
+				continue
+			var kayik := hm > (0.88 if yaka == 0 else 0.7)
 			var W := 0.5
 			var zi := z0 - 0.04 if yaka == 0 else z1 - W + 0.04
+			zi += (_hash(k, 99 + yaka) - 0.5) * (0.06 if yaka == 0 else 0.16)
 			var ic := 1.0 if yaka == 0 else -1.0     # hendeğe doğru +z (iç yaka) / −z (karşı yaka)
 			var hgt := 0.26 + (_hash(k, 77 + yaka) - 0.5) * 0.06
 			var dz := 0.0
@@ -827,12 +853,25 @@ static func kiyi_ortu(p: Node3D, x0: float, x1: float, ze: float, s: float, tohu
 		cols.append(c)
 	var nrm := _izgara_normal(rows)
 	var say := 0
+	var otlar: Array = []
 	for i in n:
 		if not aktif[i] or not aktif[i + 1]:
 			continue
 		var xm := lerpf(x0, x1, (i + 0.5) / n)
 		if xm < pencere.x or xm >= pencere.y:
 			continue
+		# TUR-8: kıyı boyunca seyrek ot tutamı (kopan kenarın hemen gerisinde, yüzeye gömülü taban: havada değil)
+		var ho := _hash(tohum * 5 + i, 83)
+		if ho > 0.45:
+			for k in 1 + int(ho * 7.0) % 3:
+				var hk := _hash(tohum + i * 7, k + 90)
+				var a: Vector3 = rows[i][2]
+				var b: Vector3 = rows[i][3]
+				var a2: Vector3 = rows[i + 1][2]
+				var b2: Vector3 = rows[i + 1][3]
+				var q := (a.lerp(b, hk)).lerp(a2.lerp(b2, hk), _hash(k, i + 5))
+				var sc := 0.7 + hk * 0.7
+				otlar.append(Transform3D(Basis(Vector3.UP, hk * TAU).scaled(Vector3(sc, sc * (0.8 + 0.5 * ho), sc)), q - Vector3(0, 0.04, 0)))
 		for j in prof.size() - 1:
 			var vv := [rows[i][j], rows[i][j + 1], rows[i + 1][j], rows[i + 1][j], rows[i][j + 1], rows[i + 1][j + 1]]
 			var cc := [cols[i][j], cols[i][j + 1], cols[i + 1][j], cols[i + 1][j], cols[i][j + 1], cols[i + 1][j + 1]]
@@ -852,3 +891,17 @@ static func kiyi_ortu(p: Node3D, x0: float, x1: float, ze: float, s: float, tohu
 	mi.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
 	mi.set_meta("no_walk", true)
 	p.add_child(mi)
+	if not otlar.is_empty():
+		if _kot_mat == null:
+			_kot_mat = StandardMaterial3D.new()
+			_kot_mat.vertex_color_use_as_albedo = true
+			_kot_mat.cull_mode = BaseMaterial3D.CULL_DISABLED
+			_kot_mat.roughness = 1.0
+			_kot_mat.specular_mode = BaseMaterial3D.SPECULAR_DISABLED
+		var om := Scenery.scatter(p, load("res://scripts/world/ist/sur_oturtma_ag.gd").ot_mesh(), otlar, [], _kot_mat)
+		if om != null:
+			om.name = "Bitki_HendekKiyiOt"
+			om.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
+
+
+static var _kot_mat: StandardMaterial3D
