@@ -26,6 +26,9 @@ var gedik_onarim: Node3D              # GedikOnarim
 var ova: Node3D                       # ova düğümü (SurSet.ova_ofs)
 var ms := {}                          # kurulum ölçümü (karar 12)
 var onarim := 0
+## Depo yığınlarının bölüme göre kaydırması (ortak dekor 20/20o/21; yalnız 21 verir). Bölüm 21'de lağım (MINE −9; 7)
+## deponun dibine düşüyordu: kap konan yer fıçı ve kalas yığınlarıyla kalabalıktı (docs/_kanit_ist2_tasima2 an_03).
+var depo_kaydir := Vector3.ZERO
 
 
 func _enter_tree() -> void:
@@ -129,7 +132,7 @@ func _orticuler() -> void:
 
 ## Depo: LandWalls._build_depot'un aynısı, yeni yerinde (SurSet.depo)
 func _build_depot() -> void:
-	var d := sur.depo()
+	var d := sur.depo() + depo_kaydir
 	for i in 5:
 		Props.cyl(self, 0.36, 0.95, d + Vector3(-2.6 + (i % 3) * 0.8, 0.48 + (i / 3) * 0.95, -0.6), C_WOOD.darkened((i % 2) * 0.1), Vector3.ZERO, 10)
 	var pile := Props.ball(self, 1.3, d + Vector3(0.4, 0.2, 0.2), Color("5a4630"), Vector3(1.2, 0.6, 1.0), 8)
@@ -230,8 +233,62 @@ func set_repair(n: int) -> void:
 	onarim = n
 	if gedik_onarim and gedik_onarim.has_method("asama"):
 		var k := SurSet.asama_of(n)
-		if int(gedik_onarim.get("asama_n")) != k:
+		var once := int(gedik_onarim.get("asama_n"))
+		if once != k:
 			gedik_onarim.call("asama", k)
+			if k > once:
+				_kutudan_cikar()
+
+
+## Aşama yükselince kurulan toprak setin / kazık çitin kutusunun içinde kalan düellocu (dövüşten sonra gedikte nefeslenen
+## dost, yerde yatan ceset) kutunun şehir yanına alınır. Bölüm 20 =late: dost düellocu aşama 2'nin açık molozunda duruyordu,
+## şafakta sayaç 5 → 10 sıçrayınca aşama 4'ün toprak seti onun üstüne kuruluyordu (VISAUDIT insolid … Toprak_GedikSet_Carp;
+## docs/_kanit_ist2_tasima3/rapor.md §1). Oyunda da aynı: hücumdan sonra getirilen yük seti, gedikte duran dostun üstüne kurar.
+func _kutudan_cikar() -> void:
+	if not is_inside_tree() or not gedik_onarim.has_method("kati_kutular"):
+		return
+	var kutular: Array = gedik_onarim.call("kati_kutular")
+	if kutular.is_empty():
+		return
+	var icinde := func(p: Vector3, pay: float) -> bool:
+		for k: AABB in kutular:
+			if p.x > k.position.x - pay and p.x < k.end.x + pay and p.z > k.position.z - pay and p.z < k.end.z + pay \
+					and p.y > k.position.y - 1.9 and p.y < k.end.y:
+				return true
+		return false
+	var n_tas := 0
+	for n in get_tree().current_scene.find_children("*", "Node3D", true, false):
+		var d := n as Duelist
+		if d == null or not is_instance_valid(d) or d.is_queued_for_deletion() or not d.is_visible_in_tree():
+			continue
+		var p := d.global_position
+		if not icinde.call(p, 0.3):
+			continue
+		var kz := INF
+		for k: AABB in kutular:
+			if p.x > k.position.x - 0.3 and p.x < k.end.x + 0.3:
+				kz = minf(kz, k.position.z)
+		var yer := Vector3.INF
+		for dz: float in [0.45, 1.05, 1.65, 2.25, 2.85]:
+			for dx: float in [0.0, 0.7, -0.7, 1.4, -1.4]:
+				var to := Vector3(p.x + dx, p.y, kz - dz)
+				var gy := Unclip.floor_y(d, to, 1.6, 2.5)
+				if is_nan(gy):
+					continue
+				to.y = gy
+				if icinde.call(to, 0.3) or Unclip.in_solid(d, to, 0.18) or Unclip.crowded(d, to, 0.35):
+					continue
+				yer = to
+				break
+			if yer != Vector3.INF:
+				break
+		if yer == Vector3.INF:
+			continue
+		d.global_position = yer
+		d.set("_dodge_to", Vector3.INF)
+		n_tas += 1
+	if GameState.autotest and n_tas > 0:
+		print("GEDIKBOSALT asama=%d tasindi=%d" % [int(gedik_onarim.get("asama_n")), n_tas])
 
 
 ## Eski setin "sağlam" (28o) ve dolgu (26o) seçenekleri bu sahnede yok: bölüm taşınırken ayrıca bağlanır.

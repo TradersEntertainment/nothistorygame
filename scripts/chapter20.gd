@@ -753,6 +753,13 @@ func _dawn() -> void:
 		await hud.say("SPK_GIUST", "D20_G_UNFINISHED")
 	await hud.fade_to(1.0, 0.8)
 	walls.make_dawn(0.01)
+	if not sur.eski_mi:
+		# gece yardıma koşup dövüşten sonra "nefeslenip kalan" dost düellocular şafakta sahnede değil (kararma kesmesi).
+		# Barikat tamamlanmadan ÖNCE çekilirler: =late'te gedik aşama 2'deyken (açık moloz) gedikte duran dost, sayaç 5 → 10
+		# sıçrayınca aşama 4'ün toprak setinin içinde kalıyordu (VISAUDIT insolid Toprak_GedikSet_Carp). Bir kare beklenir:
+		# queue_free kare sonunda siler.
+		Duelist.dismiss_idle(self)
+		await get_tree().process_frame
 	repair = LandWalls.STAGES
 	walls.set_repair(repair)
 	if sur.eski_mi:
@@ -767,10 +774,8 @@ func _dawn() -> void:
 		player.face(sur.barikat() + Vector3(0, 0.6, 0))
 		# kararma kesmesinde komutan yerine döner (gece hücumda/tüfekte oyuncunun yanına gelmişti; çitin öbür yanında kalıyordu)
 		giust.global_position = sur.on_rubble(GIUST_YENI)
-		# gece yardıma koşup dövüşten sonra "nefeslenip kalan" dost düellocular şafakta sahnede değil (kararma kesmesi):
-		# yeni tespit yeri gecenin düello alanına yakın, biri oyuncunun 0,5 m önünde kalıp komutanı örtüyordu
-		# (VISAUDIT personhidden D20_G_END by=…(no_talk,no_chat,no_yield))
-		Duelist.dismiss_idle(self)
+		# (dost düellocular yukarıda, barikat tamamlanmadan çekildi: yeni tespit yeri gecenin düello alanına yakın, biri
+		# oyuncunun 0,5 m önünde kalıp komutanı örtüyordu: VISAUDIT personhidden D20_G_END by=…(no_talk,no_chat,no_yield))
 	await hud.card([[tr("UI_CH20_DAWN"), 26, Color("f2e6c9")]], 1.8)
 	hud.clear_card()
 	await hud.fade_to(0.0, 1.0)
@@ -933,6 +938,7 @@ func _kare(ad: String) -> void:
 
 
 var _asama4_ok := false
+var _asama3_ok := false
 
 func _kare_asama4() -> void:
 	_asama4_ok = true
@@ -988,6 +994,9 @@ func _yuru() -> void:
 		await _yb("depo_gedik_%d" % (yk + 1), [g_on], g_bak, "breach", "gedige_tasima" if kare and yk == 0 else "")
 		if kare and repair == 3 and _kare_n < 4:
 			await _kare_gedik("onarim_asama2")
+		if kare and repair >= 6 and repair <= 8 and not _asama3_ok:
+			_asama3_ok = true
+			await _kare_gedik("onarim_asama3")
 		if kare and repair >= 9:
 			await _kare_asama4()
 			break

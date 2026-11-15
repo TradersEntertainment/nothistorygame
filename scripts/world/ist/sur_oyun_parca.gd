@@ -16,6 +16,8 @@ const KULE := preload("res://scripts/world/ist/sur_kule.gd")
 const C_WOOD := Color("7a5634")
 const C_TOPRAK := Color("6e5c42")
 const C_MOLOZ := Color("7c705c")
+const C_CUVAL := Color("9a8460")
+const C_IP := Color("6a5a40")
 const PARCA_ := preload("res://scripts/world/ist/sur_oyun_ag.gd")
 const ASAMALAR := ["", "acik", "kazik_fici", "toprak_dolgu", "barikat_tam"]
 
@@ -530,6 +532,9 @@ class GedikOnarim extends Node3D:
 	var a_ref: RefCounted
 	var asama_n := 1
 	var _katman: Node3D
+	## Aşamanın görünen katı gövdeleri (toprak set, kazık çit): kurulurken içinde kalan kişi dışarı alınır
+	## (SurSetSahne.set_repair → _kutudan_cikar)
+	var _katilar: Array = []
 
 	func kur(a: RefCounted) -> void:
 		a_ref = a
@@ -570,6 +575,7 @@ class GedikOnarim extends Node3D:
 	func asama(n_: int) -> void:
 		asama_n = clampi(n_, 1, 4)
 		a_ref.asama = asama_n
+		_katilar.clear()
 		for c in _katman.get_children():
 			_katman.remove_child(c)
 			c.queue_free()
@@ -601,12 +607,54 @@ class GedikOnarim extends Node3D:
 			var kz := Props.cyl(_katman, 0.07, 2.2, Vector3(kx, ys + 0.9, zs + 0.75), C_WOOD.darkened(0.2), Vector3(-26.0 + rng.randf_range(-5.0, 5.0), 0, rng.randf_range(-4.0, 4.0)), 6, 0.015)
 			kz.name = "Ahsap_Kazik"
 		if asama_n >= 3:
-			# toprak set (fıçı sırasının ardında, gediğin içinde: fıçılar setin şehir yüzü) ve çarpışma: gediği kapatır.
-			# Eskiden fıçıların ŞEHİR tarafındaydı (zs − 1,25, 2,4 m derin): teslim yerini, işçileri ve komutanı içine alıyordu,
-			# yakından kadrajı kaplayan dev bir hap (docs/_kanit_ist2_pilot20 an_06). Şimdi molozun üstünde, gediğin iç yarısında.
+			# toprak dolgu (fıçı sırasının ardında, gediğin iç yarısında): sepetle dökülmüş yumrulu toprak yığını, tepesinde ve
+			# fıçıların arkasında kum çuvalları, eteğinde taş, içine çakılı kazık ve yatık kütükler. Eskiden tek pürüzsüz hap
+			# (Props.ball 8,6 × 1,5 × 2,0; docs/_kanit_ist2_tasima2 an_06). Çarpışma aynı yerde, aynı boyda (aşağıda).
 			var zt := zs + 1.05
-			var tset := Props.ball(_katman, 0.5, Vector3(gx, PARCA_._profil_y(pr["pts"], zt) + 0.35, zt), C_TOPRAK, Vector3(IstSurlar.GEDIK_W + 0.6, 1.5, 2.0), 10)
-			tset.name = "Toprak_GedikSet"
+			var yag = KULE.Ag.new()
+			_toprak_yigin(yag, gx - h - 0.15, gx + h + 0.15, zs + 0.1, zs + 2.2, 0.95, pr["pts"], rng)
+			yag.mesh_ekle(_katman, Props.mat(C_TOPRAK, 0.0, false, "rubble"), "Toprak_GedikSet")
+			# çuvallar: yığının sırtında bir sıra (yer yer ikinci kat), fıçıların arkasına yaslı bir sıra
+			var cuv: Array = []
+			var cx := gx - h + 0.35
+			while cx < gx + h - 0.3:
+				cuv.append(Vector3(cx + rng.randf_range(-0.06, 0.06), 0.0, zs + 0.95 + rng.randf_range(-0.12, 0.12)))
+				if absf(cx - gx) < 2.4 and rng.randf() < 0.6:
+					cuv.append(Vector3(cx + 0.3, 0.27, zs + 1.0 + rng.randf_range(-0.08, 0.08)))
+				cx += rng.randf_range(0.6, 0.7)
+			cx = gx - h + 0.6
+			while cx < gx + h - 0.5:
+				cuv.append(Vector3(cx, -0.12, zs + 0.62))
+				cx += rng.randf_range(0.75, 1.1)
+			for c: Vector3 in cuv:
+				var yy := _yigin_y(c.x, c.z, gx - h - 0.15, gx + h + 0.15, zs + 0.1, zs + 2.2, 0.95, pr["pts"])
+				var cv := Props.ball(_katman, 0.5, Vector3(c.x, yy + 0.1 + c.y, c.z), C_CUVAL.darkened(rng.randf_range(0.0, 0.22)),
+					Vector3(rng.randf_range(0.6, 0.7), 0.27, rng.randf_range(0.38, 0.44)), 8)
+				cv.rotation = Vector3(rng.randf_range(-0.12, 0.12), rng.randf_range(-0.35, 0.35), rng.randf_range(-0.1, 0.1))
+				cv.name = "Toprak_Cuval"
+			# eteğe taşlar (yarı gömülü) ve yığına çakılı kazıklar, yatık kütükler
+			var tl: Array = []
+			for i in 22:
+				var tx := rng.randf_range(gx - h, gx + h)
+				var tz := rng.randf_range(zs + 0.15, zs + 2.15)
+				var sc := rng.randf_range(0.14, 0.32)
+				var ty := _yigin_y(tx, tz, gx - h - 0.15, gx + h + 0.15, zs + 0.1, zs + 2.2, 0.95, pr["pts"])
+				tl.append(Transform3D(Basis.from_euler(Vector3(rng.randf_range(-0.5, 0.5), rng.randf() * TAU, rng.randf_range(-0.5, 0.5))).scaled(Vector3(sc * 1.3, sc * 0.7, sc)), Vector3(tx, ty + sc * 0.05, tz)))
+			Scenery.scatter(_katman, KULE.kaya_mesh(), tl, [], Props.mat(IstSurlar.C_STONE.darkened(0.2), 0.0, false, "ashlar_far"))
+			var kag = KULE.Ag.new()
+			for i in 7:
+				var kx := gx - h + 0.7 + i * (2.0 * h - 1.4) / 6.0 + rng.randf_range(-0.25, 0.25)
+				var kz := zs + rng.randf_range(1.2, 1.9)
+				var ky := _yigin_y(kx, kz, gx - h - 0.15, gx + h + 0.15, zs + 0.1, zs + 2.2, 0.95, pr["pts"])
+				var boy := rng.randf_range(0.9, 1.5)
+				var ust := Vector3(kx + rng.randf_range(-0.25, 0.25), ky + boy, kz + rng.randf_range(0.15, 0.45))
+				_kazik(kag, Vector3(kx, ky - 0.3, kz), ust, rng.randf_range(0.06, 0.08), 0.22, C_WOOD.darkened(rng.randf_range(0.05, 0.3)))
+			for k in 2:
+				var lx := gx + (-2.2 if k == 0 else 1.6) + rng.randf_range(-0.3, 0.3)
+				var lz := zs + 1.6
+				var ly := _yigin_y(lx, lz, gx - h - 0.15, gx + h + 0.15, zs + 0.1, zs + 2.2, 0.95, pr["pts"])
+				_cubuk(kag, Vector3(lx - 1.2, ly + 0.02, lz - 0.2), Vector3(lx + 1.2, ly + 0.18, lz + 0.15), 0.11, 7, C_WOOD.darkened(0.2))
+			kag.mesh_ekle(_katman, Props.mat(C_WOOD, 0.0, false, "wood"), "Ahsap_GedikDolguKazik")
 			var b := StaticBody3D.new()
 			b.name = "Toprak_GedikSet_Carp"
 			var cs := CollisionShape3D.new()
@@ -620,32 +668,67 @@ class GedikOnarim extends Node3D:
 			# (20o =wide: bir savunan z 11,7'de 30 sn; docs/_kanit_ist2_tasima2/rapor.md)
 			b.set_meta("wall", true)
 			_katman.add_child(b)
+			_katilar.append(b)
 		if asama_n >= 4:
-			# sur yolu tahtası: sehpalar üstünde, dış sur yolu hizasında (iki yandaki surla birleşir)
+			# sur yolu tahtası: iki kırık sur ucuna gömülü iki boyuna kiriş (köprü gibi), üstte enine tahtalar; kirişleri sur
+			# uçlarından çıkan payandalar ve ortada toprak yığınının üstünde duran tek kütük dikme taşır. Eskiden molozdan sur
+			# yolu hizasına (7 m) çıkan altı dikme ve kirişler: gece karanlık bir iskele gibi okunuyordu (tasima2 an_07).
 			var ag = KULE.Ag.new()
-			for sx: float in [-1.0, 0.0, 1.0]:
-				var px := gx + sx * (h - 0.8)
-				for sz: float in [zo0 + 0.4, zo1 - 0.4]:
-					var yb := PARCA_._profil_y(pr["pts"], sz)
-					KalasKopru._dikme(ag, Vector3(px, yb - 0.1, sz), Vector3(px, OH - 0.1, sz), 0.18)
-				ag.kutu(Vector3(px, OH - 0.32, zo0), Vector3.RIGHT, Vector3.BACK, 0.2, 0.22, zo1 - zo0)
-			for i in 9:
-				var pz := zo0 + 0.1 + i * (zo1 - zo0 - 0.2) / 9.0
-				ag.kutu(Vector3(gx, OH - 0.08, pz), Vector3.RIGHT, Vector3.BACK, IstSurlar.GEDIK_W + 0.6, 0.07, (zo1 - zo0 - 0.2) / 9.0 - 0.02,
-					Color(1, 1, 1) if i % 2 == 0 else Color(0.88, 0.84, 0.78))
+			var zk: Array = [zo0 + 0.35, zo1 - 0.35]
+			for z: float in zk:
+				ag.kutu(Vector3(gx, OH - 0.32, z - 0.12), Vector3.RIGHT, Vector3.BACK, 2.0 * h + 0.9, 0.24, 0.24, Color(0.9, 0.86, 0.8))
+				for sx: float in [-1.0, 1.0]:
+					# sur ucundan kirişe çapraz payanda
+					_cubuk(ag, Vector3(gx + sx * (h + 0.05), OH - 2.5, z), Vector3(gx + sx * (h - 1.9), OH - 0.34, z), 0.1, 6, Color(0.82, 0.78, 0.72))
+				# ortada tek kütük dikme (yığının üstünden) ve iki kol
+				var yb := PARCA_._profil_y(pr["pts"], z)
+				_cubuk(ag, Vector3(gx + 0.1, yb - 0.2, z), Vector3(gx, OH - 0.34, z), 0.14, 8, Color(0.86, 0.82, 0.76))
+				for sx: float in [-1.0, 1.0]:
+					_cubuk(ag, Vector3(gx, OH - 1.9, z), Vector3(gx + sx * 1.5, OH - 0.34, z), 0.09, 6, Color(0.82, 0.78, 0.72))
+			var tx := gx - h - 0.35
+			while tx < gx + h + 0.3:
+				var tw := rng.randf_range(0.24, 0.32)
+				ag.kutu(Vector3(tx + tw * 0.5, OH - 0.08 + rng.randf_range(-0.012, 0.012), zo0 + 0.08), Vector3.RIGHT, Vector3.BACK, tw, 0.07, zo1 - zo0 - 0.16,
+					Color(1, 1, 1) if rng.randf() < 0.5 else Color(0.86, 0.82, 0.76))
+				tx += tw + rng.randf_range(0.02, 0.05)
+			ag.mesh_ekle(_katman, Props.mat(C_WOOD.darkened(0.12), 0.0, false, "wood"), "Ahsap_GedikTahta")
 			# ikinci sıra kazık çit (insan boyu): savunanın ARKASINDA, şehir tarafında (sahibin kararı: "çit oyuncunun arkasına").
 			# Eskiden dış yüzdeydi: oyuncuyla saldırganların arasında kalıp görüşü kapatıyor, düelloyu uzatıyordu (Bölüm 20 2. dalga
 			# azapları çite çarpıp terasa kayıyordu; 20o =wide 32–41 sn). Şimdi barikat ekibinin (teslim yeri, işçiler) ardında,
-			# gedik eni kadar; iki ucu açık (depodan gelen yol ve siperler ucun dışından geçer). Uçları ovaya hafif eğik.
-			var zc := CIT_Z_PAY
+			# gedik eni kadar; iki ucu açık (depodan gelen yol ve siperler ucun dışından geçer). Kazıklar yuvarlak, sivri uçlu,
+			# boyları ve aralıkları düzensiz, yer yer eğik (ovaya ve yana); iki kuşak iple bağlı (sarkık). Eskiden düz kesitli
+			# eşit kazık + iki kalas kuşak: "bahçe çiti" (tasima2 an_07). Çarpışma aynı (aşağıda, 8 × 2,4 × 0,4).
+			var cag = KULE.Ag.new()
+			var iag = KULE.Ag.new()
+			var zc := zo0 - CIT_Z_PAY
 			var yc: float = a.y_peri()
-			for i in int(IstSurlar.GEDIK_W / 0.42):
-				var kx2 := gx - h + 0.2 + i * 0.42
-				KalasKopru._dikme(ag, Vector3(kx2, yc - 0.2, zo0 - zc), Vector3(kx2 + rng.randf_range(-0.05, 0.05), yc + 2.2 + rng.randf_range(-0.12, 0.1), zo0 - zc + 0.35), 0.12)
-			# kazıkları bağlayan iki kuşak (yatay kalas)
-			for ky: float in [0.7, 1.7]:
-				ag.kutu(Vector3(gx, yc + ky, zo0 - zc + ky * 0.146 - 0.14), Vector3.RIGHT, Vector3.BACK, IstSurlar.GEDIK_W - 0.2, 0.1, 0.08)
-			ag.mesh_ekle(_katman, Props.mat(C_WOOD.darkened(0.12), 0.0, false, "wood"), "Ahsap_GedikTahta")
+			var kaziklar: Array = []
+			var kx2 := gx - h + 0.18
+			while kx2 < gx + h - 0.12:
+				var boy2 := rng.randf_range(1.75, 2.3)
+				if rng.randf() < 0.12:
+					boy2 = rng.randf_range(1.2, 1.5)          # kısa (kırık/eksik) kazık
+				var egx := rng.randf_range(-0.1, 0.1) + (rng.randf_range(-0.16, 0.16) if rng.randf() < 0.25 else 0.0)
+				var dip2 := Vector3(kx2, yc - 0.25, zc + rng.randf_range(-0.03, 0.05))
+				var ust2 := Vector3(clampf(kx2 + egx * boy2, gx - h + 0.05, gx + h - 0.05), yc + boy2, zc + 0.14 + rng.randf_range(0.0, 0.14))
+				_kazik(cag, dip2, ust2, rng.randf_range(0.06, 0.085), rng.randf_range(0.18, 0.28), C_WOOD.darkened(rng.randf_range(0.0, 0.3)))
+				kaziklar.append([dip2, ust2])
+				kx2 += rng.randf_range(0.27, 0.4)
+			for ky: float in [0.65, 1.45]:
+				for i in kaziklar.size() - 1:
+					var k0: Array = kaziklar[i]
+					var k1: Array = kaziklar[i + 1]
+					var h0 := ky + rng.randf_range(-0.05, 0.05)
+					var h1 := ky + rng.randf_range(-0.05, 0.05)
+					var p0: Vector3 = (k0[0] as Vector3).lerp(k0[1], (h0 + 0.25) / ((k0[1] as Vector3).y - (k0[0] as Vector3).y)) + Vector3(0, 0, -0.07)
+					var p1: Vector3 = (k1[0] as Vector3).lerp(k1[1], (h1 + 0.25) / ((k1[1] as Vector3).y - (k1[0] as Vector3).y)) + Vector3(0, 0, -0.07)
+					if (k0[1] as Vector3).y < yc + ky + 0.1 or (k1[1] as Vector3).y < yc + ky + 0.1:
+						continue                                  # kısa kazığın üstünden ip geçmez
+					var orta := (p0 + p1) * 0.5 + Vector3(0, -0.035, 0)
+					_cubuk(iag, p0, orta, 0.018, 4, Color(1, 1, 1))
+					_cubuk(iag, orta, p1, 0.018, 4, Color(1, 1, 1))
+			cag.mesh_ekle(_katman, Props.mat(C_WOOD, 0.0, false, "wood"), "Ahsap_GedikCit")
+			iag.mesh_ekle(_katman, Props.mat(C_IP, 0.0, false), "Ip_GedikCit")
 		PARCA_.pis(_katman)
 		if asama_n >= 4:
 			for spec in [[Vector3(gx, OH - 0.06, (zo0 + zo1) * 0.5), Vector3(IstSurlar.GEDIK_W + 0.6, 0.12, zo1 - zo0)],
@@ -654,6 +737,7 @@ class GedikOnarim extends Node3D:
 				if (spec[1] as Vector3).y > 1.0:
 					b2.name = "Ahsap_GedikCit_Carp"
 					b2.set_meta("wall", true)     # görünen kazık çitin kutusu (giriş seçimi ve görüş denetimi onu görsün)
+					_katilar.append(b2)
 				var cs2 := CollisionShape3D.new()
 				var bs2 := BoxShape3D.new()
 				bs2.size = spec[1]
@@ -661,3 +745,79 @@ class GedikOnarim extends Node3D:
 				b2.add_child(cs2)
 				b2.position = spec[0]
 				_katman.add_child(b2)
+
+	## Aşamanın görünen katılarının dünya kutuları (AABB). Ağaçta değilse boş.
+	func kati_kutular() -> Array:
+		var out: Array = []
+		for b in _katilar:
+			if not is_instance_valid(b) or not (b as Node3D).is_inside_tree():
+				continue
+			var cs := (b as Node).get_child(0) as CollisionShape3D
+			var sz: Vector3 = (cs.shape as BoxShape3D).size
+			out.append((b as Node3D).global_transform * AABB(-sz * 0.5, sz))
+		return out
+
+	## Toprak dolgu yığını (x0..x1 boyunca, z0..z1 enine): sırtı H, uçlara ve kenarlara yumuşak iner, yüzü yumrulu; renk lekeli.
+	static func _toprak_yigin(ag, x0: float, x1: float, z0: float, z1: float, H: float, pts: Array, rng: RandomNumberGenerator) -> void:
+		var nx := 18
+		var nz := 7
+		var rows: Array = []
+		for j in nz + 1:
+			var row: Array = []
+			for i in nx + 1:
+				var x := lerpf(x0, x1, float(i) / nx)
+				var z := lerpf(z0, z1, float(j) / nz)
+				var y := _yigin_y(x, z, x0, x1, z0, z1, H, pts)
+				var ic := i > 0 and i < nx and j > 0 and j < nz
+				if ic:
+					y += rng.randf_range(-0.09, 0.11)
+					x += rng.randf_range(-0.07, 0.07)
+					z += rng.randf_range(-0.06, 0.06)
+				row.append(Vector3(x, y, z))
+			rows.append(row)
+		for j in nz:
+			for i in nx:
+				var a: Vector3 = rows[j][i]
+				var b: Vector3 = rows[j][i + 1]
+				var c: Vector3 = rows[j + 1][i + 1]
+				var d: Vector3 = rows[j + 1][i]
+				for t in [[a, b, c], [a, c, d]]:
+					var nrm: Vector3 = ((t[1] as Vector3) - t[0]).cross((t[2] as Vector3) - t[0])
+					if nrm.y < 0.0:
+						nrm = -nrm
+					var k := rng.randf_range(0.82, 1.1)
+					if rng.randf() < 0.12:
+						k *= 0.78                                     # ıslak/koyu leke
+					ag.tri(t[0], t[1], t[2], nrm, Color(k, k * 0.98, k * 0.94))
+
+	## Yığının (x, z)'deki yüksekliği (gürültüsüz): moloz profili + sırt (enine sin, uçlarda yumuşak iniş)
+	static func _yigin_y(x: float, z: float, x0: float, x1: float, z0: float, z1: float, H: float, pts: Array) -> float:
+		var yb := PARCA_._profil_y(pts, z) - 0.06
+		var t := clampf((z - z0) / (z1 - z0), 0.0, 1.0)
+		var u := clampf((x - x0) / (x1 - x0), 0.0, 1.0)
+		var uc := smoothstep(0.0, 0.09, minf(u, 1.0 - u))
+		return yb + H * pow(sin(PI * t), 0.65) * uc
+
+	## Yuvarlak (çokgen kesitli) kazık, sivri uçlu: a dip, b uç; uc: sivri kısmın boyu
+	static func _kazik(ag, a: Vector3, b: Vector3, r: float, uc: float, col: Color) -> void:
+		var f := (b - a).normalized()
+		var r1 := f.cross(Vector3.FORWARD if absf(f.z) < 0.9 else Vector3.RIGHT).normalized()
+		var r2 := f.cross(r1).normalized()
+		var m := b - f * uc
+		var n := 6
+		for i in n:
+			var d0 := r1 * cos(TAU * i / n) + r2 * sin(TAU * i / n)
+			var d1 := r1 * cos(TAU * (i + 1) / n) + r2 * sin(TAU * (i + 1) / n)
+			var dn := (d0 + d1).normalized()
+			ag.quad(a + d0 * r, a + d1 * r, m + d1 * r, m + d0 * r, dn, col)
+			ag.tri(m + d0 * r, m + d1 * r, b, (dn + f * 0.5).normalized(), col.lightened(0.08))
+
+	## Yuvarlak çubuk (kütük, dikme, ip): a → b, n kenarlı
+	static func _cubuk(ag, a: Vector3, b: Vector3, r: float, n: int, col: Color) -> void:
+		var f := (b - a).normalized()
+		var r1 := f.cross(Vector3.FORWARD if absf(f.z) < 0.9 else Vector3.RIGHT).normalized()
+		var r2 := f.cross(r1).normalized()
+		for i in n:
+			var d0 := r1 * cos(TAU * i / n) + r2 * sin(TAU * i / n)
+			var d1 := r1 * cos(TAU * (i + 1) / n) + r2 * sin(TAU * (i + 1) / n)
+			ag.quad(a + d0 * r, a + d1 * r, b + d1 * r, b + d0 * r, (d0 + d1).normalized(), col)

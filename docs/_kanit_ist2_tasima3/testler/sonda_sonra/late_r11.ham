@@ -1,0 +1,52 @@
+Godot Engine v4.4.1.stable.official.49a5bc7b6 - https://godotengine.org
+
+SURSET kesim=mesoteikhion kurulum_ms=2780 sur_ms=689 set_ms=2087
+PILOT20ENGEL OZET nokta=9 engelde=0
+PILOT20KURULUM sur=yeni set_ms=2781 bolum_ms=977 toplam_ms=3759
+WARNING: Screen-space ambient occlusion (SSAO) can only be enabled when using the Forward+ renderer.
+     at: environment_set_ssao (servers/rendering/storage/environment_storage.cpp:586)
+WARNING: Screen-space indirect lighting (SSIL) can only be enabled when using the Forward+ renderer.
+     at: environment_set_ssil (servers/rendering/storage/environment_storage.cpp:661)
+TERRAIN_SOLIDIFIED scene=chapter20.tscn node=/root/Chapter20/@Node3D@177/Ova/@Node3D@2905/@MeshInstance3D@2907
+SIEGECHAOS segs=40 runners=80 static=30
+LORE key=20 placed=3
+GUN shots=4 hits=3 missed=1
+HANDS stowed=@Node3D@84
+HANDS stowed=@Node3D@84
+RALLY scene=chapter20.tscn allies=3 foes=0 cands=5
+KICK result=stagger
+WAVERUNNER wave=1/2 won=true t=5.4 pw=0.28 foe_dmg=18.0 allies=3+0 rally_foes=0 thrown=0
+HANDS stowed=@Node3D@84
+RALLY scene=chapter20.tscn allies=4 foes=0 cands=2
+KICK result=stagger
+WAVERUNNER wave=2/2 won=true t=8.8 pw=0.28 foe_dmg=18.0 allies=4+0 rally_foes=0 thrown=0
+GUN extra=1
+GUNNER shots=2 dodged=2 hits=0
+SONDA20 an=once_set t=38.03 ad=@Node3D@35399 team=1 state=DEAD target=true vis=true withdrawn=false qdel=false at=(-6.7, 0.0, 7.9) parent=Chapter20 spk=
+SONDA20 an=once_set t=38.03 ad=@Node3D@35525 team=1 state=DEAD target=true vis=false withdrawn=false qdel=false at=(-0.9, -121.1, 17.8) parent=Chapter20 spk=
+SONDA20 an=once_set t=38.03 ad=@Node3D@36295 team=1 state=DEAD target=true vis=true withdrawn=false qdel=false at=(-6.9, -123.4, 23.7) parent=Chapter20 spk=
+SONDA20 an=once_set t=38.03 ad=@Node3D@36429 team=1 state=DEAD target=true vis=true withdrawn=false qdel=false at=(-2.8, 0.8, 13.2) parent=Chapter20 spk=
+SONDA20 an=once_set t=38.03 ad=@Node3D@36567 team=1 state=DEAD target=false vis=true withdrawn=false qdel=false at=(-0.1, 1.1, 13.3) parent=Chapter20 spk=
+GEDIKBOSALT asama=4 tasindi=2
+SONDA20 an=sonra_set t=38.12 ad=@Node3D@35399 team=1 state=DEAD target=true vis=true withdrawn=false qdel=false at=(-6.7, 0.0, 7.9) parent=Chapter20 spk=
+SONDA20 an=sonra_set t=38.12 ad=@Node3D@35525 team=1 state=DEAD target=true vis=false withdrawn=false qdel=false at=(-0.9, -121.1, 17.8) parent=Chapter20 spk=
+SONDA20 an=sonra_set t=38.12 ad=@Node3D@36295 team=1 state=DEAD target=true vis=true withdrawn=false qdel=false at=(-6.9, -123.4, 23.7) parent=Chapter20 spk=
+SONDA20 an=sonra_set t=38.12 ad=@Node3D@36429 team=1 state=DEAD target=true vis=true withdrawn=false qdel=false at=(-2.8, 0.1, 7.5) parent=Chapter20 spk=
+SONDA20 an=sonra_set t=38.12 ad=@Node3D@36567 team=1 state=DEAD target=false vis=true withdrawn=false qdel=false at=(-0.1, 0.1, 7.5) parent=Chapter20 spk=
+SONDA20 an=dismiss t=38.16 ad=@Node3D@35399 team=1 state=DEAD target=true vis=true withdrawn=false qdel=false at=(-6.7, 0.0, 7.9) parent=Chapter20 spk=
+SONDA20 an=dismiss t=38.16 ad=@Node3D@35525 team=1 state=DEAD target=true vis=false withdrawn=false qdel=false at=(-0.9, -121.1, 17.8) parent=Chapter20 spk=
+SONDA20 an=dismiss t=38.16 ad=@Node3D@36295 team=1 state=DEAD target=true vis=true withdrawn=false qdel=false at=(-6.9, -123.4, 23.7) parent=Chapter20 spk=
+SONDA20 an=dismiss t=38.16 ad=@Node3D@36429 team=1 state=DEAD target=true vis=true withdrawn=false qdel=false at=(-2.8, 0.1, 7.5) parent=Chapter20 spk=
+SONDA20 an=dismiss t=38.16 ad=@Node3D@36567 team=1 state=DEAD target=false vis=true withdrawn=false qdel=false at=(-0.1, 0.1, 7.5) parent=Chapter20 spk=
+TESPITBLOCK who=siege20 blocker=@Node3D@21925/@Node3D@22927 (person) at=(1.7, 0.5, 10.3) eye=(2.0, 1.7, 9.400001) dist=4.4
+SONDA20 an=dismiss+0.2 t=38.21 ad=@Node3D@35399 team=1 state=DEAD target=true vis=true withdrawn=false qdel=false at=(-6.7, 0.0, 7.9) parent=Chapter20 spk=
+SONDA20 an=dismiss+0.2 t=38.21 ad=@Node3D@35525 team=1 state=DEAD target=true vis=false withdrawn=false qdel=false at=(-0.9, -121.1, 17.8) parent=Chapter20 spk=
+SONDA20 an=dismiss+0.2 t=38.21 ad=@Node3D@36295 team=1 state=DEAD target=true vis=false withdrawn=false qdel=false at=(-7.0, -126.6, 23.8) parent=Chapter20 spk=
+SONDA20 an=dismiss+0.2 t=38.21 ad=@Node3D@36429 team=1 state=DEAD target=true vis=true withdrawn=false qdel=false at=(-2.8, 0.1, 7.5) parent=Chapter20 spk=
+SONDA20 an=dismiss+0.2 t=38.21 ad=@Node3D@36567 team=1 state=DEAD target=false vis=true withdrawn=false qdel=false at=(-0.1, 0.1, 7.5) parent=Chapter20 spk=
+GRADE chapter=20 letter=S points=123 { "gun_shots": 4, "gun_hits": 3, "gunner_shots": 2, "dodged": 2, "parries": 1, "kills": 1 }
+AUTOTEST PASS chapter=20 variant=late outcome=20.3 repair=10 knocks=0 arrows=false gun=3/4 gunner=2/2 niko=0 sur=yeni
+WARNING: ObjectDB instances leaked at exit (run with --verbose for details).
+     at: cleanup (core/object/object.cpp:2378)
+ERROR: 1 resources still in use at exit (run with --verbose for details).
+   at: clear (core/io/resource.cpp:614)

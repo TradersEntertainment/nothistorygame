@@ -31,6 +31,8 @@ const GRANT_KAP_Z_YENI := 2.6               # Grant'in boş kapları (eski z 1,8
 const OYUNCU_YENI := Vector3(-4.0, 0.05, 6.3)
 ## Otomatik testin kap yerleri (eski: (2;4) ve sağda dört kap; yeni sette iç kule): uzaklık sınıfı aynı (hepsi "soğuk")
 const KAP_TEST_YENI := Vector3(-17.0, 0.0, 8.5)
+## Yeni sette depo yığınlarının kaydırması (SurSetSahne.depo_kaydir): en yakın yığın lağıma ≥ 4,6 m (önce 1,3 m)
+const DEPO_KAYDIR_21 := Vector3(-7.0, 0.0, 0.0)
 const KAPLAR_TEST_YENI := [Vector3(14, 0, 4), Vector3(16, 0, 3), Vector3(15, 0, 9.5), Vector3(18, 0, 6)]
 var sur: SurSet
 ## Kaza rotası: Blakherna'da yakalanan Osmanlı kâtibi, Grant'in esir tercümanı (Siege.captive)
@@ -102,6 +104,9 @@ func _ready() -> void:
 	else:
 		var ss := SurSetSahne.new()
 		ss.sur = sur
+		# depo yığınları lağımdan uzağa (7 m sola): lağım deponun dibindeydi (kalas yığınına 2,4 m, küçük fıçılara 1,3 m),
+		# kap konan yer kalabalıktı. Lağımın yeri ve kapların sıcak/soğuk dağılımı aynı; 21 depoyu kullanmaz (yük yok).
+		ss.depo_kaydir = DEPO_KAYDIR_21
 		walls = ss
 	add_child(walls)
 	walls.set_repair(LandWalls.STAGES)       # yeni sette: gedik onarımının 4. aşaması (barikat tam)
@@ -142,7 +147,7 @@ func _build() -> void:
 	if GameState.autotest and not sur.eski_mi:
 		# yerleşim denetimi: bölümün peribolos noktaları SurOyun.engeller()'in (kule + etek, merdiven, sur gövdesi…) dışında mı
 		var noktalar := {"lagim": MINE, "grant": grant.position, "oyuncu": OYUNCU_YENI, "ates0": Vector3(-23.0, 0, 9.0),
-			"ates1": Vector3(22.0, 0, 8.0), "kap_test": KAP_TEST_YENI}
+			"ates1": Vector3(22.0, 0, 8.0), "kap_test": KAP_TEST_YENI, "depo": sur.depo() + DEPO_KAYDIR_21}
 		for i in KAPLAR_TEST_YENI.size():
 			noktalar["kap_test%d" % i] = KAPLAR_TEST_YENI[i]
 		var kotu := 0
