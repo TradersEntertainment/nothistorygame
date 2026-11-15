@@ -902,6 +902,11 @@ func _kare(ad: String) -> void:
 	_kare_n += 1
 	var f := dir.path_join("an_%02d_%s.jpg" % [_kare_n, ad])
 	get_viewport().get_texture().get_image().save_jpg(f, 0.85)
+	# teşhis (TAŞIMA-2): --kim=x,y → o pikselin ardındaki görünür ağların listesi (tests/_ist/tasima2_kim.gd)
+	for arg in OS.get_cmdline_user_args():
+		if arg.begins_with("--kim="):
+			var xy := arg.trim_prefix("--kim=").split(",")
+			load("res://tests/_ist/tasima2_kim.gd").sor(self, get_viewport().get_camera_3d(), Vector2(float(xy[0]), float(xy[1])))
 	print("PILOT20KARE %s repair=%d asama=%d phase=%s oyuncu=%s" % [f.get_file(), repair, SurSet.asama_of(repair), phase, player.global_position])
 
 

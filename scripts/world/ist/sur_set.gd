@@ -123,14 +123,13 @@ func barikat() -> Vector3:
 
 
 ## Moloz sırtı: düelloda gedikten inen/gediğe çıkanların yeri. Eski: dış yüzün 0,2 m DIŞI (z 16,2), bütün barikat
-## aşamalarının (gediğin iç yarısı, z 13,6–15,6) ova tarafı. Yeni: aynı anlam: dış yüzün önünde, aşama 4'ün dış yüzdeki kazık
-## çitinin (GedikOnarim, dış yüz +0,1 ± 0,2; moloz üstünden ≈2 m) ova tarafında, çitten bir kişi payı (≈1 m) uzakta. Duvarın
-## ortasında (çitin içinde) ya da çitin dibinde (dış yüz +0,7) gedik sağlamken düello çitin dibine sıkışıyordu: 20o =wide
-## dalgaları 13/11 → 41/43 sn; çit çarpışması kapalı denemede 11/15 sn (docs/_kanit_ist2_pilot20/rapor.md).
+## aşamalarının (gediğin iç yarısı, z 13,6–15,6) ova tarafı. Yeni: aynı anlam, dış yüzün 0,2 m dışı. Aşama 4'ün kazık çiti
+## artık savunanın ARKASINDA, şehir tarafında (GedikOnarim.CIT_Z_PAY; sahibin kararı): sırtla gedik arasında çit yok.
+## (Pilotta çit dış yüzdeydi ve sırt çitin önüne, dış yüz + 1,4'e itilmişti: 2. dalga azapları çite çarpıp terasa kayıyordu.)
 func moloz_sirti() -> Vector3:
 	if eski_mi:
 		return LandWalls.on_rubble(LandWalls.BREACH + Vector3(0, 0, 1.2))
-	var z := dis_sur_z1() + 1.4
+	var z := dis_sur_z1() + 0.2
 	return Vector3(0.0, moloz_y(0.0, z), z)
 
 
