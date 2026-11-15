@@ -1,5 +1,3 @@
-Godot Engine v4.4.1.stable.official.49a5bc7b6 - https://godotengine.org
-
 WALKTHRU sehir_icmerdiven_icyol_uc sure=48.0 yol=161.4 takilma=0 dusme=0 bitti=true son=(92.2,12.00,-0.0) | wp0 t=1.2 y=0.25 | wp1 t=6.7 y=12.00 | wp2 t=7.5 y=12.00 | wp3 t=48.0 y=12.00
 WALKTHRU peribolos_dismerdiven_disyol_kule sure=20.2 yol=75.0 takilma=0 dusme=0 bitti=true son=(-49.3,8.50,18.8) | wp0 t=1.2 y=0.25 | wp1 t=5.0 y=8.50 | wp2 t=5.5 y=8.50 | wp3 t=20.2 y=8.50
 WALKTHRU teras_eldmerdiven_disyol_kulegecidi sure=14.9 yol=48.2 takilma=0 dusme=0 bitti=true son=(-45.3,8.50,18.8) | wp0 t=0.5 y=-3.78 | wp1 t=7.2 y=9.69 | wp2 t=14.9 y=8.50

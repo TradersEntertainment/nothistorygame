@@ -3,22 +3,18 @@
 Dal `wip/ist2-tur9`, taban `wip/ist2-birlesik` ee2ee089.
 
 ## Biten
-- Kurulum (Godot 4.4.1, ÖNCE kopyası `git archive ee2ee089`).
-- Madde 1 (c5, köşe dolgusu `Ist_kdolgu_kara_suru_16`): havadaki yeşil levha = `Karsi_cali` (dunya.gd) köşe kuşak maskesi
-  dışında kalıyordu → `sur_oturtma.gd` köşe açıortay kuşak kaydı; beyaz taşlar aynı kaynakla kalktı; üçgen çentik = arazi
-  kesim bandının kırıkta dikdörtgen uzaması → gönye yarım düzlemi (`_bant_kur`, `kes_ucgen`, `bant_ici`); köşe hendek alt
-  parçalarına kırık açısından gönye payı (`sehir.gd _kose_hendek`).
-- Madde 3 (gölgelendirici, `sur_doku.gd`): hendek yüzü oyukları seyrek/yumuşak; tuğla hatılı kutu süzgeçli (c2 kesimi).
-- Sözleşme denetimleri bu kayıtta aynı: SURSOZLESME PASS 13/8, SUROYUN 519 0/0/0, WALKTHRU 7/7/0/0 (`testler/den_*`).
-
-- Madde 2 (ay gölgesi): kök neden ölçüldü (`deney_ay/`, `tests/_ist/tur9_gece`: D kameraları + Night.environment):
-  blur etkisiz (piksel farkı 0), split_1 etkisiz, yalnız mesafe → `night.gd` ay gölgesi 35 → 22 m, solma 0,55.
-- Madde 4 (sur dibi eteği): gövde köşe alfası 1 (otlu desen) → çıplak; kesimde uç rengi zeminin paletinden; kesik
-  aralık kıyısında etek 3 m'de söner, dip bandı 1,8 m'de söner (`sur_oturtma_ag.gd`).
-- Denetimler yine aynı (`testler/den2_*`).
+- 1 hendek dış kıyısı KISMEN (havadaki çalı, beyaz taşlar, üçgen çentik giderildi; yakın yaka düz kenarı duruyor).
+- 2 ay gölgesi TAMAM (kök neden ölçüldü: blur/split etkisiz, mesafe 35 → 22 m + solma 0,55); an_03 sol orta nesne/bant KISMEN.
+- 3 koyu yamalar + tuğla kesimi TAMAM; an_03 ton KISMEN (ışık yönü).
+- 4 sur dibi eteği KISMEN (etek yaması gitti; Grant altındaki gri dörtgen etek değil → C'ye istek).
+- 5 çit yakın kare TAMAM (kazık prizma; sedde kutusu → toprak sırt).
+- 6 Blakherna KISMEN (görünüş sur kuşağı kalemiyle, çarpışma dökümü ÖNCE = SONRA; hat kara suruyla üst üste → istek).
+- Denetimler aynı (13/8, 519 0/0/0, 7/7/0/0); PARSECHECK PASS 356; 21 bölüm AUTOTEST PASS (26'da bir koşuda kararsız
+  WALKTHRU, 3 tekrarda 0); bütçe +%5 içinde; kutu sayımı 904 → 904. Ayrıntı `rapor.md`.
 
 ## Süren
-- Madde 1 kalan: c5 yakın yakadaki düz kenar (köşede kıyı örtüsü denemesi görünür katkı vermedi / yama yaptı → geri alındı).
+- Yok (tur kapandı).
 
-## Sıradaki
-- Madde 2 ay gölgesi (Night.environment / look.gd), 4 sur dibi eteği, 5 çit yakın kare; ÖNCE/SONRA kare setleri; 6 Blakherna.
+## Sıradaki (rapor "hâlâ kötü olanlar")
+- c5 yakın yaka düz kenarı (köşede arazi yakadan alçak), c21 an_01 gri dörtgen, c20 an_03 koyu nesne/bej bant, D4 duvar dibi
+  ay gölgesi panelleri, A gece_06 gölge farkı, Blakherna/kara suru üst üste hattı.

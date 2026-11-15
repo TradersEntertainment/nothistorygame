@@ -229,7 +229,8 @@ static func build_siper(host: Node3D, k: float, lod: int, tohum := 8, line := Pa
 	var w := B.new("wood")
 	var strip := B.new("")
 	strip.cast = false
-	var sirt := B.new("")
+	# TUR-9: sedde sırtı hendek şeridiyle aynı ağda (aynı malzeme: siper başına ek çizim çağrısı yok; k05 bütçesi)
+	var sirt := strip
 	var total := 0.0
 	for i in line.size() - 1:
 		total += line[i].distance_to(line[i + 1])
@@ -291,7 +292,6 @@ static func build_siper(host: Node3D, k: float, lod: int, tohum := 8, line := Pa
 				_kazik_dizi(w, cp, dn, fr, sl, lod, r)
 				w.solid_box(Vector3(cp.x, cy + 0.65, cp.y), Vector3(sl, 1.3, 0.3), yaw)
 	e.done(host, "sedde")
-	sirt.done(host, "sedde_sirt")
 	w.done(host, "cit")
 	strip.done(host, "hendek")
 

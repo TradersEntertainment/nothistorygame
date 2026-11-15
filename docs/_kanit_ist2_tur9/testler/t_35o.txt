@@ -1,0 +1,2 @@
+AUTOTEST PASS chapter=35o variant= outcome=35O.1 loose=0 swept=0 broke=false slips=0 snaps=0 logs=0/0 oxen=3
+KOSU ad=35o rc=0 sn=61 args=--chapter=35o --autotest

@@ -1,0 +1,2 @@
+AUTOTEST PASS chapter=33o variant= outcome=33O.1 stones=4 hits=0 falls=0 water=0 hidden=true gift=refuse warn=ok big=true
+KOSU ad=33o rc=0 sn=38 args=--chapter=33o --autotest
