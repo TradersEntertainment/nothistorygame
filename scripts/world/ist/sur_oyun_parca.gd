@@ -889,8 +889,8 @@ class GedikOnarim extends Node3D:
 				var c2: Array = izgara[i + 1][(j + 1) % nt]
 				var d: Array = izgara[i][(j + 1) % nt]
 				# sarım: dış normale göre (Ag.tri ile aynı kural)
-				var cr := (b[0] as Vector3 - a[0]).cross(c2[0] as Vector3 - a[0])
-				var dis := (a[1] as Vector3)
+				var cr: Vector3 = ((b[0] as Vector3) - (a[0] as Vector3)).cross((c2[0] as Vector3) - (a[0] as Vector3))
+				var dis: Vector3 = a[1]
 				if cr.dot(dis) > 0.0:
 					for v in [a, c2, b, a, d, c2]:
 						ekle.call(v)

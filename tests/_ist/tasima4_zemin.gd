@@ -3,7 +3,7 @@ extends Node3D
 ## yukarıdan aşağı ışın: düşen düellocunun (Duelist._fall_tick) konabileceği GÖRÜNEN, basılabilir zemin var mı.
 ## İlk çarpılan gövde basılamazsa (görünmez kutu, meta yok) adı yazılır: ceset onun içinden geçer.
 ##   godot --headless --path . tests/_ist/tasima4_zemin.tscn -- [--asama_onarim=N]
-## Satırlar: ZEMIN4 bos x z ilk=… | ZEMIN4 gecirgen x z ad=… | ZEMIN4 OZET nokta=… bos=… gecirgen=…
+## Satırlar: ZEMIN4 bos x z yurunur=(ışın boyunca basılabilir yüzey sayısı) ilk=… | ZEMIN4 gecirgen x z ad=… | ZEMIN4 OZET nokta=… bos=… gecirgen=…
 
 func _ready() -> void:
 	var onarim := 10
@@ -21,6 +21,7 @@ func _ready() -> void:
 	var n := 0
 	var bos := 0
 	var gec := 0
+	var yurur_bos := 0
 	var gec_ad := {}
 	var x := -24.0
 	while x <= 24.0:
@@ -30,16 +31,20 @@ func _ready() -> void:
 			var q := PhysicsRayQueryParameters3D.create(Vector3(x, 14.0, z), Vector3(x, -20.0, z), 1)
 			var ilk := ""
 			var bulundu := false
+			var yurunur := 0
 			for k in 10:
 				var h := space.intersect_ray(q)
 				if h.is_empty():
 					break
 				var col: Object = h["collider"]
 				var nrm := h["normal"] as Vector3
+				# Duelist._fall_tick'in konma şartı: görünen gövde (visible_body) VE basılabilir; yürüme (_floor_at) yalnız basılabilir
 				var ok := col is CollisionObject3D and nrm.y > 0.6 and Unclip.visible_body(col) and Unclip.standable(col, int(h.get("shape", 0)))
 				if ok:
 					bulundu = true
 					break
+				if nrm.y > 0.6 and Unclip.standable(col, int(h.get("shape", 0))):
+					yurunur += 1
 				if nrm.y > 0.6 and not Unclip.visible_body(col):
 					var ad := str((col as Node).get_path()).get_file() if col is Node else "?"
 					var par := str((col as Node).get_parent().name) if col is Node else "?"
@@ -48,7 +53,9 @@ func _ready() -> void:
 				q.exclude = q.exclude + [(col as CollisionObject3D).get_rid()]
 			if not bulundu:
 				bos += 1
-				print("ZEMIN4 bos x=%.1f z=%.1f ilk=%s" % [x, z, ilk])
+				if yurunur > 0:
+					yurur_bos += 1
+				print("ZEMIN4 bos x=%.1f z=%.1f yurunur=%d ilk=%s" % [x, z, yurunur, ilk])
 			elif ilk != "":
 				gec += 1
 				gec_ad[ilk.get_slice(" ", 0)] = gec_ad.get(ilk.get_slice(" ", 0), 0) + 1
@@ -56,5 +63,5 @@ func _ready() -> void:
 		x += 1.0
 	for k in gec_ad:
 		print("ZEMIN4 gecirgen ad=%s n=%d" % [k, gec_ad[k]])
-	print("ZEMIN4 OZET onarim=%d nokta=%d bos=%d gecirgen=%d" % [onarim, n, bos, gec])
+	print("ZEMIN4 OZET onarim=%d nokta=%d bos=%d yurunur_ama_konulamaz=%d gecirgen=%d" % [onarim, n, bos, yurur_bos, gec])
 	get_tree().quit(0)

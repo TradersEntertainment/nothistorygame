@@ -1122,10 +1122,10 @@ func _fall_tick(delta: float) -> void:
 	var space := get_world_3d().direct_space_state
 	var q := PhysicsRayQueryParameters3D.create(from + Vector3(0, 0.25, 0), to + Vector3(0, -0.05, 0), 1, _excl())
 	var hit := space.intersect_ray(q)
-	if not hit.is_empty() and not _is_person_part(hit["collider"]) and Unclip.visible_body(hit["collider"]) \
+	if not hit.is_empty() and not _is_person_part(hit["collider"]) and _fall_solid(hit["collider"]) \
 			and (_fall_t > 0.3 or (hit["normal"] as Vector3).y > 0.6):
 		var n := hit["normal"] as Vector3
-		if n.y > 0.6 and Unclip.standable(hit["collider"], int(hit.get("shape", 0))):
+		if n.y > 0.6 and (_fall_any == 1 or Unclip.standable(hit["collider"], int(hit.get("shape", 0)))):
 			_fall_land(hit["position"] as Vector3)
 			return
 		if n.y <= 0.6:
@@ -1141,6 +1141,25 @@ func _fall_tick(delta: float) -> void:
 		_falling = false
 		visible = false
 		set_process(false)
+
+
+## Düşen gövdeyi durduran katı mı. Varsayılan: görünen gövde (Unclip.visible_body). Sahne (düellocunun bir atası)
+## "dusus_her_kati" metası taşırsa her StaticBody3D katıdır: yeni sur setinin (SurSetSahne) zemin ve duvar gövdelerinin
+## görünen ağı pişirilmiş kardeş düğümde, gövdenin çocuğu değil; visible_body onları görmüyor, atılan düellocu moloz
+## rampasının içinden geçip 4 sn düşüyordu (y −70…−128; docs/_kanit_ist2_tasima4/rapor.md §3). Yalnız yeni setli bölümler verir.
+var _fall_any := -1
+func _fall_solid(c: Object) -> bool:
+	if Unclip.visible_body(c):
+		return true
+	if _fall_any < 0:
+		_fall_any = 0
+		var q: Node = get_parent()
+		while q != null:
+			if q.has_meta("dusus_her_kati"):
+				_fall_any = 1 if bool(q.get_meta("dusus_her_kati")) else 0
+				break
+			q = q.get_parent()
+	return _fall_any == 1 and c is StaticBody3D and not (c as Node).is_queued_for_deletion()
 
 
 ## Yere çarptı: gümleme, toz, kan, sarsıntı (yakınsa); ceset orada yatar.

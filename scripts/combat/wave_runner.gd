@@ -9,7 +9,8 @@ extends RefCounted
 ##
 ## waves: [{"specs": [StoryDuel spec...], "max_active": 3, "allies": 0, "limit": 60.0, "skill": 0.4,
 ##          "from": Vector3 | [Vector3...] (giriş noktaları; yoksa dövüş yerinin ötesinde kendiliğinden),
-##          "via": [Vector3...] (giriş yolunun ara noktaları), "group": 4 (ilk bölük kaç kişi; yoksa max_active + 2),
+##          "via": [Vector3...] (giriş yolunun ara noktaları; ya da her giriş noktası için bir yol: [[Vector3...], ...]),
+##          "group": 4 (ilk bölük kaç kişi; yoksa max_active + 2), "stagger": 0.0 (bölükte sırayla çıkış aralığı, sn),
 ##          "rally": 16.0 (alarm yarıçapı; 0 kapalı), "rally_foes": 0 (karşı taraftan kalkacak en çok),
 ##          "ally_from": Vector3 (taze dostların koşup geldiği yer; yoksa oyuncunun arkası),
 ##          "ladders": [{"base", "top", "land"}] (rakipler bu merdivenlerden tırmanıp mazgaldan atlar),
@@ -243,7 +244,14 @@ static func _enter(scene: Node3D, player: Player, melee: Melee, sp: Dictionary, 
 		d.rotate_y(PI)
 		melee.add_foe(d)
 		return d
-	melee.arrive(d, src, dest, w.get("via", []), float(i % 4) * 0.35)
+	# "stagger": ilk bölüğün i. rakibi giriş noktasından i × stagger sn sonra çıkar (sırayla gelme; varsayılan 0: eskisi
+	# gibi hepsi birlikte). "via" dizi dizisi olabilir: [[...], [...]] — rakip i, i % n. yolu izler (giriş noktalarıyla eşli).
+	var via = w.get("via", [])
+	if via is Array and not (via as Array).is_empty() and (via as Array)[0] is Array:
+		via = (via as Array)[i % (via as Array).size()]
+	var grp: int = w.get("group", int(w.get("max_active", 3)) + 2)
+	var sira := float(i) * float(w.get("stagger", 0.0)) if i < grp else 0.0      # takviye (düşenin yerine) beklemez
+	melee.arrive(d, src, dest, via, float(i % 4) * 0.35 + sira)
 	melee.add_foe(d)
 	return d
 

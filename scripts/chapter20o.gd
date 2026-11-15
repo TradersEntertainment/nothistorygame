@@ -26,6 +26,7 @@ const ESKI_SUR := false
 var walls: LandWalls
 ## Bölüm bağdaştırıcısı (Bölüm 20 ile aynı): sette yer soran her şey buradan
 var sur: SurSet
+var _ceset: SurSetSahne.CesetSayac        # autotest: düellocuların zemine göre en derin yeri (tasima4 §3)
 var gun: Node3D
 var player: Player
 var hud: Hud
@@ -83,6 +84,8 @@ func _ready() -> void:
 		ss.sur = sur
 		walls = ss
 	add_child(walls)
+	if GameState.autotest:
+		_ceset = SurSetSahne.ceset_sayac(self, sur)
 	# Kuşatma sürerken şehir ve surlar arası Bizans'ın: oyuncu gedikten ya da açık bir kapıdan içeri girerse savunucular
 	# yakalayıp dışarı atar (Trespass)
 	Trespass.attach(self, player, hud)
@@ -731,6 +734,8 @@ func _autotest_report() -> void:
 		ok = ok and player.downs >= 1 and not _duel_won
 	if not ok:
 		printerr("AUTOTEST: beklenen %s, gelen %s (sayfa=%s)" % [expected, _outcome, not page.is_empty()])
+	if _ceset:
+		print(_ceset.ozet("bolum=%s variant=%s" % ["20o", v]))
 	print("AUTOTEST %s chapter=20o variant=%s outcome=%s hits=%d cracks=%d gun=%d/%d gunner=%d/%d duel=%s bed=%s sur=%s" % ["PASS" if ok else "FAIL",
 		v, _outcome, hits, cracks, gun_hits, gun_shots, gunner_dodged, gunner_shots, _duel_won, _bed, "eski" if sur.eski_mi else "yeni"])
 	get_tree().quit(0 if ok else 1)

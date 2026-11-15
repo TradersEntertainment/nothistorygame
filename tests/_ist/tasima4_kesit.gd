@@ -10,6 +10,7 @@ func _init() -> void:
 	print("KESIT4 ana gedik=%s moloz_sirti=%s dis_z0=%.2f dis_z1=%.2f teras=%s hendek=[%.2f..%.2f] dip=%.2f ova_y=%.2f ova_ofs=%s" % [
 		sur.gedik(), sur.moloz_sirti(), sur.dis_sur_z0(), sur.dis_sur_z1(), sur.teras(), sur.hendek_z0(), sur.hendek_z1(),
 		sur.hendek_dip_y(), sur.ova_y(), sur.ova_ofs()])
+	print("KESIT4 poterna_x=%.2f dis_kuleler=%s gedik_en=%.2f depo=%s dogus=%s siperler=%s" % [sur.poterna_x(), sur.dis_kuleler(), sur.gedik_en(), sur.depo(), sur.dogus(), sur.siperler()])
 	for g: Dictionary in sur.gecisler():
 		print("KESIT4 gecis=%s" % [g])
 	for x: float in [0.0, -2.0, 2.0, -4.0, 4.0]:
