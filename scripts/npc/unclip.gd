@@ -583,7 +583,11 @@ static func clear_line(root: Node, from: Vector3, targets: Array, keep: Array = 
 			var q := Geometry3D.get_closest_point_to_segment(p.global_position, from, t.global_position)
 			var off := Vector2(p.global_position.x - q.x, p.global_position.z - q.z)
 			if off.length() < 1.0 and p.global_position.distance_to(from) > 0.6:
-				var side := off.normalized() if off.length() > 0.05 else Vector2(1, 0)
+				# Tam çizginin üstünde duran için "yan" çizgiye dik olmalı (eskiden sabit (1, 0): çizgi x yönündeyse
+				# yan çekilme çizgi boyunca oluyor, kişi görüşün önünde kalıyordu; 26 hold_lose personhidden)
+				var side := off.normalized() if off.length() > 0.05 else Vector2(-(t.global_position.z - from.z), t.global_position.x - from.x).normalized()
+				if side.is_zero_approx():
+					side = Vector2(1, 0)
 				for sg: float in [1.0, -1.0]:
 					var c := p.global_position + Vector3(side.x, 0, side.y) * sg * (1.3 - off.length() if sg > 0.0 else 1.3 + off.length())
 					var fy := floor_y(p, c, 1.0, 1.2)

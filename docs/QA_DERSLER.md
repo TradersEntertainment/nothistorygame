@@ -1107,3 +1107,11 @@ Her bölüm denetiminde ve her düzeltmede bu listeyi baştan uygula. Yeni bir h
   - Sahne gizlenip zamanlayıcılar sürüyorsa kişi yürüten döngüler kendi `visible` bayrağına değil
     `is_visible_in_tree()`'ye bakar: boş yer denetimi görünmeyeni saymaz, adım komşunun içinde biter.
   - Nadir kusurda suçu son birleşmeye yıkma: ikiye bölme, kusurun yayındaki sürümde de olduğunu gösterdi.
+- v0.99.121 (küçük güncelleme: Bölüm 26'nın iki kararsız denetimi [Sonnet, günlükle kök neden])
+  - Kararsız denetim satırı "flake" değildir: günlükle tek tek kare izlenir. Konuşanın önüne çekilen asker: kişi görüş
+    çizgisinin TAM üstündeyken "yana çek" yönü sabit (1, 0) seçiliyordu; çizgi x boyunca uzanınca yana değil çizgi
+    BOYUNCA kayıyordu. Dejenere durumda yön her zaman çizgiye dik hesaplanır.
+  - Bir karelik durum kayması: yenilgide kılıç kına girdiği kare ile oyuncunun yere serilmesi arasında bir kare vardı
+    (ayakta, silahsız, yanında saldırgan). Birbirine bağlı iki durum değişikliği aynı karede yapılır.
+  - Tam pakette çıkan her satır eski sürümle aynı sayıda karşılaştırılır (26 =council_bad Duelist moloz/sur: 0.99.120'de
+    de 1/12, 0.99.121'de 1/12 → bu sürümün getirdiği değil, ayrı iş).
