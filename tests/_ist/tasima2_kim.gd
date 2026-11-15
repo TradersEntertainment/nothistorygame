@@ -15,8 +15,8 @@ static func sor(root: Node, kam: Camera3D, px: Vector2, en_cok := 25) -> Array:
 		if g == null or not g.is_visible_in_tree():
 			continue
 		var ab: AABB = g.global_transform * g.get_aabb()
-		if ab.size.length() > 400.0:
-			continue
+		if ab.size.length() > 400.0 or maxf(ab.size.x, maxf(ab.size.y, ab.size.z)) > 25.0:
+			continue      # büyük gövdeler (sur dilimi, kalabalık MultiMesh) aday listesini boğuyordu
 		var hit = ab.intersects_ray(o, yon)
 		if hit == null:
 			continue

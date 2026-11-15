@@ -932,6 +932,13 @@ var _asama4_ok := false
 func _kare_asama4() -> void:
 	_asama4_ok = true
 	await _kare_gedik("onarim_asama4")
+	if not sur.eski_mi:
+		# aşama 4'ün kazık çiti: şehir tarafından (doğuşun önü), çit + işçiler + barikat bir arada
+		var p := player.global_position
+		player.global_position = Vector3(-6.0, 0.05, 5.6)
+		player.face(Vector3(0.0, 1.6, sur.gedik_onu().z + 0.6))
+		await _kare("cit_sehir_tarafindan")
+		player.global_position = p
 
 
 ## Onarım karesi: teslim yerinin 1,6 m gerisinden ve solundan (taşıyıcıların varış noktası teslim yerinin hemen önü:

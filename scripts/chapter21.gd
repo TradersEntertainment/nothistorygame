@@ -1371,10 +1371,17 @@ func _kare(ad: String) -> void:
 	if dir == "":
 		return
 	DirAccess.make_dir_recursive_absolute(dir)
-	for k in 3:
+	for k in 20:
 		await get_tree().process_frame
-	await RenderingServer.frame_post_draw
+	# bütçe: bu bakışta 10 karenin ortalama çizim çağrısı ve ilkel sayısı (eski ↔ yeni aynı kameradan)
+	var dc := 0.0
+	var pr := 0.0
+	for k in 10:
+		await RenderingServer.frame_post_draw
+		dc += RenderingServer.get_rendering_info(RenderingServer.RENDERING_INFO_TOTAL_DRAW_CALLS_IN_FRAME)
+		pr += RenderingServer.get_rendering_info(RenderingServer.RENDERING_INFO_TOTAL_PRIMITIVES_IN_FRAME)
 	_kare_n += 1
 	var f := dir.path_join("an_%02d_%s.jpg" % [_kare_n, ad])
 	get_viewport().get_texture().get_image().save_jpg(f, 0.85)
-	print("TASIMA21KARE %s oyuncu=%s" % [f.get_file(), player.global_position.snapped(Vector3.ONE * 0.1)])
+	print("TASIMA21KARE %s oyuncu=%s cizim=%.0f ilkel=%.0f sur=%s" % [f.get_file(), player.global_position.snapped(Vector3.ONE * 0.1),
+		dc / 10.0, pr / 10.0, "eski" if sur.eski_mi else "yeni"])
