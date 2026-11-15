@@ -617,24 +617,15 @@ class GedikOnarim extends Node3D:
 			var yag = KULE.Ag.new()
 			_toprak_yigin(yag, gx - h - 0.15, gx + h + 0.15, zs + 0.1, zs + 2.2, YIGIN_H, pr["pts"], rng)
 			yag.mesh_ekle(_katman, Props.mat(C_TOPRAK, 0.0, false, "rubble"), "Toprak_GedikSet")
-			# çuvallar: yığının sırtında bir sıra (yer yer ikinci kat), fıçıların arkasına yaslı bir sıra
-			var cuv: Array = []
-			var cx := gx - h + 0.35
-			while cx < gx + h - 0.3:
-				cuv.append(Vector3(cx + rng.randf_range(-0.06, 0.06), 0.0, zs + 0.95 + rng.randf_range(-0.12, 0.12)))
-				if absf(cx - gx) < 2.4 and rng.randf() < 0.6:
-					cuv.append(Vector3(cx + 0.3, 0.27, zs + 1.0 + rng.randf_range(-0.08, 0.08)))
-				cx += rng.randf_range(0.6, 0.7)
-			cx = gx - h + 0.6
-			while cx < gx + h - 0.5:
-				cuv.append(Vector3(cx, -0.12, zs + 0.62))
-				cx += rng.randf_range(0.75, 1.1)
-			for c: Vector3 in cuv:
-				var yy := _yigin_y(c.x, c.z, gx - h - 0.15, gx + h + 0.15, zs + 0.1, zs + 2.2, YIGIN_H, pr["pts"])
-				var cv := Props.ball(_katman, 0.5, Vector3(c.x, yy + 0.12 + c.y, c.z), C_CUVAL.darkened(rng.randf_range(0.0, 0.25)),
-					Vector3(rng.randf_range(0.58, 0.7), rng.randf_range(0.3, 0.36), rng.randf_range(0.4, 0.46)), 8)
-				cv.rotation = Vector3(rng.randf_range(-0.25, 0.25), rng.randf_range(-0.45, 0.45), rng.randf_range(-0.22, 0.22))
-				cv.name = "Toprak_Cuval"
+			# kum çuvalları: dolgun, ağzı bağlı, tuğla dizisi gibi üst üste (üst sıradaki her çuval alttaki iki çuvalın
+			# arasına oturur; en alttakiler yığına gömülü). Fıçıların arkasına yaslı duvar (ortada 3 sıra) ve yığının sırtında
+			# bir duvar (ortada 2 sıra). Eskiden tek tek basık top (Props.ball): karede "yassı disk/somun" (tasima3 an_06).
+			var cag0 = KULE.Ag.new()
+			var yf := func(x: float, z: float) -> float:
+				return _yigin_y(x, z, gx - h - 0.15, gx + h + 0.15, zs + 0.1, zs + 2.2, YIGIN_H, pr["pts"])
+			for duvar: Array in [[zs + 0.6, 3, 2.6], [zs + 1.02, 2, 1.8]]:
+				_cuval_duvar(cag0, gx - h + 0.3, gx + h - 0.3, float(duvar[0]), int(duvar[1]), float(duvar[2]), gx, yf, rng)
+			cag0.mesh_ekle(_katman, Props.mat(C_CUVAL, 0.0, false, "rubble"), "Toprak_Cuval")
 			# eteğe taşlar (yarı gömülü) ve yığına çakılı kazıklar, yatık kütükler
 			var tl: Array = []
 			for i in 22:
@@ -819,3 +810,114 @@ class GedikOnarim extends Node3D:
 			var d0 := r1 * cos(TAU * i / n) + r2 * sin(TAU * i / n)
 			var d1 := r1 * cos(TAU * (i + 1) / n) + r2 * sin(TAU * (i + 1) / n)
 			ag.quad(a + d0 * r, a + d1 * r, b + d1 * r, b + d0 * r, (d0 + d1).normalized(), col)
+
+	## Çuval duvarı: x0..x1 boyunca z hattında, `kat` sıra; üst sıralar yalnız |x − ox| < yari içinde. Alt sıra yığına gömülür
+	## (çuvalın altı, ayak izinin en alçak zemininin 3 cm altında: havada kalmaz); üst sıradaki her çuval alttaki iki komşunun
+	## arasına, ikisinin alçak sırtına oturur (tuğla dizisi). yf(x, z): zemin yüksekliği.
+	static func _cuval_duvar(ag, x0: float, x1: float, z: float, kat: int, yari: float, ox: float, yf: Callable, rng: RandomNumberGenerator) -> void:
+		var L := 0.6
+		var alt: Array = []          # [x, üst y]
+		var x := x0 + L * 0.5
+		while x <= x1 - L * 0.5 + 0.01:
+			var cx := x + rng.randf_range(-0.04, 0.04)
+			var cz := z + rng.randf_range(-0.06, 0.06)
+			var zemin := INF
+			for dx: float in [-0.26, 0.0, 0.26]:
+				for dz: float in [-0.15, 0.0, 0.15]:
+					zemin = minf(zemin, float(yf.call(cx + dx, cz + dz)))
+			alt.append([cx, _cuval(ag, Vector3(cx, zemin - 0.03, cz), rng)])
+			x += L * rng.randf_range(0.93, 0.99)
+		for k in range(1, kat):
+			var ust: Array = []
+			for i in alt.size() - 1:
+				var xa: float = (alt[i][0] + alt[i + 1][0]) * 0.5
+				if absf(xa - ox) > yari - 0.05 * k:
+					continue
+				var taban := minf(float(alt[i][1]), float(alt[i + 1][1])) - 0.05
+				ust.append([xa, _cuval(ag, Vector3(xa + rng.randf_range(-0.03, 0.03), taban, z + rng.randf_range(-0.05, 0.05) - 0.03 * k), rng)])
+			if ust.size() < 2:
+				break
+			alt = ust
+
+	## Tek kum çuvalı (yatık, boyu x yönünde ± küçük sapma): alt orta noktası `dip`. Gövde dolgun (süperelips kesit, altı
+	## yüküyle basık), uçları dikişli/büzük; bir ucunda iple bağlı ağız ve püskül. Yumuşak normaller. Döner: sırtının y'si.
+	static func _cuval(ag, dip: Vector3, rng: RandomNumberGenerator) -> float:
+		var L := rng.randf_range(0.56, 0.64) * 0.5
+		var W := rng.randf_range(0.34, 0.39) * 0.5
+		var H := rng.randf_range(0.21, 0.25) * 0.5
+		var yaw := rng.randf_range(-0.14, 0.14)
+		var bas := Basis(Vector3.UP, yaw) * Basis(Vector3.RIGHT, rng.randf_range(-0.05, 0.05))
+		var yon := 1.0 if rng.randf() < 0.5 else -1.0          # ağzın yanı
+		var alt_bas := 0.5                                      # alt yarı yükle basık
+		var merkez := dip + Vector3(0, H * alt_bas, 0)
+		var renk := Color(1, 1, 1).darkened(rng.randf_range(0.0, 0.22))
+		var ns := 8
+		var nt := 10
+		var nok := func(s: float, t: float) -> Vector3:
+			# s ∈ [−1, 1] boyuna, t açısı; f: boy profili (dolgun gövde, uçta büzülür)
+			var f := pow(maxf(0.0, 1.0 - pow(absf(s), 3.2)), 0.42)
+			var c := cos(t)
+			var sn := sin(t)
+			var zz := signf(c) * pow(absf(c), 0.7) * W * f
+			var yy := signf(sn) * pow(absf(sn), 0.7) * H * f * (1.0 if sn > 0.0 else alt_bas)
+			return merkez + bas * Vector3(s * L * yon, yy, zz)
+		var nrm := func(s: float, t: float) -> Vector3:
+			var e := 0.02
+			var du: Vector3 = nok.call(minf(s + e, 1.0), t) - nok.call(maxf(s - e, -1.0), t)
+			var dv: Vector3 = nok.call(s, t + e) - nok.call(s, t - e)
+			var n := du.cross(dv)
+			var dis: Vector3 = nok.call(s, t) - merkez
+			if n.dot(dis) < 0.0:
+				n = -n
+			return n.normalized() if n.length_squared() > 1e-12 else dis.normalized()
+		var izgara: Array = []
+		for i in ns + 1:
+			var s := -0.985 + 1.97 * float(i) / ns
+			var sat: Array = []
+			for j in nt:
+				var t := TAU * float(j) / nt
+				sat.append([nok.call(s, t), nrm.call(s, t)])
+			izgara.append(sat)
+		var ekle := func(v: Array) -> void:
+			ag.st.set_color(renk)
+			ag.st.set_normal(v[1])
+			ag.st.add_vertex(v[0])
+		for i in ns:
+			for j in nt:
+				var a: Array = izgara[i][j]
+				var b: Array = izgara[i + 1][j]
+				var c2: Array = izgara[i + 1][(j + 1) % nt]
+				var d: Array = izgara[i][(j + 1) % nt]
+				# sarım: dış normale göre (Ag.tri ile aynı kural)
+				var cr := (b[0] as Vector3 - a[0]).cross(c2[0] as Vector3 - a[0])
+				var dis := (a[1] as Vector3)
+				if cr.dot(dis) > 0.0:
+					for v in [a, c2, b, a, d, c2]:
+						ekle.call(v)
+				else:
+					for v in [a, b, c2, a, c2, d]:
+						ekle.call(v)
+				ag.n += 2
+		# uç kapakları (dikişli dip ve büzük ağız)
+		for uc: int in [0, ns]:
+			var sat: Array = izgara[uc]
+			var m := Vector3.ZERO
+			for v: Array in sat:
+				m += v[0]
+			m /= float(nt)
+			var dis2 := bas * Vector3((1.0 if uc == ns else -1.0) * yon, 0, 0)
+			for j in nt:
+				ag.tri(sat[j][0], sat[(j + 1) % nt][0], m, dis2, renk)
+		# bağlı ağız: büzük boyun (koni), iple sarılı halka, püskül
+		var ax := bas * Vector3(yon, 0, 0)
+		var agiz := merkez + ax * (L * 0.97) + Vector3(0, H * 0.15, 0)
+		var ipr := Color(0.62, 0.54, 0.42)
+		_cubuk(ag, agiz - ax * 0.02, agiz + ax * 0.05, 0.045, 6, renk.darkened(0.08))
+		_cubuk(ag, agiz + ax * 0.035, agiz + ax * 0.06, 0.05, 6, ipr)
+		var pus := agiz + ax * 0.06
+		var r1 := ax.cross(Vector3.UP).normalized()
+		for j in 6:
+			var d0 := r1.rotated(ax, TAU * j / 6.0)
+			var d1 := r1.rotated(ax, TAU * (j + 1) / 6.0)
+			ag.tri(pus + d0 * 0.02, pus + d1 * 0.02, pus + ax * 0.07 + (d0 + d1) * 0.04 + Vector3(0, -0.02, 0), (d0 + d1).normalized(), renk.darkened(0.12))
+		return merkez.y + H * 0.92

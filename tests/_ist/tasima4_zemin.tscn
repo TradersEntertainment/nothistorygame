@@ -1,0 +1,6 @@
+[gd_scene load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://tests/_ist/tasima4_zemin.gd" id="1"]
+
+[node name="Tasima4Zemin" type="Node3D"]
+script = ExtResource("1")
