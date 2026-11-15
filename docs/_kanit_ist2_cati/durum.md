@@ -10,8 +10,15 @@ Dal: `wip/ist2-cati` (taban `wip/ist2-birlesik`).
 - Bulgu: Ayasofya–Yerebatan–Hipodrom arası bugün EV YOK (94 ev zonda ama hepsi batıda/kuzeyde; arası anıt daireleri,
   meydan oyun alanı, Augustaion döşemesi, Hipodrom). Çatı rotası için yeni ev kümeleri gerekiyor.
 
+## Biten (2)
+- `scripts/world/ist/cati.gd` (IstCati): 12 yeni ev (E, M1a, M1b, M2, Ds sıraları; `sira~dam` düz dam), 5 dış merdiven,
+  1 dam merdiveni, 1 kalas köprü (ayaklı), 2 bakış kulesi, 2 saman yığını; sokak verisine eklenir (doluluk 2).
+- `evler.gd`: `~dam` eki ve `c_*` parça tipleri; `sokak.gd`: build sonunda `IstCati.uygula`; `sehir.gd/_sehir_dokusu_v2`:
+  parçalar aynı katmanlara, çakışan ağaç/doku/meydan kuyusu kurulmaz (rng sırası aynı).
+- Bot SONRA (KAPALI kip): R1/R2/R3 tamam=3 takılma=0 düşme=0 sıkışma=0 (`bot_SONRA_kapali.txt`).
+
 ## Süren
-- ÖNCE kareleri (14 kare: sokak 6, çatı 6, hava 2) + çizim/ilkel bütçesi.
+- ÖNCE (`--cati=0`) ve SONRA kareleri (14'er) + bütçe; bot ÖNCE ve AÇIK kip.
 
 ## Sıradaki
 - `scripts/world/ist/cati.gd`: yeni kümeler (E: meydan doğu kıyısı, M1/M2: meydan güney kıyısı–Milion, D: Hipodrom doğu

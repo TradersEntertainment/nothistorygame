@@ -222,6 +222,8 @@ static func build_merdiven(host: Node3D, h: float, lod: int = 0) -> void:
 
 ## Evin bütün kararları (biçim, renk, çatı, ekler) tohum ve tipten: ev() ve shapes() aynı planı kullanır.
 static func plan(L: float, D: float, H: float, tohum: int, tip: String) -> Dictionary:
+	var ek_ := ek(tip)
+	tip = taban_tip(tip)
 	var rng := RandomNumberGenerator.new()
 	rng.seed = tohum * 7919 + hash(tip)
 	var p := {"L": L, "D": D, "H": H, "tip": tip, "tohum": tohum}
@@ -287,7 +289,23 @@ static func plan(L: float, D: float, H: float, tohum: int, tip: String) -> Dicti
 	p["baca"] = tip in ["firin", "demirci"] or (cati == "kiremit" and rng.randf() < 0.45)
 	# Dış merdiven (teras ve kule dama; konakta üst kat sofaya)
 	p["merdiven"] = tip in ["teras", "kule"]
+	p["ek"] = ek_
+	if ek_ == "dam":
+		# ÇATI ROTASI (IstCati, docs/ISTANBUL_CATI.md): yürünür düz dam; dam üstünde baca, saman/küp ve dış merdiven yok
+		# (rotanın merdivenleri ve köprüleri IstCati'nin parçaları). Renk, biçim, pencere, kapı aynı plandan (rng sırası aynı).
+		p["cati"] = "duz"
+		p["baca"] = false
+		p["merdiven"] = false
 	return p
+
+
+## ÇATI ROTASI: tip eki ("sira~dam": aynı ev, düz damlı). Taban tip bütün eski kararlarda kullanılır.
+static func taban_tip(tip: String) -> String:
+	return tip.get_slice("~", 0)
+
+
+static func ek(tip: String) -> String:
+	return tip.get_slice("~", 1) if tip.contains("~") else ""
 
 
 # ---------------------------------------------------------------- ev gövdesi
@@ -297,6 +315,7 @@ static func plan(L: float, D: float, H: float, tohum: int, tip: String) -> Dicti
 ## pencere/kapı boşlukları (çarpışma aynı); lod 2 gövde + çatı (çarpışmasız, uzak siluet; renkler aynı).
 static func ev(host: Node3D, L: float, D: float, H: float, tohum: int, lod: int, tip := "sira") -> void:
 	var p := plan(L, D, H, tohum, tip)
+	tip = String(p["tip"])
 	var rng := RandomNumberGenerator.new()
 	rng.seed = tohum * 97 + 13
 	var gf: float = p["gf"]
@@ -436,7 +455,7 @@ static func _cati(host: Node3D, p: Dictionary, lod: int) -> void:
 					# TUR-7 (KUTU YASAĞI): asma yaprağı düz yeşil KUTU levha değil ("havada kare yeşillik"): kirişlere
 					# oturan yassı, kabarık yaprak öbeği (tek ağ: çizim sayısı aynı), solgun zeytin
 					Props.ball(host, 0.5, Vector3(0, H + 2.56, -D * 0.1), Color("434f33"), Vector3(L * 0.64, 0.42, 2.5), 8)
-			elif lod == 0:
+			elif lod == 0 and String(p.get("ek", "")) != "dam":
 				# düz damda saman/odun ya da küp
 				Props.box(host, Vector3(1.2, 0.5, 0.9), Vector3(-L * 0.2, H + 0.43, -D * 0.15), Color("8a7a50"))
 		_:
@@ -654,7 +673,7 @@ static func _dk(col: Color, pattern: String) -> Color:
 static var _mesh_cache := {}        # "v|tip|lod" → Mesh
 
 static func _tohum(v: int, tip: String) -> int:
-	return v * 7 + (3 if tip == "dukkan" else 0)
+	return v * 7 + (3 if taban_tip(tip) == "dukkan" else 0)
 
 
 ## Örneğin pişmiş ağı (MultiMesh / birleşik ağ için). lod 0 tam (dokulu), lod 1 sade (dokulu), lod 2 tek yüzey.
@@ -690,7 +709,7 @@ static var _ob_temiz := false
 
 static func _ob_yol(v: int, tip: String, lod: int) -> String:
 	if _ob_imza == "":
-		_ob_imza = IstSokak.onbellek_imza(["res://scripts/world/ist/evler.gd", "res://scripts/level/props.gd",
+		_ob_imza = IstSokak.onbellek_imza(["res://scripts/world/ist/evler.gd", "res://scripts/world/ist/cati.gd", "res://scripts/level/props.gd",
 			"res://scripts/world/world1453.gd", "res://scripts/level/dressing.gd", Props.outlines])
 	return IstSokak.ONBELLEK_DIR + "ev/%s%s_%d_%s_%d.res" % [_ob_imza, "v2" if IstSehir.v2 else "", v, tip, lod]
 
@@ -778,8 +797,11 @@ static func _ob_mesh_yaz(v: int, tip: String, lod: int, m: Mesh) -> void:
 
 static func _mesh_kur(v: int, tip: String, lod: int) -> Mesh:
 	var tmp := Node3D.new()
-	var d := dims(v)
-	ev(tmp, d.x, d.z, d.y, _tohum(v, tip), lod, tip)
+	if tip.begins_with("c_"):
+		IstCati.build_parca(tmp, v, tip, lod)          # çatı rotası parçası (kalas, merdiven, bakış kulesi, saman)
+	else:
+		var d := dims(v)
+		ev(tmp, d.x, d.z, d.y, _tohum(v, tip), lod, tip)
 	var list: Array = []
 	for n in tmp.find_children("*", "MeshInstance3D", true, false):
 		list.append(n)
@@ -793,8 +815,11 @@ static func _mesh_kur(v: int, tip: String, lod: int) -> Mesh:
 
 ## Örneğin çarpışma şekilleri (yerel): [[Shape3D, Transform3D], …] — ev() ile aynı plan
 static func shapes(v: int, tip: String) -> Array:
+	if tip.begins_with("c_"):
+		return IstCati.shapes_parca(v, tip)
 	var d := dims(v)
 	var p := plan(d.x, d.z, d.y, _tohum(v, tip), tip)
+	tip = String(p["tip"])
 	var L := d.x
 	var D := d.z
 	var H := d.y
@@ -869,6 +894,7 @@ static func _sundurma_x(v: int, tip: String) -> float:
 static func tasma(v: int, tip: String) -> Dictionary:
 	var d := dims(v)
 	var p := plan(d.x, d.z, d.y, _tohum(v, tip), tip)
+	tip = String(p["tip"])
 	return {"on": 1.4 if (bool(p["sundurma"]) or tip == "dukkan") else 0.6, "yan": 1.0 if bool(p["merdiven"]) else 0.0}
 
 
@@ -877,6 +903,7 @@ static func tasma(v: int, tip: String) -> Dictionary:
 static func climbs(v: int, tip: String) -> Array:
 	var d := dims(v)
 	var p := plan(d.x, d.z, d.y, _tohum(v, tip), tip)
+	tip = String(p["tip"])
 	var out: Array = []
 	if tip == "dukkan":
 		var w := minf(d.x - 2.6, 3.4)

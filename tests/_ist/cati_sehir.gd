@@ -61,8 +61,63 @@ func _kos() -> void:
 			await _dolu()
 		"nokta":
 			await _dolu(true)
+		"merd":
+			await _merd()
 	print("CATIS BITTI")
 	get_tree().quit(0)
+
+
+## Hata ayıklama: bir evin yan merdiveninin çevresinde (evin yereli) çarpışma yüksekliği ızgarası
+func _merd() -> void:
+	var ad := "Ds3"
+	for a: String in OS.get_cmdline_user_args():
+		if a.begins_with("--ev="):
+			ad = a.substr(5)
+	var e: Dictionary = IstCati.plan()["geo"][ad]
+	var c: Vector2 = e["c"]
+	var merkez := ""
+	for a: String in OS.get_cmdline_user_args():
+		if a.begins_with("--merkez="):
+			merkez = a.substr(9)
+	cam.global_position = Vector3(c.x, IstGeo.h(c.x, c.y) + 2, c.y)
+	for cc: Dictionary in s._cells0:
+		var q: Vector3 = cc["c"]
+		if Vector2(q.x - c.x, q.z - c.y).length() < 80:
+			s._cell_up(cc)
+	dunya.call("carpisma_yenile", Vector3(c.x, 0, c.y))
+	for i in 8:
+		await get_tree().physics_frame
+	var sp := get_world_3d().direct_space_state
+	if merkez != "":
+		var f := merkez.split(",")
+		var mc := Vector2(f[0].to_float(), f[1].to_float())
+		var yy := float(e["ust"])
+		var zz := mc.y - 3.0
+		while zz <= mc.y + 3.0:
+			var row := PackedStringArray()
+			var xx := mc.x - 3.0
+			while xx <= mc.x + 3.0:
+				var hit := sp.intersect_ray(PhysicsRayQueryParameters3D.create(Vector3(xx, yy + 12, zz), Vector3(xx, yy - 8, zz)))
+				row.append("%5.2f" % ((hit["position"] as Vector3).y - yy) if not hit.is_empty() else "  -  ")
+				xx += 0.3
+			print("CATIMERD z=%.1f %s" % [zz, " ".join(row)])
+			zz += 0.3
+		return
+	var L: float = e["L"]
+	var D: float = e["D"]
+	var y0: float = e["y0"]
+	print("CATIMERD %s L=%.1f D=%.1f y0=%.2f ust=%.2f" % [ad, L, D, y0, float(e["ust"])])
+	var x := L * 0.5 - 0.6
+	while x < L * 0.5 + 1.8:
+		var row := PackedStringArray()
+		var z := D * 0.5 + 1.2
+		while z > -D * 0.5 - 0.4:
+			var q := (e["c"] as Vector2) + (e["ux"] as Vector2) * x + (e["uz"] as Vector2) * z
+			var hit := sp.intersect_ray(PhysicsRayQueryParameters3D.create(Vector3(q.x, y0 + 12, q.y), Vector3(q.x, y0 - 3, q.y)))
+			row.append("%5.2f" % ((hit["position"] as Vector3).y - y0) if not hit.is_empty() else "  -  ")
+			z -= 0.3
+		print("CATIMERD x=%.2f %s" % [x, " ".join(row)])
+		x += 0.2
 
 
 # ---------------------------------------------------------------- doluluk (ışın taraması)
@@ -97,7 +152,7 @@ func _dolu(nokta := false) -> void:
 						q = P + X * f[1].to_float() + Z * f[2].to_float()
 					var g := IstGeo.h(q.x, q.y)
 					var hit := sp.intersect_ray(PhysicsRayQueryParameters3D.create(Vector3(q.x, g + 60.0, q.y), Vector3(q.x, g - 3.0, q.y)))
-					var cn := "" if hit.is_empty() else str((hit["collider"] as Node).get_parent().name if (hit["collider"] as Node).get_parent() else "")
+					var cn := "" if hit.is_empty() else str((hit["collider"] as Node).get_path()).substr(0, 140)
 					print("CATINOKTA %s w=(%.1f,%.1f) zemin=%.2f dh=%.2f %s" % [t, q.x, q.y, g, -1.0 if hit.is_empty() else (hit["position"] as Vector3).y - g, cn])
 		return
 	var W := int(r.size.x)
@@ -151,6 +206,12 @@ func _olc() -> void:
 		txt.append(line)
 		print("CATIEV " + line)
 	var yol := IstCati.sokaklar(s.sokak.streets, IstCati.zon())
+	for st: Dictionary in yol:
+		var lp: Array = []
+		for q: Vector2 in (st["pts"] as PackedVector2Array):
+			var r := q - IstCati.HIP_P
+			lp.append("(%.0f,%.0f|h%.1f,%.1f)" % [q.x, q.y, r.dot(IstCati.HIP_X), r.dot(IstCati.HIP_Z)])
+		print("CATIYOL w=%.1f tur=%s %s" % [float(st["w"]), st["tur"], " ".join(lp)])
 	print("CATIZON ozet %s sokak_sayisi=%d genislikler=%s" % [str(say), yol.size(), str(IstCati.genislik_ozet(yol))])
 	var f := FileAccess.open(out.path_join("cati_envanter_%s.md" % on_), FileAccess.WRITE)
 	f.store_string("# Çatı envanteri (%s)\n\nÖzet: %s\n\nSokak genişlikleri (m, adet): %s\n\n" % [on_, str(say), str(IstCati.genislik_ozet(yol))])
@@ -244,6 +305,7 @@ func _dolgu(img: Image, q: PackedVector2Array, c: Color) -> void:
 
 # ---------------------------------------------------------------- bot
 
+var iz_kayit := OS.get_cmdline_user_args().has("--iz")
 var ozet := {"rota": 0, "tamam": 0, "takilma": 0, "dusme": 0, "sikisma": 0, "yuksuz": 0}
 
 
@@ -255,7 +317,13 @@ func _bot_hepsi() -> void:
 	if kip == "acik":
 		pl.enable_climb()
 	var rotalar := IstCati.rotalar(s.sokak.houses)
+	var sec := ""
+	for a: String in OS.get_cmdline_user_args():
+		if a.begins_with("--rota="):
+			sec = a.substr(7)
 	for ro: Dictionary in rotalar:
+		if sec != "" and not String(ro["ad"]).begins_with(sec):
+			continue
 		await _bot(ro)
 	print("CATIBOT OZET kip=%s rota=%d tamam=%d takilma=%d dusme=%d sikisma=%d yuksuz=%d" % [kip, ozet["rota"], ozet["tamam"],
 		ozet["takilma"], ozet["dusme"], ozet["sikisma"], ozet["yuksuz"]])
@@ -298,6 +366,8 @@ func _bot(ro: Dictionary) -> void:
 	var eksik: int = await _hucre_hazir(wps)
 	var bas: Vector3 = ro["bas"]
 	cam.global_position = bas + Vector3(0, 2, 0)
+	# ışınlama sonrası arazi çarpışma yaması yenilenir (IstDunya.carpisma_yenile; oyundaki ışınlamalar da böyle yapar)
+	dunya.call("carpisma_yenile", dunya.to_local(bas))
 	pl.global_position = bas + Vector3(0, 0.3, 0)
 	pl.velocity = Vector3.ZERO
 	for i in 20:
@@ -330,6 +400,8 @@ func _bot(ro: Dictionary) -> void:
 		await get_tree().physics_frame
 		Input.action_release("jump")
 		cam.global_position = pl.global_position + Vector3(0, 1.6, 0)
+		if iz_kayit and Engine.get_physics_frames() % 5 == 0:
+			print("CATIIZ wp%d p=(%.2f,%.2f,%.2f) v=(%.1f,%.1f,%.1f) yer=%s" % [i, pl.global_position.x, pl.global_position.y, pl.global_position.z, pl.velocity.x, pl.velocity.y, pl.velocity.z, pl.is_on_floor()])
 		var dt := get_physics_process_delta_time()
 		t += dt
 		p = pl.global_position
@@ -354,7 +426,7 @@ func _bot(ro: Dictionary) -> void:
 		if dd < best - 0.3:
 			best = dd
 			iz = t
-		if dd < 1.0 and absf(p.y - wp.y) < 1.3:
+		if dd < 0.9 and absf(p.y - wp.y) < 0.2:
 			logs.append("wp%d t=%.1f y=%.2f" % [i, t, p.y])
 			i += 1
 			iz = t
@@ -394,14 +466,8 @@ func _zipla_gerek(wp: Vector3) -> bool:
 	var h := sp.intersect_ray(q)
 	if h.is_empty() and wp.y > p.y - 4.0:
 		return true                  # kenar: önde zemin yok (karşı çatıya atla)
-	var kq := PhysicsRayQueryParameters3D.create(p + Vector3.UP * 0.3, p + Vector3.UP * 0.3 + fwd * 0.75)
-	kq.exclude = ex
-	var k := sp.intersect_ray(kq)
-	if not k.is_empty() and (k["normal"] as Vector3).y < 0.5:
-		var uq := PhysicsRayQueryParameters3D.create(p + Vector3.UP * 0.75 + fwd * 0.75, p + Vector3.UP * 0.75)
-		uq.exclude = ex
-		if sp.intersect_ray(PhysicsRayQueryParameters3D.create(p + Vector3.UP * 0.75, p + Vector3.UP * 0.75 + fwd * 0.75, 0xFFFFFFFF, ex)).is_empty():
-			return true              # diz hizasında alçak engel, bel hizası açık
+	# Diz hizası engelde zıplanmaz: rotaların bütün basamakları ≤ 0,30 m (Player.step_up yürüyerek çıkar); dar merdivende
+	# zıplamak oyuncuyu yana kaydırıyordu (ilk sürüm). Engel varsa bot takılır ve takılma olarak sayılır.
 	return false
 
 
