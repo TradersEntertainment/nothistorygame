@@ -870,7 +870,7 @@ static func kiyi_ortu(p: Node3D, x0: float, x1: float, ze: float, s: float, tohu
 				var a2: Vector3 = rows[i + 1][2]
 				var b2: Vector3 = rows[i + 1][3]
 				var q := (a.lerp(b, hk)).lerp(a2.lerp(b2, hk), _hash(k, i + 5))
-				var sc := 0.7 + hk * 0.7
+				var sc := 0.5 + hk * 0.45
 				otlar.append(Transform3D(Basis(Vector3.UP, hk * TAU).scaled(Vector3(sc, sc * (0.8 + 0.5 * ho), sc)), q - Vector3(0, 0.04, 0)))
 		for j in prof.size() - 1:
 			var vv := [rows[i][j], rows[i][j + 1], rows[i + 1][j], rows[i + 1][j], rows[i][j + 1], rows[i + 1][j + 1]]

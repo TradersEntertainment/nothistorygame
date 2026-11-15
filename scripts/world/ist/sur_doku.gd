@@ -144,7 +144,7 @@ void fragment() {
 		// dökülmüş taş: yer yer blok yerinde yok (koyu oyuk, üst kenarında gölge); hendek yüzünde (yerel y < 0) sık
 		float eh = h21(vec2(bid * 1.7 + 2.0, ci + 3.0));
 		float ez = vn(vec2(u * 0.18, y * 0.3) + 7.0);
-		float eks = (yerel_dip > 0.5 && ly < -0.4) ? step(0.80, eh) * step(0.40, ez) : step(0.965, eh) * step(0.55, ez);
+		float eks = (yerel_dip > 0.5 && ly < -0.4) ? step(0.80, eh) * step(0.40, ez) : step(0.975, eh) * step(0.6, ez);
 		tc = mix(tc, harc * mix(0.42, 0.68, sf) * vec3(0.95, 0.92, 0.88), eks * orta);
 		if (tur > 0.5 && tur < 1.5) {
 			// deniz: moloz yamaları (küçük düzensiz taş), daha gri
@@ -169,9 +169,9 @@ void fragment() {
 		float covX = clamp((min(jx0 + hu, 0.02) - max(jx0 - hu, -0.02)) / fu, 0.0, 1.0)
 			+ clamp((min(jx0 + hu - bl, 0.02) - max(jx0 - hu - bl, -0.02)) / fu, 0.0, 1.0);
 		covX = fu > bl * 0.6 ? 0.04 / bl : clamp(covX, 0.0, 1.0);
-		float j = clamp(covJ + covX * (1.0 - covJ), 0.0, 1.0);
+		float j = clamp(covJ + 0.55 * covX * (1.0 - covJ), 0.0, 1.0);
 		vec3 cs = mix(tas * 0.98, tc, orta);
-		cs = mix(cs, harc * 0.66, j * 0.8);
+		cs = mix(cs, harc * 0.78, j * 0.75);
 		c = mix(cs, bcol, covB);
 	} else {
 		// yatay (yürüme yolu, kule terası): döşeme taşı
