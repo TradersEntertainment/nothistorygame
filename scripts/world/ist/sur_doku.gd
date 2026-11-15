@@ -65,9 +65,14 @@ void fragment() {
 	vec3 harc = vec3(0.52, 0.48, 0.41) * kat;
 	// TUR-8: desen yönü GEOMETRİK normalden (ekran türevi). Gölgelendirme normali yukarı yatırılmış yüzler (hendek iç
 	// yüzü: fn + UP·0,9 → y 0,78) "yatay döşeme" sanılıyor, 0,9 m'lik xz ızgarası dik yüzde DİKEY ŞERİT (perde) çiziyordu.
-	vec3 gnr = normalize(cross(dFdx(wpos), dFdy(wpos)) + vec3(0.0, 1e-6, 0.0));
+	// Türev GÖRÜŞ uzayındaki konumdan (küçük sayılar): şehirde dünya x ≈ −1700'de float türevi gürültülü (yakın yüz
+	// dikey parazit, desen sönüyordu)
+	vec3 gnv = cross(dFdx(VERTEX), dFdy(VERTEX));
+	vec3 gnr = normalize(mat3(INV_VIEW_MATRIX) * gnv + vec3(0.0, 1e-9, 0.0));
 	float dikey = 1.0 - step(0.6, abs(gnr.y));
-	vec2 t2 = normalize(vec2(-gnr.z, gnr.x) + vec2(1e-4, 0.0));
+	// sıra yönü yumuşak normalin YATAY bileşeninden (yatırılmış normalde de doğru yön; türev normali 1700 m'lik
+	// koordinatla çarpılınca u'yu titretir)
+	vec2 t2 = normalize(vec2(-wnrm.z, wnrm.x) + vec2(1e-4, 0.0));
 	float u = dot(wpos.xz, t2);
 	float y = wpos.y;
 	float fy = max(fwidth(y), 1e-4);
