@@ -2660,6 +2660,20 @@ func _kose_hendek(n: Node3D, izp: Array, cen: Vector2, y: float, lod: int, tohum
 	var d := IstSurlar.dims(K_SUR)
 	var zm0 := float(d["zm0"])
 	var zm1 := float(d["zm1"])
+	# TUR-9: kırık noktasında iki alt parçanın arasındaki kama dış yakada r·θ (r ≈ zm1 + 0,9 ≈ 45 m: 5°'lik kırıkta ~4 m)
+	# açılıyordu; sabit 0,6 m'lik gönye payı kapatmıyordu → c5'te karşı kıyıda koyu ÜÇGEN ÇENTİK. Pay kırık açısından.
+	var exs: Array = []
+	for k in izp.size() - 1:
+		var q0: Vector2 = izp[k][0]
+		var q1: Vector2 = izp[k + 1][0]
+		exs.append((q1 - q0).normalized() if q0.distance_to(q1) >= 0.05 else Vector2.ZERO)
+	# uçlarda komşu dilimin yönü (uç noktanın dış normaline dik): dilim ile ilk/son alt parça arasındaki kırık
+	var dik := func(nv: Vector2, ref: Vector2) -> Vector2:
+		var t := Vector2(-nv.y, nv.x).normalized()
+		return t if t.dot(ref) >= 0.0 else -t
+	var ex_bas: Vector2 = dik.call(izp[0][1], exs[0]) if exs.size() > 0 and exs[0] != Vector2.ZERO else Vector2.ZERO
+	var ex_son: Vector2 = dik.call(izp[izp.size() - 1][1], exs[exs.size() - 1]) if exs.size() > 0 and exs[exs.size() - 1] != Vector2.ZERO else Vector2.ZERO
+	var r_dis := zm1 + 0.9
 	for k in izp.size() - 1:
 		var P0: Vector2 = izp[k][0]
 		var P1: Vector2 = izp[k + 1][0]
@@ -2672,8 +2686,16 @@ func _kose_hendek(n: Node3D, izp: Array, cen: Vector2, y: float, lod: int, tohum
 		var nd := Node3D.new()
 		nd.transform = Transform3D(Basis(Vector3(ex.x, 0, ex.y), Vector3.UP, Vector3(ez.x, 0, ez.y)), Vector3(P0.x - cen.x, y, P0.y - cen.y))
 		n.add_child(nd)
-		# alt parçanın iki ucunda gönye payı (komşu parçayla aradaki kama kapanır)
-		SURZEMIN.hendek_kesit(nd, -0.6, L + 0.6, zm0 - 0.9, zm1 + 0.9, float(d["MD"]), lod, tohum + k)
+		# alt parçanın iki ucunda gönye payı (komşu parçayla aradaki kama kapanır): 0,6 m + dış yarıçap × tan(kırık/2)
+		var pa := 0.6
+		var pb := 0.6
+		var e_on: Vector2 = exs[k - 1] if k > 0 else ex_bas
+		var e_ar: Vector2 = exs[k + 1] if k + 1 < exs.size() else ex_son
+		if e_on != Vector2.ZERO:
+			pa += r_dis * tan(minf(absf(e_on.angle_to(ex)), 0.6) * 0.5)
+		if e_ar != Vector2.ZERO:
+			pb += r_dis * tan(minf(absf(ex.angle_to(e_ar)), 0.6) * 0.5)
+		SURZEMIN.hendek_kesit(nd, -pa, L + pb, zm0 - 0.9, zm1 + 0.9, float(d["MD"]), lod, tohum + k)
 
 
 ## Hat üstünde yay boyu sv'deki nokta, yön ve gönye çarpanı (kırık noktasında dış öteleme 1/cos(yarım açı))
