@@ -296,15 +296,48 @@ static func build_siper(host: Node3D, k: float, lod: int, tohum := 8, line := Pa
 			if lod == 0 or s % 2 == 0:
 				var cp := pm + fr * 6.6
 				var cy := K.gy(cp.x, cp.y)
-				w.box(Vector3(cp.x, cy + 0.65, cp.y), Vector3(sl, 1.3, 0.3), K.AHSAP2, yaw)
+				# TUR-8: görünüş sivri uçlu tek tek kazık (yan yana, boyları ve eğimleri farklı); sürekli kalas kutusu
+				# uzaktan "kahverengi uzun kutu" okunuyordu. Çarpışma aynı kutu.
+				_kazik_dizi(w, cp, dn, fr, sl, lod, r)
 				w.solid_box(Vector3(cp.x, cy + 0.65, cp.y), Vector3(sl, 1.3, 0.3), yaw)
-				if lod == 0:
-					for q in int(sl / 0.5):
-						var cq := cp + dn * (-sl / 2 + 0.25 + q * 0.5)
-						w.box(Vector3(cq.x, cy + 1.35, cq.y), Vector3(0.12, 0.9, 0.12), K.AHSAP_A, yaw, Vector3(r.randf_range(-12, 12), 0, r.randf_range(-14, 14)))
 	e.done(host, "sedde")
 	w.done(host, "cit")
 	strip.done(host, "hendek")
+
+
+## TUR-8: kazık perde: sl boyunca sivri uçlu kazıklar (lod 0 üç yüzlü prizma + piramit uç, lod 1 iki yüzlü beşgen);
+## tabanı zemine 0,25 m gömülü (havada değil), boy 1,35–1,9 m, öne/yana ±8° eğik, ton kazık kazık
+static func _kazik_dizi(w: B, cp: Vector2, dn: Vector2, fr: Vector2, sl: float, lod: int, r: RandomNumberGenerator) -> void:
+	var ara := 0.34 if lod == 0 else 0.46
+	var nq := maxi(int(sl / ara), 1)
+	var d3 := Vector3(dn.x, 0, dn.y)
+	var f3 := Vector3(fr.x, 0, fr.y)
+	for q in nq:
+		var c2 := cp + dn * (-sl * 0.5 + ara * (q + 0.5) + r.randf_range(-0.04, 0.04))
+		var y0 := K.gy(c2.x, c2.y) - 0.25
+		var h := r.randf_range(1.6, 2.15)
+		var rw := r.randf_range(0.11, 0.15) if lod == 0 else 0.19
+		var ust := Vector3(c2.x, y0 + h, c2.y) + f3 * r.randf_range(0.05, 0.25) + d3 * r.randf_range(-0.12, 0.12)
+		var alt := Vector3(c2.x, y0, c2.y)
+		var eg := (ust - alt).normalized()
+		var tip := ust + eg * r.randf_range(0.28, 0.42)
+		var col := K.AHSAP2.lerp(K.AHSAP_A, r.randf()).darkened(r.randf_range(0.0, 0.15))
+		var col_u := col.lightened(0.12)
+		if lod == 0:
+			var kos: Array = []
+			for k in 3:
+				var a := TAU * k / 3.0 + r.randf() * 0.4
+				kos.append((d3 * cos(a) + f3 * sin(a)) * rw)
+			for k in 3:
+				var k2 := (k + 1) % 3
+				var dis: Vector3 = ((kos[k] as Vector3) + (kos[k2] as Vector3)) * 0.5
+				w.poly([alt + kos[k], alt + kos[k2], ust + kos[k2], ust + kos[k]], dis, col.darkened(0.06 * k))
+				w.poly([ust + kos[k], ust + kos[k2], tip], dis + Vector3.UP * 0.3, col_u)
+		else:
+			for yon: float in [1.0, -1.0]:
+				var o := f3 * 0.04 * yon
+				var sd := d3 * rw
+				w.poly([alt - sd + o, alt + sd + o, ust + sd + o, tip + o, ust - sd + o], f3 * yon, col if yon > 0.0 else col.darkened(0.1))
 
 
 # ------------------------------------------------------------------ Sancak ormanı (alan süsü)
