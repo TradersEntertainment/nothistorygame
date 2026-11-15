@@ -1,0 +1,18 @@
+RINFO birlik sahip_03_sur_disi_30m cizim=1308 ucgen=3146018
+RINFO birlik sahip_04_sur_disi_70m cizim=1206 ucgen=2837411
+RINFO birlik s3_hendek cizim=1550 ucgen=5142695
+RINFO birlik hendek_kenar_05 cizim=1541 ucgen=4779091
+RINFO birlik k02_ordugah_on_hat_40m cizim=1397 ucgen=4678988
+RINFO birlik k03_hendek_kenari cizim=1500 ucgen=4453585
+RINFO birlik k04_sur_ustunden_ordugaha cizim=1109 ucgen=3174626
+RINFO birlik k05_ordugahtan_sura_400m cizim=1363 ucgen=5474000
+RINFO birlik k06_sehirden_sura_40m cizim=1310 ucgen=3005102
+RINFO birlik k08_ordugah_on_hat_40m cizim=1594 ucgen=6837416
+RINFO birlik k09_hendek_kenari cizim=1377 ucgen=5219019
+RINFO birlik k10_sur_ustunden_ordugaha cizim=1529 ucgen=5115510
+RINFO birlik k11_ordugahtan_sura_400m cizim=1413 ucgen=6084494
+RINFO birlik k12_sehirden_sura_40m cizim=1679 ucgen=5581564
+RINFO birlik k13_kapi_onu_1 cizim=1414 ucgen=3000975
+RINFO birlik k14_kapi_onu_2 cizim=1277 ucgen=2654767
+RINFO birlik kara_05_yer60 cizim=1313 ucgen=2991739
+KOSU sB rc=0
