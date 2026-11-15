@@ -1,0 +1,6 @@
+ENGEL nokta ad=eski_start p=(7.0, 0.0, 4.0) engelde=true
+ENGEL nokta ad=eski_line p=(-0.6, 0.0, 11.4) engelde=false
+ENGEL nokta ad=eski_stage p=(3.0, 0.0, 8.6) engelde=false
+ENGEL nokta ad=eski_giust p=(-4.2, 0.0, 12.0) engelde=false
+ENGEL nokta ad=eski_patlama p=(8.8, 0.0, 9.9) engelde=false
+ENGEL nokta ad=eski_bolük0 p=(-18.0, 0.0, 8.0) engelde=false
