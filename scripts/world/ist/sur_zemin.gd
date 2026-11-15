@@ -870,7 +870,7 @@ static func kiyi_ortu(p: Node3D, x0: float, x1: float, ze: float, s: float, tohu
 			continue
 		# TUR-8: kıyı boyunca seyrek ot tutamı (kopan kenarın hemen gerisinde, yüzeye gömülü taban: havada değil)
 		var ho := _hash(tohum * 5 + i, 83)
-		if ho > 0.45:
+		if ho > 0.45 and s > 0.0:      # yalnız dış (ova) yakası: iç yaka ayrı çizim çağrısı ekliyordu (bütçe)
 			for k in 1 + int(ho * 7.0) % 3:
 				var hk := _hash(tohum + i * 7, k + 90)
 				var a: Vector3 = rows[i][2]

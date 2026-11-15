@@ -5,6 +5,7 @@ extends "res://tests/_ist/birlik_kare.gd"
 ##   xvfb-run -a godot --path . --rendering-driver opengl3 --resolution 1280x720 res://tests/_ist/tur8_butce.tscn -- \
 ##       --set=liste --liste=DOSYA --out=KLASÖR [--sec=ad1,ad2]
 
+var _tri_bel := {}
 var _kok_re := RegEx.create_from_string("[^A-Za-zÇĞİÖŞÜçğıöşü_]+")
 
 
@@ -40,13 +41,9 @@ func _shot(ad: String) -> void:
 		if mesh == null:
 			continue
 		var yuz := mesh.get_surface_count()
-		var tri := 0
-		for si in yuz:
-			var n: int = mesh.surface_get_array_index_len(si)
-			if n <= 0:
-				n = mesh.surface_get_array_len(si)
-			tri += n / 3
-		tri *= maxi(adet, 0)
+		if not _tri_bel.has(mesh):
+			_tri_bel[mesh] = mesh.get_faces().size() / 3
+		var tri: int = int(_tri_bel[mesh]) * maxi(adet, 0)
 		var yol := String(gi.get_path()).split("/", false)
 		var bas := ""
 		for i in range(2, mini(yol.size() - 1, 5)):

@@ -221,18 +221,18 @@ static func figur(kind: String) -> ArrayMesh:
 	var B := IstOrdugahKit.Bld
 	match kind:
 		"govde":
+			# TUR-8 (bütçe): uzak figür 150–400 m'de görünür; kuşak bandı, çizme kutusu ve göğüs kapağı piksel altı
+			# (figür başına ~120 → ~88 üçgen; siluet aynı). Kuşak rengi göğsün alt köşesinde.
 			b.cyl(B.xf(Vector3(0, 0.55, 0)), 0.26, 1.1, Color(0.92, 0.92, 0.92), 5, 0.2, false)  # dolama (etek)  ORDUGÂH-5: 5 kenar, kapaksız
-			b.cyl(B.xf(Vector3(0, 1.22, 0)), 0.2, 0.36, Color.WHITE, 5, 0.17)                    # göğüs
-			b.cyl(B.xf(Vector3(0, 1.0, 0)), 0.215, 0.07, Color(0.55, 0.5, 0.42), 5, -1.0, false)  # kuşak
+			b.cyl(B.xf(Vector3(0, 1.22, 0)), 0.2, 0.36, Color.WHITE, 5, 0.17, false)             # göğüs
 			b.box(Vector3(-0.24, 1.1, 0.04), Vector3(0.09, 0.5, 0.1), Color(0.88, 0.88, 0.88), 0.0, Vector3(0, 0, 8))
 			b.box(Vector3(0.24, 1.1, 0.04), Vector3(0.09, 0.5, 0.1), Color(0.88, 0.88, 0.88), 0.0, Vector3(0, 0, -8))
-			b.box(Vector3(0, 0.04, 0.04), Vector3(0.34, 0.08, 0.24), Color(0.3, 0.24, 0.2))        # çizme
 		"bas":
 			b.sph(Vector3(0, 1.5, 0.01), 0.12, Color("c99a74"), 6, Vector3(0.95, 1.1, 1.0))
 			b.box(Vector3(0, 1.43, 0.1), Vector3(0.13, 0.05, 0.04), Color("3a2a1e"))              # bıyık
 		"bas_baslik":
 			b.sph(Vector3(0, 1.5, 0.01), 0.12, Color("e8c2a0"), 5, Vector3(0.95, 1.1, 1.0))
-			b.cyl(B.xf(Vector3(0, 1.64, -0.01)), 0.13, 0.2, Color.WHITE, 6, 0.1)
+			b.cyl(B.xf(Vector3(0, 1.64, -0.01)), 0.13, 0.2, Color.WHITE, 5, 0.1)
 		"govde_otur":
 			# bağdaş: yere yayılmış dizler + kucak (etek), kısa gövde
 			b.sph(Vector3(0, 0.1, 0.08), 0.33, Color(0.92, 0.92, 0.92), 6, Vector3(1.15, 0.38, 0.95))
