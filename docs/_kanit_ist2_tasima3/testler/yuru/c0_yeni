@@ -1,0 +1,6 @@
+TASIMA0ENGEL OZET nokta=16 engelde=0
+TASIMA0KURULUM sur=yeni set_ms=3440 bolum_ms=1594 toplam_ms=5034
+TASIMA0YURU set=yeni start=(-8.6, 0.05, 4.4) line=(-0.6, 0.0, 10.6) stage=(-3.0, 0.0, 8.6) mesafe=10.1 teslim_mesafe=7.1
+TASIMA0YURU bacak=start_line sure=2.5 yol=7.2 takilma=0 dusme=0 teslim=tamam son=(-2.9, 0.2, 8.8)
+TASIMA0YURU OZET set=yeni bacak=1 takilma=0 dusme=0 teslim=tamam sure=2.5 yol=7.2
+KOSU -- --chapter=0 --autotest=yuru rc=0

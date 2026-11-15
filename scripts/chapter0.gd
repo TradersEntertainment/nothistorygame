@@ -656,7 +656,7 @@ func _unstack_frozen() -> void:
 ## =yuru: gerçek Player botu bölümün tek bacağını yürür: START → savunucu sırası (LINE'a 3 m: teslim). İleri tuşu basılı,
 ## yön her karede hedefe; takılma (8 sn yaklaşmama), düşme (dikey hız < −7) sayılır. Oklar oyuncunun çevresine yağar (akış
 ## aynı). Satır: TASIMA0YURU bacak=… ; son satır TASIMA0YURU OZET …
-## =kare: oyuncunun kamerasından altı an (--dialogshots klasörüne an_XX_*.jpg) ve her anda 10 karenin ortalama çizim çağrısı /
+## =kare: oyuncunun kamerasından altı an (--dialogshots klasörüne an_XX_*.jpg) ve her anda 4 karenin ortalama çizim çağrısı /
 ## ilkel sayısı: açılış (yer yazısı, hedef), koşunun ortası, savunucu sırası (teslim), sabit bakış (iki sette AYNI kamera:
 ## bütçe), top (gözcü bağırışı + namlu parlaması), donan kare. Bacaklar ışınlanır (yazılımsal GL'de yürüyüş saatler sürer).
 var _kare_on := false
@@ -735,11 +735,11 @@ func _kare(ad: String) -> void:
 	if dir == "":
 		return
 	DirAccess.make_dir_recursive_absolute(dir)
-	for k in 12:
+	for k in 4:
 		await get_tree().process_frame
 	var dc := 0.0
 	var pr := 0.0
-	for k in 10:
+	for k in 4:
 		await RenderingServer.frame_post_draw
 		dc += RenderingServer.get_rendering_info(RenderingServer.RENDERING_INFO_TOTAL_DRAW_CALLS_IN_FRAME)
 		pr += RenderingServer.get_rendering_info(RenderingServer.RENDERING_INFO_TOTAL_PRIMITIVES_IN_FRAME)
@@ -748,4 +748,4 @@ func _kare(ad: String) -> void:
 	get_viewport().get_texture().get_image().save_jpg(f, 0.85)
 	var cam := get_viewport().get_camera_3d()
 	print("TASIMA0KARE %s kamera=%s cizim=%.0f ilkel=%.0f sur=%s" % [f.get_file(), cam.global_position.snapped(Vector3.ONE * 0.1) if cam else Vector3.ZERO,
-		dc / 10.0, pr / 10.0, "eski" if sur.eski_mi else "yeni"])
+		dc / 4.0, pr / 4.0, "eski" if sur.eski_mi else "yeni"])

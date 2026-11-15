@@ -1165,6 +1165,13 @@ func _butce() -> void:
 	hud.set_fade(0.0)
 	player.frozen = true
 	_set_crew(true)
+	# --butce_onarim=N: barikat aşaması (TAŞIMA-3: aşama 3–4 görünüşünün bütçesi; yoksa 0, aşama 1)
+	var on_ek := ""
+	for arg in OS.get_cmdline_user_args():
+		if arg.begins_with("--butce_onarim="):
+			repair = int(arg.trim_prefix("--butce_onarim="))
+			walls.set_repair(repair)
+			on_ek = " onarim=%d asama=%d" % [repair, SurSet.asama_of(repair)]
 	var hava := Camera3D.new()
 	add_child(hava)
 	var bakis := [
@@ -1191,7 +1198,7 @@ func _butce() -> void:
 			await RenderingServer.frame_post_draw
 			dc += RenderingServer.get_rendering_info(RenderingServer.RENDERING_INFO_TOTAL_DRAW_CALLS_IN_FRAME)
 			pr += RenderingServer.get_rendering_info(RenderingServer.RENDERING_INFO_TOTAL_PRIMITIVES_IN_FRAME)
-		print("PILOT20BUTCE sur=%s bakis=%s cizim=%.0f ilkel=%.0f" % ["eski" if sur.eski_mi else "yeni", b[0], dc / 10.0, pr / 10.0])
+		print("PILOT20BUTCE sur=%s bakis=%s cizim=%.0f ilkel=%.0f%s" % ["eski" if sur.eski_mi else "yeni", b[0], dc / 10.0, pr / 10.0, on_ek])
 		if GameState.shots_dir != "":
 			get_viewport().get_texture().get_image().save_png(GameState.shots_dir.path_join("butce_%s_%s.png" % ["eski" if sur.eski_mi else "yeni", b[0]]))
 	get_tree().quit(0)

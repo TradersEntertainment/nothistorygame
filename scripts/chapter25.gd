@@ -940,7 +940,7 @@ func _run_shots() -> void:
 ## =yuru: gerçek Player botu dış sur yolunda: başlangıç → nöbetçinin yanı → sur yolu boyunca 12 m (gedikten uzağa) → geri
 ## başlangıca (yeni sette yol 1,7 m, gedik tarafı kesik; eski 1,45 m). İleri tuşu basılı; takılma (8 sn yaklaşmama), düşme
 ## (dikey hız < −7 ya da sur yolu hizasından 1 m aşağı) sayılır. Satır: TASIMA25YURU bacak=… ; son: TASIMA25YURU OZET …
-## =kare: oyuncunun kamerasından altı an + bütçe (her anda 10 karenin ortalama çizim çağrısı / ilkel sayısı).
+## =kare: oyuncunun kamerasından altı an + bütçe (her anda 4 karenin ortalama çizim çağrısı / ilkel sayısı).
 var _yz25 := {"bacak": 0, "takilma": 0, "dusme": 0, "sure": 0.0, "yol": 0.0}
 var _kare25_n := 0
 
@@ -1028,11 +1028,11 @@ func _kare25(ad: String) -> void:
 	if dir == "":
 		return
 	DirAccess.make_dir_recursive_absolute(dir)
-	for k in 12:
+	for k in 4:
 		await get_tree().process_frame
 	var dc := 0.0
 	var pr := 0.0
-	for k in 10:
+	for k in 4:
 		await RenderingServer.frame_post_draw
 		dc += RenderingServer.get_rendering_info(RenderingServer.RENDERING_INFO_TOTAL_DRAW_CALLS_IN_FRAME)
 		pr += RenderingServer.get_rendering_info(RenderingServer.RENDERING_INFO_TOTAL_PRIMITIVES_IN_FRAME)
@@ -1040,4 +1040,4 @@ func _kare25(ad: String) -> void:
 	var f := dir.path_join("an_%02d_%s.jpg" % [_kare25_n, ad])
 	get_viewport().get_texture().get_image().save_jpg(f, 0.85)
 	print("TASIMA25KARE %s oyuncu=%s cizim=%.0f ilkel=%.0f sur=%s" % [f.get_file(), player.global_position.snapped(Vector3.ONE * 0.1),
-		dc / 10.0, pr / 10.0, "eski" if sur.eski_mi else "yeni"])
+		dc / 4.0, pr / 4.0, "eski" if sur.eski_mi else "yeni"])

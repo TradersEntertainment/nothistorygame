@@ -1,0 +1,6 @@
+TASIMA25YURU set=eski bas=(-9.2, 8.05, 14.9) nobetci=(-7.4, 8.05, 14.9) uzak=(-21.2, 8.05, 14.9) yol_en=1,45
+TASIMA25YURU bacak=bas_nobetci sure=0.2 yol=0.5 takilma=0 dusme=0 son=(-8.6, 8.0, 14.9)
+TASIMA25YURU bacak=nobetci_uzak sure=4.1 yol=12.4 takilma=0 dusme=0 son=(-20.9, 8.0, 15.0)
+TASIMA25YURU bacak=uzak_bas sure=3.7 yol=11.4 takilma=0 dusme=0 son=(-9.5, 8.0, 15.0)
+TASIMA25YURU OZET set=eski bacak=3 takilma=0 dusme=0 sure=8.0 yol=24.3
+KOSU -- --chapter=25 --autotest=yuru --eskisur rc=0

@@ -1,0 +1,5 @@
+TASIMA0KURULUM sur=eski set_ms=4934 bolum_ms=1219 toplam_ms=6153
+TASIMA0YURU set=eski start=(7.0, 0.05, 4.0) line=(-0.6, 0.0, 11.4) stage=(3.0, 0.0, 8.6) mesafe=10.6 teslim_mesafe=7.6
+TASIMA0YURU bacak=start_line sure=3.6 yol=8.2 takilma=0 dusme=0 teslim=tamam son=(1.7, 0.0, 9.5)
+TASIMA0YURU OZET set=eski bacak=1 takilma=0 dusme=0 teslim=tamam sure=3.6 yol=8.2
+KOSU -- --chapter=0 --autotest=yuru --eskisur rc=0
