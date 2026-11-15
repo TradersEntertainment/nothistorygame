@@ -16,3 +16,7 @@ SAYDIST key=D25_K_1 scene=chapter25.tscn speaker=SPK_EMPEROR d=6.4
 SAYDIST key=D25_K_2 scene=chapter25.tscn speaker=SPK_EMPEROR d=6.4
 SAYDIST key=D25_I_1 scene=chapter25.tscn speaker=SPK_ISIDORE d=12.0
 AUTOTEST PASS chapter=25 variant=cistern_blab outcome=25.1 caught=0 candle=true tezkire=false marco=false sur=yeni
+WARNING: ObjectDB instances leaked at exit (run with --verbose for details).
+     at: cleanup (core/object/object.cpp:2378)
+ERROR: 1 resources still in use at exit (run with --verbose for details).
+   at: clear (core/io/resource.cpp:614)

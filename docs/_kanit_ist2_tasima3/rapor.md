@@ -205,8 +205,9 @@ Kurulum (`TASIMA0KURULUM`): eski 6.153–6.554 ms (set 4.934–5.152) ↔ yeni 4
 - Osmanlı yarısı (`osm*`) koşulur, kodu aynı (`sur=-`).
 
 ### Testler (`testler/son/c25_*`)
-Bizans çeşitleri (def, caught, pass, kid, cistern, cistern_blab) yeni ×2 + eski ×1; Osmanlı (osm, osm_caught, osm_tez) yeni ×1 +
-`--eskisur` ×1: hepsi PASS, denetim 0 (sonuçlar aşağıdaki "25 ikinci tur" notunda). Alanlar eski ↔ yeni aynı:
+Bizans çeşitleri (def, caught, pass, kid, cistern, cistern_blab) yeni ×2 (mazgal düzeltmesinden sonra; ilk tur
+`testler/son/c25_tur1/` de 12/12 PASS) + eski ×1; Osmanlı (osm, osm_caught, osm_tez) yeni ×1 + `--eskisur` ×1: **27/27 PASS,
+denetim 0**. Alanlar eski ↔ yeni aynı:
 def 25.1, caught 25.2, pass 25.1, kid 25.1 marco=true, cistern/cistern_blab 25.1, osm 25.1, osm_caught 25.2 caught=2,
 osm_tez 25.1 tezkire=true.
 
@@ -214,19 +215,19 @@ osm_tez 25.1 tezkire=true.
 
 | bacak | eski sn / m | yeni sn / m |
 |---|---|---|
-| başlangıç → nöbetçinin yanı | 0,2 / 0,5 | (ikinci tur) |
-| nöbetçi → sur yolu boyunca 12 m | 4,1 / 12,4 | (ikinci tur) |
-| geri başlangıca | 3,7 / 11,4 | (ikinci tur) |
-| özet | takılma 0, düşme 0 | (ikinci tur) |
+| başlangıç → nöbetçinin yanı | 0,2 / 0,5 | 0,2 / 0,5 |
+| nöbetçi → sur yolu boyunca 12 m | 4,1 / 12,4 | 3,9 / 12,2 |
+| geri başlangıca | 3,7 / 11,4 | 3,6 / 11,2 |
+| özet | 8,0 sn / 24,3 m, takılma 0, düşme 0 | 7,6 sn / 23,8 m, takılma 0, düşme 0 |
 
-İlk tur (mazgal düzeltmesinden önce, `yuru/c25_yeni` eski sürümü kayıtta): 0,2/0,5 · 3,9/12,2 · 3,6/11,2, takılma 0, düşme 0.
+(Yeni başlangıç x −8,7, nöbetçi −6,9: en yakın mazgal açıklıkları.)
 
 ### Mesafe tablosu
 
 | çift | eski m | yeni m |
 |---|---|---|
-| oyuncu → nöbetçi | 1,8 | ≈1,8 (iki komşu mazgal) |
-| oyuncu → gedik | 9,2 | ≈9,2 |
+| oyuncu → nöbetçi | 1,8 | 1,8 (iki komşu mazgal) |
+| oyuncu → gedik | 9,2 | 8,7 |
 | oyuncu → tespit hedefi (ordugâh) | 315 | 326 (ova +10,6) |
 
 ### Yön söyleyen replikler
@@ -234,13 +235,17 @@ osm_tez 25.1 tezkire=true.
 `UI_OBJ25B_PHOTO`: yön yok.
 
 ### Kareler (`kare/c25_eski` ↔ `kare/c25_yeni`)
-Ölçümler ikinci turda (aşağıda). İlk tur YENİ (`kare/c25_yeni_tur1`) tek cümleler:
-- `an_01` mazgal dişi kadrajın yarısını kaplıyor, ordugâh yalnız bir açıklıktan; sağda dekor fıçısı (A'nın sur yolu dekoru) → **kötü**, düzeltildi.
-- `an_02_nobetci` iki nöbetçi, ardında kule ve sur yolu, ufukta turuncu ışık → iyi.
-- `an_03_tespit_ordugah` ovada ışıklı çadırlar, alevler; ufuk turuncu; alevler ovaya oturuyor (havada değil) → iyi.
-- `an_04_sur_yolu_boyunca` tahta kaplı sur yolu, ilerde kule ve nöbetçi; ordugâh sağda → iyi.
-- `an_05_peribolos_asagi` korkuluğun iç yüzü kadrajı dolduruyor (yeni korkuluk yüksek, peribolos görünmüyor) → vasat (kadraj).
-- `an_06_gedik_sur_yolundan` solda büyük dekor fıçıları sur yolunun kenarında, ilerde nöbetçiler → vasat.
+Bütçe 4 kare ortalaması (`testler/kare_c25_*.log`). İlk tur YENİ karesi `kare/c25_yeni_tur1` (an_01'de oyuncu dişin
+karşısındaydı: **kötü**, düzeltildi).
+
+| an | YENİ tek cümle | hüküm | çizim eski → yeni | ilkel eski → yeni |
+|---|---|---|---|---|
+| `an_01_acilis_ordugah` | iki dişin arasındaki açıklıktan ovada ışıklı çadırlar ve alevler, turuncu ufuk; dişler A'nın sur görünüşü | kabul (eskisi alçak korkulukla geniş manzara; yeni dar ama ordugâh kadrajın ortasında) | 4.289 → 3.792 | 6,4 M → 5,8 M |
+| `an_02_nobetci` | iki nöbetçi sur yolunda, ardında kule, ufukta turuncu ışık; havada yok | iyi | 3.530 → 2.134 | 4,2 M → 3,3 M |
+| `an_03_tespit_ordugah` | ova, çadırlar, kandiller ve alevler ovaya oturuyor (kaydırma doğru), turuncu ufuk | iyi | 3.886 → 3.804 | 5,6 M → 5,8 M |
+| `an_04_sur_yolu_boyunca` | tahta kaplı sur yolu, ilerde kule ve nöbetçi, sağda ordugâh | iyi | 2.087 → 2.088 | 3,8 M → 3,3 M |
+| `an_05_peribolos_asagi` | yüksek iç korkuluk kadrajı dolduruyor, peribolos görünmüyor | vasat (kadraj) | 1.688 → 584 | 1,5 M → 0,7 M |
+| `an_06_gedik_sur_yolundan` | solda sur yolu kenarında büyük köşeli dekor fıçıları, ilerde nöbetçiler | vasat (A'nın dekoru) | 3.488 → 1.935 | 4,1 M → 3,1 M |
 
 ## Öteki bölümler
 Kanca eklenen yardımcılar: `SurSetSahne` (`_kutudan_cikar`, `depo_kaydir`) ve `GedikOnarim` (görünüş, `kati_kutular`). Bunları
