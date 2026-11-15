@@ -40,7 +40,15 @@ static func environment(parent: Node3D, fog := 0.012) -> DirectionalLight3D:
 	moon.shadow_enabled = true
 	# Ay gölgesi soluk (enerji 0,55): 35 m ötesinde fark edilmez. 60 m'de kuşatma gecelerinde gölge geçişi karede
 	# ~6 milyon üçgen çiziyordu (açılış sahnesi)
-	moon.directional_shadow_max_distance = 35.0
+	# (eski: 35 m)
+	# TUR-9: ay gölgesinin kenarı testere dişliydi (Bölüm 20 an_03 x≈620–660, D2 kareleri). Kök neden gölge haritası
+	# texel'i: ay ışığı sur yüzünü sıyırarak geliyor (texel yüzde uzuyor), 2 dilimde ilk dilim yalnız 0–3,5 m; sur dibi
+	# (8–25 m) kaba ikinci dilimde. Ölçüldü (tests/_ist/tur9_gece): Compatibility'de shadow_blur kareyi DEĞİŞTİRMİYOR
+	# (1,4 ↔ 3,0 piksel farkı 0), ilk dilim payı (split_1 0,1 → 0,5) etkisiz; yalnız mesafe texel'i küçültüyor (texel ∝ mesafe:
+	# 35 → 22 m ≈ %37 küçük); erken solma (0,55: 12–22 m) gölgenin bittiği yerde ani aydınlık bant bırakmaz. Dilim sayısı
+	# ve atlas aynı (look.gd, project.godot).
+	moon.directional_shadow_max_distance = 22.0
+	moon.directional_shadow_fade_start = 0.55
 	parent.add_child(moon)
 	# Ay (ay ışığının geldiği yönde, sisten etkilenmez) ve yıldızlar
 	SkyBody.attach(parent, moon, true)
