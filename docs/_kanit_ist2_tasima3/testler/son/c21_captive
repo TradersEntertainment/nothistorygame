@@ -1,0 +1,3 @@
+TASIMA21ENGEL OZET nokta=11 engelde=0
+AUTOTEST PASS chapter=21 variant=captive outcome=21.1 bowls=2 tunnel=leb talk=talk trust=3 captive=true next=chapter22o.tscn sur=yeni
+KOSU -- --chapter=21 --autotest=captive rc=0

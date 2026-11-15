@@ -1,0 +1,3 @@
+TASIMA21ENGEL OZET nokta=11 engelde=0
+AUTOTEST PASS chapter=21 variant=grant outcome=21.2 bowls=4 tunnel=leb talk=talk trust=3 captive=false next= sur=yeni
+KOSU -- --chapter=21 --autotest=grant rc=0

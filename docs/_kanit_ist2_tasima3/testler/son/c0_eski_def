@@ -1,0 +1,3 @@
+TASIMA0KURULUM sur=eski set_ms=5152 bolum_ms=1402 toplam_ms=6554
+AUTOTEST PASS chapter=0 variant= froze=true sur=eski
+KOSU -- --chapter=0 --autotest --eskisur rc=0

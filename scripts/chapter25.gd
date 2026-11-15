@@ -66,6 +66,20 @@ const YOL_OYUNCU_X := -9.2
 const YOL_NOBETCI_X := -7.4
 
 
+## Yeni sette sur yolunda verilen x'e en yakın dış mazgal açıklığının x'i (iki diş arası). Yeni dış surun dişleri insan
+## boyu: oyuncu ilk karede bir dişin tam karşısındaydı, ordugâh yalnız yandaki açıklıktan görünüyordu (kare/c25_yeni ilk
+## tur an_01). Eski sette (alçak korkuluk) x aynen.
+func _mazgal_x(x: float) -> float:
+	var best := sur.dis_yol_x(x)
+	var bd := INF
+	for m: Dictionary in sur.a.mazgallar("dis"):
+		var mx: float = (m["ayak"]["yerel"] as Vector3).x + sur.ofs.x
+		if absf(mx - x) < bd and sur.dis_yol_bos(mx):
+			bd = absf(mx - x)
+			best = mx
+	return best
+
+
 func _ready() -> void:
 	GameState.snapshot(25)
 	hud = Hud.new()
@@ -461,7 +475,7 @@ func _build_walls_night() -> void:
 	# Yanındaki nöbetçi (konuşur). Gece sahnesiyle birlikte kalkar (eskiden bölümün kökündeydi: surlar kaldırılınca
 	# Ayasofya'nın üstünde 8 m havada kalıyordu)
 	var d := Garrison.man(_night, Vector3(-7.4, LandWalls.OUTER_H, 14.75) if sur.eski_mi
-		else Vector3(sur.dis_yol_x(YOL_NOBETCI_X), sur.dis_yol_y(), sur.dis_yol_ic_z()), 0.1, 2501, "spear")
+		else Vector3(_mazgal_x(YOL_NOBETCI_X), sur.dis_yol_y(), sur.dis_yol_ic_z()), 0.1, 2501, "spear")
 	d.set_meta("spk", "SPK_DEFENDER")
 	d.remove_meta("no_talk")
 	d.remove_meta("garrison")
@@ -470,7 +484,7 @@ func _build_walls_night() -> void:
 func _walls_night() -> void:
 	phase = "walls"
 	player.global_position = Vector3(-9.2, LandWalls.OUTER_H + 0.05, 14.9) if sur.eski_mi \
-		else Vector3(sur.dis_yol_x(YOL_OYUNCU_X), sur.dis_yol_y() + 0.05, sur.dis_yol_z())
+		else Vector3(_mazgal_x(YOL_OYUNCU_X), sur.dis_yol_y() + 0.05, sur.dis_yol_z())
 	player.face(Vector3(10.0, 6.0, 300.0) + sur.ova_ofs())
 	_capture_mouse()
 	player.show_remote(true)             # Tolga'nın eli açık (Bizans yolunda da kapalıydı)
@@ -950,13 +964,13 @@ func _yuru25() -> void:
 	hud.set_fade(0.0)
 	var y0 := (LandWalls.OUTER_H if sur.eski_mi else sur.dis_yol_y()) + 0.05
 	var z0 := 14.9 if sur.eski_mi else sur.dis_yol_z()
-	var bas := Vector3(-9.2 if sur.eski_mi else sur.dis_yol_x(YOL_OYUNCU_X), y0, z0)
+	var bas := Vector3(-9.2 if sur.eski_mi else _mazgal_x(YOL_OYUNCU_X), y0, z0)
 	player.global_position = bas
 	player.face(Vector3(10.0, 6.0, 300.0) + sur.ova_ofs())
 	player.show_remote(true)
 	for i in 10:
 		await get_tree().physics_frame
-	var nob := Vector3(-7.4 if sur.eski_mi else sur.dis_yol_x(YOL_NOBETCI_X), y0, z0)
+	var nob := Vector3(-7.4 if sur.eski_mi else _mazgal_x(YOL_NOBETCI_X), y0, z0)
 	var uzak := Vector3(bas.x - 12.0, y0, z0)
 	print("TASIMA25YURU set=%s bas=%s nobetci=%s uzak=%s yol_en=%s" % ["eski" if sur.eski_mi else "yeni", bas, nob, uzak, "1,45" if sur.eski_mi else "1,7"])
 	if kare:
