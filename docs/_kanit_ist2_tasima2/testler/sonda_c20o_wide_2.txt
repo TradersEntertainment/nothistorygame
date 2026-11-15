@@ -1,0 +1,111 @@
+Godot Engine v4.4.1.stable.official.49a5bc7b6 - https://godotengine.org
+
+ERROR: Cannot open file 'res://.godot/imported/Crate_Wooden.gltf-dc7816376724c67bf0a820b8113df31e.scn'.
+   at: load (core/io/resource_format_binary.cpp:1225)
+ERROR: Failed loading resource: res://.godot/imported/Crate_Wooden.gltf-dc7816376724c67bf0a820b8113df31e.scn. Make sure resources have been imported by opening the project in the editor at least once.
+   at: _load (core/io/resource_loader.cpp:343)
+ERROR: Failed loading resource: res://assets/models/props/Crate_Wooden.gltf. Make sure resources have been imported by opening the project in the editor at least once.
+   at: _load (core/io/resource_loader.cpp:343)
+ERROR: Cannot open file 'res://.godot/imported/Barrel.gltf-f955cba997cb02c8ec803d5e0d25fe1c.scn'.
+   at: load (core/io/resource_format_binary.cpp:1225)
+ERROR: Failed loading resource: res://.godot/imported/Barrel.gltf-f955cba997cb02c8ec803d5e0d25fe1c.scn. Make sure resources have been imported by opening the project in the editor at least once.
+   at: _load (core/io/resource_loader.cpp:343)
+ERROR: Failed loading resource: res://assets/models/props/Barrel.gltf. Make sure resources have been imported by opening the project in the editor at least once.
+   at: _load (core/io/resource_loader.cpp:343)
+ERROR: Cannot open file 'res://.godot/imported/Bag.gltf-7a7037805ac2c82a2b8867e682e8fa9e.scn'.
+   at: load (core/io/resource_format_binary.cpp:1225)
+ERROR: Failed loading resource: res://.godot/imported/Bag.gltf-7a7037805ac2c82a2b8867e682e8fa9e.scn. Make sure resources have been imported by opening the project in the editor at least once.
+   at: _load (core/io/resource_loader.cpp:343)
+ERROR: Failed loading resource: res://assets/models/props/Bag.gltf. Make sure resources have been imported by opening the project in the editor at least once.
+   at: _load (core/io/resource_loader.cpp:343)
+ERROR: Cannot open file 'res://.godot/imported/Barrel_Apples.gltf-e60e6ac0b8e1543ef41051b50fdff331.scn'.
+   at: load (core/io/resource_format_binary.cpp:1225)
+ERROR: Failed loading resource: res://.godot/imported/Barrel_Apples.gltf-e60e6ac0b8e1543ef41051b50fdff331.scn. Make sure resources have been imported by opening the project in the editor at least once.
+   at: _load (core/io/resource_loader.cpp:343)
+ERROR: Failed loading resource: res://assets/models/props/Barrel_Apples.gltf. Make sure resources have been imported by opening the project in the editor at least once.
+   at: _load (core/io/resource_loader.cpp:343)
+ERROR: Cannot open file 'res://.godot/imported/Anvil_Log.gltf-941fbb07cc33f1264c8f60ccd575ffea.scn'.
+   at: load (core/io/resource_format_binary.cpp:1225)
+ERROR: Failed loading resource: res://.godot/imported/Anvil_Log.gltf-941fbb07cc33f1264c8f60ccd575ffea.scn. Make sure resources have been imported by opening the project in the editor at least once.
+   at: _load (core/io/resource_loader.cpp:343)
+ERROR: Failed loading resource: res://assets/models/props/Anvil_Log.gltf. Make sure resources have been imported by opening the project in the editor at least once.
+   at: _load (core/io/resource_loader.cpp:343)
+ERROR: Cannot open file 'res://.godot/imported/Whetstone.gltf-6100114d736d5246f127a5493e396f2d.scn'.
+   at: load (core/io/resource_format_binary.cpp:1225)
+ERROR: Failed loading resource: res://.godot/imported/Whetstone.gltf-6100114d736d5246f127a5493e396f2d.scn. Make sure resources have been imported by opening the project in the editor at least once.
+   at: _load (core/io/resource_loader.cpp:343)
+ERROR: Failed loading resource: res://assets/models/props/Whetstone.gltf. Make sure resources have been imported by opening the project in the editor at least once.
+   at: _load (core/io/resource_loader.cpp:343)
+ERROR: Cannot open file 'res://.godot/imported/WeaponStand.gltf-f450a475d5ef91f33f862f648485ceb3.scn'.
+   at: load (core/io/resource_format_binary.cpp:1225)
+ERROR: Failed loading resource: res://.godot/imported/WeaponStand.gltf-f450a475d5ef91f33f862f648485ceb3.scn. Make sure resources have been imported by opening the project in the editor at least once.
+   at: _load (core/io/resource_loader.cpp:343)
+ERROR: Failed loading resource: res://assets/models/props/WeaponStand.gltf. Make sure resources have been imported by opening the project in the editor at least once.
+   at: _load (core/io/resource_loader.cpp:343)
+SURSET kesim=mesoteikhion kurulum_ms=14423 sur_ms=1405 set_ms=13006
+WARNING: Screen-space ambient occlusion (SSAO) can only be enabled when using the Forward+ renderer.
+     at: environment_set_ssao (servers/rendering/storage/environment_storage.cpp:586)
+WARNING: Screen-space indirect lighting (SSIL) can only be enabled when using the Forward+ renderer.
+     at: environment_set_ssil (servers/rendering/storage/environment_storage.cpp:661)
+TERRAIN_SOLIDIFIED scene=chapter20o.tscn node=/root/Chapter20o/@Node3D@177/Ova/@Node3D@2902/@MeshInstance3D@2904
+HELDDEFAULT scene=chapter20o item=tape
+CREW impact hit=true at=(-0.2, 4.4, 17.2) target=(0.0, 4.0, 15.3) t=0.84 speed=127.8 elev=5.0 yaw=4.7
+LORE key=20o placed=3
+CREW impact hit=true at=(0.0, 4.0, 19.6) target=(0.0, 4.0, 15.3) t=0.86 speed=121.2 elev=5.0 yaw=4.7
+CREW impact hit=true at=(0.0, 4.0, 19.6) target=(0.0, 4.0, 15.3) t=0.86 speed=121.2 elev=5.0 yaw=4.7
+TESPITBLOCK who=siege20o blocker=Chapter20o/@Node3D@25643 (soldier) at=(7.0, -3.5, 132.6) eye=(7.1, -1.9, 137.7) dist=122.7
+GUN shots=4 hits=3 missed=1
+HANDS stowed=@Node3D@84
+HANDS stowed=@Node3D@84
+RALLY scene=chapter20o.tscn allies=0 foes=0 cands=1
+SONDA t=2 w=1 pl=(0.0, -0.6, 20.0) | e=(-3.1, 0.8, 14.6) st=0 path=1 | e=(1.6, 0.6, 11.3) st=0 path=1
+SONDA t=4 w=1 pl=(0.0, -0.6, 20.0) | e=(-1.3, 1.3, 16.2) st=0 path=1 | e=(0.5, 0.7, 11.3) st=0 path=0
+SONDA t=6 w=1 pl=(-0.7, 0.6, 17.8) | e=(-1.7, 1.2, 16.1) st=0 path=0 | e=(0.0, 0.7, 11.3) st=0 path=0
+SONDA t=8 w=1 pl=(0.3, 0.4, 18.1) | e=(-0.7, 1.3, 16.1) st=1 path=0 | e=(1.1, 0.7, 11.3) st=0 path=0
+KICK result=stagger
+SONDA t=10 w=1 pl=(0.0, 0.8, 17.4) | e=(-1.0, 1.4, 15.6) st=4 path=0 | e=(0.5, 0.7, 11.6) st=0 path=0
+FINISHER kind=thrust cam=third
+SONDA t=12 w=1 pl=(-0.2, 1.0, 17.2) | e=(0.7, 0.7, 11.6) st=0 path=0
+SONDA t=14 w=1 pl=(-0.2, 1.0, 17.2) | e=(-0.6, 0.8, 11.6) st=0 path=0
+SONDA t=16 w=1 pl=(-0.2, 1.0, 17.2) | e=(-0.5, 0.8, 11.6) st=0 path=0
+SONDA t=18 w=1 pl=(-0.2, 1.0, 17.2) | e=(0.3, 0.7, 11.6) st=0 path=0
+SONDA t=20 w=1 pl=(1.7, 0.1, 17.9) | e=(0.6, 0.7, 11.6) st=0 path=0
+SONDA t=22 w=1 pl=(2.0, 0.3, 17.2) | e=(2.3, 0.6, 11.6) st=0 path=0
+SONDA t=24 w=1 pl=(2.0, 0.3, 17.2) | e=(2.0, 0.6, 11.6) st=0 path=0
+SONDA t=26 w=1 pl=(2.0, 0.3, 17.2) | e=(2.0, 0.6, 11.6) st=0 path=0
+SONDA t=28 w=1 pl=(2.0, 0.3, 17.2) | e=(2.2, 0.6, 11.6) st=0 path=0
+SONDA t=30 w=1 pl=(1.3, 0.8, 17.2) | e=(-0.8, 0.9, 17.2) st=1 path=0
+KICK result=down
+FINISHER kind=ground cam=third
+SONDA t=32 w=1 pl=(-0.3, 0.2, 18.6) | e=(-2.2, 0.0, 17.2) st=7 path=0
+WAVERUNNER wave=1/2 won=true t=33.6 pw=0.28 foe_dmg=18.0 allies=0+0 rally_foes=0 thrown=0
+HANDS stowed=@Node3D@84
+RALLY scene=chapter20o.tscn allies=0 foes=0 cands=0
+SONDA t=2 w=2 pl=(-0.6, -0.1, 19.0) | e=(-3.2, 0.8, 14.8) st=0 path=0 | e=(0.5, 0.7, 11.6) st=0 path=0 | e=(-3.9, 0.4, 13.7) st=0 path=0
+SONDA t=4 w=2 pl=(-1.6, 0.4, 17.5) | e=(-3.3, 0.8, 15.9) st=0 path=0 | e=(-1.6, 0.7, 11.7) st=0 path=0 | e=(-2.7, 1.0, 15.7) st=1 path=0
+SONDA t=6 w=2 pl=(-1.8, -0.6, 19.3) | e=(-3.4, 0.7, 16.1) st=4 path=0 | e=(-1.8, 0.7, 11.7) st=0 path=0 | e=(-2.2, 1.1, 16.2) st=0 path=0
+SONDA t=8 w=2 pl=(-2.7, -0.9, 18.5) | e=(-3.2, 0.7, 16.1) st=1 path=0 | e=(-1.7, 0.7, 11.7) st=0 path=0 | e=(-2.1, 1.1, 16.2) st=4 path=0
+FINISHER kind=slash cam=first
+SONDA t=10 w=2 pl=(-2.7, -0.9, 18.5) | e=(-2.2, 0.6, 11.7) st=0 path=0 | e=(-2.1, 1.1, 16.2) st=0 path=0
+SONDA t=12 w=2 pl=(-2.7, -0.7, 18.1) | e=(-2.2, 0.6, 11.7) st=0 path=0 | e=(-1.4, 1.3, 16.0) st=4 path=0
+FINISHER kind=thrust cam=third
+SONDA t=14 w=2 pl=(-2.5, -0.4, 17.8) | e=(-2.2, 0.6, 11.7) st=0 path=0
+SONDA t=16 w=2 pl=(-2.5, -0.2, 17.2) | e=(-2.4, 0.6, 11.7) st=0 path=0
+SONDA t=18 w=2 pl=(-1.7, -0.3, 18.8) | e=(-1.5, 0.7, 11.7) st=0 path=0
+SONDA t=20 w=2 pl=(-1.9, 0.3, 17.2) | e=(-1.6, 0.7, 11.7) st=0 path=0
+SONDA t=22 w=2 pl=(-1.9, 0.3, 17.2) | e=(-1.8, 0.7, 11.7) st=0 path=0
+SONDA t=24 w=2 pl=(-1.9, 0.3, 17.2) | e=(-1.9, 0.7, 11.7) st=0 path=0
+SONDA t=26 w=2 pl=(-1.9, 0.3, 17.2) | e=(-2.2, 0.6, 11.7) st=0 path=0
+SONDA t=28 w=2 pl=(-1.9, 0.3, 17.2) | e=(-2.3, 0.6, 11.7) st=0 path=0
+SONDA t=30 w=2 pl=(-1.4, 0.1, 18.5) | e=(-1.6, 0.7, 11.7) st=0 path=0
+SONDA t=32 w=2 pl=(-0.5, -0.3, 19.5) | e=(1.6, -0.7, 19.4) st=4 path=0
+SONDA t=34 w=2 pl=(-0.5, -0.3, 19.5) | e=(1.8, -1.1, 20.0) st=0 path=0
+WAVERUNNER wave=2/2 won=true t=34.7 pw=0.28 foe_dmg=18.0 allies=0+0 rally_foes=0 thrown=0
+GUNNER shots=6 dodged=6 hits=0
+GRADE chapter=20o letter=S points=136 { "gun_shots": 4, "gun_hits": 3, "gunner_shots": 6, "dodged": 6, "parries": 6, "kills": 5, "hits_taken": 1 }
+AUTOTEST PASS chapter=20o variant=wide outcome=20O.2 hits=0 cracks=0 gun=3/4 gunner=6/6 duel=true bed= sur=yeni
+WARNING: ObjectDB instances leaked at exit (run with --verbose for details).
+     at: cleanup (core/object/object.cpp:2378)
+ERROR: 1 resources still in use at exit (run with --verbose for details).
+   at: clear (core/io/resource.cpp:614)
+KOSU ad=sonda_c20o_wide_2 rc=0 sn=75 args=--chapter=20o --autotest=wide

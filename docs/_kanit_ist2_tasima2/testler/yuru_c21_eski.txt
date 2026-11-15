@@ -1,0 +1,19 @@
+Godot Engine v4.4.1.stable.official.49a5bc7b6 - https://godotengine.org
+
+WARNING: Screen-space ambient occlusion (SSAO) can only be enabled when using the Forward+ renderer.
+     at: environment_set_ssao (servers/rendering/storage/environment_storage.cpp:586)
+WARNING: Screen-space indirect lighting (SSIL) can only be enabled when using the Forward+ renderer.
+     at: environment_set_ssil (servers/rendering/storage/environment_storage.cpp:661)
+TASIMA21YURU set=eski dogus=(-2.0, 0.000107, 5.0) grant=(-4.0, 0.0, 3.0) kap_a=(2.0, 0.0, 4.0) lagim=(-9.0, 0.0, 7.0)
+TASIMA21YURU bacak=dogus_grant sure=0.3 yol=0.8 takilma=0 dusme=0 kap=- son=(-2.6, 0.0, 4.4)
+WORLDWALK region= shapes=9839 boxes=9115 tris=284340 ms=1484
+CITYLIFE region= src=plan era=siege night=true density=0.50 nodes=1026 plazas=19 landmarks=23
+TASIMA21YURU bacak=grant_kap1 sure=1.1 yol=3.3 takilma=0 dusme=0 kap=tamam son=(0.8, 0.0, 4.1)
+TASIMA21YURU bacak=kap1_lagim sure=2.5 yol=7.8 takilma=0 dusme=0 kap=tamam son=(-6.6, 0.0, 7.0)
+TASIMA21YURU bacak=lagim_tespit sure=0.8 yol=2.4 takilma=0 dusme=0 kap=- son=(-8.7, 0.0, 8.3)
+TASIMA21YURU OZET set=eski bacak=4 takilma=0 dusme=0 kap_yok=0 sure=4.6 yol=14.3 bulundu=true kap=2
+WARNING: ObjectDB instances leaked at exit (run with --verbose for details).
+     at: cleanup (core/object/object.cpp:2378)
+ERROR: 1 resources still in use at exit (run with --verbose for details).
+   at: clear (core/io/resource.cpp:614)
+KOSU ad=yuru_c21_eski rc=0 sn=29 args=--chapter=21 --autotest=yuru --eskisur

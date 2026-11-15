@@ -524,6 +524,9 @@ class HucumMerdiveni extends Node3D:
 # ------------------------------------------------------------------ GEDİK ONARIMI (karar 4-A, 5-B)
 
 class GedikOnarim extends Node3D:
+	## Aşama 4 kazık çitinin dış surun iç yüzünden (zo0) şehir yanına uzaklığı: teslim yerinin (zo0 − 3,2) 2,8 m gerisi. 5,0 iken
+	## depodan gelen taşıyıcı şeridi çitin sol ucunu sıyırıyordu (VISAUDIT insolid WallFight carry x −4,1); 6,0 ile uçta 1,7 m açık
+	const CIT_Z_PAY := 6.0
 	var a_ref: RefCounted
 	var asama_n := 1
 	var _katman: Node3D
@@ -598,8 +601,11 @@ class GedikOnarim extends Node3D:
 			var kz := Props.cyl(_katman, 0.07, 2.2, Vector3(kx, ys + 0.9, zs + 0.75), C_WOOD.darkened(0.2), Vector3(-26.0 + rng.randf_range(-5.0, 5.0), 0, rng.randf_range(-4.0, 4.0)), 6, 0.015)
 			kz.name = "Ahsap_Kazik"
 		if asama_n >= 3:
-			# toprak set (fıçıların arkasında, yuvarlak toprak yığın) ve çarpışma: gediği kapatır
-			var tset := Props.ball(_katman, 0.5, Vector3(gx, ys + 0.45, zs - 1.25), C_TOPRAK, Vector3(IstSurlar.GEDIK_W + 0.6, 1.5, 2.4), 10)
+			# toprak set (fıçı sırasının ardında, gediğin içinde: fıçılar setin şehir yüzü) ve çarpışma: gediği kapatır.
+			# Eskiden fıçıların ŞEHİR tarafındaydı (zs − 1,25, 2,4 m derin): teslim yerini, işçileri ve komutanı içine alıyordu,
+			# yakından kadrajı kaplayan dev bir hap (docs/_kanit_ist2_pilot20 an_06). Şimdi molozun üstünde, gediğin iç yarısında.
+			var zt := zs + 1.05
+			var tset := Props.ball(_katman, 0.5, Vector3(gx, PARCA_._profil_y(pr["pts"], zt) + 0.35, zt), C_TOPRAK, Vector3(IstSurlar.GEDIK_W + 0.6, 1.5, 2.0), 10)
 			tset.name = "Toprak_GedikSet"
 			var b := StaticBody3D.new()
 			b.name = "Toprak_GedikSet_Carp"
@@ -609,6 +615,10 @@ class GedikOnarim extends Node3D:
 			cs.shape = bs
 			b.add_child(cs)
 			b.position = Vector3(gx, ys + 0.6, zs)
+			# Görünen toprak setin ve fıçı sırasının kutusu: düellocuların giriş seçimi (Melee.auto_entry, Unclip.visible_body)
+			# onu görünen bir katı saymalı; yoksa savunanın girişi barikatın arkasından seçiliyor, barikatın içinde kalıyordu
+			# (20o =wide: bir savunan z 11,7'de 30 sn; docs/_kanit_ist2_tasima2/rapor.md)
+			b.set_meta("wall", true)
 			_katman.add_child(b)
 		if asama_n >= 4:
 			# sur yolu tahtası: sehpalar üstünde, dış sur yolu hizasında (iki yandaki surla birleşir)
@@ -623,16 +633,27 @@ class GedikOnarim extends Node3D:
 				var pz := zo0 + 0.1 + i * (zo1 - zo0 - 0.2) / 9.0
 				ag.kutu(Vector3(gx, OH - 0.08, pz), Vector3.RIGHT, Vector3.BACK, IstSurlar.GEDIK_W + 0.6, 0.07, (zo1 - zo0 - 0.2) / 9.0 - 0.02,
 					Color(1, 1, 1) if i % 2 == 0 else Color(0.88, 0.84, 0.78))
-			# ikinci sıra kazık çit (dış yüzde, insan boyu)
+			# ikinci sıra kazık çit (insan boyu): savunanın ARKASINDA, şehir tarafında (sahibin kararı: "çit oyuncunun arkasına").
+			# Eskiden dış yüzdeydi: oyuncuyla saldırganların arasında kalıp görüşü kapatıyor, düelloyu uzatıyordu (Bölüm 20 2. dalga
+			# azapları çite çarpıp terasa kayıyordu; 20o =wide 32–41 sn). Şimdi barikat ekibinin (teslim yeri, işçiler) ardında,
+			# gedik eni kadar; iki ucu açık (depodan gelen yol ve siperler ucun dışından geçer). Uçları ovaya hafif eğik.
+			var zc := CIT_Z_PAY
+			var yc: float = a.y_peri()
 			for i in int(IstSurlar.GEDIK_W / 0.42):
 				var kx2 := gx - h + 0.2 + i * 0.42
-				KalasKopru._dikme(ag, Vector3(kx2, PARCA_._profil_y(pr["pts"], zo1 - 0.2) - 0.2, zo1 - 0.2), Vector3(kx2 + rng.randf_range(-0.05, 0.05), PARCA_._profil_y(pr["pts"], zo1) + 2.2, zo1 + 0.5), 0.12)
+				KalasKopru._dikme(ag, Vector3(kx2, yc - 0.2, zo0 - zc), Vector3(kx2 + rng.randf_range(-0.05, 0.05), yc + 2.2 + rng.randf_range(-0.12, 0.1), zo0 - zc + 0.35), 0.12)
+			# kazıkları bağlayan iki kuşak (yatay kalas)
+			for ky: float in [0.7, 1.7]:
+				ag.kutu(Vector3(gx, yc + ky, zo0 - zc + ky * 0.146 - 0.14), Vector3.RIGHT, Vector3.BACK, IstSurlar.GEDIK_W - 0.2, 0.1, 0.08)
 			ag.mesh_ekle(_katman, Props.mat(C_WOOD.darkened(0.12), 0.0, false, "wood"), "Ahsap_GedikTahta")
 		PARCA_.pis(_katman)
 		if asama_n >= 4:
 			for spec in [[Vector3(gx, OH - 0.06, (zo0 + zo1) * 0.5), Vector3(IstSurlar.GEDIK_W + 0.6, 0.12, zo1 - zo0)],
-					[Vector3(gx, 1.9, zo1 + 0.1), Vector3(IstSurlar.GEDIK_W, 2.4, 0.4)]]:
+					[Vector3(gx, float(a.y_peri()) + 1.1, zo0 - CIT_Z_PAY + 0.15), Vector3(IstSurlar.GEDIK_W, 2.4, 0.4)]]:
 				var b2 := StaticBody3D.new()
+				if (spec[1] as Vector3).y > 1.0:
+					b2.name = "Ahsap_GedikCit_Carp"
+					b2.set_meta("wall", true)     # görünen kazık çitin kutusu (giriş seçimi ve görüş denetimi onu görsün)
 				var cs2 := CollisionShape3D.new()
 				var bs2 := BoxShape3D.new()
 				bs2.size = spec[1]

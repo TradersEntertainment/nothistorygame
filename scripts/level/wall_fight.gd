@@ -11,6 +11,7 @@ extends Node3D
 var cauldrons: Array = []        # {node, pot, stream, pos, t}
 var burning: Array = []          # {node, flames, light, t, dir}
 var crew: Array = []             # {node, a, b, t, speed}
+var builders: Array = []         # gedikte iş başındaki işçiler (add_builders)
 var rng := RandomNumberGenerator.new()
 var _t := 0.0
 ## Bölüm bağdaştırıcısı (SurSet): verilirse moloz yamacı yeni setten; null: LandWalls (bugünkü davranış)
@@ -367,6 +368,7 @@ func add_builders(site: Vector3, n: int, seed := 0) -> void:
 		p.position.y = _ry(p.position.x, p.position.z)
 		p.rotation.y = -signf(x) * 0.5
 		add_child(p)
+		builders.append(p)
 		p.set_activity(["hammer", "chop"][i % 2])
 		# Elde iş aleti (yayma P6): kazık çakan tokmakla, taş yontan baltayla (boş elle havayı dövüyorlardı)
 		p.give_tool(["mallet", "axe"][i % 2])
@@ -397,6 +399,8 @@ func _gap(hud: Node, c: Dictionary, ph: float) -> float:
 ## ötekiler replik bitene dek çizgiye girmeden bekler (_update_crew).
 func dodge(_eye: Vector3, _head: Vector3, _speaker: Node3D) -> void:
 	var hud := get_tree().get_first_node_in_group("hud")
+	if sur != null and not sur.eski_mi:
+		_dodge_builders(hud)
 	for c: Dictionary in crew:
 		var p: Node3D = c["node"]
 		if not is_instance_valid(p) or not p.visible:
@@ -426,6 +430,28 @@ func dodge(_eye: Vector3, _head: Vector3, _speaker: Node3D) -> void:
 				at = _crew_pos(c, ph)
 			at.y = _ry(at.x, at.z)
 			p.position = at
+
+
+## Yeni sur setinde (SurSet yeni): görüş çizgisindeki işçi barikat boyunca (x) boş bir yere kayar; z'si aynı kalır (arkası
+## barikatın kutusu, önü taşıyıcıların varışı: Unclip.clear_line'ın 1,3 m'lik yana çekilmesi orada yer bulamıyordu, işçi
+## komutanla oyuncunun arasında kalıyordu: VISAUDIT personhidden D20_G_ASSAULT / D20_G_REPELLED / D20_G_DONE). Eski sette yok.
+func _dodge_builders(hud: Node) -> void:
+	if hud == null:
+		return
+	for b in builders:
+		var p := b as Node3D
+		if not is_instance_valid(p) or not p.visible:
+			continue
+		if hud.sightline_gap(p.global_position) >= 1.0:
+			continue
+		for dx: float in [1.2, -1.2, 1.8, -1.8, 2.4, -2.4, 3.0, -3.0]:
+			var at := p.position + Vector3(dx, 0, 0)
+			at.y = _ry(at.x, at.z)
+			var g := global_transform * at
+			if hud.sightline_gap(g) < 1.0 or Unclip.in_solid(self, g, 0.25) or Unclip.crowded(p, g, 0.55):
+				continue
+			p.position = at
+			break
 
 
 func _update_crew(delta: float) -> void:

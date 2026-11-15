@@ -23,6 +23,8 @@ const ARROWS := Vector3(6.2, 0.0, 0.2)
 ## açılıyordu); ok sandığı depo yanında, iç surun dibinde. Hücumdaki ok koşusu (gedik önü → sandık → okçular) eski 13,0 +
 ## 18,6 = 31,6 m ↔ yeni 18,1 + 12,0 = 30,1 m (docs/_kanit_ist2_pilot20/rapor.md)
 const ARCHERS_YENI := Vector3(-9.0, 0.0, 11.0)
+## Giustiniani'nin yeni setteki yeri: sağ siperin önü (bkz. _build)
+const GIUST_YENI := Vector3(5.0, 0.0, 9.4)
 const ARROWS_YENI := Vector3(-16.0, 0.0, 1.2)
 ## Bölüm sabiti: true → eski set (geri dönüş; komut satırında --eskisur ile de)
 const ESKI_SUR := false
@@ -124,14 +126,16 @@ func _build() -> void:
 		# yeni sette depo ve taşıyıcı şeridi gediğin SOLUNDA: komutan eskideki gibi şeridin karşı yanında (gediğin sağı, iç
 		# kulenin önü; işçilerin ve sağ siperin arası). Solda, şeridin 0,7 m yanındayken gedikten bakan oyuncuya taşıyıcılar
 		# onu örtüyordu (VISAUDIT personhidden D20_G_ASSAULT / D20_G_DUEL). Doğuştan uzaklığı eskiyle aynı (≈14 m).
-		giust.position = sur.on_rubble(sur.gedik_onu() + Vector3(3.6, 0, 1.8))
+		# (TAŞIMA-2) Sağ siperin önü (siper z 10,9–11,6): eski yer gedik önü + (3,6; 1,8) barikatın fıçı sırası kutusunun
+		# (aşama 3–4, z 12,0–13,2) içindeydi; kutu görünen katı sayılınca VISAUDIT insolid. Doğuştan 14,8 m.
+		giust.position = sur.on_rubble(GIUST_YENI)
 	add_child(giust)
 	giust.look_target = player
 	# Huruçtan dönen Leon (36.1): Giustiniani "gedikte, senin yanında" der; _breach_duel'da oyuncunun solunda durur
 	if Siege.outcome(36) == "36.1":
 		_leon = Person.new(LEON_LOOK)
 		_leon.set_meta("spk", "SPK_LEON")
-		_leon.position = sur.on_rubble(sur.gedik() + Vector3(-2.2, 0, -3.6)) if sur.eski_mi else sur.on_rubble(sur.gedik_onu() + Vector3(2.0, 0, 1.2))
+		_leon.position = sur.on_rubble(sur.gedik() + Vector3(-2.2, 0, -3.6)) if sur.eski_mi else sur.on_rubble(sur.gedik_onu() + Vector3(1.6, 0, -1.0))
 		add_child(_leon)
 		_leon.look_target = giust
 	# Yük taşıyan savunucular: WallFight.add_carriers (aşağıda). Ayrı bir işçi takımı yok: iki takımın yolları
@@ -158,12 +162,21 @@ func _build() -> void:
 	add_child(fight)
 	for sx: float in [-1.0, 1.0]:
 		fight.add_cauldron(Vector3(sx * 8.6, sur.dis_yol_y(), sur.dis_yol_z()), 2040 + int(sx))
-	fight.add_carriers(sur.depo() + Vector3(-2.6, 0, 2.6), sur.gedik_onu(), 5, 2050)
+	# yeni sette taşıyıcıların varışı teslim yerinin 0,4 m gerisi: şerit, barikatın dibindeki işçilerden 1,4 m uzak geçer
+	fight.add_carriers(sur.depo() + Vector3(-2.6, 0, 2.6), sur.gedik_onu() + (Vector3.ZERO if sur.eski_mi else Vector3(0, 0, -0.4)), 5, 2050)
 	if GameState.flags.get("niko_friend", false):
 		niko = fight.swap_carrier(4, Person.new({"face": "niko", "coat": Color("8a2b22"), "pants": Color("4a3a2a"), "hair": Color("2a1e14"),
 			"hat": "helm", "mustache": true, "beard": true, "skin": Color("d9a07a")}), "plank")
 		niko.set_meta("spk", "SPK_NIKO")
-	fight.add_builders(sur.gedik() + Vector3(0, 0, -2.6) if sur.eski_mi else sur.gedik_onu() + Vector3(0, 0, 0.4), 4, 2060)
+	# yeni sette işçiler barikatın dibinde (gedik önü + 1,1: z 10,9–11,4; fıçı sırası kutusu 12,0'da başlar). Gedik önü + 0,4'te
+	# soldakiler depodan gelen taşıyıcı şeridinin üstündeydi: taşıyıcılar onları adım adım barikata itiyordu (VISAUDIT insolid)
+	fight.add_builders(sur.gedik() + Vector3(0, 0, -2.6) if sur.eski_mi else sur.gedik_onu() + Vector3(0, 0, 1.1), 4, 2060)
+	if not sur.eski_mi:
+		# iş başındaki işçi yerinden itilmez (taşıyıcı kalabalığı onu adım adım barikatın kutusuna itiyordu: VISAUDIT insolid
+		# z 11,9–12,1); taşıyıcı şeridi onlardan uzak geçer (yukarıda)
+		for c in fight.get_children():
+			if c is Person and String((c as Person).activity) in ["hammer", "chop"]:
+				c.set_meta("no_yield", true)
 	fight.set_crew_active(false)
 	# Önceki gecelerin bedeli: peribolosta yerde yatan oklanmış savunucular, düşmüş kalkanlar, surdan kopmuş taşlar,
 	# kırık kılıçlar, dağılmış kalaslar (oyuncunun depo–gedik yolunu ve okçu sırasını kesmeyen yerlerde)
@@ -746,9 +759,18 @@ func _dawn() -> void:
 		player.global_position = LandWalls.BREACH + Vector3(1.5, 0.05, -7.5)
 		player.face(LandWalls.BREACH + Vector3(0, 2.4, 0))
 	else:
-		# iç kulenin eteği gediğin sağında: tespit yeri gediğin önünde, biraz solda
-		player.global_position = sur.gedik_onu() + Vector3(-1.5, 0.05, -4.0)
+		# tespit yeri aşama 4'ün kazık çitinin (savunanın arkası, teslim yerinin 2,8 m gerisi) önünde, gediğin hafif sağında:
+		# barikata 4,5 m. Eskiden gedik önü − 4 m: çit kareyi kesiyordu (TESPITBLOCK Ahsap_GedikCit_Carp), Giustiniani'nin son
+		# sözü çitin ardında kalıyordu (VISAUDIT hidden). Solda (−6,5; 9,5) denendi: soldan gelen taşıyıcı şeridi ve sol
+		# işçiler kadraj çizgisindeydi (TESPITBLOCK person 17/18 koşu); sağda ikisi de çizginin ≥1,3 m dışında.
+		player.global_position = Vector3(2.0, 0.05, sur.gedik_onu().z - 1.4)
 		player.face(sur.barikat() + Vector3(0, 0.6, 0))
+		# kararma kesmesinde komutan yerine döner (gece hücumda/tüfekte oyuncunun yanına gelmişti; çitin öbür yanında kalıyordu)
+		giust.global_position = sur.on_rubble(GIUST_YENI)
+		# gece yardıma koşup dövüşten sonra "nefeslenip kalan" dost düellocular şafakta sahnede değil (kararma kesmesi):
+		# yeni tespit yeri gecenin düello alanına yakın, biri oyuncunun 0,5 m önünde kalıp komutanı örtüyordu
+		# (VISAUDIT personhidden D20_G_END by=…(no_talk,no_chat,no_yield))
+		Duelist.dismiss_idle(self)
 	await hud.card([[tr("UI_CH20_DAWN"), 26, Color("f2e6c9")]], 1.8)
 	hud.clear_card()
 	await hud.fade_to(0.0, 1.0)
@@ -902,6 +924,11 @@ func _kare(ad: String) -> void:
 	_kare_n += 1
 	var f := dir.path_join("an_%02d_%s.jpg" % [_kare_n, ad])
 	get_viewport().get_texture().get_image().save_jpg(f, 0.85)
+	# teşhis (TAŞIMA-2): --kim=x,y → o pikselin ardındaki görünür ağların listesi (tests/_ist/tasima2_kim.gd)
+	for arg in OS.get_cmdline_user_args():
+		if arg.begins_with("--kim="):
+			var xy := arg.trim_prefix("--kim=").split(",")
+			load("res://tests/_ist/tasima2_kim.gd").sor(self, get_viewport().get_camera_3d(), Vector2(float(xy[0]), float(xy[1])))
 	print("PILOT20KARE %s repair=%d asama=%d phase=%s oyuncu=%s" % [f.get_file(), repair, SurSet.asama_of(repair), phase, player.global_position])
 
 
@@ -910,6 +937,13 @@ var _asama4_ok := false
 func _kare_asama4() -> void:
 	_asama4_ok = true
 	await _kare_gedik("onarim_asama4")
+	if not sur.eski_mi:
+		# aşama 4'ün kazık çiti: şehir tarafından (doğuşun önü), çit + işçiler + barikat bir arada
+		var p := player.global_position
+		player.global_position = Vector3(-6.0, 0.05, 5.6)
+		player.face(Vector3(0.0, 1.6, sur.gedik_onu().z + 0.6))
+		await _kare("cit_sehir_tarafindan")
+		player.global_position = p
 
 
 ## Onarım karesi: teslim yerinin 1,6 m gerisinden ve solundan (taşıyıcıların varış noktası teslim yerinin hemen önü:
