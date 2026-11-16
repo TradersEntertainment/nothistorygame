@@ -266,7 +266,13 @@ func _build_walls_scene() -> void:
 		var ay: Vector3 = dm["ayak"]
 		var tp: Vector3 = dm["tepe"]
 		var boy := ay.distance_to(tp)
-		climb_ladder = Ladder.new(boy, rad_to_deg(asin((ay.z - tp.z) / boy)), Color("6a4a2c"))
+		# TAŞIMA-8D: tepe çıkışı sur yolunun ZEMİNİNE (mazgal açıklığının ardı). Ladder.top_exit tepeden 0,7 m geriye
+		# veriyordu: merdivenin tepesi korkuluğun 1,5 m üstünde, o nokta mazgal eşiğinin (korkuluğun) üstüne, sur yolunun
+		# 1,4 m yukarısına düşüyordu (TMP8D: çıkış y 10,03, sur yolu 8,62). Oyuncu eşikte kalabiliyordu; bot merdivene
+		# geri yürüyüp yeniden tutunuyor, tırmanış döngüsü hiç bitmiyordu.
+		var sm := SurMerdiveni.new(boy, rad_to_deg(asin((ay.z - tp.z) / boy)), Color("6a4a2c"))
+		sm.cikis = Vector3(ay.x, sur.dis_yol_y() + 0.05, sur.dis_yol_on_z())
+		climb_ladder = sm
 		climb_ladder.position = ay
 	climb_ladder.visible = false
 	add_child(climb_ladder)
@@ -469,14 +475,16 @@ func _wall_climb() -> void:
 	player.frozen = false
 	var hz := 1.0
 	var t := 0.0
-	while not (player.ladder == null and player.global_position.y > sur.dis_yol_y() - 0.3 \
-			and player.global_position.z < sur.dis_sur_z1() - 0.1 \
-			and (sur.eski_mi or (player.is_on_floor() and player.global_position.y < sur.dis_yol_y() + 0.5))):
+	var yedek := false          # bot 40 sn'de çıkamazsa tek sefer tepeye konur
+	var ustte := 0.0            # merdivenden çıkıp sur yolunun üstünde (korkuluk eşiği, diş) duruş süresi
+	while not _tirmandi():
 		await get_tree().process_frame
 		if get_tree().paused:      # duraklatmada sayaç akmaz
 			continue
 		var dt := get_process_delta_time()
 		t += dt
+		if GameState.autotest and int((t - dt) * 2.0) != int(t * 2.0):
+			print("TMP8D t=%.1f pos=%s lad=%s lt=%.2f floor=%s frozen=%s stone=%s oil=%s vel=%s" % [t, player.global_position.snapped(Vector3.ONE * 0.01), player.ladder != null, player._ladder_t, player.is_on_floor(), player.frozen, _stone_falling, oil.active, player.velocity.snapped(Vector3.ONE * 0.01)])
 		# Merdivenden düşüp uzaklaşan (hendeğe, ovaya) ya da kaybolan: işaret merdiveni gösterir; çok uzaksa dibine
 		if player.ladder == null and not player.frozen and player.is_on_floor():
 			var off := Vector2(player.global_position.x - CLIMB_X, player.global_position.z - climb_ladder.global_position.z).length()
@@ -485,6 +493,17 @@ func _wall_climb() -> void:
 				player.global_position = climb_ladder.global_position + Vector3(0, 0.05, 1.0)
 				player.face(climb_ladder.point_at(2.5))
 				await hud.fade_to(0.0, 0.3)
+		# Sur yolunun üstünde (korkuluk eşiği, diş tepesi) yerde duran: 1,5 sn içinde kendisi inmezse bir kez merdivenin
+		# sur yolu çıkışına konur (gerçek oyuncu dişe çıkıp orada dikilebilir; her çıkış biçimi biter, döngü takılmaz)
+		if not sur.eski_mi and _sur_ustunde():
+			ustte += dt
+			if ustte > 1.5:
+				print("CLIMB ustten at=%s" % player.global_position.snapped(Vector3.ONE * 0.1))
+				player.global_position = climb_ladder.top_exit()
+				player.velocity = Vector3.ZERO
+				ustte = 0.0
+		else:
+			ustte = 0.0
 		if player.ladder == climb_ladder and not _stone_falling and player._ladder_t > climb_ladder.height * 0.4:
 			oil.trigger()
 		if player.ladder == climb_ladder and not oil.active:
@@ -493,13 +512,21 @@ func _wall_climb() -> void:
 				hz = randf_range(1.4, 2.0)
 				_drop_stone()
 		if GameState.autotest:
-			# Bot: taş düşerken durur, sonra tırmanır (kaçınma ritmi gerçekten denenir)
-			if _stone_falling or oil.active:
+			if player.ladder == null and player.global_position.y > sur.dis_yol_y() - 0.3:
+				# Tepede: merdivene geri bakıp yürümez (eskiden tepeye bakıp merdivene geri dönüyordu)
 				Input.action_release("move_forward")
 			else:
-				Input.action_press("move_forward")
-			player.face(climb_ladder.point_at(clampf(player._ladder_t + 2.0, 0.0, climb_ladder.height)))
-			if t > 40.0:
+				# Bot: taş düşerken durur, sonra tırmanır (kaçınma ritmi gerçekten denenir)
+				if _stone_falling or oil.active:
+					Input.action_release("move_forward")
+				else:
+					Input.action_press("move_forward")
+				player.face(climb_ladder.point_at(clampf(player._ladder_t + 2.0, 0.0, climb_ladder.height)))
+			if t > 40.0 and not yedek:
+				yedek = true
+				print("CLIMB yedek t=%.1f at=%s lad=%s" % [t, player.global_position.snapped(Vector3.ONE * 0.1), player.ladder != null])
+				player.ladder = null
+				player.velocity = Vector3.ZERO
 				player.global_position = climb_ladder.top_exit()
 	if GameState.autotest:
 		Input.action_release("move_forward")
@@ -1169,3 +1196,30 @@ func _entry_vary(men: Array) -> void:
 		if is_instance_valid(s) and (s as Node3D).is_visible_in_tree() and s.rig and s.rig.lock == 0:
 			s.rig.emote(["nod", "shrug", "arms_cross", "nod", "whisper"][randi() % 5])
 		_entry_vary(men))
+
+
+## Tırmanış bitti mi: merdivende değil, yerde, dış surun içinde ve sur yolunun üstünde (yeni sette sur yolu zemininde;
+## korkuluğun/dişin üstünde duran _sur_ustunde ile bir kez sur yoluna indirilir)
+func _tirmandi() -> bool:
+	var p := player.global_position
+	if player.ladder != null or p.y <= sur.dis_yol_y() - 0.3 or p.z >= sur.dis_sur_z1() - 0.1:
+		return false
+	return sur.eski_mi or (player.is_on_floor() and p.y < sur.dis_yol_y() + 0.5)
+
+
+func _sur_ustunde() -> bool:
+	var p := player.global_position
+	return player.ladder == null and player.is_on_floor() and p.y >= sur.dis_yol_y() + 0.5 and p.y < sur.dis_yol_y() + 4.0 \
+		and p.z > sur.dis_sur_z0() - 0.5 and p.z < sur.dis_sur_z1() + 0.3 and absf(p.x - CLIMB_X) < 6.0
+
+
+## Hücum merdiveni (yeni set): tepe çıkışı sur yolunun zemini (Ladder.top_exit tepenin 0,7 m gerisini, burada mazgal
+## eşiğinin üstünü verirdi). Player merdivenin tepesinde top_exit()'i çağırır.
+class SurMerdiveni extends Ladder:
+	var cikis := Vector3.INF
+
+	func _init(p_height := 6.0, p_tilt := 15.0, p_color := Color("6a4a2c")) -> void:
+		super(p_height, p_tilt, p_color)
+
+	func top_exit() -> Vector3:
+		return cikis if cikis != Vector3.INF else super()
