@@ -44,7 +44,20 @@ const TUR := {
 static var _bek_mm := {}          # "Ad|x|y|z" -> tür   (Dressing: MultiMesh örneği, kök-yerel çerçevede)
 static var _bek_dugum: Array = [] # [MeshInstance3D, StaticBody3D, tür]
 static var _korunan: Array = []   # [Vector3 (dünya), yarıçap]
-static var _engel: Array = []     # [Transform3D (Dressing kök-yerel), boyut, ms]
+static var _engel: Array = []
+static var _mmi_kuyruk: Array = []
+static var _ag_adlar := {}
+static var _kanca := false
+
+
+static var _ag_kume := {}         # kayıtlı Kit modellerinin parça ağları (yalnız bunlarla çizilen MultiMesh kuyruğa)
+
+
+static func _statik_eklendi(n: Node) -> void:
+	if n is MultiMeshInstance3D and not _bek_mm.is_empty():
+		var mm := (n as MultiMeshInstance3D).multimesh
+		if mm != null and _ag_kume.has(mm.mesh):
+			_mmi_kuyruk.append(n)     # [Transform3D (Dressing kök-yerel), boyut, ms]
 static var _ben: EsyaFizik = null
 static var _kurulacak := false
 
@@ -53,12 +66,12 @@ var uyanik: Array = []            # uyanık eşyalar (sıra: en eski önde)
 var _izgara := {}                 # Vector2i -> Array[Dictionary]
 var _taranan := {}                # MultiMeshInstance3D örnek kimliği -> true
 var _tara_t := 0.0
-var _yeni_mmi: Array = []         # ağaca yeni giren MultiMeshInstance3D'ler (tarama yalnız bunlara bakar)
-var _ilk_tarama := true
+
 var _player: Player
 var _temas := {}                  # eşya kimliği -> yürüyerek dayanma süresi
 var _son_hiz := 0.0
 var _sira := 0
+var _devam: Array = []            # [ad, {parça: mmi}, sıradaki örnek]: karelere bölünmüş eşleştirme
 var sayac := {"kayit": 0, "uyanan": 0, "tekme": 0, "kosu": 0, "itme": 0, "patlama": 0, "destek": 0,
 	"dusme": 0, "havada": 0, "gomuk": 0, "tikama": 0, "sinir": 0}
 var olcum := {"en_cok_uyanik": 0}
@@ -73,6 +86,10 @@ static func kaydet_mm(ad: String, xf: Transform3D, tur: String) -> void:
 	if KAPALI:
 		return
 	_bek_mm[_anahtar(ad, xf.origin)] = [tur, Time.get_ticks_msec()]
+	if not _ag_adlar.has(ad):
+		_ag_adlar[ad] = true
+		for p in Kit.prop_parts(ad):
+			_ag_kume[p[0]] = true
 	_kur()
 
 
@@ -145,6 +162,13 @@ static func _anahtar(ad: String, p: Vector3) -> String:
 
 
 static func _kur() -> void:
+	# Kit.batch'in MultiMesh'leri ağaca girdikleri anda kuyruğa (ağaç taraması yok: ilk kare takılmasın). Kayıt
+	# kurucunun içinde, MultiMesh'ten ÖNCE yapılır; kanca ilk kayıtta bağlanır ve hep bağlı kalır (tür denetimi kadar).
+	if not _kanca:
+		var tr := Engine.get_main_loop() as SceneTree
+		if tr:
+			tr.node_added.connect(_statik_eklendi)
+			_kanca = true
 	if (_ben != null and is_instance_valid(_ben)) or _kurulacak:
 		return
 	_kurulacak = true
@@ -190,6 +214,9 @@ func _exit_tree() -> void:
 		print("ESYAAUDIT OZET kayit=%d uyanan=%d tekme=%d kosu=%d itme=%d patlama=%d destek=%d en_cok_uyanik=%d sorun=%d (dusme=%d havada=%d gomuk=%d tikama=%d sinir=%d)" % [
 			sayac["kayit"], sayac["uyanan"], sayac["tekme"], sayac["kosu"], sayac["itme"], sayac["patlama"], sayac["destek"],
 			olcum["en_cok_uyanik"], sorun(), sayac["dusme"], sayac["havada"], sayac["gomuk"], sayac["tikama"], sayac["sinir"]])
+		print("ESYAAUDIT MALIYET uyurken_us_kare=%.1f uyanikken_us_kare=%.1f en_kotu_us=%d kare=%d tara_us=%d dugum_us=%d grup_us=%d liste_n=%d" % [
+			float(olcum.get("uyur_us", 0)) / maxf(1.0, float(olcum.get("uyur_kare", 0))),
+			float(olcum.get("uyanik_us", 0)) / maxf(1.0, float(olcum.get("uyanik_kare", 0))), int(olcum.get("en_us", 0)), int(olcum.get("kare", 0)), int(olcum.get("tara_us", 0)), int(olcum.get("dugum_us", 0)), int(olcum.get("grup_us", 0)), int(olcum.get("liste_n", 0))])
 
 
 func sorun() -> int:
@@ -197,16 +224,30 @@ func sorun() -> int:
 
 
 func _physics_process(delta: float) -> void:
+	var t0 := Time.get_ticks_usec()
+	_kare_isi(delta)
+	var us := Time.get_ticks_usec() - t0
+	olcum["kare"] = int(olcum.get("kare", 0)) + 1
+	if uyanik.is_empty():
+		olcum["uyur_us"] = int(olcum.get("uyur_us", 0)) + us
+		olcum["uyur_kare"] = int(olcum.get("uyur_kare", 0)) + 1
+	else:
+		olcum["uyanik_us"] = int(olcum.get("uyanik_us", 0)) + us
+		olcum["uyanik_kare"] = int(olcum.get("uyanik_kare", 0)) + 1
+	olcum["en_us"] = maxi(int(olcum.get("en_us", 0)), us)
+
+
+## Yöneticinin kare işi (süresi _physics_process'te ölçülür: OZET satırında uyur_us / uyanik_us)
+func _kare_isi(delta: float) -> void:
 	# kayıt bekleyen var: kısa aralıkla tara (kurulum karelere yayılabilir)
 	# tarama: ilk karede bütün ağaç (yönetici dünyadan sonra kurulur), sonra yalnız ağaca yeni giren MultiMesh'ler ve
 	# bekleyen tek düğümler (ağaç taraması yok: uyurken maliyet ~0)
 	_tara_t -= delta
-	if _tara_t <= 0.0 and (_ilk_tarama or not _yeni_mmi.is_empty() or not _bek_dugum.is_empty()):
+	if not _devam.is_empty() or (_tara_t <= 0.0 and (not _mmi_kuyruk.is_empty() or not _bek_dugum.is_empty())):
 		_tara_t = 0.25
 		if not _bek_mm.is_empty() or not _bek_dugum.is_empty():
 			_tara()
-		_yeni_mmi.clear()
-		_ilk_tarama = false
+		_mmi_kuyruk.clear()
 	if _player == null or not is_instance_valid(_player):
 		_player = get_tree().get_first_node_in_group("player") as Player
 	if _player != null and _player.is_inside_tree():
@@ -217,24 +258,9 @@ func _physics_process(delta: float) -> void:
 
 # ======================================================================== tarama: kayıtları eşyaya çevir
 
-# Oynanış düğümleri (adlarında geçen): yanındaki eşya kayda geçmez, donan eşya üstlerinden kenara itilir
-const KORU_AD := ["Merdiven", "Ladder", "Kopru", "Poterna", "Gedik", "Kapi", "Door", "Gate", "FicStack", "Pile", "Depo"]
-var _koru_tarandi := false
-
-
-func _koru_tara() -> void:
-	_koru_tarandi = true
-	for ad in KORU_AD:
-		for n in get_tree().root.find_children("*%s*" % ad, "Node3D", true, false):
-			var p := (n as Node3D).global_position
-			if absf(p.x) > 1.0e5:
-				continue
-			_korunan.append([p, 1.4])
-
-
 func _tara() -> void:
-	if not _koru_tarandi:
-		_koru_tara()
+	var td := Time.get_ticks_usec()
+	var tm := Time.get_ticks_usec()
 	# tek düğümler
 	var kalan: Array = []
 	for b in _bek_dugum:
@@ -248,8 +274,10 @@ func _tara() -> void:
 		var st = b[1] if is_instance_valid(b[1]) else null
 		_dugum_esya(g, st, b[2])
 	_bek_dugum = kalan
+	olcum["dugum_us"] = maxi(int(olcum.get("dugum_us", 0)), Time.get_ticks_usec() - td)
 	# Dressing MultiMesh örnekleri
-	var liste: Array = get_tree().root.find_children("*", "MultiMeshInstance3D", true, false) if _ilk_tarama else _yeni_mmi
+	var liste: Array = _mmi_kuyruk
+	_mmi_kuyruk = []
 	if not _bek_mm.is_empty() and not liste.is_empty():
 		var adlar := {}
 		for k in _bek_mm:
@@ -272,19 +300,30 @@ func _tara() -> void:
 			if not gruplar.has(gk):
 				gruplar[gk] = {}
 			gruplar[gk][pa[1]] = mmi
+		olcum["grup_us"] = maxi(int(olcum.get("grup_us", 0)), Time.get_ticks_usec() - tm)
+		olcum["liste_n"] = maxi(int(olcum.get("liste_n", 0)), liste.size())
 		for gk in gruplar:
-			var ad: String = String(gk).get_slice("|", 1)
-			var parts: Array = Kit.prop_parts(ad)
-			var g: Dictionary = gruplar[gk]
-			if not g.has(0):
-				continue
-			var m0: MultiMeshInstance3D = g[0]
-			var n0 := m0.multimesh.instance_count
-			for i in n0:
-				var x0: Transform3D = WorldWalk.inst_xf(m0, i) * (parts[0][1] as Transform3D).affine_inverse()
-				var k := _anahtar(ad, x0.origin)
-				if not _bek_mm.has(k):
-					continue
+			var g0: Dictionary = gruplar[gk]
+			if g0.has(0):
+				_devam.append([String(gk).get_slice("|", 1), g0, 0])
+	# eşleştirme karelere bölünür (binlerce örnekli MultiMesh'te tek kare takılmasın): kare başı ~2 ms
+	var sinir := Time.get_ticks_usec() + 2000
+	while not _devam.is_empty() and Time.get_ticks_usec() < sinir:
+		var d: Array = _devam[0]
+		var ad: String = d[0]
+		var g: Dictionary = d[1]
+		var m0: MultiMeshInstance3D = g[0]
+		if not is_instance_valid(m0) or not m0.is_inside_tree():
+			_devam.pop_front()
+			continue
+		var parts: Array = Kit.prop_parts(ad)
+		var p0inv := (parts[0][1] as Transform3D).affine_inverse()
+		var n0 := m0.multimesh.instance_count
+		var i: int = d[2]
+		while i < n0 and Time.get_ticks_usec() < sinir:
+			var x0: Transform3D = WorldWalk.inst_xf(m0, i) * p0inv
+			var k := _anahtar(ad, x0.origin)
+			if _bek_mm.has(k):
 				var tur := String(_bek_mm[k][0])
 				_bek_mm.erase(k)
 				var mm: Array = []
@@ -292,11 +331,18 @@ func _tara() -> void:
 					if g.has(pi):
 						mm.append([g[pi], i, parts[pi][1]])
 				_mm_esya(ad, x0, m0.get_parent() as Node3D, mm, tur)
+			i += 1
+		if i >= n0:
+			_devam.pop_front()
+		else:
+			d[2] = i
+	if not _bek_mm.is_empty() and _devam.is_empty():
 		# eşleşmeden 2 dakikadan uzun bekleyen (kurulup sahneye hiç girmemiş, ya da başka sahnenin) kayıt düşer
 		var simdi := Time.get_ticks_msec()
 		for k in _bek_mm.keys():
 			if simdi - int(_bek_mm[k][1]) > 120000:
 				_bek_mm.erase(k)
+	olcum["tara_us"] = maxi(int(olcum.get("tara_us", 0)), Time.get_ticks_usec() - tm)
 
 
 func _mm_esya(ad: String, x_yerel: Transform3D, kok: Node3D, mm: Array, tur: String) -> void:
@@ -562,9 +608,6 @@ func _patlama(p: Vector3, boy: float) -> void:
 
 
 func _dugum_eklendi(n: Node) -> void:
-	if n is MultiMeshInstance3D:
-		_yeni_mmi.append(n)       # Dressing kökü sonradan ağaca girer: yeni MultiMesh kayıtla eşleştirilecek
-		return
 	# Vfx.explosion'un ışığı (renk ffb050, güç 9): patlamanın yeri (Vfx'e dokunmadan; kanca isteği raporda)
 	if n is OmniLight3D:
 		var l := n as OmniLight3D
@@ -1056,6 +1099,31 @@ func _yol_temizle(e: Dictionary) -> void:
 	var g := e["govde"] as RigidBody3D
 	var c := g.global_position
 	var r := _yaricap(e)
+	# etkileşim alanı (kapı, merdiven, yük yığını, görev yeri: Props.interactable, katman 2) üstünde donmaz: dışarı itilir
+	var aq := PhysicsShapeQueryParameters3D.new()
+	var ks := SphereShape3D.new()
+	ks.radius = r + 0.35
+	aq.shape = ks
+	aq.transform = Transform3D(Basis(), c)
+	aq.collision_mask = 2
+	for h in g.get_world_3d().direct_space_state.intersect_shape(aq, 4):
+		var o := h["collider"] as Node3D
+		if o == null or not o.has_meta("interact_id"):
+			continue
+		var d := Vector3(c.x - o.global_position.x, 0.0, c.z - o.global_position.z)
+		var dis := d.normalized() if d.length() > 0.01 else Vector3.RIGHT
+		var cs0 := o.get_child(0) as CollisionShape3D
+		var yari := 1.0
+		if cs0 and cs0.shape is BoxShape3D:
+			var bs := (cs0.shape as BoxShape3D).size * 0.5
+			yari = Vector2(bs.x, bs.z).length()
+		sayac["tikama"] += 1
+		_rapor("tikama_alan", e, c)
+		g.global_position = Vector3(o.global_position.x, c.y, o.global_position.z) + dis * (yari + r + 0.15)
+		var bos := _zemin_boslugu(g)
+		if bos < 2.0:
+			g.global_position -= Vector3(0, bos, 0)
+		return
 	for k in _korunan:
 		var kp: Vector3 = k[0]
 		var d := Vector2(c.x - kp.x, c.z - kp.z)
