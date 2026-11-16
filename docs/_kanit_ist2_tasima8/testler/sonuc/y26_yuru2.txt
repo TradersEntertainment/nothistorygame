@@ -1,0 +1,20 @@
+SURSET govde_gorunur=355
+SURSET kesim=mesoteikhion kurulum_ms=5063 sur_ms=1449 set_ms=3596
+TASIMA8 stauroma=[-75.13999273628, -41.2912539206445, -10.6567935943604, 61.4831957817078, 71.5499773025513, 135.123022317886, 150.19281411171, 173.447597503662, 195.761451721191, 246.184123039246]
+TASIMA8YER set=yeni kuyu=(-4.6, 0.0, 5.6) poterna=(14.25, 0.0, -0.4) fici=[(15.35, 0.0, 3.2), (13.95, 0.0, 2.8)] sancak=(35.392, 13.12, 16.7) merdiven=[-14.1, 12.0, -23.1, 22.8, 17.4]
+TASIMA8YURU bacak=kuyu t=1.5 yol=4.6 takilma=0 dusme=0 yer=(-4.9, 0.0, 7.2) hedef=(-4.6, 0.0, 7.2)
+TASIMA8YURU bacak=okcular t=5.8 yol=7.2 takilma=0 dusme=0 yer=(-1.1, 0.8, 11.7) hedef=(-0.8, 0.0, 11.8)
+TASIMA8YURU bacak=merdiven_agzi t=0.3 yol=1.0 takilma=0 dusme=0 yer=(-15.0, 8.6, 15.2) hedef=(-14.7, 8.6, 15.3)
+TASIMA8YURU bacak=kazan t=1.5 yol=4.6 takilma=0 dusme=0 yer=(-10.3, 8.6, 15.3) hedef=(-10.0, 0.0, 15.3)
+TASIMA8YURU bacak=depo t=4.1 yol=13.3 takilma=0 dusme=0 yer=(-12.1, 0.0, 6.5) hedef=(-12.3, 0.0, 6.4)
+TASIMA8YURU bacak=barikat t=4.2 yol=13.1 takilma=0 dusme=0 yer=(0.4, 0.5, 10.2) hedef=(0.6, 0.0, 10.4)
+TASIMA8YURU bacak=fici t=4.6 yol=14.6 takilma=0 dusme=0 yer=(13.9, 0.0, 4.3) hedef=(14.1, 0.0, 4.2)
+TASIMA8YURU bacak=giust t=5.9 yol=18.7 takilma=0 dusme=0 yer=(-4.0, 0.1, 9.400001) hedef=(-4.2, 0.1, 9.6)
+TASIMA8YURU bacak=tasima_ara t=0.1 yol=0.3 takilma=0 dusme=0 yer=(-3.6, 0.1, 9.2) hedef=(-3.4, 0.0, 9.0)
+TASIMA8YURU bacak=tasima_ara t=5.1 yol=16.1 takilma=0 dusme=0 yer=(12.6, 0.0, 9.0) hedef=(12.8, 0.0, 9.0)
+TASIMA8YURU bacak=poterna t=2.2 yol=6.9 takilma=0 dusme=0 yer=(13.6, 0.2, 2.0) hedef=(13.6, 0.0, 1.8)
+TASIMA8YURU tasima set=yeni yol=23.4 sure=7.4
+TASIMA8YURU bacak=kapi t=1.0 yol=3.2 takilma=0 dusme=0 yer=(-56.0, 0.0, -8.400001) hedef=(-56.1, 0.0, -8.2)
+TASIMA8YURU OZET set=yeni bacak=12 takilma=0 dusme=0 sure=36.4 yol=103.6
+AUTOTEST PASS chapter=26 variant=yuru set=yeni takilma=0 dusme=0
+KOSU rc=0 sure=62 args=--chapter=26 --autotest=yuru

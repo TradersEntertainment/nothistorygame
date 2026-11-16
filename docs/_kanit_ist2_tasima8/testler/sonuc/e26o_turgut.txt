@@ -1,0 +1,8 @@
+GUN shots=4 hits=3 missed=1
+WAVERUNNER wave=1/2 won=true t=25.6 pw=0.28 foe_dmg=18.0 allies=0+2 rally_foes=1 thrown=0
+WAVERUNNER wave=2/2 won=true t=25.1 pw=0.28 foe_dmg=18.0 allies=0+2 rally_foes=1 thrown=0
+GUNNER shots=5 dodged=5 hits=0
+TASIMA8 alay sure=70.1 set=eski
+GRADE chapter=26o letter=S points=128 { "gun_shots": 4, "gun_hits": 3, "parries": 2, "hits_taken": 1, "kills": 2, "gunner_shots": 5, "dodged": 5 }
+AUTOTEST PASS chapter=26o variant=turgut outcome=26.1 water=3 ladders=3 gun=3/4 stones=1/1 gunner=5/5 oil=1/1 turgut=help
+KOSU rc=0 sure=98 args=--chapter=26o --autotest=turgut --eskisur=26o

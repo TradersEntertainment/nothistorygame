@@ -26,6 +26,9 @@ var rng := RandomNumberGenerator.new()
 ## düğümünde kurulur ve SurSet.ova_ofs ile yeni ovaya iner; sura yakın işler (koşanlar, merdivenler, oklar, yangınlar)
 ## yerlerini bağdaştırıcıdan alır (hendek dolgudan geçilir).
 var sur: SurSet = null
+## TAŞIMA-8: yeni sette dekor merdivenlerinin konmayacağı x'ler (bölümün kendi merdivenleri; SurSet.hucum_merdivenleri
+## kacin, ±2,1 m). build()'den önce verilir; varsayılan boş: aynı yerleşim.
+var merdiven_kacin: Array = []
 var _ova: Node3D = self
 const VOLLEY_FLIGHT := 2.4        # okun havada kaldığı süre (yüksek yay, dik iniş)
 const CLIMB := preload("res://scripts/npc/climb_anim.gd")
@@ -544,7 +547,7 @@ func _ladders() -> void:
 	# Merdiven ayağı korkuluğun (z 18.8–19.6) önündeki sette, dış sur kulelerinin (x 13.5–18.5) dışında. Eskiden ayak
 	# korkuluğun içindeydi ve ince direkler uzaktan görünmüyordu: tırmananlar duvarda süzülüyor gibiydi.
 	var xs := [-44.0, -33.0, -24.0, -12.0, 12.0, 22.0, 31.0, 42.0]
-	var yer: Array = sur.hucum_merdivenleri(xs, wall_len * 0.45) if _yeni() else []
+	var yer: Array = sur.hucum_merdivenleri(xs, wall_len * 0.45, merdiven_kacin) if _yeni() else []
 	if _yeni():
 		for e: Dictionary in ek_merdiven:
 			yer.append(sur.merdiven_dayama(float(e["x"]), float(e.get("uzat", 0.0))))

@@ -1,0 +1,10 @@
+SURSET govde_gorunur=355
+SURSET kesim=mesoteikhion kurulum_ms=4642 sur_ms=1568 set_ms=3055
+GUN shots=4 hits=3 missed=1
+WAVERUNNER wave=1/2 won=true t=14.0 pw=0.28 foe_dmg=18.0 allies=0+2 rally_foes=1 thrown=0
+WAVERUNNER wave=2/2 won=true t=14.8 pw=0.28 foe_dmg=18.0 allies=0+2 rally_foes=1 thrown=0
+GUNNER shots=3 dodged=3 hits=0
+TASIMA8 alay sure=76.1 set=yeni
+GRADE chapter=26o letter=S points=126 { "gun_shots": 4, "gun_hits": 3, "kills": 4, "parries": 4, "gunner_shots": 3, "dodged": 3, "hits_taken": 1 }
+AUTOTEST PASS chapter=26o variant=nophoto outcome=26.2 water=3 ladders=3 gun=3/4 stones=1/1 gunner=3/3 oil=1/1 turgut=no
+KOSU rc=0 sure=90 args=--chapter=26o --autotest=nophoto

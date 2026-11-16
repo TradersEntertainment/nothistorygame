@@ -1,0 +1,15 @@
+SURSET govde_gorunur=355
+SURSET kesim=mesoteikhion kurulum_ms=4590 sur_ms=1299 set_ms=3271
+TASIMA8YER set=yeni su=(9.0, -3.545, 60.6) yigin=(-11.0, -3.545, 61.6) boluk=[(-8.0, -3.545, 49.6), (0.0, -3.545, 49.6), (8.0, -3.545, 49.6)] merdiven=(10.241, -3.675, 20.67565) sancak=(35.392, 13.12, 16.7)
+TASIMA8YURU bacak=su t=1.5 yol=4.7 takilma=0 dusme=0 yer=(9.400001, -3.6, 59.2) hedef=(9.6, -3.5, 59.0)
+TASIMA8YURU bacak=boluk t=3.9 yol=11.9 takilma=0 dusme=0 yer=(0.2, -3.6, 51.8) hedef=(0.0, -3.5, 51.6)
+TASIMA8YURU bacak=yigin t=4.1 yol=13.1 takilma=0 dusme=0 yer=(-8.8, -3.6, 61.4) hedef=(-9.0, -3.5, 61.6)
+TASIMA8YURU bacak=kiyi t=3.2 yol=9.5 takilma=0 dusme=0 yer=(-8.0, -3.6, 51.9) hedef=(-8.0, -3.5, 51.6)
+TASIMA8YURU bacak=dolgu_uzak t=2.8 yol=8.7 takilma=0 dusme=0 yer=(-0.2, -3.5, 47.7) hedef=(0.0, 0.0, 47.6)
+TASIMA8YURU bacak=dolgu t=3.4 yol=10.8 takilma=0 dusme=0 yer=(0.0, -3.5, 36.8) hedef=(0.0, 0.0, 36.6)
+TASIMA8YURU bacak=teras t=4.1 yol=12.6 takilma=0 dusme=0 yer=(1.6, -2.8, 24.2) hedef=(1.6, 0.0, 24.0)
+TASIMA8YURU bacak=merdiven_dibi t=2.5 yol=8.1 takilma=0 dusme=0 yer=(9.400001, -3.7, 22.0) hedef=(9.6, -3.7, 21.9)
+TASIMA8YURU bacak=sur_yolu t=5.8 yol=18.8 takilma=0 dusme=0 yer=(29.2, 11.1, 15.3) hedef=(29.4, 0.0, 15.3)
+TASIMA8YURU OZET set=yeni bacak=9 takilma=0 dusme=0 sure=31.2 yol=98.2
+AUTOTEST PASS chapter=26o variant=yuru set=yeni takilma=0 dusme=0
+KOSU rc=0 sure=52 args=--chapter=26o --autotest=yuru

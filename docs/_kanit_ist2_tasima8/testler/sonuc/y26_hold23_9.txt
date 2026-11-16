@@ -1,0 +1,14 @@
+SURSET govde_gorunur=355
+SURSET kesim=mesoteikhion kurulum_ms=4176 sur_ms=1198 set_ms=2963
+TASIMA8 stauroma=[-75.13999273628, -41.2912539206445, -10.6567935943604, 61.4831957817078, 71.5499773025513, 135.123022317886, 150.19281411171, 173.447597503662, 195.761451721191, 246.184123039246]
+WAVERUNNER wave=1/1 won=true t=37.4 pw=0.28 foe_dmg=18.0 allies=3+0 rally_foes=0 thrown=3
+WAVERUNNER wave=1/1 won=true t=15.0 pw=0.28 foe_dmg=18.0 allies=5+0 rally_foes=0 thrown=0
+SAYFACE key=D26_G_WAVE3 scene=chapter26.tscn speaker=SPK_GIUST d=6.5 dot=-0.55
+GUN shots=4 hits=3 missed=1
+GUN extra=1
+WAVERUNNER wave=1/2 won=true t=10.1 pw=0.28 foe_dmg=18.0 allies=3+0 rally_foes=0 thrown=0
+WAVERUNNER wave=2/2 won=true t=17.5 pw=0.28 foe_dmg=18.0 allies=3+0 rally_foes=0 thrown=0
+GUNNER shots=2 dodged=2 hits=0
+GRADE chapter=26 letter=A points=109 { "kills": 13, "thrown": 3, "parries": 6, "gun_shots": 4, "gun_hits": 3, "hits_taken": 4, "gunner_shots": 2, "dodged": 2 }
+AUTOTEST PASS chapter=26 variant=hold23 outcome=26.3 water=3 repaired=3 cleared=0 world=W12 gun=3/4 gunner=2/2
+KOSU rc=0 sure=74 args=--chapter=26 --autotest=hold23

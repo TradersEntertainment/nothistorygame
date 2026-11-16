@@ -1,0 +1,10 @@
+WAVERUNNER wave=1/1 won=true t=31.0 pw=0.28 foe_dmg=18.0 allies=3+0 rally_foes=0 thrown=2
+WAVERUNNER wave=1/1 won=true t=23.4 pw=0.28 foe_dmg=18.0 allies=5+0 rally_foes=0 thrown=0
+GUN shots=4 hits=3 missed=1
+GUN extra=1
+WAVERUNNER wave=1/2 won=true t=19.2 pw=0.28 foe_dmg=18.0 allies=3+0 rally_foes=0 thrown=0
+WAVERUNNER wave=2/2 won=true t=18.1 pw=0.28 foe_dmg=18.0 allies=5+0 rally_foes=0 thrown=0
+GUNNER shots=4 dodged=4 hits=0
+GRADE chapter=26 letter=B points=85 { "kills": 11, "thrown": 2, "hits_taken": 9, "parries": 6, "gun_shots": 4, "gun_hits": 3, "gunner_shots": 4, "dodged": 4 }
+AUTOTEST PASS chapter=26 variant=hold outcome=26.3 water=3 repaired=3 cleared=0 world=W10 gun=3/4 gunner=4/4
+KOSU rc=0 sure=106 args=--chapter=26 --autotest=hold

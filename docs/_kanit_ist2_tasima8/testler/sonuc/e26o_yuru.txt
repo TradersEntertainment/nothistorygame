@@ -1,0 +1,11 @@
+TASIMA8YER set=eski su=(9.0, 0.0, 50.0) yigin=(-11.0, 0.0, 51.0) boluk=[(-8.0, 0.0, 39.0), (0.0, 0.0, 39.0), (8.0, 0.0, 39.0)] merdiven=(9.0, 0.0, 17.31689) sancak=(16.0, 11.0, 17.0)
+TASIMA8YURU bacak=su t=1.5 yol=4.7 takilma=0 dusme=0 yer=(9.400001, 0.0, 48.6) hedef=(9.6, 0.0, 48.4)
+TASIMA8YURU bacak=boluk t=3.9 yol=11.9 takilma=0 dusme=0 yer=(0.2, 0.0, 41.2) hedef=(0.0, 0.0, 41.0)
+TASIMA8YURU bacak=yigin t=4.1 yol=13.1 takilma=0 dusme=0 yer=(-8.8, 0.0, 50.8) hedef=(-9.0, 0.0, 51.0)
+TASIMA8YURU bacak=kiyi t=3.2 yol=9.5 takilma=0 dusme=0 yer=(-8.0, 0.0, 41.3) hedef=(-8.0, 0.0, 41.0)
+TASIMA8YURU bacak=dolgu t=4.3 yol=13.8 takilma=0 dusme=0 yer=(-3.1, 0.2, 28.2) hedef=(-3.0, 0.0, 28.0)
+TASIMA8YURU bacak=merdiven_dibi t=4.6 yol=13.9 takilma=0 dusme=0 yer=(8.2, 0.0, 20.5) hedef=(8.400001, 0.0, 20.3)
+TASIMA8YURU bacak=sur_yolu t=0.9 yol=2.6 takilma=0 dusme=0 yer=(12.1, 8.0, 15.1) hedef=(12.4, 0.0, 15.0)
+TASIMA8YURU OZET set=eski bacak=7 takilma=0 dusme=0 sure=22.5 yol=69.6
+AUTOTEST PASS chapter=26o variant=yuru set=eski takilma=0 dusme=0
+KOSU rc=0 sure=48 args=--chapter=26o --autotest=yuru --eskisur=26o

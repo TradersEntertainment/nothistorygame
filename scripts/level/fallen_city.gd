@@ -32,8 +32,15 @@ var field: Node3D
 ## (bölümün kendi yanık evi oraya konur), (z_üst, z_alt).
 var quiet := false
 var reserve_right := Vector2.ZERO
+## TAŞIMA-8 (konum parametresi; görünüş aynı): caddenin yeri. Bütün yapılar düğümün kendi çerçevesinde kurulur; bölüm
+## düğümü `yer`e koyar (Bölüm 26 yeni sette: Romanos iç kapısının şehir yanı, SurSet.sehir_ofs). Varsayılan ZERO: eski
+## LandWalls çerçevesi (x 0 iç kapı, iç surun şehir yüzü LandWalls.INNER_Z0) — 26 eski set ve 31o bit bit aynı.
+## add_child'dan önce verilir.
+var yer := Vector3.ZERO
 
 func _ready() -> void:
+	if yer != Vector3.ZERO:
+		position = yer
 	rng.seed = 1453529
 	_clear_field()
 	_d = Dressing.new(529)
@@ -71,7 +78,7 @@ static func mood(env: Environment, sun: DirectionalLight3D) -> void:
 func _clear_field() -> void:
 	if field == null:
 		return
-	var area := Rect2(-40.0, -104.0, 80.0, 64.0)
+	var area := Rect2(-40.0 + yer.x, -104.0 + yer.z, 80.0, 64.0)
 	for n in field.find_children("*", "", true, false):
 		if n is MultiMeshInstance3D:
 			var mmi := n as MultiMeshInstance3D

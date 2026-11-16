@@ -1,0 +1,3 @@
+SURSET kesim=mesoteikhion kurulum_ms=4699 sur_ms=1339 set_ms=3354
+AUTOTEST PASS chapter=22 variant= outcome=22.1 hits=2 singed=false window=0.42-0.68
+KOSU rc=0 sure=18 args=--chapter=22 --autotest
