@@ -58,6 +58,11 @@ static func ayarla() -> void:
 			etkin = false
 		elif a == "--ayak-olc":
 			olc_acik = true
+		elif a.begins_with("--ayak-kare=") and Engine.get_main_loop() is SceneTree:
+			# Kanıt kareleri (tests/_fizik/ayak_gez.gd; paketli oyunda yok, yalnız bu argümanla yolla yüklenir)
+			var gs: Script = load("res://tests/_fizik/ayak_gez.gd")
+			if gs:
+				(Engine.get_main_loop() as SceneTree).root.add_child.call_deferred(gs.new())
 
 
 ## Ölçüm (--ayak-olc): her karede bir kez (ilk Rig.update) önceki karenin betik süresi (Performance.TIME_PROCESS),
