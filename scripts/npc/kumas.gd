@@ -200,7 +200,7 @@ func uygula(delta: float) -> void:
 		return
 	var o: Node3D = rig.owner
 	if o == null or not o.is_inside_tree() or not o.is_visible_in_tree():
-		_lp = Vector3.INF
+		_dinlen()
 		return
 	# LOD: uzaktaki ya da görüş dışındaki donar; LOD_YARI'dan uzakta iki karede bir
 	_lod_t -= delta
@@ -219,7 +219,7 @@ func uygula(delta: float) -> void:
 		else:
 			_lod_t = 0.5
 	if not _yakin:
-		_lp = Vector3.INF
+		_dinlen()
 		return
 	_acc += delta
 	if _kare == 1 and Engine.get_process_frames() % 2 == (get_instance_id() & 1):
@@ -242,15 +242,21 @@ func _coz(dt: float, gp: Vector3) -> void:
 	var B := bxf.basis.orthonormalized()
 	var Binv := B.transposed()
 	# Gövdenin hızı ve ivmesi (dünya); ışınlanma sıfırlar
+	# Işınlanma (sahne betiği kişiyi bir karede taşıdı: 12 m/sn'den hızlı ya da 0,8 m'den uzun) hız/ivme sayılmaz
 	var v_w := Vector3.ZERO
-	if _lp.x != INF and gp.distance_squared_to(_lp) < 4.0:
-		v_w = (gp - _lp) / dt
-	elif _lp.x == INF:
+	var isin := _lp.x == INF
+	if not isin:
+		var d := gp - _lp
+		isin = d.length() > 0.8 or d.length() / dt > 12.0
+		if not isin:
+			v_w = d / dt
+	if isin:
 		_lv = Vector3.ZERO
-	var a_w := (v_w - _lv) / dt
+		_la = Vector3.ZERO
+	var a_w := Vector3.ZERO if isin else (v_w - _lv) / dt
 	_lp = gp
 	_lv = _lv.lerp(v_w, clampf(dt * 15.0, 0.0, 1.0))
-	_la = _la.lerp(a_w.limit_length(25.0), clampf(dt * 12.0, 0.0, 1.0))
+	_la = _la.lerp(a_w.limit_length(15.0), clampf(dt * 12.0, 0.0, 1.0))
 	var a_l := Binv * _la
 	# Göreli rüzgâr (rüzgâr − gövde hızı) kumaşı sürükler; şiddet yavaş dalgalanır
 	var tt := Time.get_ticks_msec() * 0.001 + _faz
@@ -269,23 +275,35 @@ func _coz(dt: float, gp: Vector3) -> void:
 		hedef.x += sin(rig._walk_phase) * 0.04 * gk
 		hedef.y += cos(rig._walk_phase * 2.0) * 0.018 * gk
 	# Yaylı sarkaç (etek ucu ~1,1 Hz, az sönümlü): ivmeye eylemsizlikle karşı koyar
+	# Yarı örtük Euler, en çok 1/60 sn'lik alt adımlar (karede en çok 0,1 sn): yavaş karede (0,5 sn) açık Euler
+	# kararsızlaşıp eteği sınıra savuruyordu
 	var K := 48.0
 	var C := 3.2
-	var acc := (hedef - _s) * K - _sv * C - Vector2(a_l.x, a_l.z) * 0.9
-	_sv += acc * dt
-	_s += _sv * dt
+	var ia := Vector2(a_l.x, a_l.z) * 0.9
+	var kalan := minf(dt, 0.1)
+	while kalan > 0.0:
+		var h := minf(kalan, 1.0 / 60.0)
+		kalan -= h
+		_sv += ((hedef - _s) * K - _sv * C - ia) * h
+		_s += _sv * h
 	if _s.length() > 0.34:
 		_s = _s.limit_length(0.34)
 		_sv *= 0.5
 	# Dönüş: burulma (gecikme) ve açılma
 	var yaw := o.global_rotation.y
 	var w := 0.0
-	if _lyaw != INF:
-		w = wrapf(yaw - _lyaw, -PI, PI) / dt
+	if _lyaw != INF and not isin:
+		var dy := wrapf(yaw - _lyaw, -PI, PI)
+		# Bir karede 0,6 rad'dan çok dönüş sahne betiğinin bir anda çevirmesidir (yüzünü döndür): dönüş hızı sayılmaz
+		if absf(dy) < 0.6:
+			w = dy / dt
 	_lyaw = yaw
-	var twa := (-w * 0.1 - _tw) * 30.0 - _twv * 3.5
-	_twv += twa * dt
-	_tw = clampf(_tw + _twv * dt, -0.7, 0.7)
+	var kt := minf(dt, 0.1)
+	while kt > 0.0:
+		var h2 := minf(kt, 1.0 / 60.0)
+		kt -= h2
+		_twv += ((-w * 0.1 - _tw) * 30.0 - _twv * 3.5) * h2
+		_tw = clampf(_tw + _twv * h2, -0.7, 0.7)
 	_fl = lerpf(_fl, clampf(absf(w) * 0.035 + spd * 0.012, 0.0, 0.22), clampf(dt * 6.0, 0.0, 1.0))
 	var amp := clampf(0.004 + rel_l.length() * 0.0035, 0.0, 0.02)
 	if _gov.is_empty():
@@ -344,6 +362,23 @@ func _coz(dt: float, gp: Vector3) -> void:
 	_yaz(7, Vector4(ar.x, ar.y, ar.z, 0.0))
 	_yaz(8, zl)
 	_yaz(9, zr)
+
+
+## Kumaş donarken (uzakta, görüş dışında, gizli) dinlenme duruşuna döner: savrulmuş hâliyle donup kalmasın (görüşe
+## yeniden girdiğinde ya da kamera kesmesinde savrulmuş görünüyordu). Uzakta/görüş dışında olduğundan geçiş görünmez.
+func _dinlen() -> void:
+	_lp = Vector3.INF
+	if _s == Vector2.ZERO and _son.size() > 0 and not (_son[0] is Vector4 and (_son[0] as Vector4).y > 0.5):
+		return
+	_s = Vector2.ZERO
+	_sv = Vector2.ZERO
+	_tw = 0.0
+	_twv = 0.0
+	_fl = 0.0
+	_lyaw = INF
+	if _son.size() > 0 and _son[0] is Vector4:
+		var e: Vector4 = _son[0]
+		_yaz(0, Vector4(e.x, 0.0, e.z, e.w))
 
 
 static func _duzlem(binv: Transform3D, p_w: Vector3, n_w: Vector3) -> Vector4:
