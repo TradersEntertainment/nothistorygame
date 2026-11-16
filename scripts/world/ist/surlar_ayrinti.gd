@@ -124,7 +124,7 @@ static func build(root: Node3D, lay: Dictionary, o: Dictionary) -> void:
 		if j % 2 == 0:
 			_balls(root, ox + 0.5, d["OTH"], zo0 + 1.2, 3, rng)
 		else:
-			_barrel(root, Vector3(ox - 0.7, float(d["OTH"]), zo0 + float(d["OT"]) + 0.8))
+			_barrel(root, Vector3(ox - 0.7, float(d["OTH"]), zo0 + float(d["OT"]) + 0.8), 0.9, true)
 	# ---- sarmaşık YOK (TUR-7 ikinci geçiş): duvar yüzüne yapışık yaprak örtüsü uzaktan yeşil dama/kutu okunuyordu ("havada
 	# duran kare yeşillikler"). Sur yüzünde bitki yalnız dipte (oturtma eteğinin ot / çalı öbekleri) kalır.
 	_beden(root, lay, sd, stone)
@@ -245,7 +245,7 @@ static func _oyuk(ag, p: Vector3, r: float, rng: RandomNumberGenerator) -> void:
 			w *= 0.5
 
 
-static func _barrel(root: Node3D, p: Vector3, daralt := 0.9) -> void:
+static func _barrel(root: Node3D, p: Vector3, daralt := 0.9, esya := false) -> void:
 	# TUR-7: toprak dolu eski fıçı: yıpranmış gri-kahve tahta (güneşte turuncu kutu/silindir okunmasın); çarpışma aynı
 	# TUR-10 (Bölüm 25 an_06, "büyük ve köşeli"): 10 köşeli düz silindir (çap 0,84 m) + 3 ayrı çember silindiri yerine tek
 	# ağ: karınlı (uç çapı 0,54, karın 0,66 m, boy 0,92), 12 dilim, tahta tahta ton, demir çemberler, gömme kapak.
@@ -253,10 +253,12 @@ static func _barrel(root: Node3D, p: Vector3, daralt := 0.9) -> void:
 	var rng := RandomNumberGenerator.new()
 	rng.seed = int(absf(p.x * 131.0 + p.z * 17.0))
 	var b := Props.cyl(root, 0.42, 0.95, p + Vector3(0, 0.475, 0), Color("665846"), Vector3.ZERO, 10, 0.38)
-	Props.make_solid(b, daralt)
+	var govde := Props.make_solid(b, daralt)
 	b.mesh = _fici_ag()
 	b.material_override = _fici_mat()
 	b.rotation_degrees = Vector3(rng.randf_range(-2.5, 2.5), rng.randf_range(0.0, 360.0), rng.randf_range(-2.5, 2.5))
+	if esya:
+		EsyaFizik.kaydet_dugum(b, govde, "fici")      # dekor fıçısı (gedik barikatınınkiler değil): tekmede gövdeye döner
 
 
 static var _fici: ArrayMesh
@@ -355,7 +357,7 @@ static func _ftri(st: SurfaceTool, a: Vector3, b: Vector3, c: Vector3, nrm: Vect
 ## kazıklar fıçıların arasında, dibi sur yolunda, tepesi korkuluğa dayalı.
 static func _stauroma(root: Node3D, x: float, z: float, y: float, rng: RandomNumberGenerator) -> void:
 	for i in 4:
-		_barrel(root, Vector3(x + i * 0.8 - 1.2 + rng.randf_range(-0.05, 0.05), y, z - 0.28 + rng.randf_range(-0.015, 0.015)), 0.7)
+		_barrel(root, Vector3(x + i * 0.8 - 1.2 + rng.randf_range(-0.05, 0.05), y, z - 0.28 + rng.randf_range(-0.015, 0.015)), 0.7, true)
 	var bz := z - 0.42
 	var tz := z + 0.03
 	var th := IstSurlar.PARAPET_H + 0.24

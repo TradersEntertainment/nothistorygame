@@ -252,6 +252,7 @@ func crate(p: Vector3, s := 0.6, yaw := 0.0) -> void:
 	if Kit.has_props():
 		var k := s / 1.12
 		model("Crate_Wooden", p + Vector3(0, 0.07 * k, 0), yaw + rng.randf_range(-4, 4), Vector3.ONE * k)
+		EsyaFizik.kaydet_mm("Crate_Wooden", _nodes[-1][1], "sandik")     # uyuyan dekor: tekmede/çarpınca gövdeye döner
 		return
 	var w := _pick(WOOD)
 	box(Vector3(s, s, s), p + Vector3(0, s / 2.0, 0), w, Vector3(0, yaw, 0))
@@ -289,6 +290,7 @@ func crates(p: Vector3) -> void:
 func barrel(p: Vector3, tip := false) -> void:
 	if Kit.has_props() and not tip:
 		model("Barrel_Apples" if rng.randf() < 0.25 else "Barrel", p, rng.randf_range(0, 360), Vector3.ONE * 0.92)
+		EsyaFizik.kaydet_mm(_nodes[-1][2], _nodes[-1][1], "fici")     # uyuyan dekor: tekmede/çarpınca gövdeye döner
 		return
 	var w := _pick(WOOD)
 	var rot := Vector3(90, rng.randf_range(0, 180), 0) if tip else Vector3.ZERO
