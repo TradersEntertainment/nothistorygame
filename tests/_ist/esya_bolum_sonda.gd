@@ -139,12 +139,14 @@ func _acik_yon(space: PhysicsDirectSpaceState3D, e: Dictionary) -> Vector3:
 			puan += 1.0
 		if not ok:
 			continue
-		# yatay engel yok (eşyanın yüksekliğinde)
-		var a := Vector3(c.x, alt + 0.5, c.z) - yon * (0.95 + r)
-		var b := Vector3(c.x, alt + 0.5, c.z) + yon * (0.8 + r)
-		var q2 := PhysicsRayQueryParameters3D.create(a, b)
-		var hh := space.intersect_ray(q2)
-		if not hh.is_empty() and (hh["position"] as Vector3).distance_to(c) > r + 0.4:
+		# yatay engel yok (eşyanın yüksekliğinde): önü (gideceği yer) ve arkası (oyuncunun yeri), kendi yüzünden başlayarak
+		var bos := true
+		for sg: float in [1.0, -1.0]:
+			var a := Vector3(c.x, alt + 0.45, c.z) + yon * sg * (r + 0.06)
+			var b := Vector3(c.x, alt + 0.45, c.z) + yon * sg * (r + (1.0 if sg > 0.0 else 1.0))
+			if not space.intersect_ray(PhysicsRayQueryParameters3D.create(a, b)).is_empty():
+				bos = false
+		if not bos:
 			continue
 		if puan > en_puan:
 			en_puan = puan

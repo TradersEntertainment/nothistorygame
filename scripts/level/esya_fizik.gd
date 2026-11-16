@@ -514,11 +514,12 @@ func _ustu_bos(e: Dictionary) -> bool:
 func _darbe(oyuncu: Node3D, hedef: Vector3, guc: float) -> void:
 	var pp := oyuncu.global_position
 	var e: Dictionary = {}
+	# hedef, tekmede seçilen eşyanın merkezidir: en yakın merkez (yığında komşu büyük sandık "kenarı yakın" diye seçilmesin)
 	var en_d := 1.3
 	for o in _yakin(hedef, 1.5):
 		var c := _merkez(o)
-		var d := Vector2(c.x - hedef.x, c.z - hedef.z).length() - _yaricap(o)
-		if d < en_d and absf(c.y - hedef.y) < 1.0:
+		var d := c.distance_to(hedef)
+		if d < en_d:
 			en_d = d
 			e = o
 	if OS.has_environment("ESYA_HATA"):
@@ -647,10 +648,28 @@ func _uyandir(e: Dictionary) -> void:
 			sayac["uyanan"] += 1
 			olcum["en_cok_uyanik"] = maxi(olcum["en_cok_uyanik"], uyanik.size())
 			return
-	_sinir_kontrol()
 	var t: Array = TUR[e["tur"]]
 	var xf: Transform3D = e["xf"]
 	var ab: AABB = e["ab"]
+	# altında çarpışan zemin yoksa (oyun alanı dışındaki uzak dekor: yalnız görünüş) uyanmaz: gövde dünyadan düşerdi
+	if not e.get("dusen", false) and is_inside_tree():
+		var c0 := xf * ab.get_center()
+		var zq := PhysicsRayQueryParameters3D.create(c0, c0 + Vector3.DOWN * (ab.size.y * 0.5 + 0.6))
+		var haric: Array[RID] = []      # eşyanın kendi katısı ve yığının ortak kutusu zemin sayılmaz
+		var kendi = e.get("statik")
+		if kendi != null and is_instance_valid(kendi):
+			haric.append((kendi as CollisionObject3D).get_rid())
+		var kk = e.get("kok")
+		if kk != null and is_instance_valid(kk):
+			for st in (kk as Node).get_children():
+				if st is StaticBody3D:
+					haric.append((st as StaticBody3D).get_rid())
+		zq.exclude = haric
+		var zh := get_world_3d().direct_space_state.intersect_ray(zq)
+		if zh.is_empty():
+			sayac["zeminsiz"] = int(sayac.get("zeminsiz", 0)) + 1
+			return
+	_sinir_kontrol()
 	var g := RigidBody3D.new()
 	g.name = "Esya_%s_%d" % [e["tur"], e["id"]]
 	g.mass = t[0]
