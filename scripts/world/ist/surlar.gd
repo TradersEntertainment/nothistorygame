@@ -266,6 +266,9 @@ static func _parapet_x(p: Node3D, x0: float, x1: float, z: float, y: float, col:
 	# SUR-5: üst çizgi cetvel değil: uzun kesimlerde yer yer YIKIK korkuluk (görünen alçalmış, üstünde düşmüş taşlar;
 	# çarpışma tam boy kalır: sur üstü yürüyüşte düşme olmasın)
 	var yik := Vector2(1e9, -1e9)
+	# TUR-11: korkuluk ince taş örgü (sur_doku: köşe alfası 0,9 → 0,2 m sıra, tuğla hatılsız). Göz hizasındaki tuğla hatılı
+	# 0,4–0,9 m'den iri şerit okunuyordu (Bölüm 25 an_01); çarpışma ve ölçü aynı
+	var kc := Color(col.r, col.g, col.b, 0.9) if lod == 0 else col
 	if lod == 0 and x1 - x0 > 14.0:
 		var hh := fposmod(sin(x0 * 0.731 + z * 2.17 + y * 0.37) * 4373.17, 1.0)
 		if hh < 0.45:
@@ -274,7 +277,7 @@ static func _parapet_x(p: Node3D, x0: float, x1: float, z: float, y: float, col:
 			yik = Vector2(xc - yw, xc + yw)
 	if yik.x < yik.y:
 		for sg in _segs(x0, x1, [[yik.x, yik.y]]):
-			_s(p, Vector3(sg[0], y, z - PARAPET_T * 0.5), Vector3(sg[1], y + PARAPET_H, z + PARAPET_T * 0.5), col, "ashlar", lod)
+			_s(p, Vector3(sg[0], y, z - PARAPET_T * 0.5), Vector3(sg[1], y + PARAPET_H, z + PARAPET_T * 0.5), kc, "ashlar", lod)
 		carp_only = true
 		_s(p, Vector3(yik.x, y, z - PARAPET_T * 0.5), Vector3(yik.y, y + PARAPET_H, z + PARAPET_T * 0.5), col, "ashlar", lod)
 		carp_only = false
@@ -293,7 +296,7 @@ static func _parapet_x(p: Node3D, x0: float, x1: float, z: float, y: float, col:
 				KULE._moloz_tas(ag, Vector3(rng.randf_range(yik.x, yik.y), y, z + rng.randf_range(-0.9, 0.3)), rng)
 			ag.mesh_ekle(p, KULE._tas_mat(col, 0), "YikikKorkuluk")
 	else:
-		_s(p, Vector3(x0, y, z - PARAPET_T * 0.5), Vector3(x1, y + PARAPET_H, z + PARAPET_T * 0.5), col, "ashlar", lod)
+		_s(p, Vector3(x0, y, z - PARAPET_T * 0.5), Vector3(x1, y + PARAPET_H, z + PARAPET_T * 0.5), kc, "ashlar", lod)
 	if lod == 0:
 		# dişler insan boyunda (SUR-4: 1,0 m en, korkulukla 1,8 m; 1,8 m arayla); bin yıllık surda yer yer eksik diş
 		var m := floori((x1 - x0) / 1.8)
@@ -308,7 +311,7 @@ static func _parapet_x(p: Node3D, x0: float, x1: float, z: float, y: float, col:
 static func _parapet_z(p: Node3D, z0: float, z1: float, x: float, y: float, col: Color, lod: int, mer: Array) -> void:
 	if z1 - z0 < 0.3:
 		return
-	_s(p, Vector3(x - PARAPET_T * 0.5, y, z0), Vector3(x + PARAPET_T * 0.5, y + PARAPET_H, z1), col, "ashlar", lod)
+	_s(p, Vector3(x - PARAPET_T * 0.5, y, z0), Vector3(x + PARAPET_T * 0.5, y + PARAPET_H, z1), Color(col.r, col.g, col.b, 0.9) if lod == 0 else col, "ashlar", lod)
 	if lod == 0:
 		var m := floori((z1 - z0) / 1.8)
 		var off := ((z1 - z0) - m * 1.8) * 0.5

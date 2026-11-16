@@ -85,7 +85,7 @@ static func build(root: Node3D, lay: Dictionary, o: Dictionary) -> void:
 				gyakin = true
 		if gyakin:
 			continue
-		_stauroma(root, x, zo1 - 0.225, OH + 1.2, rng)
+		_stauroma(root, x, zo1 - IstSurlar.PARAPET_T, OH, rng)
 	# ---- iskele (dış sur yüzünde): direkler, kirişler, tahta
 	if otx.size() > 0:
 		var sx: float = float(otx[0]) + 7.5
@@ -245,7 +245,7 @@ static func _oyuk(ag, p: Vector3, r: float, rng: RandomNumberGenerator) -> void:
 			w *= 0.5
 
 
-static func _barrel(root: Node3D, p: Vector3) -> void:
+static func _barrel(root: Node3D, p: Vector3, daralt := 0.9) -> void:
 	# TUR-7: toprak dolu eski fıçı: yıpranmış gri-kahve tahta (güneşte turuncu kutu/silindir okunmasın); çarpışma aynı
 	# TUR-10 (Bölüm 25 an_06, "büyük ve köşeli"): 10 köşeli düz silindir (çap 0,84 m) + 3 ayrı çember silindiri yerine tek
 	# ağ: karınlı (uç çapı 0,54, karın 0,66 m, boy 0,92), 12 dilim, tahta tahta ton, demir çemberler, gömme kapak.
@@ -253,7 +253,7 @@ static func _barrel(root: Node3D, p: Vector3) -> void:
 	var rng := RandomNumberGenerator.new()
 	rng.seed = int(absf(p.x * 131.0 + p.z * 17.0))
 	var b := Props.cyl(root, 0.42, 0.95, p + Vector3(0, 0.475, 0), Color("665846"), Vector3.ZERO, 10, 0.38)
-	Props.make_solid(b, 0.9)
+	Props.make_solid(b, daralt)
 	b.mesh = _fici_ag()
 	b.material_override = _fici_mat()
 	b.rotation_degrees = Vector3(rng.randf_range(-2.5, 2.5), rng.randf_range(0.0, 360.0), rng.randf_range(-2.5, 2.5))
@@ -347,16 +347,24 @@ static func _ftri(st: SurfaceTool, a: Vector3, b: Vector3, c: Vector3, nrm: Vect
 		st.add_vertex(v)
 
 
+## Stauroma: dış sur yolunda toprak dolu fıçılar ve kazıklar. z: dış korkuluğun İÇ yüzü, y: sur yolu zemini.
+## TUR-11 (Bölüm 25 an_04: "fıçılar korkuluğun ÜSTÜNDE duruyor, insan boyunda dev"): fıçılar korkuluğun üstünde (y = OH + 1,2,
+## göz hizasında) duruyordu. Artık sur yolunun zemininde, korkuluğa yaslı (karın korkuluğa 4–6 cm değer), gerçek ölçek (boy
+## 0,92, karın çapı 0,66 m). Çarpışma görünen karına daraltılmış (yarıçap ≈ 0,29): iç kenarı korkuluktan 0,57 m, sur yolu
+## ortası (0,3 m'lik oyuncu kapsülü) serbest. Korkuluk üstündeki toprak yığını ve kalas (fıçısız havada kalıyordu) kaldırıldı;
+## kazıklar fıçıların arasında, dibi sur yolunda, tepesi korkuluğa dayalı.
 static func _stauroma(root: Node3D, x: float, z: float, y: float, rng: RandomNumberGenerator) -> void:
 	for i in 4:
-		_barrel(root, Vector3(x + i * 0.95 - 1.4, y, z))
-	# arkada toprak yığını ve öne eğik kazıklar
-	var earth := Props.ball(root, 0.5, Vector3(x, y + 0.95, z), Color("5a4630"), Vector3(4.4, 0.35, 0.6), 6)
-	earth.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
-	for i in 7:
-		var sx := x - 1.7 + i * 0.57
-		Props.cyl(root, 0.06, 1.7, Vector3(sx, y + 0.75, z + 0.42), C_WOOD.darkened(0.2), Vector3(-24.0 + rng.randf_range(-4.0, 4.0), 0, 0), 5, 0.02)
-	Props.box(root, Vector3(3.8, 0.1, 0.12), Vector3(x, y + 0.5, z + 0.34), C_WOOD.darkened(0.1))
+		_barrel(root, Vector3(x + i * 0.8 - 1.2 + rng.randf_range(-0.05, 0.05), y, z - 0.28 + rng.randf_range(-0.015, 0.015)), 0.7)
+	var bz := z - 0.42
+	var tz := z + 0.03
+	var th := IstSurlar.PARAPET_H + 0.24
+	var ln := Vector2(tz - bz, th).length()
+	var aci := rad_to_deg(atan2(tz - bz, th))
+	for i in 3:
+		var sx := x - 0.8 + i * 0.8 + rng.randf_range(-0.03, 0.03)
+		var k := Props.cyl(root, 0.055, ln, Vector3(sx, y + th * 0.5, (bz + tz) * 0.5), C_WOOD.darkened(0.2), Vector3(aci, 0.0, rng.randf_range(-3.0, 3.0)), 5, 0.035)
+		k.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
 
 
 static func _scaffold(root: Node3D, x: float, z: float, h: float, dy := 0.0) -> void:

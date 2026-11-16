@@ -966,68 +966,79 @@ static func disler_ag(p: Node3D, mer: Array, col: Color, seed: int) -> void:
 	ag.mesh_ekle(p, _tas_mat(col, 0), "MazgalDis")
 
 
-## Tek diş: o = taban ön-arka ortası (arka yüz o'da, ön yüz o + nn·dp), tt yatay, nn dışa.
+## TUR-11 ("iki diş koyu, düz yüzlü KUTU/kama; tepe pürüzsüz eğik levha", Bölüm 25 an_01): diş = ÖRÜLMÜŞ gövde + ayrı
+## HARPUŞTA. Gövde pahlı altıgen prizma; yüzleri sur_doku'nun ince örgüsünde (köşe alfası 0,9: 0,2 m sıra → dişte 3 sıra
+## blok, derz, blok blok ton, kabartma). Tepe taşı ayrı taş (alfa 0,8): her yandan 2,5–4,5 cm taşkın, 12–16 cm kalın, üst
+## kenarı pahlı (yuvarlanmış), sur yoluna eğimli, köşeleri tek tek oynak; %30'unda bir köşesi kırık. Yıkık diş (%9):
+## harpuştasız, kırık pürüzlü tepe. Kaplama aynı (en w, derinlik dp, boy). Üçgen: 12 gövde + 20 taş = 32 (eski 28).
 static func _dis_tas(ag: Ag, o: Vector3, tt: Vector3, nn: Vector3, w: float, yuk: float, dp: float, h2: float, h3: float, yikik: bool, col: Color) -> void:
-	# Bütçe (Bölüm 25 an_05'te ≈2000 diş çizilir): plan altıgen — yalnız sur yolu tarafındaki (−nn) iki dikey kenar pahlı,
-	# omuz (yuvarlatılmış tepe kenarı) yalnız o yüzde ve yanlarda; dış yüz (ovadan uzakta görünen) düz, tepe ona doğru
-	# eğimli. Diş başına ≤ 26 üçgen.
 	var pah := 0.05 + 0.05 * h3
 	var hw := w * 0.5
 	var c := o + nn * dp * 0.5
 	var hd := dp * 0.5
-	# taban planı: (−nn) tarafı pahlı dikdörtgen (6 köşe), sırayla
 	var plan: Array[Vector2] = [Vector2(-hw + pah, -hd), Vector2(hw - pah, -hd), Vector2(hw, -hd + pah), Vector2(hw, hd),
 		Vector2(-hw, hd), Vector2(-hw, -hd + pah)]
-	var yat := (h3 - 0.5) * 0.04                # tepe yana yatık (cm'ler)
-	var omuz := minf(0.045 + 0.035 * h2, yuk * 0.25)
-	var ic := 0.04 + 0.03 * h2                 # omuzun içe çekilişi
-	var egim := 0.03 + 0.04 * h3               # tepe içe (sur yoluna, −nn) doğru alçalır
-	# kırık köşe: bir tepe köşesi (sol/sağ × ön/arka) aşağı
-	var kir_k := -1
-	if not yikik and h2 > 0.7:
-		kir_k = int(h3 * 4.0) % 4
-	var kir_d := 0.1 + 0.18 * h2
+	var yat := (h3 - 0.5) * 0.04
+	var govde := Color(col.r, col.g, col.b, 0.9)
+	var kal := 0.12 + 0.04 * h2                     # harpuşta kalınlığı
+	var yb := yuk - kal                             # gövde tepesi (taşın altı)
 	var alt: Array[Vector3] = []
 	var ust: Array[Vector3] = []
-	var tep: Array[Vector3] = []
 	for k in 6:
 		var v := plan[k]
 		var pos := c + tt * v.x + nn * v.y
 		alt.append(pos)
-		var arka := v.y < 0.0          # sur yolu tarafı: omuzlu
-		# tepe tek yöne (sur yoluna doğru) alçalır, o kenar omuzla yuvarlanır: yandan sivri sırt (beşik çatı) okunmaz
-		var yt := yuk - egim * (0.5 - v.y / hd * 0.5)
-		var yk := yt - (omuz if arka else 0.0)
+		var yk := yb
 		if yikik:
-			# kırık diş: sırtsız, köşe köşe farklı yükseklikte pürüzlü alçak tepe (çatı gibi sivrilmesin)
 			var r := fposmod(sin(float(k) * 12.9 + h2 * 78.2) * 43758.5, 1.0)
 			yk = yuk * (0.7 + 0.3 * r)
-			yt = yk
-		var dx := yat * (yk / maxf(yuk, 0.01))
-		ust.append(pos + tt * dx + Vector3.UP * yk)
-		if arka and not yikik:
-			var vi := Vector2(v.x * (1.0 - ic / hw), v.y + ic)
-			tep.append(c + tt * (vi.x + yat) + nn * vi.y + Vector3.UP * yt)
-		else:
-			tep.append(ust[k])
-	if kir_k >= 0:
-		# köşe: 0 (−x, arka) → 5,0 ; 1 (+x, arka) → 1,2 ; 2 (+x, ön) → 3 ; 3 (−x, ön) → 4
-		var ks: Array = [[5, 0], [1, 2], [3], [4]][kir_k]
-		for kk: int in ks:
-			var on := plan[kk].y > 0.0
-			ust[kk] = ust[kk] - Vector3.UP * kir_d
-			tep[kk] = ust[kk] if on else tep[kk] - Vector3.UP * kir_d * 0.9
-	var mz := c
+		ust.append(pos + tt * yat * (yk / maxf(yuk, 0.01)) + Vector3.UP * yk)
 	for k in 6:
 		var k2 := (k + 1) % 6
-		var dis := ((alt[k] + alt[k2]) * 0.5 - mz)
+		var dis := (alt[k] + alt[k2]) * 0.5 - c
 		dis.y = 0.0
-		ag.quad_auto(alt[k], alt[k2], ust[k2], ust[k], dis, col)
-		var dis2 := dis.normalized() + Vector3.UP * 0.9
-		ag.quad_auto(ust[k], ust[k2], tep[k2], tep[k], dis2, col)
-	# tepe kapağı (altıgen yelpaze)
-	for k in range(1, 5):
-		ag.tri(tep[0], tep[k], tep[k + 1], Vector3.UP, col)
+		ag.quad_auto(alt[k], alt[k2], ust[k2], ust[k], dis, govde)
+	if yikik:
+		# kırık tepe (harpuştası düşmüş): köşe köşe farklı yükseklikte pürüzlü yüz
+		for k in range(1, 5):
+			ag.tri(ust[0], ust[k], ust[k + 1], Vector3.UP, govde)
+		return
+	# ---- harpuşta
+	var ta := 0.025 + 0.02 * h3                     # taşma
+	var ci := 0.03 + 0.025 * h2                     # üst kenar pahı (yuvarlanmış kenar)
+	var egim := 0.03 + 0.04 * h3                    # tepe sur yoluna (−nn) doğru alçalır
+	var orta := c + tt * yat + Vector3.UP * yb
+	var tcol := Color(col.r * (0.96 + 0.06 * h3), col.g * (0.96 + 0.05 * h3), col.b * (0.95 + 0.04 * h3), 0.8)
+	var kir_k := int(h3 * 4.0) % 4 if h2 > 0.7 else -1
+	var kir_d := 0.05 + 0.06 * h3
+	var r0: Array[Vector3] = []     # alt halka
+	var r1: Array[Vector3] = []     # yan yüzün üstü
+	var r2: Array[Vector3] = []     # tepe (pah içeride)
+	var kose: Array[Vector2] = [Vector2(-1, -1), Vector2(1, -1), Vector2(1, 1), Vector2(-1, 1)]
+	for k in 4:
+		var s := kose[k]
+		var hk := fposmod(sin(float(k) * 7.31 + h2 * 41.7 + h3 * 13.1) * 9137.3, 1.0)
+		var ex := hw + ta + (hk - 0.5) * 0.02
+		var ez := hd + ta + (0.5 - hk) * 0.016
+		var p0 := orta + tt * s.x * ex + nn * s.y * ez
+		var yy := kal * (0.5 + 0.12 * hk)
+		var yt := kal - egim * (0.5 - s.y * 0.5) + (hk - 0.5) * 0.012
+		var p1 := p0 + Vector3.UP * yy
+		var p2 := orta + tt * s.x * (ex - ci) + nn * s.y * (ez - ci * 0.8) + Vector3.UP * maxf(yt, yy + 0.015)
+		if k == kir_k:
+			p1 += Vector3.UP * -minf(kir_d, yy * 0.8) + (orta - p0).normalized() * 0.01
+			p2 += Vector3.UP * -kir_d * 0.8 + (orta - p0) * 0.25
+		r0.append(p0)
+		r1.append(p1)
+		r2.append(p2)
+	ag.quad(r0[0], r0[1], r0[2], r0[3], Vector3.DOWN, tcol)
+	for k in 4:
+		var k2 := (k + 1) % 4
+		var dis2 := (r0[k] + r0[k2]) * 0.5 - orta
+		dis2.y = 0.0
+		ag.quad_auto(r0[k], r0[k2], r1[k2], r1[k], dis2, tcol)
+		ag.quad_auto(r1[k], r1[k2], r2[k2], r2[k], dis2.normalized() + Vector3.UP * 1.1, tcol)
+	ag.quad_auto(r2[0], r2[1], r2[2], r2[3], Vector3.UP, tcol)
 
 
 # ------------------------------------------------------------------ KÖŞE KULESİ (hat kırıklarında)

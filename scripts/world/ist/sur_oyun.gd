@@ -23,6 +23,7 @@ var dy := 0.0                    # dış kuşak (teras, hendek, ova) kademesi (I
 var gx := NAN                    # oyun gediği yerel x (yoksa NAN)
 var asama := 1                   # gedik onarım aşaması 1..4 (PARCA.ASAMALAR; kurulunca parça günceller)
 var gedik_w: Array = []          # üç gediğin dünya noktası (Vector2, şehir kuralı sehir.gd:2824-2853)
+var saglam := false              # TUR-11: sağlam sur kipi (gediksiz kesim; saglam_yap)
 
 
 # ------------------------------------------------------------------ kurulum (veri)
@@ -47,6 +48,27 @@ func _kur_veri(p_id: String) -> void:
 	gedik_w.clear()
 	for w in y["gedik_w"]:
 		gedik_w.append(Vector2(float(w[0]), float(w[1])))
+
+
+## TUR-11 (taşıma 5'in isteği, Bölüm 28o — 11 Nisan, sur henüz gediksiz): kesimin SAĞLAM kipi. Donmuş kesim satırının DERİN
+## KOPYASINDA gedik listesi boşalır (oyun gediği + dekor gedikler, yan dilimlerin dekor gedikleri), gedik yüzünden yıkık sayılan
+## dış kule sağlam kuleye döner, gx = NAN. Kurucu (IstSurlar._run) bu kopyayla gediksiz dilim kurar: iç/dış sur, sur yolu,
+## korkuluk ve dişler sürekli; gedik molozu, gedik onarımı (GedikOnarim) yok. Bütün sorgular (yol, mazgallar, gedik() → {},
+## engeller, noktalar…) aynı kopyadan okur. Donmuş sözleşme ve varsayılan (gedikli) kip DEĞİŞMEZ. gedik_w (şehrin üç gediğinin
+## dünya noktası, şehir kuralı) olduğu gibi kalır: kesimin dışındaki şehir surunu kesim kurmaz.
+func saglam_yap() -> void:
+	saglam = true
+	kesim = kesim.duplicate(true)
+	var ku: Dictionary = kesim["kule"]
+	var dis: Array = (ku["dis"] as Array) + (ku.get("dis_yikik", []) as Array)
+	dis.sort()
+	ku["dis"] = dis
+	ku["dis_yikik"] = []
+	kesim["gedik"]["x"] = []
+	kesim["gedik"]["oyun"] = -1
+	for yn: Dictionary in kesim["yan"]:
+		yn["gedik"] = []
+	gx = NAN
 
 
 ## Dekor gedikler (oyun gediği dışındakiler; karar 4-A): kesim-yerel x
@@ -462,10 +484,13 @@ func noktalar() -> Array:
 ## 2. gedik dekor/kapalı, karar 4-A) + uzak katman (her yanda iki 110 m dilim lod 2, çarpışmasız) + zemin levhaları.
 ## secenekler: "uzak" (bool, true), "yan" (bool, true), "parca" (bool, true: poterna/köprü/dolgu/gedik/merdiven),
 ##   "asama" (0..3 gedik onarımı), "kalas" (bool), "dolgu" (0..1), "kapi_kopru" ("saglam"|"yikik"), "merdiven" (dayama
-##   indisleri dizisi), "poterna_acik" (bool), "dunya" (true: kök a.xf'e konur; false: kök orijinde, yerel çalışma)
+##   indisleri dizisi), "poterna_acik" (bool), "dunya" (true: kök a.xf'e konur; false: kök orijinde, yerel çalışma),
+##   "saglam" (bool, false — TUR-11: gediksiz sağlam sur, bkz. saglam_yap; "asama" yok sayılır)
 static func kur(p_id: String, sec := {}) -> Dictionary:
 	var t0 := Time.get_ticks_usec()
 	var a: RefCounted = arayuz(p_id)
+	if bool(sec.get("saglam", false)):
+		a.saglam_yap()
 	var kok := Node3D.new()
 	kok.name = "SurOyun_" + p_id
 	if bool(sec.get("dunya", true)):

@@ -89,11 +89,86 @@ void fragment() {
 	float orta = 1.0 - smoothstep(0.06, 0.25, fw);      // blok tonu
 	float bant_g = 1.0 - smoothstep(0.30, 0.9, fy);    // tuğla hatılı
 	vec3 c;
+	// TUR-11: köşe alfası işareti (pişiricide korunur): < 0,75 döküntü taşı; 0,75–0,86 harpuşta (diş tepe taşı);
+	// 0,86–0,95 ince taş örgü (mazgal dişi ve korkuluk: oyuncu 0,5–2 m'de; tuğla hatılı yok)
+	float ca = COLOR.a * renk.a;
+	float harp = step(0.75, ca) * (1.0 - step(0.86, ca));
+	float orgu = step(0.86, ca) * (1.0 - step(0.95, ca));
+	// TUR-11: sahte kabartma (taş kenarı yuvarlanmış, derz girintili): (u, y) yönünde normal eğimi; dik yüzde uygulanır
+	vec2 egim2 = vec2(0.0);
 	// tuğla/kiremit/ahşap rengi yüzey (uzak pişmiş ağda köşe rengi): desen yok, yalnız yıpranma
 	// (kızıllık oranı: tuğla r/g ≈ 1,9; koyu kesme taş r/g ≈ 1,1–1,25 — fark eşiği koyu taşı da tuğla sanıyordu)
 	float duz = step(1.4 * COLOR.g * renk.g + 0.02, COLOR.r * renk.r);
 	if (duz > 0.5) {
 		c = base;
+	} else if (harp > 0.5 || (orgu > 0.5 && dikey < 0.5 && abs(gnr.y) < 0.97)) {
+		// TUR-11: harpuşta (dişin tepe taşı; yıkık dişin kırık tepesi): TEK taş, derzsiz; dane, çukur, liken (sarımsı gri ve
+		// koyu), üstte yosun; kenar yuvarlanması geometride (pah). Eski: dişin tepesi pürüzsüz eğik levha.
+		vec2 hp = vec2(wpos.x + wpos.y * 0.71, wpos.z - wpos.y * 0.63);
+		vec3 hcol = tas * vec3(1.0, 0.98, 0.94) * (0.8 + 0.2 * vn(hp * 1.7 + 3.0));
+		hcol *= 1.0 + 0.22 * (vn(hp * 26.0) - 0.5) * yakin;
+		hcol *= 1.0 - 0.16 * smoothstep(0.62, 0.9, vn(hp * 9.0 + 11.0)) * ince;          // çukurcuk
+		float ust = smoothstep(0.5, 0.95, abs(gnr.y));
+		float hl1 = smoothstep(0.6, 0.76, vn(hp * 5.3 + 7.0 + COLOR.r * 13.0));
+		hcol = mix(hcol, tas * vec3(1.1, 1.06, 0.8), hl1 * (0.35 + 0.25 * ust) * orta);    // sarımsı gri liken
+		float hl2 = smoothstep(0.7, 0.84, vn(hp * 11.0 + 23.0));
+		hcol = mix(hcol, tas * vec3(0.42, 0.44, 0.38), hl2 * 0.55 * orta);                 // koyu liken
+		float hy = smoothstep(0.62, 0.8, vn(hp * 3.1 + 41.0)) * ust;
+		hcol = mix(hcol, vec3(0.17, 0.2, 0.11) * kat, hy * 0.4 * orta);                   // yosun (üstte)
+		// ince kılcal çatlak (yakında)
+		float cat = 1.0 - smoothstep(0.0, 0.035, abs(vn(hp * 2.2 + 61.0) - 0.5));
+		hcol *= 1.0 - 0.3 * cat * yakin * step(0.55, h21(floor(hp * 0.8)));
+		c = hcol;
+	} else if (dikey > 0.5 && orgu > 0.5) {
+		// TUR-11: ince taş örgü (mazgal dişi, korkuluk): "dişin önü düz tek ton levha" (0,42 m'lik sur sırası 0,6 m'lik dişe hiç
+		// derz düşürmüyordu; korkuluğa tuğla hatılı göz hizasında iri şerit). Sıra ≈ 0,2 m (dişte 3 sıra), blok 0,3–0,62 m,
+		// derz 1,5–2,4 cm (girintili, koyu), blok blok ton, aşınmış kenar, kırık köşe, liken; kabartma normalle.
+		float hf = 0.5 * fy;
+		float hu = 0.5 * fu;
+		float okh = 0.2;
+		float odl = (vn(vec2(u * 2.3, y * 1.7) + 3.0) - 0.5) * 0.03 * ince;
+		float osy = y + odl + 0.07;
+		float osi = floor(osy / okh);
+		float osf = fract(osy / okh);
+		float obl = 0.3 + 0.32 * h21(vec2(osi, 5.1));
+		float ooff = h21(vec2(osi, 2.7)) * obl;
+		float obx = (u + ooff + (vn(vec2(u * 3.1, y * 4.3) + 1.0) - 0.5) * 0.025 * ince) / obl;
+		float obid = floor(obx);
+		float obf = fract(obx);
+		float otn = h21(vec2(obid, osi));
+		float otn2 = h21(vec2(obid + 4.1, osi + 1.9));
+		vec3 tc = tas * (0.74 + 0.36 * otn);
+		tc *= mix(vec3(0.95, 0.98, 1.04), vec3(1.06, 1.0, 0.9), h21(vec2(obid + 5.3, osi)));
+		tc = mix(tc, tas * vec3(0.7, 0.7, 0.72), step(0.9, otn2) * 0.7);
+		float okx = min(obf, 1.0 - obf) * obl;
+		float oky = min(osf, 1.0 - osf) * okh;
+		float opur = (vn(vec2(u * 11.0, y * 11.0) + osi) - 0.5) * 0.03;
+		float oew = 0.025 + 0.045 * h21(vec2(obid + 2.9, osi + 1.7));
+		tc *= mix(1.0, mix(0.72, 1.0, smoothstep(0.0, oew, min(okx, oky) + opur)), ince);
+		float okh1 = h21(vec2(obid + 7.7, osi + 2.3));
+		float okxs = (h21(vec2(obid, osi + 4.4)) > 0.5 ? obf : 1.0 - obf) * obl;
+		float okys = (okh1 > 0.75 ? osf : 1.0 - osf) * okh;
+		float okr = 0.04 + 0.08 * h21(vec2(obid + 3.3, osi + 8.1));
+		tc = mix(tc, tc * vec3(0.62, 0.6, 0.57), step(okh1, 0.45) * (1.0 - smoothstep(okr * 0.75, okr, okxs + okys * 1.2 + opur)) * orta);
+		tc *= 1.0 + 0.16 * (vn(vec2(u * 21.0, y * 21.0) + osi) - 0.5) * yakin;
+		float olik = smoothstep(0.68, 0.84, vn(vec2(u * 4.1, y * 4.6) + 21.0 + osi * 0.37));
+		tc = mix(tc, tc * vec3(1.08, 1.06, 0.86), olik * 0.4 * orta);
+		tc *= 1.0 - 0.1 * smoothstep(0.7, 0.92, vn(vec2(u * 16.0, y * 17.0) + 41.0)) * ince;
+		float ojw = 0.018 + 0.006 * h21(vec2(osi, 7.0));
+		float ojy0 = osf * okh;
+		float ocJ = clamp((min(ojy0 + hf, ojw * 0.5) - max(ojy0 - hf, -ojw * 0.5)) / fy, 0.0, 1.0)
+			+ clamp((min(ojy0 + hf - okh, ojw * 0.5) - max(ojy0 - hf - okh, -ojw * 0.5)) / fy, 0.0, 1.0);
+		ocJ = fy > okh * 0.6 ? ojw / okh : clamp(ocJ, 0.0, 1.0);
+		float ojx0 = obf * obl;
+		float ocX = clamp((min(ojx0 + hu, 0.008) - max(ojx0 - hu, -0.008)) / fu, 0.0, 1.0)
+			+ clamp((min(ojx0 + hu - obl, 0.008) - max(ojx0 - hu - obl, -0.008)) / fu, 0.0, 1.0);
+		ocX = fu > obl * 0.6 ? 0.016 / obl : clamp(ocX, 0.0, 1.0);
+		float oj = clamp(ocJ + ocX * (1.0 - ocJ), 0.0, 1.0);
+		vec3 ocs = mix(tas * 0.95, tc, orta);
+		c = mix(ocs, harc * 0.62, oj * 0.85);
+		float eb = oew * 1.6;
+		egim2 = vec2(smoothstep(eb, 0.0, (1.0 - obf) * obl + opur) - smoothstep(eb, 0.0, obf * obl + opur),
+			smoothstep(eb, 0.0, (1.0 - osf) * okh + opur) - smoothstep(eb, 0.0, osf * okh + opur)) * 0.75 * ince;
 	} else if (dikey > 0.5) {
 		float P = 2.5;
 		float B = 0.42;
@@ -251,6 +326,10 @@ void fragment() {
 		vec3 cs = mix(tas * 0.98, tc, orta);
 		cs = mix(cs, harc * 0.78, j * 0.75);
 		c = mix(cs, bcol, covB);
+		// TUR-11: taş kuşağında da kenar kabartması (yakında; hatılda yok)
+		float eb2 = ew * 1.3;
+		egim2 = vec2(smoothstep(eb2, 0.0, (1.0 - bf) * bl + kpur) - smoothstep(eb2, 0.0, bf * bl + kpur),
+			smoothstep(eb2, 0.0, (1.0 - sf) * kh + kpur) - smoothstep(eb2, 0.0, sf * kh + kpur)) * 0.6 * ince * (1.0 - covB);
 	} else {
 		// yatay (yürüme yolu, kule terası): döşeme taşı
 		// TUR-10: döşeme ve tepe taşları (diş tepesi, korkuluk üstü) yakından düz levha okunuyordu: sıralar şaşırtmalı,
@@ -277,6 +356,10 @@ void fragment() {
 	// hatılı), dip kararması ve gece payı ona uygulanınca zeminde simsiyah leke okunuyordu (Bölüm 20 an_03): taş tonu, iri
 	// lekeli, yıpranma yalnız hafif
 	float moloz = 1.0 - step(0.75, COLOR.a);
+	if (dikey > 0.5 && moloz < 0.5 && dot(egim2, egim2) > 1e-6) {
+		vec3 tw = vec3(t2.x, 0.0, t2.y) * egim2.x + vec3(0.0, egim2.y, 0.0);
+		NORMAL = normalize(NORMAL + mat3(VIEW_MATRIX) * tw);
+	}
 	if (moloz > 0.5) {
 		c = tas * vec3(1.0, 0.96, 0.9) * (0.7 + 0.25 * vn(wpos.xz * 2.7 + wpos.y * 1.9)) * (0.85 + 0.15 * h21(floor(wpos.xz * 1.3)));
 	}
