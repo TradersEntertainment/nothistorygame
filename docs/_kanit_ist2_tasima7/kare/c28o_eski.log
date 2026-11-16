@@ -35,3 +35,14 @@ TASIMA28OYURU bacak=yigin sure=0.0 yol=0.0 takilma=0 dusme=0 son=(18.0, 0.0, 118
 WARN_PORTRAIT_STUDIO speaker=SPK_SOLDIER key=D28O_S_BALL scene=chapter28o.tscn
 TASIMA28OKARE an_02_kazik_yigini.jpg oyuncu=(18.0, 0.0, 118.9) cizim=1964 ilkel=2397344 sur=eski
 TASIMA28OYURU bacak=cukur sure=0.0 yol=0.0 takilma=0 dusme=0 son=(2.5, 0.0, 115.9) odak=hole_0
+TASIMA28OKARE an_03_kazik.jpg oyuncu=(2.5, 0.0, 115.3) cizim=1811 ilkel=1810300 sur=eski
+TASIMA28OYURU bacak=yigin sure=0.0 yol=0.0 takilma=0 dusme=0 son=(18.0, 0.0, 118.9) odak=stakes
+TASIMA28OYURU bacak=cukur sure=0.0 yol=0.0 takilma=0 dusme=0 son=(6.7, 0.0, 115.9) odak=hole_1
+TASIMA28OYURU bacak=yigin sure=0.0 yol=0.0 takilma=0 dusme=0 son=(18.0, 0.0, 118.9) odak=stakes
+TASIMA28OYURU bacak=cukur sure=0.0 yol=0.0 takilma=0 dusme=0 son=(10.9, 0.0, 115.9) odak=hole_2
+TASIMA28OYURU bacak=yigin sure=0.0 yol=0.0 takilma=0 dusme=0 son=(18.0, 0.0, 118.9) odak=stakes
+TASIMA28OYURU bacak=cukur sure=0.0 yol=0.0 takilma=0 dusme=0 son=(15.1, 0.0, 115.9) odak=hole_3
+SAYDIST key=D28O_U_STAKES scene=chapter28o.tscn speaker=SPK_URBAN d=5.8
+LOOKAUDIT raw Person(urban)[SPK_URBAN] chapter28o.tscn 138 kind=walk act= pose=<null> look=@CharacterBody3D@80 talking=false pos=(9.0, 0.0, 128.1)
+TASIMA28OKARE an_04_kizak.jpg oyuncu=(4.5, 0.0, 131.5) cizim=2488 ilkel=2873341 sur=eski
+TASIMA28OKARE an_05_kizak_yarim.jpg oyuncu=(9.2, 0.0, 133.5) cizim=2670 ilkel=2985202 sur=eski

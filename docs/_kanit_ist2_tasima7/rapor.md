@@ -18,8 +18,8 @@
 | 2 | 32o'nun kalanı | **TAMAM** | `=yuru` gerçek bot (çalı demeti → hendek, toprak, yaylımda manto arkası, basamak, manto itme): yeni ve eski bacak bacak aynı, takılma 0 düşme 0 tuş yok 0; eski ×1 7/7, yeni ×1 7/7 PASS, denetim 0; 6 ESKİ\|YENİ kare; bütçe; mesafe tablosu (ova içinde hepsi aynı); yön replikleri uyumlu. Kutu yasağı: çalı demeti dal demeti, manto kalaslı |
 | 3 | 36b (Huruç) | **TAMAM** | Yeni **sağlam** surda: setin `Poterna`'sı (sahanlık + terasa inen basamak), `KalasKopru` (görünmeyen tahta düzeltildi: gizli kur + `tak()`), hendek merdivenleri, ova kaydırması; son kod yeni 5/5 + eski 4/4 PASS denetim 0 (ara turlarda üç `VISAUDIT overlap` sondayla kökten düzeltildi); `=yuru` takılma 0 düşme 0; mesafe ≤ 20; 6 kare (eski 5); bütçe 5 anın 4'ünde ≤ (an_01 ilkel +%2) |
 | 4 | 28o (sağlam sur) | **TAMAM** | `SurSet`/`SurSetSahne` sağlam kip seçeneği (varsayılan aynı); 28o sağlam surla (ova kaydırması, HAUL_Z 124,5 + O.z, ıska hendeğe); yeni 8/8 + eski 4/4 PASS denetim 0; `=yuru` (kazık) iki sette aynı; kareler @@OZET28O@@ |
-| — | Ortak bölümler | @@OZETORTAK@@ | 0, 20 ×2, 20o ×2, 21, 22, 22o, 25, 32o, 37o ×1 (SurSet, SurSetSahne, Assault değişti) |
-| — | Sözleşme | @@OZETSOZ@@ | `SURSOZLESME PASS kalem=13 kesim=8` · `SUROYUN … havada=0 gomuk=0 katida=0` · `WALKTHRU OZET yol=7 tamam=7 takilma=0 dusme=0` |
+| — | Ortak bölümler | **TAMAM** | 0, 20 ×6, 20o ×2, 21, 22, 22o, 25, 32o ×7, 37o ×3 (+eski) PASS, denetim 0; Bölüm 20 2. dalga medyanı 23,2 sn (taşıma 6 `def` 21,4, aralık 18,0–32,8), 1. dalga aynı (§6) |
+| — | Sözleşme | **AYNI** | `SURSOZLESME PASS kalem=13 kesim=8` · `SUROYUN … havada=0 gomuk=0 katida=0` · `WALKTHRU OZET yol=7 tamam=7 takilma=0 dusme=0` |
 
 ---
 
@@ -56,8 +56,8 @@ vurduğu şey (`PIK7 an=barikat px=… d=… yol=…`):
 - Eski set yolu (`_yeni()` yanlış) aynı satırlar: aynı sayılar, aynı rastgele dizi.
 
 ### 1.3 Kareler an_04 ÖNCE | SONRA (`kare/c37o_once/an_04_barikat_tasima6.jpg` (sahibin gördüğü), `kare/c37o_once/an_04_barikat.jpg` (bu dalın tabanı), `kare/c37o_sonra/an_04_barikat.jpg`)
-- ÖNCE: sırtın iki yanında baş hizasında üç koyu çokgen (A'nın koni + kayaları), sağ üstte opak beyaz altıgen (toz bulutu, sur
-  yolunun 0,3 m altında doğup havada), (taşıma 6 karesinde) sol üstte küçük turuncu kutu.
+- ÖNCE: sırtın iki yanında baş hizasında üç koyu çokgen (A'nın koni + kayaları), sağ üstte opak beyaz altıgen (mancınık tozu: eski
+  kesitin rastgele yeri, yeni dış surun gövdesinde, kule yüzünün önünde asılı), (taşıma 6 karesinde) sol üstte küçük turuncu kutu.
 - **SONRA** (tek cümle): beyaz altıgen ve turuncu kutu yok (mancınık tozu sağdaki kulenin yüzünde saydam ve sönerken
   görünüyor, havada değil); ip çeken azaplar ve fıçılar aynı; **sırtın iki yanındaki üç koyu çokgen DURUYOR** (A'nın
   `GedikMoloz`'u; bu taşımada dokunulmadı), kutu yok, eskisinden sönük değil.
@@ -81,7 +81,7 @@ vurduğu şey (`PIK7 an=barikat px=… d=… yol=…`):
   36b'nin mantosu gibi), çarpışma aynı kutu (görünmez). Yaylımda arkasına sığınınca kameranın dibinde koca bir kutu okunuyordu
   (`kare/c32o_yeni_tur0/an_04_manto_arkasi.jpg`). Yalnız görünüş, iki sette de.
 
-### 2.2 Testler (`testler/c32o`; son kod)
+### 2.2 Testler (`testler/c32o`; son mantık kodu — demet/manto görünüşü bir kısmında henüz eskiydi)
 
 | çeşit | eski ×1 | yeni ×1 (taşıma 6'da ×1–2 daha) | alanlar (eski = yeni) |
 |---|---|---|---|
@@ -292,7 +292,31 @@ Yön replikleri: `D28O_U_01` "Kazıkları siperin arkasına" uyumlu (aynı yer);
   Kullanan bölümler ×1 (§6).
 
 ## 6. Ortak değişikliklerden sonra öteki bölümler (`testler/ortak`) ve sözleşme
-@@ORTAK@@
+Değişen ortak kod: `SurSet` (isteğe bağlı `p_saglam`), `SurSetSahne` (`intact` → sağlam; varsayılan aynı), `Assault`
+(yalnız yeni set: mancınık/top isabeti ve kırıntı). Kullanan bölümler, varsayılan çeşit, yeni set (`testler/ortak`):
+
+| bölüm | koşu | sonuç | alanlar | dalgalar (sn) |
+|---|---|---|---|---|
+| 0 | ×1 | PASS | `froze=true` | — |
+| 20 | ×6 | 6/6 PASS | 20.1 · repair 10 · knocks 0 · gun 3/4 | 1. dalga 13,3 · 11,9 · 12,6 · 12,6 · 14,5 · 12,9; **2. dalga** 60,0* · 23,9 · 23,1 · 23,2 · 23,8 · 20,5 |
+| 20o | ×2 | 2/2 PASS | 20O.1 · hits 3 · cracks 0 | 12,3 / 15,2 · 5,9 / 9,2 |
+| 21 | ×1 | PASS | 21.1 · bowls 2 | — |
+| 22 | ×1 | PASS | 22.1 · hits 2 · window 0.42–0.68 | — |
+| 22o | ×1 | PASS | 22O.1 · gun 3/4 · carry 0.75 | — |
+| 25 | ×1 | PASS | 25.1 | — |
+| 32o | ×7 (+eski ×7) | 7/7 PASS | §2.2 | — |
+| 37o | ×3 (+eski ×1) | 3/3 PASS (+1) | 37O.1 · 37O.2 (lose) · caught 1 (trespass) | çıkış düellosu 13,2 (kazanılan), 10,9 (kaybedilen) |
+
+**Denetim satırı 0** (bütün paket; `CESET4 … dusen=0`). **Bölüm 20 düello süreleri**: 2. dalga medyanı **23,2 sn** (n 5;
+taşıma 6 `def` ×6: 22,3 · 18,0 · 18,7 · 20,4 · 32,8 · 29,5 → medyan 21,4, aralık 18,0–32,8): aralığın içinde, sahibin
+kararındaki ≈ 21'in 2 sn üstünde. 1. dalga medyanı 12,8 (taşıma 6: 12,6) — aynı. *İlk koşu (`c20_def_1`) makine çok yüklüyken
+(iki yazılımsal GL kare kipi + 3 test, yük ≈ 10/4 çekirdek) koşuldu: 2. dalga 60 sn sınırına dayandı, düşük yükte tekrarlanan
+5 koşuda 20,5–23,9. `WaveRunner`, `Duelist`, `Melee`, `Duel` değişmedi; Bölüm 20 kodu değişmedi; Assault değişikliği yalnız
+mancınık/top isabetinin görünüşü (aynı rastgele üretecten birkaç sayı daha çekiyor: rastgele dizi kayar). 20o 1. dalga 5,9
+(taşıma 4/6 aralığı 7,4–13,3'ün biraz altında, n 2).
+
+**Sözleşme** (`testler/soz_son`, son kod): `SURSOZLESME PASS kalem=13 kesim=8` · `SUROYUN nokta=519 havada=0 gomuk=0 katida=0` · `WALKTHRU OZET yol=7 tamam=7 takilma=0 dusme=0` — tabanla (`testler/soz`) aynı.
+
 
 ## Değişen dosyalar
 - `scripts/level/assault.gd`: yalnız yeni set yolu — `_lob_yeri` (mancınık isabeti gerçek yüzeyde), `_kirik_tas` (kırıntı

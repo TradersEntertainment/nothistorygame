@@ -35,3 +35,31 @@ WORLDWALK region= shapes=9848 boxes=9115 tris=288000 ms=41997
 CITYLIFE region= src=plan era=siege night=false density=0.85 nodes=1026 plazas=19 landmarks=23
 TASIMA32OKARE an_01_acilis.jpg oyuncu=(-14.0, 0.0, 72.0) cizim=3643 ilkel=2594400 sur=eski
 TASIMA32OYURU bacak=azap sure=0.0 yol=0.0 takilma=0 dusme=0 kesik=false son=(2.0, 0.0, 48.4) odak=
+LORE key=32o placed=3
+TASIMA32OYURU bacak=yigin sure=0.0 yol=0.0 takilma=0 dusme=0 kesik=false son=(-9.0, 0.0, 52.0) odak=pile
+TASIMA32OKARE an_02_yigin.jpg oyuncu=(-9.0, 0.0, 52.0) cizim=3400 ilkel=2084114 sur=eski
+TASIMA32OYURU bacak=kiyi sure=0.0 yol=0.0 takilma=0 dusme=0 kesik=false son=(-9.0, 0.0, 39.0) odak=edge
+TASIMA32OKARE an_03_kiyi.jpg oyuncu=(-9.0, 0.0, 39.0) cizim=2862 ilkel=1714894 sur=eski
+TASIMA32OYURU bacak=yigin sure=0.0 yol=0.0 takilma=0 dusme=0 kesik=false son=(-9.0, 0.0, 52.0) odak=pile
+TASIMA32OYURU bacak=kiyi sure=0.0 yol=0.0 takilma=0 dusme=0 kesik=false son=(-9.0, 0.0, 39.0) odak=edge
+TASIMA32OYURU bacak=toprak sure=0.0 yol=0.0 takilma=0 dusme=0 kesik=false son=(9.0, 0.0, 52.0) odak=earth
+TASIMA32OYURU bacak=kiyi sure=0.0 yol=0.0 takilma=0 dusme=0 kesik=false son=(9.0, 0.0, 39.0) odak=edge
+TASIMA32OYURU bacak=siper sure=0.0 yol=0.0 takilma=0 dusme=0 kesik=false son=(5.0, 0.0, 44.4) odak=
+TASIMA32OKARE an_04_manto_arkasi.jpg oyuncu=(5.9, 0.0, 45.0) cizim=3590 ilkel=2290278 sur=eski
+TASIMA32OYURU bacak=yigin sure=0.0 yol=0.0 takilma=0 dusme=0 kesik=false son=(-9.0, 0.0, 52.0) odak=pile
+TASIMA32OYURU bacak=kiyi sure=0.0 yol=0.0 takilma=0 dusme=0 kesik=false son=(-9.0, 0.0, 39.0) odak=edge
+TASIMA32OYURU bacak=toprak sure=0.0 yol=0.0 takilma=0 dusme=0 kesik=false son=(9.0, 0.0, 52.0) odak=earth
+TASIMA32OYURU bacak=kiyi sure=0.0 yol=0.0 takilma=0 dusme=0 kesik=false son=(9.0, 0.0, 39.0) odak=edge
+TASIMA32OYURU bacak=yigin sure=0.0 yol=0.0 takilma=0 dusme=0 kesik=false son=(-9.0, 0.0, 52.0) odak=pile
+TASIMA32OYURU bacak=kiyi sure=0.0 yol=0.0 takilma=0 dusme=0 kesik=false son=(-9.0, 0.0, 39.0) odak=edge
+TASIMA32OYURU bacak=toprak sure=0.0 yol=0.0 takilma=0 dusme=0 kesik=false son=(9.0, 0.0, 52.0) odak=earth
+TASIMA32OYURU bacak=kiyi sure=0.0 yol=0.0 takilma=0 dusme=0 kesik=false son=(9.0, 0.0, 39.0) odak=edge
+TASIMA32OYURU bacak=yigin sure=0.0 yol=0.0 takilma=0 dusme=0 kesik=false son=(-9.0, 0.0, 52.0) odak=pile
+TASIMA32OYURU bacak=kiyi sure=0.0 yol=0.0 takilma=0 dusme=0 kesik=false son=(-9.0, 0.0, 39.0) odak=edge
+TASIMA32OYURU bacak=toprak sure=0.0 yol=0.0 takilma=0 dusme=0 kesik=false son=(9.0, 0.0, 52.0) odak=earth
+TASIMA32OYURU bacak=kiyi sure=0.0 yol=0.0 takilma=0 dusme=0 kesik=false son=(9.0, 0.0, 39.0) odak=edge
+TASIMA32OYURU bacak=yigin sure=0.0 yol=0.0 takilma=0 dusme=0 kesik=false son=(-9.0, 0.0, 52.0) odak=pile
+TASIMA32OYURU bacak=kiyi sure=0.0 yol=0.0 takilma=0 dusme=0 kesik=false son=(-9.0, 0.0, 39.0) odak=edge
+TASIMA32OYURU bacak=toprak sure=0.0 yol=0.0 takilma=0 dusme=0 kesik=false son=(9.0, 0.0, 52.0) odak=earth
+TASIMA32OYURU tus_yok yer=toprak odak=
+TASIMA32OYURU bacak=tezgah sure=0.0 yol=0.0 takilma=0 dusme=0 kesik=false son=(-16.0, 0.0, 68.4) odak=bench
