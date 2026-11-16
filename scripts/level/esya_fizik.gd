@@ -53,8 +53,8 @@ var uyanik: Array = []            # uyanık eşyalar (sıra: en eski önde)
 var _izgara := {}                 # Vector2i -> Array[Dictionary]
 var _taranan := {}                # MultiMeshInstance3D örnek kimliği -> true
 var _tara_t := 0.0
-var _bek_sayi := -1
-var _bek_degisti := 0
+var _yeni_mmi: Array = []         # ağaca yeni giren MultiMeshInstance3D'ler (tarama yalnız bunlara bakar)
+var _ilk_tarama := true
 var _player: Player
 var _temas := {}                  # eşya kimliği -> yürüyerek dayanma süresi
 var _son_hiz := 0.0
@@ -90,7 +90,8 @@ static func kaydet_engel(xf: Transform3D, boy: Vector3) -> void:
 static func kaydet_dugum(gorunen: Node3D, govde: StaticBody3D, tur: String) -> void:
 	if gorunen == null or KAPALI:
 		return
-	_bek_dugum.append([gorunen, govde, tur])
+	gorunen.set_meta("no_bake", true)     # Props.bake_static birleşik ağa katmasın (katılınca tek başına uyanamaz)
+	_bek_dugum.append([gorunen, govde, tur, Time.get_ticks_msec()])
 	_kur()
 
 
@@ -197,15 +198,15 @@ func sorun() -> int:
 
 func _physics_process(delta: float) -> void:
 	# kayıt bekleyen var: kısa aralıkla tara (kurulum karelere yayılabilir)
+	# tarama: ilk karede bütün ağaç (yönetici dünyadan sonra kurulur), sonra yalnız ağaca yeni giren MultiMesh'ler ve
+	# bekleyen tek düğümler (ağaç taraması yok: uyurken maliyet ~0)
 	_tara_t -= delta
-	if _tara_t <= 0.0:
-		var bek := _bek_mm.size() + _bek_dugum.size()
-		if bek != _bek_sayi:
-			_bek_degisti = Time.get_ticks_msec()
-		# yeni kayıt geldiyse ya da son kayıttan bu yana 60 sn geçmediyse (kurulum karelere yayılıyor) tara
-		if bek > 0 and (bek != _bek_sayi or Time.get_ticks_msec() - _bek_degisti < 60000):
+	if _tara_t <= 0.0 and (_ilk_tarama or not _yeni_mmi.is_empty() or not _bek_dugum.is_empty()):
+		_tara_t = 0.25
+		if not _bek_mm.is_empty() or not _bek_dugum.is_empty():
 			_tara()
-		_tara_t = 1.0
+		_yeni_mmi.clear()
+		_ilk_tarama = false
 	if _player == null or not is_instance_valid(_player):
 		_player = get_tree().get_first_node_in_group("player") as Player
 	if _player != null and _player.is_inside_tree():
@@ -241,13 +242,15 @@ func _tara() -> void:
 			continue
 		var g := b[0] as Node3D
 		if not g.is_inside_tree():
-			kalan.append(b)
+			if Time.get_ticks_msec() - int(b[3]) < 120000:
+				kalan.append(b)       # henüz ağaçta değil (2 dk bekler; hiç girmeyen kurulum artığı düşer)
 			continue
 		var st = b[1] if is_instance_valid(b[1]) else null
 		_dugum_esya(g, st, b[2])
 	_bek_dugum = kalan
 	# Dressing MultiMesh örnekleri
-	if not _bek_mm.is_empty():
+	var liste: Array = get_tree().root.find_children("*", "MultiMeshInstance3D", true, false) if _ilk_tarama else _yeni_mmi
+	if not _bek_mm.is_empty() and not liste.is_empty():
 		var adlar := {}
 		for k in _bek_mm:
 			adlar[String(k).get_slice("|", 0)] = true
@@ -257,7 +260,9 @@ func _tara() -> void:
 			for i in parts.size():
 				parca_ag[parts[i][0]] = [ad, i]
 		var gruplar := {}        # kök kimliği|ad -> {parça sırası: mmi}
-		for n in get_tree().root.find_children("*", "MultiMeshInstance3D", true, false):
+		for n in liste:
+			if not is_instance_valid(n) or not (n as Node).is_inside_tree():
+				continue
 			var mmi := n as MultiMeshInstance3D
 			if _taranan.has(mmi.get_instance_id()) or mmi.multimesh == null or not parca_ag.has(mmi.multimesh.mesh):
 				continue
@@ -292,7 +297,6 @@ func _tara() -> void:
 		for k in _bek_mm.keys():
 			if simdi - int(_bek_mm[k][1]) > 120000:
 				_bek_mm.erase(k)
-	_bek_sayi = _bek_mm.size() + _bek_dugum.size()
 
 
 func _mm_esya(ad: String, x_yerel: Transform3D, kok: Node3D, mm: Array, tur: String) -> void:
@@ -451,6 +455,10 @@ func _oyuncu(delta: float) -> void:
 func _tekme_serbest(p: Player) -> bool:
 	if p.frozen or p.move_mode != "walk" or p.focus_id != "" or p.hand_style != "tolga" or p.held != 0:
 		return false
+	# konuşma ya da ara sahne sürerken tekme yok (tuş repliği geçirir; kick() gövdeyi tween'le geri çeker)
+	var hud := get_tree().get_first_node_in_group("hud")
+	if hud and (bool(hud.get("cinematic")) or (hud.has_method("is_talking") and hud.is_talking())):
+		return false
 	if p.traversal and p.traversal.state != "":
 		return false
 	if p.leg == null or p.leg.visible:
@@ -553,6 +561,9 @@ func _patlama(p: Vector3, boy: float) -> void:
 
 
 func _dugum_eklendi(n: Node) -> void:
+	if n is MultiMeshInstance3D:
+		_yeni_mmi.append(n)       # Dressing kökü sonradan ağaca girer: yeni MultiMesh kayıtla eşleştirilecek
+		return
 	# Vfx.explosion'un ışığı (renk ffb050, güç 9): patlamanın yeri (Vfx'e dokunmadan; kanca isteği raporda)
 	if n is OmniLight3D:
 		var l := n as OmniLight3D
