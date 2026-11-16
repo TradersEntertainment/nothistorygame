@@ -284,6 +284,30 @@ class Poterna extends Node3D:
 		kanat_govde.add_child(kc)
 		kanat_govde.position = Vector3((w - 0.06) * 0.5, (h - 0.4) * 0.5, -0.01)
 		kanat.add_child(kanat_govde)
+		_otur_ic.call_deferred(zf, esik)
+
+	## İç surun dibinde etek (OTURTMA: sur dibi toprak/taş tümseği, yüzde ≈ 0,3–0,5 m) var; kapı peribolos toprağına
+	## (y_peri) kurulunca alt yarım metresi eteğin içinde kalıyordu (tasima8 k1 p1: gömük). Çarpışmalar yerleşince ışınla
+	## eteğin kapı önündeki gerçek yüzü ölçülür, kapı (söve, eşik, kanat, karanlık geçit) o yüze oturur. Etek yoksa yerinde.
+	func _otur_ic(zf: float, esik: StaticBody3D) -> void:
+		for i in 3:
+			await get_tree().physics_frame
+		if not is_inside_tree():
+			return
+		var sp := get_world_3d().direct_space_state
+		var en := -INF
+		var haric: Array[RID] = [esik.get_rid(), kanat_govde.get_rid()]
+		for dx: float in [-0.55, 0.0, 0.55]:
+			for dz: float in [0.25, 0.6]:
+				var q := PhysicsRayQueryParameters3D.create(to_global(Vector3(x + dx, 2.0, zf + dz)), to_global(Vector3(x + dx, -2.0, zf + dz)))
+				q.exclude = haric
+				var hit := sp.intersect_ray(q)
+				if not hit.is_empty():
+					en = maxf(en, to_local(hit["position"]).y)
+		if en > -0.02:
+			position.y += en + 0.02
+		if GameState.autotest:
+			print("ICPOTERNA x=%.2f etek_y=%.2f oturma=%.2f" % [x, en, position.y])
 
 	## Kanadı açar/kapar (dışarı, 100°). anim: tween ile 0,8 sn
 	func ac(p_acik: bool, anim := true) -> void:

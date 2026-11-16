@@ -351,8 +351,8 @@ func ic_poterna() -> Dictionary:
 	var g0 := 0.0 if is_nan(gx) else gx
 	var w := IstSurlar.POTERNA_W
 	var bul := NAN
-	for k in 120:
-		for s: float in [1.0, -1.0]:
+	for s: float in [1.0, -1.0]:
+		for k in 120:
 			var x := g0 + s * (12.0 + k * 0.25)
 			var bos := absf(x) < L * 0.5 - 4.0
 			for t in kesim["kule"]["ic"]:
@@ -515,6 +515,9 @@ func noktalar() -> Array:
 ##   "asama" (0..3 gedik onarımı), "kalas" (bool), "dolgu" (0..1), "kapi_kopru" ("saglam"|"yikik"), "merdiven" (dayama
 ##   indisleri dizisi), "poterna_acik" (bool), "dunya" (true: kök a.xf'e konur; false: kök orijinde, yerel çalışma),
 ##   "saglam" (bool, false — TUR-11: gediksiz sağlam sur, bkz. saglam_yap; "asama" yok sayılır)
+##   TAŞIMA-8 (hepsi varsayılan false; verilmezse kurulum bit bit aynı): "ic_poterna" (iç surda poterna, ic_poterna();
+##   parca["ic_poterna"]), "romanos_kanat" (yan dilimdeki kapı koşusunun kanatları açılır parça: parca["yan_kapi_kanat"],
+##   "kapi_acik" ile açık kurulur), "romanos_kopru" (o kapının önünde KapiKopru, "kapi_kopru" hâli; varsayılan "yikik")
 static func kur(p_id: String, sec := {}) -> Dictionary:
 	var t0 := Time.get_ticks_usec()
 	var a: RefCounted = arayuz(p_id)
