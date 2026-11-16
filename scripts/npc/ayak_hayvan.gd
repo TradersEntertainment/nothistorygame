@@ -70,10 +70,10 @@ func guncelle(delta: float) -> void:
 		else:
 			_hf = _zemin(pt, root, root.y)
 			_hr = _hf
-		# Görünen ama çarpışmasız zeminin (güverte ağı, döşeme) üstündeyse ışın alttakini görür: gövde gömülmesin
-		# (yalnız kökün tam altındaki çarpışma zemini alçaksa: eğimde arka toynağın alçak olması doğal)
-		if minf(_hf, _hr) < -0.12 and (not dort or _zemin(pt, root, root.y) < -0.12) \
-				and Unclip.on_mesh(h, h.global_position, h):
+		# Kökün tam altında 25 cm içinde çarpışma zemini yoksa (görünen-çarpışmasız güverte/döşeme ağı: ışın alttakini
+		# görür) gövde yerinde kalır. Eğimde arka toynağın alçak olması doğal: yalnız kökün altına bakılır.
+		# (Unclip.on_mesh sorulmaz: sahnenin bütün ağacını tarıyor)
+		if minf(_hf, _hr) < -0.12 and (not dort or _zemin(pt, root, root.y) < -0.24):
 			_hf = 0.0
 			_hr = 0.0
 	var te := 0.0

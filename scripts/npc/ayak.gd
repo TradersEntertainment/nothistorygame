@@ -303,35 +303,9 @@ func uygula(delta: float, yuru: bool, anim := false) -> void:
 		_kapat()
 		return
 	var t0 := Time.get_ticks_usec()
-	if _mesh_kok_mu(delta):
-		# Görünen ama çarpışmasız bir zeminin (döşeme ağı, tabla) üstünde: ışın onu görmez, IK gövdeyi alttaki
-		# çarpışma zeminine gömerdi. Bu kişide Rig'in duruşu (kök o zemine oturur)
-		_kapat()
-		return
 	_coz(delta, yuru and not anim)
 	olc_us += Time.get_ticks_usec() - t0
 	olc_n += 1
-
-
-## Kökün altı: çarpışma zemini kökten 12 cm'den alçaksa (ya da yoksa) kök görünen bir ağın üstünde mi (Unclip.on_mesh,
-## VISAUDIT float'ın ölçüsü). Seyrek: kök 0,5 m yer değiştirince ya da üç saniyede bir.
-var _mk_p := Vector3.INF
-var _mk_t := 0.0
-var _mesh_kok := false
-
-
-func _mesh_kok_mu(delta: float) -> bool:
-	_mk_t -= delta
-	var o := rig.owner as Node3D
-	var root := o.position
-	if _mk_t > 0.0 and _mk_p.x != INF and root.distance_squared_to(_mk_p) < 0.25:
-		return _mesh_kok
-	_mk_t = 3.0 + randf()
-	_mk_p = root
-	_mesh_kok = false
-	if not _zemin(root, root.y) or _zy < root.y - 0.12:
-		_mesh_kok = Unclip_.on_mesh(o, o.global_position)
-	return _mesh_kok
 
 
 func _kapat() -> void:
@@ -462,6 +436,16 @@ func _coz(delta: float, yuru: bool) -> void:
 		_yuruyus(ot, root)
 		_grd[0] = basiyor[0] or _planted[0]
 		_grd[1] = basiyor[1] or _planted[1]
+	# İki ayağın da altında kökün 25 cm içinde çarpışma zemini yoksa kök ya görünen ama çarpışmasız bir zeminin (döşeme
+	# ağı, tabla: ışın görmez) üstünde ya da kendi yanlış yüksekliğinde (VISAUDIT float'ın işi): ikisinde de IK gövdeyi
+	# alttaki çarpışmaya indirirdi (26: döşeme ağındaki askerler 50 cm gömülüyordu). Rig'in duruşu kalır (yazma yok).
+	# (Unclip.on_mesh sorulmaz: her çağrıda sahnenin bütün ağacını tarıyor; 37o'da kişi başı ~5 ms.)
+	if maxf(_tgt[0].y, _tgt[1].y) < root.y - 0.25:
+		pel = 0.0
+		_cur[0] = _tgt[0]
+		_cur[1] = _tgt[1]
+		_az_sifirla()
+		return
 	# Kip değişiminde yumuşak geçiş
 	var gecis := _mod_t > 0.0
 	var kk := clampf(delta * 12.0, 0.0, 1.0)
@@ -588,7 +572,7 @@ func _yuruyus(ot: Transform3D, root: Vector3) -> void:
 			var sw := (u - D) / (1.0 - D)
 			var land := hp + _vel * ((1.0 - u) * Tc) + fwd * half
 			var lr := _land_ray[s]
-			if lr.x == INF or Vector2(lr.x - land.x, lr.z - land.z).length() > 0.15:
+			if lr.x == INF or (sw < 0.6 and Vector2(lr.x - land.x, lr.z - land.z).length() > 0.25):
 				_land_ray[s] = land
 				if _zemin(land, root.y):
 					land.y = _zy

@@ -413,8 +413,7 @@ static func in_solid(ctx: Node3D, p: Vector3, r := 0.16) -> bool:
 static var _stand_frame := -1
 static var _stand: Array = []    # [AABB global, Transform3D inverse, AABB yerel]
 
-## skip: bu düğümün altındaki ağlar sayılmaz (hayvanın kendi gövdesi: Horse/Ox karakter sayılmadığından taranır)
-static func on_mesh(ch: Node3D, p: Vector3, skip: Node = null) -> bool:
+static func on_mesh(ch: Node3D, p: Vector3) -> bool:
 	var tree := ch.get_tree()
 	if tree == null:
 		return false
@@ -431,7 +430,7 @@ static func on_mesh(ch: Node3D, p: Vector3, skip: Node = null) -> bool:
 				var m := n as MeshInstance3D
 				var ab := m.global_transform * m.get_aabb()
 				if ab.size.x <= 40.0 and ab.size.z <= 40.0:
-					_stand.append([ab, m.global_transform.affine_inverse(), m.get_aabb().grow(0.02), m])
+					_stand.append([ab, m.global_transform.affine_inverse(), m.get_aabb().grow(0.02)])
 			for c in n.get_children():
 				stack.append(c)
 	var lo := p + Vector3(0, -0.04, 0)
@@ -443,8 +442,6 @@ static func on_mesh(ch: Node3D, p: Vector3, skip: Node = null) -> bool:
 		var inv: Transform3D = e[1]
 		var la: AABB = e[2]
 		if la.has_point(inv * lo) and not la.has_point(inv * hi):
-			if skip != null and is_instance_valid(e[3]) and skip.is_ancestor_of(e[3]):
-				continue
 			return true
 	return false
 

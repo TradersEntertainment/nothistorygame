@@ -108,7 +108,8 @@ static func _olc(who: Node3D, cp: Vector3, cam: Camera3D, sc: Node) -> void:
 		var par := who.get_parent()
 		var ik := "yok"
 		if r.ayak:
-			ik = "w%.1f/m%d/pel%+.2f/g%s" % [r.ayak.w, r.ayak.mod, r.ayak.pel, "1" if r.ayak._g_ok[s] else "0"]
+			ik = "w%.1f/m%d/pel%+.2f/g%s/gy%+.2f/zemin%+.2f" % [r.ayak.w, r.ayak.mod, r.ayak.pel, "1" if r.ayak._g_ok[s] else "0",
+				r.ayak._g_y[s] - who.position.y, fy - who.global_position.y]
 		print("AYAKAUDIT %s scene=%s who=%s/%s(%s) ayak=%s fark=%+.2f d=%.1f at=%s durum=%s act=%s ik=%s" % ["yakin" if d <= YAKIN else "uzak",
 			sc.scene_file_path.get_file(), (who.get_script() as Script).get_global_name() if who.get_script() else who.get_class(),
 			who.name, par.name if par else "", "L" if s == 0 else "R", gap, d, sole.snapped(Vector3.ONE * 0.1), durum, r.activity, ik])
