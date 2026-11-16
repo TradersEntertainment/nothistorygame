@@ -1392,6 +1392,9 @@ func _kare(ad: String) -> void:
 		dc += RenderingServer.get_rendering_info(RenderingServer.RENDERING_INFO_TOTAL_DRAW_CALLS_IN_FRAME)
 		pr += RenderingServer.get_rendering_info(RenderingServer.RENDERING_INFO_TOTAL_PRIMITIVES_IN_FRAME)
 	_kare_n += 1
+	preload("res://tests/_ist/tasima5_pik.gd").uygula(self)
+	await get_tree().process_frame
+	preload("res://tests/_ist/tasima5_pik.gd").yaz(self, ad)      # --pik5=x,y;… (TAŞIMA-5 sondası; argümansız hiçbir şey yapmaz)
 	var f := dir.path_join("an_%02d_%s.jpg" % [_kare_n, ad])
 	get_viewport().get_texture().get_image().save_jpg(f, 0.85)
 	print("TASIMA21KARE %s oyuncu=%s cizim=%.0f ilkel=%.0f sur=%s" % [f.get_file(), player.global_position.snapped(Vector3.ONE * 0.1),

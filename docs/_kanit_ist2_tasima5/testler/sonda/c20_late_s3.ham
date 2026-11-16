@@ -1,0 +1,121 @@
+Godot Engine v4.4.1.stable.official.49a5bc7b6 - https://godotengine.org
+
+SURSET kesim=mesoteikhion kurulum_ms=3236 sur_ms=916 set_ms=2314
+PILOT20ENGEL OZET nokta=9 engelde=0
+PILOT20KURULUM sur=yeni set_ms=3237 bolum_ms=1364 toplam_ms=4601
+WARNING: Screen-space ambient occlusion (SSAO) can only be enabled when using the Forward+ renderer.
+     at: environment_set_ssao (servers/rendering/storage/environment_storage.cpp:586)
+WARNING: Screen-space indirect lighting (SSIL) can only be enabled when using the Forward+ renderer.
+     at: environment_set_ssil (servers/rendering/storage/environment_storage.cpp:661)
+TERRAIN_SOLIDIFIED scene=chapter20.tscn node=/root/Chapter20/@Node3D@177/Ova/@Node3D@2899/@MeshInstance3D@2901
+SIEGECHAOS segs=40 runners=80 static=30
+SONDA4 t=0.4 oyuncu=(-9.6, 0.000234, 7.2)
+LORE key=20 placed=3
+SONDA4 t=1.5 oyuncu=(-9.6, 0.000234, 7.2)
+SONDA4 t=2.5 oyuncu=(-9.6, 0.000234, 7.2)
+SONDA4 t=3.6 oyuncu=(-9.593439, 0.000234, 6.959504)
+SONDA4 t=4.6 oyuncu=(-9.593439, 0.000234, 6.959504)
+SONDA4 t=5.7 oyuncu=(-9.593439, 0.000234, 6.959504)
+SONDA4 t=6.7 oyuncu=(-9.593439, 0.000234, 6.959504)
+SONDA4 t=7.8 oyuncu=(-8.4803, 0.000234, 6.841763)
+SONDA4 t=8.8 oyuncu=(-8.4803, 0.000234, 6.841763)
+SONDA4 t=9.9 oyuncu=(-8.4803, 0.000234, 6.841763)
+SONDA4 t=10.9 oyuncu=(-8.4803, 0.000234, 6.841763)
+SONDA4 t=12.0 oyuncu=(-8.4803, 0.000234, 6.841763)
+SONDA4 t=13.0 oyuncu=(-8.4803, 0.000234, 6.841763)
+SONDA4 t=14.1 oyuncu=(-8.4803, 0.000234, 6.841763)
+SONDA4 t=15.1 oyuncu=(-8.4803, 0.000234, 6.841763)
+SONDA4 t=16.2 oyuncu=(-8.4803, 0.000234, 6.841763)
+SONDA4 t=17.2 oyuncu=(-8.4803, 0.000234, 6.841763)
+SONDA4 t=18.3 oyuncu=(-8.4803, 0.000234, 6.841763)
+SONDA4 t=19.3 oyuncu=(-8.4803, 0.000234, 6.841763)
+SONDA4 t=20.4 oyuncu=(-8.4803, 0.000234, 6.841763)
+SONDA4 t=21.4 oyuncu=(-8.4803, 0.000234, 6.841763)
+SONDA4 t=22.5 oyuncu=(-8.4803, 0.000234, 6.841763)
+SONDA4 t=23.5 oyuncu=(-8.4803, 0.000234, 6.841763)
+SONDA4 t=24.6 oyuncu=(-8.4803, 0.000234, 6.841763)
+SONDA4 t=25.6 oyuncu=(-8.4803, 0.000234, 6.841763)
+SONDA4 t=26.7 oyuncu=(-8.4803, 0.000234, 6.841763)
+SONDA4 t=27.7 oyuncu=(-8.4803, 0.000234, 6.841763)
+SONDA4 t=28.8 oyuncu=(-8.47881, 0.000234, 6.838764)
+SONDA4 t=29.8 oyuncu=(-8.47881, 0.000234, 6.838764)
+SONDA4 t=30.9 oyuncu=(-8.47881, 0.000234, 6.838764)
+SONDA4 t=31.9 oyuncu=(-8.47881, 0.000234, 6.838764)
+SONDA4 t=33.0 oyuncu=(-8.47881, 0.000234, 6.838764)
+SONDA4 t=34.0 oyuncu=(-8.47881, 0.000234, 6.838764)
+SONDA4 t=35.1 oyuncu=(-10.0, 8.62, 15.3)
+SONDA4 t=36.2 oyuncu=(-10.0, 8.62, 15.3)
+SONDA4 t=37.3 oyuncu=(-10.0, 8.62, 15.3)
+SONDA4 t=38.3 oyuncu=(-10.0, 8.62, 15.3)
+SONDA4 t=39.4 oyuncu=(-10.0, 8.62, 15.3)
+SONDA4 t=40.4 oyuncu=(-10.0, 8.62, 15.3)
+SONDA4 t=41.5 oyuncu=(-10.0, 8.62, 15.3)
+SONDA4 t=42.5 oyuncu=(-10.0, 8.62, 15.3)
+SONDA4 t=43.6 oyuncu=(-10.0, 8.62, 15.3)
+SONDA4 t=44.6 oyuncu=(-10.0, 8.62, 15.3)
+SONDA4 t=45.7 oyuncu=(-10.0, 8.62, 15.3)
+SONDA4 t=46.7 oyuncu=(-10.0, 8.62, 15.3)
+SONDA4 t=47.8 oyuncu=(-10.0, 8.62, 15.3)
+SONDA4 t=48.8 oyuncu=(-10.0, 8.62, 15.3)
+SONDA4 t=49.9 oyuncu=(-10.0, 8.62, 15.3)
+SONDA4 t=51.0 oyuncu=(-10.0, 8.62, 15.3)
+SONDA4 t=52.0 oyuncu=(-10.0, 8.62, 15.3)
+SONDA4 t=53.1 oyuncu=(-10.0, 8.62, 15.3)
+SONDA4 t=54.1 oyuncu=(-10.0, 8.62, 15.3)
+SONDA4 t=55.2 oyuncu=(-10.0, 8.62, 15.3)
+GUN shots=4 hits=3 missed=1
+SONDA4 t=56.2 oyuncu=(-8.47881, 0.000234, 6.838764)
+HANDS stowed=@Node3D@84
+HANDS stowed=@Node3D@84
+RALLY scene=chapter20.tscn allies=3 foes=0 cands=5
+SONDA4 t=57.3 oyuncu=(-8.47881, 0.000234, 6.838764) | tk=1 st=0 yol=4 p=(-1.3, -2.8, 24.1) | tk=0 st=0 yol=0 p=(-3.6, 0.1, 9.1) | tk=0 st=0 yol=0 p=(-9.0, 0.1, 11.6) | tk=0 st=0 yol=0 p=(-7.5, 0.2, 11.6)
+SONDA4 t=58.3 oyuncu=(-8.47881, 0.000234, 6.838764) | tk=1 st=0 yol=4 p=(-1.0, -0.4, 19.4) | tk=0 st=0 yol=0 p=(-3.6, 0.1, 9.1) | tk=0 st=0 yol=0 p=(-9.0, 0.1, 11.6) | tk=0 st=0 yol=0 p=(-7.5, 0.2, 11.6)
+SONDA4 t=59.4 oyuncu=(-9.033105, 0.000234, 7.415615) | tk=1 st=0 yol=3 p=(-1.6, 1.2, 15.8) | tk=1 st=0 yol=5 p=(1.4, -3.2, 25.1) | tk=0 st=0 yol=0 p=(-3.6, 0.1, 9.1) | tk=0 st=0 yol=0 p=(-9.0, 0.1, 11.6) | tk=0 st=0 yol=0 p=(-7.5, 0.2, 11.6)
+SONDA4 t=60.4 oyuncu=(-10.14169, 0.000234, 8.569318) | tk=1 st=0 yol=2 p=(-4.3, 0.2, 13.6) | tk=1 st=0 yol=4 p=(1.1, -1.4, 21.2) | tk=0 st=0 yol=0 p=(-3.6, 0.1, 9.1) | tk=0 st=0 yol=0 p=(-9.0, 0.1, 11.6) | tk=0 st=0 yol=0 p=(-7.5, 0.2, 11.6)
+SONDA4 t=61.5 oyuncu=(-10.14169, 0.000234, 8.569318) | tk=1 st=0 yol=1 p=(-4.4, 0.0, 12.1) | tk=1 st=0 yol=4 p=(0.8, 1.2, 16.7) | tk=0 st=0 yol=0 p=(-3.6, 0.1, 9.1) | tk=0 st=0 yol=0 p=(-9.0, 0.1, 11.6) | tk=0 st=0 yol=0 p=(-7.5, 0.2, 11.6)
+SONDA4 t=62.5 oyuncu=(-10.14169, 0.000234, 8.569318) | tk=1 st=0 yol=1 p=(-4.1, 0.2, 12.1) | tk=1 st=0 yol=3 p=(-2.5, 1.0, 14.6) | tk=0 st=0 yol=0 p=(-3.6, 0.1, 9.1) | tk=0 st=0 yol=0 p=(-9.0, 0.1, 11.6) | tk=0 st=0 yol=0 p=(-7.5, 0.2, 11.6)
+SONDA4 t=63.6 oyuncu=(-10.1404, 0.000234, 8.742021) | tk=1 st=0 yol=1 p=(-4.0, 0.2, 11.5) | tk=1 st=0 yol=1 p=(-5.0, 0.1, 13.5) | tk=0 st=0 yol=0 p=(-3.6, 0.1, 9.1) | tk=0 st=0 yol=0 p=(-9.0, 0.1, 11.6) | tk=0 st=0 yol=0 p=(-7.5, 0.2, 11.6)
+SONDA4 t=64.6 oyuncu=(-10.1404, 0.000234, 8.742021) | tk=1 st=0 yol=1 p=(-4.0, 0.2, 11.5) | tk=1 st=0 yol=1 p=(-7.6, 0.2, 12.1) | tk=0 st=0 yol=0 p=(-3.6, 0.1, 9.1) | tk=0 st=0 yol=0 p=(-9.0, 0.1, 11.6) | tk=0 st=0 yol=0 p=(-7.5, 0.2, 11.5)
+SONDA4 t=65.7 oyuncu=(-9.784056, 0.000234, 9.063611) | tk=1 st=0 yol=0 p=(-6.2, 0.1, 9.7) | tk=1 st=0 yol=0 p=(-8.1, 0.1, 10.4) | tk=0 st=0 yol=0 p=(-4.2, 0.0, 8.900001) | tk=0 st=0 yol=0 p=(-7.5, 0.1, 11.3) | tk=0 st=0 yol=0 p=(-7.0, 0.1, 11.7)
+SONDA4 t=66.7 oyuncu=(-9.745275, 0.000234, 9.090808) | tk=1 st=1 yol=0 p=(-7.6, 0.1, 8.900001) | tk=1 st=1 yol=0 p=(-7.9, 0.1, 10.0) | tk=0 st=1 yol=0 p=(-5.4, 0.0, 8.6) | tk=0 st=1 yol=0 p=(-7.4, 0.1, 10.7) | tk=0 st=1 yol=0 p=(-6.8, 0.1, 11.1)
+FINISHER kind=bash cam=third
+SONDA4 t=67.7 oyuncu=(-9.745275, 0.000234, 9.090808) | tk=1 st=6 yol=0 p=(-8.0, 0.0, 8.400001) | tk=1 st=4 yol=0 p=(-7.7, 0.1, 10.1) | tk=0 st=0 yol=0 p=(-6.0, 0.0, 8.7) | tk=0 st=0 yol=0 p=(-7.2, 0.1, 10.8) | tk=0 st=0 yol=0 p=(-6.6, 0.1, 11.1)
+SONDA4 t=68.7 oyuncu=(-9.745275, 0.000234, 9.090808) | tk=1 st=6 yol=0 p=(-8.0, 0.1, 8.400001) | tk=1 st=6 yol=0 p=(-7.3, 0.1, 10.3) | tk=0 st=0 yol=0 p=(-6.2, 0.0, 8.6) | tk=0 st=0 yol=0 p=(-7.1, 0.1, 11.3) | tk=0 st=0 yol=0 p=(-6.1, 0.1, 11.1)
+SONDA4 t=69.8 oyuncu=(-8.118689, 0.000234, 9.861661) | tk=1 st=6 yol=0 p=(-8.0, 0.1, 8.400001) | tk=1 st=6 yol=0 p=(-7.3, 0.1, 10.3) | tk=0 st=0 yol=0 p=(-6.2, 0.0, 8.6) | tk=0 st=0 yol=0 p=(-7.1, 0.1, 11.3) | tk=0 st=0 yol=0 p=(-6.1, 0.1, 11.1)
+WAVERUNNER wave=1/2 won=true t=13.7 pw=0.28 foe_dmg=18.0 allies=3+0 rally_foes=0 thrown=0
+SONDA4 t=70.9 oyuncu=(-10.01582, 0.000234, 8.43832) | tk=1 st=6 yol=0 p=(-8.0, 0.1, 8.400001) | tk=1 st=6 yol=0 p=(-7.3, 0.1, 10.3) | tk=0 st=0 yol=0 p=(-6.2, 0.0, 8.6) | tk=0 st=0 yol=0 p=(-7.1, 0.1, 11.3) | tk=0 st=0 yol=0 p=(-6.1, 0.1, 11.1)
+HANDS stowed=@Node3D@84
+SONDA4 t=72.0 oyuncu=(-10.01582, 0.000234, 8.43832) | tk=1 st=6 yol=0 p=(-8.0, 0.1, 8.400001) | tk=1 st=6 yol=0 p=(-7.3, 0.1, 10.3) | tk=0 st=0 yol=0 p=(-6.2, 0.0, 8.6) | tk=0 st=0 yol=0 p=(-7.1, 0.1, 11.3) | tk=0 st=0 yol=0 p=(-6.1, 0.1, 11.1) | tk=1 st=0 yol=5 p=(-1.8, -3.5, 42.4)
+SONDA4 t=73.0 oyuncu=(-10.07776, 0.000234, 8.535352) | tk=1 st=6 yol=0 p=(-8.0, 0.1, 8.400001) | tk=1 st=6 yol=0 p=(-7.3, 0.1, 10.3) | tk=0 st=0 yol=0 p=(-6.2, 0.0, 8.6) | tk=0 st=0 yol=0 p=(-7.1, 0.1, 11.3) | tk=0 st=0 yol=0 p=(-6.1, 0.1, 11.1) | tk=1 st=0 yol=5 p=(-1.7, -3.6, 38.0)
+RALLY scene=chapter20.tscn allies=4 foes=0 cands=2
+SONDA4 t=74.1 oyuncu=(-10.07776, 0.000234, 8.535352) | tk=1 st=6 yol=0 p=(-8.0, 0.1, 8.400001) | tk=1 st=6 yol=0 p=(-7.3, 0.1, 10.3) | tk=0 st=0 yol=0 p=(-6.2, 0.0, 8.6) | tk=0 st=0 yol=0 p=(-7.1, 0.1, 11.3) | tk=0 st=0 yol=0 p=(-6.1, 0.1, 11.1) | tk=1 st=0 yol=5 p=(-1.6, -3.6, 33.6) | tk=0 st=0 yol=0 p=(-10.5, 0.0, 11.6)
+SONDA4 t=75.1 oyuncu=(-10.07776, 0.000234, 8.535352) | tk=1 st=6 yol=0 p=(-8.0, 0.1, 8.400001) | tk=1 st=6 yol=0 p=(-7.3, 0.1, 10.3) | tk=0 st=0 yol=0 p=(-6.2, 0.0, 8.6) | tk=0 st=0 yol=0 p=(-7.1, 0.1, 11.3) | tk=0 st=0 yol=0 p=(-6.1, 0.1, 11.1) | tk=1 st=0 yol=5 p=(-1.5, -3.5, 29.2) | tk=1 st=0 yol=5 p=(1.8, -3.6, 40.9) | tk=0 st=0 yol=0 p=(-10.5, 0.0, 11.6)
+SONDA4 t=76.2 oyuncu=(-10.07776, 0.000234, 8.535352) | tk=1 st=6 yol=0 p=(-8.0, 0.1, 8.400001) | tk=1 st=6 yol=0 p=(-7.3, 0.1, 10.3) | tk=0 st=0 yol=0 p=(-6.2, 0.0, 8.6) | tk=0 st=0 yol=0 p=(-7.1, 0.1, 11.3) | tk=0 st=0 yol=0 p=(-6.1, 0.1, 11.1) | tk=1 st=0 yol=5 p=(-1.5, -3.1, 24.9) | tk=1 st=0 yol=5 p=(1.7, -3.5, 36.2) | tk=0 st=0 yol=0 p=(-10.5, 0.0, 11.6)
+SONDA4 t=77.2 oyuncu=(-10.26192, 0.000234, 8.768007) | tk=1 st=6 yol=0 p=(-8.0, 0.1, 8.400001) | tk=1 st=6 yol=0 p=(-7.3, 0.1, 10.3) | tk=0 st=0 yol=0 p=(-6.2, 0.0, 8.6) | tk=0 st=0 yol=0 p=(-7.1, 0.1, 11.3) | tk=0 st=0 yol=0 p=(-6.1, 0.1, 11.1) | tk=1 st=0 yol=4 p=(-1.2, -1.4, 21.1) | tk=1 st=0 yol=5 p=(1.6, -3.5, 31.4) | tk=0 st=0 yol=0 p=(-10.5, 0.0, 11.6)
+SONDA4 t=78.3 oyuncu=(-10.26192, 0.000234, 8.768007) | tk=1 st=6 yol=0 p=(-8.0, 0.1, 8.400001) | tk=1 st=6 yol=0 p=(-7.3, 0.1, 10.3) | tk=0 st=0 yol=0 p=(-6.2, 0.0, 8.6) | tk=0 st=0 yol=0 p=(-7.1, 0.1, 11.3) | tk=0 st=0 yol=0 p=(-6.1, 0.1, 11.1) | tk=1 st=0 yol=4 p=(-0.9, 1.2, 16.8) | tk=1 st=0 yol=5 p=(1.5, -3.5, 26.7) | tk=0 st=0 yol=0 p=(-10.5, 0.0, 11.6)
+SONDA4 t=79.3 oyuncu=(-10.26192, 0.000234, 8.768007) | tk=1 st=6 yol=0 p=(-8.0, 0.1, 8.400001) | tk=1 st=6 yol=0 p=(-7.3, 0.1, 10.3) | tk=0 st=0 yol=0 p=(-6.2, 0.0, 8.6) | tk=0 st=0 yol=0 p=(-7.1, 0.1, 11.3) | tk=0 st=0 yol=0 p=(-6.1, 0.1, 11.1) | tk=1 st=0 yol=2 p=(-3.0, 0.9, 14.5) | tk=1 st=0 yol=4 p=(1.3, -2.1, 22.6) | tk=0 st=0 yol=0 p=(-10.5, 0.0, 11.6)
+SONDA4 t=80.4 oyuncu=(-11.59586, 0.000234, 10.76315) | tk=1 st=6 yol=0 p=(-8.0, 0.1, 8.400001) | tk=1 st=6 yol=0 p=(-7.3, 0.1, 10.3) | tk=0 st=0 yol=0 p=(-6.2, 0.0, 8.6) | tk=0 st=0 yol=0 p=(-7.1, 0.1, 11.3) | tk=0 st=0 yol=0 p=(-6.1, 0.1, 11.1) | tk=1 st=0 yol=1 p=(-4.3, 0.1, 13.5) | tk=1 st=0 yol=4 p=(1.0, 0.5, 17.9) | tk=0 st=0 yol=0 p=(-10.5, 0.0, 11.6)
+SONDA4 t=81.4 oyuncu=(-11.59586, 0.000234, 10.76315) | tk=1 st=6 yol=0 p=(-8.0, 0.1, 8.400001) | tk=1 st=6 yol=0 p=(-7.3, 0.1, 10.3) | tk=0 st=0 yol=0 p=(-6.2, 0.0, 8.6) | tk=0 st=0 yol=0 p=(-7.1, 0.1, 11.3) | tk=0 st=0 yol=0 p=(-6.1, 0.1, 11.1) | tk=1 st=0 yol=1 p=(-2.0, 1.1, 16.2) | tk=1 st=0 yol=3 p=(-1.8, 1.3, 15.2) | tk=0 st=0 yol=0 p=(-10.5, 0.0, 11.6)
+SONDA4 t=82.5 oyuncu=(-11.59586, 0.000234, 10.76315) | tk=1 st=6 yol=0 p=(-8.0, 0.1, 8.400001) | tk=1 st=6 yol=0 p=(-7.3, 0.1, 10.3) | tk=0 st=0 yol=0 p=(-5.6, 0.0, 11.0) | tk=0 st=0 yol=0 p=(-5.9, 0.1, 12.5) | tk=0 st=0 yol=0 p=(-4.7, 0.1, 11.1) | tk=1 st=0 yol=0 p=(-3.7, 0.5, 14.1) | tk=1 st=0 yol=2 p=(-4.9, 0.2, 13.5) | tk=0 st=0 yol=0 p=(-8.2, 0.4, 13.1)
+SONDA4 t=83.5 oyuncu=(-10.26608, 0.000234, 11.3154) | tk=1 st=6 yol=0 p=(-8.0, 0.1, 8.400001) | tk=1 st=6 yol=0 p=(-7.3, 0.1, 10.3) | tk=0 st=1 yol=0 p=(-5.4, 0.0, 11.0) | tk=0 st=2 yol=0 p=(-5.6, 0.1, 12.6) | tk=0 st=1 yol=0 p=(-4.4, 0.0, 11.1) | tk=1 st=5 yol=0 p=(-6.1, 0.0, 13.2) | tk=1 st=0 yol=1 p=(-1.7, 1.2, 14.7) | tk=0 st=1 yol=0 p=(-6.9, 0.3, 13.7)
+SONDA4 t=84.6 oyuncu=(-8.221929, 0.269865, 12.44805) | tk=1 st=6 yol=0 p=(-8.0, 0.1, 8.400001) | tk=1 st=6 yol=0 p=(-7.3, 0.1, 10.3) | tk=0 st=3 yol=0 p=(-6.1, 0.0, 11.0) | tk=0 st=0 yol=0 p=(-5.2, 0.1, 12.6) | tk=0 st=0 yol=0 p=(-4.7, 0.0, 11.1) | tk=1 st=6 yol=0 p=(-6.3, 0.2, 13.6) | tk=1 st=0 yol=0 p=(-0.4, 1.4, 15.6) | tk=0 st=3 yol=0 p=(-7.6, 0.5, 13.7)
+SONDA4 t=85.7 oyuncu=(-7.231392, 0.253034, 12.72896) | tk=1 st=6 yol=0 p=(-8.0, 0.1, 8.400001) | tk=1 st=6 yol=0 p=(-7.3, 0.1, 10.3) | tk=0 st=1 yol=0 p=(-4.5, 0.0, 11.1) | tk=0 st=1 yol=0 p=(-4.1, 0.2, 13.3) | tk=0 st=1 yol=0 p=(-3.5, 0.4, 11.9) | tk=1 st=6 yol=0 p=(-6.3, 0.2, 13.7) | tk=1 st=0 yol=0 p=(-3.7, 0.4, 13.6) | tk=0 st=1 yol=0 p=(-5.7, 0.2, 13.7) | tk=1 st=0 yol=4 p=(-0.7, -1.8, 22.2)
+SONDA4 t=86.7 oyuncu=(-5.282393, -0.000273, 13.15816) | tk=1 st=6 yol=0 p=(-8.0, 0.1, 8.400001) | tk=1 st=6 yol=0 p=(-7.3, 0.1, 10.3) | tk=0 st=0 yol=0 p=(-4.5, 0.0, 11.1) | tk=0 st=0 yol=0 p=(-4.3, 0.1, 13.2) | tk=0 st=0 yol=0 p=(-3.5, 0.4, 11.9) | tk=1 st=6 yol=0 p=(-6.3, 0.2, 13.7) | tk=1 st=6 yol=0 p=(-3.5, 0.6, 13.8) | tk=0 st=0 yol=0 p=(-5.7, 0.2, 13.7) | tk=1 st=0 yol=4 p=(-0.5, 0.6, 17.7)
+SONDA4 t=87.8 oyuncu=(-5.282393, -0.000273, 13.15816) | tk=1 st=6 yol=0 p=(-8.0, 0.1, 8.400001) | tk=1 st=6 yol=0 p=(-7.3, 0.1, 10.3) | tk=0 st=0 yol=0 p=(-4.5, 0.0, 11.1) | tk=0 st=0 yol=0 p=(-4.3, 0.1, 13.2) | tk=0 st=0 yol=0 p=(-3.5, 0.4, 11.9) | tk=1 st=6 yol=0 p=(-6.3, 0.2, 13.7) | tk=1 st=6 yol=0 p=(-3.5, 0.6, 13.9) | tk=0 st=0 yol=0 p=(-5.7, 0.2, 13.7) | tk=1 st=0 yol=3 p=(-2.6, 1.0, 14.6)
+SONDA4 t=88.8 oyuncu=(-5.282393, -0.000273, 13.15816) | tk=1 st=6 yol=0 p=(-8.0, 0.1, 8.400001) | tk=1 st=6 yol=0 p=(-7.3, 0.1, 10.3) | tk=0 st=0 yol=0 p=(-4.0, 0.2, 11.6) | tk=0 st=1 yol=0 p=(-4.3, 0.1, 13.2) | tk=0 st=1 yol=0 p=(-3.2, 0.5, 12.0) | tk=1 st=6 yol=0 p=(-6.3, 0.2, 13.7) | tk=1 st=6 yol=0 p=(-3.5, 0.6, 13.9) | tk=0 st=0 yol=0 p=(-5.7, 0.2, 13.6) | tk=1 st=0 yol=0 p=(-3.1, 0.8, 14.2)
+SONDA4 t=89.9 oyuncu=(-5.269187, -0.000273, 13.14552) | tk=1 st=6 yol=0 p=(-8.0, 0.1, 8.400001) | tk=1 st=6 yol=0 p=(-7.3, 0.1, 10.3) | tk=0 st=2 yol=0 p=(-3.8, 0.2, 11.9) | tk=0 st=3 yol=0 p=(-4.3, 0.1, 13.2) | tk=0 st=3 yol=0 p=(-3.1, 0.5, 12.0) | tk=1 st=6 yol=0 p=(-6.3, 0.2, 13.7) | tk=1 st=6 yol=0 p=(-3.5, 0.6, 13.9) | tk=0 st=1 yol=0 p=(-5.7, 0.2, 13.6) | tk=1 st=5 yol=0 p=(-2.9, 0.9, 14.4)
+WAVERUNNER wave=2/2 won=true t=17.4 pw=0.28 foe_dmg=18.0 allies=4+0 rally_foes=0 thrown=0
+SONDA4 t=90.9 oyuncu=(-10.07776, 0.000234, 8.535352) | tk=1 st=6 yol=0 p=(-8.0, 0.1, 8.400001) | tk=1 st=6 yol=0 p=(-7.3, 0.1, 10.3) | tk=0 st=0 yol=1 p=(-3.8, 0.2, 11.3) | tk=0 st=0 yol=1 p=(-4.9, 0.0, 12.9) | tk=0 st=0 yol=1 p=(-3.7, 0.3, 11.9) | tk=1 st=6 yol=0 p=(-6.3, 0.2, 13.7) | tk=1 st=6 yol=0 p=(-3.5, 0.6, 13.9) | tk=0 st=0 yol=1 p=(-6.4, 0.2, 13.3) | tk=1 st=6 yol=0 p=(-2.6, 1.0, 14.5)
+GUN extra=1
+GUNNER shots=3 dodged=3 hits=0
+SONDA4 t=92.0 oyuncu=(-11.47548, 0.000234, 10.53904) | tk=1 st=6 yol=0 p=(-8.0, 0.1, 8.400001) | tk=1 st=6 yol=0 p=(-7.3, 0.1, 10.3) | tk=0 st=0 yol=1 p=(-3.8, 0.2, 11.3) | tk=0 st=0 yol=1 p=(-7.2, 0.2, 12.2) | tk=0 st=0 yol=1 p=(-6.0, 0.0, 11.9) | tk=1 st=6 yol=0 p=(-6.3, 0.2, 13.7) | tk=1 st=6 yol=0 p=(-3.5, 0.6, 13.9) | tk=0 st=0 yol=1 p=(-8.6, 0.2, 12.4) | tk=1 st=6 yol=0 p=(-2.6, 1.0, 14.5)
+SAYDIST key=D20_G_UNFINISHED scene=chapter20.tscn speaker=SPK_GIUST d=5.4
+SONDA4 t=93.3 oyuncu=(2.0, 0.38625, 9.750001) | tk=1 st=6 yol=0 p=(-8.0, 0.1, 8.400001) | tk=1 st=6 yol=0 p=(-7.3, 0.1, 10.3) | tk=1 st=6 yol=0 p=(-6.3, 0.2, 13.7) | tk=1 st=6 yol=0 p=(-3.5, 0.6, 13.9) | tk=1 st=6 yol=0 p=(-2.6, 1.0, 14.5)
+GRADE chapter=20 letter=S points=126 { "gun_shots": 4, "gun_hits": 3, "gunner_shots": 3, "dodged": 3, "parries": 1, "kills": 2 }
+CESET4 bolum=20 variant=late n=9 dusen=0 en_derin=-0.1 yer=(-1.8, -3.592125, 43.6)
+AUTOTEST PASS chapter=20 variant=late outcome=20.3 repair=10 knocks=0 arrows=false gun=3/4 gunner=3/3 niko=0 sur=yeni
+WARNING: ObjectDB instances leaked at exit (run with --verbose for details).
+     at: cleanup (core/object/object.cpp:2378)
+ERROR: 3 resources still in use at exit (run with --verbose for details).
+   at: clear (core/io/resource.cpp:614)
+KOSU rc=0 sure=48 args=--chapter=20 --autotest=late --sonda4

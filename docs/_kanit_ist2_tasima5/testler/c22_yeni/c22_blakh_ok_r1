@@ -1,0 +1,2 @@
+AUTOTEST PASS chapter=22 variant=blakh_ok outcome=22.1 hits=2 singed=false window=0.36-0.74
+KOSU rc=0 sure=15 args=--chapter=22 --autotest=blakh_ok
