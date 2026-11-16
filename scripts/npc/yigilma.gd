@@ -424,8 +424,16 @@ func indi(v := Vector3.INF) -> void:
 		return
 	_havada = false
 	var kv := _kok_v if v == Vector3.INF else v
+	# Gövde kökün (indiği yerin) üstüne: havadaki dönüş kalçayı kökten kaydırmış olabilir; ceset kökün indiği zeminde yığılır
+	# (yanındaki hendeğe/kenardan sarkmasın)
+	var kay := Vector3.ZERO
+	if kok and is_instance_valid(kok):
+		var c := (p[HL] + p[HR] + p[SL] + p[SR]) * 0.25
+		kay = Vector3(kok.global_position.x - c.x, 0.0, kok.global_position.z - c.z)
 	for i in N:
-		o[i] -= kv * DT
+		var rel := (p[i] - o[i]).limit_length(0.2)
+		p[i] += kay
+		o[i] = p[i] - kv * DT - rel
 	var tepe := -INF
 	for i in N:
 		tepe = maxf(tepe, p[i].y)
@@ -787,6 +795,9 @@ func _isin0(from: Vector3, derin: float, icten: bool) -> float:
 				return from.y
 			q.exclude = q.exclude + [(col as CollisionObject3D).get_rid()]
 			continue
+		# Izgarada dik yüz (duvarın eğik dış yüzü, şev > ~60°) zemin değil duvardır: ayak/bacak duvara yaslanıp havada kalmasın
+		if icten and (hit["normal"] as Vector3).y < 0.5:
+			return from.y
 		return (hit["position"] as Vector3).y
 	return NAN
 
