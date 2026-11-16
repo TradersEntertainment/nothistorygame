@@ -146,3 +146,18 @@ aynı sancak kulesini (x 35,4) ve aynı Romanos kapısını kullanır. Bölüm 2
 |---|---|---|---|
 | Tırmanış (`CLIMB t=`, bot taştan kaçınarak) | 8,5–8,6 sn (8,6 m) | 11,1–27,0 sn (14,35 m; taş/yağ beklemesi dahil) | merdiven +5,75 m (teras 3,7 m aşağıda) |
 | `=yuru` toplam | (eski yol korkuluğun önünde biter) | 98,2 m / 31,2 sn, takılma 0 | |
+
+### 1.3 Kareler (26) — `kare/26/eski_an_NN_*.jpg` | `kare/26/yeni_an_NN_*.jpg`, 1280×720, tam boy bakıldı
+Çekim: `xvfb-run … -- --chapter=26 --autotest=kare --dialogshots=DIR [--eskisur=26] [--karebas=N]` (yazılımsal GL; seri
+10 dakikayı aştığı için `--karebas` ile iki parçada). Aynı anlamdaki kamera iki sette aynı kodla (`_t8_yuru`) kurulur.
+
+| Kare | Yeni (tek cümle) | Eski ↔ yeni |
+|---|---|---|
+| 01 açılış | Gece peribolos: gedikte komutan ve savunucu sırası, kazık çit, meşale, solda ok sandığı; kutu yok (sandık bir sandık), havada yok, herkes zemine basıyor, aynı ressam; **eskisinden sönük**: peribolos daha seyrek (alan dar, kalabalık gedikte toplanmış). | eski kutu duvarlar, peribolos kalabalık |
+| 02 ok demeti | Açık sandıkta ok demetleri, arkada deponun kalas yığını; oturuyor, havada yok; eskisiyle aynı yakınlık. | aynı |
+| 03 merdiven/azap | (yeniden çekiliyor; ilk çekimde azap merdivenin eğimine değil dikine konmuştu: kare kurgusu hatası, havada — düzeltildi) | |
+| 04 kazan | Sur yolunda kazancı ve savunucu, kazanın ateşi, sağda korkuluğa yaslı stauroma fıçıları ve kazık, iki yanda dişler; oturuyor, havada yok; eskisinden zengin. | eskide kazancının sırtı + kutu korkuluk |
+| 05 barikat | Savunucuların arasından aşama-2 barikatı (kazık, fıçı, kum torbası); yakın kadraj, havada yok. | aynı kadraj |
+| 06 poterna | İç surda kemerli küçük kapı, kanat peribolosa açık, karanlık geçit, fenerli nöbetçi, sağda yuvarlanmış fıçı; kapı eteğin üstüne oturuyor; **iyi**. | eskide kutu kanatlı kapı |
+| 07 taşıma | Giustiniani sırtüstü taşınma pozunda (ayak ucundan), arkada baş ucundaki taşıyıcı; yakın, eskisiyle aynı kadraj. | aynı |
+| 08 kapı/final | Caddeden Romanos iç kapısı açık, koridorda beyaz atlı Sultan, ötede dış kapı; **kötü**: kapının iki yanında iç surun dibinde kutu gibi gri taş blokları (görünüşe istek 3). | eskide açık kutu kapıdan gedik |

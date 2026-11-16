@@ -2833,8 +2833,8 @@ func _t8_yuru() -> void:
 	if kare:
 		var az := Soldier.new(Color("8a6a4a"), "stand", "turban")
 		add_child(az)
-		var lb := lad.global_transform
-		az.global_position = lb * Vector3(0, lad.height * 0.9, 0.18)
+		# merdivenin üstünde, tepeye yakın (basamağa basar: eğim boyunca, ön yüzünde)
+		az.global_position = lad.point_at(lad.height * 0.86) + lad.front_dir() * 0.3
 		az.rotation.y = PI
 		az.set_meta("no_audit", true)
 		# kadraj: merdiven başının 2,6 m yanından, korkuluğun üstüne çıkan azaba
@@ -2993,7 +2993,15 @@ func _t8_kare(ad: String) -> void:
 	if dir == "":
 		return
 	DirAccess.make_dir_recursive_absolute(dir)
-	for k in 20:
+	# --karebas=N: N'den önceki kareler atlanır (yazılımsal GL'de seri 10 dakikayı aşıyordu: iki parçada çekilir)
+	var bas := 1
+	for arg in OS.get_cmdline_user_args():
+		if arg.begins_with("--karebas="):
+			bas = int(arg.trim_prefix("--karebas="))
+	if _kare_n + 1 < bas:
+		_kare_n += 1
+		return
+	for k in 8:
 		await get_tree().process_frame
 	# bütçe: bu bakışta 4 karenin ortalama çizim çağrısı ve ilkel sayısı (eski ↔ yeni aynı anlamdaki kameradan)
 	var dc := 0.0
