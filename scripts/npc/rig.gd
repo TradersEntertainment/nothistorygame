@@ -170,6 +170,8 @@ static func mood_of(speaker_key: String, text: String) -> String:
 func update(delta: float, talking: bool, busy: bool, ext := true) -> void:
 	if ayak:
 		ayak.geri_al()
+	if Ayak.olc_acik:
+		Ayak.olc_tick()
 	yuruyor = false
 	_update_core(delta, talking, busy)
 	if ext:
