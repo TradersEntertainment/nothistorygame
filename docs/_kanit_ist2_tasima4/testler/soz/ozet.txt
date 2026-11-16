@@ -1,0 +1,7 @@
+SURSOZLESME ksylokerkos ic_kule=[-7.7, 7.7] dis_kule=[] gedik=[] merdiven_ic=nan..nan dis=nan..nan rampa=-19.2/19.2 poterna=-20.6 dayama=[-14.8, -9.2, 8.0, 13.6, 19.2] gecis=[{en:10.000,tur:dolgu,x:10.800},{en:1.600,tur:kalas,x:-14.200},{en:4.800,tur:kapi_kopru,x:0.000}]
+SURSOZLESME ozet carpisma=0a707cc62857 gedik=ff2842e1fc52 gedik_kural=740a4b5db06b hendek=80cbae1fe91f kapi=a0a0816b349d kapi_olcu=9dd579b547ca kapi_yer=b10920d2ef2d kesit=3161a752678d kule=89ea7440e4c6 merdiven=3d67e8869647 oyun=56e50804ceba yan=598103884f39 yer=535891d260ae
+SURSOZLESME PASS kalem=13 kesim=8
+SUROYUN_TUR kharisios yol_ic nokta=6 havada=0 gomuk=0 katida=0
+SUROYUN_YER kharisios xf_origin=(-1276.29, 18.584, -897.641) yaw=-146.2 dy=-11.14 gx=nan gedikler_yerel=[]
+SUROYUN nokta=519 havada=0 gomuk=0 katida=0
+WALKTHRU OZET yol=7 tamam=7 takilma=0 dusme=0

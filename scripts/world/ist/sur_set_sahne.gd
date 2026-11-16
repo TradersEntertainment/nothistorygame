@@ -14,6 +14,7 @@ extends LandWalls
 ## Sur görünüşüne (taş, renk, kule, hendek) dokunmaz.
 
 const SurOyun := preload("res://scripts/world/ist/sur_oyun.gd")
+const KULE := preload("res://scripts/world/ist/sur_kule.gd")
 
 var sur: SurSet
 var kesim_id := "mesoteikhion"
@@ -35,6 +36,11 @@ func _enter_tree() -> void:
 	if sur == null:
 		sur = SurSet.yeni(kesim_id)
 	SurSet.etkin = sur
+	# Bu setin zemin ve duvar gövdelerinin görünen ağı pişirilmiş kardeş düğümde (gövdenin çocuğu değil): Duelist'in düşüşü
+	# (_fall_tick) onları görünmez sayıp içinden geçiyordu (atılan düellocu y −128'e; tasima4 §3). Bölüm düğümü bu metayı
+	# taşıyınca düşen gövdeyi her StaticBody3D durdurur (Duelist._fall_solid; varsayılan davranış başka sahnede aynı).
+	if get_parent() != null:
+		get_parent().set_meta("dusus_her_kati", true)
 
 
 func _exit_tree() -> void:
@@ -142,8 +148,7 @@ func _build_depot() -> void:
 			c.set_meta("ground", true)
 	for i in 4:
 		Props.cyl(self, 0.28, 0.45, d + Vector3(1.8 + (i % 2) * 0.6, 0.23, 0.9 + (i / 2) * 0.6), Color("9a7a48"), Vector3.ZERO, 8, 0.32)
-	for i in 6:
-		Props.box(self, Vector3(3.2, 0.12, 0.3), d + Vector3(3.8, 0.1 + i * 0.13, -0.4 + (i % 2) * 0.05), Color("8a6440"))
+	_kalas_yigini(d + Vector3(3.8, 0.0, -0.4))
 	for b: Array in [[Vector3(2.0, 1.9, 0.76), Vector3(-1.8, 0.95, -0.6)], [Vector3(1.16, 0.45, 1.16), Vector3(2.1, 0.23, 1.2)],
 			[Vector3(3.2, 0.82, 0.36), Vector3(3.8, 0.41, -0.38)]]:
 		var body := Props.solid(self, b[0], d + b[1], Color.WHITE)
@@ -151,6 +156,59 @@ func _build_depot() -> void:
 	Props.interactable(self, "pile_barrel", Vector3(2.4, 2.0, 1.6), d + Vector3(-1.8, 1.0, -0.4))
 	Props.interactable(self, "pile_earth", Vector3(2.4, 1.6, 2.4), d + Vector3(0.9, 0.8, 0.5))
 	Props.interactable(self, "pile_plank", Vector3(3.4, 1.2, 1.4), d + Vector3(3.8, 0.6, -0.3))
+
+
+## Kalas yığını (deponun sağı): tek tek kalaslar, boyları/genişlikleri/renkleri farklı, kenarları pahlı (kesit sekizgen),
+## sıralar arasında enine takozlar, üstte yamuk duran ve yığına yaslanmış birkaç kalas. Eskiden altı eşit Props.box üst üste:
+## karede tek bir kutu gibi duruyordu (tasima3 c0 an_06). Çarpışma ve etkileşim kutusu aynı (pile_plank; görünmez katı).
+func _kalas_yigini(o: Vector3) -> void:
+	var rng := RandomNumberGenerator.new()
+	rng.seed = 2904
+	var ag = KULE.Ag.new()
+	var y := 0.0
+	for sira in 6:
+		if sira % 2 == 0:
+			# takozlar (enine, iki sırada bir; en alttakiler zemine)
+			for tx: float in [-1.25, 0.0, 1.2]:
+				_kalas(ag, o + Vector3(tx + rng.randf_range(-0.1, 0.1), y + 0.03, 0.0), Vector3(0, PI * 0.5 + rng.randf_range(-0.18, 0.18), 0),
+					Vector3(0.42, 0.06, 0.08), Color(0.74, 0.66, 0.56))
+			y += 0.06
+		var kal := rng.randf_range(0.055, 0.07)
+		var boy := rng.randf_range(2.7, 3.35)
+		if sira == 5:
+			boy = 2.2                                     # üstte kısa (kırık) kalas
+		_kalas(ag, o + Vector3(rng.randf_range(-0.22, 0.22), y + kal * 0.5, rng.randf_range(-0.03, 0.03)),
+			Vector3(rng.randf_range(-0.012, 0.012), rng.randf_range(-0.05, 0.05), rng.randf_range(-0.01, 0.01)),
+			Vector3(boy, kal, rng.randf_range(0.25, 0.3)), Color(1, 1, 1).darkened(rng.randf_range(0.0, 0.28)))
+		y += kal + 0.004
+	# üstte yamuk duran bir kalas; yığının ucunda yere bırakılmış bir kalas (ikisi de oturuyor)
+	_kalas(ag, o + Vector3(0.35, y + 0.03, 0.02), Vector3(0.0, 0.22, 0.0), Vector3(2.6, 0.055, 0.22), Color(0.92, 0.88, 0.82))
+	_kalas(ag, o + Vector3(2.6, 0.03, 0.15), Vector3(0.0, 0.5, 0.0), Vector3(2.1, 0.06, 0.24), Color(0.8, 0.74, 0.66))
+	ag.mesh_ekle(self, Props.mat(Color("8a6440"), 0.0, false, "wood"), "Ahsap_KalasYigini")
+
+
+## Tek kalas: merkez c, dönüş rot (Euler), boyut (boy x, kalınlık y, en z); kesit sekizgen (kenarlar pahlı), uçlar kapalı.
+static func _kalas(ag, c: Vector3, rot: Vector3, b: Vector3, col: Color) -> void:
+	var bas := Basis.from_euler(rot)
+	var hy := b.y * 0.5
+	var hz := b.z * 0.5
+	var p := minf(hy, hz) * 0.45            # pah
+	var kesit := [Vector2(-hz + p, -hy), Vector2(hz - p, -hy), Vector2(hz, -hy + p), Vector2(hz, hy - p),
+		Vector2(hz - p, hy), Vector2(-hz + p, hy), Vector2(-hz, hy - p), Vector2(-hz, -hy + p)]
+	var hx := b.x * 0.5
+	var uc0: Array = []
+	var uc1: Array = []
+	for v: Vector2 in kesit:
+		uc0.append(c + bas * Vector3(-hx, v.y, v.x))
+		uc1.append(c + bas * Vector3(hx + (v.y * 0.0), v.y, v.x))
+	for i in 8:
+		var j := (i + 1) % 8
+		var m: Vector2 = ((kesit[i] as Vector2) + (kesit[j] as Vector2)) * 0.5
+		var nrm := bas * Vector3(0, m.y, m.x).normalized()
+		ag.quad(uc0[i], uc0[j], uc1[j], uc1[i], nrm, col)
+	for i in range(1, 7):
+		ag.tri(uc0[0], uc0[i], uc0[i + 1], bas * Vector3.LEFT, col.darkened(0.15))
+		ag.tri(uc1[0], uc1[i], uc1[i + 1], bas * Vector3.RIGHT, col.darkened(0.15))
 
 
 ## Gedikte: teslim alanı, tekerlekli siperler (LandWalls._build_breach'teki modelin aynısı), gediğin iki yanında meşale.
@@ -294,3 +352,64 @@ func _kutudan_cikar() -> void:
 ## Eski setin "sağlam" (28o) ve dolgu (26o) seçenekleri bu sahnede yok: bölüm taşınırken ayrıca bağlanır.
 func open_inner_gate() -> void:
 	push_warning("SurSetSahne: iç kapı Mesoteikhion kesiminde yok (karar 11: Romanos)")
+
+
+## Test ölçümü (yalnız autotest): sahnenin doğrudan çocuğu olan bütün düellocuların (yaşayan, ölü, gizlenmiş) zemine göre en
+## derin yeri; bölüm sonunda `ozet()` → "CESET4 …" satırı. Zemin: SurSet.zemin_y (peribolos, moloz, teras, hendek, ova).
+## Eşik 2 m (görev: "ceset y'si zeminin 2 m altına inmesin").
+class CesetSayac extends Node:
+	var sur: SurSet
+	var _t := 0.0
+	var _derin := {}         # instance_id → en derin (y − zemin)
+	var _yer := {}
+
+	var sonda := OS.get_cmdline_user_args().has("--sonda4")    # düellocuların yeri saniyede bir (SONDA4 satırı)
+	var _st := 0.0
+	var _saat := 0.0
+
+	func _process(delta: float) -> void:
+		_saat += delta
+		if sonda:
+			_st -= delta
+			if _st <= 0.0:
+				_st = 1.0
+				var pl = get_parent().get("player")
+				var sat := "SONDA4 t=%.1f oyuncu=%s" % [_saat, (pl as Node3D).global_position if pl is Node3D else Vector3.INF]
+				for c in get_parent().get_children():
+					if c is Duelist and (c as Node3D).visible:
+						var dd := c as Duelist
+						sat += " | tk=%d st=%d yol=%d p=%s" % [dd.team, dd.state, dd.path.size(), dd.global_position.snapped(Vector3.ONE * 0.1)]
+				print(sat)
+		_t -= delta
+		if _t > 0.0:
+			return
+		_t = 0.2
+		for c in get_parent().get_children():
+			if not (c is Duelist):
+				continue
+			var p := (c as Node3D).global_position
+			var dy := p.y - sur.zemin_y(p.x, p.z)
+			var id := c.get_instance_id()
+			if not _derin.has(id) or dy < float(_derin[id]):
+				_derin[id] = dy
+				_yer[id] = p
+
+	func ozet(etiket: String) -> String:
+		var dusen := 0
+		var en := 0.0
+		var en_yer := Vector3.ZERO
+		for id in _derin:
+			if float(_derin[id]) < -2.0:
+				dusen += 1
+			if float(_derin[id]) < en:
+				en = _derin[id]
+				en_yer = _yer[id]
+		return "CESET4 %s n=%d dusen=%d en_derin=%.1f yer=%s" % [etiket, _derin.size(), dusen, en, en_yer]
+
+
+static func ceset_sayac(sahne: Node, s: SurSet) -> CesetSayac:
+	var cs := CesetSayac.new()
+	cs.sur = s
+	cs.name = "CesetSayac"
+	sahne.add_child(cs)
+	return cs

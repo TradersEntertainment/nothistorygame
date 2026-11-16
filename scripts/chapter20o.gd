@@ -26,6 +26,7 @@ const ESKI_SUR := false
 var walls: LandWalls
 ## Bölüm bağdaştırıcısı (Bölüm 20 ile aynı): sette yer soran her şey buradan
 var sur: SurSet
+var _ceset: SurSetSahne.CesetSayac        # autotest: düellocuların zemine göre en derin yeri (tasima4 §3)
 var gun: Node3D
 var player: Player
 var hud: Hud
@@ -83,6 +84,8 @@ func _ready() -> void:
 		ss.sur = sur
 		walls = ss
 	add_child(walls)
+	if GameState.autotest:
+		_ceset = SurSetSahne.ceset_sayac(self, sur)
 	# Kuşatma sürerken şehir ve surlar arası Bizans'ın: oyuncu gedikten ya da açık bir kapıdan içeri girerse savunucular
 	# yakalayıp dışarı atar (Trespass)
 	Trespass.attach(self, player, hud)
@@ -571,13 +574,15 @@ func _assault() -> void:
 			"mustache": true, "beard": k % 2 == 1}})
 	player.frozen = false
 	var gn := Gunner.spawn(self, Vector3(8.4, y, 15.4) if sur.eski_mi else Vector3(sur.dis_yol_x(8.4), y, sur.dis_yol_z()), player, hud, 6.0, Color("7a2a24"), "helm")
-	var r: Dictionary = await WaveRunner.run(self, hud, player, [
-		{"specs": specs, "max_active": 2, "skill": 0.4, "limit": 60.0},
-		{"specs": more, "max_active": 2, "skill": 0.45, "allies": 2, "limit": 60.0,
+	var w1 := {"specs": specs, "max_active": 2, "skill": 0.4, "limit": 60.0}
+	var w2 := {"specs": more, "max_active": 2, "skill": 0.45, "allies": 2, "limit": 60.0,
 		"intro": func():
 			# Dövüşün ortasında haykırış (Tolga kılıç sallarken Urban'a dönmez)
 			hud.bark("SPK_URBAN", "D20O_U_MORE", 3.5)
-			await get_tree().create_timer(1.5, false).timeout}], "kilij")
+			await get_tree().create_timer(1.5, false).timeout}
+	if not sur.eski_mi and SurSet.asama_of((walls as SurSetSahne).onarim) >= 3:
+		_savunan_yolu(w1, w2)
+	var r: Dictionary = await WaveRunner.run(self, hud, player, [w1, w2], "kilij")
 	await gn.settle_test()
 	gunner_shots = gn.shots
 	gunner_dodged = gn.dodged
@@ -588,6 +593,39 @@ func _assault() -> void:
 	player.frozen = true
 	await hud.say("SPK_TOLGA", "D20O_T_DUEL" if _duel_won else "D20O_T_LOST")
 	await hud.say("SPK_NIHAT", "D20O_N_NIGHT")
+
+
+## Barikat kapalıyken (aşama ≥ 3: 20O.2 "surlar dayandı") savunanların gelişi (TAŞIMA-4, sahibinin kararı: "düello çok
+## kısa"; =wide 1. dalga 3,7–7,6 sn, eski 9,3). Kök neden: savunanın giriş noktası (Melee.auto_entry) düello yerinin
+## ötesinde, gediğin içinde aranır; kapalı barikattan geçen yol bulunamayınca (walkable) giriş yok sayılır ve savunan
+## oyuncunun 3 m önünde, moloz sırtında doğar. Şimdi peribolostan koşarak gelir: siperin ardından, barikatın ucundan
+## dolanıp gedik ağzından sırta çıkar, yamaçtan oyuncuya iner; bölük kademeli katılır, 2. dalgada önce iki kişi gelir
+## ve düşenin yerine sıradaki aynı yoldan koşar. Açık gedikte (20O.1) auto_entry zaten içeriden getiriyor: değişmez.
+const SAVUNAN_ARA_1 := 1.0
+const SAVUNAN_ARA_2 := 3.0
+func _savunan_yolu(w1: Dictionary, w2: Dictionary) -> void:
+	var hw := sur.gedik_en() * 0.5
+	var z0 := sur.dis_sur_z0()
+	var from: Array = []
+	var via: Array = []
+	for yan: float in [-1.0, 1.0]:
+		from.append(sur.on_rubble(Vector3(yan * (hw + 7.5), 0.0, z0 - 4.6)))
+		via.append([sur.on_rubble(Vector3(yan * (hw + 3.4), 0.0, z0 - 1.6)), sur.on_rubble(Vector3(yan * (hw + 0.8), 0.0, z0 - 0.5)),
+			sur.on_rubble(Vector3(yan * (hw - 1.4), 0.0, z0 + 0.6)), sur.on_rubble(Vector3(yan * 1.0, 0.0, sur.moloz_sirti().z))])
+	w2["from"] = from
+	w2["via"] = via
+	# 1. dalga barikatın ucundaki toplanma yerinden çıkar (peribolostan koşu 2. dalgaya kalır): ilk denemelerde 1. dalga
+	# 12,4–13,9 sn (hedef ≈ 8–12; sonda: varış ~4 sn, gerisi düello)
+	var from1: Array = []
+	var via1: Array = []
+	for k in via.size():
+		from1.append((via[k] as Array)[0])
+		via1.append((via[k] as Array).slice(1))
+	w1["from"] = from1
+	w1["via"] = via1
+	w1["stagger"] = SAVUNAN_ARA_1
+	w2["stagger"] = SAVUNAN_ARA_2
+	w2["group"] = 2
 
 
 ## Gece ortamı (22O ile aynı palet). Süren şafak tween'i (make_dawn) gece renklerini ezmesin diye önce durdurulur.
@@ -731,6 +769,8 @@ func _autotest_report() -> void:
 		ok = ok and player.downs >= 1 and not _duel_won
 	if not ok:
 		printerr("AUTOTEST: beklenen %s, gelen %s (sayfa=%s)" % [expected, _outcome, not page.is_empty()])
+	if _ceset:
+		print(_ceset.ozet("bolum=%s variant=%s" % ["20o", v]))
 	print("AUTOTEST %s chapter=20o variant=%s outcome=%s hits=%d cracks=%d gun=%d/%d gunner=%d/%d duel=%s bed=%s sur=%s" % ["PASS" if ok else "FAIL",
 		v, _outcome, hits, cracks, gun_hits, gun_shots, gunner_dodged, gunner_shots, _duel_won, _bed, "eski" if sur.eski_mi else "yeni"])
 	get_tree().quit(0 if ok else 1)

@@ -1,0 +1,2 @@
+AUTOTEST PASS chapter=0 variant= froze=true sur=eski
+KOSU rc=0 sure=20 args=--chapter=0 --autotest --eskisur

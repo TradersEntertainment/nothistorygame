@@ -1,0 +1,15 @@
+Godot Engine v4.4.1.stable.official.49a5bc7b6 - https://godotengine.org
+
+SURSET kesim=mesoteikhion kurulum_ms=3588 sur_ms=894 set_ms=2688
+TASIMA0ENGEL OZET nokta=14 engelde=0
+TASIMA0KURULUM sur=yeni set_ms=3752 bolum_ms=2494 toplam_ms=6246
+WARNING: Screen-space ambient occlusion (SSAO) can only be enabled when using the Forward+ renderer.
+     at: environment_set_ssao (servers/rendering/storage/environment_storage.cpp:586)
+WARNING: Screen-space indirect lighting (SSIL) can only be enabled when using the Forward+ renderer.
+     at: environment_set_ssil (servers/rendering/storage/environment_storage.cpp:661)
+TERRAIN_SOLIDIFIED scene=chapter0.tscn node=/root/Chapter0/@Node3D@177/@Node3D@178/Ova/@Node3D@2900/@MeshInstance3D@2902
+SIEGECHAOS segs=42 runners=96 static=45
+TASIMA0YURU set=yeni start=(-8.6, 0.05, 4.4) line=(-0.6, 0.0, 10.6) stage=(-3.0, 0.0, 8.6) mesafe=10.1 teslim_mesafe=7.1
+TASIMA0YURU bacak=start_line sure=2.5 yol=7.2 takilma=0 dusme=0 teslim=tamam son=(-2.9, 0.2, 8.8)
+TASIMA0YURU OZET set=yeni bacak=1 takilma=0 dusme=0 teslim=tamam sure=2.5 yol=7.2
+KOSU rc=0 sure=19 args=--chapter=0 --autotest=yuru

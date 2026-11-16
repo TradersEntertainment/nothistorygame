@@ -1,0 +1,9 @@
+GUN shots=4 hits=3 missed=1
+GUNNER_HIT moved=0.00 perp=0.00 aim=(-9.1, 0.0, 6.9) now=(-9.1, 0.0, 6.9)
+WAVERUNNER wave=1/2 won=false t=17.5 pw=0.28 foe_dmg=18.0 allies=0+0 rally_foes=0 thrown=0
+GUN extra=1
+GUNNER shots=2 dodged=1 hits=1
+GRADE chapter=20 letter=C points=47 { "gun_shots": 4, "gun_hits": 3, "gunner_shots": 2, "dodged": 1, "hits_taken": 6, "gunner_hits": 1, "downs": 1 }
+CESET4 bolum=20 variant=lose n=2 dusen=0 en_derin=-0.0 yer=(1.6, -3.564198, 27.6)
+AUTOTEST PASS chapter=20 variant=lose outcome=20.3 repair=10 knocks=0 arrows=true gun=3/4 gunner=1/2 niko=0 sur=yeni
+KOSU rc=0 sure=48 args=--chapter=20 --autotest=lose

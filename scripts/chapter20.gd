@@ -28,11 +28,19 @@ const GIUST_YENI := Vector3(5.0, 0.0, 9.4)
 const ARROWS_YENI := Vector3(-16.0, 0.0, 1.2)
 ## Bölüm sabiti: true → eski set (geri dönüş; komut satırında --eskisur ile de)
 const ESKI_SUR := false
+## Yeni sette düello yaklaşması (_yaklasma): 1. dalga hendek dolgusunun yakın ucundan (hendeğin iç yakasının bu kadar
+## ötesi, m), 2. dalga dolgunun uzak ucundan (hendeğin dış yakasının bu kadar berisi, m); bölükte çıkış aralığı (sn)
+const YAKLASMA_1_Z := 1.0
+const YAKLASMA_1_ARA := 2.0
+const YAKLASMA_2_Z := 3.0
+const YAKLASMA_2_ARA := 2.5
 const NIKO_EVERY := 15.0       # Niko'nun bir yükü (gece 170 sn: dost taşıyıcı yarım gedik kadar getirir)
 
 var walls: LandWalls
 ## Bölüm bağdaştırıcısı: sette yer soran her şey buradan (eski: LandWalls sabitleri; yeni: SurOyun sorguları)
 var sur: SurSet
+var _dalga2 := false                       # düellonun 2. dalgası başladı (=kare: dalga2 kareleri)
+var _ceset: SurSetSahne.CesetSayac        # autotest: düellocuların zemine göre en derin yeri (tasima4 §3)
 var archers_p := ARCHERS
 var arrows_p := ARROWS
 var player: Player
@@ -98,6 +106,8 @@ func _ready() -> void:
 		archers_p = ARCHERS_YENI
 		arrows_p = ARROWS_YENI
 	add_child(walls)
+	if GameState.autotest:
+		_ceset = SurSetSahne.ceset_sayac(self, sur)
 	var t_set := Time.get_ticks_usec()
 	_build()
 	if GameState.autotest:
@@ -534,14 +544,16 @@ func _breach_duel() -> void:
 	var w1 := {"specs": specs, "max_active": 2, "skill": 0.35, "limit": 60.0}
 	if Mentor.current() == "leon" and Siege.outcome(36) == "36.1":
 		w1["intro"] = func(): hud.bark("SPK_LEON", "D20_LN_TALIM", 3.5)
-	_duel_on = true
-	var r: Dictionary = await WaveRunner.run(self, hud, player, [
-		w1,
-		{"specs": more, "max_active": 2, "skill": 0.4, "allies": 2, "limit": 60.0,
+	var w2 := {"specs": more, "max_active": 2, "skill": 0.4, "allies": 2, "limit": 60.0,
 		"intro": func():
+			_dalga2 = true
 			# Dövüşün ortasında haykırış (Tolga kılıç sallarken komutana dönmez)
 			hud.bark("SPK_GIUST", "D20_G_SECOND", 3.5)
-			await get_tree().create_timer(1.5, false).timeout}], "spathion")
+			await get_tree().create_timer(1.5, false).timeout}
+	if not sur.eski_mi:
+		_yaklasma(w1, w2, more.size() - 2)
+	_duel_on = true
+	var r: Dictionary = await WaveRunner.run(self, hud, player, [w1, w2], "spathion")
 	if _gun_missed > 0:
 		print("GUN extra=%d" % mini(_gun_missed, 2))
 	await gn.settle_test()
@@ -558,6 +570,57 @@ func _breach_duel() -> void:
 		_update_objective()
 	await hud.say("SPK_TOLGA", "D20_T_DUEL" if _duel_won else "D20_T_LOST")
 	await _see_giust(p)     # Giustiniani konuşacak
+
+
+## Yeni sette düello azaplarının yaklaşması (TAŞIMA-4, sahibinin kararı: "düello çok kısa olmuş"; 2. dalga medyanı 7,8 sn,
+## eski sette 22,7). Eskiden azaplar gedik ağzının hemen ötesinde (Melee.auto_entry, 6–10 m) belirip iki adımda gelirdi.
+## Şimdi gerçekten ovadan gelirler: hendek dolgusunu geçer, teras boyunca moloz yamacını tırmanır, sırttan gedikten iner
+## (görünür yaklaşma); bölük birlikte değil kademeli katılır (WaveRunner "stagger"), 2. dalgada önce iki azap gelir,
+## düşenin yerine sıradaki aynı yoldan koşar ("group"). Tüfekle vurulamayanlar (ek azaplar) zaten gediğe varmıştı: teras
+## eteğinden tırmanır. 1. dalga ("iki azap gediği aşıp Tolga'nın önüne düşer"): dolgunun yakın ucundan. Eski sette
+## (barikata takılma eski sürenin bir parçasıydı) yol değişmez. Düşman sayısı, dalga sınırı, can, hasar aynı.
+func _yaklasma(w1: Dictionary, w2: Dictionary, ek: int) -> void:
+	var sirt_z := sur.moloz_sirti().z
+	# Gedikten içeri: barikat (aşama 2 fıçı sırası, 3–4 toprak set; gedik eni boyunca) dış surun iç yüzünün 0,8–2 m
+	# gerisinde. Azap gedik ağzından (iç yüzün hemen önü) barikatın oyuncu yanındaki ucuna (köşe) iner; ilk denemede yol
+	# sırttan doğrudan oyuncuya gidiyordu, azaplar barikatın ova yüzüne çarpıp ~3 sn yana kayıyordu (testler/sonda).
+	var yan := signf(player.global_position.x - sur.gedik().x)
+	if yan == 0.0:
+		yan = -1.0
+	var hw := sur.gedik_en() * 0.5
+	var ic := sur.on_rubble(Vector3(yan * (hw - 1.4), 0.0, sur.dis_sur_z0() + 0.6))
+	var kose := sur.on_rubble(Vector3(yan * (hw + 0.8), 0.0, sur.dis_sur_z0() - 0.5))
+	var yol := func(x: float, bas_z: float) -> Array:
+		# [başlangıç, ara noktalar]: dolgu/teras üstünde başlangıç, teras eteği (dolgunun yakın ucu), moloz sırtı, gedik
+		# ağzı, barikatın ucu
+		var bas := Vector3(x, sur.zemin_y(x, bas_z), bas_z)
+		var etek_z := sur.hendek_z0() - 2.6
+		var etek := Vector3(x * 0.8, sur.zemin_y(x * 0.8, etek_z), etek_z)
+		var sirt := sur.on_rubble(Vector3(x * 0.5, 0.0, sirt_z))
+		return [bas, ([etek] if bas_z > etek_z + 0.5 else []) + [sirt, ic, kose]]
+	var from1: Array = []
+	var via1: Array = []
+	for x: float in [-1.6, 1.6]:
+		var y1: Array = yol.call(x, sur.hendek_z0() + YAKLASMA_1_Z)
+		from1.append(y1[0])
+		via1.append(y1[1])
+	w1["from"] = from1
+	w1["via"] = via1
+	w1["stagger"] = YAKLASMA_1_ARA
+	var from2: Array = []
+	var via2: Array = []
+	for x: float in [-1.8, 1.8]:
+		var y2: Array = yol.call(x, sur.hendek_z1() - YAKLASMA_2_Z)
+		from2.append(y2[0])
+		via2.append(y2[1])
+	for k in ek:
+		var y3: Array = yol.call(-0.8 + k * 1.6, sur.hendek_z0() - 2.6)
+		from2.append(y3[0])
+		via2.append(y3[1])
+	w2["from"] = from2
+	w2["via"] = via2
+	w2["group"] = 2
+	w2["stagger"] = YAKLASMA_2_ARA
 
 
 ## Giustiniani konuşmadan önce görünür olsun: uzun dövüşte (zor zorlukta dalga süre dolana dek sürer) oyuncu gediğin
@@ -1047,6 +1110,13 @@ func _yuru() -> void:
 			await get_tree().process_frame
 		await get_tree().create_timer(2.5, false).timeout
 		await _kare("duello")
+		# 2. dalga (TAŞIMA-4): başlangıcı (azaplar ovadan, dolgu ve moloz yamacından geliyor) ve ortası, oyuncunun kamerasından
+		while not _dalga2:
+			await get_tree().process_frame
+		await get_tree().create_timer(2.0, false).timeout
+		await _kare("dalga2_baslangic")
+		await get_tree().create_timer(7.0, false).timeout
+		await _kare("dalga2_orta")
 		print("PILOT20KARE BITTI")
 		get_tree().quit(0)
 		return
@@ -1289,6 +1359,8 @@ func _autotest_report() -> void:
 		ok = ok and gunner_shots >= 1 and (gunner_dodged >= 1 or v.ends_with("lose"))
 	if not ok:
 		printerr("AUTOTEST: beklenen %s, gelen %s (sayfa=%s, knocks=%d, duel=%s, downs=%d, repair=%d)" % [expected, _outcome, not page.is_empty(), _knocks, _duel_won, player.downs, repair])
+	if _ceset:
+		print(_ceset.ozet("bolum=%s variant=%s" % ["20", v]))
 	print("AUTOTEST %s chapter=20 variant=%s outcome=%s repair=%d knocks=%d arrows=%s gun=%d/%d gunner=%d/%d niko=%d sur=%s" % ["PASS" if ok else "FAIL", v,
 		_outcome, repair, _knocks, _arrows_ok, gun_hits, gun_shots, gunner_dodged, gunner_shots, _niko_loads, "eski" if sur.eski_mi else "yeni"])
 	get_tree().quit(0 if ok else 1)

@@ -15,6 +15,9 @@ var night := true
 var wall_len := 150.0
 var intensity := 1.0              # 0..1 (dalgalar ve top sıklığı)
 var with_defenders := true        # false: surdaki savunanları bölüm kendisi koyar (Garrison)
+## Yeni sette ek hücum merdivenleri (bölümün kadrajı için): [{"x", "uzat" (tepe korkuluğun bu kadar daha üstünde)}].
+## Varsayılan boş: merdivenler aynı (TAŞIMA-4, Bölüm 0 açılışı)
+var ek_merdiven: Array = []
 var live_span := 0.0              # dış surda |x| < live_span boş (bölüm oraya canlı Garrison askerleri koyar)
 var gun_spots: Array = [Vector3(-44, 0, 92), Vector3(-16, 0, 94), Vector3(16, 0, 94), Vector3(44, 0, 92)]
 var rng := RandomNumberGenerator.new()
@@ -521,6 +524,9 @@ func _ladders() -> void:
 	# korkuluğun içindeydi ve ince direkler uzaktan görünmüyordu: tırmananlar duvarda süzülüyor gibiydi.
 	var xs := [-44.0, -33.0, -24.0, -12.0, 12.0, 22.0, 31.0, 42.0]
 	var yer: Array = sur.hucum_merdivenleri(xs, wall_len * 0.45) if _yeni() else []
+	if _yeni():
+		for e: Dictionary in ek_merdiven:
+			yer.append(sur.merdiven_dayama(float(e["x"]), float(e.get("uzat", 0.0))))
 	for li in (yer.size() if _yeni() else xs.size()):
 		var x: float = float(yer[li]["x"]) if _yeni() else float(xs[li])
 		var base := Vector3(x, 0.0, 18.35)

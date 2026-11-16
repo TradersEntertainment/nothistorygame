@@ -480,6 +480,21 @@ func hucum_merdivenleri(xs_eski: Array, span: float) -> Array:
 	return out
 
 
+## Tek bir hücum merdiveni x'te (hucum_merdivenleri'nin dayama kuralıyla: eğim, tepe dış sur yolunun dayama payı üstü);
+## uzat: merdiven tepesi korkuluğun bu kadar daha üstüne taşar (m; içeriden, peribolostan merdiven ucu görünsün diye).
+## Eski sette Assault'un sabit kesiti. {"x", "ayak", "tepe"}
+func merdiven_dayama(x: float, uzat := 0.0) -> Dictionary:
+	if eski_mi:
+		return {"x": x, "ayak": Vector3(x, 0.0, 18.35), "tepe": Vector3(x, 7.7 + uzat, 16.25)}
+	var dm: Array = a.dayamalar()
+	var eg := deg_to_rad(float(dm[0]["egim"])) if not dm.is_empty() else deg_to_rad(16.0)
+	var ty := dis_yol_y() + float(a.kesim["oyun"]["dayama_ust_pay"]) + uzat
+	var gy := teras_y()
+	var boy := (ty - gy) / cos(eg)
+	var ayak := Vector3(x, gy, dis_sur_z1() + 0.12 + boy * sin(eg))
+	return {"x": x, "ayak": ayak, "tepe": ayak + Vector3(0.0, boy * cos(eg), -boy * sin(eg))}
+
+
 func _merdiven_bos(x: float, secilen: Array) -> bool:
 	if not dis_yol_bos(x) or absf(x) < gedik_bosluk() + 2.0:
 		return false

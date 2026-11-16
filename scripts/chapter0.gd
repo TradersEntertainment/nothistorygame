@@ -14,6 +14,7 @@ extends Node3D
 ##                   Mesoteikhion kesimi (SurSetSahne + bölüm bağdaştırıcısı SurSet; docs/SUR_SOZLESME.md)
 
 const BattleExtras := preload("res://scripts/level/battle_extras.gd")
+const GedikOnarimRef := preload("res://scripts/world/ist/sur_oyun_parca.gd").GedikOnarim
 const TOLGA := {"face": "tolga", "coat": Color("23262d"), "pants": Color("23262d"), "hat": "fez", "skin": Color("e6ad88")}
 const START := Vector3(7.0, 0.05, 4.0)
 ## Ok demetlerinin götürüleceği savunucu sırası (gediğin içi)
@@ -35,6 +36,20 @@ const SAVUNUCU_YENI := [Vector3(-4.3, 0, 10.8), Vector3(-3.2, 0, 10.4), Vector3(
 	Vector3(3.3, 0, 10.5), Vector3(2.4, 0, 10.1)]
 ## Bölüm sabiti: true → eski set (geri dönüş; komut satırında --eskisur ile de)
 const ESKI_SUR := false
+## Yeni sette ek hücum merdivenleri (Assault.ek_merdiven): x, korkuluğun üstüne ek taşma (m). Açılış kadrajında (START → LINE)
+## dış sur x > 4,5 kadrajın üst ortasında görünür (6,4 ve 14,4; yer yazısının üstünde), donma kadrajında x −20 (x −6,3 denendi:
+## sabit bakışın bütçesini eskinin üstüne çıkarıyordu, anahtar karede görünmüyordu)
+const EK_MERDIVEN_YENI := [{"x": 6.4, "uzat": 1.8}, {"x": 14.4, "uzat": 1.4}, {"x": -20.6, "uzat": 1.3}]
+## Yeni sette açılış kadrajındaki yaralılar ve koşanlar (BattleExtras şeridi): [a, b, en, koşan, yatan, siperde, (yalnız ad)].
+## Taşıyıcı şeridi (depo → gedik önü) ve oyuncunun yolu (START → LINE) dışında: dış surun eteği önü, gediğin iki yanı (kadrajın
+## sağı ve solu; tests/_ist/tasima4_kadraj.gd ile seçildi)
+const SERIT_YENI_EK := [[Vector3(-10.2, 0, 11.2), Vector3(-6.9, 0, 11.4), 0.8, 2, 4, 0, 3150], [Vector3(7.4, 0, 12.4), Vector3(10.6, 0, 12.5), 0.8, 1, 3, 0, 3160],
+	[Vector3(-7.0, 0, 12.5), Vector3(-4.9, 0, 12.8), 0.6, 0, 3, 0, 3170],       # donma karesinde patlamanın 3 m dışı (yakındakiler gizlenir)
+	[Vector3(-7.0, 0, 2.9), Vector3(-5.2, 0, 3.3), 0.5, 0, 3, 0, 3180]]         # donma karesinin sağı, kalas yığınının yanı (yoldan ≥ 2,2 m)
+## Yeni sette donma karesinde kameradan bu uzaklığın (m) ötesindeki figüranlar gizlenir (bütçe; bkz. _freeze)
+const DONMA_UZAK_YENI := 22.0
+## Yeni sette donma kadrajının sağındaki iç kulenin batı yüzüne (x −2,8) dayalı merdiven: ayak, tepe (oyuncu yolundan ≥ 2 m)
+const MERDIVEN_KULE_YENI := [Vector3(-4.1, 0.0, 4.7), Vector3(-2.95, 5.6, 4.7)]
 
 ## Bölüm bağdaştırıcısı: sette yer soran her şey buradan (eski: LandWalls sabitleri; yeni: SurOyun sorguları)
 var sur: SurSet
@@ -131,10 +146,26 @@ func _build() -> void:
 	# yeni sette ordu ova kaydırmasıyla aynı yerde dursun: alan hendeğin uzak yakasına kadar (eski 36 ↔ yeni ova_z0)
 	assault.keep = Rect2(-40.0, -10.0, 80.0, 36.0) if sur.eski_mi else Rect2(-40.0, -10.0, 80.0, 36.0 + sur.ova_ofs().z)
 	assault.live_span = 30.0
+	if not sur.eski_mi:
+		# açılış kadrajında (START'tan gediğe bakış: dış sur x −8…−4,5) ve donma karesinde dış sura dayalı hücum merdivenleri;
+		# uçları korkuluğun üstüne taşar, tepeye varan tırmanan savunanın mızrağıyla geri düşer (TAŞIMA-4: açılış eskisi
+		# kadar destansı olsun; eskide sur yolunda merdiven ve tepede çatışma kadrajın ortasındaydı)
+		assault.ek_merdiven = EK_MERDIVEN_YENI
 	world.add_child(assault)
 	assault.build()
-	# Sur yolu dolu, iç surun üstü de (Bölüm 26 gibi)
-	Garrison.land_walls(world, [Vector2(13.0, 19.0), Vector2(-10.4, -6.8), Vector2(6.8, 10.4)], [Vector2(-30.0, 30.0)], [], 26, 46.0, true, true, true, sur)
+	# Sur yolu dolu, iç surun üstü de (Bölüm 26 gibi). Yeni sette yalnız kazanların yeri boş (eskinin x 13–19 kulesi yeni sette
+	# yok; eskinin geniş kazan aralıkları açılış kadrajındaki tek sur yolu parçasını boşaltıyordu: kadrajda 2 m sur yolu kalıyordu)
+	var bos: Array = [Vector2(13.0, 19.0), Vector2(-10.4, -6.8), Vector2(6.8, 10.4)] if sur.eski_mi else [Vector2(-9.5, -7.7), Vector2(7.7, 9.5)]
+	Garrison.land_walls(world, bos, [Vector2(-30.0, 30.0)], [], 26, 46.0, true, true, true, sur)
+	if not sur.eski_mi:
+		# dış sur yolunda meşaleler (kazanların yanı) ve surun ardından (teras, hendek) yükselen dumanlar: gece hücumunun
+		# ışığı ve dumanı kadrajda (eskide sur yolu meşaleleri ve yangın dumanı)
+		for tx: float in [-9.4, 9.4]:          # kazanların yanında (Garrison bu aralıklara adam koymaz)
+			Night.torch(world, Vector3(sur.dis_yol_x(tx), sur.dis_yol_y(), sur.dis_yol_ic_z()), 1.6)
+		_dekor_merdiven(world, MERDIVEN_KULE_YENI[0], MERDIVEN_KULE_YENI[1])
+		for dm: Vector3 in [Vector3(-9.0, sur.teras_y(), sur.dis_sur_z1() + 4.0), Vector3(-2.5, sur.teras_y(), sur.hendek_z0() + 3.0),
+				Vector3(-16.0, sur.teras_y(), sur.dis_sur_z1() + 6.0)]:
+			Vfx.smoke_wisp(world, dm, 14.0, Vector3(0.6, 0, -0.25))
 	var fight := WallFight.new()
 	fight.sur = sur
 	world.add_child(fight)
@@ -168,6 +199,8 @@ func _build() -> void:
 		# kalıyorlardı (yanlarındaki kutu biçimli enkazla; kare/c0_yeni ilk tur an_01)
 		lanes = [[Vector3(-25.0, 0, 3.4), Vector3(-15.6, 0, 3.4), 1.4, 11, 5, 0], [Vector3(8.4, 0, 9.8), Vector3(26, 0, 9.8), 1.2, 6, 3, 0],
 			[Vector3(-26, 0, 9.8), Vector3(-10.5, 0, 9.8), 1.2, 6, 7, 0]]
+		for e: Array in SERIT_YENI_EK:
+			lanes.append(e.slice(0, 6))
 	for lane: Array in lanes:
 		var bx := BattleExtras.new()
 		world.add_child(bx)
@@ -224,6 +257,23 @@ func _build() -> void:
 		bd.position = Vector3(k * 0.14, -k * 0.05, k * 0.06)
 	Props.strip_outlines(_carry)
 	player.speed_mult = 0.9
+
+
+## Dekor merdiven (tırmanılmaz, çarpışmasız): iki yuvarlak dikme ve yuvarlak basamaklar; ayak zeminde, tepe duvara dayalı
+func _dekor_merdiven(par: Node3D, ayak: Vector3, tepe: Vector3) -> void:
+	var l := Node3D.new()
+	par.add_child(l)
+	var yv := (tepe - ayak).normalized()
+	var yan := yv.cross(Vector3.UP).normalized()
+	l.transform = Transform3D(Basis(yan, yv, yan.cross(yv)), ayak)
+	var boy := ayak.distance_to(tepe)
+	# tek ağ (dikmeler ve basamaklar yuvarlak çubuk; GedikOnarim._cubuk ile): tek çizim çağrısı
+	var ag = SurSetSahne.KULE.Ag.new()
+	for sx: float in [-0.3, 0.3]:
+		GedikOnarimRef._cubuk(ag, Vector3(sx, 0, 0), Vector3(sx, boy + 0.4, 0), 0.05, 6, Color(0.9, 0.84, 0.76))
+	for k in int(boy / 0.4):
+		GedikOnarimRef._cubuk(ag, Vector3(-0.31, 0.3 + k * 0.4, 0), Vector3(0.31, 0.3 + k * 0.4, 0), 0.03, 5, Color(1, 1, 1))
+	ag.mesh_ekle(l, Props.mat(Color("8a6440"), 0.0, false, "wood"), "Ahsap_KuleMerdiveni")
 
 
 ## Donan kare efekti (renk solması, kenar kararması) ve geri sarma (satır kayması, parazit).
@@ -422,6 +472,10 @@ func _freeze() -> void:
 			var np: Vector3 = (n as Node3D).global_position + Vector3(0, 1.0, 0)
 			var seg := Geometry3D.get_closest_point_to_segment(np, cam_p, eye)
 			if np.distance_to(seg) < 1.0 or np.distance_to(cam_p) < 3.4 or np.distance_to(blast) < 3.0:
+				n.visible = false
+			elif not sur.eski_mi and np.distance_to(cam_p) > DONMA_UZAK_YENI:
+				# yeni sette kadraj peribolos koridorunun dibine kadar açık: oradaki küçük figüranlar donmuş karede okunmuyor ama
+				# eski setin bütçesini aşıyordu (tasima3 an_06 çizim 4.643 > eski 4.363)
 				n.visible = false
 	# Üçüncü kişi: Tolga havada; yüzü kameraya (seyirciye konuşacak), başı öne: patlama onu kameraya doğru savurdu
 	var tolga := Person.new(TOLGA)
