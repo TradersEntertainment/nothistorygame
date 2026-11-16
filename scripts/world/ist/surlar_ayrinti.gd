@@ -247,11 +247,101 @@ static func _oyuk(ag, p: Vector3, r: float, rng: RandomNumberGenerator) -> void:
 
 static func _barrel(root: Node3D, p: Vector3) -> void:
 	# TUR-7: toprak dolu eski fıçı: yıpranmış gri-kahve tahta (güneşte turuncu kutu/silindir okunmasın); çarpışma aynı
+	# TUR-10 (Bölüm 25 an_06, "büyük ve köşeli"): 10 köşeli düz silindir (çap 0,84 m) + 3 ayrı çember silindiri yerine tek
+	# ağ: karınlı (uç çapı 0,54, karın 0,66 m, boy 0,92), 16 dilim, tahta tahta ton, demir çemberler, gömme kapak.
+	# Çarpışma ESKİ silindirin dışbükey kabuğu (aynı; görünen ağ sonra değişir). Çizim: 4 düğüm → 1.
+	var rng := RandomNumberGenerator.new()
+	rng.seed = int(absf(p.x * 131.0 + p.z * 17.0))
 	var b := Props.cyl(root, 0.42, 0.95, p + Vector3(0, 0.475, 0), Color("665846"), Vector3.ZERO, 10, 0.38)
 	Props.make_solid(b, 0.9)
-	Props.cyl(root, 0.43, 0.06, p + Vector3(0, 0.25, 0), Color("3a3634"), Vector3.ZERO, 10)
-	Props.cyl(root, 0.43, 0.06, p + Vector3(0, 0.75, 0), Color("3a3634"), Vector3.ZERO, 10)
-	Props.cyl(root, 0.36, 0.05, p + Vector3(0, 0.96, 0), Color("54473a"), Vector3.ZERO, 10)
+	b.mesh = _fici_ag()
+	b.material_override = _fici_mat()
+	b.rotation_degrees = Vector3(rng.randf_range(-2.5, 2.5), rng.randf_range(0.0, 360.0), rng.randf_range(-2.5, 2.5))
+
+
+static var _fici: ArrayMesh
+static var _fici_m: StandardMaterial3D
+
+
+static func _fici_mat() -> StandardMaterial3D:
+	if _fici_m == null:
+		_fici_m = Props.mat(Color.WHITE).duplicate() as StandardMaterial3D
+		_fici_m.vertex_color_use_as_albedo = true
+	return _fici_m
+
+
+## Fıçı ağı (merkez orijinde, boy 0,92; yerden 0,475 m'de duran eski silindirle aynı taban: −0,475)
+static func _fici_ag() -> ArrayMesh:
+	if _fici != null:
+		return _fici
+	var st := SurfaceTool.new()
+	st.begin(Mesh.PRIMITIVE_TRIANGLES)
+	var N := 16
+	var y0 := -0.475
+	var H := 0.92
+	var halkalar: Array = []     # [y, r, renk çarpanı (çember koyu)]
+	var ys := [0.0, 0.05, 0.075, 0.2, 0.3, 0.5, 0.7, 0.8, 0.925, 0.95, 1.0]
+	for t: float in ys:
+		var r := 0.27 + 0.06 * sin(t * PI)          # karın
+		var cember := (t > 0.04 and t < 0.085) or (t > 0.915 and t < 0.96)
+		halkalar.append([y0 + t * H, r + (0.006 if cember else 0.0), cember])
+	var rng := RandomNumberGenerator.new()
+	rng.seed = 1453
+	var tahta: Array = []
+	for i in N:
+		tahta.append(rng.randf_range(0.78, 1.08))
+	var ahsap := Color("6a5a46")
+	var demir := Color("3b3633")
+	for i in N:
+		var a0 := TAU * i / N
+		var a1 := TAU * (i + 1) / N
+		for k in halkalar.size() - 1:
+			var A: Array = halkalar[k]
+			var B: Array = halkalar[k + 1]
+			var cem: bool = A[2] and B[2]
+			var c: Color = demir if cem else ahsap * float(tahta[i])
+			c.a = 1.0
+			var p00 := Vector3(cos(a0) * A[1], A[0], sin(a0) * A[1])
+			var p01 := Vector3(cos(a1) * A[1], A[0], sin(a1) * A[1])
+			var p10 := Vector3(cos(a0) * B[1], B[0], sin(a0) * B[1])
+			var p11 := Vector3(cos(a1) * B[1], B[0], sin(a1) * B[1])
+			var nm := Vector3(cos((a0 + a1) * 0.5), (float(A[1]) - float(B[1])) / maxf(float(B[0]) - float(A[0]), 0.01), sin((a0 + a1) * 0.5)).normalized()
+			_ftri(st, p00, p11, p10, nm, c)
+			_ftri(st, p00, p01, p11, nm, c)
+	# gömme kapak (üst; 3 cm içeride), koyu tahta
+	var yk := y0 + H - 0.03
+	var rk := 0.255
+	var kap := ahsap * 0.82
+	kap.a = 1.0
+	for i in N:
+		var a0 := TAU * i / N
+		var a1 := TAU * (i + 1) / N
+		_ftri(st, Vector3(0, yk, 0), Vector3(cos(a1) * rk, yk, sin(a1) * rk), Vector3(cos(a0) * rk, yk, sin(a0) * rk), Vector3.UP, kap)
+		# kapak ile ağız arasındaki iç bilezik
+		var r2 := 0.27
+		var q := [Vector3(cos(a0) * rk, yk, sin(a0) * rk), Vector3(cos(a1) * rk, yk, sin(a1) * rk),
+			Vector3(cos(a1) * r2, y0 + H, sin(a1) * r2), Vector3(cos(a0) * r2, y0 + H, sin(a0) * r2)]
+		var nb := -Vector3(cos((a0 + a1) * 0.5), 0, sin((a0 + a1) * 0.5))
+		_ftri(st, q[0], q[2], q[1], nb + Vector3.UP * 0.3, kap)
+		_ftri(st, q[0], q[3], q[2], nb + Vector3.UP * 0.3, kap)
+	_fici = st.commit()
+	return _fici
+
+
+## Üçgen; sarım istenen dış normale göre (Godot: ön yüz saat yönünde; KULE.Ag.tri ile aynı kural)
+static func _ftri(st: SurfaceTool, a: Vector3, b: Vector3, c: Vector3, nrm: Vector3, col: Color) -> void:
+	var cr := (b - a).cross(c - a)
+	if cr.length_squared() < 1e-12:
+		return
+	if cr.dot(nrm) > 0.0:
+		var t := b
+		b = c
+		c = t
+	var nn := nrm.normalized()
+	for v: Vector3 in [a, b, c]:
+		st.set_color(col)
+		st.set_normal(nn)
+		st.add_vertex(v)
 
 
 static func _stauroma(root: Node3D, x: float, z: float, y: float, rng: RandomNumberGenerator) -> void:

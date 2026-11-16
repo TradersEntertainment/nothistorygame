@@ -66,7 +66,7 @@ void fragment() {
 	// TUR-7: hatıl belirgin kiremit kırmızısı (yayındaki bölümlerin sur görünüşü)
 	// TUR-10: tuğla doygunluğu düşük (kahve-kiremit; eski 0,37 0,14 0,085 doygun kırmızı = Lego), harç kirli bej-gri
 	vec3 tug = vec3(0.30, 0.165, 0.115) * clamp(kat, 0.7, 1.0);
-	vec3 harc = vec3(0.42, 0.395, 0.35) * kat;
+	vec3 harc = vec3(0.40, 0.355, 0.31) * kat;     // kireç + tuğla tozu (Bizans harcı: kirli pembemsi bej-gri)
 	// yakınlık (ekran türevi): yalnız yakında görünen ince ayrıntı (kenar pürüzü, taş/tuğla yüzü dokusu)
 	float fwy = fwidth(wpos.y) + 1e-5;
 	float yakin = 1.0 - smoothstep(0.003, 0.012, fwy);
@@ -116,7 +116,7 @@ void fragment() {
 			covB = fy > P * 0.6 ? B / P : clamp(covB, 0.0, 1.0);
 		}
 		// TUR-10: harç tuğla kalınlığında (Theodosius: ≈4–5 cm tuğla, aynı kalınlıkta harç) → uzak ortalama yarı yarıya
-		vec3 uzak_b = mix(tug * 0.9, harc * 0.84, 0.47);       // mat kiremit (orta/uzak)
+		vec3 uzak_b = mix(tug * 0.9, mix(harc, tug * 1.25, 0.22) * 0.88, 0.47);       // mat kiremit (orta/uzak; yakındaki ortalama)
 		vec3 bcol = uzak_b;
 		if (bant) {
 			// TUR-9: tuğla örgüsü eşikle değil KUTU SÜZGEÇLE (c2: eğik bakışta yatay sıkışma fw'yi büyütüp tuğlaları x≈720'de
@@ -162,7 +162,9 @@ void fragment() {
 			float ke = min(min(y0 - mh, rp - y0), min(x0 - mv, bl - x0));
 			tcol *= mix(1.0, mix(0.78, 1.0, smoothstep(0.0, 0.014, ke + 0.006 * pur)), tsec);
 			// harç: kirli bej-gri, lekeli, yer yer oyulmuş (koyu), üstündeki tuğlanın gölgesinde (girinti)
-			vec3 hc = harc * (0.82 + 0.2 * vn(vec2(u * 5.0, rid * 1.9)));
+			// tuğla bandında harç tuğla tozuyla pembemsi ve tuğladan az açık (şerit şerit "Lego" değil); kumlu dane yakında
+			vec3 hc = mix(harc, tug * 1.25, 0.22) * (0.82 + 0.2 * vn(vec2(u * 5.0, rid * 1.9)));
+			hc *= 1.0 + 0.18 * (vn(vec2(u * 55.0, py * 60.0)) - 0.5) * yakin;
 			float oy = smoothstep(0.6, 0.76, vn(vec2(u * 3.7 + 11.0, rid * 1.7)));
 			hc *= 1.0 - 0.3 * oy * tsec;
 			float glg = smoothstep(0.55, 1.0, clamp(y0 / max(mh, 1e-3), 0.0, 1.0)) * step(y0, mh);
@@ -212,8 +214,8 @@ void fragment() {
 		tc *= 1.0 + 0.14 * (vn(vec2(u * 17.0, y * 17.0) + ci) - 0.5) * yakin;
 		float lik = smoothstep(0.7, 0.86, vn(vec2(u * 3.4, y * 3.8) + 21.0 + ci * 0.37));
 		tc = mix(tc, tc * vec3(1.06, 1.05, 0.9), lik * 0.35 * orta);
-		float ben = smoothstep(0.66, 0.9, vn(vec2(u * 12.0, y * 13.0) + 41.0));
-		tc *= 1.0 - 0.12 * ben * ince;
+		float ben = smoothstep(0.7, 0.92, vn(vec2(u * 14.0, y * 15.0) + 41.0));
+		tc *= 1.0 - 0.08 * ben * ince;
 		// dökülmüş taş: yer yer blok yerinde yok (koyu oyuk, üst kenarında gölge); hendek yüzünde (yerel y < 0) sık
 		float eh = h21(vec2(bid * 1.7 + 2.0, ci + 3.0));
 		float ez = vn(vec2(u * 0.18, y * 0.3) + 7.0);
@@ -262,6 +264,8 @@ void fragment() {
 		// SUR-5: sıcak, koyu kireçtaşı döşeme (gölgede gök ışığıyla camgöbeği karo okunuyordu); taş taş ton ve aşınma
 		float tn2 = h21(floor(q) + 7.3);
 		vec3 dos = tas * vec3(1.06, 0.9, 0.74) * (0.66 + 0.24 * tn + 0.06 * tn2);   // gök ışığı (mavi) × sarı = yeşile kaçmasın: kızıla çekik
+		// TUR-10: eğik yüz (diş omzu, kırık tepe) döşeme değil yontulmuş taş: taş tonu (pembe-kahve "çatı" okunmasın)
+		dos = mix(tas * (0.74 + 0.2 * tn), dos, smoothstep(0.86, 0.97, abs(gnr.y)));
 		dos *= mix(0.84, 1.0, smoothstep(0.03, 0.16, fq_k));
 		dos *= 1.0 - 0.22 * smoothstep(0.5, 0.9, vn(wpos.xz * 0.35));
 		dos *= 1.0 + 0.12 * (vn(wpos.xz * 14.0) - 0.5);
@@ -306,6 +310,7 @@ static func mat(tur: int, renk := Color.WHITE, yerel_dip := true) -> ShaderMater
 	m.set_shader_parameter("renk", renk)
 	m.set_shader_parameter("tur", float(tur))
 	m.set_shader_parameter("yerel_dip", 1.0 if yerel_dip else 0.0)
+	m.set_shader_parameter("gece", _gece)
 	_mats[key] = m
 	return m
 
@@ -389,7 +394,11 @@ static func gece_payi(vp: Viewport) -> float:
 	return 1.0 - smoothstep(0.1, 0.32, lum)
 
 
+static var _gece := 0.0
+
+
 static func gece_ver(g: float) -> void:
+	_gece = g
 	for m: ShaderMaterial in _mats.values():
 		m.set_shader_parameter("gece", g)
 

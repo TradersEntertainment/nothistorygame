@@ -84,6 +84,26 @@ func _kos() -> void:
 		"y5_dis_sur_yolu_boyunca": [Vector3(m1.x - 1.0, OH + 1.62, a.zc_dis()), Vector3(m1.x + 12.0, OH + 1.0, zo1 - 0.2)],
 		"y6_dis_sira_ustten_1m": [Vector3(m1.x - 0.5, OH + 2.3, zd - 1.0), Vector3(m1.x + 3.0, OH + 1.6, zo1)],
 	}
+	# fıçılar (ÖNCE: 0,84×0,95 silindir; SONRA: karınlı fıçı 0,66×0,92): sur yolundaki (korkuluk üstü stauroma) ve gedikteki
+	var fici_ust: Vector3 = Vector3.INF
+	var fici_alt: Vector3 = Vector3.INF
+	for fm in (k["kok"] as Node).find_children("*", "MeshInstance3D", true, false):
+		var m: Mesh = (fm as MeshInstance3D).mesh
+		if m == null:
+			continue
+		var bb := m.get_aabb()
+		if bb.size.y < 0.9 or bb.size.y > 0.96 or bb.size.x < 0.6 or bb.size.x > 0.86:
+			continue
+		var gp := (fm as Node3D).global_position
+		if gp.y > OH and (fici_ust == Vector3.INF or absf(gp.x - gx) < absf(fici_ust.x - gx)):
+			fici_ust = gp
+		if gp.y < OH - 4.0 and (fici_alt == Vector3.INF or absf(gp.x - gx) < absf(fici_alt.x - gx)):
+			fici_alt = gp
+	if fici_ust != Vector3.INF:
+		kam["y7_fici_sur_yolu_2m"] = [Vector3(fici_ust.x + 1.6, OH + 1.62, fici_ust.z - 1.6), fici_ust + Vector3(-0.5, -0.4, 0)]
+	if fici_alt != Vector3.INF:
+		kam["y8_fici_gedik_2m"] = [fici_alt + Vector3(1.6, 1.2, -1.4), fici_alt + Vector3(-0.6, -0.1, 0)]
+	print("TUR10YAKIN fici ust=%s alt=%s" % [fici_ust, fici_alt])
 	for ad: String in kam:
 		var c: Array = kam[ad]
 		cam.global_position = c[0]
