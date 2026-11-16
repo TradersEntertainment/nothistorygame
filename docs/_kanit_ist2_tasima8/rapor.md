@@ -39,7 +39,7 @@ Eski sette her sorgu `SurSet.eski()` üzerinden `LandWalls` sabitinin AYNISINI v
 | Fıçılar `BLOCKS` | (12,6; 3,2), (14,6; 2,2); +z'ye yuvarlanır | (15,35; 3,2), (13,95; 2,8); +x'e yuvarlanır | taşıma yolu soldan iner; tween aynı (yalnız yön) |
 | Sancak kulesi | (16; 11; 17) | (35,39; 13,12; 16,7) | gediğe en yakın kurulu dış kule `dis_kule_tepe` − 0,6 z |
 | Komutan / savunucu sırası | BREACH + ofset (z 12 / 12,3–11,95) | gedik önüne hizalı `_gp` (z 11,2 / 11,5–11,15) | eski teslim yeri 11,6 ↔ yeni `gedik_onu` 10,8 |
-| 5 hücum merdiveni | x −10,5; 9,5; −24; 22; 28 (9 m, 16°, ayak z 18,6) | x −10,5; 11,8; −24; 23; 17,5 (14,35 m, 16°, ayak teras y −3,675, z 20,68) | `SurSet.hucum_merdivenleri(lx, 40)`; gediğin iki yanı, `Garrison`/`SiegeChaos` alanı içinde; eski sıraya en yakın eşleme (ilki gediğin solu) |
+| 5 hücum merdiveni | x −10,5; 9,5; −24; 22; 28 (9 m, 16°, ayak z 18,6) | x −14,1; 12,0; −23,1; 22,8; 17,4 (14,35 m, 16°, ayak teras y −3,675, z 20,68) | `SurSet.hucum_merdivenleri(lx, 40, stauroma + kazanlar)` → en yakın mazgal açıklığı (`_acikliga`); gediğin iki yanı, `Garrison`/`SiegeChaos` alanı içinde; eski sıraya en yakın eşleme (ilki gediğin solu) |
 | Kazanlar | (±8,6; 8; 15) | (±8,6; 8,62; 15,3) | `dis_yol_y/z` |
 | Taşıyıcı/onarım ekibi | DEPOT(−2,6; 2,6) → BREACH − 3,4 / BREACH − 2,6 | depo (−14,1; 6,8) → `gedik_onu` / `_gp` | |
 | Yedek bölükler | (−18; 8), (22,5; 9) | (−18; 8), (24; 7,4) | ikincisi peribolos eteğinin dışına |
@@ -155,24 +155,24 @@ aynı sancak kulesini (x 35,4) ve aynı Romanos kapısını kullanır. Bölüm 2
 |---|---|---|
 | 01 açılış | Gece peribolos: gedikte komutan ve savunucu sırası, kazık çit, meşale, solda ok sandığı; kutu yok (sandık bir sandık), havada yok, herkes zemine basıyor, aynı ressam; **eskisinden sönük**: peribolos daha seyrek (alan dar, kalabalık gedikte toplanmış). | eski kutu duvarlar, peribolos kalabalık |
 | 02 ok demeti | Açık sandıkta ok demetleri, arkada deponun kalas yığını; oturuyor, havada yok; eskisiyle aynı yakınlık. | aynı |
-| 03 merdiven/azap | Sur yolundan: mazgal açıklığına dayalı merdivenin iki direği, korkuluğun ardında azabın sarığı (yarısı dişin arkasında), sağda sur yolunda savunucular, önde stauroma fıçıları; havada yok; **eskisinden sönük**: dişli 1,2 m korkuluk azabı yarı saklıyor (ilk çekimde azap merdivenin eğimine değil dikine konmuştu: kare kurgusu hatası, havadaydı — düzeltildi, yeniden çekildi). | eskide kutu korkuluğun üstünde azap bütün görünür |
+| 03 merdiven/azap | Sur yolundan: azap merdivenin tepesinde, mazgal açıklığından gövdesiyle sur yoluna çıkıyor (ayakları korkuluğun ardında merdivende), arkada sur yolunda stauroma fıçıları, kazanın ateşi ve kazancı; havada yok, aynı ressam (önceki iki çekimde kare kurgusu hatalıydı: azap merdivenin dikine/korkuluğun altına konmuştu — düzeltildi). | eskide alçak kutu korkuluğun üstünde azap, önde savunucu |
 | 04 kazan | Sur yolunda kazancı ve savunucu, kazanın ateşi, sağda korkuluğa yaslı stauroma fıçıları ve kazık, iki yanda dişler; oturuyor, havada yok; eskisinden zengin. | eskide kazancının sırtı + kutu korkuluk |
 | 05 barikat | Savunucuların arasından aşama-2 barikatı (kazık, fıçı, kum torbası); yakın kadraj, havada yok. | aynı kadraj |
 | 06 poterna | İç surda kemerli küçük kapı, kanat peribolosa açık, karanlık geçit, fenerli nöbetçi, sağda yuvarlanmış fıçı; kapı eteğin üstüne oturuyor; **iyi**. | eskide kutu kanatlı kapı |
 | 07 taşıma | Giustiniani sırtüstü taşınma pozunda (ayak ucundan), arkada baş ucundaki taşıyıcı; yakın, eskisiyle aynı kadraj. | aynı |
 | 08 kapı/final | Caddeden Romanos iç kapısı açık, koridorda beyaz atlı Sultan, ötede dış kapı; **kötü**: kapının iki yanında iç surun dibinde kutu gibi gri taş blokları (görünüşe istek 3). | eskide açık kutu kapıdan gedik |
 
-#### Bütçe (26; aynı kod, aynı anlamdaki kamera; `TASIMA8KARE … cizim ilkel`, 4 karenin ortalaması)
+#### Bütçe (26; aynı kod, aynı anlamdaki kamera; `TASIMA8KARE … cizim ilkel`, 4 karenin ortalaması; son seri)
 | Kare | Eski çizim / ilkel | Yeni çizim / ilkel | Sınır (yeni ≤ eski + %5) |
 |---|---|---|---|
 | 01 açılış | 10327 / 12,19 M | 6434 / 8,03 M | ✓ |
 | 02 ok demeti | 1152 / 3,08 M | 840 / 1,59 M | ✓ |
-| 03 merdiven | 6830 / 10,27 M | 6318 / 9,51 M | ✓ |
-| 04 kazan | 9350 / 10,15 M | 7391 / 8,17 M | ✓ |
-| 05 barikat | 7714 / 11,80 M | 7462 / 10,93 M | ✓ |
-| 06 poterna | 1051 / 4,30 M | 512 / 1,85 M | ✓ |
-| 07 taşıma | 911 / 3,55 M | 593 / 2,18 M | ✓ |
-| 08 kapı/final | 8068 / 11,31 M | 2342 / 3,84 M | ✓ |
+| 03 merdiven | 9451 / 10,70 M | 6408 / 8,31 M | ✓ |
+| 04 kazan | 9460 / 10,21 M | 6700 / 8,07 M | ✓ |
+| 05 barikat | 7462 / 11,73 M | 7236 / 10,72 M | ✓ |
+| 06 poterna | 1035 / 4,19 M | 513 / 1,89 M | ✓ |
+| 07 taşıma | 871 / 3,67 M | 600 / 2,26 M | ✓ |
+| 08 kapı/final | 8719 / 11,42 M | 2175 / 3,79 M | ✓ |
 
 ### 2.2 Kareler (26o) — `kare/26o/eski_an_NN_*.jpg` | `kare/26o/yeni_an_NN_*.jpg`
 | Kare | Yeni (tek cümle) | Eski ↔ yeni |
@@ -193,3 +193,30 @@ aynı sancak kulesini (x 35,4) ve aynı Romanos kapısını kullanır. Bölüm 2
 | 04 dolgu | 3117 / 2,59 M | 2623 / 2,33 M | ✓ |
 | 05 tırmanış | 1120 / 2,05 M | 964 / 1,37 M | ✓ |
 | 06 sancak | 1197 / 2,86 M | 2241 / 3,87 M | **✗ (+87 % / +35 %)**: eski karede bir savunucunun miğferi kadrajın yarısını örtüyor ve eski kule ovayı kapatıyor; yeni kamera kule basamağında (y 11), ovaya ve ordugâha açık bakıyor. Aynı noktadan bakış değil; kök neden ölçülmedi (ova SiegeField'in çizim sayısı görünüşe ait). |
+
+## Hâlâ kötü olanlar (dürüst)
+1. **Merdiven boyu**: teras dış surun 3,7 m altında (sözleşme dondu) → hücum merdivenleri 14,35 m (eski 9 / 8,6). 26'da 1. dalga
+   (merdiven başı) ≈ 35,6 sn (eski ≈ 31); `hold_lose`'da pasif bot tırmananları itmeye devam ettiği için dalga 75 sn sınırına
+   dayanıyor (eski 28 sn'de bot yere düşüyordu; test iki sette PASS). 26o tırmanışı 11–27 sn (eski 8,5).
+2. **Sancak**: iki bölümde de düz kırmızı levha (`Props.box`, eski kod) — kutu gibi; setin kumaş bayrağına (taban: bayrak
+   kumaşı) geçirilmedi.
+3. **26o pavez siperleri** kutu gibi (eski kod, iki sette aynı).
+4. **Romanos iç kapısının iki yanında** iç surun dibinde kutu gibi gri taş blokları (kare 26/08) — görünüşe istek 3.
+5. **26 açılış** peribolosu eskisinden seyrek görünüyor (alan dar: iç surun ve dış surun etekleri arası 8,2 m; eski 10,6).
+6. **26 merdivenleri yeniden yerleşti**: stauroma fıçıları (sur ayrıntısı) ve kazanlar merdiven başını kapatıyordu, merdiven
+   bir dişin önüne düşüyordu: `SurSet.stauroma_xs` + kazan kaçınması + mazgal açıklığına oturtma. Son yerler x −14,1; 12,0; −23,1; 22,8; 17,4.
+7. **26o bütçe**: sancak karesi eskiden %87 fazla çizim (kamera açık ovaya bakıyor; eski karede miğfer kadrajı örtüyor).
+8. **İç poterna** eteğin tepesinde (eşik peribolosun 0,73 m üstünde) — görünüşe istek 2.
+9. **Final geçişi** gedikten Romanos'a karartmayla (57 m teras yürüyüşü gösterilmez).
+
+## Değişen dosyalar
+- `scripts/world/ist/sur_oyun.gd` (EKLEME: `ic_poterna()`, `kur` seçenekleri `ic_poterna`, `romanos_kanat`, `romanos_kopru`)
+- `scripts/world/ist/sur_oyun_parca.gd` (`Poterna.kur_ic`, `_otur_ic`; varsayılan `kur` aynı)
+- `scripts/world/ist/sur_set.gd` (`ic_poterna`, `romanos`, `sehir_ofs`, `dolgu_ust`, `dolgu_y`, `stauroma_xs`;
+  `hucum_merdivenleri(…, kacin)` isteğe bağlı)
+- `scripts/world/ist/sur_set_sahne.gd` (`ic_poterna`, `romanos_kanat`, `romanos_kopru`, `open_inner_gate`, `ic_poterna_ac`)
+- `scripts/level/siege_chaos.gd` (`sur` kancası), `scripts/level/fallen_city.gd` (`yer` konum parametresi)
+- `scripts/chapter26.gd`, `scripts/chapter26o.gd`
+- `tests/_ist/tasima8_kare.gd/.tscn` (parça kareleri), `tests/_ist/tasima8_sonda.gd` (yerler)
+- `surlar_kapi.gd` DEĞİŞMEDİ (seçenek kopyası yeterli oldu); `assault.gd`, `garrison.gd`, `wall_fight.gd` DEĞİŞMEDİ (var olan
+  `sur` kancaları yetti).

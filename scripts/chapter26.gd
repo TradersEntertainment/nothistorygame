@@ -297,7 +297,9 @@ func _build_walls_scene() -> void:
 		for sx: float in [-1.0, 1.0]:
 			fight.add_cauldron(Vector3(sx * 8.6, sur.dis_yol_y(), sur.dis_yol_z()), 2640 + int(sx))
 		fight.add_carriers(sur.depo() + Vector3(-2.6, 0, 2.6), sur.gedik_onu(), 4, 2650)
-		fight.add_builders(_gp(Vector3(0, 0, -2.6)), 2, 2660)
+		# yeni sette barikatın dibinde (savunucu sırasının 1 m önü): sıranın içinde duran çekiççinin yanına dinlenen dost
+		# düellocu geliyordu (VISAUDIT overlap, nophoto)
+		fight.add_builders(_gp(Vector3(0, 0, -2.6)) if sur.eski_mi else sur.gedik_onu() + Vector3(0, 0, 1.6), 2, 2660)
 		Garrison.squad(self, Vector3(-18.0, 0, 8.0), 5, 2, 0.0, 2610, "spear_shield", true)
 		Garrison.squad(self, Vector3(22.5, 0, 9.0) if sur.eski_mi else Vector3(24.0, 0, 7.4), 4, 2, 0.0, 2620, "spear_shield", true)
 		# Gerçek savaş (Bölüm 0'daki gibi): kalkanını başına kaldırıp koşanlar, ok yiyip devrilenler, yerde yatanlar,
@@ -2863,11 +2865,11 @@ func _t8_yuru() -> void:
 		var az := Soldier.new(Color("8a6a4a"), "stand", "turban")
 		add_child(az)
 		# merdivenin üstünde, tepeye yakın (basamağa basar: eğim boyunca, ön yüzünde)
-		az.global_position = lad.point_at(lad.height * 0.86) + lad.front_dir() * 0.3
+		az.global_position = lad.point_at(lad.height - 1.2) + lad.front_dir() * 0.3
 		az.rotation.y = PI
 		az.set_meta("no_audit", true)
 		# kadraj: merdiven başının 2,6 m yanından, korkuluğun üstüne çıkan azaba
-		var kx := lad.position.x - 2.6 * signf(lad.position.x)
+		var kx := lad.position.x + 2.6 * signf(lad.position.x)      # gedikten uzak yan (stauroma gedik yanında)
 		player.global_position = Vector3(kx, sur.dis_yol_y() + 0.05, 14.7 if sur.eski_mi else sur.dis_yol_ic_z())
 		await _t8_bekle(0.3)
 		player.face(az.global_position + Vector3(0, 1.4, 0))
