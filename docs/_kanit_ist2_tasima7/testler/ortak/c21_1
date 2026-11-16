@@ -1,0 +1,2 @@
+AUTOTEST PASS chapter=21 variant= outcome=21.1 bowls=2 tunnel=leb talk=talk trust=3 captive=false next= sur=yeni
+KOSU rc=0 sure=15 args=--chapter=21 --autotest

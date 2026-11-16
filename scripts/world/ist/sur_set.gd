@@ -22,6 +22,9 @@ static var etkin: SurSet = null
 
 var eski_mi := true
 var ad := "eski"
+## TAŞIMA-7: sağlam sur kipi (TUR-11 SurOyun.saglam_yap; 28o 11 Nisan, 36b 9 Nisan: bombardıman başlamadı). Çerçeve aynı
+## (gedik x 0 = varsayılan kipin oyun gediğinin yeri), ama sur gediksiz: moloz yok, sur yolu sürekli. Varsayılan false.
+var saglam := false
 var a: RefCounted = null            # SurOyun arayüzü (yeni)
 var d: Dictionary = {}              # donmuş kesit (yeni)
 var ofs := Vector3.ZERO             # SurOyun yereli → bölüm çerçevesi
@@ -38,7 +41,7 @@ static func eski() -> SurSet:
 	return s
 
 
-static func yeni(kesim := "mesoteikhion") -> SurSet:
+static func yeni(kesim := "mesoteikhion", p_saglam := false) -> SurSet:
 	var s := SurSet.new()
 	s.eski_mi = false
 	s.ad = kesim
@@ -46,9 +49,14 @@ static func yeni(kesim := "mesoteikhion") -> SurSet:
 	s.d = s.a.d
 	# çerçeve: gedik x = 0, peribolos toprağı y = 0, dış surun iç yüzü z = 14 (LandWalls.OUTER_Z0)
 	s.ofs = Vector3(-float(s.a.gx), -float(s.a.y_peri()), LandWalls.OUTER_Z0 - float(s.d["zo0"]))
-	var pr: Dictionary = SurOyun.AG.moloz_profil(s.a)
-	for p: Vector2 in pr["pts"]:
-		s._moloz.append(Vector2(p.x + s.ofs.z, p.y + s.ofs.y))
+	if p_saglam:
+		# sağlam kip: çerçeve varsayılan kipin gediğinden (TUR-11 notu: gx gerekirse varsayılanın değeri); sonra gediksiz kopya
+		s.saglam = true
+		s.a.saglam_yap()
+	else:
+		var pr: Dictionary = SurOyun.AG.moloz_profil(s.a)
+		for p: Vector2 in pr["pts"]:
+			s._moloz.append(Vector2(p.x + s.ofs.z, p.y + s.ofs.y))
 	for r: Rect2 in s.a.engeller():
 		s._engel.append(Rect2(r.position + Vector2(s.ofs.x, s.ofs.z), r.size))
 	return s
@@ -68,8 +76,8 @@ static func eski_istendi(bolum: String, sabit := false) -> bool:
 
 
 ## Bölümün sur seti: eski ya da yeni (SurSet.eski_istendi ile seçilir).
-static func sec(bolum: String, sabit := false, kesim := "mesoteikhion") -> SurSet:
-	return eski() if eski_istendi(bolum, sabit) else yeni(kesim)
+static func sec(bolum: String, sabit := false, kesim := "mesoteikhion", p_saglam := false) -> SurSet:
+	return eski() if eski_istendi(bolum, sabit) else yeni(kesim, p_saglam)
 
 
 ## SurOyun yereli → çerçeve
@@ -105,6 +113,8 @@ func gedik_en() -> float:
 func gedik_bosluk() -> float:
 	if eski_mi:
 		return LandWalls.BREACH_W * 0.5 + LandWalls.EDGE_W
+	if saglam:
+		return 0.0                # sağlam: sur yolu gedik yerinde de sürekli
 	return IstSurlar.GEDIK_W * 0.5 + 0.5
 
 

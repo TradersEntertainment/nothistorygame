@@ -1724,8 +1724,10 @@ func _kare(ad: String) -> void:
 	if dir == "":
 		return
 	DirAccess.make_dir_recursive_absolute(dir)
+	preload("res://tests/_ist/tasima7_pik.gd").uygula(self)
 	for k in 20:
 		await get_tree().process_frame
+	preload("res://tests/_ist/tasima7_pik.gd").yaz(self, ad)      # --pik7=x,y;… (TAŞIMA-7 sondası; argümansız hiçbir şey yapmaz)
 	# bütçe: bu bakışta 4 karenin ortalama çizim çağrısı ve ilkel sayısı (eski ↔ yeni aynı kameradan)
 	var dc := 0.0
 	var pr := 0.0

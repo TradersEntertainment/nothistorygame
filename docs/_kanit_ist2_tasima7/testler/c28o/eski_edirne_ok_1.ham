@@ -1,0 +1,24 @@
+Godot Engine v4.4.1.stable.official.49a5bc7b6 - https://godotengine.org
+
+WARNING: Screen-space ambient occlusion (SSAO) can only be enabled when using the Forward+ renderer.
+     at: environment_set_ssao (servers/rendering/storage/environment_storage.cpp:586)
+WARNING: Screen-space indirect lighting (SSIL) can only be enabled when using the Forward+ renderer.
+     at: environment_set_ssil (servers/rendering/storage/environment_storage.cpp:661)
+HELDDEFAULT scene=chapter28o item=tape
+SAYDIST key=D28O_U_STAKES scene=chapter28o.tscn speaker=SPK_URBAN d=6.5
+SAYDIST key=D28O_U_ROAD_OK scene=chapter28o.tscn speaker=SPK_URBAN d=6.6
+WORLDWALK region= shapes=9835 boxes=9106 tris=282884 ms=1325
+CITYLIFE region= src=plan era=siege night=false density=0.85 nodes=1026 plazas=19 landmarks=23
+LOOKAUDIT raw Person(urban)[SPK_URBAN] chapter28o.tscn 138 kind=walk act= pose=<null> look=@CharacterBody3D@80 talking=false pos=(9.1, 0.0, 128.1)
+WARN_PORTRAIT_STUDIO speaker=SPK_SOLDIER key=D28O_S_BALL scene=chapter28o.tscn
+SAYDIST key=D28O_U_PLACED scene=chapter28o.tscn speaker=SPK_URBAN d=10.4
+SAYDIST key=D28O_F_01 scene=chapter28o.tscn speaker=SPK_FATIH d=9.5
+CREW impact hit=true at=(-0.1, 4.6, 19.0) target=(0.0, 4.0, 15.0) t=1.08 speed=87.9 elev=5.0 yaw=5.2
+TESPITBLOCK who=siege28o blocker=Skeleton/Mesh (MeshInstance3D) at=(9.1, 0.0, 126.9) eye=(9.1, 1.6, 126.9) dist=108.4
+SAYDIST key=D28O_F_02 scene=chapter28o.tscn speaker=SPK_FATIH d=6.2
+AUTOTEST PASS chapter=28o variant=edirne_ok outcome=28O.1 stakes=4 slips=0 hit=true master=false roller_every=6.0 rollers=1 sur=eski
+WARNING: ObjectDB instances leaked at exit (run with --verbose for details).
+     at: cleanup (core/object/object.cpp:2378)
+ERROR: 1 resources still in use at exit (run with --verbose for details).
+   at: clear (core/io/resource.cpp:614)
+KOSU rc=0 sure=23 args=--chapter=28o --autotest=edirne_ok --eskisur

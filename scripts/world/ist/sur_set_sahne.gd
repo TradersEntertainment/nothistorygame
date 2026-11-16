@@ -34,7 +34,7 @@ var depo_kaydir := Vector3.ZERO
 
 func _enter_tree() -> void:
 	if sur == null:
-		sur = SurSet.yeni(kesim_id)
+		sur = SurSet.yeni(kesim_id, intact)      # intact (eski setin 28o/36b seçeneği) → sağlam sur kipi (TAŞIMA-7)
 	SurSet.etkin = sur
 	# Bu setin zemin ve duvar gövdelerinin görünen ağı pişirilmiş kardeş düğümde (gövdenin çocuğu değil): Duelist'in düşüşü
 	# (_fall_tick) onları görünmez sayıp içinden geçiyordu (atılan düellocu y −128'e; tasima4 §3). Bölüm düğümü bu metayı
@@ -84,7 +84,7 @@ func _ready() -> void:
 	cer.transform = sur.cerceve()
 	add_child(cer)
 	kesim = SurOyun.kur(kesim_id, {"ebeveyn": cer, "dunya": false, "asama": 1, "dolgu": dolgu, "kalas": kalas,
-		"poterna_acik": poterna_acik, "merdiven": []})
+		"poterna_acik": poterna_acik, "merdiven": [], "saglam": sur.saglam})
 	ms = (kesim["ms"] as Dictionary).duplicate()
 	gedik_onarim = kesim["parca"].get("gedik")
 	# Kesimin düz ova levhası görünmez (çarpışması kalır): ova görüntüsü SiegeField'in arazisidir (aynı düzlemde iki yüzey
@@ -95,7 +95,8 @@ func _ready() -> void:
 	_orticuler()
 	var t1 := Time.get_ticks_usec()
 	_build_depot()
-	_build_breach_set()
+	if not sur.saglam:
+		_build_breach_set()      # sağlam surda gedik yok (eski set intact: _build_breach kurulmaz)
 	_build_field()
 	_harita()
 	ms["set_ms"] = (Time.get_ticks_usec() - t1) / 1000.0

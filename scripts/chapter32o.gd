@@ -171,6 +171,8 @@ func _ready() -> void:
 	if GameState.shots_dir != "":
 		_run_shots()
 	else:
+		if _yuru_on():
+			_yuru_surucu()
 		_run()
 
 
@@ -306,11 +308,40 @@ var _rung_root: Node3D
 var _back_bar: Node3D      # ovanın arka sınırı: topun güllesinin yolunda, batarya fazında kalkar
 
 
+## Çalı demeti (fascine): ekseni boyunca bağlanmış dokuz ince dal (boyları ve tonları farklı, uçları düzensiz), iki ip bağı.
+## Kök düğüm pos'ta, rot (derece) ile döner; dalların ekseni kökün y'si (Props.cyl gibi). Kutu değil.
+func _demet(parent: Node3D, pos: Vector3, rot: Vector3, r: float, boy: float, col: Color) -> Node3D:
+	var n := Node3D.new()
+	parent.add_child(n)
+	n.position = pos
+	n.rotation_degrees = rot
+	var rr := RandomNumberGenerator.new()
+	rr.seed = 3207 + _demet_n
+	_demet_n += 1
+	for i in 9:
+		var a := TAU * float(i) / 8.0
+		var o := Vector2.ZERO if i == 8 else Vector2(cos(a), sin(a)) * r * 0.6
+		var L := boy * rr.randf_range(0.9, 1.06)
+		Props.cyl(n, r * 0.34, L, Vector3(o.x, rr.randf_range(-0.06, 0.06) * boy, o.y), col.darkened(rr.randf_range(0.0, 0.3)).lightened(rr.randf_range(0.0, 0.08)),
+			Vector3(rr.randf_range(-3.0, 3.0), 0, rr.randf_range(-3.0, 3.0)), 6, r * rr.randf_range(0.22, 0.3))
+	for y: float in [-0.3, 0.3]:
+		Props.cyl(n, r * 1.02, 0.06, Vector3(0, y * boy, 0), Color("8a7a50"), Vector3.ZERO, 10)
+	return n
+
+var _demet_n := 0
+
+
 func _mantlet(at: Vector3) -> Node3D:
 	var m := Node3D.new()
 	m.position = at
 	add_child(m)
-	Props.make_solid(Props.box(m, Vector3(2.4, 2.0, 0.14), Vector3(0, 1.25, 0), Color("6a4a2c")))
+	# perde: dikine kalaslar (boyları ve tonları farklı, araları ince yarık; 36b'nin mantosu gibi). Eskiden tek düz levhaydı:
+	# arkasına sığınınca kameranın dibinde koca bir kutu okunuyordu (TAŞIMA-7, 32o an_04). Çarpışma aynı kutu, görünmez.
+	var sv := Props.solid(m, Vector3(2.4, 2.0, 0.14), Vector3(0, 1.25, 0), Color.WHITE)
+	sv.get_child(0).visible = false
+	for k in 8:
+		var hk := 2.0 + (0.1 if k % 3 == 1 else (0.04 if k % 3 == 2 else 0.0))
+		Props.box(m, Vector3(0.285, hk, 0.12), Vector3(-1.05 + k * 0.3, 0.25 + hk * 0.5, 0.0), Color("6a4a2c").darkened(0.05 * (k % 3)).lightened(0.03 * (k % 2)))
 	for y: float in [0.6, 1.9]:
 		Props.box(m, Vector3(2.45, 0.12, 0.18), Vector3(0, y, 0.02), Color("4a3422"))
 	for sx: float in [-1.0, 1.0]:
@@ -349,7 +380,7 @@ func _build_people() -> void:
 		var x: float = [-22.0, -17.0, 17.0, 22.0][i]
 		c.position = Vector3(x, 0, 52.0 - i * 3.0) + O
 		add_child(c)
-		var b := Props.cyl(c, 0.28, 1.5, Vector3(0, 1.45, -0.1), Color("6a5636"), Vector3(0, 90, 90), 6)
+		var b := _demet(c, Vector3(0, 1.45, -0.1), Vector3(0, 90, 90), 0.28, 1.5, Color("6a5636"))
 		_carriers.append([c, b, Vector3(x, O.y, EDGE_Z + 1.2)])
 	for k in 2:
 		var ps := Soldier.new(Color("8a6a4a"), "push", "turban" if k == 0 else "bork")
@@ -418,6 +449,9 @@ func _run() -> void:
 	await _herald()
 	await _ditch()
 	await _ladders()
+	if _yuru_on():
+		_yuru_bitir()
+		return
 	await _guns()
 	await _evening()
 	await _silence()
@@ -468,7 +502,7 @@ func _herald() -> void:
 				1: hud.bark("SPK_HERALD", "D32O_TL_02", 4.2)
 				_: hud.bark("SPK_HERALD", "D32O_TL_03", 4.2)
 			k += 1
-		if GameState.autotest and t > 14.0:
+		if GameState.autotest and t > 14.0 and not _yuru_on():
 			player.global_position = azap.global_position + Vector3(0, 0.05, 2.4)
 	hud.set_objective("")
 	player.frozen = true
@@ -506,7 +540,7 @@ func _ditch() -> void:
 			continue
 		var dt := get_process_delta_time()
 		t += dt
-		if GameState.autotest:
+		if GameState.autotest and not _yuru_on():
 			await _bot_ditch(late)
 			if late and bundles >= 4:
 				t = limit
@@ -619,9 +653,9 @@ func _pick(kind: String) -> void:
 	match kind:
 		"bundle":
 			_carry.position = Vector3(0.45, -0.55, -0.9)
-			Props.cyl(_carry, 0.3, 1.6, Vector3.ZERO, Color("6a5636"), Vector3(0, 70, 90), 6)
-			for x: float in [-0.4, 0.4]:
-				Props.cyl(_carry, 0.31, 0.06, Vector3(x * 0.34, 0, x), Color("8a7a50"), Vector3(0, 70, 90), 6)
+			# çalı demeti: bağlı ince dallar (tek altı köşeli silindir kameranın dibinde iri, kutu gibi bir levha okunuyordu:
+			# TAŞIMA-7, 32o an_02); iki ip bağı
+			_demet(_carry, Vector3.ZERO, Vector3(0, 70, 90), 0.3, 1.6, Color("6a5636"))
 			player.speed_mult = 0.7
 			Audio.sfx("cloth", -8.0, 0.8)
 		"earth":
@@ -665,7 +699,7 @@ func _throw_in(kind: String) -> void:
 	var to := _hendek_p(x + randf_range(-1.0, 1.0), randf_range(29.0, 34.0), 0.3 + layer * 0.35)
 	var n: Node3D
 	if kind == "bundle":
-		n = Props.cyl(self, 0.32, 1.8, from, Color("6a5636").darkened(randf_range(0.0, 0.25)), Vector3(0, randf_range(-30, 30), 90), 6)
+		n = _demet(self, from, Vector3(0, randf_range(-30, 30), 90), 0.32, 1.8, Color("6a5636").darkened(randf_range(0.0, 0.25)))
 	else:
 		n = Props.ball(self, 0.7, from, Color("6a5236"), Vector3(1.4, 0.35, 1.2), 7)
 	var tw := n.create_tween()
@@ -851,7 +885,7 @@ func _update_carriers(delta: float) -> void:
 		if d.length() < 0.3:
 			if bundle.visible:
 				bundle.visible = false
-				var n := Props.cyl(self, 0.3, 1.6, s.position + Vector3(0, 1.4, -0.6), Color("6a5636"), Vector3(0, randf_range(-30, 30), 90), 6)
+				var n := _demet(self, s.position + Vector3(0, 1.4, -0.6), Vector3(0, randf_range(-30, 30), 90), 0.3, 1.6, Color("6a5636"))
 				var to := _hendek_p(s.position.x + randf_range(-1, 1), randf_range(29.0, 34.0), 0.3)
 				var tw := n.create_tween()
 				tw.tween_property(n, "position", to, 0.7).set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_IN)
@@ -916,6 +950,7 @@ func _greek_fire_end(out: bool) -> void:
 # ---------------------------------------------------------------- 2. merdiven ve manto
 
 var _rung_press := false
+var _rung_iyi := false            # işaret ortada ve tezgâhın yanında (yalnız =yuru botu okur)
 
 
 func _ladders() -> void:
@@ -946,11 +981,12 @@ func _ladders() -> void:
 		# İşaret: çivi yeri gidip gelir; ortadayken E
 		var v := 0.5 + 0.5 * sin(t * 3.2)
 		var good := absf(v - 0.5) < 0.14
+		_rung_iyi = good and near
 		if near:
 			hud.set_qte(tr("UI_QTE32O_RUNG") + "  " + _meter(v))
 		else:
 			hud.set_qte("")
-		if GameState.autotest:
+		if GameState.autotest and not _yuru_on():
 			_rung_press = good and fmod(t, 0.9) < dt * 3.0
 		if _rung_press and near:
 			_rung_press = false
@@ -989,10 +1025,10 @@ func _ladders() -> void:
 		var behind := player.global_position.z > mantlet.global_position.z and \
 			Vector2(player.global_position.x - mantlet.global_position.x, player.global_position.z - mantlet.global_position.z).length() < 3.0
 		hud.set_prompt(tr("UI_PROMPT32O_PUSH") if behind else "")
-		if GameState.autotest:
+		if GameState.autotest and not _yuru_on():
 			player.global_position = mantlet.global_position + Vector3(0, 0.05, 1.8)
 			behind = true
-		if behind and (Input.is_action_pressed("interact") or GameState.autotest):
+		if behind and (Input.is_action_pressed("interact") or (GameState.autotest and not _yuru_on())):
 			mantlet.global_position.z -= 1.4 * dt
 			if fmod(t, 0.5) < dt:
 				Audio.sfx("wood_creak", -10.0, randf_range(0.9, 1.1))
@@ -1534,3 +1570,277 @@ func _run_shots() -> void:
 func _light_fire_quiet(i: int) -> void:
 	_fire_spots[i].set_meta("lit", true)
 	_fire_lights.append(Night.campfire(self, _fire_spots[i].global_position, 1.0))
+
+
+# ================================================================ yürüyüş kanıtı (=yuru) ve kareler (=kare) — TAŞIMA-7
+
+## Gerçek Player botu bölümün ana döngüsünü gerçek tuşlarla oynar (ileri tuşu, E): tellalın geçtiği yoldan azaba →
+## hendek: yığından çalı demeti (E) → kıyıya at (E); iki demette bir toprak sepeti (E) → kıyı (E); Rum ateşinde toprak;
+## ok yaylımı uyarısında en yakın mantonun arkasına → Usta'nın tezgâhı: işaret ortadayken E (basamak) → manto: arkasına
+## geç, E basılı it. Bölümün kendi akışı (diyaloglar, süreler: DITCH_TIME, yaylım, Rum ateşi) aynen çalışır; autotest
+## kısayolları (ışınlama, kendiliğinden basma) bu kipte kapalı. Satırlar: TASIMA32OYURU bacak=… ; son: TASIMA32OYURU OZET …
+## =kare: aynı yol, bacaklar ışınlanır; oyuncunun kamerasından 6 an (--dialogshots klasörüne an_XX_*.jpg; TASIMA32OKARE).
+var _yz := {"bacak": 0, "takilma": 0, "dusme": 0, "tus_yok": 0, "sure": 0.0, "yol": 0.0, "siper": 0}
+var _kare_n := 0
+var _kare_cekildi := {}
+
+
+func _yuru_on() -> bool:
+	return GameState.autotest and GameState.autotest_variant in ["yuru", "kare"]
+
+
+func _kare_mi() -> bool:
+	return GameState.autotest_variant == "kare"
+
+
+func _yuru_surucu() -> void:
+	await get_tree().process_frame
+	Engine.time_scale = 1.0
+	var set_ad := "eski" if sur.eski_mi else "yeni"
+	print("TASIMA32OYURU set=%s O=%s pile=%s earth=%s edge_z=%.1f covers=%s bench=%s manto=%s>%s fire_z=%.1f" % [set_ad, O,
+		PILE, EARTH, EDGE_Z, COVERS, BENCH, MANTLET_FROM, MANTLET_TO, FIRE_Z])
+	# Mesafe tablosu (düz çizgi, xz; eski ↔ yeni aynı olmalı)
+	var bas := Vector3(-14.0, 0.0, 72.0) + O
+	var azap_yeri := Vector3(2.0, 0, 46.0) + O
+	var kiyi_pile := Vector3(PILE.x, O.y, EDGE_Z + 1.6)
+	var kiyi_earth := Vector3(EARTH.x, O.y, EDGE_Z + 1.6)
+	for m: Array in [["baslangic_azap", bas, azap_yeri], ["yigin_kiyi", PILE + Vector3(0, 0, -2.0), kiyi_pile],
+			["toprak_kiyi", EARTH + Vector3(0, 0, -2.0), kiyi_earth], ["kiyi_manto0", kiyi_pile, (COVERS[0] as Vector3) + Vector3(0, 0, 1.4)],
+			["yigin_manto2", PILE + Vector3(0, 0, -2.0), (COVERS[2] as Vector3) + Vector3(0, 0, 1.4)],
+			["kiyi_tezgah", kiyi_pile, BENCH], ["manto_yolu", MANTLET_FROM, MANTLET_TO], ["tezgah_manto", BENCH, MANTLET_FROM],
+			["kiyi_hendek_ortasi", Vector3(0, O.y, EDGE_Z), _hendek_p(0.0, 28.0, 0.0)], ["kiyi_sur", Vector3(0, O.y, EDGE_Z), Vector3(0, _sur_ust_y(), _sur_dis_z())]]:
+		var a: Vector3 = m[1]
+		var b: Vector3 = m[2]
+		print("TASIMA32OMESAFE set=%s %s=%.1f dy=%.1f" % [set_ad, m[0], Vector2(a.x - b.x, a.z - b.z).length(), b.y - a.y])
+	# 0. Tellal: azaba yürü
+	while phase != "herald" or player.frozen:
+		await get_tree().process_frame
+	await _kare_bir("acilis", _gedik() + Vector3(0, _sur_ust_y() * 0.5, 0))
+	await _yb("azap", azap.global_position + Vector3(0, 0, 2.4), azap.global_position + Vector3(0, 1.6, 0))
+	# 1. Hendek
+	while phase != "ditch" or player.frozen:
+		await get_tree().process_frame
+	var ilk := true
+	while phase == "ditch":
+		if player.frozen or player.is_down:
+			await get_tree().process_frame
+			continue
+		if _vwarn >= 0.0:
+			var c := _nearest_cover(player.global_position)
+			_yz["siper"] += 1
+			await _yb_rota("siper", c + Vector3(0, 0, 1.4), Vector3(c.x, _sur_ust_y(), _sur_dis_z()))
+			# kadraj: mantonun omzunun üstünden sura (manto solda/sağda, sur ve okçular görünür)
+			player.global_position += Vector3(signf(c.x) * 0.9 if absf(c.x) > 0.1 else 0.9, 0, 0.6)
+			await _kare_bir("manto_arkasi", Vector3(c.x + (signf(c.x) if absf(c.x) > 0.1 else 1.0) * 6.0, _sur_ust_y() + 2.0, _sur_dis_z()))
+			while _vwarn >= 0.0 and phase == "ditch":
+				await get_tree().process_frame
+			continue
+		if carrying == "":
+			var need_earth := (bundles > 0 and bundles % 2 == 0 and earth < bundles / 2) or _fire_t >= 0.0
+			var hedef := EARTH if need_earth else PILE
+			if not await _yb_rota("toprak" if need_earth else "yigin", hedef + Vector3(0, 0, -2.0), hedef + Vector3(0, 0.6, 0), _vuyari):
+				continue
+			await _tus()
+			if carrying == "" and _vwarn < 0.0 and phase == "ditch":
+				_yz["tus_yok"] += 1
+				print("TASIMA32OYURU tus_yok yer=%s odak=%s" % ["toprak" if need_earth else "yigin", player.focus_id])
+			if carrying == "bundle" and ilk:
+				ilk = false
+				player.face(_hendek_p(0.0, 30.0, 0.0))
+				await _kare_bir("yigin", _hendek_p(0.0, 30.0, 0.0))
+		else:
+			var x := clampf(player.global_position.x, -11.0, 11.0)
+			if not await _yb_rota("kiyi", Vector3(x, O.y, EDGE_Z + 1.6), Vector3(x, O.y + 0.6, EDGE_Z), _vuyari):
+				continue
+			var once := carrying
+			await _tus()
+			if carrying != "" and _vwarn < 0.0 and phase == "ditch":
+				_yz["tus_yok"] += 1
+				print("TASIMA32OYURU tus_yok yer=kiyi odak=%s" % player.focus_id)
+			if once == "bundle" and carrying == "" and not _kare_cekildi.has("kiyi"):
+				player.face(_hendek_p(x, 30.0, 0.0))
+				await get_tree().create_timer(0.6, false).timeout
+				await _kare_bir("kiyi", _hendek_p(x, 30.0, 0.0))
+	# 2. Basamak: işaret ortadayken E
+	while phase != "rungs" or player.frozen:
+		await get_tree().process_frame
+	await _yb("tezgah", BENCH + Vector3(0.0, 0, 2.4), BENCH + Vector3(0, 0.8, 0))
+	await _kare_bir("tezgah", BENCH + Vector3(0, 0.8, 0))
+	var bekle := 0.0
+	while phase == "rungs" and rungs < RUNGS:
+		await get_tree().process_frame
+		bekle += get_process_delta_time()
+		if _rung_iyi:
+			var r0 := rungs + bad_rungs
+			await _tus()
+			if rungs + bad_rungs == r0:
+				_yz["tus_yok"] += 1
+				print("TASIMA32OYURU tus_yok yer=tezgah odak=%s" % player.focus_id)
+			await get_tree().create_timer(0.35, false).timeout
+		if bekle > 60.0:
+			_yz["takilma"] += 1
+			print("TASIMA32OYURU takilma yer=tezgah rungs=%d" % rungs)
+			break
+	# 3. Manto: arkasına geç, E basılı it
+	while phase != "mantlet" or player.frozen:
+		await get_tree().process_frame
+	await _yb("manto_arkasi_it", mantlet.global_position + Vector3(0, 0, 1.8), mantlet.global_position + Vector3(0, 1.2, 0))
+	var t := 0.0
+	var z0 := mantlet.global_position.z
+	Input.action_press("interact")
+	while phase == "mantlet" and mantlet.global_position.z > MANTLET_TO.z + 0.2 and t < 60.0:
+		var mp := mantlet.global_position
+		player.face(Vector3(mp.x, player.global_position.y + 1.4, mp.z))
+		var dd := Vector2(player.global_position.x - mp.x, player.global_position.z - mp.z).length()
+		if dd > 1.7:
+			Input.action_press("move_forward")
+		else:
+			Input.action_release("move_forward")
+		await get_tree().physics_frame
+		t += get_physics_process_delta_time()
+		if t > 6.0 and t < 6.0 + get_physics_process_delta_time() * 1.5:
+			await _kare_bir("manto_it", Vector3(mp.x, _sur_ust_y(), _sur_dis_z()))
+	Input.action_release("move_forward")
+	Input.action_release("interact")
+	var it_ok := mantlet.global_position.z <= MANTLET_TO.z + 0.3
+	if not it_ok:
+		_yz["takilma"] += 1
+	print("TASIMA32OYURU bacak=manto_itme sure=%.1f yol=%.1f ok=%s" % [t, z0 - mantlet.global_position.z, it_ok])
+	_yz["sure"] += t
+
+
+## Yol bir mantonun (katı perde, 2,4 m) içinden geçiyorsa yanından dolanır (oyuncu da öyle yürür): ara nokta mantonun
+## hedefe yakın ucunun 2,2 m yanı, mantonun hizasında
+func _yb_rota(ad: String, to: Vector3, bak: Vector3, iptal := Callable()) -> bool:
+	if not _kare_mi():
+		var p := player.global_position
+		for c: Vector3 in COVERS:
+			var dz0 := p.z - c.z
+			var dz1 := to.z - c.z
+			if signf(dz0) == signf(dz1) or absf(dz0) < 0.05:
+				continue
+			var k := dz0 / (dz0 - dz1)
+			var xk := lerpf(p.x, to.x, k)
+			if absf(xk - c.x) < 1.7:
+				var yan := signf(to.x - c.x) if absf(to.x - c.x) > 0.3 else (signf(p.x - c.x) if absf(p.x - c.x) > 0.3 else -1.0)
+				if not await _yb(ad + "_dolan", Vector3(c.x + yan * 2.2, O.y, c.z), bak, iptal):
+					return false
+				break
+	return await _yb(ad, to, bak, iptal)
+
+
+func _vuyari() -> bool:
+	return _vwarn >= 0.0 or phase != "ditch"
+
+
+func _yuru_bitir() -> void:
+	print("TASIMA32OYURU OZET set=%s bacak=%d takilma=%d dusme=%d tus_yok=%d sure=%.1f yol=%.1f siper=%d ok=%d demet=%d/%d toprak=%d rum_ates=%d/%d basamak=%d/%d kotu=%d manto=%s" % [
+		"eski" if sur.eski_mi else "yeni", _yz["bacak"], _yz["takilma"], _yz["dusme"], _yz["tus_yok"], _yz["sure"], _yz["yol"], _yz["siper"],
+		arrows, bundles, BUNDLES, earth, fires_out, fires_out + fires_lost, rungs, RUNGS, bad_rungs, mantlet.global_position.z <= MANTLET_TO.z + 0.3])
+	if _kare_mi():
+		print("TASIMA32OKARE BITTI")
+	get_tree().quit(0)
+
+
+## Gerçek etkileşim tuşu (bas, 3 kare, bırak)
+func _tus() -> void:
+	var ev := InputEventAction.new()
+	ev.action = "interact"
+	ev.pressed = true
+	Input.parse_input_event(ev)
+	for k in 3:
+		await get_tree().physics_frame
+	var ev2 := InputEventAction.new()
+	ev2.action = "interact"
+	ev2.pressed = false
+	Input.parse_input_event(ev2)
+	for k in 6:
+		await get_tree().physics_frame
+
+
+## Tek bacak: hedefe yürü (gerçek ileri tuşu), varınca bak. iptal() doğru olursa bacak yarıda kalır (false döner; ok
+## yaylımı uyarısı). =kare: ışınlanır.
+func _yb(ad: String, to: Vector3, bak: Vector3, iptal := Callable()) -> bool:
+	var t := 0.0
+	var yol := 0.0
+	var son := player.global_position
+	var takil := 0
+	var dus := 0
+	var best := 1e9
+	var iz := 0.0
+	var kesik := false
+	if _kare_mi():
+		player.global_position = Vector3(to.x, to.y + 0.05, to.z)
+		player.velocity = Vector3.ZERO
+	else:
+		while t < 40.0:
+			if iptal.is_valid() and iptal.call():
+				kesik = true
+				break
+			if player.frozen or player.is_down:
+				Input.action_release("move_forward")
+				await get_tree().physics_frame
+				iz += get_physics_process_delta_time()
+				t += get_physics_process_delta_time()
+				continue
+			player.face(Vector3(to.x, player.global_position.y + 1.4, to.z))
+			Input.action_press("move_forward")
+			await get_tree().physics_frame
+			t += get_physics_process_delta_time()
+			var p := player.global_position
+			yol += Vector2(p.x - son.x, p.z - son.z).length()
+			son = p
+			if player.velocity.y < -7.0:
+				dus += 1
+			var dd := Vector2(p.x - to.x, p.z - to.z).length()
+			if dd < best - 0.2:
+				best = dd
+				iz = t
+			if dd < 0.35:
+				break
+			if t - iz > 6.0:
+				takil += 1
+				break
+		Input.action_release("move_forward")
+	for k in 3:
+		await get_tree().physics_frame
+	if not kesik:
+		player.face(bak)
+		for k in 3:
+			await get_tree().physics_frame
+	_yz["bacak"] += 1
+	_yz["takilma"] += takil
+	_yz["dusme"] += dus
+	_yz["sure"] += t
+	_yz["yol"] += yol
+	print("TASIMA32OYURU bacak=%s sure=%.1f yol=%.1f takilma=%d dusme=%d kesik=%s son=%s odak=%s" % [ad, t, yol, takil, dus, kesik,
+		player.global_position.snapped(Vector3.ONE * 0.1), player.focus_id])
+	return not kesik
+
+
+## =kare: bir an bir kez (bakış verilen noktaya)
+func _kare_bir(ad: String, bak: Vector3) -> void:
+	if not _kare_mi() or _kare_cekildi.has(ad):
+		return
+	_kare_cekildi[ad] = true
+	player.face(bak)
+	var dir := GameState.dialog_shots_dir if GameState.dialog_shots_dir != "" else GameState.shots_dir
+	if dir == "":
+		return
+	DirAccess.make_dir_recursive_absolute(dir)
+	preload("res://tests/_ist/tasima7_pik.gd").uygula(self)
+	for k in 20:
+		await get_tree().process_frame
+	player.face(bak)
+	preload("res://tests/_ist/tasima7_pik.gd").yaz(self, ad)
+	var dc := 0.0
+	var pr := 0.0
+	for k in 4:
+		await RenderingServer.frame_post_draw
+		dc += RenderingServer.get_rendering_info(RenderingServer.RENDERING_INFO_TOTAL_DRAW_CALLS_IN_FRAME)
+		pr += RenderingServer.get_rendering_info(RenderingServer.RENDERING_INFO_TOTAL_PRIMITIVES_IN_FRAME)
+	_kare_n += 1
+	var f := dir.path_join("an_%02d_%s.jpg" % [_kare_n, ad])
+	get_viewport().get_texture().get_image().save_jpg(f, 0.85)
+	print("TASIMA32OKARE %s oyuncu=%s cizim=%.0f ilkel=%.0f sur=%s" % [f.get_file(), player.global_position.snapped(Vector3.ONE * 0.1),
+		dc / 4.0, pr / 4.0, "eski" if sur.eski_mi else "yeni"])
