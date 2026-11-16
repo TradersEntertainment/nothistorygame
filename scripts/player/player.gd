@@ -135,9 +135,25 @@ var _held_model: Node3D
 var _item_busy := false
 ## Nihat'ın Büro donanımı (uçuş, görünmezlik): Nihat bölümleri enable_nihat_powers ile açar.
 var powers: NihatPowers
+var his: HareketHis              # hareket hissi: kamera, iniş, düşüş, havada kollar (scripts/player/hareket_his.gd)
+## Zıplama: coyote (kenardan çıktıktan sonra) ve tampon (inmeden hemen önce basılan) süreleri. Coyote zıplaması
+## menzili uzatmaz: dikey hız, kenarda zıplansaydı o an olacak hızdır (bkz. _zipla_hiz).
+const COYOTE := 0.1
+const ZIPLA_TAMPON := 0.1
+var _hava_t := 0.0
+var _zipladi := false
+var _zipla_tampon := 0.0
 
 
 func _ready() -> void:
+	for a in OS.get_cmdline_user_args():
+		if a == "--hareket-butce":
+			_butce = true
+		elif a.begins_with("--hareket-kare=") and not get_tree().root.has_node("HareketGez"):
+			# Hareket hissi kareleri (tests/_fizik/hareket_gez.gd; yalnız bu argümanla, paketli oyunda yok)
+			var gz: Node = (load("res://tests/_fizik/hareket_gez.gd") as Script).new()
+			gz.name = "HareketGez"
+			get_tree().root.add_child.call_deferred(gz)
 	GameState.combat = {}
 	add_to_group("player")      # yürüyen halk (Walker) oyuncunun içinden geçmesin diye onu bulur
 	GameState.bag_changed.connect(_on_bag_changed)
@@ -160,6 +176,8 @@ func _ready() -> void:
 			camera.fov = float(GameState.settings.get("fov", 72.0)))
 	camera.current = true
 
+	his = HareketHis.new(self)
+	add_child(his)
 	_ray = RayCast3D.new()
 	_ray.target_position = Vector3(0, 0, -2.4)
 	_ray.collision_mask = 2
@@ -220,6 +238,16 @@ func _vm_sync(delta: float) -> void:
 
 
 func _process(_delta: float) -> void:
+	if not _butce:
+		_kare_adim(_delta)
+		return
+	var t0 := Time.get_ticks_usec()
+	_kare_adim(_delta)
+	_butce_us += Time.get_ticks_usec() - t0
+	_butce_say()
+
+
+func _kare_adim(_delta: float) -> void:
 	_interpolate_camera()
 	_vm_sync(_delta)
 	if _cam != null and not _cam_pocket and (combat or ladder != null or is_down \
@@ -458,6 +486,45 @@ var _tp_hold := 0.0
 
 
 func _physics_process(delta: float) -> void:
+	if not _butce:
+		_fizik_adim(delta)
+		return
+	var t0 := Time.get_ticks_usec()
+	_fizik_adim(delta)
+	_butce_us += Time.get_ticks_usec() - t0
+
+
+## Bütçe ölçümü (yalnız --hareket-butce ile): oyuncunun fizik ve kare güncellemesinin betik süresi, çizilen kare başına.
+## 20 sn'de bir ve sahneden çıkarken HAREKETBUTCE satırı (tests/_fizik/hareket_butce.sh).
+var _butce := false
+var _butce_us := 0
+var _butce_his_us := 0          # bunun içinde hareket hissinin (HareketHis.adim) payı
+var _butce_kare := 0
+var _butce_t := 0
+
+
+func _butce_say() -> void:
+	_butce_kare += 1
+	var now := Time.get_ticks_msec()
+	if _butce_t == 0:
+		_butce_t = now
+	elif now - _butce_t > 20000:
+		_butce_yaz()
+		_butce_t = now
+
+
+func _butce_yaz() -> void:
+	if _butce_kare > 0:
+		print("HAREKETBUTCE sahne=%s kare=%d ms_kare=%.4f his_ms_kare=%.4f" % [get_tree().current_scene.scene_file_path.get_file() if get_tree() and get_tree().current_scene else "?",
+			_butce_kare, _butce_us / 1000.0 / _butce_kare, _butce_his_us / 1000.0 / _butce_kare])
+
+
+func _exit_tree() -> void:
+	if _butce:
+		_butce_yaz()
+
+
+func _fizik_adim(delta: float) -> void:
 	_health_tick(delta)
 	_fall_guard(delta)
 	if _ladder_hands and (ladder == null or frozen or pinned):
@@ -487,8 +554,7 @@ func _physics_process(delta: float) -> void:
 	if move_mode == "script" and not frozen:
 		velocity.x = script_velocity.x
 		velocity.z = script_velocity.z
-		if Input.is_action_just_pressed("jump") and is_on_floor():
-			velocity.y = JUMP
+		_zipla_iste(delta)
 		var was_floor := is_on_floor()
 		move_and_slide()
 		if was_floor:
@@ -501,16 +567,16 @@ func _physics_process(delta: float) -> void:
 	if not frozen:
 		var input := Input.get_vector("move_left", "move_right", "move_forward", "move_back")
 		dir = (transform.basis * Vector3(input.x, 0, input.y)).normalized()
-		if Input.is_action_just_pressed("jump") and is_on_floor() and not is_down:
-			velocity.y = JUMP
+		if not is_down and _zipla_iste(delta):
 			if hand_style == "nihat" and not can_climb and not _nihat_refused:
 				_nihat_wall()
+	else:
+		_zipla_tampon = 0.0
 	var speed := (RUN if Input.is_action_pressed("sprint") else WALK) * speed_mult * _wound_mult()
 	if _stagger > 0.0:
 		_stagger = maxf(0.0, _stagger - delta)
 		speed *= lerpf(1.0, 0.3, clampf(_stagger / 0.5, 0.0, 1.0))
-	velocity.x = move_toward(velocity.x, dir.x * speed, speed * delta * 10.0)
-	velocity.z = move_toward(velocity.z, dir.z * speed, speed * delta * 10.0)
+	_ivmelen(dir * speed, speed, delta)
 	var want := Vector3(velocity.x, 0.0, velocity.z)
 	var on_floor := is_on_floor()
 	move_and_slide()
@@ -521,6 +587,60 @@ func _physics_process(delta: float) -> void:
 	if can_climb and traversal:
 		traversal.after_walk(delta)
 	_after_move(delta)
+
+
+## Yerde ivmelenme: tam hıza ≈0,16 sn'de varılır (eskiden 0,1 sn, "anahtarla açılan" his), bırakınca ≈0,14 sn'de
+## durur; koşarken ters yöne dönüşte hız biraz daha geç döner (takım elbiseli gövde hafifçe savrulur: ≈0,22 sn).
+## Havada eskisi gibi (speed * 10/sn): zıplama menzili ve havada yön değiştirme aynı kalır. Tepe hız aynı.
+func _ivmelen(want: Vector3, speed: float, delta: float) -> void:
+	if not is_on_floor() or speed <= 0.01:
+		velocity.x = move_toward(velocity.x, want.x, speed * delta * 10.0)
+		velocity.z = move_toward(velocity.z, want.z, speed * delta * 10.0)
+		return
+	var cur := Vector2(velocity.x, velocity.z)
+	var hedef := Vector2(want.x, want.z)
+	var rate := speed / 0.16
+	if hedef.length_squared() < 0.0001:
+		rate = speed / 0.14
+	elif cur.length() > WALK * 0.8 and cur.normalized().dot(hedef.normalized()) < 0.2:
+		rate = speed / 0.22
+	cur = cur.move_toward(hedef, rate * delta)
+	velocity.x = cur.x
+	velocity.z = cur.y
+
+
+## Zıplama isteği: tampon (yere inmeden 0,1 sn önce basılan sayılır) ve coyote (kenardan çıktıktan sonra 0,1 sn).
+## Coyote zıplamasının dikey hızı kenarda zıplansaydı o an olacak hız: menzil ve tepe kenarınkini aşmaz.
+func _zipla_iste(delta: float) -> bool:
+	if is_on_floor():
+		_hava_t = 0.0
+		_zipladi = false
+	else:
+		_hava_t += delta
+	if Input.is_action_just_pressed("jump"):
+		_zipla_tampon = ZIPLA_TAMPON
+	elif _zipla_tampon > 0.0:
+		_zipla_tampon = maxf(0.0, _zipla_tampon - delta)
+	if _zipla_tampon <= 0.0 or not gravity_on:
+		return false
+	if is_on_floor():
+		velocity.y = JUMP
+		his.zipladi(0.0)
+	elif not _zipladi and _hava_t <= COYOTE and velocity.y <= 0.0:
+		velocity.y = _zipla_hiz(_hava_t)
+		his.zipladi(_hava_t)
+	else:
+		return false
+	_zipla_tampon = 0.0
+	_zipladi = true
+	return true
+
+
+## Kenardan c sn sonra zıplayınca: kenarda zıplanmış olsaydı o anda sahip olunacak dikey hız (JUMP − g·c). Yol,
+## kenar zıplamasının yolunun J·c kadar aşağı kaydırılmışıdır: her kot farkında menzil ve tepe kenarınkinden kısa kalır
+## (ilk sürümde uçuş süresini eşitleyen hız, derin inişlerde menzili 0,3 m uzatıyordu: dh 5,8 m'de 7,9 → 8,2).
+func _zipla_hiz(c: float) -> float:
+	return JUMP - _gravity * c
 
 
 ## Alçak basamak (eşik, kaldırım, taş basamak, moloz, alçak sahanlık; en çok STEP_H) zıplamadan çıkılır. Önü kapanınca
@@ -707,8 +827,11 @@ func _ladder_physics(delta: float) -> bool:
 	if ladder_no_top and _ladder_t > ladder.height - 0.5:
 		_ladder_t = ladder.height - 0.5
 	if _ladder_t >= ladder.height - 0.2:
-		# Tepede: yaslandığı yerin üstüne çık, biraz ileri adım at (merdivenin tutunma alanından çıksın)
+		# Tepede: yaslandığı yerin üstüne çık, biraz ileri adım at (merdivenin tutunma alanından çıksın). Kamera eski
+		# göz noktasından yumuşakça yetişir (eskiden bir karede 0,7 m geri ve yukarı sıçrıyordu)
+		var eski_goz := camera.global_position
 		global_position = ladder.top_exit()
+		his.kamera_yetis(eski_goz)
 		var ahead := -ladder.front_dir()
 		ahead.y = 0.0
 		velocity = ahead.normalized() * 2.0
@@ -839,18 +962,25 @@ func _after_move(delta: float) -> void:
 	_bob += delta * horiz * 1.3
 	if int(_bob * 2.0 / PI) != step_before and is_on_floor() and horiz > 0.5:
 		Audio.step(step_voice if step_voice != "" else hand_style)
+		his.adim_sesi()
+	if _butce:
+		var th := Time.get_ticks_usec()
+		his.adim(delta, horiz)
+		_butce_his_us += Time.get_ticks_usec() - th
+	else:
+		his.adim(delta, horiz)
 	var sw := 1.0 if GameState.settings.get("sway", true) else 0.0      # erişilebilirlik: sallanma kapalı
 	var y := eye_height + sin(_bob * 2.0) * 0.03 * clampf(horiz / WALK, 0.0, 1.0) * sw
 	_cam_dy = lerpf(_cam_dy, 0.0, clampf(delta * 14.0, 0.0, 1.0))
-	y += _cam_dy
+	y += _cam_dy + his.kamera_y()
 	_shake = maxf(0.0, _shake - delta * 2.5)
-	var roll := 0.0
+	var roll := his.yatis()
 	if floating:
 		_float_t += delta
 		y += sin(_float_t * 1.7) * 0.07
 		roll = sin(_float_t * 1.1) * 0.035
 	camera.rotation.z = lerpf(camera.rotation.z, roll, clampf(delta * 4.0, 0.0, 1.0))
-	camera.position = Vector3(randf_range(-1, 1) * _shake * 0.05, y + randf_range(-1, 1) * _shake * 0.05, 0)
+	camera.position = Vector3(randf_range(-1, 1) * _shake * 0.05, y + randf_range(-1, 1) * _shake * 0.05, 0) + his.kamera_ofs()
 	_ip_gp = [_ip_gp[1], global_position]
 	_ip_cam = [_ip_cam[1], camera.position]
 	_cam_written = camera.position
@@ -919,6 +1049,10 @@ func _animate_hands(delta: float, horiz: float) -> void:
 		if gravity_on and not is_on_floor():
 			pos.y += clampf(-velocity.y * 0.01, -0.04, 0.05)
 			rot.x += clampf(velocity.y * 4.0, -14.0, 14.0)
+		# Havada kol yana açılır (denge): el dışa ve biraz yukarı, bilek dışa döner
+		var hk := his.hava()
+		pos += Vector3(0.045, 0.025, 0.02) * hk
+		rot.z -= 14.0 * hk
 	pos.x += _hand_sway.x
 	pos.y += _hand_sway.y
 	rot.y += _hand_sway.x * 200.0
@@ -957,7 +1091,9 @@ func _animate_free_hand(delta: float, spd: float) -> void:
 	var holding := is_instance_valid(_prop_item) and _prop_item.is_inside_tree()
 	# Tespit makinesi elde: sol el gövdesinden tutar (makine kameraya asılı duruyordu)
 	var cam_held := is_instance_valid(_cam) and _cam.visible and _cam.get_parent() == camera and not _cam_pocket
-	var show := _grab or _flail_t > 0.0 or floating or holding or _balance != INF or free_hold != Vector3.INF or cam_held or _sleeve_t > 0.0
+	var hk := his.hava() if his else 0.0
+	var show := _grab or _flail_t > 0.0 or floating or holding or _balance != INF or free_hold != Vector3.INF or cam_held or _sleeve_t > 0.0 \
+			or hk > 0.25
 	var pos := _free_base + Vector3(0, -0.45, 0)
 	var roll := 0.0
 	var tilt := 0.0
@@ -1001,6 +1137,12 @@ func _animate_free_hand(delta: float, spd: float) -> void:
 		roll = -15.0
 		tilt = 15.0
 		curl = -25.0
+	elif hk > 0.0 and not floating:
+		# Havada (zıplama, düşüş): sol kol yana açılır, avuç aşağı; inince iner
+		pos = (_free_base + Vector3(0, -0.45, 0)).lerp(_free_base + Vector3(-0.09, -0.05, 0.04), hk)
+		roll = -55.0 * hk
+		tilt = 12.0
+		curl = -12.0
 	elif floating:
 		# Kurbağalama: el öne uzanır, yana açılır, göğse döner. Dururken suyu hafifçe iter.
 		var a := 1.0 if spd > 0.3 else 0.35
@@ -1327,6 +1469,14 @@ func drop_prop() -> void:
 ## Kollar savrulur (düşüş, tökezleme, kayma).
 func flail(seconds := 0.6) -> void:
 	_flail_t = maxf(_flail_t, seconds)
+
+
+## Bölümün kendi düşüşü için ortak his (Bölüm 2 kızaktan uçuş, 44b kuyu): sure boyunca kollar savrulur, kamera
+## hafifçe sarsılır, rüzgâr yükselir; bagir ise Tolga Bölüm 2'deki gibi bağırır (var olan D2_T_FALL_SCREAM), süre
+## sonunda kesilir. Akışı beklemez, süreyi değiştirmez. Serbest düşüşte (≥ 3 m) aynı his kendiliğinden gelir.
+func dusus_hissi(sure: float, bagir := false) -> void:
+	if his:
+		his.dusus(sure, bagir)
 
 
 ## Pijama durumu (Bölüm 1): kollar (sol, sağ, "iki el" kolluğu) ve üçüncü şahıs modeli buna göre. Aynı değerse bir şey yapmaz.

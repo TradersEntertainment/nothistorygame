@@ -431,6 +431,7 @@ func _descend() -> void:
 		await hud.say("SPK_TOLGA", "D44B_T_DOWN")
 	Audio.sfx("paper_tear", -4.0, 0.5)          # ipin lifleri kopar
 	player.shake(0.25)
+	player.dusus_hissi(0.75, true)      # ortak düşüş hissi: kollar savrulur, rüzgâr, Bölüm 2'deki çığlık
 	var fall := create_tween()
 	fall.tween_property(player, "global_position:y", CisternLevel.WATER_Y - 1.25, 0.05 if GameState.autotest else 0.75).set_ease(Tween.EASE_IN)
 	# Düşüşün itişiyle 1,4 m güneyde yüzeye çıkar: tonoz gözünün tam ortasında ön köşe sütunları ekranın iki kenarında
