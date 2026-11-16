@@ -204,6 +204,35 @@ func _ic_ice_ayir() -> void:
 				Unclip.spread(m, 0.6)
 
 
+## Gizlenip yeniden görünen (Melee.rally: ayaklandırılan asker dövüş boyunca gizli, dönüşte evinde görünür; Duel öldürme
+## kamerası: kadrajı kapatan gizli): gizliyken komşusu (reserve_loop yerinde adımı, düellocu) onu saymadan yerine girmiş
+## olabilir (VISAUDIT overlap Squad{crouch}|Squad{crouch} (−20,1; 0; 5,1), isidore: RALLY'nin hemen ardında). Göründüğü
+## karenin sonunda yanındaki iç içe ayaktaki ayrılır.
+func _gorunce_ayir(p: Person) -> void:
+	if is_instance_valid(p) and p.is_inside_tree() and p.is_visible_in_tree():
+		_yakin_ayir.call_deferred(p)
+
+
+func _yakin_ayir(p: Person) -> void:
+	if not is_instance_valid(p) or not p.is_inside_tree() or not p.is_visible_in_tree() or Unclip.lying(p):
+		return
+	var gp := p.global_position
+	for n in get_tree().get_nodes_in_group("persons") + get_tree().get_nodes_in_group("soldiers"):
+		var o := n as Node3D
+		if o == null or o == p or not o.is_visible_in_tree() or o.has_meta("corpse") or o.has_meta("no_audit") or Unclip.lying(o):
+			continue
+		if o is Soldier and (o as Soldier).pose != "stand":
+			continue
+		var op := o.global_position
+		if Vector2(op.x - gp.x, op.z - gp.z).length() >= 0.4 or absf(op.y - gp.y) > 0.6:
+			continue
+		var m := _ayrilan(p, o)
+		if m != null:
+			print("BEKCI26 gorunce a=%s b=%s d=%.2f" % [p.get_parent().name, o.get_parent().name, Vector2(op.x - gp.x, op.z - gp.z).length()])
+			Unclip.spread(m, 0.6)
+		return
+
+
 ## İç içe çiftten yer değiştirecek olan: düellocu (yürüyen); yoksa yerinde durması istenmeyen (no_yield değil)
 func _ayrilan(a: Node3D, b: Node3D) -> Node3D:
 	for o: Node3D in [a, b]:
@@ -454,6 +483,17 @@ func _build_walls_scene() -> void:
 					if m is Node3D:
 						chaos.avoid.append([(m as Node3D).global_position if (m as Node3D).is_inside_tree() else bk.position + (m as Node3D).position, 1.3])
 		add_child(chaos)
+		# TAŞIMA-8D: gizlenip geri gelenler (dövüşte ayaklandırılan yedek asker, öldürme kamerasının gizlediği savunucu,
+		# onarımcı) yeniden göründüğü anda yanında iç içe kalan varsa ayrılır (_gorunce_ayir)
+		var izle: Array = defenders.duplicate()
+		for bk: Node3D in bolukler:
+			izle.append_array(bk.get_children())
+		for c: Dictionary in fight.crew:
+			izle.append(c["node"])
+		izle.append_array(fight.builders)
+		for n in izle:
+			if n is Person:
+				(n as Person).visibility_changed.connect(_gorunce_ayir.bind(n))
 	# Burçtaki sancak (Ulubatlı Hasan): başta görünmez, 3. dalgada yükselir
 	banner = Node3D.new()
 	banner.position = BANNER_TOWER + Vector3(0, -4.0, 0)
