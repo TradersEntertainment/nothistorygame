@@ -335,7 +335,13 @@ func _mantlet(at: Vector3) -> Node3D:
 	var m := Node3D.new()
 	m.position = at
 	add_child(m)
-	Props.make_solid(Props.box(m, Vector3(2.4, 2.0, 0.14), Vector3(0, 1.25, 0), Color("6a4a2c")))
+	# perde: dikine kalaslar (boyları ve tonları farklı, araları ince yarık; 36b'nin mantosu gibi). Eskiden tek düz levhaydı:
+	# arkasına sığınınca kameranın dibinde koca bir kutu okunuyordu (TAŞIMA-7, 32o an_04). Çarpışma aynı kutu, görünmez.
+	var sv := Props.solid(m, Vector3(2.4, 2.0, 0.14), Vector3(0, 1.25, 0), Color.WHITE)
+	sv.get_child(0).visible = false
+	for k in 8:
+		var hk := 2.0 + (0.1 if k % 3 == 1 else (0.04 if k % 3 == 2 else 0.0))
+		Props.box(m, Vector3(0.285, hk, 0.12), Vector3(-1.05 + k * 0.3, 0.25 + hk * 0.5, 0.0), Color("6a4a2c").darkened(0.05 * (k % 3)).lightened(0.03 * (k % 2)))
 	for y: float in [0.6, 1.9]:
 		Props.box(m, Vector3(2.45, 0.12, 0.18), Vector3(0, y, 0.02), Color("4a3422"))
 	for sx: float in [-1.0, 1.0]:
@@ -1623,7 +1629,9 @@ func _yuru_surucu() -> void:
 			var c := _nearest_cover(player.global_position)
 			_yz["siper"] += 1
 			await _yb_rota("siper", c + Vector3(0, 0, 1.4), Vector3(c.x, _sur_ust_y(), _sur_dis_z()))
-			await _kare_bir("manto_arkasi", Vector3(c.x * 0.5, _sur_ust_y() + 1.0, _sur_dis_z()))
+			# kadraj: mantonun omzunun üstünden sura (manto solda/sağda, sur ve okçular görünür)
+			player.global_position += Vector3(signf(c.x) * 0.9 if absf(c.x) > 0.1 else 0.9, 0, 0.6)
+			await _kare_bir("manto_arkasi", Vector3(c.x + (signf(c.x) if absf(c.x) > 0.1 else 1.0) * 6.0, _sur_ust_y() + 2.0, _sur_dis_z()))
 			while _vwarn >= 0.0 and phase == "ditch":
 				await get_tree().process_frame
 			continue

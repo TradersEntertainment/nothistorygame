@@ -15,7 +15,7 @@ ERROR: Condition "status < 0" is true. Returning: ERR_CANT_OPEN
 WARNING: All audio drivers failed, falling back to the dummy driver.
      at: initialize (servers/audio_server.cpp:246)
 
-SURSET kesim=mesoteikhion kurulum_ms=3603 sur_ms=1041 set_ms=2550
+SURSET kesim=mesoteikhion kurulum_ms=3642 sur_ms=1114 set_ms=2521
 WARNING: Screen-space ambient occlusion (SSAO) can only be enabled when using the Forward+ renderer.
      at: environment_set_ssao (servers/rendering/storage/environment_storage.cpp:586)
 WARNING: Screen-space indirect lighting (SSIL) can only be enabled when using the Forward+ renderer.
@@ -34,4 +34,3 @@ TASIMA36BMESAFE set=yeni kopru_basi_donus=7.0 dy=3.8
 TASIMA36BMESAFE set=yeni kopru_siper=16.7 dy=0.0
 TASIMA36BMESAFE set=yeni siper_atli_dur=4.5 dy=0.0
 TASIMA36BMESAFE set=yeni donus_iceri=8.3 dy=-0.1
-TASIMA36BYURU bacak=kopru_basi sure=0.0 yol=0.0 takilma=0 dusme=0 son=(-17.9, -3.7, 24.2) odak=

@@ -1,0 +1,23 @@
+Godot Engine v4.4.1.stable.official.49a5bc7b6 - https://godotengine.org
+
+WARNING: Screen-space ambient occlusion (SSAO) can only be enabled when using the Forward+ renderer.
+     at: environment_set_ssao (servers/rendering/storage/environment_storage.cpp:586)
+WARNING: Screen-space indirect lighting (SSIL) can only be enabled when using the Forward+ renderer.
+     at: environment_set_ssil (servers/rendering/storage/environment_storage.cpp:661)
+HELDDEFAULT scene=chapter28o item=tape
+TASIMA28OYURU set=eski O=(0.0, 0.0, 0.0) haul_z=124.5 yigin=(18.0, -0.03, 120.5) hedef=(0.0, 0.0, 15.0) ova_y=0.00
+TASIMA28OMESAFE set=eski baslangic_yigin=3.2 dy=-0.0
+TASIMA28OMESAFE set=eski yigin_cukur0=16.6 dy=-0.0
+TASIMA28OMESAFE set=eski yigin_cukur3=6.6 dy=-0.0
+TASIMA28OMESAFE set=eski cukur_hedef_sur=99.6 dy=0.0
+TASIMA28OMESAFE set=eski top_hedef_sur=103.4 dy=0.0
+TASIMA28OMESAFE set=eski kizak_yolu=12.0 dy=0.0
+TASIMA28OMESAFE set=eski kizak_top=6.5 dy=0.0
+WORLDWALK region= shapes=9835 boxes=9106 tris=282884 ms=1222
+CITYLIFE region= src=plan era=siege night=false density=0.85 nodes=1026 plazas=19 landmarks=23
+TASIMA28OYURU bacak=yigin sure=1.4 yol=4.2 takilma=0 dusme=0 son=(17.9, 0.0, 119.1) odak=stakes
+WARN_PORTRAIT_STUDIO speaker=SPK_SOLDIER key=D28O_S_BALL scene=chapter28o.tscn
+TASIMA28OYURU bacak=cukur sure=10.6 yol=5.0 takilma=1 dusme=0 son=(14.8, 0.0, 116.6) odak=
+TASIMA28OYURU tus_yok yer=cukur odak=
+TASIMA28OYURU bacak=yigin sure=7.5 yol=16.1 takilma=0 dusme=0 son=(17.8, 0.0, 118.9) odak=stakes
+TASIMA28OYURU bacak=cukur sure=8.2 yol=12.6 takilma=0 dusme=0 son=(6.9, 0.0, 115.9) odak=hole_1

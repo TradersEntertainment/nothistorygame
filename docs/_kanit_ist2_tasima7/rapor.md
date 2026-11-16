@@ -51,3 +51,64 @@ vurduğu şey (`PIK7 an=barikat px=… d=… yol=…`):
 - Bütçe (aynı 6 an, taşıma 6'nın eski ↔ bu SONRA): çizim −%64…−%80, ilkel −%50…−%60 (hepsi eskinin altında; taşıma 6 yeni ↔
   SONRA: −%6…+%9 çizim, rastgele mancınık/top anlarına bağlı).
 
+## 3. Bölüm 36b (Huruç, 9 Nisan) — `scripts/chapter36b.gd`
+
+### 3.1 Ne değişti (yalnız yeni set; `--eskisur` yolu eskinin aynısı)
+- `ESKI_SUR` + `SurSet.sec("36b", …, saglam=true)`: 9 Nisan'da bombardıman başlamadı (eski set `walls.intact = true`) → yeni sur
+  **sağlam kipte** (TUR-11 `saglam_yap`; bu taşımada `SurSet`/`SurSetSahne`'ye bağlandı, §5). `SurSetSahne`: `dolgu` 0 (dolgu
+  yok), `kalas` true (köprü bölüm başında kurulu; eskide de), `poterna_acik` true (adamlar dışarıda).
+- **Şerit**: eski `LANE_X` −24 → setin poternasının x'i (−17,9; kalas geçidi de orada, karar 7-A). Setin kendi `Poterna`'sı
+  (dış surun ova yüzünde; dış kuşak 3,7 m aşağıda olduğu için kapının önünde sahanlık ve sur yüzü boyunca +x'e inen taş basamak)
+  ve `KalasKopru`'su (parateikhion yalnız orada açık; 21,8 m) kullanılır; bölümün eski rampa/köprü/kapı kutuları yeni sette
+  kurulmaz.
+- **Ova** (siper hattı, üç manto, kazıcılar, meşaleler, Leon'un düştüğü yer, atlılar ve durdukları okçu menzili): eski
+  koordinat + `ova_ofs` + şeridin x kayması (+6,1) → aralarındaki mesafeler eskiyle aynı (§3.3).
+- **Çıkış yeri** (`TOPLAN`): sahanlıktan inen basamağın dibi, terasta (Giustiniani, beş savunucu, Leon, Tolga); **dönüş hedefi**
+  (`RETURN`): poternanın sahanlığı (kapının önü; eskide de kapının önü). "Hendeği geç" eşiği uzak yakanın 4 m ötesi (eski de).
+- **Köprü yolu** (adamlar, Leon): teras (açıklığın önü) → köprünün yakın ucu → uzak ucu → ova; yükseklik aşağı ışınla
+  (sahanlık, basamak, köprü, teras, ova; kişiler sayılmaz). İlk koşuda (`tur0_yeni_def_2`) köprünün ucunda iki savunucu iç içe
+  girdi (`VISAUDIT overlap (−17,5; −3,5; 47,4)`): sol şeritten inip sağa dönen, sağ şeritten inenin yolunu kesiyordu → yeni
+  sette her adam hedefinin yanındaki şeritten iner. Sonraki bütün koşularda denetim 0.
+- **Hendek**: düşen eski gibi 1,5 sn sonra köprünün başına kurtarılır (eşik ova − 1,5); ayrıca köprünün iki yanında hendeğin
+  iç yüzüne dayalı iki merdiven (37o kalıbı; 6 m'lik hendekten kendisi de çıkabilir; karar 6: ceza 2× değil).
+- İçeri dönüşte (karartma arkasında) poterna kapanır (`Poterna.ac(false)`). Surdaki okçular `Garrison` yeni sette `dense`
+  (ovadan görünür; 22o/37o kalıbı).
+- `=yuru` (gerçek bot) ve `=kare` (6 an) eklendi; AUTOTEST satırına `sur=`.
+
+### 3.2 Testler (`testler/c36b`)
+
+| çeşit | eski ×1 | yeni | alanlar (eski \| yeni) |
+|---|---|---|---|
+| (varsayılan) | PASS | PASS ×4 (`tur0_yeni_def_1…4`; 2. koşuda 1 overlap → düzeltildi, 3–4 temiz) | 36.1 · burned 3 · fights 1 · kills 5 \| 4–6 |
+| leave | PASS | PASS ×2 | 36.2 · burned 3 · kills 3 \| 4–5 |
+
+Çarpışma (`WAVERUNNER`, 75 sn sınır): eski 25,0 · 25,1 | yeni 19,4 · 20,6 · 19,7 · 24,6 · 20,5 · 23,6 sn (hepsi kazanıldı).
+
+## 2. Bölüm 32o (Son Gün, 28 Mayıs) — kalanlar — `scripts/chapter32o.gd`
+
+### 2.1 Ne eklendi / değişti
+- `=yuru` (gerçek Player botu, bölümün KENDİ akışı; autotest kısayolları — ışınlanma, kendiliğinden basma, kendiliğinden itme —
+  bu kipte kapalı, gerisi aynen): tellalın yolundan azaba → hendek döngüsü (yığından demet E → kıyı E; iki demette bir toprak
+  sepeti E → kıyı E; Rum ateşinde toprak) → **ok yaylımı uyarısında en yakın mantonun arkasına** (mantonun içinden geçen yol yanından
+  dolanır: ilk koşuda bot mantoya yapışıp kalıyordu, `yuru_yeni_1`) → Usta'nın tezgâhı (işaret ortadayken gerçek E) → manto
+  (arkasına geç, E basılı it). Süreler (DITCH_TIME 240, yaylım 13/2,6 sn, Rum ateşi 15 sn) bölümün kendisi.
+- `=kare` (6 an: açılış, yığında demet elde, kıyıda atış, yaylımda manto arkası, tezgâh, manto itme).
+- **Çalı demeti** (eldeki, atılan, yan bölüğün sırtındaki): tek 6 köşeli silindir yerine bağlı dokuz ince dal + iki ip bağı
+  (`_demet`). Elde kameranın dibinde iri, kutu gibi düz bir levha okunuyordu (kare `kare/c32o_yeni_tur0` yerine: ilk koşu,
+  an_02; eskide de aynı). Yalnız görünüş (iki sette de); yığının 14 demeti ve hendekteki eski demetler aynı (uzaktan kütük gibi).
+
+## 4. Bölüm 28o (İlk Atış, 6 ve 11 Nisan) — sağlam surla — `scripts/chapter28o.gd`
+
+### 4.1 Ne değişti (yalnız yeni set; `--eskisur` yolu eskinin aynısı)
+- `ESKI_SUR` + `SurSet.sec("28o", …, saglam=true)` → `SurSetSahne` sağlam kipte (11 Nisan: sur gediksiz; eski `intact`),
+  `dolgu` 0, `kalas` false, `gun_gate` ve `field_keep` eskisi gibi (ova koordinatında).
+- Bölümün bütün işi ovada, bataryada (22o/32o kalıbı): `gy(x, z)` = SiegeField zemini ova kaydırmasıyla (statik `_O`);
+  kazık yığını, dört çukur, Urban'ın ve Tolga'nın yerleri, kızak yolu (`HAUL_Z` 124,5 + O.z; `HAUL_FROM`/`HAUL_TO` aynı), halat
+  ucu, ip çit, zemin ayrıntısı, bakışlar **eski + `ova_ofs`** → aralarındaki bütün mesafeler eskiyle aynı (§4.3). Büyük top
+  `SurSetSahne`'nin `far_gun`'ı (zaten ova kaydırmasıyla).
+- İlk atışın hedefi `_hedef()`: eski `LandWalls.BREACH` ↔ yeni `sur.gedik()` (sağlam kipte gedik yok: çerçevenin x 0'ı, dış
+  surun ortası = varsayılan kipin oyun gediğinin yeri, TUR-11 notu). İsabet dış surun ova yüzüne (yara `_scar` yüzde, teras +
+  1,5 … sur yolu − 1 arasında); **ıska hendeğe** (D28O_U_MISS "Hendek."): eski yer (eski hendekte oran 0,125) yeni hendekte aynı
+  oranda (ilk denemede terasa düşüyordu: replikle uyuşmazdı, düzeltildi). `CannonCrew.ground_y` yeni ova (32o'daki hata).
+- `=yuru` (kazık işi gerçek botla), `=kare` (6 an: açılış, kazık yığını, kazık, kızak, kızak yarı yolda, top, ilk toz) eklendi;
+  AUTOTEST satırına `sur=`.

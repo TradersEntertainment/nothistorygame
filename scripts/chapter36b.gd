@@ -87,7 +87,10 @@ func _ready() -> void:
 		var ss := SurSetSahne.new()
 		ss.sur = sur
 		ss.dolgu = 0.0             # 9 Nisan: hendek dolgusu yok
-		ss.kalas = true            # kalas köprü poternanın önünde kurulu (eskide de bölüm başında yerinde)
+		# kalas köprü poternanın önünde kurulu (eskide de bölüm başında yerinde). Gizli kurulup add_child'dan sonra tak()
+		# edilir (37o'nun yolu): SurOyun.kur köprüyü kurulu (kalas true) verince kur_hepsi'nin pişirmesi tahta ağını siliyor,
+		# yalnız çarpışma kalıyordu — askerler hendeğin üstünde boşlukta yürüyordu (kare c36b_yeni_tur0/an_02; görünüşe istek)
+		ss.kalas = false
 		ss.poterna_acik = true     # adamlar dışarı çıkmış
 		walls = ss
 		_yeni_yerlesim()
@@ -95,6 +98,10 @@ func _ready() -> void:
 	# baskının alanı: ova eşyası konmaz (ova koordinatında; yeni sette şerit poternanın x'ine kayar)
 	walls.field_keep = [Rect2(LANE_X - 14.0, 36.0, 28.0, 60.0)]
 	add_child(walls)
+	if not sur.eski_mi:
+		var kk = (walls as SurSetSahne).kesim["parca"].get("kalas")
+		if kk != null:
+			kk.tak()
 	walls.set_repair(LandWalls.STAGES)
 	walls.dawn_to(0.05, 0.01)
 	_build()
@@ -1112,7 +1119,8 @@ func _yuru() -> void:
 	phase = "cross"
 	_advance_men()          # adamlar köprüden geçip siperin önüne yayılır (bölümdeki gibi; meşaleyi biri getirir)
 	# Tolga ardından çıkar: adamlar köprüye girene dek bekler (bot, sırayla rampaya/köprüye çıkanların arasına dalıyordu)
-	await get_tree().create_timer(10.0, false).timeout
+	# (=kare: adamlar köprüyü geçip siperin önüne yayılana dek: köprü boş görünsün, kamera adamların içine düşmesin)
+	await get_tree().create_timer(30.0 if _kare_mi() else 10.0, false).timeout
 	if sur.eski_mi:
 		# eski: rampa sur yüzünden başlar, dibinden yandan girilir (adamların yolu gibi: _walk_bridge)
 		# rampanın ayağı sur yüzüne dayalı (0,2 m): yandan çıkılır (kenarı alçak basamaktan yüksek: bot zıplar, oyuncu da)
