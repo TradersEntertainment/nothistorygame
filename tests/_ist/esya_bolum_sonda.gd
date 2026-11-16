@@ -176,13 +176,31 @@ func _tekme_dizisi() -> void:
 	cam.fov = 60.0
 	cam.far = 3000.0
 	_sahne().add_child(cam)
-	var kp := c + yan * 3.4 - yon * 1.2 + Vector3.UP * 1.7
-	# kamera bir şeyin içine düşmesin: eşyadan kameraya ışın
+	# kamera: birkaç açıdan, eşyaya (ve gideceği yere) görüşü en açık olanı (bir şeyin içine düşmesin)
 	var space := pl.get_world_3d().direct_space_state
-	var hq := PhysicsRayQueryParameters3D.create(c + Vector3.UP * 0.5, kp)
-	var h := space.intersect_ray(hq)
-	if not h.is_empty():
-		kp = c + Vector3.UP * 0.5 + ((h["position"] as Vector3) - (c + Vector3.UP * 0.5)) * 0.85
+	var kp := c + yan * 3.4 - yon * 1.2 + Vector3.UP * 1.7
+	var en_acik := -1.0
+	for aci: float in [0.0, 0.5, -0.5, 1.0, -1.0, PI, 1.6, -1.6]:
+		for uz: float in [3.6, 2.8]:
+			var d := yan.rotated(Vector3.UP, aci)
+			var aday := c + d * uz - yon * 0.6 + Vector3.UP * 1.6
+			var acik := 0.0
+			for hedef in [c + Vector3.UP * 0.3, c + yon * 1.2 + Vector3.UP * 0.3]:
+				var hq := PhysicsRayQueryParameters3D.create(aday, hedef)
+				var h := space.intersect_ray(hq)
+				acik += 1.0 if h.is_empty() or (h["position"] as Vector3).distance_to(hedef) < 0.5 else 0.0
+			# kameranın yeri boş mu (küçük küre)
+			var sq := PhysicsShapeQueryParameters3D.new()
+			var sp := SphereShape3D.new()
+			sp.radius = 0.4
+			sq.shape = sp
+			sq.transform = Transform3D(Basis(), aday)
+			if not space.intersect_shape(sq, 1).is_empty():
+				continue
+			acik += uz * 0.1
+			if acik > en_acik:
+				en_acik = acik
+				kp = aday
 	cam.look_at_from_position(kp, c + yon * 0.8, Vector3.UP)
 	_kam_xf = cam.global_transform
 	for i in 6:
