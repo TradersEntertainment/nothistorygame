@@ -264,7 +264,10 @@ func _coz(dt: float, gp: Vector3) -> void:
 	# Yürüyüşte kalça yana salınır: kumaş izler
 	var spd := Vector2(_lv.x, _lv.z).length()
 	if rig.yuruyor:
-		hedef.x += sin(rig._walk_phase) * 0.022 * clampf(spd / 1.4, 0.0, 1.2)
+		# Kalça her adımda yana salınır, öne basan bacak eteği önden iter: etek ucu adımla sağa-sola ve öne-arkaya
+		var gk := clampf(spd / 1.4, 0.0, 1.2)
+		hedef.x += sin(rig._walk_phase) * 0.04 * gk
+		hedef.y += cos(rig._walk_phase * 2.0) * 0.018 * gk
 	# Yaylı sarkaç (etek ucu ~1,1 Hz, az sönümlü): ivmeye eylemsizlikle karşı koyar
 	var K := 48.0
 	var C := 3.2
