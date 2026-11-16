@@ -1111,7 +1111,15 @@ func _yuru() -> void:
 	player.frozen = false
 	phase = "cross"
 	_advance_men()          # adamlar köprüden geçip siperin önüne yayılır (bölümdeki gibi; meşaleyi biri getirir)
-	await _yb("kopru_basi", once, Vector3(LANE_X, O.y + 1.2, CROSS_Z))
+	# Tolga ardından çıkar: adamlar köprüye girene dek bekler (bot, sırayla rampaya/köprüye çıkanların arasına dalıyordu)
+	await get_tree().create_timer(10.0, false).timeout
+	if sur.eski_mi:
+		# eski: rampa sur yüzünden başlar, dibinden yandan girilir (adamların yolu gibi: _walk_bridge)
+		# rampanın ayağı sur yüzüne dayalı (0,2 m): yandan çıkılır (kenarı alçak basamaktan yüksek: bot zıplar, oyuncu da)
+		await _yb("rampa_yani", Vector3(LANE_X + 1.25, 0.0, 16.45), Vector3(LANE_X, 1.0, 20.0))
+		await _yb("rampa_ust", Vector3(LANE_X, BRIDGE_Y, BRIDGE_Z0 - 0.3), Vector3(LANE_X, 1.0, 30.0), true)
+	else:
+		await _yb("kopru_basi", once, Vector3(LANE_X, O.y + 1.2, CROSS_Z))
 	await _kare("cikis")
 	await _yb("kopru_ortasi", (once + sonra) * 0.5, Vector3(LANE_X, O.y + 1.4, TRENCH_Z))
 	await _kare("kopru")
@@ -1183,7 +1191,7 @@ func _tus() -> void:
 
 
 ## Tek bacak: hedefe yürü (gerçek ileri tuşu), varınca bak. Leon izliyorsa zemine göre yeri ölçülür. =kare: ışınlanır.
-func _yb(ad: String, to: Vector3, bak: Vector3) -> void:
+func _yb(ad: String, to: Vector3, bak: Vector3, zipla := false) -> void:
 	var t := 0.0
 	var yol := 0.0
 	var son := player.global_position
@@ -1197,6 +1205,13 @@ func _yb(ad: String, to: Vector3, bak: Vector3) -> void:
 		if _leon_follow:
 			leon.global_position = _leon_spot()
 	else:
+		if zipla:
+			player.face(Vector3(to.x, player.global_position.y + 1.4, to.z))
+			Input.action_press("move_forward")
+			Input.action_press("jump")
+			for k in 3:
+				await get_tree().physics_frame
+			Input.action_release("jump")
 		while t < 40.0:
 			player.face(Vector3(to.x, player.global_position.y + 1.4, to.z))
 			Input.action_press("move_forward")
@@ -1205,8 +1220,8 @@ func _yb(ad: String, to: Vector3, bak: Vector3) -> void:
 			var p := player.global_position
 			yol += Vector2(p.x - son.x, p.z - son.z).length()
 			son = p
-			if player.velocity.y < -7.0 or p.y < _dus_y():
-				dus += 1
+			if p.y < _dus_y():
+				dus += 1          # hendeğe düştü (köprüden)
 			if _leon_follow and leon.visible:
 				var lp := leon.global_position
 				var zy := _yer_y(lp + Vector3(0, 0.6, 0)) if not sur.eski_mi else _walk_y(lp)

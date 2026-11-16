@@ -21,7 +21,17 @@ const HAUL_FROM := -3.0       # kızağın x'i (bataryanın arkasındaki yol boy
 const HAUL_TO := 9.0           # LandWalls.CANNON.x
 ## Kızak yolu mevzinin arka kenarında: barut fıçılarının (z ≤ 121,8) ve yan sepet duvarlarının (SiegeField.GUN_GATE_Z)
 ## gerisinden geçer. Eskiden z 122'deydi: kızak fıçıların, çeken bölük sepetlerin içinden geçiyordu.
-const HAUL_Z := 124.5
+const HAUL_Z_E := 124.5
+## Yeni sette (TAŞIMA-7) bölüm yeni Mesoteikhion surunun SAĞLAM kipinde (11 Nisan: sur henüz gediksiz; eski set `intact`).
+## Bölümün bütün işi ovada, bataryada (22o/32o kalıbı): ovadaki her yer eski koordinat + SurSet.ova_ofs (O) → aralarındaki
+## mesafeler AYNI (kızak yolu HAUL_Z eski 124,5 → 124,5 + O.z, HAUL_FROM/HAUL_TO aynı). Sur yalnız hedef: ilk gülle sağlam
+## dış surun ova yüzüne iner (gedik x'i = varsayılan kipin oyun gediğinin yeri, SurSet çerçevesi). Süreler (ROLLER_EVERY,
+## STEP) aynı. Geri dönüş: ESKI_SUR ya da --eskisur[=28o].
+const ESKI_SUR := false
+var sur: SurSet
+var O := Vector3.ZERO
+static var _O := Vector3.ZERO          # gy() statik: ova kaydırması
+var HAUL_Z := HAUL_Z_E
 const ROLLER_EVERY := 4.0
 const STEP := 1.0              # iyi bir "hey-yap" başına kızağın yolu (m); tam vaktinde 1,3
 const ROLLER_SLOTS := [-3.0, 0.0, 3.0]    # kızağın altındaki kütüklerin yerleri (kızağa göre x)
@@ -71,7 +81,7 @@ var _coils: Array[MeshInstance3D] = []
 var _on_rope := false                  # oyuncunun iki eli halatın ucunda
 var _ox_teams: Array[Dictionary] = []  # yakın, canlı öküz takımları (koşumlu, kızak çekerek yürür)
 var _herd: Array[Node3D] = []          # uzak, durağan öküz sıraları (çoklu ağ)
-var _gyf := func(x: float, z: float) -> float: return SiegeField.ground(x, z)
+var _gyf := func(x: float, z: float) -> float: return gy(x, z)
 
 
 func _ready() -> void:
@@ -89,7 +99,19 @@ func _ready() -> void:
 	hud.set_signal(0)
 	meter = RowMeter.new()
 	hud.add_child(meter)
-	walls = LandWalls.new()
+	sur = SurSet.sec("28o", ESKI_SUR, "mesoteikhion", true)
+	if sur.eski_mi:
+		walls = LandWalls.new()
+		_O = Vector3.ZERO
+	else:
+		var ss := SurSetSahne.new()
+		ss.sur = sur
+		ss.dolgu = 0.0             # 11 Nisan: hendek dolgusu yok
+		ss.kalas = false           # kalas köprü yok (36b'nin huruçu 9 Nisan'daydı; köprü içeri alındı)
+		walls = ss
+		O = sur.ova_ofs()
+		_O = O
+		HAUL_Z = HAUL_Z_E + O.z
 	walls.intact = true
 	walls.gun_gate = true                                   # mevzinin yan sepet duvarları arkada açık: kızak oradan girer
 	walls.field_keep = [Rect2(-18.0, 120.0, 48.0, 9.0)]     # kızak yolu ve çeken bölük: ova eşyası konmaz
@@ -112,7 +134,7 @@ func _ready() -> void:
 	add_child(urban)
 	urban.look_target = player
 	# Bataryanın arkasındaki yol (kızağın çekildiği yer) yürünür: arazinin çarpışması yalnız topun çevresinde var
-	var pad := Props.solid(self, Vector3(40.0, 0.4, 26.0), Vector3(3.0, -0.2, 121.0), Color.WHITE)
+	var pad := Props.solid(self, Vector3(40.0, 0.4, 26.0), Vector3(3.0, -0.2, 121.0) + O, Color.WHITE)
 	pad.get_child(0).visible = false
 	_build_stakes()
 	_build_sled()
@@ -139,14 +161,14 @@ func _ready() -> void:
 
 
 static func gy(x: float, z: float) -> float:
-	return SiegeField.ground(x, z)
+	return SiegeField.ground(x - _O.x, z - _O.z) + _O.y
 
 
 # ================================================================ sahne
 
 ## Kazık yığını ve siperin ardında dört delik (kazık çit, setin hemen gerisinde)
 func _build_stakes() -> void:
-	var pile := Vector3(18.0, 0, 120.5)
+	var pile := Vector3(18.0, 0, 120.5) + O
 	pile.y = gy(pile.x, pile.z)
 	for i in 7:
 		Props.cyl(self, 0.09, 2.2, pile + Vector3(-0.6 + (i % 4) * 0.4, 0.15 + (i / 4) * 0.2, 0), Color("8a6a44"), Vector3(90, 0, 90), 6)
@@ -155,7 +177,7 @@ func _build_stakes() -> void:
 		var h := Node3D.new()
 		add_child(h)
 		var x := 2.5 + i * 4.2
-		h.global_position = Vector3(x, gy(x, 114.6), 114.6)
+		h.global_position = Vector3(x, gy(x, 114.6 + O.z), 114.6 + O.z)
 		Props.cyl(h, 0.22, 0.04, Vector3(0, 0.02, 0), Color("3a2a1a"), Vector3.ZERO, 8)
 		Props.interactable(h, "hole_%d" % i, Vector3(1.2, 1.2, 1.2), Vector3(0, 0.5, 0))
 		_holes.append(h)
@@ -286,8 +308,8 @@ func _run() -> void:
 	await hud.card([[tr("UI_CH28O_TITLE"), 44, Color("f2e6c9")], [tr("UI_CH28O_SUB"), 20, Color(1, 1, 1, 0.7)]], 2.8)
 	hud.clear_card()
 	Audio.ambience("amb_wall_day")
-	urban.global_position = Vector3(14.0, gy(14.0, 121.0), 121.0)
-	player.global_position = Vector3(16.0, gy(16.0, 123.0) + 0.05, 123.0)
+	urban.global_position = Vector3(14.0, gy(14.0, 121.0 + O.z), 121.0 + O.z)
+	player.global_position = Vector3(16.0, gy(16.0, 123.0 + O.z) + 0.05, 123.0 + O.z)
 	player.face(urban.global_position + Vector3(0, 1.5, 0))
 	player.show_remote(true)             # Tolga'nın eli açık (kazık ve kütük elsiz havada duruyordu)
 	_capture_mouse()
@@ -339,17 +361,17 @@ func _haul_phase() -> void:
 	# (Halat ucunda başlatmak denendi: görüş halatçı sırasıyla kapanıyor, çizim yükü %35 artıyordu.)
 	var ps := Vector3(haul_x + 7.5, 0, HAUL_Z + 7.0)
 	player.global_position = Vector3(ps.x, gy(ps.x, ps.z) + 0.05, ps.z)
-	player.face(Vector3(haul_x + 5.5, 1.0, HAUL_Z))
+	player.face(Vector3(haul_x + 5.5, 1.0 + O.y, HAUL_Z))
 	player.stow_hands(true)
 	player.show_remote(false)            # 2. tur: eller görünmez (koli bandı gitmişti ama el boş havada açık duruyordu)
 	_lay_ropes()
 	# "Altmış öküz bunu Edirne'den getirdi": bakış replik boyunca öküzlere (kızak yolunun gerisinde, takımlar çekerek
 	# gelir, ötede çiftler dinlenir); Urban o yanda konuşur. Replikten sonra bakış kızağa döner.
 	urban.global_position = Vector3(haul_x + 1.0, gy(haul_x + 1.0, HAUL_Z + 6.0), HAUL_Z + 6.0)
-	player.face(Vector3(-6.0, 0.5, HAUL_Z + 15.0))
+	player.face(Vector3(-6.0, 0.5 + O.y, HAUL_Z + 15.0))
 	await hud.fade_to(0.0, 0.8)
 	await hud.say("SPK_URBAN", "D28O_U_HAUL")
-	player.face(Vector3(haul_x + 5.5, 1.0, HAUL_Z))
+	player.face(Vector3(haul_x + 5.5, 1.0 + O.y, HAUL_Z))
 	match Siege.outcome(35):
 		"35O.2":
 			_roller_every = 3.0
@@ -524,16 +546,16 @@ func _first_shot() -> void:
 	# Mevzinin arkası açık (kızak oradan girdi): yanlarda ip çit; build_great_gun'ın görünmez sınırı artık görünür
 	for sx: float in [-3.3, 21.3]:
 		for i in 5:
-			Props.cyl(self, 0.07, 1.2, Vector3(sx, 0.6, 121.4 + i * 2.05), Color("5a4630"), Vector3.ZERO, 6)
+			Props.cyl(self, 0.07, 1.2, Vector3(sx, 0.6, 121.4 + i * 2.05) + O, Color("5a4630"), Vector3.ZERO, 6)
 		for y: float in [0.55, 1.0]:
-			Props.box(self, Vector3(0.035, 0.035, 8.3), Vector3(sx, y, 125.5), Color("8a7050"))
+			Props.box(self, Vector3(0.035, 0.035, 8.3), Vector3(sx, y, 125.5) + O, Color("8a7050"))
 	_setup_gun_crew()
 	urban.global_position = gun.position + Vector3(4.8, 0, 4.4)
 	horse.visible = true
 	horse.global_position = gun.position + Vector3(-6.0, 0, 9.0)
 	horse.rotation.y = PI
 	player.global_position = gun.position + Vector3(3.0, 0.05, 6.0)
-	player.face(LandWalls.BREACH + Vector3(0, 4.0, 0))
+	player.face(_hedef() + Vector3(0, 4.0, 0))
 	await hud.card([[tr("UI_CH28O_SHOT"), 26, Color("f2e6c9")]], 1.8)
 	hud.clear_card()
 	await hud.fade_to(0.0, 0.8)
@@ -563,6 +585,12 @@ func _first_shot() -> void:
 		await get_tree().create_timer(1.6, false).timeout
 	hit = _acc >= 0.5
 	var at := LandWalls.BREACH + Vector3(randf_range(-1.5, 1.5), 3.5, 1.2) if hit else LandWalls.BREACH + Vector3(randf_range(-10.0, 10.0), 0.8, 7.0)
+	if not sur.eski_mi:
+		# yeni: isabet dış surun ova yüzünde (eski: yüzün 0,2 m önü, 3,5 m yükseklik); ıska surun önündeki toprağa, eski gibi
+		# yüzün 6 m önü (terasa) ve zeminin 0,8 m üstü
+		var hx := randf_range(-1.5, 1.5) if hit else randf_range(-10.0, 10.0)
+		var hz := sur.dis_sur_z1() + (0.2 if hit else 6.0)
+		at = Vector3(hx, 3.5 if hit else sur.zemin_y(hx, hz) + 0.8, hz)
 	if drill.physical and drill.last_impact != Vector3.INF:
 		at = drill.last_impact
 	walls.impact(at)
@@ -603,9 +631,17 @@ func _first_shot() -> void:
 	Siege.record(28, _photo, "SIEGE_NOTE_28O_%s%s" % [_outcome.split(".")[1], "" if hit else "M"])      # ıska: gülle hendekte
 
 
+## İlk atışın hedefi: dış surun gedik yeri (eski LandWalls.BREACH; yeni sağlam kipte gedik yok: SurSet çerçevesinin x 0'ı,
+## dış surun ortası = varsayılan kipin oyun gediğinin yeri, TUR-11 notu)
+func _hedef() -> Vector3:
+	return LandWalls.BREACH if sur.eski_mi else sur.gedik()
+
+
 ## Sağlam surda ilk gülle yarası: koyu oyuk, çatlaklar
 func _scar(at: Vector3) -> void:
 	var p := Vector3(at.x, clampf(at.y, 1.5, LandWalls.OUTER_H - 1.0), LandWalls.OUTER_Z1 + 0.02)
+	if not sur.eski_mi:
+		p = Vector3(at.x, clampf(at.y, sur.teras_y() + 1.5, sur.dis_yol_y() - 1.0), sur.dis_sur_z1() + 0.02)
 	Props.box(self, Vector3(1.8, 1.5, 0.03), p, Color("5e584e"), Vector3(0, 0, randf_range(-20, 20)))
 	Props.box(self, Vector3(1.0, 0.9, 0.04), p + Vector3(0, 0, 0.01), Color("2e2a25"), Vector3(0, 0, 45))
 	for k in 5:
@@ -626,10 +662,10 @@ func _setup_gun_crew() -> void:
 	gun_crew.supplies = {"powder": gun.to_global(Vector3(-2.7, 0, 2.2)), "ball": gun.to_global(Vector3(3.8, 0, -0.5)),
 		"wad": gun.to_global(Vector3(-2.8, 0, 5.6)), "rammer": gun.to_global(Vector3(2.8, 0, 5.6))}
 	gun_crew.spawn = ["wad"]
-	gun_crew.target = func() -> Vector3: return LandWalls.BREACH + Vector3(0, 4.0, 0)
+	gun_crew.target = func() -> Vector3: return _hedef() + Vector3(0, 4.0, 0)
 	gun_crew.hit_radius = 5.0
 	gun_crew.tolerance = 16.0
-	gun_crew.ground_y = 0.0
+	gun_crew.ground_y = 0.0 if sur.eski_mi else sur.ova_y()      # yeni ova 3,6 m aşağıda (32o'da gülle namluda "yere düşüyordu")
 	gun_crew.load_radius = 3.2
 	gun_crew.design_elev = 5.0
 	gun_crew.pitch_min = -2.0
@@ -655,7 +691,7 @@ func _update_objective() -> void:
 		"stakes":
 			var look: Variant = null
 			if carrying == "" :
-				look = Vector3(18.0, gy(18.0, 120.5) + 1.0, 120.5)
+				look = Vector3(18.0, gy(18.0, 120.5 + O.z) + 1.0, 120.5 + O.z)
 			elif stakes < STAKES:
 				# Henüz çakılmamış en yakın çukur (sıra numarasına göre gösteriliyordu: yakından başlayan oyuncuda işaret
 				# bitmiş çukurda kalıyordu)
@@ -945,7 +981,7 @@ func _haul_show(on: bool) -> void:
 
 ## Oyuncunun halattaki yeri: +z halatının ucunda, son halatçının ardında (halatın iç yanında)
 func _rope_spot() -> Vector3:
-	return Vector3(haul_x + 19.6, 0, HAUL_Z + 2.5)
+	return Vector3(haul_x + 19.6, O.y, HAUL_Z + 2.5)
 
 
 ## Urban halatçı sırasının yanında (dışında) yürür: oyuncuya 7 m, sıraya bakar
@@ -1157,10 +1193,10 @@ func _goad(sol: Soldier) -> void:
 ## Batarya zemini (yayma P4): siper dibinde kazık çukurlarının çamuru, kızak yolunda çamur ve ayak izi, gelinen yolda
 ## kızak ve toynak izi, kazık yığınının dibinde yonga. Her tür tek çoklu ağ. Eskiden düz petek taş levhaydı.
 func _build_ground() -> void:
-	Nature.ground_detail(self, Rect2(1.4, 113.7, 15.4, 1.8), "mud", 2.4, 2801, _gyf)
+	Nature.ground_detail(self, Rect2(1.4, 113.7 + O.z, 15.4, 1.8), "mud", 2.4, 2801, _gyf)
 	Nature.ground_detail(self, Rect2(-24.0, HAUL_Z - 2.8, 52.0, 5.6), "mud", 0.5, 2802, _gyf)
 	Nature.ground_detail(self, Rect2(-24.0, HAUL_Z - 3.4, 52.0, 6.8), "footprint", 0.55, 2803, _gyf)
-	Nature.ground_detail(self, Rect2(16.4, 119.2, 3.4, 2.6), "chips", 3.0, 2804, _gyf)
+	Nature.ground_detail(self, Rect2(16.4, 119.2 + O.z, 3.4, 2.6), "chips", 3.0, 2804, _gyf)
 	for rz: float in [-0.55, 0.55]:
 		Nature.trail(self, [Vector3(-70.0, 0, HAUL_Z + rz), Vector3(HAUL_FROM - 4.6, 0, HAUL_Z + rz)], "wheel_ruts", _gyf, 1.0, 2805 + int(rz * 10.0), 0.05)
 	Nature.trail(self, [Vector3(-70.0, 0, HAUL_Z + 4.0), Vector3(-14.0, 0, HAUL_Z + 4.0)], "hoofprint", _gyf, 0.5, 2807, 1.6)
@@ -1233,8 +1269,8 @@ func _autotest_report() -> void:
 	if not ok:
 		printerr("AUTOTEST: beklenen %s, gelen %s (sayfa=%s foto=%s usta=%s kütük=%.1f)" % [expected, _outcome, not page.is_empty(),
 			cam != null and cam.done, _master, _roller_every])
-	print("AUTOTEST %s chapter=28o variant=%s outcome=%s stakes=%d slips=%d hit=%s master=%s roller_every=%.1f rollers=%d" % [
-		"PASS" if ok else "FAIL", v, _outcome, stakes, slips, hit, _master, _roller_every, rollers_set])
+	print("AUTOTEST %s chapter=28o variant=%s outcome=%s stakes=%d slips=%d hit=%s master=%s roller_every=%.1f rollers=%d sur=%s" % [
+		"PASS" if ok else "FAIL", v, _outcome, stakes, slips, hit, _master, _roller_every, rollers_set, "eski" if sur.eski_mi else "yeni"])
 	get_tree().quit(0 if ok else 1)
 
 

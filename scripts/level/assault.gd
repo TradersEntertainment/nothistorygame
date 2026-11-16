@@ -821,7 +821,7 @@ func _fire_gun(gd: Dictionary) -> void:
 		Vfx.explosion(self, hit, 0.8)
 		Vfx.dust(self, hit + Vector3(0, -1.0, 1.0), 1.4)
 		for k in 5:
-			var st := Props.box(self, Vector3.ONE * rng.randf_range(0.2, 0.45), hit, Color("cdbd9e"))
+			var st := _kirik_tas(rng.randf_range(0.2, 0.45), hit) if _yeni() else Props.box(self, Vector3.ONE * rng.randf_range(0.2, 0.45), hit, Color("cdbd9e"))
 			var v := Vector3(rng.randf_range(-3, 3), rng.randf_range(2, 5), rng.randf_range(2, 6))
 			_flying.append([st, v, 2.5])
 		Audio.sfx("explosion_small", -12.0, rng.randf_range(0.7, 1.0))
@@ -954,6 +954,8 @@ func _away_from_quiet(x: float) -> float:
 func _lob(from: Vector3) -> void:
 	var hit := Vector3(clampf(from.x * 0.5 + rng.randf_range(-10, 10), -wall_len * 0.4, wall_len * 0.4), rng.randf_range(4.0, 9.0), rng.randf_range(12.0, 16.2))
 	hit.x = _away_from_quiet(hit.x)
+	if _yeni():
+		hit = _lob_yeri(hit.x)
 	var stone := Props.ball(self, 0.4, from, Color("8a8478"), Vector3.ONE, 6)
 	var peak := (from + hit) * 0.5 + Vector3(0, 28.0, 0)
 	var tb := stone.create_tween()
@@ -961,10 +963,38 @@ func _lob(from: Vector3) -> void:
 	tb.tween_callback(func():
 		Vfx.dust(self, hit, 1.6)
 		for k in 4:
-			var st := Props.box(self, Vector3.ONE * rng.randf_range(0.2, 0.4), hit, Color("cdbd9e"))
+			var st := _kirik_tas(rng.randf_range(0.2, 0.4), hit) if _yeni() else Props.box(self, Vector3.ONE * rng.randf_range(0.2, 0.4), hit, Color("cdbd9e"))
 			_flying.append([st, Vector3(rng.randf_range(-3, 3), rng.randf_range(2, 5), rng.randf_range(1, 5)), 2.5])
 		Audio.sfx("explosion_small", -16.0, rng.randf_range(0.5, 0.7))
 		stone.queue_free())
+
+
+## TAŞIMA-7 (yalnız yeni set): mancınık taşının düştüğü yer GERÇEK bir yüzeyde. Eski kesitteki rastgele yer (y 4–9, z 12–16,2:
+## eski dış sur 14–16, 8 m) yeni sette ya surun gövdesinin içine ya peribolosun 4–9 m üstüne, havaya düşüyordu: toz bulutu
+## (Vfx.dust, 8 dilimli beyaz küre) ve kırık taşlar havada belirip saçılıyordu (37o an_04'ün sağ üstündeki "havada beyaz
+## altıgen" ve sol üstteki küçük turuncu "kutu", docs/_kanit_ist2_tasima7 §1). Aynı anlam ("sura ya da surun ardına"): dış
+## surun ova yüzü (yarısı), sur yolunun taşı (gedik ve kule dışında), peribolosun toprağı (surun ardı).
+func _lob_yeri(x: float) -> Vector3:
+	var r := rng.randf()
+	if r < 0.5 or (r < 0.8 and not sur.dis_yol_bos(x)):
+		var y := lerpf(sur.teras_y(), sur.dis_yol_y(), rng.randf_range(0.35, 0.9))
+		var z := sur.dis_sur_z1() + 0.15
+		if absf(x) < sur.gedik_bosluk():
+			z = sur.dis_sur_z1() + rng.randf_range(0.0, 2.0)
+			y = sur.zemin_y(x, z)
+		return Vector3(x, y, z)
+	if r < 0.8:
+		return Vector3(x, sur.dis_yol_y(), lerpf(sur.dis_sur_z0(), sur.dis_sur_z1(), rng.randf_range(0.3, 0.7)))
+	var zp := sur.dis_sur_z0() - rng.randf_range(1.5, 4.0)
+	return sur.on_rubble(Vector3(x, 0.0, zp))
+
+
+## Kırık taş (yeni set; kutu değil): düzensiz, yassı bir kaya parçası
+func _kirik_tas(boy: float, at: Vector3) -> Node3D:
+	var st := Props.ball(self, boy * 0.5, at, Color("cdbd9e").darkened(rng.randf_range(0.0, 0.25)),
+		Vector3(rng.randf_range(1.0, 1.4), rng.randf_range(0.55, 0.8), rng.randf_range(0.8, 1.2)), 5)
+	st.rotation = Vector3(rng.randf_range(-0.6, 0.6), rng.randf() * TAU, rng.randf_range(-0.6, 0.6))
+	return st
 
 
 ## Pavise (kalkan siper): hendeğin ötesinde, okçu sıralarının önünde, arkası payandalı büyük tahta kalkanlar;
@@ -1218,6 +1248,8 @@ func _update_flying(delta: float) -> void:
 			n.look_at(n.global_position + v, Vector3.UP if absf(v.normalized().y) < 0.98 else Vector3.RIGHT)
 			n.rotate_object_local(Vector3.UP, PI)
 		var ground: float = f[4] if is_arrow else -0.5
+		if not is_arrow and _yeni():
+			ground = sur.zemin_y(n.global_position.x, n.global_position.z)      # yeni: taş gerçek zemine değince (teras, ova 3,6 m aşağıda)
 		if n.global_position.y <= ground or float(f[2]) <= -1.0:
 			_flying.remove_at(k)
 			if is_arrow and f.size() > 5 and int(f[5]) >= 0:

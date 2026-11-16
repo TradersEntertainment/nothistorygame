@@ -43,7 +43,24 @@ static func yaz(kok: Node, an: String, n := 8) -> void:
 			if not nd.is_visible_in_tree() or cam.is_position_behind(nd.global_position):
 				continue
 			var e := cam.unproject_position(nd.global_position)
-			print("PIK7PARCA an=%s tur=%s ekran=%s p=%s yol=%s" % [an, g.get_class(), e.round(), nd.global_position.snapped(Vector3.ONE * 0.01), str(g.get_path()).right(100)])
+			var ek := ""
+			if g is CPUParticles3D:
+				var cp := g as CPUParticles3D
+				var ms := cp.mesh
+				ek = " mesh=%s" % (ms.get_class() if ms else "-")
+				if ms is SphereMesh:
+					ek += " r=%.3f seg=%d" % [(ms as SphereMesh).radius, (ms as SphereMesh).radial_segments]
+				var mt: Material = ms.surface_get_material(0) if ms and ms.get_surface_count() > 0 else null
+				if mt == null and ms is PrimitiveMesh:
+					mt = (ms as PrimitiveMesh).material
+				if mt is BaseMaterial3D:
+					ek += " renk=%s saydam=%d" % [(mt as BaseMaterial3D).albedo_color, (mt as BaseMaterial3D).transparency]
+				ek += " olcek=%.2f..%.2f emit=%s yerel=%s" % [cp.scale_amount_min, cp.scale_amount_max, cp.emitting, cp.local_coords]
+			var ata := g.get_parent()
+			var ata_s: String = ata.get_class() + ("(" + str(ata.get_script().resource_path).get_file() + ")" if ata.get_script() else "")
+			var ata2 := ata.get_parent()
+			var ata2_s: String = ata2.get_class() + ("(" + str(ata2.get_script().resource_path).get_file() + ")" if ata2 and ata2.get_script() else "") if ata2 else "-"
+			print("PIK7PARCA an=%s tur=%s ekran=%s p=%s yol=%s ata=%s ata2=%s%s" % [an, g.get_class(), e.round(), nd.global_position.snapped(Vector3.ONE * 0.01), str(g.get_path()).right(100), ata_s, ata2_s, ek])
 	var vs := kok.get_viewport().get_visible_rect().size
 	var olcek := vs / Vector2(1280, 720)
 	var hepsi: Array = []
