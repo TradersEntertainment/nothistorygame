@@ -1,0 +1,2 @@
+VISAUDIT float scene=chapter37o.tscn who=Soldier/Chapter37o spk= feet=(1.4, -0.1, 20.7) floor=-0.32 by=@Node3D@179/@StaticBody3D@1067 act= meta=no_rally,no_talk src=Chapter37o>Soldier shape=ConvexPolygonShape3D@(0.0, 0.0, 0.0) lp=(1.43, -0.15, 20.75)
+AUTOTEST PASS chapter=37o variant=lose outcome=37O.2 beats=4/16 arrows=0 falls=1 barrels=2/5 cuts=2 stones=0 slips=0 burns=0 duel=false caught=0 sur=eski

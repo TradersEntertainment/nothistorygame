@@ -1,0 +1,1 @@
+AUTOTEST PASS chapter=42 variant= outcome=42.1 dir=4 bumps=0 blocks=3 parries=2 kick=true down=true fins=thrust,slash,ground spar=4/0 pushed=2 late=0

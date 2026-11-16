@@ -113,6 +113,11 @@ func _init(p := {}) -> void:
 			hair = rh["color"]
 
 
+## Giysi kumaşı (scripts/npc/kumas.gd); uzun kaftanın bel yüksekliği ve boyu: üstündeki süsler de bununla bükülür
+const Kumas := preload("res://scripts/npc/kumas.gd")
+const ROBE_UST := 0.95
+const ROBE_BOY := 0.78
+
 func _ready() -> void:
 	Props.share_meshes = true          # aynı ölçülü parçalar kişiler arasında paylaşılır (kurulum hızı)
 	_t = randf() * 10.0
@@ -132,7 +137,7 @@ func _ready() -> void:
 	_body.add_child(_leg_r)
 	_knee_r = CharKit.leg(_leg_r, pants, shoe)
 	if skirt:
-		Props.cyl(_body, 0.2, 0.45, Vector3(0, 0.55, 0), pants, Vector3.ZERO, 14, 0.25)
+		Kumas.silindir(_body, 0.2, 0.45, Vector3(0, 0.55, 0), pants, 14, 0.25)      # sallanır (scripts/npc/kumas.gd)
 	# Asker zırhı: 15. yy savunucuları kapitone gambeson, zincir zırh (hauberk) ya da göğüs zırhı giyerdi
 	var team := coat
 	if hat == "helm" and armor == "":
@@ -144,10 +149,14 @@ func _ready() -> void:
 	_armor(team)
 	if robe.a > 0.0:
 		# Uzun kaftan / cüppe: dizlere kadar, etekte hafif açılır
-		Props.cyl(_body, 0.32, 0.78, Vector3(0, 0.56, 0), robe, Vector3.ZERO, 14, 0.25)
-		Props.cyl(_body, 0.325, 0.06, Vector3(0, 0.2, 0), robe.darkened(0.18), Vector3.ZERO, 14)
+		# Kumaş: yürürken bacaklarla ve gövdenin hızıyla sallanır, rüzgârda dalgalanır (scripts/npc/kumas.gd); uçtaki şerit
+		# eteğin bir parçası gibi bükülür
+		Kumas.silindir(_body, 0.32, 0.78, Vector3(0, 0.56, 0), robe, 14, 0.25)
+		Kumas.silindir(_body, 0.325, 0.06, Vector3(0, 0.2, 0), robe.darkened(0.18), 14, -1.0, Kumas.ETEK, ROBE_UST, ROBE_BOY)
 	if apron.a > 0.0:
-		Props.box(_body, Vector3(0.38, 0.62, 0.03), Vector3(0, 0.8, 0.25), apron)
+		var ap := Props.box(_body, Vector3(0.38, 0.62, 0.03), Vector3(0, 0.8, 0.25), apron)
+		if robe.a > 0.0:
+			Kumas.isaretle(ap, Kumas.ETEK, ROBE_UST, ROBE_BOY)      # kaftanla birlikte bükülür (içine girmesin)
 	Props.prism(_body, Vector3(0.17, 0.12, 0.04), Vector3(0, 1.3, 0.21), Color("f1ede2"), Vector3(180, 0, 0))
 	# Kollar
 	_arm_l = Node3D.new()
@@ -218,12 +227,12 @@ func _ready() -> void:
 			# Yeniçeri börkü (Soldier ile aynı): sırma kenar, uzun beyaz keçe, enseye düşen yatırtma
 			Props.cyl(_head, 0.205, 0.08, Vector3(0, 0.16, 0), Color("c9a24a"), Vector3.ZERO, 16)
 			Props.cyl(_head, 0.18, 0.45, Vector3(0, 0.38, -0.04), Color("f3efe4"), Vector3(-12, 0, 0), 16, 0.14)
-			Props.box(_head, Vector3(0.14, 0.4, 0.04), Vector3(0, 0.12, -0.24), Color("f3efe4"), Vector3(20, 0, 0))
+			Kumas.pano(_head, Vector3(0.14, 0.4, 0.04), Vector3(0, 0.12, -0.24), Color("f3efe4"), Vector3(20, 0, 0), Kumas.UC)
 		"azap":
 			# Azap börkü: kırmızı keçe (yeniçerininki gibi ama kızıl ve sırmasız), enseye düşen yatırtma
 			Props.cyl(_head, 0.2, 0.07, Vector3(0, 0.15, 0), Color("7a1e1a"), Vector3.ZERO, 14)
 			Props.cyl(_head, 0.17, 0.34, Vector3(0, 0.33, -0.03), Color("a8281f"), Vector3(-10, 0, 0), 14, 0.13)
-			Props.box(_head, Vector3(0.13, 0.3, 0.035), Vector3(0, 0.12, -0.23), Color("a8281f"), Vector3(18, 0, 0))
+			Kumas.pano(_head, Vector3(0.13, 0.3, 0.035), Vector3(0, 0.12, -0.23), Color("a8281f"), Vector3(18, 0, 0), Kumas.UC)
 		"cicak":
 			# Sipahi çiçak miğferi: sivri tepeli çelik kubbe, çevresine sarılmış sarık, burun siperi, zincir boyunluk
 			Props.ball(_head, 0.23, Vector3(0, 0.14, -0.01), Color("7e848c"), Vector3(1.0, 0.95, 1.0), 12)
@@ -375,8 +384,8 @@ func _sultan() -> void:
 	# Kapaniçe: samur kürk yaka ve önde kürk şeritler, kırmızı-altın kaftan
 	Props.ring(_body, 0.19, 0.275, Vector3(0, 1.34, 0), fur, Vector3(-6, 0, 0))       # omuz topuna (x ±0.3) ve kalkan kola girmesin
 	for sx in [-0.09, 0.09]:
-		Props.box(_body, Vector3(0.07, 1.05, 0.05), Vector3(sx, 0.72, 0.3), fur)       # kalçaya kadar: bacak şeride girmez
-	Props.box(_body, Vector3(0.1, 1.0, 0.04), Vector3(0, 0.72, 0.29), gold.darkened(0.15))
+		Kumas.isaretle(Props.box(_body, Vector3(0.07, 1.05, 0.05), Vector3(sx, 0.72, 0.3), fur), Kumas.ETEK, ROBE_UST, ROBE_BOY)       # kalçaya kadar: bacak şeride girmez
+	Kumas.isaretle(Props.box(_body, Vector3(0.1, 1.0, 0.04), Vector3(0, 0.72, 0.29), gold.darkened(0.15)), Kumas.ETEK, ROBE_UST, ROBE_BOY)
 	# Çintemani: eteğe üçlü altın benekler
 	for i in 8:
 		var a := TAU * (i + 0.5) / 8.0
@@ -384,14 +393,14 @@ func _sultan() -> void:
 			continue
 		for k in 3:
 			var off := Vector3(0.035 * (k - 1), 0.02 if k == 1 else 0.0, 0).rotated(Vector3.UP, a)
-			Props.ball(_body, 0.022, Vector3(sin(a) * 0.3, 0.42, cos(a) * 0.3) + off, gold, Vector3(1, 1, 0.5), 5)
+			Kumas.isaretle(Props.ball(_body, 0.022, Vector3(sin(a) * 0.3, 0.42, cos(a) * 0.3) + off, gold, Vector3(1, 1, 0.5), 5), Kumas.ETEK, ROBE_UST, ROBE_BOY)
 	# Mücevherli kuşak ve hançer
 	Props.cyl(_body, 0.27, 0.08, Vector3(0, 0.98, 0), gold, Vector3.ZERO, 12)
 	Props.ball(_body, 0.035, Vector3(0, 0.98, 0.27), Color("2a8a4a"), Vector3.ONE, 6)
 	Props.box(_body, Vector3(0.05, 0.22, 0.03), Vector3(0.12, 0.93, 0.26), gold, Vector3(0, 0, -25))
-	# Arkadan sarkan uzun yenler
+	# Arkadan sarkan uzun yenler (sallanır)
 	for arm in [_arm_l, _arm_r]:
-		Props.box(arm, Vector3(0.13, 0.75, 0.05), Vector3(0, -0.42, -0.12), robe if robe.a > 0.0 else red)
+		Kumas.pano(arm, Vector3(0.13, 0.75, 0.05), Vector3(0, -0.42, -0.12), robe if robe.a > 0.0 else red, Vector3.ZERO, Kumas.UC)
 
 
 ## Son Bizans imparatoru XI. Konstantinos Palaiologos: kubbeli altın stemma tacı, iki yanda inci sarkıtlar (pendilia),
@@ -413,10 +422,10 @@ func _basileus() -> void:
 			Props.ball(_head, 0.022, Vector3(sx * 0.2, 0.12 - k * 0.055, 0.04), pearl, Vector3.ONE, 5)
 	# Loros: omuzdan çapraz inen mücevherli altın kuşak
 	for sx in [-1, 1]:
-		Props.box(_body, Vector3(0.1, 0.75, 0.03), Vector3(sx * 0.1, 0.95, 0.27), gold, Vector3(0, 0, sx * 22))
-	Props.box(_body, Vector3(0.12, 0.6, 0.03), Vector3(0, 0.45, 0.33), gold)
+		Kumas.isaretle(Props.box(_body, Vector3(0.1, 0.75, 0.03), Vector3(sx * 0.1, 0.95, 0.27), gold, Vector3(0, 0, sx * 22)), Kumas.ETEK, ROBE_UST, ROBE_BOY)
+	Kumas.isaretle(Props.box(_body, Vector3(0.12, 0.6, 0.03), Vector3(0, 0.45, 0.33), gold), Kumas.ETEK, ROBE_UST, ROBE_BOY)
 	for k in 5:
-		Props.ball(_body, 0.02, Vector3(0, 0.25 + k * 0.1, 0.35), Color("b0101a") if k % 2 == 0 else Color("1a7a4a"), Vector3.ONE, 5)
+		Kumas.isaretle(Props.ball(_body, 0.02, Vector3(0, 0.25 + k * 0.1, 0.35), Color("b0101a") if k % 2 == 0 else Color("1a7a4a"), Vector3.ONE, 5), Kumas.ETEK, ROBE_UST, ROBE_BOY)
 	# Çift başlı kartal (Palaiologos arması)
 	Props.ball(_body, 0.055, Vector3(0, 1.12, 0.265), gold, Vector3(1.4, 1, 0.3), 6)
 	for sx in [-1, 1]:
@@ -460,9 +469,9 @@ func _armor(team: Color) -> void:
 			for k in 6:
 				Props.box(_body, Vector3(0.44, 0.012, 0.02), Vector3(0, 0.72 + k * 0.1, 0.235 - absf(k - 2.5) * 0.004), team.darkened(0.3))
 			Props.box(_body, Vector3(0.012, 0.56, 0.02), Vector3(0, 0.96, 0.245), team.darkened(0.3))
-			Props.cyl(_body, 0.27, 0.16, Vector3(0, 0.62, 0), team.darkened(0.12), Vector3.ZERO, 12, 0.26)
+			Kumas.silindir(_body, 0.27, 0.16, Vector3(0, 0.62, 0), team.darkened(0.12), 12, 0.26)
 		"mail":
-			Props.cyl(_body, 0.27, 0.2, Vector3(0, 0.6, 0), Color("565c64"), Vector3.ZERO, 12, 0.25)
+			Kumas.silindir(_body, 0.27, 0.2, Vector3(0, 0.6, 0), Color("565c64"), 12, 0.25)
 			Props.box(_body, Vector3(0.36, 0.6, 0.03), Vector3(0, 0.88, 0.24), team)
 			Props.box(_body, Vector3(0.4, 0.06, 0.04), Vector3(0, 0.78, 0.25), Color("4a3a2a"))
 		"plate":
@@ -506,7 +515,7 @@ func _condottiero() -> void:
 		Props.cyl(leg, 0.08, 0.3, Vector3(0, -0.14, 0.0), bright, Vector3.ZERO, 10, 0.07)
 		Props.ball(leg, 0.075, Vector3(0, 0.0, 0.03), steel, Vector3(1, 1, 1.1), 8)
 	# Pelerin: omuzlardan dizlere, arkada hafif açılır
-	Props.box(_body, Vector3(0.52, 0.9, 0.03), Vector3(0, 0.84, -0.24), Color("8a1c22"), Vector3(-4, 0, 0))
+	Kumas.pano(_body, Vector3(0.52, 0.9, 0.03), Vector3(0, 0.84, -0.24), Color("8a1c22"), Vector3(-4, 0, 0), Kumas.PELERIN)      # sallanır
 	Props.box(_body, Vector3(0.6, 0.06, 0.2), Vector3(0, 1.3, -0.14), Color("8a1c22"))
 	Props.ball(_body, 0.035, Vector3(0.2, 1.3, 0.2), Color("d4a640"), Vector3.ONE, 8)
 	Props.box(_body, Vector3(0.05, 0.6, 0.04), Vector3(-0.3, 0.55, 0.12), Color("6a6e74"), Vector3(0, 0, 10))
@@ -522,7 +531,7 @@ func _kalpak() -> void:
 	if apron.a <= 0.0:
 		Props.ball(_head, 0.035, Vector3(0.12, 0.26, 0.17), Color("e0b440"), Vector3.ONE, 6)
 		Props.box(_head, Vector3(0.02, 0.3, 0.05), Vector3(0.14, 0.42, 0.14), Color("f4f0e6"), Vector3(-10, 0, -15))
-		Props.box(_body, Vector3(0.5, 0.85, 0.04), Vector3(-0.08, 0.85, -0.26), coat.darkened(0.25), Vector3(0, 0, -8))
+		Kumas.pano(_body, Vector3(0.5, 0.85, 0.04), Vector3(-0.08, 0.85, -0.26), coat.darkened(0.25), Vector3(0, 0, -8), Kumas.PELERIN)
 		# Çocukta iri kafa boynu örter: kürk yaka çenenin önünden çubuk gibi taşmasın
 		if not child:
 			Props.ring(_body, 0.18, 0.26, Vector3(-0.06, 1.33, -0.02), fur, Vector3(-8, 0, 12))
@@ -538,7 +547,7 @@ func _vizier() -> void:
 	Props.ring(_head, 0.27, 0.3, Vector3(0, 0.18, -0.02), Color("e6dcc6"), Vector3(10, 0, 0))
 	Props.ring(_body, 0.2, 0.29, Vector3(0, 1.33, 0), Color("6a4a30"), Vector3(-6, 0, 0))
 	for arm in [_arm_l, _arm_r]:
-		Props.box(arm, Vector3(0.12, 0.6, 0.05), Vector3(0, -0.38, -0.11), robe if robe.a > 0.0 else coat)
+		Kumas.pano(arm, Vector3(0.12, 0.6, 0.05), Vector3(0, -0.38, -0.11), robe if robe.a > 0.0 else coat, Vector3.ZERO, Kumas.UC)
 
 
 ## Kardinal Isidoros: geniş kenarlı kırmızı kardinal şapkası (galero) ve sarkan püsküller, kırmızı pelerin (cappa).
@@ -548,8 +557,8 @@ func _galero() -> void:
 	Props.cyl(_head, 0.34, 0.03, Vector3(0, 0.19, 0), red, Vector3.ZERO, 16)       # eskiden 0.38 (%11 küçük)
 	Props.cyl(_head, 0.19, 0.1, Vector3(0, 0.25, 0), red, Vector3.ZERO, 12, 0.17)
 	for sx in [-1, 1]:
-		Props.cyl(_head, 0.008, 0.45, Vector3(sx * 0.32, -0.04, 0), red.darkened(0.2), Vector3.ZERO, 4)
-		Props.ball(_head, 0.03, Vector3(sx * 0.32, -0.28, 0), red, Vector3(1, 1.4, 1), 5)
+		Kumas.silindir(_head, 0.008, 0.45, Vector3(sx * 0.32, -0.04, 0), red.darkened(0.2), 4, -1.0, Kumas.UC)
+		Kumas.isaretle(Props.ball(_head, 0.03, Vector3(sx * 0.32, -0.28, 0), red, Vector3(1, 1.4, 1), 5), Kumas.UC, 0.185, 0.45)
 	Props.ball(_body, 0.34, Vector3(0, 1.18, 0), red.darkened(0.05), Vector3(1.0, 0.45, 0.9), 12)
 	Props.box(_body, Vector3(0.05, 0.12, 0.02), Vector3(0, 1.08, 0.3), Color("e0b440"))
 	Props.box(_body, Vector3(0.1, 0.03, 0.02), Vector3(0, 1.1, 0.3), Color("e0b440"))
@@ -559,8 +568,8 @@ func _galero() -> void:
 func _berretta() -> void:
 	Props.ball(_head, 0.215, Vector3(0, 0.06, -0.03), hair, Vector3(1.02, 0.9, 1.0), 10)
 	Props.ball(_head, 0.22, Vector3(0, 0.2, -0.02), Color("1a1a1e"), Vector3(1.05, 0.5, 1.05), 10)
-	Props.box(_body, Vector3(0.1, 0.8, 0.04), Vector3(0.14, 0.9, 0.26), Color("1a1a1e"))
-	Props.box(_body, Vector3(0.12, 0.5, 0.04), Vector3(0.14, 1.05, -0.26), Color("1a1a1e"))
+	Kumas.isaretle(Props.box(_body, Vector3(0.1, 0.8, 0.04), Vector3(0.14, 0.9, 0.26), Color("1a1a1e")), Kumas.ETEK, ROBE_UST, ROBE_BOY)
+	Kumas.isaretle(Props.box(_body, Vector3(0.12, 0.5, 0.04), Vector3(0.14, 1.05, -0.26), Color("1a1a1e")), Kumas.ETEK, ROBE_UST, ROBE_BOY)
 
 
 ## Sürekli iş hareketi (Rig.activity): sit, sit_ground, stir, hammer, write, paint, carry, whittle.

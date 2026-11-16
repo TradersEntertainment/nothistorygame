@@ -122,6 +122,7 @@ func _init(p_owner: Node3D, parts: Dictionary) -> void:
 	_t = randf() * 10.0
 	_blink_t = randf_range(0.5, 4.0)
 	Ayak.ayarla()
+	Kumas.ayarla()
 
 
 ## Replikten yüz ifadesi: önce sahne notu ("(Gülerek)", "(Sinirle)"...), sonra noktalama ve kim konuştuğu.
@@ -174,19 +175,46 @@ func update(delta: float, talking: bool, busy: bool, ext := true) -> void:
 		Ayak.olc_tick()
 	if Yigilma.olc_acik:
 		Yigilma.olc_tick()
+	if Kumas.olc_acik:
+		Kumas.olc_tick()
 	yuruyor = false
 	_update_core(delta, talking, busy)
 	if ext:
 		if not busy and owner != null and owner.is_inside_tree() and Ayak.etkin:
 			if ayak == null:
 				ayak = Ayak.new(self)
-			ayak.uygula(delta, yuruyor)
+			# Stage.grip_hold tutuşu (iskelet kilitli: çekiç, balta, halat): ayaklar izdüşüm kipinde yere basar; tutuşun öne
+			# eğilmesi IK'dan önce (tween onu sonra yeniden yazar: aynı değer). Fizik-3: 26 =hold öne basan ayağın burnu
+			# 11–13 cm gömüktü (IK kilitli kişide her karede kapanıyordu)
+			var tutus := lock > 0 and owner.has_meta("grip_lean")
+			if tutus and float(owner.get_meta("grip_lean")) != 0.0:
+				body.rotation.x = float(owner.get_meta("grip_lean"))
+			ayak.uygula(delta, yuruyor, tutus)
 		if GameState.autotest and owner != null and owner.is_inside_tree():
 			AyakDenet.tick(owner)
 		extremities()
 		if lock == 0 and DurusKit.var_mi(activity):
 			DurusKit.bilekler(self)
+		kumas_tick(delta)
 	_egim_denet(delta)
+
+
+## GİYSİ KUMAŞI (scripts/npc/kumas.gd): kaftan/etek/pelerin/yen sallanır. Kumaşı olmayan kişide bir kez bakılır, sonra
+## hiçbir şey yapmaz. Rig.update'in sonunda; Rig.update'siz iş pozlarında (Soldier: halat, kürek) sahibinin _process'inden.
+const Kumas := preload("res://scripts/npc/kumas.gd")
+var kumas: Kumas
+var _kumas_bakti := false
+
+func kumas_tick(delta: float) -> void:
+	if kumas == null:
+		if _kumas_bakti or not Kumas.etkin:
+			return
+		_kumas_bakti = true
+		var k := Kumas.new(self)
+		if not k._ok:
+			return
+		kumas = k
+	kumas.uygula(delta)
 
 
 ## AYAK YERLEŞTİRME (scripts/npc/ayak.gd): kameraya yakın kişilerde her ayak kendi zeminine basar (iki kemikli IK),
@@ -262,7 +290,31 @@ var _ank_v := PackedFloat32Array([0.0, 0.0])
 var _wr_v := PackedFloat32Array([0.0, 0.0])
 
 
+## Yalnız ayak bilekleri (taban zemine paralel; ayak IK'nın taban eğimiyle). Stage.grip_hold tutuş duruşunda IK'dan sonra
+## çağırır (el bilekleri iki kez yumuşatılmasın).
+func ayak_bilekleri() -> void:
+	if not _ext_ready:
+		return
+	var bx := body.rotation.x if body else 0.0
+	_ayak_bilek(bx, absf(bx) > 0.9 or (body != null and absf(body.rotation.z) > 0.9))
+
+
+func _ayak_bilek(bx: float, lying: bool) -> void:
+	for side in 2:
+		var an: Node3D = _ankles[side]
+		if an:
+			var leg := leg_l if side == 0 else leg_r
+			var kn := knee_l if side == 0 else knee_r
+			var pitch := bx + (leg.rotation.x if leg else 0.0) + kn.rotation.x
+			var av := 0.0 if lying else clampf(-pitch + (ayak.ank_ek[side] if ayak and ayak.mod > 0 else 0.0), -0.75, 0.9)
+			if absf(av - _ank_v[side]) > 0.004:
+				_ank_v[side] = av
+				an.rotation.x = av
+
+
 func extremities() -> void:
+	if ayak:
+		ayak.bayatsa_birak()     # bu karede IK çalışmadıysa (Rig.update'siz iş pozu) eski yazdıkları kalmasın
 	if not _ext_ready:
 		_ext_ready = true
 		for side in 2:
@@ -278,16 +330,8 @@ func extremities() -> void:
 	var recheck := _hold_check <= 0
 	if recheck:
 		_hold_check = 12
+	_ayak_bilek(bx, lying)
 	for side in 2:
-		var an: Node3D = _ankles[side]
-		if an:
-			var leg := leg_l if side == 0 else leg_r
-			var kn := knee_l if side == 0 else knee_r
-			var pitch := bx + (leg.rotation.x if leg else 0.0) + kn.rotation.x
-			var av := 0.0 if lying else clampf(-pitch + (ayak.ank_ek[side] if ayak and ayak.mod > 0 else 0.0), -0.75, 0.9)
-			if absf(av - _ank_v[side]) > 0.004:
-				_ank_v[side] = av
-				an.rotation.x = av
 		var wr: Node3D = _wrists[side]
 		if wr:
 			var el := elbow_l if side == 0 else elbow_r

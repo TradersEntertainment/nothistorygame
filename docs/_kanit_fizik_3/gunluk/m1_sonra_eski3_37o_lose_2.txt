@@ -1,0 +1,8 @@
+AYAKAUDIT yakin scene=chapter37o.tscn who=Soldier/@Node3D@27536(Chapter37o) ayak=L fark=+0.07 d=3.2 at=(-10.5, 0.1, 64.3) durum=yuru act= ik=w1.0/m2/pel-0.17/g1/gy-0.03/zemin-0.03
+AYAKAUDIT yakin scene=chapter37o.tscn who=Soldier/@Node3D@27656(Chapter37o) ayak=L fark=+0.07 d=3.1 at=(-7.1, 0.1, 64.5) durum=yuru act= ik=w1.0/m2/pel-0.17/g1/gy-0.03/zemin-0.03
+AYAKAUDIT yakin scene=chapter37o.tscn who=Soldier/@Node3D@27770(Chapter37o) ayak=L fark=+0.07 d=4.8 at=(-11.7, 0.1, 62.9) durum=yuru act= ik=w1.0/m2/pel-0.17/g1/gy-0.03/zemin-0.03
+AYAKAUDIT yakin scene=chapter37o.tscn who=Soldier/@Node3D@27886(Chapter37o) ayak=L fark=+0.07 d=4.9 at=(-6.3, 0.1, 62.7) durum=yuru act= ik=w1.0/m2/pel-0.17/g1/gy-0.03/zemin-0.03
+AYAKAUDIT yakin scene=chapter37o.tscn who=Soldier/@Node3D@27994(Chapter37o) ayak=L fark=+0.07 d=2.6 at=(-10.1, 0.1, 68.1) durum=yuru act= ik=w1.0/m2/pel-0.17/g1/gy-0.03/zemin-0.03
+AYAKAUDIT yakin scene=chapter37o.tscn who=Soldier/@Node3D@28113(Chapter37o) ayak=L fark=+0.07 d=2.6 at=(-7.9, 0.1, 68.3) durum=yuru act= ik=w1.0/m2/pel-0.17/g1/gy-0.03/zemin-0.03
+AYAKAUDIT yakin scene=chapter37o.tscn who=Soldier/@Node3D@28225(Chapter37o) ayak=L fark=+0.07 d=3.6 at=(-5.9, 0.1, 65.3) durum=yuru act= ik=w1.0/m2/pel-0.17/g1/gy-0.03/zemin-0.03
+AUTOTEST PASS chapter=37o variant=lose outcome=37O.2 beats=5/16 arrows=0 falls=1 barrels=2/5 cuts=25 stones=0 slips=0 burns=0 duel=false caught=0 sur=eski

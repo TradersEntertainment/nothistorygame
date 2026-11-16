@@ -1,0 +1,10 @@
+AYAKAUDIT yakin scene=chapter20.tscn who=Person/@Node3D@29229(@Node3D@28119) ayak=L fark=-0.13 d=13.3 at=(-2.5, 0.6, 11.9) durum=dur act=hammer ik=yok
+AYAKAUDIT yakin scene=chapter20.tscn who=Person/@Node3D@29229(@Node3D@28119) ayak=R fark=-0.07 d=13.3 at=(-2.3, 0.6, 11.8) durum=dur act=hammer ik=yok
+AYAKAUDIT yakin scene=chapter20.tscn who=Person/@Node3D@29353(@Node3D@28119) ayak=L fark=-0.07 d=9.5 at=(2.3, 0.6, 11.8) durum=dur act=chop ik=yok
+AYAKAUDIT yakin scene=chapter20.tscn who=Person/@Node3D@29353(@Node3D@28119) ayak=R fark=-0.13 d=9.5 at=(2.5, 0.6, 11.9) durum=dur act=chop ik=yok
+AYAKAUDIT yakin scene=chapter20.tscn who=Person/@Node3D@29464(@Node3D@28119) ayak=L fark=-0.13 d=14.1 at=(-3.7, 0.3, 11.4) durum=dur act=hammer ik=yok
+AYAKAUDIT yakin scene=chapter20.tscn who=Person/@Node3D@29464(@Node3D@28119) ayak=R fark=-0.07 d=14.1 at=(-3.5, 0.3, 11.3) durum=dur act=hammer ik=yok
+AYAKAUDIT yakin scene=chapter20.tscn who=Person/@Node3D@29599(@Node3D@28119) ayak=L fark=-0.07 d=8.4 at=(3.5, 0.3, 11.3) durum=dur act=chop ik=yok
+AYAKAUDIT yakin scene=chapter20.tscn who=Person/@Node3D@29599(@Node3D@28119) ayak=R fark=-0.13 d=8.4 at=(3.7, 0.3, 11.4) durum=dur act=chop ik=yok
+YIGILMAAUDIT fizik scene=Chapter20 who=Person/@Node3D@52069(@Node3D@52070) at=(8.3, 0.0, 16.3) bas=+0.45 govde=+0.31 govde=+0.50 el_l=+0.47 el_r=+0.34 ayak_l=+0.96 ayak_r=+1.06
+AUTOTEST PASS chapter=20 variant= outcome=20.1 repair=10 knocks=0 arrows=true gun=3/4 gunner=4/4 niko=0 sur=eski

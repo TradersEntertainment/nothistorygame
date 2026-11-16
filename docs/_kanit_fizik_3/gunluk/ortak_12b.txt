@@ -1,0 +1,1 @@
+AUTOTEST PASS chapter=12b variant= outcome=12B.1 world= honest=true
