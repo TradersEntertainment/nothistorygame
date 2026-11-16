@@ -22,6 +22,7 @@
 | 2 | Bölüm 28o | **YAPILMADI** | yeni sette "sağlam sur" (gediksiz) seçeneği yok: 28o 11 Nisan, sur sağlam (`LandWalls.intact`); gedik `surlar.gd`/`SurOyun.kur` kesiminin parçası (A) → **A'ya istek** |
 | 3a | Bölüm 21 an_01 gri dörtgen | **KAYNAK BULUNDU — A'nın dosyası** | `--golgesiz5` ile de duruyor (gölge değil); üçgen düzeyinde piksel sondası (`--pik5`): gri yüzey peribolosun çıplak zemin ağı `OyunDilimi/Mesoteikhion/@MeshInstance3D@1366`, dokulu kısım `SurDibiEtek` (iç surun ve iç kulenin eteği; iç kule eteği x −2,8'den sağda). "Dörtgen" = iki eteğin örtmediği peribolos zemininin dokusuz, düz görünüşü → **görünüşe istek** |
 | 3b | Bölüm 20 dost asker terasa | **YENİDEN ÜRETİLEMEDİ** | `--sonda4` 4 koşu (def ×2, late, tape): hiçbir dost (tk=0) gedikten dışarı (z > 17) ya da aşağı (y < −0,8) çıkmadı. İncelenen yollar §3b; kod değişmedi |
+| — | Ortak yardımcılar | **TAMAM** | hiçbir ortak sınıfa kanca eklenmedi (yalnız var olan parametreler: Garrison `dense`, `sur`) → başka bölümlerin davranışı değişmedi; dosyası değişen 21 varsayılan ×1 PASS (`testler/son/c21_def`). Bölüm 20/20o'nun düello yolları ve süreleri bu dalda dokunulmadı |
 | — | Sözleşme | **TAMAM** | `SURSOZLESME PASS kalem=13 kesim=8` · `SUROYUN nokta=519 havada=0 gomuk=0 katida=0` · `WALKTHRU OZET yol=7 tamam=7 takilma=0 dusme=0` (`testler/soz/`) |
 
 ---
