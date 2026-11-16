@@ -98,6 +98,7 @@ var _plant_n := [Vector3.UP, Vector3.UP]
 var _lift := [Vector3.ZERO, Vector3.ZERO]
 var _lift_n := [Vector3.UP, Vector3.UP]
 var _lift_ok := [false, false]
+var _lift_rel := [Vector3.ZERO, Vector3.ZERO]
 var _land := [Vector3.INF, Vector3.INF]
 var _land_n := [Vector3.UP, Vector3.UP]
 var _land_ray := [Vector3.INF, Vector3.INF]
@@ -373,6 +374,12 @@ func _coz(delta: float, yuru: bool) -> void:
 		a_loc[s] = al
 		var h: Vector3 = hip_l[s]
 		var hd := Vector2(h.x - al.x, h.z - al.z).length()
+		if m == 2:
+			# Yürürken salınan ayak kalçayı bağlamaz; basan ayak adımın iki ucunda topuktan/parmaktan yuvarlanır
+			# (taban tam düz değil): kalça adım uzunluğunun ancak bir kısmı kadar iner (yoksa her adımda çöküyordu)
+			if not _planted[s]:
+				continue
+			hd *= 0.6
 		var maxh := al.y + sqrt(maxf(R * R - hd * hd, 0.0))
 		if m == 1 and not grounded[s]:
 			continue
@@ -470,11 +477,13 @@ func _yuruyus(delta: float, par_t: Transform3D, ot: Transform3D, root: Vector3, 
 				_lift[s] = _plant[s]
 				_lift_n[s] = _plant_n[s]
 				_lift_ok[s] = true
+				_lift_rel[s] = (_plant[s] as Vector3) - hp
 			elif not _lift_ok[s]:
 				var c: Vector3 = _cur[s]
 				_lift[s] = c if c != Vector3.INF else Vector3(hp.x, root.y, hp.z)
 				_lift_n[s] = _cur_n[s]
 				_lift_ok[s] = true
+				_lift_rel[s] = (_lift[s] as Vector3) - hp
 			var sw := (u - D) / (1.0 - D)
 			var t_left := (1.0 - u) * Tc
 			var land := hp + _vel * t_left + fwd * (spd * D * Tc * 0.5)
@@ -491,8 +500,12 @@ func _yuruyus(delta: float, par_t: Transform3D, ot: Transform3D, root: Vector3, 
 			if Vector2(lf.x - hp.x, lf.z - hp.z).length() > reach * 1.5:
 				lf = Vector3(hp.x, root.y, hp.z)
 				_lift[s] = lf
+				_lift_rel[s] = Vector3.ZERO
+			# Kalçaya göre aradeğer (sarkaç): dünya uzayında aradeğerlenince hızlı koşuda salınan ayak geride gerili
+			# kalıyordu (kalkış noktası kalçanın 1 m gerisinde)
 			var e := smoothstep(0.0, 1.0, sw)
-			var p := lf.lerp(land, e)
+			var rel: Vector3 = _lift_rel[s]
+			var p := hp + rel.lerp(land - hp, e)
 			p.y = lerpf(lf.y, land.y, e) + lift_h * sin(PI * sw)
 			tgt[s] = p
 			tn[s] = (_lift_n[s] as Vector3).lerp(_land_n[s], e).normalized()

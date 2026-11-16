@@ -196,11 +196,11 @@ var faz_hiz := 0.0
 
 
 ## Yürüyüş kadansı (rad/sn, iki adım bir tur): basan ayak kaymasın diye adım boyu hızdan (bacak 0,66 m: yürürken
-## ~0,5 m, koşarken ~1,3 m). Eski formül (3 + 1,6·hız) ayağı yürüyüşün yarı hızında geri götürüyordu (ayak kayıyordu).
+## ~0,45 m, koşarken ~1,2 m). Eski formül (3 + 1,6·hız) ayağı yürüyüşün yarı hızında geri götürüyordu (ayak kayıyordu).
 static func kadans(v: float) -> float:
 	if not Ayak.etkin:
 		return 3.0 + v * 1.6
-	var adim := clampf(0.18 + 0.27 * v, 0.25, 1.35)
+	var adim := clampf(0.2 + 0.2 * v, 0.28, 1.2)
 	return PI * v / adim
 
 
