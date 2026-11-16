@@ -58,3 +58,74 @@ Eski sette her sorgu `SurSet.eski()` üzerinden `LandWalls` sabitinin AYNISINI v
 | Final: iç kapı | x 0 `open_inner_gate` | Romanos (x −57,3) `KapiKanat` açılır | karar 11-A |
 | `FallenCity` | yer 0 | `yer` = (−57,3; 0; −2,0) (`SurSet.sehir_ofs`) | konum parametresi |
 | Alay yolu | dolgu → gedik tepesi → iç kapı (x 0) → cadde | dolgu → gedik tepesi (durur: "gediğin üstünden") → karartma → Romanos koridoru → iç kapı → cadde | aşağıda "replik/yol" |
+
+### 1.2 Final yolu: neden "peribolos boyunca" değil (replik ve yol)
+Romanos kapı koşusunun (yan dilim, `IstSurlarKapi` `koridor`) iki yan duvarı iç surun peribolos yüzünden dış surun iç
+yüzüne uzanır (`surlar_kapi.gd:77-80`): kapı geçidi peribolostan **kapalıdır** (kare `k1/r2`: peribolostan koridorun yan
+duvarı). Sultan'ın atı ve oyuncu peribolostan Romanos iç kapısına giremez. İki repliğe uyan yol seçildi:
+`D26_N_ENTRY_2` "Durdu. Gediğin üstünden şehre bakıyor." → at dolgudan gediğin tepesine çıkar ve durur (eskisi gibi);
+`D26_N_CITY` "Aziz Romanos Kapısı'ndan içeri girdiniz." → ekran kararır, alay Romanos'un dış kapısından koridora girer, iç
+kapıdan caddeye çıkar; oyuncu caddenin başında, kapının şehir yanında. Gedikten Romanos'un dış kapısına (teras boyunca
+57 m) yürüyüş gösterilmez (karartma). Metin değişmedi.
+
+## 2. Bölüm 26o
+
+### 2.1 Bağ tablosu (eski → yeni; ova: eski + `SurSet.ova_ofs` = (0; −3,575; +10,6))
+
+| Bağ | Eski | Yeni | Nasıl |
+|---|---|---|---|
+| Set | `LandWalls.ditch_filled = true; LandWalls.new()` | `SurSetSahne` (dolgu 1, `romanos_kanat`) — 26 ile aynı gedik, aynı kuleler | `SurSet.sec("26o", ESKI_SUR_O)` |
+| `EDGE_Z`, `O_WATER`, `O_LADDERS`, `SQUADS`, `O_COVERS`, meşaleler, bekleyen saflar, Hasan, oyuncu başlangıcı | ova (y 0) | + `ova_ofs` | `_yeni_yerler_o` / `_ova` |
+| Görünmez ova levhası | (0; −0,6; 57) 64×42 | kurulmaz (setin ovası katı) | |
+| Hendek kenarı engeli | z 36,4 | z 47,0 (+ `ova_ofs`) | tırmanışta kalkar (eski hata düzeltildi: hiç kalkmıyordu) |
+| Kazanlar | x −20,6; −8,6; 8,6; 21 (y 8, z 15) | x −20,6; −8,6; 8,6; 46,5 (sur yolu) | 21'deki kazan yeni sancak kulesine giden yolu kapatıyordu |
+| Hücum (tırmanış) merdiveni | x 9, 8,6 m, 8°, ayak sur dibi y 0 | x 10,2 (mazgal açıklığı), dayama kuralı: 14,35 m, 16°, ayak terasta (y −3,675) | `SurSet.merdiven_dayama`; x 9 bir dişin önüne düşüyordu |
+| Tırmanış bitişi | y > OUTER_H − 0,3, z < OUTER_Z1 − 0,1 | + yerde ve sur yolunun 0,5 m içinde | dişin/korkuluğun üstü "çıktı" sayılmasın |
+| Hendek dolgusu (`CAUSEWAY_TOP`, `fill_y`) | LandWalls statikleri | `SurSet.dolgu_ust()`, `dolgu_y()` | `_entry_ground` |
+| Mazgaldaki savunucular (tüfek) | `walk_x` [7,4; 9; 10,8; 12,5], z 15,25 | mazgal açıklıkları [6,6; 8,4; 10,2; 12,0], `dis_yol_on_z` | `_mazgal_x` (`SurOyun.mazgallar`) |
+| Tüfekçi (düşman) | x 16 kulesinin tepesi | sur yolu x 19,2 (o aralıkta kule yok) | |
+| `crowd_box` | (x−32; 6,5; −7) 64×11,5×25 | iç surun şehir yüzünden dış surun dışına | |
+| Hendekteki kalabalık şeridi | x −26…26, z 27,5 | x −26…−8 ve 8…26, hendeğin ortası | dolgunun şevinde zemin formülü 0,44 m sapıyordu (VISAUDIT float) |
+| Sur dibi şeridi | z 17,9 | `dis_sur_z1` + 1,3 (teras) | |
+| Gedikten giren yeniçeriler | (x; 0; OUTER_Z1 + 2) | (x; teras; `dis_sur_z1` + 2) | |
+| Sancak | (16; 11; 17) | (35,39; 13,12; 16,7) — 26 ile aynı kule | `_yeni_yerler` (26) |
+| Giriş/FallenCity/Ayasofya | 26'dan miras | 26'dan miras (Romanos) | |
+
+## 3. Bölümler arası süreklilik
+26 ve 26o aynı `SurSetSahne` kesimini (Mesoteikhion, oyun gediği x 0 = 1. gedik, karar 4-A), aynı dolguyu (1,0: 29 Mayıs),
+aynı sancak kulesini (x 35,4) ve aynı Romanos kapısını kullanır. Bölüm 20/22'nin gediği ile aynı nokta (`SurSet.yeni`
+çerçevesi). 31o hâlâ eski sette (`LandWalls.new()` + `open_inner_gate`; `FallenCity.yer` verilmez → eski yer): 31o ×1 PASS
+(aşağıda). 31o taşınınca `FallenCity.yer = sur.sehir_ofs(sur.romanos()["x"])` ve `SurSetSahne.romanos_kanat` ile aynı kapı.
+
+## Sonraki taşıyana
+1. **İç poterna**: `SurOyun.kur(…, {"ic_poterna": true})` → `parca["ic_poterna"]` (`Poterna.kur_ic`), yer `SurOyun.ic_poterna()`
+   / `SurSet.ic_poterna()`. Sur gövdesi oyulmaz (surlar.gd değişmez): kanadın ardında söve derinliğinde karanlık geçit. Kapı
+   kurulduktan 3 fizik karesi sonra iç surun eteğinin gerçek yüzüne ışınla oturur (`ICPOTERNA … oturma=` satırı, autotest).
+2. **Romanos kapısı**: `{"romanos_kanat": true}` (+ `"romanos_kopru": true`, `"kapi_kopru": "saglam"|"yikik"`) →
+   `parca["yan_kapi_kanat"]`, `SurSetSahne.open_inner_gate()`. Romanos koridoru peribolostan KAPALI (yan duvarlar); şehre
+   geçiş iç kapıdan, dışarıya dış kapıdan. `SurSet.romanos()` eşikleri, `SurSet.sehir_ofs(x)` caddenin kaydırması.
+3. **`FallenCity.yer`**: add_child'dan önce. Caddenin kendi zemin levhası z −42…−94 (yerel); kesimin şehir önü levhası iç
+   surun 4 m gerisinden başlar: oyuncuyu caddeye koyarken iç surun gövdesine (yerel z −4…−0,6 eski; yeni çerçevede −6…−1)
+   değil, caddenin başına (yerel −7,5 ve ötesi) koy (ilk denemede WARN_VOID_TELEPORT).
+4. **`SiegeChaos.sur`**: area yeni periboloşa kırpılır, iç kuleler kaçınılır; `avoid_lines` ile oyuncunun yolu boş kalır.
+5. **Vector3 bileşeni 32 bit**: `spec[1].z == 36.4` gibi eşitlikler tutmaz (26o'nun hendek engeli hiç kalkmıyordu).
+6. **Mazgal**: el merdiveni tepesi bir mazgal AÇIKLIĞINA dayanmalı (`_mazgal_x`); dişin önündeki merdivenden çıkan dişin
+   tepesine çıkar.
+7. **Sonda**: `--sonda8` (26): savunucu sırası her evrede; kafile başı. `=yuru`, `=kare` (26 ve 26o).
+
+## Görünüşe istek
+1. İç poternanın kemer halkası (dış `Poterna` ile aynı ağ) alt uçlarında iki taş "kulak" gibi dışa taşıyor (kare `k1/p1`).
+   `sur_oyun_parca.gd` `Poterna.kur/kur_ic` kemer döngüsü (açı 0 ve π'deki kama taşının dış ucu söveden 0,32 m dışarıda).
+   Görünüş dosyası değil ama dış poternayla aynı ressam diye dokunmadım.
+2. İç surun peribolos yüzündeki etek (OTURTMA) kapı önünde kesilmiyor (dış poterna için `kes["peri"]`'ye boşluk ekleniyor,
+   iç yüz için yok: `surlar.gd:653-660`): iç poterna eteğin üstüne oturtuldu (eşik 0,39 m yüksekte). İç yüze `ic_poterna`
+   boşluğu verilirse kapı toprağa iner.
+
+## Replik uyumsuzluğu
+- `UI_CH26_ENTRY` "Topkapı yanındaki gedik", `D26_N_ENTRY_2` "Gediğin üstünden şehre bakıyor": yeni yolda da doğru (at gedik
+  tepesinde durur). `D26_N_CITY` "Aziz Romanos Kapısı'ndan içeri girdiniz": yeni yolda doğru (eskide x 0'daki adsız iç kapı).
+  Uyumsuzluk yok; ama gedikten Romanos'a geçiş karartmayla (57 m) atlanıyor.
+
+## run_tests.sh isteği (kendim eklemedim)
+- `for v in "=yuru"; do run --chapter=26 --autotest$v; done` ve `run --chapter=26o --autotest=yuru` (≈ 50 sn, takılma/düşme
+  satırı `TASIMA8YURU OZET`).

@@ -1092,7 +1092,10 @@ func _t8o_yuru() -> void:
 		# dolgunun yakın ucu → teras (parateikhion geçidi dolgunun önünde açık)
 		await _t8_yb("teras", Vector3(1.6, 0, sur.hendek_z0() - 2.6), Vector3(foot.x, foot.y + 1.0, foot.z))
 	climb_ladder.visible = true
-	await _t8_yb("merdiven_dibi", foot + Vector3(-0.6, 0, 1.2), climb_ladder.point_at(3.0))
+	# eski sette merdiven dibi sur dibi korkuluğunun (z 18,8–19,6) arkasında: eski oyunda da oraya yürünmez (tırmanışa
+	# ışınlanılır); karşılaştırma yolu korkuluğun önünde biter
+	var dib := foot + Vector3(-0.6, 0, 1.2) if not sur.eski_mi else Vector3(foot.x - 0.6, 0.0, 20.3)
+	await _t8_yb("merdiven_dibi", dib, climb_ladder.point_at(3.0))
 	if kare:
 		player.face(climb_ladder.point_at(climb_ladder.height))
 		await _t8_kare("tirmanis")
