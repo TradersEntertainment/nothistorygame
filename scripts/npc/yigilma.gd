@@ -363,9 +363,21 @@ func _process(delta: float) -> void:
 	if kisi == null or not is_instance_valid(kisi) or not kisi.is_inside_tree():
 		return
 	if not kisi.is_visible_in_tree():
-		_bitir()
+		_bitir(true)
 		return
 	var t0 := Time.get_ticks_usec()
+	if _toplama:
+		var m := 0
+		while _ti < N + KURE.size() and m < 5:
+			_topla(_ti)
+			_ti += 1
+			m += 1
+		var us0 := Time.get_ticks_usec() - t0
+		olcum_us += us0
+		toplam_us += us0
+		if _ti >= N + KURE.size():
+			_bitir(true)
+		return
 	if _havada:
 		_kok_izle(delta)
 	_acc += minf(delta, ADIM_AZAMI * DT)
@@ -881,8 +893,35 @@ static func _uzuv(pivot: Node3D, joint: Node3D, u: Vector3, l: Vector3, bacak: b
 # ---------------------------------------------------------------- bitiş
 
 ## Uyku ya da süre: son oturtma (her parçacığın altında tam ışın), görüntü, donma.
-func _bitir() -> void:
+## Son oturtmanın tam ışınları karelere yayılır (kare başına 5; bitişte tek karede 15 ışın 20o'da ~10 ms sıçrama yapıyordu)
+var _toplama := false
+var _ti := 0
+var _ge := PackedFloat32Array()
+var _kc := PackedFloat32Array()
+
+
+func _topla(k: int) -> void:
+	if k < N:
+		var gg := _isin(Vector3(p[k].x, p[k].y + 0.6, p[k].z), 1.8, false)
+		_ge[k] = gg if not is_nan(gg) else gz[k]
+	else:
+		var kalca := (p[HL] + p[HR]) * 0.5
+		var omuz := (p[SL] + p[SR]) * 0.5
+		var c := omuz.lerp(kalca, float(KURE[k - N][0]))
+		_kc[k - N] = _isin(Vector3(c.x, c.y + 0.6, c.z), 1.8, false)
+
+
+func _bitir(hemen := false) -> void:
 	if dondu:
+		return
+	if not hemen and not _toplama and kisi != null and is_instance_valid(kisi) and kisi.is_inside_tree() and kisi.is_visible_in_tree():
+		_toplama = true
+		_aktif.erase(self)
+		_ge.resize(N)
+		_kc.resize(KURE.size())
+		_ti = 0
+		return
+	if _toplama and not hemen:
 		return
 	dondu = true
 	_aktif.erase(self)
@@ -905,18 +944,17 @@ func _bitir() -> void:
 
 
 func _son_oturt() -> void:
-	var ge := PackedFloat32Array()
-	ge.resize(N)
-	for i in N:
-		var gg := _isin(Vector3(p[i].x, p[i].y + 0.6, p[i].z), 1.8, false)
-		ge[i] = gg if not is_nan(gg) else gz[i]
-	var kc := PackedFloat32Array()
+	if _ge.size() != N:
+		_ge.resize(N)
+		_kc.resize(KURE.size())
+		_ti = 0
+	while _ti < N + KURE.size():
+		_topla(_ti)
+		_ti += 1
+	var ge := _ge
+	var kc := _kc
 	var kalca := (p[HL] + p[HR]) * 0.5
 	var omuz := (p[SL] + p[SR]) * 0.5
-	for k: Array in KURE:
-		var c := omuz.lerp(kalca, float(k[0]))
-		var gg := _isin(Vector3(c.x, c.y + 0.6, c.z), 1.8, false)
-		kc.append(gg if not is_nan(gg) else NAN)
 	for it in 14:
 		for i in N:
 			if is_nan(ge[i]):
@@ -975,7 +1013,7 @@ func _son_oturt() -> void:
 
 ## Hemen dondur (ceset sınırı, sahne değişimi).
 func dondur() -> void:
-	_bitir()
+	_bitir(true)
 
 
 ## Kök (düellocu) cesedin kalçasının altına taşındıktan sonra gövde dünyadaki yerinde kalsın.
