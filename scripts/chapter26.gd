@@ -207,10 +207,10 @@ func _ic_ice_ayir() -> void:
 ## Gizlenip yeniden görünen (Melee.rally: ayaklandırılan asker dövüş boyunca gizli, dönüşte evinde görünür; Duel öldürme
 ## kamerası: kadrajı kapatan gizli): gizliyken komşusu (reserve_loop yerinde adımı, düellocu) onu saymadan yerine girmiş
 ## olabilir (VISAUDIT overlap Squad{crouch}|Squad{crouch} (−20,1; 0; 5,1), isidore: RALLY'nin hemen ardında). Göründüğü
-## karenin sonunda yanındaki iç içe ayaktaki ayrılır.
+## andan 0,5 sn sonra yanında hâlâ iç içe ayakta duran varsa ayrılır (yanından geçen, evine koşan geçicidir; denetim 1 sn ister).
 func _gorunce_ayir(p: Person) -> void:
 	if is_instance_valid(p) and p.is_inside_tree() and p.is_visible_in_tree():
-		_yakin_ayir.call_deferred(p)
+		get_tree().create_timer(0.5, false).timeout.connect(_yakin_ayir.bind(p))
 
 
 func _yakin_ayir(p: Person) -> void:
