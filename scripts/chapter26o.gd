@@ -81,6 +81,9 @@ func _ready() -> void:
 	add_child(walls)
 	walls.set_repair(LandWalls.STAGES - 3)
 	_build_walls_scene()
+	if GameState.autotest and GameState.autotest_variant in ["yuru", "kare"]:
+		_t8o_yuru()
+		return
 	if GameState.autotest:
 		Engine.time_scale = 3.0
 	if GameState.shots_dir != "":
@@ -102,7 +105,9 @@ func _yeni_yerler_o() -> void:
 		SQUADS[i] = (SQUADS[i] as Vector3) + OO
 	for i in O_COVERS.size():
 		O_COVERS[i] = (O_COVERS[i] as Vector3) + OO
-	CLIMB_X = sur.dis_yol_x(9.0)
+	# Merdivenin tepesi bir mazgal AÇIKLIĞINA dayanır (x 9 yeni sette bir dişin önüne düşüyordu: oyuncu dişin tepesine
+	# çıkıp sur yolunun 1,4 m üstünde kalıyordu); 8,6'daki kazanın (yarı yolda devrilen) yanındaki açıklık değil, bir sonraki
+	CLIMB_X = _mazgal_x(10.0)
 
 
 ## Ovadaki eski bir nokta (z ≥ 36, y 0) bu setin ovasına
@@ -119,15 +124,21 @@ func _build_walls_scene() -> void:
 		var b := Props.solid(self, spec[0], spec[1], Color.WHITE)
 		b.get_child(0).visible = false
 		b.set_meta("no_climb", true)
-		if spec[1].z == 36.4 + OO.z:
-			_ditch_bar = b
+		# (eskiden `spec[1].z == 36.4` ile seçiliyordu: Vector3 bileşeni 32 bit, eşitlik hiç tutmuyor, engel tırmanışta
+		# kalkmıyordu — TAŞIMA-8 =yuru hendek geçişinde takıldı)
+		_ditch_bar = b
 	# Hendek boyunca yürünür (kenarlarda rampalar var, dünyanın hendeği devam eder)
 	# Surda kaynar yağ kazanları: dalgalarda sur dibine, merdiven diplerine dökülür (yoldaşlar tutuşur, geri kaçar)
 	fight = WallFight.new()
 	if not sur.eski_mi:
 		fight.sur = sur
 	add_child(fight)
-	for x: float in [-20.6, -8.6, 8.6, 21.0]:      # kulelerin (x ±13.5..18.5) dışında: kazancı kulenin içine girmesin
+	var kx: Array = [-20.6, -8.6, 8.6, 21.0]
+	if not sur.eski_mi:
+		# Yeni sette sancak kulesi x 35,4: x 21'deki kazan sur yolunu merdivenle kule arasında kapatıyordu (oyuncu sancağa
+		# yardım için kuleye yaklaşamazdı; =yuru takıldı) → kulenin öbür yanına. Sıra aynı (cauldrons[2] = 8,6: yağ tehlikesi)
+		kx[3] = sur.dis_yol_x(46.5)
+	for x: float in kx:      # kulelerin (x ±13.5..18.5) dışında: kazancı kulenin içine girmesin
 		fight.add_cauldron(Vector3(x, sur.dis_yol_y(), sur.dis_yol_z()) if not sur.eski_mi else Vector3(x, LandWalls.OUTER_H, 15.0), 2690 + int(x))
 	# Su fıçıları ve merdiven yığını
 	for k in 2:
@@ -191,7 +202,10 @@ func _build_walls_scene() -> void:
 	var serit: Array = [[Vector3(-26.0, 0, 27.5), Vector3(26.0, 0, 27.5), 5.0, 12, 8], [Vector3(-24.0, 0, 17.9), Vector3(24.0, 0, 17.9), 0.6, 0, 6]]
 	if not sur.eski_mi:
 		# hendeğin ortası (dibi) ve sur dibi (teras); y BattleExtras'ın zemininden (Assault.ground_y → SurSet.zemin_y)
-		serit = [[Vector3(-26.0, 0, sur.hendek_z(0.47)), Vector3(26.0, 0, sur.hendek_z(0.47)), 5.0, 12, 8],
+		# hendekteki şerit dolgunun (x 0 ± 5, iki yanda 2 m şev) iki yanında: şevde zemin formülü görünen yüzden 0,4 m
+		# sapıyordu (VISAUDIT float, lose)
+		serit = [[Vector3(-26.0, 0, sur.hendek_z(0.47)), Vector3(-8.0, 0, sur.hendek_z(0.47)), 5.0, 6, 4],
+			[Vector3(8.0, 0, sur.hendek_z(0.47)), Vector3(26.0, 0, sur.hendek_z(0.47)), 5.0, 6, 4],
 			[Vector3(-24.0, 0, sur.dis_sur_z1() + 1.3), Vector3(24.0, 0, sur.dis_sur_z1() + 1.3), 0.6, 0, 6]]
 	for lane: Array in serit:
 		var bx := BattleExtras.new()
@@ -443,7 +457,8 @@ func _wall_climb() -> void:
 	var hz := 1.0
 	var t := 0.0
 	while not (player.ladder == null and player.global_position.y > sur.dis_yol_y() - 0.3 \
-			and player.global_position.z < sur.dis_sur_z1() - 0.1):
+			and player.global_position.z < sur.dis_sur_z1() - 0.1 \
+			and (sur.eski_mi or (player.is_on_floor() and player.global_position.y < sur.dis_yol_y() + 0.5))):
 		await get_tree().process_frame
 		if get_tree().paused:      # duraklatmada sayaç akmaz
 			continue
@@ -1031,6 +1046,74 @@ func _mazgal_x(x: float) -> float:
 			bd = absf(mx - x)
 			best = mx
 	return best
+
+
+## TAŞIMA-8 =yuru / =kare (26o): gerçek bot ana yolu yürür (bölüm gibi yalnız merdivenin tepesine çıkış ışınlama):
+## başlangıç → su fıçısı → orta bölük → merdiven yığını → kıyı (1. bölük) → hendek dolgusu → teras → hücum merdiveninin
+## dibi → [sur yolu] → sancak kulesinin basamağı. =kare: ışınlanır, 6 kare.
+func _t8o_yuru() -> void:
+	Engine.time_scale = 1.0
+	var kare := GameState.autotest_variant == "kare"
+	var set_ad := "eski" if sur.eski_mi else "yeni"
+	hud.set_fade(0.0)
+	player.show_remote(true)
+	for i in 10:
+		await get_tree().physics_frame
+	print("TASIMA8YER set=%s su=%s yigin=%s boluk=%s merdiven=%s sancak=%s" % [set_ad, O_WATER, O_LADDERS, SQUADS,
+		climb_ladder.global_position, BANNER_TOWER])
+	player.global_position = _ova(Vector3(6.0, 0.05, 52.0))
+	player.frozen = false
+	await _t8_bekle(0.5)
+	player.face(Vector3(0, 6.0 + OO.y, sur.dis_sur_z1()))
+	if kare:
+		await _t8_kare("acilis")
+	phase = "o1"
+	_o_wave_start(1)
+	await _t8_yb("su", O_WATER + Vector3(0.6, 0, -1.6), O_WATER + Vector3(0.6, 0.8, 0))
+	if kare:
+		await _t8_kare("su_ficisi")
+	await _t8_yb("boluk", (SQUADS[1] as Vector3) + Vector3(0, 0, 2.0), (SQUADS[1] as Vector3) + Vector3(0, 1.5, 0))
+	await _t8_yb("yigin", O_LADDERS + Vector3(2.0, 0, 0), O_LADDERS + Vector3(0, 0.6, 0))
+	await _t8_yb("kiyi", (SQUADS[0] as Vector3) + Vector3(0, 0, 2.0), (SQUADS[0] as Vector3) + Vector3(0, 1.5, -3.0))
+	if kare:
+		ladders[0].visible = true
+		await _t8_kare("kiyi_merdiven")
+	# hendek: tırmanışta olduğu gibi kenar engeli kalkar; dolgunun üstünden geçilir
+	if is_instance_valid(_ditch_bar):
+		_ditch_bar.queue_free()
+	var foot := climb_ladder.global_position
+	if sur.eski_mi:
+		await _t8_yb("dolgu", Vector3(-3.0, 0, 28.0), Vector3(-3.0, 1.0, 20.0))
+	else:
+		await _t8_yb("dolgu_uzak", Vector3(0.0, 0, sur.hendek_z1() + 1.0), Vector3(0, sur.ova_y() + 1.0, sur.hendek_z0()))
+		await _t8_yb("dolgu", Vector3(0.0, 0, sur.hendek_z(0.5)), Vector3(0, sur.ova_y() + 1.0, sur.hendek_z0()))
+		if kare:
+			await _t8_kare("dolgu")
+		# dolgunun yakın ucu → teras (parateikhion geçidi dolgunun önünde açık)
+		await _t8_yb("teras", Vector3(1.6, 0, sur.hendek_z0() - 2.6), Vector3(foot.x, foot.y + 1.0, foot.z))
+	climb_ladder.visible = true
+	await _t8_yb("merdiven_dibi", foot + Vector3(-0.6, 0, 1.2), climb_ladder.point_at(3.0))
+	if kare:
+		player.face(climb_ladder.point_at(climb_ladder.height))
+		await _t8_kare("tirmanis")
+	# merdivenin tepesi (bölüm W ile tırmandırır; yürüyüş ölçüsünde ışınlanır), sur yolunda sancak kulesine
+	player.global_position = climb_ladder.top_exit() + Vector3(0, 0.05, 0)
+	await _t8_bekle(0.5)
+	var bx := BANNER_TOWER.x - 6.0 * signf(BANNER_TOWER.x - CLIMB_X)      # kule tepesi basamağında (sancağa 8 m içinde)
+	if sur.eski_mi:
+		bx = BANNER_TOWER.x - 3.6
+	await _t8_yb("sur_yolu", Vector3(bx, 0, sur.dis_yol_z()), BANNER_TOWER + Vector3(0, 1.5, 0))
+	if kare:
+		banner.visible = true
+		banner.position = BANNER_TOWER
+		walls.make_dawn(0.01)
+		await _t8_kare("sancak")
+	print("TASIMA8YURU OZET set=%s bacak=%d takilma=%d dusme=%d sure=%.1f yol=%.1f" % [set_ad, _yz["bacak"], _yz["takilma"],
+		_yz["dusme"], _yz["sure"], _yz["yol"]])
+	var ok := int(_yz["takilma"]) == 0 and int(_yz["dusme"]) == 0
+	print("AUTOTEST %s chapter=26o variant=%s set=%s takilma=%d dusme=%d" % ["PASS" if ok else "FAIL", GameState.autotest_variant,
+		set_ad, _yz["takilma"], _yz["dusme"]])
+	get_tree().quit()
 
 
 ## Oyuncunun tırmandığı merdiven: arkasından gelen azaplar bundan çıkar (Melee.reinforce_climb)
