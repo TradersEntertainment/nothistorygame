@@ -383,12 +383,17 @@ func _walk_bridge(p: Person, to: Vector3, delay: float, back := false, side := 0
 	_walking[p] = true
 	var n := 0
 	var detoured := false
+	var _dolandi := {}      # yeni sette geri yürüyüşte dolanılan bacaklar (ilk ve son)
 	while n < pts.size():
 		var q: Vector3 = pts[n]
 		# Son bacak (kalasın ucundan yerine): önceden varıp duran birinin içinden geçecekse yanından dolanır (önce
 		# çıkan Giustiniani yerinde dururken arkadan gelen savunucu düz yolda onun içinden yürüyordu: VISAUDIT overlap)
-		if not back and not detoured and n == pts.size() - 1:
+		# yeni set: geri çekilmenin ilk bacağında da (yayıldığı yerden sıra yerine giderken yerinde duran Giustiniani'nin içinden
+		# geçiyordu: VISAUDIT overlap (−19,9; 51,6))
+		var son_bacak := n == pts.size() - 1
+		if ((not back and son_bacak and not detoured) or (back and not sur.eski_mi and (n == 0 or son_bacak) and not _dolandi.has(n))):
 			detoured = true
+			_dolandi[n] = true
 			var via := _detour(p, p.global_position, q)
 			if via != Vector3.INF:
 				pts.insert(n, via)
@@ -688,7 +693,10 @@ func _retreat() -> void:
 			_walk_bridge(men[i], TOPLAN + Vector3(2.4 + (i % 3) * 1.0, 0, -0.3 + (i / 3) * 0.8), 0.8 * i, true, 0.45)
 		else:
 			_walk_bridge(men[i], TOPLAN + Vector3(2.0 + (i % 3) * 1.0, 0, 0.2 + (i / 3) * 0.8), 0.9 * r, true, 0.45, 1.2 * r)
-	_walk_bridge(giust, TOPLAN + (Vector3(-2.6, 0, 0.5) if sur.eski_mi else Vector3(-0.6, 0, 2.1)), 4.2, true, -0.45)
+	# yeni: Giustiniani'nin dönüş yeri savunucuların köprü başından toplanma yerine giden yolunun 1,5 m dışında (eski yeri
+	# TOPLAN + (−0,6; 2,1) o yolun tam üstündeydi: arkadan gelen savunucu yerinde duran Giustiniani'nin içinden geçiyordu,
+	# VISAUDIT overlap (−11,7; 19,4), sonda c36b_s15/s17)
+	_walk_bridge(giust, TOPLAN + (Vector3(-2.6, 0, 0.5) if sur.eski_mi else Vector3(0.0, 0, 3.8)), 4.2, true, -0.45)
 	# Leon bölümün asıl kararı: adıyla işaretlenir (hedef yalnız "Poternaya dön" diyordu; kapıya varınca bölüm bitiyordu)
 	hud.set_objective(tr("UI_OBJ36_BACK"), RETURN + Vector3(0, 1.6, 0), 1.6,
 		[[func(): return leon if not _leon_follow and is_instance_valid(leon) and leon.visible else null, tr("UI_OBJ36_LEON"), 1.0]],

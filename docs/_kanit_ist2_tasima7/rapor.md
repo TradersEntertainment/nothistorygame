@@ -125,3 +125,37 @@ vurduğu şey (`PIK7 an=barikat px=… d=… yol=…`):
   Kullanan bölümler ×1 (§6).
 
 ## 6. Ortak değişikliklerden sonra öteki bölümler (`testler/ortak`) ve sözleşme
+
+### 3.3 Mesafe tablosu (eski ↔ yeni; `TASIMA36BMESAFE`, düz çizgi xz, m) ve gerçek bot (`=yuru`)
+
+| çift | eski | yeni | fark / not |
+|---|---|---|---|
+| çıkış yeri → köprünün başı | 1,7 | 9,5 | +7,8: yeni dış kuşak 3,7 m aşağıda, kapının önündeki basamak +x'e iner (≤ 20) |
+| köprü (baş → karşı uç) | 20,9 | 23,7 | +2,8 (hendek 16 → 20 m, karar 6) |
+| karşı uç → "hendeği geç" hedefi | 3,5 | 3,7 | ≈ |
+| hedef → manto 0 · manto 0→1 · 1→2 · 2 → Leon | 9,2 · 7,6 · 7,6 · 4,2 | 9,2 · 7,6 · 7,6 · 4,2 | 0 (ova kaydırması) |
+| Leon → köprünün karşı ucu | 8,3 | 8,5 | ≈ |
+| köprünün başı → dönüş (kapının önü) | 0,6 | 7,0 (dy +3,8: basamaktan sahanlığa) | +6,4 (≤ 20) |
+| köprü ucu → siper hattı · siper → atlıların durduğu yer | 16,5 · 4,5 | 16,7 · 4,5 | ≈ (RIDE_TIME 34 sn aynı) |
+| dönüş → içeride toplanma | 8,2 | 8,3 | ≈ |
+
+Oyuncunun yürüdüğü her hedef ≤ 20 m; köprünün kendisi hendeğin eni (karar 6). Leon'la dönüş (çarpışmasız, süresiz) yeni sette
+≈ 15 m uzun (basamak ve köprü); atlıların Leon'a varış süresi (RIDE_TIME) aynı, Leon'un düştüğü yer siper hattına aynı uzaklıkta.
+
+Gerçek bot (`testler/c36b/yuru_*`, son kod `son_yuru_yeni_1`):
+
+| set | bacak | takılma | düşme (hendeğe) | tuş yok | süre | yol | not |
+|---|---|---|---|---|---|---|---|
+| yeni | 13 (köprü başı, ortası, ucu, hedef, 3 manto, Leon, geri ×2, basamağın dibi/üstü, kapı) | **0** | **0** | 0 | 43,1–43,3 sn | 108,8–109,2 m | 3 manto E ile yandı, Leon E ile kalktı, varış (kapının önü, Leon ≤ 4 m) |
+| eski | 11–12 | 1 | 1 | 0 | 38,9–39,6 sn | 79,9–89,2 m | **eski rampa**: ayağı sur yüzüne dayalı (0,2 m), yanından çıkılamıyor (zıplama da) → bot rampanın yanından hendeğe düşüp kurtarılıyor; eskinin kendi geometrisi |
+
+Yeni sette köprü 1,6 m enli, ayaklı, ova ile aynı düzde: eskideki dar rampa + inişli kalas yerine.
+
+### 3.4 Yön replikleri (metin DEĞİŞMEDİ)
+| anahtar | söz | yeni sette |
+|---|---|---|
+| `D36_G_01` | "hendeğin elli adım ötesinde siper kazıyor" | uyumlu: siper hattı hendeğin uzak yakasından 18 m (eskide de 18 m) |
+| `D36_G_02` | "Kalas köprüden geçin" | uyumlu (setin kalas köprüsü) |
+| `D36_G_BACK` | "Hepiniz köprüye! Surdakiler sizi örter!" | uyumlu (köprü; surdaki okçular `dense`, ovadan görünür) |
+| `D36_T_01` | "taş duvarların dışına" | uyumlu |
+| `D36_N_END` | "surun içinden" | uyumlu (dönüş poternadan, içeride peribolos) |

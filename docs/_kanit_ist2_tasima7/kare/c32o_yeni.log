@@ -65,3 +65,7 @@ TASIMA32OYURU tus_yok yer=toprak odak=
 TASIMA32OYURU bacak=tezgah sure=0.0 yol=0.0 takilma=0 dusme=0 kesik=false son=(-16.0, -3.5, 79.0) odak=bench
 TASIMA32OKARE an_05_tezgah.jpg oyuncu=(-16.0, -3.5, 79.0) cizim=2396 ilkel=1456973 sur=yeni
 TASIMA32OYURU bacak=manto_arkasi_it sure=0.0 yol=0.0 takilma=0 dusme=0 kesik=false son=(14.0, -3.5, 76.4) odak=
+TASIMA32OKARE an_06_manto_it.jpg oyuncu=(14.0, -3.5, 67.8) cizim=2023 ilkel=1260216 sur=yeni
+Terminated
+elle durduruldu (6/6 kare çekildikten sonra; manto itme sonrası)
+KARE_BITTI rc=143 --chapter=32o --autotest=kare

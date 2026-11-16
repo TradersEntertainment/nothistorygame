@@ -34,3 +34,14 @@ TASIMA36BMESAFE set=eski siper_atli_dur=4.5 dy=0.0
 TASIMA36BMESAFE set=eski donus_iceri=8.2 dy=0.0
 WORLDWALK region= shapes=9824 boxes=9106 tris=277670 ms=17217
 CITYLIFE region= src=plan era=siege night=true density=0.50 nodes=1026 plazas=19 landmarks=23
+TASIMA36BYURU bacak=rampa_yani sure=0.0 yol=0.0 takilma=0 dusme=0 son=(-22.7, 0.3, 16.5) odak=
+TASIMA36BYURU bacak=rampa_ust sure=0.0 yol=0.0 takilma=0 dusme=0 son=(-24.0, 1.9, 18.3) odak=
+TASIMA36BKARE an_01_cikis.jpg oyuncu=(-24.0, 1.5, 18.3) cizim=4431 ilkel=6090354 sur=eski
+TASIMA36BYURU bacak=kopru_ortasi sure=0.0 yol=0.0 takilma=0 dusme=0 son=(-24.0, 0.9, 27.4) odak=
+TASIMA36BKARE an_02_kopru.jpg oyuncu=(-24.0, 0.9, 27.4) cizim=4378 ilkel=6083408 sur=eski
+TASIMA36BYURU bacak=kopru_ucu sure=0.0 yol=0.0 takilma=0 dusme=0 son=(-24.0, 0.3, 37.5) odak=
+TASIMA36BYURU bacak=hedef sure=0.0 yol=0.0 takilma=0 dusme=0 son=(-24.0, 0.3, 41.0) odak=
+TASIMA36BKARE an_03_siper.jpg oyuncu=(-24.0, 0.0, 41.0) cizim=4222 ilkel=5873568 sur=eski
+TASIMA36BYURU bacak=manto0 sure=0.0 yol=0.0 takilma=0 dusme=0 son=(-31.0, 0.3, 44.8) odak=mantlet_0
+TASIMA36BYURU bacak=manto1 sure=0.0 yol=0.0 takilma=0 dusme=0 son=(-24.0, 0.3, 47.8) odak=mantlet_1
+TASIMA36BYURU bacak=manto2 sure=0.0 yol=0.0 takilma=0 dusme=0 son=(-17.0, 0.3, 44.8) odak=mantlet_2
