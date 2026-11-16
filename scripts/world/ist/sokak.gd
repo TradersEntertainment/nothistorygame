@@ -46,6 +46,8 @@ var stats := {}
 var _son_red := ""
 var ob_imza := ""                     # DOKU-4: bu verinin önbellek imzası (bağlı katmanlar kendi imzalarına katar)
 var _sira_bilgi: Array = []           # avlu için: [merkez, d, nrm, boy, derinlik, tür, sıra]
+## ÇATI ROTASI (IstCati.uygula; önbellekten sonra eklenir): Ayasofya–Yerebatan–Hipodrom çatı mahallesinin parçaları
+var cati_parca: Array = []
 
 
 # ---------------------------------------------------------------- ızgara
@@ -206,12 +208,14 @@ func build(foot: Array, bands: Array, gates: Array, tohum := 1453) -> void:
 	if ob is Dictionary and _onbellekten(ob):
 		stats["onbellek"] = "okundu"
 		stats["ms"] = Time.get_ticks_msec() - t0
+		cati_parca = IstCati.uygula(self)
 		katman_bagla()
 		return
 	_build_hesapla(foot, bands, gates, tohum)
 	onbellek_yaz("sokak", imza, _onbellege())
 	stats["onbellek"] = "yazildi" if onbellek_kip == "" else onbellek_kip
 	stats["ms"] = Time.get_ticks_msec() - t0
+	cati_parca = IstCati.uygula(self)
 	katman_bagla()
 
 

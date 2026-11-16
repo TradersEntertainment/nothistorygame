@@ -3287,6 +3287,9 @@ func _sehir_dokusu_v2() -> void:
 			var drop := y - lo + 0.3
 			_add(g0, g1, g2, "kaide", Transform3D(bas.scaled(Vector3(dm.x, drop, dm.z)), Vector3(c.x, y - drop * 0.5 + 0.02, c.y)))
 		n += 1
+	# ÇATI ROTASI (IstCati): kalas köprüler, merdivenler, bakış kuleleri, saman — evlerle aynı katmanlarda, yakında çarpışmalı
+	for pc: Array in sokak.cati_parca:
+		_add(g0, g1, g2, String(pc[0]), pc[1])
 	# Sokak taşları ve basamaklar (yamaçta) — uzakta çizilmez
 	for st: Dictionary in sokak.streets:
 		if String(st["tur"]) != "basamak":
@@ -3324,7 +3327,10 @@ func _sehir_dokusu_v2() -> void:
 		if tur == "agaclik":
 			for k in rng.randi_range(4, 10):
 				var tp := c + Vector2(rng.randf_range(-alan.x * 0.45, alan.x * 0.45), rng.randf_range(-alan.y * 0.45, alan.y * 0.45))
-				_add(g0, g1, g2, "ag|" + String(AGAC_SEYREK[rng.randi() % AGAC_SEYREK.size()]), Transform3D(Basis(Vector3.UP, rng.randf() * TAU), Vector3(tp.x, IstGeo.h(tp.x, tp.y) - 0.05, tp.y)))
+				var ak := "ag|" + String(AGAC_SEYREK[rng.randi() % AGAC_SEYREK.size()])
+				var ar := rng.randf() * TAU
+				if IstCati.bos_mu(tp):          # çatı mahallesinin evlerinin içinde/dibinde ağaç yok (rng sırası aynı)
+					_add(g0, g1, g2, ak, Transform3D(Basis(Vector3.UP, ar), Vector3(tp.x, IstGeo.h(tp.x, tp.y) - 0.05, tp.y)))
 			continue
 		var it := {"id": id, "pos": Vector3(c.x, lo + 0.02, c.y), "yaw": float(dk["yaw"]), "k": 1.0, "r": alan.length() * 0.5,
 			"have": [null, null, null], "data": {"tur": "bitki"}, "mod": "doku"}
@@ -3343,10 +3349,16 @@ func _sehir_dokusu_v2() -> void:
 		else:
 			continue
 		# bahçe/bostan kenarında birkaç ağaç
+		var dk_bos := IstCati.bos_mu(c, minf(alan.x, alan.y) * 0.5)
 		for k in rng.randi_range(1, 3):
 			var tp := c + Vector2((alan.x * 0.5 + 1.5) * (1 if rng.randf() < 0.5 else -1), rng.randf_range(-alan.y * 0.4, alan.y * 0.4))
 			if sokak.cell(tp.x, tp.y) in [0, 5]:
-				_add(g0, g1, g2, "ag|" + String(AGAC_SIK[rng.randi() % AGAC_SIK.size()]), Transform3D(Basis(Vector3.UP, rng.randf() * TAU), Vector3(tp.x, IstGeo.h(tp.x, tp.y) - 0.05, tp.y)))
+				var ak := "ag|" + String(AGAC_SIK[rng.randi() % AGAC_SIK.size()])
+				var ar := rng.randf() * TAU
+				if IstCati.bos_mu(tp):
+					_add(g0, g1, g2, ak, Transform3D(Basis(Vector3.UP, ar), Vector3(tp.x, IstGeo.h(tp.x, tp.y) - 0.05, tp.y)))
+		if not dk_bos:
+			continue                            # çatı mahallesinin evleriyle çakışan doku öğesi kurulmaz
 		_item_lazy(it)
 		far.append([tur, c, alan, float(dk["yaw"]), lo])
 	# Meydan: kuyu ya da çeşme ve çevresinde pazar köşesi
@@ -3361,7 +3373,8 @@ func _sehir_dokusu_v2() -> void:
 			if lod >= 2:
 				return
 			Ayrinti.build(which, nd, 1.0, lod)
-		_item_lazy(it)
+		if IstCati.bos_mu(c, 3.0):
+			_item_lazy(it)
 		nm += 1
 	_layers2(g0, g1, g2)
 	_far_doku(far)

@@ -1,0 +1,17 @@
+43o: AUTOTEST PASS chapter=43 variant= outcome=43O.1 bad=0 lessons=3 soup=true flown=1069 battery=22
+44b: AUTOTEST PASS chapter=44 variant= outcome=44.1 light=phone battery=3.9 bumps=4 hits=0 rescued=false kid=false
+10h: AUTOTEST PASS chapter=10h variant= outcome=10H.1 truth=3 direnc=0 paradox=0
+12b: AUTOTEST PASS chapter=12b variant= outcome=12B.1 world= honest=true
+11: AUTOTEST PASS chapter=11 variant= outcome=11.2 persuade=25 sadakat=55 baski=1
+17o: AUTOTEST PASS chapter=17o variant= outcome=17O.1 acc=1.00 water=4 pours=10.0 kadri=true
+18: AUTOTEST PASS chapter=18 variant= outcome=18.1 built=6 misses=0 taped=0 twins=false captive=false next=
+18b: AUTOTEST PASS chapter=18b variant= outcome=18B.1 hits=3 cracks=3
+31o: AUTOTEST PASS chapter=31o variant= outcome=31O.1 house=true(163) falls=0 signs=3 wrong=0 sun=true lashes=3 miss=0 scaff=true mats=8/8 err=0
+38o: AUTOTEST PASS chapter=38o variant= outcome=38O.1 oars=10 arrows=0 forks=3/3 fire=true pulled=true oil=false snaps=0 splashes=0 explored=15.1 helper=false slips=0
+7: AUTOTEST PASS chapter=7 variant= branch=7a outcome=7.1 extras=[] sadakat=60 baski=0 hour=13.5
+8y: AUTOTEST PASS chapter=8y variant= outcome=8Y.1 id=seal warnings=0 lowered=0 radio=true
+parse_check: PARSECHECK PASS scripts=356
+SURSOZLESME PASS kalem=13 kesim=8
+SUROYUN nokta=519 havada=0 gomuk=0 katida=0
+WALKTHRU OZET yol=7 tamam=7 takilma=0 dusme=0
+Denetim satırı (SCRIPT ERROR|VISAUDIT|WALKTHRU|HELDAUDIT|ARMAUDIT|WARN_FX|WARN_FLY|WARN_VOID) bölüm koşularında: 0

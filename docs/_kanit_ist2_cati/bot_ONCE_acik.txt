@@ -1,0 +1,4 @@
+CATIBOT R1_ayasofya_onu_yerebatan kip=acik sure=8.3 wp=0/12 takilma=1 dusme=0 sikisma=0 yuksuz=0 eksik_hucre=0 bitti=false son=(-61.5,12.92,12.4) | TAKILDI wp0 hedef(-61.3,13.2,12.4) at (-61.5,12.92,12.4) t=8.3
+CATIBOT R2_yerebatan_hipodrom kip=acik sure=12.5 wp=1/15 takilma=1 dusme=0 sikisma=0 yuksuz=0 eksik_hucre=0 bitti=false son=(-72.6,12.81,33.2) | wp0 t=3.3 y=13.35 | TAKILDI wp1 hedef(-72.6,18.9,33.3) at (-72.6,12.79,33.3) t=12.5
+CATIBOT R3_hipodrom_boyunca kip=acik sure=8.4 wp=0/16 takilma=1 dusme=0 sikisma=0 yuksuz=0 eksik_hucre=0 bitti=false son=(-91.1,10.02,104.3) | TAKILDI wp0 hedef(-90.8,10.3,104.3) at (-91.1,10.02,104.3) t=8.4
+CATIBOT OZET kip=acik rota=3 tamam=0 takilma=3 dusme=0 sikisma=0 yuksuz=0
