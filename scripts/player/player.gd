@@ -1133,10 +1133,10 @@ func _animate_free_hand(delta: float, spd: float) -> void:
 		curl = -25.0
 	elif hk > 0.0 and not floating:
 		# Havada (zıplama, düşüş): sol kol yana açılır, avuç aşağı; inince iner
-		pos = (_free_base + Vector3(0, -0.45, 0)).lerp(_free_base + Vector3(-0.07, 0.0, 0.03), hk)
-		roll = -40.0 * hk
-		tilt = 8.0
-		curl = -20.0
+		pos = (_free_base + Vector3(0, -0.45, 0)).lerp(_free_base + Vector3(-0.09, -0.05, 0.04), hk)
+		roll = -55.0 * hk
+		tilt = 12.0
+		curl = -12.0
 	elif floating:
 		# Kurbağalama: el öne uzanır, yana açılır, göğse döner. Dururken suyu hafifçe iter.
 		var a := 1.0 if spd > 0.3 else 0.35

@@ -352,8 +352,9 @@ func _mantle(top: Dictionary) -> bool:
 	tw.tween_property(p, "global_position", rise, t1).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_OUT)
 	tw.parallel().tween_method(func(k: float): _pose_hands(1.0 - k * 2.0, k), 0.0, 1.0, t1)
 	# Kamera kenara doğru yükselir ve öne eğilir (kenarın üstüne bakılır), çıkınca doğrulur. Süre aynı (t1 + 0,22).
-	tw.parallel().tween_method(_mantle_his, 0.0, 1.0, t1 + 0.22)
 	tw.tween_property(p, "global_position", target, 0.22).set_trans(Tween.TRANS_SINE)
+	# Ayrı tween (asıl akışın süresi değişmesin): t1 + 0,22 boyunca
+	p.create_tween().tween_method(_mantle_his, 0.0, 1.0, t1 + 0.22)
 	tw.tween_callback(func():
 		state = ""
 		_show_hands(false)
@@ -613,6 +614,8 @@ func _yorgunluk() -> float:
 
 ## Kenardan çıkış: k 0..1 boyunca kamera öne eğilir (en çok 8°) ve kenara doğru biraz yükselir, sonra doğrulur.
 func _mantle_his(k: float) -> void:
+	if state != "mantle":
+		return
 	if p.his:
 		p.his.kenar_egilme(sin(k * PI) * 8.0, sin(k * PI) * 0.06)
 

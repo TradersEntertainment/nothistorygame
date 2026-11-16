@@ -56,8 +56,11 @@ func _physics_process(delta: float) -> void:
 			_son_y = y
 
 
+## Yazılım çizimi (xvfb) saniyede ~1 kare çizer: kare aralığı oyun zamanında doğru olsun diye çekim boyunca oyun
+## ağır çekimde (time_scale 0,04) akar, kareler oyun zamanıyla 0,1 sn arayla alınır.
 func _cek(ad: String) -> void:
 	_mesgul = true
+	Engine.time_scale = 0.04
 	for i in n:
 		await RenderingServer.frame_post_draw
 		get_viewport().get_texture().get_image().save_jpg(dir.path_join("%s_%s_%d.jpg" % [ad, on_, i]), 0.85)

@@ -120,7 +120,8 @@ func adim(delta: float, horiz: float) -> void:
 		_hava_t = 0.0
 		_dusus_t = 0.0
 	else:
-		_hava_tepe = y if _yerde else maxf(_hava_tepe, y)
+		# Merdivende, duvarda, ara sahnede ya da yüzerken düşüş sayılmaz: tepe serbest kalınan andan ölçülür
+		_hava_tepe = y if (_yerde or not serbest) else maxf(_hava_tepe, y)
 		_hava_t += delta
 	_yerde = yerde
 	if _zipla_y0 != INF:
