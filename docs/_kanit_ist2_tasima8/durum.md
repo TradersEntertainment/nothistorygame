@@ -18,10 +18,16 @@ Dal: `wip/ist2-tasima8` (taban `wip/ist2-taban13` c6ab0f7b).
   karartma → Romanos koridoru → iç kapı → cadde (FallenCity.yer).
 - `=yuru` / `=kare` kipi (26).
 
+- 26o iki yollu (yeni set varsayılan, `--eskisur=26o` eski): yeni `""` ×2, `lose`, `turgut` PASS; eski `""` PASS.
+- `=yuru` takılmasız: 26 yeni (100,5 m) / eski (91,8 m), 26o yeni (98,2 m).
+- Kökü bulunup düzeltilenler: savunucu üst üste (yardımcı taşıyıcının çekilme yönü), kafile başı kilise basamağında,
+  taşıma yolu sıraya yakın, fıçılar yola yuvarlanıyordu, 26o hendek engeli hiç kalkmıyordu (32 bit eşitlik), 26o tırmanış
+  dişin önündeydi, 26o kazan sancak yolunu kapatıyordu, 26 merdiven başı stauroma fıçılarına/kazana dayanıyordu.
+
 ## Süren
-- Denetim satırları (yeni sette): savunucu üst üste binmesi (1,5; 0,5; 10,6) her koşuda; kafile başı caddede kirişe gömülü
-  (nophoto, council_bad). Sonda (`--sonda8`) ile kök neden.
-- `=yuru` iki takılma bot betiğindendi (fıçılar çekilmeden poterna, kazanın öbür yanı): düzeltildi, yeniden koşuyor.
+- Tam çeşit listesi (26: 14 çeşit yeni ×2 + eski ×1; 26o: 5 çeşit yeni ×2 + eski ×1) parça parça koşuyor.
+- Kareler: 26 eski seri tamam; 26 yeni seri merdiven/kadraj düzeltmesinden sonra yeniden.
 
 ## Sıradaki
-- 26'nın bütün çeşitleri yeni ×2 + eski ×1; kareler (8 çift); 26o (d)
+- Bağımlı bölümler ×1 (0, 1, 2, 8y, 20 bütün çeşitler, 20o, 21, 22, 22o, 25, 28o, 31o, 32o, 36b, 37o, 38o, 30, 30o), menu_return 26.
+- 26o kareleri, bütçe tablosu, rapor.

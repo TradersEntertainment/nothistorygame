@@ -457,7 +457,8 @@ func kosu_yolu(from: Vector3, to: Vector3) -> Array:
 ## Dış surun önündeki hücum merdivenleri (Assault'un dekor merdivenleri; karar 8-A sayı aynı): [{"x", "ayak", "tepe"}].
 ## Eski: Assault'un sekiz merdiveni (ayak z 18,35, tepe y 7,7). Yeni: önce sözleşmenin dayamaları, sonra dış sur yolunda
 ## kule, gedik, poterna ve geçişlerden uzak eşit aralıklı yerler (dayama kuralıyla: eğim 16°, tepe korkuluğun 1,5 m üstü).
-func hucum_merdivenleri(xs_eski: Array, span: float) -> Array:
+## TAŞIMA-8: kacin — merdiven başının konmayacağı ek x'ler (±2,1 m; ör. sur yolundaki stauroma fıçıları, stauroma_xs).
+func hucum_merdivenleri(xs_eski: Array, span: float, kacin: Array = []) -> Array:
 	var out: Array = []
 	if eski_mi:
 		for x: float in xs_eski:
@@ -468,7 +469,7 @@ func hucum_merdivenleri(xs_eski: Array, span: float) -> Array:
 	var secilen: Array = []
 	for m: Dictionary in dm:
 		var x := float(m["x"]) + ofs.x
-		if absf(x) < span and _merdiven_bos(x, secilen):
+		if absf(x) < span and _merdiven_bos(x, secilen, kacin):
 			secilen.append(x)
 	# eski düzenin x'lerini yeni engellerden kaydırarak tamamla (aynı sayı)
 	for x0: float in xs_eski:
@@ -476,7 +477,7 @@ func hucum_merdivenleri(xs_eski: Array, span: float) -> Array:
 			break
 		for k in 40:
 			var x := x0 + (0.5 * k if k % 2 == 0 else -0.5 * k)
-			if absf(x) < span and _merdiven_bos(x, secilen):
+			if absf(x) < span and _merdiven_bos(x, secilen, kacin):
 				secilen.append(x)
 				break
 	secilen.sort()
@@ -505,7 +506,10 @@ func merdiven_dayama(x: float, uzat := 0.0) -> Dictionary:
 	return {"x": x, "ayak": ayak, "tepe": ayak + Vector3(0.0, boy * cos(eg), -boy * sin(eg))}
 
 
-func _merdiven_bos(x: float, secilen: Array) -> bool:
+func _merdiven_bos(x: float, secilen: Array, kacin: Array = []) -> bool:
+	for k: float in kacin:
+		if absf(x - k) < 2.1:          # dizi ±1,53 (4 fıçı, karın 0,33) + merdiven yarı eni 0,4 + pay
+			return false
 	if not dis_yol_bos(x) or absf(x) < gedik_bosluk() + 2.0:
 		return false
 	for g: Dictionary in gecisler():
@@ -517,6 +521,39 @@ func _merdiven_bos(x: float, secilen: Array) -> bool:
 		if absf(x - s) < 5.0:
 			return false
 	return true
+
+
+## TAŞIMA-8: dış sur yolundaki stauroma fıçı dizilerinin (IstSurlarAyrinti._stauroma: korkuluğa yaslı dört fıçı) orta x'leri,
+## kurulu sahnenin çarpışma gövdelerinden (fıçının dışbükey kabuğu: boy ≈ 0,95, en ≈ 0,6; dış korkuluğun iç yüzünde).
+## Görünüş dosyası değişmez; yer ondan okunur. Eski: [].
+func stauroma_xs(kok: Node) -> Array:
+	if eski_mi or kok == null:
+		return []
+	var xs: Array = []
+	var zk := dis_sur_z1() - IstSurlar.PARAPET_T - 0.28
+	for b in kok.find_children("*", "StaticBody3D", true, false):
+		var sb := b as StaticBody3D
+		if sb.get_child_count() != 1 or not (sb.get_child(0) is CollisionShape3D):
+			continue
+		var sh := (sb.get_child(0) as CollisionShape3D).shape as ConvexPolygonShape3D
+		if sh == null or sh.points.size() < 8:
+			continue
+		var ab := AABB(sh.points[0], Vector3.ZERO)
+		for q in sh.points:
+			ab = ab.expand(q)
+		if ab.size.y < 0.85 or ab.size.y > 1.05 or ab.size.x > 0.8 or ab.size.x < 0.35:
+			continue
+		var c := sb.global_transform * ab.get_center()
+		if absf(c.y - (dis_yol_y() + 0.475)) < 0.3 and absf(c.z - zk) < 0.5:
+			xs.append(c.x)
+	xs.sort()
+	var out: Array = []
+	for x: float in xs:
+		if out.is_empty() or x - float(out[out.size() - 1]) > 4.0:
+			out.append(x)
+		else:
+			out[out.size() - 1] = (float(out[out.size() - 1]) + x) * 0.5      # aynı dizinin fıçıları
+	return out
 
 
 func poterna_x() -> float:

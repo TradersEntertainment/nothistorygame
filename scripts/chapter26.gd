@@ -219,7 +219,12 @@ func _build_walls_scene() -> void:
 	else:
 		# Yeni sette (karar 8-A: sayı aynı, aralık geniş): bağdaştırıcının dayama kuralıyla gediğin İKİ yanına, kule,
 		# poterna ve geçitlerden uzak; eski sıra korunur (ilki gediğin solundaki: 1. dalgada oyuncu onun başına çıkar)
-		var yer: Array = sur.hucum_merdivenleri(lx, 40.0)
+		# merdiven başı sur yolundaki stauroma fıçılarına dayanmasın (x −10,5'teki dizinin içine iniyordu: kare an_03)
+		var st := sur.stauroma_xs(walls)
+		if GameState.autotest:
+			print("TASIMA8 stauroma=%s" % [st])
+		# ve kazanların (±8,6) başına (eskide merdiven kazandan 1,9 m ötedeydi)
+		var yer: Array = sur.hucum_merdivenleri(lx, 40.0, st + [-8.6, 8.6])
 		var kalan: Array = yer.duplicate()
 		for i in 5:
 			var en := 0
@@ -2829,15 +2834,23 @@ func _t8_yuru() -> void:
 		var az := Soldier.new(Color("8a6a4a"), "stand", "turban")
 		add_child(az)
 		var lb := lad.global_transform
-		az.global_position = lb * Vector3(0, lad.height * 0.72, 0.18)
+		az.global_position = lb * Vector3(0, lad.height * 0.9, 0.18)
 		az.rotation.y = PI
 		az.set_meta("no_audit", true)
+		# kadraj: merdiven başının 2,6 m yanından, korkuluğun üstüne çıkan azaba
+		var kx := lad.position.x - 2.6 * signf(lad.position.x)
+		player.global_position = Vector3(kx, sur.dis_yol_y() + 0.05, 14.7 if sur.eski_mi else sur.dis_yol_ic_z())
+		await _t8_bekle(0.3)
+		player.face(az.global_position + Vector3(0, 1.4, 0))
 		await _t8_kare("merdiven_azap")
 		az.queue_free()
 	# kazan sur yolunu kapatır: merdiven ağzı yanındaki kazanın merdiven tarafına (eski ve yeni sette kazan x ±8,6)
 	var cx := 8.6 * signf(lad.position.x)
 	await _t8_yb("kazan", Vector3(cx + 1.4 * signf(cx), 0, land.z), Vector3(cx, sur.dis_yol_y() + 0.6, land.z))
 	if kare:
+		player.global_position = Vector3(cx + 3.2 * signf(cx), sur.dis_yol_y() + 0.05, land.z)
+		await _t8_bekle(0.3)
+		player.face(Vector3(cx, sur.dis_yol_y() + 0.9, land.z + 0.3))
 		await _t8_kare("kazan")
 	player.global_position = back
 	await _t8_bekle(0.4)

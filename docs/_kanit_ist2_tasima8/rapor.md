@@ -129,3 +129,20 @@ aynı sancak kulesini (x 35,4) ve aynı Romanos kapısını kullanır. Bölüm 2
 ## run_tests.sh isteği (kendim eklemedim)
 - `for v in "=yuru"; do run --chapter=26 --autotest$v; done` ve `run --chapter=26o --autotest=yuru` (≈ 50 sn, takılma/düşme
   satırı `TASIMA8YURU OZET`).
+
+## Süre tabloları (ölçülen)
+
+### 26
+| Ölçü | Eski | Yeni | Fark / sınır |
+|---|---|---|---|
+| Taşıma yürüyüşü (gerçek bot, `=yuru` "giust → poterna" bacakları) | 19,6 m / 6,2 sn | 23,4 m / 7,4 sn | +3,8 m (sınır +5 m); oyunda taşıma hızı ×0,5: ≈ 12,3 → 14,6 sn |
+| Taşıma (bölümün autotest botu, oyun saati, `TASIMA8 tasima`) | 3,1 sn | 5,0–6,7 sn | bot 5 m/sn ile ara noktalardan dolanır |
+| Alay (giriş kartından ağarmaya, oyun saati, `TASIMA8 alay`) | 69,4–69,7 sn | 75,8–76,1 sn | +6,4 sn (sınır +15) |
+| `=yuru` toplam | 91,8 m / 30,4 sn, takılma 0 | 98,3 m / 31,6 sn, takılma 0 | |
+| Dalga süreleri (`WAVERUNNER t=`) | aşağıdaki çeşit tablosunda | | |
+
+### 26o
+| Ölçü | Eski | Yeni | Fark |
+|---|---|---|---|
+| Tırmanış (`CLIMB t=`, bot taştan kaçınarak) | 8,5–8,6 sn (8,6 m) | 11,1–27,0 sn (14,35 m; taş/yağ beklemesi dahil) | merdiven +5,75 m (teras 3,7 m aşağıda) |
+| `=yuru` toplam | (eski yol korkuluğun önünde biter) | 98,2 m / 31,2 sn, takılma 0 | |
