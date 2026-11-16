@@ -182,6 +182,9 @@ func build(parent: Node3D) -> Node3D:
 				Kit.horse(root, xf.origin, xf.basis.get_euler().y, n[2][0], n[2][1])
 			"food":
 				Kit.food(root, n[2], xf.origin, xf.basis.get_euler().y)
+			"kumas":
+				# TUR-12: banner_pole kumaşı (rüzgârda dalgalanan bayrak; çarpışmasız)
+				preload("res://scripts/world/ist/kumas.gd").bayrak(root, xf.origin, xf.basis.x, n[2][1], n[2][2], n[2][0], n[2][3], 7)
 	if not props.is_empty():
 		Kit.batch(root, props)
 	if not crowd.is_empty():
@@ -661,8 +664,15 @@ func banner_pole(p: Vector3, color: Color) -> void:
 	cyl(0.05, 4.2, p + Vector3(0, 2.1, 0), Color("5a3a22"), Vector3.ZERO, 5)
 	solid(Vector3(0.12, 4.2, 0.12), p + Vector3(0, 2.1, 0))
 	ball(0.08, p + Vector3(0, 4.25, 0), Color("d8b040"))
-	box(Vector3(0.9, 1.3, 0.03), p + Vector3(0.47, 3.5, 0), color)
-	box(Vector3(0.9, 0.1, 0.035), p + Vector3(0.47, 3.0, 0), color.darkened(0.3))
+	# TUR-12: ince çift yüzlü, dalgalanan bayrak; alt kuşak kumaşın yaması (eski: 3 cm'lik kutu + kutu şerit, birleşik
+	# parçaya pişiyordu). Kumaş kendi gölgelendiricisiyle ayrı düğüm: build()'de kurulur
+	kumas(p + Vector3(0, 4.15, 0), 0.92, 1.3, color, [[0.0, 0.81, 1.0, 0.88, color.darkened(0.3)]])
+
+
+## TUR-12: rüzgârda dalgalanan bayrak kumaşı (ince, çift yüzlü; çarpışmasız). ust: direk ekseninde üst köşe (yerel);
+## L boy, H yükseklik; yamalar [u0, v0, u1, v1, renk]. build()'de kendi gölgelendiricisiyle ayrı düğüm olarak kurulur.
+func kumas(ust: Vector3, L: float, H: float, color: Color, yamalar: Array = []) -> void:
+	_nodes.append(["kumas", _frame * Transform3D(Basis.IDENTITY, ust), [color, L, H, yamalar]])
 
 
 ## Yerde yatan köpek ya da kedi.

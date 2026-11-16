@@ -218,8 +218,9 @@ static func war_galley(parent: Node3D, pos: Vector3, yaw: float, rowers := true,
 	# Seren yönü (0; 0,5; 0,866); altı (0; −0,866; 0,5). Demet serenin orta kısmında, uçları serenin içinde kalır.
 	Props.cyl(g, 0.14, 5.4, Vector3(0.15, GALLEY_DECK + 8.0 - 0.866 * 0.14, -3.0 + 0.5 * 0.14), Color("8a7a58"), Vector3(60, 0, 0), 8, 0.09)
 	if flag:
-		Props.box(g, Vector3(0.04, 1.0, 1.6), Vector3(0, GALLEY_DECK + 9.4, -3.8), Color("b3262d"))
-		Props.crescent(g, Vector3(0, GALLEY_DECK + 9.4, -3.9), 0.24, Color("b3262d"))
+		# TUR-12: ince çift yüzlü, rüzgârda dalgalanan sancak; hilal kumaşa işli (eski: 4 cm'lik kutu + ayrı hilal)
+		preload("res://scripts/world/ist/kumas.gd").bayrak(g, Vector3(0, GALLEY_DECK + 9.9, -3.0), Vector3.FORWARD, 1.6, 1.0,
+			Color("b3262d"), [], 8, "Sancak", 0.0, true)
 	var oars: Array = []
 	for i in 9:
 		var z := -6.5 + i * 1.5

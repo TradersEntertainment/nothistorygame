@@ -319,18 +319,36 @@ static func _bayrak(k: MeshKit, bas: Vector3, bay: String, w: float, h: float, a
 		var fu := float(i) / nx
 		var fv := float(j) / ny
 		return bas + Vector3(0.06 * sin(fu * 5.0 + fv * 2.0) * fu, -fv * h, -fu * w)
+	# TUR-12: ayrıntılı (yakın) bayrakta en az 6 dilim: gölgelendiricideki dalga kırık çizgi okunmasın
+	if ayrinti:
+		nx = maxi(nx, 6)
+	var i0 := k.v.size()
 	for i in nx:
 		for j in ny:
 			var col := _bayrak_renk(bay, i, j, nx, ny)
 			Landmarks1453._tri2(k, p.call(i, j), p.call(i, j + 1), p.call(i + 1, j + 1), col)
 			Landmarks1453._tri2(k, p.call(i, j), p.call(i + 1, j + 1), p.call(i + 1, j), col)
+	_kumas_isaret(k, i0, bas, w)
 	# Osmanlı sancağı: altın alem (küre) ve iki uçlu kuyruk
 	if bay.begins_with("osmanli") and ayrinti:
 		k.cyl(Transform3D(Basis(), bas + Vector3(0, 0.0, 0.0)), 0.1, 0.5, Color("d8b040"), 6, 0.0)
 
 
 static func _flama(k: MeshKit, bas: Vector3, uzun: float, col: Color) -> void:
+	var i0 := k.v.size()
 	Landmarks1453._pennant(k, bas, uzun, col)
+	_kumas_isaret(k, i0, bas, uzun)
+
+
+## TUR-12 KUMAŞ: i0'dan bu yana eklenen bayrak köşelerine direkten uzaklık oranını (0 direk … 1 uç) köşe rengi alfasına
+## yazar: a = 1 − 0,5·oran (öbür bütün köşeler a = 1). SALINIM gölgelendiricisi a < 1 köşeleri dalgalandırır (direk kenarı
+## sabit); bayrak kıça (−z) akar: demirli gemi rüzgâra pruva verir, bayrağı rüzgâr altına uçar.
+static func _kumas_isaret(k: MeshKit, i0: int, bas: Vector3, w: float) -> void:
+	for i in range(i0, k.v.size()):
+		var fu := clampf((bas.z - k.v[i].z) / maxf(w, 0.01), 0.0, 1.0)
+		var cc := k.c[i]
+		cc.a = 1.0 - 0.5 * fu - 0.004
+		k.c[i] = cc
 
 
 # ------------------------------------------------------------------ karaka / kog
@@ -733,6 +751,16 @@ varying vec3 v_renk;
 void vertex() {
 	vec3 org = (MODEL_MATRIX * vec4(0.0, 0.0, 0.0, 1.0)).xyz;
 	float ph = org.x * 0.173 + org.z * 0.231;
+	// TUR-12 KUMAŞ: bayrak/flama köşeleri (köşe alfası < 1; gemiler_mesh._kumas_isaret): direk kenarı sabit, uç rüzgârda
+	// dalgalı; uzakta söner
+	if (COLOR.a < 0.997) {
+		float fu = clamp((1.0 - COLOR.a) * 2.0, 0.0, 1.0);
+		float cam = length((MODEL_MATRIX * vec4(VERTEX, 1.0)).xyz - CAMERA_POSITION_WORLD);
+		float kf = 1.0 - smoothstep(70.0, 150.0, cam);
+		float dz = -VERTEX.z;
+		VERTEX.x += (sin(dz * 2.4 + TIME * 5.6 + ph * 3.0) * 0.8 + sin(dz * 4.9 + TIME * 8.1 + VERTEX.y * 1.3) * 0.2) * (0.12 + 0.3 * fu) * fu * kf;
+		VERTEX.y -= (0.5 + 0.5 * sin(TIME * 0.6 + ph)) * 0.12 * fu * fu * kf;
+	}
 	float t = TIME * hiz;
 	float roll = sin(t + ph) * genlik;
 	float pitch = sin(t * 0.77 + ph * 1.7) * genlik * 0.6;

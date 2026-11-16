@@ -252,32 +252,53 @@ func _army() -> void:
 
 ## Sancak: kırmızı ya da yeşil (ya da sarı) çatal kuyruklu bayrak, üstünde beyaz hilal; direğin tepesinde tunç alem.
 func _sancak(bp: Vector3, col: Color) -> void:
+	var Kumas := preload("res://scripts/world/ist/kumas.gd")
 	Props.cyl(_ova, 0.05, 5.5, bp + Vector3(0, 2.75, 0), Color("4a3420"), Vector3.ZERO, 5)
 	Props.ball(_ova, 0.1, bp + Vector3(0, 5.58, 0), Color("c8a040"), Vector3.ONE, 6)
 	Props.ring(_ova, 0.07, 0.12, bp + Vector3(0, 5.8, 0), Color("c8a040"), Vector3(90, 0, 0))
-	var fl := Node3D.new()
-	fl.position = bp + Vector3(0, 4.7, 0)
-	_ova.add_child(fl)
+	# TUR-12: tek ince, çift yüzlü kumaş: çatal kuyruk (kırlangıç) kumaşın kendi ucu, hilal kumaşa işli (gölgelendiricide
+	# keskin); rüzgârda dalgalanır, direk kenarı sabit (eski: üç 3 cm'lik kutu + dört ince silindir disk)
+	var fl := Kumas.bayrak(_ova, bp + Vector3(0, 5.35, 0), Vector3.FORWARD, 2.45, 1.3, col, [], 10, "Sancak", 0.4, true)
 	fl.set_meta("flag", true)
-	Props.box(fl, Vector3(0.03, 1.3, 1.5), Vector3(0, 0, -0.75), col)
-	# Çatal kuyruk: uca doğru ayrılan iki dil
-	for sy: float in [-0.33, 0.33]:
-		Props.box(fl, Vector3(0.03, 0.34, 1.0), Vector3(0, sy + signf(sy) * 0.05, -1.92), col, Vector3(signf(sy) * 10.0, 0, 0))
-	# Hilal (ağzı bayrağın uçuşan ucuna bakar): beyaz disk, üstünü uca doğru kaydırılmış bayrak renginde disk örter
-	for sx: float in [0.02, -0.02]:
-		Props.cyl(fl, 0.34, 0.012, Vector3(sx, 0.05, -0.6), Color("f0ece0"), Vector3(0, 0, 90), 16)
-		Props.cyl(fl, 0.29, 0.014, Vector3(sx * 1.1, 0.08, -0.72), col, Vector3(0, 0, 90), 16)
 
 
 ## Tuğ: uzun direk, tepede tunç top ve alem, altından sarkan at kılı demetleri (koyu ve kızıl).
 func _tug(bp: Vector3) -> void:
+	var Kumas := preload("res://scripts/world/ist/kumas.gd")
 	Props.cyl(_ova, 0.05, 6.0, bp + Vector3(0, 3.0, 0), Color("4a3420"), Vector3.ZERO, 5)
 	Props.ball(_ova, 0.14, bp + Vector3(0, 6.05, 0), Color("c8a040"), Vector3.ONE, 8)
 	Props.cyl(_ova, 0.02, 0.35, bp + Vector3(0, 6.35, 0), Color("c8a040"), Vector3.ZERO, 4, 0.0)
 	Props.cyl(_ova, 0.16, 0.08, bp + Vector3(0, 5.85, 0), Color("c8a040"), Vector3.ZERO, 10)
+	# TUR-12: at kılı demetleri tek sarkık kumaş ağı: bağ yeri (üst) sabit, alt uçlar rüzgârda hafif salınır
+	var tv := PackedVector3Array()
+	var tn := PackedVector3Array()
+	var tc := PackedColorArray()
 	for k in 5:
 		var a := k * TAU / 5.0
-		Props.cyl(_ova, 0.07, 1.3, bp + Vector3(cos(a) * 0.1, 5.15, sin(a) * 0.1), [Color("2a1e18"), Color("6a2a1e")][k % 2], Vector3(sin(a) * 6.0, 0, cos(a) * 6.0), 5, 0.02)
+		var cm := CylinderMesh.new()
+		cm.top_radius = 0.07
+		cm.bottom_radius = 0.02
+		cm.height = 1.3
+		cm.radial_segments = 5
+		cm.rings = 2
+		var ar := cm.get_mesh_arrays()
+		var xf := Transform3D(Basis.from_euler(Vector3(deg_to_rad(sin(a) * 6.0), 0, deg_to_rad(cos(a) * 6.0))), Vector3(cos(a) * 0.1, -0.65, sin(a) * 0.1))
+		var iv: PackedInt32Array = ar[Mesh.ARRAY_INDEX]
+		var pv: PackedVector3Array = ar[Mesh.ARRAY_VERTEX]
+		var pn: PackedVector3Array = ar[Mesh.ARRAY_NORMAL]
+		for ii in iv:
+			tv.append(xf * pv[ii])
+			tn.append(xf.basis * pn[ii])
+			tc.append([Color("2a1e18"), Color("6a2a1e")][k % 2])
+	var tuv := PackedVector2Array()
+	var tuv2 := PackedVector2Array()
+	Kumas.sarkik_isaretle(tv, tuv, tuv2, 0, func(q: Vector3) -> float: return -q.y / 1.3, bp.x * 0.3)
+	var tmi := MeshInstance3D.new()
+	tmi.mesh = Kumas._dizi_ag(tv, tn, tc, tuv, tuv2)
+	tmi.material_override = Kumas.mat(true)
+	tmi.position = bp + Vector3(0, 5.8, 0)
+	tmi.name = "TugPuskul"
+	_ova.add_child(tmi)
 
 
 # ---------------------------------------------------------------- koşan dalgalar

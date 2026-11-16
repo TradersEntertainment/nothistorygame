@@ -63,7 +63,7 @@ static func _renk(u: float, v: float, taban: Color, yamalar: Array) -> Color:
 ## kat: true ise sabit (gölgelendiricisiz) çift yüz (uzak LOD ağları için), false ise kip 1 (dalgalanır).
 static func bayrak_diz(v: PackedVector3Array, n: PackedVector3Array, c: PackedColorArray, uv: PackedVector2Array,
 		uv2: PackedVector2Array, ust: Vector3, yon: Vector3, L: float, H: float, taban: Color, yamalar: Array = [],
-		nx := 8, kat := false, cift := false, catal := 0.0) -> void:
+		nx := 8, kat := false, cift := false, catal := 0.0, koken := false, hilal := false, yerel := false) -> void:
 	var d := Vector3(yon.x, 0.0, yon.z)
 	d = d.normalized() if d.length() > 0.001 else Vector3(0, 0, 1)
 	var eu: Array = []
@@ -99,19 +99,28 @@ static func bayrak_diz(v: PackedVector3Array, n: PackedVector3Array, c: PackedCo
 					var ww: float = q[kk][1]
 					v.append(P.call(uu, ww))
 					n.append(-fn if arka else fn)
-					c.append(col.darkened(0.08) if arka else col)
+					var cc := col.darkened(0.08) if arka else col
+					cc.a = 0.5 if hilal else 1.0
+					c.append(cc)
 					if kat:
 						uv.append(Vector2(0.0, KIP_SABIT))
+						uv2.append(Vector2(ust.x, ust.z))
+					elif koken:
+						# kip 10 + L: direk ekseni ağın kökeninde; UV2 = (v, H) (parça deseni: hilal)
+						uv.append(Vector2(float(U.call(uu, ww)) * L, 10.0 + L))
+						uv2.append(Vector2(ww, -H if yerel else H))
 					else:
 						uv.append(Vector2(float(U.call(uu, ww)) * L, KIP_BAYRAK))
-					uv2.append(Vector2(ust.x, ust.z))
+						uv2.append(Vector2(ust.x, ust.z))
 
 
 ## Tek bayrak düğümü (Props.box bayraklarının yerine): yerel köken = direkteki üst köşe. Ağ önbellekli.
 ## Döner: MeshInstance3D (adı "Bayrak"; çarpışmasız, gölge verir).
+## yerel: bayrak sahne rüzgârına değil kendi kurulduğu yöne uçar (duvara/gövdeye yakın bayrak duvarın içine dönmesin)
+## catal: kırlangıç kuyruğu derinliği (0…0,5, L'nin oranı); hilal: Osmanlı hilali (beyaz; parça gölgelendiricisinde keskin)
 static func bayrak(parent: Node3D, ust: Vector3, yon: Vector3, L: float, H: float, taban: Color, yamalar: Array = [],
-		nx := 8, ad := "Bayrak") -> MeshInstance3D:
-	var key := "%s|%s|%s|%s|%s|%d" % [yon.snapped(Vector3.ONE * 0.01), L, H, taban.to_html(), str(yamalar), nx]
+		nx := 8, ad := "Bayrak", catal := 0.0, hilal := false, yerel := false) -> MeshInstance3D:
+	var key := "%s|%s|%s|%s|%s|%d|%s|%s|%s" % [yon.snapped(Vector3.ONE * 0.01), L, H, taban.to_html(), str(yamalar), nx, catal, hilal, yerel]
 	var am: ArrayMesh = _meshes.get(key)
 	if am == null:
 		var v := PackedVector3Array()
@@ -119,7 +128,7 @@ static func bayrak(parent: Node3D, ust: Vector3, yon: Vector3, L: float, H: floa
 		var c := PackedColorArray()
 		var uv := PackedVector2Array()
 		var uv2 := PackedVector2Array()
-		bayrak_diz(v, n, c, uv, uv2, Vector3.ZERO, yon, L, H, taban, yamalar, nx)
+		bayrak_diz(v, n, c, uv, uv2, Vector3.ZERO, yon, L, H, taban, yamalar, nx, false, false, catal, true, hilal, yerel)
 		am = _dizi_ag(v, n, c, uv, uv2)
 		# gölgelendirici bayrağı her yöne çevirebilir: sınır kutusu direğin çevresinde L yarıçaplı
 		am.custom_aabb = AABB(Vector3(-L - 0.3, -H - L * 0.4 - 0.3, -L - 0.3), Vector3(2.0 * L + 0.6, H + L * 0.4 + 0.6, 2.0 * L + 0.6))
@@ -166,3 +175,63 @@ static func esitle(v: PackedVector3Array, uv: PackedVector2Array, uv2: PackedVec
 		uv.append(Vector2(0.0, KIP_SABIT))
 	while uv2.size() < hedef:
 		uv2.append(Vector2.ZERO)
+
+
+## Sarkık kumaş levha (tente, saçak): merkez c, genişlik w (x), derinlik d (z), x ekseni çevresinde eğim (derece; +z
+## kenarı aşağı), ortası sarkma kadar çöker. renk: Callable(u, v) -> Color (u x boyunca, v z boyunca 0…1). saçak: ön
+## (+z) kenardan sarkan perde yüksekliği (0 = yok), saçak rengi sc. Kip 2: köşeler (direklere bağlı) sabit, kenar
+## ortaları ve saçağın alt ucu hafif nefes alır. Tek MeshInstance (ince çift yüz), çarpışmasız.
+static func sarkik_levha(parent: Node3D, c: Vector3, w: float, d: float, egim: float, sarkma: float, renk: Callable,
+		sacak := 0.0, sc := Color.WHITE, nx := 10, nz := 8, ad := "Tente") -> MeshInstance3D:
+	var v := PackedVector3Array()
+	var n := PackedVector3Array()
+	var cl := PackedColorArray()
+	var uv := PackedVector2Array()
+	var uv2 := PackedVector2Array()
+	var e := deg_to_rad(egim)
+	var P := func(u: float, t: float) -> Vector3:
+		var x := (u - 0.5) * w
+		var z := (t - 0.5) * d
+		var y := -sin(PI * u) * sin(PI * t) * sarkma
+		return Vector3(x, y - z * sin(e), z * cos(e))
+	var Wt := func(u: float, t: float) -> float:
+		return clampf((sin(PI * u) + sin(PI * t)) * 0.6, 0.0, 1.0)
+	var quad := func(a: Vector3, b: Vector3, cc: Vector3, dd: Vector3, col: Color, wa: float, wb: float, wc: float, wd: float) -> void:
+		# a-b-cc-dd; tek yüz (gölgelendirici cull_disabled: arka yüz aynı üçgen, normali Godot çevirir)
+		var nn := (b - a).cross(dd - a).normalized()
+		for arka in [false]:
+			var tri: Array = [[a, wa], [b, wb], [cc, wc], [a, wa], [cc, wc], [dd, wd]]
+			if arka:
+				tri = [[a, wa], [cc, wc], [b, wb], [a, wa], [dd, wd], [cc, wc]]
+			for q in tri:
+				v.append(q[0])
+				n.append(nn if arka else -nn)      # Godot: saat yönü ön yüz → ön normal −(b−a)×(c−a)
+				cl.append(col.darkened(0.12) if arka else col)
+				uv.append(Vector2(float(q[1]), KIP_SARKIK))
+				uv2.append(Vector2(c.x * 0.3 + c.z * 0.2, 0.0))
+	for i in nx:
+		for j in nz:
+			var u0 := float(i) / nx
+			var u1 := float(i + 1) / nx
+			var t0 := float(j) / nz
+			var t1 := float(j + 1) / nz
+			var col: Color = renk.call((u0 + u1) * 0.5, (t0 + t1) * 0.5)
+			quad.call(P.call(u0, t1), P.call(u1, t1), P.call(u1, t0), P.call(u0, t0), col,
+				Wt.call(u0, t1), Wt.call(u1, t1), Wt.call(u1, t0), Wt.call(u0, t0))
+	if sacak > 0.0:
+		for i in nx:
+			var u0 := float(i) / nx
+			var u1 := float(i + 1) / nx
+			var a: Vector3 = P.call(u0, 1.0)
+			var b: Vector3 = P.call(u1, 1.0)
+			# saçak dilimleri: kenarda sabit, alt uçta serbest; dişli alt kenar
+			var dis := sacak * (0.85 if i % 2 == 0 else 1.0)
+			quad.call(a, b, b + Vector3(0, -dis, 0), a + Vector3(0, -dis, 0), sc, 0.0, 0.0, 1.0, 1.0)
+	var mi := MeshInstance3D.new()
+	mi.mesh = _dizi_ag(v, n, cl, uv, uv2)
+	mi.material_override = mat(true)
+	mi.position = c
+	mi.name = ad
+	mi.set_meta("no_walk", true)
+	parent.add_child(mi)
+	return mi

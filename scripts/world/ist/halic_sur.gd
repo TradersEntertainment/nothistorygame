@@ -212,9 +212,9 @@ static func _quay(root: Node3D, L: float, T: float, lod: int) -> void:
 
 static func _banner(root: Node3D, pos: Vector3, H: float) -> void:
 	var pole := Props.cyl(root, 0.06, 4.0, pos + Vector3(0, 2.0, 0), Color("3a2a1a"), Vector3.ZERO, 6)
-	Props.box(root, Vector3(1.6, 1.0, 0.04), pos + Vector3(0.85, 3.4, 0), Color("a82a2a"))
-	Props.box(root, Vector3(0.12, 0.7, 0.05), pos + Vector3(0.85, 3.4, 0), Color("d9b43a"))
-	Props.box(root, Vector3(0.5, 0.12, 0.05), pos + Vector3(0.85, 3.5, 0), Color("d9b43a"))
+	# TUR-12: ince çift yüzlü, dalgalanan sancak; haç kumaşın yaması (eski: üç üst üste kutu)
+	preload("res://scripts/world/ist/kumas.gd").bayrak(root, pos + Vector3(0, 3.9, 0), Vector3.RIGHT, 1.65, 1.0, Color("a82a2a"),
+		[[0.48, 0.15, 0.55, 0.85, Color("d9b43a")], [0.36, 0.34, 0.67, 0.46, Color("d9b43a")]], 8)
 	pole.name = "BayrakDireki"
 
 

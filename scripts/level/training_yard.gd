@@ -171,16 +171,12 @@ func ladder_head() -> Vector3:
 
 func _banner(p: Vector3) -> void:
 	Props.cyl(self, 0.04, 2.8, p + Vector3(0, 1.4, 0), WOOD_D, Vector3.ZERO, 6)
-	var cloth := Node3D.new()
-	cloth.position = p + Vector3(0.45, 2.35, 0)
-	add_child(cloth)
+	# TUR-12: ince çift yüzlü, dalgalanan bayrak; şerit/haç kumaşın yaması (eski: 2 cm'lik kutular)
 	if side == "O":
-		Props.box(cloth, Vector3(0.85, 0.6, 0.02), Vector3.ZERO, Color("2f6a3a"))
-		Props.box(cloth, Vector3(0.85, 0.12, 0.025), Vector3(0, -0.24, 0), Color("b3262d"))
+		preload("res://scripts/world/ist/kumas.gd").bayrak(self, p + Vector3(0, 2.65, 0), Vector3.RIGHT, 0.875, 0.6, Color("2f6a3a"), [[0.03, 0.8, 1.0, 1.0, Color("b3262d")]], 6)
 	else:
-		Props.box(cloth, Vector3(0.85, 0.6, 0.02), Vector3.ZERO, Color("f2ede0"))
-		Props.box(cloth, Vector3(0.85, 0.12, 0.025), Vector3.ZERO, Color("b3262d"))
-		Props.box(cloth, Vector3(0.12, 0.6, 0.025), Vector3.ZERO, Color("b3262d"))
+		preload("res://scripts/world/ist/kumas.gd").bayrak(self, p + Vector3(0, 2.65, 0), Vector3.RIGHT, 0.875, 0.6, Color("f2ede0"),
+			[[0.03, 0.4, 1.0, 0.6, Color("b3262d")], [0.45, 0.0, 0.59, 1.0, Color("b3262d")]], 6)
 
 
 func _bale(p: Vector3, yaw: float) -> void:

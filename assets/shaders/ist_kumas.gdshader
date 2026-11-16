@@ -20,17 +20,32 @@ uniform float lod_son = 110.0;
 uniform bool renk_srgb = true;
 uniform vec3 carpan = vec3(1.0);
 
+varying vec3 v_desen;     // x: u (m), y: v (m, üstten), z: hilal (1) / yok (0)
+
 void vertex() {
 	float kip = UV.y;
+	v_desen = vec3(UV.x, 0.0, 0.0);
+	vec2 an = UV2;
+	vec3 W = normalize(vec3(ruzgar.x, 0.0, ruzgar.z) + vec3(1e-4, 0.0, 0.0));
+	if (kip > 9.5) {
+		// direk ekseni ağın kökeninde (tek bayrak düğümü); UV2 = (v, ±H): H < 0 → yerel yön (kurulduğu yöne uçar)
+		float Hh = abs(UV2.y);
+		v_desen = vec3(UV.x, UV2.x * Hh, COLOR.a < 0.75 ? Hh : 0.0);
+		if (UV2.y < 0.0 && length(VERTEX.xz) > 0.001) {
+			vec3 yw = (MODEL_MATRIX * vec4(VERTEX.x, 0.0, VERTEX.z, 0.0)).xyz;
+			W = normalize(vec3(yw.x, 0.0, yw.z) + vec3(1e-5, 0.0, 0.0));
+		}
+		an = vec2(0.0);
+		kip = 1.0;
+	}
 	if (kip > 0.5) {
-		vec3 W = normalize(vec3(ruzgar.x, 0.0, ruzgar.z) + vec3(1e-4, 0.0, 0.0));
 		vec3 UP = vec3(0.0, 1.0, 0.0);
 		vec3 P = normalize(cross(UP, W));
 		mat4 inv = inverse(MODEL_MATRIX);
 		if (kip < 1.5) {
 			// ---- bayrak
-			vec3 eks = (MODEL_MATRIX * vec4(UV2.x, 0.0, UV2.y, 1.0)).xyz;
-			vec3 anc = (MODEL_MATRIX * vec4(UV2.x, VERTEX.y, UV2.y, 1.0)).xyz;
+			vec3 eks = (MODEL_MATRIX * vec4(an.x, 0.0, an.y, 1.0)).xyz;
+			vec3 anc = (MODEL_MATRIX * vec4(an.x, VERTEX.y, an.y, 1.0)).xyz;
 			float ph = eks.x * 0.37 + eks.z * 0.21;
 			float cam = length(eks - CAMERA_POSITION_WORLD);
 			float f = guc * (1.0 - smoothstep(lod_bas, lod_son, cam));
@@ -44,7 +59,7 @@ void vertex() {
 			// dalga: direkten uca doğru büyür (direk kenarı sabit); 1,5 m'den sonra genlik doygun
 			float amp = (0.10 + 0.05 * es) * min(d, 1.6) + 0.035 * max(d - 1.6, 0.0);
 			float k1 = 2.6;
-			float w1 = 5.2 + 1.4 * es;
+			float w1 = 5.6;          // sabit açısal hız (esintiyle değişen hız zamanla evreyi koşturur)
 			float s1 = sin(d * k1 - t * w1 + ph);
 			float s2 = sin(d * 4.7 - t * 8.3 + ph * 1.7 + VERTEX.y * 1.3);
 			float wav = (s1 * 0.8 + s2 * 0.2) * amp * f;
@@ -74,6 +89,16 @@ void vertex() {
 
 void fragment() {
 	vec3 c = COLOR.rgb;
+	if (v_desen.z > 0.01) {
+		// Osmanlı hilali (ağzı uçuşan uca bakar): beyaz disk eksi uca kaydırılmış disk; ölçü bayrak yüksekliğine göre
+		float H = v_desen.z;
+		vec2 q = vec2(v_desen.x, v_desen.y);
+		float d1 = length(q - vec2(0.46, 0.46) * H) - 0.26 * H;
+		float d2 = length(q - vec2(0.555, 0.435) * H) - 0.222 * H;
+		if (d1 < 0.0 && d2 > 0.0) {
+			c = vec3(0.94, 0.925, 0.88);
+		}
+	}
 	if (renk_srgb) {
 		c = mix(pow((c + vec3(0.055)) * (1.0 / 1.055), vec3(2.4)), c * (1.0 / 12.92), lessThan(c, vec3(0.04045)));
 	}
