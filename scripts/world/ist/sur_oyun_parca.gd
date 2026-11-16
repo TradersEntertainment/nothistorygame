@@ -157,12 +157,14 @@ class Poterna extends Node3D:
 		for i in n:
 			var a0 := PI * float(i) / n
 			var a1 := PI * float(i + 1) / n
-			for zf: float in [zo1, zo1 + 0.13]:
-				pass
-			var p0 := Vector3(x + cos(a0) * r, h - 0.35 + sin(a0) * 0.55, zo1 + 0.13)
-			var p1 := Vector3(x + cos(a1) * r, h - 0.35 + sin(a1) * 0.55, zo1 + 0.13)
-			var q0 := Vector3(x + cos(a0) * (r + 0.32), h - 0.35 + sin(a0) * 0.87, zo1 + 0.13)
-			var q1 := Vector3(x + cos(a1) * (r + 0.32), h - 0.35 + sin(a1) * 0.87, zo1 + 0.13)
+			# TUR-13: halkanın alt uçları sövenin dışına taşmaz (tasima8 "kulak"): iç kenar açıklıkta (w/2), dış kenar
+			# sövenin dış yüzünde (w/2 + 0,28); dikey yarıçaplar aynı
+			var ri := w * 0.5
+			var ro := w * 0.5 + 0.28
+			var p0 := Vector3(x + cos(a0) * ri, h - 0.35 + sin(a0) * 0.55, zo1 + 0.13)
+			var p1 := Vector3(x + cos(a1) * ri, h - 0.35 + sin(a1) * 0.55, zo1 + 0.13)
+			var q0 := Vector3(x + cos(a0) * ro, h - 0.35 + sin(a0) * 0.87, zo1 + 0.13)
+			var q1 := Vector3(x + cos(a1) * ro, h - 0.35 + sin(a1) * 0.87, zo1 + 0.13)
 			ag.quad(p0, p1, q1, q0, Vector3.BACK, Color(1, 1, 1) if i % 2 == 0 else Color(0.86, 0.82, 0.76))
 		# eşik taşı (iki yandaki toprakla aynı düzde)
 		ag.kutu(Vector3(x, -0.12, zo0 - 0.4), Vector3.RIGHT, Vector3.BACK, w + 0.1, 0.1, zo1 - zo0 + 0.8)
@@ -235,8 +237,8 @@ class Poterna extends Node3D:
 		for k2 in 2:
 			var xa := x - w * 0.5 + 0.01 + k2 * w * 0.5
 			ag.kutu(Vector3(xa + w * 0.25 - 0.01, -0.12, zf - 0.5), Vector3.RIGHT, Vector3.BACK, w * 0.5 - 0.022, 0.08, 0.62,
-				Color(1, 1, 1) if k2 == 0 else Color(0.9, 0.87, 0.82))
-		ag.mesh_ekle(self, KULE._tas_mat(tas, 0), "Tas_PoternaEsikTasi")
+				Color(0.86, 0.84, 0.8) if k2 == 0 else Color(0.78, 0.76, 0.72))
+		ag.mesh_ekle(self, IstSurlar._kesme_tas_mat(), "Tas_PoternaEsikTasi")
 		# karanlık geçit: kanadın ardında yan yüzler ve tavan içeri doğru kararır, dipte koyu yüz, tabanda koyu toprak
 		var kag0 = KULE.Ag.new()
 		var dz := [zf - 0.26, zf - 0.6, zf - 1.0, zf - D + 0.01]
@@ -272,7 +274,7 @@ class Poterna extends Node3D:
 		var kag = KULE.Ag.new()
 		var tw := (w - 0.06) / 5.0
 		for i in 5:
-			var hh := hs - 0.06
+			var hh := hs - 0.12
 			kag.kutu(Vector3(tw * (i + 0.5), 0.0, -0.095), Vector3.RIGHT, Vector3.BACK, tw - 0.012, hh, 0.09, Color(1, 1, 1) if i % 2 == 0 else Color(0.9, 0.87, 0.82))
 		kag.mesh_ekle(kanat, Props.mat(C_WOOD.darkened(0.15), 0.0, false, "wood"), "Ahsap_PoternaTahta")
 		var dag = KULE.Ag.new()
@@ -304,9 +306,21 @@ class Poterna extends Node3D:
 		var od: Node = get_parent().get_parent().get_node_or_null("OyunDilimi") if get_parent() and get_parent().get_parent() else null
 		var oyuk := od != null and od.has_meta("ic_poterna_oyuk") and absf(float(od.get_meta("ic_poterna_oyuk")) - x) < 0.01
 		var en := -INF
-		if not oyuk:
+		var sp0 := get_world_3d().direct_space_state
+		if oyuk:
+			# oyuk: iç yüzün eteği kapı önünde yassı (y ≈ 0 … 0,05; peribolos levhası −0,12): eşik taşının üstü eteğin
+			# 3–10 cm üstüne gelir (oyuğun ilk 0,35 m'sindeki etek ucunu örter)
+			var haric0: Array[RID] = [esik.get_rid(), kanat_govde.get_rid()]
+			for dx: float in [-0.5, 0.0, 0.5]:
+				var q := PhysicsRayQueryParameters3D.create(to_global(Vector3(x + dx, 2.0, zf + 0.45)), to_global(Vector3(x + dx, -2.0, zf + 0.45)))
+				q.exclude = haric0
+				var hit := sp0.intersect_ray(q)
+				if not hit.is_empty():
+					en = maxf(en, to_local(hit["position"]).y)
+			position.y += maxf(en + 0.07, 0.10)
+		else:
 			position.z += 0.36
-			var sp := get_world_3d().direct_space_state
+			var sp := sp0
 			var haric: Array[RID] = [esik.get_rid(), kanat_govde.get_rid()]
 			for dx: float in [-0.55, 0.0, 0.55]:
 				for dz: float in [0.25, 0.6]:

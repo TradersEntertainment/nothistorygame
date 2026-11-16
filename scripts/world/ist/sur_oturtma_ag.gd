@@ -76,7 +76,9 @@ static func _isik(c: Color) -> Color:
 
 ## Bir yüz çizgisi: yerel (x0..x1) boyunca z = zf, etek s yönünde (+1 / −1) uzar; y taban; en: [en_min, en_max];
 ## kes: atlanacak x aralıkları
-static func yuz(e: Dictionary, x0: float, x1: float, zf: float, s: float, y: float, en_min: float, en_max: float, kes: Array) -> void:
+## TUR-13 duz: [[a, b], …] aralıklarında etek KESİLMEZ, yassılaşır (yükseklik 0; iki yanda 2,5 m'de eski boyuna çıkar):
+## iç poterna önü (kapı toprağa iner, eteğin kesik ucu "kutu kenarlı basamak" bırakmaz)
+static func yuz(e: Dictionary, x0: float, x1: float, zf: float, s: float, y: float, en_min: float, en_max: float, kes: Array, duz: Array = []) -> void:
 	var lod: int = e["lod"]
 	var adim := 1.5 if lod == 0 else 6.0
 	var n := maxi(1, int(ceil((x1 - x0) / adim)))
@@ -103,6 +105,9 @@ static func yuz(e: Dictionary, x0: float, x1: float, zf: float, s: float, y: flo
 				dk = minf(dk, minf(absf(x - (float(k[0]) - 0.6)), absf(x - (float(k[1]) + 0.6))))
 			var ink := smoothstep(0.0, 3.0, dk)
 			h0 *= ink
+			for k: Array in duz:
+				var dd := maxf(float(k[0]) - x, x - float(k[1]))
+				h0 *= smoothstep(0.0, 2.5, dd)
 			W = maxf(W * lerpf(0.45, 1.0, ink), 0.5)
 			for cc: float in [-0.35, 0.0, 0.35, 0.8, W * 0.45, W * 0.7, W]:
 				var t := clampf(cc / W, 0.0, 1.0)
@@ -224,6 +229,14 @@ static func kule(e: Dictionary, poly: PackedVector2Array, y: float, ic_z: float,
 	var W := 3.2
 	var lod: int = e["lod"]
 	var parca := 3 if lod == 0 else 1
+	# TUR-13: iç kule (çokgeni şehir yüzünün 0,15 m önünden başlar; surlar._inner_tower) yan kenarlarının şehir ucu surun
+	# içinde kırpılır: köşedeki satır şehir yüzü ile yan kenarın normallerinin ortasına (çapraza) uzanıp şehir yanında
+	# üçgen "kama" bırakıyordu (Romanos iç kapısının iki yanı; kule kaidesi şehir yanında artık surun içinde)
+	var miny := INF
+	for v in poly:
+		miny = minf(miny, v.y)
+	var ic_kule := s > 0.0 and absf(miny + ic_z + 0.15) < 0.02
+	var kirp := -ic_z + 1.0
 	for i in n:
 		var a := poly[i]
 		var b := poly[(i + 1) % n]
@@ -232,6 +245,13 @@ static func kule(e: Dictionary, poly: PackedVector2Array, y: float, ic_z: float,
 			continue
 		var na := KULE._dis_normal(poly[(i - 1 + n) % n], a, c2).lerp(KULE._dis_normal(a, b, c2), 0.5).normalized()
 		var nb := KULE._dis_normal(a, b, c2).lerp(KULE._dis_normal(b, poly[(i + 2) % n], c2), 0.5).normalized()
+		if ic_kule:
+			if a.y < kirp and b.y > kirp:
+				a = a.lerp(b, (kirp - a.y) / (b.y - a.y))
+				na = KULE._dis_normal(poly[i], poly[(i + 1) % n], c2)
+			elif b.y < kirp and a.y > kirp:
+				b = b.lerp(a, (kirp - b.y) / (a.y - b.y))
+				nb = KULE._dis_normal(poly[i], poly[(i + 1) % n], c2)
 		for q in parca:
 			var t0 := float(q) / parca
 			var t1 := float(q + 1) / parca
@@ -462,7 +482,7 @@ static func kur(root: Node3D, lay: Dictionary, lod: int, xw: Array, dy: float, k
 	# yüzler: şehir yüzü, iç surun peribolos yüzü (iç kuleler arası), dış surun peribolos yüzü, dış surun teras yüzü (dış
 	# kuleler arası), parateikhion alçak duvarının teras yüzü
 	yuz(e, x0, x1, zi0, -1.0, 0.0, 3.0, 6.0, kes.get("sehir", []))
-	yuz(e, x0, x1, zi1, 1.0, 0.0, 3.0, 5.0, kule_ic + kes.get("kapi", []) + kes.get("ic_peri", []))
+	yuz(e, x0, x1, zi1, 1.0, 0.0, 3.0, 5.0, kule_ic + kes.get("kapi", []), kes.get("ic_peri", []))
 	yuz(e, x0, x1, zo0, -1.0, 0.0, 3.0, 5.0, kes.get("peri", []))
 	if hendek:
 		yuz(e, x0, x1, zo1, 1.0, dy, 2.5, 3.6, kule_dis + kes.get("kapi", []) + kes.get("gedik", []))

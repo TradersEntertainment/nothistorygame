@@ -97,8 +97,8 @@ func _kos() -> void:
 		kam["r2_romanos_sehir_sol_3m"] = [Vector3(float(ro["x"]) - 5.0, 1.62, float(ro["ic_z0"]) - 2.6), Vector3(float(ro["x"]) - 3.0, 0.6, float(ro["ic_z0"]))]
 		kam["r3_romanos_sehir_sag_3m"] = [Vector3(float(ro["x"]) + 5.0, 1.62, float(ro["ic_z0"]) - 2.6), Vector3(float(ro["x"]) + 3.0, 0.6, float(ro["ic_z0"]))]
 	if hepsi or setler.contains("dis_poterna"):
-		kam["d1_dis_poterna_2m"] = [Vector3(px - 0.8, ty + 1.62, dz1 + 2.4), Vector3(px, 1.0, dz1)]
-		kam["d2_dis_poterna_10m"] = [Vector3(px + 3.0, ty + 1.62, dz1 + 10.0), Vector3(px, 0.0, dz1)]
+		kam["d1_dis_poterna_sahanlik_1m"] = [Vector3(px + 0.4, 1.62, dz1 + 1.15), Vector3(px, 1.3, dz1)]
+		kam["d2_dis_poterna_teras_8m"] = [Vector3(px + 4.5, ty + 1.62, dz1 + 7.0), Vector3(px, 1.0, dz1)]
 		kam["d3_dis_poterna_peribolos_2m"] = [Vector3(px + 0.6, 1.62, float(ro["dis_z0"]) - 2.4), Vector3(px, 1.0, float(ro["dis_z0"]))]
 	if hepsi or setler.contains("harpusta"):
 		# dış sur yolunda bir dişin 0,6 m yakınından (tur 12 y1 benzeri) ve sur yolu boyunca

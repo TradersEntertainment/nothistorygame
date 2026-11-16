@@ -747,12 +747,12 @@ static func _ic_poterna_oyuk(root: Node3D, d: Dictionary, px: float, stone: Colo
 	if carp_only:
 		return
 	var ag = KULE.Ag.new()
-	var on := zi1 + 0.012
+	var on := zi1 + 0.02
 	var rng := RandomNumberGenerator.new()
 	rng.seed = int(px * 31.0) + 13
 	var ton := func() -> Color:
-		var t := rng.randf_range(0.9, 1.06)
-		return Color(t, t * 0.985, t * 0.96)
+		var t := rng.randf_range(0.84, 1.0)
+		return Color(t, t * 0.975, t * 0.94)
 	# söve taşları (iki yanda, dönüşümlü uzun/kısa: köşe örgüsü), hem yüzde hem oyuğun yan yüzünde (söve derinliği)
 	var y := -0.12
 	var k := 0
@@ -763,11 +763,13 @@ static func _ic_poterna_oyuk(root: Node3D, d: Dictionary, px: float, stone: Colo
 			var c: Color = ton.call()
 			var xi := px + sx * r                      # açıklığın kenarı
 			var xo := xi + sx * ww
-			var y0 := y + 0.006
-			var y1 := y + hh - 0.006
-			# yüz (oyuk kenarından 6 mm içeriden başlar: derz)
-			ag.quad(Vector3(xi + sx * 0.006, y0, on), Vector3(xo, y0, on), Vector3(xo, y1, on), Vector3(xi + sx * 0.006, y1, on), Vector3.BACK, c)
+			var y0 := y + 0.008
+			var y1 := y + hh - 0.008
+			# yüz (oyuk kenarından başlar), dış ucu ve üst/alt kenarı (2 cm kalınlık; aralarında 16 mm derz)
+			ag.quad(Vector3(xi, y0, on), Vector3(xo, y0, on), Vector3(xo, y1, on), Vector3(xi, y1, on), Vector3.BACK, c)
 			ag.quad(Vector3(xo, y0, zi1), Vector3(xo, y1, zi1), Vector3(xo, y1, on), Vector3(xo, y0, on), Vector3(sx, 0, 0), c.darkened(0.1))
+			ag.quad(Vector3(xi, y1, zi1), Vector3(xo, y1, zi1), Vector3(xo, y1, on), Vector3(xi, y1, on), Vector3.UP, c.darkened(0.04))
+			ag.quad(Vector3(xi, y0, zi1), Vector3(xo, y0, zi1), Vector3(xo, y0, on), Vector3(xi, y0, on), Vector3.DOWN, c.darkened(0.15))
 			# oyuğun yan yüzü (söve derinliği 0,34 m): yüzden içeri
 			var xr := xi - sx * 0.008
 			ag.quad(Vector3(xr, y0, zi1 - 0.006), Vector3(xr, y0, zi1 - 0.34), Vector3(xr, y1, zi1 - 0.34), Vector3(xr, y1, zi1 - 0.006), Vector3(-sx, 0, 0), c.darkened(0.06))
@@ -777,8 +779,8 @@ static func _ic_poterna_oyuk(root: Node3D, d: Dictionary, px: float, stone: Colo
 	var n := 9
 	var rd := r + 0.34
 	for i in n:
-		var a0 := PI * float(i) / n + 0.006
-		var a1 := PI * float(i + 1) / n - 0.006
+		var a0 := PI * float(i) / n + 0.011
+		var a1 := PI * float(i + 1) / n - 0.011
 		var ro := rd + (0.06 if i == n / 2 else 0.0)
 		var c: Color = ton.call()
 		var p0 := Vector3(px + cos(a0) * r, hs + sin(a0) * r, on)
@@ -788,6 +790,9 @@ static func _ic_poterna_oyuk(root: Node3D, d: Dictionary, px: float, stone: Colo
 		# dış uçlar yatay/dikey kesilmez: taş radyal derzle biter (kulak yok: üzengi taşı söve taşının üstünde)
 		ag.quad(p0, p1, q1, q0, Vector3.BACK, c)
 		ag.quad(q0, q1, Vector3(q1.x, q1.y, zi1), Vector3(q0.x, q0.y, zi1), Vector3(cos((a0 + a1) * 0.5), sin((a0 + a1) * 0.5), 0), c.darkened(0.08))
+		# radyal derz yüzleri (taşın iki yanı)
+		ag.quad(p0, q0, Vector3(q0.x, q0.y, zi1), Vector3(p0.x, p0.y, zi1), Vector3(sin(a0), -cos(a0), 0), c.darkened(0.12))
+		ag.quad(p1, q1, Vector3(q1.x, q1.y, zi1), Vector3(p1.x, p1.y, zi1), Vector3(-sin(a1), cos(a1), 0), c.darkened(0.12))
 		# kemer altı (kama taşının iç yüzü, 0,34 m derin)
 		ag.quad(Vector3(p0.x, p0.y, zi1 - 0.006), Vector3(p1.x, p1.y, zi1 - 0.006), Vector3(p1.x, p1.y, zi1 - IC_PO_TIMP),
 			Vector3(p0.x, p0.y, zi1 - IC_PO_TIMP), Vector3(-cos((a0 + a1) * 0.5), -sin((a0 + a1) * 0.5), 0), c.darkened(0.12))
@@ -807,7 +812,19 @@ static func _ic_poterna_oyuk(root: Node3D, d: Dictionary, px: float, stone: Colo
 		ag.tri(Vector3(px, hs, zi1 - IC_PO_TIMP), Vector3(px + cos(a0) * r, hs + sin(a0) * r, zi1 - IC_PO_TIMP),
 			Vector3(px + cos(a1) * r, hs + sin(a1) * r, zi1 - IC_PO_TIMP), Vector3.BACK, Color(0.84, 0.81, 0.76))
 	ag.kutu(Vector3(px, hs - 0.16, zi1 - IC_PO_TIMP - 0.02), Vector3.RIGHT, Vector3.BACK, w - 0.016, 0.16, 0.05, Color(0.92, 0.89, 0.84), true)
-	ag.mesh_ekle(root, KULE._tas_mat(stone.lightened(0.04), lod), "Tas_IcPoternaKemer")
+	# kesme taş (söve/kemer): sur taşı gölgelendiricisine DÖNÜŞMEYEN düz taş malzemesi ("ashlar" deseni değil: duvarın
+	# taş sıraları kama taşlarının üstünden geçip onları duvara gömüyordu); tonu taş taş köşe renginde, derz = taşlar arası
+	# boşlukta görünen duvar
+	ag.mesh_ekle(root, _kesme_tas_mat(), "Tas_IcPoternaKemer")
+
+
+static var _kesme_mat: StandardMaterial3D
+
+static func _kesme_tas_mat() -> StandardMaterial3D:
+	if _kesme_mat == null:
+		_kesme_mat = Props.mat(Color("958c7b"), 0.0, false, "")
+		_kesme_mat.vertex_color_use_as_albedo = true
+	return _kesme_mat
 
 
 ## TUR-7: orta/uzak katman korkuluğu: iç ve dış surun iki kenarında 1,2 m korkuluk + 1,0 m'lik dişler (2,0 m adım).
