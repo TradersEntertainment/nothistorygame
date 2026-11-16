@@ -122,6 +122,7 @@ func _init(p_owner: Node3D, parts: Dictionary) -> void:
 	_t = randf() * 10.0
 	_blink_t = randf_range(0.5, 4.0)
 	Ayak.ayarla()
+	Kumas.ayarla()
 
 
 ## Replikten yüz ifadesi: önce sahne notu ("(Gülerek)", "(Sinirle)"...), sonra noktalama ve kim konuştuğu.
