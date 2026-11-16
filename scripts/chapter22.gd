@@ -31,6 +31,9 @@ var WALK_Y := LandWalls.OUTER_H
 var YOL_Z := 15.0
 var CHUTE := Vector3(-2.5, LandWalls.OUTER_H, LandWalls.OUTER_Z1 - 0.2)
 var BARRELS := Vector3(3.5, LandWalls.OUTER_H, 15.0)
+## Şafakta oyuncunun sur yolundaki x'i (eski −8). Yeni dış surun dişleri insan boyu: kuleye bakan mazgal açıklığı
+## (gediğin solundaki ilk açıklık; −8'de dişin tam arkasındaydı, kule görünmüyordu: kare c22_yeni ilk tur an_01)
+var SAFAK_X := -8.0
 const FUSE_TIME := 2.6
 const WIN_A := 0.42
 const WIN_B := 0.68
@@ -86,6 +89,7 @@ func _ready() -> void:
 		CHUTE = Vector3(CHUTE.x, WALK_Y, sur.dis_sur_z1() - 0.2)
 		BARRELS = Vector3(BARRELS.x, WALK_Y, YOL_Z)
 		TOWER = TOWER_ESKI + sur.ova_ofs()
+		SAFAK_X = _mazgal_x(-6.9)
 	add_child(walls)
 	walls.set_repair(LandWalls.STAGES)       # yeni sette: aşama 4 (barikat tam, sur yolu tahtası gediğin üstünde)
 	_build()
@@ -159,6 +163,18 @@ func _build() -> void:
 	_gauge.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	_gauge.draw.connect(_draw_gauge)
 	hud.add_child(_gauge)
+
+
+## Yeni sette sur yolunda verilen x'e en yakın dış mazgal açıklığının x'i (Bölüm 25 _mazgal_x)
+func _mazgal_x(x: float) -> float:
+	var best := sur.dis_yol_x(x)
+	var bd := INF
+	for m: Dictionary in sur.a.mazgallar("dis"):
+		var mx: float = (m["ayak"]["yerel"] as Vector3).x + sur.ofs.x
+		if absf(mx - x) < bd and sur.dis_yol_bos(mx):
+			bd = absf(mx - x)
+			best = mx
+	return best
 
 
 ## Yeni sette peribolos ateşlerinden iç kulenin (ve eteğinin) içine düşen yerine konduğu z (dış surun dibi eteğinin önü)
@@ -236,7 +252,7 @@ func _run() -> void:
 	await hud.card([[tr("UI_CH22_TITLE"), 44, Color("f2e6c9")], [tr("UI_CH22_SUB"), 20, Color(1, 1, 1, 0.7)]], 2.8)
 	hud.clear_card()
 	walls.make_dawn(0.01)
-	player.global_position = Vector3(-8.0, WALK_Y + 0.05, YOL_Z)
+	player.global_position = Vector3(SAFAK_X, WALK_Y + 0.05, YOL_Z)
 	player.face(TOWER + Vector3(0, 8.0, 0))
 	player.show_remote(true)             # Tolga'nın eli açık, elde eşya (kuşatma bölümlerinde el hiç açılmıyordu)
 	_capture_mouse()
@@ -749,7 +765,7 @@ func _run_shots() -> void:
 	hud.set_fade(0.0)
 	player.show_remote(false)
 	walls.make_dawn(0.01)
-	player.global_position = Vector3(-8.0, WALK_Y + 0.05, YOL_Z)
+	player.global_position = Vector3(SAFAK_X, WALK_Y + 0.05, YOL_Z)
 	await get_tree().create_timer(0.8, false).timeout
 	player.face(TOWER + Vector3(0, 8.0, 0))
 	hud.bark("SPK_TOLGA", "D22_T_01", 30.0)
@@ -799,7 +815,7 @@ func _yuru() -> void:
 	print("TASIMA22YURU set=%s yol_y=%.2f yol_z=%.2f oluk=%s fici=%s kule=%s" % [set_ad, WALK_Y, YOL_Z, CHUTE, BARRELS, TOWER])
 	if kare:
 		walls.make_dawn(0.01)
-		player.global_position = Vector3(-8.0, WALK_Y + 0.05, YOL_Z)
+		player.global_position = Vector3(SAFAK_X, WALK_Y + 0.05, YOL_Z)
 		player.face(TOWER + Vector3(0, 8.0, 0))
 		await _kare("safak_kule")
 		player.face(giust.global_position + Vector3(0, 1.5, 0))

@@ -12,3 +12,13 @@ GUN shots=4 hits=3 missed=1
 HANDS stowed=@Node3D@84
 RALLY scene=chapter22o.tscn allies=0 foes=0 cands=0
 FINISHER kind=slash cam=third
+KICK result=stagger
+STORYDUEL won=true kills=2 parries=2 hits_taken=0 t=31.0 allies=0+2 thrown=0
+SAYDIST key=D22O_HU_CARRY scene=chapter22o.tscn speaker=SPK_HUSEYIN d=7.1
+GRADE chapter=22o letter=S points=119 { "gun_shots": 4, "gun_hits": 3, "parries": 2, "kills": 2 }
+AUTOTEST PASS chapter=22o variant=twins_late outcome=22O.1 saved=3 gun=3/4 warn=3 carry=0.75
+WARNING: ObjectDB instances leaked at exit (run with --verbose for details).
+     at: cleanup (core/object/object.cpp:2378)
+ERROR: 3 resources still in use at exit (run with --verbose for details).
+   at: clear (core/io/resource.cpp:614)
+KOSU rc=0 sure=42 args=--chapter=22o --autotest=twins_late

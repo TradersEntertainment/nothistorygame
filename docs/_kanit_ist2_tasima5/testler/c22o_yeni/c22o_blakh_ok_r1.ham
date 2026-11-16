@@ -11,3 +11,7 @@ TESPITBLOCK who=siege22o blocker=Skeleton/Mesh (MeshInstance3D) at=(4.0, -3.5, 6
 GUN shots=4 hits=3 missed=1
 HANDS stowed=@Node3D@84
 RALLY scene=chapter22o.tscn allies=0 foes=0 cands=0
+STORYDUEL won=true kills=0 parries=0 hits_taken=0 t=27.5 allies=0+2 thrown=0
+GRADE chapter=22o letter=S points=115 { "gun_shots": 4, "gun_hits": 3 }
+AUTOTEST PASS chapter=22o variant=blakh_ok outcome=22O.1 saved=3 gun=3/4 warn=5 carry=0.75
+KOSU rc=0 sure=39 args=--chapter=22o --autotest=blakh_ok
