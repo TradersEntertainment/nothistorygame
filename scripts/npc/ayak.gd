@@ -422,11 +422,12 @@ func _coz(delta: float, yuru: bool) -> void:
 			basiyor[s] = _grd[s] and gok
 			_tgt[s] = Vector3(pp.x, (_g_y[s] if gok else root.y) + maxf(0.0, fs.y), pp.z)
 			_tn[s] = _g_n[s] if gok else Vector3.UP
-		# Kenar: bir ayağın altı 30 cm'den derin bir boşluk, öteki ayak kök hizasında zeminde (sur kenarı, moloz
-		# basamağı): insan o ayağı boşlukta tutmaz, kenarın üstüne (kökün altına) çeker; zemini ötekinin zemini
+		# Kenar: bir ayağın altı 20 cm'den derin bir boşluk, öteki ayak kök hizasında zeminde (sur kenarı, platform,
+		# moloz basamağı): insan o ayağı aşağı sarkıtıp çömelmez, kenarın üstüne (kökün altına) çeker; zemini ötekinin
+		# (20'de platform kenarındaki işçi kalçasını alttaki toprağa indirip çömelmiş gibi duruyordu)
 		for s in 2:
 			var o := 1 - s
-			if _g_ok[s] and _g_ok[o] and _g_y[s] < root.y - 0.3 and absf(_g_y[o] - root.y) < 0.15 and _grd[s]:
+			if _g_ok[s] and _g_ok[o] and _g_y[s] < root.y - 0.2 and absf(_g_y[o] - root.y) < 0.15 and _grd[s]:
 				var c := ot * Vector3(_hip[s].x * 0.4, 0.0, TABAN_Z)
 				_tgt[s] = Vector3(c.x, _g_y[o] + maxf(0.0, _fks[s].y), c.z)
 				_tn[s] = _g_n[o]

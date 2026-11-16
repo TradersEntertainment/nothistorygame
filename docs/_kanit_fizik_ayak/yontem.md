@@ -34,7 +34,7 @@ askerler (Soldier.pose ≠ stand), iki ayağının da altında kökün 40 cm iç
 üstünde ya da kendi yanlış yüksekliğinde: ışın o zemini görmez, IK gövdeyi alttaki çarpışmaya gömerdi; Unclip.on_mesh
 sorulmaz: her çağrıda sahnenin bütün ağacını tarıyor, 37o'da kişi başı ~5 ms çıkmıştı).
 
-**Kenar**: bir ayağın altı 30 cm'den derin boşluk, öteki ayak kök hizasında zemindeyse o ayak kökün altına (kenarın
+**Kenar**: bir ayağın altı 20 cm'den derin boşluk, öteki ayak kök hizasında zemindeyse o ayak kökün altına (kenarın
 üstüne) çekilir.
 
 ### Bütçe
