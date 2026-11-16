@@ -29,8 +29,12 @@ Dal: `wip/ist2-tasima8` (taban `wip/ist2-taban13` c6ab0f7b).
   korkuluğunu görür: 26o sur yolu dövüşü 2–3 sn'de "atılarak" bitiyordu); saldıranlar hendek duvarına yürümüyor; İmparator
   kulenin önünde; dost düellocular dağıtılıyor.
 
+- Son kodla doğrulama tamam: 26 (14 çeşit) ve 26o (5 çeşit) yeni ×2+ / eski ×1 PASS, `=yuru` ×4 PASS, bağımlı bölümler
+  ×1 PASS (denetim 0), Bölüm 20 2. dalga medyanı 21,6 sn (düşük yük), `menu_return 26` PASS, sözleşme üçlüsü aynı.
+- Rapor: `rapor.md`.
+
 ## Süren
-- Son kodla tam liste: `testler/` (80 koşu: 26 ×2 + kararsız üçlü ×5, 26o ×2, eski kalanlar, =yuru ×4, bağımlı bölümler ×1).
+- (yok)
 
 ## Sıradaki
-- menu_return 26; sözleşme üçlüsü; rapor son hâli.
+- Yöneticinin birleştirmesi; `run_tests.sh` isteği (=yuru) raporda.

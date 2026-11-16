@@ -8,18 +8,21 @@ Dal `wip/ist2-tasima8` (taban `wip/ist2-taban13` = c6ab0f7b). Godot 4.4.1 resmi,
 
 | Madde | Durum | Not |
 |---|---|---|
-| (a) `SurOyun` iç poterna seçeneği (`{"ic_poterna": true}`) | **TAMAM** | Varsayılan kurulum bit bit aynı; sözleşme üçlüsü aynı (aşağıda) |
+| (a) `SurOyun` iç poterna seçeneği (`{"ic_poterna": true}`) | **TAMAM** | Varsayılan kurulum bit bit aynı; sözleşme üçlüsü aynı; poterna sözleşmeyi bozmadı → yedek (Romanos'a taşıma) gerekmedi |
 | (a) Romanos yan dilimine `kanat_disarida` + `KapiKanat` (+ isteğe bağlı `KapiKopru`) | **TAMAM** | `surlar_kapi.gd` DEĞİŞMEDİ: seçenek sözlüğünün kopyası verilir (paylaşılan `OPTS` aynı) |
 | (a) `SurSetSahne.open_inner_gate()` → Romanos kanatları açılır | **TAMAM** | `romanos_kanat` verilmezse eski uyarı |
-| (a) `FallenCity` konum parametresi (`yer`, varsayılan ZERO) | **TAMAM** | 31o eski sette aynı (aşağıda koşu) |
+| (a) `FallenCity` konum parametresi (`yer`, varsayılan ZERO) | **TAMAM** | 31o eski sette ×1 PASS |
 | (a) `SiegeChaos.sur` kancası | **TAMAM** | null/eski: birebir aynı |
-| (a) 26o statik karşılıkları (`SurSet.dolgu_ust`, `dolgu_y`; `walk_x` = var olan `dis_yol_x`) | **TAMAM** (yalnız sorgu) | 26o henüz bunları kullanmıyor (d) |
-| (a) 26 ve 26o ESKİ sette PASS | **TAMAM** | `--eskisur=26` ve 26o (kendi `_ready`'si eski set) |
-| (b) 26 savaş evreleri yeni sette | **TAMAM** (denetim satırları için bkz. "hâlâ kötü") | |
-| (c) 26 final: Romanos kapısı, Sultan, FallenCity | **KISMEN** | Yol: dolgu → gedik tepesi → karartma → Romanos koridoru → iç kapı → cadde; "peribolos boyunca" mümkün değil (aşağıda) |
-| (d) 26o yeni sette | **YAPILMADI** | 26o eski sette sabit (kendi `_ready`'si `LandWalls.new()`); süreklilik geçici bozuk (§3) |
-
-(Bu tablo son kayıtta güncellenir.)
+| (a) 26o statik karşılıkları (`SurSet.dolgu_ust`, `dolgu_y`; `walk_x` = `dis_yol_x`) | **TAMAM** | 26o `_entry_ground` bunları kullanır |
+| (a) 26 ve 26o ESKİ sette PASS | **TAMAM** | `--eskisur=26` 14 çeşit, `--eskisur=26o` 5 çeşit PASS |
+| (b) 26 savaş evreleri yeni sette | **TAMAM** | 14 çeşit ×2+ (kararsız üçlü ×5–10) PASS; son kodla denetim 0 |
+| (c) 26 final: Romanos kapısı, Sultan, FallenCity | **TAMAM** (yol farkı: §1.2) | dolgu → gedik tepesi → karartma → Romanos koridoru → iç kapı → cadde; "peribolos boyunca" koridor yüzünden mümkün değil |
+| (d) 26o yeni sette | **TAMAM** | 5 çeşit ×2+ PASS (son kodla `lose` ×2, `nophoto` ×2 dahil); dolgu üstünden tırmanış, sancak 26 ile aynı kule |
+| `=yuru` (gerçek bot) | **TAMAM** | 26 yeni 103,6 m / eski 91,5 m; 26o yeni 98,2 m / eski 69,6 m; takılma 0, düşme 0 |
+| Kareler | **TAMAM** | 26: 8 çift, 26o: 6 çift (`kare/`), tam boy bakıldı |
+| Bütçe | **KISMEN** | 26: 8/8 yeni ≤ eski; 26o: 5/6 (sancak karesi +%87: §2.2) |
+| Ortak dosyaları kullanan bölümler ×1 | **TAMAM** | 0, 1, 2, 8y, 20 (7 çeşit), 20o, 21, 22, 22o, 25, 28o, 31o, 32o, 36b, 37o, 38o, 30, 30o: hepsi PASS, denetim 0 |
+| `menu_return --chapter=26` | **TAMAM** | `MENURETURN PASS` |
 
 ## Sözleşme üçlüsü (her kayıttan önce)
 `SURSOZLESME PASS kalem=13 kesim=8` · `SUROYUN nokta=519 havada=0 gomuk=0 katida=0` · `WALKTHRU OZET yol=7 tamam=7 takilma=0 dusme=0`
@@ -42,7 +45,7 @@ Eski sette her sorgu `SurSet.eski()` üzerinden `LandWalls` sabitinin AYNISINI v
 | 5 hücum merdiveni | x −10,5; 9,5; −24; 22; 28 (9 m, 16°, ayak z 18,6) | x −14,1; 12,0; −23,1; 22,8; 17,4 (14,35 m, 16°, ayak teras y −3,675, z 20,68) | `SurSet.hucum_merdivenleri(lx, 40, stauroma + kazanlar)` → en yakın mazgal açıklığı (`_acikliga`); gediğin iki yanı, `Garrison`/`SiegeChaos` alanı içinde; eski sıraya en yakın eşleme (ilki gediğin solu) |
 | Kazanlar | (±8,6; 8; 15) | (±8,6; 8,62; 15,3) | `dis_yol_y/z` |
 | Taşıyıcı/onarım ekibi | DEPOT(−2,6; 2,6) → BREACH − 3,4 / BREACH − 2,6 | depo (−14,1; 6,8) → `gedik_onu` / `_gp` | |
-| Yedek bölükler | (−18; 8), (22,5; 9) | (−18; 8), (24; 7,4) | ikincisi peribolos eteğinin dışına |
+| Yedek bölükler | (−18; 8), (22,5; 9) | (−18; 6,6), (24; 7,4) | peribolosun ortasına (dar peribolosta şeride ve eteğe sıkışıyordu: VISAUDIT overlap) |
 | BattleExtras şeritleri | 5 şerit (z 2,4 / 12,6 / 6,6) | 5 şerit (z 3,2 / 9,6 / 9,6 / 5,6 / 6,6), deponun ve iç kulenin dışında | ilk denemede z 3,0 şeridi deponun içinden geçti (VISAUDIT sunk) → düzeltildi |
 | `SiegeChaos.area`/`avoid` | Rect2(−44; 1,4; 88; 10,6) | ∩ `SurSet.peribolos()` (x −25,3…44; z 2,4…10,6) + iç kuleler + taşıma yolu çizgileri + yuvarlanan fıçılar | `SiegeChaos.sur` kancası (yeni) |
 | `Garrison` boşlukları | (13,19), (−10,4;−6,8), (6,8;10,4) | (−12,6;−6,8), (6,8;13,8), her merdiven ±1,4 | `Garrison.land_walls(…, sur)` |
@@ -52,7 +55,7 @@ Eski sette her sorgu `SurSet.eski()` üzerinden `LandWalls` sabitinin AYNISINI v
 | Ok/yaylım hedefleri | z 21–33, y 0; sur yolu y 8 | z 19,6–44,6, y `zemin_y`; sur yolu `dis_yol_x` | `_arrow_loop`, `_pour_loop` |
 | Saldıranlar | z 40–70, y 0 | + `ova_ofs` (z +10,6, y −3,575), y `zemin_y` | |
 | Şafak tüfeği | oyuncu (−10; 8,05; 15,3); koşucular hendekten | oyuncu sur yolu; koşucular hendeği dolgudan (x 0 ± 5) geçer | `ground: sur.dis_zemin_y` |
-| İmparator | BREACH + (3; 0; −9) | (−4; 0; 6,8) | eski yer iç kule eteğinde |
+| İmparator | BREACH + (3; 0; −9) | (8; 0; 9,4) | eski yer iç kule eteğinde; (−4; 6,8) poternadaki oyuncudan kulenin ardında kalıyordu (VISAUDIT hidden) |
 | Şafak atışı oyuncu | (−0,6; 9,8) | (−0,6; 9,0) | `_gp` |
 | Taşıma yolu | doğrudan poternaya | (−3,4; 9,0) → (12,85; 9,0) → poterna | iç kulenin önünden; savunucu sırasından 2 m |
 | Final: iç kapı | x 0 `open_inner_gate` | Romanos (x −57,3) `KapiKanat` açılır | karar 11-A |
@@ -121,6 +124,10 @@ aynı sancak kulesini (x 35,4) ve aynı Romanos kapısını kullanır. Bölüm 2
    iç yüz için yok: `surlar.gd:653-660`): iç poterna eteğin üstüne oturtuldu (eşik 0,39 m yüksekte). İç yüze `ic_poterna`
    boşluğu verilirse kapı toprağa iner.
 
+3. Romanos iç kapısının şehir yanında, kapının iki yanında iç surun dibinde kutu gibi gri taş blokları (kare `26/yeni_an_08`):
+   yan dilim `YanKapi_romanos` (`IstSurlarKapi`/OTURTMA şehir yüzü eteğinin kapı kesiğindeki uçları olabilir; düğüm yolu
+   doğrulanmadı).
+
 ## Replik uyumsuzluğu
 - `UI_CH26_ENTRY` "Topkapı yanındaki gedik", `D26_N_ENTRY_2` "Gediğin üstünden şehre bakıyor": yeni yolda da doğru (at gedik
   tepesinde durur). `D26_N_CITY` "Aziz Romanos Kapısı'ndan içeri girdiniz": yeni yolda doğru (eskide x 0'daki adsız iç kapı).
@@ -150,6 +157,8 @@ aynı sancak kulesini (x 35,4) ve aynı Romanos kapısını kullanır. Bölüm 2
 ### 1.3 Kareler (26) — `kare/26/eski_an_NN_*.jpg` | `kare/26/yeni_an_NN_*.jpg`, 1280×720, tam boy bakıldı
 Çekim: `xvfb-run … -- --chapter=26 --autotest=kare --dialogshots=DIR [--eskisur=26] [--karebas=N]` (yazılımsal GL; seri
 10 dakikayı aştığı için `--karebas` ile iki parçada). Aynı anlamdaki kamera iki sette aynı kodla (`_t8_yuru`) kurulur.
+Kareler son üç küçük düzeltmeden (yedek bölüğün yeri, Assault dekor merdiveni kaçınması, İmparator yeri) ÖNCE çekildi; bu
+düzeltmeler karelerin kadrajına girmiyor.
 
 | Kare | Yeni (tek cümle) | Eski ↔ yeni |
 |---|---|---|
@@ -220,3 +229,88 @@ aynı sancak kulesini (x 35,4) ve aynı Romanos kapısını kullanır. Bölüm 2
 - `tests/_ist/tasima8_kare.gd/.tscn` (parça kareleri), `tests/_ist/tasima8_sonda.gd` (yerler)
 - `surlar_kapi.gd` DEĞİŞMEDİ (seçenek kopyası yeterli oldu); `assault.gd`, `garrison.gd`, `wall_fight.gd` DEĞİŞMEDİ (var olan
   `sur` kancaları yetti).
+
+## Doğrulama (son kod)
+
+Ham satırlar: `testler/sonuc/*.txt` (`kos1.sh` süzgeci). Yük: 3–4 paralel, `--max-fps 20`. "Yeni" sütunu: 1.–2. koşular son iki küçük düzeltmeden (yedek bölüğün yeri, Assault merdiven kaçınması, 26o tüfekçisi) ÖNCE; 3. ve sonrası son kod. Denetim sayısı yeni koşuların toplamı.
+
+#### Çeşit tablosu 26 (yeni = son kod; eski = `--eskisur=26`)
+| Çeşit | Yeni koşu | Yeni PASS | Denetim (yeni) | Eski | Dalga süreleri yeni (sn) | Dalga eski (sn) |
+|---|---|---|---|---|---|---|
+| candle | 2 | 2/2 | 0 | PASS, denetim 0 | 37.0 17.9 10.2 21.5; 37.1 15.9 11.1 24.1 | 31.3 28.7 20.9 21.0 |
+| council_bad | 6 | 6/6 | 0 | PASS, denetim 0 | 37.0 23.2 14.5 16.6; 37.3 15.2 11.9 28.1; 37.8 17.4 11.2 24.2 | 32.0 22.5 18.7 24.5 |
+| council_ok | 2 | 2/2 | 0 | PASS, denetim 0 | 29.6 12.5 11.5 18.8; 29.6 30.5 7.9 26.9 | 23.4 22.4 14.0 35.1 |
+| "" | 4 | 4/4 | 0 | PASS, denetim 0 | 36.6 17.0 10.3 19.6; 37.7 19.9 11.0 22.2; 37.5 22.3 9.0 37.9 | 31.6 32.5 29.5 30.9 |
+| hold | 4 | 4/4 | 0 | PASS, denetim 0 | 37.4 17.9 10.0 28.9; 37.0 19.9 9.1 29.6; 37.3 15.0 10.2 21.9 | 31.3 29.5 23.9 21.8 |
+| hold23 | 10 | 10/10 | 1 | PASS, denetim 0 | 37.8 18.5 10.1 26.6; 38.2 19.3 7.7 25.3; 36.9 14.5 14.8 22.6 | 31.1 25.5 19.1 26.6 |
+| hold3 | 2 | 2/2 | 0 | PASS, denetim 0 | 38.1 16.1 14.1 27.6; 36.9 21.3 14.5 24.4 | 32.5 19.2 18.1 19.5 |
+| hold_box | 6 | 6/6 | 0 | PASS, denetim 0 | 37.8 16.1 33.1 23.6; 37.0 23.9 8.9 19.5; 38.1 14.8 10.1 21.4 | 31.3 32.8 22.5 29.0 |
+| hold_lose | 2 | 2/2 | 0 | PASS, denetim 0 | 40.1 18.0 28.0; 40.4 22.7 17.2 | 28.4 10.8 11.5 |
+| isidore | 3 | 3/3 | 0 | PASS, denetim 0 | 37.0 19.6 10.2 22.4; 37.2 16.9 9.4 33.0; 37.0 17.3 11.5 27.0 | 31.3 27.7 6.4 24.4 |
+| kasim | 3 | 3/3 | 0 | PASS, denetim 0 | 37.1 14.5 12.9 18.9; 37.8 16.3 13.2 25.1; 36.9 44.8 9.3 21.9 | 31.4 20.6 16.4 20.4 |
+| lighter | 3 | 3/3 | 0 | PASS, denetim 1 | 37.1 16.1 7.9 33.0; 37.9 14.2 13.9 21.8; 36.7 15.4 12.3 17.8 | 31.5 29.1 6.6 23.3 |
+| nophoto | 3 | 3/3 | 0 | PASS, denetim 1 | 37.9 16.9 12.0 21.0; 37.5 16.0 9.4 29.0; 37.2 22.0 11.2 12.4 | 30.7 28.5 24.1 33.6 |
+| warn_notrust | 2 | 2/2 | 0 | PASS, denetim 0 | 37.2 32.0 12.6 26.7; 37.4 17.4 12.6 22.3 | 31.6 23.6 22.1 19.6 |
+
+#### Çeşit tablosu 26o (yeni = son kod; eski = `--eskisur=26o`)
+| Çeşit | Yeni koşu | Yeni PASS | Denetim (yeni) | Eski | Dalga süreleri yeni (sn) | Dalga eski (sn) |
+|---|---|---|---|---|---|---|
+| "" | 4 | 4/4 | 0 | PASS, denetim 0 | 11.5 9.4; 13.5 10.8; 11.6 9.5 | 22.8 6.7 |
+| lose | 4 | 3/4 | 0 | PASS, denetim 0 | 9.7; 9.5; 9.6 | 6.8 |
+| nophoto | 4 | 3/4 | 0 | PASS, denetim 0 | 12.1 10.9; 12.5 12.2; 14.0 14.8 | 31.5 21.3 |
+| turgut | 3 | 3/3 | 0 | PASS, denetim 0 | 15.1 10.8; 11.6 11.2; 13.6 11.6 | 25.6 25.1 |
+| turgut_bad | 4 | 4/4 | 1 | PASS, denetim 0 | 11.9 13.5; 12.8 9.0; 13.1 13.7 | 26.9 26.7 |
+
+#### Bağımlı bölümler (×1, son ortak kod)
+| Bölüm | Sonuç | Denetim | Dalgalar |
+|---|---|---|---|
+| 0 | PASS | 0 |  |
+| 1 | PASS | 0 |  |
+| 2 | PASS | 0 |  |
+| 20_def | PASS | 0 | 1/2:13.1 2/2:33.2 |
+| 20_def10 | PASS | 0 | 1/2:12.7 2/2:24.3 |
+| 20_def2 | PASS | 0 | 1/2:11.6 2/2:22.2 |
+| 20_def3 | PASS | 0 | 1/2:14.3 2/2:31.2 |
+| 20_def4 | PASS | 0 | 1/2:12.7 2/2:25.6 |
+| 20_def5 | PASS | 0 | 1/2:11.8 2/2:23.5 |
+| 20_def6 | PASS | 0 | 1/2:11.5 2/2:39.9 |
+| 20_def7 | PASS | 0 | 1/2:12.3 2/2:20.9 |
+| 20_def8 | PASS | 0 | 1/2:12.4 2/2:22.2 |
+| 20_def9 | PASS | 0 | 1/2:11.3 2/2:19.0 |
+| 20_hit | PASS | 0 | 1/2:10.1 2/2:17.6 |
+| 20_idle | PASS | 0 | 1/2:12.3 2/2:20.8 |
+| 20_late | PASS | 0 | 1/2:12.7 2/2:22.3 |
+| 20_lose | PASS | 0 | 1/2:17.8 |
+| 20_niko_idle | PASS | 0 | 1/2:10.6 2/2:28.8 |
+| 20_tape | PASS | 0 | 1/2:12.7 2/2:30.5 |
+| 20o | PASS | 0 | 1/2:9.3 2/2:13.8 |
+| 21 | PASS | 0 |  |
+| 22 | PASS | 0 |  |
+| 22o | PASS | 0 |  |
+| 25 | PASS | 0 |  |
+| 28o | PASS | 0 |  |
+| 30 | PASS | 0 |  |
+| 30o | PASS | 0 | 1/2:9.5 2/2:11.4 |
+| 31o | PASS | 0 |  |
+| 32o | PASS | 0 |  |
+| 36b | PASS | 0 | 1/1:24.1 |
+| 37o | PASS | 0 | 1/1:10.6 |
+| 38o | PASS | 0 |  |
+| 8y | PASS | 0 |  |
+
+Notlar:
+- 26 `hold23` denetim 1: `hold23_4` (yedek bölüğün iki askeri, `overlap`) → kök neden düzeltildi (bölük peribolosun ortasına); son kodla `hold23` ×5 (6–10) denetim 0.
+- 26o `nophoto` 3/4: `nophoto_2` FAIL (düşman tüfekçisi sur yolu boyunca ateş ediyordu, bot yana kaçamadı: `gunner=0/2`) → kök neden düzeltildi (tüfekçi iç surun yolunda); son kodla ×2 PASS.
+- 26o `lose` 3/4: `lose_1` FAIL `oil=1/1` (bot yağ kazanından kaçtı; `lose` yanmayı bekler). **Önceden de var**: taban (c6ab0f7b, eski set) `lose` ×1 FAIL aynı satırla, eski set ×3 koşuda 1 FAIL. Son kodla yeni ×2 PASS.
+- 26o `turgut_bad` denetim 1: `turgut_bad_2` (Turgut ile Assault dekor merdiveni ayağındaki asker, `overlap`) → kök neden düzeltildi (`Assault.merdiven_kacin`); son kodla ×2 denetim 0.
+- Eski set denetim 1 (`nophoto`, `lighter`): gedik molozunda yeniçeri/azap `VISAUDIT sunk` (eski `LandWalls` gediği; benim değişikliğimden bağımsız, eski yolda kod aynı) — önceden de var.
+- 26 dalgaları: 1. dalga (merdiven başı) yeni ≈ 37 sn / eski ≈ 31 (merdiven 14,35 m); 2. dalga yeni 14–32 / eski 19–33; düello daha kısa (yeni 8–15 / eski 6–29).
+- 26o sur yolu dövüşleri yeni 11–15 + 6–14 sn / eski 23–27 + 7–27 (`govde_gorunur`dan önce 2–3 sn: kenardan "atılma" — kök neden §Sonraki taşıyana).
+
+### Bölüm 20 2. dalga (sahibinin kararı ≈ 21–23 sn)
+| Yük | Süreler (sn) | Medyan |
+|---|---|---|
+| 3–4 paralel | 22,2 · 23,5 · 25,6 · 31,2 · 33,2 · 39,9 | 28,4 |
+| 2 paralel | 19,0 · 20,9 · 22,2 · 24,3 | 21,6 |
+
+Bölüm 20'nin yolunda değişiklik yok (bütün eklenen seçenekler varsayılanda kapalı); yük altında uzama taşıma 7'de de ölçülmüştü (aralık 18,0–32,8, 60 sn bir kez).

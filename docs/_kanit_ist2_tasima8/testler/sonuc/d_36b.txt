@@ -1,0 +1,4 @@
+SURSET kesim=mesoteikhion kurulum_ms=3861 sur_ms=1104 set_ms=2751
+WAVERUNNER wave=1/1 won=true t=24.1 pw=0.28 foe_dmg=18.0 allies=0+3 rally_foes=0 thrown=0
+AUTOTEST PASS chapter=36 variant= outcome=36.1 burned=3 fights=1 kills=2 sur=yeni
+KOSU rc=0 sure=38 args=--chapter=36b --autotest

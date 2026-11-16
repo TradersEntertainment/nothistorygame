@@ -1,0 +1,15 @@
+TASIMA8YER set=eski kuyu=(6.8, 0.0, 3.8) poterna=(14.5, 0.0, 0.0) fici=[(12.6, 0.0, 3.2), (14.6, 0.0, 2.2)] sancak=(16.0, 11.0, 17.0) merdiven=[-10.5, 9.5, -24.0, 22.0, 28.0]
+TASIMA8YURU bacak=kuyu t=0.6 yol=1.8 takilma=0 dusme=0 yer=(7.1, 0.0, 5.3) hedef=(6.8, 0.0, 5.4)
+TASIMA8YURU bacak=okcular t=4.4 yol=11.2 takilma=0 dusme=0 yer=(-0.6, 1.1, 12.4) hedef=(-0.8, 0.0, 12.6)
+TASIMA8YURU bacak=merdiven_agzi t=0.3 yol=0.9 takilma=0 dusme=0 yer=(-11.3, 8.0, 15.0) hedef=(-11.1, 8.0, 15.0)
+TASIMA8YURU bacak=kazan t=0.3 yol=1.0 takilma=0 dusme=0 yer=(-10.2, 8.0, 15.0) hedef=(-10.0, 0.0, 15.0)
+TASIMA8YURU bacak=depo t=4.2 yol=13.5 takilma=0 dusme=0 yer=(10.0, 0.0, 4.6) hedef=(10.2, 0.0, 4.4)
+TASIMA8YURU bacak=barikat t=3.6 yol=11.2 takilma=0 dusme=0 yer=(0.8, 0.2, 11.0) hedef=(0.6, 0.0, 11.2)
+TASIMA8YURU bacak=fici t=4.3 yol=13.1 takilma=0 dusme=0 yer=(11.2, 0.0, 4.4) hedef=(11.4, 0.0, 4.2)
+TASIMA8YURU bacak=giust t=5.5 yol=16.3 takilma=0 dusme=0 yer=(-3.9, 0.0, 10.3) hedef=(-4.2, 0.8, 10.4)
+TASIMA8YURU bacak=poterna t=6.2 yol=19.4 takilma=0 dusme=0 yer=(13.7, 0.0, 2.3) hedef=(13.9, 0.0, 2.2)
+TASIMA8YURU tasima set=eski yol=19.4 sure=6.2
+TASIMA8YURU bacak=kapi t=0.9 yol=2.9 takilma=0 dusme=0 yer=(1.3, 0.0, -6.4) hedef=(1.2, 0.0, -6.2)
+TASIMA8YURU OZET set=eski bacak=10 takilma=0 dusme=0 sure=30.4 yol=91.5
+AUTOTEST PASS chapter=26 variant=yuru set=eski takilma=0 dusme=0
+KOSU rc=0 sure=61 args=--chapter=26 --autotest=yuru --eskisur=26

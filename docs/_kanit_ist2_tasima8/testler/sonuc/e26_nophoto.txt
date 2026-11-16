@@ -1,0 +1,13 @@
+WAVERUNNER wave=1/1 won=true t=30.7 pw=0.28 foe_dmg=18.0 allies=3+0 rally_foes=0 thrown=2
+WAVERUNNER wave=1/1 won=true t=28.5 pw=0.28 foe_dmg=18.0 allies=5+0 rally_foes=0 thrown=0
+GUN shots=4 hits=3 missed=1
+GUN extra=1
+WAVERUNNER wave=1/2 won=true t=24.1 pw=0.28 foe_dmg=18.0 allies=3+0 rally_foes=0 thrown=0
+VISAUDIT sunk scene=chapter26.tscn who=Person/@Node3D@76563 spk=SPK_JANISSARY feet=(1.5, 1.8, 15.9) floor=2.28 by=@Node3D@177/@StaticBody3D@1048 act= meta=no_talk,spk,no_chat,no_yield src=Chapter26>Duelist>Person shape=(8.599999, 0.55, 2.4)@(0.0, 2.0, 15.6) lp=(0.0, 0.0, 0.0)
+WAVERUNNER wave=2/2 won=true t=33.6 pw=0.28 foe_dmg=18.0 allies=5+0 rally_foes=0 thrown=0
+GUNNER shots=6 dodged=6 hits=0
+TASIMA8 tasima sure=3.2 set=eski
+TASIMA8 alay sure=69.4 set=eski
+GRADE chapter=26 letter=S points=116 { "kills": 4, "thrown": 2, "hits_taken": 3, "parries": 2, "gun_shots": 4, "gun_hits": 3, "gunner_shots": 6, "dodged": 6 }
+AUTOTEST PASS chapter=26 variant=nophoto outcome=26.2 water=3 repaired=3 cleared=2 world= gun=3/4 gunner=6/6
+KOSU rc=0 sure=120 args=--chapter=26 --autotest=nophoto --eskisur=26
