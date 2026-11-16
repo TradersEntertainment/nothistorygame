@@ -153,8 +153,8 @@ static func build_kanat_izgara(host: Node3D, alan: PackedVector2Array, tur: Stri
 		var by := K.gy(bp.x, bp.y)
 		var col: Color = info["bant"]
 		wd.cylp(Vector3(bp.x, by + 3.0, bp.y), 0.05, 6.0, K.AHSAP2, 5)
-		fl.box(Vector3(bp.x + 0.5, by + 5.3, bp.y), Vector3(1.0, 1.3, 0.03), col)
-		fl.box(Vector3(bp.x + 0.5, by + 5.3, bp.y), Vector3(0.5, 0.5, 0.035), K.KREM)
+		# TUR-12: ince çift yüzlü, dalgalanan bayrak (eski 3 cm'lik kutu + kutu yama); uzak katmanda sabit
+		fl.bayrak(Vector3(bp.x, by + 5.95, bp.y), Vector3.RIGHT, 1.0, 1.3, col, [[0.25, 0.31, 0.75, 0.69, K.KREM]], 7 if lod == 0 else 3, lod != 0)
 		if lod == 0:
 			fl.sph(Vector3(bp.x, by + 6.1, bp.y), 0.11, K.ALTIN, 4)
 			wd.solid_cyl(Vector3(bp.x, by + 3.0, bp.y), 0.08, 6.0)

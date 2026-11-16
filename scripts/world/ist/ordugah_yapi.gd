@@ -45,12 +45,15 @@ static func sancak(b: B, f: B, pos: Vector3, h: float, col: Color, tug := false)
 	b.cylp(pos + Vector3(0, h / 2, 0), 0.05, h, K.AHSAP2, 5)
 	b.sph(pos + Vector3(0, h + 0.1, 0), 0.12, K.ALTIN, 4)
 	if tug:
-		# tuğ: at kuyruğu püskülü
+		# tuğ: at kuyruğu püskülü (TUR-12: sarkık kumaş, alt ucu rüzgârda hafif salınır; bağ yeri sabit)
+		var i0 := f.v.size()
+		var ty := pos.y + h - 0.15
 		f.cylp(pos + Vector3(0, h - 0.7, 0), 0.25, 1.1, Color("e9e2d0"), 6, 0.04)
+		f.sarkik(i0, func(q: Vector3) -> float: return (ty - q.y) / 1.1, pos.x * 0.7 + pos.z)
 		f.cylp(pos + Vector3(0, h - 1.3, 0), 0.07, 0.3, K.ALTIN, 5)
 	else:
-		f.box(pos + Vector3(0.45, h - 0.65, 0), Vector3(0.9, 1.2, 0.03), col)
-		f.box(pos + Vector3(0.45, h - 0.65, 0.0), Vector3(0.5, 0.4, 0.035), K.KREM)
+		# TUR-12: ince çift yüzlü, dalgalanan sancak (eski 3 cm'lik kutu + kutu yama); direk kenarı sabit
+		f.bayrak(pos + Vector3(0, h - 0.05, 0), Vector3.RIGHT, 0.9, 1.2, col, [[0.22, 0.33, 0.78, 0.67, K.KREM]], 7)
 
 
 # ------------------------------------------------------------------ Sultan'ın otağı külliyesi

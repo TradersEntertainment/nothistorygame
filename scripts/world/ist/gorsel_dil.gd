@@ -448,7 +448,7 @@ static func kategori(gi: Node, m: Material) -> String:
 				return "bitki"
 			"ist_insan.gdshader", "ist_kus.gdshader":
 				return "kisi"
-			"ist_bez.gdshader":
+			"ist_bez.gdshader", "ist_kumas.gdshader":
 				return "kumas"
 		if sh != null and sh == SURDOKU._shader():
 			return "tas"
