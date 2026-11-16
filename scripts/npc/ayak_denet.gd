@@ -2,6 +2,7 @@ extends RefCounted
 ## AYAKAUDIT (otomatik testte; VISAUDIT/POSEAUDIT kalıbı): kameranın gördüğü 40 m içindeki her ayaktaki insanın
 ## (persons, soldiers) her ayağının tabanı ile altındaki GÖRÜNEN zemin (Unclip.floor_y) arasındaki fark. Yalnız o an
 ## yere basması gereken ayak ölçülür: dururken ikisi (FK duruşunun kaldırmadığı), yürürken basma evresinin ortasındaki.
+## Taban görünen ama çarpışmasız bir ağın üstündeyse (Unclip.on_mesh) fark 0 (VISAUDIT float gibi).
 ## Kapsam dışı (Ayak.kapsam_disi: oturan, yatan, tırmanan, binen, taşınan, duruş takımı…) ölçülmez.
 ## Havada > 6 cm ya da gömük > 6 cm iki ardışık ölçümde (yarım saniye arayla) sürüyorsa bir kez yazar:
 ##   "AYAKAUDIT yakin|uzak scene=… who=Sınıf/ad(üst) ayak=L|R fark=+0.12 d=… at=… durum=dur|yuru|anim act=…"
@@ -93,6 +94,9 @@ static func _olc(who: Node3D, cp: Vector3, cam: Camera3D, sc: Node) -> void:
 			_bad.erase(key)
 			continue
 		var gap := sole.y - fy
+		# Görünen ama çarpışmasız bir ağın (döşeme, tabla) üstündeki taban havada değildir (VISAUDIT float'ın ölçüsü)
+		if gap > ESIK and Unclip.on_mesh(who, sole):
+			gap = 0.0
 		if absf(gap) <= ESIK:
 			_bad.erase(key)
 			continue
@@ -102,6 +106,9 @@ static func _olc(who: Node3D, cp: Vector3, cam: Camera3D, sc: Node) -> void:
 			continue
 		_seen[key] = true
 		var par := who.get_parent()
-		print("AYAKAUDIT %s scene=%s who=%s/%s(%s) ayak=%s fark=%+.2f d=%.1f at=%s durum=%s act=%s" % ["yakin" if d <= YAKIN else "uzak",
+		var ik := "yok"
+		if r.ayak:
+			ik = "w%.1f/m%d/pel%+.2f/g%s" % [r.ayak.w, r.ayak.mod, r.ayak.pel, "1" if r.ayak._g_ok[s] else "0"]
+		print("AYAKAUDIT %s scene=%s who=%s/%s(%s) ayak=%s fark=%+.2f d=%.1f at=%s durum=%s act=%s ik=%s" % ["yakin" if d <= YAKIN else "uzak",
 			sc.scene_file_path.get_file(), (who.get_script() as Script).get_global_name() if who.get_script() else who.get_class(),
-			who.name, par.name if par else "", "L" if s == 0 else "R", gap, d, sole.snapped(Vector3.ONE * 0.1), durum, r.activity])
+			who.name, par.name if par else "", "L" if s == 0 else "R", gap, d, sole.snapped(Vector3.ONE * 0.1), durum, r.activity, ik])

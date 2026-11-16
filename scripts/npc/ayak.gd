@@ -298,9 +298,35 @@ func uygula(delta: float, yuru: bool, anim := false) -> void:
 		_kapat()
 		return
 	var t0 := Time.get_ticks_usec()
+	if _mesh_kok_mu(delta):
+		# Görünen ama çarpışmasız bir zeminin (döşeme ağı, tabla) üstünde: ışın onu görmez, IK gövdeyi alttaki
+		# çarpışma zeminine gömerdi. Bu kişide Rig'in duruşu (kök o zemine oturur)
+		_kapat()
+		return
 	_coz(delta, yuru and not anim)
 	olc_us += Time.get_ticks_usec() - t0
 	olc_n += 1
+
+
+## Kökün altı: çarpışma zemini kökten 12 cm'den alçaksa (ya da yoksa) kök görünen bir ağın üstünde mi (Unclip.on_mesh,
+## VISAUDIT float'ın ölçüsü). Seyrek: kök 0,5 m yer değiştirince ya da üç saniyede bir.
+var _mk_p := Vector3.INF
+var _mk_t := 0.0
+var _mesh_kok := false
+
+
+func _mesh_kok_mu(delta: float) -> bool:
+	_mk_t -= delta
+	var o := rig.owner as Node3D
+	var root := o.position
+	if _mk_t > 0.0 and _mk_p.x != INF and root.distance_squared_to(_mk_p) < 0.25:
+		return _mesh_kok
+	_mk_t = 3.0 + randf()
+	_mk_p = root
+	_mesh_kok = false
+	if not _zemin(root, root.y) or _zy < root.y - 0.12:
+		_mesh_kok = Unclip_.on_mesh(o, o.global_position)
+	return _mesh_kok
 
 
 func _kapat() -> void:
@@ -331,6 +357,8 @@ var _zn := Vector3.UP
 
 
 func _zemin(p: Vector3, ref_y: float) -> bool:
+	if _par == null:
+		_par = rig.owner.get_parent() as Node3D
 	var par_t := _par.global_transform if is_instance_valid(_par) else Transform3D.IDENTITY
 	var wp := par_t * Vector3(p.x, ref_y, p.z)
 	var up := par_t.basis.y.normalized()
