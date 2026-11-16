@@ -1,16 +1,13 @@
 # TUR 11 — durum
 
-Dal `wip/ist2-tur11` (taban `wip/ist2-taban11` 2fa8fb35). Rapor: `rapor.md` (yazılıyor).
+Dal `wip/ist2-tur11` (taban `wip/ist2-taban11` 2fa8fb35). Rapor: `rapor.md`.
 
-## Biten (ara kayıt)
-- ÖNCE kareleri (depo dışı taban kopyası): Bölüm 25 =kare an_01…06, yakın sahne gece/gündüz.
-- Kod (ölçüldü, kareli): `sur_doku.gd` ince taş örgü (diş + korkuluk, köşe alfası 0,9), harpuşta (0,8), derzde sahte
-  kabartma; `sur_kule.gd` diş = örülmüş gövde + ayrı harpuşta; `surlar.gd` korkuluk işareti; `surlar_ayrinti.gd` stauroma
-  fıçıları sur yolu zemininde; `sur_oyun.gd` sağlam kip (`"saglam": true`, `saglam_yap`).
-- Testler (yeni): `tests/_ist/tur11_kare.tscn` (yakın + a1 + ışınla tuğla ölçümü + `--saglam`), `tests/_ist/tur11_saglam_yuru.tscn`.
+## Biten
+- §1 diş ve korkuluk taş örgü (TAMAM), harpuşta (KISMEN); tuğla ölçüsü ışınla ölçüldü (8,4 cm; hatıl dişin içine düşüyordu).
+- §2 stauroma fıçıları sur yolu zemininde (TAMAM).
+- §3 sağlam sur kipi `SurOyun.kur(…, {"saglam": true})` + yürüyüş 3/3 + kareler (TAMAM).
+- §4 Bölüm 21 peribolos gri dörtgen (TAMAM); c5 kıyısı, Bölüm 20 an_03 bej bant, D4 (YAPILMADI).
+- Sözleşme üçlüsü aynı; parse PASS; bölüm 0, 20o, 21, 22, 22o, 25, 43o PASS (denetim 0).
 
-## Süren
-- Bölüm autotestleri (20 tek başına yeniden: 600 sn aşımı), sonra rapor son hâli.
-
-## Sıradaki
-- Rapor: testler satırı.
+## Açık
+- Bölüm 20, 26 autotest bu makinede 1500 sn'de bitmiyor (taban da aynı): gerçek GPU'da koşulmalı.

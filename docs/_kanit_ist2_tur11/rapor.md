@@ -96,7 +96,11 @@ Sağlam kip ayrıca: `SAGLAMYURU OZET yol=3 tamam=3 takilma=0 dusme=0 kesik=0`.
 
 ## Testler (son kod, `--max-fps 20`, tam süzgeç + `SHADER ERROR`)
 - `tests/parse_check.tscn` → `PARSECHECK PASS scripts=357`.
-- Bölüm autotest (`testler/bolum.txt`): bkz. dosya (her satır: denetim satırı sayısı | AUTOTEST satırı).
+- Bölüm autotest (`testler/bolum.txt`): **0, 20o, 21, 22, 22o, 25, 43o → AUTOTEST PASS, denetim satırı 0.**
+- **Bölüm 20 ve 26: BU MAKİNEDE BİTMEDİ** (yazılımsal GL, `timeout 1500`): SONRA'da da ÖNCE (taban kopyası) koşusunda da aynı
+  noktada kalıyor (c20 `WAVERUNNER wave=1/2 won=true`, c26 `wave=1/1 won=true`; ardından süre doluyor). İki koşuda da SCRIPT/SHADER
+  ERROR ve denetim satırı yok. Gerileme değil, ortam yavaşlığı; ama PASS satırı alınamadığı için **doğrulanmadı** — gerçek GPU'lu
+  makinede koşulmalı (tur 10 raporunda ikisi PASS).
 
 ## Bütçe (ÖNCE ↔ SONRA, aynı kamera)
 | kare | çizim ÖNCE | çizim SONRA | ilkel ÖNCE | ilkel SONRA | Δ ilkel |
