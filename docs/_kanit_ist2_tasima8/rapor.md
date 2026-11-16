@@ -196,8 +196,8 @@ aynı sancak kulesini (x 35,4) ve aynı Romanos kapısını kullanır. Bölüm 2
 
 ## Hâlâ kötü olanlar (dürüst)
 1. **Merdiven boyu**: teras dış surun 3,7 m altında (sözleşme dondu) → hücum merdivenleri 14,35 m (eski 9 / 8,6). 26'da 1. dalga
-   (merdiven başı) ≈ 35,6 sn (eski ≈ 31); `hold_lose`'da pasif bot tırmananları itmeye devam ettiği için dalga 75 sn sınırına
-   dayanıyor (eski 28 sn'de bot yere düşüyordu; test iki sette PASS). 26o tırmanışı 11–27 sn (eski 8,5).
+   (merdiven başı) ≈ 37 sn (eski ≈ 31); 26o tırmanışı 11–27 sn (eski 8,5). (`hold_lose`'daki 75 sn'lik dalga, kök neden
+   `govde_gorunur` ile giderildi: 40 sn.)
 2. **Sancak**: iki bölümde de düz kırmızı levha (`Props.box`, eski kod) — kutu gibi; setin kumaş bayrağına (taban: bayrak
    kumaşı) geçirilmedi.
 3. **26o pavez siperleri** kutu gibi (eski kod, iki sette aynı).

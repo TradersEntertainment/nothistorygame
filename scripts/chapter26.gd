@@ -314,7 +314,9 @@ func _build_walls_scene() -> void:
 		# yeni sette barikatın dibinde (savunucu sırasının 1 m önü): sıranın içinde duran çekiççinin yanına dinlenen dost
 		# düellocu geliyordu (VISAUDIT overlap, nophoto)
 		fight.add_builders(_gp(Vector3(0, 0, -2.6)) if sur.eski_mi else sur.gedik_onu() + Vector3(0, 0, 1.6), 2, 2660)
-		Garrison.squad(self, Vector3(-18.0, 0, 8.0), 5, 2, 0.0, 2610, "spear_shield", true)
+		# yeni sette peribolosun ortasında (z 6,6 / 5,4 sıraları): z 8'de ön sıra 3. şeridin (z 9,6) koşanlarına değiyor,
+		# itilen iki asker iç içe kalıyordu (VISAUDIT overlap, hold23)
+		Garrison.squad(self, Vector3(-18.0, 0, 8.0) if sur.eski_mi else Vector3(-18.0, 0, 6.6), 5, 2, 0.0, 2610, "spear_shield", true)
 		Garrison.squad(self, Vector3(22.5, 0, 9.0) if sur.eski_mi else Vector3(24.0, 0, 7.4), 4, 2, 0.0, 2620, "spear_shield", true)
 		# Gerçek savaş (Bölüm 0'daki gibi): kalkanını başına kaldırıp koşanlar, ok yiyip devrilenler, yerde yatanlar,
 		# enkaz; oyuncunun ok deposu–gedik yolunu ve poterna fıçılarını kesmeyen şeritlerde
