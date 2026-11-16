@@ -49,3 +49,7 @@ TASIMA22OYURU bacak=su sure=0.0 yol=0.0 takilma=0 dusme=0 son=(-9.400001, -3.5, 
 TASIMA22OYURU bacak=ara_kule_sol sure=0.0 yol=0.0 takilma=0 dusme=0 son=(-6.1, -3.5, 55.1) odak=
 TASIMA22OYURU bacak=ara_kule_on sure=0.0 yol=0.0 takilma=0 dusme=0 son=(-6.1, -3.5, 47.7) odak=
 TASIMA22OYURU bacak=kule_su sure=0.0 yol=0.0 takilma=0 dusme=0 son=(-3.0, -3.5, 47.5) odak=hides
+TASIMA22OKARE an_05_safak_kule.jpg oyuncu=(4.0, -3.5, 64.6) cizim=2586 ilkel=2010626 sur=yeni
+TASIMA22OKARE an_06_kule_tepesi_sur.jpg oyuncu=(-3.0, 10.0, 49.4) cizim=919 ilkel=900523 sur=yeni
+TASIMA22OKARE BITTI
+KARE_BITTI rc=0 --chapter=22o --autotest=kare

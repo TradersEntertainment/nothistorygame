@@ -15,3 +15,10 @@ ERROR: Condition "status < 0" is true. Returning: ERR_CANT_OPEN
 WARNING: All audio drivers failed, falling back to the dummy driver.
      at: initialize (servers/audio_server.cpp:246)
 
+WARNING: Screen-space ambient occlusion (SSAO) can only be enabled when using the Forward+ renderer.
+     at: environment_set_ssao (servers/rendering/storage/environment_storage.cpp:586)
+WARNING: Screen-space indirect lighting (SSIL) can only be enabled when using the Forward+ renderer.
+     at: environment_set_ssil (servers/rendering/storage/environment_storage.cpp:661)
+HELDDEFAULT scene=chapter22 item=cologne
+TASIMA22YURU set=eski yol_y=8.00 yol_z=15.00 oluk=(-2.5, 8.0, 15.8) fici=(3.5, 8.0, 15.0) kule=(-3.0, 0.0, 40.0)
+TASIMA22KARE an_01_safak_kule.jpg oyuncu=(-8.0, 8.0, 15.0) cizim=4798 ilkel=6788338 sur=eski
