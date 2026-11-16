@@ -970,8 +970,8 @@ static func _dis_tas(ag: Ag, o: Vector3, tt: Vector3, nn: Vector3, w: float, yuk
 	var plan: Array[Vector2] = [Vector2(-hw + pah, -hd), Vector2(hw - pah, -hd), Vector2(hw, -hd + pah), Vector2(hw, hd),
 		Vector2(-hw, hd), Vector2(-hw, -hd + pah)]
 	var yat := (h3 - 0.5) * 0.04                # tepe yana yatık (cm'ler)
-	var omuz := minf(0.07 + 0.05 * h2, yuk * 0.3)
-	var ic := 0.06 + 0.04 * h2                 # omuzun içe çekilişi
+	var omuz := minf(0.045 + 0.035 * h2, yuk * 0.25)
+	var ic := 0.04 + 0.03 * h2                 # omuzun içe çekilişi
 	var egim := 0.04 + 0.04 * h3               # tepe dışa (nn) doğru alçalır
 	# kırık köşe: bir tepe köşesi (sol/sağ × ön/arka) aşağı
 	var kir_k := -1
@@ -989,12 +989,13 @@ static func _dis_tas(ag: Ag, o: Vector3, tt: Vector3, nn: Vector3, w: float, yuk
 		var yt := yuk - egim * (v.y / hd * 0.5 + 0.5)
 		var yk := yt - (omuz if arka else 0.0)
 		if yikik:
+			# kırık diş: sırtsız, köşe köşe farklı yükseklikte pürüzlü alçak tepe (çatı gibi sivrilmesin)
 			var r := fposmod(sin(float(k) * 12.9 + h2 * 78.2) * 43758.5, 1.0)
-			yk = yuk * (0.6 + 0.3 * r)
-			yt = yk + (0.04 + 0.06 * r if arka else 0.0)
+			yk = yuk * (0.7 + 0.3 * r)
+			yt = yk
 		var dx := yat * (yk / maxf(yuk, 0.01))
 		ust.append(pos + tt * dx + Vector3.UP * yk)
-		if arka:
+		if arka and not yikik:
 			var vi := Vector2(v.x * (1.0 - ic / hw), v.y + ic)
 			tep.append(c + tt * (vi.x + yat) + nn * vi.y + Vector3.UP * yt)
 		else:

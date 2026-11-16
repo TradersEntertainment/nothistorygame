@@ -248,7 +248,7 @@ static func _oyuk(ag, p: Vector3, r: float, rng: RandomNumberGenerator) -> void:
 static func _barrel(root: Node3D, p: Vector3) -> void:
 	# TUR-7: toprak dolu eski fıçı: yıpranmış gri-kahve tahta (güneşte turuncu kutu/silindir okunmasın); çarpışma aynı
 	# TUR-10 (Bölüm 25 an_06, "büyük ve köşeli"): 10 köşeli düz silindir (çap 0,84 m) + 3 ayrı çember silindiri yerine tek
-	# ağ: karınlı (uç çapı 0,54, karın 0,66 m, boy 0,92), 16 dilim, tahta tahta ton, demir çemberler, gömme kapak.
+	# ağ: karınlı (uç çapı 0,54, karın 0,66 m, boy 0,92), 12 dilim, tahta tahta ton, demir çemberler, gömme kapak.
 	# Çarpışma ESKİ silindirin dışbükey kabuğu (aynı; görünen ağ sonra değişir). Çizim: 4 düğüm → 1.
 	var rng := RandomNumberGenerator.new()
 	rng.seed = int(absf(p.x * 131.0 + p.z * 17.0))
@@ -276,14 +276,15 @@ static func _fici_ag() -> ArrayMesh:
 		return _fici
 	var st := SurfaceTool.new()
 	st.begin(Mesh.PRIMITIVE_TRIANGLES)
-	var N := 16
+	var N := 12
 	var y0 := -0.475
 	var H := 0.92
 	var halkalar: Array = []     # [y, r, renk çarpanı (çember koyu)]
-	var ys := [0.0, 0.05, 0.075, 0.2, 0.3, 0.5, 0.7, 0.8, 0.925, 0.95, 1.0]
+	# bütçe: 12 dilim × 6 bant + kapak ≈ 180 üçgen (eski 4 silindir: 160)
+	var ys := [0.0, 0.05, 0.085, 0.5, 0.915, 0.95, 1.0]
 	for t: float in ys:
 		var r := 0.27 + 0.06 * sin(t * PI)          # karın
-		var cember := (t > 0.04 and t < 0.085) or (t > 0.915 and t < 0.96)
+		var cember := (t >= 0.049 and t <= 0.086) or (t >= 0.914 and t <= 0.951)
 		halkalar.append([y0 + t * H, r + (0.006 if cember else 0.0), cember])
 	var rng := RandomNumberGenerator.new()
 	rng.seed = 1453
