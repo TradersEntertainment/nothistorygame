@@ -664,11 +664,30 @@ func _uyandir(e: Dictionary) -> void:
 			for st in (kk as Node).get_children():
 				if st is StaticBody3D:
 					haric.append((st as StaticBody3D).get_rid())
-		zq.exclude = haric
-		var zh := get_world_3d().direct_space_state.intersect_ray(zq)
+		# uyanmış/donmuş eşya gövdeleri (yığında alttaki sandık) zemin sayılmaz: gerçek zemine kadar onları da geç
+		var zh: Dictionary = {}
+		for _i in 6:
+			zq.exclude = haric
+			zh = get_world_3d().direct_space_state.intersect_ray(zq)
+			if zh.is_empty() or not (zh["collider"] as Node).has_meta("esya"):
+				break
+			haric.append((zh["collider"] as CollisionObject3D).get_rid())
+			zh = {}
 		if zh.is_empty():
 			sayac["zeminsiz"] = int(sayac.get("zeminsiz", 0)) + 1
 			return
+		# Dressing eşyayı düz y'ye koyar, arazi inişli çıkışlıdır: uyuyan eşyanın tabanı görünen arazinin birkaç cm
+		# altında kalabilir. Gövde tek yüzlü arazi ağının ALTINDA doğarsa düşer/gömülür: tabanı yüzeye oturtulur.
+		var ust := c0 + Vector3.UP * (ab.size.y * 0.5 + 0.3)
+		var yq := PhysicsRayQueryParameters3D.create(ust, c0 + Vector3.DOWN * (ab.size.y * 0.5 + 0.6))
+		yq.exclude = haric
+		var yh := get_world_3d().direct_space_state.intersect_ray(yq)
+		if not yh.is_empty() and not (yh["collider"] as Node).has_meta("esya"):
+			var taban := c0.y - ab.size.y * 0.5
+			var yuzey: float = (yh["position"] as Vector3).y
+			if yuzey > taban and yuzey - taban < ab.size.y * 0.6:
+				xf.origin.y += yuzey - taban + 0.01
+				e["xf"] = xf
 	_sinir_kontrol()
 	var g := RigidBody3D.new()
 	g.name = "Esya_%s_%d" % [e["tur"], e["id"]]
@@ -677,7 +696,7 @@ func _uyandir(e: Dictionary) -> void:
 	pm.friction = t[1]
 	pm.bounce = t[2]
 	g.physics_material_override = pm
-	g.continuous_cd = true
+	g.continuous_cd = float(t[0]) < 10.0      # küçük, hızlı eşya (testi, gülle değil, tane): ince yüzeyden geçmesin
 	g.angular_damp = 0.12 if String(t[3]) in ["silindir", "kure"] else 0.6     # yuvarlak eşya yuvarlanmayı sürdürür
 	g.linear_damp = 0.05
 	g.can_sleep = true
