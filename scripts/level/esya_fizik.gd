@@ -29,7 +29,7 @@ const DUSME_PAYI := 2.0
 
 # tür → [kütle kg, sürtünme, sekme, şekil, ses]
 const TUR := {
-	"fici": [48.0, 0.55, 0.12, "silindir", "land_thud"],
+	"fici": [45.0, 0.55, 0.12, "silindir", "land_thud"],
 	"fici_bos": [16.0, 0.55, 0.2, "silindir", "land_thud"],
 	"sandik": [28.0, 0.62, 0.08, "kutu", "footstep_wood"],
 	"kalas": [14.0, 0.6, 0.1, "kutu", "footstep_wood"],
@@ -52,6 +52,7 @@ var _tara_t := 0.0
 var _bek_sayi := -1
 var _player: Player
 var _temas := {}                  # eşya kimliği -> yürüyerek dayanma süresi
+var _son_hiz := 0.0
 var _sira := 0
 var sayac := {"kayit": 0, "uyanan": 0, "tekme": 0, "kosu": 0, "itme": 0, "patlama": 0, "destek": 0,
 	"dusme": 0, "havada": 0, "gomuk": 0, "tikama": 0, "sinir": 0}
@@ -357,18 +358,29 @@ func _oyuncu(delta: float) -> void:
 			p.kick(c, 0.75, func() -> void: pass)
 	var v := Vector3(p.velocity.x, 0.0, p.velocity.z)
 	var hiz := v.length()
-	if hiz < 0.8 or p.frozen:
+	# Yön: gerçek hız; duvara (uyuyan eşyanın katısına) dayanınca hız sıfırlanır, o zaman oyuncunun bastığı yön.
+	var yon := Vector3.ZERO
+	if hiz >= 0.8:
+		yon = v / hiz
+	elif not p.frozen and p.move_mode == "walk":
+		var inp := Input.get_vector("move_left", "move_right", "move_forward", "move_back")
+		var ist := p.global_transform.basis * Vector3(inp.x, 0.0, inp.y)
+		ist.y = 0.0
+		if ist.length() > 0.3:
+			yon = ist.normalized()
+	var carp := maxf(hiz, _son_hiz)        # çarpma anında move_and_slide hızı bu karede sıfırlamış olabilir
+	_son_hiz = hiz
+	if yon == Vector3.ZERO or p.frozen:
 		_temas.clear()
 		return
-	var yon := v / hiz
 	var pp := p.global_position
 	var dokunan := {}
-	for e in _yakin(pp, 2.0):
+	for e in _yakin(pp, 2.5):
 		var c := _merkez(e)
 		var d := Vector3(c.x - pp.x, 0.0, c.z - pp.z)
 		var r := _yaricap(e)
 		var bosluk := d.length() - r - 0.32
-		if bosluk > 0.12 or absf(c.y - (pp.y + 0.5)) > 1.2:
+		if bosluk > 0.3 + carp * 0.06 or absf(c.y - (pp.y + 0.5)) > 1.2:
 			continue
 		if d.length() < 0.01 or d.normalized().dot(yon) < 0.5:
 			continue
@@ -376,21 +388,21 @@ func _oyuncu(delta: float) -> void:
 		if e["durum"] == "uyanik":
 			# uyanık gövdeyi yürüyerek it: ağır eşya yavaş (kuvvet sınırlı)
 			var g := e["govde"] as RigidBody3D
-			var istenen := minf(hiz, 2.6 * clampf(30.0 / m, 0.25, 1.0))
+			var istenen := minf(maxf(hiz, 1.2), 2.6 * clampf(30.0 / m, 0.25, 1.0))
 			var fark := istenen - g.linear_velocity.dot(yon)
 			if fark > 0.0:
 				g.apply_central_force(yon * minf(fark * m * 6.0, 520.0))
 			continue
-		if hiz >= KOSU_HIZ:
+		if carp >= KOSU_HIZ:
 			# koşarak çarpma: hafif eşya itilir, ağır eşya kıpırdar
 			sayac["kosu"] += 1
 			_uyandir(e)
-			var g := e["govde"] as RigidBody3D
-			if g:
-				var j := minf(hiz * 0.55 * m, 75.0)
-				g.apply_impulse(yon * j, Vector3(0, (e["ab"] as AABB).size.y * 0.2, 0))
+			var j := minf(carp * 0.55 * m, 75.0)
+			_itki(e, yon * j, Vector3(0, (e["ab"] as AABB).size.y * 0.2, 0))
 			continue
-		# yürüyerek dayanma: 0,35 sn dayanınca uyanır ve yavaşça itilir
+		# yürüyerek dayanma: 0,35 sn dayanınca uyanır, sonra yukarıdaki kuvvetle yavaşça itilir
+		if bosluk > 0.3:
+			continue
 		var t: float = _temas.get(e["id"], 0.0) + delta
 		dokunan[e["id"]] = t
 		if t >= 0.35:
@@ -464,6 +476,8 @@ func _darbe(oyuncu: Node3D, hedef: Vector3, guc: float) -> void:
 		if d < en_d and absf(c.y - hedef.y) < 1.0:
 			en_d = d
 			e = o
+	if OS.has_environment("ESYA_HATA"):
+		print("ESYADBG darbe hedef=%s oyuncu=%s bulunan=%s" % [str(hedef), str(pp), str(e.get("id", -1))])
 	if e.is_empty():
 		return
 	_uyandir(e)
@@ -474,15 +488,16 @@ func _darbe(oyuncu: Node3D, hedef: Vector3, guc: float) -> void:
 	var yon := Vector3(c.x - pp.x, 0.0, c.z - pp.z).normalized()
 	var m: float = TUR[e["tur"]][0]
 	var boy: float = (e["ab"] as AABB).size.y
-	# Gerçekçi tekme itkisi ~30–45 N·s (hafif eşyada hız sınırı 7 m/s): 3 kg testi uçar, 50 kg dolu fıçı devrilir.
-	var j := minf(lerpf(30.0, 46.0, guc), m * 7.0)
-	var yuk := clampf(0.5 * boy, 0.2, 0.55)                   # ayak (diz altı) yüksekliği: alt yarıya
-	g.apply_impulse(yon * j + Vector3.UP * j * 0.12, -g.global_basis.y * boy * 0.5 + Vector3.UP * yuk - yon * _yaricap(e) * 0.9)
+	# Sert tekme itkisi ~55–80 N·s (bacak + gövde ağırlığıyla; hafif eşyada hız sınırı 7 m/s): 3 kg testi uçar, 45 kg
+	# dolu fıçı karnından itilince devrilir (devrilme eşiği ≈ 40 J), sandık kayar ya da kenarından döner.
+	var j := minf(lerpf(55.0, 80.0, guc), m * 7.0)
+	var yuk := clampf(0.72 * boy, 0.2, 0.75)                  # ayak eşyanın karnına / üst yarısına değer
+	_itki(e, yon * j + Vector3.UP * j * 0.12, -g.global_basis.y * boy * 0.5 + Vector3.UP * yuk - yon * _yaricap(e) * 0.9)
 	_ses(e, 1.0)
 
 
 func _patlama(p: Vector3, boy: float) -> void:
-	var r := 4.5 * boy
+	var r := maxf(3.0, 4.5 * boy)
 	for e in _yakin(p, r):
 		var c := _merkez(e)
 		var d := c - p
@@ -497,7 +512,7 @@ func _patlama(p: Vector3, boy: float) -> void:
 		var m: float = TUR[e["tur"]][0]
 		var k := 1.0 - l / r
 		var yon := (Vector3(d.x, 0.0, d.z).normalized() + Vector3.UP * 0.8).normalized()
-		g.apply_impulse(yon * minf(m * 6.0 * k * boy, m * 8.0), Vector3(randf_range(-0.1, 0.1), 0.15, randf_range(-0.1, 0.1)))
+		_itki(e, yon * minf(m * 6.0 * k * boy, m * 8.0), Vector3(randf_range(-0.1, 0.1), 0.15, randf_range(-0.1, 0.1)))
 
 
 func _dugum_eklendi(n: Node) -> void:
@@ -596,7 +611,7 @@ func _uyandir(e: Dictionary) -> void:
 	pm.bounce = t[2]
 	g.physics_material_override = pm
 	g.continuous_cd = true
-	g.angular_damp = 0.6
+	g.angular_damp = 0.12 if String(t[3]) in ["silindir", "kure"] else 0.6     # yuvarlak eşya yuvarlanmayı sürdürür
 	g.linear_damp = 0.05
 	g.can_sleep = true
 	g.contact_monitor = true
@@ -605,10 +620,8 @@ func _uyandir(e: Dictionary) -> void:
 	var cs := CollisionShape3D.new()
 	match String(t[3]):
 		"silindir":
-			var s := CylinderShape3D.new()
-			s.radius = maxf(ab.size.x, ab.size.z) * 0.5 * 0.94
-			s.height = ab.size.y
-			cs.shape = s
+			# 16 kenarlı dışbükey silindir (GodotPhysics'in CylinderShape'i kutu üstünde titriyor, batıyordu)
+			cs.shape = _silindir_sekli(maxf(ab.size.x, ab.size.z) * 0.5 * 0.94, ab.size.y)
 		"kure":
 			var s := SphereShape3D.new()
 			s.radius = maxf(ab.size.x, maxf(ab.size.y, ab.size.z)) * 0.5
@@ -649,6 +662,7 @@ func _uyandir(e: Dictionary) -> void:
 			d.global_transform = dx
 	g.body_entered.connect(_carpti.bind(e))
 	e["govde"] = g
+	e["kare"] = 0
 	e["durum"] = "uyanik"
 	e["t"] = 0.0
 	e["dur_t"] = 0.0
@@ -711,6 +725,18 @@ func _ortak_kati_ayir(e: Dictionary) -> void:
 		e["kendi_kati"] = null
 
 
+## İtki: yeni kurulan gövdenin kütlesi fizik sunucusunda bir adım sonra işlenir (GodotPhysics kütle özelliklerini
+## adımda günceller; o ana kadar ters kütle 1). Bu yüzden ilk karede gelen itki bir kare bekletilir.
+func _itki(e: Dictionary, j: Vector3, nokta := Vector3.ZERO) -> void:
+	var g := e["govde"] as RigidBody3D
+	if g == null:
+		return
+	if int(e.get("kare", 99)) < 2:
+		e["bekleyen"] = (e.get("bekleyen", []) as Array) + [[j, nokta]]
+		return
+	g.apply_impulse(j, nokta)
+
+
 func _dunya_ab(e: Dictionary) -> AABB:
 	return (e["xf"] as Transform3D) * (e["ab"] as AABB)
 
@@ -752,10 +778,16 @@ func _uyaniklar(delta: float) -> void:
 		if g == null or not is_instance_valid(g):
 			uyanik.erase(e)
 			continue
+		e["kare"] = int(e.get("kare", 99)) + 1
+		if int(e["kare"]) >= 2 and e.has("bekleyen"):
+			for b in e["bekleyen"]:
+				g.apply_impulse(b[0], b[1])
+			e.erase("bekleyen")
 		e["t"] = float(e["t"]) + delta
 		var c := g.global_position
-		# zemin altına düştü: ilk yerine
-		if c.y < float(e["zemin_y"]) - DUSME_PAYI:
+		# zemin altına düştü (başlangıç zemininin 2 m altında VE altında zemin yok ya da üstünde zemin var): ilk yerine.
+		# Yokuştan, merdivenden yuvarlanıp inen meşrudur: altında zemin, üstünde boşluk vardır.
+		if c.y < float(e["zemin_y"]) - DUSME_PAYI and int(e["kare"]) % 6 == 0 and _zemin_alti(g):
 			sayac["dusme"] += 1
 			_rapor("dusme", e, c)
 			_ilk_yere(e)
@@ -770,6 +802,38 @@ func _uyaniklar(delta: float) -> void:
 			_dondur(e, false)
 		elif float(e["t"]) > AZAMI_SURE:
 			_dondur(e, true)
+
+
+static var _sil_sekil := {}
+
+
+static func _silindir_sekli(r: float, h: float) -> ConvexPolygonShape3D:
+	var k := "%.3f|%.3f" % [r, h]
+	if _sil_sekil.has(k):
+		return _sil_sekil[k]
+	var pts := PackedVector3Array()
+	for i in 16:
+		var a := TAU * i / 16.0
+		for y: float in [-h * 0.5, h * 0.5]:
+			pts.append(Vector3(cos(a) * r, y, sin(a) * r))
+	var s := ConvexPolygonShape3D.new()
+	s.points = pts
+	_sil_sekil[k] = s
+	return s
+
+
+func _zemin_alti(g: RigidBody3D) -> bool:
+	var space := g.get_world_3d().direct_space_state
+	var c := g.global_position
+	var q := PhysicsRayQueryParameters3D.create(c, c + Vector3.DOWN * 60.0)
+	q.exclude = [g.get_rid()]
+	if space.intersect_ray(q).is_empty():
+		return true
+	var u := PhysicsRayQueryParameters3D.create(c, c + Vector3.UP * 4.0)
+	u.exclude = [g.get_rid()]
+	u.hit_back_faces = true
+	var h := space.intersect_ray(u)
+	return not h.is_empty() and not (h["collider"] as Node).has_meta("esya")
 
 
 ## Gövdeyi durdurur: önce zemine oturduğu (havada değil, gömük değil, yol tıkamıyor) denetlenir, sonra donar.
@@ -847,6 +911,12 @@ func _alt_nokta(g: RigidBody3D, cs: CollisionShape3D) -> float:
 		return g.global_position.y - absf(ax.y) * cy.height * 0.5 - dik * cy.radius
 	if s is SphereShape3D:
 		return g.global_position.y - (s as SphereShape3D).radius
+	if s is ConvexPolygonShape3D:
+		var en := INF
+		var xf := g.global_transform * cs.transform
+		for p in (s as ConvexPolygonShape3D).points:
+			en = minf(en, (xf * p).y)
+		return en
 	return g.global_position.y
 
 
@@ -861,6 +931,11 @@ func _gomuk(g: RigidBody3D) -> bool:
 		(s as CylinderShape3D).height *= 0.6
 	elif s is SphereShape3D:
 		(s as SphereShape3D).radius *= 0.6
+	elif s is ConvexPolygonShape3D:
+		var pts := PackedVector3Array()
+		for p in (s as ConvexPolygonShape3D).points:
+			pts.append(p * 0.6)
+		(s as ConvexPolygonShape3D).points = pts
 	var q := PhysicsShapeQueryParameters3D.new()
 	q.shape = s
 	q.transform = g.global_transform
