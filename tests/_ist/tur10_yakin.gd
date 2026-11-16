@@ -74,11 +74,12 @@ func _kos() -> void:
 			kt = t
 			break
 	var kx := float(kt[0]) - float(kt[1]) * 0.5
-	# kule yüzü: kapının üstünden (HW + 3,2) batıdan doğuya ışın; ilk çarpışma kulenin batı yüzü
-	var q := PhysicsRayQueryParameters3D.create(Vector3(kx - 14.0, HW + 3.2, 0.0), Vector3(kx + 4.0, HW + 3.2, 0.0))
+	# kule yüzü: kapının üstünden (HW + 4,6) batıdan doğuya ışın; ilk çarpışma kulenin batı yüzü
+	var q := PhysicsRayQueryParameters3D.create(Vector3(kx - 14.0, HW + 4.6, 0.0), Vector3(kx + 4.0, HW + 4.6, 0.0))
 	var hit := get_world_3d().direct_space_state.intersect_ray(q)
 	if not hit.is_empty():
 		kx = float((hit["position"] as Vector3).x)
+	print("TUR10YAKIN kule_yuzu x=%.2f isin=%s" % [kx, not hit.is_empty()])
 	var zd := zo1 - PT       # dış sur korkuluğunun iç yüzü
 	var kam := {
 		# m1 = iki diş arası açıklık; diş merkezi m1.x + 0.9 (yarım genişlik 0,5)

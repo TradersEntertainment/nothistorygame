@@ -291,8 +291,10 @@ static func _fici_ag() -> ArrayMesh:
 	var tahta: Array = []
 	for i in N:
 		tahta.append(rng.randf_range(0.78, 1.08))
-	var ahsap := Color("6a5a46")
-	var demir := Color("3b3633")
+	# köşe rengi pişiricide DOĞRUSAL okunur (vertex_color_is_srgb kapalı): "6a5a46" sRGB yazılınca gece soluk lila-beyaz
+	# okunuyordu (Bölüm 25 an_04). Yıllanmış koyu tahta ve demir, doğrusal değer
+	var ahsap := Color(0.22, 0.17, 0.12)
+	var demir := Color(0.075, 0.07, 0.065)
 	for i in N:
 		var a0 := TAU * i / N
 		var a1 := TAU * (i + 1) / N

@@ -273,12 +273,19 @@ void fragment() {
 		dos = mix(dos, vec3(0.2, 0.22, 0.13) * kat, lik2 * 0.3);
 		c = mix(dos, harc * vec3(0.66, 0.6, 0.5), j * ince);
 	}
+	// TUR-10: döküntü taşı (köşe alfası 0,5; sur_kule._moloz_tas): yerde yatan yuvarlanmış taş. Duvar deseni (yerde tuğla
+	// hatılı), dip kararması ve gece payı ona uygulanınca zeminde simsiyah leke okunuyordu (Bölüm 20 an_03): taş tonu, iri
+	// lekeli, yıpranma yalnız hafif
+	float moloz = 1.0 - step(0.75, COLOR.a);
+	if (moloz > 0.5) {
+		c = tas * vec3(1.0, 0.96, 0.9) * (0.7 + 0.25 * vn(wpos.xz * 2.7 + wpos.y * 1.9)) * (0.85 + 0.15 * h21(floor(wpos.xz * 1.3)));
+	}
 	// yıpranma: dikey akıntı, is lekesi, dipte koyulaşma ve yosun
 	float aki = vn(vec2(u * 1.7, y * 0.09));
 	aki = smoothstep(0.55, 0.95, aki) * dikey;
 	float leke = vn(vec2(u * 0.07, y * 0.11) + vec2(wpos.x, wpos.z) * 0.013);
 	float dip = yerel_dip > 0.5 ? ly : 50.0;
-	float dipk = 1.0 - smoothstep(0.0, 3.2, dip);
+	float dipk = (1.0 - smoothstep(0.0, 3.2, dip)) * (1.0 - moloz);
 	// TUR-10: akıntı ve is daha belirgin (yakında ince damar), dipte kir ve yosun daha yüksek
 	float aki2 = smoothstep(0.6, 0.95, vn(vec2(u * 6.5, y * 0.35) + 2.0)) * dikey * orta;
 	c *= 1.0 - aki * 0.2 - aki2 * 0.14;
@@ -288,11 +295,11 @@ void fragment() {
 	if (tur > 0.5 && tur < 1.5) { yos = max(yos, smoothstep(0.6, 0.9, vn(vec2(u * 0.3, y * 0.5) + 3.0)) * (1.0 - smoothstep(0.0, 4.0, dip))); }
 	// yosun yakında lekeli (düz yeşil boya değil)
 	yos *= mix(1.0, 0.55 + 0.9 * vn(vec2(u * 9.0, y * 9.0) + 31.0), yakin);
-	c = mix(c, vec3(0.17, 0.21, 0.10) * kat, clamp(yos * 0.42, 0.0, 0.6) * dikey);
+	c = mix(c, vec3(0.17, 0.21, 0.10) * kat, clamp(yos * 0.42, 0.0, 0.6) * dikey * (1.0 - moloz));
 	// uzak katman (pişmiş, köşe rengi açılmış): yakındaki derz/akıntı/dip kararmasının ortalaması kadar koyulaşır
 	if (yerel_dip < 0.5) { c *= 1.08; }      // SUR-5: uzak katman yakından koyu-kahve okunuyordu (uzak_kara_400m)
 	// TUR-10: gece sur kararır (ay ışığında yakın sur ordugâh ve gökten parlak, lila-beyaz okunuyordu); hafif sıcak
-	c *= mix(vec3(1.0), vec3(0.6, 0.58, 0.55), gece);
+	c *= mix(vec3(1.0), vec3(0.68, 0.66, 0.63), gece * (1.0 - moloz) * (0.6 + 0.4 * dikey));
 	ALBEDO = c;
 	ROUGHNESS = 0.95;
 }

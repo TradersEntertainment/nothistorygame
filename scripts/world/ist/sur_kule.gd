@@ -696,6 +696,9 @@ const _IKO_K := [Vector3(-1, 1.618, 0), Vector3(1, 1.618, 0), Vector3(-1, -1.618
 const _IKO_Y := [[0, 11, 5], [0, 5, 1], [0, 1, 7], [0, 7, 10], [0, 10, 11], [1, 5, 9], [5, 11, 4], [11, 10, 2], [10, 7, 6],
 	[7, 1, 8], [3, 9, 4], [3, 4, 2], [3, 2, 6], [3, 6, 8], [3, 8, 9], [4, 9, 5], [2, 4, 11], [6, 2, 10], [8, 6, 7], [9, 8, 1]]
 
+## Köşe alfası 0,5 = döküntü işareti (sur_doku: duvar deseni, dip kararması, gece payı uygulanmaz; zemindeki taş tonu)
+const MOLOZ_RENK := Color(1, 1, 1, 0.5)
+
 static func _moloz_tas(ag: Ag, o: Vector3, rng: RandomNumberGenerator) -> void:
 	var s := Vector3(rng.randf_range(0.35, 0.8), rng.randf_range(0.22, 0.45), rng.randf_range(0.3, 0.6))
 	var b := Basis.from_euler(Vector3(rng.randf_range(-0.35, 0.35), rng.randf_range(0, TAU), rng.randf_range(-0.35, 0.35)))
@@ -714,7 +717,7 @@ static func _moloz_tas(ag: Ag, o: Vector3, rng: RandomNumberGenerator) -> void:
 		var a: Vector3 = pts[f[0]]
 		var bb: Vector3 = pts[f[1]]
 		var c: Vector3 = pts[f[2]]
-		ag.tri(a, bb, c, (a + bb + c) / 3.0 - cen)
+		ag.tri(a, bb, c, (a + bb + c) / 3.0 - cen, MOLOZ_RENK)
 
 
 # ------------------------------------------------------------------ DIŞ SUR KULESİ
