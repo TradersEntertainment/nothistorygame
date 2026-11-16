@@ -26,23 +26,24 @@ koşularındaki `ESYAAUDIT OZET kayit=` satırından (kayda geçen dekor eşyas�
 | Bölüm 18:114-158, siege_field barut çadırı, camp_day mutfak (`Props.model("barrel")`) | `dd.cyl` ile çizilmiş fıçılar / tek .glb | birleşik ağ / tek düğüm | ortak kutu / solid_model | **kayıt YOK** (birleşik ağdaki parça tek başına gizlenemez; kurucu listemde değil) — "kalanlar" |
 | `amphora`, `basket`, `sack(s)`, `pots`, `bench` (Dressing) | testi, sepet, çuval, saksı, sıra | birleşik ağ | ortak kutu | **kayıt YOK** (yetki yalnız crate/crates/barrel/barrels; birleşik ağda ayrılamaz) — "kalanlar" |
 
-Oynanış eşyasının hiçbiri kayda geçmez; ayrıca adında `Merdiven, Ladder, Kopru, Poterna, Gedik, Kapi, Door, Gate,
-FicStack, Pile, Depo` geçen düğümlerin 1,4 m yakınındaki dekor eşyası da kayda geçmez (`EsyaFizik.KORU_AD`).
+Oynanış eşyasının hiçbiri kayda geçmez (kayıt yalnız dekor kurucularında). Uyanan dekor eşyası bir etkileşim alanının
+(`Props.interactable`, katman 2: kapı, merdiven, yük yığını, görev yeri) üstünde donarsa alanın dışına itilir. (İlk sürümde
+oynanış düğümlerini adlarıyla bütün ağaçta arıyordum: sahne başında 235 ms'lik kare; kaldırıldı.)
 
 ## Bölümler: kayda geçen dekor eşyası (oyuncunun yanına gidebildiği küçük eşyalar)
 
 | Bölüm | Dünya kurucusu | Kayıt (koşu) | Nerede | Not |
 |---|---|---|---|---|
-| 0 | SurSetSahne (SurOyun + SiegeField) | 0 | — | Savrulanlar (kalkan, ok demeti, askerler) zaman durdurmasının donmuş karesinde KASITLI havada; dünya hiç devam etmiyor (geri sarılıp garaja dönülüyor) → fizik verilmedi |
-| 6 (6a) | CampDay `auto("camp")` | ~100 | ordugâh kenar kümeleri (sandık, fıçı) | mutfak fıçıları `Props.model` → kayıt yok |
-| 6 (6b) | ByzCity `auto("byz")` + payanda dibi | (koşuya göre) | şehir kenar kümeleri | |
-| 8y | World1453 "gate8y" + kendi barikatları | (koşuya göre) | World1453 rıhtım/depo kümeleri | kendi Dressing'inde fıçı/sandık yok (gabion, perde = oynanış) |
-| 17o | World1453 + kendi Dressing `_c_crates/_c_barrels/_c_barrel_pile` | (koşuya göre) | kenar donatısı | |
-| 18, 18b | World1453 "horn_bridge" + kendi Dressing | ~96 | World1453 kümeleri (oyun alanından yüzlerce m uzakta) | bölümün kendi fıçıları `dd.cyl` (birleşik) → kayıt yok |
-| 20 | SurSetSahne | ~85 | 16 ordugâh (siege_field kampı, z≈150) + ~69 sur yolu stauroma fıçısı (dış sur yolu, y≈8,6) | gedik ve depo fıçıları oynanış → kayıt yok |
-| 26 | LandWalls + SiegeField | ~96 | sur içi meydan kümeleri (ör. 9,0.4,−49), ordugâh | barikat ve depo oynanış → kayıt yok |
-| 28o | SurSetSahne | ~89 | Bölüm 20 ile aynı (ordugâh + sur yolu) | |
-| 29 | SeaWalls | (koşuya göre) | | güverte fıçısı oynanış |
+| 0 | SurSetSahne (SurOyun + SiegeField) | 69 | sur yolu stauroma fıçıları (uzak) | Savrulanlar (kalkan, ok demeti, askerler) zaman durdurmasının donmuş karesinde KASITLI havada; dünya hiç devam etmiyor (geri sarılıp garaja dönülüyor) → fizik verilmedi |
+| 6 (6a) | CampDay `auto("camp")` | 102 | ordugâh kenar kümeleri (sandık, fıçı) | mutfak fıçıları `Props.model` → kayıt yok |
+| 6 (6b) | ByzCity `auto("byz")` + payanda dibi | 214 | şehir kenar kümeleri | |
+| 8y | World1453 "gate8y" + kendi barikatları | 104 | World1453 rıhtım/depo kümeleri | kendi Dressing'inde fıçı/sandık yok (gabion, perde = oynanış) |
+| 17o | World1453 + kendi Dressing `_c_crates/_c_barrels/_c_barrel_pile` | 130 | kenar donatısı | |
+| 18, 18b | World1453 "horn_bridge" + kendi Dressing | 96 | World1453 kümeleri (oyun alanından yüzlerce m uzakta) | bölümün kendi fıçıları `dd.cyl` (birleşik) → kayıt yok |
+| 20 | SurSetSahne | 85 | 16 ordugâh (siege_field kampı, z≈150) + ~69 sur yolu stauroma fıçısı (dış sur yolu, y≈8,6) | gedik ve depo fıçıları oynanış → kayıt yok |
+| 26 | LandWalls + SiegeField | 96 (varsayılan çeşitte 233: World1453 de kuruluyor) | sur içi meydan kümeleri (ör. 9,0.4,−49), ordugâh | barikat ve depo oynanış → kayıt yok |
+| 28o | SurSetSahne | 89 | Bölüm 20 ile aynı (ordugâh + sur yolu) | |
+| 29 | SeaWalls | 96 | | güverte fıçısı oynanış |
 
 ## Düşen / atılan eşya yerleri (madde 4)
 
