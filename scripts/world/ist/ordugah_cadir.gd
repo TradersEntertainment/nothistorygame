@@ -43,7 +43,9 @@ static func mesh(kind: String) -> ArrayMesh:
 		k = k.substr(5)
 	var o := _tur(k, lod)
 	_bez.clear()
-	_bez_izle = lod == 0
+	# TUR-13: orta katman (lod 1) çadır kumaşı da nefes alır (tur 12'de yalnız yakın); gölgelendiricinin LOD'u 55–110 m'de
+	# söndürür. Uzak (pişmiş hücre ağı) sabit kalır.
+	_bez_izle = lod <= 1
 	if k == "barinak":
 		_barinak(b, lod)
 	else:
@@ -52,7 +54,7 @@ static func mesh(kind: String) -> ArrayMesh:
 			_sayeban(b, o, lod)
 	_bez_izle = false
 	var m: ArrayMesh
-	if lod == 0 and not _bez.is_empty():
+	if lod <= 1 and not _bez.is_empty():
 		m = _nefesli_ag(b)
 	else:
 		m = K.bld_mesh(b)

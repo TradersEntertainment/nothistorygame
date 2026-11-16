@@ -752,7 +752,7 @@ static func _ic_poterna_oyuk(root: Node3D, d: Dictionary, px: float, stone: Colo
 	rng.seed = int(px * 31.0) + 13
 	var ton := func() -> Color:
 		var t := rng.randf_range(0.84, 1.0)
-		return Color(t, t * 0.975, t * 0.94)
+		return Color(t, t * 0.975, t * 0.94, KESME_A)
 	# söve taşları (iki yanda, dönüşümlü uzun/kısa: köşe örgüsü), hem yüzde hem oyuğun yan yüzünde (söve derinliği)
 	var y := -0.12
 	var k := 0
@@ -804,27 +804,26 @@ static func _ic_poterna_oyuk(root: Node3D, d: Dictionary, px: float, stone: Colo
 		var m := (a0 + a1) * 0.5
 		ag.quad(Vector3(px + cos(a0) * r, hs + sin(a0) * r, zi1 - IC_PO_TIMP), Vector3(px + cos(a1) * r, hs + sin(a1) * r, zi1 - IC_PO_TIMP),
 			Vector3(px + cos(a1) * r, hs + sin(a1) * r, zi1 - D), Vector3(px + cos(a0) * r, hs + sin(a0) * r, zi1 - D),
-			Vector3(-cos(m), -sin(m), 0), Color(0.62, 0.6, 0.56))
+			Vector3(-cos(m), -sin(m), 0), Color(0.62, 0.6, 0.56, KESME_A))
 	# lünet: kemerin altında, kanadın üstünde taş alınlık (yarım daire, yüzden 0,30 m içeride); altında söve başlığı (lento)
 	for i in nt:
 		var a0 := PI * float(i) / nt
 		var a1 := PI * float(i + 1) / nt
 		ag.tri(Vector3(px, hs, zi1 - IC_PO_TIMP), Vector3(px + cos(a0) * r, hs + sin(a0) * r, zi1 - IC_PO_TIMP),
-			Vector3(px + cos(a1) * r, hs + sin(a1) * r, zi1 - IC_PO_TIMP), Vector3.BACK, Color(0.84, 0.81, 0.76))
-	ag.kutu(Vector3(px, hs - 0.16, zi1 - IC_PO_TIMP - 0.02), Vector3.RIGHT, Vector3.BACK, w - 0.016, 0.16, 0.05, Color(0.92, 0.89, 0.84), true)
-	# kesme taş (söve/kemer): sur taşı gölgelendiricisine DÖNÜŞMEYEN düz taş malzemesi ("ashlar" deseni değil: duvarın
-	# taş sıraları kama taşlarının üstünden geçip onları duvara gömüyordu); tonu taş taş köşe renginde, derz = taşlar arası
-	# boşlukta görünen duvar
+			Vector3(px + cos(a1) * r, hs + sin(a1) * r, zi1 - IC_PO_TIMP), Vector3.BACK, Color(0.84, 0.81, 0.76, KESME_A))
+	ag.kutu(Vector3(px, hs - 0.16, zi1 - IC_PO_TIMP - 0.02), Vector3.RIGHT, Vector3.BACK, w - 0.016, 0.16, 0.05, Color(0.92, 0.89, 0.84, KESME_A), true)
+	# kesme taş (söve/kemer): sur taşı gölgelendiricisinin TEK TAŞ yolu (köşe alfası 0,8 = harpuşta: derzsiz, dane, liken;
+	# gece payı duvarla aynı). "ashlar" deseni değil: duvarın taş sıraları kama taşlarının üstünden geçip onları duvara
+	# gömüyordu; düz malzemede de gece duvar kararırken taşlar açık kalıyordu (aynı ressam değil). Derz = taşlar arası
+	# boşlukta görünen duvar.
 	ag.mesh_ekle(root, _kesme_tas_mat(), "Tas_IcPoternaKemer")
 
 
-static var _kesme_mat: StandardMaterial3D
+## Kesme taş malzemesi (iç poterna söve/kemer/eşik): sur taşı gölgelendiricisi; köşe alfası 0,8 verilmeli (KESME_A)
+const KESME_A := 0.8
 
-static func _kesme_tas_mat() -> StandardMaterial3D:
-	if _kesme_mat == null:
-		_kesme_mat = Props.mat(Color("958c7b"), 0.0, false, "")
-		_kesme_mat.vertex_color_use_as_albedo = true
-	return _kesme_mat
+static func _kesme_tas_mat() -> Material:
+	return (load("res://scripts/world/ist/sur_doku.gd") as GDScript).call("mat", 0, Color.WHITE, true)
 
 
 ## TUR-7: orta/uzak katman korkuluğu: iç ve dış surun iki kenarında 1,2 m korkuluk + 1,0 m'lik dişler (2,0 m adım).

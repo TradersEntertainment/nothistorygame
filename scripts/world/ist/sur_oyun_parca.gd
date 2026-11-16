@@ -237,7 +237,7 @@ class Poterna extends Node3D:
 		for k2 in 2:
 			var xa := x - w * 0.5 + 0.01 + k2 * w * 0.5
 			ag.kutu(Vector3(xa + w * 0.25 - 0.01, -0.12, zf - 0.5), Vector3.RIGHT, Vector3.BACK, w * 0.5 - 0.022, 0.08, 0.62,
-				Color(0.86, 0.84, 0.8) if k2 == 0 else Color(0.78, 0.76, 0.72))
+				Color(0.86, 0.84, 0.8, IstSurlar.KESME_A) if k2 == 0 else Color(0.78, 0.76, 0.72, IstSurlar.KESME_A))
 		ag.mesh_ekle(self, IstSurlar._kesme_tas_mat(), "Tas_PoternaEsikTasi")
 		# karanlık geçit: kanadın ardında yan yüzler ve tavan içeri doğru kararır, dipte koyu yüz, tabanda koyu toprak
 		var kag0 = KULE.Ag.new()
