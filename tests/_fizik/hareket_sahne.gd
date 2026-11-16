@@ -290,6 +290,60 @@ func _olc() -> void:
 	print("HAREKETOLC tirmanma_sn %.2f durum=%s y=%.2f nefes=%.2f" % [ct, pl.traversal.state, pl.global_position.y, pl.traversal.stamina])
 	_birak()
 	pl.disable_climb()
+	await _menzil()
+
+
+## Menzil (kare hizasından bağımsız): 30 m yükseklikte dam; koşarak kenardan zıplanır, yol kalkış noktasından ölçülür
+## (kalkış hizasının dh altına inene dek, ara değerli). coyote: kenardan zıplamadan çıkıp k kare sonra zıplanır, yol
+## zeminden ayrılınan noktadan. ÖNCE = SONRA ve coyote ≤ kenar beklenir.
+func _menzil() -> void:
+	var dam := _blok(Vector3(4, 1, 20), Vector3(60, 29.5, 10), Color("9c6b4e"), false)
+	for kip in ["kenar", "coyote3", "coyote6"]:
+		var yollar := []
+		await _tp(Vector3(60, 30.05, 12.0), 0.0)
+		Input.action_press("sprint")
+		Input.action_press("move_forward")
+		var k0 := -1
+		var z0 := 0.0
+		var y0 := 0.0
+		var iz: Array = []
+		for i in 400:
+			await get_tree().physics_frame
+			var p := pl.global_position
+			if k0 < 0:
+				if kip == "kenar" and p.z < 1.0 and pl.is_on_floor():
+					await _zipla()
+					k0 = i
+					z0 = p.z
+					y0 = p.y
+				elif kip != "kenar" and not pl.is_on_floor() and p.z < 2.0:
+					k0 = i
+					z0 = p.z
+					y0 = p.y
+			elif kip != "kenar" and i == k0 + int(kip.trim_prefix("coyote")):
+				await _zipla()
+			if k0 >= 0:
+				iz.append(p)
+			if p.y < 20.0:
+				break
+		var tepe_i := 0
+		for j in iz.size():
+			if (iz[j] as Vector3).y > (iz[tepe_i] as Vector3).y:
+				tepe_i = j
+		for dh in [0.0, 1.0, 2.4, 3.4, 5.8]:
+			var hy: float = y0 - float(dh)
+			var yol := -1.0
+			for j in range(maxi(tepe_i, 1), iz.size()):
+				var a: Vector3 = iz[j - 1]
+				var b: Vector3 = iz[j]
+				if a.y >= hy and b.y < hy:
+					var f: float = (a.y - hy) / maxf(a.y - b.y, 0.0001)
+					yol = z0 - lerpf(a.z, b.z, f)
+					break
+			yollar.append("dh%.1f=%.2f" % [dh, yol])
+		print("HAREKETOLC menzil_%s %s" % [kip, " ".join(yollar)])
+		_birak()
+	dam.queue_free()
 
 
 # ---------------------------------------------------------------- kareler

@@ -498,6 +498,7 @@ func _physics_process(delta: float) -> void:
 ## 20 sn'de bir ve sahneden çıkarken HAREKETBUTCE satırı (tests/_fizik/hareket_butce.sh).
 var _butce := false
 var _butce_us := 0
+var _butce_his_us := 0          # bunun içinde hareket hissinin (HareketHis.adim) payı
 var _butce_kare := 0
 var _butce_t := 0
 
@@ -514,8 +515,8 @@ func _butce_say() -> void:
 
 func _butce_yaz() -> void:
 	if _butce_kare > 0:
-		print("HAREKETBUTCE sahne=%s kare=%d ms_kare=%.4f" % [get_tree().current_scene.scene_file_path.get_file() if get_tree() and get_tree().current_scene else "?",
-			_butce_kare, _butce_us / 1000.0 / _butce_kare])
+		print("HAREKETBUTCE sahne=%s kare=%d ms_kare=%.4f his_ms_kare=%.4f" % [get_tree().current_scene.scene_file_path.get_file() if get_tree() and get_tree().current_scene else "?",
+			_butce_kare, _butce_us / 1000.0 / _butce_kare, _butce_his_us / 1000.0 / _butce_kare])
 
 
 func _exit_tree() -> void:
@@ -962,7 +963,12 @@ func _after_move(delta: float) -> void:
 	if int(_bob * 2.0 / PI) != step_before and is_on_floor() and horiz > 0.5:
 		Audio.step(step_voice if step_voice != "" else hand_style)
 		his.adim_sesi()
-	his.adim(delta, horiz)
+	if _butce:
+		var th := Time.get_ticks_usec()
+		his.adim(delta, horiz)
+		_butce_his_us += Time.get_ticks_usec() - th
+	else:
+		his.adim(delta, horiz)
 	var sw := 1.0 if GameState.settings.get("sway", true) else 0.0      # erişilebilirlik: sallanma kapalı
 	var y := eye_height + sin(_bob * 2.0) * 0.03 * clampf(horiz / WALK, 0.0, 1.0) * sw
 	_cam_dy = lerpf(_cam_dy, 0.0, clampf(delta * 14.0, 0.0, 1.0))

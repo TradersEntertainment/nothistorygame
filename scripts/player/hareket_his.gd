@@ -23,6 +23,7 @@ var _yerde := false
 var _hava_tepe := -INF
 var _hava_t := 0.0
 var _son_y := INF
+var _son_xz := Vector2.INF
 var _vy := 0.0                    # konumdan ölçülen dikey hız (ara sahne tween'leri de sayılır)
 var _hava_k := 0.0                # 0..1 havada kolların açıklığı
 var _kosu_k := 0.0
@@ -39,6 +40,7 @@ var _cok_hedef := 0.0
 var _cok_tut := 0.0
 var _nefes_k := 0.0              # tırmanırken yorgunluk 0..1 (Traversal verir): göz hizası nefesle iner kalkar
 var _nefes_faz := 0.0
+var _kamera := true
 var _ofs := Vector3.ZERO          # kameranın yerel konum ofseti (merdiven tepesi, kenardan çıkış: sıçramadan yetişir)
 # Düşüş
 var _dusus_t := 0.0
@@ -107,12 +109,21 @@ func _g() -> float:
 ## Kameranın y ofseti (çökme), yerel konum ofseti ve yatış (rad) döner; Player kamerayı yazarken ekler.
 func adim(delta: float, horiz: float) -> void:
 	var kamera := acik()
+	_kamera = kamera
 	var y := p.global_position.y
+	var xz := Vector2(p.global_position.x, p.global_position.z)
+	if _son_xz != Vector2.INF and xz.distance_to(_son_xz) > 1.5:
+		_son_y = INF                     # ışınlanma: zıplama/düşüş kayıtları yeniden başlar
+		_zipla_y0 = INF
+		_zipla_xz = Vector2.INF
+	_son_xz = xz
 	if _son_y != INF and absf(y - _son_y) < 3.0:
 		_vy = lerpf(_vy, (y - _son_y) / maxf(delta, 0.0001), clampf(delta * 30.0, 0.0, 1.0))
 	else:
 		_vy = 0.0          # ışınlanma: havadaki tepe de yeniden başlar
 		_hava_tepe = y
+		_zipla_y0 = INF
+		_zipla_xz = Vector2.INF
 	_son_y = y
 	_ay_cool = maxf(0.0, _ay_cool - delta)
 	var serbest := not p.frozen and not p.pinned and p.ladder == null and not p.floating and p.gravity_on \
@@ -177,7 +188,7 @@ func adim(delta: float, horiz: float) -> void:
 	_fov(delta, kamera)
 	_egil(delta, kamera, serbest)
 	# Yatış: dönüş hızına ve yana yürümeye göre
-	var yaw := p.global_rotation.y
+	var yaw := p.rotation.y            # oyuncu sahne kökünde ya da dönmeyen bir düğümde; yalnız değişim hızı gerekir
 	var dyaw := 0.0
 	if _son_yaw != INF:
 		dyaw = wrapf(yaw - _son_yaw, -PI, PI) / maxf(delta, 0.0001)
@@ -186,7 +197,7 @@ func adim(delta: float, horiz: float) -> void:
 	_son_yaw = yaw
 	var hedef_yatis := 0.0
 	if kamera and serbest and yerde and horiz > 1.0:
-		var yan := p.velocity.dot(p.global_transform.basis.x) / maxf(horiz, 0.001)
+		var yan := p.velocity.dot(p.transform.basis.x) / maxf(horiz, 0.001)
 		hedef_yatis = clampf(-dyaw * 0.012 * clampf(horiz / Player.RUN, 0.0, 1.0), -1.0, 1.0) * deg_to_rad(YATIS_DONUS) \
 			- yan * deg_to_rad(YATIS_YAN) * clampf(horiz / Player.WALK, 0.0, 1.0)
 	_yatis = lerpf(_yatis, hedef_yatis, clampf(delta * 6.0, 0.0, 1.0))
@@ -212,7 +223,7 @@ func adim(delta: float, horiz: float) -> void:
 
 
 func kamera_y() -> float:
-	if _nefes_k > 0.0 and acik():
+	if _nefes_k > 0.0 and _kamera:
 		return _cok + sin(_nefes_faz) * 0.012 * _nefes_k
 	return _cok
 

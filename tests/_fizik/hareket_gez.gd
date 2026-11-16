@@ -3,7 +3,8 @@ extends Node
 ##   --hareket-kare=<klasör>          kareler buraya
 ##   --hareket-kare-on=ONCE|SONRA     dosya adı eki
 ##   --hareket-kare-tetik=flail|kuyu  flail: oyuncunun kolları uzun savrulunca (Bölüm 2 kızaktan uçuş, flail ≥ 1,0 sn);
-##                                    kuyu: Bölüm 44b — avluda kuyuya kendisi "basar", ip kopunca (hızlı iniş) çeker
+##                                    kuyu: Bölüm 44b (--autotest ile açın) — avluda otomatik testi kapatır, kuyuya
+##                                    kendisi "basar", ip kopunca (hızlı iniş) çeker
 ##   --hareket-kare-n=8 --hareket-kare-ara=0.1
 ## Satır: HAREKETKARE <ad> <on> ; sonra oyunu kapatır.
 
@@ -17,6 +18,9 @@ var _mesgul := false
 var _son_y := INF
 var _kuyu_basti := false
 var _hizli := 0
+var _dbg_t := 0.0
+var _ilk_y := INF
+var _durgun := 0.0
 
 
 func _ready() -> void:
@@ -33,8 +37,6 @@ func _ready() -> void:
 		elif a.begins_with("--hareket-kare-ara="):
 			ara = float(a.trim_prefix("--hareket-kare-ara="))
 	DirAccess.make_dir_recursive_absolute(dir)
-	if tetik == "kuyu":
-		Engine.time_scale = 3.0          # avlu konuşmaları hızlı geçsin (yazılım çiziminde saniyede ~1 kare)
 
 
 func _physics_process(delta: float) -> void:
@@ -45,15 +47,35 @@ func _physics_process(delta: float) -> void:
 	if sc == null or p == null:
 		return
 	var ad := sc.scene_file_path.get_file().get_basename()
+	_dbg_t += delta
+	if _dbg_t > 5.0:
+		_dbg_t = 0.0
+		print("HAREKETGEZ t=%d faz=%s y=%.2f" % [Time.get_ticks_msec() / 1000, str(sc.get("phase")), p.global_position.y])
 	match tetik:
 		"flail":
 			if p._flail_t >= 1.0:
 				_cek(ad + "_ucus")
 		"kuyu":
-			if not _kuyu_basti and str(sc.get("phase")) == "yard":
+			if not _kuyu_basti and str(sc.get("phase")) in ["yard", "descend"]:
+				# --autotest ile açılır (menüsüz, avlu konuşmaları hızlı); kuyuya inerken otomatik test kapanır: iniş ve
+				# düşüş oyundaki gerçek süreleriyle oynar (otomatik testte düşüş 0,05 sn)
 				_kuyu_basti = true
-				sc.call("_on_interact", "well")
+				GameState.autotest = false
+				Engine.time_scale = 1.0
+				if str(sc.get("phase")) == "yard":
+					sc.call("_on_interact", "well")
 			var y := p.global_position.y
+			# İp inişi bitti (gövde durdu, replik sürüyor): kopuştan önce ağır çekime geç; yazılım çiziminde 0,75 sn'lik
+			# düşüş yoksa tek karede biterdi
+			if str(sc.get("phase")) == "descend":
+				if _ilk_y == INF:
+					_ilk_y = y
+				if _son_y != INF and absf(_son_y - y) < 0.0005 and _ilk_y - y > 2.0:
+					_durgun += delta
+					if _durgun > 0.3 and Engine.time_scale > 0.05:
+						Engine.time_scale = 0.04
+				else:
+					_durgun = 0.0
 			# Işınlanma (avludan kuyunun içine) sayılmaz: karede 1 m'den az, iki ardışık karede > 3 m/sn iniş (ip kopunca)
 			var hiz := (_son_y - y) / maxf(delta, 0.001) if _son_y != INF and absf(_son_y - y) < 1.0 else 0.0
 			_hizli = _hizli + 1 if hiz > 3.0 and str(sc.get("phase")) == "descend" else 0
