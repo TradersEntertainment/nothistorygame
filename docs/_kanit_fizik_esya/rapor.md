@@ -179,7 +179,20 @@ alanındaydı (uyanık 0).
 - `tests/_ist/sur_sozlesme.tscn` → `SURSOZLESME PASS kalem=13 kesim=8`
 - `tests/_ist/sur_oyun_denetim.tscn` → `SUROYUN nokta=519 havada=0 gomuk=0 katida=0`
 - `tests/_ist/sur_oyun_yuru.tscn` → `WALKTHRU OZET yol=7 tamam=7 takilma=0 dusme=0`
-- Bölümler (`--max-fps 20`, tam süzgeç): sonuçlar aşağıdaki "Son regresyon" bölümünde.
+- Bölümler (`--max-fps 20`, tam süzgeç `AUTOTEST (PASS|FAIL)|SCRIPT ERROR|VISAUDIT|WALKTHRU|HELDAUDIT|ARMAUDIT|WARN_FX|
+  WARN_FLY|WARN_VOID|ESYAAUDIT`): **31/31 PASS**. Hiçbir koşuda süzgeçten sorun satırı çıkmadı; `ESYAAUDIT` yalnız OZET,
+  hepsinde `sorun=0`.
+
+| Koşu | Sonuç | Kayıt | Uyanan (oyunun kendi akışında) |
+|---|---|---|---|
+| 20 varsayılan, tape, late, hit, lose, niko_idle, idle, --difficulty=0, --difficulty=2 | 9/9 PASS | 85 | 0–5 (gülle patlaması sur yolu fıçılarını uyandırdı), sorun 0 |
+| 26 hold, hold_box ×3, varsayılan | 5/5 PASS | 96 / 233 | 0 |
+| 0 | PASS | 69 | 0 |
+| 6 varsayılan, b, c, y, letter, byz, byzmistake, byzfail, byzclimb, byzgive | 10/10 PASS | 102 / 214 | 0 |
+| 8y, 17o, 18, 18b, 28o, 29 | 6/6 PASS | 104, 130, 96, 96, 89, 96 | 0 |
+
+Önceki Bölüm 20 `--difficulty=0` koşusunda bir kez görülen `VISAUDIT personhidden` (Giustiniani konuşmacısı) son koşuda
+çıkmadı. Fizikle ilgisi yok (o koşuda uyanan eşya 0); tabanda da çıkıp çıkmadığını ayrıca sınamadım.
 
 ## Kalanlar
 
