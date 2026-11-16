@@ -1,0 +1,10 @@
+YIGPERF kare=202 proc_ms=57.416 yig_us=0.0 aktif=0.00 en_aktif=0 en_us=0 en_proc_ms=0.00 en_pay=0.0000 etkin=true
+AYAKAUDIT uzak scene=chapter37o.tscn who=Person/@Node3D@22764(@Node3D@21936) ayak=R fark=+0.07 d=27.0 at=(-0.6, 0.3, 8.2) durum=yuru act= ik=w1.0/m2/pel-0.03/g1/gy+0.05/zemin+0.05
+YIGPERF kare=200 proc_ms=28.912 yig_us=0.0 aktif=0.00 en_aktif=0 en_us=0 en_proc_ms=0.00 en_pay=0.0000 etkin=true
+YIGPERF kare=201 proc_ms=21.120 yig_us=0.0 aktif=0.00 en_aktif=0 en_us=0 en_proc_ms=0.00 en_pay=0.0000 etkin=true
+YIGPERF kare=201 proc_ms=24.943 yig_us=0.0 aktif=0.00 en_aktif=0 en_us=0 en_proc_ms=0.00 en_pay=0.0000 etkin=true
+YIGILMAAUDIT fizik scene=Chapter37o who=Person/@Node3D@24998(@Node3D@24999) at=(-2.6, 0.2, 16.5) govde=+0.34
+YIGPERF kare=200 proc_ms=51.672 yig_us=186.3 aktif=0.73 en_aktif=2 en_us=868 en_proc_ms=58.14 en_pay=0.0883 etkin=true
+POSEAUDIT tilt @Node3D@20986 90  (Chapter37o/@Node3D@26529)
+YIGPERF kare=200 proc_ms=35.510 yig_us=16.7 aktif=0.05 en_aktif=1 en_us=425 en_proc_ms=60.44 en_pay=0.0101 etkin=true
+AUTOTEST PASS chapter=37o variant=trespass outcome=37O.1 beats=13/16 arrows=0 falls=0 barrels=5/5 cuts=0 stones=0 slips=0 burns=0 duel=true caught=1 sur=yeni

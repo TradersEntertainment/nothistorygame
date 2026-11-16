@@ -494,9 +494,10 @@ func _adim() -> void:
 		if _cirpin_t <= 0.0:
 			_cirpin_t = _rng.randf_range(0.12, 0.22)
 			_cirpin = Vector3(_rng.randf_range(-1, 1), _rng.randf_range(-0.3, 1.0), _rng.randf_range(-1, 1)).normalized()
+	var vmax := 0.8 if dusus else 0.25     # adım başına (24 / 7,5 m/sn): gömük başlangıçtan fırlama olmasın
 	for i in N:
 		var cur := p[i]
-		var v := (cur - o[i]) * 0.995
+		var v := ((cur - o[i]) * 0.995).limit_length(vmax)
 		var a := g
 		if cirpin and i >= DSL:
 			var s := 1.0 if (i == DSL or i == ELL) else -1.0
@@ -620,12 +621,12 @@ func _temas_coz() -> void:
 			var dh := a_h * lam
 			p[SL].y += ds
 			p[SR].y += ds
-			o[SL].y += ds * 0.7
-			o[SR].y += ds * 0.7
+			o[SL].y += ds
+			o[SR].y += ds
 			p[HL].y += dh
 			p[HR].y += dh
-			o[HL].y += dh * 0.7
-			o[HR].y += dh * 0.7
+			o[HL].y += dh
+			o[HR].y += dh
 			if a_s > 0.25:
 				_temas[SL] = 1
 				_temas[SR] = 1

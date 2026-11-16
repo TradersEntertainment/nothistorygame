@@ -1,0 +1,3 @@
+YIGPERF kare=192 proc_ms=99.838 yig_us=114.7 aktif=0.43 en_aktif=2 en_us=799 en_proc_ms=198.17 en_pay=0.0445 etkin=true
+YIGPERF kare=200 proc_ms=46.987 yig_us=324.5 aktif=1.09 en_aktif=3 en_us=1074 en_proc_ms=44.51 en_pay=0.0379 etkin=true
+AUTOTEST PASS chapter=20 variant=tape outcome=20.2 repair=10 knocks=0 arrows=true gun=3/4 gunner=4/4 niko=0 sur=yeni

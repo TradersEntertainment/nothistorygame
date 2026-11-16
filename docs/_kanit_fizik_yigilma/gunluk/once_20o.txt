@@ -1,0 +1,8 @@
+YIGPERF kare=200 proc_ms=88.972 yig_us=0.0 aktif=0.00 en_aktif=0 en_us=0 en_proc_ms=0.00 en_pay=0.0000 etkin=false
+YIGILMAAUDIT klip scene=Chapter20o who=Person/@Node3D@24358(@Node3D@24359) at=(-2.5, 0.1, 16.9) govde=+0.39 el_l=+1.47 el_r=-0.61 ayak_l=+0.46 ayak_r=+0.37
+YIGILMAAUDIT klip scene=Chapter20o who=Person/@Node3D@24503(@Node3D@24504) at=(1.1, 0.3, 18.1) el_l=+0.10 el_r=+0.29 ayak_l=+0.26 ayak_r=+0.36
+YIGPERF kare=201 proc_ms=30.548 yig_us=0.0 aktif=0.00 en_aktif=0 en_us=0 en_proc_ms=0.00 en_pay=0.0000 etkin=false
+YIGILMAAUDIT klip scene=Chapter20o who=Person/@Node3D@25032(@Node3D@25033) at=(0.5, 1.3, 16.2) bas=+0.18 el_l=+0.14 el_r=+0.22 ayak_l=+0.16 ayak_r=+0.16
+YIGILMAAUDIT klip scene=Chapter20o who=Person/@Node3D@25170(@Node3D@25171) at=(-0.4, 0.0, 18.9) bas=+0.44 govde=+0.17 el_l=+0.37 el_r=+0.64 ayak_l=+0.13 ayak_r=+0.14
+YIGILMAAUDIT klip scene=Chapter20o who=Person/@Node3D@24891(@Node3D@24892) at=(1.7, 1.1, 16.1) govde=-0.08 ayak_l=+0.11 ayak_r=+0.15
+AUTOTEST PASS chapter=20o variant= outcome=20O.1 hits=3 cracks=0 gun=3/4 gunner=2/2 duel=true bed= sur=yeni
