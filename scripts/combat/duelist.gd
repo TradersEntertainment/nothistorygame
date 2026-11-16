@@ -386,6 +386,7 @@ func knock_down(push: Vector3) -> void:
 		anim.body_amount = 1.0      # yerde gövde tam yatar (0,7'de göğüs yerden 30° kalkık, havada kalıyordu)
 		anim.play("Hit_Knockback", 1.0, false)
 	_shield_knock()
+	Yigilma.kare(self, "tekme")
 	# Bez bebek: geriye savrulup yere yığılır (kök _kb ile kayar: kenardan düşüş ve oynanış aynı), sonra kalkar (_yig_kalk)
 	if Yigilma.etkin and body and body.rig:
 		var y := Yigilma.baslat(body, {"itme": push * 0.3 + Vector3(0, 0.6, 0), "h": 1.1, "v0": push * 0.45, "kalk": true,
@@ -503,6 +504,8 @@ func collapse(clip := "Death01", from := 0.0, speed := 1.25) -> void:
 	if _settled:
 		return
 	_final_clip = clip
+	if _yig == null or not is_instance_valid(_yig):
+		Yigilma.kare(self, "bitirici" if finishing or clip == "Hit_Knockback" else "olum")
 	if _yig_olum():
 		return
 	if anim == null:
@@ -1205,6 +1208,7 @@ func fall_off(dir: Vector3, over := false) -> void:
 		anim.play("Hit_Knockback", 0.7, false)
 	Audio.sfx_at("fall_scream", self, 2.0)
 	Audio.sfx_at("whoosh_fly", self, -6.0)
+	Yigilma.kare(self, "dusus")
 	if by_player:
 		GameState.bump_stat("thrown_off")
 		GameState.combat_add("thrown")

@@ -599,7 +599,7 @@ func _climber_step(c: Dictionary, s: Soldier, delta: float) -> void:
 				fca.release(true, "fall")
 				s.position = c.get("lp", s.position)
 			if float(c["fall"]) == 0.0:
-				YIG.baslat(s, {"dusus": true, "kok": s, "itme": -s.global_basis.z * 1.0, "h": 1.4, "donus": -1.6})   # bez bebek (scripts/npc/yigilma.gd)
+				YIG.baslat(s, {"dusus": true, "kok": s, "itme": -s.global_basis.z * 1.0, "h": 1.4, "donus": -1.6, "kare": "merdiven", "lod": 30.0, "sure": 1.4})   # bez bebek (scripts/npc/yigilma.gd)
 			c["fall"] = float(c["fall"]) + delta
 			var f: float = c["fall"]
 			var gy := ground_y(s.position.x, s.position.z)

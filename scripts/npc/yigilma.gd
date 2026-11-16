@@ -23,10 +23,10 @@ static var _aktif: Array = []
 const AZAMI := 8
 const DT := 1.0 / 30.0
 const ADIM_AZAMI := 2
-const YINELE := 4
+const YINELE := 3
 const HUCRE := 0.25
 ## Kare başına en çok bu kadar yeni zemin ışını (bütün yığılanlar için); bilinmeyen hücrede parçacığın son zemini
-const ISIN_KARE := 14
+const ISIN_KARE := 10
 static var _isin_kare := -1
 static var _isin_kalan := 0
 const YERCEKIMI := 13.0
@@ -106,6 +106,7 @@ var _havada := false
 var _kok_son := Vector3.ZERO
 var _kok_v := Vector3.ZERO
 var _kok_dustu := false
+var _kok_dur := 0
 var _g := YERCEKIMI
 var olcum_us := 0                  # bu örneğin toplam işlem süresi (µs)
 static var toplam_us := 0          # bütün örneklerin (YIGILMAPERF)
@@ -170,6 +171,17 @@ static func baslat(ch: Node3D, sec := {}) -> Node:
 			or (rg as Rig).knee_l == null or (rg as Rig).knee_r == null or (rg as Rig).arm_l == null or (rg as Rig).arm_r == null \
 			or (rg as Rig).elbow_l == null or (rg as Rig).elbow_r == null or (rg as Rig).head == null:
 		return null
+	# Sınır: aynı anda en çok AZAMI kişi (fazlası eski yoldan); "lod": yalnız kameranın yakınında ve görüşündeyse
+	_aktif = _aktif.filter(func(x): return is_instance_valid(x))
+	if _aktif.size() >= AZAMI:
+		return null
+	if sec.has("lod"):
+		var cam := ch.get_viewport().get_camera_3d()
+		var at := ch.global_position + Vector3(0, 1.0, 0)
+		if cam == null or cam.global_position.distance_to(at) > float(sec["lod"]) or not cam.is_position_in_frustum(at):
+			return null
+	if sec.has("kare"):
+		kare(ch, str(sec["kare"]))
 	var eski := of(ch)
 	if eski:
 		eski.call("birak", false)
@@ -404,6 +416,12 @@ func _kok_izle(delta: float) -> void:
 			_kok_v = v
 		elif _kok_dustu and v.y > -0.3:
 			indi()
+		elif absf(v.y) < 0.05 and t > 0.25:
+			_kok_dur += 1
+			if _kok_dur >= 3:
+				indi()
+		else:
+			_kok_dur = 0
 
 
 ## Kök yere indi: yerçekimi ve zemin başlar; parçacıklar kökün son hızını alır. Izgara buradan yeniden kurulur.
@@ -770,7 +788,11 @@ func _isin0(from: Vector3, derin: float, icten: bool) -> float:
 				continue
 			return NAN
 		if (hit["normal"] as Vector3) == Vector3.ZERO:
-			return from.y
+			# İçinden başlanan: görünen katıysa duvar; görünmez gövde (yeni setin "her katı" sınırı, hacim) atlanır
+			if Unclip.standable(col, int(hit.get("shape", 0))):
+				return from.y
+			q.exclude = q.exclude + [(col as CollisionObject3D).get_rid()]
+			continue
 		return (hit["position"] as Vector3).y
 	return NAN
 
@@ -996,6 +1018,7 @@ func birak(geri_kur := true) -> void:
 ## Tüfekle vurulan asker/kişi: atıcıdan uzağa geriye yığılır (bez bebek); eski devrilmenin süresi kadar (0,45 + 2 sn)
 ## yatar, sonra gizlenir (oynanış aynı). Yığılma kapalıysa Handgun'ın eski devrilmesi birebir.
 static func vuruldu(ch: Node3D, from: Vector3) -> void:
+	kare(ch, "tufek")
 	var rg = ch.get("rig")
 	if rg is Rig:
 		(rg as Rig).set("activity", "fall")
@@ -1023,6 +1046,48 @@ static func vuruldu(ch: Node3D, from: Vector3) -> void:
 	tw2.tween_property(ch, "rotation", (Basis(axis, deg_to_rad(85.0) * sgn) * ch.global_transform.basis).get_euler(), 0.45).set_ease(Tween.EASE_IN)
 	tw2.tween_interval(2.0)
 	tw2.tween_property(ch, "visible", false, 0.0)
+
+
+# ---------------------------------------------------------------- kanıt kareleri (`--yig-kare=klasör`, pencereli)
+
+static var kare_dir := ""
+static var _kare_say := {}
+const KARE_ANLAR := [0.0, 0.2, 0.45, 0.8, 1.3, 2.4]
+
+## Oyuncu kamerasından yığılmanın 6 anı (yalnız kameranın 14 m içinde ve görüşte olan; tür başına en çok 2 dizi).
+## ÖNCE (klip yolu) ve SONRA aynı yerden çağrılır.
+static func kare(ch: Node3D, tur: String) -> void:
+	if kare_dir == "":
+		for a in OS.get_cmdline_user_args():
+			if a.begins_with("--yig-kare="):
+				kare_dir = a.trim_prefix("--yig-kare=")
+		if kare_dir == "":
+			kare_dir = "-"
+	if kare_dir == "-" or ch == null or not ch.is_inside_tree():
+		return
+	var cam := ch.get_viewport().get_camera_3d()
+	if cam == null:
+		return
+	var at := ch.global_position + Vector3(0, 0.8, 0)
+	if cam.global_position.distance_to(at) > 14.0 or not cam.is_position_in_frustum(at):
+		return
+	var n: int = _kare_say.get(tur, 0)
+	if n >= 2:
+		return
+	_kare_say[tur] = n + 1
+	DirAccess.make_dir_recursive_absolute(kare_dir)
+	var sc := ch.get_tree().current_scene
+	var ad := "%s_%s_%d" % [sc.name if sc else "x", tur, n]
+	var tree := ch.get_tree()
+	var t0 := Time.get_ticks_msec()
+	for k in KARE_ANLAR.size():
+		var hedef: float = KARE_ANLAR[k]
+		while (Time.get_ticks_msec() - t0) / 1000.0 * Engine.time_scale < hedef:
+			await tree.process_frame
+		await RenderingServer.frame_post_draw
+		var img := tree.root.get_texture().get_image()
+		img.save_jpg(kare_dir.path_join("%s_%d.jpg" % [ad, k]), 0.85)
+	print("YIGKARE %s at=%s" % [ad, ch.global_position.snapped(Vector3.ONE * 0.1)])
 
 
 # ---------------------------------------------------------------- denetim
