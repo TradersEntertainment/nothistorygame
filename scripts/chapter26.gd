@@ -414,7 +414,11 @@ func _build_walls_scene() -> void:
 				# (doğuş (−9,6; 7,2) ile komutan arasındaki görüş çizgisine girmesin: x −8,5'te bitince ucundaki koşan
 				# "D26_G_LADDER"da komutanı örtüyordu, VISAUDIT personhidden)
 				[Vector3(-24.5, 0, 9.6), Vector3(-11.4, 0, 9.6), 1.2, 7, 4, 0],
-				[Vector3(18.0, 0, 5.6), Vector3(30.0, 0, 5.4), 1.6, 5, 3, 0], [Vector3(32.0, 0, 6.6), Vector3(43.0, 0, 6.8), 1.6, 5, 3, 0]]
+				# TAŞIMA-8D: dördüncü şerit z 5,4–5,6 (en 1,6: z 4,7–6,3) ikinci yedek bölüğün (24; 7,4) arka sırasının (z 6,2)
+				# içinden geçiyordu: koşanlar askerleri itiyor, iki asker iç içe kalıyordu (VISAUDIT overlap Squad|Squad
+				# (24,6; 0; 6,0), hold_box). Bölüğün güneyinde, arka sıradan 1,5 m (itme erimi 0,7 + yerinde adım payı); batı
+				# ucu poterna fıçılarının yuvarlandığı yerin (17,95; 3,2) ötesinde
+				[Vector3(21.0, 0, 3.6), Vector3(31.0, 0, 3.6), 1.2, 5, 3, 0], [Vector3(32.0, 0, 6.6), Vector3(43.0, 0, 6.8), 1.6, 5, 3, 0]]
 		for lane: Array in serit:
 			var bx := BattleExtras.new()
 			add_child(bx)
