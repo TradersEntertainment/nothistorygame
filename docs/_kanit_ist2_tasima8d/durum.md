@@ -4,8 +4,8 @@ Dal `wip/ist2-tasima8d` (taban `wip/ist2-taban15` aec59c9f).
 
 | Bulgu | Durum |
 |---|---|
-| 1. 26o tırmanış döngüsü bitmiyor | Kök neden bulundu (tepe çıkışı mazgal eşiğinin üstü, y 10,03 / sur yolu 8,62; bot merdivene geri yürüyüp yeniden tutunuyor). Düzeltme yazıldı (`SurMerdiveni.top_exit` → sur yolu zemini, bot tepede merdivene bakmaz, yedek tek sefer). İlk ölçüm: 26o 5 çeşit ×2 = 10/10 bitti. Geniş ölçüm sürüyor |
-| 2. 26o sur yolu fıçıları geçidi tıkıyor | Kök neden: 26o dekor patlamaları eski koordinatla surun gövdesinde; `_patlama` siper bilmiyordu. Düzeltme: siper kuralı (`_siperde`), 26o patlamaları dış yüze, dar geçitte yavaşlayan gövde duvara yaslanır. Sonda (`tests/_ist/tasima8d_tekme.tscn`) iki esya_fizik kusuru daha buldu ve düzeltildi: uyanan gövde ilk fizik adımında fırlıyordu (donuk başlangıç, itkiler 3. karede), kesişme ayırma (`_kesisme_ayir`). Sonda 26o/20/22/26/37o PASS, ESYATEST PASS |
-| 3. 26 iç içe geçmeler | `SPK_DEFENDER|Duelist`: kök neden öldürme kamerasının gizlediği savunucuyu `Unclip.spread` görmüyor; `_dostlari_dagit` kamera dönünce dağıtır. Squad/chop ölçülüyor |
+| 1. 26o tırmanış döngüsü bitmiyor | Düzeltildi (`SurMerdiveni.top_exit` sur yolu zemini, bot tepede merdivene dönmez, yedek tek sefer, eşik/diş 1,5 sn → bir kez sur yoluna). Gerçek oyuncu sondası `=dis_in/=dis_dur/=esik_dur` PASS. Son doğrulama (26o ×5) sürüyor |
+| 2. 26o sur yolu fıçıları | Düzeltildi (siper kuralı, 26o patlamaları dış yüze, dar geçitte yaslanma; uyanışta donuk ilk adımlar + kesişme ayırma). Tekme sondası 26o/20/22/26/37o PASS |
+| 3. 26 iç içe | Düzeltildi (gizlenip geri gelen kişiler: `_dostlari_dagit` kamera dönünce, kamera bekçisi, göründü-bekçisi; yedek bölükler kargaşanın yolsuz alanında, 4. şerit bölükten çıkarıldı). 26 hold/isidore/hold_box ×8 = 24/24 PASS, denetim 0 |
 
-Not: `TMP8D` satırları geçici tanı satırıdır (son kayıtta kaldırılacak).
+Son doğrulama: sözleşme üçlüsü + ESYATEST + PARSECHECK PASS; 26 öteki çeşitler ×2 + eski set sürüyor; sonra 26o ×5, bağımlı bölümler, menu_return.
