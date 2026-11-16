@@ -1,0 +1,8 @@
+KOSU y30o_a2 args=--chapter=30o --autotest rc=0 sure=52s
+BLAKSET bolum=30o set=yeni
+T9SURE evre=intro sure=0.66 set=yeni
+T9SURE evre=carry sure=7.58 set=yeni
+T9SURE evre=climb sure=14.38 set=yeni
+T9SURE evre=fight sure=24.39 set=yeni
+T9SURE evre=tower sure=10.91 set=yeni
+AUTOTEST PASS chapter=30o variant= outcome=30O.1 stones=4/4 gunner=3/3 tower=true fell=false guards=10 pokes=0 flee=ride pushed=true

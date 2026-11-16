@@ -646,7 +646,7 @@ func _tasima9() -> void:
 			["acilis", Vector3(1.0, Y, 2.2), Vector3(1.0, 2.0, 30.0), 72.0],
 			["sur_yolu_yakin", Vector3(2.5, Y, 2.9), Vector3(8.5, 12.6, 4.4), 72.0],
 			["kule", Vector3(11.0, Y, 2.3), Vector3(20.0, 14.5, 5.0), 72.0],
-			["merdiven", Vector3(3.6, Y, 3.5), Vector3(6.0, 9.0, 8.5), 72.0],
+			["merdiven", Vector3(6.0, Y + 0.3, 4.2), Vector3(6.0, 4.0, 7.8), 72.0],
 			["saray_onu", Vector3(-3.0, Y, 1.0), Vector3(0.0, 7.0, -18.0), 72.0],
 			["gece_genel", Vector3(34.0, 26.0, 46.0), Vector3(0.0, 7.0, 0.0), 60.0],
 			["mazgal_yakin", Vector3(-0.1, Y, 3.4), Vector3(-0.1, 12.9, 4.6), 72.0],

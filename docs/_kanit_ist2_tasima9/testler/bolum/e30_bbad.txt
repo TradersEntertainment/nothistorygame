@@ -1,0 +1,7 @@
+KOSU e30_bbad args=--chapter=30 --autotest=bridge_bad --eskisur rc=0 sure=33s
+BLAKSET bolum=30 set=eski
+T9SURE evre=intro sure=0.47 set=eski
+T9SURE evre=gun sure=11.52 set=eski
+T9SURE evre=ladders sure=11.20 set=eski
+T9SURE evre=duel sure=8.54 set=eski
+AUTOTEST PASS chapter=30 variant=bridge_bad outcome=30.1 gun=3/3 pushed=2 boarders=0 duel=true rifle=3

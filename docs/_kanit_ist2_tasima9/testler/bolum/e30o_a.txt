@@ -1,0 +1,8 @@
+KOSU e30o_a args=--chapter=30o --autotest --eskisur rc=0 sure=53s
+BLAKSET bolum=30o set=eski
+T9SURE evre=intro sure=0.63 set=eski
+T9SURE evre=carry sure=7.57 set=eski
+T9SURE evre=climb sure=14.68 set=eski
+T9SURE evre=fight sure=28.31 set=eski
+T9SURE evre=tower sure=10.87 set=eski
+AUTOTEST PASS chapter=30o variant= outcome=30O.1 stones=4/4 gunner=4/4 tower=true fell=false guards=10 pokes=0 flee=ride pushed=true

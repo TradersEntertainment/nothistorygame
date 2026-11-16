@@ -136,7 +136,8 @@ static func _disler(n: Node3D, x0: float, x1: float, tohum: int, kes: Array, dis
 			if absf(xx - dx) < DIS_EN * 0.5 + 0.3:
 				ac = true
 		for k: Vector2 in kes:
-			if xx + DIS_EN * 0.5 > k.x and xx - DIS_EN * 0.5 < k.y:
+			# 1 cm pay: xx 1,9'luk toplamayla birikir (11,3 → 11,2999); aralığın kenarındaki diş yanlışlıkla atılıyordu
+			if xx + DIS_EN * 0.5 > k.x + 0.01 and xx - DIS_EN * 0.5 < k.y - 0.01:
 				ac = true
 		if not ac and absf(xx) + 0.5 < hx and absf(fposmod(xx * 0.37 + 4.6, 11.0)) >= 0.8:
 			mer.append(Transform3D(Basis.from_scale(Vector3(DIS_EN, 0.6, PT)), Vector3(xx, W + PH + 0.3, Z1 - PT * 0.5)))
@@ -252,11 +253,15 @@ static func birlestir(root: Node3D, ad: String) -> int:
 			q = q.get_parent()
 		if atla or q == null:
 			continue
+		# mekânsal hücre (x 32 m, z iç/dış): birleşik ağ görüşte değilse kesilsin (ilkel bütçesi; tek 130 m'lik ağ her açıda
+		# bütün kuleleri ve gölge geçişlerini çiziyordu)
+		var mc := rel * mi.mesh.get_aabb().get_center()
+		var hucre := "%d|%d" % [floori(mc.x / 32.0), 0 if mc.z < -8.0 else 1]
 		for si in mi.mesh.get_surface_count():
 			var m: Material = mi.get_active_material(si)
 			if m == null:
 				continue
-			var k := "%d|%d" % [m.get_instance_id(), int(mi.cast_shadow)]
+			var k := "%d|%d|%s" % [m.get_instance_id(), int(mi.cast_shadow), hucre]
 			if not gruplar.has(k):
 				var st := SurfaceTool.new()
 				st.begin(Mesh.PRIMITIVE_TRIANGLES)

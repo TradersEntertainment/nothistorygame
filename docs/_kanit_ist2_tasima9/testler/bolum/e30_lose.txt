@@ -1,0 +1,7 @@
+KOSU e30_lose args=--chapter=30 --autotest=lose --eskisur rc=0 sure=38s
+BLAKSET bolum=30 set=eski
+T9SURE evre=intro sure=0.50 set=eski
+T9SURE evre=gun sure=16.21 set=eski
+T9SURE evre=ladders sure=20.55 set=eski
+T9SURE evre=duel sure=13.54 set=eski
+AUTOTEST PASS chapter=30 variant=lose outcome=30.2 gun=3/4 pushed=0 boarders=2 duel=false rifle=4

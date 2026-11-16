@@ -1,0 +1,2 @@
+KOSU s44b args=--chapter=44b --autotest rc=0 sure=45s
+AUTOTEST PASS chapter=44 variant= outcome=44.1 light=phone battery=4.4 bumps=4 hits=0 rescued=false kid=false

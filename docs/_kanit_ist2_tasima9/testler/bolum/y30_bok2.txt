@@ -1,0 +1,7 @@
+KOSU y30_bok2 args=--chapter=30 --autotest=bridge_ok rc=0 sure=37s
+BLAKSET bolum=30 set=yeni
+T9SURE evre=intro sure=0.43 set=yeni
+T9SURE evre=gun sure=20.52 set=yeni
+T9SURE evre=ladders sure=11.21 set=yeni
+T9SURE evre=duel sure=7.31 set=yeni
+AUTOTEST PASS chapter=30 variant=bridge_ok outcome=30.1 gun=4/5 pushed=2 boarders=0 duel=true rifle=5

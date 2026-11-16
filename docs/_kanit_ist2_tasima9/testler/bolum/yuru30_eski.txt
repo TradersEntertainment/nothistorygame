@@ -1,0 +1,10 @@
+KOSU yuru30_eski args=--chapter=30 --autotest=yuru --eskisur rc=0 sure=44s
+BLAKSET bolum=30 set=eski
+T9YURU set=eski bas=(1.0, 12.05, 2.3)
+T9YURU bacak=sur_dogu sure=4.3 yol=13.5 takilma=0 dusme=0 son=(14.7, 12.0, 2.3)
+T9YURU bacak=sur_bati sure=9.3 yol=29.3 takilma=0 dusme=0 son=(-14.7, 12.0, 2.3)
+T9YURU bacak=merdiven_basi sure=2.8 yol=8.4 takilma=0 dusme=0 son=(-6.3, 12.0, 1.0)
+T9YURU bacak=rampa_in sure=2.2 yol=9.6 takilma=0 dusme=0 son=(-13.8, 0.7, -5.7)
+T9YURU bacak=rampa_cik sure=8.0 yol=0.8 takilma=1 dusme=0 son=(-14.2, 0.0, -6.0)
+T9YURU bacak=sur_yoluna sure=0.0 yol=0.0 takilma=0 dusme=1 son=(-14.2, 0.0, -6.0)
+T9YURU OZET set=eski bacak=6 takilma=1 dusme=1 sure=26.7 yol=61.7

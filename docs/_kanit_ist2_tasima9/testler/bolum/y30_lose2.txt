@@ -1,0 +1,7 @@
+KOSU y30_lose2 args=--chapter=30 --autotest=lose rc=0 sure=38s
+BLAKSET bolum=30 set=yeni
+T9SURE evre=intro sure=0.42 set=yeni
+T9SURE evre=gun sure=16.16 set=yeni
+T9SURE evre=ladders sure=20.51 set=yeni
+T9SURE evre=duel sure=13.21 set=yeni
+AUTOTEST PASS chapter=30 variant=lose outcome=30.2 gun=3/4 pushed=0 boarders=2 duel=false rifle=4

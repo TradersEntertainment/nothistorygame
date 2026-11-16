@@ -171,6 +171,10 @@ func _korkuluk() -> void:
 	# çizim bütçesi: sur, kuleler, merdiven, zemin, saray malzeme malzeme tek ağ (eski set ≈ 470 ayrı ağ)
 	var nb: int = BLAK.birlestir(_gor, "BlakBirlesik")
 	var saray := get_node_or_null("BlakSaray") as Node3D
+	if saray:
+		# şehirde saray İstanbul v2'nin görsel dil kuralından (gorsel_dil.gd: doygunluk/parlaklık tavanı, saf beyaz yok) geçer:
+		# bölümde de aynı kural (kural yoksa "tekfur" deseni doygun kırmızı-beyaz dama, revak sütunları saf beyaz)
+		load("res://scripts/world/ist/gorsel_dil.gd").uyumla(saray)
 	var ns: int = BLAK.birlestir(saray, "BlakSarayBirlesik") if saray else 0
 	print("BLAKSET birlestir sur=%d saray=%d" % [nb, ns])
 
