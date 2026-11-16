@@ -127,7 +127,7 @@ func _build() -> void:
 	Props.interactable(self, "powder", Vector3(2.4, 1.2, 1.2), BARRELS + Vector3(0.7, 0.6, -0.3))
 	giust = Person.new({"face": "giustiniani", "coat": Color("8a8e96"), "pants": Color("3a3a40"), "hat": "condottiero",
 		"beard": true, "skin": Color("e0b08a")})
-	giust.position = Vector3(-6.0, WALK_Y, YOL_Z)
+	giust.position = Vector3(SAFAK_X + 2.0, WALK_Y, YOL_Z)      # şafakta oyuncudan 2 m (eski −8 ↔ −6)
 	giust.rotation.y = PI * 0.5
 	add_child(giust)
 	giust.look_target = player

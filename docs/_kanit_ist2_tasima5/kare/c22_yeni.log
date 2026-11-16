@@ -15,7 +15,7 @@ ERROR: Condition "status < 0" is true. Returning: ERR_CANT_OPEN
 WARNING: All audio drivers failed, falling back to the dummy driver.
      at: initialize (servers/audio_server.cpp:246)
 
-SURSET kesim=mesoteikhion kurulum_ms=3760 sur_ms=1008 set_ms=2746
+SURSET kesim=mesoteikhion kurulum_ms=3537 sur_ms=929 set_ms=2602
 WARNING: Screen-space ambient occlusion (SSAO) can only be enabled when using the Forward+ renderer.
      at: environment_set_ssao (servers/rendering/storage/environment_storage.cpp:586)
 WARNING: Screen-space indirect lighting (SSIL) can only be enabled when using the Forward+ renderer.
@@ -23,7 +23,5 @@ WARNING: Screen-space indirect lighting (SSIL) can only be enabled when using th
 TERRAIN_SOLIDIFIED scene=chapter22.tscn node=/root/Chapter22/@Node3D@177/Ova/@Node3D@2899/@MeshInstance3D@2901
 HELDDEFAULT scene=chapter22 item=cologne
 TASIMA22YURU set=yeni yol_y=8.62 yol_z=15.30 oluk=(-2.5, 8.62, 16.4) fici=(3.5, 8.62, 15.3) kule=(-3.0, -3.545, 50.6)
-TASIMA22KARE an_01_safak_kule.jpg oyuncu=(-8.0, 8.6, 15.3) cizim=4361 ilkel=6312337 sur=yeni
-TASIMA22KARE an_02_safak_giust.jpg oyuncu=(-8.0, 8.6, 15.3) cizim=2936 ilkel=4240018 sur=yeni
-Terminated
-KARE_BITTI rc=143 --chapter=22 --autotest=kare
+TASIMA22KARE an_01_safak_kule.jpg oyuncu=(-6.9, 8.6, 15.3) cizim=4346 ilkel=6320183 sur=yeni
+TASIMA22KARE an_02_safak_giust.jpg oyuncu=(-6.9, 8.6, 15.3) cizim=2923 ilkel=4233632 sur=yeni
