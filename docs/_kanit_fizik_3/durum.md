@@ -9,4 +9,4 @@ Dal `wip/fizik-3` (taban `wip/fizik-taban3` 758502cd). Rapor: [`rapor.md`](rapor
 - [~] 3. `grip_hold` tutuşunda ayak izdüşümü (yapıldı, denetim kanıtı zayıf); YIGILMAAUDIT kalanları yapılmadı.
 - [x] Ortak liste: 32 koşu PASS, VISAUDIT/öteki 0.
 
-Son güncelleme: rapor tamam; 24o oyun içi karesi yerçekimi düzeltmesiyle yeniden çekiliyor.
+Son güncelleme: rapor tamam (24o karesi yerçekimi düzeltmesiyle yeniden çekildi).

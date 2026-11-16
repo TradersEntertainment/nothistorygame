@@ -121,6 +121,7 @@ kare başına ~0,5–1 sn aralıklı ve bot konuşmaları hızla geçtiğinden k
 |---|---|---|
 | [`oyun_10_sorucu_aga`](kare/oyun_10_sorucu_aga.jpg) | **Paşa** (Bölüm 10, Sorucu Ağa; yanında bel etekli asker) | Kaftan düz sarkıyor, asker bel eteği doğal; Fatih bu koşuda kadraja girmedi (tanık en yakın kumaşlıyı seçti). |
 | [`oyun_24o_ordugah`](kare/oyun_24o_ordugah.jpg) | **Ordugâh** (24o, ateş başında oturan börklü) | Kaftan/etek doğal; ama çorbaya eğilen askerin yatırtması başla birlikte geriye kalkmış — eski katı davranış; bu kareden **sonra** sarkan uçlara eklem uzayında yerçekimi eklendi (yeniden çekilmedi). |
+| [`oyun_24o_ordugah_2`](kare/oyun_24o_ordugah_2.jpg) | **Ordugâh**, yerçekimi düzeltmesinden sonra (gece, ateş başı; derviş ve oturan börklü) | Dervişin cüppesi doğal sarkıyor; oturan askerin yatırtması başın arkasından aşağı sarkıyor (artık kanat gibi kalkmıyor); son kare bölüm sonu şeması. |
 | [`oyun_24_sehir`](kare/oyun_24_sehir.jpg) | **Şehir** (24, yağmurda alay) | Cüppeler kalabalıkta doğal sarkıyor, bozulma yok; sallanma yavaş yürüyüşte hafif. |
 | [`oyun_26_sur`](kare/oyun_26_sur.jpg) | **Sur** (26, sandık taşıyan işçi, peribolos) | Yürüyen işçinin eteği doğal; bacaktan geçme görülmedi. |
 | [`oyun_10_eski_kararsiz_yay`](kare/oyun_10_eski_kararsiz_yay.jpg) | (hata kanıtı, düzeltildi) | İlk sürümde yavaş karede (0,5 sn) yay kararsızlaşıp askerin eteğini yelken gibi açıyordu → alt adımlı tümlev. |
@@ -226,8 +227,9 @@ Günlükler: [`gunluk/ortak_*`](gunluk/).
    aralığı (bayrakların rüzgârıyla — başka oturum — henüz bağlı değil). Pelerin/etek kendi kendisiyle ve öteki kişilerle
    çarpışmaz; kollar eteği itmez (kol etek arasında). Oturanda "oturak" yüksekliği sabit (0,55 gövde uzayında): yüksek
    tabure/bankta etek arkası oturağın altında kalabilir.
-6. **Oyun içi kumaş kareleri yavaş pencereli koşuda**: diziler 0,15 sn değil ~0,5–1 sn aralıklı; Fatih kadraja girmedi;
-   24o karesi yerçekimi düzeltmesinden önce.
+6. **Oyun içi kumaş kareleri yavaş pencereli koşuda**: diziler 0,15 sn değil ~0,5–1 sn aralıklı ve bot konuşmaları hızla
+   geçiyor (kadraj değişiyor); Fatih kadraja girmedi; oyun içinde yürüyen/koşan kaftanlı yakın çekim yok (sallanmanın
+   kanıtı deney sahnesinden).
 
 ## Dokunulan dosyalar
 `scripts/npc/ayak.gd` (bayat IK, kök dışarıdan sürülüyor, tanı argümanları), `scripts/npc/rig.gd` (extremities'te bayat
