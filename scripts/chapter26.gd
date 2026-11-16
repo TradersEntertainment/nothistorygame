@@ -124,6 +124,18 @@ func _yeni_yerler() -> void:
 	BANNER_TOWER = sur.dis_kule_tepe(tx) + Vector3(0.0, 0.0, -0.6)
 
 
+## TAŞIMA-8: gedik dövüşünden sonra dinlenen dost düellocular savunucu sırasının ve onarım ekibinin içinde kalmasın
+## (yeni sette sıra moloz yamacının hemen önünde: VISAUDIT overlap, kasim/nophoto): kalabalıksa en yakın boş, katısız
+## yere (Unclip.spread). Eski sette yapılmaz (davranış aynı).
+func _dostlari_dagit() -> void:
+	if sur.eski_mi:
+		return
+	for n in get_children():
+		var d := n as Duelist
+		if d and d.visible and d.team == 0 and d.global_position.distance_to(sur.gedik()) < 14.0:
+			Unclip.spread(d, 0.6)
+
+
 ## TAŞIMA-8: x'e en yakın dış sur mazgal açıklığı (dişlerin arası; SurOyun.mazgallar), kacin'daki x'lerden 2,1 m ve
 ## kurulmuş merdivenlerden 4 m uzak; yoksa x. Eski sette x.
 func _acikliga(x: float, kacin: Array) -> float:
@@ -637,6 +649,7 @@ func _wave2() -> void:
 		{"specs": _foe_specs(5, "azap", _ladder_heads()),
 		"max_active": 2, "skill": 0.4, "allies": 3, "limit": 85.0}], "spathion")
 	_fights_won += int(r2["won"])
+	_dostlari_dagit()
 	player.frozen = true
 	await _repelled("D26_G_REPELLED_2")
 
@@ -701,6 +714,7 @@ func _janissary_duel() -> void:
 	gunner_dodged += gn.dodged
 	gn.stop()
 	_duel_won = r["won"]
+	_dostlari_dagit()
 	player.frozen = true
 	# Önce komutana döner, sonra konuşur: dövüş biterken sur dibinde duvara dönük kalabiliyordu (VISAUDIT wall)
 	player.face(giust.global_position + Vector3(0, 1.5, 0))
