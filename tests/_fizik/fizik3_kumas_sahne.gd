@@ -24,12 +24,12 @@ func _ready() -> void:
 	e.background_color = Color("9fb8d0")
 	e.ambient_light_source = Environment.AMBIENT_SOURCE_COLOR
 	e.ambient_light_color = Color(0.45, 0.45, 0.5)
-	e.ambient_light_energy = 0.6
+	e.ambient_light_energy = 1.0
 	e.tonemap_mode = Environment.TONE_MAPPER_FILMIC
 	env.environment = e
 	add_child(env)
 	var sun := DirectionalLight3D.new()
-	sun.rotation_degrees = Vector3(-45, 150, 0)
+	sun.rotation_degrees = Vector3(-40, 70, 0)
 	sun.shadow_enabled = true
 	sun.light_energy = 0.75
 	add_child(sun)
@@ -68,7 +68,7 @@ func _ready() -> void:
 	var ot := _kisi("oturan", Vector3(6, 0, 10), 180.0, kaftan.merged({"robe": Color("6a4a3a"), "coat": Color("6a4a3a")}, true))
 	ot.position.y = 0.0      # kök yerde, kalça taburede (Rig "sit": gövde 0,22 iner)
 	ot.set_activity("sit")
-	var bag := _kisi("bagdas", Vector3(8, 0, 10), 180.0, kaftan.merged({"robe": Color("3f7a3a"), "coat": Color("3f7a3a")}, true))
+	var bag := _kisi("bagdas", Vector3(11, 0, 10), 180.0, kaftan.merged({"robe": Color("3f7a3a"), "coat": Color("3f7a3a")}, true))
 	bag.set_activity("sit_ground")
 	# 5. yığılan kaftanlı (tüfekle vurulur)
 	_kisi("yigilan", Vector3(-6, 0, 10), 90.0, kaftan.merged({"robe": Color("a8804a"), "coat": Color("a8804a")}, true))
@@ -188,11 +188,10 @@ func _yuru(n: Node3D, a: Vector3, b: Vector3, v: float) -> void:
 	tw.tween_interval(0.8)
 
 
+## Görünen zemin (kişiler sayılmaz: yürüyenin kendi etkileşim kutusuna basıp yükselmesin)
 func _zemin_ust(p: Vector3) -> Vector3:
-	var space := get_world_3d().direct_space_state
-	var q := PhysicsRayQueryParameters3D.create(Vector3(p.x, 6.0, p.z), Vector3(p.x, -2.0, p.z))
-	var h := space.intersect_ray(q)
-	return Vector3(p.x, (h["position"] as Vector3).y if not h.is_empty() else 0.0, p.z)
+	var y := Unclip.floor_y(self, Vector3(p.x, 0.0, p.z), 6.0, 2.0)
+	return Vector3(p.x, 0.0 if is_nan(y) else y, p.z)
 
 
 func _kutu(p: Vector3, size: Vector3, rot_deg: Vector3, c: Color) -> StaticBody3D:
