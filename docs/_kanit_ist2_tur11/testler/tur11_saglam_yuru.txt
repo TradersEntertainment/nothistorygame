@@ -1,0 +1,5 @@
+SAGLAMYURU gx=-67.70 kesik=0 gecit=[[-42.118, -22.498, "dis_kule_ustu (basamak 18×0.42, korkuluk geçidi 1.8)"], [19.152, 38.772, "dis_kule_ustu (basamak 18×0.42, korkuluk geçidi 1.8)"]] gedik_bos=true gedik_parca=false
+WALKTHRU saglam_dis_sur_yolu_gedik_yeri sure=30.1 yol=106.3 takilma=0 dusme=0 bitti=true son=(-80.9,8.50,18.8) | wp0 t=1.2 y=0.26 | wp1 t=4.9 y=8.50 | wp2 t=5.4 y=8.50 | wp3 t=11.8 y=8.50 | wp4 t=14.0 y=12.75 | wp5 t=15.4 y=13.00 | wp6 t=17.8 y=9.00 | wp7 t=21.3 y=8.50 | wp8 t=30.1 y=8.50
+WALKTHRU saglam_ic_sur_yolu sure=13.7 yol=51.5 takilma=0 dusme=0 bitti=true son=(-56.9,12.00,-0.0) | wp0 t=1.2 y=0.25 | wp1 t=6.7 y=12.00 | wp2 t=7.5 y=12.00 | wp3 t=13.7 y=12.00
+WALKTHRU saglam_peribolos_gedik_onu sure=8.5 yol=27.2 takilma=0 dusme=0 bitti=true son=(-54.5,-0.12,11.5) | wp0 t=0.0 y=0.03 | wp1 t=8.5 y=-0.12
+SAGLAMYURU OZET yol=3 tamam=3 takilma=0 dusme=0 kesik=0

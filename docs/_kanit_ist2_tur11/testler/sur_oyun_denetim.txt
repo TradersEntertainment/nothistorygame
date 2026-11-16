@@ -1,0 +1,1 @@
+SUROYUN nokta=519 havada=0 gomuk=0 katida=0

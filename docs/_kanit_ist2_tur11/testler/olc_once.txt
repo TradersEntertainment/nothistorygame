@@ -1,0 +1,8 @@
+TUR11OLC kam=y1 sutun=200 hatil_sira_sayisi=1 | sira=0 y=9.700..9.630 (OH+1.20) px=130 uz=2.04
+TUR11OLC kam=y1 sutun=480 hatil_sira_sayisi=1 | sira=0 y=9.700..9.629 (OH+1.20) px=157 uz=1.33
+TUR11OLC kam=y1 sutun=800 hatil_sira_sayisi=1 | sira=0 y=9.700..9.630 (OH+1.20) px=188 uz=1.13
+TUR11OLC kam=y1 sutun=1080 hatil_sira_sayisi=0 | 
+TUR11OLC kam=a1 sutun=200 hatil_sira_sayisi=1 | sira=0 y=9.700..9.630 (OH+1.20) px=127 uz=1.77
+TUR11OLC kam=a1 sutun=480 hatil_sira_sayisi=1 | sira=0 y=9.700..9.630 (OH+1.20) px=127 uz=1.42
+TUR11OLC kam=a1 sutun=800 hatil_sira_sayisi=1 | sira=0 y=9.700..9.630 (OH+1.20) px=127 uz=1.42
+TUR11OLC kam=a1 sutun=1080 hatil_sira_sayisi=1 | sira=0 y=9.700..9.630 (OH+1.20) px=127 uz=1.77
