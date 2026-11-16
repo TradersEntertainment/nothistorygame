@@ -394,6 +394,8 @@ func _zemin_ayak(s: int, p: Vector3, ref_y: float, delta: float, esik := 0.06) -
 	if _g_ok[s]:
 		_g_y[s] = _zy
 		_g_n[s] = _zn
+	else:
+		_g_t[s] = 0.25      # bulunamadı (ilk kare, kenar): kısa sürede yeniden
 
 
 func _coz(delta: float, yuru: bool) -> void:

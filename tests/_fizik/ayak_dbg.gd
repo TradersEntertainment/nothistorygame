@@ -1,15 +1,9 @@
 extends Node
 func _ready():
 	await get_tree().create_timer(3.0).timeout
-	var sc = get_tree().current_scene
-	for n in get_tree().get_nodes_in_group("soldiers"):
-		var r = n.rig
-		var a = r.ayak
-		print("DBG soldier pos=", n.global_position, " w=", a.w if a else -1, " mod=", a.mod if a else -1, " pel=", a.pel if a else 0)
-		if a:
-			print("DBG g_y=", a._g_y, " g_ok=", a._g_ok, " g_n=", a._g_n, " fks=", a._fks, " al=", a._al, " cur=", a._cur, " basiyor=", a.basiyor, " scope=", a._scope_ok, " yakin=", a._yakin)
-			for s in 2:
-				var an = a._anks[s]
-				var sole = an.global_transform * Vector3(0, -0.0765, 0.05)
-				print("DBG sole", s, "=", sole, " floor=", Unclip.floor_y(n, sole, 0.5, 1.0), " L1=", a._L1, " L2=", a._L2)
+	for n in get_parent().get_children():
+		if n is Horse or n is Ox or n is Chicken:
+			var a = n._ah
+			var wp: Vector3 = n.global_transform * Vector3(0, 0, a.on_z)
+			print("DBG ", n.name, " pos=", n.global_position, " egim=", a.egim, " dy=", a.dy, " hf=", a._hf, " hr=", a._hr, " fy=", Unclip.floor_y(n, wp, 0.5, 0.8), " wp=", wp, " z=", a._zemin(n.get_parent().global_transform, n.transform * Vector3(0, 0, a.on_z), n.position.y))
 	get_tree().quit()

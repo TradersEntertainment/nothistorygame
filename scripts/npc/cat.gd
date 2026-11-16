@@ -10,6 +10,8 @@ var _body: Node3D
 var _tail: Node3D
 var _state := "hiding"     # hiding, following, home
 var _owner_node: Node3D
+const AyakHayvan := preload("res://scripts/npc/ayak_hayvan.gd")
+var _ah    # AyakHayvan: gövdenin zemine uyumu (eğim, yükseklik)
 
 
 func _ready() -> void:
@@ -20,10 +22,13 @@ func _ready() -> void:
 	var kit: Dictionary = CK.dugum("kedi", {"renk": Color("d8843a"), "lod": 0, "birlestir": ["kulak"], "golge": false})
 	_body.add_child(kit["root"])
 	_tail = (kit["p"] as Dictionary)["kuyruk"]
+	_ah = AyakHayvan.kur(self, [_body], 0.0, 0.0)
 
 
 func _process(delta: float) -> void:
 	_t += delta
+	if _ah:
+		_ah.guncelle(delta)
 	_tail.rotation.z = sin(_t * (6.0 if _state == "following" else 2.0)) * 0.5
 	if _owner_node == null:
 		_owner_node = get_tree().get_first_node_in_group("cat_owner") as Node3D

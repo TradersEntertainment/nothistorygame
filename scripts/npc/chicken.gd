@@ -16,6 +16,8 @@ var _t := 0.0
 var _body: Node3D
 var _head: Node3D
 var _wings: Array[Node3D] = []
+const AyakHayvan := preload("res://scripts/npc/ayak_hayvan.gd")
+var _ah    # AyakHayvan: gövdenin zemine uyumu (eğim, yükseklik)
 
 
 func _ready() -> void:
@@ -30,10 +32,13 @@ func _ready() -> void:
 	_head = p["bas"]
 	_wings.append(p["kanat_l"])
 	_wings.append(p["kanat_r"])
+	_ah = AyakHayvan.kur(self, [_body], 0.0, 0.0)
 
 
 func _process(delta: float) -> void:
 	_t += delta
+	if _ah and not flapping:
+		_ah.guncelle(delta)
 	if yard.has_area() and follow == null:
 		_wild(delta)
 	var flap := flapping or (follow != null and _moving)

@@ -77,6 +77,19 @@ func _ready() -> void:
 	add_child(at)
 	at.position = _zemin_ust(Vector3(-12.0, 0, 6.0))
 	_subj["at_yokus"] = at
+	var ox := Ox.new()
+	add_child(ox)
+	ox.position = _zemin_ust(Vector3(1.0, 0, 6.5))
+	_subj["okuz_yokus"] = ox
+	var keci := Goat.new()
+	keci.bounds = Rect2(-13.5, 2.0, 3.0, 6.0)
+	add_child(keci)
+	keci.position = _zemin_ust(Vector3(-12.0, 0, 3.0))
+	_subj["keci_yokus"] = keci
+	var tav := Chicken.new()
+	add_child(tav)
+	tav.position = _zemin_ust(Vector3(-11.0, 0, 7.0))
+	_subj["tavuk_yokus"] = tav
 	var kal := 0
 	if "--ayak-dbg" in OS.get_cmdline_user_args():
 		add_child(load("res://tests/_fizik/ayak_dbg.gd").new())
@@ -101,7 +114,7 @@ func _ready() -> void:
 		get_tree().quit()
 		return
 	await get_tree().create_timer(2.5).timeout
-	for ad in ["yokus_dik", "yokus_boyuna", "merdiven_dur", "moloz_asker", "yokus25_dik", "at_yokus"]:
+	for ad in ["yokus_dik", "yokus_boyuna", "merdiven_dur", "moloz_asker", "yokus25_dik", "at_yokus", "okuz_yokus", "keci_yokus", "tavuk_yokus"]:
 		await _kare(ad, _subj[ad])
 	for k in 3:
 		await _kare("yokus_yuru_%d" % k, _subj["yokus_yuru"])
@@ -119,8 +132,9 @@ func _ready() -> void:
 func _kare(ad: String, n: Node3D) -> void:
 	var side := n.global_basis.x.normalized()
 	var p := n.global_position
-	cam.global_position = p + side * 3.2 + Vector3(0, 0.95, 0)
-	cam.look_at(p + Vector3(0, 0.7, 0))
+	var dd := 5.5 if (n is Horse or n is Ox) else (1.6 if (n is Chicken or n is Goat) else 3.2)
+	cam.global_position = p + side * dd + Vector3(0, dd * 0.3, 0)
+	cam.look_at(p + Vector3(0, minf(0.7, dd * 0.2), 0))
 	await _kaydet(ad)
 
 

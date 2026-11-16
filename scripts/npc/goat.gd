@@ -12,6 +12,8 @@ var _target := Vector3.ZERO
 var _t := 0.0
 var _legs: Array[Node3D] = []
 var _dust_t := 0.0
+const AyakHayvan := preload("res://scripts/npc/ayak_hayvan.gd")
+var _ah    # AyakHayvan: gövdenin zemine uyumu (eğim, yükseklik)
 
 
 func _ready() -> void:
@@ -23,6 +25,8 @@ func _ready() -> void:
 	var p: Dictionary = kit["p"]
 	for i in 4:
 		_legs.append(p["b%d" % i])
+	_ah = AyakHayvan.kur(self, [body], (to_local(_legs[0].global_position).z + to_local(_legs[1].global_position).z) * 0.5,
+		(to_local(_legs[2].global_position).z + to_local(_legs[3].global_position).z) * 0.5)
 	_pick_target()
 
 
@@ -37,6 +41,10 @@ func _process(delta: float) -> void:
 	if caught:
 		return
 	_t += delta
+	var eg := 0.0
+	if _ah:
+		_ah.guncelle(delta)
+		eg = _ah.egim
 	# Ara sıra meler (bölüm boyunca sessizdi); kaçarken daha sık
 	_bleat_t -= delta
 	if _bleat_t <= 0.0:
@@ -55,7 +63,7 @@ func _process(delta: float) -> void:
 			rotation.y = lerp_angle(rotation.y, atan2(to_f.x, to_f.z), clampf(delta * 4.0, 0.0, 1.0))
 			position.y = lerpf(position.y, 0.0, clampf(delta * 8.0, 0.0, 1.0))
 			for leg in _legs:
-				leg.rotation.x = lerpf(leg.rotation.x, 0.0, clampf(delta * 8.0, 0.0, 1.0))
+				leg.rotation.x = lerpf(leg.rotation.x, eg, clampf(delta * 8.0, 0.0, 1.0))
 			return
 	elif chase:
 		var away := global_position - chase.global_position
@@ -76,7 +84,7 @@ func _process(delta: float) -> void:
 	rotation.y = lerp_angle(rotation.y, atan2(to.x, to.z), clampf(delta * 6.0, 0.0, 1.0))
 	var fleeing := speed > 2.0
 	for i in _legs.size():
-		_legs[i].rotation.x = sin(_t * (20.0 if fleeing else 12.0) + i * PI) * (0.7 if fleeing else 0.4)
+		_legs[i].rotation.x = sin(_t * (20.0 if fleeing else 12.0) + i * PI) * (0.7 if fleeing else 0.4) + eg
 	# Kaçarken sekerek koşar, arkasında toz bırakır
 	position.y = absf(sin(_t * 10.0)) * 0.22 if fleeing else lerpf(position.y, 0.0, clampf(delta * 8.0, 0.0, 1.0))
 	if fleeing:

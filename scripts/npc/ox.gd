@@ -20,6 +20,8 @@ var _bellow := 0.0
 var lying := false
 var lean := 0.0          # yokuş aşağı geriye yaslanma (−1..1)
 var name_key := ""
+const AyakHayvan := preload("res://scripts/npc/ayak_hayvan.gd")
+var _ah    # AyakHayvan: gövdenin zemine uyumu (eğim, yükseklik)
 
 
 func _init(p_coat := Color("8a5a36")) -> void:
@@ -54,6 +56,8 @@ func _ready() -> void:
 	cs.position = Vector3(0, 1.1, 0.05)
 	col.add_child(cs)
 	add_child(col)
+	_ah = AyakHayvan.kur(self, [_body], (to_local(_legs[0].global_position).z + to_local(_legs[1].global_position).z) * 0.5,
+		(to_local(_legs[2].global_position).z + to_local(_legs[3].global_position).z) * 0.5)
 
 
 func bellow() -> void:
@@ -66,6 +70,10 @@ func lie(on: bool) -> void:
 
 func _process(delta: float) -> void:
 	_t += delta
+	var eg := 0.0
+	if _ah and not lying:
+		_ah.guncelle(delta)
+		eg = _ah.egim
 	var p := global_position
 	var spd := 0.0
 	if _last != Vector3.INF and delta > 0.0:
@@ -90,13 +98,13 @@ func _process(delta: float) -> void:
 	if spd > 0.15:
 		_phase += delta * clampf(spd, 0.5, 4.0) * 2.4
 		var a := sin(_phase) * clampf(spd * 0.25, 0.15, 0.5)
-		_legs[0].rotation.x = a
-		_legs[3].rotation.x = a
-		_legs[1].rotation.x = -a
-		_legs[2].rotation.x = -a
+		_legs[0].rotation.x = a + eg
+		_legs[3].rotation.x = a + eg
+		_legs[1].rotation.x = -a + eg
+		_legs[2].rotation.x = -a + eg
 	else:
 		for l in _legs:
-			l.rotation.x = lerpf(l.rotation.x, 0.0, minf(1.0, delta * 5.0))
+			l.rotation.x = lerpf(l.rotation.x, eg, minf(1.0, delta * 5.0))
 	# Baş: yürürken sallanır; böğürürken kalkar
 	_bellow = maxf(0.0, _bellow - delta)
 	var hx := 0.12 * sin(_phase * 0.5) if spd > 0.15 else 0.05 * sin(_t * 0.7)

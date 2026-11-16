@@ -20,6 +20,8 @@ var _neck: Node3D
 var _tail: Node3D
 var _t := 0.0
 var _phase := 0.0
+const AyakHayvan := preload("res://scripts/npc/ayak_hayvan.gd")
+var _ah    # AyakHayvan: gövdenin zemine uyumu (eğim, yükseklik)
 
 
 func _init(p_coat := Color("f2efe8"), p_cloth := Color("b3262d")) -> void:
@@ -56,6 +58,8 @@ func _ready() -> void:
 	bm.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
 	add_child(bm)
 	Props.ball(self, 0.06, Vector3(0, 1.2, 1.0), cloth, Vector3(1, 1.4, 1), 6)
+	_ah = AyakHayvan.kur(self, get_children(), (to_local(_legs[0].global_position).z + to_local(_legs[1].global_position).z) * 0.5,
+		(to_local(_legs[2].global_position).z + to_local(_legs[3].global_position).z) * 0.5)
 
 
 ## Biniciyi eyere oturtur.
@@ -71,6 +75,13 @@ func mount(p: Person) -> void:
 
 func _process(delta: float) -> void:
 	_t += delta
+	var eg := 0.0
+	if _ah:
+		_ah.guncelle(delta)
+		eg = _ah.egim
+		# Binici kökün çocuğu (eğime girmez): gövde inip çıkınca eyerde kalsın
+		if rider and is_instance_valid(rider) and rider.get_parent() == self:
+			rider.position.y = SADDLE_Y - 0.38 + _ah.dy
 	var moving := speed > 0.2
 	if moving:
 		_phase += delta * (2.6 + speed * 1.4)
@@ -80,7 +91,7 @@ func _process(delta: float) -> void:
 	for i in _legs.size():
 		var sgn := 1.0 if i == 0 or i == 3 else -1.0
 		var s := sw * sgn
-		_legs[i].rotation.x = lerpf(_legs[i].rotation.x, s * amp, clampf(delta * 10.0, 0.0, 1.0))
+		_legs[i].rotation.x = lerpf(_legs[i].rotation.x, s * amp + eg, clampf(delta * 10.0, 0.0, 1.0))
 		var bend := maxf(0.0, -s) * 0.9 * amp * 2.0 if moving else 0.0
 		# Ön bacakta bilek (karpus) alt bacağı geriye, arka bacakta diz (hock) öne katlar (CANLI: anatomiye göre)
 		_knees[i].rotation.x = lerpf(_knees[i].rotation.x, bend * (-1.0 if i >= 2 else 1.0), clampf(delta * 10.0, 0.0, 1.0))
