@@ -1054,7 +1054,7 @@ func _setup_gun_crew() -> void:
 	gun_crew.target = func() -> Vector3: return _gedik() + Vector3(0, 4.0, 0)
 	gun_crew.hit_radius = 5.0
 	gun_crew.tolerance = 16.0
-	gun_crew.ground_y = 0.0
+	gun_crew.ground_y = 0.0 if sur.eski_mi else sur.ova_y()      # yeni ova 3,6 m aşağıda (0'da gülle namludan çıkınca "yere düşüyordu")
 	gun_crew.load_radius = 3.2
 	gun_crew.design_elev = 5.0
 	gun_crew.pitch_min = -2.0

@@ -742,12 +742,24 @@ func _queue_blocked(c: Dictionary, to: Vector3) -> bool:
 
 # ---------------------------------------------------------------- bataryalar
 
+## Ovadaki yapıyı (ova koordinatı p) sura döndürür: yerinde, gediğe bakan (x · k, z 15). look_at_from_position KÜRESEL konum
+## alır: eski sette ova düğümü Assault'un kendisidir (koordinatlar aynı, davranış bit bit eskisi). Yeni sette ova düğümü
+## (SurSet.ova_ofs) kaydırılmış: ova koordinatı küresel diye verilince batarya, tabya ve mancınık yeni ovanın 3,55 m üstünde
+## (havada) ve 10,6 m önde kuruluyordu (TAŞIMA-6: 37o yürüyüş karesi, sonda SONDA37 tabya y 0,5 ↔ ova −3,58).
+func _sura_bak(n: Node3D, p: Vector3, k: float) -> void:
+	var hedef := Vector3(p.x * k, 0, 15.0 - (_ova.position.z if _ova != self else 0.0))
+	if _ova == self:
+		n.look_at_from_position(p, hedef, Vector3.UP)
+	else:
+		n.look_at_from_position(_ova.to_global(p), _ova.to_global(hedef), Vector3.UP)
+
+
 func _batteries() -> void:
 	for gp: Vector3 in gun_spots:
 		var g := Node3D.new()
 		_ova.add_child(g)
 		g.position = gp
-		g.look_at_from_position(gp, Vector3(gp.x * 0.3, 0, 15.0 - (_ova.position.z if _ova != self else 0.0)), Vector3.UP)
+		_sura_bak(g, gp, 0.3)
 		# Kaide, top, siper ve gabionlar katı (eskiden içlerinden yürünüyordu)
 		Props.make_solid(Props.box(g, Vector3(3.0, 0.8, 6.0), Vector3(0, 0.4, 0), Color("4a3420")))
 		Props.make_solid(Props.cyl(g, 0.8, 5.5, Vector3(0, 1.4, -0.8), Color("8c5e26"), Vector3(90, 0, 0), 14))
@@ -844,7 +856,7 @@ func _earthwork(gp: Vector3) -> void:
 	var g := Node3D.new()
 	_ova.add_child(g)
 	g.position = gp
-	g.look_at_from_position(gp, Vector3(gp.x * 0.3, 0, 15.0 - (_ova.position.z if _ova != self else 0.0)), Vector3.UP)
+	_sura_bak(g, gp, 0.3)
 	var earth := Color("5e4c36")
 	Props.box(g, Vector3(12.0, 1.8, 3.2), Vector3(0, 0.6, -8.4), earth, Vector3(-14, 0, 0))
 	Props.box(g, Vector3(12.0, 0.8, 2.0), Vector3(0, 1.4, -8.0), earth.lightened(0.06))
@@ -860,7 +872,7 @@ func _trebuchet(p: Vector3) -> void:
 	var r := Node3D.new()
 	_ova.add_child(r)
 	r.position = p
-	r.look_at_from_position(p, Vector3(p.x * 0.4, 0, 15.0 - (_ova.position.z if _ova != self else 0.0)), Vector3.UP)
+	_sura_bak(r, p, 0.4)
 	var wood := Color("6b4a2e")
 	for sx: float in [-1.3, 1.3]:
 		Props.box(r, Vector3(0.35, 0.35, 6.5), Vector3(sx, 0.18, 0), wood.darkened(0.15))

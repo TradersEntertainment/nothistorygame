@@ -46,6 +46,33 @@
    çıkışı hendek dolgusunun yakın ucundan (+1,0) teras eteğine (−2,6; gediğin ardı, peribolostan görünmez), kademe 2,0 → 1,2 sn
    (`YAKLASMA_1_Z`, `YAKLASMA_1_ARA`). 2. dalga dokunulmadı. `Duelist` temposu, can, hasar, dalga sınırı, düşman sayısı aynı.
 
+### 1.3 Ölçüm (Bölüm 20, yeni set; `testler/…`, `dalga.py` / `cesit.py`)
+
+| küme | koşu | PASS | denetim | 1. dalga medyan [aralık] | 2. dalga medyan [aralık] |
+|---|---|---|---|---|---|
+| taban `=hit` ×6 (`c20_hit_once`) | 6 | 6 | **4** (wall ×2, personhidden ×2) | 13,8 [13,5–15,3] | 22,7 [16,3–24,6] |
+| ara 1: yalnız `=hit` yeri ×12 (`c20_hit_tur1`) | 12 | 12 | **2** (personhidden ×2, oyuncu yine setin dibinde) | 12,1 | 20,5 |
+| ara 2: + yol siperi dolanır, `=hit` ×12 (`c20_hit`) | 12 | 12 | **0** | 11,7 | 17,1 |
+| ara 2, bütün çeşitler ×1 (`c20_dolan`) | 8 | 8 | 0 | **14,6** (+3,2) | 25,5 |
+| **son**: + 1. dalga teras eteği/1,2 sn — 9 çeşit ×2 + def ×4 + hit ×10 (`c20_son`) | **32** | **32** | **0** | **12,2** [9,4–22,0] (n 32) | **20,6** [15,8–35,1] (n 30) |
+| taşıma 4 "sonra" (sahibinin kararı; 9 çeşit ×3) | 27 | 27 | 0 | 11,4 [9,3–18,9] | **21,2** [17,7–26,2] |
+
+- **`=hit` ×12: denetim 0** (son paketin `hit_r1…r12`; ayrıca `c20_hit` ×12: 0). Ceset düşüşü (`CESET4 dusen`) 32/32 koşuda 0.
+- **Bölüm 20 bütün çeşitler ×2: 18/18 PASS, denetim 0**; alanlar (`outcome`, `repair`, `knocks`, `arrows`, `gun`) tabanla aynı
+  (`=hit` `knocks=1`, `tape` 20.2, `late`/`lose`/`idle` 20.3).
+- **Düello süreleri (×6+)**: 2. dalga medyanı 20,6 sn (taşıma 4: 21,2; sahibinin kararı ≈ 21) — **DEĞİŞMEDİ**; `def` ×6: 12,6 /
+  21,4 (taşıma 4 `def` ×3: 10,7 / 20,8). 1. dalga 12,2 (taşıma 4: 11,4; eski set 9,0–9,4).
+
+Çeşit başına (son, ×2; `def` ×6, `hit` ×12): def 12,6 / 21,4 · tape 13,1 / 31,8 · late 12,2 / 22,9 · hit 10,6 / 18,6 ·
+idle 12,6 / 21,5 · niko_idle 12,8 / 22,7 · d0 12,4 / 26,2 · d2 13,2 / 20,7 · lose 20,7 / — (taşıma 4: def 10,7/20,8 · tape
+10,6/24,3 · late 12,0/18,9 · hit 14,8/22,3 · idle 11,2/20,7 · niko_idle 11,6/21,3 · d0 9,9/20,4 · d2 10,2/23,1 · lose 18,4).
+`=hit`'in 2. dalgası 22,3 → 18,6: eskiden bot sete yapışık, rakip aralıkta sıkışık dövüşüyordu (o sıkışma dalgayı uzatıyordu);
+şimdi `def` gibi açık zeminde. `tape` 24,3 → 31,8 (n 2; uzun yönde, 60 sn sınırının çok altında).
+
+### 1.4 Bölüm 20o ×1 (kod yolu bu dalda değişmedi; `testler/c20o`)
+10/10 çeşit **PASS, denetim 0** (def, wide, lose, hot, hot_taped, hot_tape, named, flawed, edirne, edirne_ok); alanlar taşıma
+4/5'teki gibi (`wide` 20O.2, ötekiler 20O.1). Dalga: 1. 10,6 [7,4–13,3], 2. 12,7 [9,6–20,1] (taşıma 4: 10,3 / 13,9).
+
 ---
 
 ## 2. Bölüm 37o (İlk Hücum, 18 Nisan gecesi) — `scripts/chapter37o.gd`
@@ -110,3 +137,19 @@ kararmayla geçer, yol yok); son kodda eski sette o iki ara bacak atlanır (yeni
 | `D37O_AB_03` "Hendek! Kalası indir." | — | uyumlu (kıyı, kalas) |
 | `D37O_AB_FALL` "duvara tutun, yukarı!" | — | uyumlu sayılır: duvara tutunup tırmanmak da (6 m, Traversal) mümkün, iki yanda dayalı merdiven de var |
 | `D37O_T_DRAG` "Kalası geçince düzlük" | — | uyumlu (sürükleme ovada, iki sette aynı) |
+
+---
+
+## 3. Bölüm 32o (Son Gün, 28 Mayıs) — `scripts/chapter32o.gd`
+
+### 3.1 Ne değişti (yalnız yeni set; `--eskisur` yolu eskinin aynısı)
+- `ESKI_SUR` + `SurSet.sec("32o", …)`; yeni sette `SurSetSahne` (`dolgu` 0,5: gediğin önündeki dolgu önceki haftalarda yarıya
+  dek dolmuş; 26o'da tam). Bölümün bütün işi hendeğin önünde, ovada (22o kalıbı): `PILE`, `EARTH`, `COVERS` (mantolar),
+  `BENCH` (Usta Mahmud), `MANTLET_FROM/TO`, `FIRE_Z` (akşam ateşleri), `KADRI_POT`, `HASAN_FIRE`, tellal, azap, demet
+  taşıyanlar, ova sınırı, zemin ayrıntısı, kamera kareleri **eski + `ova_ofs`** → aralarındaki bütün mesafeler eskiyle aynı;
+  kıyı `EDGE_Z` uzak yakanın 1,4 m ötesi (eski de). Süreler (DITCH_TIME 240, yaylım 13/2,6 sn, Rum ateşi 15 sn) aynı.
+- Hendeğin içi (atılan demetler, toprak, Rum ateşi, önceden atılmış demetler): eski hendekteki oranlarıyla yeni hendekte
+  (`_hendek_p`: z oranı, dipten yükseklik); gediğin önündeki yarı dolu dolgunun üstüne düşen demet dolgunun yüzüne konur
+  (aşağı ışın; dibe konsa toprağın içinde kalırdı).
+- Ali'nin bataryası: hedef yeni gedik (`sur.gedik()`); ıskalayan gülle surun önündeki gerçek zemine.
+- Sur yolundaki savunanlar: Garrison `dense` (22o kalıbı: yeni dış surun dişleri insan boyu, yolun iç yanı ovadan görünmüyor).

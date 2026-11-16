@@ -1,0 +1,2 @@
+AUTOTEST FAIL chapter=32o variant= outcome=32O.2 bundles=6/6 earth=2 arrows=0 rungs=6 bad=0 hits=0/3 fires=6 greek=2/2 hasan=water sur=yeni
+KOSU rc=1 sure=43 args=--chapter=32o --autotest

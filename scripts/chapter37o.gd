@@ -158,8 +158,11 @@ func _ready() -> void:
 	else:
 		# Yeni peribolos (z 2,4–10,6): eski şerit (z 7 ± 2,5) iç kulenin (x 0,2…9,2, z ≤ 8) ve deponun (x −11,5, z 4,2)
 		# içinden geçiyordu (VISAUDIT sunk: depo toprak yığınında koşan). Şerit dış surun dibine yakın, kule ve deponun önünde.
+		# Gedik ağzındaki kalkan kümesi (n_wall; BattleExtras'ta sabit LandWalls.BREACH − 3,2 = z 11,8) kurulmaz: yeni setin
+		# moloz sırtı (y 1,3) kanca yerinden gövdelerini örtüyor, yalnız baş üstü kalkanlar görünüp havada disk gibi duruyordu
+		# (kare c37o_yeni an_04). Eskide de bu küme ovadan görünmüyordu.
 		var zl := sur.peribolos().end.y - 1.7
-		bx.populate(Vector3(-16.0, 0, zl), Vector3(16.0, 0, zl), 2.2, 8, 0, 8, 3718)
+		bx.populate(Vector3(-16.0, 0, zl), Vector3(16.0, 0, zl), 2.2, 8, 0, 0, 3718)
 	trespass = Trespass.attach(self, player, hud, func(p: Vector3) -> bool: return p.z < (LandWalls.OUTER_Z0 if sur.eski_mi else sur.dis_sur_z0()) - 0.3,
 		_stockade_spot, Vector3(6.0, 0.0, 2.0))
 	if GameState.autotest and GameState.autotest_variant in ["yuru", "kare"]:
@@ -272,8 +275,13 @@ func _build_field() -> void:
 	assault.sur = null if sur.eski_mi else sur
 	assault.night = true
 	assault.keep = Rect2(-40.0, 36.4 + O.z, 80.0, 72.6)
+	# Yeni sette dış surun dişleri insan boyu: Assault'un sur yolundaki savunanları ovadan görünmüyordu (kare c37o_yeni_tur1
+	# an_02: sur tepesi boş; eskide kalabalık). 22o'nun kalıbı: Garrison "dense" mazgallara da dizer.
+	assault.with_defenders = sur.eski_mi
 	add_child(assault)
 	assault.build_calm()
+	if not sur.eski_mi:
+		Garrison.land_walls(self, [], [], [], 3710, 47.0, true, true, false, sur)
 	# Hendekte ve sur dibinde daha önceki günlerin ölüleri yok: ilk hücum. Yalnız gülle çukurları ve moloz.
 	for x in [-20.0, -14.0, 6.0, 14.0, 22.0]:
 		walls.lights.append(Night.torch(self, Vector3(x, 0, 46.0 + fmod(absf(x), 3.0)) + O))
@@ -1531,6 +1539,24 @@ func _yuru() -> void:
 		s.visible = true
 	drummer.visible = true
 	player.face(Vector3(0, 4.0, 15.0))
+	if "--sonda37" in OS.get_cmdline_user_args():
+		# kameranın önünde 14 m içindeki görünen ağlar (kare an_01'de sol üstteki yakın yapı)
+		await get_tree().process_frame
+		var eye := player.camera.global_position
+		var fwd := -player.camera.global_transform.basis.z
+		for n in get_tree().root.find_children("*", "GeometryInstance3D", true, false):
+			var g := n as GeometryInstance3D
+			if not g.is_visible_in_tree():
+				continue
+			var bb := g.get_aabb()
+			if g is MultiMeshInstance3D:
+				continue
+			var c := g.global_transform * bb.get_center()
+			var to := c - eye
+			if to.length() < 14.0 and to.normalized().dot(fwd) > 0.2:
+				print("SONDA37 %s c=%s d=%.1f boy=%s ebeveyn=%s ova=%s zemin=%.2f" % [str(g.get_path()).right(110), c.snapped(Vector3.ONE * 0.1), to.length(),
+					bb.size.snapped(Vector3.ONE * 0.1), (g.get_parent() as Node3D).global_position.snapped(Vector3.ONE * 0.01) if g.get_parent() is Node3D else Vector3.INF,
+					assault._ova.global_position if assault._ova else Vector3.INF, sur.dis_zemin_y(c.x, c.z)])
 	if kare:
 		await _kare("yuruyus")
 	player.global_position = MARCH_TO + Vector3(0, 0.05, 0)

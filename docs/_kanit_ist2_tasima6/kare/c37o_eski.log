@@ -21,3 +21,23 @@ WARNING: Screen-space indirect lighting (SSIL) can only be enabled when using th
      at: environment_set_ssil (servers/rendering/storage/environment_storage.cpp:661)
 TASIMA37OYURU set=eski kalas_x=-9.0 kiyi_z=37.0 uc_z=19.4 yuruyus=(-9.0, 0.0, 74.0)>(-9.0, 0.0, 41.5) fici_z=16.6 kanca=(0.0, -1.3, 22.6) surukle=(-9.0, 0.0, 39.5)>(-9.0, 0.0, 68.0) teras_z=19.0
 TASIMA37OYURU bacak=turgut sure=0.0 yol=0.0 takilma=0 dusme=0 son=(10.4, 0.0, 127.9) odak=turgut
+WORLDWALK region= shapes=9834 boxes=9115 tris=281256 ms=43689
+CITYLIFE region= src=plan era=siege night=true density=0.50 nodes=1026 plazas=19 landmarks=23
+TASIMA37OKARE an_01_yuruyus.jpg oyuncu=(-9.0, 0.0, 74.0) cizim=3293 ilkel=2535052 sur=eski
+TASIMA37OYURU bacak=kalas_yigini sure=0.0 yol=0.0 takilma=0 dusme=0 son=(-10.5, 0.0, 44.0) odak=plank
+TASIMA37OYURU bacak=kiyi sure=0.0 yol=0.0 takilma=0 dusme=0 son=(-9.0, 0.0, 38.6) odak=edge
+TASIMA37OKARE an_02_kalas_indi.jpg oyuncu=(-9.0, 0.0, 38.6) cizim=3650 ilkel=2676208 sur=eski
+TASIMA37OYURU bacak=kalas_orta sure=0.0 yol=0.0 takilma=0 dusme=0 son=(-9.0, -2.9, 28.2) odak=
+TASIMA37OKARE an_03_kalas_ortasi.jpg oyuncu=(-9.0, -2.9, 28.2) cizim=3892 ilkel=2870892 sur=eski
+TASIMA37OYURU bacak=kalas_uc sure=0.0 yol=0.0 takilma=0 dusme=0 son=(-9.0, 0.1, 19.0) odak=
+TASIMA37OYURU bacak=kanca_yeri sure=0.0 yol=0.0 takilma=0 dusme=0 son=(0.0, -1.3, 22.6) odak=
+TASIMA37OKARE an_04_barikat.jpg oyuncu=(0.0, -1.3, 22.6) cizim=4291 ilkel=3439158 sur=eski
+TASIMA37OKARE an_05_giustiniani.jpg oyuncu=(2.2, -1.5, 23.0) cizim=4719 ilkel=3866326 sur=eski
+TASIMA37OYURU bacak=surukle sure=0.0 yol=0.0 takilma=0 dusme=0 son=(-9.0, 0.0, 68.0) odak=
+TASIMA37OKARE an_06_geri_bakis.jpg oyuncu=(-9.0, 0.0, 47.5) cizim=4644 ilkel=3129849 sur=eski
+TASIMA37OKARE BITTI
+WARNING: ObjectDB instances leaked at exit (run with --verbose for details).
+     at: cleanup (core/object/object.cpp:2378)
+ERROR: 1 resources still in use at exit (run with --verbose for details).
+   at: clear (core/io/resource.cpp:614)
+KARE_BITTI rc=0 --chapter=37o --autotest=kare --eskisur
