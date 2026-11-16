@@ -334,6 +334,8 @@ func _az_sifirla() -> void:
 var _zy := 0.0
 var _zn := Vector3.UP
 var _dik := false
+## Fizik-yığılma turunun ayak düzeltmeleri (dik moloz topuk-burun, yokuş aşağı koşu); ÖNCE ölçümünde `--yigilma=0` kapatır
+static var yeni := not (OS.get_cmdline_user_args().has("--yigilma=0"))
 
 
 func _zemin(p: Vector3, ref_y: float) -> bool:
@@ -375,7 +377,7 @@ func _zemin_ayak(s: int, p: Vector3, ref_y: float, delta: float, esik := 0.06) -
 	if _g_ok[s]:
 		_g_y[s] = _zy
 		_g_n[s] = _zn
-		if _dik:
+		if _dik and yeni:
 			_dik_taban(s, p, ref_y)
 	else:
 		_g_t[s] = 0.25      # bulunamadı (ilk kare, kenar): kısa sürede yeniden
@@ -517,7 +519,7 @@ func _coz(delta: float, yuru: bool) -> void:
 				continue
 			# Yokuş aşağı (basan ayak kökün altında): yuvarlanma payı azalır, kalça yetişecek kadar iner (hızlı inişte
 			# adım ucunda taban 3–5 cm havada kalıyordu)
-			hd *= lerpf(0.6, 0.9, clampf(-al.y / 0.15, 0.0, 1.0))
+			hd *= lerpf(0.6, 0.9, clampf(-al.y / 0.15, 0.0, 1.0)) if yeni else 0.6
 		elif not _grd[s]:
 			continue
 		p_t = minf(p_t, al.y + sqrt(maxf(R * R - hd * hd, 0.0)) - h.y)

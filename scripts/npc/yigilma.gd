@@ -416,12 +416,6 @@ func _kok_izle(delta: float) -> void:
 			_kok_v = v
 		elif _kok_dustu and v.y > -0.3:
 			indi()
-		elif absf(v.y) < 0.05 and t > 0.25:
-			_kok_dur += 1
-			if _kok_dur >= 3:
-				indi()
-		else:
-			_kok_dur = 0
 
 
 ## Kök yere indi: yerçekimi ve zemin başlar; parçacıklar kökün son hızını alır. Izgara buradan yeniden kurulur.
@@ -436,7 +430,7 @@ func indi(v := Vector3.INF) -> void:
 	for i in N:
 		tepe = maxf(tepe, p[i].y)
 	_yc = tepe + 0.3
-	_derin = 6.0
+	_derin = 24.0
 	_izgara.clear()
 	_qi.clear()
 	var ky := kok.global_position.y if kok and is_instance_valid(kok) else p[HL].y - 0.9
@@ -890,6 +884,11 @@ func _bitir() -> void:
 	olcum_us += Time.get_ticks_usec() - t0
 	toplam_us += Time.get_ticks_usec() - t0
 	if GameState.autotest:
+		if OS.get_cmdline_user_args().has("--yig-dbg"):
+			var c := (p[HL] + p[HR]) * 0.5
+			print("YIGDBG %s hav=%s t=%.2f uyku=%d kalca=%s gi=%.2f/%.2f gz=%.2f/%.2f kesin=%.2f izgara=%.2f kok=%s yc=%.2f" % [kisi.name, str(_havada), t, _uyku,
+				c, _gi[HL], _gi[HR], gz[HL], gz[HR], _isin(c + Vector3(0, 0.6, 0), 1.8, false), _zemin(c.x, c.z),
+				kok.global_position if kok and is_instance_valid(kok) else Vector3.INF, _yc])
 		denetle(kisi, "fizik")
 	bitti.emit()
 
@@ -946,10 +945,21 @@ func _son_oturt() -> void:
 			var corr := d * ((l - hedef) / (l * (wa + wb)))
 			p[ia] += corr * wa
 			p[ib] -= corr * wb
-	# Son bir kez: hiçbir parçacık zemine gömük kalmasın (kısıt düzeltmesi geri itmiş olabilir)
+	# Son bir kez: hiçbir parçacık ve gövde küresi zemine gömük kalmasın (kısıt düzeltmesi geri itmiş olabilir)
 	for i in N:
 		if not is_nan(ge[i]) and p[i].y - float(YARICAP[i]) < ge[i]:
 			p[i].y = ge[i] + float(YARICAP[i])
+	kalca = (p[HL] + p[HR]) * 0.5
+	omuz = (p[SL] + p[SR]) * 0.5
+	var kaldir := 0.0
+	for k in KURE.size():
+		if is_nan(kc[k]):
+			continue
+		var c := omuz.lerp(kalca, float(KURE[k][0]))
+		kaldir = maxf(kaldir, kc[k] + float(KURE[k][1]) - c.y)
+	if kaldir > 0.0:
+		for i in 5:
+			p[i].y += kaldir
 
 
 ## Hemen dondur (ceset sınırı, sahne değişimi).
@@ -1079,14 +1089,37 @@ static func kare(ch: Node3D, tur: String) -> void:
 	var sc := ch.get_tree().current_scene
 	var ad := "%s_%s_%d" % [sc.name if sc else "x", tur, n]
 	var tree := ch.get_tree()
+	# Tanık kamera: oyuncu kamerasının yerinde, kurbanın göğsüne bakar (test botunun kamerası çoğu an yere/rakibe dönük)
+	var tanik := Camera3D.new()
+	tanik.fov = cam.fov
+	tree.root.add_child(tanik)
+	# omzun üstünden: oyuncunun kendi kolu/kalkanı (birinci şahıs) kadrajı kapatmasın
+	var ileri := -cam.global_basis.z
+	ileri.y = 0.0
+	var goz := cam.global_position - ileri.normalized() * 1.1 + Vector3(0, 0.7, 0)
+	var hedef_p := ch.global_position + Vector3(0, 0.7, 0)
+	tanik.global_position = goz
+	tanik.look_at(hedef_p if goz.distance_to(hedef_p) > 0.3 else hedef_p + Vector3(0, 0, 1))
+	var eski_cam := cam
+	tanik.make_current()
 	var t0 := Time.get_ticks_msec()
 	for k in KARE_ANLAR.size():
 		var hedef: float = KARE_ANLAR[k]
 		while (Time.get_ticks_msec() - t0) / 1000.0 * Engine.time_scale < hedef:
 			await tree.process_frame
+		if is_instance_valid(ch) and ch.is_inside_tree():
+			var b := ch.global_position + Vector3(0, 0.5, 0)
+			var y = of(ch)
+			if y and is_instance_valid(y):
+				var pp: PackedVector3Array = y.get("p")
+				b = (pp[HL] + pp[HR] + pp[SL] + pp[SR]) * 0.25
+			tanik.look_at(b if goz.distance_to(b) > 0.3 else b + Vector3(0, 0, 1))
 		await RenderingServer.frame_post_draw
 		var img := tree.root.get_texture().get_image()
 		img.save_jpg(kare_dir.path_join("%s_%d.jpg" % [ad, k]), 0.85)
+	if is_instance_valid(eski_cam) and eski_cam.is_inside_tree():
+		eski_cam.make_current()
+	tanik.queue_free()
 	print("YIGKARE %s at=%s" % [ad, ch.global_position.snapped(Vector3.ONE * 0.1)])
 
 

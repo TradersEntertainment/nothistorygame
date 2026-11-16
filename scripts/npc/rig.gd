@@ -653,7 +653,7 @@ func _activity(delta: float, talking: bool, k: float) -> bool:
 	var t := _t
 	# Hücum pozları (Crowd ile pişirilir; merdivendekiler canlı): run_a/run_b koşu adımının iki ucu, leap siperden
 	# ya da hendek kenarından sıçrayış, climb_a/climb_b merdivende sırayla el ve ayak.
-	if activity == "fall":
+	if activity == "fall" and Yigilma.etkin:
 		_savrulma(clampf(k * 2.5, 0.0, 1.0))
 		return true
 	if STATIC_POSES.has(activity):
