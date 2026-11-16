@@ -175,6 +175,8 @@ func update(delta: float, talking: bool, busy: bool, ext := true) -> void:
 		Ayak.olc_tick()
 	if Yigilma.olc_acik:
 		Yigilma.olc_tick()
+	if Kumas.olc_acik:
+		Kumas.olc_tick()
 	yuruyor = false
 	_update_core(delta, talking, busy)
 	if ext:
@@ -204,8 +206,6 @@ var kumas: Kumas
 var _kumas_bakti := false
 
 func kumas_tick(delta: float) -> void:
-	if Kumas.olc_acik:
-		Kumas.olc_tick()
 	if kumas == null:
 		if _kumas_bakti or not Kumas.etkin:
 			return
