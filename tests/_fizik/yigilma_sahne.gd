@@ -94,6 +94,10 @@ func _ready() -> void:
 	s.shot(s.global_position + Vector3(0, 1.2, 8))
 	await _anlar("tufek", 0.0)
 	await get_tree().create_timer(1.5).timeout
+	var Y = load("res://scripts/npc/yigilma.gd")
+	print("YIGSAHNE adim n=%d us=%d uygula n=%d us=%d" % [Y.dbg_adim_n, Y.dbg_adim_us, Y.dbg_uyg_n, Y.dbg_uyg_us])
+	print("YIGSAHNE bolum %s" % [Y.dbg_s])
+	print("YIGSAHNE isin n=%d us=%d" % [load("res://scripts/npc/yigilma.gd").isin_n, load("res://scripts/npc/yigilma.gd").isin_us])
 	print("YIGSAHNE bitti us=%d n=%d" % [load("res://scripts/npc/yigilma.gd").toplam_us, load("res://scripts/npc/yigilma.gd").toplam_n])
 	get_tree().quit()
 

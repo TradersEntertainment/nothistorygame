@@ -587,6 +587,7 @@ func _too_close(c: Dictionary, now: Vector3, before: Vector3) -> bool:
 	return false
 
 
+const YIG := preload("res://scripts/npc/yigilma.gd")
 func _climber_step(c: Dictionary, s: Soldier, delta: float) -> void:
 	if true:
 		var base: Vector3 = c["base"]
@@ -597,6 +598,8 @@ func _climber_step(c: Dictionary, s: Soldier, delta: float) -> void:
 			if fca:
 				fca.release(true, "fall")
 				s.position = c.get("lp", s.position)
+			if float(c["fall"]) == 0.0:
+				YIG.baslat(s, {"dusus": true, "kok": s, "itme": -s.global_basis.z * 1.0, "h": 1.4, "donus": -1.6})   # bez bebek (scripts/npc/yigilma.gd)
 			c["fall"] = float(c["fall"]) + delta
 			var f: float = c["fall"]
 			var gy := ground_y(s.position.x, s.position.z)
@@ -620,6 +623,7 @@ func _climber_step(c: Dictionary, s: Soldier, delta: float) -> void:
 					c["t"] = 0.0
 					c["a"] = 0.0
 					s.rotation.x = 0.0
+					YIG.birak_kisi(s)
 					s.remove_meta("no_turn")
 					# Hemen hendekteki çıkış yerine: eskiden gömüldüğü yerde dik kalıyordu (çıkış yeri doluysa adım geri
 					# alınıyordu); aynı anda düşen ikisi orada iç içe duruyordu (Bölüm 0, VISAUDIT overlap)

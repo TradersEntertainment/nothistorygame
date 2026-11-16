@@ -21,10 +21,14 @@ const PATH := "res://scripts/npc/yigilma.gd"
 static var etkin := not (OS.get_cmdline_user_args().has("--yigilma=0") or OS.get_cmdline_args().has("--yigilma=0"))
 static var _aktif: Array = []
 const AZAMI := 8
-const DT := 1.0 / 60.0
-const ADIM_AZAMI := 3
-const YINELE := 5
-const HUCRE := 0.2
+const DT := 1.0 / 30.0
+const ADIM_AZAMI := 2
+const YINELE := 4
+const HUCRE := 0.25
+## Kare başına en çok bu kadar yeni zemin ışını (bütün yığılanlar için); bilinmeyen hücrede parçacığın son zemini
+const ISIN_KARE := 14
+static var _isin_kare := -1
+static var _isin_kalan := 0
 const YERCEKIMI := 13.0
 const DUVAR := 0.28
 const KENAR := 0.6
@@ -62,6 +66,8 @@ var _ca := PackedInt32Array()
 var _cb := PackedInt32Array()
 var _cmin := PackedFloat32Array()
 var _cmax := PackedFloat32Array()
+var _cmin2 := PackedFloat32Array()
+var _cmax2 := PackedFloat32Array()
 var _L := PackedFloat32Array([0, 0, 0, 0])   # uyluk, baldır, pazu, önkol
 var _gi := PackedFloat32Array()     # bu adımın zemini (parçacık başına)
 var _gk := PackedFloat32Array([0, 0])
@@ -135,6 +141,9 @@ static func olc_tick() -> void:
 		_olc["t0"] = now
 	if now - int(_olc["t0"]) >= 10000:
 		var k := maxf(1.0, float(_olc["kare"]))
+		print("YIGISIN n=%d us=%d" % [isin_n, isin_us])
+		isin_n = 0
+		isin_us = 0
 		print("YIGPERF kare=%d proc_ms=%.3f yig_us=%.1f aktif=%.2f en_aktif=%d en_us=%d en_proc_ms=%.2f en_pay=%.4f etkin=%s" % [
 			_olc["kare"], float(_olc["proc"]) * 1000.0 / k, float(_olc["us"]) / k, float(_olc["akt"]) / k, _olc["en_n"],
 			_olc["en_us"], float(_olc["en_proc"]) * 1000.0, _olc["en_pay"], str(etkin)])
@@ -295,8 +304,7 @@ func _kur(ch: Node3D, rg: Rig, sec: Dictionary) -> void:
 	_derin = 24.0 if dusus else 4.0
 	var kok_y := ch.global_position.y
 	for i in N:
-		var g0 := _zemin(p[i].x, p[i].z)
-		gz[i] = g0 if not is_nan(g0) else kok_y
+		gz[i] = kok_y
 	_aktif.append(self)
 	while _aktif.size() > AZAMI:
 		var en_eski = _aktif[0]
@@ -321,6 +329,9 @@ func _aralik(a: int, b: int, mn: float, mx: float) -> void:
 	_cb.append(b)
 	_cmin.append(mn)
 	_cmax.append(mx)
+	# Aralığın içi (karesiyle, kök almadan atlanır); sabit boylu çubukta ±0,5 mm
+	_cmin2.append(maxf(0.0, mn - 0.0005) ** 2)
+	_cmax2.append((mx + 0.0005) ** 2)
 
 
 ## Gövde çerçevesi: [sağ, yukarı (kalçadan omza), ön]
@@ -350,13 +361,20 @@ func _process(delta: float) -> void:
 	while _acc >= DT and n < ADIM_AZAMI:
 		_acc -= DT
 		n += 1
+		_pv = p.duplicate()
+		var ta := Time.get_ticks_usec()
 		_adim()
+		dbg_adim_us += Time.get_ticks_usec() - ta
+		dbg_adim_n += 1
 		if dondu:
 			break
 	if dondu:
 		return
-	if n > 0:
-		_uygula()
+	if n > 0 or (_acc > 0.0 and _uyku < 3):
+		var tu := Time.get_ticks_usec()
+		_uygula_ara(clampf(_acc / DT, 0.0, 1.0))
+		dbg_uyg_us += Time.get_ticks_usec() - tu
+		dbg_uyg_n += 1
 	var us := Time.get_ticks_usec() - t0
 	olcum_us += us
 	toplam_us += us
@@ -402,10 +420,10 @@ func indi(v := Vector3.INF) -> void:
 	_yc = tepe + 0.3
 	_derin = 6.0
 	_izgara.clear()
+	_qi.clear()
 	var ky := kok.global_position.y if kok and is_instance_valid(kok) else p[HL].y - 0.9
 	for i in N:
-		var g0 := _zemin(p[i].x, p[i].z)
-		gz[i] = g0 if not is_nan(g0) else ky
+		gz[i] = ky
 	t = minf(t, 0.3)
 
 
@@ -418,7 +436,9 @@ func durdur() -> void:
 	set_process(false)
 
 
+static var dbg_s := [0, 0, 0, 0]
 func _adim() -> void:
+	var _ta := Time.get_ticks_usec()
 	t += DT
 	var g := Vector3(0, -(_g if not _havada else 0.0) * DT * DT, 0)
 	# Düşüşte havada çırpınır (kollar, bacaklar): ilk yere değişe kadar
@@ -441,16 +461,20 @@ func _adim() -> void:
 		o[i] = cur
 		p[i] = cur + v + a
 	if _havada:
+		_menteseler()
 		for it in YINELE:
-			_menteseler()
 			_cubuklar()
 		return
+	var _tz := Time.get_ticks_usec()
+	dbg_s[0] += _tz - _ta
 	# Zemin (adım başına bir kez): duvar ve kenar yatayda geçilmez
 	for i in N:
-		var gg := _zemin(p[i].x, p[i].z)
+		var gg := _zemin_k(i, p[i].x, p[i].z)
 		var eski := gz[i]
 		var engel := false
-		if is_nan(gg):
+		if gg == INF:
+			engel = true          # henüz ışınlanmamış hücre: bu adım yatayda bekler (taşın içine girmesin)
+		elif is_nan(gg):
 			engel = not dusus
 		elif gg > p[i].y - float(YARICAP[i]) + 0.02 and gg > eski + DUVAR:
 			engel = true
@@ -459,9 +483,9 @@ func _adim() -> void:
 		if engel:
 			p[i].x = o[i].x
 			p[i].z = o[i].z
-			gg = _zemin(p[i].x, p[i].z)
-		if is_nan(gg):
-			gg = eski if not dusus else -INF
+			gg = _zemin_k(i, p[i].x, p[i].z)
+		if is_nan(gg) or gg == INF:
+			gg = eski if (not dusus or gg == INF) else -INF
 		_gi[i] = gg
 		if gg > -INF:
 			gz[i] = gg
@@ -470,15 +494,22 @@ func _adim() -> void:
 	var omuz := (p[SL] + p[SR]) * 0.5
 	for k in KURE.size():
 		var c := omuz.lerp(kalca, float(KURE[k][0]))
-		var gk := _zemin(c.x, c.z)
+		var gk := _zemin_k(N + k, c.x, c.z)
+		if gk == INF:
+			gk = (gz[SL] + gz[SR]) * 0.5 if k == 0 else (gz[HL] + gz[HR]) * 0.5
 		_gk[k] = gk if not is_nan(gk) else -INF
 	var hiz_once := 0.0
-	for i in [HL, HR, SL, SR, BAS]:
+	for i in 5:
 		hiz_once = maxf(hiz_once, (o[i].y - p[i].y) / DT)
+	var _tm := Time.get_ticks_usec()
+	dbg_s[1] += _tm - _tz
+	_menteseler()
+	var _tc := Time.get_ticks_usec()
+	dbg_s[2] += _tc - _tm
 	for it in YINELE:
-		_menteseler()
 		_cubuklar()
 		_temas_coz()
+	dbg_s[3] += Time.get_ticks_usec() - _tc
 	# Sürtünme (adım başına bir kez): zemine değen yatayda yavaşlar
 	var ilk := -1
 	for i in N:
@@ -504,7 +535,10 @@ func _cubuklar() -> void:
 		var ia := _ca[c]
 		var ib := _cb[c]
 		var d := p[ib] - p[ia]
-		var l := d.length()
+		var l2 := d.length_squared()
+		if l2 > _cmin2[c] and l2 < _cmax2[c]:
+			continue
+		var l := sqrt(l2)
 		if l < 0.0001:
 			continue
 		var hedef := clampf(l, _cmin[c], _cmax[c])
@@ -536,16 +570,22 @@ func _temas_coz() -> void:
 			var a_s := (1.0 - tt) * 0.5
 			var a_h := tt * 0.5
 			var lam := dy / (2.0 * a_s * a_s + 2.0 * a_h * a_h)
-			for i in [SL, SR]:
-				p[i].y += a_s * lam
-				o[i].y += a_s * lam * 0.7
-				if a_s > 0.25:
-					_temas[i] = 1
-			for i in [HL, HR]:
-				p[i].y += a_h * lam
-				o[i].y += a_h * lam * 0.7
-				if a_h > 0.25:
-					_temas[i] = 1
+			var ds := a_s * lam
+			var dh := a_h * lam
+			p[SL].y += ds
+			p[SR].y += ds
+			o[SL].y += ds * 0.7
+			o[SR].y += ds * 0.7
+			p[HL].y += dh
+			p[HR].y += dh
+			o[HL].y += dh * 0.7
+			o[HR].y += dh * 0.7
+			if a_s > 0.25:
+				_temas[SL] = 1
+				_temas[SR] = 1
+			if a_h > 0.25:
+				_temas[HL] = 1
+				_temas[HR] = 1
 
 
 ## Diz yalnız öne bükülür; uyluk kalça ekleminin konisi içinde.
@@ -602,6 +642,58 @@ func _menteseler() -> void:
 
 # ---------------------------------------------------------------- zemin ızgarası
 
+## Parçacık başına önbellekli zemin (k: 0..N-1 parçacık, N, N+1 gövde küreleri): aynı hücre dörtlüsünde kaldıkça
+## sözlüğe bakılmaz (adımın en pahalı kısmıydı).
+var _qi := PackedInt32Array()
+var _qh := PackedFloat32Array()
+func _zemin_k(k: int, x: float, z: float) -> float:
+	if _qi.is_empty():
+		_qi.resize((N + 2) * 3)
+		_qh.resize((N + 2) * 4)
+		for m in N + 2:
+			_qi[m * 3 + 2] = 0
+	var fx := x / HUCRE
+	var fz := z / HUCRE
+	var i0 := floori(fx)
+	var j0 := floori(fz)
+	var oi := roundi(fx) - i0
+	var oj := roundi(fz) - j0
+	var b := k * 4
+	if _qi[k * 3 + 2] == 0 or _qi[k * 3] != i0 or _qi[k * 3 + 1] != j0:
+		var h00 := _hucre(i0, j0)
+		var h10 := _hucre(i0 + 1, j0)
+		var h01 := _hucre(i0, j0 + 1)
+		var h11 := _hucre(i0 + 1, j0 + 1)
+		if h00 == INF or h10 == INF or h01 == INF or h11 == INF:
+			_qi[k * 3 + 2] = 0
+			return INF
+		_qi[k * 3] = i0
+		_qi[k * 3 + 1] = j0
+		_qi[k * 3 + 2] = 1
+		_qh[b] = h00
+		_qh[b + 1] = h10
+		_qh[b + 2] = h01
+		_qh[b + 3] = h11
+	var own := _qh[b + oi + oj * 2]
+	if is_nan(own):
+		return NAN
+	var a00 := _qh[b]
+	var a10 := _qh[b + 1]
+	var a01 := _qh[b + 2]
+	var a11 := _qh[b + 3]
+	if is_nan(a00) or absf(a00 - own) > 0.12:
+		a00 = own
+	if is_nan(a10) or absf(a10 - own) > 0.12:
+		a10 = own
+	if is_nan(a01) or absf(a01 - own) > 0.12:
+		a01 = own
+	if is_nan(a11) or absf(a11 - own) > 0.12:
+		a11 = own
+	var ax := fx - i0
+	var az := fz - j0
+	return lerpf(lerpf(a00, a10, ax), lerpf(a01, a11, ax), az)
+
+
 func _zemin(x: float, z: float) -> float:
 	var fx := x / HUCRE
 	var fz := z / HUCRE
@@ -610,8 +702,8 @@ func _zemin(x: float, z: float) -> float:
 	var ax := fx - i0
 	var az := fz - j0
 	var own := _hucre(roundi(fx), roundi(fz))
-	if is_nan(own):
-		return NAN
+	if is_nan(own) or own == INF:
+		return own
 	var h00 := _hucre(i0, j0)
 	var h10 := _hucre(i0 + 1, j0)
 	var h01 := _hucre(i0, j0 + 1)
@@ -633,6 +725,13 @@ func _hucre(i: int, j: int) -> float:
 	var v = _izgara.get(key)
 	if v != null:
 		return v
+	var f := Engine.get_process_frames()
+	if f != _isin_kare:
+		_isin_kare = f
+		_isin_kalan = ISIN_KARE
+	if _isin_kalan <= 0:
+		return INF
+	_isin_kalan -= 1
 	var h := _isin(Vector3(i * HUCRE, _yc, j * HUCRE), _derin, true)
 	_izgara[key] = h
 	return h
@@ -640,7 +739,21 @@ func _hucre(i: int, j: int) -> float:
 
 ## Yukarıdan aşağı ilk katı zemin (Unclip.standable; yeni sette "dusus_her_kati" sahnesinde her StaticBody3D). İçinden
 ## başlanan katı: duvar (başlangıç yüksekliği). Yoksa NAN.
+static var dbg_adim_us := 0
+static var dbg_adim_n := 0
+static var dbg_uyg_us := 0
+static var dbg_uyg_n := 0
+static var isin_n := 0
+static var isin_us := 0
 func _isin(from: Vector3, derin: float, icten: bool) -> float:
+	var t0 := Time.get_ticks_usec()
+	var r := _isin0(from, derin, icten)
+	isin_n += 1
+	isin_us += Time.get_ticks_usec() - t0
+	return r
+
+
+func _isin0(from: Vector3, derin: float, icten: bool) -> float:
 	if kisi == null or not kisi.is_inside_tree():
 		return NAN
 	var space := kisi.get_world_3d().direct_space_state
@@ -678,6 +791,22 @@ static func kati(col: Object, shape: int, her_kati: bool) -> bool:
 
 
 # ---------------------------------------------------------------- görüntü
+
+## Adımlar arası (30 Hz benzetim, her karede görüntü): önceki ve son adımın arası
+var _pv := PackedVector3Array()
+func _uygula_ara(a: float) -> void:
+	if _pv.size() != N or a >= 0.999:
+		_uygula()
+		return
+	var keep := p
+	var q := PackedVector3Array()
+	q.resize(N)
+	for i in N:
+		q[i] = _pv[i].lerp(keep[i], a)
+	p = q
+	_uygula()
+	p = keep
+
 
 func _uygula() -> void:
 	var cv := _cerceve()
@@ -748,14 +877,14 @@ func _son_oturt() -> void:
 	ge.resize(N)
 	for i in N:
 		var gg := _isin(Vector3(p[i].x, p[i].y + 0.6, p[i].z), 1.8, false)
-		ge[i] = gg if not is_nan(gg) else _zemin(p[i].x, p[i].z)
+		ge[i] = gg if not is_nan(gg) else gz[i]
 	var kc := PackedFloat32Array()
 	var kalca := (p[HL] + p[HR]) * 0.5
 	var omuz := (p[SL] + p[SR]) * 0.5
 	for k: Array in KURE:
 		var c := omuz.lerp(kalca, float(k[0]))
 		var gg := _isin(Vector3(c.x, c.y + 0.6, c.z), 1.8, false)
-		kc.append(gg if not is_nan(gg) else _zemin(c.x, c.z))
+		kc.append(gg if not is_nan(gg) else NAN)
 	for it in 14:
 		for i in N:
 			if is_nan(ge[i]):
@@ -834,6 +963,12 @@ func devret(anim: LimbAnim) -> void:
 	birak(false)
 	if anim and is_instance_valid(anim):
 		anim.set_process(true)
+
+
+static func birak_kisi(ch: Node) -> void:
+	var y := of(ch)
+	if y:
+		y.call("birak", true)
 
 
 ## Bırak: gövde ve baş dinlenme dönüşümüne (geri_kur), kilit kalkar, LimbAnim yeniden çalışır.
