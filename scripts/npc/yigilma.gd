@@ -27,6 +27,10 @@ const YINELE := 3
 const HUCRE := 0.25
 ## Kare başına en çok bu kadar yeni zemin ışını (bütün yığılanlar için); bilinmeyen hücrede parçacığın son zemini
 const ISIN_KARE := 10
+## Kare başına bütün yığılanların toplam işlem süresi sınırı (µs)
+const BUTCE_US := 1200
+static var _butce_kare := -1
+static var _butce_us := 0
 static var _isin_kare := -1
 static var _isin_kalan := 0
 const YERCEKIMI := 13.0
@@ -380,6 +384,15 @@ func _process(delta: float) -> void:
 		return
 	if _havada:
 		_kok_izle(delta)
+	# Kare bütçesi: bu karede bütün yığılanlar toplam BUTCE_US'yi aştıysa bu kişi adımını sonraki kareye bırakır (biriken
+	# süre en çok iki adım: kısa bir ağır çekim, sıçrama yok)
+	var fk := Engine.get_process_frames()
+	if fk != _butce_kare:
+		_butce_kare = fk
+		_butce_us = 0
+	if _butce_us > BUTCE_US:
+		_acc = minf(_acc + delta, ADIM_AZAMI * DT)
+		return
 	_acc += minf(delta, ADIM_AZAMI * DT)
 	var n := 0
 	while _acc >= DT and n < ADIM_AZAMI:
@@ -400,6 +413,7 @@ func _process(delta: float) -> void:
 		dbg_uyg_us += Time.get_ticks_usec() - tu
 		dbg_uyg_n += 1
 	var us := Time.get_ticks_usec() - t0
+	_butce_us += us
 	olcum_us += us
 	toplam_us += us
 	toplam_n += 1
