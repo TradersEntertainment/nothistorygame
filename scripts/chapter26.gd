@@ -91,6 +91,7 @@ func _ready() -> void:
 		ss.sur = sur
 		ss.ic_poterna = true            # Giustiniani'nin taşındığı kapı iç surda (eski setle aynı hikâye)
 		ss.romanos_kanat = true         # karar 11-A: iç kapı (Sultan'ın girişi) Romanos'ta
+		ss.govde_gorunur = true         # sur yolunun korkuluğu düellocu için görünür duvar (kenardan düşüş)
 		walls = ss
 		_yeni_yerler()
 	walls.assault_mode = true
@@ -169,10 +170,11 @@ func _gp(off: Vector3) -> Vector3:
 	return Vector3(off.x, off.y, sur.gedik_onu().z + 3.4 + off.z)
 
 
-## İmparator'un gediğe yürümeden önce durduğu yer (eski BREACH + (3, 0, −9)). Yeni sette o nokta iç kulenin eteğinde:
-## gediğin öbür yanında, eteğin dışında.
+## İmparator'un gediğe yürümeden önce durduğu yer (eski BREACH + (3, 0, −9)). Yeni sette o nokta iç kulenin eteğinde;
+## oyuncu o anda poternada (x 13): İmparator iç kulenin önünde, poternadan görünür yerde (−4; 6,8'de kulenin ardında
+## kalıyordu: VISAUDIT hidden D26_K_LAST).
 func _imparator_yeri() -> Vector3:
-	return LandWalls.BREACH + Vector3(3.0, 0, -9.0) if sur.eski_mi else Vector3(-4.0, 0.0, 6.8)
+	return LandWalls.BREACH + Vector3(3.0, 0, -9.0) if sur.eski_mi else Vector3(8.0, 0.0, 9.4)
 
 
 ## Yeni sette yaralı komutanı poternaya taşıma yolunun ara noktaları: iç kulenin (x −2,8…12,2, z ≤ 8 eteğiyle) önünden
@@ -1593,7 +1595,8 @@ func _entry_romanos(horse: Horse, retinue: Array[Node3D], line: Array[Node3D]) -
 	var rx := float(ro["x"])
 	for i in 8:
 		var side := -1.0 if i % 2 == 0 else 1.0
-		var z := lerpf(float(ro["dis_z0"]) - 1.5, float(ro["ic_z1"]) + 1.5, float(i / 2) / 3.0)
+		# koridorun iki ucundaki sur dibi eteklerinin (≈ 3 m) dışında (eteğe 0,15 m gömülüyorlardı: VISAUDIT sunk)
+		var z := lerpf(float(ro["dis_z0"]) - 3.4, float(ro["ic_z1"]) + 3.4, float(i / 2) / 3.0)
 		var s := Soldier.new(Color("2f5fa8") if i % 3 != 2 else Color("b3262d"), "stand", "bork")
 		s.set_meta("no_talk", true)
 		s.position = Vector3(rx + side * 1.75, 0.0, z)
@@ -2397,8 +2400,11 @@ func _process(delta: float) -> void:
 			_fx_t = randf_range(0.8, 2.0)
 			Vfx.explosion(walls, Vector3(randf_range(-14, 18), randf_range(1.0, 7.0), randf_range(22.0, 30.0)), randf_range(0.3, 0.6))
 			Audio.sfx("explosion_small", -16.0, randf_range(0.8, 1.2))
+		# Hendekte durdukları yer: eski hendeğin (z 20–36) dörtte biri, z 24; yeni sette aynı oran (parateikhion duvarının
+		# ve hendek iç yüzünün önünde; eşik eski z 24'te kalınca hendek duvarının içine yürüyorlardı: VISAUDIT insolid, WALKTHRU)
+		var dur_z := 24.0 if sur.eski_mi else sur.hendek_z(0.25)
 		for a in attackers:
-			if a.position.z > 24.0 and a.visible:
+			if a.position.z > dur_z and a.visible:
 				# Hemen önünde (0,6 m içinde) duran biri varsa bekler (hendekte üst üste birikmesinler)
 				var blocked := false
 				for o in attackers:

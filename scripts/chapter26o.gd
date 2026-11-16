@@ -75,6 +75,7 @@ func _ready() -> void:
 		ss.sur = sur
 		ss.dolgu = 1.0
 		ss.romanos_kanat = true
+		ss.govde_gorunur = true         # sur yolunun korkuluğu düellocu için görünür duvar (kenardan düşüş)
 		walls = ss
 		_yeni_yerler_o()
 	walls.assault_mode = true
@@ -204,8 +205,8 @@ func _build_walls_scene() -> void:
 		# hendeğin ortası (dibi) ve sur dibi (teras); y BattleExtras'ın zemininden (Assault.ground_y → SurSet.zemin_y)
 		# hendekteki şerit dolgunun (x 0 ± 5, iki yanda 2 m şev) iki yanında: şevde zemin formülü görünen yüzden 0,4 m
 		# sapıyordu (VISAUDIT float, lose)
-		serit = [[Vector3(-26.0, 0, sur.hendek_z(0.47)), Vector3(-8.0, 0, sur.hendek_z(0.47)), 5.0, 6, 4],
-			[Vector3(8.0, 0, sur.hendek_z(0.47)), Vector3(26.0, 0, sur.hendek_z(0.47)), 5.0, 6, 4],
+		serit = [[Vector3(-26.0, 0, sur.hendek_z(0.47)), Vector3(-9.5, 0, sur.hendek_z(0.47)), 5.0, 6, 4],
+			[Vector3(9.5, 0, sur.hendek_z(0.47)), Vector3(26.0, 0, sur.hendek_z(0.47)), 5.0, 6, 4],
 			[Vector3(-24.0, 0, sur.dis_sur_z1() + 1.3), Vector3(24.0, 0, sur.dis_sur_z1() + 1.3), 0.6, 0, 6]]
 	for lane: Array in serit:
 		var bx := BattleExtras.new()
@@ -504,7 +505,8 @@ func _wall_climb() -> void:
 	# Sur yolu: oyuncunun iki yanı; Cenevizliler kuleden (doğudan) iner
 	var y := sur.dis_yol_y()
 	var zc := sur.dis_yol_z()
-	var east := [Vector3(CLIMB_X + 3.8, y, zc), Vector3(CLIMB_X + 2.6, y, zc + 0.4)]
+	# (yeni sette ikincisi korkuluktan uzak, sur yolunun iç yarısında: zc + 0,4 dış korkuluğun içine değiyordu)
+	var east := [Vector3(CLIMB_X + 3.8, y, zc), Vector3(CLIMB_X + 2.6, y, zc + (0.4 if sur.eski_mi else -0.3))]
 	var specs := []
 	for k in 2:
 		specs.append({"pos": east[k], "blade": "spathion", "shield": true,
@@ -1123,8 +1125,12 @@ func _t8o_yuru() -> void:
 
 ## Oyuncunun tırmandığı merdiven: arkasından gelen azaplar bundan çıkar (Melee.reinforce_climb)
 func _ally_ladder(l: Ladder) -> Dictionary:
+	var land := l.top_exit() - Vector3(0, 0.1, 0)
+	if not sur.eski_mi:
+		# merdivenin tepesi korkuluğun 1,5 m üstünde: top_exit dış korkuluğun içine düşüyordu (VISAUDIT insolid)
+		land = Vector3(l.global_position.x, sur.dis_yol_y(), sur.dis_yol_z())
 	return {"base": l.point_at(0.0) + l.front_dir() * 0.35, "top": l.point_at(l.height - 0.3) + l.front_dir() * 0.3,
-		"land": l.top_exit() - Vector3(0, 0.1, 0)}
+		"land": land}
 
 
 ## Girişin sahnesi (yayma P6): yol boyunca dizilen yeniçeriler aynı pozda donup dikiliyordu. Tören sürerken (phase
