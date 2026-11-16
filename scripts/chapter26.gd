@@ -73,6 +73,8 @@ var _fx_t := 0.0
 func _ready() -> void:
 	GameState.snapshot(26)
 	_apply_autotest_setup()
+	if OS.has_environment("T8D_IZLE"):
+		_t8d_izle.call_deferred()
 	hud = Hud.new()
 	add_child(hud)
 	hud.chase_music = "tension"
@@ -130,6 +132,17 @@ func _yeni_yerler() -> void:
 ## yere (Unclip.spread). Eski sette yapılmaz (davranış aynı).
 func _dostlari_dagit() -> void:
 	if sur.eski_mi:
+		return
+	# TAŞIMA-8D: dövüş son vuruşun öldürme kamerası sürerken bitebilir; kamera kadrajı kapatanları (savunucu sırası,
+	# onarımcı, dost düellocu) o süre gizler. Unclip.spread gizliyi saymaz: dostu gizli savunucunun dibine koyuyor, kamera
+	# bitip herkes görünür olunca ikisi iç içe kalıyordu (VISAUDIT overlap SPK_DEFENDER|Duelist, TMP8D izi). Oyuncunun
+	# kamerası dönene (gizlenenler geri gelene) kadar beklenir; çağıran beklemez (akışın süresi aynı).
+	var t := 0.0
+	while t < 6.0 and is_inside_tree() and get_viewport().get_camera_3d() != player.camera:
+		await get_tree().process_frame
+		t += get_process_delta_time()
+	await get_tree().process_frame
+	if not is_inside_tree():
 		return
 	for n in get_children():
 		var d := n as Duelist
@@ -3113,3 +3126,56 @@ func _ladder_heads() -> Array:
 	to = to.normalized() if to.length() > 0.1 else Vector3(0, 0, 1)
 	var side := to.cross(Vector3.UP).normalized()
 	return [p + to * 4.5 + side * 1.6, p + to * 4.5 - side * 1.6]
+
+
+# TMP8D: geçici iç içe izleyici (yalnız T8D_IZLE ortamında)
+func _t8d_ad(n: Node3D) -> String:
+	var par := n.get_parent()
+	var pn := str(par.name)
+	if par.get_script() != null and (par.get_script() as Script).get_global_name() != "":
+		pn = (par.get_script() as Script).get_global_name()
+	var ek := ""
+	if par is Duelist:
+		var d := par as Duelist
+		ek = " team=%d st=%s tgt=%s" % [d.team, str(d.state), str(d.target.name) if d.target else "-"]
+	return "%s#%d%s%s" % [pn, n.get_instance_id() % 100000, ("(" + str(n.get_meta("spk")) + ")") if n.has_meta("spk") else "", ek]
+
+
+func _t8d_izle() -> void:
+	var gec := {}
+	var bildi := {}
+	var k := 0
+	while is_inside_tree():
+		await get_tree().create_timer(0.25, false).timeout
+		k += 1
+		var who: Array = []
+		for n in get_tree().get_nodes_in_group("persons") + get_tree().get_nodes_in_group("soldiers"):
+			var p := n as Node3D
+			if p and p.is_visible_in_tree():
+				who.append(p)
+		for p: Node3D in who:
+			var id := p.get_instance_id()
+			if not gec.has(id):
+				gec[id] = []
+			(gec[id] as Array).append([k, p.global_position])
+			if (gec[id] as Array).size() > 14:
+				(gec[id] as Array).pop_front()
+		for i in who.size():
+			for j in range(i + 1, who.size()):
+				var a: Node3D = who[i]
+				var b: Node3D = who[j]
+				if a == b:
+					continue
+				var d := Vector2(a.global_position.x - b.global_position.x, a.global_position.z - b.global_position.z).length()
+				if d >= 0.35 or absf(a.global_position.y - b.global_position.y) > 0.6:
+					continue
+				var key := "%d_%d" % [mini(a.get_instance_id(), b.get_instance_id()), maxi(a.get_instance_id(), b.get_instance_id())]
+				bildi[key] = int(bildi.get(key, 0)) + 1
+				if int(bildi[key]) != 3:
+					continue
+				print("TMP8D cift phase=%s k=%d a=%s b=%s d=%.2f" % [phase, k, _t8d_ad(a), _t8d_ad(b), d])
+				for o: Node3D in [a, b]:
+					var iz := ""
+					for e: Array in gec[o.get_instance_id()]:
+						iz += " %d:%s" % [e[0], (e[1] as Vector3).snapped(Vector3.ONE * 0.05)]
+					print("TMP8D iz %s%s" % [_t8d_ad(o), iz])

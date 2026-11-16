@@ -808,6 +808,12 @@ func _uyandir(e: Dictionary) -> void:
 			s.size = ab.size * Vector3(0.97, 1.0, 0.97)
 			cs.shape = s
 	g.add_child(cs)
+	# İlk iki fizik adımı donuk (durağan): GodotPhysics yeni gövdenin kütle/eylemsizliğini bir adım sonra hesaplar; o
+	# ilk adımda korkuluğa ve komşuya değen gövde (sur yolu dizisi) ~100 rad/sn dönüp 45 m/sn fırlıyordu (TAŞIMA-8D
+	# sondası: ilk karenin açısal hızı (−70, 87, −53); şekilden açık eylemsizlik vermek düzeltmedi). _uyaniklar 2. karede
+	# çözer, bekletilen itkileri 3. karede uygular.
+	g.freeze_mode = RigidBody3D.FREEZE_MODE_STATIC
+	g.freeze = true
 	var gxf := Transform3D(xf.basis, xf * ab.get_center())
 	add_child(g)
 	g.global_transform = gxf
@@ -837,6 +843,7 @@ func _uyandir(e: Dictionary) -> void:
 			d.get_parent().remove_child(d)
 			g.add_child(d)
 			d.global_transform = dx
+	_kesisme_ayir(g, e)
 	g.body_entered.connect(_carpti.bind(e))
 	e["govde"] = g
 	e["kare"] = 0
@@ -857,6 +864,45 @@ func _uyandir(e: Dictionary) -> void:
 		if absf(alt - ust) < 0.15 and Vector2(oc.x - c0.x, oc.z - c0.z).length() < _yaricap(e) + _yaricap(o) * 0.8:
 			sayac["destek"] += 1
 			_uyandir.call_deferred(o)
+
+
+## Uyanan gövde, uyurkenki daraltılmış katısından büyüktür (sur yolu fıçısı: katı yarıçapı ≈ 0,29, gövde 0,31; dizide
+## korkuluğa 3 cm, tekmeyle kaymış komşusuna birkaç cm girer). İç içe doğan gövdeyi fizik motoru ilk adımda patlayıcı
+## bir itkiyle ayırıyordu (TAŞIMA-8D sondası: fıçı 72 m/sn ile korkuluğun üstünden ovaya, 269 m). Kurulurken temas
+## çiftlerinden ayırma kayması hesaplanır, gövde kesişmenin dışına konur (en çok 8 adım).
+func _kesisme_ayir(g: RigidBody3D, e: Dictionary) -> void:
+	var cs := g.get_child(0) as CollisionShape3D
+	if cs == null or not is_inside_tree():
+		return
+	var space := get_world_3d().direct_space_state
+	var q := PhysicsShapeQueryParameters3D.new()
+	q.shape = cs.shape
+	q.collision_mask = g.collision_mask
+	var haric: Array[RID] = [g.get_rid()]
+	var st = e.get("statik")
+	if st != null and is_instance_valid(st):
+		haric.append((st as CollisionObject3D).get_rid())
+	q.exclude = haric
+	q.margin = 0.0
+	for _i in 8:
+		q.transform = g.global_transform * cs.transform
+		var nk := space.collide_shape(q, 16)
+		if nk.is_empty():
+			return
+		# çift: (şeklin öteki gövdeye en derin giren noktası, öteki gövdenin şekle en derin giren noktası); şekil
+		# ikinci − birinci kadar kayınca o temastan ayrılır (ölçüldü: 0,1 m iç içe küre-kutu → (1,0) / (0,9)). İki yandan
+		# sıkışan (korkuluk + komşu) gövdede en büyük tek temas salınıyordu: bütün temasların ortalaması (gevşetme).
+		var top := Vector3.ZERO
+		var n := 0
+		for k in range(0, nk.size() - 1, 2):
+			top += nk[k + 1] - nk[k]
+			n += 1
+		var en := top / float(maxi(n, 1))
+		if OS.has_environment("T8D_IZ"):
+			print("TMP8D ayir id=%d n=%d en=%s" % [e["id"], n, en.snapped(Vector3.ONE * 0.001)])
+		if en.length() < 0.002:
+			return
+		g.global_position += en + en.normalized() * 0.003
 
 
 ## Dressing yığınlarının ortak çarpışma kutusu (crates/barrels: grubun kaplamı): uyanan eşyayla kesişen kutular kapanır,
@@ -922,7 +968,7 @@ func _itki(e: Dictionary, j: Vector3, nokta := Vector3.ZERO) -> void:
 	var g := e["govde"] as RigidBody3D
 	if g == null:
 		return
-	if int(e.get("kare", 99)) < 2:
+	if int(e.get("kare", 99)) < 3:
 		e["bekleyen"] = (e.get("bekleyen", []) as Array) + [[j, nokta]]
 		return
 	g.apply_impulse(j, nokta)
@@ -972,7 +1018,10 @@ func _uyaniklar(delta: float) -> void:
 			uyanik.erase(e)
 			continue
 		e["kare"] = int(e.get("kare", 99)) + 1
-		if int(e["kare"]) >= 2 and e.has("bekleyen"):
+		if int(e["kare"]) == 2 and g.freeze:
+			g.freeze = false
+		# çözülmenin kütle/eylemsizlik güncellemesi de bir adım sürer: itkiler ondan sonra (açısal itki boşa gitmesin)
+		if int(e["kare"]) >= 3 and e.has("bekleyen"):
 			for b in e["bekleyen"]:
 				g.apply_impulse(b[0], b[1])
 			e.erase("bekleyen")
@@ -988,7 +1037,9 @@ func _uyaniklar(delta: float) -> void:
 		var lv := g.linear_velocity.length()
 		var av := g.angular_velocity.length()
 		# Dar geçitte (sur yolu) yavaşlayan gövde yolun ortasında kalacaksa yakın duvara (korkuluğa) doğru kayar/yuvarlanır:
-		# sürtünmeyi az aşan yatay kuvvet (dik fıçı devrilmeden kayar). Duvara değince durur ve orada donar.
+		# sürtünmeyi az aşan yatay kuvvet (dik fıçı devrilmeden kayar). Duvara değince kuvvet kalkar, orada donar.
+		# (Enine yatmış fıçıyı dikey eksende torkla yolun boyuna çevirmek denendi: korkuluk ile dizi arasında dönemeyip
+		# 9 sn sınırında zorla donuyordu; kaldırıldı.)
 		if lv < 0.8 and float(e["t"]) > 0.4 and int(e["kare"]) % 4 == 0:
 			var yan := _gecit_yan(g, c, _yaricap(e))
 			e["yasla"] = yan.normalized() if yan.length() > 0.04 else Vector3.ZERO
@@ -1207,6 +1258,12 @@ func _yol_temizle(e: Dictionary) -> void:
 ## Dar geçit (sur yolu, sokak arası: iki yanında boyunca uzanan duvar olan yer; eşyanın 1 m önünde ve ardında da dar).
 ## Eşyanın bir yanında oyuncunun geçeceği kadar (0,75 m) yer yoksa yakın duvara olan kayma (yoksa ZERO).
 func _gecit_yan(g: RigidBody3D, c: Vector3, r: float) -> Vector3:
+	return _gecit(g, c, r)["yan"]
+
+
+## _gecit_yan'ın ölçüsü: {"dar": dar geçitte mi, "yan": yakın duvara kayma (ya da ZERO), "boy": geçidin boyu,
+## "gecit": eşyanın geniş yanında kalan yer (m)}
+func _gecit(g: RigidBody3D, c: Vector3, r: float) -> Dictionary:
 	var space := g.get_world_3d().direct_space_state
 	for ax in [Vector3.RIGHT, Vector3.BACK]:
 		var boy: Vector3 = Vector3.BACK if ax == Vector3.RIGHT else Vector3.RIGHT
@@ -1221,12 +1278,13 @@ func _gecit_yan(g: RigidBody3D, c: Vector3, r: float) -> Vector3:
 		var a := _duvar(space, g, c, ax, 2.6)
 		var b := _duvar(space, g, c, -ax, 2.6)
 		r = _yari_en(g, ax, r)       # gövdenin o eksendeki gerçek yarı eni (yatık fıçı enine yatınca boyu kadar)
-		if maxf(a, b) - r >= 0.75:
-			return Vector3.ZERO     # bir yanından geçilir
+		var gecit := maxf(a, b) - r
+		if gecit >= 0.75:
+			return {"dar": true, "yan": Vector3.ZERO, "boy": boy, "gecit": gecit}     # bir yanından geçilir
 		var yan: Vector3 = ax if a < b else -ax
 		var ne := minf(a, b) - r - 0.03
-		return yan * ne if ne > 0.05 else Vector3.ZERO
-	return Vector3.ZERO
+		return {"dar": true, "yan": yan * ne if ne > 0.05 else Vector3.ZERO, "boy": boy, "gecit": gecit}
+	return {"dar": false, "yan": Vector3.ZERO, "boy": Vector3.ZERO, "gecit": 9.0}
 
 
 ## Gövde şeklinin ax yönündeki yarı eni (merkezden). Bilinmeyen şekilde r.
