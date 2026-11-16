@@ -124,6 +124,30 @@ func _yeni_yerler() -> void:
 	BANNER_TOWER = sur.dis_kule_tepe(tx) + Vector3(0.0, 0.0, -0.6)
 
 
+## TAŞIMA-8: x'e en yakın dış sur mazgal açıklığı (dişlerin arası; SurOyun.mazgallar), kacin'daki x'lerden 2,1 m ve
+## kurulmuş merdivenlerden 4 m uzak; yoksa x. Eski sette x.
+func _acikliga(x: float, kacin: Array) -> float:
+	if sur.eski_mi:
+		return x
+	var adaylar: Array = []
+	for mz: Dictionary in sur.a.mazgallar("dis"):
+		var mx: float = (mz["ayak"]["yerel"] as Vector3).x + sur.ofs.x
+		if absf(mx - x) < 2.0 and sur.dis_yol_bos(mx):
+			adaylar.append(mx)
+	adaylar.sort_custom(func(p: float, q: float): return absf(p - x) < absf(q - x))
+	for mx: float in adaylar:
+		var ok := true
+		for k: float in kacin:
+			if absf(mx - k) < 2.1:
+				ok = false
+		for l: Node3D in ladders:
+			if absf(mx - l.position.x) < 4.0:
+				ok = false
+		if ok:
+			return mx
+	return x
+
+
 ## Eski setin gedik çevresindeki peribolos noktası (LandWalls.BREACH'e göre ofset) → bu setin aynı yeri. Yeni sette gediğin
 ## önü (teslim yeri; eski BREACH + (0, 0, −3,4) = z 11,6 ↔ yeni SurSet.gedik_onu z 10,8) hizalanır: savunucu sırası,
 ## komutan ve onarım ekibi dış surun iç yüzüne eskisi kadar uzak durur.
@@ -233,6 +257,9 @@ func _build_walls_scene() -> void:
 					en = k
 			var m: Dictionary = kalan[en]
 			kalan.remove_at(en)
+			# Merdivenin tepesi bir mazgal AÇIKLIĞINA dayanır: dişin önündeki merdivenden çıkan azap dişin tepesine çıkıp
+			# düşüyordu (hold_lose: 1. dalga 75 sn sınıra dayandı). Fıçı/kazan kaçınması ve merdiven aralığı korunur.
+			m = sur.merdiven_dayama(_acikliga(float(m["x"]), st + [-8.6, 8.6]))
 			var ay: Vector3 = m["ayak"]
 			var tp: Vector3 = m["tepe"]
 			var boy := ay.distance_to(tp)
@@ -285,7 +312,9 @@ func _build_walls_scene() -> void:
 			# arkasında: şeritler kulenin iki yanında ve önünde; poterna fıçılarının önü boş
 			# (deponun yığınları x −14,1…−6, z 3,1–5,7: sol şerit deponun solunda biter)
 			serit = [[Vector3(-25.0, 0, 3.2), Vector3(-15.6, 0, 3.2), 1.2, 6, 4, 0], [Vector3(16.0, 0, 9.6), Vector3(30, 0, 9.6), 1.2, 8, 4, 0],
-				[Vector3(-24.5, 0, 9.6), Vector3(-8.5, 0, 9.6), 1.2, 8, 4, 0],
+				# (doğuş (−9,6; 7,2) ile komutan arasındaki görüş çizgisine girmesin: x −8,5'te bitince ucundaki koşan
+				# "D26_G_LADDER"da komutanı örtüyordu, VISAUDIT personhidden)
+				[Vector3(-24.5, 0, 9.6), Vector3(-11.4, 0, 9.6), 1.2, 7, 4, 0],
 				[Vector3(18.0, 0, 5.6), Vector3(30.0, 0, 5.4), 1.6, 5, 3, 0], [Vector3(32.0, 0, 6.6), Vector3(43.0, 0, 6.8), 1.6, 5, 3, 0]]
 		for lane: Array in serit:
 			var bx := BattleExtras.new()

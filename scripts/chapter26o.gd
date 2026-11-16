@@ -1084,6 +1084,8 @@ func _t8o_yuru() -> void:
 	var foot := climb_ladder.global_position
 	if sur.eski_mi:
 		await _t8_yb("dolgu", Vector3(-3.0, 0, 28.0), Vector3(-3.0, 1.0, 20.0))
+		if kare:
+			await _t8_kare("dolgu")
 	else:
 		await _t8_yb("dolgu_uzak", Vector3(0.0, 0, sur.hendek_z1() + 1.0), Vector3(0, sur.ova_y() + 1.0, sur.hendek_z0()))
 		await _t8_yb("dolgu", Vector3(0.0, 0, sur.hendek_z(0.5)), Vector3(0, sur.ova_y() + 1.0, sur.hendek_z0()))

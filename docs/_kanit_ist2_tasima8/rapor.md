@@ -155,9 +155,41 @@ aynı sancak kulesini (x 35,4) ve aynı Romanos kapısını kullanır. Bölüm 2
 |---|---|---|
 | 01 açılış | Gece peribolos: gedikte komutan ve savunucu sırası, kazık çit, meşale, solda ok sandığı; kutu yok (sandık bir sandık), havada yok, herkes zemine basıyor, aynı ressam; **eskisinden sönük**: peribolos daha seyrek (alan dar, kalabalık gedikte toplanmış). | eski kutu duvarlar, peribolos kalabalık |
 | 02 ok demeti | Açık sandıkta ok demetleri, arkada deponun kalas yığını; oturuyor, havada yok; eskisiyle aynı yakınlık. | aynı |
-| 03 merdiven/azap | (yeniden çekiliyor; ilk çekimde azap merdivenin eğimine değil dikine konmuştu: kare kurgusu hatası, havada — düzeltildi) | |
+| 03 merdiven/azap | Sur yolundan: mazgal açıklığına dayalı merdivenin iki direği, korkuluğun ardında azabın sarığı (yarısı dişin arkasında), sağda sur yolunda savunucular, önde stauroma fıçıları; havada yok; **eskisinden sönük**: dişli 1,2 m korkuluk azabı yarı saklıyor (ilk çekimde azap merdivenin eğimine değil dikine konmuştu: kare kurgusu hatası, havadaydı — düzeltildi, yeniden çekildi). | eskide kutu korkuluğun üstünde azap bütün görünür |
 | 04 kazan | Sur yolunda kazancı ve savunucu, kazanın ateşi, sağda korkuluğa yaslı stauroma fıçıları ve kazık, iki yanda dişler; oturuyor, havada yok; eskisinden zengin. | eskide kazancının sırtı + kutu korkuluk |
 | 05 barikat | Savunucuların arasından aşama-2 barikatı (kazık, fıçı, kum torbası); yakın kadraj, havada yok. | aynı kadraj |
 | 06 poterna | İç surda kemerli küçük kapı, kanat peribolosa açık, karanlık geçit, fenerli nöbetçi, sağda yuvarlanmış fıçı; kapı eteğin üstüne oturuyor; **iyi**. | eskide kutu kanatlı kapı |
 | 07 taşıma | Giustiniani sırtüstü taşınma pozunda (ayak ucundan), arkada baş ucundaki taşıyıcı; yakın, eskisiyle aynı kadraj. | aynı |
 | 08 kapı/final | Caddeden Romanos iç kapısı açık, koridorda beyaz atlı Sultan, ötede dış kapı; **kötü**: kapının iki yanında iç surun dibinde kutu gibi gri taş blokları (görünüşe istek 3). | eskide açık kutu kapıdan gedik |
+
+#### Bütçe (26; aynı kod, aynı anlamdaki kamera; `TASIMA8KARE … cizim ilkel`, 4 karenin ortalaması)
+| Kare | Eski çizim / ilkel | Yeni çizim / ilkel | Sınır (yeni ≤ eski + %5) |
+|---|---|---|---|
+| 01 açılış | 10327 / 12,19 M | 6434 / 8,03 M | ✓ |
+| 02 ok demeti | 1152 / 3,08 M | 840 / 1,59 M | ✓ |
+| 03 merdiven | 6830 / 10,27 M | 6318 / 9,51 M | ✓ |
+| 04 kazan | 9350 / 10,15 M | 7391 / 8,17 M | ✓ |
+| 05 barikat | 7714 / 11,80 M | 7462 / 10,93 M | ✓ |
+| 06 poterna | 1051 / 4,30 M | 512 / 1,85 M | ✓ |
+| 07 taşıma | 911 / 3,55 M | 593 / 2,18 M | ✓ |
+| 08 kapı/final | 8068 / 11,31 M | 2342 / 3,84 M | ✓ |
+
+### 2.2 Kareler (26o) — `kare/26o/eski_an_NN_*.jpg` | `kare/26o/yeni_an_NN_*.jpg`
+| Kare | Yeni (tek cümle) | Eski ↔ yeni |
+|---|---|---|
+| 01 açılış | Gece ovadan yeni sur ve kuleler, dayalı merdivenlerde tırmananlar, sura koşan ordu, pavez siperler, meşale; havada yok; **pavez siperler kutu gibi** (eski kod, iki sette aynı); üstteki kırmızı bant fesin kenarı (HUD). | eski kutu sur |
+| 02 su fıçısı | İki on köşeli silindir fıçı, su yüzü, arkada bekleyen saflar, çayır; oturuyor; eskisiyle aynı. | aynı |
+| 03 kıyı/merdiven | Hendek kıyısındaki bölüğün arasından surdaki merdivenler, tırmananlar, ateş ve duman; havada yok; eskisinden zengin (sur dili). | |
+| 04 dolgu | Hendeğin ortasında dolgunun üstünde gediğe yürüyen bölükler, iki yanda surda merdivenler; herkes dolguya basıyor. | eski dolgu kutu set |
+| 05 tırmanış | Terastan dış surun yüzüne dayalı 14,35 m'lik merdiven (alt basamaklar), yanında yerde bir saldıran; oturuyor; merdiven eskisinden uzun (teras 3,7 m aşağıda). | |
+| 06 sancak | Kule tepesi basamağından sancak kulesi (x 35,4) ve kırmızı sancak; **sancak düz levha (`Props.box`), kutu gibi** (eski kod); havada yok. | eskide miğfer kadrajı kapatıyor |
+
+#### Bütçe (26o)
+| Kare | Eski çizim / ilkel | Yeni çizim / ilkel | Sınır |
+|---|---|---|---|
+| 01 açılış | 7190 / 4,99 M | 5337 / 3,73 M | ✓ |
+| 02 su fıçısı | 7760 / 9,44 M | 6982 / 9,19 M | ✓ |
+| 03 kıyı | 5880 / 4,56 M | 4954 / 3,79 M | ✓ |
+| 04 dolgu | 3117 / 2,59 M | 2623 / 2,33 M | ✓ |
+| 05 tırmanış | 1120 / 2,05 M | 964 / 1,37 M | ✓ |
+| 06 sancak | 1197 / 2,86 M | 2241 / 3,87 M | **✗ (+87 % / +35 %)**: eski karede bir savunucunun miğferi kadrajın yarısını örtüyor ve eski kule ovayı kapatıyor; yeni kamera kule basamağında (y 11), ovaya ve ordugâha açık bakıyor. Aynı noktadan bakış değil; kök neden ölçülmedi (ova SiegeField'in çizim sayısı görünüşe ait). |
