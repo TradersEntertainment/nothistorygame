@@ -18,6 +18,7 @@ var gece := false
 var onek := ""
 var olc := false
 var saglam := false
+var s_kam := false     # --s_kam: varsayılan (gedikli) kipte de s1–s3 kameraları (karşılaştırma)
 var yalniz: Array = []
 var cam: Camera3D
 
@@ -32,6 +33,7 @@ func _ready() -> void:
 			"olc": olc = true
 			"saglam": saglam = true
 			"yalniz": yalniz = Array(kv[1].split(","))
+			"s_kam": s_kam = true
 	DirAccess.make_dir_recursive_absolute(out)
 	get_window().size = Vector2i(1280, 720)
 	if gece:
@@ -68,7 +70,7 @@ func _kos() -> void:
 	var PT := 0.45
 	var zd := zo1 - PT       # dış sur korkuluğunun iç yüzü
 	var kam := {}
-	if saglam:
+	if saglam or s_kam:
 		var yk: Dictionary = a.yol("dis")
 		print("TUR11SAGLAM yol_dis kesik=%d gecit=%d mazgal_dis=%d gedik_bos=%s parca_gedik=%s" % [(yk["kesik"] as Array).size(),
 			(yk["gecit"] as Array).size(), a.mazgallar("dis").size(), a.gedik().is_empty(), k["parca"].has("gedik")])

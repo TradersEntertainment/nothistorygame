@@ -154,7 +154,8 @@ void fragment() {
 		tc = mix(tc, tc * vec3(0.62, 0.6, 0.57), step(okh1, 0.45) * (1.0 - smoothstep(okr * 0.75, okr, okxs + okys * 1.2 + opur)) * orta);
 		tc *= 1.0 + 0.16 * (vn(vec2(u * 21.0, y * 21.0) + osi) - 0.5) * yakin;
 		float olik = smoothstep(0.68, 0.84, vn(vec2(u * 4.1, y * 4.6) + 21.0 + osi * 0.37));
-		tc = mix(tc, tc * vec3(1.08, 1.06, 0.86), olik * 0.4 * orta);
+		tc = mix(tc, tc * vec3(1.07, 1.04, 0.96), olik * 0.4 * orta);
+		tc *= vec3(1.03, 1.0, 0.96);     // gölgede gök ışığıyla yeşile kaçmasın (sıcak gri)
 		tc *= 1.0 - 0.1 * smoothstep(0.7, 0.92, vn(vec2(u * 16.0, y * 17.0) + 41.0)) * ince;
 		float ojw = 0.018 + 0.006 * h21(vec2(osi, 7.0));
 		float ojy0 = osf * okh;

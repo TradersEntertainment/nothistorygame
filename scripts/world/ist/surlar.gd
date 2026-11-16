@@ -421,7 +421,22 @@ static func _run(host: Node3D, L: float, k: float, lod: int, seed: int, o: Dicti
 		# TUR-8: bölüm setinde (SurSetSahne) de sur taşı gölgelendiricisi: kesim yalnız gösterim sahnesinde
 		# (sur_oyun_demo) uygula'dan geçiyordu, Bölüm 20'de sur eski "ashlar" dokusuyla çiziliyordu (iki ressam)
 		load("res://scripts/world/ist/sur_doku.gd").uygula(r, 0)
+		_levha_zemin_v2(r)
 	return r
+
+
+## TUR-11 (taşıma 5 §3a, Bölüm 21 an_01 "Grant'in altında gri düz dörtgen"): eteklerin örtmediği peribolos zemini pişmiş
+## "dirt" desenli levhaydı (Props deseni: gece düz gri, kenarı eteğin cetvel kenarı). Kesimde "dirt" desenli levhalar eteklerle
+## AYNI zemin malzemesine (zemin_v2: ot/toprak/çakıl öbekleri, dünya uzayında) geçer; köşe rengi (toprak ipucu) korunur.
+## Ölçü, çarpışma aynı.
+static func _levha_zemin_v2(r: Node) -> void:
+	var dirt: Texture2D = Props.mat(Color.WHITE, 0.0, false, "dirt").albedo_texture
+	var em: Material = OTAG.etek_malzeme()
+	for c in r.find_children("*", "MeshInstance3D", true, false):
+		var mi := c as MeshInstance3D
+		var m := mi.material_override as StandardMaterial3D
+		if m != null and m.albedo_texture == dirt and m.vertex_color_use_as_albedo:
+			mi.material_override = em
 
 
 static func _kesimde(n: Node) -> bool:

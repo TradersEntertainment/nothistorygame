@@ -970,7 +970,7 @@ static func disler_ag(p: Node3D, mer: Array, col: Color, seed: int) -> void:
 ## HARPUŞTA. Gövde pahlı altıgen prizma; yüzleri sur_doku'nun ince örgüsünde (köşe alfası 0,9: 0,2 m sıra → dişte 3 sıra
 ## blok, derz, blok blok ton, kabartma). Tepe taşı ayrı taş (alfa 0,8): her yandan 2,5–4,5 cm taşkın, 12–16 cm kalın, üst
 ## kenarı pahlı (yuvarlanmış), sur yoluna eğimli, köşeleri tek tek oynak; %30'unda bir köşesi kırık. Yıkık diş (%9):
-## harpuştasız, kırık pürüzlü tepe. Kaplama aynı (en w, derinlik dp, boy). Üçgen: 12 gövde + 20 taş = 32 (eski 28).
+## harpuştasız, kırık pürüzlü tepe. Kaplama aynı (en w, derinlik dp, boy). Üçgen: 12 gövde + 22 taş = 34 (eski 28).
 static func _dis_tas(ag: Ag, o: Vector3, tt: Vector3, nn: Vector3, w: float, yuk: float, dp: float, h2: float, h3: float, yikik: bool, col: Color) -> void:
 	var pah := 0.05 + 0.05 * h3
 	var hw := w * 0.5
@@ -1040,7 +1040,10 @@ static func _dis_tas(ag: Ag, o: Vector3, tt: Vector3, nn: Vector3, w: float, yuk
 		dis2.y = 0.0
 		ag.quad_auto(r0[k], r0[k2], r1[k2], r1[k], dis2, tcol)
 		ag.quad_auto(r1[k], r1[k2], r2[k2], r2[k], dis2.normalized() + Vector3.UP * 1.1, tcol)
-	ag.quad_auto(r2[0], r2[1], r2[2], r2[3], Vector3.UP, tcol)
+	# tepe hafif kubbeli (aşınmış taş: düz levha değil): dört üçgen, tepe noktası 1,5–3,5 cm yukarıda, ortadan kaçık
+	var tm := (r2[0] + r2[1] + r2[2] + r2[3]) * 0.25 + Vector3.UP * (0.015 + 0.02 * h2) + tt * (h3 - 0.5) * hw * 0.4
+	for k in 4:
+		ag.tri(r2[k], r2[(k + 1) % 4], tm, Vector3.UP, tcol)
 
 
 # ------------------------------------------------------------------ KÖŞE KULESİ (hat kırıklarında)
