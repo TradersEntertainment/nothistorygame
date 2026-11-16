@@ -1003,14 +1003,29 @@ static func _dis_tas(ag: Ag, o: Vector3, tt: Vector3, nn: Vector3, w: float, yuk
 		for k in range(1, 5):
 			ag.tri(ust[0], ust[k], ust[k + 1], Vector3.UP, govde)
 		return
-	# ---- harpuşta
+	# ---- harpuşta. TUR-12: geniş dişte (> 0,95 m) tek uzun levha değil, derzli 2–3 taş (her biri kendi oynaklığıyla;
+	# derz 6–10 mm, iç uçlarda taşma yok); tepe eşek sırtı
+	var nt := clampi(int(ceil(w / 0.95)), 1, 3)
+	for ti in nt:
+		var g2 := fposmod(h2 * 1.7 + float(ti) * 0.381, 1.0) if nt > 1 else h2
+		var g3 := fposmod(h3 * 1.3 + float(ti) * 0.617, 1.0) if nt > 1 else h3
+		var sw := w / nt
+		var sx := (float(ti) + 0.5) * sw - hw
+		var sol_uc := ti == 0
+		var sag_uc := ti == nt - 1
+		_harpusta(ag, c + tt * (yat + sx) + Vector3.UP * yb, tt, nn, sw * 0.5, hd, kal, g2, g3, col, sol_uc, sag_uc, ti == 0)
+
+
+## TUR-12: tek harpuşta taşı (eski _dis_tas gövdesinden). orta: taşın alt yüzünün ortası; sw2/hd yarı en/derinlik;
+## sol_uc/sag_uc: dişin ucundaki taş (o yanda taşar, değilse komşu taşla derz); kirik_izin: köşe kırığı yalnız bir taşta
+static func _harpusta(ag: Ag, orta: Vector3, tt: Vector3, nn: Vector3, hw: float, hd: float, kal: float, h2: float, h3: float,
+		col: Color, sol_uc: bool, sag_uc: bool, kirik_izin: bool) -> void:
 	var ta := 0.025 + 0.02 * h3                     # taşma
 	var ci := 0.045 + 0.03 * h2                     # üst kenar pahı (yuvarlanmış kenar)
 	var yana := (h2 - 0.5) * 0.035                  # taş yana hafif yatık (cetvel gibi düz tepe çizgisi olmasın)
 	var egim := 0.03 + 0.04 * h3                    # tepe sur yoluna (−nn) doğru alçalır
-	var orta := c + tt * yat + Vector3.UP * yb
 	var tcol := Color(col.r * (0.96 + 0.06 * h3), col.g * (0.96 + 0.05 * h3), col.b * (0.95 + 0.04 * h3), 0.8)
-	var kir_k := int(h3 * 4.0) % 4 if h2 > 0.7 else -1
+	var kir_k := int(h3 * 4.0) % 4 if h2 > 0.7 and kirik_izin else -1
 	var kir_d := 0.05 + 0.06 * h3
 	var r0: Array[Vector3] = []     # alt halka
 	var r1: Array[Vector3] = []     # yan yüzün üstü
@@ -1020,13 +1035,14 @@ static func _dis_tas(ag: Ag, o: Vector3, tt: Vector3, nn: Vector3, w: float, yuk
 		var s := kose[k]
 		var hk := fposmod(sin(float(k) * 7.31 + h2 * 41.7 + h3 * 13.1) * 9137.3, 1.0)
 		var hk2 := fposmod(sin(float(k) * 3.17 + h3 * 57.3) * 4371.9, 1.0)
-		var ex := hw + ta + (hk - 0.5) * 0.04
+		var uc := sag_uc if s.x > 0.0 else sol_uc
+		var ex := (hw + ta + (hk - 0.5) * 0.04) if uc else (hw - 0.004 - hk * 0.004)
 		var ez := hd + ta + (0.5 - hk2) * 0.03
 		var p0 := orta + tt * s.x * ex + nn * s.y * ez + Vector3.UP * (s.x * yana * 0.5 + (hk2 - 0.5) * 0.02)
 		var yy := kal * (0.38 + 0.14 * hk)
 		var yt := kal - egim * (0.5 - s.y * 0.5) + (hk - 0.5) * 0.03 + s.x * yana
 		var p1 := p0 + Vector3.UP * yy
-		var p2 := orta + tt * s.x * (ex - ci) + nn * s.y * (ez - ci * 0.8) + Vector3.UP * maxf(yt, yy + 0.015)
+		var p2 := orta + tt * s.x * (ex - (ci if uc else ci * 0.45)) + nn * s.y * (ez - ci * 0.8) + Vector3.UP * maxf(yt, yy + 0.015)
 		if k == kir_k:
 			p1 += Vector3.UP * -minf(kir_d, yy * 0.8) + (orta - p0).normalized() * 0.01
 			p2 += Vector3.UP * -kir_d * 0.8 + (orta - p0) * 0.25
@@ -1040,10 +1056,25 @@ static func _dis_tas(ag: Ag, o: Vector3, tt: Vector3, nn: Vector3, w: float, yuk
 		dis2.y = 0.0
 		ag.quad_auto(r0[k], r0[k2], r1[k2], r1[k], dis2, tcol)
 		ag.quad_auto(r1[k], r1[k2], r2[k2], r2[k], dis2.normalized() + Vector3.UP * 1.1, tcol)
-	# tepe hafif kubbeli (aşınmış taş: düz levha değil): dört üçgen, tepe noktası 1,5–3,5 cm yukarıda, ortadan kaçık
-	var tm := (r2[0] + r2[1] + r2[2] + r2[3]) * 0.25 + Vector3.UP * (0.015 + 0.02 * h2) + tt * (h3 - 0.5) * hw * 0.4
-	for k in 4:
-		ag.tri(r2[k], r2[(k + 1) % 4], tm, Vector3.UP, tcol)
+	# TUR-12: tepe "eşek sırtı" (harpuştanın asıl biçimi): taş boyunca (tt) uzanan, ortadan kaçık bir sırt; iki yana
+	# 4,5–7 cm eğimle iner, uçları kırma. Eskiden 1,5–3,5 cm'lik basık kubbe: yakından düz levha okunuyordu (tur 11).
+	# Sırt dışa (+nn) hafif kaçık; sırt çizgisi uçtan uca 1–2 cm oynak (cetvel değil).
+	var hr := 0.045 + 0.025 * h2
+	var kac := (0.1 + 0.15 * h3)
+	var ra := r2[0].lerp(r2[3], 0.5 + kac * 0.5) + Vector3.UP * hr + tt * (ci * 0.6)
+	var rb := r2[1].lerp(r2[2], 0.5 + kac * 0.5) + Vector3.UP * (hr + (h3 - 0.5) * 0.02) - tt * (ci * 0.6)
+	var ns := (r2[1] - r2[0]).cross(ra - r2[0]).normalized()
+	if ns.y < 0.0:
+		ns = -ns
+	ag.tri(r2[0], r2[1], rb, ns, tcol)
+	ag.tri(r2[0], rb, ra, ns, tcol)
+	var nd := (r2[2] - r2[3]).cross(ra - r2[3]).normalized()
+	if nd.y < 0.0:
+		nd = -nd
+	ag.tri(r2[3], ra, rb, nd, tcol.darkened(0.03))
+	ag.tri(r2[3], rb, r2[2], nd, tcol.darkened(0.03))
+	ag.tri(r2[0], ra, r2[3], (-tt + Vector3.UP).normalized(), tcol.darkened(0.05))
+	ag.tri(r2[1], r2[2], rb, (tt + Vector3.UP).normalized(), tcol.darkened(0.05))
 
 
 # ------------------------------------------------------------------ KÖŞE KULESİ (hat kırıklarında)

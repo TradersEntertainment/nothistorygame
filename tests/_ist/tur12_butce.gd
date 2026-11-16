@@ -4,10 +4,11 @@ extends Node
 ##   xvfb-run … godot --path . --rendering-driver opengl3 --resolution 1280x720 res://tests/_ist/tur12_butce.tscn --
 ##       --chapter=26 [--autotest] --t12bekle=25 --t12kam=<json> [--t12kare=<klasör>]
 ## --t12kam dosyası yoksa bekleme sonundaki etkin kameranın dönüşümü yazılır (ilk koşu), varsa okunur (aynı kamera).
-## Duraklatmadan önceki 4 sn'nin ortalama betik (process) süresi de yazılır. Satırlar: T12BUTCE …, T12SURE …
+## Duraklatmadan önceki --t12pencere (varsayılan 4) sn'nin ortalama betik (process) süresi de yazılır. Satırlar: T12BUTCE …, T12SURE …
 ## --t12kare: her yönün karesi (1280×720 jpg 85) + 0,4 sn arayla 3 kare (dalga kanıtı) o klasöre.
 
 var bekle := 25.0
+var pencere := 4.0
 var kam_yol := ""
 var kare_dir := ""
 var _t0 := 0
@@ -24,6 +25,8 @@ func _ready() -> void:
 			kam_yol = a.get_slice("=", 1)
 		elif a.begins_with("--t12kare="):
 			kare_dir = a.get_slice("=", 1)
+		elif a.begins_with("--t12pencere="):
+			pencere = float(a.get_slice("=", 1))
 	var iz := Node.new()
 	iz.set_script(get_script())
 	iz.set_meta("izle", true)
@@ -31,6 +34,7 @@ func _ready() -> void:
 	iz.bekle = bekle
 	iz.kam_yol = kam_yol
 	iz.kare_dir = kare_dir
+	iz.pencere = pencere
 	get_tree().root.add_child.call_deferred(iz)
 	get_tree().change_scene_to_file.call_deferred("res://scenes/main.tscn")
 
@@ -42,7 +46,7 @@ func _enter_tree() -> void:
 
 
 func _calis() -> void:
-	while (Time.get_ticks_msec() - _t0) / 1000.0 < bekle - 4.0:
+	while (Time.get_ticks_msec() - _t0) / 1000.0 < bekle - pencere:
 		await get_tree().process_frame
 	# betik süresi (oyun akarken)
 	var n := 0

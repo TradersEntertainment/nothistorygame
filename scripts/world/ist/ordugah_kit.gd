@@ -315,7 +315,8 @@ static func mm(host: Node3D, mesh: Mesh, xfs: Array, cols: Array = [], nm := "",
 			m.set_instance_color(i, cols[i % cols.size()])
 	var mi := MultiMeshInstance3D.new()
 	mi.multimesh = m
-	mi.material_override = mat(pattern)
+	# TUR-12: nefesli yakın çadır ağı (ordugah_cadir._nefesli_ag) kumaş gölgelendiricisiyle (köşe × örnek rengi, vmat çarpanı)
+	mi.material_override = KUMAS.mat(false) if mesh.has_meta("kumas") else mat(pattern)
 	if not shadow:
 		mi.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
 	if nm != "":

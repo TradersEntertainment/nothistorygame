@@ -23,15 +23,15 @@ func _ready() -> void:
 	var env := WorldEnvironment.new()
 	var e := Environment.new()
 	e.background_mode = Environment.BG_COLOR
-	e.background_color = Color("101828") if gece else Color("5d7186")
+	e.background_color = Color("101828") if gece else Color("2a3b4e")
 	e.ambient_light_source = Environment.AMBIENT_SOURCE_COLOR
 	e.ambient_light_color = Color("3a4660") if gece else Color("8f8a7c")
-	e.ambient_light_energy = 0.6 if gece else 0.35
+	e.ambient_light_energy = 0.6 if gece else 0.2
 	env.environment = e
 	add_child(env)
 	var sun := DirectionalLight3D.new()
 	sun.rotation_degrees = Vector3(-35, 30, 0) if not gece else Vector3(-50, 140, 0)
-	sun.light_energy = 0.55 if not gece else 0.25
+	sun.light_energy = 0.4 if not gece else 0.25
 	sun.light_color = Color("ffe9c7") if not gece else Color("9fb0d8")
 	sun.shadow_enabled = true
 	add_child(sun)
@@ -39,7 +39,7 @@ func _ready() -> void:
 	var pm := PlaneMesh.new()
 	pm.size = Vector2(400, 400)
 	yer.mesh = pm
-	yer.material_override = Props.mat(Color("8a7358"))
+	yer.material_override = Props.mat(Color("8a7358") if gece else Color("3d3226"))
 	add_child(yer)
 	_kur()
 	await get_tree().process_frame
@@ -162,3 +162,9 @@ func _kur() -> void:
 	wd.done(h, "odun")
 	cf.done(h, "bayrak")
 	_ist.append(["camasir", Vector3(403.5, 1.9, 4.5), Vector3(403.5, 1.5, 1.2)])
+	# 10. çadır kumaşı (yakın ağ, MultiMesh ve tek düğüm) ve tente (ayrinti "tente"): çok hafif nefes
+	h = _host(440, 0)
+	K.mm(h, K.tent_lod("koni", 0), [Transform3D(Basis().scaled(Vector3(2.4, 1.0, 2.4)), Vector3(0, -0.1, 0))], [Color("d9ccaa")], "cadir", "", true)
+	preload("res://scripts/world/ist/ordugah_cadir.gd").ekle(h, "pasa", Transform3D(Basis().scaled(Vector3(3.0, 1.0, 3.0)), Vector3(8, -0.1, 0)), Color("c8b48a"), 0, "pasa_cadir")
+	Ayrinti.build("tente", _host(440, 9), 1.0, 0)
+	_ist.append(["cadir_tente", Vector3(444.0, 3.2, 12.0), Vector3(444.0, 1.6, 3.0)])

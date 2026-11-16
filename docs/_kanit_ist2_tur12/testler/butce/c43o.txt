@@ -1,0 +1,8 @@
+SONRA T12SURE kare=1 betik_ms=3845.27 kare_ms=148.6
+SONRA T12KAM yazildi
+SONRA T12BUTCE yon=0 cizim=2765 ilkel=4322834 poz=(0.0, 1.6, 0.0)
+SONRA T12BUTCE yon=1 cizim=4295 ilkel=6667682 poz=(0.0, 1.6, 0.0)
+ONCE T12SURE kare=1 betik_ms=3791.62 kare_ms=133.3
+ONCE T12KAM yazildi
+ONCE T12BUTCE yon=0 cizim=2765 ilkel=4322834 poz=(0.0, 1.6, 0.0)
+ONCE T12BUTCE yon=1 cizim=4289 ilkel=6667162 poz=(0.0, 1.6, 0.0)

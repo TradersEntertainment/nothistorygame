@@ -81,8 +81,10 @@ void vertex() {
 			float ph = UV2.x + wp.x * 0.23 + wp.z * 0.17;
 			float t = TIME;
 			float nef = sin(t * 1.15 + ph) * 0.6 + sin(t * 2.3 + ph * 1.9 + wp.y * 0.8) * 0.4;
-			vec3 wm = (inv * vec4(W, 0.0)).xyz;
-			VERTEX += NORMAL * (nef * 0.035 * w * f) + wm * ((0.5 + 0.5 * sin(t * 0.9 + ph)) * 0.05 * w * f);
+			// genlik dünya metresinde (örnek ölçeği — birim çadır ağı — genliği büyütmesin)
+			vec3 nw = normalize((MODEL_MATRIX * vec4(NORMAL, 0.0)).xyz);
+			vec3 ofs = nw * (nef * 0.035 * w * f) + W * ((0.5 + 0.5 * sin(t * 0.9 + ph)) * 0.05 * w * f);
+			VERTEX += (inv * vec4(ofs, 0.0)).xyz;
 		}
 	}
 }
