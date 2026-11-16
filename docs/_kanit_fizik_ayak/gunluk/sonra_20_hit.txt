@@ -1,0 +1,3 @@
+AYAKPERF kare=195 proc_ms=92.667 ik_us=686.3 ik_kisi=9.47 isin=7.067 etkin=true
+AYAKPERF kare=200 proc_ms=50.559 ik_us=711.8 ik_kisi=11.12 isin=6.145 etkin=true
+AUTOTEST PASS chapter=20 variant=hit outcome=20.1 repair=10 knocks=1 arrows=true gun=3/4 gunner=3/3 niko=0 sur=yeni

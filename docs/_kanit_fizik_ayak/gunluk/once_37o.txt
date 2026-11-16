@@ -1,0 +1,22 @@
+AYAKAUDIT yakin scene=chapter37o.tscn who=Soldier/@Node3D@21107(Chapter37o) ayak=R fark=+0.07 d=3.2 at=(-10.7, -3.5, 79.0) durum=yuru act= ik=yok
+AYAKAUDIT yakin scene=chapter37o.tscn who=Soldier/@Node3D@21227(Chapter37o) ayak=R fark=+0.07 d=3.1 at=(-7.3, -3.5, 79.2) durum=yuru act= ik=yok
+AYAKAUDIT yakin scene=chapter37o.tscn who=Soldier/@Node3D@21341(Chapter37o) ayak=R fark=+0.07 d=4.8 at=(-11.9, -3.5, 77.6) durum=yuru act= ik=yok
+AYAKAUDIT yakin scene=chapter37o.tscn who=Soldier/@Node3D@21457(Chapter37o) ayak=R fark=+0.07 d=4.9 at=(-6.5, -3.5, 77.4) durum=yuru act= ik=yok
+AYAKAUDIT yakin scene=chapter37o.tscn who=Soldier/@Node3D@21565(Chapter37o) ayak=R fark=+0.07 d=2.6 at=(-10.3, -3.5, 82.8) durum=yuru act= ik=yok
+AYAKAUDIT yakin scene=chapter37o.tscn who=Soldier/@Node3D@21684(Chapter37o) ayak=R fark=+0.07 d=2.6 at=(-8.1, -3.5, 83.0) durum=yuru act= ik=yok
+AYAKAUDIT yakin scene=chapter37o.tscn who=Soldier/@Node3D@21796(Chapter37o) ayak=R fark=+0.07 d=3.6 at=(-6.1, -3.5, 80.0) durum=yuru act= ik=yok
+AYAKPERF kare=202 proc_ms=68.365 ik_us=0.0 ik_kisi=0.00 isin=0.000 etkin=false
+AYAKAUDIT yakin scene=chapter37o.tscn who=Person/@Node3D@22764(@Node3D@21936) ayak=L fark=+0.13 d=22.3 at=(-4.6, 0.1, 9.0) durum=yuru act= ik=yok
+AYAKPERF kare=201 proc_ms=31.192 ik_us=0.0 ik_kisi=0.00 isin=0.000 etkin=false
+AYAKPERF kare=200 proc_ms=25.020 ik_us=0.0 ik_kisi=0.00 isin=0.000 etkin=false
+AYAKPERF kare=201 proc_ms=27.079 ik_us=0.0 ik_kisi=0.00 isin=0.000 etkin=false
+AYAKAUDIT yakin scene=chapter37o.tscn who=Soldier/@Node3D@24552(Chapter37o) ayak=R fark=+0.11 d=5.3 at=(-3.3, -3.0, 23.9) durum=dur act= ik=yok
+AYAKPERF kare=200 proc_ms=56.937 ik_us=0.0 ik_kisi=0.00 isin=0.000 etkin=false
+AYAKAUDIT yakin scene=chapter37o.tscn who=Soldier/@Node3D@21684(Chapter37o) ayak=L fark=-0.10 d=3.2 at=(1.7, -3.0, 24.5) durum=anim act= ik=yok
+AYAKAUDIT yakin scene=chapter37o.tscn who=Soldier/@Node3D@21565(Chapter37o) ayak=L fark=-0.07 d=2.7 at=(0.1, -3.0, 24.6) durum=dur act= ik=yok
+AYAKAUDIT yakin scene=chapter37o.tscn who=Soldier/@Node3D@24552(Chapter37o) ayak=L fark=+0.07 d=3.6 at=(2.4, -1.9, 21.5) durum=dur act= ik=yok
+AYAKAUDIT yakin scene=chapter37o.tscn who=Soldier/@Node3D@24671(Chapter37o) ayak=L fark=+0.13 d=6.1 at=(1.0, -0.3, 19.5) durum=dur act= ik=yok
+AYAKAUDIT yakin scene=chapter37o.tscn who=Soldier/@Node3D@24808(Chapter37o) ayak=R fark=-0.07 d=6.6 at=(1.6, -0.2, 18.5) durum=dur act= ik=yok
+POSEAUDIT tilt @Node3D@20986 90  (Chapter37o/@Node3D@26564)
+AYAKPERF kare=200 proc_ms=40.071 ik_us=0.0 ik_kisi=0.00 isin=0.000 etkin=false
+AUTOTEST PASS chapter=37o variant= outcome=37O.1 beats=14/16 arrows=0 falls=0 barrels=5/5 cuts=0 stones=0 slips=0 burns=0 duel=true caught=0 sur=yeni

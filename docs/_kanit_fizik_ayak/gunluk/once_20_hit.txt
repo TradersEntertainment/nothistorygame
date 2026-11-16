@@ -1,0 +1,6 @@
+AYAKAUDIT yakin scene=chapter20.tscn who=Person/@Node3D@22696(@Node3D@21586) ayak=L fark=-0.07 d=3.1 at=(-2.5, 0.5, 11.4) durum=dur act=hammer ik=yok
+AYAKAUDIT yakin scene=chapter20.tscn who=Person/@Node3D@22696(@Node3D@21586) ayak=R fark=-0.08 d=3.1 at=(-2.3, 0.5, 11.3) durum=dur act=hammer ik=yok
+AYAKAUDIT yakin scene=chapter20.tscn who=Person/@Node3D@22931(@Node3D@21586) ayak=R fark=-0.08 d=4.3 at=(-3.5, 0.2, 10.8) durum=dur act=hammer ik=yok
+AYAKPERF kare=195 proc_ms=102.251 ik_us=0.0 ik_kisi=0.00 isin=0.000 etkin=false
+AYAKPERF kare=199 proc_ms=52.119 ik_us=0.0 ik_kisi=0.00 isin=0.000 etkin=false
+AUTOTEST PASS chapter=20 variant=hit outcome=20.1 repair=10 knocks=1 arrows=true gun=3/4 gunner=3/3 niko=0 sur=yeni

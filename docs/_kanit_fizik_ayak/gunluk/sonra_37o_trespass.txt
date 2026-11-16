@@ -1,0 +1,10 @@
+AYAKPERF kare=202 proc_ms=61.691 ik_us=595.6 ik_kisi=6.05 isin=5.025 etkin=true
+AYAKPERF kare=200 proc_ms=30.011 ik_us=492.5 ik_kisi=4.43 isin=5.665 etkin=true
+AYAKPERF kare=200 proc_ms=22.802 ik_us=613.4 ik_kisi=5.04 isin=6.220 etkin=true
+AYAKPERF kare=200 proc_ms=28.377 ik_us=602.0 ik_kisi=5.83 isin=6.860 etkin=true
+AYAKPERF kare=201 proc_ms=47.743 ik_us=612.6 ik_kisi=7.46 isin=5.378 etkin=true
+AYAKAUDIT yakin scene=chapter37o.tscn who=Soldier/@Node3D@24827(Chapter37o) ayak=L fark=-0.10 d=6.1 at=(3.2, -1.4, 18.7) durum=dur act= ik=w1.0/m1/pel-0.40/g1/gy-0.46/zemin-0.47
+AYAKAUDIT yakin scene=chapter37o.tscn who=Soldier/@Node3D@24827(Chapter37o) ayak=R fark=-0.12 d=6.1 at=(3.1, -1.3, 18.5) durum=dur act= ik=w1.0/m1/pel-0.40/g1/gy-0.30/zemin-0.25
+POSEAUDIT tilt @Node3D@20986 90  (Chapter37o/@Node3D@26647)
+AYAKPERF kare=200 proc_ms=35.995 ik_us=546.5 ik_kisi=6.95 isin=5.650 etkin=true
+AUTOTEST PASS chapter=37o variant=trespass outcome=37O.1 beats=13/16 arrows=0 falls=0 barrels=5/5 cuts=0 stones=0 slips=0 burns=1 duel=true caught=1 sur=yeni

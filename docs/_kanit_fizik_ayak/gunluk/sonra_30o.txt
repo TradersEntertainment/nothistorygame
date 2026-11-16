@@ -1,0 +1,5 @@
+POSEAUDIT tilt @Node3D@31112 80  (root/Chapter30o)
+AYAKPERF kare=182 proc_ms=123.608 ik_us=97.2 ik_kisi=2.77 isin=0.918 etkin=true
+AYAKPERF kare=200 proc_ms=39.130 ik_us=62.9 ik_kisi=2.21 isin=0.335 etkin=true
+AYAKPERF kare=198 proc_ms=39.380 ik_us=127.4 ik_kisi=4.15 isin=0.641 etkin=true
+AUTOTEST PASS chapter=30o variant= outcome=30O.1 stones=4/4 gunner=4/4 tower=true fell=false guards=10 pokes=0 flee=ride pushed=true
