@@ -172,6 +172,8 @@ func update(delta: float, talking: bool, busy: bool, ext := true) -> void:
 		ayak.geri_al()
 	if Ayak.olc_acik:
 		Ayak.olc_tick()
+	if Yigilma.olc_acik:
+		Yigilma.olc_tick()
 	yuruyor = false
 	_update_core(delta, talking, busy)
 	if ext:
@@ -192,6 +194,7 @@ func update(delta: float, talking: bool, busy: bool, ext := true) -> void:
 ## yakın karede kurulur). yuruyor: bu karede yürüyüş salınımı kuruldu. faz_hiz: yürüyüş evresinin hızı (rad/sn).
 const Ayak := preload("res://scripts/npc/ayak.gd")
 const AyakDenet := preload("res://scripts/npc/ayak_denet.gd")
+const Yigilma := preload("res://scripts/npc/yigilma.gd")
 var ayak: Ayak
 var yuruyor := false
 var faz_hiz := 0.0

@@ -273,7 +273,8 @@ func _process(delta: float) -> void:
 				_arm_l.rotation.x = lerpf(-1.2, 0.0, c)
 				_body.rotation.x = lerpf(0.3, 0.0, c)
 		_:
-			_body.rotation.z = sin(_t * 1.1) * 0.03
+			if not has_meta("yigilma"):      # yığılan bez bebeğin gövdesi sallanmaz (scripts/npc/yigilma.gd)
+				_body.rotation.z = sin(_t * 1.1) * 0.03
 			# Yürürken yürüdüğü yöne bakar
 			var mv := position - _last_pos      # yerel: taşıyıcı (gemi) hareketi yürüme sayılmaz
 			_last_pos = position
@@ -293,6 +294,11 @@ func _process(delta: float) -> void:
 	# İş pozlarında da (halat, kürek, kova) el ve ayak bilekleri
 	if rig and pose != "" and pose != "stand":
 		rig.extremities()
+
+
+## Tüfekle vurulan (Handgun._down): bez bebek gibi yığılır (scripts/npc/yigilma.gd)
+func shot(from: Vector3) -> void:
+	preload("res://scripts/npc/yigilma.gd").vuruldu(self, from)
 
 
 ## Kovadan savrulan iç yağı: birkaç sarımsı damla önündeki kızağa yay çizip düşer, yayılıp söner.

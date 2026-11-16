@@ -832,7 +832,7 @@ func _process(delta: float) -> void:
 	if GameState.autotest:
 		Unclip.walk_audit(self)
 	Unclip.rest_settle(self, _rest, delta)
-	if not _busy:
+	if not _busy and not has_meta("yigilma"):      # yığılan/yatan bez bebeğin gövdesini sallamaz (scripts/npc/yigilma.gd)
 		_body.rotation.z = sin(_t * 1.1) * 0.02
 	_ambient_chat(delta)
 	if activity == "whittle":
@@ -871,6 +871,11 @@ func _process(delta: float) -> void:
 			var turn := 10.0 if has_meta("gaze_walk_t") and Time.get_ticks_msec() - int(get_meta("gaze_walk_t")) < 300 else 4.0
 			rotation.y = lerp_angle(rotation.y, atan2(to.x, to.z), clampf(delta * turn, 0.0, 1.0))
 	rig.update(delta, talking or chatting, _busy)
+
+
+## Tüfekle vurulan (Handgun._down): bez bebek gibi yığılır (scripts/npc/yigilma.gd)
+func shot(from: Vector3) -> void:
+	preload("res://scripts/npc/yigilma.gd").vuruldu(self, from)
 
 
 ## Dünya çerçevesinde `step` kadar başkasınca (itme, ışınlama) kaydırılan kişinin yer değişimi kendi yürüyüşü sayılmaz:
