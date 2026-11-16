@@ -52,6 +52,8 @@ var _fall_line := 0
 var _line_cool := 0.0
 var _tween: Tween
 var _step_t := 0.0                # el el tırmanış: bir tıkın yukarı itişi
+var _yakala_t := 0.0              # tutunma anı: eller duvara "çarpar" (kısa darbe), kamera bir an çöker
+const YAKALA_SURE := 0.2
 var _last_click := 0              # -1 sol el, 1 sağ el (aynı el iki kez ilerletmez)
 const STEP_TIME := 0.3
 const STEP_COST := 0.035
@@ -111,6 +113,7 @@ func cancel() -> void:
 	state = ""
 	_face_restore()
 	_show_hands(false)
+	_his_bitir()
 	p.velocity = Vector3.ZERO
 	var from := p.global_position + Vector3.UP * 0.5
 	var hit := _ray(from, from + Vector3.DOWN * 60.0)
@@ -201,6 +204,12 @@ func _grab(hit: Dictionary) -> bool:
 	_show_hands(true)
 	_air_top = p.global_position.y
 	Audio.sfx("footstep_stone", -18.0, 1.35)
+	# Yakalama darbesi: eller duvara çarpıp oturur, kamera bir an aşağı çöker; takım elbise hışırdar
+	_yakala_t = YAKALA_SURE
+	if p.his:
+		p.his.darbe(0.07)
+	if not GameState.autotest:
+		Audio.sfx("cloth", -22.0, randf_range(0.9, 1.05))
 	if climbs == 1 and not GameState.autotest:
 		var hud := _hud()
 		if hud:
@@ -290,6 +299,9 @@ func _climb(delta: float) -> void:
 	p.move_and_slide()
 	var moving := inp.length() > 0.1 or _jump_t > 0.0
 	stamina -= ((DRAIN_FAST if fast else DRAIN_MOVE) if moving else DRAIN_IDLE) * delta
+	_yakala_t = maxf(0.0, _yakala_t - delta)
+	if p.his:
+		p.his.nefes(_yorgunluk())
 	# Eller sırayla uzanır; her tutunuşta hafif taş sesi
 	_phase += delta * Vector2(v.x, v.z).length() * 3.0 + delta * absf(v.y) * 2.6
 	if _step_t > 0.0:
@@ -310,6 +322,7 @@ func _climb(delta: float) -> void:
 
 func _release(push: Vector3) -> void:
 	state = ""
+	_his_bitir()
 	p.velocity = push
 	_grab_cool = 0.45
 	_jump_t = 0.0
@@ -332,14 +345,19 @@ func _mantle(top: Dictionary) -> bool:
 	var t1 := clampf((target.y - start.y) * 0.22, 0.18, 0.45)
 	p.velocity = Vector3.ZERO
 	Audio.sfx("land_thud", -20.0, 1.3)
+	if p.his and _yakala_t <= 0.0:
+		p.his.darbe(0.05)          # havadan doğrudan kenara: yakalama darbesi
 	var tw := p.create_tween()
 	_tween = tw
 	tw.tween_property(p, "global_position", rise, t1).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_OUT)
 	tw.parallel().tween_method(func(k: float): _pose_hands(1.0 - k * 2.0, k), 0.0, 1.0, t1)
+	# Kamera kenara doğru yükselir ve öne eğilir (kenarın üstüne bakılır), çıkınca doğrulur. Süre aynı (t1 + 0,22).
+	tw.parallel().tween_method(_mantle_his, 0.0, 1.0, t1 + 0.22)
 	tw.tween_property(p, "global_position", target, 0.22).set_trans(Tween.TRANS_SINE)
 	tw.tween_callback(func():
 		state = ""
 		_show_hands(false)
+		_his_bitir()
 		p.velocity = Vector3.ZERO
 		_air_top = p.global_position.y
 		_was_floor = true)
@@ -356,11 +374,19 @@ func _vault(top: Dictionary) -> bool:
 	var speed := maxf(3.4, p.horizontal_speed())
 	p.velocity = Vector3.ZERO
 	Audio.sfx("footstep_stone", -14.0, 0.9)
+	# Aşma akıcı: iki el engelin üstüne basar, kamera hafifçe öne eğilip toparlanır (süre ve hız aynı: 0,2 sn)
+	_show_hands(true)
 	var tw := p.create_tween()
 	_tween = tw
 	tw.tween_property(p, "global_position", up_to, 0.2).set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_OUT)
+	tw.parallel().tween_method(func(k: float):
+		_pose_hands(0.0, 0.4 + 0.6 * k)
+		if p.his:
+			p.his.kenar_egilme(sin(k * PI) * 5.0, 0.0), 0.0, 1.0, 0.2)
 	tw.tween_callback(func():
 		state = ""
+		_show_hands(false)
+		_his_bitir()
 		p.velocity = -n * speed + Vector3.UP * 1.4
 		_air_top = p.global_position.y
 		_was_floor = false)
@@ -562,13 +588,39 @@ func _show_hands(on: bool) -> void:
 		p.hand.visible = p._hand_shown and not on
 
 
-## a: -1..1 hangi el yukarıda; push: kenardan çıkarken eller aşağı iter (0..1).
+## a: -1..1 hangi el yukarıda; push: kenardan çıkarken eller aşağı iter (0..1). Tutunma anında eller duvara çarpıp
+## oturur (yakalama darbesi); nefes azaldıkça eller titrer (yorgunluk 0..1).
 func _pose_hands(a: float, push: float) -> void:
 	if _hands.size() < 2:
 		return
 	var base_y := lerpf(-0.08, -0.42, push)
-	_hands[0].position = Vector3(-0.24, base_y + a * 0.11 * (1.0 - push), -0.42)
-	_hands[1].position = Vector3(0.24, base_y - a * 0.11 * (1.0 - push), -0.42)
+	var darbe := Vector3.ZERO
+	if _yakala_t > 0.0:
+		var k := _yakala_t / YAKALA_SURE
+		darbe = Vector3(0.0, 0.05 * k * k - 0.025 * sin(k * PI), -0.05 * k * k)
+	var y := _yorgunluk()
+	var tm := Time.get_ticks_msec() * 0.001
+	for i in 2:
+		var s := -1.0 if i == 0 else 1.0
+		var titre := Vector3(sin(tm * 41.0 + i * 1.7), sin(tm * 37.0 + i * 2.9), 0.0) * 0.006 * y * y
+		_hands[i].position = Vector3(0.24 * s, base_y - s * a * 0.11 * (1.0 - push), -0.42) + darbe + titre
+
+
+## Nefes azaldıkça yorgunluk (0: dolu nefesin %45'i ve üstü, 1: tükendi).
+func _yorgunluk() -> float:
+	return clampf((0.45 - stamina) / 0.45, 0.0, 1.0)
+
+
+## Kenardan çıkış: k 0..1 boyunca kamera öne eğilir (en çok 8°) ve kenara doğru biraz yükselir, sonra doğrulur.
+func _mantle_his(k: float) -> void:
+	if p.his:
+		p.his.kenar_egilme(sin(k * PI) * 8.0, sin(k * PI) * 0.06)
+
+
+func _his_bitir() -> void:
+	if p.his:
+		p.his.kenar_egilme(0.0, 0.0)
+		p.his.nefes(0.0)
 
 
 func _hud() -> Hud:

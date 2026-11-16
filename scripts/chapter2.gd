@@ -494,6 +494,7 @@ func _plunge() -> void:
 	# Çığlık kalkışta başlar, suya çarpınca yarıda kesilir; kollar havada savrulur
 	hud.bark("SPK_TOLGA", "D2_T_FALL_SCREAM", 3.0, true)
 	player.flail(1.4)
+	player.dusus_hissi(1.25)      # ortak düşüş hissi: rüzgâr, hafif sarsıntı (çığlık yukarıda)
 	# Kadırga da kızağın ucuna kadar gelir, burnu suyun üstünde durur
 	var ship_tw := create_tween()
 	ship_tw.tween_method(func(v: float):
