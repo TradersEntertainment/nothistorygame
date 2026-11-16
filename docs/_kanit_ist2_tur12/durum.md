@@ -1,6 +1,6 @@
-# TUR-12 durum
-- [x] Kurulum (Godot 4.4.1, içe aktarma), ÖNCE kopyası `~/is/once` (taban 1e27302d)
-- [x] Madde 1 kod: `surlar.gd _gedik` sade kipte tümsek + kaya saçılımı kurulmaz (kareler bekliyor)
-- [~] Madde 2: `assets/shaders/ist_kumas.gdshader` + `scripts/world/ist/kumas.gd`; ordugâh Bld kumaş desteği; ordugah_yapi/oba/kanat bayrakları, tuğ, çamaşır
-- [ ] öbür bayrak işlevleri, kareler, bütçe, bölüm testleri, rapor
-- Sözleşme (ara): SURSOZLESME PASS kalem=13 kesim=8 · SUROYUN havada=0 gomuk=0 katida=0 · WALKTHRU OZET yol=7 tamam=7 takilma=0 dusme=0
+# TUR-12 durum — BİTTİ
+- [x] Madde 1 (37o havadaki taşlar): TAMAM, kareler 37o/20/0/22/36b
+- [x] Madde 2 (kumaş): TAMAM — bayrak işlevleri, tuğ, tente, çamaşır, yakın çadır; sergi paftaları; bütçe ±%3
+- [x] Madde 3: harpuşta TAMAM (yakın kare); c5 hendek kıyısı YAPILMADI
+- [x] Sözleşme üçlüsü aynı; 25 bölüm koşusu ×1 PASS denetim 0
+- Rapor: rapor.md

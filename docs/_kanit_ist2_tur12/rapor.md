@@ -122,11 +122,20 @@ Sergi sahnesi oyunun KENDİ kurucularını çağırır (aynı işlev, aynı öl�
 Doğuş kamerasından 4 yön (yaw 0/90/180/270), duraklatılmış oyunda 12 karelik ortalama. Dört süreç yük altında bazı
 koşular 400 sn sınırında kesildi (eksik yönler tabloda yok).
 
-BUTCE_TABLO
+
+
+(6, 26, 43o son kodla; 20, 30o, 39o harpuşta ve genlik çarpanından önceki ara kodla ölçüldü — harpuşta diş başına +2 üçgen.) En kötü yön: 26/3 çizim +%3,0, ilkel +%0,8 (≤ +%5).
 
 Kare betik süresi: kumaşın kare başına GDScript işi **yok** (dalga gölgelendiricide; 39o'daki bayrak tween'i kalktı);
 yalnız kurulumda ızgara üretimi (önbellekli ağ). `T12SURE` satırları ölçüm anında bölümün yüklenmesine denk geldiği için
-(1–3 kare/4 sn, llvmpipe) karşılaştırmaya elverişli değil; ekransız ölçüm: SURE_SATIRI.
+(1–3 kare/4 sn, llvmpipe) karşılaştırmaya elverişli değil; ekransız ölçüm (`--headless --max-fps 20`, oyun 90. sn'ye dek akar, son 30 sn = 600 kare; ÖNCE ve SONRA aynı anda; `testler/butce/sure_*.ham`):
+
+| bölüm | betik ms/kare ÖNCE → SONRA |
+|---|---|
+| 6 (ordugâh) | 15,18 → 14,40 (−%5) |
+| 26 | 48,93 → 49,56 (+%1,3) |
+
+Fark ölçüm gürültüsü içinde (kumaşın kare başına betik işi yok).
 
 ## 3. Yetişirse — harpuşta **TAMAM (yakın kare)**, c5 hendek dış kıyısı **YAPILMADI**
 - `sur_kule.gd _dis_tas` → yeni `_harpusta`: tepe **eşek sırtı** (diş boyunca sırt, iki yana 4,5–7 cm eğim, uçları kırma;
@@ -140,10 +149,18 @@ yalnız kurulumda ızgara üretimi (önbellekli ağ). `T12SURE` satırları öl�
 - c5 hendek dış kıyısı düz kenar: bu turda yapılmadı (zaman).
 
 ## Sözleşme (her kayıttan önce; son kod)
-SOZ_SATIRLARI
+Son kod (harpuşta dahil; `testler/soz/sozlesme`, `testler/soz2/denetim`, `testler/soz2/yuru`):
+- `SURSOZLESME PASS kalem=13 kesim=8`
+- `SUROYUN nokta=519 havada=0 gomuk=0 katida=0`
+- `WALKTHRU OZET yol=7 tamam=7 takilma=0 dusme=0`
 
 ## Bölüm testleri (×1, `--max-fps 20`, tam süzgeç; `testler/b/`, `testler/b2/`)
-BOLUM_SATIRLARI
+Varsayılan ×1, hepsi **PASS**, `SCRIPT ERROR`/`VISAUDIT`/`WALKTHRU`/`HELDAUDIT`/`ARMAUDIT`/`WARN_*` satırı **0**:
+- Küme 1 (`b/`, kumaş bayrakları sonrası): 0, 10, 20, 26, 30o, 37o, 39o, 43o, 17, 19, 28o, 6 (ordugâh).
+- Küme 2 (`b2/`, harpuşta + çadır nefesi sonrası): 25, 20, 37o, 0, 41o (talim meydanı), 29 (deniz savaşı), 17o ve 8y
+  (siege_field / dressing), 6, 43o, 39o, 26, 22, 38o.
+- Son genlik çarpanı değişikliğinden sonra (yalnız gölgelendirici ve UV2 değeri) bölüm 6 ve 43o bütçe koşularında `SCRIPT ERROR` 0;
+  tam paket yöneticide.
 
 ## Hâlâ kötü olanlar
 - Gemi yelkenleri ve çadır gövdeleri ORTA/UZAK katmanda kıpırdamaz (yalnız yakın çadır nefes alır; uzak hücre ağı pişmiş).
