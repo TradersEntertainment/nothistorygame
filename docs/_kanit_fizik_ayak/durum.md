@@ -1,11 +1,11 @@
 # Fizik-ayak: durum
 
 - [x] Dal `wip/fizik-ayak` (taban `wip/ist2-birlesik` 5203a40e)
-- [x] `scripts/npc/ayak.gd`: ayak yerleştirme (iki kemikli IK, kalça alçak ayağa iner, taban eğime döner, yürürken basan ayak kilitli, LOD 28 m + görüş konisi, düzde duranda yazma yok, görünen-çarpışmasız zeminde kapalı)
-- [x] `scripts/npc/ayak_denet.gd`: AYAKAUDIT (ik durumu satırda)
-- [x] Rig/LimbAnim kancaları; yeni kadans (adım boyu hızdan)
-- [x] `tests/_fizik/ayak_sahne.tscn` deney sahnesi (eğim/basamak/moloz/koşu/at; `--ayak-kalabalik=60` bütçe)
-- [x] 18 koşu ÖNCE|SONRA (ara sürüm): SONRA yakın satır 0, hepsi PASS
-- [x] Son kodla ÖNCE|SONRA tablosu (20 koşu: yakın 87 → 5, hepsi PASS)
-- [x] Hayvanlar (ayak_hayvan.gd)
-- [ ] Oyun içi kareler (çekiliyor), rapor taslağı yazıldı
+- [x] `scripts/npc/ayak.gd`: ayak yerleştirme (iki kemikli IK, kalça, taban eğimi, yürürken kilit, LOD 28 m + koni, düzde yazma yok, kenar kuralı)
+- [x] `scripts/npc/ayak_denet.gd`: AYAKAUDIT (taban üç noktada)
+- [x] `scripts/npc/ayak_hayvan.gd`: at, öküz, keçi, tavuk, kedi
+- [x] Rig/LimbAnim kancaları; yeni kadans
+- [x] 20 koşu ÖNCE|SONRA (yakın 87 → 5, hepsi PASS), kare süresi tabloları, deney sahnesi bütçesi (+%21 en kötü durum: hedef aşıldı)
+- [x] Kareler: oyun içi (37o, 20, 22o, 24, 24o) + deney sahnesi
+- [x] Rapor: `rapor.md`, yöntem: `yontem.md`
+- Kalan (rapor "hâlâ kötü"): meşgul iş pozları, dik moloz yüzü, kişi tavanı, oyun içi at/merdiven karesi
