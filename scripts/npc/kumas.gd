@@ -170,6 +170,7 @@ var _lod_t := 0.0
 var _zy_t := 0.0
 var _zy := NAN                # yığılanın gövdesinin altındaki zemin (dünya y)
 var _son: Array = []          # son yazılan değerler (değişmeyen yazılmaz)
+var _ek_son: Array = []       # baş/kol ağlarının son salınımı (kendi eklem uzaylarında)
 const PARAMS := ["kk_ek", "kk_sw", "kk_dg", "kk_hp", "kk_ul", "kk_al", "kk_ur", "kk_ar", "kk_zl", "kk_zr"]
 
 
@@ -313,10 +314,10 @@ func _coz(dt: float, gp: Vector3) -> void:
 		_tw = clampf(_tw + _twv * h2, -0.7, 0.7)
 	_fl = lerpf(_fl, clampf(absf(w) * 0.035 + spd * 0.012, 0.0, 0.22), clampf(dt * 6.0, 0.0, 1.0))
 	var amp := clampf(0.004 + rel_l.length() * 0.0035, 0.0, 0.02)
+	_uclar(B)
 	if _gov.is_empty():
 		# Yalnız sarkan uçlar (sarık yatırtması, yen): bacak ve zemin gerekmez
 		_yaz(0, Vector4(0.45, 1.0, _lr, 0.0))
-		_yaz(1, Vector4(_s.x, _s.y, _tw, _fl))
 		_yaz(2, Vector4(rel_l.x, rel_l.z, amp, _faz))
 		return
 	# Bacaklar (gövde uzayı)
@@ -386,12 +387,36 @@ func _dinlen() -> void:
 	if _son.size() > 0 and _son[0] is Vector4:
 		var e: Vector4 = _son[0]
 		_yaz(0, Vector4(e.x, 0.0, e.z, e.w))
+	_ek_son.clear()
 
 
 static func _duzlem(binv: Transform3D, p_w: Vector3, n_w: Vector3) -> Vector4:
 	var p := binv * p_w
 	var n := (binv.basis * n_w).normalized()
 	return Vector4(n.x, n.y, n.z, -n.dot(p))
+
+
+## Sarkan uçlar (baş: yatırtma, püskül; kol: yen) kendi eklemlerinin uzayında: gövdenin salınımı o uzaya çevrilir ve
+## yerçekimi eklenir (baş öne eğilince ya da kol kalkınca uç aşağı sarkar; eskiden katı parça başla birlikte geriye
+## kalkıyordu: 24o'da çorbaya eğilen askerin yatırtması kanat gibi duruyordu)
+func _uclar(B: Basis) -> void:
+	if _ek.is_empty():
+		return
+	if _ek_son.size() != _ek.size():
+		_ek_son.resize(_ek.size())
+	var sw := B * Vector3(_s.x, 0.0, _s.y)
+	for k in _ek.size():
+		var mi := _ek[k]
+		var pb := (mi.get_parent() as Node3D).global_basis.orthonormalized().transposed()
+		var sp := pb * sw
+		var gp := pb * Vector3.DOWN
+		var c := (Vector2(sp.x, sp.z) + Vector2(gp.x, gp.z) * 0.5).limit_length(0.34)
+		var v := Vector4(c.x, c.y, 0.0, 0.0)
+		var e = _ek_son[k]
+		if e is Vector4 and ((e as Vector4) - v).abs().dot(Vector4.ONE) < 0.0015:
+			continue
+		_ek_son[k] = v
+		mi.set_instance_shader_parameter(&"kk_sw", v)
 
 
 ## Değişen değer yazılır (yarım milimetreden küçük oynamalar değil); gövde ağına hepsi, baş/kol ağlarına sallanma ve dalga
@@ -407,7 +432,7 @@ func _yaz(i: int, v: Vector4) -> void:
 	var nm: StringName = PARAMS[i]
 	for mi in _gov:
 		mi.set_instance_shader_parameter(nm, v)
-	if i <= 2:
+	if i == 0 or i == 2:
 		for mi in _ek:
 			mi.set_instance_shader_parameter(nm, v)
 
