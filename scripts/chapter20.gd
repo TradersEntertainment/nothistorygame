@@ -28,10 +28,12 @@ const GIUST_YENI := Vector3(5.0, 0.0, 9.4)
 const ARROWS_YENI := Vector3(-16.0, 0.0, 1.2)
 ## Bölüm sabiti: true → eski set (geri dönüş; komut satırında --eskisur ile de)
 const ESKI_SUR := false
-## Yeni sette düello yaklaşması (_yaklasma): 1. dalga hendek dolgusunun yakın ucundan (hendeğin iç yakasının bu kadar
-## ötesi, m), 2. dalga dolgunun uzak ucundan (hendeğin dış yakasının bu kadar berisi, m); bölükte çıkış aralığı (sn)
-const YAKLASMA_1_Z := 1.0
-const YAKLASMA_1_ARA := 2.0
+## Yeni sette düello yaklaşması (_yaklasma): 1. dalga teras eteğinden (hendeğin iç yakasının bu kadar ötesi, m; eksi:
+## berisi), 2. dalga dolgunun uzak ucundan (hendeğin dış yakasının bu kadar berisi, m); bölükte çıkış aralığı (sn).
+## TAŞIMA-6: azaplar barikatın ucundan sonra tekerlekli siperi dolanır (≈ 6 m uzun yol); 1. dalga eskiden dolgunun yakın
+## ucundan (+1,0) 2,0 sn arayla çıkıyordu, şimdi teras eteğinden (−2,6) 1,2 sn arayla: dalga süresi taşıma 4'teki gibi.
+const YAKLASMA_1_Z := -2.6
+const YAKLASMA_1_ARA := 1.2
 const YAKLASMA_2_Z := 3.0
 const YAKLASMA_2_ARA := 2.5
 const NIKO_EVERY := 15.0       # Niko'nun bir yükü (gece 170 sn: dost taşıyıcı yarım gedik kadar getirir)

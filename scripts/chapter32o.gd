@@ -19,24 +19,41 @@ extends Node3D
 ##   council_ok: 25.1, council_bad: 25.2)
 
 const BUNDLES := 6
-const PILE := Vector3(-9.0, 0.0, 54.0)
-const EARTH := Vector3(9.0, 0.0, 54.0)
-const EDGE_Z := 37.4
-const COVERS := [Vector3(-5.0, 0.0, 43.0), Vector3(5.0, 0.0, 43.0), Vector3(0.0, 0.0, 49.0)]
+## Eski setin (LandWalls) ova sayıları. Yeni sette (TAŞIMA-6) bölümün bütün işi hendeğin önünde: ovadaki her şey
+## SurSet.ova_ofs ile yeni ovaya iner (22o kalıbı; aralarındaki mesafeler AYNI). Hendeğin içine düşenler (atılan demet,
+## Rum ateşi) eski hendekteki oranlarıyla yeni hendeğe (20 × 6) konur. Süreler (DITCH_TIME, yaylım) aynı.
+const PILE_E := Vector3(-9.0, 0.0, 54.0)
+const EARTH_E := Vector3(9.0, 0.0, 54.0)
+const EDGE_Z_E := 37.4
+const COVERS_E := [Vector3(-5.0, 0.0, 43.0), Vector3(5.0, 0.0, 43.0), Vector3(0.0, 0.0, 49.0)]
+## Geri dönüş anahtarı (karar 13): true → eski set; komut satırında --eskisur ya da --eskisur=32o
+const ESKI_SUR := false
+var sur: SurSet
+var O := Vector3.ZERO
+var PILE := PILE_E
+var EARTH := EARTH_E
+var EDGE_Z := EDGE_Z_E
+var COVERS: Array = COVERS_E
 const VOLLEY_EVERY := 13.0
 const VOLLEY_WARN := 2.6
 const DITCH_TIME := 240.0
-const BENCH := Vector3(-16.0, 0.0, 66.0)
+const BENCH_E := Vector3(-16.0, 0.0, 66.0)
+var BENCH := BENCH_E
 const RUNGS := 6
-const MANTLET_FROM := Vector3(14.0, 0.0, 64.0)
-const MANTLET_TO := Vector3(14.0, 0.0, 41.0)
+const MANTLET_FROM_E := Vector3(14.0, 0.0, 64.0)
+const MANTLET_TO_E := Vector3(14.0, 0.0, 41.0)
+var MANTLET_FROM := MANTLET_FROM_E
+var MANTLET_TO := MANTLET_TO_E
 const SHOTS := 3
 const COOL_TIME := 2.4
-const FIRE_Z := 92.0
+const FIRE_Z_E := 92.0
+var FIRE_Z := FIRE_Z_E
 const GREEK_TIME := 15.0
 const FIRES := 6
-const KADRI_POT := Vector3(-4.0, 0.0, 99.0)
-const HASAN_FIRE := Vector3(20.0, 0.0, 101.0)
+const KADRI_POT_E := Vector3(-4.0, 0.0, 99.0)
+const HASAN_FIRE_E := Vector3(20.0, 0.0, 101.0)
+var KADRI_POT := KADRI_POT_E
+var HASAN_FIRE := HASAN_FIRE_E
 
 var walls: LandWalls
 var gun: Node3D
@@ -114,7 +131,25 @@ func _ready() -> void:
 	player.interacted.connect(_on_interact)
 	hud.set_fez(GameState.flags.get("fez", true))
 	hud.set_signal(0)
-	walls = LandWalls.new()
+	sur = SurSet.sec("32o", ESKI_SUR)
+	if sur.eski_mi:
+		walls = LandWalls.new()
+	else:
+		var ss := SurSetSahne.new()
+		ss.sur = sur
+		ss.dolgu = 0.5           # gedik önü dolgusu önceki haftalarda yarıya dek doldu (26o'da tam)
+		walls = ss
+		O = sur.ova_ofs()
+		PILE = PILE_E + O
+		EARTH = EARTH_E + O
+		EDGE_Z = sur.hendek_z1() + (EDGE_Z_E - 36.0)
+		COVERS = COVERS_E.map(func(c: Vector3) -> Vector3: return c + O)
+		BENCH = BENCH_E + O
+		MANTLET_FROM = MANTLET_FROM_E + O
+		MANTLET_TO = MANTLET_TO_E + O
+		FIRE_Z = FIRE_Z_E + O.z
+		KADRI_POT = KADRI_POT_E + O
+		HASAN_FIRE = HASAN_FIRE_E + O
 	add_child(walls)
 	# Kuşatma sürerken şehir ve surlar arası Bizans'ın: oyuncu gedikten ya da açık bir kapıdan içeri girerse savunucular
 	# yakalayıp dışarı atar (Trespass)
@@ -177,19 +212,38 @@ func _make_night(t: float) -> void:
 
 # ================================================================ yerleşim
 
+## Eski hendeğin (z 20–36, dip −2,9) bir noktasını yeni hendekte aynı orana taşır; y: dipten yükseklik
+func _hendek_p(x: float, z_eski: float, ust: float) -> Vector3:
+	if sur.eski_mi:
+		return Vector3(x, -2.9 + ust, z_eski)
+	return Vector3(x, sur.hendek_dip_y() + ust, sur.hendek_z((z_eski - 20.0) / 16.0))
+
+
+func _gedik() -> Vector3:
+	return LandWalls.BREACH if sur.eski_mi else sur.gedik()
+
+
+func _sur_ust_y() -> float:
+	return LandWalls.OUTER_H if sur.eski_mi else sur.dis_yol_y()
+
+
+func _sur_dis_z() -> float:
+	return LandWalls.OUTER_Z1 if sur.eski_mi else sur.dis_sur_z1()
+
+
 func _build_field() -> void:
 	# Ova (hendekten ordugâha) yürünür; sınırlar görünmez
-	var pad := Props.solid(self, Vector3(84, 1.2, 76), Vector3(0, -0.6, 74.0), Color("3a3e2a"))
+	var pad := Props.solid(self, Vector3(84, 1.2, 76), Vector3(0, -0.6, 74.0) + O, Color("3a3e2a"))
 	pad.get_child(0).visible = false
 	# Yalnız hendeğin kenarı; yanlar ve arka açık: ötesi dünyanın ovası (WorldWalk)
-	for spec in [[Vector3(84, 6, 0.4), Vector3(0, 3, 36.4)]]:
+	for spec in [[Vector3(84, 6, 0.4), Vector3(0, 3, 36.4) + O]]:
 		var b := Props.solid(self, spec[0], spec[1], Color.WHITE)
 		b.get_child(0).visible = false
 		b.set_meta("no_climb", true)
 		b.set_meta("ball_through", true)
 		if spec[1].z == 109.0:
 			_back_bar = b
-	Scenery.ground_detail(self, Rect2(-38.0, 37.0, 76.0, 70.0), 520, func(_x: float, _z: float) -> float: return 0.0, Color("3a4a2a"), 3201)
+	Scenery.ground_detail(self, Rect2(-38.0, 37.0 + O.z, 76.0, 70.0), 520, func(_x: float, _z: float) -> float: return O.y, Color("3a4a2a"), 3201)
 	# Çalı demeti yığını ve toprak sepetleri
 	var rng := RandomNumberGenerator.new()
 	rng.seed = 3202
@@ -203,9 +257,9 @@ func _build_field() -> void:
 		Props.cyl(self, 0.28, 0.06, p + Vector3(0, 0.5, 0), Color("5a4630"), Vector3.ZERO, 8)
 	Props.interactable(self, "earth", Vector3(4.0, 1.6, 2.0), EARTH + Vector3(0, 0.8, 0))
 	# Hendek kıyısı: buraya atılır
-	Props.interactable(self, "edge", Vector3(26.0, 1.8, 1.6), Vector3(0, 0.9, EDGE_Z))
+	Props.interactable(self, "edge", Vector3(26.0, 1.8, 1.6), Vector3(0, O.y + 0.9, EDGE_Z))
 	for x in [-12.0, -6.0, 0.0, 6.0, 12.0]:
-		Props.cyl(self, 0.04, 1.2, Vector3(x, 0.6, EDGE_Z + 0.4), Color("b3262d"), Vector3.ZERO, 4)
+		Props.cyl(self, 0.04, 1.2, Vector3(x, O.y + 0.6, EDGE_Z + 0.4), Color("b3262d"), Vector3.ZERO, 4)
 	# Mantolar (tekerlekli ahşap perde): ok yaylımında arkasına geçilir
 	for c: Vector3 in COVERS:
 		_mantlet(c)
@@ -226,14 +280,16 @@ func _build_field() -> void:
 		Props.box(self, Vector3(0.8, 0.12, 6.0), BENCH + Vector3(-4.5, 0.1 + i * 0.14, 0), Color("6a4a2c"), Vector3(0, 90 + i * 5.0, 0))
 	# Hendekte daha önce atılmış demetler (görüntü): az ve dağınık
 	for i in 10:
-		Props.cyl(self, 0.3, 1.8, Vector3(rng.randf_range(-24, 24), -2.65, rng.randf_range(22.0, 34.0)), Color("5a4630"),
+		Props.cyl(self, 0.3, 1.8, _hendek_p(rng.randf_range(-24, 24), rng.randf_range(22.0, 34.0), 0.25), Color("5a4630"),
 			Vector3(0, rng.randf_range(-40, 40), 90), 6)
 	# Sancaklı ordu, bataryalar, surda savunanlar (hücum yarın: koşan dalga ve merdiven yok)
 	assault = Assault.new()
-	assault.keep = Rect2(-40.0, 36.4, 80.0, 72.6)
+	assault.sur = null if sur.eski_mi else sur
+	assault.keep = Rect2(-40.0, 36.4 + O.z, 80.0, 72.6)
 	add_child(assault)
 	assault.build_calm()
-	Garrison.land_walls(self, [], [], [], 3210)
+	# Yeni sette dış surun dişleri insan boyu: yolun iç yanındaki savunanlar ovadan görünmez (22o'nun kalıbı: "dense")
+	Garrison.land_walls(self, [], [], [], 3210, 47.0, true, not sur.eski_mi, false, null if sur.eski_mi else sur)
 
 
 var _rung_root: Node3D
@@ -257,11 +313,11 @@ func _mantlet(at: Vector3) -> Node3D:
 func _build_people() -> void:
 	herald = Person.new({"coat": Color("b3262d"), "pants": Color("e8e0d0"), "hat": "bork", "mustache": true, "beard": true, "skin": Color("d9a07a")})
 	herald.set_meta("spk", "SPK_HERALD")
-	herald.position = Vector3(-22.0, 0, 60.0)
+	herald.position = Vector3(-22.0, 0, 60.0) + O
 	add_child(herald)
 	azap = Soldier.new(Color("b3262d"), "stand", "azap")
 	azap.set_meta("spk", "SPK_AZAP")
-	azap.position = Vector3(2.0, 0, 46.0)
+	azap.position = Vector3(2.0, 0, 46.0) + O
 	azap.rotation.y = PI
 	add_child(azap)
 	usta = Person.new({"coat": Color("6a5a3a"), "pants": Color("3a3028"), "hat": "turban", "beard": true, "mustache": true,
@@ -281,10 +337,10 @@ func _build_people() -> void:
 	for i in 4:
 		var c := Soldier.new([Color("b3262d"), Color("8a6a4a"), Color("6a4a3a"), Color("b3262d")][i], "stand", "azap")
 		var x: float = [-22.0, -17.0, 17.0, 22.0][i]
-		c.position = Vector3(x, 0, 52.0 - i * 3.0)
+		c.position = Vector3(x, 0, 52.0 - i * 3.0) + O
 		add_child(c)
 		var b := Props.cyl(c, 0.28, 1.5, Vector3(0, 1.45, -0.1), Color("6a5636"), Vector3(0, 90, 90), 6)
-		_carriers.append([c, b, Vector3(x, 0, EDGE_Z + 1.2)])
+		_carriers.append([c, b, Vector3(x, O.y, EDGE_Z + 1.2)])
 	for k in 2:
 		var ps := Soldier.new(Color("8a6a4a"), "push", "turban" if k == 0 else "bork")
 		add_child(ps)
@@ -302,7 +358,7 @@ func _build_people() -> void:
 func _build_camp() -> void:
 	# Akşam yakılacak ateş yerleri: kütük yığını (sönük)
 	for i in FIRES:
-		var p := Vector3(-25.0 + i * 10.0, 0.0, FIRE_Z + (i % 2) * 2.0)
+		var p := Vector3(-25.0 + i * 10.0, O.y, FIRE_Z + (i % 2) * 2.0)
 		var n := Node3D.new()
 		n.position = p
 		add_child(n)
@@ -334,14 +390,14 @@ func _run() -> void:
 	hud.set_fade(1.0)
 	await hud.card([[tr("UI_CH32O_TITLE"), 44, Color("f2e6c9")], [tr("UI_CH32O_SUB"), 20, Color(1, 1, 1, 0.7)]], 3.0)
 	hud.clear_card()
-	player.global_position = Vector3(-14.0, 0.05, 72.0)
+	player.global_position = Vector3(-14.0, 0.05, 72.0) + O
 	player.face(Vector3(0, 4.0, 15.0))
 	player.show_remote(true)             # Tolga'nın eli açık (bölüm boyunca kapalıydı)
 	_capture_mouse()
 	# Kadri açılışta Tolga'nın yanında, sura bakan tarafta durur (kazanı 29 m geride, konuşan görünmüyordu);
 	# konuşma bitince kazanına döner
 	var pot_spot := kadri.position
-	kadri.position = Vector3(-12.6, 0.0, 70.4)
+	kadri.position = Vector3(-12.6, 0.0, 70.4) + O
 	kadri.look_target = player
 	await hud.fade_to(0.0, 1.0)
 	await hud.say("SPK_NIHAT", "D32O_N_01")
@@ -451,7 +507,7 @@ func _ditch() -> void:
 	hud.set_chase("", 0.0)
 	hud.set_objective("")
 	player.frozen = true
-	player.face(Vector3(0, -1.0, 28.0))
+	player.face(_hendek_p(0.0, 28.0, 2.0))
 	if bundles >= BUNDLES:
 		await hud.say("SPK_TOLGA", "D32O_T_DITCH")
 	else:
@@ -471,7 +527,7 @@ func _bot_ditch(late: bool) -> void:
 		await get_tree().create_timer(0.4, false).timeout
 		_on_interact("earth" if need_earth else "pile")
 	else:
-		player.global_position = Vector3(randf_range(-8, 8), 0.05, EDGE_Z + 1.4)
+		player.global_position = Vector3(randf_range(-8, 8), O.y + 0.05, EDGE_Z + 1.4)
 		await get_tree().create_timer(0.4, false).timeout
 		_on_interact("edge")
 	if late and bundles >= 4:
@@ -485,7 +541,7 @@ func _update_objective() -> void:
 			if carrying == "earth" and _fire_t >= 0.0:
 				hud.set_objective(tr("UI_OBJ32O_FIRE"), _fire_at + Vector3(0, 2.6, 0))
 			elif carrying == "bundle" or carrying == "earth":
-				hud.set_objective(tr("UI_OBJ32O_DROP") % [bundles, BUNDLES] if carrying == "bundle" else tr("UI_OBJ32O_EARTH"), Vector3(0, 1.0, EDGE_Z))
+				hud.set_objective(tr("UI_OBJ32O_DROP") % [bundles, BUNDLES] if carrying == "bundle" else tr("UI_OBJ32O_EARTH"), Vector3(0, O.y + 1.0, EDGE_Z))
 			elif need_earth:
 				hud.set_objective(tr("UI_OBJ32O_EARTH"), EARTH + Vector3(0, 1.2, 0))
 			else:
@@ -523,8 +579,8 @@ func _azap_carry() -> void:
 	var pl := player.global_position
 	var cov := _nearest_cover(pl)
 	var from := azap.position
-	var mid := Vector3(pl.x, 0.0, pl.z + 0.9)           # azap önce kâtibin yanına çöker
-	var rest := Vector3(cov.x, 0.0, cov.z + 1.4)        # mantonun arkası: oklar orada değmez
+	var mid := Vector3(pl.x, O.y, pl.z + 0.9)           # azap önce kâtibin yanına çöker
+	var rest := Vector3(cov.x, O.y, cov.z + 1.4)        # mantonun arkası: oklar orada değmez
 	var tw := create_tween()
 	tw.tween_method(func(k: float) -> void: azap.position = from.lerp(mid, k), 0.0, 1.0, 1.0)
 	tw.tween_method(func(k: float) -> void: _carry_to(mid.lerp(rest, k)), 0.0, 1.0, 2.4)
@@ -594,9 +650,9 @@ func _drop_carry() -> void:
 func _throw_in(kind: String) -> void:
 	player.hand_gesture("throw")
 	var x := clampf(player.global_position.x, -12.0, 12.0)
-	var from := Vector3(x, 1.0, EDGE_Z - 0.4)
+	var from := Vector3(x, O.y + 1.0, EDGE_Z - 0.4)
 	var layer := (bundles + earth) / 6
-	var to := Vector3(x + randf_range(-1.0, 1.0), -2.6 + layer * 0.35, randf_range(29.0, 34.0))
+	var to := _hendek_p(x + randf_range(-1.0, 1.0), randf_range(29.0, 34.0), 0.3 + layer * 0.35)
 	var n: Node3D
 	if kind == "bundle":
 		n = Props.cyl(self, 0.32, 1.8, from, Color("6a5636").darkened(randf_range(0.0, 0.25)), Vector3(0, randf_range(-30, 30), 90), 6)
@@ -748,7 +804,7 @@ func _process(delta: float) -> void:
 		var before := _vwarn
 		_vwarn += delta
 		if before < VOLLEY_WARN - Assault.VOLLEY_FLIGHT and _vwarn >= VOLLEY_WARN - Assault.VOLLEY_FLIGHT and assault:
-			assault.volley(Vector3(player.global_position.x, 0.0, player.global_position.z), 7.0, 40)
+			assault.volley(Vector3(player.global_position.x, O.y, player.global_position.z), 7.0, 40)
 		if _vwarn >= VOLLEY_WARN:
 			_vwarn = -1.0
 			_volley = VOLLEY_EVERY
@@ -757,7 +813,7 @@ func _process(delta: float) -> void:
 			if not _covered():
 				arrows += 1
 				player.stagger(0.8)
-				player.hurt(30.0, Vector3(player.global_position.x, 8.0, LandWalls.OUTER_Z1))
+				player.hurt(30.0, Vector3(player.global_position.x, _sur_ust_y(), _sur_dis_z()))
 				hud.bark("SPK_TOLGA", "D32O_T_HIT_1" if arrows == 1 else "D32O_T_HIT_2", 3.0)
 				if carrying == "bundle" and player.is_down:
 					_drop_carry()
@@ -786,13 +842,13 @@ func _update_carriers(delta: float) -> void:
 			if bundle.visible:
 				bundle.visible = false
 				var n := Props.cyl(self, 0.3, 1.6, s.position + Vector3(0, 1.4, -0.6), Color("6a5636"), Vector3(0, randf_range(-30, 30), 90), 6)
-				var to := Vector3(s.position.x + randf_range(-1, 1), -2.6, randf_range(29.0, 34.0))
+				var to := _hendek_p(s.position.x + randf_range(-1, 1), randf_range(29.0, 34.0), 0.3)
 				var tw := n.create_tween()
 				tw.tween_property(n, "position", to, 0.7).set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_IN)
-				c[2] = Vector3(s.position.x, 0, 54.0)
+				c[2] = Vector3(s.position.x, O.y, 54.0 + O.z)
 			else:
 				bundle.visible = true
-				c[2] = Vector3(s.position.x, 0, EDGE_Z + 1.2)
+				c[2] = Vector3(s.position.x, O.y, EDGE_Z + 1.2)
 			continue
 		var step := d.normalized() * minf(d.length(), (1.3 if bundle.visible else 1.9) * delta)
 		s.position += step
@@ -805,9 +861,9 @@ func _greek_fire() -> void:
 	if _fire_t >= 0.0:
 		return
 	_fire_t = 0.0
-	_fire_at = Vector3(clampf(player.global_position.x, -10.0, 10.0), -2.4, 31.0)
+	_fire_at = _hendek_p(clampf(player.global_position.x, -10.0, 10.0), 31.0, 0.5)
 	# Çömlek surdan yay çizerek gelir
-	var pot := Props.ball(self, 0.22, Vector3(_fire_at.x, LandWalls.OUTER_H + 1.5, LandWalls.OUTER_Z1), Color("6a4a2a"), Vector3.ONE, 8)
+	var pot := Props.ball(self, 0.22, Vector3(_fire_at.x, _sur_ust_y() + 1.5, _sur_dis_z()), Color("6a4a2a"), Vector3.ONE, 8)
 	var tw := pot.create_tween()
 	tw.tween_property(pot, "position", _fire_at, 0.9).set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_IN)
 	tw.tween_callback(func():
@@ -985,7 +1041,7 @@ func _setup_gun_crew() -> void:
 	gun_crew.supplies = {"powder": gun.to_global(Vector3(-2.7, 0, 2.2)), "ball": gun.to_global(Vector3(3.8, 0, -0.5)),
 		"wad": gun.to_global(Vector3(-2.8, 0, 5.6)), "rammer": gun.to_global(Vector3(2.8, 0, 5.6))}
 	gun_crew.spawn = ["wad"]
-	gun_crew.target = func() -> Vector3: return LandWalls.BREACH + Vector3(0, 4.0, 0)
+	gun_crew.target = func() -> Vector3: return _gedik() + Vector3(0, 4.0, 0)
 	gun_crew.hit_radius = 5.0
 	gun_crew.tolerance = 16.0
 	gun_crew.ground_y = 0.0
@@ -1038,7 +1094,7 @@ func _guns() -> void:
 	for shot in SHOTS:
 		phase = "drill"
 		player.global_position = gun.position + Vector3(3.0, 0.05, 6.0)
-		player.face(LandWalls.BREACH + Vector3(0, 4.0, 0))
+		player.face(_gedik() + Vector3(0, 4.0, 0))
 		hud.set_objective(tr("UI_OBJ32O_LOAD") % [shot + 1, SHOTS])
 		# Nişancı (17o): dolumu yamaklar yapar, Tolga yalnız ateş anını seçer; bant geniştir
 		drill.start(0.25 + shot * 0.1, 0.16 + (MARKSMAN_BAND if _marksman else 0.0))
@@ -1063,7 +1119,9 @@ func _fire() -> void:
 		player.shake(1.0)
 		await get_tree().create_timer(1.6, false).timeout
 	var hit := _acc >= 0.5
-	var at := LandWalls.BREACH + Vector3(randf_range(-1.5, 1.5) if hit else randf_range(-14, 14), 3.0 if hit else 1.0, 1.2 if hit else 6.0)
+	var at := _gedik() + Vector3(randf_range(-1.5, 1.5) if hit else randf_range(-14, 14), 3.0 if hit else 1.0, 1.2 if hit else 6.0)
+	if not sur.eski_mi and not hit:
+		at.y = sur.dis_zemin_y(at.x, at.z) + 1.0      # ıskalayan gülle surun önüne (yeni sette teras eski zeminin 3,7 m altı)
 	if drill.physical and drill.last_impact != Vector3.INF:
 		at = drill.last_impact
 	walls.impact(at)
@@ -1164,8 +1222,8 @@ func _sultan() -> void:
 		"robe": Color("c8323a"), "hair": Color("2a1e14"), "skin": Color("e0b08a")})
 	sultan.set_meta("spk", "SPK_FATIH")
 	horse.mount(sultan)
-	var from := Vector3(-34.0, 0.0, FIRE_Z - 3.5)
-	var to := Vector3(34.0, 0.0, FIRE_Z - 3.5)
+	var from := Vector3(-34.0, O.y, FIRE_Z - 3.5)
+	var to := Vector3(34.0, O.y, FIRE_Z - 3.5)
 	horse.position = from
 	horse.rotation.y = PI * 0.5
 	var guards: Array = []
@@ -1397,9 +1455,9 @@ func _autotest_report() -> void:
 	if not ok:
 		printerr("AUTOTEST: beklenen %s, gelen %s (sayfa=%s foto=%s basamak=%d ateş=%d demet=%d toprak=%d ok=%d isabet=%d)" % [expected, _outcome,
 			not page.is_empty(), cam != null and cam.done, rungs, fires_lit, bundles, earth, arrows, hits])
-	print("AUTOTEST %s chapter=32o variant=%s outcome=%s bundles=%d/%d earth=%d arrows=%d rungs=%d bad=%d hits=%d/%d fires=%d greek=%d/%d hasan=%s" % [
+	print("AUTOTEST %s chapter=32o variant=%s outcome=%s bundles=%d/%d earth=%d arrows=%d rungs=%d bad=%d hits=%d/%d fires=%d greek=%d/%d hasan=%s sur=%s" % [
 		"PASS" if ok else "FAIL", v, _outcome, bundles, BUNDLES, earth, arrows, rungs, bad_rungs, hits, SHOTS, fires_lit,
-		fires_out, fires_out + fires_lost, hasan_choice])
+		fires_out, fires_out + fires_lost, hasan_choice, "eski" if sur.eski_mi else "yeni"])
 	get_tree().quit(0 if ok else 1)
 
 
@@ -1421,15 +1479,15 @@ func _run_shots() -> void:
 	player.global_position = PILE + Vector3(3.0, 0.05, -6.0)
 	await get_tree().create_timer(0.8, false).timeout
 	_pick("bundle")
-	player.face(Vector3(0, 0.0, 30.0))
+	player.face(_hendek_p(0.0, 30.0, 0.0))
 	_update_objective()
 	await _shot_png("c32o_01_ditch.png")
 	_drop_carry()
 	hud.visible = false
 	var cv := Camera3D.new()
 	add_child(cv)
-	cv.global_position = Vector3(-10.0, 4.5, 50.0)
-	cv.look_at(Vector3(2.0, 0.0, 30.0), Vector3.UP)
+	cv.global_position = Vector3(-10.0, 4.5, 50.0) + O
+	cv.look_at(_hendek_p(2.0, 30.0, 0.0), Vector3.UP)
 	cv.fov = 60.0
 	cv.make_current()
 	await get_tree().create_timer(0.3, false).timeout
@@ -1444,16 +1502,16 @@ func _run_shots() -> void:
 	sultan = Person.new({"coat": Color("b3262d"), "pants": Color("6a1a1a"), "hat": "sultan", "face": "fatih", "mustache": true,
 		"robe": Color("c8323a"), "hair": Color("2a1e14"), "skin": Color("e0b08a")})
 	horse.mount(sultan)
-	horse.position = Vector3(0.0, 0.0, FIRE_Z - 3.5)
+	horse.position = Vector3(0.0, O.y, FIRE_Z - 3.5)
 	horse.rotation.y = PI * 0.5
-	cv.global_position = Vector3(4.0, 1.7, FIRE_Z + 6.0)
-	cv.look_at(Vector3(-1.0, 1.8, FIRE_Z - 3.5), Vector3.UP)
+	cv.global_position = Vector3(4.0, O.y + 1.7, FIRE_Z + 6.0)
+	cv.look_at(Vector3(-1.0, O.y + 1.8, FIRE_Z - 3.5), Vector3.UP)
 	await get_tree().create_timer(0.5, false).timeout
 	await _shot_png("c32o_02_sultan.png")
 	# Hasan ateş başında oturur (sit_ground): duruşu ve konuşurken oturuşu
 	hasan.visible = true
 	hasan.set_activity("sit_ground")
-	cv.global_position = Vector3(HASAN_FIRE.x + 2.6, 1.5, HASAN_FIRE.z + 3.2)
+	cv.global_position = Vector3(HASAN_FIRE.x + 2.6, O.y + 1.5, HASAN_FIRE.z + 3.2)
 	cv.look_at(hasan.global_position + Vector3(0, 0.9, 0), Vector3.UP)
 	await get_tree().create_timer(1.5, false).timeout
 	await _shot_png("c32o_03_hasan.png")

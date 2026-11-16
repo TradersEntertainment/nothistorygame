@@ -1,0 +1,28 @@
+Godot Engine v4.4.1.stable.official.49a5bc7b6 - https://godotengine.org
+
+SURSET kesim=mesoteikhion kurulum_ms=3606 sur_ms=916 set_ms=2685
+WARNING: Screen-space ambient occlusion (SSAO) can only be enabled when using the Forward+ renderer.
+     at: environment_set_ssao (servers/rendering/storage/environment_storage.cpp:586)
+WARNING: Screen-space indirect lighting (SSIL) can only be enabled when using the Forward+ renderer.
+     at: environment_set_ssil (servers/rendering/storage/environment_storage.cpp:661)
+TERRAIN_SOLIDIFIED scene=chapter37o.tscn node=/root/Chapter37o/@Node3D@179/Ova/@Node3D@2665/@MeshInstance3D@2667
+TASIMA6FAZ faz=yuruyus t=23.9
+TASIMA6FAZ faz=kalas t=0.9 p=(-16.5, -3.6, 25.6)
+TESPITBLOCK who=siege37o blocker=Skeleton/Mesh (MeshInstance3D) at=(0.0, -2.2, 23.2) eye=(0.0, -0.6, 23.2) dist=9.2
+GUNNER_HIT moved=0.00 perp=0.00 aim=(3.6, -3.0, 23.2) now=(3.6, -3.0, 23.2)
+HANDS stowed=@Node3D@84,@Node3D@127
+HANDS stowed=@Node3D@84
+RALLY scene=chapter37o.tscn allies=0 foes=0 cands=3
+GUNNER_HIT moved=0.00 perp=0.00 aim=(5.4, -3.7, 23.2) now=(5.4, -3.7, 23.2)
+WAVERUNNER wave=1/1 won=false t=10.2 pw=0.28 foe_dmg=18.0 allies=0+0 rally_foes=0 thrown=0
+TASIMA6FAZ faz=barikat t=28.5
+GUNNER shots=3 dodged=1 hits=2
+POSEAUDIT tilt @Node3D@20974 90  (Chapter37o/@Node3D@26399)
+TASIMA6FAZ faz=surukle t=23.1
+GRADE chapter=37o letter=C points=28 { "gunner_shots": 3, "dodged": 1, "gunner_hits": 2, "hits_taken": 5, "downs": 1 }
+AUTOTEST PASS chapter=37o variant=lose outcome=37O.2 beats=4/16 arrows=0 falls=1 barrels=2/5 cuts=6 stones=0 slips=0 burns=1 duel=false caught=0 sur=yeni
+WARNING: ObjectDB instances leaked at exit (run with --verbose for details).
+     at: cleanup (core/object/object.cpp:2378)
+ERROR: 1 resources still in use at exit (run with --verbose for details).
+   at: clear (core/io/resource.cpp:614)
+KOSU rc=0 sure=45 args=--chapter=37o --autotest=lose

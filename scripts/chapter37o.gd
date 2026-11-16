@@ -238,6 +238,16 @@ func _build_field() -> void:
 			var z: float = spec[0]
 			var w := Props.solid(self, Vector3(spec[2] - spec[1], 3.0, 0.5), Vector3((spec[1] + spec[2]) * 0.5, -1.5, z), Color.WHITE)
 			Props.set_pattern(w, LandWalls.C_STONE.darkened(0.3), "ashlar")
+	else:
+		# Kalastan düşen hendeğin dibinden çıkar (sahibin 6. kararı: hendek 20 × 6 kalır, düşmenin cezası 2× olmaz): eskide
+		# 2,9 m'lik duvara tutunup çıkılıyordu; 6 m'lik taş yüze tırmanış nefesi ve süreyi iki katına çıkarırdı. Kalasın iki
+		# yanında hendeğin iç (sur) yüzüne dayalı birer hücum merdiveni (azapların getirdiği; W ile tırmanılır).
+		var dip := sur.hendek_dip_y()
+		var boy := (sur.teras_y() + 0.12 - dip) / cos(deg_to_rad(15.0)) + 0.7
+		for sx: float in [-2.3, 2.3]:
+			var lad := Ladder.new(boy, 15.0, Color("6a4a2c"))
+			lad.position = Vector3(PLANK_X + sx, dip, sur.hendek_z0() + (boy - 0.7) * sin(deg_to_rad(15.0)) + 0.1)
+			add_child(lad)
 	Scenery.ground_detail(self, Rect2(-30.0, 37.5 + O.z, 60.0, 70.0), 380, func(_x: float, _z: float) -> float: return O.y, Color("2e3a24"), 3701)
 	# Kalas yığını (ekip buradan alır)
 	for k in 3:
@@ -1546,8 +1556,10 @@ func _yuru() -> void:
 		await _kare("kalas_ortasi")
 	await _yb("kalas_uc", Vector3(PLANK_X, 0, FAR_Z - 0.4), Vector3(PLANK_X, _far_y() + 1.5, teras_z))
 	# 4. Terasa (yeni: parateikhion yalnız kalasın önünde açık), moloz eteği, kanca yeri
-	await _yb("teras", Vector3(PLANK_X, 0, teras_z), Vector3(0.0, 1.0, teras_z))
-	await _yb("yamac_etegi", Vector3(-3.5, 0, teras_z), _barikat_orta() + Vector3(0, 1.0, 0))
+	if not sur.eski_mi:
+		# eski sette kalasın ucu moloz dilinin yanında, düz zeminde: doğrudan kanca yerine
+		await _yb("teras", Vector3(PLANK_X, 0, teras_z), Vector3(0.0, 1.0, teras_z))
+		await _yb("yamac_etegi", Vector3(-3.5, 0, teras_z), _barikat_orta() + Vector3(0, 1.0, 0))
 	phase = "stockade"
 	giust.visible = true
 	giust.look_target = player
@@ -1560,8 +1572,8 @@ func _yuru() -> void:
 		squad[i].visible = false
 	drummer.visible = false
 	_make_haulers()
+	_haul_place(_haul_spots(_next_barrel(), _stockade_spot()), true)      # ip çekenler yerlerinde (kökte iç içe durmasınlar)
 	await _yb("kanca_yeri", _stockade_spot(), _barikat_orta() + Vector3(0, 0.8, 0))
-	_haul_place(_haul_spots(_next_barrel(), player.global_position), true)
 	if kare:
 		await _kare("barikat")
 		player.face(giust.global_position + Vector3(0, 1.6, 0))

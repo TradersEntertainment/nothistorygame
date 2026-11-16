@@ -4,9 +4,10 @@ Dal `wip/ist2-tasima6`, taban `wip/ist2-taban11` 2fa8fb35.
 
 | adım | durum |
 |---|---|
-| kurulum | tamam (Godot 4.4.1, içe aktarma) |
-| 1. Bölüm 20 `=hit` D20_T_DUEL "wall" | kök neden bulundu (sonda `TASIMA6DUELLO`, `SONDA6`): `=hit` yeri yeni setin toprak setinin 0,76 m önü + azap yolu set ile siper arasındaki 0,4 m'lik aralıkta bitiyor, bot sete yapışıyor. Düzeltme 1 (`=hit` yeri `gedik_onu`): ×12 PASS, wall 0, ama 1 koşuda personhidden ×2 (`testler/c20_hit_tur1`). Düzeltme 2 (yol siperin dış ucunu dolanır): ölçülüyor |
-| 2. 37o | bağdaştırıcı yazıldı (SurSet, `--eskisur`, setin KalasKopru'su x −17,9, ova `ova_ofs`), `=yuru`/`=kare` yazıldı; ilk koşu PASS; çeşit matrisi sürüyor |
-| 32o, 36b | başlanmadı |
+| kurulum | tamam |
+| 1. Bölüm 20 `=hit` D20_T_DUEL | kök neden kanıtlı (`testler/sonda`); düzeltme: `=hit` yeri + azap yolu siperi dolanır + 1. dalga çıkışı teras eteği/1,2 sn. Ara ölçüm: `=hit` ×12 denetim 0 (`testler/c20_hit`). Son paket (`testler/c20_son`: 9 çeşit ×2, def ×6, hit ×12) koşuyor |
+| 2. 37o | bağdaştırıcı tamam; yeni ×2 / eski ×1 def+lose PASS denetim 0 (`testler/c37o`); `=yuru` yeni takılma 0 düşme 0 (`testler/c37o_yuru`); hendek iç yüzünde iki hücum merdiveni (düşme cezası). Kareler ve bütçe sırada |
+| 3. 32o | bağdaştırıcı yazıldı (ova `ova_ofs`, hendek oranla, dolgu 0,5); koşulmadı |
+| 36b | başlanmadı |
 
-Sözleşme üçlüsü: henüz koşulmadı.
+Sözleşme üçlüsü (`testler/soz`): `SURSOZLESME PASS kalem=13 kesim=8` · `SUROYUN nokta=519 havada=0 gomuk=0 katida=0` · `WALKTHRU OZET yol=7 tamam=7 takilma=0 dusme=0` (sur dosyalarına dokunulmadı).
