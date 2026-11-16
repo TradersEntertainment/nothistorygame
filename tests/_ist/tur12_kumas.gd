@@ -23,15 +23,15 @@ func _ready() -> void:
 	var env := WorldEnvironment.new()
 	var e := Environment.new()
 	e.background_mode = Environment.BG_COLOR
-	e.background_color = Color("101828") if gece else Color("a9c3d9")
+	e.background_color = Color("101828") if gece else Color("5d7186")
 	e.ambient_light_source = Environment.AMBIENT_SOURCE_COLOR
-	e.ambient_light_color = Color("3a4660") if gece else Color("c9c2b0")
-	e.ambient_light_energy = 0.6 if gece else 0.8
+	e.ambient_light_color = Color("3a4660") if gece else Color("8f8a7c")
+	e.ambient_light_energy = 0.6 if gece else 0.35
 	env.environment = e
 	add_child(env)
 	var sun := DirectionalLight3D.new()
 	sun.rotation_degrees = Vector3(-35, 30, 0) if not gece else Vector3(-50, 140, 0)
-	sun.light_energy = 1.1 if not gece else 0.25
+	sun.light_energy = 0.55 if not gece else 0.25
 	sun.light_color = Color("ffe9c7") if not gece else Color("9fb0d8")
 	sun.shadow_enabled = true
 	add_child(sun)
@@ -79,7 +79,7 @@ func _kur() -> void:
 	# 1. ordugâh sancak ormanı (ordugah_yapi2.build_sancaklar → ordugah_yapi.sancak), 5 sancak + 1 tuğ
 	var h := _host(0, 0)
 	IstOrdugahYapi2.build_sancaklar(h, 1.0, 0)
-	_ist.append(["ordugah_sancak", Vector3(-1.0, 4.2, 11.0), Vector3(0.0, 5.0, 0.0)])
+	_ist.append(["ordugah_sancak", Vector3(3.0, 5.0, 7.5), Vector3(3.0, 6.2, 0.0)])
 	# 2. otağ tuğları (ordugah_oba._sancak tuğ) + çatallı flama
 	h = _host(40, 0)
 	var w := K.Bld.new("wood")
@@ -110,8 +110,21 @@ func _kur() -> void:
 		mi.material_override = GM.malzeme()
 		mi.position = Vector3(gi * 30.0, 0, 0)
 		h.add_child(mi)
-	_ist.append(["gemi_kadirga", Vector3(176.0, 9.0, 22.0), Vector3(170.0, 7.0, -6.0)])
-	_ist.append(["gemi_karaka", Vector3(212.0, 16.0, 20.0), Vector3(200.0, 16.0, -6.0)])
+		# bayrak köşelerinin (alfa < 1) en büyük kümesi: kıç bayrağı; kamera ona 7 m yandan bakar
+		var ar := mi.mesh.surface_get_arrays(0)
+		var vv: PackedVector3Array = ar[Mesh.ARRAY_VERTEX]
+		var cc: PackedColorArray = ar[Mesh.ARRAY_COLOR]
+		var lo := Vector3(1e9, 1e9, 1e9)
+		var en := -1e9
+		var hedef := Vector3.ZERO
+		var say := 0
+		for i in vv.size():
+			if cc[i].a < 0.997 and vv[i].y < 12.0:
+				hedef += vv[i]
+				say += 1
+		if say > 0:
+			hedef = hedef / say + mi.position + h.position
+		_ist.append([["gemi_kadirga", "gemi_karaka"][gi], hedef + Vector3(7.0, 0.5, 3.0), hedef])
 	# 6. şehir/hub sancakları: Haliç mahallesi ve Haliç suru (halic_mahalle._banner, halic_sur._banner), sahne sancağı
 	#    (dressing.banner_pole), talim meydanı (training_yard._banner eşi)
 	h = _host(260, 0)
