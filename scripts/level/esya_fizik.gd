@@ -211,9 +211,10 @@ func _exit_tree() -> void:
 	if not _bek_mm.is_empty() or not _bek_dugum.is_empty():
 		_kur.call_deferred()
 	if denetim_acik:
-		print("ESYAAUDIT OZET kayit=%d uyanan=%d tekme=%d kosu=%d itme=%d patlama=%d destek=%d en_cok_uyanik=%d sorun=%d (dusme=%d havada=%d gomuk=%d tikama=%d sinir=%d)" % [
+		print("ESYAAUDIT OZET kayit=%d uyanan=%d tekme=%d kosu=%d itme=%d patlama=%d destek=%d en_cok_uyanik=%d sorun=%d (dusme=%d havada=%d gomuk=%d tikama=%d sinir=%d) siper=%d yasla=%d" % [
 			sayac["kayit"], sayac["uyanan"], sayac["tekme"], sayac["kosu"], sayac["itme"], sayac["patlama"], sayac["destek"],
-			olcum["en_cok_uyanik"], sorun(), sayac["dusme"], sayac["havada"], sayac["gomuk"], sayac["tikama"], sayac["sinir"]])
+			olcum["en_cok_uyanik"], sorun(), sayac["dusme"], sayac["havada"], sayac["gomuk"], sayac["tikama"], sayac["sinir"],
+			int(sayac.get("siper", 0)), int(sayac.get("yasla", 0))])
 		print("ESYAAUDIT MALIYET uyurken_us_kare=%.1f uyanikken_us_kare=%.1f en_kotu_us=%d kare=%d tara_us=%d dugum_us=%d grup_us=%d liste_n=%d" % [
 			float(olcum.get("uyur_us", 0)) / maxf(1.0, float(olcum.get("uyur_kare", 0))),
 			float(olcum.get("uyanik_us", 0)) / maxf(1.0, float(olcum.get("uyanik_kare", 0))), int(olcum.get("en_us", 0)), int(olcum.get("kare", 0)), int(olcum.get("tara_us", 0)), int(olcum.get("dugum_us", 0)), int(olcum.get("grup_us", 0)), int(olcum.get("liste_n", 0))])
@@ -359,6 +360,10 @@ func _mm_esya(ad: String, x_yerel: Transform3D, kok: Node3D, mm: Array, tur: Str
 	e["mm"] = mm
 	e["kok"] = kok
 	e["olcek"] = sc
+	if kok != null and is_instance_valid(kok):
+		for st in (kok as Node).get_children():
+			if st is StaticBody3D:
+				(st as Node).set_meta("esya_statik", true)     # yığının ortak kutusu: patlamaya siper sayılmaz
 	_yerlestir(e)
 
 
@@ -371,6 +376,8 @@ func _dugum_esya(g: Node3D, govde, tur: String) -> void:
 	e["kaynak"] = "dugum"
 	e["dugum"] = g
 	e["statik"] = govde
+	if govde is Node:
+		(govde as Node).set_meta("esya_statik", true)        # uyuyan eşyanın katısı: patlamaya siper sayılmaz
 	_yerlestir(e)
 
 
@@ -596,7 +603,14 @@ func _patlama(p: Vector3, boy: float) -> void:
 		var l := d.length()
 		if l > r:
 			continue
+		# Patlama ile eşya arasında sur, korkuluk, duvar (durağan katı) varsa eşya siperdedir: uyanmaz. (Surun dış
+		# yüzündeki, gövdesindeki patlama korkuluğun ardındaki sur yolu fıçılarını sur yolunun ortasına savuruyordu:
+		# 26o ESYAAUDIT tikama_gecit.)
+		if _siperde(p, e, c):
+			sayac["siper"] = int(sayac.get("siper", 0)) + 1
+			continue
 		sayac["patlama"] += 1
+		print("TMP8D patlama p=%s boy=%.2f id=%d c=%s" % [p.snapped(Vector3.ONE * 0.1), boy, e["id"], c.snapped(Vector3.ONE * 0.1)])
 		_uyandir(e)
 		var g := e["govde"] as RigidBody3D
 		if g == null:
@@ -605,6 +619,40 @@ func _patlama(p: Vector3, boy: float) -> void:
 		var k := 1.0 - l / r
 		var yon := (Vector3(d.x, 0.0, d.z).normalized() + Vector3.UP * 0.8).normalized()
 		_itki(e, yon * minf(m * 6.0 * k * boy, m * 8.0), Vector3(randf_range(-0.1, 0.1), 0.15, randf_range(-0.1, 0.1)))
+
+
+## Patlama noktasından eşyanın gövdesine (merkez ve üst) iki ışın: ikisi de durağan bir katıya (eşya olmayan) çarparsa siper.
+## Katının içinden başlayan ışın da sayılır (surun gövdesindeki patlama). Işın patlama noktasının 0,5 m üstünden çıkar. Kişiler ve öteki eşyalar siper sayılmaz.
+func _siperde(p: Vector3, e: Dictionary, c: Vector3) -> bool:
+	if not is_inside_tree():
+		return false
+	var space := get_world_3d().direct_space_state
+	var haric: Array[RID] = []
+	for k in ["statik", "govde"]:
+		var o = e.get(k)
+		if o != null and is_instance_valid(o) and o is CollisionObject3D:
+			haric.append((o as CollisionObject3D).get_rid())
+	var boy := (e["ab"] as AABB).size.y
+	for hedef: Vector3 in [c, c + Vector3(0, boy * 0.4, 0)]:
+		# ateş topundan (Vfx.explosion yerin 0,5–1,2 m üstünde): yere oturan patlamanın ışını zeminin içinden başlamasın
+		var q := PhysicsRayQueryParameters3D.create(p + Vector3(0, 0.5, 0), hedef)
+		q.hit_from_inside = true
+		q.collision_mask = 1
+		var kapali := false
+		var ex := haric.duplicate()
+		for _i in 5:
+			q.exclude = ex
+			var h := space.intersect_ray(q)
+			if h.is_empty():
+				break
+			var o := h["collider"] as Node
+			if o is StaticBody3D and not o.has_meta("esya") and not o.has_meta("esya_statik"):
+				kapali = true
+				break
+			ex.append((o as CollisionObject3D).get_rid())
+		if not kapali:
+			return false
+	return true
 
 
 func _dugum_eklendi(n: Node) -> void:
@@ -939,6 +987,19 @@ func _uyaniklar(delta: float) -> void:
 			continue
 		var lv := g.linear_velocity.length()
 		var av := g.angular_velocity.length()
+		# Dar geçitte (sur yolu) yavaşlayan gövde yolun ortasında kalacaksa yakın duvara (korkuluğa) doğru kayar/yuvarlanır:
+		# sürtünmeyi az aşan yatay kuvvet (dik fıçı devrilmeden kayar). Duvara değince durur ve orada donar.
+		if lv < 0.8 and float(e["t"]) > 0.4 and int(e["kare"]) % 4 == 0:
+			var yan := _gecit_yan(g, c, _yaricap(e))
+			e["yasla"] = yan.normalized() if yan.length() > 0.04 else Vector3.ZERO
+			if yan.length() > 0.04 and not e.get("yaslandi", false):
+				e["yaslandi"] = true
+				sayac["yasla"] = int(sayac.get("yasla", 0)) + 1
+		var yd: Vector3 = e.get("yasla", Vector3.ZERO)
+		if yd != Vector3.ZERO and lv < 0.8:
+			g.sleeping = false
+			g.apply_central_force(yd * float(TUR[e["tur"]][0]) * 9.8 * (float(TUR[e["tur"]][1]) + 0.07))
+			lv = maxf(lv, DUR_LIN)        # yaslanırken durmuş sayılmaz (duvara varınca kuvvet kalkar)
 		if g.sleeping or (lv < DUR_LIN and av < DUR_ACI):
 			e["dur_t"] = float(e["dur_t"]) + delta
 		else:
@@ -1010,6 +1071,7 @@ func _dondur(e: Dictionary, zorla: bool) -> void:
 		_rapor("gomuk", e, g.global_position)
 		_ilk_yere(e)
 		return
+	print("TMP8D don id=%d at=%s t=%.1f" % [e["id"], g.global_position.snapped(Vector3.ONE * 0.01), float(e.get("t", 0.0))])
 	_yol_temizle(e)
 	g.linear_velocity = Vector3.ZERO
 	g.angular_velocity = Vector3.ZERO
@@ -1134,8 +1196,17 @@ func _yol_temizle(e: Dictionary) -> void:
 			g.global_position = Vector3(kp.x, c.y, kp.z) + dis * (float(k[1]) + r + 0.1)
 			g.global_position -= Vector3(0, minf(_zemin_boslugu(g), 2.0), 0)
 			return
-	# dar geçit (sur yolu, sokak arası): iki yanında boyunca uzanan duvar olan yer (eşyanın 1 m önünde ve ardında da dar).
-	# Eşyanın bir yanında oyuncunun geçeceği kadar (0,75 m) yer yoksa yakın duvara yaslanır.
+	# dar geçit (sur yolu, sokak arası): eşyanın bir yanında oyuncunun geçeceği kadar yer yoksa yakın duvara yaslanır
+	var yan := _gecit_yan(g, c, r)
+	if yan != Vector3.ZERO:
+		sayac["tikama"] += 1
+		_rapor("tikama_gecit", e, c)
+		g.global_position += yan
+
+
+## Dar geçit (sur yolu, sokak arası: iki yanında boyunca uzanan duvar olan yer; eşyanın 1 m önünde ve ardında da dar).
+## Eşyanın bir yanında oyuncunun geçeceği kadar (0,75 m) yer yoksa yakın duvara olan kayma (yoksa ZERO).
+func _gecit_yan(g: RigidBody3D, c: Vector3, r: float) -> Vector3:
 	var space := g.get_world_3d().direct_space_state
 	for ax in [Vector3.RIGHT, Vector3.BACK]:
 		var boy: Vector3 = Vector3.BACK if ax == Vector3.RIGHT else Vector3.RIGHT
@@ -1149,15 +1220,33 @@ func _yol_temizle(e: Dictionary) -> void:
 			continue
 		var a := _duvar(space, g, c, ax, 2.6)
 		var b := _duvar(space, g, c, -ax, 2.6)
+		r = _yari_en(g, ax, r)       # gövdenin o eksendeki gerçek yarı eni (yatık fıçı enine yatınca boyu kadar)
 		if maxf(a, b) - r >= 0.75:
-			return     # bir yanından geçilir
+			return Vector3.ZERO     # bir yanından geçilir
 		var yan: Vector3 = ax if a < b else -ax
 		var ne := minf(a, b) - r - 0.03
-		if ne > 0.05:
-			sayac["tikama"] += 1
-			_rapor("tikama_gecit", e, c)
-			g.global_position += yan * ne
-		return
+		return yan * ne if ne > 0.05 else Vector3.ZERO
+	return Vector3.ZERO
+
+
+## Gövde şeklinin ax yönündeki yarı eni (merkezden). Bilinmeyen şekilde r.
+func _yari_en(g: RigidBody3D, ax: Vector3, r: float) -> float:
+	var cs := g.get_child(0) as CollisionShape3D
+	if cs == null:
+		return r
+	var xf := g.global_transform * cs.transform
+	var s := cs.shape
+	if s is ConvexPolygonShape3D:
+		var en := 0.0
+		for q in (s as ConvexPolygonShape3D).points:
+			en = maxf(en, absf((xf.basis * q).dot(ax)))
+		return en
+	if s is BoxShape3D:
+		var h := (s as BoxShape3D).size * 0.5
+		return absf(xf.basis.x.dot(ax)) * h.x + absf(xf.basis.y.dot(ax)) * h.y + absf(xf.basis.z.dot(ax)) * h.z
+	if s is SphereShape3D:
+		return (s as SphereShape3D).radius
+	return r
 
 
 func _duvar(space: PhysicsDirectSpaceState3D, g: RigidBody3D, p: Vector3, ax: Vector3, l: float) -> float:

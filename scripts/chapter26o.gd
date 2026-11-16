@@ -809,7 +809,13 @@ func _process(delta: float) -> void:
 	_fx_t -= delta
 	if _fx_t <= 0.0:
 		_fx_t = randf_range(0.8, 2.0)
-		Vfx.explosion(walls, Vector3(randf_range(-14, 18), randf_range(2.0, 8.0), randf_range(14.0, 20.0)), randf_range(0.3, 0.6))
+		var fx := Vector3(randf_range(-14, 18), randf_range(2.0, 8.0), randf_range(14.0, 20.0))
+		if not sur.eski_mi:
+			# Eski koordinat (dış sur z 14–16, boy 8) yeni sette surun gövdesinin ve sur yolunun altına düşüyordu (patlama
+			# görünmüyor, sur yolu fıçılarını uyandırıyordu): aynı oranla dış surun ova yüzüne ve önüne
+			fx = Vector3(fx.x, lerpf(sur.teras_y(), sur.dis_yol_y(), fx.y / LandWalls.OUTER_H),
+				sur.dis_sur_z1() + 0.2 + maxf(0.0, fx.z - LandWalls.OUTER_Z1))
+		Vfx.explosion(walls, fx, randf_range(0.3, 0.6))
 		Audio.sfx("explosion_small", -16.0, randf_range(0.8, 1.2))
 	if phase == "o2" and not player.frozen and not GameState.autotest:
 		if _vwarn >= 0.0:
