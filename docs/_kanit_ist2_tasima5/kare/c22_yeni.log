@@ -25,3 +25,9 @@ HELDDEFAULT scene=chapter22 item=cologne
 TASIMA22YURU set=yeni yol_y=8.62 yol_z=15.30 oluk=(-2.5, 8.62, 16.4) fici=(3.5, 8.62, 15.3) kule=(-3.0, -3.545, 50.6)
 TASIMA22KARE an_01_safak_kule.jpg oyuncu=(-6.9, 8.6, 15.3) cizim=4346 ilkel=6320183 sur=yeni
 TASIMA22KARE an_02_safak_giust.jpg oyuncu=(-6.9, 8.6, 15.3) cizim=2923 ilkel=4233632 sur=yeni
+TASIMA22KARE an_03_gece_ficilar.jpg oyuncu=(0.0, 8.6, 15.3) cizim=2675 ilkel=3710994 sur=yeni
+TASIMA22YURU bacak=fici_al sure=0.0 yol=0.0 takilma=0 dusme=0 son=(2.5, 8.6, 15.1) odak=powder
+TASIMA22YURU bacak=oluk sure=0.0 yol=0.0 takilma=0 dusme=0 son=(-2.5, 8.6, 15.3) odak=chute
+LORE key=22 placed=3
+TASIMA22KARE an_04_oluk_fitil.jpg oyuncu=(-2.5, 8.6, 15.3) cizim=4392 ilkel=6285816 sur=yeni
+VISAUDIT offview key=D22_G_SINGED scene=chapter22.tscn speaker=SPK_GIUST

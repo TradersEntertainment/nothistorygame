@@ -352,7 +352,7 @@ func _process(delta: float) -> void:
 		f.scale.y = 1.0 + sin(_t * 9.0 + i) * 0.25
 	if _fire_light and _fire_light.light_energy > 0.0:
 		_fire_light.light_energy = maxf(1.0, _fire_light.light_energy + sin(_t * 17.0) * 0.4)
-	if _fuse >= 0.0:
+	if _fuse >= 0.0 and not _fitil_dur:
 		_fuse += delta / FUSE_TIME
 		_gauge.queue_redraw()
 		if _fuse >= 1.0:
@@ -802,6 +802,8 @@ func _run_shots() -> void:
 ## =kare: TASIMA22KARE <dosya> cizim=… ilkel=…
 var _yz := {"bacak": 0, "takilma": 0, "dusme": 0, "sure": 0.0, "yol": 0.0, "tus_yok": 0}
 var _kare_n := 0
+## =kare: çekim sürerken fitil durur (yazılımsal GL'de 20 kare saniyeler sürüyor; fitil dolup fıçı olukta patlıyordu)
+var _fitil_dur := false
 
 
 func _yuru() -> void:
@@ -850,8 +852,10 @@ func _yuru() -> void:
 			_light()
 		if kare and _kare_n < 5:
 			_fuse = 0.5
+			_fitil_dur = true
 			_gauge.queue_redraw()
 			await _kare("oluk_fitil")
+			_fitil_dur = false
 			_fuse = 0.0
 		while _fuse >= 0.0 and _fuse < f:
 			await get_tree().process_frame
