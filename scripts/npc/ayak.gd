@@ -63,6 +63,11 @@ static func ayarla() -> void:
 			var gs: Script = load("res://tests/_fizik/ayak_gez.gd")
 			if gs:
 				(Engine.get_main_loop() as SceneTree).root.add_child.call_deferred(gs.new())
+		elif a == "--fizik3-dbg" and Engine.get_main_loop() is SceneTree:
+			# Fizik-3 tanısı (tests/_fizik/fizik3_dbg.gd; yalnız bu argümanla)
+			var ds: Script = load("res://tests/_fizik/fizik3_dbg.gd")
+			if ds:
+				(Engine.get_main_loop() as SceneTree).root.add_child.call_deferred(ds.new())
 
 
 ## Ölçüm (--ayak-olc): her karede bir kez (ilk Rig.update) önceki karenin betik süresi (Performance.TIME_PROCESS),
@@ -186,6 +191,17 @@ var _tgt := PackedVector3Array([Vector3.ZERO, Vector3.ZERO])
 var _tn := PackedVector3Array([Vector3.UP, Vector3.UP])
 var _al := PackedVector3Array([Vector3.ZERO, Vector3.ZERO])
 var _grd := [true, true]
+## Kökün yüksekliğini dışarıdan bir denetleyici sürüyor (Stage.plant_feet: kişi yerinde dururken kök her karede en alçak
+## tabana göre dikine kaydırılır). İkisi birlikte aynı serbestliği iki ayrı yerden sürer: IK kalçayı/dizleri tabanı kendi
+## zeminine koyacak kadar oynatır, plant_feet bu tabanlara bakıp kökü kaydırır; iki zemin ölçüsü arasındaki milimetrelik
+## fark her karede birikir (37o eski set: kök 1,3 sn'de 35 cm gömüldü, kalça +0,35 çıktı). Böyle kişide IK kapalı
+## (kapsam dışı "kok_dis"; plant_feet FK tabanını zemine koyar, --ayak-ik=0 ile aynı). Kişi yerinden 30 cm ayrılınca açılır.
+var _kd_p := Vector3.INF      # bir önceki karede kök (ebeveyn uzayı)
+var _kd_n := 0                # yerinde dikine yazım sayısı (yakın zamanda)
+var _kd_t := 0.0
+var _kd_xz := Vector3.INF     # kok_dis olduğunda kökün yeri
+## Son uygula'nın karesi: bir karede uygula çağrılmadıysa (kişi Rig.update'siz bir iş pozuna geçti) yazılanlar bayattır
+var _kare := -1
 
 
 func _init(r: Rig) -> void:
@@ -205,7 +221,9 @@ func _init(r: Rig) -> void:
 
 
 ## Önceki karede yazılanları FK değerine döndür (Rig.update'in ve LimbAnim'in başında)
-func geri_al() -> void:
+## bayat: kişi bu arada Rig.update'siz bir iş pozuna geçti (o pozun betiği bacağın yalnız x açısını yazar): IK'nın yan
+## açıları (y, z) da FK'ye döner (gövdenin inişi her zamanki gibi: başkası yazmadıysa).
+func geri_al(bayat := false) -> void:
 	mod = 0
 	if not _has_w:
 		return
@@ -217,9 +235,24 @@ func geri_al() -> void:
 		var leg := _legs[s]
 		if leg.basis.is_equal_approx(_w_leg[s]):
 			leg.rotation = _fk_leg[s]
+		elif bayat:
+			leg.rotation = Vector3(leg.rotation.x, _fk_leg[s].y, _fk_leg[s].z)
 		var kn := _knees[s]
 		if is_equal_approx(kn.rotation.x, _w_knee[s]):
 			kn.rotation.x = _fk_knee[s]
+
+
+## Bu karede uygula çağrılmadıysa (Rig.extremities'in başında): önceki karelerin yazdıkları (gövdenin inişi, bacak ve
+## bilek açıları, taban eğimi) FK'ye döner, IK kapanır. Fizik-3: 37o'da ip çeken azap "haul" pozuna geçince Soldier
+## Rig.update'i çağırmıyor (yalnız extremities): IK'nın son gövde inişi (pel −0,15 / +0,11) donup kalıyor, bölümün her
+## karede çağırdığı Stage.plant_feet bu bayat inişi telafi etmek için kökü kaydırıyordu (kök 15 cm havada ya da 25 cm
+## gömük: VISAUDIT float/sunk, eski sette 3/3).
+func bayatsa_birak() -> void:
+	if _kare == Engine.get_process_frames():
+		return
+	if _has_w or mod != 0 or pel != 0.0 or _az_on:
+		geri_al(true)
+		_kapat()
 
 
 ## Kapsam: IK bu kişide çalışabilir mi (iş, işaret, taşıyıcı). Denetim de aynı ölçüyü kullanır.
@@ -232,7 +265,7 @@ static func kapsam_disi(r: Rig) -> String:
 		return "is:" + act
 	if DurusKit_.var_mi(act) or not r._durus.is_empty():
 		return "durus"
-	for m in ["climber", "corpse", "no_ground", "hologram", "airborne", "cameo"]:
+	for m in ["climber", "corpse", "no_ground", "hologram", "airborne", "cameo", "ayak_kok_dis"]:
 		if o.has_meta(m):
 			return "meta:" + m
 	if o.global_basis.y.normalized().dot(Vector3.UP) < 0.95:
@@ -255,6 +288,8 @@ static func kapsam_disi(r: Rig) -> String:
 ## Rig.update'in (ve LimbAnim'in) sonunda, Rig.extremities'ten önce. yuru: Rig bu karede yürüyüş salınımını kurdu.
 ## anim: LimbAnim çağırıyor (Rig.lock > 0 olsa da çalışır).
 func uygula(delta: float, yuru: bool, anim := false) -> void:
+	_kare = Engine.get_process_frames()
+	_kok_denet(delta)
 	basiyor[0] = false
 	basiyor[1] = false
 	ank_ek[0] = 0.0
@@ -306,6 +341,28 @@ func uygula(delta: float, yuru: bool, anim := false) -> void:
 	_coz(delta, yuru and not anim)
 	olc_us += Time.get_ticks_usec() - t0
 	olc_n += 1
+
+
+func _kok_denet(delta: float) -> void:
+	var o: Node3D = rig.owner
+	if o == null:
+		return
+	var lp := o.position
+	if _kd_xz != Vector3.INF and Vector2(lp.x - _kd_xz.x, lp.z - _kd_xz.z).length() > 0.3:
+		_kd_xz = Vector3.INF
+		o.remove_meta("ayak_kok_dis")
+		_scope_t = 0.0
+	_kd_t -= delta
+	if _kd_t <= 0.0:
+		_kd_n = 0
+	if _kd_p != Vector3.INF and Vector2(lp.x - _kd_p.x, lp.z - _kd_p.z).length() < 0.002 and absf(lp.y - _kd_p.y) > 0.0003:
+		_kd_n += 1
+		_kd_t = 1.0
+		if _kd_n >= 2 and _kd_xz == Vector3.INF:
+			_kd_xz = lp
+			o.set_meta("ayak_kok_dis", true)
+			_scope_t = 0.0
+	_kd_p = lp
 
 
 func _kapat() -> void:

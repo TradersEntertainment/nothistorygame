@@ -516,6 +516,8 @@ static func hair_cap(head: Node3D, c: Color, r := 0.2, volume := 1.0) -> void:
 static var _vc: Dictionary = {}
 
 ## Köşe renkli ortak karakter malzemesi (birleştirilmiş parçalar tek çizimde).
+const Kumas := preload("res://scripts/npc/kumas.gd")
+
 static func vc_mat(outline: bool) -> StandardMaterial3D:
 	var key := "%s|%s" % [outline, Props.outlines]
 	if _vc.has(key):
@@ -570,6 +572,9 @@ static func bake(root: Node3D, pivots: Array, keep: Array = [], no_outline: Arra
 		var norms := PackedVector3Array()
 		var cols := PackedColorArray()
 		var idx := PackedInt32Array()
+		# Giysi kumaşı (scripts/npc/kumas.gd): işaretli parçaların köşelerine UV (h, kip); öteki köşeler (0, 0)
+		var uvs := PackedVector2Array()
+		var kumas := false
 		for mi: MeshInstance3D in list:
 			var m := mi.material_override as StandardMaterial3D
 			var c := m.albedo_color if m else Color.WHITE
@@ -585,7 +590,15 @@ static func bake(root: Node3D, pivots: Array, keep: Array = [], no_outline: Arra
 				var n: PackedVector3Array = arr[Mesh.ARRAY_NORMAL]
 				var ix: PackedInt32Array = arr[Mesh.ARRAY_INDEX]
 				var base := verts.size()
-				verts.append_array(xf * v)
+				var tv := xf * v
+				verts.append_array(tv)
+				if mi.has_meta("kumas"):
+					uvs.append_array(Kumas.uv_of(mi, tv))
+					kumas = true
+				else:
+					var zu := PackedVector2Array()
+					zu.resize(v.size())
+					uvs.append_array(zu)
 				if n.size() == v.size() and uni:
 					norms.append_array(Transform3D(xf.basis / sx, Vector3.ZERO) * n)
 				else:
@@ -609,11 +622,16 @@ static func bake(root: Node3D, pivots: Array, keep: Array = [], no_outline: Arra
 		arrays[Mesh.ARRAY_NORMAL] = norms
 		arrays[Mesh.ARRAY_COLOR] = cols
 		arrays[Mesh.ARRAY_INDEX] = idx
+		if kumas:
+			arrays[Mesh.ARRAY_TEX_UV] = uvs
 		var out := MeshInstance3D.new()
 		out.name = "Baked"
 		out.lod_bias = LOD_BIAS
 		_lod_assign(out, arrays)
-		out.material_override = vc_mat(not (p in no_outline))
+		out.material_override = Kumas.malzeme(not (p in no_outline)) if kumas else vc_mat(not (p in no_outline))
+		if kumas:
+			out.set_meta("kumas_baked", true)
+			out.extra_cull_margin = 0.4      # bükülen etek ağın sınır kutusundan taşar
 		(p as Node3D).add_child(out)
 	var more := true
 	while more:

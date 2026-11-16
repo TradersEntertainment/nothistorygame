@@ -186,7 +186,28 @@ func update(delta: float, talking: bool, busy: bool, ext := true) -> void:
 		extremities()
 		if lock == 0 and DurusKit.var_mi(activity):
 			DurusKit.bilekler(self)
+		kumas_tick(delta)
 	_egim_denet(delta)
+
+
+## GİYSİ KUMAŞI (scripts/npc/kumas.gd): kaftan/etek/pelerin/yen sallanır. Kumaşı olmayan kişide bir kez bakılır, sonra
+## hiçbir şey yapmaz. Rig.update'in sonunda; Rig.update'siz iş pozlarında (Soldier: halat, kürek) sahibinin _process'inden.
+const Kumas := preload("res://scripts/npc/kumas.gd")
+var kumas: Kumas
+var _kumas_bakti := false
+
+func kumas_tick(delta: float) -> void:
+	if Kumas.olc_acik:
+		Kumas.olc_tick()
+	if kumas == null:
+		if _kumas_bakti or not Kumas.etkin:
+			return
+		_kumas_bakti = true
+		var k := Kumas.new(self)
+		if not k._ok:
+			return
+		kumas = k
+	kumas.uygula(delta)
 
 
 ## AYAK YERLEŞTİRME (scripts/npc/ayak.gd): kameraya yakın kişilerde her ayak kendi zeminine basar (iki kemikli IK),
@@ -263,6 +284,8 @@ var _wr_v := PackedFloat32Array([0.0, 0.0])
 
 
 func extremities() -> void:
+	if ayak:
+		ayak.bayatsa_birak()     # bu karede IK çalışmadıysa (Rig.update'siz iş pozu) eski yazdıkları kalmasın
 	if not _ext_ready:
 		_ext_ready = true
 		for side in 2:
