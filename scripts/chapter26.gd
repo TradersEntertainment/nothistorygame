@@ -368,7 +368,9 @@ func _build_walls_scene() -> void:
 	banner.visible = false
 	add_child(banner)
 	Props.cyl(banner, 0.05, 4.0, Vector3(0, 2.0, 0), Color("5a3e26"), Vector3.ZERO, 5)
-	Props.box(banner, Vector3(0.04, 1.2, 1.8), Vector3(0, 3.3, 0.92), Color("b3262d"))
+	# TUR-13: setin kumaş bayrağı (ince çift yüzlü, direk kenarı sabit, rüzgârda dalgalanır; eski: 4 cm'lik düz kutu levha).
+	# Aynı ölçü (1,8 × 1,2 m, üst kenar direğin 3,9 m'sinde), aynı renk; yükselişi banner düğümüyle (tween) aynı.
+	preload("res://scripts/world/ist/kumas.gd").bayrak(banner, Vector3(0, 3.9, 0.03), Vector3.BACK, 1.8, 1.2, Color("b3262d"), [], 8, "Sancak").set_meta("flag", true)
 	emperor = Person.new({"coat": Color("5a2a6a"), "pants": Color("3a1a4a"), "hat": "stemma", "face": "emperor", "beard": true,
 		"mustache": true, "hair": Color("6a6a6a"), "robe": Color("5a2a6a")})
 	emperor.visible = false

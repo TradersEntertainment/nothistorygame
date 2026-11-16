@@ -184,11 +184,19 @@ func _build_walls_scene() -> void:
 			pv.position = cp + Vector3(sin(a) * 1.6, 0, -cos(a) * 1.6)
 			pv.rotation = Vector3(deg_to_rad(-12), a, 0)
 			add_child(pv)
-			Props.solid(pv, Vector3(1.3, 2.1, 0.12), Vector3(0, 1.05, 0), Color("6a4a2c")).set_meta("no_climb", true)
-			Props.box(pv, Vector3(1.35, 0.12, 0.16), Vector3(0, 1.7, 0.02), Color("4a3422"))
-			Props.box(pv, Vector3(1.35, 0.12, 0.16), Vector3(0, 0.5, 0.02), Color("4a3422"))
-			Props.box(pv, Vector3(0.45, 0.45, 0.02), Vector3(0, 1.2, -0.07), Color("b3262d"))
-			Props.box(pv, Vector3(0.08, 1.6, 0.08), Vector3(0, 0.75, 0.5), Color("4a3422"), Vector3(-30, 0, 0))
+			# TUR-13: görünüş pavez_ag (kalın tahtalar, kavisli, pahlı, boyalı yüz, kuşaklı arka, dayanak ayağı; kutu değil).
+			# Çarpışma kutusu aynı; kutunun görünen ağı yerine pavez ağı gövdenin çocuğu (gövde "görünür" kalır: Unclip).
+			var pc := Props.solid(pv, Vector3(1.3, 2.1, 0.12), Vector3(0, 1.05, 0), Color("6a4a2c"))
+			pc.set_meta("no_climb", true)
+			var eski := pc.get_child(0)
+			pc.remove_child(eski)
+			eski.queue_free()
+			var pm := MeshInstance3D.new()
+			pm.name = "Ahsap_Pavez"
+			pm.mesh = Assault.pavez_ag(1.3, 2.1, 0.12, Color("8a3a2e"), -12.0)
+			pm.material_override = Dressing._material()
+			pm.position = Vector3(0, -1.05, 0)
+			pc.add_child(pm)
 	# Gerçek hücum: arkada ve yanlarda sancaklı ordu, sura koşan dalgalar, merdivenlerde tırmananlar,
 	# ateş eden bataryalar, surda savunanlar, görünen ok yağmuru
 	assault = Assault.new()
@@ -244,7 +252,9 @@ func _build_walls_scene() -> void:
 	banner.visible = false
 	add_child(banner)
 	Props.cyl(banner, 0.05, 4.0, Vector3(0, 2.0, 0), Color("5a3e26"), Vector3.ZERO, 5)
-	Props.box(banner, Vector3(0.04, 1.2, 1.8), Vector3(0, 3.3, 0.92), Color("b3262d"))
+	# TUR-13: setin kumaş bayrağı (ince çift yüzlü, direk kenarı sabit, rüzgârda dalgalanır; eski: 4 cm'lik düz kutu levha).
+	# Aynı ölçü (1,8 × 1,2 m, üst kenar direğin 3,9 m'sinde), aynı renk; yükselişi banner düğümüyle (tween) aynı.
+	preload("res://scripts/world/ist/kumas.gd").bayrak(banner, Vector3(0, 3.9, 0.03), Vector3.BACK, 1.8, 1.2, Color("b3262d"), [], 8, "Sancak").set_meta("flag", true)
 	# Hücum merdiveni: dış surun ova yüzüne yaslı, sancak kulesinin yanında (oyuncu buradan sura çıkar)
 	var lh := LandWalls.OUTER_H + 0.6
 	if sur.eski_mi:

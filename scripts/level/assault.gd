@@ -1027,23 +1027,162 @@ func _kirik_tas(boy: float, at: Vector3) -> Node3D:
 
 ## Pavise (kalkan siper): hendeğin ötesinde, okçu sıralarının önünde, arkası payandalı büyük tahta kalkanlar;
 ## arkalarında diz çökmüş Osmanlı okçuları.
+## TUR-13: kutu levha + kutu kenar yerine pavez_ag (kalın tahtalar, kavisli, pahlı, boyalı yüz, kuşaklı arka, dayanak ayağı);
+## renk başına tek MultiMesh (az çizim). Yer, eğim, okçular ve rng sırası aynı (çarpışma yoktu, yok).
 func _pavises() -> void:
-	var d := Dressing.new(7711)
 	var archers: Array = []
+	var xfs := {}
 	var x := -wall_len * 0.47
 	while x < wall_len * 0.47:
 		var z := 39.0 + sin(x * 0.21) * 1.2
 		if not _oblocked(x, z, 1.0) and absf(x) > live_span:
 			var col: Color = [Color("7a5634"), Color("6b4a2e"), Color("8a3a2e"), Color("3e5238")][int(absf(x) * 7.0) % 4]
-			d.box(Vector3(1.1, 1.7, 0.1), Vector3(x, 0.85, z), col, Vector3(-12, 0, 0))
-			d.box(Vector3(0.14, 1.72, 0.12), Vector3(x, 0.86, z - 0.02), col.darkened(0.25), Vector3(-12, 0, 0))
-			d.cyl(0.03, 1.6, Vector3(x, 0.7, z + 0.55), Color("4a3020"), Vector3(40, 0, 0), 4)
+			var k := col.to_html()
+			if not xfs.has(k):
+				xfs[k] = [col, []]
+			(xfs[k][1] as Array).append(Transform3D(Basis(Vector3.RIGHT, deg_to_rad(-12.0)), Vector3(x, 0.0, z)))
 			if rng.randf() < 0.55:
 				archers.append([Transform3D(Basis(Vector3.UP, PI + rng.randf_range(-0.2, 0.2)), Vector3(x + rng.randf_range(-0.3, 0.3), 0, z + 1.0)),
 					{"side": "O", "coat": [Color("7a6448"), Color("6a5a48"), Color("a89878")][rng.randi() % 3], "hat": "turban", "arm": "bow", "pose": "sit_ground" if rng.randf() < 0.3 else ""}])
 		x += rng.randf_range(2.6, 4.2)
-	d.build(_ova)
+	for k in xfs:
+		var mm := MultiMesh.new()
+		mm.transform_format = MultiMesh.TRANSFORM_3D
+		mm.mesh = pavez_ag(1.1, 1.7, 0.1, xfs[k][0], -12.0)
+		var lst: Array = xfs[k][1]
+		mm.instance_count = lst.size()
+		for i in lst.size():
+			mm.set_instance_transform(i, lst[i])
+		var mmi := MultiMeshInstance3D.new()
+		mmi.name = "Ahsap_Pavez"
+		mmi.multimesh = mm
+		mmi.material_override = Dressing._material()
+		_ova.add_child(mmi)
 	Crowd.place(_ova, archers)
+
+
+static var _pavez_cache := {}
+
+## TUR-13 PAVEZ (büyük ahşap kalkan siper) görünüşü; KUTU DEĞİL. Yerel: alt kenarın ortası (0,0,0), ön yüz −z, boy +y.
+## Beş kalın dikey tahta (aralarında 7 mm derz, her tahta kendi tonu ve boyu ±1,5 cm), ön yüz enine kavisli (ortada 4 cm
+## öne şişkin), tahta kenarları pahlı (1,5 cm), üst ön kenarı pahlı; ön yüz boyalı (taban boya, ortada soluk enine
+## şerit, dipte kir), arkada iki enine kuşak (tahtaları bağlayan kalas, demir çivili), arkadan inen
+## dayanak ayağı (altıgen kesitli sırık; egim_deg ile yatık kurulduğunda ucu zemine, y 0) ve altta iki demir uç.
+## kal: tahta kalınlığı. Köşe renkli tek ağ (Dressing malzemesi: toon + dış çizgi).
+static func pavez_ag(en: float, boy: float, kal: float, boya: Color, egim_deg: float) -> ArrayMesh:
+	var key := "%.2f|%.2f|%.2f|%s|%.1f" % [en, boy, kal, boya.to_html(), egim_deg]
+	if _pavez_cache.has(key):
+		return _pavez_cache[key]
+	var st := SurfaceTool.new()
+	st.begin(Mesh.PRIMITIVE_TRIANGLES)
+	var tri := func(a: Vector3, b: Vector3, c: Vector3, col: Color) -> void:
+		var nrm := (b - a).cross(c - a)
+		if nrm.length_squared() < 1e-12:
+			return
+		nrm = nrm.normalized()
+		for v: Vector3 in [a, c, b]:
+			st.set_color(col)
+			st.set_normal(-nrm)
+			st.add_vertex(v)
+	var quad := func(a: Vector3, b: Vector3, c: Vector3, d: Vector3, dis: Vector3, col: Color) -> void:
+		# dis: dışa bakan yaklaşık yön (sarım ona göre)
+		var nrm := (b - a).cross(d - a)
+		if nrm.dot(dis) < 0.0:
+			tri.call(a, d, c, col)
+			tri.call(a, c, b, col)
+		else:
+			tri.call(a, b, c, col)
+			tri.call(a, c, d, col)
+	var rng := RandomNumberGenerator.new()
+	rng.seed = hash(key)
+	var ahsap := Color("7a5a3c")
+	var acik := Color("a8915f") if boya.get_luminance() < 0.45 else Color("4a3422")   # soluk aşı/koyu şerit (saf beyaz yok)
+	var n := 5
+	var derz := 0.007
+	var pah := 0.015
+	var bw := (en - derz * (n - 1)) / n
+	var zf := func(xx: float) -> float:
+		var u := xx / (en * 0.5)
+		return -kal * 0.5 - 0.04 * (1.0 - u * u)
+	for i in n:
+		var xa := -en * 0.5 + i * (bw + derz)
+		var xb := xa + bw
+		var yt := boy + rng.randf_range(-0.015, 0.015)
+		var y0 := 0.02
+		var tv := rng.randf_range(0.88, 1.06)
+		var c_on := Color(boya.r * tv, boya.g * tv, boya.b * tv)
+		var c_ah := Color(ahsap.r * tv, ahsap.g * tv, ahsap.b * tv)
+		var xs := [xa + pah, (xa + xb) * 0.5, xb - pah]
+		# ön yüz: 3 dilim yükseklik (boya / arma şeridi / boya), 2 dilim enine (kavis)
+		var bantlar := [[y0, boy * 0.52, c_on], [boy * 0.52, boy * 0.66, acik], [boy * 0.66, yt - pah, c_on]]
+		for bnt: Array in bantlar:
+			for j in 2:
+				var x0: float = xs[j]
+				var x1: float = xs[j + 1]
+				var cc: Color = bnt[2]
+				if bnt[0] < 0.05:
+					cc = cc.darkened(0.12)                # dipte çamur/kir
+				quad.call(Vector3(x0, bnt[0], zf.call(x0)), Vector3(x1, bnt[0], zf.call(x1)), Vector3(x1, bnt[1], zf.call(x1)),
+					Vector3(x0, bnt[1], zf.call(x0)), Vector3(0, 0, -1), cc)
+		# pah yüzleri (ön kenarlar ve üst ön kenar), yan yüzler, arka, üst
+		var zb := kal * 0.5
+		for sx: float in [-1.0, 1.0]:
+			var xe: float = xa if sx < 0.0 else xb
+			var xp: float = xs[0] if sx < 0.0 else xs[2]
+			quad.call(Vector3(xp, y0, zf.call(xp)), Vector3(xe, y0, zf.call(xe) + pah), Vector3(xe, yt - pah, zf.call(xe) + pah),
+				Vector3(xp, yt - pah, zf.call(xp)), Vector3(sx, 0, -1), c_on.darkened(0.12))
+			quad.call(Vector3(xe, y0, zf.call(xe) + pah), Vector3(xe, y0, zb), Vector3(xe, yt, zb), Vector3(xe, yt - pah * 0.3, zf.call(xe) + pah),
+				Vector3(sx, 0, 0), c_ah.darkened(0.2))
+		for j in 2:
+			var x0: float = xs[j]
+			var x1: float = xs[j + 1]
+			quad.call(Vector3(x0, yt - pah, zf.call(x0)), Vector3(x1, yt - pah, zf.call(x1)), Vector3(x1, yt, zf.call(x1) + pah),
+				Vector3(x0, yt, zf.call(x0) + pah), Vector3(0, 1, -1), c_on.darkened(0.06))
+		quad.call(Vector3(xa, yt, zf.call(xa) + pah), Vector3(xb, yt, zf.call(xb) + pah), Vector3(xb, yt, zb), Vector3(xa, yt, zb), Vector3.UP, c_ah.darkened(0.05))
+		quad.call(Vector3(xa, y0, zb), Vector3(xb, y0, zb), Vector3(xb, yt, zb), Vector3(xa, yt, zb), Vector3.BACK, c_ah)
+		quad.call(Vector3(xa, y0, zf.call(xa)), Vector3(xb, y0, zf.call(xb)), Vector3(xb, y0, zb), Vector3(xa, y0, zb), Vector3.DOWN, c_ah.darkened(0.3))
+	# arka kuşaklar (enine kalas, 9 × 4 cm) ve çivi başları
+	var kus := ahsap.darkened(0.2)
+	for yk: float in [boy * 0.22, boy * 0.78]:
+		var z0 := kal * 0.5
+		var z1 := z0 + 0.04
+		var xa := -en * 0.5 + 0.04
+		var xb := en * 0.5 - 0.04
+		quad.call(Vector3(xa, yk - 0.045, z1), Vector3(xb, yk - 0.045, z1), Vector3(xb, yk + 0.045, z1), Vector3(xa, yk + 0.045, z1), Vector3.BACK, kus)
+		quad.call(Vector3(xa, yk + 0.045, z0), Vector3(xb, yk + 0.045, z0), Vector3(xb, yk + 0.045, z1), Vector3(xa, yk + 0.045, z1), Vector3.UP, kus.lightened(0.05))
+		quad.call(Vector3(xa, yk - 0.045, z0), Vector3(xb, yk - 0.045, z0), Vector3(xb, yk - 0.045, z1), Vector3(xa, yk - 0.045, z1), Vector3.DOWN, kus.darkened(0.2))
+		for sx: float in [-1.0, 1.0]:
+			var xe: float = xa if sx < 0.0 else xb
+			quad.call(Vector3(xe, yk - 0.045, z0), Vector3(xe, yk + 0.045, z0), Vector3(xe, yk + 0.045, z1), Vector3(xe, yk - 0.045, z1), Vector3(sx, 0, 0), kus.darkened(0.1))
+	# dayanak ayağı: tahtanın arkasında boy × 0,72'den zemine (egim ile kurulunca ucu y 0'da, 0,75 m geride)
+	var R := Basis(Vector3.RIGHT, deg_to_rad(egim_deg))
+	var ust := Vector3(0.0, boy * 0.72, kal * 0.5 + 0.04)
+	var ust_d := R * ust
+	var alt := R.inverse() * Vector3(0.0, 0.0, ust_d.z + 0.75)
+	var eks := (alt - ust).normalized()
+	var u1 := eks.cross(Vector3.RIGHT).normalized()
+	var u2 := eks.cross(u1).normalized()
+	var r := 0.028
+	for k in 6:
+		var a0 := TAU * k / 6.0
+		var a1 := TAU * (k + 1) / 6.0
+		var o0 := (u1 * cos(a0) + u2 * sin(a0)) * r
+		var o1 := (u1 * cos(a1) + u2 * sin(a1)) * r
+		var om := (u1 * cos((a0 + a1) * 0.5) + u2 * sin((a0 + a1) * 0.5))
+		quad.call(ust + o0, ust + o1, alt + o1, alt + o0, om, kus.lightened(0.04 * (k % 2)))
+	# altta iki demir uç (zemine batan kısa sivri ayak: tahtanın alt kenarında)
+	for sx: float in [-0.32, 0.32]:
+		var xc := sx * en
+		var a := Vector3(xc - 0.03, 0.03, -0.01)
+		var b := Vector3(xc + 0.03, 0.03, -0.01)
+		var c := Vector3(xc, -0.12, 0.0)
+		var d := Vector3(xc, 0.03, 0.04)
+		tri.call(a, b, c, Color("3a3634"))
+		tri.call(b, d, c, Color("3a3634"))
+		tri.call(d, a, c, Color("3a3634"))
+	var am := st.commit()
+	_pavez_cache[key] = am
+	return am
 
 
 ## Merdiven taşıyan takım: üç asker omuzlarında uzun merdiveni arkadan sura taşır, hendeğe iner; hendek dibine
