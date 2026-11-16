@@ -42,6 +42,8 @@ static var _meshes := {}
 static var olc_acik := false
 ## Tanı (--kumas-dbg): salınım 0,15 m'yi aşınca bir satır (KUMASDBG)
 static var dbg := false
+## Ölçüm (--kumas-donuk): kumaş parçaları ve malzemesi kurulur ama kişi başı güncelleme yapılmaz (gizli maliyet ayrımı)
+static var donuk := false
 static var olc_us := 0
 static var olc_n := 0
 static var _olc_frame := -1
@@ -59,6 +61,8 @@ static func ayarla() -> void:
 			olc_acik = true
 		elif a == "--kumas-dbg":
 			dbg = true
+		elif a == "--kumas-donuk":
+			donuk = true
 
 
 ## Kumaş gölgelendiricili köşe renkli malzeme (CharKit.vc_mat'ın eşi); outline: dış hat (aynı bükümle)
@@ -201,7 +205,7 @@ func _init(r: Rig) -> void:
 
 ## Kişi bu karede (Rig.update'in sonunda; ayak IK'dan sonra). Kumaşı yoksa hiçbir şey yapmaz.
 func uygula(delta: float) -> void:
-	if not _ok or not etkin:
+	if not _ok or not etkin or donuk:
 		return
 	var o: Node3D = rig.owner
 	if o == null or not o.is_inside_tree() or not o.is_visible_in_tree():
