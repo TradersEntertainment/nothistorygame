@@ -146,8 +146,8 @@ func _kos() -> void:
 ## ışın; ilk çarpan çarpışma gövdesi korkuluk/kule değilse fıçıdır (dışbükey kabuk)
 func _stauroma_x(a: RefCounted, OH: float, zd: float) -> float:
 	var ss := get_world_3d().direct_space_state
-	var x := -a.L * 0.5 + 2.0
-	while x < a.L * 0.5 - 2.0:
+	var x: float = -float(a.L) * 0.5 + 2.0
+	while x < float(a.L) * 0.5 - 2.0:
 		var q := PhysicsRayQueryParameters3D.create(Vector3(x, OH + 0.45, zd - 1.3), Vector3(x, OH + 0.45, zd + 0.02))
 		var h := ss.intersect_ray(q)
 		if not h.is_empty():

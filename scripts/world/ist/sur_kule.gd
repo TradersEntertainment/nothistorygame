@@ -1005,7 +1005,8 @@ static func _dis_tas(ag: Ag, o: Vector3, tt: Vector3, nn: Vector3, w: float, yuk
 		return
 	# ---- harpuşta
 	var ta := 0.025 + 0.02 * h3                     # taşma
-	var ci := 0.03 + 0.025 * h2                     # üst kenar pahı (yuvarlanmış kenar)
+	var ci := 0.045 + 0.03 * h2                     # üst kenar pahı (yuvarlanmış kenar)
+	var yana := (h2 - 0.5) * 0.035                  # taş yana hafif yatık (cetvel gibi düz tepe çizgisi olmasın)
 	var egim := 0.03 + 0.04 * h3                    # tepe sur yoluna (−nn) doğru alçalır
 	var orta := c + tt * yat + Vector3.UP * yb
 	var tcol := Color(col.r * (0.96 + 0.06 * h3), col.g * (0.96 + 0.05 * h3), col.b * (0.95 + 0.04 * h3), 0.8)
@@ -1018,11 +1019,12 @@ static func _dis_tas(ag: Ag, o: Vector3, tt: Vector3, nn: Vector3, w: float, yuk
 	for k in 4:
 		var s := kose[k]
 		var hk := fposmod(sin(float(k) * 7.31 + h2 * 41.7 + h3 * 13.1) * 9137.3, 1.0)
-		var ex := hw + ta + (hk - 0.5) * 0.02
-		var ez := hd + ta + (0.5 - hk) * 0.016
-		var p0 := orta + tt * s.x * ex + nn * s.y * ez
-		var yy := kal * (0.5 + 0.12 * hk)
-		var yt := kal - egim * (0.5 - s.y * 0.5) + (hk - 0.5) * 0.012
+		var hk2 := fposmod(sin(float(k) * 3.17 + h3 * 57.3) * 4371.9, 1.0)
+		var ex := hw + ta + (hk - 0.5) * 0.04
+		var ez := hd + ta + (0.5 - hk2) * 0.03
+		var p0 := orta + tt * s.x * ex + nn * s.y * ez + Vector3.UP * (s.x * yana * 0.5 + (hk2 - 0.5) * 0.02)
+		var yy := kal * (0.38 + 0.14 * hk)
+		var yt := kal - egim * (0.5 - s.y * 0.5) + (hk - 0.5) * 0.03 + s.x * yana
 		var p1 := p0 + Vector3.UP * yy
 		var p2 := orta + tt * s.x * (ex - ci) + nn * s.y * (ez - ci * 0.8) + Vector3.UP * maxf(yt, yy + 0.015)
 		if k == kir_k:

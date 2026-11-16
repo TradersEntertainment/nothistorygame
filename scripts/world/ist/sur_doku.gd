@@ -118,6 +118,8 @@ void fragment() {
 		// ince kılcal çatlak (yakında)
 		float cat = 1.0 - smoothstep(0.0, 0.035, abs(vn(hp * 2.2 + 61.0) - 0.5));
 		hcol *= 1.0 - 0.3 * cat * yakin * step(0.55, h21(floor(hp * 0.8)));
+		// taşın alt yüzü (taşkın kenarın altı) gölgede: göz hizasında açık şerit okunmasın
+		hcol *= mix(1.0, 0.45, smoothstep(-0.4, -0.8, gnr.y));
 		c = hcol;
 	} else if (dikey > 0.5 && orgu > 0.5) {
 		// TUR-11: ince taş örgü (mazgal dişi, korkuluk): "dişin önü düz tek ton levha" (0,42 m'lik sur sırası 0,6 m'lik dişe hiç
