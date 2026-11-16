@@ -181,7 +181,13 @@ func update(delta: float, talking: bool, busy: bool, ext := true) -> void:
 		if not busy and owner != null and owner.is_inside_tree() and Ayak.etkin:
 			if ayak == null:
 				ayak = Ayak.new(self)
-			ayak.uygula(delta, yuruyor)
+			# Stage.grip_hold tutuşu (iskelet kilitli: çekiç, balta, halat): ayaklar izdüşüm kipinde yere basar; tutuşun öne
+			# eğilmesi IK'dan önce (tween onu sonra yeniden yazar: aynı değer). Fizik-3: 26 =hold öne basan ayağın burnu
+			# 11–13 cm gömüktü (IK kilitli kişide her karede kapanıyordu)
+			var tutus := lock > 0 and owner.has_meta("grip_lean")
+			if tutus and float(owner.get_meta("grip_lean")) != 0.0:
+				body.rotation.x = float(owner.get_meta("grip_lean"))
+			ayak.uygula(delta, yuruyor, tutus)
 		if GameState.autotest and owner != null and owner.is_inside_tree():
 			AyakDenet.tick(owner)
 		extremities()

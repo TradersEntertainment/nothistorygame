@@ -323,6 +323,9 @@ static func grip_hold(who: Node3D, frame: Node3D, pts: Array, seconds := -1.0, l
 		rg.lock += 1      # rig'in kendi kol jesti (konuşma, işaret) araya girmesin
 	if "work_focus" in who:
 		who.work_focus += 1      # iş sürerken look_target gövdeyi çevirmez (gaze_dir)
+	# Fizik-3: tutuş duruşunda ayaklar yere izdüşer: Rig.update kilitli kişide ayak IK'yı izdüşüm kipinde çalıştırır
+	# (Rig.update; öne eğilme orada da uygulanır: IK eğilmiş gövdeyle çözülür, sonradan eğilip ayağı kaydırmaz)
+	who.set_meta("grip_lean", lean)
 	var tw := who.create_tween()
 	var apply := func(_t: float) -> void:
 		if is_instance_valid(who) and (frame == null or is_instance_valid(frame)):
@@ -334,14 +337,6 @@ static func grip_hold(who: Node3D, frame: Node3D, pts: Array, seconds := -1.0, l
 					c += frame.to_global(q) if frame else q
 				who.work_at = c / float(pts.size())
 			grip(who, frame, pts)
-			# Fizik-3: tutuş duruşunda (çekiç, balta, halat) ayaklar yere izdüşür (ayak IK izdüşüm kipi: FK'nin ayak yerleri
-			# korunur, her taban kendi zeminine; öne basan ayağın burnu yere 11–13 cm giriyordu, 26 =hold AYAKAUDIT)
-			if rg and Rig.Ayak.etkin and who.is_inside_tree():
-				if rg.ayak == null:
-					rg.ayak = Rig.Ayak.new(rg)
-				rg.ayak.uygula(who.get_process_delta_time(), false, true)
-				if rg.ayak.mod > 0:
-					rg.ayak_bilekleri()
 	if seconds < 0.0:
 		tw.set_loops()
 		tw.tween_method(apply, 0.0, 1.0, 1.0)
@@ -362,6 +357,7 @@ static func grip_release(who: Node3D) -> void:
 	var rg := Handover.rig_of(who)
 	if rg:
 		rg.lock = maxi(0, rg.lock - 1)
+	who.remove_meta("grip_lean")
 	if "work_focus" in who:
 		who.work_focus = maxi(0, who.work_focus - 1)
 		if who.work_focus == 0:
