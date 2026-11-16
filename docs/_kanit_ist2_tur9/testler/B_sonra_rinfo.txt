@@ -1,0 +1,16 @@
+RINFO birlik sahip_03_sur_disi_30m cizim=1310 ucgen=3226759
+RINFO birlik sahip_04_sur_disi_70m cizim=1226 ucgen=2847997
+RINFO birlik s3_hendek cizim=1571 ucgen=5149832
+RINFO birlik hendek_kenar_05 cizim=1549 ucgen=4774968
+RINFO birlik k02_ordugah_on_hat_40m cizim=1434 ucgen=4702674
+RINFO birlik k03_hendek_kenari cizim=1525 ucgen=4460870
+RINFO birlik k04_sur_ustunden_ordugaha cizim=1129 ucgen=3197582
+RINFO birlik k05_ordugahtan_sura_400m cizim=1651 ucgen=7168072
+RINFO birlik k06_sehirden_sura_40m cizim=1330 ucgen=3008818
+RINFO birlik k08_ordugah_on_hat_40m cizim=1618 ucgen=6841040
+RINFO birlik k09_hendek_kenari cizim=1392 ucgen=5234320
+RINFO birlik k10_sur_ustunden_ordugaha cizim=1546 ucgen=5134097
+RINFO birlik k11_ordugahtan_sura_400m cizim=1435 ucgen=6085698
+RINFO birlik k12_sehirden_sura_40m cizim=1698 ucgen=5586614
+RINFO birlik k13_kapi_onu_1 cizim=1433 ucgen=2991745
+RINFO birlik k14_kapi_onu_2 cizim=1278 ucgen=2661974

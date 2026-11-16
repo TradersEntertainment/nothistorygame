@@ -1,0 +1,2 @@
+AUTOTEST PASS chapter=30 variant= outcome=30.1 gun=3/4 pushed=2 boarders=0 duel=true rifle=4
+KOSU ad=30 rc=0 sn=42 args=--chapter=30 --autotest

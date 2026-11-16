@@ -186,6 +186,24 @@ static func kur(s: Node, ad: String) -> Rect2:
 		_izg_ekle(_kizg, kusak.size() - 1, _dikd(kd))
 		for q: Vector2 in _dikd(kd):
 			alan = Rect2(q, Vector2.ZERO) if alan.size == Vector2.ZERO and alan.position == Vector2.ZERO else alan.expand(q)
+	# TUR-9: köşe dolguları (iki dilim arası ≤ 30 m'lik aralık, kırık hat): öğe kayıtları yalnız dilim boyunca (−3 … L+3);
+	# köşenin dış kaması kuşak dışında kalıyordu → karşı kıyı çalısı köşe hendeğinin üstünde, kesilmiş arazinin
+	# yüksekliğinde HAVADA asılı kalıyordu (c5, "yeşil eğik levha"). Köşenin açıortayı boyunca ek kayıt.
+	for gi in ogeler.size() - 1:
+		var A: Dictionary = ogeler[gi]
+		var B: Dictionary = ogeler[gi + 1]
+		var gap := float(B["it"]["s0"]) - float(A["it"]["s1"])
+		if gap > 30.0 or gap < -2.0:
+			continue
+		var P := ((A["b"] as Vector2) + (B["a"] as Vector2)) * 0.5
+		var dm := ((A["d"] as Vector2) + (B["d"] as Vector2)).normalized()
+		var om := IstSehir._out(dm, P, ad)
+		var half := (A["b"] as Vector2).distance_to(B["a"]) * 0.5 + 8.0
+		var hen: bool = A["hendek"] or B["hendek"]
+		var kb2 := [P - dm * half, dm, om, -3.0, half * 2.0 + 3.0, zi0 - 20.0, c1 if hen else float(d["zo1"]),
+			float(A["y"]), float(A["y"]) + float(A["dy"]), ATES + 8.0]
+		kusak.append(kb2)
+		_izg_ekle(_kizg, kusak.size() - 1, _dikd([kb2[0], kb2[1], kb2[2], kb2[3], kb2[4], kb2[5], float(kb2[6]) + float(kb2[9])]))
 	sayac = {"oge": ogeler.size(), "duz": n_duz, "bant": bantlar.size(), "kusak": kusak.size(),
 		"ms": (Time.get_ticks_usec() - t0) / 1000.0}
 	print("OTURTMA kur oge=%d duz=%d bant=%d ms=%.1f" % [ogeler.size(), n_duz, bantlar.size(), float(sayac["ms"])])
@@ -207,13 +225,20 @@ static func _bant_kur(pl: PackedVector2Array, S: Array, ara: Array, ad: String, 
 			if u1 - u0 < 0.5:
 				continue
 			# iç kırıklarda gönye payı (bant komşu bandın kesitine kadar uzar; yalnız aralığın içindeki uçlarda)
+			# TUR-9: uzatılan uç kırığın AÇIORTAYIYLA kırpılır (gönye). Dikdörtgen uç komşu bandın dış kıyısından taşıp
+			# araziyi yakanın dışında da kesiyordu: c5'te kıyıda koyu ÜÇGEN ÇENTİK (altından hendek tabanı görünüyordu).
+			var gy: Array = []
 			if u0 < 0.01 and i > 0 and float(r[0]) < float(S[i]) - 0.5:
 				var dp := (A - pl[i - 1]).normalized()
 				u0 -= minf(25.0, c1 * tan(absf(dp.angle_to(dv)) * 0.5) + 1.5)
+				var m0 := -(dp + dv).normalized()
+				gy.append([m0, A.dot(m0)])
 			if u1 > Ls - 0.01 and i < pl.size() - 2 and float(r[1]) > float(S[i + 1]) + 0.5:
 				var dn := (pl[i + 2] - B).normalized()
 				u1 += minf(25.0, c1 * tan(absf(dv.angle_to(dn)) * 0.5) + 1.5)
-			var bnt := [A, dv, o, u0, u1, c0, c1]
+				var m1 := (dv + dn).normalized()
+				gy.append([m1, B.dot(m1)])
+			var bnt := [A, dv, o, u0, u1, c0, c1, gy]
 			bantlar.append(bnt)
 			_izg_ekle(_bizg, bantlar.size() - 1, _dikd(bnt))
 
@@ -384,7 +409,12 @@ static func bant_ici(x: float, z: float) -> bool:
 		var u := v.dot(b[1])
 		var c := v.dot(b[2])
 		if u > float(b[3]) and u < float(b[4]) and c > float(b[5]) and c < float(b[6]):
-			return true
+			var ic := true
+			for g: Array in (b[7] if b.size() > 7 else []):
+				if q.dot(g[0]) - float(g[1]) > 0.0:
+					ic = false
+			if ic:
+				return true
 	return false
 
 
@@ -442,6 +472,8 @@ static func kes_ucgen(tri: Array, aday: Array, ek: Callable) -> Array:
 			# dört yarım düzlem: c < c0 | c > c1 | u < t0 | u > t1 parçaları kalır; dikdörtgenin içi atılır
 			var kalan := pc
 			var hp := [[-o, -float(b[5]) - A.dot(o)], [o, float(b[6]) + A.dot(o)], [-dv, -float(b[3]) - A.dot(dv)], [dv, float(b[4]) + A.dot(dv)]]
+			if b.size() > 7:
+				hp.append_array(b[7])      # TUR-9: gönye yarım düzlemleri
 			for h: Array in hp:
 				if kalan.size() < 3:
 					break

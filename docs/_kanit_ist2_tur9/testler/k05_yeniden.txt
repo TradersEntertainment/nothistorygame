@@ -1,0 +1,8 @@
+RINFO birlik k05_ordugahtan_sura_400m cizim=1306 ucgen=5484774
+RINFO birlik kara_05_yer60 cizim=1274 ucgen=2988769
+RINFO birlik k05_ordugahtan_sura_400m cizim=1390 ucgen=5578442
+RINFO birlik kara_05_yer60 cizim=1269 ucgen=2989727
+RINFO birlik k05_ordugahtan_sura_400m cizim=1335 ucgen=5546564
+RINFO birlik kara_05_yer60 cizim=1274 ucgen=2987213
+RINFO birlik k05_ordugahtan_sura_400m cizim=1335 ucgen=5545020
+RINFO birlik kara_05_yer60 cizim=1248 ucgen=2992143

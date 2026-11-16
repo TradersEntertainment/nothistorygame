@@ -79,7 +79,6 @@ void fragment() {
 	float fu = max(fwidth(u), 1e-4);
 	float fw = max(fy, fu);
 	float ince = 1.0 - smoothstep(0.015, 0.07, fw);     // derz, taş sırası
-	float ince_t = 1.0 - smoothstep(0.008, 0.017, fw);   // SUR-5: tek tek tuğla yalnız ~6 m'den yakında
 	float orta = 1.0 - smoothstep(0.06, 0.25, fw);      // blok tonu
 	float bant_g = 1.0 - smoothstep(0.30, 0.9, fy);    // tuğla hatılı
 	vec3 c;
@@ -112,16 +111,32 @@ void fragment() {
 		vec3 uzak_b = mix(tug * 1.05, harc, 0.38);       // mat kiremit (orta/uzak)
 		vec3 bcol = uzak_b;
 		if (bant) {
-			float r = py / (B / nk);
+			// TUR-9: tuğla örgüsü eşikle değil KUTU SÜZGEÇLE (c2: eğik bakışta yatay sıkışma fw'yi büyütüp tuğlaları x≈720'de
+			// birden düz turuncu şeride çeviriyordu). Sıra derzi y'de (fy), dikey derz u'da (fu) ayrı süzülür: yan bakışta
+			// sıra çizgileri kalır, dikey derzler ortalamaya söner; uzakta her ikisi ortalama (uzak_b ile aynı ton).
+			float rp = B / nk;
+			float r = py / rp;
 			float fr = fract(r);
 			float bi = floor(r);
 			float bl = 0.36;
 			float off = mod(bi, 2.0) * 0.18;
-			float bx = fract((u + off) / bl);
-			float harc_m = max(step(fr, 0.34), step(bx, 0.05));
-			float tt = 0.82 + 0.3 * h21(vec2(floor((u + off) / bl), bi + per * 7.0));
-			vec3 bc = mix(tug * tt, harc, harc_m);
-			bcol = mix(uzak_b, bc, ince_t);
+			float bxu = (u + off) / bl;
+			float bx = fract(bxu);
+			float mh = 0.34 * rp;     // yatay harç kalınlığı (m)
+			float y0 = fr * rp;
+			float cH = clamp((min(y0 + hf, mh) - max(y0 - hf, 0.0)) / fy, 0.0, 1.0)
+				+ clamp((min(y0 + hf - rp, mh) - max(y0 - hf - rp, 0.0)) / fy, 0.0, 1.0);
+			cH = fy > rp * 0.6 ? 0.34 : clamp(cH, 0.0, 1.0);
+			float hu2 = 0.5 * fu;
+			float mv = 0.05 * bl;
+			float x0 = bx * bl;
+			float cV = clamp((min(x0 + hu2, mv) - max(x0 - hu2, 0.0)) / fu, 0.0, 1.0)
+				+ clamp((min(x0 + hu2 - bl, mv) - max(x0 - hu2 - bl, 0.0)) / fu, 0.0, 1.0);
+			cV = fu > bl * 0.6 ? 0.05 : clamp(cV, 0.0, 1.0);
+			float harc_m = clamp(cH + cV * (1.0 - cH), 0.0, 1.0);
+			float tt = mix(0.97, 0.82 + 0.3 * h21(vec2(floor(bxu), bi + per * 7.0)), 1.0 - smoothstep(0.02, 0.09, fu));
+			vec3 bc = mix(tug * 1.05 * tt, harc, harc_m);
+			bcol = mix(uzak_b, bc, 1.0 - smoothstep(0.06, 0.12, fy));
 		}
 		// taş kuşağı (hatıl içindeyken komşu sıranın değerleri: yalnız kenar karışımında kullanılır)
 		float sy = py - B;
@@ -149,8 +164,11 @@ void fragment() {
 		// dökülmüş taş: yer yer blok yerinde yok (koyu oyuk, üst kenarında gölge); hendek yüzünde (yerel y < 0) sık
 		float eh = h21(vec2(bid * 1.7 + 2.0, ci + 3.0));
 		float ez = vn(vec2(u * 0.18, y * 0.3) + 7.0);
-		float eks = (yerel_dip > 0.5 && ly < -0.4) ? step(0.80, eh) * step(0.40, ez) : step(0.975, eh) * step(0.6, ez);
-		tc = mix(tc, harc * mix(0.42, 0.68, sf) * vec3(0.95, 0.92, 0.88), eks * orta);
+		// TUR-9: hendek yüzünde (A03, c5) oyuklar "koyu dikdörtgen yama" okunuyordu (blokların %12'si, tam koyu, keskin
+		// kenar): seyrek (%5), ton farkı az, kenarı blok içinde yumuşak (aşınmış oyuk, yapıştırılmış levha değil)
+		float eks = (yerel_dip > 0.5 && ly < -0.4) ? step(0.90, eh) * step(0.48, ez) : step(0.978, eh) * step(0.6, ez);
+		float eyum = smoothstep(0.02, 0.16, min(kx, ky));
+		tc = mix(tc, tc * mix(0.62, 0.8, sf) * vec3(0.97, 0.95, 0.92), eks * orta * eyum);
 		if (tur > 0.5 && tur < 1.5) {
 			// deniz: moloz yamaları (küçük düzensiz taş), daha gri
 			float yama = vn(vec2(u * 0.12, y * 0.15) + 4.0);

@@ -62,6 +62,14 @@ static func _kose(x: float, z: float) -> Color:
 	return Color.from_hsv(c.h, clampf(c.s * 1.25, 0.0, 1.0), c.v * 0.8, 1.0 - maxf(cp, 0.8))
 
 
+## Kesim sahnesinde (dünya dışı) zemin levhasının rengi ve alfası (sur_gorunus.gd _levha ile aynı kural)
+static func _kesim_renk(x: float, z: float, w: float) -> Color:
+	var rc: Array = load("res://scripts/world/ist/sur_gorunus.gd").zemin_renk(x, z, w)
+	var c: Color = rc[0]
+	c.a = 1.0 - float(rc[1])
+	return c
+
+
 static func _isik(c: Color) -> Color:
 	return Color.from_hsv(c.h, clampf(c.s * 1.25, 0.0, 1.0), c.v * 0.8)
 
@@ -88,6 +96,14 @@ static func yuz(e: Dictionary, x0: float, x1: float, zf: float, s: float, y: flo
 			var W := lerpf(en_min, en_max, 0.5 + 0.5 * sin(x * 0.37 + tohum) * 0.6 + (hx - 0.5) * 0.5)
 			W = clampf(W, en_min, en_max)
 			var h0 := 0.3 + 0.5 * clampf(0.5 + 0.5 * sin(x * 0.21 + tohum * 1.3) + (hx2 - 0.5) * 0.6, 0.0, 1.0)
+			# TUR-9: kesik aralığın (kule, kapı, poterna) kıyısında etek birden bitiyordu: kesitin yüksekliği ve eni
+			# 3 m'de sıfıra iner (gece D4'te "kutu kenarlı zemin basamağı")
+			var dk := INF
+			for k: Array in kes:
+				dk = minf(dk, minf(absf(x - (float(k[0]) - 0.6)), absf(x - (float(k[1]) + 0.6))))
+			var ink := smoothstep(0.0, 3.0, dk)
+			h0 *= ink
+			W = maxf(W * lerpf(0.45, 1.0, ink), 0.5)
 			for cc: float in [-0.35, 0.0, 0.35, 0.8, W * 0.45, W * 0.7, W]:
 				var t := clampf(cc / W, 0.0, 1.0)
 				var yy := h0 + 0.05 if cc < 0.0 else h0 * pow(1.0 - t, 1.6) * (1.0 + (_h(roundi(x * 5.0), roundi(cc * 9.0)) - 0.5) * 0.3)
@@ -131,18 +147,25 @@ static func _doldur(e: Dictionary, pts: Array, s: float) -> void:
 			var wv := xf * v
 			var hz := _h(roundi(wv.x * 2.0), roundi(wv.z * 2.0))
 			var col: Color
+			# TUR-9: uçtaki zemin rengi kesimde de zeminin kendi paletinden (sur_gorunus.zemin_renk; kesim levhası aynı
+			# işlevle boyanır: eskiden sabit toprak rengi → Bölüm 21 an_01'de gri/kahve DÜZ KENARLI YAMA)
+			var uc: Color = arazi_renk(wv.x, wv.z) if dunya else _kesim_renk(wv.x + float(e.get("ox", 0.0)), wv.z, dd + 0.35)
 			if k == m - 1:
-				col = arazi_renk(wv.x, wv.z) if dunya else _isik(OTURTMA.R_TOPRAK)
+				col = uc
 			else:
 				var toz := OTURTMA.R_TOZ.lerp(OTURTMA.R_TOPRAK, hz * 0.7)
 				if hz > 0.78:
 					toz = toz.lerp(OTURTMA.R_KOYU, 0.6)          # çamur lekesi
 				col = _isik(toz)
-				var uc := arazi_renk(wv.x, wv.z) if dunya else _isik(OTURTMA.R_TOPRAK)
-				col = col.lerp(uc, clampf((dd - 0.6) / 2.4, 0.0, 1.0))
-				# sahte AO: duvarın dibinde koyu temas gölgesi
-				var ao := lerpf(0.5, 1.0, smoothstep(0.0, 1.4, dd))
+				var tk := clampf((dd - 0.6) / 2.4, 0.0, 1.0)
+				col = col.lerp(uc, tk)
+				# sahte AO: duvarın dibinde koyu temas gölgesi (TUR-9: daha az; gece kenarı kutu gibi koyu çiziyordu)
+				var ao := lerpf(0.68, 1.0, smoothstep(0.0, 1.4, dd))
 				col = Color(col.r * ao, col.g * ao, col.b * ao)
+				# TUR-9: köşe alfası = 1 − çıplaklık (zemin_v2). Etek gövdesi alfa 1 (otlu desen) kalıyordu, çevresindeki
+				# zemin çıplak (≤ 0,2): etek AYRI DESENLİ düz kenarlı yama okunuyordu. Duvar dibinde çıplak, uca doğru zeminin
+				# kendi değerine.
+				col.a = lerpf(0.04, uc.a, tk)
 			cr.append(col)
 		cols.append(cr)
 	for k in m - 1:
@@ -241,7 +264,9 @@ static func kule(e: Dictionary, poly: PackedVector2Array, y: float, ic_z: float,
 
 
 ## Dip bandı (nem, toprak sıçraması, yosun): yüz çizgisi boyunca dikey şerit; gölgelendirici benekli seyreltir
-static func bant(e: Dictionary, a: Vector2, b: Vector2, nr: Vector2, y: float, ofs := 0.03, ust := 1.6) -> void:
+## uc (TUR-9): parçanın ait olduğu düz yüz bölümünün iki ucu; verilirse bant uçlara 1,8 m'de söner (kesik aralıkta birden
+## biten koyu bant duvarda "dikdörtgen koyu levha" okunuyordu, gece D4). Köşe rengi kırmızı kanalı = sönme çarpanı.
+static func bant(e: Dictionary, a: Vector2, b: Vector2, nr: Vector2, y: float, ofs := 0.03, ust := 1.6, uc: Array = []) -> void:
 	var bst: SurfaceTool = e["bst"]
 	var L := a.distance_to(b)
 	if L < 0.2:
@@ -249,8 +274,9 @@ static func bant(e: Dictionary, a: Vector2, b: Vector2, nr: Vector2, y: float, o
 	# pencereli kurulum: yalnız bu pencerenin x aralığındaki parçalar (dilim birkaç işte kurulur)
 	if L > 2.5:
 		var n := int(ceil(L / 2.0))
+		var u2: Array = uc if not uc.is_empty() else []
 		for k in n:
-			bant(e, a.lerp(b, float(k) / n), a.lerp(b, float(k + 1) / n), nr, y, ofs, ust)
+			bant(e, a.lerp(b, float(k) / n), a.lerp(b, float(k + 1) / n), nr, y, ofs, ust, u2)
 		return
 	if not IstSurlar._ic((a.x + b.x) * 0.5):
 		return
@@ -260,12 +286,27 @@ static func bant(e: Dictionary, a: Vector2, b: Vector2, nr: Vector2, y: float, o
 	var u := Vector3(0, ust + 0.3, 0)
 	var vs := [p0, p1, p1 + u, p0 + u]
 	var uv := [Vector2(0, 0), Vector2(L, 0), Vector2(L, ust + 0.3), Vector2(0, ust + 0.3)]
+	var sn := [1.0, 1.0]
+	if not uc.is_empty():
+		for q in 2:
+			var pq: Vector2 = a if q == 0 else b
+			var du := minf(pq.distance_to(uc[0]), pq.distance_to(uc[1]))
+			sn[q] = clampf(du / 1.8, 0.0, 1.0)
 	for ix: int in [0, 1, 2, 0, 2, 3]:
+		var f: float = sn[0] if ix == 0 or ix == 3 else sn[1]
+		bst.set_color(Color(f, 1.0, 1.0, 1.0))
 		bst.set_normal(n3)
 		bst.set_uv(uv[ix])
 		bst.add_vertex(vs[ix])
 	# sarım: normal tarafından saat yönü; n3'e göre çevir
 	e["bn"] = int(e["bn"]) + 2
+
+
+## Bant parçasının sönme uçları: dilimin kendi ucu (komşu dilimde devam eder) uç sayılmaz, yalnız kesik aralık kıyısı
+static func _uclar(sg: Array, x0: float, x1: float, z: float) -> Array:
+	var a := Vector2(float(sg[0]), z) if float(sg[0]) > x0 + 0.01 else Vector2(-1e6, z)
+	var b := Vector2(float(sg[1]), z) if float(sg[1]) < x1 - 0.01 else Vector2(1e6, z)
+	return [a, b]
 
 
 static func _bant_malzeme() -> ShaderMaterial:
@@ -294,6 +335,7 @@ void fragment() {
 	float a = 1.0 - smoothstep(0.0, ust, max(h, 0.0));
 	a *= a;
 	a *= 0.62 * (0.75 + 0.25 * n);
+	a *= COLOR.r;      // TUR-9: kesik aralık kıyısında söner
 	float ym = smoothstep(0.55, 0.85, gn(q * vec2(0.9, 1.6))) * (1.0 - smoothstep(0.1, 0.7, h));
 	vec3 c = mix(camur, yosun, ym * 0.7);
 	c *= 0.9 + 0.2 * gn(q * 5.0);
@@ -364,6 +406,16 @@ static func cali_mesh() -> ArrayMesh:
 	return _cali
 
 
+## Kesim sahnesinde dilim kökünün SurOyun_* köküne göre x ötelemesi (zemin levhası kök çerçevesinde boyanır)
+static func _kesim_ox(root: Node) -> float:
+	var ox := 0.0
+	var nd: Node = root
+	while nd != null and nd is Node3D and not String(nd.name).begins_with("SurOyun_"):
+		ox += (nd as Node3D).position.x
+		nd = nd.get_parent()
+	return ox if nd != null else 0.0
+
+
 static func _mm(p: Node3D, mesh: Mesh, xfs: Array, mat: Material, ad: String) -> void:
 	if xfs.is_empty():
 		return
@@ -399,7 +451,7 @@ static func kur(root: Node3D, lay: Dictionary, lod: int, xw: Array, dy: float, k
 	bst.begin(Mesh.PRIMITIVE_TRIANGLES)
 	var e := {"st": st, "bst": bst, "n": 0, "bn": 0, "lod": lod, "tohum": int(lay["rng_seed"]),
 		"xf": xw[1] if xw[0] else Transform3D(), "dunya": bool(xw[0]) and not OTURTMA.kusak.is_empty(),
-		"ot": [], "tas": [], "cali": [], "_px": 0.0, "yasak": kes.get("yasak", [])}
+		"ot": [], "tas": [], "cali": [], "_px": 0.0, "yasak": kes.get("yasak", []), "ox": _kesim_ox(root)}
 	var zi0: float = d["zi0"]
 	var zi1: float = d["zi1"]
 	var zo0: float = d["zo0"]
@@ -433,14 +485,14 @@ static func kur(root: Node3D, lay: Dictionary, lod: int, xw: Array, dy: float, k
 			out = nv
 		return out
 	for sg: Array in segs.call(kes.get("sehir", [])):
-		bant(e, Vector2(sg[0], zi0), Vector2(sg[1], zi0), Vector2(0, -1), 0.0)
+		bant(e, Vector2(sg[0], zi0), Vector2(sg[1], zi0), Vector2(0, -1), 0.0, 0.03, 1.6, _uclar(sg, x0, x1, zi0))
 	for sg: Array in segs.call(kule_ic + kes.get("kapi", [])):
-		bant(e, Vector2(sg[0], zi1), Vector2(sg[1], zi1), Vector2(0, 1), 0.0)
+		bant(e, Vector2(sg[0], zi1), Vector2(sg[1], zi1), Vector2(0, 1), 0.0, 0.03, 1.6, _uclar(sg, x0, x1, zi1))
 	for sg: Array in segs.call(kes.get("peri", [])):
-		bant(e, Vector2(sg[0], zo0), Vector2(sg[1], zo0), Vector2(0, -1), 0.0)
+		bant(e, Vector2(sg[0], zo0), Vector2(sg[1], zo0), Vector2(0, -1), 0.0, 0.03, 1.6, _uclar(sg, x0, x1, zo0))
 	if hendek:
 		for sg: Array in segs.call(kule_dis + kes.get("kapi", []) + kes.get("gedik", [])):
-			bant(e, Vector2(sg[0], zo1), Vector2(sg[1], zo1), Vector2(0, 1), dy)
+			bant(e, Vector2(sg[0], zo1), Vector2(sg[1], zo1), Vector2(0, 1), dy, 0.03, 1.6, _uclar(sg, x0, x1, zo1))
 	for k: Array in kuleler:
 		var poly: PackedVector2Array = k[0]
 		var n := poly.size()

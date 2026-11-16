@@ -2660,6 +2660,20 @@ func _kose_hendek(n: Node3D, izp: Array, cen: Vector2, y: float, lod: int, tohum
 	var d := IstSurlar.dims(K_SUR)
 	var zm0 := float(d["zm0"])
 	var zm1 := float(d["zm1"])
+	# TUR-9: kırık noktasında iki alt parçanın arasındaki kama dış yakada r·θ (r ≈ zm1 + 0,9 ≈ 45 m: 5°'lik kırıkta ~4 m)
+	# açılıyordu; sabit 0,6 m'lik gönye payı kapatmıyordu → c5'te karşı kıyıda koyu ÜÇGEN ÇENTİK. Pay kırık açısından.
+	var exs: Array = []
+	for k in izp.size() - 1:
+		var q0: Vector2 = izp[k][0]
+		var q1: Vector2 = izp[k + 1][0]
+		exs.append((q1 - q0).normalized() if q0.distance_to(q1) >= 0.05 else Vector2.ZERO)
+	# uçlarda komşu dilimin yönü (uç noktanın dış normaline dik): dilim ile ilk/son alt parça arasındaki kırık
+	var dik := func(nv: Vector2, ref: Vector2) -> Vector2:
+		var t := Vector2(-nv.y, nv.x).normalized()
+		return t if t.dot(ref) >= 0.0 else -t
+	var ex_bas: Vector2 = dik.call(izp[0][1], exs[0]) if exs.size() > 0 and exs[0] != Vector2.ZERO else Vector2.ZERO
+	var ex_son: Vector2 = dik.call(izp[izp.size() - 1][1], exs[exs.size() - 1]) if exs.size() > 0 and exs[exs.size() - 1] != Vector2.ZERO else Vector2.ZERO
+	var r_dis := zm1 + 0.9
 	for k in izp.size() - 1:
 		var P0: Vector2 = izp[k][0]
 		var P1: Vector2 = izp[k + 1][0]
@@ -2672,8 +2686,16 @@ func _kose_hendek(n: Node3D, izp: Array, cen: Vector2, y: float, lod: int, tohum
 		var nd := Node3D.new()
 		nd.transform = Transform3D(Basis(Vector3(ex.x, 0, ex.y), Vector3.UP, Vector3(ez.x, 0, ez.y)), Vector3(P0.x - cen.x, y, P0.y - cen.y))
 		n.add_child(nd)
-		# alt parçanın iki ucunda gönye payı (komşu parçayla aradaki kama kapanır)
-		SURZEMIN.hendek_kesit(nd, -0.6, L + 0.6, zm0 - 0.9, zm1 + 0.9, float(d["MD"]), lod, tohum + k)
+		# alt parçanın iki ucunda gönye payı (komşu parçayla aradaki kama kapanır): 0,6 m + dış yarıçap × tan(kırık/2)
+		var pa := 0.6
+		var pb := 0.6
+		var e_on: Vector2 = exs[k - 1] if k > 0 else ex_bas
+		var e_ar: Vector2 = exs[k + 1] if k + 1 < exs.size() else ex_son
+		if e_on != Vector2.ZERO:
+			pa += r_dis * tan(minf(absf(e_on.angle_to(ex)), 0.6) * 0.5)
+		if e_ar != Vector2.ZERO:
+			pb += r_dis * tan(minf(absf(ex.angle_to(e_ar)), 0.6) * 0.5)
+		SURZEMIN.hendek_kesit(nd, -pa, L + pb, zm0 - 0.9, zm1 + 0.9, float(d["MD"]), lod, tohum + k)
 
 
 ## Hat üstünde yay boyu sv'deki nokta, yön ve gönye çarpanı (kırık noktasında dış öteleme 1/cos(yarım açı))
@@ -2911,9 +2933,18 @@ func _hat_piece(ad: String, kur: String, mid: Vector2, d: Vector2, L: float, see
 	return it
 
 
-## Blakherna suru dilimi: Blachernae.shell_parts("wall") 120 m'lik; L'ye göre x ekseninde ölçeklenmez, kırpılır
+## Blakherna suru dilimi: Blachernae.shell_parts("wall") 120 m'lik; L'ye göre x ekseninde ölçeklenmez, kırpılır.
+## TUR-9: ÇARPIŞMA eskisiyle aynı kutular (aynı konum ve boy: kabuğun katı parçaları, görünen kutu ağı yok); GÖRÜNÜŞ sur
+## kuşağının (Mesoteikhion) kalemiyle: dipte şevli ve kaideli gövde (temeli zemine gömülü), sur taşı gölgelendiricisi
+## (blok + tuğla hatıl; ayrı tuğla şerit kutuları kalktı), yürüme yolunun dış kenarında korkuluk + mazgal dişleri
+## (KULE.disler_ag: diş diş boy farkı, yer yer eksik), kuleler Mesoteikhion iç kulesi (KULE.ic_kule: pahlı plan, şev,
+## silme, ok yarıkları, tepe korkuluğu ve dişleri; kendi çarpışması atılır), sur dibinde döküntü. Ölçü aynı: gövde
+## WALL_H, kule WALL_H + 5, dişlerin tepesi WALK_Y + 1,1; x aralığı dilimle kırpılır.
 func _blakherna_wall(n: Node3D, L: float, lod: int) -> void:
-	var emit := func(kind: String, size: Vector3, pos: Vector3, col: Color, pattern: String, solid: bool, tag: String) -> void:
+	var stone := Blachernae.C_STONE
+	var hx := L * 0.5
+	# 1) çarpışma: kabuğun katı kutuları (eskisi Props.solid: aynı gövde + kutu şekli; görünen kutu ağı artık yok)
+	var emit := func(kind: String, size: Vector3, pos: Vector3, _col: Color, _pattern: String, solid: bool, _tag: String) -> void:
 		if absf(pos.x) - size.x * 0.5 > L * 0.5:
 			return
 		var sz := size
@@ -2921,14 +2952,93 @@ func _blakherna_wall(n: Node3D, L: float, lod: int) -> void:
 		if size.x > L:
 			sz.x = L
 			p.x = 0.0
-		if kind == "merl" and lod > 0:
-			return
-		if solid and lod == 0:
-			var b := Props.solid(n, sz, p, Color.WHITE)
-			Props.set_pattern(b, col, pattern)
-		else:
-			Props.box(n, sz, p, col)
+		if solid and lod == 0 and kind == "box":
+			var body := StaticBody3D.new()
+			body.name = "BlakhernaKati"
+			body.position = p
+			n.add_child(body)
+			var cs := CollisionShape3D.new()
+			var bs := BoxShape3D.new()
+			bs.size = sz
+			cs.shape = bs
+			body.add_child(cs)
 	Blachernae.shell_parts(emit, "wall")
+	# 2) görünüş
+	var Z0 := Blachernae.WALL_Z0
+	var Z1 := Blachernae.WALL_Z1
+	var H := Blachernae.WALL_H
+	var W := Blachernae.WALK_Y
+	var ag = SURKULE.Ag.new()
+	var x0 := -hx
+	var x1 := hx
+	# dış yüz profili (y, dışa öteleme): gömülü temel, kaide basamağı, şev, düz gövde
+	var prof := [[-1.6, 0.55], [0.0, 0.55], [0.0, 0.42], [0.9, 0.42], [0.9, 0.28], [3.2, 0.0], [H, 0.0]]
+	if lod > 0:
+		prof = [[-1.6, 0.3], [2.4, 0.0], [H, 0.0]]
+	for k in prof.size() - 1:
+		var ya: float = prof[k][0]
+		var yb: float = prof[k + 1][0]
+		var oa: float = prof[k][1]
+		var ob: float = prof[k + 1][1]
+		if absf(yb - ya) < 0.001:
+			# yatay basamak (üstü)
+			ag.quad(Vector3(x0, ya, Z1 + ob), Vector3(x1, ya, Z1 + ob), Vector3(x1, ya, Z1 + oa), Vector3(x0, ya, Z1 + oa), Vector3.UP)
+		else:
+			var nr := Vector3(0, oa - ob, yb - ya).normalized()
+			ag.quad(Vector3(x0, ya, Z1 + oa), Vector3(x1, ya, Z1 + oa), Vector3(x1, yb, Z1 + ob), Vector3(x0, yb, Z1 + ob), nr)
+	# iç yüz (şehir), tepe (yürüme yolu), uçlar (komşu dilime kavuşur: uç yüzler yalnız kaide çıkıntısını kapatır)
+	ag.quad(Vector3(x0, -1.6, Z0), Vector3(x1, -1.6, Z0), Vector3(x1, H, Z0), Vector3(x0, H, Z0), Vector3.FORWARD)
+	ag.quad(Vector3(x0, H, Z0), Vector3(x1, H, Z0), Vector3(x1, H, Z1), Vector3(x0, H, Z1), Vector3.UP)
+	for sx: float in [-1.0, 1.0]:
+		var xe := hx * sx
+		for k in prof.size() - 1:
+			var ya2: float = prof[k][0]
+			var yb2: float = prof[k + 1][0]
+			var oa2: float = prof[k][1]
+			var ob2: float = prof[k + 1][1]
+			if oa2 < 0.01 and ob2 < 0.01:
+				continue
+			ag.quad(Vector3(xe, ya2, Z1), Vector3(xe, yb2, Z1), Vector3(xe, yb2, Z1 + ob2), Vector3(xe, ya2, Z1 + oa2), Vector3(sx, 0, 0))
+	# korkuluk (yürüme yolunun dış kenarı, 0,6 m kalın, 0,5 m yüksek) + dişler (0,6 m): tepe WALK_Y + 1,1 (eski diş tepesi)
+	var PT := 0.6
+	var PH := 0.5
+	ag.kutu(Vector3(0, W, Z1 - PT), Vector3.RIGHT, Vector3.BACK, L, PH, PT)
+	ag.mesh_ekle(n, SURKULE._tas_mat(stone, lod), "BlakhernaSur")
+	if lod == 0:
+		var mer: Array = []
+		var xx := -59.0
+		while xx < 59.0:
+			if absf(xx) + 0.5 < hx and absf(fposmod(xx * 0.37 + 4.6, 11.0)) >= 0.8:
+				mer.append(Transform3D(Basis.from_scale(Vector3(1.1, 0.6, PT)), Vector3(xx, W + PH + 0.3, Z1 - PT * 0.5)))
+			xx += 1.9
+		SURKULE.disler_ag(n, mer, stone.darkened(0.04), int(absf(L * 13.0)))
+	# kuleler: Mesoteikhion iç kulesi, kabuktaki kutu kulenin ölçüsünde (8 × 8 m, z Z1−2,4 … Z1+5,6, tepe WALL_H + 5)
+	for i in Blachernae.TOWERS.size():
+		var tx: float = Blachernae.TOWERS[i]
+		if absf(tx) + 4.0 > hx + 0.01:
+			continue
+		var tmp := Node3D.new()
+		SURKULE.ic_kule(tmp, {"cx": tx, "w": 8.0, "zb": Z1 - 2.4, "zf": Z1 + 5.6, "zi1": Z1, "yf": W + 0.03, "HT": H + 5.0,
+			"yc": H + 4.5, "tur": 0, "tohum": 1305 + i * 31, "hasar": 0.6, "kapi_z0": Z1 - 2.1, "kapi_z1": Z1 - 0.3,
+			"cati": false, "yazit": false, "tas": stone}, lod)
+		for c in tmp.get_children():
+			tmp.remove_child(c)
+			if c is CollisionObject3D:
+				c.free()                   # kulenin çarpışması kabuğun kutusudur (ölçü aynı)
+			else:
+				n.add_child(c)
+		tmp.free()
+	# sur dibi: dökülmüş taş (yalnız yakın)
+	if lod == 0:
+		var rng := RandomNumberGenerator.new()
+		rng.seed = int(absf(L * 7.0)) + 53
+		var tas: Array = []
+		for k in int(L / 6.0):
+			var px := rng.randf_range(x0 + 1.0, x1 - 1.0)
+			var sc := rng.randf_range(0.25, 0.6)
+			tas.append(Transform3D(Basis.from_euler(Vector3(rng.randf() * 2.0, rng.randf() * 6.0, 0.3)).scaled(Vector3(sc * 1.3, sc * 0.7, sc)), Vector3(px, sc * 0.12, Z1 + 0.8 + rng.randf_range(0.0, 2.2))))
+		if not tas.is_empty():
+			Scenery.scatter(n, SURKULE.kaya_mesh(), tas, [], load("res://scripts/world/ist/sur_gorunus.gd").kaya_tas_mat())
 
 
 static func _walk_h(kur: String) -> float:
