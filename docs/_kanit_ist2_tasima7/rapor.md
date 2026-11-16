@@ -112,3 +112,16 @@ vurduğu şey (`PIK7 an=barikat px=… d=… yol=…`):
   oranda (ilk denemede terasa düşüyordu: replikle uyuşmazdı, düzeltildi). `CannonCrew.ground_y` yeni ova (32o'daki hata).
 - `=yuru` (kazık işi gerçek botla), `=kare` (6 an: açılış, kazık yığını, kazık, kızak, kızak yarı yolda, top, ilk toz) eklendi;
   AUTOTEST satırına `sur=`.
+
+## 5. Ortak: `SurSet` / `SurSetSahne` sağlam kip seçeneği (madde 4'ün ön koşulu; 36b de kullanır)
+- `SurSet.yeni(kesim, p_saglam := false)`, `SurSet.sec(bolum, sabit, kesim, p_saglam := false)`: sağlamda çerçeve **varsayılan
+  kipin** gediğinden kurulur (TUR-11 notu: `gx` gerekirse varsayılanın değeri; çerçeve gedik x 0 aynı kalır, bütün eski
+  sayılar aynı yere düşer), sonra `a.saglam_yap()`: moloz profili boş (`moloz_y` 0, `zemin_y` molozsuz), `gedik_bosluk()` 0
+  (sur yolu gedik yerinde de sürekli), `dis_kuleler` sağlamlaşan kuleyi içerir, `engeller()` gediksiz.
+- `SurSetSahne`: `_enter_tree`'de `sur` verilmemişse `SurSet.yeni(kesim, intact)` (eski setin `intact` seçeneği → sağlam kip);
+  `SurOyun.kur`'a `"saglam": sur.saglam`; sağlam surda gediğin teslim alanı/tekerlekli siperleri (`_build_breach_set`) kurulmaz
+  (eski set `intact`'te `_build_breach` kurmaz).
+- **Varsayılan aynı**: `p_saglam` false / `intact` false → aynı çağrılar, aynı sayılar (`"saglam": false` = `kur`'un varsayılanı).
+  Kullanan bölümler ×1 (§6).
+
+## 6. Ortak değişikliklerden sonra öteki bölümler (`testler/ortak`) ve sözleşme

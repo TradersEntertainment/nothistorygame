@@ -21,3 +21,14 @@ TASIMA28OYURU bacak=cukur sure=10.6 yol=5.0 takilma=1 dusme=0 son=(14.8, 0.0, 11
 TASIMA28OYURU tus_yok yer=cukur odak=
 TASIMA28OYURU bacak=yigin sure=7.5 yol=16.1 takilma=0 dusme=0 son=(17.8, 0.0, 118.9) odak=stakes
 TASIMA28OYURU bacak=cukur sure=8.2 yol=12.6 takilma=0 dusme=0 son=(6.9, 0.0, 115.9) odak=hole_1
+TASIMA28OYURU bacak=yigin sure=6.4 yol=12.6 takilma=0 dusme=0 son=(17.8, 0.0, 118.9) odak=stakes
+TASIMA28OYURU bacak=cukur sure=4.3 yol=8.1 takilma=0 dusme=0 son=(11.1, 0.0, 115.9) odak=hole_2
+TASIMA28OYURU bacak=yigin sure=2.6 yol=7.8 takilma=0 dusme=0 son=(17.8, 0.0, 118.7) odak=stakes
+TASIMA28OYURU bacak=cukur sure=1.4 yol=3.6 takilma=0 dusme=0 son=(15.3, 0.0, 116.1) odak=hole_3
+SAYDIST key=D28O_U_STAKES scene=chapter28o.tscn speaker=SPK_URBAN d=5.9
+TASIMA28OYURU OZET set=eski bacak=8 takilma=1 dusme=0 tus_yok=1 sure=42.4 yol=70.0 kazik=4/4
+WARNING: ObjectDB instances leaked at exit (run with --verbose for details).
+     at: cleanup (core/object/object.cpp:2378)
+ERROR: 1 resources still in use at exit (run with --verbose for details).
+   at: clear (core/io/resource.cpp:614)
+KOSU rc=0 sure=58 args=--chapter=28o --autotest=yuru --eskisur

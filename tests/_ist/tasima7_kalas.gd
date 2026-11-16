@@ -38,4 +38,13 @@ func _kos() -> void:
 		# kalasın yerinde (x ±0,5, z ortası) aşağı bakan görünür ağlar
 		kok.queue_free()
 		await process_frame
+	# kapı köprüsü (Romanos): aynı pişirme döngüsü
+	var kok2 := Node3D.new()
+	get_root().add_child(kok2)
+	var k2 := SurOyun.kur("romanos", {"ebeveyn": kok2, "dunya": false, "kapi_kopru": "saglam"})
+	await process_frame
+	var kk: Node = k2["parca"].get("kapi_kopru")
+	print("KALAS7 === romanos kapi_kopru=%s" % kk)
+	if kk:
+		_yaz(kk, 0)
 	quit(0)

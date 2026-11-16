@@ -355,7 +355,7 @@ func _advance_men() -> void:
 
 
 ## Köprü yolu: kapının önü → rampa → kalas → ova; sonra hedef. Adım hızında, kalasın üstünde.
-func _walk_bridge(p: Person, to: Vector3, delay: float, back := false, side := 0.0) -> void:
+func _walk_bridge(p: Person, to: Vector3, delay: float, back := false, side := 0.0, sira_z := -1.0) -> void:
 	if delay > 0.0:
 		await get_tree().create_timer(delay, false).timeout
 	if not is_instance_valid(p) or phase == "home":
@@ -370,6 +370,8 @@ func _walk_bridge(p: Person, to: Vector3, delay: float, back := false, side := 0
 		var y0 := Vector3(lane, 0.0, sur.hendek_z0() - 0.4)
 		var y1 := Vector3(lane, 0.0, sur.hendek_z1() + 0.4)
 		pts.assign([sn, y1, y0, on, to] if back else [on, y0, y1, sn, to])
+		if back and sira_z >= 0.0:
+			pts.insert(0, sn + Vector3(0, 0, 0.6 + sira_z))      # sıra yeri: şeridin önünde, köprü ucundan geriye
 	elif back:
 		pts = [Vector3(lane, 0, BRIDGE_Z1 + 0.6), Vector3(lane, _bridge_y(BRIDGE_Z0), BRIDGE_Z0), Vector3(lane, 0, 16.6), to]
 	else:
@@ -392,6 +394,8 @@ func _walk_bridge(p: Person, to: Vector3, delay: float, back := false, side := 0
 				pts.insert(n, via)
 				q = via
 		n += 1
+		if _sonda36:
+			_bacak36[p] = "%d/%d>%s" % [n, pts.size(), (q * Vector3(1, 0, 1)).snapped(Vector3.ONE * 0.1)]
 		var from := p.global_position
 		var d := from.distance_to(q)
 		if d < 0.05:
@@ -408,12 +412,33 @@ func _walk_bridge(p: Person, to: Vector3, delay: float, back := false, side := 0
 			# Aynı şeritte önündeki adama yetişirse yavaşlar (farklı yerden çıkıp aynı hızla yürüyenler köprünün
 			# dibinde iç içe giriyordu: yükte VISAUDIT overlap). Çıkışta da: şeride varış yolu kişiden kişiye farklı,
 			# arkadan gelen öndekine köprünün başında yetişip içine giriyordu (Giustiniani ve bir savunucu, %30 koşu)
-			tw.set_speed_scale(0.12 if _lane_blocked(p, at, q - from) else 1.0)
+			var hiz := 0.12 if _lane_blocked(p, at, q - from) else 1.0
+			if not sur.eski_mi and _yol_ver(p, at, q):
+				hiz = 0.02
+			tw.set_speed_scale(hiz)
 			if (q - from).length() > 0.1:
 				p.look_at(p.global_position + Vector3(q.x - from.x, 0, q.z - from.z), Vector3.UP)
 				p.rotate_y(PI), 0.0, 1.0, d / 2.6)
 		await tw.finished
 	_walking.erase(p)
+
+
+## Yeni set (TAŞIMA-7): birleşme noktasında yol verme. Geri çekilmede herkes yayıldığı yerden aynı noktaya (köprünün uzak ucu,
+## şeridin girişi) farklı yönlerden yürüyor; _lane_blocked yalnız kendi yürüme yönüne baktığı için iki kişi oraya aynı anda
+## varıp iç içe giriyordu (VISAUDIT overlap (−17,5; 47,7), sonda SONDA36YAKIN). 0,8 m içindeki yürüyen biri p'nin hedefine
+## p'den yakınsa p bekler (o geçince devam eder).
+func _yol_ver(p: Person, at: Vector3, q: Vector3) -> bool:
+	var dq := Vector2(at.x - q.x, at.z - q.z).length()
+	for o in men + [giust]:
+		if o == p or not is_instance_valid(o) or not o.visible or not _walking.has(o):
+			continue
+		var op: Vector3 = o.global_position
+		var ileri := Vector2(op.x - at.x, op.z - at.z).dot(Vector2(q.x - at.x, q.z - at.z)) > 0.0      # o, p'nin önünde (hedef yönünde)
+		if ileri and Vector2(op.x - at.x, op.z - at.z).length() < 0.8 and Vector2(op.x - q.x, op.z - q.z).length() < dq - 0.05:
+			if _sonda36:
+				print("SONDA36YOLVER p=%s o=%s at=%s" % [p.name.right(4), o.name.right(4), (at * Vector3(1, 0, 1)).snapped(Vector3.ONE * 0.01)])
+			return true
+	return false
 
 
 ## Yürünen yerin yüksekliği: rampa ve kalas (2 m eninde) ya da setin zemini. Yeni: aşağı ışın (sahanlık, basamak, köprü,
@@ -645,12 +670,24 @@ func _retreat() -> void:
 	await hud.say("SPK_LEON", "D36_L_HELP")
 	player.face(leon.global_position + Vector3(0, 0.6, 0))      # yardım isteyen Leon kadrajda (kamera ona dönmüyordu)
 	player.frozen = false
+	# Yeni sette (TAŞIMA-7): köprünün uzak ucuna en yakın olan önce, sırayla; her biri şeridin önünde kendi sıra yerine
+	# (köprü ucundan 1,2 m arayla geriye) yürür, oradan tek sıra köprüye girer. Herkes aynı noktaya farklı yönlerden yürüyünce
+	# iki kişi oraya aynı anda varıp iç içe giriyordu (VISAUDIT overlap (−17,5; 47,7), sonda SONDA36YAKIN).
+	var sira: Array = []
 	for i in men.size():
 		if men[i] != leon:
-			# Savunucular sağa (çıktıkları yere) gider: hepsi sağ şeritten sırayla iner; Giustiniani sola gider, sol şeritten.
-			# Şerit hedefin tarafında: sol şeritten inip sağa dönen, sağ şeritten inenin yolunu kesip içine giriyordu
-			_walk_bridge(men[i], TOPLAN + (Vector3(2.4 + (i % 3) * 1.0, 0, -0.3 + (i / 3) * 0.8) if sur.eski_mi \
-				else Vector3(2.0 + (i % 3) * 1.0, 0, 0.2 + (i / 3) * 0.8)), 0.8 * i, true, 0.45)
+			sira.append(i)
+	if not sur.eski_mi:
+		var uc := _kopru_sonra()
+		sira.sort_custom(func(a: int, b: int) -> bool: return men[a].global_position.distance_to(uc) < men[b].global_position.distance_to(uc))
+	for r in sira.size():
+		var i: int = sira[r]
+		# Savunucular sağa (çıktıkları yere) gider: hepsi sağ şeritten sırayla iner; Giustiniani sola gider, sol şeritten.
+		# Şerit hedefin tarafında: sol şeritten inip sağa dönen, sağ şeritten inenin yolunu kesip içine giriyordu
+		if sur.eski_mi:
+			_walk_bridge(men[i], TOPLAN + Vector3(2.4 + (i % 3) * 1.0, 0, -0.3 + (i / 3) * 0.8), 0.8 * i, true, 0.45)
+		else:
+			_walk_bridge(men[i], TOPLAN + Vector3(2.0 + (i % 3) * 1.0, 0, 0.2 + (i / 3) * 0.8), 0.9 * r, true, 0.45, 1.2 * r)
 	_walk_bridge(giust, TOPLAN + (Vector3(-2.6, 0, 0.5) if sur.eski_mi else Vector3(-0.6, 0, 2.1)), 4.2, true, -0.45)
 	# Leon bölümün asıl kararı: adıyla işaretlenir (hedef yalnız "Poternaya dön" diyordu; kapıya varınca bölüm bitiyordu)
 	hud.set_objective(tr("UI_OBJ36_BACK"), RETURN + Vector3(0, 1.6, 0), 1.6,
@@ -730,8 +767,31 @@ func _fall_rescue(delta: float) -> void:
 	_fall_busy = false
 
 
+var _sonda36 := OS.get_cmdline_user_args().has("--sonda36")
+var _sonda36_t := 0.0
+var _bacak36 := {}
+
+
 func _process(delta: float) -> void:
 	_fall_rescue(delta)
+	if _sonda36 and phase in ["cross", "fight", "burn", "photo", "retreat"]:
+		# TAŞIMA-7 sondası (yalnız --sonda36): iki kişi 0,5 m'ye yaklaştığı her karede ikisinin bacağı; 0,25 sn'de bir hepsi
+		var hep: Array = men + [giust]
+		for i in hep.size():
+			for j in range(i + 1, hep.size()):
+				var a: Node3D = hep[i]
+				var b: Node3D = hep[j]
+				if a.visible and b.visible and Vector2(a.global_position.x - b.global_position.x, a.global_position.z - b.global_position.z).length() < 0.5:
+					print("SONDA36YAKIN t=%.2f faz=%s a=%s%s %s %s b=%s%s %s %s" % [Time.get_ticks_msec() / 1000.0, phase, a.name.right(4), "*" if _walking.has(a) else "",
+						(a.global_position * Vector3(1, 0, 1)).snapped(Vector3.ONE * 0.01), _bacak36.get(a, "-"), b.name.right(4), "*" if _walking.has(b) else "",
+						(b.global_position * Vector3(1, 0, 1)).snapped(Vector3.ONE * 0.01), _bacak36.get(b, "-")])
+		_sonda36_t -= delta
+		if _sonda36_t <= 0.0:
+			_sonda36_t = 0.25
+			var sat := "SONDA36 t=%.2f" % (Time.get_ticks_msec() / 1000.0)
+			for m in men + [giust]:
+				sat += " | %s%s p=%s" % [m.name.right(4), "*" if _walking.has(m) else "", (m.global_position * Vector3(1, 0, 1)).snapped(Vector3.ONE * 0.01)]
+			print(sat)
 	if phase == "retreat":
 		_ride_t += delta
 		var k := clampf(_ride_t / RIDE_TIME, 0.0, 1.0)

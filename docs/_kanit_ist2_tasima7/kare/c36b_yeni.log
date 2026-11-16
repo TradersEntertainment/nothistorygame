@@ -34,3 +34,24 @@ TASIMA36BMESAFE set=yeni kopru_basi_donus=7.0 dy=3.8
 TASIMA36BMESAFE set=yeni kopru_siper=16.7 dy=0.0
 TASIMA36BMESAFE set=yeni siper_atli_dur=4.5 dy=0.0
 TASIMA36BMESAFE set=yeni donus_iceri=8.3 dy=-0.1
+TASIMA36BYURU bacak=kopru_basi sure=0.0 yol=0.0 takilma=0 dusme=0 son=(-17.9, -3.7, 24.2) odak=
+TASIMA36BKARE an_01_cikis.jpg oyuncu=(-17.9, -3.7, 24.2) cizim=4390 ilkel=6227772 sur=yeni
+TASIMA36BYURU bacak=kopru_ortasi sure=0.0 yol=0.0 takilma=0 dusme=0 son=(-17.9, -3.5, 36.1) odak=
+TASIMA36BKARE an_02_kopru.jpg oyuncu=(-17.9, -3.5, 36.1) cizim=4317 ilkel=6077336 sur=yeni
+TASIMA36BYURU bacak=kopru_ucu sure=0.0 yol=0.0 takilma=0 dusme=0 son=(-17.9, -3.6, 47.9) odak=
+TASIMA36BYURU bacak=hedef sure=0.0 yol=0.0 takilma=0 dusme=0 son=(-17.9, -3.6, 51.6) odak=
+TASIMA36BKARE an_03_siper.jpg oyuncu=(-17.9, -3.6, 51.6) cizim=4053 ilkel=5736480 sur=yeni
+TASIMA36BYURU bacak=manto0 sure=0.0 yol=0.0 takilma=0 dusme=0 son=(-24.9, -3.6, 55.4) odak=mantlet_0
+TASIMA36BYURU bacak=manto1 sure=0.0 yol=0.0 takilma=0 dusme=0 son=(-17.9, -3.6, 58.4) odak=mantlet_1
+TASIMA36BYURU bacak=manto2 sure=0.0 yol=0.0 takilma=0 dusme=0 son=(-10.9, -3.6, 55.4) odak=mantlet_2
+TASIMA36BKARE an_04_yanan.jpg oyuncu=(-10.9, -3.6, 55.4) cizim=3376 ilkel=4673369 sur=yeni
+TASIMA36BYURU bacak=leon sure=0.0 yol=0.0 takilma=0 dusme=0 son=(-13.9, -3.6, 55.2) odak=leon
+TASIMA36BKARE an_05_leon.jpg oyuncu=(-13.9, -3.6, 55.2) cizim=1030 ilkel=1954391 sur=yeni
+TASIMA36BYURU bacak=geri_kopru_ucu sure=0.0 yol=0.0 takilma=0 dusme=0 son=(-17.9, -3.6, 47.9) odak=
+TASIMA36BYURU bacak=geri_kopru_basi sure=0.0 yol=0.0 takilma=0 dusme=0 son=(-17.9, -3.7, 24.2) odak=
+TASIMA36BYURU bacak=basamak_dibi sure=0.0 yol=0.0 takilma=0 dusme=0 son=(-10.5, -3.7, 17.5) odak=
+TASIMA36BYURU bacak=basamak_ust sure=0.0 yol=0.0 takilma=0 dusme=0 son=(-16.7, 0.1, 17.2) odak=
+TASIMA36BYURU bacak=poterna sure=0.0 yol=0.0 takilma=0 dusme=0 son=(-17.7, 0.1, 17.4) odak=
+TASIMA36BKARE an_06_geri_bakis.jpg oyuncu=(-13.9, -3.6, 56.6) cizim=1347 ilkel=1567570 sur=yeni
+TASIMA36BKARE BITTI
+KARE_BITTI rc=0 --chapter=36b --autotest=kare

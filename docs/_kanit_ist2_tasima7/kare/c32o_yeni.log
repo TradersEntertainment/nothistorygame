@@ -15,3 +15,53 @@ ERROR: Condition "status < 0" is true. Returning: ERR_CANT_OPEN
 WARNING: All audio drivers failed, falling back to the dummy driver.
      at: initialize (servers/audio_server.cpp:246)
 
+SURSET kesim=mesoteikhion kurulum_ms=3529 sur_ms=1056 set_ms=2468
+WARNING: Screen-space ambient occlusion (SSAO) can only be enabled when using the Forward+ renderer.
+     at: environment_set_ssao (servers/rendering/storage/environment_storage.cpp:586)
+WARNING: Screen-space indirect lighting (SSIL) can only be enabled when using the Forward+ renderer.
+     at: environment_set_ssil (servers/rendering/storage/environment_storage.cpp:661)
+TERRAIN_SOLIDIFIED scene=chapter32o.tscn node=/root/Chapter32o/@Node3D@177/Ova/@Node3D@2566/@MeshInstance3D@2568
+HELDDEFAULT scene=chapter32o item=chickpeas
+TASIMA32OYURU set=yeni O=(0.0, -3.545, 10.6) pile=(-9.0, -3.545, 64.6) earth=(9.0, -3.545, 64.6) edge_z=48.0 covers=[(-5.0, -3.545, 53.6), (5.0, -3.545, 53.6), (0.0, -3.545, 59.6)] bench=(-16.0, -3.545, 76.6) manto=(14.0, -3.545, 74.6)>(14.0, -3.545, 51.6) fire_z=102.6
+TASIMA32OMESAFE set=yeni baslangic_azap=30.5 dy=0.0
+TASIMA32OMESAFE set=yeni yigin_kiyi=13.0 dy=0.0
+TASIMA32OMESAFE set=yeni toprak_kiyi=13.0 dy=0.0
+TASIMA32OMESAFE set=yeni kiyi_manto0=6.7 dy=0.0
+TASIMA32OMESAFE set=yeni yigin_manto2=9.1 dy=0.0
+TASIMA32OMESAFE set=yeni kiyi_tezgah=27.9 dy=0.0
+TASIMA32OMESAFE set=yeni manto_yolu=23.0 dy=0.0
+TASIMA32OMESAFE set=yeni tezgah_manto=30.1 dy=0.0
+TASIMA32OMESAFE set=yeni kiyi_hendek_ortasi=11.4 dy=-0.2
+TASIMA32OMESAFE set=yeni kiyi_sur=31.4 dy=12.2
+TASIMA32OKARE an_01_acilis.jpg oyuncu=(-14.0, -3.5, 82.6) cizim=1804 ilkel=1463638 sur=yeni
+TASIMA32OYURU bacak=azap sure=0.0 yol=0.0 takilma=0 dusme=0 kesik=false son=(2.0, -3.5, 59.0) odak=
+LORE key=32o placed=3
+TASIMA32OYURU bacak=yigin sure=0.0 yol=0.0 takilma=0 dusme=0 kesik=false son=(-9.0, -3.5, 62.6) odak=pile
+TASIMA32OKARE an_02_yigin.jpg oyuncu=(-9.0, -3.5, 62.6) cizim=1262 ilkel=1102662 sur=yeni
+TASIMA32OYURU bacak=kiyi sure=0.0 yol=0.0 takilma=0 dusme=0 kesik=false son=(-9.0, -3.5, 49.6) odak=edge
+TASIMA32OKARE an_03_kiyi.jpg oyuncu=(-9.0, -3.5, 49.6) cizim=723 ilkel=752810 sur=yeni
+TASIMA32OYURU bacak=yigin sure=0.0 yol=0.0 takilma=0 dusme=0 kesik=false son=(-9.0, -3.5, 62.6) odak=pile
+TASIMA32OYURU bacak=kiyi sure=0.0 yol=0.0 takilma=0 dusme=0 kesik=false son=(-9.0, -3.5, 49.6) odak=edge
+TASIMA32OYURU bacak=toprak sure=0.0 yol=0.0 takilma=0 dusme=0 kesik=false son=(9.0, -3.5, 62.6) odak=earth
+TASIMA32OYURU bacak=kiyi sure=0.0 yol=0.0 takilma=0 dusme=0 kesik=false son=(9.0, -3.5, 49.6) odak=edge
+TASIMA32OYURU bacak=siper sure=0.0 yol=0.0 takilma=0 dusme=0 kesik=false son=(5.0, -3.5, 55.0) odak=
+TASIMA32OKARE an_04_manto_arkasi.jpg oyuncu=(5.9, -3.5, 55.6) cizim=952 ilkel=1070999 sur=yeni
+TASIMA32OYURU bacak=yigin sure=0.0 yol=0.0 takilma=0 dusme=0 kesik=false son=(-9.0, -3.5, 62.6) odak=pile
+TASIMA32OYURU bacak=kiyi sure=0.0 yol=0.0 takilma=0 dusme=0 kesik=false son=(-9.0, -3.5, 49.6) odak=edge
+TASIMA32OYURU bacak=toprak sure=0.0 yol=0.0 takilma=0 dusme=0 kesik=false son=(9.0, -3.5, 62.6) odak=earth
+TASIMA32OYURU bacak=kiyi sure=0.0 yol=0.0 takilma=0 dusme=0 kesik=false son=(9.0, -3.5, 49.6) odak=edge
+TASIMA32OYURU bacak=yigin sure=0.0 yol=0.0 takilma=0 dusme=0 kesik=false son=(-9.0, -3.5, 62.6) odak=pile
+TASIMA32OYURU bacak=kiyi sure=0.0 yol=0.0 takilma=0 dusme=0 kesik=false son=(-9.0, -3.5, 49.6) odak=edge
+TASIMA32OYURU bacak=toprak sure=0.0 yol=0.0 takilma=0 dusme=0 kesik=false son=(9.0, -3.5, 62.6) odak=earth
+TASIMA32OYURU bacak=kiyi sure=0.0 yol=0.0 takilma=0 dusme=0 kesik=false son=(9.0, -3.5, 49.6) odak=edge
+TASIMA32OYURU bacak=yigin sure=0.0 yol=0.0 takilma=0 dusme=0 kesik=false son=(-9.0, -3.5, 62.6) odak=pile
+TASIMA32OYURU bacak=kiyi sure=0.0 yol=0.0 takilma=0 dusme=0 kesik=false son=(-9.0, -3.5, 49.6) odak=edge
+TASIMA32OYURU bacak=toprak sure=0.0 yol=0.0 takilma=0 dusme=0 kesik=false son=(9.0, -3.5, 62.6) odak=earth
+TASIMA32OYURU bacak=kiyi sure=0.0 yol=0.0 takilma=0 dusme=0 kesik=false son=(9.0, -3.5, 49.6) odak=edge
+TASIMA32OYURU bacak=yigin sure=0.0 yol=0.0 takilma=0 dusme=0 kesik=false son=(-9.0, -3.5, 62.6) odak=pile
+TASIMA32OYURU bacak=kiyi sure=0.0 yol=0.0 takilma=0 dusme=0 kesik=false son=(-9.0, -3.5, 49.6) odak=edge
+TASIMA32OYURU bacak=toprak sure=0.0 yol=0.0 takilma=0 dusme=0 kesik=false son=(9.0, -3.5, 62.6) odak=earth
+TASIMA32OYURU tus_yok yer=toprak odak=
+TASIMA32OYURU bacak=tezgah sure=0.0 yol=0.0 takilma=0 dusme=0 kesik=false son=(-16.0, -3.5, 79.0) odak=bench
+TASIMA32OKARE an_05_tezgah.jpg oyuncu=(-16.0, -3.5, 79.0) cizim=2396 ilkel=1456973 sur=yeni
+TASIMA32OYURU bacak=manto_arkasi_it sure=0.0 yol=0.0 takilma=0 dusme=0 kesik=false son=(14.0, -3.5, 76.4) odak=
