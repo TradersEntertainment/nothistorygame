@@ -1,0 +1,2 @@
+YIGILMAAUDIT fizik scene=Chapter20o who=Person/@Node3D@36882(@Node3D@36883) at=(-0.1, 2.3, 16.5) ayak_l=-0.26
+AUTOTEST PASS chapter=20o variant= outcome=20O.1 hits=3 cracks=0 gun=3/4 gunner=3/3 duel=true bed= sur=eski

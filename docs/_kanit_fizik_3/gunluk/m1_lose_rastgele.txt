@@ -1,0 +1,82 @@
+# 37o =lose çekiş vuruşları (F3STROKE): taban ve bu dal; cuts rastgele
+## taban_dbg_1.log
+AUTOTEST PASS chapter=37o variant=lose outcome=37O.2 beats=5/16 arrows=0 falls=1 barrels=2/5 cuts=32 stones=0 slips=0 burns=0 duel=false caught=0 sur=eski
+F3STROKE t=25.99 good=true cuts=0 down=0 hook=0 pull=0
+F3STROKE t=26.49 good=true cuts=1 down=0 hook=0 pull=0
+F3STROKE t=27.04 good=true cuts=2 down=0 hook=0 pull=0
+F3STROKE t=27.59 good=true cuts=3 down=0 hook=0 pull=0
+F3STROKE t=28.09 good=true cuts=4 down=0 hook=0 pull=0
+F3STROKE t=28.59 good=true cuts=5 down=0 hook=0 pull=0
+F3STROKE t=29.09 good=true cuts=5 down=0 hook=0 pull=1
+F3STROKE t=29.59 good=true cuts=5 down=0 hook=0 pull=2
+F3STROKE t=30.19 good=true cuts=6 down=0 hook=0 pull=0
+F3STROKE t=30.69 good=true cuts=6 down=0 hook=0 pull=1
+F3STROKE t=31.24 good=true cuts=7 down=0 hook=0 pull=0
+F3STROKE t=31.84 good=true cuts=8 down=0 hook=0 pull=0
+F3STROKE t=32.34 good=true cuts=9 down=0 hook=1 pull=0
+F3STROKE t=32.84 good=true cuts=10 down=0 hook=1 pull=0
+F3STROKE t=33.34 good=true cuts=10 down=0 hook=1 pull=1
+F3STROKE t=33.94 good=true cuts=11 down=0 hook=1 pull=0
+F3STROKE t=34.44 good=true cuts=12 down=0 hook=1 pull=0
+F3STROKE t=34.99 good=true cuts=12 down=0 hook=1 pull=1
+F3STROKE t=35.49 good=true cuts=13 down=0 hook=1 pull=0
+F3STROKE t=36.04 good=true cuts=14 down=0 hook=1 pull=0
+F3STROKE t=36.59 good=true cuts=15 down=0 hook=1 pull=0
+F3STROKE t=37.16 good=true cuts=15 down=0 hook=1 pull=1
+F3STROKE t=37.69 good=true cuts=15 down=0 hook=1 pull=2
+F3STROKE t=38.24 good=true cuts=16 down=0 hook=1 pull=0
+F3STROKE t=38.74 good=true cuts=16 down=0 hook=1 pull=1
+F3STROKE t=39.24 good=true cuts=16 down=0 hook=1 pull=2
+F3STROKE t=39.79 good=true cuts=17 down=0 hook=1 pull=0
+F3STROKE t=40.29 good=true cuts=17 down=0 hook=1 pull=1
+F3STROKE t=40.79 good=true cuts=17 down=0 hook=1 pull=2
+F3STROKE t=41.39 good=true cuts=18 down=0 hook=2 pull=0
+F3STROKE t=41.89 good=true cuts=18 down=0 hook=2 pull=1
+F3STROKE t=42.41 good=true cuts=18 down=0 hook=2 pull=2
+F3STROKE t=42.99 good=true cuts=19 down=0 hook=2 pull=0
+F3STROKE t=43.54 good=true cuts=20 down=0 hook=2 pull=0
+F3STROKE t=44.09 good=true cuts=21 down=0 hook=2 pull=0
+F3STROKE t=44.59 good=true cuts=21 down=0 hook=2 pull=1
+F3STROKE t=45.09 good=true cuts=21 down=0 hook=2 pull=2
+F3STROKE t=45.64 good=true cuts=22 down=0 hook=2 pull=0
+F3STROKE t=46.14 good=true cuts=22 down=0 hook=2 pull=1
+F3STROKE t=46.71 good=true cuts=23 down=0 hook=2 pull=0
+## ben_dbg_1.log
+AUTOTEST PASS chapter=37o variant=lose outcome=37O.2 beats=5/16 arrows=0 falls=1 barrels=2/5 cuts=13 stones=0 slips=0 burns=0 duel=false caught=0 sur=eski
+F3STROKE t=25.56 good=true cuts=0 down=0 hook=0 pull=0
+F3STROKE t=26.07 good=true cuts=1 down=0 hook=0 pull=0
+F3STROKE t=26.61 good=true cuts=2 down=0 hook=0 pull=0
+F3STROKE t=27.16 good=true cuts=3 down=0 hook=0 pull=0
+F3STROKE t=27.66 good=true cuts=3 down=0 hook=0 pull=1
+F3STROKE t=28.16 good=true cuts=4 down=0 hook=0 pull=0
+F3STROKE t=28.71 good=true cuts=5 down=0 hook=0 pull=0
+F3STROKE t=29.21 good=true cuts=5 down=0 hook=0 pull=1
+F3STROKE t=29.76 good=true cuts=6 down=0 hook=0 pull=0
+F3STROKE t=30.32 good=true cuts=7 down=0 hook=0 pull=0
+F3STROKE t=30.86 good=true cuts=7 down=0 hook=0 pull=1
+F3STROKE t=31.37 good=true cuts=8 down=0 hook=0 pull=0
+F3STROKE t=31.91 good=true cuts=9 down=0 hook=1 pull=0
+F3STROKE t=32.42 good=true cuts=10 down=0 hook=1 pull=0
+F3STROKE t=32.96 good=true cuts=10 down=0 hook=1 pull=1
+F3STROKE t=33.46 good=true cuts=10 down=0 hook=1 pull=2
+F3STROKE t=34.06 good=true cuts=10 down=1 hook=0 pull=0
+F3STROKE t=34.61 good=true cuts=11 down=1 hook=0 pull=0
+F3STROKE t=35.11 good=true cuts=12 down=1 hook=0 pull=0
+F3STROKE t=35.66 good=true cuts=13 down=1 hook=0 pull=0
+F3STROKE t=36.21 good=true cuts=13 down=1 hook=0 pull=1
+F3STROKE t=36.76 good=true cuts=13 down=1 hook=0 pull=2
+## ben_dbg_2.log
+AUTOTEST PASS chapter=37o variant=lose outcome=37O.2 beats=4/16 arrows=0 falls=1 barrels=2/5 cuts=5 stones=0 slips=0 burns=0 duel=false caught=0 sur=eski
+F3STROKE t=25.21 good=true cuts=0 down=0 hook=0 pull=0
+F3STROKE t=25.71 good=true cuts=0 down=0 hook=0 pull=1
+F3STROKE t=26.21 good=true cuts=0 down=0 hook=0 pull=2
+F3STROKE t=26.71 good=true cuts=0 down=1 hook=1 pull=0
+F3STROKE t=27.21 good=true cuts=0 down=1 hook=1 pull=1
+F3STROKE t=27.71 good=true cuts=0 down=1 hook=1 pull=2
+F3STROKE t=28.31 good=true cuts=1 down=1 hook=1 pull=0
+F3STROKE t=28.86 good=true cuts=2 down=1 hook=1 pull=0
+F3STROKE t=29.36 good=true cuts=3 down=1 hook=1 pull=0
+F3STROKE t=29.91 good=true cuts=4 down=1 hook=1 pull=0
+F3STROKE t=30.46 good=true cuts=5 down=1 hook=1 pull=0
+F3STROKE t=30.96 good=true cuts=5 down=1 hook=1 pull=1
+F3STROKE t=31.50 good=true cuts=5 down=1 hook=1 pull=2
