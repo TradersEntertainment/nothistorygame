@@ -1703,6 +1703,7 @@ func kick(target: Vector3, power: float, on_hit: Callable) -> void:
 	tw.parallel().tween_property(self, "global_position", lunge, dur)
 	tw.tween_callback(func():
 		shake(0.3 + power)
+		EsyaFizik.darbe(self, target, power)     # önündeki dekor eşyası (fıçı, sandık) itkiyi alır
 		on_hit.call())
 	tw.tween_interval(0.18)
 	tw.tween_property(leg, "rotation_degrees:x", 5.0, 0.3).set_trans(Tween.TRANS_QUAD)

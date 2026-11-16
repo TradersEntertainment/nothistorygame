@@ -799,7 +799,11 @@ func _fall_load(n: Node3D) -> void:
 	var floor_y := player.global_position.y + 0.25
 	var fast := GameState.autotest and not GameState.pace
 	var tw := create_tween()
-	tw.tween_property(n, "global_position:y", floor_y, 0.05 if fast else 0.4).set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_IN)
+	# yük gövdeyle düşer (savrulur, seker, yuvarlanır; EsyaFizik); olmazsa eskisi gibi düz iner. Süreler aynı.
+	if EsyaFizik.dusur(n, "", player.velocity * 0.6 + Vector3.UP * 1.2, Vector3(randf_range(-2, 2), 0, randf_range(-2, 2))):
+		tw.tween_interval(0.05 if fast else 0.4)
+	else:
+		tw.tween_property(n, "global_position:y", floor_y, 0.05 if fast else 0.4).set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_IN)
 	tw.tween_callback(Audio.sfx.bind("land_thud", -4.0, 0.8))
 	tw.tween_interval(0.05 if fast else 3.0)
 	tw.tween_callback(n.queue_free)

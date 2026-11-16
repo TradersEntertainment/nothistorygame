@@ -132,6 +132,8 @@ func _click() -> int:
 	if p.hand_style != "tolga" or p.focus_id != "":
 		return 0
 	if Input.is_action_just_pressed("kick"):
+		if state == "" and EsyaFizik.tekme_var(p):
+			return 0      # önde tekmelenecek dekor eşyası var: tık tırmanmaya değil tekmeye (EsyaFizik)
 		return -1
 	if Input.is_action_just_pressed("use_item"):
 		return 1
