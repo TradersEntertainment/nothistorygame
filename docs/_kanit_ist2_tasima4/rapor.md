@@ -19,7 +19,7 @@
 | 3b | Çuvallar yassı disk | **TAMAM** | dolgun, ağzı iple bağlı, püsküllü kum çuvalı (kendi ağı, yumuşak normal), tuğla dizisi gibi alttakilerin üstüne oturur; havada yok |
 | 3c | Bölüm 21 an_03 SONRA karesi | **TAMAM** | kap yeri açık, depo solda; iyi |
 | 2 | Bölüm 0 açılışı destanı | **TAMAM** (açılış iyi; eskinin sur yolu kalabalığı yeni setin yüksek iç korkuluğu yüzünden görünmüyor) | ek hücum merdivenleri (uçları kadrajda), yaralı/koşan şeritleri, sur yolu meşaleleri, duman, kuleye dayalı merdiven; donma karesinde yaralı, merdiven, tek tek kalas; bütün anlar eski setin çizim ve ilkel sayısının altında; yeni ×2 + eski ×1 PASS, `=yuru` takılma 0 |
-| 1-kare | 2. dalga kareleri | **KISMEN** | başlangıç karesi var (kötü kadraj), orta kare alınamadı |
+| 1-kare | 2. dalga kareleri | **TAMAM** (başlangıç kötü kadraj) | orta kare iyi; başlangıçta kameranın dibinde kalas taşıyan işçi |
 | — | Sözleşme | **TAMAM** | `SURSOZLESME PASS kalem=13 kesim=8` · `SUROYUN nokta=519 havada=0 gomuk=0 katida=0` · `WALKTHRU OZET yol=7 tamam=7 takilma=0 dusme=0` (`testler/soz/`) |
 | 4 | Bölüm 22 / 22o taşıması | **YAPILMADI** | süre §1–3'e harcandı; bkz. "Sonraki taşıyana" |
 
@@ -154,7 +154,10 @@ yalnız `SurSetSahne`'li sahnede). Bu sınıfları kullanan bölümler ×1: 21, 
 |---|---|---|
 | `an_12_duello` (1. dalga) | gedik önünde düello; arkada fıçılar, tuğla dizisi çuvallar, kazık çiti | kabul |
 | `an_13_dalga2_baslangic` | kameranın dibinde kalas taşıyan bir işçi ve bir dost asker kadrajı kesiyor; arkada fıçılar, çuvallar, kazıklar, bir azap; o anda gelen azaplar dolgu/yamaçta, aşama 4 barikatının ardında kaldığı için peribolostan görünmüyor | **kötü kadraj** (oynanışta oyuncu dönüp bakabilir; =kare'nin sabit bakışı kalabalığın içinde) |
-| `an_14_dalga2_orta` | çekilemedi: yazılımsal GL'de `=kare` 1.400 sn sınırına takıldı (makine bir kez yeniden başladı, ilk çekim yarıda kaldı); 2.400 sn ile yeniden çekim rapor yazılırken sürüyordu | **YAPILMADI** (bkz. durum.md) |
+| `an_14_dalga2_orta` | barikatın önünde göğüs göğüse dövüş: dostlar azaplarla çarpışıyor, ak börklü bir azap fıçıların ardından barikatı aşıyor, havada toz bulutları, sağda dış sur; kutu yok, havada duran kişi yok, herkes zemine oturuyor | **iyi** |
+
+(İkinci çekim `KT=2400`; ilk çekim makine yeniden başlayınca, ikincisi 1.400 sn sınırında yarıda kaldı. İki çekimde de başlangıç
+karesi aynı kalabalığa düştü.)
 
 ### Bütçe (çuvallar; Bölüm 20 `=butce --butce_onarim=7`, aşama 3, aynı kameralar, 10 kare ortalaması)
 ÖNCE = tasima3 SONRA (`docs/_kanit_ist2_tasima3/testler/butce/sonra_onarim7.ham`; çuval dışında set kodu aynı), SONRA
@@ -269,7 +272,7 @@ yakalansın); `--chapter=0 --autotest=yuru` (tasima3'ün isteği hâlâ geçerli
 5. **Düello süresinin oynaklığı:** `=wide` 1. dalga ×2–4'lük turlarda 7,5–13,9 arasında oynadı; ölçüm en az ×6.
 
 ## Hâlâ kötü olanlar (dürüst)
-- Bölüm 20 2. dalga başlangıç karesi kötü kadraj; orta kare alınamadı. Aşama 4'te azapların ovadan gelişi peribolostan
+- Bölüm 20 2. dalga başlangıç karesi kötü kadraj (kameranın dibinde kalas taşıyan işçi; iki çekimde de). Aşama 4'te azapların ovadan gelişi peribolostan
   görünmüyor (barikat ve sur yolu tahtası kapatıyor); yaklaşma sur yolundan ya da gedik ağzından bakınca görünür.
 - 20o `=wide` 2. dalga 12,9 sn: tabandan (11,1) uzun ama eskiden (22,3) kısa (kaldıraç a/b tükendi; c/can'a dokunulmadı).
 - Bölüm 20 1. dalga 11,4 sn: eskiden (9,0) biraz uzun (yaklaşma yolu); `lose` çeşidinde 18,4.

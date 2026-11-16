@@ -25,7 +25,7 @@ Dal `wip/ist2-tasima4`, taban `wip/ist2-tasima3` 6f92f921.
 - Bölüm 0: 3 kare turu (merdiven ucu, kuleye dayalı merdiven, yaralılar); donma karesi bütçesi için uzak figüran gizleme.
 
 ## Süren
-- Bölüm 20 `=kare` yeniden çekim (2.400 sn sınır) yalnız `an_14_dalga2_orta` için; gelirse `kare/c20_sonra/`'ya eklenir.
+- Yok (Bölüm 20 `an_14_dalga2_orta` alındı).
 
 ## Sıradaki
 - Bölüm 22 / 22o taşıması (yapılmadı; rapor §4).

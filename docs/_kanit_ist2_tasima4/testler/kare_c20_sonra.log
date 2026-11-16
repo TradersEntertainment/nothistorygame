@@ -15,9 +15,9 @@ ERROR: Condition "status < 0" is true. Returning: ERR_CANT_OPEN
 WARNING: All audio drivers failed, falling back to the dummy driver.
      at: initialize (servers/audio_server.cpp:246)
 
-SURSET kesim=mesoteikhion kurulum_ms=4384 sur_ms=1145 set_ms=3229
+SURSET kesim=mesoteikhion kurulum_ms=3547 sur_ms=836 set_ms=2702
 PILOT20ENGEL OZET nokta=9 engelde=0
-PILOT20KURULUM sur=yeni set_ms=4385 bolum_ms=1741 toplam_ms=6126
+PILOT20KURULUM sur=yeni set_ms=3549 bolum_ms=1653 toplam_ms=5202
 WARNING: Screen-space ambient occlusion (SSAO) can only be enabled when using the Forward+ renderer.
      at: environment_set_ssao (servers/rendering/storage/environment_storage.cpp:586)
 WARNING: Screen-space indirect lighting (SSIL) can only be enabled when using the Forward+ renderer.
@@ -36,7 +36,7 @@ PILOT20YURU bacak=gedik_depo_2 sure=0.0 yol=0.0 takilma=0 dusme=0 etkilesim=tama
 PILOT20YURU bacak=depo_gedik_3 sure=0.0 yol=0.0 takilma=0 dusme=0 etkilesim=tamam yuk=barrel onarim=2 
 PILOT20YURU bacak=gedik_depo_3 sure=0.0 yol=0.0 takilma=0 dusme=0 etkilesim=tamam yuk= onarim=3 
 PILOT20YURU bacak=depo_gedik_4 sure=0.0 yol=0.0 takilma=0 dusme=0 etkilesim=tamam yuk=barrel onarim=3 
-PILOT20KARE an_04_onarim_asama2.jpg repair=4 asama=2 phase=work oyuncu=(-1.351214, 0.202663, 8.193217)
+PILOT20KARE an_04_onarim_asama2.jpg repair=4 asama=2 phase=work oyuncu=(-1.351263, 0.202743, 8.193614)
 PILOT20YURU bacak=gedik_siper sure=0.0 yol=0.0 takilma=0 dusme=0 etkilesim=tamam yuk= onarim=4 
 PILOT20KARE an_05_top_uyarisi_siper.jpg repair=4 asama=2 phase=work oyuncu=(-5.2, 0.000391, 9.3)
 PILOT20YURU siperde_devrilme=0 onarim=3
@@ -50,7 +50,7 @@ PILOT20YURU bacak=gedik_depo_7 sure=0.0 yol=0.0 takilma=0 dusme=0 etkilesim=tama
 PILOT20YURU bacak=depo_gedik_8 sure=0.0 yol=0.0 takilma=0 dusme=0 etkilesim=tamam yuk=earth onarim=5 
 PILOT20YURU bacak=gedik_depo_8 sure=0.0 yol=0.0 takilma=0 dusme=0 etkilesim=tamam yuk= onarim=6 
 PILOT20YURU bacak=depo_gedik_9 sure=0.0 yol=0.0 takilma=0 dusme=0 etkilesim=tamam yuk= onarim=6 
-PILOT20KARE an_06_onarim_asama3.jpg repair=6 asama=3 phase=work oyuncu=(-1.366333, 0.214935, 8.321032)
+PILOT20KARE an_06_onarim_asama3.jpg repair=6 asama=3 phase=work oyuncu=(-1.366333, 0.214786, 8.321031)
 PILOT20YURU bacak=gedik_depo_9 sure=0.0 yol=0.0 takilma=0 dusme=0 etkilesim=tamam yuk= onarim=6 
 PILOT20YURU bacak=depo_gedik_10 sure=0.0 yol=0.0 takilma=0 dusme=0 etkilesim=tamam yuk=plank onarim=6 
 PILOT20YURU bacak=gedik_depo_10 sure=0.0 yol=0.0 takilma=0 dusme=0 etkilesim=tamam yuk= onarim=7 
@@ -61,16 +61,22 @@ PILOT20YURU bacak=gedik_depo_12 sure=0.0 yol=0.0 takilma=0 dusme=0 etkilesim=tam
 PILOT20YURU bacak=depo_gedik_son sure=0.0 yol=0.0 takilma=0 dusme=0 etkilesim=tamam yuk=plank onarim=9 
 PILOT20KARE an_07_onarim_asama4.jpg repair=9 asama=4 phase=work oyuncu=(-1.366333, 0.271804, 8.650857)
 PILOT20KARE an_08_cit_sehir_tarafindan.jpg repair=9 asama=4 phase=work oyuncu=(-6.0, 0.000391, 5.6)
-PILOT20KARE an_09_hucum_baslangici.jpg repair=9 asama=4 phase=assault oyuncu=(0.175691, 0.463568, 9.760813)
+PILOT20KARE an_09_hucum_baslangici.jpg repair=9 asama=4 phase=assault oyuncu=(0.174421, 0.466881, 9.790436)
 PILOT20YURU bacak=gedik_oksandigi sure=0.0 yol=0.0 takilma=0 dusme=0 etkilesim=tamam yuk= onarim=9 
 PILOT20KARE an_10_ok_sandigi.jpg repair=9 asama=4 phase=assault oyuncu=(-16.00333, 0.115329, 2.607508)
 PILOT20YURU bacak=oksandigi_okcular sure=0.0 yol=0.0 takilma=0 dusme=0 etkilesim=tamam yuk=arrows onarim=9 
 PILOT20KARE an_11_okcular.jpg repair=9 asama=4 phase=assault oyuncu=(-9.0, 0.000391, 9.4)
 PILOT20YURU bacak=okcular_gedik_duello sure=0.0 yol=0.0 takilma=0 dusme=0 etkilesim=tamam yuk= onarim=9 
 RALLY scene=chapter20.tscn allies=3 foes=0 cands=4
-PILOT20KARE an_12_duello.jpg repair=9 asama=4 phase=assault oyuncu=(-0.679275, 0.428268, 9.620498)
+PILOT20KARE an_12_duello.jpg repair=9 asama=4 phase=assault oyuncu=(-0.595861, 0.428632, 9.612994)
 FINISHER kind=slash cam=third
-WAVERUNNER wave=1/2 won=true t=15.0 pw=0.28 foe_dmg=18.0 allies=3+0 rally_foes=0 thrown=0
-RALLY scene=chapter20.tscn allies=4 foes=0 cands=1
-PILOT20KARE an_13_dalga2_baslangic.jpg repair=9 asama=4 phase=assault oyuncu=(-0.368756, 0.440865, 9.678802)
-KARE_BITTI rc=124 --chapter=20 --autotest=kare
+WAVERUNNER wave=1/2 won=true t=14.1 pw=0.28 foe_dmg=18.0 allies=3+0 rally_foes=0 thrown=0
+RALLY scene=chapter20.tscn allies=4 foes=0 cands=2
+PILOT20KARE an_13_dalga2_baslangic.jpg repair=9 asama=4 phase=assault oyuncu=(-0.052459, 0.388202, 9.203609)
+PILOT20KARE an_14_dalga2_orta.jpg repair=9 asama=4 phase=assault oyuncu=(1.887584, 0.215155, 8.650208)
+PILOT20KARE BITTI
+WARNING: ObjectDB instances leaked at exit (run with --verbose for details).
+     at: cleanup (core/object/object.cpp:2378)
+ERROR: 2 resources still in use at exit (run with --verbose for details).
+   at: clear (core/io/resource.cpp:614)
+KARE_BITTI rc=0 --chapter=20 --autotest=kare
