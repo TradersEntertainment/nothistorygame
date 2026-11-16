@@ -67,7 +67,7 @@ Bölüm 20 (`sonra/c20`): an_11 (sur dibinden 2 m, gece) ÖNCE parlak pembe blok
 taş, soluk tuğla — **oyuncak değil**. an_03 (240,430) koyu kutu yok (aşağıda). Öbür anlar sur gece tonunda, kutu/havada yok.
 
 Bölüm 0 (`sonra/c0`): an_01 açılış: ÖNCE bembeyaz parlak sur → SONRA gece tonunda koyu taş, hatıl soluk — **oyuncak değil**. an_05:
-gedik fıçıları yuvarlak (bkz. "hâlâ kötü").
+gedik fıçıları yuvarlak, koyu kahve tahta, çemberli; sur koyu taş (ÖNCE pembe-beyaz) — **oyuncak değil**.
 
 ## 2. Tur 9 kalanları
 | madde | durum | kare / not |
@@ -101,11 +101,11 @@ gedik fıçıları yuvarlak (bkz. "hâlâ kötü").
 | c25 an_04 | 2069 | 2065 | −0,2% | 3 266 878 | 3 268 486 | +0,0% |
 | c25 an_05 | 592 | 556 | −6,1% | 786 248 | 721 273 | −8,3% |
 | c25 an_06 | 1888 | 1880 | −0,4% | 3 058 201 | 3 027 249 | −1,0% |
-| c0 an_01 | 8314 | 8320 | +0,1% | 10 039 460 | 10 054 508 | +0,1% |
-| c0 an_02 | 7011 | 7060 | +0,7% | 9 305 065 | 9 396 554 | +1,0% |
-| c0 an_03 | 7396 | 7385 | −0,1% | 11 429 386 | 11 421 100 | −0,1% |
-| c0 an_04 | 7988 | 8022 | +0,4% | 10 410 699 | 10 443 547 | +0,3% |
-| c0 an_05 | 5264 | 5229 | −0,7% | 8 659 710 | 8 626 806 | −0,4% |
+| c0 an_01 | 8314 | 8310 | −0,0% | 10 039 460 | 10 046 582 | +0,1% |
+| c0 an_02 | 7011 | 7044 | +0,5% | 9 305 065 | 9 341 639 | +0,4% |
+| c0 an_03 | 7396 | 7365 | −0,4% | 11 429 386 | 11 390 754 | −0,3% |
+| c0 an_04 | 7988 | 7905 | −1,0% | 10 410 699 | 10 352 766 | −0,6% |
+| c0 an_05 | 5264 | 5192 | −1,4% | 8 659 710 | 8 594 256 | −0,8% |
 | yakın gece y1 | 65 | 65 | 0 | 251 494 | 255 880 | +1,7% |
 | yakın gece y2 | 164 | 164 | 0 | 321 853 | 328 497 | +2,1% |
 | yakın gece y4 | 129 | 129 | 0 | 280 271 | 286 915 | +2,4% |
@@ -139,7 +139,7 @@ gürültü örneği) yazılımsal GL'de ölçülmedi; kare süresi gerçek GPU'd
   dibi koyu paneller: bu turda yapılmadı.
 - Blakherna: şehirde gündüz, `gorsel_dil` karşıtlık sıkıştırması altında değişim az; kara suru ile üst üste binme (hat) aynı.
 - Gedik onarımının fıçıları (taşıma oturumunun aşama parçası) `_barrel` ortak olduğu için onlar da yeni fıçı oldu (çarpışma aynı);
-  Bölüm 0 an_05'te gece koyu okunuyor (son renk ayarı karede: `sonra/c0/an_05`).
+  son renk ayarıyla Bölüm 0 an_05'te koyu kahve tahta, çemberli (`sonra/c0/an_05`).
 - y3 kule kapısı kamerası kule geçidinin içini çekiyor (kule yüzü ışını kapının üstünde de geçide denk geliyor).
 - Gerçek GPU'da kare süresi ölçülmedi.
 

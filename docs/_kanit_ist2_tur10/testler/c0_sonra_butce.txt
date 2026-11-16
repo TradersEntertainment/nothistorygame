@@ -1,0 +1,7 @@
+TASIMA0KARE an_01_acilis.jpg kamera=(-8.6, 1.6, 4.4) cizim=8310 ilkel=10046582 sur=yeni
+TASIMA0KARE an_02_kosu_orta.jpg kamera=(-4.6, 1.6, 7.5) cizim=7044 ilkel=9341639 sur=yeni
+TASIMA0KARE an_03_teslim_savunucular.jpg kamera=(0.2, 1.9, 8.6) cizim=7365 ilkel=11390754 sur=yeni
+TASIMA0KARE an_04_sabit_bakis.jpg kamera=(-6.0, 1.6, 6.0) cizim=7905 ilkel=10352766 sur=yeni
+TASIMA0KARE an_05_gun.jpg kamera=(0.2, 1.9, 8.6) cizim=5192 ilkel=8594256 sur=yeni
+TASIMA0KARE an_06_donma.jpg kamera=(1.2, 1.5, 9.5) cizim=3940 ilkel=5510390 sur=yeni
+TASIMA0KARE BITTI
