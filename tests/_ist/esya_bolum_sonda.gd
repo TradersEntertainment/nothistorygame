@@ -7,6 +7,7 @@ var sec := 0
 var yer := Vector2.INF
 var olc := false
 var donma := false
+var olc_n := 240
 var cam: Camera3D
 var _kam_xf := Transform3D.IDENTITY
 
@@ -23,6 +24,7 @@ func _ready() -> void:
 				var p := kv[1].split(",")
 				yer = Vector2(float(p[0]), float(p[1]))
 			"olc": olc = true
+			"olc_n": olc_n = int(kv[1])
 			"donma": donma = true
 	if dir != "":
 		DirAccess.make_dir_recursive_absolute(dir)
@@ -258,7 +260,7 @@ func _kaydet(ad: String, cumle: String) -> void:
 
 func _olc() -> void:
 	var ef := EsyaFizik.ben()
-	var a := await _olc_pencere(240)
+	var a := await _olc_pencere(olc_n)
 	print("ESYABOLUM OLC dururken betik_ms=%.3f fizik_ms=%.3f cizim=%d kare_ms=%.2f esya=%d kapali=%s" % [a[0], a[1], a[2], a[3], ef.items.size() if ef else 0, EsyaFizik.KAPALI])
 	if ef == null or EsyaFizik.KAPALI:
 		return
@@ -270,7 +272,7 @@ func _olc() -> void:
 		pl.global_position = ef._merkez(e) - (sec_["yon"] as Vector3) * 1.3
 		pl.face(ef._merkez(e))
 		EsyaFizik.darbe(pl, ef._merkez(e), 0.75)
-		var b := await _olc_pencere(60)
+		var b := await _olc_pencere(maxi(8, olc_n / 4))
 		print("ESYABOLUM OLC tekme betik_ms=%.3f fizik_ms=%.3f cizim=%d kare_ms=%.2f en_kotu_kare_ms=%.2f" % [b[0], b[1], b[2], b[3], b[4]])
 	# 12 gövde aynı anda uyanık: oyuncuya en yakın 12 uyuyan eşya
 	var pl2 := _oyuncu()
@@ -283,7 +285,7 @@ func _olc() -> void:
 		var e: Dictionary = uy[i][1]
 		ef._uyandir(e)
 		ef._itki(e, Vector3(randf_range(-1, 1), 0.6, randf_range(-1, 1)).normalized() * 40.0, Vector3(0, 0.2, 0))
-	var c := await _olc_pencere(40)
+	var c := await _olc_pencere(maxi(8, olc_n / 6))
 	print("ESYABOLUM OLC 12uyanik=%d betik_ms=%.3f fizik_ms=%.3f cizim=%d kare_ms=%.2f en_kotu_kare_ms=%.2f" % [ef.uyanik.size(), c[0], c[1], c[2], c[3], c[4]])
 	var t := 0.0
 	while not ef.uyanik.is_empty() and t < 15.0:
