@@ -168,6 +168,11 @@ func _korkuluk() -> void:
 		kes.append(BLAK.mazgal_araligi(g))
 	BLAK.korkuluk_dis(_gor, -60.0, 60.0, 0, 120 * 13, kes, dissiz)
 	load("res://scripts/world/ist/sur_doku.gd").uygula(_gor, 0)
+	# çizim bütçesi: sur, kuleler, merdiven, zemin, saray malzeme malzeme tek ağ (eski set ≈ 470 ayrı ağ)
+	var nb: int = BLAK.birlestir(_gor, "BlakBirlesik")
+	var saray := get_node_or_null("BlakSaray") as Node3D
+	var ns: int = BLAK.birlestir(saray, "BlakSarayBirlesik") if saray else 0
+	print("BLAKSET birlestir sur=%d saray=%d" % [nb, ns])
 
 ## Yürüyüş yolunun korkulukları: dış kenarda (merdiven açıklıkları hariç) ve iç kenarda (merdiven başı hariç)
 func build_guards(gaps: Array, inner_open := true) -> void:

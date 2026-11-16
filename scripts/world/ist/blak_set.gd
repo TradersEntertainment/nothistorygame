@@ -226,3 +226,59 @@ static func zemin(n: Node3D, x0: float, x1: float, z0: float, z1: float, y: floa
 ## Görünen zeminin yüksekliği (sur_gorunus._levha'nın levha içi engebesi, uzat 0): ±1,6 cm. Çarpışma düz (y 0).
 static func zemin_y(x: float, z: float) -> float:
 	return (GOR.gn(x, z, 5.0, 7) - 0.5) * 0.032
+
+
+## Çizim bütçesi: kökün altındaki görünen ağları MALZEMEYE göre tek ağda birleştirir (aynı malzeme nesnesi = tek çizim;
+## kule taşları, korkuluk, merdiven, saray kutuları, ışıklı pencereler kendi malzemeleriyle). Katı gövdenin çocuğu olan ağ
+## kaldırılırsa gövde "görünür katı" sayılır (meta "wall": Unclip/düellocu düşüşü eskisi gibi). Kişi, çoklu ağ, özel sınır
+## kutulu (kumaş) ve yalnız-çarpışma düğümleri dokunulmaz. Dönen: birleştirilen ağ sayısı.
+static func birlestir(root: Node3D, ad: String) -> int:
+	var gruplar := {}
+	var sira: Array = []
+	var say := 0
+	for c in root.find_children("*", "MeshInstance3D", true, false):
+		var mi := c as MeshInstance3D
+		if mi.mesh == null or not mi.is_visible_in_tree() or mi.has_meta("birlesik") or mi.mesh.custom_aabb.size != Vector3.ZERO:
+			continue
+		var rel := Transform3D.IDENTITY
+		var q: Node = mi
+		var atla := false
+		while q != null and q != root:
+			if q is Person or q is MultiMeshInstance3D:
+				atla = true
+				break
+			if q is Node3D:
+				rel = (q as Node3D).transform * rel
+			q = q.get_parent()
+		if atla or q == null:
+			continue
+		for si in mi.mesh.get_surface_count():
+			var m: Material = mi.get_active_material(si)
+			if m == null:
+				continue
+			var k := "%d|%d" % [m.get_instance_id(), int(mi.cast_shadow)]
+			if not gruplar.has(k):
+				var st := SurfaceTool.new()
+				st.begin(Mesh.PRIMITIVE_TRIANGLES)
+				gruplar[k] = [st, m, mi.cast_shadow]
+				sira.append(k)
+			(gruplar[k][0] as SurfaceTool).append_from(mi.mesh, si, rel)
+		var p := mi.get_parent()
+		if p is StaticBody3D:
+			p.set_meta("wall", true)
+		p.remove_child(mi)
+		mi.queue_free()
+		say += 1
+	var i := 0
+	for k: String in sira:
+		var g: Array = gruplar[k]
+		var yeni := MeshInstance3D.new()
+		yeni.name = "%s_%d" % [ad, i]
+		yeni.mesh = (g[0] as SurfaceTool).commit()
+		yeni.material_override = g[1]
+		yeni.cast_shadow = g[2]
+		yeni.set_meta("birlesik", true)
+		yeni.set_meta("no_walk", true)
+		root.add_child(yeni)
+		i += 1
+	return say

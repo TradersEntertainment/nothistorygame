@@ -95,7 +95,9 @@ func _ready() -> void:
 	guards = WallGuard.spawn_all(self, walls.live_spots, player)
 	if GameState.autotest:
 		Engine.time_scale = 3.0
-	if GameState.shots_dir != "":
+	if GameState.autotest and GameState.autotest_variant in ["kare", "yuru"]:
+		_tasima9()
+	elif GameState.shots_dir != "":
 		_run_shots()
 	else:
 		_run()
@@ -1614,6 +1616,7 @@ func _on_interact(id: String) -> void:
 
 func _process(delta: float) -> void:
 	_t += delta
+	_t9_sure()
 
 
 # ================================================================ bölüm sonu
@@ -1879,3 +1882,55 @@ func _run_shots() -> void:
 	cv.look_at(gr.global_position + Vector3(0, 0.9, 0.8), Vector3.UP)
 	await _shot_png("c30o_captive_side.png")
 	get_tree().quit()
+
+
+# ================================================================ TAŞIMA-9 kare / yürüyüş (tests/_ist/tasima9_bot.gd)
+
+## =kare: sabit kameralardan altı an + iki yakın mazgal (0,6 m; merdivenin açıldığı mazgal); --dialogshots=<klasör>.
+## =yuru: gerçek Player botu ovadan merdiven ayağına (START → PLANT), sonra sur yolunda (merdiven tepesinden iki yana) yürür.
+func _tasima9() -> void:
+	var BOT := load("res://tests/_ist/tasima9_bot.gd")
+	var set_ad := "eski" if walls.eski else "yeni"
+	# taşıyan bölük akışta konumlanır (_carry); kare/yürüyüşte akış yok: dünyanın ortasında (surun içinde) kalmasınlar
+	for k in carriers.size():
+		carriers[k].visible = false
+		carriers[k].position = START + Vector3(-1.5 + 1.5 * k, 0, 4.0)
+	var W := Blachernae.WALK_Y
+	var Y := W + Player.EYE
+	if GameState.autotest_variant == "kare":
+		ladder.visible = true
+		emperor.visible = true
+		await BOT.kare(self, player, hud, [
+			["acilis", Vector3(10.0, 1.67, 40.0), Vector3(10.0, 8.0, 0.0), 72.0],
+			["sur_yolu_yakin", Vector3(8.0, Y, 2.9), Vector3(14.0, 12.6, 4.4), 72.0],
+			["kule", Vector3(24.0, 1.67, 24.0), Vector3(20.0, 12.0, 6.0), 72.0],
+			["merdiven", Vector3(13.0, 1.67, 15.0), Vector3(10.0, 8.0, 5.0), 72.0],
+			["saray_onu", Vector3(6.0, Y, 1.0), Vector3(0.0, 7.0, -18.0), 72.0],
+			["gece_genel", Vector3(-30.0, 24.0, 48.0), Vector3(5.0, 6.0, 0.0), 60.0],
+			["mazgal_yakin", Vector3(11.3, Y, 3.4), Vector3(11.3, 12.9, 4.6), 72.0],
+			["mazgal_merdiven", Vector3(10.35, Y, 3.2), Vector3(10.35, 11.8, 9.0), 72.0],
+		], set_ad)
+		return
+	var ust := Vector3(CLIMB_X, W + 0.05, 2.3)
+	await BOT.yuru(self, player, hud, START + Vector3(0, 0.05, 0), [
+		["ova_merdiven_ayagi", Vector3(CLIMB_X, 0.0, PLANT.z + 1.5), 0.0],
+		["sur_dogu", Vector3(15.0, W, 2.3), W, ust],
+		["sur_bati", Vector3(-15.0, W, 2.3), W],
+		["sur_geri", Vector3(CLIMB_X, W, 2.3), W],
+	], set_ad)
+
+
+## TAŞIMA-9 süre tablosu (yalnız autotest): evre değişince bir önceki evrenin oyun süresi (ölçekli delta; eski | yeni aynı
+## komutla karşılaştırılır). Satır: T9SURE evre=<ad> sure=<sn>
+var _t9_faz := ""
+var _t9_bas := 0.0
+
+
+func _t9_sure() -> void:
+	if not GameState.autotest or phase == _t9_faz:
+		return
+	if _t9_faz != "":
+		print("T9SURE evre=%s sure=%.2f set=%s" % [_t9_faz, _t - _t9_bas, "eski" if walls.eski else "yeni"])
+	_t9_faz = phase
+	_t9_bas = _t
+
