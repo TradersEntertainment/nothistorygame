@@ -1,0 +1,12 @@
+YIGPERF kare=199 proc_ms=69.604 yig_us=0.0 aktif=0.00 en_aktif=0 en_us=0 en_proc_ms=0.00 en_pay=0.0000 etkin=false
+YIGPERF kare=200 proc_ms=22.973 yig_us=0.0 aktif=0.00 en_aktif=0 en_us=0 en_proc_ms=0.00 en_pay=0.0000 etkin=false
+YIGPERF kare=200 proc_ms=27.431 yig_us=0.0 aktif=0.00 en_aktif=0 en_us=0 en_proc_ms=0.00 en_pay=0.0000 etkin=false
+YIGPERF kare=198 proc_ms=49.176 yig_us=0.0 aktif=0.00 en_aktif=0 en_us=0 en_proc_ms=0.00 en_pay=0.0000 etkin=false
+YIGILMAAUDIT klip scene=Chapter20 who=Person/@Node3D@33079(@Node3D@33080) at=(-8.1, 0.1, 9.7) bas=+0.29 govde=+0.21 govde=+0.13 el_l=+0.33 el_r=+0.35 ayak_l=+0.21 ayak_r=+0.25
+YIGILMAAUDIT klip scene=Chapter20 who=Person/@Node3D@33205(@Node3D@33206) at=(-6.0, 0.1, 11.9) bas=+0.30 govde=+0.22 govde=+0.14 el_l=+0.34 el_r=+0.37 ayak_l=+0.22 ayak_r=+0.16
+YIGPERF kare=200 proc_ms=43.871 yig_us=0.0 aktif=0.00 en_aktif=0 en_us=0 en_proc_ms=0.00 en_pay=0.0000 etkin=false
+YIGILMAAUDIT klip scene=Chapter20 who=Person/@Node3D@34101(@Node3D@34102) at=(-5.8, 0.0, 12.0) bas=+0.22 govde=+0.14 el_l=+0.26 el_r=+0.29 ayak_l=+0.14 ayak_r=+0.19
+YIGILMAAUDIT klip scene=Chapter20 who=Person/@Node3D@34235(@Node3D@34236) at=(-8.6, 0.3, 13.5) bas=+0.22 govde=+0.12 el_l=+0.30 el_r=+0.62 ayak_l=+0.11 ayak_r=+0.16
+YIGILMAAUDIT klip scene=Chapter20 who=Person/@Node3D@34712(@Node3D@34713) at=(-4.1, 0.2, 13.2) bas=+0.16 govde=+0.11 el_l=+0.25 el_r=-0.42 ayak_l=+0.09
+YIGPERF kare=200 proc_ms=44.215 yig_us=0.0 aktif=0.00 en_aktif=0 en_us=0 en_proc_ms=0.00 en_pay=0.0000 etkin=false
+AUTOTEST PASS chapter=20 variant=idle outcome=20.3 repair=10 knocks=0 arrows=true gun=3/4 gunner=5/5 niko=0 sur=yeni

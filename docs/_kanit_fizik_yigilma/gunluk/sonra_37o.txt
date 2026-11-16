@@ -1,0 +1,8 @@
+YIGPERF kare=202 proc_ms=61.673 yig_us=0.0 aktif=0.00 en_aktif=0 en_us=0 en_proc_ms=0.00 en_pay=0.0000 etkin=true
+YIGPERF kare=200 proc_ms=32.362 yig_us=0.0 aktif=0.00 en_aktif=0 en_us=0 en_proc_ms=0.00 en_pay=0.0000 etkin=true
+YIGPERF kare=201 proc_ms=24.299 yig_us=0.0 aktif=0.00 en_aktif=0 en_us=0 en_proc_ms=0.00 en_pay=0.0000 etkin=true
+YIGPERF kare=200 proc_ms=17.970 yig_us=0.0 aktif=0.00 en_aktif=0 en_us=0 en_proc_ms=0.00 en_pay=0.0000 etkin=true
+YIGPERF kare=199 proc_ms=38.254 yig_us=143.8 aktif=0.50 en_aktif=2 en_us=1705 en_proc_ms=56.87 en_pay=0.0885 etkin=true
+POSEAUDIT tilt @Node3D@20986 90  (Chapter37o/@Node3D@26496)
+YIGPERF kare=201 proc_ms=35.877 yig_us=0.0 aktif=0.00 en_aktif=0 en_us=0 en_proc_ms=0.00 en_pay=0.0000 etkin=true
+AUTOTEST PASS chapter=37o variant= outcome=37O.1 beats=12/16 arrows=0 falls=0 barrels=5/5 cuts=0 stones=0 slips=0 burns=0 duel=true caught=0 sur=yeni

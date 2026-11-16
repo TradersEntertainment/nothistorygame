@@ -1,0 +1,5 @@
+YIGPERF kare=199 proc_ms=92.421 yig_us=0.0 aktif=0.00 en_aktif=0 en_us=0 en_proc_ms=0.00 en_pay=0.0000 etkin=false
+YIGPERF kare=200 proc_ms=43.229 yig_us=0.0 aktif=0.00 en_aktif=0 en_us=0 en_proc_ms=0.00 en_pay=0.0000 etkin=false
+YIGILMAAUDIT klip scene=Chapter22o who=Person/@Node3D@32200(@Node3D@32201) at=(-0.9, -3.5, 46.0) bas=+0.24 govde=+0.12 el_l=+0.27 el_r=+0.32 ayak_l=+0.14 ayak_r=+0.18
+YIGILMAAUDIT klip scene=Chapter22o who=Person/@Node3D@32064(@Node3D@32065) at=(0.6, -3.6, 60.3) bas=+0.16 el_l=+0.19 el_r=+0.22 ayak_r=+0.12
+AUTOTEST PASS chapter=22o variant= outcome=22O.1 saved=3 gun=3/4 warn=3 carry=0.75

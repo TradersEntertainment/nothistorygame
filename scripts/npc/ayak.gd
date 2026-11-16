@@ -333,6 +333,9 @@ func _az_sifirla() -> void:
 ## ebeveyn uzayında yükseklik ve normal.
 var _zy := 0.0
 var _zn := Vector3.UP
+var _dik := false
+## Fizik-yığılma turunun ayak düzeltmeleri (dik moloz topuk-burun, yokuş aşağı koşu); ÖNCE ölçümünde `--yigilma=0` kapatır
+static var yeni := not (OS.get_cmdline_user_args().has("--yigilma=0"))
 
 
 func _zemin(p: Vector3, ref_y: float) -> bool:
@@ -355,7 +358,8 @@ func _zemin(p: Vector3, ref_y: float) -> bool:
 		var inv := par_t.affine_inverse()
 		_zy = (inv * (h["position"] as Vector3)).y
 		_zn = (inv.basis * (h["normal"] as Vector3)).normalized()
-		if _zn.y < 0.55:      # duvar yüzü/çok dik: düz say (bacak 56°'den dik eğime basmaz)
+		_dik = _zn.y < 0.55
+		if _dik:      # duvar yüzü/çok dik: düz say (bacak 56°'den dik eğime basmaz); _zemin_ayak topuk-burunla bakar
 			_zn = Vector3.UP
 		return true
 	return false
@@ -373,8 +377,39 @@ func _zemin_ayak(s: int, p: Vector3, ref_y: float, delta: float, esik := 0.06) -
 	if _g_ok[s]:
 		_g_y[s] = _zy
 		_g_n[s] = _zn
+		if _dik and yeni:
+			_dik_taban(s, p, ref_y)
 	else:
 		_g_t[s] = 0.25      # bulunamadı (ilk kare, kenar): kısa sürede yeniden
+
+
+## Dik moloz yüzü (taban ortasının altındaki yüz > 56°): topuk ve burun altına iki ışın daha; taban ikisinin arasına yatar
+## (en çok ±0,6 rad), yükseklik ikisinin yükseği (ne burun ne topuk taşa girer). Eskiden taban düz sayılıyor, burun ya da
+## topuk 10–12 cm gömülüyordu (37o =trespass). Yalnız dik yüzde: ışın ×3 o ayakta.
+func _dik_taban(s: int, p: Vector3, ref_y: float) -> void:
+	var fw := (rig.owner.transform.basis.z * Vector3(1, 0, 1))
+	if fw.length() < 0.01:
+		return
+	fw = fw.normalized()
+	var mid := _zy
+	var yh := NAN
+	var yt := NAN
+	if _zemin(p - fw * 0.11, ref_y):
+		yh = _zy
+	if _zemin(p + fw * 0.11, ref_y):
+		yt = _zy
+	if is_nan(yh) or is_nan(yt):
+		_g_y[s] = maxf(mid, yt if not is_nan(yt) else (yh if not is_nan(yh) else mid))
+		return
+	var a := atan2(yt - yh, 0.22)
+	var ac := clampf(a, -0.6, 0.6)
+	# eğim ileriye: normal öne/arkaya yatar (ebeveyn uzayında, kişinin önü fw)
+	_g_n[s] = (Vector3.UP * cos(ac) - fw * sin(ac)).normalized()
+	# Taban topuk ve buruna değer; sınırda (tam yatamaz) yüksek ucu taşa girmez; ortası çıkıksa ortaya basar
+	var y := (yh + yt) * 0.5
+	if absf(a) > 0.6:
+		y = maxf(yh, yt) - 0.11 * tan(0.6)
+	_g_y[s] = maxf(mid, y)
 
 
 func _coz(delta: float, yuru: bool) -> void:
@@ -482,7 +517,9 @@ func _coz(delta: float, yuru: bool) -> void:
 			# (taban tam düz değil): kalça adım uzunluğunun ancak bir kısmı kadar iner (yoksa her adımda çöküyordu)
 			if not _planted[s]:
 				continue
-			hd *= 0.6
+			# Yokuş aşağı (basan ayak kökün altında): yuvarlanma payı azalır, kalça yetişecek kadar iner (hızlı inişte
+			# adım ucunda taban 3–5 cm havada kalıyordu)
+			hd *= lerpf(0.6, 0.9, clampf(-al.y / 0.15, 0.0, 1.0)) if yeni else 0.6
 		elif not _grd[s]:
 			continue
 		p_t = minf(p_t, al.y + sqrt(maxf(R * R - hd * hd, 0.0)) - h.y)

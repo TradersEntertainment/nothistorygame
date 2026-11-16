@@ -1,0 +1,15 @@
+YIGPERF kare=148 proc_ms=206.696 yig_us=0.0 aktif=0.00 en_aktif=0 en_us=0 en_proc_ms=0.00 en_pay=0.0000 etkin=false
+YIGILMAAUDIT klip scene=Chapter26o who=Person/@Node3D@59908(@Node3D@59909) at=(14.6, 8.0, 14.6) bas=+0.10 el_l=-0.32 el_r=+0.20 ayak_l=+0.10 ayak_r=+0.12
+YIGPERF kare=175 proc_ms=105.774 yig_us=0.0 aktif=0.00 en_aktif=0 en_us=0 en_proc_ms=0.00 en_pay=0.0000 etkin=false
+YIGILMAAUDIT klip scene=Chapter26o who=Person/@Node3D@60166(@Node3D@60445) at=(12.9, 0.0, 11.0) bas=+0.22 govde=+0.13 el_l=+0.25 el_r=+0.28 ayak_l=+0.14 ayak_r=+0.18
+YIGILMAAUDIT klip scene=Chapter26o who=Person/@Node3D@59763(@Node3D@59764) at=(22.4, 8.0, 15.5) bas=+0.19 govde=+0.10 el_l=+0.22 ayak_l=+0.11 ayak_r=+0.15
+YIGILMAAUDIT klip scene=Chapter26o who=Person/@Node3D@62996(@Node3D@62997) at=(12.2, 8.0, 14.6) bas=+0.19 govde=+0.10 el_r=+0.25 ayak_l=+0.11 ayak_r=+0.15
+YIGILMAAUDIT klip scene=Chapter26o who=Person/@Node3D@62855(@Node3D@62856) at=(21.9, 8.0, 15.6) bas=+0.19 govde=+0.10 el_l=+0.22 ayak_l=+0.11 ayak_r=+0.15
+YIGPERF kare=188 proc_ms=102.221 yig_us=0.0 aktif=0.00 en_aktif=0 en_us=0 en_proc_ms=0.00 en_pay=0.0000 etkin=false
+YIGILMAAUDIT klip scene=Chapter26o who=Person/@Node3D@63134(@Node3D@63135) at=(18.5, 0.5, 19.0) bas=+0.19 govde=+0.10 el_l=+0.74 el_r=+0.77 ayak_l=+0.62 ayak_r=+0.15
+AYAKAUDIT yakin scene=chapter26o.tscn who=Soldier/@Node3D@67655(Chapter26o) ayak=L fark=-0.27 d=13.2 at=(-5.8, 0.0, 11.2) durum=dur act= ik=w1.0/m1/pel-0.01/g1/gy-0.00/zemin-0.00
+YIGPERF kare=168 proc_ms=196.510 yig_us=0.0 aktif=0.00 en_aktif=0 en_us=0 en_proc_ms=0.00 en_pay=0.0000 etkin=false
+AYAKAUDIT yakin scene=chapter26o.tscn who=Soldier/@Node3D@68416(Chapter26o) ayak=R fark=-0.07 d=10.5 at=(4.2, 0.0, 11.0) durum=dur act= ik=w1.0/m1/pel+0.00/g1/gy-0.00/zemin-0.00
+YIGPERF kare=197 proc_ms=89.476 yig_us=0.0 aktif=0.00 en_aktif=0 en_us=0 en_proc_ms=0.00 en_pay=0.0000 etkin=false
+YIGPERF kare=154 proc_ms=88.961 yig_us=0.0 aktif=0.00 en_aktif=0 en_us=0 en_proc_ms=0.00 en_pay=0.0000 etkin=false
+AUTOTEST PASS chapter=26o variant= outcome=26.1 water=3 ladders=3 gun=3/4 stones=1/1 gunner=3/3 oil=1/1 turgut=no

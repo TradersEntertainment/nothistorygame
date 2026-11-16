@@ -1,0 +1,12 @@
+YIGPERF kare=202 proc_ms=56.107 yig_us=0.0 aktif=0.00 en_aktif=0 en_us=0 en_proc_ms=0.00 en_pay=0.0000 etkin=false
+AYAKAUDIT uzak scene=chapter37o.tscn who=Person/@Node3D@22193(@Node3D@21936) ayak=R fark=+0.16 d=31.8 at=(2.2, 0.4, 8.900001) durum=yuru act= ik=w0.0/m0/pel+0.00/g0/gy-0.21/zemin+0.03
+YIGPERF kare=201 proc_ms=25.817 yig_us=0.0 aktif=0.00 en_aktif=0 en_us=0 en_proc_ms=0.00 en_pay=0.0000 etkin=false
+YIGPERF kare=200 proc_ms=19.670 yig_us=0.0 aktif=0.00 en_aktif=0 en_us=0 en_proc_ms=0.00 en_pay=0.0000 etkin=false
+YIGPERF kare=200 proc_ms=20.168 yig_us=0.0 aktif=0.00 en_aktif=0 en_us=0 en_proc_ms=0.00 en_pay=0.0000 etkin=false
+YIGILMAAUDIT klip scene=Chapter37o who=Person/@Node3D@25018(@Node3D@25019) at=(-0.9, 0.0, 18.8) bas=+0.40 govde=+0.19 el_l=+0.38 el_r=+0.18 ayak_l=+0.21 ayak_r=+0.20
+YIGILMAAUDIT klip scene=Chapter37o who=Person/@Node3D@25163(@Node3D@25164) at=(1.1, 1.0, 16.9) govde=+0.08 el_l=+0.12 el_r=+0.57 ayak_l=+0.35 ayak_r=+0.31
+YIGPERF kare=200 proc_ms=49.665 yig_us=0.0 aktif=0.00 en_aktif=0 en_us=0 en_proc_ms=0.00 en_pay=0.0000 etkin=false
+YIGILMAAUDIT klip scene=Chapter37o who=Person/@Node3D@25292(@Node3D@25293) at=(4.7, -1.7, 18.8) bas=+0.14 govde=+0.87 govde=+1.50 el_l=+0.15 el_r=+0.57 ayak_l=+1.68 ayak_r=+1.64
+POSEAUDIT tilt @Node3D@20986 90  (Chapter37o/@Node3D@26517)
+YIGPERF kare=200 proc_ms=32.871 yig_us=0.0 aktif=0.00 en_aktif=0 en_us=0 en_proc_ms=0.00 en_pay=0.0000 etkin=false
+AUTOTEST PASS chapter=37o variant=trespass outcome=37O.1 beats=12/16 arrows=0 falls=0 barrels=5/5 cuts=0 stones=0 slips=0 burns=0 duel=true caught=1 sur=yeni

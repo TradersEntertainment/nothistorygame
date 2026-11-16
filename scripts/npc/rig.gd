@@ -172,6 +172,8 @@ func update(delta: float, talking: bool, busy: bool, ext := true) -> void:
 		ayak.geri_al()
 	if Ayak.olc_acik:
 		Ayak.olc_tick()
+	if Yigilma.olc_acik:
+		Yigilma.olc_tick()
 	yuruyor = false
 	_update_core(delta, talking, busy)
 	if ext:
@@ -192,6 +194,7 @@ func update(delta: float, talking: bool, busy: bool, ext := true) -> void:
 ## yakın karede kurulur). yuruyor: bu karede yürüyüş salınımı kuruldu. faz_hiz: yürüyüş evresinin hızı (rad/sn).
 const Ayak := preload("res://scripts/npc/ayak.gd")
 const AyakDenet := preload("res://scripts/npc/ayak_denet.gd")
+const Yigilma := preload("res://scripts/npc/yigilma.gd")
 var ayak: Ayak
 var yuruyor := false
 var faz_hiz := 0.0
@@ -528,6 +531,31 @@ func _shield_arms(k: float) -> void:
 
 
 ## Dönüşün x ve z'si tek yazışta; ikisi de yerindeyse hiç yazılmaz
+## Havada savrulan/düşen (activity "fall"; patlamada, surdan, merdivenden): kollar yukarı savrulur ve çırpınır, bacaklar
+## ayrı ayrı tepinir, gövde geriye kaykılır, baş geride. Kişiden kişiye evre ve genlik farklı (aynı kalıp tahta duruş
+## değil). Zaman durunca (donma karesi) o anki duruşta kalır. Eski: tek sabit duruş (STATIC_POSES "fall").
+func _savrulma(k: float) -> void:
+	var sd := float(owner.get_instance_id() % 997) if owner else 0.0
+	var ph := sd * 0.37
+	var a := 0.7 + fmod(sd * 0.13, 0.5)
+	var t := _t * (7.5 + fmod(sd, 3.0))
+	body.rotation.x = lerpf(body.rotation.x, -0.3 - 0.15 * sin(t * 0.5 + ph), k)
+	body.rotation.z = lerpf(body.rotation.z, 0.12 * sin(ph), k)
+	if leg_l:
+		leg_l.rotation = leg_l.rotation.lerp(Vector3(-0.7 + sin(t + ph) * 0.55 * a, 0, -0.18 - 0.1 * sin(t * 0.7)), k)
+	if leg_r:
+		leg_r.rotation = leg_r.rotation.lerp(Vector3(0.1 + sin(t + ph + PI) * 0.55 * a, 0, 0.18 + 0.1 * sin(t * 0.8)), k)
+	_knee(knee_l, 0.8 + 0.5 * sin(t * 1.3 + ph), k)
+	_knee(knee_r, 0.5 + 0.5 * sin(t * 1.3 + ph + 2.0), k)
+	arm_l.rotation = arm_l.rotation.lerp(Vector3(-2.3 + sin(t * 1.1 + ph) * 0.8 * a, 0, -0.55 - 0.35 * sin(t * 0.9 + ph)), k)
+	arm_r.rotation = arm_r.rotation.lerp(Vector3(-2.0 + sin(t * 1.1 + ph + 2.4) * 0.8 * a, 0, 0.55 + 0.35 * sin(t * 0.8)), k)
+	_elbow(elbow_l, -0.4 - 0.5 * (0.5 + 0.5 * sin(t * 1.7 + ph)), k)
+	_elbow(elbow_r, -0.4 - 0.5 * (0.5 + 0.5 * sin(t * 1.5 + ph + 1.0)), k)
+	if head:
+		head.rotation = head.rotation.lerp(Vector3(-0.35, 0.2 * sin(ph), 0), k)
+	body.position.y = lerpf(body.position.y, 0.0, k)
+
+
 func _set_xz(n: Node3D, x: float, z: float) -> void:
 	var r := n.rotation
 	if absf(r.x - x) + absf(r.z - z) > 0.0004:
@@ -625,6 +653,9 @@ func _activity(delta: float, talking: bool, k: float) -> bool:
 	var t := _t
 	# Hücum pozları (Crowd ile pişirilir; merdivendekiler canlı): run_a/run_b koşu adımının iki ucu, leap siperden
 	# ya da hendek kenarından sıçrayış, climb_a/climb_b merdivende sırayla el ve ayak.
+	if activity == "fall" and Yigilma.etkin:
+		_savrulma(clampf(k * 2.5, 0.0, 1.0))
+		return true
 	if STATIC_POSES.has(activity):
 		var sp: Array = STATIC_POSES[activity]
 		body.rotation.x = lerpf(body.rotation.x, sp[0], k)
