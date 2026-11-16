@@ -40,6 +40,8 @@ static var _rng := RandomNumberGenerator.new()
 static var _meshes := {}
 ## Ölçüm (--kumas-olc; KUMASPERF): kare başına süre ve kişi sayısı
 static var olc_acik := false
+## Tanı (--kumas-dbg): salınım 0,15 m'yi aşınca bir satır (KUMASDBG)
+static var dbg := false
 static var olc_us := 0
 static var olc_n := 0
 static var _olc_frame := -1
@@ -55,6 +57,8 @@ static func ayarla() -> void:
 			etkin = false
 		elif a == "--kumas-olc":
 			olc_acik = true
+		elif a == "--kumas-dbg":
+			dbg = true
 
 
 ## Kumaş gölgelendiricili köşe renkli malzeme (CharKit.vc_mat'ın eşi); outline: dış hat (aynı bükümle)
@@ -289,6 +293,9 @@ func _coz(dt: float, gp: Vector3) -> void:
 	if _s.length() > 0.34:
 		_s = _s.limit_length(0.34)
 		_sv *= 0.5
+	if dbg and _s.length() > 0.15:
+		print("KUMASDBG %s/%s s=%s hedef=%s a_l=%s v=%s dt=%.3f g=%s act=%s" % [o.get_class() if o.get_script() == null else (o.get_script() as Script).get_global_name(),
+			o.name, _s, hedef, a_l, _lv, dt, g_l, rig.activity])
 	# Dönüş: burulma (gecikme) ve açılma
 	var yaw := o.global_rotation.y
 	var w := 0.0

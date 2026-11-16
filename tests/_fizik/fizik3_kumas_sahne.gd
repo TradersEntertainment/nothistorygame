@@ -75,6 +75,14 @@ func _ready() -> void:
 	# 6. merdiven çıkan kaftanlı
 	var mer := _kisi("merdiven", Vector3(13.4, 0, 0.8), 0.0, kaftan.merged({"robe": Color("5a3a6a"), "coat": Color("5a3a6a")}, true))
 	_yuru(mer, Vector3(13.4, 0, 0.8), Vector3(13.4, 0, 5.0), 1.0)
+	# 8. oturan börklü (Person "bork": enseye düşen yatırtma) ve oturan börklü asker
+	var bk := _kisi("bork_otur", Vector3(16, 0, 10), 90.0, {"coat": Color("c8262f"), "pants": Color("f0eadc"), "hat": "bork"})
+	bk.set_activity("sit_ground")
+	var sb := Soldier.new(Color("b3262d"), "stand", "bork")
+	add_child(sb)
+	sb.position = Vector3(18, 0, 10)
+	sb.rotation.y = deg_to_rad(90.0)
+	_subj["bork_asker"] = sb
 	# 7. yokuşta duran kadın (etek)
 	_kisi("etek_yokus", Vector3(-10.5, 0, 4.0), 90.0, {"coat": Color("c98a3a"), "pants": Color("7a3a5a"), "skirt": true, "hat": "bun"})
 	var kal := 0
@@ -116,6 +124,9 @@ func _ready() -> void:
 	await _dizi("bagdas_yan", "bagdas", "yan", 2.6)
 	await _dizi("merdiven_yan", "merdiven", "yan", 3.0)
 	await _dizi("etek_yokus_yan", "etek_yokus", "yan", 2.8)
+	await _dizi("bork_otur_yan", "bork_otur", "yan", 2.2)
+	await _dizi("bork_otur_arka", "bork_otur", "arka", 2.2)
+	await _dizi("bork_asker_yan", "bork_asker", "yan", 2.2)
 	# Yığılan: vurulur, 6 kare
 	var yg := _subj["yigilan"] as Person
 	yg.shot(yg.global_position + yg.global_basis.z * 3.0 + Vector3(0, 1.3, 0))
