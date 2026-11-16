@@ -290,7 +290,16 @@ func _toz(size: float) -> void:
 		if col.get_normal().y > 0.6:
 			at.y = col.get_position().y
 			break
-	Vfx.dust_puff(sc, at + Vector3(0, 0.08, 0), size, Color(0.72, 0.65, 0.55, 0.38))
+	# Ayağın dibinde, bakış yönüne 0,35 m kaymış (birinci şahısta ayağın tam altı kadraja girmiyor); zemine oturur
+	var ileri := -p.camera.global_transform.basis.z
+	ileri.y = 0.0
+	if ileri.length_squared() > 0.001:
+		var on := at + ileri.normalized() * 0.35
+		var q := PhysicsRayQueryParameters3D.create(on + Vector3.UP * 0.4, on + Vector3.DOWN * 0.3, p.collision_mask, [p.get_rid()])
+		var hit := p.get_world_3d().direct_space_state.intersect_ray(q)
+		if not hit.is_empty() and (hit["normal"] as Vector3).y > 0.6:
+			at = hit["position"]          # önde zemin varsa oraya (kenarın ötesinde havada toz olmaz)
+	Vfx.dust_puff(sc, at + Vector3(0, 0.08, 0), size, Color(0.72, 0.65, 0.55, 0.42))
 
 
 # ---------------------------------------------------------------- düşüş
@@ -298,8 +307,6 @@ func _toz(size: float) -> void:
 ## Bölümün kendi düşüşü (Bölüm 2 kızaktan uçuş, 44b kuyu): kollar savrulur, kamera hafifçe sarsılır, rüzgâr yükselir;
 ## bagir: Tolga'nın Bölüm 2 çığlığı (D2_T_FALL_SCREAM), süre sonunda kesilir. Akışı beklemez.
 func dusus(sure: float, bagir: bool) -> void:
-	if GameState.autotest and not GameState.pace:
-		return
 	_dis_dusus = sure
 	_dis_ciglik = bagir
 	p.flail(sure + 0.2)
