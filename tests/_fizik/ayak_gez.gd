@@ -16,6 +16,8 @@ var _sira := 0
 var _gorulen := {}
 var _mesgul := false
 var _red := {}
+var _cam_son := Transform3D()
+var _fov_son := 70.0
 
 
 func _ready() -> void:
@@ -46,33 +48,48 @@ func _process(_d: float) -> void:
 		_sira += 1
 		_cek("%s_t%02d" % [_ad(sc), int(zamanlar[_sira - 1])], true)
 		return
-	if izle and GameState.shots_dir != "" and Engine.get_process_frames() % 4 == 0:
+	if izle and GameState.shots_dir != "":
+		# Bölüm kareyi çizimden sonra kaydedip oyuncuyu hemen sonraki noktaya ışınlıyor: aday, bir önceki karenin
+		# (kaydın yapıldığı anın) oyuncu kamerasıyla seçilir
 		var d := DirAccess.open(GameState.shots_dir)
 		if d:
 			for f in d.get_files():
 				if f.begins_with("an_") and f.ends_with(".jpg") and not f.ends_with("_yan.jpg") and not _gorulen.has(f):
 					_gorulen[f] = true
-					_cek(f.get_basename(), false)
+					_cek(f.get_basename(), false, _cam_son)
 					return
+		var c := get_viewport().get_camera_3d()
+		if c:
+			_cam_son = c.global_transform
+			_fov_son = c.fov
 
 
 func _ad(sc: Node) -> String:
 	return sc.scene_file_path.get_file().get_basename()
 
 
-func _cek(ad: String, oyuncu: bool) -> void:
+func _cek(ad: String, oyuncu: bool, kam := Transform3D()) -> void:
 	_mesgul = true
 	var vp := get_viewport()
-	var cam0 := vp.get_camera_3d()
-	if cam0 == null:
+	var cam_asil := vp.get_camera_3d()
+	if cam_asil == null:
 		_mesgul = false
 		return
+	var cam0 := cam_asil
+	if kam != Transform3D():
+		# Kayıt anının kamerası (yalnız seçim ve yan yön için; çizmez)
+		cam0 = Camera3D.new()
+		cam0.fov = _fov_son
+		get_tree().current_scene.add_child(cam0)
+		cam0.global_transform = kam
 	if oyuncu:
 		await RenderingServer.frame_post_draw
 		vp.get_texture().get_image().save_jpg(dir.path_join(ad + "_oyuncu.jpg"), 0.85)
 	var c := _aday(cam0)
 	if c == null:
 		print("AYAKKARE %s aday yok %s" % [ad, _red])
+		if cam0 != cam_asil:
+			cam0.queue_free()
 		_mesgul = false
 		return
 	var cam := Camera3D.new()
@@ -90,8 +107,10 @@ func _cek(ad: String, oyuncu: bool) -> void:
 	print("AYAKKARE %s kisi=%s/%s at=%s fark=%.2f" % [ad, c.get_class() if c.get_script() == null else (c.get_script() as Script).get_global_name(),
 		c.name, c.global_position.snapped(Vector3.ONE * 0.1), _fark(c)])
 	cam.current = false
-	cam0.current = true
+	cam_asil.current = true
 	cam.queue_free()
+	if cam0 != cam_asil:
+		cam0.queue_free()
 	_mesgul = false
 
 

@@ -34,7 +34,29 @@ ayağı eğik mi durur".
 ÖNCE: aynı kod `--ayak-ik=0` (IK ve yeni kadans kapalı = tabanın davranışı). `--max-fps 20`, ekransız, `--autotest`.
 Günlükler (süzülmüş): [`gunluk/`](gunluk/). Satır: kişi-ayak başına bir kez.
 
-TABLO1
+| Bölüm | ÖNCE sonuç | ÖNCE AYAKAUDIT yakın / hepsi | SONRA sonuç | SONRA AYAKAUDIT yakın / hepsi | öteki denetim (ÖNCE → SONRA) |
+|---|---|---|---|---|---|
+| 0 | PASS | 0 / 0 | PASS | **0** / 0 | 0 → 0 |
+| 1 | PASS | 0 / 0 | PASS | **0** / 0 | 0 → 0 |
+| 2 | PASS | 0 / 0 | PASS | **0** / 0 | 0 → 0 |
+| 8y | PASS | 0 / 0 | PASS | **0** / 0 | 0 → 0 |
+| 10h | PASS | 0 / 0 | PASS | **0** / 0 | 0 → 0 |
+| 12b | PASS | 0 / 0 | PASS | **0** / 0 | 0 → 0 |
+| 20 | PASS | 3 / 3 | PASS | **0** / 0 | 0 → 0 |
+| 20:hit | PASS | 3 / 3 | PASS | **0** / 0 | 0 → 0 |
+| 20o | PASS | 2 / 2 | PASS | **0** / 0 | 0 → 0 |
+| 22o | PASS | 0 / 0 | PASS | **0** / 0 | 0 → 0 |
+| 26 | PASS | 29 / 32 | PASS | **0** / 0 | 0 → 0 |
+| 26:hold | PASS | 27 / 27 | PASS | **3** / 3 | 0 → 0 |
+| 30o | PASS | 0 / 0 | PASS | **0** / 0 | 1 → 1 |
+| 37o | PASS | 14 / 14 | PASS | **0** / 0 | 1 → 1 |
+| 37o:trespass | PASS | 9 / 9 | PASS | **2** / 2 | 1 → 1 |
+| 43o | PASS | 0 / 0 | PASS | **0** / 0 | 0 → 0 |
+| 44b | PASS | 0 / 0 | PASS | **0** / 0 | 0 → 0 |
+| 28o | PASS | 0 / 0 | PASS | **0** / 0 | 0 → 0 |
+| 24o | PASS | 0 / 0 | PASS | **0** / 0 | 0 → 0 |
+| 24 | PASS | 0 / 0 | PASS | **0** / 0 | 0 → 0 |
+| **toplam** | | **87** / 90 | | **5** / 5 | |
 
 **Kalan 5 satır (SONRA, yakın)**
 - 26 =hold, `act=hammer` (d 1,4) ve `act=chop` (d 5,4), burun 11–13 cm gömük: kişi Stage'in iş tutuşunda (`_busy`),
@@ -49,7 +71,24 @@ Otomatik testte kareler çok uzun (kare başı 40–500 ms işlem: test botu, ek
 iki koşunun işlem süresi farkı gürültü. Daha sağlam ölçü **IK'nın kendi süresi** (`Time.get_ticks_usec`, kare başı)
 ve bunun SONRA işlem süresine oranı (`--ayak-olc`, `AYAKPERF` satırları).
 
-TABLO2
+| Bölüm | ÖNCE işlem ms/kare | SONRA işlem ms/kare | fark | SONRA IK µs/kare | IK'lı kişi/kare | ışın/kare | IK payı (SONRA işlemin %) |
+|---|---|---|---|---|---|---|---|
+| 2 | 517.72 | 407.82 | -21.2% | 249 | 5.1 | 2.20 | 0.06% |
+| 8y | 79.53 | 85.48 | +7.5% | 349 | 1.9 | 0.62 | 0.41% |
+| 20 | 72.34 | 72.32 | -0.0% | 832 | 11.4 | 8.09 | 1.15% |
+| 20:hit | 76.93 | 71.35 | -7.3% | 699 | 10.3 | 6.60 | 0.98% |
+| 20o | 64.76 | 59.93 | -7.5% | 247 | 4.4 | 1.42 | 0.41% |
+| 22o | 67.83 | 60.02 | -11.5% | 383 | 4.5 | 3.43 | 0.64% |
+| 26 | 115.37 | 109.88 | -4.8% | 980 | 23.9 | 9.72 | 0.89% |
+| 26:hold | 118.23 | 114.48 | -3.2% | 1243 | 25.3 | 10.40 | 1.09% |
+| 30o | 59.60 | 65.72 | +10.3% | 96 | 3.0 | 0.62 | 0.15% |
+| 37o | 41.47 | 36.38 | -12.3% | 548 | 6.0 | 5.40 | 1.51% |
+| 37o:trespass | 42.15 | 37.82 | -10.3% | 577 | 6.0 | 5.80 | 1.53% |
+| 43o | 50.07 | 46.42 | -7.3% | 48 | 1.1 | 0.37 | 0.10% |
+| 44b | 115.38 | 81.27 | -29.6% | 2 | 0.0 | 0.03 | 0.00% |
+| 24 | 285.26 | 315.93 | +10.8% | 1071 | 22.3 | 21.75 | 0.34% |
+
+(0, 1, 10h, 12b, 28o, 24o: AYAKPERF satırı yok ya da kişi yok: koşu 10 sn'den kısa ya da Rig'li kişi görünmüyor.)
 
 **Gerçek zamanlı en kötü durum** (deney sahnesi `tests/_fizik/ayak_sahne.tscn --ayak-kalabalik=60`, ekransız, kare
 sınırı yok; 60 kişi + 9 denek hepsi kameranın 25 m içinde ve görüşte, yarısı yürüyor, çoğu eğimde/molozda):
@@ -64,6 +103,20 @@ TABLO4
 
 ## Kareler (oyuncu kamerası + yandan; 1280×720, jpg 85) — [`kare/`](kare/)
 
+### Deney sahnesi (`tests/_fizik/ayak_sahne.tscn`, yandan; sol ÖNCE, sağ SONRA)
+| Kare | Sahne | SONRA (tek cümle) |
+|---|---|---|
+| [`sahne_yokus25_dik`](kare/sahne_yokus25_dik_once_sonra.jpg) | **Yan profilden yakın kişi, 25° yanal eğim** | Yokuş yukarı bacağın dizi bükük, öteki düz; iki taban yamaçta, gövde dik: doğal. |
+| [`sahne_yokus_dik`](kare/sahne_yokus_dik_once_sonra.jpg) | 15° yanal eğim | Fark küçük (ayaklar 0,2 m arayla: 5 cm); iki taban yamaçta. |
+| [`sahne_moloz_asker`](kare/sahne_moloz_asker_once_sonra.jpg) | Molozda asker | ÖNCE sol ayak taşın üstünde havada; SONRA sol diz bükük, taban taşa basıyor, sağ ayak alttaki taşta: doğal. |
+| [`sahne_merdiven_dur`](kare/sahne_merdiven_dur_once_sonra.jpg) | Basamak kenarında duran | İki ayak basamakta; kenardaki ayak kökün altına çekili: iyi. |
+| [`sahne_merdiven_yuru_1`](kare/sahne_merdiven_yuru_1_once_sonra.jpg) | Merdiven çıkan | Basan ayak basamakta kilitli, salınan ayak bir üst basamağa yay çiziyor; kayma yok: iyi (kök doğrusal yolda: basamak kenarında kalça biraz iniyor). |
+| [`sahne_yokus_yuru_1`](kare/sahne_yokus_yuru_1_once_sonra.jpg) | Yokuş yukarı yürüyen | Basan ayak yamaçta kilitli, adım boyu hızla uyumlu, gövde dik: doğal. |
+| [`sahne_yokus_kos_1`](kare/sahne_yokus_kos_1_once_sonra.jpg) | Yokuş aşağı koşan | Koşu adımı (arka bacak geride bükük, ön ayak yamaçta); ÖNCE iki ayak kök düzleminde (yamacın içinde/üstünde): iyi. |
+| [`sahne_at_yokus`](kare/sahne_at_yokus_once_sonra.jpg) | **At eğimde** (25°) | Gövde yokuşa göre eğik (sınır 17°), dört toynak yamaçta, bacaklar dik: iyi; 17°'yi aşan kısım ön bacaklarda birkaç cm gömük. |
+| [`sahne_okuz_yokus`](kare/sahne_okuz_yokus_once_sonra.jpg) | Öküz eğimde (15°) | Gövde eğik, toynaklar yamaçta: iyi. |
+
+### Oyun içi (oyuncu kamerası; sol ÖNCE, sağ SONRA)
 KARELER
 
 ## Hayvanlar
