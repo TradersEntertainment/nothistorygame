@@ -78,10 +78,15 @@ static func build_tente(h: Node3D) -> void:
 		for sz in [-1.1, 1.1]:
 			L.cb(h, 0.05, 2.6 if sz < 0 else 2.2, sx, 0, sz, L.WOOD_D, 5)
 			L.col_box(h, Vector3(0.12, 2.2, 0.12), Vector3(sx, 1.1, sz))
-	L.b(h, Vector3(3.1, 0.04, 2.5), Vector3(0, 2.45, 0), L.LINEN, Vector3(-9, 0, 0))
-	for i in 5:
-		L.b(h, Vector3(0.28, 0.045, 2.5), Vector3(-1.32 + i * 0.66, 2.455, 0), L.RED, Vector3(-9, 0, 0))
-	L.b(h, Vector3(3.1, 0.25, 0.04), Vector3(0, 2.2, 1.24), L.RED)
+	# TUR-12 KUMAŞ: 4 cm'lik kutu levha + kutu şeritler yerine ince, çift yüzlü, ortası sarkık çizgili bez; ön kenarında
+	# dişli saçak. Direklere bağlı köşeler sabit, kenar ortaları ve saçak hafif nefes alır (köşe gölgelendiricisi)
+	var cizgi := func(u: float, _t: float) -> Color:
+		var x := (u - 0.5) * 3.1
+		for i in 5:
+			if absf(x - (-1.32 + i * 0.66)) < 0.14:
+				return L.RED
+		return L.LINEN
+	preload("res://scripts/world/ist/kumas.gd").sarkik_levha(h, Vector3(0, 2.45, 0), 3.1, 2.5, 9.0, 0.12, cizgi, 0.25, L.RED, 14 if L.lod == 0 else 6, 6 if L.lod == 0 else 3)
 	L.b(h, Vector3(3.1, 0.07, 0.1), Vector3(0, 2.5, -1.24), L.ROPE)
 
 

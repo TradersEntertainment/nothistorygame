@@ -305,8 +305,8 @@ static func build_sancak_diregi(h: Node3D) -> void:
 	L.col_box(h, Vector3(0.12, 3.8, 0.12), Vector3(0, 1.9, 0))
 	L.s(h, 0.07, Vector3(0, 3.92, 0), L.GOLD, Vector3.ONE, 6)
 	L.b(h, Vector3(0.025, 0.2, 0.025), Vector3(0, 4.05, 0), L.GOLD)
-	L.b(h, Vector3(0.02, 0.7, 1.1), Vector3(0, 3.3, 0.6), L.RED)
-	L.b(h, Vector3(0.025, 0.2, 0.2), Vector3(0, 3.3, 0.5), L.CREAM)
+	# TUR-12: ince çift yüzlü, dalgalanan bayrak (eski: 2 cm'lik kutu + kutu yama)
+	preload("res://scripts/world/ist/kumas.gd").bayrak(h, Vector3(0, 3.65, 0), Vector3.BACK, 1.15, 0.7, L.RED, [[0.3, 0.36, 0.48, 0.64, L.CREAM]], 6)
 	L.cb(h, 0.35, 0.12, 0, 0, 0, L.STONE_D, 8, 0.28)
 
 

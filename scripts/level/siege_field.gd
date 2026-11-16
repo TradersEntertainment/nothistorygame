@@ -1012,7 +1012,8 @@ func formation(c: Vector3, coat: Color, cols := 8, rows := 5, flag := Color("b32
 	fp.y = surf(fp.x, fp.z)
 	d.cyl(0.05, 5.5, fp + Vector3(0, 2.75, 0), Color("4a3420"), Vector3.ZERO, 5)
 	d.ball(0.12, fp + Vector3(0, 5.6, 0), Color("d8b040"))
-	d.box(Vector3(0.03, 1.4, 2.1), fp + Vector3(0, 4.6, 1.05), flag)
+	# TUR-12: ince çift yüzlü, rüzgârda dalgalanan sancak (eski: birleşik parçaya pişen 3 cm'lik kutu)
+	d.kumas(fp + Vector3(0, 5.3, 0), 2.1, 1.4, flag)
 	d.build(self)
 
 

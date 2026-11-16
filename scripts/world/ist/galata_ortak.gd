@@ -169,10 +169,13 @@ static func lancet(h: Node3D, pos: Vector3, yaw: float, wd := 0.7, ht := 2.0) ->
 ## Ceneviz bayrağı: beyaz zemin, kırmızı Aziz Georg haçı.
 static func flag(h: Node3D, base: Vector3, pole_h := 4.0, w := 1.8, fh := 1.2) -> void:
 	Props.cyl(h, 0.05, pole_h, base + Vector3(0, pole_h * 0.5, 0), WOOD_D, Vector3.ZERO, 6)
-	var top := base + Vector3(0, pole_h - fh * 0.5 - 0.1, 0)
-	Props.box(h, Vector3(0.03, fh, w), top + Vector3(0, 0, w * 0.5 + 0.05), WHITE)
-	Props.box(h, Vector3(0.05, fh, 0.22), top + Vector3(0, 0, w * 0.5 + 0.05), RED)
-	Props.box(h, Vector3(0.05, 0.22, w), top + Vector3(0, 0, w * 0.5 + 0.05), RED)
+	# TUR-12: ince çift yüzlü, rüzgârda dalgalanan bayrak; haç kumaşın kendi yaması (eski: üç üst üste kutu)
+	var L := w + 0.05
+	var hu := 0.11 / L
+	var hv := 0.11 / fh
+	var cu := (w * 0.5 + 0.05) / L
+	preload("res://scripts/world/ist/kumas.gd").bayrak(h, base + Vector3(0, pole_h - 0.1, 0), Vector3.BACK, L, fh, WHITE,
+		[[cu - hu, 0.0, cu + hu, 1.0, RED], [0.0, 0.5 - hv, 1.0, 0.5 + hv, RED]], 8)
 
 
 ## Fıçı ve sandık yığını (süs + dayanak): parçalar birbirine değer, aralarında dar boşluk kalmaz.

@@ -1,0 +1,68 @@
+Godot Engine v4.4.1.stable.official.49a5bc7b6 - https://godotengine.org
+WARNING: Could not set V-Sync mode, as changing V-Sync mode is not supported by the graphics driver.
+     at: set_use_vsync (platform/linuxbsd/x11/gl_manager_x11.cpp:360)
+OpenGL API 4.5 (Core Profile) Mesa 25.2.8-0ubuntu0.24.04.4 - Compatibility - Using Device: Mesa - llvmpipe (LLVM 20.1.2, 256 bits)
+ALSA lib confmisc.c:855:(parse_card) cannot find card '0'
+ALSA lib conf.c:5208:(_snd_config_evaluate) function snd_func_card_inum returned error: No such file or directory
+ALSA lib confmisc.c:422:(snd_func_concat) error evaluating strings
+ALSA lib conf.c:5208:(_snd_config_evaluate) function snd_func_concat returned error: No such file or directory
+ALSA lib confmisc.c:1342:(snd_func_refer) error evaluating name
+ALSA lib conf.c:5208:(_snd_config_evaluate) function snd_func_refer returned error: No such file or directory
+ALSA lib conf.c:5731:(snd_config_expand) Evaluate error: No such file or directory
+ALSA lib pcm.c:2721:(snd_pcm_open_noupdate) Unknown PCM default
+ERROR: Condition "status < 0" is true. Returning: ERR_CANT_OPEN
+   at: init_output_device (drivers/alsa/audio_driver_alsa.cpp:90)
+WARNING: All audio drivers failed, falling back to the dummy driver.
+     at: initialize (servers/audio_server.cpp:246)
+
+SURSET kesim=mesoteikhion kurulum_ms=3991 sur_ms=1096 set_ms=2888
+PILOT20ENGEL OZET nokta=9 engelde=0
+PILOT20KURULUM sur=yeni set_ms=3992 bolum_ms=1676 toplam_ms=5667
+WARNING: Screen-space ambient occlusion (SSAO) can only be enabled when using the Forward+ renderer.
+     at: environment_set_ssao (servers/rendering/storage/environment_storage.cpp:586)
+WARNING: Screen-space indirect lighting (SSIL) can only be enabled when using the Forward+ renderer.
+     at: environment_set_ssil (servers/rendering/storage/environment_storage.cpp:661)
+TERRAIN_SOLIDIFIED scene=chapter20.tscn node=/root/Chapter20/@Node3D@177/Ova/@Node3D@2557/@MeshInstance3D@2559
+AYAKAUDIT yakin scene=chapter20.tscn who=Person/@Node3D@18075(Chapter20) ayak=L fark=-0.11 d=4.7 at=(-9.1, 0.0, 11.7) durum=dur act= ik=yok
+AYAKAUDIT yakin scene=chapter20.tscn who=Person/@Node3D@18075(Chapter20) ayak=R fark=-0.12 d=4.7 at=(-8.900001, 0.0, 11.7) durum=dur act= ik=yok
+AYAKAUDIT yakin scene=chapter20.tscn who=Person/@Node3D@18197(Chapter20) ayak=L fark=-0.18 d=5.2 at=(-7.6, 0.0, 11.7) durum=dur act= ik=yok
+AYAKAUDIT yakin scene=chapter20.tscn who=Person/@Node3D@18197(Chapter20) ayak=R fark=-0.16 d=5.2 at=(-7.4, 0.0, 11.7) durum=dur act= ik=yok
+SIEGECHAOS segs=40 runners=80 static=30
+PILOT20YURU set=yeni dogus=(-9.6, 0.05, 7.2) depo=(-13.3, 0.0, 5.6) gedik_onu=(0.0, 0.0, 10.0) ok=(-16.0, 0.0, 2.6) okcu=(-9.0, 0.0, 9.4) siper=(-5.2, 0.0, 9.3)
+PILOT20KARE an_01_acilis.jpg repair=0 asama=1 phase=work oyuncu=(-9.6, 0.000107, 7.2)
+PILOT20KARE an_02_depo.jpg repair=0 asama=1 phase=work oyuncu=(-11.45, 0.000391, 6.4)
+PILOT20YURU bacak=dogus_depo sure=0.0 yol=0.0 takilma=0 dusme=0 etkilesim=tamam yuk= onarim=0 
+PILOT20KARE an_03_gedige_tasima.jpg repair=0 asama=1 phase=work oyuncu=(-6.65, 0.000391, 7.8)
+PILOT20YURU bacak=depo_gedik_1 sure=0.0 yol=0.0 takilma=0 dusme=0 etkilesim=tamam yuk=barrel onarim=0 
+PILOT20YURU bacak=gedik_depo_1 sure=0.0 yol=0.0 takilma=0 dusme=0 etkilesim=tamam yuk= onarim=1 
+PILOT20YURU bacak=depo_gedik_2 sure=0.0 yol=0.0 takilma=0 dusme=0 etkilesim=tamam yuk=barrel onarim=1 
+PILOT20YURU bacak=gedik_depo_2 sure=0.0 yol=0.0 takilma=0 dusme=0 etkilesim=tamam yuk= onarim=2 
+PILOT20YURU bacak=depo_gedik_3 sure=0.0 yol=0.0 takilma=0 dusme=0 etkilesim=tamam yuk=barrel onarim=2 
+PILOT20YURU bacak=gedik_depo_3 sure=0.0 yol=0.0 takilma=0 dusme=0 etkilesim=tamam yuk= onarim=3 
+PILOT20YURU bacak=depo_gedik_4 sure=0.0 yol=0.0 takilma=0 dusme=0 etkilesim=tamam yuk=barrel onarim=3 
+PILOT20KARE an_04_onarim_asama2.jpg repair=4 asama=2 phase=work oyuncu=(-1.351217, 0.202814, 8.193849)
+PILOT20YURU bacak=gedik_siper sure=0.0 yol=0.0 takilma=0 dusme=0 etkilesim=tamam yuk= onarim=4 
+PILOT20KARE an_05_top_uyarisi_siper.jpg repair=4 asama=2 phase=work oyuncu=(-5.2, 0.000391, 9.3)
+PILOT20YURU siperde_devrilme=0 onarim=3
+PILOT20YURU bacak=gedik_depo_4 sure=0.0 yol=0.0 takilma=0 dusme=0 etkilesim=tamam yuk= onarim=3 
+PILOT20YURU bacak=depo_gedik_5 sure=0.0 yol=0.0 takilma=0 dusme=0 etkilesim=tamam yuk=barrel onarim=3 
+PILOT20YURU bacak=gedik_depo_5 sure=0.0 yol=0.0 takilma=0 dusme=0 etkilesim=tamam yuk= onarim=4 
+PILOT20YURU bacak=depo_gedik_6 sure=0.0 yol=0.0 takilma=0 dusme=0 etkilesim=tamam yuk= onarim=4 
+PILOT20YURU bacak=gedik_depo_6 sure=0.0 yol=0.0 takilma=0 dusme=0 etkilesim=tamam yuk= onarim=4 
+PILOT20YURU bacak=depo_gedik_7 sure=0.0 yol=0.0 takilma=0 dusme=0 etkilesim=tamam yuk=earth onarim=4 
+PILOT20YURU bacak=gedik_depo_7 sure=0.0 yol=0.0 takilma=0 dusme=0 etkilesim=tamam yuk= onarim=5 
+PILOT20YURU bacak=depo_gedik_8 sure=0.0 yol=0.0 takilma=0 dusme=0 etkilesim=tamam yuk=earth onarim=5 
+PILOT20YURU bacak=gedik_depo_8 sure=0.0 yol=0.0 takilma=0 dusme=0 etkilesim=tamam yuk= onarim=6 
+PILOT20YURU bacak=depo_gedik_9 sure=0.0 yol=0.0 takilma=0 dusme=0 etkilesim=tamam yuk= onarim=6 
+PILOT20KARE an_06_onarim_asama3.jpg repair=6 asama=3 phase=work oyuncu=(-1.366333, 0.214786, 8.321032)
+PILOT20YURU bacak=gedik_depo_9 sure=0.0 yol=0.0 takilma=0 dusme=0 etkilesim=tamam yuk= onarim=6 
+PILOT20YURU bacak=depo_gedik_10 sure=0.0 yol=0.0 takilma=0 dusme=0 etkilesim=tamam yuk=plank onarim=6 
+PILOT20YURU bacak=gedik_depo_10 sure=0.0 yol=0.0 takilma=0 dusme=0 etkilesim=tamam yuk= onarim=7 
+PILOT20YURU bacak=depo_gedik_11 sure=0.0 yol=0.0 takilma=0 dusme=0 etkilesim=tamam yuk=plank onarim=7 
+PILOT20YURU bacak=gedik_depo_11 sure=0.0 yol=0.0 takilma=0 dusme=0 etkilesim=tamam yuk= onarim=8 
+PILOT20YURU bacak=depo_gedik_12 sure=0.0 yol=0.0 takilma=0 dusme=0 etkilesim=tamam yuk=plank onarim=8 
+PILOT20YURU bacak=gedik_depo_12 sure=0.0 yol=0.0 takilma=0 dusme=0 etkilesim=tamam yuk= onarim=9 
+PILOT20YURU bacak=depo_gedik_son sure=0.0 yol=0.0 takilma=0 dusme=0 etkilesim=tamam yuk=plank onarim=9 
+PILOT20KARE an_07_onarim_asama4.jpg repair=9 asama=4 phase=work oyuncu=(-1.366333, 0.271804, 8.650857)
+PILOT20KARE an_08_cit_sehir_tarafindan.jpg repair=9 asama=4 phase=work oyuncu=(-6.0, 0.000391, 5.6)
+KARE_BITTI rc=124 --chapter=20 --autotest=kare

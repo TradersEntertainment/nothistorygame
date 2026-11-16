@@ -584,20 +584,24 @@ static func _sancak(w: B, f: B, p: Vector3, h: float, col: Color, lod: int, tug 
 		w.solid_cyl(p + Vector3(0, h * 0.5, 0), 0.07, h)
 	f.sph(p + Vector3(0, h + 0.12, 0), 0.12, K.ALTIN, 4)
 	if tug:
+		# TUR-12: at kuyruğu sarkık kumaş (yakın katmanda salınır)
+		var i0 := f.v.size()
+		var ty := p.y + h - 0.15
 		f.cylp(p + Vector3(0, h - 0.75, 0), 0.26, 1.2, [Color("1e1a16"), Color("e9e2d0"), Color("8a2a22")][int(absf(p.x)) % 3], 6, 0.04)
+		if lod == 0:
+			f.sarkik(i0, func(q: Vector3) -> float: return (ty - q.y) / 1.2, p.x * 0.7 + p.z, 2.0)
 		f.cylp(p + Vector3(0, h - 0.1, 0), 0.08, 0.25, K.ALTIN, 5)
 		return
 	var y0 := h - 0.15
 	var L := 1.9
 	var H := 0.9
-	# iki uçlu (çatallı) flama: üst ve alt dil
-	f.poly([p + Vector3(0.05, y0, 0), p + Vector3(L, y0 - 0.25, 0), p + Vector3(L * 0.7, y0 - H * 0.5, 0), p + Vector3(0.05, y0 - H * 0.5, 0)], Vector3(0, 0, 1), col)
-	f.poly([p + Vector3(0.05, y0, 0), p + Vector3(L, y0 - 0.25, 0), p + Vector3(L * 0.7, y0 - H * 0.5, 0), p + Vector3(0.05, y0 - H * 0.5, 0)], Vector3(0, 0, -1), col.darkened(0.1))
-	f.poly([p + Vector3(0.05, y0 - H * 0.5, 0), p + Vector3(L * 0.7, y0 - H * 0.5, 0), p + Vector3(L, y0 - H + 0.1, 0), p + Vector3(0.05, y0 - H, 0)], Vector3(0, 0, 1), col)
-	f.poly([p + Vector3(0.05, y0 - H * 0.5, 0), p + Vector3(L * 0.7, y0 - H * 0.5, 0), p + Vector3(L, y0 - H + 0.1, 0), p + Vector3(0.05, y0 - H, 0)], Vector3(0, 0, -1), col.darkened(0.1))
+	# TUR-12: iki uçlu (çatallı) flama, ince çift yüz; yakın katmanda (lod 0) rüzgârda dalgalanır, uzakta sabit.
+	# Ortasındaki hat çizgisi kumaşın kendi yaması (eski: flamanın önünde 3,5 cm'lik kutu çubuk).
+	var yam: Array = []
 	if lod == 0:
 		var hc := Color("efe6cc") if col.get_luminance() < 0.6 else Color("6a3a20")
-		f.box(p + Vector3(0.6, y0 - H * 0.42, 0), Vector3(0.75, 0.06, 0.035), hc)
+		yam = [[0.12, 0.39, 0.51, 0.46, hc]]
+	f.bayrak(p + Vector3(0.0, y0, 0), Vector3.RIGHT, L, H, col, yam, 7 if lod == 0 else 3, lod != 0, 0.3)
 
 
 static func _rastgele(r: RandomNumberGenerator, ic: Rect2, ok_at: Callable, yer: Yer, rad: float) -> Vector2:
@@ -796,6 +800,10 @@ static func _camasir(wd: B, det: B, onler: Array, r: RandomNumberGenerator) -> v
 			var c: Color = renk[r.randi() % renk.size()]
 			var dd3 := Vector3(dv.x, 0, dv.y) * w
 			var q4: Array = [cur - dd3, cur + dd3, cur + dd3 - Vector3(0, h, 0), cur - dd3 - Vector3(0, h * 0.92, 0)]
+			var i0 := det.v.size()
 			det.poly(q4, Vector3(-dv.y, 0, dv.x), c)
 			det.poly(q4, Vector3(dv.y, 0, -dv.x), c.darkened(0.15))
+			# TUR-12: ipten sarkan bez hafifçe nefes alır (ipteki kenar sabit)
+			var cy := cur.y
+			det.sarkik(i0, func(pp: Vector3) -> float: return (cy - pp.y) / h, float(i) * 1.7, 3.0)
 		onceki = cur

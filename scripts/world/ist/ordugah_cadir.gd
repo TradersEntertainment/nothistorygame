@@ -23,6 +23,9 @@ const PIRINC := Color(0.86, 0.7, 0.36)       # topuz/alem (küre; hilal YOK)
 const IC := 0.34                             # iç yüzlerin karanlığı
 
 static var _cache := {}
+## TUR-12 KUMAŞ: yakın ağda (lod 0) _grid'in eklediği kumaş köşe aralıkları [i0, i1) (ip/direk/kazık değil)
+static var _bez: Array = []
+static var _bez_izle := false
 
 
 ## Tür adları: "koni", "can", "catma", "buyuk", "pasa", "otag", "kil", "barinak"; katman öneki: "" yakın, "orta_", "uzak_"
@@ -39,14 +42,49 @@ static func mesh(kind: String) -> ArrayMesh:
 		lod = 2
 		k = k.substr(5)
 	var o := _tur(k, lod)
+	_bez.clear()
+	_bez_izle = lod == 0
 	if k == "barinak":
 		_barinak(b, lod)
 	else:
 		_govde(b, o, lod)
 		if k == "pasa" and lod <= 1:
 			_sayeban(b, o, lod)
-	var m := K.bld_mesh(b)
+	_bez_izle = false
+	var m: ArrayMesh
+	if lod == 0 and not _bez.is_empty():
+		m = _nefesli_ag(b)
+	else:
+		m = K.bld_mesh(b)
 	_cache[kind] = m
+	return m
+
+
+## TUR-12 KUMAŞ: yakın çadır ağı + nefes ağırlığı (kip 2). Ağırlık kumaşın yüksekliğine göre: yerdeki etek ve direk
+## tepesi az (bağlı), ortası (çatı panelleri, duvar) çok; ip, direk, kazık, iç eşya 0 (kıpırdamaz). Ağ "kumas" işaretli:
+## K.mm / ekle kumaş gölgelendiricisini seçer.
+static func _nefesli_ag(b: B) -> ArrayMesh:
+	var ytop := 0.5
+	for p in b.v:
+		ytop = maxf(ytop, p.y)
+	var uv := PackedVector2Array()
+	uv.resize(b.v.size())
+	var uv2 := PackedVector2Array()
+	uv2.resize(b.v.size())
+	for r: Array in _bez:
+		for i in range(int(r[0]), int(r[1])):
+			var t := clampf((b.v[i].y - ZEMIN) / (ytop - ZEMIN), 0.0, 1.0)
+			uv[i] = Vector2(0.2 + 0.8 * sin(PI * t), 2.0)
+	var arr := []
+	arr.resize(Mesh.ARRAY_MAX)
+	arr[Mesh.ARRAY_VERTEX] = b.v
+	arr[Mesh.ARRAY_NORMAL] = b.n
+	arr[Mesh.ARRAY_COLOR] = b.c
+	arr[Mesh.ARRAY_TEX_UV] = uv
+	arr[Mesh.ARRAY_TEX_UV2] = uv2
+	var m := ArrayMesh.new()
+	m.add_surface_from_arrays(Mesh.PRIMITIVE_TRIANGLES, arr)
+	m.set_meta("kumas", true)
 	return m
 
 
@@ -119,6 +157,7 @@ static func _tri(b: B, a: Vector3, c1: Vector3, c2: Vector3, na: Vector3, n1: Ve
 
 ## Izgara: G[i][j] (i satır, j sütun). colf(i, j) dörtgen rengi. ref(p) dış yön. ic = içe bakan yüz (normal ters).
 static func _grid(b: B, G: Array, colf: Callable, ref: Callable, ic := false) -> void:
+	var i0_bez := b.v.size()
 	var R := G.size()
 	var C := (G[0] as Array).size()
 	var N: Array = []
@@ -142,6 +181,8 @@ static func _grid(b: B, G: Array, colf: Callable, ref: Callable, ic := false) ->
 			var col: Color = colf.call(i, j)
 			_tri(b, G[i][j], G[i + 1][j], G[i + 1][j + 1], N[i][j], N[i + 1][j], N[i + 1][j + 1], col)
 			_tri(b, G[i][j], G[i + 1][j + 1], G[i][j + 1], N[i][j], N[i + 1][j + 1], N[i][j + 1], col)
+	if _bez_izle:
+		_bez.append([i0_bez, b.v.size()])
 
 
 ## İnce ip/direk: üçgen kesitli ince prizma (her yönden görünür, 6 üçgen)
@@ -598,11 +639,19 @@ static var _tmat := {}
 static func ekle(host: Node3D, kind: String, xf: Transform3D, renk: Color, lod: int, ad := "") -> MeshInstance3D:
 	var mi := MeshInstance3D.new()
 	mi.mesh = K.tent_lod(kind, lod)
-	var key := renk.to_html()
+	var kum: bool = mi.mesh.has_meta("kumas")
+	var key := renk.to_html() + ("k" if kum else "")
 	if not _tmat.has(key):
-		var m := (K.mat("") as StandardMaterial3D).duplicate() as StandardMaterial3D
-		m.albedo_color = Color(0.78, 0.76, 0.72) * renk
-		_tmat[key] = m
+		if kum:
+			# TUR-12: yakın çadır kumaşı nefes alır (kumaş gölgelendiricisi; aynı renk çarpanı)
+			var km := (K.KUMAS.mat(false) as ShaderMaterial).duplicate() as ShaderMaterial
+			var cc := Color(0.78, 0.76, 0.72) * renk
+			km.set_shader_parameter("carpan", Vector3(cc.r, cc.g, cc.b))
+			_tmat[key] = km
+		else:
+			var m := (K.mat("") as StandardMaterial3D).duplicate() as StandardMaterial3D
+			m.albedo_color = Color(0.78, 0.76, 0.72) * renk
+			_tmat[key] = m
 	mi.material_override = _tmat[key]
 	mi.transform = xf
 	if lod > 0:

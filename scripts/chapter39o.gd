@@ -271,10 +271,10 @@ func _plant_flag(idx: int, col: Color) -> void:
 	add_child(f)
 	f.position = Vector3(p.x - side * 0.15, 2.4, p.z + 0.7)
 	Props.cyl(f, 0.03, 1.4, Vector3(-side * 0.3, 0, 0), Color("6a4a2c"), Vector3(0, 0, side * 60.0), 5)
-	var cloth := Props.box(f, Vector3(0.03, 0.5, 0.7), Vector3(-side * 0.7, 0.15, 0.35), col)
-	var tw := cloth.create_tween().set_loops()
-	tw.tween_property(cloth, "rotation:y", 0.15, 0.6)
-	tw.tween_property(cloth, "rotation:y", -0.15, 0.6)
+	# TUR-12: ince çift yüzlü kumaş, direğin ucunda; köşe gölgelendiricisiyle dalgalanır (eski: dönen 3 cm'lik kutu).
+	# Kapı duvarına dönmesin diye kurulduğu yöne (sokağa) uçar
+	preload("res://scripts/world/ist/kumas.gd").bayrak(f, Vector3(-side * 0.86, 0.33, 0.0), Vector3.BACK, 0.7, 0.5, col, [], 6,
+		"Sancak", 0.0, false, true)
 
 
 func _send_looter() -> void:

@@ -1,0 +1,14 @@
+/home/user/nothistorygame/docs/_kanit_ist2_tur12/testler/b2/c25 --chapter=25 --autotest
+/home/user/nothistorygame/docs/_kanit_ist2_tur12/testler/b2/c20 --chapter=20 --autotest
+/home/user/nothistorygame/docs/_kanit_ist2_tur12/testler/b2/c37o --chapter=37o --autotest
+/home/user/nothistorygame/docs/_kanit_ist2_tur12/testler/b2/c0 --chapter=0 --autotest
+/home/user/nothistorygame/docs/_kanit_ist2_tur12/testler/b2/c41o --chapter=41o --autotest
+/home/user/nothistorygame/docs/_kanit_ist2_tur12/testler/b2/c29 --chapter=29 --autotest
+/home/user/nothistorygame/docs/_kanit_ist2_tur12/testler/b2/c17o --chapter=17o --autotest
+/home/user/nothistorygame/docs/_kanit_ist2_tur12/testler/b2/c8y --chapter=8y --autotest
+/home/user/nothistorygame/docs/_kanit_ist2_tur12/testler/b2/c6 --chapter=6 --autotest
+/home/user/nothistorygame/docs/_kanit_ist2_tur12/testler/b2/c43o --chapter=43o --autotest
+/home/user/nothistorygame/docs/_kanit_ist2_tur12/testler/b2/c39o --chapter=39o --autotest
+/home/user/nothistorygame/docs/_kanit_ist2_tur12/testler/b2/c26 --chapter=26 --autotest
+/home/user/nothistorygame/docs/_kanit_ist2_tur12/testler/b2/c22 --chapter=22 --autotest
+/home/user/nothistorygame/docs/_kanit_ist2_tur12/testler/b2/c38o --chapter=38o --autotest

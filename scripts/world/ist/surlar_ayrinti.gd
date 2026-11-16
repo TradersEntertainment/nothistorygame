@@ -414,8 +414,8 @@ static func _balls(root: Node3D, x: float, y: float, z: float, n: int, rng: Rand
 static func _flag(root: Node3D, x: float, y: float, z: float, c1: Color, c2: Color) -> void:
 	Props.cyl(root, 0.05, 3.6, Vector3(x, y + 1.8, z), C_WOOD.darkened(0.2), Vector3.ZERO, 5)
 	Props.cyl(root, 0.09, 0.14, Vector3(x, y + 3.65, z), Color("d9a82a"), Vector3.ZERO, 6)
-	Props.box(root, Vector3(0.03, 1.0, 1.6), Vector3(x, y + 3.0, z + 0.85), c1)
-	Props.box(root, Vector3(0.035, 0.34, 0.5), Vector3(x, y + 3.0, z + 0.6), c2)
+	# TUR-12: ince çift yüzlü, rüzgârda dalgalanan bayrak (eski: 3 cm'lik kutu + kutu yama); direk kenarı sabit
+	preload("res://scripts/world/ist/kumas.gd").bayrak(root, Vector3(x, y + 3.5, z), Vector3.BACK, 1.65, 1.0, c1, [[0.18, 0.33, 0.48, 0.67, c2]])
 
 
 static func _mangonel(root: Node3D, x: float, y: float, z: float) -> void:

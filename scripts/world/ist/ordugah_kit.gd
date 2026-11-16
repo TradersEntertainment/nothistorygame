@@ -28,6 +28,8 @@ const SAMAN := Color("c8ac5c")
 const DERI := Color("8c6a46")
 
 ## Zemin yüksekliği (yerel x,z → y). Boşken düz zemin (önizleme). attach() konumlandırmadan önce doldurur.
+const KUMAS = preload("res://scripts/world/ist/kumas.gd")
+
 static var zemin := Callable()
 static var filtre := Callable()          # (x,z yerel) → bu noktaya çadır konabilir mi (attach doldurur)
 static var gece := false
@@ -61,6 +63,13 @@ class Bld:
 	var body: StaticBody3D
 	var no_climb := false
 	var cast := true
+	## TUR-12 KUMAŞ: bayrak()/sarkik() ile kumaş eklenmişse done() kumaş malzemesiyle (dalgalanır) kurar; uv/uv2
+	## yalnız o zaman dolar (öbür köşeler kip 0 = sabit)
+	var kumas := false
+	var uv := PackedVector2Array()
+	var uv2 := PackedVector2Array()
+	## kip 1 bayrakların en uzun boyu: sınır kutusu payı (gölgelendirici bayrağı rüzgâr yönüne çevirir)
+	var kumas_pay := 0.0
 	static var _mats := {}
 
 	static func vmat(pattern := "") -> StandardMaterial3D:
@@ -75,6 +84,28 @@ class Bld:
 
 	func _init(p := "") -> void:
 		pattern = p
+
+	## TUR-12: ince çift yüzlü, rüzgârda dalgalanan bayrak (kip 1). ust: direk ekseninde üst köşe; yon: dinlenme yönü;
+	## yamalar: [u0, v0, u1, v1, renk] (u direkten uca, v üstten alta). sabit: dalgasız ince çift yüz (uzak LOD)
+	func bayrak(ust: Vector3, yon: Vector3, L: float, H: float, col: Color, yamalar: Array = [], nx := 7, sabit := false, catal := 0.0) -> void:
+		var i0 := v.size()
+		if sabit:
+			var tmp_uv := PackedVector2Array()
+			var tmp_uv2 := PackedVector2Array()
+			KUMAS.bayrak_diz(v, n, c, tmp_uv, tmp_uv2, ust, yon, L, H, col, yamalar, nx, true, true, catal)
+			if kumas:
+				KUMAS.esitle(v, uv, uv2)
+		else:
+			kumas = true
+			KUMAS.esitle(v, uv, uv2, i0)
+			KUMAS.bayrak_diz(v, n, c, uv, uv2, ust, yon, L, H, col, yamalar, nx, false, false, catal)
+			kumas_pay = maxf(kumas_pay, L + 0.3)
+		tris += (v.size() - i0) / 3
+
+	## TUR-12: i0'dan bu yana eklenen köşeler sarkık kumaş (kip 2; tente, perde, püskül): agirlik(Vector3) -> 0…1
+	func sarkik(i0: int, agirlik: Callable, evre := 0.0, genlik := 1.0) -> void:
+		kumas = true
+		KUMAS.sarkik_isaretle(v, uv, uv2, i0, agirlik, evre, genlik)
 
 	## Dışbükey çokgen (saat yönü ters sıralı olması gerekmez), out = dış yön
 	func poly(pts: Array, out: Vector3, col: Color) -> void:
@@ -246,11 +277,17 @@ class Bld:
 			arr[Mesh.ARRAY_VERTEX] = v
 			arr[Mesh.ARRAY_NORMAL] = n
 			arr[Mesh.ARRAY_COLOR] = c
+			if kumas:
+				KUMAS.esitle(v, uv, uv2)
+				arr[Mesh.ARRAY_TEX_UV] = uv
+				arr[Mesh.ARRAY_TEX_UV2] = uv2
 			var m := ArrayMesh.new()
 			m.add_surface_from_arrays(Mesh.PRIMITIVE_TRIANGLES, arr)
 			mi = MeshInstance3D.new()
 			mi.mesh = m
-			mi.material_override = Bld.vmat(pattern)
+			mi.material_override = KUMAS.mat(false) if kumas else Bld.vmat(pattern)
+			if kumas and kumas_pay > 0.0:
+				mi.extra_cull_margin = kumas_pay
 			if not cast:
 				mi.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
 			if nm != "":
@@ -278,7 +315,8 @@ static func mm(host: Node3D, mesh: Mesh, xfs: Array, cols: Array = [], nm := "",
 			m.set_instance_color(i, cols[i % cols.size()])
 	var mi := MultiMeshInstance3D.new()
 	mi.multimesh = m
-	mi.material_override = mat(pattern)
+	# TUR-12: nefesli yakın çadır ağı (ordugah_cadir._nefesli_ag) kumaş gölgelendiricisiyle (köşe × örnek rengi, vmat çarpanı)
+	mi.material_override = KUMAS.mat(false) if mesh.has_meta("kumas") else mat(pattern)
 	if not shadow:
 		mi.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
 	if nm != "":

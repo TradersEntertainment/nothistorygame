@@ -1,0 +1,2 @@
+AUTOTEST PASS chapter=6 variant= branch=6a outcome=6a.1 paradox=10 mistakes=0 telsiz=4
+KOSU rc=0 sure=17 args=--chapter=6 --autotest

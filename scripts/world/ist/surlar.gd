@@ -944,6 +944,15 @@ static func _gedik(root: Node3D, lay: Dictionary, gx: float, lod: int, stone: Co
 		carp_only = true
 		_s(root, Vector3(gx - h, 0, zo0), Vector3(gx + h, 1.0, zo1), stone, "ashlar", lod, true)
 		carp_only = false
+	# TUR-12: oyun kesitinde (sade) tümsek ve kaya saçılımı KURULMAZ. Düz tabanla (dilimin y 0'ı) kuruluyordu; dış kuşak
+	# 3,7 m aşağıda olduğundan tümseğin dış yarısı ve kayalar terasın ve GedikOnarim'ın moloz rampasının 1–3 m üstünde,
+	# baş hizasında koyu çokgen olarak asılı kalıyordu (37o an_04). Oyun gediğinin molozunu sur_oyun_parca GedikOnarim
+	# (Toprak_GedikMolozRampa + kırık taşlar) kesitin gerçek tabanına oturtarak kurar. Şehir kipi aynı.
+	if sade:
+		ag.mesh_ekle(root, KULE._tas_mat(stone.darkened(0.05), mini(lod, 2)), "GedikBeden")
+		if lod <= 1 and root.is_inside_tree():
+			gedik_dunya.append(root.global_transform * Vector3(gx, 0.0, zo1))
+		return
 	# moloz yığını: alçak toprak-taş tümsek (yarım elips koni) + düzensiz taşlar
 	var tm = KULE.Ag.new()
 	var zc := (zo0 + zo1) * 0.5
@@ -971,9 +980,7 @@ static func _gedik(root: Node3D, lay: Dictionary, gx: float, lod: int, stone: Co
 		kl.append(Transform3D(Basis.from_euler(Vector3(rng.randf_range(-0.6, 0.6), rng.randf() * TAU, rng.randf_range(-0.6, 0.6))).scaled(Vector3(sc * 1.3, sc * 0.7, sc)), Vector3(px, yy, pz)))
 	Scenery.scatter(root, KULE.kaya_mesh(), kl, [], load("res://scripts/world/ist/sur_gorunus.gd").kaya_tas_mat())      # TUR-7: kaya üstünde blok deseni yok
 	ag.mesh_ekle(root, KULE._tas_mat(stone.darkened(0.05), lod), "GedikBeden")
-	if lod == 1 or sade:
-		if sade and root.is_inside_tree():
-			gedik_dunya.append(root.global_transform * Vector3(gx, 0.0, zo1))
+	if lod == 1:
 		return
 	# stauroma: dış surun peribolos yüzü boyunca toprak dolu fıçılar, arkada kazıklı toprak set
 	var zs := zo0 - 1.4

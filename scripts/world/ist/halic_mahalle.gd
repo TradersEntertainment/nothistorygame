@@ -102,8 +102,9 @@ static func roof_stair(p: Node3D, info: Dictionary, xoff: float) -> Array:
 
 static func _banner(p: Node3D, pos: Vector3, red := true) -> void:
 	Props.cyl(p, 0.07, 5.0, pos + Vector3(0, 2.5, 0), Color("3a2a1a"), Vector3.ZERO, 6)
-	Props.box(p, Vector3(1.8, 1.1, 0.04), pos + Vector3(0.95, 4.3, 0), Color("a82a2a") if red else Color("e0b84a"))
-	Props.box(p, Vector3(0.7, 0.6, 0.06), pos + Vector3(0.95, 4.3, 0), Color("d9b43a") if red else Color("2a2a2a"))
+	# TUR-12: ince çift yüzlü, dalgalanan sancak (eski: 4 cm'lik kutu + 6 cm'lik kutu yama)
+	preload("res://scripts/world/ist/kumas.gd").bayrak(p, pos + Vector3(0, 4.85, 0), Vector3.RIGHT, 1.85, 1.1, Color("a82a2a") if red else Color("e0b84a"),
+		[[0.32, 0.23, 0.7, 0.77, Color("d9b43a") if red else Color("2a2a2a")]], 8)
 
 
 static func _well(p: Node3D, pos: Vector3) -> void:
