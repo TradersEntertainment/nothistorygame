@@ -52,6 +52,9 @@ func _ready() -> void:
 	hud.set_fez(GameState.flags.get("fez", true))
 	hud.set_signal(0)
 	walls = Blachernae.new()
+	walls.bolum = "30"
+	# Yeni sette (TAŞIMA-9) merdivenlerin tepesi dişe değil korkuluğa yaslanır: o x'lerde diş kurulmaz (görünüş)
+	walls.dissiz = LADDERS
 	add_child(walls)
 	walls.build_guards([])
 	walls.night_assault(LADDERS + [6.0, -6.0], false)
@@ -135,7 +138,7 @@ func _gun() -> void:
 			"path": [Vector3(x + 6.0, 0, 46.0), Vector3(x + 2.0, 0, 26.0), Vector3(x, 0, Blachernae.WALL_Z1 + 3.0)], "delay": i * 1.6, "ladder": true})
 	var res: Dictionary = await GunRange.run(self, hud, player, {"runners": runners, "shots": _rifle_shots,
 		"limit": 26.0 + maxf(0.0, _rifle_shots - 4) * 5.5, "speed": 2.4, "objective": tr("UI_OBJ30_GUN") % _rifle_shots,
-		"look": Vector3(0, 1.0, 30.0)})
+		"look": Vector3(0, 1.0, 30.0), "ground": Blachernae.zemin_y})
 	gun_shots = res["shots"]
 	gun_hits = res["hits"]
 	player.frozen = true
@@ -263,7 +266,8 @@ func _pole_show(p: float) -> void:
 func _spawn_ladder(x: float, delay: float) -> void:
 	var lh := WALK + 0.6
 	var lad := Ladder.new(lh, TILT, Color("6a4a2c"))
-	var base := Vector3(x, 0.0, Blachernae.WALL_Z1 + lh * sin(deg_to_rad(TILT)) + 0.12)
+	var bz := Blachernae.WALL_Z1 + lh * sin(deg_to_rad(TILT)) + 0.12
+	var base := Vector3(x, Blachernae.zemin_y(x, bz), bz)
 	lad.position = base
 	add_child(lad)
 	lad.visible = false
@@ -304,7 +308,7 @@ func _carry_step(l: Dictionary, dt: float) -> void:
 			var c: Soldier = team[i]
 			var along := 1.0 + i * 2.0                    # merdiven boyunca (dipten)
 			var side := 0.55 if i % 2 == 0 else -0.55
-			c.global_position = Vector3(at.x + side, 0.0, at.z + along)
+			c.global_position = Vector3(at.x + side, Blachernae.zemin_y(at.x + side, at.z + along), at.z + along)
 			if c.rig:
 				c.rig.activity = ""
 		if k >= 1.0:
@@ -319,6 +323,7 @@ func _carry_step(l: Dictionary, dt: float) -> void:
 		for i in team.size():
 			var c: Soldier = team[i]
 			var to := base + Vector3((0.0 if i == 0 else (0.7 if i == 1 else -0.7)), 0, 0.9 if i == 0 else 1.4)
+			to.y = Blachernae.zemin_y(to.x, to.z)
 			c.global_position = c.global_position.lerp(to, clampf(dt * 4.0, 0.0, 1.0))
 		if k >= 1.0:
 			l["stage"] = "climb"

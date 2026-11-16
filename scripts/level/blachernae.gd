@@ -33,6 +33,23 @@ var live_spots: Array[Transform3D] = []
 ## Bu kulenin tepesi boş kalır (bölüm oraya kendi tüfekçisini koyar)
 var quiet_tower := INF
 var _t := 0.0
+## TAŞIMA-9: yeni görünüş (şehirdeki Blakherna kalemi: scripts/world/ist/blak_set.gd) ya da eski set. Çarpışma, ölçü ve bütün
+## bağlar (WALK_Y, WALL_Z0/Z1, TOWERS, rampa, korkuluklar, zemin y 0) İKİSİNDE AYNI; yalnız görünen ağ değişir.
+## Seçim: SurSet.eski_istendi(bolum) (`--eskisur` ya da `--eskisur=30,30o`); add_child'dan önce verilir.
+var bolum := "30"
+## Sonda/test: −1 komut satırına bak, 0 yeni, 1 eski
+var eski_zorla := -1
+var eski := false
+## Yeni sette yalnız görünüş: bu x'lere dayanan merdivenin tepesi dişe değil korkuluğa yaslanır (dişi kurulmaz). Bölüm 30'un
+## merdivenleri (oyuncu çıkmaz). Oyuncunun çıktığı merdivenler build_guards(gaps): orada korkuluk da açılır (mazgal aralığı).
+var dissiz: Array = []
+var _gor: Node3D                    # yeni görünüş düğümü (sur taşı gölgelendiricisi yalnız bunun altında)
+var _korkuluk_kuruldu := false
+## Yeni set etkin mi (zemin_y için; sahneden çıkınca sıfırlanır)
+static var _yeni_etkin := false
+
+const BLAK_YOL := "res://scripts/world/ist/blak_set.gd"
+const ESER_YOL := "res://scripts/world/ist/sehir_eser.gd"
 
 
 static func slope_y(_z: float) -> float:
@@ -40,18 +57,40 @@ static func slope_y(_z: float) -> float:
 	return 0.0
 
 
+## TAŞIMA-9: zemin sorgusu (merdiven ayağı, taşıma yolu, yaralı, çalı). Çarpışma her iki sette düz (y 0); yeni sette görünen
+## zemin sur kuşağının zemin dilinde ±1,6 cm engebeli: ayaklar görünen yüze oturur (blak_set.zemin_y). Eski sette 0.
+static func zemin_y(x: float, z: float) -> float:
+	if not _yeni_etkin:
+		return 0.0
+	return load(BLAK_YOL).zemin_y(x, z)
+
+
 func _ready() -> void:
+	eski = SurSet.eski_istendi(bolum) if eski_zorla < 0 else eski_zorla == 1
+	_yeni_etkin = not eski
+	print("BLAKSET bolum=%s set=%s" % [bolum, "eski" if eski else "yeni"])
 	Audio.voice_space("outdoor")
 	moon = Night.environment(self, 0.008)
 	moon.rotation_degrees = Vector3(-30, 150, 0)
+	if not eski:
+		_gor = Node3D.new()
+		_gor.name = "BlakGorunus"
+		add_child(_gor)
 	_ground()
 	_wall()
 	_palace()
 	_outside()
+	if not eski:
+		# korkuluk ve dişler: bölüm build_guards ile merdiven yerlerini verir (aynı karede); vermezse kare sonunda kurulur
+		_korkuluk.call_deferred()
 	if in_world:
 		# Oynanış alanı: surun iki yanı (x ±70), içeride avlu, dışarıda yamaç
 		world = World1453.surround(self, "blachernae", [Rect2(-75.0, -62.0, 150.0, 130.0)])
 		_join_tower()
+
+
+func _exit_tree() -> void:
+	_yeni_etkin = false
 
 
 func _process(delta: float) -> void:
@@ -63,18 +102,44 @@ func _process(delta: float) -> void:
 
 func _ground() -> void:
 	# İçeride avlu (katı, düz)
-	Props.set_pattern(Props.solid(self, Vector3(140, 0.4, 60), Vector3(0, -0.2, -30.0), Color.WHITE), Color("7a6e5a"), "cobble")
+	var avlu := Props.solid(self, Vector3(140, 0.4, 60), Vector3(0, -0.2, -30.0), Color.WHITE)
+	Props.set_pattern(avlu, Color("7a6e5a"), "cobble")
+	_gizle(avlu, "ground")
 	# Dışarıda yamaç: üç kademeli katı parçalar (yürünür)
 	for k in 6:
 		var z0 := WALL_Z1 + k * 10.0
 		var y0 := slope_y(z0 + 5.0)
 		var b := Props.solid(self, Vector3(140, 0.4, 10.2), Vector3(0, y0 - 0.2, z0 + 5.0), Color.WHITE)
 		Props.set_pattern(b, Color("4e4a36"), "dirt")
+		_gizle(b, "ground")
+	if eski:
+		return
+	# TAŞIMA-9: görünen zemin sur kuşağının zemin dilinde (Mesoteikhion'un ovası ve peribolosuyla aynı: kuru ot yamaları,
+	# çıplak toprak, sura doğru taş tozu, ot tutamları). Çarpışma yukarıdaki düz levhalar (y 0, aynı)
+	var BLAK := load(BLAK_YOL)
+	BLAK.zemin(_gor, -70.0, 70.0, WALL_Z1, WALL_Z1 + 61.2, 0.0, [WALL_Z1], "BlakZemin_Dis")
+	BLAK.zemin(_gor, -70.0, 70.0, -20.0, WALL_Z0, 0.0, [WALL_Z0], "BlakZemin_Ic")
+	BLAK.zemin(_gor, -70.0, 70.0, -60.0, -20.0, 0.0, [WALL_Z0], "BlakZemin_Ic2")
+
+
+## Yeni sette kabuğun katı kutusu yalnız çarpışmadır: görünen kutu ağı gizlenir, gövde "görünür katı" sayılır (Unclip:
+## düellocu düşüşü, ayakta durma denetimi eskisi gibi; meta "wall"/"ground")
+func _gizle(b: Node3D, meta: String) -> void:
+	if eski or b == null:
+		return
+	for c in b.get_children():
+		if c is GeometryInstance3D:
+			(c as GeometryInstance3D).visible = false
+	b.set_meta(meta, true)
 
 
 func _wall() -> void:
 	shell_parts(_emit, "wall")
-	Scenery.scatter(self, Scenery._boxm(Vector3.ONE), _merl, [], _merl_mat)
+	if eski:
+		Scenery.scatter(self, Scenery._boxm(Vector3.ONE), _merl, [], _merl_mat)
+	else:
+		# TAŞIMA-9: sur gövdesi ve kuleler şehirdeki Blakherna kalemiyle (blak_set.sur; korkuluk/dişler _korkuluk'ta)
+		load(BLAK_YOL).sur(_gor, -60.0, 60.0, 0, {"tohum_L": 120.0})
 	_merl = []
 	for tx: float in TOWERS:
 		lights.append(Night.torch(self, Vector3(tx - 4.6, WALK_Y, WALL_Z0 + 0.6), 1.6))
@@ -84,11 +149,30 @@ func _wall() -> void:
 	# İçeriden yürüyüş yoluna çıkan taş merdiven (x −8)
 	var stair := Props.ramp(self, Vector3(-14.0, 0.0, WALL_Z0 - 6.0), Vector3(-6.0, WALK_Y, WALL_Z0 - 0.2), 2.4, Color.WHITE)
 	Props.set_pattern(stair, C_STONE.darkened(0.1), "ashlar")
+	if not eski:
+		# basamaklı taş merdiven, altı dolu taş kütle (eski: havada eğik taş levha); çarpışma rampası aynı
+		_gizle(stair, "wall")
+		load(BLAK_YOL).merdiven(_gor, Vector3(-14.0, 0.0, WALL_Z0 - 6.0), Vector3(-6.0, WALK_Y, WALL_Z0 - 0.2), 2.4, 0)
+		load("res://scripts/world/ist/sur_doku.gd").uygula(_gor, 0)
 
+
+## Yeni set: yürüyüş yolunun dış korkuluğu ve dişleri. Oyuncunun çıktığı merdivenlerde (ladder_gaps) mazgal aralığında
+## korkuluk açılır; dissiz x'lerde (bölümün başka merdivenleri) diş kurulmaz.
+func _korkuluk() -> void:
+	if eski or _korkuluk_kuruldu or not is_instance_valid(_gor):
+		return
+	_korkuluk_kuruldu = true
+	var BLAK := load(BLAK_YOL)
+	var kes: Array = []
+	for g: float in ladder_gaps:
+		kes.append(BLAK.mazgal_araligi(g))
+	BLAK.korkuluk_dis(_gor, -60.0, 60.0, 0, 120 * 13, kes, dissiz)
+	load("res://scripts/world/ist/sur_doku.gd").uygula(_gor, 0)
 
 ## Yürüyüş yolunun korkulukları: dış kenarda (merdiven açıklıkları hariç) ve iç kenarda (merdiven başı hariç)
 func build_guards(gaps: Array, inner_open := true) -> void:
 	ladder_gaps = gaps
+	_korkuluk()
 	var xs: Array = [-60.0]
 	for g: float in gaps:
 		xs.append(g - 0.9)
@@ -112,7 +196,15 @@ func build_guards(gaps: Array, inner_open := true) -> void:
 ## Tekfur Sarayı: üç katlı, tuğla-taş bantlı cephe; kemerli pencereler (ışıklı), arkada yamaca tırmanan saray
 func _palace() -> void:
 	var z := -16.0
-	shell_parts(_emit, "palace")
+	if eski:
+		shell_parts(_emit, "palace")
+	else:
+		# TAŞIMA-9: saray şehirdeki Blakherna Sarayı'nın kendisi (sehir_eser.palace: üç kat, kemerli pencere sıraları, revak,
+		# balkon, kırma çatı, yan kuleler, avlu; gece pencereleri ışıklı). Aynı çerçeve (cephe z −16), bir kez kurulur
+		var saray := Node3D.new()
+		saray.name = "BlakSaray"
+		add_child(saray)
+		load(ESER_YOL).palace(saray, 0, true)
 	var l := OmniLight3D.new()
 	l.light_color = Color("ffb060")
 	l.light_energy = 2.0
@@ -153,6 +245,17 @@ func _outside() -> void:
 ## inen kule (x −60)
 func _join_tower() -> void:
 	shell_parts(_emit, "join")
+	if eski:
+		return
+	# Görünüş: aynı iç kule kalemi, kabuğun kutusunun ölçüsünde (9 × 9 m, tepe WALL_H + 7)
+	var BLAK := load(BLAK_YOL)
+	var zc := (WALL_Z0 + WALL_Z1) * 0.5
+	for i in 2:
+		var tx: float = [62.0, -62.0][i]
+		BLAK.kule(_gor, {"cx": tx, "w": 9.0, "zb": zc - 4.5, "zf": zc + 4.5, "zi1": WALL_Z1, "yf": WALK_Y + 0.03, "HT": WALL_H + 7.0,
+			"yc": WALL_H + 6.5, "tur": 1, "tohum": 1451 + i * 17, "hasar": 0.5, "kapi_z0": WALL_Z0 + 0.4, "kapi_z1": WALL_Z1 - 0.4,
+			"cati": false, "yazit": false, "tas": C_STONE}, 0)
+	load("res://scripts/world/ist/sur_doku.gd").uygula(_gor, 0)
 
 
 ## Blakherna'nın yapı kabuğu tek yerde (ortak kurucu): bölümün kendi sahnesi (Props: katı, desenli) ve tek haritanın uzak
@@ -202,12 +305,18 @@ var _merl_mat: Material
 func _emit(kind: String, size: Vector3, pos: Vector3, col: Color, pattern: String, solid: bool, tag: String) -> void:
 	match kind:
 		"merl":
+			if not eski:
+				return
 			_merl.append(Transform3D(Basis.from_scale(size), pos))
 			if _merl_mat == null:
 				_merl_mat = Props.mat(col, 0.0, false, pattern)
 		"glass":
+			if not eski:
+				return
 			Props.box(self, size, pos, col).material_override = Props.mat(Color("ffc070"), 2.2, false, "", false)
 		"dark":
+			if not eski:
+				return
 			Props.box(self, size, pos, Color("ffc070")).material_override = Props.mat(col)
 		_:
 			if solid:
@@ -215,7 +324,8 @@ func _emit(kind: String, size: Vector3, pos: Vector3, col: Color, pattern: Strin
 				Props.set_pattern(b, col, pattern)
 				if tag != "":
 					b.set_meta(tag, true)
-			else:
+				_gizle(b, "wall")
+			elif eski:
 				Props.box(self, size, pos, col)
 
 
@@ -276,6 +386,7 @@ func night_assault(skip: Array, ottoman_side := true) -> void:
 	# Ovada: hasır siperlerin ardında okçular (sura ateş eder), arkada mızraklı yedek bölükler ve meşaleler.
 	# Bölümün yolu (skip x ±7) boş kalır.
 	var items: Array = []
+	var pavez: Array = []
 	var gx := -58.0
 	while gx < 58.0:
 		var clear := true
@@ -284,8 +395,13 @@ func night_assault(skip: Array, ottoman_side := true) -> void:
 				clear = false
 		if clear:
 			var mz := WALL_Z1 + 20.0 + rng.randf_range(-1.5, 1.5)
-			var mant := Props.box(self, Vector3(2.6, 1.9, 0.25), Vector3(gx, 0.95, mz), Color("66502f"), Vector3(-12.0, rng.randf_range(-8.0, 8.0), 0))
-			mant.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
+			var yaw := rng.randf_range(-8.0, 8.0)
+			if eski:
+				var mant := Props.box(self, Vector3(2.6, 1.9, 0.25), Vector3(gx, 0.95, mz), Color("66502f"), Vector3(-12.0, yaw, 0))
+				mant.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
+			else:
+				# TAŞIMA-9: siper kutu levha değil, ova sahnesinin pavezi (Assault.pavez_ag; TUR-13), ayağı zeminde
+				pavez.append(Transform3D(Basis(Vector3.UP, deg_to_rad(yaw)) * Basis(Vector3.RIGHT, deg_to_rad(-12.0)), Vector3(gx, zemin_y(gx, mz), mz)))
 			for k in 2:
 				items.append([Transform3D(Basis(Vector3.UP, PI + rng.randf_range(-0.2, 0.2)), Vector3(gx - 0.7 + k * 1.4, 0, mz + 1.0)),
 					{"side": "O", "coat": [Color("2e4a7a"), Color("7a2a24"), Color("6a4a2a")][k + int(gx) % 2], "hat": "bork", "arm": "bow", "pose": "aim"}])
@@ -297,20 +413,41 @@ func night_assault(skip: Array, ottoman_side := true) -> void:
 				lights.append(Night.torch(self, Vector3(gx + 1.6, 0, mz + 17.0), 1.2))
 		gx += rng.randf_range(6.0, 8.0)
 	Crowd.place(self, items)
+	if not pavez.is_empty():
+		var mm := MultiMesh.new()
+		mm.transform_format = MultiMesh.TRANSFORM_3D
+		mm.mesh = Assault.pavez_ag(2.6, 1.9, 0.1, Color("66502f"), -12.0)
+		mm.instance_count = pavez.size()
+		for i in pavez.size():
+			mm.set_instance_transform(i, pavez[i])
+		var mmi := MultiMeshInstance3D.new()
+		mmi.name = "Ahsap_Pavez"
+		mmi.multimesh = mm
+		mmi.material_override = Dressing._material()
+		mmi.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
+		add_child(mmi)
 	# Sur dibinde yanan ateş çömlekleri ve kırık merdivenler. Bölümün kendi alanında (skip ±7) olmaz: 30o'da sırta
 	# alınan yaralı azap bir ateşin dibinde, bir kırık merdivenin altında yatıyordu (kartında yüzü yerine tahta görünüyordu)
 	for i in 9:
 		var p := Vector3(rng.randf_range(-55.0, 55.0), 0.1, WALL_Z1 + rng.randf_range(0.8, 4.0))
 		if not _near_skip(p.x, skip, 7.0):
 			lights.append(Night.campfire(self, p, 0.5))
+	var kirik := Dressing.new(1208)
 	for i in 6:
 		var size := Vector3(0.7, 0.12, rng.randf_range(3.0, 6.0))
 		var at := Vector3(rng.randf_range(-50.0, 50.0), 0.1, WALL_Z1 + rng.randf_range(2.0, 9.0))
 		var rot := Vector3(0, rng.randf() * 180.0, rng.randf_range(-8.0, 8.0))
 		if _near_skip(at.x, skip, 7.0 + size.z * 0.5):
 			continue
-		var b := Props.box(self, size, at, Color("5a3e26"), rot)
-		b.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
+		if eski:
+			var b := Props.box(self, size, at, Color("5a3e26"), rot)
+			b.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
+		else:
+			_kirik_merdiven(kirik, size, Vector3(at.x, zemin_y(at.x, at.z), at.z), rot.y, i)
+	if not eski:
+		for g in kirik.build(self).get_children():
+			if g is GeometryInstance3D:
+				(g as GeometryInstance3D).cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
 	# Sur yolunda savunanlar (oynanış merdiveninin çevresi boş: orada bölümün kendi dövüşü var)
 	var men: Array = []
 	var mx := -58.0
@@ -396,13 +533,42 @@ func _wall_works(skip: Array, rng: RandomNumberGenerator) -> void:
 	for tx: float in TOWERS:
 		var top := WALL_H + 5.0
 		Props.cyl(self, 0.06, 5.0, Vector3(tx, top + 2.5, WALL_Z1 + 1.6), Color("4a3420"), Vector3.ZERO, 5)
-		Props.box(self, Vector3(0.04, 1.6, 2.4), Vector3(tx, top + 4.0, WALL_Z1 + 2.8), Color("8a1a2a"))
-		Props.box(self, Vector3(0.05, 0.7, 0.7), Vector3(tx, top + 4.0, WALL_Z1 + 2.8), Color("d8b040"))
+		if eski:
+			Props.box(self, Vector3(0.04, 1.6, 2.4), Vector3(tx, top + 4.0, WALL_Z1 + 2.8), Color("8a1a2a"))
+			Props.box(self, Vector3(0.05, 0.7, 0.7), Vector3(tx, top + 4.0, WALL_Z1 + 2.8), Color("d8b040"))
+		else:
+			# TAŞIMA-9: sancak levha değil dalgalanan kumaş (kumas.bayrak; TUR-12/13), aynı ölçü ve renk: kırmızı üstüne altın
+			var kb := Node3D.new()
+			kb.position = Vector3(tx, top + 4.8, WALL_Z1 + 1.6)
+			add_child(kb)
+			preload("res://scripts/world/ist/kumas.gd").bayrak(kb, Vector3.ZERO, Vector3.BACK, 2.4, 1.6, Color("8a1a2a"), [], 8, "Sancak")
 		if absf(tx - quiet_tower) < 1.0:
 			continue
 		for s2: float in [-2.4, 0.0, 2.4]:
 			tm.append(Transform3D(Basis(Vector3.UP, rng.randf_range(-0.3, 0.3)), Vector3(tx + s2, top, WALL_Z1 + 4.4)))
 	Garrison.far_men(self, tm, Garrison.COATS)
+
+
+## Sur dibinde kırık hücum merdiveni (yeni set): iki yan direk ve basamaklar, ortasından kırık (bir yarısı 8–14° kalkık,
+## ucu yerde), eski kutu levhanın boyunda (en 0,7, boy size.z)
+func _kirik_merdiven(d: Dressing, size: Vector3, at: Vector3, yaw_deg: float, i: int) -> void:
+	var b := Basis(Vector3.UP, deg_to_rad(yaw_deg))
+	var Lz := size.z
+	var kir := Lz * (0.45 + 0.1 * float(i % 3))
+	var col := Color("5a3e26").darkened(0.05 * float(i % 3))
+	for parca in 2:
+		var z0 := -Lz * 0.5 if parca == 0 else -Lz * 0.5 + kir
+		var uz := kir if parca == 0 else Lz - kir
+		var egim := 0.0 if parca == 0 else deg_to_rad(8.0 + 3.0 * float(i % 3))
+		var pb := b * Basis(Vector3.RIGHT, -egim)
+		var o := at + b * Vector3(0, 0.05, z0)
+		for sx: float in [-0.3, 0.3]:
+			var m := o + pb * Vector3(sx, 0, uz * 0.5)
+			d.cyl(0.045, uz, m, col, (pb * Basis(Vector3.RIGHT, PI * 0.5)).get_euler() * (180.0 / PI), 6)
+		var k := 0.25
+		while k < uz - 0.1:
+			d.cyl(0.03, 0.62, o + pb * Vector3(0, 0, k), col.lightened(0.05), (pb * Basis(Vector3.FORWARD, PI * 0.5)).get_euler() * (180.0 / PI), 5)
+			k += 0.38
 
 
 ## Sur yolu adamı: canlı aralıktaysa live_spots'a, değilse uzak kalabalığa
