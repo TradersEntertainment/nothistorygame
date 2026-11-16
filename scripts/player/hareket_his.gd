@@ -54,6 +54,8 @@ var _audit_seen := {}
 var _zipla_y0 := INF
 var _zipla_tepe := -INF
 var _zipla_coyote := 0.0
+var _zipla_xz := Vector2.INF       # kalkış (coyote'ta kenar) noktası
+var _zipla_hiz := 0.0
 var _takilma_t := 0.0
 var _inis_hiz := 0.0
 var _inis_t := 99.0
@@ -91,6 +93,9 @@ func zipladi(c: float) -> void:
 	_zipla_y0 = p.global_position.y + (_g() * c * c * 0.5 if c > 0.0 else 0.0)     # kenarın yüksekliği
 	_zipla_tepe = p.global_position.y
 	_zipla_coyote = c
+	var hv := Vector2(p.velocity.x, p.velocity.z)
+	_zipla_xz = Vector2(p.global_position.x, p.global_position.z) - hv * c
+	_zipla_hiz = maxf(hv.length(), Player.RUN * maxf(p.speed_mult, 1.0))
 
 
 func _g() -> float:
@@ -126,6 +131,13 @@ func adim(delta: float, horiz: float) -> void:
 	_yerde = yerde
 	if _zipla_y0 != INF:
 		_zipla_tepe = maxf(_zipla_tepe, y)
+		if _zipla_xz != Vector2.INF and not yerde and y < _zipla_y0 - 0.02 and _vy < 0.0:
+			# Kalkış hizasına geri inildi: yatay yol, o hızla kenardan zıplamanın en uzun yolunu aşmasın
+			var d := Vector2(p.global_position.x, p.global_position.z).distance_to(_zipla_xz)
+			var en := _zipla_hiz * 2.0 * Player.JUMP / _g() + 0.2
+			if d > en:
+				_audit("menzil", "yol=%.2f sinir=%.2f coyote=%.2f" % [d, en, _zipla_coyote])
+			_zipla_xz = Vector2.INF
 		if yerde or not serbest:
 			_zipla_denetle()
 	# Havada kollar (el donanımı): zıplayınca ve düşerken hafifçe açılır
@@ -437,6 +449,7 @@ func _zipla_denetle() -> void:
 	if tepe > en + 0.06:
 		_audit("zipla_tepe", "tepe=%.2f sinir=%.2f coyote=%.2f" % [tepe, en, _zipla_coyote])
 	_zipla_y0 = INF
+	_zipla_xz = Vector2.INF
 
 
 func _takilma(delta: float, horiz: float, serbest: bool) -> void:

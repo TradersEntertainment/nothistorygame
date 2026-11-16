@@ -137,7 +137,7 @@ var _item_busy := false
 var powers: NihatPowers
 var his: HareketHis              # hareket hissi: kamera, iniş, düşüş, havada kollar (scripts/player/hareket_his.gd)
 ## Zıplama: coyote (kenardan çıktıktan sonra) ve tampon (inmeden hemen önce basılan) süreleri. Coyote zıplaması
-## menzili uzatmaz: dikey hız, kenarda zıplansaydı kalacak uçuş süresine göre ayarlanır (bkz. _zipla_hiz).
+## menzili uzatmaz: dikey hız, kenarda zıplansaydı o an olacak hızdır (bkz. _zipla_hiz).
 const COYOTE := 0.1
 const ZIPLA_TAMPON := 0.1
 var _hava_t := 0.0
@@ -609,7 +609,7 @@ func _ivmelen(want: Vector3, speed: float, delta: float) -> void:
 
 
 ## Zıplama isteği: tampon (yere inmeden 0,1 sn önce basılan sayılır) ve coyote (kenardan çıktıktan sonra 0,1 sn).
-## Coyote zıplamasının dikey hızı, kenarda zıplansaydı kalacak uçuş süresine göre: menzil ve tepe kenarınkini aşmaz.
+## Coyote zıplamasının dikey hızı kenarda zıplansaydı o an olacak hız: menzil ve tepe kenarınkini aşmaz.
 func _zipla_iste(delta: float) -> bool:
 	if is_on_floor():
 		_hava_t = 0.0
@@ -635,11 +635,11 @@ func _zipla_iste(delta: float) -> bool:
 	return true
 
 
-## Kenardan c sn sonra zıplayınca: kalan uçuş T = 2·JUMP/g − c; o anki düşüş −g·c²/2'den T sonunda kenar hizasına
-## dönecek dikey hız. c = 0'da JUMP.
+## Kenardan c sn sonra zıplayınca: kenarda zıplanmış olsaydı o anda sahip olunacak dikey hız (JUMP − g·c). Yol,
+## kenar zıplamasının yolunun J·c kadar aşağı kaydırılmışıdır: her kot farkında menzil ve tepe kenarınkinden kısa kalır
+## (ilk sürümde uçuş süresini eşitleyen hız, derin inişlerde menzili 0,3 m uzatıyordu: dh 5,8 m'de 7,9 → 8,2).
 func _zipla_hiz(c: float) -> float:
-	var t := maxf(2.0 * JUMP / _gravity - c, 0.05)
-	return _gravity * t * 0.5 + _gravity * c * c / (2.0 * t)
+	return JUMP - _gravity * c
 
 
 ## Alçak basamak (eşik, kaldırım, taş basamak, moloz, alçak sahanlık; en çok STEP_H) zıplamadan çıkılır. Önü kapanınca

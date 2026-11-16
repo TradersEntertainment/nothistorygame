@@ -16,6 +16,7 @@ var _bitti := false
 var _mesgul := false
 var _son_y := INF
 var _kuyu_basti := false
+var _hizli := 0
 
 
 func _ready() -> void:
@@ -32,6 +33,8 @@ func _ready() -> void:
 		elif a.begins_with("--hareket-kare-ara="):
 			ara = float(a.trim_prefix("--hareket-kare-ara="))
 	DirAccess.make_dir_recursive_absolute(dir)
+	if tetik == "kuyu":
+		Engine.time_scale = 3.0          # avlu konuşmaları hızlı geçsin (yazılım çiziminde saniyede ~1 kare)
 
 
 func _physics_process(delta: float) -> void:
@@ -51,7 +54,10 @@ func _physics_process(delta: float) -> void:
 				_kuyu_basti = true
 				sc.call("_on_interact", "well")
 			var y := p.global_position.y
-			if _son_y != INF and str(sc.get("phase")) == "descend" and (_son_y - y) / maxf(delta, 0.001) > 3.0:
+			# Işınlanma (avludan kuyunun içine) sayılmaz: karede 1 m'den az, iki ardışık karede > 3 m/sn iniş (ip kopunca)
+			var hiz := (_son_y - y) / maxf(delta, 0.001) if _son_y != INF and absf(_son_y - y) < 1.0 else 0.0
+			_hizli = _hizli + 1 if hiz > 3.0 and str(sc.get("phase")) == "descend" else 0
+			if _hizli >= 2:
 				_cek(ad + "_kuyu")
 			_son_y = y
 
