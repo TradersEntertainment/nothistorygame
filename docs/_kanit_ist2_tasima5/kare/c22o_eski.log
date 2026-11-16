@@ -37,3 +37,23 @@ TASIMA22OYURU bacak=ara_kule_arka sure=0.0 yol=0.0 takilma=0 dusme=0 son=(1.0, 0
 TASIMA22OYURU bacak=ara_kule_sol sure=0.0 yol=0.0 takilma=0 dusme=0 son=(-6.1, 0.0, 44.5) odak=
 TASIMA22OYURU bacak=deri_yigini sure=0.0 yol=0.0 takilma=0 dusme=0 son=(-5.8, 0.0, 40.6) odak=hidepile
 TASIMA22OYURU bacak=kule_onu sure=0.0 yol=0.0 takilma=0 dusme=0 son=(-3.0, 0.0, 37.0) odak=hides
+TASIMA22OYURU deri=1 sure=2.8 odak=hides
+TASIMA22OYURU bacak=deri_yigini sure=0.0 yol=0.0 takilma=0 dusme=0 son=(-5.8, 0.0, 40.6) odak=hidepile
+TASIMA22OYURU bacak=kule_onu sure=0.0 yol=0.0 takilma=0 dusme=0 son=(-3.0, 0.0, 37.0) odak=hides
+TASIMA22OKARE an_04_deri_ustalar.jpg oyuncu=(-3.0, 0.0, 37.0) cizim=731 ilkel=742652 sur=eski
+TASIMA22OYURU deri=2 sure=3.6 odak=hides
+TASIMA22OYURU bacak=deri_yigini sure=0.0 yol=0.0 takilma=0 dusme=0 son=(-5.8, 0.0, 40.6) odak=hidepile
+TASIMA22OYURU bacak=kule_onu sure=0.0 yol=0.0 takilma=0 dusme=0 son=(-3.0, 0.0, 37.0) odak=hides
+TASIMA22OYURU deri=3 sure=3.6 odak=hides
+TASIMA22OYURU bacak=su sure=0.0 yol=0.0 takilma=0 dusme=0 son=(-9.400001, 0.0, 51.4) odak=water
+TASIMA22OYURU bacak=ara_kule_sol sure=0.0 yol=0.0 takilma=0 dusme=0 son=(-6.1, 0.0, 44.5) odak=
+TASIMA22OYURU bacak=ara_kule_on sure=0.0 yol=0.0 takilma=0 dusme=0 son=(-6.1, 0.0, 37.1) odak=
+TASIMA22OYURU bacak=kule_su sure=0.0 yol=0.0 takilma=0 dusme=0 son=(-3.0, 0.0, 37.0) odak=hides
+TASIMA22OKARE an_05_safak_kule.jpg oyuncu=(4.0, 0.0, 54.0) cizim=6138 ilkel=3738789 sur=eski
+TASIMA22OKARE an_06_kule_tepesi_sur.jpg oyuncu=(-3.0, 13.5, 38.8) cizim=3871 ilkel=2796873 sur=eski
+TASIMA22OKARE BITTI
+WARNING: ObjectDB instances leaked at exit (run with --verbose for details).
+     at: cleanup (core/object/object.cpp:2378)
+ERROR: 1 resources still in use at exit (run with --verbose for details).
+   at: clear (core/io/resource.cpp:614)
+KARE_BITTI rc=0 --chapter=22o --autotest=kare --eskisur
