@@ -776,6 +776,7 @@ func _wave3() -> void:
 	var fall := create_tween()
 	fall.tween_method(func(k: float): _carry_pose(dir, 0.15, k), 0.0, 1.0, 0.55).set_ease(Tween.EASE_IN)
 	await fall.finished
+	_t8_sonda("dusus")
 	Vfx.dust(self, giust.global_position, 0.6)
 	await hud.say("SPK_DEFENDER", "D26_S_GIUST")
 	await hud.say("SPK_GIUST", "D26_G_HURT")
@@ -807,6 +808,7 @@ func _wave3() -> void:
 			var fy := _visible_floor(q)
 			b0.global_position = Vector3(q.x, q.y if is_nan(fy) else fy, q.z), 0.0, 1.0, 1.0)
 	await come.finished
+	_t8_sonda("tasiyici")
 	for i in 2:
 		bearers[i].rotation.y = atan2(dir.x, dir.z) + (PI if i == 0 else 0.0)
 	# Taşıyıcılar moloz basamağının kenarında bekler: kalabalıktan yana itilen basamaktan iner (havada kalıyordu).
@@ -829,7 +831,9 @@ func _wave3() -> void:
 		await get_tree().process_frame
 	player.frozen = true
 	hud.set_objective("")
+	_t8_sonda("tasima_once")
 	await _carry_giust(dir)
+	_t8_sonda("tasima_sonra")
 	await hud.say("SPK_TOLGA", "D26_T_GONE")
 	# Burçta sancak
 	banner.visible = true
@@ -1228,7 +1232,12 @@ func _carry_giust(dir: Vector3) -> void:
 	helper.set_activity("")
 	var feet_spot := _carry_at - dir * 1.35
 	var side := dir.cross(Vector3.UP).normalized()
-	Stage.approach(helper, helper.global_position + side * 1.4, 0.0, 1.6, Vector3.ZERO, _rubble_y)
+	# Çekildiği yer doluysa (şafak atışında görüş çizgisinden itilen savunucu orada) öbür yana: yeni sette yardımcı onun
+	# üstüne çekiliyordu (VISAUDIT overlap 1,5; 0,5; 10,6). Boşsa eskisiyle aynı yer.
+	var cek := helper.global_position + side * 1.4
+	if Unclip.crowded(helper, cek, 0.7):
+		cek = helper.global_position - side * 1.4
+	Stage.approach(helper, cek, 0.0, 1.6, Vector3.ZERO, _rubble_y)
 	await Stage.walk_player(player, feet_spot, 0.0, giust.global_position + Vector3(0, 0.4, 0), 4.0)
 	player.face(giust.global_position + dir * 0.6 + Vector3(0, 0.3, 0))
 	bearers[0].set_activity("carry")
