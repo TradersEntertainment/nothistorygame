@@ -34,6 +34,16 @@ static func yaz(kok: Node, an: String, n := 8) -> void:
 	if px.is_empty():
 		return
 	var cam := kok.get_viewport().get_camera_3d()
+	if OS.get_cmdline_user_args().has("--pik7parca"):
+		# kameranın önündeki bütün parçacık/sprite düğümleri ve ekran yerleri (ağ olmayan çizilenler)
+		for g in kok.get_tree().root.find_children("*", "", true, false):
+			if not (g is GPUParticles3D or g is CPUParticles3D or g is Sprite3D or g is Label3D or g is Decal):
+				continue
+			var nd := g as Node3D
+			if not nd.is_visible_in_tree() or cam.is_position_behind(nd.global_position):
+				continue
+			var e := cam.unproject_position(nd.global_position)
+			print("PIK7PARCA an=%s tur=%s ekran=%s p=%s yol=%s" % [an, g.get_class(), e.round(), nd.global_position.snapped(Vector3.ONE * 0.01), str(g.get_path()).right(100)])
 	var vs := kok.get_viewport().get_visible_rect().size
 	var olcek := vs / Vector2(1280, 720)
 	var hepsi: Array = []
@@ -80,6 +90,17 @@ static func yaz(kok: Node, an: String, n := 8) -> void:
 							ornek = xfs.find(xf)
 			if en < INF:
 				bul.append([en, gi, ab, nok, ornek])
+		# ağ olmayan çizilenler (parçacık, Sprite3D, Label3D, CSG…): yalnız dünya AABB'si ışınla kesişiyorsa, uzaklık AABB'ye
+		for g in kok.get_tree().root.find_children("*", "GeometryInstance3D", true, false):
+			var gi := g as GeometryInstance3D
+			if not gi.is_visible_in_tree() or gi is MeshInstance3D or gi is MultiMeshInstance3D:
+				continue
+			var ab := gi.global_transform * gi.get_aabb()
+			var h = ab.intersects_ray(o, d)
+			if h == null and not ab.has_point(o):
+				continue
+			var dd := 0.0 if h == null else o.distance_to(h)
+			print("PIK7 an=%s px=%s d=%.2f AABB_YALNIZ tur=%s yol=%s aabb=%s" % [an, p, dd, gi.get_class(), str(gi.get_path()).right(110), ab])
 		bul.sort_custom(func(a, b): return a[0] < b[0])
 		for i in mini(n, bul.size()):
 			var gi: GeometryInstance3D = bul[i][1]

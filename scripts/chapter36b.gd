@@ -13,16 +13,33 @@ extends Node3D
 ## Dallanma: Bölüm 20 (Gedik) Leon'u hatırlar (36.1: gedikte Tolga'nın yanındadır; 36.2: Giustiniani adını anar).
 ##   --autotest[=leave]   (varsayılan: 36.1; leave: Leon kaldırılmaz)
 
-const LANE_X := -24.0
-const POSTERN := Vector3(LANE_X, 0.0, LandWalls.OUTER_Z1)       # dış surun ova yüzündeki gizli kapı
-const RETURN := Vector3(LANE_X, 0.0, 17.2)                      # kapının önü (sur dibindeki set)
+## Eski setin (LandWalls) sayıları (*_E). Yeni sette (TAŞIMA-7) bölüm yeni Mesoteikhion surunun SAĞLAM kipinde (9 Nisan:
+## bombardıman başlamadı; eski set `intact`): setin kendi Poterna'sı (dış surun ova yüzünde; dış kuşak 3,7 m aşağıda olduğu için
+## kapının önünde sahanlık ve sur yüzü boyunca terasa inen taş basamak), kalas geçidindeki KalasKopru (poternanın önü, 20 m'lik
+## hendeğin üstünde; parateikhion yalnız orada açık) ve hendeğin iç yüzüne dayalı iki merdiven (düşen çıkar; eski kurtarma da
+## aynı). Ovadaki her şey (siper, mantolar, kazıcılar, Leon'un düştüğü yer, atlılar) eski koordinat + SurSet.ova_ofs + şeridin
+## x kayması (eski LANE_X −24 → poternanın x'i): aralarındaki mesafeler AYNI. Süreler (RIDE_TIME 34, dalga sınırı 75) aynı.
+const LANE_X_E := -24.0
+const POSTERN := Vector3(LANE_X_E, 0.0, LandWalls.OUTER_Z1)     # dış surun ova yüzündeki gizli kapı (eski set)
+const RETURN_E := Vector3(LANE_X_E, 0.0, 17.2)                  # kapının önü (sur dibindeki set)
 const BRIDGE_Z0 := 18.6
 const BRIDGE_Z1 := 36.9
 const BRIDGE_Y := 1.6
-const MANTLETS := [Vector3(LANE_X - 7.0, 0.0, 47.0), Vector3(LANE_X, 0.0, 50.0), Vector3(LANE_X + 7.0, 0.0, 47.0)]
-const TRENCH_Z := 54.0
-const LEON_AT := Vector3(LANE_X + 3.2, 0.0, 45.2)
+const MANTLETS_E := [Vector3(LANE_X_E - 7.0, 0.0, 47.0), Vector3(LANE_X_E, 0.0, 50.0), Vector3(LANE_X_E + 7.0, 0.0, 47.0)]
+const TRENCH_Z_E := 54.0
+const LEON_AT_E := Vector3(LANE_X_E + 3.2, 0.0, 45.2)
 const RIDE_TIME := 34.0
+## Geri dönüş anahtarı (karar 13): true → eski set; komut satırında --eskisur ya da --eskisur=36b
+const ESKI_SUR := false
+var sur: SurSet
+var O := Vector3.ZERO              # ova kaydırması (eski ova → yeni ova) + şeridin x kayması
+var LANE_X := LANE_X_E
+var RETURN := RETURN_E             # dönüş hedefi: kapının önü (yeni: poternanın sahanlığı)
+var TOPLAN := RETURN_E             # çıkış yeri (adamlar, Giustiniani, Tolga); yeni: sahanlıktan inen basamağın dibi, terasta
+var MANTLETS: Array = MANTLETS_E
+var TRENCH_Z := TRENCH_Z_E
+var LEON_AT := LEON_AT_E
+var CROSS_Z := 40.0                # "hendeği geç": oyuncu bu z'yi geçince çarpışma başlar (eski: hendeğin uzak yakası + 4)
 
 var walls: LandWalls
 var player: Player
@@ -63,9 +80,20 @@ func _ready() -> void:
 	player.interacted.connect(_on_interact)
 	hud.set_fez(false)
 	hud.set_signal(0)
-	walls = LandWalls.new()
+	sur = SurSet.sec("36b", ESKI_SUR, "mesoteikhion", true)
+	if sur.eski_mi:
+		walls = LandWalls.new()
+	else:
+		var ss := SurSetSahne.new()
+		ss.sur = sur
+		ss.dolgu = 0.0             # 9 Nisan: hendek dolgusu yok
+		ss.kalas = true            # kalas köprü poternanın önünde kurulu (eskide de bölüm başında yerinde)
+		ss.poterna_acik = true     # adamlar dışarı çıkmış
+		walls = ss
+		_yeni_yerlesim()
 	walls.intact = true                 # 9 Nisan: bombardıman başlamadı, sur bütün
-	walls.field_keep = [Rect2(LANE_X - 14.0, 36.0, 28.0, 60.0)]     # baskının alanı: ova eşyası konmaz
+	# baskının alanı: ova eşyası konmaz (ova koordinatında; yeni sette şerit poternanın x'ine kayar)
+	walls.field_keep = [Rect2(LANE_X - 14.0, 36.0, 28.0, 60.0)]
 	add_child(walls)
 	walls.set_repair(LandWalls.STAGES)
 	walls.dawn_to(0.05, 0.01)
@@ -74,13 +102,68 @@ func _ready() -> void:
 		Engine.time_scale = 3.0
 	if GameState.shots_dir != "":
 		_run_shots()
+	elif GameState.autotest and GameState.autotest_variant in ["yuru", "kare"]:
+		_yuru()
 	else:
 		_run()
 
 
 # ================================================================ kurulum
 
+## Yeni set (sağlam Mesoteikhion): şerit poternanın x'inde; ova yerleri eski + ova kaydırması + x kayması
+func _yeni_yerlesim() -> void:
+	LANE_X = sur.poterna_x()
+	O = sur.ova_ofs() + Vector3(LANE_X - LANE_X_E, 0.0, 0.0)
+	MANTLETS = MANTLETS_E.map(func(m: Vector3) -> Vector3: return m + O)
+	TRENCH_Z = TRENCH_Z_E + O.z
+	LEON_AT = LEON_AT_E + O
+	CROSS_Z = sur.hendek_z1() + 4.0
+	var pt: Dictionary = sur.a.poterna()
+	RETURN = sur.c(pt["sahanlik"]["yerel"])
+	TOPLAN = sur.c(pt["dis"]["yerel"])
+
+
+## Oyuncunun hendeğe düştüğünü sayan yükseklik (eski −1,5: ova 0, hendek dibi −2,9)
+func _dus_y() -> float:
+	return -1.5 if sur.eski_mi else sur.ova_y() - 1.5
+
+
+## Köprünün tahta yüzü (yeni: setin KalasKopru'su, ova ile aynı düzde)
+func _deck_y() -> float:
+	return BRIDGE_Y if sur.eski_mi else sur.ova_y() + 0.02
+
+
+## Köprüye çıkmadan önceki yer (eski: rampanın dibi; yeni: terasta, parateikhion açıklığının önü) ve karşı uçtan sonraki yer (ova)
+func _kopru_once() -> Vector3:
+	return Vector3(LANE_X, 0.0, 16.6) if sur.eski_mi else Vector3(LANE_X, sur.teras_y(), sur.hendek_z0() - 2.4)
+
+
+func _kopru_sonra() -> Vector3:
+	return Vector3(LANE_X, 0.04, BRIDGE_Z1 + 0.6) if sur.eski_mi else Vector3(LANE_X, sur.ova_y(), sur.hendek_z1() + 1.3)
+
+
 func _build() -> void:
+	if not sur.eski_mi:
+		_build_yeni_gecit()
+	else:
+		_build_eski_gecit()
+	var oy := O.y
+	_build_ova(oy)
+
+
+## Yeni set: poterna, kalas köprü ve parateikhion açıklığı setin parçası (SurSetSahne: poterna açık, kalas kurulu). Bölümün
+## eklediği: köprünün iki yanında hendeğin iç yüzüne dayalı iki merdiven (düşen eskide 2,9 m'lik hendekten kurtarılıyordu;
+## kurtarma aynı, merdivenle kendisi de çıkabilir: 6 m, karar 6), hendeğin dibinde düşenin göreceği çamur.
+func _build_yeni_gecit() -> void:
+	var dip := sur.hendek_dip_y()
+	var boy := (sur.teras_y() + 0.12 - dip) / cos(deg_to_rad(15.0)) + 0.7
+	for sx: float in [-2.3, 2.3]:
+		var lad := Ladder.new(boy, 15.0, Color("6a4a2c"))
+		lad.position = Vector3(LANE_X + sx, dip, sur.hendek_z0() + (boy - 0.7) * sin(deg_to_rad(15.0)) + 0.1)
+		add_child(lad)
+
+
+func _build_eski_gecit() -> void:
 	# Poterna: dış surun dibinde alçak, demir kuşaklı meşe kapı (ova yüzünde), üstünde taş kemer
 	var wood := Color("5a3e26")
 	Props.box(self, Vector3(1.5, 2.2, 0.12), POSTERN + Vector3(0, 1.1, 0.07), wood.darkened(0.15))
@@ -105,27 +188,30 @@ func _build() -> void:
 		var bot := Assault.ground_y(LANE_X, z)
 		for sx: float in [-0.85, 0.85]:
 			Props.box(self, Vector3(0.18, top - bot, 0.18), Vector3(LANE_X + sx, (top + bot) * 0.5, z), wood)
+
+
+func _build_ova(oy: float) -> void:
 	# Osmanlı öncülerinin işi: hendeğe 50 m'de kazılan siper (toprak set, sepetler) ve önünde üç tekerlekli ahşap
 	# kalkan (mantelet). Kazıcılar gece çalışır, fenerleri yanar.
 	var earth := Color("6a5a44")
-	Props.solid(self, Vector3(26.0, 0.38, 1.6), Vector3(LANE_X, 0.19, TRENCH_Z - 1.2), earth)
-	Props.box(self, Vector3(26.0, 0.04, 1.4), Vector3(LANE_X, 0.02, TRENCH_Z + 0.4), Color("2a241e"))     # kazılan hendek (koyu)
+	Props.solid(self, Vector3(26.0, 0.38, 1.6), Vector3(LANE_X, oy + 0.19, TRENCH_Z - 1.2), earth)
+	Props.box(self, Vector3(26.0, 0.04, 1.4), Vector3(LANE_X, oy + 0.02, TRENCH_Z + 0.4), Color("2a241e"))     # kazılan hendek (koyu)
 	for k in 9:
 		var gx := LANE_X - 12.0 + k * 3.0
-		var g := Props.cyl(self, 0.42, 0.9, Vector3(gx, 0.83, TRENCH_Z - 1.2), Color("8a7450"), Vector3.ZERO, 10)
+		var g := Props.cyl(self, 0.42, 0.9, Vector3(gx, oy + 0.83, TRENCH_Z - 1.2), Color("8a7450"), Vector3.ZERO, 10)
 		g.set_meta("gabion", true)
 		Props.make_solid(g, 0.9)
 		for r in 3:
-			Props.cyl(self, 0.43, 0.03, Vector3(gx, 0.45 + r * 0.3, TRENCH_Z - 1.2), Color("5a4a30"), Vector3.ZERO, 10)
+			Props.cyl(self, 0.43, 0.03, Vector3(gx, oy + 0.45 + r * 0.3, TRENCH_Z - 1.2), Color("5a4a30"), Vector3.ZERO, 10)
 	for i in MANTLETS.size():
 		_mantlets.append(_mantlet(MANTLETS[i], i))
 	for k in 3:
-		Night.torch(self, Vector3(LANE_X - 9.0 + k * 9.0, 0, TRENCH_Z + 1.4), 1.8, k == 1)
+		Night.torch(self, Vector3(LANE_X - 9.0 + k * 9.0, oy, TRENCH_Z + 1.4), 1.8, k == 1)
 	# Kazıcılar (çarpışma başlayınca kalkıp kılıca sarılırlar: yerlerinden WaveRunner'ın rakipleri koşar)
 	for i in 6:
 		var dg := Person.new({"coat": [Color("8a6a4a"), Color("6a4a3a"), Color("7a5a3a")][i % 3], "pants": Color("e8e0d0"), "hat": "turban",
 			"mustache": true, "beard": i % 2 == 0})
-		dg.position = Vector3(LANE_X - 10.0 + i * 4.0, 0.0, TRENCH_Z + 0.6)
+		dg.position = Vector3(LANE_X - 10.0 + i * 4.0, oy, TRENCH_Z + 0.6)
 		dg.rotation.y = PI
 		dg.set_meta("no_talk", true)
 		add_child(dg)
@@ -136,7 +222,8 @@ func _build() -> void:
 	# Giustiniani ve adamları kapının önünde, setin üstünde (dışarı çıkmış, sessiz)
 	giust = Person.new({"face": "giustiniani", "coat": Color("8a8e96"), "pants": Color("3a3a40"), "hat": "condottiero",
 		"beard": true, "skin": Color("e0b08a")})
-	giust.position = RETURN + Vector3(-1.6, 0, 0.2)
+	# yeni: basamağın dibinde, basamağın önünde (eski yer basamağın üstüne düşerdi)
+	giust.position = RETURN + Vector3(-1.6, 0, 0.2) if sur.eski_mi else _yerde(TOPLAN + Vector3(-0.6, 0, 2.1))
 	giust.set_meta("no_yield", true)
 	add_child(giust)
 	giust.look_target = player
@@ -146,7 +233,9 @@ func _build() -> void:
 		d.set_meta("no_talk", true)
 		d.set_meta("spk", "SPK_DEFENDER")
 		# Rampanın (x LANE_X ± 1) yanında, kenarından uzak: dibindeki adam rampanın kenarına itilip havada kalıyordu
-		d.position = RETURN + Vector3(2.4 + (i % 3) * 1.0, 0, -0.3 + (i / 3) * 0.8)
+		d.position = TOPLAN + Vector3(2.4 + (i % 3) * 1.0, 0, -0.3 + (i / 3) * 0.8)
+		if not sur.eski_mi:
+			d.position = _yerde(TOPLAN + Vector3(2.0 + (i % 3) * 1.0, 0, 0.2 + (i / 3) * 0.8))
 		add_child(d)
 		d.equip("spear_shield" if i % 2 == 0 else "sword", Color("5a2a24"))
 		men.append(d)
@@ -157,11 +246,13 @@ func _build() -> void:
 	# Savunucuların grubunun arkasında-yanında, Tolga'nın bakışı arada adam olmadan ona düşer. Korkuluğun (z 18,8–19,6)
 	# içinde: eskiden z 20'de, korkuluğun hendek tarafındaydı; köprüye yürürken korkuluğun üstünden süzülüp setin
 	# üstünde havada kalıyordu (VISAUDIT float, koşuların ~%15'i)
-	leon.position = RETURN + Vector3(2.3, 0, 1.15)
+	leon.position = RETURN + Vector3(2.3, 0, 1.15) if sur.eski_mi else _yerde(TOPLAN + Vector3(1.9, 0, 1.75))
 	add_child(leon)
 	men.append(leon)
 	# Surda okçular ve nöbetçiler (kapının iki yanında; dönerken örtü ateşi açarlar)
-	Garrison.land_walls(self, [Vector2(LANE_X - 2.5, LANE_X + 2.5)], [Vector2(LANE_X - 12.0, LANE_X + 12.0)], [], 36)
+	# yeni: sur yolunun savunanları ovadan görünür (dense: 22o/37o kalıbı; yeni dış surun dişleri insan boyu)
+	Garrison.land_walls(self, [Vector2(LANE_X - 2.5, LANE_X + 2.5)], [Vector2(LANE_X - 12.0, LANE_X + 12.0)], [], 36, 47.0, true,
+		not sur.eski_mi, false, null if sur.eski_mi else sur)
 
 
 func _bridge_y(z: float) -> float:
@@ -198,7 +289,9 @@ func _run() -> void:
 	hud.set_fade(1.0)
 	await hud.card([[tr("UI_CH36B_TITLE"), 44, Color("f2e6c9")], [tr("UI_CH36B_SUB"), 20, Color(1, 1, 1, 0.7)]], 3.0)
 	hud.clear_card()
-	player.global_position = RETURN + Vector3(1.5, 0.05, 0.3)      # rampanın yanında (eskiden rampanın içinde doğuyordu)
+	player.global_position = TOPLAN + Vector3(1.5, 0.05, 0.3)      # rampanın yanında (eskiden rampanın içinde doğuyordu)
+	if not sur.eski_mi:
+		player.global_position = _yerde(TOPLAN + Vector3(0.6, 0.0, 1.0)) + Vector3(0, 0.05, 0)      # basamağın dibi, adamların yanı
 	player.face(giust.global_position + Vector3(0, 1.5, 0))
 	player.show_remote(true)             # Tolga'nın eli açık (bölüm boyunca kapalıydı)
 	_capture_mouse()
@@ -217,10 +310,10 @@ func _run() -> void:
 	_advance_men()
 	Lore.scatter(self, "36b")
 	player.frozen = false
-	hud.set_objective(tr("UI_OBJ36_CROSS"), Vector3(LANE_X, 1.2, 41.0))
+	hud.set_objective(tr("UI_OBJ36_CROSS"), Vector3(LANE_X, O.y + 1.2, CROSS_Z + 1.0))
 	if GameState.autotest:
-		player.global_position = Vector3(LANE_X + 1.0, 0.05, 41.5)
-	while player.global_position.z < 40.0 or player.global_position.y < -0.5:
+		player.global_position = Vector3(LANE_X + 1.0, O.y + 0.05, CROSS_Z + 1.5)
+	while player.global_position.z < CROSS_Z or player.global_position.y < O.y - 0.5:
 		await get_tree().process_frame
 	await _fight()
 	await _burn_phase()
@@ -234,19 +327,24 @@ func _run() -> void:
 func _advance_men() -> void:
 	var spots: Array[Vector3] = []
 	for i in men.size():
-		spots.append(Vector3(LANE_X - 6.0 + i * 2.2, 0.0, 42.5 + (i % 2) * 1.0))
-	spots.append(Vector3(LANE_X - 2.0, 0.0, 41.0))     # Giustiniani
+		spots.append(Vector3(LANE_X - 6.0 + i * 2.2, O.y, 42.5 + O.z + (i % 2) * 1.0))
+	spots.append(Vector3(LANE_X - 2.0, O.y, 41.0 + O.z))     # Giustiniani
 	var all: Array[Person] = men.duplicate()
 	all.append(giust)
 	# Rampanın dibine yakın olan önce çıkar ve aynı şeritte arka arkaya gelenler arasında rampaya varış payı kalır:
 	# setin üstünde rampanın başından ileride duranlar önce geri yürüyüp sonra rampaya dönüyor, önden çıkanla aynı
 	# şeritte karşı karşıya gelip iç içe kalıyordu (0,75 sn arayla; v0.99.74'te de 6 koşunun 2'sinde VISAUDIT overlap)
 	var order := range(all.size())
-	order.sort_custom(func(a: int, b: int): return all[a].global_position.distance_to(Vector3(LANE_X, 0, 16.6)) \
-			< all[b].global_position.distance_to(Vector3(LANE_X, 0, 16.6)))
+	var bas := _kopru_once()
+	order.sort_custom(func(a: int, b: int): return all[a].global_position.distance_to(bas) < all[b].global_position.distance_to(bas))
 	for k in order.size():
 		var i: int = order[k]
-		_walk_bridge(all[i], spots[i], 1.5 * k, false, -0.45 if k % 2 == 0 else 0.45)
+		var yan := -0.45 if k % 2 == 0 else 0.45
+		if not sur.eski_mi:
+			# yeni: köprüden hedefinin yanındaki şeritten iner (sol şeritten inip sağa dönen sağ şeritten ineninin yolunu
+			# kesiyordu: köprünün ucunda VISAUDIT overlap, tur0_yeni_def_2)
+			yan = 0.45 if spots[i].x > LANE_X + 0.1 else -0.45
+		_walk_bridge(all[i], spots[i], 1.5 * k, false, yan)
 
 
 ## Köprü yolu: kapının önü → rampa → kalas → ova; sonra hedef. Adım hızında, kalasın üstünde.
@@ -258,13 +356,20 @@ func _walk_bridge(p: Person, to: Vector3, delay: float, back := false, side := 0
 	var pts: Array[Vector3] = []
 	# Köprüde iki sıra (kalas iki metre): arka arkaya gidenler iç içe girmesin
 	var lane := LANE_X + side
-	if back:
+	if not sur.eski_mi:
+		# yeni: teras (parateikhion açıklığının önü) → köprünün yakın ucu → karşı uç → ova (yükseklik zeminden: _walk_y)
+		var on := _kopru_once() + Vector3(side, 0, 0)
+		var sn := _kopru_sonra() + Vector3(side, 0, 0)
+		var y0 := Vector3(lane, 0.0, sur.hendek_z0() - 0.4)
+		var y1 := Vector3(lane, 0.0, sur.hendek_z1() + 0.4)
+		pts.assign([sn, y1, y0, on, to] if back else [on, y0, y1, sn, to])
+	elif back:
 		pts = [Vector3(lane, 0, BRIDGE_Z1 + 0.6), Vector3(lane, _bridge_y(BRIDGE_Z0), BRIDGE_Z0), Vector3(lane, 0, 16.6), to]
 	else:
 		pts = [Vector3(lane, 0, 16.6), Vector3(lane, _bridge_y(BRIDGE_Z0), BRIDGE_Z0), Vector3(lane, 0.04, BRIDGE_Z1 + 0.6), to]
 		# Setin üstünde yanda duran, rampaya dibinden girer: çapraz yürüyen rampanın yan yüzüne (0,5–0,9 m) sıçrıyordu
 		var dx := p.global_position.x - LANE_X
-		if absf(dx) > 1.0 and p.global_position.z > 16.1 and p.global_position.z < BRIDGE_Z0:
+		if sur.eski_mi and absf(dx) > 1.0 and p.global_position.z > 16.1 and p.global_position.z < BRIDGE_Z0:
 			pts.insert(0, Vector3(LANE_X + signf(dx) * 1.25, 0.0, 16.5))
 	_walking[p] = true
 	var n := 0
@@ -304,8 +409,11 @@ func _walk_bridge(p: Person, to: Vector3, delay: float, back := false, side := 0
 	_walking.erase(p)
 
 
-## Yürünen yerin yüksekliği: rampa ve kalas (2 m eninde) ya da setin zemini.
+## Yürünen yerin yüksekliği: rampa ve kalas (2 m eninde) ya da setin zemini. Yeni: aşağı ışın (sahanlık, basamak, köprü,
+## teras, ova; kişiler sayılmaz), ışın yoksa setin zemini.
 func _walk_y(at: Vector3) -> float:
+	if not sur.eski_mi:
+		return _yer_y(at)
 	if at.z > 16.1 and at.z < BRIDGE_Z1 + 0.2 and absf(at.x - LANE_X) < 1.0:
 		return _bridge_y(at.z)
 	return Assault.ground_y(at.x, at.z) if at.z > 16.1 else 0.0
@@ -534,8 +642,9 @@ func _retreat() -> void:
 		if men[i] != leon:
 			# Savunucular sağa (çıktıkları yere) gider: hepsi sağ şeritten sırayla iner; Giustiniani sola gider, sol şeritten.
 			# Şerit hedefin tarafında: sol şeritten inip sağa dönen, sağ şeritten inenin yolunu kesip içine giriyordu
-			_walk_bridge(men[i], RETURN + Vector3(2.4 + (i % 3) * 1.0, 0, -0.3 + (i / 3) * 0.8), 0.8 * i, true, 0.45)
-	_walk_bridge(giust, RETURN + Vector3(-2.6, 0, 0.5), 4.2, true, -0.45)
+			_walk_bridge(men[i], TOPLAN + (Vector3(2.4 + (i % 3) * 1.0, 0, -0.3 + (i / 3) * 0.8) if sur.eski_mi \
+				else Vector3(2.0 + (i % 3) * 1.0, 0, 0.2 + (i / 3) * 0.8)), 0.8 * i, true, 0.45)
+	_walk_bridge(giust, TOPLAN + (Vector3(-2.6, 0, 0.5) if sur.eski_mi else Vector3(-0.6, 0, 2.1)), 4.2, true, -0.45)
 	# Leon bölümün asıl kararı: adıyla işaretlenir (hedef yalnız "Poternaya dön" diyordu; kapıya varınca bölüm bitiyordu)
 	hud.set_objective(tr("UI_OBJ36_BACK"), RETURN + Vector3(0, 1.6, 0), 1.6,
 		[[func(): return leon if not _leon_follow and is_instance_valid(leon) and leon.visible else null, tr("UI_OBJ36_LEON"), 1.0]],
@@ -547,9 +656,15 @@ func _retreat() -> void:
 			await get_tree().process_frame
 			_on_interact("leon")
 		await get_tree().create_timer(0.5, false).timeout
-		player.global_position = RETURN + Vector3(1.5, 0.05, 0.6)
-		if _leon_follow:
-			leon.global_position = RETURN + Vector3(2.2, 0.0, 1.0)      # korkuluğun (z 18,8) önünde, içine girmeden
+		if sur.eski_mi:
+			player.global_position = RETURN + Vector3(1.5, 0.05, 0.6)
+			if _leon_follow:
+				leon.global_position = RETURN + Vector3(2.2, 0.0, 1.0)      # korkuluğun (z 18,8) önünde, içine girmeden
+		else:
+			# yeni: sahanlıkta (kapının önü); Leon bir basamak aşağıda, arkasında
+			player.global_position = RETURN + Vector3(0.2, 0.05, 0.3)
+			if _leon_follow:
+				leon.global_position = _yerde(RETURN + Vector3(1.9, 0.0, 0.65))
 	while phase == "retreat":
 		await get_tree().process_frame
 	hud.set_chase("", 0.0)
@@ -570,7 +685,7 @@ func _leon_down() -> void:
 func _spawn_riders() -> void:
 	for i in 6:
 		var h := Horse.new([Color("5a3a24"), Color("2a2420"), Color("8a6a4a")][i % 3], [Color("b3262d"), Color("2e4a7a")][i % 2])
-		h.position = Vector3(LANE_X - 9.0 + i * 3.6, 0.0, 84.0 + (i % 2) * 2.5)
+		h.position = Vector3(LANE_X - 9.0 + i * 3.6, O.y, 84.0 + O.z + (i % 2) * 2.5)
 		h.rotation.y = PI
 		add_child(h)
 		var rd := Person.new({"coat": [Color("2e4a7a"), Color("b3262d"), Color("3e4c68")][i % 3], "pants": Color("e8e0d0"), "hat": "helm",
@@ -590,7 +705,7 @@ var _fall_busy := false
 ## Korkuluksuz köprüden hendeğe düşen oyuncu köprünün başına geri alınır (bu bölümde tırmanma yok; çıkış 40 m ötedeki
 ## rampaydı, geçiş ve dönüş döngüleri sonsuza dek bekliyordu)
 func _fall_rescue(delta: float) -> void:
-	if not phase in ["cross", "retreat"] or _fall_busy or player.frozen or player.global_position.y > -1.5:
+	if not phase in ["cross", "retreat"] or _fall_busy or player.frozen or player.global_position.y > _dus_y():
 		_fall_t = 0.0
 		return
 	_fall_t += delta
@@ -599,7 +714,10 @@ func _fall_rescue(delta: float) -> void:
 	_fall_busy = true
 	await hud.fade_to(1.0, 0.3)
 	player.velocity = Vector3.ZERO
-	player.global_position = Vector3(LANE_X, BRIDGE_Y + 0.15, BRIDGE_Z1 - 1.5 if phase == "retreat" else BRIDGE_Z0 + 1.5)
+	if sur.eski_mi:
+		player.global_position = Vector3(LANE_X, BRIDGE_Y + 0.15, BRIDGE_Z1 - 1.5 if phase == "retreat" else BRIDGE_Z0 + 1.5)
+	else:
+		player.global_position = Vector3(LANE_X, _deck_y() + 0.15, sur.hendek_z1() - 1.0 if phase == "retreat" else sur.hendek_z0() + 1.0)
 	await hud.fade_to(0.0, 0.3)
 	_fall_t = 0.0
 	_fall_busy = false
@@ -615,12 +733,12 @@ func _process(delta: float) -> void:
 			var h := riders[i] as Horse
 			if not is_instance_valid(h):
 				continue
-			var z0 := 84.0 + (i % 2) * 2.5
+			var z0 := 84.0 + O.z + (i % 2) * 2.5
 			# Okçuların menzili (z 58): atlılar burada durur, siperin gerisinde bekler
-			var z_end := LEON_AT.z + 1.2 if i == CAPTOR else 58.5 + (i % 2) * 1.5      # Leon'u alacak atlı onun yanına iner
+			var z_end := LEON_AT.z + 1.2 if i == CAPTOR else 58.5 + O.z + (i % 2) * 1.5      # Leon'u alacak atlı onun yanına iner
 			var z := lerpf(z0, z_end, k)
 			h.speed = 0.0 if k >= 1.0 else 4.0
-			h.position = Vector3(h.position.x, 0.0, z)
+			h.position = Vector3(h.position.x, O.y, z)
 		if k >= 1.0 and not _leon_follow and leon.visible:
 			_leon_taken()
 		_leon_step(delta)
@@ -719,6 +837,10 @@ func _back_inside() -> void:
 			h.queue_free()
 	riders.clear()
 	_leon_follow = false
+	if not sur.eski_mi and walls is SurSetSahne:
+		var po = (walls as SurSetSahne).kesim["parca"].get("poterna")
+		if po != null:
+			po.ac(false, false)      # içeride: poterna arkalarından kapandı
 	# İçeride: peribolos, kapının arkası. Adamlar sayılır.
 	player.global_position = Vector3(LANE_X + 0.6, 0.05, 9.0)
 	giust.global_position = Vector3(LANE_X - 1.2, 0.0, 10.2)
@@ -863,8 +985,8 @@ func _autotest_report() -> void:
 	if not ok:
 		printerr("AUTOTEST: beklenen %s, gelen %s (yanan=%d sayfa=%s foto=%s)" % [expected, _outcome, burned, not page.is_empty(),
 			cam != null and cam.done])
-	print("AUTOTEST %s chapter=36 variant=%s outcome=%s burned=%d fights=%d kills=%d" % ["PASS" if ok else "FAIL", v, _outcome, burned,
-		_fights_won, _kills])
+	print("AUTOTEST %s chapter=36 variant=%s outcome=%s burned=%d fights=%d kills=%d sur=%s" % ["PASS" if ok else "FAIL", v, _outcome, burned,
+		_fights_won, _kills, "eski" if sur.eski_mi else "yeni"])
 	get_tree().quit(0 if ok else 1)
 
 
@@ -885,7 +1007,9 @@ func _run_shots() -> void:
 	walls.dawn_to(0.35, 0.01)
 	await get_tree().create_timer(1.0, false).timeout
 	player.global_position = Vector3(LANE_X + 0.3, _bridge_y(18.0) + 0.05, 18.0)      # rampanın üstünden köprü ve ova
-	player.face(Vector3(LANE_X, 1.0, 45.0))
+	if not sur.eski_mi:
+		player.global_position = _kopru_once() + Vector3(0.3, 0.05, 1.0)
+	player.face(Vector3(LANE_X, O.y + 1.0, 45.0 + O.z))
 	await _shot("c36b_01_bridge.png")
 	_advance_men()
 	await get_tree().create_timer(7.0, false).timeout
@@ -893,7 +1017,7 @@ func _run_shots() -> void:
 		_burn_mantlet(i)
 	_spawn_riders()
 	await get_tree().create_timer(1.5, false).timeout
-	player.global_position = Vector3(LANE_X + 4.0, 0.05, 40.0)
+	player.global_position = Vector3(LANE_X + 4.0, O.y + 0.05, 40.0 + O.z)
 	player.face(MANTLETS[1] + Vector3(0, 1.2, 0))
 	await _shot("c36b_02_fire.png")
 	hud.visible = false
@@ -907,9 +1031,230 @@ func _run_shots() -> void:
 	await _shot("c36b_03_leon.png")
 	var cv := Camera3D.new()
 	add_child(cv)
-	cv.global_position = Vector3(LANE_X + 9.0, 7.5, 33.0)
-	cv.look_at(Vector3(LANE_X, 1.5, 49.0), Vector3.UP)
+	cv.global_position = Vector3(LANE_X + 9.0, O.y + 7.5, 33.0 + O.z)
+	cv.look_at(Vector3(LANE_X, O.y + 1.5, 49.0 + O.z), Vector3.UP)
 	cv.fov = 60.0
 	cv.make_current()
 	await _shot("c36b_cover.png")
 	get_tree().quit()
+
+
+# ================================================================ yardımcılar (TAŞIMA-7) ve yürüyüş kanıtı (=yuru, =kare)
+
+## Noktanın altındaki yürünür yükseklik (yeni set): aşağı ışın (kişiler ve çarpışmasız eşya sayılmaz); yoksa setin zemini
+func _yer_y(p: Vector3) -> float:
+	if sur.eski_mi:
+		return p.y
+	if is_inside_tree():
+		var ust := maxf(p.y, sur.ova_y()) + 1.6
+		var q := PhysicsRayQueryParameters3D.create(Vector3(p.x, ust, p.z), Vector3(p.x, sur.hendek_dip_y() - 1.0, p.z))
+		q.collision_mask = 1
+		var ex: Array[RID] = []
+		for k in 6:
+			var h := get_world_3d().direct_space_state.intersect_ray(q)
+			if h.is_empty():
+				break
+			var c := h["collider"] as Node
+			if c != null and (c.get_parent() is Person or c is CharacterBody3D or c.get_parent() is Soldier):
+				ex.append(h["rid"])
+				q.exclude = ex
+				continue
+			return (h["position"] as Vector3).y
+	return sur.zemin_y(p.x, p.z)
+
+
+func _yerde(p: Vector3) -> Vector3:
+	if sur.eski_mi:
+		return p
+	var q := p
+	q.y = maxf(p.y, 0.5)
+	return Vector3(p.x, _yer_y(q), p.z)
+
+
+## TAŞIMA-7. Gerçek Player botu bölümün yürünen yolunu gerçek ileri tuşuyla yürür, etkileşimleri gerçek E tuşuyla yapar:
+## poternanın önü (yeni: basamağın dibi, terasta) → köprünün başı → kalas köprüden karşı uca → ova (çarpışmanın yeri) →
+## [çarpışma ölçülmez] → meşaleyle üç mantoyu yak (E) → Leon'u kaldır (E) → Leon'la geri: ova → köprü → teras → (yeni:
+## basamaktan) poternanın önü. Leon izinden yürür; dönüşte Leon'un en derin batışı/yüksekte kalışı ölçülür.
+## Satırlar: TASIMA36BYURU bacak=… ; son: TASIMA36BYURU OZET … ; mesafe: TASIMA36BMESAFE …
+## =kare: aynı yol, bacaklar ışınlanır; oyuncunun kamerasından 6 an (--dialogshots; TASIMA36BKARE).
+var _yz := {"bacak": 0, "takilma": 0, "dusme": 0, "tus_yok": 0, "sure": 0.0, "yol": 0.0}
+var _kare_n := 0
+var _leon_en := {"alt": 0.0, "ust": 0.0}
+
+
+func _kare_mi() -> bool:
+	return GameState.autotest_variant == "kare"
+
+
+func _yuru() -> void:
+	Engine.time_scale = 1.0
+	var set_ad := "eski" if sur.eski_mi else "yeni"
+	hud.set_fade(0.0)
+	for i in 10:
+		await get_tree().physics_frame
+	var bas := TOPLAN + Vector3(1.5, 0.0, 0.3) if sur.eski_mi else _yerde(TOPLAN + Vector3(0.6, 0.0, 1.0))
+	var once := _kopru_once()
+	var sonra := _kopru_sonra()
+	var hedef := Vector3(LANE_X, O.y, CROSS_Z + 1.0)
+	print("TASIMA36BYURU set=%s lane_x=%.1f toplan=%s donus=%s kopru=%s>%s cross_z=%.1f manto=%s leon=%s O=%s" % [set_ad, LANE_X,
+		TOPLAN.snapped(Vector3.ONE * 0.01), RETURN.snapped(Vector3.ONE * 0.01), once.snapped(Vector3.ONE * 0.01), sonra.snapped(Vector3.ONE * 0.01),
+		CROSS_Z, MANTLETS, LEON_AT, O])
+	for m: Array in [["baslangic_kopru_basi", bas, once], ["kopru", once, sonra], ["kopru_ucu_hedef", sonra, hedef],
+			["hedef_manto0", hedef, MANTLETS[0]], ["manto0_manto1", MANTLETS[0], MANTLETS[1]], ["manto1_manto2", MANTLETS[1], MANTLETS[2]],
+			["manto2_leon", MANTLETS[2], LEON_AT], ["leon_kopru_ucu", LEON_AT, sonra], ["kopru_basi_donus", once, RETURN],
+			["kopru_siper", sonra, Vector3(LANE_X, O.y, TRENCH_Z)], ["siper_atli_dur", Vector3(LANE_X, O.y, TRENCH_Z), Vector3(LANE_X, O.y, 58.5 + O.z)],
+			["donus_iceri", RETURN, Vector3(LANE_X + 0.6, 0.0, 9.0)]]:
+		var a: Vector3 = m[1]
+		var b: Vector3 = m[2]
+		print("TASIMA36BMESAFE set=%s %s=%.1f dy=%.1f" % [set_ad, m[0], Vector2(a.x - b.x, a.z - b.z).length(), b.y - a.y])
+	player.global_position = bas + Vector3(0, 0.05, 0)
+	player.frozen = false
+	phase = "cross"
+	_advance_men()          # adamlar köprüden geçip siperin önüne yayılır (bölümdeki gibi; meşaleyi biri getirir)
+	await _yb("kopru_basi", once, Vector3(LANE_X, O.y + 1.2, CROSS_Z))
+	await _kare("cikis")
+	await _yb("kopru_ortasi", (once + sonra) * 0.5, Vector3(LANE_X, O.y + 1.4, TRENCH_Z))
+	await _kare("kopru")
+	await _yb("kopru_ucu", sonra, Vector3(LANE_X, O.y + 1.2, TRENCH_Z))
+	await _yb("hedef", hedef, (MANTLETS[1] as Vector3) + Vector3(0, 1.2, 0))
+	await _kare("siper")
+	# meşale: adamlardan biri yanına gelir (yeni sette kimse çıkmadı: elde belirir; eskide de bu kipte aynı)
+	phase = "burn"
+	await _take_torch()
+	for i in 3:
+		var m: Vector3 = MANTLETS[i]
+		await _yb("manto%d" % i, m + Vector3(0, 0, -2.2), m + Vector3(0, 1.2, 0))
+		await _tus()
+		if not _burned[i]:
+			_yz["tus_yok"] += 1
+			print("TASIMA36BYURU tus_yok manto%d odak=%s" % [i, player.focus_id])
+			_burn_mantlet(i)
+	await get_tree().create_timer(0.8, false).timeout
+	player.face((MANTLETS[1] as Vector3) + Vector3(0, 1.2, 0))
+	await _kare("yanan")
+	_drop_torch()
+	# Leon
+	phase = "retreat"
+	_leon_down()
+	await _yb("leon", LEON_AT + Vector3(0.8, 0, -0.6), leon.global_position + Vector3(0, 0.4, 0))
+	await _kare("leon")
+	await _tus()
+	if not _leon_follow:
+		_yz["tus_yok"] += 1
+		print("TASIMA36BYURU tus_yok leon odak=%s" % player.focus_id)
+		_on_interact("leon")
+	await get_tree().create_timer(1.4, false).timeout
+	await _yb("geri_kopru_ucu", sonra, Vector3(LANE_X, _deck_y() + 1.2, once.z))
+	await _yb("geri_kopru_basi", once, RETURN + Vector3(0, 1.4, 0))
+	if not sur.eski_mi:
+		await _yb("basamak_dibi", TOPLAN + Vector3(0.6, 0, 0.3), RETURN + Vector3(0, 1.4, 0))
+		await _yb("basamak_ust", RETURN + Vector3(1.2, 0, 0.0), RETURN + Vector3(0, 1.4, 0))
+	await _yb("poterna", RETURN + Vector3(0.2, 0, 0.1), Vector3(LANE_X, O.y + 1.0, CROSS_Z))
+	await get_tree().create_timer(1.0, false).timeout
+	if _kare_mi():
+		# geri bakış: ovadan köprüye, poternaya ve sura (eski ve yeni aynı yerden)
+		player.global_position = Vector3(LANE_X + 4.0, O.y + 0.05, CROSS_Z + 6.0)
+		player.face(Vector3(LANE_X, _deck_y() + 2.0, once.z))
+		await _kare("geri_bakis")
+		print("TASIMA36BKARE BITTI")
+		get_tree().quit(0)
+		return
+	var ld := leon.global_position.distance_to(player.global_position)
+	print("TASIMA36BYURU OZET set=%s bacak=%d takilma=%d dusme=%d tus_yok=%d sure=%.1f yol=%.1f yanan=%d leon=%s leon_uzak=%.1f leon_alt=%.2f leon_ust=%.2f varis=%s" % [
+		set_ad, _yz["bacak"], _yz["takilma"], _yz["dusme"], _yz["tus_yok"], _yz["sure"], _yz["yol"], burned, _leon_follow, ld,
+		_leon_en["alt"], _leon_en["ust"], phase == "home"])
+	get_tree().quit(0)
+
+
+## Gerçek etkileşim tuşu (bas, 3 kare, bırak)
+func _tus() -> void:
+	var ev := InputEventAction.new()
+	ev.action = "interact"
+	ev.pressed = true
+	Input.parse_input_event(ev)
+	for k in 3:
+		await get_tree().physics_frame
+	var ev2 := InputEventAction.new()
+	ev2.action = "interact"
+	ev2.pressed = false
+	Input.parse_input_event(ev2)
+	for k in 6:
+		await get_tree().physics_frame
+
+
+## Tek bacak: hedefe yürü (gerçek ileri tuşu), varınca bak. Leon izliyorsa zemine göre yeri ölçülür. =kare: ışınlanır.
+func _yb(ad: String, to: Vector3, bak: Vector3) -> void:
+	var t := 0.0
+	var yol := 0.0
+	var son := player.global_position
+	var takil := 0
+	var dus := 0
+	var best := 1e9
+	var iz := 0.0
+	if _kare_mi():
+		player.global_position = _yerde(Vector3(to.x, to.y + 0.3, to.z)) + Vector3(0, 0.05, 0)
+		player.velocity = Vector3.ZERO
+		if _leon_follow:
+			leon.global_position = _leon_spot()
+	else:
+		while t < 40.0:
+			player.face(Vector3(to.x, player.global_position.y + 1.4, to.z))
+			Input.action_press("move_forward")
+			await get_tree().physics_frame
+			t += get_physics_process_delta_time()
+			var p := player.global_position
+			yol += Vector2(p.x - son.x, p.z - son.z).length()
+			son = p
+			if player.velocity.y < -7.0 or p.y < _dus_y():
+				dus += 1
+			if _leon_follow and leon.visible:
+				var lp := leon.global_position
+				var zy := _yer_y(lp + Vector3(0, 0.6, 0)) if not sur.eski_mi else _walk_y(lp)
+				_leon_en["alt"] = minf(_leon_en["alt"], lp.y - zy)
+				_leon_en["ust"] = maxf(_leon_en["ust"], lp.y - zy)
+			var dd := Vector2(p.x - to.x, p.z - to.z).length()
+			if dd < best - 0.2:
+				best = dd
+				iz = t
+			if dd < 0.35:
+				break
+			if t - iz > 6.0:
+				takil += 1
+				break
+		Input.action_release("move_forward")
+	for k in 4:
+		await get_tree().physics_frame
+	player.face(bak)
+	for k in 4:
+		await get_tree().physics_frame
+	_yz["bacak"] += 1
+	_yz["takilma"] += takil
+	_yz["dusme"] += mini(dus, 1)
+	_yz["sure"] += t
+	_yz["yol"] += yol
+	print("TASIMA36BYURU bacak=%s sure=%.1f yol=%.1f takilma=%d dusme=%d son=%s odak=%s" % [ad, t, yol, takil, dus,
+		player.global_position.snapped(Vector3.ONE * 0.1), player.focus_id])
+
+
+func _kare(ad: String) -> void:
+	if not _kare_mi():
+		return
+	var dir := GameState.dialog_shots_dir if GameState.dialog_shots_dir != "" else GameState.shots_dir
+	if dir == "":
+		return
+	DirAccess.make_dir_recursive_absolute(dir)
+	preload("res://tests/_ist/tasima7_pik.gd").uygula(self)
+	for k in 20:
+		await get_tree().process_frame
+	preload("res://tests/_ist/tasima7_pik.gd").yaz(self, ad)
+	var dc := 0.0
+	var pr := 0.0
+	for k in 4:
+		await RenderingServer.frame_post_draw
+		dc += RenderingServer.get_rendering_info(RenderingServer.RENDERING_INFO_TOTAL_DRAW_CALLS_IN_FRAME)
+		pr += RenderingServer.get_rendering_info(RenderingServer.RENDERING_INFO_TOTAL_PRIMITIVES_IN_FRAME)
+	_kare_n += 1
+	var f := dir.path_join("an_%02d_%s.jpg" % [_kare_n, ad])
+	get_viewport().get_texture().get_image().save_jpg(f, 0.85)
+	print("TASIMA36BKARE %s oyuncu=%s cizim=%.0f ilkel=%.0f sur=%s" % [f.get_file(), player.global_position.snapped(Vector3.ONE * 0.1),
+		dc / 4.0, pr / 4.0, "eski" if sur.eski_mi else "yeni"])
