@@ -22,3 +22,5 @@ WARNING: Screen-space indirect lighting (SSIL) can only be enabled when using th
 HELDDEFAULT scene=chapter22 item=cologne
 TASIMA22YURU set=eski yol_y=8.00 yol_z=15.00 oluk=(-2.5, 8.0, 15.8) fici=(3.5, 8.0, 15.0) kule=(-3.0, 0.0, 40.0)
 TASIMA22KARE an_01_safak_kule.jpg oyuncu=(-8.0, 8.0, 15.0) cizim=4798 ilkel=6788338 sur=eski
+WORLDWALK region= shapes=9839 boxes=9115 tris=284340 ms=85961
+CITYLIFE region= src=plan era=siege night=true density=0.50 nodes=1026 plazas=19 landmarks=23

@@ -224,7 +224,9 @@ func _build() -> void:
 			sp.set_activity("sit_ground")
 	# Karşıda surlar: Bizans nöbetçileri (uzak). Önde pavezlerin ardında okçular (sura bakar); iki yanda bekleyen
 	# bölükler (azaplar solda, yeniçeriler sağda) sancaklarıyla. Bölüklerin içinden geçilmesin: görünmez sınır.
-	Garrison.land_walls(self, [], [], [], 2210, 47.0, true, false, false, null if sur.eski_mi else sur)
+	# Yeni sette dış surun dişleri insan boyu: yolun iç yanındaki nöbetçiler ovadan görünmüyordu (kare c22o_yeni an_01: sur
+	# tepesi boş; eskide kalabalık). Garrison'un "dense" seçeneği dış yana (mazgallara) da dizer.
+	Garrison.land_walls(self, [], [], [], 2210, 47.0, true, not sur.eski_mi, false, null if sur.eski_mi else sur)
 	for i in 8:
 		var x: float = [-28.0, -25.5, -23.0, -20.5, 17.5, 20.0, 22.5, 25.0][i]
 		var z := 39.4 + (i % 2) * 0.3 + O.z

@@ -1,2 +1,17 @@
 Godot Engine v4.4.1.stable.official.49a5bc7b6 - https://godotengine.org
 
+SURSET kesim=mesoteikhion kurulum_ms=3323 sur_ms=999 set_ms=2319
+WARNING: Screen-space ambient occlusion (SSAO) can only be enabled when using the Forward+ renderer.
+     at: environment_set_ssao (servers/rendering/storage/environment_storage.cpp:586)
+WARNING: Screen-space indirect lighting (SSIL) can only be enabled when using the Forward+ renderer.
+     at: environment_set_ssil (servers/rendering/storage/environment_storage.cpp:661)
+TERRAIN_SOLIDIFIED scene=chapter22.tscn node=/root/Chapter22/@Node3D@177/Ova/@Node3D@2899/@MeshInstance3D@2901
+HELDDEFAULT scene=chapter22 item=cologne
+TASIMA22YURU set=yeni yol_y=8.62 yol_z=15.30 oluk=(-2.5, 8.62, 16.4) fici=(3.5, 8.62, 15.3) kule=(-3.0, -3.545, 50.6)
+TASIMA22YURU bacak=fici_al sure=0.7 yol=2.2 takilma=0 dusme=0 son=(2.3, 8.6, 15.1) odak=powder
+TASIMA22YURU bacak=oluk sure=2.1 yol=4.5 takilma=0 dusme=0 son=(-2.3, 8.6, 15.4) odak=chute
+LORE key=22 placed=3
+TASIMA22YURU bacak=fici_al sure=1.7 yol=5.1 takilma=0 dusme=0 son=(3.0, 8.6, 15.1) odak=powder
+TASIMA22YURU bacak=oluk sure=2.4 yol=5.2 takilma=0 dusme=0 son=(-2.3, 8.6, 15.4) odak=chute
+TASIMA22YURU OZET set=yeni bacak=4 takilma=0 dusme=0 tus_yok=0 sure=6.9 yol=17.1 isabet=2 fici_kalan=1
+KOSU rc=0 sure=27 args=--chapter=22 --autotest=yuru
