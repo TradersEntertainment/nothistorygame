@@ -12,8 +12,16 @@ Dal: `wip/ist2-tasima8` (taban `wip/ist2-taban13` c6ab0f7b).
   - `SiegeChaos.sur` kancası; `FallenCity.yer` konum parametresi (varsayılan ZERO = eski)
 - Taban ölçümü (eski set, değişiklikten önce): 26 `""` PASS (142 sn), 26 `hold` PASS, 26o `""` PASS, **26o `lose` FAIL (tabanda da)**
 
+- 26 iki yollu (yeni set varsayılan, `--eskisur=26` eski): yeni sette `""` ×2, `hold`, `hold_box`, `nophoto`, `council_bad` PASS;
+  eski sette `""` PASS; 26o (eski set, aynı dosyadan türer) `""` PASS.
+- İç poterna eteğe oturur (ışınla), gediğin +x yanında (x 14,25); Romanos kanatları açılır; final yolu: dolgu → gedik tepesi →
+  karartma → Romanos koridoru → iç kapı → cadde (FallenCity.yer).
+- `=yuru` / `=kare` kipi (26).
+
 ## Süren
-- 26'nın iki yollu bağlanması (yeni set / eski set)
+- Denetim satırları (yeni sette): savunucu üst üste binmesi (1,5; 0,5; 10,6) her koşuda; kafile başı caddede kirişe gömülü
+  (nophoto, council_bad). Sonda (`--sonda8`) ile kök neden.
+- `=yuru` iki takılma bot betiğindendi (fıçılar çekilmeden poterna, kazanın öbür yanı): düzeltildi, yeniden koşuyor.
 
 ## Sıradaki
-- 26 ve 26o eski sette PASS kontrolü; 26 savaş evreleri yeni sette
+- 26'nın bütün çeşitleri yeni ×2 + eski ×1; kareler (8 çift); 26o (d)

@@ -97,6 +97,9 @@ func _ready() -> void:
 	add_child(walls)
 	walls.set_repair(LandWalls.STAGES)
 	_build_walls_scene()
+	if GameState.autotest and GameState.autotest_variant in ["yuru", "kare"]:
+		_t8_yuru()
+		return
 	if GameState.autotest:
 		Engine.time_scale = 3.0
 	if GameState.shots_dir != "":
@@ -710,7 +713,9 @@ func _wave3() -> void:
 	# Şafak: hendeği geçen yeniçerilere surdan tüfekle (vurulamayanlar gedik dövüşünün son bölüğüne katılır)
 	await _gun_dawn()
 	# Yeniçeriler gediğin moloz yamacını tırmanıp içeri dalar: göğüs göğüse (StoryDuel: ölüm yok)
+	_t8_sonda("duel_once")
 	await _janissary_duel()
+	_t8_sonda("duel_sonra")
 	# Şafak: gediğin ağzında bir tüfekçi nişan alır. Tolga bu sahneyi belgesellerden bilir.
 	if await _dawn_shot():
 		await _hold()
@@ -885,7 +890,9 @@ func _dawn_shot() -> bool:
 	gunner.equip("handgun")
 	var mid := (gunner.global_position + giust.global_position) * 0.5 + Vector3(0, 1.4, 0)
 	player.global_position = sur.on_rubble(_gp(Vector3(-0.6, 0, -5.2))) + Vector3(0, 0.05, 0)
+	_t8_sonda("dawn_once")
 	_clear_line(player.global_position, [gunner, giust])
+	_t8_sonda("dawn_sonra")
 	player.face(gunner.global_position + Vector3(0, 1.4, 0))
 	await hud.think("SPK_TOLGA", "D26_T_SEE_GUN")      # parantez içinde düşünce: söylenmez
 	player.face(mid)
@@ -1703,6 +1710,8 @@ func _isidore_column() -> void:
 		var p := Person.new(spec)
 		p.set_meta("no_talk", true)
 		p.position = Vector3(-1.8 + _co.x, 0, z0 - i * 1.3)
+		if i == 0 and OS.get_cmdline_user_args().has("--sonda8"):
+			print("SONDA8 kafile oyuncu=%s bas=%s at=%s" % [player.global_position.snapped(Vector3.ONE * 0.1), p.position, "?"])
 		p.rotation.y = 0.0
 		add_child(p)
 		if i == 0:
@@ -2732,6 +2741,219 @@ func _run_shots() -> void:
 	cv.make_current()
 	await _shot("c26_cover.png")
 	get_tree().quit()
+
+
+# ================================================================ TAŞIMA-8: =yuru / =kare
+
+## =yuru: gerçek bot bölümün ana yolunu YÜRÜR (ileri tuşu; bölümün kendisi gibi yalnız sur yoluna çıkış ve caddeye geçiş
+## karartmalı ışınlamadır): doğuş → ok sandığı → okçular (gedik teslim yeri) → [sur yolu] merdiven ağzı → kazan →
+## [peribolos] depo → barikat → poterna fıçıları → Giustiniani'nin yeri → (kulenin önünden) poterna → [cadde] Romanos iç
+## kapısının önü. Satır: TASIMA8YURU … takilma/dusme. =kare: aynı yerlere ışınlanır, 8 kare (an_NN_ad.jpg) + bütçe satırı.
+##   godot --path . -- --chapter=26 --autotest=yuru [--eskisur=26]
+##   xvfb-run … -- --chapter=26 --autotest=kare --dialogshots=DIR [--eskisur=26]
+var _yz := {"bacak": 0, "takilma": 0, "dusme": 0, "sure": 0.0, "yol": 0.0}
+var _kare_n := 0
+
+
+func _t8_yuru() -> void:
+	Engine.time_scale = 1.0
+	var kare := GameState.autotest_variant == "kare"
+	var set_ad := "eski" if sur.eski_mi else "yeni"
+	hud.set_fade(0.0)
+	player.show_remote(true)
+	for i in 10:
+		await get_tree().physics_frame
+	print("TASIMA8YER set=%s kuyu=%s poterna=%s fici=%s sancak=%s merdiven=%s" % [set_ad, WELL, POSTERN, BLOCKS, BANNER_TOWER,
+		ladders.map(func(l): return snappedf(l.position.x, 0.1))])
+	# 1. açılış (doğuş, komutana bakış)
+	player.global_position = sur.dogus()
+	player.frozen = false
+	await _t8_bekle(0.5)
+	player.face(giust.global_position + Vector3(0, 1.5, 0))
+	if kare:
+		await _t8_kare("acilis")
+	# 2. ok sandığı → okçular (1. dalga)
+	phase = "wave1"
+	_wave_start(1)
+	await _t8_yb("kuyu", WELL + Vector3(0.0, 0.0, 1.6), WELL + Vector3(0, 0.6, 0))
+	if kare:
+		await _t8_kare("ok_demeti")
+	await _t8_yb("okcular", _gp(Vector3(-0.8, 0, -2.4)), sur.gedik() + Vector3(0, 2.0, 0))
+	# 3. sur yolu: merdiven ağzı (bölümde karartmayla ışınlanır), kazana yürü
+	var lad: Ladder = ladders[0]
+	var land := Vector3(lad.position.x, sur.dis_yol_y(), 15.05 if sur.eski_mi else sur.dis_yol_z())
+	var back := player.global_position
+	player.global_position = Vector3(lad.position.x - 1.9, sur.dis_yol_y() + 0.05, 14.95 if sur.eski_mi else sur.dis_yol_ic_z())
+	await _t8_bekle(0.4)
+	await _t8_yb("merdiven_agzi", land + Vector3(-0.6, 0, 0), land + Vector3(0, -2.0, 3.0))
+	if kare:
+		var az := Soldier.new(Color("8a6a4a"), "stand", "turban")
+		add_child(az)
+		var lb := lad.global_transform
+		az.global_position = lb * Vector3(0, lad.height * 0.72, 0.18)
+		az.rotation.y = PI
+		az.set_meta("no_audit", true)
+		await _t8_kare("merdiven_azap")
+		az.queue_free()
+	# kazan sur yolunu kapatır: merdiven ağzı yanındaki kazanın merdiven tarafına (eski ve yeni sette kazan x ±8,6)
+	var cx := 8.6 * signf(lad.position.x)
+	await _t8_yb("kazan", Vector3(cx + 1.4 * signf(cx), 0, land.z), Vector3(cx, sur.dis_yol_y() + 0.6, land.z))
+	if kare:
+		await _t8_kare("kazan")
+	player.global_position = back
+	await _t8_bekle(0.4)
+	# 4. depo → barikat (2. dalga)
+	phase = "wave2"
+	walls.set_repair(LandWalls.STAGES - 4)
+	await _t8_yb("depo", sur.depo() + Vector3(-0.8, 0, 2.2), sur.depo() + Vector3(0, 1.0, 0))
+	await _t8_yb("barikat", sur.gedik_onu() + Vector3(0.6, 0, -0.4), sur.barikat())
+	if kare:
+		await _t8_kare("barikat")
+	# 5. poterna fıçıları (3. dalga, şafak)
+	phase = "wave3"
+	walls.make_dawn(0.01)
+	await _t8_yb("fici", BLOCKS[0] + Vector3(-1.2, 0, 1.0), POSTERN + Vector3(0, 1.2, 0))
+	# fıçılar çekilir (oyunda da poternaya ancak böyle geçilir), poterna açılır
+	for i in BLOCKS.size():
+		_on_interact("block_%d" % i)
+	await _t8_bekle(2.0)
+	if kare:
+		await _t8_kare("poterna")
+	# 6. Giustiniani'yi taşıma yolu: yaralının yanından poternaya (yeni sette iç kulenin önünden)
+	await _t8_yb("giust", giust.global_position + Vector3(0.0, 0, -1.6), giust.global_position + Vector3(0, 1.0, 0))
+	var t_tas := _yz["sure"] as float
+	var yol_tas := _yz["yol"] as float
+	if _tasima_ara() != Vector3.INF:
+		await _t8_yb("tasima_ara", _tasima_ara(), POSTERN + Vector3(0, 1.0, 0))
+	await _t8_yb("poterna", POSTERN + Vector3(0, 0, 1.6), POSTERN + Vector3(0, 1.2, 0))
+	print("TASIMA8YURU tasima set=%s yol=%.1f sure=%.1f" % [set_ad, float(_yz["yol"]) - yol_tas, float(_yz["sure"]) - t_tas])
+	if kare:
+		# taşıma pozu poternanın önünde (oyuncu ayak ucunda)
+		var dir := (POSTERN - player.global_position)
+		dir.y = 0.0
+		dir = dir.normalized()
+		_carry_at = player.global_position + dir * 1.35
+		_carry_pose(dir, 0.85, 1.0)
+		player.face(_carry_at + Vector3(0, 0.6, 0))
+		await _t8_kare("tasima")
+		giust.visible = false
+	# 7. cadde: Romanos iç kapısının (eski: iç kapı) önü
+	walls.make_day()
+	var ro := sur.romanos()
+	var co := sur.sehir_ofs(float(ro["x"]))
+	var city := FallenCity.new()
+	city.field = walls.field
+	if sur.eski_mi:
+		walls.open_inner_gate()
+	else:
+		city.yer = co
+		walls.open_inner_gate()
+	add_child(city)
+	player.global_position = co + Vector3(2.6, 0.05, -9.5)
+	await _t8_bekle(1.0)
+	await _t8_yb("kapi", Vector3(float(ro["x"]) + 1.2, 0, float(ro["ic_z0"]) - 2.2), Vector3(float(ro["x"]), 2.4, float(ro["ic_z1"])))
+	if kare:
+		var horse := Horse.new(Color("e4e0d8"))
+		add_child(horse)
+		var sultan := Person.new({"coat": Color("b3262d"), "pants": Color("6a1a1a"), "hat": "sultan", "face": "fatih", "mustache": true,
+			"robe": Color("c8323a"), "hair": Color("2a1e14"), "skin": Color("e0b08a")})
+		horse.mount(sultan)
+		horse.position = Vector3(float(ro["x"]), 0.0, (float(ro["ic_z1"]) + float(ro["dis_z0"])) * 0.5) if not sur.eski_mi else Vector3(0, 0.0, 5.0)
+		horse.rotation.y = PI
+		player.global_position = co + Vector3(2.6, 0.05, -9.5)
+		player.face(horse.global_position + Vector3(0, 2.0, 0))
+		await _t8_kare("kapi_final")
+	print("TASIMA8YURU OZET set=%s bacak=%d takilma=%d dusme=%d sure=%.1f yol=%.1f" % [set_ad, _yz["bacak"], _yz["takilma"],
+		_yz["dusme"], _yz["sure"], _yz["yol"]])
+	print("AUTOTEST PASS chapter=26 variant=%s set=%s takilma=%d dusme=%d" % [GameState.autotest_variant, set_ad, _yz["takilma"], _yz["dusme"]]
+		if int(_yz["takilma"]) == 0 and int(_yz["dusme"]) == 0 else
+		"AUTOTEST FAIL chapter=26 variant=%s set=%s takilma=%d dusme=%d" % [GameState.autotest_variant, set_ad, _yz["takilma"], _yz["dusme"]])
+	get_tree().quit()
+
+
+## Sonda (--sonda8): savunucu sırasının yerleri
+func _t8_sonda(an: String) -> void:
+	if not OS.get_cmdline_user_args().has("--sonda8"):
+		return
+	var sat := "SONDA8 %s" % an
+	for d in defenders:
+		sat += " %s" % d.global_position.snapped(Vector3.ONE * 0.1)
+	print(sat)
+
+
+func _t8_bekle(sn: float) -> void:
+	var t := 0.0
+	while t < sn:
+		await get_tree().physics_frame
+		t += get_physics_process_delta_time()
+
+
+## Tek bacak: hedefe yürü (gerçek ileri tuşu), varınca bak. =kare: ışınlanır.
+func _t8_yb(ad: String, to: Vector3, bak: Vector3) -> void:
+	var t := 0.0
+	var yol := 0.0
+	var son := player.global_position
+	var takil := 0
+	var dus := 0
+	var best := 1e9
+	var iz := 0.0
+	if GameState.autotest_variant == "kare":
+		var gy := Unclip.floor_y(player, Vector3(to.x, player.global_position.y + 1.0, to.z), 2.5, 6.0)
+		player.global_position = Vector3(to.x, (player.global_position.y if is_nan(gy) else gy) + 0.05, to.z)
+	else:
+		while t < 30.0:
+			player.face(Vector3(to.x, player.global_position.y + 1.4, to.z))
+			Input.action_press("move_forward")
+			await get_tree().physics_frame
+			t += get_physics_process_delta_time()
+			var p := player.global_position
+			yol += Vector2(p.x - son.x, p.z - son.z).length()
+			son = p
+			if player.velocity.y < -7.0:
+				dus += 1
+			var dd := Vector2(p.x - to.x, p.z - to.z).length()
+			if dd < best - 0.2:
+				best = dd
+				iz = t
+			if dd < 0.4:
+				break
+			if t - iz > 6.0:
+				takil += 1
+				break
+		Input.action_release("move_forward")
+	for k in 4:
+		await get_tree().physics_frame
+	player.face(bak)
+	for k in 4:
+		await get_tree().physics_frame
+	_yz["bacak"] += 1
+	_yz["takilma"] += takil
+	_yz["dusme"] += dus
+	_yz["sure"] += t
+	_yz["yol"] += yol
+	print("TASIMA8YURU bacak=%s t=%.1f yol=%.1f takilma=%d dusme=%d yer=%s hedef=%s" % [ad, t, yol, takil, dus,
+		player.global_position.snapped(Vector3.ONE * 0.1), to.snapped(Vector3.ONE * 0.1)])
+
+
+func _t8_kare(ad: String) -> void:
+	var dir := GameState.dialog_shots_dir if GameState.dialog_shots_dir != "" else GameState.shots_dir
+	if dir == "":
+		return
+	DirAccess.make_dir_recursive_absolute(dir)
+	for k in 20:
+		await get_tree().process_frame
+	# bütçe: bu bakışta 4 karenin ortalama çizim çağrısı ve ilkel sayısı (eski ↔ yeni aynı anlamdaki kameradan)
+	var dc := 0.0
+	var pr := 0.0
+	for k in 4:
+		await RenderingServer.frame_post_draw
+		dc += RenderingServer.get_rendering_info(RenderingServer.RENDERING_INFO_TOTAL_DRAW_CALLS_IN_FRAME)
+		pr += RenderingServer.get_rendering_info(RenderingServer.RENDERING_INFO_TOTAL_PRIMITIVES_IN_FRAME)
+	_kare_n += 1
+	var f := dir.path_join("an_%02d_%s.jpg" % [_kare_n, ad])
+	get_viewport().get_texture().get_image().save_jpg(f, 0.85)
+	print("TASIMA8KARE %s oyuncu=%s cizim=%.0f ilkel=%.0f sur=%s" % [f.get_file(), player.global_position.snapped(Vector3.ONE * 0.1),
+		dc / 4.0, pr / 4.0, "eski" if sur.eski_mi else "yeni"])
 
 
 ## Dalga rakipleri: tür ("azap", "janissary", "genoese", "defender"), doğuş noktaları sırayla dağıtılır.
