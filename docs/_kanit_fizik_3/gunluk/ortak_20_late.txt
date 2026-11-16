@@ -1,1 +1,0 @@
-AUTOTEST PASS chapter=20 variant=late outcome=20.3 repair=10 knocks=0 arrows=false gun=3/4 gunner=4/4 niko=0 sur=yeni

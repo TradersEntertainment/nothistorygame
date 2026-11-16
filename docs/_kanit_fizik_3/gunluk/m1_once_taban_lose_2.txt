@@ -1,4 +1,0 @@
-VISAUDIT float scene=chapter37o.tscn who=Soldier/Chapter37o spk= feet=(-0.2, -0.1, 20.7) floor=-0.32 by=@Node3D@179/@StaticBody3D@1067 act= meta=no_rally,no_talk src=Chapter37o>Soldier shape=ConvexPolygonShape3D@(0.0, 0.0, 0.0) lp=(-0.24, -0.13, 20.75)
-VISAUDIT sunk scene=chapter37o.tscn who=Soldier/Chapter37o spk= feet=(-0.8, 0.6, 18.8) floor=0.77 by=@Node3D@179/@StaticBody3D@1059 act= meta=no_rally,no_talk src=Chapter37o>Soldier shape=(12.2, 0.55, 7.2)@(0.0, 0.5, 15.6) lp=(-0.83, 0.6, 18.8)
-VISAUDIT sunk scene=chapter37o.tscn who=Soldier/Chapter37o spk= feet=(-0.2, 1.1, 18.0) floor=1.27 by=@Node3D@179/@StaticBody3D@1056 act= meta=no_rally,no_talk src=Chapter37o>Soldier shape=(11.0, 0.55, 5.6)@(0.0, 1.0, 15.6) lp=(-0.15, 1.14, 18.0)
-AUTOTEST PASS chapter=37o variant=lose outcome=37O.2 beats=4/16 arrows=0 falls=1 barrels=2/5 cuts=4 stones=0 slips=0 burns=0 duel=false caught=0 sur=eski

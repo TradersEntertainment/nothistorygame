@@ -1,8 +1,0 @@
-GUN shots=4 hits=3 missed=1
-WAVERUNNER wave=1/2 won=true t=9.6 pw=0.28 foe_dmg=18.0 allies=0+0 rally_foes=0 thrown=0
-WAVERUNNER wave=2/2 won=true t=16.6 pw=0.28 foe_dmg=18.0 allies=0+0 rally_foes=0 thrown=0
-GUNNER shots=2 dodged=2 hits=0
-GRADE chapter=20o letter=S points=115 { "gun_shots": 4, "gun_hits": 3, "parries": 3, "kills": 5, "gunner_shots": 2, "dodged": 2, "hits_taken": 2 }
-CESET4 bolum=20o variant=flawed n=5 dusen=0 en_derin=-0.2 yer=(1.36322, 1.019379, 16.26036)
-AUTOTEST PASS chapter=20o variant=flawed outcome=20O.1 hits=3 cracks=1 gun=3/4 gunner=2/2 duel=true bed= sur=yeni
-KOSU rc=0 sure=42 args=--chapter=20o --autotest=flawed

@@ -1,8 +1,0 @@
-GUN shots=4 hits=3 missed=1
-WAVERUNNER wave=1/2 won=true t=4.0 pw=0.28 foe_dmg=18.0 allies=3+0 rally_foes=0 thrown=1
-WAVERUNNER wave=2/2 won=true t=8.1 pw=0.28 foe_dmg=18.0 allies=4+0 rally_foes=0 thrown=1
-GUN extra=1
-GUNNER shots=2 dodged=2 hits=0
-GRADE chapter=20 letter=S points=121 { "gun_shots": 4, "gun_hits": 3, "kills": 1, "thrown": 1, "gunner_shots": 2, "dodged": 2 }
-AUTOTEST PASS chapter=20 variant=late outcome=20.3 repair=10 knocks=0 arrows=false gun=3/4 gunner=2/2 niko=0 sur=yeni
-KOSU rc=0 sure=42 args=--chapter=20 --autotest=late

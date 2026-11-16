@@ -1,3 +1,0 @@
-AYAKPERF kare=180 proc_ms=163.283 ik_us=3.9 ik_kisi=0.08 isin=0.056 etkin=true
-AYAKPERF kare=201 proc_ms=7.822 ik_us=0.0 ik_kisi=0.00 isin=0.000 etkin=true
-AUTOTEST PASS chapter=44 variant= outcome=44.1 light=phone battery=4.5 bumps=3 hits=0 rescued=false kid=false

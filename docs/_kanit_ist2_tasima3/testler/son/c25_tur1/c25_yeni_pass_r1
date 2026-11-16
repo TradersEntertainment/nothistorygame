@@ -1,2 +1,0 @@
-AUTOTEST PASS chapter=25 variant=pass outcome=25.1 caught=0 candle=true tezkire=false marco=false sur=yeni
-KOSU -- --chapter=25 --autotest=pass rc=0

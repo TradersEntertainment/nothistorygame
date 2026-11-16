@@ -1,2 +1,0 @@
-AUTOTEST PASS chapter=25 variant=cistern outcome=25.1 caught=0 candle=true tezkire=false marco=false sur=eski
-KOSU -- --chapter=25 --autotest=cistern --eskisur rc=0

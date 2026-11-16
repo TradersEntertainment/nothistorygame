@@ -1,4 +1,0 @@
-YIGPERF kare=201 proc_ms=87.363 yig_us=76.9 aktif=0.19 en_aktif=1 en_us=706 en_proc_ms=114.00 en_pay=0.1381 etkin=true
-YIGILMAAUDIT fizik scene=Chapter20o who=Person/@Node3D@24358(@Node3D@24359) at=(-1.6, 0.5, 16.9) bas=+0.31 govde=-0.50 el_l=-0.11
-YIGPERF kare=200 proc_ms=30.007 yig_us=163.9 aktif=0.64 en_aktif=2 en_us=1653 en_proc_ms=53.87 en_pay=0.0623 etkin=true
-AUTOTEST PASS chapter=20o variant= outcome=20O.1 hits=3 cracks=0 gun=3/4 gunner=2/2 duel=true bed= sur=yeni

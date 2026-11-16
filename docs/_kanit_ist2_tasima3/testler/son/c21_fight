@@ -1,3 +1,0 @@
-TASIMA21ENGEL OZET nokta=11 engelde=0
-AUTOTEST PASS chapter=21 variant=fight outcome=21.1 bowls=2 tunnel=fight talk=iron trust=0 captive=false next= sur=yeni
-KOSU -- --chapter=21 --autotest=fight rc=0

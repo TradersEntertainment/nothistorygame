@@ -1,2 +1,0 @@
-AUTOTEST PASS chapter=28o variant=lose outcome=28O.2 stakes=4 slips=1 hit=true master=false roller_every=4.0 rollers=2 sur=yeni
-KOSU rc=0 sure=20 args=--chapter=28o --autotest=lose

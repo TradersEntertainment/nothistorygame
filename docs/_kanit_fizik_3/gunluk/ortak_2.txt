@@ -1,1 +1,0 @@
-AUTOTEST PASS chapter=2 variant= outcome=2.1 stumbles=1 telsiz=3

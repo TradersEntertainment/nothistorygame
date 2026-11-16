@@ -1,2 +1,0 @@
-AYAKPERF kare=35 proc_ms=407.820 ik_us=248.7 ik_kisi=5.09 isin=2.200 etkin=true
-AUTOTEST PASS chapter=2 variant= outcome=2.1 stumbles=1 telsiz=3

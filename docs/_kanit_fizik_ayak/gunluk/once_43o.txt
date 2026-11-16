@@ -1,4 +1,0 @@
-AYAKPERF kare=191 proc_ms=117.518 ik_us=0.0 ik_kisi=0.00 isin=0.000 etkin=false
-AYAKPERF kare=201 proc_ms=20.103 ik_us=0.0 ik_kisi=0.00 isin=0.000 etkin=false
-AYAKPERF kare=201 proc_ms=15.951 ik_us=0.0 ik_kisi=0.00 isin=0.000 etkin=false
-AUTOTEST PASS chapter=43 variant= outcome=43O.1 bad=0 lessons=3 soup=true flown=1069 battery=22

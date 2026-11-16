@@ -1,8 +1,0 @@
-AYAKPERF kare=201 proc_ms=65.515 ik_us=613.4 ik_kisi=6.17 isin=4.945 etkin=true
-AYAKPERF kare=201 proc_ms=20.762 ik_us=467.6 ik_kisi=4.16 isin=5.234 etkin=true
-AYAKPERF kare=200 proc_ms=25.974 ik_us=579.1 ik_kisi=5.16 isin=6.075 etkin=true
-AYAKPERF kare=200 proc_ms=24.999 ik_us=604.8 ik_kisi=6.56 isin=6.205 etkin=true
-AYAKPERF kare=198 proc_ms=46.157 ik_us=542.9 ik_kisi=7.27 isin=4.808 etkin=true
-POSEAUDIT tilt @Node3D@20986 90  (Chapter37o/@Node3D@26470)
-AYAKPERF kare=200 proc_ms=34.883 ik_us=481.3 ik_kisi=6.72 isin=5.110 etkin=true
-AUTOTEST PASS chapter=37o variant= outcome=37O.1 beats=13/16 arrows=0 falls=0 barrels=5/5 cuts=0 stones=0 slips=0 burns=0 duel=true caught=0 sur=yeni

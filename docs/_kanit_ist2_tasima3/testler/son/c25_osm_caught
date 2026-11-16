@@ -1,2 +1,0 @@
-AUTOTEST PASS chapter=25 variant=osm_caught outcome=25.2 caught=2 candle=false tezkire=false marco=false sur=-
-KOSU -- --chapter=25 --autotest=osm_caught rc=0

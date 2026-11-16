@@ -1115,3 +1115,18 @@ Her bölüm denetiminde ve her düzeltmede bu listeyi baştan uygula. Yeni bir h
     (ayakta, silahsız, yanında saldırgan). Birbirine bağlı iki durum değişikliği aynı karede yapılır.
   - Tam pakette çıkan her satır eski sürümle aynı sayıda karşılaştırılır (26 =council_bad Duelist moloz/sur: 0.99.120'de
     de 1/12, 0.99.121'de 1/12 → bu sürümün getirdiği değil, ayrı iş).
+- v0.99.122 (büyük İstanbul, 1. parça: yeni kara surları + 11 bölümün taşınması + genel fizik [Opus yardımcılar, yönetici birleştirir; Fable danışman])
+  - Ölçüyü dondur, sonra taşı: sur sözleşmesi (13 kalem, 8 kesim) ve oynanış arayüzü (`SurOyun`: yol, çıkış, dayama,
+    mazgal, gedik, hendek, poterna) donduktan sonra bölümler tek tek, `--eskisur` geri dönüşüyle taşındı. Her kayıtta
+    üç sabit satır (sözleşme, havada/gömük nokta 0, bot yürüyüşü 7/7) değişmemeli.
+  - Yakın kamera ölçütü: sur uzaktan iyi, oyuncu gözünden (0,5–3 m) "oyuncak gibi" görünüyordu (dev tuğla, düz kutu
+    dişler). Görünüş turlarına oyuncu gözü yüksekliğinde adlı kameralar eklendi; uzak pafta yetmez.
+  - Taşımada denge de taşınır: yeni gedik barikatı Bölüm 20'nin ikinci dalgasını 23 sn'den 8 sn'ye indirmişti. Her
+    taşımada dalga/düello süresi ESKİ | YENİ tablosuyla verilir; sahibinin süresi korunur.
+  - Fizik eklentisi eski kodla çift denetleyici olabilir: ayak IK gövdeyi, bölümün "ayağı yere koy"u kökü aynı anda
+    sürünce eski sette askerler kayıp gömüldü. Yeni sistem eklenirken aynı serbestliği süren eski kod aranır; dışarıdan
+    sürülen kişi kapsam dışına alınır.
+  - Danışman ikinci göz: en büyük taşımanın görev yazısı açılmadan okutuldu; "hazır" sanılan kapı arayüzünün o dilimde
+    boş döndüğü, poternanın ters tarafta olduğu ve 26o'nun 26'dan türediği görev yazılmadan önce yakalandı.
+  - Disk payı: kare ve video kanıtları büyür; yarıda kalan git sıkıştırması 2,5 GB artık bıraktı. Eski çalışma kopyaları
+    ve kanıt yığınları iş bitince silinir; kanıt klasörleri (`docs/_*`) ana dala girmez.

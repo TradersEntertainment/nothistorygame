@@ -1,2 +1,0 @@
-AUTOTEST PASS chapter=34o variant= outcome=34O.1 nicks=0 slips=0 calls=8/8 stopped=1 crowd=6 sparks=0 blast=false jam=false hit=true
-KOSU ad=34o rc=0 sn=69 args=--chapter=34o --autotest

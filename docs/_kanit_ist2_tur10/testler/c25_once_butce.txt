@@ -1,7 +1,0 @@
-TASIMA25KARE an_01_acilis_ordugah.jpg oyuncu=(-8.7, 8.6, 15.3) cizim=3683 ilkel=5660576 sur=yeni
-TASIMA25KARE an_02_nobetci.jpg oyuncu=(-8.7, 8.6, 15.3) cizim=2092 ilkel=3269305 sur=yeni
-TASIMA25KARE an_03_tespit_ordugah.jpg oyuncu=(-8.7, 8.6, 15.3) cizim=3694 ilkel=5664056 sur=yeni
-TASIMA25KARE an_04_sur_yolu_boyunca.jpg oyuncu=(-8.7, 8.6, 15.3) cizim=2069 ilkel=3266878 sur=yeni
-TASIMA25KARE an_05_peribolos_asagi.jpg oyuncu=(-8.7, 8.6, 15.3) cizim=592 ilkel=786248 sur=yeni
-TASIMA25KARE an_06_gedik_sur_yolundan.jpg oyuncu=(-5.7, 8.6, 15.3) cizim=1888 ilkel=3058201 sur=yeni
-TASIMA25KARE BITTI

@@ -1,4 +1,0 @@
-YIGILMAAUDIT fizik scene=Chapter37o who=Person/@Node3D@39400(@Node3D@39401) at=(-1.1, 1.3, 18.2) bas=-0.32
-YIGILMAAUDIT fizik scene=Chapter37o who=Person/@Node3D@39545(@Node3D@39546) at=(-1.6, 1.8, 17.0) govde=+0.16 ayak_r=+0.36
-YIGILMAAUDIT fizik scene=Chapter37o who=Person/@Node3D@39674(@Node3D@39675) at=(0.3, 1.8, 17.1) govde=-0.29
-AUTOTEST PASS chapter=37o variant= outcome=37O.1 beats=12/16 arrows=0 falls=0 barrels=5/5 cuts=0 stones=0 slips=0 burns=0 duel=true caught=0 sur=eski

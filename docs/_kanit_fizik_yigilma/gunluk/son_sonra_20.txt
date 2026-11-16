@@ -1,4 +1,0 @@
-YIGPERF kare=191 proc_ms=107.221 yig_us=114.1 aktif=0.42 en_aktif=2 en_us=728 en_proc_ms=179.64 en_pay=0.0279 etkin=true
-YIGPERF kare=201 proc_ms=50.498 yig_us=373.0 aktif=1.34 en_aktif=4 en_us=1273 en_proc_ms=40.40 en_pay=0.0499 etkin=true
-YIGPERF kare=199 proc_ms=40.115 yig_us=391.3 aktif=1.33 en_aktif=5 en_us=1605 en_proc_ms=40.05 en_pay=0.0534 etkin=true
-AUTOTEST PASS chapter=20 variant= outcome=20.1 repair=10 knocks=0 arrows=true gun=3/4 gunner=5/5 niko=0 sur=yeni

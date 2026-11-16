@@ -1,4 +1,0 @@
-VISAUDIT overlap scene=chapter37o.tscn a=Chapter37o b=Chapter37o at=(0.0, 0.0, 0.0) src=Chapter37o>Soldier|Chapter37o>Soldier
-VISAUDIT overlap scene=chapter37o.tscn a=Chapter37o b=Chapter37o at=(0.0, 0.0, 0.0) src=Chapter37o>Soldier|Chapter37o>Soldier
-VISAUDIT overlap scene=chapter37o.tscn a=Chapter37o b=Chapter37o at=(0.0, 0.0, 0.0) src=Chapter37o>Soldier|Chapter37o>Soldier
-KOSU rc=0 sure=45 args=--chapter=37o --autotest=yuru --eskisur

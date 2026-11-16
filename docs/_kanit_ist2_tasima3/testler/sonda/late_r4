@@ -1,4 +1,0 @@
-PILOT20ENGEL OZET nokta=9 engelde=0
-VISAUDIT insolid scene=chapter20.tscn who=Duelist at=(-3.1, 0.5, 12.0) by=Asama size=(8.400001, 1.4, 1.2)@(0.0, 1.5, 12.6) pos=(0.0, 1.5, 12.6) src=Chapter20>Duelist>Person|Chapter20>SurSetSahne>SurCerceve>SurOyun_mesoteikhion>OyunParcalari>Toprak_GedikOnarim>Asama>Toprak_GedikSet_Carp
-AUTOTEST PASS chapter=20 variant=late outcome=20.3 repair=10 knocks=0 arrows=false gun=3/4 gunner=2/2 niko=0 sur=yeni
-KOSU -- --chapter=20 --autotest=late rc=0

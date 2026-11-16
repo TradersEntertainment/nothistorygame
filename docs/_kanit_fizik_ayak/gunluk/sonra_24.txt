@@ -1,2 +1,0 @@
-AYAKPERF kare=57 proc_ms=315.930 ik_us=1070.8 ik_kisi=22.33 isin=21.754 etkin=true
-AUTOTEST PASS chapter=24 variant= outcome=24.1 stumbles=0 kid=true niko=false steadied=0 kid_t=0.2

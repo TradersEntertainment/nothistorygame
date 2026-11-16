@@ -1,4 +1,0 @@
-KUMASPERF kare=104 proc_ms=202.288 kumas_us=0.0 kumas_kisi=0.00 etkin=false
-KUMASPERF kare=201 proc_ms=27.757 kumas_us=0.0 kumas_kisi=0.00 etkin=false
-KUMASPERF kare=200 proc_ms=28.212 kumas_us=0.0 kumas_kisi=0.00 etkin=false
-AUTOTEST PASS chapter=30o variant= outcome=30O.1 stones=4/4 gunner=3/3 tower=true fell=false guards=10 pokes=0 flee=ride pushed=true

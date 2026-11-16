@@ -1,2 +1,0 @@
-AYAKPERF kare=193 proc_ms=85.478 ik_us=348.6 ik_kisi=1.91 isin=0.617 etkin=true
-AUTOTEST PASS chapter=8y variant= outcome=8Y.1 id=seal warnings=0 lowered=0 radio=true

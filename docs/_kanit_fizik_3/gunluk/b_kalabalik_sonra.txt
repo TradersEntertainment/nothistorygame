@@ -1,3 +1,0 @@
-KUMASPERF kare=1024 proc_ms=19.441 kumas_us=471.5 kumas_kisi=16.72 etkin=true
-KUMASPERF kare=1064 proc_ms=15.218 kumas_us=447.6 kumas_kisi=16.50 etkin=true
-KUMASPERF kare=963 proc_ms=18.264 kumas_us=509.3 kumas_kisi=16.73 etkin=true

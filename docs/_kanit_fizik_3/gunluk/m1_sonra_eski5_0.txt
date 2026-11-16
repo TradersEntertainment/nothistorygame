@@ -1,1 +1,0 @@
-AUTOTEST PASS chapter=0 variant= froze=true sur=eski

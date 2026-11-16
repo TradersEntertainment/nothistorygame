@@ -1,2 +1,0 @@
-AUTOTEST PASS chapter=22 variant= outcome=22.1 hits=2 singed=false window=0.42-0.68
-KOSU rc=0 sure=29 args=--chapter=22 --autotest --eskisur

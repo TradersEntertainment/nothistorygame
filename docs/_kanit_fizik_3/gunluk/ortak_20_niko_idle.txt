@@ -1,1 +1,0 @@
-AUTOTEST PASS chapter=20 variant=niko_idle outcome=20.1 repair=10 knocks=0 arrows=true gun=3/4 gunner=5/5 niko=5 sur=yeni

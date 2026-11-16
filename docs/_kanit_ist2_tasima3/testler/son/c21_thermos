@@ -1,3 +1,0 @@
-TASIMA21ENGEL OZET nokta=11 engelde=0
-AUTOTEST PASS chapter=21 variant=thermos outcome=21.1 bowls=5 tunnel=leb talk=talk trust=3 captive=false next= sur=yeni
-KOSU -- --chapter=21 --autotest=thermos rc=0

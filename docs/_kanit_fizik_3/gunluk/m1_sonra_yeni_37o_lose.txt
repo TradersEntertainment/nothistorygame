@@ -1,2 +1,0 @@
-AYAKAUDIT yakin scene=chapter37o.tscn who=Person/@Node3D@22587(@Node3D@22179) ayak=R fark=+0.08 d=12.4 at=(1.6, 0.7, 11.4) durum=yuru act=carry ik=w1.0/m2/pel-0.05/g1/gy+0.04/zemin+0.03
-AUTOTEST PASS chapter=37o variant=lose outcome=37O.2 beats=5/16 arrows=0 falls=1 barrels=2/5 cuts=9 stones=0 slips=0 burns=0 duel=false caught=0 sur=yeni

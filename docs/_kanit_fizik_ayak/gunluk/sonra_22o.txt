@@ -1,3 +1,0 @@
-AYAKPERF kare=200 proc_ms=82.181 ik_us=374.5 ik_kisi=3.55 isin=3.505 etkin=true
-AYAKPERF kare=200 proc_ms=37.867 ik_us=391.7 ik_kisi=5.36 isin=3.350 etkin=true
-AUTOTEST PASS chapter=22o variant= outcome=22O.1 saved=3 gun=3/4 warn=3 carry=0.75

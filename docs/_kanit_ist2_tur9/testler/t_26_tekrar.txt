@@ -1,3 +1,0 @@
-AUTOTEST PASS chapter=26 variant= outcome=26.1 water=3 repaired=3 cleared=2 worl
-AUTOTEST PASS chapter=26 variant= outcome=26.1 water=3 repaired=3 cleared=2 worl
-AUTOTEST PASS chapter=26 variant= outcome=26.1 water=3 repaired=3 cleared=2 worl

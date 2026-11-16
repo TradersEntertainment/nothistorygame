@@ -1,2 +1,0 @@
-YIGILMAAUDIT fizik scene=Chapter37o who=Person/@Node3D@25344(@Node3D@25345) at=(-2.8, -1.0, 18.4) el_l=+1.57 el_r=+1.73
-AUTOTEST PASS chapter=37o variant=trespass outcome=37O.1 beats=13/16 arrows=0 falls=0 barrels=5/5 cuts=0 stones=0 slips=0 burns=1 duel=true caught=1 sur=yeni

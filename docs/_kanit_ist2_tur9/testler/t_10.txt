@@ -1,2 +1,0 @@
-AUTOTEST PASS chapter=10 variant= outcome=10O.1 tries=0 envoy=false merak=0
-KOSU ad=10 rc=0 sn=18 args=--chapter=10 --autotest

@@ -1,2 +1,0 @@
-YIGPERF kare=60 proc_ms=414.822 yig_us=0.0 aktif=0.00 en_aktif=0 en_us=0 en_proc_ms=0.00 en_pay=0.0000 etkin=true
-AUTOTEST PASS chapter=24 variant= outcome=24.1 stumbles=0 kid=true niko=false steadied=0 kid_t=0.4

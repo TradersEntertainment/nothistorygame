@@ -1,1 +1,0 @@
-AUTOTEST PASS chapter=37o variant=lose outcome=37O.2 beats=4/16 arrows=0 falls=1 barrels=2/5 cuts=26 stones=0 slips=0 burns=1 duel=false caught=0 sur=yeni

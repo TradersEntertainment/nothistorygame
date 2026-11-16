@@ -1,3 +1,0 @@
-WALKTHRU scene=chapter26.tscn who=@Node3D@52018 at=(31.4, 1.0, 5.0) by=@Node3D@177/@StaticBody3D@237 pos=(32.0, 1.5, 2.2) src=Chapter26>Node3D>Person|Chapter26>LandWalls>StaticBody3D
-AUTOTEST PASS chapter=26 variant= outcome=26.1 water=3 repaired=3 cleared=2 world= gun=3/4 gunner=3/4
-KOSU ad=26 rc=0 sn=119 args=--chapter=26 --autotest

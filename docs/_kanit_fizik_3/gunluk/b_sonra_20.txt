@@ -1,3 +1,0 @@
-KUMASPERF kare=183 proc_ms=148.581 kumas_us=333.3 kumas_kisi=5.93 etkin=true
-KUMASPERF kare=194 proc_ms=79.419 kumas_us=555.1 kumas_kisi=11.31 etkin=true
-AUTOTEST PASS chapter=20 variant= outcome=20.1 repair=10 knocks=0 arrows=true gun=3/4 gunner=4/4 niko=0 sur=yeni

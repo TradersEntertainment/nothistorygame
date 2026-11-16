@@ -1,7 +1,0 @@
-TASIMA6FAZ faz=yuruyus t=24.3
-TASIMA6FAZ faz=kalas t=0.9 p=(-7.6, 0.1, 19.0)
-WAVERUNNER wave=1/1 won=false t=10.4 pw=0.28 foe_dmg=18.0 allies=0+0 rally_foes=0 thrown=0
-TASIMA6FAZ faz=barikat t=9.3
-TASIMA6FAZ faz=surukle t=23.1
-AUTOTEST PASS chapter=37o variant=lose outcome=37O.2 beats=4/16 arrows=0 falls=1 barrels=2/5 cuts=0 stones=0 slips=0 burns=0 duel=false caught=0 sur=eski
-KOSU rc=0 sure=41 args=--chapter=37o --autotest=lose --eskisur

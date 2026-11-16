@@ -1,2 +1,0 @@
-AUTOTEST PASS chapter=25 variant=caught outcome=25.2 caught=0 candle=true tezkire=false marco=false sur=eski
-KOSU -- --chapter=25 --autotest=caught --eskisur rc=0

@@ -1,3 +1,0 @@
-GUN shots=4 hits=3 missed=1
-AUTOTEST PASS chapter=22o variant=blakh_ok outcome=22O.1 saved=3 gun=3/4 warn=5 carry=0.75
-KOSU rc=0 sure=39 args=--chapter=22o --autotest=blakh_ok

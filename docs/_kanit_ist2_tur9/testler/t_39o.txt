@@ -1,2 +1,0 @@
-AUTOTEST PASS chapter=39o variant= outcome=39O.1 flags=6/6 lost=0 wrong=0 door=98 broke=false tez=1 struggle=0 lowered=true roof=83 answer=write called=false axes=2
-KOSU ad=39o rc=0 sn=29 args=--chapter=39o --autotest

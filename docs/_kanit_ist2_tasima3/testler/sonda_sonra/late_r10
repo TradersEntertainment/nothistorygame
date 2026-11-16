@@ -1,3 +1,0 @@
-PILOT20ENGEL OZET nokta=9 engelde=0
-AUTOTEST PASS chapter=20 variant=late outcome=20.3 repair=10 knocks=0 arrows=false gun=3/4 gunner=2/2 niko=0 sur=yeni
-KOSU -- --chapter=20 --autotest=late rc=0

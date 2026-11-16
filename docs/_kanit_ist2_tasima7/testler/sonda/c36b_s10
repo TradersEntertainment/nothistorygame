@@ -1,5 +1,0 @@
-WAVERUNNER wave=1/1 won=true t=21.9 pw=0.28 foe_dmg=18.0 allies=0+3 rally_foes=0 thrown=0
-VISAUDIT overlap scene=chapter36b.tscn a=Chapter36b b=Chapter36b(SPK_DEFENDER) at=(-19.9, -3.6, 51.6) src=Chapter36b>Person|Chapter36b>Person
-VISAUDIT overlap scene=chapter36b.tscn a=Chapter36b(SPK_DEFENDER) b=Chapter36b(SPK_DEFENDER) at=(-17.5, -3.6, 47.9) src=Chapter36b>Person|Chapter36b>Person
-AUTOTEST PASS chapter=36 variant= outcome=36.1 burned=3 fights=1 kills=4 sur=yeni
-KOSU rc=0 sure=43 args=--chapter=36b --autotest --sonda36

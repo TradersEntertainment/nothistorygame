@@ -1,9 +1,0 @@
-YIGPERF kare=201 proc_ms=62.568 yig_us=0.0 aktif=0.00 en_aktif=0 en_us=0 en_proc_ms=0.00 en_pay=0.0000 etkin=true
-YIGPERF kare=201 proc_ms=18.697 yig_us=0.0 aktif=0.00 en_aktif=0 en_us=0 en_proc_ms=0.00 en_pay=0.0000 etkin=true
-YIGPERF kare=200 proc_ms=23.486 yig_us=0.0 aktif=0.00 en_aktif=0 en_us=0 en_proc_ms=0.00 en_pay=0.0000 etkin=true
-YIGPERF kare=200 proc_ms=44.499 yig_us=137.6 aktif=0.43 en_aktif=2 en_us=853 en_proc_ms=36.72 en_pay=0.0241 etkin=true
-YIGILMAAUDIT fizik scene=Chapter20 who=Person/@Node3D@33204(@Node3D@33205) at=(-6.0, 0.0, 12.6) el_r=+0.15
-YIGPERF kare=200 proc_ms=40.016 yig_us=354.8 aktif=1.33 en_aktif=3 en_us=1335 en_proc_ms=43.27 en_pay=0.0350 etkin=true
-YIGILMAAUDIT fizik scene=Chapter20 who=Person/@Node3D@34230(@Node3D@34231) at=(-3.0, 0.7, 13.0) govde=+1.07 el_l=+1.45 ayak_l=+0.56
-YIGPERF kare=200 proc_ms=38.471 yig_us=243.9 aktif=0.81 en_aktif=4 en_us=1252 en_proc_ms=32.75 en_pay=0.0611 etkin=true
-AUTOTEST PASS chapter=20 variant=idle outcome=20.3 repair=10 knocks=0 arrows=true gun=3/4 gunner=5/5 niko=0 sur=yeni

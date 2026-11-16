@@ -1,1 +1,0 @@
-AUTOTEST PASS chapter=24o variant= outcome=24O.1 calmed=3 kadri=false tea=0 menu=false eclipse=false
