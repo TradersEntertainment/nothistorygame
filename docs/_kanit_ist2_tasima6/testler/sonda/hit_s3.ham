@@ -1,0 +1,179 @@
+Godot Engine v4.4.1.stable.official.49a5bc7b6 - https://godotengine.org
+
+SURSET kesim=mesoteikhion kurulum_ms=3564 sur_ms=969 set_ms=2589
+PILOT20ENGEL OZET nokta=9 engelde=0
+PILOT20KURULUM sur=yeni set_ms=3565 bolum_ms=1245 toplam_ms=4810
+WARNING: Screen-space ambient occlusion (SSAO) can only be enabled when using the Forward+ renderer.
+     at: environment_set_ssao (servers/rendering/storage/environment_storage.cpp:586)
+WARNING: Screen-space indirect lighting (SSIL) can only be enabled when using the Forward+ renderer.
+     at: environment_set_ssil (servers/rendering/storage/environment_storage.cpp:661)
+TERRAIN_SOLIDIFIED scene=chapter20.tscn node=/root/Chapter20/@Node3D@177/Ova/@Node3D@2668/@MeshInstance3D@2670
+SIEGECHAOS segs=40 runners=80 static=30
+LORE key=20 placed=3
+GUN shots=4 hits=3 missed=1
+TASIMA6DUELLO etiket=duello_basi p=(0.2, 0.6, 11.0) bas=(0.2, 0.6, 11.0) ileri=(-0.05, -0.17, 0.98) ilk=/@Node3D@177/SurCerceve/SurOyun_mesoteikhion/OyunParcalari/Toprak_GedikOnarim/Asama/Toprak_GedikSet_Carp@1.05
+HANDS stowed=@Node3D@84
+HANDS stowed=@Node3D@84
+RALLY scene=chapter20.tscn allies=3 foes=0 cands=3
+SONDA6 t=28.52 p=(0.2, 0.6, 11.0) v=(0.0, 0.0, 0.0) mod=walk duel=true ev=(0.241416, 0.628261, 10.97107)
+SONDA6 t=28.79 p=(0.2, 0.6, 11.0) v=(0.0, 0.0, 0.0) mod=walk duel=true ev=(0.241416, 0.628261, 10.97107)
+SONDA6 t=29.09 p=(0.2, 0.6, 11.0) v=(0.0, 0.0, 0.0) mod=walk duel=true ev=(0.241416, 0.628261, 10.97107)
+SONDA6 t=29.38 p=(0.2, 0.6, 11.0) v=(0.0, 0.0, 0.0) mod=walk duel=true ev=(0.241416, 0.628261, 10.97107)
+SONDA6 t=29.68 p=(0.2, 0.6, 11.0) v=(0.0, 0.0, 0.0) mod=walk duel=true ev=(0.241416, 0.628261, 10.97107)
+SONDA6 t=29.98 p=(0.2, 0.6, 11.0) v=(0.0, 0.0, 0.0) mod=walk duel=true ev=(0.241416, 0.628261, 10.97107)
+SONDA6 t=30.28 p=(0.2, 0.6, 11.0) v=(0.0, 0.0, 0.0) mod=walk duel=true ev=(0.241416, 0.628261, 10.97107)
+SONDA6 t=30.58 p=(0.2, 0.6, 11.0) v=(0.0, 0.0, 0.0) mod=walk duel=true ev=(0.241416, 0.628261, 10.97107)
+SONDA6 t=30.88 p=(0.2, 0.6, 11.0) v=(0.0, 0.0, 0.0) mod=walk duel=true ev=(0.241416, 0.628261, 10.97107)
+SONDA6 t=31.18 p=(0.2, 0.6, 11.0) v=(0.0, 0.0, 0.0) mod=walk duel=true ev=(0.241416, 0.628261, 10.97107)
+SONDA6 t=31.48 p=(1.0, 0.6, 10.7) v=(0.0, 0.0, 0.0) mod=walk duel=true ev=(0.241416, 0.628261, 10.97107)
+SONDA6 t=31.78 p=(2.5, 0.5, 10.2) v=(0.0, 0.0, 0.0) mod=walk duel=true ev=(0.241416, 0.628261, 10.97107)
+SONDA6 t=32.08 p=(2.5, 0.4, 10.2) v=(0.0, 0.0, 0.0) mod=walk duel=true ev=(0.241416, 0.628261, 10.97107)
+SONDA6 t=32.38 p=(2.5, 0.4, 10.2) v=(0.0, 0.0, 0.0) mod=walk duel=true ev=(0.241416, 0.628261, 10.97107)
+SONDA6 t=32.68 p=(2.5, 0.4, 10.2) v=(0.0, 0.0, 0.0) mod=walk duel=true ev=(0.241416, 0.628261, 10.97107)
+SONDA6 t=32.98 p=(2.5, 0.4, 10.2) v=(0.0, 0.0, 0.0) mod=walk duel=true ev=(0.241416, 0.628261, 10.97107)
+SONDA6 t=33.28 p=(2.5, 0.4, 10.2) v=(0.0, 0.0, 0.0) mod=walk duel=true ev=(0.241416, 0.628261, 10.97107)
+SONDA6 t=33.58 p=(2.5, 0.4, 10.2) v=(0.0, 0.0, 0.0) mod=walk duel=true ev=(0.241416, 0.628261, 10.97107)
+SONDA6 t=33.88 p=(2.5, 0.4, 10.2) v=(0.0, 0.0, 0.0) mod=walk duel=true ev=(0.241416, 0.628261, 10.97107)
+SONDA6 t=34.18 p=(2.5, 0.4, 10.2) v=(0.0, 0.0, 0.0) mod=walk duel=true ev=(0.241416, 0.628261, 10.97107)
+SONDA6 t=34.48 p=(2.5, 0.4, 10.2) v=(0.0, 0.0, 0.0) mod=walk duel=true ev=(0.241416, 0.628261, 10.97107)
+SONDA6 t=34.78 p=(2.3, 0.5, 11.1) v=(-0.9, 0.0, 3.1) mod=script duel=true ev=(0.241416, 0.628261, 10.97107)
+SONDA6 t=35.08 p=(2.1, 0.6, 11.7) v=(0.0, 0.0, 0.0) mod=walk duel=true ev=(0.241416, 0.628261, 10.97107)
+SONDA6 t=35.38 p=(2.1, 0.6, 11.7) v=(0.0, 0.0, 0.0) mod=walk duel=true ev=(0.241416, 0.628261, 10.97107)
+SONDA6 t=35.68 p=(2.1, 0.6, 11.7) v=(0.0, 0.0, 0.0) mod=walk duel=true ev=(0.241416, 0.628261, 10.97107)
+SONDA6 t=35.98 p=(2.1, 0.6, 11.7) v=(0.0, 0.0, 0.0) mod=walk duel=true ev=(0.241416, 0.628261, 10.97107)
+SONDA6 t=36.29 p=(2.1, 0.6, 11.7) v=(0.0, 0.0, 0.0) mod=walk duel=true ev=(0.241416, 0.628261, 10.97107)
+SONDA6 t=36.54 p=(2.1, 0.6, 11.7) v=(0.0, 0.0, 0.0) mod=walk duel=true ev=(0.241416, 0.628261, 10.97107)
+SONDA6 t=36.89 p=(2.1, 0.6, 11.7) v=(0.0, 0.0, 0.0) mod=walk duel=true ev=(0.241416, 0.628261, 10.97107)
+SONDA6 t=37.19 p=(2.1, 0.6, 11.7) v=(0.0, 0.0, 0.0) mod=walk duel=true ev=(0.241416, 0.628261, 10.97107)
+SONDA6 t=37.49 p=(2.1, 0.6, 11.7) v=(0.0, 0.0, 0.0) mod=walk duel=true ev=(0.241416, 0.628261, 10.97107)
+SONDA6 t=37.79 p=(2.1, 0.6, 11.7) v=(0.0, 0.0, 0.0) mod=walk duel=true ev=(0.241416, 0.628261, 10.97107)
+SONDA6 t=38.10 p=(2.1, 0.6, 11.7) v=(0.0, 0.0, 0.0) mod=walk duel=true ev=(0.241416, 0.628261, 10.97107)
+SONDA6 t=38.40 p=(2.1, 0.6, 11.7) v=(0.0, 0.0, 0.0) mod=walk duel=true ev=(0.241416, 0.628261, 10.97107)
+SONDA6 t=38.70 p=(2.1, 0.6, 11.7) v=(0.0, 0.0, 0.0) mod=walk duel=true ev=(0.241416, 0.628261, 10.97107)
+SONDA6 t=39.00 p=(2.1, 0.6, 11.7) v=(0.0, 0.0, 0.0) mod=walk duel=true ev=(0.241416, 0.628261, 10.97107)
+SONDA6 t=39.30 p=(2.1, 0.6, 11.7) v=(0.0, 0.0, 0.0) mod=walk duel=true ev=(0.241416, 0.628261, 10.97107)
+SONDA6 t=39.60 p=(2.1, 0.6, 11.7) v=(0.0, 0.0, 0.0) mod=script duel=true ev=(0.241416, 0.628261, 10.97107)
+SONDA6 t=39.90 p=(2.1, 0.6, 11.7) v=(0.0, 0.0, 0.0) mod=walk duel=true ev=(0.241416, 0.628261, 10.97107)
+SONDA6 t=40.20 p=(2.1, 0.6, 11.7) v=(0.0, 0.0, 0.0) mod=walk duel=true ev=(0.241416, 0.628261, 10.97107)
+SONDA6 t=40.50 p=(2.1, 0.6, 11.7) v=(0.0, 0.0, 0.0) mod=walk duel=true ev=(0.241416, 0.628261, 10.97107)
+SONDA6 t=40.80 p=(2.9, 0.6, 11.4) v=(0.0, 0.0, 0.0) mod=walk duel=true ev=(0.241416, 0.628261, 10.97107)
+KICK result=stagger
+SONDA6 t=41.10 p=(4.0, 0.4, 11.5) v=(-0.7, -1.0, 0.0) mod=script duel=true ev=(0.241416, 0.628261, 10.97107)
+SONDA6 t=41.41 p=(3.7, 0.3, 10.5) v=(-0.8, 0.0, 3.1) mod=script duel=true ev=(0.241416, 0.628261, 10.97107)
+SONDA6 t=41.71 p=(3.5, 0.2, 9.900001) v=(-0.5, 0.0, 3.2) mod=script duel=true ev=(0.241416, 0.628261, 10.97107)
+SONDA6 t=42.01 p=(3.4, 0.3, 10.0) v=(-0.4, 0.0, 3.2) mod=script duel=true ev=(0.241416, 0.628261, 10.97107)
+SONDA6 t=42.31 p=(3.3, 0.4, 10.9) v=(-0.4, 0.0, 3.2) mod=script duel=true ev=(0.241416, 0.628261, 10.97107)
+SONDA6 t=42.61 p=(3.2, 0.5, 11.7) v=(0.0, 0.0, 0.0) mod=script duel=true ev=(0.241416, 0.628261, 10.97107)
+SONDA6 t=42.91 p=(3.2, 0.5, 11.7) v=(0.0, 0.0, 0.0) mod=walk duel=true ev=(0.241416, 0.628261, 10.97107)
+SONDA6 t=43.21 p=(3.2, 0.5, 11.7) v=(0.0, 0.0, 0.0) mod=walk duel=true ev=(0.241416, 0.628261, 10.97107)
+SONDA6 t=43.51 p=(3.2, 0.5, 11.7) v=(0.0, 0.0, 0.0) mod=walk duel=true ev=(0.241416, 0.628261, 10.97107)
+SONDA6 t=43.81 p=(3.2, 0.5, 11.7) v=(0.0, 0.0, 0.0) mod=walk duel=true ev=(0.241416, 0.628261, 10.97107)
+SONDA6 t=44.11 p=(3.2, 0.5, 11.7) v=(0.0, 0.0, 0.0) mod=script duel=true ev=(0.241416, 0.628261, 10.97107)
+SONDA6 t=44.38 p=(3.2, 0.5, 11.7) v=(0.0, 0.0, 0.0) mod=walk duel=true ev=(0.241416, 0.628261, 10.97107)
+SONDA6 t=44.64 p=(3.2, 0.5, 11.7) v=(0.0, 0.0, 0.0) mod=walk duel=true ev=(0.241416, 0.628261, 10.97107)
+WAVERUNNER wave=1/2 won=true t=16.3 pw=0.28 foe_dmg=18.0 allies=3+0 rally_foes=0 thrown=0
+SONDA6 t=44.90 p=(0.2, 0.6, 11.0) v=(0.0, 0.0, 0.0) mod=walk duel=false ev=-
+SONDA6 t=45.23 p=(0.2, 0.6, 11.0) v=(0.0, 0.0, 0.0) mod=walk duel=false ev=-
+SONDA6 t=45.50 p=(0.2, 0.6, 11.0) v=(0.0, 0.0, 0.0) mod=walk duel=false ev=-
+SONDA6 t=45.80 p=(0.2, 0.6, 11.0) v=(0.0, 0.0, 0.0) mod=walk duel=false ev=-
+SONDA6 t=46.10 p=(0.2, 0.6, 11.0) v=(0.0, 0.0, 0.0) mod=walk duel=false ev=-
+SONDA6 t=46.40 p=(0.2, 0.6, 11.0) v=(0.0, 0.0, 0.0) mod=walk duel=false ev=-
+HANDS stowed=@Node3D@84
+SONDA6 t=46.72 p=(0.2, 0.6, 11.0) v=(0.0, 0.0, 0.0) mod=walk duel=false ev=-
+SONDA6 t=47.02 p=(0.2, 0.6, 11.0) v=(0.0, 0.0, 0.0) mod=walk duel=false ev=-
+SONDA6 t=47.32 p=(0.2, 0.6, 11.0) v=(0.0, 0.0, 0.0) mod=walk duel=false ev=-
+SONDA6 t=47.62 p=(0.2, 0.6, 11.0) v=(0.0, 0.0, 0.0) mod=walk duel=false ev=-
+SONDA6 t=47.92 p=(0.2, 0.6, 11.0) v=(0.0, 0.0, 0.0) mod=walk duel=false ev=-
+RALLY scene=chapter20.tscn allies=3 foes=0 cands=0
+SONDA6 t=48.22 p=(0.2, 0.6, 11.0) v=(0.0, 0.0, 0.0) mod=walk duel=true ev=(0.241416, 0.628261, 10.97107)
+SONDA6 t=48.52 p=(0.2, 0.6, 11.0) v=(0.0, 0.0, 0.0) mod=walk duel=true ev=(0.241416, 0.628261, 10.97107)
+SONDA6 t=48.82 p=(0.2, 0.6, 11.0) v=(0.0, 0.0, 0.0) mod=walk duel=true ev=(0.241416, 0.628261, 10.97107)
+SONDA6 t=49.12 p=(0.2, 0.6, 11.0) v=(0.0, 0.0, 0.0) mod=walk duel=true ev=(0.241416, 0.628261, 10.97107)
+SONDA6 t=49.42 p=(0.2, 0.6, 11.0) v=(0.0, 0.0, 0.0) mod=walk duel=true ev=(0.241416, 0.628261, 10.97107)
+SONDA6 t=49.72 p=(0.2, 0.6, 11.0) v=(0.0, 0.0, 0.0) mod=walk duel=true ev=(0.241416, 0.628261, 10.97107)
+SONDA6 t=50.02 p=(1.8, 0.6, 10.5) v=(0.0, 0.0, 0.0) mod=walk duel=true ev=(0.241416, 0.628261, 10.97107)
+SONDA6 t=50.32 p=(2.5, 0.4, 10.2) v=(0.0, -1.0, 0.0) mod=walk duel=true ev=(0.241416, 0.628261, 10.97107)
+SONDA6 t=50.62 p=(2.5, 0.4, 10.2) v=(0.0, 0.0, 0.0) mod=walk duel=true ev=(0.241416, 0.628261, 10.97107)
+SONDA6 t=50.92 p=(2.5, 0.4, 10.2) v=(0.0, 0.0, 0.0) mod=walk duel=true ev=(0.241416, 0.628261, 10.97107)
+SONDA6 t=51.22 p=(2.5, 0.4, 10.2) v=(0.0, 0.0, 0.0) mod=walk duel=true ev=(0.241416, 0.628261, 10.97107)
+SONDA6 t=51.52 p=(2.5, 0.4, 10.2) v=(0.0, 0.0, 0.0) mod=walk duel=true ev=(0.241416, 0.628261, 10.97107)
+SONDA6 t=51.82 p=(2.5, 0.4, 10.2) v=(0.0, 0.0, 0.0) mod=walk duel=true ev=(0.241416, 0.628261, 10.97107)
+SONDA6 t=52.12 p=(2.5, 0.4, 10.2) v=(0.0, 0.0, 0.0) mod=walk duel=true ev=(0.241416, 0.628261, 10.97107)
+SONDA6 t=52.42 p=(2.5, 0.4, 10.2) v=(0.0, 0.0, 0.0) mod=walk duel=true ev=(0.241416, 0.628261, 10.97107)
+SONDA6 t=52.72 p=(2.5, 0.4, 10.2) v=(0.0, 0.0, 0.0) mod=walk duel=true ev=(0.241416, 0.628261, 10.97107)
+SONDA6 t=53.02 p=(2.5, 0.4, 10.2) v=(0.0, 0.0, 0.0) mod=walk duel=true ev=(0.241416, 0.628261, 10.97107)
+SONDA6 t=53.32 p=(2.5, 0.4, 10.2) v=(0.0, 0.0, 0.0) mod=walk duel=true ev=(0.241416, 0.628261, 10.97107)
+SONDA6 t=53.62 p=(2.5, 0.4, 10.2) v=(0.0, 0.0, 0.0) mod=walk duel=true ev=(0.241416, 0.628261, 10.97107)
+SONDA6 t=53.92 p=(2.5, 0.4, 10.2) v=(0.0, 0.0, 0.0) mod=walk duel=true ev=(0.241416, 0.628261, 10.97107)
+SONDA6 t=54.22 p=(2.5, 0.4, 10.2) v=(0.0, 0.0, 0.0) mod=walk duel=true ev=(0.241416, 0.628261, 10.97107)
+SONDA6 t=54.52 p=(2.5, 0.4, 10.2) v=(0.0, 0.0, 0.0) mod=walk duel=true ev=(0.241416, 0.628261, 10.97107)
+SONDA6 t=54.82 p=(2.5, 0.4, 10.2) v=(0.0, 0.0, 0.0) mod=walk duel=true ev=(0.241416, 0.628261, 10.97107)
+SONDA6 t=55.12 p=(2.5, 0.4, 10.2) v=(0.0, 0.0, 0.0) mod=walk duel=true ev=(0.241416, 0.628261, 10.97107)
+SONDA6 t=55.42 p=(2.5, 0.4, 10.2) v=(0.0, 0.0, 0.0) mod=walk duel=true ev=(0.241416, 0.628261, 10.97107)
+SONDA6 t=55.72 p=(2.6, 0.4, 10.2) v=(0.0, 0.0, 0.0) mod=walk duel=true ev=(0.241416, 0.628261, 10.97107)
+SONDA6 t=56.02 p=(2.6, 0.4, 10.2) v=(0.0, 0.0, 0.0) mod=walk duel=true ev=(0.241416, 0.628261, 10.97107)
+SONDA6 t=56.32 p=(2.7, 0.4, 10.2) v=(0.0, 0.0, 0.0) mod=walk duel=true ev=(0.241416, 0.628261, 10.97107)
+SONDA6 t=56.62 p=(2.2, 0.5, 11.0) v=(-1.7, 0.0, 2.7) mod=script duel=true ev=(0.241416, 0.628261, 10.97107)
+SONDA6 t=56.92 p=(1.7, 0.7, 11.7) v=(-1.6, 0.0, 0.0) mod=script duel=true ev=(0.241416, 0.628261, 10.97107)
+SONDA6 t=57.22 p=(1.3, 0.7, 11.7) v=(-1.2, 0.0, 0.0) mod=script duel=true ev=(0.241416, 0.628261, 10.97107)
+SONDA6 t=57.52 p=(1.6, 0.7, 11.6) v=(0.0, 0.0, 0.0) mod=walk duel=true ev=(0.241416, 0.628261, 10.97107)
+SONDA6 t=57.82 p=(1.6, 0.7, 11.6) v=(0.0, 0.0, 0.0) mod=walk duel=true ev=(0.241416, 0.628261, 10.97107)
+SONDA6 t=58.12 p=(1.6, 0.7, 11.6) v=(0.0, 0.0, 0.0) mod=walk duel=true ev=(0.241416, 0.628261, 10.97107)
+SONDA6 t=58.42 p=(1.2, 0.7, 11.7) v=(-1.4, 0.0, 0.0) mod=script duel=true ev=(0.241416, 0.628261, 10.97107)
+SONDA6 t=58.73 p=(1.1, 0.7, 11.7) v=(0.0, 0.0, 0.0) mod=walk duel=true ev=(0.241416, 0.628261, 10.97107)
+SONDA6 t=59.03 p=(1.1, 0.7, 11.7) v=(0.0, 0.0, 0.0) mod=walk duel=true ev=(0.241416, 0.628261, 10.97107)
+SONDA6 t=59.33 p=(1.1, 0.7, 11.7) v=(0.0, 0.0, 0.0) mod=walk duel=true ev=(0.241416, 0.628261, 10.97107)
+SONDA6 t=59.63 p=(1.1, 0.7, 11.7) v=(0.0, 0.0, 0.0) mod=walk duel=true ev=(0.241416, 0.628261, 10.97107)
+SONDA6 t=59.93 p=(1.1, 0.7, 11.7) v=(0.0, 0.0, 0.0) mod=walk duel=true ev=(0.241416, 0.628261, 10.97107)
+SONDA6 t=60.24 p=(1.1, 0.7, 11.7) v=(0.0, 0.0, 0.0) mod=walk duel=true ev=(0.241416, 0.628261, 10.97107)
+KICK result=down
+SONDA6 t=60.52 p=(1.1, 0.7, 11.7) v=(0.0, 0.0, 0.0) mod=walk duel=true ev=(0.241416, 0.628261, 10.97107)
+SONDA6 t=60.78 p=(1.1, 0.7, 11.7) v=(0.0, 0.0, 0.0) mod=walk duel=true ev=(0.241416, 0.628261, 10.97107)
+SONDA6 t=61.08 p=(1.1, 0.7, 11.7) v=(0.0, 0.0, 0.0) mod=script duel=true ev=(0.241416, 0.628261, 10.97107)
+SONDA6 t=61.38 p=(1.9, 0.7, 11.5) v=(0.0, 0.0, 0.0) mod=walk duel=true ev=(0.241416, 0.628261, 10.97107)
+SONDA6 t=61.69 p=(3.8, 0.5, 11.4) v=(0.0, 0.0, 0.0) mod=walk duel=true ev=(0.241416, 0.628261, 10.97107)
+SONDA6 t=61.99 p=(3.8, 0.2, 11.4) v=(0.0, 0.0, 0.0) mod=walk duel=true ev=(0.241416, 0.628261, 10.97107)
+SONDA6 t=62.29 p=(3.8, 0.2, 11.4) v=(0.0, 0.0, 0.0) mod=walk duel=true ev=(0.241416, 0.628261, 10.97107)
+SONDA6 t=62.59 p=(3.8, 0.2, 11.4) v=(0.0, 0.0, 0.0) mod=walk duel=true ev=(0.241416, 0.628261, 10.97107)
+SONDA6 t=62.89 p=(3.8, 0.2, 11.4) v=(0.0, 0.0, 0.0) mod=walk duel=true ev=(0.241416, 0.628261, 10.97107)
+SONDA6 t=63.19 p=(3.8, 0.2, 11.4) v=(0.0, 0.0, 0.0) mod=walk duel=true ev=(0.241416, 0.628261, 10.97107)
+SONDA6 t=63.49 p=(3.8, 0.2, 11.4) v=(0.0, 0.0, 0.0) mod=walk duel=true ev=(0.241416, 0.628261, 10.97107)
+SONDA6 t=63.78 p=(3.8, 0.2, 11.4) v=(0.0, 0.0, 0.0) mod=walk duel=true ev=(0.241416, 0.628261, 10.97107)
+SONDA6 t=64.05 p=(3.8, 0.2, 11.4) v=(0.0, 0.0, 0.0) mod=walk duel=true ev=(0.241416, 0.628261, 10.97107)
+SONDA6 t=64.30 p=(3.8, 0.2, 11.4) v=(0.0, 0.0, 0.0) mod=walk duel=true ev=(0.241416, 0.628261, 10.97107)
+SONDA6 t=64.63 p=(3.8, 0.2, 11.4) v=(0.0, 0.0, 0.0) mod=walk duel=true ev=(0.241416, 0.628261, 10.97107)
+SONDA6 t=64.92 p=(3.7, 0.3, 11.7) v=(0.0, 0.0, 0.0) mod=script duel=true ev=(0.241416, 0.628261, 10.97107)
+SONDA6 t=65.22 p=(3.7, 0.3, 11.7) v=(0.0, 0.0, 0.0) mod=walk duel=true ev=(0.241416, 0.628261, 10.97107)
+SONDA6 t=65.52 p=(3.7, 0.3, 11.7) v=(0.0, 0.0, 0.0) mod=walk duel=true ev=(0.241416, 0.628261, 10.97107)
+SONDA6 t=65.82 p=(3.7, 0.3, 11.7) v=(0.0, 0.0, 0.0) mod=walk duel=true ev=(0.241416, 0.628261, 10.97107)
+SONDA6 t=66.12 p=(3.7, 0.3, 11.7) v=(0.0, 0.0, 0.0) mod=walk duel=true ev=(0.241416, 0.628261, 10.97107)
+SONDA6 t=66.42 p=(3.7, 0.3, 11.7) v=(0.0, 0.0, 0.0) mod=walk duel=true ev=(0.241416, 0.628261, 10.97107)
+SONDA6 t=66.72 p=(3.7, 0.3, 11.7) v=(0.0, 0.0, 0.0) mod=walk duel=true ev=(0.241416, 0.628261, 10.97107)
+SONDA6 t=67.02 p=(3.7, 0.3, 11.7) v=(0.0, 0.0, 0.0) mod=walk duel=true ev=(0.241416, 0.628261, 10.97107)
+SONDA6 t=67.32 p=(3.7, 0.3, 11.7) v=(0.0, 0.0, 0.0) mod=walk duel=true ev=(0.241416, 0.628261, 10.97107)
+SONDA6 t=67.63 p=(3.7, 0.3, 11.7) v=(0.0, 0.0, 0.0) mod=walk duel=true ev=(0.241416, 0.628261, 10.97107)
+SONDA6 t=67.93 p=(3.7, 0.3, 11.7) v=(0.0, 0.0, 0.0) mod=walk duel=true ev=(0.241416, 0.628261, 10.97107)
+SONDA6 t=68.20 p=(3.7, 0.3, 11.7) v=(0.0, 0.0, 0.0) mod=walk duel=true ev=(0.241416, 0.628261, 10.97107)
+SONDA6 t=68.46 p=(3.7, 0.3, 11.7) v=(0.0, 0.0, 0.0) mod=walk duel=true ev=(0.241416, 0.628261, 10.97107)
+WAVERUNNER wave=2/2 won=true t=20.7 pw=0.28 foe_dmg=18.0 allies=3+0 rally_foes=0 thrown=0
+SONDA6 t=68.72 p=(0.2, 0.6, 11.0) v=(0.0, 0.0, 0.0) mod=walk duel=false ev=-
+SONDA6 t=69.05 p=(0.2, 0.6, 11.0) v=(0.0, 0.0, 0.0) mod=walk duel=false ev=-
+SONDA6 t=69.32 p=(0.2, 0.6, 11.0) v=(0.0, 0.0, 0.0) mod=walk duel=false ev=-
+SONDA6 t=69.62 p=(0.2, 0.6, 11.0) v=(0.0, 0.0, 0.0) mod=walk duel=false ev=-
+GUN extra=1
+GUNNER shots=4 dodged=4 hits=0
+TASIMA6DUELLO etiket=duello_sonu p=(0.2, 0.6, 11.0) bas=(0.2, 0.6, 11.0) ileri=(0.02, 0.01, 1.0) ilk=yok
+SONDA6 t=70.10 p=(0.2, 0.6, 11.0) v=(0.0, 0.0, 0.0) mod=walk duel=false ev=-
+SONDA6 t=70.42 p=(0.2, 0.6, 11.0) v=(0.0, 0.0, 0.0) mod=walk duel=false ev=-
+SONDA6 t=70.70 p=(2.0, 0.1, 9.400001) v=(0.0, 0.0, 0.0) mod=walk duel=false ev=-
+TESPITBLOCK who=siege20 blocker=Skeleton/Mesh (MeshInstance3D) at=(2.0, 0.3, 9.3) eye=(2.0, 1.9, 9.3) dist=4.4
+SONDA6 t=71.14 p=(2.0, 0.3, 9.3) v=(0.0, 0.0, 0.0) mod=walk duel=false ev=-
+GRADE chapter=20 letter=S points=119 { "gun_shots": 4, "gun_hits": 3, "gunner_shots": 4, "dodged": 4, "parries": 2, "hits_taken": 2, "kills": 3 }
+SONDA6 t=71.45 p=(2.0, 0.3, 9.3) v=(0.0, 0.0, 0.0) mod=walk duel=false ev=-
+CESET4 bolum=20 variant=hit n=8 dusen=0 en_derin=-0.2 yer=(1.32361, 1.083975, 16.10036)
+AUTOTEST PASS chapter=20 variant=hit outcome=20.1 repair=10 knocks=1 arrows=true gun=3/4 gunner=4/4 niko=0 sur=yeni
+WARNING: ObjectDB instances leaked at exit (run with --verbose for details).
+     at: cleanup (core/object/object.cpp:2378)
+ERROR: 1 resources still in use at exit (run with --verbose for details).
+   at: clear (core/io/resource.cpp:614)
+KOSU rc=0 sure=42 args=--chapter=20 --autotest=hit --sonda6

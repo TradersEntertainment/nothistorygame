@@ -565,7 +565,17 @@ class GedikOnarim extends Node3D:
 		for i in 40:
 			var z := rng.randf_range(zo0 - 6.0, zm0 + 10.0)
 			var xx: float = a.gx + rng.randf_range(-3.6, 3.6)
-			var y := PARCA_._profil_y(pr["pts"], z) - (absf(xx - a.gx) - 3.0) * 0.3 * float(absf(xx - a.gx) > 3.0)
+			# tümseğin enine kesitiyle (SurOyunAg._tumsek: orta ±1,05 düz, ±3,0'da %35 alçak, ±4,6'da taban). Eskiden orta
+			# yükseklik ±3'e dek sürüyordu: yamaçta (sırtla teras arası) yandaki taşlar 0,8 m'ye dek havada (TAŞIMA-6, 37o an_04/05)
+			var yc := PARCA_._profil_y(pr["pts"], z)
+			var tb: float = taban.call(z)
+			var dxk := absf(xx - a.gx)
+			var y := yc
+			if dxk > 1.05:
+				y = lerpf(yc, lerpf(yc, tb, 0.35), clampf((dxk - 1.05) / 1.95, 0.0, 1.0))
+			if dxk > 3.0:
+				y = lerpf(lerpf(yc, tb, 0.35), tb, clampf((dxk - 3.0) / 1.6, 0.0, 1.0))
+			y = maxf(y, tb)
 			var sc := rng.randf_range(0.18, 0.55)
 			kl.append(Transform3D(Basis.from_euler(Vector3(rng.randf_range(-0.6, 0.6), rng.randf() * TAU, rng.randf_range(-0.6, 0.6))).scaled(Vector3(sc * 1.3, sc * 0.6, sc)), Vector3(xx, y + sc * 0.12, z)))
 		Scenery.scatter(self, KULE.kaya_mesh(), kl, [], Props.mat(IstSurlar.C_STONE.darkened(0.14), 0.0, false, "ashlar_far"))

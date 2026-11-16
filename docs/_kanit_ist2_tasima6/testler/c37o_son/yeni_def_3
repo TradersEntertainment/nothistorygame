@@ -1,0 +1,9 @@
+TASIMA6FAZ faz=yuruyus t=23.9
+TASIMA6FAZ faz=kalas t=90.0 p=(-17.9, -3.6, 25.6)
+WAVERUNNER wave=1/1 won=true t=12.1 pw=0.28 foe_dmg=18.0 allies=3+0 rally_foes=0 thrown=0
+TASIMA6FAZ faz=barikat t=23.7
+GUNNER shots=1 dodged=1 hits=0
+TASIMA6FAZ faz=surukle t=22.0
+GRADE chapter=37o letter=A points=95 { "parries": 2, "hits_taken": 2, "kills": 1, "gunner_shots": 1, "dodged": 1 }
+AUTOTEST PASS chapter=37o variant= outcome=37O.1 beats=12/16 arrows=0 falls=0 barrels=5/5 cuts=0 stones=0 slips=0 burns=0 duel=true caught=0 sur=yeni
+KOSU rc=0 sure=75 args=--chapter=37o --autotest

@@ -1,0 +1,2 @@
+AUTOTEST PASS chapter=32o variant=cracked outcome=32O.1 bundles=6/6 earth=2 arrows=0 rungs=6 bad=0 hits=3/3 fires=6 greek=2/2 hasan=water sur=yeni
+KOSU rc=0 sure=43 args=--chapter=32o --autotest=cracked

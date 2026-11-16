@@ -1,0 +1,11 @@
+GUN shots=4 hits=3 missed=1
+TASIMA6DUELLO etiket=duello_basi p=(-9.900001, 0.0, 6.9) bas=(-9.900001, 0.0, 6.9) ileri=(0.76, -0.01, 0.65) ilk=yok
+WAVERUNNER wave=1/2 won=true t=12.6 pw=0.28 foe_dmg=18.0 allies=3+0 rally_foes=0 thrown=1
+WAVERUNNER wave=2/2 won=true t=29.5 pw=0.28 foe_dmg=18.0 allies=4+0 rally_foes=0 thrown=1
+GUN extra=1
+GUNNER shots=5 dodged=5 hits=0
+TASIMA6DUELLO etiket=duello_sonu p=(-11.6, 0.0, 9.1) bas=(-9.900001, 0.0, 6.9) ileri=(0.02, -0.72, 0.7) ilk=/@Node3D@177/SurCerceve/SurOyun_mesoteikhion/OyunDilimi/Mesoteikhion/@StaticBody3D@195@2.26
+GRADE chapter=20 letter=S points=130 { "gun_shots": 4, "gun_hits": 3, "gunner_shots": 5, "dodged": 5, "kills": 1, "thrown": 1 }
+CESET4 bolum=20 variant= n=9 dusen=0 en_derin=-0.1 yer=(-1.8, -3.592125, 43.6)
+AUTOTEST PASS chapter=20 variant= outcome=20.1 repair=10 knocks=0 arrows=true gun=3/4 gunner=5/5 niko=0 sur=yeni
+KOSU rc=0 sure=43 args=--chapter=20 --autotest
