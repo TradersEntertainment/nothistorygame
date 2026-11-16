@@ -177,7 +177,13 @@ düşürmez (gece ay ışığında görünmüyordu; her gölge geçişinde çizi
 (sonda `BLAKGOR`), gölge düşüren: sur 11,4 bin + saray 5,1 bin.
 
 ## Şehir (ortak kalemin şehirdeki görünüşü)
-__SEHIR__
+Tur 9'un Blakherna kameraları (`docs/_kanit_ist2_tur9/kam/blak.txt`, `tests/_ist/tur9_kare.tscn`; b4 gece hariç) bu dalın
+koduyla: `kare/sehir/`. Karşılaştırma tur 9 SONRA kareleriyle (`docs/_kanit_ist2_tur9/sonra/blak/`; arada tur 10–13'ün
+gölgelendirici düzeltmeleri de var, yalnız bu görevin farkı değil). Çarpışma: tur 9 dökümüyle birebir.
+- **b3 Haliç ucundan** (Blakherna diliminin açıkta kaldığı yer): kaide ve şev aynı; taş blok kabartmalı, tuğla hatıl soluk ve
+  ince (tur 9: düz krem levha üstünde parlak kırmızı şerit) — aynı ressam, **daha iyi**, kutu yok, havada yok.
+- **b1 iç yüz**: görünen sur çoğunlukla kara surunun iç suru (aynı hat; tur 9 bulgusu), Blakherna dilimi aynı — **aynı**.
+- **b2 saray yanı, h1, h2 havadan**: saray ve sur tur 9'daki gibi; korkuluk değişikliği bu uzaklıkta seçilmiyor — **aynı**.
 
 ## Sonraki taşıyana
 1. **Ortak kalem:** `blak_set.sur(n, x0, x1, lod, {"tohum_L", "kuleler", "dip_tas", "korkuluk"})`, `korkuluk_dis(n, x0, x1, lod,

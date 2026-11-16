@@ -6,4 +6,4 @@
 - [x] 3 Bağlar: aynı kutular; `Blachernae.zemin_y`; süre tablosu raporda.
 - [x] 4 Kareler: `kare/30|30o/eski|yeni` (8'er), `pafta/`.
 - [x] 5 Testler: 30/30o yeni ×3 + eski ×1 hepsi PASS; `=yuru` yeni = eski; şehir bölümleri 5/5 PASS; sözleşme üçlüsü + eşya aynı.
-- [ ] Şehir kareleri (tur 9 Blakherna kameraları) — koşuyor.
+- [x] Şehir kareleri (tur 9 Blakherna kameraları): `kare/sehir/`, aynı ya da daha iyi.
