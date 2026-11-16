@@ -30,7 +30,7 @@ const ISIN_KARE := 10
 static var _isin_kare := -1
 static var _isin_kalan := 0
 const YERCEKIMI := 13.0
-const DUVAR := 0.28
+const DUVAR := 0.1
 const KENAR := 0.6
 
 # Parçacıklar
