@@ -23,3 +23,19 @@ WARNING: Screen-space indirect lighting (SSIL) can only be enabled when using th
 TERRAIN_SOLIDIFIED scene=chapter37o.tscn node=/root/Chapter37o/@Node3D@179/Ova/@Node3D@2665/@MeshInstance3D@2667
 TASIMA37OYURU set=yeni kalas_x=-17.9 kiyi_z=47.6 uc_z=26.0 yuruyus=(-9.0, -3.545, 84.6)>(-9.0, -3.545, 52.1) fici_z=17.2 kanca=(0.0, -2.2, 23.2) surukle=(-17.9, -3.545, 50.1)>(-17.9, -3.545, 78.6) teras_z=23.8
 TASIMA37OYURU bacak=turgut sure=0.0 yol=0.0 takilma=0 dusme=0 son=(10.4, -3.5, 138.5) odak=turgut
+TASIMA37OKARE an_01_yuruyus.jpg oyuncu=(-9.0, -3.5, 84.6) cizim=1202 ilkel=1274252 sur=yeni
+TASIMA37OYURU bacak=kalas_yigini sure=0.0 yol=0.0 takilma=0 dusme=0 son=(-14.9, -3.5, 54.6) odak=plank
+TASIMA37OYURU bacak=kiyi sure=0.0 yol=0.0 takilma=0 dusme=0 son=(-17.9, -3.5, 49.2) odak=edge
+TASIMA37OKARE an_02_kalas_indi.jpg oyuncu=(-17.9, -3.5, 49.2) cizim=1164 ilkel=1199190 sur=yeni
+TASIMA37OYURU bacak=kalas_orta sure=0.0 yol=0.0 takilma=0 dusme=0 son=(-17.9, -3.5, 36.8) odak=
+TASIMA37OKARE an_03_kalas_ortasi.jpg oyuncu=(-17.9, -3.5, 36.8) cizim=998 ilkel=1268866 sur=yeni
+TASIMA37OYURU bacak=kalas_uc sure=0.0 yol=0.0 takilma=0 dusme=0 son=(-17.9, -3.5, 25.6) odak=
+TASIMA37OYURU bacak=teras sure=0.0 yol=0.0 takilma=0 dusme=0 son=(-17.9, -3.7, 23.8) odak=
+TASIMA37OYURU bacak=yamac_etegi sure=0.0 yol=0.0 takilma=0 dusme=0 son=(-3.5, -3.2, 23.8) odak=
+TASIMA37OYURU bacak=kanca_yeri sure=0.0 yol=0.0 takilma=0 dusme=0 son=(0.0, -2.2, 23.2) odak=
+TASIMA37OKARE an_04_barikat.jpg oyuncu=(0.0, -2.2, 23.2) cizim=1032 ilkel=1425607 sur=yeni
+TASIMA37OKARE an_05_giustiniani.jpg oyuncu=(2.2, -2.6, 23.6) cizim=1012 ilkel=1635895 sur=yeni
+TASIMA37OYURU bacak=surukle sure=0.0 yol=0.0 takilma=0 dusme=0 son=(-17.9, -3.5, 78.5) odak=
+TASIMA37OKARE an_06_geri_bakis.jpg oyuncu=(-17.9, -3.5, 58.1) cizim=1252 ilkel=1373020 sur=yeni
+TASIMA37OKARE BITTI
+KARE_BITTI rc=0 --chapter=37o --autotest=kare

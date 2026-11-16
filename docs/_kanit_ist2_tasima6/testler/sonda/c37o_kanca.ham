@@ -1,0 +1,218 @@
+Godot Engine v4.4.1.stable.official.49a5bc7b6 - https://godotengine.org
+
+SURSET kesim=mesoteikhion kurulum_ms=3626 sur_ms=1038 set_ms=2582
+WARNING: Screen-space ambient occlusion (SSAO) can only be enabled when using the Forward+ renderer.
+     at: environment_set_ssao (servers/rendering/storage/environment_storage.cpp:586)
+WARNING: Screen-space indirect lighting (SSIL) can only be enabled when using the Forward+ renderer.
+     at: environment_set_ssil (servers/rendering/storage/environment_storage.cpp:661)
+TERRAIN_SOLIDIFIED scene=chapter37o.tscn node=/root/Chapter37o/@Node3D@179/Ova/@Node3D@2665/@MeshInstance3D@2667
+TASIMA37OYURU set=yeni kalas_x=-17.9 kiyi_z=47.6 uc_z=26.0 yuruyus=(-9.0, -3.545, 84.6)>(-9.0, -3.545, 52.1) fici_z=17.2 kanca=(0.0, -2.2, 23.2) surukle=(-17.9, -3.545, 50.1)>(-17.9, -3.545, 78.6) teras_z=23.8
+TASIMA37OYURU bacak=turgut sure=0.9 yol=2.8 takilma=0 dusme=0 son=(10.5, -3.5, 138.4) odak=turgut
+SONDA37 /root/Chapter37o/@CharacterBody3D@80/@Camera3D@82/@Node3D@23517/@Node3D@23518/@MeshInstance3D@23519 c=(-9.1, -2.3, 83.8) d=0.8 boy=(0.2, 0.0, 0.2) ebeveyn=(-8.91, -2.26, 83.88) ova=(0.0, -3.545, 10.6) zemin=-3.58
+SONDA37 /root/Chapter37o/@CharacterBody3D@80/@Camera3D@82/@Node3D@23517/@Node3D@23518/@MeshInstance3D@23520 c=(-9.1, -2.3, 83.9) d=0.8 boy=(0.0, 0.1, 0.1) ebeveyn=(-8.91, -2.26, 83.88) ova=(0.0, -3.545, 10.6) zemin=-3.58
+SONDA37 /root/Chapter37o/@CharacterBody3D@80/@Camera3D@82/@Node3D@23517/@Node3D@23521/@MeshInstance3D@23522 c=(-8.7, -2.3, 83.9) d=0.8 boy=(0.2, 0.0, 0.2) ebeveyn=(-8.91, -2.26, 83.88) ova=(0.0, -3.545, 10.6) zemin=-3.58
+SONDA37 /root/Chapter37o/@CharacterBody3D@80/@Camera3D@82/@Node3D@23517/@Node3D@23521/@MeshInstance3D@23523 c=(-8.7, -2.3, 83.9) d=0.8 boy=(0.0, 0.1, 0.1) ebeveyn=(-8.91, -2.26, 83.88) ova=(0.0, -3.545, 10.6) zemin=-3.58
+SONDA37 /root/Chapter37o/@Node3D@21209/@Node3D@21210/@Node3D@21211/Knee/Ankle/Baked c=(-10.5, -3.5, 82.4) d=3.1 boy=(0.1, 0.1, 0.3) ebeveyn=(-10.49, -3.46, 82.46) ova=(0.0, -3.545, 10.6) zemin=-3.58
+SONDA37 /root/Chapter37o/@Node3D@21209/@Node3D@21210/@Node3D@21211/Knee/Baked c=(-10.5, -3.4, 82.4) d=3.0 boy=(0.2, 0.4, 0.2) ebeveyn=(-10.49, -3.2, 82.4) ova=(0.0, -3.545, 10.6) zemin=-3.58
+SONDA37 /root/Chapter37o/@Node3D@21209/@Node3D@21210/@Node3D@21211/Baked c=(-10.5, -3.0, 82.4) d=2.9 boy=(0.2, 0.5, 0.2) ebeveyn=(-10.49, -2.86, 82.39) ova=(0.0, -3.545, 10.6) zemin=-3.58
+SONDA37 /root/Chapter37o/@Node3D@21209/@Node3D@21210/@Node3D@21222/Knee/Ankle/Baked c=(-10.7, -3.5, 82.3) d=3.2 boy=(0.1, 0.1, 0.3) ebeveyn=(-10.71, -3.47, 82.4) ova=(0.0, -3.545, 10.6) zemin=-3.58
+SONDA37 /root/Chapter37o/@Node3D@21209/@Node3D@21210/@Node3D@21222/Knee/Baked c=(-10.7, -3.4, 82.4) d=3.1 boy=(0.2, 0.4, 0.2) ebeveyn=(-10.71, -3.2, 82.4) ova=(0.0, -3.545, 10.6) zemin=-3.58
+SONDA37 /root/Chapter37o/@Node3D@21209/@Node3D@21210/@Node3D@21222/Baked c=(-10.7, -3.0, 82.4) d=3.0 boy=(0.2, 0.5, 0.2) ebeveyn=(-10.71, -2.86, 82.39) ova=(0.0, -3.545, 10.6) zemin=-3.58
+SONDA37 /root/Chapter37o/@Node3D@21209/@Node3D@21210/@Node3D@21242/Elbow/Wrist/Baked c=(-10.2, -2.8, 82.3) d=2.7 boy=(0.1, 0.1, 0.1) ebeveyn=(-10.19, -2.74, 82.35) ova=(0.0, -3.545, 10.6) zemin=-3.58
+SONDA37 /root/Chapter37o/@Node3D@21209/@Node3D@21210/@Node3D@21242/Elbow/Baked c=(-10.2, -2.6, 82.4) d=2.6 boy=(0.1, 0.3, 0.1) ebeveyn=(-10.23, -2.53, 82.38) ova=(0.0, -3.545, 10.6) zemin=-3.58
+SONDA37 /root/Chapter37o/@Node3D@21209/@Node3D@21210/@Node3D@21242/Baked c=(-10.2, -2.4, 82.4) d=2.6 boy=(0.1, 0.3, 0.1) ebeveyn=(-10.27, -2.28, 82.38) ova=(0.0, -3.545, 10.6) zemin=-3.58
+SONDA37 /root/Chapter37o/@Node3D@21209/@Node3D@21210/@Node3D@21254/Elbow/Wrist/Baked c=(-11.0, -2.8, 82.3) d=3.1 boy=(0.1, 0.1, 0.1) ebeveyn=(-11.0, -2.74, 82.36) ova=(0.0, -3.545, 10.6) zemin=-3.58
+SONDA37 /root/Chapter37o/@Node3D@21209/@Node3D@21210/@Node3D@21254/Elbow/Baked c=(-11.0, -2.6, 82.4) d=3.1 boy=(0.1, 0.3, 0.1) ebeveyn=(-10.97, -2.53, 82.39) ova=(0.0, -3.545, 10.6) zemin=-3.58
+SONDA37 /root/Chapter37o/@Node3D@21209/@Node3D@21210/@Node3D@21254/Baked c=(-10.9, -2.4, 82.4) d=3.0 boy=(0.1, 0.3, 0.1) ebeveyn=(-10.93, -2.28, 82.38) ova=(0.0, -3.545, 10.6) zemin=-3.58
+SONDA37 /root/Chapter37o/@Node3D@21209/@Node3D@21210/@Node3D@21266/@Node3D@21267/Baked c=(-10.6, -1.9, 82.2) d=2.9 boy=(0.2, 0.1, 0.0) ebeveyn=(-10.6, -1.95, 82.2) ova=(0.0, -3.545, 10.6) zemin=-3.58
+SONDA37 /root/Chapter37o/@Node3D@21209/@Node3D@21210/@Node3D@21266/@Node3D@21268/Baked c=(-10.6, -1.9, 82.2) d=2.9 boy=(0.2, 0.0, 0.0) ebeveyn=(-10.6, -1.9, 82.2) ova=(0.0, -3.545, 10.6) zemin=-3.58
+SONDA37 /root/Chapter37o/@Node3D@21209/@Node3D@21210/@Node3D@21266/FaceDetail/Baked c=(-10.6, -2.1, 82.2) d=2.9 boy=(0.1, 0.2, 0.2) ebeveyn=(-10.6, -1.96, 82.38) ova=(0.0, -3.545, 10.6) zemin=-3.58
+SONDA37 /root/Chapter37o/@Node3D@21209/@Node3D@21210/@Node3D@21266/@MeshInstance3D@21312 c=(-10.6, -2.1, 82.2) d=2.9 boy=(0.0, 0.0, 0.0) ebeveyn=(-10.6, -1.96, 82.38) ova=(0.0, -3.545, 10.6) zemin=-3.58
+SONDA37 /root/Chapter37o/@Node3D@21209/@Node3D@21210/@Node3D@21266/Baked c=(-10.6, -1.8, 82.4) d=2.7 boy=(0.4, 0.7, 0.5) ebeveyn=(-10.6, -1.96, 82.38) ova=(0.0, -3.545, 10.6) zemin=-3.58
+SONDA37 /root/Chapter37o/@Node3D@21209/@Node3D@21210/Baked c=(-10.6, -2.6, 82.4) d=2.8 boy=(0.6, 1.0, 0.6) ebeveyn=(-10.6, -3.54, 82.4) ova=(0.0, -3.545, 10.6) zemin=-3.58
+SONDA37 /root/Chapter37o/@Node3D@21329/@Node3D@21330/@Node3D@21331/Knee/Ankle/Baked c=(-7.1, -3.5, 82.5) d=3.2 boy=(0.1, 0.1, 0.3) ebeveyn=(-7.09, -3.47, 82.6) ova=(0.0, -3.545, 10.6) zemin=-3.58
+SONDA37 /root/Chapter37o/@Node3D@21329/@Node3D@21330/@Node3D@21331/Knee/Baked c=(-7.1, -3.4, 82.6) d=3.1 boy=(0.2, 0.4, 0.2) ebeveyn=(-7.09, -3.2, 82.6) ova=(0.0, -3.545, 10.6) zemin=-3.58
+SONDA37 /root/Chapter37o/@Node3D@21329/@Node3D@21330/@Node3D@21331/Baked c=(-7.1, -3.0, 82.6) d=3.0 boy=(0.2, 0.5, 0.2) ebeveyn=(-7.09, -2.86, 82.6) ova=(0.0, -3.545, 10.6) zemin=-3.58
+SONDA37 /root/Chapter37o/@Node3D@21329/@Node3D@21330/@Node3D@21342/Knee/Ankle/Baked c=(-7.3, -3.5, 82.6) d=3.1 boy=(0.1, 0.1, 0.3) ebeveyn=(-7.31, -3.47, 82.62) ova=(0.0, -3.545, 10.6) zemin=-3.58
+SONDA37 /root/Chapter37o/@Node3D@21329/@Node3D@21330/@Node3D@21342/Knee/Baked c=(-7.3, -3.4, 82.6) d=3.0 boy=(0.2, 0.4, 0.2) ebeveyn=(-7.31, -3.2, 82.6) ova=(0.0, -3.545, 10.6) zemin=-3.58
+SONDA37 /root/Chapter37o/@Node3D@21329/@Node3D@21330/@Node3D@21342/Baked c=(-7.3, -3.0, 82.6) d=2.8 boy=(0.2, 0.5, 0.2) ebeveyn=(-7.31, -2.86, 82.6) ova=(0.0, -3.545, 10.6) zemin=-3.58
+SONDA37 /root/Chapter37o/@Node3D@21329/@Node3D@21330/@Node3D@21362/Elbow/Wrist/Baked c=(-6.8, -2.8, 82.5) d=3.1 boy=(0.1, 0.1, 0.1) ebeveyn=(-6.8, -2.74, 82.55) ova=(0.0, -3.545, 10.6) zemin=-3.58
+SONDA37 /root/Chapter37o/@Node3D@21329/@Node3D@21330/@Node3D@21362/Elbow/Baked c=(-6.8, -2.6, 82.6) d=3.1 boy=(0.1, 0.3, 0.1) ebeveyn=(-6.83, -2.53, 82.59) ova=(0.0, -3.545, 10.6) zemin=-3.58
+SONDA37 /root/Chapter37o/@Node3D@21329/@Node3D@21330/@Node3D@21362/Baked c=(-6.9, -2.4, 82.6) d=3.0 boy=(0.1, 0.3, 0.1) ebeveyn=(-6.87, -2.28, 82.59) ova=(0.0, -3.545, 10.6) zemin=-3.58
+SONDA37 /root/Chapter37o/@Node3D@21329/@Node3D@21330/@Node3D@21374/Elbow/Wrist/Baked c=(-7.6, -2.8, 82.6) d=2.6 boy=(0.1, 0.1, 0.1) ebeveyn=(-7.61, -2.74, 82.57) ova=(0.0, -3.545, 10.6) zemin=-3.58
+SONDA37 /root/Chapter37o/@Node3D@21329/@Node3D@21330/@Node3D@21374/Elbow/Baked c=(-7.6, -2.6, 82.6) d=2.6 boy=(0.1, 0.3, 0.1) ebeveyn=(-7.57, -2.53, 82.6) ova=(0.0, -3.545, 10.6) zemin=-3.58
+SONDA37 /root/Chapter37o/@Node3D@21329/@Node3D@21330/@Node3D@21374/Baked c=(-7.6, -2.4, 82.6) d=2.5 boy=(0.1, 0.3, 0.1) ebeveyn=(-7.53, -2.29, 82.59) ova=(0.0, -3.545, 10.6) zemin=-3.58
+SONDA37 /root/Chapter37o/@Node3D@21329/@Node3D@21330/@Node3D@21386/@Node3D@21387/Baked c=(-7.2, -1.9, 82.4) d=2.8 boy=(0.2, 0.1, 0.0) ebeveyn=(-7.2, -1.94, 82.41) ova=(0.0, -3.545, 10.6) zemin=-3.58
+SONDA37 /root/Chapter37o/@Node3D@21329/@Node3D@21330/@Node3D@21386/@Node3D@21388/Baked c=(-7.2, -1.9, 82.4) d=2.8 boy=(0.2, 0.0, 0.0) ebeveyn=(-7.2, -1.89, 82.41) ova=(0.0, -3.545, 10.6) zemin=-3.58
+SONDA37 /root/Chapter37o/@Node3D@21329/@Node3D@21330/@Node3D@21386/FaceDetail/Baked c=(-7.2, -2.1, 82.4) d=2.8 boy=(0.3, 0.2, 0.2) ebeveyn=(-7.2, -1.96, 82.59) ova=(0.0, -3.545, 10.6) zemin=-3.58
+SONDA37 /root/Chapter37o/@Node3D@21329/@Node3D@21330/@Node3D@21386/@MeshInstance3D@21433 c=(-7.2, -2.1, 82.4) d=2.8 boy=(0.0, 0.0, 0.0) ebeveyn=(-7.2, -1.96, 82.59) ova=(0.0, -3.545, 10.6) zemin=-3.58
+SONDA37 /root/Chapter37o/@Node3D@21329/@Node3D@21330/@Node3D@21386/Baked c=(-7.2, -1.8, 82.7) d=2.6 boy=(0.4, 0.9, 0.5) ebeveyn=(-7.2, -1.96, 82.59) ova=(0.0, -3.545, 10.6) zemin=-3.58
+SONDA37 /root/Chapter37o/@Node3D@21329/@Node3D@21330/Baked c=(-7.2, -2.6, 82.6) d=2.8 boy=(0.6, 1.0, 0.6) ebeveyn=(-7.2, -3.54, 82.6) ova=(0.0, -3.545, 10.6) zemin=-3.58
+SONDA37 /root/Chapter37o/@Node3D@21443/@Node3D@21444/@Node3D@21445/Knee/Ankle/Baked c=(-11.7, -3.5, 81.0) d=4.8 boy=(0.1, 0.1, 0.3) ebeveyn=(-11.69, -3.48, 81.07) ova=(0.0, -3.545, 10.6) zemin=-3.58
+SONDA37 /root/Chapter37o/@Node3D@21443/@Node3D@21444/@Node3D@21445/Knee/Baked c=(-11.7, -3.4, 81.0) d=4.7 boy=(0.2, 0.4, 0.2) ebeveyn=(-11.69, -3.22, 81.0) ova=(0.0, -3.545, 10.6) zemin=-3.58
+SONDA37 /root/Chapter37o/@Node3D@21443/@Node3D@21444/@Node3D@21445/Baked c=(-11.7, -3.1, 81.0) d=4.6 boy=(0.2, 0.5, 0.2) ebeveyn=(-11.69, -2.88, 81.0) ova=(0.0, -3.545, 10.6) zemin=-3.58
+SONDA37 /root/Chapter37o/@Node3D@21443/@Node3D@21444/@Node3D@21456/Knee/Ankle/Baked c=(-11.9, -3.5, 80.9) d=4.9 boy=(0.1, 0.1, 0.3) ebeveyn=(-11.91, -3.48, 81.0) ova=(0.0, -3.545, 10.6) zemin=-3.58
+SONDA37 /root/Chapter37o/@Node3D@21443/@Node3D@21444/@Node3D@21456/Knee/Baked c=(-11.9, -3.4, 81.0) d=4.8 boy=(0.2, 0.4, 0.2) ebeveyn=(-11.91, -3.22, 81.0) ova=(0.0, -3.545, 10.6) zemin=-3.58
+SONDA37 /root/Chapter37o/@Node3D@21443/@Node3D@21444/@Node3D@21456/Baked c=(-11.9, -3.1, 81.0) d=4.8 boy=(0.2, 0.5, 0.2) ebeveyn=(-11.91, -2.88, 81.0) ova=(0.0, -3.545, 10.6) zemin=-3.58
+SONDA37 /root/Chapter37o/@Node3D@21443/@Node3D@21444/@Node3D@21476/Elbow/Wrist/Baked c=(-11.4, -2.8, 80.9) d=4.4 boy=(0.1, 0.1, 0.1) ebeveyn=(-11.39, -2.76, 80.97) ova=(0.0, -3.545, 10.6) zemin=-3.58
+SONDA37 /root/Chapter37o/@Node3D@21443/@Node3D@21444/@Node3D@21476/Elbow/Baked c=(-11.4, -2.6, 81.0) d=4.4 boy=(0.1, 0.3, 0.1) ebeveyn=(-11.43, -2.55, 81.0) ova=(0.0, -3.545, 10.6) zemin=-3.58
+SONDA37 /root/Chapter37o/@Node3D@21443/@Node3D@21444/@Node3D@21476/Baked c=(-11.5, -2.4, 81.0) d=4.4 boy=(0.1, 0.3, 0.1) ebeveyn=(-11.47, -2.3, 81.00999) ova=(0.0, -3.545, 10.6) zemin=-3.58
+SONDA37 /root/Chapter37o/@Node3D@21443/@Node3D@21444/@Node3D@21488/Elbow/Wrist/Baked c=(-12.2, -2.8, 81.0) d=4.9 boy=(0.1, 0.1, 0.1) ebeveyn=(-12.21, -2.75, 80.97) ova=(0.0, -3.545, 10.6) zemin=-3.58
+SONDA37 /root/Chapter37o/@Node3D@21443/@Node3D@21444/@Node3D@21488/Elbow/Baked c=(-12.2, -2.6, 81.0) d=4.9 boy=(0.1, 0.3, 0.1) ebeveyn=(-12.17, -2.55, 81.00999) ova=(0.0, -3.545, 10.6) zemin=-3.58
+SONDA37 /root/Chapter37o/@Node3D@21443/@Node3D@21444/@Node3D@21488/Baked c=(-12.1, -2.4, 81.0) d=4.8 boy=(0.1, 0.3, 0.1) ebeveyn=(-12.13, -2.3, 81.00999) ova=(0.0, -3.545, 10.6) zemin=-3.58
+SONDA37 /root/Chapter37o/@Node3D@21443/@Node3D@21444/@Node3D@21500/@Node3D@21501/Baked c=(-11.8, -2.0, 80.8) d=4.7 boy=(0.2, 0.1, 0.0) ebeveyn=(-11.76, -1.97, 80.82) ova=(0.0, -3.545, 10.6) zemin=-3.58
+SONDA37 /root/Chapter37o/@Node3D@21443/@Node3D@21444/@Node3D@21500/@Node3D@21502/Baked c=(-11.8, -1.9, 80.8) d=4.7 boy=(0.2, 0.0, 0.0) ebeveyn=(-11.76, -1.93, 80.82) ova=(0.0, -3.545, 10.6) zemin=-3.58
+SONDA37 /root/Chapter37o/@Node3D@21443/@Node3D@21444/@Node3D@21500/FaceDetail/Baked c=(-11.8, -2.1, 80.9) d=4.7 boy=(0.3, 0.2, 0.2) ebeveyn=(-11.8, -1.98, 81.00999) ova=(0.0, -3.545, 10.6) zemin=-3.58
+SONDA37 /root/Chapter37o/@Node3D@21443/@Node3D@21444/@Node3D@21500/@MeshInstance3D@21549 c=(-11.8, -2.1, 80.8) d=4.7 boy=(0.1, 0.1, 0.1) ebeveyn=(-11.8, -1.98, 81.00999) ova=(0.0, -3.545, 10.6) zemin=-3.58
+SONDA37 /root/Chapter37o/@Node3D@21443/@Node3D@21444/@Node3D@21500/Baked c=(-11.8, -1.8, 81.0) d=4.5 boy=(0.5, 0.7, 0.5) ebeveyn=(-11.8, -1.98, 81.00999) ova=(0.0, -3.545, 10.6) zemin=-3.58
+SONDA37 /root/Chapter37o/@Node3D@21443/@Node3D@21444/Baked c=(-11.8, -2.6, 81.0) d=4.6 boy=(0.6, 1.0, 0.6) ebeveyn=(-11.8, -3.56, 81.0) ova=(0.0, -3.545, 10.6) zemin=-3.58
+SONDA37 /root/Chapter37o/@Node3D@21559/@Node3D@21560/@Node3D@21561/Knee/Ankle/Baked c=(-6.3, -3.5, 80.7) d=5.0 boy=(0.1, 0.1, 0.3) ebeveyn=(-6.29, -3.46, 80.8) ova=(0.0, -3.545, 10.6) zemin=-3.58
+SONDA37 /root/Chapter37o/@Node3D@21559/@Node3D@21560/@Node3D@21561/Knee/Baked c=(-6.3, -3.4, 80.8) d=4.9 boy=(0.2, 0.4, 0.2) ebeveyn=(-6.29, -3.2, 80.8) ova=(0.0, -3.545, 10.6) zemin=-3.58
+SONDA37 /root/Chapter37o/@Node3D@21559/@Node3D@21560/@Node3D@21561/Baked c=(-6.3, -3.0, 80.8) d=4.8 boy=(0.2, 0.5, 0.2) ebeveyn=(-6.29, -2.86, 80.79) ova=(0.0, -3.545, 10.6) zemin=-3.58
+SONDA37 /root/Chapter37o/@Node3D@21559/@Node3D@21560/@Node3D@21572/Knee/Ankle/Baked c=(-6.5, -3.5, 80.8) d=4.8 boy=(0.1, 0.1, 0.3) ebeveyn=(-6.51, -3.46, 80.84) ova=(0.0, -3.545, 10.6) zemin=-3.58
+SONDA37 /root/Chapter37o/@Node3D@21559/@Node3D@21560/@Node3D@21572/Knee/Baked c=(-6.5, -3.4, 80.8) d=4.7 boy=(0.2, 0.4, 0.2) ebeveyn=(-6.51, -3.2, 80.8) ova=(0.0, -3.545, 10.6) zemin=-3.58
+SONDA37 /root/Chapter37o/@Node3D@21559/@Node3D@21560/@Node3D@21572/Baked c=(-6.5, -3.0, 80.8) d=4.7 boy=(0.2, 0.5, 0.2) ebeveyn=(-6.51, -2.86, 80.79) ova=(0.0, -3.545, 10.6) zemin=-3.58
+SONDA37 /root/Chapter37o/@Node3D@21559/@Node3D@21560/@Node3D@21592/Elbow/Wrist/Baked c=(-6.0, -2.8, 80.7) d=5.0 boy=(0.1, 0.1, 0.1) ebeveyn=(-6.0, -2.73, 80.75999) ova=(0.0, -3.545, 10.6) zemin=-3.58
+SONDA37 /root/Chapter37o/@Node3D@21559/@Node3D@21560/@Node3D@21592/Elbow/Baked c=(-6.0, -2.6, 80.8) d=4.9 boy=(0.1, 0.3, 0.1) ebeveyn=(-6.04, -2.52, 80.79) ova=(0.0, -3.545, 10.6) zemin=-3.58
+SONDA37 /root/Chapter37o/@Node3D@21559/@Node3D@21560/@Node3D@21592/Baked c=(-6.1, -2.4, 80.8) d=4.8 boy=(0.1, 0.3, 0.1) ebeveyn=(-6.08, -2.28, 80.78) ova=(0.0, -3.545, 10.6) zemin=-3.58
+SONDA37 /root/Chapter37o/@Node3D@21559/@Node3D@21560/@Node3D@21604/Elbow/Wrist/Baked c=(-6.8, -2.8, 80.7) d=4.5 boy=(0.1, 0.1, 0.1) ebeveyn=(-6.81, -2.74, 80.75) ova=(0.0, -3.545, 10.6) zemin=-3.58
+SONDA37 /root/Chapter37o/@Node3D@21559/@Node3D@21560/@Node3D@21604/Elbow/Baked c=(-6.8, -2.6, 80.8) d=4.5 boy=(0.1, 0.3, 0.1) ebeveyn=(-6.78, -2.53, 80.78) ova=(0.0, -3.545, 10.6) zemin=-3.58
+SONDA37 /root/Chapter37o/@Node3D@21559/@Node3D@21560/@Node3D@21604/Baked c=(-6.8, -2.4, 80.8) d=4.5 boy=(0.1, 0.3, 0.1) ebeveyn=(-6.74, -2.28, 80.78) ova=(0.0, -3.545, 10.6) zemin=-3.58
+SONDA37 /root/Chapter37o/@Node3D@21559/@Node3D@21560/@Node3D@21616/@Node3D@21617/Baked c=(-6.4, -1.9, 80.6) d=4.8 boy=(0.2, 0.1, 0.0) ebeveyn=(-6.41, -1.95, 80.59) ova=(0.0, -3.545, 10.6) zemin=-3.58
+SONDA37 /root/Chapter37o/@Node3D@21559/@Node3D@21560/@Node3D@21616/@Node3D@21618/Baked c=(-6.4, -1.9, 80.6) d=4.8 boy=(0.2, 0.0, 0.0) ebeveyn=(-6.41, -1.9, 80.59) ova=(0.0, -3.545, 10.6) zemin=-3.58
+SONDA37 /root/Chapter37o/@Node3D@21559/@Node3D@21560/@Node3D@21616/FaceDetail/Baked c=(-6.4, -2.1, 80.6) d=4.7 boy=(0.1, 0.2, 0.2) ebeveyn=(-6.41, -1.96, 80.78) ova=(0.0, -3.545, 10.6) zemin=-3.58
+SONDA37 /root/Chapter37o/@Node3D@21559/@Node3D@21560/@Node3D@21616/@MeshInstance3D@21657 c=(-6.4, -2.1, 80.6) d=4.8 boy=(0.1, 0.1, 0.1) ebeveyn=(-6.41, -1.96, 80.78) ova=(0.0, -3.545, 10.6) zemin=-3.58
+SONDA37 /root/Chapter37o/@Node3D@21559/@Node3D@21560/@Node3D@21616/Baked c=(-6.4, -1.8, 80.8) d=4.6 boy=(0.5, 0.9, 0.5) ebeveyn=(-6.41, -1.96, 80.78) ova=(0.0, -3.545, 10.6) zemin=-3.58
+SONDA37 /root/Chapter37o/@Node3D@21559/@Node3D@21560/Baked c=(-6.4, -2.6, 80.8) d=4.7 boy=(0.6, 1.0, 0.6) ebeveyn=(-6.4, -3.54, 80.8) ova=(0.0, -3.545, 10.6) zemin=-3.58
+SONDA37 /root/Chapter37o/@Node3D@21898/@Node3D@21899/@Node3D@21900/Knee/Ankle/Baked c=(-5.9, -3.5, 83.4) d=3.7 boy=(0.1, 0.1, 0.3) ebeveyn=(-5.89, -3.47, 83.43999) ova=(0.0, -3.545, 10.6) zemin=-3.58
+SONDA37 /root/Chapter37o/@Node3D@21898/@Node3D@21899/@Node3D@21900/Knee/Baked c=(-5.9, -3.4, 83.4) d=3.6 boy=(0.2, 0.4, 0.2) ebeveyn=(-5.89, -3.21, 83.4) ova=(0.0, -3.545, 10.6) zemin=-3.58
+SONDA37 /root/Chapter37o/@Node3D@21898/@Node3D@21899/@Node3D@21900/Baked c=(-5.9, -3.0, 83.4) d=3.5 boy=(0.2, 0.5, 0.2) ebeveyn=(-5.89, -2.87, 83.4) ova=(0.0, -3.545, 10.6) zemin=-3.58
+SONDA37 /root/Chapter37o/@Node3D@21898/@Node3D@21899/@Node3D@21911/Knee/Ankle/Baked c=(-6.1, -3.5, 83.3) d=3.5 boy=(0.1, 0.1, 0.3) ebeveyn=(-6.11, -3.47, 83.4) ova=(0.0, -3.545, 10.6) zemin=-3.58
+SONDA37 /root/Chapter37o/@Node3D@21898/@Node3D@21899/@Node3D@21911/Knee/Baked c=(-6.1, -3.4, 83.4) d=3.4 boy=(0.2, 0.4, 0.2) ebeveyn=(-6.11, -3.21, 83.4) ova=(0.0, -3.545, 10.6) zemin=-3.58
+SONDA37 /root/Chapter37o/@Node3D@21898/@Node3D@21899/@Node3D@21911/Baked c=(-6.1, -3.0, 83.4) d=3.3 boy=(0.2, 0.5, 0.2) ebeveyn=(-6.11, -2.87, 83.4) ova=(0.0, -3.545, 10.6) zemin=-3.58
+SONDA37 /root/Chapter37o/@Node3D@21898/@Node3D@21899/@Node3D@21931/Elbow/Wrist/Baked c=(-5.6, -2.8, 83.3) d=3.7 boy=(0.1, 0.1, 0.1) ebeveyn=(-5.59, -2.74, 83.37) ova=(0.0, -3.545, 10.6) zemin=-3.58
+SONDA37 /root/Chapter37o/@Node3D@21898/@Node3D@21899/@Node3D@21931/Elbow/Baked c=(-5.6, -2.6, 83.4) d=3.7 boy=(0.1, 0.3, 0.1) ebeveyn=(-5.62, -2.54, 83.4) ova=(0.0, -3.545, 10.6) zemin=-3.58
+SONDA37 /root/Chapter37o/@Node3D@21898/@Node3D@21899/@Node3D@21931/Elbow/@Node3D@22036/@MeshInstance3D@22037 c=(-5.6, -2.7, 83.2) d=3.8 boy=(0.0, 0.4, 0.0) ebeveyn=(-5.58, -2.79, 83.36) ova=(0.0, -3.545, 10.6) zemin=-3.58
+SONDA37 /root/Chapter37o/@Node3D@21898/@Node3D@21899/@Node3D@21931/Baked c=(-5.6, -2.4, 83.4) d=3.6 boy=(0.1, 0.3, 0.1) ebeveyn=(-5.67, -2.29, 83.39) ova=(0.0, -3.545, 10.6) zemin=-3.58
+SONDA37 /root/Chapter37o/@Node3D@21898/@Node3D@21899/@Node3D@21943/Elbow/Wrist/Baked c=(-6.4, -2.8, 83.3) d=3.0 boy=(0.1, 0.1, 0.1) ebeveyn=(-6.4, -2.74, 83.35) ova=(0.0, -3.545, 10.6) zemin=-3.58
+SONDA37 /root/Chapter37o/@Node3D@21898/@Node3D@21899/@Node3D@21943/Elbow/Baked c=(-6.4, -2.6, 83.4) d=3.0 boy=(0.1, 0.3, 0.1) ebeveyn=(-6.37, -2.53, 83.39) ova=(0.0, -3.545, 10.6) zemin=-3.58
+SONDA37 /root/Chapter37o/@Node3D@21898/@Node3D@21899/@Node3D@21943/Elbow/@Node3D@22033/@MeshInstance3D@22034 c=(-6.4, -2.7, 83.2) d=3.1 boy=(0.0, 0.3, 0.0) ebeveyn=(-6.41, -2.79, 83.34) ova=(0.0, -3.545, 10.6) zemin=-3.58
+SONDA37 /root/Chapter37o/@Node3D@21898/@Node3D@21899/@Node3D@21943/Elbow/@Node3D@22033/@MeshInstance3D@22035 c=(-6.4, -2.7, 83.0) d=3.1 boy=(0.1, 0.1, 0.1) ebeveyn=(-6.41, -2.79, 83.34) ova=(0.0, -3.545, 10.6) zemin=-3.58
+SONDA37 /root/Chapter37o/@Node3D@21898/@Node3D@21899/@Node3D@21943/Baked c=(-6.3, -2.4, 83.4) d=3.0 boy=(0.1, 0.3, 0.1) ebeveyn=(-6.33, -2.29, 83.39) ova=(0.0, -3.545, 10.6) zemin=-3.58
+SONDA37 /root/Chapter37o/@Node3D@21898/@Node3D@21899/@Node3D@21955/@Node3D@21956/Baked c=(-6.0, -1.9, 83.2) d=3.3 boy=(0.2, 0.1, 0.0) ebeveyn=(-5.96, -1.95, 83.21) ova=(0.0, -3.545, 10.6) zemin=-3.58
+SONDA37 /root/Chapter37o/@Node3D@21898/@Node3D@21899/@Node3D@21955/@Node3D@21957/Baked c=(-6.0, -1.9, 83.2) d=3.3 boy=(0.2, 0.0, 0.0) ebeveyn=(-5.96, -1.9, 83.22) ova=(0.0, -3.545, 10.6) zemin=-3.58
+SONDA37 /root/Chapter37o/@Node3D@21898/@Node3D@21899/@Node3D@21955/FaceDetail/Baked c=(-6.0, -2.1, 83.2) d=3.3 boy=(0.3, 0.2, 0.2) ebeveyn=(-5.99, -1.97, 83.39) ova=(0.0, -3.545, 10.6) zemin=-3.58
+SONDA37 /root/Chapter37o/@Node3D@21898/@Node3D@21899/@Node3D@21955/@MeshInstance3D@22002 c=(-6.0, -2.1, 83.2) d=3.3 boy=(0.0, 0.0, 0.0) ebeveyn=(-5.99, -1.97, 83.39) ova=(0.0, -3.545, 10.6) zemin=-3.58
+SONDA37 /root/Chapter37o/@Node3D@21898/@Node3D@21899/@Node3D@21955/Baked c=(-6.0, -1.8, 83.5) d=3.2 boy=(0.4, 0.9, 0.5) ebeveyn=(-5.99, -1.97, 83.39) ova=(0.0, -3.545, 10.6) zemin=-3.58
+SONDA37 /root/Chapter37o/@Node3D@21898/@Node3D@21899/Baked c=(-6.0, -2.6, 83.4) d=3.3 boy=(0.6, 1.0, 0.6) ebeveyn=(-6.0, -3.55, 83.4) ova=(0.0, -3.545, 10.6) zemin=-3.58
+SONDA37 /root/Chapter37o/@Node3D@21898/@Node3D@21899/@Node3D@22020/@MeshInstance3D@22021 c=(-6.0, -2.6, 83.0) d=3.4 boy=(0.5, 0.3, 0.5) ebeveyn=(-6.0, -2.57, 83.04) ova=(0.0, -3.545, 10.6) zemin=-3.58
+SONDA37 /root/Chapter37o/@Node3D@21898/@Node3D@21899/@Node3D@22020/@MeshInstance3D@22022 c=(-5.8, -2.6, 83.0) d=3.6 boy=(0.5, 0.0, 0.5) ebeveyn=(-6.0, -2.57, 83.04) ova=(0.0, -3.545, 10.6) zemin=-3.58
+SONDA37 /root/Chapter37o/@Node3D@21898/@Node3D@21899/@Node3D@22020/@MeshInstance3D@22023 c=(-5.8, -2.6, 83.0) d=3.6 boy=(0.5, 0.0, 0.5) ebeveyn=(-6.0, -2.57, 83.04) ova=(0.0, -3.545, 10.6) zemin=-3.58
+SONDA37 /root/Chapter37o/@Node3D@21898/@Node3D@21899/@Node3D@22020/@MeshInstance3D@22024 c=(-6.2, -2.6, 83.0) d=3.3 boy=(0.5, 0.0, 0.5) ebeveyn=(-6.0, -2.57, 83.04) ova=(0.0, -3.545, 10.6) zemin=-3.58
+SONDA37 /root/Chapter37o/@Node3D@21898/@Node3D@21899/@Node3D@22020/@MeshInstance3D@22025 c=(-6.2, -2.6, 83.0) d=3.3 boy=(0.5, 0.0, 0.5) ebeveyn=(-6.0, -2.57, 83.04) ova=(0.0, -3.545, 10.6) zemin=-3.58
+SONDA37 /root/Chapter37o/@Node3D@21898/@Node3D@21899/@Node3D@22020/@MeshInstance3D@22026 c=(-6.0, -2.6, 82.8) d=3.6 boy=(0.3, 0.0, 0.0) ebeveyn=(-6.0, -2.57, 83.04) ova=(0.0, -3.545, 10.6) zemin=-3.58
+SONDA37 /root/Chapter37o/@Node3D@21898/@Node3D@21899/@Node3D@22020/@MeshInstance3D@22027 c=(-6.0, -2.3, 82.9) d=3.5 boy=(0.3, 0.0, 0.0) ebeveyn=(-6.0, -2.57, 83.04) ova=(0.0, -3.545, 10.6) zemin=-3.58
+SONDA37 /root/Chapter37o/@Node3D@21898/@Node3D@21899/@Node3D@22020/@MeshInstance3D@22028 c=(-6.0, -2.3, 83.2) d=3.4 boy=(0.3, 0.0, 0.0) ebeveyn=(-6.0, -2.57, 83.04) ova=(0.0, -3.545, 10.6) zemin=-3.58
+SONDA37 /root/Chapter37o/@Node3D@21898/@Node3D@21899/@Node3D@22020/@MeshInstance3D@22029 c=(-6.0, -2.6, 83.3) d=3.3 boy=(0.3, 0.0, 0.0) ebeveyn=(-6.0, -2.57, 83.04) ova=(0.0, -3.545, 10.6) zemin=-3.58
+SONDA37 /root/Chapter37o/@Node3D@21898/@Node3D@21899/@Node3D@22020/@MeshInstance3D@22030 c=(-6.0, -2.8, 83.2) d=3.4 boy=(0.3, 0.0, 0.0) ebeveyn=(-6.0, -2.57, 83.04) ova=(0.0, -3.545, 10.6) zemin=-3.58
+SONDA37 /root/Chapter37o/@Node3D@21898/@Node3D@21899/@Node3D@22020/@MeshInstance3D@22031 c=(-6.0, -2.8, 82.9) d=3.6 boy=(0.3, 0.0, 0.0) ebeveyn=(-6.0, -2.57, 83.04) ova=(0.0, -3.545, 10.6) zemin=-3.58
+SONDA37 /root/Chapter37o/@Node3D@21898/@Node3D@21899/@MeshInstance3D@22032 c=(-6.0, -2.2, 83.2) d=3.3 boy=(0.1, 0.6, 0.0) ebeveyn=(-6.0, -3.55, 83.4) ova=(0.0, -3.545, 10.6) zemin=-3.58
+TASIMA37OYURU bacak=kalas_yigini sure=1.9 yol=6.1 takilma=0 dusme=0 son=(-14.7, -3.3, 54.5) odak=plank
+TASIMA37OYURU bacak=kiyi sure=3.1 yol=5.8 takilma=0 dusme=0 son=(-17.7, -3.5, 49.4) odak=edge
+TASIMA37OYURU bacak=kalas_orta sure=3.9 yol=12.3 takilma=0 dusme=0 son=(-17.9, -3.5, 37.0) odak=
+TASIMA37OYURU bacak=kalas_uc sure=3.5 yol=11.1 takilma=0 dusme=0 son=(-17.9, -3.5, 25.8) odak=
+TASIMA37OYURU bacak=teras sure=0.6 yol=1.7 takilma=0 dusme=0 son=(-17.9, -3.7, 24.0) odak=
+TASIMA37OYURU bacak=yamac_etegi sure=4.5 yol=14.1 takilma=0 dusme=0 son=(-3.7, -3.3, 23.8) odak=
+TASIMA37OYURU bacak=kanca_yeri sure=1.3 yol=3.5 takilma=0 dusme=0 son=(-0.2, -2.3, 23.3) odak=
+SONDA37K ag /Chapter37o/@Node3D@179/SurCerceve/SurOyun_mesoteikhion/OyunDilimi/Mesoteikhion/GedikMoloz c=(0.0, 0.92, 15.3) boy=(11.0, 1.6, 13.0)
+SONDA37K mm /SurOyun_mesoteikhion/OyunDilimi/Mesoteikhion/@MultiMeshInstance3D@250 c=(-0.55, 0.9, 11.55) zemin=0.74 fark=0.17
+SONDA37K mm /SurOyun_mesoteikhion/OyunDilimi/Mesoteikhion/@MultiMeshInstance3D@250 c=(0.91, 0.75, 19.51) zemin=-0.39 fark=1.14
+SONDA37K mm /SurOyun_mesoteikhion/OyunDilimi/Mesoteikhion/@MultiMeshInstance3D@250 c=(-3.98, 0.52, 16.66) zemin=-2.50 fark=3.02
+SONDA37K mm /SurOyun_mesoteikhion/OyunDilimi/Mesoteikhion/@MultiMeshInstance3D@250 c=(0.6, 1.04, 12.11) zemin=0.83 fark=0.21
+SONDA37K mm /SurOyun_mesoteikhion/OyunDilimi/Mesoteikhion/@MultiMeshInstance3D@250 c=(-1.83, 1.2, 13.89) zemin=1.04 fark=0.16
+SONDA37K mm /SurOyun_mesoteikhion/OyunDilimi/Mesoteikhion/@MultiMeshInstance3D@250 c=(-1.38, 1.4, 15.6) zemin=1.32 fark=0.07
+SONDA37K mm /SurOyun_mesoteikhion/OyunDilimi/Mesoteikhion/@MultiMeshInstance3D@250 c=(-0.18, 1.75, 14.98) zemin=1.35 fark=0.40
+SONDA37K mm /SurOyun_mesoteikhion/OyunDilimi/Mesoteikhion/@MultiMeshInstance3D@250 c=(-3.04, 0.85, 16.15) zemin=0.47 fark=0.39
+SONDA37K mm /SurOyun_mesoteikhion/OyunDilimi/Mesoteikhion/@MultiMeshInstance3D@250 c=(1.14, 1.42, 14.0) zemin=1.19 fark=0.24
+SONDA37K mm /SurOyun_mesoteikhion/OyunDilimi/Mesoteikhion/@MultiMeshInstance3D@250 c=(0.92, 1.52, 15.59) zemin=1.37 fark=0.15
+SONDA37K mm /SurOyun_mesoteikhion/OyunDilimi/Mesoteikhion/@MultiMeshInstance3D@250 c=(-1.21, 1.13, 17.83) zemin=0.43 fark=0.71
+SONDA37K mm /SurOyun_mesoteikhion/OyunDilimi/Mesoteikhion/@MultiMeshInstance3D@250 c=(3.12, 0.73, 13.38) zemin=0.71 fark=0.02
+SONDA37K mm /SurOyun_mesoteikhion/OyunDilimi/Mesoteikhion/@MultiMeshInstance3D@250 c=(1.15, 1.38, 14.3) zemin=1.24 fark=0.14
+SONDA37K mm /SurOyun_mesoteikhion/OyunDilimi/Mesoteikhion/@MultiMeshInstance3D@250 c=(-0.21, 1.77, 15.11) zemin=1.38 fark=0.39
+SONDA37K mm /SurOyun_mesoteikhion/OyunDilimi/Mesoteikhion/@MultiMeshInstance3D@250 c=(3.71, 0.58, 14.12) zemin=0.49 fark=0.09
+SONDA37K mm /SurOyun_mesoteikhion/OyunDilimi/Mesoteikhion/@MultiMeshInstance3D@250 c=(4.07, 0.55, 15.27) zemin=0.36 fark=0.19
+SONDA37K mm /SurOyun_mesoteikhion/OyunDilimi/Mesoteikhion/@MultiMeshInstance3D@250 c=(-2.1, 0.52, 20.01) zemin=-1.25 fark=1.77
+SONDA37K mm /SurOyun_mesoteikhion/OyunDilimi/Mesoteikhion/@MultiMeshInstance3D@250 c=(3.25, 0.57, 18.52) zemin=-1.52 fark=2.09
+SONDA37K mm /SurOyun_mesoteikhion/OyunDilimi/Mesoteikhion/@MultiMeshInstance3D@250 c=(-1.94, 1.21, 15.48) zemin=1.21 fark=-0.01
+SONDA37K mm /SurOyun_mesoteikhion/OyunDilimi/Mesoteikhion/@MultiMeshInstance3D@250 c=(-4.12, 0.49, 13.53) zemin=0.22 fark=0.27
+SONDA37K mm /SurOyun_mesoteikhion/OyunDilimi/Mesoteikhion/@MultiMeshInstance3D@250 c=(3.63, 0.41, 18.44) zemin=-2.10 fark=2.50
+SONDA37K mm /SurOyun_mesoteikhion/OyunDilimi/Mesoteikhion/@MultiMeshInstance3D@250 c=(3.04, 0.51, 18.57) zemin=-1.21 fark=1.72
+SONDA37K mm /SurOyun_mesoteikhion/OyunDilimi/Mesoteikhion/@MultiMeshInstance3D@250 c=(2.31, 0.79, 12.1) zemin=0.64 fark=0.15
+SONDA37K mm /SurOyun_mesoteikhion/OyunDilimi/Mesoteikhion/@MultiMeshInstance3D@250 c=(-0.02, 1.83, 15.19) zemin=1.39 fark=0.44
+SONDA37K mm /SurOyun_mesoteikhion/OyunDilimi/Mesoteikhion/@MultiMeshInstance3D@250 c=(-4.59, 0.37, 15.43) zemin=0.17 fark=0.20
+SONDA37K mm /SurOyun_mesoteikhion/OyunDilimi/Mesoteikhion/@MultiMeshInstance3D@250 c=(-1.24, 0.85, 11.6) zemin=0.74 fark=0.12
+SONDA37K mm /SurOyun_mesoteikhion/OyunDilimi/Mesoteikhion/@MultiMeshInstance3D@250 c=(-0.29, 1.52, 16.63) zemin=1.24 fark=0.29
+SONDA37K mm /SurOyun_mesoteikhion/OyunDilimi/Mesoteikhion/@MultiMeshInstance3D@250 c=(-0.22, 1.35, 17.33) zemin=0.81 fark=0.53
+SONDA37K mm /SurOyun_mesoteikhion/OyunDilimi/Mesoteikhion/@MultiMeshInstance3D@250 c=(-0.92, 1.59, 14.73) zemin=1.31 fark=0.28
+SONDA37K mm /SurOyun_mesoteikhion/OyunDilimi/Mesoteikhion/@MultiMeshInstance3D@250 c=(0.1, 1.78, 15.37) zemin=1.41 fark=0.38
+SONDA37K mm /SurOyun_mesoteikhion/OyunDilimi/Mesoteikhion/@MultiMeshInstance3D@250 c=(0.34, 1.76, 15.34) zemin=1.40 fark=0.36
+SONDA37K mm SurOyun_mesoteikhion/OyunDilimi/Mesoteikhion/@MultiMeshInstance3D@1248 c=(-7.3, 4.37, 16.62) zemin=-inf fark=inf
+SONDA37K mm SurOyun_mesoteikhion/OyunDilimi/Mesoteikhion/@MultiMeshInstance3D@1248 c=(-3.9, 4.37, 16.62) zemin=-inf fark=inf
+SONDA37K mm SurOyun_mesoteikhion/OyunDilimi/Mesoteikhion/@MultiMeshInstance3D@1249 c=(-7.3, 4.96, 16.62) zemin=-inf fark=inf
+SONDA37K mm SurOyun_mesoteikhion/OyunDilimi/Mesoteikhion/@MultiMeshInstance3D@1249 c=(-3.9, 4.96, 16.62) zemin=-inf fark=inf
+SONDA37K mm esoteikhion/OyunParcalari/Toprak_GedikOnarim/@MultiMeshInstance3D@2560 c=(0.96, 1.09, 13.24) zemin=1.09 fark=-0.00
+SONDA37K mm esoteikhion/OyunParcalari/Toprak_GedikOnarim/@MultiMeshInstance3D@2560 c=(1.31, 0.88, 12.48) zemin=0.87 fark=0.00
+SONDA37K mm esoteikhion/OyunParcalari/Toprak_GedikOnarim/@MultiMeshInstance3D@2560 c=(2.94, -1.29, 18.99) zemin=-1.27 fark=-0.02
+SONDA37K mm esoteikhion/OyunParcalari/Toprak_GedikOnarim/@MultiMeshInstance3D@2560 c=(3.34, 0.75, 14.08) zemin=0.66 fark=0.09
+SONDA37K mm esoteikhion/OyunParcalari/Toprak_GedikOnarim/@MultiMeshInstance3D@2560 c=(-0.55, 0.79, 11.54) zemin=0.73 fark=0.06
+SONDA37K mm esoteikhion/OyunParcalari/Toprak_GedikOnarim/@MultiMeshInstance3D@2560 c=(2.91, 1.01, 15.0) zemin=0.95 fark=0.07
+SONDA37K mm esoteikhion/OyunParcalari/Toprak_GedikOnarim/@MultiMeshInstance3D@2560 c=(-3.23, 0.71, 13.96) zemin=0.73 fark=-0.02
+SONDA37K mm esoteikhion/OyunParcalari/Toprak_GedikOnarim/@MultiMeshInstance3D@2560 c=(-2.78, 0.58, 11.76) zemin=0.55 fark=0.03
+SONDA37K mm esoteikhion/OyunParcalari/Toprak_GedikOnarim/@MultiMeshInstance3D@2560 c=(-1.68, -0.49, 19.0) zemin=-0.53 fark=0.03
+SONDA37K mm esoteikhion/OyunParcalari/Toprak_GedikOnarim/@MultiMeshInstance3D@2560 c=(-2.1, 0.17, 17.04) zemin=0.05 fark=0.12
+SONDA37K mm esoteikhion/OyunParcalari/Toprak_GedikOnarim/@MultiMeshInstance3D@2560 c=(-1.45, 0.8, 12.09) zemin=0.78 fark=0.01
+SONDA37K mm esoteikhion/OyunParcalari/Toprak_GedikOnarim/@MultiMeshInstance3D@2560 c=(2.6, 0.59, 11.71) zemin=0.55 fark=0.04
+SONDA37K mm esoteikhion/OyunParcalari/Toprak_GedikOnarim/@MultiMeshInstance3D@2560 c=(-0.25, 1.11, 13.22) zemin=1.08 fark=0.03
+SONDA37K mm esoteikhion/OyunParcalari/Toprak_GedikOnarim/@MultiMeshInstance3D@2560 c=(1.9, -1.23, 20.24) zemin=-1.25 fark=0.02
+SONDA37K mm esoteikhion/OyunParcalari/Toprak_GedikOnarim/@MultiMeshInstance3D@2560 c=(-1.95, 0.32, 16.97) zemin=0.20 fark=0.12
+SONDA37K ag o/@Node3D@179/SurCerceve/SurOyun_mesoteikhion/OyunParcalari/Toprak_GedikOnarim/Asama/Baked c=(-0.03, 1.77, 13.08) boy=(7.7, 2.1, 1.8)
+SONDA37K ag /root/Chapter37o/@Node3D@18070/@MeshInstance3D@18071 c=(-2.8, 0.55, 17.2) boy=(0.8, 1.1, 0.8)
+SONDA37K ag /root/Chapter37o/@Node3D@18070/@MeshInstance3D@18072 c=(-2.8, 0.2, 17.2) boy=(0.8, 0.1, 0.9)
+SONDA37K ag /root/Chapter37o/@Node3D@18070/@MeshInstance3D@18073 c=(-2.8, 0.9, 17.2) boy=(0.8, 0.1, 0.9)
+SONDA37K ag /root/Chapter37o/@Node3D@18070/@MeshInstance3D@18074 c=(-2.8, 1.1, 17.2) boy=(0.8, 0.0, 0.8)
+SONDA37K ag /root/Chapter37o/@Node3D@18075/@MeshInstance3D@18076 c=(-1.4, 1.16, 17.2) boy=(0.8, 1.1, 0.8)
+SONDA37K ag /root/Chapter37o/@Node3D@18075/@MeshInstance3D@18077 c=(-1.4, 0.81, 17.2) boy=(0.8, 0.1, 0.9)
+SONDA37K ag /root/Chapter37o/@Node3D@18075/@MeshInstance3D@18078 c=(-1.4, 1.51, 17.2) boy=(0.8, 0.1, 0.9)
+SONDA37K ag /root/Chapter37o/@Node3D@18075/@MeshInstance3D@18079 c=(-1.4, 1.71, 17.2) boy=(0.8, 0.0, 0.8)
+SONDA37K ag /root/Chapter37o/@Node3D@18080/@MeshInstance3D@18081 c=(0.0, 1.45, 17.2) boy=(0.8, 1.1, 0.8)
+SONDA37K ag /root/Chapter37o/@Node3D@18080/@MeshInstance3D@18082 c=(0.0, 1.1, 17.2) boy=(0.8, 0.1, 0.9)
+SONDA37K ag /root/Chapter37o/@Node3D@18080/@MeshInstance3D@18083 c=(0.0, 1.8, 17.2) boy=(0.8, 0.1, 0.9)
+SONDA37K ag /root/Chapter37o/@Node3D@18080/@MeshInstance3D@18084 c=(0.0, 2.0, 17.2) boy=(0.8, 0.0, 0.8)
+SONDA37K ag /root/Chapter37o/@Node3D@18085/@MeshInstance3D@18086 c=(1.4, 1.16, 17.2) boy=(0.8, 1.1, 0.8)
+SONDA37K ag /root/Chapter37o/@Node3D@18085/@MeshInstance3D@18087 c=(1.4, 0.81, 17.2) boy=(0.8, 0.1, 0.9)
+SONDA37K ag /root/Chapter37o/@Node3D@18085/@MeshInstance3D@18088 c=(1.4, 1.51, 17.2) boy=(0.8, 0.1, 0.9)
+SONDA37K ag /root/Chapter37o/@Node3D@18085/@MeshInstance3D@18089 c=(1.4, 1.71, 17.2) boy=(0.8, 0.0, 0.8)
+SONDA37K ag /root/Chapter37o/@Node3D@18090/@MeshInstance3D@18091 c=(2.8, 0.55, 17.2) boy=(0.8, 1.1, 0.8)
+SONDA37K ag /root/Chapter37o/@Node3D@18090/@MeshInstance3D@18092 c=(2.8, 0.2, 17.2) boy=(0.8, 0.1, 0.9)
+SONDA37K ag /root/Chapter37o/@Node3D@18090/@MeshInstance3D@18093 c=(2.8, 0.9, 17.2) boy=(0.8, 0.1, 0.9)
+SONDA37K ag /root/Chapter37o/@Node3D@18090/@MeshInstance3D@18094 c=(2.8, 1.1, 17.2) boy=(0.8, 0.0, 0.8)
+SONDA37K ag /root/Chapter37o/@Node3D@20948/@Node3D@20949/@Node3D@20950/Baked c=(0.29, 1.81, 14.68) boy=(0.2, 0.5, 0.2)
+SONDA37K ag /root/Chapter37o/@Node3D@20948/@Node3D@20949/@Node3D@20961/Baked c=(0.49, 1.82, 14.71) boy=(0.2, 0.5, 0.2)
+SONDA37K ag /root/Chapter37o/@Node3D@20948/@Node3D@20949/@Node3D@20980/Baked c=(0.08, 2.5, 14.65) boy=(0.3, 0.4, 0.3)
+SONDA37K ag /root/Chapter37o/@Node3D@20948/@Node3D@20949/@Node3D@20992/Baked c=(0.69, 2.51, 14.73) boy=(0.3, 0.4, 0.3)
+SONDA37K ag /root/Chapter37o/@Node3D@20948/@Node3D@20949/@Node3D@21004/Baked c=(0.42, 3.06, 14.6) boy=(0.5, 0.8, 0.6)
+SONDA37K ag /root/Chapter37o/@Node3D@20948/@Node3D@20949/Baked c=(0.34, 2.17, 14.69) boy=(0.7, 1.2, 0.6)
+SONDA37K ag /root/Chapter37o/@Node3D@23767/@Node3D@23768/@Node3D@23769/Baked c=(-0.16, -0.86, 21.32) boy=(0.2, 0.5, 0.2)
+SONDA37K ag /root/Chapter37o/@Node3D@23767/@Node3D@23768/@Node3D@23780/Baked c=(-0.35, -0.87, 21.41) boy=(0.2, 0.5, 0.2)
+SONDA37K ag /root/Chapter37o/@Node3D@23767/@Node3D@23768/@Node3D@23824/Baked c=(-0.27, 0.35, 21.43) boy=(0.5, 0.8, 0.5)
+SONDA37K ag /root/Chapter37o/@Node3D@23767/@Node3D@23768/Baked c=(-0.27, -0.41, 21.37) boy=(0.6, 1.0, 0.6)
+SONDA37K ag /root/Chapter37o/@Node3D@23886/@Node3D@23887/@Node3D@23888/Baked c=(-2.27, -0.55, 19.35) boy=(0.2, 0.5, 0.2)
+SONDA37K ag /root/Chapter37o/@Node3D@23886/@Node3D@23887/@Node3D@23899/Baked c=(-2.47, -0.55, 19.45) boy=(0.2, 0.5, 0.2)
+SONDA37K ag /root/Chapter37o/@Node3D@23886/@Node3D@23887/@Node3D@23943/Baked c=(-2.33, 0.72, 19.46) boy=(0.5, 0.9, 0.5)
+SONDA37K ag /root/Chapter37o/@Node3D@23886/@Node3D@23887/Baked c=(-2.37, -0.1, 19.4) boy=(0.6, 1.0, 0.6)
+SONDA37K ag /root/Chapter37o/@Node3D@24023/@Node3D@24024/@Node3D@24025/Baked c=(-1.56, 0.3, 18.55) boy=(0.2, 0.5, 0.2)
+SONDA37K ag /root/Chapter37o/@Node3D@24023/@Node3D@24024/@Node3D@24036/Baked c=(-1.76, 0.3, 18.65) boy=(0.2, 0.5, 0.2)
+SONDA37K ag /root/Chapter37o/@Node3D@24023/@Node3D@24024/@Node3D@24080/Baked c=(-1.67, 1.52, 18.64) boy=(0.5, 0.7, 0.5)
+SONDA37K ag /root/Chapter37o/@Node3D@24023/@Node3D@24024/Baked c=(-1.67, 0.75, 18.6) boy=(0.6, 1.0, 0.6)
+TASIMA37OYURU bacak=surukle sure=8.9 yol=28.2 takilma=0 dusme=0 son=(-17.9, -3.5, 78.4) odak=
+TASIMA37OYURU OZET set=yeni bacak=9 takilma=0 dusme=0 tus_yok=0 sure=28.5 yol=85.5 zil=true kalas=true

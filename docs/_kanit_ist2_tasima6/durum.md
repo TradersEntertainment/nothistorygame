@@ -1,13 +1,13 @@
-# TAŞIMA-6 — durum
+# TAŞIMA-6 — durum (son)
 
-Dal `wip/ist2-tasima6`, taban `wip/ist2-taban11` 2fa8fb35.
+Dal `wip/ist2-tasima6`, taban `wip/ist2-taban11` 2fa8fb35. Ayrıntı: `rapor.md`.
 
 | adım | durum |
 |---|---|
-| kurulum | tamam |
-| 1. Bölüm 20 `=hit` D20_T_DUEL | kök neden kanıtlı (`testler/sonda`); düzeltme: `=hit` yeri + azap yolu siperi dolanır + 1. dalga çıkışı teras eteği/1,2 sn. Ara ölçüm: `=hit` ×12 denetim 0 (`testler/c20_hit`). Son paket (`testler/c20_son`: 9 çeşit ×2, def ×6, hit ×12) koşuyor |
-| 2. 37o | bağdaştırıcı tamam; yeni ×2 / eski ×1 def+lose PASS denetim 0 (`testler/c37o`); `=yuru` yeni takılma 0 düşme 0 (`testler/c37o_yuru`); hendek iç yüzünde iki hücum merdiveni (düşme cezası). Kareler ve bütçe sırada |
-| 3. 32o | bağdaştırıcı yazıldı (ova `ova_ofs`, hendek oranla, dolgu 0,5); koşulmadı |
-| 36b | başlanmadı |
+| 1. Bölüm 20 `=hit` D20_T_DUEL | TAMAM — `=hit` ×12 denetim 0; Bölüm 20 32/32 PASS denetim 0; 20o 10/10 PASS denetim 0; 2. dalga 20,6 sn (≈ 21) |
+| 2a. 37o | TAMAM — yeni 10/10, eski 3/3 PASS denetim 0; `=yuru` takılma 0 düşme 0; 6 ESKİ\|YENİ kare; bütçe eskinin altında |
+| 2b. 32o | KISMEN — yeni 8/8 + eski 1 PASS denetim 0; kare/bütçe/bot yok |
+| 2c. 36b | YAPILMADI |
+| ortak | `Assault._sura_bak`, `GedikOnarim` taşları; kullanan bölümler ×1 PASS |
 
-Sözleşme üçlüsü (`testler/soz`): `SURSOZLESME PASS kalem=13 kesim=8` · `SUROYUN nokta=519 havada=0 gomuk=0 katida=0` · `WALKTHRU OZET yol=7 tamam=7 takilma=0 dusme=0` (sur dosyalarına dokunulmadı).
+Sözleşme (`testler/soz_son`): `SURSOZLESME PASS kalem=13 kesim=8` · `SUROYUN nokta=519 havada=0 gomuk=0 katida=0` · `WALKTHRU OZET yol=7 tamam=7 takilma=0 dusme=0`.

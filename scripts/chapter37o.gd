@@ -1602,6 +1602,8 @@ func _yuru() -> void:
 	_make_haulers()
 	_haul_place(_haul_spots(_next_barrel(), _stockade_spot()), true)      # ip çekenler yerlerinde (kökte iç içe durmasınlar)
 	await _yb("kanca_yeri", _stockade_spot(), _barikat_orta() + Vector3(0, 0.8, 0))
+	if "--sonda37" in OS.get_cmdline_user_args():
+		_sonda37_kanca()
 	if kare:
 		await _kare("barikat")
 		# yandan (ip çekenler kanca yeriyle fıçı arasında: Giustiniani'yi örtmesinler)
@@ -1625,6 +1627,33 @@ func _yuru() -> void:
 	print("TASIMA37OYURU OZET set=%s bacak=%d takilma=%d dusme=%d tus_yok=%d sure=%.1f yol=%.1f zil=%s kalas=%s" % [set_ad,
 		_yz["bacak"], _yz["takilma"], _yz["dusme"], _yz["tus_yok"], _yz["sure"], _yz["yol"], _took_cymbal, _plank_down])
 	get_tree().quit(0)
+
+
+## Sonda (yalnız --sonda37): kanca yerinin kamerasının önünde 12 m içindeki görünen her şey (ağlar ve MultiMesh örnekleri),
+## altındaki zemin (aşağı ışın) ile: kare an_04'teki gri çokgenler ne, havada mı
+func _sonda37_kanca() -> void:
+	var eye := player.camera.global_position
+	var fwd := -player.camera.global_transform.basis.z
+	var zem := func(p: Vector3) -> float:
+		var q := PhysicsRayQueryParameters3D.create(p + Vector3(0, 0.05, 0), p - Vector3(0, 6.0, 0))
+		q.collision_mask = 1
+		var h := get_world_3d().direct_space_state.intersect_ray(q)
+		return (h["position"] as Vector3).y if not h.is_empty() else -INF
+	for n in get_tree().root.find_children("*", "GeometryInstance3D", true, false):
+		var g := n as GeometryInstance3D
+		if not g.is_visible_in_tree():
+			continue
+		if g is MultiMeshInstance3D and g.has_meta("xforms"):
+			for xf: Transform3D in g.get_meta("xforms"):
+				var c := g.global_transform * xf.origin
+				var to := c - eye
+				if to.length() < 12.0 and to.normalized().dot(fwd) > 0.5:
+					print("SONDA37K mm %s c=%s zemin=%.2f fark=%.2f" % [str(g.get_path()).right(70), c.snapped(Vector3.ONE * 0.01), zem.call(c), c.y - float(zem.call(c))])
+		elif not (g is MultiMeshInstance3D):
+			var c := g.global_transform * g.get_aabb().get_center()
+			var to := c - eye
+			if to.length() < 12.0 and to.normalized().dot(fwd) > 0.5 and g.get_aabb().size.length() > 0.5:
+				print("SONDA37K ag %s c=%s boy=%s" % [str(g.get_path()).right(90), c.snapped(Vector3.ONE * 0.01), g.get_aabb().size.snapped(Vector3.ONE * 0.1)])
 
 
 ## Gerçek etkileşim tuşu (bas, 3 kare, bırak)
