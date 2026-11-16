@@ -258,7 +258,8 @@ func _run() -> void:
 	player.global_position = Vector3(0.0, WALK_Y + 0.05, YOL_Z)
 	player.face(BARRELS + Vector3(0, 0.6, 0))
 	# Gece emri yanında verir: 6 m öteden, sırtı dönük (rotation PI/2) konuşuyordu (sahneleme raporu)
-	giust.position = Vector3(-2.2, WALK_Y, YOL_Z)
+	# Yeni sette yolun iç yanında (eskide oluğun 0,8 m gerisi; yeni yolun ortası oluğun önünü kapatıyordu: bot oluğa varamadı)
+	giust.position = Vector3(-2.2, WALK_Y, YOL_Z if sur.eski_mi else sur.dis_yol_ic_z())
 	giust.face_toward(player.global_position)
 	await hud.fade_to(0.0, 1.0)
 	# Gece sözleri oyuncu serbestken söylenir; fıçı işi (phase "barrels") sözler bitince başlar
@@ -805,7 +806,7 @@ func _yuru() -> void:
 		await _kare("safak_giust")
 	_make_night()
 	player.global_position = Vector3(0.0, WALK_Y + 0.05, YOL_Z)
-	giust.position = Vector3(-2.2, WALK_Y, YOL_Z)
+	giust.position = Vector3(-2.2, WALK_Y, YOL_Z if sur.eski_mi else sur.dis_yol_ic_z())
 	giust.face_toward(player.global_position)
 	player.face(BARRELS + Vector3(0, 0.6, 0))
 	phase = "barrels"

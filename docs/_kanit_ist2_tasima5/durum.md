@@ -3,13 +3,16 @@
 Dal `wip/ist2-tasima5` (taban `wip/ist2-taban10` 0ded6ea0).
 
 ## Biten
-- Godot 4.4.1 kuruldu (`~/is/godot/godot`), içe aktarma başladı.
-- Okundu: tasima3/4 raporları, SUR_BOLUM_TASIMA §2/§4.3/§6, SurSet, SurSetSahne, chapter21/25 kalıbı, chapter22, chapter22o (kurulum).
+- Bölüm 22 yeni surda: SurSet bağdaştırıcısı, `--eskisur`, oluk/fıçılar aşama-4 sur yolu tahtasında, kule hendeğin ötesinde
+  (ova_ofs), fıçı yuvarlanma izi (oluk → moloz → teras → dolgu → kule dibi, süre aynı), `=yuru`/`=kare`.
+  Testler: yeni 7 çeşit ×2 = 14/14 PASS, eski ×1 7/7 PASS (`testler/c22_yeni`, `testler/c22_eski`); bot yeni/eski takılma 0.
+- Bölüm 22o yeni surda: ova içeriği ova_ofs ile; kule dolgusu uzak yakadan (SurOyunAg._tumsek); tüfek hedefleri mazgalda;
+  `=yuru` yeni/eski: takılma 0, düşme 0, tuş 0, 80 sn (iki sette aynı).
+- Sonda `tests/_ist/tasima5_sonda.tscn` (`~/is/sonda5.log`).
 
 ## Süren
-- Bölüm 22 / 22o taşıması: yeni set sayılarının sondası.
+- 22o bütün çeşitler yeni ×2 / eski ×1; 22 kareleri (xvfb).
 
 ## Sıradaki
-- 22: SurSet bağdaştırıcısı + `--eskisur`; oluk/fıçı/sur yolu yeni dış surda, kule hendeğin ötesinde (ova_ofs), yuvarlanma yolu.
-- 22o: ova içeriği `ova_ofs` ile yeni ovaya; hendek dolgusu.
-- Testler: eski ×1, yeni ×2; `=yuru`, `=kare`.
+- 22o kareleri, eski kareler, bütçe tablosu, düello süreleri (STORYDUEL t), sözleşme üçlüsü, rapor.
+- Küçük kalanlar (21 an_01 gri dörtgen, 20 dost asker), 28o (yetişirse).
