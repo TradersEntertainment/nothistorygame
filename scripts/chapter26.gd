@@ -288,6 +288,8 @@ func _build_walls_scene() -> void:
 		assault = Assault.new()
 		if not sur.eski_mi:
 			assault.sur = sur
+			# dekor merdivenleri bölümün beş merdiveninin üstüne düşmesin (11,79 ↔ 12,0 gibi iki merdiven iç içeydi)
+			assault.merdiven_kacin = ladders.map(func(l): return l.position.x)
 		assault.keep = Rect2(-40.0, -10.0, 80.0, 36.0)
 		assault.live_span = 30.0
 		assault.intensity = 1.5        # son hücum: ova baştan başa koşan asker (eskiden çevre boş görünüyordu)

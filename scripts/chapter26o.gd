@@ -194,6 +194,8 @@ func _build_walls_scene() -> void:
 	assault = Assault.new()
 	if not sur.eski_mi:
 		assault.sur = sur
+		# dekor merdivenleri tırmanış merdiveninin ve dibindeki Turgut'un (x + 1,5) yanına düşmesin (VISAUDIT overlap)
+		assault.merdiven_kacin = [CLIMB_X, CLIMB_X + 1.5]
 	assault.keep = Rect2(-32.0, 36.4 + OO.z, 64.0, 41.6)
 	assault.intensity = 1.4        # son hücum: ova baştan başa asker (Bölüm 26 ile aynı yoğunluk)
 	add_child(assault)
@@ -519,9 +521,11 @@ func _wall_climb() -> void:
 	# Gedik ağzında bir tüfekçi: nişan alınca yer değiştir ya da siper al
 	# Yenilgi testinde bot ~5 sn'de düşer (iki rakip artık iç içe girip birbirini kapatmıyor): tüfekçi daha önce ateş etsin
 	var first := 3.5 if GameState.autotest and GameState.autotest_variant.ends_with("lose") else 6.0
-	# Eski: x 16'daki kulenin tepesinde. Yeni sette o aralıkta kule yok (kule x 35,4): merdivenin doğusunda sur yolunda
+	# Eski: x 16'daki kulenin tepesinde (atış çizgisi sur yolunun dışından). Yeni sette o aralıkta kule yok (kule x 35,4);
+	# sur yolunda koyunca atış sur yolu boyunca geliyordu, bot yana kaçamıyordu (nophoto: gunner 0/2): peribolosun öbür
+	# yanında, iç surun yolunda (çizgi sur yoluna dik)
 	var gpos := Vector3(14.4, LandWalls.OUTER_H + 3.0, LandWalls.OUTER_Z1 - 0.6) if sur.eski_mi \
-		else Vector3(sur.dis_yol_x(CLIMB_X + 9.0), sur.dis_yol_y(), sur.dis_yol_ic_z())
+		else Vector3(CLIMB_X + 4.0, sur.ic_yol_y(), sur.ic_yol_z())
 	var gn := Gunner.spawn(self, gpos, player, hud, first)
 	# Arkadan azaplar aynı merdivenden çıkıp yanına atlar; sur yolundaki nöbetçi de kılıca davranır
 	var al := _ally_ladder(climb_ladder)
