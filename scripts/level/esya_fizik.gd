@@ -610,7 +610,6 @@ func _patlama(p: Vector3, boy: float) -> void:
 			sayac["siper"] = int(sayac.get("siper", 0)) + 1
 			continue
 		sayac["patlama"] += 1
-		print("TMP8D patlama p=%s boy=%.2f id=%d c=%s" % [p.snapped(Vector3.ONE * 0.1), boy, e["id"], c.snapped(Vector3.ONE * 0.1)])
 		_uyandir(e)
 		var g := e["govde"] as RigidBody3D
 		if g == null:
@@ -898,8 +897,6 @@ func _kesisme_ayir(g: RigidBody3D, e: Dictionary) -> void:
 			top += nk[k + 1] - nk[k]
 			n += 1
 		var en := top / float(maxi(n, 1))
-		if OS.has_environment("T8D_IZ"):
-			print("TMP8D ayir id=%d n=%d en=%s" % [e["id"], n, en.snapped(Vector3.ONE * 0.001)])
 		if en.length() < 0.002:
 			return
 		g.global_position += en + en.normalized() * 0.003
@@ -1122,7 +1119,6 @@ func _dondur(e: Dictionary, zorla: bool) -> void:
 		_rapor("gomuk", e, g.global_position)
 		_ilk_yere(e)
 		return
-	print("TMP8D don id=%d at=%s t=%.1f" % [e["id"], g.global_position.snapped(Vector3.ONE * 0.01), float(e.get("t", 0.0))])
 	_yol_temizle(e)
 	g.linear_velocity = Vector3.ZERO
 	g.angular_velocity = Vector3.ZERO

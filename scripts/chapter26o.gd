@@ -275,7 +275,7 @@ func _build_walls_scene() -> void:
 		var boy := ay.distance_to(tp)
 		# TAŞIMA-8D: tepe çıkışı sur yolunun ZEMİNİNE (mazgal açıklığının ardı). Ladder.top_exit tepeden 0,7 m geriye
 		# veriyordu: merdivenin tepesi korkuluğun 1,5 m üstünde, o nokta mazgal eşiğinin (korkuluğun) üstüne, sur yolunun
-		# 1,4 m yukarısına düşüyordu (TMP8D: çıkış y 10,03, sur yolu 8,62). Oyuncu eşikte kalabiliyordu; bot merdivene
+		# 1,4 m yukarısına düşüyordu (8D tanı satırı: çıkış y 10,03, sur yolu 8,62). Oyuncu eşikte kalabiliyordu; bot merdivene
 		# geri yürüyüp yeniden tutunuyor, tırmanış döngüsü hiç bitmiyordu.
 		var sm := SurMerdiveni.new(boy, rad_to_deg(asin((ay.z - tp.z) / boy)), Color("6a4a2c"))
 		sm.cikis = Vector3(ay.x, sur.dis_yol_y() + 0.05, sur.dis_yol_on_z())
@@ -490,8 +490,6 @@ func _wall_climb() -> void:
 			continue
 		var dt := get_process_delta_time()
 		t += dt
-		if GameState.autotest and int((t - dt) * 2.0) != int(t * 2.0):
-			print("TMP8D t=%.1f pos=%s lad=%s lt=%.2f floor=%s frozen=%s stone=%s oil=%s vel=%s" % [t, player.global_position.snapped(Vector3.ONE * 0.01), player.ladder != null, player._ladder_t, player.is_on_floor(), player.frozen, _stone_falling, oil.active, player.velocity.snapped(Vector3.ONE * 0.01)])
 		# Merdivenden düşüp uzaklaşan (hendeğe, ovaya) ya da kaybolan: işaret merdiveni gösterir; çok uzaksa dibine
 		if player.ladder == null and not player.frozen and player.is_on_floor():
 			var off := Vector2(player.global_position.x - CLIMB_X, player.global_position.z - climb_ladder.global_position.z).length()

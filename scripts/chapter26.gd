@@ -73,8 +73,6 @@ var _fx_t := 0.0
 func _ready() -> void:
 	GameState.snapshot(26)
 	_apply_autotest_setup()
-	if OS.has_environment("T8D_IZLE"):
-		_t8d_izle.call_deferred()
 	_kamera_bekci.call_deferred()
 	hud = Hud.new()
 	add_child(hud)
@@ -136,7 +134,7 @@ func _dostlari_dagit() -> void:
 		return
 	# TAŞIMA-8D: dövüş son vuruşun öldürme kamerası sürerken bitebilir; kamera kadrajı kapatanları (savunucu sırası,
 	# onarımcı, dost düellocu) o süre gizler. Unclip.spread gizliyi saymaz: dostu gizli savunucunun dibine koyuyor, kamera
-	# bitip herkes görünür olunca ikisi iç içe kalıyordu (VISAUDIT overlap SPK_DEFENDER|Duelist, TMP8D izi). Oyuncunun
+	# bitip herkes görünür olunca ikisi iç içe kalıyordu (VISAUDIT overlap SPK_DEFENDER|Duelist, 8D tanı izi). Oyuncunun
 	# kamerası dönene (gizlenenler geri gelene) kadar beklenir; çağıran beklemez (akışın süresi aynı).
 	var t := 0.0
 	while t < 6.0 and is_inside_tree() and get_viewport().get_camera_3d() != player.camera:
@@ -154,7 +152,7 @@ func _dostlari_dagit() -> void:
 ## TAŞIMA-8D: öldürme kamerası (Duel finisher) kadrajı kapatanları (savunucu sırası, onarımcı, yedek bölük) o süre gizler;
 ## gizliyken yürüyenler (düellocu, yerinde adım atan) onları görmez (Unclip gizliyi saymaz), yerlerine adım atar; kamera
 ## bitip gizlenenler geri gelince ikisi iç içe kalıyordu (VISAUDIT overlap WallFight{chop}|Duelist, SPK_DEFENDER|Duelist;
-## TMP8D izi: onarımcı k 366–370 gizli, dost düellocu 3,5 → 2,55). Kamera oyuncuya her döndüğünde oyuncunun çevresinde
+## 8D tanı izi: onarımcı k 366–370 gizli, dost düellocu 3,5 → 2,55). Kamera oyuncuya her döndüğünde oyuncunun çevresinde
 ## iç içe ayakta duran çiftlerin yürüyeni (düellocu; yoksa yerinde durmayan) boş yere ayrılır.
 func _kamera_bekci() -> void:
 	var onceki := true
@@ -202,7 +200,7 @@ func _ic_ice_ayir() -> void:
 				continue
 			var m := _ayrilan(a, b)
 			if m != null:
-				print("T8D ayir a=%s b=%s d=%.2f" % [a.get_parent().name, b.get_parent().name, d])
+				print("BEKCI26 ayir a=%s b=%s d=%.2f" % [a.get_parent().name, b.get_parent().name, d])
 				Unclip.spread(m, 0.6)
 
 
@@ -398,8 +396,9 @@ func _build_walls_scene() -> void:
 		fight.add_builders(_gp(Vector3(0, 0, -2.6)) if sur.eski_mi else sur.gedik_onu() + Vector3(0, 0, 1.6), 2, 2660)
 		# yeni sette peribolosun ortasında (z 6,6 / 5,4 sıraları): z 8'de ön sıra 3. şeridin (z 9,6) koşanlarına değiyor,
 		# itilen iki asker iç içe kalıyordu (VISAUDIT overlap, hold23)
-		Garrison.squad(self, Vector3(-18.0, 0, 8.0) if sur.eski_mi else Vector3(-18.0, 0, 6.6), 5, 2, 0.0, 2610, "spear_shield", true)
-		Garrison.squad(self, Vector3(22.5, 0, 9.0) if sur.eski_mi else Vector3(24.0, 0, 7.4), 4, 2, 0.0, 2620, "spear_shield", true)
+		var bolukler: Array = [
+			Garrison.squad(self, Vector3(-18.0, 0, 8.0) if sur.eski_mi else Vector3(-18.0, 0, 6.6), 5, 2, 0.0, 2610, "spear_shield", true),
+			Garrison.squad(self, Vector3(22.5, 0, 9.0) if sur.eski_mi else Vector3(24.0, 0, 7.4), 4, 2, 0.0, 2620, "spear_shield", true)]
 		# Gerçek savaş (Bölüm 0'daki gibi): kalkanını başına kaldırıp koşanlar, ok yiyip devrilenler, yerde yatanlar,
 		# enkaz; oyuncunun ok deposu–gedik yolunu ve poterna fıçılarını kesmeyen şeritlerde
 		var serit: Array = [[Vector3(-17.5, 0, 2.4), Vector3(3.0, 0, 2.4), 1.4, 9, 5, 0], [Vector3(9.0, 0, 12.6), Vector3(26, 0, 12.6), 1.2, 8, 4, 0],
@@ -441,6 +440,15 @@ func _build_walls_scene() -> void:
 			chaos.avoid_lines = [[_gp(Vector3(-4.2, 0, -3.0)), ty[0], 1.6], [ty[0], ty[1], 1.6], [ty[1], POSTERN, 1.6]]
 			for b: Vector3 in BLOCKS:
 				chaos.avoid.append([b + _yuvarla() * 2.6, 1.5])
+			# TAŞIMA-8D: yedek bölüklerin askerleri. Kargaşada koşanların yolu bir insandan yalnız 0,6 m uzak tutuluyordu;
+			# yürüyen (Person._clear_way) 0,7 m'deki ayaktakini yana iter: bölüğün içinden geçenler askerleri evinden
+			# itiyor, itilen asker şeridin koşanlarınca daha da itiliyor (8D tanı izi: asker z 5,4 → 3,65), iki asker iç
+			# içe kalıyordu (VISAUDIT overlap Squad|Squad). Her askerin çevresi (itme erimi 0,7 + yerinde adım 0,4 + pay)
+			# yolsuz; bölüğün önünde ve ardında peribolosun geçişi açık kalır.
+			for bk: Node3D in bolukler:
+				for m in bk.get_children():
+					if m is Node3D:
+						chaos.avoid.append([(m as Node3D).global_position if (m as Node3D).is_inside_tree() else bk.position + (m as Node3D).position, 1.3])
 		add_child(chaos)
 	# Burçtaki sancak (Ulubatlı Hasan): başta görünmez, 3. dalgada yükselir
 	banner = Node3D.new()
@@ -3193,56 +3201,3 @@ func _ladder_heads() -> Array:
 	to = to.normalized() if to.length() > 0.1 else Vector3(0, 0, 1)
 	var side := to.cross(Vector3.UP).normalized()
 	return [p + to * 4.5 + side * 1.6, p + to * 4.5 - side * 1.6]
-
-
-# TMP8D: geçici iç içe izleyici (yalnız T8D_IZLE ortamında)
-func _t8d_ad(n: Node3D) -> String:
-	var par := n.get_parent()
-	var pn := str(par.name)
-	if par.get_script() != null and (par.get_script() as Script).get_global_name() != "":
-		pn = (par.get_script() as Script).get_global_name()
-	var ek := ""
-	if par is Duelist:
-		var d := par as Duelist
-		ek = " team=%d st=%s tgt=%s" % [d.team, str(d.state), str(d.target.name) if d.target else "-"]
-	return "%s#%d%s%s" % [pn, n.get_instance_id() % 100000, ("(" + str(n.get_meta("spk")) + ")") if n.has_meta("spk") else "", ek]
-
-
-func _t8d_izle() -> void:
-	var gec := {}
-	var bildi := {}
-	var k := 0
-	while is_inside_tree():
-		await get_tree().create_timer(0.25, false).timeout
-		k += 1
-		var who: Array = []
-		for n in get_tree().get_nodes_in_group("persons") + get_tree().get_nodes_in_group("soldiers"):
-			var p := n as Node3D
-			if p and p.is_visible_in_tree():
-				who.append(p)
-		for p: Node3D in who:
-			var id := p.get_instance_id()
-			if not gec.has(id):
-				gec[id] = []
-			(gec[id] as Array).append([k, p.global_position])
-			if (gec[id] as Array).size() > 14:
-				(gec[id] as Array).pop_front()
-		for i in who.size():
-			for j in range(i + 1, who.size()):
-				var a: Node3D = who[i]
-				var b: Node3D = who[j]
-				if a == b:
-					continue
-				var d := Vector2(a.global_position.x - b.global_position.x, a.global_position.z - b.global_position.z).length()
-				if d >= 0.35 or absf(a.global_position.y - b.global_position.y) > 0.6:
-					continue
-				var key := "%d_%d" % [mini(a.get_instance_id(), b.get_instance_id()), maxi(a.get_instance_id(), b.get_instance_id())]
-				bildi[key] = int(bildi.get(key, 0)) + 1
-				if int(bildi[key]) != 3:
-					continue
-				print("TMP8D cift phase=%s k=%d a=%s b=%s d=%.2f" % [phase, k, _t8d_ad(a), _t8d_ad(b), d])
-				for o: Node3D in [a, b]:
-					var iz := ""
-					for e: Array in gec[o.get_instance_id()]:
-						iz += " %d:%s" % [e[0], (e[1] as Vector3).snapped(Vector3.ONE * 0.05)]
-					print("TMP8D iz %s%s" % [_t8d_ad(o), iz])
