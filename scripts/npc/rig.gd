@@ -121,6 +121,7 @@ func _init(p_owner: Node3D, parts: Dictionary) -> void:
 		_brow_y0 = brows.position.y
 	_t = randf() * 10.0
 	_blink_t = randf_range(0.5, 4.0)
+	Ayak.ayarla()
 
 
 ## Replikten yüz ifadesi: önce sahne notu ("(Gülerek)", "(Sinirle)"...), sonra noktalama ve kim konuştuğu.
@@ -167,12 +168,40 @@ static func mood_of(speaker_key: String, text: String) -> String:
 
 ## ext=false: el/ayak bilekleri bu karede sürülmez (CityLife uzaktakiler için; bilekler son açılarında kalır)
 func update(delta: float, talking: bool, busy: bool, ext := true) -> void:
+	if ayak:
+		ayak.geri_al()
+	yuruyor = false
 	_update_core(delta, talking, busy)
 	if ext:
+		if not busy and owner != null and owner.is_inside_tree() and Ayak.etkin:
+			if ayak == null:
+				ayak = Ayak.new(self)
+			ayak.uygula(delta, yuruyor)
+		if GameState.autotest and owner != null and owner.is_inside_tree():
+			AyakDenet.tick(owner)
 		extremities()
 		if lock == 0 and DurusKit.var_mi(activity):
 			DurusKit.bilekler(self)
 	_egim_denet(delta)
+
+
+## AYAK YERLEŞTİRME (scripts/npc/ayak.gd): kameraya yakın kişilerde her ayak kendi zeminine basar (iki kemikli IK),
+## kalça alçak ayağa göre iner, taban zemin eğimine döner; basan ayak yürürken kilitli. ayak: kişi başı durum (ilk
+## yakın karede kurulur). yuruyor: bu karede yürüyüş salınımı kuruldu. faz_hiz: yürüyüş evresinin hızı (rad/sn).
+const Ayak := preload("res://scripts/npc/ayak.gd")
+const AyakDenet := preload("res://scripts/npc/ayak_denet.gd")
+var ayak: Ayak
+var yuruyor := false
+var faz_hiz := 0.0
+
+
+## Yürüyüş kadansı (rad/sn, iki adım bir tur): basan ayak kaymasın diye adım boyu hızdan (bacak 0,66 m: yürürken
+## ~0,5 m, koşarken ~1,3 m). Eski formül (3 + 1,6·hız) ayağı yürüyüşün yarı hızında geri götürüyordu (ayak kayıyordu).
+static func kadans(v: float) -> float:
+	if not Ayak.etkin:
+		return 3.0 + v * 1.6
+	var adim := clampf(0.18 + 0.27 * v, 0.25, 1.35)
+	return PI * v / adim
 
 
 ## DURUŞ takımı (scripts/npc/durus_kit.gd): eklem açılarıyla kurulan oturma/yatma/iş duruşları (bağdaş, diz üstü,
@@ -250,7 +279,7 @@ func extremities() -> void:
 			var leg := leg_l if side == 0 else leg_r
 			var kn := knee_l if side == 0 else knee_r
 			var pitch := bx + (leg.rotation.x if leg else 0.0) + kn.rotation.x
-			var av := 0.0 if lying else clampf(-pitch, -0.6, 0.75)
+			var av := 0.0 if lying else clampf(-pitch + (ayak.ank_ek[side] if ayak and ayak.mod > 0 else 0.0), -0.75, 0.9)
 			if absf(av - _ank_v[side]) > 0.004:
 				_ank_v[side] = av
 				an.rotation.x = av
@@ -353,7 +382,9 @@ func _update_core(delta: float, talking: bool, busy: bool) -> void:
 		DurusKit.birak(self, delta)
 	# Oturan ya da suda olan (kayıkta taşınan kürekçi, yüzen) yürümez: taşınmak adım sayılmaz
 	if speed > 0.35 and not activity in ["sit", "sit_ground", "write", "row", "swim", "ride", "halay", "halay_lead", "fly", "hover", "whittle", "read_ground", "doze", "write_desk", "sit_astride"]:
-		_walk_phase += delta * (3.0 + speed * 1.6)
+		faz_hiz = kadans(speed)
+		_walk_phase += delta * faz_hiz
+		yuruyor = true
 		var amp := clampf(speed / 3.0, 0.35, 1.0)
 		var run := clampf((speed - 3.2) / 2.0, 0.0, 1.0)
 		var sw := sin(_walk_phase)
