@@ -126,9 +126,25 @@ Sahnede ilk sürüm `menzil` için yanlış alarm verdi (ışınlanma sonrası e
 Ara koşular (`--max-fps 20`): 1, 2, 6, 6=byzclimb, 20, 26, 30, 38o, 43o, 44b → hepsi `AUTOTEST PASS`, `SCRIPT ERROR`
 0, denetim satırı 0.
 
-Tam paket (4 parça): **SONUÇ_PAKET**
+Tam paket (`SHARD=0..3 SHARDS=4 MAXFPS=20`, 4 parça aynı anda, son kayıttaki kodla — `f5ac161e`): **456 `AUTOTEST
+PASS`, `AUTOTEST FAIL` 0, `TIMEOUT` 0, `SCRIPT ERROR` 0, HAREKETAUDIT 0** (`user://hareketaudit.log` oluşmadı). Parça
+sonuçları: 1 ve 3 `fail=0`, parça 2 `fail=1` (aşağıdaki CITYCHECK), parça 0 sonu menü dönüşü `MENURETURN PASS`. Paket süzgecinde üç satır çıktı, **hiçbiri oyuncu hareketiyle ilgili
+görünmüyor ve tek başına koşunca tekrarlanmadı**:
+
+| satır | koşu | tek başına (ÖNCE ×2 / SONRA ×2–3) |
+|---|---|---|
+| `VISAUDIT meshhidden key=D10O_CAMELEER_1 … by=bas/Ag` (devenin başı deveciyi kapatıyor) | `--chapter=10 --autotest=fail` | yok / yok (SONRA 3 koşu) |
+| `VISAUDIT overlap scene=chapter36b.tscn` (iki savunmacı iç içe) | `--chapter=36b --autotest` | yok / yok |
+| `CITYCHECK FAIL: 24 … porter gövde yerinden kopuk (1.07 m)` (sivil, oyuncusuz denetim) | `tests/city_check.tscn` (parça 2'nin `fail=1`'i) | PASS / PASS |
+
+Dördü aynı anda çalışırken yük altında çıkan, deve yürüyüşü/kalabalık zamanlamasına bağlı satırlar; dosyaları
+(`chapter10`, `chapter36b`, şehir sivilleri) bu işin sahipliğinde değil, kök nedene dokunulmadı. Tekrarlanmadığı için
+"kök neden düzeltildi" denemez: **açık kalan** olarak yazıldı (kalanlar).
 
 ## Kalanlar
+
+- Tam paketteki üç denetim satırı (yukarıda): tek başına tekrarlanmıyor, oyuncu dosyalarıyla bağı bulunamadı; ilgili
+  bölüm/şehir sahipleri yük altında (4 süreç) bakmalı.
 
 - **Nefes sesi**: kitaplıkta nefes/soluma efekti yok; yeni ses üretilmedi. Var olan `D_CLIMB_TIRED_*` repliği nefes
   tükenince çalıyor. Bir nefes efekti (kısa, 3–4 varyasyon) eklenirse `HareketHis.nefes()` buna bağlanabilir.
