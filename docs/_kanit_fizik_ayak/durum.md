@@ -6,4 +6,6 @@
 - [x] Rig/LimbAnim kancaları; yeni kadans (adım boyu hızdan)
 - [x] `tests/_fizik/ayak_sahne.tscn` deney sahnesi (eğim/basamak/moloz/koşu/at; `--ayak-kalabalik=60` bütçe)
 - [x] 18 koşu ÖNCE|SONRA (ara sürüm): SONRA yakın satır 0, hepsi PASS
-- [ ] Son kodla ÖNCE|SONRA tablosu, kare süresi, oyun içi kareler, hayvanlar, rapor
+- [x] Son kodla ÖNCE|SONRA tablosu (20 koşu: yakın 87 → 5, hepsi PASS)
+- [x] Hayvanlar (ayak_hayvan.gd)
+- [ ] Oyun içi kareler (çekiliyor), rapor taslağı yazıldı
