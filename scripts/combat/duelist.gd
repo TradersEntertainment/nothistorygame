@@ -410,7 +410,9 @@ func _yig_kalk() -> void:
 	ileri.y = 0.0
 	var gy := _floor_at(pel)
 	var keep := body.rig.body.global_transform
-	global_position = Vector3(pel.x, gy if not is_nan(gy) else global_position.y, pel.z)
+	var yeni := Vector3(pel.x, gy if not is_nan(gy) else global_position.y, pel.z)
+	if not Unclip.in_solid(self, yeni, 0.25):
+		global_position = yeni
 	if ileri.length() > 0.1:
 		rotation.y = atan2(ileri.x, ileri.z)
 	body.rig.body.global_transform = keep
@@ -587,7 +589,10 @@ func _yig_bitti() -> void:
 	var pp: PackedVector3Array = _yig.get("p")
 	var pel := (pp[Yigilma.HL] + pp[Yigilma.HR]) * 0.5
 	var gy := _floor_at(pel)
-	global_position = Vector3(pel.x, gy if not is_nan(gy) else global_position.y, pel.z)
+	var yeni := Vector3(pel.x, gy if not is_nan(gy) else global_position.y, pel.z)
+	# Kök bir katının (duvar dibi) içine düşmesin: kalça duvara yaslıysa kök yerinde kalır (VISAUDIT insolid)
+	if not Unclip.in_solid(self, yeni, 0.25):
+		global_position = yeni
 	_yig.call("yeniden")
 	_freeze()
 
