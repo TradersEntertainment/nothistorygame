@@ -49,12 +49,19 @@ var _ditch_bar: Node3D        # ova ile hendek arasındaki görünmez sınır: t
 ## kalkanları merdivenin başına tutar (taş bir eksik); çizik almadıysa (37O.2) bölükten kalan azdır, yalnız anar.
 var turgut: Person
 var _turgut_help := false
+## TAŞIMA-8D sondası (=dis_in, =dis_dur, =esik_dur): merdivenden çıkınca oyuncu bir dişin (ya da mazgal eşiğinin)
+## üstüne konur; gerçek oyuncu gibi yürüyerek iner (dis_in) ya da orada dikilir (dur). Tırmanış döngüsü bitmeli.
+var _t8d_sonda := ""
+var _t8d_kondu := false
+var _t8d_ustten := 0
 
 
 func _ready() -> void:
 	GameState.snapshot(26)
 	if GameState.autotest and GameState.autotest_variant.begins_with("turgut"):
 		GameState.chapter_outcomes[37] = "37O.2" if GameState.autotest_variant == "turgut_bad" else "37O.1"
+	if GameState.autotest and GameState.autotest_variant in ["dis_in", "dis_dur", "esik_dur"]:
+		_t8d_sonda = GameState.autotest_variant
 	hud = Hud.new()
 	add_child(hud)
 	hud.chase_music = "tension"
@@ -499,6 +506,7 @@ func _wall_climb() -> void:
 			ustte += dt
 			if ustte > 1.5:
 				print("CLIMB ustten at=%s" % player.global_position.snapped(Vector3.ONE * 0.1))
+				_t8d_ustten += 1
 				player.global_position = climb_ladder.top_exit()
 				player.velocity = Vector3.ZERO
 				ustte = 0.0
@@ -512,7 +520,13 @@ func _wall_climb() -> void:
 				hz = randf_range(1.4, 2.0)
 				_drop_stone()
 		if GameState.autotest:
-			if player.ladder == null and player.global_position.y > sur.dis_yol_y() - 0.3:
+			if _t8d_sonda != "" and player.ladder == null and not _t8d_kondu and player.global_position.y > sur.dis_yol_y() - 0.3:
+				_t8d_koy()
+			if _t8d_kondu and _t8d_sonda == "dis_in":
+				# gerçek oyuncu: dişin üstünden sur içine doğru yürür, sur yoluna atlar
+				player.face(player.global_position + Vector3(0, 1.5, -4.0))
+				Input.action_press("move_forward")
+			elif player.ladder == null and player.global_position.y > sur.dis_yol_y() - 0.3:
 				# Tepede: merdivene geri bakıp yürümez (eskiden tepeye bakıp merdivene geri dönüyordu)
 				Input.action_release("move_forward")
 			else:
@@ -530,6 +544,9 @@ func _wall_climb() -> void:
 				player.global_position = climb_ladder.top_exit()
 	if GameState.autotest:
 		Input.action_release("move_forward")
+		if _t8d_sonda != "":
+			print("T8D sonda=%s kondu=%s ustten=%d bitti_t=%.1f at=%s" % [_t8d_sonda, _t8d_kondu, _t8d_ustten, t,
+				player.global_position.snapped(Vector3.ONE * 0.01)])
 	hud.set_qte("")
 	hud.set_objective("")
 	# Hasan sur yolunda, Tolga'nın yanında (sırtını ona verecek): "Arkadan daha da geliyorlar!" görünmez birinden
@@ -1229,3 +1246,27 @@ class SurMerdiveni extends Ladder:
 
 	func top_exit() -> Vector3:
 		return cikis if cikis != Vector3.INF else super()
+
+
+## TAŞIMA-8D sondası: merdivenin yanındaki dişin (dis_*) ya da merdivenin mazgal eşiğinin (esik_*) üstüne koy
+func _t8d_koy() -> void:
+	_t8d_kondu = true
+	var zk := sur.dis_sur_z1() - IstSurlar.PARAPET_T * 0.5
+	var space := get_world_3d().direct_space_state
+	var en := Vector3.INF
+	var dxs: Array = [0.0] if _t8d_sonda.begins_with("esik") else [0.6, -0.6, 0.8, -0.8, 1.0, -1.0, 1.2, -1.2, 1.4, -1.4]
+	for dx: float in dxs:
+		var a := Vector3(CLIMB_X + dx, sur.dis_yol_y() + 6.0, zk)
+		var q := PhysicsRayQueryParameters3D.create(a, a + Vector3.DOWN * 8.0)
+		q.exclude = [player.get_rid()]
+		var h := space.intersect_ray(q)
+		if h.is_empty():
+			continue
+		var y: float = (h["position"] as Vector3).y
+		if y > sur.dis_yol_y() + 0.6 and (en == Vector3.INF or y > en.y + 0.1):
+			en = h["position"]       # eşik (korkuluk üstü) ya da en yüksek diş tepesi
+	print("T8D koy sonda=%s yer=%s" % [_t8d_sonda, en.snapped(Vector3.ONE * 0.01) if en != Vector3.INF else "yok"])
+	if en != Vector3.INF:
+		player.velocity = Vector3.ZERO
+		player.global_position = en + Vector3(0, 0.05, 0)
+		Input.action_release("move_forward")
