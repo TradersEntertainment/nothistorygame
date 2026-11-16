@@ -17,7 +17,7 @@
 | 1 | 37o havadaki moloz taşları (an_04) | **KISMEN** | Piksel sondasıyla üçü de bulundu. **Üç koyu çokgen** = `OyunDilimi/Mesoteikhion/GedikMoloz` tümseği + kaya saçılımı (`surlar.gd _gedik`, sade kipte düz tabanla, dış kuşağın 1–3 m üstünde) → A'nın dosyası: **görünüşe istek** (düğüm yolu + kare + öneri). **Beyaz altıgen** = mancınık taşının toz bulutu, **turuncu kutu** = isabet kırıntısı (`Assault._lob/_fire_gun`, eski kesitten seçilen isabet yeri yeni sette havada; kırıntı `Props.box`) → düzeltildi (gerçek yüzey, kaya parçası; yalnız yeni set). an_04 ÖNCE\|SONRA: altıgen ve kutu yok, koyu çokgenler DURUYOR |
 | 2 | 32o'nun kalanı | **TAMAM** | `=yuru` gerçek bot (çalı demeti → hendek, toprak, yaylımda manto arkası, basamak, manto itme): yeni ve eski bacak bacak aynı, takılma 0 düşme 0 tuş yok 0; eski ×1 7/7, yeni ×1 7/7 PASS, denetim 0; 6 ESKİ\|YENİ kare; bütçe; mesafe tablosu (ova içinde hepsi aynı); yön replikleri uyumlu. Kutu yasağı: çalı demeti dal demeti, manto kalaslı |
 | 3 | 36b (Huruç) | **TAMAM** | Yeni **sağlam** surda: setin `Poterna`'sı (sahanlık + terasa inen basamak), `KalasKopru` (görünmeyen tahta düzeltildi: gizli kur + `tak()`), hendek merdivenleri, ova kaydırması; son kod yeni 5/5 + eski 4/4 PASS denetim 0 (ara turlarda üç `VISAUDIT overlap` sondayla kökten düzeltildi); `=yuru` takılma 0 düşme 0; mesafe ≤ 20; 6 kare (eski 5); bütçe 5 anın 4'ünde ≤ (an_01 ilkel +%2) |
-| 4 | 28o (sağlam sur) | **TAMAM** | `SurSet`/`SurSetSahne` sağlam kip seçeneği (varsayılan aynı); 28o sağlam surla (ova kaydırması, HAUL_Z 124,5 + O.z, ıska hendeğe); yeni 8/8 + eski 4/4 PASS denetim 0; `=yuru` (kazık) iki sette aynı; kareler @@OZET28O@@ |
+| 4 | 28o (sağlam sur) | **TAMAM** | `SurSet`/`SurSetSahne` sağlam kip seçeneği (varsayılan aynı); 28o sağlam surla (ova kaydırması, HAUL_Z 124,5 + O.z, ıska hendeğe); yeni 8/8 + eski 4/4 PASS denetim 0; `=yuru` (kazık) iki sette aynı; kareler 6 yeni + 6 eski ESKİ|YENİ (bütçe eskinin altında) |
 | — | Ortak bölümler | **TAMAM** | 0, 20 ×6, 20o ×2, 21, 22, 22o, 25, 32o ×7, 37o ×3 (+eski) PASS, denetim 0; Bölüm 20 2. dalga medyanı 23,2 sn (taşıma 6 `def` 21,4, aralık 18,0–32,8), 1. dalga aynı (§6) |
 | — | Sözleşme | **AYNI** | `SURSOZLESME PASS kalem=13 kesim=8` · `SUROYUN … havada=0 gomuk=0 katida=0` · `WALKTHRU OZET yol=7 tamam=7 takilma=0 dusme=0` |
 
@@ -121,10 +121,27 @@ Oyuncunun yürüdüğü her şey ovada ve eskiyle aynı; yalnız sur daha uzak v
 `D32O_AZ_B3` "Sağdaki bölük" (demet taşıyan yan bölük x 17/22): uyumlu (aynı yerde). `D32O_AZ_02` "mantonun arkasına": uyumlu.
 
 ### 2.5 Kareler ESKİ | YENİ (oyuncu kamerası, `=kare`; `kare/c32o_eski`, `kare/c32o_yeni`)
-@@KARE32O@@
+| an | ESKİ | YENİ — tek cümle | hüküm |
+|---|---|---|---|
+| an_01 açılış (Kadri, Usta'nın tezgâhı) | ovada tezgâh ve ustalar, yakın alçak surda savunucular ve ateş | aynı ova ve tezgâh, uzakta yeni sur ve kuleler (sur yolunda savunucular, duman); kutu yok, herkes ovaya basıyor | **iyi** |
+| an_02 yığında demet elde | elde dal demeti, mantolar, yakın sur | elde dal demeti (bağlı dallar, ip bağı; ilk turda tek altı köşeli silindir: `c32o_yeni_tur0/an_02`), kalaslı mantolar, uzakta sur ve top isabeti | **iyi** (eskide de aynı demet) |
+| an_03 kıyıda atış | sığ hendekte atılmış demetler ve Rum ateşi, hemen ötede sur | 6 m'lik taş hendeğe bakış: yarı dolu dolgu, yanan demetler ve duman, kıyıda kapak taşları; atılan demet dumanın içinde seçilmiyor | **kabul** (eskide demetler daha iyi seçiliyor) |
+| an_04 yaylımda manto arkası | mantonun arkası, sur | kalaslı mantonun omzunun üstünden sur, hücum merdiveni ve yere saplanmış oklar (ilk turda tek levha: `c32o_yeni_tur0/an_04`) | **iyi** |
+| an_05 tezgâh | Usta Mahmud, basamak işareti, merdiven | aynı (Usta yakın plan, işaret, ustalar, uzakta sur) | **iyi** |
+| an_06 manto itme | — (eski sette kare kipi 10 dk sınırına takıldı, çekilemedi) | iki asker ve Tolga kalaslı mantoyu sura doğru itiyor, ilerleme çubuğu | **iyi** |
+
 
 ### 2.6 Bütçe (aynı an, 4 kare ortalaması; `kare/c32o_eski.log` ↔ `kare/c32o_yeni.log`)
-@@BUTCE32O@@
+| an | çizim eski → yeni | ilkel eski → yeni |
+|---|---|---|
+| acilis | 3.643 → 1.804 (-50%) | 2.59 M → 1.46 M (-44%) |
+| yigin | 3.400 → 1.262 (-63%) | 2.08 M → 1.10 M (-47%) |
+| kiyi | 2.862 → 723 (-75%) | 1.71 M → 0.75 M (-56%) |
+| manto_arkasi | 3.590 → 952 (-73%) | 2.29 M → 1.07 M (-53%) |
+| tezgah | 4.736 → 2.396 (-49%) | 2.77 M → 1.46 M (-47%) |
+
+Bütün anlar eskinin altında (yeni sur kesimi örtücülü; eski setin yakın alçak suru ve gedik ateşleri kadrajın çoğu).
+
 
 ## 3. Bölüm 36b (Huruç, 9 Nisan) — `scripts/chapter36b.gd`
 
@@ -279,7 +296,27 @@ Yön replikleri: `D28O_U_01` "Kazıkları siperin arkasına" uyumlu (aynı yer);
 "Hendek." ıska yeni hendekte (§4.1).
 
 ### 4.4 Kareler ESKİ | YENİ (`kare/c28o_eski`, `kare/c28o_yeni`)
-@@KARE28O@@
+| an | ESKİ | YENİ — tek cümle | hüküm |
+|---|---|---|---|
+| an_01 açılış (Urban, batarya) | Urban, gülleler, siperlik, sepet siper; ötede yakın alçak sur | aynı batarya (Urban, gülleler, siperlik iskelesi, sepet siper), ötede yeni sur ve kuleler (daha uzak: hendek ve teras geniş); kutu yok | **iyi** |
+| an_02 kazık yığını | yığın, sepetler, sur | aynı | **iyi** |
+| an_03 kazık (çukurda) | sepet siperin dibi, ötede sur | aynı kadraj (sepetler kameranın dibinde; iki sette de) | **kabul** (kadraj sepete yakın) |
+| an_04 kızak | kızak, namlu, halatçılar, ibre | aynı; arkada surdan inen güllelerin toz ve ateşi | **iyi** |
+| an_05 kızak yarı yolda | kızak, halatçılar, siperlik iskelesi, yakın sur | kızak ve namlu, iki sıra halatçı, bataryanın siperlik iskelesi, arkada yeni sur ve top dumanı | **iyi** |
+| an_06 top (ilk atıştan önce) | Urban topun yanında, sepetler, yakın sur | Urban topun yanında, sepetler ve gülleler, uzakta sağlam sur ve ordu; Nihat'ın satırı ekranda | **kabul** (Urban kadrajın ortasında) |
+
+**Bütçe** (aynı an):
+
+| an | çizim eski → yeni | ilkel eski → yeni |
+|---|---|---|
+| acilis | 2.104 → 958 (-54%) | 2.49 M → 1.28 M (-49%) |
+| kazik_yigini | 1.964 → 826 (-58%) | 2.40 M → 1.20 M (-50%) |
+| kazik | 1.811 → 671 (-63%) | 1.81 M → 0.66 M (-63%) |
+| kizak | 2.488 → 1.131 (-55%) | 2.87 M → 1.58 M (-45%) |
+| kizak_yarim | 2.670 → 1.502 (-44%) | 2.99 M → 1.83 M (-39%) |
+| top | 2.410 → 1.417 (-41%) | 2.49 M → 1.98 M (-20%) |
+
+
 ## 5. Ortak: `SurSet` / `SurSetSahne` sağlam kip seçeneği (madde 4'ün ön koşulu; 36b de kullanır)
 - `SurSet.yeni(kesim, p_saglam := false)`, `SurSet.sec(bolum, sabit, kesim, p_saglam := false)`: sağlamda çerçeve **varsayılan
   kipin** gediğinden kurulur (TUR-11 notu: `gx` gerekirse varsayılanın değeri; çerçeve gedik x 0 aynı kalır, bütün eski
@@ -392,3 +429,10 @@ takilma=0 dusme=0`, `TASIMA32OYURU OZET … takilma=0 dusme=0`); 36b varsayılan
   kalaslı/dallı ama hâlâ iri (kameranın dibinde).
 - **Ova bölümlerinde sur uzak**: 32o'da kıyıdan sura 31,4 m (eski 21,4), 28o'da topla sur arası 113,7 m (eski 103,4): yeni
   hendek ve teras daha geniş (kurgu gereği; aradaki ova mesafeleri aynı).
+- **Bölüm 20 2. dalga**: medyan 23,2 sn (n 5; taşıma 6 `def` 21,4) — taşıma 6'nın aralığı içinde ama sahibin ≈ 21'inin 2 sn
+  üstünde; yoğun yükte koşulan bir koşuda 60 sn sınırına dayandı (§6). Bölüm 20 kodu, `WaveRunner`/`Duelist` değişmedi; Assault'un
+  rastgele dizisi yeni sette kaydı (mancınık isabeti için birkaç sayı daha çekiliyor). Ayrıştırılmadı.
+- **36b eski kareleri 5/6**: eski sette geri bakış anı çekilemedi (kare kipinin ışınlamasında Leon eski sur gövdesine düştü,
+  kip ilerlemedi; eski geometrinin ve kare kipinin sorunu).
+- **Kare kipleri 10 dk sınırında**: yazılımsal GL'de 32o'nun eski kare kipi bir kez 5/6'da kesildi (240 sn'lik hendek fazı
+  oyun saatinde akıyor); yük düşünce yeniden çekildi.

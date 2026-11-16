@@ -46,3 +46,15 @@ SAYDIST key=D28O_U_STAKES scene=chapter28o.tscn speaker=SPK_URBAN d=5.8
 LOOKAUDIT raw Person(urban)[SPK_URBAN] chapter28o.tscn 138 kind=walk act= pose=<null> look=@CharacterBody3D@80 talking=false pos=(9.0, 0.0, 128.1)
 TASIMA28OKARE an_04_kizak.jpg oyuncu=(4.5, 0.0, 131.5) cizim=2488 ilkel=2873341 sur=eski
 TASIMA28OKARE an_05_kizak_yarim.jpg oyuncu=(9.2, 0.0, 133.5) cizim=2670 ilkel=2985202 sur=eski
+SAYDIST key=D28O_U_PLACED scene=chapter28o.tscn speaker=SPK_URBAN d=7.9
+SAYDIST key=D28O_F_01 scene=chapter28o.tscn speaker=SPK_FATIH d=9.5
+CREW impact hit=true at=(-0.2, 4.6, 17.1) target=(0.0, 4.0, 15.0) t=1.10 speed=87.9 elev=5.0 yaw=5.2
+TESPITBLOCK who=siege28o blocker=Chapter28o/@MeshInstance3D@32357 (MeshInstance3D) at=(1.0, 5.4, 30.9) eye=(9.1, 1.6, 126.9) dist=110.3
+SAYDIST key=D28O_F_02 scene=chapter28o.tscn speaker=SPK_FATIH d=6.2
+TASIMA28OKARE an_06_top.jpg oyuncu=(12.4, 0.0, 123.8) cizim=2410 ilkel=2485692 sur=eski
+AUTOTEST PASS chapter=28o variant=kare outcome=28O.1 stakes=4 slips=0 hit=true master=false roller_every=4.0 rollers=2 sur=eski
+WARNING: ObjectDB instances leaked at exit (run with --verbose for details).
+     at: cleanup (core/object/object.cpp:2378)
+ERROR: 1 resources still in use at exit (run with --verbose for details).
+   at: clear (core/io/resource.cpp:614)
+KARE_BITTI rc=0 --chapter=28o --autotest=kare --eskisur
