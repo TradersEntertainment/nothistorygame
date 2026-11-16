@@ -10,7 +10,7 @@ kurduğu için; o arada başka bir sistem yazdıysa onunki kalır).
    taban ortasının (bileğin 5 cm önü) altında, kökün 0,5 m üstünden 0,9 m altına. Normal de alınır (56°'den dik: düz sayılır).
 2. **Kalça**: kök uzayında her ayak için kalçanın en çok ne kadar yüksekte olabileceği (bilek hedefi + √(R² − yatay²),
    R = 0,985 × (uyluk + baldır)); kalça en kısıtlayıcı ayağa göre iner (dururken ayak gömülüyse o kadar çıkar), en çok
-   −0,5 / +0,4 m. Gövde **yalnız kaydırılır** (dik kalır). Yumuşatma: inerken 20/sn, çıkarken 8/sn.
+   −0,5 / +0,4 m. Gövde **yalnız kaydırılır** (dik kalır). Yumuşatma: inerken 40/sn, çıkarken 8/sn.
 3. **İki kemikli IK** (gövde uzayında): diz açısı kosinüs yasasından (uyluk L1 = dizin kalçaya uzaklığı, baldır L2 =
    bileğin dize uzaklığı; CharKit.leg: Person 0,33 / 0,255, Soldier 0,34 / 0,265), uyluk FK'nin bükülme düzlemini
    koruyan en kısa dönüşle (Quaternion(arc_from, arc_to)) hedefe çevrilir. Diz yalnız öne bükülür.
@@ -30,16 +30,19 @@ Oturan (Rig.SEATED, `sit*`), yatan/ölü/uyuyan, tırmanan (`climb*`, `climber`)
 taşınan (ebeveyn zincirinde karakter/oyuncu), uçan/yüzen/düşen, sıçrayan (`leap`), DurusKit duruşları (bağdaş, diz
 üstü, çömelme…), iskeleti kilitli olanlar (Rig.lock > 0; LimbAnim ile oynatılan ayaktaki klip hariç: onun duruşunda
 izdüşüm), kökü 18°'den çok eğik olanlar (devrilen), `corpse/no_ground/hologram/airborne/cameo` işaretliler, iş pozundaki
-askerler (Soldier.pose ≠ stand), görünen ama çarpışmasız bir zeminin üstünde duranlar (kökün altındaki çarpışma zemini
-12 cm'den alçak ve Unclip.on_mesh: ışın o zemini görmez, IK gövdeyi alttaki çarpışmaya gömerdi).
+askerler (Soldier.pose ≠ stand), iki ayağının da altında kökün 40 cm içinde çarpışma zemini olmayanlar (görünen ama çarpışmasız bir döşemenin
+üstünde ya da kendi yanlış yüksekliğinde: ışın o zemini görmez, IK gövdeyi alttaki çarpışmaya gömerdi; Unclip.on_mesh
+sorulmaz: her çağrıda sahnenin bütün ağacını tarıyor, 37o'da kişi başı ~5 ms çıkmıştı).
+
+**Kenar**: bir ayağın altı 30 cm'den derin boşluk, öteki ayak kök hizasında zemindeyse o ayak kökün altına (kenarın
+üstüne) çekilir.
 
 ### Bütçe
 - **LOD**: kameraya ≤ 28 m ve görüş konisinde (her karede ucuz koni testi; ≤ 6 m'de koni aranmaz). Uzaktakiler yarım
   saniyede bir yoklanır. Kamera kesmesinde görüşe yeni giren kişide IK anında açılır (bir önceki karede görünmüyordu);
   yürüyerek LOD sınırını geçende 0,25 sn'de yumuşak. Uzaktakiler eski yol (kök Unclip.rest_settle ile zemine oturur).
-- **Işın**: dururken ayak başına bir kez (ayak 6 cm kayınca ya da 2–2,5 sn'de bir yeniden); yürürken adım başına
-  (basarken bir, salınım başında iniş noktasına bir; iniş noktası 15 cm kayarsa bir daha). Kök başına seyrek bir
-  "çarpışmasız zemin" yoklaması (kök 0,5 m yer değiştirince ya da 3–4 sn'de bir).
+- **Işın**: dururken ayak başına bir kez (ayak 6 cm kayınca ya da 1–1,3 sn'de bir yeniden: zemin değişebilir); yürürken adım başına
+  (basarken bir, salınım başında iniş noktasına bir; salınımın ilk %60'ında iniş noktası 25 cm kayarsa bir daha).
 - **Düzde duran**: iki ayağın zemini kökle aynı (±1,5 cm) ve düzse IK hiçbir şey yazmaz (sonuç FK'nin aynısı).
 - Kare başına ara diziler yeniden kullanılır (paketli diziler), ebeveyn dönüşümü yalnız ışın gerekince.
 

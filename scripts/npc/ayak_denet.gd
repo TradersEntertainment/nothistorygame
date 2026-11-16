@@ -2,6 +2,8 @@ extends RefCounted
 ## AYAKAUDIT (otomatik testte; VISAUDIT/POSEAUDIT kalıbı): kameranın gördüğü 40 m içindeki her ayaktaki insanın
 ## (persons, soldiers) her ayağının tabanı ile altındaki GÖRÜNEN zemin (Unclip.floor_y) arasındaki fark. Yalnız o an
 ## yere basması gereken ayak ölçülür: dururken ikisi (FK duruşunun kaldırmadığı), yürürken basma evresinin ortasındaki.
+## Taban üç noktada ölçülür (topuk, orta, burun): herhangi bir noktası zemine 6 cm'den yakınsa ayak basıyordur (kenarda
+## topuk ya da burun basamakta), herhangi bir noktası 6 cm'den derin zeminin içindeyse gömüktür.
 ## Taban görünen ama çarpışmasız bir ağın üstündeyse (Unclip.on_mesh) fark 0 (VISAUDIT float gibi).
 ## Kapsam dışı (Ayak.kapsam_disi: oturan, yatan, tırmanan, binen, taşınan, duruş takımı…) ölçülmez.
 ## Havada > 6 cm ya da gömük > 6 cm iki ardışık ölçümde (yarım saniye arayla) sürüyorsa bir kez yazar:
@@ -13,6 +15,7 @@ const ESIK := 0.06
 const YAKIN := 25.0
 const MENZIL := 40.0
 const TABAN_P := Vector3(0, -0.0765, 0.05)
+const TABAN_NOKTA := [Vector3(0, -0.0765, -0.05), Vector3(0, -0.0765, 0.05), Vector3(0, -0.0765, 0.15)]
 
 static var _t_ms := 0
 static var _rr := 0
@@ -88,12 +91,32 @@ static func _olc(who: Node3D, cp: Vector3, cam: Camera3D, sc: Node) -> void:
 		if not exp:
 			_bad.erase(key)
 			continue
-		var sole := an.global_transform * TABAN_P
-		var fy := Unclip.floor_y(who, sole, 0.5, 1.0)
-		if is_nan(fy):
+		# Taban üç noktada (topuk, orta, burun): ayak, tabanının herhangi bir noktası zemine 6 cm'den yakınsa basıyordur
+		# (kenarda topuk ya da burun basamakta); herhangi bir noktası zeminin 6 cm'den çok içindeyse gömüktür
+		var at := an.global_transform
+		var sole := at * TABAN_P
+		var fy := NAN
+		var hava := INF
+		var gomuk := -INF
+		for tp: Vector3 in TABAN_NOKTA:
+			var pt := at * tp
+			var gy := Unclip.floor_y(who, pt, 0.5, 1.0)
+			if is_nan(gy):
+				continue
+			if tp == TABAN_P:
+				fy = gy
+			hava = minf(hava, pt.y - gy)
+			gomuk = maxf(gomuk, gy - pt.y)
+		if hava == INF:
 			_bad.erase(key)
 			continue
-		var gap := sole.y - fy
+		if is_nan(fy):
+			fy = sole.y - hava
+		var gap := 0.0
+		if hava > ESIK:
+			gap = hava
+		elif gomuk > ESIK:
+			gap = -gomuk
 		# Görünen ama çarpışmasız bir ağın (döşeme, tabla) üstündeki taban havada değildir (VISAUDIT float'ın ölçüsü)
 		if gap > ESIK and Unclip.on_mesh(who, sole):
 			gap = 0.0

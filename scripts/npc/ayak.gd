@@ -368,7 +368,7 @@ func _zemin_ayak(s: int, p: Vector3, ref_y: float, delta: float, esik := 0.06) -
 	if esik > 0.0 and gp.x != INF and _g_t[s] > 0.0 and Vector2(gp.x - p.x, gp.z - p.z).length() < esik:
 		return
 	_g_p[s] = p
-	_g_t[s] = 2.0 + randf() * 0.5
+	_g_t[s] = 1.0 + randf() * 0.3      # zemin değişebilir (fıçı kondu, kalas kalktı)
 	_g_ok[s] = _zemin(p, ref_y)
 	if _g_ok[s]:
 		_g_y[s] = _zy
@@ -422,6 +422,14 @@ func _coz(delta: float, yuru: bool) -> void:
 			basiyor[s] = _grd[s] and gok
 			_tgt[s] = Vector3(pp.x, (_g_y[s] if gok else root.y) + maxf(0.0, fs.y), pp.z)
 			_tn[s] = _g_n[s] if gok else Vector3.UP
+		# Kenar: bir ayağın altı 30 cm'den derin bir boşluk, öteki ayak kök hizasında zeminde (sur kenarı, moloz
+		# basamağı): insan o ayağı boşlukta tutmaz, kenarın üstüne (kökün altına) çeker; zemini ötekinin zemini
+		for s in 2:
+			var o := 1 - s
+			if _g_ok[s] and _g_ok[o] and _g_y[s] < root.y - 0.3 and absf(_g_y[o] - root.y) < 0.15 and _grd[s]:
+				var c := ot * Vector3(_hip[s].x * 0.4, 0.0, TABAN_Z)
+				_tgt[s] = Vector3(c.x, _g_y[o] + maxf(0.0, _fks[s].y), c.z)
+				_tn[s] = _g_n[o]
 		# Düz zemin ve kök tam zeminde: IK sonucu FK'nin aynısı; hiçbir şey yazılmaz (şehirde duranların çoğu)
 		if _mod_t <= 0.0 and absf(pel) < 0.004 and _g_ok[0] and _g_ok[1] and absf(_g_y[0] - root.y) < 0.015 \
 				and absf(_g_y[1] - root.y) < 0.015 and _g_n[0].y > 0.996 and _g_n[1].y > 0.996:
@@ -436,11 +444,11 @@ func _coz(delta: float, yuru: bool) -> void:
 		_yuruyus(ot, root)
 		_grd[0] = basiyor[0] or _planted[0]
 		_grd[1] = basiyor[1] or _planted[1]
-	# İki ayağın da altında kökün 25 cm içinde çarpışma zemini yoksa kök ya görünen ama çarpışmasız bir zeminin (döşeme
+	# İki ayağın da altında kökün 40 cm içinde çarpışma zemini yoksa kök ya görünen ama çarpışmasız bir zeminin (döşeme
 	# ağı, tabla: ışın görmez) üstünde ya da kendi yanlış yüksekliğinde (VISAUDIT float'ın işi): ikisinde de IK gövdeyi
 	# alttaki çarpışmaya indirirdi (26: döşeme ağındaki askerler 50 cm gömülüyordu). Rig'in duruşu kalır (yazma yok).
 	# (Unclip.on_mesh sorulmaz: her çağrıda sahnenin bütün ağacını tarıyor; 37o'da kişi başı ~5 ms.)
-	if maxf(_tgt[0].y, _tgt[1].y) < root.y - 0.25:
+	if maxf(_tgt[0].y, _tgt[1].y) < root.y - 0.4:
 		pel = 0.0
 		_cur[0] = _tgt[0]
 		_cur[1] = _tgt[1]
@@ -485,7 +493,8 @@ func _coz(delta: float, yuru: bool) -> void:
 	if up_t < INF:
 		p_t = minf(p_t, up_t)
 	p_t = clampf(p_t, PEL_ALT, PEL_UST)
-	pel = lerpf(pel, p_t, clampf(delta * (20.0 if p_t < pel else 8.0), 0.0, 1.0))
+	# İnerken hızlı (basan ayak kalça inmeden yetişemez, havada kalırdı), çıkarken yumuşak
+	pel = lerpf(pel, p_t, clampf(delta * (40.0 if p_t < pel else 8.0), 0.0, 1.0))
 	# Uygula: gövde (dik) iner/çıkar; bacaklar IK
 	var pw := pel * w
 	_fk_by = body.position.y
