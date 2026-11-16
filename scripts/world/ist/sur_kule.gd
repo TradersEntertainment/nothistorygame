@@ -687,28 +687,34 @@ static func _cati(ag: Ag, poly: PackedVector2Array, HT: float, tur: int, orta :=
 
 
 ## Moloz taşı: düzensiz, eğik, köşeleri kırık blok (kesme taş parçası; çıplak kutu değil)
+## TUR-10: döküntü taşı. Eskiden 8 köşeli altı yüzlü (köşesi oynatılmış KUTU): Bölüm 20 an_03'te (240,430) gediğin yanında
+## peribolosta düz kenarlı koyu dikdörtgen okunuyordu (üçgen düzeyinde ışın teşhisi: dilim-yerel −66,2; 0,22; 10,5).
+## Şimdi oynatılmış yirmiyüzlü (12 köşe, 20 üçgen): yıpranmış, köşesi yuvarlanmış taş; boyutlar aynı aralıkta, yere gömük.
+const _IKO_K := [Vector3(-1, 1.618, 0), Vector3(1, 1.618, 0), Vector3(-1, -1.618, 0), Vector3(1, -1.618, 0),
+	Vector3(0, -1, 1.618), Vector3(0, 1, 1.618), Vector3(0, -1, -1.618), Vector3(0, 1, -1.618),
+	Vector3(1.618, 0, -1), Vector3(1.618, 0, 1), Vector3(-1.618, 0, -1), Vector3(-1.618, 0, 1)]
+const _IKO_Y := [[0, 11, 5], [0, 5, 1], [0, 1, 7], [0, 7, 10], [0, 10, 11], [1, 5, 9], [5, 11, 4], [11, 10, 2], [10, 7, 6],
+	[7, 1, 8], [3, 9, 4], [3, 4, 2], [3, 2, 6], [3, 6, 8], [3, 8, 9], [4, 9, 5], [2, 4, 11], [6, 2, 10], [8, 6, 7], [9, 8, 1]]
+
 static func _moloz_tas(ag: Ag, o: Vector3, rng: RandomNumberGenerator) -> void:
 	var s := Vector3(rng.randf_range(0.35, 0.8), rng.randf_range(0.22, 0.45), rng.randf_range(0.3, 0.6))
 	var b := Basis.from_euler(Vector3(rng.randf_range(-0.35, 0.35), rng.randf_range(0, TAU), rng.randf_range(-0.35, 0.35)))
 	var pts: Array = []
-	for i in 8:
-		var v := Vector3(s.x * (1 if i & 1 else -1), s.y * (1 if i & 2 else -1), s.z * (1 if i & 4 else -1)) * 0.5
-		v *= rng.randf_range(0.7, 1.0)              # köşe kırık
-		pts.append(o + b * v + Vector3.UP * s.y * 0.35)
-	var yuz := [[0, 1, 3, 2, Vector3.DOWN], [4, 5, 7, 6, Vector3.UP], [0, 1, 5, 4, Vector3.BACK * -1], [2, 3, 7, 6, Vector3.BACK],
-		[0, 2, 6, 4, Vector3.LEFT], [1, 3, 7, 5, Vector3.RIGHT]]
+	for k: Vector3 in _IKO_K:
+		var v := k.normalized() * 0.5 * rng.randf_range(0.8, 1.06)
+		# alt yarı yassı (yere oturan yüz), üst hafif kubbe
+		if v.y < 0.0:
+			v.y *= 0.6
+		pts.append(o + b * Vector3(v.x * s.x, v.y * s.y, v.z * s.z) + Vector3.UP * s.y * 0.2)
 	var cen := Vector3.ZERO
 	for q: Vector3 in pts:
 		cen += q
-	cen /= 8.0
-	for f: Array in yuz:
+	cen /= float(pts.size())
+	for f: Array in _IKO_Y:
 		var a: Vector3 = pts[f[0]]
 		var bb: Vector3 = pts[f[1]]
 		var c: Vector3 = pts[f[2]]
-		var d: Vector3 = pts[f[3]]
-		var dis := ((a + bb + c + d) * 0.25 - cen)
-		ag.tri(a, bb, c, dis)
-		ag.tri(a, c, d, dis)
+		ag.tri(a, bb, c, (a + bb + c) / 3.0 - cen)
 
 
 # ------------------------------------------------------------------ DIŞ SUR KULESİ
@@ -972,7 +978,7 @@ static func _dis_tas(ag: Ag, o: Vector3, tt: Vector3, nn: Vector3, w: float, yuk
 	var yat := (h3 - 0.5) * 0.04                # tepe yana yatık (cm'ler)
 	var omuz := minf(0.045 + 0.035 * h2, yuk * 0.25)
 	var ic := 0.04 + 0.03 * h2                 # omuzun içe çekilişi
-	var egim := 0.04 + 0.04 * h3               # tepe dışa (nn) doğru alçalır
+	var egim := 0.03 + 0.04 * h3               # tepe içe (sur yoluna, −nn) doğru alçalır
 	# kırık köşe: bir tepe köşesi (sol/sağ × ön/arka) aşağı
 	var kir_k := -1
 	if not yikik and h2 > 0.7:
@@ -986,7 +992,8 @@ static func _dis_tas(ag: Ag, o: Vector3, tt: Vector3, nn: Vector3, w: float, yuk
 		var pos := c + tt * v.x + nn * v.y
 		alt.append(pos)
 		var arka := v.y < 0.0          # sur yolu tarafı: omuzlu
-		var yt := yuk - egim * (v.y / hd * 0.5 + 0.5)
+		# tepe tek yöne (sur yoluna doğru) alçalır, o kenar omuzla yuvarlanır: yandan sivri sırt (beşik çatı) okunmaz
+		var yt := yuk - egim * (0.5 - v.y / hd * 0.5)
 		var yk := yt - (omuz if arka else 0.0)
 		if yikik:
 			# kırık diş: sırtsız, köşe köşe farklı yükseklikte pürüzlü alçak tepe (çatı gibi sivrilmesin)
