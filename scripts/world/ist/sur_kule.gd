@@ -927,6 +927,11 @@ static func kaya_mesh() -> ArrayMesh:
 
 
 ## Beden mazgal dişleri (eski MultiMesh dönüşümleri): her biri gerçek ağ; boy ±%12, %9'u kırık (alçak, eğik üst)
+## TUR-10 ("oyuncak gibi surlar", Bölüm 25 an_01: oyuncu mazgalda 0,6 m'de): diş keskin kenarlı KUTU, tepesi düz levha,
+## hepsi birbirinin kopyasıydı. Şimdi her diş ayrı yontulmuş taş: dikey kenarları pahlı (4–9 cm), tepesi yuvarlatılmış
+## omuz + dışa hafif eğimli tepe, en/boy/yatıklık oynak, %30'unda bir tepe köşesi kırık, %9'u yıkık (alçak, pürüzlü tepe),
+## diş diş ton farkı (köşe rengi). Kaplama (ölçü) aynı: en w, derinlik dp, boy ±%12; çarpışma yok (görünen ağ; korkuluk
+## kutusu aynı). Üçgen: diş başına ≈ 36 (eskisi 10); tek ağ, çizim çağrısı aynı.
 static func disler_ag(p: Node3D, mer: Array, col: Color, seed: int) -> void:
 	var ag := Ag.new()
 	var i := 0
@@ -934,8 +939,11 @@ static func disler_ag(p: Node3D, mer: Array, col: Color, seed: int) -> void:
 		i += 1
 		var sz := t.basis.get_scale()
 		var h := fposmod(sin(t.origin.x * 3.71 + t.origin.z * 1.37 + float(seed) * 0.11) * 4375.85, 1.0)
+		var h2 := fposmod(sin(t.origin.x * 1.93 + t.origin.z * 5.11 + float(seed) * 0.37) * 9137.31, 1.0)
+		var h3 := fposmod(sin(t.origin.x * 7.17 + t.origin.z * 2.29 + float(seed) * 0.53) * 2741.93, 1.0)
 		var yuk := sz.y * (0.9 + 0.25 * h)
-		if h < 0.09:
+		var yikik := h < 0.09
+		if yikik:
 			yuk = sz.y * 0.45
 		var along_x := sz.x >= sz.z
 		var tt := Vector3.RIGHT if along_x else Vector3.BACK
@@ -943,8 +951,68 @@ static func disler_ag(p: Node3D, mer: Array, col: Color, seed: int) -> void:
 		var w := sz.x if along_x else sz.z
 		var dp := sz.z if along_x else sz.x
 		var o := t.origin - Vector3.UP * sz.y * 0.5 - nn * dp * 0.5
-		ag.kutu(o, tt, nn, w * (0.94 + 0.1 * h), yuk, dp)
+		# diş diş ton (sur_doku: kat = parlaklık(köşe^2,2 × taban)/0,42; taban ≈ 0,48 → köşe 0,88–1,0 ≈ taş tonu ×0,86–1,0)
+		var ton := Color(0.88 + 0.12 * h2, 0.88 + 0.115 * h2, 0.87 + 0.11 * h2 - 0.02 * h3)
+		_dis_tas(ag, o, tt, nn, w * (0.92 + 0.12 * h), yuk, dp, h2, h3, yikik, ton)
 	ag.mesh_ekle(p, _tas_mat(col, 0), "MazgalDis")
+
+
+## Tek diş: o = taban ön-arka ortası (arka yüz o'da, ön yüz o + nn·dp), tt yatay, nn dışa.
+static func _dis_tas(ag: Ag, o: Vector3, tt: Vector3, nn: Vector3, w: float, yuk: float, dp: float, h2: float, h3: float, yikik: bool, col: Color) -> void:
+	var pah := 0.04 + 0.05 * h3
+	var hw := w * 0.5
+	var c := o + nn * dp * 0.5
+	var hd := dp * 0.5
+	# taban planı: pahlı dikdörtgen (8 köşe), saat yönünde
+	var plan: Array[Vector2] = [Vector2(-hw + pah, -hd), Vector2(hw - pah, -hd), Vector2(hw, -hd + pah), Vector2(hw, hd - pah),
+		Vector2(hw - pah, hd), Vector2(-hw + pah, hd), Vector2(-hw, hd - pah), Vector2(-hw, -hd + pah)]
+	var yat := (h3 - 0.5) * 0.04                # tepe yana yatık (cm'ler)
+	var omuz := minf(0.07 + 0.04 * h2, yuk * 0.3)
+	var ic := 0.05 + 0.03 * h2                 # omuzun içe çekilişi
+	var egim := 0.03 + 0.03 * h3               # tepe dışa (nn) doğru alçalır
+	# kırık köşe: bir tepe köşesi (sol/sağ × ön/arka) aşağı
+	var kir_k := -1
+	if not yikik and h2 > 0.7:
+		kir_k = int(h3 * 4.0) % 4
+	var kir_d := 0.1 + 0.18 * h2
+	var alt: Array[Vector3] = []
+	var ust: Array[Vector3] = []
+	var tep: Array[Vector3] = []
+	for k in 8:
+		var v := plan[k]
+		var pos := c + tt * v.x + nn * v.y
+		alt.append(pos)
+		var yk := yuk - omuz
+		var yt := yuk - egim * (v.y / hd * 0.5 + 0.5)
+		if yikik:
+			var r := fposmod(sin(float(k) * 12.9 + h2 * 78.2) * 43758.5, 1.0)
+			yk = yuk * (0.6 + 0.3 * r)
+			yt = yk + 0.04 + 0.06 * r
+		var dx := yat * (yk / maxf(yuk, 0.01))
+		ust.append(pos + tt * dx + Vector3.UP * yk)
+		var vi := Vector2(v.x * (1.0 - ic / hw), v.y * (1.0 - ic / hd))
+		tep.append(c + tt * (vi.x + yat) + nn * vi.y + Vector3.UP * yt)
+	if kir_k >= 0:
+		# köşe sırası: 0 (-x, -y) → plan 7,0 ; 1 (+x, -y) → 1,2 ; 2 (+x, +y) → 3,4 ; 3 (-x, +y) → 5,6
+		var ks: Array = [[7, 0], [1, 2], [3, 4], [5, 6]][kir_k]
+		for kk: int in ks:
+			ust[kk] = ust[kk] - Vector3.UP * kir_d
+			tep[kk] = tep[kk] - Vector3.UP * kir_d * 0.9
+	var mz := c
+	for k in 8:
+		var k2 := (k + 1) % 8
+		var dis := ((alt[k] + alt[k2]) * 0.5 - mz)
+		dis.y = 0.0
+		ag.quad_auto(alt[k], alt[k2], ust[k2], ust[k], dis, col)
+		var dis2 := dis.normalized() + Vector3.UP * 0.9
+		ag.quad_auto(ust[k], ust[k2], tep[k2], tep[k], dis2, col)
+	# tepe kapağı (merkez yelpaze)
+	var tm := Vector3.ZERO
+	for v in tep:
+		tm += v
+	tm /= 8.0
+	for k in 8:
+		ag.tri(tm, tep[k], tep[(k + 1) % 8], Vector3.UP, col)
 
 
 # ------------------------------------------------------------------ KÖŞE KULESİ (hat kırıklarında)
