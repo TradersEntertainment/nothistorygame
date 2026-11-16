@@ -1,0 +1,34 @@
+Godot Engine v4.4.1.stable.official.49a5bc7b6 - https://godotengine.org
+
+SURSET kesim=mesoteikhion kurulum_ms=4372 sur_ms=1456 set_ms=2910
+PILOT20ENGEL OZET nokta=9 engelde=0
+PILOT20KURULUM sur=yeni set_ms=4374 bolum_ms=1326 toplam_ms=5700
+WARNING: Screen-space ambient occlusion (SSAO) can only be enabled when using the Forward+ renderer.
+     at: environment_set_ssao (servers/rendering/storage/environment_storage.cpp:586)
+WARNING: Screen-space indirect lighting (SSIL) can only be enabled when using the Forward+ renderer.
+     at: environment_set_ssil (servers/rendering/storage/environment_storage.cpp:661)
+TERRAIN_SOLIDIFIED scene=chapter20.tscn node=/root/Chapter20/@Node3D@177/Ova/@Node3D@2668/@MeshInstance3D@2670
+SIEGECHAOS segs=40 runners=80 static=30
+LORE key=20 placed=3
+GUN shots=4 hits=3 missed=1
+TASIMA6DUELLO etiket=duello_basi p=(-9.900001, 0.0, 6.9) bas=(-9.900001, 0.0, 6.9) ileri=(0.76, -0.01, 0.65) ilk=yok
+HANDS stowed=@Node3D@84
+HANDS stowed=@Node3D@84
+RALLY scene=chapter20.tscn allies=3 foes=0 cands=5
+THROWN by=player at=(-8.900001, 0.1, 5.8)
+WAVERUNNER wave=1/2 won=true t=12.6 pw=0.28 foe_dmg=18.0 allies=3+0 rally_foes=0 thrown=1
+HANDS stowed=@Node3D@84
+RALLY scene=chapter20.tscn allies=4 foes=0 cands=2
+WAVERUNNER wave=2/2 won=true t=29.5 pw=0.28 foe_dmg=18.0 allies=4+0 rally_foes=0 thrown=1
+GUN extra=1
+GUNNER shots=5 dodged=5 hits=0
+TASIMA6DUELLO etiket=duello_sonu p=(-11.6, 0.0, 9.1) bas=(-9.900001, 0.0, 6.9) ileri=(0.02, -0.72, 0.7) ilk=/@Node3D@177/SurCerceve/SurOyun_mesoteikhion/OyunDilimi/Mesoteikhion/@StaticBody3D@195@2.26
+TESPITBLOCK who=siege20 blocker=Skeleton/Mesh (MeshInstance3D) at=(2.0, 0.3, 9.3) eye=(2.0, 1.9, 9.3) dist=4.4
+GRADE chapter=20 letter=S points=130 { "gun_shots": 4, "gun_hits": 3, "gunner_shots": 5, "dodged": 5, "kills": 1, "thrown": 1 }
+CESET4 bolum=20 variant= n=9 dusen=0 en_derin=-0.1 yer=(-1.8, -3.592125, 43.6)
+AUTOTEST PASS chapter=20 variant= outcome=20.1 repair=10 knocks=0 arrows=true gun=3/4 gunner=5/5 niko=0 sur=yeni
+WARNING: ObjectDB instances leaked at exit (run with --verbose for details).
+     at: cleanup (core/object/object.cpp:2378)
+ERROR: 1 resources still in use at exit (run with --verbose for details).
+   at: clear (core/io/resource.cpp:614)
+KOSU rc=0 sure=43 args=--chapter=20 --autotest

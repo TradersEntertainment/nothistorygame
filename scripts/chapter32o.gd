@@ -216,7 +216,17 @@ func _make_night(t: float) -> void:
 func _hendek_p(x: float, z_eski: float, ust: float) -> Vector3:
 	if sur.eski_mi:
 		return Vector3(x, -2.9 + ust, z_eski)
-	return Vector3(x, sur.hendek_dip_y() + ust, sur.hendek_z((z_eski - 20.0) / 16.0))
+	# Gediğin önünde setin yarı dolu dolgusu (x 0 ± 5, şevi hendeğin dibine iner): oraya düşen demet dolgunun üstünde kalır
+	# (dibe konunca toprağın içinde kalıyordu). Zemin aşağı ışınla; ışın yoksa hendeğin dibi.
+	var z := sur.hendek_z((z_eski - 20.0) / 16.0)
+	var y := sur.hendek_dip_y()
+	if is_inside_tree():
+		var q := PhysicsRayQueryParameters3D.create(Vector3(x, sur.ova_y() + 2.0, z), Vector3(x, y - 1.0, z))
+		q.collision_mask = 1
+		var h := get_world_3d().direct_space_state.intersect_ray(q)
+		if not h.is_empty() and not ((h["collider"] as Node).get_parent() is Person or (h["collider"] as Node).get_parent() is Soldier):
+			y = (h["position"] as Vector3).y
+	return Vector3(x, y + ust, z)
 
 
 func _gedik() -> Vector3:

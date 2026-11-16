@@ -187,9 +187,11 @@ func _yeni_yerlesim() -> void:
 			PLANK_X = float(g["x"])
 	var dx := PLANK_X - PLANK_X_E
 	var kx := Vector3(dx, 0, 0)
-	MARCH_FROM = MARCH_FROM_E + O + kx
-	MARCH_TO = MARCH_TO_E + O + kx
-	PLANK_PILE = PLANK_PILE_E + O + kx
+	# yürüyüş eski x'inde (kalasla birlikte −8,9 kaydırınca başı yeni setin x −24'teki batarya yuvasının dibine düşüyordu:
+	# kare c37o_yeni_tur1/an_01); kalas yığını yürüyüşün sonu ile kalasın arasında (yürüme 8,3 + 5,5 m; eski 4,3 + 7,5)
+	MARCH_FROM = MARCH_FROM_E + O
+	MARCH_TO = MARCH_TO_E + O
+	PLANK_PILE = Vector3(PLANK_X + 1.0, 0.0, PLANK_PILE_E.z) + O
 	DRAG_FROM = DRAG_FROM_E + O + kx
 	DRAG_TO = DRAG_TO_E + O + kx
 	EDGE_Z = sur.hendek_z1() + (EDGE_Z_E - 36.0)
@@ -1551,7 +1553,7 @@ func _yuru() -> void:
 		player.face(Vector3(PLANK_X, _far_y() + 1.5, FAR_Z))
 		await _kare("kalas_indi")
 	# 3. Kalasın üstünden karşıya (zemin: kalas; düşen sayılır)
-	await _yb("kalas_orta", Vector3(PLANK_X, 0, (EDGE_Z + FAR_Z) * 0.5), Vector3(0.0, _sur_ust_y(), 15.0))
+	await _yb("kalas_orta", Vector3(PLANK_X, 0, (EDGE_Z + FAR_Z) * 0.5), _barikat_orta() + Vector3(0, 1.5, 0))
 	if kare:
 		await _kare("kalas_ortasi")
 	await _yb("kalas_uc", Vector3(PLANK_X, 0, FAR_Z - 0.4), Vector3(PLANK_X, _far_y() + 1.5, teras_z))
@@ -1576,6 +1578,9 @@ func _yuru() -> void:
 	await _yb("kanca_yeri", _stockade_spot(), _barikat_orta() + Vector3(0, 0.8, 0))
 	if kare:
 		await _kare("barikat")
+		# yandan (ip çekenler kanca yeriyle fıçı arasında: Giustiniani'yi örtmesinler)
+		var yan := _stockade_spot() + Vector3(2.2, 0, 0.4)
+		player.global_position = Vector3(yan.x, _out_y(yan.x, yan.z) + 0.05, yan.z)
 		player.face(giust.global_position + Vector3(0, 1.6, 0))
 		await _kare("giustiniani")
 	# 5. Geri: sürükleme yolu (ova)
@@ -1716,8 +1721,13 @@ func _run_shots() -> void:
 	hud.visible = false
 	var cv := Camera3D.new()
 	add_child(cv)
-	cv.global_position = Vector3(-14.0, 3.5, 40.0)
-	cv.look_at(Vector3(-2.0, 1.0, 18.0), Vector3.UP)
+	if sur.eski_mi:
+		cv.global_position = Vector3(-14.0, 3.5, 40.0)
+		cv.look_at(Vector3(-2.0, 1.0, 18.0), Vector3.UP)
+	else:
+		# aynı bakış (kıyının ardından kalasa ve gediğe), yeni hendeğin yerinde
+		cv.global_position = Vector3(PLANK_X - 5.0, PLANK_Y + 3.5, EDGE_Z + 3.0)
+		cv.look_at(_barikat_orta() + Vector3(-2.0, 0.0, 1.4), Vector3.UP)
 	cv.fov = 62.0
 	cv.make_current()
 	_on_interact_force_plank()
