@@ -37,8 +37,9 @@ const SAVUNUCU_YENI := [Vector3(-4.3, 0, 10.8), Vector3(-3.2, 0, 10.4), Vector3(
 ## Bölüm sabiti: true → eski set (geri dönüş; komut satırında --eskisur ile de)
 const ESKI_SUR := false
 ## Yeni sette ek hücum merdivenleri (Assault.ek_merdiven): x, korkuluğun üstüne ek taşma (m). Açılış kadrajında (START → LINE)
-## dış sur x > 4,5 kadrajın üst ortasında görünür (6,4 ve 14,4; yer yazısının üstünde), donma kadrajında x −20 (−6,3: koşu ortası)
-const EK_MERDIVEN_YENI := [{"x": 6.4, "uzat": 1.8}, {"x": 14.4, "uzat": 1.4}, {"x": -6.3, "uzat": 1.3}, {"x": -20.6, "uzat": 1.3}]
+## dış sur x > 4,5 kadrajın üst ortasında görünür (6,4 ve 14,4; yer yazısının üstünde), donma kadrajında x −20 (x −6,3 denendi:
+## sabit bakışın bütçesini eskinin üstüne çıkarıyordu, anahtar karede görünmüyordu)
+const EK_MERDIVEN_YENI := [{"x": 6.4, "uzat": 1.8}, {"x": 14.4, "uzat": 1.4}, {"x": -20.6, "uzat": 1.3}]
 ## Yeni sette açılış kadrajındaki yaralılar ve koşanlar (BattleExtras şeridi): [a, b, en, koşan, yatan, siperde, (yalnız ad)].
 ## Taşıyıcı şeridi (depo → gedik önü) ve oyuncunun yolu (START → LINE) dışında: dış surun eteği önü, gediğin iki yanı (kadrajın
 ## sağı ve solu; tests/_ist/tasima4_kadraj.gd ile seçildi)

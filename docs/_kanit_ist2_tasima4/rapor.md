@@ -142,3 +142,62 @@ yalnız `SurSetSahne`'li sahnede). Bu sınıfları kullanan bölümler ×1: 21, 
 41o, 42b — **14/14 AUTOTEST PASS, denetim 0**. (0, 20, 20o yukarıda.)
 
 ### Kareler (oyuncu kamerası) — 2. dalga başlangıcı ve ortası
+
+## 3c. Bölüm 21 an_03 (kap yeri) SONRA karesi — `kare/c21_sonra/an_03_lagim_kap.jpg`
+Tek cümle: lağımın üstündeki kap yeri geniş ve boş toprak; depo yığınları (toprak yığını, kısa fıçılar, tek tek kalaslar) 7 m
+solda geride, sağda dış surun eteği; kutu yok, havada duran yok, yığınlar zemine oturuyor, aynı ressamın elinden. Hüküm: **iyi**
+(tasima2'deki "kap yeri kalabalık" sorunu yok). Kare `=kare` kipiyle, bu dalın kodu (kalas yığını yeni biçimde); bütçe
+`testler/kare_c21_sonra.log` (an_03 çizim 528, ilkel 0,61 M).
+
+## 2. Bölüm 0 (soğuk açılış) — eskisi kadar destansı
+
+### Neden boştu (kadraj sondası `tests/_ist/tasima4_kadraj.gd`, çizimsiz izdüşüm)
+- Açılış kamerası (START → LINE) yeni sette dış surun x > 4,5 kesimine (kadrajın üst ortası, yer yazısının hemen üstü) ve
+  gediğin sağ burcuna bakıyor; x < −4,5 kesimi kadrajın sol üst köşesinin dışında. Eskinin `Garrison` boşlukları (kazanlar için
+  x ±6,8…10,4, eski kule 13–19) yeni sette görünen sur yolunun çoğunu boşaltıyordu; ayrıca yeni dış surun **iç korkuluğu
+  yüksek** (A'nın sur ölçüsü, dondu): sur yolundaki savunucular peribolostan çoğunlukla görünmüyor.
+- Hücum merdivenlerinin tepesi korkuluğun 1,5 m üstünde, kadrajdaki kesimde merdiven yoktu (x 11,8 / 17 / 22'dekiler yer
+  yazısının arkasında kalıyordu).
+- Yaralı/koşan şeritleri (BattleExtras) kadrajın dışındaydı; donma karesinde patlamaya 3 m'den yakın herkes gizleniyor.
+
+### Yapılan (yalnız yeni set; `--eskisur` yolu aynı)
+- `Assault.ek_merdiven` (kanca, varsayılan boş) + `SurSet.merdiven_dayama(x, uzat)` (dayama kuralının tek merdivenlik hâli):
+  Bölüm 0 üç ek hücum merdiveni koyar — x 6,4 (uç korkuluğun 1,8 m üstü: açılış kadrajında gedik burcunun üstünde) ve 14,4,
+  donma kadrajı için −20,6. Tırmananlar tepeye varınca savunanın mızrağıyla geri düşer (Assault'un kendi akışı): tepede
+  çatışma.
+- `Garrison` boşlukları yeni sette yalnız kazanların yanı (±7,7…9,5); kazan yanlarına sur yolu meşaleleri; surun ardından
+  (teras, hendek) yükselen üç duman sütunu (`Vfx.smoke_wisp`).
+- Dört yaralı/koşan şeridi (`SERIT_YENI_EK`): dış sur eteğinin önü (gediğin iki yanı), donma karesinde patlamanın 3 m dışı,
+  kalas yığınının yanı (oyuncu yolundan ≥ 2,2 m; taşıyıcı şeridinin dışında).
+- İç kulenin batı yüzüne dayalı dekor merdiveni (tek ağ, yuvarlak dikme/basamak, tırmanılmaz, çarpışmasız).
+- Donma karesindeki kalas yığını (`SurSetSahne._kalas_yigini`, depo dekoru — 20/20o/21'de de): altı eşit `Props.box` yerine
+  tek tek kalaslar: boy/en/renk farklı, kenarları pahlı (sekizgen kesit), iki sırada bir enine takoz, üstte yamuk bir kalas,
+  ucunda yere bırakılmış bir kalas; tek ağ. Çarpışma/etkileşim kutusu aynı.
+- Bütçe: donma anında yeni sette kameradan 22 m'den uzak figüranlar gizlenir (koridorun dibinde okunmayan küçük figürler;
+  tasima3'te bile donma karesi eski setin üstündeydi: 4.643 > 4.363).
+
+### Kareler ESKİ | YENİ(önce) | YENİ(sonra) — `kare/c0_eski`, `kare/c0_once` (tasima3), `kare/c0_sonra` (son tur); ara turlar `kare/c0_sonra_tur1`
+
+| an | SONRA tek cümle | hüküm |
+|---|---|---|
+| `an_01_acilis` | gedik burcunun üstünde korkuluğu aşan hücum merdiveninin ucu, solda kuleye dayalı merdiven, havada oklar, koşan savunucu, sağda siperin dibinde yerde oklanmış yaralılar ve çömelmiş asker, sol alt ön planda yerde iki yaralı, sur yolunda meşale; kutu yok, havada duran yok, herkes zemine oturuyor, aynı ressamın elinden | **iyi** (önceye göre belirgin dolu ve hareketli; eskinin sur yolu kalabalığı yeni setin yüksek iç korkuluğu yüzünden görünmüyor) |
+| `an_02_kosu_orta` | savunucular ve taşıyıcılar, solda peribolos boyunca yedek bölük ve uzakta yerde yaralılar, sağda fıçılar ve çuvallar | kabul (önceyle hemen aynı; kadraj kişilerle dolu) |
+| `an_05_gun` | gediğin içinden gökyüzü; gedik ağzında azap, fıçıların ardında tuğla dizisi çuvallar, sağda surun ardından yükselen duman | iyi |
+| `an_06_donma` | havada Tolga, arkasında patlama ve savrulan oklar/kalkan, solda savrulan askerler, sağda iç kuleye dayalı merdiven, merdivenin dibinde yerde yaralı, tek tek kalaslardan yığın (takozlu, biri yamuk, biri yerde), yere saplı oklar, koşan asker | **iyi** (önce: boş, kalas yığını kutu; eskisi kadar dolu değil ama yaralı, merdiven, kalas var) |
+
+### Bütçe (`=kare`, 4 kare ortalaması; ESKİ `--eskisur` tasima3 `kare_c0_eski.log`, önce tasima3 `kare_c0_yeni2.log`, sonra `testler/kare_c0_sonra.log`)
+
+| an | çizim eski / önce / **sonra** | ilkel eski / önce / **sonra** |
+|---|---|---|
+| an_01 | 11.409 / 7.030 / **8.882** (−%22) | 13,90 M / 9,11 M / **10,69 M** (−%23) |
+| an_02 | 10.181 / 6.399 / **7.268** (−%29) | 13,31 M / 8,83 M / **9,58 M** (−%28) |
+| an_03 | 9.114 / 6.838 / **7.816** (−%14) | 13,10 M / 10,63 M / **11,92 M** (−%9) |
+| an_04 (aynı kamera) | 9.344 / 7.054 / **8.556** (−%8) | 11,09 M / 9,51 M / **11,03 M** (−%0,6) |
+| an_05 | 8.142 / 5.080 / **5.739** (−%30) | 10,97 M / 8,42 M / **9,08 M** (−%17) |
+| an_06 | 4.363 / 4.643 / **3.792** (−%13) | 8,07 M / 6,78 M / **5,40 M** (−%33) |
+
+Hepsi eski setin altında (an_04 ilkel en dar: −%0,6; ara turda x −6,3 ek merdiveni ve 3 tırmananıyla +%0,2 idi → kaldırıldı).
+
+### Testler (`testler/c0_son/`)
+Yeni ×2, `--eskisur` ×1: **3/3 AUTOTEST PASS `froze=true`, denetim 0**; `TASIMA0ENGEL OZET nokta=14 engelde=0`; `=yuru` (gerçek
+bot) yeni: takılma 0, düşme 0, teslim tamam, 2,5 sn / 7,2 m (eski `--eskisur` 3,6 sn / 8,2 m, takılma 0).
