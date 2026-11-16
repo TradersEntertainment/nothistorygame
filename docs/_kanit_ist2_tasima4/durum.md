@@ -25,8 +25,8 @@ Dal `wip/ist2-tasima4`, taban `wip/ist2-tasima3` 6f92f921.
 - Bölüm 0: 3 kare turu (merdiven ucu, kuleye dayalı merdiven, yaralılar); donma karesi bütçesi için uzak figüran gizleme.
 
 ## Süren
-- §1 Bölüm 20 düello süresi: ŞİMDİ ölçümü (×3 / ×2) sırada.
-- §3 ceset düşmesi: kök neden adayı `Duelist._fall_tick` (görünmez/basılamaz yüzeye çarpınca konmuyor, 4 sn düşüp gizleniyor: −128 m = ½·16·4²); sonda ile doğrulanacak.
+- Bölüm 20 `=kare` yeniden çekim (2.400 sn sınır) yalnız `an_14_dalga2_orta` için; gelirse `kare/c20_sonra/`'ya eklenir.
 
 ## Sıradaki
-- §1 kaldıraçlar (yaklaşma yolu, kademeli katılma), §2 Bölüm 0, §3 kalanlar, §4 22/22o.
+- Bölüm 22 / 22o taşıması (yapılmadı; rapor §4).
+- Rapor: `rapor.md` tamam (özet, ölçümler, kareler, bütçe, istekler).
