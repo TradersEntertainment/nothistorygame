@@ -459,7 +459,15 @@ func _audit(tur: String, ayrinti: String) -> void:
 		return
 	_audit_seen[tur] = true
 	var sc := p.get_tree().current_scene
-	print("HAREKETAUDIT %s sahne=%s p=%s %s" % [tur, sc.scene_file_path.get_file() if sc else "?", p.global_position.snapped(Vector3.ONE * 0.1), ayrinti])
+	var satir := "HAREKETAUDIT %s sahne=%s p=%s %s" % [tur, sc.scene_file_path.get_file() if sc else "?", p.global_position.snapped(Vector3.ONE * 0.1), ayrinti]
+	print(satir)
+	if GameState.autotest:
+		# tests/run_tests.sh bu satırı süzgecinde göstermiyor (istek raporda): paket koşusunda dosyaya da yazılır
+		var f := FileAccess.open("user://hareketaudit.log", FileAccess.READ_WRITE if FileAccess.file_exists("user://hareketaudit.log") else FileAccess.WRITE)
+		if f:
+			f.seek_end()
+			f.store_line("%s args=%s" % [satir, " ".join(OS.get_cmdline_user_args())])
+			f.close()
 
 
 func _zipla_denetle() -> void:
