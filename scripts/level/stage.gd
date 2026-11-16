@@ -337,6 +337,16 @@ static func grip_hold(who: Node3D, frame: Node3D, pts: Array, seconds := -1.0, l
 					c += frame.to_global(q) if frame else q
 				who.work_at = c / float(pts.size())
 			grip(who, frame, pts)
+			# Fizik-3: kişinin kendi _process'i bu karede çalışmadıysa (süreci kapalı uzak/iş figürü) ayak izdüşümü burada:
+			# önce bir önceki karenin yazdıkları geri alınır (üst üste binmesin), sonra izdüşüm. Çalıştıysa Rig.update yaptı.
+			if rg and Rig.Ayak.etkin and who.is_inside_tree():
+				if rg.ayak == null:
+					rg.ayak = Rig.Ayak.new(rg)
+				if rg.ayak._kare != Engine.get_process_frames():
+					rg.ayak.geri_al()
+					rg.ayak.uygula(who.get_process_delta_time(), false, true)
+					if rg.ayak.mod > 0:
+						rg.ayak_bilekleri()
 	if seconds < 0.0:
 		tw.set_loops()
 		tw.tween_method(apply, 0.0, 1.0, 1.0)
