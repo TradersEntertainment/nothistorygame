@@ -17,8 +17,10 @@
 | 1 | Bölüm 20 düellosu "çok kısa" | **TAMAM** | azaplar ovadan gelir (hendek dolgusu → teras → moloz yamacı → gedik ağzı → barikatın ucu), 2. dalgada önce iki azap, ötekiler kademeli. 2. dalga medyan **8,3 → 21,2 sn** [17,7–26,2] (eski 22,7); 1. dalga 4,1 → 11,4 (eski 9,0). 20o `=wide` (kök neden: kapalı barikatta savunanın giriş noktası bulunamayıp oyuncunun 3 m önünde doğuyordu) → bkz. §1 tablo. Can/hasar/`Duelist` temposu DEĞİŞMEDİ |
 | 3a | Cesetler boşluğa düşüyor | **TAMAM** | kök neden: yeni setin zemin/duvar gövdeleri `Unclip.visible_body` değil (görünen ağ pişmiş kardeş düğümde); `Duelist._fall_tick` konmak için bunu şart koşuyor → atılan düellocu molozun/peribolosun içinden 4 sn düşüyor (−128 m = ½·16·4²). Düşen ceset: ŞİMDİ 19/24 koşu (20), 13/20 (20o) → SONRA **0/27**, 20o bkz. §3 |
 | 3b | Çuvallar yassı disk | **TAMAM** | dolgun, ağzı iple bağlı, püsküllü kum çuvalı (kendi ağı, yumuşak normal), tuğla dizisi gibi alttakilerin üstüne oturur; havada yok |
-| 3c | Bölüm 21 an_03 SONRA karesi | bkz. §3c | |
-| 2 | Bölüm 0 açılışı destanı | bkz. §2 | |
+| 3c | Bölüm 21 an_03 SONRA karesi | **TAMAM** | kap yeri açık, depo solda; iyi |
+| 2 | Bölüm 0 açılışı destanı | **TAMAM** (açılış iyi; eskinin sur yolu kalabalığı yeni setin yüksek iç korkuluğu yüzünden görünmüyor) | ek hücum merdivenleri (uçları kadrajda), yaralı/koşan şeritleri, sur yolu meşaleleri, duman, kuleye dayalı merdiven; donma karesinde yaralı, merdiven, tek tek kalas; bütün anlar eski setin çizim ve ilkel sayısının altında; yeni ×2 + eski ×1 PASS, `=yuru` takılma 0 |
+| 1-kare | 2. dalga kareleri | **KISMEN** | başlangıç karesi var (kötü kadraj), orta kare alınamadı |
+| — | Sözleşme | **TAMAM** | `SURSOZLESME PASS kalem=13 kesim=8` · `SUROYUN nokta=519 havada=0 gomuk=0 katida=0` · `WALKTHRU OZET yol=7 tamam=7 takilma=0 dusme=0` (`testler/soz/`) |
 | 4 | Bölüm 22 / 22o taşıması | **YAPILMADI** | süre §1–3'e harcandı; bkz. "Sonraki taşıyana" |
 
 ## 3a. Cesetler boşluğa düşüyor — kök neden ve düzeltme
@@ -52,6 +54,11 @@
 |---|---|---|---|
 | Bölüm 20 ŞİMDİ (×3, 9 çeşit) | 24 | **19** | −128,9 |
 | Bölüm 20 SONRA (×3, 9 çeşit) | 27 | **0** | −0,4 |
+| 20o ŞİMDİ (×2, 10 çeşit) | 20 | **13** | −129,5 |
+| 20o SONRA (×2, 10 çeşit) + `=wide` son ×6 | 26 | **0** | −1,1 |
+| eski set `--eskisur` (20 ×4, 20o ×2) | 6 | 0 | −1,2 |
+
+(Eşik −2 m; −1,1 m = moloz yamacına uzanmış ceset, sayaç zemini moloz profilinin pürüzsüz hâlinden okuyor.)
 
 ## 1. Bölüm 20 düellosu "çok kısa olmuş" (sahibinin kararı)
 
@@ -141,7 +148,27 @@ Değişiklikler varsayılanda aynı dalları çalıştırır (`stagger` 0, `via`
 yalnız `SurSetSahne`'li sahnede). Bu sınıfları kullanan bölümler ×1: 21, 21o, 22o, 25, 26, 26o, 29, 30, 30o, 32o, 36b, 37o,
 41o, 42b — **14/14 AUTOTEST PASS, denetim 0**. (0, 20, 20o yukarıda.)
 
-### Kareler (oyuncu kamerası) — 2. dalga başlangıcı ve ortası
+### Kareler (oyuncu kamerası) — 2. dalga başlangıcı ve ortası (`=kare`, `kare/c20_sonra/`)
+
+| an | tek cümle | hüküm |
+|---|---|---|
+| `an_12_duello` (1. dalga) | gedik önünde düello; arkada fıçılar, tuğla dizisi çuvallar, kazık çiti | kabul |
+| `an_13_dalga2_baslangic` | kameranın dibinde kalas taşıyan bir işçi ve bir dost asker kadrajı kesiyor; arkada fıçılar, çuvallar, kazıklar, bir azap; o anda gelen azaplar dolgu/yamaçta, aşama 4 barikatının ardında kaldığı için peribolostan görünmüyor | **kötü kadraj** (oynanışta oyuncu dönüp bakabilir; =kare'nin sabit bakışı kalabalığın içinde) |
+| `an_14_dalga2_orta` | çekilemedi: yazılımsal GL'de `=kare` 1.400 sn sınırına takıldı (makine bir kez yeniden başladı, ilk çekim yarıda kaldı); 2.400 sn ile yeniden çekim rapor yazılırken sürüyordu | **YAPILMADI** (bkz. durum.md) |
+
+### Bütçe (çuvallar; Bölüm 20 `=butce --butce_onarim=7`, aşama 3, aynı kameralar, 10 kare ortalaması)
+ÖNCE = tasima3 SONRA (`docs/_kanit_ist2_tasima3/testler/butce/sonra_onarim7.ham`; çuval dışında set kodu aynı), SONRA
+`testler/butce/sonra_onarim7.log`. Düello yolu çizim bütçesine dokunmaz.
+
+| bakış | çizim önce → sonra | ilkel önce → sonra |
+|---|---|---|
+| peribolos | 3.546 → 3.547 (+%0,0) | 6,154 M → 6,182 M (+%0,5) |
+| gedik ağzı | 4.350 → 4.357 (+%0,2) | 8,151 M → 8,275 M (+%1,5) |
+| sur yolu | 4.238 → 4.270 (+%0,8) | 5,169 M → 5,242 M (+%1,4) |
+| hava | 9.907 → 9.963 (+%0,6) | 8,203 M → 8,270 M (+%0,8) |
+
+Çuvallar aşamanın pişmiş ağına katıldığı için çizim çağrısı artışı çuvaldan değil (gedik ağzında +7; kalas yığını ve
+ölçüm gürültüsü); ilkel artışı ≈ 120 bin üçgen (≈50 çuval × ~220 + bağlar).
 
 ## 3c. Bölüm 21 an_03 (kap yeri) SONRA karesi — `kare/c21_sonra/an_03_lagim_kap.jpg`
 Tek cümle: lağımın üstündeki kap yeri geniş ve boş toprak; depo yığınları (toprak yığını, kısa fıçılar, tek tek kalaslar) 7 m
@@ -201,3 +228,54 @@ Hepsi eski setin altında (an_04 ilkel en dar: −%0,6; ara turda x −6,3 ek me
 ### Testler (`testler/c0_son/`)
 Yeni ×2, `--eskisur` ×1: **3/3 AUTOTEST PASS `froze=true`, denetim 0**; `TASIMA0ENGEL OZET nokta=14 engelde=0`; `=yuru` (gerçek
 bot) yeni: takılma 0, düşme 0, teslim tamam, 2,5 sn / 7,2 m (eski `--eskisur` 3,6 sn / 8,2 m, takılma 0).
+
+## 4. Bölüm 22 / 22o taşıması — YAPILMADI
+Süre §1–3'e (sahibinin kararı zorunluydu) ve makinenin bir kez yeniden başlamasıyla yarıda kalan ölçümlerin yinelenmesine gitti.
+22/22o'nun sabit noktaları (tasima belgesi §4.3: CHUTE, BARRELS, TOWER (−3;0;40), PILE (9;0;56), WATER (−11;0;52), HIDE_PILE)
+taranmadı.
+
+## Değişen dosyalar
+- `scripts/chapter20.gd`: `_yaklasma` (yalnız yeni set), `YAKLASMA_*` sabitleri; `=kare`'ye 2. dalga kareleri; autotest ceset sayacı.
+- `scripts/chapter20o.gd`: `_savunan_yolu` (yalnız yeni set, barikat aşama ≥ 3), `SAVUNAN_ARA_*`; autotest ceset sayacı.
+- `scripts/chapter0.gd`: ek merdivenler, Garrison boşlukları, yaralı şeritleri, meşale, duman, dekor merdiven, donma bütçesi (yalnız yeni set).
+- `scripts/combat/wave_runner.gd`: `stagger`, giriş başına `via` (varsayılan aynı). `scripts/combat/duelist.gd`: `_fall_solid`
+  (`dusus_her_kati` metası yoksa aynı). `scripts/level/assault.gd`: `ek_merdiven` (varsayılan boş).
+- `scripts/world/ist/sur_set.gd`: `merdiven_dayama`. `sur_set_sahne.gd`: `dusus_her_kati` metası, `CesetSayac` (autotest,
+  `--sonda4`), kalas yığını. `sur_oyun_parca.gd`: yalnız `GedikOnarim` (çuvallar).
+- Testler (yalnız yeni dosya): `tests/_ist/tasima4_kesit.gd`, `tasima4_zemin.gd/.tscn`, `tasima4_kadraj.gd`.
+
+## run_tests.sh isteği
+Paket değişmedi. Öneri: Bölüm 20/20o çeşitlerinin çıktısında `CESET4 … dusen=0` aranması (ceset düşüşü yeniden gelirse
+yakalansın); `--chapter=0 --autotest=yuru` (tasima3'ün isteği hâlâ geçerli).
+
+## A'ya istek (görünüş dosyaları)
+- **Sur gövdeleri "görünmez" sayılıyor:** yeni setin zemin/duvar çarpışma gövdelerinin (ör. `Toprak_GedikMolozRampa_Carp`,
+  `Toprak_DolguSet_Carp`, `SurDibiEtekGovde`, peribolos ve sur gövdeleri) ne ağ çocuğu ne `wall`/`ground` metası var
+  (`testler/sonda/zemin_once.txt`). Bu dalda `Duelist` düşüşü sahne metasıyla çözüldü; ama `Unclip.visible_body`'ye dayanan her
+  şey (görüş denetimi `VISAUDIT hidden`, `Melee.auto_entry`'nin "arada duvar yok" ışını, `_see_giust`) yeni sette sur
+  gövdelerini görmüyor. Kalıcı çözüm A'nın gövde kurucusunda `wall`/`ground` metası.
+- **Dış surun iç korkuluğu yüksek:** peribolostan sur yolundaki savunucular görünmüyor (Bölüm 0 açılışı, kare
+  `kare/c0_sonra/an_01_acilis.jpg`; tasima3'te Bölüm 25'te de). Eski setteki "sur üstünde kalabalık" ancak korkuluk alçalırsa döner.
+
+## Sonraki taşıyana
+1. **Düşüş zemini:** yeni sette düşen/atılan her şey `SurSetSahne`'nin `dusus_her_kati` metasına güveniyor; başka bir düşen
+   nesne yazarsan (`_fall_tick` benzeri) `Unclip.visible_body` yerine `Duelist._fall_solid` mantığını kullan.
+2. **Düello girişi:** `WaveRunner`'a `from` + giriş başına `via` + `stagger` + `group` ver; `Melee.auto_entry` kapalı barikatta
+   giriş bulamayınca rakibi oyuncunun dibinde doğurur (20o kökü). `--sonda4` (bölümde `SurSetSahne.ceset_sayac`) ile saniyede
+   bir yerleri gör.
+3. **Kadraj sondası:** `tests/_ist/tasima4_kadraj.gd -- --kamera=x,y,z --bak=x,y,z` bir noktanın ekranda nereye düştüğünü
+   çizmeden söyler (Godot'da kamera +z'ye bakarken ekranın sağı −x'tir; elle hesap yanıltıyor).
+4. **Yazılımsal GL:** Bölüm 20 `=kare` tam akış ≥ 25 dk; `KT=2400 ~/is/kare.sh …` (`testler/kare.sh`).
+5. **Düello süresinin oynaklığı:** `=wide` 1. dalga ×2–4'lük turlarda 7,5–13,9 arasında oynadı; ölçüm en az ×6.
+
+## Hâlâ kötü olanlar (dürüst)
+- Bölüm 20 2. dalga başlangıç karesi kötü kadraj; orta kare alınamadı. Aşama 4'te azapların ovadan gelişi peribolostan
+  görünmüyor (barikat ve sur yolu tahtası kapatıyor); yaklaşma sur yolundan ya da gedik ağzından bakınca görünür.
+- 20o `=wide` 2. dalga 12,9 sn: tabandan (11,1) uzun ama eskiden (22,3) kısa (kaldıraç a/b tükendi; c/can'a dokunulmadı).
+- Bölüm 20 1. dalga 11,4 sn: eskiden (9,0) biraz uzun (yaklaşma yolu); `lose` çeşidinde 18,4.
+- Bölüm 0 açılışında sur yolu kalabalığı görünmüyor (A'nın korkuluğu); donma karesi eskisinden hâlâ seyrek; `an_04` sabit bakışta
+  kask kameranın dibinde (tasima3'ten beri).
+- Bölüm 0'da ön planda yerde yatan yaralılar (kalas yığınının yanı) açılış karesinin sol altına giriyor: kasıtlı ama kalabalık.
+- Bir dost asker 2. dalgada gediğin dış yanından terasa (y −3,1) iniyor (sonda `c20_def_s1`); ceset değil, düşme değil, ama
+  dövüşten çıkıyor — araştırılmadı.
+- Bölüm 22/22o yapılmadı.
