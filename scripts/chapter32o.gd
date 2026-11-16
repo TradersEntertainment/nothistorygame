@@ -308,6 +308,29 @@ var _rung_root: Node3D
 var _back_bar: Node3D      # ovanın arka sınırı: topun güllesinin yolunda, batarya fazında kalkar
 
 
+## Çalı demeti (fascine): ekseni boyunca bağlanmış dokuz ince dal (boyları ve tonları farklı, uçları düzensiz), iki ip bağı.
+## Kök düğüm pos'ta, rot (derece) ile döner; dalların ekseni kökün y'si (Props.cyl gibi). Kutu değil.
+func _demet(parent: Node3D, pos: Vector3, rot: Vector3, r: float, boy: float, col: Color) -> Node3D:
+	var n := Node3D.new()
+	parent.add_child(n)
+	n.position = pos
+	n.rotation_degrees = rot
+	var rr := RandomNumberGenerator.new()
+	rr.seed = 3207 + _demet_n
+	_demet_n += 1
+	for i in 9:
+		var a := TAU * float(i) / 8.0
+		var o := Vector2.ZERO if i == 8 else Vector2(cos(a), sin(a)) * r * 0.6
+		var L := boy * rr.randf_range(0.9, 1.06)
+		Props.cyl(n, r * 0.34, L, Vector3(o.x, rr.randf_range(-0.06, 0.06) * boy, o.y), col.darkened(rr.randf_range(0.0, 0.3)).lightened(rr.randf_range(0.0, 0.08)),
+			Vector3(rr.randf_range(-3.0, 3.0), 0, rr.randf_range(-3.0, 3.0)), 6, r * rr.randf_range(0.22, 0.3))
+	for y: float in [-0.3, 0.3]:
+		Props.cyl(n, r * 1.02, 0.06, Vector3(0, y * boy, 0), Color("8a7a50"), Vector3.ZERO, 10)
+	return n
+
+var _demet_n := 0
+
+
 func _mantlet(at: Vector3) -> Node3D:
 	var m := Node3D.new()
 	m.position = at
@@ -351,7 +374,7 @@ func _build_people() -> void:
 		var x: float = [-22.0, -17.0, 17.0, 22.0][i]
 		c.position = Vector3(x, 0, 52.0 - i * 3.0) + O
 		add_child(c)
-		var b := Props.cyl(c, 0.28, 1.5, Vector3(0, 1.45, -0.1), Color("6a5636"), Vector3(0, 90, 90), 6)
+		var b := _demet(c, Vector3(0, 1.45, -0.1), Vector3(0, 90, 90), 0.28, 1.5, Color("6a5636"))
 		_carriers.append([c, b, Vector3(x, O.y, EDGE_Z + 1.2)])
 	for k in 2:
 		var ps := Soldier.new(Color("8a6a4a"), "push", "turban" if k == 0 else "bork")
@@ -624,9 +647,9 @@ func _pick(kind: String) -> void:
 	match kind:
 		"bundle":
 			_carry.position = Vector3(0.45, -0.55, -0.9)
-			Props.cyl(_carry, 0.3, 1.6, Vector3.ZERO, Color("6a5636"), Vector3(0, 70, 90), 6)
-			for x: float in [-0.4, 0.4]:
-				Props.cyl(_carry, 0.31, 0.06, Vector3(x * 0.34, 0, x), Color("8a7a50"), Vector3(0, 70, 90), 6)
+			# çalı demeti: bağlı ince dallar (tek altı köşeli silindir kameranın dibinde iri, kutu gibi bir levha okunuyordu:
+			# TAŞIMA-7, 32o an_02); iki ip bağı
+			_demet(_carry, Vector3.ZERO, Vector3(0, 70, 90), 0.3, 1.6, Color("6a5636"))
 			player.speed_mult = 0.7
 			Audio.sfx("cloth", -8.0, 0.8)
 		"earth":
@@ -670,7 +693,7 @@ func _throw_in(kind: String) -> void:
 	var to := _hendek_p(x + randf_range(-1.0, 1.0), randf_range(29.0, 34.0), 0.3 + layer * 0.35)
 	var n: Node3D
 	if kind == "bundle":
-		n = Props.cyl(self, 0.32, 1.8, from, Color("6a5636").darkened(randf_range(0.0, 0.25)), Vector3(0, randf_range(-30, 30), 90), 6)
+		n = _demet(self, from, Vector3(0, randf_range(-30, 30), 90), 0.32, 1.8, Color("6a5636").darkened(randf_range(0.0, 0.25)))
 	else:
 		n = Props.ball(self, 0.7, from, Color("6a5236"), Vector3(1.4, 0.35, 1.2), 7)
 	var tw := n.create_tween()
@@ -856,7 +879,7 @@ func _update_carriers(delta: float) -> void:
 		if d.length() < 0.3:
 			if bundle.visible:
 				bundle.visible = false
-				var n := Props.cyl(self, 0.3, 1.6, s.position + Vector3(0, 1.4, -0.6), Color("6a5636"), Vector3(0, randf_range(-30, 30), 90), 6)
+				var n := _demet(self, s.position + Vector3(0, 1.4, -0.6), Vector3(0, randf_range(-30, 30), 90), 0.3, 1.6, Color("6a5636"))
 				var to := _hendek_p(s.position.x + randf_range(-1, 1), randf_range(29.0, 34.0), 0.3)
 				var tw := n.create_tween()
 				tw.tween_property(n, "position", to, 0.7).set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_IN)

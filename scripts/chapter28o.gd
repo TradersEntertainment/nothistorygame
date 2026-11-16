@@ -157,6 +157,8 @@ func _ready() -> void:
 	if GameState.shots_dir != "":
 		_run_shots()
 	else:
+		if _yuru_on():
+			_yuru_surucu()
 		_run()
 
 
@@ -332,7 +334,7 @@ func _stakes_phase() -> void:
 	_update_objective()
 	while stakes < STAKES:
 		await get_tree().process_frame
-		if GameState.autotest and not _hammering:      # bot tokmak inerken yeni kazık almaz
+		if GameState.autotest and not _hammering and not _yuru_on():      # bot tokmak inerken yeni kazık almaz
 			if carrying == "":
 				_on_interact("stakes")
 			else:
@@ -347,6 +349,9 @@ func _stakes_phase() -> void:
 	hud.set_prompt("")
 	await hud.say("SPK_URBAN", "D28O_U_STAKES")
 	await hud.say("SPK_TOLGA", "D28O_T_STAKES")
+	if _yuru_on() and not _kare_mi():
+		_yuru_bitir()
+		await get_tree().create_timer(60.0).timeout
 
 
 ## 2. Şahi'yi çekmek (11 Nisan)
@@ -586,11 +591,11 @@ func _first_shot() -> void:
 	hit = _acc >= 0.5
 	var at := LandWalls.BREACH + Vector3(randf_range(-1.5, 1.5), 3.5, 1.2) if hit else LandWalls.BREACH + Vector3(randf_range(-10.0, 10.0), 0.8, 7.0)
 	if not sur.eski_mi:
-		# yeni: isabet dış surun ova yüzünde (eski: yüzün 0,2 m önü, 3,5 m yükseklik); ıska surun önündeki toprağa, eski gibi
-		# yüzün 6 m önü (terasa) ve zeminin 0,8 m üstü
+		# yeni: isabet dış surun ova yüzünde (eski: yüzün 0,2 m önü, 3,5 m yükseklik); ıska hendeğe (D28O_U_MISS "Hendek."):
+		# eski yer (BREACH z + 7 = eski hendeğin yakın yakasından 2 m, oranı 0,125) yeni hendekte aynı oranda, dibin 0,8 m üstü
 		var hx := randf_range(-1.5, 1.5) if hit else randf_range(-10.0, 10.0)
-		var hz := sur.dis_sur_z1() + (0.2 if hit else 6.0)
-		at = Vector3(hx, 3.5 if hit else sur.zemin_y(hx, hz) + 0.8, hz)
+		var hz := sur.dis_sur_z1() + 0.2 if hit else sur.hendek_z((LandWalls.BREACH.z + 7.0 - 20.0) / 16.0)
+		at = Vector3(hx, 3.5 if hit else sur.hendek_dip_y() + 0.8, hz)
 	if drill.physical and drill.last_impact != Vector3.INF:
 		at = drill.last_impact
 	walls.impact(at)
@@ -1299,3 +1304,186 @@ func _run_shots() -> void:
 	await get_tree().create_timer(0.6, false).timeout
 	await _shot_png("c28o_cover.png")
 	get_tree().quit()
+
+
+# ================================================================ yürüyüş kanıtı (=yuru) ve kareler (=kare) — TAŞIMA-7
+
+## Gerçek Player botu kazık işini gerçek tuşlarla yapar (ileri tuşu, E): açılış yeri → kazık yığını (E) → sıradaki çukur (E;
+## tokmak bölümün kendi animasyonu) ×4. Çekiş (ritim) ve atış ölçülmez (bölümün kendi autotest botu). Satırlar:
+## TASIMA28OYURU bacak=… ; son: TASIMA28OYURU OZET … ; mesafe: TASIMA28OMESAFE …
+## =kare: aynı yol (bacaklar ışınlanır), çekiş ve atış bölümün autotest akışıyla; 6 an (--dialogshots; TASIMA28OKARE).
+var _yz := {"bacak": 0, "takilma": 0, "dusme": 0, "tus_yok": 0, "sure": 0.0, "yol": 0.0}
+var _kare_n := 0
+var _kare_cekildi := {}
+
+
+func _yuru_on() -> bool:
+	return GameState.autotest and GameState.autotest_variant in ["yuru", "kare"]
+
+
+func _kare_mi() -> bool:
+	return GameState.autotest_variant == "kare"
+
+
+func _yuru_surucu() -> void:
+	await get_tree().process_frame
+	Engine.time_scale = 1.0
+	var set_ad := "eski" if sur.eski_mi else "yeni"
+	var pile := Vector3(18.0, 0, 120.5) + O
+	pile.y = gy(pile.x, pile.z)
+	var bas := Vector3(16.0, 0, 123.0) + O
+	print("TASIMA28OYURU set=%s O=%s haul_z=%.1f yigin=%s hedef=%s ova_y=%.2f" % [set_ad, O, HAUL_Z, pile, _hedef(), O.y])
+	for m: Array in [["baslangic_yigin", bas, pile], ["yigin_cukur0", pile, _holes[0].global_position], ["yigin_cukur3", pile, _holes[3].global_position],
+			["cukur_hedef_sur", _holes[0].global_position, _hedef()], ["top_hedef_sur", gun.global_position, _hedef()],
+			["kizak_yolu", Vector3(HAUL_FROM, 0, HAUL_Z), Vector3(HAUL_TO, 0, HAUL_Z)], ["kizak_top", Vector3(HAUL_TO, 0, HAUL_Z), gun.global_position]]:
+		var a: Vector3 = m[1]
+		var b: Vector3 = m[2]
+		print("TASIMA28OMESAFE set=%s %s=%.1f dy=%.1f" % [set_ad, m[0], Vector2(a.x - b.x, a.z - b.z).length(), b.y - a.y])
+	while phase != "stakes" or player.frozen:
+		await get_tree().process_frame
+	await _kare_bir("acilis", _hedef() + Vector3(0, 4.0, 0))
+	while stakes < STAKES:
+		if player.frozen or _hammering:
+			await get_tree().process_frame
+			continue
+		if carrying == "":
+			await _yb("yigin", pile + Vector3(0, 0, -1.6), pile + Vector3(0, 0.5, 0))
+			await _tus()
+			if carrying == "":
+				_yz["tus_yok"] += 1
+				print("TASIMA28OYURU tus_yok yer=yigin odak=%s" % player.focus_id)
+				_on_interact("stakes")
+			await _kare_bir("kazik_yigini", _hedef() + Vector3(0, 4.0, 0))
+		else:
+			var h: Node3D = _holes[stakes]
+			for k in _holes.size():
+				if not _holes[k].has_meta("done"):
+					h = _holes[k]
+					break
+			await _yb("cukur", h.global_position + Vector3(0, 0, 1.3), h.global_position + Vector3(0, 0.3, 0))
+			var once := stakes
+			await _tus()
+			if stakes == once:
+				_yz["tus_yok"] += 1
+				print("TASIMA28OYURU tus_yok yer=cukur odak=%s" % player.focus_id)
+				_on_interact("hole_%d" % _holes.find(h))
+			await get_tree().process_frame
+			await _kare_bir("kazik", _hedef() + Vector3(0, 4.0, 0))
+	if not _kare_mi():
+		return
+	# =kare: çekiş ve atış bölümün kendi autotest akışıyla; anlar
+	while phase != "haul" or player.frozen:
+		await get_tree().process_frame
+	await get_tree().create_timer(1.0, false).timeout
+	await _kare_bir("kizak", sled.global_position + Vector3(4.0, 1.4, 0))
+	while haul_x < (HAUL_FROM + HAUL_TO) * 0.5:
+		await get_tree().process_frame
+	var ps := sled.global_position + Vector3(6.0, 0, 9.0)
+	player.global_position = Vector3(ps.x, gy(ps.x, ps.z) + 0.05, ps.z)
+	await _kare_bir("kizak_yarim", _hedef() + Vector3(0, 2.0, 0))
+	while phase != "shot":
+		await get_tree().process_frame
+	while not drill.active:
+		await get_tree().process_frame
+	await _kare_bir("top", _hedef() + Vector3(0, 4.0, 0))
+	while cam == null:
+		await get_tree().process_frame
+	await get_tree().create_timer(0.6, false).timeout
+	await _kare_bir("ilk_toz", _hedef() + Vector3(0, 3.0, 0))
+	print("TASIMA28OKARE BITTI")
+
+
+func _yuru_bitir() -> void:
+	print("TASIMA28OYURU OZET set=%s bacak=%d takilma=%d dusme=%d tus_yok=%d sure=%.1f yol=%.1f kazik=%d/%d" % [
+		"eski" if sur.eski_mi else "yeni", _yz["bacak"], _yz["takilma"], _yz["dusme"], _yz["tus_yok"], _yz["sure"], _yz["yol"], stakes, STAKES])
+	get_tree().quit(0)
+
+
+## Gerçek etkileşim tuşu (bas, 3 kare, bırak)
+func _tus() -> void:
+	var ev := InputEventAction.new()
+	ev.action = "interact"
+	ev.pressed = true
+	Input.parse_input_event(ev)
+	for k in 3:
+		await get_tree().physics_frame
+	var ev2 := InputEventAction.new()
+	ev2.action = "interact"
+	ev2.pressed = false
+	Input.parse_input_event(ev2)
+	for k in 6:
+		await get_tree().physics_frame
+
+
+## Tek bacak: hedefe yürü (gerçek ileri tuşu), varınca bak. =kare: ışınlanır.
+func _yb(ad: String, to: Vector3, bak: Vector3) -> void:
+	var t := 0.0
+	var yol := 0.0
+	var son := player.global_position
+	var takil := 0
+	var dus := 0
+	var best := 1e9
+	var iz := 0.0
+	if _kare_mi():
+		player.global_position = Vector3(to.x, gy(to.x, to.z) + 0.05, to.z)
+		player.velocity = Vector3.ZERO
+	else:
+		while t < 40.0:
+			player.face(Vector3(to.x, player.global_position.y + 1.4, to.z))
+			Input.action_press("move_forward")
+			await get_tree().physics_frame
+			t += get_physics_process_delta_time()
+			var p := player.global_position
+			yol += Vector2(p.x - son.x, p.z - son.z).length()
+			son = p
+			if p.y < gy(p.x, p.z) - 1.0:
+				dus += 1
+			var dd := Vector2(p.x - to.x, p.z - to.z).length()
+			if dd < best - 0.2:
+				best = dd
+				iz = t
+			if dd < 0.35:
+				break
+			if t - iz > 6.0:
+				takil += 1
+				break
+		Input.action_release("move_forward")
+	for k in 3:
+		await get_tree().physics_frame
+	player.face(bak)
+	for k in 3:
+		await get_tree().physics_frame
+	_yz["bacak"] += 1
+	_yz["takilma"] += takil
+	_yz["dusme"] += mini(dus, 1)
+	_yz["sure"] += t
+	_yz["yol"] += yol
+	print("TASIMA28OYURU bacak=%s sure=%.1f yol=%.1f takilma=%d dusme=%d son=%s odak=%s" % [ad, t, yol, takil, dus,
+		player.global_position.snapped(Vector3.ONE * 0.1), player.focus_id])
+
+
+func _kare_bir(ad: String, bak: Vector3) -> void:
+	if not _kare_mi() or _kare_cekildi.has(ad):
+		return
+	_kare_cekildi[ad] = true
+	var dir := GameState.dialog_shots_dir if GameState.dialog_shots_dir != "" else GameState.shots_dir
+	if dir == "":
+		return
+	DirAccess.make_dir_recursive_absolute(dir)
+	preload("res://tests/_ist/tasima7_pik.gd").uygula(self)
+	player.face(bak)
+	for k in 20:
+		await get_tree().process_frame
+	player.face(bak)
+	preload("res://tests/_ist/tasima7_pik.gd").yaz(self, ad)
+	var dc := 0.0
+	var pr := 0.0
+	for k in 4:
+		await RenderingServer.frame_post_draw
+		dc += RenderingServer.get_rendering_info(RenderingServer.RENDERING_INFO_TOTAL_DRAW_CALLS_IN_FRAME)
+		pr += RenderingServer.get_rendering_info(RenderingServer.RENDERING_INFO_TOTAL_PRIMITIVES_IN_FRAME)
+	_kare_n += 1
+	var f := dir.path_join("an_%02d_%s.jpg" % [_kare_n, ad])
+	get_viewport().get_texture().get_image().save_jpg(f, 0.85)
+	print("TASIMA28OKARE %s oyuncu=%s cizim=%.0f ilkel=%.0f sur=%s" % [f.get_file(), player.global_position.snapped(Vector3.ONE * 0.1),
+		dc / 4.0, pr / 4.0, "eski" if sur.eski_mi else "yeni"])
