@@ -1,0 +1,5 @@
+YIGILMAAUDIT fizik scene=Chapter26o who=Person/@Node3D@62168(@Node3D@62169) at=(9.5, 8.0, 14.7) govde=+0.22
+YIGILMAAUDIT fizik scene=Chapter26o who=Person/@Node3D@66708(@Node3D@66709) at=(14.1, 8.0, 14.4) govde=+0.20 el_l=+0.47
+AYAKAUDIT yakin scene=chapter26o.tscn who=Soldier/@Node3D@71208(Chapter26o) ayak=L fark=-0.28 d=13.3 at=(-5.7, 0.0, 11.2) durum=dur act= ik=w1.0/m1/pel+0.00/g1/gy-0.00/zemin-0.00
+AYAKAUDIT yakin scene=chapter26o.tscn who=Soldier/@Node3D@72482(Chapter26o) ayak=R fark=-0.27 d=11.0 at=(5.7, 0.0, 11.1) durum=dur act= ik=w1.0/m1/pel+0.00/g1/gy-0.00/zemin-0.00
+AUTOTEST PASS chapter=26o variant= outcome=26.1 water=3 ladders=3 gun=3/4 stones=1/1 gunner=5/5 oil=1/1 turgut=no

@@ -130,7 +130,20 @@ kare başına ~0,5–1 sn aralıklı ve bot konuşmaları hızla geçtiğinden k
 (Performance.TIME_PROCESS) oranı; otomatik testte koşudan koşuya ±%20 oynayan işlem süresi farkı gürültü (önceki turlar
 gibi). ÖNCE (`--kumas=0`) ve SONRA aynı anda koşuldu.
 
-BUTCE_TABLO
+| Koşu | ÖNCE işlem ms/kare (ortanca) | SONRA işlem ms/kare | kumaş µs/kare | kumaşlı etkin kişi | kumaşın payı (ortanca; en kötü pencere) |
+|---|---|---|---|---|---|
+| 20 | 182,1 | 148,6 | 555 | 11,3 | %0,70 (%0,70) |
+| 20 (ilk ölçüm, ayrı koşu) | — | 99,6 | 494 | 8,9 | %0,50 |
+| 26 =hold | 86,4 | 97,4 | 606 | 14,4 | %0,52 (%1,15) |
+| 26 =hold (ilk ölçüm) | — | 131,6 | 591 | 17,1 | %0,45 |
+| 30o | 28,2 | 60,1 | 242 | 7,3 | %0,38 (%0,76) |
+| 24 (şehir), 24o (ordugâh) | — | — | — | — | geçerli pencere yok: 24'ün otomatik testi yüklemeden hemen sonra bitiyor (tek pencere, yükleme kareleri); 24o koşusu ölçüm satırının kumaşsız güncellemede de basılması düzeltilmeden önceydi |
+| **Deney sahnesi, en kötü durum** (60 kişi + 9 denek, yarısı kaftanlı, yarısı yürür, hepsi kameranın 25 m içinde; kare sınırı yok) | 16,7 (`--kumas=0`) | 17,6 (tam) · 17,8 (`--kumas-donuk`: parçalar kumaşlı, güncelleme yok) | 476 | 16,6 | **%2,7** |
+
+Bölüm koşularında ÖNCE/SONRA işlem süresi farkı iki yönde ve büyük (−%18 … +%113): aynı anda koşan süreçlerin ve yükleme
+pencerelerinin gürültüsü (önceki turlardaki gibi); ölçü kumaşın kendi payı: **%0,4–0,7** (en kötü pencere %1,15).
+Deney sahnesinin en kötü durumunda pay %2,7; ÖNCE→SONRA farkı (+0,9 ms, +%6) güncellemesiz kipte de aynı (+1,1 ms):
+fark gürültü düzeyinde, kumaşın kendisi ≈ 0,5 ms. Hedef (≤ %5) tutuyor. Günlükler: [`gunluk/b_*`](gunluk/).
 
 Kişi başı ~30–45 µs/kare (GDScript; dönüşümler + uniform yazımı). Uzakta (> 26 m) ve görüş dışında **donar** (yazım yok,
 dinlenme duruşu); 12 m'den uzakta iki karede bir. Çizim çağrısı ve üçgen sayısı aynı (kumaş var olan pişmiş ağda;
@@ -143,7 +156,11 @@ etek/pelerin parçaları 1 halka yerine 5–11 halka: kişi başı +~300 üçgen
 - **`Stage.grip_hold` tutuş duruşunda ayaklar**: kök neden — tutuşta iskelet kilitli (`Rig.lock > 0`), `Rig.update` ayak
   IK'yı her karede kapatıyordu (`_kapat`: ağırlık 0); bu turun ilk sürümünde tween'den çağrılan izdüşüm %20 ağırlıkta
   kalıyordu (burun −0,06/−0,07). Düzeltme: tutuştaki kişide `Rig.update` IK'yı izdüşüm kipinde çalıştırır, tutuşun öne
-  eğilmesi IK'dan önce uygulanır. TUTUS_OLCUM
+  eğilmesi IK'dan önce uygulanır. Ölçüm (26 =hold, varsayılan): taban AYAKAUDIT yakın 1 (yürüyen kişi, tutuşla ilgisiz), YIGILMAAUDIT 5; SONRA 1 (balta
+  işçisi, burun −0,06: eşikte), YIGILMAAUDIT 2; =hold_box 1. Önceki turun raporundaki tutuş satırları (burun −0,11…−0,13) bu
+  turun koşularında hiçbir sürümde görülmedi (kameranın baktığı yer koşudan koşuya değişiyor) — iyileşmenin denetim
+  kanıtı **zayıf**. Ara sürümde (IK yalnız Rig.update'te) süreci kapalı figürlerde IK hiç kurulmadı (`ik=yok`, 6 satır):
+  son sürümde süreç kapalıysa izdüşüm tween'de (önce geri alınarak) yapılıyor.
 - **YIGILMAAUDIT 15 → 0, taşta başlayan kök, Assault okla vurulanlar**: **YAPILMADI** (süre madde 1'in ölçümüne ve kumaşa
   gitti). Bu turun koşularındaki YIGILMAAUDIT sayıları tabanla aynı düzeyde (37o 0–3, 26 hold 3–7).
 
@@ -151,7 +168,46 @@ etek/pelerin parçaları 1 halka yerine 5–11 halka: kişi başı +~300 üçgen
 
 ## Ortak dosyalar (varsayılan çeşit, tam süzgeç)
 
-ORTAK_TABLO
+| Bölüm | sonuç | VISAUDIT | öteki | AYAKAUDIT yakın | YIGILMAAUDIT |
+|---|---|---|---|---|---|
+| 0 | PASS | 0 | 0 | 0 | 0 |
+| 1 | PASS | 0 | 0 | 0 | 0 |
+| 2 | PASS | 0 | 0 | 0 | 0 |
+| 8y | PASS | 0 | 0 | 0 | 0 |
+| 10h | PASS | 0 | 0 | 0 | 0 |
+| 12b | PASS | 0 | 0 | 0 | 0 |
+| 20 | PASS | 0 | 0 | 0 | 0 |
+| 20 =tape | PASS | 0 | 0 | 0 | 2 |
+| 20 =late | PASS | 0 | 0 | 0 | 0 |
+| 20 =hit | PASS | 0 | 0 | 0 | 0 |
+| 20 =lose | PASS | 0 | 0 | 0 | 0 |
+| 20 =niko_idle | PASS | 0 | 0 | 0 | 0 |
+| 20 =idle | PASS | 0 | 0 | 0 | 0 |
+| 20o | PASS | 0 | 0 | 0 | 1 |
+| 22o | PASS | 0 | 0 | 0 | 0 |
+| 24 | PASS | 0 | 0 | 0 | 0 |
+| 24o | PASS | 0 | 0 | 0 | 0 |
+| 26 =hold | PASS | 0 | 0 | 1 | 2 |
+| 26 =hold_box | PASS | 0 | 0 | 1 | 3 |
+| 26 =hold_lose | PASS | 0 | 0 | 18 | 0 |
+| 26o | PASS | 0 | 0 | 2 | 2 |
+| 30o | PASS | 0 | 0 | 0 | 0 |
+| 32o | PASS | 0 | 0 | 1 | 0 |
+| 37o | PASS | 0 | 0 | 0 | 2 |
+| 43o | PASS | 0 | 0 | 0 | 0 |
+| 44b | PASS | 0 | 0 | 0 | 0 |
+| 3 | PASS | 0 | 0 | 0 | 0 |
+| 8 | PASS | 0 | 0 | 0 | 0 |
+| 12 | PASS | 0 | 0 | 0 | 0 |
+| 29 | PASS | 0 | 0 | 0 | 0 |
+| 41o | PASS | 0 | 0 | 0 | 0 |
+| 42b | PASS | 0 | 0 | 0 | 0 |
+
+**Hepsi PASS; VISAUDIT ve öteki denetimler (SCRIPT ERROR, WALKTHRU, HELDAUDIT, ARMAUDIT, WARN_FX/FLY/VOID) 0.**
+AYAKAUDIT ve YIGILMAAUDIT satırları run_tests.sh süzgecinde yok; sayılar önceki turların tablolarıyla aynı düzeyde
+(yığılma turu: 26 =hold_lose AYAKAUDIT 19 — IK'sı kapalı (`ik=w0`) çömelen bölük; 26o 4; YIGILMAAUDIT 26 hold 2–4, 26o 3,
+20o 1). 24 ve 24o, 20 ve 26 =hold, 30o satırları bütçe koşularının SONRA'sı (`--kumas-olc`), 37o yeni set ×3'ün ilki.
+Günlükler: [`gunluk/ortak_*`](gunluk/).
 
 ---
 
@@ -163,7 +219,9 @@ ORTAK_TABLO
    tabanını (`Ayak._fks`) ölçmesi — `plant_feet` bu turda madde 1 için benim dosyam değildi; istek olarak yazıldı.
 3. **YIGILMAAUDIT** kalanları (yaslanan gövde, sarkan/taşa giren uzuv), taşta başlayan kök, Assault okla vurulanlar: yapılmadı.
 4. **Eski set 20 gedik işçileri** (çekiç/balta, `ik=yok`): tabanları 7–13 cm gömük (8 AYAKAUDIT, tabanda da 8). Bu kişilerde
-   ayak IK hiç kurulmuyor; neden bulunamadı (sahne `wall_fight.add_builders`; `_busy` değil).
+   ayak IK hiç kurulmamış: denetim onları oyun konuşmayla duraklatılmışken ölçüyor (kişinin `_process`'i hiç çalışmadan);
+   kök sahnenin moloz yüksekliği işlevinde (`wall_fight._ry`) görünen zeminin altında. Kökten çözüm sahne dosyasında
+   (yerleştirmede görünen zemin) — bu turda benim dosyam değil.
 5. **Kumaş**: yürüyüşte sallanma bilerek hafif (kalça ±4 cm, adım ±1,8 cm); rüzgâr sahnede tek yön ve sabit şiddet
    aralığı (bayrakların rüzgârıyla — başka oturum — henüz bağlı değil). Pelerin/etek kendi kendisiyle ve öteki kişilerle
    çarpışmaz; kollar eteği itmez (kol etek arasında). Oturanda "oturak" yüksekliği sabit (0,55 gövde uzayında): yüksek
@@ -179,4 +237,8 @@ aynı), `scripts/level/stage.gd` (yalnız `grip_hold`/`grip_release`: tutuş eğ
 `giysi_kumas_hat.gdshader`, `giysi_kumas.gdshaderinc` (yeni), `tests/_fizik/fizik3_*` (deney sahnesi, koşu/kare/pafta/
 tablo betikleri, tanı). Bölüm dosyaları, `scripts/world/ist`, `scripts/player`, `scripts/ui`, `scripts/combat`,
 `tests/run_tests.sh`, `project.godot`, bayrak/sur dosyaları: dokunulmadı. Replik, ses, denge, sayaç değişmedi.
-Kapatma: `--kumas=0`, `--ayak-ik=0`.
+Kapatma: `--kumas=0`, `--ayak-ik=0`. Ölçüm/tanı: `--kumas-olc`, `--kumas-donuk`, `--kumas-dbg`, `--fizik3-dbg`, `--fizik3-oyun=`.
+
+Not: ortak liste ve madde 1 koşularının bir kısmı kumaşın son görsel düzeltmelerinden (sarkan uçlarda yerçekimi, ölçüm
+satırı) ve tutuşun son sürümünden önce koşuldu; bu değişiklikler oynanışa ve köke dokunmuyor, tutuş değişikliği 26 =hold,
+=hold_box, =hold_lose, 26o, 32o, 43o, 44b, 3, 8, 12, 29, 41o, 42b, 20 =niko_idle/=idle, 20o, 22o koşularında vardı.

@@ -1,0 +1,2 @@
+AYAKAUDIT yakin scene=chapter32o.tscn who=Person/@Node3D@27307(Chapter32o) ayak=R fark=+0.23 d=17.3 at=(-1.9, -3.2, 70.5) durum=yuru act=walk ik=w1.0/m2/pel+0.29/g1/gy+0.34/zemin-0.03
+AUTOTEST PASS chapter=32o variant= outcome=32O.1 bundles=6/6 earth=2 arrows=0 rungs=6 bad=0 hits=3/3 fires=6 greek=2/2 hasan=water sur=yeni

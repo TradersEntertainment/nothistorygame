@@ -71,7 +71,11 @@ iki karede bir. Kendi rastgele üreteci (oyunun küresel dizisini tüketmez).
 **Kapatma / ölçüm:** `--kumas=0` (parçalar eskisi gibi kurulur, ÖNCE), `--kumas-olc` (KUMASPERF: kare başı betik süresi,
 kumaş µs, kişi).
 
-## 3. Tutuş duruşunda ayaklar — `scripts/level/stage.gd` (`grip_hold`)
-`Stage.grip_hold`'un her karede (tween, kişinin _process'inden sonra) pozu yazdıktan sonra ayak IK izdüşüm kipinde çalışır
-(`Ayak.uygula(anim=true)`: FK'nin ayak yerleri korunur, her taban kendi zeminine, kalça gerekirse iner) ve ayak bilekleri
-taban eğimine döner (`Rig.ayak_bilekleri`; el bilekleri ikinci kez yumuşatılmaz).
+## 3. Tutuş duruşunda ayaklar — `scripts/npc/rig.gd`, `scripts/level/stage.gd` (`grip_hold`/`grip_release`)
+Tutuşta iskelet kilitli (`Rig.lock > 0`); `Rig.update` ayak IK'yı kilitli kişide her karede kapatıyordu (`_kapat`).
+- Kişinin `_process`'i çalışıyorsa: `Rig.update` tutuştaki kişide (`grip_lean` işareti) IK'yı izdüşüm kipinde çalıştırır
+  (`Ayak.uygula(anim=true)`: FK'nin ayak yerleri korunur, her taban kendi zeminine, kalça gerekirse iner); tutuşun öne
+  eğilmesi IK'dan **önce** uygulanır (tween onu sonra aynı değerle yeniden yazar: ayak kaymaz).
+- Süreci kapalı figürde (`_process` çalışmıyor, yalnız tutuş tween'i): tween, o karede IK çalışmadıysa önce bir önceki
+  karenin yazdıklarını geri alır, sonra izdüşüm yapar ve ayak bileklerini taban eğimine çevirir (`Rig.ayak_bilekleri`;
+  el bilekleri ikinci kez yumuşatılmaz).
