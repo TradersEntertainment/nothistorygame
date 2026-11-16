@@ -259,6 +259,7 @@ static func _barrel(root: Node3D, p: Vector3, daralt := 0.9, esya := false) -> v
 	b.rotation_degrees = Vector3(rng.randf_range(-2.5, 2.5), rng.randf_range(0.0, 360.0), rng.randf_range(-2.5, 2.5))
 	if esya:
 		EsyaFizik.kaydet_dugum(b, govde, "fici")      # dekor fıçısı (gedik barikatınınkiler değil): tekmede gövdeye döner
+		b.set_meta("no_bake", true)                   # birleşik ağa katılmaz (katılınca tek başına uyanamaz)
 
 
 static var _fici: ArrayMesh

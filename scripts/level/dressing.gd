@@ -299,6 +299,7 @@ func barrel(p: Vector3, tip := false) -> void:
 	for k in [-0.26, 0.26]:
 		var off := Basis.from_euler(rot * (PI / 180.0)) * Vector3(0, k, 0)
 		cyl(0.315, 0.06, c + off, Color("3a3634"), rot, 10, 1.0)
+	EsyaFizik.kaydet_engel(_frame * Transform3D(Basis.from_euler(rot * (PI / 180.0)), c), Vector3(0.6, 0.84, 0.6))     # yığın açılınca kendi kutusu
 
 
 func barrels(p: Vector3) -> void:

@@ -26,6 +26,8 @@ const DUR_ACI := 0.12
 const DUR_SURE := 0.45
 const AZAMI_SURE := 9.0           # uyanık kalma sınırı (sn); sonra zorla oturtulup donar
 const DUSME_PAYI := 2.0
+# Ölçüm için kapatma (ÖNCE|SONRA bütçe karşılaştırması): ESYA_KAPALI=1 ortamında hiçbir şey kayda geçmez, yönetici kurulmaz
+static var KAPALI := OS.has_environment("ESYA_KAPALI")
 
 # tür → [kütle kg, sürtünme, sekme, şekil, ses]
 const TUR := {
@@ -35,12 +37,14 @@ const TUR := {
 	"kalas": [14.0, 0.6, 0.1, "kutu", "footstep_wood"],
 	"testi": [3.0, 0.5, 0.32, "silindir", "land_pot"],
 	"gulle": [60.0, 0.5, 0.15, "kure", "kick_metal"],
+	"tane": [0.01, 0.7, 0.35, "kure", ""],        # leblebi, tane: sesi yok
 }
 
 # ---- kayıt (kurucular çağırır; sahne kurulurken)
 static var _bek_mm := {}          # "Ad|x|y|z" -> tür   (Dressing: MultiMesh örneği, kök-yerel çerçevede)
 static var _bek_dugum: Array = [] # [MeshInstance3D, StaticBody3D, tür]
 static var _korunan: Array = []   # [Vector3 (dünya), yarıçap]
+static var _engel: Array = []     # [Transform3D (Dressing kök-yerel), boyut, ms]
 static var _ben: EsyaFizik = null
 static var _kurulacak := false
 
@@ -50,6 +54,7 @@ var _izgara := {}                 # Vector2i -> Array[Dictionary]
 var _taranan := {}                # MultiMeshInstance3D örnek kimliği -> true
 var _tara_t := 0.0
 var _bek_sayi := -1
+var _bek_degisti := 0
 var _player: Player
 var _temas := {}                  # eşya kimliği -> yürüyerek dayanma süresi
 var _son_hiz := 0.0
@@ -65,13 +70,25 @@ var denetim_acik := false
 ## Dressing (crate/barrel): model() ile MultiMesh'e giden örnek. xf: Dressing kökünün yerel çerçevesinde örneğin
 ## dönüşümü (model'e verilenin aynısı), ad: Kit model adı.
 static func kaydet_mm(ad: String, xf: Transform3D, tur: String) -> void:
-	_bek_mm[_anahtar(ad, xf.origin)] = tur
+	if KAPALI:
+		return
+	_bek_mm[_anahtar(ad, xf.origin)] = [tur, Time.get_ticks_msec()]
 	_kur()
+
+
+## Uyanmayan engel (Dressing yığınındaki kayda geçmeyen parça: birleşik ağa çizilmiş yatık fıçı): yığının ortak katısı
+## açılınca bu parçaya kendi kutusu verilir (uyanan eşya içinden geçmesin). xf: Dressing kökünün yerel çerçevesinde merkez.
+static func kaydet_engel(xf: Transform3D, boy: Vector3) -> void:
+	if KAPALI:
+		return
+	_engel.append([xf, boy, Time.get_ticks_msec()])
+	if _engel.size() > 4000:
+		_engel = _engel.slice(2000)
 
 
 ## Tek düğüm eşya (Props.cyl + make_solid): görünen düğüm ve onun durağan gövdesi.
 static func kaydet_dugum(gorunen: Node3D, govde: StaticBody3D, tur: String) -> void:
-	if gorunen == null:
+	if gorunen == null or KAPALI:
 		return
 	_bek_dugum.append([gorunen, govde, tur])
 	_kur()
@@ -109,7 +126,7 @@ static func tekme_var(oyuncu: Node3D) -> bool:
 ## donar. Düğüm sonradan silinirse gövde de kalkar. tur boşsa ağdan tahmin edilir (silindir → fıçı, uzun → kalas,
 ## yoksa sandık). Başarılıysa true (çağıran tween'i kurmasın).
 static func dusur(n: Node3D, tur := "", hiz := Vector3.ZERO, donus := Vector3.ZERO) -> bool:
-	if n == null or not n.is_inside_tree():
+	if n == null or not n.is_inside_tree() or KAPALI:
 		return false
 	if _ben == null or not is_instance_valid(_ben):
 		_ekle()
@@ -135,10 +152,16 @@ static func _kur() -> void:
 
 static func _ekle() -> void:
 	_kurulacak = false
-	if _ben != null and is_instance_valid(_ben):
+	if _ben != null and is_instance_valid(_ben) and not _ben.is_queued_for_deletion():
 		return
 	var tree := Engine.get_main_loop() as SceneTree
-	if tree == null or tree.current_scene == null:
+	if tree == null:
+		return
+	var sc := tree.current_scene
+	if sc == null or sc.is_queued_for_deletion() or not sc.is_inside_tree():
+		# sahne geçişi sürüyor (dünya yeni sahne yüklenirken kurulmuş olabilir): bir sonraki karede yeniden dene
+		_kurulacak = true
+		tree.process_frame.connect(_ekle, CONNECT_ONE_SHOT)
 		return
 	var n := EsyaFizik.new()
 	n.name = "EsyaFizik"
@@ -157,9 +180,11 @@ func _ready() -> void:
 func _exit_tree() -> void:
 	if _ben == self:
 		_ben = null
-	_bek_mm.clear()
-	_bek_dugum.clear()
 	_korunan.clear()
+	# Bekleyen kayıtlar silinmez: dünya bir sonraki sahne için (geçiş sırasında) kurulmuş olabilir; yeni sahnede
+	# yönetici yeniden kurulur. Eşleşmeyen eski kayıtlar tarama sırasında 2 dakika sonra düşer.
+	if not _bek_mm.is_empty() or not _bek_dugum.is_empty():
+		_kur.call_deferred()
 	if denetim_acik:
 		print("ESYAAUDIT OZET kayit=%d uyanan=%d tekme=%d kosu=%d itme=%d patlama=%d destek=%d en_cok_uyanik=%d sorun=%d (dusme=%d havada=%d gomuk=%d tikama=%d sinir=%d)" % [
 			sayac["kayit"], sayac["uyanan"], sayac["tekme"], sayac["kosu"], sayac["itme"], sayac["patlama"], sayac["destek"],
@@ -173,9 +198,14 @@ func sorun() -> int:
 func _physics_process(delta: float) -> void:
 	# kayıt bekleyen var: kısa aralıkla tara (kurulum karelere yayılabilir)
 	_tara_t -= delta
-	if _tara_t <= 0.0 and (_bek_sayi != _bek_mm.size() + _bek_dugum.size() or not _bek_dugum.is_empty()):
-		_tara_t = 0.5
-		_tara()
+	if _tara_t <= 0.0:
+		var bek := _bek_mm.size() + _bek_dugum.size()
+		if bek != _bek_sayi:
+			_bek_degisti = Time.get_ticks_msec()
+		# yeni kayıt geldiyse ya da son kayıttan bu yana 60 sn geçmediyse (kurulum karelere yayılıyor) tara
+		if bek > 0 and (bek != _bek_sayi or Time.get_ticks_msec() - _bek_degisti < 60000):
+			_tara()
+		_tara_t = 1.0
 	if _player == null or not is_instance_valid(_player):
 		_player = get_tree().get_first_node_in_group("player") as Player
 	if _player != null and _player.is_inside_tree():
@@ -193,9 +223,8 @@ var _koru_tarandi := false
 
 func _koru_tara() -> void:
 	_koru_tarandi = true
-	var sc := get_tree().current_scene
 	for ad in KORU_AD:
-		for n in sc.find_children("*%s*" % ad, "Node3D", true, false):
+		for n in get_tree().root.find_children("*%s*" % ad, "Node3D", true, false):
 			var p := (n as Node3D).global_position
 			if absf(p.x) > 1.0e5:
 				continue
@@ -208,13 +237,14 @@ func _tara() -> void:
 	# tek düğümler
 	var kalan: Array = []
 	for b in _bek_dugum:
-		var g: Node3D = b[0]
-		if not is_instance_valid(g):
+		if not is_instance_valid(b[0]):
 			continue
+		var g := b[0] as Node3D
 		if not g.is_inside_tree():
 			kalan.append(b)
 			continue
-		_dugum_esya(g, b[1], b[2])
+		var st = b[1] if is_instance_valid(b[1]) else null
+		_dugum_esya(g, st, b[2])
 	_bek_dugum = kalan
 	# Dressing MultiMesh örnekleri
 	if not _bek_mm.is_empty():
@@ -227,7 +257,7 @@ func _tara() -> void:
 			for i in parts.size():
 				parca_ag[parts[i][0]] = [ad, i]
 		var gruplar := {}        # kök kimliği|ad -> {parça sırası: mmi}
-		for n in get_tree().current_scene.find_children("*", "MultiMeshInstance3D", true, false):
+		for n in get_tree().root.find_children("*", "MultiMeshInstance3D", true, false):
 			var mmi := n as MultiMeshInstance3D
 			if _taranan.has(mmi.get_instance_id()) or mmi.multimesh == null or not parca_ag.has(mmi.multimesh.mesh):
 				continue
@@ -250,11 +280,18 @@ func _tara() -> void:
 				var k := _anahtar(ad, x0.origin)
 				if not _bek_mm.has(k):
 					continue
+				var tur := String(_bek_mm[k][0])
+				_bek_mm.erase(k)
 				var mm: Array = []
 				for pi in parts.size():
 					if g.has(pi):
 						mm.append([g[pi], i, parts[pi][1]])
-				_mm_esya(ad, x0, m0.get_parent() as Node3D, mm, String(_bek_mm[k]))
+				_mm_esya(ad, x0, m0.get_parent() as Node3D, mm, tur)
+		# eşleşmeden 2 dakikadan uzun bekleyen (kurulup sahneye hiç girmemiş, ya da başka sahnenin) kayıt düşer
+		var simdi := Time.get_ticks_msec()
+		for k in _bek_mm.keys():
+			if simdi - int(_bek_mm[k][1]) > 120000:
+				_bek_mm.erase(k)
 	_bek_sayi = _bek_mm.size() + _bek_dugum.size()
 
 
@@ -275,7 +312,7 @@ func _mm_esya(ad: String, x_yerel: Transform3D, kok: Node3D, mm: Array, tur: Str
 	_yerlestir(e)
 
 
-func _dugum_esya(g: Node3D, govde: StaticBody3D, tur: String) -> void:
+func _dugum_esya(g: Node3D, govde, tur: String) -> void:
 	var mi := g as MeshInstance3D
 	var ab := mi.mesh.get_aabb() if mi and mi.mesh else AABB(Vector3(-0.3, -0.45, -0.3), Vector3(0.6, 0.9, 0.6))
 	var xw := g.global_transform
@@ -699,6 +736,20 @@ func _ortak_kati_ayir(e: Dictionary) -> void:
 			if cab.grow(-0.02).intersects(ab_d):
 				cs.disabled = true
 				kapanan.append(cab)
+				# kutunun içindeki kayıtsız parçalar (yatık fıçı): kendi kutuları
+				var yerel := (cs.transform * AABB(-(cs.shape as BoxShape3D).size * 0.5, (cs.shape as BoxShape3D).size)).grow(0.1)
+				var inv := (kok.global_transform.affine_inverse() * (st as Node3D).global_transform)
+				for en in _engel:
+					var exf: Transform3D = en[0]
+					if not yerel.has_point(inv.affine_inverse() * exf.origin):
+						continue
+					var cs3 := CollisionShape3D.new()
+					var b3 := BoxShape3D.new()
+					b3.size = en[1]
+					cs3.shape = b3
+					cs3.set_meta("esya_kendi", true)
+					st.add_child(cs3)
+					cs3.global_transform = kok.global_transform * exf
 		if kapanan.is_empty():
 			continue
 		for o in items:
@@ -765,6 +816,8 @@ func _ses(e: Dictionary, guc: float) -> void:
 	if g == null or not is_instance_valid(g):
 		return
 	var ad: String = TUR[e["tur"]][4]
+	if ad == "":
+		return
 	if ad == "footstep_wood":
 		ad = "footstep_wood_%d" % randi_range(1, 4)
 	Audio.sfx_at(ad, g, lerpf(-16.0, -4.0, guc))
@@ -964,23 +1017,30 @@ func _yol_temizle(e: Dictionary) -> void:
 			g.global_position = Vector3(kp.x, c.y, kp.z) + dis * (float(k[1]) + r + 0.1)
 			g.global_position -= Vector3(0, minf(_zemin_boslugu(g), 2.0), 0)
 			return
-	# dar geçit: iki yatay eksende yan duvarlar arası
+	# dar geçit (sur yolu, sokak arası): iki yanında boyunca uzanan duvar olan yer (eşyanın 1 m önünde ve ardında da dar).
+	# Eşyanın bir yanında oyuncunun geçeceği kadar (0,75 m) yer yoksa yakın duvara yaslanır.
 	var space := g.get_world_3d().direct_space_state
-	var y := c.y
 	for ax in [Vector3.RIGHT, Vector3.BACK]:
-		var a := _duvar(space, g, Vector3(c.x, y, c.z), ax, 2.5)
-		var b := _duvar(space, g, Vector3(c.x, y, c.z), -ax, 2.5)
-		if a + b < 2.6:
-			# geçidin genişliği < 2,6 m: eşya ortadaysa (iki yanda da oyuncu kapsülü + pay kadar yer yoksa) kenara it
-			var bos := maxf(a, b) - r
-			if minf(a, b) - r > 0.12 and bos < 0.85:
-				sayac["tikama"] += 1
-				_rapor("tikama_gecit", e, c)
-			var yan: Vector3 = ax if a < b else -ax
-			var ne := minf(a, b) - r - 0.03
-			if ne > 0.05:
-				g.global_position += yan * ne
-			return
+		var boy: Vector3 = Vector3.BACK if ax == Vector3.RIGHT else Vector3.RIGHT
+		var dar := true
+		for o: float in [-1.0, 0.0, 1.0]:
+			var p := c + boy * o
+			if _duvar(space, g, p, ax, 2.6) + _duvar(space, g, p, -ax, 2.6) >= 2.6:
+				dar = false
+				break
+		if not dar:
+			continue
+		var a := _duvar(space, g, c, ax, 2.6)
+		var b := _duvar(space, g, c, -ax, 2.6)
+		if maxf(a, b) - r >= 0.75:
+			return     # bir yanından geçilir
+		var yan: Vector3 = ax if a < b else -ax
+		var ne := minf(a, b) - r - 0.03
+		if ne > 0.05:
+			sayac["tikama"] += 1
+			_rapor("tikama_gecit", e, c)
+			g.global_position += yan * ne
+		return
 
 
 func _duvar(space: PhysicsDirectSpaceState3D, g: RigidBody3D, p: Vector3, ax: Vector3, l: float) -> float:
