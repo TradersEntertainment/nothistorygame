@@ -1,0 +1,2 @@
+AUTOTEST PASS chapter=29 variant= outcome=29.1 cut=6/6 boarders=0 fires=0 duel=true
+KOSU rc=0 sure=35 args=--chapter=29 --autotest

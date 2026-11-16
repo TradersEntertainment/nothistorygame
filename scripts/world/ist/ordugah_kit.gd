@@ -103,9 +103,9 @@ class Bld:
 		tris += (v.size() - i0) / 3
 
 	## TUR-12: i0'dan bu yana eklenen köşeler sarkık kumaş (kip 2; tente, perde, püskül): agirlik(Vector3) -> 0…1
-	func sarkik(i0: int, agirlik: Callable, evre := 0.0) -> void:
+	func sarkik(i0: int, agirlik: Callable, evre := 0.0, genlik := 1.0) -> void:
 		kumas = true
-		KUMAS.sarkik_isaretle(v, uv, uv2, i0, agirlik, evre)
+		KUMAS.sarkik_isaretle(v, uv, uv2, i0, agirlik, evre, genlik)
 
 	## Dışbükey çokgen (saat yönü ters sıralı olması gerekmez), out = dış yön
 	func poly(pts: Array, out: Vector3, col: Color) -> void:

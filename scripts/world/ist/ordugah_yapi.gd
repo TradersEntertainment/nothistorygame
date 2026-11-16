@@ -49,7 +49,7 @@ static func sancak(b: B, f: B, pos: Vector3, h: float, col: Color, tug := false)
 		var i0 := f.v.size()
 		var ty := pos.y + h - 0.15
 		f.cylp(pos + Vector3(0, h - 0.7, 0), 0.25, 1.1, Color("e9e2d0"), 6, 0.04)
-		f.sarkik(i0, func(q: Vector3) -> float: return (ty - q.y) / 1.1, pos.x * 0.7 + pos.z)
+		f.sarkik(i0, func(q: Vector3) -> float: return (ty - q.y) / 1.1, pos.x * 0.7 + pos.z, 2.0)
 		f.cylp(pos + Vector3(0, h - 1.3, 0), 0.07, 0.3, K.ALTIN, 5)
 	else:
 		# TUR-12: ince çift yüzlü, dalgalanan sancak (eski 3 cm'lik kutu + kutu yama); direk kenarı sabit

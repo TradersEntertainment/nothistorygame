@@ -589,7 +589,7 @@ static func _sancak(w: B, f: B, p: Vector3, h: float, col: Color, lod: int, tug 
 		var ty := p.y + h - 0.15
 		f.cylp(p + Vector3(0, h - 0.75, 0), 0.26, 1.2, [Color("1e1a16"), Color("e9e2d0"), Color("8a2a22")][int(absf(p.x)) % 3], 6, 0.04)
 		if lod == 0:
-			f.sarkik(i0, func(q: Vector3) -> float: return (ty - q.y) / 1.2, p.x * 0.7 + p.z)
+			f.sarkik(i0, func(q: Vector3) -> float: return (ty - q.y) / 1.2, p.x * 0.7 + p.z, 2.0)
 		f.cylp(p + Vector3(0, h - 0.1, 0), 0.08, 0.25, K.ALTIN, 5)
 		return
 	var y0 := h - 0.15
@@ -805,5 +805,5 @@ static func _camasir(wd: B, det: B, onler: Array, r: RandomNumberGenerator) -> v
 			det.poly(q4, Vector3(dv.y, 0, -dv.x), c.darkened(0.15))
 			# TUR-12: ipten sarkan bez hafifçe nefes alır (ipteki kenar sabit)
 			var cy := cur.y
-			det.sarkik(i0, func(pp: Vector3) -> float: return (cy - pp.y) / h, float(i) * 1.7)
+			det.sarkik(i0, func(pp: Vector3) -> float: return (cy - pp.y) / h, float(i) * 1.7, 3.0)
 		onceki = cur

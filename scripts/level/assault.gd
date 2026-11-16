@@ -292,7 +292,7 @@ func _tug(bp: Vector3) -> void:
 			tc.append([Color("2a1e18"), Color("6a2a1e")][k % 2])
 	var tuv := PackedVector2Array()
 	var tuv2 := PackedVector2Array()
-	Kumas.sarkik_isaretle(tv, tuv, tuv2, 0, func(q: Vector3) -> float: return -q.y / 1.3, bp.x * 0.3)
+	Kumas.sarkik_isaretle(tv, tuv, tuv2, 0, func(q: Vector3) -> float: return -q.y / 1.3, bp.x * 0.3, 2.0)
 	var tmi := MeshInstance3D.new()
 	tmi.mesh = Kumas._dizi_ag(tv, tn, tc, tuv, tuv2)
 	tmi.material_override = Kumas.mat(true)

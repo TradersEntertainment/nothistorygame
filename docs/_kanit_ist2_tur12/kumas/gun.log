@@ -43,9 +43,9 @@ KUMAS istasyon=sehir_sancak kare=sehir_sancak_2.jpg cizim=40
 KUMAS istasyon=hucum_sancak kare=hucum_sancak_0.jpg cizim=29
 KUMAS istasyon=hucum_sancak kare=hucum_sancak_1.jpg cizim=29
 KUMAS istasyon=hucum_sancak kare=hucum_sancak_2.jpg cizim=29
-KUMAS istasyon=c39o_sancak kare=c39o_sancak_0.jpg cizim=72
-KUMAS istasyon=c39o_sancak kare=c39o_sancak_1.jpg cizim=72
-KUMAS istasyon=c39o_sancak kare=c39o_sancak_2.jpg cizim=72
+KUMAS istasyon=c39o_sancak kare=c39o_sancak_0.jpg cizim=78
+KUMAS istasyon=c39o_sancak kare=c39o_sancak_1.jpg cizim=78
+KUMAS istasyon=c39o_sancak kare=c39o_sancak_2.jpg cizim=78
 KUMAS istasyon=camasir kare=camasir_0.jpg cizim=20
 KUMAS istasyon=camasir kare=camasir_1.jpg cizim=20
 KUMAS istasyon=camasir kare=camasir_2.jpg cizim=20
@@ -53,7 +53,3 @@ KUMAS istasyon=cadir_tente kare=cadir_tente_0.jpg cizim=31
 KUMAS istasyon=cadir_tente kare=cadir_tente_1.jpg cizim=31
 KUMAS istasyon=cadir_tente kare=cadir_tente_2.jpg cizim=31
 KUMAS bitti bayrak_dugum=10
-WARNING: ObjectDB instances leaked at exit (run with --verbose for details).
-     at: cleanup (core/object/object.cpp:2378)
-ERROR: 1 resources still in use at exit (run with --verbose for details).
-   at: clear (core/io/resource.cpp:614)

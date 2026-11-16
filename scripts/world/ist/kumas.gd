@@ -161,11 +161,11 @@ static func _dizi_ag(v: PackedVector3Array, n: PackedVector3Array, c: PackedColo
 ## Sarkık kumaş için ağırlık işareti: i0'dan bu yana eklenen köşelere kip 2 yazar. agirlik: Callable(Vector3) -> float
 ## (0 tutturulmuş … 1 serbest). Diziler v ile eşit boya getirilir (öncesi sabit).
 static func sarkik_isaretle(v: PackedVector3Array, uv: PackedVector2Array, uv2: PackedVector2Array, i0: int,
-		agirlik: Callable, evre := 0.0) -> void:
+		agirlik: Callable, evre := 0.0, genlik := 1.0) -> void:
 	esitle(v, uv, uv2, i0)
 	for i in range(i0, v.size()):
 		uv.append(Vector2(clampf(float(agirlik.call(v[i])), 0.0, 1.0), KIP_SARKIK))
-		uv2.append(Vector2(evre, 0.0))
+		uv2.append(Vector2(evre, genlik))
 
 
 ## uv/uv2'yi v'nin boyuna (ya da verilen boya) sabit kiple doldurur
@@ -208,7 +208,7 @@ static func sarkik_levha(parent: Node3D, c: Vector3, w: float, d: float, egim: f
 				n.append(nn if arka else -nn)      # Godot: saat yönü ön yüz → ön normal −(b−a)×(c−a)
 				cl.append(col.darkened(0.12) if arka else col)
 				uv.append(Vector2(float(q[1]), KIP_SARKIK))
-				uv2.append(Vector2(c.x * 0.3 + c.z * 0.2, 0.0))
+				uv2.append(Vector2(c.x * 0.3 + c.z * 0.2, 1.5))
 	for i in nx:
 		for j in nz:
 			var u0 := float(i) / nx

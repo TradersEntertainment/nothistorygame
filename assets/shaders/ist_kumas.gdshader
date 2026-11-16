@@ -5,7 +5,7 @@
 //   kip 1: UV.x = direkten uzaklık (m), UV2 = direk ekseninin yerel (x, z)'si. Bayrak gölgelendiricide DÜNYA rüzgâr
 //          yönüne yeniden kurulur: direk kenarı (UV.x = 0) yerinde, serbest uç rüzgâr altında dalgalı, hafif sarkık.
 //          Böylece aynı sahnedeki bütün bayraklar (kurucu hangi yöne kurmuş olursa olsun) aynı yöne uçar.
-//   kip 2: UV.x = ağırlık (0 tutturulmuş kenar … 1 serbest), UV2.x = evre. Yüzey normali boyunca çok hafif nefes +
+//   kip 2: UV.x = ağırlık (0 tutturulmuş kenar … 1 serbest), UV2.x = evre, UV2.y = genlik çarpanı (0 → 1; çamaşır 3). Yüzey normali boyunca çok hafif nefes +
 //          rüzgâr yönünde az salınım.
 // Uzakta (lod_bas … lod_son m) dalga söner; bayrak rüzgâr altında durur. Gece/gündüz aynı (ışık sahnenin).
 shader_type spatial;
@@ -77,7 +77,7 @@ void vertex() {
 			vec3 wp = (MODEL_MATRIX * vec4(VERTEX, 1.0)).xyz;
 			float cam = length(wp - CAMERA_POSITION_WORLD);
 			float f = guc * (1.0 - smoothstep(lod_bas, lod_son, cam));
-			float w = clamp(UV.x, 0.0, 1.0);
+			float w = clamp(UV.x, 0.0, 1.0) * (UV2.y > 0.0 ? UV2.y : 1.0);     // UV2.y: genlik çarpanı (0 → 1)
 			float ph = UV2.x + wp.x * 0.23 + wp.z * 0.17;
 			float t = TIME;
 			float nef = sin(t * 1.15 + ph) * 0.6 + sin(t * 2.3 + ph * 1.9 + wp.y * 0.8) * 0.4;
