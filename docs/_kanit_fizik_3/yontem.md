@@ -65,8 +65,15 @@ kaftanının kürk şeritleri/çintemani benekleri/yenleri, vezir yenleri, impar
 börkünün yatırtması. Soldier: kaftan bel eteği, börk/azap yatırtması. Hikmet ve Büro/Tolga: yok (uzun giysileri yok).
 Kalabalığın pişmiş kopyaları (Crowd, MultiMesh) dinlenme duruşunda (uniform'u yok).
 
+**Sağlamlık:** yay yarı örtük Euler, en çok 1/60 sn'lik alt adımlarla (karede en çok 0,1 sn; yavaş karede açık Euler
+kararsızlaşıp eteği sınıra savuruyordu); bir karede 0,8 m'den uzun ya da 12 m/sn'den hızlı yer değiştirme ışınlanmadır
+(hız/ivme sayılmaz), 0,6 rad'dan büyük anlık dönüş sahnenin çevirmesidir (burulma sayılmaz). **Sarkan uçlar** (baş:
+yatırtma, püskül; kol: yen) kendi eklemlerinin uzayında yazılır: gövdenin salınımı o uzaya çevrilir, yerçekiminin o
+uzaydaki yatay bileşeni eklenir (baş öne eğilince ya da kol kalkınca uç aşağı sarkar).
+
 **Bütçe:** kameraya ≤ 26 m ve görüş konisinde; ötesinde **donar** (uniform yazılmaz, son hâlinde kalır). 12 m'den uzakta
-iki karede bir. Kendi rastgele üreteci (oyunun küresel dizisini tüketmez).
+iki karede bir. Donarken dinlenme duruşuna döner (savrulmuş hâliyle donup kalmaz; uzakta/görüş dışında olduğundan
+görünmez). Kendi rastgele üreteci (oyunun küresel dizisini tüketmez).
 
 **Kapatma / ölçüm:** `--kumas=0` (parçalar eskisi gibi kurulur, ÖNCE), `--kumas-olc` (KUMASPERF: kare başı betik süresi,
 kumaş µs, kişi).
