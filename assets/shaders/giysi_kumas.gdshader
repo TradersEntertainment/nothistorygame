@@ -4,8 +4,8 @@ render_mode blend_mix, depth_draw_opaque, cull_back, diffuse_lambert_wrap, specu
 #include "res://assets/shaders/giysi_kumas.gdshaderinc"
 
 void vertex() {
-	// CharKit.vc_mat: köşe rengi sRGB
-	COLOR.rgb = mix(pow((COLOR.rgb + vec3(0.055)) * (1.0 / (1.0 + 0.055)), vec3(2.4)), COLOR.rgb * (1.0 / 12.92), lessThan(COLOR.rgb, vec3(0.04045)));
+	// Köşe rengi olduğu gibi: uyumluluk çizicisi vc_mat'ın sRGB dönüşümünü kendisi yapıyor (iki kez çevirince koyu çıkıyordu;
+	// aynı köşe renginde ölçüldü: vc_mat 0,451/0,310/0,247, bu 0,451/0,314/0,251)
 	VERTEX = kumas_buk(VERTEX, UV, TIME);
 }
 
