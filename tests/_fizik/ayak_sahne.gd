@@ -77,6 +77,22 @@ func _ready() -> void:
 	add_child(at)
 	at.position = _zemin_ust(Vector3(-12.0, 0, 6.0))
 	_subj["at_yokus"] = at
+	var kal := 0
+	for a in OS.get_cmdline_user_args():
+		if a.begins_with("--ayak-kalabalik="):
+			kal = int(a.trim_prefix("--ayak-kalabalik="))
+	if kal > 0:
+		# Bütçe: kal kişi (yarısı yürür) yokuşta ve düzde, hepsi kameranın 25 m içinde; 20 sn AYAKPERF
+		cam.global_position = Vector3(0, 6, -10)
+		cam.look_at(Vector3(0, 0, 6))
+		for i in kal:
+			var p := Vector3(-9 + (i % 10) * 2.0, 0, -2 + (i / 10) * 2.5)
+			var k := _kisi("k%d" % i, p, randf() * 360.0, {"coat": Color(randf(), randf(), randf())})
+			if i % 2 == 0:
+				_yuru(k, p, p + Vector3(0, 0, 6), 1.2 + randf())
+		await get_tree().create_timer(32.0).timeout
+		get_tree().quit()
+		return
 	if dir == "":
 		await get_tree().create_timer(6.0).timeout
 		print("AYAKSAHNE bitti")
@@ -101,8 +117,8 @@ func _ready() -> void:
 func _kare(ad: String, n: Node3D) -> void:
 	var side := n.global_basis.x.normalized()
 	var p := n.global_position
-	cam.global_position = p + side * 2.6 + Vector3(0, 0.6, 0)
-	cam.look_at(p + Vector3(0, 0.5, 0))
+	cam.global_position = p + side * 3.2 + Vector3(0, 0.95, 0)
+	cam.look_at(p + Vector3(0, 0.7, 0))
 	await _kaydet(ad)
 
 
