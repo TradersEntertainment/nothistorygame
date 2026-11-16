@@ -262,10 +262,10 @@ func _kur(ch: Node3D, rg: Rig, sec: Dictionary) -> void:
 	# Boyun: baş omuzlara ve kalçalara aralıklı bağlı (öne/yana sarkar, gövdenin içine girmez)
 	for i in [SL, SR]:
 		var d0 := (p[BAS] - p[i]).length()
-		_aralik(BAS, i, d0 * 0.86, d0 * 1.02)
+		_aralik(BAS, i, d0 * 0.78, d0 * 1.02)
 	for i in [HL, HR]:
 		var d1 := (p[BAS] - p[i]).length()
-		_aralik(BAS, i, d1 * 0.86, d1 * 1.0)
+		_aralik(BAS, i, d1 * 0.8, d1 * 1.0)
 	_L[0] = (p[DZL] - p[HL]).length()
 	_L[1] = (p[AYL] - p[DZL]).length()
 	_L[2] = (p[DSL] - p[SL]).length()
@@ -487,17 +487,17 @@ func _adim() -> void:
 		if gg == INF:
 			engel = true          # henüz ışınlanmamış hücre: bu adım yatayda bekler (taşın içine girmesin)
 		elif is_nan(gg):
-			engel = not dusus
+			engel = true          # yere indikten sonra (düşüşte de) boşluğa/kenardan sarkmaz
 		elif gg > p[i].y - float(YARICAP[i]) + 0.02 and gg > eski + DUVAR:
 			engel = true
-		elif not dusus and gg < eski - KENAR:
+		elif gg < eski - KENAR:
 			engel = true
 		if engel:
 			p[i].x = o[i].x
 			p[i].z = o[i].z
 			gg = _zemin_k(i, p[i].x, p[i].z)
 		if is_nan(gg) or gg == INF:
-			gg = eski if (not dusus or gg == INF) else -INF
+			gg = eski
 		_gi[i] = gg
 		if gg > -INF:
 			gz[i] = gg
