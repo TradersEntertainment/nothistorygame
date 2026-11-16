@@ -29,7 +29,7 @@ func _ready() -> void:
 	env.environment = e
 	add_child(env)
 	var sun := DirectionalLight3D.new()
-	sun.rotation_degrees = Vector3(-50, 35, 0)
+	sun.rotation_degrees = Vector3(-45, 150, 0)
 	sun.shadow_enabled = true
 	sun.light_energy = 0.75
 	add_child(sun)
@@ -66,7 +66,7 @@ func _ready() -> void:
 	_kisi("padisah_dur", Vector3(8, 0, 2), 200.0, {"coat": Color("b3262d"), "pants": Color("6a1a1a"), "hat": "sultan", "face": "fatih", "mustache": true, "robe": Color("c8323a")})
 	# 4. oturan kaftanlı (tabure) ve yerde bağdaş
 	var ot := _kisi("oturan", Vector3(6, 0, 10), 180.0, kaftan.merged({"robe": Color("6a4a3a"), "coat": Color("6a4a3a")}, true))
-	ot.position.z -= 0.0
+	ot.position.y = 0.0      # kök yerde, kalça taburede (Rig "sit": gövde 0,22 iner)
 	ot.set_activity("sit")
 	var bag := _kisi("bagdas", Vector3(8, 0, 10), 180.0, kaftan.merged({"robe": Color("3f7a3a"), "coat": Color("3f7a3a")}, true))
 	bag.set_activity("sit_ground")
@@ -129,25 +129,38 @@ func _ready() -> void:
 	get_tree().quit()
 
 
-## 6 kare, 0,15 sn arayla; kamera deneğin yanında (yan), arkasında (arka) ya da üstünde (ust), deneği izler
+## 6 kare, 0,15 sn arayla; kamera deneğin yanında (yan), arkasında (arka) ya da üstünde (ust); her karede deneği izler
+## (_process), kok_sabit: kamera ilk yerde kalır (yığılan)
+var _tk: Array = []
+
 func _dizi(ad: String, kim: String, yon: String, dd: float, kok_sabit := false) -> void:
 	var n := _subj[kim] as Node3D
-	var p0 := n.global_position
+	_tk = [n, yon, dd, n.global_position if kok_sabit else Vector3.INF, n.global_basis]
+	for k in 3:
+		await get_tree().process_frame
 	for i in 6:
-		var p := p0 if kok_sabit else n.global_position
-		var b := n.global_basis
-		var side := b.x.normalized()
-		var back := -b.z.normalized()
-		match yon:
-			"yan":
-				cam.global_position = p + side * dd + Vector3(0, 0.9, 0)
-			"arka":
-				cam.global_position = p + back * dd + side * 0.8 + Vector3(0, 1.1, 0)
-			_:
-				cam.global_position = p + side * dd * 0.6 + Vector3(0, dd * 0.8, 0)
-		cam.look_at(p + Vector3(0, 0.7, 0))
 		await _kaydet("%s_%d" % [ad, i])
 		await get_tree().create_timer(0.15).timeout
+	_tk = []
+
+
+func _process(_d: float) -> void:
+	if _tk.is_empty():
+		return
+	var n := _tk[0] as Node3D
+	var dd: float = _tk[2]
+	var p: Vector3 = n.global_position if _tk[3] == Vector3.INF else _tk[3]
+	var b: Basis = n.global_basis if _tk[3] == Vector3.INF else _tk[4]
+	var side := b.x.normalized()
+	var back := -b.z.normalized()
+	match str(_tk[1]):
+		"yan":
+			cam.global_position = p + side * dd + Vector3(0, 0.9, 0)
+		"arka":
+			cam.global_position = p + back * dd + side * 0.8 + Vector3(0, 1.1, 0)
+		_:
+			cam.global_position = p + side * dd * 0.6 + Vector3(0, dd * 0.8, 0)
+	cam.look_at(p + Vector3(0, 0.7, 0))
 
 
 func _kaydet(ad: String) -> void:

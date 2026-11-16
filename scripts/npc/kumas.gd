@@ -283,6 +283,12 @@ func _coz(dt: float, gp: Vector3) -> void:
 	_tw = clampf(_tw + _twv * dt, -0.7, 0.7)
 	_fl = lerpf(_fl, clampf(absf(w) * 0.035 + spd * 0.012, 0.0, 0.22), clampf(dt * 6.0, 0.0, 1.0))
 	var amp := clampf(0.004 + rel_l.length() * 0.0035, 0.0, 0.02)
+	if _gov.is_empty():
+		# Yalnız sarkan uçlar (sarık yatırtması, yen): bacak ve zemin gerekmez
+		_yaz(0, Vector4(0.45, 1.0, _lr, 0.0))
+		_yaz(1, Vector4(_s.x, _s.y, _tw, _fl))
+		_yaz(2, Vector4(rel_l.x, rel_l.z, amp, _faz))
+		return
 	# Bacaklar (gövde uzayı)
 	var ll: Node3D = rig.leg_l
 	var lr: Node3D = rig.leg_r

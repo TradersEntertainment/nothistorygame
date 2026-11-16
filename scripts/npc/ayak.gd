@@ -248,8 +248,8 @@ func geri_al(bayat := false) -> void:
 ## karede çağırdığı Stage.plant_feet bu bayat inişi telafi etmek için kökü kaydırıyordu (kök 15 cm havada ya da 25 cm
 ## gömük: VISAUDIT float/sunk, eski sette 3/3).
 func bayatsa_birak() -> void:
-	if _kare == Engine.get_process_frames():
-		return
+	if Engine.get_process_frames() - _kare <= 1:
+		return      # bu karede ya da bir önceki karede (Stage.grip_hold'un tween'i: Rig.update'ten sonra) çalıştı
 	if _has_w or mod != 0 or pel != 0.0 or _az_on:
 		geri_al(true)
 		_kapat()

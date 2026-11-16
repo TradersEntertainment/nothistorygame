@@ -283,6 +283,28 @@ var _ank_v := PackedFloat32Array([0.0, 0.0])
 var _wr_v := PackedFloat32Array([0.0, 0.0])
 
 
+## Yalnız ayak bilekleri (taban zemine paralel; ayak IK'nın taban eğimiyle). Stage.grip_hold tutuş duruşunda IK'dan sonra
+## çağırır (el bilekleri iki kez yumuşatılmasın).
+func ayak_bilekleri() -> void:
+	if not _ext_ready:
+		return
+	var bx := body.rotation.x if body else 0.0
+	_ayak_bilek(bx, absf(bx) > 0.9 or (body != null and absf(body.rotation.z) > 0.9))
+
+
+func _ayak_bilek(bx: float, lying: bool) -> void:
+	for side in 2:
+		var an: Node3D = _ankles[side]
+		if an:
+			var leg := leg_l if side == 0 else leg_r
+			var kn := knee_l if side == 0 else knee_r
+			var pitch := bx + (leg.rotation.x if leg else 0.0) + kn.rotation.x
+			var av := 0.0 if lying else clampf(-pitch + (ayak.ank_ek[side] if ayak and ayak.mod > 0 else 0.0), -0.75, 0.9)
+			if absf(av - _ank_v[side]) > 0.004:
+				_ank_v[side] = av
+				an.rotation.x = av
+
+
 func extremities() -> void:
 	if ayak:
 		ayak.bayatsa_birak()     # bu karede IK çalışmadıysa (Rig.update'siz iş pozu) eski yazdıkları kalmasın
@@ -301,16 +323,8 @@ func extremities() -> void:
 	var recheck := _hold_check <= 0
 	if recheck:
 		_hold_check = 12
+	_ayak_bilek(bx, lying)
 	for side in 2:
-		var an: Node3D = _ankles[side]
-		if an:
-			var leg := leg_l if side == 0 else leg_r
-			var kn := knee_l if side == 0 else knee_r
-			var pitch := bx + (leg.rotation.x if leg else 0.0) + kn.rotation.x
-			var av := 0.0 if lying else clampf(-pitch + (ayak.ank_ek[side] if ayak and ayak.mod > 0 else 0.0), -0.75, 0.9)
-			if absf(av - _ank_v[side]) > 0.004:
-				_ank_v[side] = av
-				an.rotation.x = av
 		var wr: Node3D = _wrists[side]
 		if wr:
 			var el := elbow_l if side == 0 else elbow_r

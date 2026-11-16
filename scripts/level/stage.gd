@@ -334,6 +334,14 @@ static func grip_hold(who: Node3D, frame: Node3D, pts: Array, seconds := -1.0, l
 					c += frame.to_global(q) if frame else q
 				who.work_at = c / float(pts.size())
 			grip(who, frame, pts)
+			# Fizik-3: tutuş duruşunda (çekiç, balta, halat) ayaklar yere izdüşür (ayak IK izdüşüm kipi: FK'nin ayak yerleri
+			# korunur, her taban kendi zeminine; öne basan ayağın burnu yere 11–13 cm giriyordu, 26 =hold AYAKAUDIT)
+			if rg and Rig.Ayak.etkin and who.is_inside_tree():
+				if rg.ayak == null:
+					rg.ayak = Rig.Ayak.new(rg)
+				rg.ayak.uygula(who.get_process_delta_time(), false, true)
+				if rg.ayak.mod > 0:
+					rg.ayak_bilekleri()
 	if seconds < 0.0:
 		tw.set_loops()
 		tw.tween_method(apply, 0.0, 1.0, 1.0)

@@ -154,7 +154,9 @@ func _ready() -> void:
 		Kumas.silindir(_body, 0.32, 0.78, Vector3(0, 0.56, 0), robe, 14, 0.25)
 		Kumas.silindir(_body, 0.325, 0.06, Vector3(0, 0.2, 0), robe.darkened(0.18), 14, -1.0, Kumas.ETEK, ROBE_UST, ROBE_BOY)
 	if apron.a > 0.0:
-		Props.box(_body, Vector3(0.38, 0.62, 0.03), Vector3(0, 0.8, 0.25), apron)
+		var ap := Props.box(_body, Vector3(0.38, 0.62, 0.03), Vector3(0, 0.8, 0.25), apron)
+		if robe.a > 0.0:
+			Kumas.isaretle(ap, Kumas.ETEK, ROBE_UST, ROBE_BOY)      # kaftanla birlikte bükülür (içine girmesin)
 	Props.prism(_body, Vector3(0.17, 0.12, 0.04), Vector3(0, 1.3, 0.21), Color("f1ede2"), Vector3(180, 0, 0))
 	# Kollar
 	_arm_l = Node3D.new()
@@ -420,7 +422,7 @@ func _basileus() -> void:
 			Props.ball(_head, 0.022, Vector3(sx * 0.2, 0.12 - k * 0.055, 0.04), pearl, Vector3.ONE, 5)
 	# Loros: omuzdan çapraz inen mücevherli altın kuşak
 	for sx in [-1, 1]:
-		Props.box(_body, Vector3(0.1, 0.75, 0.03), Vector3(sx * 0.1, 0.95, 0.27), gold, Vector3(0, 0, sx * 22))
+		Kumas.isaretle(Props.box(_body, Vector3(0.1, 0.75, 0.03), Vector3(sx * 0.1, 0.95, 0.27), gold, Vector3(0, 0, sx * 22)), Kumas.ETEK, ROBE_UST, ROBE_BOY)
 	Kumas.isaretle(Props.box(_body, Vector3(0.12, 0.6, 0.03), Vector3(0, 0.45, 0.33), gold), Kumas.ETEK, ROBE_UST, ROBE_BOY)
 	for k in 5:
 		Kumas.isaretle(Props.ball(_body, 0.02, Vector3(0, 0.25 + k * 0.1, 0.35), Color("b0101a") if k % 2 == 0 else Color("1a7a4a"), Vector3.ONE, 5), Kumas.ETEK, ROBE_UST, ROBE_BOY)
@@ -566,8 +568,8 @@ func _galero() -> void:
 func _berretta() -> void:
 	Props.ball(_head, 0.215, Vector3(0, 0.06, -0.03), hair, Vector3(1.02, 0.9, 1.0), 10)
 	Props.ball(_head, 0.22, Vector3(0, 0.2, -0.02), Color("1a1a1e"), Vector3(1.05, 0.5, 1.05), 10)
-	Props.box(_body, Vector3(0.1, 0.8, 0.04), Vector3(0.14, 0.9, 0.26), Color("1a1a1e"))
-	Props.box(_body, Vector3(0.12, 0.5, 0.04), Vector3(0.14, 1.05, -0.26), Color("1a1a1e"))
+	Kumas.isaretle(Props.box(_body, Vector3(0.1, 0.8, 0.04), Vector3(0.14, 0.9, 0.26), Color("1a1a1e")), Kumas.ETEK, ROBE_UST, ROBE_BOY)
+	Kumas.isaretle(Props.box(_body, Vector3(0.12, 0.5, 0.04), Vector3(0.14, 1.05, -0.26), Color("1a1a1e")), Kumas.ETEK, ROBE_UST, ROBE_BOY)
 
 
 ## Sürekli iş hareketi (Rig.activity): sit, sit_ground, stir, hammer, write, paint, carry, whittle.
