@@ -404,7 +404,8 @@ func _fov(delta: float, kamera: bool) -> void:
 		_fov_yazilan = INF
 		return
 	_fov_ek = move_toward(_fov_ek, hedef, delta * FOV_KOSU * 3.0)
-	cam.fov = taban + _fov_ek
+	if cam.fov != taban + _fov_ek:
+		cam.fov = taban + _fov_ek          # yalnız değişince (her karede yazmak kamerayı her karede günceller)
 	_fov_yazilan = cam.fov
 	# Denetim: koşu bitti, katkı 1,5 sn'de sıfıra dönmedi
 	if _kosu_k <= 0.0 and _fov_ek > 0.05:

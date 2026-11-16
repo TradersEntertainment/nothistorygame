@@ -65,21 +65,22 @@ func _physics_process(delta: float) -> void:
 				if str(sc.get("phase")) == "yard":
 					sc.call("_on_interact", "well")
 			var y := p.global_position.y
-			# İp inişi bitti (gövde durdu, replik sürüyor): kopuştan önce ağır çekime geç; yazılım çiziminde 0,75 sn'lik
-			# düşüş yoksa tek karede biterdi
+			# İpte iniş 4,8 m (kuyu ağzı +3,7'den −1,1'e): inişin sonuna doğru ağır çekime geçilir (yazılım çiziminde
+			# 0,75 sn'lik düşüş yoksa tek karede biterdi); iniş başında oyun 0,25 hızında (karede ≤ 0,25 sn)
 			if str(sc.get("phase")) == "descend":
+				if _son_y != INF and absf(_son_y - y) > 1.0 and Engine.time_scale > 0.05:
+					_ilk_y = INF            # avludan kuyunun içine ışınlandı: iniş buradan ölçülür
 				if _ilk_y == INF:
 					_ilk_y = y
-				if _son_y != INF and absf(_son_y - y) < 0.0005 and _ilk_y - y > 2.0:
-					_durgun += delta
-					if _durgun > 0.3 and Engine.time_scale > 0.05:
-						Engine.time_scale = 0.04
-				else:
-					_durgun = 0.0
+					Engine.time_scale = 0.25
+				if _ilk_y - y > 4.6 and Engine.time_scale > 0.05:
+					Engine.time_scale = 0.04
 			# Işınlanma (avludan kuyunun içine) sayılmaz: karede 1 m'den az, iki ardışık karede > 3 m/sn iniş (ip kopunca)
 			var hiz := (_son_y - y) / maxf(delta, 0.001) if _son_y != INF and absf(_son_y - y) < 1.0 else 0.0
 			_hizli = _hizli + 1 if hiz > 3.0 and str(sc.get("phase")) == "descend" else 0
-			if _hizli >= 2:
+			# İp 4,8 m'de biter; ondan 0,15 m aşağısı kopuştan sonraki düşüş (tween'ler çizim karesinde ilerler: fizik
+			# adımları arasında hız sıfır görünebilir, yalnız hıza bakılmaz)
+			if _hizli >= 2 or (_ilk_y != INF and str(sc.get("phase")) == "descend" and _ilk_y - y > 4.95):
 				_cek(ad + "_kuyu")
 			_son_y = y
 
