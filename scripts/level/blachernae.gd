@@ -175,7 +175,7 @@ func _korkuluk() -> void:
 		# şehirde saray İstanbul v2'nin görsel dil kuralından (gorsel_dil.gd: doygunluk/parlaklık tavanı, saf beyaz yok) geçer:
 		# bölümde de aynı kural (kural yoksa "tekfur" deseni doygun kırmızı-beyaz dama, revak sütunları saf beyaz)
 		load("res://scripts/world/ist/gorsel_dil.gd").uyumla(saray)
-	var ns: int = BLAK.birlestir(saray, "BlakSarayBirlesik") if saray else 0
+	var ns: int = BLAK.birlestir(saray, "BlakSarayBirlesik", 2.0) if saray else 0
 	print("BLAKSET birlestir sur=%d saray=%d" % [nb, ns])
 
 ## Yürüyüş yolunun korkulukları: dış kenarda (merdiven açıklıkları hariç) ve iç kenarda (merdiven başı hariç)

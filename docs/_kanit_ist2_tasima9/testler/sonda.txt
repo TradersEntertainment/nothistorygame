@@ -59,7 +59,28 @@ BLAKRAMPA eski 0.56 1.56 2.56 3.56 4.56 5.56 6.56 7.56 8.56 9.56 10.56 11.56
 BLAKZEMIN eski dis y=0.000..0.000 bos=29
 BLAKZEMIN eski ic y=0.000..0.000 bos=0
 BLAKGOR eski ag=472 ucgen=19556
+BLAKGOR eski cocuk=@Node3D@15 ucgen=4368 golgeli=0
+BLAKGOR eski cocuk=Dressing ucgen=2000 golgeli=2000
+BLAKGOR eski cocuk=@Node3D@257 ucgen=628 golgeli=138
+BLAKGOR eski cocuk=@Node3D@279 ucgen=628 golgeli=138
+BLAKGOR eski cocuk=@Node3D@301 ucgen=628 golgeli=138
+BLAKGOR eski cocuk=@Node3D@323 ucgen=628 golgeli=138
+BLAKGOR eski cocuk=@Node3D@345 ucgen=628 golgeli=138
+BLAKGOR eski cocuk=@Node3D@367 ucgen=628 golgeli=138
+BLAKGOR eski cocuk=@Node3D@389 ucgen=628 golgeli=138
+BLAKGOR eski cocuk=@Node3D@411 ucgen=628 golgeli=138
+BLAKGOR eski cocuk=@Node3D@433 ucgen=628 golgeli=138
+BLAKGOR eski cocuk=@Node3D@455 ucgen=628 golgeli=138
+BLAKGOR eski cocuk=@Node3D@477 ucgen=628 golgeli=138
+BLAKGOR eski cocuk=@Node3D@499 ucgen=628 golgeli=138
+BLAKGOR eski cocuk=@Node3D@521 ucgen=628 golgeli=138
+BLAKGOR eski cocuk=@Node3D@543 ucgen=628 golgeli=138
+BLAKGOR eski cocuk=@Node3D@565 ucgen=628 golgeli=138
+BLAKGOR eski cocuk=@Node3D@587 ucgen=628 golgeli=138
+BLAKGOR eski cocuk=@Node3D@609 ucgen=628 golgeli=138
+BLAKGOR eski cocuk=@Node3D@631 ucgen=628 golgeli=138
 BLAKSET bolum=30 set=yeni
+BLAKSET birlestir sur=19 saray=326
 BLAKCARP yeni poz=(-10.000,5.900,-3.100) don=(50.53,-125.94,0.00) boy=(2.400,0.200,15.645) nc=false
 BLAKCARP yeni poz=(-15.400,10.000,-20.000) don=(-0.00,0.00,0.00) boy=(5.400,20.000,5.400) nc=false
 BLAKCARP yeni poz=(-16.000,2.000,-35.000) don=(-0.00,0.00,0.00) boy=(0.800,4.000,18.000) nc=false
@@ -120,7 +141,29 @@ BLAKYOL yeni z=3.6 -62.0..-60.5@-9.00 -60.0..-44.5@12.00 -44.0..-36.0@17.00 -35.
 BLAKRAMPA yeni 0.56 1.56 2.56 3.56 4.56 5.56 6.56 7.56 8.56 9.56 10.56 11.56
 BLAKZEMIN yeni dis y=0.000..0.000 bos=29
 BLAKZEMIN yeni ic y=0.000..0.000 bos=0
-BLAKGOR yeni ag=750 ucgen=43284
+BLAKGOR yeni ag=484 ucgen=43404
+BLAKGOR yeni cocuk=@Node3D@664 ucgen=4368 golgeli=0
+BLAKGOR yeni cocuk=BlakGorunus ucgen=15012 golgeli=11426
+BLAKGOR yeni cocuk=BlakSaray ucgen=9640 golgeli=5050
+BLAKGOR yeni cocuk=Dressing ucgen=2000 golgeli=2000
+BLAKGOR yeni cocuk=@Node3D@1349 ucgen=628 golgeli=138
+BLAKGOR yeni cocuk=@Node3D@1371 ucgen=628 golgeli=138
+BLAKGOR yeni cocuk=@Node3D@1393 ucgen=628 golgeli=138
+BLAKGOR yeni cocuk=@Node3D@1415 ucgen=628 golgeli=138
+BLAKGOR yeni cocuk=@Node3D@1437 ucgen=628 golgeli=138
+BLAKGOR yeni cocuk=@Node3D@1459 ucgen=628 golgeli=138
+BLAKGOR yeni cocuk=@Node3D@1481 ucgen=628 golgeli=138
+BLAKGOR yeni cocuk=@Node3D@1503 ucgen=628 golgeli=138
+BLAKGOR yeni cocuk=@Node3D@1525 ucgen=628 golgeli=138
+BLAKGOR yeni cocuk=@Node3D@1547 ucgen=628 golgeli=138
+BLAKGOR yeni cocuk=@Node3D@1569 ucgen=628 golgeli=138
+BLAKGOR yeni cocuk=@Node3D@1591 ucgen=628 golgeli=138
+BLAKGOR yeni cocuk=@Node3D@1613 ucgen=628 golgeli=138
+BLAKGOR yeni cocuk=@Node3D@1635 ucgen=628 golgeli=138
+BLAKGOR yeni cocuk=@Node3D@1657 ucgen=628 golgeli=138
+BLAKGOR yeni cocuk=@Node3D@1679 ucgen=628 golgeli=138
+BLAKGOR yeni cocuk=@Node3D@1701 ucgen=628 golgeli=138
+BLAKGOR yeni cocuk=@Node3D@1723 ucgen=628 golgeli=138
 BLAKCARP SARAY_ESKI poz=(-14.400,10.000,-20.000) don=(-0.00,0.00,0.00) boy=(5.000,20.000,5.000) nc=false
 BLAKCARP SARAY_ESKI poz=(14.400,10.000,-20.000) don=(-0.00,0.00,0.00) boy=(5.000,20.000,5.000) nc=false
 BLAKCARP SARAY_YENI poz=(-15.400,10.000,-20.000) don=(-0.00,0.00,0.00) boy=(5.400,20.000,5.400) nc=false
@@ -133,7 +176,3 @@ BLAKCARP SARAY_YENI poz=(16.000,2.000,-35.000) don=(-0.00,0.00,0.00) boy=(0.800,
 BLAKCARP SARAY_YENI poz=(2.100,2.200,-44.000) don=(-0.00,0.00,0.00) boy=(0.800,4.400,1.000) nc=false
 BLAKCARP SARAY_YENI poz=(8.850,2.000,-44.000) don=(-0.00,0.00,0.00) boy=(14.300,4.000,0.800) nc=false
 BLAKSONDA OZET eski_carp=47 yeni_carp=54 fark=0 saray_farki=11
-WARNING: ObjectDB instances leaked at exit (run with --verbose for details).
-     at: cleanup (core/object/object.cpp:2378)
-ERROR: 1 resources still in use at exit (run with --verbose for details).
-   at: clear (core/io/resource.cpp:614)

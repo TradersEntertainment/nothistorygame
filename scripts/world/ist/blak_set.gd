@@ -233,7 +233,9 @@ static func zemin_y(x: float, z: float) -> float:
 ## kule taşları, korkuluk, merdiven, saray kutuları, ışıklı pencereler kendi malzemeleriyle). Katı gövdenin çocuğu olan ağ
 ## kaldırılırsa gövde "görünür katı" sayılır (meta "wall": Unclip/düellocu düşüşü eskisi gibi). Kişi, çoklu ağ, özel sınır
 ## kutulu (kumaş) ve yalnız-çarpışma düğümleri dokunulmaz. Dönen: birleştirilen ağ sayısı.
-static func birlestir(root: Node3D, ad: String) -> int:
+## golge_esik > 0: en uzun kenarı bundan kısa parçalar gölge düşürmez (sarayın pencere kemeri, sütun, diş, balkon parmaklığı:
+## gece ay ışığında görünmeyen gölge, ama her gölge geçişinde yeniden çiziliyordu; bütçe)
+static func birlestir(root: Node3D, ad: String, golge_esik := 0.0) -> int:
 	var gruplar := {}
 	var sira: Array = []
 	var say := 0
@@ -256,16 +258,21 @@ static func birlestir(root: Node3D, ad: String) -> int:
 		# mekânsal hücre (x 32 m, z iç/dış): birleşik ağ görüşte değilse kesilsin (ilkel bütçesi; tek 130 m'lik ağ her açıda
 		# bütün kuleleri ve gölge geçişlerini çiziyordu)
 		var mc := rel * mi.mesh.get_aabb().get_center()
+		var golge := mi.cast_shadow
+		if golge_esik > 0.0:
+			var asz := mi.mesh.get_aabb().size * rel.basis.get_scale().abs()
+			if maxf(asz.x, maxf(asz.y, asz.z)) < golge_esik:
+				golge = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
 		var hucre := "%d|%d" % [floori(mc.x / 32.0), 0 if mc.z < -8.0 else 1]
 		for si in mi.mesh.get_surface_count():
 			var m: Material = mi.get_active_material(si)
 			if m == null:
 				continue
-			var k := "%d|%d|%s" % [m.get_instance_id(), int(mi.cast_shadow), hucre]
+			var k := "%d|%d|%s" % [m.get_instance_id(), int(golge), hucre]
 			if not gruplar.has(k):
 				var st := SurfaceTool.new()
 				st.begin(Mesh.PRIMITIVE_TRIANGLES)
-				gruplar[k] = [st, m, mi.cast_shadow]
+				gruplar[k] = [st, m, golge]
 				sira.append(k)
 			(gruplar[k][0] as SurfaceTool).append_from(mi.mesh, si, rel)
 		var p := mi.get_parent()

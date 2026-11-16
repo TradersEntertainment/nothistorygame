@@ -1,0 +1,11 @@
+BLAKSET bolum=30 set=yeni
+BLAKSET birlestir sur=25 saray=326
+T9KARE an_01_acilis.jpg goz=(1.0, 13.62, 2.2) cizim=2024 ilkel=3588534 set=yeni
+T9KARE an_02_sur_yolu_yakin.jpg goz=(2.5, 13.62, 2.9) cizim=6034 ilkel=7963518 set=yeni
+T9KARE an_03_kule.jpg goz=(11.0, 13.62, 2.3) cizim=5782 ilkel=7934926 set=yeni
+T9KARE an_04_merdiven.jpg goz=(6.0, 13.92, 4.2) cizim=708 ilkel=1171945 set=yeni
+T9KARE an_05_saray_onu.jpg goz=(-3.0, 13.62, 1.0) cizim=1104 ilkel=1636914 set=yeni
+T9KARE an_06_gece_genel.jpg goz=(34.0, 26.0, 46.0) cizim=2266 ilkel=1860318 set=yeni
+T9KARE an_07_mazgal_yakin.jpg goz=(-0.1, 13.62, 3.4) cizim=1908 ilkel=3444233 set=yeni
+T9KARE an_08_mazgal_ova.jpg goz=(0.9, 13.62, 3.4) cizim=2442 ilkel=4644305 set=yeni
+T9KARE BITTI set=yeni

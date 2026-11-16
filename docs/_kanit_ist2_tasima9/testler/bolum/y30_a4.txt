@@ -1,0 +1,7 @@
+KOSU y30_a4 args=--chapter=30 --autotest rc=0 sure=37s
+BLAKSET bolum=30 set=yeni
+T9SURE evre=intro sure=0.47 set=yeni
+T9SURE evre=gun sure=17.75 set=yeni
+T9SURE evre=ladders sure=11.25 set=yeni
+T9SURE evre=duel sure=8.83 set=yeni
+AUTOTEST PASS chapter=30 variant= outcome=30.1 gun=3/4 pushed=2 boarders=0 duel=true rifle=4

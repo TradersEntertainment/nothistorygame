@@ -1,0 +1,10 @@
+BLAKSET bolum=30 set=eski
+T9KARE an_01_acilis.jpg goz=(1.0, 13.62, 2.2) cizim=2064 ilkel=3554850 set=eski
+T9KARE an_02_sur_yolu_yakin.jpg goz=(2.5, 13.62, 2.9) cizim=6086 ilkel=7930412 set=eski
+T9KARE an_03_kule.jpg goz=(11.0, 13.62, 2.3) cizim=5852 ilkel=7905419 set=eski
+T9KARE an_04_merdiven.jpg goz=(6.0, 13.92, 4.2) cizim=735 ilkel=1127196 set=eski
+T9KARE an_05_saray_onu.jpg goz=(-3.0, 13.62, 1.0) cizim=1064 ilkel=1601312 set=eski
+T9KARE an_06_gece_genel.jpg goz=(34.0, 26.0, 46.0) cizim=2292 ilkel=1801377 set=eski
+T9KARE an_07_mazgal_yakin.jpg goz=(-0.1, 13.62, 3.4) cizim=1945 ilkel=3400252 set=eski
+T9KARE an_08_mazgal_ova.jpg goz=(0.9, 13.62, 3.4) cizim=2475 ilkel=4590894 set=eski
+T9KARE BITTI set=eski

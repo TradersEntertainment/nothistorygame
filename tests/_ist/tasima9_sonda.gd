@@ -134,3 +134,21 @@ func _dok(b: Blachernae, ad: String) -> void:
 			var vv: PackedVector3Array = arr[Mesh.ARRAY_VERTEX]
 			tri += (idx.size() if idx.size() > 0 else vv.size()) / 3
 	print("BLAKGOR %s ag=%d ucgen=%d" % [ad, nm, tri])
+	# üst düzey çocuk başına üçgen ve gölge düşüren üçgen (bütçe: gölge geçişleri ilkel sayısını katlar)
+	for ch in b.get_children():
+		var t2 := 0
+		var g2 := 0
+		for g in ([ch] if ch is MeshInstance3D else []) + ch.find_children("*", "MeshInstance3D", true, false):
+			var mi2 := g as MeshInstance3D
+			if mi2.mesh == null or not mi2.is_visible_in_tree():
+				continue
+			var tt := 0
+			for s2 in mi2.mesh.get_surface_count():
+				var a2 := mi2.mesh.surface_get_arrays(s2)
+				var ix: PackedInt32Array = a2[Mesh.ARRAY_INDEX] if a2[Mesh.ARRAY_INDEX] != null else PackedInt32Array()
+				tt += (ix.size() if ix.size() > 0 else (a2[Mesh.ARRAY_VERTEX] as PackedVector3Array).size()) / 3
+			t2 += tt
+			if mi2.cast_shadow != GeometryInstance3D.SHADOW_CASTING_SETTING_OFF:
+				g2 += tt
+		if t2 > 500:
+			print("BLAKGOR %s cocuk=%s ucgen=%d golgeli=%d" % [ad, ch.name, t2, g2])
