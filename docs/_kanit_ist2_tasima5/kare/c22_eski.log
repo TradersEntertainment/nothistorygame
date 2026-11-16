@@ -30,3 +30,14 @@ TASIMA22YURU bacak=fici_al sure=0.0 yol=0.0 takilma=0 dusme=0 son=(2.5, 8.0, 14.
 TASIMA22YURU bacak=oluk sure=0.0 yol=0.0 takilma=0 dusme=0 son=(-2.6, 8.0, 14.6) odak=chute
 TASIMA22KARE an_04_oluk_fitil.jpg oyuncu=(-2.6, 8.0, 14.6) cizim=4966 ilkel=6535120 sur=eski
 LORE key=22 placed=3
+TASIMA22KARE an_05_yuvarlanma.jpg oyuncu=(-2.6, 8.0, 14.6) cizim=5084 ilkel=6676730 sur=eski
+TASIMA22YURU bacak=fici_al sure=0.0 yol=0.0 takilma=0 dusme=0 son=(3.2, 8.0, 14.7) odak=powder
+TASIMA22YURU bacak=oluk sure=0.0 yol=0.0 takilma=0 dusme=0 son=(-2.6, 8.0, 14.6) odak=chute
+TASIMA22KARE an_06_yuvarlanma.jpg oyuncu=(-2.6, 8.0, 14.6) cizim=5246 ilkel=6833668 sur=eski
+TASIMA22KARE an_07_kule_yaniyor.jpg oyuncu=(-2.6, 8.0, 14.6) cizim=5026 ilkel=6712274 sur=eski
+TASIMA22KARE BITTI
+WARNING: ObjectDB instances leaked at exit (run with --verbose for details).
+     at: cleanup (core/object/object.cpp:2378)
+ERROR: 1 resources still in use at exit (run with --verbose for details).
+   at: clear (core/io/resource.cpp:614)
+KARE_BITTI rc=0 --chapter=22 --autotest=kare --eskisur

@@ -17,8 +17,8 @@
 | 1a | Bölüm 22 yeni surda | **TAMAM** | SurSet bağdaştırıcısı + `--eskisur`; oluk ve fıçılar eski yerinde, aşama 4'ün gedik üstü sur yolu tahtasında; kule hendeğin ötesinde (ova kaydırması); fıçı izi oluk → moloz yamacı → teras → dolgu → kule dibi (süreler aynı). Yeni 7 çeşit ×2 **14/14 PASS**, eski ×1 **7/7 PASS**, denetim 0; `=yuru` takılma 0 düşme 0 (iki set) |
 | 1b | Bölüm 22o yeni surda | **TAMAM** | ova içeriği `ova_ofs` ile yeni ovaya (iç mesafeler AYNI); kule önü dolgusu uzak yakadan dolan kendi tümseğim (setin dolgu yardımcısıyla); tüfek hedefleri yeni sur yolunun mazgallarında. Yeni 6 çeşit ×2 **12/12 PASS**, eski ×1 **6/6 PASS**, denetim 0; `=yuru` 20 bacak takılma 0 düşme 0 tuş 0 (iki set aynı, 80 sn) |
 | 1c | Düello (22o çıkış düellosu) süresi | **TAMAM** | kazanılan düello medyan eski 18,6 sn [10,8–34,3] (n 5) ↔ yeni 28,1 [23,9–33,7] (n 10): yeni kısa DEĞİL |
-| 1d | Kareler ESKİ\|YENİ | bkz. §1.6 | |
-| 1e | Bütçe | bkz. §1.7 | |
+| 1d | Kareler ESKİ\|YENİ | **TAMAM** (22: 7 çift, 22o: 6 çift) | iki kötü ilk kare düzeltildi (22 şafak: diş arkası → mazgal; 22 fitil karesi: çekimde fitil doluyordu); 22o'da sur tepesi boştu → Garrison `dense` ile mazgallarda savunucular (yakın kırpım `kare/kirp_c22o_*.jpg`) |
+| 1e | Bütçe (yeni ≤ eski) | **KISMEN** | 13 bakışın 12'sinde çizim ve ilkel eskinin altında (−%4…−%75); 22o an_04 (kule dibinden yukarı) ilkel **+%14**, çizim −%1 |
 | 2 | Bölüm 28o | **YAPILMADI** | yeni sette "sağlam sur" (gediksiz) seçeneği yok: 28o 11 Nisan, sur sağlam (`LandWalls.intact`); gedik `surlar.gd`/`SurOyun.kur` kesiminin parçası (A) → **A'ya istek** |
 | 3a | Bölüm 21 an_01 gri dörtgen | **KAYNAK BULUNDU — A'nın dosyası** | `--golgesiz5` ile de duruyor (gölge değil); üçgen düzeyinde piksel sondası (`--pik5`): gri yüzey peribolosun çıplak zemin ağı `OyunDilimi/Mesoteikhion/@MeshInstance3D@1366`, dokulu kısım `SurDibiEtek` (iç surun ve iç kulenin eteği; iç kule eteği x −2,8'den sağda). "Dörtgen" = iki eteğin örtmediği peribolos zemininin dokusuz, düz görünüşü → **görünüşe istek** |
 | 3b | Bölüm 20 dost asker terasa | **YENİDEN ÜRETİLEMEDİ** | `--sonda4` 4 koşu (def ×2, late, tape): hiçbir dost (tk=0) gedikten dışarı (z > 17) ya da aşağı (y < −0,8) çıkmadı. İncelenen yollar §3b; kod değişmedi |
@@ -65,7 +65,10 @@ Denetim satırı (süzgeç) **0**. `TESPITBLOCK who=siege22 blocker=Skeleton/Mes
 | set | bacak | takılma | düşme | tuş yok | süre | yol | isabet |
 |---|---|---|---|---|---|---|---|
 | eski | 4 | 0 | 0 | 0 | 7,5 sn | 17,7 m | 2 |
-| yeni | 4 | 0 | 0 | 0 | (bkz. §1.8 son koşu) | | 2 |
+| yeni (son kod, `testler/son/c22_yuru.ham`) | 4 | 0 | 0 | 0 | 6,9 sn | 17,1 m | 2 |
+| yeni (ilk tur; Giustiniani yolun ortasında) | 4 | 0 | 0 | 0 | 13,3 sn | 20,0 m | 2 |
+
+Son kodla ayrıca `testler/son/c22_def`, `c22_brow`: PASS (aynı alanlar).
 
 ### 1.4 Mesafe tablosu (eski ↔ yeni; yatay / 3B, m)
 
@@ -82,10 +85,29 @@ Oyuncunun yürüdüğü bütün hedefler ≤ 7 m (karar 1-A: ≤ 20 m).
 ### 1.5 Yön replikleri — `yon_replikleri.md` (metin DEĞİŞMEDİ). 22'de hepsi uyumlu.
 
 ### 1.6 Kareler (oyuncu kamerası) — `kare/c22_eski`, `kare/c22_yeni2` (ilk tur `kare/c22_yeni`)
-(doldurulacak)
 
-### 1.7 Bütçe
-(doldurulacak)
+| an | ESKİ | YENİ — tek cümle | hüküm |
+|---|---|---|---|
+| an_01 şafak, kule | alçak korkuluğun üstünden ovada kule, ordugâh dumanları | mazgal açıklığından hendeğin ötesinde kule, ardında ordugâh; iki yanda insan boyu dişler; kutu yok, havada duran yok, kule ovaya oturuyor | **kabul** (ilk tur: oyuncu dişin arkasındaydı, kule görünmüyordu → **kötü**, düzeltildi) |
+| an_02 şafak, Giustiniani | Giustiniani 2 m'de; sol altta peribolosta ateş başında askerler, iç surda nöbetçiler | Giustiniani 2 m'de sur yolunda, arkasında gedik tahtası ve kuleler; peribolos yüksek iç korkuluğun ardında görünmüyor | **kabul, eskisinden sönük** (peribolos hayatı A'nın korkuluğu yüzünden görünmüyor; ilk tur: 0,9 m'de yüz → düzeltildi) |
+| an_03 gece, fıçılar | kalas köprüden fıçılara; solda peribolos ateşi ve depo | gediğin üstündeki aşama-4 tahtasından fıçılara; ötede kazan dumanı ve nöbetçiler, sağda ova ve ordugâh, solda aşağıda peribolos; aynı ressamın elinden | **iyi** |
+| an_04 olukta fitil | Giustiniani'nin yüzü kadrajın yarısını kapatıyor; olukta fıçı, kule | olukta fıçı, fitil göstergesi, oluğun hizasında hendeğin (dolgunun) ötesinde kule, ordugâh; kadraj açık | **iyi** (eskiden iyi; ilk tur: çekimde fitil dolup fıçı olukta patlamıştı → **kötü**, düzeltildi) |
+| an_05/06 yuvarlanma | Giustiniani'nin yüzü; kulenin dibinde patlama | oluğun ucundan hendeğin ötesine: kulenin dibinde patlama, duman, ateş ışığı | **iyi** |
+| an_07 kule yanıyor | yanan kule yakın (24 m), Giustiniani'nin yüzü kadrajda | yanan kule hendeğin ötesinde (34 m), alevler, yerde yanmış asker; kule daha küçük | **kabul** |
+
+### 1.7 Bütçe (`=kare`, aynı an, 4 kare ortalaması; `kare/c22_eski.log` ↔ `kare/c22_yeni2.log`; `testler/butce.py`)
+
+| an | çizim eski → yeni | ilkel eski → yeni |
+|---|---|---|
+| safak_kule | 4.798 → 4.339 (−%10) | 6,79 M → 6,31 M (−%7) |
+| safak_giust | 4.549 → 2.874 (−%37) | 5,29 M → 4,20 M (−%21) |
+| gece_ficilar | 3.619 → 2.676 (−%26) | 4,91 M → 3,72 M (−%24) |
+| oluk_fitil | 4.966 → 4.462 (−%10) | 6,54 M → 6,27 M (−%4) |
+| yuvarlanma (an_05) | 5.084 → 4.510 (−%11) | 6,68 M → 6,33 M (−%5) |
+| yuvarlanma (an_06) | 5.246 → 4.619 (−%12) | 6,83 M → 6,42 M (−%6) |
+| kule_yaniyor | 5.026 → 4.497 (−%11) | 6,71 M → 6,26 M (−%7) |
+
+Hepsi eskinin altında.
 
 ---
 
@@ -105,6 +127,9 @@ Oyuncunun yürüdüğü bütün hedefler ≤ 7 m (karar 1-A: ≤ 20 m).
 - Kuleden tüfek: hedefler yeni dış sur yolunda, **mazgal açıklığında** (`_mazgal_x`; dişler insan boyu); WallCrowd kutusu iç
   surdan dış surun ova yüzüne (`_sur_kutusu`). İkinci gecenin fıçıları yeni dış surun yolundan yuvarlanır, orta noktası dolgunun
   üstü (ova kaydırmasıyla).
+- Sur yolu kalabalığı: yeni setin `Garrison` dizisi yolun iç yanında (insan boyu dişlerin ardında, ovadan görünmüyor: ilk tur
+  an_01 sur tepesi boş) → yeni sette Garrison'un var olan `dense` seçeneği açık (dış yana, mazgallara da dizer; eğilen, mızrak
+  saplayan, taş atan duruşlar). Garrison kodu değişmedi.
 - `=yuru` (gerçek bot: Hasan → sepet ×3 → kıyı → deri ×3 → kule önü, E basılı çak/çek → su → ıslat; siper ve kule gövdesini
   dolanan ara noktalar iki sette aynı) ve `=kare` (7 an).
 
@@ -145,8 +170,34 @@ Ova içindeki bütün çiftler (Hasan, sepet yığını, kıyı, deri yığını
 (aynı kaydırma; en uzun yürüyüş su ↔ kule 16,8 m). Değişenler: kıyı ↔ hendek dibi 2,9 → 6,0 m (düşüş); kule tepesi ↔ dış sur
 yolu (tüfek) yatay 23,6 → 33,6 m, kule tepesinin sur yolundan yüksekliği 5,5 → 1,4 m (bkz. yön replikleri D22O_H_GUN).
 
-### 2.6 Kareler — `kare/c22o_eski`, `kare/c22o_yeni`
-(doldurulacak)
+### 2.6 Kareler — `kare/c22o_eski`, `kare/c22o_yeni2` (ilk tur `kare/c22o_yeni`, `dense`siz)
+
+| an | ESKİ | YENİ — tek cümle | hüküm |
+|---|---|---|---|
+| an_01 açılış, Hasan | kulenin iskeleti, marangozlar, Hasan; arkada alçak surların tepesi savunucularla dolu, gedikte ateşli barikat | aynı ön plan; arkada yeni surlar, kuleler, gedik tahtası; mazgallarda miğferli, mızraklı savunucular (yakın kırpım); kutu yok, herkes zemine oturuyor | **kabul** (ilk tur: sur tepesi boş → **sönük**; `dense` ile kalabalık geri geldi, `kirp_c22o_yeni.jpg` ↔ `kirp_c22o_yeni2.jpg`) |
+| an_02 kıyıda sepet | elde sepet; hendekte düz kahverengi dolgu **kutusu**, hendekte yatan askerler | elde sepet; 6 m'lik hendeğin dibinde yatan askerler, karşıda teras ve moloz; dolgu henüz yok | **iyi** (kutu yok) |
+| an_03 üç sepetten sonra dolgu | hendeği dolduran düz **kutu** | uzak yakadan hendeğe uzanan şevli toprak tümseği (setin dolgusuyla aynı ağ/doku) | **iyi** (kutu gitti; gece yakından doku kaba taş gibi okunuyor) |
+| an_04 deri, halat | kulenin altından yukarı: halat, eller | aynısı | **aynı** |
+| an_05 şafak, kule | kule, ustalar, Hasan, siperler; arkada savunucularla dolu surlar | aynı ön plan; arkada yeni surlar, kuleler | **kabul** |
+| an_06 kule tepesinden sur | surlar savunucu dolu, gedikte ateşli barikat, kule tepesi surun 5,5 m üstünde | surların mazgal sırası boyunca savunucular, gedik tahtası, dolu dolgu, poterna merdiveni; kule tepesi surun yalnız 1,4 m üstünde, bakış yatık | **kabul, eskisinden sönük** (gedikte ateş yok; bakış yüksekliği: yön replikleri D22O_H_GUN) |
+
+### 2.7 Bütçe (`kare/c22o_eski.log` ↔ `kare/c22o_yeni2.log`)
+
+| an | çizim eski → yeni | ilkel eski → yeni |
+|---|---|---|
+| acilis_hasan | 5.527 → 3.470 (−%37) | 4,42 M → 3,34 M (−%25) |
+| kiyi_sepet | 3.977 → 2.798 (−%30) | 3,56 M → 2,81 M (−%21) |
+| dolgu_uc_sepet | 5.362 → 2.895 (−%46) | 4,32 M → 2,76 M (−%36) |
+| deri_ustalar | 731 → 724 (−%1) | 0,74 M → 0,85 M (**+%14**) |
+| safak_kule | 6.138 → 2.583 (−%58) | 3,74 M → 2,04 M (−%46) |
+| kule_tepesi_sur | 3.871 → 977 (−%75) | 2,80 M → 1,06 M (−%62) |
+
+an_04 ilkel artışı `dense`den değil (ilk tur, `dense`siz: aynı 845 bin); kule dibinden yukarı bakışta görünen tek şey kule ve
+gökyüzü, çizim çağrısı aynı → artış büyük olasılıkla yeni setin gölge geçişindeki gövdeleri (ayrıştırılmadı).
+
+### 2.8 `dense` sonrası testler (`testler/c22o_dense`)
+varsayılan ×2, late ×1: **3/3 PASS**, denetim 0, alanlar aynı; `=yuru` takılma 0 düşme 0 tuş 0, 80,3 sn. Düello 19,1 · 31,9 ·
+29,5 sn (kazanılan; §2.3'e eklenince yeni medyan 28,6, n 13).
 
 ---
 
@@ -210,4 +261,7 @@ dusme=0`, `TASIMA22OYURU OZET … takilma=0 dusme=0`). `=kare` yazılımsal GL'd
   kararı.
 - 22o dolgusu gece karesinde yakından kaba taş döşeme gibi okunuyor (setin dolgusuyla aynı ağ/doku; eskide düz kutu idi).
 - 28o yapılmadı (A'nın sağlam sur seçeneği yok). Bölüm 20 dost asker yeniden üretilemedi.
-- (kareler/bütçe sonrası eklenecek)
+- 22 an_02 ve 22o an_06: peribolosun ve surun eskideki hayatı yeni sette daha az görünüyor (A'nın yüksek iç korkuluğu; gedikte
+  ateşli barikat yok).
+- 22o an_04 ilkel +%14 (bütçe kuralının tek istisnası).
+- `make_dawn(0.01)` iki sette de şafak rengini vermiyor (kareler gece mavisi; eskide de aynı, dokunulmadı).

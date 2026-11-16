@@ -33,3 +33,7 @@ LORE key=22 placed=3
 TASIMA22KARE an_05_yuvarlanma.jpg oyuncu=(-2.5, 8.6, 15.3) cizim=4510 ilkel=6328024 sur=yeni
 TASIMA22YURU bacak=fici_al sure=0.0 yol=0.0 takilma=0 dusme=0 son=(3.2, 8.6, 15.0) odak=powder
 TASIMA22YURU bacak=oluk sure=0.0 yol=0.0 takilma=0 dusme=0 son=(-2.5, 8.6, 15.3) odak=chute
+TASIMA22KARE an_06_yuvarlanma.jpg oyuncu=(-2.5, 8.6, 15.3) cizim=4619 ilkel=6418449 sur=yeni
+TASIMA22KARE an_07_kule_yaniyor.jpg oyuncu=(-2.5, 8.6, 15.3) cizim=4497 ilkel=6257615 sur=yeni
+TASIMA22KARE BITTI
+KARE_BITTI rc=0 --chapter=22 --autotest=kare
