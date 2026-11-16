@@ -24,10 +24,13 @@ Dal: `wip/ist2-tasima8` (taban `wip/ist2-taban13` c6ab0f7b).
   taşıma yolu sıraya yakın, fıçılar yola yuvarlanıyordu, 26o hendek engeli hiç kalkmıyordu (32 bit eşitlik), 26o tırmanış
   dişin önündeydi, 26o kazan sancak yolunu kapatıyordu, 26 merdiven başı stauroma fıçılarına/kazana dayanıyordu.
 
+- Kareler: 26 (8 çift), 26o (6 çift) `kare/` altında; bütçe tabloları raporda.
+- Son düzeltmeler: merdivenler mazgal açıklığında, stauroma/kazan kaçınma; `SurSetSahne.govde_gorunur` (düellocu sur yolunun
+  korkuluğunu görür: 26o sur yolu dövüşü 2–3 sn'de "atılarak" bitiyordu); saldıranlar hendek duvarına yürümüyor; İmparator
+  kulenin önünde; dost düellocular dağıtılıyor.
+
 ## Süren
-- Tam çeşit listesi (26: 14 çeşit yeni ×2 + eski ×1; 26o: 5 çeşit yeni ×2 + eski ×1) parça parça koşuyor.
-- Kareler: 26 eski seri tamam; 26 yeni seri merdiven/kadraj düzeltmesinden sonra yeniden.
+- Son kodla tam liste: `testler/` (80 koşu: 26 ×2 + kararsız üçlü ×5, 26o ×2, eski kalanlar, =yuru ×4, bağımlı bölümler ×1).
 
 ## Sıradaki
-- Bağımlı bölümler ×1 (0, 1, 2, 8y, 20 bütün çeşitler, 20o, 21, 22, 22o, 25, 28o, 31o, 32o, 36b, 37o, 38o, 30, 30o), menu_return 26.
-- 26o kareleri, bütçe tablosu, rapor.
+- menu_return 26; sözleşme üçlüsü; rapor son hâli.
