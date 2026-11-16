@@ -75,6 +75,7 @@ func _ready() -> void:
 	_apply_autotest_setup()
 	if OS.has_environment("T8D_IZLE"):
 		_t8d_izle.call_deferred()
+	_kamera_bekci.call_deferred()
 	hud = Hud.new()
 	add_child(hud)
 	hud.chase_music = "tension"
@@ -148,6 +149,72 @@ func _dostlari_dagit() -> void:
 		var d := n as Duelist
 		if d and d.visible and d.team == 0 and d.global_position.distance_to(sur.gedik()) < 14.0:
 			Unclip.spread(d, 0.6)
+
+
+## TAŞIMA-8D: öldürme kamerası (Duel finisher) kadrajı kapatanları (savunucu sırası, onarımcı, yedek bölük) o süre gizler;
+## gizliyken yürüyenler (düellocu, yerinde adım atan) onları görmez (Unclip gizliyi saymaz), yerlerine adım atar; kamera
+## bitip gizlenenler geri gelince ikisi iç içe kalıyordu (VISAUDIT overlap WallFight{chop}|Duelist, SPK_DEFENDER|Duelist;
+## TMP8D izi: onarımcı k 366–370 gizli, dost düellocu 3,5 → 2,55). Kamera oyuncuya her döndüğünde oyuncunun çevresinde
+## iç içe ayakta duran çiftlerin yürüyeni (düellocu; yoksa yerinde durmayan) boş yere ayrılır.
+func _kamera_bekci() -> void:
+	var onceki := true
+	while is_inside_tree():
+		await get_tree().process_frame
+		if player == null or not is_instance_valid(player):
+			continue
+		var simdi := get_viewport().get_camera_3d() == player.camera
+		if simdi and not onceki:
+			await get_tree().process_frame      # gizlenenler bir kare içinde geri gelir
+			_ic_ice_ayir()
+		onceki = simdi
+
+
+func _ic_ice_ayir() -> void:
+	var pp := player.global_position
+	var who: Array[Node3D] = []
+	for n in get_tree().get_nodes_in_group("persons") + get_tree().get_nodes_in_group("soldiers"):
+		var p := n as Node3D
+		if p == null or not p.is_visible_in_tree() or p in who or p.has_meta("corpse") or p.has_meta("no_audit") or Unclip.lying(p):
+			continue
+		# denetimin (Hud._crowd_audit) saydıkları: ayakta, binmemiş, oturmayan
+		if p is Soldier and (p as Soldier).pose != "stand":
+			continue
+		var act := str(p.get("activity")) if p.get("activity") != null else ""
+		if act.begins_with("sit") or act in ["row", "ride", "swim"]:
+			continue
+		var at := false
+		var q: Node = p.get_parent()
+		while q != null and q != self:
+			if q is Horse:
+				at = true
+				break
+			q = q.get_parent()
+		if not at and p.global_position.distance_to(pp) < 30.0:
+			who.append(p)
+	for i in who.size():
+		for j in range(i + 1, who.size()):
+			var a := who[i]
+			var b := who[j]
+			if not is_instance_valid(a) or not is_instance_valid(b):
+				continue
+			var d := Vector2(a.global_position.x - b.global_position.x, a.global_position.z - b.global_position.z).length()
+			if d >= 0.4 or absf(a.global_position.y - b.global_position.y) > 0.6:
+				continue
+			var m := _ayrilan(a, b)
+			if m != null:
+				print("T8D ayir a=%s b=%s d=%.2f" % [a.get_parent().name, b.get_parent().name, d])
+				Unclip.spread(m, 0.6)
+
+
+## İç içe çiftten yer değiştirecek olan: düellocu (yürüyen); yoksa yerinde durması istenmeyen (no_yield değil)
+func _ayrilan(a: Node3D, b: Node3D) -> Node3D:
+	for o: Node3D in [a, b]:
+		if o.get_parent() is Duelist:
+			return o.get_parent() as Node3D
+	for o: Node3D in [a, b]:
+		if not o.has_meta("no_yield") and o != giust and o != emperor:
+			return o
+	return null
 
 
 ## TAŞIMA-8: x'e en yakın dış sur mazgal açıklığı (dişlerin arası; SurOyun.mazgallar), kacin'daki x'lerden 2,1 m ve
