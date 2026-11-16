@@ -24,3 +24,6 @@ TERRAIN_SOLIDIFIED scene=chapter22.tscn node=/root/Chapter22/@Node3D@177/Ova/@No
 HELDDEFAULT scene=chapter22 item=cologne
 TASIMA22YURU set=yeni yol_y=8.62 yol_z=15.30 oluk=(-2.5, 8.62, 16.4) fici=(3.5, 8.62, 15.3) kule=(-3.0, -3.545, 50.6)
 TASIMA22KARE an_01_safak_kule.jpg oyuncu=(-6.9, 8.6, 15.3) cizim=4339 ilkel=6311267 sur=yeni
+TASIMA22KARE an_02_safak_giust.jpg oyuncu=(-6.9, 8.6, 15.3) cizim=2874 ilkel=4201368 sur=yeni
+TASIMA22KARE an_03_gece_ficilar.jpg oyuncu=(0.0, 8.6, 15.3) cizim=2676 ilkel=3715889 sur=yeni
+TASIMA22YURU bacak=fici_al sure=0.0 yol=0.0 takilma=0 dusme=0 son=(2.5, 8.6, 15.1) odak=powder

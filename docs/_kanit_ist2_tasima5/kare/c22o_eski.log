@@ -32,3 +32,8 @@ TASIMA22OYURU bacak=kiyi sure=0.0 yol=0.0 takilma=0 dusme=0 son=(1.3, 0.0, 37.8)
 TASIMA22OYURU bacak=ara_siper sure=0.0 yol=0.0 takilma=0 dusme=0 son=(7.0, 0.0, 42.0) odak=
 TASIMA22OYURU bacak=yigin sure=0.0 yol=0.0 takilma=0 dusme=0 son=(7.4, 0.0, 54.4) odak=pile
 TASIMA22OYURU bacak=kiyi sure=0.0 yol=0.0 takilma=0 dusme=0 son=(2.2, 0.0, 37.8) odak=drop
+TASIMA22OKARE an_03_dolgu_uc_sepet.jpg oyuncu=(2.2, 0.0, 37.8) cizim=5362 ilkel=4319453 sur=eski
+TASIMA22OYURU bacak=ara_kule_arka sure=0.0 yol=0.0 takilma=0 dusme=0 son=(1.0, 0.0, 44.5) odak=
+TASIMA22OYURU bacak=ara_kule_sol sure=0.0 yol=0.0 takilma=0 dusme=0 son=(-6.1, 0.0, 44.5) odak=
+TASIMA22OYURU bacak=deri_yigini sure=0.0 yol=0.0 takilma=0 dusme=0 son=(-5.8, 0.0, 40.6) odak=hidepile
+TASIMA22OYURU bacak=kule_onu sure=0.0 yol=0.0 takilma=0 dusme=0 son=(-3.0, 0.0, 37.0) odak=hides
