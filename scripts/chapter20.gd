@@ -568,6 +568,8 @@ func _breach_duel() -> void:
 		Vfx.dust(self, sur.gedik() + Vector3(0, 1.0, 0), 1.2)
 		Audio.sfx("cave_in", -6.0, 1.1)
 		_update_objective()
+	if GameState.autotest:
+		_t6_sonda("duello_sonu", p)
 	await hud.say("SPK_TOLGA", "D20_T_DUEL" if _duel_won else "D20_T_LOST")
 	await _see_giust(p)     # Giustiniani konuşacak
 
@@ -621,6 +623,24 @@ func _yaklasma(w1: Dictionary, w2: Dictionary, ek: int) -> void:
 	w2["via"] = via2
 	w2["group"] = 2
 	w2["stagger"] = YAKLASMA_2_ARA
+
+
+## TAŞIMA-6 sondası (yalnız autotest): düello bitince oyuncu nerede, kamerası neye bakıyor, önündeki ilk gövde ne.
+## "TASIMA6DUELLO etiket=… p=… bas=… ileri=… ilk=<yol>@<uzaklık>" (0,5 m = hud'un "wall" denetimi; 3 m'ye kadar bakılır).
+func _t6_sonda(etiket: String, bas: Vector3) -> void:
+	if player.camera == null:
+		return
+	var eye := player.camera.global_position
+	var fwd := -player.camera.global_transform.basis.z
+	var q := PhysicsRayQueryParameters3D.create(eye, eye + fwd * 3.0)
+	q.exclude = [player.get_rid()]
+	var h := get_world_3d().direct_space_state.intersect_ray(q)
+	var ilk := "yok"
+	if not h.is_empty():
+		var col: Node = h["collider"]
+		ilk = "%s@%.2f" % [str(col.get_path()).replace(str(get_path()), ""), eye.distance_to(h["position"])]
+	print("TASIMA6DUELLO etiket=%s p=%s bas=%s ileri=%s ilk=%s" % [etiket, player.global_position.snapped(Vector3.ONE * 0.1),
+		bas.snapped(Vector3.ONE * 0.1), fwd.snapped(Vector3.ONE * 0.01), ilk])
 
 
 ## Giustiniani konuşmadan önce görünür olsun: uzun dövüşte (zor zorlukta dalga süre dolana dek sürer) oyuncu gediğin
