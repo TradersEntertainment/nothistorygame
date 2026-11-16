@@ -22,6 +22,11 @@ var kesim_id := "mesoteikhion"
 var dolgu := 1.0
 var kalas := true
 var poterna_acik := false
+## TAŞIMA-8 (Bölüm 26): iç surda poterna (SurOyun.ic_poterna) ve Romanos yan diliminde açılır kanatlar (karar 11-A).
+## add_child'dan önce verilir; varsayılan false (öteki bölümlerin kurulumu aynı).
+var ic_poterna := false
+var romanos_kanat := false
+var romanos_kopru := false
 var kesim: Dictionary = {}            # SurOyun.kur dönüşü
 var gedik_onarim: Node3D              # GedikOnarim
 var ova: Node3D                       # ova düğümü (SurSet.ova_ofs)
@@ -84,7 +89,8 @@ func _ready() -> void:
 	cer.transform = sur.cerceve()
 	add_child(cer)
 	kesim = SurOyun.kur(kesim_id, {"ebeveyn": cer, "dunya": false, "asama": 1, "dolgu": dolgu, "kalas": kalas,
-		"poterna_acik": poterna_acik, "merdiven": [], "saglam": sur.saglam})
+		"poterna_acik": poterna_acik, "merdiven": [], "saglam": sur.saglam,
+		"ic_poterna": ic_poterna, "romanos_kanat": romanos_kanat, "romanos_kopru": romanos_kopru})
 	ms = (kesim["ms"] as Dictionary).duplicate()
 	gedik_onarim = kesim["parca"].get("gedik")
 	# Kesimin düz ova levhası görünmez (çarpışması kalır): ova görüntüsü SiegeField'in arazisidir (aynı düzlemde iki yüzey
@@ -351,8 +357,20 @@ func _kutudan_cikar() -> void:
 
 
 ## Eski setin "sağlam" (28o) ve dolgu (26o) seçenekleri bu sahnede yok: bölüm taşınırken ayrıca bağlanır.
+## TAŞIMA-8 (karar 11-A): iç kapı Romanos'ta. romanos_kanat ile kurulduysa yan dilimin kanatları açılır (1,6 sn).
 func open_inner_gate() -> void:
-	push_warning("SurSetSahne: iç kapı Mesoteikhion kesiminde yok (karar 11: Romanos)")
+	var kn: Node = kesim.get("parca", {}).get("yan_kapi_kanat")
+	if kn == null:
+		push_warning("SurSetSahne: iç kapı Mesoteikhion kesiminde yok (karar 11: Romanos; romanos_kanat verilmedi)")
+		return
+	kn.call("ac", true, true)
+
+
+## TAŞIMA-8: iç poternanın kanadı (Bölüm 26, 3. dalga). Kurulmadıysa bir şey yapmaz.
+func ic_poterna_ac(acik := true, anim := true) -> void:
+	var ip: Node = kesim.get("parca", {}).get("ic_poterna")
+	if ip:
+		ip.call("ac", acik, anim)
 
 
 ## Test ölçümü (yalnız autotest): sahnenin doğrudan çocuğu olan bütün düellocuların (yaşayan, ölü, gizlenmiş) zemine göre en

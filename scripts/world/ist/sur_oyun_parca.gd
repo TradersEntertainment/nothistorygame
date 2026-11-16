@@ -135,6 +135,7 @@ class Poterna extends Node3D:
 	var acik := false
 	var x := 0.0
 	var basamak_uc := Vector3.INF      # dış basamağın teras ucu (yoksa INF)
+	var ic := false                    # TAŞIMA-8: iç surun peribolos yüzünde (26: Giustiniani'nin taşındığı kapı)
 
 	func kur(a: RefCounted) -> void:
 		var d: Dictionary = a.d
@@ -208,6 +209,80 @@ class Poterna extends Node3D:
 		kc.shape = kb
 		kanat_govde.add_child(kc)
 		kanat_govde.position = Vector3((w - 0.06) * 0.5, h * 0.5, -0.01)
+		kanat.add_child(kanat_govde)
+
+	## TAŞIMA-8 (Bölüm 26, sahibinin kararı: poterna İÇ SURDA, şehre açılan küçük kapı): iç surun peribolos yüzünde (zi1)
+	## aynı söve, kemerli alın taşı ve kanat. Sur gövdesi oyulmaz (surlar.gd değişmez): kanadın ardında söve derinliğinde
+	## karanlık geçit (kapı aralığı) görünür; kanat peribolosa (+z) açılır. Eşik peribolos toprağıyla aynı düzde, önde.
+	## px: kesim-yerel x (SurOyun.ic_poterna). Varsayılan Poterna (kur) hiç değişmez.
+	func kur_ic(a: RefCounted, px: float) -> void:
+		ic = true
+		var d: Dictionary = a.d
+		x = px
+		var zf := float(d["zi1"])
+		var w := IstSurlar.POTERNA_W
+		var h := IstSurlar.POTERNA_H
+		var tas := IstSurlar.C_STONE.darkened(0.1)
+		var ag = KULE.Ag.new()
+		# söve (iki yanda çıkıntılı taş pervaz) ve kemerli alın taşı, peribolos yüzünde
+		for s: float in [-1.0, 1.0]:
+			var sx := x + s * (w * 0.5 + 0.14)
+			ag.kutu(Vector3(sx, -0.05, zf), Vector3.RIGHT, Vector3.BACK, 0.28, h + 0.05, 0.16)
+		var n := 7
+		var r := w * 0.5 + 0.14
+		for i in n:
+			var a0 := PI * float(i) / n
+			var a1 := PI * float(i + 1) / n
+			var p0 := Vector3(x + cos(a0) * r, h - 0.35 + sin(a0) * 0.55, zf + 0.17)
+			var p1 := Vector3(x + cos(a1) * r, h - 0.35 + sin(a1) * 0.55, zf + 0.17)
+			var q0 := Vector3(x + cos(a0) * (r + 0.32), h - 0.35 + sin(a0) * 0.87, zf + 0.17)
+			var q1 := Vector3(x + cos(a1) * (r + 0.32), h - 0.35 + sin(a1) * 0.87, zf + 0.17)
+			ag.quad(p0, p1, q1, q0, Vector3.BACK, Color(1, 1, 1) if i % 2 == 0 else Color(0.86, 0.82, 0.76))
+		# kemerin ardındaki dolgu taşı (söve ile kemer arasındaki yarım ay: duvar yüzü)
+		for i in n:
+			var a0 := PI * float(i) / n
+			var a1 := PI * float(i + 1) / n
+			ag.tri(Vector3(x, h - 0.35, zf + 0.012), Vector3(x + cos(a1) * r, h - 0.35 + sin(a1) * 0.55, zf + 0.012),
+				Vector3(x + cos(a0) * r, h - 0.35 + sin(a0) * 0.55, zf + 0.012), Vector3.BACK, Color(0.8, 0.76, 0.7))
+		# eşik taşı (peribolos toprağıyla aynı düzde, kapının önünde)
+		ag.kutu(Vector3(x, -0.12, zf), Vector3.RIGHT, Vector3.BACK, w + 0.3, 0.1, 0.7)
+		ag.mesh_ekle(self, KULE._tas_mat(tas, 0), "Tas_PoternaSove")
+		# karanlık geçit: kanat açılınca görünen kapı aralığı (sur gövdesinin içi; söve derinliğinde koyu yüz)
+		var kag0 = KULE.Ag.new()
+		kag0.quad(Vector3(x - w * 0.5, -0.02, zf + 0.008), Vector3(x + w * 0.5, -0.02, zf + 0.008),
+			Vector3(x + w * 0.5, h - 0.35, zf + 0.008), Vector3(x - w * 0.5, h - 0.35, zf + 0.008), Vector3.BACK, Color(1, 1, 1))
+		kag0.mesh_ekle(self, Props.mat(Color("15110e"), 0.0, false, ""), "Tas_PoternaGecit")
+		var esik := StaticBody3D.new()
+		esik.name = "Tas_PoternaEsik_Carp"
+		var cs := CollisionShape3D.new()
+		var bs := BoxShape3D.new()
+		bs.size = Vector3(w + 0.3, 0.12, 0.7)
+		cs.shape = bs
+		esik.add_child(cs)
+		esik.position = Vector3(x, -0.08, zf + 0.35)
+		add_child(esik)
+		# kanat: menteşe söve içinde (x − w/2), duvar yüzünün 0,12 m önünde; peribolosa (+z) açılır
+		kanat = Node3D.new()
+		kanat.name = "Ahsap_PoternaKanat"
+		kanat.position = Vector3(x - w * 0.5 + 0.03, 0.0, zf + 0.125)
+		add_child(kanat)
+		var kag = KULE.Ag.new()
+		var tw := (w - 0.06) / 5.0
+		for i in 5:
+			var hh := h - 0.4 - (0.1 if i in [0, 4] else 0.0)
+			kag.kutu(Vector3(tw * (i + 0.5), 0.0, -0.05), Vector3.RIGHT, Vector3.BACK, tw - 0.012, hh, 0.09, Color(1, 1, 1) if i % 2 == 0 else Color(0.9, 0.87, 0.82))
+		kag.mesh_ekle(kanat, Props.mat(C_WOOD.darkened(0.15), 0.0, false, "wood"), "Ahsap_PoternaTahta")
+		var dag = KULE.Ag.new()
+		for yy: float in [0.35, h - 0.85]:
+			dag.kutu(Vector3((w - 0.06) * 0.5, yy, 0.04), Vector3.RIGHT, Vector3.BACK, w - 0.16, 0.07, 0.025)
+		dag.mesh_ekle(kanat, Props.mat(Color("3a3634"), 0.0, false, ""), "Demir_PoternaKusak")
+		kanat_govde = StaticBody3D.new()
+		var kc := CollisionShape3D.new()
+		var kb := BoxShape3D.new()
+		kb.size = Vector3(w - 0.06, h - 0.4, 0.12)
+		kc.shape = kb
+		kanat_govde.add_child(kc)
+		kanat_govde.position = Vector3((w - 0.06) * 0.5, (h - 0.4) * 0.5, -0.01)
 		kanat.add_child(kanat_govde)
 
 	## Kanadı açar/kapar (dışarı, 100°). anim: tween ile 0,8 sn

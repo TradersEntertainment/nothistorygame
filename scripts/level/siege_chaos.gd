@@ -29,6 +29,10 @@ var built := false
 var bells := false                             # şehrin çanları (29 Mayıs sabahı bütün kiliselerde alarm çalındı)
 var static_clear_x := 0.0                     # yerinde kalanlar |x| bundan küçükse konmaz (dövüşün döndüğü gedik çevresi)
 var block_pts := PackedVector3Array()          # yerinde kalanlar: oyuncu kişi gibi yumuşakça itilir (Player)
+## TAŞIMA-8: sur bağdaştırıcısı (SurSet). Verilmezse (null) ya da eski set: davranış birebir aynı. Yeni sette kuşak
+## (area) yeni periboloşa kırpılır (SurSet.peribolos: sur dibi eteklerinin dışı) ve iç kuleler/etekleri, poterna yolu
+## kaçınılacak çemberlere eklenir (SurSet.peribolos_engelleri). add_child'dan önce verilir.
+var sur: SurSet = null
 
 var _rng := RandomNumberGenerator.new()
 var _segs: Array = []        # [a, b, ys (PackedFloat32Array), len]
@@ -58,6 +62,9 @@ func _ready() -> void:
 
 
 func _build() -> void:
+	if sur != null and not sur.eski_mi:
+		area = area.intersection(sur.peribolos())
+		avoid = avoid + sur.peribolos_engelleri(area.position.x - 6.0, area.end.x + 6.0)
 	# Çarpışma gövdeleri ve sahnedeki insanlar yerleşsin (bölüm kurulumu bu karede sürüyor)
 	for i in 3:
 		await get_tree().physics_frame

@@ -525,6 +525,65 @@ func poterna_x() -> float:
 	return float(a.kesim["oyun"]["poterna"]) + ofs.x
 
 
+## TAŞIMA-8: iç surdaki poterna (Bölüm 26; SurOyun.ic_poterna, kurulum SurSetSahne.ic_poterna). Dönen: kapının ortası,
+## iç surun peribolos yüzünde, peribolos zemininde (eski: chapter26 POSTERN = (DEPOT.x + 3,5; 0; INNER_Z1 + 0,6)).
+func ic_poterna() -> Vector3:
+	if eski_mi:
+		return Vector3(LandWalls.DEPOT.x + 3.5, 0.0, LandWalls.INNER_Z1 + 0.6)
+	var p: Dictionary = a.ic_poterna()
+	return Vector3(float(p["x"]) + ofs.x, 0.0, float(p["yuz_z"]) + ofs.z)
+
+
+## TAŞIMA-8: Romanos kapısı (karar 11-A; kesim sahnesinde kuzey yan dilim). {"x" (kapı ortası), "en", "ic_z0" (iç surun
+## şehir yüzü), "ic_z1" (peribolos yüzü), "dis_z0", "dis_z1", "ic_esik" (şehir yanı eşik önü), "peri" (koridorun
+## ortası), "dis_esik" (dış sur kapısının ova yanı), "teras_y"}. Eski: tek iç kapı x 0 (LandWalls.open_inner_gate).
+func romanos() -> Dictionary:
+	if eski_mi:
+		return {"x": 0.0, "en": 4.8, "ic_z0": LandWalls.INNER_Z0, "ic_z1": LandWalls.INNER_Z1, "dis_z0": LandWalls.OUTER_Z0,
+			"dis_z1": LandWalls.OUTER_Z1, "ic_esik": Vector3(0, 0, LandWalls.INNER_Z0 - 1.5),
+			"peri": Vector3(0, 0, (LandWalls.INNER_Z1 + LandWalls.OUTER_Z0) * 0.5), "dis_esik": Vector3(0, 0, LandWalls.OUTER_Z1 + 1.5), "teras_y": 0.0}
+	for yn: Dictionary in a.kesim["yan"]:
+		if String(yn["secenek"]) == "romanos":
+			var x := float(yn["x"]) + ofs.x
+			var gw := float(IstSurlar.OPTS["romanos"]["gw"])
+			return {"x": x, "en": gw, "ic_z0": float(d["zi0"]) + ofs.z, "ic_z1": float(d["zi1"]) + ofs.z,
+				"dis_z0": float(d["zo0"]) + ofs.z, "dis_z1": float(d["zo1"]) + ofs.z,
+				"ic_esik": Vector3(x, 0.0, float(d["zi0"]) - 1.5 + ofs.z),
+				"peri": Vector3(x, 0.0, (float(d["zi1"]) + float(d["zo0"])) * 0.5 + ofs.z),
+				"dis_esik": Vector3(x, teras_y(), float(d["zo1"]) + 1.5 + ofs.z), "teras_y": teras_y()}
+	return {}
+
+
+## Şehir yanındaki zemin (iç surun şehir yüzünün ötesi): eski LandWalls düz y 0; yeni kesimin şehir önü levhası y 0
+## (SurOyun.y_peri + ofs.y). FallenCity'nin çerçeveye konacağı z kaydırması: iç surun şehir yüzü eski INNER_Z0'a gelir.
+func sehir_ofs(x: float) -> Vector3:
+	if eski_mi:
+		return Vector3.ZERO
+	return Vector3(x, 0.0, float(d["zi0"]) + ofs.z - LandWalls.INNER_Z0)
+
+
+# ------------------------------------------------------------------ TAŞIMA-8: hendek dolgusu (26o; LandWalls.ditch_filled eşi)
+## 26o'nun eski statiklerinin karşılıkları. Eski: LandWalls.CAUSEWAY_TOP / fill_y. Yeni: oyun gediğinin önündeki Dolgu
+## (SurSetSahne.dolgu; 29 Mayıs dolu) — setin katı üstü dolgunun eninden 0,5 m içeride, hendek boyunca.
+
+## Dolgu setinin katı üstü (Rect2 x/z): eski CAUSEWAY_TOP
+func dolgu_ust() -> Rect2:
+	if eski_mi:
+		return LandWalls.CAUSEWAY_TOP
+	for g: Dictionary in gecisler():
+		if String(g["tur"]) == "dolgu":
+			var hw := float(g["en"]) * 0.5 - 0.5
+			return Rect2(float(g["x"]) - hw, hendek_z0(), hw * 2.0, hendek_z1() - hendek_z0())
+	return Rect2()
+
+
+## Dolgunun üstündeki zemin (eski LandWalls.fill_y; set üstü dışında hendek dibi/yamacı): yeni sette zemin_y (dolgu tam)
+func dolgu_y(x: float, z: float) -> float:
+	if eski_mi:
+		return LandWalls.fill_y(x, z)
+	return zemin_y(x, z)
+
+
 ## Ovadaki top yuvaları, OVA koordinatında (Assault.gun_spots; ova düğümü ova_ofs ile kayar). Eski: aynen. Yeni: sözleşmenin
 ## iki bataryası + aynı aralıkla iki yanda birer (sayı aynı: 4).
 func top_yuvalari(eski_liste: Array) -> Array:
