@@ -12,8 +12,12 @@ Dal `wip/ist2-tur10` (taban `wip/ist2-taban10` 0ded6ea0). ÖNCE ağacı: `~/is/o
 - `tests/_ist/tur10_yakin.tscn`: oyuncu gözü yakın kareler (gece/gündüz, fıçı kameraları).
 - parse_check PASS.
 
+- Döküntü taşı (`_moloz_tas`) kutu → oynatılmış yirmiyüzlü, köşe alfası 0,5 işareti (Bölüm 20 an_03 koyu dikdörtgenin kaynağı).
+- Sözleşme üçlüsü SONRA aynı; bölüm testleri 0, 20, 20o, 21, 25, 26, 43o PASS, denetim satırı 0 (`testler/`).
+- ÖNCE kareleri: Bölüm 25 (6), Bölüm 20 (12), Bölüm 0 (5), yakın (gece/gündüz 7'şer).
+
 ## Süren
-- ÖNCE/SONRA yakın kareler; Bölüm 25 kare; Bölüm 20, 0 kareleri.
+- Son kodla SONRA: Bölüm 20, Bölüm 25; sonra Bölüm 0, yakın, Blakherna.
 
 ## Sıradaki
-- Bölüm 20/0 kareleri, sözleşme üçlüsü, bölüm testleri, tur 9 kalanları, rapor.
+- Paftalar, bütçe tablosu, rapor.
