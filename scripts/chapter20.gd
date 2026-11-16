@@ -333,6 +333,14 @@ func _update_objective() -> void:
 
 func _process(delta: float) -> void:
 	_t += delta
+	if _duel_on and GameState.autotest and "--sonda6" in OS.get_cmdline_user_args():
+		_t6_iz -= delta
+		if _t6_iz <= 0.0:
+			_t6_iz = 0.25
+			var d := get_tree().get_first_node_in_group("active_duel")
+			print("SONDA6 t=%.2f p=%s v=%s mod=%s duel=%s ev=%s" % [_t, player.global_position.snapped(Vector3.ONE * 0.1),
+				player.velocity.snapped(Vector3.ONE * 0.1), player.move_mode, d != null,
+				str(d.get("_bot_home")) if d else "-"])
 	if phase != "work" and phase != "assault":
 		return
 	_time -= delta
@@ -509,6 +517,8 @@ func _breach_duel() -> void:
 	if carrying != "":
 		_drop()
 	var p := player.global_position
+	if GameState.autotest:
+		_t6_sonda("duello_basi", p)
 	var to := sur.gedik() - p
 	to.y = 0.0
 	to = to.normalized() if to.length() > 0.1 else Vector3(0, 0, 1)
@@ -592,14 +602,28 @@ func _yaklasma(w1: Dictionary, w2: Dictionary, ek: int) -> void:
 	var hw := sur.gedik_en() * 0.5
 	var ic := sur.on_rubble(Vector3(yan * (hw - 1.4), 0.0, sur.dis_sur_z0() + 0.6))
 	var kose := sur.on_rubble(Vector3(yan * (hw + 0.8), 0.0, sur.dis_sur_z0() - 0.5))
+	# Barikatın ucundan peribolosa (TAŞIMA-6): yol köşede bitince azap oyuncuya, toprak setin kutusuyla (z 12,0–13,2, x ±4,2)
+	# tekerlekli siperin (x 4,3–6,7, z 11,4–11,6) arasındaki 0,4 m'lik aralıktan sıkışarak iniyordu; bot ona yürürken setin
+	# arka yüzüne (z 11,7) yapışıyor, düelloyu ve D20_T_DUEL'i sete 0,3 m'den bakarak bitiriyordu (=hit, VISAUDIT wall /
+	# personhidden; testler/sonda/hit_s*: SONDA6). Şimdi azap dış surun iç yüzü boyunca siperin dış ucunu dolanır ve
+	# peribolosa siperin önünden (açık zeminden) girer.
+	var sp_x := 0.0
+	var sp_z := sur.dis_sur_z0() - 3.0
+	for m: Vector3 in sur.siperler():
+		if signf(m.x) == yan:
+			sp_x = absf(m.x) + 1.8           # siperin dış ucu (yarı en 1,2) + 0,6 pay
+			sp_z = m.z
+	var dolan: Array = []
+	if sp_x > 0.0:
+		dolan = [sur.on_rubble(Vector3(yan * sp_x, 0.0, sur.dis_sur_z0() - 1.6)), sur.on_rubble(Vector3(yan * sp_x, 0.0, sp_z))]
 	var yol := func(x: float, bas_z: float) -> Array:
 		# [başlangıç, ara noktalar]: dolgu/teras üstünde başlangıç, teras eteği (dolgunun yakın ucu), moloz sırtı, gedik
-		# ağzı, barikatın ucu
+		# ağzı, barikatın ucu, siperin dış ucu
 		var bas := Vector3(x, sur.zemin_y(x, bas_z), bas_z)
 		var etek_z := sur.hendek_z0() - 2.6
 		var etek := Vector3(x * 0.8, sur.zemin_y(x * 0.8, etek_z), etek_z)
 		var sirt := sur.on_rubble(Vector3(x * 0.5, 0.0, sirt_z))
-		return [bas, ([etek] if bas_z > etek_z + 0.5 else []) + [sirt, ic, kose]]
+		return [bas, ([etek] if bas_z > etek_z + 0.5 else []) + [sirt, ic, kose] + dolan]
 	var from1: Array = []
 	var via1: Array = []
 	for x: float in [-1.6, 1.6]:
@@ -627,6 +651,8 @@ func _yaklasma(w1: Dictionary, w2: Dictionary, ek: int) -> void:
 
 ## TAŞIMA-6 sondası (yalnız autotest): düello bitince oyuncu nerede, kamerası neye bakıyor, önündeki ilk gövde ne.
 ## "TASIMA6DUELLO etiket=… p=… bas=… ileri=… ilk=<yol>@<uzaklık>" (0,5 m = hud'un "wall" denetimi; 3 m'ye kadar bakılır).
+var _t6_iz := 0.0
+
 func _t6_sonda(etiket: String, bas: Vector3) -> void:
 	if player.camera == null:
 		return
@@ -949,7 +975,12 @@ func _on_interact(id: String) -> void:
 func _auto() -> void:
 	await get_tree().create_timer(0.3, false).timeout
 	if GameState.autotest_variant == "hit":
-		player.global_position = sur.on_rubble(sur.gedik() + Vector3(0, 0, -3.0)) + Vector3(0, 0.05, 0)
+		# Gediğin önü, barikatın 1,6 m berisi (eski sette gedik − 3 m = z 12, barikat z 13,6'dan başlar). Yeni sette aynı
+		# sayı (gedik z 15,3 − 3 = 12,3) aşama 3–4'ün toprak setinin (arka yüzü z ≈ 12,4) dibine düşüyordu: bot düelloyu
+		# sete yaslanıp köşeden gelen azaba yan yan yürüyerek bitiriyor, D20_T_DUEL'i sete 0,3 m'den bakarak söylüyordu
+		# (VISAUDIT wall; TAŞIMA-6 §1). Yeni sette gediğin önü (gedik_onu: barikatın 1,6 m berisi, top hâlâ görür).
+		var yer := sur.gedik() + Vector3(0, 0, -3.0) if sur.eski_mi else sur.gedik_onu()
+		player.global_position = sur.on_rubble(yer) + Vector3(0, 0.05, 0)
 		_gun_t = 0.05
 		await get_tree().create_timer(2.0, false).timeout
 	var idle := GameState.autotest_variant.ends_with("idle")
