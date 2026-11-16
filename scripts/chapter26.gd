@@ -116,7 +116,7 @@ func _ready() -> void:
 func _yeni_yerler() -> void:
 	WELL = Vector3(-4.6, 0.0, 5.6)
 	POSTERN = sur.ic_poterna() + Vector3(0.0, 0.0, 0.6)
-	BLOCKS = [POSTERN + Vector3(-1.9, 0.0, 3.6), POSTERN + Vector3(0.1, 0.0, 3.0)]
+	BLOCKS = [POSTERN + Vector3(1.1, 0.0, 3.6), POSTERN + Vector3(-0.3, 0.0, 3.2)]
 	var tx := INF
 	for x: float in sur.dis_kuleler_kurulu():
 		if absf(x) < absf(tx):
@@ -139,12 +139,25 @@ func _imparator_yeri() -> Vector3:
 	return LandWalls.BREACH + Vector3(3.0, 0, -9.0) if sur.eski_mi else Vector3(-4.0, 0.0, 6.8)
 
 
-## Yeni sette yaralı komutanı poternaya taşıma yolunun ara noktası: iç kulenin (x −2,8…12,2, z ≤ 8) önünden dolanır,
-## sonra poternaya döner (doğrudan çizgi kulenin içinden geçiyordu). Eski sette yok (INF).
-func _tasima_ara() -> Vector3:
+## Yeni sette yaralı komutanı poternaya taşıma yolunun ara noktaları: iç kulenin (x −2,8…12,2, z ≤ 8 eteğiyle) önünden
+## dolanır, sonra poternaya iner (doğrudan çizgi kulenin içinden geçiyordu). Yol savunucu sırasından (z 11,2–11,5) 2 m
+## uzakta: önce sıradan geri çekilir (z 9,2 iken öndeki taşıyıcı sıranın içinden geçiyordu: VISAUDIT overlap). Kapıya
+## fıçıların sol yanından iner (fıçılar sağa, +x'e yuvarlanır). Eski: [].
+func _tasima_yolu() -> Array:
 	if sur.eski_mi:
-		return Vector3.INF
-	return Vector3(POSTERN.x - 0.4, 0.0, 9.2)
+		return []
+	return [Vector3(-3.4, 0.0, 9.0), Vector3(POSTERN.x - 1.4, 0.0, 9.0)]
+
+
+## Son ara nokta (yoksa INF)
+func _tasima_ara() -> Vector3:
+	var y := _tasima_yolu()
+	return Vector3.INF if y.is_empty() else y[y.size() - 1]
+
+
+## Çekilen fıçının yuvarlanma yönü: eski +z (surdan uzağa); yeni +x (kapının sağına, taşıma yolunun dışına)
+func _yuvarla() -> Vector3:
+	return Vector3(0, 0, 1) if sur.eski_mi else Vector3(1, 0, 0)
 
 
 func _build_walls_scene() -> void:
@@ -290,7 +303,10 @@ func _build_walls_scene() -> void:
 			[sur.dogus(), 1.8]]
 		if not sur.eski_mi:
 			# Giustiniani'yi poternaya taşıma yolu (iç kulenin önünden dolanır) boş kalır
-			chaos.avoid_lines = [[_gp(Vector3(-4.2, 0, -3.0)), _tasima_ara(), 1.6], [_tasima_ara(), POSTERN, 1.6]]
+			var ty := _tasima_yolu()
+			chaos.avoid_lines = [[_gp(Vector3(-4.2, 0, -3.0)), ty[0], 1.6], [ty[0], ty[1], 1.6], [ty[1], POSTERN, 1.6]]
+			for b: Vector3 in BLOCKS:
+				chaos.avoid.append([b + _yuvarla() * 2.6, 1.5])
 		add_child(chaos)
 	# Burçtaki sancak (Ulubatlı Hasan): başta görünmez, 3. dalgada yükselir
 	banner = Node3D.new()
@@ -1200,7 +1216,7 @@ var _carry_at := Vector3.ZERO
 ## (gösterge; uca varınca Giustiniani inler, Tolga sendeler, bir an durulur). Arkada yeniçeriler gediğe doluşur.
 var giust_jolts := 0
 var _carrying_giust := false
-var _ara_gecti := false
+var _ara_i := 0
 ## TAŞIMA-8: taşıma yürüyüşünün süresi (sn; oyun saati, autotest ölçüm satırı TASIMA8 tasima)
 var _tasima_t := 0.0
 
@@ -1252,10 +1268,11 @@ func _carry_giust(dir: Vector3) -> void:
 		if GameState.autotest:
 			# Yeni sette doğrudan çizgi iç kulenin içinden geçer: bot önce kulenin önündeki ara noktaya yürür
 			var hedef := arrive
-			if not _ara_gecti and _tasima_ara() != Vector3.INF:
-				hedef = _tasima_ara()
+			var yol := _tasima_yolu()
+			if _ara_i < yol.size():
+				hedef = yol[_ara_i]
 				if Vector2(player.global_position.x - hedef.x, player.global_position.z - hedef.z).length() < 0.8:
-					_ara_gecti = true
+					_ara_i += 1
 			var to := hedef - player.global_position
 			to.y = 0.0
 			player.global_position += to.normalized() * minf(to.length(), (2.0 if GameState.flags.get("trailer", false) else 5.0) * dt)
@@ -1752,6 +1769,7 @@ func _isidore_column() -> void:
 		for p in column:
 			p.position.z += 0.9 * dt
 			p.position.y = _entry_ground(p.position)      # yana itilen esir görünen zeminde kalsın
+			_kafile_zemin(p)
 		if GameState.autotest or t > 12.0 or isidore.global_position.distance_to(player.global_position) < 6.0:
 			walking = false
 		await get_tree().process_frame
@@ -1801,10 +1819,22 @@ func _isidore_column() -> void:
 				if is_instance_valid(p):
 					p.position.z += 0.9 * dt
 					p.position.y = _entry_ground(p.position)
-					if p.position.z > -7.0:
+					_kafile_zemin(p)
+					if p.position.z > -7.0 + _co.z:
 						p.visible = false
 			await get_tree().process_frame
 	go.call()
+
+
+## TAŞIMA-8: yeni sette kafile caddenin görünen zeminine basar: alay geçerken yana çekilen kafile başı kilisenin
+## basamağının (0,3 m, üstüne çıkılır) üstüne geliyordu, yüksekliği düz zeminden alındığı için basamağa gömülü duruyordu
+## (VISAUDIT sunk, nophoto/council_bad). Eski sette değişmez.
+func _kafile_zemin(p: Person) -> void:
+	if sur.eski_mi or not p.is_inside_tree():
+		return
+	var fy := _visible_floor(p.global_position + Vector3(0, 0.5, 0))
+	if not is_nan(fy) and fy > p.global_position.y and fy - p.global_position.y < 0.6:
+		p.global_position.y = fy
 
 
 ## Tezkireyle kafileden çıkarılan Isidoros: asker tuğrayı alnına götürür, "kâtibimi" alıp götürmesine izin verir. Eller
@@ -2417,13 +2447,13 @@ func _on_interact(id: String) -> void:
 			tw.tween_property(b, "rotation:z", deg_to_rad(-5), 0.12)
 			tw.tween_property(b, "rotation:z", 0.0, 0.08)
 			tw.tween_property(b, "rotation:x", deg_to_rad(90), 0.35).set_ease(Tween.EASE_IN)
-			tw.parallel().tween_property(b, "position", b.position + Vector3(0, 0.42, 0.6), 0.35)
+			tw.parallel().tween_property(b, "position", b.position + Vector3(0, 0.42, 0) + _yuvarla() * 0.6, 0.35)
 			tw.tween_callback(func():
 				Audio.sfx("land_thud", -4.0, 0.7)
 				Vfx.dust(self, b.global_position, 0.6)
 				player.shake(0.25))
 			# Yuvarlanır (ekseni yatay: x'te döner) ve duvarın dibinde durur
-			tw.tween_property(b, "position", b.position + Vector3(0, 0.42, 2.6), 0.7).set_ease(Tween.EASE_OUT)
+			tw.tween_property(b, "position", b.position + Vector3(0, 0.42, 0) + _yuvarla() * 2.6, 0.7).set_ease(Tween.EASE_OUT)
 			tw.parallel().tween_property(b, "rotation:y", deg_to_rad(200), 0.7).set_ease(Tween.EASE_OUT)
 			tw.tween_callback(func():
 				for c in b.get_children():
@@ -2823,9 +2853,10 @@ func _t8_yuru() -> void:
 	await _t8_yb("giust", giust.global_position + Vector3(0.0, 0, -1.6), giust.global_position + Vector3(0, 1.0, 0))
 	var t_tas := _yz["sure"] as float
 	var yol_tas := _yz["yol"] as float
-	if _tasima_ara() != Vector3.INF:
-		await _t8_yb("tasima_ara", _tasima_ara(), POSTERN + Vector3(0, 1.0, 0))
-	await _t8_yb("poterna", POSTERN + Vector3(0, 0, 1.6), POSTERN + Vector3(0, 1.2, 0))
+	for q: Vector3 in _tasima_yolu():
+		await _t8_yb("tasima_ara", q, POSTERN + Vector3(0, 1.0, 0))
+	# taşıma bitişi (bölümün kendi ölçüsü: poternanın 1,6 m önü, 1,2 m yakınlık; eski sette kapının nöbetçisi önünde)
+	await _t8_yb("poterna", POSTERN + Vector3(-0.6, 0, 2.2), POSTERN + Vector3(0, 1.2, 0))
 	print("TASIMA8YURU tasima set=%s yol=%.1f sure=%.1f" % [set_ad, float(_yz["yol"]) - yol_tas, float(_yz["sure"]) - t_tas])
 	if kare:
 		# taşıma pozu poternanın önünde (oyuncu ayak ucunda)
