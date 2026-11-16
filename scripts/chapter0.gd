@@ -14,6 +14,7 @@ extends Node3D
 ##                   Mesoteikhion kesimi (SurSetSahne + bölüm bağdaştırıcısı SurSet; docs/SUR_SOZLESME.md)
 
 const BattleExtras := preload("res://scripts/level/battle_extras.gd")
+const GedikOnarimRef := preload("res://scripts/world/ist/sur_oyun_parca.gd").GedikOnarim
 const TOLGA := {"face": "tolga", "coat": Color("23262d"), "pants": Color("23262d"), "hat": "fez", "skin": Color("e6ad88")}
 const START := Vector3(7.0, 0.05, 4.0)
 ## Ok demetlerinin götürüleceği savunucu sırası (gediğin içi)
@@ -42,7 +43,10 @@ const EK_MERDIVEN_YENI := [{"x": 6.4, "uzat": 1.8}, {"x": 14.4, "uzat": 1.4}, {"
 ## Taşıyıcı şeridi (depo → gedik önü) ve oyuncunun yolu (START → LINE) dışında: dış surun eteği önü, gediğin iki yanı (kadrajın
 ## sağı ve solu; tests/_ist/tasima4_kadraj.gd ile seçildi)
 const SERIT_YENI_EK := [[Vector3(-10.2, 0, 11.2), Vector3(-6.9, 0, 11.4), 0.8, 2, 4, 0, 3150], [Vector3(7.4, 0, 12.4), Vector3(10.6, 0, 12.5), 0.8, 1, 3, 0, 3160],
-	[Vector3(-7.0, 0, 12.5), Vector3(-4.9, 0, 12.8), 0.6, 0, 3, 0, 3170]]      # donma karesinde patlamanın 3 m dışı (yakındakiler gizlenir)
+	[Vector3(-7.0, 0, 12.5), Vector3(-4.9, 0, 12.8), 0.6, 0, 3, 0, 3170],       # donma karesinde patlamanın 3 m dışı (yakındakiler gizlenir)
+	[Vector3(-7.0, 0, 2.9), Vector3(-5.2, 0, 3.3), 0.5, 0, 3, 0, 3180]]         # donma karesinin sağı, kalas yığınının yanı (yoldan ≥ 2,2 m)
+## Yeni sette donma karesinde kameradan bu uzaklığın (m) ötesindeki figüranlar gizlenir (bütçe; bkz. _freeze)
+const DONMA_UZAK_YENI := 22.0
 ## Yeni sette donma kadrajının sağındaki iç kulenin batı yüzüne (x −2,8) dayalı merdiven: ayak, tepe (oyuncu yolundan ≥ 2 m)
 const MERDIVEN_KULE_YENI := [Vector3(-4.1, 0.0, 4.7), Vector3(-2.95, 5.6, 4.7)]
 
@@ -262,10 +266,13 @@ func _dekor_merdiven(par: Node3D, ayak: Vector3, tepe: Vector3) -> void:
 	var yan := yv.cross(Vector3.UP).normalized()
 	l.transform = Transform3D(Basis(yan, yv, yan.cross(yv)), ayak)
 	var boy := ayak.distance_to(tepe)
+	# tek ağ (dikmeler ve basamaklar yuvarlak çubuk; GedikOnarim._cubuk ile): tek çizim çağrısı
+	var ag = SurSetSahne.KULE.Ag.new()
 	for sx: float in [-0.3, 0.3]:
-		Props.cyl(l, 0.05, boy + 0.4, Vector3(sx, (boy + 0.4) * 0.5, 0), Color("7a5a38"), Vector3.ZERO, 6)
+		GedikOnarimRef._cubuk(ag, Vector3(sx, 0, 0), Vector3(sx, boy + 0.4, 0), 0.05, 6, Color(0.9, 0.84, 0.76))
 	for k in int(boy / 0.4):
-		Props.cyl(l, 0.03, 0.62, Vector3(0, 0.3 + k * 0.4, 0), Color("8a6440"), Vector3(0, 0, 90), 5)
+		GedikOnarimRef._cubuk(ag, Vector3(-0.31, 0.3 + k * 0.4, 0), Vector3(0.31, 0.3 + k * 0.4, 0), 0.03, 5, Color(1, 1, 1))
+	ag.mesh_ekle(l, Props.mat(Color("8a6440"), 0.0, false, "wood"), "Ahsap_KuleMerdiveni")
 
 
 ## Donan kare efekti (renk solması, kenar kararması) ve geri sarma (satır kayması, parazit).
@@ -464,6 +471,10 @@ func _freeze() -> void:
 			var np: Vector3 = (n as Node3D).global_position + Vector3(0, 1.0, 0)
 			var seg := Geometry3D.get_closest_point_to_segment(np, cam_p, eye)
 			if np.distance_to(seg) < 1.0 or np.distance_to(cam_p) < 3.4 or np.distance_to(blast) < 3.0:
+				n.visible = false
+			elif not sur.eski_mi and np.distance_to(cam_p) > DONMA_UZAK_YENI:
+				# yeni sette kadraj peribolos koridorunun dibine kadar açık: oradaki küçük figüranlar donmuş karede okunmuyor ama
+				# eski setin bütçesini aşıyordu (tasima3 an_06 çizim 4.643 > eski 4.363)
 				n.visible = false
 	# Üçüncü kişi: Tolga havada; yüzü kameraya (seyirciye konuşacak), başı öne: patlama onu kameraya doğru savurdu
 	var tolga := Person.new(TOLGA)

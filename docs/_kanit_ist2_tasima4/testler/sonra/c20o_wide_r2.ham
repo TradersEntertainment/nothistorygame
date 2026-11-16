@@ -1,0 +1,39 @@
+Godot Engine v4.4.1.stable.official.49a5bc7b6 - https://godotengine.org
+
+SURSET kesim=mesoteikhion kurulum_ms=2819 sur_ms=719 set_ms=2094
+WARNING: Screen-space ambient occlusion (SSAO) can only be enabled when using the Forward+ renderer.
+     at: environment_set_ssao (servers/rendering/storage/environment_storage.cpp:586)
+WARNING: Screen-space indirect lighting (SSIL) can only be enabled when using the Forward+ renderer.
+     at: environment_set_ssil (servers/rendering/storage/environment_storage.cpp:661)
+TERRAIN_SOLIDIFIED scene=chapter20o.tscn node=/root/Chapter20o/@Node3D@177/Ova/@Node3D@2899/@MeshInstance3D@2901
+HELDDEFAULT scene=chapter20o item=tape
+CREW impact hit=true at=(-0.2, 4.4, 18.0) target=(0.0, 4.0, 15.3) t=0.83 speed=127.8 elev=5.0 yaw=4.7
+LORE key=20o placed=3
+CREW impact hit=true at=(0.0, 4.0, 19.6) target=(0.0, 4.0, 15.3) t=0.86 speed=121.2 elev=5.0 yaw=4.7
+CREW impact hit=true at=(-0.1, 4.0, 19.1) target=(0.0, 4.0, 15.3) t=0.87 speed=121.2 elev=5.0 yaw=4.7
+TESPITBLOCK who=siege20o blocker=Chapter20o/@Node3D@20539 (soldier) at=(7.0, -3.5, 132.6) eye=(7.1, -1.9, 137.7) dist=122.7
+GUN shots=4 hits=3 missed=1
+HANDS stowed=@Node3D@84
+HANDS stowed=@Node3D@84
+RALLY scene=chapter20o.tscn allies=0 foes=0 cands=0
+KICK result=stagger
+FINISHER kind=thrust cam=third
+KICK result=down
+FINISHER kind=ground cam=third
+WAVERUNNER wave=1/2 won=true t=14.3 pw=0.28 foe_dmg=18.0 allies=0+0 rally_foes=0 thrown=0
+HANDS stowed=@Node3D@84
+RALLY scene=chapter20o.tscn allies=0 foes=0 cands=0
+KICK result=stagger
+KICK result=down
+FINISHER kind=ground cam=third
+FINISHER kind=slash cam=third
+WAVERUNNER wave=2/2 won=true t=14.1 pw=0.28 foe_dmg=18.0 allies=0+0 rally_foes=0 thrown=0
+GUNNER shots=2 dodged=2 hits=0
+GRADE chapter=20o letter=S points=129 { "gun_shots": 4, "gun_hits": 3, "kills": 4, "parries": 4, "gunner_shots": 2, "dodged": 2 }
+CESET4 bolum=20o variant=wide n=5 dusen=0 en_derin=-0.2 yer=(1.296107, 1.043219, 16.42473)
+AUTOTEST PASS chapter=20o variant=wide outcome=20O.2 hits=0 cracks=0 gun=3/4 gunner=2/2 duel=true bed= sur=yeni
+WARNING: ObjectDB instances leaked at exit (run with --verbose for details).
+     at: cleanup (core/object/object.cpp:2378)
+ERROR: 1 resources still in use at exit (run with --verbose for details).
+   at: clear (core/io/resource.cpp:614)
+KOSU rc=0 sure=40 args=--chapter=20o --autotest=wide

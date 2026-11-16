@@ -601,8 +601,8 @@ func _assault() -> void:
 ## oyuncunun 3 m önünde, moloz sırtında doğar. Şimdi peribolostan koşarak gelir: siperin ardından, barikatın ucundan
 ## dolanıp gedik ağzından sırta çıkar, yamaçtan oyuncuya iner; bölük kademeli katılır, 2. dalgada önce iki kişi gelir
 ## ve düşenin yerine sıradaki aynı yoldan koşar. Açık gedikte (20O.1) auto_entry zaten içeriden getiriyor: değişmez.
-const SAVUNAN_ARA_1 := 2.0
-const SAVUNAN_ARA_2 := 2.5
+const SAVUNAN_ARA_1 := 1.0
+const SAVUNAN_ARA_2 := 3.0
 func _savunan_yolu(w1: Dictionary, w2: Dictionary) -> void:
 	var hw := sur.gedik_en() * 0.5
 	var z0 := sur.dis_sur_z0()
@@ -612,9 +612,17 @@ func _savunan_yolu(w1: Dictionary, w2: Dictionary) -> void:
 		from.append(sur.on_rubble(Vector3(yan * (hw + 7.5), 0.0, z0 - 4.6)))
 		via.append([sur.on_rubble(Vector3(yan * (hw + 3.4), 0.0, z0 - 1.6)), sur.on_rubble(Vector3(yan * (hw + 0.8), 0.0, z0 - 0.5)),
 			sur.on_rubble(Vector3(yan * (hw - 1.4), 0.0, z0 + 0.6)), sur.on_rubble(Vector3(yan * 1.0, 0.0, sur.moloz_sirti().z))])
-	for w: Dictionary in [w1, w2]:
-		w["from"] = from
-		w["via"] = via
+	w2["from"] = from
+	w2["via"] = via
+	# 1. dalga barikatın ucundaki toplanma yerinden çıkar (peribolostan koşu 2. dalgaya kalır): ilk denemelerde 1. dalga
+	# 12,4–13,9 sn (hedef ≈ 8–12; sonda: varış ~4 sn, gerisi düello)
+	var from1: Array = []
+	var via1: Array = []
+	for k in via.size():
+		from1.append((via[k] as Array)[0])
+		via1.append((via[k] as Array).slice(1))
+	w1["from"] = from1
+	w1["via"] = via1
 	w1["stagger"] = SAVUNAN_ARA_1
 	w2["stagger"] = SAVUNAN_ARA_2
 	w2["group"] = 2

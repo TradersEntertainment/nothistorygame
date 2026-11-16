@@ -1,0 +1,37 @@
+Godot Engine v4.4.1.stable.official.49a5bc7b6 - https://godotengine.org
+
+WARNING: Screen-space ambient occlusion (SSAO) can only be enabled when using the Forward+ renderer.
+     at: environment_set_ssao (servers/rendering/storage/environment_storage.cpp:586)
+WARNING: Screen-space indirect lighting (SSIL) can only be enabled when using the Forward+ renderer.
+     at: environment_set_ssil (servers/rendering/storage/environment_storage.cpp:661)
+HELDDEFAULT scene=chapter30o item=chickpeas
+POSEAUDIT tilt @Node3D@31218 80  (root/Chapter30o)
+WORLDWALK region=blachernae shapes=9836 boxes=9099 tris=276877 ms=1137
+CITYLIFE region=blachernae src=plan era=siege night=true density=0.50 nodes=1026 plazas=19 landmarks=23
+HANDS stowed=@Node3D@84
+HANDS stowed=@Node3D@84
+RALLY scene=chapter30o.tscn allies=0 foes=1 cands=2
+KICK result=stagger
+FINISHER kind=thrust cam=third
+KICK result=stagger
+FINISHER kind=thrust cam=third
+FINISHER kind=bash cam=third
+WAVERUNNER wave=1/2 won=true t=9.9 pw=0.28 foe_dmg=18.0 allies=0+2 rally_foes=1 thrown=0
+HANDS stowed=@Node3D@84
+RALLY scene=chapter30o.tscn allies=0 foes=1 cands=1
+KICK result=down
+FINISHER kind=ground cam=third
+THROWN by=player at=(6.9, 12.0, 4.1)
+WAVERUNNER wave=2/2 won=true t=8.6 pw=0.28 foe_dmg=18.0 allies=0+2 rally_foes=1 thrown=1
+GUNNER shots=3 dodged=3 hits=0
+HANDS stowed=@Node3D@84
+RALLY scene=chapter30o.tscn allies=0 foes=0 cands=0
+STORYDUEL won=true kills=1 parries=0 hits_taken=0 t=2.5 allies=0+0 thrown=0
+SAYDIST key=D30O_S_WOUNDED scene=chapter30o.tscn speaker=SPK_SOLDIER d=4.9
+GRADE chapter=30o letter=A points=109 { "kills": 6, "parries": 3, "gunner_shots": 3, "dodged": 3, "hits_taken": 1, "thrown": 1 }
+AUTOTEST PASS chapter=30o variant= outcome=30O.1 stones=4/4 gunner=3/3 tower=true fell=false guards=10 pokes=0 flee=ride pushed=true
+WARNING: ObjectDB instances leaked at exit (run with --verbose for details).
+     at: cleanup (core/object/object.cpp:2378)
+ERROR: 2 resources still in use at exit (run with --verbose for details).
+   at: clear (core/io/resource.cpp:614)
+KOSU rc=0 sure=50 args=--chapter=30o --autotest

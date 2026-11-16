@@ -95,3 +95,50 @@
 | an_06 (aşama 3) | fıçıların ardında iki-üç sıra, birbirinin üstüne oturan yuvarlak koyu çuvallar; kazıklar aralarından çıkıyor; havada duran yok, kutu yok, toprak yığına oturuyor | iyi (gece karesinde koyu → renk açıldı) |
 | an_09 (hücum, aşama 4) | fıçıların ardında tuğla dizisi gibi üç sıra açık kahverengi dolgun kum çuvalı, üstünde kazık çiti; aynı ressamın elinden | iyi |
 | an_05 (top uyarısı, aşama 2) | aşama 2'de çuval yok (doğru); fıçı sırası ve kazıklar aynı | aynı |
+
+### Ölçüm (`WAVERUNNER t=`, sn; medyan [aralık] (n); `testler/simdi`, `testler/sonra`, `testler/eski`, `testler/sonra_wide`)
+
+**Bölüm 20** (eski | şimdi | sonra). "Eski" sütunu tasima2'nin pilot ölçümü (×1, n 8–9) ve bu dalda `--eskisur` ×1
+(def, tape, hit, late; `testler/eski/`).
+
+| küme | 1. dalga | 2. dalga | tüfekçi `gunner=` |
+|---|---|---|---|
+| eski (tasima2 pilot) | 9,0 [8,4–15,6] (n 9) | **22,7** [18,9–34,2] (n 8) | 3/3 (tasima2 `son_c20_eski_def`) |
+| eski (bu dal `--eskisur`, 4 çeşit) | 9,4 [8,8–16,4] (n 4) | 19,5 [16,1–24,8] (n 4) | 4/4 4/4 3/3 4/4 |
+| şimdi (taban, 9 çeşit ×3; 3 koşu eksik: idle, d0, d2 ×2) | 4,1 [1,8–11,8] (n 24) | **8,3** [4,3–30,0] (n 21) | çoğu 2/2 (1/1…4/4) |
+| **sonra** (9 çeşit ×3) | **11,4** [9,3–18,9] (n 27) | **21,2** [17,7–26,2] (n 24) | çoğu **4/4** (3/3; lose 0/2, 1/2) |
+
+Çeşit başına sonra (×3): def 10,7 / 20,8 · tape 10,6 / 24,3 · hit 14,8 / 22,3 · idle 11,2 / 20,7 · niko_idle 11,6 / 21,3 ·
+late 12,0 / 18,9 · d0 9,9 / 20,4 · d2 10,2 / 23,1 · lose 18,4 / — (1. dalgada yenilir; şimdi 10,0). 2. dalga hiçbir koşuda 60 sn
+sınırına yaklaşmadı (en çok 26,2). 27/27 PASS, denetim 0, `outcome`/`repair`/`knocks`/`arrows`/`gun` alanları tabanla aynı.
+
+**20o** (wide hariç 9 çeşit ×2; kod yolu bu çeşitlerde değişmedi — gedik açık, `auto_entry` içeriden getiriyor):
+
+| küme | 1. dalga | 2. dalga | tüfekçi |
+|---|---|---|---|
+| eski (tasima2 pilot) | 11,0 [9,0–13,7] | 14,2 [11,9–15,1] | — |
+| eski (bu dal `--eskisur` def ×1) | 14,4 | 12,1 | 1/2 |
+| şimdi (×2) | 10,0 [6,1–14,1] (n 18) | 14,7 [10,2–17,8] (n 16) | 2/2 (lose 0/1) |
+| sonra (×2) | 10,3 [6,4–14,8] (n 18) | 13,9 [10,6–17,9] (n 16) | 2/2 (lose 0/1) |
+
+**20o `=wide`** (20O.2, barikat kapalı):
+
+| küme | 1. dalga | 2. dalga | tüfekçi |
+|---|---|---|---|
+| eski (tasima2) / bu dal `--eskisur` ×1 | 9,3 / 8,5 | 22,3 / 35,2 | 2/2 / 2/4 |
+| şimdi (×2) | **6,4** [4,5–8,3] | 11,1 [10,2–12,0] | 2/2 |
+| ara turlar (×2–4, `sonra_wide/tur2..5`, ayar denemeleri) | 12,4 · 13,0 · 13,9 · 7,5 · 13,1 | 17,2 · 12,4 · 14,8 · 11,6 · 16,2 | 2/2 |
+| **sonra (son ayar ×6, `sonra_wide/tur6`)** | **8,6** [7,5–13,1] | 12,9 [10,2–17,5] | 2/2 ×6 |
+
+Ayar geçmişi (`=wide`): peribolostan koşu + 2,0 sn kademe → 12,4; yakın çıkış + 1,5 → 13,0; 0,7 → 13,9 (sonda
+`testler/sonda/wide_s3.ham`: varış ~4 sn, gerisi tek savunanla 8 sn düello — süreyi düello belirliyor). Son: 1. dalga
+barikatın ucundaki toplanma yerinden 1,0 sn kademeyle, 2. dalga peribolostan uzun yol + 3,0 sn kademe. 2. dalga 12,9 sn:
+şimdiden (11,1) uzun, eski 22,3'ten kısa — **kısmen** (dalga sınırı/düşman sayısı/can değişmeden 2. dalgayı uzatacak kaldıraç
+kalmadı: savunanlar zaten en uzak yoldan geliyor; ötesi `Duelist` temposu ya da can, ikisine dokunulmadı).
+
+### Ortak sınıflar (`WaveRunner`, `Duelist`, `Assault`) — varsayılan ×1 (`testler/ortak/`)
+Değişiklikler varsayılanda aynı dalları çalıştırır (`stagger` 0, `via` düz dizi, `ek_merdiven` boş, `dusus_her_kati` metası
+yalnız `SurSetSahne`'li sahnede). Bu sınıfları kullanan bölümler ×1: 21, 21o, 22o, 25, 26, 26o, 29, 30, 30o, 32o, 36b, 37o,
+41o, 42b — **14/14 AUTOTEST PASS, denetim 0**. (0, 20, 20o yukarıda.)
+
+### Kareler (oyuncu kamerası) — 2. dalga başlangıcı ve ortası

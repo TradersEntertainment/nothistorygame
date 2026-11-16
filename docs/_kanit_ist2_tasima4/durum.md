@@ -19,6 +19,11 @@ Dal `wip/ist2-tasima4`, taban `wip/ist2-tasima3` 6f92f921.
 - SONRA Bölüm 20 ×3 (27 koşu, `testler/sonra/c20_*`): 27/27 PASS, denetim 0; 1. dalga 11,4 [9,3–18,9], 2. dalga 21,2 [17,7–26,2]; düşen ceset 0/27; tüfekçi çoğunlukla 4/4.
 - Çuval karesi (Bölüm 20 an_06): tuğla dizisi, havada yok; renk bir ton açıldı.
 
+- Makine yeniden başladı (kare/ölçüm yarıda): kalan 20o, eski koşuları yeniden koşuldu.
+- SONRA 20o ×2 20/20 PASS, düşen 0; `=wide` son ayar ×6: 8,6 / 12,9 sn. Eski `--eskisur` 6 koşu PASS.
+- Ortak sınıf kullanan 14 bölüm ×1 PASS, denetim 0. Sözleşme üçlüsü aynı.
+- Bölüm 0: 3 kare turu (merdiven ucu, kuleye dayalı merdiven, yaralılar); donma karesi bütçesi için uzak figüran gizleme.
+
 ## Süren
 - §1 Bölüm 20 düello süresi: ŞİMDİ ölçümü (×3 / ×2) sırada.
 - §3 ceset düşmesi: kök neden adayı `Duelist._fall_tick` (görünmez/basılamaz yüzeye çarpınca konmuyor, 4 sn düşüp gizleniyor: −128 m = ½·16·4²); sonda ile doğrulanacak.
