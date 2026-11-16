@@ -63,6 +63,11 @@ static func ayarla() -> void:
 			var gs: Script = load("res://tests/_fizik/ayak_gez.gd")
 			if gs:
 				(Engine.get_main_loop() as SceneTree).root.add_child.call_deferred(gs.new())
+		elif a.begins_with("--fizik3-oyun=") and Engine.get_main_loop() is SceneTree:
+			# Fizik-3 oyun içi kumaş kareleri (tests/_fizik/fizik3_gez.gd; yalnız bu argümanla)
+			var gz: Script = load("res://tests/_fizik/fizik3_gez.gd")
+			if gz:
+				(Engine.get_main_loop() as SceneTree).root.add_child.call_deferred(gz.new())
 		elif a == "--fizik3-dbg" and Engine.get_main_loop() is SceneTree:
 			# Fizik-3 tanısı (tests/_fizik/fizik3_dbg.gd; yalnız bu argümanla)
 			var ds: Script = load("res://tests/_fizik/fizik3_dbg.gd")

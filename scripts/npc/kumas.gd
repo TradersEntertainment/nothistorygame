@@ -35,6 +35,8 @@ static var ruzgar := Vector3(1.4, 0.0, 0.6)
 static var etkin := true
 static var _arg_ok := false
 static var _mats := {}
+## Kendi rastgele üreteci: oyunun küresel dizisini (randf) tüketmez (bölümlerin rastgele akışı değişmesin)
+static var _rng := RandomNumberGenerator.new()
 static var _meshes := {}
 ## Ölçüm (--kumas-olc; KUMASPERF): kare başına süre ve kişi sayısı
 static var olc_acik := false
@@ -169,7 +171,7 @@ const PARAMS := ["kk_ek", "kk_sw", "kk_dg", "kk_hp", "kk_ul", "kk_al", "kk_ur", 
 
 func _init(r: Rig) -> void:
 	rig = r
-	_faz = randf() * 20.0
+	_faz = _rng.randf() * 20.0
 	var o := r.owner
 	if o == null:
 		return
@@ -209,7 +211,7 @@ func uygula(delta: float) -> void:
 		if cam:
 			var d2 := gp.distance_squared_to(Ayak_._cam_pos)
 			_yakin = d2 <= LOD * LOD and (d2 < 36.0 or Ayak_.gorunur(gp, d2))
-			_lod_t = 0.0 if d2 < (LOD + 4.0) * (LOD + 4.0) else 0.4 + randf() * 0.2
+			_lod_t = 0.0 if d2 < (LOD + 4.0) * (LOD + 4.0) else 0.4 + _rng.randf() * 0.2
 			if d2 > LOD_YARI * LOD_YARI:
 				_kare = 1
 			else:

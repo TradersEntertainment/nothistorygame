@@ -5,8 +5,16 @@ extends Node
 var _son := {}
 var _t := 0.0
 
+var _bagli := false
+
 func _process(delta: float) -> void:
 	_t += delta
+	var sc0 := get_tree().current_scene
+	if not _bagli and sc0 and sc0.get("meter") is RowMeter:
+		_bagli = true
+		(sc0.get("meter") as RowMeter).stroke.connect(func(good: bool):
+			print("F3STROKE t=%.2f good=%s cuts=%s down=%s hook=%s pull=%s" % [Time.get_ticks_msec() / 1000.0, str(good), str(sc0.get("cuts")),
+				str(sc0.get("barrels_down")), str(sc0.get("_hook_target")), str(sc0.get("_pull"))]))
 	if _t < 0.5:
 		return
 	_t = 0.0
