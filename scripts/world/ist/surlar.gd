@@ -515,8 +515,16 @@ static func _run_ic(host: Node3D, L: float, k: float, lod: int, seed: int, o: Di
 	if open_gate:
 		in_cut.append([-gw * 0.5, gw * 0.5])
 	# OTURTMA: duvar gövdesi tabanın 1 m altından başlar (komşu dilim geçişinde arazi taban altına inse de yüz sürer)
-	for s in _segs(x0, x1, in_cut):
+	# TUR-13: iç poterna (yalnız Bölüm 26: ata SurSetSahne.ic_poterna) surun İÇİNE oyulur; çarpışma birleşimi aynı
+	var ipx := _ic_poterna_x(host, o) if lod == 0 else NAN
+	var in_cut_g: Array = in_cut.duplicate()
+	if not is_nan(ipx):
+		in_cut_g.append([ipx - POTERNA_W * 0.5, ipx + POTERNA_W * 0.5])
+	for s in _segs(x0, x1, in_cut_g):
 		_s(root, Vector3(s[0], -1.0, zi0), Vector3(s[1], HW, zi1), stone, "ashlar", lod, true)
+	if not is_nan(ipx):
+		_ic_poterna_oyuk(root, d, ipx, stone, lod)
+		host.set_meta("ic_poterna_oyuk", ipx)
 	if open_gate:
 		_s(root, Vector3(-gw * 0.5, gh, zi0), Vector3(gw * 0.5, HW, zi1), stone, "ashlar", lod, true)
 	elif gw > 0.0:
@@ -659,6 +667,9 @@ static func _run_ic(host: Node3D, L: float, k: float, lod: int, seed: int, o: Di
 		var ptr := [[float(o["poterna"]) - POTERNA_W * 0.5 - 0.8, float(o["poterna"]) + pdx]]
 		kes["peri"] = (kes["peri"] as Array) + ptr
 		kes["gedik"] = (kes["gedik"] as Array) + ptr
+	# TUR-13: iç poternanın önünde iç surun peribolos yüzü eteği kurulmaz (kapı toprağa iner; eşik peribolos zemininde)
+	if not is_nan(ipx):
+		kes["ic_peri"] = [[ipx - POTERNA_W * 0.5 - 0.5, ipx + POTERNA_W * 0.5 + 0.5]]
 	for pg in o.get("para_gecit", []):
 		kes["para"] = (kes.get("para", []) as Array) + [[float(pg[0]) - float(pg[1]) * 0.5 - 0.6, float(pg[0]) + float(pg[1]) * 0.5 + 0.6]]
 	OTAG.kur(root, lay, lod, xw, dy, o["_kuleler"], kes, bool(o.get("hendek", true)))
@@ -671,6 +682,132 @@ static func _run_ic(host: Node3D, L: float, k: float, lod: int, seed: int, o: Di
 		if bake and root.is_inside_tree():
 			Props.bake_static(root, [root])
 	return root
+
+
+## TUR-13 — İÇ POTERNA OYUĞU (Bölüm 26; tasima8 "kemerli ahşap kulübe" sorunu). Kapı surun önüne konmuyor, surun içine
+## oyuluyor. Kim ister: oyun diliminin (SurOyun.kur "OyunDilimi") atalarından biri `ic_poterna == true` özelliğini
+## (SurSetSahne) ya da "ic_poterna" metasını (test sahnesi) taşır. Yer SurOyun.ic_poterna() ile aynı (aynı arayüz).
+## Varsayılan kurulumda (öteki bölümler, sözleşme sahneleri) NAN → hiçbir şey değişmez.
+static func _ic_poterna_x(host: Node, o: Dictionary) -> float:
+	if not (o.has("gedik_sade") or o.has("poterna")) or host == null or not host.is_inside_tree():
+		return NAN
+	var q: Node = host
+	var istek := false
+	var sur_set: Object = null
+	var pid := ""
+	while q != null:
+		var v: Variant = q.get("ic_poterna")
+		if (v is bool and v) or (q.has_meta("ic_poterna") and bool(q.get_meta("ic_poterna"))):
+			istek = true
+			var ss: Variant = q.get("sur")
+			if ss is Object and ss != null and (ss as Object).get("a") != null:
+				sur_set = ss
+		if String(q.name).begins_with("SurOyun_"):
+			pid = String(q.name).trim_prefix("SurOyun_")
+		q = q.get_parent()
+	if not istek or pid == "":
+		return NAN
+	var a: RefCounted = sur_set.get("a") if sur_set != null else null
+	if a == null:
+		a = (load("res://scripts/world/ist/sur_oyun.gd") as GDScript).call("arayuz", pid)
+	var x := float((a.call("ic_poterna") as Dictionary)["x"])
+	return x
+
+
+## İç poterna ölçüleri (sur_oyun_parca Poterna.kur_ic de bunları kullanır)
+const IC_PO_HS := 1.9        # söve (kemer üzengisi) yüksekliği, peribolos zemininden (y −0,12) değil y 0'dan
+const IC_PO_D := 1.45        # geçidin görünen derinliği (karanlık iç yüz)
+const IC_PO_TIMP := 0.30     # kemerin altındaki taş alınlığın (lünet) yüzden derinliği
+
+
+## Duvar parçaları (oyuğun üstü, arkası) + oyuğu dolduran yalnız-çarpışma kutusu (çarpışma birleşimi kesilmemiş duvarla
+## AYNI: kapı önünde yürünen yüz yine z = zi1) + taş işçiliği (söve taşları, kemer kama taşları, tonoz, lünet). Taşlar
+## duvar yüzüyle aynı düzlemde (1 cm önde: z-kavgası yok), sur taşı gölgelendiricisinden geçer (aynı ressam).
+static func _ic_poterna_oyuk(root: Node3D, d: Dictionary, px: float, stone: Color, lod: int) -> void:
+	var zi0: float = d["zi0"]
+	var zi1: float = d["zi1"]
+	var HW: float = d["HW"]
+	var w := POTERNA_W
+	var r := w * 0.5
+	var hs := IC_PO_HS
+	var tepe := hs + r
+	var D := IC_PO_D
+	_s(root, Vector3(px - r, tepe, zi0), Vector3(px + r, HW, zi1), stone, "ashlar", lod, true)
+	_s(root, Vector3(px - r, -1.0, zi0), Vector3(px + r, tepe, zi1 - D), stone, "ashlar", lod, true)
+	var body := StaticBody3D.new()
+	body.name = "IcPoternaOyukCarp"
+	body.position = Vector3(px, (tepe - 1.0) * 0.5, zi1 - D * 0.5)
+	var cs := CollisionShape3D.new()
+	var bs := BoxShape3D.new()
+	bs.size = Vector3(w, tepe + 1.0, D)
+	cs.shape = bs
+	body.add_child(cs)
+	body.set_meta("no_climb", true)
+	root.add_child(body)
+	if carp_only:
+		return
+	var ag = KULE.Ag.new()
+	var on := zi1 + 0.012
+	var rng := RandomNumberGenerator.new()
+	rng.seed = int(px * 31.0) + 13
+	var ton := func() -> Color:
+		var t := rng.randf_range(0.9, 1.06)
+		return Color(t, t * 0.985, t * 0.96)
+	# söve taşları (iki yanda, dönüşümlü uzun/kısa: köşe örgüsü), hem yüzde hem oyuğun yan yüzünde (söve derinliği)
+	var y := -0.12
+	var k := 0
+	while y < hs - 0.05:
+		var hh := minf(rng.randf_range(0.34, 0.42), hs - y)
+		for sx: float in [-1.0, 1.0]:
+			var ww := 0.42 if (k + (1 if sx > 0.0 else 0)) % 2 == 0 else 0.27
+			var c: Color = ton.call()
+			var xi := px + sx * r                      # açıklığın kenarı
+			var xo := xi + sx * ww
+			var y0 := y + 0.006
+			var y1 := y + hh - 0.006
+			# yüz (oyuk kenarından 6 mm içeriden başlar: derz)
+			ag.quad(Vector3(xi + sx * 0.006, y0, on), Vector3(xo, y0, on), Vector3(xo, y1, on), Vector3(xi + sx * 0.006, y1, on), Vector3.BACK, c)
+			ag.quad(Vector3(xo, y0, zi1), Vector3(xo, y1, zi1), Vector3(xo, y1, on), Vector3(xo, y0, on), Vector3(sx, 0, 0), c.darkened(0.1))
+			# oyuğun yan yüzü (söve derinliği 0,34 m): yüzden içeri
+			var xr := xi - sx * 0.008
+			ag.quad(Vector3(xr, y0, zi1 - 0.006), Vector3(xr, y0, zi1 - 0.34), Vector3(xr, y1, zi1 - 0.34), Vector3(xr, y1, zi1 - 0.006), Vector3(-sx, 0, 0), c.darkened(0.06))
+		y += hh
+		k += 1
+	# kemer: 9 kama taşı (yarım daire, iç yarıçap r, dış r + 0,34; kilit taşı 6 cm uzun), alt uçları söve taşının üstünde
+	var n := 9
+	var rd := r + 0.34
+	for i in n:
+		var a0 := PI * float(i) / n + 0.006
+		var a1 := PI * float(i + 1) / n - 0.006
+		var ro := rd + (0.06 if i == n / 2 else 0.0)
+		var c: Color = ton.call()
+		var p0 := Vector3(px + cos(a0) * r, hs + sin(a0) * r, on)
+		var p1 := Vector3(px + cos(a1) * r, hs + sin(a1) * r, on)
+		var q0 := Vector3(px + cos(a0) * ro, hs + sin(a0) * ro, on)
+		var q1 := Vector3(px + cos(a1) * ro, hs + sin(a1) * ro, on)
+		# dış uçlar yatay/dikey kesilmez: taş radyal derzle biter (kulak yok: üzengi taşı söve taşının üstünde)
+		ag.quad(p0, p1, q1, q0, Vector3.BACK, c)
+		ag.quad(q0, q1, Vector3(q1.x, q1.y, zi1), Vector3(q0.x, q0.y, zi1), Vector3(cos((a0 + a1) * 0.5), sin((a0 + a1) * 0.5), 0), c.darkened(0.08))
+		# kemer altı (kama taşının iç yüzü, 0,34 m derin)
+		ag.quad(Vector3(p0.x, p0.y, zi1 - 0.006), Vector3(p1.x, p1.y, zi1 - 0.006), Vector3(p1.x, p1.y, zi1 - IC_PO_TIMP),
+			Vector3(p0.x, p0.y, zi1 - IC_PO_TIMP), Vector3(-cos((a0 + a1) * 0.5), -sin((a0 + a1) * 0.5), 0), c.darkened(0.12))
+	# kemerle kesimin köşeleri arası (üçgen alınlar) yüz düzleminde: kama taşları köşeleri örter; ardını kapatan tonoz
+	var nt := 12
+	for i in nt:
+		var a0 := PI * float(i) / nt
+		var a1 := PI * float(i + 1) / nt
+		var m := (a0 + a1) * 0.5
+		ag.quad(Vector3(px + cos(a0) * r, hs + sin(a0) * r, zi1 - IC_PO_TIMP), Vector3(px + cos(a1) * r, hs + sin(a1) * r, zi1 - IC_PO_TIMP),
+			Vector3(px + cos(a1) * r, hs + sin(a1) * r, zi1 - D), Vector3(px + cos(a0) * r, hs + sin(a0) * r, zi1 - D),
+			Vector3(-cos(m), -sin(m), 0), Color(0.62, 0.6, 0.56))
+	# lünet: kemerin altında, kanadın üstünde taş alınlık (yarım daire, yüzden 0,30 m içeride); altında söve başlığı (lento)
+	for i in nt:
+		var a0 := PI * float(i) / nt
+		var a1 := PI * float(i + 1) / nt
+		ag.tri(Vector3(px, hs, zi1 - IC_PO_TIMP), Vector3(px + cos(a0) * r, hs + sin(a0) * r, zi1 - IC_PO_TIMP),
+			Vector3(px + cos(a1) * r, hs + sin(a1) * r, zi1 - IC_PO_TIMP), Vector3.BACK, Color(0.84, 0.81, 0.76))
+	ag.kutu(Vector3(px, hs - 0.16, zi1 - IC_PO_TIMP - 0.02), Vector3.RIGHT, Vector3.BACK, w - 0.016, 0.16, 0.05, Color(0.92, 0.89, 0.84), true)
+	ag.mesh_ekle(root, KULE._tas_mat(stone.lightened(0.04), lod), "Tas_IcPoternaKemer")
 
 
 ## TUR-7: orta/uzak katman korkuluğu: iç ve dış surun iki kenarında 1,2 m korkuluk + 1,0 m'lik dişler (2,0 m adım).

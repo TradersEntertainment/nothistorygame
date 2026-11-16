@@ -462,7 +462,7 @@ static func kur(root: Node3D, lay: Dictionary, lod: int, xw: Array, dy: float, k
 	# yüzler: şehir yüzü, iç surun peribolos yüzü (iç kuleler arası), dış surun peribolos yüzü, dış surun teras yüzü (dış
 	# kuleler arası), parateikhion alçak duvarının teras yüzü
 	yuz(e, x0, x1, zi0, -1.0, 0.0, 3.0, 6.0, kes.get("sehir", []))
-	yuz(e, x0, x1, zi1, 1.0, 0.0, 3.0, 5.0, kule_ic + kes.get("kapi", []))
+	yuz(e, x0, x1, zi1, 1.0, 0.0, 3.0, 5.0, kule_ic + kes.get("kapi", []) + kes.get("ic_peri", []))
 	yuz(e, x0, x1, zo0, -1.0, 0.0, 3.0, 5.0, kes.get("peri", []))
 	if hendek:
 		yuz(e, x0, x1, zo1, 1.0, dy, 2.5, 3.6, kule_dis + kes.get("kapi", []) + kes.get("gedik", []))
@@ -486,7 +486,7 @@ static func kur(root: Node3D, lay: Dictionary, lod: int, xw: Array, dy: float, k
 		return out
 	for sg: Array in segs.call(kes.get("sehir", [])):
 		bant(e, Vector2(sg[0], zi0), Vector2(sg[1], zi0), Vector2(0, -1), 0.0, 0.03, 1.6, _uclar(sg, x0, x1, zi0))
-	for sg: Array in segs.call(kule_ic + kes.get("kapi", [])):
+	for sg: Array in segs.call(kule_ic + kes.get("kapi", []) + kes.get("ic_peri", [])):
 		bant(e, Vector2(sg[0], zi1), Vector2(sg[1], zi1), Vector2(0, 1), 0.0, 0.03, 1.6, _uclar(sg, x0, x1, zi1))
 	for sg: Array in segs.call(kes.get("peri", [])):
 		bant(e, Vector2(sg[0], zo0), Vector2(sg[1], zo0), Vector2(0, -1), 0.0, 0.03, 1.6, _uclar(sg, x0, x1, zo0))
