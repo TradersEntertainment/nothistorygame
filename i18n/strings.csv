@@ -9875,3 +9875,41 @@ D25_E_CISTERN_1,Tolga. Cin bu sabah kovama iki balık koymuş. Kimseye söylemed
 D25_E_CISTERN_2,"Saraylı tercüman bu. Bodrumumuzda saray var dedi. Dua edelim, aklı yerine gelsin.",That's the palace interpreter. Said there's a palace in our cellars. Let's pray his wits come back.
 ACH_CISTERN_T,Doksan Yıl Erken,Ninety Years Early
 ACH_CISTERN_D,1453'te bir kuyunun altında unutulmuş Bazilika Sarnıcı'nı bul.,Find the forgotten Basilica Cistern beneath a well in 1453.
+LM_AUGUSTAION,Augustaion ve Iustinianus Sütunu,The Augustaion and the Column of Justinian
+LM_MILION,Milion,The Milion
+LM_AYA_IRINI,Aya İrini,Hagia Irene
+LM_SERGIOS,Küçük Ayasofya,Little Hagia Sophia
+LM_BUYUK_SARAY,Büyük Saray Harabeleri,Ruins of the Great Palace
+LM_KHALKE,Khalke Kapısı,The Chalke Gate
+LM_ZEUKSIPPOS,Zeuksippos Hamamı,The Baths of Zeuxippus
+LM_NEA,Nea Ekklesia,The Nea Ekklesia
+LM_TAURI,Theodosius Forumu,The Forum of Theodosius
+LM_ARKADIUS,Arkadius Sütunu,The Column of Arcadius
+LM_MARKIANOS,Kıztaşı,The Column of Marcian
+LM_ANEMODOULION,Anemodoulion,The Anemodoulion
+LM_HALIC_VENEDIK,Venedik Mahallesi,The Venetian Quarter
+D_LM_AUGUSTAION,"Augustaion. Iustinianus atının üstünde, eli doğuya uzanmış. Elindeki küre 1317'de düşmüş; kimse yerine koymamış. Bizim Büro'da da düşen bir şey yerine konmaz.","The Augustaion. Justinian on his horse, hand stretched to the east. The orb in his hand fell in 1317 and nobody put it back. Nothing that falls at the Bureau gets put back either."
+D_LM_MILION,"Milion. Bütün yolların sıfır noktası. Bütün mesafeler buradan ölçülürmüş. Bizim Büro'nun sıfır noktası çaycının ocağıdır.","The Milion. Mile zero for every road; all distances were measured from here. The Bureau's mile zero is the tea stove."
+D_LM_AYA_IRINI,"Aya İrini. Ayasofya'dan da eski bir kilise. Adı 'barış' demek. Zamanlaması pek uymamış.","Hagia Irene. A church older than Hagia Sophia itself. Its name means 'peace'. The timing could have been better."
+D_LM_SERGIOS,"Küçük Ayasofya. Büyüğünün provası gibi. Her büyük işin önce küçüğü yapılır; bizde önce yazışması yapılır.","Little Hagia Sophia. Like a rehearsal for the big one. Every great work starts with a small one; ours starts with paperwork."
+D_LM_BUYUK_SARAY,"Büyük Saray. Bin yıl imparatorların eviymiş, şimdi otlu bir harabe. Mozaiklerin üstünde keçi otluyor. Saygısızlık değil, bakım.","The Great Palace. A thousand years the emperors' home, now an overgrown ruin. Goats graze over the mosaics. Not disrespect, maintenance."
+D_LM_KHALKE,"Khalke Kapısı. Sarayın tunç kapısı. Kapı duruyor, saray gitmiş. Bizim Büro'nun kapısı da hep kapalı ama arkasında biz varız. Maalesef.","The Chalke Gate. The palace's bronze gate. The gate stands, the palace is gone. The Bureau's door is always shut too, but we're behind it. Unfortunately."
+D_LM_ZEUKSIPPOS,"Zeuksippos Hamamı. Bir zamanlar heykellerle doluymuş. Şimdi duvar diplerinde ot, kemerlerde güvercin. Hamam kalmamış, buhar kalmış: benim.","The Baths of Zeuxippus. Once full of statues. Now weeds along the walls and pigeons in the arches. The baths are gone; the steam is still here. That's me."
+D_LM_NEA,"Nea Ekklesia. Adı 'yeni kilise'. Yedi yüz yaşında. Bizde de 'yeni yönetmelik' diye bir şey var, ondan biraz genç.","The Nea Ekklesia. Its name means 'new church'. It's seven hundred years old. We have a 'new regulation' at the Bureau; it's slightly younger."
+D_LM_TAURI,"Theodosius Forumu. Zafer takının sütunlarında gözyaşı deseni var. Zafer için gözyaşı. Kimse sormamış neden.","The Forum of Theodosius. The triumphal arch's columns have a teardrop pattern. Tears for a triumph. Nobody asked why."
+D_LM_ARKADIUS,"Arkadius Sütunu. Baştan aşağı kabartma: savaşlar, alaylar, zaferler. Yukarıdan okununca bir çizgi roman. Aşağıdan okununca boyun ağrısı.","The Column of Arcadius. Reliefs from top to bottom: wars, processions, victories. Read from above, it's a comic book. From below, it's a neck ache."
+D_LM_MARKIANOS,"Kıztaşı. Tepesinde kanatlı kızlar. Halk dokunanın kalbini bildiğine inanıyormuş. Ben dokunmuyorum, dosyam kabarık.","The Column of Marcian. Winged maidens on top. People believe it can see into the heart of whoever touches it. I'm not touching it. My file is thick enough."
+D_LM_ANEMODOULION,"Anemodoulion. Rüzgârın kölesi demek. Tepesindeki fırıldak rüzgârı gösterirmiş. Benim de rüzgâra göre dönen bir amirim var.","The Anemodoulion. 'Servant of the winds'. Its vane showed which way the wind blew. I also have a superior who turns with the wind."
+D_LM_HALIC_VENEDIK,"Venedik mahallesi. Ambarlar, iskeleler, aslanlı bayrak. Burada her şeyin bir fiyatı var; Venedikliler fiyatını da yazıyla tutuyor. Meslektaş sayılırız.","The Venetian quarter. Warehouses, quays, the lion banner. Everything here has a price, and the Venetians keep the price in writing. Colleagues, practically."
+LM_STUDIOS,Studios Manastırı,The Stoudios Monastery
+LM_MOKIOS,Mokios Sarnıcı,The Cistern of Mokios
+LM_PANTOKRATOR,Pantokrator Manastırı,The Pantokrator Monastery
+LM_KHORA,Kariye (Khora) Manastırı,The Chora Monastery
+LM_PAMMAKARISTOS,Pammakaristos Manastırı,The Pammakaristos Monastery
+LM_BLAKHERNAI_KILISE,Blakherna Meryem Kilisesi,The Church of St Mary of Blachernae
+D_LM_STUDIOS,"Studios Manastırı. Bin keşiş, bir kütüphane, sayısız kural. Kuralları bir ara Büro'ya fotokopi çekmek lazım.","The Stoudios Monastery. A thousand monks, one library, countless rules. Somebody should photocopy those rules for the Bureau."
+D_LM_MOKIOS,"Mokios Sarnıcı. Şehrin en büyük açık sarnıcı. İçi su değil bostan: marul, bakla, soğan. Altyapı yatırımının en verimli hâli.","The Cistern of Mokios. The city's largest open cistern. No water inside, just vegetables: lettuce, beans, onions. Infrastructure at its most productive."
+D_LM_PANTOKRATOR,"Pantokrator. Üç kilise yan yana, bitişik. Biri yetmemiş, ikincisi yetmemiş. Bizde de bir form yetmez, üç nüsha istenir.","The Pantokrator. Three churches side by side, wall to wall. One wasn't enough, nor two. At the Bureau one form isn't enough either; they want it in triplicate."
+D_LM_KHORA,"Kariye. Dışı mütevazı, içi baştan aşağı mozaik. Tıpkı Büro gibi; yalnız bizim içimiz baştan aşağı dosya.","The Chora. Modest outside, mosaic from floor to ceiling inside. Just like the Bureau, except ours is files from floor to ceiling."
+D_LM_PAMMAKARISTOS,"Pammakaristos. Haliç'e bakan tepede, kubbe üstüne kubbe. Buradan bütün kıyı görünüyor. Gözetleme için ideal. Ben not alıyorum.","The Pammakaristos. On the hill above the Golden Horn, dome upon dome. You can see the whole shore from here. Ideal for surveillance. I'm taking notes."
+D_LM_BLAKHERNAI_KILISE,"Blakherna kilisesi. Şehrin koruyucu ikonası buradaymış; kilise yirmi yıl önce yanmış. Ayazması hâlâ akıyor. Su, yangından inatçı.","The church of Blachernae. The city's protecting icon was kept here; the church burned twenty years ago. Its holy spring still flows. Water is more stubborn than fire."

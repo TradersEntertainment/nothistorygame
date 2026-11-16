@@ -184,6 +184,8 @@ func _ground(p: Vector3) -> Vector3:
 		return Vector3(p.x, flat_y, p.z)
 	if side == "osm":
 		return Vector3(p.x, Assault.ground_y(p.x, p.z), p.z)
+	if SurSet.etkin != null and not SurSet.etkin.eski_mi:
+		return SurSet.etkin.on_rubble(Vector3(p.x, 0, p.z))      # yeni sur seti (bölüm bağdaştırıcısı)
 	return LandWalls.on_rubble(Vector3(p.x, 0, p.z))
 
 

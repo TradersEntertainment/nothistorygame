@@ -14,12 +14,19 @@ extends Node3D
 ## bırakır (nişan bandı dar), ilk seferde oturan kızak (28O.1) sağlam (bant geniş).
 ##   --autotest[=wide|lose|hot|hot_taped|hot_tape|named|flawed|edirne|edirne_ok]   (varsayılan: 20O.1; hot*: namlu hiç
 ##   soğutulmaz; edirne: 34O.2 + 28O.2, edirne_ok: 34O.1 + 28O.1)
+##   --eskisur[=20o]   eski set (LandWalls) — geri dönüş anahtarı (karar 13); anahtarsız: yeni Mesoteikhion kesimi
+##                     (SurSetSahne + bölüm bağdaştırıcısı SurSet; Bölüm 20 ile aynı sahne ve çerçeve)
 
 const BattleExtras := preload("res://scripts/level/battle_extras.gd")
 const SHOTS := 3
 const COOL_TIME := 2.4
+## Bölüm sabiti: true → eski set (geri dönüş; komut satırında --eskisur ile de)
+const ESKI_SUR := false
 
 var walls: LandWalls
+## Bölüm bağdaştırıcısı (Bölüm 20 ile aynı): sette yer soran her şey buradan
+var sur: SurSet
+var _ceset: SurSetSahne.CesetSayac        # autotest: düellocuların zemine göre en derin yeri (tasima4 §3)
 var gun: Node3D
 var player: Player
 var hud: Hud
@@ -69,8 +76,16 @@ func _ready() -> void:
 	player.frozen = true
 	hud.set_fez(GameState.flags.get("fez", true))
 	hud.set_signal(0)
-	walls = LandWalls.new()
+	sur = SurSet.sec("20o", ESKI_SUR)
+	if sur.eski_mi:
+		walls = LandWalls.new()
+	else:
+		var ss := SurSetSahne.new()
+		ss.sur = sur
+		walls = ss
 	add_child(walls)
+	if GameState.autotest:
+		_ceset = SurSetSahne.ceset_sayac(self, sur)
 	# Kuşatma sürerken şehir ve surlar arası Bizans'ın: oyuncu gedikten ya da açık bir kapıdan içeri girerse savunucular
 	# yakalayıp dışarı atar (Trespass)
 	Trespass.attach(self, player, hud)
@@ -93,7 +108,14 @@ func _ready() -> void:
 	urban.look_target = player
 	_build_tally()
 	# Önceki hücumlardan kalanlar: hendekte ve sur dibinde yatan azaplar, düşmüş hasır kalkanlar
-	for lane: Array in [[Vector3(-26.0, 0, 27.5), Vector3(26.0, 0, 27.5), 5.0], [Vector3(-24.0, 0, 17.9), Vector3(24.0, 0, 17.9), 0.6]]:
+	var lanes: Array = [[Vector3(-26.0, 0, 27.5), Vector3(26.0, 0, 27.5), 5.0], [Vector3(-24.0, 0, 17.9), Vector3(24.0, 0, 17.9), 0.6]]
+	if not sur.eski_mi:
+		# yeni: hendek dibi (aynı oranda; dolgu yanları) ve teras (sur dibi)
+		var zh := sur.hendek_z(0.47)
+		var zt := sur.dis_sur_z1() + 1.9
+		lanes = [[Vector3(-26.0, 0, zh), Vector3(-9.0, 0, zh), 5.0], [Vector3(9.0, 0, zh), Vector3(26.0, 0, zh), 5.0],
+			[Vector3(-24.0, 0, zt), Vector3(24.0, 0, zt), 0.6]]
+	for lane: Array in lanes:
 		var bx := BattleExtras.new()
 		bx.side = "osm"
 		add_child(bx)
@@ -116,12 +138,17 @@ func _ready() -> void:
 		add_child(o)
 		if i % 3 == 1:
 			o.equip("spear")
-	Garrison.land_walls(self, [], [], [], 2010)
+	Garrison.land_walls(self, [], [], [], 2010, 47.0, true, false, false, sur)
 	# Karşıda gedikte Bizanslılar gündüz de onarır: kazık çakanlar, toprak ve kalas taşıyanlar (top vurdukça)
 	var fight := WallFight.new()
+	fight.sur = sur
 	add_child(fight)
-	fight.add_builders(LandWalls.BREACH + Vector3(0, 0, -1.4), 4, 2070)
-	fight.add_carriers(LandWalls.DEPOT + Vector3(-2.6, 0, 2.6), LandWalls.BREACH + Vector3(0, 0, -2.6), 4, 2080)
+	if sur.eski_mi:
+		fight.add_builders(LandWalls.BREACH + Vector3(0, 0, -1.4), 4, 2070)
+		fight.add_carriers(LandWalls.DEPOT + Vector3(-2.6, 0, 2.6), LandWalls.BREACH + Vector3(0, 0, -2.6), 4, 2080)
+	else:
+		fight.add_builders(sur.gedik_onu() + Vector3(0, 0, 0.4), 4, 2070)
+		fight.add_carriers(sur.depo() + Vector3(-2.6, 0, 2.6), sur.gedik_onu(), 4, 2080)
 	if GameState.autotest:
 		Engine.time_scale = 3.0
 	if GameState.shots_dir != "":
@@ -154,7 +181,7 @@ func _run() -> void:
 	for shot in SHOTS:
 		phase = "drill"
 		player.global_position = gun.position + Vector3(3.0, 0.05, 6.0)
-		player.face(LandWalls.BREACH + Vector3(0, 4.0, 0))
+		player.face(sur.gedik() + Vector3(0, 4.0, 0))
 		hud.set_objective(tr("UI_OBJ20O_LOAD") % [shot + 1, SHOTS])
 		var wide := GameState.autotest_variant == "wide"
 		# Çatlak namluya tam barut konmaz: gülle kısa düşer
@@ -188,10 +215,10 @@ func _setup_gun_crew() -> void:
 	gun_crew.supplies = {"powder": gun.to_global(Vector3(-2.7, 0, 2.2)), "ball": gun.to_global(Vector3(3.8, 0, -0.5)),
 		"wad": gun.to_global(Vector3(-2.8, 0, 5.6)), "rammer": gun.to_global(Vector3(2.8, 0, 5.6))}
 	gun_crew.spawn = ["wad"]
-	gun_crew.target = func() -> Vector3: return LandWalls.BREACH + Vector3(0, 4.0, 0)
+	gun_crew.target = func() -> Vector3: return sur.gedik() + Vector3(0, 4.0, 0)
 	gun_crew.hit_radius = 5.0
 	gun_crew.tolerance = 16.0
-	gun_crew.ground_y = 0.0
+	gun_crew.ground_y = sur.ova_y()
 	gun_crew.load_radius = 3.2
 	gun_crew.design_elev = 5.0
 	gun_crew.pitch_min = -2.0
@@ -221,7 +248,10 @@ func _fire() -> void:
 		tw.tween_property(gun, "position:z", gun.position.z, 1.2)
 		await get_tree().create_timer(1.6, false).timeout
 	var hit := _acc >= 0.5
-	var at := LandWalls.BREACH + Vector3(randf_range(-1.5, 1.5) if hit else randf_range(-14, 14), 3.0 if hit else 1.0, 1.2 if hit else 6.0)
+	var at := sur.gedik() + Vector3(randf_range(-1.5, 1.5) if hit else randf_range(-14, 14), 3.0 if hit else 1.0, 1.2 if hit else 6.0)
+	if not sur.eski_mi and not hit:
+		# ıska: sur dibine, terasa (eski: sur dibinin 6 m önü, set)
+		at = Vector3(at.x, sur.teras_y() + 1.0, sur.dis_sur_z1() + 4.4)
 	if drill.physical and drill.last_impact != Vector3.INF:
 		at = drill.last_impact
 	walls.impact(at)
@@ -445,7 +475,7 @@ func _evening() -> void:
 	await hud.fade_to(0.0, 0.8)
 	var target := Node3D.new()
 	walls.add_child(target)
-	target.position = LandWalls.BREACH + Vector3(0, 3.0, 0)
+	target.position = sur.gedik() + Vector3(0, 3.0, 0)
 	player.frozen = false
 	hud.set_objective(tr("UI_OBJ20O_PHOTO"), target.global_position)
 	cam = TespitCam.new(player, hud, target, "siege20o")
@@ -493,15 +523,17 @@ func _assault() -> void:
 	await hud.card([[tr("UI_CH20O_NIGHT_HOLD" if _outcome == "20O.2" else "UI_CH20O_NIGHT"), 26, Color("f2e6c9")]], 1.8)
 	hud.clear_card()
 	_make_night()
-	var y := LandWalls.OUTER_H
-	# Yakın ova (hendeğin dış kıyısı) bu bölümde boş: hücumun toplandığı yere çiğnenmiş toprak
-	if get_node_or_null("AssaultGround") == null:
+	var y := sur.dis_yol_y()
+	# Yakın ova (hendeğin dış kıyısı) bu bölümde boş: hücumun toplandığı yere çiğnenmiş toprak (yeni sette ova zemini var)
+	if get_node_or_null("AssaultGround") == null and sur.eski_mi:
 		var g := Props.solid(self, Vector3(44.0, 0.4, 18.0), Vector3(0, -0.2, 45.2), Color("6a5a40"))
 		g.name = "AssaultGround"
 		Props.set_pattern(g, Color("6a5a40"), "dirt")
-	player.global_position = Vector3(2.0, 0.05, 41.0)
+	# hendeğin uzak yakasının 5 m ötesi (eski z 41 ↔ yeni ova_z0 + 5)
+	var oz := sur.ova_z0() - 36.0
+	player.global_position = Vector3(2.0, sur.ova_y() + 0.05, 41.0 + oz)
 	player.face(Vector3(0, y + 1.2, 15.3))
-	urban.global_position = Vector3(4.2, 0, 42.5)
+	urban.global_position = Vector3(4.2, sur.ova_y(), 42.5 + oz)
 	urban.look_target = player
 	await hud.fade_to(0.0, 0.6)
 	Audio.intensity(2, "walls_night")
@@ -513,21 +545,22 @@ func _assault() -> void:
 	var xs := [-10.0, -7.5, 7.5, 10.0]
 	for i in 4:
 		peek.append({"coat": [Color("7a2a24"), Color("8a8e96"), Color("5a6a7a"), Color("6a5a3a")][i], "hat": "helm",
-			"pos": Vector3(LandWalls.walk_x(xs[i]), y, 15.25), "face": Vector3(xs[i], y, 40.0), "phase": i * 0.9})
+			"pos": Vector3(sur.dis_yol_x(xs[i]), y, 15.25 if sur.eski_mi else sur.dis_yol_on_z() - 0.5), "face": Vector3(xs[i], y, 40.0 + oz), "phase": i * 0.9})
 	var res: Dictionary = await GunRange.run(self, hud, player, {"peek": peek, "limit": 28.0,
-		"crowd_box": AABB(Vector3(0.0 - 32.0, LandWalls.OUTER_H - 1.5, LandWalls.INNER_Z0 - 3.0), Vector3(64.0, 11.5, 25.0)),
+		"crowd_box": AABB(Vector3(0.0 - 32.0, sur.dis_yol_y() - 1.5, (LandWalls.INNER_Z0 if sur.eski_mi else sur.ic_sur_z1() - float(sur.d["T"])) - 3.0), Vector3(64.0, 11.5, 25.0)),
 		"objective": tr("UI_OBJ20O_GUN") % 4, "look": Vector3(0, y + 1.2, 15.3)})
 	gun_shots = res["shots"]
 	gun_hits = res["hits"]
 	await hud.say("SPK_TOLGA", "D20_T_GUN_GOOD" if gun_hits >= 2 else "D26O_T_GUN_BAD")
 	# Gedik: moloz dilinin üstünde, azaplarla birlikte (görünen moloz kutularının içine düşmeden)
 	await hud.fade_to(1.0, 0.4)
-	var at := _clear_spot(LandWalls.BREACH + Vector3(0, 0, 4.6))
+	# gediğin önü: eski moloz dili (sur dibinin 3,6 m önü) ↔ yeni moloz yamacının teras ucu (azaplar dolgudan gelir)
+	var at := _clear_spot(LandWalls.BREACH + Vector3(0, 0, 4.6) if sur.eski_mi else Vector3(0, 0, sur.dis_sur_z1() + 3.4))
 	player.global_position = at + Vector3(0, 0.05, 0)
-	player.face(LandWalls.BREACH + Vector3(0, 2.0, 0))
+	player.face(sur.gedik() + Vector3(0, 2.0, 0))
 	await hud.fade_to(0.0, 0.4)
 	await hud.say("SPK_URBAN", "D20O_U_CHARGE" if _outcome == "20O.1" else "D20O_U_CHARGE_HOLD")
-	var crest := LandWalls.on_rubble(LandWalls.BREACH + Vector3(0, 0, 1.2))
+	var crest := sur.moloz_sirti()
 	var spots := [crest + Vector3(-1.2, 0, 0), crest + Vector3(1.2, 0, 0)]
 	var specs := []
 	for k in 2:
@@ -540,14 +573,16 @@ func _assault() -> void:
 			"look": {"coat": [Color("7a2a24"), Color("5a6a7a"), Color("6a5a3a")][k % 3], "pants": Color("3a2a22"), "hat": "helm",
 			"mustache": true, "beard": k % 2 == 1}})
 	player.frozen = false
-	var gn := Gunner.spawn(self, Vector3(8.4, y, 15.4), player, hud, 6.0, Color("7a2a24"), "helm")
-	var r: Dictionary = await WaveRunner.run(self, hud, player, [
-		{"specs": specs, "max_active": 2, "skill": 0.4, "limit": 60.0},
-		{"specs": more, "max_active": 2, "skill": 0.45, "allies": 2, "limit": 60.0,
+	var gn := Gunner.spawn(self, Vector3(8.4, y, 15.4) if sur.eski_mi else Vector3(sur.dis_yol_x(8.4), y, sur.dis_yol_z()), player, hud, 6.0, Color("7a2a24"), "helm")
+	var w1 := {"specs": specs, "max_active": 2, "skill": 0.4, "limit": 60.0}
+	var w2 := {"specs": more, "max_active": 2, "skill": 0.45, "allies": 2, "limit": 60.0,
 		"intro": func():
 			# Dövüşün ortasında haykırış (Tolga kılıç sallarken Urban'a dönmez)
 			hud.bark("SPK_URBAN", "D20O_U_MORE", 3.5)
-			await get_tree().create_timer(1.5, false).timeout}], "kilij")
+			await get_tree().create_timer(1.5, false).timeout}
+	if not sur.eski_mi and SurSet.asama_of((walls as SurSetSahne).onarim) >= 3:
+		_savunan_yolu(w1, w2)
+	var r: Dictionary = await WaveRunner.run(self, hud, player, [w1, w2], "kilij")
 	await gn.settle_test()
 	gunner_shots = gn.shots
 	gunner_dodged = gn.dodged
@@ -558,6 +593,39 @@ func _assault() -> void:
 	player.frozen = true
 	await hud.say("SPK_TOLGA", "D20O_T_DUEL" if _duel_won else "D20O_T_LOST")
 	await hud.say("SPK_NIHAT", "D20O_N_NIGHT")
+
+
+## Barikat kapalıyken (aşama ≥ 3: 20O.2 "surlar dayandı") savunanların gelişi (TAŞIMA-4, sahibinin kararı: "düello çok
+## kısa"; =wide 1. dalga 3,7–7,6 sn, eski 9,3). Kök neden: savunanın giriş noktası (Melee.auto_entry) düello yerinin
+## ötesinde, gediğin içinde aranır; kapalı barikattan geçen yol bulunamayınca (walkable) giriş yok sayılır ve savunan
+## oyuncunun 3 m önünde, moloz sırtında doğar. Şimdi peribolostan koşarak gelir: siperin ardından, barikatın ucundan
+## dolanıp gedik ağzından sırta çıkar, yamaçtan oyuncuya iner; bölük kademeli katılır, 2. dalgada önce iki kişi gelir
+## ve düşenin yerine sıradaki aynı yoldan koşar. Açık gedikte (20O.1) auto_entry zaten içeriden getiriyor: değişmez.
+const SAVUNAN_ARA_1 := 1.0
+const SAVUNAN_ARA_2 := 3.0
+func _savunan_yolu(w1: Dictionary, w2: Dictionary) -> void:
+	var hw := sur.gedik_en() * 0.5
+	var z0 := sur.dis_sur_z0()
+	var from: Array = []
+	var via: Array = []
+	for yan: float in [-1.0, 1.0]:
+		from.append(sur.on_rubble(Vector3(yan * (hw + 7.5), 0.0, z0 - 4.6)))
+		via.append([sur.on_rubble(Vector3(yan * (hw + 3.4), 0.0, z0 - 1.6)), sur.on_rubble(Vector3(yan * (hw + 0.8), 0.0, z0 - 0.5)),
+			sur.on_rubble(Vector3(yan * (hw - 1.4), 0.0, z0 + 0.6)), sur.on_rubble(Vector3(yan * 1.0, 0.0, sur.moloz_sirti().z))])
+	w2["from"] = from
+	w2["via"] = via
+	# 1. dalga barikatın ucundaki toplanma yerinden çıkar (peribolostan koşu 2. dalgaya kalır): ilk denemelerde 1. dalga
+	# 12,4–13,9 sn (hedef ≈ 8–12; sonda: varış ~4 sn, gerisi düello)
+	var from1: Array = []
+	var via1: Array = []
+	for k in via.size():
+		from1.append((via[k] as Array)[0])
+		via1.append((via[k] as Array).slice(1))
+	w1["from"] = from1
+	w1["via"] = via1
+	w1["stagger"] = SAVUNAN_ARA_1
+	w2["stagger"] = SAVUNAN_ARA_2
+	w2["group"] = 2
 
 
 ## Gece ortamı (22O ile aynı palet). Süren şafak tween'i (make_dawn) gece renklerini ezmesin diye önce durdurulur.
@@ -586,8 +654,8 @@ func _clear_spot(base: Vector3) -> Vector3:
 	for dz in [0.0, 1.0, -1.0, 2.0]:
 		for dx in [0.0, 1.5, -1.5, 3.0, -3.0]:
 			var p := base + Vector3(dx, 0.0, dz)
-			p.y = LandWalls.outside_y(p.x, p.z)
-			if p.y < -1.0:
+			p.y = sur.dis_zemin_y(p.x, p.z)
+			if p.y < sur.teras_y() - 1.0:
 				continue
 			if Unclip.in_solid(self, p) or Unclip.in_solid(self, p + Vector3(0, 0.6, 0)) or Unclip.on_mesh(self, p):
 				continue
@@ -613,10 +681,10 @@ var _incoming_t := 1.5
 func _incoming() -> void:
 	var a := randf_range(-PI, PI)
 	var at := gun.position + Vector3(cos(a), 0, sin(a)) * randf_range(7.0, 15.0)
-	at.y = 0.0
+	at.y = sur.ova_y()
 	if Vector2(at.x - player.global_position.x, at.z - player.global_position.z).length() < 5.0:
 		at += (at - player.global_position).normalized() * 5.0
-		at.y = 0.0
+		at.y = sur.ova_y()
 	Audio.sfx("whoosh_fly", -10.0, 1.6)
 	await get_tree().create_timer(0.45, false).timeout
 	if not is_inside_tree():
@@ -701,8 +769,10 @@ func _autotest_report() -> void:
 		ok = ok and player.downs >= 1 and not _duel_won
 	if not ok:
 		printerr("AUTOTEST: beklenen %s, gelen %s (sayfa=%s)" % [expected, _outcome, not page.is_empty()])
-	print("AUTOTEST %s chapter=20o variant=%s outcome=%s hits=%d cracks=%d gun=%d/%d gunner=%d/%d duel=%s bed=%s" % ["PASS" if ok else "FAIL",
-		v, _outcome, hits, cracks, gun_hits, gun_shots, gunner_dodged, gunner_shots, _duel_won, _bed])
+	if _ceset:
+		print(_ceset.ozet("bolum=%s variant=%s" % ["20o", v]))
+	print("AUTOTEST %s chapter=20o variant=%s outcome=%s hits=%d cracks=%d gun=%d/%d gunner=%d/%d duel=%s bed=%s sur=%s" % ["PASS" if ok else "FAIL",
+		v, _outcome, hits, cracks, gun_hits, gun_shots, gunner_dodged, gunner_shots, _duel_won, _bed, "eski" if sur.eski_mi else "yeni"])
 	get_tree().quit(0 if ok else 1)
 
 
@@ -722,7 +792,7 @@ func _run_shots() -> void:
 	player.show_remote(false)
 	player.global_position = gun.position + Vector3(3.0, 0.05, 6.0)
 	await get_tree().create_timer(0.8, false).timeout
-	player.face(LandWalls.BREACH + Vector3(0, 4.0, 0))
+	player.face(sur.gedik() + Vector3(0, 4.0, 0))
 	drill.start(0.0, 0.16)
 	drill.step = 4
 	await _shot_png("c20o_01_aim.png")

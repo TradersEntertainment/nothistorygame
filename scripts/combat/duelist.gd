@@ -57,6 +57,10 @@ var _final_clip := ""
 var _settled := false
 ## Cesetler: sahnede en çok bu kadar; fazlası (en eskiler) oyuncunun görüşünden çıkınca yere batıp silinir
 const CORPSE_CAP := 12
+## Yığılma (scripts/npc/yigilma.gd): ölen, düşen, yere serilen bez bebek gibi yığılır (eski: ölüm klibi + zemine oturtma)
+const Yigilma := preload("res://scripts/npc/yigilma.gd")
+var _yig: Node
+var _yig_dusus := false
 static var _corpses: Array = []
 var _dodge_to := Vector3.INF
 
@@ -382,6 +386,37 @@ func knock_down(push: Vector3) -> void:
 		anim.body_amount = 1.0      # yerde gövde tam yatar (0,7'de göğüs yerden 30° kalkık, havada kalıyordu)
 		anim.play("Hit_Knockback", 1.0, false)
 	_shield_knock()
+	Yigilma.kare(self, "tekme")
+	# Bez bebek: geriye savrulup yere yığılır (kök _kb ile kayar: kenardan düşüş ve oynanış aynı), sonra kalkar (_yig_kalk)
+	if Yigilma.etkin and body and body.rig:
+		var y := Yigilma.baslat(body, {"itme": push * 0.3 + Vector3(0, 0.6, 0), "h": 1.1, "v0": push * 0.45, "kalk": true,
+			"diz": 0.5, "haric": _excl()})
+		if y:
+			_yig = y
+
+
+## Yerde yatan (bez bebek) kalkar: kök kalçanın altına ve ayakların yönüne alınır, yerdeki duruş kalkış klibinin
+## harmanına verilir (klip yerden başlar; eskiden yatış klibinin son karesinden kalkıyordu).
+func _yig_kalk() -> void:
+	if _yig == null or not is_instance_valid(_yig):
+		_yig = null
+		return
+	var y := _yig
+	_yig = null
+	var pp: PackedVector3Array = y.get("p")
+	var pel := (pp[Yigilma.HL] + pp[Yigilma.HR]) * 0.5
+	var sh := (pp[Yigilma.SL] + pp[Yigilma.SR]) * 0.5
+	var ileri := pel - sh
+	ileri.y = 0.0
+	var gy := _floor_at(pel)
+	var keep := body.rig.body.global_transform
+	var yeni := Vector3(pel.x, gy if not is_nan(gy) else global_position.y, pel.z)
+	if not Unclip.in_solid(self, yeni, 0.25):
+		global_position = yeni
+	if ileri.length() > 0.1:
+		rotation.y = atan2(ileri.x, ileri.z)
+	body.rig.body.global_transform = keep
+	y.call("devret", anim)
 
 
 ## Kalkan kolu yana savrulur, sonra toparlanır (tekme kalkanı açar).
@@ -471,6 +506,10 @@ func collapse(clip := "Death01", from := 0.0, speed := 1.25) -> void:
 	if _settled:
 		return
 	_final_clip = clip
+	if _yig == null or not is_instance_valid(_yig):
+		Yigilma.kare(self, "bitirici" if finishing or clip == "Hit_Knockback" else "olum")
+	if _yig_olum():
+		return
 	if anim == null:
 		var tw := create_tween().set_parallel()
 		tw.tween_property(body, "rotation:x", deg_to_rad(-88), 0.6).set_ease(Tween.EASE_IN)
@@ -498,6 +537,66 @@ func collapse(clip := "Death01", from := 0.0, speed := 1.25) -> void:
 			Vfx.dust(get_parent_node_3d(), global_position + Vector3(0, 0.15, 0) + global_transform.basis.z * -0.6, 0.35))
 
 
+## Bez bebek yığılması (Yigilma): darbe yönü _kb'den (yoksa vurandan uzağa), göğüs hizasından; dizler çözülür. Döner:
+## başladı mı (kapalıysa ya da iskelet yoksa eski klip yolu).
+func _yig_olum() -> bool:
+	if not Yigilma.etkin or body == null or body.rig == null:
+		return false
+	if _yig and is_instance_valid(_yig) and not bool(_yig.get("dondu")):
+		return true             # zaten yığılıyor (düşüş, yere serilme): bitince ceset
+	var dir := _kb
+	dir.y = 0.0
+	if dir.length() < 0.3:
+		if target and is_instance_valid(target):
+			dir = global_position - target.global_position
+			dir.y = 0.0
+		if dir.length() < 0.05:
+			dir = -global_transform.basis.z
+		dir = dir.normalized() * 1.2
+	var y := Yigilma.baslat(body, {"itme": dir.limit_length(3.5) * 0.85, "h": 1.35, "v0": dir.limit_length(3.0) * 0.3,
+		"haric": _excl()})
+	if y == null:
+		return false
+	_kb = Vector3.ZERO
+	_yig = y
+	_yig_bagla()
+	return true
+
+
+func _yig_bagla() -> void:
+	if _yig == null:
+		return
+	if not _yig.is_connected("carpti", _yig_carpti):
+		_yig.connect("carpti", _yig_carpti)
+	if not _yig.is_connected("bitti", _yig_bitti):
+		_yig.connect("bitti", _yig_bitti)
+
+
+## Yere çarpma anı (gövde ilk değdiğinde): toz ve gümleme (düşüşün kendi sesi _fall_land'de)
+func _yig_carpti(at: Vector3, _hiz: float) -> void:
+	if state != St.DEAD or _yig_dusus or not is_inside_tree():
+		return
+	Audio.sfx("land_thud", -5.0, 0.7)
+	Vfx.dust(get_parent_node_3d(), at + Vector3(0, 0.05, 0), 0.35)
+
+
+## Bez bebek dondu: ölüyse ceset son hâlini alır (kök kalçanın altına, kan, sayaç). Yere serilen (kalkacak) bekler.
+func _yig_bitti() -> void:
+	if state != St.DEAD or _settled or _yig == null or not is_instance_valid(_yig) or not is_inside_tree():
+		return
+	_settled = true
+	_kb = Vector3.ZERO
+	var pp: PackedVector3Array = _yig.get("p")
+	var pel := (pp[Yigilma.HL] + pp[Yigilma.HR]) * 0.5
+	var gy := _floor_at(pel)
+	var yeni := Vector3(pel.x, gy if not is_nan(gy) else global_position.y, pel.z)
+	# Kök bir katının (duvar dibi) içine düşmesin: kalça duvara yaslıysa kök yerinde kalır (VISAUDIT insolid)
+	if not Unclip.in_solid(self, yeni, 0.25):
+		global_position = yeni
+	_yig.call("yeniden")
+	_freeze()
+
+
 func _on_clip_done() -> void:
 	if state == St.DEAD and anim and anim.clip == _final_clip and not _settled:
 		_settle()
@@ -521,7 +620,10 @@ func _settle() -> void:
 
 
 func _freeze() -> void:
-	_lift_over_ground()
+	if _yig == null:
+		_lift_over_ground()
+		if GameState.autotest and body:
+			Yigilma.denetle(body, "klip")
 	_blood_pool()
 	if anim:
 		anim.set_process(false)
@@ -959,7 +1061,8 @@ func _process(delta: float) -> void:
 				if anim:
 					anim.ground_mode = 2
 			if _t >= DOWN_LIE and anim and anim.clip != "Roll":
-				# Kalkış: yuvarlanmanın son yarısı (oturur, dizine gelir, doğrulur)
+				# Kalkış: yuvarlanmanın son yarısı (oturur, dizine gelir, doğrulur); bez bebek yatıyorsa o duruştan
+				_yig_kalk()
 				anim.fade = 0.3
 				anim.ground_mode = 1
 				anim.create_tween().tween_property(anim, "body_amount", 0.7, 0.5)
@@ -1094,7 +1197,15 @@ func fall_off(dir: Vector3, over := false) -> void:
 		body.set_meta("no_audit", true)
 	npc_killed = not by_player       # kill() düşüşü duyurur (Duel oyuncunun hanesine yazar ya da yazmaz)
 	kill()
-	if anim:
+	# Bez bebek: havada kökü izler (kökün yolu, duvar ve suyu kökün ışınları çözer), kollar bacaklar çırpınır, geriye
+	# döner; kök yere inince (_fall_land) yerçekimiyle çarpar ve yığılır
+	if Yigilma.etkin and body and body.rig:
+		_yig = Yigilma.baslat(body, {"dusus": true, "kok": self, "v0": _fall_v, "g": 16.0, "h": 1.4,
+			"itme": dir * 0.8 + Vector3(0, 0.4, 0), "donus": -2.4 if over else -1.8, "haric": _excl()})
+		if _yig:
+			_yig_dusus = true
+			_yig_bagla()
+	if anim and _yig == null:
 		anim.fade = 0.08
 		anim.ground_mode = 0
 		anim.body_amount = 1.0
@@ -1102,6 +1213,7 @@ func fall_off(dir: Vector3, over := false) -> void:
 		anim.play("Hit_Knockback", 0.7, false)
 	Audio.sfx_at("fall_scream", self, 2.0)
 	Audio.sfx_at("whoosh_fly", self, -6.0)
+	Yigilma.kare(self, "dusus")
 	if by_player:
 		GameState.bump_stat("thrown_off")
 		GameState.combat_add("thrown")
@@ -1122,10 +1234,10 @@ func _fall_tick(delta: float) -> void:
 	var space := get_world_3d().direct_space_state
 	var q := PhysicsRayQueryParameters3D.create(from + Vector3(0, 0.25, 0), to + Vector3(0, -0.05, 0), 1, _excl())
 	var hit := space.intersect_ray(q)
-	if not hit.is_empty() and not _is_person_part(hit["collider"]) and Unclip.visible_body(hit["collider"]) \
+	if not hit.is_empty() and not _is_person_part(hit["collider"]) and _fall_solid(hit["collider"]) \
 			and (_fall_t > 0.3 or (hit["normal"] as Vector3).y > 0.6):
 		var n := hit["normal"] as Vector3
-		if n.y > 0.6 and Unclip.standable(hit["collider"], int(hit.get("shape", 0))):
+		if n.y > 0.6 and (_fall_any == 1 or Unclip.standable(hit["collider"], int(hit.get("shape", 0)))):
 			_fall_land(hit["position"] as Vector3)
 			return
 		if n.y <= 0.6:
@@ -1143,6 +1255,25 @@ func _fall_tick(delta: float) -> void:
 		set_process(false)
 
 
+## Düşen gövdeyi durduran katı mı. Varsayılan: görünen gövde (Unclip.visible_body). Sahne (düellocunun bir atası)
+## "dusus_her_kati" metası taşırsa her StaticBody3D katıdır: yeni sur setinin (SurSetSahne) zemin ve duvar gövdelerinin
+## görünen ağı pişirilmiş kardeş düğümde, gövdenin çocuğu değil; visible_body onları görmüyor, atılan düellocu moloz
+## rampasının içinden geçip 4 sn düşüyordu (y −70…−128; docs/_kanit_ist2_tasima4/rapor.md §3). Yalnız yeni setli bölümler verir.
+var _fall_any := -1
+func _fall_solid(c: Object) -> bool:
+	if Unclip.visible_body(c):
+		return true
+	if _fall_any < 0:
+		_fall_any = 0
+		var q: Node = get_parent()
+		while q != null:
+			if q.has_meta("dusus_her_kati"):
+				_fall_any = 1 if bool(q.get_meta("dusus_her_kati")) else 0
+				break
+			q = q.get_parent()
+	return _fall_any == 1 and c is StaticBody3D and not (c as Node).is_queued_for_deletion()
+
+
 ## Yere çarptı: gümleme, toz, kan, sarsıntı (yakınsa); ceset orada yatar.
 func _fall_land(at: Vector3) -> void:
 	_falling = false
@@ -1157,11 +1288,15 @@ func _fall_land(at: Vector3) -> void:
 	Vfx.dust(par, at + Vector3(0, 0.2, 0), 0.9)
 	Duel.blood(par, at + Vector3(0, 0.3, 0), Vector3.UP, 0.8)
 	Fx.trauma(clampf(drop / 30.0, 0.1, 0.4) * _cam_near())
+	if _yig and is_instance_valid(_yig):
+		_yig.call("indi", _fall_v)
 	collapse("Death01", 0.85, 2.2)
 
 
 func _fall_splash(at: Vector3) -> void:
 	_falling = false
+	if _yig and is_instance_valid(_yig):
+		_yig.call("durdur")
 	Audio.sfx_at("splash", self, 2.0)
 	Vfx.splash(get_parent_node_3d(), at, 1.0)
 	global_position = at

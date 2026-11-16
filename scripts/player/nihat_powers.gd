@@ -56,6 +56,9 @@ var _edge_cd := 0.0
 var _v := Vector3.ZERO      # uçuş hızı (Player yerçekimsizken dikey hızı sıfırlar; burada tutulur)
 var range_m := RANGE
 var max_alt := MAX_ALT
+## İstanbul v2 (IstBaglama.ucus_bagla): uçuşta sisin indiği yoğunluk ve harita sınırı (dünya x,z; boşsa yalnız menzil)
+var ucus_sis := 0.0007
+var sinir := Rect2()
 ## Bu bölümün seyir noktaları: {id, pos, r, seen}
 var landmarks: Array = []
 var _marks: Array = []
@@ -363,7 +366,7 @@ func _thin_fog(delta: float) -> void:
 		_env = (we[0] as WorldEnvironment).environment
 		_fog0 = _env.fog_density
 	var k := clampf((_alt - 8.0) / 30.0, 0.0, 1.0) if flying else 0.0
-	_env.fog_density = lerpf(_env.fog_density, lerpf(_fog0, minf(_fog0, 0.0007), k), clampf(delta * 1.5, 0.0, 1.0))
+	_env.fog_density = lerpf(_env.fog_density, lerpf(_fog0, minf(_fog0, ucus_sis), k), clampf(delta * 1.5, 0.0, 1.0))
 
 
 func _check_landmarks() -> void:
@@ -378,7 +381,7 @@ func _check_landmarks() -> void:
 		GameState.flags["nihat_landmarks"] = book
 		GameState.flags["lm_%s" % str(lm.id)] = true
 		Audio.sfx("radio_beep", -8.0, 1.4)
-		_toast.text = tr("UI_LM_FOUND") % [tr("LM_" + str(lm.id)), book.size(), LANDMARK_IDS.size()]
+		_toast.text = tr("UI_LM_FOUND") % [tr("LM_" + str(lm.id)), book.size(), maxi(LANDMARK_IDS.size(), landmarks.size())]
 		var tw := create_tween()
 		tw.tween_property(_toast, "modulate:a", 1.0, 0.4)
 		tw.tween_interval(3.5)
@@ -387,7 +390,7 @@ func _check_landmarks() -> void:
 		if h and not h.is_talking():
 			_bark_cd = 6.0
 			h.bark("SPK_NIHAT", "D_LM_" + str(lm.id), 6.0)
-		if book.size() >= LANDMARK_IDS.size() and not GameState.flags.get("nihat_seyyah", false):
+		if LANDMARK_IDS.all(func(i: String) -> bool: return book.has(i)) and not GameState.flags.get("nihat_seyyah", false):
 			GameState.flags["nihat_seyyah"] = true
 			get_tree().create_timer(6.5).timeout.connect(func():
 				if is_instance_valid(h) and not h.is_talking():
@@ -475,6 +478,9 @@ func ensure_flight_solids() -> int:
 		var n: Node = top[0]
 		var far: bool = top[1] or n.has_meta("far_scenery")
 		if n is CanvasItem or n == player or n.is_in_group("persons") or n.is_in_group("soldiers"):
+			continue
+		# İstanbul v2 kendi çarpışmasını akışla kurar (IstBaglama): binlerce düğümü taramak kalkışta takılma yapıyordu
+		if n.has_meta("ucus_tarama_yok"):
 			continue
 		if n is Node3D and not (n as Node3D).visible:
 			continue
@@ -688,7 +694,21 @@ func fly(delta: float) -> void:
 	if _home == Vector3.INF:
 		_home = player.global_position
 	var off := Vector2(player.global_position.x - _home.x, player.global_position.z - _home.z)
-	if off.length() > range_m:
+	# Harita sınırı (v2): dışına taşınca en yakın kenara doğru yumuşak geri çevirme
+	var out_of := Vector2.ZERO
+	if sinir.size != Vector2.ZERO:
+		var q := Vector2(player.global_position.x, player.global_position.z)
+		out_of = Vector2(clampf(q.x, sinir.position.x, sinir.end.x), clampf(q.y, sinir.position.y, sinir.end.y)) - q
+	if out_of.length() > 0.5:
+		var back := Vector3(out_of.x, 0, out_of.y).normalized()
+		want = want - back * minf(0.0, want.dot(back)) + back * 4.0
+		_edge_cd -= delta
+		if _edge_cd <= 0.0:
+			_edge_cd = 6.0
+			var h := _hud()
+			if h and not h.is_talking():
+				h.bark("SPK_NIHAT", "D_NIHAT_EDGE", 3.0)
+	elif off.length() > range_m:
 		var back := -Vector3(off.x, 0, off.y).normalized()
 		want = want - back * minf(0.0, want.dot(back)) + back * 4.0
 		_edge_cd -= delta

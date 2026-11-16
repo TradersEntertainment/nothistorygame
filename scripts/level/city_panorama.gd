@@ -990,7 +990,10 @@ static func _ship(root: Node3D, p: Vector3, yaw: float, sail: Color, flag: Color
 			Props.box(n, Vector3(3.0, 0.12, 0.12), Vector3(sx * 3.2, 0.8, -8.0 + k * 1.8), Color("6a5236"), Vector3(0, 0, sx * -18.0))
 	Props.cyl(n, 0.2, 14.0, Vector3(0, 8.5, 2.0), Color("5a4028"), Vector3.ZERO, 6)
 	Props.prism(n, Vector3(0.1, 11.0, 9.0), Vector3(0, 9.0, 3.0), sail, Vector3(0, 90, 0))
-	Props.box(n, Vector3(0.05, 1.2, 2.0), Vector3(0, 3.4, -10.0), flag)
+	# TUR-12: kıç bayrağı kendi direğinde (eskiden direksiz, güvertenin 1,3 m üstünde asılı 5 cm'lik kutu), ince çift
+	# yüzlü, rüzgârda dalgalanır
+	Props.cyl(n, 0.05, 2.75, Vector3(0, 2.95, -9.0), Color("5a4028"), Vector3.ZERO, 5)
+	preload("res://scripts/world/ist/kumas.gd").bayrak(n, Vector3(0, 4.1, -9.0), Vector3.FORWARD, 2.0, 1.2, flag, [], 7)
 
 
 ## Boğaz: şehrin burnunun önünde Osmanlı donanması (kırmızı sancaklı kadırgalar), karşıda Asya kıyısı.

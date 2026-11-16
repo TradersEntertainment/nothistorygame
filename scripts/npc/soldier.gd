@@ -40,6 +40,8 @@ static func huseyin_hat() -> String:
 	return "fez" if GameState.given_to("spare_fez") == "huseyin" else "bork"
 
 
+const Kumas := preload("res://scripts/npc/kumas.gd")
+
 func _init(p_coat := Color("b3262d"), p_pose := "stand", p_hat := "bork") -> void:
 	coat = p_coat
 	pose = p_pose
@@ -65,7 +67,7 @@ func _ready() -> void:
 		legs.append(leg)
 	CharKit.torso(_body, coat, skin, 0.28, 0.6)
 	# Kaftan eteği ve kuşak
-	Props.cyl(_body, 0.31, 0.4, Vector3(0, 0.66, 0), coat.darkened(0.06), Vector3.ZERO, 14, 0.27)
+	Kumas.silindir(_body, 0.31, 0.4, Vector3(0, 0.66, 0), coat.darkened(0.06), 14, 0.27)      # sallanır (scripts/npc/kumas.gd)
 	Props.cyl(_body, 0.3, 0.08, Vector3(0, 0.85, 0), Color("e0b52a"), Vector3.ZERO, 14)
 	# Kollar
 	_arm_l = Node3D.new()
@@ -95,7 +97,7 @@ func _ready() -> void:
 	if hat == "bork":
 		Props.cyl(head, 0.205, 0.08, Vector3(0, 0.16, 0), Color("c9a24a"), Vector3.ZERO, 16)
 		Props.cyl(head, 0.18, 0.45, Vector3(0, 0.38, -0.04), Color("f3efe4"), Vector3(-12, 0, 0), 16, 0.14)
-		Props.box(head, Vector3(0.14, 0.4, 0.04), Vector3(0, 0.12, -0.24), Color("f3efe4"), Vector3(20, 0, 0))
+		Kumas.pano(head, Vector3(0.14, 0.4, 0.04), Vector3(0, 0.12, -0.24), Color("f3efe4"), Vector3(20, 0, 0), Kumas.UC)
 	elif hat == "fez":
 		# Tolga'nın Haliç'te bulduğu yedek fes (Hüseyin, 4a'dan sonra): kırmızı keçe, yana düşen siyah püskül.
 		# Ayrı düğümde: 7'de nöbette fesi başından çıkarıp arkasına saklar (take_off_hat)
@@ -116,7 +118,7 @@ func _ready() -> void:
 		# Soldier azaplar (30o'daki yaralı, 32o'nun azapları, 37o'nun bölüğü) beyaz sarıklıydı, kartın kopyası kırmızı börklü
 		Props.cyl(head, 0.2, 0.07, Vector3(0, 0.15, 0), Color("7a1e1a"), Vector3.ZERO, 14)
 		Props.cyl(head, 0.17, 0.34, Vector3(0, 0.33, -0.03), Color("a8281f"), Vector3(-10, 0, 0), 14, 0.13)
-		Props.box(head, Vector3(0.13, 0.3, 0.035), Vector3(0, 0.12, -0.23), Color("a8281f"), Vector3(18, 0, 0))
+		Kumas.pano(head, Vector3(0.13, 0.3, 0.035), Vector3(0, 0.12, -0.23), Color("a8281f"), Vector3(18, 0, 0), Kumas.UC)
 	elif hat == "helm":
 		# Bizans savunucusunun miğferi (Person "helm" ile aynı kettle hat): kubbe, aşağı eğik kenar, zincir boyunluk. Surdaki
 		# tüfekçiler (Gunner) bunu ister; Soldier eskiden tanımıyordu, Bizanslı tüfekçi beyaz Osmanlı sarığıyla duruyordu
@@ -273,7 +275,8 @@ func _process(delta: float) -> void:
 				_arm_l.rotation.x = lerpf(-1.2, 0.0, c)
 				_body.rotation.x = lerpf(0.3, 0.0, c)
 		_:
-			_body.rotation.z = sin(_t * 1.1) * 0.03
+			if not has_meta("yigilma"):      # yığılan bez bebeğin gövdesi sallanmaz (scripts/npc/yigilma.gd)
+				_body.rotation.z = sin(_t * 1.1) * 0.03
 			# Yürürken yürüdüğü yöne bakar
 			var mv := position - _last_pos      # yerel: taşıyıcı (gemi) hareketi yürüme sayılmaz
 			_last_pos = position
@@ -290,9 +293,15 @@ func _process(delta: float) -> void:
 				if to.length() > 0.1:
 					rotation.y = lerp_angle(rotation.y, atan2(to.x, to.z), clampf(delta * 4.0, 0.0, 1.0))
 			rig.update(delta, talking, false)
-	# İş pozlarında da (halat, kürek, kova) el ve ayak bilekleri
+	# İş pozlarında da (halat, kürek, kova) el ve ayak bilekleri; kumaş
 	if rig and pose != "" and pose != "stand":
 		rig.extremities()
+		rig.kumas_tick(delta)
+
+
+## Tüfekle vurulan (Handgun._down): bez bebek gibi yığılır (scripts/npc/yigilma.gd)
+func shot(from: Vector3) -> void:
+	preload("res://scripts/npc/yigilma.gd").vuruldu(self, from)
 
 
 ## Kovadan savrulan iç yağı: birkaç sarımsı damla önündeki kızağa yay çizip düşer, yayılıp söner.

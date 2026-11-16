@@ -350,7 +350,7 @@ func _build_ground() -> void:
 	var body := Props.solid(self, Vector3(90, 0.2, 80), Vector3(0, -0.1, -10), Color.WHITE)
 	Props.set_pattern(body, Color("fff8ec"), "cobble")
 	var gmi := body.get_child(0) as MeshInstance3D
-	_ground_mat = (gmi.material_override as StandardMaterial3D).duplicate()
+	_ground_mat = load("res://scripts/level/zemin.gd").doseme_kir((gmi.material_override as StandardMaterial3D).duplicate())      # ZEMİN: kir/aşınma
 	gmi.material_override = _ground_mat
 	# Caddenin ortasında taş oluk ve kenar taşları
 	Props.box(self, Vector3(0.5, 0.02, 34.0), Vector3(0, 0.005, 1.0), Color("7a7264"))

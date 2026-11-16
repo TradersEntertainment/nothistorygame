@@ -1,4 +1,6 @@
 class_name Scenery
+
+const BitkiKit := preload("res://scripts/level/bitki_kit.gd")
 ## Derin, dolu manzara için yardımcılar: yüzlerce çadır, ağaç, uzak insan, duman sütunu ve ufuk.
 ## Tekrarlayan nesneler MultiMesh ile çizilir (tek çizim çağrısı), yani yüzlerce tane ucuzdur.
 ## Hiçbir haritada ufuk boş kalmasın (kullanıcı isteği).
@@ -49,7 +51,10 @@ static func scatter(parent: Node3D, mesh: Mesh, xforms: Array, colors: Array = [
 	mi.multimesh = mm
 	# WorldWalk örnekleri buradan okur (başsız sunucuda MultiMesh dönüşümleri saklanmıyor)
 	mi.set_meta("xforms", xforms)
-	if material:
+	if mesh != null and mesh.has_meta("bitki_kit"):
+		# BİTKİ: kit ağacı kendi (rüzgârlı, sRGB köşe renkli) malzemesiyle çizilir
+		mi.material_override = mesh.surface_get_material(0)
+	elif material:
 		mi.material_override = material
 	else:
 		var mat := _vc_mat()
@@ -179,31 +184,19 @@ static func pavilion_mesh() -> ArrayMesh:
 	])
 
 
-## Servi ağacı.
+## Servi ağacı. BİTKİ (4. tur): ortak kitten (dikey fırça dokulu, tepesi eğik; düz koni değil), boy ~7 m.
 static func cypress_mesh() -> ArrayMesh:
-	return merged([
-		[_cyl(0.18, 1.2, -1.0, 5), _t(Vector3(0, 0.6, 0)), Color("5a4028")],
-		[_cyl(0.9, 6.0, 0.05, 7), _t(Vector3(0, 4.0, 0)), Color("2f5a34")],
-	])
+	return BitkiKit.agac_boy("servi", 1, 7.0)
 
 
-## Sokak servisi: ince, mızrak gibi (Akdeniz servisi). Gövde ortada en kalın 0,55 m, toplam ~6,5 m.
-## Eski koni (taban yarıçapı 0,9) yakından dev bir külah gibi duruyordu.
+## Sokak servisi: ince, mızrak gibi (Akdeniz servisi), ~6,5 m. BİTKİ: ortak kitten.
 static func cypress_slim_mesh() -> ArrayMesh:
-	return merged([
-		[_cyl(0.12, 1.0, 0.1, 5), _t(Vector3(0, 0.5, 0)), Color("5a4028")],
-		[_cyl(0.3, 1.6, 0.55, 8), _t(Vector3(0, 1.6, 0)), Color("2c5232")],
-		[_cyl(0.55, 4.2, 0.04, 8), _t(Vector3(0, 4.5, 0)), Color("2f5a34")],
-	])
+	return BitkiKit.agac_boy("servi", 1, 6.5)
 
 
-## Yuvarlak ağaç (çınar).
+## Yuvarlak ağaç (çınar). BİTKİ: ortak kitten (dallı gövde, birbirine geçen öbekler), boy ~6,5 m.
 static func plane_tree_mesh() -> ArrayMesh:
-	return merged([
-		[_cyl(0.3, 3.0, 0.22, 6), _t(Vector3(0, 1.5, 0)), Color("6a5038")],
-		[_ball(2.2), _t(Vector3(0, 4.4, 0), Vector3.ZERO, Vector3(1, 0.85, 1)), Color("4a7a3a")],
-		[_ball(1.5), _t(Vector3(1.2, 3.8, 0.4)), Color("3f6e34")],
-	])
+	return BitkiKit.agac_boy("cinar", 1, 6.5)
 
 
 ## Uzak insan silueti (asker ya da ordugâh halkı): gövde, baş, börk.
@@ -219,14 +212,8 @@ static func figure_mesh() -> ArrayMesh:
 
 ## At (basit).
 static func horse_mesh() -> ArrayMesh:
-	var parts := [
-		[_boxm(Vector3(0.5, 0.6, 1.5)), _t(Vector3(0, 1.3, 0)), Color.WHITE],
-		[_boxm(Vector3(0.3, 0.7, 0.35)), _t(Vector3(0, 1.75, 0.8), Vector3(-0.6, 0, 0)), Color.WHITE],
-		[_boxm(Vector3(0.25, 0.3, 0.55)), _t(Vector3(0, 2.05, 1.05)), Color.WHITE],
-	]
-	for p in [Vector3(-0.18, 0.5, 0.55), Vector3(0.18, 0.5, 0.55), Vector3(-0.18, 0.5, -0.55), Vector3(0.18, 0.5, -0.55)]:
-		parts.append([_cyl(0.07, 1.0, -1.0, 4), _t(p), Color.WHITE.darkened(0.2)])
-	return merged(parts)
+	# CANLI (kalite notu 32): canli_kit atı (orta katman, açık post; örnek rengi boyar). Kutu parça yok.
+	return preload("res://scripts/world/ist/canli_kit.gd").mesh("at", 1, {"renk": Color(0.92, 0.9, 0.86), "poz": "dur"})
 
 
 ## Uzaktaki kule ya da ev (ufuk dolgusu).
@@ -600,7 +587,9 @@ static func ground_detail(parent: Node3D, area: Rect2, count: int, height: Calla
 			# Rüzgârda salınan çimen öbeği (Nature.tuft): koyu zeytin - saman arası tonlar
 			var s := rng.randf_range(0.7, 1.5)
 			tx.append(_t(p, Vector3(0, rng.randf() * TAU, 0), Vector3(s, s * rng.randf_range(0.8, 1.3), s)))
-			tc.append(grass.darkened(0.12).lerp(Color("b0a468"), rng.randf() * 0.45))
+			# ZEMİN: oyuncak yeşili yok; Nisan sonu solgun bahar yeşili ↔ sarımsı kuru ot (grass yalnız tonu hafif kaydırır)
+			var gz := Color("76844f").lerp(Color(grass.r, grass.g, grass.b).darkened(0.1), 0.2)
+			tc.append(gz.lerp(Color("aa9e6a"), rng.randf() * 0.6))
 		else:
 			# Köşeli kaya, yarısı toprağa gömülü
 			var s := rng.randf_range(0.25, 0.9)

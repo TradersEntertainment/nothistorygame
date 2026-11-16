@@ -29,6 +29,7 @@ var ground_mode := 0
 ## Döngüsüz klip son karesine varınca: true (bir kez) — ölüm pozu donar, işlem kapanır
 signal finished_clip
 var _done_sent := false
+var _dt := 0.0
 
 
 static func data() -> Dictionary:
@@ -160,6 +161,9 @@ func _process(delta: float) -> void:
 	var r0: Array = frames[i0]
 	var r1: Array = frames[i1]
 	_k = minf(1.0, _k + delta / maxf(fade, 0.001))
+	if rig.ayak:
+		rig.ayak.geri_al()
+	_dt = delta
 	_apply(r0, r1, f)
 
 
@@ -202,6 +206,11 @@ func _apply(r0: Array, r1: Array, f: float) -> void:
 		rig.head.rotation.x = lerpf(rig.head.rotation.x, pitch, 0.5)
 	if ground_mode > 0 and body:
 		_clamp_to_ground()
+	elif body and Rig.Ayak.etkin and rig.owner != null and rig.owner.is_inside_tree():
+		# Ayakta oynatılan klip (düello duruşu, yürüyüş): ayaklar bu duruşta kendi zeminine basar (Rig.ayak, izdüşüm)
+		if rig.ayak == null:
+			rig.ayak = Rig.Ayak.new(rig)
+		rig.ayak.uygula(_dt, false, true)
 	rig.extremities()
 
 

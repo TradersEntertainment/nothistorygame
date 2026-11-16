@@ -121,6 +121,8 @@ func _init(p_owner: Node3D, parts: Dictionary) -> void:
 		_brow_y0 = brows.position.y
 	_t = randf() * 10.0
 	_blink_t = randf_range(0.5, 4.0)
+	Ayak.ayarla()
+	Kumas.ayarla()
 
 
 ## Replikten yüz ifadesi: önce sahne notu ("(Gülerek)", "(Sinirle)"...), sonra noktalama ve kim konuştuğu.
@@ -167,9 +169,110 @@ static func mood_of(speaker_key: String, text: String) -> String:
 
 ## ext=false: el/ayak bilekleri bu karede sürülmez (CityLife uzaktakiler için; bilekler son açılarında kalır)
 func update(delta: float, talking: bool, busy: bool, ext := true) -> void:
+	if ayak:
+		ayak.geri_al()
+	if Ayak.olc_acik:
+		Ayak.olc_tick()
+	if Yigilma.olc_acik:
+		Yigilma.olc_tick()
+	if Kumas.olc_acik:
+		Kumas.olc_tick()
+	yuruyor = false
 	_update_core(delta, talking, busy)
 	if ext:
+		if not busy and owner != null and owner.is_inside_tree() and Ayak.etkin:
+			if ayak == null:
+				ayak = Ayak.new(self)
+			# Stage.grip_hold tutuşu (iskelet kilitli: çekiç, balta, halat): ayaklar izdüşüm kipinde yere basar; tutuşun öne
+			# eğilmesi IK'dan önce (tween onu sonra yeniden yazar: aynı değer). Fizik-3: 26 =hold öne basan ayağın burnu
+			# 11–13 cm gömüktü (IK kilitli kişide her karede kapanıyordu)
+			var tutus := lock > 0 and owner.has_meta("grip_lean")
+			if tutus and float(owner.get_meta("grip_lean")) != 0.0:
+				body.rotation.x = float(owner.get_meta("grip_lean"))
+			ayak.uygula(delta, yuruyor, tutus)
+		if GameState.autotest and owner != null and owner.is_inside_tree():
+			AyakDenet.tick(owner)
 		extremities()
+		if lock == 0 and DurusKit.var_mi(activity):
+			DurusKit.bilekler(self)
+		kumas_tick(delta)
+	_egim_denet(delta)
+
+
+## GİYSİ KUMAŞI (scripts/npc/kumas.gd): kaftan/etek/pelerin/yen sallanır. Kumaşı olmayan kişide bir kez bakılır, sonra
+## hiçbir şey yapmaz. Rig.update'in sonunda; Rig.update'siz iş pozlarında (Soldier: halat, kürek) sahibinin _process'inden.
+const Kumas := preload("res://scripts/npc/kumas.gd")
+var kumas: Kumas
+var _kumas_bakti := false
+
+func kumas_tick(delta: float) -> void:
+	if kumas == null:
+		if _kumas_bakti or not Kumas.etkin:
+			return
+		_kumas_bakti = true
+		var k := Kumas.new(self)
+		if not k._ok:
+			return
+		kumas = k
+	kumas.uygula(delta)
+
+
+## AYAK YERLEŞTİRME (scripts/npc/ayak.gd): kameraya yakın kişilerde her ayak kendi zeminine basar (iki kemikli IK),
+## kalça alçak ayağa göre iner, taban zemin eğimine döner; basan ayak yürürken kilitli. ayak: kişi başı durum (ilk
+## yakın karede kurulur). yuruyor: bu karede yürüyüş salınımı kuruldu. faz_hiz: yürüyüş evresinin hızı (rad/sn).
+const Ayak := preload("res://scripts/npc/ayak.gd")
+const AyakDenet := preload("res://scripts/npc/ayak_denet.gd")
+const Yigilma := preload("res://scripts/npc/yigilma.gd")
+var ayak: Ayak
+var yuruyor := false
+var faz_hiz := 0.0
+
+
+## Yürüyüş kadansı (rad/sn, iki adım bir tur): basan ayak kaymasın diye adım boyu hızdan (bacak 0,66 m: yürürken
+## ~0,45 m, koşarken ~1,2 m). Eski formül (3 + 1,6·hız) ayağı yürüyüşün yarı hızında geri götürüyordu (ayak kayıyordu).
+static func kadans(v: float) -> float:
+	if not Ayak.etkin:
+		return 3.0 + v * 1.6
+	var adim := clampf(0.2 + 0.2 * v, 0.28, 1.2)
+	return PI * v / adim
+
+
+## DURUŞ takımı (scripts/npc/durus_kit.gd): eklem açılarıyla kurulan oturma/yatma/iş duruşları (bağdaş, diz üstü,
+## çömelme, yan/sırtüstü uzanma, kütüğe oturma, kazan karıştırma…; adlar DurusKit.ADLAR). Kişinin kökü YATIRILMAZ;
+## gövde kalçadan bükülür, bacak ve kollar IK ile zemine/hedefe uzanır. Eski işlerin (sit_ground, doze, stir…)
+## davranışı aynı kalır. _durus: takımın kişi başına durumu (geçiş zamanı, eşyalar, denetim).
+const DurusKit := preload("res://scripts/npc/durus_kit.gd")
+## Kalabalık pişirme önbelleği (Crowd._cache_path) rig.gd'nin içeriğini tuzlar ama durus_kit.gd'yi saymaz: duruş
+## takımında pişmiş görünümü değiştiren her değişiklikte bu sayı artırılır (yoksa diskte eski duruş kalır).
+const DURUS_SURUM := 3
+var _durus := {}
+## Eğim denetimi (POSEAUDIT tilt, susturulamaz): kişinin kökü dünya dikeyinden 20°'den çok sapmışsa bir kez yazar.
+## Bilinçli düşme/taşınma/uyuma/uçma işleri hariç (açık liste).
+const EGIM_SERBEST := ["fly", "hover", "swim", "fall", "dead", "lie", "sleep"]
+## Etkinlik adı vermeden kökü bilerek yatıran düşme/taşınma sahneleri (açık liste): [kişinin üst düğümünün betiği,
+## kişinin face_id'si ("" = hepsi)].
+##   wall_fight.gd: ateş alan asker koşar, sonra yüzüstü düşer (_burn, ~1,45 rad)
+##   chapter26.gd giustiniani: vurulur, sırtüstü moloza düşer, sedyeyle poternaya taşınır (_carry_pose, ~90°)
+const EGIM_SERBEST_SAHNE := [["res://scripts/level/wall_fight.gd", ""], ["res://scripts/chapter26.gd", "giustiniani"]]
+var _egim_t := 0.0
+var _egim_bildi := false
+
+
+func _egim_denet(delta: float) -> void:
+	_egim_t -= delta
+	if _egim_t > 0.0 or _egim_bildi or owner == null or not owner.is_inside_tree():
+		return
+	_egim_t = 0.5
+	var up := owner.global_basis.y.normalized()
+	var deg := rad_to_deg(acos(clampf(up.dot(Vector3.UP), -1.0, 1.0)))
+	if deg > 20.0 and not activity in EGIM_SERBEST:
+		var par := owner.get_parent()
+		var ps: String = (par.get_script() as Script).resource_path if par and par.get_script() else ""
+		for e: Array in EGIM_SERBEST_SAHNE:
+			if ps == e[0] and (e[1] == "" or str(owner.get("face_id")) == e[1]):
+				return
+		_egim_bildi = true
+		print("POSEAUDIT tilt %s %.0f %s (%s/%s)" % [owner.name, deg, activity, par.get_parent().name if par and par.get_parent() else "", par.name if par else ""])
 
 
 ## El ve ayak bilekleri (CharKit'in üçüncü eklemleri): ayak tabanı karakterin zeminine paralel kalır (baldır ne açıda
@@ -187,7 +290,31 @@ var _ank_v := PackedFloat32Array([0.0, 0.0])
 var _wr_v := PackedFloat32Array([0.0, 0.0])
 
 
+## Yalnız ayak bilekleri (taban zemine paralel; ayak IK'nın taban eğimiyle). Stage.grip_hold tutuş duruşunda IK'dan sonra
+## çağırır (el bilekleri iki kez yumuşatılmasın).
+func ayak_bilekleri() -> void:
+	if not _ext_ready:
+		return
+	var bx := body.rotation.x if body else 0.0
+	_ayak_bilek(bx, absf(bx) > 0.9 or (body != null and absf(body.rotation.z) > 0.9))
+
+
+func _ayak_bilek(bx: float, lying: bool) -> void:
+	for side in 2:
+		var an: Node3D = _ankles[side]
+		if an:
+			var leg := leg_l if side == 0 else leg_r
+			var kn := knee_l if side == 0 else knee_r
+			var pitch := bx + (leg.rotation.x if leg else 0.0) + kn.rotation.x
+			var av := 0.0 if lying else clampf(-pitch + (ayak.ank_ek[side] if ayak and ayak.mod > 0 else 0.0), -0.75, 0.9)
+			if absf(av - _ank_v[side]) > 0.004:
+				_ank_v[side] = av
+				an.rotation.x = av
+
+
 func extremities() -> void:
+	if ayak:
+		ayak.bayatsa_birak()     # bu karede IK çalışmadıysa (Rig.update'siz iş pozu) eski yazdıkları kalmasın
 	if not _ext_ready:
 		_ext_ready = true
 		for side in 2:
@@ -203,16 +330,8 @@ func extremities() -> void:
 	var recheck := _hold_check <= 0
 	if recheck:
 		_hold_check = 12
+	_ayak_bilek(bx, lying)
 	for side in 2:
-		var an: Node3D = _ankles[side]
-		if an:
-			var leg := leg_l if side == 0 else leg_r
-			var kn := knee_l if side == 0 else knee_r
-			var pitch := bx + (leg.rotation.x if leg else 0.0) + kn.rotation.x
-			var av := 0.0 if lying else clampf(-pitch, -0.6, 0.75)
-			if absf(av - _ank_v[side]) > 0.004:
-				_ank_v[side] = av
-				an.rotation.x = av
 		var wr: Node3D = _wrists[side]
 		if wr:
 			var el := elbow_l if side == 0 else elbow_r
@@ -305,9 +424,16 @@ func _update_core(delta: float, talking: bool, busy: bool) -> void:
 		brows.rotation.z = _m_roll
 	if lock > 0 or busy:
 		return
+	if DurusKit.var_mi(activity):
+		DurusKit.uygula(self, delta, talking)
+		return
+	elif not _durus.is_empty():
+		DurusKit.birak(self, delta)
 	# Oturan ya da suda olan (kayıkta taşınan kürekçi, yüzen) yürümez: taşınmak adım sayılmaz
 	if speed > 0.35 and not activity in ["sit", "sit_ground", "write", "row", "swim", "ride", "halay", "halay_lead", "fly", "hover", "whittle", "read_ground", "doze", "write_desk", "sit_astride"]:
-		_walk_phase += delta * (3.0 + speed * 1.6)
+		faz_hiz = kadans(speed)
+		_walk_phase += delta * faz_hiz
+		yuruyor = true
 		var amp := clampf(speed / 3.0, 0.35, 1.0)
 		var run := clampf((speed - 3.2) / 2.0, 0.0, 1.0)
 		var sw := sin(_walk_phase)
@@ -449,6 +575,31 @@ func _shield_arms(k: float) -> void:
 
 
 ## Dönüşün x ve z'si tek yazışta; ikisi de yerindeyse hiç yazılmaz
+## Havada savrulan/düşen (activity "fall"; patlamada, surdan, merdivenden): kollar yukarı savrulur ve çırpınır, bacaklar
+## ayrı ayrı tepinir, gövde geriye kaykılır, baş geride. Kişiden kişiye evre ve genlik farklı (aynı kalıp tahta duruş
+## değil). Zaman durunca (donma karesi) o anki duruşta kalır. Eski: tek sabit duruş (STATIC_POSES "fall").
+func _savrulma(k: float) -> void:
+	var sd := float(owner.get_instance_id() % 997) if owner else 0.0
+	var ph := sd * 0.37
+	var a := 0.7 + fmod(sd * 0.13, 0.5)
+	var t := _t * (7.5 + fmod(sd, 3.0))
+	body.rotation.x = lerpf(body.rotation.x, -0.3 - 0.15 * sin(t * 0.5 + ph), k)
+	body.rotation.z = lerpf(body.rotation.z, 0.12 * sin(ph), k)
+	if leg_l:
+		leg_l.rotation = leg_l.rotation.lerp(Vector3(-0.7 + sin(t + ph) * 0.55 * a, 0, -0.18 - 0.1 * sin(t * 0.7)), k)
+	if leg_r:
+		leg_r.rotation = leg_r.rotation.lerp(Vector3(0.1 + sin(t + ph + PI) * 0.55 * a, 0, 0.18 + 0.1 * sin(t * 0.8)), k)
+	_knee(knee_l, 0.8 + 0.5 * sin(t * 1.3 + ph), k)
+	_knee(knee_r, 0.5 + 0.5 * sin(t * 1.3 + ph + 2.0), k)
+	arm_l.rotation = arm_l.rotation.lerp(Vector3(-2.3 + sin(t * 1.1 + ph) * 0.8 * a, 0, -0.55 - 0.35 * sin(t * 0.9 + ph)), k)
+	arm_r.rotation = arm_r.rotation.lerp(Vector3(-2.0 + sin(t * 1.1 + ph + 2.4) * 0.8 * a, 0, 0.55 + 0.35 * sin(t * 0.8)), k)
+	_elbow(elbow_l, -0.4 - 0.5 * (0.5 + 0.5 * sin(t * 1.7 + ph)), k)
+	_elbow(elbow_r, -0.4 - 0.5 * (0.5 + 0.5 * sin(t * 1.5 + ph + 1.0)), k)
+	if head:
+		head.rotation = head.rotation.lerp(Vector3(-0.35, 0.2 * sin(ph), 0), k)
+	body.position.y = lerpf(body.position.y, 0.0, k)
+
+
 func _set_xz(n: Node3D, x: float, z: float) -> void:
 	var r := n.rotation
 	if absf(r.x - x) + absf(r.z - z) > 0.0004:
@@ -546,6 +697,9 @@ func _activity(delta: float, talking: bool, k: float) -> bool:
 	var t := _t
 	# Hücum pozları (Crowd ile pişirilir; merdivendekiler canlı): run_a/run_b koşu adımının iki ucu, leap siperden
 	# ya da hendek kenarından sıçrayış, climb_a/climb_b merdivende sırayla el ve ayak.
+	if activity == "fall" and Yigilma.etkin:
+		_savrulma(clampf(k * 2.5, 0.0, 1.0))
+		return true
 	if STATIC_POSES.has(activity):
 		var sp: Array = STATIC_POSES[activity]
 		body.rotation.x = lerpf(body.rotation.x, sp[0], k)

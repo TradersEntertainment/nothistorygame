@@ -378,10 +378,11 @@ func _vignette(kind: int, c: Vector3) -> Array:
 	var i := _rng.randi()
 	match kind:
 		0:
-			# Yerde yatan yaralı, başında diz çökmüş arkadaşı
-			var lie := Transform3D(b * Basis(Vector3.RIGHT, -PI * 0.5), Vector3(0, 0.13, 0))
+			# Yerde yatan yaralı, başında diz çökmüş arkadaşı. Yaralı DURUŞ "sirt_uzan" ile eklemlerinden yatar (kökü dik;
+			# eskiden ayakta kalıp bütün hâlde yatırılıyordu: kaskatı kukla)
+			var lie := Transform3D(b, Vector3.ZERO)
 			var kneel := Transform3D(Basis(Vector3.UP, yaw + PI * 0.5), Vector3.ZERO)
-			return [[c, lie, {"side": "B", "coat": Crowd.BYZ_COATS[i % 6], "arm": "", "pose": "dead"}, 1.0],
+			return [[c, lie, {"side": "B", "coat": Crowd.BYZ_COATS[i % 6], "arm": "", "pose": "sirt_uzan"}, 1.0],
 				[c + b * Vector3(0.9, 0, 0.2), kneel, {"side": "B", "coat": Crowd.BYZ_COATS[(i + 2) % 6], "arm": "", "pose": "crouch"}, 0.45]]
 		1:
 			# Ok yağmurunda kalkanın altına sinen üçlü: yağmur dinince doğrulup bakar, yeni yağmurda yine çöker

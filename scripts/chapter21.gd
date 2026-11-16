@@ -22,6 +22,19 @@ extends Node3D
 ##   --autotest[=grant|fight|thermos|ear|captive]   (varsayılan: 21.1, sus, konuşur · fight: kaç, sert çeviri, kapı kapanır)
 
 const MINE := Vector3(-9.0, 0.0, 7.0)
+## Sur seti (docs/SUR_SOZLESME.md "Bölüm bağdaştırıcısı"): true → eski LandWalls seti; `--eskisur` ya da `--eskisur=21` de
+## eskiyi seçer. Yeni sette (Mesoteikhion kesimi) peribolos sayıları aynı çerçevededir (gedik x 0, dış surun iç yüzü z 14);
+## değişenler aşağıdaki *_YENI yerleri: eski yerler gediğin sağındaki iç kulenin (x −2,8…12,2; z ≤ 8) içine düşüyordu.
+const ESKI_SUR := false
+const GRANT_YENI := Vector3(-4.0, 0.0, 3.4)
+const GRANT_KAP_Z_YENI := 2.6               # Grant'in boş kapları (eski z 1,8: yeni sette iç surun dibi eteği)
+const OYUNCU_YENI := Vector3(-4.0, 0.05, 6.3)
+## Otomatik testin kap yerleri (eski: (2;4) ve sağda dört kap; yeni sette iç kule): uzaklık sınıfı aynı (hepsi "soğuk")
+const KAP_TEST_YENI := Vector3(-17.0, 0.0, 8.5)
+## Yeni sette depo yığınlarının kaydırması (SurSetSahne.depo_kaydir): en yakın yığın lağıma ≥ 4,6 m (önce 1,3 m)
+const DEPO_KAYDIR_21 := Vector3(-7.0, 0.0, 0.0)
+const KAPLAR_TEST_YENI := [Vector3(14, 0, 4), Vector3(16, 0, 3), Vector3(15, 0, 9.5), Vector3(18, 0, 6)]
+var sur: SurSet
 ## Kaza rotası: Blakherna'da yakalanan Osmanlı kâtibi, Grant'in esir tercümanı (Siege.captive)
 var _door_guards: Array = []      # kapıdaki iki asker: Kasım'ı onlar götürür
 var _captive := false
@@ -85,10 +98,22 @@ func _ready() -> void:
 	player.interacted.connect(_on_interact)
 	hud.set_fez(false)
 	hud.set_signal(0)
-	walls = LandWalls.new()
+	sur = SurSet.sec("21", ESKI_SUR)
+	if sur.eski_mi:
+		walls = LandWalls.new()
+	else:
+		var ss := SurSetSahne.new()
+		ss.sur = sur
+		# depo yığınları lağımdan uzağa (7 m sola): lağım deponun dibindeydi (kalas yığınına 2,4 m, küçük fıçılara 1,3 m),
+		# kap konan yer kalabalıktı. Lağımın yeri ve kapların sıcak/soğuk dağılımı aynı; 21 depoyu kullanmaz (yük yok).
+		ss.depo_kaydir = DEPO_KAYDIR_21
+		walls = ss
 	add_child(walls)
-	walls.set_repair(LandWalls.STAGES)
+	walls.set_repair(LandWalls.STAGES)       # yeni sette: gedik onarımının 4. aşaması (barikat tam)
 	_build()
+	if GameState.autotest and GameState.autotest_variant in ["yuru", "kare"]:
+		_yuru()
+		return
 	if GameState.autotest:
 		Engine.time_scale = 3.0
 	if GameState.shots_dir != "":
@@ -101,12 +126,12 @@ func _build() -> void:
 	grant = Person.new({"coat": Color("5a5a62"), "pants": Color("3a3a40"), "hat": "none", "beard": true, "hair": Color("8a5a2a"),
 		"apron": Color("3a3028"), "skin": Color("e8b894")})
 	grant.set_meta("spk", "SPK_GRANT")
-	grant.position = Vector3(-4.0, 0, 3.0)
+	grant.position = Vector3(-4.0, 0, 3.0) if sur.eski_mi else GRANT_YENI
 	add_child(grant)
 	grant.look_target = player
 	# Grant'in kendi kapları (sırada bekleyen, boş)
 	for i in 4:
-		Props.cyl(self, 0.22, 0.12, Vector3(-5.2 + i * 0.5, 0.06, 1.8), Color("9a6a40"), Vector3.ZERO, 10, 0.27)
+		Props.cyl(self, 0.22, 0.12, Vector3(-5.2 + i * 0.5, 0.06, 1.8 if sur.eski_mi else GRANT_KAP_Z_YENI), Color("9a6a40"), Vector3.ZERO, 10, 0.27)
 	# Telefon deprem ölçeri (sağ alt): titreşim çizgisi ve sıcaklık çubuğu
 	_meter = Control.new()
 	_meter.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
@@ -116,9 +141,21 @@ func _build() -> void:
 	hud.add_child(_meter)
 	_build_tunnel()
 	# Garnizon: surlarda nöbetçiler; peribolosun uçlarında ateş başında yedekler (lağım dinlenen yerden uzak)
-	Garrison.land_walls(self, [], [Vector2(-32.0, 32.0)], [], 21)
+	Garrison.land_walls(self, [], [Vector2(-32.0, 32.0)], [], 21, 47.0, true, false, false, null if sur.eski_mi else sur)
 	for spec in [[Vector3(-23.0, 0, 9.0), 5], [Vector3(22.0, 0, 8.0), 4]]:
 		walls.lights.append(Garrison.fire_ring(self, spec[0], spec[1], 2100 + int(spec[0].x)))
+	if GameState.autotest and not sur.eski_mi:
+		# yerleşim denetimi: bölümün peribolos noktaları SurOyun.engeller()'in (kule + etek, merdiven, sur gövdesi…) dışında mı
+		var noktalar := {"lagim": MINE, "grant": grant.position, "oyuncu": OYUNCU_YENI, "ates0": Vector3(-23.0, 0, 9.0),
+			"ates1": Vector3(22.0, 0, 8.0), "kap_test": KAP_TEST_YENI, "depo": sur.depo() + DEPO_KAYDIR_21}
+		for i in KAPLAR_TEST_YENI.size():
+			noktalar["kap_test%d" % i] = KAPLAR_TEST_YENI[i]
+		var kotu := 0
+		for ad: String in noktalar:
+			if sur.engelde(noktalar[ad]):
+				kotu += 1
+				print("TASIMA21ENGEL %s %s" % [ad, noktalar[ad]])
+		print("TASIMA21ENGEL OZET nokta=%d engelde=%d" % [noktalar.size(), kotu])
 
 
 ## Karşı lağım: dar, destekli, mumlu bir tünel ve sonunda kazı yüzü.
@@ -200,7 +237,7 @@ func _run() -> void:
 		card.append([tr("UI_CH21_CAPTIVE"), 18, Color("ff8a70")])
 	await hud.card(card, 2.8)
 	hud.clear_card()
-	player.global_position = Vector3(-2.0, 0.05, 5.0)
+	player.global_position = Vector3(-2.0, 0.05, 5.0) if sur.eski_mi else OYUNCU_YENI
 	player.face(grant.global_position + Vector3(0, 1.5, 0))
 	player.show_remote(true)             # Tolga'nın eli açık (bölüm boyunca kapalıydı; kap koyma jesti hiç oynamıyordu)
 	player.hold_now("phone")            # deprem ölçeri telefonda: kaplar boyunca telefon elde, sonra cebe
@@ -1044,12 +1081,12 @@ func _unhandled_input(event: InputEvent) -> void:
 func _auto_bowls() -> void:
 	await get_tree().create_timer(0.3, false).timeout
 	if GameState.autotest_variant in ["grant", "thermos", "ear"]:
-		for p: Vector3 in [Vector3(8, 0, 4), Vector3(10, 0, 2), Vector3(6, 0, 10), Vector3(12, 0, 8)]:
+		for p: Vector3 in ([Vector3(8, 0, 4), Vector3(10, 0, 2), Vector3(6, 0, 10), Vector3(12, 0, 8)] if sur.eski_mi else KAPLAR_TEST_YENI):
 			_place_bowl(p)
 		if GameState.autotest_variant == "ear":
 			_place_bowl(MINE + Vector3(0.6, 0, -0.4))      # kulağın kabı: dört kap ıskaladı, beşincisi bulur
 	else:
-		_place_bowl(Vector3(2, 0, 4))
+		_place_bowl(Vector3(2, 0, 4) if sur.eski_mi else KAP_TEST_YENI)
 		_place_bowl(MINE + Vector3(1.2, 0, 0.5))
 
 
@@ -1141,8 +1178,8 @@ func _autotest_report() -> void:
 		ok = ok and not _captive and not page.get("captive", false)
 	if not ok:
 		printerr("AUTOTEST: beklenen %s/%s/%s, gelen %s/%s/%s (sayfa=%s)" % [expected, exp_way, exp_talk, _outcome, _tunnel_way, _talk, page])
-	print("AUTOTEST %s chapter=21 variant=%s outcome=%s bowls=%d tunnel=%s talk=%s trust=%d captive=%s next=%s" % ["PASS" if ok else "FAIL", v,
-		_outcome, _bowls_used(), _tunnel_way, _talk, _trust, _captive, nxt.get_file()])
+	print("AUTOTEST %s chapter=21 variant=%s outcome=%s bowls=%d tunnel=%s talk=%s trust=%d captive=%s next=%s sur=%s" % ["PASS" if ok else "FAIL", v,
+		_outcome, _bowls_used(), _tunnel_way, _talk, _trust, _captive, nxt.get_file(), "eski" if sur.eski_mi else "yeni"])
 	get_tree().quit(0 if ok else 1)
 
 
@@ -1198,3 +1235,167 @@ func _run_shots() -> void:
 	cv.make_current()
 	await _shot("c21_cover.png")
 	get_tree().quit()
+
+
+# ================================================================ yürüyüş ve kare kanıtı (=yuru, =kare; TAŞIMA-2)
+
+## Gerçek Player botu bölümün ana döngüsünü yürür: doğuş → Grant → 1. kap (uzak, gerçek etkileşim tuşuyla toprağa) →
+## lağımın üstü (2. kap: bulur) → tespit yeri (bulunan kabın önü). =kare: bacaklar ışınlanır, altı an kaydedilir
+## (--dialogshots=<klasör>), sonra tünelin içi. Satır: TASIMA21YURU bacak=… sure=… yol=… takilma=… dusme=… kap=… ;
+## son satır TASIMA21YURU OZET … ; =kare: TASIMA21KARE <dosya>.
+var _yz := {"bacak": 0, "takilma": 0, "dusme": 0, "sure": 0.0, "yol": 0.0, "kap_yok": 0}
+var _kare_n := 0
+
+
+func _yuru() -> void:
+	Engine.time_scale = 1.0
+	var kare := GameState.autotest_variant == "kare"
+	hud.set_fade(0.0)
+	player.global_position = Vector3(-2.0, 0.05, 5.0) if sur.eski_mi else OYUNCU_YENI
+	player.show_remote(true)
+	player.hold_now("phone")
+	for i in 10:
+		await get_tree().physics_frame
+	var kap_a: Vector3 = Vector3(2, 0, 4) if sur.eski_mi else KAP_TEST_YENI
+	var kap_b: Vector3 = MINE + Vector3(1.2, 0, 0.5)
+	var g := grant.global_position
+	print("TASIMA21YURU set=%s dogus=%s grant=%s kap_a=%s lagim=%s" % ["eski" if sur.eski_mi else "yeni", player.global_position, g, kap_a, MINE])
+	if kare:
+		player.face(g + Vector3(0, 1.5, 0))
+		await _kare("acilis_grant")
+	phase = "bowls"
+	_meter.visible = true
+	player.frozen = false
+	await _yb("dogus_grant", g + (player.global_position - g).normalized() * 1.6, g + Vector3(0, 1.5, 0), false)
+	await _yb("grant_kap1", kap_a, Vector3.INF, true)
+	if kare:
+		player.face(MINE + Vector3(0, 0.2, 0))
+		await _kare("kap1_peribolos")
+	await _yb("kap1_lagim", kap_b, Vector3.INF, true)
+	if kare:
+		# kabın 2,4 m gerisinden (dibinden bakınca kadrajı kabın tepesi dolduruyordu)
+		var geri := player.global_position
+		var yon := player.global_position - MINE
+		yon.y = 0.0
+		player.global_position = MINE + yon.normalized() * 2.4 + Vector3(0, 0.05, 0)
+		player.face(MINE + Vector3(0, 0.6, 0))
+		await _kare("lagim_kap")
+		player.global_position = geri
+	var best: Vector3 = MINE
+	for bw in bowls:
+		if float(bw["strength"]) > 0.0 and (bw["node"] as Node3D).global_position.distance_to(MINE) < FOUND_R:
+			best = (bw["node"] as Node3D).global_position
+	await _yb("lagim_tespit", best + Vector3(-1.6, 0, 1.2), best, false)
+	if kare:
+		await _kare("tespit")
+		# peribolos boyunca gediğe (onarılmış barikat) ve sur yoluna
+		player.global_position = Vector3(-14.0, 0.05, 9.0)
+		player.face(Vector3(0, 2.0, 12.0))
+		await _kare("peribolos_gedik")
+		player.global_position = TUN + Vector3(0, 0.05, 1.5)
+		player.face(TUN + Vector3(0, 1.2, -TUN_LEN))
+		await _kare("tunel")
+		print("TASIMA21KARE BITTI")
+		get_tree().quit(0)
+		return
+	print("TASIMA21YURU OZET set=%s bacak=%d takilma=%d dusme=%d kap_yok=%d sure=%.1f yol=%.1f bulundu=%s kap=%d" % ["eski" if sur.eski_mi else "yeni",
+		_yz["bacak"], _yz["takilma"], _yz["dusme"], _yz["kap_yok"], _yz["sure"], _yz["yol"], found, _bowls_used()])
+	get_tree().quit(0)
+
+
+## Tek bacak: hedefe yürü (gerçek ileri tuşu), varınca istenirse kabı GERÇEK etkileşim tuşuyla koy (kap hedefin 0,9 m önüne
+## düşer: bot hedefin 0,9 m gerisinde durur). =kare: ışınlanır.
+func _yb(ad: String, hedef: Vector3, bak: Vector3, kap: bool) -> void:
+	var to := hedef
+	if kap:
+		var d := hedef - player.global_position
+		d.y = 0.0
+		to = hedef - d.normalized() * 0.9
+	var t := 0.0
+	var yol := 0.0
+	var son := player.global_position
+	var takil := 0
+	var dus := 0
+	var best := 1e9
+	var iz := 0.0
+	if GameState.autotest_variant == "kare":
+		var yon := to - player.global_position
+		yon.y = 0.0
+		player.global_position = Vector3(to.x, player.global_position.y, to.z)
+		player.face(player.global_position + yon.normalized() * 3.0 + Vector3(0, 1.4, 0))
+	else:
+		while t < 60.0:
+			player.face(Vector3(to.x, player.global_position.y + 1.4, to.z))
+			Input.action_press("move_forward")
+			await get_tree().physics_frame
+			t += get_physics_process_delta_time()
+			var p := player.global_position
+			yol += Vector2(p.x - son.x, p.z - son.z).length()
+			son = p
+			if player.velocity.y < -7.0:
+				dus += 1
+			var dd := Vector2(p.x - to.x, p.z - to.z).length()
+			if dd < best - 0.3:
+				best = dd
+				iz = t
+			if dd < 0.5:
+				break
+			if t - iz > 8.0:
+				takil += 1
+				break
+		Input.action_release("move_forward")
+	for k in 4:
+		await get_tree().physics_frame
+	var once := bowls.size()
+	if kap:
+		var yon2 := hedef - player.global_position
+		player.face(player.global_position + Vector3(yon2.x, 0, yon2.z).normalized() * 3.0 + Vector3(0, 0.2, 0))
+		for k in 4:
+			await get_tree().physics_frame
+		var ev := InputEventAction.new()
+		ev.action = "interact"
+		ev.pressed = true
+		Input.parse_input_event(ev)
+		for k in 3:
+			await get_tree().physics_frame
+		var ev2 := InputEventAction.new()
+		ev2.action = "interact"
+		ev2.pressed = false
+		Input.parse_input_event(ev2)
+		for k in 6:
+			await get_tree().physics_frame
+		if bowls.size() == once:
+			_yz["kap_yok"] += 1
+	elif bak != Vector3.INF:
+		player.face(bak)
+	_yz["bacak"] += 1
+	_yz["takilma"] += takil
+	_yz["dusme"] += dus
+	_yz["sure"] += t
+	_yz["yol"] += yol
+	print("TASIMA21YURU bacak=%s sure=%.1f yol=%.1f takilma=%d dusme=%d kap=%s son=%s" % [ad, t, yol, takil, dus,
+		("tamam" if bowls.size() > once else "YOK") if kap else "-", player.global_position.snapped(Vector3.ONE * 0.1)])
+
+
+func _kare(ad: String) -> void:
+	var dir := GameState.dialog_shots_dir if GameState.dialog_shots_dir != "" else GameState.shots_dir
+	if dir == "":
+		return
+	DirAccess.make_dir_recursive_absolute(dir)
+	for k in 20:
+		await get_tree().process_frame
+	# bütçe: bu bakışta 10 karenin ortalama çizim çağrısı ve ilkel sayısı (eski ↔ yeni aynı kameradan)
+	var dc := 0.0
+	var pr := 0.0
+	for k in 10:
+		await RenderingServer.frame_post_draw
+		dc += RenderingServer.get_rendering_info(RenderingServer.RENDERING_INFO_TOTAL_DRAW_CALLS_IN_FRAME)
+		pr += RenderingServer.get_rendering_info(RenderingServer.RENDERING_INFO_TOTAL_PRIMITIVES_IN_FRAME)
+	_kare_n += 1
+	preload("res://tests/_ist/tasima5_pik.gd").uygula(self)
+	await get_tree().process_frame
+	preload("res://tests/_ist/tasima5_pik.gd").yaz(self, ad)      # --pik5=x,y;… (TAŞIMA-5 sondası; argümansız hiçbir şey yapmaz)
+	var f := dir.path_join("an_%02d_%s.jpg" % [_kare_n, ad])
+	get_viewport().get_texture().get_image().save_jpg(f, 0.85)
+	print("TASIMA21KARE %s oyuncu=%s cizim=%.0f ilkel=%.0f sur=%s" % [f.get_file(), player.global_position.snapped(Vector3.ONE * 0.1),
+		dc / 10.0, pr / 10.0, "eski" if sur.eski_mi else "yeni"])

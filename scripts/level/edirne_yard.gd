@@ -197,6 +197,7 @@ func _ground() -> void:
 	var cf := func(x: float, z: float, y: float, steep: float) -> Color:
 		return _snow_col(x, z, y, steep)
 	# Yakın alan: 1 m ızgara, çarpışma aynı ızgaradan
+	load("res://scripts/level/zemin.gd").yore("kar", self)      # ZEMİN: yöre paleti (Şubat, kar)
 	var near := LowPoly.terrain(-60.0, 60.0, -70.0, 100.0, 120, 170, hf, cf)
 	near.material_override = LowPoly.vertex_color_material()
 	add_child(near)

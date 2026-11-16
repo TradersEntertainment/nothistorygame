@@ -53,6 +53,8 @@ static func height(v: int) -> float:
 ## Evler: list CityPlan.houses_in kayıtları. surf: görünen yüzey (x, z → y). free(x, z, pay): bölümün alanı dışı mı.
 ## nd: gece ışıkları (cephede fener).
 static func build(parent: Node3D, list: Array, surf: Callable, free: Callable, nd: Dressing) -> void:
+	if IstSehir.houses(parent, list, surf, free, nd):      # İstanbul 1453: mektup bölümünün ev dili (scripts/world/ist)
+		return
 	var near := {}            # Vector3i(hücre x, hücre z, örnek) → [Transform3D]
 	var far := {}             # Vector2i → [[Transform3D], [Color]]
 	var i := 0

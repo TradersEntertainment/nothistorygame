@@ -55,6 +55,29 @@ var _t := 0.0
 var byz := false
 var walls: LandWalls
 var _night: Node3D
+## Bizans yarısının sur gecesi (dış sur yolunda yürü-konuş): bölüm bağdaştırıcısı. Eski: LandWalls sabitleri; yeni: İstanbul
+## kara suru, Mesoteikhion kesimi (SurSetSahne; docs/SUR_SOZLESME.md). Ayin (ByzCity) ve Osmanlı yarısı (CampDay) surdan
+## bağımsız: aynı. --eskisur[=25] eski seti seçer (karar 13).
+var sur: SurSet
+## Bölüm sabiti: true → eski set (geri dönüş; komut satırında --eskisur ile de)
+const ESKI_SUR := false
+## Oyuncunun ve yanındaki nöbetçinin sur yolundaki x'i (gediğin solu; yeni sette gedik boşluğu 4,5 m, yol 1,7 m eninde)
+const YOL_OYUNCU_X := -9.2
+const YOL_NOBETCI_X := -7.4
+
+
+## Yeni sette sur yolunda verilen x'e en yakın dış mazgal açıklığının x'i (iki diş arası). Yeni dış surun dişleri insan
+## boyu: oyuncu ilk karede bir dişin tam karşısındaydı, ordugâh yalnız yandaki açıklıktan görünüyordu (kare/c25_yeni ilk
+## tur an_01). Eski sette (alçak korkuluk) x aynen.
+func _mazgal_x(x: float) -> float:
+	var best := sur.dis_yol_x(x)
+	var bd := INF
+	for m: Dictionary in sur.a.mazgallar("dis"):
+		var mx: float = (m["ayak"]["yerel"] as Vector3).x + sur.ofs.x
+		if absf(mx - x) < bd and sur.dis_yol_bos(mx):
+			bd = absf(mx - x)
+			best = mx
+	return best
 
 
 func _ready() -> void:
@@ -90,6 +113,9 @@ func _ready() -> void:
 		add_child(day)
 		day.make_night(true)
 		_build_camp()
+	if GameState.autotest and byz and v in ["yuru", "kare"]:
+		_yuru25()
+		return
 	if GameState.autotest:
 		Engine.time_scale = 3.0
 	if GameState.shots_dir != "":
@@ -395,12 +421,23 @@ func _lights() -> void:
 ## Bizans tarafı, 27 Mayıs gecesi: kara surlarının yürüyüş yolu. Karşıda ordugâh baştan uca kandil ve ateşle
 ## aydınlanır (kaynaklar: surdakiler kampın yandığını sandı); davul ve bağırış sesleri. Yanında bir nöbetçi.
 func _build_walls_night() -> void:
-	walls = LandWalls.new()
+	sur = SurSet.sec("25", ESKI_SUR)
+	if sur.eski_mi:
+		walls = LandWalls.new()
+	else:
+		var ss := SurSetSahne.new()
+		ss.sur = sur
+		walls = ss
 	add_child(walls)
 	walls.set_repair(LandWalls.STAGES)
-	Garrison.land_walls(self, [Vector2(-10.6, -6.8)], [Vector2(-30.0, 10.0)], [], 25)
+	Garrison.land_walls(self, [Vector2(-10.6, -6.8)], [Vector2(-30.0, 10.0)], [], 25, 47.0, true, false, false, null if sur.eski_mi else sur)
 	_night = Node3D.new()
 	add_child(_night)
+	# ordugâhın ışıkları ovada: yeni sette ova peribolostan 3,57 m aşağıda ve hendeğin ötesinde (SurSet.ova_ofs; eski 0).
+	# Kaydırmasız alevler ovanın 3,5 m üstünde havada dururdu.
+	var uzak := Node3D.new()
+	uzak.position = sur.ova_ofs()
+	_night.add_child(uzak)
 	var rng := RandomNumberGenerator.new()
 	rng.seed = 527
 	# Kandiller: her çadırın önünde küçük ışık; buradan (140–600 m) yalnız sıcak bir hale, ışık tozu gibi. Arada büyük
@@ -415,7 +452,7 @@ func _build_walls_night() -> void:
 			continue
 		var k := rng.randf_range(2.6, 4.4) * clampf(p.z / 300.0, 0.7, 1.6)
 		xs.append(Transform3D(Basis().scaled(Vector3.ONE * k), p + Vector3(0, rng.randf_range(0.8, 2.6), 0)))
-	Flame.scatter_glows(_night, xs, 1.25, Color("ffe2a8"), Color("ff9a38"))
+	Flame.scatter_glows(uzak, xs, 1.25, Color("ffe2a8"), Color("ff9a38"))
 	var fx: Array = []
 	var halos: Array = []
 	for i in 120:
@@ -426,8 +463,8 @@ func _build_walls_night() -> void:
 		fx.append(Transform3D(Basis().scaled(Vector3(w, h, w)), p))
 		fx.append(Transform3D(Basis().scaled(Vector3(w * 0.6, h * 0.65, w * 0.6)), p + Vector3(w * 0.35, 0, 0.5)))
 		halos.append(Transform3D(Basis().scaled(Vector3.ONE * h * 2.4), p + Vector3(0, h * 0.4, 0)))
-	Flame.scatter_flames(_night, fx, 1.8)
-	Flame.scatter_glows(_night, halos, 0.6, Color("ffc070"), Color("ff6418"))
+	Flame.scatter_flames(uzak, fx, 1.8)
+	Flame.scatter_glows(uzak, halos, 0.6, Color("ffc070"), Color("ff6418"))
 	# Ufuk turuncu: gök ve sis ordugâhın ışığını yansıtır
 	var e := walls.env.environment
 	e.fog_light_color = Color("7a4a3a")
@@ -437,7 +474,8 @@ func _build_walls_night() -> void:
 		sm.ground_horizon_color = Color("6a4030")
 	# Yanındaki nöbetçi (konuşur). Gece sahnesiyle birlikte kalkar (eskiden bölümün kökündeydi: surlar kaldırılınca
 	# Ayasofya'nın üstünde 8 m havada kalıyordu)
-	var d := Garrison.man(_night, Vector3(-7.4, LandWalls.OUTER_H, 14.75), 0.1, 2501, "spear")
+	var d := Garrison.man(_night, Vector3(-7.4, LandWalls.OUTER_H, 14.75) if sur.eski_mi
+		else Vector3(_mazgal_x(YOL_NOBETCI_X), sur.dis_yol_y(), sur.dis_yol_ic_z()), 0.1, 2501, "spear")
 	d.set_meta("spk", "SPK_DEFENDER")
 	d.remove_meta("no_talk")
 	d.remove_meta("garrison")
@@ -445,8 +483,9 @@ func _build_walls_night() -> void:
 
 func _walls_night() -> void:
 	phase = "walls"
-	player.global_position = Vector3(-9.2, LandWalls.OUTER_H + 0.05, 14.9)
-	player.face(Vector3(10.0, 6.0, 300.0))
+	player.global_position = Vector3(-9.2, LandWalls.OUTER_H + 0.05, 14.9) if sur.eski_mi \
+		else Vector3(_mazgal_x(YOL_OYUNCU_X), sur.dis_yol_y() + 0.05, sur.dis_yol_z())
+	player.face(Vector3(10.0, 6.0, 300.0) + sur.ova_ofs())
 	_capture_mouse()
 	player.show_remote(true)             # Tolga'nın eli açık (Bizans yolunda da kapalıydı)
 	Audio.ambience("amb_wall_night")
@@ -465,7 +504,7 @@ func _walls_night() -> void:
 	await hud.say("SPK_TOLGA", "D25B_T_2")
 	var target := Node3D.new()
 	add_child(target)
-	target.global_position = Vector3(0.0, 8.0, 330.0)
+	target.global_position = Vector3(0.0, 8.0, 330.0) + sur.ova_ofs()
 	Lore.scatter(self, "25")
 	player.frozen = false
 	hud.set_objective(tr("UI_OBJ25B_PHOTO"), target.global_position)
@@ -867,8 +906,8 @@ func _autotest_report() -> void:
 		ok = false
 	if not ok:
 		printerr("AUTOTEST: beklenen %s, gelen %s (sayfa=%s)" % [expected, _outcome, not page.is_empty()])
-	print("AUTOTEST %s chapter=25 variant=%s outcome=%s caught=%d candle=%s tezkire=%s marco=%s" % ["PASS" if ok else "FAIL", v, _outcome,
-		caught, candle_lit, tez_shown, _marco_spoke])
+	print("AUTOTEST %s chapter=25 variant=%s outcome=%s caught=%d candle=%s tezkire=%s marco=%s sur=%s" % ["PASS" if ok else "FAIL", v, _outcome,
+		caught, candle_lit, tez_shown, _marco_spoke, "-" if sur == null else ("eski" if sur.eski_mi else "yeni")])
 	get_tree().quit(0 if ok else 1)
 
 
@@ -908,3 +947,111 @@ func _run_shots() -> void:
 	cv.make_current()
 	await _shot("c25_cover.png")
 	get_tree().quit()
+
+
+# ================================================================ yürüyüş ve kare kanıtı (=yuru, =kare; TAŞIMA-3, Bizans yarısı)
+
+## =yuru: gerçek Player botu dış sur yolunda: başlangıç → nöbetçinin yanı → sur yolu boyunca 12 m (gedikten uzağa) → geri
+## başlangıca (yeni sette yol 1,7 m, gedik tarafı kesik; eski 1,45 m). İleri tuşu basılı; takılma (8 sn yaklaşmama), düşme
+## (dikey hız < −7 ya da sur yolu hizasından 1 m aşağı) sayılır. Satır: TASIMA25YURU bacak=… ; son: TASIMA25YURU OZET …
+## =kare: oyuncunun kamerasından altı an + bütçe (her anda 4 karenin ortalama çizim çağrısı / ilkel sayısı).
+var _yz25 := {"bacak": 0, "takilma": 0, "dusme": 0, "sure": 0.0, "yol": 0.0}
+var _kare25_n := 0
+
+func _yuru25() -> void:
+	var kare := GameState.autotest_variant == "kare"
+	Engine.time_scale = 1.0
+	hud.set_fade(0.0)
+	var y0 := (LandWalls.OUTER_H if sur.eski_mi else sur.dis_yol_y()) + 0.05
+	var z0 := 14.9 if sur.eski_mi else sur.dis_yol_z()
+	var bas := Vector3(-9.2 if sur.eski_mi else _mazgal_x(YOL_OYUNCU_X), y0, z0)
+	player.global_position = bas
+	player.face(Vector3(10.0, 6.0, 300.0) + sur.ova_ofs())
+	player.show_remote(true)
+	for i in 10:
+		await get_tree().physics_frame
+	var nob := Vector3(-7.4 if sur.eski_mi else _mazgal_x(YOL_NOBETCI_X), y0, z0)
+	var uzak := Vector3(bas.x - 12.0, y0, z0)
+	print("TASIMA25YURU set=%s bas=%s nobetci=%s uzak=%s yol_en=%s" % ["eski" if sur.eski_mi else "yeni", bas, nob, uzak, "1,45" if sur.eski_mi else "1,7"])
+	if kare:
+		await _kare25("acilis_ordugah")
+		player.face(nob + Vector3(0, 1.5, 0))
+		await _kare25("nobetci")
+		player.face(Vector3(0.0, 8.0, 330.0) + sur.ova_ofs())
+		await _kare25("tespit_ordugah")
+		player.face(uzak + Vector3(-6.0, 1.0, 0))
+		await _kare25("sur_yolu_boyunca")
+		player.face(Vector3(bas.x + 4.0, 0.5, 6.0))
+		await _kare25("peribolos_asagi")
+		player.global_position = Vector3(bas.x + 3.0, y0, z0)
+		player.face(Vector3(0.0, y0 - 1.0, z0))
+		await _kare25("gedik_sur_yolundan")
+		print("TASIMA25KARE BITTI")
+		get_tree().quit(0)
+		return
+	player.frozen = false
+	await _yb25("bas_nobetci", nob + Vector3(-0.9, 0, 0), y0)
+	await _yb25("nobetci_uzak", uzak, y0)
+	await _yb25("uzak_bas", bas, y0)
+	print("TASIMA25YURU OZET set=%s bacak=%d takilma=%d dusme=%d sure=%.1f yol=%.1f" % ["eski" if sur.eski_mi else "yeni",
+		_yz25["bacak"], _yz25["takilma"], _yz25["dusme"], _yz25["sure"], _yz25["yol"]])
+	get_tree().quit(0)
+
+
+func _yb25(ad: String, to: Vector3, y0: float) -> void:
+	var t := 0.0
+	var yol := 0.0
+	var son := player.global_position
+	var takil := 0
+	var dus := 0
+	var best := 1e9
+	var iz := 0.0
+	while t < 40.0:
+		player.face(Vector3(to.x, player.global_position.y + 1.4, to.z))
+		Input.action_press("move_forward")
+		await get_tree().physics_frame
+		t += get_physics_process_delta_time()
+		var p := player.global_position
+		yol += Vector2(p.x - son.x, p.z - son.z).length()
+		son = p
+		if player.velocity.y < -7.0 or p.y < y0 - 1.0:
+			dus += 1
+			break
+		var dd := Vector2(p.x - to.x, p.z - to.z).length()
+		if dd < best - 0.3:
+			best = dd
+			iz = t
+		if dd < 0.5:
+			break
+		if t - iz > 8.0:
+			takil += 1
+			break
+	Input.action_release("move_forward")
+	for k in 4:
+		await get_tree().physics_frame
+	_yz25["bacak"] += 1
+	_yz25["takilma"] += takil
+	_yz25["dusme"] += dus
+	_yz25["sure"] += t
+	_yz25["yol"] += yol
+	print("TASIMA25YURU bacak=%s sure=%.1f yol=%.1f takilma=%d dusme=%d son=%s" % [ad, t, yol, takil, dus, player.global_position.snapped(Vector3.ONE * 0.1)])
+
+
+func _kare25(ad: String) -> void:
+	var dir := GameState.dialog_shots_dir if GameState.dialog_shots_dir != "" else GameState.shots_dir
+	if dir == "":
+		return
+	DirAccess.make_dir_recursive_absolute(dir)
+	for k in 4:
+		await get_tree().process_frame
+	var dc := 0.0
+	var pr := 0.0
+	for k in 4:
+		await RenderingServer.frame_post_draw
+		dc += RenderingServer.get_rendering_info(RenderingServer.RENDERING_INFO_TOTAL_DRAW_CALLS_IN_FRAME)
+		pr += RenderingServer.get_rendering_info(RenderingServer.RENDERING_INFO_TOTAL_PRIMITIVES_IN_FRAME)
+	_kare25_n += 1
+	var f := dir.path_join("an_%02d_%s.jpg" % [_kare25_n, ad])
+	get_viewport().get_texture().get_image().save_jpg(f, 0.85)
+	print("TASIMA25KARE %s oyuncu=%s cizim=%.0f ilkel=%.0f sur=%s" % [f.get_file(), player.global_position.snapped(Vector3.ONE * 0.1),
+		dc / 4.0, pr / 4.0, "eski" if sur.eski_mi else "yeni"])

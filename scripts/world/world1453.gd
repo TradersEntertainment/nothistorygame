@@ -239,6 +239,9 @@ static func horn_n_x(z: float) -> float:
 ## kalabalık, çadır, ev konmaz ve zemin düz kalır. Dönen bölgelerde dikdörtgenin dünyadaki sınır kutusu kullanılır.
 ## blend_local: rampanın ölçüldüğü düz oynanış alanı (bölgenin kendi arazisi keep'in tamamını kaplıyorsa)
 static func build(parent: Node3D, region_name: String, keep_local: Array, night := true, blend_local: Array = []) -> SiegeField:
+	# İstanbul v2 bağlaması (Bölüm 7, 11; güvenlik anahtarı IstBaglama.acik / --eski-dunya): bölümün çevresi v2 dünyası
+	if IstBaglama.istek(region_name):
+		return IstBaglama.build(parent, region_name, keep_local, night, blend_local)
 	var xf := region(region_name)
 	var f := SiegeField.new()
 	f.transform = xf.affine_inverse()
@@ -289,6 +292,8 @@ static func build(parent: Node3D, region_name: String, keep_local: Array, night 
 		match fr:
 			"byz_walls":
 				ByzCity.far_hub(f, region(fr))
+	# İstanbul 1453 parçaları (scripts/world/ist: anıtlar, surlar, limanlar, ayrıntı): mesafeyle kurulur/boşaltılır
+	IstSehir.attach(f)
 	# Ateşler: Dressing.glow kutuları (ordugâhın, ovanın, surların, kıyının gece ateşleri) alev ve haleye çevrilir
 	Flame.from_glow_boxes(f)
 	# Gölgelendiriciler yüklemede derlensin (yaklaşınca donma olmasın)
@@ -339,6 +344,12 @@ static func flight_data(world: SiegeField) -> Dictionary:
 		["BLAKHERNA", at.call("blachernae", 16.0), 34.0],
 		["SURLAR", at.call("romanos", 18.0, Vector3(0, 0, 9.0)), 30.0],
 	]
+	# İstanbul 1453 (IstSehir): parçaların yan görev eserleri ("gorev": true), dokuzun ardına; adı yazılmamış olan girmez
+	var ist := world.get_node_or_null("IstSehir") as IstSehir
+	if ist:
+		for q: Array in ist.quest_marks():
+			if TranslationServer.translate("LM_" + String(q[0])) != "LM_" + String(q[0]):
+				landmarks.append([q[0], world.to_global(q[1]), q[2]])
 	var gc: Vector3 = LANDMARKS["galata_center"]
 	var e: Vector3 = LANDMARKS["eugenius"]
 	var forms := [
@@ -362,6 +373,9 @@ static func flight_data(world: SiegeField) -> Dictionary:
 		["galata", world.to_global(Vector3(tw.x, gallery, tw.z)), 9.5],
 		["column", world.to_global(Vector3(col.x, HornWorld.east_surf(col.x, col.z) + ByzCity.COLUMN_TOP, col.z)), 3.5],
 	]
+	if ist:
+		for q: Array in ist.perch_marks():
+			perches.append([q[0], world.to_global(q[1]), q[2]])
 	return {"landmarks": landmarks, "forms": forms, "perches": perches}
 
 

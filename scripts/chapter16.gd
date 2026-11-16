@@ -121,18 +121,12 @@ func _build() -> void:
 	# Sırt üstü, kaskatı (hasta sanılıyor): yürümez, kolları yanında
 	tolga_npc.set_activity("lie")
 	tolga_npc.rig.lock += 1
-	# Kedi: turuncu, kutu gibi, kararlı
+	# Kedi: turuncu, tombul, kararlı. CANLI (kalite notu 32): canli_kit kedisi (kesit halkalı gövde, yuvarlak baş, dik
+	# kulak, kuyruk); kutu yok. Boyu eskisi gibi (gövde ~0,45 m), düğüm ve davranış aynı.
 	cat = Node3D.new()
 	add_child(cat)
-	Props.box(cat, Vector3(0.22, 0.2, 0.45), Vector3(0, 0.2, 0), Color("e08a3a"))
-	for lx in [-0.07, 0.07]:
-		for lz in [-0.15, 0.15]:
-			Props.box(cat, Vector3(0.05, 0.11, 0.05), Vector3(lx, 0.055, lz), Color("c8702a"))    # bacaklar (havada duruyordu)
-	Props.box(cat, Vector3(0.2, 0.18, 0.18), Vector3(0, 0.32, 0.26), Color("e08a3a"))
-	for s in [-1, 1]:
-		Props.prism(cat, Vector3(0.06, 0.08, 0.04), Vector3(s * 0.06, 0.45, 0.26), Color("c8702a"))
-		Props.ball(cat, 0.02, Vector3(s * 0.05, 0.35, 0.36), Color("1a3a1a"), Vector3.ONE, 5)
-	Props.cyl(cat, 0.02, 0.35, Vector3(0, 0.35, -0.3), Color("e08a3a"), Vector3(-40, 0, 0), 4)
+	var kk: Dictionary = preload("res://scripts/world/ist/canli_kit.gd").dugum("kedi", {"renk": Color("e08a3a"), "H": 0.34, "lod": 0, "birlestir": ["kulak", "boyun", "bas", "d"], "golge": false})
+	cat.add_child(kk["root"])
 	_place_actors(0.0)
 
 

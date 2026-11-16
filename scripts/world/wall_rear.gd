@@ -249,7 +249,7 @@ func _tents(p: Vector3) -> bool:
 	for k in rng.randi_range(2, 4):
 		var a := rng.randf_range(0.6, TAU - 0.6)
 		var q := p + Vector3(cos(a), 0, sin(a)) * 1.9
-		men.append(_man(q, atan2(p.x - q.x, p.z - q.z), "sit_ground"))
+		men.append(_man(q, atan2(p.x - q.x, p.z - q.z), "bagdas"))
 	if rng.randf() < 0.6:
 		d.spear_rack(p + Vector3(-3.0, 0, 3.0))
 	return true
@@ -362,7 +362,7 @@ func _drill_yard(p: Vector3) -> bool:
 	d.solid(Vector3(0.7, 1.0, 2.7), side + Vector3(0, 0.5, 0), rad_to_deg(yaw0))     # basamak gibi çıkılmasın (gezinen halk üstünde kalıyordu)
 	for k in rng.randi_range(2, 3):
 		var q := side + b * Vector3(-0.7, 0, -0.9 + k * 0.9)
-		men.append(_man(q, yaw0 - PI * 0.5 + rng.randf_range(-0.4, 0.4), "sit_ground"))
+		men.append(_man(q, yaw0 - PI * 0.5 + rng.randf_range(-0.4, 0.4), "bagdas"))
 	d.spear_rack(p + b * Vector3(-10.5, 0, -3.0))
 	d.barrel(p + b * Vector3(-10.0, 0, 3.0))
 	var fp := p + b * Vector3(-10.8, 0, 5.8)
@@ -476,12 +476,13 @@ func _aid(p: Vector3) -> bool:
 		for sx in [-0.32, 0.32]:
 			d.cyl(0.03, 2.3, q + Vector3(sx, 0.18, 0), Color("6b4a2e"), Vector3(90, 0, 0), 4)
 		d.box(Vector3(0.62, 0.04, 1.9), q + Vector3(0, 0.2, 0), Color("b8a888"))
-		# Yatan yaralı: ayakta kalıbın yatırılmışı (sırtüstü, ayakları sura)
-		var lie := Transform3D(Basis(Vector3.RIGHT, -PI * 0.5), q + Vector3(0, 0.36, 0.85))
-		men.append([lie, {"side": "B", "coat": Crowd.BYZ_COATS[rng.randi() % Crowd.BYZ_COATS.size()], "arm": "", "pose": ""}])
+		# Yatan yaralı: sedyede sırtüstü, ayakları sura (DURUŞ "sirt_uzan": eklemlerinden yatar, baş altında bohça;
+		# eskiden ayakta kalıbın bütün hâlde yatırılmışıydı)
+		var lie := Transform3D(Basis(), q + Vector3(0, 0.22, 0.2))
+		men.append([lie, {"side": "B", "coat": Crowd.BYZ_COATS[rng.randi() % Crowd.BYZ_COATS.size()], "arm": "", "pose": "sirt_uzan"}])
 		d.box(Vector3(0.3, 0.06, 0.5), q + Vector3(0, 0.33, 0.2), Color("e8e0d0"))      # sargı bezi
 	d.amphorae(p + Vector3(3.2, 0, -0.6))
-	men.append(_man(p + Vector3(-0.75, 0, 1.6), PI, "sit_ground"))
+	men.append(_man(p + Vector3(-0.75, 0, 1.6), PI, "bagdas"))
 	_worker(p + Vector3(2.8, 0, 1.0), -PI * 0.6)
 	return true
 
