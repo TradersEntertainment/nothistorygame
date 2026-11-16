@@ -78,6 +78,8 @@ func _ready() -> void:
 	at.position = _zemin_ust(Vector3(-12.0, 0, 6.0))
 	_subj["at_yokus"] = at
 	var kal := 0
+	if "--ayak-dbg" in OS.get_cmdline_user_args():
+		add_child(load("res://tests/_fizik/ayak_dbg.gd").new())
 	for a in OS.get_cmdline_user_args():
 		if a.begins_with("--ayak-kalabalik="):
 			kal = int(a.trim_prefix("--ayak-kalabalik="))

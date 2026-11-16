@@ -90,12 +90,33 @@ static func olc_tick() -> void:
 		_olc = {"kare": 0, "proc": 0.0, "us": 0, "n": 0, "isin": 0, "t0": now}
 
 
+static var _cam_pos := Vector3.ZERO
+static var _cam_fwd := Vector3.FORWARD
+static var _cam_cos := 0.5
+
+
 static func kamera(ctx: Node) -> Camera3D:
 	var f := Engine.get_process_frames()
 	if f != _cam_frame:
 		_cam_frame = f
 		_cam = ctx.get_viewport().get_camera_3d() if ctx.is_inside_tree() else null
+		if _cam:
+			var ct := _cam.global_transform
+			_cam_pos = ct.origin
+			_cam_fwd = -ct.basis.z.normalized()
+			# Görüş konisi: köşegen yarı açısı (en-boy oranıyla) + pay
+			var vp := _cam.get_viewport().get_visible_rect().size
+			var asp := vp.x / maxf(vp.y, 1.0)
+			var tv := tan(deg_to_rad(_cam.fov) * 0.5)
+			_cam_cos = cos(minf(atan(tv * sqrt(1.0 + asp * asp)) + 0.1, 1.5))
 	return _cam
+
+
+## Kişi (kök op) kameranın görüş konisinde mi; d2: uzaklığın karesi. Gövde ~1 m: koni kenarında pay.
+static func gorunur(op: Vector3, d2: float) -> bool:
+	var dv := op + Vector3(0, 0.9, 0) - _cam_pos
+	var dl := sqrt(maxf(d2, 0.0001))
+	return dv.dot(_cam_fwd) > _cam_cos * dl - 1.2
 
 
 var rig: Rig
@@ -115,6 +136,7 @@ var _L2 := 0.255
 var _R := 0.576
 var _par: Node3D
 var _yakin := false
+var _kon := false      # bir önceki ölçümde görüş konisindeydi
 var _lod_t := 0.0
 var _scope_t := 0.0
 var _scope_ok := true
@@ -251,16 +273,26 @@ func uygula(delta: float, yuru: bool, anim := false) -> void:
 	if not _scope_ok:
 		_kapat()
 		return
+	# LOD: uzaktakiler yarım saniyede bir, LOD sınırına yakın olanlar her karede (ucuz koni testi). Kamera kesmesinde
+	# görüşe yeni giren kişide IK anında açılır (bir önceki karede görünmüyordu: geçiş görünmez); yürüyerek LOD
+	# sınırını geçende yumuşak (0,25 sn).
 	_lod_t -= delta
 	if _lod_t <= 0.0:
-		_lod_t = 0.2 + randf() * 0.1
 		var cam := kamera(o)
-		_yakin = false
+		var hedef := false
 		if cam:
 			var op := o.global_position
-			var d := cam.global_position.distance_to(op)
-			_yakin = d <= LOD_YAKIN or (d <= LOD and (cam.is_position_in_frustum(op + Vector3(0, 0.5, 0)) \
-				or cam.is_position_in_frustum(op + Vector3(0, 1.6, 0))))
+			var d2 := op.distance_squared_to(_cam_pos)
+			_lod_t = 0.0 if d2 < (LOD + 6.0) * (LOD + 6.0) else 0.4 + randf() * 0.2
+			var kon := d2 < LOD_YAKIN * LOD_YAKIN or gorunur(op, d2)
+			hedef = kon and d2 <= LOD * LOD
+			if kon and not _kon:
+				w = 1.0 if hedef else 0.0
+			_kon = kon
+		else:
+			_lod_t = 0.5
+			_kon = false
+		_yakin = hedef
 	w = move_toward(w, 1.0 if _yakin else 0.0, delta * 4.0)
 	if w <= 0.0:
 		_kapat()
@@ -468,13 +500,14 @@ func _coz(delta: float, yuru: bool) -> void:
 
 
 ## Yürüyüş kipi: her ayak Rig'in evresinden (sol ayak evre -π/2'de öne basar) basar/salınır. Basma süresi D (evrenin
-## payı: yürürken 0,56, koşarken 0,3), adım uzunluğu ve kilit hızdan; iniş noktası şimdiki hızla öngörülür.
+## payı: yürürken 0,56, koşarken 0,25–0,35), adım uzunluğu ve kilit hızdan; iniş noktası şimdiki hızla öngörülür.
 func _yuruyus(ot: Transform3D, root: Vector3) -> void:
 	var rate: float = maxf(rig.faz_hiz, 0.5)
 	var phase: float = rig._walk_phase
 	var spd := _vel.length()
 	var run := clampf((spd - 3.2) / 2.0, 0.0, 1.0)
-	var D := lerpf(0.56, 0.3, run)
+	# Basma payı hızla kısalır (koşuda ayak yerde kısa kalır; uzun basmada bacak adımın uçlarına yetişmiyordu)
+	var D := clampf(0.56 - 0.1 * (spd - 1.5), 0.25, 0.56)
 	var Tc := TAU / rate
 	var fwd := _vel / spd if spd > 0.2 else (ot.basis.z * Vector3(1, 0, 1)).normalized()
 	var amp := clampf(spd / 3.0, 0.35, 1.0)
