@@ -39,3 +39,29 @@ LORE key=32o placed=3
 TASIMA32OYURU bacak=yigin sure=0.0 yol=0.0 takilma=0 dusme=0 kesik=false son=(-9.0, 0.0, 52.0) odak=pile
 TASIMA32OKARE an_02_yigin.jpg oyuncu=(-9.0, 0.0, 52.0) cizim=3402 ilkel=2085276 sur=eski
 TASIMA32OYURU bacak=kiyi sure=0.0 yol=0.0 takilma=0 dusme=0 kesik=false son=(-9.0, 0.0, 39.0) odak=edge
+TASIMA32OKARE an_03_kiyi.jpg oyuncu=(-9.0, 0.0, 39.0) cizim=2797 ilkel=1707980 sur=eski
+TASIMA32OYURU bacak=yigin sure=0.0 yol=0.0 takilma=0 dusme=0 kesik=false son=(-9.0, 0.0, 52.0) odak=pile
+TASIMA32OYURU bacak=kiyi sure=0.0 yol=0.0 takilma=0 dusme=0 kesik=false son=(-9.0, 0.0, 39.0) odak=edge
+TASIMA32OYURU bacak=toprak sure=0.0 yol=0.0 takilma=0 dusme=0 kesik=false son=(9.0, 0.0, 52.0) odak=earth
+TASIMA32OYURU bacak=kiyi sure=0.0 yol=0.0 takilma=0 dusme=0 kesik=false son=(9.0, 0.0, 39.0) odak=edge
+TASIMA32OYURU bacak=siper sure=0.0 yol=0.0 takilma=0 dusme=0 kesik=false son=(5.0, 0.0, 44.4) odak=
+TASIMA32OKARE an_04_manto_arkasi.jpg oyuncu=(5.9, 0.0, 45.0) cizim=3516 ilkel=2276686 sur=eski
+TASIMA32OYURU bacak=yigin sure=0.0 yol=0.0 takilma=0 dusme=0 kesik=false son=(-9.0, 0.0, 52.0) odak=pile
+TASIMA32OYURU bacak=kiyi sure=0.0 yol=0.0 takilma=0 dusme=0 kesik=false son=(-9.0, 0.0, 39.0) odak=edge
+TASIMA32OYURU bacak=toprak sure=0.0 yol=0.0 takilma=0 dusme=0 kesik=false son=(9.0, 0.0, 52.0) odak=earth
+TASIMA32OYURU bacak=kiyi sure=0.0 yol=0.0 takilma=0 dusme=0 kesik=false son=(9.0, 0.0, 39.0) odak=edge
+TASIMA32OYURU bacak=yigin sure=0.0 yol=0.0 takilma=0 dusme=0 kesik=false son=(-9.0, 0.0, 52.0) odak=pile
+TASIMA32OYURU bacak=kiyi sure=0.0 yol=0.0 takilma=0 dusme=0 kesik=false son=(-9.0, 0.0, 39.0) odak=edge
+TASIMA32OYURU bacak=toprak sure=0.0 yol=0.0 takilma=0 dusme=0 kesik=false son=(9.0, 0.0, 52.0) odak=earth
+TASIMA32OYURU bacak=kiyi sure=0.0 yol=0.0 takilma=0 dusme=0 kesik=false son=(9.0, 0.0, 39.0) odak=edge
+TASIMA32OYURU bacak=yigin sure=0.0 yol=0.0 takilma=0 dusme=0 kesik=false son=(-9.0, 0.0, 52.0) odak=pile
+TASIMA32OYURU bacak=kiyi sure=0.0 yol=0.0 takilma=0 dusme=0 kesik=false son=(-9.0, 0.0, 39.0) odak=edge
+TASIMA32OYURU bacak=toprak sure=0.0 yol=0.0 takilma=0 dusme=0 kesik=false son=(9.0, 0.0, 52.0) odak=earth
+TASIMA32OYURU bacak=kiyi sure=0.0 yol=0.0 takilma=0 dusme=0 kesik=false son=(9.0, 0.0, 39.0) odak=edge
+TASIMA32OYURU bacak=yigin sure=0.0 yol=0.0 takilma=0 dusme=0 kesik=false son=(-9.0, 0.0, 52.0) odak=pile
+TASIMA32OYURU bacak=kiyi sure=0.0 yol=0.0 takilma=0 dusme=0 kesik=false son=(-9.0, 0.0, 39.0) odak=edge
+TASIMA32OYURU bacak=toprak sure=0.0 yol=0.0 takilma=0 dusme=0 kesik=false son=(9.0, 0.0, 52.0) odak=earth
+TASIMA32OYURU tus_yok yer=toprak odak=
+TASIMA32OYURU bacak=tezgah sure=0.0 yol=0.0 takilma=0 dusme=0 kesik=false son=(-16.0, 0.0, 68.4) odak=bench
+TASIMA32OKARE an_05_tezgah.jpg oyuncu=(-16.0, 0.0, 68.4) cizim=4620 ilkel=2756820 sur=eski
+KARE_BITTI rc=124 --chapter=32o --autotest=kare --eskisur

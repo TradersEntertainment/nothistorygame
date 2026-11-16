@@ -45,3 +45,13 @@ TASIMA36BKARE an_03_siper.jpg oyuncu=(-24.0, 0.0, 41.0) cizim=4222 ilkel=5873568
 TASIMA36BYURU bacak=manto0 sure=0.0 yol=0.0 takilma=0 dusme=0 son=(-31.0, 0.3, 44.8) odak=mantlet_0
 TASIMA36BYURU bacak=manto1 sure=0.0 yol=0.0 takilma=0 dusme=0 son=(-24.0, 0.3, 47.8) odak=mantlet_1
 TASIMA36BYURU bacak=manto2 sure=0.0 yol=0.0 takilma=0 dusme=0 son=(-17.0, 0.3, 44.8) odak=mantlet_2
+TASIMA36BKARE an_04_yanan.jpg oyuncu=(-17.0, 0.0, 44.8) cizim=3888 ilkel=5314638 sur=eski
+TASIMA36BYURU bacak=leon sure=0.0 yol=0.0 takilma=0 dusme=0 son=(-20.0, 0.3, 44.6) odak=leon
+TASIMA36BKARE an_05_leon.jpg oyuncu=(-20.0, 0.0, 44.6) cizim=1040 ilkel=1997267 sur=eski
+TASIMA36BYURU bacak=geri_kopru_ucu sure=0.0 yol=0.0 takilma=0 dusme=0 son=(-24.0, 0.3, 37.5) odak=
+TASIMA36BYURU bacak=geri_kopru_basi sure=0.0 yol=0.0 takilma=0 dusme=0 son=(-24.0, 0.4, 16.6) odak=
+VISAUDIT insolid scene=chapter36b.tscn who=Chapter36b(SPK_LEON) at=(-23.8, 0.0, 16.1) by=@Node3D@177 size=(43.5, 8.0, 2.0)@(-28.2, 4.0, 15.0) pos=(-28.2, 4.0, 15.0) src=Chapter36b>Person|Chapter36b>LandWalls>StaticBody3D
+TASIMA36BYURU bacak=poterna sure=0.0 yol=0.0 takilma=0 dusme=0 son=(-23.8, 0.7, 17.1) odak=
+Terminated
+elle durduruldu: an_06 (geri_bakis) eski sette çekilemedi — dönüş bacağından sonra ilerlemedi (eski rampada Leon sur gövdesine ışınlandı, VISAUDIT insolid; kare kipinin ışınlama yapıntısı)
+KARE_BITTI rc=143 --chapter=36b --autotest=kare --eskisur
