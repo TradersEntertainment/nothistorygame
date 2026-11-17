@@ -1181,7 +1181,11 @@ func _exit() -> void:
 	var door := ByzCity.EXIT_POS
 	# Kapının iç yanında beyaz bayrak; karanlıktan kapıda açılır: Tolga geçitte, Niko yanında
 	Props.cyl(city, 0.03, 2.6, door + Vector3(-2.0, 1.3, 1.6), Color("5a4028"))
-	Props.box(city, Vector3(0.05, 0.7, 0.9), door + Vector3(-2.0, 2.4, 2.05), Color("f4f1ea"))
+	if city.sur_yeni:
+		# TAŞIMA-10: yeni surun kapısında bayrak kumaş (kutu levha değil), aynı yer ve ölçü
+		preload("res://scripts/world/ist/kumas.gd").bayrak(city, door + Vector3(-2.0, 2.58, 1.6), Vector3.BACK, 0.9, 0.7, Color("f4f1ea"), [], 6, "BeyazBayrak")
+	else:
+		Props.box(city, Vector3(0.05, 0.7, 0.9), door + Vector3(-2.0, 2.4, 2.05), Color("f4f1ea"))
 	player.global_position = door + Vector3(-2.6, 0.05, 0.0)
 	city.niko.position = door + Vector3(-1.4, 0.0, -1.1)     # Tolga ile kapı arasında, kapıya bakan kadrajın içinde
 	city.niko.look_target = player

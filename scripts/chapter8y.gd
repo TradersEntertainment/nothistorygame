@@ -155,6 +155,8 @@ func _ready() -> void:
 	# Bölge: dünyanın kara surlarındaki kapı (yerel x 0 = dünya x GATE_X); dünya tek haritadan kurulur
 	World1453.REGIONS[REGION] = Transform3D(Basis.IDENTITY, Vector3(GATE_X, 0.0, 0.0))
 	sur_yeni = SurHub.yeni8y() and IstBaglama.etkin()
+	if sur_yeni:
+		IstBaglama.duz_yerel = [[Vector2(BATTERY.x, BATTERY.z + 0.5), 7.0]]      # bataryanın döşemesi düz arazide
 	world = World1453.build(self, REGION, KEEP, false)
 	if sur_yeni:
 		_yeni_yerler()
@@ -283,7 +285,8 @@ func _gy_yeni(x: float, z: float) -> float:
 		if absf(x) < 3.2:
 			return -3.43
 		return SurHub.arayuz().y_hendek_dip() + 0.12
-	return maxf(_arazi(x, z), _ova_y - 0.03) if absf(x) < 16.0 else _arazi(x, z)
+	var hy := _ova_izgara_y(x, z)
+	return hy if not is_nan(hy) else _arazi(x, z)
 
 
 # ================================================================ sahne
@@ -381,7 +384,7 @@ func _build_ground() -> void:
 ## tümseği); bölüm şehir yanına ve ovaya görünmez döşeme koyar (v2 arazisi akışla katılaşır, oyuncu ondan önce de bassın).
 func _build_ground_yeni() -> void:
 	_floor(Vector3(24, 0.6, 40.0), Vector3(0, -0.03, -24.8))      # şehir içi
-	_floor(Vector3(30, 0.6, 102.0), Vector3(0, _ova_y - 0.03, FIELD_Z - 1.0 + 51.0))      # ölü bölge ve hatlar
+	_ova_zemini()      # ölü bölge ve hatlar: arazinin kendisi (yükseklik haritası; görünen arazi ile aynı)
 	var gy := Callable(self, "_gy")
 	Nature.ground_detail(self, Rect2(-10.0, -40.0, 20.0, 34.0), "straw", 0.03, 8101, gy)
 	Nature.ground_detail(self, Rect2(-10.0, -40.0, 20.0, 34.0), "pebble", 0.06, 8102, gy)
@@ -401,6 +404,123 @@ func _build_ground_yeni() -> void:
 	Nature.ground_detail(self, Rect2(-14.0, 125.0, 28.0, 25.0), "straw", 0.04, 8111, gy)
 	Nature.trail(self, [Vector3(0.6, 0, -9.0), Vector3(0.4, 0, 13.0), Vector3(0.2, 0, FIELD_Z)] + PATH + [Vector3(0.3, 0, 108.0),
 		Vector3(0.0, 0, 146.0)], "footprint", gy, 1.4, 8112)
+
+
+var _ova_izg := PackedFloat32Array()
+var _ova_w := 0
+var _ova_d := 0
+var _ova_z0 := 0.0
+
+
+## Ova ızgarasının (katı zemin) yüksekliği: HeightMapShape3D ile aynı üçgenleme (hücre köşegeni) — nesneler ve kişiler
+## görünen arazinin değil katı zeminin üstüne basar (VISAUDIT float: arazi ızgara arasında 0,2 m oynuyordu)
+func _ova_izgara_y(x: float, z: float) -> float:
+	var fx := x + (_ova_w - 1) * 0.5
+	var fz := z - _ova_z0
+	if _ova_izg.is_empty() or fx < 0.0 or fz < 0.0 or fx > _ova_w - 1.001 or fz > _ova_d - 1.001:
+		return NAN
+	var i := int(fx)
+	var j := int(fz)
+	var u := fx - i
+	var v := fz - j
+	var h00 := _ova_izg[j * _ova_w + i]
+	var h10 := _ova_izg[j * _ova_w + i + 1]
+	var h01 := _ova_izg[(j + 1) * _ova_w + i]
+	var h11 := _ova_izg[(j + 1) * _ova_w + i + 1]
+	# Godot yükseklik haritası hücreyi (0,0)-(1,1) köşegeniyle böler
+	if u >= v:
+		return h00 + (h10 - h00) * u + (h11 - h10) * v + 0.01
+	return h00 + (h11 - h01) * u + (h01 - h00) * v + 0.01
+
+
+## TAŞIMA-10 denetimi: ovada katı zemin ızgarası (OvaZemini) ile ondan başka katıların (v2 arazisinin akışla kurulan gövdeleri)
+## yükseklik farkı; ızgaranın üstünde kalan başka katı (siper, tümsek) kişileri havada bırakır
+func _t10_zemin_denetim() -> void:
+	var ss := get_world_3d().direct_space_state
+	if not sur_yeni:
+		_t10_istasyon(ss)
+		return
+	var oz := get_node_or_null("OvaZemini") as CollisionObject3D
+	var en := 0.0
+	var yer := Vector3.ZERO
+	var kim := ""
+	var n := 0
+	var z := FIELD_Z + 1.0
+	while z < 150.0:
+		var x := -14.0
+		while x <= 14.0:
+			var q := PhysicsRayQueryParameters3D.create(to_global(Vector3(x, 20.0, z)), to_global(Vector3(x, -30.0, z)))
+			var ex: Array[RID] = []
+			if oz:
+				ex.append(oz.get_rid())
+			var r := {}
+			for k in 6:
+				q.exclude = ex
+				r = ss.intersect_ray(q)
+				# yalnız v2'nin gövdeleri (bölümün kendi siperleri, çitleri sayılmaz)
+				if r.is_empty() or IstBaglama.kok == null or IstBaglama.kok.is_ancestor_of(r["collider"]):
+					break
+				ex.append((r["collider"] as CollisionObject3D).get_rid())
+				r = {}
+			if not r.is_empty():
+				n += 1
+				var hy := to_local(r["position"]).y
+				var fark := hy - _gy(x, z)
+				if fark > en:
+					en = fark
+					yer = Vector3(x, hy, z)
+					kim = str((r["collider"] as Node).get_path()).right(70)
+			x += 1.0
+		z += 1.0
+	print("T10_8Y zemin_denetim isin=%d en_ust_fark=%.2f yer=%s kim=%s" % [n, en, yer, kim])
+	_t10_istasyon(ss)
+
+
+func _t10_istasyon(ss: PhysicsDirectSpaceState3D) -> void:
+	var st := get_node_or_null("Station_coil_rope")
+	if st:
+		for c in st.get_children():
+			if c is Person:
+				var sh := CapsuleShape3D.new()
+				sh.radius = 0.3
+				sh.height = 1.6
+				var qs := PhysicsShapeQueryParameters3D.new()
+				qs.shape = sh
+				qs.transform = Transform3D(Basis.IDENTITY, (c as Node3D).global_position + Vector3(0, 0.6, 0))
+				var hs := ss.intersect_shape(qs, 8)
+				var ad: Array = []
+				for h in hs:
+					ad.append(str((h["collider"] as Node).get_path()).right(60))
+				print("T10_8Y istasyon lp=%s gy=%.2f kok_y=%.2f carpan=%s" % [(c as Node3D).position, _gy(st.global_position.x, st.global_position.z), (st as Node3D).global_position.y, ad])
+
+
+## Ovanın görünmez katı zemini: koridorun (x ±15, köprünün ötesinden z 152'ye) v2 arazisi 1 m ızgarada (HeightMapShape3D).
+## Düz döşeme arazinin çukurunda havada, tümseğinde gömülü kalırdı (ova ±0,6 m dalgalı).
+func _ova_zemini() -> void:
+	var z0 := floorf(float(SurHub.arayuz().d["zm1"]) + 0.6)
+	var w := 33
+	var dpt := int(153.0 - z0) + 1
+	var hm := HeightMapShape3D.new()
+	hm.map_width = w
+	hm.map_depth = dpt
+	var veri := PackedFloat32Array()
+	veri.resize(w * dpt)
+	for j in dpt:
+		for i in w:
+			veri[j * w + i] = _arazi(float(i - (w - 1) / 2), z0 + j) - 0.01
+	hm.map_data = veri
+	_ova_izg = veri
+	_ova_w = w
+	_ova_d = dpt
+	_ova_z0 = z0
+	var b := StaticBody3D.new()
+	b.name = "OvaZemini"
+	var cs := CollisionShape3D.new()
+	cs.shape = hm
+	b.add_child(cs)
+	b.position = Vector3(0.0, 0.0, z0 + (dpt - 1) * 0.5)
+	b.set_meta("ground", true)
+	add_child(b)
 
 
 ## Hendek geçidi: dünyanın dolgu geçidinin üstü taş döşeme (enine sıralar), ortasında iki tekerlek izi, iki yanda alçak taş
@@ -1852,6 +1972,7 @@ func _auto() -> void:
 
 func _autotest_report() -> void:
 	var v := GameState.autotest_variant
+	_t10_zemin_denetim()
 	print("SURE8Y %.0f s (sahne açılışından rapora; PACE'te gerçek süre)" % ((Time.get_ticks_msec() - _t_start) / 1000.0))
 	var expected: String = {"warn": "8Y.2", "dep": "8Y.3"}.get(v, "8Y.1")
 	var ok: bool = _outcome == expected and str(GameState.chapter_outcomes.get(NO, "")) == _outcome

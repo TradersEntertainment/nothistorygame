@@ -49,11 +49,11 @@ func _surus() -> void:
 	get_tree().current_scene = ch
 	await get_tree().process_frame
 	var t := 0.0
-	while city == null and t < 60.0:
+	while city == null and t < (60.0 if bolum in ["6", "7", "10h", "12b"] else 0.0):
 		city = _bul(ch)
 		await get_tree().process_frame
 		t += get_process_delta_time()
-	print("T10KARE_YUKLE bolum=%s v2=%s yeni=%s ms=%d" % [bolum, IstBaglama.aktif(), city != null and bool(city.get("sur_yeni")), Time.get_ticks_msec() - t0])
+	print("T10KARE_YUKLE bolum=%s v2=%s yeni=%s ms=%d" % [bolum, IstBaglama.aktif(), bool((city if city != null else ch).get("sur_yeni")), Time.get_ticks_msec() - t0])
 	await _bekle(12.0)
 	cam = Camera3D.new()
 	cam.fov = 70.0
@@ -95,6 +95,23 @@ func _bakislar() -> Array:
 				["06_kapi_sehir_yani", c.to_global(Vector3(24.5, 1.7, 1.5)), c.to_global(Vector3(33.0, 3.5, gz)), null],
 				["07_disaridan_sur", c.to_global(Vector3(130.0, 22.0, -14.0)), c.to_global(Vector3(34.0, 6.0, -8.0)), null],
 				["08_tepeden", c.to_global(Vector3(-10.0, 140.0, -10.0)), c.to_global(Vector3(45.0, 0.0, -10.0)), null],
+			]
+		"8y":
+			var gz: float = ch.get("GATE_Z")
+			var bz: float = ch.get("BRIDGE_Z")
+			var fz: float = ch.get("FIELD_Z")
+			var tz: float = ch.get("GATE_TRIGGER_Z")
+			var st: Vector3 = ch.get("START")
+			var g := func(x: float, z: float) -> float: return float(ch.call("_gy", x, z))
+			var on: Vector3 = Vector3(0, 0, gz + 2.3)
+			return [
+				["01_sehirden_ic_kapi", ch.to_global(st + Vector3(0, 1.65, 0)), ch.to_global(Vector3(0, 4.0, 2.0)), ch.to_global(st)],
+				["02_koridor_dis_kapi", ch.to_global(Vector3(0.0, 1.65, tz - 3.0)), ch.to_global(Vector3(0.0, 2.6, gz)), ch.to_global(Vector3(0, 0, tz - 3.0))],
+				["03_kanat_yakin", ch.to_global(Vector3(1.2, 1.6, gz - 2.2)), ch.to_global(Vector3(-1.0, 1.4, gz)), ch.to_global(Vector3(1.2, 0, gz - 2.2))],
+				["04_kopru", ch.to_global(Vector3(0.0, g.call(0.0, bz + 1.5) + 1.65, bz + 1.5)), ch.to_global(Vector3(0.0, g.call(0.0, fz + 15.0) + 1.0, fz + 15.0)), ch.to_global(Vector3(0, g.call(0.0, bz + 1.5), bz + 1.5))],
+				["05_ovadan_sur", ch.to_global(Vector3(0.0, g.call(0.0, 75.0) + 1.7, 75.0)), ch.to_global(Vector3(0.0, 5.0, gz)), ch.to_global(Vector3(0, g.call(0.0, 75.0), 75.0))],
+				["06_dis_kapi_yakin", ch.to_global(Vector3(1.6, g.call(1.6, on.z) + 1.6, on.z)), ch.to_global(Vector3(-1.2, 2.6, gz + 1.0)), ch.to_global(Vector3(1.6, g.call(1.6, on.z), on.z))],
+				["07_tepeden", ch.to_global(Vector3(-60.0, 90.0, 10.0)), ch.to_global(Vector3(0.0, 0.0, 40.0)), null],
 			]
 	return []
 

@@ -1,0 +1,3 @@
+SURHUB kur bolum=10h kesim=romanos ms=161 ic_yuz_x=32.50 ic_yol_y=12.12 dis_sur_dis_x=55.10
+AUTOTEST PASS chapter=11 variant= outcome=11.2 persuade=25 sadakat=55 baski=1
+BITTI rc=0
