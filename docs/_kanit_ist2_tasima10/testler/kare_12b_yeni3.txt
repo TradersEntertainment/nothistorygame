@@ -1,0 +1,10 @@
+T10KARE_YUKLE bolum=12b v2=true yeni=true ms=75775
+T10KARE ad=01_surda_imparator cizim=5115 ilkel=5917692
+T10KARE ad=02_mazgal_yakin cizim=5895 ilkel=5200787
+T10KARE ad=03_kule_kapisi cizim=4153 ilkel=6158422
+T10KARE ad=04_surdan_ordugah cizim=5816 ilkel=4483254
+T10KARE ad=05_caddeden_sur cizim=9333 ilkel=5797153
+T10KARE ad=06_kapi_sehir_yani cizim=4856 ilkel=4447975
+T10KARE ad=07_disaridan_sur cizim=6425 ilkel=3608795
+T10KARE ad=08_tepeden cizim=5979 ilkel=2163839
+T10KARE_BITTI

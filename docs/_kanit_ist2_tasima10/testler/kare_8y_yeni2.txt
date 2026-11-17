@@ -1,0 +1,5 @@
+T10KARE_YUKLE bolum=8y v2=true yeni=true ms=62222
+T10KARE ad=01_sehirden_ic_kapi cizim=3225 ilkel=5441763
+T10KARE ad=05_ovadan_sur cizim=2204 ilkel=3268961
+T10KARE ad=07_tepeden cizim=2517 ilkel=1798602
+T10KARE_BITTI

@@ -1,0 +1,9 @@
+T10KARE_YUKLE bolum=8y v2=false yeni=false ms=7683
+T10KARE ad=01_sehirden_ic_kapi cizim=4179 ilkel=11009907
+T10KARE ad=02_koridor_dis_kapi cizim=3751 ilkel=7242538
+T10KARE ad=03_kanat_yakin cizim=5168 ilkel=9769761
+T10KARE ad=04_kopru cizim=4675 ilkel=6472967
+T10KARE ad=05_ovadan_sur cizim=2244 ilkel=2350948
+T10KARE ad=06_dis_kapi_yakin cizim=2312 ilkel=4276218
+T10KARE ad=07_tepeden cizim=2372 ilkel=2580096
+T10KARE_BITTI

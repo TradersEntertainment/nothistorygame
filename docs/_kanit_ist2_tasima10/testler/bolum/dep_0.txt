@@ -1,0 +1,2 @@
+AUTOTEST PASS chapter=0 variant= froze=true sur=yeni
+BITTI rc=0

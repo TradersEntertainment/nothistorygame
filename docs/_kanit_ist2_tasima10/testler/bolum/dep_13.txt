@@ -1,0 +1,2 @@
+AUTOTEST PASS chapter=13 variant= version=garage outcome=13.1 window=8.4 tolga=T1 hikmet=
+BITTI rc=0

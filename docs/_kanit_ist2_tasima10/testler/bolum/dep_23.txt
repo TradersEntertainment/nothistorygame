@@ -1,0 +1,2 @@
+AUTOTEST PASS chapter=23 variant= outcome=23.1 deviation=0 card=true singed=false letter=false
+BITTI rc=0

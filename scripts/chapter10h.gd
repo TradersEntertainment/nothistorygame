@@ -132,9 +132,9 @@ func _build() -> void:
 			Props.box(self, Vector3(0.3, 0.22, 0.45), k + Vector3(-0.05, 0.4 + i * 0.45, (-1.25 if i % 2 == 0 else 1.2) + (i % 3) * 0.1), Color("8a4a36"), Vector3(i * 17.0, 0, 0))
 	else:
 		# TAŞIMA-10: yeni surun taşı (kutu yarık levhaları yok): surun dibinde top yarasından düşmüş taş ve tuğla yığını
-		for i in 9:
-			var rp2 := k + Vector3(-0.2 - (i % 3) * 0.45, 0.12 + (i / 3) * 0.16, -1.6 + (i % 5) * 0.8)
-			Props.ball(self, 0.28 + (i % 4) * 0.06, rp2, IstSurlar.C_STONE.darkened(0.1 + (i % 3) * 0.08), Vector3(1.3, 0.6, 1.0), 6)
+		for i in 11:
+			var rp2 := k + Vector3(-0.25 - (i % 3) * 0.4, 0.06 + (i / 4) * 0.12, -1.7 + (i % 5) * 0.75)
+			Props.ball(self, 0.2 + (i % 4) * 0.05, rp2, IstSurlar.C_STONE.darkened(0.32 + (i % 3) * 0.08), Vector3(1.4, 0.5, 1.1), 6)
 	for i in 9:
 		var rp := k + Vector3(-0.3 - (i % 3) * 0.5, 0.25 + (i / 3) * 0.2, -1.2 + (i % 4) * 0.8)
 		Props.ball(self, 0.35 + (i % 3) * 0.1, rp, Color("b8a888").darkened((i % 3) * 0.1), Vector3(1.2, 0.7, 1.0), 6)
