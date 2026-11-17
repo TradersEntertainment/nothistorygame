@@ -1,0 +1,2 @@
+KOSU n4_gcaught args=--chapter=4 --autotest=caught rc=0 sure=12s
+AUTOTEST PASS chapter=4 variant=caught branch=4a start=tent outcome=4a.3 catches=2 fez=true telsiz=3

@@ -1,0 +1,2 @@
+KOSU n4_gitem args=--chapter=4 --autotest=item rc=0 sure=13s
+AUTOTEST PASS chapter=4 variant=item branch=4a start=tent outcome=4a.2 catches=0 fez=true telsiz=3

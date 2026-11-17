@@ -59,6 +59,7 @@ func _ready() -> void:
 	meter = RowMeter.new()
 	hud.add_child(meter)
 	walls = SeaWalls.new()
+	walls.bolum = "29o"     # TAŞIMA 11: --eskisur seçimi (SurSet.eski_istendi)
 	walls.in_world = true
 	add_child(walls)
 	SeaBattle.make_day(walls)

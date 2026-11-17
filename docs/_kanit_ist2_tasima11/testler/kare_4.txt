@@ -1,0 +1,11 @@
+DENIZSET bolum=4 set=eski in_world=false
+T11KARE a6_kapi_genel ciz=324 ilkel=279536
+DENIZSET bolum=4 set=yeni in_world=false
+DENIZSET birlestir=43
+T11KARE a1_zincirden ciz=374 ilkel=328700
+T11KARE a2_rihtim_yakin ciz=294 ilkel=337338
+T11KARE a3_kapi_yuzyuze ciz=259 ilkel=299094
+T11KARE a4_kule_yanagi ciz=207 ilkel=363532
+T11KARE a5_niko ciz=122 ilkel=318200
+T11KARE d1_dikis_x80 ciz=352 ilkel=336390
+T11KARE a6_kapi_genel ciz=243 ilkel=291202
