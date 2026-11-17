@@ -28,6 +28,7 @@ func _ready() -> void:
 	if shots != "":
 		DirAccess.make_dir_recursive_absolute(shots)
 	GameState.autotest = false
+	process_mode = Node.PROCESS_MODE_ALWAYS
 	_hazirla()
 	_surus.call_deferred()
 
@@ -161,19 +162,18 @@ func _bul(n: Node) -> Node3D:
 
 
 func _bekle(sn: float) -> void:
-	var t := 0.0
-	while t < sn:
+	# gerçek saat: bölüm ağacı duraklatırsa (7b açılış kartı) işlem deltası akmaz
+	var t0 := Time.get_ticks_msec()
+	while Time.get_ticks_msec() - t0 < int(sn * 1000.0):
 		await get_tree().process_frame
-		t += get_process_delta_time()
 		if cam != null:
 			cam.make_current()
 
 
 func _akis_bekle(en_cok: float) -> void:
-	var t := 0.0
-	while t < en_cok:
+	var t0 := Time.get_ticks_msec()
+	while Time.get_ticks_msec() - t0 < int(en_cok * 1000.0):
 		await get_tree().process_frame
-		t += get_process_delta_time()
 		var s := IstSehir.active
 		if not IstBaglama.aktif() or s == null:
 			break
