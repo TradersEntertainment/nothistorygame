@@ -1,0 +1,2 @@
+AUTOTEST PASS chapter=8y variant=honest outcome=8Y.1 id=honest warnings=0 lowered=0 radio=true
+BITTI rc=0

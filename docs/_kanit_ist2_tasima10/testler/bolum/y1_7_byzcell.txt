@@ -1,0 +1,3 @@
+SURHUB kur bolum=7 kesim=romanos ms=139 ic_yuz_x=32.50 ic_yol_y=12.12 dis_sur_dis_x=55.10
+AUTOTEST PASS chapter=7 variant=byzcell branch=7b outcome=7.1 extras=[] sadakat=60 baski=0 hour=13.0
+BITTI rc=0

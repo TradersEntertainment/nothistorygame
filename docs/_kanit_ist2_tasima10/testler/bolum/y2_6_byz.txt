@@ -1,0 +1,3 @@
+SURHUB kur bolum=6 kesim=romanos ms=204 ic_yuz_x=32.50 ic_yol_y=12.12 dis_sur_dis_x=55.10
+AUTOTEST PASS chapter=6 variant=byz branch=6b outcome=6b.1 paradox=0 mistakes=0 telsiz=4
+BITTI rc=0

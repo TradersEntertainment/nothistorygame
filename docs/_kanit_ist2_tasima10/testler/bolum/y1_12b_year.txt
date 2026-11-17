@@ -1,0 +1,4 @@
+SURHUB kur bolum=12b kesim=romanos ms=133 ic_yuz_x=32.50 ic_yol_y=12.12 dis_sur_dis_x=55.10
+T10_12B kapi=(35.0, 12.12, -11.4) ofs=(1.599998, 0.12, -6.2) duvar=(34.9, 12.17, -17.4) imp=(36.35, 12.12, -14.8) yol=(33.25, 36.75, -21.1, -11.9)
+AUTOTEST PASS chapter=12b variant=year outcome=12B.3 world= honest=false
+BITTI rc=0

@@ -1,0 +1,6 @@
+T10KARE_YUKLE bolum=6 v2=true yeni=true ms=106834
+T10KARE ad=01_sur_yolu_fici cizim=2203 ilkel=3727615
+T10KARE ad=02_giust_masa_sur cizim=1425 ilkel=3134853
+T10KARE ad=03_kapi_yakin cizim=1071 ilkel=3162464
+T10KARE ad=04_caddeden_sur cizim=4597 ilkel=5078716
+T10KARE_BITTI

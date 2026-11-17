@@ -1,0 +1,2 @@
+AUTOTEST PASS chapter=10h variant=pass outcome=10H.1 truth=1 direnc=0 paradox=0
+BITTI rc=0

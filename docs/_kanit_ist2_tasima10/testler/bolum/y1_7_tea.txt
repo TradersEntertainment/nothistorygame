@@ -1,0 +1,2 @@
+AUTOTEST PASS chapter=7 variant=tea branch=7a outcome=7.1 extras=["7.4"] sadakat=50 baski=0 hour=13.0
+BITTI rc=0

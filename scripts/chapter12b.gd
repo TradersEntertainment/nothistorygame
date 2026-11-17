@@ -10,10 +10,22 @@ extends Node3D
 ## sonu söylemesi ya da söylememesi, İmparator'un 29 Mayıs sabahı gedikte ona ne diyeceğini belirler.
 ##   --autotest[=lie|year|d2|d3|next]   (varsayılan: 12B.1, Direniş 1)
 
-const WALL_TOP := Vector3(33.3, 12.05, -11.2)
-const EMP_AT := Vector3(34.75, 12.0, -8.6)
-const SPH_AT := Vector3(33.4, 12.0, -6.4)
-const DOOR := Vector3(33.4, 12.0, -5.2)
+const WALL_TOP_ESKI := Vector3(33.3, 12.05, -11.2)
+const EMP_AT_ESKI := Vector3(34.75, 12.0, -8.6)
+const SPH_AT_ESKI := Vector3(33.4, 12.0, -6.4)
+const DOOR_ESKI := Vector3(33.4, 12.0, -5.2)
+## TAŞIMA-10: sur yolu yeni surun iç sur yolunda (SurHub, Romanos kesimi): kapı kulesinin şehir yanındaki geçidi "kuleye açılan
+## kapı"; bütün sur yolu noktaları eskisiyle aynı aralıkta, tek kaydırmayla (OFS: eski kapı → kule geçidi) taşınır.
+## Eski: ByzCity'nin kutu iç surunun üstü (x 32,3–34,9, z −14,9…−5,2); `--eskisur=12b` eskisi.
+var WALL_TOP := WALL_TOP_ESKI
+var EMP_AT := EMP_AT_ESKI
+var SPH_AT := SPH_AT_ESKI
+var DOOR := DOOR_ESKI
+var OFS := Vector3.ZERO
+## Meşale yürüyüşünün sınırı (x0, x1, z0, z1) ve otomatik testin yürüdüğü x
+var YOL := Vector4(32.3, 34.9, -14.9, -5.7)
+var YOL_X := 33.4
+const SurHub := preload("res://scripts/world/ist/sur_set_hub.gd")
 
 var city: ByzCity
 var player: Player
@@ -42,6 +54,7 @@ func _ready() -> void:
 	player.show_remote(true)
 	city = ByzCity.new()
 	add_child(city)
+	_yeni_yerler()
 	city.make_sunset()
 	# Güneş ordugâhın üstüne batar (kara surlarının batısı; "Güneş Sultan'ın çadırlarının üstüne batıyor")
 	var sun = city.get("_sun")
@@ -67,16 +80,49 @@ func _ready() -> void:
 	_build_wall_walk()
 	if GameState.autotest:
 		Engine.time_scale = 2.5
+	if GameState.autotest and GameState.autotest_variant == "yuru":
+		_tasima10_yuru()
+		return
 	if GameState.shots_dir != "":
 		_run_shots()
 	else:
 		_run()
 
 
+## TAŞIMA-10: yeni surda sur yolu noktaları. Kapı = kapı kulesinin (Romanos'un güney kulesi, hub −z yanı) sur yolu geçidi;
+## İmparator, Sfrancis, oyuncu, meşaleler eski yerlerinin kapıya göre aynı yerinde (geçidin ortası sur yolunun ortasında).
+func _yeni_yerler() -> void:
+	if not city.sur_yeni:
+		return
+	var kule_z := INF
+	var kule_w := 0.0
+	for t: Dictionary in SurHub.ic_kuleler():
+		# çıkış kapısının −z yanındaki kule (sur yolu iki kule arası: kapı kulesi ile güneydeki dilimin kulesi)
+		if float(t["z"]) < SurHub.KAPI_Z and (kule_z == INF or float(t["z"]) > kule_z):
+			kule_z = float(t["z"])
+			kule_w = float(t["w"])
+	var yy := SurHub.ic_yol_y()
+	DOOR = Vector3(SurHub.ic_yol_x(), yy, kule_z - kule_w * 0.5)
+	OFS = DOOR - DOOR_ESKI
+	OFS.y = yy - DOOR_ESKI.y
+	WALL_TOP = WALL_TOP_ESKI + OFS
+	EMP_AT = EMP_AT_ESKI + OFS
+	SPH_AT = SPH_AT_ESKI + OFS
+	# yürünür en: sur yolu 4,1 m (eski 2,6); şehir yanı korkuluğun ve dış korkuluğun içi
+	var yx := SurHub.ic_yol_x()
+	YOL = Vector4(yx - 1.75, yx + 1.75, -14.9 + OFS.z, DOOR.z - 0.5)
+	YOL_X = SurHub.ic_yol_x() - 0.2
+	if GameState.autotest:
+		print("T10_12B kapi=%s ofs=%s duvar=%s imp=%s yol=%s" % [DOOR, OFS, WALL_TOP, EMP_AT, YOL])
+
+
 ## Surun yürüyüş yolu (iki kule arası): dış kenarda mazgallar, kulede Palaiologos sancağı, kuleye açılan kapı,
 ## söndürülmüş meşaleler (sahne sonunda yakılır), uzakta seyrek nöbetçiler (beş bin kişiyle yirmi iki kilometre sur),
 ## İmparator'un yanında kâtibi ve dostu Yorgi Sfrancis, elinde sayım listesi.
 func _build_wall_walk() -> void:
+	if city.sur_yeni:
+		_build_wall_walk_yeni()
+		return
 	var x_out := 35.3
 	var z := -14.6
 	while z < -5.2:
@@ -137,8 +183,61 @@ func _build_wall_walk() -> void:
 		Props.cyl(arm, 0.05, 0.34, Vector3(0.02, -0.6, 0.1), Color("efe6cf"), Vector3(0, 0, 90), 8)
 
 
+## TAŞIMA-10: yeni surun sur yolu. Mazgallar, korkuluk, kule ve kulenin geçidi (kapı) kesimin kendisi; bölümün kurduğu:
+## kulede Palaiologos sancağı (kumaş), söndürülmüş meşaleler (iç kenarda), seyrek nöbetçiler, Sfrancis.
+func _build_wall_walk_yeni() -> void:
+	# Sancak: kapı kulesinin tepesinde, direk kulenin döşemesine basar (kumaş: kutu levha değil)
+	var fp := DOOR + Vector3(0.0, 0.0, 2.2)
+	fp.y = SurHub.h(Vector3(0, float(SurHub.arayuz().d["HT"]), 0)).y
+	Props.cyl(self, 0.06, 5.0, fp + Vector3(0, 2.5, 0), Color("5a4028"), Vector3.ZERO, 6)
+	var flag := Node3D.new()
+	flag.position = fp + Vector3(0, 4.8, 0)
+	add_child(flag)
+	preload("res://scripts/world/ist/kumas.gd").bayrak(flag, Vector3.ZERO, Vector3.FORWARD, 2.0, 1.4, Color("b0202a"), [], 8, "Sancak")
+	_flag_top = fp
+	# Söndürülmüş meşaleler (iç kenarda, şehir yanı korkuluğun dibinde)
+	for tz: float in [-14.2, -7.4, -5.8]:
+		var t := Node3D.new()
+		t.position = Vector3(YOL.x + 0.3, DOOR.y, tz + OFS.z)
+		add_child(t)
+		Props.cyl(t, 0.05, 1.7, Vector3(0, 0.85, 0), Color("4a3020"), Vector3.ZERO, 5)
+		Props.cyl(t, 0.09, 0.2, Vector3(0, 1.72, 0), Color("2a2a2a"), Vector3.ZERO, 6)
+		var fl := Props.cyl(t, 0.1, 0.35, Vector3(0, 1.97, 0), Color("ffb030"), Vector3.ZERO, 5, 0.0)
+		fl.material_override = Props.mat(Color("ffc050"), 3.0, false, "", false)
+		fl.visible = false
+		fl.name = "Flame"
+		var l := OmniLight3D.new()
+		l.position = Vector3(0, 2.2, 0)
+		l.light_color = Color("ff9a40")
+		l.light_energy = 0.0
+		l.omni_range = 7.0
+		l.name = "Light"
+		t.add_child(l)
+		_torches.append(t)
+	# Seyrek nöbetçiler: yolun ucunda biri, kapı kulelerinin tepesinde birer gözcü
+	Garrison.man(self, Vector3(SurHub.ic_yol_x() + 0.3, DOOR.y, -14.2 + OFS.z), PI * 0.5, 1210, "spear")
+	var ht := SurHub.h(Vector3(0, float(SurHub.arayuz().d["HT"]), 0)).y
+	for t2: Dictionary in SurHub.ic_kuleler():
+		Garrison.man(self, Vector3(SurHub.ic_sur_dis_x() + 2.0, ht, float(t2["z"]) + 1.5), PI * 0.5, 1211 if float(t2["z"]) < SurHub.KAPI_Z else 1212,
+			"bow" if float(t2["z"]) < SurHub.KAPI_Z else "spear")
+	sphrantzes = Person.new({"coat": Color("2a3a5a"), "robe": Color("2a3a5a"), "pants": Color("2a2a30"), "beard": true, "mustache": true,
+		"hair": Color("5a4a3a"), "hat": "skiadion", "skin": Color("e0b894")})
+	sphrantzes.position = SPH_AT
+	sphrantzes.set_meta("no_talk", true)
+	add_child(sphrantzes)
+	sphrantzes.face_toward(EMP_AT)
+	var arm: Node3D = sphrantzes.rig.arm_r if sphrantzes.rig else null
+	if arm:
+		Props.cyl(arm, 0.05, 0.34, Vector3(0.02, -0.6, 0.1), Color("efe6cf"), Vector3(0, 0, 90), 8)
+
+var _flag_top := Vector3.ZERO
+
+
 ## Surların dışı: ovada Osmanlı ordugâhı. Gün batımında çadırlar ve yanmaya başlayan ateşler (boş ufuk yok).
 func _build_camp_view() -> void:
+	if city.sur_yeni:
+		_build_camp_view_yeni()
+		return
 	# Şehrin 400 m'lik dolgu zemininin (üstü y=-0.02) üstünde kalsın: ova surdan dışarıda
 	var ground := Props.box(self, Vector3(420, 0.2, 360), Vector3(247, -0.08, -10), Color("6a6440"))
 	ground.material_override = Props.mat(Color("6a6440"), 0.0, false, "", false)
@@ -196,6 +295,72 @@ func _build_camp_view() -> void:
 		Props.ball(self, rng.randf_range(40.0, 70.0), hp, Color("6a6048"), Vector3(1.0, 0.45, 1.3), 10)
 
 
+## TAŞIMA-10: yeni surda ordugâh görünümü. Hendek, dış sur ve kuleleri kesimin (kutu set yok); ovanın zemini v2 arazisi.
+## Çit, tabyalar, çadırlar, ateşler, otağ ve tepeler eskisiyle aynı dizide (aynı tohum), hendeğin karşı yakasından başlar
+## (eski ön hat x 62 → yeni ova başı + 3 m) ve arazinin üstüne oturur.
+func _build_camp_view_yeni() -> void:
+	var a: RefCounted = SurHub.arayuz()
+	var ova_x := SurHub.h(Vector3(0, 0, float(a.d["zm1"]))).x + 3.0
+	var dx := ova_x - 62.0
+	var zp := -70.0
+	while zp < 60.0:
+		var px := 62.0 + dx
+		Props.cyl(self, 0.12, 2.2, Vector3(px, _oy(px, zp) + 1.1, zp), Color("5a4028"), Vector3(0, 0, randf_range(-4, 4)), 5)
+		zp += 0.6
+	for bz: float in [-30.0, -8.0, 16.0]:
+		var by := _oy(66.0 + dx, bz)
+		# toprak tabya (kutu değil: alçak yığın) ve top
+		Props.ball(self, 2.6, Vector3(66.0 + dx, by - 0.4, bz), Color("7a6440"), Vector3(1.0, 0.42, 1.7), 10)
+		Props.cyl(self, 0.55, 5.5, Vector3(66.5 + dx, by + 1.9, bz), Color("8a6a3a"), Vector3(0, 0, 90), 12)
+		Props.cyl(self, 0.35, 0.2, Vector3(63.7 + dx, by + 1.9, bz), Color("1a1410"), Vector3(0, 0, 90), 12)
+	var rng := RandomNumberGenerator.new()
+	rng.seed = 1453
+	var colors := [Color("d8cbb0"), Color("c8b894"), Color("e0d4b8"), Color("b8a888")]
+	var bands := [Color("8a2b22"), Color("2f5fa8"), Color("3a6b3a"), Color("c98a3a")]
+	for i in 170:
+		var p := Vector3(rng.randf_range(72.0, 300.0) + dx, 0, rng.randf_range(-150.0, 130.0))
+		p.y = _oy(p.x, p.z)
+		var t := Night.tent(self, p, rng.randf_range(1.8, 3.4), colors[i % 4], bands[i % 4])
+		t.rotation.y = rng.randf() * TAU
+	var oy := _oy(170.0 + dx, -10.0)
+	Props.cyl(self, 9.0, 6.0, Vector3(170 + dx, oy + 3.0, -10), Color("b3262d"), Vector3.ZERO, 16)
+	Props.cyl(self, 9.4, 5.0, Vector3(170 + dx, oy + 8.5, -10), Color("c8323a"), Vector3.ZERO, 16, 0.4)
+	Props.ball(self, 0.8, Vector3(170 + dx, oy + 11.5, -10), Color("d8b040"), Vector3.ONE, 8)
+	for i in 64:
+		var x := 66.0 + pow(rng.randf(), 0.8) * 214.0
+		var p := Vector3(x + dx, 0.0, rng.randf_range(-140.0, 120.0))
+		p.y = _oy(p.x, p.z)
+		var fire := Node3D.new()
+		fire.position = p
+		add_child(fire)
+		var sz := 1.0 + (x - 66.0) / 214.0 * 1.6
+		var fl := Props.ball(fire, 0.7 * sz, Vector3(0, 0.7 * sz, 0), Color("ffa040"), Vector3(1.0, 1.7, 1.0), 6, 5.0)
+		fl.material_override = Props.mat(Color("ffa040"), 5.0, false, "", false)
+		var core := Props.ball(fire, 0.4 * sz, Vector3(0, 0.55 * sz, 0), Color("fff0a0"), Vector3(1.0, 1.5, 1.0), 6, 6.0)
+		core.material_override = Props.mat(Color("fff0a0"), 6.0, false, "", false)
+		fire.scale = Vector3.ONE * 0.01
+		_fires.append(fire)
+		if i % 5 == 0:
+			var l := OmniLight3D.new()
+			l.position = Vector3(0, 1.5, 0)
+			l.light_color = Color("ff9a4a")
+			l.light_energy = 2.5
+			l.omni_range = 16.0
+			fire.add_child(l)
+	for i in 9:
+		var hp := Vector3(330.0 + dx + rng.randf_range(-20.0, 20.0), 0.0, -200.0 + i * 50.0)
+		hp.y = _oy(hp.x, hp.z) - 6.0
+		Props.ball(self, rng.randf_range(40.0, 70.0), hp, Color("6a6048"), Vector3(1.0, 0.45, 1.3), 10)
+
+
+## Ovanın zemini (hub yereli): v2'de arazi (IstGeo), değilse kesimin ova düzeyi
+func _oy(x: float, z: float) -> float:
+	if IstBaglama.aktif():
+		var w := IstBaglama.v2(Vector3(x, 0.0, z))
+		return IstGeo.h(w.x, w.z) - IstBaglama.xf.origin.y
+	return SurHub.h(Vector3(0, SurHub.arayuz().y_ova(), 0)).y
+
+
 func _apply_autotest_setup() -> void:
 	if not GameState.autotest:
 		return
@@ -218,7 +383,7 @@ func _run() -> void:
 	hud.clear_card()
 	player.gravity_on = false
 	player.global_position = WALL_TOP
-	player.face(Vector3(90.0, 8.0, -12.0))
+	player.face((Vector3(90.0, 8.0, -12.0) + OFS))
 	await hud.fade_to(0.0, 1.4)
 	await _wait(1.5)
 	player.face(city.emperor.global_position + Vector3(0, 1.5, 0))
@@ -252,9 +417,9 @@ func _run() -> void:
 	await _t("D12B_T_SHIPS")
 	# Güneş ordugâhın üstüne batar; şehirde akşam duası için çanlar çalar
 	city.emperor.look_target = null
-	city.emperor.face_toward(Vector3(90.0, 12.0, -8.6))
+	city.emperor.face_toward((Vector3(90.0, 12.0, -8.6) + OFS))
 	# Güneşe bakarken İmparator kadrajın kenarında kalır ("Bak. Güneş..." derken görünmüyordu)
-	player.face(city.emperor.global_position.lerp(Vector3(90.0, 9.0, -10.0), 0.12) + Vector3(0, 1.2, 0))
+	player.face(city.emperor.global_position.lerp((Vector3(90.0, 9.0, -10.0) + OFS), 0.12) + Vector3(0, 1.2, 0))
 	Audio.sfx("church_bell", -8.0, 0.9)
 	await _k("D12B_K_03")
 	_light_fires(9.0)
@@ -313,7 +478,7 @@ func _run() -> void:
 	city.emperor.visible = false
 	sphrantzes.visible = false
 	await _light_torches_yourself()
-	player.face(Vector3(90.0, 7.0, -10.0))
+	player.face((Vector3(90.0, 7.0, -10.0) + OFS))
 	await _wait(2.2)
 	await hud.fade_to(1.0, 1.4)
 	# Pencere 07:15'te (26 Nisan öğlesi) açılacaktı; Tolga gün batımında hâlâ surda. Hikmet son dakikaya (07:29) alır:
@@ -330,6 +495,21 @@ func _run() -> void:
 	# Dünya burada yazılmaz: eski bir kayıttan kalan ertelemeyi sil, hükmü kuşatma verecek
 	GameState.flags.erase("world10")
 	await _end_chapter()
+
+
+## TAŞIMA-10 =yuru: gerçek Player botu sur yolunda (yerçekimi açık): üç meşale, kuleye açılan kapının önü, yolun başı.
+## Eski ve yeni sette aynı noktalar (bölümün kendi değişkenleri). Satır: T9YURU … OZET (tests/_ist/tasima9_bot.gd)
+func _tasima10_yuru() -> void:
+	var BOT := load("res://tests/_ist/tasima9_bot.gd")
+	hud.set_cinematic(false)
+	player.gravity_on = true
+	var yy := DOOR.y
+	var bacak: Array = []
+	for t in _torches:
+		bacak.append(["mesale_%.1f" % t.global_position.z, Vector3(YOL_X, yy, t.global_position.z), yy])
+	bacak.append(["kapi_onu", Vector3(DOOR.x, yy, DOOR.z - 0.8), yy])
+	bacak.append(["yol_basi", Vector3(YOL_X, yy, YOL.z + 0.4), yy])
+	await BOT.yuru(self, player, hud, WALL_TOP + Vector3(0, 0.1, 0), bacak, "yeni" if city.sur_yeni else "eski")
 
 
 func _d(sec: float) -> float:
@@ -376,13 +556,13 @@ func _light_torches_yourself() -> void:
 			continue
 		t0 += get_process_delta_time()
 		var gp := player.global_position
-		player.global_position = Vector3(clampf(gp.x, 32.3, 34.9), gp.y, clampf(gp.z, -14.9, -5.7))
+		player.global_position = Vector3(clampf(gp.x, YOL.x, YOL.y), gp.y, clampf(gp.z, YOL.z, YOL.w))
 		var near: Node3D = null
 		for t in left:
 			if Vector2(t.global_position.x - gp.x, t.global_position.z - gp.z).length() < 1.6:
 				near = t
 		if GameState.autotest and near == null:
-			player.global_position = Vector3(33.4, gp.y, left[0].global_position.z)
+			player.global_position = Vector3(YOL_X, gp.y, left[0].global_position.z)
 			continue
 		hud.set_prompt(tr("UI_PROMPT12B_TORCH") if near else "")
 		if near and (Input.is_action_just_pressed("interact") or GameState.autotest):
@@ -515,7 +695,7 @@ func _run_shots() -> void:
 	await _snap("c12b_01_son_aksam.png")
 	# 2) Mazgalın arasından ordugâh: çit, toplar, ateşler
 	player.global_position = WALL_TOP + Vector3(1.2, 0, 0.2)
-	player.face(Vector3(80.0, 6.0, -14.0))
+	player.face((Vector3(80.0, 6.0, -14.0) + OFS))
 	hud.bark("SPK_EMPEROR", "D12B_K_03", 30.0)
 	await get_tree().create_timer(0.3, false).timeout
 	await _snap("c12b_02_ordugah.png")

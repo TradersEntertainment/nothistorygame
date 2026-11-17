@@ -550,6 +550,10 @@ static func kur(p_id: String, sec := {}) -> Dictionary:
 		o["gedik_sade"] = [a.gx]
 	if kanca and float(a.kesim["kapi"]["gw"]) > 0.0 and not bool(a.kesim["kapi"]["kapali"]) and bool(sec.get("parca", true)):
 		o["kanat_disarida"] = true
+	# TAŞIMA-10: "kapi_parca" — parçasız (kanca yok, şehirdeki dilimin aynısı) kurulumda da kapı koşusunun kanatları
+	# oynanış parçası (KapiKanat) olarak kurulur ve köprü (KapiKopru) yürünür olabilir. Varsayılan false: kurulum aynı.
+	if bool(sec.get("kapi_parca", false)) and float(a.kesim["kapi"]["gw"]) > 0.0 and not bool(a.kesim["kapi"]["kapali"]):
+		o["kanat_disarida"] = true
 	var oyun := Node3D.new()
 	oyun.name = "OyunDilimi"
 	kok.add_child(oyun)
@@ -630,6 +634,28 @@ static func kur(p_id: String, sec := {}) -> Dictionary:
 				PARCA.PARCA_.pis(kk)
 				parca["yan_kapi_kopru"] = kk
 			parca["yan_kapi_arayuz"] = ra
+	if bool(sec.get("kapi_parca", false)) and not bool(sec.get("parca", true)) and float(a.kesim["kapi"]["gw"]) > 0.0:
+		var pk := Node3D.new()
+		pk.name = "OyunParcalari"
+		kok.add_child(pk)
+		if not bool(a.kesim["kapi"]["kapali"]):
+			var kn2 := PARCA.KapiKanat.new()
+			kn2.name = "Ahsap_KapiKanat"
+			kn2.kur(a)
+			pk.add_child(kn2)
+			kn2.ac(bool(sec.get("kapi_acik", false)), false)
+			parca["kapi_kanat"] = kn2
+		if bool(a.kesim["kapi"]["hendek"]):
+			var kk2 := PARCA.KapiKopru.new()
+			kk2.name = "Ahsap_KapiKopru"
+			kk2.kur(a)
+			pk.add_child(kk2)
+			kk2.hal(String(sec.get("kapi_kopru", "saglam")))
+			for c in kk2.get_children():
+				if c is Node3D:
+					PARCA.PARCA_.pis(c)
+			PARCA.PARCA_.pis(kk2)
+			parca["kapi_kopru"] = kk2
 	olc["parca_ms"] = (Time.get_ticks_usec() - t5) / 1000.0
 	olc["toplam_ms"] = (Time.get_ticks_usec() - t0) / 1000.0
 	return {"kok": kok, "arayuz": a, "parca": parca, "ms": olc}

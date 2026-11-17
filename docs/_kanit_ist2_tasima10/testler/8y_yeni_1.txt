@@ -1,0 +1,4 @@
+SURHUB kur bolum=8y kesim=romanos ms=134 ic_yuz_x=32.50 ic_yol_y=12.12 dis_sur_dis_x=55.10
+T10_8Y kapi_z=18.09 kopru_z=30.6 ova_z=51.1 ova_y=-3.17 (min -3.63 max -2.46) kanat=true
+AUTOTEST PASS chapter=8y variant= outcome=8Y.1 id=seal warnings=0 lowered=0 radio=true
+BITTI rc=0

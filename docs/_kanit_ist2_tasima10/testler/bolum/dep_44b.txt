@@ -1,0 +1,2 @@
+AUTOTEST PASS chapter=44 variant= outcome=44.1 light=phone battery=4.2 bumps=4 hits=0 rescued=false kid=false
+BITTI rc=0

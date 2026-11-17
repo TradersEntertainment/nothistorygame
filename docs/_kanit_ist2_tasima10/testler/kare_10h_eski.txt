@@ -1,0 +1,6 @@
+T10KARE_YUKLE bolum=10h v2=true yeni=false ms=93600
+T10KARE ad=01_gedik cizim=2335 ilkel=4548852
+T10KARE ad=02_gedik_yakin cizim=2326 ilkel=4382471
+T10KARE ad=03_kapi_sehir_yani cizim=2212 ilkel=4764309
+T10KARE ad=04_caddeden_sur cizim=5477 ilkel=5428368
+T10KARE_BITTI

@@ -1,0 +1,3 @@
+SURHUB kur bolum=10h kesim=romanos ms=170 ic_yuz_x=32.50 ic_yol_y=12.12 dis_sur_dis_x=55.10
+AUTOTEST PASS chapter=10h variant=save outcome=10H.1 truth=3 direnc=3 paradox=10
+BITTI rc=0

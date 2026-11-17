@@ -17,6 +17,7 @@ extends Node
 ## GameState.settings["eski_dunya"] = true. Kapalıyken bölümler eski World1453 ile aynen çalışır.
 
 static var acik := true
+const SurHub := preload("res://scripts/world/ist/sur_set_hub.gd")
 ## Bölümün bildirdiği istek (hazirla): hangi bölüm, gece mi
 static var bolum := 0
 static var gece := false
@@ -41,9 +42,11 @@ static var xf := Transform3D()
 const CAMP_OTAG := Vector2(0.0, -62.0)
 const HUB_ORTA := Vector2(-4.0, -13.0)
 ## Bölümün kendi zemini ve süsü bu yarıçapa kadar (yerel çapa çevresi); ötesi v2 arazisine yumuşak geçer
-const YAMA := {"camp": [Vector2(0.0, -20.0), 170.0, 330.0], "byz_walls": [Vector2(-4.0, -13.0), 62.0, 260.0]}
+const YAMA := {"camp": [Vector2(0.0, -20.0), 170.0, 330.0], "byz_walls": [Vector2(-4.0, -13.0), 62.0, 260.0],
+	"gate8y": [Vector2(0.0, 55.0), 115.0, 160.0]}
 ## v2 yapılarının kaldırıldığı alan (yerel; bölümün oynanış alanı + pay)
-const TEMIZ := {"camp": Rect2(-150.0, -175.0, 300.0, 300.0), "byz_walls": Rect2(-56.0, -58.0, 104.0, 90.0)}
+const TEMIZ := {"camp": Rect2(-150.0, -175.0, 300.0, 300.0), "byz_walls": Rect2(-56.0, -58.0, 104.0, 90.0),
+	"gate8y": Rect2(-16.0, -46.0, 32.0, 236.0)}
 ## Uçuş sisi (NihatPowers._thin_fog hedefi): v2'nin km ölçeği için incelir (eski 0,0007)
 const UCUS_SIS := 0.00035
 ## v2 konma noktası kimliği → yan görevin kimliği
@@ -139,6 +142,9 @@ static func birak() -> void:
 static func istek(region_name: String) -> bool:
 	if region_name == "byz_walls" and bolum == 0 and tolga_istek():
 		return true
+	# TAŞIMA-10: Bölüm 8y yeni surda (Romanos kapısı, v2'nin gerçek yeri); `--eskisur=8y` eski dünya
+	if region_name == "gate8y" and SurHub.yeni8y() and etkin():
+		return true
 	return bolum in BOLUMLER and region_name in BOLGELER and etkin()
 
 
@@ -155,6 +161,10 @@ static func tolga_istek() -> bool:
 	if id == "" or not (id in TOLGA):
 		return false
 	if id in TOLGA_ACIK:
+		return true
+	# TAŞIMA-10: yeni hub suru kullanan bölüm (6b) v2'de oynanır: hub'ın yeni suru şehrin Romanos dilimidir (eski dünyanın
+	# kutu surları onu çevirmesin). `--eskisur=6` ile eski dünya ve eski sur.
+	if SurHub.yeni(id):
 		return true
 	for a: String in OS.get_cmdline_user_args() + OS.get_cmdline_args():
 		if a.trim_prefix("--") == "ist2-deneme=" + id:
@@ -214,7 +224,12 @@ static func donusum(region_name: String) -> Transform3D:
 			var b := Basis(Vector3.UP, atan2(dir.x, dir.y))          # yerel +z → dir
 			var t := Vector3(o.x, IstGeo.h(o.x, o.y), o.y) - b * Vector3(CAMP_OTAG.x, 0.0, CAMP_OTAG.y)
 			return Transform3D(b, t)
+		"gate8y":
+			return SurHub.gate8y_v2()
 		"byz_walls":
+			# TAŞIMA-10: yeni hub surunda hub, yeni surun Romanos kesiminin GERÇEK yerine oturur (kapı = çıkış kapısı)
+			if SurHub.sahnede():
+				return SurHub.hub_v2()
 			var kp := _hub_kapi_v2()
 			var p: Vector2 = kp[0]
 			var dis: Vector2 = kp[1]
@@ -358,8 +373,16 @@ static func build(parent: Node3D, region_name: String, keep_local: Array, _night
 			return dy + CampDay.height(q.x, q.z) - (0.35 if grid.grow(-0.5).has_point(Vector2(q.x, q.z)) else 0.03))
 	else:
 		var zr := ic.grow(4.0)
+		# TAŞIMA-10: yeni hub surunda yama yalnız iç surun şehir yanında: peribolos, teras, hendek ve ova kesimin gerçek
+		# arazisi (eski yama ovayı hub'ın düzüne çekiyordu: hendek ve ova 3,5 m yükselirdi)
+		var sur_x := SurHub.HUB_IC_X + 2.0 if (region_name == "byz_walls" and SurHub.sahnede()) else INF
+		var sur_z := 2.5 if region_name == "gate8y" else INF
 		IstGeo.yama_ekle(Vector2(mv.x, mv.z), ym[1], ym[2], func(x: float, z: float) -> float:
 			var q := IstBaglama.yerel(Vector3(x, 0.0, z))
+			if q.x > sur_x or q.z > sur_z:
+				return IstGeo.h_ham(x, z)
+			if sur_z < INF:
+				return dy - 0.03          # 8y: şehir yanında görünen zemin bölümün döşemesiyle aynı (−0,03)
 			return dy + (-0.35 if zr.has_point(Vector2(q.x, q.z)) else -0.05))
 	var temiz: Rect2 = TEMIZ[region_name]
 	IstGeo.dislanan = [v2_rect(temiz)]
@@ -463,12 +486,18 @@ const KORU := ["romanos"]
 static func _temizle(region_name: String, alan: Rect2) -> void:
 	var n_s := 0
 	var s := IstSehir.active
+	# TAŞIMA-10: yeni hub surunda şehrin Romanos kapı dilimi de kalkar: yerine aynı dilimin oynanır kesimi (SurHub) kurulur
+	var koru: Array = [] if ((region_name == "byz_walls" and SurHub.sahnede()) or region_name == "gate8y") else KORU
 	if s != null:
 		for i in range(s.items.size() - 1, -1, -1):
 			var it: Dictionary = s.items[i]
 			var p: Vector3 = it["pos"]
 			var r := float(it.get("r", 0.0))
-			if String(it.get("id", "")) in KORU:
+			if String(it.get("id", "")) in koru:
+				continue
+			# TAŞIMA-10: yeni surda şehrin kara suru dilimleri kalır (hub'ın kutu suru artık onları örtmüyor; kaldırılınca
+			# Romanos kesiminin güneyinde 30 m sur boşluğu kalıyordu). Kalkan yalnız şehrin Romanos kapı dilimi (yerine kesim).
+			if koru.is_empty() and String(it.get("hat", "")) == "kara_suru":
 				continue
 			if yerel_icinde(alan.grow(r * 0.5), p.x, p.z):
 				it["want"] = 99            # kuyrukta bekleyen işi kurulmaz
