@@ -4,9 +4,9 @@ Dal `wip/ist2-tasima10` (taban `wip/ist2-taban17` = f962b002).
 
 | Adım | Durum |
 |---|---|
-| Kurulum (Godot 4.4.1, import) | sürüyor |
-| 1 ÖLÇ VE DÖK | sürüyor (okuma: SUR_BOLUM_TASIMA §1/§4.4, tasima8/9 raporları, byz_city, baglama, 12b, 10h, 8y, 6) |
-| 2 12b | başlamadı |
+| Kurulum (Godot 4.4.1, import) | TAMAM |
+| 1 ÖLÇ VE DÖK | TAMAM (dokum.md) |
+| 2 12b | sürüyor: SurHub + 12b sur yolu yeni (PASS ×1), kareler bekliyor |
 | 3 8y | başlamadı |
 | 4 10h | başlamadı |
 | 5 6b | başlamadı |

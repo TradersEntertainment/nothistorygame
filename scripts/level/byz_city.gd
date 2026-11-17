@@ -38,6 +38,11 @@ var _cypress_spots: Array[Vector4] = []
 ## panoraması (uçuşlu Bölüm 7, fragman). Parça ayrımı yerel z −45 civarı.
 var part := "walls"
 var world: SiegeField
+## TAŞIMA-10: yeni hub suru (SurHub: yeni surun Romanos kesimi; bölüm 6b, 7b, 10h, 12b). Karar _ready'de sahnedeki bölümden
+## (SurHub.sahnede: listede ve `--eskisur` istenmemiş); öbür bölümler ve far_hub eski kutu suru kurar.
+const SurHub := preload("res://scripts/world/ist/sur_set_hub.gd")
+var sur_yeni := false
+var sur_hub: Dictionary = {}
 
 
 ## Bu parçada mı (yerel z'ye göre)
@@ -53,6 +58,11 @@ func _ready() -> void:
 	Audio.voice_space("outdoor")
 	_build_sky()
 	if part == "walls":
+		sur_yeni = SurHub.sahnede()
+	if part == "walls" and sur_yeni:
+		# yeni sur: bölümün alanı iç surun şehir yüzünde biter (peribolos, sur ve ova v2'nin/kesimin)
+		world = World1453.build(self, "byz_walls", [Rect2(-46.0, -48.0, 46.0 + SurHub.HUB_IC_X, 70.0)], false)
+	elif part == "walls":
 		world = World1453.build(self, "byz_walls", [Rect2(-46.0, -48.0, 84.0, 70.0)], false)
 	elif part == "aya":
 		world = World1453.build(self, "byz_aya", [Rect2(-46.0, -114.0, 64.0, 76.0)], false)
@@ -347,7 +357,9 @@ func set_wet(k: float) -> void:
 
 
 func _build_ground() -> void:
-	var body := Props.solid(self, Vector3(90, 0.2, 80), Vector3(0, -0.1, -10), Color.WHITE)
+	# TAŞIMA-10: yeni surda döşeme iç surun şehir yüzünde biter (ötesi kesimin peribolosu)
+	var gx1 := SurHub.HUB_IC_X if sur_yeni else 45.0
+	var body := Props.solid(self, Vector3(gx1 + 45.0, 0.2, 80), Vector3((gx1 - 45.0) * 0.5, -0.1, -10), Color.WHITE)
 	Props.set_pattern(body, Color("fff8ec"), "cobble")
 	var gmi := body.get_child(0) as MeshInstance3D
 	_ground_mat = load("res://scripts/level/zemin.gd").doseme_kir((gmi.material_override as StandardMaterial3D).duplicate())      # ZEMİN: kir/aşınma
@@ -1543,6 +1555,9 @@ func _wall(size: Vector3, pos: Vector3, _color: Color, _front: bool) -> void:
 # ---------------------------------------------------------------- kara surları
 
 func _build_walls() -> void:
+	if sur_yeni:
+		_build_walls_yeni()
+		return
 	# İç sur: kuleli, tuğla bantlı, önünde ahşap iskele ve topçular
 	var x := 34.0
 	# Tek haritada dünyanın iç suru bölgenin kenarında (yerel z −48 ve 22) kesilir: iç sur o kenarlara kadar uzar
@@ -1591,6 +1606,12 @@ func _build_walls() -> void:
 		Props.make_solid(Props.box(self, Vector3(0.6, 0.9, 0.8), Vector3(x - 1.2, 12.45, zz), Color("bba98a")))
 		zz += 1.6
 	# Ahşap iskele ve Giustiniani'nin masası (haritalar, sözleşmeler)
+	_build_giust_yeri(x)
+	_build_gate()
+
+
+## Giustiniani'nin iskelesi, masası, sandıkları ve kendisi (eski ve yeni surda aynı yer: iç surun şehir yüzünün önü)
+func _build_giust_yeri(x: float) -> void:
 	Props.solid(self, Vector3(4.0, 0.3, 8.0), Vector3(x - 4.0, 1.2, GIUST_POS.z), Color("7a5a38"))
 	for k in 4:
 		Props.cyl(self, 0.1, 1.2, Vector3(x - 5.8 + (k % 2) * 3.6, 0.6, GIUST_POS.z - 3.6 + (k / 2) * 7.2), Color("5a4028"), Vector3.ZERO, 6)
@@ -1604,7 +1625,27 @@ func _build_walls() -> void:
 	giustiniani.rotation.y = -PI / 2.0
 	add_child(giustiniani)
 	Props.interactable(self, "giustiniani", Vector3(1.2, 2.0, 1.2), GIUST_POS + Vector3(0, 1.0, 0))
-	_build_gate()
+
+
+## TAŞIMA-10: yeni sur — iç sur, kuleler, kapı, peribolos, dış sur, hendek ve köprü yeni surun Romanos kesiminden (SurHub);
+## hub'ın kendi işleri (Giustiniani'nin iskelesi, çıkış kapısının nöbetçileri, meşaleleri ve etkileşimi) aynı yerde.
+func _build_walls_yeni() -> void:
+	sur_hub = SurHub.kur(self, {"kapi_acik": true})
+	_build_giust_yeri(34.0)
+	var g := EXIT_POS
+	var fx := SurHub.HUB_IC_X
+	var hw := 1.7
+	# Kapının şehir yanı: iki meşale ve iki nöbetçi (kanatlar şehre doğru açık: nöbetçiler kanatların dışında)
+	for sz: float in [-1.0, 1.0]:
+		lights.append(Night.torch(self, Vector3(fx - 2.0, 0, g.z + sz * 3.9), 2.6))
+		var guard := Person.new({"coat": Color("8a2b22"), "pants": Color("4a3a2a"), "hat": "helm", "mustache": true, "skin": Color("d9a07a")})
+		guard.position = Vector3(fx - 3.0, 0, g.z + sz * 3.3)
+		guard.rotation.y = -PI / 2.0
+		add_child(guard)
+		Props.cyl(guard, 0.025, 2.3, Vector3(0.35, 1.15, 0.1), Color("5a4028"), Vector3.ZERO, 5)
+		Props.cyl(guard, 0.05, 0.25, Vector3(0.35, 2.35, 0.1), Color("b8bcc4"), Vector3.ZERO, 5, 0.0)
+		Props.cyl(guard, 0.3, 0.05, Vector3(-0.3, 1.0, 0.15), Color("9a1a22"), Vector3(0, 0, 90), 12)
+	Props.interactable(self, "exit", Vector3(1.4, 3.4, hw * 2.0), Vector3(fx - 0.9, 1.7, g.z))
 
 
 ## Aziz Romanos Kapısı (kara surlarının iç yüzünde, iki kule arasında): şehre giriş ve beyaz bayrakla çıkış.

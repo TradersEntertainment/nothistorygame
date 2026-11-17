@@ -17,6 +17,7 @@ extends Node
 ## GameState.settings["eski_dunya"] = true. Kapalıyken bölümler eski World1453 ile aynen çalışır.
 
 static var acik := true
+const SurHub := preload("res://scripts/world/ist/sur_set_hub.gd")
 ## Bölümün bildirdiği istek (hazirla): hangi bölüm, gece mi
 static var bolum := 0
 static var gece := false
@@ -156,6 +157,10 @@ static func tolga_istek() -> bool:
 		return false
 	if id in TOLGA_ACIK:
 		return true
+	# TAŞIMA-10: yeni hub suru kullanan bölüm (6b) v2'de oynanır: hub'ın yeni suru şehrin Romanos dilimidir (eski dünyanın
+	# kutu surları onu çevirmesin). `--eskisur=6` ile eski dünya ve eski sur.
+	if SurHub.yeni(id):
+		return true
 	for a: String in OS.get_cmdline_user_args() + OS.get_cmdline_args():
 		if a.trim_prefix("--") == "ist2-deneme=" + id:
 			return true
@@ -215,6 +220,9 @@ static func donusum(region_name: String) -> Transform3D:
 			var t := Vector3(o.x, IstGeo.h(o.x, o.y), o.y) - b * Vector3(CAMP_OTAG.x, 0.0, CAMP_OTAG.y)
 			return Transform3D(b, t)
 		"byz_walls":
+			# TAŞIMA-10: yeni hub surunda hub, yeni surun Romanos kesiminin GERÇEK yerine oturur (kapı = çıkış kapısı)
+			if SurHub.sahnede():
+				return SurHub.hub_v2()
 			var kp := _hub_kapi_v2()
 			var p: Vector2 = kp[0]
 			var dis: Vector2 = kp[1]
@@ -358,8 +366,13 @@ static func build(parent: Node3D, region_name: String, keep_local: Array, _night
 			return dy + CampDay.height(q.x, q.z) - (0.35 if grid.grow(-0.5).has_point(Vector2(q.x, q.z)) else 0.03))
 	else:
 		var zr := ic.grow(4.0)
+		# TAŞIMA-10: yeni hub surunda yama yalnız iç surun şehir yanında: peribolos, teras, hendek ve ova kesimin gerçek
+		# arazisi (eski yama ovayı hub'ın düzüne çekiyordu: hendek ve ova 3,5 m yükselirdi)
+		var sur_x := SurHub.HUB_IC_X + 2.0 if (region_name == "byz_walls" and SurHub.sahnede()) else INF
 		IstGeo.yama_ekle(Vector2(mv.x, mv.z), ym[1], ym[2], func(x: float, z: float) -> float:
 			var q := IstBaglama.yerel(Vector3(x, 0.0, z))
+			if q.x > sur_x:
+				return IstGeo.h_ham(x, z)
 			return dy + (-0.35 if zr.has_point(Vector2(q.x, q.z)) else -0.05))
 	var temiz: Rect2 = TEMIZ[region_name]
 	IstGeo.dislanan = [v2_rect(temiz)]
@@ -463,12 +476,14 @@ const KORU := ["romanos"]
 static func _temizle(region_name: String, alan: Rect2) -> void:
 	var n_s := 0
 	var s := IstSehir.active
+	# TAŞIMA-10: yeni hub surunda şehrin Romanos kapı dilimi de kalkar: yerine aynı dilimin oynanır kesimi (SurHub) kurulur
+	var koru: Array = [] if (region_name == "byz_walls" and SurHub.sahnede()) else KORU
 	if s != null:
 		for i in range(s.items.size() - 1, -1, -1):
 			var it: Dictionary = s.items[i]
 			var p: Vector3 = it["pos"]
 			var r := float(it.get("r", 0.0))
-			if String(it.get("id", "")) in KORU:
+			if String(it.get("id", "")) in koru:
 				continue
 			if yerel_icinde(alan.grow(r * 0.5), p.x, p.z):
 				it["want"] = 99            # kuyrukta bekleyen işi kurulmaz
