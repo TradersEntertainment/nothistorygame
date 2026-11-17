@@ -102,3 +102,48 @@ sağlanınca döngü biter: tek sefer; koşularda `yedek=0`), boru dönüşü (`
 Sonda: `=esik_dur` (oyuncu mazgal kenarındaki korkuluğun TEPESİNE, (−7,2; 10,17; 59,85)) ve `=dis_dur` (diş tepesine,
 (−7,5; 10,82; 59,85)) → 3 sn sonra ikisinde de yolda (y 9,62), merdivene yeniden tutunma 0 (`T11ESIK … yolda=true
 tutundu=0`). Bot tırmanışı bütün çeşitlerde `T11CIKIS y=9.70 z=60.60 x=-6.00 t≈9,1 yedek=0`.
+
+## Bölüm 17, 19, 19o, 29, 29o — SeaWalls `in_world` (tek harita) + HornWorld yakın devamı
+
+**Bağlar:** SeaWalls'ın `in_world` dalı yalnız rıhtım + yakın kesiti (x −60…80) kurar; kutular ve bütün bağlar 4b ile aynı
+(yukarıda). Ortam/güneş `walls`'ın doğrudan çocukları olarak kaldı (`SeaBattle.make_day/make_dusk`, 17 `_captive_light`,
+19o `_make_dawn` aynı düğümleri bulur; yeni görünüş kökü `DenizSetGorunus` ayrı bir çocuk). `walls.lights`, `walls.niko`,
+`walls.world`, `gate_leaves`, `open_gate` aynı. 19 SeaWalls'ı iki kez kurar (`:70`, `:525`): ikisine de `bolum = "19"`.
+Zincir ve devam `HornWorld`'den: 2b ile bölgenin keep dikdörtgenine ≤ 250 m olan Haliç parçaları yeni kalemin uzak katmanı
+(`horn_chain`: Haliç 2 456 + Marmara 1 858 üçgen, tek ağ; `DENIZSET hornworld` satırı).
+
+**Kareler** (`kare/17|19|19o|29|29o/`):
+- **17 b1 rıhtım yakın (2 m)**: gövde taş örgü, seyrek hatıl; iki kapı (lento + kemer; mozaik haç) — kutu yok, havada yok, 4b
+  ile aynı ressam. Rıhtımın sura yakın şeridini dünyanın gri kıyı arazisi örtüyor (ESKİ'de de aynı: World1453 arazisi rıhtım
+  üstüne çıkıyor; "hâlâ kötü" 4).
+- **17 b2 sudan genel**: kesim, dört kule, devam aynı kalem — kutu yok, havada yok (kuleler suya iner).
+- **17 b3/b4 dikiş x 80 / x −60**: SeaWalls kesimi + HornWorld devamı aynı kadrajda; ESKİ'de devam beyaz kutu gövde + kırmızı
+  şerit + kutu kule, YENİ'de deniz suru kalemi (kaideli gövde, korkuluk, diş, pahlı kule). Dikiş geometrisi eskisiyle aynı:
+  dünyanın kıyı hattı yerel z −3,2 ile çakışmıyor, kesimin ucunda arazi yamacı başlıyor ve devam yamacın üstünden geçiyor
+  ("hâlâ kötü" 4, "başka dosyaya istek" 4).
+- **19 g1 dönüş sahnesi (gemiden, sura ≈ 8 m)**: x −6 kulesinin batı yanı, sur yüzü, uzakta kapılar — kutu yok, havada yok.
+- **19 g2 sudan genel**, **19 d1 dikiş x −60**: 17 ile aynı.
+- **19o h1 kayıktan (≈ 50 m)**: kesim + kuleler + devam tek ressam, gece; **19o d1 dikiş x 80**: devam yamacın üstünde.
+- **29 / 29o j1 savaştan (gündüz, ≈ 125 m)**: sur ve kuleler görünüyor (gemilerin ardında), gündüz ışığında kaba gri deniz
+  taşı; ESKİ'nin kırmızı şeritli kutu gövdesi gitti — bu uzaklıkta diş ve korkuluk seçiliyor, ayrıntı seçilmiyor.
+
+## Şehir — `IstHalicSur` (96 m'lik Haliç dilimi)
+
+`build` yakın ve orta katmanda: eski K.slab çarpışma kutuları (gövde parçaları, lentolar, iki yüzün korkulukları, kule alt/üst
+parçaları + koridor lentosu + teras korkulukları, rıhtım) birebir kurulur ve gizlenir (`wall` metası); görünüş `deniz_set`:
+gövde (iki kapı açıklığı), deniz korkuluğu (1,05 m: çarpışmayla aynı) + dişler (eski `K.merlons` dizisi: kesit başı + 0,4,
+1,6 m adım), şehir korkuluğu (merdiven ağzı açık), kuleler (pahsız: ayak izi rıhtımda; sur yolu koridoru z ±0,9 × 2,4 m;
+teras korkuluğunda kule merdiveninin 2 m'lik ağzı), iki yüzde kapı lentosu + boşaltma kemeri (şehir yüzünde kitabe), rıhtım
+taşı. Basamaklar, fıçı/balya yığınları, babalar, rampa, fenerler, sancak aynı. Şehir kurucusu (`_sur_tas`) "ashlar"
+yüzeyleri deniz taşı gölgelendiricisine çevirir (tur 1). `dims/tower_xs/perches/climbs` DEĞİŞMEDİ.
+**Çarpışma dökümü** (`tests/_ist/tasima11_halic_sonda.tscn`, lod 0/1/2): eski 661 şekil, karma 3854034809 = yeni 661 şekil,
+karma 3854034809 (`testler/halic_sonda_*.txt`; dönüş değerleri satırı da aynı).
+**Kareler** (`kare/sehir/`, dilim tek başına, gündüz; `tests/_ist/tasima11_halic_kare.tscn`):
+- **s1 denizden**: dört kule, iki kapı, rıhtım; ESKİ'nin K.band kırmızı şeritleri ve kutu dişleri yok — kutu yok, havada yok,
+  bölüm sahneleriyle aynı ressam.
+- **s2 rıhtım yakın (kule köşesi, 2 m)**: taş örgü + tuğla hatıl köşeden döner; rıhtım taşı — kutu yok.
+- **s3 sur yolu dişleri yakın**, **s4 kule geçidi**: korkuluk ve harpuştalı dişler, kule koridoru açık (çarpışma koridoruyla
+  aynı) — kutu yok; harpuşta gölgede koyu ("hâlâ kötü" 1).
+- **s5 kapı şehirden**: lento + kemer + kitabe.
+- **s6 kule terası**: teras korkuluğunda merdiven ağzı açık, basamak terasa çıkıyor — ağzın iki ucunda gökyüzü sızan 2–3 cm'lik
+  aralık var (kule merdiveni korkuluktan dar; "hâlâ kötü" 6).
