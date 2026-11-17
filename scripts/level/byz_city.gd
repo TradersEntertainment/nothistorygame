@@ -88,6 +88,9 @@ func _ready() -> void:
 	var drect := Rect2(-44, -110, 88, 138)
 	if part == "walls":
 		drect = Rect2(-44, -45, 88, 73)
+		if sur_yeni:
+			# TAŞIMA-10: yeni surun şehir yüzünde etek (OTURTMA, 3 m) var: süs ve yürüyen halk eteğin önünde kalır
+			drect.size.x = SurHub.HUB_IC_X - 3.5 - drect.position.x
 	elif part == "aya":
 		drect = Rect2(-44, -110, 62, 70)
 	# Zindan hücresi (Bölüm 6): yürüyen halk parmaklıkların arasından geçiyordu

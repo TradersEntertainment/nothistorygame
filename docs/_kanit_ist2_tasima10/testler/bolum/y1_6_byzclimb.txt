@@ -1,0 +1,4 @@
+SURHUB kur bolum=6 kesim=romanos ms=184 ic_yuz_x=32.50 ic_yol_y=12.12 dis_sur_dis_x=55.10
+VISAUDIT float scene=chapter6.tscn who=Person/@Node3D@215 spk= feet=(28.6, 0.2, -44.4) floor=0.00 by=@Node3D@215/@StaticBody3D@114855 act= meta=walker src=Chapter6>ByzCity>Person shape=(77.5, 0.2, 80.0)@(-6.25, -0.1, -10.0) lp=(28.55, 0.17, -44.44)
+AUTOTEST PASS chapter=6 variant=byzclimb branch=6b outcome=6b.1 paradox=0 mistakes=0 telsiz=4
+BITTI rc=0

@@ -1,0 +1,5 @@
+SURHUB kur bolum=8y kesim=romanos ms=159 ic_yuz_x=32.50 ic_yol_y=12.12 dis_sur_dis_x=55.10
+T10_8Y kapi_z=18.09 kopru_z=30.6 ova_z=51.1 ova_y=-3.17 (min -3.63 max -2.46) kanat=true
+VISAUDIT float scene=chapter8y.tscn who=Person/Station_coil_rope spk= feet=(13.7, -2.9, 103.4) floor=-3.08 by=Chapter8y/OvaZemini act=crouch meta=no_talk,ayak_kok_dis src=Chapter8y>Station_coil_rope>Person shape=HeightMapShape3D@(0.0, 0.0, 101.5) lp=(0.0, 0.18, 0.0)
+AUTOTEST PASS chapter=9 variant=arch route= byz=true offers=["theodoros"] outcome=9.5 telsiz=4 merak=0
+BITTI rc=0
