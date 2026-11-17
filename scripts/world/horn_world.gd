@@ -584,6 +584,8 @@ func _deniz_kur(ad: String) -> void:
 	var mi: MeshInstance3D = _deniz_ag.mesh_ekle(self, load("res://scripts/world/ist/sur_doku.gd").mat(1, Color("c9b89a"), false), ad)
 	if mi:
 		mi.set_meta("no_walk", true)
+		mi.visibility_range_end = 1200.0
+	print("DENIZSET hornworld %s bolge=%s ucgen=%d" % [ad, region_name, _deniz_ag.n])
 	_deniz_ag = null
 
 

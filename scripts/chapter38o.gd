@@ -286,6 +286,15 @@ func _build_wall() -> void:
 	gate_r.position = Vector3(GATE_X + 1.5, QUAY_Y, WALL_Z - 2.25)
 	add_child(gate_r)
 	Props.box(gate_r, Vector3(1.5, 4.0, 0.12), Vector3(-0.75, 2.0, 0), Color("4a3220"))
+	if not eski:
+		# TAŞIMA 11: kanatlarda demir kuşaklar ve çiviler (SeaWalls kapısıyla aynı dil; düz tahta levha okunuyordu)
+		for kn: Array in [[gate_l, 1.0], [gate_r, -1.0]]:
+			var lf: Node3D = kn[0]
+			var sx: float = kn[1]
+			for yy: float in [0.6, 2.0, 3.4]:
+				Props.box(lf, Vector3(1.5, 0.1, 0.03), Vector3(sx * 0.75, yy, -0.075), Color("3a3a3e"))
+				for k in 4:
+					Props.ball(lf, 0.03, Vector3(sx * (0.2 + k * 0.37), yy, -0.095), Color("2a2a2e"), Vector3.ONE, 4)
 	Props.interactable(self, "bollard", Vector3(1.0, 1.0, 1.0), BOLLARD + Vector3(0, 0.5, 0))      # rıhtım yolunu kapatmasın
 	# Kazan: yürüyüş yolunun deniz kenarında, merdivenin yanında; denize döndürülür
 	fight = WallFight.new()

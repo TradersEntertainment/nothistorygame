@@ -292,13 +292,35 @@ static func kule(n: Node3D, k: Dictionary, g: Dictionary, ad := "DenizKule") -> 
 	var koyu = SURKULE.Ag.new()
 	var poly := _plan(cx, w, zi, zo, pah)
 	var ys1 := ky + 0.22
+	# gecit: sur yolunun kuleden geçtiği koridor (Vector3: z0, z1, boy; yb'den): yan yüzlerde açıklık + koridor duvarları
+	var gecit: Vector3 = k.get("gecit", Vector3.ZERO)
+	# teras_kapi: kara yüzündeki teras korkuluğunda merdiven ağzı (Vector2: x0, x1)
+	var tk: Vector2 = k.get("teras_kapi", Vector2.ZERO)
 	var prof: Array = [[dip, kd + bat], [ky, kd + bat], [ys1, bat], [yb, 0.0]]
 	if lod == 0:
-		prof += [[yb, 0.12], [yb + 0.28, 0.12], [yb + 0.28, 0.0],
-			[HT - 0.95, 0.0], [HT - 0.95, 0.14], [HT - 0.65, 0.14], [HT - 0.65, 0.28], [HT - 0.35, 0.28], [HT - 0.35, 0.42],
-			[HT + SURKULE.PARAPET_H, 0.42]]
+		prof += [[yb, 0.12], [yb + 0.28, 0.12], [yb + 0.28, 0.0]]
+		if gecit.z > 0.3:
+			prof += [[yb + gecit.z, 0.0]]
+		prof += [[HT - 0.95, 0.0], [HT - 0.95, 0.14], [HT - 0.65, 0.14], [HT - 0.65, 0.28], [HT - 0.35, 0.28], [HT - 0.35, 0.42],
+			[HT, 0.42], [HT + SURKULE.PARAPET_H, 0.42]]
 	else:
-		prof += [[HT - 0.6, 0.0], [HT - 0.6, 0.3], [HT + SURKULE.PARAPET_H, 0.3]]
+		if gecit.z > 0.3:
+			prof += [[yb + gecit.z, 0.0]]
+		prof += [[HT - 0.6, 0.0], [HT - 0.6, 0.3], [HT, 0.3], [HT + SURKULE.PARAPET_H, 0.3]]
+	var kapi := {}
+	var pn := poly.size()
+	if gecit.z > 0.3:
+		for i in pn:
+			var a := poly[i]
+			var b := poly[(i + 1) % pn]
+			if absf(a.x - b.x) < 1e-3 and absf(b.y - a.y) > 1e-3:
+				var t0 := (gecit.x - a.y) / (b.y - a.y)
+				var t1 := (gecit.y - a.y) / (b.y - a.y)
+				kapi[i] = [[clampf(minf(t0, t1), 0.0, 1.0), clampf(maxf(t0, t1), 0.0, 1.0), yb + gecit.z, yb]]
+	var tk_t := Vector2.ZERO
+	if tk.y - tk.x > 0.1:
+		tk_t = Vector2((tk.x - poly[0].x) / (poly[1].x - poly[0].x), (tk.y - poly[0].x) / (poly[1].x - poly[0].x))
+		kapi[0] = [[minf(tk_t.x, tk_t.y), maxf(tk_t.x, tk_t.y), HT + SURKULE.PARAPET_H, HT]]
 	var rng := RandomNumberGenerator.new()
 	rng.seed = seed
 	var yamalar: Array = []
@@ -310,16 +332,45 @@ static func kule(n: Node3D, k: Dictionary, g: Dictionary, ad := "DenizKule") -> 
 				var v: float = ym[4]
 				return Color(v, v * 0.98, v * 0.93)
 		return Color.WHITE
-	SURKULE._or(tas, poly, prof, {}, tint if lod == 0 else Callable(), 0.05 if lod == 0 else 0.0, seed, 3 if lod == 0 else 1)
+	SURKULE._or(tas, poly, prof, kapi, tint if lod == 0 else Callable(), (0.05 if kapi.is_empty() else 0.0) if lod == 0 else 0.0, seed, 3 if lod == 0 else 1)
 	var po: float = float(prof[prof.size() - 1][1])
 	var pd := SURKULE._otele(poly, po)
 	var pi := poly
 	var ytp := HT + SURKULE.PARAPET_H
-	SURKULE._halka(tas, pd, pi, ytp)
-	SURKULE._ic_yuz(tas, pi, HT, ytp)
+	var atla := {}
+	var ic_kapi := {}
+	var dis_bos := {}
+	if tk_t != Vector2.ZERO:
+		atla[0] = true
+		ic_kapi[0] = [[minf(tk_t.x, tk_t.y), maxf(tk_t.x, tk_t.y), ytp, HT]]
+		dis_bos[0] = [[minf(tk_t.x, tk_t.y), maxf(tk_t.x, tk_t.y)]]
+		# kara kenarının korkuluk tepesi iki parça (merdiven ağzı açık); ağzın iki yanağı
+		for pr: Vector2 in [Vector2(0.0, minf(tk_t.x, tk_t.y)), Vector2(maxf(tk_t.x, tk_t.y), 1.0)]:
+			var a0 := pd[0].lerp(pd[1], pr.x)
+			var a1 := pd[0].lerp(pd[1], pr.y)
+			var b0 := pi[0].lerp(pi[1], pr.x)
+			var b1 := pi[0].lerp(pi[1], pr.y)
+			tas.quad(Vector3(a0.x, ytp, a0.y), Vector3(a1.x, ytp, a1.y), Vector3(b1.x, ytp, b1.y), Vector3(b0.x, ytp, b0.y), Vector3.UP)
+		for tt: float in [minf(tk_t.x, tk_t.y), maxf(tk_t.x, tk_t.y)]:
+			var a2 := pd[0].lerp(pd[1], tt)
+			var b2 := pi[0].lerp(pi[1], tt)
+			tas.quad(Vector3(a2.x, HT, a2.y), Vector3(b2.x, HT, b2.y), Vector3(b2.x, ytp, b2.y), Vector3(a2.x, ytp, a2.y), Vector3.RIGHT)
+	SURKULE._halka(tas, pd, pi, ytp, atla)
+	SURKULE._ic_yuz(tas, pi, HT, ytp, ic_kapi)
 	SURKULE._kapak(tas, pi, HT, true)
+	if gecit.z > 0.3:
+		# koridor: iki duvar, tavan, döşeme (sur yolunun devamı)
+		var x0 := cx - w * 0.5 - 0.13
+		var x1 := cx + w * 0.5 + 0.13
+		var yg := yb + gecit.z
+		var zl := minf(gecit.x, gecit.y)
+		var zh := maxf(gecit.x, gecit.y)
+		tas.quad(Vector3(x0, yb, zl), Vector3(x1, yb, zl), Vector3(x1, yg, zl), Vector3(x0, yg, zl), Vector3.BACK, ORGU)
+		tas.quad(Vector3(x0, yb, zh), Vector3(x1, yb, zh), Vector3(x1, yg, zh), Vector3(x0, yg, zh), Vector3.FORWARD, ORGU)
+		tas.quad(Vector3(x0, yg, zl), Vector3(x1, yg, zl), Vector3(x1, yg, zh), Vector3(x0, yg, zh), Vector3.DOWN)
+		tas.quad(Vector3(x0, yb + 0.005, zl), Vector3(x1, yb + 0.005, zl), Vector3(x1, yb + 0.005, zh), Vector3(x0, yb + 0.005, zh), Vector3.UP)
 	if lod == 0:
-		SURKULE._disler(tas, pd, pi, ytp, seed, {}, 0.6)
+		SURKULE._disler(tas, pd, pi, ytp, seed, dis_bos, 0.6)
 		# ok yarıkları: deniz yüzünde, sur yolunun üstünde (şev bitmiş: yüz düz)
 		var ny: int = k.get("yarik", 2)
 		for i in ny:
