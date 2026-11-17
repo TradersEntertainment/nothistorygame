@@ -545,6 +545,7 @@ func _wall_run(a: Vector3, b: Vector3, h: float, tower_step: float, d: Dressing,
 		if rng.randf() < 0.5:
 			nd.glow(Vector3(0.4, 0.6, 0.4), p + Vector3(0, th + 1.0, 0), Color("ffb040"))
 		t += tower_step
+	_deniz_kur("DenizSurUzak_%d" % int(absf(a.x) + absf(a.z)))
 
 
 ## TAŞIMA 11: kıyı surunun bölüm kesimine (keep) ≤ 250 m'lik kısmı deniz suru kaleminin uzak katmanıyla (deniz_set.uzak_parca,
@@ -620,7 +621,6 @@ func _horn_walls() -> void:
 		d.cyl(7.0, 22.0, Vector3(e.x, 10.0, e.z), STONE.darkened(0.2), Vector3.ZERO, 14)
 		d.cyl(7.4, 0.6, Vector3(e.x, 21.3, e.z), Color("9a5040"), Vector3.ZERO, 14)
 	_wall_run(b, World1453.TIP, 9.0, 60.0, d, merl, nd)
-	_deniz_kur("DenizSurUzak_Halic")
 	d.build(self)
 	_night.append(nd.build(self))
 	Scenery.scatter(self, Scenery._boxm(Vector3.ONE), merl, [], Props.mat(STONE.darkened(0.2), 0.0, false, "ashlar"))
@@ -747,7 +747,6 @@ func _marmara_walls() -> void:
 	for f: float in World1453.MARMARA_GATES:
 		mg.append(ma.lerp(mb, f))
 	_wall_run(ma, mb, 9.0, 58.0, d, merl, nd, mg)
-	_deniz_kur("DenizSurUzak_Marmara")
 	# Kıyı kayalıkları
 	for i in 60:
 		var t := rng.randf()
