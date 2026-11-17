@@ -1,0 +1,6 @@
+T10KARE_YUKLE bolum=7 v2=true yeni=false ms=73645
+T10KARE ad=01_iz_sur cizim=1100 ilkel=1653126
+T10KARE ad=02_iz_kapi cizim=883 ilkel=1534601
+T10KARE ad=03_caddeden_sur cizim=4624 ilkel=3451441
+T10KARE ad=04_tepeden cizim=5494 ilkel=2864055
+T10KARE_BITTI

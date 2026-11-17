@@ -14,10 +14,10 @@ hepsine TAM BOY bakıldı. Klasörler: `kare/<bölüm>/eski|yeni/`, `testler/` (
 | 3 | **8y** | **TAMAM** (1 bilinen denetim satırı, aşağıda) | v2'de Romanos'un gerçek yeri; iç kapı (açık kanatlar) → 5 m'lik koridor → dış kapı (`KapiKanat`, nöbetçi açar) → 3,4 m inen rampa → **yürünür** köprü (`KapiKopru` "saglam") → ova (v2 arazisi) → ölü bölge → siper; yürüyüş z −10 → 137,5 aynı (bot 176,3 → 182,6 m) |
 | 4 | **10h** | **KISMEN** | Çıkış = Romanos iç kapısı ✓; gedik **v2 oyun gediği DEĞİL** (iç surun şehir yüzünde, eski yerinde; kutu yarık levhaları kalktı, taş yığını): v2'nin oyun gediği dış surda, şehir yanından erişim yok (aşağıda "sahibine") |
 | 5 | **6b** | **TAMAM** | Meydan/pazar aynı; "sur yolu" (surun dibindeki yol) yeni iç surun dibinde; kapıdan çıkış Romanos iç kapısı; beyaz bayrak kumaş. 6b artık v2 dünyasında (eski dünyanın kutu surları kesimi çevirmesin) |
-| 6 | **7b fon** | **TAMAM** | Hub yeni surla (v2, Nihat uçuşu aynı); ×2 PASS; kareler `kare/7b` |
+| 6 | **7b fon** | **TAMAM** | Hub yeni surla (v2, Nihat uçuşu aynı); 11 çeşit ×2 PASS, eski ×1; 4 kare çifti `kare/7b` |
 | — | Geri dönüş | **TAMAM** | `--eskisur` / `--eskisur=12b,10h,6,7,8y`: eski kutu sur ve eski yerleşim satır satır (44 çeşit eski ×1 PASS) |
 | — | Sözleşme | **AYNI** | `SURSOZLESME PASS kalem=13 kesim=8` · `SUROYUN nokta=519 havada=0 gomuk=0 katida=0` · `WALKTHRU OZET yol=7 tamam=7 takilma=0 dusme=0` · `ESYATEST PASS` |
-| — | Bütçe | **KISMEN** | 30 kameranın 26'sında yeni ≤ eski + %5; 4'ü aşıyor (8y'de dünya değişti: eski dünya → v2; 12b'de bir kamera). Tablo aşağıda |
+| — | Bütçe | **KISMEN** | 34 kameranın 30'unda yeni ≤ eski + %5; 4'ü aşıyor (8y'de dünya değişti: eski dünya → v2; 12b'de bir kamera). Tablo aşağıda |
 
 ## Ortak bağdaştırıcı: `scripts/world/ist/sur_set_hub.gd` (yeni; class_name yok, `preload`)
 
@@ -138,7 +138,10 @@ hepsine TAM BOY bakıldı. Klasörler: `kare/<bölüm>/eski|yeni/`, `testler/` (
 | 6b/02 Giustiniani masası | İskele ve masa yeni surun önünde; iyi. |
 | 6b/03 kapı yakın | Açık iç kanatlar, koridor, dış kapı açık, ötede ova; iyi. |
 | 6b/04 caddeden sur | Yeni sur ve kule. |
-| 7b/01–04 | `kare/7b` (iz noktalarından sur ve kapı, caddeden, tepeden) |
+| 7b/01 iz sur | Giustiniani'nin izinden yeni iç sur ve iskele; havada yok, aynı ressam. |
+| 7b/02 iz kapı | Kapının şehir yanındaki izden açık iç kanatlar, koridor, açık dış kapı, ova; kutu yok. |
+| 7b/03 caddeden sur | Caddeden yeni sur ve kule. |
+| 7b/04 tepeden | Hub iç surun önünde, kapı kuleleri, sur sürekli (eskisinde kutu sur ve kapının güneyinde boşluk). |
 
 ## Çeşit tablosu (yeni ×2 + eski ×1; `testler/bolum/`)
 
@@ -175,6 +178,7 @@ Hepsi BİTTİ (zaman aşımı 0; 2–4 süreç aynı anda).
 | 8y/07 | 2372 / 2,58 M | 2517 / 1,80 M | **✗ çizim +%6** (aynı neden) |
 | 10h/01–04 | 2335/4,55 · 2326/4,38 · 2212/4,76 · 5477/5,43 | 2183/4,32 · 2139/4,12 · 1792/4,40 · 4860/5,23 | ✓ ✓ ✓ ✓ |
 | 6b/01–04 | 5295/8,65 · 4407/8,36 · 2617/4,47 · 7238/8,90 | 2203/3,73 · 1425/3,13 · 1071/3,16 · 4597/5,08 | ✓ ✓ ✓ ✓ (6b eski dünya → v2) |
+| 7b/01–04 | 1100/1,65 · 883/1,53 · 4624/3,45 · 5494/2,86 | 835/1,54 · 682/1,53 · 4207/3,28 · 5129/2,92 | ✓ ✓ ✓ ✓ (04 ilkel +%2) |
 
 ## Sonraki taşıyana
 1. **Hub'ı yeni sura bağlamak:** `const SurHub := preload("res://scripts/world/ist/sur_set_hub.gd")`; bölüm kimliğini
@@ -233,4 +237,5 @@ Hepsi BİTTİ (zaman aşımı 0; 2–4 süreç aynı anda).
 - `scripts/level/byz_city.gd` (yeni sur kipi; meydan/pazar/ev aynı; döşeme ve süs alanı iç surun önünde biter)
 - `scripts/chapter12b.gd`, `chapter8y.gd`, `chapter10h.gd`, `chapter6.gd` (yeni kip + `=yuru`); `chapter7.gd` değişmedi
 - `tests/_ist/tasima10_sonda.*`, `tasima10_kare.*` (yeni)
+- Güvenlik anahtarı: v2 kapalıyken (`--eski-dunya`) hub ve 8y eski surda (`SurHub.yeni` v2'yi şart koşar; 12b ile ölçüldü, PASS)
 - `world1453.gd` DEĞİŞMEDİ (8y'nin yönlendirmesi `IstBaglama.istek` içinden).
