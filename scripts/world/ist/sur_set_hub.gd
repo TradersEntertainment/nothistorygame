@@ -26,12 +26,13 @@ static var _a: RefCounted = null
 
 ## Bu bölüm yeni hub surunu mu kullanır (bölüm listesinde ve geri dönüş istenmemiş)
 static func yeni(bolum: String) -> bool:
-	return bolum in BOLUMLER and not SurSet.eski_istendi(bolum)
+	# v2 kapalıysa (`--eski-dunya`, güvenlik anahtarı) eski dünyanın kutu surları kesimi çevirirdi: eski sur
+	return bolum in BOLUMLER and not SurSet.eski_istendi(bolum) and IstBaglama.etkin()
 
 
 ## Bölüm 8y (Beyaz Havlu) yeni surda mı (`--eskisur=8y` ya da `--eskisur` eski)
 static func yeni8y() -> bool:
-	return not SurSet.eski_istendi("8y")
+	return not SurSet.eski_istendi("8y") and IstBaglama.etkin()
 
 
 ## Kesim yereli → 8y bölge yereli (x 0 kapı ortası, +z ova, −z şehir): dönüşsüz; iç sur ortası z 0, peribolos toprağı y 0
