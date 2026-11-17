@@ -6,10 +6,10 @@ Dal `wip/ist2-tasima10` (taban `wip/ist2-taban17` = f962b002).
 |---|---|
 | Kurulum (Godot 4.4.1, import) | TAMAM |
 | 1 ÖLÇ VE DÖK | TAMAM (dokum.md) |
-| 2 12b | sürüyor: SurHub + 12b sur yolu yeni (PASS ×1), kareler bekliyor |
-| 3 8y | başlamadı |
-| 4 10h | başlamadı |
-| 5 6b | başlamadı |
+| 2 12b | sürüyor: sur yolu yeni surda (PASS ×1); ilk kareler alındı; kusur: kapının güneyinde dış görünüşte sur boşluğu (inceleniyor) |
+| 3 8y | sürüyor: v2 bölgesi gate8y (Romanos'un gerçek yeri) + kesim + kanatlar/köprü; `""` PASS ×1 |
+| 4 10h | hub yeni surla `""` PASS ×1 (gedik henüz eski yerinde) |
+| 5 6b | hub yeni surla (v2) `byz` PASS ×1 |
 | 6 7b fon | başlamadı |
 
 ## Tasarım kararı (ilk)

@@ -28,17 +28,31 @@ const KEEP := [Rect2(-12.0, -45.0, 24.0, 40.2), Rect2(-8.0, 0.0, 16.0, 12.5), Re
 	Rect2(-14.0, 36.0, 28.0, 64.0), Rect2(-5.0, 100.0, 10.0, 26.0), Rect2(-14.0, 126.0, 28.0, 26.0)]
 const START := Vector3(0.0, 0.0, -10.0)
 const NIKO_AT := Vector3(1.3, 0.0, -8.6)
-const NIKO_GATE := Vector3(2.2, 0.0, 9.8)
-const GUARD_AT := Vector3(-2.6, 0.0, 9.6)
-const BAR_AT := Vector3(0.0, 1.55, 13.62)
+## TAŞIMA-10: kapı bölgesinin bağları değişken (eski değerleri aşağıda); yeni surda (`_yeni_yerler`) Romanos kesiminden:
+## iç sur z −2,5…2,5, koridor (peribolos, 5 m en) 2,5…17,5, dış kapı kanadı z 18,09, rampa 20,1…29,2 (3,4 m iniş),
+## köprü 30,1…50,1 (y −3,41), ova z > 50,1 (y ≈ −3,45). Ölü bölge ve hatlar (z ≥ 54) aynı yerde: yürüyüş z −10 → 137,5 aynı.
+var NIKO_GATE := Vector3(2.2, 0.0, 9.8)
+var GUARD_AT := Vector3(-2.6, 0.0, 9.6)
+var BAR_AT := Vector3(0.0, 1.55, 13.62)
 ## Sürgü kaldırılınca sol kulenin peribolosa bakan yüzüne dikine yaslanır (alt ucu yerde, üstü taşa değer)
-const BAR_DOWN := Vector3(-4.6, 2.72, 12.45)
-const HINGE_X := 3.45
-const GATE_Z := 13.85
+var BAR_DOWN := Vector3(-4.6, 2.72, 12.45)
+var HINGE_X := 3.45
+var GATE_Z := 13.85
 const LEAF_R := 2.2          # nöbetçinin kanadı çektiği tutamak, menteşeden uzaklık (m)
-const GATE_TRIGGER_Z := 8.4
-const BRIDGE_Z := 21.0
-const FIELD_Z := 37.0
+var GATE_TRIGGER_Z := 8.4
+var BRIDGE_Z := 21.0
+var FIELD_Z := 37.0
+const SurHub := preload("res://scripts/world/ist/sur_set_hub.gd")
+## TAŞIMA-10: yeni sur (SurHub.yeni8y ve v2 bağlaması açık); eski: `--eskisur=8y`
+var sur_yeni := false
+var sur_hub: Dictionary = {}
+## Sürgünün boyu (kapının enine göre), nöbetçinin sürgüye yürüdüğü ve bıraktığı yer, gözcünün yeri
+var BAR_L := 5.6
+var GUARD_BAR := Vector3(-0.9, 0, 12.6)
+var GUARD_DROP := Vector3(-3.95, 0, 11.95)
+var LOOKOUT_AT := Vector3(0.4, 9.3, 15.0)
+## Ova (köprünün ötesi) zemin yüksekliği (v2 arazisinin koridordaki ortancası) ve rampa
+var _ova_y := -0.03
 const TRENCH_Z := 103.5
 const HASAN_AT := Vector3(-1.3, 0.0, 109.0)
 const HUSEYIN_AT := Vector3(1.3, 0.0, 109.0)
@@ -140,7 +154,10 @@ func _ready() -> void:
 	_build_sky()
 	# Bölge: dünyanın kara surlarındaki kapı (yerel x 0 = dünya x GATE_X); dünya tek haritadan kurulur
 	World1453.REGIONS[REGION] = Transform3D(Basis.IDENTITY, Vector3(GATE_X, 0.0, 0.0))
+	sur_yeni = SurHub.yeni8y() and IstBaglama.etkin()
 	world = World1453.build(self, REGION, KEEP, false)
+	if sur_yeni:
+		_yeni_yerler()
 	_build_ground()
 	_build_bounds()
 	_build_gate()
@@ -187,11 +204,86 @@ func _wait(sec: float) -> void:
 ## Görünen zeminin yüksekliği (bölge yereli): hendek geçidi 0, ova dünyanın görünen yüzeyi, gerisi döşeme (−0,03).
 ## Hiçbir yerde döşemenin (görünmez katı zemin) altına inmez: kişiler ona gömülmesin.
 func _gy(x: float, z: float) -> float:
+	if sur_yeni:
+		return _gy_yeni(x, z)
 	if z > 19.6 and z < 36.4 and absf(x) < 3.5:
 		return 0.0
 	if z >= 36.0:
 		return maxf(SiegeField.surf(x + GATE_X, z), -0.03)
 	return -0.03
+
+
+# ================================================================ TAŞIMA-10: yeni sur
+
+## Kapı bölgesi yeni surun Romanos kesiminde (v2'de gerçek yeri; SurHub.gate8y_v2). Kesim bölgenin çerçevesine kurulur
+## (SurHub.M8: dönüşsüz, peribolos toprağı y 0); kapı kanatları ve köprü oynanış parçası (KapiKanat, KapiKopru "saglam").
+func _yeni_yerler() -> void:
+	var a: RefCounted = SurHub.arayuz()
+	var d: Dictionary = a.d
+	sur_hub = SurHub.kur(self, {"cerceve": SurHub.M8(), "kapi_acik": true, "kapi_kopru": "saglam"})
+	var kn = (sur_hub["parca"] as Dictionary).get("kapi_kanat")
+	var gw := float(a.kesim["kapi"]["gw"])
+	HINGE_X = gw * 0.5
+	GATE_Z = float(d["zo0"]) + 0.45 + 0.14              # dış kapının menteşe çizgisi (KapiKanat: zk + 0,14)
+	if kn != null:
+		var km: Array = kn.get("kanatlar")
+		# dış kapının kanatları (2: sol, 3: sağ) bölümün kanatları olur: kapalı başlar, nöbetçi açar (bölümün açısıyla)
+		for i in [2, 3]:
+			(km[i] as Node3D).rotation.y = 0.0
+		_leaf_l = km[2]
+		_leaf_r = km[3]
+	var dz := GATE_Z - 13.85
+	BAR_AT = Vector3(0.0, 1.55, GATE_Z - 0.28 - 0.23)
+	BAR_L = gw - 0.4
+	BAR_DOWN = Vector3(-gw * 0.5 + 0.22, 2.72, GATE_Z - 2.6)
+	GUARD_AT = Vector3(-1.6, 0.0, 9.6 + dz)
+	NIKO_GATE = Vector3(1.6, 0.0, 9.8 + dz)
+	GUARD_BAR = Vector3(-0.9, 0, 12.6 + dz)
+	GUARD_DROP = Vector3(-gw * 0.5 + 0.6, 0, GATE_Z - 2.0)
+	GATE_TRIGGER_Z = 8.4 + dz
+	BRIDGE_Z = float(d["zm0"]) + 0.5
+	FIELD_Z = float(d["zm1"]) + 1.0
+	LOOKOUT_AT = Vector3(0.4, float(d["OH"]) + 0.12 + 1.3, float(d["zo1"]) - 0.6)
+	# Ova: koridordaki arazi örnekleri (v2), ortanca; döşeme ve görünmez sınırlar bu düzeyde
+	var ys: Array = []
+	var z := FIELD_Z
+	while z < 152.0:
+		for x: float in [-12.0, 0.0, 12.0]:
+			ys.append(_arazi(x, z))
+		z += 4.0
+	ys.sort()
+	_ova_y = float(ys[ys.size() / 2])
+	if GameState.autotest:
+		print("T10_8Y kapi_z=%.2f kopru_z=%.1f ova_z=%.1f ova_y=%.2f (min %.2f max %.2f) kanat=%s" % [GATE_Z, BRIDGE_Z, FIELD_Z, _ova_y,
+			float(ys[0]), float(ys[ys.size() - 1]), kn != null])
+
+
+## v2 arazisi (bölge yereli)
+func _arazi(x: float, z: float) -> float:
+	if not IstBaglama.aktif():
+		return SurHub.arayuz().y_ova() + 0.12
+	var w := IstBaglama.v2(Vector3(x, 0.0, z))
+	return IstGeo.h(w.x, w.z) - IstBaglama.xf.origin.y
+
+
+## Yeni surda görünen zemin: şehir yanı −0,03, koridor ve dış kapı 0 (kesimin toprağı), rampa (dış kapıdan terasa 3,4 m),
+## köprü ve iki yanındaki taş ayaklar −3,41; ova arazisi (≥ döşeme); hendeğin içi dibi.
+func _gy_yeni(x: float, z: float) -> float:
+	var d: Dictionary = SurHub.arayuz().d
+	if z < -2.5:
+		return -0.03
+	if z < float(d["zo1"]) + 0.9:
+		return 0.0
+	var tk: float = SurHub.arayuz().y_teras() + 0.12
+	if z < float(d["zm0"]) - 0.6:
+		if absf(x) < 3.0:
+			return clampf(-0.42 * (z - (float(d["zo1"]) + 0.9)), -3.43, 0.0)
+		return tk
+	if z <= float(d["zm1"]) + 0.6:
+		if absf(x) < 3.2:
+			return -3.43
+		return SurHub.arayuz().y_hendek_dip() + 0.12
+	return maxf(_arazi(x, z), _ova_y - 0.03) if absf(x) < 16.0 else _arazi(x, z)
 
 
 # ================================================================ sahne
@@ -252,6 +344,9 @@ func _block(size: Vector3, center: Vector3) -> void:
 
 
 func _build_ground() -> void:
+	if sur_yeni:
+		_build_ground_yeni()
+		return
 	_floor(Vector3(24, 0.6, 40.0), Vector3(0, -0.03, -24.8))      # şehir içi
 	_floor(Vector3(8, 0.6, 5.0), Vector3(0, -0.03, -2.4))         # iç sur kapısının altı
 	_floor(Vector3(14, 0.6, 15.0), Vector3(0, -0.03, 6.6))        # peribolos
@@ -280,6 +375,32 @@ func _build_ground() -> void:
 	Nature.trail(self, [Vector3(0.6, 0, -9.0), Vector3(0.4, 0, 13.0), Vector3(0.2, 0, 36.0)] + PATH + [Vector3(0.3, 0, 108.0),
 		Vector3(0.0, 0, 146.0)], "footprint", gy, 1.4, 8112)
 	_build_causeway()
+
+
+## TAŞIMA-10: yeni surda döşeme ve zemin ayrıntısı. Koridor, rampa ve köprü kesimin kendi katıları (KapiKopru, rampa
+## tümseği); bölüm şehir yanına ve ovaya görünmez döşeme koyar (v2 arazisi akışla katılaşır, oyuncu ondan önce de bassın).
+func _build_ground_yeni() -> void:
+	_floor(Vector3(24, 0.6, 40.0), Vector3(0, -0.03, -24.8))      # şehir içi
+	_floor(Vector3(30, 0.6, 102.0), Vector3(0, _ova_y - 0.03, FIELD_Z - 1.0 + 51.0))      # ölü bölge ve hatlar
+	var gy := Callable(self, "_gy")
+	Nature.ground_detail(self, Rect2(-10.0, -40.0, 20.0, 34.0), "straw", 0.03, 8101, gy)
+	Nature.ground_detail(self, Rect2(-10.0, -40.0, 20.0, 34.0), "pebble", 0.06, 8102, gy)
+	Nature.ground_detail(self, Rect2(-2.2, 3.0, 4.4, 14.0), "rubble", 0.05, 8103, gy)
+	Nature.ground_detail(self, Rect2(-2.2, 3.0, 4.4, 14.0), "stone", 0.08, 8104, gy)
+	var f0 := FIELD_Z
+	var fr := Rect2(-14.0, f0, 28.0, 101.0 - f0)
+	Nature.ground_detail(self, fr, "rubble", 0.05, 8106, gy)
+	Nature.ground_detail(self, fr, "stone", 0.09, 8107, gy)
+	Nature.ground_detail(self, fr, "mud", 0.03, 8108, gy)
+	Nature.ground_detail(self, fr, "ash", 0.012, 8113, gy)
+	Nature.ground_detail(self, fr, "footprint", 0.04, 8114, gy)
+	Nature.ground_detail(self, fr, "hoofprint", 0.015, 8115, gy)
+	Nature.ground_detail(self, fr, "tall_grass", 0.02, 8116, gy)
+	Nature.ground_detail(self, Rect2(-14.0, 96.0, 28.0, 54.0), "hoofprint", 0.03, 8109, gy)
+	Nature.ground_detail(self, Rect2(-14.0, 112.0, 28.0, 38.0), "camp_mud", 0.02, 8110, gy)
+	Nature.ground_detail(self, Rect2(-14.0, 125.0, 28.0, 25.0), "straw", 0.04, 8111, gy)
+	Nature.trail(self, [Vector3(0.6, 0, -9.0), Vector3(0.4, 0, 13.0), Vector3(0.2, 0, FIELD_Z)] + PATH + [Vector3(0.3, 0, 108.0),
+		Vector3(0.0, 0, 146.0)], "footprint", gy, 1.4, 8112)
 
 
 ## Hendek geçidi: dünyanın dolgu geçidinin üstü taş döşeme (enine sıralar), ortasında iki tekerlek izi, iki yanda alçak taş
@@ -312,6 +433,20 @@ func _build_causeway() -> void:
 
 
 func _build_bounds() -> void:
+	if sur_yeni:
+		# şehir yanı aynı; koridor (iç sur → dış sur) kesimin duvarları; rampa ve köprü ayaklarının iki yanı (terasa ve 6 m'lik
+		# hendeğe düşülmez); ovanın yanları ve sonu ova düzeyinde
+		var d: Dictionary = SurHub.arayuz().d
+		_block(Vector3(26, 4, 0.5), Vector3(0, 2, -22.0))
+		var z0 := float(d["zo1"])
+		var z1 := float(d["zm1"]) + 0.8
+		for sx: float in [-1.0, 1.0]:
+			_block(Vector3(0.5, 4, 18.0), Vector3(sx * 9.0, 2, -13.4))
+			_block(Vector3(0.5, 5, z1 - z0), Vector3(sx * 3.35, -1.0, (z0 + z1) * 0.5))
+			_block(Vector3(11.4, 3, 0.5), Vector3(sx * 9.3, _ova_y + 1.5, z1 + 0.2))
+			_block(Vector3(0.5, 4, 152.0 - z1), Vector3(sx * 15.0, _ova_y + 2.0, (z1 + 152.0) * 0.5))
+		_block(Vector3(31, 4, 0.5), Vector3(0, _ova_y + 2.0, 152.0))
+		return
 	_block(Vector3(26, 4, 0.5), Vector3(0, 2, -22.0))
 	for sx: float in [-1.0, 1.0]:
 		_block(Vector3(0.5, 4, 18.0), Vector3(sx * 9.0, 2, -13.4))
@@ -326,6 +461,15 @@ func _build_bounds() -> void:
 ## Dış surun kapısı: iki ahşap kanat (kalas, demir kuşak, menteşe), önlerinde sürgü. Kanatlar katıdır; açılınca
 ## peribolosa doğru döner, sürgü kenara yere konur.
 func _build_gate() -> void:
+	if sur_yeni:
+		# Kanatlar kesimin (KapiKanat: aynı ressam); bölümün kurduğu yalnız sürgü (kapının eninde)
+		_bar = Node3D.new()
+		_bar.position = BAR_AT
+		add_child(_bar)
+		Props.box(_bar, Vector3(BAR_L, 0.2, 0.16), Vector3.ZERO, Color("6a4a2c"))
+		for x: float in [-BAR_L * 0.45, BAR_L * 0.45]:
+			Props.box(_bar, Vector3(0.06, 0.22, 0.17), Vector3(x, 0, 0), Color("3a3634"))
+		return
 	for side: float in [-1.0, 1.0]:
 		var h := Node3D.new()
 		h.position = Vector3(side * HINGE_X, 0.0, GATE_Z)
@@ -383,6 +527,11 @@ func _build_people() -> void:
 		var s := Soldier.new([Color("6a2a2a"), Color("3a4a6a"), Color("5a3a2a"), Color("6a2a2a")][i], "stand", "helm")
 		# Mazgalın ardında taş atış basamağında (0,8 m): köprüden bakınca belden yukarısı mazgalın üstünde görünür
 		s.position = Vector3(x, 8.8, 15.05)
+		if sur_yeni:
+			# yeni sur: dış surun yolunda (kapının üstü ve yanı), korkuluğun ardında; basamak yok (korkuluk 1,2 m)
+			var dd: Dictionary = SurHub.arayuz().d
+			x = [-1.2, 0.6, 2.0, -7.8][i]
+			s.position = Vector3(x, float(dd["OH"]) + 0.12, float(dd["zo1"]) - IstSurlar.PARAPET_T - 0.45)
 		s.set_meta("climber", true)        # mazgalda: Unclip yere indirmesin (sur yolunun çarpışması sonradan kurulur)
 		s.set_meta("no_unclip", true)
 		add_child(s)
@@ -391,8 +540,9 @@ func _build_people() -> void:
 			# Okçular yayı kaldırmış, ovaya nişanlı (kapı açılınca çıkan Tolga'ya döner); gözcünün sözüyle indirir
 			s.pose = "aim"
 			_archers.append(s)
-		var step := Props.solid(self, Vector3(1.0, 0.8, 0.6), Vector3(x, 8.4, 15.05), Color.WHITE)
-		Props.set_pattern(step, Color("b8a888"), "ashlar")
+		if not sur_yeni:
+			var step := Props.solid(self, Vector3(1.0, 0.8, 0.6), Vector3(x, 8.4, 15.05), Color.WHITE)
+			Props.set_pattern(step, Color("b8a888"), "ashlar")
 		if i == 0:
 			lookout = s
 			s.set_meta("spk", "SPK_LOOKOUT")
@@ -813,7 +963,12 @@ func _keep_sinerji() -> void:
 	_move_lead()
 	var p := sinerji.global_position
 	var lim := 13.5
-	if p.z < -4.0:
+	if sur_yeni:
+		if p.z < -3.0:
+			lim = 8.0
+		elif p.z < FIELD_Z - 0.4:
+			lim = 2.0
+	elif p.z < -4.0:
 		lim = 8.0
 	elif p.z < 14.5:
 		lim = 3.0 if p.z > -4.6 and p.z < 0.0 else 5.5
@@ -979,7 +1134,7 @@ func _run() -> void:
 	# Niko önden dış sur kapısına yürür; Tolga peşinden
 	Stage.walk_on_ground(niko, NIKO_GATE, Callable(self, "_gy"), 1.6, Vector3(0, 0, 13.0))
 	phase = "peri"
-	hud.set_objective(tr("UI_OBJ8Y_GATE"), Vector3(0, 1.6, 12.6))
+	hud.set_objective(tr("UI_OBJ8Y_GATE"), Vector3(0, 1.6, GATE_Z - 1.25))
 	player.frozen = false
 	if GameState.autotest:
 		_auto()
@@ -1126,7 +1281,7 @@ func _open_gate() -> void:
 	var gy := Callable(self, "_gy")
 	guard.look_target = null
 	var spear := _plant_spear()        # iki eli işte: mızrağı yanına diker (elde kalırsa kapıdan/sürgüden geçiyordu)
-	await Stage.walk_on_ground(guard, Vector3(-0.9, 0, 12.6), gy, 1.6, BAR_AT)
+	await Stage.walk_on_ground(guard, GUARD_BAR, gy, 1.6, BAR_AT)
 	# İki elle sürgüyü yuvalarından kaldırır (eller sürgüde), sürgüyü taşıyarak kulenin dibine götürür, dikine yaslar
 	# Eller sürgünün kendi yerelinde (Stage.grip_hold her karede izler): kaldırırken ve taşırken sürgüde kalır
 	Stage.grip_hold(guard, _bar, [Vector3(-1.25, 0.0, -0.1), Vector3(-0.55, 0.0, -0.1)], -1.0, 0.1)
@@ -1137,7 +1292,7 @@ func _open_gate() -> void:
 	await lift.finished
 	var walk_t := _d(1.4)
 	var carry := create_tween().set_parallel()
-	carry.tween_property(guard, "global_position", Vector3(-3.95, _gy(-3.95, 11.95), 11.95), walk_t)
+	carry.tween_property(guard, "global_position", Vector3(GUARD_DROP.x, _gy(GUARD_DROP.x, GUARD_DROP.z), GUARD_DROP.z), walk_t)
 	carry.tween_property(_bar, "position", BAR_DOWN, walk_t).set_trans(Tween.TRANS_SINE)
 	carry.tween_property(_bar, "rotation_degrees", Vector3(10, 0, 90), walk_t).set_trans(Tween.TRANS_SINE)
 	guard.set_meta("stage_walk", true)
@@ -1256,7 +1411,7 @@ func _bridge_scene() -> void:
 	lookout.look_target = player
 	# Tolga dönüp kapının üstüne bakar; sırığı omzuna yatırır (sırık ve el kapıdakileri örtmesin)
 	_rest_towel(true)
-	player.face(Vector3(0.4, 9.3, 15.0))
+	player.face(LOOKOUT_AT)
 	_say("SPK_LOOKOUT", "D8Y_WALL_1")
 	# Okçular gözcünün sözü başlayınca indirir (testte de görünür süre: replik karesi nişanı, sonraki indirmeyi yakalar)
 	await get_tree().create_timer(0.7, false).timeout
@@ -1675,9 +1830,9 @@ func _wait_until(f: Callable, limit := 60.0) -> void:
 
 func _auto() -> void:
 	var v := GameState.autotest_variant
-	await _bot_to(Vector3(0.0, 0.0, 9.0))
+	await _bot_to(Vector3(0.0, 0.0, GATE_TRIGGER_Z + 0.6))
 	await _wait_until(func() -> bool: return phase in ["out", "field"] and not _busy)
-	await _bot_to(Vector3(0.0, 0.0, 42.0))
+	await _bot_to(Vector3(0.0, 0.0, FIELD_Z + 5.0))
 	if v == "warn":
 		_set_towel(false)
 		await _wait_until(func() -> bool: return _warnings >= 1, 20.0)

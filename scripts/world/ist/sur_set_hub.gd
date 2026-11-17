@@ -29,6 +29,21 @@ static func yeni(bolum: String) -> bool:
 	return bolum in BOLUMLER and not SurSet.eski_istendi(bolum)
 
 
+## Bölüm 8y (Beyaz Havlu) yeni surda mı (`--eskisur=8y` ya da `--eskisur` eski)
+static func yeni8y() -> bool:
+	return not SurSet.eski_istendi("8y")
+
+
+## Kesim yereli → 8y bölge yereli (x 0 kapı ortası, +z ova, −z şehir): dönüşsüz; iç sur ortası z 0, peribolos toprağı y 0
+static func M8() -> Transform3D:
+	return Transform3D(Basis.IDENTITY, Vector3(0.0, -arayuz().y_peri(), 0.0))
+
+
+## 8y bölge yereli → İstanbul v2 (kesimin gerçek yeri)
+static func gate8y_v2() -> Transform3D:
+	return arayuz().xf * M8().affine_inverse()
+
+
 ## Sahnedeki bölüm için (IstBaglama ve ByzCity aynı kararı verir)
 static func sahnede() -> bool:
 	return yeni(IstBaglama.sahne_bolumu())
@@ -104,7 +119,7 @@ static func kur(host: Node3D, sec := {}) -> Dictionary:
 	var t0 := Time.get_ticks_usec()
 	var tut := Node3D.new()
 	tut.name = "SurHub"
-	tut.transform = M()
+	tut.transform = sec.get("cerceve", M())
 	host.add_child(tut)
 	var k: Dictionary = SurOyun.kur(KESIM, {"ebeveyn": tut, "dunya": false, "parca": false, "kanca": false, "kapi_parca": true,
 		"kapi_acik": bool(sec.get("kapi_acik", false)), "kapi_kopru": String(sec.get("kapi_kopru", "saglam")),

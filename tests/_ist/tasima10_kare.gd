@@ -92,8 +92,9 @@ func _bakislar() -> Array:
 				["03_kule_kapisi", wt + Vector3(0.0, 1.65, -2.0), dr + Vector3(0, 1.4, 0), wt + Vector3(0, 0, -3.0)],
 				["04_surdan_ordugah", wt + Vector3(0.6, 1.7, 0.0), wt + Vector3(60.0, -6.0, 0.0), wt + Vector3(0, 0, -3.0)],
 				["05_caddeden_sur", c.to_global(Vector3(-20.0, 1.7, -14.0)), c.to_global(Vector3(34.0, 7.0, -10.0)), null],
-				["06_kapi_sehir_yani", c.to_global(Vector3(20.0, 1.7, -2.0)), c.to_global(Vector3(33.0, 4.0, gz)), null],
+				["06_kapi_sehir_yani", c.to_global(Vector3(24.5, 1.7, 1.5)), c.to_global(Vector3(33.0, 3.5, gz)), null],
 				["07_disaridan_sur", c.to_global(Vector3(130.0, 22.0, -14.0)), c.to_global(Vector3(34.0, 6.0, -8.0)), null],
+				["08_tepeden", c.to_global(Vector3(-10.0, 140.0, -10.0)), c.to_global(Vector3(45.0, 0.0, -10.0)), null],
 			]
 	return []
 
