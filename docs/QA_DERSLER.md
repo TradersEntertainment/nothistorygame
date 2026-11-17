@@ -1130,3 +1130,22 @@ Her bölüm denetiminde ve her düzeltmede bu listeyi baştan uygula. Yeni bir h
     boş döndüğü, poternanın ters tarafta olduğu ve 26o'nun 26'dan türediği görev yazılmadan önce yakalandı.
   - Disk payı: kare ve video kanıtları büyür; yarıda kalan git sıkıştırması 2,5 GB artık bıraktı. Eski çalışma kopyaları
     ve kanıt yığınları iş bitince silinir; kanıt klasörleri (`docs/_*`) ana dala girmez.
+- v0.99.123 (büyük İstanbul, 2. parça: 26/26o ve Blakherna yeni surda, eşya fiziği, Tolga'nın hareket hissi [Opus yardımcılar, yönetici birleştirir; Fable danışman])
+  - Sürüm notu taşınmayanı da sayar: 0.99.122'nin notu yalnız yeni surda olan bölümleri sayıyordu; sahibi Blakherna'yı
+    oynayıp eski suru gördü ("eski surlardı hâlâ?"). Her sürüm notunda "hâlâ eski sette olanlar" listesi açıkça yazılır.
+  - Kanıt dalda yoksa iş yok sayılır: bir görünüş oturumu kodu bitirip testleri ve kareleri kaydetmeden boşta kaldı;
+    kareleri yönetici çekti. Görev yazılarına "kareler dala kaydedilir, her adımda gönder, durum.md" şartı eklendi.
+  - Yük altında zaman aşımı gerçek bir kilit olabilir: 26o tek başına 80 sn'de geçiyor, 4 süreç aynı anda koşunca 5'te 2
+    bitmiyordu. Kök neden bot değil merdivenin tepe çıkışıydı (oyuncu sur yolu yerine mazgal eşiğine konuyor, 40 sn
+    yedeği her karede aynı eşiğe ışınlıyordu). Her çeşit 4 süreç aynı anda koşarken de bitmeli; "flake" denmez.
+  - Yeni fizik eski koordinatla çarpışır: eşya fiziği 26o'yu yeni sette hiç sınamamıştı; eski setin patlama
+    koordinatları yeni surun gövdesinin içine düşüyor, korkuluğun ardındaki fıçılar yolun ortasına savruluyordu.
+    Patlamaya siper kuralı eklendi; ortak sistem değişince o sistemi kullanan her bölüm yeni sette yeniden koşulur.
+  - Ayırıcı boş yer bulamayabilir: iç içe kalan iki yedek askeri ayıran bekçi, sık nizamdaki bölükte (1,1 × 1,2 m) boş
+    yer bulamıyor, bekçi satırı yazıp hiçbir şey yapmıyordu. Ayırma işlevinin dönüş değeri okunur; sık dizide asker
+    kendi yerine geri konur.
+  - Yeni ayar varsayılanlarda olmalı: hareket kamerası ayarı yalnız ilk kullanımda oluşturuluyordu; ayarlar menüsü
+    oyundan önce açılınca anahtar yoktu. Her yeni ayar GameState.settings varsayılanlarına yazılır.
+  - Gerçek biçimli model eski kutudan büyüktür: Bölüm 10'da devenin yeni uzun boynu ve başı, Ağa'dan dönen oyuncu ile
+    deveci arasına giriyordu (tam pakette iki kez, tek başına koşuda yok). Kutudan gerçek biçime geçen her hayvan ve
+    eşyanın yanında konuşan biri varsa oyuncunun duracağı yer o modele göre yeniden seçilir.
