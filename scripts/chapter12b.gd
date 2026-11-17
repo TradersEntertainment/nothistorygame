@@ -80,6 +80,9 @@ func _ready() -> void:
 	_build_wall_walk()
 	if GameState.autotest:
 		Engine.time_scale = 2.5
+	if GameState.autotest and GameState.autotest_variant == "yuru":
+		_tasima10_yuru()
+		return
 	if GameState.shots_dir != "":
 		_run_shots()
 	else:
@@ -492,6 +495,21 @@ func _run() -> void:
 	# Dünya burada yazılmaz: eski bir kayıttan kalan ertelemeyi sil, hükmü kuşatma verecek
 	GameState.flags.erase("world10")
 	await _end_chapter()
+
+
+## TAŞIMA-10 =yuru: gerçek Player botu sur yolunda (yerçekimi açık): üç meşale, kuleye açılan kapının önü, yolun başı.
+## Eski ve yeni sette aynı noktalar (bölümün kendi değişkenleri). Satır: T9YURU … OZET (tests/_ist/tasima9_bot.gd)
+func _tasima10_yuru() -> void:
+	var BOT := load("res://tests/_ist/tasima9_bot.gd")
+	hud.set_cinematic(false)
+	player.gravity_on = true
+	var yy := DOOR.y
+	var bacak: Array = []
+	for t in _torches:
+		bacak.append(["mesale_%.1f" % t.global_position.z, Vector3(YOL_X, yy, t.global_position.z), yy])
+	bacak.append(["kapi_onu", Vector3(DOOR.x, yy, DOOR.z - 0.8), yy])
+	bacak.append(["yol_basi", Vector3(YOL_X, yy, YOL.z + 0.4), yy])
+	await BOT.yuru(self, player, hud, WALL_TOP + Vector3(0, 0.1, 0), bacak, "yeni" if city.sur_yeni else "eski")
 
 
 func _d(sec: float) -> float:

@@ -1,0 +1,7 @@
+T9YURU set=eski bas=(33.3, 12.15, -11.2)
+T9YURU bacak=mesale_-14.2 sure=1.0 yol=2.9 takilma=0 dusme=0 son=(33.4, 12.0, -13.9)
+T9YURU bacak=mesale_-7.4 sure=8.5 yol=1.2 takilma=1 dusme=0 son=(33.4, 12.0, -12.7)
+T9YURU bacak=mesale_-5.8 sure=4.8 yol=7.1 takilma=0 dusme=0 son=(33.7, 12.0, -5.9)
+T9YURU bacak=kapi_onu sure=0.0 yol=0.0 takilma=0 dusme=0 son=(33.7, 12.0, -5.8)
+T9YURU bacak=yol_basi sure=2.8 yol=8.4 takilma=0 dusme=0 son=(33.4, 12.0, -14.2)
+T9YURU OZET set=eski bacak=5 takilma=1 dusme=0 sure=17.0 yol=19.6

@@ -100,10 +100,31 @@ func _ready() -> void:
 		city.niko.look_target = player
 	if GameState.autotest:
 		Engine.time_scale = 2.5
+	if GameState.autotest and GameState.autotest_variant == "byzyuru":
+		_tasima10_yuru()
+		return
 	if GameState.shots_dir != "":
 		_run_shots()
 	else:
 		_run()
+
+
+## TAŞIMA-10 =byzyuru: gerçek Player botu martı kovalamacasının sur tarafındaki yolu (cadde → çamaşır ipi → meydan →
+## tabela → sur yolundaki fıçı → Giustiniani'nin masası) ve kapı; eski ve yeni sette aynı noktalar (pazar tezgâhları
+## arasında bot ileri tuşuyla dolanamıyor: iki sette de; pazar sur dışı, bu ölçüye girmez)
+func _tasima10_yuru() -> void:
+	var BOT := load("res://tests/_ist/tasima9_bot.gd")
+	var bacak: Array = [
+		["cadde", Vector3(2.5, 0.0, 4.0), 0.0],
+		["camasir_ipi", Vector3(2.5, 0.0, 1.0), 0.0],
+		["meydan_cesme", Vector3(2.5, 0.0, -13.7), 0.0],
+		["tabela", Vector3(8.0, 0.0, -16.5), 0.0],
+		["sur_yolu_fici", Vector3(15.0, 0.0, -13.0), 0.0],
+		["giust", ByzCity.GIUST_POS + Vector3(-2.6, 0, 1.2), 0.0],
+		["kapi_yolu", Vector3(22.0, 0.0, -2.0), 0.0],
+		["kapi", ByzCity.EXIT_POS + Vector3(-2.6, 0, 0.0), 0.0],
+	]
+	await BOT.yuru(self, player, hud, ByzCity.START + Vector3(0, 0.05, 0), bacak, "yeni" if city.sur_yeni else "eski")
 
 
 func _process(_delta: float) -> void:

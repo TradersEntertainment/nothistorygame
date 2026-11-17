@@ -168,10 +168,36 @@ func _ready() -> void:
 	_build_lines()
 	if GameState.autotest:
 		Engine.time_scale = 2.5
+	if GameState.autotest and GameState.autotest_variant == "yuru":
+		_tasima10_yuru()
+		return
 	if GameState.shots_dir != "":
 		_run_shots()
 	else:
 		_run()
+
+
+## TAŞIMA-10 =yuru: gerçek Player botu bütün koridoru yürür (iç kapı → koridor → dış kapı → rampa → köprü → ölü bölge
+## zikzağı → siper → hatlar). Dış kapının kanatları açık, sürgü kenarda (nöbetçinin işi sahnede). ≈ 148 m. Eski ve yeni aynı.
+func _tasima10_yuru() -> void:
+	var BOT := load("res://tests/_ist/tasima9_bot.gd")
+	_set_leaves(95.0)
+	_bar.position = BAR_DOWN
+	_bar.rotation_degrees = Vector3(10, 0, 90)
+	guard.position = GUARD_AT + Vector3(-0.2, 0, -2.0)
+	var g := func(x: float, z: float) -> float: return _gy(x, z)
+	var bacak: Array = [
+		["ic_kapi", Vector3(0.0, 0.0, 2.0), g.call(0.0, 2.0)],
+		["koridor", Vector3(0.0, 0.0, GATE_Z - 1.0), g.call(0.0, GATE_Z - 1.0)],
+		["dis_kapi", Vector3(0.0, 0.0, GATE_Z + 2.5), NAN],
+		["kopru", Vector3(0.0, 0.0, BRIDGE_Z + 2.0), NAN],
+		["ova", Vector3(0.0, 0.0, FIELD_Z + 2.0), NAN],
+	]
+	for p: Vector3 in PATH:
+		bacak.append(["zikzak_%.0f" % p.z, p, NAN])
+	bacak.append(["siper", Vector3(0.0, 0.0, TRENCH_Z + 2.0), NAN])
+	bacak.append(["hatlar", Vector3(0.6, 0.0, END_Z + 1.0), NAN])
+	await BOT.yuru(self, player, hud, START + Vector3(0, 0.05, 0), bacak, "yeni" if sur_yeni else "eski")
 
 
 func _apply_autotest_setup() -> void:

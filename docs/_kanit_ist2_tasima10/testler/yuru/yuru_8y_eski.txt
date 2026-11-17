@@ -1,0 +1,13 @@
+T9YURU set=eski bas=(0.0, 0.05, -10.0)
+T9YURU bacak=ic_kapi sure=3.7 yol=11.5 takilma=0 dusme=0 son=(0.0, 0.0, 1.7)
+T9YURU bacak=koridor sure=3.4 yol=10.7 takilma=0 dusme=0 son=(0.0, 0.0, 12.5)
+T9YURU bacak=dis_kapi sure=1.1 yol=3.4 takilma=0 dusme=0 son=(0.0, 0.0, 16.0)
+T9YURU bacak=kopru sure=2.0 yol=6.5 takilma=0 dusme=0 son=(0.0, 0.0, 22.7)
+T9YURU bacak=ova sure=5.0 yol=15.8 takilma=0 dusme=0 son=(0.0, 0.0, 38.7)
+T9YURU bacak=zikzak_54 sure=5.9 yol=18.7 takilma=0 dusme=0 son=(-11.3, 0.0, 53.8)
+T9YURU bacak=zikzak_72 sure=9.1 yol=28.8 takilma=0 dusme=0 son=(11.3, 0.0, 71.8)
+T9YURU bacak=zikzak_90 sure=9.1 yol=28.7 takilma=0 dusme=0 son=(-11.2, 0.0, 89.8)
+T9YURU bacak=zikzak_103 sure=5.3 yol=16.9 takilma=0 dusme=0 son=(-0.2, 0.0, 102.7)
+T9YURU bacak=siper sure=0.8 yol=2.3 takilma=0 dusme=0 son=(0.0, 0.0, 105.2)
+T9YURU bacak=hatlar sure=10.3 yol=32.9 takilma=0 dusme=0 son=(0.6, 0.0, 138.2)
+T9YURU OZET set=eski bacak=11 takilma=0 dusme=0 sure=55.5 yol=176.3

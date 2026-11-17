@@ -1,0 +1,12 @@
+T9YURU set=eski bas=(0.0, 0.05, 12.0)
+T9YURU bacak=cadde sure=2.5 yol=7.9 takilma=0 dusme=0 son=(2.4, 0.0, 4.3)
+T9YURU bacak=meydan sure=5.7 yol=17.7 takilma=0 dusme=0 son=(2.5, 0.0, -13.4)
+T9YURU bacak=meydan_dogu sure=1.9 yol=5.9 takilma=0 dusme=0 son=(7.7, 0.0, -16.4)
+T9YURU bacak=dogu_caddesi sure=4.5 yol=14.1 takilma=0 dusme=0 son=(21.7, 0.0, -16.5)
+T9YURU bacak=iskele_guneyi sure=1.0 yol=3.1 takilma=0 dusme=0 son=(22.0, 0.0, -19.7)
+T9YURU bacak=sur_dibi sure=2.3 yol=7.1 takilma=0 dusme=0 son=(29.2, 0.0, -20.0)
+T9YURU bacak=gedik sure=1.8 yol=5.7 takilma=0 dusme=0 son=(30.1, 0.0, -25.7)
+T9YURU bacak=giust sure=4.5 yol=14.1 takilma=0 dusme=0 son=(23.8, 0.0, -13.2)
+T9YURU bacak=kapi_yolu sure=3.6 yol=10.9 takilma=0 dusme=0 son=(22.0, 0.0, -2.3)
+T9YURU bacak=kapi sure=3.6 yol=11.4 takilma=0 dusme=0 son=(30.7, 0.0, 5.3)
+T9YURU OZET set=eski bacak=10 takilma=0 dusme=0 sure=31.5 yol=98.0

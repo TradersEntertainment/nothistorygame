@@ -53,6 +53,9 @@ func _ready() -> void:
 	_build()
 	if GameState.autotest:
 		Engine.time_scale = 2.5
+	if GameState.autotest and GameState.autotest_variant == "yuru":
+		_tasima10_yuru()
+		return
 	if GameState.shots_dir != "":
 		_run_shots()
 	else:
@@ -72,6 +75,25 @@ func _apply_autotest_setup() -> void:
 		for id in ["tape", "powerbank", "chickpeas"]:
 			if not id in GameState.bag:
 				GameState.bag.append(id)
+
+
+## TAŞIMA-10 =yuru: gerçek Player botu gecenin yolu: doğuş → gedik → Giustiniani → kapı (eski ve yeni aynı noktalar)
+func _tasima10_yuru() -> void:
+	var BOT := load("res://tests/_ist/tasima9_bot.gd")
+	city.make_night()
+	# sokaklar boyunca: ana cadde (x 2,5), doğu-batı caddesi (z −14), iskelenin güneyinden sura, gedik; geri ve kapı yolu
+	await BOT.yuru(self, player, hud, ByzCity.START + Vector3(0, 0.05, 0), [
+		["cadde", Vector3(2.5, 0.0, 4.0), 0.0],
+		["meydan", Vector3(2.5, 0.0, -13.7), 0.0],
+		["meydan_dogu", Vector3(8.0, 0.0, -16.5), 0.0],
+		["dogu_caddesi", Vector3(22.0, 0.0, -16.5), 0.0],
+		["iskele_guneyi", Vector3(22.0, 0.0, -20.0), 0.0],
+		["sur_dibi", Vector3(29.5, 0.0, -20.0), 0.0],
+		["gedik", BREACH + Vector3(-2.2, 0, 0.0), 0.0],
+		["giust", ByzCity.GIUST_POS + Vector3(-2.4, 0, 1.2), 0.0],
+		["kapi_yolu", Vector3(22.0, 0.0, -2.0), 0.0],
+		["kapi", ByzCity.EXIT_POS + Vector3(-2.0, 0, 0.0), 0.0],
+	], "yeni" if city.sur_yeni else "eski")
 
 
 func _d(sec: float) -> float:
