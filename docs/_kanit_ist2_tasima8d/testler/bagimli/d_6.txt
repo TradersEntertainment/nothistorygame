@@ -1,0 +1,3 @@
+AUTOTEST PASS chapter=6 variant= branch=6a outcome=6a.1 paradox=10 mistakes=0 telsiz=4
+ESYAAUDIT OZET kayit=102 uyanan=0 tekme=0 kosu=0 itme=0 patlama=0 destek=0 en_cok_uyanik=0 sorun=0 (dusme=0 havada=0 gomuk=0 tikama=0 sinir=0) siper=0 yasla=0
+KOSU rc=0 sure=20 args=--chapter=6 --autotest

@@ -1,0 +1,6 @@
+GUN shots=4 hits=3 missed=1
+WAVERUNNER wave=1/2 won=true t=13.0 pw=0.28 foe_dmg=18.0 allies=0+0 rally_foes=0 thrown=0
+WAVERUNNER wave=2/2 won=true t=17.1 pw=0.28 foe_dmg=18.0 allies=0+0 rally_foes=0 thrown=0
+AUTOTEST PASS chapter=20o variant= outcome=20O.1 hits=3 cracks=0 gun=3/4 gunner=2/2 duel=true bed= sur=yeni
+ESYAAUDIT OZET kayit=85 uyanan=0 tekme=0 kosu=0 itme=0 patlama=0 destek=0 en_cok_uyanik=0 sorun=0 (dusme=0 havada=0 gomuk=0 tikama=0 sinir=0) siper=0 yasla=0
+KOSU rc=0 sure=44 args=--chapter=20o --autotest

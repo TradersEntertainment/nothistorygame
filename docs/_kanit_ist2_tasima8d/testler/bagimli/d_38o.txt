@@ -1,0 +1,3 @@
+AUTOTEST PASS chapter=38o variant= outcome=38O.1 oars=10 arrows=0 forks=3/3 fire=true pulled=true oil=false snaps=0 splashes=0 explored=14.6 helper=false slips=0
+ESYAAUDIT OZET kayit=91 uyanan=0 tekme=0 kosu=0 itme=0 patlama=0 destek=0 en_cok_uyanik=0 sorun=0 (dusme=0 havada=0 gomuk=0 tikama=0 sinir=0) siper=0 yasla=0
+KOSU rc=0 sure=66 args=--chapter=38o --autotest

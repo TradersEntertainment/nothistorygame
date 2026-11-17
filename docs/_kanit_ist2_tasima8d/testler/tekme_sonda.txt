@@ -1,0 +1,147 @@
+T8DTEKME sahne=Chapter20
+T8DTEKME fici=68 dizi=10
+T8DTEKME oyuncu=(-16.34, 8.62, 15.3) durum=donmus
+T8DTEKME dizi=1 adim=1 id=21 uyandi=true durum=donmus once=(-12.34, 9.08, 15.88) sonra=(-12.35, 9.08, 15.85) yol=0.03 bos_on=-0.01 bos_ic=1.09 gecer=true yan=(0.0, 0.0, 0.0) denetim=0
+T8DTEKME oyuncu=(-16.35, 8.62, 15.3) durum=donmus
+T8DTEKME dizi=1 adim=2 id=21 uyandi=true durum=donmus once=(-12.35, 9.08, 15.85) sonra=(-12.35, 9.07, 15.84) yol=0.01 bos_on=0.00 bos_ic=1.08 gecer=true yan=(0.0, 0.0, 0.0) denetim=0
+T8DTEKME oyuncu=(-16.35, 8.62, 15.3) durum=donmus
+T8DTEKME dizi=1 adim=3 id=21 uyandi=true durum=donmus once=(-12.35, 9.07, 15.84) sonra=(-12.12, 9.07, 15.85) yol=0.23 bos_on=-0.00 bos_ic=1.09 gecer=true yan=(0.0, 0.0, 0.0) denetim=0
+T8DTEKME oyuncu=(-15.54, 8.62, 15.3) durum=donmus
+T8DTEKME dizi=1 adim=4 id=22 uyandi=true durum=donmus once=(-11.54, 9.08, 15.86) sonra=(-11.44, 8.92, 15.01) yol=0.85 bos_on=0.65 bos_ic=0.07 gecer=false yan=(0.0, 0.0, 0.0) denetim=0
+T8DTEKME oyuncu=(-52.66, 8.62, 15.3) durum=donmus
+T8DTEKME dizi=2 adim=1 id=34 uyandi=true durum=donmus once=(-48.66, 9.08, 15.86) sonra=(-48.67, 9.07, 15.82) yol=0.05 bos_on=0.02 bos_ic=1.06 gecer=true yan=(0.0, 0.0, 0.0) denetim=0
+T8DTEKME oyuncu=(-52.67, 8.62, 15.3) durum=donmus
+T8DTEKME dizi=2 adim=2 id=34 uyandi=true durum=donmus once=(-48.67, 9.07, 15.82) sonra=(-48.68, 9.07, 15.84) yol=0.02 bos_on=0.00 bos_ic=1.08 gecer=true yan=(0.0, 0.0, 0.0) denetim=0
+T8DTEKME oyuncu=(-52.68, 8.62, 15.3) durum=donmus
+T8DTEKME dizi=2 adim=3 id=34 uyandi=true durum=donmus once=(-48.68, 9.07, 15.84) sonra=(-48.42, 9.07, 15.84) yol=0.26 bos_on=0.00 bos_ic=1.08 gecer=true yan=(0.0, 0.0, 0.0) denetim=0
+T8DTEKME oyuncu=(-51.82, 8.62, 15.3) durum=donmus
+T8DTEKME dizi=2 adim=4 id=35 uyandi=true durum=donmus once=(-47.82, 9.08, 15.88) sonra=(-47.71, 8.92, 14.99) yol=0.90 bos_on=0.69 bos_ic=0.06 gecer=false yan=(0.0, 0.0, 0.0) denetim=0
+T8DTEKME oyuncu=(55.77, 8.62, 15.3) durum=donmus
+T8DTEKME dizi=3 adim=1 id=5 uyandi=true durum=donmus once=(59.77, 9.08, 15.88) sonra=(59.77, 9.07, 15.8) yol=0.08 bos_on=0.04 bos_ic=1.04 gecer=true yan=(0.0, 0.0, 0.0) denetim=0
+T8DTEKME oyuncu=(55.77, 8.62, 15.3) durum=donmus
+T8DTEKME dizi=3 adim=2 id=5 uyandi=true durum=donmus once=(59.77, 9.07, 15.8) sonra=(59.77, 9.07, 15.84) yol=0.04 bos_on=-0.00 bos_ic=1.09 gecer=true yan=(0.0, 0.0, 0.0) denetim=0
+T8DTEKME oyuncu=(55.77, 8.62, 15.3) durum=donmus
+T8DTEKME dizi=3 adim=3 id=5 uyandi=true durum=donmus once=(59.77, 9.07, 15.84) sonra=(60.03, 9.07, 15.84) yol=0.25 bos_on=0.00 bos_ic=1.08 gecer=true yan=(0.0, 0.0, 0.0) denetim=0
+T8DTEKME oyuncu=(56.63, 8.62, 15.3) durum=donmus
+T8DTEKME dizi=3 adim=4 id=6 uyandi=true durum=donmus once=(60.63, 9.08, 15.88) sonra=(60.69, 8.92, 14.99) yol=0.90 bos_on=0.68 bos_ic=0.06 gecer=false yan=(0.0, 0.0, 0.0) denetim=0
+T8DTEKME OZET dizi=3 sayac={ "kayit": 85, "uyanan": 12, "tekme": 0, "kosu": 0, "itme": 0, "patlama": 0, "destek": 0, "dusme": 0, "havada": 0, "gomuk": 0, "tikama": 0, "sinir": 0, "yasla": 3 }
+T8DTEKME PASS 
+ESYAAUDIT OZET kayit=85 uyanan=12 tekme=0 kosu=0 itme=0 patlama=0 destek=0 en_cok_uyanik=1 sorun=0 (dusme=0 havada=0 gomuk=0 tikama=0 sinir=0) siper=0 yasla=3
+T8DTEKME sahne=Chapter22
+T8DTEKME fici=68 dizi=10
+T8DTEKME oyuncu=(-16.34, 8.62, 15.32) durum=donmus
+T8DTEKME dizi=1 adim=1 id=21 uyandi=true durum=donmus once=(-12.34, 9.08, 15.88) sonra=(-12.35, 9.08, 15.85) yol=0.03 bos_on=-0.01 bos_ic=1.09 gecer=true yan=(0.0, 0.0, 0.0) denetim=0
+T8DTEKME oyuncu=(-16.35, 8.62, 15.31) durum=donmus
+T8DTEKME dizi=1 adim=2 id=21 uyandi=true durum=donmus once=(-12.35, 9.08, 15.85) sonra=(-12.35, 9.07, 15.84) yol=0.01 bos_on=0.00 bos_ic=1.08 gecer=true yan=(0.0, 0.0, 0.0) denetim=0
+T8DTEKME oyuncu=(-16.36, 8.62, 15.31) durum=donmus
+T8DTEKME dizi=1 adim=3 id=21 uyandi=true durum=donmus once=(-12.35, 9.07, 15.84) sonra=(-12.11, 9.07, 15.84) yol=0.24 bos_on=-0.00 bos_ic=1.09 gecer=true yan=(0.0, 0.0, 0.0) denetim=0
+T8DTEKME oyuncu=(-15.54, 8.62, 15.3) durum=donmus
+T8DTEKME dizi=1 adim=4 id=22 uyandi=true durum=donmus once=(-11.54, 9.08, 15.86) sonra=(-11.43, 8.92, 15.01) yol=0.86 bos_on=0.65 bos_ic=0.07 gecer=false yan=(0.0, 0.0, 0.0) denetim=0
+T8DTEKME oyuncu=(-52.66, 8.62, 15.3) durum=donmus
+T8DTEKME dizi=2 adim=1 id=34 uyandi=true durum=donmus once=(-48.66, 9.08, 15.86) sonra=(-48.68, 9.07, 15.83) yol=0.04 bos_on=0.02 bos_ic=1.07 gecer=true yan=(0.0, 0.0, 0.0) denetim=0
+T8DTEKME oyuncu=(-52.68, 8.62, 15.3) durum=donmus
+T8DTEKME dizi=2 adim=2 id=34 uyandi=true durum=donmus once=(-48.68, 9.07, 15.83) sonra=(-48.68, 9.07, 15.85) yol=0.02 bos_on=-0.00 bos_ic=1.09 gecer=true yan=(0.0, 0.0, 0.0) denetim=0
+T8DTEKME oyuncu=(-52.68, 8.62, 15.3) durum=donmus
+T8DTEKME dizi=2 adim=3 id=34 uyandi=true durum=donmus once=(-48.68, 9.07, 15.85) sonra=(-48.42, 9.07, 15.85) yol=0.26 bos_on=-0.00 bos_ic=1.09 gecer=true yan=(0.0, 0.0, 0.0) denetim=0
+T8DTEKME oyuncu=(-51.82, 8.62, 15.3) durum=donmus
+T8DTEKME dizi=2 adim=4 id=35 uyandi=true durum=donmus once=(-47.82, 9.08, 15.88) sonra=(-47.76, 8.92, 14.98) yol=0.90 bos_on=0.71 bos_ic=0.07 gecer=false yan=(0.0, 0.0, 0.0) denetim=0
+T8DTEKME oyuncu=(55.77, 8.62, 15.3) durum=donmus
+T8DTEKME dizi=3 adim=1 id=5 uyandi=true durum=donmus once=(59.77, 9.08, 15.88) sonra=(59.77, 9.07, 15.8) yol=0.08 bos_on=0.04 bos_ic=1.04 gecer=true yan=(0.0, 0.0, 0.0) denetim=0
+T8DTEKME oyuncu=(55.77, 8.62, 15.3) durum=donmus
+T8DTEKME dizi=3 adim=2 id=5 uyandi=true durum=donmus once=(59.77, 9.07, 15.8) sonra=(59.77, 9.07, 15.85) yol=0.04 bos_on=-0.01 bos_ic=1.09 gecer=true yan=(0.0, 0.0, 0.0) denetim=0
+T8DTEKME oyuncu=(55.77, 8.62, 15.3) durum=donmus
+T8DTEKME dizi=3 adim=3 id=5 uyandi=true durum=donmus once=(59.77, 9.07, 15.85) sonra=(60.02, 9.07, 15.84) yol=0.25 bos_on=-0.00 bos_ic=1.08 gecer=true yan=(0.0, 0.0, 0.0) denetim=0
+T8DTEKME oyuncu=(56.63, 8.62, 15.3) durum=donmus
+T8DTEKME dizi=3 adim=4 id=6 uyandi=true durum=donmus once=(60.63, 9.08, 15.88) sonra=(60.69, 8.92, 14.99) yol=0.90 bos_on=0.68 bos_ic=0.06 gecer=false yan=(0.0, 0.0, 0.0) denetim=0
+T8DTEKME OZET dizi=3 sayac={ "kayit": 85, "uyanan": 12, "tekme": 0, "kosu": 0, "itme": 0, "patlama": 0, "destek": 0, "dusme": 0, "havada": 0, "gomuk": 0, "tikama": 0, "sinir": 0, "yasla": 3 }
+T8DTEKME PASS 
+ESYAAUDIT OZET kayit=85 uyanan=12 tekme=0 kosu=0 itme=0 patlama=0 destek=0 en_cok_uyanik=1 sorun=0 (dusme=0 havada=0 gomuk=0 tikama=0 sinir=0) siper=0 yasla=3
+T8DTEKME sahne=Chapter26
+T8DTEKME fici=68 dizi=10
+T8DTEKME oyuncu=(-16.34, 8.62, 15.3) durum=donmus
+T8DTEKME dizi=1 adim=1 id=21 uyandi=true durum=donmus once=(-12.34, 9.08, 15.88) sonra=(-12.35, 9.08, 15.85) yol=0.03 bos_on=-0.01 bos_ic=1.09 gecer=true yan=(0.0, 0.0, 0.0) denetim=0
+T8DTEKME oyuncu=(-16.35, 8.62, 15.3) durum=donmus
+T8DTEKME dizi=1 adim=2 id=21 uyandi=true durum=donmus once=(-12.35, 9.08, 15.85) sonra=(-12.35, 9.07, 15.84) yol=0.01 bos_on=0.00 bos_ic=1.08 gecer=true yan=(0.0, 0.0, 0.0) denetim=0
+T8DTEKME oyuncu=(-16.35, 8.62, 15.3) durum=donmus
+T8DTEKME dizi=1 adim=3 id=21 uyandi=true durum=donmus once=(-12.35, 9.07, 15.84) sonra=(-12.12, 9.07, 15.84) yol=0.24 bos_on=-0.00 bos_ic=1.09 gecer=true yan=(0.0, 0.0, 0.0) denetim=0
+T8DTEKME oyuncu=(-15.54, 8.62, 15.3) durum=donmus
+T8DTEKME dizi=1 adim=4 id=22 uyandi=true durum=donmus once=(-11.54, 9.08, 15.86) sonra=(-11.43, 8.92, 15.0) yol=0.86 bos_on=0.66 bos_ic=0.06 gecer=false yan=(0.0, 0.0, 0.0) denetim=0
+T8DTEKME oyuncu=(-52.66, 8.62, 15.3) durum=donmus
+T8DTEKME dizi=2 adim=1 id=34 uyandi=true durum=donmus once=(-48.66, 9.08, 15.86) sonra=(-48.67, 9.07, 15.81) yol=0.05 bos_on=0.03 bos_ic=1.06 gecer=true yan=(0.0, 0.0, 0.0) denetim=0
+T8DTEKME oyuncu=(-52.67, 8.62, 15.3) durum=donmus
+T8DTEKME dizi=2 adim=2 id=34 uyandi=true durum=donmus once=(-48.67, 9.07, 15.81) sonra=(-48.68, 9.07, 15.85) yol=0.04 bos_on=-0.01 bos_ic=1.09 gecer=true yan=(0.0, 0.0, 0.0) denetim=0
+T8DTEKME oyuncu=(-52.68, 8.62, 15.3) durum=donmus
+T8DTEKME dizi=2 adim=3 id=34 uyandi=true durum=donmus once=(-48.68, 9.07, 15.85) sonra=(-48.43, 9.07, 15.83) yol=0.24 bos_on=0.01 bos_ic=1.07 gecer=true yan=(0.0, 0.0, 0.0) denetim=0
+T8DTEKME oyuncu=(-51.82, 8.62, 15.3) durum=donmus
+T8DTEKME dizi=2 adim=4 id=35 uyandi=true durum=donmus once=(-47.82, 9.08, 15.88) sonra=(-47.63, 8.92, 14.96) yol=0.94 bos_on=0.73 bos_ic=0.05 gecer=false yan=(0.0, 0.0, 0.0) denetim=0
+T8DTEKME oyuncu=(55.77, 8.62, 15.3) durum=donmus
+T8DTEKME dizi=3 adim=1 id=5 uyandi=true durum=donmus once=(59.77, 9.08, 15.88) sonra=(59.77, 9.07, 15.8) yol=0.08 bos_on=0.04 bos_ic=1.04 gecer=true yan=(0.0, 0.0, 0.0) denetim=0
+T8DTEKME oyuncu=(55.77, 8.62, 15.3) durum=donmus
+T8DTEKME dizi=3 adim=2 id=5 uyandi=true durum=donmus once=(59.77, 9.07, 15.8) sonra=(59.77, 9.07, 15.84) yol=0.04 bos_on=-0.00 bos_ic=1.09 gecer=true yan=(0.0, 0.0, 0.0) denetim=0
+T8DTEKME oyuncu=(55.77, 8.62, 15.3) durum=donmus
+T8DTEKME dizi=3 adim=3 id=5 uyandi=true durum=donmus once=(59.77, 9.07, 15.84) sonra=(60.03, 9.07, 15.84) yol=0.25 bos_on=0.00 bos_ic=1.08 gecer=true yan=(0.0, 0.0, 0.0) denetim=0
+T8DTEKME oyuncu=(56.63, 8.62, 15.3) durum=donmus
+T8DTEKME dizi=3 adim=4 id=6 uyandi=true durum=donmus once=(60.63, 9.08, 15.88) sonra=(60.69, 8.92, 14.99) yol=0.90 bos_on=0.68 bos_ic=0.06 gecer=false yan=(0.0, 0.0, 0.0) denetim=0
+T8DTEKME OZET dizi=3 sayac={ "kayit": 69, "uyanan": 12, "tekme": 0, "kosu": 0, "itme": 0, "patlama": 0, "destek": 0, "dusme": 0, "havada": 0, "gomuk": 0, "tikama": 0, "sinir": 0, "yasla": 3, "siper": 2 }
+T8DTEKME PASS 
+ESYAAUDIT OZET kayit=69 uyanan=12 tekme=0 kosu=0 itme=0 patlama=0 destek=0 en_cok_uyanik=1 sorun=0 (dusme=0 havada=0 gomuk=0 tikama=0 sinir=0) siper=2 yasla=3
+T8DTEKME sahne=Chapter26o
+T8DTEKME fici=68 dizi=10
+T8DTEKME oyuncu=(-16.34, 8.62, 15.3) durum=donmus
+T8DTEKME dizi=1 adim=1 id=21 uyandi=true durum=donmus once=(-12.34, 9.08, 15.88) sonra=(-12.35, 9.08, 15.85) yol=0.03 bos_on=-0.01 bos_ic=1.09 gecer=true yan=(0.0, 0.0, 0.0) denetim=0
+T8DTEKME oyuncu=(-16.35, 8.62, 15.3) durum=donmus
+T8DTEKME dizi=1 adim=2 id=21 uyandi=true durum=donmus once=(-12.35, 9.08, 15.85) sonra=(-12.35, 9.07, 15.84) yol=0.01 bos_on=0.00 bos_ic=1.08 gecer=true yan=(0.0, 0.0, 0.0) denetim=0
+T8DTEKME oyuncu=(-16.35, 8.62, 15.3) durum=donmus
+T8DTEKME dizi=1 adim=3 id=21 uyandi=true durum=donmus once=(-12.35, 9.07, 15.84) sonra=(-12.12, 9.07, 15.84) yol=0.24 bos_on=-0.00 bos_ic=1.09 gecer=true yan=(0.0, 0.0, 0.0) denetim=0
+T8DTEKME oyuncu=(-15.54, 8.62, 15.3) durum=donmus
+T8DTEKME dizi=1 adim=4 id=22 uyandi=true durum=donmus once=(-11.54, 9.08, 15.86) sonra=(-11.42, 8.92, 15.01) yol=0.86 bos_on=0.65 bos_ic=0.07 gecer=false yan=(0.0, 0.0, 0.0) denetim=0
+T8DTEKME oyuncu=(-52.66, 8.62, 15.3) durum=donmus
+T8DTEKME dizi=2 adim=1 id=34 uyandi=true durum=donmus once=(-48.66, 9.08, 15.86) sonra=(-48.68, 9.07, 15.83) yol=0.04 bos_on=0.02 bos_ic=1.07 gecer=true yan=(0.0, 0.0, 0.0) denetim=0
+T8DTEKME oyuncu=(-52.68, 8.62, 15.3) durum=donmus
+T8DTEKME dizi=2 adim=2 id=34 uyandi=true durum=donmus once=(-48.68, 9.07, 15.83) sonra=(-48.68, 9.07, 15.85) yol=0.02 bos_on=-0.00 bos_ic=1.09 gecer=true yan=(0.0, 0.0, 0.0) denetim=0
+T8DTEKME oyuncu=(-52.68, 8.62, 15.3) durum=donmus
+T8DTEKME dizi=2 adim=3 id=34 uyandi=true durum=donmus once=(-48.68, 9.07, 15.85) sonra=(-48.42, 9.07, 15.85) yol=0.26 bos_on=-0.00 bos_ic=1.09 gecer=true yan=(0.0, 0.0, 0.0) denetim=0
+T8DTEKME oyuncu=(-51.82, 8.62, 15.3) durum=donmus
+T8DTEKME dizi=2 adim=4 id=35 uyandi=true durum=donmus once=(-47.82, 9.08, 15.88) sonra=(-47.76, 8.92, 14.98) yol=0.90 bos_on=0.71 bos_ic=0.07 gecer=false yan=(0.0, 0.0, 0.0) denetim=0
+T8DTEKME oyuncu=(55.77, 8.62, 15.3) durum=donmus
+T8DTEKME dizi=3 adim=1 id=5 uyandi=true durum=donmus once=(59.77, 9.08, 15.88) sonra=(59.77, 9.07, 15.8) yol=0.08 bos_on=0.04 bos_ic=1.04 gecer=true yan=(0.0, 0.0, 0.0) denetim=0
+T8DTEKME oyuncu=(55.77, 8.62, 15.3) durum=donmus
+T8DTEKME dizi=3 adim=2 id=5 uyandi=true durum=donmus once=(59.77, 9.07, 15.8) sonra=(59.77, 9.07, 15.85) yol=0.04 bos_on=-0.01 bos_ic=1.09 gecer=true yan=(0.0, 0.0, 0.0) denetim=0
+T8DTEKME oyuncu=(55.77, 8.62, 15.3) durum=donmus
+T8DTEKME dizi=3 adim=3 id=5 uyandi=true durum=donmus once=(59.77, 9.07, 15.85) sonra=(60.02, 9.07, 15.84) yol=0.25 bos_on=-0.00 bos_ic=1.08 gecer=true yan=(0.0, 0.0, 0.0) denetim=0
+T8DTEKME oyuncu=(56.63, 8.62, 15.3) durum=donmus
+T8DTEKME dizi=3 adim=4 id=6 uyandi=true durum=donmus once=(60.63, 9.08, 15.88) sonra=(60.69, 8.92, 14.99) yol=0.90 bos_on=0.68 bos_ic=0.06 gecer=false yan=(0.0, 0.0, 0.0) denetim=0
+T8DTEKME OZET dizi=3 sayac={ "kayit": 69, "uyanan": 12, "tekme": 0, "kosu": 0, "itme": 0, "patlama": 0, "destek": 0, "dusme": 0, "havada": 0, "gomuk": 0, "tikama": 0, "sinir": 0, "yasla": 3 }
+T8DTEKME PASS 
+ESYAAUDIT OZET kayit=69 uyanan=12 tekme=0 kosu=0 itme=0 patlama=0 destek=0 en_cok_uyanik=1 sorun=0 (dusme=0 havada=0 gomuk=0 tikama=0 sinir=0) siper=0 yasla=3
+T8DTEKME sahne=Chapter37o
+T8DTEKME fici=68 dizi=10
+T8DTEKME oyuncu=(-16.34, 8.62, 15.3) durum=donmus
+T8DTEKME dizi=1 adim=1 id=21 uyandi=true durum=donmus once=(-12.34, 9.08, 15.88) sonra=(-12.35, 9.08, 15.85) yol=0.03 bos_on=-0.01 bos_ic=1.09 gecer=true yan=(0.0, 0.0, 0.0) denetim=0
+T8DTEKME oyuncu=(-16.35, 8.62, 15.3) durum=donmus
+T8DTEKME dizi=1 adim=2 id=21 uyandi=true durum=donmus once=(-12.35, 9.08, 15.85) sonra=(-12.35, 9.07, 15.84) yol=0.01 bos_on=0.00 bos_ic=1.08 gecer=true yan=(0.0, 0.0, 0.0) denetim=0
+T8DTEKME oyuncu=(-16.35, 8.62, 15.3) durum=donmus
+T8DTEKME dizi=1 adim=3 id=21 uyandi=true durum=donmus once=(-12.35, 9.07, 15.84) sonra=(-12.12, 9.07, 15.84) yol=0.23 bos_on=-0.00 bos_ic=1.09 gecer=true yan=(0.0, 0.0, 0.0) denetim=0
+T8DTEKME oyuncu=(-15.54, 8.62, 15.3) durum=donmus
+T8DTEKME dizi=1 adim=4 id=22 uyandi=true durum=donmus once=(-11.54, 9.08, 15.86) sonra=(-11.44, 8.92, 15.01) yol=0.85 bos_on=0.65 bos_ic=0.08 gecer=false yan=(0.0, 0.0, 0.0) denetim=0
+T8DTEKME oyuncu=(-52.66, 8.62, 15.3) durum=donmus
+T8DTEKME dizi=2 adim=1 id=34 uyandi=true durum=donmus once=(-48.66, 9.08, 15.86) sonra=(-48.68, 9.07, 15.83) yol=0.04 bos_on=0.02 bos_ic=1.07 gecer=true yan=(0.0, 0.0, 0.0) denetim=0
+T8DTEKME oyuncu=(-52.68, 8.62, 15.3) durum=donmus
+T8DTEKME dizi=2 adim=2 id=34 uyandi=true durum=donmus once=(-48.68, 9.07, 15.83) sonra=(-48.68, 9.07, 15.85) yol=0.02 bos_on=-0.00 bos_ic=1.09 gecer=true yan=(0.0, 0.0, 0.0) denetim=0
+T8DTEKME oyuncu=(-52.68, 8.62, 15.3) durum=donmus
+T8DTEKME dizi=2 adim=3 id=34 uyandi=true durum=donmus once=(-48.68, 9.07, 15.85) sonra=(-48.43, 9.07, 15.83) yol=0.25 bos_on=0.01 bos_ic=1.08 gecer=true yan=(0.0, 0.0, 0.0) denetim=0
+T8DTEKME oyuncu=(-51.82, 8.62, 15.3) durum=donmus
+T8DTEKME dizi=2 adim=4 id=35 uyandi=true durum=donmus once=(-47.82, 9.08, 15.88) sonra=(-47.75, 8.92, 14.97) yol=0.91 bos_on=0.72 bos_ic=0.06 gecer=false yan=(0.0, 0.0, 0.0) denetim=0
+T8DTEKME oyuncu=(55.77, 8.62, 15.3) durum=donmus
+T8DTEKME dizi=3 adim=1 id=5 uyandi=true durum=donmus once=(59.77, 9.08, 15.88) sonra=(59.77, 9.07, 15.8) yol=0.07 bos_on=0.04 bos_ic=1.05 gecer=true yan=(0.0, 0.0, 0.0) denetim=0
+T8DTEKME oyuncu=(55.77, 8.62, 15.3) durum=donmus
+T8DTEKME dizi=3 adim=2 id=5 uyandi=true durum=donmus once=(59.77, 9.07, 15.8) sonra=(59.77, 9.07, 15.85) yol=0.04 bos_on=-0.01 bos_ic=1.09 gecer=true yan=(0.0, 0.0, 0.0) denetim=0
+T8DTEKME oyuncu=(55.77, 8.62, 15.3) durum=donmus
+T8DTEKME dizi=3 adim=3 id=5 uyandi=true durum=donmus once=(59.77, 9.07, 15.85) sonra=(60.02, 9.07, 15.84) yol=0.25 bos_on=0.00 bos_ic=1.08 gecer=true yan=(0.0, 0.0, 0.0) denetim=0
+T8DTEKME oyuncu=(56.63, 8.62, 15.3) durum=donmus
+T8DTEKME dizi=3 adim=4 id=6 uyandi=true durum=donmus once=(60.63, 9.08, 15.88) sonra=(60.69, 8.92, 14.99) yol=0.90 bos_on=0.68 bos_ic=0.06 gecer=false yan=(0.0, 0.0, 0.0) denetim=0
+T8DTEKME OZET dizi=3 sayac={ "kayit": 85, "uyanan": 12, "tekme": 0, "kosu": 0, "itme": 0, "patlama": 0, "destek": 0, "dusme": 0, "havada": 0, "gomuk": 0, "tikama": 0, "sinir": 0, "yasla": 3 }
+T8DTEKME PASS 
+ESYAAUDIT OZET kayit=85 uyanan=12 tekme=0 kosu=0 itme=0 patlama=0 destek=0 en_cok_uyanik=1 sorun=0 (dusme=0 havada=0 gomuk=0 tikama=0 sinir=0) siper=0 yasla=3
+ESYATEST PASS
+ESYAAUDIT OZET kayit=36 uyanan=33 tekme=7 kosu=2 itme=0 patlama=22 destek=2 en_cok_uyanik=12 sorun=0 (dusme=0 havada=0 gomuk=0 tikama=0 sinir=0) siper=0 yasla=0

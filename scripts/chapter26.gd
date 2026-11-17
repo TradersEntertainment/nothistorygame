@@ -73,6 +73,7 @@ var _fx_t := 0.0
 func _ready() -> void:
 	GameState.snapshot(26)
 	_apply_autotest_setup()
+	_kamera_bekci.call_deferred()
 	hud = Hud.new()
 	add_child(hud)
 	hud.chase_music = "tension"
@@ -131,10 +132,116 @@ func _yeni_yerler() -> void:
 func _dostlari_dagit() -> void:
 	if sur.eski_mi:
 		return
+	# TAŞIMA-8D: dövüş son vuruşun öldürme kamerası sürerken bitebilir; kamera kadrajı kapatanları (savunucu sırası,
+	# onarımcı, dost düellocu) o süre gizler. Unclip.spread gizliyi saymaz: dostu gizli savunucunun dibine koyuyor, kamera
+	# bitip herkes görünür olunca ikisi iç içe kalıyordu (VISAUDIT overlap SPK_DEFENDER|Duelist, 8D tanı izi). Oyuncunun
+	# kamerası dönene (gizlenenler geri gelene) kadar beklenir; çağıran beklemez (akışın süresi aynı).
+	var t := 0.0
+	while t < 6.0 and is_inside_tree() and get_viewport().get_camera_3d() != player.camera:
+		await get_tree().process_frame
+		t += get_process_delta_time()
+	await get_tree().process_frame
+	if not is_inside_tree():
+		return
 	for n in get_children():
 		var d := n as Duelist
 		if d and d.visible and d.team == 0 and d.global_position.distance_to(sur.gedik()) < 14.0:
 			Unclip.spread(d, 0.6)
+
+
+## TAŞIMA-8D: öldürme kamerası (Duel finisher) kadrajı kapatanları (savunucu sırası, onarımcı, yedek bölük) o süre gizler;
+## gizliyken yürüyenler (düellocu, yerinde adım atan) onları görmez (Unclip gizliyi saymaz), yerlerine adım atar; kamera
+## bitip gizlenenler geri gelince ikisi iç içe kalıyordu (VISAUDIT overlap WallFight{chop}|Duelist, SPK_DEFENDER|Duelist;
+## 8D tanı izi: onarımcı k 366–370 gizli, dost düellocu 3,5 → 2,55). Kamera oyuncuya her döndüğünde oyuncunun çevresinde
+## iç içe ayakta duran çiftlerin yürüyeni (düellocu; yoksa yerinde durmayan) boş yere ayrılır.
+func _kamera_bekci() -> void:
+	var onceki := true
+	while is_inside_tree():
+		await get_tree().process_frame
+		if player == null or not is_instance_valid(player):
+			continue
+		var simdi := get_viewport().get_camera_3d() == player.camera
+		if simdi and not onceki:
+			await get_tree().process_frame      # gizlenenler bir kare içinde geri gelir
+			_ic_ice_ayir()
+		onceki = simdi
+
+
+func _ic_ice_ayir() -> void:
+	var pp := player.global_position
+	var who: Array[Node3D] = []
+	for n in get_tree().get_nodes_in_group("persons") + get_tree().get_nodes_in_group("soldiers"):
+		var p := n as Node3D
+		if p == null or not p.is_visible_in_tree() or p in who or p.has_meta("corpse") or p.has_meta("no_audit") or Unclip.lying(p):
+			continue
+		# denetimin (Hud._crowd_audit) saydıkları: ayakta, binmemiş, oturmayan
+		if p is Soldier and (p as Soldier).pose != "stand":
+			continue
+		var act := str(p.get("activity")) if p.get("activity") != null else ""
+		if act.begins_with("sit") or act in ["row", "ride", "swim"]:
+			continue
+		var at := false
+		var q: Node = p.get_parent()
+		while q != null and q != self:
+			if q is Horse:
+				at = true
+				break
+			q = q.get_parent()
+		if not at and p.global_position.distance_to(pp) < 30.0:
+			who.append(p)
+	for i in who.size():
+		for j in range(i + 1, who.size()):
+			var a := who[i]
+			var b := who[j]
+			if not is_instance_valid(a) or not is_instance_valid(b):
+				continue
+			var d := Vector2(a.global_position.x - b.global_position.x, a.global_position.z - b.global_position.z).length()
+			if d >= 0.4 or absf(a.global_position.y - b.global_position.y) > 0.6:
+				continue
+			var m := _ayrilan(a, b)
+			if m != null:
+				print("BEKCI26 ayir a=%s b=%s d=%.2f" % [a.get_parent().name, b.get_parent().name, d])
+				Unclip.spread(m, 0.6)
+
+
+## Gizlenip yeniden görünen (Melee.rally: ayaklandırılan asker dövüş boyunca gizli, dönüşte evinde görünür; Duel öldürme
+## kamerası: kadrajı kapatan gizli): gizliyken komşusu (reserve_loop yerinde adımı, düellocu) onu saymadan yerine girmiş
+## olabilir (VISAUDIT overlap Squad{crouch}|Squad{crouch} (−20,1; 0; 5,1), isidore: RALLY'nin hemen ardında). Göründüğü
+## andan 0,5 sn sonra yanında hâlâ iç içe ayakta duran varsa ayrılır (yanından geçen, evine koşan geçicidir; denetim 1 sn ister).
+func _gorunce_ayir(p: Person) -> void:
+	if is_instance_valid(p) and p.is_inside_tree() and p.is_visible_in_tree():
+		get_tree().create_timer(0.5, false).timeout.connect(_yakin_ayir.bind(p))
+
+
+func _yakin_ayir(p: Person) -> void:
+	if not is_instance_valid(p) or not p.is_inside_tree() or not p.is_visible_in_tree() or Unclip.lying(p):
+		return
+	var gp := p.global_position
+	for n in get_tree().get_nodes_in_group("persons") + get_tree().get_nodes_in_group("soldiers"):
+		var o := n as Node3D
+		if o == null or o == p or not o.is_visible_in_tree() or o.has_meta("corpse") or o.has_meta("no_audit") or Unclip.lying(o):
+			continue
+		if o is Soldier and (o as Soldier).pose != "stand":
+			continue
+		var op := o.global_position
+		if Vector2(op.x - gp.x, op.z - gp.z).length() >= 0.4 or absf(op.y - gp.y) > 0.6:
+			continue
+		var m := _ayrilan(p, o)
+		if m != null:
+			print("BEKCI26 gorunce a=%s b=%s d=%.2f" % [p.get_parent().name, o.get_parent().name, Vector2(op.x - gp.x, op.z - gp.z).length()])
+			Unclip.spread(m, 0.6)
+		return
+
+
+## İç içe çiftten yer değiştirecek olan: düellocu (yürüyen); yoksa yerinde durması istenmeyen (no_yield değil)
+func _ayrilan(a: Node3D, b: Node3D) -> Node3D:
+	for o: Node3D in [a, b]:
+		if o.get_parent() is Duelist:
+			return o.get_parent() as Node3D
+	for o: Node3D in [a, b]:
+		if not o.has_meta("no_yield") and o != giust and o != emperor:
+			return o
+	return null
 
 
 ## TAŞIMA-8: x'e en yakın dış sur mazgal açıklığı (dişlerin arası; SurOyun.mazgallar), kacin'daki x'lerden 2,1 m ve
@@ -318,8 +425,9 @@ func _build_walls_scene() -> void:
 		fight.add_builders(_gp(Vector3(0, 0, -2.6)) if sur.eski_mi else sur.gedik_onu() + Vector3(0, 0, 1.6), 2, 2660)
 		# yeni sette peribolosun ortasında (z 6,6 / 5,4 sıraları): z 8'de ön sıra 3. şeridin (z 9,6) koşanlarına değiyor,
 		# itilen iki asker iç içe kalıyordu (VISAUDIT overlap, hold23)
-		Garrison.squad(self, Vector3(-18.0, 0, 8.0) if sur.eski_mi else Vector3(-18.0, 0, 6.6), 5, 2, 0.0, 2610, "spear_shield", true)
-		Garrison.squad(self, Vector3(22.5, 0, 9.0) if sur.eski_mi else Vector3(24.0, 0, 7.4), 4, 2, 0.0, 2620, "spear_shield", true)
+		var bolukler: Array = [
+			Garrison.squad(self, Vector3(-18.0, 0, 8.0) if sur.eski_mi else Vector3(-18.0, 0, 6.6), 5, 2, 0.0, 2610, "spear_shield", true),
+			Garrison.squad(self, Vector3(22.5, 0, 9.0) if sur.eski_mi else Vector3(24.0, 0, 7.4), 4, 2, 0.0, 2620, "spear_shield", true)]
 		# Gerçek savaş (Bölüm 0'daki gibi): kalkanını başına kaldırıp koşanlar, ok yiyip devrilenler, yerde yatanlar,
 		# enkaz; oyuncunun ok deposu–gedik yolunu ve poterna fıçılarını kesmeyen şeritlerde
 		var serit: Array = [[Vector3(-17.5, 0, 2.4), Vector3(3.0, 0, 2.4), 1.4, 9, 5, 0], [Vector3(9.0, 0, 12.6), Vector3(26, 0, 12.6), 1.2, 8, 4, 0],
@@ -335,7 +443,11 @@ func _build_walls_scene() -> void:
 				# (doğuş (−9,6; 7,2) ile komutan arasındaki görüş çizgisine girmesin: x −8,5'te bitince ucundaki koşan
 				# "D26_G_LADDER"da komutanı örtüyordu, VISAUDIT personhidden)
 				[Vector3(-24.5, 0, 9.6), Vector3(-11.4, 0, 9.6), 1.2, 7, 4, 0],
-				[Vector3(18.0, 0, 5.6), Vector3(30.0, 0, 5.4), 1.6, 5, 3, 0], [Vector3(32.0, 0, 6.6), Vector3(43.0, 0, 6.8), 1.6, 5, 3, 0]]
+				# TAŞIMA-8D: dördüncü şerit z 5,4–5,6 (en 1,6: z 4,7–6,3) ikinci yedek bölüğün (24; 7,4) arka sırasının (z 6,2)
+				# içinden geçiyordu: koşanlar askerleri itiyor, iki asker iç içe kalıyordu (VISAUDIT overlap Squad|Squad
+				# (24,6; 0; 6,0), hold_box). Bölüğün güneyinde, arka sıradan 1,5 m (itme erimi 0,7 + yerinde adım payı); batı
+				# ucu poterna fıçılarının yuvarlandığı yerin (17,95; 3,2) ötesinde
+				[Vector3(21.0, 0, 3.6), Vector3(31.0, 0, 3.6), 1.2, 5, 3, 0], [Vector3(32.0, 0, 6.6), Vector3(43.0, 0, 6.8), 1.6, 5, 3, 0]]
 		for lane: Array in serit:
 			var bx := BattleExtras.new()
 			add_child(bx)
@@ -361,7 +473,27 @@ func _build_walls_scene() -> void:
 			chaos.avoid_lines = [[_gp(Vector3(-4.2, 0, -3.0)), ty[0], 1.6], [ty[0], ty[1], 1.6], [ty[1], POSTERN, 1.6]]
 			for b: Vector3 in BLOCKS:
 				chaos.avoid.append([b + _yuvarla() * 2.6, 1.5])
+			# TAŞIMA-8D: yedek bölüklerin askerleri. Kargaşada koşanların yolu bir insandan yalnız 0,6 m uzak tutuluyordu;
+			# yürüyen (Person._clear_way) 0,7 m'deki ayaktakini yana iter: bölüğün içinden geçenler askerleri evinden
+			# itiyor, itilen asker şeridin koşanlarınca daha da itiliyor (8D tanı izi: asker z 5,4 → 3,65), iki asker iç
+			# içe kalıyordu (VISAUDIT overlap Squad|Squad). Her askerin çevresi (itme erimi 0,7 + yerinde adım 0,4 + pay)
+			# yolsuz; bölüğün önünde ve ardında peribolosun geçişi açık kalır.
+			for bk: Node3D in bolukler:
+				for m in bk.get_children():
+					if m is Node3D:
+						chaos.avoid.append([(m as Node3D).global_position if (m as Node3D).is_inside_tree() else bk.position + (m as Node3D).position, 1.3])
 		add_child(chaos)
+		# TAŞIMA-8D: gizlenip geri gelenler (dövüşte ayaklandırılan yedek asker, öldürme kamerasının gizlediği savunucu,
+		# onarımcı) yeniden göründüğü anda yanında iç içe kalan varsa ayrılır (_gorunce_ayir)
+		var izle: Array = defenders.duplicate()
+		for bk: Node3D in bolukler:
+			izle.append_array(bk.get_children())
+		for c: Dictionary in fight.crew:
+			izle.append(c["node"])
+		izle.append_array(fight.builders)
+		for n in izle:
+			if n is Person:
+				(n as Person).visibility_changed.connect(_gorunce_ayir.bind(n))
 	# Burçtaki sancak (Ulubatlı Hasan): başta görünmez, 3. dalgada yükselir
 	banner = Node3D.new()
 	banner.position = BANNER_TOWER + Vector3(0, -4.0, 0)

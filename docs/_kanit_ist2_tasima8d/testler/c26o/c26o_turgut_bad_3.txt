@@ -1,0 +1,7 @@
+GUN shots=4 hits=3 missed=1
+CLIMB t=11.1 stones=1 hits=0 at=(10.2, 8.6, 15.7)
+WAVERUNNER wave=1/2 won=true t=16.7 pw=0.28 foe_dmg=18.0 allies=0+2 rally_foes=1 thrown=0
+WAVERUNNER wave=2/2 won=true t=11.3 pw=0.28 foe_dmg=18.0 allies=0+2 rally_foes=1 thrown=0
+AUTOTEST PASS chapter=26o variant=turgut_bad outcome=26.1 water=3 ladders=3 gun=3/4 stones=1/1 gunner=3/3 oil=1/1 turgut=yes
+ESYAAUDIT OZET kayit=206 uyanan=0 tekme=0 kosu=0 itme=0 patlama=0 destek=0 en_cok_uyanik=0 sorun=0 (dusme=0 havada=0 gomuk=0 tikama=0 sinir=0) siper=2 yasla=0
+KOSU rc=0 sure=84 args=--chapter=26o --autotest=turgut_bad

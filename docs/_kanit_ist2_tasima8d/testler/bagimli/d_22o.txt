@@ -1,0 +1,4 @@
+GUN shots=4 hits=3 missed=1
+AUTOTEST PASS chapter=22o variant= outcome=22O.1 saved=3 gun=3/4 warn=3 carry=0.75
+ESYAAUDIT OZET kayit=85 uyanan=0 tekme=0 kosu=0 itme=0 patlama=0 destek=0 en_cok_uyanik=0 sorun=0 (dusme=0 havada=0 gomuk=0 tikama=0 sinir=0) siper=0 yasla=0
+KOSU rc=0 sure=44 args=--chapter=22o --autotest

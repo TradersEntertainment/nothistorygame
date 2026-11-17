@@ -49,12 +49,19 @@ var _ditch_bar: Node3D        # ova ile hendek arasındaki görünmez sınır: t
 ## kalkanları merdivenin başına tutar (taş bir eksik); çizik almadıysa (37O.2) bölükten kalan azdır, yalnız anar.
 var turgut: Person
 var _turgut_help := false
+## TAŞIMA-8D sondası (=dis_in, =dis_dur, =esik_dur): merdivenden çıkınca oyuncu bir dişin (ya da mazgal eşiğinin)
+## üstüne konur; gerçek oyuncu gibi yürüyerek iner (dis_in) ya da orada dikilir (dur). Tırmanış döngüsü bitmeli.
+var _t8d_sonda := ""
+var _t8d_kondu := false
+var _t8d_ustten := 0
 
 
 func _ready() -> void:
 	GameState.snapshot(26)
 	if GameState.autotest and GameState.autotest_variant.begins_with("turgut"):
 		GameState.chapter_outcomes[37] = "37O.2" if GameState.autotest_variant == "turgut_bad" else "37O.1"
+	if GameState.autotest and GameState.autotest_variant in ["dis_in", "dis_dur", "esik_dur"]:
+		_t8d_sonda = GameState.autotest_variant
 	hud = Hud.new()
 	add_child(hud)
 	hud.chase_music = "tension"
@@ -266,7 +273,13 @@ func _build_walls_scene() -> void:
 		var ay: Vector3 = dm["ayak"]
 		var tp: Vector3 = dm["tepe"]
 		var boy := ay.distance_to(tp)
-		climb_ladder = Ladder.new(boy, rad_to_deg(asin((ay.z - tp.z) / boy)), Color("6a4a2c"))
+		# TAŞIMA-8D: tepe çıkışı sur yolunun ZEMİNİNE (mazgal açıklığının ardı). Ladder.top_exit tepeden 0,7 m geriye
+		# veriyordu: merdivenin tepesi korkuluğun 1,5 m üstünde, o nokta mazgal eşiğinin (korkuluğun) üstüne, sur yolunun
+		# 1,4 m yukarısına düşüyordu (8D tanı satırı: çıkış y 10,03, sur yolu 8,62). Oyuncu eşikte kalabiliyordu; bot merdivene
+		# geri yürüyüp yeniden tutunuyor, tırmanış döngüsü hiç bitmiyordu.
+		var sm := SurMerdiveni.new(boy, rad_to_deg(asin((ay.z - tp.z) / boy)), Color("6a4a2c"))
+		sm.cikis = Vector3(ay.x, sur.dis_yol_y() + 0.05, sur.dis_yol_on_z())
+		climb_ladder = sm
 		climb_ladder.position = ay
 	climb_ladder.visible = false
 	add_child(climb_ladder)
@@ -469,9 +482,9 @@ func _wall_climb() -> void:
 	player.frozen = false
 	var hz := 1.0
 	var t := 0.0
-	while not (player.ladder == null and player.global_position.y > sur.dis_yol_y() - 0.3 \
-			and player.global_position.z < sur.dis_sur_z1() - 0.1 \
-			and (sur.eski_mi or (player.is_on_floor() and player.global_position.y < sur.dis_yol_y() + 0.5))):
+	var yedek := false          # bot 40 sn'de çıkamazsa tek sefer tepeye konur
+	var ustte := 0.0            # merdivenden çıkıp sur yolunun üstünde (korkuluk eşiği, diş) duruş süresi
+	while not _tirmandi():
 		await get_tree().process_frame
 		if get_tree().paused:      # duraklatmada sayaç akmaz
 			continue
@@ -485,6 +498,18 @@ func _wall_climb() -> void:
 				player.global_position = climb_ladder.global_position + Vector3(0, 0.05, 1.0)
 				player.face(climb_ladder.point_at(2.5))
 				await hud.fade_to(0.0, 0.3)
+		# Sur yolunun üstünde (korkuluk eşiği, diş tepesi) yerde duran: 1,5 sn içinde kendisi inmezse bir kez merdivenin
+		# sur yolu çıkışına konur (gerçek oyuncu dişe çıkıp orada dikilebilir; her çıkış biçimi biter, döngü takılmaz)
+		if not sur.eski_mi and _sur_ustunde():
+			ustte += dt
+			if ustte > 1.5:
+				print("CLIMB ustten at=%s" % player.global_position.snapped(Vector3.ONE * 0.1))
+				_t8d_ustten += 1
+				player.global_position = climb_ladder.top_exit()
+				player.velocity = Vector3.ZERO
+				ustte = 0.0
+		else:
+			ustte = 0.0
 		if player.ladder == climb_ladder and not _stone_falling and player._ladder_t > climb_ladder.height * 0.4:
 			oil.trigger()
 		if player.ladder == climb_ladder and not oil.active:
@@ -493,16 +518,33 @@ func _wall_climb() -> void:
 				hz = randf_range(1.4, 2.0)
 				_drop_stone()
 		if GameState.autotest:
-			# Bot: taş düşerken durur, sonra tırmanır (kaçınma ritmi gerçekten denenir)
-			if _stone_falling or oil.active:
+			if _t8d_sonda != "" and player.ladder == null and not _t8d_kondu and player.global_position.y > sur.dis_yol_y() - 0.3:
+				_t8d_koy()
+			if _t8d_kondu and _t8d_sonda == "dis_in":
+				# gerçek oyuncu: dişin üstünden sur içine doğru yürür, sur yoluna atlar
+				player.face(player.global_position + Vector3(0, 1.5, -4.0))
+				Input.action_press("move_forward")
+			elif player.ladder == null and player.global_position.y > sur.dis_yol_y() - 0.3:
+				# Tepede: merdivene geri bakıp yürümez (eskiden tepeye bakıp merdivene geri dönüyordu)
 				Input.action_release("move_forward")
 			else:
-				Input.action_press("move_forward")
-			player.face(climb_ladder.point_at(clampf(player._ladder_t + 2.0, 0.0, climb_ladder.height)))
-			if t > 40.0:
+				# Bot: taş düşerken durur, sonra tırmanır (kaçınma ritmi gerçekten denenir)
+				if _stone_falling or oil.active:
+					Input.action_release("move_forward")
+				else:
+					Input.action_press("move_forward")
+				player.face(climb_ladder.point_at(clampf(player._ladder_t + 2.0, 0.0, climb_ladder.height)))
+			if t > 40.0 and not yedek:
+				yedek = true
+				print("CLIMB yedek t=%.1f at=%s lad=%s" % [t, player.global_position.snapped(Vector3.ONE * 0.1), player.ladder != null])
+				player.ladder = null
+				player.velocity = Vector3.ZERO
 				player.global_position = climb_ladder.top_exit()
 	if GameState.autotest:
 		Input.action_release("move_forward")
+		if _t8d_sonda != "":
+			print("T8D sonda=%s kondu=%s ustten=%d bitti_t=%.1f at=%s" % [_t8d_sonda, _t8d_kondu, _t8d_ustten, t,
+				player.global_position.snapped(Vector3.ONE * 0.01)])
 	hud.set_qte("")
 	hud.set_objective("")
 	# Hasan sur yolunda, Tolga'nın yanında (sırtını ona verecek): "Arkadan daha da geliyorlar!" görünmez birinden
@@ -782,7 +824,13 @@ func _process(delta: float) -> void:
 	_fx_t -= delta
 	if _fx_t <= 0.0:
 		_fx_t = randf_range(0.8, 2.0)
-		Vfx.explosion(walls, Vector3(randf_range(-14, 18), randf_range(2.0, 8.0), randf_range(14.0, 20.0)), randf_range(0.3, 0.6))
+		var fx := Vector3(randf_range(-14, 18), randf_range(2.0, 8.0), randf_range(14.0, 20.0))
+		if not sur.eski_mi:
+			# Eski koordinat (dış sur z 14–16, boy 8) yeni sette surun gövdesinin ve sur yolunun altına düşüyordu (patlama
+			# görünmüyor, sur yolu fıçılarını uyandırıyordu): aynı oranla dış surun ova yüzüne ve önüne
+			fx = Vector3(fx.x, lerpf(sur.teras_y(), sur.dis_yol_y(), fx.y / LandWalls.OUTER_H),
+				sur.dis_sur_z1() + 0.2 + maxf(0.0, fx.z - LandWalls.OUTER_Z1))
+		Vfx.explosion(walls, fx, randf_range(0.3, 0.6))
 		Audio.sfx("explosion_small", -16.0, randf_range(0.8, 1.2))
 	if phase == "o2" and not player.frozen and not GameState.autotest:
 		if _vwarn >= 0.0:
@@ -1169,3 +1217,54 @@ func _entry_vary(men: Array) -> void:
 		if is_instance_valid(s) and (s as Node3D).is_visible_in_tree() and s.rig and s.rig.lock == 0:
 			s.rig.emote(["nod", "shrug", "arms_cross", "nod", "whisper"][randi() % 5])
 		_entry_vary(men))
+
+
+## Tırmanış bitti mi: merdivende değil, yerde, dış surun içinde ve sur yolunun üstünde (yeni sette sur yolu zemininde;
+## korkuluğun/dişin üstünde duran _sur_ustunde ile bir kez sur yoluna indirilir)
+func _tirmandi() -> bool:
+	var p := player.global_position
+	if player.ladder != null or p.y <= sur.dis_yol_y() - 0.3 or p.z >= sur.dis_sur_z1() - 0.1:
+		return false
+	return sur.eski_mi or (player.is_on_floor() and p.y < sur.dis_yol_y() + 0.5)
+
+
+func _sur_ustunde() -> bool:
+	var p := player.global_position
+	return player.ladder == null and player.is_on_floor() and p.y >= sur.dis_yol_y() + 0.5 and p.y < sur.dis_yol_y() + 4.0 \
+		and p.z > sur.dis_sur_z0() - 0.5 and p.z < sur.dis_sur_z1() + 0.3 and absf(p.x - CLIMB_X) < 6.0
+
+
+## Hücum merdiveni (yeni set): tepe çıkışı sur yolunun zemini (Ladder.top_exit tepenin 0,7 m gerisini, burada mazgal
+## eşiğinin üstünü verirdi). Player merdivenin tepesinde top_exit()'i çağırır.
+class SurMerdiveni extends Ladder:
+	var cikis := Vector3.INF
+
+	func _init(p_height := 6.0, p_tilt := 15.0, p_color := Color("6a4a2c")) -> void:
+		super(p_height, p_tilt, p_color)
+
+	func top_exit() -> Vector3:
+		return cikis if cikis != Vector3.INF else super()
+
+
+## TAŞIMA-8D sondası: merdivenin yanındaki dişin (dis_*) ya da merdivenin mazgal eşiğinin (esik_*) üstüne koy
+func _t8d_koy() -> void:
+	_t8d_kondu = true
+	var zk := sur.dis_sur_z1() - IstSurlar.PARAPET_T * 0.5
+	var space := get_world_3d().direct_space_state
+	var en := Vector3.INF
+	var dxs: Array = [0.0] if _t8d_sonda.begins_with("esik") else [0.6, -0.6, 0.8, -0.8, 1.0, -1.0, 1.2, -1.2, 1.4, -1.4]
+	for dx: float in dxs:
+		var a := Vector3(CLIMB_X + dx, sur.dis_yol_y() + 6.0, zk)
+		var q := PhysicsRayQueryParameters3D.create(a, a + Vector3.DOWN * 8.0)
+		q.exclude = [player.get_rid()]
+		var h := space.intersect_ray(q)
+		if h.is_empty():
+			continue
+		var y: float = (h["position"] as Vector3).y
+		if y > sur.dis_yol_y() + 0.6 and (en == Vector3.INF or y > en.y + 0.1):
+			en = h["position"]       # eşik (korkuluk üstü) ya da en yüksek diş tepesi
+	print("T8D koy sonda=%s yer=%s" % [_t8d_sonda, en.snapped(Vector3.ONE * 0.01) if en != Vector3.INF else "yok"])
+	if en != Vector3.INF:
+		player.velocity = Vector3.ZERO
+		player.global_position = en + Vector3(0, 0.05, 0)
+		Input.action_release("move_forward")

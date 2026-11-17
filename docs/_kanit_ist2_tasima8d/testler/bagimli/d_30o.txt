@@ -1,0 +1,5 @@
+WAVERUNNER wave=1/2 won=true t=12.8 pw=0.28 foe_dmg=18.0 allies=0+2 rally_foes=1 thrown=1
+WAVERUNNER wave=2/2 won=true t=12.2 pw=0.28 foe_dmg=18.0 allies=0+2 rally_foes=1 thrown=1
+AUTOTEST PASS chapter=30o variant= outcome=30O.1 stones=4/4 gunner=4/4 tower=true fell=false guards=10 pokes=0 flee=ride pushed=true
+ESYAAUDIT OZET kayit=98 uyanan=0 tekme=0 kosu=0 itme=0 patlama=0 destek=0 en_cok_uyanik=0 sorun=0 (dusme=0 havada=0 gomuk=0 tikama=0 sinir=0) siper=0 yasla=0
+KOSU rc=0 sure=57 args=--chapter=30o --autotest

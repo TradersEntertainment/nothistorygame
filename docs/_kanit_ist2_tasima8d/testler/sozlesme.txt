@@ -1,0 +1,5 @@
+SURSOZLESME PASS kalem=13 kesim=8
+SUROYUN nokta=519 havada=0 gomuk=0 katida=0
+WALKTHRU OZET yol=7 tamam=7 takilma=0 dusme=0
+ESYATEST PASS
+PARSECHECK PASS scripts=364
