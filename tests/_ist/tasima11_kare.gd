@@ -11,6 +11,8 @@ var bekle := 1.5
 var kamlar := ""
 var fov := 72.0
 var on_ek := ""
+## --once=Sinif: bekleme, sahnede bu sınıftan bir düğüm (SeaWalls) kurulduktan sonra başlar
+var once := ""
 
 
 func _ready() -> void:
@@ -22,6 +24,7 @@ func _ready() -> void:
 			"kam": kamlar = kv[1]
 			"fov": fov = float(kv[1])
 			"onek": on_ek = kv[1]
+			"once": once = kv[1]
 	DirAccess.make_dir_recursive_absolute(out)
 	var h := Yardimci.new()
 	h.ana = self
@@ -50,8 +53,21 @@ class Yardimci extends Node:
 		var kamlar: String = ana.kamlar
 		var fov: float = ana.fov
 		var on_ek: String = ana.on_ek
+		var once: String = ana.once
 		get_window().size = Vector2i(1280, 720)
 		var t := 0.0
+		if once != "":
+			var bulundu := false
+			while not bulundu and t < 240.0:
+				await get_tree().process_frame
+				t += get_process_delta_time() / maxf(Engine.time_scale, 0.01)
+				var sc := get_tree().current_scene
+				if sc != null and Engine.get_process_frames() % 10 == 0:
+					for c in sc.get_children():
+						if c.get_script() != null and (c.get_script() as Script).get_global_name() == once:
+							bulundu = true
+			print("T11BEKLE once=%s bulundu=%s t=%.1f" % [once, bulundu, t])
+			t = 0.0
 		while t < bekle:
 			await get_tree().process_frame
 			t += get_process_delta_time() / maxf(Engine.time_scale, 0.01)

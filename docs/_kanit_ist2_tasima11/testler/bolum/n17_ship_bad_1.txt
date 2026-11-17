@@ -1,0 +1,4 @@
+KOSU n17_ship_bad_1 args=--chapter=17 --autotest=ship_bad rc=0 sure=32s
+DENIZSET bolum=17 set=yeni in_world=true
+DENIZSET birlestir=21
+AUTOTEST PASS chapter=17 variant=ship_bad outcome=17.1 saved=3 fell=false lost=false next=chapter18b.tscn shot=true chain=false rescue_t=32 genoese=0

@@ -1,0 +1,4 @@
+KOSU n17_two_2 args=--chapter=17 --autotest=two rc=0 sure=39s
+DENIZSET bolum=17 set=yeni in_world=true
+DENIZSET birlestir=21
+AUTOTEST PASS chapter=17 variant=two outcome=17.2 saved=2 fell=false lost=false next=chapter18b.tscn shot=true chain=false rescue_t=40 genoese=0

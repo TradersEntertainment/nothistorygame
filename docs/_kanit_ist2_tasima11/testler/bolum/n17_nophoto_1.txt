@@ -1,0 +1,4 @@
+KOSU n17_nophoto_1 args=--chapter=17 --autotest=nophoto rc=0 sure=32s
+DENIZSET bolum=17 set=yeni in_world=true
+DENIZSET birlestir=21
+AUTOTEST PASS chapter=17 variant=nophoto outcome=17.1 saved=3 fell=false lost=false next=chapter18b.tscn shot=false chain=false rescue_t=40 genoese=0

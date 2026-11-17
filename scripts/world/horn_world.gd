@@ -481,6 +481,28 @@ func _wall_run(a: Vector3, b: Vector3, h: float, tower_step: float, d: Dressing,
 		# Sur kıyıdan, şehrin kenarının üstüne yükselir (şehir zemini kıyının 10 m içinde 10–20 m yüksekte: eskiden 9 m'lik
 		# sur yamacın içinde kalıyor, Galata'dan kıyı çıplak yeşil bir yamaç görünüyordu)
 		var hh := _wall_top(mid, side, h)
+		if _deniz_yakin(mid):
+			# TAŞIMA 11: bölümün kendi sur kesimine ≤ 250 m: deniz suru kaleminin uzak katmanı (kutu gövde, saçılmış kutu diş,
+			# kırmızı şerit yok). Uçuş kutusu ve savunanlar eskisi gibi.
+			var u0 := p0 - dir * 0.2
+			var u1 := p1 + dir * 0.2
+			if skip:
+				var DZ := load(DENIZ_YOL)
+				DZ.uzak_parca(_deniz_ag, u0, mid - dir * seg * 0.16, 3.0, hh, -3.0, side)
+				DZ.uzak_parca(_deniz_ag, mid + dir * seg * 0.16, u1, 3.0, hh, -3.0, side)
+				DZ.uzak_parca(_deniz_ag, mid - dir * seg * 0.16, mid + dir * seg * 0.16, 3.0, hh, hh * 0.62, side)
+				continue
+			load(DENIZ_YOL).uzak_parca(_deniz_ag, u0, u1, 3.0, hh, -3.0, side)
+			flight_boxes.append([Transform3D(Basis(Vector3.UP, deg_to_rad(yaw)), mid + Vector3(0, (hh - 3.0) * 0.5, 0)), Vector3(3.0, hh + 3.0, seg)])
+			var face0 := atan2(side.x, side.z)
+			var nm0 := int(seg / 4.5)
+			for m in nm0:
+				if rng.randf() < 0.75:
+					var mp0 := p0.lerp(p1, (m + rng.randf_range(0.2, 0.8)) / nm0) + Vector3(0, hh, 0) - side * 0.4
+					_wall_men.append(Transform3D(Basis(Vector3.UP, face0 + rng.randf_range(-0.3, 0.3)), mp0))
+			if k % 2 == 0:
+				nd.glow(Vector3(0.35, 0.5, 0.35), mid + Vector3(0, hh + 1.3, 0) + side * 0.9, Color("ffb040"))
+			continue
 		if skip:
 			# Kapı: iki ayak ve kemer
 			d.box(Vector3(3.2, hh + 3.0, seg * 0.35), mid - dir * seg * 0.33 + Vector3(0, (hh - 3.0) * 0.5, 0), STONE.darkened(0.12), Vector3(0, yaw, 0))
@@ -510,6 +532,12 @@ func _wall_run(a: Vector3, b: Vector3, h: float, tower_step: float, d: Dressing,
 		if not _free(p.x, p.z, 6.0):
 			t += tower_step
 			continue
+		if _deniz_yakin(p):
+			load(DENIZ_YOL).uzak_kule(_deniz_ag, p + side * 1.0, 8.0, th, -3.0, deg_to_rad(yaw))
+			if rng.randf() < 0.5:
+				nd.glow(Vector3(0.4, 0.6, 0.4), p + Vector3(0, th + 1.5, 0), Color("ffb040"))
+			t += tower_step
+			continue
 		d.box(Vector3(8.0, th + 3.0, 8.0), p + Vector3(0, (th - 3.0) * 0.5, 0) + side * 1.0, STONE.darkened(0.18), Vector3(0, yaw, 0))
 		for q in 4:
 			d.box(Vector3(1.4, 1.3, 1.4), p + side * 1.0 + Basis(Vector3.UP, deg_to_rad(yaw)) * Vector3((q % 2 - 0.5) * 6.6, th + 1.0, (q / 2 - 0.5) * 6.6), STONE.darkened(0.14), Vector3(0, yaw, 0))
@@ -517,6 +545,46 @@ func _wall_run(a: Vector3, b: Vector3, h: float, tower_step: float, d: Dressing,
 		if rng.randf() < 0.5:
 			nd.glow(Vector3(0.4, 0.6, 0.4), p + Vector3(0, th + 1.0, 0), Color("ffb040"))
 		t += tower_step
+
+
+## TAŞIMA 11: kıyı surunun bölüm kesimine (keep) ≤ 250 m'lik kısmı deniz suru kaleminin uzak katmanıyla (deniz_set.uzak_parca,
+## uzak_kule; tek ağ, sur_doku tur 1). `--eskisur` (ya da `--eskisur=<bölüm>`) eskisini kurar.
+const DENIZ_YOL := "res://scripts/world/ist/deniz_set.gd"
+const DENIZ_YAKIN := 250.0
+var _deniz_ag = null
+var _deniz_eski := -1
+
+
+func _deniz_yakin(p: Vector3) -> bool:
+	if keep.is_empty():
+		return false
+	if _deniz_eski < 0:
+		var bolum := ""
+		var sc := get_tree().current_scene if is_inside_tree() else null
+		if sc != null:
+			bolum = sc.scene_file_path.get_file().get_basename().trim_prefix("chapter")
+		_deniz_eski = 1 if SurSet.eski_istendi(bolum) else 0
+	if _deniz_eski == 1:
+		return false
+	var kd := INF
+	for r: Rect2 in keep:
+		var dx := maxf(maxf(r.position.x - p.x, 0.0), p.x - r.end.x)
+		var dz := maxf(maxf(r.position.y - p.z, 0.0), p.z - r.end.y)
+		kd = minf(kd, Vector2(dx, dz).length())
+	if kd > DENIZ_YAKIN:
+		return false
+	if _deniz_ag == null:
+		_deniz_ag = load("res://scripts/world/ist/sur_kule.gd").Ag.new()
+	return true
+
+
+func _deniz_kur(ad: String) -> void:
+	if _deniz_ag == null:
+		return
+	var mi: MeshInstance3D = _deniz_ag.mesh_ekle(self, load("res://scripts/world/ist/sur_doku.gd").mat(1, Color("c9b89a"), false), ad)
+	if mi:
+		mi.set_meta("no_walk", true)
+	_deniz_ag = null
 
 
 ## Kıyı surunun tepesi: iki yandaki görünen zeminin 5 m üstü (en az h); bölümün kendi sur parçasının yanında (keep) eski
@@ -550,6 +618,7 @@ func _horn_walls() -> void:
 		d.cyl(7.0, 22.0, Vector3(e.x, 10.0, e.z), STONE.darkened(0.2), Vector3.ZERO, 14)
 		d.cyl(7.4, 0.6, Vector3(e.x, 21.3, e.z), Color("9a5040"), Vector3.ZERO, 14)
 	_wall_run(b, World1453.TIP, 9.0, 60.0, d, merl, nd)
+	_deniz_kur("DenizSurUzak_Halic")
 	d.build(self)
 	_night.append(nd.build(self))
 	Scenery.scatter(self, Scenery._boxm(Vector3.ONE), merl, [], Props.mat(STONE.darkened(0.2), 0.0, false, "ashlar"))
@@ -676,6 +745,7 @@ func _marmara_walls() -> void:
 	for f: float in World1453.MARMARA_GATES:
 		mg.append(ma.lerp(mb, f))
 	_wall_run(ma, mb, 9.0, 58.0, d, merl, nd, mg)
+	_deniz_kur("DenizSurUzak_Marmara")
 	# Kıyı kayalıkları
 	for i in 60:
 		var t := rng.randf()

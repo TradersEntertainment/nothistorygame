@@ -132,26 +132,133 @@ func _ready() -> void:
 
 # ================================================================ yerleşim
 
+## TAŞIMA 11: Haliç surunun bu kesiminin yeni görünüşü (deniz suru kalemi, scripts/world/ist/deniz_set.gd). Ölçüler eski
+## kutuların: gövde x −24…24, z 60–64 (dış yüz 60,00), tepe 9,6; deniz kapısı x 15 ± 1,6, eşik 1,18, lento altı 5,4;
+## yol taşı z 59,6–63,98, y 9,32–9,62 (0,4 m konsol, kademeli bingiler); korkuluk + dişler yolun dış kenarında (eski diş
+## dizisi −22,5 + 2,5 k; dişler eskisi gibi çarpışmasız); MERDİVEN: x −6 ± 0,65 dişsiz ve korkuluksuz (−6,9…−5,1 açık;
+## TAŞIMA-8D'nin eşik tuzağı: kalın korkuluk/eşik yok, çıkış MerdivenCikis ile yolun üstüne); kazanın önü açık; kuleler
+## x ±21 (6,2 × 6,2, tepe 14,6); rıhtım x 6…24, z 57,4–60,2, üst 1,2.
+const LADDER_GAP := Vector2(-6.9, -5.1)
+
+func _yeni_sur(gizli: Array, esik: StaticBody3D, yol: StaticBody3D, kule_kutu: Array, rihtim: StaticBody3D) -> void:
+	var D := load("res://scripts/world/ist/deniz_set.gd")
+	for b: StaticBody3D in gizli:
+		D.gizle(b)
+	D.gizle(esik, true)
+	D.gizle(yol, true)
+	D.gizle(rihtim, true)
+	for kb: StaticBody3D in kule_kutu:
+		D.gizle(kb)
+	var gor := Node3D.new()
+	gor.name = "DenizSetGorunus"
+	add_child(gor)
+	var yt := WALK_Y + 0.02
+	var zf := WALL_Z - 2.0
+	var g := {"zf": zf, "s": -1.0, "T": 4.0, "H": WALK_Y, "dip": -3.0, "su": 0.0, "lod": 0, "tohum": 3811, "ust": false,
+		"kz": WALL_Z - 2.4, "PT": 0.5, "PH": 0.5, "yol": yt}
+	var lt := QUAY_Y + GATE_H
+	D.govde(gor, -24.0, 24.0, g, [{"a": GATE_X - GATE_HW, "b": GATE_X + GATE_HW, "y0": QUAY_Y - 0.02, "y1": lt}])
+	var bos: Array = [Vector2(-24.2, -17.9), Vector2(17.9, 24.2), Vector2(-6.65, -5.35)]
+	var xs: Array = D.dis_dizisi(-22.5, 2.5, 22.5, 1.2, bos)
+	var bingi: Array = []
+	for x: float in xs:
+		if absf(x) < 17.2:
+			bingi.append(x)
+	D.konsol(gor, -17.9, 17.9, {"s": -1.0, "zf": zf, "zk": WALL_Z - 2.4, "zy": WALL_Z + 1.98, "yk": WALK_Y - 0.28, "yt": yt}, bingi)
+	D.korkuluk(gor, -17.9, 17.9, g, [LADDER_GAP])
+	D.disler(gor, xs, 1.2, 0.6, g, 3812)
+	for i in 2:
+		var sx := -1.0 if i == 0 else 1.0
+		D.kule(gor, {"cx": sx * 21.0, "w": 6.2, "zi": WALL_Z + 3.1, "zo": WALL_Z - 3.1, "HT": WALK_Y + 5.0, "yb": yt, "pah": 0.45,
+			"bat": 0.2, "tohum": 3813 + i * 11}, g)
+	# rıhtım (batı ucu suya açık; doğu ucu kulenin dibinde)
+	D.rihtim(gor, QUAY.position.x, QUAY.end.x, QUAY.position.y, zf, QUAY_Y, -2.6, {"lod": 0, "tohum": 3814}, [true, false])
+	# deniz kapısı: mermer söve ve lento, boşaltma kemeri (kanatlar eskisi gibi önde)
+	D.kapi_kemer(gor, GATE_X, GATE_HW, QUAY_Y - 0.02, lt - QUAY_Y + 0.02, g)
+	var nb: int = D.bitir(gor, "DenizBirlesik")
+	print("DENIZSET birlestir=%d" % nb)
+
+
+## TAŞIMA 11 (TAŞIMA-8D "başka dosyaya istek" 4, 26o'daki SurMerdiveni gibi): merdivenin tepesinden çıkış noktası sur
+## yolunun üstü (ladder.gd'nin top_exit'i tepeden 0,7 m geriye, y ≈ 10,2'ye bırakıyordu: yol 9,62; oyuncu 0,6 m düşüyordu).
+## Bütün çağrılar (Player tepe çıkışı, tayfa aşması, 40 sn yedeği, boru dönüşü, kare çekimi) aynı noktayı alır.
+class MerdivenCikis extends Ladder:
+	var cikis := Vector3.INF
+
+	func _init(p_height := 6.0, p_tilt := 15.0, p_color := Color("6a4a2c")) -> void:
+		super(p_height, p_tilt, p_color)
+
+	func top_exit() -> Vector3:
+		return cikis if cikis != Vector3.INF else super()
+
+
+var _t11_yedek := 0
+
+
+## TAŞIMA 11 sondası (=esik_dur, =dis_dur; 26o'daki TAŞIMA-8D sondasının karşılığı): merdivenden çıkan oyuncu mazgal
+## açıklığının kenarındaki korkuluğun (eşik) ya da en yakın dişin TEPESİNE konur, giriş bırakılır; 3 sn sonra yolda mı
+## (y ≈ 9,62), merdivene yeniden tutundu mu (sonsuz döngü), kaç kez tutundu. Korkuluk ve dişler çarpışmasız: düşer.
+func _t11_esik() -> void:
+	var yer := Vector3(LADDER_GAP.x - 0.3, WALK_Y + 0.02 + 0.5 + 0.05, WALL_Z - 2.15)
+	if GameState.autotest_variant == "dis_dur":
+		yer = Vector3(-7.5, WALK_Y + 0.02 + 0.5 + 0.6 + 0.1, WALL_Z - 2.15)
+	player.frozen = false
+	player.velocity = Vector3.ZERO
+	player.global_position = yer
+	var tutundu := 0
+	var t := 0.0
+	while t < 3.0:
+		await get_tree().process_frame
+		t += get_process_delta_time()
+		if player.ladder != null:
+			tutundu += 1
+			player.ladder = null
+	var p := player.global_position
+	var yolda := absf(p.y - (WALK_Y + 0.02)) < 0.2 and p.z > WALL_Z - 2.45 and p.z < WALL_Z + 2.0
+	print("T11ESIK sonda=%s yer=%s son=%s yolda=%s tutundu=%d" % [GameState.autotest_variant, yer.snapped(Vector3.ONE * 0.01),
+		p.snapped(Vector3.ONE * 0.01), yolda, tutundu])
+	player.global_position = ladder.top_exit()
+	player.frozen = true
+
+
+func _merdiven(boy: float, egim: float, foot: Vector3) -> Ladder:
+	var m := MerdivenCikis.new(boy, egim, Color("6a4a2c"))
+	# yol yüzü 9,62; tepe (−6; 10,0; 59,7): çıkış mazgalın ardında, kazanın yanında yolun üstü
+	m.cikis = Vector3(foot.x, WALK_Y + 0.1, WALL_Z - 1.4)
+	return m
+
 ## Haliç surunun bu kesimi (18b'nin parçası gibi): gövde, yürüyüş yolu, mazgallar, kuleler; deniz kapısı ve rıhtım
 func _build_wall() -> void:
 	var c := Color("cdbd9e")
 	# Sur gövdesi deniz kapısında açık (GATE_X ± GATE_HW, rıhtımdan GATE_H yükseğe): iki yan gövde, lento, eşik
 	var gl := GATE_X - GATE_HW
 	var gr := GATE_X + GATE_HW
-	Props.set_pattern(Props.solid(self, Vector3(gl + 24.0, WALK_Y, 4.0), Vector3((gl - 24.0) * 0.5, WALK_Y * 0.5, WALL_Z), Color.WHITE), c, "ashlar")
-	Props.set_pattern(Props.solid(self, Vector3(24.0 - gr, WALK_Y, 4.0), Vector3((gr + 24.0) * 0.5, WALK_Y * 0.5, WALL_Z), Color.WHITE), c, "ashlar")
+	# TAŞIMA 11: çarpışma kutuları aynı; yeni kipte görünüş deniz suru kalemiyle (_yeni_sur), `--eskisur` eskisi
+	var eski := SurSet.eski_istendi("38o")
+	print("DENIZSET bolum=38o set=%s" % ("eski" if eski else "yeni"))
+	var gizli: Array = []
+	gizli.append(Props.solid(self, Vector3(gl + 24.0, WALK_Y, 4.0), Vector3((gl - 24.0) * 0.5, WALK_Y * 0.5, WALL_Z), Color.WHITE))
+	gizli.append(Props.solid(self, Vector3(24.0 - gr, WALK_Y, 4.0), Vector3((gr + 24.0) * 0.5, WALK_Y * 0.5, WALL_Z), Color.WHITE))
 	var lt := QUAY_Y + GATE_H
-	Props.set_pattern(Props.solid(self, Vector3(gr - gl, WALK_Y - lt, 4.0), Vector3(GATE_X, (WALK_Y + lt) * 0.5, WALL_Z), Color.WHITE), c, "ashlar")
-	Props.set_pattern(Props.solid(self, Vector3(gr - gl, QUAY_Y - 0.02, 4.0), Vector3(GATE_X, (QUAY_Y - 0.02) * 0.5, WALL_Z), Color.WHITE), Color("b8a888"), "cobble")   # rıhtımla aynı düzlemde titreşmesin
+	gizli.append(Props.solid(self, Vector3(gr - gl, WALK_Y - lt, 4.0), Vector3(GATE_X, (WALK_Y + lt) * 0.5, WALL_Z), Color.WHITE))
+	for b: StaticBody3D in gizli:
+		Props.set_pattern(b, c, "ashlar")
+	var esik := Props.solid(self, Vector3(gr - gl, QUAY_Y - 0.02, 4.0), Vector3(GATE_X, (QUAY_Y - 0.02) * 0.5, WALL_Z), Color.WHITE)
+	Props.set_pattern(esik, Color("b8a888"), "cobble")   # rıhtımla aynı düzlemde titreşmesin
 	# Kapalı kapı: görünmez engel (şafakta kanatlar açılınca kalkar; EXITCHECK'te hiç konmaz)
 	if not GameState.exitcheck:
 		_gate_block = Props.solid(self, Vector3(gr - gl, GATE_H, 0.4), Vector3(GATE_X, QUAY_Y + GATE_H * 0.5, WALL_Z - 1.9), Color.WHITE)
 		_gate_block.visible = false
-	Props.set_pattern(Props.solid(self, Vector3(48, 0.3, 4.38), Vector3(0, WALK_Y - 0.13, WALL_Z - 0.21), Color.WHITE), Color("b8a888"), "cobble")
-	for i in 19:
-		Props.set_pattern(Props.box(self, Vector3(1.2, 1.1, 0.5), Vector3(-22.5 + i * 2.5, WALK_Y + 0.55, WALL_Z - 2.15), Color.WHITE), Color("a89878"), "ashlar")
+	var yol := Props.solid(self, Vector3(48, 0.3, 4.38), Vector3(0, WALK_Y - 0.13, WALL_Z - 0.21), Color.WHITE)
+	Props.set_pattern(yol, Color("b8a888"), "cobble")
+	if eski:
+		for i in 19:
+			Props.set_pattern(Props.box(self, Vector3(1.2, 1.1, 0.5), Vector3(-22.5 + i * 2.5, WALK_Y + 0.55, WALL_Z - 2.15), Color.WHITE), Color("a89878"), "ashlar")
+	var kule_kutu: Array = []
 	for sx: float in [-1.0, 1.0]:
-		Props.set_pattern(Props.solid(self, Vector3(6.2, WALK_Y + 5.0, 6.2), Vector3(sx * 21.0, (WALK_Y + 5.0) * 0.5, WALL_Z), Color.WHITE), Color("c8b898"), "ashlar")
+		var kb := Props.solid(self, Vector3(6.2, WALK_Y + 5.0, 6.2), Vector3(sx * 21.0, (WALK_Y + 5.0) * 0.5, WALL_Z), Color.WHITE)
+		Props.set_pattern(kb, Color("c8b898"), "ashlar")
+		kule_kutu.append(kb)
 	# Mazgallarda savunanlar (Venedikli ve Rum)
 	for k in 7:
 		var x := -16.0 + k * 4.4
@@ -164,8 +271,11 @@ func _build_wall() -> void:
 		var gap_x := roundf((x + 21.25) / 2.5) * 2.5 - 21.25
 		_guard_spots.append(Transform3D(Basis(Vector3.UP, PI), Vector3(gap_x, WALK_Y, WALL_Z - 1.4)))
 	# Deniz kapısı ve önündeki dar taş rıhtım (üstü y 1,2), iki demir baba
-	Props.set_pattern(Props.solid(self, QUAY.size.x * Vector3(1, 0, 0) + Vector3(0, QUAY_Y + 1.0, QUAY.size.y),
-		Vector3(QUAY.get_center().x, QUAY_Y * 0.5 - 0.5, QUAY.get_center().y), Color.WHITE), Color("b8a888"), "ashlar")
+	var rihtim := Props.solid(self, QUAY.size.x * Vector3(1, 0, 0) + Vector3(0, QUAY_Y + 1.0, QUAY.size.y),
+		Vector3(QUAY.get_center().x, QUAY_Y * 0.5 - 0.5, QUAY.get_center().y), Color.WHITE)
+	Props.set_pattern(rihtim, Color("b8a888"), "ashlar")
+	if not eski:
+		_yeni_sur(gizli, esik, yol, kule_kutu, rihtim)
 	for bx: float in [BOLLARD.x, BOLLARD.x + 7.0]:
 		Props.make_solid(Props.cyl(self, 0.18, 0.7, Vector3(bx, QUAY_Y + 0.35, BOLLARD.z), Color("3a3a40"), Vector3.ZERO, 8))
 	gate_l = Node3D.new()
@@ -707,7 +817,7 @@ func _ladder_phase() -> void:
 	var d := top - foot
 	var h := d.length()
 	var tilt := rad_to_deg(atan2(d.z, d.y))
-	ladder = Ladder.new(h, tilt, Color("6a4a2c"))
+	ladder = _merdiven(h, tilt, foot)
 	ladder.position = foot
 	ladder.rotation.y = PI
 	add_child(ladder)
@@ -1027,8 +1137,12 @@ func _climb() -> void:
 			if t > 40.0:
 				player.ladder = null
 				player.global_position = ladder.top_exit()
+				_t11_yedek += 1
 	if GameState.autotest:
 		Input.action_release("move_forward")
+		print("T11CIKIS y=%.2f z=%.2f x=%.2f t=%.1f yedek=%d" % [player.global_position.y, player.global_position.z, player.global_position.x, t, _t11_yedek])
+		if GameState.autotest_variant in ["esik_dur", "dis_dur"]:
+			await _t11_esik()
 	oil_hit = oil.hits > 0
 	player.frozen = true
 	hud.set_objective("")
@@ -1916,7 +2030,7 @@ func _run_shots() -> void:
 	galley.position = ROW_TO
 	var foot := galley.to_global(Vector3(0, DECK, -9.4))
 	var top := Vector3(foot.x, WALK_Y + 0.4, WALL_Z - 2.3)
-	ladder = Ladder.new((top - foot).length(), rad_to_deg(atan2((top - foot).z, (top - foot).y)), Color("6a4a2c"))
+	ladder = _merdiven((top - foot).length(), rad_to_deg(atan2((top - foot).z, (top - foot).y)), foot)
 	ladder.position = foot
 	ladder.rotation.y = PI
 	add_child(ladder)

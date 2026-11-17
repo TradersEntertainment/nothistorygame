@@ -1,0 +1,4 @@
+KOSU n18b_miss_1 args=--chapter=18b --autotest=miss rc=0 sure=23s
+DENIZSET bolum=18b set=yeni
+DENIZSET birlestir=8
+AUTOTEST PASS chapter=18b variant=miss outcome=18B.2 hits=0 cracks=0

@@ -1,0 +1,4 @@
+KOSU n18b_bos_1 args=--chapter=18b --autotest rc=0 sure=24s
+DENIZSET bolum=18b set=yeni
+DENIZSET birlestir=8
+AUTOTEST PASS chapter=18b variant= outcome=18B.1 hits=3 cracks=3

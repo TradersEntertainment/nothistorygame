@@ -1,0 +1,15 @@
+DENIZSET bolum=18b set=eski
+T11KARE c1_dis_yakin ciz=1419 ilkel=1642930
+T11KARE c2_doseme_yakin ciz=1863 ilkel=1852021
+T11KARE c3_kopruden ciz=6069 ilkel=8252852
+T11KARE c4_bingi_alttan ciz=1078 ilkel=1596752
+T11KARE d1_dikis_x20 ciz=6310 ilkel=8238316
+T11KARE c5_top_mazgal ciz=1248 ilkel=1069370
+DENIZSET bolum=18b set=yeni
+DENIZSET birlestir=8
+T11KARE c1_dis_yakin ciz=1382 ilkel=1649632
+T11KARE c2_doseme_yakin ciz=1828 ilkel=1848069
+T11KARE c3_kopruden ciz=6024 ilkel=8268010
+T11KARE c4_bingi_alttan ciz=1016 ilkel=1601446
+T11KARE d1_dikis_x20 ciz=6267 ilkel=8259308
+T11KARE c5_top_mazgal ciz=1220 ilkel=1069080

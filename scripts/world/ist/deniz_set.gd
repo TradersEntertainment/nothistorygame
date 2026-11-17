@@ -514,6 +514,13 @@ static func bitir(kok: Node3D, ad: String) -> int:
 	return BLAK.birlestir(kok, ad)
 
 
+## Sahnenin bölüm adı (res://scenes/chapter18b.tscn → "18b"); ortak kurucular (Horn, HornWorld) seçimi buradan alır
+static func sahne_bolumu(n: Node) -> String:
+	if n == null or not n.is_inside_tree() or n.get_tree().current_scene == null:
+		return ""
+	return n.get_tree().current_scene.scene_file_path.get_file().get_basename().trim_prefix("chapter")
+
+
 ## Seçim: SurSet.eski_istendi(bolum) (`--eskisur`, `--eskisur=4,17`)
 static func eski_mi(bolum: String) -> bool:
 	return SurSet.eski_istendi(bolum)
