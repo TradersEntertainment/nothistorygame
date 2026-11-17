@@ -1,0 +1,6 @@
+KOSU S_g_31o args=--chapter=31o --autotest rc=0 sure=60s
+DENIZSET hornworld DenizSurUzak_740 bolge=eyup ucgen=1884
+DENIZSET hornworld DenizSurUzak_740 bolge=byz_aya ucgen=3112
+DENIZSET hornworld DenizSurUzak_2360 bolge=byz_aya ucgen=748
+DENIZSET hornworld DenizSurUzak_714 bolge=byz_aya ucgen=3130
+AUTOTEST PASS chapter=31o variant= outcome=31O.1 house=true(163) falls=0 signs=3 wrong=0 sun=true lashes=3 miss=0 scaff=true mats=8/8 err=1

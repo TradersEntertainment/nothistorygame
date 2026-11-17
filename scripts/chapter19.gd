@@ -68,6 +68,7 @@ func _ready() -> void:
 	for i in PATH.size() - 1:
 		_total += (PATH[i] as Vector3).distance_to(PATH[i + 1])
 	walls = SeaWalls.new()
+	walls.bolum = "19"     # TAŞIMA 11: --eskisur seçimi (SurSet.eski_istendi)
 	walls.in_world = true
 	add_child(walls)
 	_build_ship()
@@ -522,6 +523,7 @@ func _return() -> void:
 	sea = null
 	await get_tree().process_frame
 	walls = SeaWalls.new()
+	walls.bolum = "19"     # TAŞIMA 11: --eskisur seçimi (SurSet.eski_istendi)
 	walls.in_world = true
 	add_child(walls)
 	Audio.music("walls_night", 1.5)

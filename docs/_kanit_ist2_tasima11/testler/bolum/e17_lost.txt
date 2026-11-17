@@ -1,0 +1,3 @@
+KOSU e17_lost args=--chapter=17 --autotest=lost --eskisur rc=0 sure=47s
+DENIZSET bolum=17 set=eski in_world=true
+AUTOTEST PASS chapter=17 variant=lost outcome=17.3 saved=0 fell=true lost=true next=chapter18.tscn shot=true chain=false rescue_t=40 genoese=0

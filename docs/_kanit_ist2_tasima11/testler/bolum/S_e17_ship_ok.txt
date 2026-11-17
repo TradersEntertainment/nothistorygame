@@ -1,0 +1,3 @@
+KOSU S_e17_ship_ok args=--chapter=17 --autotest=ship_ok --eskisur rc=0 sure=31s
+DENIZSET bolum=17 set=eski in_world=true
+AUTOTEST PASS chapter=17 variant=ship_ok outcome=17.1 saved=3 fell=false lost=false next=chapter18b.tscn shot=true chain=false rescue_t=48 genoese=2

@@ -1,0 +1,2 @@
+KOSU S_g_10h args=--chapter=10h --autotest rc=0 sure=71s
+AUTOTEST PASS chapter=10h variant= outcome=10H.1 truth=3 direnc=0 paradox=0

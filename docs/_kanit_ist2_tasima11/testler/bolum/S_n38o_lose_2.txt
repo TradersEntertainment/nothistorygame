@@ -1,0 +1,6 @@
+KOSU S_n38o_lose_2 args=--chapter=38o --autotest=lose rc=0 sure=75s
+DENIZSET hornworld DenizSurUzak_740 bolge=horn_wall_o ucgen=3564
+DENIZSET bolum=38o set=yeni
+DENIZSET birlestir=12
+T11CIKIS y=9.70 z=60.60 x=-6.00 t=9.2 yedek=0
+AUTOTEST PASS chapter=38o variant=lose outcome=38O.2 oars=9 arrows=0 forks=0/3 fire=false pulled=false oil=true snaps=0 splashes=4 explored=14.9 helper=false slips=0

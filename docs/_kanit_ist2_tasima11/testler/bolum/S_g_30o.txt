@@ -1,0 +1,3 @@
+KOSU S_g_30o args=--chapter=30o --autotest rc=0 sure=51s
+DENIZSET hornworld DenizSurUzak_740 bolge=blachernae ucgen=1824
+AUTOTEST PASS chapter=30o variant= outcome=30O.1 stones=4/4 gunner=3/3 tower=true fell=false guards=10 pokes=0 flee=ride pushed=true

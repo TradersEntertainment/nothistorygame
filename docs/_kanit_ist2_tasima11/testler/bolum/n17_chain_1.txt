@@ -1,0 +1,4 @@
+KOSU n17_chain_1 args=--chapter=17 --autotest=chain rc=0 sure=31s
+DENIZSET bolum=17 set=yeni in_world=true
+DENIZSET birlestir=21
+AUTOTEST PASS chapter=17 variant=chain outcome=17.1 saved=3 fell=false lost=false next=chapter18b.tscn shot=true chain=true rescue_t=52 genoese=0

@@ -1,0 +1,3 @@
+KOSU S_e29_lose args=--chapter=29 --autotest=lose --eskisur rc=0 sure=41s
+DENIZSET bolum=29 set=eski in_world=true
+AUTOTEST PASS chapter=29 variant=lose outcome=29.2 cut=0/6 boarders=6 fires=3 duel=false

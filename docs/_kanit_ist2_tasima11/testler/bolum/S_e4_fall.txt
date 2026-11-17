@@ -1,0 +1,3 @@
+KOSU S_e4_fall args=--chapter=4 --autotest=fall --eskisur rc=0 sure=11s
+DENIZSET bolum=4 set=eski in_world=false
+AUTOTEST PASS chapter=4 variant=fall branch=4b start=chain outcome=4b.3 catches=0 fez=true telsiz=3

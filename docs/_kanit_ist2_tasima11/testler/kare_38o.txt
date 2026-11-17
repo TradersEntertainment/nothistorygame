@@ -1,0 +1,31 @@
+DENIZSET bolum=38o set=eski
+T11KARE f1_merdiven_tepesi ciz=3400 ilkel=5067532
+T11KARE f2_kapi_yakin ciz=3315 ilkel=4981538
+T11KARE f3_sudan_genel ciz=3865 ilkel=5424934
+T11KARE f4_gemiden_sur ciz=3478 ilkel=4985976
+T11KARE f5_yol_yakin ciz=1843 ilkel=3176083
+T11KARE d1_dikis_x24 ciz=5611 ilkel=7476087
+T11KARE f6_rihtim_yakin ciz=5396 ilkel=7669711
+DENIZSET bolum=38o set=eski
+T11KARE f1_merdiven_tepesi ciz=5376 ilkel=7687927
+T11KARE f2_kapi_yakin ciz=2528 ilkel=4007138
+T11KARE f1b_mazgal_acikligi ciz=1175 ilkel=980052
+DENIZSET bolum=38o set=yeni
+DENIZSET birlestir=12
+T11KARE f1_merdiven_tepesi ciz=3373 ilkel=5084675
+T11KARE f2_kapi_yakin ciz=3295 ilkel=4987873
+T11KARE f3_sudan_genel ciz=3799 ilkel=5452496
+T11KARE f4_gemiden_sur ciz=3431 ilkel=5005839
+T11KARE f5_yol_yakin ciz=1806 ilkel=3186826
+T11KARE d1_dikis_x24 ciz=5547 ilkel=7489447
+T11KARE f6_rihtim_yakin ciz=5359 ilkel=7690218
+DENIZSET bolum=38o set=yeni
+DENIZSET birlestir=12
+T11KARE f1_merdiven_tepesi ciz=5345 ilkel=7704566
+T11KARE f2_kapi_yakin ciz=2512 ilkel=4020877
+T11KARE f1b_mazgal_acikligi ciz=1160 ilkel=995637
+DENIZSET hornworld DenizSurUzak_Halic bolge=horn_wall_o ucgen=3564
+DENIZSET bolum=38o set=yeni
+DENIZSET birlestir=12
+T11KARE f2_kapi_yakin ciz=2540 ilkel=4021923
+T11KARE f3_sudan_genel ciz=3841 ilkel=5454042

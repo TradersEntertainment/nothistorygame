@@ -1,0 +1,9 @@
+DENIZSET bolum=19o set=eski in_world=true
+T11KARE h1_kayiktan ciz=799 ilkel=904486
+T11KARE d1_dikis_x80 ciz=390 ilkel=630222
+DENIZSET bolum=19o set=yeni in_world=true
+DENIZSET hornworld DenizSurUzak_Halic bolge=horn_chain ucgen=2456
+DENIZSET hornworld DenizSurUzak_Marmara bolge=horn_chain ucgen=1858
+DENIZSET birlestir=21
+T11KARE h1_kayiktan ciz=712 ilkel=905966
+T11KARE d1_dikis_x80 ciz=315 ilkel=632870

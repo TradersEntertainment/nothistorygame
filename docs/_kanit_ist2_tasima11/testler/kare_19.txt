@@ -1,0 +1,11 @@
+DENIZSET bolum=19 set=eski in_world=true
+T11KARE g1_donus_gemiden ciz=4351 ilkel=6194312
+T11KARE g2_genel_sudan ciz=1120 ilkel=1442560
+T11KARE d1_dikis_x-60 ciz=4731 ilkel=6611278
+DENIZSET bolum=19 set=yeni in_world=true
+DENIZSET hornworld DenizSurUzak_Halic bolge=horn_chain ucgen=2456
+DENIZSET hornworld DenizSurUzak_Marmara bolge=horn_chain ucgen=1858
+DENIZSET birlestir=21
+T11KARE g1_donus_gemiden ciz=4242 ilkel=6203452
+T11KARE g2_genel_sudan ciz=1001 ilkel=1445608
+T11KARE d1_dikis_x-60 ciz=4665 ilkel=6613802

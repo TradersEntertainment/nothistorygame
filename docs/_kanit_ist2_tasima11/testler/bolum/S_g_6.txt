@@ -1,0 +1,2 @@
+KOSU S_g_6 args=--chapter=6 --autotest rc=0 sure=20s
+AUTOTEST PASS chapter=6 variant= branch=6a outcome=6a.1 paradox=10 mistakes=0 telsiz=4

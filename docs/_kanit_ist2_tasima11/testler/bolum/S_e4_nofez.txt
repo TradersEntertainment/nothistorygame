@@ -1,0 +1,3 @@
+KOSU S_e4_nofez args=--chapter=4 --autotest=nofez --eskisur rc=0 sure=18s
+DENIZSET bolum=4 set=eski in_world=false
+AUTOTEST PASS chapter=4 variant=nofez branch=4b start=chain outcome=4b.2 catches=0 fez=false telsiz=3

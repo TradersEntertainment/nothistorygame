@@ -1,0 +1,2 @@
+KOSU n17_edirne_none_2 args=--chapter=17 --autotest=edirne_none rc=0 sure=40s
+AUTOTEST PASS chapter=17 variant=edirne_none vlad=none who=time answer=dunno caesar=veni future=silent side=B

@@ -1,0 +1,3 @@
+KOSU S_e19_flee args=--chapter=19 --autotest=flee --eskisur rc=0 sure=25s
+DENIZSET bolum=19 set=eski in_world=true
+AUTOTEST PASS chapter=19 variant=flee outcome=19.2 suspicion=0 tezkire=false saved=false grain=0

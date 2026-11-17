@@ -1,0 +1,3 @@
+KOSU S_g_18 args=--chapter=18 --autotest rc=0 sure=17s
+DENIZSET hornworld DenizSurUzak_740 bolge=horn_bridge ucgen=1836
+AUTOTEST PASS chapter=18 variant= outcome=18.1 built=6 misses=0 taped=0 twins=false captive=false next=

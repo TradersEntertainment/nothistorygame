@@ -1,0 +1,7 @@
+KOSU S_n29_bos_1 args=--chapter=29 --autotest rc=0 sure=36s
+DENIZSET bolum=29 set=yeni in_world=true
+DENIZSET hornworld DenizSurUzak_740 bolge=horn_chain ucgen=1740
+DENIZSET hornworld DenizSurUzak_2360 bolge=horn_chain ucgen=716
+DENIZSET hornworld DenizSurUzak_714 bolge=horn_chain ucgen=1858
+DENIZSET birlestir=21
+AUTOTEST PASS chapter=29 variant= outcome=29.1 cut=6/6 boarders=0 fires=0 duel=true

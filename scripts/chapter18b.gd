@@ -116,16 +116,27 @@ func _build() -> void:
 		s.position = bridge_gun.position + Vector3(-1.6 + i * 1.6, 0, -2.0)
 		add_child(s)
 	# Haliç surunun bu kesimi: gövde, yürüyüş yolu, mazgallar, yan kuleler
-	Props.set_pattern(Props.solid(self, Vector3(40, WALK_Y, 3.0), Vector3(0, WALK_Y * 0.5, WALL_Z + 1.5), Color.WHITE), Color("cdbd9e"), "ashlar")
+	# TAŞIMA 11: çarpışma kutuları aynı; yeni kipte görünüş deniz suru kalemiyle (_yeni_sur), `--eskisur` eskisi
+	var eski := SurSet.eski_istendi("18b")
+	print("DENIZSET bolum=18b set=%s" % ("eski" if eski else "yeni"))
+	var govde := Props.solid(self, Vector3(40, WALK_Y, 3.0), Vector3(0, WALK_Y * 0.5, WALL_Z + 1.5), Color.WHITE)
+	Props.set_pattern(govde, Color("cdbd9e"), "ashlar")
 	# Yol döşemesi sur gövdesinin üstünden 2 cm yukarıda: aynı yüzeyde iki doku üst üste titreşmesin
-	Props.set_pattern(Props.solid(self, Vector3(40, 0.3, 4.0), Vector3(0, WALK_Y - 0.13, WALL_Z - 0.5), Color.WHITE), Color("b8a888"), "cobble")
-	for i in 16:
-		Props.set_pattern(Props.box(self, Vector3(1.2, 1.1, 0.5), Vector3(-19.0 + i * 2.5, WALK_Y + 0.55, WALL_Z - 2.3), Color.WHITE), Color("a89878"), "ashlar")
+	var yol := Props.solid(self, Vector3(40, 0.3, 4.0), Vector3(0, WALK_Y - 0.13, WALL_Z - 0.5), Color.WHITE)
+	Props.set_pattern(yol, Color("b8a888"), "cobble")
+	if eski:
+		for i in 16:
+			Props.set_pattern(Props.box(self, Vector3(1.2, 1.1, 0.5), Vector3(-19.0 + i * 2.5, WALK_Y + 0.55, WALL_Z - 2.3), Color.WHITE), Color("a89878"), "ashlar")
 	var rail := Props.solid(self, Vector3(40, 1.1, 0.3), Vector3(0, WALK_Y + 0.55, WALL_Z - 2.4), Color.WHITE)
 	rail.get_child(0).visible = false
 	rail.set_meta("no_climb", true)
+	var kule_kutu: Array = []
 	for sx: float in [-1.0, 1.0]:
-		Props.set_pattern(Props.solid(self, Vector3(6.2, WALK_Y + 5.0, 6.2), Vector3(sx * 17.0, (WALK_Y + 5.0) * 0.5, WALL_Z), Color.WHITE), Color("c8b898"), "ashlar")
+		var kb := Props.solid(self, Vector3(6.2, WALK_Y + 5.0, 6.2), Vector3(sx * 17.0, (WALK_Y + 5.0) * 0.5, WALL_Z), Color.WHITE)
+		Props.set_pattern(kb, Color("c8b898"), "ashlar")
+		kule_kutu.append(kb)
+	if not eski:
+		_yeni_sur(govde, yol, kule_kutu)
 	# İç kenar açık: yürüyüş yolundan şehir tarafına atlanır (ötesi dünyanın şehri, yürünür)
 	# Küçük Bizans topu (mazgal aralığında)
 	gun = Node3D.new()
@@ -234,6 +245,42 @@ func _setup_gun_crew() -> void:
 	gun_crew.yaw_limit = 20.0
 	gun_crew.setup()
 	drill.bind(gun_crew)
+
+
+## TAŞIMA 11: Haliç suru kesiminin yeni görünüşü (deniz suru kalemi, scripts/world/ist/deniz_set.gd). Ölçüler eski kutuların:
+## gövde x −20…20, z 62–65 (dış yüz 62,00), tepe 9,6; yol taşı z 59,5–63,5, y 9,32–9,62 (gövdenin 2,5 m önüne taşan konsol:
+## altı kademeli taş bingilerle dolu); korkuluk + dişler yolun dış kenarında (eski diş dizisi −19 + 2,5 k, görünmez korkuluğun
+## hizası; dişler çarpışmasız); topun mazgalında (x −0,9…0,4) korkuluk açık; kuleler x ±17 (6,2 × 6,2, tepe 14,6).
+## Bingiler diş hizasında (−1,5 ve 1,0'da: topun altındaki çatlak işaretleri x −0,85…0,35, z 61,65 açıkta kalır).
+func _yeni_sur(govde: StaticBody3D, yol: StaticBody3D, kule_kutu: Array) -> void:
+	var D := load("res://scripts/world/ist/deniz_set.gd")
+	D.gizle(govde)
+	D.gizle(yol, true)
+	for kb: StaticBody3D in kule_kutu:
+		D.gizle(kb)
+	var gor := Node3D.new()
+	gor.name = "DenizSetGorunus"
+	add_child(gor)
+	var yt := WALK_Y + 0.02
+	var g := {"zf": WALL_Z, "s": -1.0, "T": 3.0, "H": WALK_Y, "dip": -3.0, "su": 0.0, "lod": 0, "tohum": 1813, "ust": false,
+		"kz": WALL_Z - 2.5, "PT": 0.5, "PH": 0.5, "yol": yt}
+	D.govde(gor, -20.0, 20.0, g)
+	var bos: Array = [Vector2(-20.2, -13.9), Vector2(13.9, 20.2)]
+	var xs: Array = D.dis_dizisi(-19.0, 2.5, 18.6, 1.2, bos)
+	var bingi: Array = []
+	for x: float in xs:
+		if absf(x) < 13.0:
+			bingi.append(x)
+	D.konsol(gor, -13.9, 13.9, {"s": -1.0, "zf": WALL_Z, "zk": WALL_Z - 2.5, "zy": WALL_Z + 3.0, "yk": WALK_Y - 0.28, "yt": yt}, bingi)
+	var mazgal := Vector2(-0.9, 0.4)
+	D.korkuluk(gor, -13.9, 13.9, g, [mazgal])
+	D.disler(gor, xs, 1.2, 0.6, g, 1814)
+	for i in 2:
+		var sx := -1.0 if i == 0 else 1.0
+		D.kule(gor, {"cx": sx * 17.0, "w": 6.2, "zi": WALL_Z + 3.1, "zo": WALL_Z - 3.1, "HT": WALK_Y + 5.0, "yb": yt, "pah": 0.45,
+			"bat": 0.2, "tohum": 1815 + i * 11}, g)
+	var nb: int = D.bitir(gor, "DenizBirlesik")
+	print("DENIZSET birlestir=%d" % nb)
 
 
 ## Büyük barutun geri tepmesi mazgalın dibini çatlatır: kalıcı koyu çatlak çizgileri (yalnız sayaçta vardı)

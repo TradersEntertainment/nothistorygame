@@ -1,0 +1,3 @@
+KOSU S_e19_ship_ok args=--chapter=19 --autotest=ship_ok --eskisur rc=0 sure=25s
+DENIZSET bolum=19 set=eski in_world=true
+AUTOTEST PASS chapter=19 variant=ship_ok outcome=19.1 suspicion=0 tezkire=false saved=false grain=1

@@ -1,0 +1,2 @@
+KOSU S_g_10 args=--chapter=10 --autotest rc=0 sure=20s
+AUTOTEST PASS chapter=10 variant= outcome=10O.1 tries=0 envoy=false merak=0

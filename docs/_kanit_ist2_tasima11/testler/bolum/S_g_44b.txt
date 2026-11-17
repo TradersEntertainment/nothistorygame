@@ -1,0 +1,5 @@
+KOSU S_g_44b args=--chapter=44b --autotest rc=0 sure=45s
+DENIZSET hornworld DenizSurUzak_740 bolge=byz_aya ucgen=3112
+DENIZSET hornworld DenizSurUzak_2360 bolge=byz_aya ucgen=748
+DENIZSET hornworld DenizSurUzak_714 bolge=byz_aya ucgen=3130
+AUTOTEST PASS chapter=44 variant= outcome=44.1 light=phone battery=4.3 bumps=4 hits=0 rescued=false kid=false

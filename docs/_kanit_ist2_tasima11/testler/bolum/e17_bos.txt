@@ -1,0 +1,4 @@
+KOSU e17_bos args=--chapter=17 --autotest --eskisur rc=0 sure=59s
+WALKTHRU scene=chapter17.tscn who=SPK_MUFIDE at=(2.0, 1.0, -28.5) by=@Node3D@180/@StaticBody3D@706 pos=(2.1, 1.7, -28.8) src=Chapter17>Bureau>Person|Chapter17>Bureau>StaticBody3D
+DENIZSET bolum=17 set=eski in_world=true
+AUTOTEST PASS chapter=17 variant= outcome=17.1 saved=3 fell=false lost=false next=chapter18b.tscn shot=true chain=false rescue_t=40 genoese=0

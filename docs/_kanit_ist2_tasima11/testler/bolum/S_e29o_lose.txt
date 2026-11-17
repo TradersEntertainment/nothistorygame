@@ -1,0 +1,3 @@
+KOSU S_e29o_lose args=--chapter=29o --autotest=lose --eskisur rc=0 sure=34s
+DENIZSET bolum=29o set=eski in_world=true
+AUTOTEST PASS chapter=29o variant=lose outcome=29O.2 hooks=0/0 gun=4/4

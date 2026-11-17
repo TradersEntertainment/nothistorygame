@@ -1,0 +1,3 @@
+KOSU S_e19o_hooks_ok args=--chapter=19o --autotest=hooks_ok --eskisur rc=0 sure=36s
+DENIZSET bolum=19o set=eski in_world=true
+AUTOTEST PASS chapter=19o variant=hooks_ok outcome=19O.1 gap=9 gun=3/5 rifle=5

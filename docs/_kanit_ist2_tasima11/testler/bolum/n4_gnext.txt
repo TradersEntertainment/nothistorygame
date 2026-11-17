@@ -1,0 +1,2 @@
+KOSU n4_gnext args=--chapter=4 --autotest=next rc=0 sure=14s
+AUTOTEST PASS chapter=5 variant= machine=free outcome=5.1 telsiz=4 rel=0

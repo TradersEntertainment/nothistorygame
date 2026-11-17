@@ -1,0 +1,6 @@
+9-AYAKAUDIT yakin scene=chapter17.tscn who=Person/@Node3D@8763(@Node3D@8316) ayak=L fark=-0.11 d=2.3 at=(3000.7, 0.2, 11.4) durum=anim act= ik=w0.0/m0/pel+0.00/g1/gy-0.00/zemin-0.00
+10-ITEM use cube cube_sehzade left=1
+11-LOOKAUDIT raw Person[SPK_RADU] chapter17.tscn 177 kind=walk act= pose=<null> look=@CharacterBody3D@80 talking=false pos=(2984.1, 0.0, -3.9)
+12:WALKTHRU scene=chapter17.tscn who=SPK_MUFIDE at=(2.0, 1.0, -28.5) by=@Node3D@180/@StaticBody3D@706 pos=(2.1, 1.7, -28.8) src=Chapter17>Bureau>Person|Chapter17>Bureau>StaticBody3D
+13-DENIZSET bolum=17 set=eski in_world=true
+14-WORLDWALK region=horn_chain shapes=9851 boxes=9112 tris=278364 ms=1367

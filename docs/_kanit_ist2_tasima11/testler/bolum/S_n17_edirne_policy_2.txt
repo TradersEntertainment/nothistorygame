@@ -1,0 +1,2 @@
+KOSU S_n17_edirne_policy_2 args=--chapter=17 --autotest=edirne_policy rc=0 sure=39s
+AUTOTEST PASS chapter=17 variant=edirne_policy vlad=policy who=greek answer=flat caesar=salad future=told side=B

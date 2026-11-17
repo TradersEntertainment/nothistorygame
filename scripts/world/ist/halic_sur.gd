@@ -26,8 +26,23 @@ static func tower_xs(L: float) -> Array:
 	return [-L * 0.44, -L * 0.15, L * 0.15, L * 0.44]
 
 
+## TAŞIMA 11: yakın ve orta katmanda görünüş deniz suru kalemiyle (scripts/world/ist/deniz_set.gd: bölüm sahneleriyle
+## AYNI işlevler). Çarpışma kutuları birebir aynı (gizli, `wall` metası; tests/_ist/tasima11_halic_sonda); yalnız görünen
+## kutu ağları (bant, kutu diş, kutu kemer, kutu mazgal) kurulmaz. `--eskisur` (çıplak) eskisini kurar.
+static var _yeni := false
+static var _gizlenecek: Array = []
+
+
+static func _g(b: StaticBody3D) -> StaticBody3D:
+	if _yeni:
+		_gizlenecek.append(b)
+	return b
+
+
 static func build(host: Node3D, k: float, lod: int) -> void:
 	var d := dims(k)
+	_yeni = lod < 2 and not SurSet.eski_istendi("")
+	_gizlenecek = []
 	var L: float = d["L"]
 	var H: float = d["H"]
 	var T: float = d["T"]
@@ -58,11 +73,12 @@ static func build(host: Node3D, k: float, lod: int) -> void:
 		var gx: float = gates[i]
 		var w: float = gw[i]
 		var gh := gate_h if i == 0 else 2.6
-		K.slab(root, gx - w * 0.5, gx + w * 0.5, -T * 0.5, T * 0.5, gh, H, col, "ashlar")
+		_g(K.slab(root, gx - w * 0.5, gx + w * 0.5, -T * 0.5, T * 0.5, gh, H, col, "ashlar"))
 		_gate_dressing(root, gx, w, gh, T, i == 0)
 	# Tuğla bantlar (deniz yüzü)
-	for y in [1.9, 3.6, H - 0.9]:
-		K.band(root, -L * 0.5, L * 0.5, y, -T * 0.5 - 0.02, T, K.BRICK, 0.3)
+	if not _yeni:
+		for y in [1.9, 3.6, H - 0.9]:
+			K.band(root, -L * 0.5, L * 0.5, y, -T * 0.5 - 0.02, T, K.BRICK, 0.3)
 	# Yürüme yolu parapetleri (deniz yüzü sürekli, şehir yüzü merdiven boşluğuyla)
 	_parapets(root, d, gates, gw)
 	# Kuleler
@@ -80,28 +96,89 @@ static func build(host: Node3D, k: float, lod: int) -> void:
 	# Bayraklı direk: ana kapının üstünde (Bizans: kırmızı zemin altın haç)
 	if lod == 0:
 		_banner(root, Vector3(0, H, 0), H)
+	if _yeni:
+		for b: StaticBody3D in _gizlenecek:
+			load("res://scripts/world/ist/deniz_set.gd").gizle(b)
+		_yeni_gorunus(root, d, gates, gw, lod)
+	_yeni = false
+	_gizlenecek = []
+
+
+## Yeni görünüş (deniz suru kalemi): gövde (iki kapı açıklığı), deniz korkuluğu + dişler, şehir korkuluğu (merdiven ağzı açık),
+## kuleler (sur yolu koridoru, teras merdiven ağzı), kapı süsleri (iki yüzde mermer lento + boşaltma kemeri), rıhtım taşı.
+static func _yeni_gorunus(root: Node3D, d: Dictionary, gates: Array, gw: Array, lod: int) -> void:
+	var D := load("res://scripts/world/ist/deniz_set.gd")
+	var L: float = d["L"]
+	var H: float = d["H"]
+	var T: float = d["T"]
+	var g := {"zf": -T * 0.5, "s": -1.0, "T": T, "H": H, "dip": -1.6, "su": -1.6, "ic_dip": 0.0, "lod": lod, "tohum": 96,
+		"kz": -T * 0.5, "PT": 0.5, "PH": 1.05, "yol": H}
+	var acik: Array = []
+	for i in gates.size():
+		var w: float = gw[i]
+		acik.append({"a": float(gates[i]) - w * 0.5, "b": float(gates[i]) + w * 0.5, "y0": 0.0, "y1": 3.4 if i == 0 else 2.6, "esik": false})
+	D.govde(root, -L * 0.5, L * 0.5, g, acik, "HalicSurGovde")
+	# kule aralıkları (eski _parapets ile aynı bölme)
+	var tows: Array = tower_xs(L)
+	var edges: Array = [-L * 0.5]
+	for tx: float in tows:
+		edges.append(tx - d["TW"] * 0.5)
+		edges.append(tx + d["TW"] * 0.5)
+	edges.append(L * 0.5)
+	var gs := g.duplicate()
+	gs["s"] = 1.0
+	gs["kz"] = T * 0.5
+	var stair_x: float = L * 0.29
+	for i in range(0, edges.size(), 2):
+		var sg := Vector2(edges[i], edges[i + 1])
+		if sg.y - sg.x < 0.3:
+			continue
+		D.korkuluk(root, sg.x, sg.y, g, [], "HalicKorkulukDeniz")
+		if lod == 0:
+			var xs: Array = []
+			var x := sg.x + 0.4
+			while x < sg.y - 0.3:
+				xs.append(x)
+				x += 1.6
+			D.disler(root, xs, 0.8, 0.75, g, 961 + i)
+		var kes: Array = []
+		if stair_x > sg.x and stair_x < sg.y:
+			kes.append(Vector2(stair_x - 1.0, stair_x + 1.0))
+		D.korkuluk(root, sg.x, sg.y, gs, kes, "HalicKorkulukSehir")
+	for i in tows.size():
+		var tx: float = tows[i]
+		D.kule(root, {"cx": tx, "w": d["TW"], "zi": d["TD"] * 0.5, "zo": -d["TD"] * 0.5, "HT": H + d["TH"], "yb": H, "pah": 0.0,
+			"bat": 0.0, "tohum": 970 + i * 13, "gecit": Vector3(-0.9, 0.9, 2.4), "teras_kapi": Vector2(tx - 1.0, tx + 1.0)}, g, "HalicKule")
+	for i in gates.size():
+		var w2: float = gw[i]
+		var gh := 3.4 if i == 0 else 2.6
+		D.kapi_kemer(root, float(gates[i]), w2 * 0.5, 0.0, gh, g, {"soveler": false})
+		D.kapi_kemer(root, float(gates[i]), w2 * 0.5, 0.0, gh, gs, {"soveler": false, "kitabe": i == 0})
+	D.rihtim(root, -L * 0.5 - 4.0, L * 0.5 + 4.0, -T * 0.5 - QUAY_W, -T * 0.5, QUAY_Y, -2.6, g, [true, true], "HalicRihtim")
 
 
 static func _wall_piece(root: Node3D, x0: float, x1: float, T: float, H: float, col: Color) -> void:
 	if x1 - x0 < 0.1:
 		return
-	var b := K.slab(root, x0, x1, -T * 0.5, T * 0.5, 0.0, H, col, "ashlar")
+	var b := _g(K.slab(root, x0, x1, -T * 0.5, T * 0.5, 0.0, H, col, "ashlar"))
 	b.name = "Sur"
 
 
 static func _gate_dressing(root: Node3D, gx: float, w: float, gh: float, T: float, grand: bool) -> void:
 	var stone := Color("b6a583")
-	# Kapı çerçevesi iki yüzde de: kemer görseli
-	for zz in [-T * 0.5 - 0.06, T * 0.5 + 0.06]:
-		K.arch_front(root, gx, 0.0, zz, w, gh, stone)
+	# Kapı çerçevesi iki yüzde de: kemer görseli (yeni kipte deniz suru kaleminin kemeri: _yeni_gorunus)
+	if not _yeni:
+		for zz in [-T * 0.5 - 0.06, T * 0.5 + 0.06]:
+			K.arch_front(root, gx, 0.0, zz, w, gh, stone)
 	# Açık kapı kanatları geçit duvarlarına yaslı (geçişi daraltmaz, görsel)
 	if grand:
 		for s in [-1.0, 1.0]:
 			Props.box(root, Vector3(0.12, gh - 0.4, 1.3), Vector3(gx + s * (w * 0.5 - 0.07), gh * 0.5 - 0.1, -T * 0.5 + 0.8), Color("5a3a22"))
-		# lentoda mermer kitabe + haç
-		Props.box(root, Vector3(2.2, 0.6, 0.08), Vector3(gx, gh + 0.9, T * 0.5 + 0.06), Color("e6dfd0"))
-		Props.box(root, Vector3(0.12, 0.5, 0.1), Vector3(gx, gh + 0.9, T * 0.5 + 0.1), Color("b8932f"))
-		Props.box(root, Vector3(0.36, 0.1, 0.1), Vector3(gx, gh + 0.95, T * 0.5 + 0.1), Color("b8932f"))
+		# lentoda mermer kitabe + haç (yeni kipte kemerin üstündeki mermer kitabe)
+		if not _yeni:
+			Props.box(root, Vector3(2.2, 0.6, 0.08), Vector3(gx, gh + 0.9, T * 0.5 + 0.06), Color("e6dfd0"))
+			Props.box(root, Vector3(0.12, 0.5, 0.1), Vector3(gx, gh + 0.9, T * 0.5 + 0.1), Color("b8932f"))
+			Props.box(root, Vector3(0.36, 0.1, 0.1), Vector3(gx, gh + 0.95, T * 0.5 + 0.1), Color("b8932f"))
 		# eşik taşı
 		Props.set_pattern(Props.solid(root, Vector3(w, 0.1, T + 0.2), Vector3(gx, 0.05, 0), Color("a89878")), Color("a89878"), "flagstone")
 
@@ -126,17 +203,18 @@ static func _parapets(root: Node3D, d: Dictionary, gates: Array, gw: Array) -> v
 	for sg: Vector2 in segs:
 		if sg.y - sg.x < 0.3:
 			continue
-		K.slab(root, sg.x, sg.y, zs - 0.25, zs + 0.25, H, H + 1.05, Color("cdbd9f"), "ashlar").name = "ParapetDeniz"
-		K.merlons(root, sg.x, sg.y, zs, H + 1.05, Color("cdbd9f"))
+		_g(K.slab(root, sg.x, sg.y, zs - 0.25, zs + 0.25, H, H + 1.05, Color("cdbd9f"), "ashlar")).name = "ParapetDeniz"
+		if not _yeni:
+			K.merlons(root, sg.x, sg.y, zs, H + 1.05, Color("cdbd9f"))
 		# şehir yüzü: merdiven başında 2 m boşluk
 		var cuts: Array = []
 		if stair_x > sg.x and stair_x < sg.y:
 			cuts.append(Vector2(stair_x - 1.0, stair_x + 1.0))
 		var xx: float = sg.x
 		for c: Vector2 in cuts:
-			K.slab(root, xx, c.x, zl - 0.25, zl + 0.25, H, H + 1.05, Color("cdbd9f"), "ashlar")
+			_g(K.slab(root, xx, c.x, zl - 0.25, zl + 0.25, H, H + 1.05, Color("cdbd9f"), "ashlar"))
 			xx = c.y
-		K.slab(root, xx, sg.y, zl - 0.25, zl + 0.25, H, H + 1.05, Color("cdbd9f"), "ashlar")
+		_g(K.slab(root, xx, sg.y, zl - 0.25, zl + 0.25, H, H + 1.05, Color("cdbd9f"), "ashlar"))
 
 
 static func _tower(root: Node3D, tx: float, d: Dictionary, col: Color, flip: bool) -> void:
@@ -148,23 +226,26 @@ static func _tower(root: Node3D, tx: float, d: Dictionary, col: Color, flip: boo
 	var top: float = H + TH
 	var tcol := Color("bfae90")
 	# Alt gövde (zeminden yürüme yolu seviyesine) tam dolu
-	K.slab(root, tx - TW * 0.5, tx + TW * 0.5, -TD * 0.5, TD * 0.5, 0, H, tcol, "ashlar").name = "KuleAlt"
+	_g(K.slab(root, tx - TW * 0.5, tx + TW * 0.5, -TD * 0.5, TD * 0.5, 0, H, tcol, "ashlar")).name = "KuleAlt"
 	# Üst bölüm: yürüme yolu geçidi (1,8 m) açık; deniz ve şehir tarafı parçaları, geçit üstü lento
 	var gz0 := -0.9
 	var gz1 := 0.9
-	K.slab(root, tx - TW * 0.5, tx + TW * 0.5, -TD * 0.5, gz0, H, top, tcol, "ashlar").name = "KuleUstDeniz"
-	K.slab(root, tx - TW * 0.5, tx + TW * 0.5, gz1, TD * 0.5, H, top, tcol, "ashlar").name = "KuleUstSehir"
-	K.slab(root, tx - TW * 0.5, tx + TW * 0.5, gz0, gz1, H + 2.4, top, tcol, "ashlar").name = "KuleLento"
+	_g(K.slab(root, tx - TW * 0.5, tx + TW * 0.5, -TD * 0.5, gz0, H, top, tcol, "ashlar")).name = "KuleUstDeniz"
+	_g(K.slab(root, tx - TW * 0.5, tx + TW * 0.5, gz1, TD * 0.5, H, top, tcol, "ashlar")).name = "KuleUstSehir"
+	_g(K.slab(root, tx - TW * 0.5, tx + TW * 0.5, gz0, gz1, H + 2.4, top, tcol, "ashlar")).name = "KuleLento"
 	# Tepe: kule üstüne yürüyüş yok (üst bölüm dolu, tepe düz). Kule tepesinde siper
-	K.slab(root, tx - TW * 0.5, tx + TW * 0.5, -TD * 0.5, -TD * 0.5 + 0.5, top, top + 1.05, Color("cdbd9f"), "ashlar")
-	K.slab(root, tx - TW * 0.5, tx - TW * 0.5 + 0.5, -TD * 0.5 + 0.5, TD * 0.5 - 0.5, top, top + 1.05, Color("cdbd9f"), "ashlar")
-	K.slab(root, tx + TW * 0.5 - 0.5, tx + TW * 0.5, -TD * 0.5 + 0.5, TD * 0.5 - 0.5, top, top + 1.05, Color("cdbd9f"), "ashlar")
+	_g(K.slab(root, tx - TW * 0.5, tx + TW * 0.5, -TD * 0.5, -TD * 0.5 + 0.5, top, top + 1.05, Color("cdbd9f"), "ashlar"))
+	_g(K.slab(root, tx - TW * 0.5, tx - TW * 0.5 + 0.5, -TD * 0.5 + 0.5, TD * 0.5 - 0.5, top, top + 1.05, Color("cdbd9f"), "ashlar"))
+	_g(K.slab(root, tx + TW * 0.5 - 0.5, tx + TW * 0.5, -TD * 0.5 + 0.5, TD * 0.5 - 0.5, top, top + 1.05, Color("cdbd9f"), "ashlar"))
 	# şehir yüzünde merdiven boşluğu: 2 m
-	K.slab(root, tx - TW * 0.5, tx - 1.0, TD * 0.5 - 0.5, TD * 0.5, top, top + 1.05, Color("cdbd9f"), "ashlar")
-	K.slab(root, tx + 1.0, tx + TW * 0.5, TD * 0.5 - 0.5, TD * 0.5, top, top + 1.05, Color("cdbd9f"), "ashlar")
+	_g(K.slab(root, tx - TW * 0.5, tx - 1.0, TD * 0.5 - 0.5, TD * 0.5, top, top + 1.05, Color("cdbd9f"), "ashlar"))
+	_g(K.slab(root, tx + 1.0, tx + TW * 0.5, TD * 0.5 - 0.5, TD * 0.5, top, top + 1.05, Color("cdbd9f"), "ashlar"))
 	# Kule merdiveni (şehir yüzü, tepeye)
 	var n := int(ceil(top / K.STEP_RISE))
 	K.stair(root, Vector3(tx, 0, TD * 0.5 + 0.34 * n), Vector3(0, 0, -1), top, 1.8, Color("b4a384"))
+	if _yeni:
+		Props.cyl(root, 0.06, 1.2, Vector3(tx + TW * 0.5 - 0.7, top + 0.6, -TD * 0.5 + 1.0), Color("3a2a1a"), Vector3.ZERO, 6)
+		return
 	# Tuğla bantlar ve okçu mazgalları (deniz yüzü)
 	for y in [2.2, H * 0.62, top - 1.0]:
 		Props.box(root, Vector3(TW + 0.06, 0.3, 0.05), Vector3(tx, y, -TD * 0.5 - 0.03), K.BRICK)
@@ -180,10 +261,11 @@ static func _tower(root: Node3D, tx: float, d: Dictionary, col: Color, flip: boo
 static func _quay(root: Node3D, L: float, T: float, lod: int) -> void:
 	var z0 := -T * 0.5 - QUAY_W
 	var z1 := -T * 0.5
-	var q := K.slab(root, -L * 0.5 - 4.0, L * 0.5 + 4.0, z0, z1, -1.6, QUAY_Y, Color("a89a80"), "flagstone")
+	var q := _g(K.slab(root, -L * 0.5 - 4.0, L * 0.5 + 4.0, z0, z1, -1.6, QUAY_Y, Color("a89a80"), "flagstone"))
 	q.name = "Rihtim"
 	# Rıhtım ön yüzü taş sıra çizgisi ve halka
-	Props.box(root, Vector3(L + 8.0, 0.2, 0.06), Vector3(0, QUAY_Y - 0.5, z0 - 0.03), Color("7a6c58"))
+	if not _yeni:
+		Props.box(root, Vector3(L + 8.0, 0.2, 0.06), Vector3(0, QUAY_Y - 0.5, z0 - 0.03), Color("7a6c58"))
 	K.sea(root, -L * 0.5 - 40.0, L * 0.5 + 40.0, z0 - 40.0, z0, 1.6)
 	# Suya iniş basamakları (iki yer)
 	for sx in [-L * 0.2, L * 0.33]:

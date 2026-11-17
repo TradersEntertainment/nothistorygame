@@ -1,0 +1,2 @@
+KOSU S_n17_route_1 args=--chapter=17 --autotest=route rc=0 sure=11s
+AUTOTEST PASS chapter=17 variant=route first=res://scenes/chapter42b.tscn

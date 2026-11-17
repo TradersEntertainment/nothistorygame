@@ -1,0 +1,2 @@
+KOSU S_g_0 args=--chapter=0 --autotest rc=0 sure=22s
+AUTOTEST PASS chapter=0 variant= froze=true sur=yeni

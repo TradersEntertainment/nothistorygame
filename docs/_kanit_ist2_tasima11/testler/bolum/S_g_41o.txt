@@ -1,0 +1,2 @@
+KOSU S_g_41o args=--chapter=41o --autotest rc=0 sure=54s
+AUTOTEST PASS chapter=41 variant= outcome=41O.1 dir=4 bumps=0 blocks=3 parries=2 kick=true down=true fins=thrust,slash,ground spar=1/0 bags=0/1 water=0
