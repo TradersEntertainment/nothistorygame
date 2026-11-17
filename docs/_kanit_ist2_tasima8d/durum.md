@@ -1,11 +1,12 @@
-# Taşıma 8D — durum
+# Taşıma 8D — durum: BİTTİ
 
-Dal `wip/ist2-tasima8d` (taban `wip/ist2-taban15` aec59c9f).
+Dal `wip/ist2-tasima8d` (taban `wip/ist2-taban15` aec59c9f). Ayrıntı: `rapor.md`; süzülmüş koşu satırları: `testler/`.
 
 | Bulgu | Durum |
 |---|---|
-| 1. 26o tırmanış döngüsü bitmiyor | Düzeltildi (`SurMerdiveni.top_exit` sur yolu zemini, bot tepede merdivene dönmez, yedek tek sefer, eşik/diş 1,5 sn → bir kez sur yoluna). Gerçek oyuncu sondası `=dis_in/=dis_dur/=esik_dur` PASS. Son doğrulama (26o ×5) sürüyor |
-| 2. 26o sur yolu fıçıları | Düzeltildi (siper kuralı, 26o patlamaları dış yüze, dar geçitte yaslanma; uyanışta donuk ilk adımlar + kesişme ayırma). Tekme sondası 26o/20/22/26/37o PASS |
-| 3. 26 iç içe | Düzeltildi (gizlenip geri gelen kişiler: `_dostlari_dagit` kamera dönünce, kamera bekçisi, göründü-bekçisi; yedek bölükler kargaşanın yolsuz alanında, 4. şerit bölükten çıkarıldı). 26 hold/isidore/hold_box ×8 = 24/24 PASS, denetim 0 |
+| 1. 26o tırmanış döngüsü | TAMAM — 26o 5 çeşit ×5: 25/25 PASS, bitmeyen 0, denetim 0; gerçek oyuncu sondaları PASS |
+| 2. 26o sur yolu fıçıları | TAMAM — 26o/20/22/26/37o denetim 0; tekme sondası 5 bölüm PASS; ESYATEST PASS |
+| 3. 26 iç içe | TAMAM — hold/isidore/hold_box ×8: 24/24 PASS, denetim 0; öteki çeşitler ×2: 22/22 |
 
-Son doğrulama: sözleşme üçlüsü + ESYATEST + PARSECHECK PASS; 26 öteki çeşitler ×2 + eski set sürüyor; sonra 26o ×5, bağımlı bölümler, menu_return.
+Son doğrulama: PARSECHECK, sözleşme üçlüsü, ESYATEST PASS; eski set 26/26o PASS; bağımlı 29 koşu PASS, denetim 0;
+`MENURETURN PASS`.
