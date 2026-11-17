@@ -200,11 +200,13 @@ Hepsi BİTTİ (zaman aşımı 0; 2–4 süreç aynı anda).
    yerinde, iç surun şehir yüzünde (sur gövdesinde yarık görünmüyor, yalnız dibinde moloz ve barikat). Sahibine: (A) hub'a
    Mesoteikhion kesimi + iç poterna (26'nın `ic_poterna`'sı), 10h yolu ≈ +20 m; (B) gediği iç surda bırak (bugünkü).
 2. **8y `VISAUDIT float Station_coil_rope`** (her yeni koşuda 1 satır, PASS): batarya yanındaki çömelmiş ip saran asker
-   doğuştan 1–5 sn sonra kökü 0,18 m yukarı çıkıyor (`ayak_kok_dis`); **eski sette de aynı** (`--eskisur=8y`: lp 0,1796,
-   ölçüldü) ama eski dünyanın kaba arazi çarpışması (WalkSolids) denetimi örtüyordu; yeni sette görünmez zemin arazinin
-   tam yüksekliğinde (fark ≤ 0,04) olduğundan denetim yakalıyor. Kökü kaldıran sistem bulunamadı (Unclip.settle autotest'te
-   kapalı, itme xz'yi de değiştirirdi; batarya döşemesi düzeltildi, değişmedi). Ortak kod (`Stage.station` "coil_rope" /
-   çömelme / Ayak) bu görevin dosyası değil.
+   doğuştan 1–5 sn sonra 0,18 m yükseliyor (`ayak_kok_dis`). **Kök neden (ölçüldü/okundu):** v2'nin kendi arazi çarpışması
+   `IstDunya/AraziCarpisma` (HeightMapShape3D, v2 ekseninde 2 m ızgara, `dunya.gd:1187`) bu noktada benim ova ızgaramdan
+   (`OvaZemini`, bölge ekseninde 1 m, aynı `IstGeo.h`) ≈ 0,18 m yüksek (iki ızgaranın üçgenlemesi farklı; ızgara noktalarında
+   fark ≤ 0,04: `T10_8Y zemin_denetim`); `Unclip.rest_settle` askeri v2 çarpışmasına çıkarıyor, `Hud._ground_audit` ise yalnız
+   görünür/"ground" işaretli zemini sayıp benim ızgarama bakıyor. Eski sette de aynı kaldırma var (`--eskisur=8y`: lp 0,1796;
+   eski dünyanın WalkSolids'i örtüyor). Çözüm önerisi (bu görevin dosyası değil): `AraziCarpisma`'ya "ground" metası ya da ova
+   ızgarasını v2'nin 2 m çarpışmasıyla aynı noktalardan kurmak (v2 ekseninde: bölge ekseniyle 108° dönük).
 3. **Bütçe 4 kamerada +%5'i aşıyor** (8y'de dünya değişti; 12b/04 +%7,5 çizim).
 4. **Kapı şehir yanı kamerası** (12b/06, 10h/03) evin saçağına yakın (iki sette aynı kadraj).
 5. **Kapı kanatları**: hub'da iç ve dış kapı açık (eskinin "çıkış" süsü de açık kanatlıydı); kuşatma gerçekliğinde kapalı
