@@ -1,0 +1,2 @@
+AUTOTEST PASS chapter=6 variant=b branch=6a outcome=6a.2 paradox=0 mistakes=0 telsiz=4
+BITTI rc=0

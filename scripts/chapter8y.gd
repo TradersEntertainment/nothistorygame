@@ -155,8 +155,6 @@ func _ready() -> void:
 	# Bölge: dünyanın kara surlarındaki kapı (yerel x 0 = dünya x GATE_X); dünya tek haritadan kurulur
 	World1453.REGIONS[REGION] = Transform3D(Basis.IDENTITY, Vector3(GATE_X, 0.0, 0.0))
 	sur_yeni = SurHub.yeni8y() and IstBaglama.etkin()
-	if sur_yeni:
-		IstBaglama.duz_yerel = [[Vector2(BATTERY.x, BATTERY.z + 0.5), 7.0]]      # bataryanın döşemesi düz arazide
 	world = World1453.build(self, REGION, KEEP, false)
 	if sur_yeni:
 		_yeni_yerler()
@@ -844,6 +842,16 @@ func _build_lines() -> void:
 	var d := Dressing.new(8120)
 	var p := BATTERY + Vector3(0, _gy(BATTERY.x, BATTERY.z), 0)
 	var yaw := atan2(p.x + GATE_X - (p.x + GATE_X) * 0.93, p.z - 15.0)
+	if sur_yeni:
+		# TAŞIMA-10: ova eğimli (v2 arazisi, ±0,6 m): bataryanın 8 × 10 m'lik döşemesi en alçak köşesine iner (tümseğe gömülür,
+		# havada kalmaz)
+		var bb := Basis(Vector3.UP, yaw)
+		var en_dus := p.y
+		for lx: float in [-4.0, 0.0, 4.0]:
+			for lz: float in [-4.5, 0.5, 5.5]:
+				var q := p + bb * Vector3(lx, 0.0, lz)
+				en_dus = minf(en_dus, _gy(q.x, q.z))
+		p.y = en_dus - 0.03
 	d.at(p, yaw)
 	d.box(Vector3(8.0, 0.05, 10.0), Vector3(0, 0.0, 0.5), Color("54462f"))
 	d.box(Vector3(2.4, 0.5, 6.0), Vector3(0, 0.25, 0.2), Color("4e3620"))

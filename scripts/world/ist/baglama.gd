@@ -17,9 +17,6 @@ extends Node
 ## GameState.settings["eski_dunya"] = true. Kapalıyken bölümler eski World1453 ile aynen çalışır.
 
 static var acik := true
-## TAŞIMA-10: bölümün ovada düz istediği yerler (bölge yereli: [merkez Vector2, yarıçap]); 8y'nin bataryası (düz döşeme
-## kutusu eğimli arazide havada/gömülü kalıyordu). World1453.build'den önce verilir; birak() boşaltır.
-static var duz_yerel: Array = []
 const SurHub := preload("res://scripts/world/ist/sur_set_hub.gd")
 ## Bölümün bildirdiği istek (hazirla): hangi bölüm, gece mi
 static var bolum := 0
@@ -130,7 +127,6 @@ static func hazirla(b: int, gece_ := false) -> void:
 
 ## Bölümden çıkarken: sonraki bölümler eski dünyayı kurar; v2 ötelemesi sıfırlanır
 static func birak() -> void:
-	duz_yerel = []
 	bolum = 0
 	gece = false
 	aktif_bolge = ""
@@ -384,16 +380,6 @@ static func build(parent: Node3D, region_name: String, keep_local: Array, _night
 		IstGeo.yama_ekle(Vector2(mv.x, mv.z), ym[1], ym[2], func(x: float, z: float) -> float:
 			var q := IstBaglama.yerel(Vector3(x, 0.0, z))
 			if q.x > sur_x or q.z > sur_z:
-				for dz: Array in IstBaglama.duz_yerel:
-					var dm: Vector2 = dz[0]
-					var dd := Vector2(q.x, q.z).distance_to(dm)
-					if dd < float(dz[1]) + 2.0:
-						var cw := IstBaglama.v2(Vector3(dm.x, 0.0, dm.y))
-						var hc := IstGeo.h_ham(cw.x, cw.z)
-						if dd <= float(dz[1]):
-							return hc
-						var tt := (dd - float(dz[1])) / 2.0
-						return lerpf(hc, IstGeo.h_ham(x, z), tt * tt * (3.0 - 2.0 * tt))
 				return IstGeo.h_ham(x, z)
 			if sur_z < INF:
 				return dy - 0.03          # 8y: şehir yanında görünen zemin bölümün döşemesiyle aynı (−0,03)
