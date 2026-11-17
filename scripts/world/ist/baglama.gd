@@ -46,7 +46,7 @@ const CAMP_OTAG := Vector2(0.0, -62.0)
 const HUB_ORTA := Vector2(-4.0, -13.0)
 ## Bölümün kendi zemini ve süsü bu yarıçapa kadar (yerel çapa çevresi); ötesi v2 arazisine yumuşak geçer
 const YAMA := {"camp": [Vector2(0.0, -20.0), 170.0, 330.0], "byz_walls": [Vector2(-4.0, -13.0), 62.0, 260.0],
-	"gate8y": [Vector2(0.0, -24.0), 30.0, 120.0]}
+	"gate8y": [Vector2(0.0, 55.0), 115.0, 160.0]}
 ## v2 yapılarının kaldırıldığı alan (yerel; bölümün oynanış alanı + pay)
 const TEMIZ := {"camp": Rect2(-150.0, -175.0, 300.0, 300.0), "byz_walls": Rect2(-56.0, -58.0, 104.0, 90.0),
 	"gate8y": Rect2(-16.0, -46.0, 32.0, 236.0)}

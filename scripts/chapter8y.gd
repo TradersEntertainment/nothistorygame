@@ -438,7 +438,6 @@ func _ova_izgara_y(x: float, z: float) -> float:
 func _t10_zemin_denetim() -> void:
 	var ss := get_world_3d().direct_space_state
 	if not sur_yeni:
-		_t10_istasyon(ss)
 		return
 	var oz := get_node_or_null("OvaZemini") as CollisionObject3D
 	var en := 0.0
@@ -473,25 +472,6 @@ func _t10_zemin_denetim() -> void:
 			x += 1.0
 		z += 1.0
 	print("T10_8Y zemin_denetim isin=%d en_ust_fark=%.2f yer=%s kim=%s" % [n, en, yer, kim])
-	_t10_istasyon(ss)
-
-
-func _t10_istasyon(ss: PhysicsDirectSpaceState3D) -> void:
-	var st := get_node_or_null("Station_coil_rope")
-	if st:
-		for c in st.get_children():
-			if c is Person:
-				var sh := CapsuleShape3D.new()
-				sh.radius = 0.3
-				sh.height = 1.6
-				var qs := PhysicsShapeQueryParameters3D.new()
-				qs.shape = sh
-				qs.transform = Transform3D(Basis.IDENTITY, (c as Node3D).global_position + Vector3(0, 0.6, 0))
-				var hs := ss.intersect_shape(qs, 8)
-				var ad: Array = []
-				for h in hs:
-					ad.append(str((h["collider"] as Node).get_path()).right(60))
-				print("T10_8Y istasyon lp=%s gy=%.2f kok_y=%.2f carpan=%s" % [(c as Node3D).position, _gy(st.global_position.x, st.global_position.z), (st as Node3D).global_position.y, ad])
 
 
 ## Ovanın görünmez katı zemini: koridorun (x ±15, köprünün ötesinden z 152'ye) v2 arazisi 1 m ızgarada (HeightMapShape3D).

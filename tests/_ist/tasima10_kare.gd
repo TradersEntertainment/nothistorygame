@@ -109,7 +109,7 @@ func _bakislar() -> Array:
 				["02_koridor_dis_kapi", ch.to_global(Vector3(0.0, 1.65, tz - 3.0)), ch.to_global(Vector3(0.0, 2.6, gz)), ch.to_global(Vector3(0, 0, tz - 3.0))],
 				["03_kanat_yakin", ch.to_global(Vector3(1.2, 1.6, gz - 2.2)), ch.to_global(Vector3(-1.0, 1.4, gz)), ch.to_global(Vector3(1.2, 0, gz - 2.2))],
 				["04_kopru", ch.to_global(Vector3(0.0, g.call(0.0, bz + 1.5) + 1.65, bz + 1.5)), ch.to_global(Vector3(0.0, g.call(0.0, fz + 15.0) + 1.0, fz + 15.0)), ch.to_global(Vector3(0, g.call(0.0, bz + 1.5), bz + 1.5))],
-				["05_ovadan_sur", ch.to_global(Vector3(0.0, g.call(0.0, 75.0) + 1.7, 75.0)), ch.to_global(Vector3(0.0, 5.0, gz)), ch.to_global(Vector3(0, g.call(0.0, 75.0), 75.0))],
+				["05_ovadan_sur", ch.to_global(Vector3(0.0, g.call(0.0, 63.0) + 1.7, 63.0)), ch.to_global(Vector3(0.0, 5.0, gz)), ch.to_global(Vector3(0, g.call(0.0, 63.0), 63.0))],
 				["06_dis_kapi_yakin", ch.to_global(Vector3(1.6, g.call(1.6, on.z) + 1.6, on.z)), ch.to_global(Vector3(-1.2, 2.6, gz + 1.0)), ch.to_global(Vector3(1.6, g.call(1.6, on.z), on.z))],
 				["07_tepeden", ch.to_global(Vector3(-60.0, 90.0, 10.0)), ch.to_global(Vector3(0.0, 0.0, 40.0)), null],
 			]
