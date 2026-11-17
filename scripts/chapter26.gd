@@ -198,6 +198,9 @@ func _ic_ice_ayir() -> void:
 			var d := Vector2(a.global_position.x - b.global_position.x, a.global_position.z - b.global_position.z).length()
 			if d >= 0.4 or absf(a.global_position.y - b.global_position.y) > 0.6:
 				continue
+			if _eve_dondur(a, b):
+				print("BEKCI26 ayir eve a=%s b=%s d=%.2f" % [a.get_parent().name, b.get_parent().name, d])
+				continue
 			var m := _ayrilan(a, b)
 			if m != null:
 				print("BEKCI26 ayir a=%s b=%s d=%.2f" % [a.get_parent().name, b.get_parent().name, d])
@@ -226,11 +229,52 @@ func _yakin_ayir(p: Person) -> void:
 		var op := o.global_position
 		if Vector2(op.x - gp.x, op.z - gp.z).length() >= 0.4 or absf(op.y - gp.y) > 0.6:
 			continue
+		var dd := Vector2(op.x - gp.x, op.z - gp.z).length()
+		if _eve_dondur(p, o):
+			print("BEKCI26 gorunce eve a=%s b=%s d=%.2f" % [p.get_parent().name, o.get_parent().name, dd])
+			return
 		var m := _ayrilan(p, o)
 		if m != null:
-			print("BEKCI26 gorunce a=%s b=%s d=%.2f" % [p.get_parent().name, o.get_parent().name, Vector2(op.x - gp.x, op.z - gp.z).length()])
+			print("BEKCI26 gorunce a=%s b=%s d=%.2f" % [p.get_parent().name, o.get_parent().name, dd])
 			Unclip.spread(m, 0.6)
 		return
+
+
+## Yedek bölük askeri (reserve_loop) iç içe kaldıysa, evinden (reserve_loop._home) uzaklaşmış olanı evine geri koyar.
+## Bölük 1,1 × 1,2 m sık nizamda dizili: Unclip.spread 1,4 m içinde 0,6 m boş yer bulamıyor, iki asker iç içe kalıyordu
+## (birleşik doğrulama, 26 =hold_box ×11'de 2: "BEKCI26 gorunce d=0.19" ardından "VISAUDIT overlap Squad|Squad"; ayaklanıp
+## dönen askerin evine, o gizliyken komşusu yerinde adımla girmişti). Evler arası en az ≈0,66 m: ikisi evindeyken iç içe değil.
+func _eve_dondur(a: Node3D, b: Node3D) -> bool:
+	var en: Node3D = null
+	var en_rl: Node = null
+	var en_d := 0.15
+	for o: Node3D in [a, b]:
+		var rl := _yedek_dongu(o)
+		if rl == null:
+			continue
+		var h: Vector3 = rl.get("_home")
+		if h == Vector3.INF:
+			continue
+		var d := Vector2(o.position.x - h.x, o.position.z - h.z).length()
+		if d > en_d:
+			en_d = d
+			en = o
+			en_rl = rl
+	if en == null:
+		return false
+	var tw = en_rl.get("_shift")
+	if tw is Tween and (tw as Tween).is_running():
+		(tw as Tween).kill()
+	var h: Vector3 = en_rl.get("_home")
+	en.position = Vector3(h.x, en.position.y, h.z)
+	return true
+
+
+func _yedek_dongu(o: Node3D) -> Node:
+	for c in o.get_children():
+		if c.get("group") is Dictionary and c.get("officer") != null and c.get("_home") != null:
+			return c
+	return null
 
 
 ## İç içe çiftten yer değiştirecek olan: düellocu (yürüyen); yoksa yerinde durması istenmeyen (no_yield değil)
