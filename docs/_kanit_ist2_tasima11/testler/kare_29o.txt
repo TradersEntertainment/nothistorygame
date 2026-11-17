@@ -1,0 +1,7 @@
+DENIZSET bolum=29o set=eski in_world=true
+T11KARE j1_savastan_uzak ciz=608 ilkel=653558
+DENIZSET bolum=29o set=yeni in_world=true
+DENIZSET hornworld DenizSurUzak_Halic bolge=horn_chain ucgen=2456
+DENIZSET hornworld DenizSurUzak_Marmara bolge=horn_chain ucgen=1858
+DENIZSET birlestir=21
+T11KARE j1_savastan_uzak ciz=555 ilkel=653326

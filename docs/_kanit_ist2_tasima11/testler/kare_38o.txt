@@ -24,3 +24,8 @@ DENIZSET birlestir=12
 T11KARE f1_merdiven_tepesi ciz=5345 ilkel=7704566
 T11KARE f2_kapi_yakin ciz=2512 ilkel=4020877
 T11KARE f1b_mazgal_acikligi ciz=1160 ilkel=995637
+DENIZSET hornworld DenizSurUzak_Halic bolge=horn_wall_o ucgen=3564
+DENIZSET bolum=38o set=yeni
+DENIZSET birlestir=12
+T11KARE f2_kapi_yakin ciz=2540 ilkel=4021923
+T11KARE f3_sudan_genel ciz=3841 ilkel=5454042
