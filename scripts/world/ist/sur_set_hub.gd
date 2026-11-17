@@ -32,6 +32,10 @@ static func yeni(bolum: String) -> bool:
 
 ## Bölüm 8y (Beyaz Havlu) yeni surda mı (`--eskisur=8y` ya da `--eskisur` eski)
 static func yeni8y() -> bool:
+	# GEÇİCİ (0.99.124): 8y yeni sette her koşuda VISAUDIT float Station_coil_rope (siper kenarında çömelen asker
+	# ova zemininden 0,18 m yukarıda; kök neden TAŞIMA 12'de). Düzelene dek 8y eski sette; `--yenisur=8y` ile denenir.
+	if not "--yenisur=8y" in OS.get_cmdline_user_args():
+		return false
 	return not SurSet.eski_istendi("8y") and IstBaglama.etkin()
 
 
