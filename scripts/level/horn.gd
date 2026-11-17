@@ -84,6 +84,11 @@ static func build(parent: Node3D, wall_z: float, work: Rect2, wall_gap := Vector
 ## Haliç surları: su kenarından yükselen tek sur, mazgallar, 45 m arayla kuleler.
 static func _sea_wall(parent: Node3D, wall_z: float, gap: Vector2, rng: RandomNumberGenerator, E := 700.0) -> void:
 	var h := 9.6
+	var DZ := load("res://scripts/world/ist/deniz_set.gd")
+	# TAŞIMA 11: tek haritada (E ≤ 250: bölüm kesiminin en çok 220 m yanı) deniz suru kalemi; `--eskisur` eskisi
+	if E <= 250.0 and not DZ.eski_mi(DZ.sahne_bolumu(parent)):
+		_sea_wall_yeni(parent, wall_z, gap, rng, E, h)
+		return
 	var d := Dressing.new(181)
 	d.chunk = 160.0
 	var merl: Array = []
@@ -124,6 +129,85 @@ static func _sea_wall(parent: Node3D, wall_z: float, gap: Vector2, rng: RandomNu
 		x2 += rng.randf_range(10.0, 26.0)
 	Garrison.far_men(parent, men, Garrison.COATS)
 	d.build(parent)
+
+
+## TAŞIMA 11: Haliç surunun devamı deniz suru kalemiyle (scripts/world/ist/deniz_set.gd): gövde (su altına inen yosunlu kaide),
+## korkuluk + harpuştalı dişler (eski dizi: a + 1, 2,5 m adım), kuleler eskisinin yerinde ve boyunda (aynı rng dizisi; teras
+## mazgallı, ok yarıklı), sancak kumaş. Görünüş çarpışmasız (eskisi de çarpışmasızdı: Props.box). Deniz −z, gövde wall_z…+3.
+static func _sea_wall_yeni(parent: Node3D, wall_z: float, gap: Vector2, rng: RandomNumberGenerator, E: float, h: float) -> void:
+	var DZ := load("res://scripts/world/ist/deniz_set.gd")
+	var gor := Node3D.new()
+	gor.name = "HornDenizSur"
+	parent.add_child(gor)
+	var g := {"zf": wall_z, "s": -1.0, "T": 3.0, "H": h, "dip": -3.0, "su": 0.0, "lod": 0, "tohum": 181,
+		"kz": wall_z, "PT": 0.6, "PH": 0.5, "yol": h}
+	var kuleler: Array = []
+	var tx := -E + rng.randf_range(0.0, 20.0)
+	while tx < E:
+		if tx < gap.x - 6.0 or tx > gap.y + 6.0:
+			var th := rng.randf_range(14.0, 17.0)
+			var bayrak := rng.randf() < 0.5
+			var renk := Color.WHITE
+			if bayrak:
+				renk = Color("a88a3a") if rng.randf() < 0.5 else Color("6e2a2e")
+			kuleler.append([tx, th, bayrak, renk])
+		tx += 45.0 + rng.randf_range(-4.0, 4.0)
+	for seg in [[-E, gap.x], [gap.y, E]]:
+		var a: float = seg[0]
+		var b: float = seg[1]
+		if b - a < 1.0:
+			continue
+		var bos: Array = []
+		for kt: Array in kuleler:
+			bos.append(Vector2(float(kt[0]) - 3.5, float(kt[0]) + 3.5))
+		var gl := g.duplicate()
+		gl["lod"] = 1
+		# oyuncuya yakın (bölüm kesiminin 80 m'si) yakın katman, ötesi orta
+		var yk0 := maxf(a, gap.x - 80.0) if b <= gap.x + 0.01 else a
+		var yk1 := b if b <= gap.x + 0.01 else minf(b, gap.y + 80.0)
+		if b <= gap.x + 0.01:
+			if yk0 > a:
+				DZ.govde(gor, a, yk0, gl, [], "HornSurOrta")
+			DZ.govde(gor, yk0, b, g, [], "HornSurYakin")
+		else:
+			DZ.govde(gor, a, yk1, g, [], "HornSurYakin")
+			if yk1 < b:
+				DZ.govde(gor, yk1, b, gl, [], "HornSurOrta")
+		DZ.korkuluk(gor, a, b, g, bos)
+		DZ.disler(gor, DZ.dis_dizisi(a + 1.0, 2.5, b - 0.5, 1.2, bos), 1.2, 0.6, g, 1811 + int(a))
+	for i in kuleler.size():
+		var kt: Array = kuleler[i]
+		var kx: float = kt[0]
+		var th2: float = kt[1]
+		var yakin := absf(kx - (gap.x + gap.y) * 0.5) < 90.0
+		DZ.kule(gor, {"cx": kx, "w": 7.0, "zi": wall_z + 1.2 + 3.5, "zo": wall_z + 1.2 - 3.5, "HT": th2, "yb": h, "pah": 0.45,
+			"bat": 0.2, "tohum": 1830 + i * 7, "yarik": 2}, g if yakin else gl_of(g))
+		if kt[2]:
+			var top := Vector3(kx, th2 + SurKuleH, wall_z + 1.2)
+			Props.cyl(gor, 0.06, 3.0, top + Vector3(0, 1.5, 0), Color("3a2a1e"), Vector3.ZERO, 6)
+			preload("res://scripts/world/ist/kumas.gd").bayrak(parent, top + Vector3(0, 2.9, 0), Vector3.RIGHT, 1.6, 1.0, kt[3], [], 6)
+	DZ.bitir(gor, "HornDenizBirlesik")
+	# Surun üstünde savunanlar (uzak siluet): korkuluğun ardında
+	var men: Array = []
+	var x2 := -minf(500.0, E)
+	while x2 < minf(500.0, E):
+		if x2 < gap.x - 4.0 or x2 > gap.y + 4.0:
+			var ic := false
+			for kt2: Array in kuleler:
+				ic = ic or absf(x2 - float(kt2[0])) < 3.8
+			if not ic:
+				men.append(Transform3D(Basis(Vector3.UP, PI), Vector3(x2, h, wall_z + 1.0)))
+		x2 += rng.randf_range(10.0, 26.0)
+	Garrison.far_men(parent, men, Garrison.COATS)
+
+
+const SurKuleH := 1.2
+
+
+static func gl_of(g: Dictionary) -> Dictionary:
+	var gl := g.duplicate()
+	gl["lod"] = 1
+	return gl
 
 
 ## Surun ardında şehir: Blakherna yamacı.

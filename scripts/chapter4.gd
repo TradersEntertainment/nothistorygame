@@ -97,6 +97,7 @@ func _ready() -> void:
 		add_child(camp)
 	else:
 		walls = SeaWalls.new()
+		walls.bolum = "4"     # TAŞIMA 11: --eskisur seçimi (SurSet.eski_istendi)
 		add_child(walls)
 	if GameState.autotest:
 		Engine.time_scale = 2.5

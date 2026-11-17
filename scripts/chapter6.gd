@@ -100,10 +100,31 @@ func _ready() -> void:
 		city.niko.look_target = player
 	if GameState.autotest:
 		Engine.time_scale = 2.5
+	if GameState.autotest and GameState.autotest_variant == "byzyuru":
+		_tasima10_yuru()
+		return
 	if GameState.shots_dir != "":
 		_run_shots()
 	else:
 		_run()
+
+
+## TAŞIMA-10 =byzyuru: gerçek Player botu martı kovalamacasının sur tarafındaki yolu (cadde → çamaşır ipi → meydan →
+## tabela → sur yolundaki fıçı → Giustiniani'nin masası) ve kapı; eski ve yeni sette aynı noktalar (pazar tezgâhları
+## arasında bot ileri tuşuyla dolanamıyor: iki sette de; pazar sur dışı, bu ölçüye girmez)
+func _tasima10_yuru() -> void:
+	var BOT := load("res://tests/_ist/tasima9_bot.gd")
+	var bacak: Array = [
+		["cadde", Vector3(2.5, 0.0, 4.0), 0.0],
+		["camasir_ipi", Vector3(2.5, 0.0, 1.0), 0.0],
+		["meydan_cesme", Vector3(2.5, 0.0, -13.7), 0.0],
+		["tabela", Vector3(8.0, 0.0, -16.5), 0.0],
+		["sur_yolu_fici", Vector3(15.0, 0.0, -13.0), 0.0],
+		["giust", ByzCity.GIUST_POS + Vector3(-2.6, 0, 1.2), 0.0],
+		["kapi_yolu", Vector3(22.0, 0.0, -2.0), 0.0],
+		["kapi", ByzCity.EXIT_POS + Vector3(-2.6, 0, 0.0), 0.0],
+	]
+	await BOT.yuru(self, player, hud, ByzCity.START + Vector3(0, 0.05, 0), bacak, "yeni" if city.sur_yeni else "eski")
 
 
 func _process(_delta: float) -> void:
@@ -1181,7 +1202,11 @@ func _exit() -> void:
 	var door := ByzCity.EXIT_POS
 	# Kapının iç yanında beyaz bayrak; karanlıktan kapıda açılır: Tolga geçitte, Niko yanında
 	Props.cyl(city, 0.03, 2.6, door + Vector3(-2.0, 1.3, 1.6), Color("5a4028"))
-	Props.box(city, Vector3(0.05, 0.7, 0.9), door + Vector3(-2.0, 2.4, 2.05), Color("f4f1ea"))
+	if city.sur_yeni:
+		# TAŞIMA-10: yeni surun kapısında bayrak kumaş (kutu levha değil), aynı yer ve ölçü
+		preload("res://scripts/world/ist/kumas.gd").bayrak(city, door + Vector3(-2.0, 2.58, 1.6), Vector3.BACK, 0.9, 0.7, Color("f4f1ea"), [], 6, "BeyazBayrak")
+	else:
+		Props.box(city, Vector3(0.05, 0.7, 0.9), door + Vector3(-2.0, 2.4, 2.05), Color("f4f1ea"))
 	player.global_position = door + Vector3(-2.6, 0.05, 0.0)
 	city.niko.position = door + Vector3(-1.4, 0.0, -1.1)     # Tolga ile kapı arasında, kapıya bakan kadrajın içinde
 	city.niko.look_target = player

@@ -21,6 +21,16 @@ var world: SiegeField
 var niko: Person
 var lights: Array = []
 var _t := 0.0
+## TAŞIMA 11: yeni görünüş (deniz suru ortak kalemi: scripts/world/ist/deniz_set.gd) ya da eski set. Çarpışma, ölçü ve bütün
+## bağlar (rıhtım, kapılar, kuleler, zincir, Niko) aynı; yeni kipte eski kutuların ağı gizli, gövde `wall` metası taşır.
+## Seçim: SurSet.eski_istendi(bolum) (`--eskisur` ya da `--eskisur=4,17`); bölüm add_child'dan önce `bolum` verir.
+var bolum := ""
+## Sonda/test: −1 komut satırına bak, 0 yeni, 1 eski
+var eski_zorla := -1
+var eski := false
+var _gor: Node3D
+const DENIZ_YOL := "res://scripts/world/ist/deniz_set.gd"
+const KULELER := [-22.0, -6.0, 30.0, 58.0]
 
 
 func _ready() -> void:
@@ -28,6 +38,12 @@ func _ready() -> void:
 	var moon := Night.environment(self, 0.01)
 	# Ay Haliç'in üstünde (rıhtımdan ve kapıdan görünsün; 4b'deki tutulma sahnesi)
 	moon.rotation_degrees = Vector3(-30, 20, 0)
+	eski = SurSet.eski_istendi(bolum) if eski_zorla < 0 else eski_zorla == 1
+	print("DENIZSET bolum=%s set=%s in_world=%s" % [bolum, "eski" if eski else "yeni", in_world])
+	if not eski:
+		_gor = Node3D.new()
+		_gor.name = "DenizSetGorunus"
+		add_child(_gor)
 	if in_world:
 		# Karşı kıyı (kuzey) yerel z ≈ 220'de: SeaBattle'ın ordusu ve Sultan oraya
 		SeaBattle.world_shift = -(World1453.HORN_N_X - World1453.HORN_S_X) - 170.0
@@ -42,6 +58,9 @@ func _ready() -> void:
 		_build_extension()
 		_build_city()
 		_build_far_side()
+	if not eski:
+		var nb: int = load(DENIZ_YOL).bitir(_gor, "DenizBirlesik")
+		print("DENIZSET birlestir=%d" % nb)
 	niko = Person.new({"face": "niko", "coat": Color("8a2b22"), "pants": Color("4a3a2a"), "hair": Color("2a1e14"), "hat": "helm", "mustache": true, "skin": Color("d9a07a")})
 	# Surun ön kenarında, iki mazgal arasında (rıhtımdan bakınca başı ve omuzları görünsün)
 	niko.position = Vector3(4.8, QUAY_Y + WALL_H, WALL_Z - 0.25)
@@ -93,7 +112,12 @@ func _build_chain() -> void:
 func _build_quay() -> void:
 	var len := GATE_X + 8.0
 	var body := Props.solid(self, Vector3(len, QUAY_Y + 1.0, -WALL_Z), Vector3(GATE_X / 2.0 - 1.0, (QUAY_Y - 1.0) / 2.0, WALL_Z / 2.0), Color("6d6a64"))
-	Props.set_pattern(body, Color("6d6a64"), "concrete")
+	if eski:
+		Props.set_pattern(body, Color("6d6a64"), "concrete")
+	else:
+		# rıhtım taşı: aynı kutu (x −5…20, z −3,2…0, üst y 0,7), görünüş deniz suru kalemi; batı ucu x −6 kulesinin içinde
+		load(DENIZ_YOL).gizle(body, true)
+		load(DENIZ_YOL).rihtim(_gor, GATE_X - 22.0, GATE_X + 3.0, QUAY_Z, WALL_Z, QUAY_Y, -2.6, {"lod": 0, "tohum": 422}, [false, true])
 	# Rıhtımda fıçılar, ağlar, halatlar
 	for x in [3.0, 8.5, 12.0]:
 		Props.cyl(self, 0.35, 0.9, Vector3(x, QUAY_Y + 0.45, -2.4), Color("6a4a2c"), Vector3.ZERO, 8)
@@ -149,14 +173,33 @@ func _build_wall() -> void:
 	var gx := 12.0
 	var gw := 1.8
 	var gh := 5.0
+	var gizli: Array = []
 	for seg: Vector2 in [Vector2(x0, gx - gw), Vector2(gx + gw, x1)]:
 		var body := Props.solid(self, Vector3(seg.y - seg.x, WALL_H + 2.0, 4.0), Vector3((seg.x + seg.y) / 2.0, top - (WALL_H + 2.0) / 2.0, WALL_Z - 2.0), Color("c9b89a"))
 		Props.set_pattern(body, Color("c9b89a"), "ashlar")
+		gizli.append(body)
 	var over := (top - QUAY_Y) - gh + 2.0
 	var lintel := Props.solid(self, Vector3(gw * 2.0, over, 4.0), Vector3(gx, top - over * 0.5, WALL_Z - 2.0), Color("c9b89a"))
 	Props.set_pattern(lintel, Color("b8a888"), "ashlar")
+	gizli.append(lintel)
 	# Kapının altında eşik (rıhtım yüksekliğinde) ve arkasında şehre inen rampa
-	Props.set_pattern(Props.solid(self, Vector3(gw * 2.0, 0.4, 4.4), Vector3(gx, QUAY_Y - 0.22, WALL_Z - 2.0), Color.WHITE), Color("a89878"), "cobble")
+	var esik := Props.solid(self, Vector3(gw * 2.0, 0.4, 4.4), Vector3(gx, QUAY_Y - 0.22, WALL_Z - 2.0), Color.WHITE)
+	Props.set_pattern(esik, Color("a89878"), "cobble")
+	if not eski:
+		for b: StaticBody3D in gizli:
+			load(DENIZ_YOL).gizle(b)
+		load(DENIZ_YOL).gizle(esik, true)
+		# kuleler: aynı katı kutular (görünüş kalemden)
+		for tx: float in KULELER:
+			load(DENIZ_YOL).gizle(Props.solid(self, Vector3(6.0, WALL_H + 5.0, 6.5), Vector3(tx, QUAY_Y + (WALL_H + 5.0) / 2.0, WALL_Z - 1.2), Color("bfae90")))
+			lights.append(Night.torch(self, Vector3(tx + 2.2, QUAY_Y + WALL_H + 5.0, WALL_Z + 1.6), 0.8, true))
+		_yeni_sur(x0, x1, gx, gw, top - over, esik.position.y + 0.2)
+		for tx2 in [-12.0, 12.0, 22.0, 44.0]:
+			var l2 := Night.torch(self, Vector3(tx2, top, WALL_Z - 0.2), 1.2, tx2 == 12.0 or tx2 == 22.0)
+			if l2:
+				lights.append(l2)
+		_build_gate()
+		return
 	# Tuğla bantlar
 	for y in [3.0, 6.0, 9.0]:
 		Props.box(self, Vector3(x1 - x0, 0.35, 0.06), Vector3((x0 + x1) / 2.0, QUAY_Y + y, WALL_Z + 0.02), Color("8a4a36"))
@@ -170,7 +213,7 @@ func _build_wall() -> void:
 		x += 1.6
 	Scenery.scatter(self, Scenery._boxm(Vector3.ONE), merl, [], Props.mat(Color("bba98a"), 0.0, false, "ashlar"))
 	# Kuleler
-	for tx in [-22.0, 0.0 - 6.0, 30.0, 58.0]:
+	for tx in KULELER:
 		var tb := Props.solid(self, Vector3(6.0, WALL_H + 5.0, 6.5), Vector3(tx, QUAY_Y + (WALL_H + 5.0) / 2.0, WALL_Z - 1.2), Color("bfae90"))
 		Props.set_pattern(tb, Color("bfae90"), "ashlar")
 		for y in [4.0, 8.0, 12.0]:
@@ -185,6 +228,32 @@ func _build_wall() -> void:
 	_build_gate()
 
 
+## Yeni görünüş kesiti (deniz suru kalemi): g sözlüğü (bkz. deniz_set.gd başı)
+func _kesit(lod := 0) -> Dictionary:
+	return {"zf": WALL_Z, "s": 1.0, "T": 4.0, "H": QUAY_Y + WALL_H, "dip": -3.0, "su": WATER_Y, "lod": lod, "tohum": 42,
+		"kz": WALL_Z - 0.55, "PT": 0.6, "PH": 0.45, "yol": QUAY_Y + WALL_H}
+
+
+## Yakın kesit (x0…x1) yeni kalemle: gövde (x 12 geçidi açık: eşik … lento altı), korkuluk ve dişler (eski diş dizisi:
+## x0'dan 1,6 m adım, yüzden 0,85 m geride; önünde Niko'nun durduğu 0,55 m'lik kenar), kuleler, geçidin süsü.
+func _yeni_sur(x0: float, x1: float, gx: float, gw: float, lento_y: float, esik_y: float) -> void:
+	var D := load(DENIZ_YOL)
+	var g := _kesit()
+	D.govde(_gor, x0, x1, g, [{"a": gx - gw, "b": gx + gw, "y0": esik_y, "y1": lento_y}], "DenizSurYakin")
+	var bos: Array = []
+	for tx: float in KULELER:
+		bos.append(Vector2(tx - 3.0, tx + 3.0))
+	D.korkuluk(_gor, x0, x1, g, bos)
+	D.disler(_gor, D.dis_dizisi(x0, 1.6, x1 - 0.01, 0.8, bos), 0.8, 0.5, g, 4201)
+	for i in KULELER.size():
+		var tx: float = KULELER[i]
+		# x −6 kulesi rıhtımın batı ucunu kapatır (oyuncu dibinde yürür): pahsız, şevsiz (ayak izi = kutu)
+		D.kule(_gor, {"cx": tx, "w": 6.0, "zi": WALL_Z - 1.2 - 3.25, "zo": WALL_Z - 1.2 + 3.25, "HT": QUAY_Y + WALL_H + 5.0,
+			"yb": QUAY_Y + WALL_H, "pah": 0.0 if tx == -6.0 else 0.45, "bat": 0.0 if tx == -6.0 else 0.2, "tohum": 4300 + i * 17}, g)
+	# geçit (x 12): mermer lento ve boşaltma kemeri (deniz yüzü)
+	D.kapi_kemer(_gor, gx, gw, esik_y, lento_y - esik_y, g, {"soveler": false})
+
+
 ## Surun iki yana devamı (-420..420): sudan yükselen gövde, tuğla bantlar, mazgallar, 42 m arayla kuleler,
 ## kulelerde gece meşaleleri. Yakın kesit (-60..80) _build_wall'dadır.
 func _build_extension() -> void:
@@ -196,6 +265,9 @@ func _build_extension() -> void:
 	var merl: Array = []
 	var rng := RandomNumberGenerator.new()
 	rng.seed = 4223
+	if not eski:
+		_yeni_devam(rng, nd)
+		return
 	for seg in [[-420.0, -60.0], [80.0, 420.0]]:
 		var a: float = seg[0]
 		var b: float = seg[1]
@@ -239,6 +311,61 @@ func _build_extension() -> void:
 	g.add_to_group("garrison")
 	add_child(g)
 	Garrison.far_men(g, men, cols)
+
+
+## Yeni kalemle devam (4b): gövde (orta katman), korkuluk + dişler yakın kesitin dizisini sürdürür (1,6 m adım, aynı faz),
+## kuleler eskisinin yerinde ve boyunda (aynı rng dizisi), kulelerde nöbet ateşi, mazgalların ardında nöbetçiler.
+func _yeni_devam(rng: RandomNumberGenerator, nd: Dressing) -> void:
+	var D := load(DENIZ_YOL)
+	var top := QUAY_Y + WALL_H
+	var g := _kesit(1)
+	var gd := _kesit(0)
+	var kuleler: Array = []
+	for seg in [[-420.0, -60.0], [80.0, 420.0]]:
+		var a: float = seg[0]
+		var b: float = seg[1]
+		var bos: Array = []
+		var tx := a + 20.0 if a < 0.0 else a + 22.0
+		while tx < b - 6.0:
+			var th := WALL_H + rng.randf_range(4.0, 6.0)
+			kuleler.append([tx, th])
+			bos.append(Vector2(tx - 3.0, tx + 3.0))
+			if rng.randf() < 0.6:
+				nd.glow(Vector3(0.3, 0.45, 0.3), Vector3(tx + 2.2, QUAY_Y + th - 0.6 + 1.2 + 0.25, WALL_Z + 1.5), Color("ffb040"))
+			tx += 42.0 + rng.randf_range(-3.0, 3.0)
+		D.govde(_gor, a, b, g, [], "DenizSurDevam")
+		D.korkuluk(_gor, a, b, gd, bos)
+		# yakın kesitin dizisi: x = −60 + 1,6 k
+		var k0 := ceilf((a + 0.4 - (-60.0)) / 1.6)
+		D.disler(_gor, D.dis_dizisi(-60.0 + k0 * 1.6, 1.6, b - 0.41, 0.8, bos), 0.8, 0.5, gd, 4202 + int(a))
+	for i in kuleler.size():
+		var tx: float = kuleler[i][0]
+		var th: float = kuleler[i][1]
+		D.kule(_gor, {"cx": tx, "w": 6.0, "zi": WALL_Z - 1.2 - 3.25, "zo": WALL_Z - 1.2 + 3.25, "HT": QUAY_Y + th - 0.6,
+			"yb": top, "pah": 0.45, "bat": 0.2, "tohum": 4400 + i * 13}, g)
+	Flame.from_glow_boxes(nd.build(self))     # nöbet ateşleri kutu değil alev
+	# Surda nöbetçiler (uzak siluet): korkuluğun ardında (z −4,8), kulelerin içinde değil
+	var men: Array = []
+	var cols: Array = []
+	for seg in [[-420.0, -60.0], [80.0, 420.0], [-58.0, -30.0], [46.0, 78.0]]:
+		var x: float = seg[0] + rng.randf_range(0.5, 3.0)
+		while x < seg[1] - 1.0:
+			var yaw := rng.randf_range(-0.35, 0.35)
+			var col: Color = Garrison.COATS[rng.randi() % Garrison.COATS.size()]
+			var ic := false
+			for kt: Array in kuleler:
+				ic = ic or absf(x - float(kt[0])) < 3.4
+			for tx2: float in KULELER:
+				ic = ic or absf(x - tx2) < 3.4
+			if not ic:
+				men.append(Transform3D(Basis(Vector3.UP, yaw), Vector3(x, top, WALL_Z - 1.6)))
+				cols.append(col)
+			x += rng.randf_range(3.5, 8.0)
+	var gg := Node3D.new()
+	gg.name = "WallGuards"
+	gg.add_to_group("garrison")
+	add_child(gg)
+	Garrison.far_men(gg, men, cols)
 
 
 ## Surun ardında şehir: yamaca tırmanan evler (gece bazı pencereler yanar), kiliseler, serviler, uzakta Ayasofya.
@@ -294,6 +421,59 @@ func _build_gate() -> void:
 	var hw := 1.15
 	var spring := 2.7
 	var marble := Color("e8e0d0")
+	if not eski:
+		_yeni_kapi(g, hw, spring)
+	else:
+		_eski_kapi_cerceve(g, hw, spring, marble)
+	# Kanatların ardındaki karanlık geçit (kapı açılınca görünür)
+	var dark := Props.box(self, Vector3(hw * 2.0, spring, 0.02), g + Vector3(0, spring / 2.0, 0.03), Color("120e0b"))
+	dark.material_override = Props.mat(Color("120e0b"), 0.0, false, "", false)
+	_kapi_kanatlar(g, hw, spring)
+	# Eşik ve basamaklar
+	if eski:
+		Props.box(self, Vector3(hw * 2.0 + 1.2, 0.12, 0.7), g + Vector3(0, 0.06, 0.45), Color("a8a090"))
+	# İki yanda demir fenerler
+	for sx: float in [-1.0, 1.0]:
+		var lp := g + Vector3(sx * (hw + 0.95), 2.4, 0.45)
+		Props.box(self, Vector3(0.06, 0.06, 0.45), lp + Vector3(0, 0.2, -0.2), Color("2a2a2e"))
+		Props.cyl(self, 0.12, 0.3, lp, Color("2a2a2e"), Vector3.ZERO, 6, 0.08)
+		var fl := Props.ball(self, 0.07, lp, Color("ffb850"), Vector3(1, 1.4, 1), 6)
+		fl.material_override = Props.mat(Color("ffb850"), 3.0, false, "", false)
+	lights.append(Night.torch(self, g + Vector3(hw + 2.2, 0, 0.5), 2.2))
+	Props.interactable(self, "gate", Vector3(2.4, 3.0, 1.2), g + Vector3(0, 1.5, 0.6))
+
+
+## Yeni kapı süsü (deniz suru kalemi): mermer söveler ve lento (kanatların üstü = eski kemer başlangıcı), dönüşümlü
+## tuğla/taş boşaltma kemeri, kemer içinde altın zeminli mozaik haç (yarım disk, kutu değil), üstte mermer kitabe; önde
+## eşik taşı (eskisinin ölçüsü: 0,12 m, rıhtımdan 0,7 m). Çarpışmasız (eskisi gibi).
+func _yeni_kapi(g: Vector3, hw: float, spring: float) -> void:
+	var D := load(DENIZ_YOL)
+	var k := _kesit()
+	D.kapi_kemer(_gor, g.x, hw, g.y, spring, k, {"kitabe": true})
+	var Ag = load("res://scripts/world/ist/sur_kule.gd").Ag
+	var moz = Ag.new()
+	var hac = Ag.new()
+	var cy := g.y + spring + 0.42
+	var r := hw + 0.2
+	var c := Vector3(g.x, cy, g.z + 0.025)
+	for i in 14:
+		var a0 := PI * float(i) / 14.0
+		var a1 := PI * float(i + 1) / 14.0
+		moz.tri(c, c + Vector3(-cos(a0), sin(a0), 0) * (r - 0.02), c + Vector3(-cos(a1), sin(a1), 0) * (r - 0.02), Vector3.BACK)
+	var hz := Vector3(0, 0, 0.012)
+	hac.quad(c + hz + Vector3(-0.05, 0.12, 0), c + hz + Vector3(0.05, 0.12, 0), c + hz + Vector3(0.05, 0.82, 0), c + hz + Vector3(-0.05, 0.82, 0), Vector3.BACK)
+	hac.quad(c + hz + Vector3(-0.21, 0.5, 0), c + hz + Vector3(0.21, 0.5, 0), c + hz + Vector3(0.21, 0.6, 0), c + hz + Vector3(-0.21, 0.6, 0), Vector3.BACK)
+	moz.mesh_ekle(_gor, Props.mat(Color("9a7c44"), 0.0, false, "", false), "KapiMozaik", false)
+	hac.mesh_ekle(_gor, Props.mat(Color("6e2a2a"), 0.0, false, "", false), "KapiHac", false)
+	var ky := cy + r + 0.38 + 0.15 + 0.25
+	Props.label(self, "ΠΥΛΗ ΤΟΥ ΝΕΩΡΙΟΥ", Vector3(g.x, ky, g.z + 0.08), 26, Color("5a2a2a"), Vector3.ZERO, 2.2)
+	# eşik taşı (eskisinin yeri ve boyu; ince örgü taş)
+	var es = Ag.new()
+	es.kutu(Vector3(g.x, g.y, g.z + 0.1), Vector3.RIGHT, Vector3.BACK, hw * 2.0 + 1.2, 0.12, 0.7, Color(0.92, 0.9, 0.86, 0.9))
+	es.mesh_ekle(_gor, load("res://scripts/world/ist/sur_kule.gd")._tas_mat(Color("a8a090"), 0), "KapiEsik")
+
+
+func _eski_kapi_cerceve(g: Vector3, hw: float, spring: float, marble: Color) -> void:
 	# Taş çerçeve: iki söve (dışa taşan), üstte düz kuşak
 	for sx: float in [-1.0, 1.0]:
 		Props.set_pattern(Props.box(self, Vector3(0.55, spring + 1.9, 0.5), g + Vector3(sx * (hw + 0.28), (spring + 1.9) / 2.0, 0.2), Color.WHITE), marble, "marble")
@@ -311,9 +491,9 @@ func _build_gate() -> void:
 	Props.box(self, Vector3(hw * 2.0 + 1.4, 0.25, 0.55), g + Vector3(0, spring + hw + 0.55, 0.22), marble)
 	Props.box(self, Vector3(2.4, 0.4, 0.06), g + Vector3(0, spring + hw + 1.0, 0.1), Color("f2ecdc"))
 	Props.label(self, "ΠΥΛΗ ΤΟΥ ΝΕΩΡΙΟΥ", g + Vector3(0, spring + hw + 1.0, 0.14), 26, Color("5a2a2a"), Vector3.ZERO, 2.2)
-	# Kanatların ardındaki karanlık geçit (kapı açılınca görünür)
-	var dark := Props.box(self, Vector3(hw * 2.0, spring, 0.02), g + Vector3(0, spring / 2.0, 0.03), Color("120e0b"))
-	dark.material_override = Props.mat(Color("120e0b"), 0.0, false, "", false)
+
+
+func _kapi_kanatlar(g: Vector3, hw: float, spring: float) -> void:
 	# Çift kanat (kapalı): ahşap, demir kuşaklar, çiviler, halka tokmaklar
 	for sx: float in [-1.0, 1.0]:
 		var leaf := Node3D.new()
@@ -326,17 +506,6 @@ func _build_gate() -> void:
 				Props.ball(leaf, 0.035, Vector3(-sx * (0.2 + k * 0.35), yy, 0.09), Color("2a2a2e"), Vector3.ONE, 4)
 		Props.ring(leaf, 0.07, 0.1, Vector3(-sx * (hw - 0.22), 1.25, 0.1), Color("8a7040"), Vector3(90, 0, 0))
 		gate_leaves.append(leaf)
-	# Eşik ve basamaklar
-	Props.box(self, Vector3(hw * 2.0 + 1.2, 0.12, 0.7), g + Vector3(0, 0.06, 0.45), Color("a8a090"))
-	# İki yanda demir fenerler
-	for sx: float in [-1.0, 1.0]:
-		var lp := g + Vector3(sx * (hw + 0.95), 2.4, 0.45)
-		Props.box(self, Vector3(0.06, 0.06, 0.45), lp + Vector3(0, 0.2, -0.2), Color("2a2a2e"))
-		Props.cyl(self, 0.12, 0.3, lp, Color("2a2a2e"), Vector3.ZERO, 6, 0.08)
-		var fl := Props.ball(self, 0.07, lp, Color("ffb850"), Vector3(1, 1.4, 1), 6)
-		fl.material_override = Props.mat(Color("ffb850"), 3.0, false, "", false)
-	lights.append(Night.torch(self, g + Vector3(hw + 2.2, 0, 0.5), 2.2))
-	Props.interactable(self, "gate", Vector3(2.4, 3.0, 1.2), g + Vector3(0, 1.5, 0.6))
 
 
 ## Kanatlar içe açılır (Niko'yla içeri girerken).

@@ -1149,3 +1149,12 @@ Her bölüm denetiminde ve her düzeltmede bu listeyi baştan uygula. Yeni bir h
   - Gerçek biçimli model eski kutudan büyüktür: Bölüm 10'da devenin yeni uzun boynu ve başı, Ağa'dan dönen oyuncu ile
     deveci arasına giriyordu (tam pakette iki kez, tek başına koşuda yok). Kutudan gerçek biçime geçen her hayvan ve
     eşyanın yanında konuşan biri varsa oyuncunun duracağı yer o modele göre yeniden seçilir.
+- v0.99.124 (büyük İstanbul, 3. parça: kapı/hub ve Haliç/deniz bölümleri yeni surda [Opus yardımcılar, yönetici birleştirir; Fable danışman])
+  - Taşınan bölüm hazır ama tek denetim satırı kalıyorsa sürüm onu beklemez, bölüm de denetimi susturarak gelmez:
+    8y yeni sette her koşuda bir "havada asker" satırı yazıyordu; bölüm geçici bir anahtarla eski sette bırakıldı,
+    yeni hâli `--yenisur=8y` ile denenebilir, kök neden ayrı işte. Sürüm notunda açıkça "hâlâ eski" listesinde.
+  - İki zemin tanımı çakışınca denetim doğru söyler: kişileri oturtan katı zemin (görünmez yükseklik haritası dahil)
+    ile denetimin saydığı görünür zemin ayrıysa, ikisinin arasındaki fark "havada" diye görünür. Çözüm tek zemindir;
+    zemin işaretini kaldırmak susturmaktır.
+  - Danışmanın kod okuması görev yazısındaki yanlış varsayımları açmadan yakaladı (13/23/24 için yalnız liste eklemek
+    yetmez, 41o sağlam değil gedikli, aynı dosyada iki görevin çakışması); görev yazıları açılmadan önce okutulur.
