@@ -1,0 +1,2 @@
+KOSU S_n4_gfez args=--chapter=4 --autotest=fez rc=0 sure=12s
+AUTOTEST PASS chapter=4 variant=fez branch=4a start=tent outcome=4a.2 catches=0 fez=true telsiz=3

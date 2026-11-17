@@ -1,0 +1,2 @@
+KOSU S_g_8y args=--chapter=8y --autotest rc=0 sure=27s
+AUTOTEST PASS chapter=8y variant= outcome=8Y.1 id=seal warnings=0 lowered=0 radio=true

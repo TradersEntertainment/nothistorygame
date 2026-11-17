@@ -1,0 +1,9 @@
+SURSOZLESME PASS kalem=13 kesim=8
+SUROYUN nokta=519 havada=0 gomuk=0 katida=0
+WALKTHRU OZET yol=7 tamam=7 takilma=0 dusme=0
+ESYATEST PASS
+T8DTEKME PASS 
+
+real	4m48.996s
+user	1m13.730s
+sys	0m4.330s

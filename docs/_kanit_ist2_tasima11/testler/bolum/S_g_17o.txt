@@ -1,0 +1,3 @@
+KOSU S_g_17o args=--chapter=17o --autotest rc=0 sure=21s
+DENIZSET hornworld DenizSurUzak_740 bolge=springs ucgen=3852
+AUTOTEST PASS chapter=17o variant= outcome=17O.1 acc=1.00 water=4 pours=10.0 kadri=true

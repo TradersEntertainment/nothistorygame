@@ -1,0 +1,2 @@
+KOSU S_g_11 args=--chapter=11 --autotest rc=0 sure=68s
+AUTOTEST PASS chapter=11 variant= outcome=11.2 persuade=25 sadakat=55 baski=1

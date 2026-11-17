@@ -1,0 +1,3 @@
+KOSU S_e19_saved args=--chapter=19 --autotest=saved --eskisur rc=0 sure=25s
+DENIZSET bolum=19 set=eski in_world=true
+AUTOTEST PASS chapter=19 variant=saved outcome=19.1 suspicion=0 tezkire=false saved=true grain=0

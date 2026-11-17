@@ -1,0 +1,7 @@
+KOSU S_n19_flee_2 args=--chapter=19 --autotest=flee rc=0 sure=26s
+DENIZSET bolum=19 set=yeni in_world=true
+DENIZSET hornworld DenizSurUzak_740 bolge=horn_chain ucgen=1740
+DENIZSET hornworld DenizSurUzak_2360 bolge=horn_chain ucgen=716
+DENIZSET hornworld DenizSurUzak_714 bolge=horn_chain ucgen=1858
+DENIZSET birlestir=21
+AUTOTEST PASS chapter=19 variant=flee outcome=19.2 suspicion=0 tezkire=false saved=false grain=0

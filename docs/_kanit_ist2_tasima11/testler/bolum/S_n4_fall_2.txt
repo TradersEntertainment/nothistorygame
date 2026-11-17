@@ -1,0 +1,4 @@
+KOSU S_n4_fall_2 args=--chapter=4 --autotest=fall rc=0 sure=11s
+DENIZSET bolum=4 set=yeni in_world=false
+DENIZSET birlestir=43
+AUTOTEST PASS chapter=4 variant=fall branch=4b start=chain outcome=4b.3 catches=0 fez=true telsiz=3

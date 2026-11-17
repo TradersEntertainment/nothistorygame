@@ -16,7 +16,7 @@ Klasörler: `kare/<bölüm>/eski|yeni/` (tam boy), `kare/sahip_*.jpg` (sahibine 
 |---|---|---|---|
 | 1 | ÖLÇ VE DÖK | **TAMAM** | `dokum.md`: sekiz bölümün bağları, çarpışma kutuları, merdiven/çıkış noktaları, v2 karşılıkları; danışmanın iki ölçüsü düzeltildi (SeaWalls x 12 geçidinin gerçek açıklığı 3,0 m — lento kutusu 3,7'de; 18b "11 × 3 m" köprüdür) |
 | 2 | Ortak kalem `deniz_set.gd` | **TAMAM** | gövde, korkuluk, diş, konsol/bingi, kule (geçit, teras ağzı), rıhtım, deniz kapısı, uzak katman; SeaWalls, 18b, 38o, Horn, HornWorld ve şehir AYNI işlevleri çağırır |
-| 2 | Şehir `IstHalicSur` | **TAMAM** (bütçe **KISMEN**) | yeni kalem; çarpışma dökümü eski = yeni (661 şekil, aynı karma); dönüş değerleri aynı; şehir karesinde bütçe ölçülmedi (dilim başına +9,5 bin üçgen) |
+| 2 | Şehir `IstHalicSur` | **TAMAM** (bütçe **KISMEN**) | yeni kalem; çarpışma dökümü eski = yeni (661 şekil, aynı karma); dönüş değerleri aynı; şehir karesinde bütçe ölçülmedi (dilim başına yakın katmanda +5,7 bin üçgen) |
 | 2b | Komşu devam (Horn, HornWorld ≤ 250 m) | **TAMAM** | `Horn._sea_wall` tek haritada baştan sona, `HornWorld._wall_run` keep'e ≤ 250 m parçalar yeni kalemin uzak katmanı; 250 m ötesi eski (görev sınırı) |
 | 3 | SeaWalls: 4b | **TAMAM** | yeni görünüş + `--eskisur`; çarpışma aynı; 7 ESKİ\|YENİ kare (3 yakın) + dikiş |
 | 3 | SeaWalls: 17 | **TAMAM** | `in_world`; kareler + iki dikiş (dikiş geometrisi eskisi gibi kopuk: "hâlâ kötü" 2) |
@@ -24,7 +24,8 @@ Klasörler: `kare/<bölüm>/eski|yeni/` (tam boy), `kare/sahip_*.jpg` (sahibine 
 | 4 | 18b | **TAMAM** | kesim + bingiler + top mazgalı; dış yüz 62,00; çatlak işaretleri açıkta |
 | 5 | 38o | **TAMAM** | dış yüz 60,00; merdiven ağzı dişsiz/eşiksiz; `MerdivenCikis` çıkışı (−6; 9,70; 60,60); eşik ve diş sondası yolda, tutunma 0 |
 | — | Bütçe | **TAMAM** | bölüm karelerinin hepsinde ilkel ≤ +%4,2, çizim çağrısı 27 karenin 26'sında azaldı |
-| — | Sözleşme | **AYNI** | (son doğrulama satırı aşağıda) |
+| — | Testler | **TAMAM** | son kodla 156 koşu: 156 PASS, bitmeyen 0, sorun satırı 0 (4 süreç aynı anda) |
+| — | Sözleşme | **AYNI** | `SURSOZLESME PASS kalem=13 kesim=8` · `SUROYUN nokta=519 havada=0 gomuk=0 katida=0` · `WALKTHRU OZET yol=7 tamam=7 takilma=0 dusme=0` · `ESYATEST PASS` · `T8DTEKME PASS` · `PARSECHECK PASS` |
 
 ## Dosyalar (eski → yeni)
 | dosya | değişiklik |
@@ -183,3 +184,271 @@ karma 3854034809 (`testler/halic_sonda_*.txt`; dönüş değerleri satırı da a
 - **s5 kapı şehirden**: lento + kemer + kitabe.
 - **s6 kule terası**: teras korkuluğunda merdiven ağzı açık, basamak terasa çıkıyor — ağzın iki ucunda gökyüzü sızan 2–3 cm'lik
   aralık var (kule merdiveni korkuluktan dar; "hâlâ kötü" 6).
+
+## Testler — son doğrulama (son kayıttaki kod; `testler/bolum/S_*.txt`)
+
+Her koşu `--max-fps 20`, 4 süreç aynı anda, ≤ 600 sn zaman aşımı; "sorun satırı" tam süzgeçteki satırlar (SCRIPT ERROR,
+VISAUDIT, WALKTHRU, HELDAUDIT, ARMAUDIT, WARN_FX/FLY/VOID, ESYAAUDIT dusme/havada/gomuk/tikama/sinir, HAREKETAUDIT).
+
+| bölüm | çeşit | kip | koşu | PASS | bitmeyen | sorun satırı | süre (sn) |
+|---|---|---|---|---|---|---|---|
+| 4 | chain | yeni | 2 | 2 | 0 | 0 | 19 · 19 |
+| 4 | chain | eski | 1 | 1 | 0 | 0 | 18 |
+| 4 | nofez | yeni | 2 | 2 | 0 | 0 | 19 · 18 |
+| 4 | nofez | eski | 1 | 1 | 0 | 0 | 18 |
+| 4 | fall | yeni | 2 | 2 | 0 | 0 | 11 · 11 |
+| 4 | fall | eski | 1 | 1 | 0 | 0 | 11 |
+| 4 | "" | yeni | 1 | 1 | 0 | 0 | 11 |
+| 4 | caught | yeni | 1 | 1 | 0 | 0 | 11 |
+| 4 | fez | yeni | 1 | 1 | 0 | 0 | 12 |
+| 4 | item | yeni | 1 | 1 | 0 | 0 | 11 |
+| 4 | market | yeni | 1 | 1 | 0 | 0 | 11 |
+| 4 | next | yeni | 1 | 1 | 0 | 0 | 12 |
+| 4 | wet | yeni | 1 | 1 | 0 | 0 | 11 |
+| 17 | "" | yeni | 2 | 2 | 0 | 0 | 56 · 56 |
+| 17 | chain | yeni | 2 | 2 | 0 | 0 | 31 · 31 |
+| 17 | edirne_none | yeni | 2 | 2 | 0 | 0 | 37 · 36 |
+| 17 | edirne_policy | yeni | 2 | 2 | 0 | 0 | 39 · 39 |
+| 17 | fall | yeni | 2 | 2 | 0 | 0 | 31 · 30 |
+| 17 | lost | yeni | 2 | 2 | 0 | 0 | 31 · 31 |
+| 17 | nophoto | yeni | 2 | 2 | 0 | 0 | 32 · 31 |
+| 17 | osm | yeni | 2 | 2 | 0 | 0 | 69 · 68 |
+| 17 | route | yeni | 2 | 2 | 0 | 0 | 11 · 10 |
+| 17 | ship_bad | yeni | 2 | 2 | 0 | 0 | 30 · 31 |
+| 17 | ship_ok | yeni | 2 | 2 | 0 | 0 | 30 · 31 |
+| 17 | two | yeni | 2 | 2 | 0 | 0 | 30 · 32 |
+| 17 | edirne_legend | yeni | 2 | 2 | 0 | 0 | 38 · 39 |
+| 17 | "" | eski | 1 | 1 | 0 | 0 | 55 |
+| 17 | chain | eski | 1 | 1 | 0 | 0 | 30 |
+| 17 | edirne_none | eski | 1 | 1 | 0 | 0 | 36 |
+| 17 | edirne_policy | eski | 1 | 1 | 0 | 0 | 39 |
+| 17 | fall | eski | 1 | 1 | 0 | 0 | 30 |
+| 17 | lost | eski | 1 | 1 | 0 | 0 | 30 |
+| 17 | nophoto | eski | 1 | 1 | 0 | 0 | 31 |
+| 17 | osm | eski | 1 | 1 | 0 | 0 | 67 |
+| 17 | route | eski | 1 | 1 | 0 | 0 | 10 |
+| 17 | ship_bad | eski | 1 | 1 | 0 | 0 | 31 |
+| 17 | ship_ok | eski | 1 | 1 | 0 | 0 | 31 |
+| 17 | two | eski | 1 | 1 | 0 | 0 | 32 |
+| 17 | edirne_legend | eski | 1 | 1 | 0 | 0 | 40 |
+| 18b | "" | yeni | 2 | 2 | 0 | 0 | 23 · 24 |
+| 18b | "" | eski | 1 | 1 | 0 | 0 | 23 |
+| 18b | miss | yeni | 2 | 2 | 0 | 0 | 25 · 24 |
+| 18b | miss | eski | 1 | 1 | 0 | 0 | 24 |
+| 38o | "" | yeni | 5 | 5 | 0 | 0 | 67 · 65 · 67 · 64 · 67 |
+| 38o | hooks_bad | yeni | 5 | 5 | 0 | 0 | 65 · 66 · 68 · 65 · 67 |
+| 38o | hooks_ok | yeni | 5 | 5 | 0 | 0 | 66 · 66 · 67 · 65 · 67 |
+| 38o | lose | yeni | 5 | 5 | 0 | 0 | 73 · 75 · 73 · 74 · 74 |
+| 38o | "" | eski | 1 | 1 | 0 | 0 | 66 |
+| 38o | hooks_bad | eski | 1 | 1 | 0 | 0 | 66 |
+| 38o | hooks_ok | eski | 1 | 1 | 0 | 0 | 66 |
+| 38o | lose | eski | 1 | 1 | 0 | 0 | 73 |
+| 38o | esik_dur | yeni | 1 | 1 | 0 | 0 | 67 |
+| 38o | dis_dur | yeni | 1 | 1 | 0 | 0 | 66 |
+| 19 | "" | yeni | 2 | 2 | 0 | 0 | 27 · 26 |
+| 19 | captive18 | yeni | 2 | 2 | 0 | 0 | 26 · 26 |
+| 19 | flee | yeni | 2 | 2 | 0 | 0 | 26 · 26 |
+| 19 | saved | yeni | 2 | 2 | 0 | 0 | 26 · 25 |
+| 19 | ship_bad | yeni | 2 | 2 | 0 | 0 | 27 · 25 |
+| 19 | ship_ok | yeni | 2 | 2 | 0 | 0 | 26 · 26 |
+| 19 | ship_ok_flee | yeni | 2 | 2 | 0 | 0 | 28 · 25 |
+| 19 | tezkire | yeni | 2 | 2 | 0 | 0 | 26 · 26 |
+| 19o | "" | yeni | 2 | 2 | 0 | 0 | 37 · 35 |
+| 19o | hooks_bad | yeni | 2 | 2 | 0 | 0 | 33 · 33 |
+| 19o | hooks_ok | yeni | 2 | 2 | 0 | 0 | 37 · 36 |
+| 19o | silent | yeni | 2 | 2 | 0 | 0 | 35 · 35 |
+| 29 | "" | yeni | 2 | 2 | 0 | 0 | 36 · 37 |
+| 29 | lose | yeni | 2 | 2 | 0 | 0 | 41 · 41 |
+| 29o | "" | yeni | 2 | 2 | 0 | 0 | 36 · 36 |
+| 29o | lose | yeni | 2 | 2 | 0 | 0 | 35 · 34 |
+| 19 | "" | eski | 1 | 1 | 0 | 0 | 26 |
+| 19 | captive18 | eski | 1 | 1 | 0 | 0 | 26 |
+| 19 | flee | eski | 1 | 1 | 0 | 0 | 25 |
+| 19 | saved | eski | 1 | 1 | 0 | 0 | 25 |
+| 19 | ship_bad | eski | 1 | 1 | 0 | 0 | 25 |
+| 19 | ship_ok | eski | 1 | 1 | 0 | 0 | 25 |
+| 19 | ship_ok_flee | eski | 1 | 1 | 0 | 0 | 25 |
+| 19 | tezkire | eski | 1 | 1 | 0 | 0 | 26 |
+| 19o | "" | eski | 1 | 1 | 0 | 0 | 35 |
+| 19o | hooks_bad | eski | 1 | 1 | 0 | 0 | 33 |
+| 19o | hooks_ok | eski | 1 | 1 | 0 | 0 | 36 |
+| 19o | silent | eski | 1 | 1 | 0 | 0 | 36 |
+| 29 | "" | eski | 1 | 1 | 0 | 0 | 36 |
+| 29 | lose | eski | 1 | 1 | 0 | 0 | 41 |
+| 29o | "" | eski | 1 | 1 | 0 | 0 | 35 |
+| 29o | lose | eski | 1 | 1 | 0 | 0 | 34 |
+| 18 | "" | yeni | 1 | 1 | 0 | 0 | 17 |
+| 31o | "" | yeni | 1 | 1 | 0 | 0 | 60 |
+| 39o | "" | yeni | 1 | 1 | 0 | 0 | 31 |
+| 27 | "" | yeni | 1 | 1 | 0 | 0 | 19 |
+| 17o | "" | yeni | 1 | 1 | 0 | 0 | 21 |
+| 30 | "" | yeni | 1 | 1 | 0 | 0 | 40 |
+| 30o | "" | yeni | 1 | 1 | 0 | 0 | 51 |
+| 41o | "" | yeni | 1 | 1 | 0 | 0 | 54 |
+| 42b | "" | yeni | 1 | 1 | 0 | 0 | 63 |
+| 43o | "" | yeni | 1 | 1 | 0 | 0 | 51 |
+| 44b | "" | yeni | 1 | 1 | 0 | 0 | 45 |
+| 8y | "" | yeni | 1 | 1 | 0 | 0 | 27 |
+| 0 | "" | yeni | 1 | 1 | 0 | 0 | 22 |
+| 20 | "" | yeni | 1 | 1 | 0 | 0 | 44 |
+| 28o | "" | yeni | 1 | 1 | 0 | 0 | 22 |
+| 6 | "" | yeni | 1 | 1 | 0 | 0 | 20 |
+| 7 | "" | yeni | 1 | 1 | 0 | 0 | 72 |
+| 10h | "" | yeni | 1 | 1 | 0 | 0 | 71 |
+| 12b | "" | yeni | 1 | 1 | 0 | 0 | 62 |
+| 11 | "" | yeni | 1 | 1 | 0 | 0 | 68 |
+| 10 | "" | yeni | 1 | 1 | 0 | 0 | 20 |
+| **toplam** | | | **156** | **156** | **0** | **0** | |
+
+**Toplam:** son kodla 156 koşu (8 bölümün bütün çeşitleri yeni ×2 + eski ×1; 4'ün 4a çeşitleri ×1; 38o ×5 + eski ×1 +
+iki eşik sondası; 21 gerileme bölümü ×1), **156 PASS, bitmeyen 0, sorun satırı 0**. Önceki turlar (kod donmadan önce):
+`testler/bolum/` içindeki S_ öneksiz dosyalar; onlarda tek sorun satırı `e17_bos`'taki Büro WALKTHRU ("hâlâ kötü" 9).
+
+**38o merdiven çıkışı ve sondalar (son tur):** bütün 38o koşularında `T11CIKIS` y 9,62–9,70, z 60,60–60,91, `yedek=0`;
+`=esik_dur` ve `=dis_dur`: `yolda=true tutundu=0`.
+
+**Gerileme — HornWorld'ün yeni uzak katmanı hangi bölgelerde kuruldu** (`DENIZSET hornworld` satırları; satır yoksa o bölümde
+HornWorld'ün kurduğu sur DEĞİŞMEDİ):
+
+| bölüm | bölge | yeni uzak katman (üçgen) |
+|---|---|---|
+| 17, 19, 19o, 29, 29o | horn_chain | 1 740 + 716 + 1 858 |
+| 38o | horn_wall_o | 3 564 |
+| 18 | horn_bridge | 1 836 |
+| 31o | eyup + byz_aya | 1 884 + 6 990 |
+| 39o | petrion | 3 456 |
+| 27 | galata | 2 556 |
+| 17o | springs | 3 852 |
+| 30, 30o | blachernae | 1 824 |
+| 44b | byz_aya | 6 990 (iki kez kurulur) |
+| **8y, 20**, 0, 28o, 41o, 42b, 43o, 6, 7, 10h, 12b, 11, 10 | — | **yok** (kara suru / şehir bölgeleri 250 m'den uzak) |
+
+8y ve 20'de (ve TAŞIMA 10'un bölümlerinde: 6, 7, 10h, 12b) HornWorld'ün kurduğu geometri eskisiyle aynı: ESKİ|YENİ bütçe
+farkı 0 (kare çekmedim: aynı sahne). Yeni katmanın kurulduğu bölgelerde en çok +7 bin üçgen (byz_aya), aynı parçaların eski
+kutuları ve saçılmış dişleri kurulmuyor; ölçtüğüm bölgelerde (horn_chain, horn_wall_o) kare ilkel farkı ≤ +%0,5.
+
+**Sözleşme ve araçlar (son kayıt, kopyadan):** `PARSECHECK PASS scripts=367` · `SURSOZLESME PASS kalem=13 kesim=8` ·
+`SUROYUN nokta=519 havada=0 gomuk=0 katida=0` · `WALKTHRU OZET yol=7 tamam=7 takilma=0 dusme=0` · `ESYATEST PASS` ·
+`T8DTEKME PASS` (`testler/sozlesme_son.txt`) · `HALICSONDA OZET carp=661 karma=3854034809` (eski ile aynı;
+`testler/halic_sonda_son.txt`; görünen üçgen yakın katman 5 978 → 11 674, orta 4 970 → 5 070, uzak 60 → 60).
+
+## Bütçe — ESKİ | YENİ (aynı kamera, 4 karenin ortalaması; `testler/kare_*.txt`)
+Kural ≤ +%5 (ilkel); bütün bölüm karelerinde sağlandı. Çizim çağrısı yeni kipte 27 karenin 26'sında eskiden AZ
+(birleştirme: eski kesim ≈ yüzlerce ayrı kutu ağı + saçılmış diş, yeni malzeme × 32 m hücre).
+
+| bölüm | kare | çizim | ilkel |
+|---|---|---|---|
+| 4 | a1 zincirden | 476 → 374 (−21,4 %) | 326 538 → 328 700 (+0,7 %) |
+| 4 | a2 rıhtım yakın | 408 → 294 (−27,9 %) | 338 064 → 337 338 (−0,2 %) |
+| 4 | a3 kapıya yüz yüze | 337 → 259 (−23,1 %) | 288 146 → 299 094 (+3,8 %) |
+| 4 | a4 kule yanağı | 268 → 207 (−22,8 %) | 358 666 → 363 532 (+1,4 %) |
+| 4 | a5 Niko | 144 → 122 (−15,3 %) | 313 466 → 318 200 (+1,5 %) |
+| 4 | d1 dikiş x 80 | 439 → 352 (−19,8 %) | 325 992 → 336 390 (+3,2 %) |
+| 4 | a6 kapı genel | 324 → 243 (−25,0 %) | 279 536 → 291 202 (+4,2 %) |
+| 17 | b1 rihtim_yakin | 7613 → 7524 (−1,2 %) | 7 704 283 → 7 718 025 (+0,2 %) |
+| 17 | b2 genel_sudan | 1412 → 1310 (−7,2 %) | 1 376 961 → 1 382 717 (+0,4 %) |
+| 17 | b3 dikis_x80 | 587 → 526 (−10,4 %) | 604 328 → 603 860 (−0,1 %) |
+| 17 | b4 dikis_x-60 | 6594 → 6530 (−1,0 %) | 6 690 286 → 6 690 192 (−0,0 %) |
+| 17 | b5 kapi | 1172 → 1091 (−6,9 %) | 1 094 557 → 1 101 295 (+0,6 %) |
+| 18b | c1 dis_yakin | 1419 → 1382 (−2,6 %) | 1 642 930 → 1 649 632 (+0,4 %) |
+| 18b | c2 doseme_yakin | 1863 → 1828 (−1,9 %) | 1 852 021 → 1 848 069 (−0,2 %) |
+| 18b | c3 kopruden | 6069 → 6024 (−0,7 %) | 8 252 852 → 8 268 010 (+0,2 %) |
+| 18b | c4 bingi_alttan | 1078 → 1016 (−5,8 %) | 1 596 752 → 1 601 446 (+0,3 %) |
+| 18b | d1 dikis_x20 | 6310 → 6267 (−0,7 %) | 8 238 316 → 8 259 308 (+0,3 %) |
+| 18b | c5 top_mazgal | 1248 → 1220 (−2,2 %) | 1 069 370 → 1 069 080 (−0,0 %) |
+| 19 | g1 donus_gemiden | 4351 → 4242 (−2,5 %) | 6 194 312 → 6 203 452 (+0,1 %) |
+| 19 | g2 genel_sudan | 1120 → 1001 (−10,6 %) | 1 442 560 → 1 445 608 (+0,2 %) |
+| 19 | d1 dikis_x-60 | 4731 → 4665 (−1,4 %) | 6 611 278 → 6 613 802 (+0,0 %) |
+| 19o | h1 kayiktan | 799 → 712 (−10,9 %) | 904 486 → 905 966 (+0,2 %) |
+| 19o | d1 dikis_x80 | 390 → 315 (−19,2 %) | 630 222 → 632 870 (+0,4 %) |
+| 29 | j1 savastan_uzak | 761 → 708 (−7,0 %) | 656 048 → 655 816 (−0,0 %) |
+| 29o | j1 savastan_uzak | 608 → 555 (−8,7 %) | 653 558 → 653 326 (−0,0 %) |
+| 38o | f1 merdiven_tepesi | 5376 → 5345 (−0,6 %) | 7 687 927 → 7 704 566 (+0,2 %) |
+| 38o | f2 kapi_yakin | 2528 → 2540 (+0,5 %) | 4 007 138 → 4 021 923 (+0,4 %) |
+| 38o | f3 sudan_genel | 3865 → 3841 (−0,6 %) | 5 424 934 → 5 454 042 (+0,5 %) |
+| 38o | f4 gemiden_sur | 3478 → 3431 (−1,4 %) | 4 985 976 → 5 005 839 (+0,4 %) |
+| 38o | f5 yol_yakin | 1843 → 1806 (−2,0 %) | 3 176 083 → 3 186 826 (+0,3 %) |
+| 38o | d1 dikis_x24 | 5611 → 5547 (−1,1 %) | 7 476 087 → 7 489 447 (+0,2 %) |
+| 38o | f6 rihtim_yakin | 5396 → 5359 (−0,7 %) | 7 669 711 → 7 690 218 (+0,3 %) |
+| 38o | f1b mazgal_acikligi | 1175 → 1160 (−1,3 %) | 980 052 → 995 637 (+1,6 %) |
+
+**Şehir Haliç dilimi** (`kare/sehir/`, dilim tek başına; şehirde pişirilir, çizim çağrısı orada birleşir): çizim 968 → 752
+(s1), ilkel 20 922 → 30 472 (s1, +%46; dilimin görünen üçgeni yakın katmanda 5 978 → 11 674, orta 4 970 → 5 070: kaideli gövde, harpuştalı dişler, koridorlu/silmeli kuleler,
+kemerler). Dilim başına yakın katmanda ≈ +5,7 bin üçgen; şehirde bu dilimden yalnız
+96 m'lik Haliç hat parçaları var. Şehir karesinde ESKİ|YENİ ölçülmedi (çıplak `--eskisur` şehirdeki başka setleri de
+değiştirdiği için yalıtılamadı) — **KISMEN**.
+
+**HornWorld (2b)**: yeni uzak katman yalnız bölgenin keep dikdörtgenine ≤ 250 m olan parçalarda: `horn_chain` (17, 19,
+19o, 29, 29o) Haliç 2 456 + Marmara 1 858 üçgen, `horn_wall_o` (38o) 3 564 üçgen (tek ağ, görüş sonu 1 200 m); bu
+bölümlerin karelerinde ilkel farkı ≤ +%0,5 (yukarıdaki tablo; HornWorld dahil). 8y ve 20 (kara suru bölgeleri) ve öteki
+gerileme bölümleri: bkz. "Gerileme" (`DENIZSET hornworld` satırı yoksa o bölgede HornWorld'ün kurduğu sur DEĞİŞMEDİ).
+
+## Sonraki taşıyana
+1. **Ortak kalem tek yerde:** deniz surunun görünüşü `scripts/world/ist/deniz_set.gd`'de. SeaWalls, 18b, 38o, Horn devamı,
+   HornWorld'ün yakın devamı ve şehirdeki 96 m'lik Haliç dilimi aynı işlevleri çağırır; kesit sözlüğü `g` (zf, s, T, H, dip,
+   su, lod, kz, PT, PH, yol) dosyanın başında. Deniz yönü `s` ile çevrilir (+1 deniz +z: SeaWalls; −1 deniz −z: Haliç kesimi,
+   şehir).
+2. **Çarpışma kutuları değişmedi:** her yerde eski kutular gizli + `wall`/`ground` metası (`deniz_set.gizle`). Görünüş hiçbir
+   yerde kutudan küçük değil (kule pahı oyuncunun yürüdüğü yerdeki kulelerde 0: SeaWalls x −6, şehir kuleleri).
+3. **Dişler çarpışmasız** (eskisi gibi); 18b'de görünmez korkuluk aynı hatta. 38o'da merdiven ağzı x −6 ± 0,65 dişsiz ve
+   eşiksiz; çıkış `MerdivenCikis.cikis` (bölüm içinde). Başka bir bölüm deniz suruna merdiven dayarsa aynı kalıp: ağız
+   `korkuluk(kes=…)` + `dis_dizisi(bos=…)`, çıkış noktası yolun üstü.
+4. **Geri dönüş:** `--eskisur` (hepsi), `--eskisur=4`, `=17`, `=18b`, `=19`, `=19o`, `=29`, `=29o`, `=38o` (SeaWalls `bolum`
+   add_child'dan önce; Horn ve HornWorld sahnenin bölüm adından). Şehir dilimi yalnız çıplak `--eskisur` ile eskiye döner.
+5. **Bütçe:** yakın kesitler `blak_set.birlestir` (malzeme × 32 m hücre); HornWorld'ün yeni uzak katmanı tek ağ (görüş sonu
+   1200 m). `DENIZSET hornworld … ucgen=` satırı hangi bölgede kaç üçgen kurulduğunu yazar.
+6. **Testler kopyadan:** uzun koşu turları sürerken ortak bir dosya düzenlenirse (Godot betiği her süreç başında okur) tur
+   ayrıştırma hatası penceresine düşer; `~/is/kopya` eşinden koşmak bunu önler.
+
+## Başka dosyaya istek
+1. **`scripts/world/ist/marmara_sur.gd` (`IstMarmaraSur.build_run`) — şehir Haliç hattının çoğu:** `sehir.gd:2901-2906`
+   yalnız tam 96 m'lik Haliç dilimlerini `IstHalicSur`'a verir; öteki Haliç dilimleri (ve Marmara) `IstMarmaraSur.build_run`
+   ile kurulur ve bu görevin dosyası değil. Şehirde aynı kıyıda iki ressam yan yana durur (96 m'lik dilim yeni kalem, komşusu
+   eski kutu diş). İstek: `build_run` görünüşü `deniz_set.govde/korkuluk/disler/kule` ile (çarpışma aynı kalarak; bu dalda
+   `IstHalicSur` için yapılan kalıp: kutular gizli + meta, `tasima11_halic_sonda` ile döküm eşitliği).
+2. **`scripts/world/ist/sur_kule.gd` (`disler_ag` harpuştası):** yakında ve gölgede harpuşta koyu, yeşilimsi (18b c1,
+   38o f1); TAŞIMA-9 "hâlâ kötü" 1 ile aynı. Ortak; değiştirmedim.
+3. **`scripts/world/ist/sur_doku.gd` (yatay yüz döşeme tonu):** sur yolu ve rıhtım döşemesi yakında kiremit-kahve (4 a2,
+   38o f1). Deniz dalında değiştirmedim (kanıtla gösterilecek bir ölçüm yapmadım); ortak döşeme rengi sahibinin kararı.
+4. **`scripts/world/horn_world.gd` / `world1453.gd` — tek harita kıyı hattı:** 17/19/19o/29/29o'da SeaWalls'ın kesimi
+   (yerel z −3,2) dünyanın kıyı çizgisiyle çakışmıyor: kesimin iki ucunda (x −60, 80) arazi yamacı başlıyor, `HornWorld`
+   suru yamacın üstünden geçiyor (17 b3/b4: eski ve yeni AYNI geometri; yeni kipte yalnız görünüş yeni kalem). Kıyı hattını
+   hizalamak `World1453` arazisi/`REGIONS` işi (DOKUNMA listesinde).
+5. **TAŞIMA 10'a bilgi (8y, 6, 7, 10h, 12b):** `HornWorld._wall_run`'ın yeni uzak katmanı yalnız bölgenin `keep`
+   dikdörtgenine ≤ 250 m olan parçalarda kurulur; kara suru bölgelerinde (landwalls, byz_walls) Haliç/Marmara suru 250 m'den
+   uzakta → bu bölümlerde HornWorld'ün kurduğu sur değişmedi (`DENIZSET hornworld` satırı yok; bütçe aşağıda).
+
+## Hâlâ kötü olanlar (dürüst)
+1. **Harpuşta yakında ve gölgede koyu, yeşilimsi** (18b c1, 38o f1, şehir s3): ortak `sur_kule.disler_ag` + sur_doku harpuşta
+   dalı (TAŞIMA-9 "hâlâ kötü" 1 ile aynı); dokunmadım.
+2. **Tek harita dikişleri (17, 19, 19o, 29, 29o):** SeaWalls'ın yakın kesiti x −60 ve 80'de bitiyor; dünyanın kıyı hattı
+   kesimin çizgisiyle çakışmadığı için uçlarda arazi yamacı başlıyor, HornWorld suru yamacın üstünden devam ediyor. Ressam
+   artık aynı ama geometri kopuk (eskide de aynı kopukluk). Kıyı hattı/arazi `World1453`'ün işi.
+3. **Sur yolu ve rıhtım döşemesi yakında kiremit-kahve** (4 a2, 38o f1): ortak sur_doku'nun yatay yüzü.
+4. **17/19'da dünyanın gri kıyı arazisi rıhtımın sura yakın şeridini örtüyor** (17 b1; eskisinde de): World1453 arazisi rıhtım
+   üstünden (y 0,7) yüksek. Oyuncunun basdığı çarpışma rıhtımın kutusu; görünen yüzey arazi.
+5. **Kapı kanatları** (SeaWalls x 17, 38o): eskisinin düz tahta kutuları (oynanış düğümleri: `gate_leaves`, `gate_l/r`);
+   38o'ya demir kuşak eklendi, SeaWalls'ınki zaten kuşaklı. Tahta dokusu düz.
+6. **Şehir kule terası:** teras korkuluğundaki merdiven ağzının iki ucunda 2–3 cm'lik gök aralığı (s6): kule merdiveninin
+   eni (1,8) ağızdan (2,0) dar; ağzın yanakları eklendi ama basamak kenarı ile korkuluk arasında ince boşluk kalıyor.
+7. **Şehirde Haliç hattının çoğu `IstMarmaraSur.build_run`** (bu görevin dosyası değil): yalnız 96 m'lik `IstHalicSur`
+   dilimleri yeni kalemle; komşu dilimler eski kutu dişli (başka dosyaya istek 1).
+8. **HornWorld'ün 250 m'den uzak kıyı surları** (Haliç'in öbür ucu, Marmara) eski Dressing kutuları (görev sınırı; bütçe).
+9. **17 eski koşusunda 1 WALKTHRU (Büro, Müfide):** `e17_bos` (`--eskisur`), satır SeaWalls kurulmadan ÖNCE (günlük sırası:
+   WALKTHRU → `DENIZSET bolum=17`), Büro sahnesinde (`bureau.gd`, bu görevin dosyası değil). Aynı komutla 2 eski + 2 yeni
+   yeniden koşuda çıkmadı (`r17_*`), 17'nin öteki 42 koşusunda yok. Kök neden bulunamadı; olası yol: `Person._clear_way`
+   (yürüyen biri ayaktaki Müfide'yi yana iter) + `Unclip.walk_audit`'in itilmeyi yürüme sayması (`discount_move`
+   `Unclip._wa_last`'ı düzeltmiyor) + itme denetiminin (`in_solid` "zaten içindeyse izin ver") masaya değen kişiyi içeri
+   itebilmesi. Doğrulanmadı; "flake" diye geçiştirmiyorum: Büro/kişi dosyalarının sahibine bildirilmeli.
+
+## Replik uyumsuzluğu
+Yok. Bütün oynanış yerleri (rıhtım, iki kapı, zincir, Niko'nun kenarı, kuleler; 18b top mazgalı, köprü; 38o merdiven ağzı,
+kazan, deniz kapısı, rıhtım halatı, babalar) eski koordinatlarında. "Kapı", "rıhtım", "mazgal", "merdiven", "sur" replikleri
+yeni görünüşle de doğru. 4b'nin kapı kitabesi ("ΠΥΛΗ ΤΟΥ ΝΕΩΡΙΟΥ") aynı yazıyla kemerin üstündeki mermer levhada.
+
+## run_tests.sh isteği (EKLEMEDİM)
+- `run --chapter=38o --autotest=esik_dur` ve `run --chapter=38o --autotest=dis_dur` (son satırlardan `T11ESIK … yolda=true
+  tutundu=0`; merdiven eşik tuzağının gerilemesi).
+- `godot --headless --path . res://tests/_ist/tasima11_halic_sonda.tscn` → `HALICSONDA OZET carp=661 karma=3854034809`
+  (şehir Haliç dilimi çarpışması değişmedi).
+- `=kare` araçları (`tasima11_kare.tscn`, `tasima11_halic_kare.tscn`) yalnız pencereli; pakete değil kanıt koşularına.

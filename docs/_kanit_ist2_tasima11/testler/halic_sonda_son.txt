@@ -1,15 +1,5 @@
-Godot Engine v4.4.1.stable.official.49a5bc7b6 - https://godotengine.org
-
-SCRIPT ERROR: Parse Error: There is already a parameter named "n" declared in this scope.
-          at: GDScript::reload (res://scripts/world/ist/deniz_set.gd:311)
-ERROR: Failed to load script "res://scripts/world/ist/deniz_set.gd" with error "Parse error".
-   at: load (modules/gdscript/gdscript.cpp:3022)
-SCRIPT ERROR: Invalid call. Nonexistent function 'gizle' in base 'GDScript'.
-          at: build (res://scripts/world/ist/halic_sur.gd:101)
-HALICGOR lod=0 ucgen=5078
-SCRIPT ERROR: Invalid call. Nonexistent function 'gizle' in base 'GDScript'.
-          at: build (res://scripts/world/ist/halic_sur.gd:101)
-HALICGOR lod=1 ucgen=4070
+HALICGOR lod=0 ucgen=11674
+HALICGOR lod=1 ucgen=5070
 HALICGOR lod=2 ucgen=60
 CARP lod=0 box (0.3, 0.2, 0.3) at=(-2.6, 3.6, 1.7) basis=(0.0, 0.0, 0.0)
 CARP lod=0 box (0.3, 0.2, 0.3) at=(2.6, 3.6, 1.7) basis=(0.0, 0.0, 0.0)

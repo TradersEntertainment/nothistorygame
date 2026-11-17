@@ -1,0 +1,3 @@
+KOSU S_g_27 args=--chapter=27 --autotest rc=0 sure=19s
+DENIZSET hornworld DenizSurUzak_740 bolge=galata ucgen=2556
+AUTOTEST PASS chapter=27 variant= outcome=27.1 stayed=3 brig=false genoese=false

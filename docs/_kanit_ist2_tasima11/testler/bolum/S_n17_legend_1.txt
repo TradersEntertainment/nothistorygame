@@ -1,0 +1,2 @@
+KOSU S_n17_legend_1 args=--chapter=17 --autotest=edirne_legend --bag=phone,book,selfie,cube rc=0 sure=38s
+AUTOTEST PASS chapter=17 variant=edirne_legend vlad=legend who=hizir answer=flat caesar=brutus future=book side=B

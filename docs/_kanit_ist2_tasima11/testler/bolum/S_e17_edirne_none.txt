@@ -1,0 +1,2 @@
+KOSU S_e17_edirne_none args=--chapter=17 --autotest=edirne_none --eskisur rc=0 sure=36s
+AUTOTEST PASS chapter=17 variant=edirne_none vlad=none who=time answer=dunno caesar=veni future=silent side=B

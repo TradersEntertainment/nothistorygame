@@ -1,0 +1,3 @@
+KOSU S_e17_two args=--chapter=17 --autotest=two --eskisur rc=0 sure=32s
+DENIZSET bolum=17 set=eski in_world=true
+AUTOTEST PASS chapter=17 variant=two outcome=17.2 saved=2 fell=false lost=false next=chapter18b.tscn shot=true chain=false rescue_t=40 genoese=0

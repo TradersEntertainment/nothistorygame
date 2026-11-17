@@ -1,0 +1,6 @@
+KOSU S_n38o_hooks_ok_3 args=--chapter=38o --autotest=hooks_ok rc=0 sure=67s
+DENIZSET hornworld DenizSurUzak_740 bolge=horn_wall_o ucgen=3564
+DENIZSET bolum=38o set=yeni
+DENIZSET birlestir=12
+T11CIKIS y=9.70 z=60.60 x=-6.00 t=9.1 yedek=0
+AUTOTEST PASS chapter=38o variant=hooks_ok outcome=38O.1 oars=10 arrows=0 forks=3/3 fire=true pulled=true oil=false snaps=0 splashes=0 explored=15.3 helper=true slips=0

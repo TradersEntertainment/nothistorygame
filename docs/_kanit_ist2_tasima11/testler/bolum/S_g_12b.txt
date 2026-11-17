@@ -1,0 +1,2 @@
+KOSU S_g_12b args=--chapter=12b --autotest rc=0 sure=62s
+AUTOTEST PASS chapter=12b variant= outcome=12B.1 world= honest=true
