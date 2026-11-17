@@ -35,6 +35,8 @@ func _ready() -> void:
 ## Bölümün akışının istediği ön koşullar (hub_kare ile aynı)
 func _hazirla() -> void:
 	match bolum:
+		"6":
+			GameState.chapter_outcomes[4] = "4b.1"
 		"7":
 			GameState.chapter_outcomes[6] = "6b.1"
 		"10h", "12b":
@@ -96,6 +98,30 @@ func _bakislar() -> Array:
 				["07_disaridan_sur", c.to_global(Vector3(130.0, 22.0, -14.0)), c.to_global(Vector3(34.0, 6.0, -8.0)), null],
 				["08_tepeden", c.to_global(Vector3(-10.0, 140.0, -10.0)), c.to_global(Vector3(45.0, 0.0, -10.0)), null],
 			]
+		"10h":
+			var br: Vector3 = c.to_global(_k("BREACH"))
+			return [
+				["01_gedik", br + Vector3(-4.0, 1.7, 2.2), br + Vector3(0, 1.6, 0), br + Vector3(-4.0, 0, 2.2)],
+				["02_gedik_yakin", br + Vector3(-1.9, 1.5, 1.0), br + Vector3(0.0, 1.0, -0.2), br + Vector3(-1.9, 0, 1.0)],
+				["03_kapi_sehir_yani", c.to_global(Vector3(24.5, 1.7, 1.5)), c.to_global(Vector3(33.0, 3.5, 5.5)), c.to_global(Vector3(24.5, 0, 1.5))],
+				["04_caddeden_sur", c.to_global(Vector3(-20.0, 1.7, -14.0)), c.to_global(Vector3(34.0, 7.0, -10.0)), null],
+			]
+		"6":
+			var pr: Array = _k("PERCHES")
+			var fc: Vector3 = c.to_global(pr[4])
+			return [
+				["01_sur_yolu_fici", fc + Vector3(-5.0, 0.5, 3.0), fc + Vector3(4.0, 1.5, -1.0), fc + Vector3(-5.0, -1.2, 3.0)],
+				["02_giust_masa_sur", c.to_global(ByzCity.GIUST_POS + Vector3(-5.0, 1.7, 3.0)), c.to_global(ByzCity.GIUST_POS + Vector3(3.0, 3.0, -1.0)), null],
+				["03_kapi_yakin", c.to_global(ByzCity.EXIT_POS + Vector3(-2.6, 1.65, 0.0)), c.to_global(ByzCity.EXIT_POS + Vector3(1.0, 1.8, 0.0)), c.to_global(ByzCity.EXIT_POS + Vector3(-2.6, 0, 0))],
+				["04_caddeden_sur", c.to_global(Vector3(-20.0, 1.7, -14.0)), c.to_global(Vector3(34.0, 7.0, -10.0)), null],
+			]
+		"7":
+			return [
+				["01_iz_sur", c.to_global(ByzCity.GIUST_POS + Vector3(-3.5, 1.65, 2.5)), c.to_global(ByzCity.GIUST_POS + Vector3(6.0, 4.0, 0.0)), c.to_global(ByzCity.GIUST_POS + Vector3(-3.5, 0, 2.5))],
+				["02_iz_kapi", c.to_global(ByzCity.EXIT_POS + Vector3(-2.4, 1.65, 1.4)), c.to_global(ByzCity.EXIT_POS + Vector3(1.0, 2.0, 0.0)), c.to_global(ByzCity.EXIT_POS + Vector3(-2.4, 0, 1.4))],
+				["03_caddeden_sur", c.to_global(Vector3(-20.0, 1.7, -14.0)), c.to_global(Vector3(34.0, 7.0, -10.0)), null],
+				["04_tepeden", c.to_global(Vector3(-10.0, 140.0, -10.0)), c.to_global(Vector3(45.0, 0.0, -10.0)), null],
+			]
 		"8y":
 			var gz: float = ch.get("GATE_Z")
 			var bz: float = ch.get("BRIDGE_Z")
@@ -114,6 +140,14 @@ func _bakislar() -> Array:
 				["07_tepeden", ch.to_global(Vector3(-60.0, 90.0, 10.0)), ch.to_global(Vector3(0.0, 0.0, 40.0)), null],
 			]
 	return []
+
+
+## Bölümün değişkeni ya da sabiti
+func _k(ad: String) -> Variant:
+	var v = ch.get(ad)
+	if v == null:
+		v = (ch.get_script() as Script).get_script_constant_map().get(ad)
+	return v
 
 
 func _bul(n: Node) -> Node3D:

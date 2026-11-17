@@ -1,0 +1,2 @@
+AUTOTEST PASS chapter=9 variant=arch route= byz=true offers=["theodoros"] outcome=9.5 telsiz=4 merak=0
+BITTI rc=0

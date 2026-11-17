@@ -1,0 +1,2 @@
+AUTOTEST PASS chapter=8y variant=hikmet outcome=8Y.1 id=seal warnings=0 lowered=0 radio=false
+BITTI rc=0
