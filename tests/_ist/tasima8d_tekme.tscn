@@ -1,0 +1,6 @@
+[gd_scene load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://tests/_ist/tasima8d_tekme.gd" id="1"]
+
+[node name="T8DTekme" type="Node"]
+script = ExtResource("1")

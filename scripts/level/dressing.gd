@@ -252,6 +252,7 @@ func crate(p: Vector3, s := 0.6, yaw := 0.0) -> void:
 	if Kit.has_props():
 		var k := s / 1.12
 		model("Crate_Wooden", p + Vector3(0, 0.07 * k, 0), yaw + rng.randf_range(-4, 4), Vector3.ONE * k)
+		EsyaFizik.kaydet_mm("Crate_Wooden", _nodes[-1][1], "sandik")     # uyuyan dekor: tekmede/çarpınca gövdeye döner
 		return
 	var w := _pick(WOOD)
 	box(Vector3(s, s, s), p + Vector3(0, s / 2.0, 0), w, Vector3(0, yaw, 0))
@@ -289,6 +290,7 @@ func crates(p: Vector3) -> void:
 func barrel(p: Vector3, tip := false) -> void:
 	if Kit.has_props() and not tip:
 		model("Barrel_Apples" if rng.randf() < 0.25 else "Barrel", p, rng.randf_range(0, 360), Vector3.ONE * 0.92)
+		EsyaFizik.kaydet_mm(_nodes[-1][2], _nodes[-1][1], "fici")     # uyuyan dekor: tekmede/çarpınca gövdeye döner
 		return
 	var w := _pick(WOOD)
 	var rot := Vector3(90, rng.randf_range(0, 180), 0) if tip else Vector3.ZERO
@@ -297,6 +299,7 @@ func barrel(p: Vector3, tip := false) -> void:
 	for k in [-0.26, 0.26]:
 		var off := Basis.from_euler(rot * (PI / 180.0)) * Vector3(0, k, 0)
 		cyl(0.315, 0.06, c + off, Color("3a3634"), rot, 10, 1.0)
+	EsyaFizik.kaydet_engel(_frame * Transform3D(Basis.from_euler(rot * (PI / 180.0)), c), Vector3(0.6, 0.84, 0.6))     # yığın açılınca kendi kutusu
 
 
 func barrels(p: Vector3) -> void:
@@ -373,12 +376,49 @@ func cart(p: Vector3) -> void:
 		solid(Vector3(1.2, 1.1, 3.0), p + Vector3(0, 0.55, 0))
 		return
 	var w := _pick(WOOD)
-	box(Vector3(1.2, 0.12, 2.0), p + Vector3(0, 0.7, 0), w)
+	# TUR-13: öküz arabası (kutu kasa + çubuk bacak yerine): tahta döşemeli kasa, parmaklıklı yanlar, iki gerçek tekerlek
+	# (yuvarlak ispit, 8 parmak, göbek), dingil ve takozlar, öne uzanıp ucu yere inen ok ve ucunda yerde duran boyunduruk.
+	# Kasanın üstü (yük düzlemi) eskisi gibi y 0,76; çarpışma kutusu ve rng sırası aynı.
+	var wk := w.darkened(0.15)
+	for i in 5:
+		box(Vector3(0.225, 0.06, 2.0), p + Vector3(-0.48 + i * 0.24, 0.73, 0), w if i % 2 == 0 else w.darkened(0.06))
+	for sz in [-0.9, 0.9]:
+		box(Vector3(1.24, 0.1, 0.1), p + Vector3(0, 0.65, sz), wk)          # kasa altı kirişleri (enine)
 	for s in [-0.6, 0.6]:
-		box(Vector3(0.06, 0.35, 2.0), p + Vector3(s, 0.9, 0), w.darkened(0.15))
-		cyl(0.45, 0.08, p + Vector3(s * 1.12, 0.45, -0.2), w.darkened(0.3), Vector3(0, 0, 90), 10)
-		cyl(0.08, 0.1, p + Vector3(s * 1.15, 0.45, -0.2), Color("3a3634"), Vector3(0, 0, 90), 6)
-		box(Vector3(0.06, 0.06, 1.6), p + Vector3(s * 0.4, 0.62, 1.6), w.darkened(0.1), Vector3(-10, 0, 0))
+		box(Vector3(0.08, 0.1, 2.06), p + Vector3(s, 0.66, 0), wk)            # boyuna kiriş (kasa kenarı)
+		box(Vector3(0.06, 0.06, 2.0), p + Vector3(s, 1.08, 0), wk)            # üst parmaklık kalası
+		for k in 7:
+			cyl(0.024, 0.32, p + Vector3(s, 0.92, -0.93 + k * 0.31), w.darkened(0.1), Vector3.ZERO, 5)
+	box(Vector3(1.2, 0.3, 0.05), p + Vector3(0, 0.91, -0.99), wk)            # arka tahta
+	# dingil ve takozları (kasa altında, tekerlek göbeklerine)
+	cyl(0.05, 1.56, p + Vector3(0, 0.45, -0.2), Color("4a3a2a"), Vector3(0, 0, 90), 6)
+	for s in [-0.42, 0.42]:
+		box(Vector3(0.12, 0.16, 0.16), p + Vector3(s, 0.54, -0.2), wk)
+	# tekerlekler: yarıçap 0,45 (alt ucu zeminde), 12 parça ispit, 8 parmak, göbek, demir çember
+	var R := 0.45
+	for s in [-1.0, 1.0]:
+		var c := p + Vector3(s * 0.74, R, -0.2)
+		for k in 12:
+			var a := TAU * k / 12.0
+			box(Vector3(0.07, 0.07, 2.0 * PI * (R - 0.035) / 12.0 * 1.06), c + Vector3(0, cos(a), sin(a)) * (R - 0.035), w.darkened(0.3), Vector3(rad_to_deg(a), 0, 0))
+			box(Vector3(0.075, 0.016, 2.0 * PI * R / 12.0 * 1.04), c + Vector3(0, cos(a), sin(a)) * (R - 0.004), Color("3a3634"), Vector3(rad_to_deg(a), 0, 0))
+		for k in 8:
+			var a := TAU * (k + 0.5) / 8.0
+			box(Vector3(0.035, R - 0.1, 0.035), c + Vector3(0, cos(a), sin(a)) * (R * 0.5 + 0.02), w.darkened(0.2), Vector3(rad_to_deg(a), 0, 0))
+		cyl(0.085, 0.16, c, w.darkened(0.35), Vector3(0, 0, 90), 8)
+		cyl(0.03, 0.2, c + Vector3(s * 0.02, 0, 0), Color("3a3634"), Vector3(0, 0, 90), 6)
+	# ok (ön traversin ortasından) ucu yerde; ucunda yerde yatan boyunduruk ve iki kavisli boyun yayı
+	var ok_bas := p + Vector3(0, 0.66, 1.05)
+	var ok_uc := p + Vector3(0, 0.06, 2.75)
+	var ok_d := ok_uc - ok_bas
+	var ok_a := rad_to_deg(atan2(-ok_d.y, ok_d.z))
+	box(Vector3(1.24, 0.08, 0.08), p + Vector3(0, 0.66, 1.02), wk)              # ön travers (okun bağlandığı)
+	box(Vector3(0.09, 0.09, ok_d.length()), (ok_bas + ok_uc) * 0.5, wk, Vector3(ok_a, 0, 0))
+	box(Vector3(1.3, 0.09, 0.11), ok_uc + Vector3(0, 0.0, 0.08), wk.darkened(0.1))
+	for s in [-0.36, 0.36]:
+		for k in 4:
+			var a := PI * (k + 0.5) / 4.0
+			box(Vector3(0.14, 0.035, 0.035), ok_uc + Vector3(s + cos(a) * 0.17, 0.045 + sin(a) * 0.17, 0.08), wk.darkened(0.2), Vector3(0, 0, rad_to_deg(a) + 90.0))
 	var load := rng.randi() % 3
 	for k in 3:
 		match load:

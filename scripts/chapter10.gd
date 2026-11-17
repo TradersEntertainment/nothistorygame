@@ -301,7 +301,15 @@ func _queue_talk(who: String) -> void:
 	var node := _npc(who)
 	if "look_target" in node:
 		node.set("look_target", player)      # Ağa'ya dönmüşse konuşacağı Tolga'ya döner (tur 2)
-	await Stage.walk_player(player, node.global_position, 1.8, node.global_position + Vector3(0, 1.4, 0), 3.0)   # sıradakiyle yanına gidip konuşulur
+	# Deveci devenin başının yanında durur (başı devecinin başından 0,4 m ötede); Ağa'dan dönen oyuncu doğrudan yaklaşınca
+	# devenin başı ikisinin arasına giriyordu (tam paket 10 =fail ×2'de 1: VISAUDIT meshhidden D10O_CAMELEER_1 by=deve bas).
+	# Oyuncu devecinin önüne-sağına durur: devenin başı devecinin ardında kalır.
+	var hedef := node.global_position
+	var dur := 1.8
+	if who == "cameleer":
+		hedef = node.global_position + Vector3(1.0, 0.0, 1.5)
+		dur = 0.0
+	await Stage.walk_player(player, hedef, dur, node.global_position + Vector3(0, 1.4, 0), 3.0)   # sıradakiyle yanına gidip konuşulur
 	player.face(node.global_position + Vector3(0, 1.4, 0))
 	var up := who.to_upper()
 	if _talked.has(who):

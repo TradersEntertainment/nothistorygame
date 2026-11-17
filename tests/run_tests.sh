@@ -12,6 +12,10 @@ fail=0
 out=$(timeout 120 "$GODOT" --headless --path . res://tests/parse_check.tscn 2>&1)
 echo "$out" | grep -E "PARSECHECK|Parse Error|Compile Error"
 echo "$out" | grep -q "PARSECHECK PASS" || fail=1
+# Eşya fiziği deney sahnesi (v0.99.123): tekme, eğim, merdiven, patlama, destek; ESYAAUDIT sorun=0
+out=$(timeout 300 "$GODOT" --headless --path . res://tests/_ist/esya_fizik.tscn 2>&1)
+echo "$out" | grep -E "ESYATEST|SCRIPT ERROR" | tail -2
+echo "$out" | grep -q "ESYATEST PASS" || fail=1
 # Takılma denetimi: bitmiş tweeni bekleyen akışlar (replik uzun okununca oyun kilitlenir)
 python3 tests/check_tween_await.py || fail=1
 # Metni yazılmamış replik/arayüz anahtarı (ekranda anahtarın kendisi görünür)
@@ -70,7 +74,7 @@ run() {
   [ $? -eq 124 ] && echo "AUTOTEST TIMEOUT $*"
   # WALKTHRU (v0.91, Unclip.walk_audit): sahne betiğinin yürüttüğü karakter bir katının yüzeyinden geçti. v0.91'in
   # bulguları (38o, 39o) ve yalnız CI'da çıkanlar (26o, 12b) düzeltildi; paket 20 FPS'te de temiz: v0.93'ten beri hata
-  echo "$out" | grep -E "AUTOTEST|SCRIPT ERROR|Parse Error|WARN_|VISAUDIT|WALKTHRU|HELDAUDIT|ARMAUDIT|JOURNEY" | awk '!seen[$0]++'
+  echo "$out" | grep -E "AUTOTEST|SCRIPT ERROR|Parse Error|WARN_|VISAUDIT|WALKTHRU|HELDAUDIT|ARMAUDIT|JOURNEY|^ESYAAUDIT (dusme|havada|gomuk|tikama|sinir)|^HAREKETAUDIT" | awk '!seen[$0]++'
   echo "$out" | grep -q "AUTOTEST PASS" || fail=1
   echo "$out" | grep -q "SCRIPT ERROR" && fail=1
   # Ağır çekim/donma takılı kaldıysa (Fx bekçisi sıfırladı) bu bir hata
@@ -86,6 +90,10 @@ run() {
   echo "$out" | grep -q "^ARMAUDIT " && fail=1
   # Bölüm sonunda elde (kamerada) unutulmuş eşya (v0.97.1, Hud._held_audit): 37o'da zil ve kalkan bölüm sonuna dek kalıyordu
   echo "$out" | grep -q "^HELDAUDIT " && fail=1
+  # Eşya fiziği (v0.99.123, EsyaFizik denetimi): uyanan fıçı/sandık düştü, havada ya da gömülü dondu, geçidi tıkadı, sınırı aştı
+  echo "$out" | grep -qE "^ESYAAUDIT (dusme|havada|gomuk|tikama|sinir)" && fail=1
+  # Tolga'nın hareket hissi (v0.99.123, HareketHis denetimi): zıplama tepesi/menzil sınırı aşıldı, kamera sahipliği bozuldu
+  echo "$out" | grep -q "^HAREKETAUDIT " && fail=1
   # Final yolculuğu (Bölüm 15): oynanan bir durak haritada yok ya da kartlar üst üste
   echo "$out" | grep -q -e "^JOURNEY_MISS" -e "^JOURNEY_OVERLAP" && fail=1
 }

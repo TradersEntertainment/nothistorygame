@@ -21,10 +21,16 @@ extends Node3D
 ##   --autotest[=nophoto|hold|hold_box|hold23|hold3|warn_notrust|lighter|isidore|kasim|candle|council_ok|council_bad]   (varsayılan: 26.1)
 
 const BattleExtras := preload("res://scripts/level/battle_extras.gd")
-const WELL := LandWalls.DEPOT + Vector3(-4.2, 0.0, 1.6)
-const POSTERN := Vector3(LandWalls.DEPOT.x + 3.5, 0.0, LandWalls.INNER_Z1 + 0.6)
-const BLOCKS := [Vector3(12.6, 0.0, 3.2), Vector3(14.6, 0.0, 2.2)]
-const BANNER_TOWER := Vector3(16.0, LandWalls.OUTER_H + 3.0, LandWalls.OUTER_Z1 + 1.0)
+## TAŞIMA-8: Bölüm 26 yeni Mesoteikhion surunda (SurSet/SurSetSahne). Geri dönüş: `--eskisur` ya da `--eskisur=26`, ya
+## da bu sabit true. 26o bu dosyadan türer ve kendi _ready'sinde eski seti kurar: `sur` varsayılanı ESKİ bağdaştırıcıdır
+## (bütün sorguları LandWalls sabitlerinin aynısı), 26o'nun yolu bit bit aynı kalır.
+const ESKI_SUR := false
+var sur: SurSet = SurSet.eski()
+## Set noktaları (eski değerler; yeni sette _yeni_yerler değiştirir). Eskiden sabitti.
+var WELL := LandWalls.DEPOT + Vector3(-4.2, 0.0, 1.6)
+var POSTERN := Vector3(LandWalls.DEPOT.x + 3.5, 0.0, LandWalls.INNER_Z1 + 0.6)
+var BLOCKS := [Vector3(12.6, 0.0, 3.2), Vector3(14.6, 0.0, 2.2)]
+var BANNER_TOWER := Vector3(16.0, LandWalls.OUTER_H + 3.0, LandWalls.OUTER_Z1 + 1.0)
 const AYA := Vector3(-14.0, 0.0, -82.0)
 
 var walls: LandWalls
@@ -67,6 +73,7 @@ var _fx_t := 0.0
 func _ready() -> void:
 	GameState.snapshot(26)
 	_apply_autotest_setup()
+	_kamera_bekci.call_deferred()
 	hud = Hud.new()
 	add_child(hud)
 	hud.chase_music = "tension"
@@ -77,11 +84,24 @@ func _ready() -> void:
 	player.interacted.connect(_on_interact)
 	hud.set_fez(false)
 	hud.set_signal(0)
-	walls = LandWalls.new()
+	sur = SurSet.sec("26", ESKI_SUR)
+	if sur.eski_mi:
+		walls = LandWalls.new()
+	else:
+		var ss := SurSetSahne.new()
+		ss.sur = sur
+		ss.ic_poterna = true            # Giustiniani'nin taşındığı kapı iç surda (eski setle aynı hikâye)
+		ss.romanos_kanat = true         # karar 11-A: iç kapı (Sultan'ın girişi) Romanos'ta
+		ss.govde_gorunur = true         # sur yolunun korkuluğu düellocu için görünür duvar (kenardan düşüş)
+		walls = ss
+		_yeni_yerler()
 	walls.assault_mode = true
 	add_child(walls)
 	walls.set_repair(LandWalls.STAGES)
 	_build_walls_scene()
+	if GameState.autotest and GameState.autotest_variant in ["yuru", "kare"]:
+		_t8_yuru()
+		return
 	if GameState.autotest:
 		Engine.time_scale = 3.0
 	if GameState.shots_dir != "":
@@ -90,10 +110,249 @@ func _ready() -> void:
 		_run()
 
 
+## TAŞIMA-8: yeni setin set noktaları (bölüm çerçevesi: gedik x 0, peribolos y 0, dış surun iç yüzü z 14).
+##   Ok sandığı: eski yeri (gediğin +x yanı, x 6,8) yeni sette iç kulenin gövdesine düşer (x 0,2–9,2, eteğiyle −2,8–12,2;
+##   z ≤ 8): gediğin −x yanında, deponun (x −14…−6) ile iç kule eteğinin arasında, gedik teslim yerine ≈ 7 m (eski 10 m).
+##   Poterna: iç surun peribolos yüzünde (SurOyun.ic_poterna; gediğin +x yanı, iç kule eteğinin dışı); fıçılar önünde,
+##   iç surun eteğinin (z ≤ 2,4) dışında. Sancak: gediğe en yakın kurulu dış kule (x ≈ 35,4; eski ±16'nın karşılığı).
+func _yeni_yerler() -> void:
+	WELL = Vector3(-4.6, 0.0, 5.6)
+	POSTERN = sur.ic_poterna() + Vector3(0.0, 0.0, 0.6)
+	BLOCKS = [POSTERN + Vector3(1.1, 0.0, 3.6), POSTERN + Vector3(-0.3, 0.0, 3.2)]
+	var tx := INF
+	for x: float in sur.dis_kuleler_kurulu():
+		if absf(x) < absf(tx):
+			tx = x
+	BANNER_TOWER = sur.dis_kule_tepe(tx) + Vector3(0.0, 0.0, -0.6)
+
+
+## TAŞIMA-8: gedik dövüşünden sonra dinlenen dost düellocular savunucu sırasının ve onarım ekibinin içinde kalmasın
+## (yeni sette sıra moloz yamacının hemen önünde: VISAUDIT overlap, kasim/nophoto): kalabalıksa en yakın boş, katısız
+## yere (Unclip.spread). Eski sette yapılmaz (davranış aynı).
+func _dostlari_dagit() -> void:
+	if sur.eski_mi:
+		return
+	# TAŞIMA-8D: dövüş son vuruşun öldürme kamerası sürerken bitebilir; kamera kadrajı kapatanları (savunucu sırası,
+	# onarımcı, dost düellocu) o süre gizler. Unclip.spread gizliyi saymaz: dostu gizli savunucunun dibine koyuyor, kamera
+	# bitip herkes görünür olunca ikisi iç içe kalıyordu (VISAUDIT overlap SPK_DEFENDER|Duelist, 8D tanı izi). Oyuncunun
+	# kamerası dönene (gizlenenler geri gelene) kadar beklenir; çağıran beklemez (akışın süresi aynı).
+	var t := 0.0
+	while t < 6.0 and is_inside_tree() and get_viewport().get_camera_3d() != player.camera:
+		await get_tree().process_frame
+		t += get_process_delta_time()
+	await get_tree().process_frame
+	if not is_inside_tree():
+		return
+	for n in get_children():
+		var d := n as Duelist
+		if d and d.visible and d.team == 0 and d.global_position.distance_to(sur.gedik()) < 14.0:
+			Unclip.spread(d, 0.6)
+
+
+## TAŞIMA-8D: öldürme kamerası (Duel finisher) kadrajı kapatanları (savunucu sırası, onarımcı, yedek bölük) o süre gizler;
+## gizliyken yürüyenler (düellocu, yerinde adım atan) onları görmez (Unclip gizliyi saymaz), yerlerine adım atar; kamera
+## bitip gizlenenler geri gelince ikisi iç içe kalıyordu (VISAUDIT overlap WallFight{chop}|Duelist, SPK_DEFENDER|Duelist;
+## 8D tanı izi: onarımcı k 366–370 gizli, dost düellocu 3,5 → 2,55). Kamera oyuncuya her döndüğünde oyuncunun çevresinde
+## iç içe ayakta duran çiftlerin yürüyeni (düellocu; yoksa yerinde durmayan) boş yere ayrılır.
+func _kamera_bekci() -> void:
+	var onceki := true
+	while is_inside_tree():
+		await get_tree().process_frame
+		if player == null or not is_instance_valid(player):
+			continue
+		var simdi := get_viewport().get_camera_3d() == player.camera
+		if simdi and not onceki:
+			await get_tree().process_frame      # gizlenenler bir kare içinde geri gelir
+			_ic_ice_ayir()
+		onceki = simdi
+
+
+func _ic_ice_ayir() -> void:
+	var pp := player.global_position
+	var who: Array[Node3D] = []
+	for n in get_tree().get_nodes_in_group("persons") + get_tree().get_nodes_in_group("soldiers"):
+		var p := n as Node3D
+		if p == null or not p.is_visible_in_tree() or p in who or p.has_meta("corpse") or p.has_meta("no_audit") or Unclip.lying(p):
+			continue
+		# denetimin (Hud._crowd_audit) saydıkları: ayakta, binmemiş, oturmayan
+		if p is Soldier and (p as Soldier).pose != "stand":
+			continue
+		var act := str(p.get("activity")) if p.get("activity") != null else ""
+		if act.begins_with("sit") or act in ["row", "ride", "swim"]:
+			continue
+		var at := false
+		var q: Node = p.get_parent()
+		while q != null and q != self:
+			if q is Horse:
+				at = true
+				break
+			q = q.get_parent()
+		if not at and p.global_position.distance_to(pp) < 30.0:
+			who.append(p)
+	for i in who.size():
+		for j in range(i + 1, who.size()):
+			var a := who[i]
+			var b := who[j]
+			if not is_instance_valid(a) or not is_instance_valid(b):
+				continue
+			var d := Vector2(a.global_position.x - b.global_position.x, a.global_position.z - b.global_position.z).length()
+			if d >= 0.4 or absf(a.global_position.y - b.global_position.y) > 0.6:
+				continue
+			if _eve_dondur(a, b):
+				print("BEKCI26 ayir eve a=%s b=%s d=%.2f" % [a.get_parent().name, b.get_parent().name, d])
+				continue
+			var m := _ayrilan(a, b)
+			if m != null:
+				print("BEKCI26 ayir a=%s b=%s d=%.2f" % [a.get_parent().name, b.get_parent().name, d])
+				Unclip.spread(m, 0.6)
+
+
+## Gizlenip yeniden görünen (Melee.rally: ayaklandırılan asker dövüş boyunca gizli, dönüşte evinde görünür; Duel öldürme
+## kamerası: kadrajı kapatan gizli): gizliyken komşusu (reserve_loop yerinde adımı, düellocu) onu saymadan yerine girmiş
+## olabilir (VISAUDIT overlap Squad{crouch}|Squad{crouch} (−20,1; 0; 5,1), isidore: RALLY'nin hemen ardında). Göründüğü
+## andan 0,5 sn sonra yanında hâlâ iç içe ayakta duran varsa ayrılır (yanından geçen, evine koşan geçicidir; denetim 1 sn ister).
+func _gorunce_ayir(p: Person) -> void:
+	if is_instance_valid(p) and p.is_inside_tree() and p.is_visible_in_tree():
+		get_tree().create_timer(0.5, false).timeout.connect(_yakin_ayir.bind(p))
+
+
+func _yakin_ayir(p: Person) -> void:
+	if not is_instance_valid(p) or not p.is_inside_tree() or not p.is_visible_in_tree() or Unclip.lying(p):
+		return
+	var gp := p.global_position
+	for n in get_tree().get_nodes_in_group("persons") + get_tree().get_nodes_in_group("soldiers"):
+		var o := n as Node3D
+		if o == null or o == p or not o.is_visible_in_tree() or o.has_meta("corpse") or o.has_meta("no_audit") or Unclip.lying(o):
+			continue
+		if o is Soldier and (o as Soldier).pose != "stand":
+			continue
+		var op := o.global_position
+		if Vector2(op.x - gp.x, op.z - gp.z).length() >= 0.4 or absf(op.y - gp.y) > 0.6:
+			continue
+		var dd := Vector2(op.x - gp.x, op.z - gp.z).length()
+		if _eve_dondur(p, o):
+			print("BEKCI26 gorunce eve a=%s b=%s d=%.2f" % [p.get_parent().name, o.get_parent().name, dd])
+			return
+		var m := _ayrilan(p, o)
+		if m != null:
+			print("BEKCI26 gorunce a=%s b=%s d=%.2f" % [p.get_parent().name, o.get_parent().name, dd])
+			Unclip.spread(m, 0.6)
+		return
+
+
+## Yedek bölük askeri (reserve_loop) iç içe kaldıysa, evinden (reserve_loop._home) uzaklaşmış olanı evine geri koyar.
+## Bölük 1,1 × 1,2 m sık nizamda dizili: Unclip.spread 1,4 m içinde 0,6 m boş yer bulamıyor, iki asker iç içe kalıyordu
+## (birleşik doğrulama, 26 =hold_box ×11'de 2: "BEKCI26 gorunce d=0.19" ardından "VISAUDIT overlap Squad|Squad"; ayaklanıp
+## dönen askerin evine, o gizliyken komşusu yerinde adımla girmişti). Evler arası en az ≈0,66 m: ikisi evindeyken iç içe değil.
+func _eve_dondur(a: Node3D, b: Node3D) -> bool:
+	var en: Node3D = null
+	var en_rl: Node = null
+	var en_d := 0.15
+	for o: Node3D in [a, b]:
+		var rl := _yedek_dongu(o)
+		if rl == null:
+			continue
+		var h: Vector3 = rl.get("_home")
+		if h == Vector3.INF:
+			continue
+		var d := Vector2(o.position.x - h.x, o.position.z - h.z).length()
+		if d > en_d:
+			en_d = d
+			en = o
+			en_rl = rl
+	if en == null:
+		return false
+	var tw = en_rl.get("_shift")
+	if tw is Tween and (tw as Tween).is_running():
+		(tw as Tween).kill()
+	var h: Vector3 = en_rl.get("_home")
+	en.position = Vector3(h.x, en.position.y, h.z)
+	return true
+
+
+func _yedek_dongu(o: Node3D) -> Node:
+	for c in o.get_children():
+		if c.get("group") is Dictionary and c.get("officer") != null and c.get("_home") != null:
+			return c
+	return null
+
+
+## İç içe çiftten yer değiştirecek olan: düellocu (yürüyen); yoksa yerinde durması istenmeyen (no_yield değil)
+func _ayrilan(a: Node3D, b: Node3D) -> Node3D:
+	for o: Node3D in [a, b]:
+		if o.get_parent() is Duelist:
+			return o.get_parent() as Node3D
+	for o: Node3D in [a, b]:
+		if not o.has_meta("no_yield") and o != giust and o != emperor:
+			return o
+	return null
+
+
+## TAŞIMA-8: x'e en yakın dış sur mazgal açıklığı (dişlerin arası; SurOyun.mazgallar), kacin'daki x'lerden 2,1 m ve
+## kurulmuş merdivenlerden 4 m uzak; yoksa x. Eski sette x.
+func _acikliga(x: float, kacin: Array) -> float:
+	if sur.eski_mi:
+		return x
+	var adaylar: Array = []
+	for mz: Dictionary in sur.a.mazgallar("dis"):
+		var mx: float = (mz["ayak"]["yerel"] as Vector3).x + sur.ofs.x
+		if absf(mx - x) < 2.0 and sur.dis_yol_bos(mx):
+			adaylar.append(mx)
+	adaylar.sort_custom(func(p: float, q: float): return absf(p - x) < absf(q - x))
+	for mx: float in adaylar:
+		var ok := true
+		for k: float in kacin:
+			if absf(mx - k) < 2.1:
+				ok = false
+		for l: Node3D in ladders:
+			if absf(mx - l.position.x) < 4.0:
+				ok = false
+		if ok:
+			return mx
+	return x
+
+
+## Eski setin gedik çevresindeki peribolos noktası (LandWalls.BREACH'e göre ofset) → bu setin aynı yeri. Yeni sette gediğin
+## önü (teslim yeri; eski BREACH + (0, 0, −3,4) = z 11,6 ↔ yeni SurSet.gedik_onu z 10,8) hizalanır: savunucu sırası,
+## komutan ve onarım ekibi dış surun iç yüzüne eskisi kadar uzak durur.
+func _gp(off: Vector3) -> Vector3:
+	if sur.eski_mi:
+		return LandWalls.BREACH + off
+	return Vector3(off.x, off.y, sur.gedik_onu().z + 3.4 + off.z)
+
+
+## İmparator'un gediğe yürümeden önce durduğu yer (eski BREACH + (3, 0, −9)). Yeni sette o nokta iç kulenin eteğinde;
+## oyuncu o anda poternada (x 13): İmparator iç kulenin önünde, poternadan görünür yerde (−4; 6,8'de kulenin ardında
+## kalıyordu: VISAUDIT hidden D26_K_LAST).
+func _imparator_yeri() -> Vector3:
+	return LandWalls.BREACH + Vector3(3.0, 0, -9.0) if sur.eski_mi else Vector3(8.0, 0.0, 9.4)
+
+
+## Yeni sette yaralı komutanı poternaya taşıma yolunun ara noktaları: iç kulenin (x −2,8…12,2, z ≤ 8 eteğiyle) önünden
+## dolanır, sonra poternaya iner (doğrudan çizgi kulenin içinden geçiyordu). Yol savunucu sırasından (z 11,2–11,5) 2 m
+## uzakta: önce sıradan geri çekilir (z 9,2 iken öndeki taşıyıcı sıranın içinden geçiyordu: VISAUDIT overlap). Kapıya
+## fıçıların sol yanından iner (fıçılar sağa, +x'e yuvarlanır). Eski: [].
+func _tasima_yolu() -> Array:
+	if sur.eski_mi:
+		return []
+	return [Vector3(-3.4, 0.0, 9.0), Vector3(POSTERN.x - 1.4, 0.0, 9.0)]
+
+
+## Son ara nokta (yoksa INF)
+func _tasima_ara() -> Vector3:
+	var y := _tasima_yolu()
+	return Vector3.INF if y.is_empty() else y[y.size() - 1]
+
+
+## Çekilen fıçının yuvarlanma yönü: eski +z (surdan uzağa); yeni +x (kapının sağına, taşıma yolunun dışına)
+func _yuvarla() -> Vector3:
+	return Vector3(0, 0, 1) if sur.eski_mi else Vector3(1, 0, 0)
+
+
 func _build_walls_scene() -> void:
 	giust = Person.new({"face": "giustiniani", "coat": Color("8a8e96"), "pants": Color("3a3a40"), "hat": "condottiero",
 		"beard": true, "skin": Color("e0b08a")})
-	giust.position = LandWalls.on_rubble(LandWalls.BREACH + Vector3(-4.2, 0, -3.0))     # savunucu sırasının ve taşıyıcı şeritlerinin dışında
+	giust.position = sur.on_rubble(_gp(Vector3(-4.2, 0, -3.0)))     # savunucu sırasının ve taşıyıcı şeritlerinin dışında
 	giust.set_meta("no_yield", true)     # komutan yerinde durur (itilip siperin arkasına geçmesin)
 	add_child(giust)
 	giust.look_target = player
@@ -107,7 +366,7 @@ func _build_walls_scene() -> void:
 		d.set_meta("spk", "SPK_DEFENDER")   # "Komutan vuruldu!", "Gemiye!": kartta yanındaki savunucu
 		d.set_meta("no_yield", true)     # sırada yerinde durur: geçenler itip Giustiniani'nin önüne, yamacın içine sokmasın
 		# Barikatın (toprak tabya) arkasında: eskiden tabyanın içinde, beline kadar toprağa gömülü duruyorlardı
-		d.position = LandWalls.on_rubble(LandWalls.BREACH + Vector3(-3.2 + i * 1.3, 0, -2.7 - (i % 2) * 0.35))
+		d.position = sur.on_rubble(_gp(Vector3(-3.2 + i * 1.3, 0, -2.7 - (i % 2) * 0.35)))
 		d.rotation.y = 0.0
 		add_child(d)
 		defenders.append(d)
@@ -139,16 +398,49 @@ func _build_walls_scene() -> void:
 	# Dış sur kulelerinin (x ±13.5–18.5) ve gediğin kırık kenarının (x ±6.5) dışında (eskiden biri kulenin, biri
 	# gediğin içindeydi)
 	var lx := [-10.5, 9.5, -24.0, 22.0, 28.0]
-	for i in 5:
-		var l := Ladder.new(9.0, 16.0)
-		l.position = Vector3(lx[i], 0, LandWalls.OUTER_Z1 + 2.6)
-		l.visible = false
-		add_child(l)
-		ladders.append(l)
+	if sur.eski_mi:
+		for i in 5:
+			var l := Ladder.new(9.0, 16.0)
+			l.position = Vector3(lx[i], 0, LandWalls.OUTER_Z1 + 2.6)
+			l.visible = false
+			add_child(l)
+			ladders.append(l)
+	else:
+		# Yeni sette (karar 8-A: sayı aynı, aralık geniş): bağdaştırıcının dayama kuralıyla gediğin İKİ yanına, kule,
+		# poterna ve geçitlerden uzak; eski sıra korunur (ilki gediğin solundaki: 1. dalgada oyuncu onun başına çıkar)
+		# merdiven başı sur yolundaki stauroma fıçılarına dayanmasın (x −10,5'teki dizinin içine iniyordu: kare an_03)
+		var st := sur.stauroma_xs(walls)
+		if GameState.autotest:
+			print("TASIMA8 stauroma=%s" % [st])
+		# ve kazanların (±8,6) başına (eskide merdiven kazandan 1,9 m ötedeydi)
+		var yer: Array = sur.hucum_merdivenleri(lx, 40.0, st + [-8.6, 8.6])
+		var kalan: Array = yer.duplicate()
+		for i in 5:
+			var en := 0
+			for k in kalan.size():
+				if absf(float(kalan[k]["x"]) - float(lx[i])) < absf(float(kalan[en]["x"]) - float(lx[i])):
+					en = k
+			var m: Dictionary = kalan[en]
+			kalan.remove_at(en)
+			# Merdivenin tepesi bir mazgal AÇIKLIĞINA dayanır: dişin önündeki merdivenden çıkan azap dişin tepesine çıkıp
+			# düşüyordu (hold_lose: 1. dalga 75 sn sınıra dayandı). Fıçı/kazan kaçınması ve merdiven aralığı korunur.
+			m = sur.merdiven_dayama(_acikliga(float(m["x"]), st + [-8.6, 8.6]))
+			var ay: Vector3 = m["ayak"]
+			var tp: Vector3 = m["tepe"]
+			var boy := ay.distance_to(tp)
+			var l := Ladder.new(boy, rad_to_deg(asin((ay.z - tp.z) / boy)))
+			l.position = ay
+			l.visible = false
+			add_child(l)
+			ladders.append(l)
 	# Surların önündeki hücum: ova boyunca sancaklı ordu, sura koşan dalgalar, merdivenlerde tırmananlar,
 	# ateş eden bataryalar (Bizans tarafından, surdan görülür). Oyuncunun alanı surların içi.
 	if assault == null and get_script().resource_path.ends_with("chapter26.gd"):
 		assault = Assault.new()
+		if not sur.eski_mi:
+			assault.sur = sur
+			# dekor merdivenleri bölümün beş merdiveninin üstüne düşmesin (11,79 ↔ 12,0 gibi iki merdiven iç içeydi)
+			assault.merdiven_kacin = ladders.map(func(l): return l.position.x)
 		assault.keep = Rect2(-40.0, -10.0, 80.0, 36.0)
 		assault.live_span = 30.0
 		assault.intensity = 1.5        # son hücum: ova baştan başa koşan asker (eskiden çevre boş görünüyordu)
@@ -156,23 +448,51 @@ func _build_walls_scene() -> void:
 		assault.build()
 		# Surda canlı savunanlar (gediğin iki yanında; sancağın çıkacağı burç boş), peribolosta yedek bölükler
 		# Sur yolu dolu (her iki savunanın arasında mazgala eğilen, dürten, taş atan) ve iç surun üstü de (eskiden boştu)
-		Garrison.land_walls(self, [Vector2(13.0, 19.0), Vector2(-10.4, -6.8), Vector2(6.8, 10.4)], [Vector2(-30.0, 30.0)], [], 26, 46.0, true, true, true)
+		if sur.eski_mi:
+			Garrison.land_walls(self, [Vector2(13.0, 19.0), Vector2(-10.4, -6.8), Vector2(6.8, 10.4)], [Vector2(-30.0, 30.0)], [], 26, 46.0, true, true, true)
+		else:
+			# Boş kalan aralıklar: kazanlar ve merdiven başları (eski: ±6,8…10,4 kazan ve el merdiveni)
+			var bos: Array = [Vector2(-12.6, -6.8), Vector2(6.8, 13.8)]
+			for l in ladders:
+				bos.append(Vector2(l.position.x - 1.4, l.position.x + 1.4))
+			Garrison.land_walls(self, bos, [Vector2(-30.0, 30.0)], [], 26, 46.0, true, true, true, sur)
 		# Gediğin iki yanında kaynar yağ kazanları; peribolosta gediği ayakta tutan onarım ekibi
 		fight = WallFight.new()
+		if not sur.eski_mi:
+			fight.sur = sur
 		add_child(fight)
 		for sx: float in [-1.0, 1.0]:
-			fight.add_cauldron(Vector3(sx * 8.6, LandWalls.OUTER_H, 15.0), 2640 + int(sx))
-		fight.add_carriers(LandWalls.DEPOT + Vector3(-2.6, 0, 2.6), LandWalls.BREACH + Vector3(0, 0, -3.4), 4, 2650)
-		fight.add_builders(LandWalls.BREACH + Vector3(0, 0, -2.6), 2, 2660)
-		Garrison.squad(self, Vector3(-18.0, 0, 8.0), 5, 2, 0.0, 2610, "spear_shield", true)
-		Garrison.squad(self, Vector3(22.5, 0, 9.0), 4, 2, 0.0, 2620, "spear_shield", true)
+			fight.add_cauldron(Vector3(sx * 8.6, sur.dis_yol_y(), sur.dis_yol_z()), 2640 + int(sx))
+		fight.add_carriers(sur.depo() + Vector3(-2.6, 0, 2.6), sur.gedik_onu(), 4, 2650)
+		# yeni sette barikatın dibinde (savunucu sırasının 1 m önü): sıranın içinde duran çekiççinin yanına dinlenen dost
+		# düellocu geliyordu (VISAUDIT overlap, nophoto)
+		fight.add_builders(_gp(Vector3(0, 0, -2.6)) if sur.eski_mi else sur.gedik_onu() + Vector3(0, 0, 1.6), 2, 2660)
+		# yeni sette peribolosun ortasında (z 6,6 / 5,4 sıraları): z 8'de ön sıra 3. şeridin (z 9,6) koşanlarına değiyor,
+		# itilen iki asker iç içe kalıyordu (VISAUDIT overlap, hold23)
+		var bolukler: Array = [
+			Garrison.squad(self, Vector3(-18.0, 0, 8.0) if sur.eski_mi else Vector3(-18.0, 0, 6.6), 5, 2, 0.0, 2610, "spear_shield", true),
+			Garrison.squad(self, Vector3(22.5, 0, 9.0) if sur.eski_mi else Vector3(24.0, 0, 7.4), 4, 2, 0.0, 2620, "spear_shield", true)]
 		# Gerçek savaş (Bölüm 0'daki gibi): kalkanını başına kaldırıp koşanlar, ok yiyip devrilenler, yerde yatanlar,
 		# enkaz; oyuncunun ok deposu–gedik yolunu ve poterna fıçılarını kesmeyen şeritlerde
-		for lane: Array in [[Vector3(-17.5, 0, 2.4), Vector3(3.0, 0, 2.4), 1.4, 9, 5, 0], [Vector3(9.0, 0, 12.6), Vector3(26, 0, 12.6), 1.2, 8, 4, 0],
+		var serit: Array = [[Vector3(-17.5, 0, 2.4), Vector3(3.0, 0, 2.4), 1.4, 9, 5, 0], [Vector3(9.0, 0, 12.6), Vector3(26, 0, 12.6), 1.2, 8, 4, 0],
 				[Vector3(-26, 0, 12.6), Vector3(-6.5, 0, 12.6), 1.2, 8, 4, 0],
 				# Peribolosun iki ucu: yedekler gediğe koşar, yaralılar geri taşınır. x=±32'deki ara duvarın geçidinden
 				# (z 5-8,6) ortadan geçerler: eskiden geçidin kenarından (z 4,8) geçen taşıyıcı duvarın içine giriyordu
-				[Vector3(-37, 0, 6.8), Vector3(-24, 0, 6.6), 1.6, 5, 3, 0], [Vector3(26, 0, 6.6), Vector3(38, 0, 6.8), 1.6, 5, 3, 0]]:
+				[Vector3(-37, 0, 6.8), Vector3(-24, 0, 6.6), 1.6, 5, 3, 0], [Vector3(26, 0, 6.6), Vector3(38, 0, 6.8), 1.6, 5, 3, 0]]
+		if not sur.eski_mi:
+			# Yeni peribolos z 2,4–10,6 (iki surun dibindeki eteklerin arası), x −25…44; iç kule (x −2,8…12,2, z ≤ 8) gediğin
+			# arkasında: şeritler kulenin iki yanında ve önünde; poterna fıçılarının önü boş
+			# (deponun yığınları x −14,1…−6, z 3,1–5,7: sol şerit deponun solunda biter)
+			serit = [[Vector3(-25.0, 0, 3.2), Vector3(-15.6, 0, 3.2), 1.2, 6, 4, 0], [Vector3(16.0, 0, 9.6), Vector3(30, 0, 9.6), 1.2, 8, 4, 0],
+				# (doğuş (−9,6; 7,2) ile komutan arasındaki görüş çizgisine girmesin: x −8,5'te bitince ucundaki koşan
+				# "D26_G_LADDER"da komutanı örtüyordu, VISAUDIT personhidden)
+				[Vector3(-24.5, 0, 9.6), Vector3(-11.4, 0, 9.6), 1.2, 7, 4, 0],
+				# TAŞIMA-8D: dördüncü şerit z 5,4–5,6 (en 1,6: z 4,7–6,3) ikinci yedek bölüğün (24; 7,4) arka sırasının (z 6,2)
+				# içinden geçiyordu: koşanlar askerleri itiyor, iki asker iç içe kalıyordu (VISAUDIT overlap Squad|Squad
+				# (24,6; 0; 6,0), hold_box). Bölüğün güneyinde, arka sıradan 1,5 m (itme erimi 0,7 + yerinde adım payı); batı
+				# ucu poterna fıçılarının yuvarlandığı yerin (17,95; 3,2) ötesinde
+				[Vector3(21.0, 0, 3.6), Vector3(31.0, 0, 3.6), 1.2, 5, 3, 0], [Vector3(32.0, 0, 6.6), Vector3(43.0, 0, 6.8), 1.6, 5, 3, 0]]
+		for lane: Array in serit:
 			var bx := BattleExtras.new()
 			add_child(bx)
 			bx.assault = assault
@@ -182,21 +502,51 @@ func _build_walls_scene() -> void:
 		# dua edenler (eskiden sur içi boştu: "savunan çok az, kaos kargaşa olması gerekmez mi"). Gediğin arkası (barikat,
 		# Giustiniani), ok deposu, poterna, merdiven ayakları ve İmparator'un gediğe yürüyeceği yol boş kalır.
 		chaos = SiegeChaos.new()
+		if not sur.eski_mi:
+			chaos.sur = sur
 		chaos.player = player
 		chaos.area = Rect2(-44.0, 1.4, 88.0, 10.6)
 		chaos.static_clear_x = 12.0
 		chaos.bells = true
-		chaos.avoid = [[Vector3(0, 0, 14.0), 5.4], [WELL, 2.4], [POSTERN, 2.2], [BLOCKS[0], 1.5], [BLOCKS[1], 1.5], [LandWalls.DEPOT, 3.0],
-			[Vector3(-8.0, 0, 12.2), 1.8], [Vector3(8.0, 0, 12.2), 1.8], [LandWalls.BREACH + Vector3(3.0, 0, -9.0), 2.2], [Vector3(1.6, 0, 9.5), 1.8],
-			[LandWalls.SPAWN, 1.8]]
+		chaos.avoid = [[Vector3(0, 0, sur.dis_sur_z0()), 5.4], [WELL, 2.4], [POSTERN, 2.2], [BLOCKS[0], 1.5], [BLOCKS[1], 1.5], [sur.depo(), 3.0],
+			[Vector3(-8.0, 0, 12.2), 1.8], [Vector3(8.0, 0, 12.2), 1.8], [_imparator_yeri(), 2.2], [Vector3(1.6, 0, 9.5), 1.8],
+			[sur.dogus(), 1.8]]
+		if not sur.eski_mi:
+			# Giustiniani'yi poternaya taşıma yolu (iç kulenin önünden dolanır) boş kalır
+			var ty := _tasima_yolu()
+			chaos.avoid_lines = [[_gp(Vector3(-4.2, 0, -3.0)), ty[0], 1.6], [ty[0], ty[1], 1.6], [ty[1], POSTERN, 1.6]]
+			for b: Vector3 in BLOCKS:
+				chaos.avoid.append([b + _yuvarla() * 2.6, 1.5])
+			# TAŞIMA-8D: yedek bölüklerin askerleri. Kargaşada koşanların yolu bir insandan yalnız 0,6 m uzak tutuluyordu;
+			# yürüyen (Person._clear_way) 0,7 m'deki ayaktakini yana iter: bölüğün içinden geçenler askerleri evinden
+			# itiyor, itilen asker şeridin koşanlarınca daha da itiliyor (8D tanı izi: asker z 5,4 → 3,65), iki asker iç
+			# içe kalıyordu (VISAUDIT overlap Squad|Squad). Her askerin çevresi (itme erimi 0,7 + yerinde adım 0,4 + pay)
+			# yolsuz; bölüğün önünde ve ardında peribolosun geçişi açık kalır.
+			for bk: Node3D in bolukler:
+				for m in bk.get_children():
+					if m is Node3D:
+						chaos.avoid.append([(m as Node3D).global_position if (m as Node3D).is_inside_tree() else bk.position + (m as Node3D).position, 1.3])
 		add_child(chaos)
+		# TAŞIMA-8D: gizlenip geri gelenler (dövüşte ayaklandırılan yedek asker, öldürme kamerasının gizlediği savunucu,
+		# onarımcı) yeniden göründüğü anda yanında iç içe kalan varsa ayrılır (_gorunce_ayir)
+		var izle: Array = defenders.duplicate()
+		for bk: Node3D in bolukler:
+			izle.append_array(bk.get_children())
+		for c: Dictionary in fight.crew:
+			izle.append(c["node"])
+		izle.append_array(fight.builders)
+		for n in izle:
+			if n is Person:
+				(n as Person).visibility_changed.connect(_gorunce_ayir.bind(n))
 	# Burçtaki sancak (Ulubatlı Hasan): başta görünmez, 3. dalgada yükselir
 	banner = Node3D.new()
 	banner.position = BANNER_TOWER + Vector3(0, -4.0, 0)
 	banner.visible = false
 	add_child(banner)
 	Props.cyl(banner, 0.05, 4.0, Vector3(0, 2.0, 0), Color("5a3e26"), Vector3.ZERO, 5)
-	Props.box(banner, Vector3(0.04, 1.2, 1.8), Vector3(0, 3.3, 0.92), Color("b3262d"))
+	# TUR-13: setin kumaş bayrağı (ince çift yüzlü, direk kenarı sabit, rüzgârda dalgalanır; eski: 4 cm'lik düz kutu levha).
+	# Aynı ölçü (1,8 × 1,2 m, üst kenar direğin 3,9 m'sinde), aynı renk; yükselişi banner düğümüyle (tween) aynı.
+	preload("res://scripts/world/ist/kumas.gd").bayrak(banner, Vector3(0, 3.9, 0.03), Vector3.BACK, 1.8, 1.2, Color("b3262d"), [], 8, "Sancak").set_meta("flag", true)
 	emperor = Person.new({"coat": Color("5a2a6a"), "pants": Color("3a1a4a"), "hat": "stemma", "face": "emperor", "beard": true,
 		"mustache": true, "hair": Color("6a6a6a"), "robe": Color("5a2a6a")})
 	emperor.visible = false
@@ -207,14 +557,14 @@ func _build_walls_scene() -> void:
 
 ## Stage.approach için zemin: gedik yamacında moloz yüzeyi.
 func _rubble_y(x: float, z: float) -> float:
-	return LandWalls.on_rubble(Vector3(x, 0.0, z)).y
+	return sur.on_rubble(Vector3(x, 0.0, z)).y
 
 
 func _run() -> void:
 	hud.set_fade(1.0)
 	await hud.card([[tr("UI_CH26_TITLE"), 44, Color("f2e6c9")], [tr("UI_CH26_SUB"), 20, Color(1, 1, 1, 0.7)]], 3.0)
 	hud.clear_card()
-	player.global_position = LandWalls.SPAWN
+	player.global_position = sur.dogus()
 	player.face(giust.global_position + Vector3(0, 1.5, 0))
 	player.show_remote(true)             # Tolga'nın eli açık (ok demeti, çakmak, tezkire elsiz duruyordu)
 	_capture_mouse()
@@ -302,10 +652,20 @@ func _pour_loop(wave: String) -> void:
 	_arrow_loop(wave)
 	while is_inside_tree() and phase == wave and is_instance_valid(fight):
 		var d: Dictionary = fight.cauldrons[k % fight.cauldrons.size()]
-		fight.pour(d, Vector3((d["pos"] as Vector3).x + randf_range(-1.0, 1.0), 0.0, 18.0), 2)
+		var px := (d["pos"] as Vector3).x + randf_range(-1.0, 1.0)
+		if sur.eski_mi:
+			fight.pour(d, Vector3(px, 0.0, 18.0), 2)
+		else:
+			# sur dibi: dış yüzün 1,4 m önü, terasta (eski z 18 = dış yüz 16 + 2)
+			fight.pour(d, Vector3(px, sur.teras_y(), sur.dis_sur_z1() + 1.4), 2)
 		if assault:
 			# Surun boyunca bir yerden (hendek, karşı set, ovanın başı): eskiden hep gediğin önünde aynı yere düşüyordu
-			assault.volley(Vector3(randf_range(-34.0, 34.0), 0, randf_range(21.0, 33.0)), 6.0, 18)
+			if sur.eski_mi:
+				assault.volley(Vector3(randf_range(-34.0, 34.0), 0, randf_range(21.0, 33.0)), 6.0, 18)
+			else:
+				var vx := randf_range(-34.0, 34.0)
+				var vz := randf_range(sur.dis_sur_z1() + 3.0, sur.hendek_z1() - 2.0)
+				assault.volley(Vector3(vx, sur.zemin_y(vx, vz), vz), 6.0, 18)
 		k += 1
 		await get_tree().create_timer(randf_range(3.5, 5.5), false).timeout
 
@@ -318,8 +678,11 @@ func _arrow_loop(wave: String) -> void:
 		var x := randf_range(-30.0, 30.0)
 		if absf(x - player.global_position.x) < 4.0:
 			x += 8.0 * signf(x - player.global_position.x + 0.01)
-		var on_wall := absf(x - LandWalls.BREACH.x) > LandWalls.BREACH_W * 0.5 + 1.0
-		var to := Vector3(x, LandWalls.OUTER_H if on_wall else LandWalls.on_rubble(Vector3(x, 0, 13.0)).y, 15.0 if on_wall else 13.0)
+		var on_wall := absf(x - sur.gedik().x) > sur.gedik_en() * 0.5 + 1.0
+		if on_wall and not sur.eski_mi:
+			x = sur.dis_yol_x(x)          # kule ve basamakları değil, sur yolu
+		var zb := 13.0 if sur.eski_mi else sur.dis_sur_z0() - 1.0
+		var to := Vector3(x, sur.dis_yol_y() if on_wall else sur.on_rubble(Vector3(x, 0, zb)).y, sur.dis_yol_z() if on_wall else zb)
 		assault.volley(to, 3.0, 14, true)
 		await get_tree().create_timer(randf_range(2.5, 4.5), false).timeout
 
@@ -332,7 +695,9 @@ func _spawn_attackers(count: int, wave: int) -> void:
 	for i in count:
 		var s := Soldier.new(coat, "stand", "bork" if wave == 3 else "turban")
 		# Kendi şeridinde (hepsi hendekte z 24'te durur: rastgele x'te ikisi aynı yere varıp iç içe duruyordu)
-		s.position = Vector3(lerpf(-16.0, 20.0, (i + 0.5) / count) + randf_range(-0.5, 0.5), 0, randf_range(40, 70))
+		s.position = Vector3(lerpf(-16.0, 20.0, (i + 0.5) / count) + randf_range(-0.5, 0.5), 0, randf_range(40, 70)) + sur.ova_ofs()
+		if not sur.eski_mi:
+			s.position.y = sur.zemin_y(s.position.x, s.position.z)
 		s.rotation.y = PI
 		add_child(s)
 		attackers.append(s)
@@ -407,11 +772,11 @@ func _wave1() -> void:
 	await hud.say("SPK_GIUST", "D26_G_LADDER")
 	var back := player.global_position
 	var lad: Ladder = ladders[0]
-	var land := Vector3(lad.position.x, LandWalls.OUTER_H, 15.05)
+	var land := Vector3(lad.position.x, sur.dis_yol_y(), 15.05 if sur.eski_mi else sur.dis_yol_z())
 	await hud.fade_to(1.0, 0.35)
 	# Işınlanma noktası merdiven başındaki nöbetçinin üstüne denk gelirse oyuncu onun içinde kalır (kamera figürün
 	# içinde, yere kilitli kaldı): yakın boş bir nokta seçilir; uzakta boş yer yoksa nokta olduğu gibi kalır
-	var want := Vector3(lad.position.x - 1.9, LandWalls.OUTER_H + 0.05, 14.95)
+	var want := Vector3(lad.position.x - 1.9, sur.dis_yol_y() + 0.05, 14.95 if sur.eski_mi else sur.dis_yol_ic_z())
 	var spot := Person.clear_spot(get_tree(), want, null, 1.2)
 	player.global_position = spot if spot.distance_to(want) < 2.5 else want
 	player.face(land + Vector3(0, 1.4, 0.6))
@@ -435,13 +800,13 @@ func _wave2() -> void:
 	# Urban'ın topu barikatı yıkar: ateşten önce zaman ağırlaşır, bakış topa döner
 	hud.bark("SPK_LOOKOUT", "D20_L_WARN_1", 2.5)
 	Audio.stinger("warn", -6.0)
-	player.face(LandWalls.CANNON + Vector3(0, 2.0, 0))
+	player.face(sur.top() + Vector3(0, 2.0, 0))
 	Fx.slowmo(0.3, 1.2, 0.4)
 	await get_tree().create_timer(0.5, false).timeout
 	walls.fire_flash()
 	Audio.sfx("cannon", 0.0, 0.8)
 	await get_tree().create_timer(1.1, false).timeout
-	walls.impact(LandWalls.BREACH + Vector3(0, 2.0, 0.6))
+	walls.impact(sur.gedik() + Vector3(0, 2.0, 0.6))
 	Audio.sfx("explosion_big", -2.0)
 	player.shake(0.8)
 	walls.set_repair(LandWalls.STAGES - 4)
@@ -468,6 +833,7 @@ func _wave2() -> void:
 		{"specs": _foe_specs(5, "azap", _ladder_heads()),
 		"max_active": 2, "skill": 0.4, "allies": 3, "limit": 85.0}], "spathion")
 	_fights_won += int(r2["won"])
+	_dostlari_dagit()
 	player.frozen = true
 	await _repelled("D26_G_REPELLED_2")
 
@@ -503,7 +869,7 @@ func _repelled(key: String) -> void:
 
 func _janissary_duel() -> void:
 	var p := player.global_position
-	var to := LandWalls.BREACH - p
+	var to := sur.gedik() - p
 	to.y = 0.0
 	to = to.normalized() if to.length() > 0.1 else Vector3(0, 0, 1)
 	var side := to.cross(Vector3.UP).normalized()
@@ -519,7 +885,7 @@ func _janissary_duel() -> void:
 	if _gun_missed > 0:
 		print("GUN extra=%d" % mini(_gun_missed, 2))
 	# Gedik ağzında bir tüfekçi: nişan alınca yer değiştir ya da siper al
-	var gn := Gunner.spawn(self, LandWalls.on_rubble(LandWalls.BREACH + Vector3(2.2, 0, 1.4)), player, hud, 6.0)
+	var gn := Gunner.spawn(self, sur.on_rubble(sur.gedik() + Vector3(2.2, 0, 1.4)), player, hud, 6.0)
 	var r: Dictionary = await WaveRunner.run(self, hud, player, [
 		{"specs": specs, "max_active": 2, "skill": 0.45, "limit": 60.0},
 		{"specs": last, "max_active": 2, "skill": 0.45, "allies": 3, "limit": 95.0,
@@ -532,6 +898,7 @@ func _janissary_duel() -> void:
 	gunner_dodged += gn.dodged
 	gn.stop()
 	_duel_won = r["won"]
+	_dostlari_dagit()
 	player.frozen = true
 	# Önce komutana döner, sonra konuşur: dövüş biterken sur dibinde duvara dönük kalabiliyordu (VISAUDIT wall)
 	player.face(giust.global_position + Vector3(0, 1.5, 0))
@@ -550,16 +917,25 @@ func _gun_dawn() -> void:
 	else:
 		await get_tree().create_timer(2.5, false).timeout
 	await hud.fade_to(1.0, 0.35)
-	player.global_position = Vector3(-10.0, LandWalls.OUTER_H + 0.05, 15.3)
+	var gun_look := Vector3(0, -1.0, 28.0)
+	if sur.eski_mi:
+		player.global_position = Vector3(-10.0, LandWalls.OUTER_H + 0.05, 15.3)
+	else:
+		player.global_position = Vector3(sur.dis_yol_x(-10.0), sur.dis_yol_y() + 0.05, sur.dis_yol_z())
+		gun_look = Vector3(0, sur.teras_y() - 1.0, sur.hendek_z(0.5))
 	var runners: Array = []
 	for i in 4:
 		var x0 := -4.5 + i * 3.0
-		runners.append({"coat": Color("2f5fa8"), "hat": "bork",
-			"path": [Vector3(x0, 0, 35.5), Vector3(x0 * 0.4, 0, 25.0), Vector3(x0 * 0.15, 0, 17.6)], "delay": i * 1.9})
-	player.face(Vector3(0, -1.0, 28.0))
+		var path: Array = [Vector3(x0, 0, 35.5), Vector3(x0 * 0.4, 0, 25.0), Vector3(x0 * 0.15, 0, 17.6)]
+		if not sur.eski_mi:
+			# Ovadan hendeği gediğin önündeki dolgudan (x 0 ± 5) geçip moloz yamacının dibine (eski: hendeğin uzak yakası →
+			# hendeğin içi → sur dibi)
+			path = [Vector3(x0, 0, sur.hendek_z1() - 0.5), Vector3(x0 * 0.4, 0, sur.hendek_z(0.25)), Vector3(x0 * 0.15, 0, sur.dis_sur_z1() + 1.0)]
+		runners.append({"coat": Color("2f5fa8"), "hat": "bork", "path": path, "delay": i * 1.9})
+	player.face(gun_look)
 	await hud.fade_to(0.0, 0.35)
-	var res: Dictionary = await GunRange.run(self, hud, player, {"runners": runners, "ground": LandWalls.outside_y,
-		"speed": 2.4, "objective": tr("UI_OBJ26_GUN") % 4, "look": Vector3(0, -1.0, 28.0)})
+	var res: Dictionary = await GunRange.run(self, hud, player, {"runners": runners, "ground": LandWalls.outside_y if sur.eski_mi else sur.dis_zemin_y,
+		"speed": 2.4, "objective": tr("UI_OBJ26_GUN") % 4, "look": gun_look})
 	gun_shots = res["shots"]
 	gun_hits = res["hits"]
 	_gun_missed = res["missed"]
@@ -567,7 +943,7 @@ func _gun_dawn() -> void:
 	await hud.say("SPK_TOLGA", "D20_T_GUN_GOOD" if gun_hits >= 2 else "D20_T_GUN_BAD")
 	await hud.fade_to(1.0, 0.35)
 	player.global_position = back
-	player.face(LandWalls.BREACH + Vector3(0, 1.5, 0))
+	player.face(sur.gedik() + Vector3(0, 1.5, 0))
 	await hud.fade_to(0.0, 0.35)
 
 
@@ -577,7 +953,7 @@ func _wave3() -> void:
 	walls.make_dawn(0.01)
 	await hud.card([[tr("UI_CH26_DAWN"), 26, Color("f2e6c9")]], 1.8)
 	hud.clear_card()
-	player.global_position = LandWalls.BREACH + Vector3(4.0, 0.05, -6.0)
+	player.global_position = LandWalls.BREACH + Vector3(4.0, 0.05, -6.0) if sur.eski_mi else _gp(Vector3(2.0, 0.05, -5.0))
 	player.face(giust.global_position + Vector3(0, 1.5, 0))
 	await hud.fade_to(0.0, 0.8)
 	_wave_start(3)
@@ -587,7 +963,9 @@ func _wave3() -> void:
 	# Şafak: hendeği geçen yeniçerilere surdan tüfekle (vurulamayanlar gedik dövüşünün son bölüğüne katılır)
 	await _gun_dawn()
 	# Yeniçeriler gediğin moloz yamacını tırmanıp içeri dalar: göğüs göğüse (StoryDuel: ölüm yok)
+	_t8_sonda("duel_once")
 	await _janissary_duel()
+	_t8_sonda("duel_sonra")
 	# Şafak: gediğin ağzında bir tüfekçi nişan alır. Tolga bu sahneyi belgesellerden bilir.
 	if await _dawn_shot():
 		await _hold()
@@ -632,6 +1010,7 @@ func _wave3() -> void:
 	var fall := create_tween()
 	fall.tween_method(func(k: float): _carry_pose(dir, 0.15, k), 0.0, 1.0, 0.55).set_ease(Tween.EASE_IN)
 	await fall.finished
+	_t8_sonda("dusus")
 	Vfx.dust(self, giust.global_position, 0.6)
 	await hud.say("SPK_DEFENDER", "D26_S_GIUST")
 	await hud.say("SPK_GIUST", "D26_G_HURT")
@@ -663,6 +1042,7 @@ func _wave3() -> void:
 			var fy := _visible_floor(q)
 			b0.global_position = Vector3(q.x, q.y if is_nan(fy) else fy, q.z), 0.0, 1.0, 1.0)
 	await come.finished
+	_t8_sonda("tasiyici")
 	for i in 2:
 		bearers[i].rotation.y = atan2(dir.x, dir.z) + (PI if i == 0 else 0.0)
 	# Taşıyıcılar moloz basamağının kenarında bekler: kalabalıktan yana itilen basamaktan iner (havada kalıyordu).
@@ -685,7 +1065,9 @@ func _wave3() -> void:
 		await get_tree().process_frame
 	player.frozen = true
 	hud.set_objective("")
+	_t8_sonda("tasima_once")
 	await _carry_giust(dir)
+	_t8_sonda("tasima_sonra")
 	await hud.say("SPK_TOLGA", "D26_T_GONE")
 	# Burçta sancak
 	banner.visible = true
@@ -699,7 +1081,7 @@ func _wave3() -> void:
 	# İmparator'un son görüntüsü: arkası dönük, gediğe ve dumana yürür
 	emperor.visible = true
 	# Boş bir yerde (dövüşten sonra nefeslenen dost askerlerin üstünde değil); aradakiler görüşten çekilir
-	emperor.position = Person.clear_spot(get_tree(), LandWalls.BREACH + Vector3(3.0, 0, -9.0), emperor)
+	emperor.position = Person.clear_spot(get_tree(), _imparator_yeri(), emperor)
 	emperor.rotation.y = 0.0
 	player.face(emperor.global_position + Vector3(0, 1.5, 0))
 	_clear_line(player.camera.global_position, [emperor])
@@ -707,10 +1089,10 @@ func _wave3() -> void:
 	var walk := create_tween()
 	# Yamacın dibine yürür, sonra molozun üstünden gediğe tırmanır
 	# Savunanların sırasındaki aralıktan (x −0,6 ile 0,7 arası) geçer: eskiden x 0,5'ten yürüyüp birinin içinden geçiyordu
-	walk.tween_property(emperor, "position", LandWalls.BREACH + Vector3(0.05, 0, -4.2), 2.8)
-	walk.tween_property(emperor, "position", LandWalls.on_rubble(LandWalls.BREACH + Vector3(0.05, 0, -1.4)), 1.6)
+	walk.tween_property(emperor, "position", sur.on_rubble(_gp(Vector3(0.05, 0, -4.2))), 2.8)
+	walk.tween_property(emperor, "position", sur.on_rubble(_gp(Vector3(0.05, 0, -1.4))), 1.6)
 	for i in 4:
-		Vfx.dust(self, LandWalls.BREACH + Vector3(randf_range(-2, 2), 1.0, -1.0), 1.4)
+		Vfx.dust(self, sur.on_rubble(_gp(Vector3(randf_range(-2, 2), 0.0, -1.0))) + Vector3(0, 1.0, 0), 1.4)
 	await walk.finished
 	emperor.visible = false
 	await hud.say("SPK_NIHAT", "D26_N_OUT")
@@ -756,13 +1138,15 @@ func _dawn_shot() -> bool:
 	add_child(gunner)
 	# Barikatın yıkılan ortasında, fıçı sırasının önünde (eskiden toprak tabyanın içinde duruyordu)
 	walls.set_repair(3)
-	gunner.global_position = LandWalls.on_rubble(LandWalls.BREACH + Vector3(0.9, 0, -0.8))
+	gunner.global_position = sur.on_rubble(_gp(Vector3(0.9, 0, -0.8)))
 	gunner.set_meta("no_chat", true)
 	gunner.face_toward(giust.global_position)
 	gunner.equip("handgun")
 	var mid := (gunner.global_position + giust.global_position) * 0.5 + Vector3(0, 1.4, 0)
-	player.global_position = LandWalls.on_rubble(LandWalls.BREACH + Vector3(-0.6, 0, -5.2)) + Vector3(0, 0.05, 0)
+	player.global_position = sur.on_rubble(_gp(Vector3(-0.6, 0, -5.2))) + Vector3(0, 0.05, 0)
+	_t8_sonda("dawn_once")
 	_clear_line(player.global_position, [gunner, giust])
+	_t8_sonda("dawn_sonra")
 	player.face(gunner.global_position + Vector3(0, 1.4, 0))
 	await hud.think("SPK_TOLGA", "D26_T_SEE_GUN")      # parantez içinde düşünce: söylenmez
 	player.face(mid)
@@ -1007,7 +1391,7 @@ func _hold() -> void:
 	# İmparator gediğe gelir, Giustiniani'nin yanında durur (dumana yürümez)
 	emperor.visible = true
 	# Yüksekliği yamaçtan (Giustiniani'ninkinden değil: yamaç orada daha alçak, havada duruyordu)
-	emperor.position = LandWalls.on_rubble(Vector3(giust.position.x + 1.3, 0.0, giust.position.z - 0.8))
+	emperor.position = sur.on_rubble(Vector3(giust.position.x + 1.3, 0.0, giust.position.z - 0.8))
 	emperor.look_target = player
 	player.face(emperor.global_position + Vector3(0, 1.5, 0))
 	var ans: String = GameState.chapter_outcomes.get(12, "")
@@ -1070,6 +1454,9 @@ var _carry_at := Vector3.ZERO
 ## (gösterge; uca varınca Giustiniani inler, Tolga sendeler, bir an durulur). Arkada yeniçeriler gediğe doluşur.
 var giust_jolts := 0
 var _carrying_giust := false
+var _ara_i := 0
+## TAŞIMA-8: taşıma yürüyüşünün süresi (sn; oyun saati, autotest ölçüm satırı TASIMA8 tasima)
+var _tasima_t := 0.0
 
 
 func _carry_giust(dir: Vector3) -> void:
@@ -1079,7 +1466,12 @@ func _carry_giust(dir: Vector3) -> void:
 	helper.set_activity("")
 	var feet_spot := _carry_at - dir * 1.35
 	var side := dir.cross(Vector3.UP).normalized()
-	Stage.approach(helper, helper.global_position + side * 1.4, 0.0, 1.6, Vector3.ZERO, _rubble_y)
+	# Çekildiği yer doluysa (şafak atışında görüş çizgisinden itilen savunucu orada) öbür yana: yeni sette yardımcı onun
+	# üstüne çekiliyordu (VISAUDIT overlap 1,5; 0,5; 10,6). Boşsa eskisiyle aynı yer.
+	var cek := helper.global_position + side * 1.4
+	if Unclip.crowded(helper, cek, 0.7):
+		cek = helper.global_position - side * 1.4
+	Stage.approach(helper, cek, 0.0, 1.6, Vector3.ZERO, _rubble_y)
 	await Stage.walk_player(player, feet_spot, 0.0, giust.global_position + Vector3(0, 0.4, 0), 4.0)
 	player.face(giust.global_position + dir * 0.6 + Vector3(0, 0.3, 0))
 	bearers[0].set_activity("carry")
@@ -1115,8 +1507,16 @@ func _carry_giust(dir: Vector3) -> void:
 		if get_tree().paused:      # duraklatmada sayaç akmaz
 			continue
 		var dt := get_process_delta_time()
+		_tasima_t += dt
 		if GameState.autotest:
-			var to := arrive - player.global_position
+			# Yeni sette doğrudan çizgi iç kulenin içinden geçer: bot önce kulenin önündeki ara noktaya yürür
+			var hedef := arrive
+			var yol := _tasima_yolu()
+			if _ara_i < yol.size():
+				hedef = yol[_ara_i]
+				if Vector2(player.global_position.x - hedef.x, player.global_position.z - hedef.z).length() < 0.8:
+					_ara_i += 1
+			var to := hedef - player.global_position
 			to.y = 0.0
 			player.global_position += to.normalized() * minf(to.length(), (2.0 if GameState.flags.get("trailer", false) else 5.0) * dt)
 			var fy := _visible_floor(player.global_position)
@@ -1154,6 +1554,8 @@ func _carry_giust(dir: Vector3) -> void:
 		_carry_pose(cdir, 0.85, 1.0)
 	meter.queue_free()
 	_carrying_giust = false
+	if GameState.autotest:
+		print("TASIMA8 tasima sure=%.1f set=%s" % [_tasima_t, "eski" if sur.eski_mi else "yeni"])
 	player.frozen = true
 	player.speed_mult = 1.0
 	hud.set_objective("")
@@ -1176,8 +1578,8 @@ func _carry_pose(dir: Vector3, h: float, k: float) -> void:
 	var feet := _carry_at - dir * 0.9
 	var head := _carry_at + dir * 0.9
 	# Görünen zemin (yamaç formülü gediğin iç yanında toprağın yarım metre üstündeydi: vurulan komutan havada duruyordu)
-	feet.y = LandWalls.rubble_y(feet.x, feet.z)
-	head.y = LandWalls.rubble_y(head.x, head.z)
+	feet.y = sur.moloz_y(feet.x, feet.z)
+	head.y = sur.moloz_y(head.x, head.z)
 	var ffy := _visible_floor(feet)
 	if not is_nan(ffy):
 		feet.y = ffy
@@ -1205,7 +1607,7 @@ func _carry_pose(dir: Vector3, h: float, k: float) -> void:
 ## Taşıyıcının yeri: 0 başta (koltuk altları; önde, geri geri yürür), 1 ayak ucunda (arkada).
 func _bearer_spot(dir: Vector3, i: int) -> Vector3:
 	var p := _carry_at + dir * (1.35 if i == 0 else -1.35)
-	p.y = LandWalls.rubble_y(p.x, p.z)
+	p.y = sur.moloz_y(p.x, p.z)
 	# Görünen zemin: gediğin iç yanında yamaç formülü (ve onun görünmez çarpışma kutusu) görünen toprağın yarım metre
 	# üstünde kalıyordu (taşıyıcı havada). Yalnız görünen gövdeler sayılır (denetçinin ölçüsü)
 	var fy := _visible_floor(p)
@@ -1240,6 +1642,8 @@ func _person_part(n: Node) -> bool:
 
 ## Girişin sahnesi: hendek dolgusu, iki yanda yeniçeriler, at ve Sultan, arkada vezirler.
 func _entry_stage() -> Dictionary:
+	if not sur.eski_mi:
+		return _entry_stage_yeni()
 	# Hendek, gedik önünde toprakla doldurulmuş (atın yolu)
 	Props.box(walls, Vector3(8.0, 3.0, 17.0), Vector3(0, -1.5, 28.0), Color("6a5a40"))
 	var line: Array[Node3D] = []
@@ -1298,6 +1702,103 @@ func _entry_stage() -> Dictionary:
 	return {"line": line, "horse": horse, "sultan": sultan, "retinue": retinue}
 
 
+## TAŞIMA-8 — yeni setin giriş sahnesi. Hendek gediğin önünde zaten dolu (setin Dolgu'su, SurSetSahne.dolgu 1: 29 Mayıs).
+## Saflar: dolgunun iki yanında (dışarıda) ve gediğin iç yanında, peribolosta (iç kulenin eteği ve ok sandığı dışında).
+## Romanos koridoru ve caddenin başındaki saflar _entry'de, ekran kararınca kurulur (aynı listeye eklenir).
+func _entry_stage_yeni() -> Dictionary:
+	var line: Array[Node3D] = []
+	var z0 := sur.hendek_z0()
+	var z1 := sur.hendek_z1()
+	for i in 8:
+		var side := -1.0 if i % 2 == 0 else 1.0
+		var z := lerpf(z1 - 2.0, z0 + 2.0, float(i / 2) / 3.0)
+		var s := Soldier.new(Color("2f5fa8") if i % 3 != 2 else Color("b3262d"), "stand", "bork")
+		s.position = Vector3(side * 3.2, 0.0, z)
+		s.position.y = _entry_ground(s.position)
+		s.rotation.y = -side * PI * 0.5
+		add_child(s)
+		s.equip("spear")
+		line.append(s)
+	# Gediğin iç yanı (peribolos): iki yanda saf; sağda iç kulenin eteği (z ≤ 8), solda ok sandığı ve oyuncunun yeri boş
+	for side: float in [-1.0, 1.0]:
+		for row in 2:
+			for k in 3:
+				var z := sur.gedik_onu().z - 0.6 - k * 1.0
+				var x := side * (4.6 + row * 1.2) + randf_range(-0.12, 0.12)
+				var s := Soldier.new([Color("2f5fa8"), Color("b3262d"), Color("3a6b3a"), Color("8a6a4a")][(row + k) % 4], "stand", "bork" if (row + k) % 3 != 0 else "turban")
+				s.set_meta("no_talk", true)
+				s.position = Vector3(x, 0.0, z + randf_range(-0.15, 0.15))
+				s.position.y = _entry_ground(s.position)
+				s.rotation.y = -side * PI * 0.5 + randf_range(-0.2, 0.2)
+				add_child(s)
+				s.equip(["spear", "sword_shield", "spear"][(row + k) % 3])
+				line.append(s)
+	for side: float in [-1.0, 1.0]:
+		var bp := Node3D.new()
+		bp.position = Vector3(side * 7.6, 0, sur.gedik_onu().z - 1.2)
+		add_child(bp)
+		Props.make_solid(Props.cyl(bp, 0.05, 5.0, Vector3(0, 2.5, 0), Color("4a3420"), Vector3.ZERO, 5))
+		Props.ball(bp, 0.12, Vector3(0, 5.1, 0), Color("d8b040"), Vector3.ONE, 6)
+		Props.box(bp, Vector3(0.03, 1.3, 2.0), Vector3(0, 4.2, -1.0 * side), Color("b3262d") if side < 0.0 else Color("2e6a3a"))
+		line.append(bp)
+	var horse := Horse.new(Color("e4e0d8"))
+	add_child(horse)
+	var sultan := Person.new({"coat": Color("b3262d"), "pants": Color("6a1a1a"), "hat": "sultan", "face": "fatih", "mustache": true,
+		"robe": Color("c8323a"), "hair": Color("2a1e14"), "skin": Color("e0b08a")})
+	horse.mount(sultan)
+	horse.position = Vector3(0, 0, z1 + 8.0)
+	horse.position.y = _entry_ground(horse.position)
+	horse.rotation.y = PI
+	var retinue: Array[Node3D] = []
+	for i in 4:
+		var v := Person.new({"coat": [Color("2f4a6a"), Color("3a6b3a"), Color("f0e8d8"), Color("6a4a2c")][i], "pants": Color("2a2a30"),
+			"hat": "turban", "beard": true, "robe": [Color("2f4a6a"), Color("3a6b3a"), Color("f0e8d8"), Color("6a4a2c")][i]})
+		v.set_meta("no_talk", true)
+		v.set_meta("no_chat", true)
+		v.position = Vector3(-1.0 + (i % 2) * 2.0, 0, z1 + 11.5 + (i / 2) * 1.6)
+		v.position.y = _entry_ground(v.position)
+		v.rotation.y = PI
+		add_child(v)
+		retinue.append(v)
+	return {"line": line, "horse": horse, "sultan": sultan, "retinue": retinue}
+
+
+## TAŞIMA-8 — yeni sette giriş: Sultan dolgudan gediğin tepesine çıkar, durur, şehre bakar ("gediğin üstünden"). Mesoteikhion
+## diliminde iç surda kapı yok, Romanos koridoru (iç kapıdan dış kapıya iki yan duvar) peribolostan kapalı (karar 11-A:
+## kapı Romanos'ta): ekran kararır; alay Romanos'un dış kapısından koridora, iç kapıdan caddeye girer, oyuncu caddenin
+## başında, kapının şehir yanında ("Aziz Romanos Kapısı'ndan içeri girdiniz"). FallenCity iç kapının şehir yanında
+## (SurSet.sehir_ofs). Dönen: caddenin çerçevedeki kaydırması (eski 0).
+func _entry_romanos(horse: Horse, retinue: Array[Node3D], line: Array[Node3D]) -> Vector3:
+	var ro := sur.romanos()
+	var co := sur.sehir_ofs(float(ro["x"]))
+	await hud.fade_to(1.0, 0.8)
+	walls.open_inner_gate()
+	# Koridor ve kapının şehir yanı: iki yanda saf (koridorun ortası açık); caddenin başı FallenCity'nin kendi kalabalığı
+	var rx := float(ro["x"])
+	for i in 8:
+		var side := -1.0 if i % 2 == 0 else 1.0
+		# koridorun iki ucundaki sur dibi eteklerinin (≈ 3 m) dışında (eteğe 0,15 m gömülüyorlardı: VISAUDIT sunk)
+		var z := lerpf(float(ro["dis_z0"]) - 3.4, float(ro["ic_z1"]) + 3.4, float(i / 2) / 3.0)
+		var s := Soldier.new(Color("2f5fa8") if i % 3 != 2 else Color("b3262d"), "stand", "bork")
+		s.set_meta("no_talk", true)
+		s.position = Vector3(rx + side * 1.75, 0.0, z)
+		s.rotation.y = -side * PI * 0.5
+		add_child(s)
+		s.equip("spear")
+		line.append(s)
+	horse.position = Vector3(rx, 0.0, float(ro["dis_z0"]) - 0.5)
+	horse.rotation.y = PI
+	for i in retinue.size():
+		retinue[i].position = horse.position + Vector3(-1.0 + (i % 2) * 2.0, 0, 3.0 + (i / 2) * 1.6)
+		retinue[i].rotation.y = PI
+	_trail = [horse.position]
+	player.global_position = co + Vector3(2.6, 0.05, -9.5)
+	player.face(Vector3(rx, 2.4, float(ro["ic_z1"])))
+	await get_tree().create_timer(0.3, false).timeout
+	await hud.fade_to(0.0, 0.8)
+	return co
+
+
 ## Öğle: Sultan Mehmed beyaz atıyla gedikten (Topkapı / Aziz Romanos Kapısı yanı) şehre girer. Yeniçeriler yolun iki
 ## yanında; vezirler ve ulema arkasında. Tolga moloz yamacının yanında, kalabalığın arasında izler.
 func _entry() -> void:
@@ -1330,24 +1831,38 @@ func _entry() -> void:
 	var horse: Horse = st["horse"]
 	var sultan: Person = st["sultan"]
 	var retinue: Array[Node3D] = st["retinue"]
-	# İç surun kapısı açık; ardında yıkık, yanık cadde (Mese'ye giden yol)
-	walls.open_inner_gate()
+	# İç surun kapısı açık; ardında yıkık, yanık cadde (Mese'ye giden yol). Yeni sette kapı ve cadde Romanos'ta (karar 11-A)
 	var city := FallenCity.new()
 	city.field = walls.field
+	if sur.eski_mi:
+		walls.open_inner_gate()
+	else:
+		city.yer = sur.sehir_ofs(float(sur.romanos()["x"]))
 	add_child(city)
 	FallenCity.mood(walls.env.environment, walls.moon)
 	# Oyuncu yolun sağ kenarında, safların bittiği açıklıkta (arada yeniçeri yok): atı gedikten inerken önden görür
-	player.global_position = Vector3(2.4, 0.05, 0.8)
-	player.face(Vector3(0, 2.5, 15.0))
+	if sur.eski_mi:
+		player.global_position = Vector3(2.4, 0.05, 0.8)
+		player.face(Vector3(0, 2.5, 15.0))
+	else:
+		# Gediğin iç yanında, solda (iç kulenin eteği sağda; ok sandığının önü): atı gedikten çıkarken önden görür
+		player.global_position = Vector3(-6.6, 0.05, 6.9)
+		player.face(Vector3(0, 2.5, sur.gedik().z))
 	hud.set_fez(true)   # Tolga fesini takar: kalabalıkta Bizanslı sanılmasın
 	# At, konuşmalar sürerken yaklaşır (boş bekleme olmasın): hendek dolgusu → gediğin tepesi, orada durur
-	horse.position = Vector3(0, 0, 36.0)
+	horse.position = Vector3(0, 0, 36.0) if sur.eski_mi else Vector3(0, 0, sur.hendek_z1())
+	horse.position.y = _entry_ground(horse.position)
 	for r in retinue:
 		r.position.z -= 8.0
+		r.position.y = _entry_ground(r.position)
 	_trail = [horse.position]
 	await hud.card([[tr("UI_CH26_ENTRY"), 26, Color("f2e6c9")]], 2.0)
 	hud.clear_card()
 	var outside := [Vector3(0, 0, 30.0), Vector3(0, 0.1, 20.0), Vector3(0, 2.3, 15.0)]
+	if not sur.eski_mi:
+		# dolgunun üstü → moloz yamacının dibi (teras) → gediğin tepesi (y: _entry_ground)
+		outside = [Vector3(0, 0, sur.hendek_z(0.4)), Vector3(0, 0, sur.dis_sur_z1() + 2.0), Vector3(0, 0, sur.gedik().z)]
+	var t_alay := _t
 	var riding := _ride(horse, retinue, outside)
 	await hud.fade_to(0.0, 1.2, Color.WHITE)
 	Audio.sfx("crowd_camp", -4.0, 0.9)
@@ -1363,8 +1878,18 @@ func _entry() -> void:
 	# Gediğin üstünde durur, şehre bakar
 	await hud.say("SPK_NIHAT", "D26_N_ENTRY_2")
 	await hud.say("SPK_TOLGA", "D26_T_ENTRY_2")
-	# Serbest: alayın yanında yürü (gedikten geri çıkılmaz, yan sokaklar molozla kapalı)
+	# Yeni sette: Romanos koridoru ve cadde (ekran kararır; co: caddenin kaydırması)
+	var co := Vector3.ZERO
+	var ro := {}
+	if not sur.eski_mi:
+		ro = sur.romanos()
+		co = await _entry_romanos(horse, retinue, line)
+		_co = co
+	# Serbest: alayın yanında yürü (gedikten geri çıkılmaz, yan sokaklar molozla kapalı). Yeni sette: kapıdan geri koridora
+	# girilmez (iç kapının şehir yüzü)
 	var back := Props.solid(self, Vector3(LandWalls.BREACH_W + 4.0, 6.0, 0.4), Vector3(0, 3.0, 12.6), Color.WHITE)
+	if not sur.eski_mi:
+		back.position = Vector3(float(ro["x"]), 3.0, float(ro["ic_z0"]) + 0.6)
 	back.get_child(0).visible = false
 	back.set_meta("no_climb", true)
 	Lore.scatter(self, "26")
@@ -1372,16 +1897,21 @@ func _entry() -> void:
 	hud.set_objective(tr("UI_OBJ26_FOLLOW"), sultan, 2.6)
 	var inside := [Vector3(0, 0.6, 9.5), Vector3(0, 0.0, 5.0), Vector3(0, 0, -2.0), Vector3(0, 0, -8.0), Vector3(0.5, 0, -24.0),
 		Vector3(-0.3, 0, -44.0), FallenCity.STOP]
+	if not sur.eski_mi:
+		# koridor → iç kapı → cadde (FallenCity'nin noktaları, kaydırmayla)
+		inside = [Vector3(float(ro["x"]), 0, float(ro["ic_z1"]) + 1.0), Vector3(float(ro["x"]), 0, float(ro["ic_z0"]) - 1.5)]
+		for q: Vector3 in [Vector3(0, 0, -8.0), Vector3(0.5, 0, -24.0), Vector3(-0.3, 0, -44.0), FallenCity.STOP]:
+			inside.append(q + co)
 	riding = _ride(horse, retinue, inside)
 	# Yol boyunca: kapıdan geçince şehir, sancaklı evler; sarayın önünde durur
-	while horse.position.z > -3.0 and not _ride_done:
+	while horse.position.z > -3.0 + co.z and not _ride_done:
 		await get_tree().process_frame
 	await hud.say("SPK_NIHAT", "D26_N_CITY")
 	await hud.say("SPK_TOLGA", "D26_T_CITY")
-	while horse.position.z > -28.0 and not _ride_done:
+	while horse.position.z > -28.0 + co.z and not _ride_done:
 		await get_tree().process_frame
 	await hud.say("SPK_NIHAT", "D26_N_FLAGS")
-	while horse.position.z > -36.0 and not _ride_done:
+	while horse.position.z > -36.0 + co.z and not _ride_done:
 		await get_tree().process_frame
 	await _isidore_column()
 	await hud.say("SPK_NIHAT", "D26_N_GIUST")
@@ -1396,7 +1926,7 @@ func _entry() -> void:
 	if who != "":
 		await hud.say("SPK_FATIH", "D26_F_EDIRNE_" + who.to_upper())
 	# Ayasofya'ya doğru devam eder; ekran ağarır
-	riding = _ride(horse, retinue, [Vector3(0.2, 0, -72.0), Vector3(0, 0, -80.0)])
+	riding = _ride(horse, retinue, [Vector3(0.2, 0, -72.0) + co, Vector3(0, 0, -80.0) + co])
 	var t := 0.0   # oyuncu hâlâ serbest: "Padişahı izle" hedefi ve işareti ağarmaya dek kalır
 	while not _ride_done and t < 14.0:
 		await get_tree().process_frame
@@ -1404,6 +1934,8 @@ func _entry() -> void:
 			continue
 		t += get_process_delta_time()
 	player.frozen = true
+	if GameState.autotest:
+		print("TASIMA8 alay sure=%.1f set=%s" % [_t - t_alay, "eski" if sur.eski_mi else "yeni"])
 	await hud.fade_to(1.0, 1.5, Color.WHITE)
 	for n in line + retinue:
 		n.queue_free()
@@ -1421,9 +1953,11 @@ func _entry() -> void:
 ## esirlerin arasında, tanınmadan şehirden çıktı). Yakında bir asker kırmızı kardinal şapkasını mızrağının ucunda
 ## sallar. Kafile oyuncunun yanında bir an durur; Isidoros Tolga'ya bakar, parmağını dudağına götürür.
 var _entry_extras: Array[Node] = []
+## TAŞIMA-8: caddenin (FallenCity) bölüm çerçevesindeki kaydırması (eski 0; yeni: Romanos iç kapısının şehir yanı)
+var _co := Vector3.ZERO
 
 func _isidore_column() -> void:
-	var z0 := minf(player.global_position.z, -36.0) - 9.0
+	var z0 := minf(player.global_position.z, -36.0 + _co.z) - 9.0
 	var column: Array[Person] = []
 	var isidore: Person
 	for i in 6:
@@ -1436,7 +1970,9 @@ func _isidore_column() -> void:
 				"face": "cardinal", "n": 2983}
 		var p := Person.new(spec)
 		p.set_meta("no_talk", true)
-		p.position = Vector3(-1.8, 0, z0 - i * 1.3)
+		p.position = Vector3(-1.8 + _co.x, 0, z0 - i * 1.3)
+		if i == 0 and OS.get_cmdline_user_args().has("--sonda8"):
+			print("SONDA8 kafile oyuncu=%s bas=%s at=%s" % [player.global_position.snapped(Vector3.ONE * 0.1), p.position, "?"])
 		p.rotation.y = 0.0
 		add_child(p)
 		if i == 0:
@@ -1452,11 +1988,11 @@ func _isidore_column() -> void:
 	# Mızrağın ucunda kırmızı kardinal şapkası (galero), asker gülüyor
 	var mock := Person.new({"coat": Color("2f5fa8"), "pants": Color("e8e0d0"), "hat": "bork", "mustache": true, "skin": Color("d9a07a"), "n": 2990})
 	mock.set_meta("no_talk", true)
-	mock.position = Vector3(2.3, 0, z0 + 3.0)
+	mock.position = Vector3(2.3 + _co.x, 0, z0 + 3.0)
 	mock.rotation.y = -PI * 0.5
 	add_child(mock)
 	var pole := Node3D.new()
-	pole.position = Vector3(1.9, 0, z0 + 3.0)
+	pole.position = Vector3(1.9 + _co.x, 0, z0 + 3.0)
 	pole.rotation_degrees = Vector3(0, 0, 8)
 	add_child(pole)
 	Props.cyl(pole, 0.03, 2.8, Vector3(0, 1.4, 0), Color("5a3e26"), Vector3.ZERO, 5)
@@ -1477,6 +2013,7 @@ func _isidore_column() -> void:
 		for p in column:
 			p.position.z += 0.9 * dt
 			p.position.y = _entry_ground(p.position)      # yana itilen esir görünen zeminde kalsın
+			_kafile_zemin(p)
 		if GameState.autotest or t > 12.0 or isidore.global_position.distance_to(player.global_position) < 6.0:
 			walking = false
 		await get_tree().process_frame
@@ -1526,10 +2063,22 @@ func _isidore_column() -> void:
 				if is_instance_valid(p):
 					p.position.z += 0.9 * dt
 					p.position.y = _entry_ground(p.position)
-					if p.position.z > -7.0:
+					_kafile_zemin(p)
+					if p.position.z > -7.0 + _co.z:
 						p.visible = false
 			await get_tree().process_frame
 	go.call()
+
+
+## TAŞIMA-8: yeni sette kafile caddenin görünen zeminine basar: alay geçerken yana çekilen kafile başı kilisenin
+## basamağının (0,3 m, üstüne çıkılır) üstüne geliyordu, yüksekliği düz zeminden alındığı için basamağa gömülü duruyordu
+## (VISAUDIT sunk, nophoto/council_bad). Eski sette değişmez.
+func _kafile_zemin(p: Person) -> void:
+	if sur.eski_mi or not p.is_inside_tree():
+		return
+	var fy := _visible_floor(p.global_position + Vector3(0, 0.5, 0))
+	if not is_nan(fy) and fy > p.global_position.y and fy - p.global_position.y < 0.6:
+		p.global_position.y = fy
 
 
 ## Tezkireyle kafileden çıkarılan Isidoros: asker tuğrayı alnına götürür, "kâtibimi" alıp götürmesine izin verir. Eller
@@ -1604,6 +2153,8 @@ var _ride_id := 0
 ## Alayın yolundaki zemin: dışarıda hendek dolgusunun üstü (y 0), gedikte moloz katmanları ve iç yamaç, içeride
 ## peribolos ve cadde.
 func _entry_ground(p: Vector3) -> float:
+	if not sur.eski_mi:
+		return sur.zemin_y(p.x, p.z)       # peribolos, moloz, teras, dolgu, ova; iç surun ötesi (koridor, cadde) 0
 	return maxf(0.0, LandWalls.rubble_y(p.x, p.z))
 var _blocked_t := 0.0
 
@@ -1959,16 +2510,16 @@ func _update_objective() -> void:
 			if water >= 3 and carrying == "":
 				# Üç demet teslim: "Ok sandığı (3/3)" merdiven dövüşü boyunca kalıyordu
 				var lad0: Node3D = ladders[0] if not ladders.is_empty() else null
-				hud.set_objective(tr("UI_OBJ26_LADDER"), Vector3(lad0.position.x, LandWalls.OUTER_H + 1.6, 15.05) if lad0 else LandWalls.BREACH)
+				hud.set_objective(tr("UI_OBJ26_LADDER"), Vector3(lad0.position.x, sur.dis_yol_y() + 1.6, 15.05 if sur.eski_mi else sur.dis_yol_z()) if lad0 else sur.gedik())
 			elif carrying == "water":
-				hud.set_objective(tr("UI_OBJ26_ARROWS_GIVE") % [water, 3], LandWalls.BREACH + Vector3(0, 1.6, -2.0))
+				hud.set_objective(tr("UI_OBJ26_ARROWS_GIVE") % [water, 3], _gp(Vector3(0, 1.6, -2.0)))
 			else:
 				hud.set_objective(tr("UI_OBJ26_ARROWS") % [water, 3], WELL + Vector3(0, 1.2, 0))
 		"wave2":
 			if carrying != "":
-				hud.set_objective(tr("UI_OBJ26_REPAIR_PUT") % [repaired, 3], LandWalls.BREACH + Vector3(0, 2.2, -1.2))
+				hud.set_objective(tr("UI_OBJ26_REPAIR_PUT") % [repaired, 3], sur.barikat())
 			else:
-				hud.set_objective(tr("UI_OBJ26_REPAIR") % [repaired, 3], LandWalls.DEPOT + Vector3(0, 1.2, 0))
+				hud.set_objective(tr("UI_OBJ26_REPAIR") % [repaired, 3], sur.depo() + Vector3(0, 1.2, 0))
 
 
 func _pick(kind: String) -> void:
@@ -2031,8 +2582,11 @@ func _process(delta: float) -> void:
 			_fx_t = randf_range(0.8, 2.0)
 			Vfx.explosion(walls, Vector3(randf_range(-14, 18), randf_range(1.0, 7.0), randf_range(22.0, 30.0)), randf_range(0.3, 0.6))
 			Audio.sfx("explosion_small", -16.0, randf_range(0.8, 1.2))
+		# Hendekte durdukları yer: eski hendeğin (z 20–36) dörtte biri, z 24; yeni sette aynı oran (parateikhion duvarının
+		# ve hendek iç yüzünün önünde; eşik eski z 24'te kalınca hendek duvarının içine yürüyorlardı: VISAUDIT insolid, WALKTHRU)
+		var dur_z := 24.0 if sur.eski_mi else sur.hendek_z(0.25)
 		for a in attackers:
-			if a.position.z > 24.0 and a.visible:
+			if a.position.z > dur_z and a.visible:
 				# Hemen önünde (0,6 m içinde) duran biri varsa bekler (hendekte üst üste birikmesinler)
 				var blocked := false
 				for o in attackers:
@@ -2078,18 +2632,18 @@ func _fire() -> void:
 	await get_tree().create_timer(1.1, false).timeout
 	if walls == null:
 		return
-	walls.impact(LandWalls.BREACH + Vector3(randf_range(-2.5, 2.5), 2.0, 0.6))
+	walls.impact(sur.gedik() + Vector3(randf_range(-2.5, 2.5), 2.0, 0.6))
 	Audio.sfx("explosion_big", -4.0)
 	player.shake(0.5)
 	var p := player.global_position
-	var safe := p.distance_to(LandWalls.BREACH) > 9.0 or p.distance_to(LandWalls.DEPOT) < 4.5
-	for m: Vector3 in LandWalls.MANTLETS:
+	var safe := p.distance_to(sur.gedik()) > 9.0 or p.distance_to(sur.depo()) < 4.5
+	for m: Vector3 in sur.siperler():
 		if absf(p.x - m.x) < 1.5 and p.z < m.z + 0.9 and p.z > m.z - 2.2:
 			safe = true
 	if not safe:
 		_knocks += 1
 		player.stagger(1.2)
-		player.hurt(40.0, LandWalls.BREACH + Vector3(0, 2.0, 30.0))
+		player.hurt(40.0, sur.gedik() + Vector3(0, 2.0, 30.0))
 		if carrying != "":
 			_drop()
 			_update_objective()
@@ -2140,13 +2694,13 @@ func _on_interact(id: String) -> void:
 			tw.tween_property(b, "rotation:z", deg_to_rad(-5), 0.12)
 			tw.tween_property(b, "rotation:z", 0.0, 0.08)
 			tw.tween_property(b, "rotation:x", deg_to_rad(90), 0.35).set_ease(Tween.EASE_IN)
-			tw.parallel().tween_property(b, "position", b.position + Vector3(0, 0.42, 0.6), 0.35)
+			tw.parallel().tween_property(b, "position", b.position + Vector3(0, 0.42, 0) + _yuvarla() * 0.6, 0.35)
 			tw.tween_callback(func():
 				Audio.sfx("land_thud", -4.0, 0.7)
 				Vfx.dust(self, b.global_position, 0.6)
 				player.shake(0.25))
 			# Yuvarlanır (ekseni yatay: x'te döner) ve duvarın dibinde durur
-			tw.tween_property(b, "position", b.position + Vector3(0, 0.42, 2.6), 0.7).set_ease(Tween.EASE_OUT)
+			tw.tween_property(b, "position", b.position + Vector3(0, 0.42, 0) + _yuvarla() * 2.6, 0.7).set_ease(Tween.EASE_OUT)
 			tw.parallel().tween_property(b, "rotation:y", deg_to_rad(200), 0.7).set_ease(Tween.EASE_OUT)
 			tw.tween_callback(func():
 				for c in b.get_children():
@@ -2164,14 +2718,17 @@ func _on_interact(id: String) -> void:
 
 ## Yol açılınca poterna da açılır: içeriden fenerli bir nöbetçi kanatları çeker, sıcak ışık peribolosa düşer
 func _open_postern() -> void:
-	var door := Vector3(POSTERN.x, 0.0, LandWalls.INNER_Z1)
+	var door := Vector3(POSTERN.x, 0.0, LandWalls.INNER_Z1 if sur.eski_mi else sur.ic_sur_z1())
 	var glow := OmniLight3D.new()
 	glow.light_color = Color("ffb862")
 	glow.light_energy = 0.0
 	glow.omni_range = 7.0
 	glow.position = door + Vector3(0, 1.8, 0.6)
 	add_child(glow)
-	for k: float in [-1.0, 1.0]:
+	if not sur.eski_mi:
+		# Yeni sette kapı setin kendi poternası (iç surun peribolos yüzü; SurOyun.ic_poterna): kanadı peribolosa açılır
+		(walls as SurSetSahne).ic_poterna_ac(true)
+	for k: float in ([-1.0, 1.0] if sur.eski_mi else []):
 		var hinge := Node3D.new()
 		hinge.position = door + Vector3(k * 1.0, 0, 0.12)
 		add_child(hinge)
@@ -2185,7 +2742,7 @@ func _open_postern() -> void:
 	lt.tween_property(glow, "light_energy", 2.2, 0.8)
 	Audio.sfx("door_metal", -6.0, 0.8)
 	var keeper := Soldier.new(Color("5a6a7a"), "stand", "helm")
-	keeper.position = door + Vector3(0.7, 0, 0.9)
+	keeper.position = door + Vector3(0.7, 0, 0.9 if sur.eski_mi else 1.4)
 	keeper.set_meta("no_talk", true)
 	add_child(keeper)
 	keeper.face_toward(giust.global_position)
@@ -2372,11 +2929,11 @@ func _run_shots() -> void:
 	add_child(gunner)
 	# Barikatın yıkılan ortasında, fıçı sırasının önünde (eskiden toprak tabyanın içinde duruyordu)
 	walls.set_repair(3)
-	gunner.global_position = LandWalls.on_rubble(LandWalls.BREACH + Vector3(0.9, 0, -0.8))
+	gunner.global_position = sur.on_rubble(_gp(Vector3(0.9, 0, -0.8)))
 	gunner.set_meta("no_chat", true)
 	gunner.face_toward(giust.global_position)
 	gunner.equip("handgun")
-	player.global_position = LandWalls.on_rubble(LandWalls.BREACH + Vector3(-0.6, 0, -5.2)) + Vector3(0, 0.05, 0)
+	player.global_position = sur.on_rubble(_gp(Vector3(-0.6, 0, -5.2))) + Vector3(0, 0.05, 0)
 	_clear_line(player.global_position, [gunner, giust])
 	player.face((gunner.global_position + giust.global_position) * 0.5 + Vector3(0, 1.3, 0))
 	await get_tree().create_timer(0.6, false).timeout
@@ -2384,7 +2941,7 @@ func _run_shots() -> void:
 	gunner.queue_free()
 	emperor.visible = true
 	# Yüksekliği yamaçtan (Giustiniani'ninkinden değil: yamaç orada daha alçak, havada duruyordu)
-	emperor.position = LandWalls.on_rubble(Vector3(giust.position.x + 1.3, 0.0, giust.position.z - 0.8))
+	emperor.position = sur.on_rubble(Vector3(giust.position.x + 1.3, 0.0, giust.position.z - 0.8))
 	player.face((giust.global_position + emperor.global_position) * 0.5 + Vector3(0, 1.4, 0))
 	await get_tree().create_timer(0.4, false).timeout
 	await _shot("c26_02h_hold.png")
@@ -2463,6 +3020,236 @@ func _run_shots() -> void:
 	get_tree().quit()
 
 
+# ================================================================ TAŞIMA-8: =yuru / =kare
+
+## =yuru: gerçek bot bölümün ana yolunu YÜRÜR (ileri tuşu; bölümün kendisi gibi yalnız sur yoluna çıkış ve caddeye geçiş
+## karartmalı ışınlamadır): doğuş → ok sandığı → okçular (gedik teslim yeri) → [sur yolu] merdiven ağzı → kazan →
+## [peribolos] depo → barikat → poterna fıçıları → Giustiniani'nin yeri → (kulenin önünden) poterna → [cadde] Romanos iç
+## kapısının önü. Satır: TASIMA8YURU … takilma/dusme. =kare: aynı yerlere ışınlanır, 8 kare (an_NN_ad.jpg) + bütçe satırı.
+##   godot --path . -- --chapter=26 --autotest=yuru [--eskisur=26]
+##   xvfb-run … -- --chapter=26 --autotest=kare --dialogshots=DIR [--eskisur=26]
+var _yz := {"bacak": 0, "takilma": 0, "dusme": 0, "sure": 0.0, "yol": 0.0}
+var _kare_n := 0
+
+
+func _t8_yuru() -> void:
+	Engine.time_scale = 1.0
+	var kare := GameState.autotest_variant == "kare"
+	var set_ad := "eski" if sur.eski_mi else "yeni"
+	hud.set_fade(0.0)
+	player.show_remote(true)
+	for i in 10:
+		await get_tree().physics_frame
+	print("TASIMA8YER set=%s kuyu=%s poterna=%s fici=%s sancak=%s merdiven=%s" % [set_ad, WELL, POSTERN, BLOCKS, BANNER_TOWER,
+		ladders.map(func(l): return snappedf(l.position.x, 0.1))])
+	# 1. açılış (doğuş, komutana bakış)
+	player.global_position = sur.dogus()
+	player.frozen = false
+	await _t8_bekle(0.5)
+	player.face(giust.global_position + Vector3(0, 1.5, 0))
+	if kare:
+		await _t8_kare("acilis")
+	# 2. ok sandığı → okçular (1. dalga)
+	phase = "wave1"
+	_wave_start(1)
+	await _t8_yb("kuyu", WELL + Vector3(0.0, 0.0, 1.6), WELL + Vector3(0, 0.6, 0))
+	if kare:
+		await _t8_kare("ok_demeti")
+	await _t8_yb("okcular", _gp(Vector3(-0.8, 0, -2.4)), sur.gedik() + Vector3(0, 2.0, 0))
+	# 3. sur yolu: merdiven ağzı (bölümde karartmayla ışınlanır), kazana yürü
+	var lad: Ladder = ladders[0]
+	var land := Vector3(lad.position.x, sur.dis_yol_y(), 15.05 if sur.eski_mi else sur.dis_yol_z())
+	var back := player.global_position
+	player.global_position = Vector3(lad.position.x - 1.9, sur.dis_yol_y() + 0.05, 14.95 if sur.eski_mi else sur.dis_yol_ic_z())
+	await _t8_bekle(0.4)
+	await _t8_yb("merdiven_agzi", land + Vector3(-0.6, 0, 0), land + Vector3(0, -2.0, 3.0))
+	if kare:
+		var az := Soldier.new(Color("8a6a4a"), "stand", "turban")
+		add_child(az)
+		# merdivenin üstünde, tepeye yakın (basamağa basar: eğim boyunca, ön yüzünde)
+		az.global_position = lad.point_at(lad.height - 1.2) + lad.front_dir() * 0.3
+		az.rotation.y = PI
+		az.set_meta("no_audit", true)
+		# kadraj: merdiven başının 2,6 m yanından, korkuluğun üstüne çıkan azaba
+		var kx := lad.position.x + 2.6 * signf(lad.position.x)      # gedikten uzak yan (stauroma gedik yanında)
+		player.global_position = Vector3(kx, sur.dis_yol_y() + 0.05, 14.7 if sur.eski_mi else sur.dis_yol_ic_z())
+		await _t8_bekle(0.3)
+		player.face(az.global_position + Vector3(0, 1.4, 0))
+		await _t8_kare("merdiven_azap")
+		az.queue_free()
+	# kazan sur yolunu kapatır: merdiven ağzı yanındaki kazanın merdiven tarafına (eski ve yeni sette kazan x ±8,6)
+	var cx := 8.6 * signf(lad.position.x)
+	await _t8_yb("kazan", Vector3(cx + 1.4 * signf(cx), 0, land.z), Vector3(cx, sur.dis_yol_y() + 0.6, land.z))
+	if kare:
+		player.global_position = Vector3(cx + 3.2 * signf(cx), sur.dis_yol_y() + 0.05, land.z)
+		await _t8_bekle(0.3)
+		player.face(Vector3(cx, sur.dis_yol_y() + 0.9, land.z + 0.3))
+		await _t8_kare("kazan")
+	player.global_position = back
+	await _t8_bekle(0.4)
+	# 4. depo → barikat (2. dalga)
+	phase = "wave2"
+	walls.set_repair(LandWalls.STAGES - 4)
+	await _t8_yb("depo", sur.depo() + Vector3(-0.8, 0, 2.2), sur.depo() + Vector3(0, 1.0, 0))
+	await _t8_yb("barikat", sur.gedik_onu() + Vector3(0.6, 0, -0.4), sur.barikat())
+	if kare:
+		await _t8_kare("barikat")
+	# 5. poterna fıçıları (3. dalga, şafak)
+	phase = "wave3"
+	walls.make_dawn(0.01)
+	await _t8_yb("fici", BLOCKS[0] + Vector3(-1.2, 0, 1.0), POSTERN + Vector3(0, 1.2, 0))
+	# fıçılar çekilir (oyunda da poternaya ancak böyle geçilir), poterna açılır
+	for i in BLOCKS.size():
+		_on_interact("block_%d" % i)
+	await _t8_bekle(2.0)
+	if kare:
+		await _t8_kare("poterna")
+	# 6. Giustiniani'yi taşıma yolu: yaralının yanından poternaya (yeni sette iç kulenin önünden)
+	await _t8_yb("giust", giust.global_position + Vector3(0.0, 0, -1.6), giust.global_position + Vector3(0, 1.0, 0))
+	var t_tas := _yz["sure"] as float
+	var yol_tas := _yz["yol"] as float
+	for q: Vector3 in _tasima_yolu():
+		await _t8_yb("tasima_ara", q, POSTERN + Vector3(0, 1.0, 0))
+	# taşıma bitişi (bölümün kendi ölçüsü: poternanın 1,6 m önü, 1,2 m yakınlık; eski sette kapının nöbetçisi önünde)
+	await _t8_yb("poterna", POSTERN + Vector3(-0.6, 0, 2.2), POSTERN + Vector3(0, 1.2, 0))
+	print("TASIMA8YURU tasima set=%s yol=%.1f sure=%.1f" % [set_ad, float(_yz["yol"]) - yol_tas, float(_yz["sure"]) - t_tas])
+	if kare:
+		# taşıma pozu poternanın önünde (oyuncu ayak ucunda)
+		var dir := (POSTERN - player.global_position)
+		dir.y = 0.0
+		dir = dir.normalized()
+		_carry_at = player.global_position + dir * 1.35
+		_carry_pose(dir, 0.85, 1.0)
+		player.face(_carry_at + Vector3(0, 0.6, 0))
+		await _t8_kare("tasima")
+		giust.visible = false
+	# 7. cadde: Romanos iç kapısının (eski: iç kapı) önü
+	walls.make_day()
+	var ro := sur.romanos()
+	var co := sur.sehir_ofs(float(ro["x"]))
+	var city := FallenCity.new()
+	city.field = walls.field
+	if sur.eski_mi:
+		walls.open_inner_gate()
+	else:
+		city.yer = co
+		walls.open_inner_gate()
+	add_child(city)
+	player.global_position = co + Vector3(2.6, 0.05, -9.5)
+	await _t8_bekle(1.0)
+	await _t8_yb("kapi", Vector3(float(ro["x"]) + 1.2, 0, float(ro["ic_z0"]) - 2.2), Vector3(float(ro["x"]), 2.4, float(ro["ic_z1"])))
+	if kare:
+		var horse := Horse.new(Color("e4e0d8"))
+		add_child(horse)
+		var sultan := Person.new({"coat": Color("b3262d"), "pants": Color("6a1a1a"), "hat": "sultan", "face": "fatih", "mustache": true,
+			"robe": Color("c8323a"), "hair": Color("2a1e14"), "skin": Color("e0b08a")})
+		horse.mount(sultan)
+		horse.position = Vector3(float(ro["x"]), 0.0, (float(ro["ic_z1"]) + float(ro["dis_z0"])) * 0.5) if not sur.eski_mi else Vector3(0, 0.0, 5.0)
+		horse.rotation.y = PI
+		player.global_position = co + Vector3(2.6, 0.05, -9.5)
+		player.face(horse.global_position + Vector3(0, 2.0, 0))
+		await _t8_kare("kapi_final")
+	print("TASIMA8YURU OZET set=%s bacak=%d takilma=%d dusme=%d sure=%.1f yol=%.1f" % [set_ad, _yz["bacak"], _yz["takilma"],
+		_yz["dusme"], _yz["sure"], _yz["yol"]])
+	print("AUTOTEST PASS chapter=26 variant=%s set=%s takilma=%d dusme=%d" % [GameState.autotest_variant, set_ad, _yz["takilma"], _yz["dusme"]]
+		if int(_yz["takilma"]) == 0 and int(_yz["dusme"]) == 0 else
+		"AUTOTEST FAIL chapter=26 variant=%s set=%s takilma=%d dusme=%d" % [GameState.autotest_variant, set_ad, _yz["takilma"], _yz["dusme"]])
+	get_tree().quit()
+
+
+## Sonda (--sonda8): savunucu sırasının yerleri
+func _t8_sonda(an: String) -> void:
+	if not OS.get_cmdline_user_args().has("--sonda8"):
+		return
+	var sat := "SONDA8 %s" % an
+	for d in defenders:
+		sat += " %s" % d.global_position.snapped(Vector3.ONE * 0.1)
+	print(sat)
+
+
+func _t8_bekle(sn: float) -> void:
+	var t := 0.0
+	while t < sn:
+		await get_tree().physics_frame
+		t += get_physics_process_delta_time()
+
+
+## Tek bacak: hedefe yürü (gerçek ileri tuşu), varınca bak. =kare: ışınlanır.
+func _t8_yb(ad: String, to: Vector3, bak: Vector3) -> void:
+	var t := 0.0
+	var yol := 0.0
+	var son := player.global_position
+	var takil := 0
+	var dus := 0
+	var best := 1e9
+	var iz := 0.0
+	if GameState.autotest_variant == "kare":
+		var gy := Unclip.floor_y(player, Vector3(to.x, player.global_position.y + 1.0, to.z), 2.5, 6.0)
+		player.global_position = Vector3(to.x, (player.global_position.y if is_nan(gy) else gy) + 0.05, to.z)
+	else:
+		while t < 30.0:
+			player.face(Vector3(to.x, player.global_position.y + 1.4, to.z))
+			Input.action_press("move_forward")
+			await get_tree().physics_frame
+			t += get_physics_process_delta_time()
+			var p := player.global_position
+			yol += Vector2(p.x - son.x, p.z - son.z).length()
+			son = p
+			if player.velocity.y < -7.0:
+				dus += 1
+			var dd := Vector2(p.x - to.x, p.z - to.z).length()
+			if dd < best - 0.2:
+				best = dd
+				iz = t
+			if dd < 0.4:
+				break
+			if t - iz > 6.0:
+				takil += 1
+				break
+		Input.action_release("move_forward")
+	for k in 4:
+		await get_tree().physics_frame
+	player.face(bak)
+	for k in 4:
+		await get_tree().physics_frame
+	_yz["bacak"] += 1
+	_yz["takilma"] += takil
+	_yz["dusme"] += dus
+	_yz["sure"] += t
+	_yz["yol"] += yol
+	print("TASIMA8YURU bacak=%s t=%.1f yol=%.1f takilma=%d dusme=%d yer=%s hedef=%s" % [ad, t, yol, takil, dus,
+		player.global_position.snapped(Vector3.ONE * 0.1), to.snapped(Vector3.ONE * 0.1)])
+
+
+func _t8_kare(ad: String) -> void:
+	var dir := GameState.dialog_shots_dir if GameState.dialog_shots_dir != "" else GameState.shots_dir
+	if dir == "":
+		return
+	DirAccess.make_dir_recursive_absolute(dir)
+	# --karebas=N: N'den önceki kareler atlanır (yazılımsal GL'de seri 10 dakikayı aşıyordu: iki parçada çekilir)
+	var bas := 1
+	for arg in OS.get_cmdline_user_args():
+		if arg.begins_with("--karebas="):
+			bas = int(arg.trim_prefix("--karebas="))
+	if _kare_n + 1 < bas:
+		_kare_n += 1
+		return
+	for k in 8:
+		await get_tree().process_frame
+	# bütçe: bu bakışta 4 karenin ortalama çizim çağrısı ve ilkel sayısı (eski ↔ yeni aynı anlamdaki kameradan)
+	var dc := 0.0
+	var pr := 0.0
+	for k in 4:
+		await RenderingServer.frame_post_draw
+		dc += RenderingServer.get_rendering_info(RenderingServer.RENDERING_INFO_TOTAL_DRAW_CALLS_IN_FRAME)
+		pr += RenderingServer.get_rendering_info(RenderingServer.RENDERING_INFO_TOTAL_PRIMITIVES_IN_FRAME)
+	_kare_n += 1
+	var f := dir.path_join("an_%02d_%s.jpg" % [_kare_n, ad])
+	get_viewport().get_texture().get_image().save_jpg(f, 0.85)
+	print("TASIMA8KARE %s oyuncu=%s cizim=%.0f ilkel=%.0f sur=%s" % [f.get_file(), player.global_position.snapped(Vector3.ONE * 0.1),
+		dc / 4.0, pr / 4.0, "eski" if sur.eski_mi else "yeni"])
+
+
 ## Dalga rakipleri: tür ("azap", "janissary", "genoese", "defender"), doğuş noktaları sırayla dağıtılır.
 func _foe_specs(n: int, kind: String, spots: Array) -> Array:
 	var out := []
@@ -2497,7 +3284,7 @@ func _foe_specs(n: int, kind: String, spots: Array) -> Array:
 ## Merdivenden çıkıp gelenlerin doğduğu yer: oyuncunun gedik/sur tarafında, 4 m ötede iki yan (boş yer _free_spot'ta)
 func _ladder_heads() -> Array:
 	var p := player.global_position
-	var to := LandWalls.BREACH - p
+	var to := sur.gedik() - p
 	to.y = 0.0
 	to = to.normalized() if to.length() > 0.1 else Vector3(0, 0, 1)
 	var side := to.cross(Vector3.UP).normalized()

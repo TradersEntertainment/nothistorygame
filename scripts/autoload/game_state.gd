@@ -79,6 +79,8 @@ var settings := {"master": 1.0, "music": 0.8, "sfx": 0.9, "voice": 1.0, "mouse":
 	# Erişilebilirlik: kafa/el sallanması (hareket rahatsızlığı), koşma ve nişan için aç/kapa (basılı tutmadan),
 	# düello tepki süresi çarpanı, seslendirmesiz repliklerde okuma süresi çarpanı
 	"sway": true, "toggle_hold": false, "react": 1.0, "read_time": 1.0,
+	# Hareket hissi kamerası (HareketHis: koşu görüş açısı, iniş çökmesi, yatış, düşüş sarsıntısı); menü ilk açılışta da okur
+	"hareket_kamera": true,
 	# Arayüz ölçeği (altyazı, hedef, menüler; 3B görüntü değişmez)
 	"ui_scale": 1.0,
 	# Oyun testi (isteğe bağlı): bölüm sonu anketi ve yerel oturum günlüğü (user://playtest; ağa bir şey gitmez)

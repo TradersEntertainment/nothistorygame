@@ -342,6 +342,35 @@ func poterna() -> Dictionary:
 		"ic": n(Vector3(x, y_peri(), float(d["zo0"]) - 1.4)), "sahanlik": n(sah), "dis": n(dis)}
 
 
+## TAŞIMA-8 — İÇ POTERNA (Bölüm 26: Giustiniani'nin taşındığı, şehre açılan küçük kapı; eski set: iç surda, deponun
+## yanında). Yalnız kur(…, {"ic_poterna": true}) ile kurulur; bu sorgu her zaman yanıt verir ama kurulumu, engelleri,
+## noktaları ve varsayılan kesimi DEĞİŞTİRMEZ. Yer: iç surun peribolos yüzünde, oyun gediğinden şehir boyunca en az
+## 12 m uzakta, iç kulenin ve eteğinin (OTURTMA 3 m) dışında, gediğin +x yanını yeğler (eski poterna gediğin +x yanında,
+## 14,5 m). {"x", "en", "boy", "esik" (yüzün önü, peribolos zemini), "ic" (kapının 1,2 m önü), "yuz_z"}
+func ic_poterna() -> Dictionary:
+	var g0 := 0.0 if is_nan(gx) else gx
+	var w := IstSurlar.POTERNA_W
+	var bul := NAN
+	for s: float in [1.0, -1.0]:
+		for k in 120:
+			var x := g0 + s * (12.0 + k * 0.25)
+			var bos := absf(x) < L * 0.5 - 4.0
+			for t in kesim["kule"]["ic"]:
+				if absf(x - float(t[0])) < float(t[1]) * 0.5 + 3.0 + w * 0.5 + 1.2:
+					bos = false
+			var m: Dictionary = kesim["merdiven"]
+			if m.has("out_x0") and x > float(m["out_x0"]) - 3.0 and x < float(m["out_x1"]) + 3.0:
+				bos = false
+			if bos:
+				bul = x
+				break
+		if not is_nan(bul):
+			break
+	var zf := float(d["zi1"])
+	return {"x": bul, "en": w, "boy": IstSurlar.POTERNA_H, "yuz_z": zf,
+		"esik": n(Vector3(bul, y_peri(), zf + 0.35)), "ic": n(Vector3(bul, y_peri(), zf + 1.2))}
+
+
 ## Yürünür alanlar (yerel Rect2 x/z + y). Engeller ayrı (engeller()).
 func alanlar() -> Dictionary:
 	var x0 := -L * 0.5 + 2.0
@@ -486,6 +515,9 @@ func noktalar() -> Array:
 ##   "asama" (0..3 gedik onarımı), "kalas" (bool), "dolgu" (0..1), "kapi_kopru" ("saglam"|"yikik"), "merdiven" (dayama
 ##   indisleri dizisi), "poterna_acik" (bool), "dunya" (true: kök a.xf'e konur; false: kök orijinde, yerel çalışma),
 ##   "saglam" (bool, false — TUR-11: gediksiz sağlam sur, bkz. saglam_yap; "asama" yok sayılır)
+##   TAŞIMA-8 (hepsi varsayılan false; verilmezse kurulum bit bit aynı): "ic_poterna" (iç surda poterna, ic_poterna();
+##   parca["ic_poterna"]), "romanos_kanat" (yan dilimdeki kapı koşusunun kanatları açılır parça: parca["yan_kapi_kanat"],
+##   "kapi_acik" ile açık kurulur), "romanos_kopru" (o kapının önünde KapiKopru, "kapi_kopru" hâli; varsayılan "yikik")
 static func kur(p_id: String, sec := {}) -> Dictionary:
 	var t0 := Time.get_ticks_usec()
 	var a: RefCounted = arayuz(p_id)
@@ -528,6 +560,7 @@ static func kur(p_id: String, sec := {}) -> Dictionary:
 	olc["oyun_ms"] = (Time.get_ticks_usec() - t1) / 1000.0
 	# yan dilimler
 	var t2 := Time.get_ticks_usec()
+	var yan_kapi: Array = []          # TAŞIMA-8: [yan düğüm, kesim adı] (romanos_kanat)
 	if bool(sec.get("yan", true)):
 		for yn: Dictionary in a.yanlar():
 			var yd := Node3D.new()
@@ -535,7 +568,15 @@ static func kur(p_id: String, sec := {}) -> Dictionary:
 			yd.position.x = float(yn["x"])
 			kok.add_child(yd)
 			a._dy_kaydet(yd)
-			IstSurlar._run(yd, float(yn["L"]), SZ.K, 0, int(yn["tohum"]), yn["secenek"])
+			var yo: Dictionary = yn["secenek"]
+			# TAŞIMA-8 (karar 11-A: 26'nın sonu Romanos'ta): yan dilimdeki kapı koşusunun kanatları kapalı/gömülü kurulmaz,
+			# oynanış parçası (KapiKanat, açılır) kurar. Paylaşılan OPTS sözlüğü değişmez (kopya); görünüş aynı.
+			if bool(sec.get("romanos_kanat", false)) and String(yo.get("ad", "")) != "SurDilimi" and float(yo.get("gw", 0.0)) > 0.0 \
+					and not bool(yo.get("kapali", false)):
+				yo = yo.duplicate()
+				yo["kanat_disarida"] = true
+				yan_kapi.append([yd, String(yn["ad"]).trim_prefix("YanKapi_")])
+			IstSurlar._run(yd, float(yn["L"]), SZ.K, 0, int(yn["tohum"]), yo)
 	olc["yan_ms"] = (Time.get_ticks_usec() - t2) / 1000.0
 	# uzak katman
 	var t3 := Time.get_ticks_usec()
@@ -558,6 +599,37 @@ static func kur(p_id: String, sec := {}) -> Dictionary:
 	var parca := {}
 	if bool(sec.get("parca", true)):
 		parca = PARCA.kur_hepsi(kok, a, sec)
+		# TAŞIMA-8 ekleri (yalnız seçenekle; varsayılan kurulum bit bit aynı)
+		if bool(sec.get("ic_poterna", false)):
+			var ip := PARCA.Poterna.new()
+			ip.name = "Tas_IcPoterna"
+			ip.kur_ic(a, float(a.ic_poterna()["x"]))
+			(kok.get_node("OyunParcalari") as Node3D).add_child(ip)
+			ip.ac(false, false)
+			ip.kanat.set_meta("no_bake", true)
+			PARCA.PARCA_.pis(ip)
+			parca["ic_poterna"] = ip
+		for yk: Array in yan_kapi:
+			var ra: RefCounted = arayuz(String(yk[1]))
+			ra.dy = a.dy                  # yan dilim kesimin dış kademesinde kurulur
+			var kn := PARCA.KapiKanat.new()
+			kn.name = "Ahsap_KapiKanat"
+			kn.kur(ra)
+			(yk[0] as Node3D).add_child(kn)
+			kn.ac(bool(sec.get("kapi_acik", false)), false)
+			parca["yan_kapi_kanat"] = kn
+			if bool(sec.get("romanos_kopru", false)) and bool(ra.kesim["kapi"]["hendek"]):
+				var kk := PARCA.KapiKopru.new()
+				kk.name = "Ahsap_KapiKopru"
+				kk.kur(ra)
+				(yk[0] as Node3D).add_child(kk)
+				kk.hal(String(sec.get("kapi_kopru", "yikik")))
+				for c in kk.get_children():
+					if c is Node3D:
+						PARCA.PARCA_.pis(c)
+				PARCA.PARCA_.pis(kk)
+				parca["yan_kapi_kopru"] = kk
+			parca["yan_kapi_arayuz"] = ra
 	olc["parca_ms"] = (Time.get_ticks_usec() - t5) / 1000.0
 	olc["toplam_ms"] = (Time.get_ticks_usec() - t0) / 1000.0
 	return {"kok": kok, "arayuz": a, "parca": parca, "ms": olc}

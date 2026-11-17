@@ -84,6 +84,7 @@ func _ready() -> void:
 	hud.set_fez(GameState.flags.get("fez", true))
 	hud.set_signal(0)
 	walls = Blachernae.new()
+	walls.bolum = "30o"
 	add_child(walls)
 	walls.build_guards([CLIMB_X], false)
 	# Merdivenin iki yanındaki sur yolu adamları canlı: oyuncuya döner, sokulana mızrak dürter
@@ -94,7 +95,9 @@ func _ready() -> void:
 	guards = WallGuard.spawn_all(self, walls.live_spots, player)
 	if GameState.autotest:
 		Engine.time_scale = 3.0
-	if GameState.shots_dir != "":
+	if GameState.autotest and GameState.autotest_variant in ["kare", "yuru"]:
+		_tasima9()
+	elif GameState.shots_dir != "":
 		_run_shots()
 	else:
 		_run()
@@ -103,7 +106,8 @@ func _ready() -> void:
 func _build() -> void:
 	var lh := Blachernae.WALK_Y + 0.6
 	ladder = Ladder.new(lh, TILT, Color("6a4a2c"))
-	ladder.position = Vector3(CLIMB_X, 0.0, Blachernae.WALL_Z1 + lh * sin(deg_to_rad(TILT)) + 0.12)
+	var lz := Blachernae.WALL_Z1 + lh * sin(deg_to_rad(TILT)) + 0.12
+	ladder.position = Vector3(CLIMB_X, Blachernae.zemin_y(CLIMB_X, lz), lz)
 	add_child(ladder)
 	ladder.visible = false
 	# Sur yolundan kulenin tepesine kısa merdiven (kulenin batı yüzüne dayalı; kule x 16…24, tepe y 17)
@@ -119,7 +123,7 @@ func _build() -> void:
 	zaganos = Person.new({"coat": Color("2e6a3a"), "pants": Color("e8e0d0"), "hat": "turban", "beard": true, "mustache": true,
 		"robe": Color("2e6a3a"), "skin": Color("d8a882")})
 	zaganos.set_meta("spk", "SPK_ZAGANOS")
-	zaganos.position = START + Vector3(-3.0, Blachernae.slope_y(START.z + 2.0), 2.0)
+	zaganos.position = START + Vector3(-3.0, Blachernae.zemin_y(START.x - 3.0, START.z + 2.0), 2.0)
 	zaganos.rotation.y = PI
 	add_child(zaganos)
 	zaganos.look_target = player
@@ -153,7 +157,7 @@ func _build() -> void:
 	wounded.set_meta("spk", "SPK_SOLDIER")
 	wounded.set_meta("no_talk", true)
 	wounded.set_meta("climber", true)
-	wounded.position = Vector3(CLIMB_X + 2.4, 0.1, Blachernae.WALL_Z1 + 1.6)
+	wounded.position = Vector3(CLIMB_X + 2.4, 0.1 + Blachernae.zemin_y(CLIMB_X + 2.4, Blachernae.WALL_Z1 + 1.6), Blachernae.WALL_Z1 + 1.6)
 	wounded.rotation = Vector3(deg_to_rad(-80), 0.6, 0)
 	add_child(wounded)
 	wounded.visible = false
@@ -224,7 +228,7 @@ func _carry_ladder() -> void:
 			arrows = randf_range(1.6, 2.8)
 			var ahead := _carry_fwd() * randf_range(1.5, 4.0)
 			var at := player.global_position + ahead + _carry_fwd().cross(Vector3.UP) * randf_range(-2.2, 2.2)
-			at.y = Blachernae.slope_y(at.z)
+			at.y = Blachernae.zemin_y(at.x, at.z)
 			_arrow_volley(at)
 	player.frozen = true
 	hud.set_objective("")
@@ -240,7 +244,7 @@ func _carry_ladder() -> void:
 		c.pose = "push"
 		# Merdiven ayağının iki yanında ve yanında (oyuncunun görüşünün önüne değil, kenarlarına)
 		var at := ladder.global_position + Vector3([-1.15, 1.15, 2.1][k], 0, [0.7, 0.7, 1.3][k])
-		at.y = Blachernae.slope_y(at.z)
+		at.y = Blachernae.zemin_y(at.x, at.z)
 		var tw := c.create_tween()
 		tw.tween_property(c, "global_position", at, 0.6)
 		c.look_at(Vector3(at.x, at.y, Blachernae.WALL_Z1), Vector3.UP)
@@ -318,7 +322,7 @@ func _carry_pose() -> void:
 	for k in carriers.size():
 		var along: float = [3.2, -2.6, -5.4][k]
 		var p: Vector3 = player.global_position + fwd * along
-		p.y = Blachernae.slope_y(p.z)
+		p.y = Blachernae.zemin_y(p.x, p.z)
 		carriers[k].global_position = p
 		carriers[k].look_at(p + fwd, Vector3.UP)
 		carriers[k].rotate_object_local(Vector3.UP, PI)
@@ -673,6 +677,7 @@ func _fall_off(lost := true) -> void:
 ## Çalı: birkaç yeşil top ve dal (ayak bileği yüksekliğinde gövde yok; üstüne düşülür)
 func _bush(at: Vector3) -> void:
 	var rng := RandomNumberGenerator.new()
+	at.y += Blachernae.zemin_y(at.x, at.z)
 	rng.seed = int(at.x * 13.0 + at.z * 7.0)
 	for k in 7:
 		var off := Vector3(rng.randf_range(-0.8, 0.8), rng.randf_range(0.3, 0.7), rng.randf_range(-0.7, 0.7))
@@ -842,7 +847,7 @@ func _retreat() -> void:
 		if volley <= 0.0 and player.global_position.z < SAFE_Z - 4.0:
 			volley = randf_range(1.8, 3.0)
 			var at := player.global_position + Vector3(randf_range(-2.0, 2.0), 0, randf_range(1.5, 4.0))
-			at.y = Blachernae.slope_y(at.z)
+			at.y = Blachernae.zemin_y(at.x, at.z)
 			_arrow_volley(at)
 	player.frozen = true
 	hud.set_objective("")
@@ -854,7 +859,7 @@ func _retreat() -> void:
 		player.show_remote(true)
 	await hud.say("SPK_SOLDIER", "D30O_S_THANKS")
 	# Paşa yamaçtan inip yanına gelir (9 m öteden konuşuyordu); yürürken yamaca basar
-	await Stage.approach(zaganos, player.global_position, 2.4, 1.6, Vector3.ZERO, func(_x: float, z: float) -> float: return Blachernae.slope_y(z))
+	await Stage.approach(zaganos, player.global_position, 2.4, 1.6, Vector3.ZERO, func(x: float, z: float) -> float: return Blachernae.zemin_y(x, z))
 	await hud.say("SPK_ZAGANOS", "D30O_Z_END")
 	await hud.say("SPK_NIHAT", "D30O_N_END")
 	_outcome = "30O.1"
@@ -1352,7 +1357,7 @@ func _run_off(s: Soldier, end: Vector3, speed: float) -> void:
 		if to.length() < 0.15:
 			break
 		var st := to.limit_length(speed * get_process_delta_time())
-		s.global_position = Vector3(p.x + st.x, Blachernae.slope_y(p.z + st.z), p.z + st.z)
+		s.global_position = Vector3(p.x + st.x, Blachernae.zemin_y(p.x + st.x, p.z + st.z), p.z + st.z)
 		s.face_toward(end)
 		walked += st.length()
 		if s.rig:
@@ -1443,7 +1448,7 @@ func _path_done(d: Duelist, limit: float) -> void:
 func _leap(n: Node3D, cx: float) -> void:
 	var from := n.global_position
 	var peak := Vector3(cx, Blachernae.WALK_Y + 1.25, Blachernae.WALL_Z1 + 0.55)
-	var land := Vector3(cx, Blachernae.slope_y(Blachernae.WALL_Z1 + 6.0), Blachernae.WALL_Z1 + 6.0)
+	var land := Vector3(cx, Blachernae.zemin_y(cx, Blachernae.WALL_Z1 + 6.0), Blachernae.WALL_Z1 + 6.0)
 	var tw := create_tween()
 	tw.tween_method(func(u: float):
 		if not is_instance_valid(n):
@@ -1465,7 +1470,7 @@ func _leap(n: Node3D, cx: float) -> void:
 ## Sağdaki bölük tüfekçinin kulesinin önünden çıkar (kule surdan 10 m öne taşar). at_player: oklar oyuncunun çevresine
 ## de iner (oyuncu sur dibindeyse; sur yolundayken oklar oradan atılıyor). avoid: başka kaçanların varış yerleri.
 func _start_rout(at_player := true, more_avoid: Array = []) -> void:
-	var gy := func(_x: float, z: float) -> float: return Blachernae.slope_y(z)
+	var gy := func(x: float, z: float) -> float: return Blachernae.zemin_y(x, z)
 	var avoid: Array = [zaganos.global_position] + more_avoid
 	for side: Array in [[Vector3(CLIMB_X - 17.0, 0, Blachernae.WALL_Z1 + 3.0), Vector3(CLIMB_X - 4.5, 0, Blachernae.WALL_Z1 + 3.0), 7, 3011],
 			[Vector3(CLIMB_X + 5.0, 0, Blachernae.WALL_Z1 + 6.9), Vector3(CLIMB_X + 16.0, 0, Blachernae.WALL_Z1 + 6.9), 6, 3012]]:
@@ -1548,13 +1553,13 @@ func _captured() -> void:
 ## Kararmış ekranda konuşulmaz: surun dibi, meşale ışığı. Kâtip düştüğü yerde yatıyor; Grant önünde (sur tarafında),
 ## çıkış kolunun iki mızraklısı iki yanında, biri elinde meşale (21'deki gibi: önlüklü, sakallı mühendis).
 func _captors(at: Vector3) -> Person:
-	at.y = Blachernae.slope_y(at.z)
+	at.y = Blachernae.zemin_y(at.x, at.z)
 	var grant := Person.new({"coat": Color("5a5a62"), "pants": Color("3a3a40"), "hat": "none", "beard": true, "hair": Color("8a5a2a"),
 		"apron": Color("3a3028"), "skin": Color("e8b894")})
 	grant.set_meta("spk", "SPK_GRANT")
 	add_child(grant)
 	var gz := at.z - 1.7
-	grant.global_position = Vector3(at.x - 0.2, Blachernae.slope_y(gz), gz)
+	grant.global_position = Vector3(at.x - 0.2, Blachernae.zemin_y(at.x - 0.2, gz), gz)
 	grant.look_target = player
 	for k in 2:
 		var m := Soldier.new([Color("7a2a24"), Color("5a6a7a")][k], "stand", "helm")
@@ -1562,7 +1567,7 @@ func _captors(at: Vector3) -> Person:
 		m.set_meta("climber", true)
 		add_child(m)
 		var mz := at.z - 0.6 + k * 0.5
-		m.global_position = Vector3(at.x - 1.3 + 2.6 * k, Blachernae.slope_y(mz), mz)
+		m.global_position = Vector3(at.x - 1.3 + 2.6 * k, Blachernae.zemin_y(at.x - 1.3 + 2.6 * k, mz), mz)
 		m.face_toward(at)
 		m.equip("spear" if k == 0 else "torch")
 		if k == 1:
@@ -1611,6 +1616,7 @@ func _on_interact(id: String) -> void:
 
 func _process(delta: float) -> void:
 	_t += delta
+	_t9_sure()
 
 
 # ================================================================ bölüm sonu
@@ -1876,3 +1882,55 @@ func _run_shots() -> void:
 	cv.look_at(gr.global_position + Vector3(0, 0.9, 0.8), Vector3.UP)
 	await _shot_png("c30o_captive_side.png")
 	get_tree().quit()
+
+
+# ================================================================ TAŞIMA-9 kare / yürüyüş (tests/_ist/tasima9_bot.gd)
+
+## =kare: sabit kameralardan altı an + iki yakın mazgal (0,6 m; merdivenin açıldığı mazgal); --dialogshots=<klasör>.
+## =yuru: gerçek Player botu ovadan merdiven ayağına (START → PLANT), sonra sur yolunda (merdiven tepesinden iki yana) yürür.
+func _tasima9() -> void:
+	var BOT := load("res://tests/_ist/tasima9_bot.gd")
+	var set_ad := "eski" if walls.eski else "yeni"
+	# taşıyan bölük akışta konumlanır (_carry); kare/yürüyüşte akış yok: dünyanın ortasında (surun içinde) kalmasınlar
+	for k in carriers.size():
+		carriers[k].visible = false
+		carriers[k].position = START + Vector3(-1.5 + 1.5 * k, 0, 4.0)
+	var W := Blachernae.WALK_Y
+	var Y := W + Player.EYE
+	if GameState.autotest_variant == "kare":
+		ladder.visible = true
+		emperor.visible = true
+		await BOT.kare(self, player, hud, [
+			["acilis", Vector3(10.0, 1.67, 40.0), Vector3(10.0, 8.0, 0.0), 72.0],
+			["sur_yolu_yakin", Vector3(8.0, Y, 2.9), Vector3(14.0, 12.6, 4.4), 72.0],
+			["kule", Vector3(24.0, 1.67, 24.0), Vector3(20.0, 12.0, 6.0), 72.0],
+			["merdiven", Vector3(13.0, 1.67, 15.0), Vector3(10.0, 8.0, 5.0), 72.0],
+			["saray_onu", Vector3(6.0, Y, 1.0), Vector3(0.0, 7.0, -18.0), 72.0],
+			["gece_genel", Vector3(-30.0, 24.0, 48.0), Vector3(5.0, 6.0, 0.0), 60.0],
+			["mazgal_yakin", Vector3(11.3, Y, 3.4), Vector3(11.3, 12.9, 4.6), 72.0],
+			["mazgal_merdiven", Vector3(10.35, Y, 3.2), Vector3(10.35, 11.8, 9.0), 72.0],
+		], set_ad)
+		return
+	var ust := Vector3(CLIMB_X, W + 0.05, 2.3)
+	await BOT.yuru(self, player, hud, START + Vector3(0, 0.05, 0), [
+		["ova_merdiven_ayagi", Vector3(CLIMB_X, 0.0, PLANT.z + 1.5), 0.0],
+		["sur_dogu", Vector3(15.0, W, 2.3), W, ust],
+		["sur_bati", Vector3(-15.0, W, 2.3), W],
+		["sur_geri", Vector3(CLIMB_X, W, 2.3), W],
+	], set_ad)
+
+
+## TAŞIMA-9 süre tablosu (yalnız autotest): evre değişince bir önceki evrenin oyun süresi (ölçekli delta; eski | yeni aynı
+## komutla karşılaştırılır). Satır: T9SURE evre=<ad> sure=<sn>
+var _t9_faz := ""
+var _t9_bas := 0.0
+
+
+func _t9_sure() -> void:
+	if not GameState.autotest or phase == _t9_faz:
+		return
+	if _t9_faz != "":
+		print("T9SURE evre=%s sure=%.2f set=%s" % [_t9_faz, _t - _t9_bas, "eski" if walls.eski else "yeni"])
+	_t9_faz = phase
+	_t9_bas = _t
+

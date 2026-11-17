@@ -22,6 +22,16 @@ var kesim_id := "mesoteikhion"
 var dolgu := 1.0
 var kalas := true
 var poterna_acik := false
+## TAŞIMA-8 (Bölüm 26): iç surda poterna (SurOyun.ic_poterna) ve Romanos yan diliminde açılır kanatlar (karar 11-A).
+## add_child'dan önce verilir; varsayılan false (öteki bölümlerin kurulumu aynı).
+var ic_poterna := false
+var romanos_kanat := false
+var romanos_kopru := false
+## TAŞIMA-8: kesimin çarpışma gövdeleri "görünür duvar" sayılsın (meta "wall"). Gövdelerin görünen ağı pişirmede kardeş
+## düğüme taşındığı için Unclip.visible_body onları görünmez sınır sayıyordu: geri savrulan düellocu sur yolunun
+## korkuluğunu/dişini yokmuş gibi aşıp düşüyordu (Duelist._edge_fall; 26o'da sur yolu dövüşü 2–3 sn'de "atılarak" bitti,
+## eskide 22 sn). Varsayılan false: öteki bölümlerin davranışı aynı.
+var govde_gorunur := false
 var kesim: Dictionary = {}            # SurOyun.kur dönüşü
 var gedik_onarim: Node3D              # GedikOnarim
 var ova: Node3D                       # ova düğümü (SurSet.ova_ofs)
@@ -84,9 +94,36 @@ func _ready() -> void:
 	cer.transform = sur.cerceve()
 	add_child(cer)
 	kesim = SurOyun.kur(kesim_id, {"ebeveyn": cer, "dunya": false, "asama": 1, "dolgu": dolgu, "kalas": kalas,
-		"poterna_acik": poterna_acik, "merdiven": [], "saglam": sur.saglam})
+		"poterna_acik": poterna_acik, "merdiven": [], "saglam": sur.saglam,
+		"ic_poterna": ic_poterna, "romanos_kanat": romanos_kanat, "romanos_kopru": romanos_kopru})
 	ms = (kesim["ms"] as Dictionary).duplicate()
 	gedik_onarim = kesim["parca"].get("gedik")
+	if govde_gorunur:
+		# yalnız sur yolu düzeyine (ve üstüne) çıkan kutu gövdeler: sur gövdeleri (yolun kendisi), korkuluk, diş, kuleler.
+		# Etek (üçgen ağ), hendek duvarları, gedik molozu, teras gibi alçak gövdeler eskisi gibi kalır.
+		var n_g := 0
+		var yy := sur.dis_yol_y() - 0.3
+		for b in (kesim["kok"] as Node).find_children("*", "StaticBody3D", true, false):
+			if Unclip.visible_body(b) or b.has_meta("wall") or b.has_meta("ground"):
+				continue
+			var ust := true
+			var var_kutu := false
+			for c in b.get_children():
+				var cs := c as CollisionShape3D
+				if cs == null:
+					continue
+				var bx := cs.shape as BoxShape3D
+				if bx == null:
+					ust = false
+					break
+				var_kutu = true
+				if (cs.global_transform.origin.y + bx.size.y * 0.5) < yy:
+					ust = false
+			if ust and var_kutu:
+				b.set_meta("wall", true)
+				n_g += 1
+		if GameState.autotest:
+			print("SURSET govde_gorunur=%d" % n_g)
 	# Kesimin düz ova levhası görünmez (çarpışması kalır): ova görüntüsü SiegeField'in arazisidir (aynı düzlemde iki yüzey
 	# titreşirdi)
 	var ovl := (kesim["kok"] as Node).find_child("Toprak_ZeminOva", true, false)
@@ -351,8 +388,20 @@ func _kutudan_cikar() -> void:
 
 
 ## Eski setin "sağlam" (28o) ve dolgu (26o) seçenekleri bu sahnede yok: bölüm taşınırken ayrıca bağlanır.
+## TAŞIMA-8 (karar 11-A): iç kapı Romanos'ta. romanos_kanat ile kurulduysa yan dilimin kanatları açılır (1,6 sn).
 func open_inner_gate() -> void:
-	push_warning("SurSetSahne: iç kapı Mesoteikhion kesiminde yok (karar 11: Romanos)")
+	var kn: Node = kesim.get("parca", {}).get("yan_kapi_kanat")
+	if kn == null:
+		push_warning("SurSetSahne: iç kapı Mesoteikhion kesiminde yok (karar 11: Romanos; romanos_kanat verilmedi)")
+		return
+	kn.call("ac", true, true)
+
+
+## TAŞIMA-8: iç poternanın kanadı (Bölüm 26, 3. dalga). Kurulmadıysa bir şey yapmaz.
+func ic_poterna_ac(acik := true, anim := true) -> void:
+	var ip: Node = kesim.get("parca", {}).get("ic_poterna")
+	if ip:
+		ip.call("ac", acik, anim)
 
 
 ## Test ölçümü (yalnız autotest): sahnenin doğrudan çocuğu olan bütün düellocuların (yaşayan, ölü, gizlenmiş) zemine göre en

@@ -135,6 +135,7 @@ class Poterna extends Node3D:
 	var acik := false
 	var x := 0.0
 	var basamak_uc := Vector3.INF      # dış basamağın teras ucu (yoksa INF)
+	var ic := false                    # TAŞIMA-8: iç surun peribolos yüzünde (26: Giustiniani'nin taşındığı kapı)
 
 	func kur(a: RefCounted) -> void:
 		var d: Dictionary = a.d
@@ -156,12 +157,14 @@ class Poterna extends Node3D:
 		for i in n:
 			var a0 := PI * float(i) / n
 			var a1 := PI * float(i + 1) / n
-			for zf: float in [zo1, zo1 + 0.13]:
-				pass
-			var p0 := Vector3(x + cos(a0) * r, h - 0.35 + sin(a0) * 0.55, zo1 + 0.13)
-			var p1 := Vector3(x + cos(a1) * r, h - 0.35 + sin(a1) * 0.55, zo1 + 0.13)
-			var q0 := Vector3(x + cos(a0) * (r + 0.32), h - 0.35 + sin(a0) * 0.87, zo1 + 0.13)
-			var q1 := Vector3(x + cos(a1) * (r + 0.32), h - 0.35 + sin(a1) * 0.87, zo1 + 0.13)
+			# TUR-13: halkanın alt uçları sövenin dışına taşmaz (tasima8 "kulak"): iç kenar açıklıkta (w/2), dış kenar
+			# sövenin dış yüzünde (w/2 + 0,28); dikey yarıçaplar aynı
+			var ri := w * 0.5
+			var ro := w * 0.5 + 0.28
+			var p0 := Vector3(x + cos(a0) * ri, h - 0.35 + sin(a0) * 0.55, zo1 + 0.13)
+			var p1 := Vector3(x + cos(a1) * ri, h - 0.35 + sin(a1) * 0.55, zo1 + 0.13)
+			var q0 := Vector3(x + cos(a0) * ro, h - 0.35 + sin(a0) * 0.87, zo1 + 0.13)
+			var q1 := Vector3(x + cos(a1) * ro, h - 0.35 + sin(a1) * 0.87, zo1 + 0.13)
 			ag.quad(p0, p1, q1, q0, Vector3.BACK, Color(1, 1, 1) if i % 2 == 0 else Color(0.86, 0.82, 0.76))
 		# eşik taşı (iki yandaki toprakla aynı düzde)
 		ag.kutu(Vector3(x, -0.12, zo0 - 0.4), Vector3.RIGHT, Vector3.BACK, w + 0.1, 0.1, zo1 - zo0 + 0.8)
@@ -210,10 +213,132 @@ class Poterna extends Node3D:
 		kanat_govde.position = Vector3((w - 0.06) * 0.5, h * 0.5, -0.01)
 		kanat.add_child(kanat_govde)
 
-	## Kanadı açar/kapar (dışarı, 100°). anim: tween ile 0,8 sn
+	## TAŞIMA-8 (Bölüm 26, sahibinin kararı: poterna İÇ SURDA, şehre açılan küçük kapı): iç surun peribolos yüzünde (zi1).
+	## TUR-13: kapı surun ÖNÜNE konmaz, surun İÇİNE oyulur (tasima8 karesi: "kemerli ahşap kulübe"). Oyuk, söve ve kemer
+	## taşları, tonoz ve lünet sur gövdesiyle birlikte kurulur (IstSurlar._ic_poterna_oyuk; aynı ressam, yüzle aynı düzlem).
+	## Burada yalnız kapının oynayan/koyu parçaları: kanat (oyukta, yüzden 0,24 m içeride, peribolosa açılır), eşik taşı,
+	## kanadın ardındaki karanlık geçit (yan yüzler içeri doğru kararır, dipte koyu yüz). Kanat çarpışma kutusu aynı ölçü.
+	## Sur oyulmadıysa (oyuğu istemeyen test sahnesi) kapı eskisi gibi yüzün önüne alınır (_otur_ic).
+	## px: kesim-yerel x (SurOyun.ic_poterna). Varsayılan Poterna (kur) hiç değişmez.
+	var _zf := 0.0
+	func kur_ic(a: RefCounted, px: float) -> void:
+		ic = true
+		var d: Dictionary = a.d
+		x = px
+		var zf := float(d["zi1"])
+		_zf = zf
+		var w := IstSurlar.POTERNA_W
+		var h := IstSurlar.POTERNA_H
+		var hs := IstSurlar.IC_PO_HS
+		var D := IstSurlar.IC_PO_D
+		var tas := IstSurlar.C_STONE.darkened(0.1)
+		var ag = KULE.Ag.new()
+		# eşik taşı: oyuğun tabanında, peribolos toprağının (y −0,12) üstünde 8 cm, yüzden 12 cm taşar (iki parça, derzli)
+		for k2 in 2:
+			var xa := x - w * 0.5 + 0.01 + k2 * w * 0.5
+			ag.kutu(Vector3(xa + w * 0.25 - 0.01, -0.12, zf - 0.5), Vector3.RIGHT, Vector3.BACK, w * 0.5 - 0.022, 0.08, 0.62,
+				Color(0.86, 0.84, 0.8, IstSurlar.KESME_A) if k2 == 0 else Color(0.78, 0.76, 0.72, IstSurlar.KESME_A))
+		ag.mesh_ekle(self, IstSurlar._kesme_tas_mat(), "Tas_PoternaEsikTasi")
+		# karanlık geçit: kanadın ardında yan yüzler ve tavan içeri doğru kararır, dipte koyu yüz, tabanda koyu toprak
+		var kag0 = KULE.Ag.new()
+		var dz := [zf - 0.26, zf - 0.6, zf - 1.0, zf - D + 0.01]
+		var ton := [Color(0.42, 0.39, 0.36), Color(0.24, 0.22, 0.2), Color(0.12, 0.11, 0.1)]
+		for j in 3:
+			var za: float = dz[j]
+			var zb: float = dz[j + 1]
+			for sx: float in [-1.0, 1.0]:
+				var xr := x + sx * (w * 0.5 - 0.004)
+				kag0.quad(Vector3(xr, -0.13, za), Vector3(xr, -0.13, zb), Vector3(xr, hs, zb), Vector3(xr, hs, za), Vector3(-sx, 0, 0), ton[j])
+			kag0.quad(Vector3(x - w * 0.5, hs - 0.004, za), Vector3(x + w * 0.5, hs - 0.004, za), Vector3(x + w * 0.5, hs - 0.004, zb),
+				Vector3(x - w * 0.5, hs - 0.004, zb), Vector3.DOWN, ton[j])
+			kag0.quad(Vector3(x - w * 0.5, -0.115, za), Vector3(x + w * 0.5, -0.115, za), Vector3(x + w * 0.5, -0.115, zb),
+				Vector3(x - w * 0.5, -0.115, zb), Vector3.UP, ton[j].darkened(0.2))
+		kag0.quad(Vector3(x - w * 0.5, -0.13, zf - D + 0.012), Vector3(x + w * 0.5, -0.13, zf - D + 0.012),
+			Vector3(x + w * 0.5, hs, zf - D + 0.012), Vector3(x - w * 0.5, hs, zf - D + 0.012), Vector3.BACK, Color(0.06, 0.055, 0.05))
+		kag0.mesh_ekle(self, Props.mat(Color("2a231d"), 0.0, false, ""), "Tas_PoternaGecit", false)
+		var esik := StaticBody3D.new()
+		esik.name = "Tas_PoternaEsik_Carp"
+		var cs := CollisionShape3D.new()
+		var bs := BoxShape3D.new()
+		bs.size = Vector3(w + 0.3, 0.12, 0.7)
+		cs.shape = bs
+		esik.add_child(cs)
+		esik.position = Vector3(x, -0.08, zf + 0.35)
+		add_child(esik)
+		# kanat: menteşe oyuğun sol yan yüzünde (x − w/2 + 0,03), yüzden 0,24 m içeride; peribolosa (+z) 95° açılır
+		aci = -95.0
+		kanat = Node3D.new()
+		kanat.name = "Ahsap_PoternaKanat"
+		kanat.position = Vector3(x - w * 0.5 + 0.03, -0.04, zf - 0.24 + 0.095)
+		add_child(kanat)
+		var kag = KULE.Ag.new()
+		var tw := (w - 0.06) / 5.0
+		for i in 5:
+			var hh := hs - 0.12
+			kag.kutu(Vector3(tw * (i + 0.5), 0.0, -0.095), Vector3.RIGHT, Vector3.BACK, tw - 0.012, hh, 0.09, Color(1, 1, 1) if i % 2 == 0 else Color(0.9, 0.87, 0.82))
+		kag.mesh_ekle(kanat, Props.mat(C_WOOD.darkened(0.15), 0.0, false, "wood"), "Ahsap_PoternaTahta")
+		var dag = KULE.Ag.new()
+		for yy: float in [0.3, hs - 0.45]:
+			dag.kutu(Vector3((w - 0.06) * 0.5, yy, -0.005), Vector3.RIGHT, Vector3.BACK, w - 0.16, 0.07, 0.022)
+		# çivi başları (kuşak boyunca)
+		for yy: float in [0.335, hs - 0.415]:
+			for i in 6:
+				dag.kutu(Vector3(0.12 + i * (w - 0.3) / 5.0, yy - 0.012, 0.017), Vector3.RIGHT, Vector3.BACK, 0.024, 0.024, 0.012)
+		dag.mesh_ekle(kanat, Props.mat(Color("3a3634"), 0.0, false, ""), "Demir_PoternaKusak")
+		kanat_govde = StaticBody3D.new()
+		var kc := CollisionShape3D.new()
+		var kb := BoxShape3D.new()
+		kb.size = Vector3(w - 0.06, h - 0.4, 0.12)
+		kc.shape = kb
+		kanat_govde.add_child(kc)
+		kanat_govde.position = Vector3((w - 0.06) * 0.5, (h - 0.4) * 0.5, -0.01 - 0.05)
+		kanat.add_child(kanat_govde)
+		_otur_ic.call_deferred(zf, esik)
+
+	## TUR-13: sur oyulduysa (IstSurlar._ic_poterna_oyuk; OyunDilimi meta "ic_poterna_oyuk") kapı oyukta, eşik peribolos
+	## zemininde (iç yüzün eteği kapı önünde kurulmaz): kaydırma yok. Oyulmadıysa (yalnız oyuğu istemeyen test sahnesi)
+	## kapı yüzün önüne alınır ve eskisi gibi eteğin gerçek yüzüne ışınla oturur.
+	func _otur_ic(zf: float, esik: StaticBody3D) -> void:
+		for i in 3:
+			await get_tree().physics_frame
+		if not is_inside_tree():
+			return
+		var od: Node = get_parent().get_parent().get_node_or_null("OyunDilimi") if get_parent() and get_parent().get_parent() else null
+		var oyuk := od != null and od.has_meta("ic_poterna_oyuk") and absf(float(od.get_meta("ic_poterna_oyuk")) - x) < 0.01
+		var en := -INF
+		var sp0 := get_world_3d().direct_space_state
+		if oyuk:
+			# oyuk: iç yüzün eteği kapı önünde yassı (y ≈ 0 … 0,05; peribolos levhası −0,12): eşik taşının üstü eteğin
+			# 3–10 cm üstüne gelir (oyuğun ilk 0,35 m'sindeki etek ucunu örter)
+			var haric0: Array[RID] = [esik.get_rid(), kanat_govde.get_rid()]
+			for dx: float in [-0.5, 0.0, 0.5]:
+				var q := PhysicsRayQueryParameters3D.create(to_global(Vector3(x + dx, 2.0, zf + 0.45)), to_global(Vector3(x + dx, -2.0, zf + 0.45)))
+				q.exclude = haric0
+				var hit := sp0.intersect_ray(q)
+				if not hit.is_empty():
+					en = maxf(en, to_local(hit["position"]).y)
+			position.y += maxf(en + 0.07, 0.10)
+		else:
+			position.z += 0.36
+			var sp := sp0
+			var haric: Array[RID] = [esik.get_rid(), kanat_govde.get_rid()]
+			for dx: float in [-0.55, 0.0, 0.55]:
+				for dz: float in [0.25, 0.6]:
+					var q := PhysicsRayQueryParameters3D.create(to_global(Vector3(x + dx, 2.0, zf + dz)), to_global(Vector3(x + dx, -2.0, zf + dz)))
+					q.exclude = haric
+					var hit := sp.intersect_ray(q)
+					if not hit.is_empty():
+						en = maxf(en, to_local(hit["position"]).y)
+			if en > -0.02:
+				position.y += en + 0.02
+		if GameState.autotest:
+			print("ICPOTERNA x=%.2f oyuk=%s etek_y=%.2f oturma=%.2f" % [x, oyuk, en, position.y])
+
+	## Kanadı açar/kapar (dışarı, 100°; iç poterna oyukta 95°). anim: tween ile 0,8 sn
+	var aci := -100.0
 	func ac(p_acik: bool, anim := true) -> void:
 		acik = p_acik
-		var hedef := deg_to_rad(-100.0) if acik else 0.0
+		var hedef := deg_to_rad(aci) if acik else 0.0
 		if anim and is_inside_tree():
 			create_tween().tween_property(kanat, "rotation:y", hedef, 0.8).set_trans(Tween.TRANS_SINE)
 		else:

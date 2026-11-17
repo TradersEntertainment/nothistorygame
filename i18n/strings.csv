@@ -3542,6 +3542,7 @@ UI_PT_OUT_QUIT,Çık,Quit
 UI_PT_OUT_BACK,Geri,Back
 UI_PT_CLIP_HEAD,Gerçek Tarih Bu Değil · oyun testi cevapları (olduğu gibi gönder),Not a History Game · playtest answers (send as is)
 UI_SET_SWAY,Kamera ve el sallanması,Camera and hand bob
+UI_SET_MOVE_CAM,"Koşu, zıplama ve iniş kamera efektleri","Run, jump and landing camera effects"
 UI_SET_TOGGLE,Koşma ve nişan: basılı tutmak yerine aç/kapa,Sprint and aim: toggle instead of hold
 UI_SET_REACT,Düelloda tepki süresi,Duel reaction time
 UI_SET_READ,Okuma süresi (seslendirmesiz replikler),Reading time (unvoiced lines)

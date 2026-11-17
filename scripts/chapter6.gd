@@ -939,8 +939,13 @@ func _scatter_chickpeas() -> void:
 		var to := ground + Vector3(randf_range(-0.35, 0.35), 0.02, randf_range(-0.35, 0.35))
 		var mid := from.lerp(to, 0.5) + Vector3(0, 0.5, 0)
 		var tw := create_tween()
-		tw.tween_property(c, "global_position", mid, 0.18).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_OUT)
-		tw.tween_property(c, "global_position", to, 0.22).set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_IN)
+		# taneler gövdeyle uçar, yere düşünce seker, yuvarlanır (EsyaFizik; aynı yere aynı sürede: 0,4 sn); olmazsa eski yay
+		var ucus := (to - from) / 0.4 + Vector3.UP * 4.9 * 0.4
+		if EsyaFizik.dusur(c, "tane", ucus, Vector3(randf_range(-9, 9), 0, randf_range(-9, 9))):
+			tw.tween_interval(0.4)
+		else:
+			tw.tween_property(c, "global_position", mid, 0.18).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_OUT)
+			tw.tween_property(c, "global_position", to, 0.22).set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_IN)
 		tw.tween_interval(6.0)
 		tw.tween_callback(c.queue_free)
 	Audio.sfx("paper_tear", -14.0, 1.5)

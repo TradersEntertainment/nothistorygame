@@ -440,7 +440,18 @@ static func ic_kule(p: Node3D, g: Dictionary, lod: int) -> void:
 			[HT - 0.95, 0.0], [HT - 0.95, 0.16], [HT - 0.65, 0.16], [HT - 0.65, 0.32], [HT - 0.35, 0.32], [HT - 0.35, 0.46],
 			[HT + PARAPET_H, 0.46],
 		]
-		_or(tas, poly, prof, kapi, tint, 0.06, seed, 3, false)
+		# TUR-13 (tasima8 26/an_08 "Romanos iç kapısının iki yanında kutu gibi gri taş bloklar"): iç kule şehir yanında
+		# surdan çıkmaz (Theodosius kuleleri peribolosa çıkar). Kaide ve gövde (sur yolu düzeyine dek) şehir kenarı surun
+		# 1 m İÇİNE çekilmiş çokgenle örülür: kaidenin şehir yüzündeki 0,8 m'lik çıkıntısı ve yan kenarların şehir ucunda
+		# kapı geçidine taşan kutu uçları surun içinde kalır. Sur yolunun üstü (yf'den yukarı) eskisi gibi; alt kenarı kapalı.
+		var iy := 0
+		for k in prof.size():
+			if absf(float(prof[k][0]) - yf) < 1e-4 and float(prof[k][1]) == 0.0:
+				iy = k
+				break
+		var poly_k := plan_ic(cx, w, float(g.get("zi0", zb + 0.15)) + 1.0, zf, tur)
+		_or(tas, poly_k, prof.slice(0, iy + 1), kapi, tint, 0.06, seed, 3, false)
+		_or(tas, poly, [[yf, -1.0]] + prof.slice(iy), kapi, tint, 0.06, seed, 3, false)
 		# korkuluk tepesi ve iç yüzü, teras
 		var pd := _otele(poly, 0.46)
 		var pi := _otele(poly, 0.0)
@@ -487,10 +498,11 @@ static func ic_kule(p: Node3D, g: Dictionary, lod: int) -> void:
 			var L := a.distance_to(b)
 			var nn := _dis_normal(a, b, c2)
 			if nn.y < -0.5:
-				# şehir yüzü: kule kapısı (dipte, kemerli) ve bir pencere
+				# şehir yüzü: kule kapısı (dipte, kemerli) ve bir pencere. TUR-13: kaide şehir yanında surun içinde: kapı sur yüzünde
 				var mid := (a + b) * 0.5
+				mid.y = float(g.get("zi0", zb + 0.15))
 				var te := (b - a) / L
-				_kemer(tas, koyu, tug, _v3(mid + nn * (bat + 0.36), 0.0), Vector3(te.x, 0, te.y), Vector3(nn.x, 0, nn.y), 1.5, 2.6, lod)
+				_kemer(tas, koyu, tug, _v3(mid, 0.0), Vector3(te.x, 0, te.y), Vector3(nn.x, 0, nn.y), 1.5, 2.6, lod)
 				continue
 			var mid2 := (a + b) * 0.5
 			if mid2.y < float(g.get("zi1", 2.5)) + 0.6 and absf(nn.x) > 0.9:
@@ -1020,7 +1032,9 @@ static func _dis_tas(ag: Ag, o: Vector3, tt: Vector3, nn: Vector3, w: float, yuk
 ## sol_uc/sag_uc: dişin ucundaki taş (o yanda taşar, değilse komşu taşla derz); kirik_izin: köşe kırığı yalnız bir taşta
 static func _harpusta(ag: Ag, orta: Vector3, tt: Vector3, nn: Vector3, hw: float, hd: float, kal: float, h2: float, h3: float,
 		col: Color, sol_uc: bool, sag_uc: bool, kirik_izin: bool) -> void:
-	var ta := 0.025 + 0.02 * h3                     # taşma
+	# TUR-13: saçak (taşma) 2–3 cm (tur 12'de 2,5–4,5 cm + 2 cm uç oynaklığı + 1,5 cm derinlik oynaklığı: yakından dişin
+	# 8–15 cm dışına taşan "şapka" okunuyordu). Sırt ve derz aynı.
+	var ta := 0.016 + 0.008 * h3                    # taşma
 	var ci := 0.045 + 0.03 * h2                     # üst kenar pahı (yuvarlanmış kenar)
 	var yana := (h2 - 0.5) * 0.035                  # taş yana hafif yatık (cetvel gibi düz tepe çizgisi olmasın)
 	var egim := 0.03 + 0.04 * h3                    # tepe sur yoluna (−nn) doğru alçalır
@@ -1036,8 +1050,8 @@ static func _harpusta(ag: Ag, orta: Vector3, tt: Vector3, nn: Vector3, hw: float
 		var hk := fposmod(sin(float(k) * 7.31 + h2 * 41.7 + h3 * 13.1) * 9137.3, 1.0)
 		var hk2 := fposmod(sin(float(k) * 3.17 + h3 * 57.3) * 4371.9, 1.0)
 		var uc := sag_uc if s.x > 0.0 else sol_uc
-		var ex := (hw + ta + (hk - 0.5) * 0.04) if uc else (hw - 0.004 - hk * 0.004)
-		var ez := hd + ta + (0.5 - hk2) * 0.03
+		var ex := (hw + ta + (hk - 0.5) * 0.012) if uc else (hw - 0.004 - hk * 0.004)
+		var ez := hd + ta + (0.5 - hk2) * 0.01
 		var p0 := orta + tt * s.x * ex + nn * s.y * ez + Vector3.UP * (s.x * yana * 0.5 + (hk2 - 0.5) * 0.02)
 		var yy := kal * (0.38 + 0.14 * hk)
 		var yt := kal - egim * (0.5 - s.y * 0.5) + (hk - 0.5) * 0.03 + s.x * yana

@@ -52,6 +52,9 @@ func _ready() -> void:
 	hud.set_fez(GameState.flags.get("fez", true))
 	hud.set_signal(0)
 	walls = Blachernae.new()
+	walls.bolum = "30"
+	# Yeni sette (TAŞIMA-9) merdivenlerin tepesi dişe değil korkuluğa yaslanır: o x'lerde diş kurulmaz (görünüş)
+	walls.dissiz = LADDERS
 	add_child(walls)
 	walls.build_guards([])
 	walls.night_assault(LADDERS + [6.0, -6.0], false)
@@ -78,7 +81,9 @@ func _ready() -> void:
 	player.focus_changed.connect(_on_focus)
 	if GameState.autotest:
 		Engine.time_scale = 3.0
-	if GameState.shots_dir != "":
+	if GameState.autotest and GameState.autotest_variant in ["kare", "yuru"]:
+		_tasima9()
+	elif GameState.shots_dir != "":
 		_run_shots()
 	else:
 		_run()
@@ -135,7 +140,7 @@ func _gun() -> void:
 			"path": [Vector3(x + 6.0, 0, 46.0), Vector3(x + 2.0, 0, 26.0), Vector3(x, 0, Blachernae.WALL_Z1 + 3.0)], "delay": i * 1.6, "ladder": true})
 	var res: Dictionary = await GunRange.run(self, hud, player, {"runners": runners, "shots": _rifle_shots,
 		"limit": 26.0 + maxf(0.0, _rifle_shots - 4) * 5.5, "speed": 2.4, "objective": tr("UI_OBJ30_GUN") % _rifle_shots,
-		"look": Vector3(0, 1.0, 30.0)})
+		"look": Vector3(0, 1.0, 30.0), "ground": Blachernae.zemin_y})
 	gun_shots = res["shots"]
 	gun_hits = res["hits"]
 	player.frozen = true
@@ -263,7 +268,8 @@ func _pole_show(p: float) -> void:
 func _spawn_ladder(x: float, delay: float) -> void:
 	var lh := WALK + 0.6
 	var lad := Ladder.new(lh, TILT, Color("6a4a2c"))
-	var base := Vector3(x, 0.0, Blachernae.WALL_Z1 + lh * sin(deg_to_rad(TILT)) + 0.12)
+	var bz := Blachernae.WALL_Z1 + lh * sin(deg_to_rad(TILT)) + 0.12
+	var base := Vector3(x, Blachernae.zemin_y(x, bz), bz)
 	lad.position = base
 	add_child(lad)
 	lad.visible = false
@@ -304,7 +310,7 @@ func _carry_step(l: Dictionary, dt: float) -> void:
 			var c: Soldier = team[i]
 			var along := 1.0 + i * 2.0                    # merdiven boyunca (dipten)
 			var side := 0.55 if i % 2 == 0 else -0.55
-			c.global_position = Vector3(at.x + side, 0.0, at.z + along)
+			c.global_position = Vector3(at.x + side, Blachernae.zemin_y(at.x + side, at.z + along), at.z + along)
 			if c.rig:
 				c.rig.activity = ""
 		if k >= 1.0:
@@ -319,6 +325,7 @@ func _carry_step(l: Dictionary, dt: float) -> void:
 		for i in team.size():
 			var c: Soldier = team[i]
 			var to := base + Vector3((0.0 if i == 0 else (0.7 if i == 1 else -0.7)), 0, 0.9 if i == 0 else 1.4)
+			to.y = Blachernae.zemin_y(to.x, to.z)
 			c.global_position = c.global_position.lerp(to, clampf(dt * 4.0, 0.0, 1.0))
 		if k >= 1.0:
 			l["stage"] = "climb"
@@ -518,6 +525,7 @@ func _emperor() -> void:
 
 func _process(delta: float) -> void:
 	_t += delta
+	_t9_sure()
 
 
 # ================================================================ bölüm sonu
@@ -617,3 +625,55 @@ func _run_shots() -> void:
 	await get_tree().create_timer(0.6, false).timeout
 	await _shot_png("c30_cover.png")
 	get_tree().quit()
+
+
+# ================================================================ TAŞIMA-9 kare / yürüyüş (tests/_ist/tasima9_bot.gd)
+
+## =kare: sabit kameralardan altı an + iki yakın mazgal (sahibinin "oyuncak gibi" ölçütü: 0,6 m); --dialogshots=<klasör>.
+## =yuru: gerçek Player botu sur yolunu (orta parça x −15…15) ve iç taş rampayı iner/çıkar.
+func _tasima9() -> void:
+	var BOT := load("res://tests/_ist/tasima9_bot.gd")
+	var set_ad := "eski" if walls.eski else "yeni"
+	var Y := WALK + Player.EYE
+	if GameState.autotest_variant == "kare":
+		_spawn_ladder(6.0, 0.0)
+		var l: Dictionary = _ladders[0]
+		(l["node"] as Node3D).visible = true
+		(l["climber"] as Node3D).visible = true
+		CLIMB.attach(l["climber"], l["node"], (l["node"] as Ladder).height * 0.7, "30")
+		emperor.visible = true
+		await BOT.kare(self, player, hud, [
+			["acilis", Vector3(1.0, Y, 2.2), Vector3(1.0, 2.0, 30.0), 72.0],
+			["sur_yolu_yakin", Vector3(2.5, Y, 2.9), Vector3(8.5, 12.6, 4.4), 72.0],
+			["kule", Vector3(11.0, Y, 2.3), Vector3(20.0, 14.5, 5.0), 72.0],
+			["merdiven", Vector3(6.0, Y + 0.3, 4.2), Vector3(6.0, 4.0, 7.8), 72.0],
+			["saray_onu", Vector3(-3.0, Y, 1.0), Vector3(0.0, 7.0, -18.0), 72.0],
+			["gece_genel", Vector3(34.0, 26.0, 46.0), Vector3(0.0, 7.0, 0.0), 60.0],
+			["mazgal_yakin", Vector3(-0.1, Y, 3.4), Vector3(-0.1, 12.9, 4.6), 72.0],
+			["mazgal_ova", Vector3(0.9, Y, 3.4), Vector3(2.0, 12.4, 12.0), 72.0],
+		], set_ad)
+		return
+	await BOT.yuru(self, player, hud, Vector3(1.0, WALK + 0.05, 2.3), [
+		["sur_dogu", Vector3(15.0, WALK, 2.3), WALK],
+		["sur_bati", Vector3(-15.0, WALK, 2.3), WALK],
+		["merdiven_basi", Vector3(-6.0, WALK, 0.9), WALK],
+		["rampa_in", Vector3(-13.6, 0.0, -5.7), NAN],
+		["rampa_cik", Vector3(-6.2, WALK, -0.4), NAN],
+		["sur_yoluna", Vector3(-6.0, WALK, 1.8), WALK],
+	], set_ad)
+
+
+## TAŞIMA-9 süre tablosu (yalnız autotest): evre değişince bir önceki evrenin oyun süresi (ölçekli delta; eski | yeni aynı
+## komutla karşılaştırılır). Satır: T9SURE evre=<ad> sure=<sn>
+var _t9_faz := ""
+var _t9_bas := 0.0
+
+
+func _t9_sure() -> void:
+	if not GameState.autotest or phase == _t9_faz:
+		return
+	if _t9_faz != "":
+		print("T9SURE evre=%s sure=%.2f set=%s" % [_t9_faz, _t - _t9_bas, "eski" if walls.eski else "yeni"])
+	_t9_faz = phase
+	_t9_bas = _t
+
