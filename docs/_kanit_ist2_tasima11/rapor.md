@@ -12,7 +12,32 @@ Klasörler: `kare/<bölüm>/eski|yeni/` (tam boy), `kare/sahip_*.jpg` (sahibine 
 
 ## Özet
 
-(son doğrulamada doldurulur — aşağıya bakın)
+| # | Madde | Durum | Kısa |
+|---|---|---|---|
+| 1 | ÖLÇ VE DÖK | **TAMAM** | `dokum.md`: sekiz bölümün bağları, çarpışma kutuları, merdiven/çıkış noktaları, v2 karşılıkları; danışmanın iki ölçüsü düzeltildi (SeaWalls x 12 geçidinin gerçek açıklığı 3,0 m — lento kutusu 3,7'de; 18b "11 × 3 m" köprüdür) |
+| 2 | Ortak kalem `deniz_set.gd` | **TAMAM** | gövde, korkuluk, diş, konsol/bingi, kule (geçit, teras ağzı), rıhtım, deniz kapısı, uzak katman; SeaWalls, 18b, 38o, Horn, HornWorld ve şehir AYNI işlevleri çağırır |
+| 2 | Şehir `IstHalicSur` | **TAMAM** (bütçe **KISMEN**) | yeni kalem; çarpışma dökümü eski = yeni (661 şekil, aynı karma); dönüş değerleri aynı; şehir karesinde bütçe ölçülmedi (dilim başına +9,5 bin üçgen) |
+| 2b | Komşu devam (Horn, HornWorld ≤ 250 m) | **TAMAM** | `Horn._sea_wall` tek haritada baştan sona, `HornWorld._wall_run` keep'e ≤ 250 m parçalar yeni kalemin uzak katmanı; 250 m ötesi eski (görev sınırı) |
+| 3 | SeaWalls: 4b | **TAMAM** | yeni görünüş + `--eskisur`; çarpışma aynı; 7 ESKİ\|YENİ kare (3 yakın) + dikiş |
+| 3 | SeaWalls: 17 | **TAMAM** | `in_world`; kareler + iki dikiş (dikiş geometrisi eskisi gibi kopuk: "hâlâ kötü" 2) |
+| 3 | SeaWalls: 19, 19o, 29, 29o (fon) | **TAMAM** | dönüş sahnesi (8 m), kayıktan, gündüz savaştan uzak (≈ 125 m) kareler |
+| 4 | 18b | **TAMAM** | kesim + bingiler + top mazgalı; dış yüz 62,00; çatlak işaretleri açıkta |
+| 5 | 38o | **TAMAM** | dış yüz 60,00; merdiven ağzı dişsiz/eşiksiz; `MerdivenCikis` çıkışı (−6; 9,70; 60,60); eşik ve diş sondası yolda, tutunma 0 |
+| — | Bütçe | **TAMAM** | bölüm karelerinin hepsinde ilkel ≤ +%4,2, çizim çağrısı 27 karenin 26'sında azaldı |
+| — | Sözleşme | **AYNI** | (son doğrulama satırı aşağıda) |
+
+## Dosyalar (eski → yeni)
+| dosya | değişiklik |
+|---|---|
+| `scripts/world/ist/deniz_set.gd` (yeni) | ortak deniz suru kalemi (aşağıda) |
+| `scripts/level/sea_walls.gd` | `bolum`, `eski_zorla`, `eski`; yeni kipte kutular gizli + meta, görünüş `_yeni_sur` / `_yeni_kapi` / `_yeni_devam` (4b); eski kip satır satır eskisi (`_eski_kapi_cerceve`, `_kapi_kanatlar` yalnız bölündü) |
+| `scripts/chapter4.gd`, `17`, `19` (×2), `19o`, `29`, `29o` | yalnız `walls.bolum = "…"` (add_child'dan önce) |
+| `scripts/chapter18b.gd` | sur satır arası: kutular aynı; yeni kipte eski diş kutuları kurulmaz, `_yeni_sur` |
+| `scripts/chapter38o.gd` | `_build_wall`: kutular aynı; yeni kipte `_yeni_sur` + kanat kuşakları; `MerdivenCikis` + `_merdiven` (iki merdiven kurulumu); `T11CIKIS` satırı ve `=esik_dur`/`=dis_dur` sondası (yalnız autotest) |
+| `scripts/level/horn.gd` | yalnız `_sea_wall` (tek haritada `_sea_wall_yeni`'ye geçer; yardımcı `gl_of`) |
+| `scripts/world/horn_world.gd` | yalnız `_wall_run` (≤ 250 m parçalar `deniz_set.uzak_parca/uzak_kule`, sonunda tek ağ) + yardımcılar `_deniz_yakin`, `_deniz_kur`; `_horn_walls`, `_marmara_walls`, `_wall_top`, `_chain`, `_horn_shore` DEĞİŞMEDİ |
+| `scripts/world/ist/halic_sur.gd` | `build` yakın/orta katman: kutular aynı (`_g` ile gizlenir), görünüş `_yeni_gorunus`; `dims/tower_xs/perches/climbs` aynı. `halic.gd` değişmedi |
+| `tests/_ist/tasima11_kare.*`, `tasima11_halic_kare.*`, `tasima11_halic_sonda.*` (yeni) | bölüm kare aracı (bütçe), şehir dilimi karesi, şehir dilimi çarpışma sondası |
 
 ## Ortak kalem — `scripts/world/ist/deniz_set.gd` (yeni)
 
@@ -101,7 +126,18 @@ düşüyordu). İki merdiven kurulumu da (`_ladder_phase`, `_run_shots`) bu sın
 sağlanınca döngü biter: tek sefer; koşularda `yedek=0`), boru dönüşü (`_explore`), kare çekimi.
 Sonda: `=esik_dur` (oyuncu mazgal kenarındaki korkuluğun TEPESİNE, (−7,2; 10,17; 59,85)) ve `=dis_dur` (diş tepesine,
 (−7,5; 10,82; 59,85)) → 3 sn sonra ikisinde de yolda (y 9,62), merdivene yeniden tutunma 0 (`T11ESIK … yolda=true
-tutundu=0`). Bot tırmanışı bütün çeşitlerde `T11CIKIS y=9.70 z=60.60 x=-6.00 t≈9,1 yedek=0`.
+tutundu=0`). Bot tırmanışı bütün çeşitlerde çıkış yolun üstünde: `T11CIKIS y=9.62…9.70 z=60.60…60.91` (çıkıştan sonraki ilk adım), `yedek=0` (40 sn yedeği hiç çalışmadı).
+
+**Kareler** (`kare/38o/`; gece):
+- **f1 merdiven tepesinden (yola 1–2 m)**: mazgal ağzı açık (diş ve korkuluk yok), yanında harpuştalı diş ve korkuluk, kazan
+  açıklıkta, savunucular diş aralarında — kutu yok, havada yok; döşeme kiremit-kahve ("hâlâ kötü" 3).
+- **f1b mazgal açıklığından denize**: açıklıkta korkuluk yok, iki yanda korkuluk; ön planda tayfa (kadraj kısmen kapalı).
+- **f2 kapıya yakın (2,5 m)**: mermer söve + lento, boşaltma kemeri; kanatlar demir kuşaklı — kutu çerçeve yok, havada yok.
+- **f3 sudan genel**: kesim, iki kule, rıhtım, kapı; Horn devamı iki yanda aynı kalem — kutu yok, havada yok (gövde ve kuleler
+  suya iner); ESKİ'nin kırmızı şeritli kutu gövdesi ve küp dişleri yok.
+- **f4 gemiden sura**: merdivenin dayanacağı kesim, bingiler, diş aralarında savunucular, kazan dumanı.
+- **f5 sur yolu yakın**, **f6 rıhtım yakın (1,5 m)**: sur yüzü blok blok, hatıl, rıhtım taşı tam 1,2'de — kutu yok, havada yok.
+- **d1 dikiş x 24** (kesim + Horn devamı): ±24'teki 2 m'lik yüz farkı x 21 kulesinin ardında; devam kesintisiz.
 
 ## Bölüm 17, 19, 19o, 29, 29o — SeaWalls `in_world` (tek harita) + HornWorld yakın devamı
 
