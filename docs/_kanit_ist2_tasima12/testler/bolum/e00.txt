@@ -1,0 +1,43 @@
+KOSU 10h_shame_y1 rc=0 sure=50 args=--chapter=10h --autotest=shame
+AUTOTEST PASS chapter=10h variant=shame outcome=10H.2 truth=0 direnc=0 paradox=0
+KOSU 10h_def_y1 rc=0 sure=52 args=--chapter=10h --autotest
+AUTOTEST PASS chapter=10h variant= outcome=10H.1 truth=3 direnc=0 paradox=0
+KOSU 10h_def_y2 rc=0 sure=52 args=--chapter=10h --autotest
+AUTOTEST PASS chapter=10h variant= outcome=10H.1 truth=3 direnc=0 paradox=0
+KOSU 10h_def_e rc=0 sure=66 args=--chapter=10h --autotest --eskisur=10h
+AUTOTEST PASS chapter=10h variant= outcome=10H.1 truth=3 direnc=0 paradox=0
+KOSU 10h_shame_e rc=0 sure=55 args=--chapter=10h --autotest=shame --eskisur=10h
+AUTOTEST PASS chapter=10h variant=shame outcome=10H.2 truth=0 direnc=0 paradox=0
+KOSU 10h_shame_y2 rc=0 sure=66 args=--chapter=10h --autotest=shame
+AUTOTEST PASS chapter=10h variant=shame outcome=10H.2 truth=0 direnc=0 paradox=0
+KOSU 10h_save_y1 rc=0 sure=69 args=--chapter=10h --autotest=save
+AUTOTEST PASS chapter=10h variant=save outcome=10H.1 truth=3 direnc=3 paradox=10
+KOSU 10h_save_y2 rc=0 sure=58 args=--chapter=10h --autotest=save
+AUTOTEST PASS chapter=10h variant=save outcome=10H.1 truth=3 direnc=3 paradox=10
+KOSU 10h_save_e rc=0 sure=71 args=--chapter=10h --autotest=save --eskisur=10h
+AUTOTEST PASS chapter=10h variant=save outcome=10H.1 truth=3 direnc=3 paradox=10
+KOSU 10h_save1_y1 rc=0 sure=70 args=--chapter=10h --autotest=save1
+AUTOTEST PASS chapter=10h variant=save1 outcome=10H.1 truth=3 direnc=1 paradox=10
+KOSU 10h_save1_y2 rc=0 sure=65 args=--chapter=10h --autotest=save1
+AUTOTEST PASS chapter=10h variant=save1 outcome=10H.1 truth=3 direnc=1 paradox=10
+KOSU 10h_save1_e rc=0 sure=70 args=--chapter=10h --autotest=save1 --eskisur=10h
+AUTOTEST PASS chapter=10h variant=save1 outcome=10H.1 truth=3 direnc=1 paradox=10
+KOSU 10h_honest_y1 rc=0 sure=67 args=--chapter=10h --autotest=honest
+AUTOTEST PASS chapter=10h variant=honest outcome=10H.1 truth=3 direnc=0 paradox=10
+KOSU 10h_honest_y2 rc=0 sure=59 args=--chapter=10h --autotest=honest
+AUTOTEST PASS chapter=10h variant=honest outcome=10H.1 truth=3 direnc=0 paradox=10
+KOSU 10h_honest_e rc=0 sure=66 args=--chapter=10h --autotest=honest --eskisur=10h
+AUTOTEST PASS chapter=10h variant=honest outcome=10H.1 truth=3 direnc=0 paradox=10
+KOSU 10h_open_y1 rc=0 sure=65 args=--chapter=10h --autotest=open
+AUTOTEST PASS chapter=10h variant=open outcome=10H.1 truth=3 direnc=0 paradox=10
+KOSU 10h_open_y2 rc=0 sure=52 args=--chapter=10h --autotest=open
+AUTOTEST PASS chapter=10h variant=open outcome=10H.1 truth=3 direnc=0 paradox=10
+KOSU 10h_open_e rc=0 sure=67 args=--chapter=10h --autotest=open --eskisur=10h
+AUTOTEST PASS chapter=10h variant=open outcome=10H.1 truth=3 direnc=0 paradox=10
+KOSU 10h_pass_y2 rc=0 sure=58 args=--chapter=10h --autotest=pass
+AUTOTEST PASS chapter=10h variant=pass outcome=10H.1 truth=1 direnc=0 paradox=0
+KOSU 10h_pass_y1 rc=0 sure=65 args=--chapter=10h --autotest=pass
+AUTOTEST PASS chapter=10h variant=pass outcome=10H.1 truth=1 direnc=0 paradox=0
+KOSU 10h_pass_e rc=0 sure=64 args=--chapter=10h --autotest=pass --eskisur=10h
+AUTOTEST PASS chapter=10h variant=pass outcome=10H.1 truth=1 direnc=0 paradox=0
+KUME_BITTI

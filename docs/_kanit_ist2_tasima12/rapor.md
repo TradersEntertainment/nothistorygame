@@ -93,7 +93,28 @@ Sahibine: `kare/sahip_1_31o_kapi.jpg`, `sahip_2_uzak_hub.jpg`, `sahip_3_42b_meyd
 
 ## Çeşit tablosu
 
-BUNA_TESTLER
+Hepsi BİTTİ (zaman aşımı 0, `rc=0`), 4 süreç aynı anda; satırlar `testler/bolum/*.txt`. Ortalama koşu ≈ 70 sn (4 süreçle).
+
+| Bölüm | Çeşitler | Yeni 1 | Yeni 2 | (Yeni 3) | Eski | Denetim |
+|---|---|---|---|---|---|---|
+| 8y | "", warn, dep, opened, honest, hikmet, sinerji, next | 8/8 | 8/8 | 8/8 | 8/8 | 0 · `=yuru` takılma 0, düşme 0 (182,6 m) |
+| 23 | "", creative, pass, singed, letter, osm | 6/6 | 6/6 | | 6/6 | 0 |
+| 24 | "", late, niko, niko_slow, eclipse | 5/5 | 5/5 | | 5/5 | 0 |
+| 13 | "", miss, wrong, depot, together, stay, w4, meclis, kitchen, city, next, wrong_next, gidak | 13/13 | 13/13 | | 13/13 | 0 |
+| 31o | "", late, petrion_ok, petrion_bad | 4/4 | 4/4 | | 4/4 | 0 |
+| 41o | "", lose | 2/2 | 2/2 | | 2/2 | 0 |
+| 42b | "", lose | 2/2 | 2/2 | | 2/2 | 0 |
+| 10h | "", shame, save, save1, honest, open, pass, next | 8/8 | 8/8 | | 8/8 | 0 |
+| 10h `=yuru` | | PASS | PASS | | PASS | takılma 0 · **VISAUDIT overlap ×3** (eski sette de aynı, aşağıda) |
+| Bağımlılar ×1 | 0, 6, 7, 10, 11, 12, 12b, 20, 26, 28o, 30, 37o, 43o, 44b | 14/14 PASS | | | | 0 |
+
+Sözleşme (son kod): `SURSOZLESME PASS kalem=13 kesim=8` · `SUROYUN nokta=519 havada=0 gomuk=0 katida=0` ·
+`WALKTHRU OZET yol=7 tamam=7 takilma=0 dusme=0` · `ESYATEST PASS` · `T8DTEKME PASS` (26o) · `PARSECHECK PASS scripts=368`.
+
+**10h `=yuru` overlap (Taşıma 10'dan, ESKİ sette de):** heyet kişileri (Lütfi, elçi, Theodoros) `_build`'de (0; 0; 0)'da kurulur,
+yerlerine `_place_audience` koyar; o yalnız `_run`'da çağrılır, Taşıma 10'un `=yuru` çeşidi onu atlar → üçü üst üste.
+`run_tests.sh`'te bu çeşit yok; düzeltmesi (`_tasima10_yuru` başında `_place_audience()`) bu görevin `chapter10h.gd` payı
+("yalnız gedik dekoru") dışında: YAPILMADI, sonraki taşıyana.
 
 ## Bütçe (tek kare; ESKİ | YENİ çizim / ilkel; sınır yeni ≤ eski + %5)
 
@@ -130,6 +151,7 @@ BUNA_TESTLER
    kusuru, `rig.gd` — kimsenin değiştirmediği dosya); yakında IK düzeltir.
 5. **42b meydanı** kesimin düz şehir önü levhasında; çevresinde ev yok (eski sette de boştu).
 6. 31o ve 26'da `open_inner_gate` kanadı sade tahta (görünüşe istek, Taşıma 10'dan beri).
+7. 10h `=yuru` (test çeşidi) heyet kişileri üst üste (`VISAUDIT overlap`, eski sette de): bu görevin payı dışında, yukarıda.
 
 ## Görünüşe istek
 1. **17o**: Haliç'in karşı kıyısındaki şehir surları eski kutu (`HornWorld` uzak katmanı / `Scenery.city_walls`) — kare `kare/17o/eski/01_karsi_kiyi_sur.jpg`.

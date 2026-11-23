@@ -1,0 +1,47 @@
+KOSU 10h_yuru_y1 rc=0 sure=95 args=--chapter=10h --autotest=yuru
+VISAUDIT overlap scene=chapter10h.tscn a=Chapter10h b=Chapter10h(SPK_ENVOY) at=(0.0, 0.0, 0.0) src=Chapter10h>Person|Chapter10h>Person
+VISAUDIT overlap scene=chapter10h.tscn a=Chapter10h b=Chapter10h(SPK_THEODOROS) at=(0.0, 0.0, 0.0) src=Chapter10h>Person|Chapter10h>Person
+VISAUDIT overlap scene=chapter10h.tscn a=Chapter10h(SPK_ENVOY) b=Chapter10h(SPK_THEODOROS) at=(0.0, 0.0, 0.0) src=Chapter10h>Person|Chapter10h>Person
+KOSU 10h_next_y1 rc=0 sure=105 args=--chapter=10h --autotest=next
+AUTOTEST PASS chapter=11 variant= outcome=11.2 persuade=25 sadakat=55 baski=1
+KOSU 10h_next_y2 rc=0 sure=105 args=--chapter=10h --autotest=next
+AUTOTEST PASS chapter=11 variant= outcome=11.2 persuade=25 sadakat=55 baski=1
+KOSU 10h_next_e rc=0 sure=105 args=--chapter=10h --autotest=next --eskisur=10h
+AUTOTEST PASS chapter=11 variant= outcome=11.2 persuade=25 sadakat=55 baski=1
+KOSU dep_6 rc=0 sure=17 args=--chapter=6 --autotest
+AUTOTEST PASS chapter=6 variant= branch=6a outcome=6a.1 paradox=10 mistakes=0 telsiz=4
+KOSU dep_0 rc=0 sure=24 args=--chapter=0 --autotest
+AUTOTEST PASS chapter=0 variant= froze=true sur=yeni
+KOSU dep_10 rc=0 sure=19 args=--chapter=10 --autotest
+AUTOTEST PASS chapter=10 variant= outcome=10O.1 tries=0 envoy=false merak=0
+KOSU dep_7 rc=0 sure=68 args=--chapter=7 --autotest
+AUTOTEST PASS chapter=7 variant= branch=7a outcome=7.1 extras=[] sadakat=60 baski=0 hour=13.5
+KOSU 10h_yuru_y2 rc=0 sure=96 args=--chapter=10h --autotest=yuru
+VISAUDIT overlap scene=chapter10h.tscn a=Chapter10h b=Chapter10h(SPK_ENVOY) at=(0.0, 0.0, 0.0) src=Chapter10h>Person|Chapter10h>Person
+VISAUDIT overlap scene=chapter10h.tscn a=Chapter10h b=Chapter10h(SPK_THEODOROS) at=(0.0, 0.0, 0.0) src=Chapter10h>Person|Chapter10h>Person
+VISAUDIT overlap scene=chapter10h.tscn a=Chapter10h(SPK_ENVOY) b=Chapter10h(SPK_THEODOROS) at=(0.0, 0.0, 0.0) src=Chapter10h>Person|Chapter10h>Person
+KOSU dep_11 rc=0 sure=51 args=--chapter=11 --autotest
+AUTOTEST PASS chapter=11 variant= outcome=11.2 persuade=25 sadakat=55 baski=1
+KOSU dep_12 rc=0 sure=10 args=--chapter=12 --autotest
+AUTOTEST PASS chapter=12 variant= outcome=12.1 merak=4 paradox=0 tries=0 key=1 honest=true tezkire=true
+KOSU 10h_yuru_e rc=0 sure=97 args=--chapter=10h --autotest=yuru --eskisur=10h
+VISAUDIT overlap scene=chapter10h.tscn a=Chapter10h b=Chapter10h(SPK_ENVOY) at=(0.0, 0.0, 0.0) src=Chapter10h>Person|Chapter10h>Person
+VISAUDIT overlap scene=chapter10h.tscn a=Chapter10h b=Chapter10h(SPK_THEODOROS) at=(0.0, 0.0, 0.0) src=Chapter10h>Person|Chapter10h>Person
+VISAUDIT overlap scene=chapter10h.tscn a=Chapter10h(SPK_ENVOY) b=Chapter10h(SPK_THEODOROS) at=(0.0, 0.0, 0.0) src=Chapter10h>Person|Chapter10h>Person
+KOSU dep_28o rc=0 sure=24 args=--chapter=28o --autotest
+AUTOTEST PASS chapter=28o variant= outcome=28O.1 stakes=4 slips=0 hit=true master=false roller_every=4.0 rollers=2 sur=yeni
+KOSU dep_20 rc=0 sure=43 args=--chapter=20 --autotest
+AUTOTEST PASS chapter=20 variant= outcome=20.1 repair=10 knocks=0 arrows=true gun=3/4 gunner=4/4 niko=0 sur=yeni
+KOSU dep_12b rc=0 sure=71 args=--chapter=12b --autotest
+AUTOTEST PASS chapter=12b variant= outcome=12B.1 world= honest=true
+KOSU dep_30 rc=0 sure=41 args=--chapter=30 --autotest
+AUTOTEST PASS chapter=30 variant= outcome=30.1 gun=3/4 pushed=2 boarders=0 duel=true rifle=4
+KOSU dep_44b rc=0 sure=43 args=--chapter=44b --autotest
+AUTOTEST PASS chapter=44 variant= outcome=44.1 light=phone battery=4.7 bumps=3 hits=0 rescued=false kid=false
+KOSU dep_43o rc=0 sure=50 args=--chapter=43o --autotest
+AUTOTEST PASS chapter=43 variant= outcome=43O.1 bad=0 lessons=3 soup=true flown=1069 battery=22
+KOSU dep_26 rc=0 sure=114 args=--chapter=26 --autotest
+AUTOTEST PASS chapter=26 variant= outcome=26.1 water=3 repaired=3 cleared=2 world= gun=3/4 gunner=3/3
+KOSU dep_37o rc=0 sure=77 args=--chapter=37o --autotest
+AUTOTEST PASS chapter=37o variant= outcome=37O.1 beats=14/16 arrows=0 falls=0 barrels=5/5 cuts=0 stones=0 slips=0 burns=0 duel=true caught=0 sur=yeni
+KUME_BITTI
