@@ -472,6 +472,9 @@ func _thrown() -> void:
 	GameState.flags["ch10_tries"] = _tries
 	# Koltuk altlarından kaldırılır: görüş yükselir, nöbetçiler kollarını uzatır
 	# Nöbetçiler Tolga'nın iki yanına gelir, koltuk altlarından kavrar (yerlerinden kıpırdamadan "kaldırıyorlardı")
+	# Kapıdaki yerleri kavramadan ÖNCE alınır: sonra alınınca Tolga'nın durduğu yerin yanına dönüyorlardı; ikinci denemede
+	# Tolga aynı yere gelince nöbetçi gözünün dibinde kalıp Ağa'yı örtüyordu (VISAUDIT personhidden, 0.99.125 tam paket)
+	var homes: Array[Vector3] = [hasan.global_position, huseyin.global_position]
 	var reach := create_tween().set_parallel(true)
 	for g_i in 2:
 		var gg: Node3D = hasan if g_i == 0 else huseyin
@@ -493,7 +496,7 @@ func _thrown() -> void:
 	for g_i in 2:
 		var g: Node3D = hasan if g_i == 0 else huseyin
 		var side := -1.0 if g_i == 0 else 1.0
-		var home := g.global_position
+		var home := homes[g_i]
 		var gtw := create_tween()
 		gtw.tween_interval(0.3)
 		gtw.tween_property(g, "global_position", Vector3(to.x + side * 1.1, g.global_position.y, to.z), carry)

@@ -34,7 +34,7 @@ const BOLUMLER := [7, 11]
 const BOLGELER := ["camp", "byz_walls"]
 ## Tolga'nın şehir bölümleri (ByzCity "walls" hub'ı; bölüm dosyasına dokunulmaz: sahnenin betiğinden tanınır). Varsayılan
 ## AÇIK olanlar yalnız kareleri temiz olanlar (docs/_kanit_ist2_baglama4/rapor.md); öbürleri `--ist2-deneme=<id>` ile denenir.
-const TOLGA := ["6", "10h", "12b", "23", "24"]
+const TOLGA := ["6", "10h", "12b", "13", "23", "24"]
 const TOLGA_ACIK: Array = ["12b", "10h"]
 ## Bölüm yereli → v2 (dönüşümlü bağlama). kok.transform bunun tersi.
 static var xf := Transform3D()
@@ -228,7 +228,7 @@ static func donusum(region_name: String) -> Transform3D:
 			return SurHub.gate8y_v2()
 		"byz_walls":
 			# TAŞIMA-10: yeni hub surunda hub, yeni surun Romanos kesiminin GERÇEK yerine oturur (kapı = çıkış kapısı)
-			if SurHub.sahnede():
+			if SurHub.sahnede() or SurHub.uzak_yeni():      # TAŞIMA-12: uzak hub da (7a, 11) aynı yerde
 				return SurHub.hub_v2()
 			var kp := _hub_kapi_v2()
 			var p: Vector2 = kp[0]

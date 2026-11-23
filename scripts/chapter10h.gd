@@ -130,14 +130,13 @@ func _build() -> void:
 			Props.box(self, spec[0], k + spec[1], Color("1a1410"), Vector3(spec[2], 0, 0))
 		for i in 7:
 			Props.box(self, Vector3(0.3, 0.22, 0.45), k + Vector3(-0.05, 0.4 + i * 0.45, (-1.25 if i % 2 == 0 else 1.2) + (i % 3) * 0.1), Color("8a4a36"), Vector3(i * 17.0, 0, 0))
+		for i in 9:
+			var rp := k + Vector3(-0.3 - (i % 3) * 0.5, 0.25 + (i / 3) * 0.2, -1.2 + (i % 4) * 0.8)
+			Props.ball(self, 0.35 + (i % 3) * 0.1, rp, Color("b8a888").darkened((i % 3) * 0.1), Vector3(1.2, 0.7, 1.0), 6)
 	else:
-		# TAŞIMA-10: yeni surun taşı (kutu yarık levhaları yok): surun dibinde top yarasından düşmüş taş ve tuğla yığını
-		for i in 11:
-			var rp2 := k + Vector3(-0.25 - (i % 3) * 0.4, 0.06 + (i / 4) * 0.12, -1.7 + (i % 5) * 0.75)
-			Props.ball(self, 0.2 + (i % 4) * 0.05, rp2, IstSurlar.C_STONE.darkened(0.32 + (i % 3) * 0.08), Vector3(1.4, 0.5, 1.1), 6)
-	for i in 9:
-		var rp := k + Vector3(-0.3 - (i % 3) * 0.5, 0.25 + (i / 3) * 0.2, -1.2 + (i % 4) * 0.8)
-		Props.ball(self, 0.35 + (i % 3) * 0.1, rp, Color("b8a888").darkened((i % 3) * 0.1), Vector3(1.2, 0.7, 1.0), 6)
+		# TAŞIMA-12: surun dibinde top yarasından düşmüş moloz: koyu, düzensiz, köşeli taş + tuğla kırığı + toz (yuvarlak soluk
+		# "kaya" topları yerine; tek ağ, çarpışmasız: oynanış, barikat ve etkileşim aynı)
+		_moloz_yeni(k)
 	# Yarım kalmış barikat: birkaç dikme ve fıçı
 	for z in [-1.2, 1.2]:
 		Props.cyl(self, 0.08, 3.0, k + Vector3(-0.6, 1.5, z), Color("6a4a2c"), Vector3.ZERO, 5)
@@ -153,6 +152,94 @@ func _build() -> void:
 	Props.cyl(_stockade, 0.35, 0.8, k + Vector3(-1.0, 1.2, 0), Color("7a5030"), Vector3.ZERO, 10)
 	Props.interactable(self, "gedik", Vector3(1.4, 2.6, 3.0), k + Vector3(-0.9, 1.3, 0))
 	city.lights.append(Night.torch(self, k + Vector3(-1.2, 0, 1.8), 2.4))
+
+
+## TAŞIMA-12: gedik molozu (yeni sur): k surun şehir yüzünün dibi (−x şehir). Yığın sura yaslanır (yüksekliği sura doğru
+## artar, iki yana iner); taşlar köşeleri oynatılmış altı yüzlü parçalar (düz gölgeli, her biri farklı), tuğlalar kırık
+## köşeli çubuklar (kiremit rengi), altta koyu toz/harç lekesi. Her parça yığının o noktadaki yüzeyine yarı gömülü oturur
+## (havada parça yok); en altta zemine değen iri taşlar.
+func _moloz_yeni(k: Vector3) -> void:
+	var rng := RandomNumberGenerator.new()
+	rng.seed = 104526
+	var st := SurfaceTool.new()
+	st.begin(Mesh.PRIMITIVE_TRIANGLES)
+	var tas := [Color("6e6656"), Color("5e584c"), Color("7a7060"), Color("54503f"), Color("686052")]
+	var tug := [Color("7a4434"), Color("6a3a2c"), Color("8a5040"), Color("5c3428")]
+	var yig := func(u: float, z: float) -> float:      # yığın yüzeyi: u surdan uzaklık (m), z yana
+		var a := clampf(1.0 - u / 2.6, 0.0, 1.0)
+		var b := clampf(1.0 - pow(z / 2.3, 2.0), 0.0, 1.0)
+		return 0.62 * pow(a, 1.2) * b
+	# Toz ve harç lekesi (düzensiz çokgen, zeminin 1 cm üstü)
+	var n_t := 14
+	var tc := Vector3(-1.1, 0.012, 0.0)
+	var rr: Array[float] = []
+	for i in n_t:
+		rr.append(rng.randf_range(1.7, 2.5))
+	for i in n_t:
+		var a0 := TAU * i / n_t
+		var a1 := TAU * (i + 1) / n_t
+		var r0: float = rr[i]
+		var r1: float = rr[(i + 1) % n_t]
+		_ucgen(st, k + tc, k + tc + Vector3(cos(a0) * r0 * 0.7, 0, sin(a0) * r0), k + tc + Vector3(cos(a1) * r1 * 0.7, 0, sin(a1) * r1),
+			Color("4a4338"))
+	# Taşlar: önce yığının gövdesi (iri, alçak), sonra yüzeye dağılan orta ve küçük parçalar
+	# Gövde: iri taşlar yığının yüzeyine kadar yükselir (merkez yüzeyin yarısında): üstteki küçük parçalar gövdeye basar
+	for i in 80:
+		var iri := i < 30
+		var u := rng.randf_range(0.0, 2.4) if not iri else rng.randf_range(0.05, 1.9)
+		var z := rng.randf_range(-2.1, 2.1) if not iri else rng.randf_range(-1.7, 1.7)
+		var h: float = yig.call(u, z)
+		var boy := Vector3(rng.randf_range(0.34, 0.6), rng.randf_range(0.26, 0.42), rng.randf_range(0.3, 0.55)) if iri else \
+			Vector3(rng.randf_range(0.09, 0.3), rng.randf_range(0.06, 0.2), rng.randf_range(0.08, 0.28))
+		var y := maxf(h - boy.y * 0.5, boy.y * 0.35) if not iri else maxf(h * 0.55, boy.y * 0.4)
+		var c: Color = tas[rng.randi() % tas.size()]
+		_parca(st, rng, k + Vector3(-u - 0.05, y, z), boy, Vector3(rng.randf_range(-0.5, 0.5), rng.randf() * TAU, rng.randf_range(-0.5, 0.5)),
+			c.darkened(rng.randf_range(0.0, 0.18)), 0.32)
+	# Tuğla kırıkları (bütün ya da yarım; yüzeyde, eğik)
+	for i in 34:
+		var u := rng.randf_range(0.1, 2.5)
+		var z := rng.randf_range(-2.2, 2.2)
+		var h: float = yig.call(u, z)
+		var yarim := rng.randf() < 0.55
+		var boy := Vector3(0.13 if yarim else 0.26, 0.055, 0.12)
+		var c: Color = tug[rng.randi() % tug.size()]
+		_parca(st, rng, k + Vector3(-u - 0.05, maxf(h - 0.03, 0.03), z), boy, Vector3(rng.randf_range(-0.6, 0.6), rng.randf() * TAU, rng.randf_range(-0.5, 0.5)),
+			c.darkened(rng.randf_range(0.0, 0.15)), 0.12)
+	var mi := MeshInstance3D.new()
+	mi.name = "GedikMoloz"
+	mi.mesh = st.commit()
+	var m := Scenery._vc_mat()
+	m.cull_mode = BaseMaterial3D.CULL_DISABLED
+	mi.material_override = m
+	add_child(mi)
+
+
+## Köşeleri oynatılmış altı yüzlü taş/tuğla parçası (düz gölge: her üçgen kendi normaliyle)
+static func _parca(st: SurfaceTool, rng: RandomNumberGenerator, c: Vector3, boy: Vector3, rot: Vector3, col: Color, oyna: float) -> void:
+	var b := Basis.from_euler(rot)
+	var v: Array[Vector3] = []
+	for i in 8:
+		var s := Vector3(-0.5 if (i & 1) == 0 else 0.5, -0.5 if (i & 2) == 0 else 0.5, -0.5 if (i & 4) == 0 else 0.5)
+		s += Vector3(rng.randf_range(-oyna, oyna) * 0.5, rng.randf_range(-oyna, oyna) * 0.5, rng.randf_range(-oyna, oyna) * 0.5)
+		v.append(c + b * (s * boy))
+	for f: Array in [[0, 2, 3, 1], [4, 5, 7, 6], [0, 1, 5, 4], [2, 6, 7, 3], [0, 4, 6, 2], [1, 3, 7, 5]]:
+		var cc := col.lightened(0.07) if f[0] == 2 else col      # üst yüz bir ton açık
+		_ucgen(st, v[f[0]], v[f[1]], v[f[2]], cc, c)
+		_ucgen(st, v[f[0]], v[f[2]], v[f[3]], cc, c)
+
+
+## Üçgen; normal merkez (o) dışına bakar (düz gölge), yüz iki yanlı çizilir
+static func _ucgen(st: SurfaceTool, a: Vector3, b: Vector3, c: Vector3, col: Color, o := Vector3.INF) -> void:
+	var n := (c - a).cross(b - a).normalized()
+	if o == Vector3.INF:
+		if n.y < 0.0:
+			n = -n
+	elif n.dot((a + b + c) / 3.0 - o) < 0.0:
+		n = -n
+	for p: Vector3 in [a, b, c]:
+		st.set_color(col)
+		st.set_normal(n)
+		st.add_vertex(p)
 
 
 func _place_audience() -> void:

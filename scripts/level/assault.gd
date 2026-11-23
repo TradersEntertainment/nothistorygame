@@ -1056,7 +1056,7 @@ func _pavises() -> void:
 		var mmi := MultiMeshInstance3D.new()
 		mmi.name = "Ahsap_Pavez"
 		mmi.multimesh = mm
-		mmi.material_override = Dressing._material()
+		mmi.material_override = IstSurlarKapi.kanat_mat()      # TUR-14: köşe rengi × ahşap damarı (Dressing gibi toon + dış çizgi)
 		_ova.add_child(mmi)
 	Crowd.place(_ova, archers)
 
@@ -1097,7 +1097,10 @@ static func pavez_ag(en: float, boy: float, kal: float, boya: Color, egim_deg: f
 	rng.seed = hash(key)
 	var ahsap := Color("7a5a3c")
 	var acik := Color("a8915f") if boya.get_luminance() < 0.45 else Color("4a3422")   # soluk aşı/koyu şerit (saf beyaz yok)
-	var n := 5
+	# TUR-14 ("30o pavez düz levha"): tahta eni gerçek ölçü (≈ 22–26 cm; eskisi 2,6 m'lik pavezde 52 cm), ön yüzde boyalı
+	# HAM DERİ kaplama (kenarlarda 6–7 cm tahta açıkta; deri tahtadan 6 mm kalkık, kenarı kıvrık koyu), deri kenarında çivi
+	# sırası (dövme baş), tahtada damar (malzeme: IstSurlarKapi.kanat_mat — köşe rengi × damar dokusu, toon + dış çizgi)
+	var n := maxi(5, int(round(en / 0.24)))
 	var derz := 0.007
 	var pah := 0.015
 	var bw := (en - derz * (n - 1)) / n
@@ -1114,16 +1117,12 @@ static func pavez_ag(en: float, boy: float, kal: float, boya: Color, egim_deg: f
 		var c_ah := Color(ahsap.r * tv, ahsap.g * tv, ahsap.b * tv)
 		var xs := [xa + pah, (xa + xb) * 0.5, xb - pah]
 		# ön yüz: 3 dilim yükseklik (boya / arma şeridi / boya), 2 dilim enine (kavis)
-		var bantlar := [[y0, boy * 0.52, c_on], [boy * 0.52, boy * 0.66, acik], [boy * 0.66, yt - pah, c_on]]
-		for bnt: Array in bantlar:
-			for j in 2:
-				var x0: float = xs[j]
-				var x1: float = xs[j + 1]
-				var cc: Color = bnt[2]
-				if bnt[0] < 0.05:
-					cc = cc.darkened(0.12)                # dipte çamur/kir
-				quad.call(Vector3(x0, bnt[0], zf.call(x0)), Vector3(x1, bnt[0], zf.call(x1)), Vector3(x1, bnt[1], zf.call(x1)),
-					Vector3(x0, bnt[1], zf.call(x0)), Vector3(0, 0, -1), cc)
+		# tahtanın ön yüzü: çıplak ahşap (deri kaplamanın altında kalan kısım da; deri ayrı yüz olarak önde)
+		for j in 2:
+			var x0: float = xs[j]
+			var x1: float = xs[j + 1]
+			quad.call(Vector3(x0, y0, zf.call(x0)), Vector3(x1, y0, zf.call(x1)), Vector3(x1, yt - pah, zf.call(x1)),
+				Vector3(x0, yt - pah, zf.call(x0)), Vector3(0, 0, -1), c_ah)
 		# pah yüzleri (ön kenarlar ve üst ön kenar), yan yüzler, arka, üst
 		var zb := kal * 0.5
 		for sx: float in [-1.0, 1.0]:
@@ -1141,6 +1140,62 @@ static func pavez_ag(en: float, boy: float, kal: float, boya: Color, egim_deg: f
 		quad.call(Vector3(xa, yt, zf.call(xa) + pah), Vector3(xb, yt, zf.call(xb) + pah), Vector3(xb, yt, zb), Vector3(xa, yt, zb), Vector3.UP, c_ah.darkened(0.05))
 		quad.call(Vector3(xa, y0, zb), Vector3(xb, y0, zb), Vector3(xb, yt, zb), Vector3(xa, yt, zb), Vector3.BACK, c_ah)
 		quad.call(Vector3(xa, y0, zf.call(xa)), Vector3(xb, y0, zf.call(xb)), Vector3(xb, y0, zb), Vector3(xa, y0, zb), Vector3.DOWN, c_ah.darkened(0.3))
+	# ---- ham deri kaplama: boyalı (taban boya, ortada soluk enine şerit, dipte kir), tahtanın kavsini izler (6 mm önde),
+	# kenarı kıvrık ve koyu (2,5 cm), kenar boyunca çivi başları (≈ 14 cm arayla)
+	var dk := 0.065
+	var dx0 := -en * 0.5 + dk
+	var dx1 := en * 0.5 - dk
+	var dy0 := 0.12
+	var dy1 := boy - 0.1
+	var zd := func(xx: float) -> float: return zf.call(xx) - 0.006
+	var nxs := maxi(2, int(ceil((dx1 - dx0) / 0.2)))
+	var deri_bant := [[dy0, boy * 0.52, boya], [boy * 0.52, boy * 0.66, acik], [boy * 0.66, dy1, boya]]
+	for j in nxs:
+		var xa2 := lerpf(dx0, dx1, float(j) / nxs)
+		var xb2 := lerpf(dx0, dx1, float(j + 1) / nxs)
+		var hv := rng.randf_range(0.93, 1.04)
+		for bnt: Array in deri_bant:
+			var cc: Color = (bnt[2] as Color) * hv
+			cc.a = 1.0
+			if bnt[0] < 0.2:
+				cc = cc.darkened(0.1)                # dipte çamur/kir
+			quad.call(Vector3(xa2, bnt[0], zd.call(xa2)), Vector3(xb2, bnt[0], zd.call(xb2)), Vector3(xb2, bnt[1], zd.call(xb2)),
+				Vector3(xa2, bnt[1], zd.call(xa2)), Vector3(0, 0, -1), cc)
+	# kıvrık kenar (koyu deri şerit, 2,5 cm, 1 cm kalkık) dört yanda
+	var kd := Color(0.27, 0.2, 0.14)
+	var kk := 0.025
+	for j in nxs:
+		var xa3 := lerpf(dx0, dx1, float(j) / nxs)
+		var xb3 := lerpf(dx0, dx1, float(j + 1) / nxs)
+		for yy: Array in [[dy0, dy0 + kk], [dy1 - kk, dy1]]:
+			quad.call(Vector3(xa3, yy[0], zd.call(xa3) - 0.004), Vector3(xb3, yy[0], zd.call(xb3) - 0.004),
+				Vector3(xb3, yy[1], zd.call(xb3) - 0.004), Vector3(xa3, yy[1], zd.call(xa3) - 0.004), Vector3(0, 0, -1), kd)
+	for xx: Array in [[dx0, dx0 + kk], [dx1 - kk, dx1]]:
+		quad.call(Vector3(xx[0], dy0, zd.call(xx[0]) - 0.004), Vector3(xx[1], dy0, zd.call(xx[1]) - 0.004),
+			Vector3(xx[1], dy1, zd.call(xx[1]) - 0.004), Vector3(xx[0], dy1, zd.call(xx[0]) - 0.004), Vector3(0, 0, -1), kd)
+	# çivi başları (dört yüzlü piramit) kenar boyunca
+	var civi := func(c: Vector3) -> void:
+		var hw := 0.013
+		var a := c + Vector3(-hw, -hw, 0)
+		var b := c + Vector3(hw, -hw, 0)
+		var d := c + Vector3(hw, hw, 0)
+		var e := c + Vector3(-hw, hw, 0)
+		var t := c + Vector3(0, 0, -0.012)
+		var cn := Color("3a3634")
+		tri.call(a, b, t, cn)
+		tri.call(b, d, t, cn)
+		tri.call(d, e, t, cn)
+		tri.call(e, a, t, cn)
+	var ncx := maxi(2, int(round((dx1 - dx0) / 0.14)))
+	for j in ncx + 1:
+		var xc2 := lerpf(dx0 + kk * 0.5, dx1 - kk * 0.5, float(j) / ncx)
+		for yc: float in [dy0 + kk * 0.5, dy1 - kk * 0.5]:
+			civi.call(Vector3(xc2, yc, zd.call(xc2) - 0.008))
+	var ncy := maxi(2, int(round((dy1 - dy0) / 0.14)))
+	for j in range(1, ncy):
+		var yc2 := lerpf(dy0, dy1, float(j) / ncy)
+		for xc3: float in [dx0 + kk * 0.5, dx1 - kk * 0.5]:
+			civi.call(Vector3(xc3, yc2, zd.call(xc3) - 0.008))
 	# arka kuşaklar (enine kalas, 9 × 4 cm) ve çivi başları
 	var kus := ahsap.darkened(0.2)
 	for yk: float in [boy * 0.22, boy * 0.78]:

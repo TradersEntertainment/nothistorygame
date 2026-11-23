@@ -884,7 +884,15 @@ func _build_lines() -> void:
 	add_child(rammer)
 	Stage.face(rammer, muzzle)
 	rammer.give_tool("rammer", {"aim": muzzle, "aim_world": true})
-	Stage.station(self, "coil_rope", BATTERY + Vector3(3.2, 0, 4.4), Vector3(-1, 0, 0.2), {"ground": gy, "person": false})
+	# TAŞIMA-12: çömelen halatçı yer çağrısız (y elle): Stage.station yer çağrısıyla her 0,5 sn'de Stage.plant_feet'i
+	# çalıştırır; "crouch" pozunun FK tabanı kökün 0,12–0,18 m altında, plant_feet kökü 0,18 m kaldırıyordu (iki sette de;
+	# VISAUDIT float). Kök zeminde kalır, tabanları ayak IK'sı zemine koyar (dışarıdan kök yazılmayınca IK açık).
+	var cr := BATTERY + Vector3(3.2, 0, 4.4)
+	cr.y = _gy(cr.x, cr.z)
+	Stage.station(self, "coil_rope", cr, Vector3(-1, 0, 0.2), {"person": false})
+	if GameState.autotest:
+		for t: float in [0.3, 2.0]:
+			get_tree().create_timer(t, false).timeout.connect(_t12_ayak_gunluk.bind("Station_coil_rope"))
 	# Setin ardında: kazı (siperi derinleştiren), kazan başında aşçı (ateşli), su içen, halat saran
 	Stage.station(self, "dig", Vector3(-8.5, 0, 119.5), Vector3(0.6, 0, -1), {"ground": gy, "hat": "azap"})
 	Stage.station(self, "stir_pot", Vector3(9.0, 0, 133.0), Vector3(-1, 0, 0), {"ground": gy, "fire": true})
@@ -1984,8 +1992,51 @@ func _auto() -> void:
 	await _bot_to(Vector3(0.6, 0.0, 139.0))
 
 
+## TAŞIMA-12 günlüğü: bir kişinin ayağının altındaki BÜTÜN çarpışma yüzeyleri (yukarıdan aşağı): gövde, şekil, y,
+## Unclip.standable (Unclip.floor_y/rest_settle'ın saydığı), denetçinin saydığı (görünür ya da "ground" metalı), _gy.
+func _t12_ayak_gunluk(ad: String) -> void:
+	var st := get_node_or_null(ad) as Node3D
+	if st == null:
+		return
+	for n in st.find_children("*", "Node3D", true, false):
+		if not (n is Person or n is Soldier):
+			continue
+		var who := n as Node3D
+		var f := who.global_position
+		var ss := get_world_3d().direct_space_state
+		var q := PhysicsRayQueryParameters3D.create(f + Vector3(0, 1.3, 0), f + Vector3(0, -1.5, 0))
+		var ex: Array[RID] = []
+		var satir := ""
+		for k in 10:
+			q.exclude = ex
+			var h := ss.intersect_ray(q)
+			if h.is_empty():
+				break
+			var col := h["collider"] as CollisionObject3D
+			ex.append(col.get_rid())
+			var sh = col.shape_owner_get_shape(col.shape_find_owner(int(h.get("shape", 0))), 0)
+			var gor := false
+			for c in col.get_children():
+				if c is GeometryInstance3D and (c as GeometryInstance3D).is_visible_in_tree():
+					gor = true
+			satir += " | %s %s y=%.3f standable=%s denetci=%s" % [str(col.get_path()).right(60), sh.get_class(),
+				(h["position"] as Vector3).y, Unclip.standable(col, int(h.get("shape", 0))), gor or col.has_meta("ground")]
+		var lp := to_local(f)
+		var rg := Handover.rig_of(who)
+		if rg and rg.knee_l and rg.knee_r:
+			for kn: Node3D in [rg.knee_l, rg.knee_r]:
+				var an := CharKit.ankle_of(kn)
+				var so := to_local(an.to_global(Vector3(0, -0.075, 0.05)))
+				satir += " | taban %s y=%.3f gy=%.3f (taban-gy %.3f) bilek_y=%.3f act=%s govde_y=%.3f" % [kn.name, so.y, _gy(so.x, so.z),
+					so.y - _gy(so.x, so.z), to_local(an.global_position).y, rg.activity, rg.body.position.y]
+		print("T12_8Y ayak %s set=%s ayak_y=%.3f gy=%.3f ova_izgara=%.3f arazi=%.3f floor_y=%.3f%s" % [who.get_path().get_name(who.get_path().get_name_count() - 2),
+			"yeni" if sur_yeni else "eski", lp.y, _gy(lp.x, lp.z), _ova_izgara_y(lp.x, lp.z) if sur_yeni else NAN, _arazi(lp.x, lp.z),
+			to_local(Vector3(0, Unclip.floor_y(who, f, 0.9, 0.8), 0)).y, satir])
+
+
 func _autotest_report() -> void:
 	var v := GameState.autotest_variant
+	_t12_ayak_gunluk("Station_coil_rope")
 	_t10_zemin_denetim()
 	print("SURE8Y %.0f s (sahne açılışından rapora; PACE'te gerçek süre)" % ((Time.get_ticks_msec() - _t_start) / 1000.0))
 	var expected: String = {"warn": "8Y.2", "dep": "8Y.3"}.get(v, "8Y.1")

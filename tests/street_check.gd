@@ -558,14 +558,22 @@ func _city() -> void:
 	set_meta("citylife", true)
 	var root: Node = (load("res://scenes/chapter24.tscn") as PackedScene).instantiate()
 	add_child(root)
-	var cl: CityLife = null
+	# Kalabalık: eski CityLife ya da (0.99.125'ten, şehir yarısı İstanbul v2'de) IstHayatYakin — düğüm adı "CityLife",
+	# aynı alanlar (graph_ready, agents{active, body, wait}, prof_sum_us/prof_n); StreetEye ikisini de aynı yoldan bulur
+	var cl = null
 	var t := 0.0
 	while t < 150.0:
 		await get_tree().process_frame
 		t += get_process_delta_time()
+		cl = null
 		for c in root.find_children("CityLife", "Node3D", true, false):
-			cl = c as CityLife
-		if cl and cl.graph_ready and cl.is_processing() and cl._built >= cl.agents.size():
+			if c is CityLife:
+				cl = c
+		if cl == null and IstHayatYakin.aktif != null and is_instance_valid(IstHayatYakin.aktif) and IstHayatYakin.aktif.is_inside_tree():
+			cl = IstHayatYakin.aktif
+		if cl is CityLife and cl.graph_ready and cl.is_processing() and cl._built >= cl.agents.size():
+			break
+		if cl is IstHayatYakin and cl.graph_ready and cl.active_list().size() >= 8 and t > 3.0:
 			break
 	if cl == null or not cl.graph_ready:
 		_bad("Bölüm 24: CityLife hazır değil")
@@ -575,18 +583,32 @@ func _city() -> void:
 	eye = hud.street_eye
 	eye.set("test_on", true)
 	eye.set("force_mode", "full")
-	var w := cl.world
-	var best := -1
-	var bd := INF
-	for i in cl.nodes.size():
-		var d := Vector2(cl.nodes[i].x + 313.0, cl.nodes[i].z + 930.0).length()
-		if d < bd and cl._nstate[i] == 1:
-			bd = d
-			best = i
-	if best < 0:
-		_bad("Bölüm 24: açık sokak düğümü yok")
-		return
-	_hold = w.global_transform * (cl.nodes[best] + Vector3(0, 0.05, 0))
+	if cl is CityLife:
+		var w: Node3D = cl.world
+		var best := -1
+		var bd := INF
+		for i in cl.nodes.size():
+			var d: float = Vector2(cl.nodes[i].x + 313.0, cl.nodes[i].z + 930.0).length()
+			if d < bd and cl._nstate[i] == 1:
+				bd = d
+				best = i
+		if best < 0:
+			_bad("Bölüm 24: açık sokak düğümü yok")
+			return
+		_hold = w.global_transform * (cl.nodes[best] + Vector3(0, 0.05, 0))
+	else:
+		_hold = player.global_position          # v2: oyuncu şehir yarısının açılış yerinde (çarşı), kalabalığın ortasında
+		# v2 ilk karesinden işler (eski CityLife ısınma bitene kadar işlemez): açılış yüklemesi bitene kadar, art arda
+		# 30 kare ≤ 50 ms; yoksa ilk "açık" ölçüm yüklemeye denk geliyordu (1657 µs; ikinci tur 467/430). Eşik aynı.
+		var calm := 0
+		var st := 0.0
+		while calm < 30 and st < 40.0:
+			await get_tree().process_frame
+			var dt := get_process_delta_time()
+			st += dt
+			calm = calm + 1 if dt <= 0.05 else 0
+		print("STREETCHECK (e) v2 açılış yüklemesi %.1f sn" % st)
+	print("STREETCHECK (e) kalabalık=%s" % ("CityLife" if cl is CityLife else "IstHayatYakin (v2)"))
 	player.global_position = _hold
 	await get_tree().create_timer(3.0).timeout
 	# Ölçüm: StreetEye açık (her 0,5 sn bir tuhaflık) / kapalı, art arda iki tur
@@ -610,7 +632,7 @@ func _city() -> void:
 				if on and fire <= 0.0:
 					fire = 0.5
 					eye.call("event", ["jump", "phone", "spin", "selfie"][randi() % 4], 0.5)
-			var m := cl.prof_sum_us / maxf(cl.prof_n, 1)
+			var m: float = cl.prof_sum_us / maxf(cl.prof_n, 1)
 			if on:
 				on_us.append(m)
 				eye_us.append(float(eye.get("prof_sum_us")) / maxf(float(eye.get("prof_n")), 1.0))
@@ -637,9 +659,13 @@ func _city() -> void:
 		var fwd := b.global_basis.z
 		fwd.y = 0.0
 		fwd = fwd.normalized()
-		_hold = b.global_position + fwd * 1.5 + Vector3(0, 0.05, 0)
+		# v2: uzaktaki kişinin gerçek gövdesi gizli bekler (yerinde pişmiş ikiz); ajanın kendi konumu esas
+		var bpos: Vector3 = b.global_position
+		if not (cl is CityLife):
+			bpos = (cl.get_parent() as Node3D).global_transform * (ag.pos as Vector3)
+		_hold = bpos + fwd * 1.5 + Vector3(0, 0.05, 0)
 		player.global_position = _hold
-		player.face(b.global_position + Vector3(0, 1.2, 0))
+		player.face(bpos + Vector3(0, 1.2, 0))
 		var k := 0
 		while player.focus_id != "npc:crowd" and k < 40:
 			player.frozen = false           # bölümün açılış konuşması oyuncuyu donduruyor: odak donukken gelmez

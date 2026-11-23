@@ -432,7 +432,7 @@ func night_assault(skip: Array, ottoman_side := true) -> void:
 		var mmi := MultiMeshInstance3D.new()
 		mmi.name = "Ahsap_Pavez"
 		mmi.multimesh = mm
-		mmi.material_override = Dressing._material()
+		mmi.material_override = IstSurlarKapi.kanat_mat()      # TUR-14: köşe rengi × ahşap damarı (pavez tahta + deri)
 		mmi.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
 		add_child(mmi)
 	# Sur dibinde yanan ateş çömlekleri ve kırık merdivenler. Bölümün kendi alanında (skip ±7) olmaz: 30o'da sırta

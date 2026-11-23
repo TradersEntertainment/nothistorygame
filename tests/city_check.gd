@@ -24,7 +24,11 @@ func _ready() -> void:
 	# Bölüm kendi akışında ilk konuşmada beklesin: kendiliğinden ilerleyen diyalog (ayar) bölümü sonraki evrelere
 	# götürüp şehri değiştiriyordu (Bölüm 24'te son iki noktada CityLife boş kalıyordu)
 	GameState.settings["auto_advance"] = false
-	for ch: String in CHAPTERS:
+	# CITYCHECK_CH=24 (virgüllü): yalnız bu bölümler (yerel deneme); tam paket hepsini koşar
+	var chs: Array = CHAPTERS
+	if OS.get_environment("CITYCHECK_CH") != "":
+		chs = Array(OS.get_environment("CITYCHECK_CH").split(",", false))
+	for ch: String in chs:
 		await _chapter(ch)
 	print("CITYCHECK %s" % ("PASS" if ok else "FAIL"))
 	get_tree().quit(0 if ok else 1)
@@ -43,6 +47,7 @@ func _chapter(ch: String) -> void:
 	add_child(root)
 	# Şehrin CityLife'ı kurulup hazır olana kadar bekle (WorldWalk katıları + sokak ağı)
 	var cl: CityLife = null
+	var yk: IstHayatYakin = null
 	var t := 0.0
 	while t < 120.0:
 		await get_tree().process_frame
@@ -50,6 +55,15 @@ func _chapter(ch: String) -> void:
 		cl = _find_life(root)
 		if cl and cl.graph_ready and cl.is_processing():
 			break
+		yk = _find_v2()
+		if cl == null and yk and yk.graph_ready and yk.active_list().size() >= MIN_CIV:
+			break
+	if cl == null and yk != null and yk.graph_ready:
+		await _chapter_v2(ch, yk)
+		root.queue_free()
+		for k in 3:
+			await get_tree().process_frame
+		return
 	if cl == null or not cl.graph_ready:
 		_fail("%s: CityLife yok ya da hazır değil" % ch)
 		root.queue_free()
@@ -109,6 +123,101 @@ func _find_life(root: Node) -> CityLife:
 		if n is CityLife and (n as CityLife).is_inside_tree():
 			best = n
 	return best
+
+
+## İstanbul v2 dünyasının yakın kalabalığı (IstHayatYakin; düğüm adı "CityLife", StreetEye uyumlu). 0.99.125'ten Bölüm
+## 24'ün şehir yarısı v2'de (SurHub): eski CityLife yerine bu kurulur.
+func _find_v2() -> IstHayatYakin:
+	var yk := IstHayatYakin.aktif
+	if yk != null and is_instance_valid(yk) and yk.is_inside_tree():
+		return yk
+	return null
+
+
+## v2 şehri: eski ölçütlerin aynısı. Oyuncunun durduğu yer ve oradan 40-85 m ötede sokakta yürüyen iki kişinin yeri:
+## çevrede (NEAR) en az MIN_CIV sivil; kimse evde, havada/gömülü ya da suda değil (IstHayatYakin.sayim); gerçek gövde
+## ajanın konumunu izliyor; kalabalığın kare süresi bütçede.
+func _chapter_v2(ch: String, yk: IstHayatYakin) -> void:
+	_player = get_tree().get_first_node_in_group("player") as Node3D
+	var dn := yk.get_parent() as Node3D
+	print("CITYCHECK %s: kaynak=v2 (IstHayatYakin) gece=%s hedef=%d etkin=%d" % [ch, yk.gece, yk.hedef_sayi(), yk.active_list().size()])
+	# Bölümün açılış yüklemesi (v2 dünyasının akışı, gölgelendirici ısınması) bitene kadar bekle: art arda 30 kare ≤ 50 ms.
+	# Eski CityLife ısınma bitene kadar işlemez (ölçüm ondan sonra başlar); v2 ilk karesinden işler, ilk ölçüm yüklemeye
+	# denk geliyordu (5,5 sn'de 55 kare). Bütçe aynı.
+	var calm := 0
+	var st := 0.0
+	while calm < 30 and st < 40.0:
+		await get_tree().process_frame
+		var dt := get_process_delta_time()
+		st += dt
+		calm = calm + 1 if dt <= 0.05 else 0
+	print("CITYCHECK %s v2: açılış yüklemesi %.1f sn (sakin=%d)" % [ch, st, calm])
+	var pts: Array[Vector3] = [_player.global_position]
+	var worst_us := 0.0
+	var i := 0
+	while i < pts.size():
+		_hold = pts[i]
+		_player.global_position = _hold
+		var tt := 0.0
+		var armed := false
+		while tt < 7.0:
+			await get_tree().process_frame
+			tt += get_process_delta_time()
+			if not armed and tt >= 1.5:
+				armed = true
+				yk.prof_sum_us = 0.0
+				yk.prof_n = 0
+				yk.prof_max_us = 0.0
+		var mean_us := yk.prof_sum_us / maxf(yk.prof_n, 1)
+		worst_us = maxf(worst_us, mean_us)
+		var g := dn.global_transform
+		var at_l := g.affine_inverse() * pts[i]
+		var civ := 0
+		var pat := 0
+		var kopuk := 0
+		var roles := {}
+		for ag in yk.active_list():
+			var d: float = Vector2(ag.pos.x - at_l.x, ag.pos.z - at_l.z).length()
+			if d <= IstHayatYakin.NEAR:
+				if ag.kind == "patrol":
+					pat += 1
+				else:
+					civ += 1
+					roles[ag.role] = int(roles.get(ag.role, 0)) + 1
+			if ag.near and ag.body != null and is_instance_valid(ag.body) and ag.body.visible:
+				var bp: Vector3 = g.affine_inverse() * (ag.body.global_position as Vector3)
+				var lag: float = bp.distance_to(ag.pos)
+				if lag > maxf(0.5, get_process_delta_time() * 3.0 * 2.4 + 0.2):
+					kopuk += 1
+		var s := yk.sayim()
+		var bad := int(s["evde"]) + int(s["havada"]) + int(s["suda"]) + kopuk
+		print("CITYCHECK %s v2 @(%.0f, %.0f): sivil=%d devriye=%d evde=%d havada=%d suda=%d kopuk=%d roller=%s µs=%.0f (en uzun kare %.0f, %d kare)" % [
+			ch, at_l.x, at_l.z, civ, pat, s["evde"], s["havada"], s["suda"], kopuk, roles, mean_us, yk.prof_max_us, yk.prof_n])
+		if civ < MIN_CIV:
+			_fail("%s v2 @(%.0f, %.0f): sivil az (%d)" % [ch, at_l.x, at_l.z, civ])
+		if bad > 0:
+			_fail("%s v2 @(%.0f, %.0f): %d karakter yanlış yerde" % [ch, at_l.x, at_l.z, bad])
+		if i == 0:
+			# Ek iki nokta: ilk noktadan 40-85 m ötede sokakta yürüyen kişilerin yerleri, birbirinden 30 m ayrı
+			for ag in yk.active_list():
+				if pts.size() >= 3:
+					break
+				if ag.mode != "walk":
+					continue
+				var d0: float = Vector2(ag.pos.x - at_l.x, ag.pos.z - at_l.z).length()
+				if d0 < 40.0 or d0 > 85.0:
+					continue
+				var wp: Vector3 = g * (ag.pos + Vector3(0, 0.05, 0))
+				if pts.size() == 2 and wp.distance_to(pts[1]) < 30.0:
+					continue
+				pts.append(wp)
+		i += 1
+	_hold = Vector3.INF
+	if pts.size() < 3:
+		_fail("%s v2: şehirde yeterli açık nokta yok (%d)" % [ch, pts.size()])
+	if worst_us > BUDGET_US:
+		_fail("%s v2: kalabalığın kare süresi %.0f µs > %.0f" % [ch, worst_us, BUDGET_US])
+	print("CITYCHECK %s v2: kare süresi (en kötü nokta ortalaması) %.0f µs" % [ch, worst_us])
 
 
 func _nearest_open(cl: CityLife, wp: Vector3) -> int:

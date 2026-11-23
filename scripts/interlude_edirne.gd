@@ -1592,7 +1592,12 @@ func _aftermath() -> void:
 	# Saniye masasından koşar
 	var mu := bureau.mufide
 	var mu_home := mu.position
-	await _bureau_walk(mu, Vector3(0.7, 0, Bureau.LIFT_Z + 2.1), 3.0)
+	# Masanın güney ucundan dolanır, oda açıklığının ortasından koridora çıkar, sonra asansöre iner. Tek hedefe düz
+	# yürüyünce Walker engelden kaçarken güney duvarına yapışıp saksının içinden geçiyor, açıklığın köşesindeki duvar
+	# parçasını kesiyordu (otomatik testte hızlı adımda ara sıra WALKTHRU).
+	for pt: Vector3 in [Vector3(5.4, 0, -27.75), Vector3(3.3, 0, -27.75), Vector3(1.4, 0, -27.6),
+			Vector3(0.7, 0, Bureau.LIFT_Z + 2.1)]:
+		await _bureau_walk(mu, pt, 3.0)
 	mu.face_toward(nihat.global_position)
 	await _snap("34_mufide", 0.1, mu, 1.4)
 	await hud.say("SPK_MUFIDE", "D17E_MU_01")

@@ -432,32 +432,27 @@ static func kapi_kemer(n: Node3D, gx: float, hw: float, y0: float, h: float, g: 
 		for sx: float in [-1.0, 1.0]:
 			mer.kutu(Vector3(gx + sx * (hw + 0.14), y0, zf), Vector3.RIGHT, ns, 0.28, h, 0.09)
 	mer.kutu(Vector3(gx, yl, zf), Vector3.RIGHT, ns, hw * 2.0 + 0.7, 0.42, 0.12)
-	# boşaltma kemeri: lentonun üstünde, kemer taşları dönüşümlü (tuğla / taş); timpan kör, bir ton koyu
+	# boşaltma kemeri: lentonun üstünde; timpan kör, bir ton koyu
+	# TUR-14: kemer kara surunun Romanos kemeriyle AYNI kalem (IstSurlarKapi.arch_ag: kesme taş kama taşları + üçer tuğla
+	# demeti, dış tuğla halkası, harç yatağı; sur taşı gölgelendiricisi). Eskisi 11 iri dilim, yarısı Props tuğla (parlak
+	# turuncu toon) — yakından oyuncak.
 	var r := hw + 0.2
 	var cy := yl + 0.42
 	var nk := 11
-	var kal := 0.38
 	for i in nk:
 		var a0 := PI * float(i) / nk
 		var a1 := PI * float(i + 1) / nk
-		var d0 := Vector3(-cos(a0), sin(a0), 0)
-		var d1 := Vector3(-cos(a1), sin(a1), 0)
 		var c0 := Vector3(gx, cy, zf)
-		var p0 := c0 + d0 * r
-		var p1 := c0 + d1 * r
-		var q0 := c0 + d0 * (r + kal)
-		var q1 := c0 + d1 * (r + kal)
-		var f := ns * 0.07
-		var ag = tug if i % 2 == 0 else tas
-		var col := Color.WHITE if i % 2 == 0 else ORGU
-		ag.quad(p0 + f, p1 + f, q1 + f, q0 + f, ns, col)
-		ag.quad(q0, q1, q1 + f, q0 + f, (d0 + d1).normalized(), col)
-		ag.quad(p0, p1, p1 + f, p0 + f, -(d0 + d1).normalized(), col)
+		var p0 := c0 + Vector3(-cos(a0), sin(a0), 0) * r
+		var p1 := c0 + Vector3(-cos(a1), sin(a1), 0) * r
 		# timpan dilimi (geri çekik değil: yüzün 1 cm önünde, koyu ton)
 		tas.tri(c0 + ns * 0.01, p0 + ns * 0.01, p1 + ns * 0.01, ns, Color(0.8, 0.78, 0.74))
+	var kem = SURKULE.Ag.new()
+	IstSurlarKapi.arch_ag(kem, gx, cy, r, zf, s, IstSurlarKapi.C_BRICK, 0.14)
+	kem.mesh_ekle(n, SURDOKU.mat(1, Color.WHITE, true), "DenizKapiKemer", false)
 	if opt.get("kitabe", false):
-		mer.kutu(Vector3(gx, cy + r + kal + 0.15, zf), Vector3.RIGHT, ns, 2.4, 0.5, 0.06)
-	mer.mesh_ekle(n, Props.mat(SURKULE.C_MARBLE, 0.0, false, "marble"), "DenizKapiMermer")
+		mer.kutu(Vector3(gx, cy + r + IstSurlarKapi.HALKA + 0.17 + 0.15, zf), Vector3.RIGHT, ns, 2.4, 0.5, 0.06)
+	mer.mesh_ekle(n, Props.mat(SURKULE.C_MARBLE.darkened(0.12), 0.0, false, "marble"), "DenizKapiMermer")     # TUR-14: gece parlak beyaz okunmasın
 	tug.mesh_ekle(n, Props.mat(SURKULE.C_BRICK, 0.0, false, "brick"), "DenizKapiTugla")
 	tas.mesh_ekle(n, _mat(g.get("lod", 0), g.get("tas", TAS)), "DenizKapiTas")
 
