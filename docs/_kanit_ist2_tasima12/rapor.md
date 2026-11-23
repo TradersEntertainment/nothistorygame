@@ -93,7 +93,7 @@ Sahibine: `kare/sahip_1_31o_kapi.jpg`, `sahip_2_uzak_hub.jpg`, `sahip_3_42b_meyd
 
 ## Çeşit tablosu
 
-Hepsi BİTTİ (zaman aşımı 0, `rc=0`), 4 süreç aynı anda; satırlar `testler/bolum/*.txt`. Ortalama koşu ≈ 70 sn (4 süreçle).
+Hepsi BİTTİ (zaman aşımı 0, `rc=0`), 4 süreç aynı anda; satırlar `testler/bolum/*.txt`. 171 koşu, ortalama ≈ 52 sn (4 süreçle).
 
 | Bölüm | Çeşitler | Yeni 1 | Yeni 2 | (Yeni 3) | Eski | Denetim |
 |---|---|---|---|---|---|---|

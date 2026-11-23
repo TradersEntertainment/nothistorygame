@@ -20,7 +20,7 @@ func _hazirla() -> void:
 
 ## Taşıma 10'unkinin aynısı; hub'ı bekleme listesine 13, 23, 24 eklendi (hub bölüm akışında sonradan kurulabilir)
 func _surus() -> void:
-	var sc := load("res://scenes/chapter%s.tscn" % bolum) as PackedScene
+	var sc := load("res://scenes/chapter%s.tscn" % bolum.trim_prefix("uzak")) as PackedScene
 	var t0 := Time.get_ticks_msec()
 	ch = sc.instantiate() as Node3D
 	get_tree().root.add_child(ch)
@@ -31,6 +31,14 @@ func _surus() -> void:
 		city = _bul(ch)
 		await get_tree().process_frame
 		t += get_process_delta_time()
+	if bolum.begins_with("uzak"):
+		# uzak hub: bölümün v2 dünyası kurulsun (IstBaglama), hub_sehir öğesi akışla gelsin
+		var tt := 0.0
+		while not IstBaglama.aktif() and tt < 120.0:
+			await get_tree().process_frame
+			tt += get_process_delta_time()
+		await _bekle(20.0)
+		get_tree().paused = true
 	if bolum in ["31o", "41o", "42b"]:
 		# sur seti bölümün akışında kurulur (31o ev evresi): kurulunca otomatik akış donar
 		if bolum == "31o":
@@ -106,6 +114,17 @@ func _bakislar() -> Array:
 			return [
 				["01_meydandan_sur", p + Vector3(4.0, 1.7, -sgn * 6.0), p + Vector3(0.0, 6.0, sgn * 60.0), null],
 				["02_meydan", p + Vector3(-14.0, 5.0, -sgn * 14.0), p + Vector3(0.0, 1.0, 0.0), null],
+			]
+		"uzak7", "uzak11":
+			# uzak hub (IstSehir hub_sehir): v2 kökünün çerçevesinde SurHub.hub_v2 (hub yereli → v2)
+			var hv: Transform3D = IstBaglama.kok.global_transform * load("res://scripts/world/ist/sur_set_hub.gd").hub_v2()
+			for it: Dictionary in IstSehir.active.items:
+				if String(it.get("id", "")) == "hub_sehir":
+					print("T12_UZAK hub_sehir pos=%s yaw=%.1f hub_v2=%s yaw=%.1f" % [it["pos"], rad_to_deg(float(it["yaw"])),
+						load("res://scripts/world/ist/sur_set_hub.gd").hub_v2().origin, rad_to_deg(load("res://scripts/world/ist/sur_set_hub.gd").hub_v2().basis.get_euler().y)])
+			return [
+				["01_uzak_hub_havadan", hv * Vector3(-70.0, 70.0, -40.0), hv * Vector3(30.0, 0.0, -5.0), null],
+				["02_uzak_hub_kapi", hv * Vector3(12.0, 16.0, 14.0), hv * Vector3(33.0, 5.0, 5.5), null],
 			]
 		"17o", "21o":
 			# oyuncunun gözünden: 17o Haliç'in karşı kıyısı (şehir surları uzak fon, +z), 21o tünel (iki yön)
