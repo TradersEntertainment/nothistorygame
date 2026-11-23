@@ -574,17 +574,11 @@ class KapiKanat extends Node3D:
 				add_child(mente)
 				var ag = KULE.Ag.new()
 				var w := gw * 0.5
-				var n := 4
-				for i in n:
-					var x0 := -sx * (w * float(i) / n)
-					var x1 := -sx * (w * float(i + 1) / n)
-					ag.kutu(Vector3((x0 + x1) * 0.5, 0.0, -0.14), Vector3.RIGHT, Vector3.BACK, absf(x1 - x0) - 0.01, hk, 0.28,
-						Color(1, 1, 1) if i % 2 == 0 else Color(0.9, 0.86, 0.8))
-				ag.mesh_ekle(mente, Props.mat(IstSurlarKapi.C_WOOD, 0.0, false, "wood"), "Ahsap_KanatTahta")
+				# TUR-14: tahta tahta (≈ 27 cm, ton, damar), kuşaklarda çivi başı (IstSurlarKapi.kanat_ag; kaplama aynı)
 				var dg = KULE.Ag.new()
-				for yy: float in [0.7, hk * 0.5, hk - 0.7]:
-					dg.kutu(Vector3(-sx * w * 0.5, yy, -0.17), Vector3.RIGHT, Vector3.BACK, w - 0.2, 0.14, 0.03)
-				dg.mesh_ekle(mente, Props.mat(IstSurlarKapi.C_IRON, 0.0, false, ""), "Demir_KanatKusak")
+				IstSurlarKapi.kanat_ag(ag, dg, minf(0.0, -sx * w), maxf(0.0, -sx * w), hk, -0.14, 0.28, zk * 3.0 + sx * 7.0)
+				ag.mesh_ekle(mente, IstSurlarKapi.kanat_mat(), "Ahsap_KanatTahta")
+				dg.mesh_ekle(mente, Props.mat(IstSurlarKapi.C_IRON, 0.0, false, ""), "Demir_KanatKusak", false)
 				var b := StaticBody3D.new()
 				var cs := CollisionShape3D.new()
 				var bs := BoxShape3D.new()
