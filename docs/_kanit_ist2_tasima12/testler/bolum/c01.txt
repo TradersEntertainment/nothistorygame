@@ -1,0 +1,39 @@
+KOSU 24_eclipse_e rc=0 sure=35 args=--chapter=24 --autotest=eclipse --eskisur=24
+AUTOTEST PASS chapter=24 variant=eclipse outcome=24.1 stumbles=0 kid=true niko=false steadied=0 kid_t=0.2
+KOSU 24_niko_slow_e rc=0 sure=44 args=--chapter=24 --autotest=niko_slow --eskisur=24
+AUTOTEST PASS chapter=24 variant=niko_slow outcome=24.1 stumbles=0 kid=true niko=true steadied=0 kid_t=23.8
+KOSU 31o_def_y2 rc=0 sure=71 args=--chapter=31o --autotest
+AUTOTEST PASS chapter=31o variant= outcome=31O.1 house=true(163) falls=0 signs=3 wrong=0 sun=true lashes=3 miss=0 scaff=true mats=8/8 err=0
+KOSU 24_eclipse_y2 rc=0 sure=86 args=--chapter=24 --autotest=eclipse
+AUTOTEST PASS chapter=24 variant=eclipse outcome=24.1 stumbles=0 kid=true niko=false steadied=0 kid_t=0.4
+KOSU 31o_def_e rc=0 sure=70 args=--chapter=31o --autotest --eskisur=31o
+AUTOTEST PASS chapter=31o variant= outcome=31O.1 house=true(163) falls=0 signs=3 wrong=0 sun=true lashes=3 miss=0 scaff=true mats=8/8 err=0
+KOSU 31o_petrion_ok_y2 rc=0 sure=82 args=--chapter=31o --autotest=petrion_ok
+AUTOTEST PASS chapter=31o variant=petrion_ok outcome=31O.1 house=true(203) falls=0 signs=3 wrong=0 sun=true lashes=3 miss=0 scaff=true mats=8/8 err=0
+KOSU 31o_petrion_ok_e rc=0 sure=76 args=--chapter=31o --autotest=petrion_ok --eskisur=31o
+AUTOTEST PASS chapter=31o variant=petrion_ok outcome=31O.1 house=true(202) falls=0 signs=3 wrong=0 sun=true lashes=3 miss=0 scaff=true mats=8/8 err=0
+KOSU 31o_late_y2 rc=0 sure=164 args=--chapter=31o --autotest=late
+AUTOTEST PASS chapter=31o variant=late outcome=31O.2 house=true(159) falls=1 signs=3 wrong=2 sun=false lashes=3 miss=1 scaff=true mats=5/8 err=50
+KOSU 31o_petrion_bad_y2 rc=0 sure=56 args=--chapter=31o --autotest=petrion_bad
+AUTOTEST PASS chapter=31o variant=petrion_bad outcome=31O.1 house=true(163) falls=0 signs=3 wrong=0 sun=true lashes=3 miss=0 scaff=true mats=8/8 err=0
+KOSU 31o_petrion_bad_e rc=0 sure=57 args=--chapter=31o --autotest=petrion_bad --eskisur=31o
+AUTOTEST PASS chapter=31o variant=petrion_bad outcome=31O.1 house=true(163) falls=0 signs=3 wrong=0 sun=true lashes=3 miss=0 scaff=true mats=8/8 err=2
+KOSU 31o_late_e rc=0 sure=172 args=--chapter=31o --autotest=late --eskisur=31o
+AUTOTEST PASS chapter=31o variant=late outcome=31O.2 house=true(157) falls=1 signs=3 wrong=2 sun=false lashes=3 miss=1 scaff=true mats=5/8 err=50
+KOSU 41o_def_y2 rc=0 sure=51 args=--chapter=41o --autotest
+AUTOTEST PASS chapter=41 variant= outcome=41O.1 dir=3 bumps=0 blocks=3 parries=2 kick=true down=true fins=thrust,slash,ground spar=4/0 bags=0/1 water=0
+KOSU 41o_def_e rc=0 sure=58 args=--chapter=41o --autotest --eskisur=41o
+AUTOTEST PASS chapter=41 variant= outcome=41O.1 dir=4 bumps=0 blocks=3 parries=2 kick=true down=true fins=thrust,slash,ground spar=3/0 bags=0/1 water=0
+KOSU 41o_lose_y2 rc=0 sure=59 args=--chapter=41o --autotest=lose
+AUTOTEST PASS chapter=41 variant=lose outcome=41O.2 dir=3 bumps=0 blocks=3 parries=2 kick=true down=true fins=thrust,slash,ground spar=1/7 bags=0/1 water=0
+KOSU 41o_lose_e rc=0 sure=60 args=--chapter=41o --autotest=lose --eskisur=41o
+AUTOTEST PASS chapter=41 variant=lose outcome=41O.2 dir=4 bumps=0 blocks=3 parries=2 kick=true down=true fins=thrust,slash,ground spar=1/7 bags=0/1 water=0
+KOSU 42b_def_y2 rc=0 sure=57 args=--chapter=42b --autotest
+AUTOTEST PASS chapter=42 variant= outcome=42.1 dir=3 bumps=1 blocks=3 parries=2 kick=true down=true fins=thrust,slash,ground spar=3/0 pushed=2 late=0
+KOSU 42b_def_e rc=0 sure=65 args=--chapter=42b --autotest --eskisur=42b
+AUTOTEST PASS chapter=42 variant= outcome=42.1 dir=4 bumps=0 blocks=3 parries=2 kick=true down=true fins=thrust,slash,ground spar=4/0 pushed=2 late=0
+KOSU 42b_lose_y2 rc=0 sure=61 args=--chapter=42b --autotest=lose
+AUTOTEST PASS chapter=42 variant=lose outcome=42.2 dir=4 bumps=0 blocks=3 parries=2 kick=true down=true fins=thrust,slash,ground spar=1/7 pushed=2 late=0
+KOSU 42b_lose_e rc=0 sure=69 args=--chapter=42b --autotest=lose --eskisur=42b
+AUTOTEST PASS chapter=42 variant=lose outcome=42.2 dir=4 bumps=0 blocks=3 parries=2 kick=true down=true fins=thrust,slash,ground spar=1/7 pushed=2 late=0
+KUME_BITTI
