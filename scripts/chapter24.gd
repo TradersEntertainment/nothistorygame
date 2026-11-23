@@ -383,6 +383,10 @@ func _to_ayasofya() -> void:
 	var old := city
 	remove_child(old)
 	old.queue_free()
+	# TAŞIMA-12: ilk yarının hub'ı v2'deydi (yeni sur); Ayasofya parçası eski dünyada kurulur: v2'nin durağan durumu
+	# (aktif bölge, dönüşüm, harita, IstGeo kaydırması) bırakılmazsa yeni parça v2 açık sanar
+	if IstBaglama.aktif():
+		IstBaglama.birak()
 	city = ByzCity.new()
 	city.part = "aya"
 	add_child(city)

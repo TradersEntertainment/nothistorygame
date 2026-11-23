@@ -1,0 +1,41 @@
+KOSU 13_def_y1 rc=0 sure=21 args=--chapter=13 --autotest
+AUTOTEST PASS chapter=13 variant= version=garage outcome=13.1 window=8.4 tolga=T1 hikmet=
+KOSU 13_def_e rc=0 sure=22 args=--chapter=13 --autotest --eskisur=13
+AUTOTEST PASS chapter=13 variant= version=garage outcome=13.1 window=8.4 tolga=T1 hikmet=
+KOSU 13_def_y2 rc=0 sure=22 args=--chapter=13 --autotest
+AUTOTEST PASS chapter=13 variant= version=garage outcome=13.1 window=8.4 tolga=T1 hikmet=
+KOSU 13_miss_y1 rc=0 sure=24 args=--chapter=13 --autotest=miss
+AUTOTEST PASS chapter=13 variant=miss version=garage outcome=13.2 window=8.4 tolga=T2 hikmet=
+KOSU 13_miss_y2 rc=0 sure=23 args=--chapter=13 --autotest=miss
+AUTOTEST PASS chapter=13 variant=miss version=garage outcome=13.2 window=8.4 tolga=T2 hikmet=
+KOSU 13_miss_e rc=0 sure=23 args=--chapter=13 --autotest=miss --eskisur=13
+AUTOTEST PASS chapter=13 variant=miss version=garage outcome=13.2 window=8.4 tolga=T2 hikmet=
+KOSU 13_wrong_y1 rc=0 sure=26 args=--chapter=13 --autotest=wrong
+AUTOTEST PASS chapter=13 variant=wrong version=garage outcome=13.3 window=8.4 tolga=T3 hikmet=
+KOSU 13_wrong_y2 rc=0 sure=25 args=--chapter=13 --autotest=wrong
+AUTOTEST PASS chapter=13 variant=wrong version=garage outcome=13.3 window=8.4 tolga=T3 hikmet=
+KOSU 13_depot_y1 rc=0 sure=20 args=--chapter=13 --autotest=depot
+AUTOTEST PASS chapter=13 variant=depot version=depot outcome=13.1 window=8.4 tolga=T1 hikmet=
+KOSU 13_wrong_e rc=0 sure=24 args=--chapter=13 --autotest=wrong --eskisur=13
+AUTOTEST PASS chapter=13 variant=wrong version=garage outcome=13.3 window=8.4 tolga=T3 hikmet=
+KOSU 13_depot_e rc=0 sure=20 args=--chapter=13 --autotest=depot --eskisur=13
+AUTOTEST PASS chapter=13 variant=depot version=depot outcome=13.1 window=8.4 tolga=T1 hikmet=
+KOSU 13_depot_y2 rc=0 sure=21 args=--chapter=13 --autotest=depot
+AUTOTEST PASS chapter=13 variant=depot version=depot outcome=13.1 window=8.4 tolga=T1 hikmet=
+KOSU 13_together_y1 rc=0 sure=19 args=--chapter=13 --autotest=together
+AUTOTEST PASS chapter=13 variant=together version=1453 outcome=13.4 window=8.4 tolga=T1 hikmet=H1
+KOSU 13_together_y2 rc=0 sure=20 args=--chapter=13 --autotest=together
+AUTOTEST PASS chapter=13 variant=together version=1453 outcome=13.4 window=8.4 tolga=T1 hikmet=H1
+KOSU 13_together_e rc=0 sure=20 args=--chapter=13 --autotest=together --eskisur=13
+AUTOTEST PASS chapter=13 variant=together version=1453 outcome=13.4 window=8.4 tolga=T1 hikmet=H1
+KOSU 13_stay_y1 rc=0 sure=20 args=--chapter=13 --autotest=stay
+AUTOTEST PASS chapter=13 variant=stay version=1453 outcome=13.5 window=8.4 tolga=T1 hikmet=H3
+KOSU 13_w4_y1 rc=0 sure=9 args=--chapter=13 --autotest=w4
+AUTOTEST PASS chapter=13 variant=w4 version=w4 outcome=13.1 window=8.4 tolga=T1 hikmet=
+KOSU 13_w4_y2 rc=0 sure=9 args=--chapter=13 --autotest=w4
+AUTOTEST PASS chapter=13 variant=w4 version=w4 outcome=13.1 window=8.4 tolga=T1 hikmet=
+KOSU 13_stay_y2 rc=0 sure=19 args=--chapter=13 --autotest=stay
+AUTOTEST PASS chapter=13 variant=stay version=1453 outcome=13.5 window=8.4 tolga=T1 hikmet=H3
+KOSU 13_stay_e rc=0 sure=20 args=--chapter=13 --autotest=stay --eskisur=13
+AUTOTEST PASS chapter=13 variant=stay version=1453 outcome=13.5 window=8.4 tolga=T1 hikmet=H3
+KUME_BITTI

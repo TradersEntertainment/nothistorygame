@@ -1,0 +1,16 @@
+KOSU 8y_def_e rc=0 sure=28 args=--chapter=8y --autotest --eskisur=8y
+AUTOTEST PASS chapter=8y variant= outcome=8Y.1 id=seal warnings=0 lowered=0 radio=true
+KOSU 8y_warn_e rc=0 sure=32 args=--chapter=8y --autotest=warn --eskisur=8y
+AUTOTEST PASS chapter=8y variant=warn outcome=8Y.2 id=item warnings=2 lowered=2 radio=true
+KOSU 8y_dep_e rc=0 sure=26 args=--chapter=8y --autotest=dep --eskisur=8y
+AUTOTEST PASS chapter=8y variant=dep outcome=8Y.3 id=honest warnings=0 lowered=0 radio=true
+KOSU 8y_opened_e rc=0 sure=29 args=--chapter=8y --autotest=opened --eskisur=8y
+AUTOTEST PASS chapter=8y variant=opened outcome=8Y.1 id=seal warnings=0 lowered=0 radio=true
+KOSU 8y_honest_e rc=0 sure=27 args=--chapter=8y --autotest=honest --eskisur=8y
+AUTOTEST PASS chapter=8y variant=honest outcome=8Y.1 id=honest warnings=0 lowered=0 radio=true
+KOSU 8y_hikmet_e rc=0 sure=27 args=--chapter=8y --autotest=hikmet --eskisur=8y
+AUTOTEST PASS chapter=8y variant=hikmet outcome=8Y.1 id=seal warnings=0 lowered=0 radio=false
+KOSU 8y_sinerji_e rc=0 sure=27 args=--chapter=8y --autotest=sinerji --eskisur=8y
+AUTOTEST PASS chapter=8y variant=sinerji outcome=8Y.1 id=seal warnings=0 lowered=0 radio=true
+KOSU 8y_next_e rc=0 sure=36 args=--chapter=8y --autotest=next --eskisur=8y
+AUTOTEST PASS chapter=9 variant=arch route= byz=true offers=["theodoros"] outcome=9.5 telsiz=4 merak=0

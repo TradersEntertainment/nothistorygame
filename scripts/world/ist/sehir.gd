@@ -2163,10 +2163,18 @@ func _make_hub(n: Node3D, lod: int) -> void:
 	var t0 := Time.get_ticks_msec()
 	var c := ByzCity.new()
 	c.part = "walls"
+	# TAŞIMA-12: yeni surda uzak hub kesimin gerçek yerinde (SurHub.hub_v2; IstBaglama.donusum, hub_xf) ve kutu iç sur,
+	# kuleler, Romanos kemeri KURULMAZ: sur v2'nin kendi kara suru dilimleri (Romanos kapı dilimi dahil); döşeme iç surun
+	# şehir yüzünde biter, Giustiniani'nin iskelesi aynı yerde. `--eskisur` (ya da `--eskisur=hub`) eski kutu sur.
+	var yeni: bool = load("res://scripts/world/ist/sur_set_hub.gd").uzak_yeni()
+	c.sur_yeni = yeni
 	c._build_ground()
 	c._build_street()
 	c._build_chancery()
-	c._build_walls()
+	if yeni:
+		c._build_giust_yeri(34.0)
+	else:
+		c._build_walls()
 	c._build_palace()
 	c._build_small_skyline()
 	c._build_fill()
@@ -2500,6 +2508,11 @@ var _hub_xf := Transform3D()
 
 func hub_xf() -> Transform3D:
 	if _hub_xf != Transform3D():
+		return _hub_xf
+	# TAŞIMA-12: yeni surda hub kesimin gerçek yerinde (oynanan hub ile aynı: SurHub.hub_v2)
+	var shub = load("res://scripts/world/ist/sur_set_hub.gd")
+	if shub.uzak_yeni():
+		_hub_xf = shub.hub_v2()
 		return _hub_xf
 	var ar := oyun_alanlari()
 	if ar.size() < 2:

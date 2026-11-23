@@ -1,0 +1,39 @@
+KOSU 13_meclis_e rc=0 sure=10 args=--chapter=13 --autotest=meclis --eskisur=13
+AUTOTEST PASS chapter=13 variant=meclis version=meclis outcome=13.4 window=8.4 tolga=T1 hikmet=H1
+KOSU 13_meclis_y2 rc=0 sure=10 args=--chapter=13 --autotest=meclis
+AUTOTEST PASS chapter=13 variant=meclis version=meclis outcome=13.4 window=8.4 tolga=T1 hikmet=H1
+KOSU 13_meclis_y1 rc=0 sure=10 args=--chapter=13 --autotest=meclis
+AUTOTEST PASS chapter=13 variant=meclis version=meclis outcome=13.4 window=8.4 tolga=T1 hikmet=H1
+KOSU 13_w4_e rc=0 sure=10 args=--chapter=13 --autotest=w4 --eskisur=13
+AUTOTEST PASS chapter=13 variant=w4 version=w4 outcome=13.1 window=8.4 tolga=T1 hikmet=
+KOSU 13_kitchen_e rc=0 sure=19 args=--chapter=13 --autotest=kitchen --eskisur=13
+AUTOTEST PASS chapter=13 variant=kitchen version=garage outcome=13.1 window=8.4 tolga=T1 hikmet=
+KOSU 13_kitchen_y1 rc=0 sure=19 args=--chapter=13 --autotest=kitchen
+AUTOTEST PASS chapter=13 variant=kitchen version=garage outcome=13.1 window=8.4 tolga=T1 hikmet=
+KOSU 13_kitchen_y2 rc=0 sure=19 args=--chapter=13 --autotest=kitchen
+AUTOTEST PASS chapter=13 variant=kitchen version=garage outcome=13.1 window=8.4 tolga=T1 hikmet=
+KOSU 13_city_e rc=0 sure=21 args=--chapter=13 --autotest=city --eskisur=13
+AUTOTEST PASS chapter=13 variant=city version=garage outcome=13.2 window=8.4 tolga=T2 hikmet=
+KOSU 13_next_y1 rc=0 sure=21 args=--chapter=13 --autotest=next
+AUTOTEST PASS chapter=14 variant= outcome=14.1 nihat=N1 tolga=T1 sicil= cuma=
+KOSU 13_next_y2 rc=0 sure=20 args=--chapter=13 --autotest=next
+AUTOTEST PASS chapter=14 variant= outcome=14.1 nihat=N1 tolga=T1 sicil= cuma=
+KOSU 13_next_e rc=0 sure=20 args=--chapter=13 --autotest=next --eskisur=13
+AUTOTEST PASS chapter=14 variant= outcome=14.1 nihat=N1 tolga=T1 sicil= cuma=
+KOSU 13_city_y1 rc=0 sure=68 args=--chapter=13 --autotest=city
+AUTOTEST PASS chapter=13 variant=city version=garage outcome=13.2 window=8.4 tolga=T2 hikmet=
+KOSU 13_city_y2 rc=0 sure=52 args=--chapter=13 --autotest=city
+AUTOTEST PASS chapter=13 variant=city version=garage outcome=13.2 window=8.4 tolga=T2 hikmet=
+KOSU 13_wrong_next_y1 rc=0 sure=29 args=--chapter=13 --autotest=wrong_next
+AUTOTEST PASS chapter=15 variant= final=late_by_49_years T=T3 H=H1 N=N1 W=W1 fixed=false
+KOSU 13_wrong_next_y2 rc=0 sure=30 args=--chapter=13 --autotest=wrong_next
+AUTOTEST PASS chapter=15 variant= final=late_by_49_years T=T3 H=H1 N=N1 W=W1 fixed=false
+KOSU 13_gidak_y1 rc=0 sure=26 args=--chapter=13 --autotest=gidak
+AUTOTEST PASS chapter=16 variant= outcome=16.1 ch13=13.6 pecks=3
+KOSU 13_wrong_next_e rc=0 sure=30 args=--chapter=13 --autotest=wrong_next --eskisur=13
+AUTOTEST PASS chapter=15 variant= final=late_by_49_years T=T3 H=H1 N=N1 W=W1 fixed=false
+KOSU 13_gidak_y2 rc=0 sure=27 args=--chapter=13 --autotest=gidak
+AUTOTEST PASS chapter=16 variant= outcome=16.1 ch13=13.6 pecks=3
+KOSU 13_gidak_e rc=0 sure=27 args=--chapter=13 --autotest=gidak --eskisur=13
+AUTOTEST PASS chapter=16 variant= outcome=16.1 ch13=13.6 pecks=3
+KUME_BITTI

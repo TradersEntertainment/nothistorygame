@@ -35,6 +35,9 @@ const BAG_AT := Vector3(-1.3, 0.0, 0.5)     # iskelenin üstünde kum torbası a
 const POT_AT := Vector3(1.3, 0.0, 0.5)      # su döken azap
 
 var walls: LandWalls
+## TAŞIMA-12: sur seti (SurSet.sec) ve ova kaydırması (eski: 0; yeni: SurSet.ova_ofs — meydan ovayla iner)
+var sur: SurSet
+var O := Vector3.ZERO
 var yard: TrainingYard
 var player: Player
 var hud: Hud
@@ -67,7 +70,16 @@ func _ready() -> void:
 	player.frozen = true
 	hud.set_fez(GameState.flags.get("fez", true))
 	hud.set_signal(0)
-	walls = LandWalls.new()
+	# TAŞIMA-12: sur fonda yeni surun Mesoteikhion kesimi (17 Nisan: gedikli kip, onarım 3); `--eskisur=41o` eski set.
+	# Meydan ovada: ova düğümü SurSet.ova_ofs ile yeni ovaya iner, field_keep eski ova koordinatında kalır (SurSetSahne)
+	sur = SurSet.sec("41o")
+	if sur.eski_mi:
+		walls = LandWalls.new()
+	else:
+		var ss := SurSetSahne.new()
+		ss.sur = sur
+		walls = ss
+		O = sur.ova_ofs()
 	walls.field_keep = [Rect2(YARD_AT.x - 13.0, YARD_AT.z - 15.0, 26.0, 30.0)]
 	add_child(walls)
 	walls.set_repair(3)
@@ -89,13 +101,13 @@ func _yard_y() -> float:
 	for dx: float in [-12.0, 0.0, 12.0]:
 		for dz: float in [-15.0, 0.0, 13.0]:
 			y = maxf(y, SiegeField.surf(YARD_AT.x + dx, YARD_AT.z + dz))
-	return y + 0.02
+	return y + 0.02 + O.y
 
 
 func _build() -> void:
 	yard = TrainingYard.new("O")
 	add_child(yard)
-	yard.global_position = Vector3(YARD_AT.x, _yard_y(), YARD_AT.z)
+	yard.global_position = Vector3(YARD_AT.x + O.x, _yard_y(), YARD_AT.z + O.z)
 	turgut = Person.new(TURGUT_LOOK)
 	turgut.set_meta("spk", "SPK_AZAPBASI")
 	add_child(turgut)

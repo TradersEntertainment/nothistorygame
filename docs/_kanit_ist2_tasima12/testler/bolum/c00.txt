@@ -1,0 +1,39 @@
+KOSU 23_creative_e rc=0 sure=18 args=--chapter=23 --autotest=creative --eskisur=23
+AUTOTEST PASS chapter=23 variant=creative outcome=23.2 deviation=3 card=true singed=false letter=false
+KOSU 23_def_e rc=0 sure=19 args=--chapter=23 --autotest --eskisur=23
+AUTOTEST PASS chapter=23 variant= outcome=23.1 deviation=0 card=true singed=false letter=false
+KOSU 23_pass_e rc=0 sure=18 args=--chapter=23 --autotest=pass --eskisur=23
+AUTOTEST PASS chapter=23 variant=pass outcome=23.1 deviation=0 card=true singed=false letter=false
+KOSU 23_creative_y2 rc=0 sure=51 args=--chapter=23 --autotest=creative
+AUTOTEST PASS chapter=23 variant=creative outcome=23.2 deviation=3 card=true singed=false letter=false
+KOSU 23_def_y2 rc=0 sure=53 args=--chapter=23 --autotest
+AUTOTEST PASS chapter=23 variant= outcome=23.1 deviation=0 card=true singed=false letter=false
+KOSU 23_singed_e rc=0 sure=18 args=--chapter=23 --autotest=singed --eskisur=23
+AUTOTEST PASS chapter=23 variant=singed outcome=23.1 deviation=0 card=true singed=true letter=false
+KOSU 23_pass_y2 rc=0 sure=52 args=--chapter=23 --autotest=pass
+AUTOTEST PASS chapter=23 variant=pass outcome=23.1 deviation=0 card=true singed=false letter=false
+KOSU 23_letter_e rc=0 sure=19 args=--chapter=23 --autotest=letter --eskisur=23
+AUTOTEST PASS chapter=23 variant=letter outcome=23.1 deviation=0 card=true singed=false letter=true
+KOSU 23_singed_y2 rc=0 sure=54 args=--chapter=23 --autotest=singed
+AUTOTEST PASS chapter=23 variant=singed outcome=23.1 deviation=0 card=true singed=true letter=false
+KOSU 23_letter_y2 rc=0 sure=51 args=--chapter=23 --autotest=letter
+AUTOTEST PASS chapter=23 variant=letter outcome=23.1 deviation=0 card=true singed=false letter=true
+KOSU 23_osm_e rc=0 sure=18 args=--chapter=23 --autotest=osm --eskisur=23
+AUTOTEST PASS chapter=23 variant=osm outcome=23.1 deviation=0 card=true singed=false letter=false
+KOSU 23_osm_y2 rc=0 sure=53 args=--chapter=23 --autotest=osm
+AUTOTEST PASS chapter=23 variant=osm outcome=23.1 deviation=0 card=true singed=false letter=false
+KOSU 24_def_e rc=0 sure=27 args=--chapter=24 --autotest --eskisur=24
+AUTOTEST PASS chapter=24 variant= outcome=24.1 stumbles=0 kid=true niko=false steadied=0 kid_t=0.3
+KOSU 24_late_e rc=0 sure=26 args=--chapter=24 --autotest=late --eskisur=24
+AUTOTEST PASS chapter=24 variant=late outcome=24.2 stumbles=0 kid=false niko=false steadied=0 kid_t=0.2
+KOSU 24_def_y2 rc=0 sure=60 args=--chapter=24 --autotest
+AUTOTEST PASS chapter=24 variant= outcome=24.1 stumbles=0 kid=true niko=false steadied=0 kid_t=0.4
+KOSU 24_late_y2 rc=0 sure=62 args=--chapter=24 --autotest=late
+AUTOTEST PASS chapter=24 variant=late outcome=24.2 stumbles=0 kid=false niko=false steadied=0 kid_t=0.4
+KOSU 24_niko_e rc=0 sure=26 args=--chapter=24 --autotest=niko --eskisur=24
+AUTOTEST PASS chapter=24 variant=niko outcome=24.1 stumbles=0 kid=true niko=true steadied=0 kid_t=0.3
+KOSU 24_niko_y2 rc=0 sure=64 args=--chapter=24 --autotest=niko
+AUTOTEST PASS chapter=24 variant=niko outcome=24.1 stumbles=0 kid=true niko=true steadied=1 kid_t=0.4
+KOSU 24_niko_slow_y2 rc=0 sure=73 args=--chapter=24 --autotest=niko_slow
+AUTOTEST PASS chapter=24 variant=niko_slow outcome=24.1 stumbles=0 kid=true niko=true steadied=3 kid_t=23.7
+KUME_BITTI

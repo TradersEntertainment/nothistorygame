@@ -139,21 +139,41 @@ func _clear_stage() -> void:
 # ================================================================ 1. yanık ev (30 Mayıs)
 
 var walls: LandWalls
+## TAŞIMA-12: sur seti (yeni: Mesoteikhion kesimi, iç kapı Romanos'ta; `--eskisur=31o` eski LandWalls)
+var sur: SurSet
 var city: FallenCity
 var _beam: Node3D
 var _fallen_beam: Node3D
 var _embers: Array = []
 
 
-func _house_phase() -> void:
-	phase = "house"
-	_stage = Node3D.new()
-	add_child(_stage)
-	walls = LandWalls.new()
+## TAŞIMA-12: sur seti (ev evresi ve kare kipi aynı işlevden). Yeni sette 26'nın kalıbı (SurSetSahne, romanos_kanat,
+## open_inner_gate); caddenin (FallenCity) ve bölümün kendi yapılarının (yanık ev, saçak, tellal, Kadri, Lore, kamera) sayıları
+## eski çerçevededir (iç kapı x 0, iç surun şehir yüzü LandWalls.INNER_Z0): set, Romanos iç kapısının şehir yanı bu noktaya
+## gelecek kadar KAYAR (26'nın `city.yer = sur.sehir_ofs(romanos x)` kaydırmasının tersi; geometri aynı, sayılar tek yerde).
+func _sur_kur() -> void:
+	sur = SurSet.sec("31o")
+	if sur.eski_mi:
+		walls = LandWalls.new()
+	else:
+		var ss := SurSetSahne.new()
+		ss.sur = sur
+		ss.romanos_kanat = true         # iç kapı (Sultan'ın girişi, 26 ile aynı) Romanos'ta
+		ss.position = -sur.sehir_ofs(float(sur.romanos()["x"]))
+		walls = ss
 	walls.near_works = false
 	_stage.add_child(walls)
 	walls.make_day()
 	walls.open_inner_gate()
+	if GameState.autotest:
+		print("T12_31O sur=%s kayma=%s etkin=%s" % ["eski" if sur.eski_mi else "yeni", walls.position, SurSet.etkin == sur])
+
+
+func _house_phase() -> void:
+	phase = "house"
+	_stage = Node3D.new()
+	add_child(_stage)
+	_sur_kur()
 	city = FallenCity.new()
 	city.field = walls.field
 	city.quiet = true
@@ -654,6 +674,8 @@ var _mound: MeshInstance3D
 
 func _eyup_phase() -> void:
 	phase = "eyup"
+	if GameState.autotest:
+		print("T12_31O asama=eyup surset_etkin_temiz=%s" % (SurSet.etkin == null))
 	_stage = Node3D.new()
 	add_child(_stage)
 	_day_env(_stage, Vector3(-30, 160, 0))
@@ -898,6 +920,8 @@ func _aya() -> Vector3:
 
 func _scaffold_phase() -> void:
 	phase = "scaff"
+	if GameState.autotest:
+		print("T12_31O asama=aya surset_etkin_temiz=%s" % (SurSet.etkin == null))
 	_stage = Node3D.new()
 	add_child(_stage)
 	bcity = ByzCity.new()
@@ -1562,11 +1586,7 @@ func _run_shots() -> void:
 	hud.visible = false
 	_stage = Node3D.new()
 	add_child(_stage)
-	walls = LandWalls.new()
-	walls.near_works = false
-	_stage.add_child(walls)
-	walls.make_day()
-	walls.open_inner_gate()
+	_sur_kur()
 	city = FallenCity.new()
 	city.field = walls.field
 	city.quiet = true
