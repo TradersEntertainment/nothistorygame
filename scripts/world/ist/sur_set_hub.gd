@@ -15,7 +15,7 @@ extends RefCounted
 const SurOyun := preload("res://scripts/world/ist/sur_oyun.gd")
 
 ## Yeni hub suru kullanan bölümler (kimlik: IstBaglama.sahne_bolumu, betik adı chapter<id>.gd)
-const BOLUMLER := ["6", "7", "10h", "12b"]
+const BOLUMLER := ["6", "7", "10h", "12b", "13", "23", "24"]     # TAŞIMA-12: 13 (yalnız şehir dalı), 23, 24 (ilk yarı)
 const KESIM := "romanos"
 ## Eski iç surun şehir yüzü (ByzCity: x 34 − 1,5) ve çıkış kapısı (ByzCity.EXIT_POS)
 const HUB_IC_X := 32.5
@@ -35,6 +35,13 @@ static func yeni8y() -> bool:
 	# TAŞIMA-12: geçici eski set kalktı (VISAUDIT float Station_coil_rope'un kök nedeni Stage.station'ın plant_feet'iydi,
 	# ızgara değil: chapter8y.gd _build_lines; docs/_kanit_ist2_tasima12/rapor.md)
 	return not SurSet.eski_istendi("8y") and IstBaglama.etkin()
+
+
+## TAŞIMA-12 — uzak hub (IstSehir "hub_sehir": hub'ı oynamayan v2 bölümlerinde uzaktan görünen şehir; 7a, 11 uçuşu) yeni
+## surla mı: hub kesimin gerçek yerinde (hub_v2), kutu iç sur/kuleler/Romanos kemeri kurulmaz (v2'nin kendi dilimleri).
+## `--eskisur`, `--eskisur=<sahnedeki bölüm>` ya da `--eskisur=hub` eski (eski yer ve kutu sur).
+static func uzak_yeni() -> bool:
+	return IstBaglama.etkin() and not SurSet.eski_istendi(IstBaglama.sahne_bolumu()) and not SurSet.eski_istendi("hub")
 
 
 ## Kesim yereli → 8y bölge yereli (x 0 kapı ortası, +z ova, −z şehir): dönüşsüz; iç sur ortası z 0, peribolos toprağı y 0

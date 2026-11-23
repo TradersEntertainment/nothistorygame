@@ -1,0 +1,50 @@
+KOSU 8y_dep_r1 rc=0 sure=62 args=--chapter=8y --autotest=dep
+AUTOTEST PASS chapter=8y variant=dep outcome=8Y.3 id=honest warnings=0 lowered=0 radio=true
+KOSU 8y_def_r1 rc=0 sure=63 args=--chapter=8y --autotest
+AUTOTEST PASS chapter=8y variant= outcome=8Y.1 id=seal warnings=0 lowered=0 radio=true
+KOSU 8y_opened_r1 rc=0 sure=64 args=--chapter=8y --autotest=opened
+AUTOTEST PASS chapter=8y variant=opened outcome=8Y.1 id=seal warnings=0 lowered=0 radio=true
+KOSU 8y_warn_r1 rc=0 sure=66 args=--chapter=8y --autotest=warn
+AUTOTEST PASS chapter=8y variant=warn outcome=8Y.2 id=item warnings=2 lowered=2 radio=true
+KOSU 8y_honest_r1 rc=0 sure=62 args=--chapter=8y --autotest=honest
+AUTOTEST PASS chapter=8y variant=honest outcome=8Y.1 id=honest warnings=0 lowered=0 radio=true
+KOSU 8y_hikmet_r1 rc=0 sure=63 args=--chapter=8y --autotest=hikmet
+AUTOTEST PASS chapter=8y variant=hikmet outcome=8Y.1 id=seal warnings=0 lowered=0 radio=false
+KOSU 8y_sinerji_r1 rc=0 sure=63 args=--chapter=8y --autotest=sinerji
+AUTOTEST PASS chapter=8y variant=sinerji outcome=8Y.1 id=seal warnings=0 lowered=0 radio=true
+KOSU 8y_next_r1 rc=0 sure=74 args=--chapter=8y --autotest=next
+AUTOTEST PASS chapter=9 variant=arch route= byz=true offers=["theodoros"] outcome=9.5 telsiz=4 merak=0
+KOSU 8y_def_r2 rc=0 sure=67 args=--chapter=8y --autotest
+AUTOTEST PASS chapter=8y variant= outcome=8Y.1 id=seal warnings=0 lowered=0 radio=true
+KOSU 8y_dep_r2 rc=0 sure=64 args=--chapter=8y --autotest=dep
+AUTOTEST PASS chapter=8y variant=dep outcome=8Y.3 id=honest warnings=0 lowered=0 radio=true
+KOSU 8y_warn_r2 rc=0 sure=68 args=--chapter=8y --autotest=warn
+AUTOTEST PASS chapter=8y variant=warn outcome=8Y.2 id=item warnings=2 lowered=2 radio=true
+KOSU 8y_opened_r2 rc=0 sure=63 args=--chapter=8y --autotest=opened
+AUTOTEST PASS chapter=8y variant=opened outcome=8Y.1 id=seal warnings=0 lowered=0 radio=true
+KOSU 8y_honest_r2 rc=0 sure=66 args=--chapter=8y --autotest=honest
+AUTOTEST PASS chapter=8y variant=honest outcome=8Y.1 id=honest warnings=0 lowered=0 radio=true
+KOSU 8y_hikmet_r2 rc=0 sure=66 args=--chapter=8y --autotest=hikmet
+AUTOTEST PASS chapter=8y variant=hikmet outcome=8Y.1 id=seal warnings=0 lowered=0 radio=false
+KOSU 8y_sinerji_r2 rc=0 sure=66 args=--chapter=8y --autotest=sinerji
+AUTOTEST PASS chapter=8y variant=sinerji outcome=8Y.1 id=seal warnings=0 lowered=0 radio=true
+KOSU 8y_next_r2 rc=0 sure=77 args=--chapter=8y --autotest=next
+AUTOTEST PASS chapter=9 variant=arch route= byz=true offers=["theodoros"] outcome=9.5 telsiz=4 merak=0
+KOSU 8y_def_r3 rc=0 sure=67 args=--chapter=8y --autotest
+AUTOTEST PASS chapter=8y variant= outcome=8Y.1 id=seal warnings=0 lowered=0 radio=true
+KOSU 8y_dep_r3 rc=0 sure=66 args=--chapter=8y --autotest=dep
+AUTOTEST PASS chapter=8y variant=dep outcome=8Y.3 id=honest warnings=0 lowered=0 radio=true
+KOSU 8y_warn_r3 rc=0 sure=71 args=--chapter=8y --autotest=warn
+AUTOTEST PASS chapter=8y variant=warn outcome=8Y.2 id=item warnings=2 lowered=2 radio=true
+KOSU 8y_opened_r3 rc=0 sure=66 args=--chapter=8y --autotest=opened
+AUTOTEST PASS chapter=8y variant=opened outcome=8Y.1 id=seal warnings=0 lowered=0 radio=true
+KOSU 8y_honest_r3 rc=0 sure=66 args=--chapter=8y --autotest=honest
+AUTOTEST PASS chapter=8y variant=honest outcome=8Y.1 id=honest warnings=0 lowered=0 radio=true
+KOSU 8y_hikmet_r3 rc=0 sure=67 args=--chapter=8y --autotest=hikmet
+AUTOTEST PASS chapter=8y variant=hikmet outcome=8Y.1 id=seal warnings=0 lowered=0 radio=false
+KOSU 8y_sinerji_r3 rc=0 sure=65 args=--chapter=8y --autotest=sinerji
+AUTOTEST PASS chapter=8y variant=sinerji outcome=8Y.1 id=seal warnings=0 lowered=0 radio=true
+KOSU 8y_next_r3 rc=0 sure=77 args=--chapter=8y --autotest=next
+AUTOTEST PASS chapter=9 variant=arch route= byz=true offers=["theodoros"] outcome=9.5 telsiz=4 merak=0
+KOSU 8y_yuru rc=0 sure=110 args=--chapter=8y --autotest=yuru
+KUME_BITTI

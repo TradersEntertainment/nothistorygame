@@ -4,13 +4,13 @@ Dal `wip/ist2-tasima12`, taban `wip/ist2-taban19` = a38ad405.
 
 | # | Madde | Durum |
 |---|---|---|
-| 0 | 8y "havada asker" kök neden + 8y varsayılan yeni sette | kök neden BULUNDU ve düzeltildi (Stage.station'ın plant_feet'i, ızgara değil); geçici anahtar kalktı; 8y ×3 koşuluyor |
-| 1 | 13, 23, 24 | başlamadı |
-| 2 | uzak hub | başlamadı |
-| 3 | 31o | başlamadı |
-| 4 | 41o, 42b | başlamadı |
+| 0 | 8y "havada asker" kök neden + 8y varsayılan yeni sette | TAMAM: 8y ×3 = 24/24 PASS + yuru (takılma 0), denetim 0 (`testler/bolum/8y_yeni_x3.txt`); eski ×1 ve 6/7/10h/12b ×1 sırada |
+| 1 | 13, 23, 24 | kod yazıldı (BOLUMLER, TOLGA += 13, 24'te `IstBaglama.birak`); ilk tur koşuluyor |
+| 2 | uzak hub | kod yazıldı (`SurHub.uzak_yeni`, `_make_hub`, `hub_xf`, `donusum`) |
+| 3 | 31o | kod yazıldı (`_sur_kur`, set kaydırılır) |
+| 4 | 41o, 42b | kod yazıldı |
 | 5 | 21o, 17o | başlamadı |
-| 6 | 10h moloz | başlamadı |
+| 6 | 10h moloz | kod yazıldı (`_moloz_yeni`) |
 
 ## 8y kök neden (kısa)
 `VISAUDIT float Station_coil_rope` iki ızgaranın farkı DEĞİL. Günlük (`testler/gunluk_8y_*`): ayak altında OvaZemini

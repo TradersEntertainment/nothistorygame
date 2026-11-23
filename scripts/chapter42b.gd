@@ -33,6 +33,9 @@ const MEN := [
 const PUSH_HOLD := 0.8
 
 var walls: LandWalls
+## TAŞIMA-12: sur seti ve şehir yanı kaydırması (eski: 0; yeni: SurSet.sehir_ofs — iç surun şehir yüzüne göre aynı yer)
+var sur: SurSet
+var S := Vector3.ZERO
 var yard: TrainingYard
 var player: Player
 var hud: Hud
@@ -60,7 +63,16 @@ func _ready() -> void:
 	player.frozen = true
 	hud.set_fez(false)
 	hud.set_signal(0)
-	walls = LandWalls.new()
+	# TAŞIMA-12: sur fonda yeni surun Mesoteikhion kesimi, SAĞLAM kip (7 Nisan; 28o kalıbı); `--eskisur=42b` eski set.
+	# Meydan şehir yanında: iç surun şehir yüzüne göre aynı uzaklıkta (SurSet.sehir_ofs)
+	sur = SurSet.sec("42b", false, "mesoteikhion", true)
+	if sur.eski_mi:
+		walls = LandWalls.new()
+	else:
+		var ss := SurSetSahne.new()
+		ss.sur = sur
+		walls = ss
+		S = sur.sehir_ofs(0.0)
 	walls.intact = true                 # 7 Nisan: bombardıman başlamadı
 	add_child(walls)
 	walls.set_repair(LandWalls.STAGES)
@@ -79,7 +91,9 @@ func _ready() -> void:
 func _build() -> void:
 	yard = TrainingYard.new("B")
 	add_child(yard)
-	yard.global_position = YARD_AT
+	yard.global_position = YARD_AT + S
+	if GameState.autotest and not sur.eski_mi:
+		_t12_engel()
 	yard.rotation.y = PI                # iskele iç sura dönük (yerel -z = dünya +z), giriş şehir tarafında
 	giust = Person.new(GIUST_LOOK)
 	giust.set_meta("spk", "SPK_GIUST")
@@ -531,3 +545,16 @@ func _run_shots() -> void:
 	cv.make_current()
 	await _shot("c42b_cover.png")
 	get_tree().quit()
+
+
+## TAŞIMA-12 ölçümü: meydanın (±13 × ±15 m) kesimin kişi konamaz alanlarıyla (kule, etek, merdiven) çakışması ve şehir
+## yanındaki zeminin yüksekliği (meydanın köşelerinde aşağı ışın)
+func _t12_engel() -> void:
+	var m := Rect2(YARD_AT.x + S.x - 13.0, YARD_AT.z + S.z - 15.0, 26.0, 30.0)
+	var n := 0
+	for r: Rect2 in sur._engel:
+		if r.intersects(m):
+			n += 1
+			print("T12_42B engel_cakisma %s" % r)
+	print("T12_42B meydan=%s cakisma=%d sehir_ofs=%s ic_yuz_z=%.2f" % [m, n, S, float(sur.d["zi0"]) + sur.ofs.z])
+
