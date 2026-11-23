@@ -37,6 +37,10 @@ var reserve_right := Vector2.ZERO
 ## LandWalls çerçevesi (x 0 iç kapı, iç surun şehir yüzü LandWalls.INNER_Z0) — 26 eski set ve 31o bit bit aynı.
 ## add_child'dan önce verilir.
 var yer := Vector3.ZERO
+## TAŞIMA-13 (v2 kipi; 31o yeni sette, IstBaglama "fallen31o"): caddenin ardı İstanbul v2'nin şehri. Kutu siluet (_skyline:
+## uzak evler, duman, Ayasofya maketi) kurulmaz (v2'nin kendi evleri ve Ayasofya'sı); taş döşeme evlerin ve kilisenin altıyla sınırlı ve iç
+## surun şehir yüzüne kadar (eski setin sur önü döşemesi yok). Varsayılan false: 26 ve eski set bit bit aynı. add_child'dan önce.
+var v2 := false
 
 func _ready() -> void:
 	if yer != Vector3.ZERO:
@@ -52,7 +56,8 @@ func _ready() -> void:
 	_street_clutter()
 	_end_line()
 	_d.build(self)
-	_skyline()
+	if not v2:
+		_skyline()
 	_people()
 
 
@@ -101,7 +106,13 @@ func _clear_field() -> void:
 func _ground() -> void:
 	# Surun iç yüzünden caddenin sonuna (LandWalls'ın şehir zemini z -44'e kadar)
 	# Üst yüzü ovanın zemininden 1 cm yukarıda (aynı düzlemde çimenle çakışmasın)
-	Props.set_pattern(Props.solid(self, Vector3(70, 0.4, 52), Vector3(0, -0.19, -68.0), Color.WHITE), Color("7a6a54"), "cobble")
+	if v2:
+		# evlerin ve kilisenin altı (x ±15) ve sur dibinden caddenin sonuna (iç surun şehir yüzünün 0,2 m önünden)
+		var z0 := LandWalls.INNER_Z0 - 0.2
+		var z1 := Z1 - 8.0
+		Props.set_pattern(Props.solid(self, Vector3(30, 0.4, z0 - z1), Vector3(0, -0.19, (z0 + z1) * 0.5), Color.WHITE), Color("7a6a54"), "cobble")
+	else:
+		Props.set_pattern(Props.solid(self, Vector3(70, 0.4, 52), Vector3(0, -0.19, -68.0), Color.WHITE), Color("7a6a54"), "cobble")
 	# Cadde taşları: ortada daha açık, iki yanda oluk
 	Props.set_pattern(Props.box(self, Vector3(STREET * 2.0 - 1.0, 0.02, absf(Z1 - Z0)), Vector3(0, 0.01, (Z0 + Z1) * 0.5), Color.WHITE), Color("b0a080"), "cobble")
 	for sx: float in [-1.0, 1.0]:

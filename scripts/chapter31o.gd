@@ -134,6 +134,14 @@ func _clear_stage() -> void:
 	_sun = null
 	await get_tree().process_frame
 	await get_tree().process_frame
+	# TAŞIMA-13: v2 dünyası kökle birlikte gitti; bağlama durumu (bölge, harita kipi, arazi yaması, dışlanan/denizsiz alanlar)
+	# eyüp evresinin World1453'ünden önce boşalır (IstBaglama._exit_tree'nin ertelenmiş birak'ı da aynısını yapar)
+	if IstBaglama.aktif_bolge == IstBaglama.B31O:
+		IstBaglama.birak()
+	if sur_v2:
+		IstGeo.dislanan.clear()
+		IstGeo.deniz_yok.clear()
+	v2_kok = null
 
 
 # ================================================================ 1. yanık ev (30 Mayıs)
@@ -141,6 +149,12 @@ func _clear_stage() -> void:
 var walls: LandWalls
 ## TAŞIMA-12: sur seti (yeni: Mesoteikhion kesimi, iç kapı Romanos'ta; `--eskisur=31o` eski LandWalls)
 var sur: SurSet
+## TAŞIMA-13: yeni sette caddenin ardı İstanbul v2 (8y kalıbı: SurHub "romanos" kesimi + IstBaglama "fallen31o"); walls null.
+## v2 kapalıysa (`--eski-dunya`) Taşıma 12'nin seti (SurSetSahne) kurulur.
+const SurHub := preload("res://scripts/world/ist/sur_set_hub.gd")
+var sur_v2 := false
+var sur_hub: Dictionary = {}
+var v2_kok: SiegeField
 var city: FallenCity
 var _beam: Node3D
 var _fallen_beam: Node3D
@@ -153,6 +167,10 @@ var _embers: Array = []
 ## gelecek kadar KAYAR (26'nın `city.yer = sur.sehir_ofs(romanos x)` kaydırmasının tersi; geometri aynı, sayılar tek yerde).
 func _sur_kur() -> void:
 	sur = SurSet.sec("31o")
+	sur_v2 = not sur.eski_mi and IstBaglama.etkin()
+	if sur_v2:
+		_sur_kur_v2()
+		return
 	if sur.eski_mi:
 		walls = LandWalls.new()
 	else:
@@ -165,26 +183,75 @@ func _sur_kur() -> void:
 	_stage.add_child(walls)
 	walls.make_day()
 	walls.open_inner_gate()
+	_env = walls.env
+	_sun = walls.moon
 	if GameState.autotest:
 		print("T12_31O sur=%s kayma=%s etkin=%s" % ["eski" if sur.eski_mi else "yeni", walls.position, SurSet.etkin == sur])
 
 
+## TAŞIMA-13: yeni sur + v2 şehri (Bölüm 8y'nin kurulumu: chapter8y.gd _yeni_yerler, World1453.build → IstBaglama).
+## Kesim bölümün çerçevesine T · M8 ile oturur (iç kapı x 0, iç surun şehir yüzü LandWalls.INNER_Z0; caddenin ve bölümün
+## sayıları değişmez); v2 dünyası aynı çerçevede (IstBaglama.donusum "fallen31o" = gate8y_v2 · T⁻¹). Gök ve ışık eski setin
+## gündüzü (Night.environment + LandWalls.make_day'in değerleri); v2'nin göğü kurulmaz (IstBaglama.build: gok_kur false).
+func _sur_kur_v2() -> void:
+	var t0 := Time.get_ticks_usec()
+	sur_hub = SurHub.kur(_stage, {"cerceve": IstBaglama.t31o() * SurHub.M8(), "kapi_acik": true})
+	_sun = Night.environment(_stage, 0.006)
+	for c in _stage.get_children():
+		if c is WorldEnvironment:
+			_env = c
+	# LandWalls.make_day'in gündüzü (aynı değerler)
+	var e := _env.environment
+	var sm := e.sky.sky_material as ProceduralSkyMaterial
+	sm.sky_top_color = Color("4a86c8")
+	sm.sky_horizon_color = Color("c8dcec")
+	sm.ground_horizon_color = Color("a89878")
+	Look.refresh(_env)
+	e.tonemap_exposure = 0.92
+	e.ambient_light_color = Color("c8ccd4")
+	e.ambient_light_energy = 0.8
+	e.fog_light_color = Color("c8d4e0")
+	e.fog_density = 0.003
+	_sun.light_color = Color("fff4e0")
+	_sun.light_energy = 1.2
+	_sun.rotation_degrees = Vector3(-48, 150, 0)
+	IstBaglama.gece = false
+	v2_kok = IstBaglama.build(_stage, IstBaglama.B31O, [IstBaglama.OYUN_31O], false)
+	# görünmez döşeme: v2 arazisi akışla katılaşır; oyuncu ondan önce de bassın (8y _build_ground_yeni). Cadde döşemesi
+	# (FallenCity) z −4,2'den başlar; kapı eşiğiyle arası ve caddenin başı
+	var b := Props.solid(_stage, Vector3(24, 0.6, 44.0), Vector3(0, -0.03 - 0.3, -26.0), Color.WHITE)
+	b.get_child(0).visible = false
+	if GameState.autotest:
+		print("T13_31O sur=yeni_v2 bolge=%s kur_ms=%.0f v2_ms=%.0f hub_ms=%.0f" % [IstBaglama.aktif_bolge, (Time.get_ticks_usec() - t0) / 1000.0,
+			IstBaglama.kurulum_ms, float(sur_hub["ms"].get("hub_ms", 0.0))])
+
+
+## TAŞIMA-13 ölçümü (otomatik oyun): düğüm sayısı ve bellek (evre geçişinde v2 temiz kalkıyor mu)
+func _olc(ad: String) -> void:
+	if GameState.autotest:
+		print("T13_31O olc=%s dugum=%d bellek_mb=%.1f aktif_bolge=%s yakin_gecerli=%s" % [ad, int(Performance.get_monitor(Performance.OBJECT_NODE_COUNT)),
+			Performance.get_monitor(Performance.MEMORY_STATIC) / 1048576.0, IstBaglama.aktif_bolge, is_instance_valid(IstHayatYakin.aktif)])
+
+
 func _house_phase() -> void:
 	phase = "house"
+	_olc("once")
 	_stage = Node3D.new()
 	add_child(_stage)
 	_sur_kur()
 	city = FallenCity.new()
-	city.field = walls.field
+	city.field = walls.field if walls != null else null
+	city.v2 = sur_v2
 	city.quiet = true
 	city.reserve_right = Vector2(HZ1 + 0.4, HZ0 - 0.2)
 	_stage.add_child(city)
-	FallenCity.mood(walls.env.environment, walls.moon)
+	FallenCity.mood(_env.environment, _sun)
 	# Fethin ertesi sabah: duman inceldi, ışık daha açık
-	walls.env.environment.fog_density = 0.006
-	walls.moon.light_energy = 1.15
+	_env.environment.fog_density = 0.006
+	_sun.light_energy = 1.15
 	_build_burnt_house()
 	_build_street_people()
+	_olc("ev")
 	_lore = Lore.scatter(self, "31o", [Vector3(-3.2, 0.3, -30.0), Vector3(3.0, 0.3, -52.0), Vector3(-2.6, 0.3, -82.0)])
 	player.global_position = Vector3(0.8, 0.05, -10.0)
 	player.face(Vector3(0, 1.6, -40.0))
@@ -676,6 +743,7 @@ func _eyup_phase() -> void:
 	phase = "eyup"
 	if GameState.autotest:
 		print("T12_31O asama=eyup surset_etkin_temiz=%s" % (SurSet.etkin == null))
+	_olc("eyup")
 	_stage = Node3D.new()
 	add_child(_stage)
 	_day_env(_stage, Vector3(-30, 160, 0))
@@ -922,6 +990,7 @@ func _scaffold_phase() -> void:
 	phase = "scaff"
 	if GameState.autotest:
 		print("T12_31O asama=aya surset_etkin_temiz=%s" % (SurSet.etkin == null))
+	_olc("aya")
 	_stage = Node3D.new()
 	add_child(_stage)
 	bcity = ByzCity.new()
@@ -1588,12 +1657,13 @@ func _run_shots() -> void:
 	add_child(_stage)
 	_sur_kur()
 	city = FallenCity.new()
-	city.field = walls.field
+	city.field = walls.field if walls != null else null
+	city.v2 = sur_v2
 	city.quiet = true
 	city.reserve_right = Vector2(HZ1 + 0.4, HZ0 - 0.2)
 	_stage.add_child(city)
-	FallenCity.mood(walls.env.environment, walls.moon)
-	walls.env.environment.fog_density = 0.006
+	FallenCity.mood(_env.environment, _sun)
+	_env.environment.fog_density = 0.006
 	_build_burnt_house()
 	_build_street_people()
 	var cv := Camera3D.new()
