@@ -56,7 +56,7 @@ static func tugla_renk(h: float, h2: float) -> Color:
 
 ## Kesme taş (köşe alfası 0,8): sur_doku tek taş yolunda ton köşe parlaklığından (0,62–0,72 sRGB → ×0,76–1,0)
 static func tas_renk(h: float) -> Color:
-	var v := 0.57 + 0.1 * h
+	var v := 0.6 + 0.1 * h
 	return Color(v, v * 0.985, v * 0.95, KESME_A)
 
 
