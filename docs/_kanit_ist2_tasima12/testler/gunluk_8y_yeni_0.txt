@@ -1,0 +1,2 @@
+VISAUDIT float scene=chapter8y.tscn who=Person/Station_coil_rope spk= feet=(13.7, -2.9, 103.4) floor=-3.08 by=Chapter8y/OvaZemini act=crouch meta=no_talk,ayak_kok_dis src=Chapter8y>Station_coil_rope>Person shape=HeightMapShape3D@(0.0, 0.0, 101.5) lp=(0.0, 0.18, 0.0)
+AUTOTEST PASS chapter=8y variant= outcome=8Y.1 id=seal warnings=0 lowered=0 radio=true
