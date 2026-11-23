@@ -172,7 +172,8 @@ func _north_shore() -> void:
 	var gnd := Dressing.new(333)
 	gnd.chunk = 240.0
 	GalataView.build(self, hf, Vector2(tw.x, tw.z), top, Vector2(gc.x, gc.z), 150.0, -1.6, 1453, night, keep,
-		func(list: Array) -> void: CityHouses.build(self, list, func(px: float, pz: float) -> float: return north_surf(px, pz), _free, gnd))
+		func(list: Array) -> void: CityHouses.build(self, list, func(px: float, pz: float) -> float: return north_surf(px, pz), _free, gnd),
+		_deniz_bolge())
 	_night.append(gnd.build(self))
 	# Osmanlı yakası: çadırlar, ateşler (Galata'nın çevresi boş)
 	var d := Dressing.new(331)
@@ -552,27 +553,41 @@ func _wall_run(a: Vector3, b: Vector3, h: float, tower_step: float, d: Dressing,
 ## uzak_kule; tek ağ, sur_doku tur 1). `--eskisur` (ya da `--eskisur=<bölüm>`) eskisini kurar.
 const DENIZ_YOL := "res://scripts/world/ist/deniz_set.gd"
 const DENIZ_YAKIN := 250.0
+## TUR 15: bölge adına bağlı eşik (keep'e uzaklık; yoksa DENIZ_YAKIN). "springs"i (Pınarlar Vadisi) yalnız 17o kurar:
+## oyuncu Haliç'in karşı kıyısına bakar, gördüğü bütün kıyı surları (Haliç koşusu, buruna dönen koşu, Marmara koşusu),
+## Eugenius kulesi ve Galata surları yeni kalemle. Öteki bölgeler (keep'i olan bütün bölümler) bit bit aynı.
+const DENIZ_UZAK := {"springs": INF}
 var _deniz_ag = null
 var _deniz_eski := -1
 
 
-func _deniz_yakin(p: Vector3) -> bool:
-	if keep.is_empty():
-		return false
+## `--eskisur` (ya da `--eskisur=<bölüm>`) istendi mi (sahnenin bölüm adıyla; bir kez bakılır)
+func _deniz_eski_mi() -> bool:
 	if _deniz_eski < 0:
 		var bolum := ""
 		var sc := get_tree().current_scene if is_inside_tree() else null
 		if sc != null:
 			bolum = sc.scene_file_path.get_file().get_basename().trim_prefix("chapter")
 		_deniz_eski = 1 if SurSet.eski_istendi(bolum) else 0
-	if _deniz_eski == 1:
+	return _deniz_eski == 1
+
+
+## TUR 15: bölgenin bütün uzak surları yeni kalemde mi (DENIZ_UZAK bölgesi, eski istenmedi)
+func _deniz_bolge() -> bool:
+	return not keep.is_empty() and DENIZ_UZAK.has(region_name) and not _deniz_eski_mi()
+
+
+func _deniz_yakin(p: Vector3) -> bool:
+	if keep.is_empty():
+		return false
+	if _deniz_eski_mi():
 		return false
 	var kd := INF
 	for r: Rect2 in keep:
 		var dx := maxf(maxf(r.position.x - p.x, 0.0), p.x - r.end.x)
 		var dz := maxf(maxf(r.position.y - p.z, 0.0), p.z - r.end.y)
 		kd = minf(kd, Vector2(dx, dz).length())
-	if kd > DENIZ_YAKIN:
+	if kd > float(DENIZ_UZAK.get(region_name, DENIZ_YAKIN)):
 		return false
 	if _deniz_ag == null:
 		_deniz_ag = load("res://scripts/world/ist/sur_kule.gd").Ag.new()
@@ -617,7 +632,12 @@ func _horn_walls() -> void:
 		hg.append(Vector3(World1453.HORN_S_X, 0.0, gz))
 	_wall_run(a, b, 10.0, 44.0, d, merl, nd, hg)
 	# Eugenius kulesi (zincirin şehir ucu) ve burna dönen sur
-	if _free(e.x, e.z, 8.0):
+	if _free(e.x, e.z, 8.0) and _deniz_bolge():
+		# TUR 15: yuvarlak kule deniz suru kaleminin uzak katmanıyla (eski silindirin ölçüsü: r 7, tepe 21)
+		_deniz_ag = load("res://scripts/world/ist/sur_kule.gd").Ag.new()
+		load(DENIZ_YOL).uzak_yuvarlak_kule(_deniz_ag, Vector3(e.x, 0.0, e.z), 7.0, 21.0, -3.0)
+		_deniz_kur("DenizKuleEugenius")
+	elif _free(e.x, e.z, 8.0):
 		d.cyl(7.0, 22.0, Vector3(e.x, 10.0, e.z), STONE.darkened(0.2), Vector3.ZERO, 14)
 		d.cyl(7.4, 0.6, Vector3(e.x, 21.3, e.z), Color("9a5040"), Vector3.ZERO, 14)
 	_wall_run(b, World1453.TIP, 9.0, 60.0, d, merl, nd)
