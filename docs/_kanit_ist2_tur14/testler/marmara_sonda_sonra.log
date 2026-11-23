@@ -1,0 +1,67 @@
+Godot Engine v4.4.1.stable.official.49a5bc7b6 - https://godotengine.org
+
+MARMARAGOR k=1.0 L=30.0 lod=0 mer=true ucgen=2274
+MARMARAGOR k=1.0 L=30.0 lod=0 mer=false ucgen=1820
+MARMARAGOR k=1.0 L=30.0 lod=1 mer=true ucgen=692
+MARMARAGOR k=1.0 L=30.0 lod=1 mer=false ucgen=238
+MARMARAGOR k=1.0 L=30.0 lod=2 mer=true ucgen=24
+MARMARAGOR k=1.0 L=30.0 lod=2 mer=false ucgen=24
+MARMARAGOR k=1.0 L=61.5 lod=0 mer=true ucgen=3262
+MARMARAGOR k=1.0 L=61.5 lod=0 mer=false ucgen=2808
+MARMARAGOR k=1.0 L=61.5 lod=1 mer=true ucgen=788
+MARMARAGOR k=1.0 L=61.5 lod=1 mer=false ucgen=334
+MARMARAGOR k=1.0 L=61.5 lod=2 mer=true ucgen=24
+MARMARAGOR k=1.0 L=61.5 lod=2 mer=false ucgen=24
+MARMARAGOR k=1.0 L=150.0 lod=0 mer=true ucgen=6938
+MARMARAGOR k=1.0 L=150.0 lod=0 mer=false ucgen=6484
+MARMARAGOR k=1.0 L=150.0 lod=1 mer=true ucgen=1184
+MARMARAGOR k=1.0 L=150.0 lod=1 mer=false ucgen=730
+MARMARAGOR k=1.0 L=150.0 lod=2 mer=true ucgen=36
+MARMARAGOR k=1.0 L=150.0 lod=2 mer=false ucgen=36
+MARMARAGOR k=1.0 L=233.0 lod=0 mer=true ucgen=12386
+MARMARAGOR k=1.0 L=233.0 lod=0 mer=false ucgen=11932
+MARMARAGOR k=1.0 L=233.0 lod=1 mer=true ucgen=2060
+MARMARAGOR k=1.0 L=233.0 lod=1 mer=false ucgen=1606
+MARMARAGOR k=1.0 L=233.0 lod=2 mer=true ucgen=60
+MARMARAGOR k=1.0 L=233.0 lod=2 mer=false ucgen=60
+MARMARAGOR k=0.5 L=30.0 lod=0 mer=true ucgen=1782
+MARMARAGOR k=0.5 L=30.0 lod=0 mer=false ucgen=1544
+MARMARAGOR k=0.5 L=30.0 lod=1 mer=true ucgen=476
+MARMARAGOR k=0.5 L=30.0 lod=1 mer=false ucgen=238
+MARMARAGOR k=0.5 L=30.0 lod=2 mer=true ucgen=24
+MARMARAGOR k=0.5 L=30.0 lod=2 mer=false ucgen=24
+MARMARAGOR k=0.5 L=61.5 lod=0 mer=true ucgen=3320
+MARMARAGOR k=0.5 L=61.5 lod=0 mer=false ucgen=3082
+MARMARAGOR k=0.5 L=61.5 lod=1 mer=true ucgen=668
+MARMARAGOR k=0.5 L=61.5 lod=1 mer=false ucgen=430
+MARMARAGOR k=0.5 L=61.5 lod=2 mer=true ucgen=36
+MARMARAGOR k=0.5 L=61.5 lod=2 mer=false ucgen=36
+MARMARAGOR k=0.5 L=150.0 lod=0 mer=true ucgen=8858
+MARMARAGOR k=0.5 L=150.0 lod=0 mer=false ucgen=8620
+MARMARAGOR k=0.5 L=150.0 lod=1 mer=true ucgen=1526
+MARMARAGOR k=0.5 L=150.0 lod=1 mer=false ucgen=1288
+MARMARAGOR k=0.5 L=150.0 lod=2 mer=true ucgen=72
+MARMARAGOR k=0.5 L=150.0 lod=2 mer=false ucgen=72
+MARMARAGOR k=0.5 L=233.0 lod=0 mer=true ucgen=13206
+MARMARAGOR k=0.5 L=233.0 lod=0 mer=false ucgen=12968
+MARMARAGOR k=0.5 L=233.0 lod=1 mer=true ucgen=2228
+MARMARAGOR k=0.5 L=233.0 lod=1 mer=false ucgen=1990
+MARMARAGOR k=0.5 L=233.0 lod=2 mer=true ucgen=108
+MARMARAGOR k=0.5 L=233.0 lod=2 mer=false ucgen=108
+MARMARAGOR pencere L=61.5 ucgen=3410
+MARMARAGOR pencere L=150.0 ucgen=7306
+MARMARAGOR mermerkule lod=0 ucgen=7136
+MARMARAGOR ahirkapi lod=0 ucgen=4830
+MARMARAGOR msur lod=0 ucgen=5538
+MARMARAGOR mermerkule lod=1 ucgen=1602
+MARMARAGOR ahirkapi lod=1 ucgen=806
+MARMARAGOR msur lod=1 ucgen=1028
+MARMARAGOR mermerkule lod=2 ucgen=96
+MARMARAGOR ahirkapi lod=2 ucgen=36
+MARMARAGOR msur lod=2 ucgen=48
+MARMARADON dims1={ "H": 12.0, "T": 3.4, "TW": 8.0, "PROJ": 4.2, "DH": 2.5, "NST": 9, "S": 58.0, "TH": 14.5 } dims05={ "H": 6.0, "T": 2.7, "TW": 4.8, "PROJ": 2.4, "DH": 1.25, "NST": 5, "S": 29.0, "TH": 7.25 } towers=[-29.0, 29.0] gates=[] stair={ "n": 36, "x_top": 8.28, "x_foot": -8.28, "len": 16.56 } perches=[(-29.0, 7.25, 1.2), (0.0, 7.25, 1.2), (29.0, 7.25, 1.2)] climbs=[[(-19.04, 0.0, -2.2), (-10.61, 6.0, -2.2), "merdiven"], [(-10.56, 6.0, -2.2), (-10.56, 6.0, -0.45), "basamak"]]
+MARMARASONDA OZET carp=1837 karma=2250736444
+ERROR: 1 RID allocations of type 'P11GodotBody3D' were leaked at exit.
+ERROR: 2 RID allocations of type 'N17RendererSceneCull8InstanceE' were leaked at exit.
+WARNING: ObjectDB instances leaked at exit (run with --verbose for details).
+     at: cleanup (core/object/object.cpp:2378)

@@ -1,8 +1,8 @@
 # TUR 14 — durum
 
 - Dal: `wip/ist2-tur14` (taban `wip/ist2-taban19` a38ad405)
-- Son kayıt: madde 1 (Romanos kemeri + kanat), madde 2 (harpuşta), madde 3 (döşeme) yapıldı; yakın kareler ÖNCE|SONRA
-  `kare/yakin/{once,sonra}` (tests/_ist/tur14_kare, Bölüm 26 kesimi, gündüz + gece).
-- Testler (bu kayıttaki kodla, `~/is/kopya`): SURSOZLESME PASS kalem=13 kesim=8 · SUROYUN nokta=519 havada=0 gomuk=0 katida=0 ·
-  WALKTHRU OZET yol=7 tamam=7 takilma=0 dusme=0 · ESYATEST PASS · HALICSONDA OZET carp=661 karma=3854034809 · PARSECHECK PASS
-- Sürüyor: madde 4 (şehirde Haliç/Marmara hattı deniz kalemine), bölüm koşuları, bölüm kareleri, rapor.
+- Yapıldı: madde 1 (Romanos kemeri + kanat), 2 (harpuşta), 3 (döşeme), 4 (IstMarmaraSur.build_run deniz kalemine; deniz kapısı
+  kemeri ortak kalem), 5'ten pavez (tahta + ham deri + çivi + damar).
+- Çarpışma: `MARMARASONDA OZET carp=1837 karma=2250736444` ÖNCE = SONRA (testler/marmara_sonda_*.log).
+- Bu kayıtta bölüm koşuları HENÜZ yok (sürüyor); sözleşme/denetim/yürüyüş/eşya/Haliç sondası madde 1–3 koduyla PASS.
+- Kareler: kare/yakin (tur14_kare), kare/sehir (gezi; Haliç dilimleri 12, 22).

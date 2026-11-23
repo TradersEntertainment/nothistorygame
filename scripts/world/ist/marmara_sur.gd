@@ -11,6 +11,23 @@ const GATE_W := 3.6         # kapı açıklığı (gerçek boy)
 const GATE_H := 4.4
 
 
+## TUR-14: yakın ve orta katmanda görünüş deniz suru kalemiyle (scripts/world/ist/deniz_set.gd; şehirdeki Haliç dilimi,
+## SeaWalls, 18b/38o kesimi ile AYNI işlevler). Şehirde Haliç hattının çoğu (96 m'lik modüle sığmayan dilimler) ve bütün
+## Marmara kıyısı buradan kurulur; eskiden kutu gövde, kutu kule, kutu diş, düz tuğla bant. Çarpışma kutuları birebir aynı
+## (ağları gizli, `wall` metası; tests/_ist/tur14_marmara_sonda); yalnız görünen kutu süsler (kule kornişi, kutu diş, korkuluk
+## kapağı, kutu kemer, mermer söve/lento kutusu, devşirme levha, oluk, yosun bandı, kaide) kurulmaz. Pencereli kurulumda
+## (sehir.gd _pencere_is: 7 m'lik pencereler) yeni görünüş de pencereye kırpılır. `--eskisur` (çıplak) eskisini kurar.
+static var _yeni := false
+static var _gizlenecek: Array = []
+
+
+static func _S(p: Node3D, size: Vector3, base: Vector3, col: Color, pat := "", rot_y := 0.0) -> StaticBody3D:
+	var b := IstMk.S(p, size, base, col, pat, rot_y)
+	if _yeni and b != IstMk._bos_s:
+		_gizlenecek.append(b)
+	return b
+
+
 static func dims(k: float) -> Dictionary:
 	var h := maxf(12.0 * k, 4.8)
 	var t := maxf(3.4 * k, 2.7)
@@ -76,6 +93,8 @@ static func build_run(host: Node3D, length: float, k: float, lod: int, opts := {
 	var gates := gate_xs(length, k, opts)
 	var x0 := -length * 0.5
 	var x1 := length * 0.5
+	_yeni = lod < 2 and not SurSet.eski_istendi("")
+	_gizlenecek = []
 	if lod >= 2:
 		IstMk.S(root, Vector3(length, H, T), Vector3(0, 0, 0), IstMk.STONE, "ashlar")
 		for x: float in xs:
@@ -92,7 +111,7 @@ static func build_run(host: Node3D, length: float, k: float, lod: int, opts := {
 		var a: float = cuts[i]
 		var b: float = cuts[i + 1]
 		if b - a > 0.05:
-			IstMk.S(root, Vector3(b - a, H, T), Vector3((a + b) * 0.5, 0, 0), IstMk.STONE, "ashlar")
+			_S(root, Vector3(b - a, H, T), Vector3((a + b) * 0.5, 0, 0), IstMk.STONE, "ashlar")
 		i += 2
 	for gx: float in gates:
 		_gate(root, gx, H, T, lod)
@@ -115,19 +134,140 @@ static func build_run(host: Node3D, length: float, k: float, lod: int, opts := {
 		_plinth(root, length, d)
 	if lod == 0:
 		_details(root, length, d, xs, gates, opts)
+	if _yeni:
+		for b: StaticBody3D in _gizlenecek:
+			DENIZ.gizle(b)
+		_yeni_gorunus(root, length, d, xs, gates, gap_x0, gap_x1, lod)
+	_yeni = false
+	_gizlenecek = []
+
+
+const DENIZ := preload("res://scripts/world/ist/deniz_set.gd")
+
+
+## Pencere (IstMk.pencere) ile x0…x1'in kesişimi; boşsa Vector2(1, 0)
+static func _kirp(a: float, b: float) -> Vector2:
+	return Vector2(maxf(a, IstMk.pencere.x), minf(b, IstMk.pencere.y))
+
+
+## Yeni görünüş (deniz suru kalemi): gövde (kapı açıklıkları, su çizgisinde kaide), deniz korkuluğu + dişler, şehir
+## korkuluğu (merdiven ağzı açık), kuleler (eski kutu kulenin ayak izi ve tepesi; teras korkuluğu ve dişleri), kapı süsleri
+## (iki yüzde söve, lento, boşaltma kemeri). Deniz +z, şehir −z.
+static func _yeni_gorunus(root: Node3D, length: float, d: Dictionary, xs: Array, gates: Array, gap_x0: float, gap_x1: float, lod: int) -> void:
+	var H: float = d["H"]
+	var T: float = d["T"]
+	var TW: float = d["TW"]
+	var NST: int = d["NST"]
+	var x0 := -length * 0.5
+	var x1 := length * 0.5
+	var tam := IstMk.pencere.x < -1e8 and IstMk.pencere.y > 1e8
+	var g := {"zf": T * 0.5, "s": 1.0, "T": T, "H": H, "dip": -0.6, "su": 0.0, "ic_dip": 0.0, "lod": lod,
+		"tohum": 211, "kaide": 0.55, "kaide_y": 0.6, "uclar": tam, "kz": T * 0.5, "PT": 0.5, "PH": 1.9 if lod == 0 else 1.4, "yol": H}
+	var gh := minf(GATE_H, H - 1.3)
+	var acik: Array = []
+	for gx: float in gates:
+		acik.append({"a": gx - GATE_W * 0.5, "b": gx + GATE_W * 0.5, "y0": 0.0, "y1": gh, "esik": false})
+	var kg := _kirp(x0, x1)
+	if kg.y - kg.x > 0.05:
+		var ak: Array = []
+		for a: Dictionary in acik:
+			if float(a["b"]) > kg.x and float(a["a"]) < kg.y:
+				var a2 := a.duplicate()
+				a2["a"] = maxf(float(a["a"]), kg.x)
+				a2["b"] = minf(float(a["b"]), kg.y)
+				ak.append(a2)
+		DENIZ.govde(root, kg.x, kg.y, g, ak, "MarmaraSurGovde")
+	# korkuluklar (eski _parapets ile aynı bölme: kule + kule basamakları dışında kalan şeritler)
+	var gs := g.duplicate()
+	gs["s"] = -1.0
+	gs["kz"] = -T * 0.5
+	gs["PT"] = 0.4
+	gs["PH"] = 1.05
+	var blocks: Array = []
+	for x: float in xs:
+		blocks.append([x - TW * 0.5 - NST * 0.5, x + TW * 0.5 + NST * 0.5])
+	var segs: Array = []
+	var cur := x0
+	for bl in blocks:
+		if float(bl[0]) > cur:
+			segs.append([cur, minf(float(bl[0]), x1)])
+		cur = maxf(cur, float(bl[1]))
+	if cur < x1:
+		segs.append([cur, x1])
+	var si := 0
+	for sg in segs:
+		si += 1
+		var a: float = sg[0]
+		var b: float = sg[1]
+		if b - a < 0.4:
+			continue
+		var k2 := _kirp(a, b)
+		if k2.y - k2.x > 0.05:
+			DENIZ.korkuluk(root, k2.x, k2.y, g, [], "MarmaraKorkulukDeniz")
+			DENIZ.korkuluk(root, k2.x, k2.y, gs, [Vector2(gap_x0, gap_x1)], "MarmaraKorkulukSehir")
+		if lod == 0:
+			var n := int(floor((b - a) / 1.7))
+			var mx: Array = []
+			for i in n:
+				var px := a + (i + 0.5) * (b - a) / n
+				if IstMk._ic(px):
+					mx.append(px)
+			DENIZ.disler(root, mx, 0.95, 0.8, g, 2110 + si)
+	# kuleler (eski kutu kulenin ayak izi: x ± TW/2, z −T/2 … T/2 + PROJ; tepe TH)
+	var ti := 0
+	for x: float in xs:
+		ti += 1
+		if not IstMk._ic(x):
+			continue
+		DENIZ.kule(root, {"cx": x, "w": TW, "zi": -T * 0.5, "zo": T * 0.5 + float(d["PROJ"]), "HT": float(d["TH"]), "yb": H,
+			"pah": 0.0, "bat": 0.0, "tohum": 2130 + ti * 13, "yarik": 3}, g, "MarmaraKule")
+	if lod == 0:
+		for gx: float in gates:
+			if not IstMk._ic(gx):
+				continue
+			DENIZ.kapi_kemer(root, gx, GATE_W * 0.5, 0.0, gh, g, {"soveler": true})
+			DENIZ.kapi_kemer(root, gx, GATE_W * 0.5, 0.0, gh, gs, {"soveler": true, "kitabe": true})
 
 
 static func _plinth(root: Node3D, length: float, d: Dictionary) -> void:
 	var T: float = d["T"]
 	# deniz yüzünde kaya ayak (talus): sur tabanına yaslı, 1,2 m yüksek, 0,55 m öne taşan
-	IstMk.S(root, Vector3(length, 1.2, 0.55), Vector3(0, 0, T * 0.5 + 0.275), IstMk.ROCK, "rubble")
+	_S(root, Vector3(length, 1.2, 0.55), Vector3(0, 0, T * 0.5 + 0.275), IstMk.ROCK, "rubble")
 
 
 static func _gate(root: Node3D, gx: float, H: float, T: float, lod: int) -> void:
 	var gh := minf(GATE_H, H - 1.3)
 	# lento (kapı üstü sur gövdesi)
-	IstMk.S(root, Vector3(GATE_W + 0.02, H - gh, T), Vector3(gx, gh, 0), IstMk.STONE, "ashlar")
+	_S(root, Vector3(GATE_W + 0.02, H - gh, T), Vector3(gx, gh, 0), IstMk.STONE, "ashlar")
 	if lod >= 1:
+		return
+	if _yeni:
+		# kapı süsü deniz kaleminden (kapi_kemer); açık kanatlar tahta tahta (IstSurlarKapi.kanat_ag), eşik taşı aynı
+		IstMk.V(root, Vector3(GATE_W + 0.6, 0.04, T + 1.2), Vector3(gx, 0.0, 0), IstMk.STONE_DK, "flagstone")
+		if IstMk._ic(gx):
+			var tahta = DENIZ.SURKULE.Ag.new()
+			var demir = DENIZ.SURKULE.Ag.new()
+			for sx: float in [-1.0, 1.0]:
+				# kanat yerel x boyunca (−0,625 … 0,625), kalınlık z (−0,09 … 0,09); dünyada z boyunca, iç yüzü geçide
+				var b := Basis(Vector3.UP, deg_to_rad(90.0 * sx))
+				var o := Vector3(gx + sx * (GATE_W * 0.5 - 0.09), 0.0, T * 0.5 - 0.7)
+				var ta = DENIZ.SURKULE.Ag.new()
+				var de = DENIZ.SURKULE.Ag.new()
+				IstSurlarKapi.kanat_ag(ta, de, -0.625, 0.625, gh - 0.3, -0.09, 0.18, gx * 1.7 + sx * 5.0)
+				for pair: Array in [[ta, tahta], [de, demir]]:
+					var src: Mesh = (pair[0] as RefCounted).st.commit()
+					if src.get_surface_count() > 0:
+						var arr := src.surface_get_arrays(0)
+						var vs: PackedVector3Array = arr[Mesh.ARRAY_VERTEX]
+						var ns: PackedVector3Array = arr[Mesh.ARRAY_NORMAL]
+						var cs: PackedColorArray = arr[Mesh.ARRAY_COLOR]
+						for vi in vs.size():
+							(pair[1] as RefCounted).st.set_color(cs[vi])
+							(pair[1] as RefCounted).st.set_normal(b * ns[vi])
+							(pair[1] as RefCounted).st.add_vertex(o + b * vs[vi])
+						(pair[1] as RefCounted).n += vs.size() / 3
+			tahta.mesh_ekle(root, IstSurlarKapi.kanat_mat(), "Ahsap_KanatTahta")
+			demir.mesh_ekle(root, Props.mat(IstMk.DARK, 0.0, false, ""), "Demir_KanatKusak", false)
 		return
 	# mermer lento kirişi + boşaltma kemeri + dolgu (tympanum)
 	IstMk.V(root, Vector3(GATE_W + 0.7, 0.4, 0.14), Vector3(gx, gh - 0.4, T * 0.5 + 0.07), IstMk.MARBLE, "marble")
@@ -163,21 +303,23 @@ static func _tower(root: Node3D, x: float, d: Dictionary, lod: int) -> void:
 	var zc := PROJ * 0.5
 	var depth := T + PROJ
 	# gövde (denize doğru taşan dikdörtgen kule)
-	IstMk.S(root, Vector3(TW, TH, depth), Vector3(x, 0, zc), IstMk.STONE_DK, "ashlar")
+	_S(root, Vector3(TW, TH, depth), Vector3(x, 0, zc), IstMk.STONE_DK, "ashlar")
 	if lod >= 1:
-		IstMk.V(root, Vector3(TW + 0.3, 0.4, depth + 0.3), Vector3(x, TH - 0.4, zc), IstMk.STONE, "ashlar")
+		if not _yeni:
+			IstMk.V(root, Vector3(TW + 0.3, 0.4, depth + 0.3), Vector3(x, TH - 0.4, zc), IstMk.STONE, "ashlar")
 		return
 	# tepe kornişi (tuğla dişli) ve üst platform çevresi parapet
-	IstMk.V(root, Vector3(TW + 0.5, 0.18, depth + 0.5), Vector3(x, TH - 0.5, zc), IstMk.BRICK, "brick")
-	IstMk.V(root, Vector3(TW + 0.3, 0.3, depth + 0.3), Vector3(x, TH - 0.32, zc), IstMk.STONE, "ashlar")
+	if not _yeni:
+		IstMk.V(root, Vector3(TW + 0.5, 0.18, depth + 0.5), Vector3(x, TH - 0.5, zc), IstMk.BRICK, "brick")
+		IstMk.V(root, Vector3(TW + 0.3, 0.3, depth + 0.3), Vector3(x, TH - 0.32, zc), IstMk.STONE, "ashlar")
 	var zs := T * 0.5 + PROJ - 0.25
 	var zn := -T * 0.5 + 0.2
 	# parapet çarpışmaları (üç dış yan); kule üstü derinlik boyunca
-	IstMk.S(root, Vector3(TW, 1.6, 0.5), Vector3(x, TH, zs), IstMk.STONE, "ashlar")
-	IstMk.S(root, Vector3(0.5, 1.6, depth - 0.0), Vector3(x - TW * 0.5 + 0.25, TH, zc), IstMk.STONE, "ashlar")
-	IstMk.S(root, Vector3(0.5, 1.6, depth - 0.0), Vector3(x + TW * 0.5 - 0.25, TH, zc), IstMk.STONE, "ashlar")
+	_S(root, Vector3(TW, 1.6, 0.5), Vector3(x, TH, zs), IstMk.STONE, "ashlar")
+	_S(root, Vector3(0.5, 1.6, depth - 0.0), Vector3(x - TW * 0.5 + 0.25, TH, zc), IstMk.STONE, "ashlar")
+	_S(root, Vector3(0.5, 1.6, depth - 0.0), Vector3(x + TW * 0.5 - 0.25, TH, zc), IstMk.STONE, "ashlar")
 	# kuzey (şehir) tarafı: alçak korkuluk, ortası açık değil, sağ-sol yürüme yolu merdiveniyle birleşir
-	IstMk.S(root, Vector3(TW, 1.0, 0.4), Vector3(x, TH, zn), IstMk.STONE, "ashlar")
+	_S(root, Vector3(TW, 1.0, 0.4), Vector3(x, TH, zn), IstMk.STONE, "ashlar")
 	# mazgal dişleri
 	var xf: Array = []
 	var n := int(floor(TW / 1.6))
@@ -189,7 +331,8 @@ static func _tower(root: Node3D, x: float, d: Dictionary, lod: int) -> void:
 		for j in m:
 			var pz := T * 0.5 + PROJ - 0.25 - (j + 0.5) * (depth - 0.5) / m
 			xf.append([Vector3(x + sx * (TW * 0.5 - 0.25), TH + 1.6 + 0.4, pz), 90.0])
-	IstMk.MM(root, Vector3(0.9, 0.8, 0.52), xf, IstMk.STONE, "ashlar")
+	if not _yeni:
+		IstMk.MM(root, Vector3(0.9, 0.8, 0.52), xf, IstMk.STONE, "ashlar")
 	# yürüme yolundan kule üstüne çıkan basamaklar (iki yan): kule yanlarında, sur üstü şeridi içinde
 	var wwid := T - 0.9
 	var zwc := (-T * 0.5 + 0.4 + (T * 0.5 - 0.5)) * 0.5
@@ -205,6 +348,14 @@ static func _tower(root: Node3D, x: float, d: Dictionary, lod: int) -> void:
 		# Çarpışma: basamak ortalarından geçen tek rampa (ŞEHİR-3: oyuncu kutu basamakların önünde takılıyordu)
 		if IstMk._ic(foot.x):
 			rampa(root, foot + Vector3(0, rise * 0.5, 0), foot + dir * (0.5 * NST - 0.25) + Vector3(0, rise * NST, 0), wwid)
+	if _yeni:
+		# ok yarıkları, kornişler, dişler deniz kaleminin kulesinde; bayrak direği teras döşemesinden (eskisi korkuluk
+		# boyu kadar havadaydı), kazan aynı
+		IstMk.CY(root, 0.05, 4.4, Vector3(x - TW * 0.5 + 0.9, TH, zc), IstMk.WOOD_DK, "", 5)
+		IstMk.V(root, Vector3(0.04, 0.7, 1.2), Vector3(x - TW * 0.5 + 0.9, TH + 1.6 + 1.9, zc + 0.65), IstMk.GOLD)
+		IstMk.V(root, Vector3(0.05, 0.7, 0.35), Vector3(x - TW * 0.5 + 0.9, TH + 1.6 + 1.9, zc + 0.2), IstMk.RED)
+		IstMk.CY(root, 0.3, 0.45, Vector3(x + TW * 0.25, TH, zc + 0.2), IstMk.DARK, "", 8, true)
+		return
 	# ok yarıkları ve pencere: deniz yüzünde iki sıra
 	var slit: Array = []
 	for sx: float in [-0.3, 0.0, 0.3]:
@@ -251,7 +402,7 @@ static func _parapets(root: Node3D, d: Dictionary, x0: float, x1: float, xs: Arr
 		var cx := (a + b) * 0.5
 		# deniz parapeti (kalın, mazgallı)
 		var hsea := 1.9 if lod == 0 else 1.4
-		IstMk.S(root, Vector3(b - a, hsea, 0.5), Vector3(cx, H, T * 0.5 - 0.25), IstMk.STONE, "ashlar")
+		_S(root, Vector3(b - a, hsea, 0.5), Vector3(cx, H, T * 0.5 - 0.25), IstMk.STONE, "ashlar")
 		if lod == 0:
 			var n := int(floor((b - a) / 1.7))
 			for i in n:
@@ -267,10 +418,10 @@ static func _parapets(root: Node3D, d: Dictionary, x0: float, x1: float, xs: Arr
 		for s2 in segs2:
 			var a2: float = s2[0]
 			var b2: float = s2[1]
-			IstMk.S(root, Vector3(b2 - a2, 1.05, 0.4), Vector3((a2 + b2) * 0.5, H, -T * 0.5 + 0.2), IstMk.STONE, "ashlar")
-			if lod == 0:
+			_S(root, Vector3(b2 - a2, 1.05, 0.4), Vector3((a2 + b2) * 0.5, H, -T * 0.5 + 0.2), IstMk.STONE, "ashlar")
+			if lod == 0 and not _yeni:
 				IstMk.V(root, Vector3(b2 - a2 + 0.1, 0.1, 0.55), Vector3((a2 + b2) * 0.5, H + 1.05, -T * 0.5 + 0.2), IstMk.STONE_DK)
-	if lod == 0 and merl.size() > 0:
+	if lod == 0 and merl.size() > 0 and not _yeni:
 		IstMk.MM(root, Vector3(0.95, 0.8, 0.52), merl, IstMk.STONE, "ashlar")
 
 
@@ -323,7 +474,7 @@ static func _details(root: Node3D, length: float, d: Dictionary, xs: Array, gate
 			dr.append(Transform3D(Basis(Vector3.RIGHT, deg_to_rad(90.0)), Vector3(x, y, T * 0.5 + 0.1)))
 		else:
 			sp.append([Vector3(x, y, T * 0.5 + 0.035), 0.0])
-	if sp.size() > 0:
+	if sp.size() > 0 and not _yeni:
 		IstMk.MM(root, Vector3(rng.randf_range(0.7, 1.1), 0.5, 0.08), sp, IstMk.MARBLE, "marble")
 	if dr.size() > 0:
 		IstMk.MMC(root, 0.26, 0.6, dr, IstMk.MARBLE, 8, "marble")
@@ -331,9 +482,10 @@ static func _details(root: Node3D, length: float, d: Dictionary, xs: Array, gate
 	var spouts: Array = []
 	for i in maxi(int(length / 12.0), 1):
 		spouts.append([Vector3(-length * 0.5 + 4.0 + i * 12.0, H - 0.4, T * 0.5 + 0.3), 0.0])
-	IstMk.MM(root, Vector3(0.25, 0.2, 0.7), spouts, IstMk.STONE_DK, "ashlar")
-	# su hattında yosun bandı ve midye taşı
-	IstMk.V(root, Vector3(length, 0.5, 0.58), Vector3(0, 0.0, T * 0.5 + 0.28), IstMk.MOSS, "rubble")
+	if not _yeni:
+		IstMk.MM(root, Vector3(0.25, 0.2, 0.7), spouts, IstMk.STONE_DK, "ashlar")
+		# su hattında yosun bandı ve midye taşı (yeni görünüşte gövdenin kaidesi)
+		IstMk.V(root, Vector3(length, 0.5, 0.58), Vector3(0, 0.0, T * 0.5 + 0.28), IstMk.MOSS, "rubble")
 	# şehir yüzünde: sur dibinde istif (sandık yığını) — alçak ahşap yığın, tırmanma yardımcısı
 	var cx: float = opts.get("sandik_x", -length * 0.5 + 5.0)
 	IstMk.S(root, Vector3(1.0, 0.5, 1.0), Vector3(cx, 0, -T * 0.5 - 0.8), IstMk.WOOD, "wood")

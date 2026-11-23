@@ -405,9 +405,10 @@ void fragment() {
 		dj = mix(0.9, dj, ince_d);
 		float tn = h21(vec2(tid, rid));
 		float tn2 = h21(vec2(tid + 7.3, rid + 1.9));
-		vec3 dos = tas * vec3(1.04, 1.01, 0.95) * (0.8 + 0.24 * tn);
-		dos *= mix(vec3(0.96, 0.99, 1.03), vec3(1.05, 1.0, 0.92), tn2);
-		dos = mix(dos, tas * vec3(0.8, 0.8, 0.81), step(0.92, h21(vec2(tid + 3.1, rid))) * 0.7);   // onarım taşı (gri)
+		// gri-bej ama gök ışığına karşı sıcak (nötr gri gölgede camgöbeği okunuyor; eski kahve 1,06 0,9 0,74 kadar değil)
+		vec3 dos = tas * vec3(1.1, 0.985, 0.85) * (0.82 + 0.22 * tn);
+		dos *= mix(vec3(0.98, 0.995, 1.01), vec3(1.04, 1.0, 0.94), tn2);
+		dos = mix(dos, tas * vec3(0.86, 0.82, 0.76), step(0.92, h21(vec2(tid + 3.1, rid))) * 0.7);   // onarım taşı (koyu)
 		// aşınmış kenar: kenara doğru hafif koyu ve yuvarlanmış
 		float kenar = smoothstep(0.0, 0.05 + 0.04 * tn2, kk + tpur);
 		dos *= mix(0.86, 1.0, kenar * ince_d + (1.0 - ince_d));
@@ -422,8 +423,8 @@ void fragment() {
 		float dn2 = vn(P * 23.0 + tid);
 		dos *= 1.0 + 0.12 * (dn2 - 0.5) * yakin;
 		float cv = 1.0 - smoothstep(0.0, 0.025, abs(vn(P * vec2(2.7, 3.1) + tid * 3.7) - 0.5));
-		float catd = cv * step(0.72, h21(vec2(tid + 5.5, rid + 2.2))) * ince_d;
-		dos *= 1.0 - 0.28 * catd;
+		float catd = cv * step(0.8, h21(vec2(tid + 5.5, rid + 2.2))) * ince_d * smoothstep(0.35, 0.6, vn(P * 1.3 + tid));
+		dos *= 1.0 - 0.16 * catd;
 		float iz = smoothstep(0.45, 0.8, vn(P * 0.6 + 17.0));
 		dos = mix(dos, dos * vec3(1.07, 1.06, 1.03), iz * 0.6);
 		dos *= 1.0 - 0.14 * smoothstep(0.5, 0.9, vn(P * 0.35));
@@ -480,6 +481,11 @@ void fragment() {
 	// TUR-14: harpuşta/kesme taş gece daha az kararır (koyu ağır levha okunmasın; diş silueti seçilsin)
 	c *= mix(vec3(1.0), vec3(0.68, 0.66, 0.63), gece * (1.0 - moloz) * (0.6 + 0.4 * dikey) * (1.0 - 0.55 * harp));
 	ALBEDO = c;
+	// TUR-14: yukarı bakan taş (döşeme, harpuşta tepesi) gölgede yalnız gök ışığı alıyor; doğrusal uzayda mavi baskın gök ×
+	// gri-bej taş = yeşil/camgöbeği döşeme (taşıma 9/11 karelerinde "zeytin yeşili sur yolu"). Çevredeki güneşli taştan
+	// sekip gelen sıcak ışık: küçük, sıcak, gece yok (yalnız yukarı bakan yüzde; dikey sur yüzü değişmez).
+	float yukari = smoothstep(0.55, 0.95, abs(gnr.y)) * smoothstep(0.3, 0.6, wnrm.y) * (1.0 - moloz);
+	EMISSION = c * vec3(0.24, 0.165, 0.09) * yukari * (1.0 - gece);
 	ROUGHNESS = 0.95;
 }
 """
