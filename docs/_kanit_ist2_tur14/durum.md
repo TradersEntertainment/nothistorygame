@@ -1,8 +1,7 @@
 # TUR 14 — durum
 
 - Dal: `wip/ist2-tur14` (taban `wip/ist2-taban19` a38ad405)
-- Yapıldı: madde 1 (Romanos kemeri + kanat), 2 (harpuşta), 3 (döşeme), 4 (IstMarmaraSur.build_run deniz kalemine; deniz kapısı
-  kemeri ortak kalem), 5'ten pavez (tahta + ham deri + çivi + damar).
-- Çarpışma: `MARMARASONDA OZET carp=1837 karma=2250736444` ÖNCE = SONRA (testler/marmara_sonda_*.log).
-- Bölüm koşuları son kodla sürüyor (26 koşu); kule kapısı ve örülmüş kapı kemerleri de ortak kemer kalemine geçti.
-- Kareler: kare/yakin (tur14_kare), kare/sehir (gezi; Haliç dilimleri 12, 22).
+- Yapıldı: madde 1, 2, 3, 4; 5'ten pavez. Kule kapısı / örülmüş kapı kemerleri de ortak kemer kalemi.
+- Testler: 26 bölüm koşusu PASS (testler/c*.ozet; 8y yeni sette yalnız izinli `Station_coil_rope` satırı), sözleşme, denetim,
+  yürüyüş, eşya, Haliç ve Marmara sondaları, menü dönüşü, zfight 25 sahne `found=0` (testler/son_testler.txt).
+- Sürüyor: son kareler (yakın gündüz/gece, 8y/12b kapı, şehir Haliç ek kareleri), rapor.

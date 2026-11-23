@@ -389,8 +389,8 @@ static func damar_doku() -> ImageTexture:
 					dx += (b.z * 3.5 - dd) * signf(ex) * 0.4
 			var w := n.get_noise_2d((fx + dx) * 3.2, fy * 0.12)               # iri lif bandı
 			var w2 := n.get_noise_2d((fx + dx) * 11.0 + 300.0, fy * 0.35)     # ince lif
-			var v := 0.86 + 0.09 * w + 0.06 * w2
-			v -= 0.07 * smoothstep(0.55, 0.9, absf(sin((fx + dx + w * 6.0) * 0.55)))   # yıllık halka çizgisi
+			var v := 0.88 + 0.05 * w + 0.06 * w2
+			v -= 0.06 * smoothstep(0.55, 0.9, absf(sin((fx + dx + w * 6.0) * 0.55)))   # yıllık halka çizgisi
 			for b: Vector3 in budak:
 				var ex2 := fx - b.x
 				var ey2 := (fy - b.y) * 0.8
@@ -434,11 +434,11 @@ static func kanat_ag(tahta, demir, x0: float, x1: float, hk: float, zf: float, d
 	for i in n:
 		var h := _h(sd + float(i), 4.2)
 		var h2 := _h(sd + float(i) * 1.9, 8.8)
-		var col := Color(0.41 + 0.05 * h, 0.345 + 0.04 * h, 0.285 + 0.035 * h)
-		if h2 > 0.8:
-			col = Color(0.44, 0.405, 0.365)          # güneşte grileşmiş tahta
-		elif h2 < 0.16:
-			col = Color(0.35, 0.285, 0.235)          # yağ/is koyusu
+		var col := Color(0.41 + 0.04 * h, 0.345 + 0.035 * h, 0.285 + 0.03 * h)
+		if h2 > 0.82:
+			col = Color(0.43, 0.39, 0.345)           # güneşte grileşmiş tahta
+		elif h2 < 0.14:
+			col = Color(0.36, 0.295, 0.245)          # yağ/is koyusu
 		var on := 0.008 * h2
 		var arka := 0.006 * h
 		var ust := hk - 0.012 * h

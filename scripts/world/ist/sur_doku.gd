@@ -32,6 +32,7 @@ uniform float gece = 0.0;         // TUR-10: sahnenin gece payı (0 gündüz …
 varying vec3 wpos;
 varying vec3 wnrm;
 varying float ly;
+varying vec2 lxz;     // TUR-14: döşeme deseni modelin yerel xz'sinde (sur dilimi kendi yönünde; büyük dünya koordinatı yok)
 
 float h21(vec2 p) { return fract(sin(dot(p, vec2(127.1, 311.7))) * 43758.5453); }
 float vn(vec2 p) {
@@ -45,6 +46,7 @@ void vertex() {
 	wpos = (MODEL_MATRIX * vec4(VERTEX, 1.0)).xyz;
 	wnrm = normalize((MODEL_MATRIX * vec4(NORMAL, 0.0)).xyz);
 	ly = VERTEX.y;
+	lxz = VERTEX.xz;
 }
 
 void fragment() {
@@ -363,7 +365,7 @@ void fragment() {
 		// (dalgalı, toz/toprak dolu, yer yer otlanmış), taş taş ton (solgun gri-bej; soğuk gri ↔ bal), aşınmış ve
 		// yuvarlanmış kenar, kırık köşe, kılcal çatlak, ayak izi aşınması (açık yama) ve yağmur lekesi; kabartma türev
 		// normaliyle (derz girintisi, kenar yuvarlanması).
-		vec2 P = wpos.xz;
+		vec2 P = lxz;
 		float fwp = max(fwidth(P.x) + fwidth(P.y), 1e-4);
 		float ince_d = 1.0 - smoothstep(0.02, 0.09, fwp);
 		float orta_d = 1.0 - smoothstep(0.08, 0.3, fwp);
