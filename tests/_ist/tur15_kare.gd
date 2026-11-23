@@ -41,6 +41,13 @@ func _bakislar() -> Array:
 		# vadinin yamacından (yürünür arazi; yer ışınla): karşı kıyı geniş ve Galata suru yakın
 		["13_yamactan_karsi_kiyi", g.call(_yer(Vector3(20.0, 0.0, -75.0)) + Vector3(0, EYE, 0)), g.call(Vector3(120.0, 6.0, 220.0)), null, 72.0],
 		["14_yamactan_galata_suru", g.call(_yer(Vector3(100.0, 0.0, -60.0)) + Vector3(0, EYE, 0)), g.call(Vector3(230.0, 10.0, -60.0)), null, 40.0],
+		# inceleme (oyuncunun konumundan, dürbün gibi 6–12°): sur dibi suya/kıyıya oturuyor mu, kule ve diş siluetleri.
+		# Karşı sur yerel z ≈ 220 (dünya x −700); tabanda keep'e ≤ 250 m olan orta kesim yerel x ≈ −247…247
+		["15_yakin_eugenius", g.call(sol), g.call(Vector3(375.0, 8.0, 230.0)), null, 6.0],
+		["16_yakin_karsi_sur_kuzey", g.call(top), g.call(Vector3(-320.0, 5.0, 220.0)), null, 8.0],
+		["17_yakin_karsi_sur_guney", g.call(sol), g.call(Vector3(300.0, 5.0, 221.0)), null, 8.0],
+		["18_yakin_galata_suru", g.call(sag), g.call(Vector3(250.0, 8.0, -30.0)), null, 12.0],
+		["19_yakin_karsi_sur_orta", g.call(top), g.call(Vector3(0.0, 5.0, 220.0)), null, 8.0],
 	]
 
 
@@ -82,11 +89,19 @@ func _surus() -> void:
 		cam.make_current()
 		await _bekle(3.0)
 		cam.make_current()
-		# kare süresi: 30 karenin ortalaması (pencereli, sabit kamera)
+		# kare süresi: 10 karenin ortalaması (pencereli, sabit kamera; yazılım GL: göreli)
+		# çizim ve ilkel de 10 karenin ortalaması (tek kare sayımı gölge atlası güncellemesiyle ±%10 oynuyordu)
 		var tt := Time.get_ticks_usec()
-		for i in 30:
+		var sc_ := 0
+		var si_ := 0
+		var mn_ := 1 << 40
+		for i in 10:
 			await RenderingServer.frame_post_draw
-		print("T15KARE_KARE ad=%s ms=%.2f" % [String(b[0]), (Time.get_ticks_usec() - tt) / 30000.0])
+			var pi_ := RenderingServer.get_rendering_info(RenderingServer.RENDERING_INFO_TOTAL_PRIMITIVES_IN_FRAME)
+			sc_ += RenderingServer.get_rendering_info(RenderingServer.RENDERING_INFO_TOTAL_DRAW_CALLS_IN_FRAME)
+			si_ += pi_
+			mn_ = mini(mn_, pi_)
+		print("T15KARE_KARE ad=%s ms=%.2f cizim_ort=%d ilkel_ort=%d ilkel_min=%d" % [String(b[0]), (Time.get_ticks_usec() - tt) / 10000.0, sc_ / 10, si_ / 10, mn_])
 		await _cek(String(b[0]))
 	print("T10KARE_BITTI")
 	get_tree().quit()

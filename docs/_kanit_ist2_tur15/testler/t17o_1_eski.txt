@@ -1,0 +1,2 @@
+KOSU t17o_1_eski args=--chapter=17o --autotest --eskisur=17o rc=0 sure=19s
+AUTOTEST PASS chapter=17o variant= outcome=17O.1 acc=1.00 water=4 pours=10.0 kadri=true
