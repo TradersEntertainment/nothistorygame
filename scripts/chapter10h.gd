@@ -168,7 +168,7 @@ func _moloz_yeni(k: Vector3) -> void:
 	var yig := func(u: float, z: float) -> float:      # yığın yüzeyi: u surdan uzaklık (m), z yana
 		var a := clampf(1.0 - u / 2.6, 0.0, 1.0)
 		var b := clampf(1.0 - pow(z / 2.3, 2.0), 0.0, 1.0)
-		return 1.05 * pow(a, 1.3) * b
+		return 0.62 * pow(a, 1.2) * b
 	# Toz ve harç lekesi (düzensiz çokgen, zeminin 1 cm üstü)
 	var n_t := 14
 	var tc := Vector3(-1.1, 0.012, 0.0)
@@ -183,14 +183,15 @@ func _moloz_yeni(k: Vector3) -> void:
 		_ucgen(st, k + tc, k + tc + Vector3(cos(a0) * r0 * 0.7, 0, sin(a0) * r0), k + tc + Vector3(cos(a1) * r1 * 0.7, 0, sin(a1) * r1),
 			Color("4a4338"))
 	# Taşlar: önce yığının gövdesi (iri, alçak), sonra yüzeye dağılan orta ve küçük parçalar
-	for i in 70:
-		var iri := i < 16
-		var u := rng.randf_range(0.0, 2.4) if not iri else rng.randf_range(0.1, 1.6)
-		var z := rng.randf_range(-2.1, 2.1) if not iri else rng.randf_range(-1.5, 1.5)
+	# Gövde: iri taşlar yığının yüzeyine kadar yükselir (merkez yüzeyin yarısında): üstteki küçük parçalar gövdeye basar
+	for i in 80:
+		var iri := i < 30
+		var u := rng.randf_range(0.0, 2.4) if not iri else rng.randf_range(0.05, 1.9)
+		var z := rng.randf_range(-2.1, 2.1) if not iri else rng.randf_range(-1.7, 1.7)
 		var h: float = yig.call(u, z)
-		var boy := Vector3(rng.randf_range(0.28, 0.55), rng.randf_range(0.2, 0.36), rng.randf_range(0.26, 0.5)) if iri else \
+		var boy := Vector3(rng.randf_range(0.34, 0.6), rng.randf_range(0.26, 0.42), rng.randf_range(0.3, 0.55)) if iri else \
 			Vector3(rng.randf_range(0.09, 0.3), rng.randf_range(0.06, 0.2), rng.randf_range(0.08, 0.28))
-		var y := maxf(h - boy.y * 0.35, boy.y * 0.4) if not iri else boy.y * 0.42
+		var y := maxf(h - boy.y * 0.5, boy.y * 0.35) if not iri else maxf(h * 0.55, boy.y * 0.4)
 		var c: Color = tas[rng.randi() % tas.size()]
 		_parca(st, rng, k + Vector3(-u - 0.05, y, z), boy, Vector3(rng.randf_range(-0.5, 0.5), rng.randf() * TAU, rng.randf_range(-0.5, 0.5)),
 			c.darkened(rng.randf_range(0.0, 0.18)), 0.32)
@@ -202,7 +203,7 @@ func _moloz_yeni(k: Vector3) -> void:
 		var yarim := rng.randf() < 0.55
 		var boy := Vector3(0.13 if yarim else 0.26, 0.055, 0.12)
 		var c: Color = tug[rng.randi() % tug.size()]
-		_parca(st, rng, k + Vector3(-u - 0.05, maxf(h - 0.015, 0.03), z), boy, Vector3(rng.randf_range(-0.6, 0.6), rng.randf() * TAU, rng.randf_range(-0.5, 0.5)),
+		_parca(st, rng, k + Vector3(-u - 0.05, maxf(h - 0.03, 0.03), z), boy, Vector3(rng.randf_range(-0.6, 0.6), rng.randf() * TAU, rng.randf_range(-0.5, 0.5)),
 			c.darkened(rng.randf_range(0.0, 0.15)), 0.12)
 	var mi := MeshInstance3D.new()
 	mi.name = "GedikMoloz"
