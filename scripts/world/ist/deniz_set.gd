@@ -452,7 +452,7 @@ static func kapi_kemer(n: Node3D, gx: float, hw: float, y0: float, h: float, g: 
 	kem.mesh_ekle(n, SURDOKU.mat(1, Color.WHITE, true), "DenizKapiKemer", false)
 	if opt.get("kitabe", false):
 		mer.kutu(Vector3(gx, cy + r + IstSurlarKapi.HALKA + 0.17 + 0.15, zf), Vector3.RIGHT, ns, 2.4, 0.5, 0.06)
-	mer.mesh_ekle(n, Props.mat(SURKULE.C_MARBLE, 0.0, false, "marble"), "DenizKapiMermer")
+	mer.mesh_ekle(n, Props.mat(SURKULE.C_MARBLE.darkened(0.12), 0.0, false, "marble"), "DenizKapiMermer")     # TUR-14: gece parlak beyaz okunmasın
 	tug.mesh_ekle(n, Props.mat(SURKULE.C_BRICK, 0.0, false, "brick"), "DenizKapiTugla")
 	tas.mesh_ekle(n, _mat(g.get("lod", 0), g.get("tas", TAS)), "DenizKapiTas")
 

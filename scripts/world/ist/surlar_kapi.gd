@@ -116,7 +116,7 @@ static func _dilim(ag, cx: float, y: float, a0: float, a1: float, ri: float, ro:
 
 
 ## Kemer halkasını verilen ağa ekler (aynı ağa lento taşları da eklenebilir)
-static func arch_ag(ag, cx: float, y: float, r: float, z: float, face: float, col: Color, depth := 0.14, _n := 11) -> void:
+static func arch_ag(ag, cx: float, y: float, r: float, z: float, face: float, col: Color, depth := 0.14, _n := 11, dis_halka := true) -> void:
 	var tuglali := col.r > col.g * 1.4
 	var rm := r + HALKA * 0.5
 	var L := PI * rm
@@ -128,7 +128,7 @@ static func arch_ag(ag, cx: float, y: float, r: float, z: float, face: float, co
 	for i in seg:
 		var a0 := PI * float(i) / seg
 		var a1 := PI * float(i + 1) / seg
-		_dilim(ag, cx, y, a0, a1, r + 0.01, r + HALKA + (0.17 if tuglali else 0.0), z, face, maxf(on0 - 0.04, 0.02), harc, 0.0, -1.0, false)
+		_dilim(ag, cx, y, a0, a1, r + 0.01, r + HALKA + (0.17 if tuglali and dis_halka else 0.0), z, face, maxf(on0 - 0.04, 0.02), harc, 0.0, -1.0, false)
 	# kama halkası: taş (≈ 0,34 m) + derz + tuğla demeti (3 tuğla) dönüşümlü; uçlar ve tepe taş
 	var tas_w := 0.34
 	var dem_w := 3.0 * TUGLA + 2.0 * HARC
@@ -168,7 +168,7 @@ static func arch_ag(ag, cx: float, y: float, r: float, z: float, face: float, co
 			s += derz
 		else:
 			s += derz
-	if not tuglali:
+	if not tuglali or not dis_halka:
 		return
 	# dış halka: tek tek tuğla (rowlock), harçla
 	var r2 := r + HALKA + 0.01
@@ -185,6 +185,30 @@ static func arch_ag(ag, cx: float, y: float, r: float, z: float, face: float, co
 		var b1 := (t + TUGLA) / rm2
 		_dilim(ag, cx, y, b0, b1, r2, r3 - hb * 0.015, z, face, on0 - 0.018 + (hb2 - 0.5) * 0.016, tugla_renk(hb, hb2), 0.0, -1.0, false)
 		t += TUGLA + ad
+
+
+## Yönlü kemer (kule kapısı vb.): arch_ag'ı yerel z düzleminde kurar, (t, UP, nrm) çerçevesine taşıyıp ag'a ekler. o: kemer
+## merkezi (yüz düzleminde), t: yüz boyunca yatay, nrm: yüzün dış normali.
+static func arch_yon(ag, o: Vector3, t: Vector3, nrm: Vector3, r: float, depth: float, dis_halka := false) -> void:
+	var tmp = KEMER_AG.new()
+	arch_ag(tmp, 0.0, 0.0, r, 0.0, 1.0, C_BRICK, depth, 11, dis_halka)
+	if tmp.n == 0:
+		return
+	var m: ArrayMesh = tmp.st.commit()
+	var arr := m.surface_get_arrays(0)
+	var vs: PackedVector3Array = arr[Mesh.ARRAY_VERTEX]
+	var ns: PackedVector3Array = arr[Mesh.ARRAY_NORMAL]
+	var cs: PackedColorArray = arr[Mesh.ARRAY_COLOR]
+	var b := Basis(t.normalized(), Vector3.UP, nrm.normalized())
+	# (t, UP, nrm) sol el çerçevesiyse (yansıma) üçgen sarımı ters çevrilir: ön yüz yine dışa baksın
+	var ters := b.determinant() < 0.0
+	for i in range(0, vs.size() - 2, 3):
+		var sira := [i, i + 2, i + 1] if ters else [i, i + 1, i + 2]
+		for j: int in sira:
+			ag.st.set_color(cs[j])
+			ag.st.set_normal((b * ns[j]).normalized())
+			ag.st.add_vertex(o + b * vs[j])
+	ag.n += vs.size() / 3
 
 
 ## Lento üstü yazıt/silme şeridi: kesme taş sırası (derzli, taş taş ton ve çıkıntı); eskisi açık renk (e2d6bb) tek levha
