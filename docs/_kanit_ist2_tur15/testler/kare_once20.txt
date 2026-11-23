@@ -1,0 +1,6 @@
+DENIZSET hornworld DenizSurUzak_740 bolge=springs ucgen=3852
+T10KARE_YUKLE bolum=17o v2=false yeni=true ms=7388
+T15KARE_KARE ad=20_dar_blakherna_kara_suru_ucu ms=789.00 cizim_ort=1817 ilkel_ort=3141220 ilkel_min=3100010
+T10KARE ad=20_dar_blakherna_kara_suru_ucu cizim=1696 ilkel=3165585
+T10KARE_BITTI
+rc=0

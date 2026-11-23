@@ -44,10 +44,12 @@ func _bakislar() -> Array:
 		# inceleme (oyuncunun konumundan, dürbün gibi 6–12°): sur dibi suya/kıyıya oturuyor mu, kule ve diş siluetleri.
 		# Karşı sur yerel z ≈ 220 (dünya x −700); tabanda keep'e ≤ 250 m olan orta kesim yerel x ≈ −247…247
 		["15_yakin_eugenius", g.call(sol), g.call(Vector3(375.0, 8.0, 230.0)), null, 6.0],
-		["16_yakin_karsi_sur_kuzey", g.call(top), g.call(Vector3(-320.0, 5.0, 220.0)), null, 8.0],
+		["16_yakin_karsi_sur_kuzey", g.call(sol), g.call(Vector3(-320.0, 5.0, 220.0)), null, 8.0],
 		["17_yakin_karsi_sur_guney", g.call(sol), g.call(Vector3(300.0, 5.0, 221.0)), null, 8.0],
 		["18_yakin_galata_suru", g.call(sag), g.call(Vector3(250.0, 8.0, -30.0)), null, 12.0],
 		["19_yakin_karsi_sur_orta", g.call(top), g.call(Vector3(0.0, 5.0, 220.0)), null, 8.0],
+		# DÜZELTME 5(b, c): Blakherna kabuğu ve kara surlarının Haliç ucu (dünya ≈ −640, 0…40; yerel x ≈ −1170, z ≈ 280)
+		["20_dar_blakherna_kara_suru_ucu", g.call(sol), g.call(Vector3(-1170.0, 12.0, 280.0)), null, 12.0],
 	]
 
 
