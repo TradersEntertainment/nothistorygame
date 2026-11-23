@@ -228,7 +228,7 @@ func _sur_kur_v2() -> void:
 
 ## TAŞIMA-13 ölçümü (otomatik oyun): düğüm sayısı ve bellek (evre geçişinde v2 temiz kalkıyor mu)
 func _olc(ad: String) -> void:
-	if GameState.autotest:
+	if GameState.autotest or OS.has_environment("T13_OLC"):
 		print("T13_31O olc=%s dugum=%d bellek_mb=%.1f aktif_bolge=%s yakin_gecerli=%s" % [ad, int(Performance.get_monitor(Performance.OBJECT_NODE_COUNT)),
 			Performance.get_monitor(Performance.MEMORY_STATIC) / 1048576.0, IstBaglama.aktif_bolge, is_instance_valid(IstHayatYakin.aktif)])
 
@@ -238,6 +238,7 @@ func _house_phase() -> void:
 	_olc("once")
 	_stage = Node3D.new()
 	add_child(_stage)
+	var t_kur := Time.get_ticks_usec()
 	_sur_kur()
 	city = FallenCity.new()
 	city.field = walls.field if walls != null else null
@@ -245,6 +246,8 @@ func _house_phase() -> void:
 	city.quiet = true
 	city.reserve_right = Vector2(HZ1 + 0.4, HZ0 - 0.2)
 	_stage.add_child(city)
+	if GameState.autotest or OS.has_environment("T13_OLC"):
+		print("T13_31O kurulum sur=%s ms=%.0f" % ["eski" if sur.eski_mi else ("yeni_v2" if sur_v2 else "yeni_set"), (Time.get_ticks_usec() - t_kur) / 1000.0])
 	FallenCity.mood(_env.environment, _sun)
 	# Fethin ertesi sabah: duman inceldi, ışık daha açık
 	_env.environment.fog_density = 0.006
