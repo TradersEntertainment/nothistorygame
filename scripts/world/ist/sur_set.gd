@@ -63,16 +63,25 @@ static func yeni(kesim := "mesoteikhion", p_saglam := false) -> SurSet:
 
 
 ## Bölüm başına geri dönüş anahtarı (karar 13): komut satırında `--eskisur` (hepsi) ya da `--eskisur=20,20o`; ya da bölümün
-## kendi sabiti (sabit = true). Anahtarsız: yeni sur.
+## kendi sabiti (sabit = true). Anahtarsız: yeni sur; ESKI_VARSAYILAN'daki bölümler anahtarsız eski sette, `--yenisur=31o` yeniyi açar.
 static func eski_istendi(bolum: String, sabit := false) -> bool:
 	if sabit:
 		return true
+	var yeni_istendi := false
 	for arg in OS.get_cmdline_user_args():
 		if arg == "--eskisur":
 			return true
-		if arg.begins_with("--eskisur="):
-			return bolum in arg.trim_prefix("--eskisur=").split(",", false)
-	return false
+		if arg.begins_with("--eskisur=") and bolum in arg.trim_prefix("--eskisur=").split(",", false):
+			return true
+		if arg.begins_with("--yenisur=") and bolum in arg.trim_prefix("--yenisur=").split(",", false):
+			yeni_istendi = true
+	return bolum in ESKI_VARSAYILAN and not yeni_istendi
+
+
+## Yeni sette bir gereği henüz karşılanmayan bölümler: anahtarsız ESKİ sette açılır (`--yenisur=<bölüm>` yeniyi açar).
+## 31o (0.99.125): yeni setin ova alanı `world = false`; surun ardında şehir (WorldWalk) ve yaşayan kalabalık (CityLife) yok,
+## yanık caddenin ötesi boş kum kalıyordu (CITYCHECK 31o). Eski sette surun ardı yaşayan şehir.
+const ESKI_VARSAYILAN := ["31o"]
 
 
 ## Bölümün sur seti: eski ya da yeni (SurSet.eski_istendi ile seçilir).
