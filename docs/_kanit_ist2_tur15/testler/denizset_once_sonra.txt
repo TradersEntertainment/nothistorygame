@@ -1,0 +1,104 @@
+== 4b ÖNCE
+DENIZSET bolum=4 set=yeni in_world=false
+DENIZSET birlestir=43
+== 4b SONRA
+DENIZSET bolum=4 set=yeni in_world=false
+DENIZSET birlestir=43
+== 17 ÖNCE
+DENIZSET bolum=17 set=yeni in_world=true
+DENIZSET hornworld DenizSurUzak_740 bolge=horn_chain ucgen=1740
+DENIZSET hornworld DenizSurUzak_2360 bolge=horn_chain ucgen=716
+DENIZSET hornworld DenizSurUzak_714 bolge=horn_chain ucgen=1858
+DENIZSET birlestir=21
+== 17 SONRA
+DENIZSET bolum=17 set=yeni in_world=true
+DENIZSET hornworld DenizSurUzak_740 bolge=horn_chain ucgen=1740
+DENIZSET hornworld DenizSurUzak_2360 bolge=horn_chain ucgen=716
+DENIZSET hornworld DenizSurUzak_714 bolge=horn_chain ucgen=1858
+DENIZSET birlestir=21
+== 18b ÖNCE
+DENIZSET hornworld DenizSurUzak_740 bolge=horn_bridge ucgen=1836
+DENIZSET bolum=18b set=yeni
+DENIZSET birlestir=8
+== 18b SONRA
+DENIZSET hornworld DenizSurUzak_740 bolge=horn_bridge ucgen=1836
+DENIZSET bolum=18b set=yeni
+DENIZSET birlestir=8
+== 19 ÖNCE
+DENIZSET bolum=19 set=yeni in_world=true
+DENIZSET hornworld DenizSurUzak_740 bolge=horn_chain ucgen=1740
+DENIZSET hornworld DenizSurUzak_2360 bolge=horn_chain ucgen=716
+DENIZSET hornworld DenizSurUzak_714 bolge=horn_chain ucgen=1858
+DENIZSET birlestir=21
+DENIZSET bolum=19 set=yeni in_world=true
+DENIZSET hornworld DenizSurUzak_740 bolge=horn_chain ucgen=1740
+DENIZSET hornworld DenizSurUzak_2360 bolge=horn_chain ucgen=716
+DENIZSET hornworld DenizSurUzak_714 bolge=horn_chain ucgen=1858
+DENIZSET birlestir=21
+== 19 SONRA
+DENIZSET bolum=19 set=yeni in_world=true
+DENIZSET hornworld DenizSurUzak_740 bolge=horn_chain ucgen=1740
+DENIZSET hornworld DenizSurUzak_2360 bolge=horn_chain ucgen=716
+DENIZSET hornworld DenizSurUzak_714 bolge=horn_chain ucgen=1858
+DENIZSET birlestir=21
+DENIZSET bolum=19 set=yeni in_world=true
+DENIZSET hornworld DenizSurUzak_740 bolge=horn_chain ucgen=1740
+DENIZSET hornworld DenizSurUzak_2360 bolge=horn_chain ucgen=716
+DENIZSET hornworld DenizSurUzak_714 bolge=horn_chain ucgen=1858
+DENIZSET birlestir=21
+== 19o ÖNCE
+DENIZSET bolum=19o set=yeni in_world=true
+DENIZSET hornworld DenizSurUzak_740 bolge=horn_chain ucgen=1740
+DENIZSET hornworld DenizSurUzak_2360 bolge=horn_chain ucgen=716
+DENIZSET hornworld DenizSurUzak_714 bolge=horn_chain ucgen=1858
+DENIZSET birlestir=21
+== 19o SONRA
+DENIZSET bolum=19o set=yeni in_world=true
+DENIZSET hornworld DenizSurUzak_740 bolge=horn_chain ucgen=1740
+DENIZSET hornworld DenizSurUzak_2360 bolge=horn_chain ucgen=716
+DENIZSET hornworld DenizSurUzak_714 bolge=horn_chain ucgen=1858
+DENIZSET birlestir=21
+== 29 ÖNCE
+DENIZSET bolum=29 set=yeni in_world=true
+DENIZSET hornworld DenizSurUzak_740 bolge=horn_chain ucgen=1740
+DENIZSET hornworld DenizSurUzak_2360 bolge=horn_chain ucgen=716
+DENIZSET hornworld DenizSurUzak_714 bolge=horn_chain ucgen=1858
+DENIZSET birlestir=21
+== 29 SONRA
+DENIZSET bolum=29 set=yeni in_world=true
+DENIZSET hornworld DenizSurUzak_740 bolge=horn_chain ucgen=1740
+DENIZSET hornworld DenizSurUzak_2360 bolge=horn_chain ucgen=716
+DENIZSET hornworld DenizSurUzak_714 bolge=horn_chain ucgen=1858
+DENIZSET birlestir=21
+== 29o ÖNCE
+DENIZSET bolum=29o set=yeni in_world=true
+DENIZSET hornworld DenizSurUzak_740 bolge=horn_chain ucgen=1740
+DENIZSET hornworld DenizSurUzak_2360 bolge=horn_chain ucgen=716
+DENIZSET hornworld DenizSurUzak_714 bolge=horn_chain ucgen=1858
+DENIZSET birlestir=21
+== 29o SONRA
+DENIZSET bolum=29o set=yeni in_world=true
+DENIZSET hornworld DenizSurUzak_740 bolge=horn_chain ucgen=1740
+DENIZSET hornworld DenizSurUzak_2360 bolge=horn_chain ucgen=716
+DENIZSET hornworld DenizSurUzak_714 bolge=horn_chain ucgen=1858
+DENIZSET birlestir=21
+== 38o ÖNCE
+DENIZSET hornworld DenizSurUzak_740 bolge=horn_wall_o ucgen=3564
+DENIZSET bolum=38o set=yeni
+DENIZSET birlestir=12
+== 38o SONRA
+DENIZSET hornworld DenizSurUzak_740 bolge=horn_wall_o ucgen=3564
+DENIZSET bolum=38o set=yeni
+DENIZSET birlestir=12
+== 8 ÖNCE
+
+== 8 SONRA
+
+== 26 ÖNCE
+DENIZSET hornworld DenizSurUzak_740 bolge=byz_aya ucgen=3112
+DENIZSET hornworld DenizSurUzak_2360 bolge=byz_aya ucgen=748
+DENIZSET hornworld DenizSurUzak_714 bolge=byz_aya ucgen=3130
+== 26 SONRA
+DENIZSET hornworld DenizSurUzak_740 bolge=byz_aya ucgen=3112
+DENIZSET hornworld DenizSurUzak_2360 bolge=byz_aya ucgen=748
+DENIZSET hornworld DenizSurUzak_714 bolge=byz_aya ucgen=3130

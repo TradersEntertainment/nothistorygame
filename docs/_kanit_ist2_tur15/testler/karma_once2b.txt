@@ -1,0 +1,7 @@
+== 2
+DENIZSET hornworld DenizSurUzak_740 bolge=slipway ucgen=4336
+T15KARMA bolum=2 horn=slipway dugum=2710 ucgen=22383354 karma=26aa3a830158929ffd7075e72465c914
+== 2
+DENIZSET hornworld DenizSurUzak_740 bolge=slipway ucgen=4336
+T15KARMA bolum=2 horn=slipway dugum=2710 ucgen=22383354 karma=26aa3a830158929ffd7075e72465c914
+BITTI

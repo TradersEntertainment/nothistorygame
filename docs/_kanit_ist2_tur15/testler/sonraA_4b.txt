@@ -1,0 +1,4 @@
+KOSU sonraA_4b args=--chapter=4 --autotest=chain rc=0 sure=18s
+DENIZSET bolum=4 set=yeni in_world=false
+DENIZSET birlestir=43
+AUTOTEST PASS chapter=4 variant=chain branch=4b start=chain outcome=4b.1 catches=0 fez=true telsiz=3

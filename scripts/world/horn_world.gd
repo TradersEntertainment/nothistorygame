@@ -489,11 +489,11 @@ func _wall_run(a: Vector3, b: Vector3, h: float, tower_step: float, d: Dressing,
 			var u1 := p1 + dir * 0.2
 			if skip:
 				var DZ := load(DENIZ_YOL)
-				DZ.uzak_parca(_deniz_ag, u0, mid - dir * seg * 0.16, 3.0, hh, -3.0, side)
-				DZ.uzak_parca(_deniz_ag, mid + dir * seg * 0.16, u1, 3.0, hh, -3.0, side)
-				DZ.uzak_parca(_deniz_ag, mid - dir * seg * 0.16, mid + dir * seg * 0.16, 3.0, hh, hh * 0.62, side)
+				DZ.uzak_parca(_deniz_ag_al(mid), u0, mid - dir * seg * 0.16, 3.0, hh, -3.0, side)
+				DZ.uzak_parca(_deniz_ag_al(mid), mid + dir * seg * 0.16, u1, 3.0, hh, -3.0, side)
+				DZ.uzak_parca(_deniz_ag_al(mid), mid - dir * seg * 0.16, mid + dir * seg * 0.16, 3.0, hh, hh * 0.62, side)
 				continue
-			load(DENIZ_YOL).uzak_parca(_deniz_ag, u0, u1, 3.0, hh, -3.0, side)
+			load(DENIZ_YOL).uzak_parca(_deniz_ag_al(mid), u0, u1, 3.0, hh, -3.0, side)
 			flight_boxes.append([Transform3D(Basis(Vector3.UP, deg_to_rad(yaw)), mid + Vector3(0, (hh - 3.0) * 0.5, 0)), Vector3(3.0, hh + 3.0, seg)])
 			var face0 := atan2(side.x, side.z)
 			var nm0 := int(seg / 4.5)
@@ -534,7 +534,7 @@ func _wall_run(a: Vector3, b: Vector3, h: float, tower_step: float, d: Dressing,
 			t += tower_step
 			continue
 		if _deniz_yakin(p):
-			load(DENIZ_YOL).uzak_kule(_deniz_ag, p + side * 1.0, 8.0, th, -3.0, deg_to_rad(yaw))
+			load(DENIZ_YOL).uzak_kule(_deniz_ag_al(p), p + side * 1.0, 8.0, th, -3.0, deg_to_rad(yaw))
 			if rng.randf() < 0.5:
 				nd.glow(Vector3(0.4, 0.6, 0.4), p + Vector3(0, th + 1.5, 0), Color("ffb040"))
 			t += tower_step
@@ -559,6 +559,11 @@ const DENIZ_YAKIN := 250.0
 const DENIZ_UZAK := {"springs": INF}
 var _deniz_ag = null
 var _deniz_eski := -1
+## TUR 15 (yalnız DENIZ_UZAK bölgesi): koşunun ağı 240 m'lik parçalara bölünür (eski kutuların Dressing parça boyu): kadraj
+## dışı ve görünürlük mesafesinin (DENIZ_GORUNUR) ötesi çizilmez. Anahtar: parça hücresi (Vector2i) → Ag
+const DENIZ_PARCA := 240.0
+const DENIZ_GORUNUR := 1200.0
+var _deniz_parca := {}
 
 
 ## `--eskisur` (ya da `--eskisur=<bölüm>`) istendi mi (sahnenin bölüm adıyla; bir kez bakılır)
@@ -594,7 +599,31 @@ func _deniz_yakin(p: Vector3) -> bool:
 	return true
 
 
+## Uzak katmanın ağı: öteki bölgelerde koşunun tek ağı (_deniz_ag, eskisi gibi); DENIZ_UZAK bölgesinde p'nin parça ağı
+func _deniz_ag_al(p: Vector3):
+	if not _deniz_bolge():
+		return _deniz_ag
+	var key := Vector2i(floori(p.x / DENIZ_PARCA), floori(p.z / DENIZ_PARCA))
+	if not _deniz_parca.has(key):
+		_deniz_parca[key] = load("res://scripts/world/ist/sur_kule.gd").Ag.new()
+	return _deniz_parca[key]
+
+
 func _deniz_kur(ad: String) -> void:
+	if not _deniz_parca.is_empty():
+		var mat: Material = load("res://scripts/world/ist/sur_doku.gd").mat(1, Color("c9b89a"), false)
+		var top := 0
+		for key: Vector2i in _deniz_parca:
+			var ag = _deniz_parca[key]
+			var pm: MeshInstance3D = ag.mesh_ekle(self, mat, "%s_%d_%d" % [ad, key.x, key.y])
+			if pm:
+				pm.set_meta("no_walk", true)
+				pm.visibility_range_end = DENIZ_GORUNUR
+			top += int(ag.n)
+		print("DENIZSET hornworld %s bolge=%s ucgen=%d parca=%d" % [ad, region_name, top, _deniz_parca.size()])
+		_deniz_parca = {}
+		_deniz_ag = null
+		return
 	if _deniz_ag == null:
 		return
 	var mi: MeshInstance3D = _deniz_ag.mesh_ekle(self, load("res://scripts/world/ist/sur_doku.gd").mat(1, Color("c9b89a"), false), ad)

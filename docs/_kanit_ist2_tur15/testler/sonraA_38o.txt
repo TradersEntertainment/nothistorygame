@@ -1,0 +1,5 @@
+KOSU sonraA_38o args=--chapter=38o --autotest rc=0 sure=65s
+DENIZSET hornworld DenizSurUzak_740 bolge=horn_wall_o ucgen=3564
+DENIZSET bolum=38o set=yeni
+DENIZSET birlestir=12
+AUTOTEST PASS chapter=38o variant= outcome=38O.1 oars=9 arrows=0 forks=3/3 fire=true pulled=true oil=false snaps=0 splashes=0 explored=15.4 helper=false slips=0

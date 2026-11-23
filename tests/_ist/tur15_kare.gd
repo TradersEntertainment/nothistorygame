@@ -10,10 +10,10 @@ const EYE := 1.65
 func _bakislar() -> Array:
 	if bolum != "17o":
 		return super._bakislar()
-	var k := func(ad: String) -> Vector3: return (ch.get_script() as Script).get_script_constant_map()[ad]
-	var gun: Vector3 = k.call("GUN")
-	var bk: Vector3 = k.call("BUCKETS")
-	var walk: Rect2 = k.call("WALK")
+	var km := (ch.get_script() as Script).get_script_constant_map()
+	var gun: Vector3 = km["GUN"]
+	var bk: Vector3 = km["BUCKETS"]
+	var walk: Rect2 = km["WALK"]
 	var g := func(p: Vector3) -> Vector3: return ch.to_global(p)
 	# oyuncunun gerçek konumları: açılış (_run), top başı (_aim), kova yığını, kıyının iki ucu
 	var bas := gun + Vector3(1.6, EYE, -2.6)
@@ -31,7 +31,27 @@ func _bakislar() -> Array:
 		["06_baslangic_galata", g.call(bas), g.call(gc), null, 72.0],
 		["07_dar_aci_karsi_kiyi", g.call(top), g.call(Vector3(10.0, 8.0, 220.0)), null, 25.0],
 		["08_dar_aci_kule_dibi", g.call(kova), g.call(Vector3(60.0, 2.0, 220.0)), null, 20.0],
+		# taban kipte eski kalan yerler: Eugenius kulesi (dünya −690, −1525), kuzey uç (Blakherna yönü), Galata'nın Haliç
+		# yüzündeki suru (keep dışı), burun (dünya TIP)
+		# (sağ uçtan bakışı demirli kadırgalar kapatır: Eugenius ve burun kıyının sol ucundan)
+		["09_dar_eugenius", g.call(sol), g.call(Vector3(375.0, 10.0, 230.0)), null, 25.0],
+		["10_dar_kuzey_ucu", g.call(sol), g.call(Vector3(-330.0, 8.0, 220.0)), null, 25.0],
+		["11_dar_galata_suru", g.call(sag), g.call(Vector3(250.0, 8.0, -30.0)), null, 30.0],
+		["12_dar_burun", g.call(sol), g.call(Vector3(570.0, 8.0, 320.0)), null, 25.0],
+		# vadinin yamacından (yürünür arazi; yer ışınla): karşı kıyı geniş ve Galata suru yakın
+		["13_yamactan_karsi_kiyi", g.call(_yer(Vector3(20.0, 0.0, -75.0)) + Vector3(0, EYE, 0)), g.call(Vector3(120.0, 6.0, 220.0)), null, 72.0],
+		["14_yamactan_galata_suru", g.call(_yer(Vector3(100.0, 0.0, -60.0)) + Vector3(0, EYE, 0)), g.call(Vector3(230.0, 10.0, -60.0)), null, 40.0],
 	]
+
+
+## Bölüm çerçevesinde (x, z) noktasının yürünen zemini (yukarıdan ışın)
+func _yer(p: Vector3) -> Vector3:
+	var from := ch.to_global(Vector3(p.x, 300.0, p.z))
+	var to := ch.to_global(Vector3(p.x, -50.0, p.z))
+	var hit := ch.get_world_3d().direct_space_state.intersect_ray(PhysicsRayQueryParameters3D.create(from, to))
+	if hit.is_empty():
+		return p
+	return ch.to_local(hit["position"])
 
 
 func _surus() -> void:
@@ -45,7 +65,10 @@ func _surus() -> void:
 	get_tree().current_scene = ch
 	await get_tree().process_frame
 	print("T10KARE_YUKLE bolum=%s v2=%s yeni=%s ms=%d" % [bolum, IstBaglama.aktif(), not SurSet.eski_istendi("17o"), Time.get_ticks_msec() - t0])
-	await _bekle(12.0)
+	await _bekle(6.0)
+	# Bölümün akışı (NPC'ler, yürüyenler, olaylar) donar, çizim sürer: ÖNCE | SONRA ilkel/çizim sayıları yalnız dünyaya bağlı
+	# kalsın (akış zamanlamasıyla ±%40 oynuyordu)
+	get_tree().paused = true
 	cam = Camera3D.new()
 	cam.far = 4000.0
 	cam.near = 0.05
