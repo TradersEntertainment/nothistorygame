@@ -1158,3 +1158,23 @@ Her bölüm denetiminde ve her düzeltmede bu listeyi baştan uygula. Yeni bir h
     zemin işaretini kaldırmak susturmaktır.
   - Danışmanın kod okuması görev yazısındaki yanlış varsayımları açmadan yakaladı (13/23/24 için yalnız liste eklemek
     yetmez, 41o sağlam değil gedikli, aynı dosyada iki görevin çakışması); görev yazıları açılmadan önce okutulur.
+- v0.99.125 (büyük İstanbul, son parça: surun göründüğü bütün bölümler yeni surda + yakın görünüş turu [Opus yardımcılar, yönetici birleştirir; Fable danışman])
+  - Kök neden tahmini görev yazısında "kanıtlanmamış" diye işaretlenince doğrusu bulundu: 8y'de askeri havaya kaldıran iki
+    zemin ızgarası değil, çömelme pozunda kökü kaldıran "ayağı yere koy" döngüsüydü (iki sette de vardı; eski sette görünür
+    zemin olmadığı için denetim yakalamıyordu). Görev yazısına yazılan kök neden bir varsayımsa öyle işaretlenir.
+  - Makine sıfırlanabilir: görev yazıları, betikler ve plan çalışma deposundaki bir devir klasöründe tutuldu; mola sonrası
+    sıfırlanan makinede iş kayıpsız sürdü.
+  - Toon malzeme köşe rengini okumuyorsa tahta, taş, deri tek ton görünür: kapı kanadı ve pavezde "tek renk levha" hissinin
+    kökü buydu; damar ve ton farkı malzeme düzeyinde verilir.
+  - Taşıma bir sistemi sessizce düşürebilir: 31o'da eski setin kurduğu "yaşayan şehir" (WorldWalk + CityLife) yeni sette
+    yoktu; bölüm testleri geçti, yalnız tam paketteki CITYCHECK yakaladı. Taşıma görevlerinde eski setin kurduğu yan
+    sistemlerin (kalabalık, yürünür şehir, harita) listesi çıkarılıp yeni sette karşılığı aranır; karşılığı yoksa bölüm
+    varsayılan eski sette kalır (`SurSet.ESKI_VARSAYILAN`, `--yenisur=<bölüm>`) ve sürüm notunda taşınmayanlara yazılır.
+  - Testin aradığı sınıf değişince test düşer, kalabalık değil: 24'ün şehri v2'de, kalabalığı IstHayatYakin ("CityLife"
+    adlı). CITYCHECK/STREETCHECK aynı ölçütlerle v2 yolunu da tanır; ölçüt gevşetilmedi.
+  - Rastgele görünen hata çoğu zaman sıralama hatasıdır: 10'da nöbetçilerin "kapıdaki yeri" kavramadan sonra okunuyordu;
+    ikinci denemede oyuncu aynı yere gelince asker gözünün dibinde kalıyordu (VISAUDIT personhidden, yalnız bazı koşularda).
+  - Tek hedefe "kaçınarak" yürütülen kişi, aradaki engelleri kendi bulmaya kalkarsa duvara yapışır ve köşe keser: 17'nin
+    Edirne ara sahnesinde Müfide masasından asansöre tek hedefle koşuyordu; hızlı adımda açıklığın köşesindeki duvar
+    parçasını ara sıra kesiyor (WALKTHRU, tam pakette bir kez), her koşuda saksının içinden geçiyordu. Oda içinden çıkan
+    yürüyüşe ara noktalar verilir (masanın ucu, açıklığın ortası); yol izi kare kare yazdırılarak doğrulanır.
