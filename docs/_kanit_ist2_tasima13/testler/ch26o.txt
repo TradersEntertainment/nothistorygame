@@ -1,0 +1,2 @@
+AUTOTEST PASS chapter=26o variant= outcome=26.1 water=3 ladders=3 gun=3/4 stones=1/1 gunner=2/2 oil=1/1 turgut=no
+rc=0

@@ -1,0 +1,10 @@
+T13_31O olc=once dugum=186 bellek_mb=152.1 aktif_bolge= yakin_gecerli=false
+T13_31O sur=yeni_v2 bolge=fallen31o kur_ms=40123 v2_ms=39565 hub_ms=552
+T13_31O kurulum sur=yeni_v2 ms=40366
+T13_31O olc=ev dugum=8319 bellek_mb=1465.2 aktif_bolge=fallen31o yakin_gecerli=true
+T12_31O asama=eyup surset_etkin_temiz=true
+T13_31O olc=eyup dugum=239 bellek_mb=422.8 aktif_bolge= yakin_gecerli=false
+T12_31O asama=aya surset_etkin_temiz=true
+T13_31O olc=aya dugum=242 bellek_mb=535.3 aktif_bolge= yakin_gecerli=false
+AUTOTEST PASS chapter=31o variant=petrion_ok outcome=31O.1 house=true(202) falls=0 signs=3 wrong=0 sun=true lashes=3 miss=0 scaff=true mats=8/8 err=2
+rc=0

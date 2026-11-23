@@ -1,0 +1,8 @@
+CITYCHECK 31o: kaynak=v2 (IstHayatYakin) gece=false hedef=20 etkin=9
+CITYCHECK 31o v2: açılış yüklemesi 11.1 sn (sakin=30)
+CITYCHECK 31o v2 @(-1684, -309): sivil=15 devriye=1 evde=0 havada=0 suda=0 kopuk=0 roller={ "man": 5, "woman": 3, "child": 3, "monk": 1, "priest": 2, "porter": 1 } µs=1023 (en uzun kare 4253, 111 kare)
+CITYCHECK 31o v2 @(-1689, -245): sivil=17 devriye=2 evde=0 havada=0 suda=0 kopuk=0 roller={ "woman": 4, "child": 2, "priest": 1, "man": 6, "porter": 4 } µs=1115 (en uzun kare 13460, 110 kare)
+CITYCHECK 31o v2 @(-1645, -366): sivil=18 devriye=1 evde=0 havada=0 suda=0 kopuk=0 roller={ "man": 10, "woman": 4, "child": 2, "porter": 2 } µs=1445 (en uzun kare 3460, 110 kare)
+CITYCHECK 31o v2: kare süresi (en kötü nokta ortalaması) 1445 µs
+CITYCHECK PASS
+rc=0

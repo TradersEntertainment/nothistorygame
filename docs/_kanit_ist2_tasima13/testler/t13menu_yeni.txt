@@ -1,0 +1,3 @@
+T13MENU taban_menu dugum=8607 sahipsiz=0
+T13MENU 31o_kurulu dugum=27772 sahipsiz=8575
+T13MENU menuye_donus dugum=8630 sahipsiz=8575

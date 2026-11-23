@@ -1,0 +1,5 @@
+MENURETURN round=0 mode=main scene=res://scenes/chapter1.tscn nodes=5356 orphans=0
+MENURETURN round=1 mode=main scene=res://scenes/chapter1.tscn nodes=8604 orphans=680
+MENURETURN kalıntı: 5356 → 8604 düğüm
+MENURETURN FAIL from=res://scenes/chapter31o.tscn
+rc=1

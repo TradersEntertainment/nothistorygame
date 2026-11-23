@@ -1,0 +1,8 @@
+CITYCHECK 24: kaynak=v2 (IstHayatYakin) gece=false hedef=20 etkin=9
+CITYCHECK 24 v2: açılış yüklemesi 12.4 sn (sakin=30)
+CITYCHECK 24 v2 @(-1669, -272): sivil=15 devriye=2 evde=0 havada=0 suda=0 kopuk=0 roller={ "man": 5, "woman": 3, "child": 2, "porter": 2, "monk": 2, "priest": 1 } µs=831 (en uzun kare 1858, 110 kare)
+CITYCHECK 24 v2 @(-1676, -230): sivil=18 devriye=1 evde=0 havada=0 suda=0 kopuk=0 roller={ "woman": 6, "child": 1, "porter": 5, "priest": 1, "man": 4, "monk": 1 } µs=943 (en uzun kare 4710, 110 kare)
+CITYCHECK 24 v2 @(-1585, -272): sivil=23 devriye=0 evde=0 havada=0 suda=0 kopuk=0 roller={ "woman": 5, "monk": 1, "man": 10, "porter": 5, "child": 2 } µs=1096 (en uzun kare 2430, 110 kare)
+CITYCHECK 24 v2: kare süresi (en kötü nokta ortalaması) 1096 µs
+CITYCHECK PASS
+rc=0

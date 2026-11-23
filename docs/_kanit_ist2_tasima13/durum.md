@@ -1,10 +1,10 @@
-# Taşıma 13 — durum
+# Taşıma 13 — durum (son)
 
-- Dal: `wip/ist2-tasima13` (taban f1f007c5).
-- [x] Yol: 8y kalıbı (SurHub "romanos" + IstBaglama yeni bölge `fallen31o`), `chapter31o.gd _sur_kur_v2`.
-- [x] İlk koşu `--yenisur=31o`: AUTOTEST PASS, denetim 0; kareler alındı (eski|yeni).
-- [x] `tasima13_olc`: caddede v2 evi 0, kalabalıktan caddeye giren 0, 90 m'de 10-11 sivil + 2 devriye.
-- [x] `ESKI_VARSAYILAN` boşaltıldı (31o anahtarsız yeni sette; `--eskisur=31o` eski).
-- [ ] Doğrulama partisi 1 (31o çeşitleri ×2, eski ×1, CITYCHECK ×2, menü, sokak, sözleşme altılısı) — koşuyor.
-- [ ] Parti 2: ZFIGHT, ortak dosyayı kullanan bölümler (7, 7b, 11, 13, 23, 24, 26, 26o, 12b, 8y), CITYCHECK 24.
-- [ ] Rapor, kareler (dala).
+- Dal: `wip/ist2-tasima13` (taban f1f007c5). Ayrıntı: `rapor.md`.
+- [x] 31o yeni sette v2 şehri (8y kalıbı: SurHub "romanos" + IstBaglama `fallen31o`), tek sur, cadde korunur, kalabalık.
+- [x] Evre geçişi temiz (düğüm eski düzeyde; bellek +92 MB kalıcı, rapor).
+- [x] `ESKI_VARSAYILAN` boş: 31o anahtarsız yeni sette; `--eskisur=31o` eski.
+- [x] Doğrulama: 31o çeşitleri ×2 PASS, eski ×1 PASS, CITYCHECK 31o ×2 PASS, ZFIGHT 0, sözleşme altılısı aynı, ortak dosya
+      bölümleri (7, 7b, 11, 13, 13 city, 23, 24, 26, 26o, 12b, 8y) PASS, CITYCHECK 24 PASS.
+- [!] `menu_return 31o` varsayılanla FAIL (MR_AFTER=60 ile PASS, 24 ile aynı); `street_check` FAIL (tabanda da FAIL).
+- [ ] Yapılmadı: dönem seçeneği (madde 3 isteğe bağlı); cadde çevresindeki seyrek kuşak (sehir.gd isteği).

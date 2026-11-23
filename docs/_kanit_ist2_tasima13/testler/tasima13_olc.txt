@@ -1,0 +1,5 @@
+T13OLC evler_cadde_icinde=0 kusaklar(m:ev) 10-20:8 20-30:6 30-40:12 40-50:13 50-60:19 60-70:22 70-80:24 80-90:28 90-100:34
+T13OLC mahalle (-40,-20):sur_dibi (40,-20):sur_dibi (-40,-70):sik (40,-70):sik (0,-130):sik (-90,-60):sik (90,-60):sik
+T13OLC kalabalik etkin=20 sivil90=13 devriye90=2 caddeye_giren_ornek=0 caddeye_en_yakin_m=5.1
+T13OLC PASS
+rc=0
