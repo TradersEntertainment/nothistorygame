@@ -196,7 +196,8 @@ c5 hendek dış kıyısı cetvel ve `HornWorld._wall_run` 250 m ötesindeki eski
   yok; kule deniz kalemi; aynı ressam.
 - `h_12_denizden_70m`: kule tepesi konsollu + harpuştalı dişler (eskisi düz kutu tepe, seyrek kutu diş).
 - `h_12_sehirden_9m`: şehir yüzü aynı (gövde deseni), korkuluk kutu kapağı yok.
-- `*_gece` (varsa): aynı kadrajlar gece.
+- `h_22_denizden_14m_gece`, `h_22_sehirden_9m_gece`: gece (v2 gece ışığı); denizden kule ikisinde de neredeyse siyah siluet
+  (karşılaştırma için zayıf: "kötü"), şehirden sur yüzü ve korkuluk okunuyor, kutu yok.
 
 **Sahibine** — `kare/sahip_1_yakin_sur.jpg` (sur yolu, harpuşta, döşeme), `sahip_2_kapi.jpg` (8y şehirden iç kapı),
 `sahip_3_sehirden_halic.jpg` (Haliç dilimi 22, denizden 14 m), `sahip_4_gece.jpg` (kemer, gece).
@@ -217,6 +218,7 @@ c5 hendek dış kıyısı cetvel ve `HornWorld._wall_run` 250 m ötesindeki eski
 | 30o p1 / p2 / p3 (gece) | 3 778 951 / 2 937 891 / 2 295 042 | 3 792 515 / 2 962 531 / 2 305 078 | +%0,4 / +%0,8 / +%0,4 | ≈ aynı |
 | şehir Haliç 12 denizden 14 m / 70 m / şehirden 9 m | 1 001 288 / 1 161 647 / 1 830 566 | 1 006 028 / 1 166 319 / 1 834 634 | +%0,5 / +%0,4 / +%0,2 | 592→553 / 591→516 / 647→583 |
 | şehir Haliç 22 denizden 14 m | 2 521 248 | 2 521 292 | %0,0 | 720→682 |
+| şehir Haliç 22 gece: denizden 14 m / şehirden 9 m | 2 578 405 / 1 642 339 | 2 583 135 / 1 652 217 | +%0,2 / +%0,6 | 741→698 / 849→763 |
 
 Hepsi ≤ +%5 (en yüksek +%2,3); çizim çağrısı her karede aynı ya da az (kemer 44 kutu + 44 dış çizgi → 1 ağ; Marmara kutu
 süsleri kalktı). Not: 38o/30o kareleri kule kapısı kemeri değişikliğinden önceki kodla (o kemer yalnız kara surunda).
@@ -231,4 +233,6 @@ süsleri kalktı). Not: 38o/30o kareleri kule kapısı kemeri değişikliğinden
   (`testler/son_testler.txt`).
 - **zfight** (`tests/zfight_check.gd`) 25 bölüm sahnesinde `found=0`.
 - Bölüm koşuları kanat damarı sabitleri ve döşeme yerel çerçevesinden önceki kodla; o iki değişiklik yalnız görünüş (doku
-  sabiti, gölgelendiricide koordinat); son kodla 26 ve 8y (yeni set) yeniden koşuldu (aşağıda).
+  sabiti, gölgelendiricide koordinat); son kodla 26 (`AUTOTEST PASS`) ve 8y yeni set (`AUTOTEST PASS` + yalnız izinli
+  `Station_coil_rope`) yeniden koşuldu (`testler/c26_son.ozet`, `c8y_yeni_son.ozet`); sözleşme, sondalar, menü dönüşü ve
+  zfight son kodla. Son kayıttaki kemer kesme taşı tonu (0,57 → 0,60) yalnız renk sabiti.
