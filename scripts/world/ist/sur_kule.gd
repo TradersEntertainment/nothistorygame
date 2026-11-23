@@ -332,22 +332,9 @@ static func _kemer(tas: Ag, koyu: Ag, tug: Ag, o: Vector3, t: Vector3, nrm: Vect
 	tas.kutu(o - t * (r + 0.13), t, nrm, 0.26, hy, dp)
 	tas.kutu(o + t * (r + 0.13), t, nrm, 0.26, hy, dp)
 	tas.kutu(o - Vector3.UP * 0.16, t, nrm, w + 0.6, 0.16, dp + 0.06)
-	for i in 7:
-		var am := PI * (float(i) + 0.5) / 7.0
-		var rm := r + 0.17
-		var p := cen - f + (t * cos(am) + Vector3.UP * sin(am)) * rm - Vector3.UP * 0.13
-		var tt := (t * -sin(am) + Vector3.UP * cos(am)).normalized()
-		# kemer taşı: yönlendirilmiş küçük kutu (tuğla)
-		var hb := tt * 0.2
-		var rb := (t * cos(am) + Vector3.UP * sin(am)) * 0.17
-		var q0 := p - hb - rb
-		var q1 := p + hb - rb
-		var q2 := p + hb + rb
-		var q3 := p - hb + rb
-		var ff := nrm * (dp - 0.02)
-		tug.quad(q0 + ff, q1 + ff, q2 + ff, q3 + ff, nrm)
-		tug.quad(q3, q2, q2 + ff, q3 + ff, (rb).normalized())
-		tug.quad(q0, q1, q1 + ff, q0 + ff, -(rb).normalized())
+	# TUR-14: kemer 7 iri Props tuğla kutusu (parlak turuncu toon, 40 × 34 cm) değil, Romanos kemerinin kalemi (kesme taş kama +
+	# üçer tuğla demeti, harç yatağı; sur taşı gölgelendiricisi; tug ağı artık o malzemede). Eski çıkıntı ≈ 0,2 m.
+	IstSurlarKapi.arch_yon(tug, cen - f - Vector3.UP * 0.13, t, nrm, r + 0.02, 0.36, false)
 
 
 ## Ok yarığı (gövdede): dar koyu açıklık, üstünde lento taşı
@@ -489,7 +476,8 @@ static func ic_kule(p: Node3D, g: Dictionary, lod: int) -> void:
 			for kk in 5:
 				var am := PI * (float(kk) + 0.5) / 5.0
 				var pm := (p0 + p1) * 0.5 + te * cos(am) * ((p1 - p0).length() * 0.5 + 0.12)
-				tug.kutu(_v3(pm, yf + kh + sin(am) * 0.45 - 0.1), Vector3(te.x, 0, te.y), Vector3(nn.x, 0, nn.y), 0.34, 0.22, 0.12)
+				tug.kutu(_v3(pm, yf + kh + sin(am) * 0.45 - 0.1), Vector3(te.x, 0, te.y), Vector3(nn.x, 0, nn.y), 0.34, 0.22, 0.12,
+					IstSurlarKapi.tugla_renk(fposmod(float(kk) * 0.37 + pm.x * 0.13, 1.0), fposmod(float(kk) * 0.71 + pm.y * 0.29, 1.0)))
 		# pencereler: üst oda ön ve yan-ön kenarlarında kemerli mazgal pencereleri; gövdede ok yarıkları
 		var n := poly.size()
 		for i in n:
@@ -602,7 +590,9 @@ static func ic_kule(p: Node3D, g: Dictionary, lod: int) -> void:
 		koyu.quad(_v3(mid - te * 0.5, yf + 1.2), _v3(mid + te * 0.5, yf + 1.2), _v3(mid + te * 0.5, yf + 3.0), _v3(mid - te * 0.5, yf + 3.0), Vector3(nn.x, 0, nn.y))
 	tas.mesh_ekle(p, _tas_mat(stone.darkened(0.02), lod), "Kule")
 	koyu.mesh_ekle(p, Props.mat(C_DARK), "KuleKoyu", false)
-	tug.mesh_ekle(p, Props.mat(C_BRICK, 0.0, false, "brick"), "KuleTugla")
+	var tmi: MeshInstance3D = tug.mesh_ekle(p, IstSurlarKapi.kemer_mat(), "Tas_KuleKemer")     # TUR-14: sur taşı gölgelendiricisi
+	if tmi != null:
+		tmi.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
 	ahs.mesh_ekle(p, Props.mat(C_ROOF, 0.0, false, ""), "KuleCati")
 	if bool(g.get("cati", false)) and lod <= 1:
 		var dir := Ag.new()

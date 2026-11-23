@@ -450,6 +450,7 @@ static func _beden(root: Node3D, lay: Dictionary, sd: int, stone: Color) -> void
 	var tas = KULE.Ag.new()
 	var koyu = KULE.Ag.new()
 	var tug = KULE.Ag.new()
+	var kemer = KULE.Ag.new()
 	var dolgu = KULE.Ag.new()
 	var kaya: Array = []
 	for i in range(itx.size() - 1):
@@ -500,10 +501,9 @@ static func _beden(root: Node3D, lay: Dictionary, sd: int, stone: Color) -> void
 				var a := PI * float(k) / 8.0
 				var b := PI * float(k + 1) / 8.0
 				dolgu.tri(Vector3(bx, hy, zi1 + 0.02), Vector3(bx + cos(a) * r, hy + sin(a) * r, zi1 + 0.02), Vector3(bx + cos(b) * r, hy + sin(b) * r, zi1 + 0.02), Vector3.BACK)
-			for k in 9:
-				var am := PI * (float(k) + 0.5) / 9.0
-				var p := Vector3(bx + cos(am) * (r + 0.18), hy + sin(am) * (r + 0.18) - 0.12, zi1)
-				tug.kutu(p, Vector3(-sin(am), cos(am), 0).normalized(), Vector3.BACK, 0.34, 0.26, 0.08)
+			# TUR-14: kemer 9 iri tuğla kutusu (Props tuğla: parlak turuncu toon) değil, Romanos kemerinin kalemi (kesme taş kama
+			# + üçer tuğla demeti, harç yatağı; sur taşı gölgelendiricisi), dış tuğla halkasız (küçük kapı)
+			IstSurlarKapi.arch_ag(kemer, bx, hy - 0.12, r + 0.02, zi1, 1.0, IstSurlarKapi.C_BRICK, 0.08, 11, false)
 			tas.kutu(Vector3(bx - r - 0.2, 0.0, zi1), Vector3.RIGHT, Vector3.BACK, 0.4, hy, 0.08)
 			tas.kutu(Vector3(bx + r + 0.2, 0.0, zi1), Vector3.RIGHT, Vector3.BACK, 0.4, hy, 0.08)
 		# sur üstü savunma eşyası (dış korkuluğa yaslı)
@@ -544,3 +544,6 @@ static func _beden(root: Node3D, lay: Dictionary, sd: int, stone: Color) -> void
 	dolgu.mesh_ekle(root, KULE._tas_mat(stone.darkened(0.22), 0), "OrulmusKapi")
 	koyu.mesh_ekle(root, Props.mat(Color("2a2620")), "BedenAkinti", false)
 	tug.mesh_ekle(root, Props.mat(Color("7a4a3a"), 0.0, false, "brick"), "BedenTugla")
+	var kmi: MeshInstance3D = kemer.mesh_ekle(root, IstSurlarKapi.kemer_mat(), "Tas_OrulmusKapiKemer")
+	if kmi != null:
+		kmi.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF

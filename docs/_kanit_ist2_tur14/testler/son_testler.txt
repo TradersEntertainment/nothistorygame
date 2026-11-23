@@ -1,0 +1,32 @@
+SUROYUN nokta=519 havada=0 gomuk=0 katida=0
+ESYATEST PASS
+HALICSONDA OZET carp=661 karma=3854034809
+MARMARASONDA OZET carp=1837 karma=2250736444
+MENURETURN PASS from=res://scenes/chapter26.tscn
+SURSOZLESME PASS kalem=13 kesim=8
+WALKTHRU OZET yol=7 tamam=7 takilma=0 dusme=0
+ZSCENE chapter0.tscn boxes=217 found=0
+ZSCENE chapter10.tscn boxes=376 found=0
+ZSCENE chapter11.tscn boxes=80 found=0
+ZSCENE chapter12b.tscn boxes=373 found=0
+ZSCENE chapter17.tscn boxes=917 found=0
+ZSCENE chapter17o.tscn boxes=302 found=0
+ZSCENE chapter18b.tscn boxes=369 found=0
+ZSCENE chapter19.tscn boxes=296 found=0
+ZSCENE chapter20.tscn boxes=217 found=0
+ZSCENE chapter20o.tscn boxes=216 found=0
+ZSCENE chapter25.tscn boxes=214 found=0
+ZSCENE chapter26.tscn boxes=219 found=0
+ZSCENE chapter26o.tscn boxes=218 found=0
+ZSCENE chapter28o.tscn boxes=167 found=0
+ZSCENE chapter29.tscn boxes=303 found=0
+ZSCENE chapter30.tscn boxes=283 found=0
+ZSCENE chapter30o.tscn boxes=291 found=0
+ZSCENE chapter37o.tscn boxes=219 found=0
+ZSCENE chapter38o.tscn boxes=298 found=0
+ZSCENE chapter4.tscn boxes=47 found=0
+ZSCENE chapter43o.tscn boxes=368 found=0
+ZSCENE chapter44b.tscn boxes=657 found=0
+ZSCENE chapter6.tscn boxes=361 found=0
+ZSCENE chapter7.tscn boxes=83 found=0
+ZSCENE chapter8y.tscn boxes=345 found=0
