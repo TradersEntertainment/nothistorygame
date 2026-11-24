@@ -25,6 +25,8 @@ var _auto: Dictionary = {}
 ## Ayarlarda Tolga'nın yorumları (v0.92): ayarlar sayfası ilk açılınca kurulur, sayfalar arasında kalır
 var _quips: TolgaQuips
 static var _opened_settings := false     # oyun açıldığından beri ayarlar açıldı mı (ilk açılışta hep konuşur)
+## Yeni sürüm bandı (Guncelleyici): yalnız ana menünün kök sayfasında, sağ üstte
+var _bant: Control
 
 
 func _init(p_mode := "main") -> void:
@@ -180,6 +182,9 @@ func _clear(root: bool) -> void:
 	(_panel.get_theme_stylebox("panel") as StyleBoxFlat).set_content_margin_all(28)
 	if root and _quips:
 		_quips.hush()
+	if is_instance_valid(_bant):
+		_bant.queue_free()
+	_bant = null
 	for c in _box.get_children():
 		_box.remove_child(c)
 		c.queue_free()
@@ -340,6 +345,9 @@ func show_root() -> void:
 		_spacer(6)
 		_label(tr("SPK_HIKMET") + ": " + tr(_hikmet_line()), 18, Color("ffc98a"))
 		_label(tr("UI_MENU_KEYS"), 14, C_DIM)
+		if GameState.guncelleyici != null:
+			_bant = GameState.guncelleyici.bant()
+			add_child(_bant)
 	else:
 		_label(tr("UI_PAUSE"), 36, C_ACCENT, title_font)
 		_label(chapter_title(GameState.current_chapter, _scene_of(GameState.run_data(), GameState.current_chapter)) + "   ·   " + _time_text(GameState.play_time), 16, C_DIM)
@@ -763,6 +771,7 @@ func show_settings() -> void:
 	pnote.custom_minimum_size = Vector2(620, 0)
 	col.add_child(pnote)
 	_button(tr("UI_SET_PLAYTEST_OPEN"), GameState.playtest_folder, true, col, 20)
+	_set_check(col, "UI_GUNC_AYAR", Guncelleyici.AYAR)
 	_set_header(col, "UI_SET_H_LANG")
 	_button(tr("UI_SET_LANG"), func():
 		GameState.toggle_locale()

@@ -220,6 +220,12 @@ echo "$out" | grep -q "SMOOTHCHECK PASS" || fail=1
 out=$(timeout 120 "$GODOT" --headless --path . res://tests/ui_fit_check.tscn 2>&1)
 echo "$out" | grep -E "UIFIT|SCRIPT ERROR|Parse Error"
 echo "$out" | grep -q "UIFIT PASS" || fail=1
+# Oyunun kendini güncellemesi (G16, ağsız): sürüm karşılaştırma, bildirim ayrıştırma, önkoşullar, sahte dosyalarla
+# değiştirme ve geri alma, açılış temizliği, bandın TR/EN 1280x720'e sığması
+out=$(timeout 120 "$GODOT" --headless --path . res://tests/guncelleme_check.tscn 2>&1)
+echo "$out" | grep -E "GUNCELLEMECHECK|SCRIPT ERROR|Parse Error"
+echo "$out" | grep -q "GUNCELLEMECHECK PASS" || fail=1
+echo "$out" | grep -q "SCRIPT ERROR" && fail=1
 # Bölüm 35o köprüsü insan gibi oynanır: ibreye bakıp A/D'ye basan, W ile yürüyen, E ile bağlayan oyuncu dereye
 # düşmeden geçer (v0.99.11; A/D ters çalışıyordu, kirişin başında yüz geriye dönüktü)
 out=$(timeout 300 "$GODOT" --headless --path . res://tests/play35o_check.tscn 2>&1)
