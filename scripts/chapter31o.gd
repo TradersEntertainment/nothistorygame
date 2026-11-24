@@ -98,6 +98,14 @@ func _ready() -> void:
 	if GameState.shots_dir != "":
 		_run_shots()
 	else:
+		# 0.99.126: ev evresinin seti (yeni sur + v2 şehri, 30–50 sn) bölüm açılışında, yükleme perdesinin altında kurulur
+		# (24/8y gibi). Eskiden başlık kartından sonra kararmış ekranda, perdesiz kuruluyordu: pencere o sürede donuktu.
+		_olc("once")
+		_stage = Node3D.new()
+		add_child(_stage)
+		_t_kur = Time.get_ticks_usec()
+		_sur_kur()
+		player.global_position = Vector3(0.8, 0.05, -10.0)
 		_run()
 
 
@@ -233,13 +241,18 @@ func _olc(ad: String) -> void:
 			Performance.get_monitor(Performance.MEMORY_STATIC) / 1048576.0, IstBaglama.aktif_bolge, is_instance_valid(IstHayatYakin.aktif)])
 
 
+var _t_kur := 0
+
+
 func _house_phase() -> void:
 	phase = "house"
-	_olc("once")
-	_stage = Node3D.new()
-	add_child(_stage)
-	var t_kur := Time.get_ticks_usec()
-	_sur_kur()
+	if _stage == null:
+		_olc("once")
+		_stage = Node3D.new()
+		add_child(_stage)
+		_t_kur = Time.get_ticks_usec()
+		_sur_kur()
+	var t_kur := _t_kur
 	city = FallenCity.new()
 	city.field = walls.field if walls != null else null
 	city.v2 = sur_v2
