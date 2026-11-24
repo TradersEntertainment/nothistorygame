@@ -1,0 +1,33 @@
+at_10h__1          AUTOTEST PASS chapter=10h variant= outcome=10H.1 truth=3 direnc=0 paradox=0
+at_10h__2          AUTOTEST PASS chapter=10h variant= outcome=10H.1 truth=3 direnc=0 paradox=0
+at_12b__1          AUTOTEST PASS chapter=12b variant= outcome=12B.1 world= honest=true
+at_12b__2          AUTOTEST PASS chapter=12b variant= outcome=12B.1 world= honest=true
+at_13_city_1       AUTOTEST PASS chapter=13 variant=city version=garage outcome=13.2 window=8.4 tolga=T2 hikmet=
+at_13_city_2       AUTOTEST PASS chapter=13 variant=city version=garage outcome=13.2 window=8.4 tolga=T2 hikmet=
+at_18b__1          AUTOTEST PASS chapter=18b variant= outcome=18B.1 hits=3 cracks=3
+at_18b__2          AUTOTEST PASS chapter=18b variant= outcome=18B.1 hits=3 cracks=3
+at_23__1           AUTOTEST PASS chapter=23 variant= outcome=23.1 deviation=0 card=true singed=false letter=false
+at_23__2           AUTOTEST PASS chapter=23 variant= outcome=23.1 deviation=0 card=true singed=false letter=false
+at_24__1           AUTOTEST PASS chapter=24 variant= outcome=24.1 stumbles=0 kid=true niko=false steadied=0 kid_t=0.3
+at_24__2           AUTOTEST PASS chapter=24 variant= outcome=24.1 stumbles=0 kid=true niko=false steadied=0 kid_t=0.4
+at_25__1           AUTOTEST PASS chapter=25 variant= outcome=25.1 caught=0 candle=true tezkire=false marco=false sur=yeni
+at_25__2           AUTOTEST PASS chapter=25 variant= outcome=25.1 caught=0 candle=true tezkire=false marco=false sur=yeni
+at_36b__1          AUTOTEST PASS chapter=36 variant= outcome=36.1 burned=3 fights=1 kills=5 sur=yeni
+at_36b__2          AUTOTEST PASS chapter=36 variant= outcome=36.1 burned=3 fights=1 kills=2 sur=yeni
+at_6_byz_1         AUTOTEST PASS chapter=6 variant=byz branch=6b outcome=6b.1 paradox=0 mistakes=0 telsiz=4
+at_6_byz_2         AUTOTEST PASS chapter=6 variant=byz branch=6b outcome=6b.1 paradox=0 mistakes=0 telsiz=4
+at_7_byz_1         AUTOTEST PASS chapter=7 variant=byz branch=7b outcome=7.1 extras=["7.3"] sadakat=50 baski=0 hour=14.0
+at_7_byz_2         AUTOTEST PASS chapter=7 variant=byz branch=7b outcome=7.1 extras=["7.3"] sadakat=50 baski=0 hour=14.0
+kapali_11          AUTOTEST PASS chapter=11 variant= outcome=11.2 persuade=25 sadakat=55 baski=1
+kapali_19          AUTOTEST PASS chapter=19 variant= outcome=19.1 suspicion=0 tezkire=false saved=false grain=0
+kapali_31o         AUTOTEST PASS chapter=31o variant= outcome=31O.1 house=true(162) falls=0 signs=3 wrong=0 sun=true lashes=3 miss=0 scaff=true mats=8/8 err=5
+kapali_7           AUTOTEST PASS chapter=7 variant= branch=7a outcome=7.1 extras=[] sadakat=60 baski=0 hour=13.5
+kapali_8y          AUTOTEST PASS chapter=8y variant= outcome=8Y.1 id=seal warnings=0 lowered=0 radio=true
+menu20o            MENURETURN PASS from=res://scenes/chapter20o.tscn
+menu26             MENURETURN PASS from=res://scenes/chapter26.tscn
+zf_10h             ZSCENE chapter10h.tscn boxes=373 found=0
+zf_13              ZSCENE chapter13.tscn boxes=56 found=0
+zf_18b             ZSCENE chapter18b.tscn boxes=369 found=0
+zf_24              ZSCENE chapter24.tscn boxes=373 found=0
+zf_25              ZSCENE chapter25.tscn boxes=214 found=0
+zf_31o             ZSCENE chapter31o.tscn boxes=51 found=0

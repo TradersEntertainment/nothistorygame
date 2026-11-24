@@ -1,0 +1,7 @@
+10h once kurulum_ms=950 sonra kurulum_ms=1000
+12b once kurulum_ms=990 sonra kurulum_ms=1064
+13 once kurulum_ms=1022 sonra kurulum_ms=1126
+23 once kurulum_ms=1046 sonra kurulum_ms=1099
+24 once kurulum_ms=998 sonra kurulum_ms=982
+6 once kurulum_ms=1114 sonra kurulum_ms=1010
+7 once kurulum_ms=1073 sonra kurulum_ms=1010
