@@ -1,0 +1,61 @@
+== 17o
+DENIZSET hornworld DenizSurUzak_740 bolge=springs ucgen=3852
+T15KARMA bolum=17o horn=springs dugum=2647 ucgen=21996497 karma=8612fe266761fba44a8caf44bc41cb78
+== 2
+DENIZSET hornworld DenizSurUzak_740 bolge=slipway ucgen=4336
+T15KARMA bolum=2 horn=slipway dugum=2710 ucgen=22383354 karma=f904bc5b14cafd1382ac3ae579ff6aa0
+== 6
+T15KARMA bolum=6 horn=yok
+== 8
+T15KARMA bolum=8 horn=yok
+== 8y
+T15KARMA bolum=8y horn=yok
+== 18
+DENIZSET hornworld DenizSurUzak_740 bolge=horn_bridge ucgen=1836
+T15KARMA bolum=18 horn=horn_bridge dugum=2655 ucgen=22019914 karma=73dfa45feb6ee9e2e34374a11954088e
+== 18b
+DENIZSET hornworld DenizSurUzak_740 bolge=horn_bridge ucgen=1836
+DENIZSET bolum=18b set=yeni
+DENIZSET birlestir=8
+T15KARMA bolum=18b horn=horn_bridge dugum=2655 ucgen=22019914 karma=7c9cd29084aed0d2666edc451ed76910
+== 26
+T15KARMA bolum=26 horn=yok
+== 27
+DENIZSET hornworld DenizSurUzak_740 bolge=galata ucgen=2556
+T15KARMA bolum=27 horn=galata dugum=2696 ucgen=22361640 karma=e7b7c010c79314b10aa826ca85170fab
+== 38o
+DENIZSET hornworld DenizSurUzak_740 bolge=horn_wall_o ucgen=3564
+DENIZSET bolum=38o set=yeni
+DENIZSET birlestir=12
+T15KARMA bolum=38o horn=horn_wall_o dugum=2589 ucgen=21465000 karma=6204634a1f642e122f76fec890a981dd
+== 17
+T15KARMA bolum=17 horn=yok
+== 19
+DENIZSET bolum=19 set=yeni in_world=true
+DENIZSET hornworld DenizSurUzak_740 bolge=horn_chain ucgen=1740
+DENIZSET hornworld DenizSurUzak_2360 bolge=horn_chain ucgen=716
+DENIZSET hornworld DenizSurUzak_714 bolge=horn_chain ucgen=1858
+DENIZSET birlestir=21
+T15KARMA bolum=19 horn=horn_chain dugum=2666 ucgen=21956053 karma=7937d2249471c82ee2ead726343b7eaa
+== 19o
+DENIZSET bolum=19o set=yeni in_world=true
+DENIZSET hornworld DenizSurUzak_740 bolge=horn_chain ucgen=1740
+DENIZSET hornworld DenizSurUzak_2360 bolge=horn_chain ucgen=716
+DENIZSET hornworld DenizSurUzak_714 bolge=horn_chain ucgen=1858
+DENIZSET birlestir=21
+T15KARMA bolum=19o horn=horn_chain dugum=2666 ucgen=21956053 karma=f41e2065f3e4af59765c7bf77985033b
+== 29
+DENIZSET bolum=29 set=yeni in_world=true
+DENIZSET hornworld DenizSurUzak_740 bolge=horn_chain ucgen=1740
+DENIZSET hornworld DenizSurUzak_2360 bolge=horn_chain ucgen=716
+DENIZSET hornworld DenizSurUzak_714 bolge=horn_chain ucgen=1858
+DENIZSET birlestir=21
+T15KARMA bolum=29 horn=horn_chain dugum=2660 ucgen=21952599 karma=ab65e8857c8e48b0c73d5ee2a9b78262
+== 29o
+DENIZSET bolum=29o set=yeni in_world=true
+DENIZSET hornworld DenizSurUzak_740 bolge=horn_chain ucgen=1740
+DENIZSET hornworld DenizSurUzak_2360 bolge=horn_chain ucgen=716
+DENIZSET hornworld DenizSurUzak_714 bolge=horn_chain ucgen=1858
+DENIZSET birlestir=21
+T15KARMA bolum=29o horn=horn_chain dugum=2660 ucgen=21952599 karma=83b0297d4a8948230ca57b1052fb677e
+BITTI

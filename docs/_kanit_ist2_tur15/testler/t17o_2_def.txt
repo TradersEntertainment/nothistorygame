@@ -1,0 +1,7 @@
+KOSU t17o_2_def args=--chapter=17o --autotest rc=0 sure=20s
+DENIZSET galataview GalataSurYeni ucgen=6616
+DENIZSET hornworld DenizSurUzak_740 bolge=springs ucgen=12212 parca=8
+DENIZSET hornworld DenizKuleEugenius bolge=springs ucgen=224
+DENIZSET hornworld DenizSurUzak_2360 bolge=springs ucgen=748 parca=2
+DENIZSET hornworld DenizSurUzak_714 bolge=springs ucgen=14204 parca=13
+AUTOTEST PASS chapter=17o variant= outcome=17O.1 acc=1.00 water=4 pours=10.0 kadri=true

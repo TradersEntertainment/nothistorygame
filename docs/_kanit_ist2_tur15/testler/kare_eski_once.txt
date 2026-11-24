@@ -1,0 +1,15 @@
+T10KARE_YUKLE bolum=17o v2=false yeni=false ms=7637
+T15KARE_KARE ad=01_baslangic_karsi_kiyi ms=1018.38 cizim_ort=2973 ilkel_ort=4272231 ilkel_min=4259427
+T10KARE ad=01_baslangic_karsi_kiyi cizim=2864 ilkel=4334106
+T15KARE_KARE ad=07_dar_aci_karsi_kiyi ms=517.01 cizim_ort=410 ilkel_ort=931860 ilkel_min=931860
+T10KARE ad=07_dar_aci_karsi_kiyi cizim=410 ilkel=931860
+T15KARE_KARE ad=15_yakin_eugenius ms=426.03 cizim_ort=203 ilkel_ort=756280 ilkel_min=751216
+T10KARE ad=15_yakin_eugenius cizim=203 ilkel=759977
+T15KARE_KARE ad=17_yakin_karsi_sur_guney ms=409.96 cizim_ort=208 ilkel_ort=757431 ilkel_min=755909
+T10KARE ad=17_yakin_karsi_sur_guney cizim=208 ilkel=757601
+T15KARE_KARE ad=18_yakin_galata_suru ms=388.10 cizim_ort=135 ilkel_ort=444044 ilkel_min=429632
+T10KARE ad=18_yakin_galata_suru cizim=136 ilkel=451404
+T15KARE_KARE ad=20_dar_blakherna_kara_suru_ucu ms=822.87 cizim_ort=1700 ilkel_ort=3175079 ilkel_min=3175079
+T10KARE ad=20_dar_blakherna_kara_suru_ucu cizim=1700 ilkel=3175079
+T10KARE_BITTI
+rc=0

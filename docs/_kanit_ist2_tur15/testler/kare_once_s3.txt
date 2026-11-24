@@ -1,0 +1,42 @@
+DENIZSET hornworld DenizSurUzak_740 bolge=springs ucgen=3852
+T10KARE_YUKLE bolum=17o v2=false yeni=true ms=7667
+T15KARE_KARE ad=01_baslangic_karsi_kiyi ms=1030.33 cizim_ort=2983 ilkel_ort=4289574 ilkel_min=4264241
+T10KARE ad=01_baslangic_karsi_kiyi cizim=2861 ilkel=4300848
+T15KARE_KARE ad=02_top_basi_karsi_kiyi_sol ms=1666.28 cizim_ort=5869 ilkel_ort=8155011 ilkel_min=8153607
+T10KARE ad=02_top_basi_karsi_kiyi_sol cizim=5869 ilkel=8155613
+T15KARE_KARE ad=03_kova_zinciri_karsi_kiyi_sag ms=466.03 cizim_ort=717 ilkel_ort=1161329 ilkel_min=1158210
+T10KARE ad=03_kova_zinciri_karsi_kiyi_sag cizim=717 ilkel=1162109
+T15KARE_KARE ad=04_kiyi_sag_ucu_burun ms=439.25 cizim_ort=596 ilkel_ort=969146 ilkel_min=954586
+T10KARE ad=04_kiyi_sag_ucu_burun cizim=597 ilkel=973873
+T15KARE_KARE ad=05_kiyi_sol_ucu_blakherna ms=1634.49 cizim_ort=5494 ilkel_ort=7722815 ilkel_min=7698411
+T10KARE ad=05_kiyi_sol_ucu_blakherna cizim=5496 ilkel=7740385
+T15KARE_KARE ad=06_baslangic_galata ms=449.35 cizim_ort=1305 ilkel_ort=1054056 ilkel_min=1054056
+T10KARE ad=06_baslangic_galata cizim=1305 ilkel=1054056
+T15KARE_KARE ad=07_dar_aci_karsi_kiyi ms=456.88 cizim_ort=407 ilkel_ort=931018 ilkel_min=927509
+T10KARE ad=07_dar_aci_karsi_kiyi cizim=407 ilkel=931408
+T15KARE_KARE ad=08_dar_aci_kule_dibi ms=460.56 cizim_ort=354 ilkel_ort=837314 ilkel_min=837314
+T10KARE ad=08_dar_aci_kule_dibi cizim=354 ilkel=837314
+T15KARE_KARE ad=09_dar_eugenius ms=564.87 cizim_ort=550 ilkel_ort=1341950 ilkel_min=833401
+T10KARE ad=09_dar_eugenius cizim=392 ilkel=833401
+T15KARE_KARE ad=10_dar_kuzey_ucu ms=1630.02 cizim_ort=5025 ilkel_ort=7408276 ilkel_min=7405565
+T10KARE ad=10_dar_kuzey_ucu cizim=5064 ilkel=7432678
+T15KARE_KARE ad=11_dar_galata_suru ms=387.97 cizim_ort=246 ilkel_ort=526374 ilkel_min=526374
+T10KARE ad=11_dar_galata_suru cizim=246 ilkel=526374
+T15KARE_KARE ad=12_dar_burun ms=382.81 cizim_ort=402 ilkel_ort=826957 ilkel_min=826957
+T10KARE ad=12_dar_burun cizim=402 ilkel=826957
+T15KARE_KARE ad=13_yamactan_karsi_kiyi ms=903.67 cizim_ort=1875 ilkel_ort=2968354 ilkel_min=2947881
+T10KARE ad=13_yamactan_karsi_kiyi cizim=1834 ilkel=2963449
+T15KARE_KARE ad=14_yamactan_galata_suru ms=515.69 cizim_ort=242 ilkel_ort=1041409 ilkel_min=1038369
+T10KARE ad=14_yamactan_galata_suru cizim=242 ilkel=1053569
+T15KARE_KARE ad=15_yakin_eugenius ms=386.02 cizim_ort=155 ilkel_ort=731417 ilkel_min=731417
+T10KARE ad=15_yakin_eugenius cizim=155 ilkel=731417
+T15KARE_KARE ad=16_yakin_karsi_sur_kuzey ms=1440.37 cizim_ort=2626 ilkel_ort=5178246 ilkel_min=5178246
+T10KARE ad=16_yakin_karsi_sur_kuzey cizim=2626 ilkel=5178246
+T15KARE_KARE ad=17_yakin_karsi_sur_guney ms=371.04 cizim_ort=161 ilkel_ort=732893 ilkel_min=732893
+T10KARE ad=17_yakin_karsi_sur_guney cizim=161 ilkel=732893
+T15KARE_KARE ad=18_yakin_galata_suru ms=346.83 cizim_ort=88 ilkel_ort=426828 ilkel_min=426828
+T10KARE ad=18_yakin_galata_suru cizim=88 ilkel=426828
+T15KARE_KARE ad=19_yakin_karsi_sur_orta ms=528.61 cizim_ort=235 ilkel_ort=671112 ilkel_min=671112
+T10KARE ad=19_yakin_karsi_sur_orta cizim=235 ilkel=671112
+T10KARE_BITTI
+rc=0

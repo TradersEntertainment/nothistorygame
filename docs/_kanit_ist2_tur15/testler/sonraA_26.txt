@@ -1,0 +1,5 @@
+KOSU sonraA_26 args=--chapter=26 --autotest rc=0 sure=118s
+DENIZSET hornworld DenizSurUzak_740 bolge=byz_aya ucgen=3112
+DENIZSET hornworld DenizSurUzak_2360 bolge=byz_aya ucgen=748
+DENIZSET hornworld DenizSurUzak_714 bolge=byz_aya ucgen=3130
+AUTOTEST PASS chapter=26 variant= outcome=26.1 water=3 repaired=3 cleared=2 world= gun=3/4 gunner=4/4

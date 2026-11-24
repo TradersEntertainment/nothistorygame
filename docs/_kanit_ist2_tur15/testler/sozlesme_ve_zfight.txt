@@ -1,0 +1,15 @@
+PARSECHECK PASS scripts=368
+== sur_sozlesme rc=0
+SURSOZLESME PASS kalem=13 kesim=8
+== sur_oyun_denetim rc=0
+SUROYUN nokta=519 havada=0 gomuk=0 katida=0
+== sur_oyun_yuru rc=0
+WALKTHRU OZET yol=7 tamam=7 takilma=0 dusme=0
+== esya_fizik rc=0
+ESYATEST PASS
+== tasima11_halic_sonda rc=0
+HALICSONDA OZET carp=661 karma=3854034809
+== tur14_marmara_sonda rc=0
+MARMARASONDA OZET carp=1837 karma=2250736444
+== zfight rc=0 satir=0
+BITTI

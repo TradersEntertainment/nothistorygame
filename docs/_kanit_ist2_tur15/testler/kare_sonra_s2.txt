@@ -1,0 +1,46 @@
+DENIZSET galataview GalataSurYeni ucgen=6616
+DENIZSET hornworld DenizSurUzak_740 bolge=springs ucgen=12212 parca=8
+DENIZSET hornworld DenizKuleEugenius bolge=springs ucgen=224
+DENIZSET hornworld DenizSurUzak_2360 bolge=springs ucgen=748 parca=2
+DENIZSET hornworld DenizSurUzak_714 bolge=springs ucgen=14204 parca=13
+T10KARE_YUKLE bolum=17o v2=false yeni=true ms=7958
+T15KARE_KARE ad=01_baslangic_karsi_kiyi ms=1110.37
+T10KARE ad=01_baslangic_karsi_kiyi cizim=2851 ilkel=4307344
+T15KARE_KARE ad=02_top_basi_karsi_kiyi_sol ms=1753.55
+T10KARE ad=02_top_basi_karsi_kiyi_sol cizim=5855 ilkel=8131273
+T15KARE_KARE ad=03_kova_zinciri_karsi_kiyi_sag ms=499.22
+T10KARE ad=03_kova_zinciri_karsi_kiyi_sag cizim=717 ilkel=1153471
+T15KARE_KARE ad=04_kiyi_sag_ucu_burun ms=435.58
+T10KARE ad=04_kiyi_sag_ucu_burun cizim=571 ilkel=965699
+T15KARE_KARE ad=05_kiyi_sol_ucu_blakherna ms=1698.09
+T10KARE ad=05_kiyi_sol_ucu_blakherna cizim=5482 ilkel=7719937
+T15KARE_KARE ad=06_baslangic_galata ms=479.06
+T10KARE ad=06_baslangic_galata cizim=1232 ilkel=1048336
+T15KARE_KARE ad=07_dar_aci_karsi_kiyi ms=482.17
+T10KARE ad=07_dar_aci_karsi_kiyi cizim=406 ilkel=914712
+T15KARE_KARE ad=08_dar_aci_kule_dibi ms=473.26
+T10KARE ad=08_dar_aci_kule_dibi cizim=353 ilkel=817830
+T15KARE_KARE ad=09_dar_eugenius ms=573.81
+T10KARE ad=09_dar_eugenius cizim=440 ilkel=921957
+T15KARE_KARE ad=10_dar_kuzey_ucu ms=1691.77
+T10KARE ad=10_dar_kuzey_ucu cizim=5008 ilkel=7381665
+T15KARE_KARE ad=11_dar_galata_suru ms=440.52
+T10KARE ad=11_dar_galata_suru cizim=209 ilkel=539862
+T15KARE_KARE ad=12_dar_burun ms=429.74
+T10KARE ad=12_dar_burun cizim=398 ilkel=811471
+T15KARE_KARE ad=13_yamactan_karsi_kiyi ms=945.88
+T10KARE ad=13_yamactan_karsi_kiyi cizim=1866 ilkel=2980185
+T15KARE_KARE ad=14_yamactan_galata_suru ms=568.96
+T10KARE ad=14_yamactan_galata_suru cizim=208 ilkel=1055175
+T15KARE_KARE ad=15_yakin_eugenius ms=429.04
+T10KARE ad=15_yakin_eugenius cizim=150 ilkel=712711
+T15KARE_KARE ad=16_yakin_karsi_sur_kuzey ms=1452.80
+T10KARE ad=16_yakin_karsi_sur_kuzey cizim=2624 ilkel=5159926
+T15KARE_KARE ad=17_yakin_karsi_sur_guney ms=375.17
+T10KARE ad=17_yakin_karsi_sur_guney cizim=156 ilkel=710427
+T15KARE_KARE ad=18_yakin_galata_suru ms=359.47
+T10KARE ad=18_yakin_galata_suru cizim=69 ilkel=442956
+T15KARE_KARE ad=19_yakin_karsi_sur_orta ms=521.81
+T10KARE ad=19_yakin_karsi_sur_orta cizim=232 ilkel=652734
+T10KARE_BITTI
+rc=0
