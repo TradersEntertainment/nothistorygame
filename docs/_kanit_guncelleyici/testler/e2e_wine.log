@@ -1,0 +1,15 @@
+# wine 9.0 (Ubuntu paketi wine64) bu kapsayıcıda açılmıyor
+A sha256=40a36f078cf4fb99a1f3937cf2ad71db217f2163d8926c51d4dbd54310367a38
+B sha256=9d87b9e6aa485b1b3f03845650db97f25239e9e6e2931beb2951d91db8bde3ed boyut=1290452640
+tests/_guncelleme/e2e_wine.sh: line 34:  8325 Aborted                 wine wineboot -i > /dev/null 2>&1
+A sürümü (wine): 
+tests/_guncelleme/e2e_wine.sh: line 43:  8334 Aborted                 timeout 900 wine "$ADIR/$AD" --headless -- --guncelleme-kaynak="http://127.0.0.1:$PORT/guncelleme.json" --guncelleme-oto > "$E2E/oto.log" 2>&1
+oto çıkış=134
+# wineboot -i:
+free(): invalid pointer
+# wine64 cmd /c echo merhaba:
+free(): invalid pointer
+# wineserver -f:
+sock_init: shutdown() causes EOF
+double free or corruption (out)
+# Windows dışa aktarımı yine de üretildi: A/B .exe boyutu 1290452640 bayt (2 GiB sınırının altında)
