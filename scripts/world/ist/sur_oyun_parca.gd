@@ -511,6 +511,28 @@ class KapiKopru extends Node3D:
 				KalasKopru._dikme(ag, Vector3(s2 * (w * 0.5 - 0.1), y, pz), Vector3(s2 * (w * 0.5 - 0.1), y + 1.05, pz), 0.12)
 			ag.kutu(Vector3(s2 * (w * 0.5 - 0.1), y + 0.95, za + 0.2), Vector3.RIGHT, Vector3.BACK, 0.1, 0.1, zb - za - 0.4)
 		ag.mesh_ekle(saglam, Props.mat(C_WOOD.darkened(0.08), 0.0, false, "wood"), "Ahsap_KapiKopruTahta")
+		# G17 (GORUNMEZZEMIN, 8y): köprünün iki yakadaki taş ayakları. Sur kesiminin ayak çarpışması (surlar._build_moat,
+		# yakalardan 4,5 m, üstü kesimin dış kuşağında düz; DONMUŞ) köprü sağlamken yürünür; görünen yalnız kuşatmanın yıkık
+		# ayağıydı (sıra sıra gediğe doğru 2 m'ye dek alçalır): oyuncu ve Hasan köprüye inip çıkarken 0,4-2 m havada
+		# yürüyordu. Sağlam hâlde ayak taş sıralarıyla tam boy (üstü çarpışmayla aynı düzlem), yıkıkta görünmez.
+		var md := float(d["MD"])
+		var half := gw * 0.5 + 1.2
+		var ay := 4.5
+		var tag = KULE.Ag.new()
+		var rngt := RandomNumberGenerator.new()
+		rngt.seed = 91
+		for side: float in [1.0, -1.0]:
+			var z_yaka := float(d["zm0"]) if side > 0.0 else float(d["zm1"])
+			var dz := ay / 5.0
+			for k in 5:
+				var z0k := z_yaka + side * dz * k
+				for m in 3:
+					var xa := -half + 2.0 * half * m / 3.0
+					var xb := -half + 2.0 * half * (m + 1) / 3.0
+					var alt := dy - md - 0.2
+					var ust := dy - rngt.randf_range(0.0, 0.025)
+					tag.kutu(Vector3((xa + xb) * 0.5, alt, z0k if side > 0.0 else z0k - dz), Vector3.RIGHT, Vector3.BACK, xb - xa - 0.04, ust - alt, dz - 0.04)
+		tag.mesh_ekle(saglam, KULE._tas_mat(Color("a89878").darkened(0.1), 0), "Tas_KapiKopruAyak")
 		govde = StaticBody3D.new()
 		var cs := CollisionShape3D.new()
 		var bs := BoxShape3D.new()
