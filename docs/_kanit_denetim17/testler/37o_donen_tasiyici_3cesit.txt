@@ -1,0 +1,3 @@
+AUTOTEST PASS chapter=37o variant= outcome=37O.1 beats=13/16 arrows=0 falls=0 barrels=5/5 cuts=0 stones=0 slips=0 burns=0 duel=true caught=0 sur=yeni
+AUTOTEST PASS chapter=37o variant=lose outcome=37O.2 beats=5/16 arrows=0 falls=1 barrels=2/5 cuts=21 stones=0 slips=0 burns=0 duel=false caught=0 sur=yeni
+AUTOTEST PASS chapter=37o variant=trespass outcome=37O.1 beats=13/16 arrows=0 falls=0 barrels=5/5 cuts=0 stones=0 slips=0 burns=0 duel=true caught=1 sur=yeni

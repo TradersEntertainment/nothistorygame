@@ -1,0 +1,14 @@
+== f22_a1
+AUTOTEST PASS chapter=22o variant= outcome=22O.1 saved=3 gun=3/4 warn=3 carry=0.75
+== f22_a2
+VISAUDIT float scene=chapter22o.tscn who=@Node3D@18424 pos=(-5.9, -6.2, 34.1) act= meta=no_talk,armed src=Chapter22o>Node3D>Person below=-7.39:Chapter22o>Toprak
+AUTOTEST PASS chapter=22o variant= outcome=22O.1 saved=3 gun=3/4 warn=3 carry=0.75
+== f22_a3
+VISAUDIT float scene=chapter22o.tscn who=@Node3D@18424 pos=(-5.9, -6.2, 34.1) act= meta=no_talk,armed src=Chapter22o>Node3D>Person below=-7.39:Chapter22o>Toprak
+AUTOTEST PASS chapter=22o variant= outcome=22O.1 saved=3 gun=3/4 warn=3 carry=0.75
+== f22_b1
+AUTOTEST PASS chapter=22o variant= outcome=22O.1 saved=3 gun=3/4 warn=3 carry=0.75
+== f22_b2
+AUTOTEST PASS chapter=22o variant= outcome=22O.1 saved=3 gun=3/4 warn=3 carry=0.75
+== f22_b3
+AUTOTEST PASS chapter=22o variant= outcome=22O.1 saved=3 gun=3/4 warn=3 carry=0.75
