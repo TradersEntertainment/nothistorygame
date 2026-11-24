@@ -36,6 +36,7 @@ var _al_min := {}              # istasyon id -> [pencere başı ms, en küçük 
 var _al_out := {}              # stir: id -> ilk dışarıda ms
 var _al_seen := {}
 var _al_baked_done := {}
+var _al_dbg := {}
 
 # ---- donuk
 var _dn_start := -1
@@ -625,6 +626,9 @@ func _alet(eyes: Array[Vector3], now: int) -> void:
 			if t == null:
 				continue
 			var d := _tool_dist(t, target)
+			if OS.has_environment("D17_DBG") and not _al_dbg.has(sid):
+				_al_dbg[sid] = true
+				print("  D17DBG alet kind=%s d=%.2f pay=%.2f who=%s" % [kind, d, r, _cls(w)])
 			if kind == "stir_pot":
 				# kepçe hep kazanın içinde: 1 sn aralıksız dışarıda kalırsa
 				if d > r:
