@@ -699,7 +699,7 @@ func _bant_doldur(p: PanelContainer, kutu: VBoxContainer) -> void:
 		D.YENI:
 			var bas := tr("UI_GUNC_YENI") % [uzak, sende]
 			if not girdi.is_empty():
-				bas += "  ·  ≈" + boyut_metni(int(girdi["boyut"]), tr_mi)
+				bas += "  ·  ≈" + boyut_metni(int(girdi["boyut"]), tr_mi).replace(" ", "\u00a0")
 			_yazi(kutu, bas, 19, C_KREM)
 			if neden != "":
 				_yazi(kutu, tr(neden), 15, Color("ffc98a"))

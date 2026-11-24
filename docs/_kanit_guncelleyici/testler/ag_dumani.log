@@ -1,0 +1,4 @@
+# 2026-11-24T04:02:56Z gerçek ağ dumanı: godot --headless --path . -- --guncelleme-yalniz-denetle
+GUNCELLEME uzak=yok yerel=0.99.125 yeni=hayir sonuc=0 kod=404 (manifest yok -> yeni yok)
+# curl -L ile aynı adres:
+404 https://github.com/TradersEntertainment/nothistorygamedemo/releases/download/v0.99.125/guncelleme.json
