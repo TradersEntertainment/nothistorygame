@@ -2991,8 +2991,8 @@ func _face_listeners(speaker_key: String, text_key := "") -> Array:
 			continue
 		if c.has_meta("garrison"):
 			continue   # nöbetteki asker (surda, sırada) konuşmaya dönmez
-		if c is Soldier and (c as Soldier).pose != "stand":
-			continue
+		if c is Soldier and ((c as Soldier).pose != "stand" or ((c as Soldier).rig != null and (c as Soldier).rig.activity != "")):
+			continue   # G17: iş istasyonundaki asker (pozu "stand", işi rig.activity'de: aşçı kepçeyle) işini bırakıp dönmez
 		if c is Person and ((c as Person)._busy or (c as Person).rig == null or (c as Person).rig.activity != ""):
 			continue
 		var d := Vector2(c.global_position.x - here.x, c.global_position.z - here.z).length()
