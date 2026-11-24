@@ -196,12 +196,28 @@ func _floor_under(own: Node, p: Vector3, up: float, down: float) -> Array:
 ## Ayağın hemen altında (0,15 m içinde) görünen bir ağ yüzeyi var mı: çarpışmasız görünen eşyanın (çadır, raf, araba)
 ## üstünde duran havada değildir (10b'de patlamayla çadırın tepesine uçan keçi). Görünen ağlar zemin denetiminin uzayında.
 func _gorunen_alt(low: Vector3) -> bool:
-	_vis_build_at(low)
+	_vis_build_at(low, 0.15)
 	if not _vspace.is_valid():
 		return false
-	var q := PhysicsRayQueryParameters3D.create(low + Vector3(0, 0.05, 0), low - Vector3(0, 0.15, 0), 1)
-	q.hit_back_faces = false
-	return not _vstate.intersect_ray(q).is_empty()
+	# en alçak nokta çoğu kez bir tırnağın ucu: kenarda duranın tırnağı 5-10 cm taşar (10a'da etiket tahtasının kenarındaki
+	# tavuk). Ucun 0,1 m çevresinde de yoklanır.
+	for o: Vector3 in [Vector3.ZERO, Vector3(0.1, 0, 0), Vector3(-0.1, 0, 0), Vector3(0, 0, 0.1), Vector3(0, 0, -0.1)]:
+		var q := PhysicsRayQueryParameters3D.create(low + o + Vector3(0, 0.05, 0), low + o - Vector3(0, 0.15, 0), 1)
+		q.hit_back_faces = false
+		if not _vstate.intersect_ray(q).is_empty():
+			return true
+	# üstü kapalı olmayan ince görünen parça (10a'daki rafın etiket tahtası: yalnız ön yüz; tavuk üst kenarında):
+	# kutusunun üstü ayağın 0,15 m altı ile 0,05 m üstü arasında ve ucun 0,1 m çevresi kutunun içinde
+	for w: WeakRef in _geoms:
+		var n = w.get_ref()
+		if n == null or not (n is MeshInstance3D) or not (n as Node3D).is_inside_tree() or not (n as GeometryInstance3D).is_visible_in_tree() or _is_char_part(n):
+			continue
+		var ab := (n as MeshInstance3D).global_transform * (n as MeshInstance3D).get_aabb()
+		if ab.end.y < low.y - 0.15 or ab.end.y > low.y + 0.05 or ab.size.x > 40.0 or ab.size.z > 40.0:
+			continue
+		if low.x > ab.position.x - 0.1 and low.x < ab.end.x + 0.1 and low.z > ab.position.z - 0.1 and low.z < ab.end.z + 0.1:
+			return true
+	return false
 
 
 func _skip_animal(a: Node, own: Node) -> String:
@@ -538,12 +554,12 @@ func _range_ok(gi: GeometryInstance3D, p: Vector3) -> bool:
 	return true
 
 
-func _vis_build_at(p: Vector3) -> void:
+func _vis_build_at(p: Vector3, r := 0.05) -> void:
 	if not _vspace.is_valid():
 		_vspace = PhysicsServer3D.space_create()
 		PhysicsServer3D.space_set_active(_vspace, true)
 		_vstate = PhysicsServer3D.space_get_direct_state(_vspace)
-	var probe := AABB(p - Vector3(0.05, 0.4, 0.05), Vector3(0.1, 0.8, 0.1))
+	var probe := AABB(p - Vector3(r, 0.4, r), Vector3(r * 2.0, 0.8, r * 2.0))
 	var keep: Array = []
 	for w: WeakRef in _geoms:
 		var n = w.get_ref()
