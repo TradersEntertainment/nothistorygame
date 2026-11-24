@@ -9,7 +9,7 @@ yalnız otomatik testte yükler (`Hud._denetim17`; dosya `tests/` altında oldu�
 | Denetim | Durum | Pakette | Kalan |
 |---|---|---|---|
 | 1. Hayvan havada/gömük (`VISAUDIT float/sunk who=<sınıf>`) | **KISMEN** | ADAY (paketi düşürmüyor) | 26 ve 26o'da Sultan'ın atı (aşağıda) |
-| 2. Görünmez zemin (`GORUNMEZZEMIN`) | **TAMAM** | KESİN (`fail=1`) | 0 (son tur sonucu aşağıda) |
+| 2. Görünmez zemin (`GORUNMEZZEMIN`) | **TAMAM** | KESİN (`fail=1`) | 2. turda 37o (ölçüt düzeltildi, hedefli koşuda 0) |
 | 3. İş istasyonu aleti (`ALETAUDIT`) + aşçı | **TAMAM** | KESİN | 0; aşçının kök nedeni bulundu, yeniden üretildi ve düzeltildi |
 | 4. Donuk bekleme (`DONUKAUDIT`, PACE) | **KISMEN** | KESİN (8y PACE bloğu) | Bütün bölümlerin PACE taraması koşulmadı (betik hazır) |
 | Kareler ve rapor | TAMAM | — | Aşçı için kare yok (sayısal kanıt var) |
@@ -130,7 +130,24 @@ Eşikler (0,15/0,10/0,35/4 sn/30 m) değişmedi.
 
 - **1. tur** (0-2. parçalar eski denetim koduyla, 3. parça ara kodla): bütün parçalar `fail=0`, menüye dönüş 2/2,
   `ZFIGHT` yok. Satırlar `testler/paket1/`.
-- **Son tur** (son kod, 4 parça): sonuç `testler/paket2/` altında; özet bu bölümün sonunda.
+- **2. tur** (kesinleşmiş denetimlerle, 4 parça; `testler/paket2/`): **dört parça da `fail=1`**. Dördünün de nedeni
+  ölçüldü:
+  - **37o:** `GORUNMEZZEMIN` (kalas köprü). Kalas ortasındaki milde yalpalıyor; kökü yerinde kalıp yalnız döndüğü için
+    taşıyıcı sayılmıyordu. Ölçüt düzeltildi (açı değişimi de taşıyıcı sayılıyor). Üç çeşit yeniden koşuldu, 0 satır
+    (`testler/37o_donen_tasiyici_3cesit.txt`).
+  - **22o:** var olan `GameState` havada-kişi taraması (`VISAUDIT float`, bu dosya benim değil) yük altında bir kişiyi
+    yakaladı. Ölçüm: denetim açıkken 3/7 koşuda, kapalıyken 0/4 (`testler/22o_once_denetimli_a_denetimsiz_b.txt`).
+    Denetimin ağır kopyalaması dünya katılaştığı karelere biniyordu; artık 3 sn sonra başlıyor. Sonrasında 4/4 ve
+    hedefli 4 çeşit temiz (`testler/22o_yuk_gecikmesiyle_4kosu.txt`). Tarama yük altında gerçek bir geçici
+    "havada" anını görmüş olabilir; kişinin kim olduğu bulunamadı.
+  - **CITYCHECK** "yeterli açık nokta yok (2)" ve **ESYATEST** `gomuk=1`: ikisi de dört parçanın aynı anda koştuğu yük
+    altında, birer parçada çıktı. Öbür parçalarda geçtiler; tek başına yeniden koşuda da geçtiler
+    (`testler/esya_yeniden.txt`). Bu değişikliklerin dokunduğu kodda değiller.
+  - **0. parçada WALKTHRU** (24, Niko): iki yeniden koşuda yok (`testler/24_yeniden.txt`).
+- **Hedefli son kod koşusu** (`testler/hedefli_son_kod_x2.txt`): 8y'nin 7 çeşidi, Bölüm 2'nin 4 çeşidi, 22o'nun 4
+  çeşidi, 10a, 26, 31o; hepsi PASS. Tek satır 26'nın atı (ADAY). Paketle birlikte düzeltilen bölümlerin çeşitleri ×2.
+- **Son kodla tam paket temiz bir turda KOŞULMADI.** 2. turdan sonra yapılan iki ölçüt düzeltmesi (37o, 22o) yalnız
+  hedefli koşularla doğrulandı. **Bir sonraki tam paket gerekli.**
 - **Paket süresi önce|sonra:** 1. turda 0-2. parçalar 05:16 → 06:43-06:47, yani ~1 sa 30 dk. Aynı makinede aynı
   anda başka koşular da sürüyordu. Önceki tam paket ≈ 1 sa 50 dk. Tek koşu ölçümü: 26 → 115 sn (denetimle) | 127 sn
   (`NO_DENETIM17`); 8y → 85 | 88 sn. Fark ölçüm gürültüsü içinde, +%15 bütçenin çok altında. 8y PACE bloğu pakete
@@ -144,6 +161,9 @@ Eşikler (0,15/0,10/0,35/4 sn/30 m) değişmedi.
   - `MARMARASONDA OZET carp=1837 karma=2250736444`
 
 ## Hâlâ kötü olanlar
+
+0. **Son kodla temiz bir tam paket turu yok** (yukarıda). 35o `=slip` çeşidinde at 0,23 m havada (ADAY, yokuşta; 26
+   ile aynı eğim sınırı sorunu olabilir, incelenmedi).
 
 1. **26 ve 26o:** Sultan'ın atı gediğin moloz rampasından inerken ön toynakları 0,5-0,9 m havada (1. turda 26'da 8,
    26o'da 4 satır). Kök neden: `AyakHayvan` eğim sınırı. Hayvan denetimi bu yüzden ADAY'da kalıyor (KISMEN).

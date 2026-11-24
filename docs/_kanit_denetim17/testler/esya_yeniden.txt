@@ -1,0 +1,59 @@
+ESYATEST kayit=18
+ESYATEST DURUM a_fici_1_once uyuyor (durağan dekor)
+ESYATEST DURUM a_fici_2_03sn yuvarlanıyor/kayıyor v=0.9 m/s, eğik, zemin boşluğu 0.00 m
+ESYATEST DURUM a_fici_3_1sn yuvarlanıyor/kayıyor v=0.0 m/s, yan yatık, zemin boşluğu 0.00 m
+ESYATEST DURUM a_fici_4_durunca durdu ve dondu, yan yatık, zemin boşluğu 0.00 m
+ESYATEST tekme_fici yol=0.74 dik=0.00 durum=donmus
+ESYATEST DURUM b_sandik_1_once uyuyor (durağan dekor)
+ESYATEST DURUM b_sandik_2_03sn yuvarlanıyor/kayıyor v=2.2 m/s, yan yatık, zemin boşluğu 0.04 m
+ESYATEST DURUM b_sandik_3_1sn yuvarlanıyor/kayıyor v=0.0 m/s, yan yatık, zemin boşluğu 0.00 m
+ESYATEST DURUM b_sandik_4_durunca durdu ve dondu, yan yatık, zemin boşluğu 0.00 m
+ESYATEST tekme_sandik yol=0.73 durum=donmus
+ESYATEST yigin ust_y=0.30
+ESYATEST DURUM c_yigin_1_once uyuyor (durağan dekor)
+ESYATEST DURUM c_yigin_2_03sn yuvarlanıyor/kayıyor v=1.4 m/s, eğik, zemin boşluğu 0.00 m
+ESYATEST DURUM c_yigin_3_1sn yuvarlanıyor/kayıyor v=0.0 m/s, yan yatık, zemin boşluğu 0.00 m
+ESYATEST DURUM c_yigin_4_durunca durdu ve dondu, yan yatık, zemin boşluğu 0.00 m
+ESYATEST DURUM d_kosu_1_once uyuyor (durağan dekor)
+ESYATEST kosu hiz=5.2 kosu_sayac=1
+ESYATEST DURUM d_kosu_2_03sn yuvarlanıyor/kayıyor v=1.1 m/s, eğik, zemin boşluğu 0.00 m
+ESYATEST DURUM d_kosu_3_1sn yuvarlanıyor/kayıyor v=0.0 m/s, yan yatık, zemin boşluğu 0.00 m
+ESYATEST DURUM d_kosu_4_durunca durdu ve dondu, yan yatık, zemin boşluğu 0.00 m
+ESYATEST DURUM e_egim_1_once uyuyor (durağan dekor)
+ESYATEST DURUM e_egim_a_2_03sn yuvarlanıyor/kayıyor v=0.9 m/s, eğik, zemin boşluğu 0.00 m
+ESYATEST DURUM e_egim_a_3_1sn yuvarlanıyor/kayıyor v=0.1 m/s, yan yatık, zemin boşluğu 0.00 m
+ESYATEST DURUM e_egim_a_4_durunca durdu ve dondu, yan yatık, zemin boşluğu 0.00 m
+ESYATEST egim_yan dik=0.00 eksen=(-0.999709, -0.000043, 0.024126)
+ESYATEST DURUM e_egim_b_2_03sn yuvarlanıyor/kayıyor v=1.4 m/s, yan yatık, zemin boşluğu 0.00 m
+ESYATEST DURUM e_egim_b_3_1sn yuvarlanıyor/kayıyor v=0.4 m/s, yan yatık, zemin boşluğu 0.00 m
+ESYATEST DURUM e_egim_b_4_durunca durdu ve dondu, yan yatık, zemin boşluğu 0.00 m
+ESYATEST egim dz=15.84 dy=-2.62
+ESYATEST DURUM f_merdiven_1_once uyuyor (durağan dekor)
+ESYATEST DURUM f_merdiven_2_03sn yuvarlanıyor/kayıyor v=0.9 m/s, eğik, zemin boşluğu 0.00 m
+ESYATEST DURUM f_merdiven_3_1sn yuvarlanıyor/kayıyor v=1.9 m/s, eğik, zemin boşluğu 0.07 m
+ESYATEST DURUM f_merdiven_4_durunca durdu ve dondu, yan yatık, zemin boşluğu 0.00 m
+ESYATEST merdiven dy=-1.38 dz=3.72
+ESYATEST suryolu esya=true c0=(40.84025, 3.460011, -1.400527) pl=(39.9, 3.0, -0.25) tekme_var=true serbest=true
+ESYATEST DURUM g_suryolu_1_once uyuyor (durağan dekor)
+ESYATEST DURUM g_suryolu_2_03sn yuvarlanıyor/kayıyor v=0.6 m/s, dik, zemin boşluğu 0.00 m
+ESYATEST DURUM g_suryolu_3_1sn yuvarlanıyor/kayıyor v=0.4 m/s, dik, zemin boşluğu 0.00 m
+ESYATEST DURUM g_suryolu_4_durunca durdu ve dondu, dik, zemin boşluğu 0.00 m
+ESYATEST suryolu x=40.73 sol_bos=1.60 sag_bos=0.14 y=3.45
+ESYATEST DURUM h_patlama_1_once uyuyor (durağan dekor)
+ESYATEST DURUM h_patlama_2_03sn yuvarlanıyor/kayıyor v=2.0 m/s, eğik, zemin boşluğu 0.01 m
+ESYATEST DURUM h_patlama_3_1sn yuvarlanıyor/kayıyor v=0.3 m/s, yan yatık, zemin boşluğu 0.00 m
+ESYATEST DURUM h_patlama_4_durunca durdu ve dondu, yan yatık, zemin boşluğu 0.00 m
+ESYATEST patlama uyanan=6
+ESYATEST DURUM i_dusur_1_once eşya yok
+ESYATEST dusur turler=fici,kalas
+ESYATEST DURUM i_dusur_2_03sn yuvarlanıyor/kayıyor v=2.8 m/s, eğik, zemin boşluğu 0.96 m
+ESYATEST DURUM i_dusur_3_1sn yuvarlanıyor/kayıyor v=0.2 m/s, yan yatık, zemin boşluğu 0.00 m
+ESYATEST DURUM i_dusur_4_durunca durdu ve dondu, yan yatık, zemin boşluğu 0.00 m
+ESYATEST dusur fici y=0.27 bosluk=0.000
+ESYATEST dusur kalas y=0.04 bosluk=0.000
+ESYATEST DURUM j_sinir_1_patlama eşya yok
+ESYATEST sinir en_cok=12
+ESYATEST DURUM j_sinir_2_durunca eşya yok
+ESYATEST genel havada=0 dusuk=0 uyanik=0 sorun=0
+ESYATEST sayac { "kayit": 36, "uyanan": 33, "tekme": 7, "kosu": 2, "itme": 0, "patlama": 22, "destek": 2, "dusme": 0, "havada": 0, "gomuk": 0, "tikama": 0, "sinir": 0, "dusen": 2 } en_cok_uyanik=12
+ESYATEST PASS

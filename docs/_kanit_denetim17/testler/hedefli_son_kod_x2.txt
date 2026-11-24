@@ -1,0 +1,40 @@
+== --chapter=8y --autotest=dep
+AUTOTEST PASS chapter=8y variant=dep outcome=8Y.3 id=honest warnings=0 lowered=0 radio=true
+== --chapter=8y --autotest=hikmet
+AUTOTEST PASS chapter=8y variant=hikmet outcome=8Y.1 id=seal warnings=0 lowered=0 radio=false
+== --chapter=2 --autotest=perfect
+AUTOTEST PASS chapter=2 variant=perfect outcome=2.2 stumbles=0 telsiz=3
+== --chapter=22o --autotest
+AUTOTEST PASS chapter=22o variant= outcome=22O.1 saved=3 gun=3/4 warn=3 carry=0.75
+== --chapter=22o --autotest=lose
+AUTOTEST PASS chapter=22o variant=lose outcome=22O.2 saved=2 gun=3/4 warn=3 carry=0.75
+== --chapter=31o --autotest
+AUTOTEST PASS chapter=31o variant= outcome=31O.1 house=true(161) falls=0 signs=3 wrong=0 sun=true lashes=3 miss=0 scaff=true mats=8/8 err=1
+HEDEFBITTI
+== --chapter=8y --autotest
+AUTOTEST PASS chapter=8y variant= outcome=8Y.1 id=seal warnings=0 lowered=0 radio=true
+== --chapter=8y --autotest=opened
+AUTOTEST PASS chapter=8y variant=opened outcome=8Y.1 id=seal warnings=0 lowered=0 radio=true
+== --chapter=8y --autotest=sinerji
+AUTOTEST PASS chapter=8y variant=sinerji outcome=8Y.1 id=seal warnings=0 lowered=0 radio=true
+== --chapter=2 --autotest=chain
+AUTOTEST PASS chapter=2 variant=chain outcome=2.3 stumbles=0 telsiz=3
+== --chapter=22o --autotest=late
+AUTOTEST PASS chapter=22o variant=late outcome=22O.2 saved=2 gun=3/4 warn=3 carry=0.75
+== --chapter=10a --autotest
+AUTOTEST PASS chapter=10a variant= outcome=10A.1 placed=6 mistakes=0
+HEDEFBITTI
+== --chapter=8y --autotest=warn
+AUTOTEST PASS chapter=8y variant=warn outcome=8Y.2 id=item warnings=2 lowered=2 radio=true
+== --chapter=8y --autotest=honest
+AUTOTEST PASS chapter=8y variant=honest outcome=8Y.1 id=honest warnings=0 lowered=0 radio=true
+== --chapter=2 --autotest
+AUTOTEST PASS chapter=2 variant= outcome=2.1 stumbles=1 telsiz=3
+== --chapter=2 --autotest=red
+AUTOTEST PASS chapter=2 variant=red outcome=2.5 stumbles=0 telsiz=3
+== --chapter=22o --autotest=blakh_ok
+AUTOTEST PASS chapter=22o variant=blakh_ok outcome=22O.1 saved=3 gun=3/4 warn=5 carry=0.75
+== --chapter=26 --autotest
+VISAUDIT_ADAY float scene=chapter26.tscn who=Horse/Canli_at feet=(-0.2,-0.6,21.1) floor=-1.28 gap=0.68 by=Chapter26>SurSetSahne>SurCerceve>SurOyun_mesoteikhion>OyunParcalari>Toprak_GedikOnarim>Toprak_
+AUTOTEST PASS chapter=26 variant= outcome=26.1 water=3 repaired=3 cleared=2 world= gun=3/4 gunner=3/3
+HEDEFBITTI
