@@ -18,6 +18,7 @@ extends Node
 
 static var acik := true
 const SurHub := preload("res://scripts/world/ist/sur_set_hub.gd")
+const OTURTMA_KAYIT := preload("res://scripts/world/ist/sur_oturtma.gd")
 ## Bölümün bildirdiği istek (hazirla): hangi bölüm, gece mi
 static var bolum := 0
 static var gece := false
@@ -354,6 +355,11 @@ static func build(parent: Node3D, region_name: String, keep_local: Array, _night
 	var t0 := Time.get_ticks_msec()
 	var hub_x := donusum("byz_walls")
 	xf = donusum(region_name)
+	# G18: hub sahnedeyken şehrin Romanos öğesinin iç kuşak düzlüğü setin zemininde (hub y 0 → 8 cm altı; 8y ile aynı ölçü).
+	# Öğenin pos.y'si yamanın içinden okunuyordu (+0,12): peribolosta ve kapı geçidinde toprak döşemenin üstüne çıkıyordu.
+	OTURTMA_KAYIT.ic_y_ozel.clear()
+	if region_name == "byz_walls" and SurHub.sahnede():
+		OTURTMA_KAYIT.ic_y_ozel["romanos"] = xf.origin.y - 0.08
 	IstGeo.kaydir(Vector2.ZERO)
 	_onbellek_sifirla()
 	aktif_bolge = region_name

@@ -1,0 +1,2 @@
+t_once: CITYCHECK 24 v2: kare süresi (en kötü nokta ortalaması) 882 µs CITYCHECK 31o v2: kare süresi (en kötü nokta ortalaması) 956 µs CITYCHECK PASS 
+t_sonra: CITYCHECK 24 v2: kare süresi (en kötü nokta ortalaması) 815 µs CITYCHECK 31o v2: kare süresi (en kötü nokta ortalaması) 997 µs CITYCHECK PASS 

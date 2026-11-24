@@ -19,6 +19,11 @@ static var kusak: Array = []
 static var _kizg := {}
 static var dy_kayit: Array = []         # [Vector2 (dilim kökü), dy]
 static var sayac := {}
+## G18: öğe kimliği → iç kuşak / şehir önü düzlük yüksekliği (v2 y). Yalnız hub sahnedeyken "romanos" (IstBaglama.build
+## doldurur, her build başında boşaltır; `temizle` BOŞALTMAZ: kur'dan hemen önce çağrılır). Şehrin Romanos kapı öğesinin
+## pos.y'si yama içinden okunur (hub'da +0,12): iç kuşak peribolosu setin zemininin 12 cm üstüne düzlüyordu (toprak
+## geçitte ve peribolosta döşemenin üstüne çıkıyordu). Dış kayıtların mutlak y'si (y + dy) ve dy_kayit değişmez.
+static var ic_y_ozel := {}
 
 
 static func temizle() -> void:
@@ -109,6 +114,13 @@ static func kur(s: Node, ad: String) -> Rect2:
 		var rel := float(g["y"]) + float(g["dy"]) - py
 		dy_kayit.append([Vector2((g["it"]["pos"] as Vector3).x, (g["it"]["pos"] as Vector3).z), rel])
 		(g["it"] as Dictionary)["oturtma_dy"] = rel
+	# G18: hub sahnedeyken Romanos öğesinin iç kayıtları setin zeminine iner (dış kayıtların y + dy'si aynı kalır)
+	for g: Dictionary in ogeler:
+		var oid := String(g["it"]["id"])
+		if ic_y_ozel.has(oid):
+			var yeni_y := float(ic_y_ozel[oid])
+			g["dy"] = float(g["y"]) + float(g["dy"]) - yeni_y
+			g["y"] = yeni_y
 	# 2) düzlük kayıtları (tek yükseklik kaynağı). Bölümlerin önceden kaydettiği düzlükler (hub) şehir önünde korunur.
 	var onceki: Array = IstGeo._duz.duplicate()
 	var alan := Rect2()

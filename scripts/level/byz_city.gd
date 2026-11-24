@@ -1129,6 +1129,8 @@ func _build_fill() -> void:
 	_fbox(Vector3(fr.size.x, 0.1, fr.size.y), Vector3(fr.get_center().x, -0.07, fr.get_center().y), _fill_mat(Color("b8ad96"), "concrete"))
 	var rng := RandomNumberGenerator.new()
 	rng.seed = 1204
+	var ek_rng := RandomNumberGenerator.new()
+	ek_rng.seed = 1205
 	var plasters := [Color("e8c890"), Color("d89a78"), Color("efe0c4"), Color("c8a0a0"), Color("b8c4c0"), Color("e0b070"), Color("d8b89a")]
 	var roof_m := _fill_mat(Color("fff0e8"), "tiles")
 	var stone_m := _fill_mat(Color("fff4e4"), "ashlar")
@@ -1144,7 +1146,13 @@ func _build_fill() -> void:
 				var w := rng.randf_range(4.6, 6.2)
 				var d := rng.randf_range(4.6, 6.2)
 				var h := rng.randf_range(5.0, 9.5)
-				var near := Vector2(cx, cz).distance_to(Vector2(0, -10)) < 45.0
+				# G18: tek haritanın parçaları ("walls", "aya") oyuncunun yürüdüğü alan: dolgu evlerinin hepsi tam model (taş zemin
+				# kat, pencereli cephe, kapı, kiremit). Ölçü hub'ın ortasındaydı (0, −10): "aya" parçasının (24, 25, 26, 31o, 44b)
+				# bütün evleri, hub'ın köşeleri penceresiz pastel kutu kalıyordu (KUTU YASAĞI). Uzak hub (far_hub: sahne dışında,
+				# pişirilir) eskisi gibi.
+				# Ek evlerin kapı/kepenk seçimi ayrı sayı dizisinden (ana dizi aynı kalır: evlerin yeri, boyu, rengi değişmez).
+				var near0 := Vector2(cx, cz).distance_to(Vector2(0, -10)) < 45.0
+				var near := near0 or (part != "all" and is_inside_tree())
 				var rot := deg_to_rad(rng.randf_range(-6, 6))
 				var pm: Color = plasters[rng.randi() % plasters.size()]
 				# Gövde: yakındakiler taş zemin kat + sıvalı üst kat, uzaktakiler tek parça
@@ -1159,13 +1167,15 @@ func _build_fill() -> void:
 					cs.shape = bs
 					cs.position = Vector3(0, h / 2.0, 0)
 					body.add_child(cs)
-					body.set_meta("wall", true)   # görünür duvar sayılsın (sokak dolgusu dibine eşya koyar)
+					if near0:
+						body.set_meta("wall", true)   # görünür duvar sayılsın (sokak dolgusu dibine eşya koyar)
 					body.set_meta("facade", true)   # pencereli cephe: üstüne ayrıca süs penceresi konmasın
 					_fbox(Vector3(w, 3.0, d), Vector3(cx, 1.5, cz), stone_m, rot)
 					_fbox(Vector3(w + 0.5, h - 3.0, d + 0.5), Vector3(cx, 3.0 + (h - 3.0) / 2.0, cz), _fill_mat(pm, "plaster"), rot)
 					# Dört cephe: kepenkli pencereler, kat kirişi; bir cephede kapı
-					var door_side := rng.randi() % 4
-					var shutter: Color = [Color("3a6a5a"), Color("3a5a8a"), Color("6a3a2a"), Color("5a6a3a")][rng.randi() % 4]
+					var r2 := rng if near0 else ek_rng
+					var door_side := r2.randi() % 4
+					var shutter: Color = [Color("3a6a5a"), Color("3a5a8a"), Color("6a3a2a"), Color("5a6a3a")][r2.randi() % 4]
 					for side in 4:
 						var fy := rot + side * PI / 2.0
 						var half := (d if side % 2 == 0 else w) / 2.0
