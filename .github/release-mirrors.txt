@@ -1,3 +1,4 @@
 # Her yeni sürümde bu etiketlerin Releases sayfası da en yeni dosyalarla güncellenir.
 # (Önceden paylaşılmış sürüm bağlantıları eski kalmasın diye. Bir satıra bir etiket.)
 v0.2.1
+# 0.99.126 CI yeniden: VERSION değişmeyen düzeltme commit'i bu dosyanın değişmesiyle tetiklenir (etiket gönderimi kapalı).
