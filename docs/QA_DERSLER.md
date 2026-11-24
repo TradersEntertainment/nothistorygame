@@ -1178,3 +1178,26 @@ Her bölüm denetiminde ve her düzeltmede bu listeyi baştan uygula. Yeni bir h
     Edirne ara sahnesinde Müfide masasından asansöre tek hedefle koşuyordu; hızlı adımda açıklığın köşesindeki duvar
     parçasını ara sıra kesiyor (WALKTHRU, tam pakette bir kez), her koşuda saksının içinden geçiyordu. Oda içinden çıkan
     yürüyüşe ara noktalar verilir (masanın ucu, açıklığın ortası); yol izi kare kare yazdırılarak doğrulanır.
+
+- v0.99.126 (İstanbul uyarlaması tamam: 31o yeni sette v2 şehriyle, 17o uzak ve Galata surları yeni kalemle [Opus yardımcılar, yönetici birleştirir; Fable danışman])
+  - Görev yazısı açılmadan danışmana okutulur: 31o için ilk yazılan yol (yeni set + v2 şehri ayrı ayrı) çift sur ve çift
+    arazi doğuracaktı; 17o yazısında "yeni sur hiç yok" ve Galata surlarının unutulması yanlıştı. Doğru kalıp hazırdı
+    (8y: SurHub kesimi + IstBaglama bölgesi); yeni yol icat etmeden önce aynı işi yapan bölüm aranır.
+  - "Öteki bölümler bit bit aynı" iddiası ölçümle kanıtlanır: paylaşılan dosyadaki seçmeli yol için DENIZSET satırları ve
+    sahnedeki her çizilen nesnenin karması (yol, dönüşüm, köşeler, renkler) önce/sonra karşılaştırıldı; tek seferlik sapma
+    tekrar koşularak ayırt edildi.
+  - Ağır kurulum yükleme perdesinin altında yapılır: 31o'nun v2 şehri (30–50 sn) başlık kartından sonra kararmış ekranda,
+    perdesiz kuruluyordu; pencere o sürede ileti işlemiyordu (Windows "yanıt vermiyor"). Kurulum `_ready`'ye alındı (24/8y
+    gibi). Otomatik test perdeyi hiç açmadığı için bunu yakalamaz; kurulum süresi satırı (`T13_31O kurulum ms=`) ile birlikte
+    "bu kurulum nerede, perde açık mı" sorusu sorulur.
+  - Kalan bilinen işler (sonraki görsel tur): v2 kurulumu yükleme perdesini canlı tutmuyor (`LoadingScreen.pump` v2
+    kurucularında çağrılmıyor; bütün hub bölümlerinde var), 31o'da tepeden bakınca caddenin çevresinde ~57 m seyrek kuşak
+    (`sehir.gd` oyun alanı tek daire), v2 ziyareti başına menüye dönüşte 680 sahipsiz düğüm, 17o'da uzak surlar gece çok koyu.
+  - Sahibinin oynayışı (8y, 0.99.125) dört açık buldu, hiçbir denetim yakalamamıştı: (1) kapı rampasının yalnız çarpışması
+    vardı: `pis()` tek ağı kendi içine pişirip siliyordu (görünmez zemin denetimi yoktu); (2) keçiler 3,5 m havadaydı
+    (VISAUDIT yalnız kişileri denetliyor); (3) oyuncu pazarda ~15 sn donuk bekledi (otomatik test hızlı kipte, bekleme
+    ölçülmüyor); (4) aşçının kepçesi kazanın dışında (yeniden üretilemedi). Ders: yardımcı karelerinde yolun GERİSİNE de bakılır
+    (dönüp kapıya), hayvanlar ve eşya da "havada" denetimine girer, gerçek hızda bir yürüyüş çeşidi bölüm sonuna kadar koşar.
+    Denetim genişletmesi ayrı iş (G17).
+  - Ölçmeden "gerileme" denmez: uçuş kontrolü 300 sn bekçisine takıldı; önceki sürümün koduyla da 306 sn sürdüğü ölçülünce
+    yalnız bekçi 600 sn'ye çıktı (PASS şartı aynı).
