@@ -9914,3 +9914,33 @@ D_LM_PANTOKRATOR,"Pantokrator. Üç kilise yan yana, bitişik. Biri yetmemiş, i
 D_LM_KHORA,"Kariye. Dışı mütevazı, içi baştan aşağı mozaik. Tıpkı Büro gibi; yalnız bizim içimiz baştan aşağı dosya.","The Chora. Modest outside, mosaic from floor to ceiling inside. Just like the Bureau, except ours is files from floor to ceiling."
 D_LM_PAMMAKARISTOS,"Pammakaristos. Haliç'e bakan tepede, kubbe üstüne kubbe. Buradan bütün kıyı görünüyor. Gözetleme için ideal. Ben not alıyorum.","The Pammakaristos. On the hill above the Golden Horn, dome upon dome. You can see the whole shore from here. Ideal for surveillance. I'm taking notes."
 D_LM_BLAKHERNAI_KILISE,"Blakherna kilisesi. Şehrin koruyucu ikonası buradaymış; kilise yirmi yıl önce yanmış. Ayazması hâlâ akıyor. Su, yangından inatçı.","The church of Blachernae. The city's protecting icon was kept here; the church burned twenty years ago. Its holy spring still flows. Water is more stubborn than fire."
+UI_GUNC_YENI,Yeni sürüm var: %s (sende %s),New version available: %s (you have %s)
+UI_GUNC_GUNCELLE,Güncelle,Update
+UI_GUNC_NE_DEGISTI,Ne değişti?,What's new?
+UI_GUNC_SONRA,Sonra,Later
+UI_GUNC_SAYFA,İndirme sayfasını aç,Open download page
+UI_GUNC_IPTAL,İptal,Cancel
+UI_GUNC_INDIRILIYOR,İndiriliyor: %s,Downloading: %s
+UI_GUNC_DOGRULANIYOR,Doğrulanıyor: %s,Verifying: %s
+UI_GUNC_ILERLEME,%s · kalan ≈%s,%s · ≈%s left
+UI_GUNC_SN,%d sn,%d s
+UI_GUNC_DK,%d dk,%d min
+UI_GUNC_OYNA_NOT,"İndirme sürerken oynayabilirsin. Kurulum yalnız burada, sen onaylayınca yapılır.","You can keep playing while it downloads. It's only installed from here, once you confirm."
+UI_GUNC_HAZIR,Güncelleme hazır: %s. Oyun kapanıp yeni sürümle yeniden açılır; kayıtların ve ayarların yerinde kalır.,Update ready: %s. The game will close and reopen with the new version; your saves and settings stay as they are.
+UI_GUNC_KUR,Yeniden başlat ve güncelle,Restart and update
+UI_GUNC_OLMADI,Oyunun içinden güncellenemedi: %s.,Couldn't update from inside the game: %s.
+UI_GUNC_N_PLATFORM,"bu sistem için yerinde güncelleme yok, yeni sürümü sayfadan indir","there's no in-place update for this system, get the new version from the page"
+UI_GUNC_N_MOTOR,"bu sürüm elle kurulmalı, sayfadan indir","this version has to be installed by hand, get it from the page"
+UI_GUNC_N_GELISTIRME,geliştirme sürümünde yerinde güncelleme yok,no in-place update in a development build
+UI_GUNC_N_YAZMA,oyunun klasörüne yazılamıyor,the game's folder isn't writable
+UI_GUNC_N_YER,diskte yeterli boş yer yok,not enough free disk space
+UI_GUNC_N_INDIRME,indirme tamamlanamadı,the download didn't finish
+UI_GUNC_N_TAKILDI,"indirme ilerlemiyor, bağlantı kopmuş olabilir","the download stopped moving, the connection may have dropped"
+UI_GUNC_N_BOZUK,indirilen dosya doğrulanamadı,the downloaded file failed verification
+UI_GUNC_N_IZIN,indirilen dosya çalıştırılabilir yapılamadı,the downloaded file couldn't be made executable
+UI_GUNC_N_DEGISTIRME,"dosya yerine konamadı, eski sürüm yerinde","the file couldn't be swapped in, the old version is still in place"
+UI_GUNC_N_BASLATMA,"yeni sürüm başlatılamadı, eski sürüm geri kondu","the new version wouldn't start, the old one is back"
+UI_GUNC_N_ADRES,indirme adresi beklenmedik,unexpected download address
+UI_GUNC_NOT_YUKLENIYOR,Sürüm notu yükleniyor…,Loading release notes…
+UI_GUNC_KAPAT,Kapat,Close
+UI_GUNC_AYAR,Güncellemeleri denetle,Check for updates

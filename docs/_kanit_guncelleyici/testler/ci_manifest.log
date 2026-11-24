@@ -1,0 +1,16 @@
+# release.yml 'Oyun içi güncelleme bildirimi' adımı, yerelde aynı kabuk satırlarıyla (sahte 3 MB / 2,5 MB ikililer)
+# python3 -c 'import yaml; yaml.safe_load(...)': OK
+# files: GitHub Releases'e yükle -> 'dist/*'
+# files: Herkese açık indirme deposuna da yükle (Trade -> 'dist/*\ndist_ham/*\n'
+# path : Artifact (elle çalıştırma) -> 'dist/*'
+{"surum":"0.99.127","motor":"4.4.1","windows":{"ad":"GercekTarihBuDegil.exe","boyut":3000000,"sha256":"2162142c0ffa358fabcb597f28657efc4500351fa81602b231ea30bbffaf3899"},"linux":{"ad":"GercekTarihBuDegil.x86_64","boyut":2500000,"sha256":"037f65973d82e6b91c7b8e3e61fa53b699f64c80709cabd9da17029340a055c4"}}
+total 5388
+drwxr-xr-x 2 root root    4096 Nov 24 04:03 .
+drwxr-xr-x 4 root root    4096 Nov 24 04:03 ..
+-rw-r--r-- 1 root root 3000000 Nov 24 04:03 GercekTarihBuDegil.exe
+-rw-r--r-- 1 root root 2500000 Nov 24 04:03 GercekTarihBuDegil.x86_64
+-rw-r--r-- 1 root root     306 Nov 24 04:03 guncelleme.json
+# çıkış=0; build/ altında kalan:
+build/linux:
+
+build/windows:

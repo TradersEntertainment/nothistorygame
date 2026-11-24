@@ -1,0 +1,15 @@
+A sha256=557f4e95f09a24525bf49614337c7301d0319b52e269a690c6d8f2ddc6554305 boyut=1262620528
+B sha256=b69adc0e03298cb6ab7b9bc85a4cdd3ba3ceb45f14a465350cfee9e306f46e38 boyut=1262620528
+A sürümü: GUNCELLEME surum=0.99.900 eski_var=false
+SENARYO bozuk_sha256:
+  çıkış=3 | GUNCELLEME uzak=0.99.901 yerel=0.99.900 yeni=evet sonuc=0 kod=200|GUNCELLEME indiriliyor url=http://127.0.0.1:18731/GercekTarihBuDegil.x86_64 boyut=1262620528|GUNCELLEME sha256 tutmadi b69adc0e03298cb6ab7b9bc85a4cdd3ba3ceb45f14a465350cfee9e306f46e38 != 0000000000000000000000000000000000000000000000000000000000000000|GUNCELLEME sayfa neden=UI_GUNC_N_BOZUK|
+SENARYO bozuk_sha256: A sağlam, klasör temiz (GercekTarihBuDegil.x86_64 )
+SENARYO motor_uyusmazligi:
+  çıkış=3 | GUNCELLEME uzak=0.99.901 yerel=0.99.900 yeni=evet sonuc=0 kod=200|GUNCELLEME sayfa neden=UI_GUNC_N_MOTOR|
+SENARYO motor_uyusmazligi: A sağlam, klasör temiz (GercekTarihBuDegil.x86_64 )
+SENARYO yazilamaz_klasor:
+  çıkış=0 | GUNCELLEME uzak=0.99.901 yerel=0.99.900 yeni=evet sonuc=0 kod=200|GUNCELLEME indiriliyor url=http://127.0.0.1:18731/GercekTarihBuDegil.x86_64 boyut=1262620528|GUNCELLEME dogrulandi sha256=b69adc0e03298cb6ab7b9bc85a4cdd3ba3ceb45f14a465350cfee9e306f46e38|GUNCELLEME degistirildi pid=4559|
+E2E HATA: yazılamaz klasör sayfa yoluna düşmedi
+E2E HATA: SENARYO yazilamaz_klasor: A bozuldu ya da klasör kirli: sha=b69adc0e03298cb6ab7b9bc85a4cdd3ba3ceb45f14a465350cfee9e306f46e38 klasör=[GercekTarihBuDegil.x86_64 GercekTarihBuDegil.x86_64.eski ]
+SENARYO indirme_kesildi:
+CIKIS 143

@@ -1,0 +1,36 @@
+A sha256=557f4e95f09a24525bf49614337c7301d0319b52e269a690c6d8f2ddc6554305 boyut=1262620528
+B sha256=b69adc0e03298cb6ab7b9bc85a4cdd3ba3ceb45f14a465350cfee9e306f46e38 boyut=1262620528
+A sürümü: GUNCELLEME surum=0.99.900 eski_var=false
+SENARYO bozuk_sha256:
+  çıkış=3 | GUNCELLEME uzak=0.99.901 yerel=0.99.900 yeni=evet sonuc=0 kod=200|GUNCELLEME indiriliyor url=http://127.0.0.1:18731/GercekTarihBuDegil.x86_64 boyut=1262620528|GUNCELLEME sha256 tutmadi b69adc0e03298cb6ab7b9bc85a4cdd3ba3ceb45f14a465350cfee9e306f46e38 != 0000000000000000000000000000000000000000000000000000000000000000|GUNCELLEME sayfa neden=UI_GUNC_N_BOZUK|
+SENARYO bozuk_sha256: A sağlam, klasör temiz (GercekTarihBuDegil.x86_64 )
+SENARYO motor_uyusmazligi:
+  çıkış=3 | GUNCELLEME uzak=0.99.901 yerel=0.99.900 yeni=evet sonuc=0 kod=200|GUNCELLEME sayfa neden=UI_GUNC_N_MOTOR|
+SENARYO motor_uyusmazligi: A sağlam, klasör temiz (GercekTarihBuDegil.x86_64 )
+SENARYO yazilamaz_klasor: (root, ----i---------e-------, dr-xr-xr-x)
+  çıkış=3 | GUNCELLEME uzak=0.99.901 yerel=0.99.900 yeni=evet sonuc=0 kod=200|GUNCELLEME sayfa neden=UI_GUNC_N_YAZMA|
+SENARYO yazilamaz_klasor: A sağlam, klasör temiz (GercekTarihBuDegil.x86_64 )
+SENARYO indirme_kesildi:
+  kesilmeden önce .yeni=50331648 bayt; sunucu kill 6422
+  çıkış=3 | GUNCELLEME uzak=0.99.901 yerel=0.99.900 yeni=evet sonuc=0 kod=200|GUNCELLEME indiriliyor url=http://127.0.0.1:18731/GercekTarihBuDegil.x86_64 boyut=1262620528|GUNCELLEME indirme hatasi sonuc=2 kod=0|GUNCELLEME sayfa neden=UI_GUNC_N_INDIRME|
+SENARYO indirme_kesildi: A sağlam, klasör temiz (GercekTarihBuDegil.x86_64 )
+SENARYO basarili:
+  çıkış=0 | GUNCELLEME uzak=0.99.901 yerel=0.99.900 yeni=evet sonuc=0 kod=200|GUNCELLEME indiriliyor url=http://127.0.0.1:18731/GercekTarihBuDegil.x86_64 boyut=1262620528|GUNCELLEME dogrulandi sha256=b69adc0e03298cb6ab7b9bc85a4cdd3ba3ceb45f14a465350cfee9e306f46e38|GUNCELLEME degistirildi pid=6612|
+  GUNCELLEME uzak=0.99.901 yerel=0.99.900 yeni=evet sonuc=0 kod=200
+  GUNCELLEME indiriliyor url=http://127.0.0.1:18731/GercekTarihBuDegil.x86_64 boyut=1262620528
+  GUNCELLEME dogrulandi sha256=b69adc0e03298cb6ab7b9bc85a4cdd3ba3ceb45f14a465350cfee9e306f46e38
+  GUNCELLEME degistirildi pid=6612
+  GUNCELLEME surum=0.99.901 eski_var=false
+  klasördeki ikili sha256 = B (b69adc0e03298cb6ab7b9bc85a4cdd3ba3ceb45f14a465350cfee9e306f46e38)
+  ikili çalıştırılabilir: -rwxr-xr-x
+  sonraki açılış: GUNCELLEME surum=0.99.901 eski_var=false
+  .eski silinmiş; klasör: GercekTarihBuDegil.x86_64 
+  user:// sınama kaydı + settings.cfg aynı (df14ee39ee271fe37a1c3de96b7f2ab10f6d1be6fc073e0fb8ff0b0ae1ff9d63)
+  B ile yeniden denetim: GUNCELLEME uzak=0.99.901 yerel=0.99.901 yeni=hayir sonuc=0 kod=200
+Sunucunun gördüğü istek başlıkları (yalnız User-Agent + HTTP'nin zorunluları):
+        8 UA=GercekTarihBuDegil/0.99.900 basliklar=User-Agent,Accept-Encoding,Host,Accept
+        5 UA=GercekTarihBuDegil/0.99.900 basliklar=User-Agent,Host,Accept
+        2 UA=GercekTarihBuDegil/0.99.901 basliklar=User-Agent,Accept-Encoding,Host,Accept
+       10 UA=curl/8.5.0 basliklar=Host,User-Agent,Accept
+E2E PASS
+CIKIS 0

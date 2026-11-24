@@ -43,6 +43,8 @@ var discovered: Dictionary = {}        # Yaşayan İstanbul: keşfedilen tarihî
 var locale := "tr"
 var _lang_override := ""
 var _cli_tamper := false         # paketli oyunda --flag/--bag/--outcome/--chaos: kayıt ve başarım yazılmaz
+## Oyunun kendini güncellemesi (scripts/ui/guncelleyici.gd): GameState'in çocuğu, menü silinince indirme sürer
+var guncelleyici: Guncelleyici
 
 ## Kayıt: bölüm başları (snapshot) dosyaya yazılır. Oynama süresi ve ayarlar.
 var current_chapter := 1
@@ -84,7 +86,9 @@ var settings := {"master": 1.0, "music": 0.8, "sfx": 0.9, "voice": 1.0, "mouse":
 	# Arayüz ölçeği (altyazı, hedef, menüler; 3B görüntü değişmez)
 	"ui_scale": 1.0,
 	# Oyun testi (isteğe bağlı): bölüm sonu anketi ve yerel oturum günlüğü (user://playtest; ağa bir şey gitmez)
-	"playtest": false}
+	"playtest": false,
+	# Ana menüde yeni sürüm denetimi (Guncelleyici; yalnız sürüm bildirimi okunur, kullanıcı verisi gitmez)
+	"guncelleme_denetle": true}
 signal settings_changed
 ## Tuşları yeniden atanabilen eylemler (ayarlar sayfasındaki sırayla).
 const REBINDABLE := ["move_forward", "move_back", "move_left", "move_right", "jump", "sprint", "interact", "use_item",
@@ -112,6 +116,7 @@ func _font_fallbacks() -> void:
 
 func _ready() -> void:
 	_font_fallbacks()
+	var gunc := {"kaynak": "", "oto": false, "yalniz": false, "surum_yaz": false}
 	for arg in OS.get_cmdline_user_args():
 		if arg.begins_with("--autotest"):
 			autotest = true
@@ -177,12 +182,24 @@ func _ready() -> void:
 		elif arg.begins_with("--lang="):
 			# Test/görüntü için dil (kayıtlı ayarı değiştirmez): --lang=en
 			_lang_override = arg.trim_prefix("--lang=")
+		elif arg.begins_with("--guncelleme-kaynak="):
+			gunc["kaynak"] = arg.trim_prefix("--guncelleme-kaynak=")
+		elif arg == "--guncelleme-oto":
+			gunc["oto"] = true
+		elif arg == "--guncelleme-yalniz-denetle":
+			gunc["yalniz"] = true
+		elif arg == "--guncelleme-surum-yaz":
+			gunc["surum_yaz"] = true
 		elif arg.begins_with("--outcome="):
 			# Test/görüntü için önceki bölüm sonucu: --outcome=2:2.3
 			_cli_tamper = not OS.is_debug_build()
 			var kv := arg.trim_prefix("--outcome=").split(":")
 			if kv.size() == 2:
 				chapter_outcomes[int(kv[0])] = kv[1]
+	# Önceki güncellemeden kalan <exe>.eski ve yarım <exe>.yeni (yalnız dışa aktarılmış pakette)
+	Guncelleyici.acilis_temizligi(OS.get_executable_path())
+	guncelleyici = Guncelleyici.new(gunc["kaynak"], gunc["oto"], gunc["yalniz"], gunc["surum_yaz"])
+	add_child.call_deferred(guncelleyici)
 	_setup_inputs()
 	_load_meta()
 	if _lang_override != "":
