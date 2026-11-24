@@ -178,7 +178,9 @@ func _floor_under(own: Node, p: Vector3, up: float, down: float) -> Array:
 		if h.is_empty():
 			return [NAN]
 		var col: Object = h["collider"]
-		if col is Node and (own.is_ancestor_of(col) or col == own or not Unclip.standable(col, int(h.get("shape", 0)))):
+		# ışın bir katının içinde başladı (pişmiş öküzün kendi gövde kutusu: Bld.solid_box): o katı zemin değildir
+		var inside := (h["position"] as Vector3).distance_to(q.from) < 0.001
+		if col is Node and (inside or own.is_ancestor_of(col) or col == own or not Unclip.standable(col, int(h.get("shape", 0)))):
 			q.exclude = q.exclude + [(col as CollisionObject3D).get_rid()]
 			continue
 		# taşıyıcıyla kaydırılan gövde (gemi): fizik sunucusundaki yeri bir kare geride, ölçülmez (hud kuralı)
@@ -336,11 +338,73 @@ func _zemin(pl: Player, now: int) -> void:
 	_vis_build_at(p)
 	if _vis_hit(p, true):
 		return
+	# Dünya arazisi (IstDunya) parçalarını yeniden kuruyor (düzleme sonrası, ayrıntı düzeyi; hızlı testte yürüyüş
+	# kurulumdan hızlı): görünen parça eski. Çarpışma noktası arazinin gerçek yüksekliğindeyse (IstGeo.h, kurulum
+	# bitince görünecek yüzey) bulgu sayılmaz; değilse (rampa, döşeme: arazi değil) sayılır.
+	var dy := _dunya_bekleyen(p)
+	if not is_nan(dy) and absf(dy) <= 0.35:
+		return
 	_gz_seen[key] = true
 	_gz_n += 1
 	if _gz_n > 12:
 		return
 	_say("zemin", "GORUNMEZZEMIN scene=%s at=%s collider=%s shape=%s" % [_sc_name(), _g(p), _col_src(co, shp), _shape_kind(co, shp)])
+	if OS.has_environment("D17_DBG"):
+		_dbg_column(p)
+
+
+## Hata ayıklama: noktanın dikey sütunundaki bütün görünen ağlar (kutu y aralığı, görünürlük)
+func _dbg_column(p: Vector3) -> void:
+	var col := AABB(Vector3(p.x - 0.05, p.y - 30.0, p.z - 0.05), Vector3(0.1, 60.0, 0.1))
+	for w: WeakRef in _geoms:
+		var n = w.get_ref()
+		if n == null or not (n as Node).is_inside_tree():
+			continue
+		var gi := n as GeometryInstance3D
+		var ab := gi.global_transform * gi.get_aabb()
+		if not ab.intersects(col):
+			continue
+		var y := NAN
+		if gi is MeshInstance3D and (gi as MeshInstance3D).mesh:
+			var f := (gi as MeshInstance3D).mesh.get_faces()
+			var xf := gi.global_transform
+			for i in range(0, f.size(), 3):
+				var r = Geometry3D.ray_intersects_triangle(Vector3(p.x, p.y + 30.0, p.z), Vector3.DOWN, xf * f[i], xf * f[i + 1], xf * f[i + 2])
+				if r != null and (is_nan(y) or absf((r as Vector3).y - p.y) < absf(y - p.y)):
+					y = (r as Vector3).y
+		var lodtxt := ""
+		if gi.get_parent() is IstDunya:
+			for k in (gi.get_parent() as IstDunya).get("_chunks"):
+				if (gi.get_parent() as IstDunya).get("_chunks")[k]["mi"] == gi:
+					lodtxt = " lod=%d jobs=%d" % [(gi.get_parent() as IstDunya).get("_chunks")[k]["lod"], ((gi.get_parent() as IstDunya).get("_jobs") as Array).size()]
+		print("  D17DBG%s %s vis=%s rng=%.0f-%.0f aby=%.2f..%.2f hit=%.2f %s" % [lodtxt, Hud.audit_src(gi), gi.is_visible_in_tree(), gi.visibility_range_begin, gi.visibility_range_end,
+			ab.position.y, ab.end.y, y, gi.get_class()])
+
+
+var _dunyalar: Array = []
+var _dunya_ara := false
+
+## Kurulumu süren bir dünya varsa: p ile o dünyanın gerçek arazi yüksekliği farkı; yoksa NAN
+func _dunya_bekleyen(p: Vector3) -> float:
+	if not _dunya_ara:
+		_dunya_ara = true
+		for d in _scene.find_children("*", "Node3D", true, false):
+			if d is IstDunya:
+				_dunyalar.append(weakref(d))
+	for w: WeakRef in _dunyalar:
+		var d = w.get_ref()
+		if d == null or not (d as Node3D).is_inside_tree():
+			continue
+		var busy := not (d.get("_jobs") as Array).is_empty() or not (d.get("_job") as Dictionary).is_empty()
+		for k in d.get("_chunks"):
+			if int(d.get("_chunks")[k]["lod"]) < 0:
+				busy = true
+		if not busy:
+			continue
+		var lp := (d as Node3D).to_local(p)
+		var wy := (d as Node3D).to_global(Vector3(lp.x, IstGeo.h(lp.x, lp.z), lp.z)).y
+		return p.y - wy
+	return NAN
 
 
 func _moving(n: Node) -> bool:
@@ -411,6 +475,10 @@ func _still_visible(info: Array, p: Vector3) -> bool:
 	if n == null or not (n as GeometryInstance3D).is_visible_in_tree():
 		return false
 	if not _range_ok(n as GeometryInstance3D, p):
+		return false
+	# ağ değişti (dünya arazisinin parçası yeni ayrıntı düzeyiyle yeniden kuruldu): kopya eskidi
+	var cur = (n as MultiMeshInstance3D).multimesh if n is MultiMeshInstance3D else (n as MeshInstance3D).mesh
+	if cur != info[3]:
 		return false
 	return (n as Node3D).global_transform.is_equal_approx(info[2])
 
@@ -505,7 +573,7 @@ func _add_vis(key: String, node: Node, faces: PackedVector3Array, xf: Transform3
 	PhysicsServer3D.body_set_collision_mask(body, 0)
 	PhysicsServer3D.body_set_space(body, _vspace)
 	_vbuilt[key] = [body, shape]
-	_vinfo[body] = [key, weakref(node), node_xf, node_xf]
+	_vinfo[body] = [key, weakref(node), node_xf, (node as MultiMeshInstance3D).multimesh if node is MultiMeshInstance3D else (node as MeshInstance3D).mesh]
 
 
 func _free_vis() -> void:
@@ -644,6 +712,8 @@ func _donuk(now: int) -> void:
 		legit = "mini"
 	elif hud.get_node_or_null("Flowchart") != null or _flow_open():
 		legit = "akis"
+	elif cam and _izlenen_is(p, cam):
+		legit = "izlenen_is"
 	var cp := cam.global_position if cam else Vector3.ZERO
 	var cb := cam.global_basis if cam else Basis()
 	var still := _dn_pos != Vector3.INF and p.global_position.distance_to(_dn_pos) < 0.02 and cp.distance_to(_dn_cam_p) < 0.02 \
@@ -662,6 +732,21 @@ func _donuk(now: int) -> void:
 
 
 var _dn_cam_p := Vector3.ZERO
+
+
+## Oyuncunun önünde (8 m, bakış konisinde) sahne betiğinin yürüttüğü ya da işe tuttuğu biri var: oyuncu bir işi izliyor
+## (8y nöbetçisinin kapıyı açması). Pazarda uzaktaki Hasan'ı beklemek (24 sn) bu değildir: o 8 m'nin dışında.
+func _izlenen_is(p: Player, cam: Camera3D) -> bool:
+	var fw := -cam.global_basis.z
+	for n in get_tree().get_nodes_in_group("persons") + get_tree().get_nodes_in_group("soldiers"):
+		var c := n as Node3D
+		if c == null or not c.is_visible_in_tree() or not (c.has_meta("stage_walk") or c.has_meta("grip_tw")):
+			continue
+		var to := c.global_position + Vector3(0, 1.0, 0) - cam.global_position
+		if to.length() > 8.0 or to.normalized().dot(fw) < 0.6:
+			continue
+		return true
+	return false
 
 
 func _mini_live() -> bool:
