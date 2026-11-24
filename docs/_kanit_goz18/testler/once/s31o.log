@@ -1,0 +1,25 @@
+OTURTMA kur oge=51 duz=1951 bant=88 ms=13.9
+G18OLC bolge=fallen31o romanos_y=14.008 hub_y=14.088 xf_y=14.088 a_xf_y=14.208 fark=-0.080
+BAKIS_SONDA x=0.0 z=-15.5 carp_y=0.01 arazi_ham=1.44 arazi=-0.12 carp=@179/@Node3D@118378/@StaticBody3D@118379
+BAKIS_SONDA x=0.0 z=-13.5 carp_y=0.01 arazi_ham=1.42 arazi=-0.12 carp=@179/@Node3D@118378/@StaticBody3D@118379
+BAKIS_SONDA x=0.0 z=-11.5 carp_y=0.01 arazi_ham=1.33 arazi=-0.12 carp=@179/@Node3D@118378/@StaticBody3D@118379
+BAKIS_SONDA x=0.0 z=-9.5 carp_y=0.01 arazi_ham=1.22 arazi=-0.12 carp=@179/@Node3D@118378/@StaticBody3D@118379
+BAKIS_SONDA x=0.0 z=-7.5 carp_y=0.01 arazi_ham=1.12 arazi=-0.12 carp=@179/@Node3D@118378/@StaticBody3D@118379
+BAKIS_SONDA x=0.0 z=-5.5 carp_y=0.01 arazi_ham=0.89 arazi=-0.12 carp=@179/@Node3D@118378/@StaticBody3D@118379
+BAKIS_SONDA x=0.0 z=-3.5 carp_y=12.12 arazi_ham=0.54 arazi=-0.12 carp=OyunDilimi/AzizRomanos/@StaticBody3D@249
+BAKIS_SONDA x=0.0 z=-1.5 carp_y=12.12 arazi_ham=0.17 arazi=-0.08 carp=OyunDilimi/AzizRomanos/@StaticBody3D@249
+BAKIS_SONDA x=0.0 z=0.5 carp_y=12.12 arazi_ham=-0.21 arazi=-0.08 carp=OyunDilimi/AzizRomanos/@StaticBody3D@249
+BAKIS_SONDA x=0.0 z=2.5 carp_y=0.00 arazi_ham=-0.74 arazi=-0.08 carp=OyunDilimi/AzizRomanos/@StaticBody3D@186
+BAKIS_SONDA x=0.0 z=4.5 carp_y=0.00 arazi_ham=-1.32 arazi=-0.08 carp=OyunDilimi/AzizRomanos/@StaticBody3D@186
+BAKIS_SONDA x=0.0 z=6.5 carp_y=0.00 arazi_ham=-1.90 arazi=-0.08 carp=OyunDilimi/AzizRomanos/@StaticBody3D@186
+BAKIS_SONDA x=0.0 z=8.5 carp_y=0.00 arazi_ham=-2.45 arazi=-0.08 carp=OyunDilimi/AzizRomanos/@StaticBody3D@186
+BAKIS_SONDA x=0.0 z=10.5 carp_y=0.00 arazi_ham=-2.86 arazi=-0.08 carp=OyunDilimi/AzizRomanos/@StaticBody3D@186
+BAKIS_SONDA x=0.0 z=12.5 carp_y=0.00 arazi_ham=-3.27 arazi=-0.08 carp=OyunDilimi/AzizRomanos/@StaticBody3D@186
+BAKIS_SONDA x=0.0 z=14.5 carp_y=0.00 arazi_ham=-3.67 arazi=-0.08 carp=OyunDilimi/AzizRomanos/@StaticBody3D@186
+BAKIS_SONDA x=0.0 z=16.5 carp_y=8.62 arazi_ham=-3.95 arazi=-0.08 carp=OyunDilimi/AzizRomanos/@StaticBody3D@258
+BAKIS_SONDA x=0.0 z=18.5 carp_y=8.62 arazi_ham=-4.08 arazi=-3.43 carp=OyunDilimi/AzizRomanos/@StaticBody3D@258
+BAKIS_SONDA x=0.0 z=20.5 carp_y=-0.42 arazi_ham=-4.21 arazi=-3.43 carp=/Ahsap_KapiKopru/Toprak_KapiRampasi_Carp
+BAKIS_SONDA x=0.0 z=22.5 carp_y=-1.28 arazi_ham=-4.33 arazi=-3.43 carp=/Ahsap_KapiKopru/Toprak_KapiRampasi_Carp
+BAKIS_SONDA x=0.0 z=24.5 carp_y=-2.07 arazi_ham=-4.36 arazi=-3.43 carp=/Ahsap_KapiKopru/Toprak_KapiRampasi_Carp
+BAKIS_SONDA x=0.0 z=26.5 carp_y=-2.91 arazi_ham=-4.35 arazi=-3.43 carp=/Ahsap_KapiKopru/Toprak_KapiRampasi_Carp
+BAKIS_SONDA x=0.0 z=28.5 carp_y=-3.38 arazi_ham=-4.35 arazi=-3.43 carp=/Ahsap_KapiKopru/Toprak_KapiRampasi_Carp

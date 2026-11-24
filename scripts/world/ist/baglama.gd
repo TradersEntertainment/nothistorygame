@@ -459,10 +459,6 @@ static func build(parent: Node3D, region_name: String, keep_local: Array, _night
 	f.child_entered_tree.connect(dinle)
 	dunya = IstDunya.build(f, gece, merkez) as IstDunya
 	f.child_entered_tree.disconnect(dinle)
-	if IstSehir.active != null:  # GECICI_G18
-		for it: Dictionary in IstSehir.active.items:
-			if String(it.get("id", "")) == "romanos":
-				print("G18OLC bolge=%s romanos_y=%.3f hub_y=%.3f xf_y=%.3f a_xf_y=%.3f fark=%.3f" % [region_name, (it["pos"] as Vector3).y, hub_x.origin.y, xf.origin.y, SurHub.arayuz().xf.origin.y, (it["pos"] as Vector3).y - xf.origin.y])
 	IstDunya.gok_kur = true
 	# Dönüşüm kurulumdan SONRA: v2 parçalarının bir kısmı kurulurken/pişirirken global çerçeveyi v2 sanıyor (gezide doğru):
 	# Ayasofya'nın uzak katmanında bir parça dünya başlangıcına, sur dilimlerinin dış kademesi h.global_transform'a göre.
