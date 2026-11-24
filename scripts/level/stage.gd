@@ -645,6 +645,8 @@ static func station(parent: Node3D, kind: String, at: Vector3, face_dir: Vector3
 		return Vector3(lp.x, lp.y + gy.call(lp), lp.z)
 	var tool := ""
 	var act := ""
+	var is_p := Vector3.INF     # işin noktası (kökün yerelinde) ve payı: aletin ucu buraya iner (ALETAUDIT, testte)
+	var is_r := 0.3
 	match kind:
 		"hammer_log":
 			tool = "mallet"
@@ -655,6 +657,8 @@ static func station(parent: Node3D, kind: String, at: Vector3, face_dir: Vector3
 				Props.box(root, Vector3(0.3, 0.32, 0.36), on_ground.call(Vector3(sx, 0.16, 0.62)), Color("6a4a2e"))
 			_st_log(root, b + Vector3(0, 0.5, 0), Vector3.RIGHT, 1.8, 0.19)
 			Props.prism(root, Vector3(0.12, 0.14, 0.16), b + Vector3(0.05, 0.74, 0), Color("b08a5c"))
+			is_p = b + Vector3(0.05, 0.74, 0)
+			is_r = 0.25
 			_st_chips(root, rng, on_ground, Vector3(0, 0, 0.5), 5, Color("d8c090"))
 		"chop_log":
 			tool = "axe"
@@ -663,6 +667,7 @@ static func station(parent: Node3D, kind: String, at: Vector3, face_dir: Vector3
 			Props.cyl(root, 0.26, 0.62, b + Vector3(0, 0.31, 0), Color("6b4a2e"), Vector3.ZERO, 9)
 			Props.cyl(root, 0.24, 0.02, b + Vector3(0, 0.625, 0), Color("c8a878"), Vector3.ZERO, 9)
 			_st_log(root, b + Vector3(0, 0.74, 0), Vector3.RIGHT, 0.5, 0.11)
+			is_p = b + Vector3(0, 0.74, 0)
 			_st_chips(root, rng, on_ground, Vector3(0, 0, 0.8), 7, Color("d8c090"))
 		"saw_log":
 			tool = "saw"
@@ -672,6 +677,8 @@ static func station(parent: Node3D, kind: String, at: Vector3, face_dir: Vector3
 				for sz: float in [-0.18, 0.18]:
 					_st_rod(root, b + Vector3(sx, 0, sz), b + Vector3(sx * 0.95, 0.62, 0), 0.03, Color("5f4329"))
 			_st_log(root, b + Vector3(0, 0.74, 0), Vector3.RIGHT, 1.7, 0.15)
+			is_p = b + Vector3(0, 0.74, 0)
+			is_r = 0.25
 			_st_chips(root, rng, on_ground, Vector3(0, 0, 0.75), 8, Color("e8d4a0"), 0.03)
 		"stir_pot":
 			tool = "ladle"
@@ -682,6 +689,8 @@ static func station(parent: Node3D, kind: String, at: Vector3, face_dir: Vector3
 				_st_rod(root, b + Vector3(cos(a) * 0.42, 0, sin(a) * 0.42), b + Vector3(cos(a) * 0.3, 0.42, sin(a) * 0.3), 0.025, Color("2a2622"))
 			Props.cyl(root, 0.36, 0.42, b + Vector3(0, 0.6, 0), Color("3a3634"), Vector3.ZERO, 12, 0.33)
 			Props.cyl(root, 0.33, 0.02, b + Vector3(0, 0.79, 0), Color("8a6a3a"), Vector3.ZERO, 12)
+			is_p = b + Vector3(0, 0.7, 0)
+			is_r = 0.33
 			if opts.get("fire", true):
 				Vfx.fire(root, b + Vector3(0, 0.08, 0), 0.4)
 				for k in 5:
@@ -692,11 +701,15 @@ static func station(parent: Node3D, kind: String, at: Vector3, face_dir: Vector3
 			act = "dig"
 			Props.ball(root, 0.45, on_ground.call(Vector3(0.75, 0.0, 0.55)), Color("5a4630"), Vector3(1.2, 0.42, 1.0), 8)
 			Props.cyl(root, 0.32, 0.02, on_ground.call(Vector3(0.08, 0.005, 0.95)), Color("3a2c1e"), Vector3.ZERO, 10)
+			is_p = on_ground.call(Vector3(0.08, 0.0, 0.95))
+			is_r = 0.35
 			_st_chips(root, rng, on_ground, Vector3(0.3, 0, 0.8), 6, Color("4a3a28"), 0.06)
 		"sweep":
 			tool = "broom"
 			act = "sweep"
 			_st_chips(root, rng, on_ground, Vector3(0.1, 0, 1.1), 9, Color("9a8a5a"), 0.05)
+			is_p = on_ground.call(Vector3(0.1, 0.02, 0.85))
+			is_r = 0.5
 		"paint_wall":
 			tool = "brush"
 			act = "paint"
@@ -705,6 +718,8 @@ static func station(parent: Node3D, kind: String, at: Vector3, face_dir: Vector3
 				Props.box(root, Vector3(0.36, 1.6, 0.05), b + Vector3(-0.54 + i * 0.36, 0.8, 0), Color("a88058").lerp(Color("8a6440"), i % 2))
 			Props.box(root, Vector3(0.7, 0.5, 0.01), b + Vector3(-0.1, 1.1, -0.03), Color("c0402a"))
 			_st_bucket(root, on_ground.call(Vector3(0.45, 0, 0.25)), Color("c0402a"))
+			is_p = b + Vector3(-0.1, 1.1, 0.72)
+			is_r = 0.45
 		"grease_log":
 			tool = "brush"
 			act = "paint"
@@ -715,6 +730,8 @@ static func station(parent: Node3D, kind: String, at: Vector3, face_dir: Vector3
 			_st_log(root, b + Vector3(0, 0.78, 0), Vector3.RIGHT, 2.0, 0.17)
 			Props.box(root, Vector3(0.6, 0.012, 0.2), b + Vector3(-0.3, 0.955, 0), Color("e8cf7a"))
 			_st_bucket(root, on_ground.call(Vector3(0.5, 0, 0.2)), Color("e8cf7a"))
+			is_p = b + Vector3(0, 0.78, 0)
+			is_r = 0.35
 		"carry_sack", "carry_crate", "carry_basket", "carry_plank", "carry_earth", "carry_barrel":
 			var p := _st_person(root, coat, hat, on_ground.call(Vector3.ZERO))
 			p.carry(kind.substr(6))
@@ -800,6 +817,10 @@ static func station(parent: Node3D, kind: String, at: Vector3, face_dir: Vector3
 			var nodes := Crowd.place(parent, [[parent.global_transform.affine_inverse() * xf,
 				{"side": "O", "coat": coat, "hat": hat if hat in ["bork", "turban"] else "bork", "arm": "tool:" + tool, "pose": act}]], true, false)
 			who.append_array(nodes)
+	if is_p != Vector3.INF:
+		root.set_meta("is_noktasi", is_p)
+		root.set_meta("is_yaricap", is_r)
+		root.add_to_group("is_istasyonu" if live else "is_istasyonu_donuk")
 	# Ayaklar zeminde (canlı figürler; eğimde, kütüğe dayanırken)
 	if ground.is_valid():
 		for w in who:

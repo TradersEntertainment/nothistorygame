@@ -640,10 +640,33 @@ static func _blachernae_palace(d: Dressing, p: Vector3) -> void:
 	d.box(Vector3(26, 16, 14), Vector3(0, 8, 0), BRICK2)
 	for hh: float in [5.0, 10.5, 15.7]:
 		d.box(Vector3(26.3, 0.5, 14.3), Vector3(0, hh, 0), LIGHT)
-	for row: float in [7.6, 13.0]:
+	# G18: pencereler dört cephede (eskiden yalnız +x ve +z: Haliç kıyısındaki bölümlerden — 18b sur yolu, 35 m — görünen
+	# −z ve −x cepheleri penceresiz, beyaz kat silmeli düz tuğla KUTU okunuyordu); zemin katta kapı ve küçük pencereler,
+	# pencere altında taş denizlik. Kule (x −13…−5, z −13…−5) önüne düşen pencere konmaz.
+	for row: float in [2.6, 7.6, 13.0]:
+		var wh := 1.6 if row < 5.0 else 2.4
 		for k in 5:
-			d.box(Vector3(0.2, 2.4, 1.6), Vector3(13.05, row, -5.0 + k * 2.5), DARK)
-			d.box(Vector3(1.6, 2.4, 0.2), Vector3(-9.0 + k * 4.5, row, 7.05), DARK)
+			for sx: float in [1.0, -1.0]:
+				var wz := -5.0 + k * 2.5
+				if sx < 0.0 and wz < -4.0:
+					continue
+				if row < 5.0 and sx < 0.0 and k == 2:
+					continue
+				d.box(Vector3(0.2, wh, 1.6), Vector3(sx * 13.05, row, wz), DARK)
+				d.box(Vector3(0.35, 0.18, 1.9), Vector3(sx * 13.12, row - wh * 0.5 - 0.09, wz), LIGHT)
+			for sz: float in [1.0, -1.0]:
+				var wx := -9.0 + k * 4.5
+				if sz < 0.0 and wx < -4.0:
+					continue
+				if row < 5.0 and sz < 0.0 and k == 2:
+					continue
+				d.box(Vector3(1.6, wh, 0.2), Vector3(wx, row, sz * 7.05), DARK)
+				d.box(Vector3(1.9, 0.18, 0.35), Vector3(wx, row - wh * 0.5 - 0.09, sz * 7.12), LIGHT)
+	# zemin katta iki kapı (−z ve −x cephesi): ahşap kanat, taş söve ve lento
+	d.box(Vector3(2.0, 3.2, 0.25), Vector3(0.0, 1.6, -7.08), Color("5a3e26"))
+	d.box(Vector3(2.8, 0.5, 0.45), Vector3(0.0, 3.45, -7.15), LIGHT)
+	d.box(Vector3(0.25, 3.2, 2.0), Vector3(-13.08, 1.6, 0.0), Color("5a3e26"))
+	d.box(Vector3(0.45, 0.5, 2.8), Vector3(-13.15, 3.45, 0.0), LIGHT)
 	d.box(Vector3(8, 26, 8), Vector3(-9, 13, -9), BRICK2.darkened(0.05))
 	d.box(Vector3(8.6, 0.8, 8.6), Vector3(-9, 26.4, -9), LIGHT.darkened(0.08))
 	d.cyl(6.2, 3.2, Vector3(-9, 28.4, -9), TILE, Vector3(0, 45, 0), 4, 0.04)

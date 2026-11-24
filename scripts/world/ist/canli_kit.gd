@@ -860,6 +860,7 @@ static func dugum(tur: String, opt := {}) -> Dictionary:
 	var parts := parcalar(tur, opt)
 	var root := Node3D.new()
 	root.name = "Canli_%s" % tur
+	root.add_to_group("hayvanlar")      # zemin denetimi (yalnız testte okunur): bütün canlı kökleri tek grupta
 	var nodes := {}
 	var birles: Array = opt.get("birlestir", [])
 	var golge: bool = opt.get("golge", true)
@@ -940,6 +941,8 @@ static func bld_ekle(b: Object, tur: String, pos: Vector3, yaw_deg: float, opt :
 	var lod: int = int(opt.get("lod", -1))
 	var xf := Transform3D(Basis(Vector3.UP, deg_to_rad(yaw_deg)), pos)
 	var pattern: String = b.get("pattern")
+	if GameState.autotest and b.get("hayvan_noktalari") is Array:
+		(b.get("hayvan_noktalari") as Array).append([pos, tur])
 	# yalnız ahşap desenli Bld ayrı ağ alır (ahşap dokusu canlıya geçmesin); öbürleri (düz, orta katmanın "rubble"
 	# tek ağı) Bld'nin içine: çizim sayısı artmaz
 	if pattern != "wood":

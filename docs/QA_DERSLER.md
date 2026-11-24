@@ -1201,3 +1201,21 @@ Her bölüm denetiminde ve her düzeltmede bu listeyi baştan uygula. Yeni bir h
     Denetim genişletmesi ayrı iş (G17).
   - Ölçmeden "gerileme" denmez: uçuş kontrolü 300 sn bekçisine takıldı; önceki sürümün koduyla da 306 sn sürdüğü ölçülünce
     yalnız bekçi 600 sn'ye çıktı (PASS şartı aynı).
+
+- **CI'da düşen bir koşuyu yerelde CI'ın koşullarıyla dene (0.99.126).** CI #340 ve #341'de 20 `--difficulty=2`
+  VISAUDIT personhidden (önce D20_G_REPELLED, sonra D20_G_DONE: aynı kök, dövüşten sonra nefeslenen dost düellocu
+  komutanın önünde). Yönetici yerelde sekiz kez `--max-fps`'siz denedi, 0/8 çıktı ve "seyrek" sandı; CI'da 2/2'ydi.
+  `run_tests.sh` CI'ın yavaş makinesini `MAXFPS=20` ile taklit eder; tekrar da öyle koşulur. Bir replik için yapılan
+  düzeltme aynı kökün öteki repliklerini de kapsamalı (ilk düzeltme yalnız REPELLED'i kapattı, DONE ikinci CI'da düştü).
+  Etiket gönderimi proxy'de 403: VERSION değişmeyen bir yayın commit'i `.github/release-mirrors.txt`'e `#` satırıyla tetiklenir.
+- **Göz kontrolü, otomatik denetimin göremediğini gördü (0.99.127).** Yeni sura bağlı 34 bölümde oyuncunun yolundan dört
+  yöne kare (`tests/_ist/bakis_kare.gd`; hızlı kipte dünya her çekimde durur, başlangıcın 30 m çevresi de çekilir) hub kapı
+  geçidindeki toprak tümseği buldu. Aynı tümsek 8y'de sahibinin yürüdüğü kapıdaydı; hiçbir denetim yakalamamıştı (çarpışma
+  ve görüntü tutarlıydı, yalnız yanlıştı). Tam gerçek hız (PACE) bu iş için yavaş: konuşmalar da gerçek sürede akıyor.
+- **Teşhisi ölçmeden kabul etme.** Yardımcı geçitteki toprağın "kapı kesiği boş" diye eteğin kendisi olduğunu yazdı;
+  geçici bir `print` kesiğin dolu olduğunu, üçgen sondası (`tests/_ist/etek_sonda.gd`) eteğin kapıyı tutan kulelerin
+  geçide bakan yan kenarından geldiğini gösterdi (z boyunca 3 m arayla dizilen köşeler). Danışman da ilk kök açıklamasını
+  ("set aşağıda") kodla düzeltti ("arazi yukarıda"). İki kez: ölçen haklı çıktı.
+- **Tam paketin yük altındaki tek seferlikleri kayda geçer, yok sayılmaz.** 26 `=nophoto` Squad overlap iki tam pakette
+  (0.99.126 ilk, 0.99.127) çıktı, tek başına 4/4 temiz; ESYATEST gomuk=1 dört parça aynı anda koşarken. Açık iş olarak
+  yazıldı (kök: yedek bölük sık nizam, `chapter26.gd` BEKCI26 katmanları).

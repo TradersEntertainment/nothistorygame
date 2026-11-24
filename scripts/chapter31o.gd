@@ -1347,6 +1347,9 @@ func _mats_phase() -> void:
 	az.global_position = a + Vector3(3.0, 0.0, 14.6)
 	az.look_target = player
 	player.face(az.global_position + Vector3(0, 1.5, 0))
+	# 0.99.127 (tam paket, =petrion_bad, yük altında): oyuncunun 0,45 m yanındaki konuşmacı azabı kapatıyordu (VISAUDIT
+	# personhidden D31O_AZ_03). Azap konuşmadan önce aradaki yana çekilir.
+	Unclip.clear_line(self, player.global_position, [az], [player])
 	await hud.say("SPK_AZAP", "D31O_AZ_03")
 	az.global_position = a + Vector3(2.7, 0.0, 15.6)
 	az.look_target = null

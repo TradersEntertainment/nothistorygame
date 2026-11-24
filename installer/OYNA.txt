@@ -14,5 +14,7 @@ KONTROLLER
   Esc           Duraklat (L: dil, Q: çık)
   L             Başlık ekranında dil: Türkçe / English
 
+Yeni sürüm çıkınca ana menüde haber verilir; Windows ve Linux'ta "Güncelle" ile oyunun içinden güncellenir.
+
 Bu oyun gerçek tarih değildir. ...ama biraz öyle.
 https://github.com/TradersEntertainment/nothistorygame

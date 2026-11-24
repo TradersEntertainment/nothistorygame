@@ -96,6 +96,23 @@ jobs:
           (cd build/linux && zip -q -9 "../../dist/GercekTarihBuDegil-Linux-$VERSION.zip" *)
           ls -la dist
 
+      - name: Oyun içi güncelleme bildirimi (ham ikililer + guncelleme.json, yalnız açık depoya)
+        # Oyun (scripts/ui/guncelleyici.gd) .../releases/latest/download/guncelleme.json'u okur, kendi platformunun ham
+        # ikilisini indirir, boyut ve sha256 ile doğrulayıp çalışan dosyayla yer değiştirir. Ham ikililer dist/'e
+        # girmez (dist/* gizli depoya, aynalara ve artifact'a da gider): dist_ham/'e taşınır, yalnız açık depoya yüklenir.
+        run: |
+          mkdir -p dist_ham
+          mv build/windows/GercekTarihBuDegil.exe dist_ham/GercekTarihBuDegil.exe
+          mv build/linux/GercekTarihBuDegil.x86_64 dist_ham/GercekTarihBuDegil.x86_64
+          wb=$(stat -c %s dist_ham/GercekTarihBuDegil.exe); lb=$(stat -c %s dist_ham/GercekTarihBuDegil.x86_64)
+          test "$wb" -lt 2000000000 && test "$lb" -lt 2000000000   # GitHub tek dosya sınırı 2 GiB
+          ws=$(sha256sum dist_ham/GercekTarihBuDegil.exe | cut -d' ' -f1); lsh=$(sha256sum dist_ham/GercekTarihBuDegil.x86_64 | cut -d' ' -f1)
+          printf '{"surum":"%s","motor":"%s","windows":{"ad":"GercekTarihBuDegil.exe","boyut":%s,"sha256":"%s"},"linux":{"ad":"GercekTarihBuDegil.x86_64","boyut":%s,"sha256":"%s"}}\n' \
+            "$VERSION" "$GODOT_VERSION" "$wb" "$ws" "$lb" "$lsh" > dist_ham/guncelleme.json
+          python3 -c "import json; d=json.load(open('dist_ham/guncelleme.json')); assert d['surum'] and d['linux']['boyut'] > 0"
+          cat dist_ham/guncelleme.json
+          ls -la dist_ham
+
       - name: macOS (universal, ad-hoc imzalı; başarısız olursa diğer sürümler yine yayınlanır)
         continue-on-error: true
         run: |
@@ -141,7 +158,9 @@ jobs:
           tag_name: v${{ env.VERSION }}
           name: "Gerçek Tarih Bu Değil v${{ env.VERSION }}"
           make_latest: true
-          files: dist/*
+          files: |
+            dist/*
+            dist_ham/*
           body: |
             ## Gerçek Tarih Bu Değil — v${{ env.VERSION }}
 
@@ -153,6 +172,8 @@ jobs:
             **Linux / Steam Deck:** `GercekTarihBuDegil-Linux-${{ env.VERSION }}.zip`
 
             **macOS:** `GercekTarihBuDegil-macOS-${{ env.VERSION }}.zip` (Intel ve Apple Silicon). İmzasız: ilk açılışta uygulamaya sağ tık → **Aç**.
+
+            Oyunun içinden de güncellenebilir (Windows ve Linux: ana menüde "Güncelle").
 
             *Bu oyun gerçek tarih değildir. ...ama biraz öyle.*
 
