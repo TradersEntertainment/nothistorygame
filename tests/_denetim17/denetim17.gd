@@ -9,7 +9,7 @@ extends Node
 ##   4. DONUKAUDIT (yalnız PACE): oyuncu donuk, meşru sebep yok, konumu ve kamerası kıpırdamıyor, > 4 sn (gerçek zaman).
 ## Satırlar önce "_ADAY" ekiyle basılır (paketi düşürmez); bir türün sayımı 0 olunca KESIN'de true yapılır.
 
-const KESIN := {"hayvan": false, "zemin": false, "alet": false, "donuk": false}
+const KESIN := {"hayvan": false, "zemin": true, "alet": true, "donuk": true}
 
 var hud: Node
 var _scene: Node
