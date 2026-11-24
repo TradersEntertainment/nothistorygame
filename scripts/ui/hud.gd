@@ -194,6 +194,7 @@ func _ready() -> void:
 		at.timeout.connect(_crowd_audit)
 		at.timeout.connect(_ground_audit.bind(40))
 		add_child(at)
+		_denetim17()
 	# Yeni sahne kuruldu: önceki sahneden kalan duraklatma ya da geçiş durumu taşınmasın
 	GameState.changing = false
 	get_tree().paused = false
@@ -2514,6 +2515,19 @@ func _held_audit(scene: Node) -> void:
 		print("HELDAUDIT scene=%s left=%s" % [scene.scene_file_path.get_file(), ",".join(left)])
 
 
+## G17 denetimleri (yalnız otomatik testte; tests/ dışa aktarılmaz, yol ile yüklenir): hayvanlar havada/gömük,
+## görünmez zemin, iş istasyonu aleti, donuk bekleme (PACE). Ayrıntı tests/_denetim17/denetim17.gd. NO_DENETIM17 kapatır.
+func _denetim17() -> void:
+	if OS.has_environment("NO_DENETIM17") or not ResourceLoader.exists("res://tests/_denetim17/denetim17.gd"):
+		return
+	var s: Script = load("res://tests/_denetim17/denetim17.gd")
+	if s:
+		var d: Node = s.new()
+		d.name = "Denetim17"
+		d.set("hud", self)
+		add_child(d)
+
+
 ## Yere gömülü karakter denetimi (otomatik testte): oyuncunun 30 m yakınındaki insanların ayağının altında,
 ## ayak hizasından yüksekte katı bir zemin var mı (karakter tahtaya/toprağa gömülmüş). Oturanlar sayılmaz.
 ## Her karakter bir kez bildirilir: "VISAUDIT sunk scene=… who=… feet=… floor=…".
@@ -2977,8 +2991,8 @@ func _face_listeners(speaker_key: String, text_key := "") -> Array:
 			continue
 		if c.has_meta("garrison"):
 			continue   # nöbetteki asker (surda, sırada) konuşmaya dönmez
-		if c is Soldier and (c as Soldier).pose != "stand":
-			continue
+		if c is Soldier and ((c as Soldier).pose != "stand" or ((c as Soldier).rig != null and (c as Soldier).rig.activity != "")):
+			continue   # G17: iş istasyonundaki asker (pozu "stand", işi rig.activity'de: aşçı kepçeyle) işini bırakıp dönmez
 		if c is Person and ((c as Person)._busy or (c as Person).rig == null or (c as Person).rig.activity != ""):
 			continue
 		var d := Vector2(c.global_position.x - here.x, c.global_position.z - here.z).length()

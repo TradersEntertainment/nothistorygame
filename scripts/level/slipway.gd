@@ -2627,12 +2627,18 @@ func _ox_model(parent: Node3D, coat: Color, rng: RandomNumberGenerator) -> Dicti
 		legs.append(p["b%d" % i])
 	for m in root.find_children("*", "GeometryInstance3D", true, false):
 		(m as GeometryInstance3D).cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_ON if m.get_parent() == p["govde"] else GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
-	return {"root": root, "legs": legs, "head": p["boyun"], "tail": p["kuyruk"], "bellow": 0.0, "w": rng.randf() * TAU}
+	# G17: takım düğümü yokuşa tek düzlem olarak oturur; iki öküzün toynakları ondan 0,12 m'ye dek gömülüyordu (yamacın
+	# kavsi, yan eğim). Her öküz kendi toynaklarının altındaki zemine oturur (AyakHayvan: Goat, Ox ile aynı modül).
+	var ah = preload("res://scripts/npc/ayak_hayvan.gd").kur(root, root.get_children(), (root.to_local(legs[0].global_position).z + root.to_local(legs[1].global_position).z) * 0.5,
+		(root.to_local(legs[2].global_position).z + root.to_local(legs[3].global_position).z) * 0.5)
+	return {"root": root, "legs": legs, "head": p["boyun"], "tail": p["kuyruk"], "bellow": 0.0, "w": rng.randf() * TAU, "ah": ah}
 
 
 ## Öküzün canlanması: takım yürürken çapraz adım (sol ön + sağ arka birlikte), baş adımla iner kalkar; dururken
 ## geviş getirir; kuyruk hep sallanır, arada sinek kovar gibi savrulur; ara sıra böğürür (baş kalkar).
 func _tick_ox(o: Dictionary, delta: float) -> void:
+	if o.get("ah") != null:
+		o["ah"].guncelle(delta)
 	var tm: Dictionary = o.get("team", {})
 	var moving: bool = tm.get("moving", false)
 	o["w"] = float(o["w"]) + delta

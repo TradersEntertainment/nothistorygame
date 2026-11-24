@@ -431,6 +431,9 @@ static func _araba(w: B, p: Vector3, yaw: float, r: RandomNumberGenerator) -> vo
 
 
 static func _okuz(w: B, p: Vector3, yaw: float, r: RandomNumberGenerator) -> void:
+	# G17: toynaklar zeminde (çağıranlar çoğu y 0 verir; batarya/şahi topunun öküzleri düzlenmiş alanın dışında, eğimli
+	# arazide 0,2-0,4 m gömülüyordu). Zemin işlevi yoksa (K.gy → 0) eskisi gibi.
+	p.y = K.gy(p.x, p.z)
 	# CANLI (kalite notu 32): kesit halkalarından örülmüş öküz (canli_kit); kutu parça yok. RNG tüketimi aynı (1 randf).
 	const CK = preload("res://scripts/world/ist/canli_kit.gd")
 	var col := Color("6e5238").lerp(Color("a08462"), r.randf())

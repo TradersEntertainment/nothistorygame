@@ -1,0 +1,6 @@
+GORUNMEZZEMIN_ADAY scene=chapter8y.tscn at=(0.0,-1.8,25.3) collider=Chapter8y>SurHub>SurOyun_romanos>OyunParcalari>Ahsap_KapiKopru>Toprak_KapiRampasi_Carp/@CollisionShape3D@112235 shape=ConcavePolygonShape3D
+GORUNMEZZEMIN_ADAY scene=chapter8y.tscn at=(-0.7,-3.4,55.7) collider=Chapter8y>OvaZemini/@CollisionShape3D@112245 shape=HeightMapShape3D
+GORUNMEZZEMIN_ADAY scene=chapter8y.tscn at=(-9.7,-3.4,54.3) collider=Chapter8y>OvaZemini/@CollisionShape3D@112245 shape=HeightMapShape3D
+GORUNMEZZEMIN_ADAY scene=chapter8y.tscn at=(-8.1,-3.4,56.6) collider=Chapter8y>OvaZemini/@CollisionShape3D@112245 shape=HeightMapShape3D
+GORUNMEZZEMIN_ADAY scene=chapter8y.tscn at=(0.4,-3.4,63.3) collider=Chapter8y>OvaZemini/@CollisionShape3D@112245 shape=HeightMapShape3D
+AUTOTEST PASS chapter=8y variant= outcome=8Y.1 id=seal warnings=0 lowered=0 radio=true

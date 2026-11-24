@@ -1,0 +1,7 @@
+PACE dead t=54.6 len=6.6 after=D8Y_NIKO_1 fade=0.00 card=false
+PACE dead t=67.7 len=1.4 after=D8Y_T_TOWEL fade=0.00 card=false
+PACE dead t=107.2 len=7.1 after=D8Y_NIKO_RULES fade=0.00 card=false
+PACE dead t=191.9 len=3.1 after=D8Y_HUSEYIN_COME fade=0.00 card=false
+DONUKAUDIT_ADAY scene=chapter8y.tscn t=270.2 len=11.6 after=D8Y_HASAN_END at=(0.6,-2.7,137.6)
+PACE dead t=270.2 len=13.7 after=D8Y_HASAN_MARKET fade=0.00 card=false
+AUTOTEST PASS chapter=8y variant= outcome=8Y.1 id=seal warnings=0 lowered=0 radio=true

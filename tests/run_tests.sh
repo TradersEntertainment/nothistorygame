@@ -74,7 +74,7 @@ run() {
   [ $? -eq 124 ] && echo "AUTOTEST TIMEOUT $*"
   # WALKTHRU (v0.91, Unclip.walk_audit): sahne betiğinin yürüttüğü karakter bir katının yüzeyinden geçti. v0.91'in
   # bulguları (38o, 39o) ve yalnız CI'da çıkanlar (26o, 12b) düzeltildi; paket 20 FPS'te de temiz: v0.93'ten beri hata
-  echo "$out" | grep -E "AUTOTEST|SCRIPT ERROR|Parse Error|WARN_|VISAUDIT|WALKTHRU|HELDAUDIT|ARMAUDIT|JOURNEY|^ESYAAUDIT (dusme|havada|gomuk|tikama|sinir)|^HAREKETAUDIT" | awk '!seen[$0]++'
+  echo "$out" | grep -E "AUTOTEST|SCRIPT ERROR|Parse Error|WARN_|VISAUDIT|WALKTHRU|HELDAUDIT|ARMAUDIT|JOURNEY|^ESYAAUDIT (dusme|havada|gomuk|tikama|sinir)|^HAREKETAUDIT|^(VISAUDIT|GORUNMEZZEMIN|ALETAUDIT|DONUKAUDIT)(_ADAY)? |^GORUNMEZSINIR " | awk '!seen[$0]++'
   echo "$out" | grep -q "AUTOTEST PASS" || fail=1
   echo "$out" | grep -q "SCRIPT ERROR" && fail=1
   # Ağır çekim/donma takılı kaldıysa (Fx bekçisi sıfırladı) bu bir hata
@@ -96,6 +96,9 @@ run() {
   echo "$out" | grep -q "^HAREKETAUDIT " && fail=1
   # Final yolculuğu (Bölüm 15): oynanan bir durak haritada yok ya da kartlar üst üste
   echo "$out" | grep -q -e "^JOURNEY_MISS" -e "^JOURNEY_OVERLAP" && fail=1
+  # G17 denetimleri (tests/_denetim17/denetim17.gd): hayvan havada/gömük (VISAUDIT, yukarıda), görünmez zemin, iş
+  # istasyonu aleti, donuk bekleme. "_ADAY" satırları yalnız listelenir; kesinleşen tür (KESIN) eksiz basar ve düşürür.
+  echo "$out" | grep -qE "^(GORUNMEZZEMIN|ALETAUDIT|DONUKAUDIT) " && fail=1
 }
 run --chapter=0 --autotest
 for v in "" "=kick" "=red"; do run --autotest$v; done
@@ -316,6 +319,16 @@ run --chapter=13 --autotest=wrong_next
 run --chapter=13 --autotest=gidak
 run --chapter=16 --autotest=next
 run --chapter=14 --autotest=next
+# Donuk bekleme (G17, DONUKAUDIT): 8y gerçek hızda (PACE; yürüyüşler ışınlanmaz, replikler okunur). Tek parçada
+# (SHARD boş ya da 3) ve kendi bekçisiyle; bütün bölümlerin PACE taraması paket dışı: tests/_denetim17/pace_tarama.sh
+if [ "${LIST:-0}" != "1" ] && { [ -z "${SHARD:-}" ] || [ "$SHARD" = "3" ]; } && [ "${QUICK:-0}" != "1" ]; then
+  pout=$(PACE=1 timeout 900 "$GODOT" --headless ${MAXFPS:+--max-fps "$MAXFPS"} --path . -- --chapter=8y --autotest 2>&1)
+  [ $? -eq 124 ] && echo "AUTOTEST TIMEOUT PACE --chapter=8y --autotest"
+  echo "$pout" | grep -E "AUTOTEST|SCRIPT ERROR|^DONUKAUDIT|^PACE dead" | awk '!seen[$0]++' | sed 's/^/PACE8Y /'
+  echo "$pout" | grep -q "AUTOTEST PASS" || fail=1
+  echo "$pout" | grep -q "SCRIPT ERROR" && fail=1
+  echo "$pout" | grep -q "^DONUKAUDIT " && fail=1
+fi
 if [ -n "${SHARD:-}" ] && [ "$SHARD" != "0" ]; then echo "SHARD $SHARD/${SHARDS:-8} BITTI fail=$fail"; exit $fail; fi
 [ "${LIST:-0}" = "1" ] && exit 0
 # Ana menüye dönüş (v0.99): ağır bölümden duraklatma menüsüyle iki kez dönülür; menü açılmalı, kalıntı kalmamalı

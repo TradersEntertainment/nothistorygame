@@ -1,0 +1,11 @@
+PACE dead t=50.9 len=6.3 after=D8Y_NIKO_1 fade=0.00 card=false
+PACE dead t=103.2 len=7.0 after=D8Y_NIKO_RULES fade=0.00 card=false
+VISAUDIT_ADAY sunk scene=chapter8y.tscn who=pismis n=2/2 olculen=2 ilk=okuz at=(-99.1,-3.7,146.1) gap=-0.22 by=Chapter8y>SiegeField>IstDunya>AraziCarpisma src=Chapter8y>SiegeField>IstDunya>IstOrdugahYonetici>sahi_top_lod0>ahsap
+VISAUDIT_ADAY sunk scene=chapter8y.tscn who=pismis n=6/6 olculen=6 ilk=okuz at=(-97.5,-3.7,147.7) gap=-0.26 by=Chapter8y>SiegeField>IstDunya>AraziCarpisma src=Chapter8y>SiegeField>IstDunya>IstOrdugahYonetici>sahi_top_lod0>ahsap2
+VISAUDIT_ADAY sunk scene=chapter8y.tscn who=pismis n=14/14 olculen=14 ilk=okuz at=(-87.9,-3.7,152.5) gap=-0.42 by=Chapter8y>SiegeField>IstDunya>AraziCarpisma src=Chapter8y>SiegeField>IstDunya>IstOrdugahYonetici>sahi_top_lod0>okuz_sirasi_katı
+GORUNMEZZEMIN_ADAY scene=chapter8y.tscn at=(0.0,-3.4,31.6) collider=Chapter8y>SurHub>SurOyun_romanos>OyunDilimi>AzizRomanos>Dis>StaticBody3D/@CollisionShape3D@139085 shape=BoxShape3D
+GORUNMEZZEMIN_ADAY scene=chapter8y.tscn at=(0.0,-3.4,33.7) collider=Chapter8y>SurHub>SurOyun_romanos>OyunDilimi>AzizRomanos>Dis>StaticBody3D/@CollisionShape3D@139085 shape=BoxShape3D
+GORUNMEZZEMIN_ADAY scene=chapter8y.tscn at=(0.0,-3.4,46.7) collider=Chapter8y>SurHub>SurOyun_romanos>OyunDilimi>AzizRomanos>Dis>StaticBody3D/@CollisionShape3D@139087 shape=BoxShape3D
+GORUNMEZZEMIN_ADAY scene=chapter8y.tscn at=(0.0,-3.4,49.0) collider=Chapter8y>SurHub>SurOyun_romanos>OyunDilimi>AzizRomanos>Dis>StaticBody3D/@CollisionShape3D@139087 shape=BoxShape3D
+PACE dead t=187.7 len=3.1 after=D8Y_HUSEYIN_COME fade=0.00 card=false
+AUTOTEST PASS chapter=8y variant= outcome=8Y.1 id=seal warnings=0 lowered=0 radio=true

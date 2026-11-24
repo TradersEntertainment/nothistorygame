@@ -70,6 +70,7 @@ class Bld:
 	var uv2 := PackedVector2Array()
 	## kip 1 bayrakların en uzun boyu: sınır kutusu payı (gölgelendirici bayrağı rüzgâr yönüne çevirir)
 	var kumas_pay := 0.0
+	var hayvan_noktalari: Array = []    # yalnız testte: pişen canlıların [ayak noktası, tür] listesi (zemin denetimi)
 	static var _mats := {}
 
 	static func vmat(pattern := "") -> StandardMaterial3D:
@@ -297,6 +298,10 @@ class Bld:
 			if nm != "":
 				body.name = nm + "_katı"
 			host.add_child(body)
+		if not hayvan_noktalari.is_empty() and (mi != null or body != null):
+			var dn: Node3D = mi if mi != null else body
+			dn.set_meta("hayvan_noktalari", hayvan_noktalari)
+			dn.add_to_group("pismis_hayvan")
 		return mi
 
 
