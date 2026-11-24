@@ -192,6 +192,17 @@ func _floor_under(own: Node, p: Vector3, up: float, down: float) -> Array:
 	return [NAN]
 
 
+## Ayağın hemen altında (0,15 m içinde) görünen bir ağ yüzeyi var mı: çarpışmasız görünen eşyanın (çadır, raf, araba)
+## üstünde duran havada değildir (10b'de patlamayla çadırın tepesine uçan keçi). Görünen ağlar zemin denetiminin uzayında.
+func _gorunen_alt(low: Vector3) -> bool:
+	_vis_build_at(low)
+	if not _vspace.is_valid():
+		return false
+	var q := PhysicsRayQueryParameters3D.create(low + Vector3(0, 0.05, 0), low - Vector3(0, 0.15, 0), 1)
+	q.hit_back_faces = false
+	return not _vstate.intersect_ray(q).is_empty()
+
+
 func _skip_animal(a: Node, own: Node) -> String:
 	var q: Node = a
 	while q != null and q != _scene:
@@ -234,7 +245,7 @@ func _hayvan(pl: Node, eyes: Array[Vector3], now: int) -> void:
 			continue
 		var gap := low.y - fy
 		var kind := ""
-		if gap > 0.15 and not Unclip.on_mesh(a, low):
+		if gap > 0.15 and not Unclip.on_mesh(a, low) and not _gorunen_alt(low):
 			kind = "float"
 		elif gap < -0.10 and not Unclip.under(a, low, fy):
 			kind = "sunk"
