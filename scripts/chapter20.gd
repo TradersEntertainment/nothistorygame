@@ -688,6 +688,56 @@ func _see_giust(back: Vector3) -> void:
 	else:
 		player.face(head)
 	Unclip.clear_line(self, player.global_position, [giust], [player])
+	# 0.99.126 (CI, zor zorluk): yana çekilemeyen dost düellocu (moloz yamacında iki yanda da yer yok; no_yield) oyuncuyla
+	# komutanın arasında kalıyordu (VISAUDIT personhidden D20_G_REPELLED). Hat hâlâ kapalıysa komutan oyuncunun yanında,
+	# hattı açık bir yere gelir (tüfek sahnesindeki gibi yanına gelip konuşur).
+	if _hat_dolu(giust.global_position + Vector3(0, 1.5, 0)):
+		var c := _giust_acik_yer()
+		if GameState.autotest:
+			print("D20 hat_kapali komutan_yeri=%s" % c)
+		if c != Vector3.INF:
+			await Stage.approach(giust, c, 0.0, 1.6, Vector3.ZERO, _rubble_y)
+			Stage.face(giust, player.global_position)
+			player.face(giust.global_position + Vector3(0, 1.5, 0))
+
+
+## Oyuncunun gözünden `bas`a uzanan hattın üstünde (hattın %5–95'i, yana 0,7 m'den yakın) görünen ayakta biri var mı
+## (komutan hariç; yatan ve ceset sayılmaz).
+func _hat_dolu(bas: Vector3) -> bool:
+	var eye := player.camera.global_position if player.camera else player.global_position + Vector3(0, 1.6, 0)
+	var a := Vector2(eye.x, eye.z)
+	var ab := Vector2(bas.x, bas.z) - a
+	if ab.length_squared() < 0.25:
+		return false
+	for n in get_tree().get_nodes_in_group("persons"):
+		var o := n as Node3D
+		if o == null or o == giust or not o.is_visible_in_tree() or o.has_meta("corpse") or Unclip.lying(o):
+			continue
+		if o.get_parent() != null and o.get_parent().has_meta("corpse"):
+			continue
+		var q := Vector2(o.global_position.x, o.global_position.z)
+		var t := (q - a).dot(ab) / ab.length_squared()
+		if t > 0.05 and t < 0.95 and (a + ab * t).distance_to(q) < 0.7:
+			return true
+	return false
+
+
+## Komutanın konuşacağı açık yer: oyuncunun 1,7–2,2 m çevresinde, şimdiki yönünden başlayıp yanlara dönerek; zemini
+## moloz/teras (oyuncudan en çok 1 m farklı), katının ve kalabalığın içi değil, oyuncudan hattı açık.
+func _giust_acik_yer() -> Vector3:
+	var pp := player.global_position
+	var d0 := Vector3(giust.global_position.x - pp.x, 0, giust.global_position.z - pp.z)
+	d0 = d0.normalized() if d0.length() > 0.1 else Vector3.FORWARD
+	for a: float in [35.0, -35.0, 70.0, -70.0, 105.0, -105.0, 0.0]:
+		for r: float in [1.7, 2.2]:
+			var c := pp + d0.rotated(Vector3.UP, deg_to_rad(a)) * r
+			c.y = _rubble_y(c.x, c.z)
+			if absf(c.y - pp.y) > 1.0 or Unclip.in_solid(giust, c, 0.25) or Unclip.crowded(giust, c, 0.6):
+				continue
+			if _hat_dolu(c + Vector3(0, 1.5, 0)):
+				continue
+			return c
+	return Vector3.INF
 
 
 ## Hücumun sonu: Giustiniani bir Ceneviz tüfeği verir; Tolga dış surun yürüyüş yolundan, gediğe koşan dört azabı
