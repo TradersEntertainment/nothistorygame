@@ -194,6 +194,7 @@ func _ready() -> void:
 		at.timeout.connect(_crowd_audit)
 		at.timeout.connect(_ground_audit.bind(40))
 		add_child(at)
+		_denetim17()
 	# Yeni sahne kuruldu: önceki sahneden kalan duraklatma ya da geçiş durumu taşınmasın
 	GameState.changing = false
 	get_tree().paused = false
@@ -2512,6 +2513,19 @@ func _held_audit(scene: Node) -> void:
 		left.append("free_hand_grab")
 	if not left.is_empty():
 		print("HELDAUDIT scene=%s left=%s" % [scene.scene_file_path.get_file(), ",".join(left)])
+
+
+## G17 denetimleri (yalnız otomatik testte; tests/ dışa aktarılmaz, yol ile yüklenir): hayvanlar havada/gömük,
+## görünmez zemin, iş istasyonu aleti, donuk bekleme (PACE). Ayrıntı tests/_denetim17/denetim17.gd. NO_DENETIM17 kapatır.
+func _denetim17() -> void:
+	if OS.has_environment("NO_DENETIM17") or not ResourceLoader.exists("res://tests/_denetim17/denetim17.gd"):
+		return
+	var s: Script = load("res://tests/_denetim17/denetim17.gd")
+	if s:
+		var d: Node = s.new()
+		d.name = "Denetim17"
+		d.set("hud", self)
+		add_child(d)
 
 
 ## Yere gömülü karakter denetimi (otomatik testte): oyuncunun 30 m yakınındaki insanların ayağının altında,

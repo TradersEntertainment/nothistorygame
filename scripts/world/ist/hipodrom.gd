@@ -404,6 +404,7 @@ static func _hayvanlar(host: Node3D, A: float, cz: float, z_n: float, rng: Rando
 		mi.material_override = CK.mat()
 		mi.position = p
 		mi.rotation.y = body.rotation.y
+		mi.add_to_group("hayvanlar")     # zemin denetimi (testte)
 		host.add_child(mi)
 
 
