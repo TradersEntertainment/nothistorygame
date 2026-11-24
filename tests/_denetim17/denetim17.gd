@@ -283,7 +283,7 @@ func _hayvan(pl: Node, eyes: Array[Vector3], now: int) -> void:
 
 ## Pişmiş hayvanlar (ordugâhın birleşik ağı): kurulumdan 3 sn sonra bir kez, her nokta için zemin farkı
 func _pismis(now: int) -> void:
-	if now - _t0 < 3000 or not _ww_done():
+	if now - _t0 < 3000 or not _ww_ok:
 		return
 	for n in get_tree().get_nodes_in_group("pismis_hayvan"):
 		var host := n as Node3D
@@ -324,6 +324,7 @@ func _ww_done() -> bool:
 
 var _ww_ok := false
 var _ww_chk := 0
+var _ww_bekle := -1
 
 func _zemin(pl: Player, now: int) -> void:
 	if now - _t0 < 3000:
@@ -332,7 +333,12 @@ func _zemin(pl: Player, now: int) -> void:
 		if now < _ww_chk:
 			return
 		_ww_chk = now + 2000
-		_ww_ok = _ww_done()
+		if _ww_done():
+			# Dünya katılaşınca GameState'in havada-kişi taraması koşar; ağır kopyalama o karelere binmesin (22o'da
+			# denetim açıkken o tarama yük altında 3/7 koşuda bir kişiyi havada yakalıyordu, kapalıyken 0/4)
+			_ww_ok = _ww_bekle >= 0 and now >= _ww_bekle
+			if _ww_bekle < 0:
+				_ww_bekle = now + 3000
 		if not _ww_ok:
 			return
 	if not pl.is_on_floor() or pl.move_mode != "walk" or pl.pinned or pl.ladder != null or pl.floating or not pl.visible:
