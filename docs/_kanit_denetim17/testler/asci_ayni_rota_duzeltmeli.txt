@@ -1,0 +1,6 @@
+PACE say t=245.7 len=3.7 key=D8Y_HUSEYIN_SEAL
+PACE say t=249.4 len=5.4 key=D8Y_HUSEYIN_END
+PACE say t=254.8 len=5.3 key=D8Y_HASAN_END
+PACE say t=275.2 len=5.9 key=D8Y_HASAN_MARKET
+PACE say t=283.3 len=8.5 key=D8Y_T_END
+AUTOTEST PASS chapter=8y variant= outcome=8Y.1 id=seal warnings=0 lowered=0 radio=true
