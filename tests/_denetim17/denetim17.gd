@@ -30,6 +30,7 @@ var _vstate: PhysicsDirectSpaceState3D
 var _vbuilt := {}              # "id" ya da "id#i" -> [body RID, shape RID, Transform3D]
 var _gz_seen := {}
 var _gz_n := 0
+var _co_last := {}         # çarpan gövde -> son örnekteki yeri
 
 # ---- alet
 var _al_min := {}              # istasyon id -> [pencere başı ms, en küçük uzaklık, en büyük]
@@ -337,8 +338,13 @@ func _zemin(pl: Player, now: int) -> void:
 	var phys_xf: Transform3D = PhysicsServer3D.body_get_state(co.get_rid(), PhysicsServer3D.BODY_STATE_TRANSFORM)
 	if not phys_xf.origin.is_equal_approx(co.global_transform.origin):
 		return
-	if _moving(co):
-		return
+	# kıpırdayan taşıyıcı (29'da gemi rotasında ilerler; düğümü her karede kaydırılır): son örnekten beri yer değiştirdi
+	var cid := co.get_instance_id()
+	var first := not _co_last.has(cid)
+	var was: Vector3 = _co_last.get(cid, co.global_position)
+	_co_last[cid] = co.global_position
+	if first or _moving(co) or was.distance_to(co.global_position) > 0.01:
+		return      # ilk örnekte yalnız yeri yazılır (kıpırdıyor mu bir sonraki örnekte belli olur)
 	var shp := int(h.get("shape", 0))
 	var p: Vector3 = h["position"]
 	var key := "%d#%d#%s" % [co.get_instance_id(), co.shape_find_owner(shp), str(Vector2i(floori(p.x / 3.0), floori(p.z / 3.0)))]
