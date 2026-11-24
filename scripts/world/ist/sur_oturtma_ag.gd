@@ -220,6 +220,18 @@ static func _tri(st: SurfaceTool, a: Vector3, b: Vector3, c: Vector3, ca: Color,
 
 
 ## Kule kaidesinin çevresinde etek (plan çokgeni, y taban; arka kenarlar (duvarın içi) atlanır: zb'den geçen kenar)
+## Kule kenarı kapı geçidine mi bakıyor: yan kenar (dış normal x yönünde) ve normal yönünde 1 m ötesi kapı kesiğinin içinde.
+static func _kapiya_bakar(a: Vector2, b: Vector2, c2: Vector2, e: Dictionary) -> bool:
+	var nk := KULE._dis_normal(a, b, c2)
+	if absf(nk.x) <= 0.7:
+		return false
+	var mx := (a.x + b.x) * 0.5 + nk.x
+	for kk: Array in e.get("kapi", []):
+		if mx > float(kk[0]) and mx < float(kk[1]):
+			return true
+	return false
+
+
 static func kule(e: Dictionary, poly: PackedVector2Array, y: float, ic_z: float, s: float) -> void:
 	var n := poly.size()
 	var c2 := KULE._merkez(poly)
@@ -243,8 +255,18 @@ static func kule(e: Dictionary, poly: PackedVector2Array, y: float, ic_z: float,
 		# duvarın içinde kalan kenar (iç yüz) atlanır
 		if s > 0.0 and maxf(a.y, b.y) <= ic_z + 0.01 or s < 0.0 and minf(a.y, b.y) >= ic_z - 0.01:
 			continue
-		var na := KULE._dis_normal(poly[(i - 1 + n) % n], a, c2).lerp(KULE._dis_normal(a, b, c2), 0.5).normalized()
-		var nb := KULE._dis_normal(a, b, c2).lerp(KULE._dis_normal(b, poly[(i + 2) % n], c2), 0.5).normalized()
+		# 0.99.126 (göz kontrolü): kapıyı iki yandan tutan kulelerin GEÇİDE bakan yan kenarına etek konmaz. 2,6–4,2 m'lik
+		# etek 5 m'lik geçide iki yandan girip ortada çatlakla buluşuyordu (8y ve hub Romanos iç kapısı: geçitte 0,1–0,35 m
+		# toprak tümseği; çarpışması da vardı). Ölçüt: kenarın dış normali yönünde 1 m ötesi kapı kesiğinin içinde.
+		# Komşu kenar geçide bakıyorsa o uçta normal harmanlanmaz (köşede etek geçide doğru yelpazelenmesin).
+		if _kapiya_bakar(a, b, c2, e):
+			continue
+		var p0 := poly[(i - 1 + n) % n]
+		var p3 := poly[(i + 2) % n]
+		var na := KULE._dis_normal(a, b, c2) if _kapiya_bakar(p0, a, c2, e) \
+			else KULE._dis_normal(p0, a, c2).lerp(KULE._dis_normal(a, b, c2), 0.5).normalized()
+		var nb := KULE._dis_normal(a, b, c2) if _kapiya_bakar(b, p3, c2, e) \
+			else KULE._dis_normal(a, b, c2).lerp(KULE._dis_normal(b, p3, c2), 0.5).normalized()
 		if ic_kule:
 			if a.y < kirp and b.y > kirp:
 				a = a.lerp(b, (kirp - a.y) / (b.y - a.y))
@@ -471,7 +493,8 @@ static func kur(root: Node3D, lay: Dictionary, lod: int, xw: Array, dy: float, k
 	bst.begin(Mesh.PRIMITIVE_TRIANGLES)
 	var e := {"st": st, "bst": bst, "n": 0, "bn": 0, "lod": lod, "tohum": int(lay["rng_seed"]),
 		"xf": xw[1] if xw[0] else Transform3D(), "dunya": bool(xw[0]) and not OTURTMA.kusak.is_empty(),
-		"ot": [], "tas": [], "cali": [], "_px": 0.0, "yasak": kes.get("yasak", []), "ox": _kesim_ox(root)}
+		"ot": [], "tas": [], "cali": [], "_px": 0.0, "yasak": kes.get("yasak", []), "ox": _kesim_ox(root),
+		"kapi": kes.get("kapi", [])}
 	var zi0: float = d["zi0"]
 	var zi1: float = d["zi1"]
 	var zo0: float = d["zo0"]
