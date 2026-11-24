@@ -17,7 +17,7 @@ const SHELF_COLORS := {"red": Color("c8323a"), "blue": Color("2f5fa8"), "green":
 const DOCS := ["red", "blue", "green", "blue", "red", "green"]
 const FORM_AT := Vector3(-7.9, 2.2, -2.0)
 const SHELF_PLANKS := [0.9, 1.8, 2.7]    # renk kodlu rafların kat yükseklikleri
-const HEN_AT := Vector3(0.6, 3.24, -10.45) # "Rafta bir tavuk var": mavi rafın tepesinde, 1204'ten beri. G17: ayaklar tepe tahtasının üstünde (3,2 + 0,04); canlı modelin tabanı kökte, eski 3,53 ile 0,29 m havadaydı, z tahtanın kenarındaydı
+const HEN_AT := Vector3(0.6, 3.53, -10.2) # "Rafta bir tavuk var": mavi rafın tepesinde, 1204'ten beri
 const OTAG_OFFSET := Vector3(300.0, 0.0, 0.0)
 
 var _held_doc: Node3D
