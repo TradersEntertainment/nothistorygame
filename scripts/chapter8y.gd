@@ -1960,6 +1960,12 @@ func _bot_to(target: Vector3) -> void:
 		var step := minf(d.length(), Player.WALK * player.speed_mult * get_physics_process_delta_time() if GameState.pace else 0.35)
 		var np := pp + d.normalized() * step
 		np.y = _gy(np.x, np.z) + 0.05
+		if GameState.pace:
+			# Gerçek adımda (PACE) eşiğe, taşa basar: altındaki görünen zemin daha yüksekse onun üstü (dış kapının eşiği
+			# _gy'den ~0,15 m yüksek; bot eşiğe gömülüp geri itiliyor, z 17,3'te takılıyordu). Hızlı adım eşiği atlar.
+			var fy := Unclip.floor_y(player, Vector3(np.x, np.y, np.z), 0.45, 0.3)
+			if not is_nan(fy) and fy + 0.05 > np.y:
+				np.y = fy + 0.05
 		player.global_position = np
 		if not player.frozen:
 			player.velocity = Vector3.ZERO
