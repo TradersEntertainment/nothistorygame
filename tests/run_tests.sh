@@ -246,7 +246,8 @@ out=$(timeout 60 "$GODOT" --headless --path . res://tests/world_check.tscn 2>&1)
 echo "$out" | grep -E "WORLDCHECK|SCRIPT ERROR|Parse Error"
 echo "$out" | grep -q "WORLDCHECK PASS" || fail=1
 # Tek haritada uçuş (Bölüm 7, 11): yer işaretleri, parçalar, konma noktaları, zemin ve su çarpışması
-out=$(timeout 300 "$GODOT" --headless --path . res://tests/flight_check.tscn 2>&1)
+# Bekçi 600 sn (0.99.126): kontrol bu makinede yalnız başına ~306 sn sürüyor (0.99.125 koduyla da); PASS şartı aynı
+out=$(timeout 600 "$GODOT" --headless --path . res://tests/flight_check.tscn 2>&1)
 echo "$out" | grep -E "FLIGHTCHECK|SCRIPT ERROR|Parse Error"
 echo "$out" | grep -q "FLIGHTCHECK PASS" || fail=1
 # Her yer yürünür: dünyanın zemini, evleri, suyu (WorldWalk)
