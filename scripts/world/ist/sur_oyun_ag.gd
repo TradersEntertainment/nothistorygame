@@ -5,7 +5,10 @@ const KULE := preload("res://scripts/world/ist/sur_kule.gd")
 
 ## Durağan parçanın ağlarını tek ağa pişirir (çizim çağrısı: pişmeden parçalar kesime +700 çağrı ekliyordu)
 static func pis(n: Node3D) -> void:
-	if n != null and n.is_inside_tree():
+	# 0.99.126: tek ağ (MeshInstance3D) pişirilmez. Props.bake_static çıktıyı kökün çocuğu yapıp kaynağı siler: kök ağın
+	# kendisiyse çıktı da onunla gidiyordu (8y'de kapı rampasının görüntüsü yoktu, çarpışması vardı: oyuncu havada yürüyordu).
+	# Ağ, ebeveyninin pişirilmesinde (ör. pis(KapiKopru)) birleşir.
+	if n != null and n.is_inside_tree() and not n is MeshInstance3D:
 		Props.bake_static(n, [n])
 
 

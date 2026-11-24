@@ -538,6 +538,58 @@ static func uzak_kule(ag, c: Vector3, w: float, th: float, dip: float, yaw: floa
 		ag.kutu(o - nr * 0.5 + Vector3(0, yt, 0), t, nr, 1.0, 0.6, 0.5)
 
 
+## TUR 15: uzak yuvarlak kule (Eugenius kulesi gibi): uzak_kule'nin halka profili (yosunlu kaide, silme, mazgallı teras)
+## n kenarlı yuvarlak planda; terasın çevresinde n/2 diş. c: taban merkezi (y zemin), r yarıçap, th teras (c.y'den).
+static func uzak_yuvarlak_kule(ag, c: Vector3, r: float, th: float, dip: float, n := 14) -> void:
+	var pts: Array = []
+	for i in n:
+		var a := TAU * (i + 0.5) / n
+		pts.append(Vector3(cos(a), 0, sin(a)))
+	var halkalar: Array = [[dip, 0.35], [0.6, 0.35], [0.9, 0.0], [th - 0.6, 0.0], [th - 0.6, 0.3], [th + 1.1, 0.3]]
+	for k in halkalar.size() - 1:
+		var ya: float = halkalar[k][0]
+		var yb: float = halkalar[k + 1][0]
+		var ra: float = r + float(halkalar[k][1])
+		var rb: float = r + float(halkalar[k + 1][1])
+		for i in n:
+			var p: Vector3 = pts[i]
+			var q: Vector3 = pts[(i + 1) % n]
+			var pa := c + p * ra + Vector3(0, ya, 0)
+			var qa := c + q * ra + Vector3(0, ya, 0)
+			var pb := c + p * rb + Vector3(0, yb, 0)
+			var qb := c + q * rb + Vector3(0, yb, 0)
+			ag.quad(pa, qa, qb, pb, Vector3.DOWN if absf(ya - yb) < 1e-3 else ((p + q) * 0.5).normalized())
+	var yt := th + 1.1
+	for i in n:
+		ag.tri(c + Vector3(0, yt, 0), c + pts[i] * (r + 0.3) + Vector3(0, yt, 0), c + pts[(i + 1) % n] * (r + 0.3) + Vector3(0, yt, 0), Vector3.UP)
+	for i in range(0, n, 2):
+		var p: Vector3 = (pts[i] + pts[(i + 1) % n]).normalized()
+		var t := Vector3(-p.z, 0, p.x)
+		ag.kutu(c + p * ((r + 0.3) * cos(PI / n) - 0.5) + Vector3(0, yt, 0), t, p, 1.2, 0.6, 0.5)
+
+
+## TUR 15: uçları kapalı uzak sur parçası (yamaca basamaklanan surlar: Galata): uzak_parca + iki uç yüzü (kaide dahil
+## kesit). Basamakta komşu parçanın yüksek ucu açık iç göstermesin.
+static func uzak_parca_uclu(ag, a: Vector3, b: Vector3, kal: float, hh: float, dip: float, side: Vector3) -> void:
+	uzak_parca(ag, a, b, kal, hh, dip, side)
+	var dir := (b - a)
+	dir.y = 0.0
+	if dir.length() < 0.5:
+		return
+	dir = dir.normalized()
+	var sd := Vector3(side.x, 0, side.z).normalized()
+	var fo := sd * kal * 0.5
+	var bo := -sd * kal * 0.5
+	var kd := sd * 0.35
+	for k in 2:
+		var p: Vector3 = a if k == 0 else b
+		var nrm := -dir if k == 0 else dir
+		# gövde kesiti (arka yüz → deniz yüzü, dip → tepe), korkuluk kesiti, kaide çıkıntısı
+		ag.quad(p + bo + Vector3(0, dip, 0), p + fo + Vector3(0, dip, 0), p + fo + Vector3(0, hh, 0), p + bo + Vector3(0, hh, 0), nrm)
+		ag.quad(p + fo - sd * 0.5 + Vector3(0, hh, 0), p + fo + Vector3(0, hh, 0), p + fo + Vector3(0, hh + 1.0, 0), p + fo - sd * 0.5 + Vector3(0, hh + 1.0, 0), nrm)
+		ag.quad(p + fo + Vector3(0, dip, 0), p + fo + kd + Vector3(0, dip, 0), p + fo + kd + Vector3(0, 0.6, 0), p + fo + Vector3(0, 0.6, 0), nrm)
+
+
 # ------------------------------------------------------------------ bağdaştırıcı yardımcıları
 
 ## Eski kutuların görünen ağını gizler: katı gövdenin çocuğu olan ağ gizlenir, gövde "görünür katı" (meta wall/ground)

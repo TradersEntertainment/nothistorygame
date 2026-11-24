@@ -16,8 +16,11 @@ const WIN := Color("ffc870")
 ## houses: verilirse (tek harita: HornWorld) evler kutu olarak çizilmez; yerleri [{c, yaw, v, away}] listesiyle bu işleve
 ## verilir (CityHouses.build: Galata bölümündeki ve şehirdeki evlerle aynı Kit evleri, üç ayrıntı katmanı). Evler
 ## birbirine girmesin diye 11 m'den yakın olanı atılır.
+## yeni_sur (TUR 15; yalnız HornWorld "springs" bölgesi, 17o): surlar ve burçlar deniz suru kaleminin uzak katmanıyla
+## (deniz_set.uzak_parca_uclu / uzak_kule, tek ağ, sur_doku tur 1); yamaca ≤ 8 m'lik düz tepeli basamaklarla tırmanır,
+## dipleri en alçak zeminin 2 m altında. Rastgele dizi eskisi kadar tüketilir (rıhtım ve gemiler aynı yerde).
 static func build(parent: Node3D, hf: Callable, tower_xz: Vector2, top_y: float, center_xz: Vector2, radius: float,
-		sea_y := 0.0, seed := 1453, night := true, keep: Array = [], houses := Callable()) -> void:
+		sea_y := 0.0, seed := 1453, night := true, keep: Array = [], houses := Callable(), yeni_sur := false) -> void:
 	var hl: Array = []
 	var free := func(x: float, z: float, m: float) -> bool:
 		for r: Rect2 in keep:
@@ -80,6 +83,7 @@ static func build(parent: Node3D, hf: Callable, tower_xz: Vector2, top_y: float,
 		placed += 1
 	# --- Surlar: kasabayı çeviren çember (yamaca tırmanır), her 22 m'de bir burç; denizde kalan dilimler atlanır
 	var seg := 40
+	var yeni_ag = load("res://scripts/world/ist/sur_kule.gd").Ag.new() if yeni_sur else null
 	for i in seg:
 		var a0 := TAU * i / seg
 		var a1 := TAU * (i + 1) / seg
@@ -93,19 +97,31 @@ static func build(parent: Node3D, hf: Callable, tower_xz: Vector2, top_y: float,
 		var ln := p0.distance_to(p1) + 0.4
 		var yaw := rad_to_deg(atan2(p1.x - p0.x, p1.y - p0.y)) + 90.0
 		var wh := 4.5
-		d.box(Vector3(ln, wh + 2.0, 1.8), Vector3(mid.x, gy0 - 2.0 + (wh + 2.0) * 0.5, mid.y), STONE, Vector3(0, yaw, 0))
-		# Mazgallar
-		var dirv := (p1 - p0).normalized()
-		for k in int(ln / 1.6):
-			var q := p0 + dirv * (0.8 + k * 1.6)
-			d.box(Vector3(0.7, 0.8, 1.9), Vector3(q.x, gy0 + wh + 0.4, q.y), STONE, Vector3(0, yaw, 0))
+		if yeni_ag != null:
+			_sur_yeni(yeni_ag, hf, p0, p1, center_xz, sea_y, wh)
+		else:
+			d.box(Vector3(ln, wh + 2.0, 1.8), Vector3(mid.x, gy0 - 2.0 + (wh + 2.0) * 0.5, mid.y), STONE, Vector3(0, yaw, 0))
+			# Mazgallar
+			var dirv := (p1 - p0).normalized()
+			for k in int(ln / 1.6):
+				var q := p0 + dirv * (0.8 + k * 1.6)
+				d.box(Vector3(0.7, 0.8, 1.9), Vector3(q.x, gy0 + wh + 0.4, q.y), STONE, Vector3(0, yaw, 0))
 		if i % 3 == 0:
-			d.box(Vector3(3.6, wh + 4.0, 3.6), Vector3(p0.x, gy0 - 2.0 + (wh + 4.0) * 0.5, p0.y), STONE_DARK, Vector3(0, yaw, 0))
-			for k in 4:
-				var o := Basis(Vector3.UP, deg_to_rad(yaw)) * Vector3(-1.4 + (k % 2) * 2.8, 0, -1.4 + (k / 2) * 2.8)
-				d.box(Vector3(0.8, 0.8, 0.8), Vector3(p0.x, gy0 + wh + 2.4, p0.y) + o, STONE_DARK)
+			var glow_y := gy0 + wh + 3.3
+			if yeni_ag != null:
+				glow_y = _kule_yeni(yeni_ag, hf, p0, deg_to_rad(yaw), sea_y, wh) + 0.25
+			else:
+				d.box(Vector3(3.6, wh + 4.0, 3.6), Vector3(p0.x, gy0 - 2.0 + (wh + 4.0) * 0.5, p0.y), STONE_DARK, Vector3(0, yaw, 0))
+				for k in 4:
+					var o := Basis(Vector3.UP, deg_to_rad(yaw)) * Vector3(-1.4 + (k % 2) * 2.8, 0, -1.4 + (k / 2) * 2.8)
+					d.box(Vector3(0.8, 0.8, 0.8), Vector3(p0.x, gy0 + wh + 2.4, p0.y) + o, STONE_DARK)
 			if night and rng.randf() < 0.6:
-				d.glow(Vector3(0.5, 0.5, 0.5), Vector3(p0.x, gy0 + wh + 3.3, p0.y), Color("ffb050"))
+				d.glow(Vector3(0.5, 0.5, 0.5), Vector3(p0.x, glow_y, p0.y), Color("ffb050"))
+	if yeni_ag != null:
+		var mi: MeshInstance3D = yeni_ag.mesh_ekle(parent, load("res://scripts/world/ist/sur_doku.gd").mat(1, Color("c9b89a"), false), "GalataSurYeni")
+		if mi:
+			mi.visibility_range_end = 1200.0
+		print("DENIZSET galataview GalataSurYeni ucgen=%d" % yeni_ag.n)
 	# --- Rıhtım: deniz kıyısında ahşap iskele, fenerler, demirli gemilerin direkleri
 	var quay := 0
 	for i in 72:
@@ -153,3 +169,42 @@ static func build(parent: Node3D, hf: Callable, tower_xz: Vector2, top_y: float,
 	d.box(Vector3(0.05, 1.2, 0.26), Vector3(tower_xz.x, gallery_y + 12.3, tower_xz.y + 0.95), Color("c8262f"))
 	d.box(Vector3(0.05, 0.24, 1.9), Vector3(tower_xz.x, gallery_y + 12.3, tower_xz.y + 0.95), Color("c8262f"))
 	d.build(parent)
+
+
+## TUR 15: Galata surunun bir dilimi (p0 → p1) yeni kalemle: ≤ 8 m'lik düz tepeli basamaklar. Her basamağın tabanı altındaki
+## en alçak zemin (dip 2 m daha aşağıda: havada kalmaz), tepesi en yüksek zeminin (denizde deniz seviyesinin) wh üstü.
+## Dış yüz (kaide) kasabanın dışına bakar.
+static func _sur_yeni(ag, hf: Callable, p0: Vector2, p1: Vector2, center: Vector2, sea_y: float, wh: float) -> void:
+	var DZ = load("res://scripts/world/ist/deniz_set.gd")
+	var L := p0.distance_to(p1)
+	var m := maxi(1, int(ceil(L / 8.0)))
+	var dv := (p1 - p0) / L
+	for j in m:
+		var a := p0.lerp(p1, float(j) / m) - dv * 0.2
+		var b := p0.lerp(p1, float(j + 1) / m) + dv * 0.2
+		var out := ((a + b) * 0.5 - center).normalized()
+		var lo := INF
+		var hi := -INF
+		for t in 5:
+			var q := a.lerp(b, t / 4.0)
+			for o: float in [-1.25, 1.25]:
+				var g: float = hf.call(q.x + out.x * o, q.y + out.y * o)
+				lo = minf(lo, g)
+				hi = maxf(hi, g)
+		var top := maxf(hi, sea_y) + wh
+		DZ.uzak_parca_uclu(ag, Vector3(a.x, lo, a.y), Vector3(b.x, lo, b.y), 1.8, top - lo, -2.0, Vector3(out.x, 0, out.y))
+
+
+## TUR 15: Galata burcu (p: eski kutu burcun yeri) yeni kalemle (deniz_set.uzak_kule, 4,4 m pahlı kare): tabanı ayak izinin
+## en alçak zemini, terası en yüksek zeminin wh + 2 m üstü (sur tepesinden yüksek). Döner: teras korkuluğunun tepesi (y).
+static func _kule_yeni(ag, hf: Callable, p: Vector2, yaw: float, sea_y: float, wh: float) -> float:
+	var lo := INF
+	var hi := -INF
+	for k in 9:
+		var o := Vector2((k % 3 - 1) * 2.5, (k / 3 - 1) * 2.5)
+		var g: float = hf.call(p.x + o.x, p.y + o.y)
+		lo = minf(lo, g)
+		hi = maxf(hi, g)
+	var th := maxf(hi, sea_y) + wh + 2.0 - lo
+	load("res://scripts/world/ist/deniz_set.gd").uzak_kule(ag, Vector3(p.x, lo, p.y), 4.4, th, -2.0, yaw)
+	return lo + th + 1.1

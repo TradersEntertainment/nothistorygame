@@ -79,9 +79,9 @@ static func eski_istendi(bolum: String, sabit := false) -> bool:
 
 
 ## Yeni sette bir gereği henüz karşılanmayan bölümler: anahtarsız ESKİ sette açılır (`--yenisur=<bölüm>` yeniyi açar).
-## 31o (0.99.125): yeni setin ova alanı `world = false`; surun ardında şehir (WorldWalk) ve yaşayan kalabalık (CityLife) yok,
-## yanık caddenin ötesi boş kum kalıyordu (CITYCHECK 31o). Eski sette surun ardı yaşayan şehir.
-const ESKI_VARSAYILAN := ["31o"]
+## 31o 0.99.125'te buradaydı (yeni setin ardında şehir ve kalabalık yoktu); TAŞIMA-13'ten beri yeni sette surun ardı İstanbul v2
+## (chapter31o.gd _sur_kur_v2: SurHub + IstBaglama "fallen31o", IstHayatYakin kalabalığı). `--eskisur=31o` eski seti kurar.
+const ESKI_VARSAYILAN: Array = []
 
 
 ## Bölümün sur seti: eski ya da yeni (SurSet.eski_istendi ile seçilir).
