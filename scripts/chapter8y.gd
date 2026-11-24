@@ -1963,10 +1963,13 @@ func _bot_to(target: Vector3) -> void:
 		if GameState.pace:
 			# Gerçek adımda (PACE) eşiğe, taşa basar: altındaki çarpışma zemini daha yüksekse onun üstü (dış kapının eşiği
 			# _gy'den ~0,15 m yüksek; bot eşiğe gömülüp geri itiliyor, z 17,3'te takılıyordu). Hızlı adım eşiği atlar.
-			var q := PhysicsRayQueryParameters3D.create(np + Vector3(0, 0.45, 0), np + Vector3(0, -0.3, 0), player.collision_mask, [player.get_rid()])
-			var hit := get_world_3d().direct_space_state.intersect_ray(q)
-			if not hit.is_empty() and (hit["position"] as Vector3).y + 0.05 > np.y:
-				np.y = (hit["position"] as Vector3).y + 0.05
+			var y0 := np.y
+			for ahead: float in [0.0, 0.2, 0.4]:      # kapsülün önü (yarıçap ~0,35 m) eşiğe ondan önce değer
+				var pr := np + d.normalized() * ahead
+				var q := PhysicsRayQueryParameters3D.create(Vector3(pr.x, y0 + 0.45, pr.z), Vector3(pr.x, y0 - 0.3, pr.z), player.collision_mask, [player.get_rid()])
+				var hit := get_world_3d().direct_space_state.intersect_ray(q)
+				if not hit.is_empty() and (hit["position"] as Vector3).y + 0.05 > np.y:
+					np.y = (hit["position"] as Vector3).y + 0.05
 		player.global_position = np
 		if not player.frozen:
 			player.velocity = Vector3.ZERO
