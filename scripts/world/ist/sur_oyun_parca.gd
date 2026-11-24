@@ -531,7 +531,7 @@ class KapiKopru extends Node3D:
 					var xb := -half + 2.0 * half * (m + 1) / 3.0
 					var alt := dy - md - 0.2
 					var ust := dy - rngt.randf_range(0.0, 0.025)
-					tag.kutu(Vector3((xa + xb) * 0.5, alt, z0k if side > 0.0 else z0k - dz), Vector3.RIGHT, Vector3.BACK, xb - xa - 0.04, ust - alt, dz - 0.04)
+					tag.kutu(Vector3((xa + xb) * 0.5, alt, z0k if side > 0.0 else z0k - dz), Vector3.RIGHT, Vector3.BACK, xb - xa, ust - alt, dz)   # aralıksız: yürüme yüzü tek parça (derzi doku verir)
 		tag.mesh_ekle(saglam, KULE._tas_mat(Color("a89878").darkened(0.1), 0), "Tas_KapiKopruAyak")
 		govde = StaticBody3D.new()
 		var cs := CollisionShape3D.new()

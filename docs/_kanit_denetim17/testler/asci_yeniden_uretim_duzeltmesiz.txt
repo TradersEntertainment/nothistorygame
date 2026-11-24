@@ -1,0 +1,8 @@
+PACE say t=240.4 len=4.0 key=D8Y_HUSEYIN_2
+PACE say t=246.1 len=3.5 key=D8Y_HASAN_SEAL
+PACE say t=250.1 len=3.7 key=D8Y_HUSEYIN_SEAL
+PACE say t=253.8 len=5.4 key=D8Y_HUSEYIN_END
+PACE say t=259.2 len=5.3 key=D8Y_HASAN_END
+PACE say t=279.6 len=5.9 key=D8Y_HASAN_MARKET
+ALETAUDIT_ADAY scene=chapter8y.tscn kind=stir_pot who=Soldier tool=ladle d=0.62 pay=0.33 neden=disarida tip=(8.7,-1.8,133.3) hedef=(8.2,-2.0,133.0) el_hedef=1.24 yaw=1.15 kok=(0.0,-0.0,0.0) look=var act=stir src=Chapter8y>Station_stir_pot
+PACE say t=287.7 len=8.5 key=D8Y_T_END
