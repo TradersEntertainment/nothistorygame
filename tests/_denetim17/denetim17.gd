@@ -363,9 +363,10 @@ func _zemin(pl: Player, now: int) -> void:
 	# kıpırdayan taşıyıcı (29'da gemi rotasında ilerler; düğümü her karede kaydırılır): son örnekten beri yer değiştirdi
 	var cid := co.get_instance_id()
 	var first := not _co_last.has(cid)
-	var was: Vector3 = _co_last.get(cid, co.global_position)
-	_co_last[cid] = co.global_position
-	if first or _moving(co) or was.distance_to(co.global_position) > 0.01:
+	var was: Transform3D = _co_last.get(cid, co.global_transform)
+	_co_last[cid] = co.global_transform
+	# yer ya da açı değişti (37o'da kalas ortasındaki milde yalpalar: kökü yerinde, yalnız döner)
+	if first or _moving(co) or was.origin.distance_to(co.global_position) > 0.01 or not was.basis.is_equal_approx(co.global_basis):
 		return      # ilk örnekte yalnız yeri yazılır (kıpırdıyor mu bir sonraki örnekte belli olur)
 	var shp := int(h.get("shape", 0))
 	var p: Vector3 = h["position"]
