@@ -2,3 +2,4 @@
 # (Önceden paylaşılmış sürüm bağlantıları eski kalmasın diye. Bir satıra bir etiket.)
 v0.2.1
 # 0.99.126 CI yeniden: VERSION değişmeyen düzeltme commit'i bu dosyanın değişmesiyle tetiklenir (etiket gönderimi kapalı).
+# 0.99.126 CI yeniden (2): 20 şafak repliği de aynı düzeltmeyle (CI #341 D20_G_DONE).

@@ -687,10 +687,15 @@ func _see_giust(back: Vector3) -> void:
 		await hud.fade_to(0.0, 0.25)
 	else:
 		player.face(head)
+	await _giust_hatti_ac()
+
+
+## Komutan konuşmadan önce görüş hattı: yana çekilebilenler çekilir (Unclip.clear_line). 0.99.126 (CI, zor zorluk, iki
+## koşuda iki ayrı replik): dövüşten sonra nefeslenen dost düellocu (moloz yamacında iki yanda da yer yok; no_yield)
+## oyuncuyla komutanın arasında kalıyordu (VISAUDIT personhidden D20_G_REPELLED, D20_G_DONE). Hat hâlâ kapalıysa komutan
+## oyuncunun yanında, hattı açık bir yere gelir (tüfek sahnesindeki gibi yanına gelip konuşur) ve oyuncu ona döner.
+func _giust_hatti_ac() -> void:
 	Unclip.clear_line(self, player.global_position, [giust], [player])
-	# 0.99.126 (CI, zor zorluk): yana çekilemeyen dost düellocu (moloz yamacında iki yanda da yer yok; no_yield) oyuncuyla
-	# komutanın arasında kalıyordu (VISAUDIT personhidden D20_G_REPELLED). Hat hâlâ kapalıysa komutan oyuncunun yanında,
-	# hattı açık bir yere gelir (tüfek sahnesindeki gibi yanına gelip konuşur).
 	if _hat_dolu(giust.global_position + Vector3(0, 1.5, 0)):
 		var c := _giust_acik_yer()
 		if GameState.autotest:
@@ -911,7 +916,7 @@ func _dawn() -> void:
 		_drop()
 	# Düello kaybedildiyse ya da Tolga gece iki kez yere serildiyse gedik sabaha yetişmez
 	var complete := repair >= LandWalls.STAGES and player.downs < 2      # düello kaybı barikatı söker (yukarıda)
-	Unclip.clear_line(self, player.global_position, [giust], [player])
+	await _giust_hatti_ac()
 	if complete:
 		await hud.say("SPK_GIUST", "D20_G_DONE")
 	else:
