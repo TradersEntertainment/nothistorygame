@@ -1,17 +1,14 @@
-# G17 durum
+# G17 durum (her kayıtta güncel)
 
-- [x] Dal `wip/denetim17` (taban f957694c)
-- [x] Denetim betiği `tests/_denetim17/denetim17.gd` (hayvan, görünmez zemin, alet, donuk) — ilk taslak, henüz koşulmadı
-- [x] Kancalar: hud `_denetim17()`, CanliKit.dugum → "hayvanlar", Bld → "pismis_hayvan", Stage.station → is_noktasi
-- [x] run_tests.sh: `_ADAY` satırları listelenir; 8y PACE bloğu
-- [ ] İlk koşu / yakalama kanıtları
-- [ ] Tam paket, bulgular, düzeltmeler, kareler, rapor
+## Yapıldı
+- Dört denetim `tests/_denetim17/denetim17.gd` (ADAY kipinde), hud kancası, gruplar/metalar, run_tests.sh bağlantısı, 8y PACE bloğu.
+- Yakalama kanıtları: rampa (GORUNMEZZEMIN), keçi zemin (VISAUDIT float who=Goat), Hasan (DONUKAUDIT 11,6 sn) — `testler/`.
+- Düzeltilenler: Bölüm 2 kızak öküzleri (AyakHayvan), ordugâh pişmiş öküzleri (K.gy), 8y hendek geçidi taş ayakları
+  (görünmez zemin; kare ÖNCE|SONRA), 10a raftaki tavuk, 8y PACE test botu (eşikte takılıyordu; tabanda da).
+- Ölçüt düzeltmeleri: katının içinde başlayan ışın, dünya arazisi kurulumu (IstGeo.h), ağ değişimi, izlenen iş (DONUK),
+  çarpışmasız görünen yüzey (hayvan).
 
-## Ara (yakalama kanıtları, 8y hızlı test)
-- GORUNMEZZEMIN: `pis()` düzeltmesi geri alınınca `Toprak_KapiRampasi_Carp` yakalanıyor (testler/yakalar_rampa_geri_alinmis.txt); düzeltmeyle rampa satırı yok.
-- Hayvan: `goat.zemin` kaldırılınca `VISAUDIT_ADAY float who=Goat gap=3.51` (testler/yakalar_keci_zemin_kaldirilmis.txt).
-- Ölçüt düzeltmeleri: (a) ışın katının içinde başlarsa (pişmiş öküzün kendi gövde kutusu) o katı zemin sayılmaz;
-  (b) dünya arazisi parçası yeniden kurulurken (IstDunya `_jobs`) çarpışma noktası IstGeo.h'ye ±0,35 ise bekler;
-  (c) kopyalanan ağın kaynağı değişirse (arazi LOD) kopya eskimiş sayılır; (d) DONUK: 8 m içinde, bakış konisinde
-  sahne betiğinin yürüttüğü kişi (stage_walk/grip) varsa "izlenen iş" (8y kapı açılışı, 7 sn).
-- Açık: 8y PACE koşusunda bot z=17,3'te takılıyor ("noktasına varamadı") — tabanda da mı, ölçülüyor.
+## Sürüyor
+- Tam paket (eski kodla 0-2, yeni kodla 3. parça), 29'da güverte GORUNMEZZEMIN adayı, aşçı yeniden üretimi.
+## Açık
+- 26 at gediğin moloz rampasında (29° > AyakHayvan eğim sınırı 17°): ön toynaklar 0,5-0,9 m havada.
