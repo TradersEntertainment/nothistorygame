@@ -749,6 +749,7 @@ func _build_field() -> void:
 	goat = Goat.new()
 	goat.bounds = Rect2(-12.0, 75.0, 24.0, 12.0)
 	goat.position = Vector3(4.0, 0.0, 80.0)
+	goat.zemin = Callable(self, "_gy")      # 0.99.126: ova yeni surda 3,5 m aşağıda (keçi havada yürüyordu)
 	add_child(goat)
 	# Kovalanmaz (kaçarken kaldırdığı toz bulutu yürüyüşü örtüyordu); kendi alanında otlar
 
@@ -965,6 +966,7 @@ func _build_market() -> void:
 	var gp := _camp(0.0, 11.0)
 	mg.position = Vector3(gp.x, 0.0, gp.z)
 	mg.bounds = Rect2(-7.0, CAMP_Z0 - 15.0, 14.0, 6.5)
+	mg.zemin = Callable(self, "_gy")
 	add_child(mg)
 	var ls := Soldier.new(Color("3a6b3a"), "stand", "bork")
 	ls.position = _camp(5.5, 12.0, _gy(-5.5, CAMP_Z0 - 12.0))
@@ -1386,7 +1388,8 @@ func _process(delta: float) -> void:
 			if not _busy and pz > TRENCH_Z:
 				_trench()
 		"lines":
-			if not _busy and pz > END_Z:
+			# 0.99.126: Hasan pazara varmadan son sahne başlamaz (oyuncu donup beklemesin, serbest yürür)
+			if not _busy and pz > END_Z and not _hasan_walking:
 				_finale()
 
 
@@ -1798,7 +1801,8 @@ func _hasan_lead() -> void:
 	_hasan_walking = true
 	hasan.look_target = null
 	for q: Vector3 in [Vector3(-6.0, 0, 122.0), Vector3(6.0, 0, 131.0), MARKET_AT]:
-		await Stage.walk_on_ground(hasan, q, Callable(self, "_gy"), 1.35)
+		# 0.99.126: oyuncunun yürüyüşüne yakın (3,2 m/sn); 1,35 m/sn ile yol ~24 sn sürüyor, oyuncu pazarda donup bekliyordu
+		await Stage.walk_on_ground(hasan, q, Callable(self, "_gy"), 2.8)
 	Stage.face(hasan, MARKET_AT + Vector3(0, 0, -6.0))
 	_hasan_walking = false
 

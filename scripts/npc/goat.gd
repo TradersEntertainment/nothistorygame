@@ -14,9 +14,18 @@ var _legs: Array[Node3D] = []
 var _dust_t := 0.0
 const AyakHayvan := preload("res://scripts/npc/ayak_hayvan.gd")
 var _ah    # AyakHayvan: gövdenin zemine uyumu (eğim, yükseklik)
+## Zemin yüksekliği (ebeveyn yereli x, z → y). Boşsa zemin y 0 (eski davranış). 0.99.126: 8y'nin ovası yeni surda 3,5 m
+## aşağıda, keçiler y 0'da havada yürüyordu.
+var zemin := Callable()
+
+
+func _taban() -> float:
+	return float(zemin.call(position.x, position.z)) if zemin.is_valid() else 0.0
 
 
 func _ready() -> void:
+	if zemin.is_valid():
+		position.y = _taban()
 	# CANLI (kalite notu 32): keçi canli_kit'ten (kesit halkalı gövde, geriye kıvrık boynuz, sakal, eklemli bacak); kutu yok.
 	var kit: Dictionary = CK.dugum("keci", {"lod": 0, "birlestir": ["kulak"]})
 	var body: Node3D = kit["root"]
@@ -61,7 +70,7 @@ func _process(delta: float) -> void:
 		else:
 			_target = global_position
 			rotation.y = lerp_angle(rotation.y, atan2(to_f.x, to_f.z), clampf(delta * 4.0, 0.0, 1.0))
-			position.y = lerpf(position.y, 0.0, clampf(delta * 8.0, 0.0, 1.0))
+			position.y = lerpf(position.y, _taban(), clampf(delta * 8.0, 0.0, 1.0))
 			for leg in _legs:
 				leg.rotation.x = lerpf(leg.rotation.x, eg, clampf(delta * 8.0, 0.0, 1.0))
 			return
@@ -86,7 +95,7 @@ func _process(delta: float) -> void:
 	for i in _legs.size():
 		_legs[i].rotation.x = sin(_t * (20.0 if fleeing else 12.0) + i * PI) * (0.7 if fleeing else 0.4) + eg
 	# Kaçarken sekerek koşar, arkasında toz bırakır
-	position.y = absf(sin(_t * 10.0)) * 0.22 if fleeing else lerpf(position.y, 0.0, clampf(delta * 8.0, 0.0, 1.0))
+	position.y = _taban() + absf(sin(_t * 10.0)) * 0.22 if fleeing else lerpf(position.y, _taban(), clampf(delta * 8.0, 0.0, 1.0))
 	if fleeing:
 		_dust_t -= delta
 		if _dust_t <= 0.0 and get_parent() is Node3D:
