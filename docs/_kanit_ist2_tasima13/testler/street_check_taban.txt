@@ -1,0 +1,4 @@
+# street_check, taban f1f007c5 (bu dalın 4 betiği geri alınmış eş /home/user/is/taban), tek süreç
+STREETCHECK (e) CityLife µs açık=[920.66, 1106.97] kapalı=[1014.12, 1065.44] (ort 1014 / 1040, fark -2.5%) · StreetEye µs=[202.69, 217.45] ort 210
+STREETCHECK hata: StreetEye kare süresi 210 µs > 150
+STREETCHECK FAIL: StreetEye kare süresi 210 µs > 150

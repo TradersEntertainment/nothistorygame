@@ -1,0 +1,4 @@
+MENURETURN round=0 mode=main scene=res://scenes/chapter1.tscn nodes=8605 orphans=680
+MENURETURN round=1 mode=main scene=res://scenes/chapter1.tscn nodes=8620 orphans=1360
+MENURETURN PASS from=res://scenes/chapter31o.tscn
+rc=0

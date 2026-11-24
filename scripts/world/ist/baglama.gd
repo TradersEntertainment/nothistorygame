@@ -43,10 +43,18 @@ const CAMP_OTAG := Vector2(0.0, -62.0)
 const HUB_ORTA := Vector2(-4.0, -13.0)
 ## Bölümün kendi zemini ve süsü bu yarıçapa kadar (yerel çapa çevresi); ötesi v2 arazisine yumuşak geçer
 const YAMA := {"camp": [Vector2(0.0, -20.0), 170.0, 330.0], "byz_walls": [Vector2(-4.0, -13.0), 62.0, 260.0],
-	"gate8y": [Vector2(0.0, 55.0), 115.0, 160.0]}
+	"gate8y": [Vector2(0.0, 55.0), 115.0, 160.0], "fallen31o": [Vector2(0.0, -48.0), 62.0, 140.0]}
 ## v2 yapılarının kaldırıldığı alan (yerel; bölümün oynanış alanı + pay)
 const TEMIZ := {"camp": Rect2(-150.0, -175.0, 300.0, 300.0), "byz_walls": Rect2(-56.0, -58.0, 104.0, 90.0),
-	"gate8y": Rect2(-16.0, -46.0, 32.0, 236.0)}
+	"gate8y": Rect2(-16.0, -46.0, 32.0, 236.0), "fallen31o": Rect2(-17.0, -99.0, 34.0, 111.0)}
+## TAŞIMA-13 — Bölüm 31o (fethin ertesi) yeni surda, 8y kalıbı: kesim (SurHub "romanos", kapı açık) bölümün çerçevesine
+## T31O · M8 ile oturur (T yalnız z kaydırması: iç surun şehir yüzü → LandWalls.INNER_Z0), cadde (FallenCity) ve bölümün
+## sayıları eski çerçevede kalır. v2 şehri caddenin çevresinde: oyun alanı (sokak, ev, çatı ve kalabalık boş bırakır; çevresine
+## sokak halkası) yalnız caddenin şeridi (OYUN_31O); uzak hub (hub_sehir) caddenin yerinde olduğu için kaldırılır (TEMIZ).
+## Sis bölümün (FallenCity.mood, fethin ertesinin dumanı): IstBaglama'nın km ölçeği sis tavanı bu bölgede uygulanmaz.
+const B31O := "fallen31o"
+const OYUN_31O := Rect2(-16.0, -97.0, 32.0, 93.0)
+const KENDI_SIS := ["fallen31o"]
 ## Uçuş sisi (NihatPowers._thin_fog hedefi): v2'nin km ölçeği için incelir (eski 0,0007)
 const UCUS_SIS := 0.00035
 ## v2 konma noktası kimliği → yan görevin kimliği
@@ -226,6 +234,8 @@ static func donusum(region_name: String) -> Transform3D:
 			return Transform3D(b, t)
 		"gate8y":
 			return SurHub.gate8y_v2()
+		"fallen31o":
+			return SurHub.gate8y_v2() * t31o().affine_inverse()
 		"byz_walls":
 			# TAŞIMA-10: yeni hub surunda hub, yeni surun Romanos kesiminin GERÇEK yerine oturur (kapı = çıkış kapısı)
 			if SurHub.sahnede() or SurHub.uzak_yeni():      # TAŞIMA-12: uzak hub da (7a, 11) aynı yerde
@@ -237,6 +247,11 @@ static func donusum(region_name: String) -> Transform3D:
 			var t := Vector3(p.x, IstGeo.h(p.x, p.y), p.y) - b * Vector3(HUB_SUR_X, 0.0, hub_kapi_z())
 			return Transform3D(b, t)
 	return Transform3D()
+
+
+## TAŞIMA-13: 31o çerçevesi ← 8y bölge yereli (dönüşsüz z kaydırması: kesimin iç surunun şehir yüzü LandWalls.INNER_Z0'da)
+static func t31o() -> Transform3D:
+	return Transform3D(Basis.IDENTITY, Vector3(0.0, 0.0, LandWalls.INNER_Z0 - float(SurHub.arayuz().d["zi0"])))
 
 
 ## Eski arayüz (öteleme): artık dönüşüm kullanılır; öteleme hep 0
@@ -377,6 +392,8 @@ static func build(parent: Node3D, region_name: String, keep_local: Array, _night
 		# arazisi (eski yama ovayı hub'ın düzüne çekiyordu: hendek ve ova 3,5 m yükselirdi)
 		var sur_x := SurHub.HUB_IC_X + 2.0 if (region_name == "byz_walls" and SurHub.sahnede()) else INF
 		var sur_z := 2.5 if region_name == "gate8y" else INF
+		if region_name == B31O:
+			sur_z = 2.5 + t31o().origin.z      # 8y'nin sınırı (iç sur ortasının 2,5 m dışı) 31o çerçevesinde
 		IstGeo.yama_ekle(Vector2(mv.x, mv.z), ym[1], ym[2], func(x: float, z: float) -> float:
 			var q := IstBaglama.yerel(Vector3(x, 0.0, z))
 			if q.x > sur_x or q.z > sur_z:
@@ -431,7 +448,8 @@ static func build(parent: Node3D, region_name: String, keep_local: Array, _night
 			(n as Node).child_entered_tree.connect(func(m: Node) -> void:
 				if m is IstSehir and (m as IstSehir).get("_oyun") is Array and ((m as IstSehir).get("_oyun") as Array).is_empty():
 					m.set("_hub_xf", hub_x)
-					m.set("_oyun", [hub_alan, IstSehir._meydan_rect()]))
+					# TAŞIMA-13: 31o'da oyun alanı caddenin şeridi (hub alanı caddenin yerinde; hub_sehir kalkar)
+					m.set("_oyun", [_rect_xf(xf, OYUN_31O) if region_name == B31O else hub_alan, IstSehir._meydan_rect()]))
 	f.child_entered_tree.connect(dinle)
 	dunya = IstDunya.build(f, gece, merkez) as IstDunya
 	f.child_entered_tree.disconnect(dinle)
@@ -487,7 +505,7 @@ static func _temizle(region_name: String, alan: Rect2) -> void:
 	var n_s := 0
 	var s := IstSehir.active
 	# TAŞIMA-10: yeni hub surunda şehrin Romanos kapı dilimi de kalkar: yerine aynı dilimin oynanır kesimi (SurHub) kurulur
-	var koru: Array = [] if ((region_name == "byz_walls" and SurHub.sahnede()) or region_name == "gate8y") else KORU
+	var koru: Array = [] if ((region_name == "byz_walls" and SurHub.sahnede()) or region_name == "gate8y" or region_name == B31O) else KORU
 	if s != null:
 		for i in range(s.items.size() - 1, -1, -1):
 			var it: Dictionary = s.items[i]
@@ -579,6 +597,8 @@ var _bul_n := 0
 
 
 func _process(dt: float) -> void:
+	if aktif_bolge in KENDI_SIS:
+		return
 	_sis_t -= dt
 	if _sis_t > 0.0:
 		return
