@@ -74,7 +74,7 @@ run() {
   [ $? -eq 124 ] && echo "AUTOTEST TIMEOUT $*"
   # WALKTHRU (v0.91, Unclip.walk_audit): sahne betiğinin yürüttüğü karakter bir katının yüzeyinden geçti. v0.91'in
   # bulguları (38o, 39o) ve yalnız CI'da çıkanlar (26o, 12b) düzeltildi; paket 20 FPS'te de temiz: v0.93'ten beri hata
-  echo "$out" | grep -E "AUTOTEST|SCRIPT ERROR|Parse Error|WARN_|VISAUDIT|WALKTHRU|HELDAUDIT|ARMAUDIT|JOURNEY|^ESYAAUDIT (dusme|havada|gomuk|tikama|sinir)|^HAREKETAUDIT|^(VISAUDIT|GORUNMEZZEMIN|ALETAUDIT|DONUKAUDIT)(_ADAY)? " | awk '!seen[$0]++'
+  echo "$out" | grep -E "AUTOTEST|SCRIPT ERROR|Parse Error|WARN_|VISAUDIT|WALKTHRU|HELDAUDIT|ARMAUDIT|JOURNEY|^ESYAAUDIT (dusme|havada|gomuk|tikama|sinir)|^HAREKETAUDIT|^(VISAUDIT|GORUNMEZZEMIN|ALETAUDIT|DONUKAUDIT)(_ADAY)? |^GORUNMEZSINIR " | awk '!seen[$0]++'
   echo "$out" | grep -q "AUTOTEST PASS" || fail=1
   echo "$out" | grep -q "SCRIPT ERROR" && fail=1
   # Ağır çekim/donma takılı kaldıysa (Fx bekçisi sıfırladı) bu bir hata

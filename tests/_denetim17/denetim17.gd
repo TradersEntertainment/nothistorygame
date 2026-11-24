@@ -347,6 +347,13 @@ func _zemin(pl: Player, now: int) -> void:
 		return      # ilk örnekte yalnız yeri yazılır (kıpırdıyor mu bir sonraki örnekte belli olur)
 	var shp := int(h.get("shape", 0))
 	var p: Vector3 = h["position"]
+	# Görünmez sınır duvarı (ince, uzun kutu: korkuluk arkası, küpeşte üstü) zemin değildir (ölçüt); üstünde durmak ayrı
+	# bir sınıftır: bilgi satırı (paketi düşürmez), bölüm başına bir kez
+	if _sinir_duvari(co, shp):
+		if not _gz_seen.has("sinir"):
+			_gz_seen["sinir"] = true
+			print("GORUNMEZSINIR scene=%s at=%s collider=%s" % [_sc_name(), _g(p), _col_src(co, shp)])
+		return
 	var key := "%d#%d#%s" % [co.get_instance_id(), co.shape_find_owner(shp), str(Vector2i(floori(p.x / 3.0), floori(p.z / 3.0)))]
 	if _gz_seen.has(key):
 		return
@@ -432,6 +439,22 @@ func _moving(n: Node) -> bool:
 			return true
 		q = q.get_parent()
 	return false
+
+
+func _sinir_duvari(co: CollisionObject3D, shp: int) -> bool:
+	var own := co.shape_find_owner(shp)
+	if own < 0 or co.shape_owner_get_shape_count(own) == 0:
+		return false
+	var s := co.shape_owner_get_shape(own, 0)
+	if not (s is BoxShape3D):
+		return false
+	var o := co.shape_owner_get_owner(own)
+	if o is Node3D:
+		for c in (o as Node).get_children() + co.get_children():
+			if c is GeometryInstance3D and (c as GeometryInstance3D).visible:
+				return false
+	var sz := (s as BoxShape3D).size * co.global_basis.get_scale()
+	return sz.y >= 1.5 and minf(sz.x, sz.z) <= 0.5
 
 
 func _shape_kind(co: CollisionObject3D, shp: int) -> String:
