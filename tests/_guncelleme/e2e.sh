@@ -104,8 +104,11 @@ sunucu_kapat
 # --- 3. yazılamaz klasör → sayfa yolu
 manifest "4.4.1" "$B_SHA"
 sunucu_ac 0
+# root için chmod engel değildir (ilk koşuda güncelleme yapıldı): root'ta klasör değişmez (immutable) yapılır
 chmod a-w "$ADIR"
-kanit "SENARYO yazilamaz_klasor:"; oto yazilamaz
+[ "$(id -u)" = "0" ] && chattr +i "$ADIR"
+kanit "SENARYO yazilamaz_klasor: ($(id -un), $(lsattr -d "$ADIR" 2>/dev/null | cut -d' ' -f1), $(stat -c %A "$ADIR"))"; oto yazilamaz
+[ "$(id -u)" = "0" ] && chattr -i "$ADIR"
 chmod u+w "$ADIR"
 grep -q "sayfa neden=UI_GUNC_N_YAZMA" "$E2E/yazilamaz.log" || hata "yazılamaz klasör sayfa yoluna düşmedi"
 a_saglam yazilamaz_klasor
