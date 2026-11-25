@@ -1241,3 +1241,7 @@ Her bölüm denetiminde ve her düzeltmede bu listeyi baştan uygula. Yeni bir h
   devrilmedi, düello hiç başlamadı ve `_duel_won` varsayılan `true` kaldı (dört tam pakette geçip beşincide düştü). Yük
   sanıldı; dört aynı anda koşuda tam günlükle `WAVERUNNER` satırının hiç basılmadığı görüldü. Bot artık her dört çekişin
   ilkini kaçırıyor (belirli).
+- **Seyrek denetim satırını sondayla zorla üret (0.99.128, CI #344).** 38o'da iki devriye eri aynı yükseklikte, 0,8 m
+  havada: `CityLife._form` tek karelerde yüksekliği izden alıyor, doğuşta izin ilk noktası reisin yüksekliğindeydi; erler
+  reis beklerken yerinden oynamayınca `_place` yüksekliği hiç düzeltmedi. Dört kopya koşu yakalamadı; sonda
+  (`tests/_ci344/devriye_yamac.gd`) devriyeyi tek karede 112 kez doğurdu: eski kod 112/112 havada (en çok 1,10 m), yeni 0.

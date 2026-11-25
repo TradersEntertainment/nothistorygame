@@ -1121,10 +1121,16 @@ func _spawn_patrol(ld: Agent, fl: Array, jump: bool) -> bool:
 	_activate(ld)
 	# Takım reisin arkasında, yolun geldiği yönde dizilir
 	var back := -Vector3(sin(ld.yaw), 0, cos(ld.yaw))
-	ld.trail = PackedVector3Array([ld.pos + back * 4.0, ld.pos])
+	# İzin ilk noktası ve erlerin yeri yüzeyde: _form tek karelerde yüksekliği izden alır; iz noktası reisin yüksekliğinde
+	# kalınca erler (reis beklerken yerinden oynamayıp _place yüksekliği düzeltmeyince) 38o'nun 1:2 yamacında reisin
+	# yüksekliğinde, 0,8 m havada duruyordu (CI #344 VISAUDIT float, iki er aynı y)
+	var tp := ld.pos + back * 4.0
+	tp.y = _surf(tp.x, tp.z)
+	ld.trail = PackedVector3Array([tp, ld.pos])
 	for f: Agent in fl:
 		var off := _form(ld, f.slot)
 		f.pos = off[0]
+		f.pos.y = _surf(f.pos.x, f.pos.z)
 		f.base = f.pos
 		f.yaw = ld.yaw
 		_activate(f)
