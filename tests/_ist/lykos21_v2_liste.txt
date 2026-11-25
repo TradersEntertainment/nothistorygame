@@ -1,0 +1,13 @@
+# G21 v2 bakışları (gezi.tscn liste=): ad e n yükseklik(arazi üstü; @ mutlak) yön(pusula) eğim
+y_bostan -4372 1566 1.7 40 -4
+y_harap_kilise -4166 1345 1.7 70 -1
+y_harap_kilise2 -4135 990 1.7 80 -1
+y_bos_meydan -4512 1342 1.7 70 -3
+y_dagnik_ev -3660 1528 1.7 55 -3
+h70_serit_romanos -4760 930 70 110 -30
+h70_serit_pempton -4460 1700 70 150 -32
+hub_sur_yolu -4776 858 14 107 -9
+yol_kapi -4288 826 1.7 83 -2
+yol_saray -3916 875 1.7 95 -2
+disari_sik -2000 900 1.7 0 -3
+disari_surdibi -4200 -500 1.7 0 -3

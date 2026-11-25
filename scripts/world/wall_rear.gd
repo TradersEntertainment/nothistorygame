@@ -707,7 +707,17 @@ func _serit_fill() -> void:
 	_serit_mod = true
 	serit_say = {"bostan": 0, "bag": 0, "harabe": 0, "meydan": 0, "agac": 0}
 	var meydanlar: Array = []
-	var x := SERIT_PEMPTON_X - 60.0
+	for gecis in 2:
+		_serit_tara(meydanlar, SERIT_PEMPTON_X - 60.0 + gecis * 13.0, gecis)
+	_serit_mod = false
+	rng = r0
+	if OS.get_environment("WORLD_PROF") != "" or GameState.autotest:
+		print("LYKOS21 eski_serit %s" % str(serit_say))
+
+
+## Şeridi sur boyunca sütun sütun tarar (ikinci geçiş 13 m kaydırılmış: birincinin arasında kalan yerler)
+func _serit_tara(meydanlar: Array, x0: float, gecis: int) -> void:
+	var x := x0
 	while x < SERIT_ROMANOS_X + 90.0:
 		var z := -depth(x) - rng.randf_range(4.0, 8.0)
 		if not _yolda(x):
@@ -719,6 +729,8 @@ func _serit_fill() -> void:
 				z -= 6.0
 				continue
 			var r := rng.randf()
+			if gecis == 1:
+				r = 0.09 + r * 0.91                      # ikinci geçişte meydan yok
 			var used := 0.0
 			if r < 0.09 and _meydan_uzak(meydanlar, px, z):
 				used = _serit_meydan(Vector3(px, 0, z))
@@ -741,12 +753,33 @@ func _serit_fill() -> void:
 				used = _agac_kumesi(Vector3(px, 0, z))
 				if used > 3.0:
 					serit_say["agac"] += 1
+			if used > 4.0:
+				_claim(Vector3(px, 0, z - used * 0.5), maxf(used * 0.5, 8.5))     # ikinci geçiş üstüne binmesin
+			if used <= 4.0:
+				used = maxf(used, _agac_kumesi(Vector3(px, 0, z)))
+				if used > 3.0:
+					_claim(Vector3(px, 0, z - used * 0.5), 5.5)     # sığmayan yere küçük ağaç kümesi
+				if used > 3.0:
+					serit_say["agac"] += 1
+				elif _kucuk(Vector3(px, 0, z - 2.0)):
+					serit_say["kucuk"] = int(serit_say.get("kucuk", 0)) + 1
 			z -= maxf(used, 4.0) + rng.randf_range(2.0, 5.0)
 		x += rng.randf_range(24.0, 30.0)
-	_serit_mod = false
-	rng = r0
-	if OS.get_environment("WORLD_PROF") != "" or GameState.autotest:
-		print("LYKOS21 eski_serit %s" % str(serit_say))
+
+
+## En küçük dolgu (sokak arasında kalan dar yer): tek meyve ağacı ve yanında ot yığını ya da kuyu
+func _kucuk(c: Vector3) -> bool:
+	if not _ok(c.x, c.z, 2.5) or not in_serit(c.x, c.z, -2.0):
+		return false
+	_claim(c, 2.5)
+	c.y = _y(c.x, c.z)
+	var s := rng.randf_range(0.8, 1.2)
+	d.cyl(0.12 * s, 1.6 * s, c + Vector3(0, 0.8 * s, 0), Color("5a4028"), Vector3.ZERO, 5)
+	d.ball(1.3 * s, c + Vector3(0, 2.3 * s, 0), Color("4a6a30").lightened(rng.randf() * 0.12), Vector3(1, 0.8, 1), 7)
+	d.solid(Vector3(0.3, 1.6, 0.3), c + Vector3(0, 0.8, 0))
+	if rng.randf() < 0.5:
+		d.hay(c + Vector3(1.6, 0, 0.4))
+	return true
 
 
 func _yolda(x: float) -> bool:
