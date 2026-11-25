@@ -1114,7 +1114,7 @@ func _doku() -> void:
 				for b in range(-1, 2):
 					if occ.has(Vector2i(floori(c.x / 16.0) + a, floori(c.y / 16.0) + b)):
 						ok = false
-			if WallRear.in_band(c.x, c.y, 10.0) or _blocked(Vector3(c.x, 0, c.y), 14.0) or (free_fn.is_valid() and not free_fn.call(c.x, c.y, 10.0, true)):
+			if WallRear.in_band(c.x, c.y, 10.0) or WallRear.in_serit(c.x, c.y, 10.0) or _blocked(Vector3(c.x, 0, c.y), 14.0) or (free_fn.is_valid() and not free_fn.call(c.x, c.y, 10.0, true)):
 				continue
 			var rng := RandomNumberGenerator.new()
 			rng.seed = hash(Vector2i(i, j)) ^ 1453
@@ -3342,6 +3342,8 @@ func _sehir_dokusu_v2() -> void:
 			it["make"] = func(nd: Node3D, lod: int) -> void: IstEvler.build_harabe(nd, 1.0, lod, tohum)
 		elif tur.begins_with("harabe_") or tur in ["kilise_kucuk", "sapel", "kilise_orta", "harap_kilise"]:
 			var kk := 0.75 if tur == "kilise_orta" else 1.0
+			if tur == "harap_kilise":
+				kk = clampf(minf(alan.x, alan.y) / 22.0, 0.75, 1.0)     # G21: yamaya sığsın (en küçük 9 × 16 m)
 			it["data"] = {"tur": "kilise"}
 			it["make"] = func(nd: Node3D, lod: int) -> void:
 				nd.set_meta("tohum", tohum)

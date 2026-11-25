@@ -1164,8 +1164,8 @@ func _dolgu_sokaklari(rng: RandomNumberGenerator, pass_i: int) -> void:
 				continue
 			var tur := _tur(p)
 			var yog := _yog(p)
-			if tur in ["kir", "bostan"] or yog < 0.18:
-				continue
+			if tur in ["kir", "bostan"] or yog < 0.18 or _serit(p):
+				continue                                # G21: şeritte dolgu sokağı yok (arası bostan/bağ yaması)
 			var hal := _aralik(tur, yog) * 0.62
 			# karenin büyük kısmı boş mu
 			var cells := _rect_cells(p, Vector2.RIGHT, Vector2.DOWN, hal, hal)
@@ -1327,12 +1327,16 @@ func _houses_along(s: int, rng: RandomNumberGenerator, ikinci := false) -> void:
 				var dolu := clampf(yog * 1.5, 0.0, 1.0)
 				if ikinci:
 					dolu = clampf(yog, 0.0, 0.9)
+				if serit:
+					dolu *= 0.4 if ikinci else 0.55        # G21: şeritte dağınık ev (kopuk köy öbekleri), sıra değil
 				if rng.randf() > dolu:
 					t += rng.randf_range(3.0, 8.0) / maxf(yog, 0.2)
 					continue
 				var maxrow := 60.0 if tur == "carsi" else (48.0 if tur in ["sik", "liman", "sur_dibi"] else (36.0 if tur == "orta" else (16.0 if tur == "seyrek" else 10.0)))
 				if stur == "savunma" and not serit:
 					maxrow = 54.0
+				if serit:
+					maxrow = minf(maxrow, 11.0)
 				var rowlen := minf(L - t - 0.5, maxrow * rng.randf_range(0.6, 1.0))
 				var used := _row(a + d * t, d, nrm, w, rowlen, tur, _latin(q), rng)
 				if used <= 0.0:
@@ -1852,6 +1856,18 @@ func _doku(rng: RandomNumberGenerator) -> void:
 			var yaw := rng.randf_range(-0.3, 0.3)
 			var u := Vector2.from_angle(-yaw)
 			var v := Vector2(-u.y, u.x)
+			# G21: şeritte harap kilise (harabe adalarında ve arada bir başka yerde; 120 m'de bir): 19 × 25 m'lik yer aranır
+			if serit and (_alt(c) == "harabe" or roll < 0.3) and _harap_kilise_yok(c):
+				var hal := Vector2(9.5, 12.5)
+				var hc := _yer_ara(c, u, v, hal.x, hal.y)
+				if hc == Vector2.INF:
+					hal = Vector2(7.5, 9.5)                  # küçük ölçek (k 0,75)
+					hc = _yer_ara(c, u, v, hal.x, hal.y)
+				if hc != Vector2.INF:
+					for k in _rect_cells(hc, u, v, hal.x, hal.y):
+						occ[k] = 5
+					doku.append({"tur": "harap_kilise", "c": hc, "alan": hal * 2.0, "yaw": yaw, "tohum": rng.randi() % 9973, "mt": tur})
+					continue
 			var pc := PackedInt32Array()
 			var ok := false
 			for sc: float in [1.0, 0.7, 0.45]:
@@ -1908,7 +1924,7 @@ func _doku(rng: RandomNumberGenerator) -> void:
 						continue
 					pick = "bahce"
 			# G21: şeritte harap kilise (yarım duvarlar, çökmüş kubbe kasnağı, devrik sütunlar; 120 m'de bir tane)
-			if serit and alan.x > 22.0 and alan.y > 22.0 and ((pick.begins_with("harabe") and roll < 0.45) or roll < 0.07) and _harap_kilise_yok(c):
+			if serit and alan.x > 17.0 and alan.y > 17.0 and (pick.begins_with("harabe") or _alt(c) == "harabe" or roll < 0.12) and _harap_kilise_yok(c):
 				pick = "harap_kilise"
 			if slope > 2.5 and pick in ["bostan", "bag", "bugday", "bahce", "cayir"]:
 				pick = "agaclik"
@@ -1974,10 +1990,27 @@ func _ogeler(rng: RandomNumberGenerator) -> void:
 	stats["oge_dolgu"] = n
 
 
-## G21: şeritte harap kilise 120 m'de bir
+## G21: c çevresinde (en çok 8 m kaydırarak) bütün hücreleri boş döndürülmüş dikdörtgen; yoksa INF
+func _yer_ara(c: Vector2, u: Vector2, v: Vector2, hx: float, hz: float) -> Vector2:
+	for o: Vector2 in [Vector2.ZERO, Vector2(6, 0), Vector2(-6, 0), Vector2(0, 6), Vector2(0, -6), Vector2(8, 8), Vector2(-8, -8), Vector2(8, -8), Vector2(-8, 8)]:
+		var q := c + u * o.x + v * o.y
+		var cells := _rect_cells(q, u, v, hx, hz)
+		if cells.has(-1):
+			continue
+		var ok := true
+		for k in cells:
+			if occ[k] != 0:
+				ok = false
+				break
+		if ok:
+			return q
+	return Vector2.INF
+
+
+## G21: şeritte harap kilise 100 m'de bir
 func _harap_kilise_yok(c: Vector2) -> bool:
 	for dk: Dictionary in doku:
-		if String(dk["tur"]) == "harap_kilise" and (dk["c"] as Vector2).distance_to(c) < 120.0:
+		if String(dk["tur"]) == "harap_kilise" and (dk["c"] as Vector2).distance_to(c) < 100.0:
 			return false
 	return true
 

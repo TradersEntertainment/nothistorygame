@@ -622,6 +622,8 @@ func _city() -> void:
 		var r := rng.randf_range(5.0, 8.5)
 		if world and (not World1453.in_city(p.x, p.z, 20.0) or not _free(p.x, p.z, 12.0, true) or CityPlan.blocked(p.x, p.z, r * 1.6) or WallRear.in_band(p.x, p.z, r * 2.0)):
 			continue
+		if world and WallRear.in_serit(p.x, p.z, r * 2.0):
+			continue                    # G21: Lykos şeridinde ayakta kilise yok (WallRear: yıkık kilise; rng çekimlerinden sonra)
 		p.y = city_surf(p.x, p.z) - 0.3
 		Props.box(self, Vector3(r * 2.4, r * 1.3, r * 2.0), p + Vector3(0, r * 0.65, 0), Color("b87060"))
 		Props.cyl(self, r * 0.62, r * 0.55, p + Vector3(0, r * 1.55, 0), Color("c8a890"), Vector3.ZERO, 12)

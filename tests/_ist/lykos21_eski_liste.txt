@@ -1,0 +1,11 @@
+# G21 eski dünya bakışları (dünya x sur boyunca, iç sur z ≈ −2,3, şehir −z; Romanos x 0/37, Pempton x −230)
+# ad x y z hedef_x hedef_y hedef_z
+# Sahibin karesi gibi: Romanos'a ~70 m yükseklikten, surun dışından içeri (43o drone)
+drone70_romanos 25 70 95 5 0 -160
+drone70_lykos -90 72 100 -90 0 -170
+drone60_pempton -210 60 90 -210 0 -170
+drone120_genis -50 120 180 -60 0 -260
+# WALLS_AT (43o: kuşun baktığı yer, dünya (10, 10, 13)) üstünden
+walls_at 10 55 70 10 10 -120
+# ordugâhtan surlara (ordugâh tepesinden, ~25 m)
+ordugah_surlar -40 25 330 -60 0 -150

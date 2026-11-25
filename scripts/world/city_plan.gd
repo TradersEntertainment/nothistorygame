@@ -416,6 +416,7 @@ static func _build() -> void:
 			_plz.append({"name": "Pazar", "c": _p[best], "r": 15.0, "kind": "market"})
 	_index_nodes()
 	_place_houses(rng)
+	_serit_suz()                # G21: Lykos şeridi (rng'den sonra: ev sırası ve şehrin kalanı kaymaz)
 	if OS.get_environment("WORLD_PROF") != "":
 		print("PROF cityplan nodes=%d edges=%d houses=%d plazas=%d %dms" % [_p.size(), _e.size(), _houses.size(), _plz.size(), Time.get_ticks_msec() - t0])
 
@@ -756,6 +757,44 @@ static func _house_fits(obb: Array) -> bool:
 				if _obb_overlap(obb, _houses[hi]["obb"], 0.25):
 					return false
 	return true
+
+
+## G21 — Lykos şeridinde (WallRear.in_serit: Romanos–Pempton, iç surdan 150–250 m) sıra evler seyrelir: yalnız kopuk
+## köy öbekleri kalır (60 m'lik karmalı hücrelerin ~üçte biri; öbeğin içinde her iki evden biri) — "dağınık ev". Sokaklar
+## kalır (halk yürür). Bostan, bağ, harabe, meydan WallRear'ın ek geçişinden. Ev karması yeniden kurulur.
+static var serit_say := Vector2i.ZERO       # (kalan, kalkan) şeritteki evler
+
+static func _serit_suz() -> void:
+	var keep: Array = []
+	var kalan := 0
+	var kalkan := 0
+	for h: Dictionary in _houses:
+		var obb: Array = h["obb"]
+		var c: Vector2 = obb[0]
+		if WallRear.in_serit(c.x, c.y, maxf(float(obb[2]), float(obb[3]))):
+			var hc := Vector2i(floori(c.x / 60.0), floori(c.y / 60.0))
+			var oba := _karma(hc.x * 7 + 3, hc.y * 13 - 5) < 0.36
+			if oba and _karma(roundi(c.x * 4.0), roundi(c.y * 4.0)) < 0.55:
+				keep.append(h)
+				kalan += 1
+			else:
+				kalkan += 1
+			continue
+		keep.append(h)
+	serit_say = Vector2i(kalan, kalkan)
+	if kalkan == 0:
+		return
+	_houses = keep
+	_hcell.clear()
+	for hi in _houses.size():
+		_hash_house(hi)
+
+
+static func _karma(i: int, j: int) -> float:
+	var h := (i * 73856093) ^ (j * 19349663) ^ 0x2545F491
+	h = (h ^ (h >> 13)) * 1274126177
+	h = h ^ (h >> 16)
+	return float(h & 0xffff) / 65535.0
 
 
 static func _hash_house(hi: int) -> void:
