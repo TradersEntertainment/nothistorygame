@@ -4,3 +4,4 @@ v0.2.1
 # 0.99.126 CI yeniden: VERSION değişmeyen düzeltme commit'i bu dosyanın değişmesiyle tetiklenir (etiket gönderimi kapalı).
 # 0.99.126 CI yeniden (2): 20 şafak repliği de aynı düzeltmeyle (CI #341 D20_G_DONE).
 # 0.99.128 CI yeniden: CityLife devriye erleri doğuşta yüzeyde (CI #344 38o VISAUDIT float).
+# 0.99.128 CI yeniden (2): EsyaFizik zorla dondurmada zemin, 36b Giustiniani/yürüyüş (CI #345 ESYATEST gomuk, 36b overlap).
