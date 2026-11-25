@@ -737,18 +737,17 @@ func _serit_tara(meydanlar: Array, x0: float, gecis: int) -> void:
 				if used > 4.0:
 					meydanlar.append(Vector2(px, z))
 					serit_say["meydan"] += 1
-			elif r < 0.44:
-				used = _plot(Vector3(px, 0, z))
-				if used > 4.0:
-					serit_say["bostan"] += 1
-			elif r < 0.68:
-				used = _orchard(Vector3(px, 0, z))
-				if used > 4.0:
-					serit_say["bag"] += 1
 			elif r < 0.84:
-				used = _ruin(Vector3(px, 0, z))
-				if used > 4.0:
-					serit_say["harabe"] += 1
+				# bostan / bağ / yıkık kilise: sokakların arasına sığsın diye üç yerde denenir
+				var tur := "bostan" if r < 0.44 else ("bag" if r < 0.68 else "harabe")
+				for o: Vector2 in [Vector2.ZERO, Vector2(7.0, -2.0), Vector2(-7.0, -2.0), Vector2(0.0, -5.0)]:
+					var q := Vector3(px + o.x, 0, z + o.y)
+					used = _plot(q) if tur == "bostan" else (_orchard(q) if tur == "bag" else _ruin(q))
+					if used > 4.0:
+						serit_say[tur] += 1
+						px = q.x
+						z = q.z
+						break
 			else:
 				used = _agac_kumesi(Vector3(px, 0, z))
 				if used > 3.0:
