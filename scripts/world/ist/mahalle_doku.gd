@@ -407,6 +407,7 @@ static func dosek_tex() -> ImageTexture:
 	if IstSokak._ob_kip() not in ["yok", "yaz"] and FileAccess.file_exists(ob_yol):
 		var oi := Image.load_from_file(ob_yol)
 		if oi != null and not oi.is_empty():
+			IstSokak.onbellek_dokun("dosek", ob_yol.get_file().get_basename().trim_prefix("dosek_"))
 			oi.generate_mipmaps()
 			_dosek = ImageTexture.create_from_image(oi)
 			return _dosek
@@ -469,12 +470,11 @@ static func dosek_tex() -> ImageTexture:
 			x += w
 	if IstSokak._ob_kip() != "yok":
 		DirAccess.make_dir_recursive_absolute(IstSokak.ONBELLEK_DIR)
-		var da := DirAccess.open(IstSokak.ONBELLEK_DIR)
-		if da != null:
-			for fn: String in da.get_files():
-				if fn.begins_with("dosek_") and IstSokak.ONBELLEK_DIR + fn != ob_yol:
-					da.remove(fn)
 		img.save_png(ob_yol)
+		var dim := ob_yol.get_file().get_basename().trim_prefix("dosek_")
+		IstSokak.onbellek_dokun("dosek", dim)
+		IstSokak.onbellek_buda("dosek", dim, "", func(fn: String) -> String:
+			return fn.substr(6, 20) if fn.length() == 30 and fn.begins_with("dosek_") and fn.ends_with(".png") else "")
 	img.generate_mipmaps()
 	_dosek = ImageTexture.create_from_image(img)
 	return _dosek

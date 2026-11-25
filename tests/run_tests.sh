@@ -74,7 +74,7 @@ run() {
   [ $? -eq 124 ] && echo "AUTOTEST TIMEOUT $*"
   # WALKTHRU (v0.91, Unclip.walk_audit): sahne betiğinin yürüttüğü karakter bir katının yüzeyinden geçti. v0.91'in
   # bulguları (38o, 39o) ve yalnız CI'da çıkanlar (26o, 12b) düzeltildi; paket 20 FPS'te de temiz: v0.93'ten beri hata
-  echo "$out" | grep -E "AUTOTEST|SCRIPT ERROR|Parse Error|WARN_|VISAUDIT|WALKTHRU|HELDAUDIT|ARMAUDIT|JOURNEY|^ESYAAUDIT (dusme|havada|gomuk|tikama|sinir)|^HAREKETAUDIT|^(VISAUDIT|GORUNMEZZEMIN|ALETAUDIT|DONUKAUDIT)(_ADAY)? |^GORUNMEZSINIR " | awk '!seen[$0]++'
+  echo "$out" | grep -E "AUTOTEST|SCRIPT ERROR|Parse Error|WARN_|VISAUDIT|WALKTHRU|HELDAUDIT|ARMAUDIT|JOURNEY|^ESYAAUDIT (dusme|havada|gomuk|tikama|sinir)|^HAREKETAUDIT|^(VISAUDIT|GORUNMEZZEMIN|ALETAUDIT|DONUKAUDIT)(_ADAY)? |^GORUNMEZSINIR |^YUKLEMEAUDIT_(ADAY|KESIN) " | awk '!seen[$0]++'
   echo "$out" | grep -q "AUTOTEST PASS" || fail=1
   echo "$out" | grep -q "SCRIPT ERROR" && fail=1
   # Ağır çekim/donma takılı kaldıysa (Fx bekçisi sıfırladı) bu bir hata
@@ -99,6 +99,9 @@ run() {
   # G17 denetimleri (tests/_denetim17/denetim17.gd): hayvan havada/gömük (VISAUDIT, yukarıda), görünmez zemin, iş
   # istasyonu aleti, donuk bekleme. "_ADAY" satırları yalnız listelenir; kesinleşen tür (KESIN) eksiz basar ve düşürür.
   echo "$out" | grep -qE "^(GORUNMEZZEMIN|ALETAUDIT|DONUKAUDIT) " && fail=1
+  # G19 yükleme canlılığı (LoadingScreen.nabiz, YUKLEMEAUDIT): kurulum penceresinde ana iş parçacığının en uzun boşluğu.
+  # Tek başına koşuda hedef < 1000 ms (_ADAY listelenir); pakette 8 parça CPU paylaştığı için kesin hata ≥ 2500 ms
+  echo "$out" | grep -q "^YUKLEMEAUDIT_KESIN " && fail=1
 }
 run --chapter=0 --autotest
 for v in "" "=kick" "=red"; do run --autotest$v; done

@@ -705,6 +705,7 @@ static var ob_say := {}
 static var _ob_imza := ""
 static var _ob_mat := {}
 static var _ob_temiz := false
+static var _ob_dokundu := false
 
 
 static func _ob_yol(v: int, tip: String, lod: int) -> String:
@@ -723,6 +724,9 @@ static func _ob_mesh_oku(v: int, tip: String, lod: int) -> Mesh:
 	var m := ResourceLoader.load(yol, "ArrayMesh", ResourceLoader.CACHE_MODE_IGNORE) as ArrayMesh
 	if m == null or not m.has_meta("ob_mat"):
 		return null
+	if not _ob_dokundu:
+		_ob_dokundu = true
+		IstSokak.onbellek_dokun("ev", _ob_imza)
 	var sig: PackedStringArray = m.get_meta("ob_mat")
 	if sig.size() != m.get_surface_count():
 		return null
@@ -782,11 +786,10 @@ static func _ob_mesh_yaz(v: int, tip: String, lod: int, m: Mesh) -> void:
 	if not _ob_temiz:
 		# eski imzalı ev ağları (kod değişmiş) silinir; oturumda bir kez
 		_ob_temiz = true
-		var da := DirAccess.open(IstSokak.ONBELLEK_DIR + "ev")
-		if da != null:
-			for fn: String in da.get_files():
-				if not fn.begins_with(_ob_imza + "_"):
-					da.remove(fn)
+		# G19: en son kullanılan IstSokak.ONBELLEK_SAKLA imza kalır (sokak.gd onbellek_buda)
+		IstSokak.onbellek_dokun("ev", _ob_imza)
+		IstSokak.onbellek_buda("ev", _ob_imza, "ev/", func(fn: String) -> String:
+			return fn.substr(0, 20) if fn.length() > 21 and fn.ends_with(".res") else "")
 	ResourceSaver.save(kopya, _ob_yol(v, tip, lod), ResourceSaver.FLAG_COMPRESS)
 	# yazılanın da aynı paylaşılan malzemeleri kullanması (çizim çağrısı birleşsin) okunanla aynı görünüş verir
 	for i in sig.size():

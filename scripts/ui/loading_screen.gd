@@ -144,11 +144,16 @@ static var _kapsam_evre := ""
 static var _nabizda := false
 static var _olay := -1             # -1 bilinmiyor, 0 kapalı (otomatik test), 1 açık
 static var _changing_once := false
+static var _once := -1
 
 
 static func nabiz(kaynak := "") -> void:
 	if _kapsam <= 0 and current == null and not _olc_acik:
 		return
+	if _once < 0:
+		_once = 1 if OS.get_environment("YUKLEME_ONCE") == "1" else 0
+	if _once == 1:
+		return            # ölçüm: "önce" (nabızsız; yalnız kareler canlılık noktası)
 	if _nabizda or OS.get_thread_caller_id() != OS.get_main_thread_id():
 		return
 	var now := Time.get_ticks_msec()

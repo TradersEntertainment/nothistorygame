@@ -1208,7 +1208,10 @@ func _item(it: Dictionary) -> void:
 	add_child(holder)
 	it["holder"] = holder
 	items.append(it)
-	_build(it, 2)
+	if IstBaglama.silinecek_mi(it):
+		IstBaglama.sil_atlanan += 1            # G19: _temizle siler; ağı kurulmaz
+	else:
+		_build(it, 2)
 
 
 # ---------------------------------------------------------------- Nihat'ın yan görevi
@@ -1481,6 +1484,13 @@ func _on_pisir() -> void:
 		if not hat and mod == "v2" and not id.begins_with("mese_") and not id in ["ayasofya", "blakherna", "bozdogan", "zincir", "hub_sehir", "meydan_aya_cevre"]:
 			continue
 		var h := it["holder"] as Node3D
+		if IstBaglama.silinecek_mi(it):
+			# G19: _temizle siler (aynı ölçüt): ağ kurulmaz, kayıt durumu aynı
+			IstBaglama.sil_atlanan += 1
+			it["pre"] = [null, null, null]
+			it["want"] = 2
+			_show(it)
+			continue
 		_build(it, 1)
 		if hat:
 			# sur dilimi: orta katman açılışta (lod 0 akışta: dilim başına ön-pişirme bellek açısından çok pahalı)
@@ -1973,7 +1983,10 @@ func _place_v2() -> void:
 			it["b2"] = Vector2(p.x, p.z) + hd * gl * 0.5
 			it["kapi_hat"] = ad_h
 		items.append(it)
-		_build(it, 2)
+		if IstBaglama.silinecek_mi(it):
+			IstBaglama.sil_atlanan += 1        # G19: _temizle siler; ağı kurulmaz
+		else:
+			_build(it, 2)
 		_perch_pad(it)
 
 	# Ayasofya meydanı oyun alanı: döşeme, kenar taşı, çınarlar, tezgâhlar, çeşme (orta alan boş; ŞEHİR-3)
@@ -2012,6 +2025,8 @@ func _place_v2() -> void:
 		# bölümün kaldırımı (üstü yerel y 0) arazinin üstünde kalsın: arazi 12 cm aşağıda düzlenir
 		IstGeo.duzle(Vector2(hc.x, hc.z), 48.0, hx.origin.y - 0.12, 10.0)
 		# Hub şehri tek katmanlı öğe (kendi uzaklık katmanları var); BAĞLAMA bölümde (7b) alanı temizlerken kalkar
+		if IstBaglama._sil_acik:
+			print("ISTBAGLAMA sil_hub place=%s olcut=%s ayni=%s" % [hx.origin, IstBaglama._sil_hub, hx.origin.is_equal_approx(IstBaglama._sil_hub)])
 		_v2_item("hub_sehir", hx.origin, 0.0, 50.0, _make_hub)
 
 
@@ -2146,6 +2161,8 @@ func _v2_item(id: String, p: Vector3, yaw: float, r: float, make: Callable, data
 		it["no2"] = true
 		it["r1"] = HAT_BEGIN + HAT_CELL * 0.75 - r
 		_hat_far_add(it)
+	elif IstBaglama.silinecek_mi(it):
+		IstBaglama.sil_atlanan += 1            # G19: _temizle siler; ağı kurulmaz
 	else:
 		_build(it, 2)
 	return it

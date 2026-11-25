@@ -458,6 +458,11 @@ static func build(parent: Node3D, region_name: String, keep_local: Array, _night
 					m.set("_oyun", [_rect_xf(xf, OYUN_31O) if region_name == B31O else hub_alan, IstSehir._meydan_rect()]))
 	f.child_entered_tree.connect(dinle)
 	LoadingScreen.nabiz("baglama_bas")
+	_sil_bolge = region_name
+	_sil_alan = temiz
+	_sil_hub = hub_x.origin
+	sil_atlanan = 0
+	_sil_acik = atla_acik
 	dunya = IstDunya.build(f, gece, merkez) as IstDunya
 	LoadingScreen.nabiz("baglama_dunya")
 	f.child_entered_tree.disconnect(dinle)
@@ -511,23 +516,46 @@ static func _hub_dondur(hub_x: Transform3D) -> void:
 const KORU := ["romanos"]
 
 ## Bölümün alanındaki v2 yapıları (IstSehir öğeleri, ordugâh öğeleri) kaldırılır: bölüm orada kendi sahnesini kurar
+## G19 (KESME B): _temizle'nin sileceği öğe mi? Tek ölçüt: IstSehir kurulurken (_place_v2, _v2_item, _on_pisir) silinecek
+## öğelerin ağ kurulumu atlanır (öğe sözlüğü, tutucu, düzleme, çakışma çözümü aynen kalır; yalnız _build yapılmaz),
+## _temizle de aynı işlevle siler. Yalnız IstBaglama.build içindeki kurulum sürerken doğru döner (statik bayrak; aktif_bolge
+## bayat kalabilir). hub_sehir'in yeri _temizle'den önce _hub_dondur'da hub_x.origin olur: ölçüt onu kullanır (_place_v2
+## anında da pos = hub_xf().origin = hub_x.origin; günlükte ISTBAGLAMA sil_hub satırı).
+static var _sil_acik := false
+static var atla_acik := not OS.get_cmdline_user_args().has("--sil-atla=0")     # ölçüm: --sil-atla=0 eski yol
+static var _sil_bolge := ""
+static var _sil_alan := Rect2()
+static var _sil_hub := Vector3.INF
+static var sil_atlanan := 0
+
+
+static func silinecek_mi(it: Dictionary) -> bool:
+	if not _sil_acik:
+		return false
+	var id := String(it.get("id", ""))
+	# TAŞIMA-10: yeni hub surunda şehrin Romanos kapı dilimi de kalkar: yerine aynı dilimin oynanır kesimi (SurHub) kurulur
+	var koru: Array = [] if ((_sil_bolge == "byz_walls" and SurHub.sahnede()) or _sil_bolge == "gate8y" or _sil_bolge == B31O) else KORU
+	if id in koru:
+		return false
+	# TAŞIMA-10: yeni surda şehrin kara suru dilimleri kalır (hub'ın kutu suru artık onları örtmüyor; kaldırılınca
+	# Romanos kesiminin güneyinde 30 m sur boşluğu kalıyordu). Kalkan yalnız şehrin Romanos kapı dilimi (yerine kesim).
+	if koru.is_empty() and String(it.get("hat", "")) == "kara_suru":
+		return false
+	var p: Vector3 = _sil_hub if (id == "hub_sehir" and _sil_hub != Vector3.INF) else it["pos"]
+	var r := float(it.get("r", 0.0))
+	return yerel_icinde(_sil_alan.grow(r * 0.5), p.x, p.z)
+
+
 static func _temizle(region_name: String, alan: Rect2) -> void:
 	var n_s := 0
 	var s := IstSehir.active
-	# TAŞIMA-10: yeni hub surunda şehrin Romanos kapı dilimi de kalkar: yerine aynı dilimin oynanır kesimi (SurHub) kurulur
-	var koru: Array = [] if ((region_name == "byz_walls" and SurHub.sahnede()) or region_name == "gate8y" or region_name == B31O) else KORU
+	_sil_bolge = region_name
+	_sil_alan = alan
+	_sil_acik = true
 	if s != null:
 		for i in range(s.items.size() - 1, -1, -1):
 			var it: Dictionary = s.items[i]
-			var p: Vector3 = it["pos"]
-			var r := float(it.get("r", 0.0))
-			if String(it.get("id", "")) in koru:
-				continue
-			# TAŞIMA-10: yeni surda şehrin kara suru dilimleri kalır (hub'ın kutu suru artık onları örtmüyor; kaldırılınca
-			# Romanos kesiminin güneyinde 30 m sur boşluğu kalıyordu). Kalkan yalnız şehrin Romanos kapı dilimi (yerine kesim).
-			if koru.is_empty() and String(it.get("hat", "")) == "kara_suru":
-				continue
-			if yerel_icinde(alan.grow(r * 0.5), p.x, p.z):
+			if silinecek_mi(it):
 				it["want"] = 99            # kuyrukta bekleyen işi kurulmaz
 				var h = it.get("holder")
 				if h is Node and is_instance_valid(h):
@@ -535,7 +563,9 @@ static func _temizle(region_name: String, alan: Rect2) -> void:
 				s.items.remove_at(i)
 				n_s += 1
 	var n_o := _ordu_suzulen        # ordugâh planı kurulmadan süzüldü (build)
+	_sil_acik = false
 	print("ISTBAGLAMA temizle bolge=%s sehir_oge=%d ordugah_oge=%d" % [region_name, n_s, n_o])
+	print("ISTBAGLAMA sil_atlanan=%d" % sil_atlanan)
 
 
 # ------------------------------------------------------------------ uçuş
