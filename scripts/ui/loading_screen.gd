@@ -163,6 +163,9 @@ static func nabiz(kaynak := "") -> void:
 		return
 	var gap := now - _last_pump
 	if gap < 150:
+		if _iz > 0:
+			_son_cagri = kaynak
+			_son_cagri_t = now
 		return
 	_bosluk_yaz(gap, kaynak)
 	_last_pump = now
@@ -219,6 +222,12 @@ static func kapsam_acik() -> bool:
 	return _kapsam > 0
 
 
+## Nabız şu an çalışır mı (kurulum kapsamı, perde ya da ölçüm penceresi açık): ağır tek çağrılar (önbellek okuma) iş
+## parçacığına alınıp beklerken nabız atılır
+static func nabiz_acik() -> bool:
+	return _kapsam > 0 or current != null or _olc_acik
+
+
 ## G19 — YUKLEMEAUDIT: yükleme penceresindeki en uzun "canlılık boşluğu" (iki nabız ya da kare arası; ana iş parçacığı
 ## bu sürede pencere iletisi işlemedi). Pencere sahne değişiminin (ya da bölüm ortası kurulumun) başından sahne hazır
 ## olduktan 5 kare sonrasına kadar. Ölçüm kipinde (otomatik test ya da YUKLEMEAUDIT=1) her kare de bir canlılık noktasıdır.
@@ -241,13 +250,15 @@ static func olcum_kipi() -> bool:
 
 
 static var _iz := -1
+static var _son_cagri := ""
+static var _son_cagri_t := 0
 
 
 static func _bosluk_yaz(gap: int, kaynak: String) -> void:
 	if _iz < 0:
 		_iz = int(OS.get_environment("YUKLEME_IZ")) if OS.get_environment("YUKLEME_IZ") != "" else 0
 	if _iz > 0 and gap >= _iz:
-		print("YUKLEMEIZ %d %s>%s" % [gap, _son_kaynak, kaynak])
+		print("YUKLEMEIZ %d %s>%s son_cagri=%s +%d" % [gap, _son_kaynak, kaynak, _son_cagri, Time.get_ticks_msec() - _son_cagri_t])
 	if _olc_acik and gap > _olc_en:
 		_olc_en = gap
 		_olc_kaynak = "%s>%s" % [_son_kaynak if _son_kaynak != "" else "bas", kaynak if kaynak != "" else "?"]

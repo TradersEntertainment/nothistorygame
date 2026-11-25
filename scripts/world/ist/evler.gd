@@ -683,14 +683,17 @@ static func mesh(v: int, tip: String, lod: int) -> Mesh:
 		return _mesh_cache[key]
 	var t0 := Time.get_ticks_usec()
 	var om := _ob_mesh_oku(v, tip, lod)
+	LoadingScreen.nabiz("ev_oku")
 	if om != null:
 		_mesh_cache[key] = om
 		ob_say["okundu"] = int(ob_say.get("okundu", 0)) + 1
 		ob_say["us"] = int(ob_say.get("us", 0)) + Time.get_ticks_usec() - t0
 		return om
 	var m := _mesh_kur(v, tip, lod)
+	LoadingScreen.nabiz("ev_kur")
 	_mesh_cache[key] = m
 	_ob_mesh_yaz(v, tip, lod, m)
+	LoadingScreen.nabiz("ev_yaz")
 	ob_say["kuruldu"] = int(ob_say.get("kuruldu", 0)) + 1
 	ob_say["us"] = int(ob_say.get("us", 0)) + Time.get_ticks_usec() - t0
 	return m
@@ -805,6 +808,7 @@ static func _mesh_kur(v: int, tip: String, lod: int) -> Mesh:
 	else:
 		var d := dims(v)
 		ev(tmp, d.x, d.z, d.y, _tohum(v, tip), lod, tip)
+	LoadingScreen.nabiz("ev_govde")
 	var list: Array = []
 	for n in tmp.find_children("*", "MeshInstance3D", true, false):
 		list.append(n)

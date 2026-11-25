@@ -79,6 +79,7 @@ static func solidify(mi: MultiMeshInstance3D, ab: AABB, xforms: Array, shrink :=
 	body.set_meta("proxy", true)      # yaklaşık biçim: üstü zemin sayılmaz (Dressing üstüne eşya koymasın)
 	mi.add_child(body)
 	var pts := PackedVector3Array()
+	LoadingScreen.nabiz("solidify")
 	if hull and mi.multimesh and mi.multimesh.mesh:
 		var cvx := mi.multimesh.mesh.create_convex_shape(true, true) as ConvexPolygonShape3D
 		if cvx:

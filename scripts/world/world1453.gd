@@ -282,9 +282,11 @@ static func build(parent: Node3D, region_name: String, keep_local: Array, night 
 	SiegeField.blend_rects = br
 	parent.add_child(f)
 	f.build()
+	LoadingScreen.nabiz("w1453_alan")
 	f.set_mode("night" if night else "day")
 	# Her yer yürünür: dünyanın görüntüsü katılaşır (karelere yayılarak)
 	WorldWalk.attach(f)
+	LoadingScreen.nabiz("w1453_yuru")
 	# Yaşayan şehir: oyuncunun çevresinde siviller ve devriyeler (dönem bölümden; testlerin dünyalarına eklenmez)
 	if CityLife.auto_ok(parent):
 		CityLife.attach(f, CityLife.opts_for(parent, night))
@@ -292,12 +294,17 @@ static func build(parent: Node3D, region_name: String, keep_local: Array, night 
 		match fr:
 			"byz_walls":
 				ByzCity.far_hub(f, region(fr))
+				LoadingScreen.nabiz("w1453_hub")
+	LoadingScreen.nabiz("w1453_sehir_once")
 	# İstanbul 1453 parçaları (scripts/world/ist: anıtlar, surlar, limanlar, ayrıntı): mesafeyle kurulur/boşaltılır
 	IstSehir.attach(f)
+	LoadingScreen.nabiz("w1453_sehir")
 	# Ateşler: Dressing.glow kutuları (ordugâhın, ovanın, surların, kıyının gece ateşleri) alev ve haleye çevrilir
 	Flame.from_glow_boxes(f)
+	LoadingScreen.nabiz("w1453_alev")
 	# Gölgelendiriciler yüklemede derlensin (yaklaşınca donma olmasın)
 	ShaderWarmup.after_world(f)
+	LoadingScreen.nabiz("w1453_isinma")
 	return f
 
 

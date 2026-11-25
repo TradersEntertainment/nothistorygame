@@ -367,13 +367,34 @@ static func onbellek_oku(ad: String, imza: String) -> Variant:
 	var yol := ONBELLEK_DIR + ad + "_" + imza + ".bin"
 	if not FileAccess.file_exists(yol):
 		return null
+	# G19: ana iş parçacığında (kurulum kapsamı/perde/ölçüm açıkken) büyük dosya iş parçacığında açılır; beklerken nabız
+	if LoadingScreen.nabiz_acik() and OS.get_thread_caller_id() == OS.get_main_thread_id():
+		var kutu := []
+		var id := WorkerThreadPool.add_task(func() -> void: kutu.append(_dosya_oku(yol)), false, "ist_onbellek_oku_" + ad)
+		var tb := Time.get_ticks_msec()
+		while not WorkerThreadPool.is_task_completed(id):
+			LoadingScreen.nabiz("onbellek_oku_bekle")
+			OS.delay_msec(2)
+		WorkerThreadPool.wait_for_task_completion(id)
+		var bekle := Time.get_ticks_msec() - tb
+		if bekle > 50:
+			print("ISTONBELLEK oku_bekle ad=%s ms=%d" % [ad, bekle])
+		var v0 = kutu[0] if not kutu.is_empty() else null
+		if v0 != null:
+			onbellek_dokun(ad, imza)
+		return v0
+	var v = _dosya_oku(yol)
+	if v != null:
+		onbellek_dokun(ad, imza)
+	return v
+
+
+static func _dosya_oku(yol: String) -> Variant:
 	var f := FileAccess.open_compressed(yol, FileAccess.READ, FileAccess.COMPRESSION_ZSTD)
 	if f == null:
 		return null
 	var v = f.get_var(false)
 	f.close()
-	if v != null:
-		onbellek_dokun(ad, imza)
 	return v
 
 

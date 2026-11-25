@@ -134,6 +134,7 @@ func build() -> void:
 	_no_mans_land()
 	await _step("_no_mans_land()")
 	_trench()
+	LoadingScreen.nabiz("siegefield_hendek")
 	await _step("_trench()")
 	_batteries()
 	await _step("_batteries()")
