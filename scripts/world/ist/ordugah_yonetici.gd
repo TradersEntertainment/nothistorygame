@@ -37,6 +37,7 @@ func kur(plan: Array) -> void:
 	var t0 := Time.get_ticks_msec()
 	var by := {}
 	for i in items.size():
+		LoadingScreen.nabiz("ordugah")
 		var it: Dictionary = items[i]
 		var p: Vector2 = it["pos"]
 		it["y"] = IstGeo.h(p.x, p.y)
@@ -47,6 +48,7 @@ func kur(plan: Array) -> void:
 			by[ck] = []
 		by[ck].append(i)
 	for ck: Vector2i in by:
+		LoadingScreen.nabiz("ordugah")
 		var cen := Vector2((ck.x + 0.5) * HUCRE, (ck.y + 0.5) * HUCRE)
 		var st := SurfaceTool.new()
 		st.begin(Mesh.PRIMITIVE_TRIANGLES)
@@ -54,6 +56,7 @@ func kur(plan: Array) -> void:
 		var n := 0
 		var ates_x: Array = []
 		for i: int in by[ck]:
+			LoadingScreen.nabiz("ordugah")
 			var it: Dictionary = items[i]
 			var host := _kur_host(i, 2)
 			var base := Transform3D(Basis(Vector3.UP, float(it["yaw"])), Vector3((it["pos"] as Vector2).x - cen.x, float(it["y"]), (it["pos"] as Vector2).y - cen.y))
@@ -100,6 +103,7 @@ static func _uzak_mat() -> StandardMaterial3D:
 func _pisir(top: Node, n: Node, xf: Transform3D, st: SurfaceTool) -> int:
 	var cnt := 0
 	for c in n.get_children():
+		LoadingScreen.nabiz("ordugah")
 		if c is Node3D and not (c as Node3D).visible:
 			continue
 		var cx := xf * ((c as Node3D).transform if c is Node3D else Transform3D.IDENTITY)
@@ -156,6 +160,8 @@ static func _ekle(st: SurfaceTool, m: Mesh, si: int, xf: Transform3D, col: Color
 	var hasn: bool = ns is PackedVector3Array and (ns as PackedVector3Array).size() == vs.size()
 	var hasc: bool = cs is PackedColorArray and (cs as PackedColorArray).size() == vs.size()
 	for k in cnt:
+		if (k & 4095) == 0:
+			LoadingScreen.nabiz("ordugah_ekle")
 		var i: int = idx[k] if idx.size() > 0 else k
 		var c := col
 		if hasc:

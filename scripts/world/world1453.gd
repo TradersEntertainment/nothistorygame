@@ -436,6 +436,7 @@ static var _tex_avg := {}
 static func bake(list: Array, top: Node3D, xf: Transform3D, parent: Node3D, node_name := "Baked", min_size := 0.05, max_tris := 0, flat := false) -> MeshInstance3D:
 	var groups := {}           # anahtar -> [v, n, c, malzeme]
 	for n: MeshInstance3D in list:
+		LoadingScreen.nabiz("w1453_bake")
 		if n.mesh == null or not n.visible:
 			continue
 		var sz := n.mesh.get_aabb().size * n.scale.abs()
@@ -519,6 +520,8 @@ static func bake(list: Array, top: Node3D, xf: Transform3D, parent: Node3D, node
 			var count := idx.size() if idx.size() > 0 else sv.size()
 			var c3 := Color(col.r, col.g, col.b, 1.0)
 			for k in count:
+				if (k & 4095) == 0:
+					LoadingScreen.nabiz("w1453_bake")
 				var i: int = idx[k] if idx.size() > 0 else k
 				st.set_color(c3)
 				st.set_normal((nb * (sn[i] if sn.size() > i else Vector3.UP)).normalized())
@@ -530,10 +533,13 @@ static func bake(list: Array, top: Node3D, xf: Transform3D, parent: Node3D, node
 	for key: String in groups:
 		var g: Array = groups[key]
 		var st: SurfaceTool = g[0]
+		LoadingScreen.nabiz("w1453_bake")
 		st.index()
 		im.add_surface(Mesh.PRIMITIVE_TRIANGLES, st.commit_to_arrays(), [], {}, g[1])
+	LoadingScreen.nabiz("w1453_bake")
 	if im.get_surface_count() > 0:
 		im.generate_lods(25.0, 60.0, [])
+	LoadingScreen.nabiz("w1453_lod")
 		mi.mesh = im.get_mesh()
 	mi.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_ON
 	parent.add_child(mi)

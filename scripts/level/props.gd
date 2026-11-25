@@ -615,6 +615,7 @@ static func bake_static(root: Node3D, nodes: Array) -> int:
 	var inv := root.global_transform.affine_inverse()
 	var st: Array = nodes.duplicate()
 	while st.size() > 0:
+		LoadingScreen.nabiz("props_bake")
 		var n: Node = st.pop_back()
 		# Karakterler (canlandırılır), dönen/hareket eden işaretliler ve çarpışması mesh'in altında olanlar birleşmez
 		if n.has_meta("no_bake") or n is Person or n is Soldier or n is Hikmet or n is CharacterBody3D:
@@ -646,6 +647,8 @@ static func bake_static(root: Node3D, nodes: Array) -> int:
 		var nb := xf.basis.inverse().transposed()
 		var count: int = idx.size() if idx != null and idx.size() > 0 else verts.size()
 		for j in count:
+			if (j & 4095) == 0:
+				LoadingScreen.nabiz("props_bake")
 			var i: int = idx[j] if idx != null and idx.size() > 0 else j
 			s2.set_color(mat.albedo_color * (cols[i] if cols != null and cols.size() > i else Color.WHITE))
 			if norms != null and norms.size() > i:
@@ -656,6 +659,7 @@ static func bake_static(root: Node3D, nodes: Array) -> int:
 		var g: Array = groups[k]
 		var out := MeshInstance3D.new()
 		out.name = "Baked"
+		LoadingScreen.nabiz("props_bake")
 		out.mesh = (g[1] as SurfaceTool).commit()
 		out.material_override = g[0]
 		out.cast_shadow = g[2]

@@ -208,14 +208,19 @@ func build(foot: Array, bands: Array, gates: Array, tohum := 1453) -> void:
 	if ob is Dictionary and _onbellekten(ob):
 		stats["onbellek"] = "okundu"
 		stats["ms"] = Time.get_ticks_msec() - t0
+		LoadingScreen.nabiz("sokak_ob")
 		cati_parca = IstCati.uygula(self)
+		LoadingScreen.nabiz("sokak_cati")
 		katman_bagla()
 		return
 	_build_hesapla(foot, bands, gates, tohum)
+	LoadingScreen.nabiz("sokak_hesap")
 	onbellek_yaz("sokak", imza, _onbellege())
+	LoadingScreen.nabiz("sokak_yaz")
 	stats["onbellek"] = "yazildi" if onbellek_kip == "" else onbellek_kip
 	stats["ms"] = Time.get_ticks_msec() - t0
 	cati_parca = IstCati.uygula(self)
+	LoadingScreen.nabiz("sokak_cati")
 	katman_bagla()
 
 

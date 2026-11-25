@@ -127,36 +127,243 @@ static var current: LoadingScreen = null
 static var _last_pump := 0
 
 
+## Eski ad (Props._place): genel nabza yönlenir.
 static func pump() -> void:
-	if current == null:
+	nabiz("props")
+
+
+## G19 — Genel nabız. Ağır kurulum döngüleri (v2 şehri, ordugâh, pişirme, SiegeField...) bunu sık sık çağırır; son
+## nabızdan 150 ms geçtiyse pencere iletileri işlenir (Windows "yanıt vermiyor" demesin), perde açıksa perde de çizilir.
+## Yalnız açık bir kurulum kapsamında (kurulum_basla/kurulum_bitir ya da yükleme perdesi) çalışır: oynanışta Props._place
+## (kor parçası vb.) çağırınca tek bir if ile döner; kare ortasında olay boşaltmak tuş/fare olaylarını kaybettirirdi.
+## Perde yokken force_draw YOK (yarım 3B sahne çizilir, frame_post_draw bekleyen eşyordamlar kurucunun ortasında uyanır).
+## Otomatik testte process_events çağrılmaz (botların Input.parse_input_event olayları boşalmasın), yalnız saat tutulur;
+## pencereli kanıt koşusu YUKLEME_OLAY=1 ile olayları işler. Yalnız ana iş parçacığı; iç içe çağrı yok.
+static var _kapsam := 0
+static var _kapsam_evre := ""
+static var _nabizda := false
+static var _olay := -1             # -1 bilinmiyor, 0 kapalı (otomatik test), 1 açık
+static var _changing_once := false
+
+
+static func nabiz(kaynak := "") -> void:
+	if _kapsam <= 0 and current == null and not _olc_acik:
+		return
+	if _nabizda or OS.get_thread_caller_id() != OS.get_main_thread_id():
 		return
 	var now := Time.get_ticks_msec()
 	if _last_pump == 0:
 		_last_pump = now
+		_son_kaynak = kaynak
 		return
-	if now - _last_pump < 150:
+	var gap := now - _last_pump
+	if gap < 150:
 		return
-	if not is_instance_valid(current) or not current.is_inside_tree():
+	_bosluk_yaz(gap, kaynak)
+	_last_pump = now
+	_son_kaynak = kaynak
+	if _kapsam <= 0 and current == null:
+		return
+	if _olay < 0:
+		_olay = 1 if (not GameState.autotest or OS.get_environment("YUKLEME_OLAY") == "1") else 0
+	if _olay == 0:
+		return
+	_nabizda = true
+	var root := (Engine.get_main_loop() as SceneTree).root
+	var perde := current != null and is_instance_valid(current) and current.is_inside_tree()
+	if current != null and not perde:
 		current = null
-		return
-	current._process(minf((now - _last_pump) / 1000.0, 0.25))
-	var root := current.get_tree().root
+	if perde:
+		current._process(minf(gap / 1000.0, 0.25))
 	var was := root.gui_disable_input
 	root.gui_disable_input = true
 	DisplayServer.process_events()
 	root.gui_disable_input = was
-	# Yalnız perde çizilir: arkadaki yarım kurulmuş 3B sahne (opak perdenin altında görünmez) çizilseydi her pompada
-	# yeni malzemelerin gölgelendiricileri derlenirdi (yazılımla çizimde kare başına 50 sn)
-	var d3 := root.disable_3d
-	root.disable_3d = true
-	RenderingServer.force_draw(true, 0.0)
-	root.disable_3d = d3
+	if perde:
+		# Yalnız perde çizilir: arkadaki yarım kurulmuş 3B sahne (opak perdenin altında görünmez) çizilseydi her pompada
+		# yeni malzemelerin gölgelendiricileri derlenirdi (yazılımla çizimde kare başına 50 sn)
+		var d3 := root.disable_3d
+		root.disable_3d = true
+		RenderingServer.force_draw(true, 0.0)
+		root.disable_3d = d3
+	_nabizda = false
 	_last_pump = Time.get_ticks_msec()
+
+
+## Perdesiz kurulum kapsamı (bölüm ortası yeniden kurulum, beyaz kararma altında): nabız bu sürede çalışır, sahne
+## değişimi beklemede sayılır (GameState.changing: duraklatma menüsü açılmaz, Hud._ready bayrağı indirmez).
+static func kurulum_basla(evre := "") -> void:
+	if _kapsam == 0:
+		_kapsam_evre = evre
+		_last_pump = Time.get_ticks_msec()
+		_changing_once = GameState.changing
+		GameState.changing = true
+	_kapsam += 1
+
+
+static func kurulum_bitir() -> void:
+	if _kapsam <= 0:
+		return
+	_kapsam -= 1
+	if _kapsam == 0:
+		GameState.changing = _changing_once
+		_changing_once = false
+
+
+static func kapsam_acik() -> bool:
+	return _kapsam > 0
+
+
+## G19 — YUKLEMEAUDIT: yükleme penceresindeki en uzun "canlılık boşluğu" (iki nabız ya da kare arası; ana iş parçacığı
+## bu sürede pencere iletisi işlemedi). Pencere sahne değişiminin (ya da bölüm ortası kurulumun) başından sahne hazır
+## olduktan 5 kare sonrasına kadar. Ölçüm kipinde (otomatik test ya da YUKLEMEAUDIT=1) her kare de bir canlılık noktasıdır.
+##   ilk_kare_ms: sahne hazır olduktan sonraki ilk tam kare (çizim dahil); bosalt_ms: eski sahnenin boşaltılması.
+static var _olc_acik := false
+static var _olc_evre := ""
+static var _olc_scene := ""
+static var _olc_t0 := 0
+static var _olc_en := 0
+static var _olc_kaynak := ""
+static var _olc_bosalt := -1
+static var _olc_ilk_kare := -1
+static var _olc_kare_en := 0     # pencereli: perde kalktıktan sonraki ilk 60 karenin en uzunu
+static var _son_kaynak := ""
+static var _olcer: Node = null
+
+
+static func olcum_kipi() -> bool:
+	return GameState.autotest or OS.get_environment("YUKLEMEAUDIT") == "1"
+
+
+static var _iz := -1
+
+
+static func _bosluk_yaz(gap: int, kaynak: String) -> void:
+	if _iz < 0:
+		_iz = int(OS.get_environment("YUKLEME_IZ")) if OS.get_environment("YUKLEME_IZ") != "" else 0
+	if _iz > 0 and gap >= _iz:
+		print("YUKLEMEIZ %d %s>%s" % [gap, _son_kaynak, kaynak])
+	if _olc_acik and gap > _olc_en:
+		_olc_en = gap
+		_olc_kaynak = "%s>%s" % [_son_kaynak if _son_kaynak != "" else "bas", kaynak if kaynak != "" else "?"]
+
+
+## Ölçüm penceresi açılır (ölçüm kipinde). sahne_bekle: yeni sahnenin hazır olmasını bekler (sahne değişimi); değilse
+## olcum_kapat() çağrılana kadar açık kalır (bölüm ortası kurulum).
+static func olcum_ac(evre: String, sahne_bekle: bool) -> void:
+	if not olcum_kipi():
+		return
+	if _olc_acik:
+		_olc_evre += "+" + evre
+		return
+	_olc_acik = true
+	_olc_evre = evre
+	_olc_scene = ""
+	_olc_t0 = Time.get_ticks_msec()
+	_olc_en = 0
+	_olc_kaynak = ""
+	_olc_bosalt = -1
+	_olc_ilk_kare = -1
+	_olc_kare_en = 0
+	_son_kaynak = "bas:" + evre
+	_last_pump = _olc_t0
+	var tree := Engine.get_main_loop() as SceneTree
+	_olcer = _Olcer.new()
+	_olcer.set("sahne_bekle", sahne_bekle)
+	_olcer.set("eski", tree.current_scene)
+	tree.root.add_child.call_deferred(_olcer)
+
+
+static func olcum_kapat() -> void:
+	if _olc_acik and is_instance_valid(_olcer):
+		_olcer.set("bitti", true)
+
+
+static func olcum_bosalt(ms: int) -> void:
+	if _olc_acik:
+		_olc_bosalt = ms
+
+
+static func _kare(now: int) -> void:
+	if _last_pump > 0:
+		var gap := now - _last_pump
+		if gap > 0:
+			_bosluk_yaz(gap, "kare")
+	_last_pump = now
+	_son_kaynak = "kare"
+
+
+static func _olcum_yaz(sc: Node) -> void:
+	var scene := ""
+	if sc != null and is_instance_valid(sc):
+		scene = sc.scene_file_path.get_file().get_basename()
+		if scene == "" and sc.get_child_count() > 0:
+			scene = String(sc.name)
+	var top := Time.get_ticks_msec() - _olc_t0
+	var satir := "scene=%s evre=%s toplam_ms=%d en_uzun_bosluk_ms=%d kaynak=%s ilk_kare_ms=%d bosalt_ms=%d" % [
+		scene, _olc_evre, top, _olc_en, _olc_kaynak, _olc_ilk_kare, _olc_bosalt]
+	print("YUKLEMEAUDIT " + satir)
+	# İki kademe: tek başına koşuda hedef < 1000 ms (aday, listelenir); pakette (8 parça CPU paylaşır) ≥ 2500 ms kesin hata
+	if _olc_en >= 2500:
+		print("YUKLEMEAUDIT_KESIN " + satir)
+	elif _olc_en >= 1000:
+		print("YUKLEMEAUDIT_ADAY " + satir)
+	_olc_acik = false
+	_olcer = null
+
+
+## Ölçüm penceresinin kare saati: her _process bir canlılık noktası; sahne hazır olunca 5 kare sonra satırı basar.
+class _Olcer extends Node:
+	var sahne_bekle := true
+	var bitti := false
+	var eski: Node = null
+	var _hazir_t := -1
+	var _sayac := 0
+	var _kare60 := 0
+	var _sc: Node = null
+
+	func _init() -> void:
+		name = "YuklemeOlcer"
+		process_mode = Node.PROCESS_MODE_ALWAYS
+		process_priority = -1000
+
+	func _process(_d: float) -> void:
+		var now := Time.get_ticks_msec()
+		var gap := now - LoadingScreen._last_pump
+		LoadingScreen._kare(now)
+		if _hazir_t >= 0:
+			if LoadingScreen._olc_ilk_kare < 0:
+				LoadingScreen._olc_ilk_kare = now - _hazir_t
+			if _sayac >= 5:
+				LoadingScreen._olc_kare_en = maxi(LoadingScreen._olc_kare_en, gap)
+		var sc := get_tree().current_scene
+		if _hazir_t < 0:
+			var hazir := false
+			if sahne_bekle:
+				hazir = sc != null and sc != eski and is_instance_valid(sc) and sc.is_node_ready()
+			else:
+				hazir = bitti
+			if hazir:
+				_hazir_t = now
+				_sc = sc
+			return
+		_sayac += 1
+		if _sayac == 5:
+			LoadingScreen._olcum_yaz(_sc)
+			if DisplayServer.get_name() == "headless":
+				queue_free()
+				return
+		if _sayac >= 65:
+			if DisplayServer.get_name() != "headless":
+				print("YUKLEMEAUDIT_PENCERE scene=%s ilk_kare_ms=%d sonraki60_en_ms=%d" % [
+					_sc.scene_file_path.get_file().get_basename() if is_instance_valid(_sc) else "",
+					LoadingScreen._olc_ilk_kare, LoadingScreen._olc_kare_en])
+			queue_free()
 
 
 func _enter_tree() -> void:
 	current = self
-	_last_pump = 0
+	_last_pump = 0 if not _olc_acik else _last_pump
 
 
 func _exit_tree() -> void:

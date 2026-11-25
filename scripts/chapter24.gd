@@ -380,6 +380,8 @@ func _particles(n: int, size: Vector3, col: Color, grav: float, life: float) -> 
 func _to_ayasofya() -> void:
 	if city.part == "aya":
 		return
+	# G19: siyah kararma altında kısa yükleme perdesi (eşzamanlı; çekim yolunda yalnız nabız)
+	GameState.kurulum_perdesi_ac(scene_file_path, "ayasofya", GameState.shots_dir == "", player)
 	var old := city
 	remove_child(old)
 	old.queue_free()
@@ -390,6 +392,7 @@ func _to_ayasofya() -> void:
 	city = ByzCity.new()
 	city.part = "aya"
 	add_child(city)
+	GameState.kurulum_perdesi_kapat()
 
 
 func _fog() -> void:

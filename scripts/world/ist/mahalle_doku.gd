@@ -77,16 +77,20 @@ static func bekleyen() -> int:
 func _kur() -> void:
 	var t0 := Time.get_ticks_msec()
 	_zemin()
+	LoadingScreen.nabiz("doku_zemin")
 	var t1 := Time.get_ticks_msec()
 	_avlular()
+	LoadingScreen.nabiz("doku_avlu")
 	var t2 := Time.get_ticks_msec()
 	_oge_hucreleri()
+	LoadingScreen.nabiz("doku_oge")
 	stats["zemin_ms"] = t1 - t0
 	stats["avlu_ms"] = t2 - t1
 	stats["oge_ms"] = Time.get_ticks_msec() - t2
 	print("ISTDOKU2 ", stats)
 	sokak_esya = SOKAK_ESYA.new(self, sk)
 	sokak_esya.kur()
+	LoadingScreen.nabiz("doku_esya")
 
 
 # ================================================================ 1. sokak zemini
@@ -972,6 +976,7 @@ func _oge_hucreleri() -> void:
 	_planla(cp)
 	var t0 := Time.get_ticks_msec()
 	while not _is_kuyrugu.is_empty() and Time.get_ticks_msec() - t0 < 8000:
+		LoadingScreen.nabiz("doku_is")
 		_is_yap(_is_kuyrugu.pop_front())
 
 
@@ -979,6 +984,7 @@ func _oge_hucreleri() -> void:
 func _oge_uzak() -> void:
 	var gr := {}
 	for o: Dictionary in sk.oge:
+		LoadingScreen.nabiz("doku_uzak")
 		var c: Vector2 = o["c"]
 		var ck := Vector2i(floori(c.x / ZEMIN_HUCRE), floori(c.y / ZEMIN_HUCRE))
 		if not gr.has(ck):

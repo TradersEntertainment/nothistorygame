@@ -99,6 +99,7 @@ func _prof(label: String) -> void:
 ## Hafif (lite) kurulumda adımlar arasında bir kare beklenir: ana menünün arkasındaki sahne kurulurken pencere donmaz
 func _step(label: String) -> void:
 	_prof(label)
+	LoadingScreen.nabiz("siegefield")
 	if lite and is_inside_tree():
 		await get_tree().process_frame
 

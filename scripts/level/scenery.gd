@@ -84,6 +84,7 @@ static func solidify(mi: MultiMeshInstance3D, ab: AABB, xforms: Array, shrink :=
 		if cvx:
 			pts = cvx.points
 	for xf in xforms:
+		LoadingScreen.nabiz("solidify")
 		var t: Transform3D = xf
 		var sc := t.basis.get_scale()
 		var cs := CollisionShape3D.new()

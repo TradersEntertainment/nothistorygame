@@ -283,6 +283,7 @@ func _place_all() -> void:
 
 
 func _build(it: Dictionary, lod: int, bol := false) -> void:
+	LoadingScreen.nabiz("sehir")
 	if it["have"][lod] != null:
 		return
 	if lod == 0 and it.has("pis_n"):
@@ -583,6 +584,7 @@ static func _cizgisiz(n: Node) -> void:
 ## Uzak/orta katmanın ilkel parçaları tek ağa pişirilir (World1453.bake: doku başına bir yüzey; uzakta tek yüzey):
 ## yüzlerce çizim yerine bir iki. Çarpışma gövdeleri ve MultiMesh'ler olduğu gibi kalır.
 func _bake_lod(n: Node3D, flat: bool) -> void:
+	LoadingScreen.nabiz("sehir")
 	var list: Array = []
 	for c in n.find_children("*", "MeshInstance3D", true, false):
 		var mi := c as MeshInstance3D
@@ -913,6 +915,7 @@ func _layers(g0: Dictionary, g1: Dictionary, g2: Dictionary) -> void:
 
 ## Grup anahtarı: "ev|örnek|tip" ya da "ag|tür" (IstBitki ağacı)
 func _mesh_for(key: String, lod: int) -> Mesh:
+	LoadingScreen.nabiz("sehir")
 	var p := key.split("|")
 	if key == "kaide":
 		if _kaide_mesh == null:
@@ -1436,14 +1439,20 @@ static func attach_v2(dunya: Node3D, gece_ := false) -> void:
 	active = s
 	var t0 := Time.get_ticks_msec()
 	s._place_v2()
+	LoadingScreen.nabiz("place_v2")
 	var t1 := Time.get_ticks_msec()
 	s._hatlar_v2()
+	LoadingScreen.nabiz("hatlar_v2")
 	s._hat_far_commit()
+	LoadingScreen.nabiz("hat_far_commit")
 	s._basamak_ag()
+	LoadingScreen.nabiz("basamak_ag")
 	var t2 := Time.get_ticks_msec()
 	s._sehir_dokusu_v2()
+	LoadingScreen.nabiz("sehir_dokusu_v2")
 	var t3 := Time.get_ticks_msec()
 	s._on_pisir()
+	LoadingScreen.nabiz("on_pisir")
 	var t4 := Time.get_ticks_msec()
 	print("ISTONPISIR ms=%d adet=%d kursun=%d" % [t4 - t3, s.stats.get("on_pisir_n", 0), s.stats.get("kursun_n", 0)])
 	t3 = t4
@@ -1465,6 +1474,7 @@ func _on_pisir() -> void:
 		return
 	var n := 0
 	for it: Dictionary in items:
+		LoadingScreen.nabiz("on_pisir")
 		var mod := String(it.get("mod", ""))
 		var id := String(it["id"])
 		var hat := it.has("hat") or id.begins_with("kose_")
@@ -1499,12 +1509,14 @@ func _on_pisir() -> void:
 		for key: String in c["groups"]:
 			anahtar[key] = true
 	for key: String in anahtar:
+		LoadingScreen.nabiz("on_pisir")
 		_mesh_for(key, 0)
 	stats["isin_ev_n"] = anahtar.size()
 	# Isınma: her sur kurucusunun yakın katmanı bir kez (desen dokuları, paylaşılan ağlar ve malzemeler önbelleğe girer;
 	# oyunda ilk dilimin ilk penceresi bunları üretirken 40–70 ms sürüyordu). Kurulan atılır.
 	var isin := {}
 	for it: Dictionary in hat_items:
+		LoadingScreen.nabiz("on_pisir")
 		var kur := String(HAT.get(String(it.get("hat", "")), {}).get("kur", ""))
 		if kur == "" or isin.has(kur) or not it.has("len"):
 			continue
@@ -1538,7 +1550,9 @@ func _parcalar_bagla(dunya: Node3D, gece_: bool) -> void:
 			parca_durum[pr[1]] = "yuklenemedi"
 			continue
 		var t0 := Time.get_ticks_msec()
+		LoadingScreen.nabiz("parca_" + String(pr[0]))
 		scr.call("attach", dunya, gece_)
+		LoadingScreen.nabiz("parca_" + String(pr[0]))
 		parca_durum[pr[1]] = "%d ms" % (Time.get_ticks_msec() - t0)
 	print("ISTPARCA ", parca_durum)
 
@@ -1899,6 +1913,7 @@ func _place_v2() -> void:
 	_coz_cakisma(cand)
 	print("ISTCAKISMA ", " · ".join(cakisma_rapor))
 	for pl: Dictionary in cand:
+		LoadingScreen.nabiz("sehir")
 		if not pl.has("e"):
 			continue
 		var e: Dictionary = pl["e"]
@@ -1974,6 +1989,7 @@ func _place_v2() -> void:
 	var ainv := axf.affine_inverse()
 	var bos: Array = []
 	for o: Dictionary in items:
+		LoadingScreen.nabiz("sehir")
 		var oid := String(o["id"])
 		if oid == "ayasofya" or oid.begins_with("doku_") or oid.begins_with("mese_") or o.has("hat"):
 			continue
@@ -2037,6 +2053,7 @@ var _hat_far := {}             # Vector3i (hücre x, z, taş türü) → Surface
 var _hat_mat: Material
 
 func _hat_far_add(it: Dictionary) -> void:
+	LoadingScreen.nabiz("sehir")
 	var tmp := Node3D.new()
 	# SUR-4: toprak setin eteği araziye insin (uzak katman ağacın dışında kurulur)
 	SURZEMIN.xf_dunya = Transform3D(Basis(Vector3.UP, float(it["yaw"])), it["pos"])
@@ -2103,6 +2120,7 @@ static func _acik(m: Mesh, f: float) -> Mesh:
 
 func _hat_far_commit() -> void:
 	for ck: Vector3i in _hat_far:
+		LoadingScreen.nabiz("sehir")
 		var mi := MeshInstance3D.new()
 		mi.mesh = _acik(( _hat_far[ck] as SurfaceTool).commit(), 1.3)
 		# sur taşı (yakınla aynı desen; SUR-4)
@@ -2302,6 +2320,7 @@ func _hatlar_v2() -> void:
 	# Kapı aralıkları: hattın üstüne oturan kayıtlar (yay boyu ± yarım genişlik)
 	var gaps := {}
 	for it: Dictionary in items:
+		LoadingScreen.nabiz("sehir")
 		var fix: Dictionary = YER2.get(String(it["id"]), {})
 		if fix.has("hat"):
 			var ad := String(fix["hat"])
@@ -2322,6 +2341,7 @@ func _hatlar_v2() -> void:
 			gaps[ad].append([Vector2(it["pos"].x, it["pos"].z), g])
 	var seed := 0
 	for ad: String in HAT:
+		LoadingScreen.nabiz("sehir")
 		var pl := _sade(IstGeo.yol(ad))
 		if pl.size() < 2:
 			continue
@@ -3148,6 +3168,7 @@ func _make_zincir(n: Node3D, lod: int, L: float) -> void:
 func _sehir_dokusu_v2() -> void:
 	var foot: Array = []
 	for it: Dictionary in items:
+		LoadingScreen.nabiz("sehir")
 		var p: Vector3 = it["pos"]
 		if it.has("hat"):
 			continue
@@ -3200,6 +3221,7 @@ func _sehir_dokusu_v2() -> void:
 	rng.seed = 29
 	var n := 0
 	for h: Dictionary in sokak.houses:
+		LoadingScreen.nabiz("sehir")
 		var v := int(h["v"])
 		var dm := IstEvler.dims(v)
 		var c: Vector2 = h["c"]
@@ -3228,9 +3250,11 @@ func _sehir_dokusu_v2() -> void:
 		n += 1
 	# ÇATI ROTASI (IstCati): kalas köprüler, merdivenler, bakış kuleleri, saman — evlerle aynı katmanlarda, yakında çarpışmalı
 	for pc: Array in sokak.cati_parca:
+		LoadingScreen.nabiz("sehir")
 		_add(g0, g1, g2, String(pc[0]), pc[1])
 	# Sokak taşları ve basamaklar (yamaçta) — uzakta çizilmez
 	for st: Dictionary in sokak.streets:
+		LoadingScreen.nabiz("sehir")
 		if String(st["tur"]) != "basamak":
 			continue
 		var pl: PackedVector2Array = st["pts"]
@@ -3254,6 +3278,7 @@ func _sehir_dokusu_v2() -> void:
 	var np := 0
 	var far: Array = []
 	for dk: Dictionary in sokak.doku:
+		LoadingScreen.nabiz("sehir")
 		var tur := String(dk["tur"])
 		var c: Vector2 = dk["c"]
 		var alan: Vector2 = dk["alan"]
@@ -3303,6 +3328,7 @@ func _sehir_dokusu_v2() -> void:
 	# Meydan: kuyu ya da çeşme ve çevresinde pazar köşesi
 	var nm := 0
 	for m: Dictionary in sokak.meydan:
+		LoadingScreen.nabiz("sehir")
 		var c: Vector2 = m["c"]
 		var tohum := int(m["tohum"])
 		var it := {"id": "meydan_%d" % nm, "pos": Vector3(c.x, IstGeo.h(c.x, c.y) - 0.02, c.y), "yaw": float(m["yaw"]), "k": 1.0, "r": 7.0,
@@ -3349,6 +3375,7 @@ func _far_doku(far: Array) -> void:
 func _far_doku_cells(far: Array, size: float, begin: float, end: float) -> void:
 	var cells := {}
 	for f: Array in far:
+		LoadingScreen.nabiz("sehir")
 		var c: Vector2 = f[1]
 		var ck := Vector2i(floori(c.x / size), floori(c.y / size))
 		if not cells.has(ck):
@@ -3359,6 +3386,7 @@ func _far_doku_cells(far: Array, size: float, begin: float, end: float) -> void:
 	mat.vertex_color_is_srgb = true
 	mat.roughness = 1.0
 	for ck: Vector2i in cells:
+		LoadingScreen.nabiz("sehir")
 		var cen := Vector3((ck.x + 0.5) * size, 0, (ck.y + 0.5) * size)
 		var st := SurfaceTool.new()
 		st.begin(Mesh.PRIMITIVE_TRIANGLES)
@@ -3421,12 +3449,14 @@ static func _box_st(st: SurfaceTool, base: Vector3, bas: Basis, sz: Vector3, col
 ## v2 katmanları: uzak (lod 2) hücre başına TEK ağ (bütün ev örnekleri birleşik), orta MultiMesh, yakın akışla
 func _layers2(g0: Dictionary, g1: Dictionary, g2: Dictionary) -> void:
 	for ck: Vector2i in g2:
+		LoadingScreen.nabiz("sehir")
 		var st := SurfaceTool.new()
 		st.begin(Mesh.PRIMITIVE_TRIANGLES)
 		var mat: Material = null
 		var any := false
 		var cen := Vector3((ck.x + 0.5) * CELL2, 0, (ck.y + 0.5) * CELL2)
 		for key: String in g2[ck]:
+			LoadingScreen.nabiz("sehir")
 			if not key.begins_with("ev|") and key != "kaide":
 				continue
 			var m2 := _mesh_for(key, 2)
@@ -3451,9 +3481,11 @@ func _layers2(g0: Dictionary, g1: Dictionary, g2: Dictionary) -> void:
 		mi.set_meta("no_walk", true)
 		add_child(mi)
 	for ck: Vector2i in g1:
+		LoadingScreen.nabiz("sehir")
 		# Evler ve kaideler: hücre başına tek ağ (malzeme başına bir yüzey); ağaçlar MultiMesh
 		var cen := Vector3((ck.x + 0.5) * CELL1, 0, (ck.y + 0.5) * CELL1)
 		for key: String in g1[ck]:
+			LoadingScreen.nabiz("sehir")
 			if _mergeable(key):
 				continue
 			var m1 := _mesh_for(key, 1)
@@ -3469,6 +3501,7 @@ func _layers2(g0: Dictionary, g1: Dictionary, g2: Dictionary) -> void:
 			mi.visibility_range_begin = NEAR
 			mi.visibility_range_end = MID
 	for ck: Vector2i in g0:
+		LoadingScreen.nabiz("sehir")
 		var cx := (ck.x + 0.5) * CELL0
 		var cz := (ck.y + 0.5) * CELL0
 		_cells0.append({"c": Vector3(cx, _hh(cx, cz), cz), "groups": g0[ck], "mm": [], "col": null, "up": false})
@@ -3482,6 +3515,7 @@ static func _mergeable(key: String) -> bool:
 func _merge_groups(groups: Dictionary, lod: int, cen: Vector3) -> MeshInstance3D:
 	var by_mat := {}
 	for key: String in groups:
+		LoadingScreen.nabiz("sehir")
 		if not _mergeable(key):
 			continue
 		var m := _mesh_for(key, lod)

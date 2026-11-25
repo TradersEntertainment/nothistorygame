@@ -457,7 +457,9 @@ static func build(parent: Node3D, region_name: String, keep_local: Array, _night
 					# TAŞIMA-13: 31o'da oyun alanı caddenin şeridi (hub alanı caddenin yerinde; hub_sehir kalkar)
 					m.set("_oyun", [_rect_xf(xf, OYUN_31O) if region_name == B31O else hub_alan, IstSehir._meydan_rect()]))
 	f.child_entered_tree.connect(dinle)
+	LoadingScreen.nabiz("baglama_bas")
 	dunya = IstDunya.build(f, gece, merkez) as IstDunya
+	LoadingScreen.nabiz("baglama_dunya")
 	f.child_entered_tree.disconnect(dinle)
 	IstDunya.gok_kur = true
 	# Dönüşüm kurulumdan SONRA: v2 parçalarının bir kısmı kurulurken/pişirirken global çerçeveyi v2 sanıyor (gezide doğru):
@@ -465,10 +467,12 @@ static func build(parent: Node3D, region_name: String, keep_local: Array, _night
 	# Kurulum birim dönüşümde biter, kök sonra bölümün çerçevesine oturur (ORTAK İSTEK 2)
 	f.transform = xf.affine_inverse()
 	_hub_dondur(hub_x)
+	LoadingScreen.nabiz("baglama_hub")
 	# harita (MiniMap, WorldMap): kabuğun dönüşümü (xf⁻¹) oyuncuyu v2 çerçevesine çevirir
 	f.night_build = gece
 	f.add_to_group(MapView.GROUP)
 	_temizle(region_name, temiz)
+	LoadingScreen.nabiz("baglama_temizle")
 	var b := IstBaglama.new()
 	b.name = "IstBaglama"
 	f.add_child(b)

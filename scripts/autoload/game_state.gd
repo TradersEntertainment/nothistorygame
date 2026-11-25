@@ -1058,6 +1058,7 @@ func change_scene(path: String, jump := true) -> void:
 	get_tree().paused = false
 	Engine.time_scale = 1.0
 	Audio.voice_space("outdoor")
+	LoadingScreen.olcum_ac("sahne", true)       # G19: YUKLEMEAUDIT (yalnız ölçüm kipinde)
 	if autotest or shots_dir != "" or DisplayServer.get_name() == "headless" or not ResourceLoader.exists(path):
 		get_tree().change_scene_to_file.call_deferred(path)
 		_unlock_after_change()
@@ -1088,7 +1089,9 @@ func _change_with_loader(path: String) -> void:
 	# sürerken onun zamanlayıcıları dolmaya devam ediyor, yeni sahneye geçilen karede hepsi birden ağaçtan çıkmış
 	# Hud'a ve bölüm yönetmenine (Edirne) sesleniyordu (yüzlerce hata; Windows'ta "bölümün başına dön" ve "kaldığım
 	# yerden devam et" çökmesi). Silinmiş nesnenin bekleyen işi uyanınca sessizce düşer.
+	var t_bos := Time.get_ticks_msec()
 	get_tree().unload_current_scene()
+	LoadingScreen.olcum_bosalt(Time.get_ticks_msec() - t_bos)
 	await get_tree().process_frame
 	var ok := ResourceLoader.load_threaded_request(path) == OK
 	var t := 0.0
@@ -1121,13 +1124,67 @@ func _show_loader(on: bool, path := "") -> void:
 		_loader = LoadingScreen.new(path)
 		add_child(_loader)
 	elif not on and _loader != null:
-		# Perde yumuşakça açılır (yeni bölüm kendi kararmasından gelir)
+		# Perde yumuşakça açılır (yeni bölüm kendi kararmasından gelir). G19: kalkan perde nabızda çizilmez (0,4 sn'lik
+		# solmada Props/v2 nabzı perdeyi yeniden çizip titretiyordu)
+		if LoadingScreen.current == _loader:
+			LoadingScreen.current = null
 		var old := _loader
 		_loader = null
 		for c in old.get_children():
 			if c is CanvasItem:
 				old.create_tween().tween_property(c, "modulate:a", 0.0, 0.35)
 		get_tree().create_timer(0.4, true, false, true).timeout.connect(old.queue_free)
+
+
+## G19 — Bölüm ortası yeniden kurulum (31o Eyüp/Ayasofya evresi, 24 → Ayasofya, 13/26 dünyaları): eşzamanlı (await'siz)
+## perde. Otomatik test/çekim/başsızda yalnız kurulum kapsamı ve ölçüm açılır. perde=false: beyaz kararmalı yerlerde
+## (13, 26) koyu perde açılmaz, yalnız nabız (kapsam). Çağıran kurulum bitince kurulum_perdesi_kapat()'ı çağırır.
+func kurulum_perdesi_ac(path: String, evre: String, perde := true, oyuncu: Node = null) -> void:
+	LoadingScreen.olcum_ac(evre, false)
+	LoadingScreen.kurulum_basla(evre)
+	# Yutulan girdi Input tekil durumunu yine günceller (is_action_just_pressed): oyuncu kurulum bitene + 2 kare donuk
+	_kurulum_oyuncu = null
+	if oyuncu != null and is_instance_valid(oyuncu) and not bool(oyuncu.get("frozen")):
+		oyuncu.set("frozen", true)
+		_kurulum_oyuncu = oyuncu
+	if not perde or autotest or shots_dir != "" or DisplayServer.get_name() == "headless" or _loader != null:
+		return
+	_show_loader(true, path)
+	# Perde bir kez hemen çizilir (bekleme yok): kurulum bu karede başlar
+	var root := get_tree().root
+	var was := root.gui_disable_input
+	root.gui_disable_input = true
+	DisplayServer.process_events()
+	root.gui_disable_input = was
+	_loader._process(0.0)
+	var d3 := root.disable_3d
+	root.disable_3d = true
+	RenderingServer.force_draw(true, 0.0)
+	root.disable_3d = d3
+	_kurulum_perdeli = true
+
+
+var _kurulum_perdeli := false
+var _kurulum_oyuncu: Node = null
+
+
+func kurulum_perdesi_kapat() -> void:
+	LoadingScreen.kurulum_bitir()
+	LoadingScreen.olcum_kapat()
+	if _kurulum_perdeli:
+		_kurulum_perdeli = false
+		_show_loader(false)
+	if _kurulum_oyuncu != null:
+		_kurulum_coz(_kurulum_oyuncu)
+		_kurulum_oyuncu = null
+
+
+## Çağıranı bekletmeden: iki kare sonra oyuncu çözülür (kurulumdan önce donuk değilse ve hâlâ donuksa)
+func _kurulum_coz(oyuncu: Node) -> void:
+	await get_tree().process_frame
+	await get_tree().process_frame
+	if is_instance_valid(oyuncu) and bool(oyuncu.get("frozen")):
+		oyuncu.set("frozen", false)
 
 
 func _on_scene_changed() -> void:
