@@ -1,0 +1,41 @@
+STREETCHECK (a) havuz: 8976 seçim, hepsi tr+en
+STREETCHECK (a/b) BYZSOL  istem='E · Konuş: Bizans askeri' ["DST_BYZSOL_IDLE_5", "DST_BYZSOL_IDLE_4", "DST_BYZSOL_AGAIN_1", "DST_BYZSOL_AGAIN_2", "DST_BYZSOL_AGAIN"]
+STREETCHECK (a/b) GENMERC istem='E · Konuş: Ceneviz paralı askeri' ["DST_GENMERC_IDLE_3", "DST_GENMERC_IDLE_2", "DST_CIVB_AGAIN_1", "DST_CIVB_AGAIN_2", "DST_CIVB_AGAIN"]
+STREETCHECK (a/b) OSMSOL  istem='E · Konuş: Asker' ["NPC_CROWD_CAMP_8", "DST_OSMSOL_IDLE_1", "DST_OSMSOL_AGAIN_1", "DST_OSMSOL_AGAIN_2", "DST_OSMSOL_AGAIN"]
+STREETCHECK (a/b) JAN     istem='E · Konuş: Yeniçeri' ["DST_JAN_IDLE_5", "DST_JAN_IDLE_1", "DST_JAN_AGAIN_1", "DST_JAN_AGAIN", "DST_JAN_AGAIN"]
+STREETCHECK (a/b) AZAP    istem='E · Konuş: Azap' ["DST_AZAP_IDLE_2", "DST_AZAP_IDLE_4", "DST_OSMSOL_AGAIN_1", "DST_OSMSOL_AGAIN_2", "DST_OSMSOL_AGAIN"]
+STREETCHECK (a/b) VENDB   istem='E · Konuş: Satıcı' ["DST_VENDB_IDLE_5", "DST_VENDB_IDLE_4", "DST_VEND_AGAIN", "DST_VEND_AGAIN", "DST_VEND_AGAIN"]
+STREETCHECK (a/b) VENDO   istem='E · Konuş: Satıcı' ["DST_VENDO_IDLE_4", "DST_VENDO_IDLE_3", "DST_VEND_AGAIN", "DST_VEND_AGAIN", "DST_VEND_AGAIN"]
+STREETCHECK (a/b) PORTER  istem='E · Konuş: Hamal' ["DST_PORTER_IDLE_2", "DST_PORTER_IDLE_1", "DST_CIVB_AGAIN_1", "DST_CIVB_AGAIN_2", "DST_CIVB_AGAIN"]
+STREETCHECK (a/b) WORKER  istem='E · Konuş: İşçi' ["DST_WORKER_IDLE_1", "DST_WORKER_IDLE_3", "DST_OSMSOL_AGAIN_1", "DST_OSMSOL_AGAIN_2", "DST_OSMSOL_AGAIN"]
+STREETCHECK (a/b) PRIEST  istem='E · Konuş: Papaz' ["DST_PRIEST_IDLE_1", "DST_PRIEST_IDLE_3", "DST_PRIEST_AGAIN", "DST_PRIEST_AGAIN", "DST_PRIEST_AGAIN"]
+STREETCHECK (a/b) MONK    istem='E · Konuş: Keşiş' ["DST_MONK_IDLE_3", "DST_MONK_IDLE_2", "DST_PRIEST_AGAIN", "DST_PRIEST_AGAIN", "DST_PRIEST_AGAIN"]
+STREETCHECK (a/b) DERV    istem='E · Konuş: Derviş' ["DST_DERV_IDLE_1", "DST_DERV_IDLE_2", "DST_DERV_AGAIN", "DST_DERV_AGAIN", "DST_DERV_AGAIN"]
+STREETCHECK (a/b) WOMB    istem='E · Konuş: Kadın' ["DST_WOMB_IDLE_1", "DST_WOMB_IDLE_4", "DST_WOMB_AGAIN_1", "DST_WOMB_AGAIN", "DST_WOMB_AGAIN"]
+STREETCHECK (a/b) CHILDB  istem='E · Konuş: Çocuk' ["DST_CHILDB_IDLE_1", "DST_CHILDB_IDLE_3", "DST_CHILDB_AGAIN_1", "DST_CHILDB_AGAIN", "DST_CHILDB_AGAIN"]
+STREETCHECK (a/b) FISHER  istem='E · Konuş: Balıkçı' ["DST_FISHER_IDLE_5", "DST_FISHER_IDLE_1", "DST_CIVB_AGAIN_1", "DST_CIVB_AGAIN_2", "DST_CIVB_AGAIN"]
+STREETCHECK (a/b) TOWNB   istem='E · Konuş: yoldan geçen' ["NPC_CROWD_BYZ_9", "NPC_CROWD_BYZ_2", "DST_CIVB_AGAIN_1", "DST_CIVB_AGAIN_2", "DST_CIVB_AGAIN"]
+STREETCHECK (a/b) 16/16 rol konuştu, tırmanma doğru
+STREETCHECK (c) jump    kişi=9 basamaklar=[[1, 2, 3, 4, 5], [1, 2, 3, 4, 5], [1, 2, 3, 4, 5]] söz=["DST_ODD_JUMP_B_2", "DST_T_ODD_2", "DST_ODD_JUMP_B_1"]
+STREETCHECK (c) bump    kişi=9 basamaklar=[[1, 2, 3, 4, 5], [1, 2, 3, 4, 5], [1, 2, 3, 4, 5]] söz=["DST_T_ODD_1", "DST_ODD_BUMP_B_2", "DST_ODD_BUMP_B_1"]
+STREETCHECK (c) phone   kişi=9 basamaklar=[[1, 2, 3, 4, 5], [1, 2, 3, 4, 5], [1, 2, 3, 4, 5]] söz=["DST_T_ODD_1", "DST_ODD_PHONE_B_1", "DST_ODD_PHONE_O_1"]
+STREETCHECK (c) selfie  kişi=9 basamaklar=[[1, 2, 3, 4, 5], [1, 2, 3, 4, 5], [1, 2, 3, 4, 5]] söz=["DST_T_ODD_4", "DST_ODD_SELFIE_B_1", "DST_ODD_SELFIE_B_1"]
+STREETCHECK (c) stare   kişi=1 basamaklar=[[1, 2, 3, 4, 5]] söz=["DST_T_ODD_1", "DST_ODD_STARE_B_1"]
+STREETCHECK (c) spin    kişi=9 basamaklar=[[1, 2, 3, 4, 5], [1, 2, 3, 4, 5], [1, 2, 3, 4, 5]] söz=["DST_T_ODD_1", "DST_ODD_SPIN_B_1", "DST_ODD_SPIN_B_1"]
+STREETCHECK (c) sword   kişi=9 basamaklar=[[1, 2, 3, 4, 5], [1, 2, 3, 4, 5], [1, 2, 3, 4, 5]] söz=["DST_T_ODD_1", "DST_ODD_SWORD_B_1", "DST_ODD_SWORD_O_2"]
+STREETCHECK (c) fez     kişi=9 basamaklar=[[1, 2, 3, 4, 5], [1, 2, 3, 4, 5], [1, 2, 3, 4, 5]] söz=["DST_T_ODD_1", "DST_ODD_FEZ_B_1", "DST_ODD_FEZ_B_1"]
+STREETCHECK (c) cologne kişi=9 basamaklar=[[1, 2, 3, 4, 5], [1, 2, 3, 4, 5], [1, 2, 3, 4, 5]] söz=["DST_T_ODD_1", "DST_ODD_COLOGNE_O_1", "DST_ODD_COLOGNE_O_1"]
+STREETCHECK (c) lighter kişi=9 basamaklar=[[1, 2, 3, 4, 5], [1, 2, 3, 4, 5], [1, 2, 3, 4, 5]] söz=["DST_T_ODD_1", "DST_ODD_LIGHTER_B_1", "DST_ODD_LIGHTER_B_1"]
+STREETCHECK (c) chick   kişi=9 basamaklar=[[1, 2, 3, 4, 5], [1, 2, 3, 4, 5], [1, 2, 3, 4, 5]] söz=["DST_T_ODD_1", "DST_ODD_CHICK_B_1", "DST_ODD_CHICK_B_1"]
+STREETCHECK (c) cube    kişi=9 basamaklar=[[1, 2, 3, 4, 5], [1, 2, 3, 4, 5], [1, 2, 3, 4, 5]] söz=["DST_T_ODD_1", "DST_ODD_CUBE_B_1", "DST_ODD_CUBE_B_1"]
+STREETCHECK (c) crouch  kişi=9 basamaklar=[[1, 2, 3, 4, 5], [1, 2, 3, 4, 5], [1, 2, 3, 4, 5]] söz=["DST_T_ODD_1", "DST_ODD_CROUCH_B_1", "DST_ODD_CROUCH_O_1"]
+STREETCHECK (c) 13/13 tuhaflık türü sırayla tepki aldı; uyarı=true ["DST_T_ODD_2", "DST_WARN_B_1", "DST_T_ODD_5", "DST_T_ODD_1"]
+STREETCHECK (f) 100 rastgele olay: söz=43 sessiz=57 ihlal=0 kart_uyumlu=43
+STREETCHECK (g) kart kişiye uyuyor; tek konuşan; kapı altyazı=false replik=false ara_sahne=false boşta=true
+STREETCHECK (c2) gerçek girdi: zıplama olayı=4 (yerde=true) telefon olayı=1
+STREETCHECK (d) gizlilik kipi: 9 kişiden 9 başını çevirdi, gövde/bakış değişen=0, sayaçlar={ "events": 13, "stares": 9, "turns": 0, "stops": 0, "gestures": 0, "barks": 0, "warns": 0, "talks": 0 }
+STREETCHECK (e) v2 açılış yüklemesi 7.3 sn
+STREETCHECK (e) kalabalık=IstHayatYakin (v2)
+STREETCHECK (e) CityLife µs açık=[376.917127071823, 373.106382978723] kapalı=[397.888888888889, 382.942611190818] (ort 375 / 390, fark -3.9%) · StreetEye µs=[31.6312154696133, 32.709219858156] ort 32
+STREETCHECK (e) CityLife ile konuşma: true istemler={ "TOWNB": "E · Konuş: yoldan geçen" }
+STREETCHECK PASS

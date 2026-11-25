@@ -1,0 +1,60 @@
+LYKOS21 tuz=0 skor=0.476 hub_koy=4/12 bostan/bostan=23% seyrek/mezarlik=15% bostan/bag=15% seyrek/=46% harabe/harabe=1%
+LYKOS21 tuz=1 skor=0.484 hub_koy=2/12 bostan/bostan=19% seyrek/manastir=5% seyrek/=25% bostan/bag=37% harabe/harabe=5% seyrek/mezarlik=9%
+LYKOS21 tuz=2 skor=0.283 hub_koy=4/12 bostan/bag=16% bostan/bostan=35% seyrek/=29% seyrek/manastir=12% harabe/harabe=8%
+LYKOS21 tuz=3 skor=0.194 hub_koy=0/12 bostan/bostan=30% bostan/bag=13% seyrek/=30% harabe/harabe=20% seyrek/mezarlik=6%
+LYKOS21 tuz=4 skor=0.539 hub_koy=6/12 seyrek/mezarlik=17% seyrek/=35% seyrek/manastir=2% bostan/bostan=16% bostan/bag=27% harabe/harabe=3%
+LYKOS21 tuz=5 skor=0.115 hub_koy=0/12 bostan/bostan=32% harabe/harabe=13% bostan/bag=13% seyrek/=29% seyrek/mezarlik=5% seyrek/manastir=8%
+LYKOS21 tuz=6 skor=0.188 hub_koy=0/12 harabe/harabe=13% bostan/bag=23% seyrek/mezarlik=8% bostan/bostan=21% seyrek/=30% seyrek/manastir=5%
+LYKOS21 tuz=7 skor=0.485 hub_koy=4/12 harabe/harabe=26% seyrek/manastir=12% seyrek/=15% bostan/bostan=18% bostan/bag=18% seyrek/mezarlik=12%
+LYKOS21 tuz=8 skor=0.399 hub_koy=10/12 seyrek/=42% harabe/harabe=14% bostan/bostan=14% bostan/bag=20% seyrek/mezarlik=9%
+LYKOS21 tuz=9 skor=0.223 hub_koy=4/12 seyrek/manastir=16% seyrek/=29% harabe/harabe=10% bostan/bostan=25% seyrek/mezarlik=9% bostan/bag=11%
+LYKOS21 tuz=10 skor=0.258 hub_koy=4/12 harabe/harabe=13% seyrek/=33% bostan/bostan=22% bostan/bag=25% seyrek/manastir=8%
+LYKOS21 tuz=11 skor=0.305 hub_koy=8/12 seyrek/manastir=6% seyrek/=40% harabe/harabe=8% bostan/bag=20% bostan/bostan=19% seyrek/mezarlik=6%
+LYKOS21 tuz=12 skor=0.319 hub_koy=2/12 bostan/bag=23% bostan/bostan=29% seyrek/=21% seyrek/mezarlik=8% seyrek/manastir=12% harabe/harabe=7%
+LYKOS21 tuz=13 skor=0.239 hub_koy=4/12 seyrek/mezarlik=6% seyrek/=23% bostan/bag=18% bostan/bostan=25% harabe/harabe=23% seyrek/manastir=5%
+LYKOS21 tuz=14 skor=0.267 hub_koy=0/12 bostan/bostan=35% harabe/harabe=11% bostan/bag=12% seyrek/manastir=13% seyrek/=26% seyrek/mezarlik=3%
+LYKOS21 tuz=15 skor=0.324 hub_koy=6/12 bostan/bag=15% seyrek/=39% seyrek/manastir=15% seyrek/mezarlik=4% bostan/bostan=23% harabe/harabe=5%
+LYKOS21 tuz=16 skor=0.543 hub_koy=4/12 bostan/bostan=14% seyrek/=20% seyrek/mezarlik=13% harabe/harabe=24% bostan/bag=26% seyrek/manastir=3%
+LYKOS21 tuz=17 skor=0.365 hub_koy=2/12 bostan/bostan=32% bostan/bag=16% seyrek/=22% seyrek/mezarlik=19% harabe/harabe=11%
+LYKOS21 tuz=18 skor=0.404 hub_koy=2/12 bostan/bostan=28% seyrek/mezarlik=5% seyrek/=49% seyrek/manastir=6% bostan/bag=9% harabe/harabe=3%
+LYKOS21 tuz=19 skor=0.395 hub_koy=6/12 seyrek/=47% seyrek/manastir=9% harabe/harabe=6% bostan/bostan=22% bostan/bag=15%
+LYKOS21 tuz=20 skor=0.544 hub_koy=4/12 seyrek/=20% bostan/bag=26% bostan/bostan=9% seyrek/manastir=11% harabe/harabe=19% seyrek/mezarlik=15%
+LYKOS21 tuz=21 skor=0.480 hub_koy=2/12 bostan/bostan=16% bostan/bag=32% seyrek/mezarlik=7% harabe/harabe=5% seyrek/=37% seyrek/manastir=3%
+LYKOS21 tuz=22 skor=0.273 hub_koy=0/12 bostan/bag=20% bostan/bostan=27% seyrek/manastir=9% harabe/harabe=18% seyrek/=16% seyrek/mezarlik=10%
+LYKOS21 tuz=23 skor=0.257 hub_koy=2/12 bostan/bostan=33% seyrek/manastir=7% seyrek/=23% seyrek/mezarlik=14% harabe/harabe=14% bostan/bag=9%
+LYKOS21 tuz=24 skor=0.527 hub_koy=4/12 bostan/bostan=20% seyrek/=33% seyrek/manastir=13% bostan/bag=32% harabe/harabe=1%
+LYKOS21 tuz=25 skor=0.218 hub_koy=4/12 bostan/bag=11% seyrek/=31% bostan/bostan=32% harabe/harabe=19% seyrek/manastir=7%
+LYKOS21 tuz=26 skor=0.431 hub_koy=2/12 seyrek/=42% seyrek/mezarlik=11% seyrek/manastir=11% bostan/bostan=15% harabe/harabe=16% bostan/bag=5%
+LYKOS21 tuz=27 skor=0.505 hub_koy=0/12 bostan/bostan=42% bostan/bag=22% seyrek/mezarlik=11% harabe/harabe=11% seyrek/=15%
+LYKOS21 tuz=28 skor=0.325 hub_koy=6/12 bostan/bostan=24% bostan/bag=4% seyrek/manastir=7% seyrek/=46% harabe/harabe=14% seyrek/mezarlik=5%
+LYKOS21 tuz=29 skor=0.536 hub_koy=4/12 bostan/bostan=50% seyrek/=25% seyrek/manastir=11% harabe/harabe=11% bostan/bag=3%
+LYKOS21 tuz=30 skor=0.547 hub_koy=8/12 seyrek/=56% bostan/bostan=18% bostan/bag=9% seyrek/manastir=8% seyrek/mezarlik=7% harabe/harabe=1%
+LYKOS21 tuz=31 skor=0.611 hub_koy=0/12 bostan/bostan=50% harabe/harabe=20% seyrek/=8% bostan/bag=16% seyrek/mezarlik=5%
+LYKOS21 tuz=32 skor=0.282 hub_koy=6/12 bostan/bostan=20% seyrek/=30% harabe/harabe=18% bostan/bag=25% seyrek/manastir=7%
+LYKOS21 tuz=33 skor=0.161 hub_koy=4/12 bostan/bostan=27% bostan/bag=8% seyrek/manastir=7% harabe/harabe=13% seyrek/mezarlik=8% seyrek/=37%
+LYKOS21 tuz=34 skor=0.391 hub_koy=4/12 bostan/bag=25% seyrek/=25% seyrek/manastir=8% harabe/harabe=20% seyrek/mezarlik=10% bostan/bostan=13%
+LYKOS21 tuz=35 skor=0.264 hub_koy=2/12 seyrek/=33% bostan/bag=13% bostan/bostan=29% harabe/harabe=22% seyrek/manastir=3%
+LYKOS21 tuz=36 skor=0.359 hub_koy=4/12 bostan/bostan=25% seyrek/mezarlik=3% seyrek/=47% harabe/harabe=9% seyrek/manastir=8% bostan/bag=9%
+LYKOS21 tuz=37 skor=0.525 hub_koy=0/12 bostan/bag=15% bostan/bostan=39% seyrek/=16% seyrek/manastir=13% harabe/harabe=2% seyrek/mezarlik=15%
+LYKOS21 tuz=38 skor=0.311 hub_koy=0/12 seyrek/mezarlik=19% bostan/bostan=27% seyrek/manastir=7% seyrek/=33% harabe/harabe=4% bostan/bag=9%
+LYKOS21 tuz=39 skor=0.473 hub_koy=2/12 seyrek/=21% bostan/bostan=18% seyrek/mezarlik=9% bostan/bag=36% harabe/harabe=14% seyrek/manastir=1%
+LYKOS21 tuz=40 skor=0.638 hub_koy=10/12 bostan/bostan=37% seyrek/=52% seyrek/manastir=7% seyrek/mezarlik=4%
+LYKOS21 tuz=41 skor=0.422 hub_koy=0/12 bostan/bostan=18% bostan/bag=12% harabe/harabe=31% seyrek/=21% seyrek/mezarlik=7% seyrek/manastir=11%
+LYKOS21 tuz=42 skor=0.332 hub_koy=4/12 bostan/bag=16% seyrek/=27% bostan/bostan=22% seyrek/manastir=15% seyrek/mezarlik=15% harabe/harabe=5%
+LYKOS21 tuz=43 skor=0.346 hub_koy=4/12 seyrek/=31% bostan/bostan=39% seyrek/mezarlik=8% harabe/harabe=18% seyrek/manastir=5%
+LYKOS21 tuz=44 skor=0.264 hub_koy=4/12 bostan/bostan=35% seyrek/=32% bostan/bag=6% harabe/harabe=10% seyrek/manastir=6% seyrek/mezarlik=11%
+LYKOS21 tuz=45 skor=0.482 hub_koy=4/12 seyrek/mezarlik=11% seyrek/=13% bostan/bostan=40% bostan/bag=22% harabe/harabe=13% seyrek/manastir=1%
+LYKOS21 tuz=46 skor=0.438 hub_koy=0/12 bostan/bag=25% bostan/bostan=22% harabe/harabe=6% seyrek/mezarlik=16% seyrek/=22% seyrek/manastir=10%
+LYKOS21 tuz=47 skor=0.470 hub_koy=4/12 bostan/bostan=49% bostan/bag=17% seyrek/=23% harabe/harabe=6% seyrek/mezarlik=5%
+LYKOS21 tuz=48 skor=0.393 hub_koy=8/12 seyrek/=38% bostan/bostan=30% harabe/harabe=12% seyrek/mezarlik=15% bostan/bag=4%
+LYKOS21 tuz=49 skor=0.241 hub_koy=6/12 seyrek/=31% bostan/bag=10% bostan/bostan=33% harabe/harabe=14% seyrek/manastir=12%
+LYKOS21 tuz=50 skor=0.458 hub_koy=0/12 bostan/bag=36% bostan/bostan=29% seyrek/=26% harabe/harabe=9%
+LYKOS21 tuz=51 skor=0.385 hub_koy=4/12 seyrek/manastir=12% seyrek/=15% bostan/bostan=39% harabe/harabe=16% bostan/bag=12% seyrek/mezarlik=6%
+LYKOS21 tuz=52 skor=0.177 hub_koy=2/12 bostan/bag=22% seyrek/mezarlik=4% seyrek/=30% harabe/harabe=15% bostan/bostan=27% seyrek/manastir=1%
+LYKOS21 tuz=53 skor=0.424 hub_koy=4/12 bostan/bostan=33% seyrek/=23% bostan/bag=15% harabe/harabe=7% seyrek/mezarlik=22%
+LYKOS21 tuz=54 skor=0.536 hub_koy=4/12 seyrek/mezarlik=6% seyrek/=9% bostan/bostan=51% bostan/bag=11% seyrek/manastir=9% harabe/harabe=13%
+LYKOS21 tuz=55 skor=0.291 hub_koy=6/12 bostan/bag=18% bostan/bostan=28% harabe/harabe=3% seyrek/=40% seyrek/manastir=4% seyrek/mezarlik=6%
+LYKOS21 tuz=56 skor=0.357 hub_koy=4/12 bostan/bostan=37% bostan/bag=15% seyrek/mezarlik=5% seyrek/=38% harabe/harabe=5%
+LYKOS21 tuz=57 skor=0.490 hub_koy=0/12 harabe/harabe=33% seyrek/mezarlik=9% seyrek/=23% bostan/bostan=30% bostan/bag=5%
+LYKOS21 tuz=58 skor=0.555 hub_koy=0/12 bostan/bag=33% bostan/bostan=11% seyrek/manastir=12% seyrek/=21% harabe/harabe=19% seyrek/mezarlik=4%
+LYKOS21 tuz=59 skor=0.399 hub_koy=6/12 bostan/bag=20% bostan/bostan=10% seyrek/=34% seyrek/mezarlik=9% seyrek/manastir=4% harabe/harabe=23%

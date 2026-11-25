@@ -1,0 +1,14 @@
+ISTEVLER2 ev=9156 doku=89 meydan=86 hucre=756
+LYKOS21V2 serit ev=640 doku={ "kilise_kucuk": 1, "bahce": 1 } oge={ "set_sur_onarim_santiyesi": 2, "agac_kumesi": 2, "agil": 5, "kuyu": 1, "sapel_kucuk": 1 } meydan=3 avlu=77 sokak_m=4459 sokak_tur={ "savunma": 322.851089000702, "yol": 902.127028465271, "basamak": 441.000442028046, "sokak": 2792.99951171875 }
+LYKOS21V2 istbos kare=66 bos=0 oran=0.0% ornek=
+LYKOS21V2 yer tur=ev gercek=(-4717,592) dunya=(-1650.8,-207.2)
+LYKOS21V2 yer tur=kilise_kucuk gercek=(-4144,1543) dunya=(-1450.5,-540.2)
+LYKOS21V2 yer tur=bahce gercek=(-4034,1466) dunya=(-1412.0,-513.3)
+LYKOS21V2 yer tur=oge_set_sur_onarim_santiyesi gercek=(-4703,1004) dunya=(-1646.1,-351.3)
+LYKOS21V2 yer tur=oge_agac_kumesi gercek=(-4837,708) dunya=(-1693.0,-247.9)
+LYKOS21V2 yer tur=oge_agil gercek=(-3896,1821) dunya=(-1363.7,-637.4)
+LYKOS21V2 yer tur=oge_kuyu gercek=(-4469,669) dunya=(-1564.2,-234.1)
+LYKOS21V2 yer tur=oge_sapel_kucuk gercek=(-4234,668) dunya=(-1481.8,-233.7)
+LYKOS21V2 yer tur=meydan gercek=(-4793,685) dunya=(-1677.6,-239.9)
+LYKOS21V2 yer tur=meydan gercek=(-4694,1007) dunya=(-1642.7,-352.6)
+LYKOS21V2 yer tur=meydan gercek=(-4114,1221) dunya=(-1439.8,-427.4)

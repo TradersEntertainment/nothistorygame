@@ -1,0 +1,4 @@
+ISTEVLER2 ev=9156 doku=89 meydan=86 hucre=756
+DOKU2 sayim ev=9156 sira=3625 tip={ "sira": 3447, "kule": 51, "teras": 1426, "kulube": 1632, "demirci": 144, "dukkan": 1992, "harap": 201, "latin": 65, "ambar": 8, "firin": 134, "konak": 42, "han": 2, "sira~dam": 12 } kat={ "2": 2424, "1": 6596, "3+": 136 } sokak={ "mese": 3, "yol": 47, "savunma": 50, "sokak": 915, "basamak": 89 } doku=89 meydan=86 stats={ "taban": 95, "izgara_ms": 522, "oyun_yol": 12, "dolgu_0": 523, "dolgu_1": 29, "dolgu_2": 13, "sokak": 1104, "sokak_ms": 1964, "kilise_yeri": 25, "eser_meydan": 37, "red_ortusme_ayni_sokak": 652, "red_dar_0": 64, "avlu_red_aralik": 2140, "red
+ISTBOS sehir_ici kare=907 bos=0 oran=0.0% ornek=[]
+ISTBOS galata kare=10 bos=0 oran=0.0% ornek=[]

@@ -1,0 +1,31 @@
+ISTEVLER2 ev=8442 doku=113 meydan=92 hucre=751
+LYKOS21V2 serit ev=101 doku={ "kilise_kucuk": 3, "sapel": 1, "bostan": 3, "harap_kilise": 3, "bag": 3, "harabe_tonoz": 1, "bahce": 5, "harabe_sarmasik": 1, "agaclik": 1 } oge={ "set_sur_onarim_santiyesi": 2, "agac_kumesi": 10, "agil": 9, "kuyu": 14, "kulube_bag": 2, "sapel_kucuk": 10, "yama_duvar": 7, "ciftlik": 7 } meydan=5 avlu=42 sokak_m=3565 sokak_tur={ "savunma": 322.851089000702, "yol": 960.007360458374, "basamak": 392.000042438507, "sokak": 1889.99943494797 }
+LYKOS21V2 istbos kare=66 bos=0 oran=0.0% ornek=
+LYKOS21V2 yer tur=ev gercek=(-4218,1329) dunya=(-1476.3,-465.2)
+LYKOS21V2 yer tur=kilise_kucuk gercek=(-4388,1424) dunya=(-1536.0,-498.3)
+LYKOS21V2 yer tur=sapel gercek=(-4352,1087) dunya=(-1523.3,-380.5)
+LYKOS21V2 yer tur=bostan gercek=(-4348,1582) dunya=(-1521.8,-553.7)
+LYKOS21V2 yer tur=harap_kilise gercek=(-3803,1600) dunya=(-1331.1,-560.1)
+LYKOS21V2 yer tur=bag gercek=(-4005,1468) dunya=(-1401.8,-513.7)
+LYKOS21V2 yer tur=harabe_tonoz gercek=(-4119,1239) dunya=(-1441.8,-433.7)
+LYKOS21V2 yer tur=bahce gercek=(-4691,1125) dunya=(-1641.8,-393.7)
+LYKOS21V2 yer tur=harabe_sarmasik gercek=(-4187,1110) dunya=(-1465.6,-388.7)
+LYKOS21V2 yer tur=agaclik gercek=(-4234,782) dunya=(-1481.8,-273.7)
+LYKOS21V2 yer tur=oge_set_sur_onarim_santiyesi gercek=(-4703,1004) dunya=(-1646.1,-351.3)
+LYKOS21V2 yer tur=oge_agac_kumesi gercek=(-4629,971) dunya=(-1620.0,-340.0)
+LYKOS21V2 yer tur=oge_agil gercek=(-4005,1925) dunya=(-1401.8,-673.7)
+LYKOS21V2 yer tur=oge_kuyu gercek=(-4005,1814) dunya=(-1401.7,-634.9)
+LYKOS21V2 yer tur=oge_kulube_bag gercek=(-4196,1688) dunya=(-1468.7,-591.0)
+LYKOS21V2 yer tur=oge_sapel_kucuk gercek=(-3870,1679) dunya=(-1354.5,-587.5)
+LYKOS21V2 yer tur=oge_yama_duvar gercek=(-4348,1582) dunya=(-1521.8,-553.7)
+LYKOS21V2 yer tur=oge_ciftlik gercek=(-3631,1546) dunya=(-1270.9,-541.0)
+LYKOS21V2 yer tur=harap_kilise_hepsi gercek=(-3803,1600) dunya=(-1331.1,-560.1) alan=(19.0, 25.0) yaw=0.18
+LYKOS21V2 yer tur=harap_kilise_hepsi gercek=(-4136,1358) dunya=(-1447.5,-475.4) alan=(19.0, 25.0) yaw=-0.29
+LYKOS21V2 yer tur=harap_kilise_hepsi gercek=(-4595,1213) dunya=(-1608.2,-424.4) alan=(19.0, 25.0) yaw=0.18
+LYKOS21V2 yer tur=harap_kilise_hepsi gercek=(-4102,1010) dunya=(-1435.8,-353.5) alan=(19.0, 25.0) yaw=-0.03
+LYKOS21V2 yer tur=meydan gercek=(-4793,685) dunya=(-1677.6,-239.9)
+LYKOS21V2 yer tur=meydan gercek=(-4694,1007) dunya=(-1642.7,-352.6)
+LYKOS21V2 yer tur=meydan gercek=(-4234,1696) dunya=(-1481.8,-593.7)
+LYKOS21V2 yer tur=meydan gercek=(-4491,1352) dunya=(-1572.0,-473.3)
+LYKOS21V2 yer tur=meydan gercek=(-4234,1125) dunya=(-1481.8,-393.7)
+LYKOS21V2 saray c_gercek=(-3542,845) c_dunya=(-1239.6,-295.7) h=6.56 yol_uzunluk=263 yol_noktalar=(-4288,826) (-3916,875) (-3542,845) alan_ev45=0 hucre=1398

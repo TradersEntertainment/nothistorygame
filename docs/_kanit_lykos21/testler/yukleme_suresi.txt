@@ -1,0 +1,8 @@
+once chapter24 1 LOADTIME scene=chapter24 load=199 inst=0 ready=45205 frame1=921 total=46326
+once chapter24 2 LOADTIME scene=chapter24 load=223 inst=1 ready=35575 frame1=909 total=36709
+kopya chapter24 1 LOADTIME scene=chapter24 load=191 inst=1 ready=34278 frame1=899 total=35370
+kopya chapter24 2 LOADTIME scene=chapter24 load=194 inst=1 ready=34571 frame1=974 total=35741
+once chapter43o 1 LOADTIME scene=chapter43o load=282 inst=1 ready=7597 frame1=729 total=8610
+once chapter43o 2 LOADTIME scene=chapter43o load=306 inst=2 ready=8040 frame1=634 total=8982
+kopya chapter43o 1 LOADTIME scene=chapter43o load=280 inst=1 ready=7647 frame1=706 total=8636
+kopya chapter43o 2 LOADTIME scene=chapter43o load=270 inst=0 ready=7082 frame1=637 total=7991

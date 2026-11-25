@@ -69,7 +69,7 @@ taban ölçümleri `~/is/once`'den (tabanın eşi). Godot 4.4.1 resmi linux. Kar
 - Brifin örneği (−390, 0, −13): ortalama y 6,76, komşu örnekler arası en büyük eğim **%7,5**, düzlem eğimi %4,1,
   Lykos çizgisine **58 m** (alanın yarı köşegeni 55 m) — sınırda.
 - Seçilen: **`SARAY_OFS = Vector3(−400, 0, 130)`** — Lykos vadisinin kuzey yamacı. v2 dünya (−1239,6; −295,7)
-  (gerçek −3542, 845), arazi y 6,56; en büyük eğim **%2,9**, düzlem %2,1; Lykos çizgisine **84 m**; en yakın kayıtlı yer
+  (gerçek −3542, 845), arazi merkezde y 6,56, alanda ortalama 6,47; en büyük eğim **%2,9**, düzlem %2,1; Lykos çizgisine **84 m**; en yakın kayıtlı yer
   "Lykos vadisi" etiketi 233 m (anıt değil); Mokios sarnıcı ~1 km; şeridin dışında (iç yüzden ~430 m).
 - Eski dünya karşılığı (byz_walls dönüşümü): x = 5,5 − 130 = **−124,5**, z = −36,3 − 400 = **−436,3**. Romanos
   yolu (ROAD, x −40 @ z −460) ~86 m doğuda, Pempton yolu ~144 m batıda. CityPlan.MARKETS (40, −470) ~168 m. G22 burada
@@ -118,7 +118,32 @@ HALICSONDA OZET carp=661 karma=3854034809
 MARMARASONDA OZET carp=1837 karma=2250736444
 ```
 
-(Bölüm testleri, CITY/STREET/FLIGHT/WORLD/WALK/MAP, yükleme süresi: aşağıdaki bölüm koşular bitince dolduruldu.)
+- **Ayrıştırma** `parse_check`: PARSECHECK PASS scripts=370.
+- **Bölüm testleri** (`--max-fps 20`, 300 sn bekçi, run_tests.sh süzgeci; `testler/bolum_testleri.txt`): **128 koşu,
+  128 AUTOTEST PASS**; VISAUDIT, WALKTHRU, HELDAUDIT, GORUNMEZZEMIN, ALETAUDIT, DONUKAUDIT, ESYAAUDIT
+  (dusme/havada/gomuk/tikama/sinir), YUKLEMEAUDIT_KESIN, SCRIPT ERROR satırı **0**.
+  - Hub: 6 (=byz, =byzmistake, =byzfail, =byzclimb, =byzgive), 7 (=byz, =byzniko, =byzcell, =tea, =lost, =form, =wall,
+    =wallkeep, =fez), 10h (7 çeşit), 12b (5), 13 =city, 23 (5 + =osm), 24 (5); 8y (7), 31o (4).
+  - Ordugâh/eski dünya: 6 (varsayılan, =b, =c, =y, =letter: 6a yarısı), 7 varsayılan (7a uçuşu), 9 (12), 10 (7), 10b (6),
+    10z (4), 11 (10), 13 (9 ordugâh/şehir dalı), 16 (3), 24o (6), 25 (=osm, =osm_caught, =osm_tez), 43o (4).
+  - ×2: 24, 31o, 8y, 12b, 10h, 43o, 9, 7, 11 varsayılan çeşitleri ikişer kez (D25); kalanı ×1.
+- **CITYCHECK** 24 PASS (14 / 16 / 16 sivil), 31o PASS (17 / 19 / 20) — eşik 8, gevşetilmedi.
+- **STREETCHECK PASS** ((e) v2 kalabalığı IstHayatYakin). **FLIGHTCHECK PASS**, **WORLDCHECK PASS** (regions=13
+  landmarks=35), **WALKCHECK PASS**, **MAPCHECK PASS**.
+- **ZFIGHT**: 6, 7, 8y, 9, 10, 10b, 10z, 10h, 11, 12b, 13, 16, 23, 24, 24o, 25, 31o, 43o sahnelerinde 0 satır.
+- **ISTBOS**: `doku2_kare` kayıt sayımı önce 0/907 → sonra 0/907 (şehir içi %0), Galata 0/10; şeridin kendi sayımı
+  (`lykos21_v2`, aynı kural) 0/66. `gezi.tscn bos=1` geometri sayımı **koşulmadı** (yalnız pencereli; kare koşuları
+  süreyi yedi) — KISMEN.
+- **Ev sayısı** `ISTEVLER2`: önce ev=9156 doku=89 meydan=86 → sonra ev=8442 doku=113 meydan=92.
+- **Yükleme süresi** (`load_time.tscn`, tek başına, ikişer koşu; ms, `testler/yukleme_suresi.txt`):
+
+| bölüm | önce (1. / 2.) | sonra (1. / 2.) |
+|---|---|---|
+| chapter24 | 46326 (soğuk önbellek) / 36709 | 35370 / 35741 |
+| chapter43o | 8610 / 8982 | 8636 / 7991 |
+
+  Artış yok (43o'da CityPlan süzgeci + WallRear ek geçişi ölçülemeyecek kadar küçük). Önbellek: v2 sokak verisi geo/sokak
+  md5'iyle yenilenir; "sonra" koşularından önce tek süreçle ısıtıldı (`lykos21_v2`).
 
 ## Hâlâ kötü olanlar (dürüst)
 

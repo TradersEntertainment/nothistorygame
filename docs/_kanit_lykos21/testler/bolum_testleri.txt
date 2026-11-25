@@ -1,0 +1,431 @@
+== c10_byz_r1 --chapter=10 --autotest=byz rc=0
+LYKOS21 eski_serit { "bostan": 15, "bag": 4, "harabe": 15, "meydan": 2, "agac": 248, "kucuk": 9 }
+YUKLEMEAUDIT_ADAY scene=chapter10 evre=acilis toplam_ms=9760 en_uzun_bosluk_ms=1175 kaynak=horn.north_shore>horn.city.plan ilk_kare_ms=406 bosalt_ms=-1
+AUTOTEST PASS chapter=10 variant=byz outcome=10O.1 tries=0 envoy=true merak=0
+== c10_def_r1 --chapter=10 --autotest rc=0
+LYKOS21 eski_serit { "bostan": 15, "bag": 4, "harabe": 15, "meydan": 2, "agac": 248, "kucuk": 9 }
+YUKLEMEAUDIT_ADAY scene=chapter10 evre=acilis toplam_ms=10140 en_uzun_bosluk_ms=1119 kaynak=horn.north_shore>horn.city.plan ilk_kare_ms=346 bosalt_ms=-1
+AUTOTEST PASS chapter=10 variant= outcome=10O.1 tries=0 envoy=false merak=0
+== c10_fail_r1 --chapter=10 --autotest=fail rc=0
+LYKOS21 eski_serit { "bostan": 15, "bag": 4, "harabe": 15, "meydan": 2, "agac": 248, "kucuk": 9 }
+YUKLEMEAUDIT_ADAY scene=chapter10 evre=acilis toplam_ms=10347 en_uzun_bosluk_ms=1297 kaynak=horn.north_shore>horn.city.plan ilk_kare_ms=368 bosalt_ms=-1
+AUTOTEST PASS chapter=10 variant=fail outcome=10O.2 tries=3 envoy=false merak=0
+== c10_fez_r1 --chapter=10 --autotest=fez rc=0
+LYKOS21 eski_serit { "bostan": 15, "bag": 4, "harabe": 15, "meydan": 2, "agac": 248, "kucuk": 9 }
+YUKLEMEAUDIT_ADAY scene=chapter10 evre=acilis toplam_ms=9805 en_uzun_bosluk_ms=1056 kaynak=horn.north_shore>horn.city.plan ilk_kare_ms=330 bosalt_ms=-1
+AUTOTEST PASS chapter=10 variant=fez outcome=10O.1 tries=0 envoy=false merak=0
+== c10_honest_r1 --chapter=10 --autotest=honest rc=0
+LYKOS21 eski_serit { "bostan": 15, "bag": 4, "harabe": 15, "meydan": 2, "agac": 248, "kucuk": 9 }
+YUKLEMEAUDIT_ADAY scene=chapter10 evre=acilis toplam_ms=9696 en_uzun_bosluk_ms=1089 kaynak=horn.north_shore>horn.city.plan ilk_kare_ms=362 bosalt_ms=-1
+AUTOTEST PASS chapter=10 variant=honest outcome=10O.1 tries=0 envoy=false merak=1
+== c10_retry_r1 --chapter=10 --autotest=retry rc=0
+LYKOS21 eski_serit { "bostan": 15, "bag": 4, "harabe": 15, "meydan": 2, "agac": 248, "kucuk": 9 }
+YUKLEMEAUDIT_ADAY scene=chapter10 evre=acilis toplam_ms=10308 en_uzun_bosluk_ms=1012 kaynak=horn.north_shore>horn.city.plan ilk_kare_ms=347 bosalt_ms=-1
+AUTOTEST PASS chapter=10 variant=retry outcome=10O.1 tries=1 envoy=false merak=0
+== c10_selfie_r1 --chapter=10 --autotest=selfie rc=0
+LYKOS21 eski_serit { "bostan": 15, "bag": 4, "harabe": 15, "meydan": 2, "agac": 248, "kucuk": 9 }
+YUKLEMEAUDIT_ADAY scene=chapter10 evre=acilis toplam_ms=10236 en_uzun_bosluk_ms=1026 kaynak=horn.north_shore>horn.city.plan ilk_kare_ms=365 bosalt_ms=-1
+AUTOTEST PASS chapter=10 variant=selfie outcome=10O.1 tries=0 envoy=false merak=0
+== c10b_boom_r1 --chapter=10b --autotest=boom rc=0
+LYKOS21 eski_serit { "bostan": 15, "bag": 4, "harabe": 15, "meydan": 2, "agac": 248, "kucuk": 9 }
+AUTOTEST PASS chapter=10b variant=boom outcome=10B.3 quality=3 risk=2 calc=phone paradox=40
+== c10b_def_r1 --chapter=10b --autotest rc=0
+LYKOS21 eski_serit { "bostan": 15, "bag": 4, "harabe": 15, "meydan": 2, "agac": 248, "kucuk": 9 }
+AUTOTEST PASS chapter=10b variant= outcome=10B.1 quality=3 risk=0 calc=phone paradox=15
+== c10b_eye_r1 --chapter=10b --autotest=eye rc=0
+LYKOS21 eski_serit { "bostan": 15, "bag": 4, "harabe": 15, "meydan": 2, "agac": 248, "kucuk": 9 }
+YUKLEMEAUDIT_ADAY scene=chapter10b evre=acilis toplam_ms=9074 en_uzun_bosluk_ms=1002 kaynak=horn.north_shore>horn.city.plan ilk_kare_ms=265 bosalt_ms=-1
+AUTOTEST PASS chapter=10b variant=eye outcome=10B.2 quality=3 risk=0 calc=eye paradox=5
+== c10b_tape_r1 --chapter=10b --autotest=tape rc=0
+LYKOS21 eski_serit { "bostan": 15, "bag": 4, "harabe": 15, "meydan": 2, "agac": 248, "kucuk": 9 }
+YUKLEMEAUDIT_ADAY scene=chapter10b evre=acilis toplam_ms=9692 en_uzun_bosluk_ms=1241 kaynak=horn.north_shore>horn.city.plan ilk_kare_ms=352 bosalt_ms=-1
+AUTOTEST PASS chapter=10b variant=tape outcome=10B.1 quality=3 risk=0 calc=phone paradox=15
+== c10b_ulighter_r1 --chapter=10b --autotest=ulighter rc=0
+LYKOS21 eski_serit { "bostan": 15, "bag": 4, "harabe": 15, "meydan": 2, "agac": 248, "kucuk": 9 }
+YUKLEMEAUDIT_ADAY scene=chapter10b evre=acilis toplam_ms=9963 en_uzun_bosluk_ms=1238 kaynak=horn.north_shore>horn.city.plan ilk_kare_ms=379 bosalt_ms=-1
+AUTOTEST PASS chapter=10b variant=ulighter outcome=10B.1 quality=3 risk=0 calc=phone paradox=15
+== c10b_untaped_r1 --chapter=10b --autotest=untaped rc=0
+LYKOS21 eski_serit { "bostan": 15, "bag": 4, "harabe": 15, "meydan": 2, "agac": 248, "kucuk": 9 }
+YUKLEMEAUDIT_ADAY scene=chapter10b evre=acilis toplam_ms=9917 en_uzun_bosluk_ms=1142 kaynak=horn.north_shore>horn.city.plan ilk_kare_ms=356 bosalt_ms=-1
+AUTOTEST PASS chapter=10b variant=untaped outcome=10B.3 quality=0 risk=3 calc=phone paradox=40
+== c10h_def_r1 --chapter=10h --autotest rc=0
+YUKLEMEAUDIT_ADAY scene=chapter10h evre=acilis toplam_ms=41835 en_uzun_bosluk_ms=1029 kaynak=sehir_289>kare ilk_kare_ms=1214 bosalt_ms=-1
+AUTOTEST PASS chapter=10h variant= outcome=10H.1 truth=3 direnc=0 paradox=0
+== c10h_def_r2 --chapter=10h --autotest rc=0
+YUKLEMEAUDIT_ADAY scene=chapter10h evre=acilis toplam_ms=41700 en_uzun_bosluk_ms=1036 kaynak=sehir_289>kare ilk_kare_ms=1246 bosalt_ms=-1
+AUTOTEST PASS chapter=10h variant= outcome=10H.1 truth=3 direnc=0 paradox=0
+== c10h_honest_r1 --chapter=10h --autotest=honest rc=0
+AUTOTEST PASS chapter=10h variant=honest outcome=10H.1 truth=3 direnc=0 paradox=10
+== c10h_open_r1 --chapter=10h --autotest=open rc=0
+AUTOTEST PASS chapter=10h variant=open outcome=10H.1 truth=3 direnc=0 paradox=10
+== c10h_pass_r1 --chapter=10h --autotest=pass rc=0
+YUKLEMEAUDIT_ADAY scene=chapter10h evre=acilis toplam_ms=41047 en_uzun_bosluk_ms=1020 kaynak=sehir_289>kare ilk_kare_ms=1203 bosalt_ms=-1
+AUTOTEST PASS chapter=10h variant=pass outcome=10H.1 truth=1 direnc=0 paradox=0
+== c10h_save1_r1 --chapter=10h --autotest=save1 rc=0
+AUTOTEST PASS chapter=10h variant=save1 outcome=10H.1 truth=3 direnc=1 paradox=10
+== c10h_save_r1 --chapter=10h --autotest=save rc=0
+YUKLEMEAUDIT_ADAY scene=chapter10h evre=acilis toplam_ms=43581 en_uzun_bosluk_ms=1131 kaynak=sehir_289>kare ilk_kare_ms=1332 bosalt_ms=-1
+AUTOTEST PASS chapter=10h variant=save outcome=10H.1 truth=3 direnc=3 paradox=10
+== c10h_shame_r1 --chapter=10h --autotest=shame rc=0
+AUTOTEST PASS chapter=10h variant=shame outcome=10H.2 truth=0 direnc=0 paradox=0
+== c10z_def_r1 --chapter=10z --autotest rc=0
+LYKOS21 eski_serit { "bostan": 15, "bag": 4, "harabe": 15, "meydan": 2, "agac": 248, "kucuk": 9 }
+YUKLEMEAUDIT_ADAY scene=chapter10z evre=acilis toplam_ms=9118 en_uzun_bosluk_ms=1056 kaynak=horn.north_shore>horn.city.plan ilk_kare_ms=351 bosalt_ms=-1
+AUTOTEST PASS chapter=10z variant= outcome=10Z.1 good=3 burnt=0 leblebi=true
+== c10z_fire_r1 --chapter=10z --autotest=fire rc=0
+LYKOS21 eski_serit { "bostan": 15, "bag": 4, "harabe": 15, "meydan": 2, "agac": 248, "kucuk": 9 }
+YUKLEMEAUDIT_ADAY scene=chapter10z evre=acilis toplam_ms=9619 en_uzun_bosluk_ms=1033 kaynak=horn.north_shore>horn.city.plan ilk_kare_ms=357 bosalt_ms=-1
+AUTOTEST PASS chapter=10z variant=fire outcome=10Z.2 good=0 burnt=2 leblebi=false
+== c10z_noleb_r1 --chapter=10z --autotest=noleb rc=0
+LYKOS21 eski_serit { "bostan": 15, "bag": 4, "harabe": 15, "meydan": 2, "agac": 248, "kucuk": 9 }
+YUKLEMEAUDIT_ADAY scene=chapter10z evre=acilis toplam_ms=9482 en_uzun_bosluk_ms=1202 kaynak=horn.north_shore>horn.city.plan ilk_kare_ms=382 bosalt_ms=-1
+AUTOTEST PASS chapter=10z variant=noleb outcome=10Z.1 good=3 burnt=0 leblebi=false
+== c10z_thermos_r1 --chapter=10z --autotest=thermos rc=0
+LYKOS21 eski_serit { "bostan": 15, "bag": 4, "harabe": 15, "meydan": 2, "agac": 248, "kucuk": 9 }
+YUKLEMEAUDIT_ADAY scene=chapter10z evre=acilis toplam_ms=9872 en_uzun_bosluk_ms=1149 kaynak=horn.north_shore>horn.city.plan ilk_kare_ms=510 bosalt_ms=-1
+AUTOTEST PASS chapter=10z variant=thermos outcome=10Z.1 good=1 burnt=1 leblebi=true
+== c11_arrest_r1 --chapter=11 --autotest=arrest rc=0
+YUKLEMEAUDIT_ADAY scene=chapter11 evre=acilis toplam_ms=43299 en_uzun_bosluk_ms=1110 kaynak=props>kare ilk_kare_ms=1339 bosalt_ms=-1
+AUTOTEST PASS chapter=11 variant=arrest outcome=11.1 persuade=25 sadakat=55 baski=0
+== c11_def_r1 --chapter=11 --autotest rc=0
+AUTOTEST PASS chapter=11 variant= outcome=11.2 persuade=25 sadakat=55 baski=1
+== c11_def_r2 --chapter=11 --autotest rc=0
+AUTOTEST PASS chapter=11 variant= outcome=11.2 persuade=25 sadakat=55 baski=1
+== c11_escape_r1 --chapter=11 --autotest=escape rc=0
+YUKLEMEAUDIT_ADAY scene=chapter11 evre=acilis toplam_ms=40565 en_uzun_bosluk_ms=1040 kaynak=props>kare ilk_kare_ms=1255 bosalt_ms=-1
+AUTOTEST PASS chapter=11 variant=escape outcome=11.2 persuade=70 sadakat=55 baski=1
+== c11_fired_r1 --chapter=11 --autotest=fired rc=0
+YUKLEMEAUDIT_ADAY scene=chapter11 evre=acilis toplam_ms=41843 en_uzun_bosluk_ms=1349 kaynak=solidify>solidify ilk_kare_ms=1108 bosalt_ms=-1
+AUTOTEST PASS chapter=11 variant=fired outcome=11.4 persuade=25 sadakat=55 baski=4
+== c11_help_r1 --chapter=11 --autotest=help rc=0
+YUKLEMEAUDIT_ADAY scene=chapter11 evre=acilis toplam_ms=42566 en_uzun_bosluk_ms=1094 kaynak=solidify>solidify ilk_kare_ms=1215 bosalt_ms=-1
+AUTOTEST PASS chapter=11 variant=help outcome=11.3 persuade=25 sadakat=55 baski=0
+== c11_helpwall_r1 --chapter=11 --autotest=helpwall rc=0
+YUKLEMEAUDIT_ADAY scene=chapter11 evre=acilis toplam_ms=41549 en_uzun_bosluk_ms=1063 kaynak=solidify>solidify ilk_kare_ms=1288 bosalt_ms=-1
+AUTOTEST PASS chapter=11 variant=helpwall outcome=11.3 persuade=25 sadakat=30 baski=0
+== c11_hikmet_r1 --chapter=11 --autotest=hikmet rc=0
+YUKLEMEAUDIT_ADAY scene=chapter11 evre=acilis toplam_ms=42782 en_uzun_bosluk_ms=1092 kaynak=solidify>solidify ilk_kare_ms=1280 bosalt_ms=-1
+AUTOTEST PASS chapter=11 variant=hikmet outcome=11.5 persuade=25 sadakat=55 baski=0
+== c11_lost_r1 --chapter=11 --autotest=lost rc=0
+YUKLEMEAUDIT_ADAY scene=chapter11 evre=acilis toplam_ms=43619 en_uzun_bosluk_ms=1109 kaynak=solidify>solidify ilk_kare_ms=1198 bosalt_ms=-1
+AUTOTEST PASS chapter=11 variant=lost outcome=11.4 persuade=25 sadakat=55 baski=0
+== c11_niko_r1 --chapter=11 --autotest=niko rc=0
+YUKLEMEAUDIT_ADAY scene=chapter11 evre=acilis toplam_ms=42583 en_uzun_bosluk_ms=1116 kaynak=props>kare ilk_kare_ms=1334 bosalt_ms=-1
+AUTOTEST PASS chapter=11 variant=niko outcome=11.6 persuade=25 sadakat=55 baski=0
+== c11_persuade_r1 --chapter=11 --autotest=persuade rc=0
+YUKLEMEAUDIT_ADAY scene=chapter11 evre=acilis toplam_ms=41793 en_uzun_bosluk_ms=1208 kaynak=solidify>solidify ilk_kare_ms=1189 bosalt_ms=-1
+AUTOTEST PASS chapter=11 variant=persuade outcome=11.2 persuade=70 sadakat=55 baski=1
+== c12b_d2_r1 --chapter=12b --autotest=d2 rc=0
+YUKLEMEAUDIT_ADAY scene=chapter12b evre=acilis toplam_ms=40895 en_uzun_bosluk_ms=1131 kaynak=sehir_289>kare ilk_kare_ms=1309 bosalt_ms=-1
+AUTOTEST PASS chapter=12b variant=d2 outcome=12B.1 world= honest=true
+== c12b_d3_r1 --chapter=12b --autotest=d3 rc=0
+AUTOTEST PASS chapter=12b variant=d3 outcome=12B.1 world= honest=true
+== c12b_def_r1 --chapter=12b --autotest rc=0
+YUKLEMEAUDIT_ADAY scene=chapter12b evre=acilis toplam_ms=43826 en_uzun_bosluk_ms=1058 kaynak=sehir_289>kare ilk_kare_ms=1242 bosalt_ms=-1
+AUTOTEST PASS chapter=12b variant= outcome=12B.1 world= honest=true
+== c12b_def_r2 --chapter=12b --autotest rc=0
+YUKLEMEAUDIT_ADAY scene=chapter12b evre=acilis toplam_ms=44775 en_uzun_bosluk_ms=1106 kaynak=sehir_289>kare ilk_kare_ms=1334 bosalt_ms=-1
+AUTOTEST PASS chapter=12b variant= outcome=12B.1 world= honest=true
+== c12b_lie_r1 --chapter=12b --autotest=lie rc=0
+YUKLEMEAUDIT_ADAY scene=chapter12b evre=acilis toplam_ms=42984 en_uzun_bosluk_ms=1075 kaynak=props>solidify ilk_kare_ms=1161 bosalt_ms=-1
+AUTOTEST PASS chapter=12b variant=lie outcome=12B.2 world= honest=false
+== c12b_year_r1 --chapter=12b --autotest=year rc=0
+AUTOTEST PASS chapter=12b variant=year outcome=12B.3 world= honest=false
+== c13_city_r1 --chapter=13 --autotest=city rc=0
+YUKLEMEAUDIT_ADAY scene=chapter13 evre=tolga_city toplam_ms=40905 en_uzun_bosluk_ms=1507 kaynak=sehir_289>solidify ilk_kare_ms=1868 bosalt_ms=-1
+AUTOTEST PASS chapter=13 variant=city version=garage outcome=13.2 window=8.4 tolga=T2 hikmet=
+== c13_def_r1 --chapter=13 --autotest rc=0
+LYKOS21 eski_serit { "bostan": 15, "bag": 4, "harabe": 15, "meydan": 2, "agac": 248, "kucuk": 9 }
+YUKLEMEAUDIT_ADAY scene=chapter13 evre=tolga_camp toplam_ms=8590 en_uzun_bosluk_ms=1084 kaynak=horn.north_shore>horn.city.plan ilk_kare_ms=532 bosalt_ms=-1
+AUTOTEST PASS chapter=13 variant= version=garage outcome=13.1 window=8.4 tolga=T1 hikmet=
+== c13_depot_r1 --chapter=13 --autotest=depot rc=0
+LYKOS21 eski_serit { "bostan": 15, "bag": 4, "harabe": 15, "meydan": 2, "agac": 248, "kucuk": 9 }
+AUTOTEST PASS chapter=13 variant=depot version=depot outcome=13.1 window=8.4 tolga=T1 hikmet=
+== c13_kitchen_r1 --chapter=13 --autotest=kitchen rc=0
+LYKOS21 eski_serit { "bostan": 15, "bag": 4, "harabe": 15, "meydan": 2, "agac": 248, "kucuk": 9 }
+YUKLEMEAUDIT_ADAY scene=chapter13 evre=tolga_camp toplam_ms=8388 en_uzun_bosluk_ms=1162 kaynak=horn.north_shore>horn.city.plan ilk_kare_ms=544 bosalt_ms=-1
+AUTOTEST PASS chapter=13 variant=kitchen version=garage outcome=13.1 window=8.4 tolga=T1 hikmet=
+== c13_meclis_r1 --chapter=13 --autotest=meclis rc=0
+AUTOTEST PASS chapter=13 variant=meclis version=meclis outcome=13.4 window=8.4 tolga=T1 hikmet=H1
+== c13_miss_r1 --chapter=13 --autotest=miss rc=0
+LYKOS21 eski_serit { "bostan": 15, "bag": 4, "harabe": 15, "meydan": 2, "agac": 248, "kucuk": 9 }
+YUKLEMEAUDIT_ADAY scene=chapter13 evre=tolga_camp toplam_ms=8431 en_uzun_bosluk_ms=1188 kaynak=horn.north_shore>horn.city.plan ilk_kare_ms=591 bosalt_ms=-1
+AUTOTEST PASS chapter=13 variant=miss version=garage outcome=13.2 window=8.4 tolga=T2 hikmet=
+== c13_stay_r1 --chapter=13 --autotest=stay rc=0
+LYKOS21 eski_serit { "bostan": 15, "bag": 4, "harabe": 15, "meydan": 2, "agac": 248, "kucuk": 9 }
+YUKLEMEAUDIT_ADAY scene=chapter13 evre=acilis+h3_ordugah toplam_ms=8851 en_uzun_bosluk_ms=1057 kaynak=horn.north_shore>horn.city.plan ilk_kare_ms=249 bosalt_ms=-1
+AUTOTEST PASS chapter=13 variant=stay version=1453 outcome=13.5 window=8.4 tolga=T1 hikmet=H3
+== c13_together_r1 --chapter=13 --autotest=together rc=0
+LYKOS21 eski_serit { "bostan": 15, "bag": 4, "harabe": 15, "meydan": 2, "agac": 248, "kucuk": 9 }
+YUKLEMEAUDIT_ADAY scene=chapter13 evre=acilis+h3_ordugah toplam_ms=9584 en_uzun_bosluk_ms=1125 kaynak=horn.north_shore>horn.city.plan ilk_kare_ms=245 bosalt_ms=-1
+AUTOTEST PASS chapter=13 variant=together version=1453 outcome=13.4 window=8.4 tolga=T1 hikmet=H1
+== c13_w4_r1 --chapter=13 --autotest=w4 rc=0
+AUTOTEST PASS chapter=13 variant=w4 version=w4 outcome=13.1 window=8.4 tolga=T1 hikmet=
+== c13_wrong_r1 --chapter=13 --autotest=wrong rc=0
+LYKOS21 eski_serit { "bostan": 15, "bag": 4, "harabe": 15, "meydan": 2, "agac": 248, "kucuk": 9 }
+AUTOTEST PASS chapter=13 variant=wrong version=garage outcome=13.3 window=8.4 tolga=T3 hikmet=
+== c16_def_r1 --chapter=16 --autotest rc=0
+LYKOS21 eski_serit { "bostan": 15, "bag": 4, "harabe": 15, "meydan": 2, "agac": 248, "kucuk": 9 }
+YUKLEMEAUDIT_ADAY scene=chapter16 evre=acilis toplam_ms=9479 en_uzun_bosluk_ms=1203 kaynak=horn.north_shore>horn.city.plan ilk_kare_ms=267 bosalt_ms=-1
+AUTOTEST PASS chapter=16 variant= outcome=16.1 ch13=13.6 pecks=3
+== c16_late_r1 --chapter=16 --autotest=late rc=0
+LYKOS21 eski_serit { "bostan": 15, "bag": 4, "harabe": 15, "meydan": 2, "agac": 248, "kucuk": 9 }
+AUTOTEST PASS chapter=16 variant=late outcome=16.2 ch13=13.2 pecks=0
+== c16_leb_r1 --chapter=16 --autotest=leb rc=0
+LYKOS21 eski_serit { "bostan": 15, "bag": 4, "harabe": 15, "meydan": 2, "agac": 248, "kucuk": 9 }
+AUTOTEST PASS chapter=16 variant=leb outcome=16.2 ch13=13.2 pecks=0
+== c23_creative_r1 --chapter=23 --autotest=creative rc=0
+YUKLEMEAUDIT_ADAY scene=chapter23 evre=acilis toplam_ms=44089 en_uzun_bosluk_ms=1117 kaynak=sehir_289>kare ilk_kare_ms=1326 bosalt_ms=-1
+AUTOTEST PASS chapter=23 variant=creative outcome=23.2 deviation=3 card=true singed=false letter=false
+== c23_def_r1 --chapter=23 --autotest rc=0
+AUTOTEST PASS chapter=23 variant= outcome=23.1 deviation=0 card=true singed=false letter=false
+== c23_letter_r1 --chapter=23 --autotest=letter rc=0
+AUTOTEST PASS chapter=23 variant=letter outcome=23.1 deviation=0 card=true singed=false letter=true
+== c23_osm_r1 --chapter=23 --autotest=osm rc=0
+YUKLEMEAUDIT_ADAY scene=chapter23 evre=acilis toplam_ms=41857 en_uzun_bosluk_ms=1015 kaynak=sehir_289>kare ilk_kare_ms=1202 bosalt_ms=-1
+AUTOTEST PASS chapter=23 variant=osm outcome=23.1 deviation=0 card=true singed=false letter=false
+== c23_pass_r1 --chapter=23 --autotest=pass rc=0
+AUTOTEST PASS chapter=23 variant=pass outcome=23.1 deviation=0 card=true singed=false letter=false
+== c23_singed_r1 --chapter=23 --autotest=singed rc=0
+YUKLEMEAUDIT_ADAY scene=chapter23 evre=acilis toplam_ms=44199 en_uzun_bosluk_ms=1028 kaynak=sehir_289>kare ilk_kare_ms=1209 bosalt_ms=-1
+AUTOTEST PASS chapter=23 variant=singed outcome=23.1 deviation=0 card=true singed=true letter=false
+== c24_def_r1 --chapter=24 --autotest rc=0
+YUKLEMEAUDIT_ADAY scene=chapter24 evre=acilis toplam_ms=43415 en_uzun_bosluk_ms=1050 kaynak=props>solidify ilk_kare_ms=1161 bosalt_ms=-1
+LYKOS21 eski_serit { "bostan": 15, "bag": 4, "harabe": 15, "meydan": 2, "agac": 248, "kucuk": 9 }
+YUKLEMEAUDIT_ADAY scene=chapter24 evre=ayasofya toplam_ms=7463 en_uzun_bosluk_ms=1278 kaynak=sehir_923>horn.city.plan ilk_kare_ms=384 bosalt_ms=-1
+AUTOTEST PASS chapter=24 variant= outcome=24.1 stumbles=0 kid=true niko=false steadied=0 kid_t=0.3
+== c24_def_r2 --chapter=24 --autotest rc=0
+YUKLEMEAUDIT_ADAY scene=chapter24 evre=acilis toplam_ms=44283 en_uzun_bosluk_ms=1020 kaynak=props>solidify ilk_kare_ms=1161 bosalt_ms=-1
+LYKOS21 eski_serit { "bostan": 15, "bag": 4, "harabe": 15, "meydan": 2, "agac": 248, "kucuk": 9 }
+YUKLEMEAUDIT_ADAY scene=chapter24 evre=ayasofya toplam_ms=7609 en_uzun_bosluk_ms=1055 kaynak=sehir_923>horn.city.plan ilk_kare_ms=410 bosalt_ms=-1
+AUTOTEST PASS chapter=24 variant= outcome=24.1 stumbles=0 kid=true niko=false steadied=0 kid_t=0.4
+== c24_eclipse_r1 --chapter=24 --autotest=eclipse rc=0
+YUKLEMEAUDIT_ADAY scene=chapter24 evre=acilis toplam_ms=44651 en_uzun_bosluk_ms=1073 kaynak=sehir_289>kare ilk_kare_ms=1271 bosalt_ms=-1
+LYKOS21 eski_serit { "bostan": 15, "bag": 4, "harabe": 15, "meydan": 2, "agac": 248, "kucuk": 9 }
+YUKLEMEAUDIT_ADAY scene=chapter24 evre=ayasofya toplam_ms=8018 en_uzun_bosluk_ms=1191 kaynak=sehir_923>horn.city.plan ilk_kare_ms=413 bosalt_ms=-1
+AUTOTEST PASS chapter=24 variant=eclipse outcome=24.1 stumbles=0 kid=true niko=false steadied=0 kid_t=0.4
+== c24_late_r1 --chapter=24 --autotest=late rc=0
+YUKLEMEAUDIT_ADAY scene=chapter24 evre=acilis toplam_ms=42377 en_uzun_bosluk_ms=1007 kaynak=sehir_289>kare ilk_kare_ms=1191 bosalt_ms=-1
+LYKOS21 eski_serit { "bostan": 15, "bag": 4, "harabe": 15, "meydan": 2, "agac": 248, "kucuk": 9 }
+YUKLEMEAUDIT_ADAY scene=chapter24 evre=ayasofya toplam_ms=7577 en_uzun_bosluk_ms=1163 kaynak=sehir_923>horn.city.plan ilk_kare_ms=385 bosalt_ms=-1
+AUTOTEST PASS chapter=24 variant=late outcome=24.2 stumbles=0 kid=false niko=false steadied=0 kid_t=0.4
+== c24_niko_r1 --chapter=24 --autotest=niko rc=0
+YUKLEMEAUDIT_ADAY scene=chapter24 evre=acilis toplam_ms=43234 en_uzun_bosluk_ms=1084 kaynak=props>solidify ilk_kare_ms=1122 bosalt_ms=-1
+LYKOS21 eski_serit { "bostan": 15, "bag": 4, "harabe": 15, "meydan": 2, "agac": 248, "kucuk": 9 }
+YUKLEMEAUDIT_ADAY scene=chapter24 evre=ayasofya toplam_ms=7796 en_uzun_bosluk_ms=1091 kaynak=sehir_923>horn.city.plan ilk_kare_ms=457 bosalt_ms=-1
+AUTOTEST PASS chapter=24 variant=niko outcome=24.1 stumbles=0 kid=true niko=true steadied=2 kid_t=0.4
+== c24_niko_slow_r1 --chapter=24 --autotest=niko_slow rc=0
+YUKLEMEAUDIT_ADAY scene=chapter24 evre=acilis toplam_ms=42745 en_uzun_bosluk_ms=1051 kaynak=sehir_289>kare ilk_kare_ms=1260 bosalt_ms=-1
+LYKOS21 eski_serit { "bostan": 15, "bag": 4, "harabe": 15, "meydan": 2, "agac": 248, "kucuk": 9 }
+YUKLEMEAUDIT_ADAY scene=chapter24 evre=ayasofya toplam_ms=8785 en_uzun_bosluk_ms=1157 kaynak=sehir_923>horn.city.plan ilk_kare_ms=623 bosalt_ms=-1
+AUTOTEST PASS chapter=24 variant=niko_slow outcome=24.1 stumbles=0 kid=true niko=true steadied=0 kid_t=23.8
+== c24o_def_r1 --chapter=24o --autotest rc=0
+LYKOS21 eski_serit { "bostan": 15, "bag": 4, "harabe": 15, "meydan": 2, "agac": 248, "kucuk": 9 }
+YUKLEMEAUDIT_ADAY scene=chapter24o evre=acilis toplam_ms=10003 en_uzun_bosluk_ms=1081 kaynak=horn.north_shore>horn.city.plan ilk_kare_ms=365 bosalt_ms=-1
+AUTOTEST PASS chapter=24o variant= outcome=24O.1 calmed=3 kadri=false tea=0 menu=false eclipse=false
+== c24o_eclipse_r1 --chapter=24o --autotest=eclipse rc=0
+LYKOS21 eski_serit { "bostan": 15, "bag": 4, "harabe": 15, "meydan": 2, "agac": 248, "kucuk": 9 }
+YUKLEMEAUDIT_ADAY scene=chapter24o evre=acilis toplam_ms=9664 en_uzun_bosluk_ms=1093 kaynak=horn.north_shore>horn.city.plan ilk_kare_ms=382 bosalt_ms=-1
+AUTOTEST PASS chapter=24o variant=eclipse outcome=24O.1 calmed=3 kadri=false tea=0 menu=false eclipse=true
+== c24o_late_r1 --chapter=24o --autotest=late rc=0
+LYKOS21 eski_serit { "bostan": 15, "bag": 4, "harabe": 15, "meydan": 2, "agac": 248, "kucuk": 9 }
+YUKLEMEAUDIT_ADAY scene=chapter24o evre=acilis toplam_ms=10001 en_uzun_bosluk_ms=1364 kaynak=horn.north_shore>horn.city.plan ilk_kare_ms=284 bosalt_ms=-1
+AUTOTEST PASS chapter=24o variant=late outcome=24O.2 calmed=2 kadri=false tea=0 menu=false eclipse=false
+== c24o_menu_r1 --chapter=24o --autotest=menu rc=0
+LYKOS21 eski_serit { "bostan": 15, "bag": 4, "harabe": 15, "meydan": 2, "agac": 248, "kucuk": 9 }
+YUKLEMEAUDIT_ADAY scene=chapter24o evre=acilis toplam_ms=10047 en_uzun_bosluk_ms=1083 kaynak=horn.north_shore>horn.city.plan ilk_kare_ms=465 bosalt_ms=-1
+AUTOTEST PASS chapter=24o variant=menu outcome=24O.1 calmed=3 kadri=false tea=0 menu=true eclipse=false
+== c24o_tea_r1 --chapter=24o --autotest=tea rc=0
+LYKOS21 eski_serit { "bostan": 15, "bag": 4, "harabe": 15, "meydan": 2, "agac": 248, "kucuk": 9 }
+YUKLEMEAUDIT_ADAY scene=chapter24o evre=acilis toplam_ms=9524 en_uzun_bosluk_ms=1054 kaynak=horn.north_shore>horn.city.plan ilk_kare_ms=342 bosalt_ms=-1
+AUTOTEST PASS chapter=24o variant=tea outcome=24O.1 calmed=3 kadri=false tea=3 menu=false eclipse=false
+== c24o_thermos_r1 --chapter=24o --autotest=thermos rc=0
+LYKOS21 eski_serit { "bostan": 15, "bag": 4, "harabe": 15, "meydan": 2, "agac": 248, "kucuk": 9 }
+YUKLEMEAUDIT_ADAY scene=chapter24o evre=acilis toplam_ms=9962 en_uzun_bosluk_ms=1120 kaynak=horn.north_shore>horn.city.plan ilk_kare_ms=345 bosalt_ms=-1
+AUTOTEST PASS chapter=24o variant=thermos outcome=24O.1 calmed=3 kadri=true tea=0 menu=false eclipse=false
+== c25_osm_caught_r1 --chapter=25 --autotest=osm_caught rc=0
+LYKOS21 eski_serit { "bostan": 15, "bag": 4, "harabe": 15, "meydan": 2, "agac": 248, "kucuk": 9 }
+YUKLEMEAUDIT_ADAY scene=chapter25 evre=acilis toplam_ms=10003 en_uzun_bosluk_ms=1083 kaynak=horn.north_shore>horn.city.plan ilk_kare_ms=333 bosalt_ms=-1
+AUTOTEST PASS chapter=25 variant=osm_caught outcome=25.2 caught=2 candle=false tezkire=false marco=false sur=-
+== c25_osm_r1 --chapter=25 --autotest=osm rc=0
+LYKOS21 eski_serit { "bostan": 15, "bag": 4, "harabe": 15, "meydan": 2, "agac": 248, "kucuk": 9 }
+YUKLEMEAUDIT_ADAY scene=chapter25 evre=acilis toplam_ms=9626 en_uzun_bosluk_ms=1000 kaynak=horn.north_shore>horn.city.plan ilk_kare_ms=343 bosalt_ms=-1
+AUTOTEST PASS chapter=25 variant=osm outcome=25.1 caught=0 candle=false tezkire=false marco=false sur=-
+== c25_osm_tez_r1 --chapter=25 --autotest=osm_tez rc=0
+LYKOS21 eski_serit { "bostan": 15, "bag": 4, "harabe": 15, "meydan": 2, "agac": 248, "kucuk": 9 }
+AUTOTEST PASS chapter=25 variant=osm_tez outcome=25.1 caught=1 candle=false tezkire=true marco=false sur=-
+== c31o_def_r1 --chapter=31o --autotest rc=0
+LYKOS21 eski_serit { "bostan": 15, "bag": 4, "harabe": 15, "meydan": 2, "agac": 248, "kucuk": 9 }
+YUKLEMEAUDIT_ADAY scene=chapter31o evre=eyup toplam_ms=7866 en_uzun_bosluk_ms=1238 kaynak=sehir_923>horn.city.plan ilk_kare_ms=195 bosalt_ms=-1
+AUTOTEST PASS chapter=31o variant= outcome=31O.1 house=true(161) falls=0 signs=3 wrong=0 sun=true lashes=3 miss=0 scaff=true mats=8/8 err=1
+== c31o_def_r2 --chapter=31o --autotest rc=0
+LYKOS21 eski_serit { "bostan": 15, "bag": 4, "harabe": 15, "meydan": 2, "agac": 248, "kucuk": 9 }
+YUKLEMEAUDIT_ADAY scene=chapter31o evre=eyup toplam_ms=7495 en_uzun_bosluk_ms=1133 kaynak=siegefield:_wall_extension()>horn.city.plan ilk_kare_ms=197 bosalt_ms=-1
+AUTOTEST PASS chapter=31o variant= outcome=31O.1 house=true(162) falls=0 signs=3 wrong=0 sun=true lashes=3 miss=0 scaff=true mats=8/8 err=0
+== c31o_late_r1 --chapter=31o --autotest=late rc=0
+LYKOS21 eski_serit { "bostan": 15, "bag": 4, "harabe": 15, "meydan": 2, "agac": 248, "kucuk": 9 }
+YUKLEMEAUDIT_ADAY scene=chapter31o evre=eyup toplam_ms=7704 en_uzun_bosluk_ms=1050 kaynak=sehir_923>horn.city.plan ilk_kare_ms=199 bosalt_ms=-1
+AUTOTEST PASS chapter=31o variant=late outcome=31O.2 house=true(156) falls=1 signs=3 wrong=2 sun=false lashes=3 miss=1 scaff=true mats=5/8 err=50
+== c31o_petrion_bad_r1 --chapter=31o --autotest=petrion_bad rc=0
+LYKOS21 eski_serit { "bostan": 15, "bag": 4, "harabe": 15, "meydan": 2, "agac": 248, "kucuk": 9 }
+YUKLEMEAUDIT_ADAY scene=chapter31o evre=eyup toplam_ms=7932 en_uzun_bosluk_ms=1080 kaynak=sehir_923>horn.city.plan ilk_kare_ms=202 bosalt_ms=-1
+AUTOTEST PASS chapter=31o variant=petrion_bad outcome=31O.1 house=true(161) falls=0 signs=3 wrong=0 sun=true lashes=3 miss=0 scaff=true mats=8/8 err=2
+== c31o_petrion_ok_r1 --chapter=31o --autotest=petrion_ok rc=0
+LYKOS21 eski_serit { "bostan": 15, "bag": 4, "harabe": 15, "meydan": 2, "agac": 248, "kucuk": 9 }
+YUKLEMEAUDIT_ADAY scene=chapter31o evre=eyup toplam_ms=7771 en_uzun_bosluk_ms=1060 kaynak=sehir_923>horn.city.plan ilk_kare_ms=203 bosalt_ms=-1
+AUTOTEST PASS chapter=31o variant=petrion_ok outcome=31O.1 house=true(201) falls=0 signs=3 wrong=0 sun=true lashes=3 miss=0 scaff=true mats=8/8 err=1
+== c43o_bad_r1 --chapter=43o --autotest=bad rc=0
+LYKOS21 eski_serit { "bostan": 15, "bag": 4, "harabe": 15, "meydan": 2, "agac": 248, "kucuk": 9 }
+YUKLEMEAUDIT_ADAY scene=chapter43o evre=acilis toplam_ms=9782 en_uzun_bosluk_ms=1188 kaynak=horn.north_shore>horn.city.plan ilk_kare_ms=320 bosalt_ms=-1
+AUTOTEST PASS chapter=43 variant=bad outcome=43O.2 bad=3 lessons=0 soup=true flown=1101 battery=22
+== c43o_def_r1 --chapter=43o --autotest rc=0
+LYKOS21 eski_serit { "bostan": 15, "bag": 4, "harabe": 15, "meydan": 2, "agac": 248, "kucuk": 9 }
+YUKLEMEAUDIT_ADAY scene=chapter43o evre=acilis toplam_ms=9676 en_uzun_bosluk_ms=1145 kaynak=horn.north_shore>horn.city.plan ilk_kare_ms=353 bosalt_ms=-1
+AUTOTEST PASS chapter=43 variant= outcome=43O.1 bad=0 lessons=3 soup=true flown=1069 battery=22
+== c43o_def_r2 --chapter=43o --autotest rc=0
+LYKOS21 eski_serit { "bostan": 15, "bag": 4, "harabe": 15, "meydan": 2, "agac": 248, "kucuk": 9 }
+YUKLEMEAUDIT_ADAY scene=chapter43o evre=acilis toplam_ms=10245 en_uzun_bosluk_ms=1184 kaynak=horn.north_shore>horn.city.plan ilk_kare_ms=346 bosalt_ms=-1
+AUTOTEST PASS chapter=43 variant= outcome=43O.1 bad=0 lessons=3 soup=true flown=1069 battery=22
+== c43o_dive_r1 --chapter=43o --autotest=dive rc=0
+LYKOS21 eski_serit { "bostan": 15, "bag": 4, "harabe": 15, "meydan": 2, "agac": 248, "kucuk": 9 }
+YUKLEMEAUDIT_ADAY scene=chapter43o evre=acilis toplam_ms=9515 en_uzun_bosluk_ms=1027 kaynak=horn.north_shore>horn.city.plan ilk_kare_ms=349 bosalt_ms=-1
+AUTOTEST PASS chapter=43 variant=dive outcome=43O.1 bad=1 lessons=3 soup=false flown=1503 battery=0
+== c43o_miss_r1 --chapter=43o --autotest=miss rc=0
+LYKOS21 eski_serit { "bostan": 15, "bag": 4, "harabe": 15, "meydan": 2, "agac": 248, "kucuk": 9 }
+YUKLEMEAUDIT_ADAY scene=chapter43o evre=acilis toplam_ms=9392 en_uzun_bosluk_ms=1176 kaynak=horn.north_shore>horn.city.plan ilk_kare_ms=321 bosalt_ms=-1
+AUTOTEST PASS chapter=43 variant=miss outcome=43O.1 bad=1 lessons=3 soup=false flown=1060 battery=18
+== c6_b_r1 --chapter=6 --autotest=b rc=0
+LYKOS21 eski_serit { "bostan": 15, "bag": 4, "harabe": 15, "meydan": 2, "agac": 248, "kucuk": 9 }
+YUKLEMEAUDIT_ADAY scene=chapter6 evre=acilis toplam_ms=9747 en_uzun_bosluk_ms=1117 kaynak=horn.north_shore>horn.city.plan ilk_kare_ms=325 bosalt_ms=-1
+AUTOTEST PASS chapter=6 variant=b branch=6a outcome=6a.2 paradox=0 mistakes=0 telsiz=4
+== c6_byz_r1 --chapter=6 --autotest=byz rc=0
+YUKLEMEAUDIT_ADAY scene=chapter6 evre=acilis toplam_ms=53841 en_uzun_bosluk_ms=1184 kaynak=w1453_bake>doku_esya ilk_kare_ms=1171 bosalt_ms=-1
+AUTOTEST PASS chapter=6 variant=byz branch=6b outcome=6b.1 paradox=0 mistakes=0 telsiz=4
+== c6_byzclimb_r1 --chapter=6 --autotest=byzclimb rc=0
+YUKLEMEAUDIT_ADAY scene=chapter6 evre=acilis toplam_ms=44822 en_uzun_bosluk_ms=1077 kaynak=sehir_289>kare ilk_kare_ms=1257 bosalt_ms=-1
+AUTOTEST PASS chapter=6 variant=byzclimb branch=6b outcome=6b.1 paradox=0 mistakes=0 telsiz=4
+== c6_byzfail_r1 --chapter=6 --autotest=byzfail rc=0
+YUKLEMEAUDIT_ADAY scene=chapter6 evre=acilis toplam_ms=45627 en_uzun_bosluk_ms=1035 kaynak=sehir_289>kare ilk_kare_ms=1211 bosalt_ms=-1
+AUTOTEST PASS chapter=6 variant=byzfail branch=6b outcome=6b.3 paradox=0 mistakes=3 telsiz=4
+== c6_byzgive_r1 --chapter=6 --autotest=byzgive rc=0
+YUKLEMEAUDIT_ADAY scene=chapter6 evre=acilis toplam_ms=45643 en_uzun_bosluk_ms=1152 kaynak=sehir_289>kare ilk_kare_ms=1326 bosalt_ms=-1
+AUTOTEST PASS chapter=6 variant=byzgive branch=6b outcome=6b.1 paradox=0 mistakes=0 telsiz=4
+== c6_byzmistake_r1 --chapter=6 --autotest=byzmistake rc=0
+YUKLEMEAUDIT_ADAY scene=chapter6 evre=acilis toplam_ms=53203 en_uzun_bosluk_ms=1208 kaynak=doku_is>doku_esya ilk_kare_ms=1090 bosalt_ms=-1
+AUTOTEST PASS chapter=6 variant=byzmistake branch=6b outcome=6b.2 paradox=45 mistakes=1 telsiz=4
+== c6_c_r1 --chapter=6 --autotest=c rc=0
+LYKOS21 eski_serit { "bostan": 15, "bag": 4, "harabe": 15, "meydan": 2, "agac": 248, "kucuk": 9 }
+YUKLEMEAUDIT_ADAY scene=chapter6 evre=acilis toplam_ms=9596 en_uzun_bosluk_ms=1020 kaynak=horn.north_shore>horn.city.plan ilk_kare_ms=390 bosalt_ms=-1
+AUTOTEST PASS chapter=6 variant=c branch=6a outcome=6a.3 paradox=5 mistakes=0 telsiz=4
+== c6_def_r1 --chapter=6 --autotest rc=0
+LYKOS21 eski_serit { "bostan": 15, "bag": 4, "harabe": 15, "meydan": 2, "agac": 248, "kucuk": 9 }
+YUKLEMEAUDIT_ADAY scene=chapter6 evre=acilis toplam_ms=10123 en_uzun_bosluk_ms=1179 kaynak=horn.north_shore>horn.city.plan ilk_kare_ms=336 bosalt_ms=-1
+AUTOTEST PASS chapter=6 variant= branch=6a outcome=6a.1 paradox=10 mistakes=0 telsiz=4
+== c6_letter_r1 --chapter=6 --autotest=letter rc=0
+LYKOS21 eski_serit { "bostan": 15, "bag": 4, "harabe": 15, "meydan": 2, "agac": 248, "kucuk": 9 }
+YUKLEMEAUDIT_ADAY scene=chapter6 evre=acilis toplam_ms=9993 en_uzun_bosluk_ms=1034 kaynak=horn.north_shore>horn.city.plan ilk_kare_ms=329 bosalt_ms=-1
+AUTOTEST PASS chapter=6 variant=letter branch=6a outcome=6a.1 paradox=20 mistakes=0 telsiz=4
+== c6_y_r1 --chapter=6 --autotest=y rc=0
+LYKOS21 eski_serit { "bostan": 15, "bag": 4, "harabe": 15, "meydan": 2, "agac": 248, "kucuk": 9 }
+YUKLEMEAUDIT_ADAY scene=chapter6 evre=acilis toplam_ms=9490 en_uzun_bosluk_ms=1089 kaynak=horn.north_shore>horn.city.plan ilk_kare_ms=332 bosalt_ms=-1
+AUTOTEST PASS chapter=6 variant=y branch=6a outcome=6a.4 paradox=0 mistakes=0 telsiz=4
+== c7_byz_r1 --chapter=7 --autotest=byz rc=0
+YUKLEMEAUDIT_ADAY scene=chapter7 evre=acilis toplam_ms=41120 en_uzun_bosluk_ms=1031 kaynak=sehir_289>props ilk_kare_ms=1483 bosalt_ms=-1
+AUTOTEST PASS chapter=7 variant=byz branch=7b outcome=7.1 extras=["7.3"] sadakat=50 baski=0 hour=14.0
+== c7_byzcell_r1 --chapter=7 --autotest=byzcell rc=0
+AUTOTEST PASS chapter=7 variant=byzcell branch=7b outcome=7.1 extras=[] sadakat=60 baski=0 hour=13.0
+== c7_byzniko_r1 --chapter=7 --autotest=byzniko rc=0
+YUKLEMEAUDIT_ADAY scene=chapter7 evre=acilis toplam_ms=42136 en_uzun_bosluk_ms=1126 kaynak=sehir_289>props ilk_kare_ms=1541 bosalt_ms=-1
+AUTOTEST PASS chapter=7 variant=byzniko branch=7b outcome=7.2 extras=[] sadakat=55 baski=2 hour=12.5
+== c7_def_r1 --chapter=7 --autotest rc=0
+YUKLEMEAUDIT_ADAY scene=chapter7 evre=acilis toplam_ms=50567 en_uzun_bosluk_ms=1031 kaynak=props>props ilk_kare_ms=1465 bosalt_ms=-1
+AUTOTEST PASS chapter=7 variant= branch=7a outcome=7.1 extras=[] sadakat=60 baski=0 hour=13.5
+== c7_def_r2 --chapter=7 --autotest rc=0
+YUKLEMEAUDIT_ADAY scene=chapter7 evre=acilis toplam_ms=40347 en_uzun_bosluk_ms=1055 kaynak=solidify>solidify ilk_kare_ms=1367 bosalt_ms=-1
+AUTOTEST PASS chapter=7 variant= branch=7a outcome=7.1 extras=[] sadakat=60 baski=0 hour=13.5
+== c7_fez_r1 --chapter=7 --autotest=fez rc=0
+YUKLEMEAUDIT_ADAY scene=chapter7 evre=acilis toplam_ms=40811 en_uzun_bosluk_ms=1032 kaynak=props>props ilk_kare_ms=1409 bosalt_ms=-1
+AUTOTEST PASS chapter=7 variant=fez branch=7a outcome=7.1 extras=["7.4"] sadakat=50 baski=0 hour=13.0
+== c7_form_r1 --chapter=7 --autotest=form rc=0
+AUTOTEST PASS chapter=7 variant=form branch=7a outcome=7.1 extras=[] sadakat=70 baski=0 hour=14.0
+== c7_lost_r1 --chapter=7 --autotest=lost rc=0
+YUKLEMEAUDIT_ADAY scene=chapter7 evre=acilis toplam_ms=40809 en_uzun_bosluk_ms=1157 kaynak=props>props ilk_kare_ms=1570 bosalt_ms=-1
+AUTOTEST PASS chapter=7 variant=lost branch=7a outcome=7.2 extras=[] sadakat=55 baski=2 hour=12.5
+== c7_tea_r1 --chapter=7 --autotest=tea rc=0
+YUKLEMEAUDIT_ADAY scene=chapter7 evre=acilis toplam_ms=57061 en_uzun_bosluk_ms=1201 kaynak=props>props ilk_kare_ms=1617 bosalt_ms=-1
+AUTOTEST PASS chapter=7 variant=tea branch=7a outcome=7.1 extras=["7.4"] sadakat=50 baski=0 hour=13.0
+== c7_wall_r1 --chapter=7 --autotest=wall rc=0
+YUKLEMEAUDIT_ADAY scene=chapter7 evre=acilis toplam_ms=39908 en_uzun_bosluk_ms=1007 kaynak=props>props ilk_kare_ms=1352 bosalt_ms=-1
+AUTOTEST PASS chapter=7 variant=wall branch=7a outcome=7.1 extras=["7.5a"] sadakat=30 baski=0 hour=13.5
+== c7_wallkeep_r1 --chapter=7 --autotest=wallkeep rc=0
+YUKLEMEAUDIT_ADAY scene=chapter7 evre=acilis toplam_ms=39950 en_uzun_bosluk_ms=1200 kaynak=solidify>solidify ilk_kare_ms=1372 bosalt_ms=-1
+AUTOTEST PASS chapter=7 variant=wallkeep branch=7a outcome=7.1 extras=["7.5b"] sadakat=50 baski=0 hour=13.5
+== c8y_def_r1 --chapter=8y --autotest rc=0
+YUKLEMEAUDIT_ADAY scene=chapter8y evre=acilis toplam_ms=40254 en_uzun_bosluk_ms=1012 kaynak=sehir_289>kare ilk_kare_ms=1236 bosalt_ms=-1
+AUTOTEST PASS chapter=8y variant= outcome=8Y.1 id=seal warnings=0 lowered=0 radio=true
+== c8y_def_r2 --chapter=8y --autotest rc=0
+AUTOTEST PASS chapter=8y variant= outcome=8Y.1 id=seal warnings=0 lowered=0 radio=true
+== c8y_dep_r1 --chapter=8y --autotest=dep rc=0
+AUTOTEST PASS chapter=8y variant=dep outcome=8Y.3 id=honest warnings=0 lowered=0 radio=true
+== c8y_hikmet_r1 --chapter=8y --autotest=hikmet rc=0
+AUTOTEST PASS chapter=8y variant=hikmet outcome=8Y.1 id=seal warnings=0 lowered=0 radio=false
+== c8y_honest_r1 --chapter=8y --autotest=honest rc=0
+AUTOTEST PASS chapter=8y variant=honest outcome=8Y.1 id=honest warnings=0 lowered=0 radio=true
+== c8y_opened_r1 --chapter=8y --autotest=opened rc=0
+YUKLEMEAUDIT_ADAY scene=chapter8y evre=acilis toplam_ms=43264 en_uzun_bosluk_ms=1041 kaynak=sehir_289>kare ilk_kare_ms=1350 bosalt_ms=-1
+AUTOTEST PASS chapter=8y variant=opened outcome=8Y.1 id=seal warnings=0 lowered=0 radio=true
+== c8y_sinerji_r1 --chapter=8y --autotest=sinerji rc=0
+AUTOTEST PASS chapter=8y variant=sinerji outcome=8Y.1 id=seal warnings=0 lowered=0 radio=true
+== c8y_warn_r1 --chapter=8y --autotest=warn rc=0
+AUTOTEST PASS chapter=8y variant=warn outcome=8Y.2 id=item warnings=2 lowered=2 radio=true
+== c9_arch_r1 --chapter=9 --autotest=arch rc=0
+LYKOS21 eski_serit { "bostan": 15, "bag": 4, "harabe": 15, "meydan": 2, "agac": 248, "kucuk": 9 }
+YUKLEMEAUDIT_ADAY scene=chapter9 evre=acilis toplam_ms=9562 en_uzun_bosluk_ms=1107 kaynak=horn.north_shore>horn.city.plan ilk_kare_ms=325 bosalt_ms=-1
+AUTOTEST PASS chapter=9 variant=arch route= byz=true offers=["theodoros"] outcome=9.5 telsiz=4 merak=0
+== c9_b_r1 --chapter=9 --autotest=b rc=0
+LYKOS21 eski_serit { "bostan": 15, "bag": 4, "harabe": 15, "meydan": 2, "agac": 248, "kucuk": 9 }
+YUKLEMEAUDIT_ADAY scene=chapter9 evre=acilis toplam_ms=9185 en_uzun_bosluk_ms=1010 kaynak=horn.north_shore>horn.city.plan ilk_kare_ms=319 bosalt_ms=-1
+AUTOTEST PASS chapter=9 variant=b route=B byz=false offers=["lutfi", "miner"] outcome=9.4 telsiz=4 merak=0
+== c9_c_r1 --chapter=9 --autotest=c rc=0
+LYKOS21 eski_serit { "bostan": 15, "bag": 4, "harabe": 15, "meydan": 2, "agac": 248, "kucuk": 9 }
+YUKLEMEAUDIT_ADAY scene=chapter9 evre=acilis toplam_ms=9064 en_uzun_bosluk_ms=1072 kaynak=horn.north_shore>horn.city.plan ilk_kare_ms=404 bosalt_ms=-1
+AUTOTEST PASS chapter=9 variant=c route=C byz=false offers=["urban", "miner"] outcome=9.2 telsiz=4 merak=0
+== c9_cell_r1 --chapter=9 --autotest=cell rc=0
+LYKOS21 eski_serit { "bostan": 15, "bag": 4, "harabe": 15, "meydan": 2, "agac": 248, "kucuk": 9 }
+YUKLEMEAUDIT_ADAY scene=chapter9 evre=acilis toplam_ms=8672 en_uzun_bosluk_ms=1043 kaynak=horn.north_shore>horn.city.plan ilk_kare_ms=247 bosalt_ms=-1
+AUTOTEST PASS chapter=9 variant=cell route= byz=true offers=[] outcome=9.6 telsiz=4 merak=0
+== c9_cube_r1 --chapter=9 --autotest=cube rc=0
+LYKOS21 eski_serit { "bostan": 15, "bag": 4, "harabe": 15, "meydan": 2, "agac": 248, "kucuk": 9 }
+YUKLEMEAUDIT_ADAY scene=chapter9 evre=acilis toplam_ms=9059 en_uzun_bosluk_ms=1082 kaynak=horn.north_shore>horn.city.plan ilk_kare_ms=314 bosalt_ms=-1
+AUTOTEST PASS chapter=9 variant=cube route=A byz=false offers=["kadri", "miner"] outcome=9.1 telsiz=4 merak=0
+== c9_def_r1 --chapter=9 --autotest rc=0
+LYKOS21 eski_serit { "bostan": 15, "bag": 4, "harabe": 15, "meydan": 2, "agac": 248, "kucuk": 9 }
+YUKLEMEAUDIT_ADAY scene=chapter9 evre=acilis toplam_ms=9406 en_uzun_bosluk_ms=1043 kaynak=horn.north_shore>horn.city.plan ilk_kare_ms=323 bosalt_ms=-1
+AUTOTEST PASS chapter=9 variant= route=A byz=false offers=["kadri", "miner"] outcome=9.1 telsiz=4 merak=0
+== c9_def_r2 --chapter=9 --autotest rc=0
+LYKOS21 eski_serit { "bostan": 15, "bag": 4, "harabe": 15, "meydan": 2, "agac": 248, "kucuk": 9 }
+YUKLEMEAUDIT_ADAY scene=chapter9 evre=acilis toplam_ms=9666 en_uzun_bosluk_ms=1078 kaynak=horn.north_shore>horn.city.plan ilk_kare_ms=331 bosalt_ms=-1
+AUTOTEST PASS chapter=9 variant= route=A byz=false offers=["kadri", "miner"] outcome=9.1 telsiz=4 merak=0
+== c9_fatih_r1 --chapter=9 --autotest=fatih rc=0
+LYKOS21 eski_serit { "bostan": 15, "bag": 4, "harabe": 15, "meydan": 2, "agac": 248, "kucuk": 9 }
+YUKLEMEAUDIT_ADAY scene=chapter9 evre=acilis toplam_ms=9467 en_uzun_bosluk_ms=1145 kaynak=horn.north_shore>horn.city.plan ilk_kare_ms=360 bosalt_ms=-1
+AUTOTEST PASS chapter=9 variant=fatih route=A byz=false offers=["kadri", "pasha", "miner"] outcome=9.6 telsiz=4 merak=1
+== c9_gifts_r1 --chapter=9 --autotest=gifts rc=0
+LYKOS21 eski_serit { "bostan": 15, "bag": 4, "harabe": 15, "meydan": 2, "agac": 248, "kucuk": 9 }
+YUKLEMEAUDIT_ADAY scene=chapter9 evre=acilis toplam_ms=8924 en_uzun_bosluk_ms=1133 kaynak=horn.north_shore>horn.city.plan ilk_kare_ms=341 bosalt_ms=-1
+AUTOTEST PASS chapter=9 variant=gifts route=A byz=false offers=["kadri", "miner"] outcome=9.1 telsiz=4 merak=0
+== c9_hikmet_r1 --chapter=9 --autotest=hikmet rc=0
+LYKOS21 eski_serit { "bostan": 15, "bag": 4, "harabe": 15, "meydan": 2, "agac": 248, "kucuk": 9 }
+AUTOTEST PASS chapter=9 variant=hikmet route=A byz=false offers=["kadri", "miner"] outcome=9.1 telsiz=3 merak=0
+== c9_lagim_r1 --chapter=9 --autotest=lagim rc=0
+LYKOS21 eski_serit { "bostan": 15, "bag": 4, "harabe": 15, "meydan": 2, "agac": 248, "kucuk": 9 }
+YUKLEMEAUDIT_ADAY scene=chapter9 evre=acilis toplam_ms=9712 en_uzun_bosluk_ms=1123 kaynak=horn.north_shore>horn.city.plan ilk_kare_ms=333 bosalt_ms=-1
+AUTOTEST PASS chapter=9 variant=lagim route=A byz=false offers=["kadri", "miner"] outcome=9.7 telsiz=4 merak=0
+== c9_none_r1 --chapter=9 --autotest=none rc=0
+LYKOS21 eski_serit { "bostan": 15, "bag": 4, "harabe": 15, "meydan": 2, "agac": 248, "kucuk": 9 }
+YUKLEMEAUDIT_ADAY scene=chapter9 evre=acilis toplam_ms=9446 en_uzun_bosluk_ms=1199 kaynak=horn.north_shore>horn.city.plan ilk_kare_ms=331 bosalt_ms=-1
+AUTOTEST PASS chapter=9 variant=none route=A byz=false offers=["kadri", "miner"] outcome=9.6 telsiz=4 merak=0
+== c9_y_r1 --chapter=9 --autotest=y rc=0
+LYKOS21 eski_serit { "bostan": 15, "bag": 4, "harabe": 15, "meydan": 2, "agac": 248, "kucuk": 9 }
+YUKLEMEAUDIT_ADAY scene=chapter9 evre=acilis toplam_ms=9320 en_uzun_bosluk_ms=1104 kaynak=horn.north_shore>horn.city.plan ilk_kare_ms=397 bosalt_ms=-1
+AUTOTEST PASS chapter=9 variant=y route=Y byz=false offers=["pasha", "miner"] outcome=9.3 telsiz=4 merak=0
