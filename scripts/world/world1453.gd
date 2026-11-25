@@ -282,9 +282,11 @@ static func build(parent: Node3D, region_name: String, keep_local: Array, night 
 	SiegeField.blend_rects = br
 	parent.add_child(f)
 	f.build()
+	LoadingScreen.nabiz("w1453_alan")
 	f.set_mode("night" if night else "day")
 	# Her yer yürünür: dünyanın görüntüsü katılaşır (karelere yayılarak)
 	WorldWalk.attach(f)
+	LoadingScreen.nabiz("w1453_yuru")
 	# Yaşayan şehir: oyuncunun çevresinde siviller ve devriyeler (dönem bölümden; testlerin dünyalarına eklenmez)
 	if CityLife.auto_ok(parent):
 		CityLife.attach(f, CityLife.opts_for(parent, night))
@@ -292,12 +294,17 @@ static func build(parent: Node3D, region_name: String, keep_local: Array, night 
 		match fr:
 			"byz_walls":
 				ByzCity.far_hub(f, region(fr))
+				LoadingScreen.nabiz("w1453_hub")
+	LoadingScreen.nabiz("w1453_sehir_once")
 	# İstanbul 1453 parçaları (scripts/world/ist: anıtlar, surlar, limanlar, ayrıntı): mesafeyle kurulur/boşaltılır
 	IstSehir.attach(f)
+	LoadingScreen.nabiz("w1453_sehir")
 	# Ateşler: Dressing.glow kutuları (ordugâhın, ovanın, surların, kıyının gece ateşleri) alev ve haleye çevrilir
 	Flame.from_glow_boxes(f)
+	LoadingScreen.nabiz("w1453_alev")
 	# Gölgelendiriciler yüklemede derlensin (yaklaşınca donma olmasın)
 	ShaderWarmup.after_world(f)
+	LoadingScreen.nabiz("w1453_isinma")
 	return f
 
 
@@ -436,6 +443,7 @@ static var _tex_avg := {}
 static func bake(list: Array, top: Node3D, xf: Transform3D, parent: Node3D, node_name := "Baked", min_size := 0.05, max_tris := 0, flat := false) -> MeshInstance3D:
 	var groups := {}           # anahtar -> [v, n, c, malzeme]
 	for n: MeshInstance3D in list:
+		LoadingScreen.nabiz("w1453_bake")
 		if n.mesh == null or not n.visible:
 			continue
 		var sz := n.mesh.get_aabb().size * n.scale.abs()
@@ -519,6 +527,8 @@ static func bake(list: Array, top: Node3D, xf: Transform3D, parent: Node3D, node
 			var count := idx.size() if idx.size() > 0 else sv.size()
 			var c3 := Color(col.r, col.g, col.b, 1.0)
 			for k in count:
+				if (k & 4095) == 0:
+					LoadingScreen.nabiz("w1453_bake")
 				var i: int = idx[k] if idx.size() > 0 else k
 				st.set_color(c3)
 				st.set_normal((nb * (sn[i] if sn.size() > i else Vector3.UP)).normalized())
@@ -530,11 +540,14 @@ static func bake(list: Array, top: Node3D, xf: Transform3D, parent: Node3D, node
 	for key: String in groups:
 		var g: Array = groups[key]
 		var st: SurfaceTool = g[0]
+		LoadingScreen.nabiz("w1453_bake")
 		st.index()
 		im.add_surface(Mesh.PRIMITIVE_TRIANGLES, st.commit_to_arrays(), [], {}, g[1])
+	LoadingScreen.nabiz("w1453_bake")
 	if im.get_surface_count() > 0:
 		im.generate_lods(25.0, 60.0, [])
 		mi.mesh = im.get_mesh()
+	LoadingScreen.nabiz("w1453_lod")
 	mi.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_ON
 	parent.add_child(mi)
 	return mi

@@ -99,6 +99,7 @@ func _prof(label: String) -> void:
 ## Hafif (lite) kurulumda adımlar arasında bir kare beklenir: ana menünün arkasındaki sahne kurulurken pencere donmaz
 func _step(label: String) -> void:
 	_prof(label)
+	LoadingScreen.nabiz("siegefield:" + label)
 	if lite and is_inside_tree():
 		await get_tree().process_frame
 
@@ -133,6 +134,7 @@ func build() -> void:
 	_no_mans_land()
 	await _step("_no_mans_land()")
 	_trench()
+	LoadingScreen.nabiz("siegefield_hendek")
 	await _step("_trench()")
 	_batteries()
 	await _step("_batteries()")
@@ -217,12 +219,16 @@ func _terrain() -> void:
 		# Uzak tepeler havanın rengine çalar (hava perspektifi): ufukta koyu bant kalmasın
 		return c.lerp(Color("7a8a80"), smoothstep(420.0, 860.0, z) * 0.55)
 	load("res://scripts/level/zemin.gd").yore("kusatma", self)      # ZEMİN: yöre paleti
+	LoadingScreen.nabiz("siegefield_arazi")
 	add_child(LowPoly.terrain(-EXT, EXT, 36.0, 900.0, 56, 36, ground, cf))
+	LoadingScreen.nabiz("siegefield_arazi")
 	if sur_yeni:
 		return
 	var ccf := func(x: float, z: float, y: float, steep: float) -> Color:
 		return Color("7a7050").lerp(Color("5a6a40"), clampf(0.5 + 0.5 * sin(x * 0.05 - z * 0.04), 0.0, 1.0) * 0.6).darkened(clampf(steep * 0.5, 0.0, 0.25))
+	LoadingScreen.nabiz("siegefield_arazi")
 	add_child(LowPoly.terrain(-EXT, EXT, -700.0, -3.0, 56, 28, city_ground, ccf))
+	LoadingScreen.nabiz("siegefield_arazi")
 
 
 # ---------------------------------------------------------------- sur devamı

@@ -2418,6 +2418,8 @@ func _aya() -> void:
 		a.queue_free()
 	attackers.clear()
 	await get_tree().process_frame
+	# G19: beyaz kararma altında: koyu perde yok, yalnız nabız (kurulum kapsamı)
+	GameState.kurulum_perdesi_ac(scene_file_path, "aya", false, player)
 	city = ByzCity.new()
 	city.part = "aya"             # tek harita: Ayasofya'nın gerçek yeri
 	add_child(city)
@@ -2425,6 +2427,7 @@ func _aya() -> void:
 	Audio.music("tender")
 	Audio.voice_space("hall")
 	_aya_stage()
+	GameState.kurulum_perdesi_kapat()
 	await hud.card([[tr("UI_CH26_AYA"), 26, Color("f2e6c9")]], 2.0)
 	hud.clear_card()
 	await hud.fade_to(0.0, 1.5, Color.WHITE)
@@ -2995,10 +2998,12 @@ func _run_shots() -> void:
 		a.queue_free()
 	attackers.clear()
 	await get_tree().process_frame
+	GameState.kurulum_perdesi_ac(scene_file_path, "aya_cekim", false)      # G19: çekim yolu, yalnız nabız
 	city = ByzCity.new()
 	city.part = "aya"
 	add_child(city)
 	_aya_stage()
+	GameState.kurulum_perdesi_kapat()
 	player.camera.make_current()     # giriş çekimlerinin kamerası hâlâ etkin kalıyordu
 	await get_tree().create_timer(1.0, false).timeout
 	await _shot("c26_03a_door.png")

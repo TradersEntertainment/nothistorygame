@@ -760,6 +760,7 @@ func _eyup_phase() -> void:
 	if GameState.autotest:
 		print("T12_31O asama=eyup surset_etkin_temiz=%s" % (SurSet.etkin == null))
 	_olc("eyup")
+	GameState.kurulum_perdesi_ac(scene_file_path, "eyup", true, player)      # G19: siyah kararma altında perde
 	_stage = Node3D.new()
 	add_child(_stage)
 	_day_env(_stage, Vector3(-30, 160, 0))
@@ -767,6 +768,7 @@ func _eyup_phase() -> void:
 	Horn.build(_stage, 150.0, Rect2(-40, -60, 80, 60), Vector2.ZERO, 3101, true, true)
 	World1453.build(_stage, "eyup", [Rect2(-Horn.WORLD_E, -Horn.WORLD_E, Horn.WORLD_E * 2.0, Horn.WORLD_E + 140.0)], false)
 	_build_eyup()
+	GameState.kurulum_perdesi_kapat()
 	player.global_position = Vector3(-4.0, 0.35, -8.0)
 	player.face(aksem.global_position + Vector3(0, 1.5, 0))
 	await hud.fade_to(0.0, 1.0)
@@ -1007,6 +1009,7 @@ func _scaffold_phase() -> void:
 	if GameState.autotest:
 		print("T12_31O asama=aya surset_etkin_temiz=%s" % (SurSet.etkin == null))
 	_olc("aya")
+	GameState.kurulum_perdesi_ac(scene_file_path, "aya", true, player)      # G19: siyah kararma altında perde
 	_stage = Node3D.new()
 	add_child(_stage)
 	bcity = ByzCity.new()
@@ -1056,6 +1059,7 @@ func _scaffold_phase() -> void:
 		items.append([Transform3D(Basis(Vector3.UP, PI + randf_range(-0.4, 0.4)), Vector3(a.x - 10.0 + (i % 10) * 2.2, 0, fz + 9.0 + (i / 10) * 1.6)),
 			{"side": "C" if i % 3 == 0 else "O", "coat": [Color("6a5040"), Color("2e4a7a"), Color("e8e0d0"), Color("7a2a24")][i % 4], "hat": "turban" if i % 2 == 0 else "bork", "arm": ""}])
 	Crowd.place(_stage, items)
+	GameState.kurulum_perdesi_kapat()
 	player.global_position = Vector3(sx - 4.0, 0.05, fz + 6.0)
 	player.face(carpenter.global_position + Vector3(0, 1.5, 0))
 	await hud.fade_to(0.0, 1.0)

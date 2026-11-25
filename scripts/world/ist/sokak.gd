@@ -208,14 +208,19 @@ func build(foot: Array, bands: Array, gates: Array, tohum := 1453) -> void:
 	if ob is Dictionary and _onbellekten(ob):
 		stats["onbellek"] = "okundu"
 		stats["ms"] = Time.get_ticks_msec() - t0
+		LoadingScreen.nabiz("sokak_ob")
 		cati_parca = IstCati.uygula(self)
+		LoadingScreen.nabiz("sokak_cati")
 		katman_bagla()
 		return
 	_build_hesapla(foot, bands, gates, tohum)
+	LoadingScreen.nabiz("sokak_hesap")
 	onbellek_yaz("sokak", imza, _onbellege())
+	LoadingScreen.nabiz("sokak_yaz")
 	stats["onbellek"] = "yazildi" if onbellek_kip == "" else onbellek_kip
 	stats["ms"] = Time.get_ticks_msec() - t0
 	cati_parca = IstCati.uygula(self)
+	LoadingScreen.nabiz("sokak_cati")
 	katman_bagla()
 
 
@@ -247,16 +252,93 @@ static func dosya_md5(yol: String) -> String:
 
 
 ## parcalar: düz veri (dizi, sözlük, sayı, vektör) ya da "res://…" betik yolu (md5'i girer)
+## G19: betiğin md5'i okunamıyorsa (paketli oyun: script_export_mode=2, .gd dosyası yok) kodu geçersiz kılan tek şey
+## oyunun sürümüdür (res://VERSION): o zaman imzaya girer. Eskiden yalnız application/config/version girerdi; o ayar
+## project.godot'ta yok (""), yani paketli oyunda güncellemeden sonra eski önbellek okunabilirdi.
 static func onbellek_imza(parcalar: Array) -> String:
 	var ctx := HashingContext.new()
 	ctx.start(HashingContext.HASH_MD5)
 	ctx.update(var_to_bytes([ONBELLEK_SURUM, str(ProjectSettings.get_setting("application/config/version", "")), Engine.get_version_info().get("hex", 0)]))
+	var md5_yok := false
 	for p in parcalar:
 		if p is String and (p as String).begins_with("res://"):
-			ctx.update(("%s:%s" % [p, dosya_md5(p)]).to_utf8_buffer())
+			var m := dosya_md5(p)
+			if m == "":
+				md5_yok = true
+			ctx.update(("%s:%s" % [p, m]).to_utf8_buffer())
 		else:
 			ctx.update(var_to_bytes(p))
+	if md5_yok:
+		ctx.update(("surum:" + _oyun_surumu()).to_utf8_buffer())
 	return ctx.finish().hex_encode().substr(0, 20)
+
+
+static var _surum := "?"
+
+
+static func _oyun_surumu() -> String:
+	if _surum == "?":
+		_surum = FileAccess.get_file_as_string("res://VERSION").strip_edges() if FileAccess.file_exists("res://VERSION") else ""
+	return _surum
+
+
+## G19 — Önbellek saklama: her ad (sokak, zemin, avlu, hayat, sokak_esya, dosek, ev) için en son kullanılan ONBELLEK_SAKLA
+## imza saklanır (eskiden aynı adın öteki dosyası silinirdi: bölgeye bağlı imzalı önbellekler bölümden bölüme geçince
+## silindi, her bölge değişimi soğuk yüklemeydi). "En son" dosya zamanına göre değil: dizin.cfg'de kullanım sırası
+## tutulur (okuma ve yazma işaretler). Paralel test parçaları aynı user://'ı paylaşır: dizin kaybı ve eksik dosya zararsız.
+const ONBELLEK_SAKLA := 4
+const ONBELLEK_DIZIN := ONBELLEK_DIR + "dizin.cfg"
+
+
+static func onbellek_dokun(ad: String, imza: String) -> void:
+	if OS.get_thread_caller_id() != OS.get_main_thread_id():
+		return
+	DirAccess.make_dir_recursive_absolute(ONBELLEK_DIR)
+	var c := ConfigFile.new()
+	c.load(ONBELLEK_DIZIN)
+	var n := int(c.get_value("meta", "sayac", 0)) + 1
+	c.set_value("meta", "sayac", n)
+	c.set_value("kullanim", ad + ":" + imza, n)
+	c.save(ONBELLEK_DIZIN)
+
+
+## dizin: ONBELLEK_DIR'e göre alt klasör ("" ya da "ev/"); imza_of: dosya adından imzayı çıkarır ("" = bu ada ait değil)
+static func onbellek_buda(ad: String, simdiki: String, dizin: String, imza_of: Callable) -> void:
+	var d := DirAccess.open(ONBELLEK_DIR + dizin)
+	if d == null:
+		return
+	var c := ConfigFile.new()
+	c.load(ONBELLEK_DIZIN)
+	var dosyalar := {}            # imza → [dosya adları]
+	for fn: String in d.get_files():
+		var im := String(imza_of.call(fn))
+		if im == "":
+			continue
+		if not dosyalar.has(im):
+			dosyalar[im] = []
+		(dosyalar[im] as Array).append(fn)
+	var sira: Array = []
+	for im: String in dosyalar:
+		if im != simdiki:
+			sira.append([int(c.get_value("kullanim", ad + ":" + im, 0)), im])
+	sira.sort()
+	sira.reverse()
+	for k in sira.size():
+		if k < ONBELLEK_SAKLA - 1:
+			continue
+		var im: String = sira[k][1]
+		for fn: String in dosyalar[im]:
+			d.remove(fn)          # başka süreç silmişse hata zararsız
+		if c.has_section_key("kullanim", ad + ":" + im):
+			c.erase_section_key("kullanim", ad + ":" + im)
+	c.save(ONBELLEK_DIZIN)
+
+
+static func _bin_imza(fn: String, ad: String) -> String:
+	# ad_<20 onaltılık>.bin (eskiden "sokak_" öneki "sokak_esya_" dosyalarını da siliyordu)
+	if fn.length() == ad.length() + 25 and fn.begins_with(ad + "_") and fn.ends_with(".bin"):
+		return fn.substr(ad.length() + 1, 20)
+	return ""
 
 
 ## Arazinin özeti (dikdörtgen içinde n × n örnek): yükseklik, deniz, mahalle türü; öteleme ve yama dahil
@@ -273,7 +355,10 @@ static func arazi_ozeti(r: Rect2, n := 48) -> PackedFloat32Array:
 
 
 static func onbellek_var(ad: String, imza: String) -> bool:
-	return _ob_kip() not in ["yok", "yaz"] and FileAccess.file_exists(ONBELLEK_DIR + ad + "_" + imza + ".bin")
+	var var_mi := _ob_kip() not in ["yok", "yaz"] and FileAccess.file_exists(ONBELLEK_DIR + ad + "_" + imza + ".bin")
+	if var_mi:
+		onbellek_dokun(ad, imza)
+	return var_mi
 
 
 static func onbellek_oku(ad: String, imza: String) -> Variant:
@@ -282,6 +367,29 @@ static func onbellek_oku(ad: String, imza: String) -> Variant:
 	var yol := ONBELLEK_DIR + ad + "_" + imza + ".bin"
 	if not FileAccess.file_exists(yol):
 		return null
+	# G19: ana iş parçacığında (kurulum kapsamı/perde/ölçüm açıkken) büyük dosya iş parçacığında açılır; beklerken nabız
+	if LoadingScreen.nabiz_acik() and OS.get_thread_caller_id() == OS.get_main_thread_id():
+		var kutu := []
+		var id := WorkerThreadPool.add_task(func() -> void: kutu.append(_dosya_oku(yol)), false, "ist_onbellek_oku_" + ad)
+		var tb := Time.get_ticks_msec()
+		while not WorkerThreadPool.is_task_completed(id):
+			LoadingScreen.nabiz("onbellek_oku_bekle")
+			OS.delay_msec(2)
+		WorkerThreadPool.wait_for_task_completion(id)
+		var bekle := Time.get_ticks_msec() - tb
+		if bekle > 50:
+			print("ISTONBELLEK oku_bekle ad=%s ms=%d" % [ad, bekle])
+		var v0 = kutu[0] if not kutu.is_empty() else null
+		if v0 != null:
+			onbellek_dokun(ad, imza)
+		return v0
+	var v = _dosya_oku(yol)
+	if v != null:
+		onbellek_dokun(ad, imza)
+	return v
+
+
+static func _dosya_oku(yol: String) -> Variant:
 	var f := FileAccess.open_compressed(yol, FileAccess.READ, FileAccess.COMPRESSION_ZSTD)
 	if f == null:
 		return null
@@ -290,20 +398,42 @@ static func onbellek_oku(ad: String, imza: String) -> Variant:
 	return v
 
 
-static func onbellek_yaz(ad: String, imza: String, veri: Variant) -> void:
+## arka: büyük önbellekler (avlu, zemin; soğuk açılışta 0,5–1,4 sn sıkıştırma) arka iş parçacığında yazılır: veri ana iş
+## parçacığında derin kopyalanır, geçici dosyaya yazılıp adı değiştirilir (yarım dosya okunmaz; okuyan imzalı adı arar).
+static func onbellek_yaz(ad: String, imza: String, veri: Variant, arka := false) -> void:
 	if _ob_kip() == "yok" or veri == null:
 		return
 	DirAccess.make_dir_recursive_absolute(ONBELLEK_DIR)
-	var d := DirAccess.open(ONBELLEK_DIR)
-	if d != null:
-		for fn: String in d.get_files():
-			if fn.begins_with(ad + "_") and fn.ends_with(".bin") and fn != ad + "_" + imza + ".bin":
-				d.remove(fn)
-	var f := FileAccess.open_compressed(ONBELLEK_DIR + ad + "_" + imza + ".bin", FileAccess.WRITE, FileAccess.COMPRESSION_ZSTD)
+	var t0 := Time.get_ticks_msec()
+	var yol := ONBELLEK_DIR + ad + "_" + imza + ".bin"
+	if arka:
+		var kopya: Variant = (veri as Dictionary).duplicate(true) if veri is Dictionary else veri
+		_arka_isler.append(WorkerThreadPool.add_task(_dosya_yaz.bind(yol, kopya), false, "ist_onbellek_" + ad))
+	else:
+		_dosya_yaz(yol, veri)
+	onbellek_dokun(ad, imza)
+	onbellek_buda(ad, imza, "", _bin_imza.bind(ad))
+	print("ISTONBELLEK yaz ad=%s arka=%s ms=%d" % [ad, arka, Time.get_ticks_msec() - t0])
+
+
+static var _arka_isler: Array = []
+
+
+static func _dosya_yaz(yol: String, veri: Variant) -> void:
+	var gecici := yol + ".yaz"
+	var f := FileAccess.open_compressed(gecici, FileAccess.WRITE, FileAccess.COMPRESSION_ZSTD)
 	if f == null:
 		return
 	f.store_var(veri, false)
 	f.close()
+	DirAccess.rename_absolute(gecici, yol)
+
+
+## Bekleyen arka yazımlar (çıkışta ve testlerde: yarım kalmasın)
+static func onbellek_bekle() -> void:
+	for id: int in _arka_isler:
+		WorkerThreadPool.wait_for_task_completion(id)
+	_arka_isler.clear()
 
 
 func _build_imza(foot: Array, bands: Array, gates: Array, tohum: int) -> String:
@@ -356,9 +486,11 @@ func _build_hesapla(foot: Array, bands: Array, gates: Array, tohum: int) -> void
 	var lo := Vector2(INF, INF)
 	var hi := Vector2(-INF, -INF)
 	for p in poly:
+		LoadingScreen.nabiz("sokak_hesap")
 		lo = Vector2(minf(lo.x, p.x), minf(lo.y, p.y))
 		hi = Vector2(maxf(hi.x, p.x), maxf(hi.y, p.y))
 	for p in gal:
+		LoadingScreen.nabiz("sokak_hesap")
 		lo = Vector2(minf(lo.x, p.x), minf(lo.y, p.y))
 		hi = Vector2(maxf(hi.x, p.x), maxf(hi.y, p.y))
 	x0 = lo.x - 20.0
@@ -371,10 +503,12 @@ func _build_hesapla(foot: Array, bands: Array, gates: Array, tohum: int) -> void
 	rid.fill(-1)
 	_halic = IstGeo.yol("halic_suru")
 	_fill_poly(poly, 0, 4)
+	LoadingScreen.nabiz("sokak_hesap")
 	if gal.size() >= 3:
 		_fill_poly(gal, 0, 4)
 	# Deniz (kıyı çokgeni ile arazinin uyuşmadığı yerler) kapalı
 	for j in range(0, nz, 3):
+		LoadingScreen.nabiz("sokak_hesap")
 		for i in range(0, nx, 3):
 			var k := j * nx + i
 			if occ[k] != 0:
@@ -387,10 +521,12 @@ func _build_hesapla(foot: Array, bands: Array, gates: Array, tohum: int) -> void
 							occ[(j + b) * nx + i + a] = 4
 	# Sur bantları; iç yanda iç yüzden 1 m ötesi yeniden açılır (sur dibi evleri yaslanacak), köşe kuleleri kapalı
 	for b: Array in bands:
+		LoadingScreen.nabiz("sokak_hesap")
 		var pl: PackedVector2Array = b[0]
 		for i in pl.size() - 1:
 			_stamp_seg(pl[i], pl[i + 1], float(b[1]) * 2.0, 3)
 	_sur_ic_ac(bands)
+	LoadingScreen.nabiz("sokak_hesap")
 	if not _taban_kayitlardan():
 		for f: Vector3 in foot:
 			_stamp_disc(Vector2(f.x, f.z), f.y, 3)
@@ -399,56 +535,74 @@ func _build_hesapla(foot: Array, bands: Array, gates: Array, tohum: int) -> void
 	rng.seed = tohum
 	# 1) Mese ve kolları
 	for ad: String in ["mese", "mese_kuzey", "mese_guney"]:
+		LoadingScreen.nabiz("sokak_hesap")
 		var pl := IstGeo.yol(ad)
 		if pl.size() >= 2:
 			_add_street(_densify(pl, 14.0), MESE_W, "mese", ad, true)
 	# 1b) Galata: rıhtımdan (zincirin ucu) kuleye çıkan ana yokuş ve onu kesen kıyı caddesi
 	_galata_yollari()
+	LoadingScreen.nabiz("sokak_hesap")
 	# 1c) Surların iç yüzü boyunca savunma yolu
 	for ad: String in SUR_IC:
+		LoadingScreen.nabiz("sokak_hesap")
 		_savunma_yolu(ad)
 	# 2) Kapılardan Mese'ye inen yollar ve deniz kapılarından yokuşlar
 	for g: Array in gates:
+		LoadingScreen.nabiz("sokak_hesap")
 		_gate_road(g[0] as Vector2, String(g[1]), rng)
 	# 2b) DOKU-4 madde 4: bölümlerin oyun alanlarının (hub, Ayasofya meydanı) çevresinde çevre yolu + dört yana bağlantı
 	_oyun_alani_yollari()
+	LoadingScreen.nabiz("sokak_hesap")
 	# 3) Mahalle içi organik sokaklar (üç kuşak) ve boş kalan yerleri dolduran ek sokaklar
 	var n0 := streets.size()
 	for s in range(0, n0):
+		LoadingScreen.nabiz("sokak_hesap")
 		_lanes_from(s, rng, 0)
 	var n1 := streets.size()
 	for s in range(n0, n1):
+		LoadingScreen.nabiz("sokak_hesap")
 		_lanes_from(s, rng, 1)
 	for pass_i in 3:
+		LoadingScreen.nabiz("sokak_hesap")
 		_dolgu_sokaklari(rng, pass_i)
 	stats["sokak"] = streets.size()
 	stats["sokak_ms"] = Time.get_ticks_msec() - t0
 	# 3b) Mahalle kiliseleri ve meydanları için yer (evlerden önce: sık dokuda da kalsın)
 	_kilise_yerleri(rng)
+	LoadingScreen.nabiz("sokak_hesap")
 	# 3c) Eser çevresi meydanları (DOKU-3, kalite notu 13): ünlü eserlerin çevresi evden önce ayrılır (döşeli meydan/avlu)
 	_eser_meydanlari()
+	LoadingScreen.nabiz("sokak_hesap")
 	# 4) Evler: önce savunma yolu ve büyük yollar (sıralar sura ve caddeye yaslansın), sonra sokaklar
 	var order: Array = []
 	for s in streets.size():
+		LoadingScreen.nabiz("sokak_hesap")
 		order.append(s)
 	var pri := {"savunma": 0, "mese": 1, "yol": 2, "sokak": 3, "basamak": 3}
 	order.sort_custom(func(a: int, b: int) -> bool: return int(pri.get(String(streets[a]["tur"]), 3)) < int(pri.get(String(streets[b]["tur"]), 3)))
 	for s: int in order:
+		LoadingScreen.nabiz("sokak_hesap")
 		_houses_along(s, rng)
 	# ikinci geçiş: kısa kalan yerlere (sokak sonlarında) tek ev / kısa sıra
 	for s: int in order:
+		LoadingScreen.nabiz("sokak_hesap")
 		_houses_along(s, rng, true)
 	# avlular bütün sıralardan sonra (karşı sıranın derinliğini çalmasın)
 	for sb: Array in _sira_bilgi:
+		LoadingScreen.nabiz("sokak_hesap")
 		_avlu_ekle(sb[0], sb[1], sb[2], sb[3], sb[4], sb[5], sb[6], rng)
 	stats["ev"] = houses.size()
 	stats["sira"] = rows
 	stats["avlu"] = avlu.size()
 	# 5) Doku ve meydanlar
 	_meydanlar(foot)
+	LoadingScreen.nabiz("sokak_hesap")
 	_eser_meydan_doldur()
+	LoadingScreen.nabiz("sokak_hesap")
 	_doku(rng)
+	LoadingScreen.nabiz("sokak_hesap")
 	_ogeler(rng)
+	LoadingScreen.nabiz("sokak_hesap")
 	stats["doku"] = doku.size()
 	stats["oge"] = oge.size()
 	stats["hesap_ms"] = Time.get_ticks_msec() - t0

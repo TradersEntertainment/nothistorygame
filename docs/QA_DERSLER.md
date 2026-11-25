@@ -1219,3 +1219,25 @@ Her bölüm denetiminde ve her düzeltmede bu listeyi baştan uygula. Yeni bir h
 - **Tam paketin yük altındaki tek seferlikleri kayda geçer, yok sayılmaz.** 26 `=nophoto` Squad overlap iki tam pakette
   (0.99.126 ilk, 0.99.127) çıktı, tek başına 4/4 temiz; ESYATEST gomuk=1 dört parça aynı anda koşarken. Açık iş olarak
   yazıldı (kök: yedek bölük sık nizam, `chapter26.gd` BEKCI26 katmanları).
+- **Pencerenin canlılığını ölç, çizildiğini sanma (0.99.128).** Eski `LoadingScreen.pump()` 150 ms'de bir pencere
+  iletilerini işleyip perdeyi çiziyordu, ama yalnız `Props._place` çağırıyordu; İstanbul v2 kurucuları (şehir, sokak,
+  mahalle dokusu, ordugâh, kalabalık) 29–37 sn hiç çağırmadı ve Windows "Yanıt vermiyor" dedi. Perde çizildiği yerde
+  de çark ve çubuk donuktu: Control'lerin yeniden çizimi (`queue_redraw`, `ColorRect` boyutu) ertelenmiş kuyrukta bekler,
+  kurulum ortasında işlenmez; `force_draw` hep aynı kareyi çizer. Çark ve çubuk artık doğrudan RenderingServer tuval
+  öğesine çiziliyor. `YUKLEMEAUDIT` iki canlılık noktası (nabız ya da kare) arasındaki en uzun boşluğu her sahne
+  değişiminde ve bölüm ortası kurulumda basar; kesin hata Windows eşiğinde (5000 ms), CI'ın yavaş makinesinde 1–2,5 sn
+  normal.
+- **Ölçüm aracını da doğrula.** `tests/load_time.gd` bölümü kendi `_ready`'si içinde köke ekliyordu; Godot reddediyordu
+  ("Parent node is busy setting up children") ve araç yıllardır `ready=2 ms` basıyordu. Ertelenmiş çağrıyla düzeldi.
+- **Önbellek temizliği önbelleği öldürüyordu.** `sokak.gd` yazarken aynı adın öteki imzalarını siliyordu (bölge değişimi
+  her seferinde soğuk yükleme; `sokak_` öneki `sokak_esya_` dosyalarını da siliyordu), `evler.gd` oturum başında v2 ev
+  ağlarını her açılışta siliyordu. Artık her ad için son 4 imza saklanıyor (`dizin.cfg`). İmzadaki "oyun sürümü" ayarı
+  `project.godot`'ta hiç yoktu: paketli oyunda betik md5'i okunamayınca güncelleme önbelleği geçersiz kılmıyordu (gizli
+  risk); şimdi md5 yoksa `res://VERSION` imzaya girer.
+- **Görüntüyü bozan hızlandırmayı karmayla yakala.** Hub şehrini kurmadan atlamak 8y'de çarpışmayı değiştirmedi ama
+  üçgen sayısını değiştirdi (ByzCity kurucuları genel rastgele sayı üretecini tüketiyor); atlama geri alındı.
+- **Test botunda yazı tura, varsayılanı "geçti" olan bayrakla birleşince seyrek düşüş üretir.** 37o `=lose` botu her
+  çekişi %50 kaçırıyordu; fıçıyı devirmek art arda üç iyi çekiş istediğinden koşuların ~%6'sında ikinci fıçı 180 sn'de
+  devrilmedi, düello hiç başlamadı ve `_duel_won` varsayılan `true` kaldı (dört tam pakette geçip beşincide düştü). Yük
+  sanıldı; dört aynı anda koşuda tam günlükle `WAVERUNNER` satırının hiç basılmadığı görüldü. Bot artık her dört çekişin
+  ilkini kaçırıyor (belirli).

@@ -196,7 +196,8 @@ func _ready() -> void:
 		add_child(at)
 		_denetim17()
 	# Yeni sahne kuruldu: önceki sahneden kalan duraklatma ya da geçiş durumu taşınmasın
-	GameState.changing = false
+	if not LoadingScreen.kapsam_acik():       # G19: bölüm ortası kurulum sürerken bayrak inmez
+		GameState.changing = false
 	get_tree().paused = false
 	# Vaka Dosyası'ndan bir finale gitmek için dönüldüyse bölüm başında hedefi hatırlat
 	if not GameState.review_goal.is_empty() and not GameState.autotest:

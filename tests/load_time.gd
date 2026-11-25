@@ -8,6 +8,12 @@ extends Node
 ## Çıktı: "LOADTIME scene=... load=.. inst=.. ready=.. frame1=.. total=.." (ms)
 
 func _ready() -> void:
+	# Ertelenmiş: kendi _ready'si içinde köke eklenen bölümü Godot reddediyordu ("Parent node is busy setting up
+	# children"), satırlar ready=2 ms gibi anlamsız çıkıyordu (G19)
+	_kos.call_deferred()
+
+
+func _kos() -> void:
 	var only := ""
 	for a in OS.get_cmdline_user_args():
 		if a.begins_with("--only="):

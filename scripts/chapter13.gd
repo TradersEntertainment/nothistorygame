@@ -205,6 +205,9 @@ func _tolga_moment() -> void:
 			place = "galata"
 		elif r10.begins_with("10B") or r10.begins_with("10L"):
 			place = "camp"
+	# G19: beyaz kararma altında koyu perde yok, yalnız nabız (kurulum kapsamı). Şehir (v2 ByzCity) ~30 sn sürüyor:
+	# yarım dakikalık boş beyaz ekran yerine yükleme perdesi (kalkınca altından beyaz kararma görünür)
+	GameState.kurulum_perdesi_ac(scene_file_path, "tolga_" + place, place == "city", player)
 	if place == "camp" and not kitchen:      # mutfak (12.5, 10Z) ordugâhın içinde: önce o (bu dal mutfağı hiç bırakmıyordu)
 		camp = CampDay.new()
 		add_child(camp)
@@ -240,6 +243,7 @@ func _tolga_moment() -> void:
 		_place_audio("audience", "crowd_camp")
 		player.global_position = OtagHall.TOLGA_SPOT + Vector3(0, 0.05, 0)
 		player.face(hall.fatih.global_position + Vector3(0, 1.6, 0))
+	GameState.kurulum_perdesi_kapat()
 	# Gıdak (Bölüm 16) yalnız mutfakta: ordugâhta yeniçeriler Tolga'yı oradan taşır. Otağ ya da şehir/Galata'da
 	# kalmış Tolga'yı yeniçerilerin omzunda 16'ya taşımak tutarsız olurdu.
 	_gidak = kitchen and (GameState.flags.get("sinerji", false) or GameState.autotest_variant == "gidak")
@@ -736,6 +740,7 @@ func _depot_version() -> void:
 # ---------------------------------------------------------------- 1453 (8.4)
 
 func _h3_version() -> void:
+	GameState.kurulum_perdesi_ac(scene_file_path, "h3_ordugah", true, player)      # G19: başlık kartından sonra, siyahta
 	camp = CampDay.new()
 	add_child(camp)
 	camp.goat.chase = null
@@ -750,6 +755,7 @@ func _h3_version() -> void:
 	# Döküm ocağının kubbesi Urban'ı örtmesin: oyuncu topun yanında, Urban'la arası açık
 	player.global_position = CampDay.URBAN_POS + Vector3(3.6, 0.05, 0.4)
 	player.face(hikmet_npc.global_position + Vector3(0, 1.4, 0))
+	GameState.kurulum_perdesi_kapat()
 	player.show_remote(true)
 	_capture_mouse()
 	await hud.fade_to(0.0, 1.0)
@@ -1203,8 +1209,10 @@ func _run_shots() -> void:
 	hud.set_qte("")
 	hud.set_red_progress(0.0)
 	_clear_levels()
+	GameState.kurulum_perdesi_ac(scene_file_path, "otag_cekim", false)      # G19: çekim yolu, yalnız nabız
 	hall = OtagHall.new()
 	add_child(hall)
+	GameState.kurulum_perdesi_kapat()
 	_switch_hand("tolga")
 	hud.set_fez(true)
 	player.global_position = OtagHall.TOLGA_SPOT + Vector3(0, 0.05, 0)
