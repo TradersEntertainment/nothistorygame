@@ -1245,3 +1245,12 @@ Her bölüm denetiminde ve her düzeltmede bu listeyi baştan uygula. Yeni bir h
   havada: `CityLife._form` tek karelerde yüksekliği izden alıyor, doğuşta izin ilk noktası reisin yüksekliğindeydi; erler
   reis beklerken yerinden oynamayınca `_place` yüksekliği hiç düzeltmedi. Dört kopya koşu yakalamadı; sonda
   (`tests/_ci344/devriye_yamac.gd`) devriyeyi tek karede 112 kez doğurdu: eski kod 112/112 havada (en çok 1,10 m), yeni 0.
+- **Her CI düşüşü ayrı bir seyrek kusurdur; sondasız "tekrar dene" yok (0.99.128, CI #345).** (1) ESYATEST gomuk=1:
+  patlama 22 eşyayı uyandırınca uyanık sınırında (12) en eskisi zorla donuyor; kalas sallanırken (3 rad/sn, 7,7° yatık)
+  alt köşesi 4,8 cm zeminin içinde dondu, gömük sayıldı. 42 koşuda 3; `ESYA_IZ=1` izi ve hatalı pozu doğrudan kuran sonda
+  (`tests/_ci344/esya_gomuk_sonda.gd`: eski gomuk=1, yeni 0, gövde 5 mm üstte) olmadan 36 temiz koşu düzeltmenin
+  kanıtı sayılmazdı (yol hiç çalışmamıştı). (2) 36b: Giustiniani'nin dönüş yeri savunucuların köprü çıkışından
+  doğuya giden yolundaydı (8 koşunun 6'sında 0,07–0,5 m); yeni yer bütün izlere 2,1 m. Aynı sonda ikinci kusuru gösterdi:
+  otomatik testte (zaman ölçeği 3) geri çekilme çıkış yürüyüşü bitmeden başlıyor, iki yürüyüş aynı adamı çekiştiriyor,
+  iki savunucu aynı noktadan aynı anda yola çıkıp köprü boyunca tam üst üste yürüyordu. Yeni yürüyüş eskisini durdurur;
+  tam üst üste olanlardan listede sonra gelen bekler.

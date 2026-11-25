@@ -1114,7 +1114,21 @@ func _dondur(e: Dictionary, zorla: bool) -> void:
 			_rapor("havada", e, g.global_position)
 			_ilk_yere(e)
 			return
+	# Zorla dondurulan gövde sallanırken zemine birkaç cm girmiş olabilir (temasın anlık iç içeliği): ESYATEST'te patlamayla
+	# uyanan kalas uyanık sınırında (12) 7,7° yatık, açısal hızı 3 rad/sn, alt köşesi 4,8 cm zeminin içinde dondu ve gömük
+	# sayıldı (CI #345; yerelde 3/42 koşu, ESYA_IZ izi). 12 cm'ye kadar yukarı alınır; daha derini gerçekten gömüktür.
+	if zorla:
+		var bat := _zemin_batmasi(g)
+		if bat > 0.0 and bat < 0.12:
+			g.global_position += Vector3(0, bat + 0.005, 0)
+			if OS.has_environment("ESYA_IZ") and bat > 0.02:
+				print("ESYAIZ kaldir tur=%s id=%d bat=%.3f" % [e["tur"], e["id"], bat])
 	if _gomuk(g):
+		if OS.has_environment("ESYA_IZ"):
+			var cs0 := g.get_child(0) as CollisionShape3D
+			print("ESYAIZ gomuk tur=%s zorla=%s t=%.2f y=%.3f alt=%.3f rot=%s lv=%.2f av=%.2f bosluk=%.3f kim=%s uyanik=%d" % [e["tur"], zorla,
+				float(e["t"]), g.global_position.y, _alt_nokta(g, cs0), g.global_rotation_degrees.snapped(Vector3.ONE * 0.1),
+				g.linear_velocity.length(), g.angular_velocity.length(), bosluk, _gomuk_kim, uyanik.size()])
 		sayac["gomuk"] += 1
 		_rapor("gomuk", e, g.global_position)
 		_ilk_yere(e)
@@ -1130,6 +1144,20 @@ func _dondur(e: Dictionary, zorla: bool) -> void:
 	_izgaradan(e)
 	_izgaraya(e)
 	g.contact_monitor = true
+
+
+## Gövdenin en alt noktasının durağan zeminin (eşya olmayan) ne kadar içinde olduğu (m); girmemişse ya da üstünde başka
+## durağan bir şey varsa 0
+func _zemin_batmasi(g: RigidBody3D) -> float:
+	var cs := g.get_child(0) as CollisionShape3D
+	var alt := _alt_nokta(g, cs)
+	var p := g.global_position
+	var q := PhysicsRayQueryParameters3D.create(Vector3(p.x, maxf(p.y, alt + 0.4), p.z), Vector3(p.x, alt - 0.3, p.z))
+	q.exclude = [g.get_rid()]
+	var hit := g.get_world_3d().direct_space_state.intersect_ray(q)
+	if hit.is_empty() or not (hit["collider"] is StaticBody3D) or (hit["collider"] as Node).has_meta("esya"):
+		return 0.0
+	return maxf(0.0, (hit["position"] as Vector3).y - alt)
 
 
 ## Gövdenin en alt noktasının altındaki zemine uzaklığı (m). Zemin bulunamazsa 99.
@@ -1198,8 +1226,10 @@ func _gomuk(g: RigidBody3D) -> bool:
 	for r in g.get_world_3d().direct_space_state.intersect_shape(q, 4):
 		var o: Object = r["collider"]
 		if o is StaticBody3D and not (o as Node).has_meta("esya"):
+			_gomuk_kim = str((o as Node).get_path())
 			return true
 	return false
+var _gomuk_kim := ""      # son gömük denetiminin çarptığı durağan (ESYA_IZ=1 izinde basılır)
 
 
 ## Donan gövde korunan noktanın (kapı, merdiven ağzı, görev yeri) ya da dar geçidin (sur yolu, sokak arası) üstündeyse
