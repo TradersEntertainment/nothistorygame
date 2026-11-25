@@ -549,6 +549,16 @@ static func silinecek_mi(it: Dictionary) -> bool:
 	return yerel_icinde(_sil_alan.grow(r * 0.5), p.x, p.z)
 
 
+## Kurulumda ağı atlanabilir mi: silinecek öğe, ama hub_sehir HARİÇ. Ölçüldü (tests/_yukleme19/sahne_karma, 8y): hub'ın ağı
+## atlanınca sahnenin üçgen sayısı değişti (6 075 731 → 6 075 303; çarpışma aynı): _make_hub'ın ByzCity kurucuları genel
+## RNG'yi tüketiyor ve Props önbelleklerini ısıtıyor, sonraki içerik kayıyor (kural: görüntü değişmez). Öteki öğelerde aynı.
+const KURULUM_ATLAMA_YOK := ["hub_sehir"]
+
+
+static func atlanabilir_mi(it: Dictionary) -> bool:
+	return not String(it.get("id", "")) in KURULUM_ATLAMA_YOK and silinecek_mi(it)
+
+
 static func _temizle(region_name: String, alan: Rect2) -> void:
 	var n_s := 0
 	var s := IstSehir.active

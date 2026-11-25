@@ -1220,7 +1220,7 @@ func _item(it: Dictionary) -> void:
 	add_child(holder)
 	it["holder"] = holder
 	items.append(it)
-	if IstBaglama.silinecek_mi(it):
+	if IstBaglama.atlanabilir_mi(it):
 		IstBaglama.sil_atlanan += 1            # G19: _temizle siler; ağı kurulmaz
 	else:
 		_build(it, 2)
@@ -1496,7 +1496,7 @@ func _on_pisir() -> void:
 		if not hat and mod == "v2" and not id.begins_with("mese_") and not id in ["ayasofya", "blakherna", "bozdogan", "zincir", "hub_sehir", "meydan_aya_cevre"]:
 			continue
 		var h := it["holder"] as Node3D
-		if IstBaglama.silinecek_mi(it):
+		if IstBaglama.atlanabilir_mi(it):
 			# G19: _temizle siler (aynı ölçüt): ağ kurulmaz, kayıt durumu aynı
 			IstBaglama.sil_atlanan += 1
 			it["pre"] = [null, null, null]
@@ -2001,7 +2001,7 @@ func _place_v2() -> void:
 			it["b2"] = Vector2(p.x, p.z) + hd * gl * 0.5
 			it["kapi_hat"] = ad_h
 		items.append(it)
-		if IstBaglama.silinecek_mi(it):
+		if IstBaglama.atlanabilir_mi(it):
 			IstBaglama.sil_atlanan += 1        # G19: _temizle siler; ağı kurulmaz
 		else:
 			_build(it, 2)
@@ -2179,7 +2179,7 @@ func _v2_item(id: String, p: Vector3, yaw: float, r: float, make: Callable, data
 		it["no2"] = true
 		it["r1"] = HAT_BEGIN + HAT_CELL * 0.75 - r
 		_hat_far_add(it)
-	elif IstBaglama.silinecek_mi(it):
+	elif IstBaglama.atlanabilir_mi(it):
 		IstBaglama.sil_atlanan += 1            # G19: _temizle siler; ağı kurulmaz
 	else:
 		_build(it, 2)

@@ -1,0 +1,19 @@
+# Sahne karması (tests/_yukleme19/sahne_karma.gd). Görünüş karması tabanda da koşudan koşuya değişiyor (iş parçacıklı akış); ölçüt: geo (çizilen düğüm), ucgen, carp ve carpisma karması.
+## Taban (b583705a)
+SAHNEKARMA bolum=8y geo=3876 carp=788 ucgen=6075731 gorunus=8293779c014432f51a3bb30bd546e6d7 carpisma=9fc8a68e3b5cbe2113eefb0be6472fb9
+SAHNEKARMA bolum=24 geo=5258 carp=997 ucgen=6786926 gorunus=17bc7dad22b8b045d3461dc0e65c3b9e carpisma=0a61cf006bc4348e84713184234264a0
+SAHNEKARMA bolum=10h geo=4808 carp=999 ucgen=6368136 gorunus=fb50fe99ad6079c96de3dbb457eeaa4b carpisma=e3dc5af1e74504a06a20b2e528bdb473
+SAHNEKARMA bolum=31o geo=3162 carp=681 ucgen=5647537 gorunus=2cd1f5a0ece21a4b9a1552c426f0fc60 carpisma=2397698a11468f16bdc67a2a5390d4f9
+SAHNEKARMA bolum=12b geo=6729 carp=1167 ucgen=6495617 gorunus=c9d24adbc98e47a1c6310895fd35f982 carpisma=2acc0eb97feffd0e44ce1c6906a09c24
+## Taban 8y art arda iki koşu (1: önbellek yazılır, 2: okunur)
+SAHNEKARMA bolum=8y geo=3876 carp=788 ucgen=6075731 carpisma=9fc8a68e3b5cbe2113eefb0be6472fb9
+SAHNEKARMA bolum=8y geo=3854 carp=788 ucgen=5415909 carpisma=9fc8a68e3b5cbe2113eefb0be6472fb9
+## Yeni (G19, hub_sehir atlanmaz)
+SAHNEKARMA bolum=24 geo=5258 carp=997 ucgen=6786926 gorunus=db49cd2a44278f7a52fd7b502e74d0f1 carpisma=0a61cf006bc4348e84713184234264a0
+SAHNEKARMA bolum=10h geo=4808 carp=999 ucgen=6368136 gorunus=edb6c9bc5ab372c7eeb0eef32d254042 carpisma=e3dc5af1e74504a06a20b2e528bdb473
+SAHNEKARMA bolum=31o geo=3162 carp=681 ucgen=5647537 gorunus=2cd1f5a0ece21a4b9a1552c426f0fc60 carpisma=2397698a11468f16bdc67a2a5390d4f9
+SAHNEKARMA bolum=12b geo=6729 carp=1167 ucgen=6495617 gorunus=dac6a866f7e0b45fa83aebe034f76b1f carpisma=2acc0eb97feffd0e44ce1c6906a09c24
+SAHNEKARMA bolum=8y (1. koşu) geo=3876 carp=788 ucgen=6075731 carpisma=9fc8a68e3b5cbe2113eefb0be6472fb9
+SAHNEKARMA bolum=8y (2. koşu) geo=3854 carp=788 ucgen=5415909 carpisma=9fc8a68e3b5cbe2113eefb0be6472fb9
+## Hub da atlanınca (ilk deneme, geri alındı)
+SAHNEKARMA bolum=8y geo=3876 carp=788 ucgen=6075303 gorunus=c90e2698ee8ad7680b17623f5c2ff61d carpisma=9fc8a68e3b5cbe2113eefb0be6472fb9
