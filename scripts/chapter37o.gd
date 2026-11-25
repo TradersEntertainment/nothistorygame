@@ -72,6 +72,7 @@ var arrows := 0
 var falls := 0
 var barrels_down := 0
 var cuts := 0
+var _lose_cekis := 0          # test "lose": çekiş sayacı (her dördün ilki kaçar)
 var stone_hits := 0
 var slips := 0
 var _hizir := false
@@ -722,8 +723,12 @@ func _stockade() -> void:
 				meter.press()
 			while _strokes.size() > 0 and _hook != null:
 				var good: bool = _strokes.pop_front()
-				if GameState.autotest and lose and randf() < 0.5:
-					good = false
+				# Test "lose": her dört çekişin ilki kaçar (ip kesilir), sonraki üçü fıçıyı devirir. Eskiden yazı turaydı
+				# (%50); devirmek art arda üç iyi çekiş istediğinden koşuların ~%6'sında ikinci fıçı 180 sn'de devrilmiyor,
+				# çıkış (düello) hiç olmuyor, sonuç "kazandı" kalıyordu (tam128: 1/1, yükte yeniden: 1/4)
+				if GameState.autotest and lose:
+					good = good and _lose_cekis % 4 != 0
+					_lose_cekis += 1
 				_heave(good)
 		else:
 			meter.enabled = false
