@@ -1,0 +1,12 @@
+# Ek testler
+ZSCENE chapter31o.tscn boxes=51 found=0
+ZSCENE chapter26.tscn boxes=219 found=0
+ZSCENE chapter13.tscn boxes=56 found=0
+ZSCENE chapter8y.tscn boxes=9 found=0
+ZSCENE chapter24.tscn boxes=373 found=0
+MENURETURN round=1 mode=main scene=res://scenes/chapter1.tscn nodes=8624 orphans=0
+MENURETURN PASS from=res://scenes/chapter26.tscn
+MENURETURN round=1 mode=main scene=res://scenes/chapter1.tscn nodes=8630 orphans=0
+MENURETURN PASS from=res://scenes/chapter20o.tscn
+CITYCHECK PASS (24 v2 açılış 9.4 sn, 31o v2 8.0 sn; taban 9.1 / 8.4)
+STREETCHECK PASS

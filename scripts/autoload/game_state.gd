@@ -1101,7 +1101,7 @@ func _change_with_loader(path: String) -> void:
 		var prog := []
 		ResourceLoader.load_threaded_get_status(path, prog)
 		if _loader != null and not prog.is_empty():
-			_loader.set_progress(float(prog[0]))
+			_loader.set_progress(float(prog[0]) * 0.4)      # G19: dosya yüklemesi çubuğun ilk %40'ı; kalanı kurulum
 	var ps: PackedScene = null
 	if ok and ResourceLoader.load_threaded_get_status(path) == ResourceLoader.THREAD_LOAD_LOADED:
 		ps = ResourceLoader.load_threaded_get(path) as PackedScene

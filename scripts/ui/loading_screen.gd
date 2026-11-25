@@ -10,7 +10,8 @@ const TIPS := 14
 const GOLD := Color("d9b45a")
 
 var _cover: TextureRect
-var _bar_fill: ColorRect
+var _rs_bar: RID
+var _rs_spin: RID
 var _bar_bg: ColorRect
 var _label: Label
 var _spinner: Control
@@ -96,8 +97,12 @@ func _init(path: String) -> void:
 	box.add_child(row)
 	_spinner = Control.new()
 	_spinner.custom_minimum_size = Vector2(30, 30)
-	_spinner.draw.connect(_draw_spinner)
 	row.add_child(_spinner)
+	# G19: çark ve çubuk doğrudan RenderingServer tuval öğesine çizilir. Kurulumun ortasındaki nabız force_draw yapar ama
+	# Control'lerin yeniden çizimi (queue_redraw, ColorRect boyutu) ertelenmiş kuyrukta bekler, kurulum bitmeden işlenmez:
+	# eski pump() perdeyi 150 ms'de bir çiziyordu ama çark ve çubuk hep aynı karede donuk kalıyordu.
+	_rs_spin = RenderingServer.canvas_item_create()
+	RenderingServer.canvas_item_set_parent(_rs_spin, _spinner.get_canvas_item())
 	var col := VBoxContainer.new()
 	col.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	col.add_theme_constant_override("separation", 6)
@@ -111,10 +116,8 @@ func _init(path: String) -> void:
 	_bar_bg.color = Color(1, 1, 1, 0.12)
 	_bar_bg.custom_minimum_size = Vector2(0, 4)
 	col.add_child(_bar_bg)
-	_bar_fill = ColorRect.new()
-	_bar_fill.color = GOLD
-	_bar_fill.size = Vector2(0, 4)
-	_bar_bg.add_child(_bar_fill)
+	_rs_bar = RenderingServer.canvas_item_create()
+	RenderingServer.canvas_item_set_parent(_rs_bar, _bar_bg.get_canvas_item())
 
 
 ## Yükleme perdesi açıkken bölüm kurulumunda pencereyi canlı tutar. Sahne dosyası iş parçacığında yüklenir ama seviye
@@ -145,6 +148,8 @@ static var _nabizda := false
 static var _olay := -1             # -1 bilinmiyor, 0 kapalı (otomatik test), 1 açık
 static var _changing_once := false
 static var _once := -1
+static var _cizim := 0           # ölçüm: perde çizimi sayısı (pencereli kanıt)
+static var _olay_n := 0          # ölçüm: olay işleme sayısı
 
 
 static func nabiz(kaynak := "") -> void:
@@ -194,6 +199,8 @@ static func nabiz(kaynak := "") -> void:
 		root.disable_3d = true
 		RenderingServer.force_draw(true, 0.0)
 		root.disable_3d = d3
+		_cizim += 1
+	_olay_n += 1
 	_nabizda = false
 	_last_pump = Time.get_ticks_msec()
 
@@ -318,6 +325,8 @@ static func _olcum_yaz(sc: Node) -> void:
 	var top := Time.get_ticks_msec() - _olc_t0
 	var satir := "scene=%s evre=%s toplam_ms=%d en_uzun_bosluk_ms=%d kaynak=%s ilk_kare_ms=%d bosalt_ms=%d" % [
 		scene, _olc_evre, top, _olc_en, _olc_kaynak, _olc_ilk_kare, _olc_bosalt]
+	if DisplayServer.get_name() != "headless":
+		satir += " olay=%d perde_cizim=%d" % [_olay_n, _cizim]
 	print("YUKLEMEAUDIT " + satir)
 	# İki kademe: tek başına koşuda hedef < 1000 ms (aday, listelenir); pakette (8 parça CPU paylaşır) ≥ 2500 ms kesin hata
 	if _olc_en >= 2500:
@@ -395,9 +404,11 @@ func set_progress(p: float) -> void:
 func _process(delta: float) -> void:
 	_t += delta
 	# Çubuk ilerlemeye yumuşakça yetişir; ilerleme gelmezse de yavaşça kıpırdar (donmuş görünmesin)
-	_shown = minf(lerpf(_shown, maxf(_progress, minf(0.9, 1.0 - exp(-_t * 0.25))), minf(1.0, delta * 4.0)), 1.0)
-	if _bar_fill and _bar_bg:
-		_bar_fill.size = Vector2(_bar_bg.size.x * _shown, _bar_bg.size.y)
+	# G19: kurulum (sahne _ready'si, 5–40 sn) ilerleme bildirmez: çubuk zamanla %95'e yaklaşır (nabızla da çizilir)
+	_shown = minf(lerpf(_shown, maxf(_progress, minf(0.95, 1.0 - exp(-_t * 0.08))), minf(1.0, delta * 4.0)), 1.0)
+	if _bar_bg and _rs_bar.is_valid():
+		RenderingServer.canvas_item_clear(_rs_bar)
+		RenderingServer.canvas_item_add_rect(_rs_bar, Rect2(Vector2.ZERO, Vector2(_bar_bg.size.x * _shown, _bar_bg.size.y)), GOLD)
 	if _label:
 		_label.text = TranslationServer.translate("UI_LOADING") + ".".repeat(1 + int(_t * 3.0) % 3)
 	if _cover:
@@ -405,20 +416,39 @@ func _process(delta: float) -> void:
 		var s := 1.0 + minf(_t, 20.0) * 0.006
 		_cover.pivot_offset = _cover.size * 0.5
 		_cover.scale = Vector2(s, s)
-	if _spinner:
-		_spinner.queue_redraw()
+	if _spinner and _rs_spin.is_valid():
+		_draw_spinner()
 
 
-## Saat çarkı: dönen altın yay ve içinde ters dönen kısa ibre
+## Saat çarkı: dönen altın yay ve içinde ters dönen kısa ibre (RenderingServer tuval öğesine; nabızda da güncellenir)
 func _draw_spinner() -> void:
+	var ci := _rs_spin
+	RenderingServer.canvas_item_clear(ci)
+	if _spinner.size.x < 8.0:
+		return            # yerleşim henüz yapılmadı
 	var c := _spinner.size * 0.5
 	var r := minf(c.x, c.y) - 2.0
-	_spinner.draw_arc(c, r, 0.0, TAU, 40, Color(1, 1, 1, 0.12), 3.0, true)
+	_yay(ci, c, r, 0.0, TAU, 40, Color(1, 1, 1, 0.12), 3.0)
 	var a := _t * 4.0
-	_spinner.draw_arc(c, r, a, a + PI * 0.7, 24, GOLD, 3.0, true)
+	_yay(ci, c, r, a, a + PI * 0.7, 24, GOLD, 3.0)
 	var h := -_t * 1.3
-	_spinner.draw_line(c, c + Vector2(cos(h), sin(h)) * r * 0.55, Color(1, 1, 1, 0.7), 2.0, true)
-	_spinner.draw_circle(c, 2.5, GOLD)
+	RenderingServer.canvas_item_add_line(ci, c, c + Vector2(cos(h), sin(h)) * r * 0.55, Color(1, 1, 1, 0.7), 2.0, true)
+	RenderingServer.canvas_item_add_circle(ci, c, 2.5, GOLD)
+
+
+static func _yay(ci: RID, c: Vector2, r: float, a0: float, a1: float, n: int, col: Color, w: float) -> void:
+	var pts := PackedVector2Array()
+	for k in n + 1:
+		var t := lerpf(a0, a1, float(k) / n)
+		pts.append(c + Vector2(cos(t), sin(t)) * r)
+	RenderingServer.canvas_item_add_polyline(ci, pts, PackedColorArray([col]), w, true)
+
+
+func _notification(what: int) -> void:
+	if what == NOTIFICATION_PREDELETE:
+		for rid: RID in [_rs_spin, _rs_bar]:
+			if rid.is_valid():
+				RenderingServer.free_rid(rid)
 
 
 static func _key(path: String) -> String:
