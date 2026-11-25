@@ -161,6 +161,7 @@ static func catalog_all() -> Array:
 		names.append(base)
 	names.sort()
 	for base: String in names:
+		LoadingScreen.nabiz("sehir_katalog_yukle")
 		var scr := load(DIR + base + ".gd") as GDScript
 		if scr == null:
 			continue
@@ -1871,6 +1872,7 @@ func _place_v2() -> void:
 	var ap := (ait["holder"] as Node3D).transform * (Vector3(3.5, 19.5 + 11.1 * 0.42 * sqrt(1.0 - pow(3.5 / 11.1, 2.0)), 0) * AYA_K)
 	_pad(ap, "Konma_ayasofya")
 	ait["perch_aya"] = ap
+	LoadingScreen.nabiz("sehir_aya")
 	# Blakherna Sarayı: Blachernae.shell_parts ("palace"), Blakherna suruna yaslı
 	var bl := IstGeo.w2(-3402.0, 3436.0)
 	var bpl := IstGeo.yol("blakherna_suru")
@@ -1887,6 +1889,7 @@ func _place_v2() -> void:
 	var bpp: Vector3 = (bit["holder"] as Node3D).transform * Vector3(0, 20.0, -21.0)
 	_pad(bpp, "Konma_blakherna")
 	bit["perch"] = bpp
+	LoadingScreen.nabiz("sehir_blakherna")
 	quest2["BLAKHERNA"] = {"p": Vector3(bl.x, IstGeo.h(bl.x, bl.y) + 26.0, bl.y), "r": 34.0}
 	var cand: Array = []
 	# Sabit engeller: Ayasofya, Blakherna Sarayı, oyun alanları (hub alanı Romanos'tan sonra eklenir)
@@ -1896,6 +1899,7 @@ func _place_v2() -> void:
 	var mr := _meydan_rect()
 	cand.append({"id": "oyun_meydan", "w": mr.get_center(), "w0": mr.get_center(), "r": mr.size.length() * 0.42, "sabit": true, "prio": 3, "tur": ""})
 	for e: Dictionary in catalog_all():
+		LoadingScreen.nabiz("sehir_katalog")
 		var id := String(e["id"])
 		var mod := String(e["mod"])
 		if mod in MOD_SKIP2 or id in HAT_IDS or mod.begins_with("ordugah") or mod.begins_with("gemiler") or mod.begins_with("hayat"):
@@ -1919,8 +1923,11 @@ func _place_v2() -> void:
 			var hc: Vector2 = pl["w"] + inn * 75.0
 			cand.append({"id": "oyun_hub", "w": hc, "w0": hc, "r": 55.0, "sabit": true, "prio": 3, "tur": ""})
 		cand.append(pl)
+	LoadingScreen.nabiz("sehir_aday")
 	_hat_dizi(cand)
+	LoadingScreen.nabiz("sehir_hatdizi")
 	_coz_cakisma(cand)
+	LoadingScreen.nabiz("sehir_cakisma")
 	print("ISTCAKISMA ", " · ".join(cakisma_rapor))
 	for pl: Dictionary in cand:
 		LoadingScreen.nabiz("sehir")
@@ -2177,6 +2184,7 @@ func _make_aya(n: Node3D, lod: int) -> void:
 	off.position = -ByzCity.AYA
 	sc.add_child(off)
 	ByzCity.aya_exterior(off)
+	LoadingScreen.nabiz("sehir_aya_dis")
 	if lod >= 2:
 		# Uzak katmanda iç kabuk kurulmaz: gövdenin üstü (kubbeler arası kurşun çatı) yukarıdan boş görünüyordu
 		Props.box(sc, Vector3(33.0, 0.4, 33.0), Vector3(0, 16.3, 0), Color("6c737c"))

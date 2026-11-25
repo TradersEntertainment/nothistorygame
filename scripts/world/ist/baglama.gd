@@ -415,6 +415,7 @@ static func build(parent: Node3D, region_name: String, keep_local: Array, _night
 	var n_su := 0
 	var dr: Rect2 = IstGeo.deniz_yok[0]
 	for i in int(dr.size.x / 20.0):
+		LoadingScreen.nabiz("baglama_deniz")
 		for j in int(dr.size.y / 20.0):
 			if IstGeo.su(dr.position.x + i * 20.0, dr.position.y + j * 20.0):
 				n_su += 1
@@ -423,7 +424,9 @@ static func build(parent: Node3D, region_name: String, keep_local: Array, _night
 	_ordu_suzulen = 0
 	var oscr = load("res://scripts/world/ist/ordugah.gd") if ResourceLoader.exists("res://scripts/world/ist/ordugah.gd") else null
 	if oscr != null:
+		LoadingScreen.nabiz("baglama_plan")
 		var pl: Array = oscr.call("plan")
+		LoadingScreen.nabiz("baglama_plan")
 		for i in range(pl.size() - 1, -1, -1):
 			var it: Dictionary = pl[i]
 			var pp: Vector2 = it["pos"]

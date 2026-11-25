@@ -377,17 +377,42 @@ static func onbellek_oku(ad: String, imza: String) -> Variant:
 	return v
 
 
-static func onbellek_yaz(ad: String, imza: String, veri: Variant) -> void:
+## arka: büyük önbellekler (avlu, zemin; soğuk açılışta 0,5–1,4 sn sıkıştırma) arka iş parçacığında yazılır: veri ana iş
+## parçacığında derin kopyalanır, geçici dosyaya yazılıp adı değiştirilir (yarım dosya okunmaz; okuyan imzalı adı arar).
+static func onbellek_yaz(ad: String, imza: String, veri: Variant, arka := false) -> void:
 	if _ob_kip() == "yok" or veri == null:
 		return
 	DirAccess.make_dir_recursive_absolute(ONBELLEK_DIR)
-	var f := FileAccess.open_compressed(ONBELLEK_DIR + ad + "_" + imza + ".bin", FileAccess.WRITE, FileAccess.COMPRESSION_ZSTD)
+	var t0 := Time.get_ticks_msec()
+	var yol := ONBELLEK_DIR + ad + "_" + imza + ".bin"
+	if arka:
+		var kopya: Variant = (veri as Dictionary).duplicate(true) if veri is Dictionary else veri
+		_arka_isler.append(WorkerThreadPool.add_task(_dosya_yaz.bind(yol, kopya), false, "ist_onbellek_" + ad))
+	else:
+		_dosya_yaz(yol, veri)
+	onbellek_dokun(ad, imza)
+	onbellek_buda(ad, imza, "", _bin_imza.bind(ad))
+	print("ISTONBELLEK yaz ad=%s arka=%s ms=%d" % [ad, arka, Time.get_ticks_msec() - t0])
+
+
+static var _arka_isler: Array = []
+
+
+static func _dosya_yaz(yol: String, veri: Variant) -> void:
+	var gecici := yol + ".yaz"
+	var f := FileAccess.open_compressed(gecici, FileAccess.WRITE, FileAccess.COMPRESSION_ZSTD)
 	if f == null:
 		return
 	f.store_var(veri, false)
 	f.close()
-	onbellek_dokun(ad, imza)
-	onbellek_buda(ad, imza, "", _bin_imza.bind(ad))
+	DirAccess.rename_absolute(gecici, yol)
+
+
+## Bekleyen arka yazımlar (çıkışta ve testlerde: yarım kalmasın)
+static func onbellek_bekle() -> void:
+	for id: int in _arka_isler:
+		WorkerThreadPool.wait_for_task_completion(id)
+	_arka_isler.clear()
 
 
 func _build_imza(foot: Array, bands: Array, gates: Array, tohum: int) -> String:
@@ -440,9 +465,11 @@ func _build_hesapla(foot: Array, bands: Array, gates: Array, tohum: int) -> void
 	var lo := Vector2(INF, INF)
 	var hi := Vector2(-INF, -INF)
 	for p in poly:
+		LoadingScreen.nabiz("sokak_hesap")
 		lo = Vector2(minf(lo.x, p.x), minf(lo.y, p.y))
 		hi = Vector2(maxf(hi.x, p.x), maxf(hi.y, p.y))
 	for p in gal:
+		LoadingScreen.nabiz("sokak_hesap")
 		lo = Vector2(minf(lo.x, p.x), minf(lo.y, p.y))
 		hi = Vector2(maxf(hi.x, p.x), maxf(hi.y, p.y))
 	x0 = lo.x - 20.0
@@ -455,10 +482,12 @@ func _build_hesapla(foot: Array, bands: Array, gates: Array, tohum: int) -> void
 	rid.fill(-1)
 	_halic = IstGeo.yol("halic_suru")
 	_fill_poly(poly, 0, 4)
+	LoadingScreen.nabiz("sokak_hesap")
 	if gal.size() >= 3:
 		_fill_poly(gal, 0, 4)
 	# Deniz (kıyı çokgeni ile arazinin uyuşmadığı yerler) kapalı
 	for j in range(0, nz, 3):
+		LoadingScreen.nabiz("sokak_hesap")
 		for i in range(0, nx, 3):
 			var k := j * nx + i
 			if occ[k] != 0:
@@ -471,10 +500,12 @@ func _build_hesapla(foot: Array, bands: Array, gates: Array, tohum: int) -> void
 							occ[(j + b) * nx + i + a] = 4
 	# Sur bantları; iç yanda iç yüzden 1 m ötesi yeniden açılır (sur dibi evleri yaslanacak), köşe kuleleri kapalı
 	for b: Array in bands:
+		LoadingScreen.nabiz("sokak_hesap")
 		var pl: PackedVector2Array = b[0]
 		for i in pl.size() - 1:
 			_stamp_seg(pl[i], pl[i + 1], float(b[1]) * 2.0, 3)
 	_sur_ic_ac(bands)
+	LoadingScreen.nabiz("sokak_hesap")
 	if not _taban_kayitlardan():
 		for f: Vector3 in foot:
 			_stamp_disc(Vector2(f.x, f.z), f.y, 3)
@@ -483,56 +514,74 @@ func _build_hesapla(foot: Array, bands: Array, gates: Array, tohum: int) -> void
 	rng.seed = tohum
 	# 1) Mese ve kolları
 	for ad: String in ["mese", "mese_kuzey", "mese_guney"]:
+		LoadingScreen.nabiz("sokak_hesap")
 		var pl := IstGeo.yol(ad)
 		if pl.size() >= 2:
 			_add_street(_densify(pl, 14.0), MESE_W, "mese", ad, true)
 	# 1b) Galata: rıhtımdan (zincirin ucu) kuleye çıkan ana yokuş ve onu kesen kıyı caddesi
 	_galata_yollari()
+	LoadingScreen.nabiz("sokak_hesap")
 	# 1c) Surların iç yüzü boyunca savunma yolu
 	for ad: String in SUR_IC:
+		LoadingScreen.nabiz("sokak_hesap")
 		_savunma_yolu(ad)
 	# 2) Kapılardan Mese'ye inen yollar ve deniz kapılarından yokuşlar
 	for g: Array in gates:
+		LoadingScreen.nabiz("sokak_hesap")
 		_gate_road(g[0] as Vector2, String(g[1]), rng)
 	# 2b) DOKU-4 madde 4: bölümlerin oyun alanlarının (hub, Ayasofya meydanı) çevresinde çevre yolu + dört yana bağlantı
 	_oyun_alani_yollari()
+	LoadingScreen.nabiz("sokak_hesap")
 	# 3) Mahalle içi organik sokaklar (üç kuşak) ve boş kalan yerleri dolduran ek sokaklar
 	var n0 := streets.size()
 	for s in range(0, n0):
+		LoadingScreen.nabiz("sokak_hesap")
 		_lanes_from(s, rng, 0)
 	var n1 := streets.size()
 	for s in range(n0, n1):
+		LoadingScreen.nabiz("sokak_hesap")
 		_lanes_from(s, rng, 1)
 	for pass_i in 3:
+		LoadingScreen.nabiz("sokak_hesap")
 		_dolgu_sokaklari(rng, pass_i)
 	stats["sokak"] = streets.size()
 	stats["sokak_ms"] = Time.get_ticks_msec() - t0
 	# 3b) Mahalle kiliseleri ve meydanları için yer (evlerden önce: sık dokuda da kalsın)
 	_kilise_yerleri(rng)
+	LoadingScreen.nabiz("sokak_hesap")
 	# 3c) Eser çevresi meydanları (DOKU-3, kalite notu 13): ünlü eserlerin çevresi evden önce ayrılır (döşeli meydan/avlu)
 	_eser_meydanlari()
+	LoadingScreen.nabiz("sokak_hesap")
 	# 4) Evler: önce savunma yolu ve büyük yollar (sıralar sura ve caddeye yaslansın), sonra sokaklar
 	var order: Array = []
 	for s in streets.size():
+		LoadingScreen.nabiz("sokak_hesap")
 		order.append(s)
 	var pri := {"savunma": 0, "mese": 1, "yol": 2, "sokak": 3, "basamak": 3}
 	order.sort_custom(func(a: int, b: int) -> bool: return int(pri.get(String(streets[a]["tur"]), 3)) < int(pri.get(String(streets[b]["tur"]), 3)))
 	for s: int in order:
+		LoadingScreen.nabiz("sokak_hesap")
 		_houses_along(s, rng)
 	# ikinci geçiş: kısa kalan yerlere (sokak sonlarında) tek ev / kısa sıra
 	for s: int in order:
+		LoadingScreen.nabiz("sokak_hesap")
 		_houses_along(s, rng, true)
 	# avlular bütün sıralardan sonra (karşı sıranın derinliğini çalmasın)
 	for sb: Array in _sira_bilgi:
+		LoadingScreen.nabiz("sokak_hesap")
 		_avlu_ekle(sb[0], sb[1], sb[2], sb[3], sb[4], sb[5], sb[6], rng)
 	stats["ev"] = houses.size()
 	stats["sira"] = rows
 	stats["avlu"] = avlu.size()
 	# 5) Doku ve meydanlar
 	_meydanlar(foot)
+	LoadingScreen.nabiz("sokak_hesap")
 	_eser_meydan_doldur()
+	LoadingScreen.nabiz("sokak_hesap")
 	_doku(rng)
+	LoadingScreen.nabiz("sokak_hesap")
 	_ogeler(rng)
+	LoadingScreen.nabiz("sokak_hesap")
 	stats["doku"] = doku.size()
 	stats["oge"] = oge.size()
 	stats["hesap_ms"] = Time.get_ticks_msec() - t0

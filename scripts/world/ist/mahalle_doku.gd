@@ -176,7 +176,7 @@ func _zemin() -> void:
 		return
 	else:
 		gruplar = _zemin_hesapla()
-		IstSokak.onbellek_yaz("zemin", imza, {"gruplar": gruplar, "n_kare": stats.get("zemin_kare", 0)})
+		IstSokak.onbellek_yaz("zemin", imza, {"gruplar": gruplar, "n_kare": stats.get("zemin_kare", 0)}, true)
 	_zemin_kur(gruplar)
 
 
@@ -230,6 +230,7 @@ func _zemin_hesapla() -> Dictionary:
 	var ek := PackedByteArray()
 	ek.resize(nx * nz)
 	for z: Dictionary in sk.zemin_ek:
+		LoadingScreen.nabiz("doku")
 		var c: Vector2 = z["c"]
 		var r := float(z["r"])
 		var t := 1 if String(z["tur"]) == "mese" else 2
@@ -241,6 +242,8 @@ func _zemin_hesapla() -> Dictionary:
 	var tur := PackedByteArray()
 	tur.resize(nx * nz)
 	for k in nx * nz:
+		if (k & 16383) == 0:
+			LoadingScreen.nabiz("doku")
 		if sk.occ[k] in [1, 2, 6] or ek[k] != 0:
 			tur[k] = _zt(k, ek)
 	var ys := PackedFloat32Array()
@@ -248,6 +251,8 @@ func _zemin_hesapla() -> Dictionary:
 	var cs := PackedColorArray()
 	cs.resize(nx * nz)
 	for k in nx * nz:
+		if (k & 16383) == 0:
+			LoadingScreen.nabiz("doku")
 		if tur[k] != 0:
 			var cc := sk.cell_c(k % nx, k / nx)
 			ys[k] = _zy(cc.x, cc.y)
@@ -256,6 +261,7 @@ func _zemin_hesapla() -> Dictionary:
 	var n_kare := 0
 	var G := IstSokak.G
 	for j in nz - 1:
+		LoadingScreen.nabiz("doku")
 		for i in nx - 1:
 			var k00 := j * nx + i
 			var t00 := tur[k00]
@@ -317,6 +323,7 @@ func _zemin_kur(gruplar: Dictionary) -> void:
 	var mt: Material = _zm[0]
 	var mt2: Material = _zm[1]
 	for ck: Vector2i in gruplar:
+		LoadingScreen.nabiz("doku")
 		var am := ArrayMesh.new()
 		for idx in 2:
 			var g: Array = gruplar[ck][idx]
@@ -430,6 +437,7 @@ static func dosek_tex() -> ImageTexture:
 		rows.append([y, h])
 		y += h
 	for r: Array in rows:
+		LoadingScreen.nabiz("doku")
 		var y0: int = r[0]
 		var h: int = r[1]
 		var x := 0
@@ -503,6 +511,7 @@ func _tarhlar(tarh: Dictionary) -> void:
 	var renk := [Color("4f6a2e"), Color("5e7a34"), Color("6b7a3a"), Color("7a6a48")]
 	var mat := _tarh_mat()
 	for tk: Vector2i in tarh:
+		LoadingScreen.nabiz("doku")
 		var st := SurfaceTool.new()
 		st.begin(Mesh.PRIMITIVE_TRIANGLES)
 		var cen := Vector3((tk.x + 0.5) * DUVAR_HUCRE, 0, (tk.y + 0.5) * DUVAR_HUCRE)
@@ -577,6 +586,7 @@ func _avlular() -> void:
 	var ob = IstSokak.onbellek_oku("avlu", imza) if sk.ob_imza != "" else null
 	if ob is Dictionary and ob.has("mi"):
 		for r: Array in ob["mi"]:
+			LoadingScreen.nabiz("avlu_ob")
 			var mi := MeshInstance3D.new()
 			var am := ArrayMesh.new()
 			am.add_surface_from_arrays(Mesh.PRIMITIVE_TRIANGLES, r[4])
@@ -605,7 +615,10 @@ func _avlular() -> void:
 	if sk.ob_imza == "":
 		return
 	var mis: Array = []
+	LoadingScreen.nabiz("avlu_kayit")
 	for i in range(once, get_child_count()):
+		if (i & 63) == 0:
+			LoadingScreen.nabiz("avlu_kayit")
 		var mi := get_child(i) as MeshInstance3D
 		if mi == null or mi.mesh == null or mi.mesh.get_surface_count() != 1:
 			return
@@ -615,8 +628,9 @@ func _avlular() -> void:
 		elif mi.material_override == _tarh_mat():
 			mk = "tarh"
 		mis.append([mi.position, mi.visibility_range_end, mi.cast_shadow, mk, mi.mesh.surface_get_arrays(0)])
+	LoadingScreen.nabiz("avlu_yaz_once")
 	IstSokak.onbellek_yaz("avlu", imza, {"mi": mis, "duvar": _duvar_cells, "oge": kayit,
-		"stats": {"avlu": stats.get("avlu", 0), "duvar_hucre": stats.get("duvar_hucre", 0), "bahce_agac": stats.get("bahce_agac", 0)}})
+		"stats": {"avlu": stats.get("avlu", 0), "duvar_hucre": stats.get("duvar_hucre", 0), "bahce_agac": stats.get("bahce_agac", 0)}}, true)
 
 
 func _avlular_hesapla() -> void:
@@ -624,6 +638,7 @@ func _avlular_hesapla() -> void:
 	var agac := {}                    # Vector2i(64) → {tür: [Transform3D]}
 	var n := 0
 	for a: Dictionary in sk.avlu:
+		LoadingScreen.nabiz("doku")
 		var c: Vector2 = a["c"]
 		var u: Vector2 = a["u"]
 		var v: Vector2 = a["v"]
@@ -693,6 +708,7 @@ func _avlular_hesapla() -> void:
 			_oge_ekle({"tur": oz, "c": ic2, "yaw": atan2(-v.x, -v.y), "tohum": tohum, "avlu": true})
 		n += 1
 	for ck: Vector2i in gruplar:
+		LoadingScreen.nabiz("doku")
 		var st: SurfaceTool = gruplar[ck]
 		var mi := MeshInstance3D.new()
 		mi.mesh = st.commit()
@@ -706,6 +722,7 @@ func _avlular_hesapla() -> void:
 	var nb := 0
 	var tarh := {}
 	for j in range(1, sk.nz - 1, 3):
+		LoadingScreen.nabiz("doku")
 		for i in range(1, sk.nx - 1, 3):
 			var k := j * sk.nx + i
 			if sk.occ[k] != 0:
@@ -741,6 +758,7 @@ func _avlular_hesapla() -> void:
 	# avlu ağaçları: 192 m hücre başına TEK ağ (bütün türler birleşik; IstBitki tek malzeme), 380 m'ye kadar
 	var ag2 := {}
 	for ak: Vector2i in agac:
+		LoadingScreen.nabiz("doku")
 		for tur: String in agac[ak]:
 			for x: Transform3D in agac[ak][tur]:
 				var k2 := Vector2i(floori(x.origin.x / DUVAR_HUCRE), floori(x.origin.z / DUVAR_HUCRE))
@@ -748,6 +766,7 @@ func _avlular_hesapla() -> void:
 					ag2[k2] = []
 				ag2[k2].append([tur, x])
 	for k2: Vector2i in ag2:
+		LoadingScreen.nabiz("doku")
 		if not _duvar_cells.has(k2):
 			_duvar_cells[k2] = {"boxes": [], "body": null}
 		for e: Array in ag2[k2]:
@@ -777,7 +796,9 @@ func _avlular_hesapla() -> void:
 		add_child(mi)
 	stats["avlu"] = n
 	stats["duvar_hucre"] = gruplar.size()
+	LoadingScreen.nabiz("avlu_gecit_once")
 	_cati_gecitleri()
+	LoadingScreen.nabiz("avlu_gecit")
 
 
 ## DOKU-4 madde 2 (çatıdan çatıya): aynı sıradaki bitişik iki evin yürünür üstü (kiremit sırtı H+1,6; düz dam H+0,18;

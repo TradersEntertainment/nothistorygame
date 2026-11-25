@@ -539,8 +539,8 @@ static func bake(list: Array, top: Node3D, xf: Transform3D, parent: Node3D, node
 	LoadingScreen.nabiz("w1453_bake")
 	if im.get_surface_count() > 0:
 		im.generate_lods(25.0, 60.0, [])
-	LoadingScreen.nabiz("w1453_lod")
 		mi.mesh = im.get_mesh()
+	LoadingScreen.nabiz("w1453_lod")
 	mi.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_ON
 	parent.add_child(mi)
 	return mi
