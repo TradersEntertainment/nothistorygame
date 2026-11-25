@@ -163,7 +163,9 @@ func _ready() -> void:
 	_rng.seed = 1453771
 	var t0 := Time.get_ticks_msec()
 	_kur_ag()
+	LoadingScreen.nabiz("yakin_ag")
 	_make_agents()
+	LoadingScreen.nabiz("yakin_ajan")
 	if hemen_isin:
 		# yükleme sırasında ilk ILK_ISIN gövde + ILK_HAYVAN hayvan (açılış karesi dolu olsun); kalanı oyunda iki karede bir
 		# (DOKU-4: bütün havuz açılışta 0,8 sn, önbelleksiz ilk açılışta 6,3 sn sürüyordu; gövde başına 6–17 ms)
@@ -172,6 +174,7 @@ func _ready() -> void:
 		for ag in agents:
 			if n_ag >= ILK_ISIN:
 				break
+			LoadingScreen.nabiz("yakin_govde")
 			_built_frame = 0
 			if _ensure_body(ag):
 				n_ag += 1
@@ -179,6 +182,7 @@ func _ready() -> void:
 		for h in hayvanlar:
 			if n_h >= ILK_HAYVAN:
 				break
+			LoadingScreen.nabiz("yakin_hayvan")
 			_built_frame = 0
 			if _ensure_animal(h):
 				n_h += 1

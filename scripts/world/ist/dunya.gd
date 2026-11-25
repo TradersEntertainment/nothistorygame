@@ -84,6 +84,7 @@ static func build(parent: Node3D, gece_ := false, merkez_ := Vector3.ZERO) -> No
 	d.merkez = merkez_
 	parent.add_child(d)
 	d._kur()
+	LoadingScreen.nabiz("dunya_kur")
 	var S = load("res://scripts/world/ist/sehir.gd")
 	if S != null and sehir_bagla:
 		for m in (S as Script).get_script_method_list():
@@ -101,6 +102,7 @@ func _kur() -> void:
 		_gok()
 	_deniz()
 	_ufuk()
+	LoadingScreen.nabiz("dunya_ufuk")
 	# çekirdek: önce hepsi kaba (lod 3), sonra merkeze yakınlar zaman dilimli inceltilir
 	for i in CNX:
 		for j in CNZ:
@@ -114,11 +116,16 @@ func _kur() -> void:
 			var job := _is_baslat(k, 3)
 			while not _is_ilerle(job, 1 << 62):
 				pass
+			LoadingScreen.nabiz("dunya_parca")
 	_zemin_ortu()
+	LoadingScreen.nabiz("dunya_ortu")
 	_dis_halka()
+	LoadingScreen.nabiz("dunya_halka")
 	_karsi_kiyilar()
+	LoadingScreen.nabiz("dunya_kiyi")
 	_kiz_kulesi()
 	_carpisma_kur()
+	LoadingScreen.nabiz("dunya_carpisma")
 	_t_kurulum_ms = (Time.get_ticks_usec() - t0) / 1000.0
 	print("ISTDUNYA kurulum_ms=%.0f" % _t_kurulum_ms)
 

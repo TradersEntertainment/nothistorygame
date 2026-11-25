@@ -14,4 +14,5 @@ func _ready() -> void:
 			GameState.flags["siege_side"] = "O"
 	elif ch > 1:
 		GameState.ensure_defaults_for(mini(ch, GameState.LATEST_CHAPTER))
+	LoadingScreen.olcum_ac("acilis", true)      # G19: YUKLEMEAUDIT (yalnız ölçüm kipinde)
 	get_tree().change_scene_to_file.call_deferred(path)

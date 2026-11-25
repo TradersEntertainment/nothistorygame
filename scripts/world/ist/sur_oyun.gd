@@ -531,6 +531,7 @@ static func kur(p_id: String, sec := {}) -> Dictionary:
 	if hedef != null:
 		hedef.add_child(kok)
 	var olc := {}
+	LoadingScreen.nabiz("suroyun")
 	var t1 := Time.get_ticks_usec()
 	a.asama = int(sec.get("asama", 1))
 	# oyun dilimi
@@ -563,10 +564,12 @@ static func kur(p_id: String, sec := {}) -> Dictionary:
 	IstSurlar._run(oyun, a.L, SZ.K, 0, SZ.tohum(p_id), o)
 	olc["oyun_ms"] = (Time.get_ticks_usec() - t1) / 1000.0
 	# yan dilimler
+	LoadingScreen.nabiz("suroyun")
 	var t2 := Time.get_ticks_usec()
 	var yan_kapi: Array = []          # TAŞIMA-8: [yan düğüm, kesim adı] (romanos_kanat)
 	if bool(sec.get("yan", true)):
 		for yn: Dictionary in a.yanlar():
+			LoadingScreen.nabiz("suroyun")
 			var yd := Node3D.new()
 			yd.name = String(yn["ad"])
 			yd.position.x = float(yn["x"])
@@ -583,9 +586,11 @@ static func kur(p_id: String, sec := {}) -> Dictionary:
 			IstSurlar._run(yd, float(yn["L"]), SZ.K, 0, int(yn["tohum"]), yo)
 	olc["yan_ms"] = (Time.get_ticks_usec() - t2) / 1000.0
 	# uzak katman
+	LoadingScreen.nabiz("suroyun")
 	var t3 := Time.get_ticks_usec()
 	if bool(sec.get("uzak", true)):
 		for s: float in [-1.0, 1.0]:
+			LoadingScreen.nabiz("suroyun")
 			for k in 2:
 				var ud := Node3D.new()
 				ud.name = "Uzak_%d_%d" % [int(s), k]
@@ -595,10 +600,12 @@ static func kur(p_id: String, sec := {}) -> Dictionary:
 				IstSurlar._run(ud, SZ.YAN_L, SZ.K, 2, SZ.tohum(p_id) + 31 + k + (0 if s < 0.0 else 5), {"ad": "SurDilimi"})
 	olc["uzak_ms"] = (Time.get_ticks_usec() - t3) / 1000.0
 	# zemin
+	LoadingScreen.nabiz("suroyun")
 	var t4 := Time.get_ticks_usec()
 	PARCA.zemin(kok, a, bool(sec.get("uzak", true)))
 	olc["zemin_ms"] = (Time.get_ticks_usec() - t4) / 1000.0
 	# oynanış parçaları
+	LoadingScreen.nabiz("suroyun")
 	var t5 := Time.get_ticks_usec()
 	var parca := {}
 	if bool(sec.get("parca", true)):

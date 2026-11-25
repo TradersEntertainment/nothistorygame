@@ -57,6 +57,7 @@ func _in_part(z: float) -> bool:
 func _ready() -> void:
 	Audio.voice_space("outdoor")
 	_build_sky()
+	LoadingScreen.nabiz("byzcity")
 	if part == "walls":
 		sur_yeni = SurHub.sahnede()
 	if part == "walls" and sur_yeni:
@@ -68,23 +69,33 @@ func _ready() -> void:
 		world = World1453.build(self, "byz_aya", [Rect2(-46.0, -114.0, 64.0, 76.0)], false)
 	if part != "aya":
 		_build_ground()
+		LoadingScreen.nabiz("byzcity")
 		_build_street()
+		LoadingScreen.nabiz("byzcity")
 		_build_chancery()
+		LoadingScreen.nabiz("byzcity")
 		_build_walls()
+		LoadingScreen.nabiz("byzcity")
 		_build_palace()
+		LoadingScreen.nabiz("byzcity")
 	_build_skyline()
+	LoadingScreen.nabiz("byzcity")
 	if part != "walls":
 		_build_ayasofya_climb()
+		LoadingScreen.nabiz("byzcity")
 		Ayasofya.build(self)
 	_build_fill()
+	LoadingScreen.nabiz("byzcity")
 	if part == "all":
 		_build_far_view()
+		LoadingScreen.nabiz("byzcity")
 	if part == "walls":
 		_walls_edge()
 	elif part == "aya":
 		_aya_edge()
 	if part != "aya":
 		_build_hub_people()
+		LoadingScreen.nabiz("byzcity")
 	var drect := Rect2(-44, -110, 88, 138)
 	if part == "walls":
 		drect = Rect2(-44, -45, 88, 73)
@@ -112,12 +123,19 @@ static func far_hub(parent: Node3D, xf: Transform3D) -> MeshInstance3D:
 	var c := ByzCity.new()
 	c.part = "walls"
 	c._build_ground()
+	LoadingScreen.nabiz("byzcity")
 	c._build_street()
+	LoadingScreen.nabiz("byzcity")
 	c._build_chancery()
+	LoadingScreen.nabiz("byzcity")
 	c._build_walls()
+	LoadingScreen.nabiz("byzcity")
 	c._build_palace()
+	LoadingScreen.nabiz("byzcity")
 	c._build_small_skyline()
+	LoadingScreen.nabiz("byzcity")
 	c._build_fill()
+	LoadingScreen.nabiz("byzcity")
 	var list: Array = c.find_children("*", "MeshInstance3D", true, false)
 	var mi := World1453.bake(list, c, xf, parent, "FarHub", 0.45, 300)
 	# Uzaklık katmanı: 300 m'ye kadar dokulu (yerdeki desenler), ötesinde tek yüzeyli düz renkli kopya (çizim 2)
@@ -172,6 +190,7 @@ func _aya_edge() -> void:
 
 func _build_hub_people() -> void:
 	_build_life()
+	LoadingScreen.nabiz("byzcity")
 	niko = Person.new({"face": "niko", "coat": Color("8a2b22"), "pants": Color("4a3a2a"), "hair": Color("2a1e14"), "hat": "helm", "mustache": true, "beard": true, "skin": Color("d9a07a")})
 	niko.position = NIKO_POS
 	add_child(niko)
@@ -204,8 +223,10 @@ func _build_hub_people() -> void:
 	Props.label(self, "ΚΑΪΚΙ · KAYIK", kb + Vector3(-0.6, 1.45, 1.23), 26, Color("2a1a10"), Vector3.ZERO, 0.95)
 	Props.interactable(self, "mg:haggle_niko", Vector3(1.4, 1.2, 2.4), kb + Vector3(0, 0.6, 0))
 	_build_council()
+	LoadingScreen.nabiz("byzcity")
 	if with_cell:
 		_build_cell()
+		LoadingScreen.nabiz("byzcity")
 
 
 ## Zindan hücresi (yalnız Bölüm 6): kançılaryanın batı köşesinde, duvarlı; doğu yüzü demir parmaklık, kapı aralığı
@@ -584,7 +605,9 @@ func _build_street() -> void:
 func _build_skyline() -> void:
 	if part != "walls":
 		_build_aya_exterior()
+		LoadingScreen.nabiz("byzcity")
 	_build_small_skyline()
+	LoadingScreen.nabiz("byzcity")
 
 
 func _build_aya_exterior() -> void:
@@ -1272,6 +1295,7 @@ func _build_fill() -> void:
 func _build_far_view() -> void:
 	var tower := CityPanorama.galata_view(self, Vector3(0, 0, 228.0), PI * 0.5)
 	_build_north()
+	LoadingScreen.nabiz("byzcity")
 	OuterWorld.build(self, {
 		"y0": 0.0, "wl": -0.3, "seed": 330, "center": Vector2(0, -150), "extent": 4000.0,
 		"inner": [Rect2(-84, -704, 120, 725), Rect2(-384, -704, 300, 569), Rect2(-259, 202, 420, 384)],
@@ -1570,6 +1594,7 @@ func _wall(size: Vector3, pos: Vector3, _color: Color, _front: bool) -> void:
 func _build_walls() -> void:
 	if sur_yeni:
 		_build_walls_yeni()
+		LoadingScreen.nabiz("byzcity")
 		return
 	# İç sur: kuleli, tuğla bantlı, önünde ahşap iskele ve topçular
 	var x := 34.0
@@ -1621,6 +1646,7 @@ func _build_walls() -> void:
 	# Ahşap iskele ve Giustiniani'nin masası (haritalar, sözleşmeler)
 	_build_giust_yeri(x)
 	_build_gate()
+	LoadingScreen.nabiz("byzcity")
 
 
 ## Giustiniani'nin iskelesi, masası, sandıkları ve kendisi (eski ve yeni surda aynı yer: iç surun şehir yüzünün önü)

@@ -1,0 +1,43 @@
+=== --chapter=8y --autotest
+YUKLEMEAUDIT scene=chapter8y evre=acilis toplam_ms=40760 en_uzun_bosluk_ms=711 kaynak=props>kare ilk_kare_ms=831 bosalt_ms=-1
+AUTOTEST PASS chapter=8y variant= outcome=8Y.1 id=seal warnings=0 lowered=0 radio=true
+=== --chapter=10h --autotest
+YUKLEMEAUDIT scene=chapter10h evre=acilis toplam_ms=39914 en_uzun_bosluk_ms=814 kaynak=sehir_289>kare ilk_kare_ms=965 bosalt_ms=-1
+AUTOTEST PASS chapter=10h variant= outcome=10H.1 truth=3 direnc=0 paradox=0
+=== --chapter=11 --autotest
+YUKLEMEAUDIT scene=chapter11 evre=acilis toplam_ms=39881 en_uzun_bosluk_ms=998 kaynak=props>solidify ilk_kare_ms=913 bosalt_ms=-1
+AUTOTEST PASS chapter=11 variant= outcome=11.2 persuade=25 sadakat=55 baski=1
+=== --chapter=12b --autotest
+YUKLEMEAUDIT scene=chapter12b evre=acilis toplam_ms=32491 en_uzun_bosluk_ms=889 kaynak=sehir_289>kare ilk_kare_ms=1040 bosalt_ms=-1
+AUTOTEST PASS chapter=12b variant= outcome=12B.1 world= honest=true
+=== --chapter=13 --autotest=city
+YUKLEMEAUDIT scene=chapter13 evre=acilis toplam_ms=718 en_uzun_bosluk_ms=225 kaynak=bas:acilis>kare ilk_kare_ms=14 bosalt_ms=-1
+YUKLEMEAUDIT scene=chapter13 evre=tolga_city toplam_ms=31584 en_uzun_bosluk_ms=1446 kaynak=sehir_kur>solidify ilk_kare_ms=1759 bosalt_ms=-1
+YUKLEMEAUDIT_ADAY scene=chapter13 evre=tolga_city toplam_ms=31584 en_uzun_bosluk_ms=1446 kaynak=sehir_kur>solidify ilk_kare_ms=1759 bosalt_ms=-1
+AUTOTEST PASS chapter=13 variant=city version=garage outcome=13.2 window=8.4 tolga=T2 hikmet=
+=== --chapter=23 --autotest
+YUKLEMEAUDIT scene=chapter23 evre=acilis toplam_ms=33874 en_uzun_bosluk_ms=850 kaynak=sehir_289>kare ilk_kare_ms=1008 bosalt_ms=-1
+AUTOTEST PASS chapter=23 variant= outcome=23.1 deviation=0 card=true singed=false letter=false
+=== --chapter=26 --autotest
+YUKLEMEAUDIT scene=chapter26 evre=acilis toplam_ms=7554 en_uzun_bosluk_ms=747 kaynak=bas:acilis>kare ilk_kare_ms=202 bosalt_ms=-1
+VISAUDIT_ADAY float scene=chapter26.tscn who=Horse/Canli_at feet=(0.2,0.6,18.7) floor=0.10 gap=0.49 by=Chapter26>SurSetSahne>SurCerceve>SurOyun_mesoteikhion>OyunParcalari>Toprak_GedikOnarim>Toprak_GedikMolozRampa_Carp src=Chapter26>Horse
+YUKLEMEAUDIT scene=chapter26 evre=aya toplam_ms=5733 en_uzun_bosluk_ms=2089 kaynak=bas:aya>props ilk_kare_ms=180 bosalt_ms=-1
+YUKLEMEAUDIT_ADAY scene=chapter26 evre=aya toplam_ms=5733 en_uzun_bosluk_ms=2089 kaynak=bas:aya>props ilk_kare_ms=180 bosalt_ms=-1
+AUTOTEST PASS chapter=26 variant= outcome=26.1 water=3 repaired=3 cleared=2 world= gun=3/4 gunner=3/3
+=== --chapter=20 --autotest
+YUKLEMEAUDIT scene=chapter20 evre=acilis toplam_ms=5672 en_uzun_bosluk_ms=579 kaynak=bas:acilis>kare ilk_kare_ms=136 bosalt_ms=-1
+AUTOTEST PASS chapter=20 variant= outcome=20.1 repair=10 knocks=0 arrows=true gun=3/4 gunner=4/4 niko=0 sur=yeni
+=== --chapter=0 --autotest
+YUKLEMEAUDIT scene=chapter0 evre=acilis toplam_ms=6694 en_uzun_bosluk_ms=601 kaynak=props>kare ilk_kare_ms=155 bosalt_ms=-1
+AUTOTEST PASS chapter=0 variant= froze=true sur=yeni
+=== --chapter=24 --autotest
+YUKLEMEAUDIT scene=chapter24 evre=acilis toplam_ms=34629 en_uzun_bosluk_ms=943 kaynak=sehir_289>kare ilk_kare_ms=1142 bosalt_ms=-1
+YUKLEMEAUDIT scene=chapter24 evre=ayasofya toplam_ms=6500 en_uzun_bosluk_ms=1358 kaynak=ev_oku>sehir_923 ilk_kare_ms=433 bosalt_ms=-1
+YUKLEMEAUDIT_ADAY scene=chapter24 evre=ayasofya toplam_ms=6500 en_uzun_bosluk_ms=1358 kaynak=ev_oku>sehir_923 ilk_kare_ms=433 bosalt_ms=-1
+AUTOTEST PASS chapter=24 variant= outcome=24.1 stumbles=0 kid=true niko=false steadied=0 kid_t=0.4
+=== --chapter=31o --autotest
+YUKLEMEAUDIT scene=chapter31o evre=acilis toplam_ms=32136 en_uzun_bosluk_ms=723 kaynak=sehir_289>kare ilk_kare_ms=880 bosalt_ms=-1
+YUKLEMEAUDIT scene=chapter31o evre=eyup toplam_ms=7293 en_uzun_bosluk_ms=1464 kaynak=sehir_923>sehir_923 ilk_kare_ms=223 bosalt_ms=-1
+YUKLEMEAUDIT_ADAY scene=chapter31o evre=eyup toplam_ms=7293 en_uzun_bosluk_ms=1464 kaynak=sehir_923>sehir_923 ilk_kare_ms=223 bosalt_ms=-1
+YUKLEMEAUDIT scene=chapter31o evre=aya toplam_ms=4684 en_uzun_bosluk_ms=552 kaynak=sehir_923>sehir_923 ilk_kare_ms=257 bosalt_ms=-1
+AUTOTEST PASS chapter=31o variant= outcome=31O.1 house=true(162) falls=0 signs=3 wrong=0 sun=true lashes=3 miss=0 scaff=true mats=8/8 err=2

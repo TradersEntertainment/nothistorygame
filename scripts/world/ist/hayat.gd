@@ -72,6 +72,7 @@ func _kur() -> void:
 			and not dunya.has_node("CityLife") and IstSehir.sokak != null
 	veri = IstHayatVeri.new()
 	veri.uret(IstSehir.sokak, gece)
+	LoadingScreen.nabiz("hayat_veri")
 	K = veri.K
 	var mi := _sh("ist_insan", 0)
 	(K["insan"] as IstHayatKatman).gorunum(IstHayatMesh.insan(), mi, 0.0, YAKIN, 1100)
@@ -95,7 +96,9 @@ func _kur() -> void:
 		var kt: IstHayatKatman = K[k]
 		if kt.views.is_empty():
 			continue
+		LoadingScreen.nabiz("hayat_katman")
 		kt.kur(self)
+	LoadingScreen.nabiz("hayat_katman")
 	if gece:
 		print("ISTUZAKISIK ", UZAK_ISIK.kur(self, K, IstSehir.sokak))
 	kur_ms = Time.get_ticks_msec() - t0
@@ -104,6 +107,7 @@ func _kur() -> void:
 	if _yakin_olacak and yakin == null:
 		var t1 := Time.get_ticks_msec()
 		yakin = IstHayatYakin.attach(dunya, null, gece)
+		LoadingScreen.nabiz("hayat_yakin")
 		print("ISTHAYAT yakin_kur_ms=%d" % (Time.get_ticks_msec() - t1))
 	yenile_hepsi()
 

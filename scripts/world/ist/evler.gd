@@ -683,14 +683,17 @@ static func mesh(v: int, tip: String, lod: int) -> Mesh:
 		return _mesh_cache[key]
 	var t0 := Time.get_ticks_usec()
 	var om := _ob_mesh_oku(v, tip, lod)
+	LoadingScreen.nabiz("ev_oku")
 	if om != null:
 		_mesh_cache[key] = om
 		ob_say["okundu"] = int(ob_say.get("okundu", 0)) + 1
 		ob_say["us"] = int(ob_say.get("us", 0)) + Time.get_ticks_usec() - t0
 		return om
 	var m := _mesh_kur(v, tip, lod)
+	LoadingScreen.nabiz("ev_kur")
 	_mesh_cache[key] = m
 	_ob_mesh_yaz(v, tip, lod, m)
+	LoadingScreen.nabiz("ev_yaz")
 	ob_say["kuruldu"] = int(ob_say.get("kuruldu", 0)) + 1
 	ob_say["us"] = int(ob_say.get("us", 0)) + Time.get_ticks_usec() - t0
 	return m
@@ -705,6 +708,7 @@ static var ob_say := {}
 static var _ob_imza := ""
 static var _ob_mat := {}
 static var _ob_temiz := false
+static var _ob_dokundu := false
 
 
 static func _ob_yol(v: int, tip: String, lod: int) -> String:
@@ -723,6 +727,9 @@ static func _ob_mesh_oku(v: int, tip: String, lod: int) -> Mesh:
 	var m := ResourceLoader.load(yol, "ArrayMesh", ResourceLoader.CACHE_MODE_IGNORE) as ArrayMesh
 	if m == null or not m.has_meta("ob_mat"):
 		return null
+	if not _ob_dokundu:
+		_ob_dokundu = true
+		IstSokak.onbellek_dokun("ev", _ob_imza)
 	var sig: PackedStringArray = m.get_meta("ob_mat")
 	if sig.size() != m.get_surface_count():
 		return null
@@ -782,11 +789,10 @@ static func _ob_mesh_yaz(v: int, tip: String, lod: int, m: Mesh) -> void:
 	if not _ob_temiz:
 		# eski imzalı ev ağları (kod değişmiş) silinir; oturumda bir kez
 		_ob_temiz = true
-		var da := DirAccess.open(IstSokak.ONBELLEK_DIR + "ev")
-		if da != null:
-			for fn: String in da.get_files():
-				if not fn.begins_with(_ob_imza + "_"):
-					da.remove(fn)
+		# G19: en son kullanılan IstSokak.ONBELLEK_SAKLA imza kalır (sokak.gd onbellek_buda)
+		IstSokak.onbellek_dokun("ev", _ob_imza)
+		IstSokak.onbellek_buda("ev", _ob_imza, "ev/", func(fn: String) -> String:
+			return fn.substr(0, 20) if fn.length() > 21 and fn.ends_with(".res") else "")
 	ResourceSaver.save(kopya, _ob_yol(v, tip, lod), ResourceSaver.FLAG_COMPRESS)
 	# yazılanın da aynı paylaşılan malzemeleri kullanması (çizim çağrısı birleşsin) okunanla aynı görünüş verir
 	for i in sig.size():
@@ -802,6 +808,7 @@ static func _mesh_kur(v: int, tip: String, lod: int) -> Mesh:
 	else:
 		var d := dims(v)
 		ev(tmp, d.x, d.z, d.y, _tohum(v, tip), lod, tip)
+	LoadingScreen.nabiz("ev_govde")
 	var list: Array = []
 	for n in tmp.find_children("*", "MeshInstance3D", true, false):
 		list.append(n)
