@@ -356,10 +356,19 @@ func _advance_men() -> void:
 
 ## Köprü yolu: kapının önü → rampa → kalas → ova; sonra hedef. Adım hızında, kalasın üstünde.
 func _walk_bridge(p: Person, to: Vector3, delay: float, back := false, side := 0.0, sira_z := -1.0) -> void:
+	# Önceki yürüyüşü (çıkış) hâlâ sürüyorsa durur. Otomatik testte (zaman ölçeği 3) geri çekilme çıkış bitmeden
+	# başlıyordu: iki yürüyüş aynı adamı çekiştirdi (ışınlanır gibi sıçradı), eskisi bitince _walking'den silindi, adam
+	# bir başkasıyla aynı noktadan aynı anda yola çıkıp köprü boyunca onunla iç içe yürüdü (VISAUDIT overlap (−17,5; 47,2),
+	# t36b sondası). Sıra çağrıda alınır: beklemesi uzun eski bir çağrı yenisini durduramaz.
+	var no := int(_yurume_no.get(p, 0)) + 1
+	_yurume_no[p] = no
 	if delay > 0.0:
 		await get_tree().create_timer(delay, false).timeout
-	if not is_instance_valid(p) or phase == "home":
+	if not is_instance_valid(p) or phase == "home" or int(_yurume_no.get(p, 0)) != no:
 		return
+	var eski = _yurume_tw.get(p)
+	if eski is Tween and (eski as Tween).is_valid():
+		(eski as Tween).kill()
 	var pts: Array[Vector3] = []
 	# Köprüde iki sıra (kalas iki metre): arka arkaya gidenler iç içe girmesin
 	var lane := LANE_X + side
@@ -406,10 +415,12 @@ func _walk_bridge(p: Person, to: Vector3, delay: float, back := false, side := 0
 		if d < 0.05:
 			continue
 		if phase == "home" and back:
-			_walking.erase(p)
+			if int(_yurume_no.get(p, 0)) == no:
+				_walking.erase(p)
 			return
 		var tw := p.create_tween()
 		_walks.append(tw)
+		_yurume_tw[p] = tw
 		tw.tween_method(func(k: float):
 			var at := from.lerp(q, k)
 			at.y = _walk_y(at)
@@ -425,7 +436,14 @@ func _walk_bridge(p: Person, to: Vector3, delay: float, back := false, side := 0
 				p.look_at(p.global_position + Vector3(q.x - from.x, 0, q.z - from.z), Vector3.UP)
 				p.rotate_y(PI), 0.0, 1.0, d / 2.6)
 		await tw.finished
-	_walking.erase(p)
+		if int(_yurume_no.get(p, 0)) != no:
+			return          # yeni yürüyüş başladı (o _walking'i tutar)
+	if int(_yurume_no.get(p, 0)) == no:
+		_walking.erase(p)
+
+
+var _yurume_no := {}      # kişi → son başlayan köprü yürüyüşünün sırası (eskisi durur)
+var _yurume_tw := {}      # kişi → o yürüyüşün tween'i
 
 
 ## Yeni set (TAŞIMA-7): birleşme noktasında yol verme. Geri çekilmede herkes yayıldığı yerden aynı noktaya (köprünün uzak ucu,
@@ -489,10 +507,17 @@ func _lane_blocked(p: Person, at: Vector3, dir: Vector3) -> bool:
 	if d.length() < 0.01:
 		return false
 	d = d.normalized()
-	for o in men + [giust]:
+	var hep: Array = men + [giust]
+	for o in hep:
 		if o == p or not is_instance_valid(o) or not o.visible:
 			continue
 		var rel := Vector2(o.global_position.x - at.x, o.global_position.z - at.z)
+		# Tam üst üste (aynı noktadan aynı anda yola çıkan iki kişi): ikisi de öbürünü önünde saymıyordu (along 0), köprü
+		# boyunca iç içe yürüdüler (t36b sondası). Listede sonra gelen bekler.
+		if rel.length() < 0.05:
+			if hep.find(o) < hep.find(p):
+				return true
+			continue
 		var along := rel.dot(d)
 		if along > 0.0 and along < 1.1 and absf(rel.cross(d)) < 0.5:
 			return true
@@ -695,8 +720,10 @@ func _retreat() -> void:
 			_walk_bridge(men[i], TOPLAN + Vector3(2.0 + (i % 3) * 1.0, 0, 0.2 + (i / 3) * 0.8), 0.9 * r, true, 0.45, 1.2 * r)
 	# yeni: Giustiniani'nin dönüş yeri savunucuların köprü başından toplanma yerine giden yolunun 1,5 m dışında (eski yeri
 	# TOPLAN + (−0,6; 2,1) o yolun tam üstündeydi: arkadan gelen savunucu yerinde duran Giustiniani'nin içinden geçiyordu,
-	# VISAUDIT overlap (−11,7; 19,4), sonda c36b_s15/s17)
-	_walk_bridge(giust, TOPLAN + (Vector3(-2.6, 0, 0.5) if sur.eski_mi else Vector3(0.0, 0, 3.8)), 4.2, true, -0.45)
+	# VISAUDIT overlap (−11,7; 19,4), sonda c36b_s15/s17). TOPLAN + (0; 3,8) de köprü ucundan doğudaki yerlerine çapraz
+	# yürüyen savunucuların yolundaydı: 8 sondalı koşunun 6'sında biri 0,07–0,5 m yanından geçti, CI #345 VISAUDIT overlap
+	# (−11,1; 21,0). Yeni yer basamak dibinin batısında, yolun güneyinde: 8 koşunun bütün izlerine en az 2,1 m.
+	_walk_bridge(giust, TOPLAN + (Vector3(-2.6, 0, 0.5) if sur.eski_mi else Vector3(-2.4, 0, 0.8)), 4.2, true, -0.45)
 	# Leon bölümün asıl kararı: adıyla işaretlenir (hedef yalnız "Poternaya dön" diyordu; kapıya varınca bölüm bitiyordu)
 	hud.set_objective(tr("UI_OBJ36_BACK"), RETURN + Vector3(0, 1.6, 0), 1.6,
 		[[func(): return leon if not _leon_follow and is_instance_valid(leon) and leon.visible else null, tr("UI_OBJ36_LEON"), 1.0]],
@@ -796,7 +823,8 @@ func _process(delta: float) -> void:
 		_sonda36_t -= delta
 		if _sonda36_t <= 0.0:
 			_sonda36_t = 0.25
-			var sat := "SONDA36 t=%.2f" % (Time.get_ticks_msec() / 1000.0)
+			# giust_y / toplan_y: Giustiniani'nin dönüş yeri basamak dibinin terasında mı (CI #345 sonrası yeni yer)
+			var sat := "SONDA36 t=%.2f giust_y=%.2f toplan_y=%.2f" % [Time.get_ticks_msec() / 1000.0, giust.global_position.y, TOPLAN.y]
 			for m in men + [giust]:
 				sat += " | %s%s p=%s" % [m.name.right(4), "*" if _walking.has(m) else "", (m.global_position * Vector3(1, 0, 1)).snapped(Vector3.ONE * 0.01)]
 			print(sat)
