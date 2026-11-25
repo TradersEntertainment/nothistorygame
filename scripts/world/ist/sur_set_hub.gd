@@ -146,3 +146,16 @@ static func kur(host: Node3D, sec := {}) -> Dictionary:
 		print("SURHUB kur bolum=%s kesim=%s ms=%.0f ic_yuz_x=%.2f ic_yol_y=%.2f dis_sur_dis_x=%.2f" % [IstBaglama.sahne_bolumu(), KESIM,
 			float(k["ms"]["hub_ms"]), ic_yuz_x(), ic_yol_y(), dis_sur_dis_x()])
 	return k
+
+
+# ------------------------------------------------------------------ G21: saray avlusu ve kançılaryanın yeni yeri
+
+## Bizans meydanının saray avlusu + kançılaryası (G22 kurar) hub yerelinde buraya taşınır: Lykos vadisinin kuzey yamacı
+## (site A ölçülerek kuzeye kaydırıldı: güney terası %7,5 eğimli ve Lykos çizgisine sınırdaydı), iç surun şehir yüzünden
+## ~430 m içeri, 84 × 70 m'lik alan (eğim ≤ %3; anıt, sarnıç ve Lykos çizgisiyle çakışmaz; ölçüm tests/_ist/lykos21_olc,
+## docs/_kanit_lykos21/rapor.md). v2'de kapıdan buraya açık bir sokak gider (IstSokak._saray_yolu).
+const SARAY_OFS := Vector3(-400.0, 0.0, 130.0)
+
+## SARAY_OFS'un İstanbul v2 dünya konumu (kaydırmasız; y = hub yereli 0, arazi IstGeo.h ile okunur)
+static func saray_v2() -> Vector3:
+	return hub_v2() * SARAY_OFS

@@ -18,6 +18,7 @@ extends RefCounted
 ## sundurmalı ev: sıra → sundurma). Avlunun kapı ağzı var (çukur değil).
 
 const G := 2.0
+const SurHub := preload("res://scripts/world/ist/sur_set_hub.gd")
 const MESE_W := 15.0
 const YOL_W := 6.0
 const SOKAK_W := 4.0
@@ -457,7 +458,8 @@ func _build_imza(foot: Array, bands: Array, gates: Array, tohum: int) -> String:
 	for ad: String in ["mese", "mese_kuzey", "mese_guney", "halic_suru", "galata_suru", "kara_suru", "marmara_suru", "blakherna_suru"]:
 		yollar.append(IstGeo.yol(ad))
 	return onbellek_imza(["res://scripts/world/ist/sokak.gd", "res://scripts/world/ist/evler.gd", "res://scripts/world/ist/geo.gd",
-		foot, bands, gates, tohum, tab, poly, yollar, IstGeo.yerler().size(), arazi_ozeti(r, 64)])
+		foot, bands, gates, tohum, tab, poly, yollar, IstGeo.yerler().size(), arazi_ozeti(r, 64),
+		"res://scripts/world/ist/sur_set_hub.gd", SurHub.saray_v2()])
 
 
 const _OB_ALANLAR := ["x0", "z0", "nx", "nz", "occ", "rid", "streets", "houses", "doku", "meydan", "avlu", "oge", "eser_meydan",
@@ -553,6 +555,9 @@ func _build_hesapla(foot: Array, bands: Array, gates: Array, tohum: int) -> void
 	# 2b) DOKU-4 madde 4: bölümlerin oyun alanlarının (hub, Ayasofya meydanı) çevresinde çevre yolu + dört yana bağlantı
 	_oyun_alani_yollari()
 	LoadingScreen.nabiz("sokak_hesap")
+	# 2c) G21: hub kapısından saray avlusunun yeni yerine (SurHub.SARAY_OFS) açık yol; alan evsiz tutulur
+	_saray_yolu()
+	LoadingScreen.nabiz("sokak_hesap")
 	# 3) Mahalle içi organik sokaklar (üç kuşak) ve boş kalan yerleri dolduran ek sokaklar
 	var n0 := streets.size()
 	for s in range(0, n0):
@@ -630,6 +635,69 @@ func _oyun_alani_yollari() -> void:
 				uc = m + dis * 30.0
 			n += _add_parcali(_densify(PackedVector2Array([m + dis * 2.5, uc]), 4.0), 5.0, "oyun_bag")
 	stats["oyun_yol"] = n
+
+
+## G21: saray avlusu + kançılaryanın (G22) yeni yeri: hub yerelinde SurHub.SARAY_OFS, 84 × 70 m (hub x × hub z)
+const SARAY_ALAN := Vector2(84.0, 70.0)
+
+## Hub oyun alanının şehre bakan bağlantı ucundan (oyun_bag) saray alanına 6 m'lik açık yol (Lykos şeridinin içinden geçer,
+## ucunda sokak ağına bağlanır); alan evden önce boş hücre → 5 (meydan: döşeme, kuyu/çeşme, kenarda ağaç kümeleri).
+func _saray_yolu() -> void:
+	var s: Node = IstSehir.active
+	if s == null or not is_instance_valid(s) or not s.has_method("oyun_alanlari"):
+		return
+	var sv: Vector3 = SurHub.saray_v2()
+	var T := Vector2(sv.x + IstGeo.OX, sv.z + IstGeo.OZ)
+	if not IstGeo.sehir_ici(T.x, T.y):
+		return
+	var hub := Rect2()
+	var bd := INF
+	for a: Rect2 in s.oyun_alanlari():
+		var d := a.get_center().distance_to(T)
+		if d < bd:
+			bd = d
+			hub = a
+	if bd > 700.0:
+		return
+	var hc := hub.get_center()
+	var dis := (T - hc).normalized()
+	dis = Vector2(signf(dis.x), 0.0) if absf(dis.x) > absf(dis.y) else Vector2(0.0, signf(dis.y))
+	var m := hc + dis * ((hub.size.x if dis.x != 0.0 else hub.size.y) * 0.5 + 4.5)
+	var uc := m + dis * 70.0
+	if not IstGeo.sehir_ici(uc.x, uc.y):
+		uc = m + dis * 30.0
+	var xf: Transform3D = SurHub.hub_v2()
+	var u := Vector2(xf.basis.x.x, xf.basis.x.z).normalized()
+	var v := Vector2(xf.basis.z.x, xf.basis.z.z).normalized()
+	# yol: bağlantı ucundan alanın merkezine, hafif kavisli (düz cetvel çizgisi okunmasın)
+	var L := uc.distance_to(T)
+	var yan := (T - uc).normalized().orthogonal()
+	var pts := PackedVector2Array()
+	var n := maxi(4, int(L / 8.0))
+	for k in n + 1:
+		var t := float(k) / n
+		pts.append(uc.lerp(T, t) + yan * sin(t * PI) * 14.0)
+	var ns := _add_parcali(pts, YOL_W, "saray_yolu")
+	# alan: boş hücreler meydan olur (yol hücreleri yol kalır)
+	var cells := _rect_cells(T, u, v, SARAY_ALAN.x * 0.5, SARAY_ALAN.y * 0.5)
+	var nh := 0
+	for k in cells:
+		if k >= 0 and occ[k] == 0:
+			occ[k] = 5
+			nh += 1
+	meydan.append({"c": T, "yaw": atan2(u.y, u.x), "tohum": 1453})
+	zemin_ek.append({"c": T, "r": 24.0, "tur": "mese"})
+	# kenarda ağaç kümeleri ve köşelerde ayrıntı (boş çayır değil; G22 kuracağı yapının çevresi)
+	var i := 0
+	for ox: float in [-0.36, 0.0, 0.36]:
+		for oz: float in [-0.36, 0.0, 0.36]:
+			if ox == 0.0 and oz == 0.0:
+				continue
+			var p := T + u * SARAY_ALAN.x * ox + v * SARAY_ALAN.y * oz
+			var tur := "agac_kumesi" if (i % 2 == 0) else ("kuyu" if i == 3 else "agac_kumesi")
+			oge.append({"tur": tur, "c": p, "yaw": atan2(u.y, u.x), "tohum": 1453 + i, "yer": "saray"})
+			i += 1
+	stats["saray"] = {"c": T, "yol_parca": ns, "hucre": nh}
 
 
 ## Yalnız boş/yol hücrelerinden geçen parçaları ekler (sur bandı, anıt, deniz atlanır); eklenen parça sayısı
@@ -855,6 +923,11 @@ func _alt(p: Vector2) -> String:
 	return String(_mah(p).get("alt", ""))
 
 
+## G21: Lykos şeridinde mi (mahalle sözlüğünün "serit" bayrağı)
+func _serit(p: Vector2) -> bool:
+	return bool(_mah(p).get("serit", false))
+
+
 func _yog(p: Vector2) -> float:
 	var m := _mah(p)
 	var t := String(m["tur"])
@@ -1019,6 +1092,8 @@ func _lanes_from(s: int, rng: RandomNumberGenerator, kusak: int) -> void:
 			var yog := _yog(p)
 			var tur := _tur(p)
 			var spacing := _aralik(tur, yog) * (1.0 + 0.15 * kusak)
+			if tur in ["bostan", "harabe"] and _serit(p):
+				spacing = 64.0 * (1.0 + 0.15 * kusak)      # G21: şeritte bostanlar arası patika (yürüyen halk orada)
 			if tur == "kir" or yog < 0.05:
 				t += 20.0
 				continue
@@ -1241,6 +1316,11 @@ func _houses_along(s: int, rng: RandomNumberGenerator, ikinci := false) -> void:
 				var q := p + nrm * 10.0
 				var yog := _yog(q)
 				var tur := _tur(q)
+				var serit := _serit(q)
+				if stur == "savunma" and serit:
+					# G21: Lykos şeridinde sur dibine yaslı sıra ev yok (savunma yolu kalır; arkası bostan, harabe, dağınık ev)
+					t += 6.0
+					continue
 				if stur == "savunma":
 					tur = "sur_dibi" if tur in ["bostan", "harabe", "kir", "seyrek"] else tur
 					yog = maxf(yog, 0.9)
@@ -1251,7 +1331,7 @@ func _houses_along(s: int, rng: RandomNumberGenerator, ikinci := false) -> void:
 					t += rng.randf_range(3.0, 8.0) / maxf(yog, 0.2)
 					continue
 				var maxrow := 60.0 if tur == "carsi" else (48.0 if tur in ["sik", "liman", "sur_dibi"] else (36.0 if tur == "orta" else (16.0 if tur == "seyrek" else 10.0)))
-				if stur == "savunma":
+				if stur == "savunma" and not serit:
 					maxrow = 54.0
 				var rowlen := minf(L - t - 0.5, maxrow * rng.randf_range(0.6, 1.0))
 				var used := _row(a + d * t, d, nrm, w, rowlen, tur, _latin(q), rng)
@@ -1763,6 +1843,11 @@ func _doku(rng: RandomNumberGenerator) -> void:
 							doku.append({"tur": "bahce", "c": mc, "alan": Vector2(10.0, 10.0), "yaw": 0.0, "tohum": rng.randi() % 9973, "mt": tur})
 				continue
 			var roll := rng.randf()
+			var serit := _serit(c)
+			# G21: Lykos şeridinde boş meydan (döşeli; kuyu ya da çeşme; çevresinde 1–3 dağınık ev / harap duvar)
+			if serit and road > 0 and roll < 0.2 and _serit_meydan(c, rng):
+				nmey += 1
+				continue
 			var alan := Vector2(DT - 6.0 - rng.randf() * 8.0, DT - 6.0 - rng.randf() * 8.0)
 			var yaw := rng.randf_range(-0.3, 0.3)
 			var u := Vector2.from_angle(-yaw)
@@ -1822,6 +1907,9 @@ func _doku(rng: RandomNumberGenerator) -> void:
 						oge.append({"tur": "manastir" if _alt(c) == "manastir" else "mezarlik", "c": c, "yaw": yaw, "tohum": rng.randi() % 9973})
 						continue
 					pick = "bahce"
+			# G21: şeritte harap kilise (yarım duvarlar, çökmüş kubbe kasnağı, devrik sütunlar; 120 m'de bir tane)
+			if serit and alan.x > 22.0 and alan.y > 22.0 and ((pick.begins_with("harabe") and roll < 0.45) or roll < 0.07) and _harap_kilise_yok(c):
+				pick = "harap_kilise"
 			if slope > 2.5 and pick in ["bostan", "bag", "bugday", "bahce", "cayir"]:
 				pick = "agaclik"
 			if pick in ["kilise_kucuk", "sapel", "kilise_orta"]:
@@ -1834,6 +1922,8 @@ func _doku(rng: RandomNumberGenerator) -> void:
 			if pick in ["bostan", "bag", "bugday", "bahce", "cayir"]:
 				oge.append({"tur": "yama_duvar", "c": c, "yaw": yaw, "tohum": int(dk["tohum"]), "alan": alan, "yama": pick})
 				var ek: String = {"bostan": "kuyu", "bag": "kulube_bag", "bugday": "agil", "bahce": "kuyu", "cayir": "agil"}[pick]
+				if serit and int(dk["tohum"]) % 2 == 0:
+					ek = "ciftlik"                      # G21: şeritte dağınık ev (ev + ağıl), bostanın köşesinde
 				oge.append({"tur": ek, "c": c + u * (alan.x * 0.5 - 4.0) + v * (alan.y * 0.5 - 4.0), "yaw": yaw, "tohum": int(dk["tohum"]) + 1})
 	stats["kilise"] = nkil
 	stats["meydan"] = nmey
@@ -1882,6 +1972,46 @@ func _ogeler(rng: RandomNumberGenerator) -> void:
 			oge.append({"tur": pick, "c": mc, "yaw": rng.randf() * TAU, "tohum": rng.randi() % 9973})
 			n += 1
 	stats["oge_dolgu"] = n
+
+
+## G21: şeritte harap kilise 120 m'de bir
+func _harap_kilise_yok(c: Vector2) -> bool:
+	for dk: Dictionary in doku:
+		if String(dk["tur"]) == "harap_kilise" and (dk["c"] as Vector2).distance_to(c) < 120.0:
+			return false
+	return true
+
+
+## G21: şeritte boş meydan (110 m'de bir): 9 m'lik döşeli disk (kuyu/çeşme: meydan kaydı), çevresinde 1–3 dağınık ev
+## (çiftlik: ev + ağıl), kulübe ya da harap duvar (sarmaşıklı duvar). Kuramazsa false (rng yine de ilerler).
+func _serit_meydan(c: Vector2, rng: RandomNumberGenerator) -> bool:
+	for m: Dictionary in meydan:
+		if (m["c"] as Vector2).distance_to(c) < 110.0:
+			return false
+	var mc := _free_spot(c, 8.0)
+	if mc == Vector2.INF:
+		return false
+	_stamp_disc(mc, 9.0, 5)
+	meydan.append({"c": mc, "yaw": rng.randf() * TAU, "tohum": rng.randi() % 9973})
+	zemin_ek.append({"c": mc, "r": 9.5, "tur": "mese"})
+	var a0 := rng.randf() * TAU
+	for k in rng.randi_range(1, 3):
+		var a := a0 + k * TAU / 3.0 + rng.randf_range(-0.4, 0.4)
+		var q := _free_spot(mc + Vector2.from_angle(a) * rng.randf_range(15.0, 19.0), 5.0)
+		if q == Vector2.INF:
+			continue
+		var r := rng.randf()
+		var tohum := rng.randi() % 9973
+		if r < 0.4:
+			_stamp_disc(q, 6.0, 5)
+			oge.append({"tur": "ciftlik", "c": q, "yaw": a + PI, "tohum": tohum, "yer": "serit_meydan"})
+		elif r < 0.65:
+			_stamp_disc(q, 4.0, 5)
+			oge.append({"tur": "kulube_bag", "c": q, "yaw": a + PI, "tohum": tohum, "yer": "serit_meydan"})
+		else:
+			_stamp_disc(q, 6.0, 5)
+			doku.append({"tur": "harabe_sarmasik", "c": q, "alan": Vector2(12.0, 6.0), "yaw": a + PI * 0.5, "tohum": tohum, "mt": "harabe"})
+	return true
 
 
 func _manastir_var(c: Vector2) -> bool:

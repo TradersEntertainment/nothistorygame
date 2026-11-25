@@ -27,9 +27,11 @@ const NEAR_CAP := 4               # aynı anda en çok bu kadar gerçek gövde (
 
 ## Mahalle türüne göre hedef kişi sayısı (kalabalık)
 ## DOKU-4 (madde 5, "ek"): üçüncü turun hedefleri korunup artırıldı (çarşı 40→46, sık 22→26, sur dibi 17→22; havuz 49→58)
-const TARGET := {"carsi": 46, "liman": 30, "sik": 26, "sur_dibi": 22, "seyrek": 11, "bostan": 5, "harabe": 4, "kir": 3}
+## G21: Lykos şeridi ("serit": bostan, bağ, harabe, dağınık ev) kalabalığı azaltmaz: bugünkü sur dibi kadar (bostanda
+## çalışanlar, keşişler, sur yakınında askerler, su taşıyanlar, çobanlar)
+const TARGET := {"carsi": 46, "liman": 30, "sik": 26, "sur_dibi": 22, "serit": 22, "seyrek": 11, "bostan": 5, "harabe": 4, "kir": 3}
 ## Doğuş ağırlığı (aynı sokak noktası kabulü)
-const WEIGHT := {"carsi": 1.0, "liman": 0.9, "sik": 0.7, "sur_dibi": 0.55, "seyrek": 0.35, "bostan": 0.2, "harabe": 0.15, "kir": 0.1}
+const WEIGHT := {"carsi": 1.0, "liman": 0.9, "sik": 0.7, "sur_dibi": 0.55, "serit": 0.6, "seyrek": 0.35, "bostan": 0.2, "harabe": 0.15, "kir": 0.1}
 
 static var aktif: IstHayatYakin
 
@@ -319,7 +321,10 @@ func _ok_cell(x: float, z: float) -> bool:
 
 
 func _tur(x: float, z: float) -> String:
-	return String(IstGeo.mahalle(x, z).get("tur", "kir"))
+	var m := IstGeo.mahalle(x, z)
+	if bool(m.get("serit", false)):
+		return "serit"                # G21: Lykos şeridi (mahalle türü bostan/harabe/seyrek; kalabalık hedefi ayrı)
+	return String(m.get("tur", "kir"))
 
 
 # ---------------------------------------------------------------- havuz
@@ -797,6 +802,14 @@ func _spawn_one() -> int:
 			return 1
 	elif tur == "sur_dibi" and r < 0.45:
 		if _spawn_wall(g):
+			return 1
+	elif tur == "serit" and r < 0.34:
+		# G21: şeritte iş başında olanlar: sur yakınında işçi/nöbetçi, içeride bostanda çalışan (işçi)
+		var dk := IstGeo.serit_td(pt.x, pt.y).y
+		if _spawn_wall(g, "" if dk < 70.0 else "worker"):
+			return 1
+	elif tur == "serit" and r < 0.42:
+		if _spawn_edge(g, "washer" if r < 0.38 else "sitter"):
 			return 1
 	elif r < 0.07 and tur in ["carsi", "sik", "liman", "seyrek"]:
 		if _spawn_edge(g, "sitter"):

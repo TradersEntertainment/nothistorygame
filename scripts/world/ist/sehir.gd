@@ -3340,7 +3340,7 @@ func _sehir_dokusu_v2() -> void:
 		elif tur == "harabe":
 			it["pos"] = Vector3(c.x, lo - 0.03, c.y)
 			it["make"] = func(nd: Node3D, lod: int) -> void: IstEvler.build_harabe(nd, 1.0, lod, tohum)
-		elif tur.begins_with("harabe_") or tur in ["kilise_kucuk", "sapel", "kilise_orta"]:
+		elif tur.begins_with("harabe_") or tur in ["kilise_kucuk", "sapel", "kilise_orta", "harap_kilise"]:
 			var kk := 0.75 if tur == "kilise_orta" else 1.0
 			it["data"] = {"tur": "kilise"}
 			it["make"] = func(nd: Node3D, lod: int) -> void:
@@ -3455,6 +3455,8 @@ func _far_doku_cells(far: Array, size: float, begin: float, end: float) -> void:
 				elif tur == "kilise_orta":
 					sz = Vector3(13, 12, 20)
 					col = Color("c88a6a")
+				elif tur == "harap_kilise":
+					sz = Vector3(11, 3.5, 18)          # G21: harap kilisenin uzak kütlesi (alçak yıkık duvarlar)
 				_box_st(st, Vector3(c.x, lo, c.y) - cen, bas, sz, col)
 		var mi := MeshInstance3D.new()
 		mi.mesh = st.commit()
