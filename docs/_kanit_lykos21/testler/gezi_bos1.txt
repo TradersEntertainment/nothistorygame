@@ -1,0 +1,12 @@
+önce ISTBOS bolge=uzak kare=73 bos=0 oran=0.0% ornek_gercek_en=
+önce ISTBOS bolge=karsi_kiyi kare=3906 bos=7 oran=0.2% ornek_gercek_en=(3828,-3142)
+önce ISTBOS bolge=sur_disi_600 kare=803 bos=4 oran=0.5% ornek_gercek_en=(-5200,-514)
+önce ISTBOS bolge=sehir_ici kare=1109 bos=10 oran=0.9% ornek_gercek_en=(-2685,1885) (-628,742) (-3600,-400) (-2457,-628)
+önce ISTBOS bolge=galata kare=24 bos=0 oran=0.0% ornek_gercek_en=
+önce ISTBOS sure_ms=5324 dolu_kare=14218
+sonra ISTBOS bolge=uzak kare=73 bos=0 oran=0.0% ornek_gercek_en=
+sonra ISTBOS bolge=karsi_kiyi kare=3906 bos=7 oran=0.2% ornek_gercek_en=(3942,2914)
+sonra ISTBOS bolge=sur_disi_600 kare=803 bos=3 oran=0.4% ornek_gercek_en=
+sonra ISTBOS bolge=sehir_ici kare=1109 bos=10 oran=0.9% ornek_gercek_en=(-2685,-628)
+sonra ISTBOS bolge=galata kare=24 bos=0 oran=0.0% ornek_gercek_en=
+sonra ISTBOS sure_ms=5948 dolu_kare=14217

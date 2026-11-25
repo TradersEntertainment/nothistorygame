@@ -132,8 +132,9 @@ MARMARASONDA OZET carp=1837 karma=2250736444
   landmarks=35), **WALKCHECK PASS**, **MAPCHECK PASS**.
 - **ZFIGHT**: 6, 7, 8y, 9, 10, 10b, 10z, 10h, 11, 12b, 13, 16, 23, 24, 24o, 25, 31o, 43o sahnelerinde 0 satır.
 - **ISTBOS**: `doku2_kare` kayıt sayımı önce 0/907 → sonra 0/907 (şehir içi %0), Galata 0/10; şeridin kendi sayımı
-  (`lykos21_v2`, aynı kural) 0/66. `gezi.tscn bos=1` geometri sayımı **koşulmadı** (yalnız pencereli; kare koşuları
-  süreyi yedi) — KISMEN.
+  (`lykos21_v2`, aynı kural) 0/66. `gezi.tscn bos=1` geometri sayımı (zeminden ≥ 0,3 m): şehir içi önce 10/1109
+  (%0,9) → sonra 10/1109 (%0,9), tabandan kötü değil; örnek boş kareler şeridin dışında ((−2685, −628) vb.;
+  `testler/gezi_bos1.txt`). Sur dışı 600 m 4 → 3, karşı kıyı 7 → 7.
 - **Ev sayısı** `ISTEVLER2`: önce ev=9156 doku=89 meydan=86 → sonra ev=8442 doku=113 meydan=92.
 - **Yükleme süresi** (`load_time.tscn`, tek başına, ikişer koşu; ms, `testler/yukleme_suresi.txt`):
 
