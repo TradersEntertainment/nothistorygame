@@ -100,7 +100,8 @@ run() {
   # istasyonu aleti, donuk bekleme. "_ADAY" satırları yalnız listelenir; kesinleşen tür (KESIN) eksiz basar ve düşürür.
   echo "$out" | grep -qE "^(GORUNMEZZEMIN|ALETAUDIT|DONUKAUDIT) " && fail=1
   # G19 yükleme canlılığı (LoadingScreen.nabiz, YUKLEMEAUDIT): kurulum penceresinde ana iş parçacığının en uzun boşluğu.
-  # Tek başına koşuda hedef < 1000 ms (_ADAY listelenir); pakette 8 parça CPU paylaştığı için kesin hata ≥ 2500 ms
+  # Tek başına koşuda hedef < 1000 ms (_ADAY listelenir); CI ve parçalı pakette CPU paylaşıldığı için kesin hata
+  # Windows eşiğinde, ≥ 5000 ms
   echo "$out" | grep -q "^YUKLEMEAUDIT_KESIN " && fail=1
 }
 run --chapter=0 --autotest

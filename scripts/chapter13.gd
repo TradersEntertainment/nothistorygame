@@ -205,8 +205,9 @@ func _tolga_moment() -> void:
 			place = "galata"
 		elif r10.begins_with("10B") or r10.begins_with("10L"):
 			place = "camp"
-	# G19: beyaz kararma altında: koyu perde yok, yalnız nabız (kurulum kapsamı)
-	GameState.kurulum_perdesi_ac(scene_file_path, "tolga_" + place, false, player)
+	# G19: beyaz kararma altında koyu perde yok, yalnız nabız (kurulum kapsamı). Şehir (v2 ByzCity) ~30 sn sürüyor:
+	# yarım dakikalık boş beyaz ekran yerine yükleme perdesi (kalkınca altından beyaz kararma görünür)
+	GameState.kurulum_perdesi_ac(scene_file_path, "tolga_" + place, place == "city", player)
 	if place == "camp" and not kitchen:      # mutfak (12.5, 10Z) ordugâhın içinde: önce o (bu dal mutfağı hiç bırakmıyordu)
 		camp = CampDay.new()
 		add_child(camp)

@@ -328,8 +328,10 @@ static func _olcum_yaz(sc: Node) -> void:
 	if DisplayServer.get_name() != "headless":
 		satir += " olay=%d perde_cizim=%d" % [_olay_n, _cizim]
 	print("YUKLEMEAUDIT " + satir)
-	# İki kademe: tek başına koşuda hedef < 1000 ms (aday, listelenir); pakette (8 parça CPU paylaşır) ≥ 2500 ms kesin hata
-	if _olc_en >= 2500:
+	# İki kademe: tek başına koşuda hedef < 1000 ms (aday, listelenir). Kesin hata Windows'un "yanıt vermiyor" eşiğinde
+	# (5000 ms): CI makinesi ve 4–8 parçalı paket CPU'yu paylaşınca 1–2,5 sn'lik boşluklar görülebilir; nabızsız eski
+	# kurulumlar 29–37 sn'ydi, gerileme yine yakalanır
+	if _olc_en >= 5000:
 		print("YUKLEMEAUDIT_KESIN " + satir)
 	elif _olc_en >= 1000:
 		print("YUKLEMEAUDIT_ADAY " + satir)
@@ -404,8 +406,9 @@ func set_progress(p: float) -> void:
 func _process(delta: float) -> void:
 	_t += delta
 	# Çubuk ilerlemeye yumuşakça yetişir; ilerleme gelmezse de yavaşça kıpırdar (donmuş görünmesin)
-	# G19: kurulum (sahne _ready'si, 5–40 sn) ilerleme bildirmez: çubuk zamanla %95'e yaklaşır (nabızla da çizilir)
-	_shown = minf(lerpf(_shown, maxf(_progress, minf(0.95, 1.0 - exp(-_t * 0.08))), minf(1.0, delta * 4.0)), 1.0)
+	# G19: kurulum (sahne _ready'si, 5–55 sn) ilerleme bildirmez: çubuk zamanla %95'e yaklaşır (nabızla da çizilir).
+	# Eğri yavaş: 0,08'de 24'ün kurulumu yarıdayken çubuk dolmuş görünüyordu (G19 pencereli kareleri)
+	_shown = minf(lerpf(_shown, maxf(_progress, minf(0.95, 1.0 - exp(-_t * 0.04))), minf(1.0, delta * 4.0)), 1.0)
 	if _bar_bg and _rs_bar.is_valid():
 		RenderingServer.canvas_item_clear(_rs_bar)
 		RenderingServer.canvas_item_add_rect(_rs_bar, Rect2(Vector2.ZERO, Vector2(_bar_bg.size.x * _shown, _bar_bg.size.y)), GOLD)

@@ -33,6 +33,7 @@ func build() -> void:
 	rng.seed = 145321
 	var t := Time.get_ticks_msec()
 	var prof := func(label: String) -> void:
+		LoadingScreen.nabiz("horn." + label)      # 0.99.128: bölüm ortası kurulumda pencere canlı (kapsam dışında tek if)
 		if OS.get_environment("WORLD_PROF") != "":
 			print("PROF horn.", label, " ", Time.get_ticks_msec() - t, "ms")
 		t = Time.get_ticks_msec()
@@ -43,6 +44,7 @@ func build() -> void:
 	_city_east()
 	prof.call("city_east")
 	_horn_walls()
+	LoadingScreen.nabiz("horn.horn_walls")
 	_horn_shore()
 	prof.call("horn_walls")
 	_marmara_walls()
@@ -51,6 +53,7 @@ func build() -> void:
 	prof.call("chain")
 	if region_name != "blachernae":
 		_blachernae()
+	LoadingScreen.nabiz("horn.blachernae")
 	_far_shores()
 	prof.call("far_shores")
 	_monuments()
@@ -234,9 +237,11 @@ func _city_east() -> void:
 			c = Color("8a7a58")
 		return c.darkened(clampf(steep * 0.5, 0.0, 0.25))
 	add_child(LowPoly.terrain(-760.0, 760.0, -1780.0, -700.0, 52, 36, hf, ccf))
+	LoadingScreen.nabiz("horn.city.arazi")
 	# Sokaklar ve meydanlar (CityPlan): döşeme bütün şehir için burada; evler sokak kenarında, cephesi sokağa bakar
 	var tp := Time.get_ticks_msec()
 	var sub := func(label: String) -> void:
+		LoadingScreen.nabiz("horn.city." + label)      # 0.99.128 (kapsam dışında tek if)
 		if OS.get_environment("WORLD_PROF") != "":
 			print("PROF horn.city.", label, " ", Time.get_ticks_msec() - tp, "ms")
 		tp = Time.get_ticks_msec()
@@ -265,6 +270,7 @@ func _city_east() -> void:
 		placed += 1
 		_church(cd, Vector3(x, east_surf(x, z) - 0.3, z), r)
 	cd.build(self)
+	LoadingScreen.nabiz("horn.city.kilise")
 	# Tarihî yapılar (Landmarks1453): Aya İrini, Augustaion, forumlar, manastırlar, limanlar, Altınkapı...
 	Landmarks1453.build(self, _free, region_name)
 	sub.call("landmarks")
@@ -352,6 +358,7 @@ func _city_east() -> void:
 			d.box(Vector3(3.0, th * 0.55, 0.3), Vector3(ax, gy + 4.0 - th * 0.12, p.z - 20.05), DARK_ARCH)
 	d = d_ist
 	d.build(self)
+	LoadingScreen.nabiz("horn.city.hipodrom")
 	# Serviler ve çınarlar: blokların içindeki bahçelerde (sokaklara, evlere değmez)
 	var cyp: Array = []
 	var pln: Array = []
