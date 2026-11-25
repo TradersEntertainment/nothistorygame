@@ -1856,7 +1856,7 @@ func _doku(rng: RandomNumberGenerator) -> void:
 			var yaw := rng.randf_range(-0.3, 0.3)
 			var u := Vector2.from_angle(-yaw)
 			var v := Vector2(-u.y, u.x)
-			# G21: şeritte harap kilise (harabe adalarında ve arada bir başka yerde; 120 m'de bir): 19 × 25 m'lik yer aranır
+			# G21: şeritte harap kilise (harabe adalarında ve arada bir başka yerde; 100 m'de bir): 19 × 25 m'lik yer aranır
 			if serit and (_alt(c) == "harabe" or roll < 0.3) and _harap_kilise_yok(c):
 				var hal := Vector2(9.5, 12.5)
 				var hc := _yer_ara(c, u, v, hal.x, hal.y)
@@ -1923,7 +1923,7 @@ func _doku(rng: RandomNumberGenerator) -> void:
 						oge.append({"tur": "manastir" if _alt(c) == "manastir" else "mezarlik", "c": c, "yaw": yaw, "tohum": rng.randi() % 9973})
 						continue
 					pick = "bahce"
-			# G21: şeritte harap kilise (yarım duvarlar, çökmüş kubbe kasnağı, devrik sütunlar; 120 m'de bir tane)
+			# G21: şeritte harap kilise (yarım duvarlar, çökmüş kubbe kasnağı, devrik sütunlar; 100 m'de bir tane)
 			if serit and alan.x > 17.0 and alan.y > 17.0 and (pick.begins_with("harabe") or _alt(c) == "harabe" or roll < 0.12) and _harap_kilise_yok(c):
 				pick = "harap_kilise"
 			if slope > 2.5 and pick in ["bostan", "bag", "bugday", "bahce", "cayir"]:
