@@ -75,6 +75,68 @@ Sahibe en iyi üç kare: `kare/sahip_1_43o_drone70_romanos_once_ust_sonra_alt.jp
   yeri, uzak saray), `tests/city_audit.gd:49–55` (bölünmüş + "saray" dikdörtgeni), yeni `tests/_ist/saray22_eski_liste.txt`.
 - `sur_set_hub.gd`, `geo.gd`, `hayat_yakin.gd`, `wall_rear.gd`, `city_plan.gd`, `chapter43o.gd`: değişmedi.
 
-## Testler
+## Testler (ham çıktılar `testler/`)
 
-(aşağıdaki bölüm testler bitince doldurulur; ham çıktılar `testler/`)
+- Ayrıştırma: PARSECHECK PASS scripts=370.
+- **Sözleşme altılısı birebir aynı** (`testler/denetim_1.txt`): SURSOZLESME PASS kalem=13 kesim=8 · SUROYUN nokta=519
+  havada=0 gomuk=0 katida=0 · WALKTHRU OZET yol=7 tamam=7 takilma=0 dusme=0 · ESYATEST PASS · HALICSONDA OZET carp=661
+  karma=3854034809 · MARMARASONDA OZET carp=1837 karma=2250736444.
+- **Hub bölümlerinin bütün çeşitleri ×2** (`--max-fps 20`; 6 byz/byzmistake/byzfail/byzclimb/byzgive, 7 tea/lost/form/
+  wall/wallkeep/byz/byzniko/byzcell/fez, 10h ""/shame/save/save1/honest/open/pass, 12b ""/lie/year/d2/d3, 13 city,
+  23 ""/creative/pass/singed/letter/osm, 24 ""/late/niko/niko_slow/eclipse): **76/76 AUTOTEST PASS**, VISAUDIT, WALKTHRU,
+  HELDAUDIT, ARMAUDIT, GORUNMEZZEMIN, ALETAUDIT, DONUKAUDIT, ESYAAUDIT (dusme/havada/gomuk/tikama/sinir), JOURNEY,
+  YUKLEMEAUDIT_KESIN, SCRIPT ERROR satırı **0** (`hub_kosu1.txt`, `hub_kosu2.txt`; yalnız YUKLEMEAUDIT_ADAY bilgi satırları).
+- **Dünya bölümleri ×1** (6, 7, 8y, 9, 10, 10b, 10z, 11, 13, 16, 24o, 25 osm, 31o, 43o): 14/14 PASS, denetim satırı 0.
+- **`--eski-dunya` hub yolu** (bölüm başına tek çeşit: 6 byz, 7 byz, 10h save, 12b, 13 city, 23, 24): 7/7 PASS (`ozet_e.txt`).
+- Ayrı koşular: CITYCHECK 24 PASS (oyuncunun noktası artık saray mahallesi: sivil 12 / 23 / 22), CITYCHECK 31o PASS
+  (14 / 14 / 20); STREETCHECK, FLIGHTCHECK, WORLDCHECK (regions=13), WALKCHECK, MAPCHECK PASS; menu_return 26 ve 20o
+  PASS; ZFIGHT 0 (6, 7, 10h, 12b, 13, 23, 24 — ilk koşuda 10h/12b/23/24'te uzak zemin levhası ile döşeme aynı yan
+  düzlemdeydi, levhalar 0,3 m içeri çekildi, ikinci koşu 0: `zf.txt`).
+- Harita `tools/map_bake` ile yeniden pişirildi: çıktı bayt bayt aynı (eski dünyanın harita dokusu değişmedi), commit yok.
+
+## Yükleme süresi (load_time, ayrı koşular; önce = taban kopyası)
+
+| Bölüm | Önce total ms | Sonra total ms |
+|---|---|---|
+| 24 | 44 555 | 39 461 |
+| 23 | 42 145 | 39 640 |
+| 10h | 53 375 | 39 522 |
+| 6 (6a açılışı) | 9 421 | 9 286 |
+
+Artış yok. Dürüst not: "önce" 24/23 koşuları paralel kare çekimiyle aynı anda koştu (CPU paylaşımı), 10h/6 tek başına;
+farkın bir kısmı ölçüm gürültüsü. Bölünmüş kurulum bugünkü kurucuları aynı sayıda çağırıyor (tek ByzCity).
+
+## Kareler (`kare/`, tam boy)
+
+- 43o sahibin bakışı ve saray mahallesi, iki yol (taze süreç `taze_*`, önce v2 kurulmuş süreç `v2_*`): `43o_*_once_ust_sonra_alt.jpg`,
+  tek tek `once/`, `sonra/`.
+- v2: `v2_23/` (06 avlu + İmparator, 07 kançılarya kapısı, 08 meydan + çeşme, 09 nöbet yeri, 10 sokak ağzı, 02 kapı,
+  05 tepeden), `v2_uzak7/` (7a uçuşu: 03 uzak saray, 04 iki parça aynı karede), `v2_10h/c10h_01_huzur.png` (saraya varış),
+  `v2_6/` (6b sur tarafı: fıçı, Giustiniani'nin masası, kapı).
+- Sahibe: `sahip_1_43o_drone70_romanos_once_ust_sonra_alt.jpg`, `sahip_2_v2_saray_avlusu_imparator.jpg`,
+  `sahip_3_v2_ucus_iki_parca.jpg`.
+
+## Rng ve sabitler (dürüst)
+
+- CityPlan meydan/ana yol listeleri ve `WallRear.depth/in_band` dokunulmadı; WORLDCHECK aynı. Ama eski dünyada keep
+  dikdörtgenleri değişti (hub alanı → sur parçası + saray): SiegeField servi döngüsü ve `WallRear._ok` sonraki çekimleri
+  kaydırır (görev yazısı madde 18). CityPlan etkilenmez.
+- `CityPlan.MARKETS` (−120, −400): iç mahallenin dünya dikdörtgeni z −482,3…−418,3; pazar 18 m kuzeyde, alana düşmüyor.
+- ByzCity'nin genel rng'si: iç evler aynı (çek-sonra-at); Deniz kapısı ve Haliç suru kurulmadığı için Props önbelleği
+  daha az ısınır (görüntüye etkisi gözlenmedi).
+- v2'de sokak önbellek imzası oyun alanlarını içerir: ilk koşu soğuk kurulur (bir kez tek süreçle ısıtıldı).
+
+## Hâlâ kötü olanlar
+
+- **v2'de eski hub alanı büyük ölçüde boş çayır** (05_tepeden, uzak7/04): G21 şeridinin bu bölgedeki dokusu seyrek ve
+  hub düzlemesi (r 48) sur kesiminin zemini değişmesin diye bilerek aynı bırakıldı. Bostan/bağ yoğunluğu ayrı iş.
+- **İç mahallenin v2 oyun alanı eksen hizalı** (`_rect_xf`): hub 161,9° dönük olduğu için dikdörtgenin köşelerinde
+  ~10 m'lik boş toprak üçgenleri kalıyor (uzak7/03). Çevre yolu bu sınırdan geçiyor.
+- **Eski dünyada mahalleye yol yok**: ROAD ~86 m doğuda; CityPlan'a dokunmadan bağlantı yapılmadı. Mahalle 26 m büyütülmüş
+  düzlükte, 30 m'lik şevle araziye iniyor.
+- Sur parçasının döşemesi şeritte keskin kenarlı bir taş dikdörtgen (kenarı zeminle aynı hizada; basamak gerekmiyor).
+- 6b'de 3→4 geçişi kararmayla: martının ~430 m'lik uçuşu görünmüyor (görev yazısının kararı).
+- `D10H_L_04` artık kapıda değil avluda çalıyor; kapıdaki sahnede "Bak, saray" repliği yok (bilinçli).
+- `IstSehir` bölünmüş hub öğeleri `--eskisur` yolunda bölünmez (eski kutu surda hub v2'de başka yerde).
+- Fazlar görev yazısındaki sırayla ayrı ayrı kaydedilmedi: A ve B'nin kodu birlikte ilerledi, ara kayıtlarda anahtar
+  (`BOLUNEN`) kapalıyken bölümler eski yerde oynadı; anahtar açıldıktan sonraki bütün testler yukarıda.

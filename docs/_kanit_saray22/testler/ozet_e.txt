@@ -1,0 +1,22 @@
+=== 6 --autotest=byz rc=0
+YUKLEMEAUDIT_ADAY scene=chapter6 evre=acilis toplam_ms=8955 en_uzun_bosluk_ms=1434 kaynak=siegefield:_wall_extension()>horn.city.plan ilk_kare_ms=403 bosalt_ms=-1
+AUTOTEST PASS chapter=6 variant=byz branch=6b outcome=6b.1 paradox=0 mistakes=0 telsiz=4
+=== 7 --autotest=byz rc=0
+YUKLEMEAUDIT_ADAY scene=chapter7 evre=acilis toplam_ms=9164 en_uzun_bosluk_ms=1124 kaynak=horn.north_shore>horn.city.plan ilk_kare_ms=924 bosalt_ms=-1
+AUTOTEST PASS chapter=7 variant=byz branch=7b outcome=7.1 extras=["7.3"] sadakat=50 baski=0 hour=14.0
+=== 10h --autotest=save rc=0
+YUKLEMEAUDIT_ADAY scene=chapter10h evre=acilis toplam_ms=8965 en_uzun_bosluk_ms=1245 kaynak=horn.north_shore>horn.city.plan ilk_kare_ms=579 bosalt_ms=-1
+AUTOTEST PASS chapter=10h variant=save outcome=10H.1 truth=3 direnc=3 paradox=10
+=== 12b --autotest rc=0
+YUKLEMEAUDIT_ADAY scene=chapter12b evre=acilis toplam_ms=9269 en_uzun_bosluk_ms=1231 kaynak=horn.north_shore>horn.city.plan ilk_kare_ms=525 bosalt_ms=-1
+AUTOTEST PASS chapter=12b variant= outcome=12B.1 world= honest=true
+=== 13 --autotest=city rc=0
+YUKLEMEAUDIT_ADAY scene=chapter13 evre=tolga_city toplam_ms=7861 en_uzun_bosluk_ms=1213 kaynak=horn.north_shore>horn.city.plan ilk_kare_ms=403 bosalt_ms=-1
+AUTOTEST PASS chapter=13 variant=city version=garage outcome=13.2 window=8.4 tolga=T2 hikmet=
+=== 23 --autotest rc=0
+YUKLEMEAUDIT_ADAY scene=chapter23 evre=acilis toplam_ms=8994 en_uzun_bosluk_ms=1160 kaynak=horn.north_shore>horn.city.plan ilk_kare_ms=453 bosalt_ms=-1
+AUTOTEST PASS chapter=23 variant= outcome=23.1 deviation=0 card=true singed=false letter=false
+=== 24 --autotest rc=0
+YUKLEMEAUDIT_ADAY scene=chapter24 evre=acilis toplam_ms=9412 en_uzun_bosluk_ms=1349 kaynak=siegefield:_wall_extension()>horn.city.plan ilk_kare_ms=451 bosalt_ms=-1
+AUTOTEST PASS chapter=24 variant= outcome=24.1 stumbles=0 kid=true niko=false steadied=0 kid_t=0.4
+BITTI

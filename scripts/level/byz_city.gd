@@ -296,7 +296,7 @@ func _build_nobet() -> void:
 	var d := Dressing.new(1456)
 	# Su fıçısı: sabit (uyuyan dekor değil; martı tepesine konar): ahşap gövde, iki demir çember, kapak
 	var fp := FICI_POS
-	Props.cyl(self, 0.34, 1.18, fp + Vector3(0, 0.59, 0), Color("7a5634"), Vector3.ZERO, 12, 0.92)
+	Props.cyl(self, 0.34, 1.18, fp + Vector3(0, 0.59, 0), Color("7a5634"), Vector3.ZERO, 12, 0.31)
 	for yy: float in [0.22, 0.96]:
 		Props.cyl(self, 0.355, 0.07, fp + Vector3(0, yy, 0), Color("3a3634"), Vector3.ZERO, 12)
 	Props.cyl(self, 0.33, 0.06, fp + Vector3(0, 1.21, 0), Color("6a4a2c"), Vector3.ZERO, 12)
@@ -315,7 +315,7 @@ func _build_nobet() -> void:
 	for sx: float in [-0.6, 0.6]:
 		Props.cyl(self, 0.03, 1.3, oc + Vector3(sx, 0.62, 0), Color("3a3634"), Vector3(0, 0, -sx * 18.0), 5)
 	Props.cyl(self, 0.02, 1.3, oc + Vector3(0, 1.22, 0), Color("3a3634"), Vector3(0, 0, 90), 4)
-	Props.cyl(self, 0.26, 0.34, oc + Vector3(0, 0.86, 0), Color("2e2a28"), Vector3.ZERO, 10, 0.85)
+	Props.cyl(self, 0.2, 0.34, oc + Vector3(0, 0.86, 0), Color("2e2a28"), Vector3.ZERO, 10, 0.26)
 	var ob := Props.solid(self, Vector3(1.4, 0.4, 1.4), oc + Vector3(0, 0.2, 0), Color.WHITE)
 	ob.get_child(0).visible = false
 	lights.append(Night.torch(self, fp + Vector3(-0.9, 0, 6.6), 2.6))
