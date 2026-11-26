@@ -1,0 +1,14 @@
+G22BSONDA yukseklik bolum=7 yerel=(8.0, -30.0) geo_h=13.968 h_ham=16.862 hub_y=14.088 carp_y=13.968 AraziCarpisma
+G22BSONDA yukseklik bolum=7 yerel=(8.0, 10.0) geo_h=13.968 h_ham=15.231 hub_y=14.088 carp_y=13.968 AraziCarpisma
+G22BSONDA yukseklik bolum=7 yerel=(-10.0, -14.0) geo_h=13.968 h_ham=16.135 hub_y=14.088 carp_y=13.968 AraziCarpisma
+G22BSONDA yukseklik bolum=7 yerel=(-30.0, 10.0) geo_h=13.968 h_ham=14.801 hub_y=14.088 carp_y=13.968 AraziCarpisma
+G22BSONDA yukseklik bolum=7 yerel=(-40.0, -30.0) geo_h=13.968 h_ham=16.444 hub_y=14.088 carp_y=13.968 AraziCarpisma
+G22BSONDA yukseklik bolum=7 yerel=(16.0, -30.0) geo_h=13.968 h_ham=16.907 hub_y=14.088 carp_y=13.968 AraziCarpisma
+G22BSONDA yukseklik bolum=7 yerel=(25.0, -14.0) geo_h=13.968 h_ham=16.210 hub_y=14.088 carp_y=14.088 @StaticBody3D@111259
+G22BSONDA yukseklik bolum=23 yerel=(8.0, -30.0) geo_h=13.968 h_ham=16.862 hub_y=14.088 carp_y=13.968 AraziCarpisma
+G22BSONDA yukseklik bolum=23 yerel=(8.0, 10.0) geo_h=13.968 h_ham=15.231 hub_y=14.088 carp_y=13.968 AraziCarpisma
+G22BSONDA yukseklik bolum=23 yerel=(-10.0, -14.0) geo_h=13.968 h_ham=16.135 hub_y=14.088 carp_y=13.968 AraziCarpisma
+G22BSONDA yukseklik bolum=23 yerel=(-30.0, 10.0) geo_h=13.968 h_ham=14.801 hub_y=14.088 carp_y=13.968 AraziCarpisma
+G22BSONDA yukseklik bolum=23 yerel=(-40.0, -30.0) geo_h=13.968 h_ham=16.444 hub_y=14.088 carp_y=13.968 AraziCarpisma
+G22BSONDA yukseklik bolum=23 yerel=(16.0, -30.0) geo_h=13.968 h_ham=16.907 hub_y=14.088 carp_y=13.968 AraziCarpisma
+G22BSONDA yukseklik bolum=23 yerel=(25.0, -14.0) geo_h=13.968 h_ham=16.210 hub_y=14.088 carp_y=14.088 @StaticBody3D@111286

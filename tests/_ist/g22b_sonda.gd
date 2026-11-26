@@ -354,6 +354,8 @@ func _yeni_izler(sk: IstSokak) -> Array:
 			r = 8.5                       # 3–6 ağaç, merkezden 2 + i·1,3 m
 		elif tur == "kulube_bag" or tur == "kuyu":
 			r = 2.8
+		elif tur in ["odun_yigini", "tas_yigini", "el_arabasi", "saman_yigini"]:
+			r = 1.8                       # Ayrinti boyu (en büyüğü saman yığını 2,6 m) + pay
 		elif tur == "agil":
 			r = 5.0                       # çit halkası r 4,5 (saman yığını yan tarafta)
 		elif tur == "yama_duvar":
@@ -452,12 +454,16 @@ func _yuru() -> void:
 	var xf: Transform3D = SurHub.hub_v2()
 	var hat := _hat(sk, xf)
 	if hat.is_empty():
-		print("G22BSONDA yuru hat_yok")
-		return
+		# taban (dolgu yok): aynı başlangıçtan çayırın üstünden batıya
+		for lx: float in [15.5, 0.0, -20.0, -40.0]:
+			hat.append(_w(xf, Vector2(lx, -14.25)))
+		print("G22BSONDA yuru hat_yok: cayir hatti")
 	# başlangıç: sur parçasının üstünde, kapının şehir yanı (EXIT_POS − 6) → sokak ağzı
 	var yerel_bas := Vector2(ByzCity.EXIT_POS.x - 6.0, ByzCity.EXIT_POS.z)
 	var bas := _w(xf, yerel_bas)
-	var nokt: Array = [_w(xf, Vector2(24.0, -6.0)), _w(xf, Vector2(21.0, -14.25))]
+	# kapının şehir yanından döşemenin kenarına (nöbet yerinin eşyası ve Giustiniani'nin iskelesi doğuda kalır), bordürden
+	# inip toprak kenarda güneye, sokak ağzının önünde yola
+	var nokt: Array = [_w(xf, Vector2(22.0, 4.0)), _w(xf, Vector2(16.0, 4.0)), _w(xf, Vector2(15.5, -14.25))]
 	# hat 6 m'de bir
 	var acc := 0.0
 	for i in hat.size() - 1:
@@ -476,6 +482,8 @@ func _yuru() -> void:
 		return kok.to_global(Vector3(w.x, IstGeo.h(w.x, w.y), w.y))
 	var bp: Vector3 = g.call(bas)
 	bp.y = city.to_global(Vector3(ByzCity.EXIT_POS.x - 6.0, 0.0, ByzCity.EXIT_POS.z)).y + 0.1
+	# 23'ün kamerası sahnede (saray avlusunda) kalır: arazi çarpışmasının penceresi oyuncuyu izlesin (oyunda kamera oyuncudadır)
+	IstBaglama.dunya.izle = pl
 	IstBaglama.dunya.carpisma_yenile(kok.to_local(bp))
 	for i in 10:
 		await get_tree().physics_frame
@@ -511,7 +519,10 @@ func _yuru() -> void:
 			var ky := kok.to_local(p)
 			if p.y < kok.to_global(Vector3(ky.x, IstGeo.h(ky.x, ky.z), ky.z)).y - 1.5:
 				dus += 1
-				print("G22BSONDA yuru dusme nokta=%d p=%s" % [k, p.snapped(Vector3.ONE * 0.1)])
+				var hr := kok.get_world_3d().direct_space_state.intersect_ray(PhysicsRayQueryParameters3D.create(p + Vector3(0, 20, 0), p + Vector3(0, -40, 0)))
+				print("G22BSONDA yuru dusme nokta=%d p=%s arazi_y=%.2f yerel=%s carp=%s" % [k, p.snapped(Vector3.ONE * 0.1),
+					kok.to_global(Vector3(ky.x, IstGeo.h(ky.x, ky.z), ky.z)).y, _l(SurHub.hub_v2().affine_inverse(), Vector2(ky.x, ky.z)).snapped(Vector2.ONE * 0.1),
+					[hr["position"].snapped(Vector3.ONE * 0.1), String(hr["collider"].name)] if hr else "yok"])
 				pl.global_position = hedef + Vector3(0, 0.5, 0)
 				break
 			var dd := Vector2(p.x - hedef.x, p.z - hedef.z).length()

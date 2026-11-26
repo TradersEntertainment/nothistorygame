@@ -1,0 +1,111 @@
+G22BSONDA yuklendi bolum=23 v2=true ms=46288
+G22BSONDA karma ad=streets n=1101 onek=1098 md5=7a8b05b3593f550acdc56c2af286133a dolgu_taban=1098
+G22BSONDA karma ad=houses n=8324 onek=8306 md5=5a763cea5fd7f5ae7037fa5d27d5273f dolgu_taban=8306
+G22BSONDA karma ad=doku n=139 onek=125 md5=2b88f63227e76e43cc2ef6437bbf4193 dolgu_taban=125
+G22BSONDA karma ad=oge n=510 onek=403 md5=0e8aca495c7e95a4f00debd44689343e dolgu_taban=403
+G22BSONDA karma ad=avlu n=1024 onek=1023 md5=3084653dc9e189d4e4b3f1d514fcb5cd dolgu_taban=1023
+G22BSONDA karma ad=meydan n=87 onek=86 md5=dbaeab54be16e27514e36e4f320cc264 dolgu_taban=86
+G22BSONDA dolgu { "taban": { "streets": 1098, "houses": 8306, "doku": 125, "oge": 403, "avlu": 1023, "meydan": 86, "sira": 3390, "zemin_ek": 139 }, "hucre": 1601, "uc": (-1593.421, -292.578), "J": (-1603.421, -292.578), "toprak": 227, "meydan": (-12.0, -1.5), "ev": 6, "harap": ["harabe_kemer", (-28.0, 24.0)], "yama": 6, "kume": 30, "saray_agiz": [(-1293.918, -293.913), (-1269.657, -290.4881), (-1262.527, -288.1599)], "saray_hucre": 1400, "saray_yama": 7, "saray_kume": 55 }
+G22BSONDA daire occ={ "rid_yok": 625, "k1": 78, "a1": 696, "a3": 556, "a5": 187, "a6": 25, "a2": 59, "rid_hub_yolu_yol": 146, "rid_hub_meydan_sokak": 3 }
+G22BSONDA bos yer=hub kare=38 bos=0 oran=0.000 ornek=[]
+G22BSONDA bos yer=saray kare=24 bos=0 oran=0.000 ornek=[]
+G22BSONDA cimen bakis=-40 en_uzun=4.5
+G22BSONDA cimen bakis=-35 en_uzun=5.0
+G22BSONDA cimen bakis=-30 en_uzun=4.0
+G22BSONDA cimen bakis=-25 en_uzun=4.0
+G22BSONDA cimen bakis=-20 en_uzun=4.0
+G22BSONDA cimen bakis=-15 en_uzun=4.0
+G22BSONDA cimen bakis=-10 en_uzun=2.5
+G22BSONDA cimen bakis=-5 en_uzun=1.0
+G22BSONDA cimen bakis=0 en_uzun=1.5
+G22BSONDA cimen bakis=5 en_uzun=1.0
+G22BSONDA cimen bakis=10 en_uzun=4.0
+G22BSONDA cimen bakis=15 en_uzun=5.5
+G22BSONDA cimen bakis=20 en_uzun=6.5
+G22BSONDA cimen bakis=25 en_uzun=5.0
+G22BSONDA cimen bakis=30 en_uzun=3.0
+G22BSONDA cimen bakis=35 en_uzun=6.0
+G22BSONDA cimen bakis=40 en_uzun=9.5
+G22BSONDA cimen OZET en_uzun=9.5 esik=12 durum=PASS
+G22BSONDA hat J=(-1603.421, -292.578) uc=(-1593.421, -292.578) nokta=55
+G22BSONDA yol nokta=418 kopuk=0 en_dar=3.00 ornek=[]
+G22BSONDA yer ad=6b_tunek_0 yerel=ic(0.0,-16.0) en_yakin=23.4 (oge_kulube_bag) durum=PASS
+G22BSONDA yer ad=6b_tunek_1 yerel=ic(-4.8,-15.2) en_yakin=27.6 (oge_kulube_bag) durum=PASS
+G22BSONDA yer ad=6b_tunek_2 yerel=ic(0.9,1.0) en_yakin=22.0 (oge_kulube_bag) durum=PASS
+G22BSONDA yer ad=6b_tunek_3 yerel=ic(8.5,-18.5) en_yakin=15.9 (oge_odun_yigini) durum=PASS
+G22BSONDA yer ad=6b_tunek_4_fici yerel=hub(21.5,-10.5) en_yakin=15.4 (oge_set_multeci_cadirlari) durum=PASS
+G22BSONDA yer ad=6b_tunek_5_masa yerel=hub(24.6,-12.4) en_yakin=18.6 (oge_set_sur_onarim_santiyesi) durum=PASS
+G22BSONDA yer ad=6b_kararma_ficiya_11m yerel=hub(20.0,0.4) en_yakin=6.6 (oge_set_multeci_cadirlari) durum=PASS
+G22BSONDA yer ad=6b_10h_sokak_agzi_yerlesme yerel=hub(20.0,-14.0) en_yakin=14.9 (oge_set_sur_onarim_santiyesi) durum=PASS
+G22BSONDA yer ad=6b_giust_yani yerel=hub(22.8,-12.4) en_yakin=17.6 (oge_set_sur_onarim_santiyesi) durum=PASS
+G22BSONDA yer ad=6b_giust_yani2 yerel=hub(23.4,-12.8) en_yakin=17.6 (oge_set_sur_onarim_santiyesi) durum=PASS
+G22BSONDA yer ad=6b_kapi_yani yerel=hub(27.0,5.5) en_yakin=13.2 (oge_set_multeci_cadirlari) durum=PASS
+G22BSONDA yer ad=6b_niko_kapi yerel=hub(27.8,4.2) en_yakin=14.0 (oge_set_multeci_cadirlari) durum=PASS
+G22BSONDA yer ad=6b_martı_sur yerel=hub(30.0,-14.0) en_yakin=21.0 (oge_set_sur_onarim_santiyesi) durum=PASS
+G22BSONDA yer ad=6b_vista_sur yerel=hub(34.0,-14.0) en_yakin=24.2 (oge_set_sur_onarim_santiyesi) durum=PASS
+G22BSONDA yer ad=GIUST_POS yerel=hub(26.0,-14.0) en_yakin=18.2 (oge_set_sur_onarim_santiyesi) durum=PASS
+G22BSONDA yer ad=EXIT_POS yerel=hub(33.0,5.5) en_yakin=19.2 (oge_set_multeci_cadirlari) durum=PASS
+G22BSONDA yer ad=7b_iz_walls yerel=hub(22.5,-11.5) en_yakin=16.7 (oge_set_multeci_cadirlari) durum=PASS
+G22BSONDA yer ad=7b_iz_outside yerel=hub(30.6,6.9) en_yakin=16.8 (oge_set_multeci_cadirlari) durum=PASS
+G22BSONDA yer ad=10h_kapidan_giris yerel=hub(30.0,5.5) en_yakin=16.2 (oge_set_multeci_cadirlari) durum=PASS
+G22BSONDA yer ad=10h_gece_niko yerel=hub(22.9,-8.3) en_yakin=14.4 (oge_set_multeci_cadirlari) durum=PASS
+G22BSONDA yer ad=10h_gedik yerel=hub(32.4,-26.0) en_yakin=18.5 (oge_set_sur_onarim_santiyesi) durum=PASS
+G22BSONDA yer ad=dress_reserved_24_-24_0 yerel=hub(24.0,-24.0) en_yakin=10.7 (oge_set_sur_onarim_santiyesi) durum=PASS
+G22BSONDA yer ad=dress_reserved_24_-24_1 yerel=hub(36.0,-24.0) en_yakin=22.3 (oge_set_sur_onarim_santiyesi) durum=PASS
+G22BSONDA yer ad=dress_reserved_24_-24_2 yerel=hub(24.0,-6.0) en_yakin=13.5 (oge_set_multeci_cadirlari) durum=PASS
+G22BSONDA yer ad=dress_reserved_24_-24_3 yerel=hub(36.0,-6.0) en_yakin=23.9 (oge_set_multeci_cadirlari) durum=PASS
+G22BSONDA yer ad=dress_reserved_21_-12_0 yerel=hub(21.0,-12.0) en_yakin=16.5 (oge_set_multeci_cadirlari) durum=PASS
+G22BSONDA yer ad=dress_reserved_21_-12_1 yerel=hub(34.0,-12.0) en_yakin=25.0 (oge_set_multeci_cadirlari) durum=PASS
+G22BSONDA yer ad=dress_reserved_21_-12_2 yerel=hub(21.0,7.0) en_yakin=7.2 (oge_set_multeci_cadirlari) durum=PASS
+G22BSONDA yer ad=dress_reserved_21_-12_3 yerel=hub(34.0,7.0) en_yakin=20.2 (oge_set_multeci_cadirlari) durum=PASS
+G22BSONDA yer ad=dress_reserved_27_-1_0 yerel=hub(27.0,-1.0) en_yakin=13.7 (oge_set_multeci_cadirlari) durum=PASS
+G22BSONDA yer ad=dress_reserved_27_-1_1 yerel=hub(36.0,-1.0) en_yakin=22.5 (oge_set_multeci_cadirlari) durum=PASS
+G22BSONDA yer ad=dress_reserved_27_-1_2 yerel=hub(27.0,8.0) en_yakin=13.2 (oge_set_multeci_cadirlari) durum=PASS
+G22BSONDA yer ad=dress_reserved_27_-1_3 yerel=hub(36.0,8.0) en_yakin=22.2 (oge_set_multeci_cadirlari) durum=PASS
+G22BSONDA yer ad=dress_reserved_17_-12_0 yerel=hub(17.5,-12.5) en_yakin=15.5 (oge_set_sur_onarim_santiyesi) durum=PASS
+G22BSONDA yer ad=dress_reserved_17_-12_1 yerel=hub(24.5,-12.5) en_yakin=18.4 (oge_set_sur_onarim_santiyesi) durum=PASS
+G22BSONDA yer ad=dress_reserved_17_-12_2 yerel=hub(17.5,0.5) en_yakin=4.4 (oge_set_multeci_cadirlari) durum=PASS
+G22BSONDA yer ad=dress_reserved_17_-12_3 yerel=hub(24.5,0.5) en_yakin=10.9 (oge_set_multeci_cadirlari) durum=PASS
+G22BSONDA yer ad=dress_reserved_18_-18_0 yerel=hub(18.0,-18.5) en_yakin=10.0 (oge_set_sur_onarim_santiyesi) durum=PASS
+G22BSONDA yer ad=dress_reserved_18_-18_1 yerel=hub(24.0,-18.5) en_yakin=13.6 (oge_set_sur_onarim_santiyesi) durum=PASS
+G22BSONDA yer ad=dress_reserved_18_-18_2 yerel=hub(18.0,-10.0) en_yakin=13.5 (oge_set_multeci_cadirlari) durum=PASS
+G22BSONDA yer ad=dress_reserved_18_-18_3 yerel=hub(24.0,-10.0) en_yakin=16.4 (oge_set_multeci_cadirlari) durum=PASS
+G22BSONDA yer ad=START yerel=ic(0.0,12.0) en_yakin=14.4 (oge_kuyu) durum=PASS
+G22BSONDA yer ad=START_rapor_kapisi yerel=ic(0.0,14.6) en_yakin=11.9 (oge_kuyu) durum=PASS
+G22BSONDA yer ad=13_dogus yerel=ic(0.0,8.0) en_yakin=18.3 (oge_kuyu) durum=PASS
+G22BSONDA yer ad=EMPEROR_POS yerel=ic(-27.0,-14.0) en_yakin=25.7 (oge_el_arabasi) durum=PASS
+G22BSONDA yer ad=NIKO_POS yerel=ic(1.5,-27.0) en_yakin=21.2 (oge_odun_yigini) durum=PASS
+G22BSONDA yer ad=CELL_START yerel=ic(-19.4,-26.0) en_yakin=25.6 (oge_kulube_bag) durum=PASS
+G22BSONDA yer ad=7b_iz_kancilarya yerel=ic(-2.2,-26.5) en_yakin=24.9 (oge_odun_yigini) durum=PASS
+G22BSONDA yer ad=24_ROUTE_A yerel=ic(0.0,-24.0) en_yakin=22.8 (oge_odun_yigini) durum=PASS
+G22BSONDA yer ad=24_ROUTE_B yerel=ic(0.0,6.0) en_yakin=20.3 (oge_kuyu) durum=PASS
+G22BSONDA yer ad=IC_RECT_kose_0 yerel=ic(-46.0,-48.0) en_yakin=7.7 (oge_saman_yigini) durum=PASS
+G22BSONDA yer ad=IC_RECT_kose_1 yerel=ic(18.0,-48.0) en_yakin=5.1 (oge_el_arabasi) durum=PASS
+G22BSONDA yer ad=IC_RECT_kose_2 yerel=ic(-46.0,22.0) en_yakin=3.2 (oge_kulube_bag) durum=PASS
+G22BSONDA yer ad=IC_RECT_kose_3 yerel=ic(18.0,22.0) en_yakin=4.3 (oge_kuyu) durum=PASS
+G22BSONDA yer ad=ic_sokak_agzi yerel=ic(18.0,-14.2) en_yakin=8.2 (oge_kulube_bag) durum=PASS
+G22BSONDA dolgu_en_dogu x=14.3 (oge_agil) esik=14
+G22BSONDA yolnokta yerel=(17.6, -14.2) occ=3 piksel=(390,263) img=(0.3137, 0.3137, 0.3137, 1.0)
+G22BSONDA yolnokta yerel=(8.0, -14.3) occ=1 piksel=(352,262) img=(0.7216, 0.6588, 0.5333, 1.0)
+G22BSONDA yolnokta yerel=(0.0, -14.2) occ=1 piksel=(320,263) img=(0.7216, 0.6588, 0.5333, 1.0)
+G22BSONDA yolnokta yerel=(-8.0, -14.2) occ=1 piksel=(287,263) img=(0.7216, 0.6588, 0.5333, 1.0)
+G22BSONDA yolnokta yerel=(-16.0, -14.3) occ=1 piksel=(256,262) img=(0.7216, 0.6588, 0.5333, 1.0)
+G22BSONDA yolnokta yerel=(-24.0, -14.2) occ=1 piksel=(223,263) img=(0.7216, 0.6588, 0.5333, 1.0)
+G22BSONDA yolnokta yerel=(-28.6, -13.8) occ=1 piksel=(205,264) img=(0.7216, 0.6588, 0.5333, 1.0)
+G22BSONDA yolnokta yerel=(-33.0, -12.5) occ=1 piksel=(187,270) img=(0.7216, 0.6588, 0.5333, 1.0)
+G22BSONDA yolnokta yerel=(-37.2, -10.3) occ=1 piksel=(171,278) img=(0.7216, 0.6588, 0.5333, 1.0)
+G22BSONDA yolnokta yerel=(-41.2, -7.2) occ=1 piksel=(155,291) img=(0.7216, 0.6588, 0.5333, 1.0)
+G22BSONDA yolnokta yerel=(-45.0, -3.2) occ=1 piksel=(139,307) img=(0.7216, 0.6588, 0.5333, 1.0)
+G22BSONDA yolnokta yerel=(-48.6, 1.7) occ=1 piksel=(125,326) img=(0.7216, 0.6588, 0.5333, 1.0)
+G22BSONDA yolnokta yerel=(-51.9, 7.5) occ=1 piksel=(112,349) img=(0.7216, 0.6588, 0.5333, 1.0)
+G22BSONDA yolnokta yerel=(-55.1, 14.1) occ=1 piksel=(99,376) img=(0.7216, 0.6588, 0.5333, 1.0)
+G22BSONDA harita /root/is/harita/harita_hub.png
+G22BSONDA harita /root/is/harita/harita_saray.png
+G22BSONDA OZET yer=55 kotu=0 yeni_iz=116 dolgu_en_dogu_x=14.3 kopuk=0 en_dar=3.00 cimen=9.5
+G22BSONDA yukseklik bolum=23 yerel=(8.0, -30.0) geo_h=13.968 h_ham=16.862 hub_y=14.088 carp_y=13.968 AraziCarpisma
+G22BSONDA yukseklik bolum=23 yerel=(8.0, 10.0) geo_h=13.968 h_ham=15.231 hub_y=14.088 carp_y=13.968 AraziCarpisma
+G22BSONDA yukseklik bolum=23 yerel=(-10.0, -14.0) geo_h=13.968 h_ham=16.135 hub_y=14.088 carp_y=13.968 AraziCarpisma
+G22BSONDA yukseklik bolum=23 yerel=(-30.0, 10.0) geo_h=13.968 h_ham=14.801 hub_y=14.088 carp_y=13.968 AraziCarpisma
+G22BSONDA yukseklik bolum=23 yerel=(-40.0, -30.0) geo_h=13.968 h_ham=16.444 hub_y=14.088 carp_y=13.968 AraziCarpisma
+G22BSONDA yukseklik bolum=23 yerel=(16.0, -30.0) geo_h=13.968 h_ham=16.907 hub_y=14.088 carp_y=13.968 AraziCarpisma
+G22BSONDA yukseklik bolum=23 yerel=(25.0, -14.0) geo_h=13.968 h_ham=16.210 hub_y=14.088 carp_y=14.088 @StaticBody3D@111286

@@ -1,0 +1,2 @@
+T10KARE ad=04_caddeden_sur cizim=1083 ilkel=1562858
+T10KARE ad=04_caddeden_sur cizim=1177 ilkel=1834498

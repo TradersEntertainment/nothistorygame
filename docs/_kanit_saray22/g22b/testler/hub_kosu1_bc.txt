@@ -1,0 +1,66 @@
+### --chapter=10h --autotest=honest rc=0
+YUKLEMEAUDIT_ADAY scene=chapter10h evre=acilis toplam_ms=49412 en_uzun_bosluk_ms=1454 kaynak=sehir_289>kare ilk_kare_ms=1653 bosalt_ms=-1
+AUTOTEST PASS chapter=10h variant=honest outcome=10H.1 truth=3 direnc=0 paradox=10
+### --chapter=10h --autotest=save1 rc=0
+AUTOTEST PASS chapter=10h variant=save1 outcome=10H.1 truth=3 direnc=1 paradox=10
+### --chapter=10h --autotest=open rc=0
+YUKLEMEAUDIT_ADAY scene=chapter10h evre=acilis toplam_ms=45341 en_uzun_bosluk_ms=1168 kaynak=sehir_289>kare ilk_kare_ms=1438 bosalt_ms=-1
+AUTOTEST PASS chapter=10h variant=open outcome=10H.1 truth=3 direnc=0 paradox=10
+### --chapter=10h --autotest=pass rc=0
+YUKLEMEAUDIT_ADAY scene=chapter10h evre=acilis toplam_ms=45449 en_uzun_bosluk_ms=1050 kaynak=sehir_289>kare ilk_kare_ms=1239 bosalt_ms=-1
+AUTOTEST PASS chapter=10h variant=pass outcome=10H.1 truth=1 direnc=0 paradox=0
+### --chapter=12b --autotest rc=0
+YUKLEMEAUDIT_ADAY scene=chapter12b evre=acilis toplam_ms=44571 en_uzun_bosluk_ms=1020 kaynak=sehir_289>kare ilk_kare_ms=1222 bosalt_ms=-1
+AUTOTEST PASS chapter=12b variant= outcome=12B.1 world= honest=true
+### --chapter=12b --autotest=lie rc=0
+YUKLEMEAUDIT_ADAY scene=chapter12b evre=acilis toplam_ms=46258 en_uzun_bosluk_ms=1480 kaynak=sehir_289>kare ilk_kare_ms=1708 bosalt_ms=-1
+AUTOTEST PASS chapter=12b variant=lie outcome=12B.2 world= honest=false
+### --chapter=12b --autotest=year rc=0
+YUKLEMEAUDIT_ADAY scene=chapter12b evre=acilis toplam_ms=44525 en_uzun_bosluk_ms=1120 kaynak=sehir_289>kare ilk_kare_ms=1304 bosalt_ms=-1
+AUTOTEST PASS chapter=12b variant=year outcome=12B.3 world= honest=false
+### --chapter=12b --autotest=d2 rc=0
+YUKLEMEAUDIT_ADAY scene=chapter12b evre=acilis toplam_ms=43691 en_uzun_bosluk_ms=1144 kaynak=sehir_289>kare ilk_kare_ms=1342 bosalt_ms=-1
+AUTOTEST PASS chapter=12b variant=d2 outcome=12B.1 world= honest=true
+### --chapter=12b --autotest=d3 rc=0
+YUKLEMEAUDIT_ADAY scene=chapter12b evre=acilis toplam_ms=48248 en_uzun_bosluk_ms=1359 kaynak=sehir_289>kare ilk_kare_ms=1579 bosalt_ms=-1
+AUTOTEST PASS chapter=12b variant=d3 outcome=12B.1 world= honest=true
+### --chapter=13 --autotest=city rc=0
+YUKLEMEAUDIT_ADAY scene=chapter13 evre=tolga_city toplam_ms=44850 en_uzun_bosluk_ms=1529 kaynak=sehir_3547>solidify ilk_kare_ms=2027 bosalt_ms=-1
+AUTOTEST PASS chapter=13 variant=city version=garage outcome=13.2 window=8.4 tolga=T2 hikmet=
+### --chapter=23 --autotest rc=0
+YUKLEMEAUDIT_ADAY scene=chapter23 evre=acilis toplam_ms=44458 en_uzun_bosluk_ms=1003 kaynak=sehir_3547>kare ilk_kare_ms=1178 bosalt_ms=-1
+AUTOTEST PASS chapter=23 variant= outcome=23.1 deviation=0 card=true singed=false letter=false
+### --chapter=23 --autotest=creative rc=0
+YUKLEMEAUDIT_ADAY scene=chapter23 evre=acilis toplam_ms=47937 en_uzun_bosluk_ms=1081 kaynak=sehir_3547>kare ilk_kare_ms=1266 bosalt_ms=-1
+AUTOTEST PASS chapter=23 variant=creative outcome=23.2 deviation=3 card=true singed=false letter=false
+### --chapter=23 --autotest=pass rc=0
+YUKLEMEAUDIT_ADAY scene=chapter23 evre=acilis toplam_ms=46746 en_uzun_bosluk_ms=1294 kaynak=sehir_3547>kare ilk_kare_ms=1540 bosalt_ms=-1
+AUTOTEST PASS chapter=23 variant=pass outcome=23.1 deviation=0 card=true singed=false letter=false
+### --chapter=23 --autotest=letter rc=0
+AUTOTEST PASS chapter=23 variant=letter outcome=23.1 deviation=0 card=true singed=false letter=true
+### --chapter=23 --autotest=singed rc=0
+YUKLEMEAUDIT_ADAY scene=chapter23 evre=acilis toplam_ms=44892 en_uzun_bosluk_ms=1002 kaynak=sehir_3547>kare ilk_kare_ms=1172 bosalt_ms=-1
+AUTOTEST PASS chapter=23 variant=singed outcome=23.1 deviation=0 card=true singed=true letter=false
+### --chapter=23 --autotest=osm rc=0
+YUKLEMEAUDIT_ADAY scene=chapter23 evre=acilis toplam_ms=45929 en_uzun_bosluk_ms=1150 kaynak=sehir_3547>kare ilk_kare_ms=1382 bosalt_ms=-1
+AUTOTEST PASS chapter=23 variant=osm outcome=23.1 deviation=0 card=true singed=false letter=false
+### --chapter=24 --autotest rc=0
+YUKLEMEAUDIT_ADAY scene=chapter24 evre=acilis toplam_ms=44278 en_uzun_bosluk_ms=1163 kaynak=sehir_289>kare ilk_kare_ms=1411 bosalt_ms=-1
+YUKLEMEAUDIT_ADAY scene=chapter24 evre=ayasofya toplam_ms=24806 en_uzun_bosluk_ms=1604 kaynak=props>horn.city.plan ilk_kare_ms=1289 bosalt_ms=-1
+AUTOTEST PASS chapter=24 variant= outcome=24.1 stumbles=0 kid=true niko=false steadied=0 kid_t=0.4
+### --chapter=24 --autotest=late rc=0
+YUKLEMEAUDIT_ADAY scene=chapter24 evre=acilis toplam_ms=50277 en_uzun_bosluk_ms=1200 kaynak=props>solidify ilk_kare_ms=1365 bosalt_ms=-1
+YUKLEMEAUDIT_ADAY scene=chapter24 evre=ayasofya toplam_ms=9439 en_uzun_bosluk_ms=1245 kaynak=sehir_923>horn.city.plan ilk_kare_ms=784 bosalt_ms=-1
+AUTOTEST PASS chapter=24 variant=late outcome=24.2 stumbles=0 kid=false niko=false steadied=0 kid_t=0.3
+### --chapter=24 --autotest=niko rc=0
+YUKLEMEAUDIT_ADAY scene=chapter24 evre=acilis toplam_ms=49611 en_uzun_bosluk_ms=1694 kaynak=props>solidify ilk_kare_ms=1224 bosalt_ms=-1
+YUKLEMEAUDIT_ADAY scene=chapter24 evre=ayasofya toplam_ms=10129 en_uzun_bosluk_ms=1635 kaynak=sehir_923>horn.city.plan ilk_kare_ms=849 bosalt_ms=-1
+AUTOTEST PASS chapter=24 variant=niko outcome=24.1 stumbles=0 kid=true niko=true steadied=0 kid_t=0.4
+### --chapter=24 --autotest=niko_slow rc=0
+YUKLEMEAUDIT_ADAY scene=chapter24 evre=acilis toplam_ms=51301 en_uzun_bosluk_ms=1170 kaynak=sehir_289>kare ilk_kare_ms=1368 bosalt_ms=-1
+YUKLEMEAUDIT_ADAY scene=chapter24 evre=ayasofya toplam_ms=9548 en_uzun_bosluk_ms=1129 kaynak=sehir_923>horn.city.plan ilk_kare_ms=837 bosalt_ms=-1
+AUTOTEST PASS chapter=24 variant=niko_slow outcome=24.1 stumbles=0 kid=true niko=true steadied=1 kid_t=23.7
+### --chapter=24 --autotest=eclipse rc=0
+YUKLEMEAUDIT_ADAY scene=chapter24 evre=acilis toplam_ms=49883 en_uzun_bosluk_ms=1630 kaynak=sehir_289>kare ilk_kare_ms=1951 bosalt_ms=-1
+YUKLEMEAUDIT_ADAY scene=chapter24 evre=ayasofya toplam_ms=10308 en_uzun_bosluk_ms=1093 kaynak=sehir_923>horn.city.plan ilk_kare_ms=859 bosalt_ms=-1
+AUTOTEST PASS chapter=24 variant=eclipse outcome=24.1 stumbles=0 kid=true niko=false steadied=0 kid_t=0.4

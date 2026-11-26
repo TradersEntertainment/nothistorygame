@@ -2419,7 +2419,7 @@ func _dolgu_kumeler(xf: Transform3D, hucre: PackedInt32Array, rng: RandomNumberG
 			if bul == Vector2.INF:
 				continue
 			c = bul
-			var sec: Array = ["set_bostan_kosesi", "agac_kumesi", "set_bostan_kosesi"] if genis else ["kuyu", "kulube_bag", "kuyu"]
+			var sec: Array = ["set_bostan_kosesi", "agac_kumesi", "set_bostan_kosesi"] if genis else ["kuyu", "odun_yigini", "saman_yigini", "kulube_bag", "tas_yigini", "el_arabasi"]
 			tur = sec[rng.randi() % sec.size()]
 			if tur == "agac_kumesi" and not _bos_mu(c, 9.0):
 				tur = "set_bostan_kosesi"
