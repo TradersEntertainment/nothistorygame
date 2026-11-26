@@ -88,21 +88,30 @@ static func bolunur(bolum: String) -> bool:
 
 ## İç grubun (saray_kok) hub yerelindeki yeri: SARAY_OFS + (0, dy, 0). dy iç mahallenin arazi yüksekliği hub y'sine göre:
 ## v2'de IstGeo.h_ham(saray_v2) − hub_v2().origin.y (≈ −7,6), eski dünyada SiegeField.saray_y() (≈ +5,65; hub y 0 = dünya
-## y 0). Bölümler y yazmaz, bunu kullanır.
-static func saray_ofs() -> Vector3:
-	if IstBaglama.etkin():
-		if _saray_ofs_v2 == Vector3.INF:
-			var w: Vector3 = SurHub.saray_v2()
-			_saray_ofs_v2 = SurHub.SARAY_OFS + Vector3(0.0, IstGeo.h_ham(w.x, w.z) - SurHub.hub_v2().origin.y, 0.0)
-		return _saray_ofs_v2
+## y 0). Hangisi olduğu dünyaya bağlı (anahtara değil: 43o gibi eski dünya bölümleri v2 açıkken de eski dünyadır):
+## ByzCity örneği kendi dünyasından bilir (ofs()); dışarıdan saray_ofs_v2 / saray_ofs_eski. Bölümler y yazmaz.
+static func saray_ofs_v2() -> Vector3:
+	if _saray_ofs_v2 == Vector3.INF:
+		var w: Vector3 = SurHub.saray_v2()
+		_saray_ofs_v2 = SurHub.SARAY_OFS + Vector3(0.0, IstGeo.h_ham(w.x, w.z) - SurHub.hub_v2().origin.y, 0.0)
+	return _saray_ofs_v2
+
+
+static func saray_ofs_eski() -> Vector3:
 	if _saray_ofs_eski == Vector3.INF:
 		_saray_ofs_eski = SurHub.SARAY_OFS + Vector3(0.0, SiegeField.saray_y(), 0.0)
 	return _saray_ofs_eski
 
 
+## Bu örneğin dünyasına göre (v2 bağlamalı bölüm ya da IstSehir'in uzak hub'ı: v2; öbürü eski dünya)
+var _v2 := false
+func ofs() -> Vector3:
+	return saray_ofs_v2() if _v2 else saray_ofs_eski()
+
+
 ## İç grup yerelindeki bir nokta → hub yereli (ByzCity düğümünün yereli; ötelenmiş bölümde de)
-static func saray_konum(v: Vector3) -> Vector3:
-	return v + saray_ofs()
+func saray_konum(v: Vector3) -> Vector3:
+	return v + ofs()
 
 
 ## İç grup yerelindeki bir nokta → sahne (global). Bölünmemişte v'nin kendisi (ByzCity global'i).
@@ -131,7 +140,7 @@ func alan_gecis(p: Vector3) -> void:
 func _saray_kok_kur() -> void:
 	saray_kok = Node3D.new()
 	saray_kok.name = "SarayKok"
-	saray_kok.position = saray_ofs()
+	saray_kok.position = ofs()
 	add_child(saray_kok)
 
 
@@ -154,8 +163,6 @@ func _ready() -> void:
 			var bb := IstBaglama.sahne_bolumu()
 			bolunmus = bolunur(bb)
 			ic_merkez = bolunmus and bb in IC_MERKEZ
-	if bolunmus:
-		_saray_kok_kur()
 	if part == "walls" and bolunmus:
 		# G22: bölümün alanı iki dikdörtgen: sur parçası (iç surun şehir yüzüne / eski kutu surun dış yüzüne kadar) ve iç
 		# mahalle (hub yerelinde SARAY_OFS'ta). İkisi ayrı verilir (birleşip 430 m'lik tek dikdörtgen olmasın).
@@ -170,6 +177,9 @@ func _ready() -> void:
 		world = World1453.build(self, "byz_walls", [Rect2(-46.0, -48.0, 84.0, 70.0)], false)
 	elif part == "aya":
 		world = World1453.build(self, "byz_aya", [Rect2(-46.0, -114.0, 64.0, 76.0)], false)
+	if bolunmus:
+		_v2 = world != null and world == IstBaglama.kok
+		_saray_kok_kur()
 	if part != "aya" and bolunmus:
 		_kur_bolunmus()
 	elif part != "aya":
@@ -209,7 +219,7 @@ func _ready() -> void:
 		_dress_bolunmus()
 		# İç ağırlıklı bölüm: iç grup sahne kökenine (Dressing.auto ve servi dikimi fizik karesini bekler: öteleme ondan önce)
 		if ic_merkez:
-			position = -saray_ofs()
+			position = -ofs()
 		return
 	var drect := Rect2(-44, -110, 88, 138)
 	if part == "walls":
@@ -232,7 +242,7 @@ func _ready() -> void:
 
 ## G22: iç mahallenin dikdörtgeni hub yerelinde (World1453 keep, Dressing değil)
 static func saray_rect() -> Rect2:
-	var o := saray_ofs()
+	var o := SurHub.SARAY_OFS
 	return Rect2(IC_RECT.position + Vector2(o.x, o.z), IC_RECT.size)
 
 

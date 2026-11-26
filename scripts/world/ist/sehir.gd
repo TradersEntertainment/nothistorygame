@@ -2052,7 +2052,7 @@ func _place_v2() -> void:
 		_hub_parca.clear()
 		_v2_item("hub_sehir", hx.origin, 0.0, 50.0, _make_hub)
 		if _hub_bol:
-			var so := ByzCity.saray_ofs()
+			var so := ByzCity.saray_ofs_v2()
 			var sc := hx * (so + Vector3(ByzCity.IC_RECT.get_center().x, 0.0, ByzCity.IC_RECT.get_center().y))
 			IstGeo.duzle(Vector2(sc.x, sc.z), 50.0, hx.origin.y + so.y - 0.12, 14.0)
 			var it := _v2_item("hub_saray", hx * so, 0.0, 50.0, _make_hub_saray)
@@ -2290,6 +2290,7 @@ func _hub_bolunmus_kur(lod: int) -> Dictionary:
 	c.sur_yeni = true
 	c.bolunmus = true
 	c.bol_karar = true
+	c._v2 = true
 	c._saray_kok_kur()
 	# far_hub / ByzCity._kur_bolunmus ile aynı sıra; yeni surda kutu iç sur, kuleler, Romanos kemeri kurulmaz
 	c._k = c.saray_kok

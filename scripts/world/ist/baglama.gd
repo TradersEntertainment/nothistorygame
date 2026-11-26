@@ -418,7 +418,7 @@ static func build(parent: Node3D, region_name: String, keep_local: Array, _night
 	_sil_alan2 = Rect2()
 	if hub_bol:
 		temiz = TEMIZ_BOL
-		var so := ByzCity.saray_ofs()
+		var so := ByzCity.saray_ofs_v2()
 		_sil_alan2 = Rect2(ByzCity.IC_RECT.position + Vector2(so.x, so.z), ByzCity.IC_RECT.size).grow(8.0)
 	IstGeo.dislanan = [v2_rect(temiz)] + ([v2_rect(_sil_alan2)] if hub_bol else [])
 	# bölümün zemini ve geçiş halkası denizin altında kalmasın (bölüm alanı karada)
@@ -542,7 +542,7 @@ static func _saray_dondur(hub_x: Transform3D) -> void:
 		if String(it.get("id", "")) == "hub_saray":
 			var h = it.get("holder")
 			if h is Node3D and is_instance_valid(h):
-				var t := hub_x * Transform3D(Basis.IDENTITY, ByzCity.saray_ofs())
+				var t := hub_x * Transform3D(Basis.IDENTITY, ByzCity.saray_ofs_v2())
 				(h as Node3D).transform = t
 				it["yaw"] = t.basis.get_euler().y
 				it["pos"] = t.origin
