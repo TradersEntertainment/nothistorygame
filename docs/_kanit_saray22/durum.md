@@ -1,4 +1,4 @@
-G22b SÜRÜYOR 07:20 UTC dolgu çalışıyor (boş kare %0, çimen ≤ 9,5 m, önek aynı); zemin/eşya rng düzeltmeleri; testler sırada
+G22b BİTTİ 10:19 UTC d98cdb84
 
 # G22 durum: BİTTİ
 
