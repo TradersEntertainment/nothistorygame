@@ -1037,8 +1037,7 @@ func _sura_gecis() -> void:
 	var dis := (city.sur_global(Vector3(30.0, 0, -14.0)) - g0)
 	dis.y = 0.0
 	var yuksel := g0 + dis.normalized() * 14.0 + Vector3(0, 9.0, 0)
-	gull.fly_to(yuksel, 7.0)
-	await _wait(1.6)
+	await gull.fly_to(yuksel, 7.0)        # uçuş biter (tween sürerse martı fıçıdan uzaklaşırdı), sonra kararma
 	var dur := player.frozen
 	player.frozen = true
 	await hud.fade_to(1.0, 0.6)
