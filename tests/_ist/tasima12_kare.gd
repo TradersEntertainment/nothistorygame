@@ -97,6 +97,12 @@ func _bakislar() -> Array:
 				# G22: saray avlusu iç mahallede (bölünmüşte c.ic_global; bölünmemişte c.to_global ile aynı)
 				["04_ic_mekan_kapisi", c.call("ic_global", ByzCity.EMPEROR_POS + Vector3(9.0, 1.7, 3.0)), c.call("ic_global", ByzCity.EMPEROR_POS + Vector3(0.0, 1.5, 0.0)), null],
 				["05_tepeden", c.to_global(Vector3(-10.0, 140.0, -10.0)), c.to_global(Vector3(45.0, 0.0, -10.0)), null],
+				# G22: iç mahalle göz hizasında ve surdaki parçanın nöbet yeri
+				["06_avlu_imparator", c.call("ic_global", ByzCity.EMPEROR_POS + Vector3(7.0, 1.7, 2.0)), c.call("ic_global", ByzCity.EMPEROR_POS + Vector3(-2.6, 1.4, 0.0)), null],
+				["07_kancilarya_kapisi", c.call("ic_global", Vector3(1.0, 1.7, -19.0)), c.call("ic_global", Vector3(0.0, 3.0, -30.0)), null],
+				["08_meydan_cesme", c.call("ic_global", Vector3(4.5, 1.7, -5.0)), c.call("ic_global", Vector3(0.0, 1.5, -16.0)), null],
+				["09_nobet_yeri", c.to_global(ByzCity.FICI_POS + Vector3(-6.0, 2.2, 9.0)), c.to_global(ByzCity.FICI_POS + Vector3(3.0, 1.0, 2.0)), null],
+				["10_sokak_agzi", c.call("ic_global", Vector3(ByzCity.BOLME_X + 14.0, 3.0, -14.0)), c.call("ic_global", Vector3(0.0, 2.0, -14.0)), null],
 			]
 		"31o":
 			var w := ch.get("walls") as Node3D
