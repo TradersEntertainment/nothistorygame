@@ -64,6 +64,9 @@ var _cleared := 0
 var _gun_t := 99.0
 var _warn := false
 var _knocks := 0
+## Sürekli bekçinin aralığı (sn) ve bir önceki bakışta iç içe görülen çiftler (_kamera_bekci)
+const BEKCI_ARA := 0.4
+var _bekci_onceki := {}
 var _photo := ""
 var cam: TespitCam
 var _t := 0.0
@@ -154,8 +157,16 @@ func _dostlari_dagit() -> void:
 ## bitip gizlenenler geri gelince ikisi iç içe kalıyordu (VISAUDIT overlap WallFight{chop}|Duelist, SPK_DEFENDER|Duelist;
 ## 8D tanı izi: onarımcı k 366–370 gizli, dost düellocu 3,5 → 2,55). Kamera oyuncuya her döndüğünde oyuncunun çevresinde
 ## iç içe ayakta duran çiftlerin yürüyeni (düellocu; yoksa yerinde durmayan) boş yere ayrılır.
+##
+## Sürekli bekçi (0,4 sn'de bir, oyuncunun kamerası açıkken): olaya bağlı bekçiler aradakini kaçırıyordu. Tam paket
+## council_ok: dövüşten sonra dost düellocu yedek bölüğün arka köşesindeki askerin içinde kaldı (VISAUDIT overlap
+## Squad|Duelist (−15,6; 0; 5,5): gediğe 15 m, _dostlari_dagit'in 14 m'sinin dışında; bölüğün sık nizamında
+## Unclip.spread'in 1,4 m'si boş yer bulamıyordu). 6 tekrarın birinde, öldürme kamerasından sonra dost düellocu gediğin
+## toprak setinin 10 cm içindeydi (VISAUDIT insolid … Asama>Toprak_GedikSet_Carp). İki ardışık bakışta iç içe duran çift
+## ayrılır (yanından geçen bir an çakışır, sayılmaz; denetim 1 sn ister); görünen bir katının içindeki düellocu dışarı alınır.
 func _kamera_bekci() -> void:
 	var onceki := true
+	var sure := 0.0
 	while is_inside_tree():
 		await get_tree().process_frame
 		if player == null or not is_instance_valid(player):
@@ -165,9 +176,53 @@ func _kamera_bekci() -> void:
 			await get_tree().process_frame      # gizlenenler bir kare içinde geri gelir
 			_ic_ice_ayir()
 		onceki = simdi
+		sure += get_process_delta_time()
+		if sure >= BEKCI_ARA:
+			sure = 0.0
+			if simdi and is_inside_tree():
+				_ic_ice_ayir(true)
+				_katidan_cikar()
 
 
-func _ic_ice_ayir() -> void:
+## Görünen bir katının (gedik seti, siper, sandık) içinde kalan dost/düşman düellocu en yakın boş, katısız yere alınır.
+func _katidan_cikar() -> void:
+	var pp := player.global_position
+	for n in get_children():
+		var d := n as Duelist
+		if d == null or not is_instance_valid(d) or d.is_queued_for_deletion() or not d.is_visible_in_tree() or not d.alive():
+			continue
+		if bool(d.get("_falling")) or not (d.get("_climb") as Dictionary).is_empty() or d.global_position.distance_to(pp) > 36.0:
+			continue
+		if not Unclip.in_solid(d, d.global_position, 0.16):
+			continue
+		var once := d.global_position
+		if _bosa_al(d):
+			d.set("_dodge_to", Vector3.INF)
+			if GameState.autotest:
+				print("BEKCI26 katidan at=%s -> %s" % [once.snapped(Vector3.ONE * 0.1), d.global_position.snapped(Vector3.ONE * 0.1)])
+
+
+## Düellocu için boş yer: halkalar 0,35–2,5 m, zemini 0,6 m içinde, katısız (0,2) ve kalabalıksız (0,45). Unclip.spread'in
+## 1,4 m'si sık nizamdaki bölüğün içinde yetmiyordu.
+func _bosa_al(who: Node3D) -> bool:
+	var p := who.global_position
+	var a0 := float(who.get_instance_id() % 628) * 0.01
+	for ring: float in [0.35, 0.6, 0.9, 1.2, 1.6, 2.0, 2.5]:
+		for k in 12:
+			var a := a0 + k * TAU / 12.0
+			var c := p + Vector3(sin(a), 0, cos(a)) * ring
+			var fy := Unclip.floor_y(who, c, 0.6, 1.0)
+			if is_nan(fy) or absf(fy - p.y) > 0.6:
+				continue
+			c.y = fy
+			if Unclip.in_solid(who, c, 0.2) or Unclip.crowded(who, c, 0.45):
+				continue
+			who.global_position = c
+			return true
+	return false
+
+
+func _ic_ice_ayir(kalici := false) -> void:
 	var pp := player.global_position
 	var who: Array[Node3D] = []
 	for n in get_tree().get_nodes_in_group("persons") + get_tree().get_nodes_in_group("soldiers"):
@@ -187,24 +242,35 @@ func _ic_ice_ayir() -> void:
 				at = true
 				break
 			q = q.get_parent()
-		if not at and p.global_position.distance_to(pp) < 30.0:
+		if not at and p.global_position.distance_to(pp) < (36.0 if kalici else 30.0):
 			who.append(p)
+	# kalici (sürekli bekçi): yalnız bir önceki bakışta da iç içe olan çift ayrılır
+	var simdi := {}
 	for i in who.size():
 		for j in range(i + 1, who.size()):
 			var a := who[i]
 			var b := who[j]
-			if not is_instance_valid(a) or not is_instance_valid(b):
+			if not is_instance_valid(a) or not is_instance_valid(b) or a == b:
 				continue
 			var d := Vector2(a.global_position.x - b.global_position.x, a.global_position.z - b.global_position.z).length()
 			if d >= 0.4 or absf(a.global_position.y - b.global_position.y) > 0.6:
 				continue
+			if kalici:
+				var key := "%d_%d" % [mini(a.get_instance_id(), b.get_instance_id()), maxi(a.get_instance_id(), b.get_instance_id())]
+				simdi[key] = true
+				if not _bekci_onceki.has(key):
+					continue
 			if _eve_dondur(a, b):
 				print("BEKCI26 ayir eve a=%s b=%s d=%.2f" % [a.get_parent().name, b.get_parent().name, d])
 				continue
 			var m := _ayrilan(a, b)
 			if m != null:
-				print("BEKCI26 ayir a=%s b=%s d=%.2f" % [a.get_parent().name, b.get_parent().name, d])
-				Unclip.spread(m, 0.6)
+				print("BEKCI26 ayir%s a=%s b=%s d=%.2f" % [" surekli" if kalici else "", a.get_parent().name, b.get_parent().name, d])
+				# Düellocu sık nizamdaki bölüğün içinde: Unclip.spread'in 1,4 m'si yetmiyordu, daha geniş arar
+				if not Unclip.spread(m, 0.6) and m is Duelist:
+					_bosa_al(m)
+	if kalici:
+		_bekci_onceki = simdi
 
 
 ## Gizlenip yeniden görünen (Melee.rally: ayaklandırılan asker dövüş boyunca gizli, dönüşte evinde görünür; Duel öldürme
