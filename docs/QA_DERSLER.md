@@ -1282,3 +1282,21 @@ Her bölüm denetiminde ve her düzeltmede bu listeyi baştan uygula. Yeni bir h
   - Yerine damgalı hücrelere AYRI rng'li bir son geçiş yazıyor. Kayıtlar listelerin sonuna ekleniyor.
   - Önek karması sondası (streets/houses/doku/oge/avlu/meydan) şehrin geri kalanının bit bit aynı kaldığını kanıtladı.
 - **Akış bitmeden çekilen kare yanıltır (G22b).** Bölgenin ilk saniyelerinde sur yolu merdivenleri surun kendisinden önce akıyor; karede merdivenler havada asılı görünüyordu. Bir sondayla aynı bakış 30 sn boyunca tekrar çekildi: sur ve ağaçlar gelince havada bir şey kalmadı. Kare değerlendirmeden önce akışın bitmesi beklenir. Akış sırası ise ayrı bir iş olarak not edildi (oyuncu da birkaç saniye görebilir).
+- **Uzun bir yapıyı yeni kaleme geçirirken ayrıntıyı uzaklığa göre böl (0.99.130, G23).** Eski dünyanın kara suru ~1280 m. Hepsi tam ayrıntı (lod 0) kurulsaydı yükleme ~4–5 sn uzardı.
+  - Tam ayrıntı yalnız oynanış alanına 120 m içindeki dilimlerde (43o'da drone'un alçaldığı dilim dahil).
+  - Ötekiler pişmiş lod 1 (kutu değil). Yüklemeden sonra kare başına bir dilim akışla kuruluyor.
+  - Çarpışma kalemin kendi gövdelerinde; WorldWalk'a bağlı değil (WorldWalk akışla gelen dilimi görmez).
+  - Sonuç: yükleme en çok +%7,6 (43o), açılış karelerinde çizim çağrısı ≈ aynı.
+- **Kutu kaldırılırken rng çekimleri "kuru" yapılır.** `_wall_extension` alanın tek rng'sinden kule boyu, sancak, yara, savunan ve ateş çekiyordu. Arkasından ordugâh, siper ve bölükler aynı akıştan çekiyor. Döngü kurmadan aynı sırayla dönüyor; `rng.state` ve ordugâh konum karması dört bölgede önce = sonra (`tests/_ist/sur23_rng.tscn`).
+- **ÖNCE karesi de kusurlu olabilir.** Kuzey uçta kara surları TAŞIMA-9'dan beri boşluğa bitiyordu. Nedeni: Blakherna'nın uzak kabuğu, yeni sette gizli olan katı parçaları pişiriciye almıyordu. İki ucu da ayrıca çekmek bunu ortaya çıkardı.
+- **"Bit bit aynı" için kare değil ağ karması.** Parçacık ve akış yüzünden kare farkı 0 çıkmaz. Yeni set ve v2 bölümlerinin sur ağı karması (yol, köşe, konum) 9 bölümde önce = sonra (`tests/_ist/sur23_karma.tscn`).
+- **Yardımcının "önceden de vardı" demesi kanıt değildir (0.99.130).**
+  - G23 raporu 27'deki havada yürüyeni (VISAUDIT float) "ÖNCE'de de aynı" diye geçti.
+  - 0.99.129'un tam paketinde aynı yedi çeşit temizdi; G23 sonrası paketin yedisinde de çıktı.
+  - Kök eski bir kusurdu: Galata'nın 0,5 m'lik bahçe duvarının tepesi `Dressing` yürüyüş noktası sayılıyordu. G23'ün akışı yükleme zamanlamasını değiştirince her koşuda görünür oldu.
+  - Ayırt etmek için aynı koşu yeni kalemle ve `--eski-kalem` bayrağıyla yan yana yapıldı. Ardından düğüm taramasına geçici bir sonda kondu.
+  - Düzeltme: yürüyüş noktası dört yanında 0,6 m aynı düzde zemin ister.
+- **Aralıklı döşemenin altı da görünmeli (0.99.130, 37o).**
+  - Kalas köprünün çarpışma kutusu kesintisiz, enine tahtaların arası 3,5 cm boştu ve altında görünen bir şey yoktu.
+  - Kalas yalpalamayı bırakıp iki ölçümde aynı açıda durunca, aralığa denk gelen ayak "görünmez zemin" sayıldı (GORUNMEZZEMIN; 37o `=trespass`, yalnız bir tam pakette).
+  - Düzeltme: kirişlerin arasına, tahtaların 1 cm altına kesintisiz alt tahta. Çarpışma aynı; sözleşme altılısı aynı.
