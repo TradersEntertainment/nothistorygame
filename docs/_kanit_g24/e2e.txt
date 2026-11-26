@@ -1,0 +1,25 @@
+== aralik
+cikis=0 sure=15s
+GUNCELLEME uzak=0.99.130 yerel=0.99.129 yeni=evet sonuc=0 kod=200
+GUNCELLEME parca listesi url=http://127.0.0.1:18741/GercekTarihBuDegil.x86_64.parca.json
+GUNCELLEME parca plan indirilecek=4033538 kopya=1258712702 aralik=4
+GUNCELLEME parca birlestirildi
+GUNCELLEME dogrulandi sha256=9b06732f4f71e4604e7b3f2caf4167cdb7150200f28183f89fa2ab8664242cce
+GUNCELLEME degistirildi pid=5930
+GUNCELLEME surum=0.99.130 eski_var=false
+kurulu sha=B klasor=[GercekTarihBuDegil.x86_64 ]
+surum: GUNCELLEME surum=0.99.130 eski_var=false
+sunucu: istek=6 206=4 200=2
+== aralik_yok
+cikis=0 sure=17s
+GUNCELLEME uzak=0.99.130 yerel=0.99.129 yeni=evet sonuc=0 kod=200
+GUNCELLEME parca listesi url=http://127.0.0.1:18741/GercekTarihBuDegil.x86_64.parca.json
+GUNCELLEME parca plan indirilecek=4033538 kopya=1258712702 aralik=4
+GUNCELLEME parca -> tam indirme (aralik sonuc=7 kod=200 boy=0/3019664)
+GUNCELLEME indiriliyor url=http://127.0.0.1:18741/GercekTarihBuDegil.x86_64 boyut=1262746240
+GUNCELLEME dogrulandi sha256=9b06732f4f71e4604e7b3f2caf4167cdb7150200f28183f89fa2ab8664242cce
+GUNCELLEME degistirildi pid=6009
+GUNCELLEME surum=0.99.130 eski_var=false
+kurulu sha=B klasor=[GercekTarihBuDegil.x86_64 ]
+surum: GUNCELLEME surum=0.99.130 eski_var=false
+sunucu: istek=4 206=0 200=4

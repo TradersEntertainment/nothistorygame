@@ -6,6 +6,11 @@ extends Node
 ## yanına <exe>.yeni olarak indirir, boyutunu ve SHA-256'sını doğrular; oyuncu menüde onaylayınca
 ##   <exe> → <exe>.eski,  <exe>.yeni → <exe>,  yeni süreç başlat,  çık.
 ## Herhangi bir adım tutmazsa geri alınır (.eski → <exe>): oyun hiçbir durumda eksik ya da bozuk exe ile kalmaz.
+## G24 PARÇALI GÜNCELLEME: bildirimde platformun "parca" listesi varsa (<ad>.parca.json, tools/guncelleme_parca.py) bütün
+## ikili indirilmez: oyun kendi ikilisinin parçalarının MD5'ini çıkarır, yalnız değişen aralıkları HTTP Range ile
+## <exe>.parcalar'a indirir, <exe>.yeni'yi yerel parçalar + indirilenlerden birleştirir ve aynı sha256 ile doğrular
+## (GuncellemeParca). Liste yoksa/bozuksa, sunucu Range vermiyorsa, fark büyükse ya da sha256 tutmazsa tam indirme.
+##   --guncelleme-tam            parça yolunu kapatır (tam indirme)
 ## Sonraki açılışta <exe>.eski ve on dakikadan eski yarım <exe>.yeni silinir (GameState._ready).
 ## Kayıtlar ve ayarlar user://'dadır, kurulum klasörüne dokunulmaz. macOS'ta yalnız bant + indirme sayfası.
 ##
@@ -64,6 +69,16 @@ var _hiz_ms := 0
 var _yayin_ms := 0
 var _ozet_is: Thread
 var _ozet_bayt := 0
+## G24 parça yolu: "" kapalı, "liste" (parça listesi iniyor), "hazirlik" (yerel özetler), "aralik" (Range istekleri),
+## "birlestir" (birleştirme + doğrulama)
+var _parca := ""
+var _parca_liste: Dictionary = {}
+var _parca_plan: Dictionary = {}
+var _parca_istek: Array = []
+var _parca_taban := 0
+var _parca_is: Thread
+var _parca_bayt := 0
+var tam_zorla := false
 
 
 func _init(p_kaynak := "", p_oto := false, p_yalniz := false, p_surum_yaz := false) -> void:
@@ -75,6 +90,7 @@ func _init(p_kaynak := "", p_oto := false, p_yalniz := false, p_surum_yaz := fal
 	# Linux'ta get_executable_path /proc/self/exe okur: adlandırmadan sonra ".eski" döner, yol açılışta saklanır
 	exe = OS.get_executable_path()
 	yerel = GameState.version_text()
+	tam_zorla = "--guncelleme-tam" in OS.get_cmdline_user_args()
 	process_mode = Node.PROCESS_MODE_ALWAYS
 
 
@@ -96,6 +112,8 @@ func _ready() -> void:
 func _exit_tree() -> void:
 	if _ozet_is != null and _ozet_is.is_started():
 		_ozet_is.wait_to_finish()
+	if _parca_is != null and _parca_is.is_started():
+		_parca_is.wait_to_finish()
 
 
 # ---------------------------------------------------------------- saf yardımcılar (tests/guncelleme_check.gd)
@@ -137,6 +155,11 @@ static func yeni_mi(uzak: String, yerel_s: String) -> bool:
 	return surum_karsilastir(uzak, yerel_s) == 1
 
 
+## Dosya adı kuralı (yol ayıracı, "..", ":" yok)
+static func ad_gecerli(ad: String) -> bool:
+	return ad.strip_edges() != "" and ad == ad.strip_edges() and not ("/" in ad or "\\" in ad or ".." in ad or ":" in ad)
+
+
 ## Bildirimdeki platform girdisi geçerli mi: ad (yol ayıracı ve ".." yok), boyut (pozitif tam sayı), sha256 (64 onaltılık).
 static func girdi_gecerli(g: Variant) -> bool:
 	if not g is Dictionary:
@@ -176,6 +199,9 @@ static func manifest_coz(metin: String) -> Dictionary:
 		if girdi_gecerli(d.get(p)):
 			var g := d[p] as Dictionary
 			out[p] = {"ad": String(g["ad"]), "boyut": int(g["boyut"]), "sha256": String(g["sha256"]).to_lower()}
+			# G24: parça listesinin adı (aynı ad kuralı); yoksa ya da bozuksa tam indirme
+			if g.get("parca") is String and ad_gecerli(String(g["parca"])):
+				out[p]["parca"] = String(g["parca"])
 	return out
 
 
@@ -300,11 +326,11 @@ static func acilis_temizligi(e: String, paket := OS.has_feature("template") and 
 		return
 	if FileAccess.file_exists(e + ".eski"):
 		DirAccess.remove_absolute(e + ".eski")
-	var yeni := e + ".yeni"
-	if FileAccess.file_exists(yeni):
-		var yas := int(Time.get_unix_time_from_system()) - int(FileAccess.get_modified_time(yeni))
-		if yas > YARIM_YENI_SN:
-			DirAccess.remove_absolute(yeni)
+	for yeni: String in [e + ".yeni", e + ".parcalar"]:
+		if FileAccess.file_exists(yeni):
+			var yas := int(Time.get_unix_time_from_system()) - int(FileAccess.get_modified_time(yeni))
+			if yas > YARIM_YENI_SN:
+				DirAccess.remove_absolute(yeni)
 
 
 static func _ozet(yol: String, ilerleme: Callable = Callable()) -> String:
@@ -405,8 +431,9 @@ func _denetim_bitti(sonuc: int, kod: int, _h: PackedStringArray, govde: PackedBy
 
 # ---------------------------------------------------------------- indirme
 
-func indirme_url() -> String:
-	var ad := String(girdi.get("ad", ""))
+func indirme_url(ad := "") -> String:
+	if ad == "":
+		ad = String(girdi.get("ad", ""))
 	if kaynak != "":
 		return kaynak.get_base_dir() + "/" + ad.uri_encode()
 	return DEPO + "/releases/download/v%s/%s" % [String(manifest["surum"]), ad.uri_encode()]
@@ -415,6 +442,14 @@ func indirme_url() -> String:
 func indir() -> void:
 	if durum != D.YENI or neden != "" or girdi.is_empty():
 		return
+	if girdi.has("parca") and not tam_zorla:
+		_parca_baslat()
+		return
+	_tam_indir()
+
+
+func _tam_indir() -> void:
+	_parca = ""
 	var url := indirme_url()
 	var ok := url.begins_with(INDIRME_ONEK) if kaynak == "" else kaynak_gecerli(url)
 	if not ok:
@@ -447,7 +482,8 @@ func indir() -> void:
 
 
 func iptal() -> void:
-	if durum == D.INDIRILIYOR:
+	if durum == D.INDIRILIYOR or (durum == D.DOGRULANIYOR and _parca == "hazirlik"):
+		_parca = ""
 		_indirme_kapat()
 		durum = D.YENI
 		_yaz("iptal")
@@ -465,12 +501,32 @@ func _indirme_kapat() -> void:
 func _yeni_sil() -> void:
 	if FileAccess.file_exists(exe + ".yeni"):
 		DirAccess.remove_absolute(exe + ".yeni")
+	_parcalar_sil()
+
+
+func _parcalar_sil() -> void:
+	if FileAccess.file_exists(exe + ".parcalar"):
+		DirAccess.remove_absolute(exe + ".parcalar")
 
 
 func _process(_d: float) -> void:
 	var simdi := Time.get_ticks_msec()
+	if _parca_is != null and not _parca_is.is_alive():
+		var r: Variant = _parca_is.wait_to_finish()
+		_parca_is = null
+		if _parca == "hazirlik":
+			_hazirlik_bitti(r)
+		elif _parca == "birlestir":
+			_birlestirme_bitti(String(r))
+		# (iptal edildiyse sonuç atılır)
+		return
+	if _parca == "hazirlik" or _parca == "birlestir":
+		indirilen = _parca_bayt
+		if simdi - _yayin_ms >= 250:
+			_yayinla()
+		return
 	if durum == D.INDIRILIYOR and is_instance_valid(_http_indir):
-		var b := _http_indir.get_downloaded_bytes()
+		var b := _parca_taban + _http_indir.get_downloaded_bytes()
 		indirilen = b
 		if b != _bekci_bayt:
 			_bekci_bayt = b
@@ -532,8 +588,12 @@ func _dogrulama_bitti(h: String) -> void:
 	if h == "" or h != String(girdi["sha256"]):
 		_yaz("sha256 tutmadi %s != %s" % [h, girdi["sha256"]])
 		_yeni_sil()
+		if _parca != "":
+			_parca_dus("sha256")
+			return
 		_sayfa("UI_GUNC_N_BOZUK")
 		return
+	_parca = ""
 	if platform() != "windows":
 		# 0o755; FAT/exFAT'te chmod düşebilir: çalıştırma biti yoksa yerinde güncelleme yok
 		var err := FileAccess.set_unix_permissions(yol, 493)
@@ -546,6 +606,183 @@ func _dogrulama_bitti(h: String) -> void:
 	_yayinla()
 	if oto:
 		uygula.call_deferred()
+
+
+# ---------------------------------------------------------------- G24 parçalı güncelleme
+
+## Parça yolu bir adımda tutmadı: tam indirmeye dön (oyuncu yeniden onay vermez; aynı "Güncelle")
+func _parca_dus(neden_: String) -> void:
+	_yaz("parca -> tam indirme (%s)" % neden_)
+	_parca = ""
+	if is_instance_valid(_http_indir):
+		_http_indir.cancel_request()
+		_http_indir.queue_free()
+	_http_indir = null
+	_parcalar_sil()
+	durum = D.YENI
+	_tam_indir()
+
+
+func _parca_baslat() -> void:
+	if _parca_is != null:
+		return                          # önceki (iptal edilmiş) hazırlık henüz bitmedi
+	var url := indirme_url(String(girdi["parca"]))
+	var ok := url.begins_with(INDIRME_ONEK) if kaynak == "" else kaynak_gecerli(url)
+	if not ok:
+		_tam_indir()
+		return
+	_parca = "liste"
+	_http_indir = HTTPRequest.new()
+	_http_indir.use_threads = true
+	_http_indir.timeout = 60.0
+	_http_indir.accept_gzip = true
+	add_child(_http_indir)
+	_http_indir.request_completed.connect(_liste_geldi)
+	durum = D.INDIRILIYOR
+	toplam = 0
+	indirilen = 0
+	_parca_taban = 0
+	_bekci_bayt = -1
+	_bekci_ms = Time.get_ticks_msec()
+	if _http_indir.request(url, _basliklar()) != OK:
+		_parca_dus("liste istegi")
+		return
+	_yaz("parca listesi url=%s" % url)
+	_yayinla()
+
+
+func _liste_geldi(sonuc: int, kod: int, _h: PackedStringArray, govde: PackedByteArray) -> void:
+	if _parca != "liste":
+		return
+	if is_instance_valid(_http_indir):
+		_http_indir.queue_free()
+	_http_indir = null
+	if sonuc != HTTPRequest.RESULT_SUCCESS or kod != 200:
+		_parca_dus("liste sonuc=%d kod=%d" % [sonuc, kod])
+		return
+	_parca_liste = GuncellemeParca.liste_coz(govde.get_string_from_utf8(), int(girdi["boyut"]))
+	if _parca_liste.is_empty():
+		_parca_dus("liste bozuk")
+		return
+	# Yerel ikilinin parçaları ve MD5'leri (iş parçacığında; ekranda "doğrulanıyor")
+	_parca = "hazirlik"
+	durum = D.DOGRULANIYOR
+	var yerel_boy := 0
+	var f := FileAccess.open(exe, FileAccess.READ)
+	if f != null:
+		yerel_boy = f.get_length()
+		f.close()
+	toplam = maxi(yerel_boy, 1)
+	_parca_bayt = 0
+	_parca_is = Thread.new()
+	_parca_is.start(_hazirlik_is.bind(exe))
+	_yayinla()
+
+
+func _hazirlik_is(yol: String) -> Dictionary:
+	var k := GuncellemeParca.kesimler(yol)
+	return GuncellemeParca.ozetle(yol, k["parcalar"], func(p: int): _parca_bayt = p)
+
+
+func _hazirlik_bitti(r: Variant) -> void:
+	if not r is Dictionary or (r as Dictionary).is_empty():
+		_parca_dus("yerel ozet yok")
+		return
+	_parca_plan = GuncellemeParca.plan(_parca_liste, r)
+	var ind := int(_parca_plan["indirilecek"])
+	_yaz("parca plan indirilecek=%d kopya=%d aralik=%d" % [ind, int(_parca_plan["kopya"]), (_parca_plan["araliklar"] as Array).size()])
+	if float(ind) > float(girdi["boyut"]) * GuncellemeParca.TAM_ORAN:
+		_parca_dus("fark buyuk")
+		return
+	_parcalar_sil()
+	_parca_istek = GuncellemeParca.istekler(_parca_plan["araliklar"])
+	_parca = "aralik"
+	durum = D.INDIRILIYOR
+	toplam = maxi(ind, 1)
+	indirilen = 0
+	_parca_taban = 0
+	kalan_sn = -1.0
+	_hiz = 0.0
+	_hiz_bayt = 0
+	_bekci_bayt = -1
+	_bekci_ms = Time.get_ticks_msec()
+	_hiz_ms = _bekci_ms
+	_yayinla()
+	_sonraki_aralik()
+
+
+func _sonraki_aralik() -> void:
+	if _parca != "aralik":
+		return
+	if _parca_istek.is_empty():
+		_birlestir_baslat()
+		return
+	var r: Array = _parca_istek[0]
+	_http_indir = HTTPRequest.new()
+	_http_indir.use_threads = true
+	_http_indir.timeout = 0.0
+	_http_indir.accept_gzip = false
+	add_child(_http_indir)
+	_http_indir.request_completed.connect(_aralik_geldi)
+	# Range'i yok sayan sunucu bütün dosyayı yollarsa bellek dolmasın: istek boyunu aşan gövde hemen kesilir (→ tam indirme)
+	_http_indir.body_size_limit = int(r[1]) - int(r[0]) + 4096
+	var bas := _basliklar()
+	bas.append("Range: bytes=%d-%d" % [int(r[0]), int(r[1]) - 1])
+	if _http_indir.request(indirme_url(), bas) != OK:
+		_parca_dus("aralik istegi")
+
+
+func _aralik_geldi(sonuc: int, kod: int, _h: PackedStringArray, govde: PackedByteArray) -> void:
+	if _parca != "aralik" or _parca_istek.is_empty():
+		return
+	if is_instance_valid(_http_indir):
+		_http_indir.queue_free()
+	_http_indir = null
+	var r: Array = _parca_istek[0]
+	var n := int(r[1]) - int(r[0])
+	# 206 ve tam boy: sunucu Range'i anladı (200 = bütün dosyayı yolladı → tam indirme)
+	if sonuc != HTTPRequest.RESULT_SUCCESS or kod != 206 or govde.size() != n:
+		_parca_dus("aralik sonuc=%d kod=%d boy=%d/%d" % [sonuc, kod, govde.size(), n])
+		return
+	var yol := exe + ".parcalar"
+	var f := FileAccess.open(yol, FileAccess.READ_WRITE) if FileAccess.file_exists(yol) else FileAccess.open(yol, FileAccess.WRITE)
+	if f == null:
+		_parca_dus("parcalar yazilamadi")
+		return
+	f.seek_end()
+	f.store_buffer(govde)
+	var ok := f.get_error() == OK
+	f.close()
+	if not ok:
+		_parca_dus("parcalar yazilamadi")
+		return
+	_parca_taban += n
+	indirilen = _parca_taban
+	_parca_istek.pop_front()
+	_sonraki_aralik()
+
+
+func _birlestir_baslat() -> void:
+	_parca = "birlestir"
+	durum = D.DOGRULANIYOR
+	toplam = int(girdi["boyut"]) * 2
+	_parca_bayt = 0
+	_parca_is = Thread.new()
+	_parca_is.start(_birlestir_is.bind(exe, exe + ".parcalar", _parca_plan, exe + ".yeni"))
+	_yayinla()
+
+
+func _birlestir_is(yerel_yol: String, parca_yol: String, pl: Dictionary, hedef: String) -> String:
+	if not GuncellemeParca.birlestir(yerel_yol, parca_yol, pl, hedef, func(p: int): _parca_bayt = p):
+		return ""
+	var n := int(pl["indirilecek"]) + int(pl["kopya"])
+	return _ozet(hedef, func(p: int): _parca_bayt = n + p)
+
+
+func _birlestirme_bitti(h: String) -> void:
+	_parcalar_sil()
+	_yaz("parca birlestirildi")
+	_dogrulama_bitti(h)
 
 
 # ---------------------------------------------------------------- değiştirme

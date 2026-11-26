@@ -107,9 +107,14 @@ jobs:
           wb=$(stat -c %s dist_ham/GercekTarihBuDegil.exe); lb=$(stat -c %s dist_ham/GercekTarihBuDegil.x86_64)
           test "$wb" -lt 2000000000 && test "$lb" -lt 2000000000   # GitHub tek dosya sınırı 2 GiB
           ws=$(sha256sum dist_ham/GercekTarihBuDegil.exe | cut -d' ' -f1); lsh=$(sha256sum dist_ham/GercekTarihBuDegil.x86_64 | cut -d' ' -f1)
-          printf '{"surum":"%s","motor":"%s","windows":{"ad":"GercekTarihBuDegil.exe","boyut":%s,"sha256":"%s"},"linux":{"ad":"GercekTarihBuDegil.x86_64","boyut":%s,"sha256":"%s"}}\n' \
+          # Parçalı güncelleme (G24): her ikilinin parça listesi (konum, boy, md5). Oyun yalnız değişen parçaları HTTP Range
+          # ile indirir (scripts/ui/guncelleme_parca.gd); listesi olmayan eski bildirimlerde ve eski istemcilerde tam indirme.
+          python3 tools/guncelleme_parca.py dist_ham/GercekTarihBuDegil.exe dist_ham/GercekTarihBuDegil.exe.parca.json
+          python3 tools/guncelleme_parca.py dist_ham/GercekTarihBuDegil.x86_64 dist_ham/GercekTarihBuDegil.x86_64.parca.json
+          printf '{"surum":"%s","motor":"%s","windows":{"ad":"GercekTarihBuDegil.exe","boyut":%s,"sha256":"%s","parca":"GercekTarihBuDegil.exe.parca.json"},"linux":{"ad":"GercekTarihBuDegil.x86_64","boyut":%s,"sha256":"%s","parca":"GercekTarihBuDegil.x86_64.parca.json"}}\n' \
             "$VERSION" "$GODOT_VERSION" "$wb" "$ws" "$lb" "$lsh" > dist_ham/guncelleme.json
           python3 -c "import json; d=json.load(open('dist_ham/guncelleme.json')); assert d['surum'] and d['linux']['boyut'] > 0"
+          python3 -c "import json; [json.load(open('dist_ham/GercekTarihBuDegil.%s.parca.json' % p))['boyut'] for p in ('exe', 'x86_64')]"
           cat dist_ham/guncelleme.json
           ls -la dist_ham
 

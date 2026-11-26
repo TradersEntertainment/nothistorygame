@@ -233,6 +233,11 @@ out=$(timeout 120 "$GODOT" --headless --path . res://tests/guncelleme_check.tscn
 echo "$out" | grep -E "GUNCELLEMECHECK|SCRIPT ERROR|Parse Error"
 echo "$out" | grep -q "GUNCELLEMECHECK PASS" || fail=1
 echo "$out" | grep -q "SCRIPT ERROR" && fail=1
+# Parçalı güncelleme (G24, ağsız): yapay ikililerde bölme, plan, birleştirme bit bit aynı, bozuk liste reddi
+out=$(timeout 120 "$GODOT" --headless --path . res://tests/_guncelleme/parca_check.tscn 2>&1)
+echo "$out" | grep -E "PARCACHECK|SCRIPT ERROR|Parse Error"
+echo "$out" | grep -q "PARCACHECK PASS" || fail=1
+echo "$out" | grep -q "SCRIPT ERROR" && fail=1
 # Bölüm 35o köprüsü insan gibi oynanır: ibreye bakıp A/D'ye basan, W ile yürüyen, E ile bağlayan oyuncu dereye
 # düşmeden geçer (v0.99.11; A/D ters çalışıyordu, kirişin başında yüz geriye dönüktü)
 out=$(timeout 300 "$GODOT" --headless --path . res://tests/play35o_check.tscn 2>&1)

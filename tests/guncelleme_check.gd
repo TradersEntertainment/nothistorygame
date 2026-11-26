@@ -77,6 +77,16 @@ func _manifestler() -> void:
 	_bak(Guncelleyici.manifest_coz(_m({"surum": "yeni"})).is_empty(), "surum bozuk")
 	_bak(Guncelleyici.manifest_coz(_m({"surum": "v0.99.127"})).get("surum") == "0.99.127", "surum v önekli")
 	_bak(Guncelleyici.manifest_coz(_m({"motor": 4.4})).get("motor") == "", "motor yanlış tür → boş")
+	# G24 parçalı güncelleme: platform girdisindeki "parca" (liste adı, ad kuralıyla); yoksa/bozuksa alan düşer (tam indirme)
+	var gp := {"ad": "GercekTarihBuDegil.x86_64", "boyut": 10, "sha256": SHA, "parca": "GercekTarihBuDegil.x86_64.parca.json"}
+	var mp := Guncelleyici.manifest_coz(_m({"linux": gp}))
+	_bak(mp.has("linux") and String(mp["linux"].get("parca", "")) == "GercekTarihBuDegil.x86_64.parca.json", "parca listesi adı okunur")
+	_bak(not (Guncelleyici.manifest_coz(_m())["linux"] as Dictionary).has("parca"), "parca yok → alan yok (tam indirme)")
+	for kp: Variant in ["../x.parca.json", "alt/x.json", "C:x.json", "", 5]:
+		var g2 := gp.duplicate()
+		g2["parca"] = kp
+		var m2 := Guncelleyici.manifest_coz(_m({"linux": g2}))
+		_bak(m2.has("linux") and not (m2["linux"] as Dictionary).has("parca"), "bozuk parca adı düşer: %s" % str(kp))
 	var kotu := [
 		{"ad": "../GercekTarihBuDegil.exe", "boyut": 10, "sha256": SHA},
 		{"ad": "alt/GercekTarihBuDegil.exe", "boyut": 10, "sha256": SHA},
