@@ -14,6 +14,7 @@ extends RefCounted
 const SurDoku := preload("res://scripts/world/ist/sur_doku.gd")
 const OTURTMA := preload("res://scripts/world/ist/sur_oturtma.gd")
 const ZEMIN := preload("res://scripts/world/ist/sur_zemin.gd")
+const EskiSurS := preload("res://scripts/world/ist/eski_sur.gd")
 
 const K := 1.0
 ## Kesim z 0'ın dünya z'si (iç surun şehir yüzü zi0 = −2,5 → −3,8)
@@ -28,7 +29,7 @@ const DIS_YOL_Z := 17.5
 const IC_YOL_Y := 12.0
 const IC_YOL_Z := -1.3
 ## Ayrıntı eşiği (oynanış alanından)
-const LOD0_M := 300.0
+const LOD0_M := 120.0
 ## Lykos açıklığı (K5: WallRear.STOCKADE x 1…19)
 const LYKOS := Vector2(1.0, 19.0)
 
@@ -108,11 +109,20 @@ static func _rect_mesafe(a: Rect2, b: Rect2) -> float:
 	return sqrt(dx * dx + dz * dz)
 
 
+## Bölümün keep'i dışında kalan oynanabilir kamera alanları (dünya): 43o drone surun Romanos kesiminde alçak uçar
+## (WALLS_AT, dünya (10, 13); İŞ 2: drone'da görünen kesim tam ayrıntı)
+const EK_ALAN := {"43o": [Rect2(0.0, -137.0, 40.0, 300.0)]}
+
+
 static func lod_sec(f: SiegeField, x0: float, x1: float) -> int:
 	var r := Rect2(x0, -6.0, x1 - x0, 42.0)
 	var dmin := INF
 	for k: Rect2 in f.keep_own:
 		dmin = minf(dmin, _rect_mesafe(k, r))
+	# ek alan: yalnız kesişen dilimler (drone'un alçaldığı kesim)
+	for k: Rect2 in EK_ALAN.get(IstBaglama.sahne_bolumu(), []):
+		if k.intersects(r):
+			return 0
 	return 0 if dmin <= LOD0_M else 1
 
 
@@ -126,7 +136,47 @@ static func kur(f: SiegeField) -> Node3D:
 	kok.name = "EskiSur"
 	kok.set_meta("no_walk", true)        # görünen ağ katılaştırılmaz: çarpışma kalemin gövdeleri
 	f.add_child(kok)
-	# Ortak statikler (v2 sızıntısı, D6): kurulum boyunca boş/sabit, sonra geri
+	var lykos := WallRear.stockade_on(f)
+	var dl := dilimler(lykos)
+	var say := [0, 0]
+	var kuyruk: Array = []
+	for i in dl.size():
+		var d: Dictionary = dl[i]
+		d["i"] = i
+		d["lod"] = lod_sec(f, float(d["x0"]), float(d["x1"]))
+		say[int(d["lod"])] += 1
+		_kayit(d, int(d["lod"]))        # sur yolu ve kule sorguları kurulumdan bağımsız (yerleşimden)
+		if int(d["lod"]) == 0:
+			dilim_kur(kok, d)
+		else:
+			kuyruk.append(d)
+	_izole(func() -> void: _uclar(kok, f))
+	if lykos:
+		_kesik_dis.append([LYKOS.x - 1.0, LYKOS.y + 1.0])
+	# Uzak (lod 1) dilimler yüklemeden sonra kare başına bir dilim (akış); oynanış alanına yakından uzağa. Çarpışma
+	# kalemin gövdelerinde (WorldWalk'a bağlı değil).
+	if not kuyruk.is_empty():
+		kuyruk.sort_custom(func(p, q): return absf(float(p["xc"]) - _yakin_x(f)) < absf(float(q["xc"]) - _yakin_x(f)))
+		var ak := Akis.new()
+		ak.name = "EskiSurAkis"
+		ak.kok = kok
+		ak.kuyruk = kuyruk
+		kok.add_child(ak)
+	olcum = {"dilim": dl.size(), "lod0": say[0], "lod1": say[1], "ms": (Time.get_ticks_usec() - t0) / 1000.0}
+	print("ESKISUR region=%s bolum=%s dilim=%d lod0=%d lod1=%d akis=%d lykos=%s ms=%.0f" % [f.region_name, IstBaglama.sahne_bolumu(),
+		dl.size(), say[0], say[1], kuyruk.size(), str(lykos), olcum["ms"]])
+	return kok
+
+
+## Oynanış alanının ortası (x): akış sırası
+static func _yakin_x(f: SiegeField) -> float:
+	if f.keep_own.is_empty():
+		return 0.0
+	return (f.keep_own[0] as Rect2).get_center().x
+
+
+## Ortak statikler (v2 sızıntısı, D6) iş boyunca boş/sabit, sonra geri
+static func _izole(is_: Callable) -> void:
 	var s_kusak := OTURTMA.kusak.duplicate()
 	var s_kizg: Dictionary = OTURTMA._kizg.duplicate()
 	var s_bant := OTURTMA.bantlar.duplicate()
@@ -147,33 +197,7 @@ static func kur(f: SiegeField) -> Node3D:
 	IstSurlar.carp_only = false
 	IstSurlar.bake = true
 	ZEMIN.xf_var = false
-	var lykos := WallRear.stockade_on(f)
-	var dl := dilimler(lykos)
-	var say := [0, 0]
-	for i in dl.size():
-		var d: Dictionary = dl[i]
-		LoadingScreen.nabiz("eskisur")
-		var host := Node3D.new()
-		host.name = "Dilim_%02d" % i
-		host.position = Vector3(float(d["xc"]), 0.0, ZC)
-		kok.add_child(host)
-		var g := host.global_position
-		OTURTMA.dy_kayit.append([Vector2(g.x, g.z), 0.0])
-		var lod := lod_sec(f, float(d["x0"]), float(d["x1"]))
-		say[lod] += 1
-		IstSehir.v2 = true
-		var r := IstSurlar._run_ic(host, float(d["L"]), K, lod, int(d["tohum"]), d["o"])
-		IstSehir.v2 = s_v2
-		if r == null:
-			continue
-		if lod >= 1:
-			Props.bake_static(r, [r])
-		SurDoku.uygula(r, 0)
-		IstSurlar._levha_zemin_v2(r)
-		for c in r.find_children("*", "GeometryInstance3D", true, false):
-			(c as Node).set_meta("no_walk", true)
-		_kayit(d, lod)
-	_uclar(kok, f)
+	is_.call()
 	OTURTMA.kusak = s_kusak
 	OTURTMA._kizg = s_kizg
 	OTURTMA.bantlar = s_bant
@@ -183,12 +207,66 @@ static func kur(f: SiegeField) -> Node3D:
 	IstSurlar.pencere = s_pen
 	IstSurlar.carp_only = s_carp
 	IstSurlar.bake = s_bake
+	IstSehir.v2 = s_v2
 	ZEMIN.xf_var = s_xfv
-	if lykos:
-		_kesik_dis.append([LYKOS.x - 1.0, LYKOS.y + 1.0])
-	olcum = {"dilim": dl.size(), "lod0": say[0], "lod1": say[1], "ms": (Time.get_ticks_usec() - t0) / 1000.0}
-	print("ESKISUR region=%s dilim=%d lod0=%d lod1=%d lykos=%s ms=%.0f" % [f.region_name, dl.size(), say[0], say[1], str(lykos), olcum["ms"]])
-	return kok
+
+
+## Tek dilim (kesim yereli kalem, dünya yerine)
+static func dilim_kur(kok: Node3D, d: Dictionary) -> void:
+	_izole(func() -> void: _dilim_ic(kok, d))
+
+
+static func _dilim_ic(kok: Node3D, d: Dictionary) -> void:
+	LoadingScreen.nabiz("eskisur")
+	var i := int(d["i"])
+	var lod := int(d["lod"])
+	var host := Node3D.new()
+	host.name = "Dilim_%02d" % i
+	host.position = Vector3(float(d["xc"]), 0.0, ZC)
+	kok.add_child(host)
+	var g := host.global_position
+	OTURTMA.dy_kayit.append([Vector2(g.x, g.z), 0.0])
+	var ta := Time.get_ticks_usec()
+	var s_v2 := IstSehir.v2
+	IstSehir.v2 = true
+	var r := IstSurlar._run_ic(host, float(d["L"]), K, lod, int(d["tohum"]), d["o"])
+	IstSehir.v2 = s_v2
+	if r == null:
+		return
+	var tb := Time.get_ticks_usec()
+	if lod >= 1:
+		Props.bake_static(r, [r])
+	var tc := Time.get_ticks_usec()
+	SurDoku.uygula(r, 0)
+	IstSurlar._levha_zemin_v2(r)
+	for c in r.find_children("*", "GeometryInstance3D", true, false):
+		(c as Node).set_meta("no_walk", true)
+	if OS.get_environment("ESKISUR_PROF") != "":
+		print("ESKISUR_D %d lod=%d L=%.0f run=%.0f bake=%.0f son=%.0f geo=%d" % [i, lod, float(d["L"]), (tb - ta) / 1000.0,
+			(tc - tb) / 1000.0, (Time.get_ticks_usec() - tc) / 1000.0, r.find_children("*", "GeometryInstance3D", true, false).size()])
+
+
+## Akış: kare başına bir dilim
+class Akis extends Node:
+	var kok: Node3D
+	var kuyruk: Array = []
+	var _t0 := 0
+
+	func _ready() -> void:
+		_t0 = Time.get_ticks_msec()
+
+	func _process(_dt: float) -> void:
+		if kuyruk.is_empty():
+			print("ESKISUR akis bitti ms=%d" % (Time.get_ticks_msec() - _t0))
+			queue_free()
+			return
+		var d: Dictionary = kuyruk.pop_front()
+		EskiSurS.dilim_kur(kok, d)
+
+	## tamamı hemen (testler, kare araçları)
+	func bitir() -> void:
+		while not kuyruk.is_empty():
+			EskiSurS.dilim_kur(kok, kuyruk.pop_front())
 
 
 ## Hattın iki ucu (K: uçlar açıkta kalmaz). Kuzey: dış sur, Blakherna köşe kulesinin önünden (z 6,8) dış surun ova
