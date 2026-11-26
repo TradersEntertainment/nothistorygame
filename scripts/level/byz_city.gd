@@ -53,7 +53,7 @@ var sur_hub: Dictionary = {}
 ## her zaman bölünmüş. ic_merkez: iç ağırlıklı bölümlerde (IC_MERKEZ) kök _ready'nin sonunda −saray_ofs() ötelenir: iç
 ## grup sahne kökenine gelir, bölümlerin yerel sabitleri (START, ROOF_BOUNDS, PERCHES[0..3]…) aynen çalışır; sur tarafı
 ## (GIUST_POS, EXIT_POS) `city.to_global(...)` ister.
-const BOLUNEN := []
+const BOLUNEN := ["6", "7", "10h", "12b", "13", "23", "24"]
 const IC_MERKEZ := ["6", "7", "13", "23", "24"]
 const BOLME_X := 18.0
 ## İç grubun yerel dikdörtgeni (saray_kok yereli = bugünkü hub yereli) ve sur parçasınınki (hub yereli)

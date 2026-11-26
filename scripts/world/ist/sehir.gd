@@ -374,7 +374,7 @@ func _paletli(it: Dictionary) -> bool:
 	if it.has("hat") or it.has("glen") or it.get("tek", false):
 		return false
 	var mod := String(it.get("mod", ""))
-	if String(it.get("id", "")) in ["hub_sehir", "zincir"]:
+	if String(it.get("id", "")) in ["hub_sehir", "hub_saray", "zincir"]:
 		return false
 	for p: String in PALETSIZ:
 		if mod.begins_with(p):
@@ -1493,7 +1493,7 @@ func _on_pisir() -> void:
 		var mod := String(it.get("mod", ""))
 		var id := String(it["id"])
 		var hat := it.has("hat") or id.begins_with("kose_")
-		if not hat and mod == "v2" and not id.begins_with("mese_") and not id in ["ayasofya", "blakherna", "bozdogan", "zincir", "hub_sehir", "meydan_aya_cevre"]:
+		if not hat and mod == "v2" and not id.begins_with("mese_") and not id in ["ayasofya", "blakherna", "bozdogan", "zincir", "hub_sehir", "hub_saray", "meydan_aya_cevre"]:
 			continue
 		var h := it["holder"] as Node3D
 		if IstBaglama.atlanabilir_mi(it):
