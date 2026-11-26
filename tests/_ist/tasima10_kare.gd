@@ -110,6 +110,9 @@ func _bakislar() -> Array:
 		"6":
 			var pr: Array = _k("PERCHES")
 			var fc: Vector3 = c.to_global(pr[4])
+			# G22: bölünmüş hub'da su fıçısı nöbet yerinde (ByzCity.FICI_POS, sur parçası)
+			if c.get("saray_kok") != null:
+				fc = c.to_global(ByzCity.FICI_POS + Vector3(0, 1.27, 0))
 			return [
 				["01_sur_yolu_fici", fc + Vector3(-5.0, 0.5, 3.0), fc + Vector3(4.0, 1.5, -1.0), fc + Vector3(-5.0, -1.2, 3.0)],
 				["02_giust_masa_sur", c.to_global(ByzCity.GIUST_POS + Vector3(-5.0, 1.7, 3.0)), c.to_global(ByzCity.GIUST_POS + Vector3(3.0, 3.0, -1.0)), null],

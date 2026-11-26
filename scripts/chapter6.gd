@@ -30,6 +30,29 @@ const PERCHES := [Vector3(0, 2.9, -16.0), Vector3(-4.8, 2.5, -15.2), Vector3(0.9
 	Vector3(16.5, 1.27, -11.0), Vector3(24.6, 0.84, -12.4)]
 const PATIENCE := [16.0, 14.0, 16.0, 14.0, 14.0, 0.0]
 const REACH := 3.2
+## G22: bölünmüş hub'da tünekler iki alanda: 0–3 iç mahallede (kök ötelenmiş: sahne = iç grup yereli), 4 (sur yolundaki su
+## fıçısı: ByzCity.FICI_POS, kodla sabit kurulur) ve 5 (Giustiniani'nin masası) surdaki parçada. Sayı ve sabır aynı.
+func _perch(i: int) -> Vector3:
+	if city == null or city.saray_kok == null:
+		return PERCHES[i]
+	if i == 4:
+		return city.sur_global(ByzCity.FICI_POS + Vector3(0, 1.27, 0))
+	if i >= 4:
+		return city.sur_global(PERCHES[i])
+	return city.ic_global(PERCHES[i])
+
+
+## Oyuncu iç mahallede mi (bölünmemişte her zaman)
+func _icte(p: Vector3) -> bool:
+	if city == null or city.saray_kok == null:
+		return true
+	var q := city.saray_kok.to_local(p)
+	return ByzCity.IC_RECT.grow(40.0).has_point(Vector2(q.x, q.z))
+
+
+## İç grup yerelinde konum (bölünmemişte sahne konumu)
+func _ic_yerel(p: Vector3) -> Vector3:
+	return city.saray_kok.to_local(p) if (city != null and city.saray_kok != null) else p
 const NPC_KEYS := {"kadri": "KADRI", "lutfi": "LUTFI", "urban": "URBAN", "niko": "NIKO",
 	"giustiniani": "GIUST", "emperor": "EMP"}
 const SPEAKERS := {"kadri": "SPK_KADRI", "lutfi": "SPK_LUTFI", "urban": "SPK_URBAN", "niko": "SPK_NIKO",
@@ -124,6 +147,16 @@ func _tasima10_yuru() -> void:
 		["kapi_yolu", Vector3(22.0, 0.0, -2.0), 0.0],
 		["kapi", ByzCity.EXIT_POS + Vector3(-2.6, 0, 0.0), 0.0],
 	]
+	if city.saray_kok != null:
+		# G22: iki alan: iç mahallenin bacakları (kök ötelenmiş: sahne = iç yerel), sonra surdaki parça (sur çerçevesi)
+		await BOT.yuru(self, player, hud, ByzCity.START + Vector3(0, 0.05, 0), bacak.slice(0, 4), "yeni_ic" if city.sur_yeni else "eski_ic")
+		var sb: Array = []
+		for b: Array in bacak.slice(4):
+			sb.append([b[0], city.sur_global(b[1]), b[2]])
+		sb[0][1] = city.sur_global(ByzCity.FICI_POS + Vector3(-1.2, 0.0, 1.4))
+		await city.alan_gecis(city.sur_global(Vector3(ByzCity.BOLME_X + 2.0, 0.05, -14.0)))
+		await BOT.yuru(self, player, hud, city.sur_global(Vector3(ByzCity.BOLME_X + 2.0, 0.05, -14.0)), sb, "yeni_sur" if city.sur_yeni else "eski_sur")
+		return
 	await BOT.yuru(self, player, hud, ByzCity.START + Vector3(0, 0.05, 0), bacak, "yeni" if city.sur_yeni else "eski")
 
 
@@ -141,7 +174,7 @@ func _process(_delta: float) -> void:
 		_update_objective()
 	# Mühürlü izinle kançılaryadan çıkınca martı kapar
 	if branch == "6b" and _got_permit and not _chase and not _permit and not _busy and _outcome == "" \
-			and player.global_position.z > ByzCity.HALL_Z0 + 0.6:
+			and _icte(player.global_position) and _ic_yerel(player.global_position).z > ByzCity.HALL_Z0 + 0.6:
 		_gull_chase()
 
 
@@ -772,7 +805,11 @@ var _roof_joke := false
 func _vistas() -> void:
 	for i in VISTAS.size():
 		var v: Array = VISTAS[i]
-		var vs := Vista.make(self, "6b", i + 1, v[0], v[1], v[2])
+		var hedef: Vector3 = v[1]
+		# G22: "Kara surları" bakışı gerçek sura (bölünmüşte ~430 m ötede, surdaki parçanın kulesi)
+		if i == 1 and city.saray_kok != null:
+			hedef = city.sur_global(Vector3(34.0, 10.0, -14.0))
+		var vs := Vista.make(self, "6b", i + 1, v[0], hedef, v[2])
 		vs.seen.connect(_on_vista)
 
 
@@ -786,17 +823,18 @@ func _on_vista(_id: String) -> void:
 var _space := ""
 var _amb := "amb_city_day"
 func _process_space() -> void:
-	var p := player.global_position
+	var ic := _icte(player.global_position)
+	var p := _ic_yerel(player.global_position)
 	var s := "outdoor"
-	if p.z < ByzCity.HALL_Z0:
+	if ic and p.z < ByzCity.HALL_Z0:
 		s = "hall"
-	if p.distance_to(ByzCity.CELL_START) < 3.5:
+	if ic and p.distance_to(ByzCity.CELL_START) < 3.5:
 		s = "room"
 	if s != _space:
 		_space = s
 		Audio.voice_space(s)
-	# Kara surları (Giustiniani'nin masası): rüzgâr ve nöbetçiler; şehrin içinde kalabalık
-	var amb := "amb_wall_day" if p.x > 14.0 else "amb_city_day"
+	# Kara surları (Giustiniani'nin masası): rüzgâr ve nöbetçiler; şehrin içinde kalabalık. G22: bölünmüşte surdaki parça
+	var amb := "amb_wall_day" if ((p.x > 14.0) if city.saray_kok == null else not ic) else "amb_city_day"
 	if amb != _amb:
 		_amb = amb
 		Audio.ambience(amb)
@@ -881,7 +919,7 @@ func _gull_chase() -> void:
 	gull.flying = true
 	Audio.sfx("chicken", -4.0, 2.1)
 	player.shake(0.3)
-	gull.fly_to(PERCHES[0], 7.0)
+	gull.fly_to(_perch(0), 7.0)
 	await _t("D6B_T_GULL")
 	while gull.flying and gull.global_position.distance_to(player.global_position) < 4.0:
 		await get_tree().process_frame      # martı yüzden uzaklaşmadan Niko konuşmasın (onu örtüyordu)
@@ -903,7 +941,10 @@ func _gull_chase() -> void:
 		var last := i == PERCHES.size() - 1
 		if i > 0:
 			hud.bark("SPK_TOLGA", "D6B_T_CHASE_%d" % mini(i, 5), 3.0)
-			await gull.fly_to(PERCHES[i], 7.0)
+			if i == 4 and city.saray_kok != null:
+				await _sura_gecis()
+			else:
+				await gull.fly_to(_perch(i), 7.0)
 		_chase_left = PATIENCE[i]
 		var reached := false
 		var shown := -1
@@ -983,7 +1024,47 @@ func _auto_chase_step(i: int) -> void:
 	if miss and i < PERCHES.size() - 1:
 		_chase_left = 0.0001
 	else:
-		player.global_position = Vector3(PERCHES[i].x + 1.0, 0.05, PERCHES[i].z + 1.5)
+		var pq := _perch(i)
+		var yer := city.ic_global(Vector3.ZERO).y if i < 4 else city.sur_global(Vector3.ZERO).y
+		player.global_position = Vector3(pq.x + 1.0, yer + 0.05, pq.z + 1.5)
+
+
+## G22: 3→4 geçişi (bölünmüş hub): "Surlara gidiyor!" çalarken martı yükselip sura doğru uzaklaşır, kararma; martı sur
+## yolundaki su fıçısına (4. tünek) konar, oyuncu fıçıya ~11 m'de (bugünkü tabela→fıçı uzaklığı) surdaki parçada. Sabır
+## kararma açılınca başlar (denge aynı). Yakalasa da kaçırsa da.
+func _sura_gecis() -> void:
+	var g0 := gull.global_position
+	var dis := (city.sur_global(Vector3(30.0, 0, -14.0)) - g0)
+	dis.y = 0.0
+	var yuksel := g0 + dis.normalized() * 14.0 + Vector3(0, 9.0, 0)
+	await gull.fly_to(yuksel, 7.0)        # uçuş biter (tween sürerse martı fıçıdan uzaklaşırdı), sonra kararma
+	var dur := player.frozen
+	player.frozen = true
+	await hud.fade_to(1.0, 0.6)
+	var f := _perch(4)
+	gull.global_position = f
+	var yer := city.sur_global(ByzCity.FICI_POS + Vector3(-1.5, 0.05, 10.9))
+	player.global_position = yer
+	player.face(f + Vector3(0, 0.3, 0))
+	if sinerji:
+		sinerji.global_position = yer + Vector3(0.8, 0, 1.0)
+	await city.alan_gecis(yer)
+	await hud.fade_to(0.0, 0.6)
+	player.frozen = dur
+
+
+## G22: hedef öteki alanda: kararma + yerleştirme (10h kalıbı), v2 arazi çarpışması yeni yerde, kısa bekleme
+func _alana_git(yer: Vector3, bak: Vector3) -> void:
+	var dur := player.frozen
+	player.frozen = true
+	await hud.fade_to(1.0, 0.6)
+	player.global_position = yer
+	player.face(bak + Vector3(0, 1.4, 0))
+	if sinerji:
+		sinerji.global_position = yer + Vector3(0.8, 0, 1.0)
+	await city.alan_gecis(yer)
+	await hud.fade_to(0.0, 0.6)
+	player.frozen = dur
 
 
 func _gull_lure() -> void:
@@ -995,6 +1076,9 @@ func _gull_lure() -> void:
 	player.face(ground)
 	await gull.fly_to(ground, 9.0)
 	await _gull_caught(false)
+	# G22: leblebiyle iç mahallede yakalandı: hedef (Giustiniani) ~430 m ötede, surdaki parçada → kararma
+	if city.saray_kok != null and _icte(player.global_position):
+		await _alana_git(city.sur_global(ByzCity.GIUST_POS + Vector3(-3.2, 0.05, 1.6)), city.giustiniani.global_position)
 
 
 ## Martı izni bırakır; kâğıt alınır. Masada yakalandıysa Giustiniani konuşmaya başlar.
@@ -1005,7 +1089,7 @@ func _gull_caught(at_table: bool) -> void:
 	_update_objective()
 	var pp := gull.drop_paper()
 	Audio.sfx("chicken", -6.0, 2.0)
-	_gull_leave(Vector3(-40, 30, -60))
+	_gull_leave(Vector3(-40, 30, -60) if city.saray_kok == null else gull.global_position + Vector3(-40, 28, -46))
 	if is_instance_valid(pp):
 		player.face(pp.global_position)                    # düşen izne bakılır (kamera gökyüzünde kalıyordu)
 		await player.reach_grab(pp.global_position)      # yere düşen izin alınır
@@ -1037,7 +1121,7 @@ func _gull_lost() -> void:
 	_busy = true
 	player.frozen = true
 	player.face(gull.global_position)
-	_gull_leave(Vector3(46, 26, -14))
+	_gull_leave(Vector3(46, 26, -14) if city.saray_kok == null else city.sur_global(Vector3(46, 26, -14)))
 	await _t("D6B_T_LOST")
 	await _labyrinth_fail()
 	_busy = false
@@ -1142,6 +1226,9 @@ func _giust(auto := false) -> void:
 		await _say("SPK_GIUST", "D6B_G_SILENT")
 	_giust_done = true
 	_update_objective()
+	# G22: "İmparator'a git": saray avlusu iç mahallede (~430 m içeri) → kararma, avlunun kenarı
+	if city.saray_kok != null:
+		await _alana_git(city.ic_global(ByzCity.EMPEROR_POS + Vector3(8.0, 0.05, 0.6)), city.emperor.global_position)
 	Lore.scatter(self, branch)
 	player.frozen = false
 	_busy = false
@@ -1175,6 +1262,10 @@ func _emperor() -> void:
 		await _say("SPK_NIKO", "D6B_N_FRIEND")
 	_emperor_done = true
 	_update_objective()
+	# G22: çıkış kapısı surdaki parçada → kararma, kapının şehir yanı (Niko yanında; "kapı şu tarafta")
+	if city.saray_kok != null:
+		await _alana_git(city.sur_global(ByzCity.EXIT_POS + Vector3(-6.0, 0.05, 0.0)), city.sur_global(ByzCity.EXIT_POS + Vector3(0, 1.6, 0)))
+		city.niko.global_position = city.sur_global(ByzCity.EXIT_POS + Vector3(-5.2, 0.0, -1.3))
 	Lore.scatter(self, branch)
 	player.frozen = false
 	_busy = false
@@ -1200,6 +1291,8 @@ func _exit() -> void:
 	await hud.card([[tr("UI_CH6B_FLAG"), 28, Color("f2e6c9")]], 1.6)
 	hud.clear_card()
 	var door := ByzCity.EXIT_POS
+	# G22: kök ötelenmiş (iç ağırlıklı bölüm): kapı sur çerçevesinde; bayrak city'nin yerelinde, kişiler sahnede
+	var dg := city.sur_global(door)
 	# Kapının iç yanında beyaz bayrak; karanlıktan kapıda açılır: Tolga geçitte, Niko yanında
 	Props.cyl(city, 0.03, 2.6, door + Vector3(-2.0, 1.3, 1.6), Color("5a4028"))
 	if city.sur_yeni:
@@ -1207,10 +1300,10 @@ func _exit() -> void:
 		preload("res://scripts/world/ist/kumas.gd").bayrak(city, door + Vector3(-2.0, 2.58, 1.6), Vector3.BACK, 0.9, 0.7, Color("f4f1ea"), [], 6, "BeyazBayrak")
 	else:
 		Props.box(city, Vector3(0.05, 0.7, 0.9), door + Vector3(-2.0, 2.4, 2.05), Color("f4f1ea"))
-	player.global_position = door + Vector3(-2.6, 0.05, 0.0)
-	city.niko.position = door + Vector3(-1.4, 0.0, -1.1)     # Tolga ile kapı arasında, kapıya bakan kadrajın içinde
+	player.global_position = dg + Vector3(-2.6, 0.05, 0.0)
+	city.niko.global_position = dg + Vector3(-1.4, 0.0, -1.1)     # Tolga ile kapı arasında, kapıya bakan kadrajın içinde
 	city.niko.look_target = player
-	player.face(door.lerp(city.niko.global_position, 0.55) + Vector3(0.0, 1.5, 0.0))
+	player.face(dg.lerp(city.niko.global_position, 0.55) + Vector3(0.0, 1.5, 0.0))
 	await hud.fade_to(0.0, 0.8)
 	await _say("SPK_NIKO", "D6B_N_BYE")
 	_outcome = "6b.1" if _mistakes == 0 else "6b.2"
@@ -1769,7 +1862,7 @@ func _run_shots() -> void:
 	_chase = false
 	_permit = true
 	_update_objective()
-	player.global_position = ByzCity.GIUST_POS + Vector3(-2.6, 0.05, 1.2)
+	player.global_position = city.sur_global(ByzCity.GIUST_POS + Vector3(-2.6, 0.05, 1.2))
 	player.face(city.giustiniani.global_position + Vector3(0, 1.4, 0))
 	city.giustiniani.look_target = player
 	hud.bark("SPK_GIUST", "D6B_G_INSURANCE", 30.0)

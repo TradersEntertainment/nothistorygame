@@ -336,13 +336,16 @@ func _build() -> void:
 ## Hendekte dolaşan kalabalık şeritleri (BattleExtras): kulenin önündeki dolgunun iki yanı ve dış surun dibi.
 ## Yeni sette hendek dibi 6 m aşağıda; şeritler yeni hendeğin aynı oranındaki z'sinde, dolgunun (x 0 ± 5, şev 2 m) dışında;
 ## dış surun dibindeki şerit terasta.
+## Şerit ucu dolgunun şevinden 2,6 m + 2 m dışarıda: BattleExtras.populate koşanın iki ucunu şerit boyunca ±2 m
+## kaydırır. Eskiden uç şevin yalnız 0,6 m dışındaydı; koşan şevin üstüne çıkıp zemin_y'de, dolgunun 0,58 m üstünde
+## havada kalıyordu (tam paket VISAUDIT float 22o, (−6,5; −8,1; 34,1) below=Toprak_KuleDolguSet_Carp).
 func _hendek_seritleri() -> Array:
 	if sur.eski_mi:
 		return [[Vector3(-26.0, 0, 27.5), Vector3(-9.0, 0, 27.5), 4.0, 5, 4], [Vector3(3.5, 0, 27.5), Vector3(26.0, 0, 27.5), 4.0, 5, 4],
 			[Vector3(-24.0, 0, 17.9), Vector3(24.0, 0, 17.9), 0.6, 0, 5]]
 	var zh := sur.hendek_z((27.5 - 20.0) / 16.0)
 	var zt := sur.dis_sur_z1() + 1.9
-	return [[Vector3(-26.0, 0, zh), Vector3(-DOLGU_EN * 0.5 - 2.6, 0, zh), 4.0, 5, 4], [Vector3(DOLGU_EN * 0.5 + 2.6, 0, zh), Vector3(26.0, 0, zh), 4.0, 5, 4],
+	return [[Vector3(-26.0, 0, zh), Vector3(-DOLGU_EN * 0.5 - 4.6, 0, zh), 4.0, 5, 4], [Vector3(DOLGU_EN * 0.5 + 4.6, 0, zh), Vector3(26.0, 0, zh), 4.0, 5, 4],
 		[Vector3(-24.0, 0, zt), Vector3(24.0, 0, zt), 0.6, 0, 5]]
 
 

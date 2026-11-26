@@ -24,6 +24,31 @@ static func in_band(x: float, z: float, margin := 0.0) -> bool:
 	return x > World1453.WALL_N_X and z > -depth(x) - margin and z < 4.0
 
 
+## G21 — LYKOS ŞERİDİ (eski dünya): Romanos (x 37) ile Pempton (x −230) arasında surun ardı derinleşir: iç surun şehir
+## yüzünden (z ≈ −2,3) 150–250 m içeri bostan, bağ, harabe (yıkık kilise), boş meydan ve dağınık ev. İstanbul v2 ile
+## ortak tanım IstGeo.serit_agirlik(t, derinlik): t = 0 Romanos, 1 Pempton. depth()/in_band() DEĞİŞMEZ (rng sırası):
+## şerit CityPlan'ın son-süzgeci (evler seyrelir) ve WallRear'ın ayrı rng'li ek geçişiyle (_serit_fill) kurulur.
+const SERIT_ROMANOS_X := 37.0
+const SERIT_PEMPTON_X := -230.0
+const SERIT_IC_Z := -2.3                    # iç surun şehir yüzü
+
+
+static func serit_t(x: float) -> float:
+	return (SERIT_ROMANOS_X - x) / (SERIT_ROMANOS_X - SERIT_PEMPTON_X)
+
+
+## Şeridin derinliği (iç surun şehir yüzünden, m; x'te): IstGeo.serit_derinlik ile aynı profil
+static func serit_derinlik(x: float) -> float:
+	return IstGeo.serit_derinlik(serit_t(x))
+
+
+## (x, z) Lykos şeridinde mi (pay: yapının yarı boyu; kenarı şeride değen de sayılır)
+static func in_serit(x: float, z: float, pay := 0.0) -> bool:
+	if z > 4.0 or x < SERIT_PEMPTON_X - 80.0 or x > SERIT_ROMANOS_X + 110.0:
+		return false
+	return IstGeo.serit_agirlik(serit_t(x), (SERIT_IC_Z - z) - pay) >= 0.5
+
+
 ## Lykos barikatı bu alanda kurulur mu (dünyanın surları ortayı da kuruyor ve bölümün kendi alanı orayı kaplamıyor)
 static func stockade_on(field: SiegeField) -> bool:
 	return field.world and field.fill_center and field._free(LYKOS_X, 15.0, 6.0, true)
@@ -83,6 +108,7 @@ static func build(field: SiegeField) -> Node3D:
 		w._oil_posts()
 	w._wall_details()
 	w._wall_spots(hot)
+	w._serit_fill()                 # G21: en sonda, ayrı rng ile (öncekilerin sırası kaymaz)
 	# Dünyanın yürünürlüğü (WorldWalk) görüntüyü katılaştırmasın: ekin sıraları, ızgara taşları basamak oluyordu
 	# (Bölüm 7'de şehirden taşan halk bostanın üstünde havada kalıyordu). Katı olması gerekenlerin kendi kutuları var.
 	w.d.build(field).set_meta("no_walk", true)
@@ -660,7 +686,165 @@ func _rect_ok(c: Vector3, w: float, h: float) -> bool:
 	for q in [Vector2(0, -h * 0.5), Vector2(-w * 0.5, 0), Vector2(w * 0.5, 0), Vector2(-w * 0.5, -h), Vector2(w * 0.5, -h), Vector2(0, -h)]:
 		if not _ok(c.x + q.x, c.z + q.y, 1.5):
 			return false
+	if _serit_mod:
+		return in_serit(c.x, c.z - h, -2.0)          # uzak kenar da şeridin içinde
 	return c.z - h > -depth(c.x) - 2.0
+
+
+# ---------------------------------------------------------------- G21: Lykos şeridi (ek geçiş)
+
+var _serit_mod := false
+var serit_say := {}
+
+
+## Bandın (depth) ötesinden şeridin derinliğine kadar: bostan, bağ/meyve bahçesi, yıkık kilise, boş meydan, kulübeli
+## bostan; araları dağınık evler (CityPlan son-süzgecinde kalan öbekler) ve sokaklar (halk yürür). Ayrı rng: bu geçiş
+## öncekilerin hiçbirini kaydırmaz. Boş çayır yok: sığmayan yere ağaç kümesi ya da ot yığını.
+func _serit_fill() -> void:
+	var r0 := rng
+	rng = RandomNumberGenerator.new()
+	rng.seed = 1453532
+	_serit_mod = true
+	serit_say = {"bostan": 0, "bag": 0, "harabe": 0, "meydan": 0, "agac": 0}
+	var meydanlar: Array = []
+	for gecis in 2:
+		_serit_tara(meydanlar, SERIT_PEMPTON_X - 60.0 + gecis * 13.0, gecis)
+	_serit_mod = false
+	rng = r0
+	if OS.get_environment("WORLD_PROF") != "" or GameState.autotest:
+		print("LYKOS21 eski_serit %s" % str(serit_say))
+
+
+## Şeridi sur boyunca sütun sütun tarar (ikinci geçiş 13 m kaydırılmış: birincinin arasında kalan yerler)
+func _serit_tara(meydanlar: Array, x0: float, gecis: int) -> void:
+	var x := x0
+	while x < SERIT_ROMANOS_X + 90.0:
+		var z := -depth(x) - rng.randf_range(4.0, 8.0)
+		if not _yolda(x):
+			x += rng.randf_range(24.0, 30.0)
+			continue
+		while z > -serit_derinlik(x) - 4.0:
+			var px := x + rng.randf_range(-2.0, 2.0)
+			if not in_serit(px, z):
+				z -= 6.0
+				continue
+			var r := rng.randf()
+			if gecis == 1:
+				r = 0.09 + r * 0.91                      # ikinci geçişte meydan yok
+			var used := 0.0
+			if r < 0.09 and _meydan_uzak(meydanlar, px, z):
+				used = _serit_meydan(Vector3(px, 0, z))
+				if used > 4.0:
+					meydanlar.append(Vector2(px, z))
+					serit_say["meydan"] += 1
+			elif r < 0.84:
+				# bostan / bağ / yıkık kilise: sokakların arasına sığsın diye üç yerde denenir
+				var tur := "bostan" if r < 0.44 else ("bag" if r < 0.68 else "harabe")
+				for o: Vector2 in [Vector2.ZERO, Vector2(7.0, -2.0), Vector2(-7.0, -2.0), Vector2(0.0, -5.0)]:
+					var q := Vector3(px + o.x, 0, z + o.y)
+					used = _plot(q) if tur == "bostan" else (_orchard(q) if tur == "bag" else _ruin(q))
+					if used > 4.0:
+						serit_say[tur] += 1
+						px = q.x
+						z = q.z
+						break
+			else:
+				used = _agac_kumesi(Vector3(px, 0, z))
+				if used > 3.0:
+					serit_say["agac"] += 1
+			if used > 4.0:
+				_claim(Vector3(px, 0, z - used * 0.5), maxf(used * 0.5, 8.5))     # ikinci geçiş üstüne binmesin
+			if used <= 4.0:
+				used = maxf(used, _agac_kumesi(Vector3(px, 0, z)))
+				if used > 3.0:
+					_claim(Vector3(px, 0, z - used * 0.5), 5.5)     # sığmayan yere küçük ağaç kümesi
+				if used > 3.0:
+					serit_say["agac"] += 1
+				elif _kucuk(Vector3(px, 0, z - 2.0)):
+					serit_say["kucuk"] = int(serit_say.get("kucuk", 0)) + 1
+			z -= maxf(used, 4.0) + rng.randf_range(2.0, 5.0)
+		x += rng.randf_range(24.0, 30.0)
+
+
+## En küçük dolgu (sokak arasında kalan dar yer): tek meyve ağacı ve yanında ot yığını ya da kuyu
+func _kucuk(c: Vector3) -> bool:
+	if not _ok(c.x, c.z, 2.5) or not in_serit(c.x, c.z, -2.0):
+		return false
+	_claim(c, 2.5)
+	c.y = _y(c.x, c.z)
+	var s := rng.randf_range(0.8, 1.2)
+	d.cyl(0.12 * s, 1.6 * s, c + Vector3(0, 0.8 * s, 0), Color("5a4028"), Vector3.ZERO, 5)
+	d.ball(1.3 * s, c + Vector3(0, 2.3 * s, 0), Color("4a6a30").lightened(rng.randf() * 0.12), Vector3(1, 0.8, 1), 7)
+	d.solid(Vector3(0.3, 1.6, 0.3), c + Vector3(0, 0.8, 0))
+	if rng.randf() < 0.5:
+		d.hay(c + Vector3(1.6, 0, 0.4))
+	return true
+
+
+func _yolda(x: float) -> bool:
+	return x > maxf(World1453.WALL_N_X, f.wall_x_min) + 12.0 and x < World1453.marmara_x(-10.0) - 14.0
+
+
+func _meydan_uzak(ms: Array, x: float, z: float) -> bool:
+	for m: Vector2 in ms:
+		if m.distance_to(Vector2(x, z)) < 85.0:
+			return false
+	return true
+
+
+## Boş meydan: taş döşeme, ortada kuyu, kenarda iki ağaç ve taş sedir, yıkık duvar parçası (sarmaşıklı). Döndürdüğü: z'de
+## kapladığı yer (0: kurulmadı)
+func _serit_meydan(c: Vector3) -> float:
+	var R := rng.randf_range(6.5, 8.5)
+	var mid := c + Vector3(0, 0, -R)
+	if not _ok(mid.x, mid.z, R) or not in_serit(mid.x, mid.z, -R):
+		return 0.0
+	_claim(mid, R)
+	mid.y = _y(mid.x, mid.z)
+	d.cyl(R, 0.12, mid + Vector3(0, 0.03, 0), Color("a89a80"), Vector3.ZERO, 18)
+	d.cyl(R - 0.5, 0.13, mid + Vector3(0, 0.035, 0), Color("b8aa8e"), Vector3.ZERO, 18)
+	d.well(mid)
+	for k in 2:
+		var a := rng.randf() * TAU
+		var q := mid + Vector3(cos(a), 0, sin(a)) * (R - 1.2)
+		q.y = _y(q.x, q.z)
+		var s := rng.randf_range(0.9, 1.3)
+		d.cyl(0.16 * s, 2.2 * s, q + Vector3(0, 1.1 * s, 0), Color("5a4028"), Vector3.ZERO, 6)
+		d.ball(1.7 * s, q + Vector3(0, 3.0 * s, 0), Color("4e7032").lightened(rng.randf() * 0.1), Vector3(1, 0.85, 1), 8)
+		d.solid(Vector3(0.4, 2.2 * s, 0.4), q + Vector3(0, 1.1 * s, 0))
+		d.bench(mid + Vector3(cos(a + 1.2), 0, sin(a + 1.2)) * (R - 1.6))
+	# meydanın bir yanında yıkık duvar (kemerli kapı boşluğu kalmış), dibinde moloz
+	var a2 := rng.randf() * TAU
+	var wq := mid + Vector3(cos(a2), 0, sin(a2)) * (R + 1.2)
+	wq.y = _y(wq.x, wq.z) - 0.05
+	var col: Color = RUIN[rng.randi() % RUIN.size()]
+	var yaw := -rad_to_deg(a2) + 90.0
+	var bas := Basis(Vector3.UP, deg_to_rad(yaw))
+	for k in 4:
+		var hh: float = [2.8, 3.4, 1.6, 0.9][k]
+		var q := wq + bas * Vector3(-2.7 + k * 1.8, hh * 0.5, 0)
+		d.box(Vector3(1.7, hh, 0.7), q, col.darkened(rng.randf() * 0.12), Vector3(0, yaw, 0))
+		d.solid(Vector3(1.7, hh, 0.7), q, yaw)
+	d.rubble(wq + bas * Vector3(2.5, 0, 1.0))
+	return R * 2.0
+
+
+## Ağaç kümesi (sığmayan arsa boş kalmasın): 3–5 meyve ağacı ve bir ot yığını
+func _agac_kumesi(c: Vector3) -> float:
+	var h := rng.randf_range(7.0, 10.0)
+	if not _rect_ok(c, 8.0, h):
+		return 3.0
+	for k in rng.randi_range(3, 5):
+		var q := Vector3(c.x + rng.randf_range(-3.5, 3.5), 0, c.z - rng.randf_range(1.0, h - 1.0))
+		q.y = _y(q.x, q.z)
+		var s := rng.randf_range(0.8, 1.2)
+		d.cyl(0.12 * s, 1.6 * s, q + Vector3(0, 0.8 * s, 0), Color("5a4028"), Vector3.ZERO, 5)
+		d.ball(1.3 * s, q + Vector3(0, 2.3 * s, 0), Color("4a6a30").lightened(rng.randf() * 0.12), Vector3(1, 0.8, 1), 7)
+		d.solid(Vector3(0.3, 1.6, 0.3), q + Vector3(0, 0.8, 0))
+	var hp := c + Vector3(rng.randf_range(-2.0, 2.0), 0, -h * 0.5)
+	hp.y = _y(hp.x, hp.z)
+	d.hay(hp)
+	return h
 
 
 # ---------------------------------------------------------------- sur üstü: okçular, kızgın yağ, ayrıntılar

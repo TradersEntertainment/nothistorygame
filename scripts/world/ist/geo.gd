@@ -379,6 +379,9 @@ static func mahalle(x: float, z: float) -> Dictionary:
 	for m in MAH_OZEL:
 		if r.distance_to(m[1]) < m[2]:
 			return _m(m[0], m[3], m[4], m[5])
+	# G21: Lykos şeridi (surun ardı 1453'teki gibi: bostan, bağ, harap kilise, dağınık ev); duvar bandından önce
+	if lykos_seridi(x, z) >= 0.5:
+		return _serit_ada(r)
 	var dr := 1.0 / S                                   # dünya metresi → gerçek metre
 	var d_kara := cizgi_uzak(p, Y_KARA) * dr
 	var d_mese := minf(cizgi_uzak(p, Y_MESE), minf(cizgi_uzak(p, Y_MESE_K), cizgi_uzak(p, Y_MESE_G))) * dr
@@ -412,6 +415,122 @@ static func mahalle(x: float, z: float) -> Dictionary:
 
 static func _m(ad: String, tur: String, yog: float, alt := "") -> Dictionary:
 	return {"ad": ad, "tur": tur, "yogunluk": yog, "alt": alt}
+
+
+## ---------------------------------------------------------------------------------------------------------------
+## G21 — LYKOS ŞERİDİ. 1453'te kara surlarının ardı bostan, bağ, açık sarnıç bahçesi, harabe ve kopuk köy mahallesiydi
+## (docs/ISTANBUL_PLAN.md; 43o'da Sultan: "bostanlar, harap kiliseler, boş meydanlar"). Mesoteikhion'da (Romanos'un
+## ~300 m güneyinden Pempton'un ~200 m kuzeyine) iç surun şehir yüzünden 150–250 DÜNYA m içeri seyrek doku; şehrin
+## kalanı dolu kalır. İki dünyanın ortak koordinatı yok: ortak olan derinlik profili serit_derinlik(t), t = 0 Romanos,
+## 1 Pempton (eski dünya: WallRear.serit_derinlik / in_serit aynı işlevi kendi x'iyle çağırır).
+const SERIT_ROMANOS := Vector2(-4836.7, 889.4)      # gerçek (e, n): Topkapı / Romanos
+const SERIT_PEMPTON := Vector2(-4199.1, 1822.6)     # Hücum Kapısı / Sulukule / Pempton
+const SERIT_T0 := -0.265                           # Romanos'un ~300 gerçek m güneyi (iki kapı arası sur boyu ~1131 m)
+const SERIT_T1 := 1.177                            # Pempton'un ~200 gerçek m kuzeyi
+const SERIT_UC := 0.035                            # uçlarda yumuşak geçiş (t)
+const SERIT_KENAR := 14.0                          # derinlik kenarında yumuşak geçiş (dünya m, ±)
+const SERIT_IC := 9.0                              # kara suru çizgisinden iç surun şehir yüzüne (dünya m; hub iç yüzü)
+const SERIT_HUCRE := 74.0                          # mozaik hücresi (DÜNYA m ≈ 210 gerçek m; 60–90 dünya m)
+static var _serit_s := PackedFloat32Array()        # R_KARA birikimli boy (gerçek m)
+static var _serit_sr := 0.0
+static var _serit_sp := 0.0
+
+## Derinlik profili (dünya m, iç surun şehir yüzünden): 150..250, dalgalı (kenar düz çizgi gibi okunmasın)
+static func serit_derinlik(t: float) -> float:
+	return clampf(200.0 + 30.0 * sin(t * 6.3 + 0.5) + 20.0 * sin(t * 15.1 + 2.1), 150.0, 250.0)
+
+static func _serit_hazirla() -> void:
+	if _serit_s.size() == R_KARA.size():
+		return
+	var s := PackedFloat32Array()
+	s.resize(R_KARA.size())
+	var acc := 0.0
+	for i in R_KARA.size():
+		if i > 0:
+			acc += R_KARA[i - 1].distance_to(R_KARA[i])
+		s[i] = acc
+	_serit_s = s
+	_serit_sr = _kara_izdus(SERIT_ROMANOS).x
+	_serit_sp = _kara_izdus(SERIT_PEMPTON).x
+
+## Gerçek noktanın kara suru çizgisi üstündeki izdüşümü: (boy, uzaklık) gerçek m
+static func _kara_izdus(r: Vector2) -> Vector2:
+	var bd := INF
+	var bs := 0.0
+	for i in R_KARA.size() - 1:
+		var a := R_KARA[i]
+		var b := R_KARA[i + 1]
+		var q := Geometry2D.get_closest_point_to_segment(r, a, b)
+		var d := r.distance_squared_to(q)
+		if d < bd:
+			bd = d
+			bs = (_serit_s[i] if _serit_s.size() == R_KARA.size() else 0.0) + a.distance_to(q)
+	return Vector2(bs, sqrt(bd))
+
+## Şeridin t'si (0 Romanos, 1 Pempton) ve iç surun şehir yüzünden derinliği (dünya m): Vector2(t, derinlik)
+static func serit_td(x: float, z: float) -> Vector2:
+	_serit_hazirla()
+	var r := real(x, z)
+	var iz := _kara_izdus(r)
+	return Vector2((iz.x - _serit_sr) / (_serit_sp - _serit_sr), iz.y * S - SERIT_IC)
+
+## 0 dışarıda, 1 içeride, kenarda yumuşak (v2 dünya x, z; kaydırmadan bağımsız)
+static func lykos_seridi(x: float, z: float) -> float:
+	var r := real(x, z)
+	# kaba kutu (gerçek m): şeridin çevresi dışını hızlı ele
+	if r.x < -5250.0 or r.x > -3500.0 or r.y < 300.0 or r.y > 2400.0:
+		return 0.0
+	if not sehir_ici(x, z):
+		return 0.0                                     # surun dışı (uzaklık işaretsiz)
+	var td := serit_td(x, z)
+	return serit_agirlik(td.x, td.y)
+
+## Ortak tanım (iki dünya): t ve iç yüzden derinlik (dünya m) → 0..1
+static func serit_agirlik(t: float, d: float) -> float:
+	if t < SERIT_T0 - SERIT_UC or t > SERIT_T1 + SERIT_UC or d < -6.0:
+		return 0.0
+	var ft := smoothstep(SERIT_T0 - SERIT_UC, SERIT_T0 + SERIT_UC, t) * (1.0 - smoothstep(SERIT_T1 - SERIT_UC, SERIT_T1 + SERIT_UC, t))
+	var D := serit_derinlik(t)
+	return ft * (1.0 - smoothstep(D - SERIT_KENAR, D + SERIT_KENAR, d))
+
+## Şeridin mozaiği: 74 dünya m'lik karmalı hücreler (Voronoi; köşesi düz okunmaz). Türler var olan tur + alt değerleri
+## (yeni tur yok: tüketiciler match ile okur) + "serit": true.
+const SERIT_TUZ := 33                              # mozaik karma tuzu (oranlar göz ve tarihle ayarlandı: lykos21_olc)
+
+static func _serit_ada(r: Vector2, tuz := SERIT_TUZ) -> Dictionary:
+	var hc := SERIT_HUCRE / S                          # hücre (gerçek m)
+	var ci := floori(r.x / hc)
+	var cj := floori(r.y / hc)
+	var bd := INF
+	var bi := 0
+	var bj := 0
+	for dj in [-1, 0, 1]:
+		for di in [-1, 0, 1]:
+			var hx: int = ci + di
+			var hz: int = cj + dj
+			var c := Vector2((hx + 0.5 + (_hash(hx + 211, hz - 37) - 0.5) * 0.7) * hc, (hz + 0.5 + (_hash(hx - 91, hz + 173) - 0.5) * 0.7) * hc)
+			var d := r.distance_squared_to(c)
+			if d < bd:
+				bd = d
+				bi = hx
+				bj = hz
+	var t := _hash(bi * 5 + 11 + tuz * 131, bj * 3 - 7 - tuz * 17)
+	var ad := "Lykos"
+	var m: Dictionary
+	if t < 0.27:
+		m = _m(ad + " bostanları", "bostan", 0.12, "bostan")
+	elif t < 0.42:
+		m = _m(ad + " bağları", "bostan", 0.1, "bag")
+	elif t < 0.56:
+		m = _m(ad + " harabeleri", "harabe", 0.15, "harabe")
+	elif t < 0.86:
+		m = _m(ad + " köy mahallesi", "seyrek", 0.35, "")
+	elif t < 0.93:
+		m = _m(ad + " manastırı", "seyrek", 0.35, "manastir")
+	else:
+		m = _m(ad + " mezarlığı", "seyrek", 0.3, "mezarlik")
+	m["serit"] = true
+	return m
 
 ## Ada ızgarası: gerçek ADA_HUCRE m hücreler; seçilen hücrenin içinde yarıçapı ≤ 125 m gerçek (S = 0,35'te ≤ 88 m çap;
 ## komşu adalar birleşmez: merkez kayması ≤ %20)

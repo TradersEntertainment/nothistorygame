@@ -94,8 +94,15 @@ func _bakislar() -> Array:
 				["01_caddeden_sur", c.to_global(Vector3(-20.0, 1.7, -14.0)), c.to_global(Vector3(34.0, 7.0, -10.0)), null],
 				["02_kapi_sehir_yani", c.to_global(Vector3(22.0, 1.7, 0.5)), c.to_global(Vector3(33.0, 3.5, gz)), null],
 				["03_ufuk", c.to_global(Vector3(-30.0, 16.0, -6.0)), c.to_global(Vector3(60.0, 8.0, -14.0)), null],
-				["04_ic_mekan_kapisi", c.to_global(ByzCity.EMPEROR_POS + Vector3(9.0, 1.7, 3.0)), c.to_global(ByzCity.EMPEROR_POS + Vector3(0.0, 1.5, 0.0)), null],
+				# G22: saray avlusu iç mahallede (bölünmüşte c.ic_global; bölünmemişte c.to_global ile aynı)
+				["04_ic_mekan_kapisi", c.call("ic_global", ByzCity.EMPEROR_POS + Vector3(9.0, 1.7, 3.0)), c.call("ic_global", ByzCity.EMPEROR_POS + Vector3(0.0, 1.5, 0.0)), null],
 				["05_tepeden", c.to_global(Vector3(-10.0, 140.0, -10.0)), c.to_global(Vector3(45.0, 0.0, -10.0)), null],
+				# G22: iç mahalle göz hizasında ve surdaki parçanın nöbet yeri
+				["06_avlu_imparator", c.call("ic_global", ByzCity.EMPEROR_POS + Vector3(7.0, 1.7, 2.0)), c.call("ic_global", ByzCity.EMPEROR_POS + Vector3(-2.6, 1.4, 0.0)), null],
+				["07_kancilarya_kapisi", c.call("ic_global", Vector3(1.0, 1.7, -19.0)), c.call("ic_global", Vector3(0.0, 3.0, -30.0)), null],
+				["08_meydan_cesme", c.call("ic_global", Vector3(4.5, 1.7, -5.0)), c.call("ic_global", Vector3(0.0, 1.5, -16.0)), null],
+				["09_nobet_yeri", c.to_global(ByzCity.FICI_POS + Vector3(-6.0, 2.2, 9.0)), c.to_global(ByzCity.FICI_POS + Vector3(3.0, 1.0, 2.0)), null],
+				["10_sokak_agzi", c.call("ic_global", Vector3(ByzCity.BOLME_X + 14.0, 3.0, -14.0)), c.call("ic_global", Vector3(0.0, 2.0, -14.0)), null],
 			]
 		"31o":
 			var w := ch.get("walls") as Node3D
@@ -119,12 +126,16 @@ func _bakislar() -> Array:
 			# uzak hub (IstSehir hub_sehir): v2 kökünün çerçevesinde SurHub.hub_v2 (hub yereli → v2)
 			var hv: Transform3D = IstBaglama.kok.global_transform * load("res://scripts/world/ist/sur_set_hub.gd").hub_v2()
 			for it: Dictionary in IstSehir.active.items:
-				if String(it.get("id", "")) == "hub_sehir":
-					print("T12_UZAK hub_sehir pos=%s yaw=%.1f hub_v2=%s yaw=%.1f" % [it["pos"], rad_to_deg(float(it["yaw"])),
+				if String(it.get("id", "")) in ["hub_sehir", "hub_saray"]:
+					print("T12_UZAK %s pos=%s yaw=%.1f hub_v2=%s yaw=%.1f" % [it["id"], it["pos"], rad_to_deg(float(it["yaw"])),
 						load("res://scripts/world/ist/sur_set_hub.gd").hub_v2().origin, rad_to_deg(load("res://scripts/world/ist/sur_set_hub.gd").hub_v2().basis.get_euler().y)])
+			# G22: iç mahalle (hub_saray) hub yerelinde ByzCity.saray_ofs_v2()'de; iki parça aynı karede
+			var so: Vector3 = ByzCity.saray_ofs_v2()
 			return [
 				["01_uzak_hub_havadan", hv * Vector3(-70.0, 70.0, -40.0), hv * Vector3(30.0, 0.0, -5.0), null],
 				["02_uzak_hub_kapi", hv * Vector3(12.0, 16.0, 14.0), hv * Vector3(33.0, 5.0, 5.5), null],
+				["03_uzak_saray_havadan", hv * (so + Vector3(50.0, 55.0, 45.0)), hv * (so + Vector3(-14.0, 0.0, -13.0)), null],
+				["04_uzak_iki_parca", hv * Vector3(90.0, 170.0, 150.0), hv * (so * 0.5 + Vector3(10.0, 0.0, -10.0)), null],
 			]
 		"17o", "21o":
 			# oyuncunun gözünden: 17o Haliç'in karşı kıyısı (şehir surları uzak fon, +z), 21o tünel (iki yön)

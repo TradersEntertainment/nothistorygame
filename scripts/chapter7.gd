@@ -244,7 +244,7 @@ func _build_city() -> void:
 	# Nihat artık oyuncu: Bölüm 6'daki kamera arkası görünüşü kaldırılır
 	if city.nihat:
 		city.nihat.queue_free()
-	var cam_int := city.get_node_or_null("Interact_nihat")
+	var cam_int := (city.saray_kok if city.saray_kok != null else city).get_node_or_null("Interact_nihat")
 	if cam_int:
 		cam_int.queue_free()
 	theodoros = city.clerks[6]
@@ -256,10 +256,11 @@ func _build_city() -> void:
 	Props.label(self, "ΦΥΛΑΚΗ", cz + Vector3(0.1, 3.3, 0), 34, Color("5a2a2a"), Vector3(0, 90, 0), 1.6)
 	# İzler
 	_trace("chancery", Vector3(-2.2, 0, -26.5), "ink")
-	_trace("walls", ByzCity.GIUST_POS + Vector3(-3.5, 0, 2.5), "thread")
+	# G22: sur tarafının izleri (Giustiniani, çıkış kapısı) surdaki parçada: kök ötelenmişse sahne konumu city.sur_global
+	_trace("walls", city.sur_global(ByzCity.GIUST_POS + Vector3(-3.5, 0, 2.5)), "thread")
 	_trace("palace", ByzCity.EMPEROR_POS + Vector3(3.2, 0, 2.5), "wax")
 	_trace("cell", cz + Vector3(0.9, 0, 0), _trace_look("cell"))
-	_trace("outside", ByzCity.EXIT_POS + Vector3(-2.4, 0, 1.4), "flag")
+	_trace("outside", city.sur_global(ByzCity.EXIT_POS + Vector3(-2.4, 0, 1.4)), "flag")
 
 
 ## Büro'nun kapısı: tarlanın ortasında tek başına duran gri bir kapı. Rapor burada yazılır.
@@ -1204,7 +1205,9 @@ func _build_wall_ui() -> void:
 ## Bot konuşulacak kişinin önüne konur: önce yüzünün baktığı yön, olmazsa oyuncudan yana ya da yanları; aradaki
 ## yol duvarsız olmalı (eskiden oyuncudan yana konup Urban'ın atölye duvarının arkasında kalıyordu).
 func _auto_stand_near(n: Node3D) -> void:
-	var base := Vector3(n.global_position.x, 0.05, n.global_position.z)
+	# G22: zemin tanığın kendi yüksekliğinde (bölünmüş hub'da surdaki parça iç mahalleden farklı y'de)
+	var gy := n.global_position.y
+	var base := Vector3(n.global_position.x, gy + 0.05, n.global_position.z)
 	var fwd := n.global_transform.basis.z
 	fwd.y = 0.0
 	var away := player.global_position - n.global_position
@@ -1223,7 +1226,7 @@ func _auto_stand_near(n: Node3D) -> void:
 		var hit := space.intersect_ray(q)
 		var floor_hit := space.intersect_ray(down)
 		if (hit.is_empty() or hit.get("collider") == n or n.is_ancestor_of(hit.get("collider"))) \
-				and not floor_hit.is_empty() and floor_hit["position"].y < 0.4:
+				and not floor_hit.is_empty() and floor_hit["position"].y < gy + 0.4:
 			pick = p
 			break
 	player.global_position = pick

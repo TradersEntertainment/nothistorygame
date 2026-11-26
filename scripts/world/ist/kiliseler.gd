@@ -9,6 +9,8 @@ extends RefCounted
 
 const IDS := ["kilise_kucuk", "kilise_orta", "bazilika", "sapel", "manastir", "ayazma", "munzevi_kulesi", "ikona_nisi", "mezarlik", "nymphaion", "harabe_tonoz", "harabe_kemer", "harabe_sutun", "harabe_mozaik", "harabe_sarmasik"]
 
+const _Harap := preload("res://scripts/world/ist/kiliseler_harap.gd")
+
 static func _run(id: String, host: Node3D, k: float, lod: int, dry := false) -> IstKB:
 	var b := IstKB.new(host, k, lod, id, dry)
 	match id:
@@ -42,6 +44,8 @@ static func _run(id: String, host: Node3D, k: float, lod: int, dry := false) -> 
 			IstKiliseHarabe.mozaik(b)
 		"harabe_sarmasik":
 			IstKiliseHarabe.sarmasik(b)
+		"harap_kilise":
+			_Harap.harap_kilise(b)          # G21: Lykos şeridinin harap kilisesi (katalogda yok; yalnız mahalle dokusu kurar)
 	return b
 
 

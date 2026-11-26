@@ -1254,3 +1254,31 @@ Her bölüm denetiminde ve her düzeltmede bu listeyi baştan uygula. Yeni bir h
   otomatik testte (zaman ölçeği 3) geri çekilme çıkış yürüyüşü bitmeden başlıyor, iki yürüyüş aynı adamı çekiştiriyor,
   iki savunucu aynı noktadan aynı anda yola çıkıp köprü boyunca tam üst üste yürüyordu. Yeni yürüyüş eskisini durdurur;
   tam üst üste olanlardan listede sonra gelen bekler.
+- **Bir bölgeyi seyreltirken rastgele sayı sırasını kaydırma; son süzgeç kullan (0.99.129, G21 Lykos şeridi).**
+  - Eski dünyada evsiz bandı (`WallRear.in_band`) ya da derinliğini (`depth`) değiştirmek, `CityPlan._place_houses`'ın ve `WallRear._fill`'in tek rng'sini kaydırırdı. Bütün sur boyunca bütün evler yer değiştirirdi.
+  - Şerit bunun yerine `_place_houses`'tan SONRA bir son süzgeçle (`CityPlan._serit_suz`) ve AYRI rng'li ek bir geçişle (`WallRear._serit_fill`) kuruldu.
+  - v2'de tek sıralı `IstSokak` rng'si kaçınılmaz olarak kaydı. Şehrin kalanında ev 9156 → 8442 oldu: bunun ~540'ı şeritten, kalanı kaymadan.
+- **Aynı bakışın iki kurulum yolu olabilir.**
+  - 43o eski dünyada kuruluyor. Ama aynı süreçte önce bir v2 bölümü oynanmışsa `IstSehir.enabled/v2` statik bayrakları true kalıyor; v2 şehir parçaları da kuruluyor.
+  - Sahibin karesi büyük olasılıkla ikinci yoldan.
+  - Kanıt kareleri iki yoldan da alınır (`tests/_ist/lykos21_kare`).
+- **Pişmiş harita da dünyanın bir parçası.**
+  - `assets/ui/map1453.png` TUR-10'dan beri pişirilmemişti; şehrin ev düzeni ondan sonra değişmişti.
+  - MAPCHECK yalnız suyu karşılaştırıyor; evleri görmüyor.
+  - Dünya değişince `res://tools/map_bake.tscn` ile yeniden pişirilir; fark `compare -metric AE` ile görülür.
+- **Görüş çizgisini temizleyen yardımcının kör noktası (`Unclip.clear_line`).**
+  - Bakana 0,6 m'den yakın olanı hiç çekmiyordu. 31o `=late`'te derviş oyuncunun 0,28 m önünde kalınca azabın başı kapandı (VISAUDIT personhidden D31O_AZ_03; önceki tam paketlerde de seyrek görülmüştü).
+  - Kimin olduğunu bulmak için `--autotest=late` öncesine geçici bir sonda kondu: derviş, 0,43–1,15 m.
+  - Artık çizgi boyunca önde olan (ileri bileşen > 0, çizgiye < 0,5 m) da çekiliyor.
+- **Özet sayımı da yanılabilir.** Tam paket özetinin denetim sayısı `^VISAUDIT` deseniyle `VISAUDIT_ADAY` satırlarını da sayıyordu (tam128'de "DENETIM=18", hepsi aday). Desen `^VISAUDIT ` (boşluklu) oldu.
+- **Kap yeniden başlayınca setsid ile koşan paket de ölür.** Uyanınca önce `uptime` ve parça günlüklerine bak. Biten parçaların sonuçları yine de okunur; düşen satır kayda geçer, paket baştan koşulur.
+- **Şerit uçları rastgele kaydırılıyorsa kaçınılacak alanın payına o kayma da eklenir (22o).** Hendek kalabalığı şeridinin ucu kule dolgusunun şevinden 0,6 m dışarıdaydı. `BattleExtras.populate` ise koşanın iki ucunu şerit boyunca ±2 m kaydırıyor; koşan şevin üstüne çıkıp `zemin_y`'de, dolgunun 0,58 m üstünde havada kalıyordu (tam paket VISAUDIT float). 8 tekrarda bir kez bile çıkmadı. Kök kod okumasıyla bulundu: uç 2 m daha dışarı alındı.
+- **Olaya bağlı bekçi aradakini kaçırır (26).** İç içe ve katı içi düzeltmeleri hep bir olaya bağlıydı: kamera oyuncuya dönünce, gizlenen geri gelince, gedik aşaması yükselince. Toplu dövüşte dost düellocu bunların dışında da yedek bölüğün sık nizamına ya da gedik setinin içine girebiliyordu (Squad|Duelist overlap; 6 tekrarın birinde Asama insolid). Sonuç: 0,4 sn'de bir sürekli bekçi.
+  - İki ardışık bakışta iç içe kalan çift ayrılır; denetim 1 sn ister, bekçi ondan önce davranır.
+  - Görünen bir katının içindeki düellocu en yakın boş yere alınır.
+  - `Unclip.spread`'in 1,4 m'si sık nizamda boş yer bulamadığı için düellocuya 2,5 m'lik geniş arama eklendi.
+- **Bir şeyi taşıyınca geride kalan yerin ne olduğuna da bakılır (G22).** Saray ve kançılarya içeri taşındı; taşınanların kareleri iyiydi. Ama v2'de eski meydanın yeri koca bir boş çayır kaldı. Neden: uzak hub öğesi (`hub_sehir`, r 50) şehrin ızgarasına 54 m'lik "dolu" damgası basmaya devam ediyordu; ev ve doku oraya girmiyordu. Oyuncunun bölüme başladığı ilk bakış karesi (6/04, 23/01) bunu hemen gösterirdi.
+  - Düzeltme (G22b): damga küçültülmedi; küçültmek tek rng'yi kaydırıp bütün şehri değiştirirdi.
+  - Yerine damgalı hücrelere AYRI rng'li bir son geçiş yazıyor. Kayıtlar listelerin sonuna ekleniyor.
+  - Önek karması sondası (streets/houses/doku/oge/avlu/meydan) şehrin geri kalanının bit bit aynı kaldığını kanıtladı.
+- **Akış bitmeden çekilen kare yanıltır (G22b).** Bölgenin ilk saniyelerinde sur yolu merdivenleri surun kendisinden önce akıyor; karede merdivenler havada asılı görünüyordu. Bir sondayla aynı bakış 30 sn boyunca tekrar çekildi: sur ve ağaçlar gelince havada bir şey kalmadı. Kare değerlendirmeden önce akışın bitmesi beklenir. Akış sırası ise ayrı bir iş olarak not edildi (oyuncu da birkaç saniye görebilir).

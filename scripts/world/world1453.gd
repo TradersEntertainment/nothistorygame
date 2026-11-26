@@ -115,7 +115,9 @@ static var REGIONS := {
 
 ## Uzak görünüşü dünyada kurulan bölgeler: bölge → oynanış dikdörtgeni (yerel). Bölüm o bölgede değilse dünya, bölgenin
 ## kendi kurucusunun pişirilmiş sürümünü koyar (ByzCity.far_hub). Ayasofya (byz_aya) HornWorld'de (World1453.far_aya).
-const FAR_REGIONS := {"byz_walls": Rect2(-46.0, -48.0, 84.0, 70.0)}
+## G22: hub bölünmüş (ByzCity.BOLME_X, IC_RECT, SurHub.SARAY_OFS): sur parçası (iç sur hattını, dünya z −2,3'ü keser:
+## SiegeField orada kendi iç surunu ve kapısını kurmaz) ve ~430 m içerideki iç mahalle (saray avlusu, kançılarya, meydan)
+const FAR_REGIONS := {"byz_walls": [Rect2(18.0, -48.0, 20.0, 70.0), Rect2(-446.0, 82.0, 64.0, 70.0)]}
 
 
 ## Tepelerin arasındaki bölgeler: dünya zemini düz alana rampayla iner
@@ -265,14 +267,17 @@ static func build(parent: Node3D, region_name: String, keep_local: Array, night 
 	for fr: String in FAR_REGIONS:
 		if fr == region_name:
 			continue
-		var wr := world_rect(region(fr), FAR_REGIONS[fr])
+		var wrs: Array = []
+		for lr: Rect2 in FAR_REGIONS[fr]:
+			wrs.append(world_rect(region(fr), lr))
 		var hit := false
 		for r: Rect2 in keep:
-			if r.grow(20.0).intersects(wr):
-				hit = true
+			for wr: Rect2 in wrs:
+				if r.grow(20.0).intersects(wr):
+					hit = true
 		if not hit:
 			far.append(fr)
-			f.keep.append(wr)
+			f.keep.append_array(wrs)
 	f.near_works = false
 	f.night_build = night
 	SiegeField.flat_blend = BLEND.get(region_name, 0.0)

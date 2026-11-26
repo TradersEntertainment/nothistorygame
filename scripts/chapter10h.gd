@@ -82,10 +82,14 @@ func _tasima10_yuru() -> void:
 	var BOT := load("res://tests/_ist/tasima9_bot.gd")
 	city.make_night()
 	# sokaklar boyunca: ana cadde (x 2,5), doğu-batı caddesi (z −14), iskelenin güneyinden sura, gedik; geri ve kapı yolu
-	await BOT.yuru(self, player, hud, ByzCity.START + Vector3(0, 0.05, 0), [
-		["cadde", Vector3(2.5, 0.0, 4.0), 0.0],
-		["meydan", Vector3(2.5, 0.0, -13.7), 0.0],
-		["meydan_dogu", Vector3(8.0, 0.0, -16.5), 0.0],
+	# G22: bölünmüşte gecenin yolu sur parçasında başlar (doğu-batı caddesinin sur ağzı)
+	var bas := ByzCity.START + Vector3(0, 0.05, 0)
+	var ic: Array = [["cadde", Vector3(2.5, 0.0, 4.0), 0.0], ["meydan", Vector3(2.5, 0.0, -13.7), 0.0],
+		["meydan_dogu", Vector3(8.0, 0.0, -16.5), 0.0]]
+	if city.saray_kok != null:
+		bas = Vector3(ByzCity.BOLME_X + 2.0, 0.05, -14.0)
+		ic = []
+	await BOT.yuru(self, player, hud, bas, ic + [
 		["dogu_caddesi", Vector3(22.0, 0.0, -16.5), 0.0],
 		["iskele_guneyi", Vector3(22.0, 0.0, -20.0), 0.0],
 		["sur_dibi", Vector3(29.5, 0.0, -20.0), 0.0],
@@ -243,10 +247,11 @@ static func _ucgen(st: SurfaceTool, a: Vector3, b: Vector3, c: Vector3, col: Col
 
 
 func _place_audience() -> void:
-	var c := HALL
-	lutfi.position = c + Vector3(1.4, 0, -1.1)
-	envoy.position = c + Vector3(1.4, 0, 1.1)
-	theodoros.position = c + Vector3(2.3, 0, 1.7)      # Tolga'nın önünde, yanında fısıldar: kadrajda (kenarda yarım kesikti)
+	# G22: saray avlusu iç mahallede (~430 m içeri): HALL iç grubun yerelinde
+	var c := city.ic_global(HALL)
+	lutfi.global_position = c + Vector3(1.4, 0, -1.1)
+	envoy.global_position = c + Vector3(1.4, 0, 1.1)
+	theodoros.global_position = c + Vector3(2.3, 0, 1.7)      # Tolga'nın önünde, yanında fısıldar: kadrajda (kenarda yarım kesikti)
 	for p in [lutfi, envoy]:
 		p.look_at_from_position(p.position, city.emperor.global_position, Vector3.UP)
 		p.rotate_y(PI)
@@ -286,10 +291,16 @@ func _run() -> void:
 			await get_tree().process_frame
 			await player.outfit_view()
 			player.set("_outfit_pending", false)
-	await _say("SPK_LUTFI", "D10H_L_04")
+	# G22: bölünmüş hub'da saray ~430 m içeride: "Bak, saray. Kaftanını düzelt." kapıda değil, kararmadan sonra avlunun
+	# kenarında çalar (repliğin çaldığı an değişti; metin ve ses aynı)
+	if city.saray_kok == null:
+		await _say("SPK_LUTFI", "D10H_L_04")
 	await hud.fade_to(1.0, 0.6)
 	_place_audience()
+	await city.alan_gecis(player.global_position)
 	await hud.fade_to(0.0, 0.8)
+	if city.saray_kok != null:
+		await _say("SPK_LUTFI", "D10H_L_04")
 	hud.set_objective(tr("UI_OBJ10H_AUDIENCE"))      # huzurda ne yapılacağı hiç söylenmiyordu
 	await _audience()
 	hud.set_objective("")
@@ -422,8 +433,17 @@ func _night() -> void:
 	await hud.card([[tr("UI_CH10H_NIGHT"), 30, Color("f2e6c9")], [tr("UI_CH10H_NIGHT_SUB"), 18, Color(1, 1, 1, 0.7)]], 2.4)
 	hud.clear_card()
 	theodoros.visible = false
-	player.global_position = ByzCity.START + Vector3(0, 0.05, 0)
-	player.face(Vector3(10.0, 1.6, -10.0))
+	if city.saray_kok != null:
+		# G22: gece işleri (gedik, Giustiniani, Niko) ve çıkış surdaki parçada; Niko kapının nöbet yerinde (replikler onu
+		# sura koyuyor: "Gece gece surda ne arıyorsun?"). Gece sur parçasında, doğu-batı caddesinin sur ağzında başlar.
+		city.niko.global_position = city.sur_global(ByzCity.FICI_POS + Vector3(1.4, 0, 2.2))
+		city.niko.rotation.y = PI * 0.5
+		player.global_position = city.sur_global(Vector3(ByzCity.BOLME_X + 2.0, 0.05, -14.0))
+		player.face(city.sur_global(Vector3(30.0, 1.6, -14.0)))
+		await city.alan_gecis(player.global_position)
+	else:
+		player.global_position = ByzCity.START + Vector3(0, 0.05, 0)
+		player.face(Vector3(10.0, 1.6, -10.0))
 	await hud.fade_to(0.0, 0.8)
 	phase = "free"
 	Lore.scatter(self, "10h")
@@ -773,6 +793,7 @@ func _run_shots() -> void:
 	hud.set_fade(0.0)
 	await get_tree().create_timer(0.8, false).timeout
 	_place_audience()
+	await city.alan_gecis(player.global_position)
 	player.face(city.emperor.global_position + Vector3(0, 1.4, 0))
 	lutfi.talking = true
 	hud.bark("SPK_LUTFI", "D10H_L_OFFER", 30.0)
@@ -781,6 +802,7 @@ func _run_shots() -> void:
 	lutfi.talking = false
 	player.global_position = BREACH + Vector3(-4.0, 0.05, 2.2)
 	player.face(BREACH + Vector3(0, 1.3, 0))
+	await city.alan_gecis(player.global_position)
 	hud.bark("SPK_TOLGA", "D10H_T_K_1", 30.0)
 	await get_tree().create_timer(0.3, false).timeout
 	await _shot("c10h_02_gedik.png")

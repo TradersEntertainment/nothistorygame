@@ -46,10 +46,14 @@ func _ready() -> void:
 		elif a.begins_with("--grid="):
 			_grid = a.substr(7).to_float()
 	if _rects.is_empty():
-		_rects = [[Rect2(-140.0, -330.0, 320.0, 326.0), "hub"], [Rect2(-500.0, -1240.0, 200.0, 200.0), "mese"]]
+		# G22: hub bölünmüş; iç mahalle (saray avlusu, kançılarya) dünya x −146,5…−76,5, z −482,3…−418,3 (ek dikdörtgen)
+		_rects = [[Rect2(-140.0, -330.0, 320.0, 326.0), "hub"], [Rect2(-152.0, -488.0, 82.0, 76.0), "saray"],
+			[Rect2(-500.0, -1240.0, 200.0, 200.0), "mese"]]
 	var t0 := Time.get_ticks_msec()
 	var c := ByzCity.new()
 	c.part = "walls"
+	c.bolunmus = not ("--saray-eski" in OS.get_cmdline_user_args())
+	c.bol_karar = true
 	add_child(c)
 	_city = c
 	_f = c.world
