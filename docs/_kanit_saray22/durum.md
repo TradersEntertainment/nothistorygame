@@ -1,3 +1,5 @@
+G22b SÜRÜYOR 06:35 UTC sokak.gd dolgu geçişi (ayrı rng, sona ekler) + bordür + g22b_sonda; ölçüm ve kareler sürüyor
+
 # G22 durum: BİTTİ
 
 Dal `wip/saray22` (taban `wip/ist2-birlesik` 618521d7). Ayrıntı ve testler: `rapor.md`.

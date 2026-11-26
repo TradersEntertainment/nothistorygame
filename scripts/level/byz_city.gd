@@ -656,6 +656,8 @@ func _build_ground() -> void:
 	var gmi := body.get_child(0) as MeshInstance3D
 	var gm: StandardMaterial3D = load("res://scripts/level/zemin.gd").doseme_kir((gmi.material_override as StandardMaterial3D).duplicate())      # ZEMİN: kir/aşınma
 	gmi.material_override = gm
+	if bolunmus and _k == self:
+		_build_kenar()
 	if _ground_mat != null:
 		_ground_ek.append(gm)
 		return
@@ -664,6 +666,85 @@ func _build_ground() -> void:
 	Props.box(_k, Vector3(0.5, 0.02, 34.0), Vector3(0, 0.005, 1.0), Color("7a7264"))
 	for sx in [-4.1, 4.1]:
 		Props.box(_k, Vector3(0.35, 0.12, 30.0), Vector3(sx, 0.06, 3.0), Color("a89c86"))
+
+
+## G22b: sur parçası döşemesinin şehir yanındaki keskin kenarı (bölme çizgisi x BOLME_X) yumuşar: alçak yontma bordür
+## taşları (döşemenin kenarına 14 cm biner, dış yüzü zemine iner: bölümde döşemenin önündeki 0,35 m'lik oluk ve uçuşta
+## 0,12 m'lik düzleme aynı taşla kapanır; tek ağ, çarpışmasız: üstü döşemeden en çok 11 cm yüksek), önünde toprak geçişi
+## v2'nin (IstSokak dolgusu: hub yereli x 14…17 toprak), kenarda birkaç eşya (döşemenin üstünde; sokak ağzı, fıçı ve
+## kapı yolunun ayrılmış dikdörtgenlerinin dışında).
+func _build_kenar() -> void:
+	var rng := RandomNumberGenerator.new()
+	rng.seed = 18022
+	var st := SurfaceTool.new()
+	st.begin(Mesh.PRIMITIVE_TRIANGLES)
+	var z := SUR_RECT.position.y + 0.25
+	var z1 := SUR_RECT.end.y - 0.25
+	while z < z1 - 0.3:
+		var L := minf(rng.randf_range(0.75, 1.35), z1 - z)
+		var w := rng.randf_range(0.38, 0.52)
+		var top := rng.randf_range(0.05, 0.11)
+		var col := Color("a89c86").darkened(rng.randf_range(-0.06, 0.14))
+		var cx := BOLME_X + 0.14 - w * 0.5 + rng.randf_range(-0.04, 0.04)
+		_bordur_tas(st, Vector3(cx, 0.0, z + L * 0.5), Vector3(w, top, L - rng.randf_range(0.04, 0.09)), rng.randf_range(-0.035, 0.035), col)
+		z += L
+	var mi := MeshInstance3D.new()
+	mi.name = "Bordur"
+	mi.mesh = st.commit()
+	var m := StandardMaterial3D.new()
+	m.vertex_color_use_as_albedo = true
+	m.vertex_color_is_srgb = true
+	m.roughness = 0.95
+	mi.material_override = m
+	_k.add_child(mi)
+	var d := Dressing.new(1457)
+	d.at(Vector3(BOLME_X + 0.9, 0, -40.5), PI * 0.5)
+	d.firewood(Vector3.ZERO)
+	d.at(Vector3(BOLME_X + 0.9, 0, -31.0), 0.0)
+	d.sacks(Vector3.ZERO)
+	d.at(Vector3(BOLME_X + 1.0, 0, 14.5), PI * 0.5)
+	d.crates(Vector3.ZERO)
+	d.build(_k)
+
+
+## Bordür taşı: tabanı y −0,45 (zeminin altında), üstü top; üst yüz 5 cm içeri çekik (yontma kenar). Alt yüz yok.
+static func _bordur_tas(st: SurfaceTool, c: Vector3, sz: Vector3, yaw: float, col: Color) -> void:
+	var b := Basis(Vector3.UP, yaw)
+	var hx := sz.x * 0.5
+	var hz := sz.z * 0.5
+	var ic := 0.05
+	var y0 := -0.45
+	var lo := [Vector3(-hx, y0, -hz), Vector3(hx, y0, -hz), Vector3(hx, y0, hz), Vector3(-hx, y0, hz)]
+	var hi := [Vector3(-hx + ic, sz.y, -hz + ic), Vector3(hx - ic, sz.y, -hz + ic), Vector3(hx - ic, sz.y, hz - ic), Vector3(-hx + ic, sz.y, hz - ic)]
+	var quads: Array = [[hi[0], hi[3], hi[2], hi[1]]]
+	for i in 4:
+		var j := (i + 1) % 4
+		quads.append([lo[i], lo[j], hi[j], hi[i]])
+	var orta := c + Vector3(0, (y0 + sz.y) * 0.5, 0)
+	for qi in quads.size():
+		var q: Array = quads[qi]
+		var p: Array = []
+		var fc := Vector3.ZERO
+		for v: Vector3 in q:
+			p.append(c + b * v)
+			fc += (c + b * v) * 0.25
+		var n: Vector3 = ((p[1] as Vector3) - (p[0] as Vector3)).cross((p[2] as Vector3) - (p[0] as Vector3)).normalized()
+		if n.dot(fc - orta) < 0.0:
+			n = -n
+		st.set_color(col.lightened(0.06) if qi == 0 else col)
+		st.set_normal(n)
+		# Godot'da ön yüz saat yönünde (dışarıdan bakınca): üçgenin çapraz çarpımı içe baksın
+		for tri: Array in [[0, 1, 2], [0, 2, 3]]:
+			var A: Vector3 = p[tri[0]]
+			var B: Vector3 = p[tri[1]]
+			var C: Vector3 = p[tri[2]]
+			if (B - A).cross(C - A).dot(n) > 0.0:
+				var tmp := B
+				B = C
+				C = tmp
+			st.add_vertex(A)
+			st.add_vertex(B)
+			st.add_vertex(C)
 
 
 ## İstanbul evi (1453): taş zemin kat (tuğla bantlı), sokağa taşan cumbalı sıvalı üst kat,

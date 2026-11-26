@@ -49,6 +49,8 @@ var ob_imza := ""                     # DOKU-4: bu verinin önbellek imzası (ba
 var _sira_bilgi: Array = []           # avlu için: [merkez, d, nrm, boy, derinlik, tür, sıra]
 ## ÇATI ROTASI (IstCati.uygula; önbellekten sonra eklenir): Ayasofya–Yerebatan–Hipodrom çatı mahallesinin parçaları
 var cati_parca: Array = []
+## G22b: sur ardı dolgusunun özeti (sonda ve rapor: taban uzunlukları, yol noktaları, sayılar; önbellekte)
+var dolgu: Dictionary = {}
 
 
 # ---------------------------------------------------------------- ızgara
@@ -463,7 +465,7 @@ func _build_imza(foot: Array, bands: Array, gates: Array, tohum: int) -> String:
 
 
 const _OB_ALANLAR := ["x0", "z0", "nx", "nz", "occ", "rid", "streets", "houses", "doku", "meydan", "avlu", "oge", "eser_meydan",
-	"zemin_ek", "rows", "stats", "_sira_bilgi"]
+	"zemin_ek", "rows", "stats", "_sira_bilgi", "dolgu"]
 
 func _onbellege() -> Dictionary:
 	var d := {}
@@ -607,6 +609,9 @@ func _build_hesapla(foot: Array, bands: Array, gates: Array, tohum: int) -> void
 	_doku(rng)
 	LoadingScreen.nabiz("sokak_hesap")
 	_ogeler(rng)
+	LoadingScreen.nabiz("sokak_hesap")
+	# 6) G22b: eski hub dairesinin (sur ardı) ve iç mahalle köşelerinin dolgusu: AYRI rng, yalnız listelerin SONUNA ekler
+	_hub_dolgu()
 	LoadingScreen.nabiz("sokak_hesap")
 	stats["doku"] = doku.size()
 	stats["oge"] = oge.size()
@@ -2046,6 +2051,380 @@ func _free_spot(c: Vector2, r: float) -> Vector2:
 		if ok:
 			return p
 	return Vector2.INF
+
+
+# ================================================================ G22b: sur ardı dolgusu
+## Sahibin kararı: "Lykos şeridi bostan: surun ardında ~150–250 m bostan, bağ, harap kilise, dağınık ev, boş meydan. BOŞ
+## ÇAYIR YOK." Kök neden: uzak hub öğesi (IstSehir "hub_sehir", r 50, gercek_olcu yok) _taban_kayitlardan'da 54 m'lik
+## occ=3 dairesi basar; G22'de sur parçası küçülünce dairenin şehir yanı boş çayır kaldı. Daire KÜÇÜLTÜLMEZ (tek rng
+## Mese'den _ogeler'e kadar kayar, bütün şehir değişirdi; öğenin r'si önbellek imzasında): bu geçiş _ogeler'den SONRA,
+## kendi rng'siyle (DOLGU_TOHUM), yalnız dairenin ve iç mahallenin taban dikdörtgeninin (köşe üçgenleri) occ=3 hücrelerine
+## yazar; kayıtlar listelerin SONUNA eklenir (öneki aynı kalır).
+## Hub yereli (SurHub.hub_v2; +x sura): dolgu x < 14 (bölümde TEMIZ_BOL x 14…48 bölümün alanı; sokak kayıtları bölümde
+## silinmez), x 2…14 nöbet/ikmal açıklığı (toprak; şantiye, çadırlar, ağıl), x 14…17 döşemenin önü toprak (yalnız zemin).
+## Yol: sur parçasının sokak ağzından (x 17,6; z −14,25: 6b/10h'nin yerleştirme noktası ve doğu-batı caddesi) batıya düz
+## (kare 01'in bakışı yolun üstünde), sonra kavisle G21'in bağlantı yoluna (oyun_bag, _saray_yolu'nun başı); iç mahalle
+## ucunda _saray_yolu'nun son parçası sokak ağzına kadar uzatılır (_add_parcali oyun alanından geçemiyordu).
+## Yalnız bölünmüş hub (SurHub.uzak_yeni(), `--saray-eski` yok) ve hub oyun alanı sur parçasıysa (31o'da ar[0] caddenin
+## şeridi: hub dairesi orada FallenCity'nin caddesi).
+const DOLGU_TOHUM := 1453022
+const DOLGU_R := 54.0
+const DOLGU_X1 := 14.0
+const NOBET_X0 := 2.0
+const KENAR_X1 := 17.0
+const HUB_YOL_W := 7.0
+const DOLGU_EV_EN_COK := 6
+const DOLGU_YAMA := ["bostan", "bag", "bahce", "bostan", "bag", "bahce", "bugday", "bag", "bostan", "bahce"]
+## Dolgunun yazabileceği hücreler (geçiş sürerken; dışındaki boş hücrelere yama/öğe konmaz)
+var _izin := {}
+
+
+func _hl(xf: Transform3D, l: Vector2) -> Vector2:
+	var w := xf * Vector3(l.x, 0.0, l.y)
+	return Vector2(w.x + IstGeo.OX, w.z + IstGeo.OZ)
+
+
+func _lh(xi: Transform3D, w: Vector2) -> Vector2:
+	var l := xi * Vector3(w.x - IstGeo.OX, 0.0, w.y - IstGeo.OZ)
+	return Vector2(l.x, l.z)
+
+
+func _hub_dolgu() -> void:
+	var s: Node = IstSehir.active
+	if s == null or not is_instance_valid(s) or not IstSehir.v2 or not s.has_method("oyun_alanlari"):
+		return
+	# Eski yollarda (eski kutu sur / eski dünya: uzak_yeni() yanlış; `--saray-eski`) hub bölünmemiş: dolgu KURULMAZ
+	if not SurHub.uzak_yeni() or "--saray-eski" in OS.get_cmdline_user_args():
+		return
+	var ar: Array = s.oyun_alanlari()
+	if ar.size() < 3:
+		return
+	var xf: Transform3D = SurHub.hub_v2()
+	if not (ar[0] as Rect2).is_equal_approx(IstBaglama._rect_xf(xf, ByzCity.SUR_RECT.grow(2.0))):
+		return
+	dolgu = {"taban": {"streets": streets.size(), "houses": houses.size(), "doku": doku.size(), "oge": oge.size(),
+		"avlu": avlu.size(), "meydan": meydan.size(), "sira": _sira_bilgi.size(), "zemin_ek": zemin_ek.size()}}
+	var rng := RandomNumberGenerator.new()
+	rng.seed = DOLGU_TOHUM
+	var xi := xf.affine_inverse()
+	var ux := Vector2(xf.basis.x.x, xf.basis.x.z).normalized()
+	var uz := Vector2(xf.basis.z.x, xf.basis.z.z).normalized()
+	var hc := _hl(xf, Vector2.ZERO)
+	# 1) dairenin taban hücreleri (occ 3, hub yereli x < 17) geçici olarak boş; sur bandı ve sur parçası (x ≥ 17) aynen
+	var hucre := PackedInt32Array()
+	for j in range(maxi(0, int((hc.y - DOLGU_R - z0) / G)), mini(nz, int((hc.y + DOLGU_R - z0) / G) + 1)):
+		for i in range(maxi(0, int((hc.x - DOLGU_R - x0) / G)), mini(nx, int((hc.x + DOLGU_R - x0) / G) + 1)):
+			var k := j * nx + i
+			var q := cell_c(i, j)
+			if occ[k] != 3 or q.distance_to(hc) > DOLGU_R or _lh(xi, q).x >= KENAR_X1:
+				continue
+			occ[k] = 0
+			hucre.append(k)
+			_izin[k] = true
+	dolgu["hucre"] = hucre.size()
+	# 2) kapıdan gelen yol
+	var yol := _hub_yolu(ar, xf, hc)
+	# 3) nöbet ve ikmal açıklığı (x 2…14): şantiye (sur onarımı), sığınmacı çadırları (ocak, kazan, sandık), ağıl;
+	# kalan hücreler toprak (yol hücresi, kimliksiz: zeminde toprak). Setin derinliği hub x boyunca, şehre dönük.
+	var yaw_nb := atan2(-ux.x, -ux.y)
+	for e: Array in [["set_sur_onarim_santiyesi", Vector2(7.0, -36.0), Vector2(6.0, -36.0), 9.0, 7.6],
+			["set_multeci_cadirlari", Vector2(9.0, 10.0), Vector2(8.0, 11.0), 9.6, 5.6],
+			["agil", Vector2(8.0, 32.0), Vector2(7.5, 32.0), 7.0, 5.5]]:
+		var c := _hl(xf, e[1])
+		var rc := _hl(xf, e[2])
+		var cells := _rect_cells(rc, uz, ux, float(e[3]), float(e[4]))
+		var ok := not cells.has(-1)
+		for k in cells:
+			if ok and occ[k] != 0:
+				ok = false
+		if not ok:
+			continue
+		for k in cells:
+			occ[k] = 5
+		oge.append({"tur": String(e[0]), "c": c, "yaw": yaw_nb, "tohum": rng.randi() % 9973, "yer": "nobet"})
+	var n_toprak := 0
+	for k in hucre:
+		if occ[k] == 0 and _lh(xi, cell_c(k % nx, k / nx)).x >= NOBET_X0:
+			occ[k] = 1
+			n_toprak += 1
+	dolgu["toprak"] = n_toprak
+	# 4) dağınık köy evleri: yolun iki yanında kısa sıralar (1–2 ev, arada bahçe), arkalarında avlu
+	var nev0 := houses.size()
+	var row0 := _sira_bilgi.size()
+	var dp := _densify(yol, 3.0)
+	for side: float in [1.0, -1.0]:
+		for r: Array in _straight_runs(dp, 0.2):
+			var a: Vector2 = r[0]
+			var b: Vector2 = r[1]
+			var L := a.distance_to(b)
+			if L < 6.0:
+				continue
+			var d := (b - a) / L
+			var nrm := Vector2(-d.y, d.x) * side
+			var t := rng.randf_range(1.0, 5.0)
+			while t < L - 5.0 and houses.size() - nev0 < DOLGU_EV_EN_COK:
+				var p := a + d * t
+				var rowlen := minf(L - t - 0.5, rng.randf_range(7.0, 11.0))
+				var ic := _lh(xi, p).x < NOBET_X0 - 2.0
+				for q: Vector2 in [p + nrm * 18.0, p + d * rowlen + nrm * 18.0]:
+					if q.distance_to(hc) > DOLGU_R - 1.0:
+						ic = false
+				if not ic:
+					t += 3.0
+					continue
+				var used := _row(p, d, nrm, HUB_YOL_W, rowlen, "seyrek", false, rng)
+				t += (used if used > 0.0 else 2.0) + rng.randf_range(7.0, 15.0)
+	for ri in range(row0, _sira_bilgi.size()):
+		var sb: Array = _sira_bilgi[ri]
+		if ((sb[0] as Vector2) + (sb[2] as Vector2) * (float(sb[4]) * 0.5 + 16.0)).distance_to(hc) < DOLGU_R:
+			_avlu_ekle(sb[0], sb[1], sb[2], sb[3], sb[4], sb[5], sb[6], rng)
+	dolgu["ev"] = houses.size() - nev0
+	# 5) kuyulu küçük meydan (döşeli; yoldan kısa patika), çevresinde ağaç
+	for lc: Vector2 in [Vector2(-34.0, -1.0), Vector2(-12.0, -1.5), Vector2(-34.0, -28.0), Vector2(-12.0, -28.0)]:
+		var c := _hl(xf, lc)
+		if not _bos_mu(c, 7.5):
+			continue
+		var yp := _hl(xf, Vector2(lc.x, -14.25))
+		_add_street(_densify(PackedVector2Array([yp, c]), 3.0), 4.0, "sokak", "hub_meydan")
+		_stamp_disc(c, 6.0, 5)
+		meydan.append({"c": c, "yaw": rng.randf() * TAU, "tohum": 2 * (rng.randi() % 4986)})
+		zemin_ek.append({"c": c, "r": 7.0, "tur": "mese"})
+		dolgu["meydan"] = lc
+		break
+	# 6) harap kilise (19 × 25 m; 100 m'de bir); yoksa küçük ölçek; o da yoksa harabe adası
+	var yaw_h := -atan2(ux.y, ux.x)
+	var kil := false
+	for hal: Vector2 in [Vector2(9.5, 12.5), Vector2(7.5, 9.5)]:
+		if kil:
+			break
+		for lc: Vector2 in [Vector2(-28.0, 24.0), Vector2(-38.0, 14.0), Vector2(-22.0, 33.0), Vector2(-30.0, -40.0), Vector2(-16.0, -40.0)]:
+			var c := _hl(xf, lc)
+			if not _harap_kilise_yok(c):
+				break
+			if not _hepsi_bos(_rect_cells(c, ux, uz, hal.x + 1.2, hal.y + 1.2)):
+				continue
+			for k in _rect_cells(c, ux, uz, hal.x, hal.y):
+				occ[k] = 5
+			doku.append({"tur": "harap_kilise", "c": c, "alan": hal * 2.0, "yaw": yaw_h, "tohum": rng.randi() % 9973, "mt": "bostan"})
+			dolgu["harap"] = ["harap_kilise", lc]
+			kil = true
+			break
+	if not kil:
+		for lc: Vector2 in [Vector2(-28.0, 24.0), Vector2(-38.0, 14.0), Vector2(-30.0, -40.0)]:
+			var c := _hl(xf, lc)
+			if _hepsi_bos(_rect_cells(c, ux, uz, 8.0, 5.0)):
+				for k in _rect_cells(c, ux, uz, 7.0, 4.0):
+					occ[k] = 5
+				doku.append({"tur": "harabe_kemer", "c": c, "alan": Vector2(14.0, 8.0), "yaw": yaw_h, "tohum": rng.randi() % 9973, "mt": "harabe"})
+				dolgu["harap"] = ["harabe_kemer", lc]
+				break
+	# 7) bostan, bağ, meyve bahçesi yamaları (duvarlı/çitli; kenarında kuyu, bağ kulübesi)
+	var nyama := _dolgu_yamalari(xf, hc, Rect2(-DOLGU_R, -DOLGU_R, DOLGU_R + NOBET_X0, DOLGU_R * 2.0), 16.0, DOLGU_R, rng)
+	dolgu["yama"] = nyama
+	# 8) hâlâ boş 10 m'lik karelere ağaç kümesi / kuyu / çiftlik
+	dolgu["kume"] = _dolgu_kumeler(xf, hucre, rng)
+	# kalan boş hücreler eski değerine (taban)
+	for k in hucre:
+		if occ[k] == 0:
+			occ[k] = 3
+	_izin.clear()
+	# 9) iç mahallenin köşe üçgenleri
+	_saray_dolgu(ar, xf, rng)
+	stats["hub_dolgu"] = dolgu.duplicate()
+	(stats["hub_dolgu"] as Dictionary).erase("yol")
+
+
+## Bütün hücreler boş (0) ve ızgaranın içinde
+func _hepsi_bos(cells: PackedInt32Array) -> bool:
+	if cells.has(-1) or cells.is_empty():
+		return false
+	for k in cells:
+		if occ[k] != 0 or (not _izin.is_empty() and not _izin.has(k)):
+			return false
+	return true
+
+
+func _bos_mu(c: Vector2, r: float) -> bool:
+	return _hepsi_bos(_rect_cells(c, Vector2.RIGHT, Vector2.DOWN, r, r))
+
+
+## Sur parçasının sokak ağzından batıya, sonra kavisle G21'in bağlantı yoluna (daireden çıktığı ilk yol hücresi)
+func _hub_yolu(ar: Array, xf: Transform3D, hc: Vector2) -> PackedVector2Array:
+	# _saray_yolu'nun bağlantı ucu (aynı hesap): hub alanının iç mahalleye bakan kenarından 70 m
+	var so := Vector3(SurHub.SARAY_OFS.x, 0.0, SurHub.SARAY_OFS.z)
+	var ag := xf * (so + Vector3(ByzCity.BOLME_X + 9.0, 0.0, -14.25))
+	var T := Vector2(ag.x + IstGeo.OX, ag.z + IstGeo.OZ)
+	var hub: Rect2 = ar[0]
+	var hcc := hub.get_center()
+	var dis := (T - hcc).normalized()
+	dis = Vector2(signf(dis.x), 0.0) if absf(dis.x) > absf(dis.y) else Vector2(0.0, signf(dis.y))
+	var m := hcc + dis * ((hub.size.x if dis.x != 0.0 else hub.size.y) * 0.5 + 4.5)
+	var uc := m + dis * 70.0
+	if not IstGeo.sehir_ici(uc.x, uc.y):
+		uc = m + dis * 30.0
+	var J := uc
+	for t in range(0, int(m.distance_to(uc)) + 1):
+		var p := m + dis * float(t)
+		if p.distance_to(hc) > DOLGU_R + 2.0 and cell(p.x, p.y) == 1:
+			J = p
+			break
+	var pts := PackedVector2Array()
+	for lx: float in [KENAR_X1 + 0.6, 8.0, 0.0, -8.0, -16.0, -24.0]:
+		pts.append(_hl(xf, Vector2(lx, -14.25)))
+	var A := pts[pts.size() - 1]
+	var west := -Vector2(xf.basis.x.x, xf.basis.x.z).normalized()
+	var B := A + west * A.distance_to(J) * 0.45
+	var n := maxi(3, int(A.distance_to(J) / 5.0))
+	for k in range(1, n + 1):
+		var t := float(k) / n
+		pts.append(A.lerp(B, t).lerp(B.lerp(J, t), t))
+	_add_street(_densify(pts, 3.0), HUB_YOL_W, "yol", "hub_yolu")
+	dolgu["yol"] = pts
+	dolgu["uc"] = uc
+	dolgu["J"] = J
+	return pts
+
+
+## Hub yerelinde (ya da iç mahalle yerelinde: ofs) ızgara üstünde duvarlı yamalar; dikdörtgen lr (yerel), adım
+func _dolgu_yamalari(xf: Transform3D, merkez: Vector2, lr: Rect2, adim: float, r_en_cok: float, rng: RandomNumberGenerator,
+		ofs := Vector2.ZERO, ic_rect := Rect2()) -> int:
+	var ux := Vector2(xf.basis.x.x, xf.basis.x.z).normalized()
+	var uz := Vector2(xf.basis.z.x, xf.basis.z.z).normalized()
+	var yaw := -atan2(ux.y, ux.x)
+	var n := 0
+	var z := lr.position.y + adim * 0.5
+	while z < lr.end.y:
+		var x := lr.position.x + adim * 0.5
+		while x < lr.end.x:
+			var lc := Vector2(x + rng.randf_range(-2.0, 2.0), z + rng.randf_range(-2.0, 2.0))
+			x += adim
+			var c := _hl(xf, lc + ofs)
+			if c.distance_to(merkez) > r_en_cok - 5.0:
+				continue
+			var alan := Vector2(rng.randf_range(adim - 4.0, adim - 1.0), rng.randf_range(adim - 6.0, adim - 2.0))
+			var pick: String = DOLGU_YAMA[rng.randi() % DOLGU_YAMA.size()]
+			var roll := rng.randf()
+			var tohum := rng.randi() % 9973
+			var ok := false
+			for sc: float in [1.0, 0.75, 0.55]:
+				var al := alan * sc
+				if _hepsi_bos(_rect_cells(c, ux, uz, al.x * 0.5 + 1.2, al.y * 0.5 + 1.2)):
+					alan = al
+					ok = true
+					break
+			if not ok or alan.x < 6.0:
+				continue
+			# bölümde (iç mahalle) _temizle'nin sildiği yarıçapta yama değil öğe (duvarsız boş yama kalmasın)
+			if ic_rect.size != Vector2.ZERO and ic_rect.grow(8.0 + alan.length() * 0.25).has_point(lc):
+				continue
+			var hs := [IstGeo.h(c.x - alan.x * 0.5, c.y - alan.y * 0.5), IstGeo.h(c.x + alan.x * 0.5, c.y - alan.y * 0.5),
+				IstGeo.h(c.x - alan.x * 0.5, c.y + alan.y * 0.5), IstGeo.h(c.x + alan.x * 0.5, c.y + alan.y * 0.5)]
+			if float(hs.max()) - float(hs.min()) > 2.5:
+				pick = "agaclik"
+			for k in _rect_cells(c, ux, uz, alan.x * 0.5, alan.y * 0.5):
+				occ[k] = 5
+			doku.append({"tur": pick, "c": c, "alan": alan, "yaw": yaw, "tohum": tohum, "mt": "bostan"})
+			if pick != "agaclik":
+				oge.append({"tur": "yama_duvar", "c": c, "yaw": yaw, "tohum": tohum, "alan": alan, "yama": pick})
+				if alan.x > 9.0 and alan.y > 9.0:
+					var ek: String = {"bostan": "kuyu", "bag": "kulube_bag", "bugday": "agil", "bahce": "kuyu"}[pick]
+					if roll < 0.3 and pick != "bugday":
+						ek = "agac_kumesi"
+					oge.append({"tur": ek, "c": c + ux * (alan.x * 0.5 - 4.0) + uz * (alan.y * 0.5 - 4.0), "yaw": yaw, "tohum": tohum + 1})
+			n += 1
+		z += adim
+	return n
+
+
+## Dolgu hücrelerinde hâlâ boş kalan 10 m'lik (hub yereli) karelere tek öğe: ilk büyük boşluğa çiftlik (ev + ağıl),
+## sonra ağaç kümesi, kuyu, bağ kulübesi
+func _dolgu_kumeler(xf: Transform3D, hucre: PackedInt32Array, rng: RandomNumberGenerator, ofs := Vector2.ZERO) -> int:
+	var xi := xf.affine_inverse()
+	var kare := {}
+	for k in hucre:
+		if occ[k] != 0:
+			continue
+		var l := _lh(xi, cell_c(k % nx, k / nx)) - ofs
+		var key := Vector2i(floori(l.x / 10.0), floori(l.y / 10.0))
+		kare[key] = int(kare.get(key, 0)) + 1
+	var anahtar: Array = kare.keys()
+	anahtar.sort()
+	var n := 0
+	var ciftlik := false
+	for key: Vector2i in anahtar:
+		if int(kare[key]) < 14:
+			continue
+		var c := _hl(xf, Vector2((key.x + 0.5) * 10.0, (key.y + 0.5) * 10.0) + ofs)
+		var tur := ""
+		var r := 0.0
+		if not ciftlik and _bos_mu(c, 13.0):
+			tur = "ciftlik"                 # ev + ağıl (ağıl evin 9 m yanında): 13 m'lik boşluk
+			r = 12.0
+			ciftlik = true
+		else:
+			var bul := Vector2.INF
+			for a in 14:
+				var q := c + Vector2.from_angle(a * 2.4) * (a * 0.45)
+				if _bos_mu(q, 3.6):
+					bul = q
+					break
+			if bul == Vector2.INF:
+				continue
+			c = bul
+			tur = ["agac_kumesi", "agac_kumesi", "kuyu", "kulube_bag", "agac_kumesi"][rng.randi() % 5]
+			r = 4.0
+		_stamp_disc(c, r, 5)
+		oge.append({"tur": tur, "c": c, "yaw": rng.randf() * TAU, "tohum": rng.randi() % 9973, "yer": "hub_dolgu"})
+		n += 1
+	return n
+
+
+## G22b madde 3: iç mahallenin oyun alanı eksen hizalı (IstBaglama._rect_xf) ve hub_saray'ın taban dairesi: dönük
+## dikdörtgenin (IC_RECT) çevresinde boş toprak üçgenleri. Alan tanımı DEĞİŞMEZ; IC_RECT'in 3 m dışındaki occ=3 hücreler
+## dolar (yama, ağaç kümesi, kuyu); _saray_yolu'nun son parçası sokak ağzına uzatılır.
+func _saray_dolgu(ar: Array, xf: Transform3D, rng: RandomNumberGenerator) -> void:
+	var xi := xf.affine_inverse()
+	var so := Vector2(SurHub.SARAY_OFS.x, SurHub.SARAY_OFS.z)
+	var sc := _hl(xf, so)
+	var kutu: Rect2 = (ar[2] as Rect2).grow(4.0)
+	var ic := ByzCity.IC_RECT.grow(3.0)
+	var T := _hl(xf, so + Vector2(ByzCity.BOLME_X + 9.0, -14.25))
+	var agiz := _hl(xf, so + Vector2(ByzCity.BOLME_X + 1.5, -14.25))
+	# _saray_yolu'nun T'ye en yakın noktası → T → sokak ağzı (oyun alanının taban hücrelerinden geçer: zorla)
+	var P := Vector2.INF
+	for st: Dictionary in streets:
+		if String(st["ad"]) != "saray_yolu":
+			continue
+		for q: Vector2 in (st["pts"] as PackedVector2Array):
+			if P == Vector2.INF or q.distance_to(T) < P.distance_to(T):
+				P = q
+	if P != Vector2.INF:
+		_add_street(_densify(PackedVector2Array([P, T, agiz]), 3.0), YOL_W, "yol", "saray_agzi", true)
+		dolgu["saray_agiz"] = [P, T, agiz]
+	var lo := Vector2(minf(kutu.position.x, sc.x - DOLGU_R), minf(kutu.position.y, sc.y - DOLGU_R))
+	var hi := Vector2(maxf(kutu.end.x, sc.x + DOLGU_R), maxf(kutu.end.y, sc.y + DOLGU_R))
+	var hucre := PackedInt32Array()
+	for j in range(maxi(0, int((lo.y - z0) / G)), mini(nz, int((hi.y - z0) / G) + 1)):
+		for i in range(maxi(0, int((lo.x - x0) / G)), mini(nx, int((hi.x - x0) / G) + 1)):
+			var k := j * nx + i
+			if occ[k] != 3:
+				continue
+			var q := cell_c(i, j)
+			if not (kutu.has_point(q) or q.distance_to(sc) <= DOLGU_R):
+				continue
+			if ic.has_point(_lh(xi, q) - so):
+				continue
+			occ[k] = 0
+			hucre.append(k)
+			_izin[k] = true
+	dolgu["saray_hucre"] = hucre.size()
+	var lr := Rect2(-80.0, -86.0, 140.0, 146.0)
+	dolgu["saray_yama"] = _dolgu_yamalari(xf, sc, lr, 14.0, 80.0, rng, so, ByzCity.IC_RECT)
+	dolgu["saray_kume"] = _dolgu_kumeler(xf, hucre, rng, so)
+	for k in hucre:
+		if occ[k] == 0:
+			occ[k] = 3
+	_izin.clear()
 
 
 ## Denetim için: iki dışbükey çokgen arasındaki en kısa uzaklık (iç içe ya da değiyorsa 0)
