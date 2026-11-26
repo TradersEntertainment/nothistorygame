@@ -80,6 +80,9 @@ func _init() -> void:
 static func bolunur(bolum: String) -> bool:
 	if "--saray-eski" in OS.get_cmdline_user_args():
 		return false
+	# v2'de yalnız yeni surla (eski kutu sur yolunda hub v2'de başka yerde: bölünmez)
+	if IstBaglama.etkin() and not SurHub.yeni(bolum):
+		return false
 	return bolum in BOLUNEN
 
 
@@ -112,6 +115,16 @@ func ic_global(v: Vector3) -> Vector3:
 ## Sur parçası yerelindeki (hub yereli) bir nokta → sahne (global)
 func sur_global(v: Vector3) -> Vector3:
 	return to_global(v)
+
+
+## G22: kararma altında öteki alana yerleştirmeden sonra: v2 arazi çarpışması (320 m'lik pencere) yeni yerde kurulur,
+## kalabalık ve akış için karanlıkta ~1 sn beklenir. Bölünmemişte beklemez.
+func alan_gecis(p: Vector3) -> void:
+	if saray_kok == null:
+		return
+	if IstBaglama.dunya != null and is_instance_valid(IstBaglama.dunya) and IstBaglama.kok != null and is_instance_valid(IstBaglama.kok):
+		IstBaglama.dunya.carpisma_yenile(IstBaglama.kok.to_local(p))
+	await get_tree().create_timer(1.0, false).timeout
 
 
 ## İç grubun kök düğümünü kurar (bölünmüşte)
@@ -321,7 +334,8 @@ func _build_nobet() -> void:
 	w.position = fp + Vector3(2.0, 0, 6.4)
 	w.rotation.y = PI
 	add_child(w)
-	w.carry("crate")
+	if w.is_inside_tree():
+		w.carry("crate")         # uzak görünüşte (sahne dışı kurulum) kişiler zaten atılır
 
 
 ## Tek harita: hub'ın (sur parçası) uzak görünüşü. Bölümün kendi yapıları (zemin, cadde ve evleri, çeşme, kançılarya,

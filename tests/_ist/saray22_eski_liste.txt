@@ -1,0 +1,10 @@
+# G22 eski dünya bakışları (43o; dünya x sur boyunca, iç sur z ≈ −2,3, şehir −z; Romanos x 0)
+# ad x y z hedef_x hedef_y hedef_z
+# Sahibin karesi: Romanos'a ~70 m yükseklikten, surun dışından içeri (43o drone)
+drone70_romanos 25 70 95 5 0 -160
+# Romanos'tan içeri, saray mahallesine (iç grup: dünya ~(−111, 5,6, −450))
+drone90_saray 10 90 60 -100 0 -420
+saray_yakin -40 45 -380 -111 5 -455
+saray_goz -114.5 7.4 -436.3 -110.5 7 -463
+# Surdaki parça: Giustiniani'nin yeri ve kapı (şehir yanından)
+sur_parca -12 14 -40 15 1 -6

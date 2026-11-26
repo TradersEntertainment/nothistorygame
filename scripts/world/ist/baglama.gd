@@ -46,6 +46,8 @@ const HUB_ORTA := Vector2(-4.0, -13.0)
 const YAMA := {"camp": [Vector2(0.0, -20.0), 170.0, 330.0], "byz_walls": [Vector2(-4.0, -13.0), 62.0, 260.0],
 	"gate8y": [Vector2(0.0, 55.0), 115.0, 160.0], "fallen31o": [Vector2(0.0, -48.0), 62.0, 140.0]}
 ## v2 yapılarının kaldırıldığı alan (yerel; bölümün oynanış alanı + pay)
+## G22: bölünmüş hub bölümünde sur parçasının temizlik alanı (bugünkü TEMIZ'in sur yanı: bölme çizgisinin 4 m içinden)
+const TEMIZ_BOL := Rect2(14.0, -58.0, 34.0, 90.0)
 const TEMIZ := {"camp": Rect2(-150.0, -175.0, 300.0, 300.0), "byz_walls": Rect2(-56.0, -58.0, 104.0, 90.0),
 	"gate8y": Rect2(-16.0, -46.0, 32.0, 236.0), "fallen31o": Rect2(-17.0, -99.0, 34.0, 111.0)}
 ## TAŞIMA-13 — Bölüm 31o (fethin ertesi) yeni surda, 8y kalıbı: kesim (SurHub "romanos", kapı açık) bölümün çerçevesine
@@ -382,7 +384,10 @@ static func build(parent: Node3D, region_name: String, keep_local: Array, _night
 	# Arazi yaması (v2 çerçevesinde): içte bölümün zemini (yerel y → v2 y = yerel + xf.origin.y), dışta v2'ye yumuşak geçiş
 	var ym: Array = YAMA[region_name]
 	var ic := Rect2()
-	for r: Rect2 in keep_local:
+	# G22: bölünmüş hub'ın keep'i iki dikdörtgen (sur parçası, ~430 m içerideki iç mahalle): birleştirilmez (430 m'lik tek
+	# dikdörtgen yamanın −0,35 bölgesini büyütürdü). Yama yalnız ilk dikdörtgene (sur parçası); iç mahalle IstGeo.duzle.
+	var hub_bol := region_name == "byz_walls" and ByzCity.bolunur(sahne_bolumu())
+	for r: Rect2 in (keep_local.slice(0, 1) if hub_bol else keep_local):
 		ic = r if ic.size == Vector2.ZERO else ic.merge(r)
 	var dy := xf.origin.y
 	var mv := xf * Vector3(ym[0].x, 0.0, ym[0].y)
@@ -408,7 +413,14 @@ static func build(parent: Node3D, region_name: String, keep_local: Array, _night
 				return dy - 0.03          # 8y: şehir yanında görünen zemin bölümün döşemesiyle aynı (−0,03)
 			return dy + (-0.35 if zr.has_point(Vector2(q.x, q.z)) else -0.05))
 	var temiz: Rect2 = TEMIZ[region_name]
-	IstGeo.dislanan = [v2_rect(temiz)]
+	# G22: bölünmüş hub bölümünde v2 yapıları iki alanda kalkar: sur parçası (bugünkü hub alanının sur yanı; G21 şeridi
+	# eski hub alanını doldurur) ve iç mahalle (uzak öğe hub_saray ve alandaki her şey)
+	_sil_alan2 = Rect2()
+	if hub_bol:
+		temiz = TEMIZ_BOL
+		var so := ByzCity.saray_ofs()
+		_sil_alan2 = Rect2(ByzCity.IC_RECT.position + Vector2(so.x, so.z), ByzCity.IC_RECT.size).grow(8.0)
+	IstGeo.dislanan = [v2_rect(temiz)] + ([v2_rect(_sil_alan2)] if hub_bol else [])
 	# bölümün zemini ve geçiş halkası denizin altında kalmasın (bölüm alanı karada)
 	var yr: float = ym[2]
 	IstGeo.deniz_yok = [Rect2(Vector2(mv.x, mv.z) - Vector2(yr, yr), Vector2(yr, yr) * 2.0).merge(v2_rect(temiz))]
@@ -451,14 +463,20 @@ static func build(parent: Node3D, region_name: String, keep_local: Array, _night
 	# Hub'ın v2'deki yeri ve yönü (bütün bölümlerde aynı; uçuşta görülen hub = Tolga'nın oynadığı hub): IstSehir kurulurken
 	# oyun alanı ve hub dönüşümü önbelleği (oyun_alanlari / hub_xf) bu dönüşümle önceden dolar; sokak, ev ve yaşam
 	# katmanları hub'ın alanını boş bırakır, hub şehri (ŞEHİR'in uzak hub'ı) surun içine dönük ve sura gömülü durur
-	var hub_alan := _rect_xf(hub_x, Rect2(-46.0, -48.0, 84.0, 70.0).grow(2.0))
+	# G22: yeni surda hub bölünmüş: oyun alanı sur parçası (bölünmemiş hub bölümünde bugünkü alan) + iç mahalle (SONDA)
+	var bol_v2 := SurHub.uzak_yeni() and not ("--saray-eski" in OS.get_cmdline_user_args())
+	var hub_tam := region_name == "byz_walls" and not hub_bol
+	var hub_alan := _rect_xf(hub_x, (ByzCity.SUR_RECT if (bol_v2 and not hub_tam) else Rect2(-46.0, -48.0, 84.0, 70.0)).grow(2.0))
 	var dinle := func(n: Node) -> void:
 		if n is IstDunya:
 			(n as Node).child_entered_tree.connect(func(m: Node) -> void:
 				if m is IstSehir and (m as IstSehir).get("_oyun") is Array and ((m as IstSehir).get("_oyun") as Array).is_empty():
 					m.set("_hub_xf", hub_x)
 					# TAŞIMA-13: 31o'da oyun alanı caddenin şeridi (hub alanı caddenin yerinde; hub_sehir kalkar)
-					m.set("_oyun", [_rect_xf(xf, OYUN_31O) if region_name == B31O else hub_alan, IstSehir._meydan_rect()]))
+					var oy: Array = [_rect_xf(xf, OYUN_31O) if region_name == B31O else hub_alan, IstSehir._meydan_rect()]
+					if bol_v2:
+						oy.append(IstSehir.saray_alani())
+					m.set("_oyun", oy))
 	f.child_entered_tree.connect(dinle)
 	LoadingScreen.nabiz("baglama_bas")
 	_sil_bolge = region_name
@@ -475,6 +493,7 @@ static func build(parent: Node3D, region_name: String, keep_local: Array, _night
 	# Kurulum birim dönüşümde biter, kök sonra bölümün çerçevesine oturur (ORTAK İSTEK 2)
 	f.transform = xf.affine_inverse()
 	_hub_dondur(hub_x)
+	_saray_dondur(hub_x)
 	LoadingScreen.nabiz("baglama_hub")
 	# harita (MiniMap, WorldMap): kabuğun dönüşümü (xf⁻¹) oyuncuyu v2 çerçevesine çevirir
 	f.night_build = gece
@@ -514,6 +533,21 @@ static func _hub_dondur(hub_x: Transform3D) -> void:
 				print("ISTBAGLAMA hub_sehir dondu yaw=%.1f" % rad_to_deg(float(it["yaw"])))
 
 
+## G22: uzak iç mahalle öğesi (hub_saray) hub dönüşümü · SARAY_OFS (+ dy) yerinde
+static func _saray_dondur(hub_x: Transform3D) -> void:
+	var s := IstSehir.active
+	if s == null:
+		return
+	for it: Dictionary in s.items:
+		if String(it.get("id", "")) == "hub_saray":
+			var h = it.get("holder")
+			if h is Node3D and is_instance_valid(h):
+				var t := hub_x * Transform3D(Basis.IDENTITY, ByzCity.saray_ofs())
+				(h as Node3D).transform = t
+				it["yaw"] = t.basis.get_euler().y
+				it["pos"] = t.origin
+
+
 ## Bölümün alanında kalsa da kaldırılmayan v2 öğeleri: Romanos Kapısı (hub'ın kapısı onun iç yanına oturur; dış sur, hendek
 ## köprüsü kesintisiz kalır)
 const KORU := ["romanos"]
@@ -528,6 +562,7 @@ static var _sil_acik := false
 static var atla_acik := not OS.get_cmdline_user_args().has("--sil-atla=0")     # ölçüm: --sil-atla=0 eski yol
 static var _sil_bolge := ""
 static var _sil_alan := Rect2()
+static var _sil_alan2 := Rect2()       # G22: bölünmüş hub bölümünde iç mahallenin alanı (hub yereli)
 static var _sil_hub := Vector3.INF
 static var sil_atlanan := 0
 
@@ -546,13 +581,18 @@ static func silinecek_mi(it: Dictionary) -> bool:
 		return false
 	var p: Vector3 = _sil_hub if (id == "hub_sehir" and _sil_hub != Vector3.INF) else it["pos"]
 	var r := float(it.get("r", 0.0))
+	if _sil_alan2.size != Vector2.ZERO:
+		if id == "hub_saray":
+			return true
+		if yerel_icinde(_sil_alan2.grow(r * 0.5), p.x, p.z):
+			return true
 	return yerel_icinde(_sil_alan.grow(r * 0.5), p.x, p.z)
 
 
 ## Kurulumda ağı atlanabilir mi: silinecek öğe, ama hub_sehir HARİÇ. Ölçüldü (tests/_yukleme19/sahne_karma, 8y): hub'ın ağı
 ## atlanınca sahnenin üçgen sayısı değişti (6 075 731 → 6 075 303; çarpışma aynı): _make_hub'ın ByzCity kurucuları genel
 ## RNG'yi tüketiyor ve Props önbelleklerini ısıtıyor, sonraki içerik kayıyor (kural: görüntü değişmez). Öteki öğelerde aynı.
-const KURULUM_ATLAMA_YOK := ["hub_sehir"]
+const KURULUM_ATLAMA_YOK := ["hub_sehir", "hub_saray"]
 
 
 static func atlanabilir_mi(it: Dictionary) -> bool:

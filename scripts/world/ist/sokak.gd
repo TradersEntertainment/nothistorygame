@@ -640,25 +640,25 @@ func _oyun_alani_yollari() -> void:
 ## G21: saray avlusu + kançılaryanın (G22) yeni yeri: hub yerelinde SurHub.SARAY_OFS, 84 × 70 m (hub x × hub z)
 const SARAY_ALAN := Vector2(84.0, 70.0)
 
-## Hub oyun alanının şehre bakan bağlantı ucundan (oyun_bag) saray alanına 6 m'lik açık yol (Lykos şeridinin içinden geçer,
-## ucunda sokak ağına bağlanır); alan evden önce boş hücre → 5 (meydan: döşeme, kuyu/çeşme, kenarda ağaç kümeleri).
+## Hub oyun alanının şehre bakan bağlantı ucundan (oyun_bag) saray mahallesine 6 m'lik açık yol (Lykos şeridinin içinden
+## geçer). G22: mahalle artık oyun alanı (IstSehir.oyun_alanlari, sonda): çevre yolu, dört bağlantı ve evsiz alan oradan
+## gelir; yol alanın merkezine değil, iç mahallenin doğu-batı caddesinin sokak ağzına (ByzCity yereli x BOLME_X, z −14,25;
+## surlara bakan uç) varır. Hub dizinle alınır (ar[0]; saray da oyun alanı olunca "en yakın alan" kendini seçerdi).
+## G21'in alanın içine koyduğu meydan, zemin_ek, ağaç kümeleri ve kuyu kaldırıldı (G22'nin yapılarının içinden çıkıyordu).
 func _saray_yolu() -> void:
 	var s: Node = IstSehir.active
 	if s == null or not is_instance_valid(s) or not s.has_method("oyun_alanlari"):
 		return
-	var sv: Vector3 = SurHub.saray_v2()
-	var T := Vector2(sv.x + IstGeo.OX, sv.z + IstGeo.OZ)
+	var ar: Array = s.oyun_alanlari()
+	if ar.size() < 3:
+		return
+	var xf: Transform3D = SurHub.hub_v2()
+	var so := Vector3(SurHub.SARAY_OFS.x, 0.0, SurHub.SARAY_OFS.z)
+	var ag := xf * (so + Vector3(ByzCity.BOLME_X + 9.0, 0.0, -14.25))
+	var T := Vector2(ag.x + IstGeo.OX, ag.z + IstGeo.OZ)
 	if not IstGeo.sehir_ici(T.x, T.y):
 		return
-	var hub := Rect2()
-	var bd := INF
-	for a: Rect2 in s.oyun_alanlari():
-		var d := a.get_center().distance_to(T)
-		if d < bd:
-			bd = d
-			hub = a
-	if bd > 700.0:
-		return
+	var hub: Rect2 = ar[0]
 	var hc := hub.get_center()
 	var dis := (T - hc).normalized()
 	dis = Vector2(signf(dis.x), 0.0) if absf(dis.x) > absf(dis.y) else Vector2(0.0, signf(dis.y))
@@ -666,10 +666,7 @@ func _saray_yolu() -> void:
 	var uc := m + dis * 70.0
 	if not IstGeo.sehir_ici(uc.x, uc.y):
 		uc = m + dis * 30.0
-	var xf: Transform3D = SurHub.hub_v2()
-	var u := Vector2(xf.basis.x.x, xf.basis.x.z).normalized()
-	var v := Vector2(xf.basis.z.x, xf.basis.z.z).normalized()
-	# yol: bağlantı ucundan alanın merkezine, hafif kavisli (düz cetvel çizgisi okunmasın)
+	# yol: bağlantı ucundan sokak ağzına, hafif kavisli (düz cetvel çizgisi okunmasın)
 	var L := uc.distance_to(T)
 	var yan := (T - uc).normalized().orthogonal()
 	var pts := PackedVector2Array()
@@ -677,27 +674,11 @@ func _saray_yolu() -> void:
 	for k in n + 1:
 		var t := float(k) / n
 		pts.append(uc.lerp(T, t) + yan * sin(t * PI) * 14.0)
+	# son parça: sokak ağzından caddenin içine (alanın kenarına kadar; hücreler oyun alanıysa _add_parcali keser)
+	var ic := xf * (so + Vector3(ByzCity.BOLME_X + 1.0, 0.0, -14.25))
+	pts.append(Vector2(ic.x + IstGeo.OX, ic.z + IstGeo.OZ))
 	var ns := _add_parcali(pts, YOL_W, "saray_yolu")
-	# alan: boş hücreler meydan olur (yol hücreleri yol kalır)
-	var cells := _rect_cells(T, u, v, SARAY_ALAN.x * 0.5, SARAY_ALAN.y * 0.5)
-	var nh := 0
-	for k in cells:
-		if k >= 0 and occ[k] == 0:
-			occ[k] = 5
-			nh += 1
-	meydan.append({"c": T, "yaw": atan2(u.y, u.x), "tohum": 1453})
-	zemin_ek.append({"c": T, "r": 24.0, "tur": "mese"})
-	# kenarda ağaç kümeleri ve köşelerde ayrıntı (boş çayır değil; G22 kuracağı yapının çevresi)
-	var i := 0
-	for ox: float in [-0.36, 0.0, 0.36]:
-		for oz: float in [-0.36, 0.0, 0.36]:
-			if ox == 0.0 and oz == 0.0:
-				continue
-			var p := T + u * SARAY_ALAN.x * ox + v * SARAY_ALAN.y * oz
-			var tur := "agac_kumesi" if (i % 2 == 0) else ("kuyu" if i == 3 else "agac_kumesi")
-			oge.append({"tur": tur, "c": p, "yaw": atan2(u.y, u.x), "tohum": 1453 + i, "yer": "saray"})
-			i += 1
-	stats["saray"] = {"c": T, "yol_parca": ns, "hucre": nh}
+	stats["saray"] = {"c": T, "yol_parca": ns}
 
 
 ## Yalnız boş/yol hücrelerinden geçen parçaları ekler (sur bandı, anıt, deniz atlanır); eklenen parça sayısı
