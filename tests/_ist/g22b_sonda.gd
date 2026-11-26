@@ -66,7 +66,7 @@ func _olc() -> void:
 	var so := Vector2(SurHub.SARAY_OFS.x, SurHub.SARAY_OFS.z)
 	# 1) önek karması
 	var adlar := ["streets", "houses", "doku", "oge", "avlu", "meydan"]
-	var tb: Dictionary = (sk.dolgu.get("taban", {}) as Dictionary)
+	var tb: Dictionary = (_dl(sk).get("taban", {}) as Dictionary)
 	for i in adlar.size():
 		var ls: Array = sk.get(adlar[i])
 		var n := ls.size()
@@ -77,8 +77,9 @@ func _olc() -> void:
 		for k in n:
 			ctx.update(var_to_bytes(ls[k]))
 		print("G22BSONDA karma ad=%s n=%d onek=%d md5=%s dolgu_taban=%s" % [adlar[i], ls.size(), n, ctx.finish().hex_encode(), str(tb.get(adlar[i], "-"))])
-	var ozet: Dictionary = sk.dolgu.duplicate()
-	ozet.erase("yol")
+	var ozet: Dictionary = _dl(sk).duplicate()
+	for k: String in ["yol", "ek_yok", "degisen", "degisen_eski"]:
+		ozet.erase(k)
 	print("G22BSONDA dolgu ", ozet)
 	# 2) daire
 	var hc := _w(xf, Vector2.ZERO)
@@ -92,6 +93,10 @@ func _olc() -> void:
 			if l.x >= 17.0:
 				continue
 			var key := "%s%d" % ["a" if l.x < 14.0 else "k", sk.occ[j * sk.nx + i]]
+			if sk.occ[j * sk.nx + i] == 1:
+				var rr := sk.rid[j * sk.nx + i]
+				var rk := "rid_" + ("yok" if rr < 0 else String(sk.streets[rr]["ad"]) + "_" + String(sk.streets[rr]["tur"]))
+				say[rk] = int(say.get(rk, 0)) + 1
 			say[key] = int(say.get(key, 0)) + 1
 	print("G22BSONDA daire occ=%s" % [say])
 	# 3) boş kareler: hub dairesi (x < 2: nöbet açıklığı hariç) ve iç mahalle çevresi (IC_RECT + 3 m dışı, alan/daire)
@@ -142,6 +147,8 @@ func _olc() -> void:
 				if orn.size() < 8:
 					orn.append(_l(xi, p).snapped(Vector2.ONE * 0.5))
 				continue
+			if sk.cell(p.x, p.y) != 1:
+				continue
 			var nr := Vector2(-dd.y, dd.x)
 			var gen := 0.0
 			for sgn: float in [1.0, -1.0]:
@@ -178,7 +185,53 @@ func _olc() -> void:
 				en_x = l.x
 				en_ad = String(z[0])
 	print("G22BSONDA dolgu_en_dogu x=%.1f (%s) esik=14" % [en_x, en_ad])
+	_harita(sk, xf, "hub", Vector2.ZERO)
+	_harita(sk, xf, "saray", so)
 	print("G22BSONDA OZET yer=%d kotu=%d yeni_iz=%d dolgu_en_dogu_x=%.1f kopuk=%d en_dar=%.2f cimen=%.1f" % [yerler.size(), kotu, yeni.size(), en_x, kopuk, en_dar, en])
+
+
+## Hub (ya da iç grup) yerelinde occ haritası: x −80…60, z −80…60, 4 px/m (+x sağa, +z aşağı); yeni kayıtlar işaretli
+func _harita(sk: IstSokak, xf: Transform3D, ad: String, ofs: Vector2) -> void:
+	var dir := ""
+	for a: String in OS.get_cmdline_user_args():
+		if a.begins_with("harita="):
+			dir = a.get_slice("=", 1)
+	if dir == "":
+		return
+	var renk := [Color("6a8a4a"), Color("b8a888"), Color("c04030"), Color("505050"), Color("2040a0"), Color("d0c040"), Color("907050")]
+	var img := Image.create(560, 560, false, Image.FORMAT_RGB8)
+	for py in 560:
+		for px in 560:
+			var l := Vector2(-80.0 + px * 0.25, -80.0 + py * 0.25) + ofs
+			var w := _w(xf, l)
+			var o := sk.cell(w.x, w.y)
+			img.set_pixel(px, py, renk[clampi(o, 0, 6)])
+	var tb: Dictionary = _dl(sk).get("taban", {})
+	var xi := xf.affine_inverse()
+	var nokta := func(w: Vector2, c: Color, r: int) -> void:
+		var l := _l(xi, w) - ofs
+		var px := int((l.x + 80.0) * 4.0)
+		var py := int((l.y + 80.0) * 4.0)
+		for dy in range(-r, r + 1):
+			for dx in range(-r, r + 1):
+				if px + dx >= 0 and px + dx < 560 and py + dy >= 0 and py + dy < 560:
+					img.set_pixel(px + dx, py + dy, c)
+	if not tb.is_empty():
+		for i in range(int(tb["houses"]), int(tb["houses"]) + int(_dl(sk).get("ev", 0))):
+			nokta.call(sk.houses[i]["c"], Color.BLACK, 3)
+		for i in range(int(tb["oge"]), sk.oge.size()):
+			nokta.call(sk.oge[i]["c"], Color.WHITE, 2)
+		for i in range(int(tb["doku"]), sk.doku.size()):
+			nokta.call(sk.doku[i]["c"], Color.MAGENTA, 3)
+	for p: Vector2 in (_dl(sk).get("yol", PackedVector2Array()) as PackedVector2Array):
+		nokta.call(p, Color.CYAN, 1)
+		if ad == "hub":
+			var lp := _l(xi, p)
+			var px := int((lp.x + 80.0) * 4.0)
+			var py := int((lp.y + 80.0) * 4.0)
+			print("G22BSONDA yolnokta yerel=%s occ=%d piksel=(%d,%d) img=%s" % [lp.snapped(Vector2.ONE * 0.1), sk.cell(p.x, p.y), px, py, img.get_pixel(clampi(px + 6, 0, 559), py)])
+	img.save_png(dir.path_join("harita_%s.png" % ad))
+	print("G22BSONDA harita %s" % dir.path_join("harita_%s.png" % ad))
 
 
 func _w(xf: Transform3D, l: Vector2) -> Vector2:
@@ -225,12 +278,12 @@ func _bos_kare(sk: IstSokak, ad: String, icinde: Callable, xf: Transform3D, ofs:
 ## Kapıdan iç mahalleye yürüyüş hattı (v2 dünya noktaları)
 func _hat(sk: IstSokak, xf: Transform3D) -> Array:
 	var out: Array = []
-	if not sk.dolgu.has("yol"):
+	if not _dl(sk).has("yol"):
 		return out
-	for p: Vector2 in (sk.dolgu["yol"] as PackedVector2Array):
+	for p: Vector2 in (_dl(sk)["yol"] as PackedVector2Array):
 		out.append(p)
-	var J: Vector2 = sk.dolgu["J"]
-	var uc: Vector2 = sk.dolgu["uc"]
+	var J: Vector2 = _dl(sk)["J"]
+	var uc: Vector2 = _dl(sk)["uc"]
 	out.append(uc)
 	# saray yolu parçaları (uc'tan başlayıp sırayla)
 	var parca: Array = []
@@ -252,8 +305,8 @@ func _hat(sk: IstSokak, xf: Transform3D) -> Array:
 		for p: Vector2 in pl2:
 			out.append(p)
 		son = pl2[pl2.size() - 1]
-	if sk.dolgu.has("saray_agiz"):
-		for p: Vector2 in (sk.dolgu["saray_agiz"] as Array).slice(1):
+	if _dl(sk).has("saray_agiz"):
+		for p: Vector2 in (_dl(sk)["saray_agiz"] as Array).slice(1):
 			out.append(p)
 	print("G22BSONDA hat J=%s uc=%s nokta=%d" % [J, uc, out.size()])
 	return out
@@ -262,10 +315,10 @@ func _hat(sk: IstSokak, xf: Transform3D) -> Array:
 ## Taban uzunluğundan sonra eklenen kayıtların ayak izleri (dünya çokgenleri)
 func _yeni_izler(sk: IstSokak) -> Array:
 	var out: Array = []
-	var tb: Dictionary = sk.dolgu.get("taban", {})
+	var tb: Dictionary = _dl(sk).get("taban", {})
 	if tb.is_empty():
 		return out
-	for i in range(int(tb["houses"]), sk.houses.size()):
+	for i in range(int(tb["houses"]), int(tb["houses"]) + int(_dl(sk).get("ev", 0))):
 		var h: Dictionary = sk.houses[i]
 		var dm := IstEvler.dims(int(h["v"]))
 		out.append(["ev", _rect(h["c"], float(h["yaw"]), Vector2(dm.x + 1.4, dm.z))])
@@ -296,8 +349,12 @@ func _yeni_izler(sk: IstSokak) -> Array:
 			r = 9.0
 		elif tur == "ciftlik":
 			r = 13.0
+		elif tur == "agac_kumesi":
+			r = 8.5                       # 3–6 ağaç, merkezden 2 + i·1,3 m
+		elif tur == "kulube_bag" or tur == "kuyu":
+			r = 2.8
 		elif tur == "agil":
-			r = 6.5
+			r = 5.0                       # çit halkası r 4,5 (saman yığını yan tarafta)
 		elif tur == "yama_duvar":
 			continue
 		out.append(["oge_" + tur, _rect(o["c"], 0.0, Vector2(r, r) * 2.0)])
@@ -469,3 +526,9 @@ func _yuru() -> void:
 				break
 	Input.action_release("move_forward")
 	print("G22BSONDA yuru OZET nokta=%d takilma=%d dusme=%d yol=%.0f sure_ms=%d" % [nokt.size(), takil, dus, yol, Time.get_ticks_msec() - t0])
+
+
+## IstSokak.dolgu (tabanda — 37ae2b7d — yok: boş)
+func _dl(sk: IstSokak) -> Dictionary:
+	var d = sk.get("dolgu")
+	return d if d is Dictionary else {}

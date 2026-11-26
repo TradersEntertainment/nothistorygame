@@ -3411,6 +3411,7 @@ func _sehir_dokusu_v2() -> void:
 	# Doku: bostan/bağ/tarla yamaları, harabe, mahalle kiliseleri, ağaçlık, bahçe
 	var np := 0
 	var far: Array = []
+	var n_dk0 := int((sokak.dolgu.get("taban", {}) as Dictionary).get("doku", sokak.doku.size()))
 	for dk: Dictionary in sokak.doku:
 		LoadingScreen.nabiz("sehir_3310")
 		var tur := String(dk["tur"])
@@ -3452,7 +3453,8 @@ func _sehir_dokusu_v2() -> void:
 		var dk_bos := IstCati.bos_mu(c, minf(alan.x, alan.y) * 0.5)
 		for k in rng.randi_range(1, 3):
 			var tp := c + Vector2((alan.x * 0.5 + 1.5) * (1 if rng.randf() < 0.5 else -1), rng.randf_range(-alan.y * 0.4, alan.y * 0.4))
-			if sokak.cell(tp.x, tp.y) in [0, 5]:
+			# G22b: eski yamalar dolgudan önceki ızgaraya göre (rng sırası aynı); dolgunun yamaları güncele göre
+			if (sokak.cell_taban(tp.x, tp.y) if np <= n_dk0 else sokak.cell(tp.x, tp.y)) in [0, 5]:
 				var ak := "ag|" + String(AGAC_SIK[rng.randi() % AGAC_SIK.size()])
 				var ar := rng.randf() * TAU
 				if IstCati.bos_mu(tp):

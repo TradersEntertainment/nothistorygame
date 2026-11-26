@@ -68,6 +68,22 @@ func cell(x: float, z: float) -> int:
 	return 4 if k < 0 else occ[k]
 
 
+## G22b: dolgudan önceki hücre değeri (eski kayıtların çizim anı denetimleri için; dolgu yoksa cell ile aynı)
+var _taban_deg := {}
+func cell_taban(x: float, z: float) -> int:
+	var k := _ix(x, z)
+	if k < 0:
+		return 4
+	if _taban_deg.is_empty() and dolgu.has("degisen"):
+		var dg: PackedInt32Array = dolgu["degisen"]
+		var de: PackedByteArray = dolgu["degisen_eski"]
+		for i in dg.size():
+			_taban_deg[dg[i]] = de[i]
+		if _taban_deg.is_empty():
+			_taban_deg[-1] = 0
+	return int(_taban_deg.get(k, occ[k]))
+
+
 func cell_c(i: int, j: int) -> Vector2:
 	return Vector2(x0 + (i + 0.5) * G, z0 + (j + 0.5) * G)
 
@@ -2106,6 +2122,7 @@ func _hub_dolgu() -> void:
 		"avlu": avlu.size(), "meydan": meydan.size(), "sira": _sira_bilgi.size(), "zemin_ek": zemin_ek.size()}}
 	var rng := RandomNumberGenerator.new()
 	rng.seed = DOLGU_TOHUM
+	var occ0 := occ.duplicate()
 	var xi := xf.affine_inverse()
 	var ux := Vector2(xf.basis.x.x, xf.basis.x.z).normalized()
 	var uz := Vector2(xf.basis.z.x, xf.basis.z.z).normalized()
@@ -2122,6 +2139,9 @@ func _hub_dolgu() -> void:
 			hucre.append(k)
 			_izin[k] = true
 	dolgu["hucre"] = hucre.size()
+	# eski kayıtların döşeli meydan diskleri (hub_sehir'in eser meydanı r 63: _eser_meydanlari) bu hücreleri boyamaz
+	# (IstMahalleDoku): toprak açıklık, yol ve yamalar döşeme altında kalmasın
+	dolgu["ek_yok"] = hucre.duplicate()
 	# 2) kapıdan gelen yol
 	var yol := _hub_yolu(ar, xf, hc)
 	# 3) nöbet ve ikmal açıklığı (x 2…14): şantiye (sur onarımı), sığınmacı çadırları (ocak, kazan, sandık), ağıl;
@@ -2148,6 +2168,18 @@ func _hub_dolgu() -> void:
 			occ[k] = 1
 			n_toprak += 1
 	dolgu["toprak"] = n_toprak
+	# 4a) kuyulu küçük meydan (döşeli; yoldan kısa patika), çevresinde ağaç
+	for lc: Vector2 in [Vector2(-12.0, -1.5), Vector2(-12.0, -27.0), Vector2(-20.0, -1.5), Vector2(-20.0, -27.0), Vector2(-6.0, -1.5), Vector2(-6.0, -27.0)]:
+		var c := _hl(xf, lc)
+		if not _bos_mu(c, 7.5):
+			continue
+		var yp := _hl(xf, Vector2(lc.x, -14.25))
+		_add_street(_densify(PackedVector2Array([yp, c]), 3.0), 4.0, "sokak", "hub_meydan")
+		_stamp_disc(c, 6.0, 5)
+		meydan.append({"c": c, "yaw": rng.randf() * TAU, "tohum": 2 * (rng.randi() % 4986)})
+		zemin_ek.append({"c": c, "r": 7.0, "tur": "mese"})
+		dolgu["meydan"] = lc
+		break
 	# 4) dağınık köy evleri: yolun iki yanında kısa sıralar (1–2 ev, arada bahçe), arkalarında avlu
 	var nev0 := houses.size()
 	var row0 := _sira_bilgi.size()
@@ -2179,18 +2211,6 @@ func _hub_dolgu() -> void:
 		if ((sb[0] as Vector2) + (sb[2] as Vector2) * (float(sb[4]) * 0.5 + 16.0)).distance_to(hc) < DOLGU_R:
 			_avlu_ekle(sb[0], sb[1], sb[2], sb[3], sb[4], sb[5], sb[6], rng)
 	dolgu["ev"] = houses.size() - nev0
-	# 5) kuyulu küçük meydan (döşeli; yoldan kısa patika), çevresinde ağaç
-	for lc: Vector2 in [Vector2(-34.0, -1.0), Vector2(-12.0, -1.5), Vector2(-34.0, -28.0), Vector2(-12.0, -28.0)]:
-		var c := _hl(xf, lc)
-		if not _bos_mu(c, 7.5):
-			continue
-		var yp := _hl(xf, Vector2(lc.x, -14.25))
-		_add_street(_densify(PackedVector2Array([yp, c]), 3.0), 4.0, "sokak", "hub_meydan")
-		_stamp_disc(c, 6.0, 5)
-		meydan.append({"c": c, "yaw": rng.randf() * TAU, "tohum": 2 * (rng.randi() % 4986)})
-		zemin_ek.append({"c": c, "r": 7.0, "tur": "mese"})
-		dolgu["meydan"] = lc
-		break
 	# 6) harap kilise (19 × 25 m; 100 m'de bir); yoksa küçük ölçek; o da yoksa harabe adası
 	var yaw_h := -atan2(ux.y, ux.x)
 	var kil := false
@@ -2230,8 +2250,20 @@ func _hub_dolgu() -> void:
 	_izin.clear()
 	# 9) iç mahallenin köşe üçgenleri
 	_saray_dolgu(ar, xf, rng)
+	# değişen hücreler ve eski değerleri: eski kayıtların çizim anı denetimleri (sokak eşyası, yama kenarı ağaçları) dolgudan
+	# önceki ızgarayı görsün (cell_taban), sayı dizileri kaymasın
+	var dg := PackedInt32Array()
+	var de := PackedByteArray()
+	for k in occ.size():
+		if occ[k] != occ0[k]:
+			dg.append(k)
+			de.append(occ0[k])
+	dolgu["degisen"] = dg
+	dolgu["degisen_eski"] = de
 	stats["hub_dolgu"] = dolgu.duplicate()
-	(stats["hub_dolgu"] as Dictionary).erase("yol")
+	for ad: String in ["yol", "ek_yok", "degisen", "degisen_eski"]:
+		(stats["hub_dolgu"] as Dictionary).erase(ad)
+	stats["hub_dolgu"]["degisen"] = dg.size()
 
 
 ## Bütün hücreler boş (0) ve ızgaranın içinde
@@ -2303,7 +2335,6 @@ func _dolgu_yamalari(xf: Transform3D, merkez: Vector2, lr: Rect2, adim: float, r
 				continue
 			var alan := Vector2(rng.randf_range(adim - 4.0, adim - 1.0), rng.randf_range(adim - 6.0, adim - 2.0))
 			var pick: String = DOLGU_YAMA[rng.randi() % DOLGU_YAMA.size()]
-			var roll := rng.randf()
 			var tohum := rng.randi() % 9973
 			var ok := false
 			for sc: float in [1.0, 0.75, 0.55]:
@@ -2328,8 +2359,6 @@ func _dolgu_yamalari(xf: Transform3D, merkez: Vector2, lr: Rect2, adim: float, r
 				oge.append({"tur": "yama_duvar", "c": c, "yaw": yaw, "tohum": tohum, "alan": alan, "yama": pick})
 				if alan.x > 9.0 and alan.y > 9.0:
 					var ek: String = {"bostan": "kuyu", "bag": "kulube_bag", "bugday": "agil", "bahce": "kuyu"}[pick]
-					if roll < 0.3 and pick != "bugday":
-						ek = "agac_kumesi"
 					oge.append({"tur": ek, "c": c + ux * (alan.x * 0.5 - 4.0) + uz * (alan.y * 0.5 - 4.0), "yaw": yaw, "tohum": tohum + 1})
 			n += 1
 		z += adim
@@ -2352,7 +2381,7 @@ func _dolgu_kumeler(xf: Transform3D, hucre: PackedInt32Array, rng: RandomNumberG
 	var n := 0
 	var ciftlik := false
 	for key: Vector2i in anahtar:
-		if int(kare[key]) < 14:
+		if int(kare[key]) < 6:
 			continue
 		var c := _hl(xf, Vector2((key.x + 0.5) * 10.0, (key.y + 0.5) * 10.0) + ofs)
 		var tur := ""
@@ -2362,17 +2391,27 @@ func _dolgu_kumeler(xf: Transform3D, hucre: PackedInt32Array, rng: RandomNumberG
 			r = 12.0
 			ciftlik = true
 		else:
+			# ağaç kümesi (ağaçlar 9 m'ye yayılır) yalnız geniş boşlukta; dar yerde kuyu ya da bağ kulübesi
 			var bul := Vector2.INF
+			var genis := false
 			for a in 14:
 				var q := c + Vector2.from_angle(a * 2.4) * (a * 0.45)
-				if _bos_mu(q, 3.6):
+				if _bos_mu(q, 9.0):
 					bul = q
+					genis = true
 					break
+			if bul == Vector2.INF:
+				for a in 14:
+					var q := c + Vector2.from_angle(a * 2.4) * (a * 0.45)
+					if _bos_mu(q, 3.2):
+						bul = q
+						break
 			if bul == Vector2.INF:
 				continue
 			c = bul
-			tur = ["agac_kumesi", "agac_kumesi", "kuyu", "kulube_bag", "agac_kumesi"][rng.randi() % 5]
-			r = 4.0
+			var sec: Array = ["agac_kumesi", "agac_kumesi", "kuyu", "agac_kumesi"] if genis else ["kuyu", "kulube_bag", "kuyu"]
+			tur = sec[rng.randi() % sec.size()]
+			r = 9.0 if tur == "agac_kumesi" else 3.2
 		_stamp_disc(c, r, 5)
 		oge.append({"tur": tur, "c": c, "yaw": rng.randf() * TAU, "tohum": rng.randi() % 9973, "yer": "hub_dolgu"})
 		n += 1
@@ -2418,6 +2457,7 @@ func _saray_dolgu(ar: Array, xf: Transform3D, rng: RandomNumberGenerator) -> voi
 			hucre.append(k)
 			_izin[k] = true
 	dolgu["saray_hucre"] = hucre.size()
+	(dolgu["ek_yok"] as PackedInt32Array).append_array(hucre)
 	var lr := Rect2(-80.0, -86.0, 140.0, 146.0)
 	dolgu["saray_yama"] = _dolgu_yamalari(xf, sc, lr, 14.0, 80.0, rng, so, ByzCity.IC_RECT)
 	dolgu["saray_kume"] = _dolgu_kumeler(xf, hucre, rng, so)

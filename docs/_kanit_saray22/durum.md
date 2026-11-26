@@ -1,4 +1,4 @@
-G22b SÜRÜYOR 06:35 UTC sokak.gd dolgu geçişi (ayrı rng, sona ekler) + bordür + g22b_sonda; ölçüm ve kareler sürüyor
+G22b SÜRÜYOR 07:20 UTC dolgu çalışıyor (boş kare %0, çimen ≤ 9,5 m, önek aynı); zemin/eşya rng düzeltmeleri; testler sırada
 
 # G22 durum: BİTTİ
 

@@ -67,15 +67,22 @@ func _sec(liste: Array, rng: RandomNumberGenerator) -> String:
 
 
 ## Nokta sokakta (yol hücresi) ve çevresi (r) evin/anıtın içine taşmıyor mu
+## G22b: eski kayıtlar (dolgudan önceki evler ve meydanlar) dolgudan önceki ızgaraya göre denetlenir (sayı dizisi aynı)
+var _taban := false
+
+func _hc(x: float, z: float) -> int:
+	return sk.cell_taban(x, z) if _taban else sk.cell(x, z)
+
+
 func _yer_uygun(p: Vector2, r: float) -> bool:
 	if IstGeo.su(p.x, p.y):
 		return false
-	var c := sk.cell(p.x, p.y)
+	var c := _hc(p.x, p.y)
 	if c != 1 and c != 0 and c != 5 and c != 6:
 		return false
 	for a in 4:
 		var q := p + Vector2.from_angle(a * PI * 0.5) * r
-		var cq := sk.cell(q.x, q.y)
+		var cq := _hc(q.x, q.y)
 		if cq == 3 or cq == 4:
 			return false
 	return true
@@ -107,14 +114,59 @@ func _kur_hesapla() -> void:
 	rng.seed = 145319
 	var n := 0
 	var tur_say := {}
-	for h: Dictionary in sk.houses:
+	# G22b: sur ardı dolgusunun evleri (listenin sonunda, IstSokak.dolgu.taban'dan sonra) meydanlardan SONRA, kendi rng'siyle
+	# (eski evlerin ve meydanların eşyası aynı sayı dizisini tüketsin)
+	# (IstCati önbellekten sonra çatı rotasının evlerini listenin sonuna ekler: dolgu evleri [n_h0, n_h1) aralığında)
+	var n_h0 := int((sk.dolgu.get("taban", {}) as Dictionary).get("houses", sk.houses.size()))
+	var n_h1 := n_h0 + int(sk.dolgu.get("ev", 0))
+	var n_m0 := int((sk.dolgu.get("taban", {}) as Dictionary).get("meydan", sk.meydan.size()))
+	_taban = true
+	for hi in sk.houses.size():
+		if hi >= n_h0 and hi < n_h1:
+			continue
+		n += _ev_esya(sk.houses[hi], rng, tur_say)
+	# meydan köşe grupları: kuyu/çeşmenin (ŞEHİR kurar, merkezde) çevresinde 3,6–5 m halkada 4–6 öğe
+	var nm := 0
+	for mi in sk.meydan.size():
+		var m: Dictionary = sk.meydan[mi]
+		_taban = mi < n_m0
+		var c: Vector2 = m["c"]
+		var mt := _tur(c)
+		var liste: Array = MEYDAN_SEC.get(mt, MEYDAN_SEC["sik"])
+		var a0 := rng.randf() * TAU
+		for i in rng.randi_range(4, 6):
+			var ang := a0 + i * TAU / 6.0 + rng.randf_range(-0.2, 0.2)
+			var p := c + Vector2.from_angle(ang) * rng.randf_range(3.6, 5.0)
+			if not _yer_uygun(p, 0.3):
+				continue
+			var id := _sec(liste, rng)
+			var y := IstGeo.h(p.x, p.y)
+			if IstMahalleDoku.aktif != null and is_instance_valid(IstMahalleDoku.aktif):
+				y = maxf(y, IstMahalleDoku.aktif._zy(p.x, p.y))
+			_ekle(id, Transform3D(Basis(Vector3.UP, -ang + PI * 0.5 + rng.randf_range(-0.3, 0.3)), Vector3(p.x, y, p.y)))
+			nm += 1
+			tur_say[id] = int(tur_say.get(id, 0)) + 1
+	_taban = false
+	var rng2 := RandomNumberGenerator.new()
+	rng2.seed = 145322
+	var n_dolgu := 0
+	for h: Dictionary in sk.houses.slice(n_h0, n_h1):
+		n_dolgu += _ev_esya(h, rng2, tur_say)
+	stats = {"meydan_oge": nm, "oge": n, "dolgu_oge": n_dolgu, "hucre": _hucre.size(), "tur": _mesh.size(), "kur_ms": Time.get_ticks_msec() - t0}
+	print("ISTDOKU3 sokak_esyasi ", stats, " ", tur_say)
+
+
+## Evin cephesindeki sokak eşyası (sayı)
+func _ev_esya(h: Dictionary, rng: RandomNumberGenerator, tur_say: Dictionary) -> int:
+	var n := 0
+	if true:
 		var c: Vector2 = h["c"]
 		var on: Vector2 = h["on"]
 		if not IstGeo.sehir_ici(c.x, c.y) and not IstGeo.galata_ici(c.x, c.y):
-			continue
+			return 0
 		var dis := on - c
 		if dis.length() < 0.01:
-			continue
+			return 0
 		dis = dis.normalized()
 		var yan := Vector2(-dis.y, dis.x)
 		var dm := IstEvler.dims(int(h["v"]))
@@ -150,27 +202,7 @@ func _kur_hesapla() -> void:
 			_ekle(id, Transform3D(Basis(Vector3.UP, yaw), Vector3(p.x, y, p.y)))
 			n += 1
 			tur_say[id] = int(tur_say.get(id, 0)) + 1
-	# meydan köşe grupları: kuyu/çeşmenin (ŞEHİR kurar, merkezde) çevresinde 3,6–5 m halkada 4–6 öğe
-	var nm := 0
-	for m: Dictionary in sk.meydan:
-		var c: Vector2 = m["c"]
-		var mt := _tur(c)
-		var liste: Array = MEYDAN_SEC.get(mt, MEYDAN_SEC["sik"])
-		var a0 := rng.randf() * TAU
-		for i in rng.randi_range(4, 6):
-			var ang := a0 + i * TAU / 6.0 + rng.randf_range(-0.2, 0.2)
-			var p := c + Vector2.from_angle(ang) * rng.randf_range(3.6, 5.0)
-			if not _yer_uygun(p, 0.3):
-				continue
-			var id := _sec(liste, rng)
-			var y := IstGeo.h(p.x, p.y)
-			if IstMahalleDoku.aktif != null and is_instance_valid(IstMahalleDoku.aktif):
-				y = maxf(y, IstMahalleDoku.aktif._zy(p.x, p.y))
-			_ekle(id, Transform3D(Basis(Vector3.UP, -ang + PI * 0.5 + rng.randf_range(-0.3, 0.3)), Vector3(p.x, y, p.y)))
-			nm += 1
-			tur_say[id] = int(tur_say.get(id, 0)) + 1
-	stats = {"meydan_oge": nm, "oge": n, "hucre": _hucre.size(), "tur": _mesh.size(), "kur_ms": Time.get_ticks_msec() - t0}
-	print("ISTDOKU3 sokak_esyasi ", stats, " ", tur_say)
+	return n
 
 
 var _boylar := {}
