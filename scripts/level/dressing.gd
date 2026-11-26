@@ -1049,6 +1049,9 @@ func _auto_run(level: Node3D, cfg: Dictionary) -> void:
 	var open_gap: float = cfg.get("open_gap", 9.0)
 	var open_clear: float = cfg.get("open_clear", 4.0)
 	var y_max: float = cfg.get("y_max", 2.0)
+	# G22: "kok": level'in global konumu (yalnız öteleme) taramaya eklenir; rect, reserved, y_max level'in yerelinde. Kökeni
+	# kaymış grupta (ByzCity.saray_kok) ışınlar doğru yere atılır, süs ve yürüyenler level'in yereline konur.
+	var o: Vector3 = level.global_transform.origin if bool(cfg.get("kok", false)) else Vector3.ZERO
 	var placed: Array[Vector3] = []
 	var nodes: Array[Vector3] = []    # yürüyüş noktaları
 	var persons := tree.get_nodes_in_group("persons")
@@ -1057,15 +1060,15 @@ func _auto_run(level: Node3D, cfg: Dictionary) -> void:
 	while z <= rect.end.y:
 		var x := rect.position.x
 		while x <= rect.end.x:
-			var g := _ground(space, Vector3(x, 0, z), y_max)
+			var g := _ground(space, Vector3(x, 0, z) + o, y_max + o.y, o.y - 3.0)
 			x += step
 			if g.is_empty():
 				continue
 			var p: Vector3 = g["pos"]
-			if _in(reserved, p, 0.0) or not _free(space, p):
+			if _in(reserved, p - o, 0.0) or not _free(space, p):
 				continue
 			# Yürüyüş noktası: gerçek zemin (altında başka zemin yok: masa, tezgâh, sandık üstü değil)
-			if int(round(p.x)) % 4 == 0 and int(round(p.z)) % 4 == 0 and _ray(space, p + Vector3(0, -0.05, 0), p + Vector3(0, -1.5, 0)).is_empty() \
+			if int(round(p.x - o.x)) % 4 == 0 and int(round(p.z - o.z)) % 4 == 0 and _ray(space, p + Vector3(0, -0.05, 0), p + Vector3(0, -1.5, 0)).is_empty() \
 					and _roomy(space, p, 0.5):
 				nodes.append(p)
 			# Duvar dibi mi?
@@ -1092,12 +1095,12 @@ func _auto_run(level: Node3D, cfg: Dictionary) -> void:
 				var n: Vector3 = h1["normal"]
 				# Sarmaşık ve duvar süsü yalnız geniş, düz duvara: dar sütun ya da kapı yanında havada asılı kalmasın
 				_wide_wall = _wall_span(space, p, dir, h1["collider"])
-				at(wall_p + n * 0.02, atan2(n.x, n.z))
+				at(wall_p - o + n * 0.02, atan2(n.x, n.z))
 				edge_cluster(style)
 				# Yüksek ve boş (üstü de çarpışmalı) duvar: üst kısma süs
 				var h3 := _wall_ray(space, p + Vector3(0, 4.0, 0), p + Vector3(0, 4.0, 0) + dir * 1.3)
 				if _wide_wall and not h3.is_empty() and h3["collider"] == h1["collider"] and not (h1["collider"] as Node).has_meta("facade") and rng.randf() < 0.75:
-					at(wall_p + n * 0.02 + Vector3(0, 0, 0), atan2(n.x, n.z))
+					at(wall_p - o + n * 0.02 + Vector3(0, 0, 0), atan2(n.x, n.z))
 					at_offset(Vector3(rng.randf_range(-1.5, 1.5), 0, 0))
 					wall_decor(style)
 				placed.append(wall_p)
@@ -1109,12 +1112,12 @@ func _auto_run(level: Node3D, cfg: Dictionary) -> void:
 	while z <= rect.end.y:
 		var x := rect.position.x + 1.5
 		while x <= rect.end.x:
-			var g := _ground(space, Vector3(x, 0, z), y_max)
+			var g := _ground(space, Vector3(x, 0, z) + o, y_max + o.y, o.y - 3.0)
 			x += 3.0
 			if g.is_empty():
 				continue
 			var p: Vector3 = g["pos"]
-			if _in(reserved, p, 1.5) or not _free(space, p) or _near(placed, p, open_gap * 0.5) or _near(opens, p, open_gap):
+			if _in(reserved, p - o, 1.5) or not _free(space, p) or _near(placed, p, open_gap * 0.5) or _near(opens, p, open_gap):
 				continue
 			var clear := true
 			for k in 8:
@@ -1127,7 +1130,7 @@ func _auto_run(level: Node3D, cfg: Dictionary) -> void:
 			if rng.randf() > float(cfg.get("open_chance", 0.6)):
 				opens.append(p)
 				continue
-			at(p, rng.randf() * TAU)
+			at(p - o, rng.randf() * TAU)
 			open_cluster(style)
 			opens.append(p)
 		z += 3.0
@@ -1161,7 +1164,7 @@ func _auto_run(level: Node3D, cfg: Dictionary) -> void:
 			w.space_owner = level
 			var look: Dictionary = looks[rng.randi() % looks.size()]
 			var pr := Person.new(look)
-			pr.position = start
+			pr.position = start - o
 			pr.set_meta("walker", true)
 			level.add_child(pr)
 			if rng.randf() < 0.3:
@@ -1226,8 +1229,8 @@ static func _wall_ray(space: PhysicsDirectSpaceState3D, a: Vector3, b: Vector3) 
 
 
 ## Zemin: yukarıdan aşağı ışın; üst yüzü y_max'ın altında, düz bir yüzey.
-static func _ground(space: PhysicsDirectSpaceState3D, p: Vector3, y_max: float) -> Dictionary:
-	var h := _ray(space, Vector3(p.x, y_max + 0.5, p.z), Vector3(p.x, -3.0, p.z))
+static func _ground(space: PhysicsDirectSpaceState3D, p: Vector3, y_max: float, y_min := -3.0) -> Dictionary:
+	var h := _ray(space, Vector3(p.x, y_max + 0.5, p.z), Vector3(p.x, y_min, p.z))
 	if h.is_empty() or (h["normal"] as Vector3).y < 0.9 or _invisible(h["collider"]):
 		return {}
 	return {"pos": h["position"]}
