@@ -1069,7 +1069,7 @@ func _auto_run(level: Node3D, cfg: Dictionary) -> void:
 				continue
 			# Yürüyüş noktası: gerçek zemin (altında başka zemin yok: masa, tezgâh, sandık üstü değil)
 			if int(round(p.x - o.x)) % 4 == 0 and int(round(p.z - o.z)) % 4 == 0 and _ray(space, p + Vector3(0, -0.05, 0), p + Vector3(0, -1.5, 0)).is_empty() \
-					and _roomy(space, p, 0.5):
+					and _roomy(space, p, 0.5) and _genis_zemin(space, p, 0.6):
 				nodes.append(p)
 			# Duvar dibi mi?
 			for k in 4:
@@ -1252,6 +1252,17 @@ static func _invisible(c: Object) -> bool:
 
 ## Nokta bir katı cismin içinde değil ve üstünde 2.4 m'ye kadar tavan yok.
 ## Yürüyüş noktası duvara yapışık olmasın (kişi orada durunca omzu evin içinde kalıyordu): dört yönde r kadar boşluk.
+## Yürüyüş noktasının dört yanında r kadar aynı düzde zemin var mı. Dar bir duvarın tepesi (Galata'nın 0,5 m'lik bahçe
+## duvarı, y 2,4) yürüyüş noktası sayılıyordu; o noktaya giden yürüyen, zemini bulamayınca hedefin yüksekliğine çıkıp
+## havada yürüyordu (27, VISAUDIT float (14,3; 2,4; −26,3)).
+static func _genis_zemin(space: PhysicsDirectSpaceState3D, p: Vector3, r: float) -> bool:
+	for d: Vector3 in [Vector3.RIGHT, Vector3.LEFT, Vector3.FORWARD, Vector3.BACK]:
+		var h := _ray(space, p + d * r + Vector3(0, 0.5, 0), p + d * r + Vector3(0, -0.5, 0))
+		if h.is_empty() or absf((h["position"] as Vector3).y - p.y) > 0.3 or (h["normal"] as Vector3).y < 0.9:
+			return false
+	return true
+
+
 static func _roomy(space: PhysicsDirectSpaceState3D, p: Vector3, r: float) -> bool:
 	for d: Vector3 in [Vector3.RIGHT, Vector3.LEFT, Vector3.FORWARD, Vector3.BACK]:
 		if not _ray(space, p + Vector3(0, 0.6, 0), p + Vector3(0, 0.6, 0) + d * r).is_empty():
