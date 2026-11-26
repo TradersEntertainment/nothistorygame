@@ -508,6 +508,9 @@ static func _studios(d: Dressing, p: Vector3) -> void:
 
 ## Altınkapı: iç surun önünde iki mermer kule ve üç gözlü zafer takı (yaldızlı kapı)
 static func _golden_gate(d: Dressing, p: Vector3) -> void:
+	# G23 (K2): eski dünyanın kara surları yeni kalemle kuruluyorsa Altın Kapı kalemin kapı dilimidir (çifte yapı olmaz)
+	if SiegeField.yeni_kalem_on:
+		return
 	var gx: float = World1453.LAND_GATES[World1453.LAND_GATES.size() - 1]
 	var y := SiegeField.city_surf(gx, -10.0) - 0.4
 	d.at(Vector3(gx, y, 0.0))

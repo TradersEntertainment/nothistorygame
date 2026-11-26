@@ -876,6 +876,11 @@ func _blachernae() -> void:
 		Blachernae.shell_parts(emit, part)
 	World1453.bake(tb.find_children("*", "MeshInstance3D", true, false), tb, Transform3D(Basis.IDENTITY, o), self, "FarBlachernae")
 	tb.free()
+	# G23 (ek yeri): kara surları yeni kalemle kurulunca Blakherna suru da şehirdeki Blakherna kalemiyle (blak_set; bölüm
+	# 30/30o'nun yeni görünüşüyle aynı). Kabuğun katı parçaları yeni sette gizli olduğundan FarBlachernae'ye sur ve köşe
+	# kuleleri girmiyordu: kuzey uçta kara surları boşluğa bitiyordu. Çarpışma kabuğun ölçüsünde (sur, iki köşe kulesi).
+	if SiegeField.yeni_kalem_on:
+		_blak_yeni(o)
 	_night.append(bn.build(self))
 	# Blakherna surunun Haliç'e inen kısmı (köşeden kıyı suruna)
 	var w2 := Props.box(self, Vector3(4.0, 14.0, World1453.HORN_IN_Z + 2.0), Vector3(World1453.HORN_S_X + 2.0, 6.0, World1453.HORN_IN_Z * 0.5), Color.WHITE)
@@ -886,6 +891,41 @@ func _blachernae() -> void:
 		if rng.randf() < 0.8:
 			_wall_men.append(Transform3D(Basis(Vector3.UP, rng.randf_range(-0.3, 0.3)), Vector3(x, Blachernae.WALK_Y, 0.6)))
 		x += rng.randf_range(2.8, 4.2)
+
+
+func _blak_yeni(o: Vector3) -> void:
+	var BLAK := load(Blachernae.BLAK_YOL)
+	var n := Node3D.new()
+	n.name = "FarBlakSur"
+	n.position = o
+	n.set_meta("no_walk", true)
+	add_child(n)
+	BLAK.sur(n, -60.0, 60.0, 0, {"tohum_L": 120.0})
+	BLAK.korkuluk_dis(n, -60.0, 60.0, 0, 120 * 13)
+	var zc := (Blachernae.WALL_Z0 + Blachernae.WALL_Z1) * 0.5
+	for i in 2:
+		var tx: float = [62.0, -62.0][i]
+		BLAK.kule(n, {"cx": tx, "w": 9.0, "zb": zc - 4.5, "zf": zc + 4.5, "zi1": Blachernae.WALL_Z1, "yf": Blachernae.WALK_Y + 0.03,
+			"HT": Blachernae.WALL_H + 7.0, "yc": Blachernae.WALL_H + 6.5, "tur": 1, "tohum": 1451 + i * 17, "hasar": 0.5,
+			"kapi_z0": Blachernae.WALL_Z0 + 0.4, "kapi_z1": Blachernae.WALL_Z1 - 0.4, "cati": false, "yazit": false,
+			"tas": Blachernae.C_STONE}, 0)
+	load("res://scripts/world/ist/sur_doku.gd").uygula(n, 0)
+	BLAK.birlestir(n, "FarBlakBirlesik")
+	for c in n.find_children("*", "GeometryInstance3D", true, false):
+		(c as Node).set_meta("no_walk", true)
+	var body := StaticBody3D.new()
+	body.name = "FarBlakCarp"
+	n.add_child(body)
+	var parca := [[Vector3(120.0, Blachernae.WALL_H, Blachernae.WALL_Z1 - Blachernae.WALL_Z0), Vector3(0.0, Blachernae.WALL_H * 0.5, zc)],
+		[Vector3(9.0, Blachernae.WALL_H + 7.0, 9.0), Vector3(62.0, (Blachernae.WALL_H + 7.0) * 0.5, zc)],
+		[Vector3(9.0, Blachernae.WALL_H + 7.0, 9.0), Vector3(-62.0, (Blachernae.WALL_H + 7.0) * 0.5, zc)]]
+	for pr: Array in parca:
+		var cs := CollisionShape3D.new()
+		var bs := BoxShape3D.new()
+		bs.size = pr[0]
+		cs.shape = bs
+		cs.position = pr[1]
+		body.add_child(cs)
 
 
 # ---------------------------------------------------------------- karşı kıyılar

@@ -42,6 +42,9 @@ var world: SiegeField
 ## (SurHub.sahnede: listede ve `--eskisur` istenmemiş); öbür bölümler ve far_hub eski kutu suru kurar.
 const SurHub := preload("res://scripts/world/ist/sur_set_hub.gd")
 var sur_yeni := false
+## G23: uzak hub eski dünyada yeni kalemli surun içinde (SiegeField.yeni_kalem): kutu iç sur, kuleler, mazgallar ve süslü
+## kapı kurulmaz (iç suru SiegeField kesintisiz kurar); döşeme iç surun şehir yüzünde biter. İskele ve nöbet yeri kalır.
+var eski_yeni := false
 var sur_hub: Dictionary = {}
 
 ## G22 — BÖLÜNMÜŞ HUB (docs/_ajan/gorev/G22_saray.md). Sahibin kararı: Romanos Kapısı'nın ardında yalnız Giustiniani'nin yeri
@@ -177,6 +180,10 @@ func _ready() -> void:
 		world = World1453.build(self, "byz_walls", [Rect2(-46.0, -48.0, 84.0, 70.0)], false)
 	elif part == "aya":
 		world = World1453.build(self, "byz_aya", [Rect2(-46.0, -114.0, 64.0, 76.0)], false)
+	# G23 (K6): `--eski-dunya` ile kendi hub'ını eski dünyada kuran bölüm: surlar yeni kalemle (SiegeField) kurulduysa hub
+	# kutu iç sur ve kuleleri kurmaz (çifte sur olmasın); süslü çıkış kapısı ve etkileşimi iç surun şehir yüzünde kalır
+	if part == "walls" and not sur_yeni and world != null and world != IstBaglama.kok and SiegeField.yeni_kalem_on:
+		eski_yeni = true
 	if bolunmus:
 		_v2 = world != null and world == IstBaglama.kok
 		_saray_kok_kur()
@@ -358,6 +365,7 @@ static func far_hub(parent: Node3D, xf: Transform3D) -> MeshInstance3D:
 	# G22: uzak hub her zaman bölünmüş (sur parçası + iç mahalle); `--saray-eski` eski bileşik
 	c.bolunmus = not ("--saray-eski" in OS.get_cmdline_user_args())
 	c.bol_karar = true
+	c.eski_yeni = SiegeField.yeni_kalem_on
 	if c.bolunmus:
 		c._saray_kok_kur()
 		c._kur_bolunmus()
@@ -638,7 +646,7 @@ func set_wet(k: float) -> void:
 
 func _build_ground() -> void:
 	# TAŞIMA-10: yeni surda döşeme iç surun şehir yüzünde biter (ötesi kesimin peribolosu)
-	var gx1 := SurHub.HUB_IC_X if sur_yeni else 45.0
+	var gx1 := SurHub.HUB_IC_X if (sur_yeni or eski_yeni) else 45.0
 	var gx0 := -45.0
 	var gz0 := -50.0
 	var gz1 := 30.0
@@ -1536,7 +1544,7 @@ func _build_fill() -> void:
 		var ir := Rect2(IC_RECT.position + Vector2(0.0, 0.3), Vector2(BOLME_X - 0.3 - IC_RECT.position.x, IC_RECT.size.y - 1.3))
 		_fbox(Vector3(ir.size.x, 0.1, ir.size.y), Vector3(ir.get_center().x, -0.07, ir.get_center().y), _fill_mat(Color("b8ad96"), "concrete"))
 		_k = self
-		var sx1 := (SurHub.HUB_IC_X if sur_yeni else 36.0) - 0.3
+		var sx1 := (SurHub.HUB_IC_X if (sur_yeni or eski_yeni) else 36.0) - 0.3
 		var sx0 := BOLME_X + 0.3
 		_fbox(Vector3(sx1 - sx0, 0.1, ir.size.y - 0.6), Vector3((sx1 + sx0) * 0.5, -0.07, ir.get_center().y), _fill_mat(Color("b8ad96"), "concrete"))
 		_k = saray_kok
@@ -2004,6 +2012,12 @@ func _wall(size: Vector3, pos: Vector3, _color: Color, _front: bool) -> void:
 func _build_walls() -> void:
 	if sur_yeni:
 		_build_walls_yeni()
+		LoadingScreen.nabiz("byzcity")
+		return
+	if eski_yeni:
+		_build_giust_yeri(34.0)
+		if world != null:
+			_build_gate()            # kendi hub'ı: çıkış kapısı (etkileşim) aynı yerde; uzak hub'da yok
 		LoadingScreen.nabiz("byzcity")
 		return
 	# İç sur: kuleli, tuğla bantlı, önünde ahşap iskele ve topçular

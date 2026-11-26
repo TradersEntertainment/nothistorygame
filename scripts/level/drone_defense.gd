@@ -93,6 +93,8 @@ func _reinforce(p: Vector3) -> void:
 		var q := p + dir * randf_range(16.0, 30.0)
 		if p.z < 445.0:
 			q.z = 420.0 if k % 2 == 0 else 401.0            # iç sur ya da dış sur hizası
+			if SiegeField.yeni_kalem_on:
+				q.z = 419.3 if k % 2 == 0 else 400.5        # G23: yeni kalemin iç ve dış sur yolunun ortası
 		var ray := PhysicsRayQueryParameters3D.create(Vector3(q.x, p.y + 40.0, q.z), Vector3(q.x, p.y - 80.0, q.z), 1)
 		var hitr := space.intersect_ray(ray)
 		if hitr.is_empty() or (hitr["position"] as Vector3).y > p.y - 3.0:

@@ -151,20 +151,24 @@ func _ready() -> void:
 		if not World1453.in_city(p.x, p.z):
 			_disc(Vector2(p.x, p.z), 7.0, C_MONUMENT)
 	print("sokaklar %d ms" % (Time.get_ticks_msec() - t0))
-	# 5. Surlar. Kara surları: hendek (z 20–36), dış sur (z 15), iç sur ve kuleleri (z −2,3); kapılar boşluk, hendeğin
-	# üstünde geçit
+	# 5. Surlar. Kara surları: hendek, dış sur, iç sur ve kuleleri; kapılar boşluk, hendeğin üstünde geçit
 	var wx0 := World1453.WALL_N_X
 	var gates: Array = World1453.LAND_GATES
-	_wall_x(28.0, wx0, 700.0, 14.0, C_MOAT, gates)
-	_wall_x(15.0, wx0, 700.0, 3.0, C_WALL, gates)
-	_wall_x(-2.3, wx0, 700.0, 5.0, C_WALL, gates)
-	var tx := wx0 + 20.0
-	while tx <= 690.0:
-		if _clear_of(tx, gates, GATE_GAP + 6.0):
-			_disc(Vector2(tx, -2.3), 5.0, C_TOWER)
-		tx += 55.0
+	# G23: eski dünyanın surları yeni kalemle (EskiSur): iç sur ortası z −1,3 (5 m), dış sur z 17,5 (2,6 m), hendek
+	# z 25,8–35,1; iç kuleler kalemin yerleşiminden
+	var ES := load("res://scripts/world/ist/eski_sur.gd")
+	var dz: Dictionary = IstSurlar.dims(1.0)
+	var zm0: float = ES.ZC + float(dz["zo1"]) + ES.PTW
+	var zm1: float = zm0 + ES.MW
+	_wall_x((zm0 + zm1) * 0.5, wx0, 700.0, zm1 - zm0, C_MOAT, gates)
+	_wall_x(ES.DIS_YOL_Z, wx0, 700.0, 3.0, C_WALL, gates)
+	_wall_x(ES.ZC, wx0, 700.0, 5.0, C_WALL, gates)
+	for dl: Dictionary in ES.dilimler(false):
+		ES._kayit(dl, 0)
+	for t: Array in ES._ic_kule:
+		_disc(Vector2(float(t[0]), ES.ZC + 2.5), 5.0, C_TOWER)
 	for gx: float in gates:
-		_seg(Vector2(gx, 20.0), Vector2(gx, 36.0), 5.0, C_LAND)          # hendeğin üstündeki geçit
+		_seg(Vector2(gx, zm0 - 1.0), Vector2(gx, zm1 + 1.0), 5.0, C_LAND)          # hendeğin üstündeki dolgu geçit
 	# Blakherna: kara surlarının kuzey ucundan Haliç'e
 	_seg(Vector2(World1453.HORN_S_X + 4.0, World1453.HORN_IN_Z), Vector2(wx0, 0.0), 5.0, C_WALL)
 	# Haliç surları (kapılar: HORN_GATE_Z ve Petrion), burnun dönüşü, Marmara surları (kesir kapıları)

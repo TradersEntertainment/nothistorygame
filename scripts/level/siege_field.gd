@@ -69,6 +69,13 @@ const GUN_GATE_Z := 121.3
 ## Yeni sur seti (SurSetSahne, bölüm bağdaştırıcısı): ova bir düğümle yeni ovaya kaydırılır; sur uzantısı, şehir ve şehir
 ## arazisi KURULMAZ (yeni kesimin kendi dilimleri ve şehir önü var). Varsayılan false: davranış aynı.
 var sur_yeni := false
+## G23: eski dünyanın (World1453.build, fill_center) kara surları yeni kalemle (EskiSur). build() karar verir; `--eskisur`
+## (çıplak ya da bölüm listede) ve LandWalls'ın kendi alanı (`landwalls`) kutu kalır (K6).
+var yeni_kalem := false
+static var yeni_kalem_on := false
+## Bölümün kendi oynanış alanları (World1453.build: FAR_REGIONS eklenmeden önceki keep); EskiSur ayrıntı düzeyini buna göre seçer
+var keep_own: Array = []
+const EskiSur := preload("res://scripts/world/ist/eski_sur.gd")
 
 var rng := RandomNumberGenerator.new()
 var _t := 0.0
@@ -113,6 +120,8 @@ func build() -> void:
 		world_on = true
 		wall_x_min = maxf(wall_x_min, World1453.WALL_N_X)
 		add_to_group(MapView.GROUP)      # harita (MiniMap, WorldMap) bu alanın dönüşümüyle oyuncuyu bulur
+	yeni_kalem = not sur_yeni and EskiSur.istek(self)
+	yeni_kalem_on = yeni_kalem
 	_terrain()
 	await _step("_terrain()")
 	if not sur_yeni:
@@ -410,6 +419,11 @@ func _inner_spans(sx: float, a0: float, b0: float) -> Array:
 
 
 func _wall_extension() -> void:
+	# G23: eski dünyanın kara surları yeni kalemle (EskiSur). Kutu sur kurulmaz; aşağıdaki döngü aynı rng sırasıyla
+	# "kuru" çalışır (kule boyu, sancak, yara, savunan, ateş çekimleri aynı; ordugâh, siper, bölük dizilişi kaymaz).
+	var yk := yeni_kalem
+	if yk:
+		EskiSur.kur(self)
 	var len := EXT - WALL_X0
 	var d := Dressing.new(71)
 	d.chunk = 160.0
@@ -417,47 +431,49 @@ func _wall_extension() -> void:
 	fd.chunk = 160.0
 	var merl: Array = []
 	var merl_o: Array = []
+	var flag_k := 0
 	for sx: float in [-1.0, 1.0]:
 		var a0 := 0.0 if fill_center else WALL_X0
 		var b0 := EXT if sx > 0.0 else minf(EXT, -wall_x_min)
 		len = b0 - a0
 		var cx := sx * (a0 + len * 0.5)
-		# Zemin: peribolos, dış surun önündeki set, korkuluk, hendek (dibi -3), iki yanı
-		Props.box(self, Vector3(len, 0.4, 15.4), Vector3(cx, -0.23, 6.6), Color("6e6452"))   # üstü 3 cm aşağıda: bölgelerin zeminiyle titreşmesin
-		Props.box(self, Vector3(len, 0.4, 4.0), Vector3(cx, -0.23, 17.6), Color("6e6452"))
-		Props.box(self, Vector3(len, 0.2, 16.0), Vector3(cx, -3.0, 28.0), Color("3a3a30"))
-		# Kapılarda (World1453.LAND_GATES) korkuluk, hendek duvarları ve surlar kesilir: ova ile şehir arası yürünür
-		var gsp := _gate_spans(sx, Vector2(a0, b0))
-		for sp: Vector2 in gsp:
-			var gl := sp.y - sp.x
-			var gx := sx * (sp.x + gl * 0.5)
-			Props.box(self, Vector3(gl, 1.6, 0.8), Vector3(gx, 0.6, 19.15), STONE.darkened(0.1))
-			Props.box(self, Vector3(gl, 2.98, 0.6), Vector3(gx, -1.51, 20.0), STONE.darkened(0.3))
-			Props.box(self, Vector3(gl, 2.98, 0.6), Vector3(gx, -1.51, 36.0), Color("4a4436"))
-			for ow: Vector2 in _outer_spans(sx, sp):
-				var ol := ow.y - ow.x
-				Props.set_pattern(Props.box(self, Vector3(ol, LandWalls.OUTER_H, 2.0), Vector3(sx * (ow.x + ol * 0.5), LandWalls.OUTER_H * 0.5, 15.0), Color.WHITE), STONE.darkened(0.05), "ashlar")
-				Props.occluder(self, Vector3(ol, LandWalls.OUTER_H, 2.0), Vector3(sx * (ow.x + ol * 0.5), LandWalls.OUTER_H * 0.5, 15.0))
-		# İç sur (12 m) ve dış sur (8 m). İç sur, bölgenin kendi iç suru olan yerde (ByzCity: Romanos Kapısı) kesilir.
-		for span0: Vector2 in _inner_spans(sx, a0, b0):
-			for span: Vector2 in _gate_spans(sx, span0):
-				var sl := span.y - span.x
-				Props.set_pattern(Props.box(self, Vector3(sl, LandWalls.INNER_H, 3.4), Vector3(sx * (span.x + sl * 0.5), LandWalls.INNER_H * 0.5, -2.3), Color.WHITE), STONE, "ashlar")
-				Props.occluder(self, Vector3(sl, LandWalls.INNER_H, 3.4), Vector3(sx * (span.x + sl * 0.5), LandWalls.INNER_H * 0.5, -2.3))
-		_gates(sx, a0, b0)
-		_ditch_ramps(sx, a0, b0)
-		var x := a0 + 1.0
-		while x < b0:
-			if _free(sx * x, -2.3, 0.5):
-				merl.append(Transform3D(Basis.from_scale(Vector3(1.2, 1.0, 0.8)), Vector3(sx * x, LandWalls.INNER_H + 0.5, -0.9)))
-			x += 2.0
-		x = a0 + 0.5
-		while x < b0:
-			if _in_stockade(sx * x, 0.6):
+		if not yk:
+			# Zemin: peribolos, dış surun önündeki set, korkuluk, hendek (dibi -3), iki yanı
+			Props.box(self, Vector3(len, 0.4, 15.4), Vector3(cx, -0.23, 6.6), Color("6e6452"))   # üstü 3 cm aşağıda: bölgelerin zeminiyle titreşmesin
+			Props.box(self, Vector3(len, 0.4, 4.0), Vector3(cx, -0.23, 17.6), Color("6e6452"))
+			Props.box(self, Vector3(len, 0.2, 16.0), Vector3(cx, -3.0, 28.0), Color("3a3a30"))
+			# Kapılarda (World1453.LAND_GATES) korkuluk, hendek duvarları ve surlar kesilir: ova ile şehir arası yürünür
+			var gsp := _gate_spans(sx, Vector2(a0, b0))
+			for sp: Vector2 in gsp:
+				var gl := sp.y - sp.x
+				var gx := sx * (sp.x + gl * 0.5)
+				Props.box(self, Vector3(gl, 1.6, 0.8), Vector3(gx, 0.6, 19.15), STONE.darkened(0.1))
+				Props.box(self, Vector3(gl, 2.98, 0.6), Vector3(gx, -1.51, 20.0), STONE.darkened(0.3))
+				Props.box(self, Vector3(gl, 2.98, 0.6), Vector3(gx, -1.51, 36.0), Color("4a4436"))
+				for ow: Vector2 in _outer_spans(sx, sp):
+					var ol := ow.y - ow.x
+					Props.set_pattern(Props.box(self, Vector3(ol, LandWalls.OUTER_H, 2.0), Vector3(sx * (ow.x + ol * 0.5), LandWalls.OUTER_H * 0.5, 15.0), Color.WHITE), STONE.darkened(0.05), "ashlar")
+					Props.occluder(self, Vector3(ol, LandWalls.OUTER_H, 2.0), Vector3(sx * (ow.x + ol * 0.5), LandWalls.OUTER_H * 0.5, 15.0))
+			# İç sur (12 m) ve dış sur (8 m). İç sur, bölgenin kendi iç suru olan yerde (ByzCity: Romanos Kapısı) kesilir.
+			for span0: Vector2 in _inner_spans(sx, a0, b0):
+				for span: Vector2 in _gate_spans(sx, span0):
+					var sl := span.y - span.x
+					Props.set_pattern(Props.box(self, Vector3(sl, LandWalls.INNER_H, 3.4), Vector3(sx * (span.x + sl * 0.5), LandWalls.INNER_H * 0.5, -2.3), Color.WHITE), STONE, "ashlar")
+					Props.occluder(self, Vector3(sl, LandWalls.INNER_H, 3.4), Vector3(sx * (span.x + sl * 0.5), LandWalls.INNER_H * 0.5, -2.3))
+			_gates(sx, a0, b0)
+			_ditch_ramps(sx, a0, b0)
+			var x := a0 + 1.0
+			while x < b0:
+				if _free(sx * x, -2.3, 0.5):
+					merl.append(Transform3D(Basis.from_scale(Vector3(1.2, 1.0, 0.8)), Vector3(sx * x, LandWalls.INNER_H + 0.5, -0.9)))
+				x += 2.0
+			x = a0 + 0.5
+			while x < b0:
+				if _in_stockade(sx * x, 0.6):
+					x += 1.8
+					continue
+				merl_o.append(Transform3D(Basis.from_scale(Vector3(1.1, 0.9, 0.7)), Vector3(sx * x, LandWalls.OUTER_H + 0.45, 15.7)))
 				x += 1.8
-				continue
-			merl_o.append(Transform3D(Basis.from_scale(Vector3(1.1, 0.9, 0.7)), Vector3(sx * x, LandWalls.OUTER_H + 0.45, 15.7)))
-			x += 1.8
 		# İç sur kuleleri (55 m arayla; LandWalls'ın ±24'teki kulelerinin devamı) ve aralarda dış sur kuleleri
 		var tx := 24.0 if fill_center else 79.0
 		while tx < b0 - 10.0:
@@ -470,44 +486,72 @@ func _wall_extension() -> void:
 			if at_gate or not _free(wx, -2.3, 5.0):
 				tx += 55.0
 				continue
-			var body := Props.box(self, Vector3(9.0, h, 8.1), Vector3(wx, h * 0.5, 0.0), Color.WHITE)   # surun iç yüzünden 5 cm taşar (aynı düzlem olmasın)
-			Props.set_pattern(body, STONE.darkened(0.03), "ashlar")
-			d.box(Vector3(9.8, 0.5, 8.8), Vector3(wx, h + 0.25, 0.0), STONE.darkened(0.12))
-			for k in 8:
-				var mx := -4.2 + (k % 4) * 2.8
-				var mz := -3.8 if k < 4 else 3.8
-				d.box(Vector3(1.1, 1.0, 1.0), Vector3(wx + mx, h + 1.0, mz), STONE.darkened(0.08))
-			for k in 3:
-				d.box(Vector3(0.8, 1.4, 0.1), Vector3(wx - 2.5 + k * 2.5, LandWalls.INNER_H + 2.0, 4.03), Color("1c1814"))
+			if not yk:
+				var body := Props.box(self, Vector3(9.0, h, 8.1), Vector3(wx, h * 0.5, 0.0), Color.WHITE)   # surun iç yüzünden 5 cm taşar (aynı düzlem olmasın)
+				Props.set_pattern(body, STONE.darkened(0.03), "ashlar")
+				d.box(Vector3(9.8, 0.5, 8.8), Vector3(wx, h + 0.25, 0.0), STONE.darkened(0.12))
+				for k in 8:
+					var mx := -4.2 + (k % 4) * 2.8
+					var mz := -3.8 if k < 4 else 3.8
+					d.box(Vector3(1.1, 1.0, 1.0), Vector3(wx + mx, h + 1.0, mz), STONE.darkened(0.08))
+				for k in 3:
+					d.box(Vector3(0.8, 1.4, 0.1), Vector3(wx - 2.5 + k * 2.5, LandWalls.INNER_H + 2.0, 4.03), Color("1c1814"))
 			if rng.randf() < 0.5:
-				d.box(Vector3(0.12, 3.2, 0.12), Vector3(wx, h + 2.6, 0.0), Color("3a2a1e"))
-				fd.box(Vector3(0.03, 1.1, 1.6), Vector3(wx, h + 3.6, 0.8), Color("8a1a2a") if rng.randf() < 0.5 else Color("d8b040"))
-				_flag_spots.append(Vector3(wx, h + 3.6, 0.8))
+				var fc := Color("8a1a2a") if rng.randf() < 0.5 else Color("d8b040")
+				if not yk:
+					d.box(Vector3(0.12, 3.2, 0.12), Vector3(wx, h + 2.6, 0.0), Color("3a2a1e"))
+					fd.box(Vector3(0.03, 1.1, 1.6), Vector3(wx, h + 3.6, 0.8), fc)
+					_flag_spots.append(Vector3(wx, h + 3.6, 0.8))
+				else:
+					# sancak yeni kalemin iç kulesinin tepesinde (çekim sırası aynı; kule x'leri kalemin)
+					var tp: Variant = EskiSur.sancak_yeri(sx, flag_k)
+					flag_k += 1
+					if tp != null:
+						var q: Vector3 = tp
+						d.box(Vector3(0.12, 3.2, 0.12), q + Vector3(0, 1.6, 0), Color("3a2a1e"))
+						fd.box(Vector3(0.03, 1.1, 1.6), q + Vector3(0, 2.6, 0.8), fc)
+						_flag_spots.append(q + Vector3(0, 2.6, 0.8))
 			var ox := sx * (tx + 27.5)
-			if absf(ox) < b0 - 6.0:
+			if absf(ox) < b0 - 6.0 and not yk:
 				var oh := LandWalls.OUTER_H + 3.0
 				var ob := Props.box(self, Vector3(5.0, oh, 5.0), Vector3(ox, oh * 0.5, 17.0), Color.WHITE)
 				Props.set_pattern(ob, STONE.darkened(0.08), "ashlar")
 				for k in 4:
 					d.box(Vector3(1.0, 0.9, 1.0), Vector3(ox + (k % 2 - 0.5) * 4.0, oh + 0.45, 17.0 + (k / 2 - 0.5) * 4.0), STONE.darkened(0.12))
 			tx += 55.0
-		# Top yaraları: dış surun dibinde moloz, yüzde is ve oyuk, üstte tahta-fıçı yaması
+		# Top yaraları: dış surun dibinde moloz, yüzde is ve oyuk, üstte tahta-fıçı yaması (yeni kalemde: yalnız çekim;
+		# kalemin kendi hasar dili var)
 		for i in 9:
 			var hx := sx * rng.randf_range(a0 + 8.0, b0 - 30.0)
 			for k in 7:
-				d.ball(rng.randf_range(0.6, 1.4), Vector3(hx + rng.randf_range(-2.8, 2.8), rng.randf_range(-0.1, 0.5), 17.2 + rng.randf_range(0.0, 1.8)),
-					STONE.darkened(rng.randf_range(0.05, 0.3)), Vector3(1.2, 0.6, 1.0), 6)
-			d.box(Vector3(rng.randf_range(3.0, 5.0), rng.randf_range(2.0, 4.0), 0.1), Vector3(hx, rng.randf_range(2.5, 5.0), 16.03), Color("5a5246"))
-			if i % 2 == 0:
-				d.box(Vector3(3.6, 0.9, 0.5), Vector3(hx, LandWalls.OUTER_H + 0.45, 15.6), WOOD.darkened(0.2))
-				d.cyl(0.35, 0.9, Vector3(hx + 1.2, LandWalls.OUTER_H + 0.45, 15.0), WOOD, Vector3.ZERO, 8)
-	Scenery.scatter(self, Scenery._boxm(Vector3.ONE), merl, [], Props.mat(STONE.darkened(0.06), 0.0, false, "ashlar"))
-	Scenery.scatter(self, Scenery._boxm(Vector3.ONE), merl_o, [], Props.mat(STONE.darkened(0.1), 0.0, false, "ashlar"))
+				var br := rng.randf_range(0.6, 1.4)
+				var bx := hx + rng.randf_range(-2.8, 2.8)
+				var by := rng.randf_range(-0.1, 0.5)
+				var bz := 17.2 + rng.randf_range(0.0, 1.8)
+				var bc := STONE.darkened(rng.randf_range(0.05, 0.3))
+				if not yk:
+					d.ball(br, Vector3(bx, by, bz), bc, Vector3(1.2, 0.6, 1.0), 6)
+			var sw := rng.randf_range(3.0, 5.0)
+			var sh := rng.randf_range(2.0, 4.0)
+			var syy := rng.randf_range(2.5, 5.0)
+			if not yk:
+				d.box(Vector3(sw, sh, 0.1), Vector3(hx, syy, 16.03), Color("5a5246"))
+				if i % 2 == 0:
+					d.box(Vector3(3.6, 0.9, 0.5), Vector3(hx, LandWalls.OUTER_H + 0.45, 15.6), WOOD.darkened(0.2))
+					d.cyl(0.35, 0.9, Vector3(hx + 1.2, LandWalls.OUTER_H + 0.45, 15.0), WOOD, Vector3.ZERO, 8)
+	if not yk:
+		Scenery.scatter(self, Scenery._boxm(Vector3.ONE), merl, [], Props.mat(STONE.darkened(0.06), 0.0, false, "ashlar"))
+		Scenery.scatter(self, Scenery._boxm(Vector3.ONE), merl_o, [], Props.mat(STONE.darkened(0.1), 0.0, false, "ashlar"))
 	d.build(self)
 	_byz_flags = fd.build(self)
 	# Surlarda nöbet tutan savunanlar (uzak siluet; son hücumda Assault kendi savunanlarını koyar)
 	var men: Array = []
 	var x3 := (4.0 if fill_center else WALL_X0 + 4.0)
+	# Yeni kalemde sur yolları: dış sur yolu ve iç sur yolu (kule, merdiven, kapı ve gedik dışı)
+	var dy_o := EskiSur.DIS_YOL_Y if yk else LandWalls.OUTER_H
+	var dz_o := EskiSur.DIS_YOL_Z if yk else 14.9
+	var dy_i := EskiSur.IC_YOL_Y if yk else LandWalls.INNER_H
+	var dz_i := EskiSur.IC_YOL_Z if yk else -1.6
 	# Kuşatmanın her günü surlar dolu: dış surun yürüyüş yolunda 3–4 m'de bir, iç surda 4–6 m'de bir savunan
 	while x3 < EXT - 4.0:
 		for sx: float in [-1.0, 1.0]:
@@ -520,10 +564,16 @@ func _wall_extension() -> void:
 			# iç sura yalnız gözcü kalır
 			var dense := WallRear.busy(ox)
 			if rng.randf() < 0.15 + 0.6 * dense and _free(ox, 14.9, 2.0) and not _in_stockade(ox, 1.0):
-				men.append(Transform3D(Basis(Vector3.UP, rng.randf_range(-0.3, 0.3)), Vector3(ox, LandWalls.OUTER_H, 14.9)))
+				if not yk or EskiSur.dis_yol_bos(ox, 0.6):
+					men.append(Transform3D(Basis(Vector3.UP, rng.randf_range(-0.3, 0.3)), Vector3(ox, dy_o, dz_o)))
+				else:
+					rng.randf_range(-0.3, 0.3)
 			var ix := sx * (x3 + rng.randf_range(1.0, 2.5))
 			if rng.randf() < 0.1 and _free(ix, -1.6, 2.0):
-				men.append(Transform3D(Basis(Vector3.UP, rng.randf_range(-0.3, 0.3)), Vector3(ix, LandWalls.INNER_H, -1.6)))
+				if not yk or EskiSur.ic_yol_bos(ix, 0.6):
+					men.append(Transform3D(Basis(Vector3.UP, rng.randf_range(-0.3, 0.3)), Vector3(ix, dy_i, dz_i)))
+				else:
+					rng.randf_range(-0.3, 0.3)
 		x3 += rng.randf_range(2.8, 4.2)
 	_wall_men = Node3D.new()
 	add_child(_wall_men)
@@ -556,9 +606,15 @@ func _wall_extension() -> void:
 			if sx < 0.0 and -x2 - 12.0 < wall_x_min:
 				continue
 			if rng.randf() < 0.85:
-				nd.glow(Vector3(0.35, 0.5, 0.35), Vector3(sx * x2, LandWalls.OUTER_H + 1.3, 15.2), Color("ffb040"))
+				if not yk:
+					nd.glow(Vector3(0.35, 0.5, 0.35), Vector3(sx * x2, LandWalls.OUTER_H + 1.3, 15.2), Color("ffb040"))
+				elif EskiSur.dis_yol_bos(sx * x2, 0.6):
+					nd.glow(Vector3(0.35, 0.5, 0.35), Vector3(sx * x2, EskiSur.DIS_YOL_Y + 1.3, EskiSur.DIS_YOL_Z - 0.2), Color("ffb040"))
 			if rng.randf() < 0.7:
-				nd.glow(Vector3(0.4, 0.6, 0.4), Vector3(sx * (x2 + 6.0), LandWalls.INNER_H + 1.4, -1.2), Color("ffb040"))
+				if not yk:
+					nd.glow(Vector3(0.4, 0.6, 0.4), Vector3(sx * (x2 + 6.0), LandWalls.INNER_H + 1.4, -1.2), Color("ffb040"))
+				elif EskiSur.ic_yol_bos(sx * (x2 + 6.0), 0.6):
+					nd.glow(Vector3(0.4, 0.6, 0.4), Vector3(sx * (x2 + 6.0), EskiSur.IC_YOL_Y + 1.4, EskiSur.IC_YOL_Z), Color("ffb040"))
 		x2 += 12.0
 	_night.append(nd.build(self))
 
@@ -617,6 +673,7 @@ func _exit_tree() -> void:
 	flat_blend = 0.0
 	blend_rects = []
 	world_on = false
+	yeni_kalem_on = false
 
 
 # ---------------------------------------------------------------- şehir
