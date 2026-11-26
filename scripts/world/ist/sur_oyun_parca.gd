@@ -371,6 +371,10 @@ class KalasKopru extends Node3D:
 			ag.kutu(Vector3(x + rng.randf_range(-0.04, 0.04), y - 0.04, zz), Vector3.RIGHT, Vector3.BACK, 1.6 + rng.randf_range(-0.08, 0.06), 0.06, tw,
 				Color(1, 1, 1) if int(zz * 3.0) % 2 == 0 else Color(0.88, 0.84, 0.78))
 			zz += tw + 0.035
+		# Alt tahta: kirişlerin arasında, enine tahtaların 1 cm altında kesintisiz (taban y −0,09, üst −0,05). Tahta
+		# aralıklarının altı boştu: çarpışma kutusu kesintisiz olduğu için aralığa basan ayağın altında görünen bir şey
+		# kalmıyordu (0.99.130 tam paketi, 37o =trespass: GORUNMEZZEMIN Ahsap_Kalas_Carp, köprünün ortası x −17,9).
+		ag.kutu(Vector3(x, y - 0.09, za + 0.05), Vector3.RIGHT, Vector3.BACK, 1.04, 0.04, boy - 0.1, Color(0.66, 0.62, 0.56))
 		# ayaklar: hendek dibine inen iki A-sehpa (üçte bir, üçte iki), çapraz bağ
 		for t: float in [0.36, 0.64]:
 			var zc := lerpf(za, zb, t)
