@@ -1,0 +1,44 @@
+=== 6 --autotest rc=0
+YUKLEMEAUDIT_ADAY scene=chapter6 evre=acilis toplam_ms=10588 en_uzun_bosluk_ms=1201 kaynak=horn.north_shore>horn.city.plan ilk_kare_ms=363 bosalt_ms=-1
+AUTOTEST PASS chapter=6 variant= branch=6a outcome=6a.1 paradox=10 mistakes=0 telsiz=4
+=== 7 --autotest rc=0
+YUKLEMEAUDIT_ADAY scene=chapter7 evre=acilis toplam_ms=57107 en_uzun_bosluk_ms=1263 kaynak=w1453_bake>doku_esya ilk_kare_ms=1611 bosalt_ms=-1
+AUTOTEST PASS chapter=7 variant= branch=7a outcome=7.1 extras=[] sadakat=60 baski=0 hour=13.5
+=== 8y --autotest rc=0
+YUKLEMEAUDIT_ADAY scene=chapter8y evre=acilis toplam_ms=59525 en_uzun_bosluk_ms=1138 kaynak=sehir_289>kare ilk_kare_ms=1444 bosalt_ms=-1
+AUTOTEST PASS chapter=8y variant= outcome=8Y.1 id=seal warnings=0 lowered=0 radio=true
+=== 9 --autotest rc=0
+YUKLEMEAUDIT_ADAY scene=chapter9 evre=acilis toplam_ms=10317 en_uzun_bosluk_ms=1243 kaynak=horn.city.arazi>horn.city.plan ilk_kare_ms=274 bosalt_ms=-1
+AUTOTEST PASS chapter=9 variant= route=A byz=false offers=["kadri", "miner"] outcome=9.1 telsiz=4 merak=0
+=== 10 --autotest rc=0
+YUKLEMEAUDIT_ADAY scene=chapter10 evre=acilis toplam_ms=12747 en_uzun_bosluk_ms=1361 kaynak=horn.north_shore>horn.city.plan ilk_kare_ms=343 bosalt_ms=-1
+AUTOTEST PASS chapter=10 variant= outcome=10O.1 tries=0 envoy=false merak=0
+=== 10b --autotest rc=0
+YUKLEMEAUDIT_ADAY scene=chapter10b evre=acilis toplam_ms=11415 en_uzun_bosluk_ms=1248 kaynak=horn.north_shore>horn.city.plan ilk_kare_ms=470 bosalt_ms=-1
+AUTOTEST PASS chapter=10b variant= outcome=10B.1 quality=3 risk=0 calc=phone paradox=15
+=== 10z --autotest rc=0
+YUKLEMEAUDIT_ADAY scene=chapter10z evre=acilis toplam_ms=10420 en_uzun_bosluk_ms=1278 kaynak=horn.north_shore>horn.city.plan ilk_kare_ms=386 bosalt_ms=-1
+AUTOTEST PASS chapter=10z variant= outcome=10Z.1 good=3 burnt=0 leblebi=true
+=== 11 --autotest rc=0
+YUKLEMEAUDIT_ADAY scene=chapter11 evre=acilis toplam_ms=52391 en_uzun_bosluk_ms=1206 kaynak=props>kare ilk_kare_ms=1487 bosalt_ms=-1
+AUTOTEST PASS chapter=11 variant= outcome=11.2 persuade=25 sadakat=55 baski=1
+=== 13 --autotest rc=0
+YUKLEMEAUDIT_ADAY scene=chapter13 evre=tolga_camp toplam_ms=10293 en_uzun_bosluk_ms=1337 kaynak=horn.north_shore>horn.city.plan ilk_kare_ms=606 bosalt_ms=-1
+AUTOTEST PASS chapter=13 variant= version=garage outcome=13.1 window=8.4 tolga=T1 hikmet=
+=== 16 --autotest rc=0
+YUKLEMEAUDIT_ADAY scene=chapter16 evre=acilis toplam_ms=11311 en_uzun_bosluk_ms=1204 kaynak=horn.north_shore>horn.city.plan ilk_kare_ms=398 bosalt_ms=-1
+AUTOTEST PASS chapter=16 variant= outcome=16.1 ch13=13.6 pecks=3
+=== 24o --autotest rc=0
+YUKLEMEAUDIT_ADAY scene=chapter24o evre=acilis toplam_ms=12908 en_uzun_bosluk_ms=1797 kaynak=horn.north_shore>horn.city.plan ilk_kare_ms=465 bosalt_ms=-1
+AUTOTEST PASS chapter=24o variant= outcome=24O.1 calmed=3 kadri=false tea=0 menu=false eclipse=false
+=== 25 --autotest=osm rc=0
+YUKLEMEAUDIT_ADAY scene=chapter25 evre=acilis toplam_ms=13750 en_uzun_bosluk_ms=1419 kaynak=horn.north_shore>horn.city.plan ilk_kare_ms=365 bosalt_ms=-1
+AUTOTEST PASS chapter=25 variant=osm outcome=25.1 caught=0 candle=false tezkire=false marco=false sur=-
+=== 31o --autotest rc=0
+YUKLEMEAUDIT_ADAY scene=chapter31o evre=acilis toplam_ms=55605 en_uzun_bosluk_ms=1052 kaynak=sehir_289>kare ilk_kare_ms=1272 bosalt_ms=-1
+YUKLEMEAUDIT_ADAY scene=chapter31o evre=eyup toplam_ms=8732 en_uzun_bosluk_ms=1213 kaynak=sehir_923>horn.city.plan ilk_kare_ms=216 bosalt_ms=-1
+AUTOTEST PASS chapter=31o variant= outcome=31O.1 house=true(162) falls=0 signs=3 wrong=0 sun=true lashes=3 miss=0 scaff=true mats=8/8 err=1
+=== 43o --autotest rc=0
+YUKLEMEAUDIT_ADAY scene=chapter43o evre=acilis toplam_ms=10085 en_uzun_bosluk_ms=1225 kaynak=horn.north_shore>horn.city.plan ilk_kare_ms=381 bosalt_ms=-1
+AUTOTEST PASS chapter=43 variant= outcome=43O.1 bad=0 lessons=3 soup=true flown=1069 battery=22
+BITTI

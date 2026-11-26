@@ -1451,11 +1451,13 @@ func _build_fill() -> void:
 	var atik_dress: Dressing = null
 	if bolunmus:
 		_k = saray_kok
-		var ir := Rect2(IC_RECT.position, Vector2(BOLME_X - IC_RECT.position.x, IC_RECT.size.y - 1.0))
+		# levhalar döşemenin kenarlarından 0,3 m içeride biter (aynı yan düzlemde titreşmesin: ZFIGHT)
+		var ir := Rect2(IC_RECT.position + Vector2(0.0, 0.3), Vector2(BOLME_X - 0.3 - IC_RECT.position.x, IC_RECT.size.y - 1.3))
 		_fbox(Vector3(ir.size.x, 0.1, ir.size.y), Vector3(ir.get_center().x, -0.07, ir.get_center().y), _fill_mat(Color("b8ad96"), "concrete"))
 		_k = self
-		var sx1 := SurHub.HUB_IC_X if sur_yeni else 36.0
-		_fbox(Vector3(sx1 - BOLME_X, 0.1, ir.size.y), Vector3((sx1 + BOLME_X) * 0.5, -0.07, ir.get_center().y), _fill_mat(Color("b8ad96"), "concrete"))
+		var sx1 := (SurHub.HUB_IC_X if sur_yeni else 36.0) - 0.3
+		var sx0 := BOLME_X + 0.3
+		_fbox(Vector3(sx1 - sx0, 0.1, ir.size.y - 0.6), Vector3((sx1 + sx0) * 0.5, -0.07, ir.get_center().y), _fill_mat(Color("b8ad96"), "concrete"))
 		_k = saray_kok
 		atik = Node3D.new()
 	else:
