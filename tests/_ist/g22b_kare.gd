@@ -71,6 +71,9 @@ func _bakislar() -> Array:
 				out.append_array(_yakinlar(sk))
 			return out
 		"uzak7", "uzak11":
+			# G22b: uzak bakışlarda v2'nin yakın katmanları (evler, yamalar, öğeler) kameraya göre akışla kurulur: ağaç
+			# duraklatılmışken (tasima12) akış durur, kamera hub'a gidince yakın katman hiç gelmez. Kareler için akış açık.
+			get_tree().paused = false
 			var out: Array = []
 			for b: Array in super._bakislar():
 				if String(b[0]) in ["03_uzak_saray_havadan", "04_uzak_iki_parca"]:
@@ -78,10 +81,15 @@ func _bakislar() -> Array:
 			# D13: hub dairesine 150 m, 400 m ve 1 km'den (yakın–uzak geçişinde dolgu kaybolmamalı)
 			var hv: Transform3D = IstBaglama.kok.global_transform * SurHub.hub_v2()
 			var hedef := hv * Vector3(-20.0, 0.0, -10.0)
+			out.append(["29_uzak_dik", hv * Vector3(-20.0, 160.0, -9.0), hedef, null])
+			out.append(["30_uzak_bant", hv * Vector3(-8.0, 14.0, -50.0), hv * Vector3(8.0, 0.0, -28.0), null])
 			for e: Array in [["21_d13_150m", 150.0], ["22_d13_400m", 400.0], ["23_d13_1km", 1000.0]]:
 				var d := float(e[1])
 				var yon := (hv.basis * Vector3(-0.55, 0.0, 0.8)).normalized()
 				out.append([e[0], hedef + yon * d * 0.85 + Vector3(0, d * 0.5, 0), hedef, null])
+			# arazinin yakın katmanı izleyiciye (oyuncu) göre kurulur: oyuncu kameranın 3 m altına (uçuşta Nihat oradadır)
+			for b: Array in out:
+				b[3] = (b[1] as Vector3) + Vector3(0, -3.0, 0)
 			return out
 	return super._bakislar()
 
@@ -123,3 +131,11 @@ func _yakinlar(sk: IstSokak) -> Array:
 func _dl(sk: IstSokak) -> Dictionary:
 	var d = sk.get("dolgu")
 	return d if d is Dictionary else {}
+
+
+## Uzak bakışlarda arazi parçaları kameraya (izleyici yoksa kamera) göre yeniden kurulur (kare bütçesiyle): çekimden önce
+## bekle, yakın parçalar gelsin (yoksa kaba katman hub düzlemesini örter: G22'nin sahip_3 karesi)
+func _cek(ad: String) -> void:
+	if bolum.begins_with("uzak"):
+		await _bekle(14.0)
+	await super._cek(ad)

@@ -2160,7 +2160,7 @@ func _hub_dolgu() -> void:
 		if not ok:
 			continue
 		for k in cells:
-			occ[k] = 5
+			occ[k] = 1
 		oge.append({"tur": String(e[0]), "c": c, "yaw": yaw_nb, "tohum": rng.randi() % 9973, "yer": "nobet"})
 	var n_toprak := 0
 	for k in hucre:
@@ -2274,6 +2274,15 @@ func _hepsi_bos(cells: PackedInt32Array) -> bool:
 		if occ[k] != 0 or (not _izin.is_empty() and not _izin.has(k)):
 			return false
 	return true
+
+
+## Dolgu hücrelerinden (_izin) boş olanları r içinde toprak yap (kimliksiz yol hücresi)
+func _toprak_disc(c: Vector2, r: float) -> void:
+	for j in range(maxi(0, int((c.y - r - z0) / G)), mini(nz, int((c.y + r - z0) / G) + 1)):
+		for i in range(maxi(0, int((c.x - r - x0) / G)), mini(nx, int((c.x + r - x0) / G) + 1)):
+			var k := j * nx + i
+			if occ[k] == 0 and _izin.has(k) and cell_c(i, j).distance_to(c) <= r:
+				occ[k] = 1
 
 
 func _bos_mu(c: Vector2, r: float) -> bool:
@@ -2391,12 +2400,13 @@ func _dolgu_kumeler(xf: Transform3D, hucre: PackedInt32Array, rng: RandomNumberG
 			r = 12.0
 			ciftlik = true
 		else:
-			# ağaç kümesi (ağaçlar 9 m'ye yayılır) yalnız geniş boşlukta; dar yerde kuyu ya da bağ kulübesi
+			# bostan köşesi (sıralar, çit, kuyu, meyve ağacı; 15 × 13 m) ya da ağaç kümesi (ağaçlar 9 m'ye yayılır) yalnız
+			# geniş boşlukta; dar yerde kuyu ya da bağ kulübesi
 			var bul := Vector2.INF
 			var genis := false
 			for a in 14:
 				var q := c + Vector2.from_angle(a * 2.4) * (a * 0.45)
-				if _bos_mu(q, 9.0):
+				if _bos_mu(q, 8.6):
 					bul = q
 					genis = true
 					break
@@ -2409,11 +2419,17 @@ func _dolgu_kumeler(xf: Transform3D, hucre: PackedInt32Array, rng: RandomNumberG
 			if bul == Vector2.INF:
 				continue
 			c = bul
-			var sec: Array = ["agac_kumesi", "agac_kumesi", "kuyu", "agac_kumesi"] if genis else ["kuyu", "kulube_bag", "kuyu"]
+			var sec: Array = ["set_bostan_kosesi", "agac_kumesi", "set_bostan_kosesi"] if genis else ["kuyu", "kulube_bag", "kuyu"]
 			tur = sec[rng.randi() % sec.size()]
-			r = 9.0 if tur == "agac_kumesi" else 3.2
-		_stamp_disc(c, r, 5)
-		oge.append({"tur": tur, "c": c, "yaw": rng.randf() * TAU, "tohum": rng.randi() % 9973, "yer": "hub_dolgu"})
+			if tur == "agac_kumesi" and not _bos_mu(c, 9.0):
+				tur = "set_bostan_kosesi"
+			r = 9.0 if tur == "agac_kumesi" else (8.6 if tur == "set_bostan_kosesi" else 3.2)
+		# damga toprak (kimliksiz yol hücresi: zeminde sıkışık toprak; çimen tarlası değil, "kullanılan alan")
+		_toprak_disc(c, r)
+		var yw := rng.randf() * TAU
+		if tur.begins_with("set_"):
+			yw = float(int(yw / (PI * 0.5))) * PI * 0.5      # dünya eksenine hizalı: ayak izi denetlenen karede kalsın
+		oge.append({"tur": tur, "c": c, "yaw": yw, "tohum": rng.randi() % 9973, "yer": "hub_dolgu"})
 		n += 1
 	return n
 

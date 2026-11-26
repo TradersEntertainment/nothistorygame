@@ -51,6 +51,7 @@ func _surus() -> void:
 	await _bekle(6.0)
 	print("G22BSONDA yuklendi bolum=%s v2=%s ms=%d" % [bolum, IstBaglama.aktif(), Time.get_ticks_msec() - t0])
 	_olc()
+	await _yukseklik()
 	if yuru:
 		await _yuru()
 	get_tree().quit()
@@ -532,3 +533,17 @@ func _yuru() -> void:
 func _dl(sk: IstSokak) -> Dictionary:
 	var d = sk.get("dolgu")
 	return d if d is Dictionary else {}
+
+
+## Arazi çarpışması (görünen arazi ağıyla aynı ızgara) ile IstGeo.h ve hub düzlemi: dolgu noktalarında (D7: bölümde ve uçuşta)
+func _yukseklik() -> void:
+	if IstBaglama.kok == null or IstBaglama.dunya == null:
+		return
+	for lp: Vector2 in [Vector2(8.0, -30.0), Vector2(8.0, 10.0), Vector2(-10.0, -14.0), Vector2(-30.0, 10.0), Vector2(-40.0, -30.0), Vector2(16.0, -30.0), Vector2(25.0, -14.0)]:
+		var w3: Vector3 = SurHub.hub_v2() * Vector3(lp.x, 0.0, lp.y)
+		var top := IstBaglama.kok.to_global(Vector3(w3.x, 80.0, w3.z))
+		IstBaglama.dunya.carpisma_yenile(IstBaglama.kok.to_local(top))
+		for i in 3:
+			await get_tree().physics_frame
+		var hit := IstBaglama.kok.get_world_3d().direct_space_state.intersect_ray(PhysicsRayQueryParameters3D.create(top, top + Vector3(0, -160, 0)))
+		print("G22BSONDA yukseklik bolum=%s yerel=%s geo_h=%.3f h_ham=%.3f hub_y=%.3f carp_y=%.3f %s" % [bolum, lp, IstGeo.h(w3.x, w3.z), IstGeo.h_ham(w3.x, w3.z), SurHub.hub_v2().origin.y, IstBaglama.kok.to_local(hit["position"]).y if hit else -99.0, String(hit["collider"].name) if hit else ""])
