@@ -254,6 +254,7 @@ static func build(parent: Node3D, region_name: String, keep_local: Array, night 
 	for r: Rect2 in keep_local:
 		keep.append(world_rect(xf, r))
 	f.keep = keep
+	f.keep_own = keep.duplicate()
 	SiegeField.flat_rects = keep.duplicate()
 	# Bölgenin kendi zemini dünya zemininin üstünde kalsın: dünya, bölgenin altına iner
 	SiegeField.flat_y = xf.origin.y - 0.8 if xf.origin.y < -0.1 else -0.03

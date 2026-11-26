@@ -91,6 +91,12 @@ var _taken: Array = []      # kurulmuş öbekler: Vector3(x, z, yarıçap); kom�
 
 
 static func build(field: SiegeField) -> Node3D:
+	YK = field.yeni_kalem
+	WALK_Y = SiegeField.EskiSur.DIS_YOL_Y if YK else 8.0
+	WALK_Z = SiegeField.EskiSur.DIS_YOL_Z if YK else 14.9
+	DZW = 2.6 if YK else 0.0
+	DZP = 2.2 if YK else 0.0
+	DZB = 2.5 if YK else 0.0
 	var w := WallRear.new()
 	w.f = field
 	w.rng.seed = 1453529
@@ -849,8 +855,15 @@ func _agac_kumesi(c: Vector3) -> float:
 
 # ---------------------------------------------------------------- sur üstü: okçular, kızgın yağ, ayrıntılar
 
-const WALK_Y := 8.0                 # dış surun yürüyüş yolu (LandWalls.OUTER_H)
-const WALK_Z := 14.9
+static var WALK_Y := 8.0            # dış surun yürüyüş yolu (LandWalls.OUTER_H; G23 yeni kalemde 8,5)
+static var WALK_Z := 14.9
+## G23: eski dünyanın surları yeni kalemle (SiegeField.yeni_kalem): sur işleri yeni yüzlere oturur. Dış sur yolu +2,6 m
+## (z 14,9 → 17,5), dış surun peribolos yüzüne yaslananlar +2,2 m (iç yüz 14 → 16,2), barikat +2,5 m (sur ortası 15 → 17,5).
+## Kutu surda hepsi 0 (davranış aynı).
+static var DZW := 0.0
+static var DZP := 0.0
+static var DZB := 0.0
+static var YK := false
 
 
 ## Dış sur boyunca bir yer sur işine uygun mu: kapıların, dış kulelerin, barikatın, bölüm alanlarının dışında
@@ -862,10 +875,14 @@ func _wall_ok(x: float, half: float) -> bool:
 	for g: float in World1453.LAND_GATES:
 		if absf(x - g) < SiegeField.GATE_HW + 6.0 + half:
 			return false
+	if YK:
+		# yeni kalemin dış kuleleri ve tepe basamakları, kapı, merdiven sahanlığı, Lykos açıklığı
+		if not SiegeField.EskiSur.dis_yol_bos(x, half + 1.1):
+			return false
 	var t0 := 51.5 if f.fill_center else 106.5
 	var ax := absf(x)
 	var t := t0
-	while t < SiegeField.EXT:
+	while t < SiegeField.EXT and not YK:
 		if absf(ax - t) < 3.6 + half:
 			return false
 		t += 55.0
@@ -887,7 +904,7 @@ func _wall_details() -> void:
 	while x < SiegeField.EXT - 20.0:
 		var w := busy(x)
 		if rng.randf() < 0.25 + 0.6 * w and _wall_ok(x, 0.8):
-			var p := Vector3(x, WALK_Y, 14.25)
+			var p := Vector3(x, WALK_Y, 14.25 + DZW)
 			match rng.randi() % 3:
 				0:
 					# Ok demeti: iple bağlı, ucu yukarı, merdivene yaslı değil iç kenarda dik
@@ -905,7 +922,7 @@ func _wall_details() -> void:
 					d.cyl(0.155, 0.02, p + Vector3(0, 0.3, 0), Color("4a6a78"), Vector3.ZERO, 10)
 		# İki sur arasında: dış surun iç yüzüne dayalı yedek merdiven ya da toprak çuvalı yığını
 		if rng.randf() < 0.18 + 0.4 * w and _wall_ok(x + 3.0, 1.2):
-			var q := Vector3(x + 3.0, SiegeField.city_surf(x + 3.0, 13.0), 13.0)
+			var q := Vector3(x + 3.0, SiegeField.city_surf(x + 3.0, 13.0 + DZP), 13.0 + DZP)
 			if rng.randf() < 0.5:
 				for sx: float in [-0.25, 0.25]:
 					d.box(Vector3(0.07, 5.2, 0.07), q + Vector3(sx, 2.5, 0.35), Color("7a5634"), Vector3(-14, 0, 0))
@@ -951,7 +968,7 @@ func _oil_post(x0: float, dir: float) -> void:
 	var c := Node3D.new()
 	c.name = "OilCauldron"
 	c.set_meta("no_walk", true)
-	c.position = Vector3(x0, WALK_Y, 15.2)
+	c.position = Vector3(x0, WALK_Y, 15.2 + DZW)
 	f.add_child(c)
 	for k in 7:
 		var a := TAU * k / 7.0
@@ -987,14 +1004,14 @@ func _oil_post(x0: float, dir: float) -> void:
 	_clear_wall(x0, 2.6)
 	_clear_wall(x0 + dir * 14.0, 1.8)
 	# Başında: karıştıran (yakında kepçeyle karıştırır) ve devirme kolunu tutan
-	var stir := _man(Vector3(x0 - 1.05, WALK_Y, 14.85), PI * 0.5 - 0.2, "stir", "", true)
+	var stir := _man(Vector3(x0 - 1.05, WALK_Y, 14.85 + DZW), PI * 0.5 - 0.2, "stir", "", true)
 	men.append(stir)
-	var lever := _man(Vector3(x0 + 0.15, WALK_Y, 14.35), 0.0, "", "", true)
+	var lever := _man(Vector3(x0 + 0.15, WALK_Y, 14.35 + DZW), 0.0, "", "", true)
 	(lever[1] as Dictionary)["role"] = "oil_lever"
 	(lever[1] as Dictionary)["cauldron"] = cauldron
 	men.append(lever)
 	# --- İki sur arasında ısıtma ocağı
-	var h := Vector3(x0 - dir * 3.0, 0, 8.6)
+	var h := Vector3(x0 - dir * 3.0, 0, 8.6 + DZP)
 	h.y = SiegeField.city_surf(h.x, h.z)
 	for k in 10:
 		var a := TAU * k / 10.0
@@ -1024,8 +1041,10 @@ func _oil_post(x0: float, dir: float) -> void:
 	var feeder := _man(h + Vector3(-0.6, 0, -1.2), atan2(0.6, 1.2), "lean_down")
 	men.append(feeder)
 	# --- Rampa: dış surun iç yüzüne yaslı, ısıtma ocağının yanından yürüyüş yoluna (taş basamaklı)
-	var a := Vector3(x0 + dir * 1.8, SiegeField.city_surf(x0 + dir * 1.8, 13.35), 13.35)
-	var b := Vector3(x0 + dir * 14.6, WALK_Y, 13.35)
+	var zr := 13.35 + DZP
+	var a := Vector3(x0 + dir * 1.8, SiegeField.city_surf(x0 + dir * 1.8, zr), zr)
+	# yeni kalemde dış surun peribolos yanında korkuluk var: rampa korkuluğun tepesine çıkar (oradan sur yoluna inilir)
+	var b := Vector3(x0 + dir * 14.6, WALK_Y + (IstSurlar.PARAPET_H if YK else 0.0), zr)
 	# Yürünen yüzey (eğik, katı) görünmez; görünen: dış surun iç yüzüne yaslı dolu taş merdiven (her basamak yere kadar
 	# örülü, kenarında koyu harç çizgisi) ve tepede küçük sahanlık
 	var r := Props.ramp(f, a, b, 1.3, Color.WHITE)
@@ -1036,10 +1055,10 @@ func _oil_post(x0: float, dir: float) -> void:
 	var sc := SiegeField.STONE.darkened(0.22)
 	for k in steps:
 		var top := a.y + rise * (k + 1)
-		var q := Vector3(a.x + run * (k + 0.5), (a.y + top) * 0.5 - 0.02, 13.35)
+		var q := Vector3(a.x + run * (k + 0.5), (a.y + top) * 0.5 - 0.02, zr)
 		d.box(Vector3(absf(run) + 0.01, top - a.y + 0.04, 1.3), q, sc.darkened(0.06 if k % 2 == 0 else 0.0))
-		d.box(Vector3(absf(run) * 0.35, 0.03, 1.32), Vector3(a.x + run * (k + 0.85), top + 0.005, 13.35), sc.darkened(0.35))
-	d.box(Vector3(1.4, 0.3, 1.3), Vector3(b.x + run * 2.0, WALK_Y - 0.15, 13.35), sc)
+		d.box(Vector3(absf(run) * 0.35, 0.03, 1.32), Vector3(a.x + run * (k + 0.85), top + 0.005, zr), sc.darkened(0.35))
+	d.box(Vector3(1.4, 0.3, 1.3), Vector3(b.x + run * 2.0, b.y - 0.15, zr), sc)
 	# Korkuluksuz dış kenarda (iki sur arası tarafı) dikili birkaç kazık ve ip: düşülmesin
 	for k in 5:
 		var t := (k + 0.5) / 5.0
@@ -1054,7 +1073,7 @@ func _oil_post(x0: float, dir: float) -> void:
 	(car[1] as Dictionary)["path"] = path
 	(car[1] as Dictionary)["cauldron"] = cauldron
 	men.append(car)
-	_claim(Vector3(x0, 0, 8.0), 4.0)
+	_claim(Vector3(x0, 0, 8.0 + DZP), 4.0)
 
 
 ## Dış surun yolunda x'in r yakınındaki figürleri (savunan ve okçu) kalıcı olarak kaldırır
@@ -1107,29 +1126,29 @@ func _stockade() -> void:
 	# Moloz yamacı (iki yüze taşar) ve toprak gövde
 	for k in 26:
 		var x := rng.randf_range(a - 1.0, b + 1.0)
-		d.ball(rng.randf_range(0.6, 1.3), Vector3(x, rng.randf_range(0.0, 0.8), rng.randf_range(16.8, 19.0)), SiegeField.STONE.darkened(rng.randf_range(0.3, 0.55)), Vector3(1.3, 0.6, 1.0), 6)
-	d.box(Vector3(len, 4.2, 3.4), Vector3(mid, 2.1, 15.0), earth)
-	d.solid(Vector3(len, 6.0, 3.4), Vector3(mid, 3.0, 15.0))
+		d.ball(rng.randf_range(0.6, 1.3), Vector3(x, rng.randf_range(0.0, 0.8), rng.randf_range(16.8, 19.0) + DZB), SiegeField.STONE.darkened(rng.randf_range(0.3, 0.55)), Vector3(1.3, 0.6, 1.0), 6)
+	d.box(Vector3(len, 4.2, 3.4), Vector3(mid, 2.1, 15.0 + DZB), earth)
+	d.solid(Vector3(len, 6.0, 3.4), Vector3(mid, 3.0, 15.0 + DZB))
 	# Üstte toprak dolu fıçılar ve dal örgüsü sepetler, önünde sivri kazıklar
 	var x := a + 0.6
 	while x < b - 0.4:
-		d.cyl(0.42, 1.1, Vector3(x, 4.75, 15.9), Color("6b4a2e").darkened(rng.randf() * 0.2), Vector3.ZERO, 10)
-		d.cyl(0.43, 0.06, Vector3(x, 4.5, 15.9), Color("3a3634"), Vector3.ZERO, 10)
-		d.cyl(0.4, 0.08, Vector3(x, 5.32, 15.9), earth.darkened(0.2), Vector3.ZERO, 10)
-		d.cyl(0.36, 0.9, Vector3(x + 0.45, 4.65, 14.6), Color("66502f"), Vector3.ZERO, 8)
+		d.cyl(0.42, 1.1, Vector3(x, 4.75, 15.9 + DZB), Color("6b4a2e").darkened(rng.randf() * 0.2), Vector3.ZERO, 10)
+		d.cyl(0.43, 0.06, Vector3(x, 4.5, 15.9 + DZB), Color("3a3634"), Vector3.ZERO, 10)
+		d.cyl(0.4, 0.08, Vector3(x, 5.32, 15.9 + DZB), earth.darkened(0.2), Vector3.ZERO, 10)
+		d.cyl(0.36, 0.9, Vector3(x + 0.45, 4.65, 14.6 + DZB), Color("66502f"), Vector3.ZERO, 8)
 		x += 0.95
 	x = a + 0.3
 	while x < b:
-		d.cyl(0.07, 2.4, Vector3(x, 4.9, 16.9), Color("7a5634"), Vector3(-25, 0, 0), 4, 0.1)
-		d.cyl(0.07, 2.0, Vector3(x + 0.2, 1.0, 19.0), Color("7a5634"), Vector3(-35, 0, 0), 4, 0.1)
+		d.cyl(0.07, 2.4, Vector3(x, 4.9, 16.9 + DZB), Color("7a5634"), Vector3(-25, 0, 0), 4, 0.1)
+		d.cyl(0.07, 2.0, Vector3(x + 0.2, 1.0, 19.0 + DZB), Color("7a5634"), Vector3(-35, 0, 0), 4, 0.1)
 		x += 0.6
 	# Dikme direkler ve çapraz kalaslar (barikatın iskeleti)
 	x = a + 0.2
 	while x < b:
-		d.box(Vector3(0.24, 6.6, 0.24), Vector3(x, 3.3, 16.5), Color("5a3a22"))
+		d.box(Vector3(0.24, 6.6, 0.24), Vector3(x, 3.3, 16.5 + DZB), Color("5a3a22"))
 		x += 2.4
-	d.box(Vector3(len, 0.22, 0.2), Vector3(mid, 5.6, 16.55), Color("6a4a2c"))
-	_genoese(Vector3(mid + 2.0, 5.3, 15.0))
+	d.box(Vector3(len, 0.22, 0.2), Vector3(mid, 5.6, 16.55 + DZB), Color("6a4a2c"))
+	_genoese(Vector3(mid + 2.0, 5.3, 15.0 + DZB))
 	# Barikatın arkasında (peribolos) Giustiniani'nin bölüğü
 	for k in 7:
-		men.append(_man(Vector3(a + 1.5 + k * 2.4, 0, 12.0 + rng.randf_range(-0.6, 0.6)), 0.0, "", ["spear_shield", "spear", "bow"][k % 3]))
+		men.append(_man(Vector3(a + 1.5 + k * 2.4, 0, 12.0 + DZB + rng.randf_range(-0.6, 0.6)), 0.0, "", ["spear_shield", "spear", "bow"][k % 3]))
