@@ -1,0 +1,28 @@
+### --chapter=6 --autotest=byzmistake rc=0
+AUTOTEST PASS chapter=6 variant=byzmistake branch=6b outcome=6b.2 paradox=45 mistakes=1 telsiz=4
+### --chapter=6 --autotest=byz rc=0
+AUTOTEST PASS chapter=6 variant=byz branch=6b outcome=6b.1 paradox=0 mistakes=0 telsiz=4
+### --chapter=6 --autotest=byzfail rc=0
+YUKLEMEAUDIT_ADAY scene=chapter6 evre=acilis toplam_ms=41589 en_uzun_bosluk_ms=1038 kaynak=sehir_3547>kare ilk_kare_ms=1212 bosalt_ms=-1
+AUTOTEST PASS chapter=6 variant=byzfail branch=6b outcome=6b.3 paradox=0 mistakes=3 telsiz=4
+### --chapter=6 --autotest=byzclimb rc=0
+AUTOTEST PASS chapter=6 variant=byzclimb branch=6b outcome=6b.1 paradox=0 mistakes=0 telsiz=4
+### --chapter=6 --autotest=byzgive rc=0
+YUKLEMEAUDIT_ADAY scene=chapter6 evre=acilis toplam_ms=42137 en_uzun_bosluk_ms=1148 kaynak=sehir_3547>kare ilk_kare_ms=1364 bosalt_ms=-1
+AUTOTEST PASS chapter=6 variant=byzgive branch=6b outcome=6b.1 paradox=0 mistakes=0 telsiz=4
+### --chapter=7 --autotest=byz rc=0
+YUKLEMEAUDIT_ADAY scene=chapter7 evre=acilis toplam_ms=41608 en_uzun_bosluk_ms=1028 kaynak=props>solidify ilk_kare_ms=1316 bosalt_ms=-1
+AUTOTEST PASS chapter=7 variant=byz branch=7b outcome=7.1 extras=["7.3"] sadakat=50 baski=0 hour=14.0
+### --chapter=7 --autotest=byzniko rc=0
+YUKLEMEAUDIT_ADAY scene=chapter7 evre=acilis toplam_ms=41698 en_uzun_bosluk_ms=1021 kaynak=sehir_289>props ilk_kare_ms=1517 bosalt_ms=-1
+AUTOTEST PASS chapter=7 variant=byzniko branch=7b outcome=7.2 extras=[] sadakat=55 baski=2 hour=12.5
+### --chapter=7 --autotest=byzcell rc=0
+AUTOTEST PASS chapter=7 variant=byzcell branch=7b outcome=7.1 extras=[] sadakat=60 baski=0 hour=13.0
+### --chapter=10h --autotest rc=0
+AUTOTEST PASS chapter=10h variant= outcome=10H.1 truth=3 direnc=0 paradox=0
+### --chapter=10h --autotest=shame rc=0
+YUKLEMEAUDIT_ADAY scene=chapter10h evre=acilis toplam_ms=43592 en_uzun_bosluk_ms=1046 kaynak=sehir_289>kare ilk_kare_ms=1228 bosalt_ms=-1
+AUTOTEST PASS chapter=10h variant=shame outcome=10H.2 truth=0 direnc=0 paradox=0
+### --chapter=10h --autotest=save rc=0
+YUKLEMEAUDIT_ADAY scene=chapter10h evre=acilis toplam_ms=41034 en_uzun_bosluk_ms=1010 kaynak=sehir_289>kare ilk_kare_ms=1200 bosalt_ms=-1
+AUTOTEST PASS chapter=10h variant=save outcome=10H.1 truth=3 direnc=3 paradox=10

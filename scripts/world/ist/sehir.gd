@@ -374,7 +374,7 @@ func _paletli(it: Dictionary) -> bool:
 	if it.has("hat") or it.has("glen") or it.get("tek", false):
 		return false
 	var mod := String(it.get("mod", ""))
-	if String(it.get("id", "")) in ["hub_sehir", "zincir"]:
+	if String(it.get("id", "")) in ["hub_sehir", "hub_saray", "zincir"]:
 		return false
 	for p: String in PALETSIZ:
 		if mod.begins_with(p):
@@ -1493,7 +1493,7 @@ func _on_pisir() -> void:
 		var mod := String(it.get("mod", ""))
 		var id := String(it["id"])
 		var hat := it.has("hat") or id.begins_with("kose_")
-		if not hat and mod == "v2" and not id.begins_with("mese_") and not id in ["ayasofya", "blakherna", "bozdogan", "zincir", "hub_sehir", "meydan_aya_cevre"]:
+		if not hat and mod == "v2" and not id.begins_with("mese_") and not id in ["ayasofya", "blakherna", "bozdogan", "zincir", "hub_sehir", "hub_saray", "meydan_aya_cevre"]:
 			continue
 		var h := it["holder"] as Node3D
 		if IstBaglama.atlanabilir_mi(it):
@@ -2045,7 +2045,19 @@ func _place_v2() -> void:
 		# Hub şehri tek katmanlı öğe (kendi uzaklık katmanları var); BAĞLAMA bölümde (7b) alanı temizlerken kalkar
 		if IstBaglama._sil_acik:
 			print("ISTBAGLAMA sil_hub place=%s olcut=%s ayni=%s" % [hx.origin, IstBaglama._sil_hub, hx.origin.is_equal_approx(IstBaglama._sil_hub)])
+		# G22: hub bölünmüş (yeni surda): sur parçası (hub_sehir) + ~430 m içeride iç mahalle (hub_saray: saray avlusu,
+		# kançılarya, meydan). İç mahallenin zemini kendi yüksekliğinde düzlenir (ikinci YAMA değil: IstGeo.duzle; hub'da ve
+		# uzak bölümlerde aynı arazi). Hub'ın düzlemesi (yukarıda) bilerek aynı: sur kesiminin oturduğu zemin değişmesin.
+		_hub_bol = load("res://scripts/world/ist/sur_set_hub.gd").uzak_yeni() and not ("--saray-eski" in OS.get_cmdline_user_args())
+		_hub_parca.clear()
 		_v2_item("hub_sehir", hx.origin, 0.0, 50.0, _make_hub)
+		if _hub_bol:
+			var so := ByzCity.saray_ofs_v2()
+			var sc := hx * (so + Vector3(ByzCity.IC_RECT.get_center().x, 0.0, ByzCity.IC_RECT.get_center().y))
+			IstGeo.duzle(Vector2(sc.x, sc.z), 50.0, hx.origin.y + so.y - 0.12, 14.0)
+			var it := _v2_item("hub_saray", hx * so, 0.0, 50.0, _make_hub_saray)
+			(it["holder"] as Node3D).transform = hx * Transform3D(Basis.IDENTITY, so)
+			it["yaw"] = hx.basis.get_euler().y
 
 
 ## Tek katmanlı öğe: kurucusu bir kez (açılışta) çalışır, kendi uzaklık katmanlarını ve çarpışmasını kendisi kurar
@@ -2213,8 +2225,18 @@ func _make_aya(n: Node3D, lod: int) -> void:
 ## saray avlusu, kubbeli kiliseler, dolgu evler) — ByzCity.far_hub'ın kurduğu parçaların aynısı; ama şehrin katmanlı
 ## pişirmesiyle (ByzCity.far_hub'daki World1453.bake köşe renkli parçaların rengini silip bembeyaz bırakıyordu, ŞEHİR-3).
 ## Kişiler, yazılar atılır; ışıklar yalnız yakın katmanda.
+## G22: hub bölünmüş mü (yeni surda; `--saray-eski` değil) ve katman başına bir kez kurulan iki parça: TEK ByzCity aynı
+## kurucu sırasıyla kurulur (genel RNG ve Props önbellekleri bugünkü gibi tüketilsin), çocukları iki tutucuya dağıtılır;
+## hangi öğe önce kurulursa ikisini kurar, öbürü hazır parçasını alır.
+var _hub_bol := false
+var _hub_parca := {}
+
 func _make_hub(n: Node3D, lod: int) -> void:
 	var t0 := Time.get_ticks_msec()
+	if _hub_bol:
+		_hub_parca_al(n, lod, "sur")
+		stats["hub_ms"] = Time.get_ticks_msec() - t0
+		return
 	var c := ByzCity.new()
 	c.part = "walls"
 	# TAŞIMA-12: yeni surda uzak hub kesimin gerçek yerinde (SurHub.hub_v2; IstBaglama.donusum, hub_xf) ve kutu iç sur,
@@ -2236,15 +2258,79 @@ func _make_hub(n: Node3D, lod: int) -> void:
 		c.remove_child(ch)
 		n.add_child(ch)
 	c.free()
+	_hub_ayikla(n, lod)
+	# TUR-6: _hub_palet(n) denendi: karelerde turuncu çatı/pastel küme değişmedi (renk başka yoldan geliyor; bulunamadı) ve
+	# kopya malzeme/ağlar çizim çağrısı ekliyordu → kapalı (rapor: F kısmen)
+	stats["hub_ms"] = Time.get_ticks_msec() - t0
+
+
+func _make_hub_saray(n: Node3D, lod: int) -> void:
+	var t0 := Time.get_ticks_msec()
+	_hub_parca_al(n, lod, "saray")
+	stats["hub_saray_ms"] = Time.get_ticks_msec() - t0
+
+
+func _hub_parca_al(n: Node3D, lod: int, ad: String) -> void:
+	if not _hub_parca.has(lod) or not (_hub_parca[lod] as Dictionary).has(ad):
+		_hub_parca[lod] = _hub_bolunmus_kur(lod)
+	var tut: Node3D = (_hub_parca[lod] as Dictionary)[ad]
+	(_hub_parca[lod] as Dictionary).erase(ad)
+	for ch in tut.get_children():
+		tut.remove_child(ch)
+		n.add_child(ch)
+	tut.free()
+	if (_hub_parca[lod] as Dictionary).is_empty():
+		_hub_parca.erase(lod)
+
+
+## Bölünmüş hub'ın iki parçası (sur: hub yereli; saray: saray_kok yereli = hub yereli) ayrık tutucularda
+func _hub_bolunmus_kur(lod: int) -> Dictionary:
+	var c := ByzCity.new()
+	c.part = "walls"
+	c.sur_yeni = true
+	c.bolunmus = true
+	c.bol_karar = true
+	c._v2 = true
+	c._saray_kok_kur()
+	# far_hub / ByzCity._kur_bolunmus ile aynı sıra; yeni surda kutu iç sur, kuleler, Romanos kemeri kurulmaz
+	c._k = c.saray_kok
+	c._build_ground()
+	c._build_street()
+	c._build_chancery()
+	c._k = c
+	c._build_ground()
+	c._build_giust_yeri(34.0)
+	c._build_nobet()
+	c._k = c.saray_kok
+	c._build_palace()
+	c._k = c
+	c._build_small_skyline()
+	c._build_fill()
+	var sur := Node3D.new()
+	var saray := Node3D.new()
+	var sk := c.saray_kok
+	c.remove_child(sk)
+	for ch in sk.get_children():
+		sk.remove_child(ch)
+		saray.add_child(ch)
+	sk.free()
+	for ch in c.get_children():
+		c.remove_child(ch)
+		sur.add_child(ch)
+	c.free()
+	_hub_ayikla(sur, lod)
+	_hub_ayikla(saray, lod)
+	return {"sur": sur, "saray": saray}
+
+
+## Uzak hub'da kişiler, yazılar, etkileşim alanları atılır; ışıklar yalnız yakın katmanda
+func _hub_ayikla(n: Node3D, lod: int) -> void:
 	for x in n.find_children("*", "", true, false):
 		if not is_instance_valid(x):
 			continue
 		if x is Person or x is Label3D or x is Area3D or (x is Light3D and lod > 0):
 			x.get_parent().remove_child(x)
 			x.free()
-	# TUR-6: _hub_palet(n) denendi: karelerde turuncu çatı/pastel küme değişmedi (renk başka yoldan geliyor; bulunamadı) ve
-	# kopya malzeme/ağlar çizim çağrısı ekliyordu → kapalı (rapor: F kısmen)
-	stats["hub_ms"] = Time.get_ticks_msec() - t0
 
 
 ## TUR-6: hub şehrinin (yayındaki bölümün kurucuları) pastel duvarları ve parlak turuncu çatıları havadan "oyuncak" küme
@@ -2544,6 +2630,11 @@ var _oyun: Array = []
 func oyun_alanlari() -> Array:
 	if not _oyun.is_empty():
 		return _oyun
+	# G22: yeni surda hub bölünmüş: sur parçası (hub_v2'de) + Ayasofya meydanı + iç mahalle (SONDA: hub_xf ar[0]'ı hub sayar)
+	var shub = load("res://scripts/world/ist/sur_set_hub.gd")
+	if shub.uzak_yeni() and not ("--saray-eski" in OS.get_cmdline_user_args()):
+		_oyun = [IstBaglama._rect_xf(shub.hub_v2(), ByzCity.SUR_RECT.grow(2.0)), _meydan_rect(), saray_alani()]
+		return _oyun
 	for it: Dictionary in items:
 		if String(it["id"]) == "romanos":
 			var p: Vector3 = it["pos"]
@@ -2554,6 +2645,13 @@ func oyun_alanlari() -> Array:
 			_oyun.append(Rect2(c - Vector2(45, 45), Vector2(90, 90)))
 	_oyun.append(_meydan_rect())
 	return _oyun
+
+
+## G22: iç mahallenin (saray avlusu, kançılarya, meydan) oyun alanı: dünya dikdörtgeni (hub_v2 · (IC_RECT + SARAY_OFS))
+static func saray_alani() -> Rect2:
+	var shub = load("res://scripts/world/ist/sur_set_hub.gd")
+	var o: Vector3 = shub.SARAY_OFS
+	return IstBaglama._rect_xf(shub.hub_v2(), Rect2(ByzCity.IC_RECT.position + Vector2(o.x, o.z), ByzCity.IC_RECT.size).grow(2.0))
 
 
 ## Hub'ın (Romanos Kapısı'nın iç yanı; Bölüm 6b, 7b, 10h, 12b, 23, 24) ByzCity "walls" parçasının yerel → dünya dönüşümü.
@@ -3313,6 +3411,7 @@ func _sehir_dokusu_v2() -> void:
 	# Doku: bostan/bağ/tarla yamaları, harabe, mahalle kiliseleri, ağaçlık, bahçe
 	var np := 0
 	var far: Array = []
+	var n_dk0 := int((sokak.dolgu.get("taban", {}) as Dictionary).get("doku", sokak.doku.size()))
 	for dk: Dictionary in sokak.doku:
 		LoadingScreen.nabiz("sehir_3310")
 		var tur := String(dk["tur"])
@@ -3354,7 +3453,8 @@ func _sehir_dokusu_v2() -> void:
 		var dk_bos := IstCati.bos_mu(c, minf(alan.x, alan.y) * 0.5)
 		for k in rng.randi_range(1, 3):
 			var tp := c + Vector2((alan.x * 0.5 + 1.5) * (1 if rng.randf() < 0.5 else -1), rng.randf_range(-alan.y * 0.4, alan.y * 0.4))
-			if sokak.cell(tp.x, tp.y) in [0, 5]:
+			# G22b: eski yamalar dolgudan önceki ızgaraya göre (rng sırası aynı); dolgunun yamaları güncele göre
+			if (sokak.cell_taban(tp.x, tp.y) if np <= n_dk0 else sokak.cell(tp.x, tp.y)) in [0, 5]:
 				var ak := "ag|" + String(AGAC_SIK[rng.randi() % AGAC_SIK.size()])
 				var ar := rng.randf() * TAU
 				if IstCati.bos_mu(tp):

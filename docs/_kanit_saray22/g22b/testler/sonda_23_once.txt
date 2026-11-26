@@ -1,0 +1,12 @@
+ISTDOKU3 sokak_esyasi { "meydan_oge": 382, "oge": 6437, "hucre": 740, "tur": 0, "kur_ms": 12, "onbellek": "okundu" }
+ISTEVLER2 ev=8318 doku=125 meydan=86 hucre=750
+G22BSONDA karma ad=streets n=1098 onek=1098 md5=7a8b05b3593f550acdc56c2af286133a dolgu_taban=-
+G22BSONDA karma ad=houses n=8318 onek=8306 md5=5a763cea5fd7f5ae7037fa5d27d5273f dolgu_taban=-
+G22BSONDA karma ad=doku n=125 onek=125 md5=2b88f63227e76e43cc2ef6437bbf4193 dolgu_taban=-
+G22BSONDA karma ad=oge n=403 onek=403 md5=0e8aca495c7e95a4f00debd44689343e dolgu_taban=-
+G22BSONDA karma ad=avlu n=1023 onek=1023 md5=3084653dc9e189d4e4b3f1d514fcb5cd dolgu_taban=-
+G22BSONDA karma ad=meydan n=86 onek=86 md5=dbaeab54be16e27514e36e4f320cc264 dolgu_taban=-
+G22BSONDA bos yer=hub kare=38 bos=38 oran=1.000 ornek=[(-20.0, -50.0), (-10.0, -50.0), (-30.0, -40.0), (-20.0, -40.0), (-10.0, -40.0), (-40.0, -30.0), (-30.0, -30.0), (-20.0, -30.0), (-10.0, -30.0), (
+G22BSONDA bos yer=saray kare=24 bos=24 oran=1.000 ornek=[(-60.0, -40.0), (-60.0, -30.0), (30.0, -30.0), (-60.0, -20.0), (30.0, -20.0), (40.0, -20.0), (30.0, -10.0), (40.0, -10.0), (30.0, 0.0), (40.0, 
+G22BSONDA cimen OZET en_uzun=50.0 esik=12 durum=FAIL
+G22BSONDA OZET yer=55 kotu=0 yeni_iz=0 dolgu_en_dogu_x=-inf kopuk=0 en_dar=inf cimen=50.0

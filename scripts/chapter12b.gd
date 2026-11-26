@@ -72,7 +72,10 @@ func _ready() -> void:
 		env.fog_light_color = Color("b86a48")
 		env.fog_density = 0.006
 		env.ambient_light_energy = 0.28
-	# İmparator surun üstünde, iki mazgalın arasından dışarıya (ordugâha) bakar
+	# İmparator surun üstünde, iki mazgalın arasından dışarıya (ordugâha) bakar. G22: bölünmüş hub'da İmparator iç mahallede
+	# (saray_kok) kurulur: surda doğrudan city'nin altına alınır (konum tweeni sur çerçevesinde)
+	if city.emperor.get_parent() != city:
+		city.emperor.reparent(city, false)
 	city.emperor.position = EMP_AT
 	city.emperor.rotation.y = PI / 2.0
 	city.emperor.look_target = null

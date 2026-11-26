@@ -180,20 +180,51 @@ static func ground(x: float, z: float, raw := false) -> float:
 	return flat_mix(h - 0.03, x, z, flat_y)
 
 
+## G22: saray mahallesinin (ByzCity iç grubu: saray avlusu, kançılarya, meydan; hub yerelinde SurHub.SARAY_OFS) düzlüğü.
+## Sabit (flat_rects'ten bağımsız; CityPlan imzası ve _exit_tree sıfırlaması etkilenmez), yalnız tek haritada (world_on).
+## İç grubun dünya dikdörtgeni x −146,5…−76,5, z −482,3…−418,3; görünen arazi ve yürüme çarpışması 25 m'lik ızgara:
+## düz alan 26 m büyütülür (kenarda döşeme havada/gömük kalmasın), ötesinde 30 m'lik şev doğal araziye iner.
+const SARAY_DUZ := Rect2(-172.5, -508.3, 122.0, 116.0)
+const SARAY_GECIS := 30.0
+const SARAY_MERKEZ := Vector2(-111.5, -450.3)
+
+
+## Saray düzlüğünün yüksekliği: o noktadaki şehir arazisi (≈ 5,65). Hub yereli y 0 = dünya y 0: iç grubun dy'si budur.
+static func saray_y() -> float:
+	return _city_ham(SARAY_MERKEZ.x, SARAY_MERKEZ.y)
+
+
+static func _saray_d(x: float, z: float) -> float:
+	var r := SARAY_DUZ
+	var dx := maxf(maxf(r.position.x - x, 0.0), x - r.end.x)
+	var dz := maxf(maxf(r.position.y - z, 0.0), z - r.end.y)
+	return sqrt(dx * dx + dz * dz)
+
+
+static func _city_ham(x: float, z: float) -> float:
+	var r := smoothstep(-100.0, -300.0, z)
+	return r * (5.0 + 4.0 * sin(x * 0.012 + 1.3) + 3.0 * cos(z * 0.02)) + smoothstep(-300.0, -700.0, z) * 14.0 * (1.0 - smoothstep(-1300.0, -1700.0, z) * 0.6) - 0.05
+
+
 ## Şehir tarafı: iç surun hemen ardı düz, sonra şehrin tepeleri.
 static func city_ground(x: float, z: float) -> float:
+	var sd := _saray_d(x, z) if world_on else INF
+	if sd <= 0.0:
+		return saray_y() - 0.02
 	# İç surun ardındaki 100 m düz (Bölüm 26'da Mese'ye giden cadde burada), sonra şehrin tepeleri
 	for fr in flat_rects:
 		if (fr as Rect2).has_point(Vector2(x, z)):
 			return flat_y - 0.02
-	var r := smoothstep(-100.0, -300.0, z)
-	var h := r * (5.0 + 4.0 * sin(x * 0.012 + 1.3) + 3.0 * cos(z * 0.02)) + smoothstep(-300.0, -700.0, z) * 14.0 * (1.0 - smoothstep(-1300.0, -1700.0, z) * 0.6) - 0.05
+	var h := _city_ham(x, z)
 	if world_on:
 		# Kıyı surlarının dışı: Haliç ve Marmara'ya iner
 		var d := maxf(World1453.HORN_S_X - x, x - World1453.marmara_x(z))
 		d = maxf(d, World1453.TIP.z - z)
 		h = lerpf(h, -4.0, smoothstep(0.0, 14.0, d))
-	return flat_mix(h, x, z, flat_y - 0.02)
+	var out := flat_mix(h, x, z, flat_y - 0.02)
+	if sd < SARAY_GECIS:
+		out = lerpf(saray_y() - 0.02, out, smoothstep(0.0, SARAY_GECIS, sd))
+	return out
 
 
 ## Görünen ova ve şehir arazisinin yüzeyi (LowPoly.terrain ızgarası 25 m: ground/city_ground köşeler arasında görünen

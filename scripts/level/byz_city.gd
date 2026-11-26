@@ -44,6 +44,105 @@ const SurHub := preload("res://scripts/world/ist/sur_set_hub.gd")
 var sur_yeni := false
 var sur_hub: Dictionary = {}
 
+## G22 — BÖLÜNMÜŞ HUB (docs/_ajan/gorev/G22_saray.md). Sahibin kararı: Romanos Kapısı'nın ardında yalnız Giustiniani'nin yeri
+## ve kapı kalır; saray avlusu, kançılarya, meydan, cadde ve evleri ~430 m içeri (SurHub.SARAY_OFS, G21'in Lykos şeridinin
+## ötesi) taşınır. İç grubun yereli bugünkü hub yereliyle AYNIDIR (START, EMPEROR_POS, HALL_Z0, clerk_x… değişmez): iç
+## grup `saray_kok` düğümünde kurulur, düğüm hub yerelinde saray_ofs()'ta durur (döndürülmez). Sur parçası (iç sur, kapı,
+## Giustiniani'nin iskelesi, nöbet yeri) ByzCity'nin kendisinde, bugünkü yerinde. Bölme çizgisi yerel x BOLME_X.
+## Anahtar bölüm başına (BOLUNEN; `--saray-eski` hepsini eski bileşik düzene döndürür); uzak hub (far_hub, IstSehir)
+## her zaman bölünmüş. ic_merkez: iç ağırlıklı bölümlerde (IC_MERKEZ) kök _ready'nin sonunda −saray_ofs() ötelenir: iç
+## grup sahne kökenine gelir, bölümlerin yerel sabitleri (START, ROOF_BOUNDS, PERCHES[0..3]…) aynen çalışır; sur tarafı
+## (GIUST_POS, EXIT_POS) `city.to_global(...)` ister.
+const BOLUNEN := ["6", "7", "10h", "12b", "13", "23", "24"]
+const IC_MERKEZ := ["6", "7", "13", "23", "24"]
+const BOLME_X := 18.0
+## İç grubun yerel dikdörtgeni (saray_kok yereli = bugünkü hub yereli) ve sur parçasınınki (hub yereli)
+const IC_RECT := Rect2(-46.0, -48.0, 46.0 + BOLME_X, 70.0)
+const SUR_RECT := Rect2(BOLME_X, -48.0, 38.0 - BOLME_X, 70.0)
+## Sur yolundaki su fıçısı (6b martı kovalamacasının 5. tüneği; tepesi y 1,27) — nöbet yerinde, kodla sabit kurulur
+const FICI_POS := Vector3(21.5, 0.0, -10.5)
+var bolunmus := false
+var bol_karar := false          # true: bolunmus'u kuran (far_hub, IstSehir) verdi; _ready bölümden karar vermez
+var ic_merkez := false
+var saray_kok: Node3D
+## Geçerli kurulum kökü: kurucular self yerine buna ekler (bölünmüşte iç grup için saray_kok)
+var _k: Node3D
+var _cypress_ic: Array[Vector4] = []
+static var _saray_ofs_v2 := Vector3.INF
+static var _saray_ofs_eski := Vector3.INF
+
+
+func _init() -> void:
+	_k = self
+
+
+## Bu bölüm bölünmüş hub mu (BOLUNEN listesinde, `--saray-eski` istenmemiş)
+static func bolunur(bolum: String) -> bool:
+	if "--saray-eski" in OS.get_cmdline_user_args():
+		return false
+	# v2'de yalnız yeni surla (eski kutu sur yolunda hub v2'de başka yerde: bölünmez)
+	if IstBaglama.etkin() and not SurHub.yeni(bolum):
+		return false
+	return bolum in BOLUNEN
+
+
+## İç grubun (saray_kok) hub yerelindeki yeri: SARAY_OFS + (0, dy, 0). dy iç mahallenin arazi yüksekliği hub y'sine göre:
+## v2'de IstGeo.h_ham(saray_v2) − hub_v2().origin.y (≈ −7,6), eski dünyada SiegeField.saray_y() (≈ +5,65; hub y 0 = dünya
+## y 0). Hangisi olduğu dünyaya bağlı (anahtara değil: 43o gibi eski dünya bölümleri v2 açıkken de eski dünyadır):
+## ByzCity örneği kendi dünyasından bilir (ofs()); dışarıdan saray_ofs_v2 / saray_ofs_eski. Bölümler y yazmaz.
+static func saray_ofs_v2() -> Vector3:
+	if _saray_ofs_v2 == Vector3.INF:
+		var w: Vector3 = SurHub.saray_v2()
+		_saray_ofs_v2 = SurHub.SARAY_OFS + Vector3(0.0, IstGeo.h_ham(w.x, w.z) - SurHub.hub_v2().origin.y, 0.0)
+	return _saray_ofs_v2
+
+
+static func saray_ofs_eski() -> Vector3:
+	if _saray_ofs_eski == Vector3.INF:
+		_saray_ofs_eski = SurHub.SARAY_OFS + Vector3(0.0, SiegeField.saray_y(), 0.0)
+	return _saray_ofs_eski
+
+
+## Bu örneğin dünyasına göre (v2 bağlamalı bölüm ya da IstSehir'in uzak hub'ı: v2; öbürü eski dünya)
+var _v2 := false
+func ofs() -> Vector3:
+	return saray_ofs_v2() if _v2 else saray_ofs_eski()
+
+
+## İç grup yerelindeki bir nokta → hub yereli (ByzCity düğümünün yereli; ötelenmiş bölümde de)
+func saray_konum(v: Vector3) -> Vector3:
+	return v + ofs()
+
+
+## İç grup yerelindeki bir nokta → sahne (global). Bölünmemişte v'nin kendisi (ByzCity global'i).
+func ic_global(v: Vector3) -> Vector3:
+	if saray_kok != null:
+		return saray_kok.to_global(v)
+	return to_global(v)
+
+
+## Sur parçası yerelindeki (hub yereli) bir nokta → sahne (global)
+func sur_global(v: Vector3) -> Vector3:
+	return to_global(v)
+
+
+## G22: kararma altında öteki alana yerleştirmeden sonra: v2 arazi çarpışması (320 m'lik pencere) yeni yerde kurulur,
+## kalabalık ve akış için karanlıkta ~1 sn beklenir. Bölünmemişte beklemez.
+func alan_gecis(p: Vector3) -> void:
+	if saray_kok == null:
+		return
+	if IstBaglama.dunya != null and is_instance_valid(IstBaglama.dunya) and IstBaglama.kok != null and is_instance_valid(IstBaglama.kok):
+		IstBaglama.dunya.carpisma_yenile(IstBaglama.kok.to_local(p))
+	await get_tree().create_timer(1.0, false).timeout
+
+
+## İç grubun kök düğümünü kurar (bölünmüşte)
+func _saray_kok_kur() -> void:
+	saray_kok = Node3D.new()
+	saray_kok.name = "SarayKok"
+	saray_kok.position = ofs()
+	add_child(saray_kok)
+
 
 ## Bu parçada mı (yerel z'ye göre)
 func _in_part(z: float) -> bool:
@@ -60,14 +159,30 @@ func _ready() -> void:
 	LoadingScreen.nabiz("byzcity")
 	if part == "walls":
 		sur_yeni = SurHub.sahnede()
-	if part == "walls" and sur_yeni:
+		if not bol_karar:
+			var bb := IstBaglama.sahne_bolumu()
+			bolunmus = bolunur(bb)
+			ic_merkez = bolunmus and bb in IC_MERKEZ
+	if part == "walls" and bolunmus:
+		# G22: bölümün alanı iki dikdörtgen: sur parçası (iç surun şehir yüzüne / eski kutu surun dış yüzüne kadar) ve iç
+		# mahalle (hub yerelinde SARAY_OFS'ta). İkisi ayrı verilir (birleşip 430 m'lik tek dikdörtgen olmasın).
+		var sr := SUR_RECT
+		if sur_yeni:
+			sr.size.x = SurHub.HUB_IC_X - sr.position.x
+		world = World1453.build(self, "byz_walls", [sr, saray_rect()], false)
+	elif part == "walls" and sur_yeni:
 		# yeni sur: bölümün alanı iç surun şehir yüzünde biter (peribolos, sur ve ova v2'nin/kesimin)
 		world = World1453.build(self, "byz_walls", [Rect2(-46.0, -48.0, 46.0 + SurHub.HUB_IC_X, 70.0)], false)
 	elif part == "walls":
 		world = World1453.build(self, "byz_walls", [Rect2(-46.0, -48.0, 84.0, 70.0)], false)
 	elif part == "aya":
 		world = World1453.build(self, "byz_aya", [Rect2(-46.0, -114.0, 64.0, 76.0)], false)
-	if part != "aya":
+	if bolunmus:
+		_v2 = world != null and world == IstBaglama.kok
+		_saray_kok_kur()
+	if part != "aya" and bolunmus:
+		_kur_bolunmus()
+	elif part != "aya":
 		_build_ground()
 		LoadingScreen.nabiz("byzcity")
 		_build_street()
@@ -83,19 +198,29 @@ func _ready() -> void:
 	if part != "walls":
 		_build_ayasofya_climb()
 		LoadingScreen.nabiz("byzcity")
-		Ayasofya.build(self)
+		Ayasofya.build(_k)
 	_build_fill()
 	LoadingScreen.nabiz("byzcity")
 	if part == "all":
 		_build_far_view()
 		LoadingScreen.nabiz("byzcity")
 	if part == "walls":
+		_k = saray_kok if bolunmus else self
 		_walls_edge()
+		_k = self
 	elif part == "aya":
 		_aya_edge()
 	if part != "aya":
+		_k = saray_kok if bolunmus else self
 		_build_hub_people()
+		_k = self
 		LoadingScreen.nabiz("byzcity")
+	if bolunmus:
+		_dress_bolunmus()
+		# İç ağırlıklı bölüm: iç grup sahne kökenine (Dressing.auto ve servi dikimi fizik karesini bekler: öteleme ondan önce)
+		if ic_merkez:
+			position = -ofs()
+		return
 	var drect := Rect2(-44, -110, 88, 138)
 	if part == "walls":
 		drect = Rect2(-44, -45, 88, 73)
@@ -115,6 +240,114 @@ func _ready() -> void:
 		"people": BYZ_PEOPLE})
 
 
+## G22: iç mahallenin dikdörtgeni hub yerelinde (World1453 keep, Dressing değil)
+static func saray_rect() -> Rect2:
+	var o := SurHub.SARAY_OFS
+	return Rect2(IC_RECT.position + Vector2(o.x, o.z), IC_RECT.size)
+
+
+## G22: bölünmüş kurulum — iç grup saray_kok'ta, sur parçası self'te. Sıra bölünmemiş yolla aynı (zemin, cadde,
+## kançılarya, sur, saray): genel RNG ve Props önbellekleri aynı sırayla tüketilir.
+func _kur_bolunmus() -> void:
+	_k = saray_kok
+	_build_ground()
+	LoadingScreen.nabiz("byzcity")
+	_build_street()
+	LoadingScreen.nabiz("byzcity")
+	_build_chancery()
+	LoadingScreen.nabiz("byzcity")
+	_k = self
+	_build_ground()
+	_build_walls()
+	_build_nobet()
+	LoadingScreen.nabiz("byzcity")
+	_k = saray_kok
+	_build_palace()
+	_k = self
+	LoadingScreen.nabiz("byzcity")
+
+
+## G22: süs ve yürüyen halk iki alanda (Dressing.auto "kok": ışınlar kökün global konumuna göre). İç mahalle bugünkü
+## hub'ın tohumu ve sayısıyla; sur parçası kendi tohumuyla (nöbetçi ve işçi; kapı yolu boş).
+func _dress_bolunmus() -> void:
+	var cell_rect: Array = [Rect2(CELL_START.x - 3.0, CELL_START.z - 4.0, 7.5, 8.0)] if with_cell else []
+	var ic := Rect2(-44, -45, 44.0 + BOLME_X - 1.0, 73)
+	Dressing.auto(saray_kok, {"style": "byz", "seed": 453, "rect": ic, "y_max": 1.0, "walkers": 10, "edge_gap": 2.5, "edge_chance": 0.9,
+		"kok": true,
+		"reserved": cell_rect + [Rect2(-14.5, -40.5, 29.0, 10.3), Rect2(-34.0, -25.0, 10.0, 22.0),
+			Rect2(-10.0, 10.5, 6.0, 7.0),
+			# Ana cadde (Bölüm 24'te ikona alayının yolu, çeşmenin doğusundan kıvrılır): araba, tezgâh konmaz
+			Rect2(-2.6, -25.0, 5.2, 33.0), Rect2(-2.6, -21.5, 8.9, 11.0),
+			# doğu-batı caddesinin ağzı (G21'in iç yolu buraya bağlanır)
+			Rect2(BOLME_X - 6.0, -18.5, 6.0, 8.5)],
+		"people": BYZ_PEOPLE})
+	var sx1 := (SurHub.HUB_IC_X - 3.5) if sur_yeni else 30.5
+	var sr := Rect2(BOLME_X + 0.5, -45, sx1 - BOLME_X - 0.5, 73)
+	Dressing.auto(self, {"style": "byz", "seed": 454, "rect": sr, "y_max": 1.0, "walkers": 4, "edge_gap": 2.5, "edge_chance": 0.9,
+		"kok": true,
+		"reserved": [Rect2(24.0, -24.0, 12.0, 18.0), Rect2(21.0, -12.0, 13.0, 19.0), Rect2(27.0, -1.0, 9.0, 9.0),
+			Rect2(FICI_POS.x - 4.0, FICI_POS.z - 2.0, 7.0, 13.0), Rect2(BOLME_X, -18.5, 6.0, 8.5)],
+		"people": [BYZ_PEOPLE[5], BYZ_PEOPLE[2], BYZ_PEOPLE[6]]})
+
+
+## G22: kapının önünde nöbet ve ikmal yeri (sur parçası): taş ocak ve kütükler, su fıçısı (6b'de martının 5. tüneği),
+## sandıklar, çuval, kalkanlar, bir sıra; nöbetçiler ve işçi. Tek görsel dil: Dressing modelleri ve hub'ın malzemesi.
+func _build_nobet() -> void:
+	var d := Dressing.new(1456)
+	# Su fıçısı: sabit (uyuyan dekor değil; martı tepesine konar): ahşap gövde, iki demir çember, kapak
+	var fp := FICI_POS
+	Props.cyl(self, 0.34, 1.18, fp + Vector3(0, 0.59, 0), Color("7a5634"), Vector3.ZERO, 12, 0.31)
+	for yy: float in [0.22, 0.96]:
+		Props.cyl(self, 0.355, 0.07, fp + Vector3(0, yy, 0), Color("3a3634"), Vector3.ZERO, 12)
+	Props.cyl(self, 0.33, 0.06, fp + Vector3(0, 1.21, 0), Color("6a4a2c"), Vector3.ZERO, 12)
+	Props.cyl(self, 0.012, 0.4, fp + Vector3(0.18, 1.42, 0.05), Color("4a3020"), Vector3(0, 0, -30), 4)       # kepçe sapı
+	var fb := Props.solid(self, Vector3(0.66, 1.24, 0.66), fp + Vector3(0, 0.62, 0), Color.WHITE)
+	fb.get_child(0).visible = false
+	# Ocak: taş halka, kütükler, kor; üstünde kazan sehpası
+	var oc := fp + Vector3(2.6, 0, 3.4)
+	for k in 9:
+		var a := TAU * k / 9.0
+		Props.ball(self, 0.17, oc + Vector3(cos(a) * 0.55, 0.1, sin(a) * 0.55), Color("8a8070").darkened(0.08 * (k % 3)), Vector3(1.2, 0.7, 1.0), 6)
+	for k in 3:
+		Props.cyl(self, 0.06, 0.8, oc + Vector3(0, 0.1, 0), Color("4a3020"), Vector3(90, k * 60.0, 0), 6)
+	Props.box(self, Vector3(0.5, 0.05, 0.5), oc + Vector3(0, 0.03, 0), Color("2a1a14"))
+	Flame.add(self, oc + Vector3(0, 0.12, 0), 0.22, 0.4, 0.8)
+	for sx: float in [-0.6, 0.6]:
+		Props.cyl(self, 0.03, 1.3, oc + Vector3(sx, 0.62, 0), Color("3a3634"), Vector3(0, 0, -sx * 18.0), 5)
+	Props.cyl(self, 0.02, 1.3, oc + Vector3(0, 1.22, 0), Color("3a3634"), Vector3(0, 0, 90), 4)
+	Props.cyl(self, 0.2, 0.34, oc + Vector3(0, 0.86, 0), Color("2e2a28"), Vector3.ZERO, 10, 0.26)
+	var ob := Props.solid(self, Vector3(1.4, 0.4, 1.4), oc + Vector3(0, 0.2, 0), Color.WHITE)
+	ob.get_child(0).visible = false
+	lights.append(Night.torch(self, fp + Vector3(-0.9, 0, 6.6), 2.6))
+	# Sandıklar, çuvallar ve bir sıra (nöbet sırası); duvara dayalı kalkanlar
+	d.at(fp + Vector3(-0.2, 0, 5.4), PI * 0.5)
+	d.crates(Vector3.ZERO)
+	d.at(fp + Vector3(4.6, 0, 6.8), 0.0)
+	d.sacks(Vector3.ZERO)
+	d.at(fp + Vector3(4.4, 0, 1.2), PI)
+	d.bench(Vector3.ZERO)
+	d.at(fp + Vector3(1.0, 0, -1.4), 0.0)
+	d.firewood(Vector3.ZERO)
+	d.build(self)
+	for k in 3:
+		var sp := fp + Vector3(6.6 + k * 0.7, 0, 8.2)
+		Props.cyl(self, 0.42, 0.06, sp + Vector3(0, 0.44, 0), Color("9a1a22"), Vector3(78, 0, 0), 12)
+		Props.cyl(self, 0.1, 0.07, sp + Vector3(0, 0.46, -0.03), Color("c8a040"), Vector3(78, 0, 0), 8)
+	# Nöbet yerinin adamları: ocak başında iki nöbetçi, sandık taşıyan bir işçi
+	var guards := [[oc + Vector3(-0.9, 0, 0.7), PI * 0.75], [oc + Vector3(0.95, 0, -0.5), -PI * 0.35]]
+	for gq in guards:
+		var g := Person.new({"coat": Color("8a2b22"), "pants": Color("4a3a2a"), "hat": "helm", "mustache": true, "skin": Color("d9a07a")})
+		g.position = gq[0]
+		g.rotation.y = gq[1]
+		add_child(g)
+	var w := Person.new({"coat": Color("a86a3a"), "pants": Color("5a4028"), "mustache": true, "skin": Color("c89070")})
+	w.position = fp + Vector3(2.0, 0, 6.4)
+	w.rotation.y = PI
+	add_child(w)
+	if w.is_inside_tree():
+		w.carry("crate")         # uzak görünüşte (sahne dışı kurulum) kişiler zaten atılır
+
+
 ## Tek harita: hub'ın (sur parçası) uzak görünüşü. Bölümün kendi yapıları (zemin, cadde ve evleri, çeşme, kançılarya,
 ## iç sur ve kuleleri, Romanos Kapısı, saray avlusu, kubbeli kiliseler, dolgu evler) sahne dışında aynı kurucularla
 ## kurulur ve xf ile (yerel → parent) tek ağa pişirilir (World1453.bake); insanlar, ışıklar, yazılar atılır. Hub'ı kendi
@@ -122,29 +355,50 @@ func _ready() -> void:
 static func far_hub(parent: Node3D, xf: Transform3D) -> MeshInstance3D:
 	var c := ByzCity.new()
 	c.part = "walls"
-	c._build_ground()
-	LoadingScreen.nabiz("byzcity")
-	c._build_street()
-	LoadingScreen.nabiz("byzcity")
-	c._build_chancery()
-	LoadingScreen.nabiz("byzcity")
-	c._build_walls()
-	LoadingScreen.nabiz("byzcity")
-	c._build_palace()
+	# G22: uzak hub her zaman bölünmüş (sur parçası + iç mahalle); `--saray-eski` eski bileşik
+	c.bolunmus = not ("--saray-eski" in OS.get_cmdline_user_args())
+	c.bol_karar = true
+	if c.bolunmus:
+		c._saray_kok_kur()
+		c._kur_bolunmus()
+	else:
+		c._build_ground()
+		LoadingScreen.nabiz("byzcity")
+		c._build_street()
+		LoadingScreen.nabiz("byzcity")
+		c._build_chancery()
+		LoadingScreen.nabiz("byzcity")
+		c._build_walls()
+		LoadingScreen.nabiz("byzcity")
+		c._build_palace()
 	LoadingScreen.nabiz("byzcity")
 	c._build_small_skyline()
 	LoadingScreen.nabiz("byzcity")
 	c._build_fill()
 	LoadingScreen.nabiz("byzcity")
 	var list: Array = c.find_children("*", "MeshInstance3D", true, false)
-	var mi := World1453.bake(list, c, xf, parent, "FarHub", 0.45, 300)
-	# Uzaklık katmanı: 300 m'ye kadar dokulu (yerdeki desenler), ötesinde tek yüzeyli düz renkli kopya (çizim 2)
-	var lo := World1453.bake(list, c, xf, parent, "FarHubLo", 1.2, 300, true)
-	mi.visibility_range_end = 300.0
-	mi.visibility_range_fade_mode = GeometryInstance3D.VISIBILITY_RANGE_FADE_DISABLED
-	lo.visibility_range_begin = 300.0
-	lo.set_meta("no_walk", true)            # çarpışma bölümün gövdelerinden (FarHubBody)
-	mi.set_meta("no_walk", true)
+	# G22: iki pişirme (sur parçası ve iç mahalle ~430 m arayla): uzaklık katmanı her biri için kendi yerinden
+	var parcalar: Array = [list]
+	if c.saray_kok != null:
+		var ic: Array = c.saray_kok.find_children("*", "MeshInstance3D", true, false)
+		var sur: Array = []
+		for m in list:
+			if not ic.has(m):
+				sur.append(m)
+		parcalar = [sur, ic]
+	var mi: MeshInstance3D = null
+	for i in parcalar.size():
+		var ad := "FarHub" if i == 0 else "FarHubSaray"
+		var hi := World1453.bake(parcalar[i], c, xf, parent, ad, 0.45, 300)
+		# Uzaklık katmanı: 300 m'ye kadar dokulu (yerdeki desenler), ötesinde tek yüzeyli düz renkli kopya (çizim 2)
+		var lo := World1453.bake(parcalar[i], c, xf, parent, ad + "Lo", 1.2, 300, true)
+		hi.visibility_range_end = 300.0
+		hi.visibility_range_fade_mode = GeometryInstance3D.VISIBILITY_RANGE_FADE_DISABLED
+		lo.visibility_range_begin = 300.0
+		lo.set_meta("no_walk", true)            # çarpışma bölümün gövdelerinden (FarHubBody)
+		hi.set_meta("no_walk", true)
+		if mi == null:
+			mi = hi
 	# Çarpışma: bölümün kendi gövdeleri (evler, duvarlar, kuleler, çeşme) aynı yerde; yürüyen ve uçan içinden geçmez
 	var body := StaticBody3D.new()
 	body.name = "FarHubBody"
@@ -177,15 +431,15 @@ static func far_hub(parent: Node3D, xf: Transform3D) -> MeshInstance3D:
 func _walls_edge() -> void:
 	var dr := Dressing.new(1454)
 	_open_barricade(dr, Vector3(22.0, 6, 0.3), Vector3(-6.0, 3, -45.2))
-	dr.build(self)
+	dr.build(_k)
 
 
 ## Tek harita, Ayasofya parçası: yolun ağzı (kançılaryanın arkası) barikatla kapanır; yolun zemini
 func _aya_edge() -> void:
-	Props.set_pattern(Props.solid(self, Vector3(32.0, 0.2, 12.0), Vector3(-13.0, -0.1, -45.0), Color.WHITE), Color("fff8ec"), "cobble")
+	Props.set_pattern(Props.solid(_k, Vector3(32.0, 0.2, 12.0), Vector3(-13.0, -0.1, -45.0), Color.WHITE), Color("fff8ec"), "cobble")
 	var dr := Dressing.new(1455)
 	_open_barricade(dr, Vector3(19.5, 6, 0.3), Vector3(-7.0, 3, -40.6))
-	dr.build(self)
+	dr.build(_k)
 
 
 func _build_hub_people() -> void:
@@ -193,20 +447,20 @@ func _build_hub_people() -> void:
 	LoadingScreen.nabiz("byzcity")
 	niko = Person.new({"face": "niko", "coat": Color("8a2b22"), "pants": Color("4a3a2a"), "hair": Color("2a1e14"), "hat": "helm", "mustache": true, "beard": true, "skin": Color("d9a07a")})
 	niko.position = NIKO_POS
-	add_child(niko)
+	_k.add_child(niko)
 	Props.interactable(niko, "niko", Vector3(1.0, 1.9, 1.0), Vector3(0, 0.95, 0))
 	# Niko'nun "kuzeninin kayığı" (pazarlık mini oyunu): kıyıya çekilmiş küçük kayık ve tabela
 	var kb := NIKO_POS + Vector3(2.6, 0, 0.9)
-	var hb := Props.solid(self, Vector3(1.0, 1.0, 3.0), kb + Vector3(0, 0.5, 0), Color.WHITE)
+	var hb := Props.solid(_k, Vector3(1.0, 1.0, 3.0), kb + Vector3(0, 0.5, 0), Color.WHITE)
 	hb.get_child(0).visible = false
 	for z in [-0.8, 0.8]:
 		for sx in [-0.35, 0.35]:
-			Props.box(self, Vector3(0.06, 0.6, 0.06), kb + Vector3(sx, 0.28, z), Color("5a3a22"), Vector3(0, 0, sx * 40.0))
-		Props.box(self, Vector3(0.9, 0.08, 0.1), kb + Vector3(0, 0.55, z), Color("6b4428"))
+			Props.box(_k, Vector3(0.06, 0.6, 0.06), kb + Vector3(sx, 0.28, z), Color("5a3a22"), Vector3(0, 0, sx * 40.0))
+		Props.box(_k, Vector3(0.9, 0.08, 0.1), kb + Vector3(0, 0.55, z), Color("6b4428"))
 	var boat := Node3D.new()
 	boat.position = kb + Vector3(0, 0.62, 0)
 	boat.scale = Vector3.ONE * 0.52
-	add_child(boat)
+	_k.add_child(boat)
 	boat.add_child(LowPoly.hull([
 		{"z": -2.8, "w": 0.05, "top": 0.75, "bottom": 0.35},
 		{"z": -1.8, "w": 0.6, "top": 0.55, "bottom": -0.05},
@@ -218,10 +472,10 @@ func _build_hub_people() -> void:
 	Props.box(boat, Vector3(1.1, 0.06, 0.3), Vector3(0, 0.4, -0.8), Color("a07a4e"))
 	for side in [-1, 1]:
 		Props.cyl(boat, 0.04, 2.8, Vector3(side * 0.5, 0.55, 0.0), Color("c9a878"), Vector3(80, 0, side * 10), 4)
-	Props.cyl(self, 0.03, 1.5, kb + Vector3(-0.6, 0.75, 1.2), Color("4a3020"), Vector3.ZERO, 5)
-	Props.box(self, Vector3(1.0, 0.3, 0.05), kb + Vector3(-0.6, 1.45, 1.2), Color("c8a868"))
-	Props.label(self, "ΚΑΪΚΙ · KAYIK", kb + Vector3(-0.6, 1.45, 1.23), 26, Color("2a1a10"), Vector3.ZERO, 0.95)
-	Props.interactable(self, "mg:haggle_niko", Vector3(1.4, 1.2, 2.4), kb + Vector3(0, 0.6, 0))
+	Props.cyl(_k, 0.03, 1.5, kb + Vector3(-0.6, 0.75, 1.2), Color("4a3020"), Vector3.ZERO, 5)
+	Props.box(_k, Vector3(1.0, 0.3, 0.05), kb + Vector3(-0.6, 1.45, 1.2), Color("c8a868"))
+	Props.label(_k, "ΚΑΪΚΙ · KAYIK", kb + Vector3(-0.6, 1.45, 1.23), 26, Color("2a1a10"), Vector3.ZERO, 0.95)
+	Props.interactable(_k, "mg:haggle_niko", Vector3(1.4, 1.2, 2.4), kb + Vector3(0, 0.6, 0))
 	_build_council()
 	LoadingScreen.nabiz("byzcity")
 	if with_cell:
@@ -235,23 +489,23 @@ func _build_cell() -> void:
 	var c := CELL_START
 	var wall := Color("c9b99a")
 	var iron := Color("3a3630")
-	Props.solid(self, Vector3(0.4, 3.2, 6.4), c + Vector3(-2.2, 1.6, 0), wall)       # arka duvar (batı)
-	Props.solid(self, Vector3(4.0, 3.2, 0.4), c + Vector3(0, 1.6, -3.2), wall)       # güney duvarı
-	Props.solid(self, Vector3(4.0, 3.2, 0.4), c + Vector3(0, 1.6, 3.2), wall)        # kuzey duvarı
+	Props.solid(_k, Vector3(0.4, 3.2, 6.4), c + Vector3(-2.2, 1.6, 0), wall)       # arka duvar (batı)
+	Props.solid(_k, Vector3(4.0, 3.2, 0.4), c + Vector3(0, 1.6, -3.2), wall)       # güney duvarı
+	Props.solid(_k, Vector3(4.0, 3.2, 0.4), c + Vector3(0, 1.6, 3.2), wall)        # kuzey duvarı
 	var bx := c.x + 2.0
 	for sz: float in [-1.0, 1.0]:
 		for k in 6:
 			var z := c.z + sz * (0.8 + k * 0.4)     # kapı aralığı: c.z ± 0.8
-			Props.solid(self, Vector3(0.08, 3.0, 0.08), Vector3(bx, 1.5, z), iron)
-	Props.box(self, Vector3(0.1, 0.12, 6.0), Vector3(bx, 2.9, c.z), iron)            # üst yatay demir
-	Props.box(self, Vector3(2.6, 0.12, 3.4), c + Vector3(-0.8, 0.06, 0.0), Color("d8b860"))   # saman
-	Props.cyl(self, 0.22, 0.5, c + Vector3(0.9, 0.25, -2.1), Color("6a4a2c"), Vector3.ZERO, 8)  # kova
+			Props.solid(_k, Vector3(0.08, 3.0, 0.08), Vector3(bx, 1.5, z), iron)
+	Props.box(_k, Vector3(0.1, 0.12, 6.0), Vector3(bx, 2.9, c.z), iron)            # üst yatay demir
+	Props.box(_k, Vector3(2.6, 0.12, 3.4), c + Vector3(-0.8, 0.06, 0.0), Color("d8b860"))   # saman
+	Props.cyl(_k, 0.22, 0.5, c + Vector3(0.9, 0.25, -2.1), Color("6a4a2c"), Vector3.ZERO, 8)  # kova
 	var lamp := OmniLight3D.new()
 	lamp.position = c + Vector3(0, 2.6, 0)
 	lamp.light_color = Color("ffd8a0")
 	lamp.light_energy = 0.8
 	lamp.omni_range = 5.0
-	add_child(lamp)
+	_k.add_child(lamp)
 
 
 ## Konsey (yan sahne): saray avlusunun köşesinde masa başında Notaras, Kardinal Isidoros ve Venedik baylosu.
@@ -267,7 +521,7 @@ func _build_council() -> void:
 	d.cyl(0.04, 0.3, Vector3(0.6, 0.98, -0.1), Color("d8b040"), Vector3.ZERO, 6)
 	d.glow(Vector3(0.04, 0.06, 0.04), Vector3(0.6, 1.16, -0.1), Color("ffd890"))
 	d.solid(Vector3(2.4, 0.9, 1.1), Vector3(0, 0.45, 0))
-	d.build(self)
+	d.build(_k)
 	var people := [
 		["SPK_NOTARAS", Vector3(0, 0, -1.05), 0.0, {"coat": Color("5a2a6a"), "robe": Color("6a3a7a"), "hat": "kamelaukion", "beard": true, "hair": Color("5a4a3a"), "skin": Color("e0b08a")}],
 		["SPK_ISIDORE", Vector3(-1.6, 0, 0.1), PI / 2.0, {"coat": Color("b3262d"), "robe": Color("b3262d"), "hat": "galero", "face": "cardinal", "beard": true, "hair": Color("e8e8e8"), "skin": Color("e8c0a0")}],
@@ -278,8 +532,8 @@ func _build_council() -> void:
 		p.position = c + (pp[1] as Vector3)
 		p.rotation.y = pp[2]
 		p.set_meta("spk", pp[0])
-		add_child(p)
-	Props.interactable(self, "ev:council", Vector3(3.0, 2.0, 2.4), c + Vector3(0, 1.0, 0))
+		_k.add_child(p)
+	Props.interactable(_k, "ev:council", Vector3(3.0, 2.0, 2.4), c + Vector3(0, 1.0, 0))
 
 
 const BYZ_PEOPLE := [
@@ -328,7 +582,7 @@ func _build_sky() -> void:
 	e.adjustment_saturation = 1.08
 	e.adjustment_contrast = 1.05
 	env.environment = e
-	add_child(env)
+	_k.add_child(env)
 	_env = e
 	var sun := DirectionalLight3D.new()
 	_sun = sun
@@ -337,7 +591,7 @@ func _build_sky() -> void:
 	sun.light_energy = 1.15
 	sun.shadow_enabled = true
 	sun.directional_shadow_max_distance = 80.0
-	add_child(sun)
+	_k.add_child(sun)
 	SkyBody.attach(self, sun)
 
 
@@ -369,29 +623,128 @@ func make_night() -> void:
 
 
 var _ground_mat: StandardMaterial3D
+var _ground_ek: Array = []        # G22: sur parçasının döşemesi
 
 
 ## Yağmurda kaldırım: koyulaşır ve parlar (k 0 kuru, 1 sırılsıklam). Paylaşılan malzeme kopyalanır.
 func set_wet(k: float) -> void:
 	if _ground_mat == null:
 		return
-	_ground_mat.albedo_color = Color("fff8ec").darkened(0.32 * k)
-	_ground_mat.roughness = lerpf(0.9, 0.14, k)
-	_ground_mat.metallic_specular = lerpf(0.2, 0.85, k)
+	for m: StandardMaterial3D in [_ground_mat] + _ground_ek:
+		m.albedo_color = Color("fff8ec").darkened(0.32 * k)
+		m.roughness = lerpf(0.9, 0.14, k)
+		m.metallic_specular = lerpf(0.2, 0.85, k)
 
 
 func _build_ground() -> void:
 	# TAŞIMA-10: yeni surda döşeme iç surun şehir yüzünde biter (ötesi kesimin peribolosu)
 	var gx1 := SurHub.HUB_IC_X if sur_yeni else 45.0
-	var body := Props.solid(self, Vector3(gx1 + 45.0, 0.2, 80), Vector3((gx1 - 45.0) * 0.5, -0.1, -10), Color.WHITE)
+	var gx0 := -45.0
+	var gz0 := -50.0
+	var gz1 := 30.0
+	# G22: iç mahallede döşeme bölme çizgisinde (ve Deniz kapısının yerinde, z 22) biter; sur parçasında bölme çizgisinde başlar
+	if bolunmus and _k == saray_kok:
+		gx1 = BOLME_X
+		gz1 = IC_RECT.end.y
+		gz0 = IC_RECT.position.y
+	elif bolunmus:
+		gx0 = BOLME_X
+		gz0 = SUR_RECT.position.y
+		gz1 = SUR_RECT.end.y
+	var body := Props.solid(_k, Vector3(gx1 - gx0, 0.2, gz1 - gz0), Vector3((gx1 + gx0) * 0.5, -0.1, (gz0 + gz1) * 0.5), Color.WHITE)
 	Props.set_pattern(body, Color("fff8ec"), "cobble")
 	var gmi := body.get_child(0) as MeshInstance3D
-	_ground_mat = load("res://scripts/level/zemin.gd").doseme_kir((gmi.material_override as StandardMaterial3D).duplicate())      # ZEMİN: kir/aşınma
-	gmi.material_override = _ground_mat
+	var gm: StandardMaterial3D = load("res://scripts/level/zemin.gd").doseme_kir((gmi.material_override as StandardMaterial3D).duplicate())      # ZEMİN: kir/aşınma
+	gmi.material_override = gm
+	if bolunmus and _k == self:
+		_build_kenar()
+	if _ground_mat != null:
+		_ground_ek.append(gm)
+		return
+	_ground_mat = gm
 	# Caddenin ortasında taş oluk ve kenar taşları
-	Props.box(self, Vector3(0.5, 0.02, 34.0), Vector3(0, 0.005, 1.0), Color("7a7264"))
+	Props.box(_k, Vector3(0.5, 0.02, 34.0), Vector3(0, 0.005, 1.0), Color("7a7264"))
 	for sx in [-4.1, 4.1]:
-		Props.box(self, Vector3(0.35, 0.12, 30.0), Vector3(sx, 0.06, 3.0), Color("a89c86"))
+		Props.box(_k, Vector3(0.35, 0.12, 30.0), Vector3(sx, 0.06, 3.0), Color("a89c86"))
+
+
+## G22b: sur parçası döşemesinin şehir yanındaki keskin kenarı (bölme çizgisi x BOLME_X) yumuşar: alçak yontma bordür
+## taşları (döşemenin kenarına 14 cm biner, dış yüzü zemine iner: bölümde döşemenin önündeki 0,35 m'lik oluk ve uçuşta
+## 0,12 m'lik düzleme aynı taşla kapanır; tek ağ, çarpışmasız: üstü döşemeden en çok 11 cm yüksek), önünde toprak geçişi
+## v2'nin (IstSokak dolgusu: hub yereli x 14…17 toprak), kenarda birkaç eşya (döşemenin üstünde; sokak ağzı, fıçı ve
+## kapı yolunun ayrılmış dikdörtgenlerinin dışında).
+func _build_kenar() -> void:
+	var rng := RandomNumberGenerator.new()
+	rng.seed = 18022
+	var st := SurfaceTool.new()
+	st.begin(Mesh.PRIMITIVE_TRIANGLES)
+	var z := SUR_RECT.position.y + 0.25
+	var z1 := SUR_RECT.end.y - 0.25
+	while z < z1 - 0.3:
+		var L := minf(rng.randf_range(0.75, 1.35), z1 - z)
+		var w := rng.randf_range(0.38, 0.52)
+		var top := rng.randf_range(0.05, 0.11)
+		var col := Color("a89c86").darkened(rng.randf_range(-0.06, 0.14))
+		var cx := BOLME_X + 0.14 - w * 0.5 + rng.randf_range(-0.04, 0.04)
+		_bordur_tas(st, Vector3(cx, 0.0, z + L * 0.5), Vector3(w, top, L - rng.randf_range(0.04, 0.09)), rng.randf_range(-0.035, 0.035), col)
+		z += L
+	var mi := MeshInstance3D.new()
+	mi.name = "Bordur"
+	mi.mesh = st.commit()
+	var m := StandardMaterial3D.new()
+	m.vertex_color_use_as_albedo = true
+	m.vertex_color_is_srgb = true
+	m.roughness = 0.95
+	mi.material_override = m
+	_k.add_child(mi)
+	var d := Dressing.new(1457)
+	d.at(Vector3(BOLME_X + 0.9, 0, -40.5), PI * 0.5)
+	d.firewood(Vector3.ZERO)
+	d.at(Vector3(BOLME_X + 0.9, 0, -31.0), 0.0)
+	d.sacks(Vector3.ZERO)
+	d.at(Vector3(BOLME_X + 1.0, 0, 14.5), PI * 0.5)
+	d.crates(Vector3.ZERO)
+	d.build(_k)
+
+
+## Bordür taşı: tabanı y −0,45 (zeminin altında), üstü top; üst yüz 5 cm içeri çekik (yontma kenar). Alt yüz yok.
+static func _bordur_tas(st: SurfaceTool, c: Vector3, sz: Vector3, yaw: float, col: Color) -> void:
+	var b := Basis(Vector3.UP, yaw)
+	var hx := sz.x * 0.5
+	var hz := sz.z * 0.5
+	var ic := 0.05
+	var y0 := -0.45
+	var lo := [Vector3(-hx, y0, -hz), Vector3(hx, y0, -hz), Vector3(hx, y0, hz), Vector3(-hx, y0, hz)]
+	var hi := [Vector3(-hx + ic, sz.y, -hz + ic), Vector3(hx - ic, sz.y, -hz + ic), Vector3(hx - ic, sz.y, hz - ic), Vector3(-hx + ic, sz.y, hz - ic)]
+	var quads: Array = [[hi[0], hi[3], hi[2], hi[1]]]
+	for i in 4:
+		var j := (i + 1) % 4
+		quads.append([lo[i], lo[j], hi[j], hi[i]])
+	var orta := c + Vector3(0, (y0 + sz.y) * 0.5, 0)
+	for qi in quads.size():
+		var q: Array = quads[qi]
+		var p: Array = []
+		var fc := Vector3.ZERO
+		for v: Vector3 in q:
+			p.append(c + b * v)
+			fc += (c + b * v) * 0.25
+		var n: Vector3 = ((p[1] as Vector3) - (p[0] as Vector3)).cross((p[2] as Vector3) - (p[0] as Vector3)).normalized()
+		if n.dot(fc - orta) < 0.0:
+			n = -n
+		st.set_color(col.lightened(0.06) if qi == 0 else col)
+		st.set_normal(n)
+		# Godot'da ön yüz saat yönünde (dışarıdan bakınca): üçgenin çapraz çarpımı içe baksın
+		for tri: Array in [[0, 1, 2], [0, 2, 3]]:
+			var A: Vector3 = p[tri[0]]
+			var B: Vector3 = p[tri[1]]
+			var C: Vector3 = p[tri[2]]
+			if (B - A).cross(C - A).dot(n) > 0.0:
+				var tmp := B
+				B = C
+				C = tmp
+			st.add_vertex(A)
+			st.add_vertex(B)
+			st.add_vertex(C)
 
 
 ## İstanbul evi (1453): taş zemin kat (tuğla bantlı), sokağa taşan cumbalı sıvalı üst kat,
@@ -400,7 +753,7 @@ func _build_ground() -> void:
 func _house(pos: Vector3, length: float, depth: float, height: float, front: int, idx: int) -> void:
 	var h := Node3D.new()
 	h.position = pos
-	add_child(h)
+	_k.add_child(h)
 	var rng := RandomNumberGenerator.new()
 	rng.seed = idx * 97 + 13
 	var plasters := [Color("e8c890"), Color("d89a78"), Color("efe0c4"), Color("c8a0a0"), Color("b8c4c0"), Color("e0b070")]
@@ -521,15 +874,17 @@ func _house(pos: Vector3, length: float, depth: float, height: float, front: int
 
 
 func _build_street() -> void:
-	# Deniz kapısı (başlangıç): surun iç yüzü, kemer ve kule
-	var gate := Props.solid(self, Vector3(22, 9, 1.8), Vector3(0, 4.5, 19.2), Color.WHITE)
-	Props.set_pattern(gate, Color("fff4e4"), "ashlar")
-	Props.box(self, Vector3(2.4, 3.2, 0.2), Vector3(0, 1.6, 18.25), Color("4a3020"))
-	Props.cyl(self, 1.4, 0.3, Vector3(0, 3.2, 18.25), Color("b0a48c"), Vector3(90, 0, 0), 12)
-	var zz := -10.5
-	while zz < 11.0:
-		Props.make_solid(Props.box(self, Vector3(0.7, 0.9, 0.9), Vector3(zz, 9.45, 19.2), Color("c8b894")))     # mazgal dişi katı
-		zz += 1.6
+	# Deniz kapısı (başlangıç): surun iç yüzü, kemer ve kule. G22: bölünmüşte kurulmaz (iç mahallenin ortasında 22 m'lik
+	# kutu sur olurdu): caddenin güney ucu açık sokak ağzı
+	if not bolunmus:
+		var gate := Props.solid(_k, Vector3(22, 9, 1.8), Vector3(0, 4.5, 19.2), Color.WHITE)
+		Props.set_pattern(gate, Color("fff4e4"), "ashlar")
+		Props.box(_k, Vector3(2.4, 3.2, 0.2), Vector3(0, 1.6, 18.25), Color("4a3020"))
+		Props.cyl(_k, 1.4, 0.3, Vector3(0, 3.2, 18.25), Color("b0a48c"), Vector3(90, 0, 0), 12)
+		var zz := -10.5
+		while zz < 11.0:
+			Props.make_solid(Props.box(_k, Vector3(0.7, 0.9, 0.9), Vector3(zz, 9.45, 19.2), Color("c8b894")))     # mazgal dişi katı
+			zz += 1.6
 	# Cadde boyunca evler (iki sıra, aralarda dar sokaklar)
 	var heights := [6.2, 7.0, 6.6, 7.4]
 	for i in 4:
@@ -539,25 +894,25 @@ func _build_street() -> void:
 	for i in 3:
 		var z := 10.0 - i * 7.0 - 3.5
 		for sx in [-7.0, 7.0]:
-			Props.box(self, Vector3(4.6, 0.6, 1.5), Vector3(sx, 4.6, z), Color("d8c8a8"))
-			Props.cyl(self, 0.7, 4.6, Vector3(sx, 4.3, z), Color("d8c8a8"), Vector3(0, 0, 90), 10)
+			Props.box(_k, Vector3(4.6, 0.6, 1.5), Vector3(sx, 4.6, z), Color("d8c8a8"))
+			Props.cyl(_k, 0.7, 4.6, Vector3(sx, 4.3, z), Color("d8c8a8"), Vector3(0, 0, 90), 10)
 	# Caddenin üstünde çamaşır ipleri
 	var cloth := [Color("e8e0cc"), Color("b3262d"), Color("3a6a9a"), Color("d8b040"), Color("f4f1ea")]
 	for k in 3:
 		var z := 8.0 - k * 7.0
-		Props.cyl(self, 0.01, 8.2, Vector3(0, 5.2, z), Color("3a3a3a"), Vector3(0, 0, 90), 3)
+		Props.cyl(_k, 0.01, 8.2, Vector3(0, 5.2, z), Color("3a3a3a"), Vector3(0, 0, 90), 3)
 		for c in 4:
-			Props.box(self, Vector3(0.6, 0.7, 0.03), Vector3(-2.5 + c * 1.6, 4.8, z), cloth[(k + c) % cloth.size()], Vector3(0, 0, 0))
+			Props.box(_k, Vector3(0.6, 0.7, 0.03), Vector3(-2.5 + c * 1.6, 4.8, z), cloth[(k + c) % cloth.size()], Vector3(0, 0, 0))
 	# Meydan: sekizgen havuzlu çeşme, sütun başlığı
 	var fc := Vector3(0, 0, -16.0)
-	Props.cyl(self, 2.0, 0.7, fc + Vector3(0, 0.35, 0), Color("e8e0cc"), Vector3.ZERO, 8)
-	Props.cyl(self, 1.8, 0.05, fc + Vector3(0, 0.66, 0), Color("4a8ab0"), Vector3.ZERO, 8)
-	Props.cyl(self, 0.25, 2.2, fc + Vector3(0, 1.4, 0), Color("f0ece0"), Vector3.ZERO, 10)
-	Props.cyl(self, 0.6, 0.3, fc + Vector3(0, 2.6, 0), Color("f0ece0"), Vector3.ZERO, 10, 0.3)
-	Props.cyl(self, 0.7, 0.15, fc + Vector3(0, 2.8, 0), Color("d8b040"), Vector3.ZERO, 10)
+	Props.cyl(_k, 2.0, 0.7, fc + Vector3(0, 0.35, 0), Color("e8e0cc"), Vector3.ZERO, 8)
+	Props.cyl(_k, 1.8, 0.05, fc + Vector3(0, 0.66, 0), Color("4a8ab0"), Vector3.ZERO, 8)
+	Props.cyl(_k, 0.25, 2.2, fc + Vector3(0, 1.4, 0), Color("f0ece0"), Vector3.ZERO, 10)
+	Props.cyl(_k, 0.6, 0.3, fc + Vector3(0, 2.6, 0), Color("f0ece0"), Vector3.ZERO, 10, 0.3)
+	Props.cyl(_k, 0.7, 0.15, fc + Vector3(0, 2.8, 0), Color("d8b040"), Vector3.ZERO, 10)
 	for k in 4:
 		var a := TAU * k / 4.0
-		Props.cyl(self, 0.03, 0.5, fc + Vector3(sin(a) * 0.4, 2.3, cos(a) * 0.4), Color("8ac8e8"), Vector3(cos(a) * 60, 0, -sin(a) * 60), 4)
+		Props.cyl(_k, 0.03, 0.5, fc + Vector3(sin(a) * 0.4, 2.3, cos(a) * 0.4), Color("8ac8e8"), Vector3(cos(a) * 60, 0, -sin(a) * 60), 4)
 	var col := StaticBody3D.new()
 	var cs := CollisionShape3D.new()
 	var cy := CylinderShape3D.new()
@@ -566,7 +921,7 @@ func _build_street() -> void:
 	cs.shape = cy
 	col.position = fc + Vector3(0, 0.4, 0)
 	col.add_child(cs)
-	add_child(col)
+	_k.add_child(col)
 	# Güvercinler
 	var rng := RandomNumberGenerator.new()
 	rng.seed = 1453
@@ -574,8 +929,8 @@ func _build_street() -> void:
 		var a := rng.randf() * TAU
 		var r := rng.randf_range(2.4, 3.6)
 		var gp := fc + Vector3(sin(a) * r, 0.1, cos(a) * r)
-		Props.ball(self, 0.09, gp, Color("8a8f9a"), Vector3(1.0, 0.8, 1.4), 6)
-		Props.ball(self, 0.05, gp + Vector3(0, 0.08, 0.1), Color("5a6070"), Vector3.ONE, 5)
+		Props.ball(_k, 0.09, gp, Color("8a8f9a"), Vector3(1.0, 0.8, 1.4), 6)
+		Props.ball(_k, 0.05, gp + Vector3(0, 0.08, 0.1), Color("5a6070"), Vector3.ONE, 5)
 	# Pazar tezgâhları (meydanın iki yanında)
 	var aw := [Color("b3262d"), Color("d8b040"), Color("3a6a9a"), Color("5a8a4a")]
 	var goods := [Color("e0a020"), Color("6a2a4a"), Color("d86a3a"), Color("8aa84a"), Color("e8e0cc")]
@@ -583,22 +938,22 @@ func _build_street() -> void:
 		# Meydanın evsiz kısmında (cadde evlerinin sonuncusu z -13.75'e kadar iner): batıda -15.2/-20.5, doğuda -19.5/-21.9
 		var sp := Vector3(-5.0 if k < 2 else 5.0, 0, ([-15.2, -20.5] if k < 2 else [-19.5, -21.9])[k % 2])
 		var face := 1 if k < 2 else -1
-		Props.solid(self, Vector3(1.0, 0.9, 2.2), sp + Vector3(0, 0.45, 0), Color("7a5a38"))
+		Props.solid(_k, Vector3(1.0, 0.9, 2.2), sp + Vector3(0, 0.45, 0), Color("7a5a38"))
 		for c in 4:
-			Props.cyl(self, 0.04, 2.3, sp + Vector3(-0.45 + (c % 2) * 0.9, 1.15, -1.0 + (c / 2) * 2.0), Color("4a3020"), Vector3.ZERO, 4)
-		Props.box(self, Vector3(1.6, 0.05, 2.6), sp + Vector3(face * 0.3, 2.3, 0), aw[k], Vector3(0, 0, -face * 12))
+			Props.cyl(_k, 0.04, 2.3, sp + Vector3(-0.45 + (c % 2) * 0.9, 1.15, -1.0 + (c / 2) * 2.0), Color("4a3020"), Vector3.ZERO, 4)
+		Props.box(_k, Vector3(1.6, 0.05, 2.6), sp + Vector3(face * 0.3, 2.3, 0), aw[k], Vector3(0, 0, -face * 12))
 		for c in 6:
-			Props.ball(self, 0.12, sp + Vector3(face * 0.1, 1.0, -0.8 + c * 0.32), goods[(k + c) % goods.size()], Vector3.ONE, 6)
+			Props.ball(_k, 0.12, sp + Vector3(face * 0.1, 1.0, -0.8 + c * 0.32), goods[(k + c) % goods.size()], Vector3.ONE, 6)
 		# Amforalar ve sepetler
 		for c in 2:
 			var ap := sp + Vector3(-face * 0.9, 0, -0.6 + c * 1.1)
-			Props.make_solid(Props.ball(self, 0.22, ap + Vector3(0, 0.4, 0), Color("b8683a"), Vector3(1, 1.5, 1), 8))      # amfora katı
-			Props.cyl(self, 0.08, 0.25, ap + Vector3(0, 0.85, 0), Color("b8683a"), Vector3.ZERO, 6)
+			Props.make_solid(Props.ball(_k, 0.22, ap + Vector3(0, 0.4, 0), Color("b8683a"), Vector3(1, 1.5, 1), 8))      # amfora katı
+			Props.cyl(_k, 0.08, 0.25, ap + Vector3(0, 0.85, 0), Color("b8683a"), Vector3.ZERO, 6)
 	# Yönler: tabelalar
 	for d in [[Vector3(-3.0, 0, -20.5), "ΚΑΓΚΕΛΛΑΡΙΑ ↑"], [Vector3(8.5, 0, -18.5), "ΤΕΙΧΗ →"], [Vector3(-8.5, 0, -18.5), "← ΠΑΛΑΤΙΟΝ"]]:
-		Props.cyl(self, 0.05, 2.0, d[0] + Vector3(0, 1.0, 0), Color("4a3020"), Vector3.ZERO, 5)
-		Props.box(self, Vector3(2.4, 0.45, 0.06), d[0] + Vector3(0, 1.9, 0), Color("e8e0cc"))
-		Props.label(self, d[1], d[0] + Vector3(0, 1.9, 0.04), 30, Color("5a2a2a"), Vector3.ZERO, 2.2)
+		Props.cyl(_k, 0.05, 2.0, d[0] + Vector3(0, 1.0, 0), Color("4a3020"), Vector3.ZERO, 5)
+		Props.box(_k, Vector3(2.4, 0.45, 0.06), d[0] + Vector3(0, 1.9, 0), Color("e8e0cc"))
+		Props.label(_k, d[1], d[0] + Vector3(0, 1.9, 0.04), 30, Color("5a2a2a"), Vector3.ZERO, 2.2)
 
 
 ## Şehrin silüeti: Ayasofya (1453'te minaresiz), kubbeli kiliseler, Konstantin Sütunu, serviler.
@@ -744,41 +1099,48 @@ static func aya_exterior(host: Node3D) -> void:
 
 
 func _build_small_skyline() -> void:
+	var k0 := _k
+	if bolunmus:
+		_k = saray_kok
 	# Kubbeli küçük kiliseler
 	for c in [[Vector3(-17.0, 0, 6.0), Color("d8b89a")], [Vector3(17.5, 0, 8.0), Color("e0c8a8")], [Vector3(14.0, 0, -48.0), Color("d8a488")]]:
 		var p: Vector3 = c[0]
 		if not _in_part(p.z):
 			continue
-		var body := Props.solid(self, Vector3(8, 7, 10), p + Vector3(0, 3.5, 0), Color.WHITE)
+		# G22: bölünmüşte doğu kilisesi (x 13,5…21,5) bölme çizgisinin üstünde: kurulmaz (sur dibinde yapı yok)
+		if bolunmus and p.x + 4.0 > BOLME_X:
+			continue
+		var body := Props.solid(_k, Vector3(8, 7, 10), p + Vector3(0, 3.5, 0), Color.WHITE)
 		# Bizans kilisesi (Pantokrator, Pammakaristos): tuğla-taş bantlı gövde, pencereli kasnak, kurşun kubbe
 		Props.set_pattern(body, Color("fff0e6"), "brick")
-		Props.set_pattern(Props.cyl(self, 2.4, 2.2, p + Vector3(0, 8.1, 0), c[1], Vector3.ZERO, 12), Color("fff0e6"), "brick")
+		Props.set_pattern(Props.cyl(_k, 2.4, 2.2, p + Vector3(0, 8.1, 0), c[1], Vector3.ZERO, 12), Color("fff0e6"), "brick")
 		for k in 8:
 			var a := TAU * k / 8.0
-			Props.box(self, Vector3(0.4, 1.0, 0.1), p + Vector3(sin(a) * 2.42, 8.2, cos(a) * 2.42), Color("2a2a30"), Vector3(0, rad_to_deg(a), 0))
-		Props.ball(self, 2.5, p + Vector3(0, 9.2, 0), Color("7a8594"), Vector3(1, 0.7, 1), 12)
-		Props.box(self, Vector3(0.12, 1.0, 0.12), p + Vector3(0, 11.3, 0), Color("d8b040"))
-		Props.box(self, Vector3(0.6, 0.12, 0.12), p + Vector3(0, 11.5, 0), Color("d8b040"))
+			Props.box(_k, Vector3(0.4, 1.0, 0.1), p + Vector3(sin(a) * 2.42, 8.2, cos(a) * 2.42), Color("2a2a30"), Vector3(0, rad_to_deg(a), 0))
+		Props.ball(_k, 2.5, p + Vector3(0, 9.2, 0), Color("7a8594"), Vector3(1, 0.7, 1), 12)
+		Props.box(_k, Vector3(0.12, 1.0, 0.12), p + Vector3(0, 11.3, 0), Color("d8b040"))
+		Props.box(_k, Vector3(0.6, 0.12, 0.12), p + Vector3(0, 11.5, 0), Color("d8b040"))
 		var roof := MeshInstance3D.new()
 		var pm := PrismMesh.new()
 		pm.size = Vector3(8.6, 1.6, 10.6)
 		roof.mesh = pm
 		roof.position = p + Vector3(0, 7.8, 0)
 		roof.material_override = Props.mat(Color("fff0e8"), 0.0, false, "tiles")
-		add_child(roof)
+		_k.add_child(roof)
 	# Konstantin Sütunu (porfir, halkalı)
 	var cp := Vector3(-22.0, 0, -52.0)
 	if part != "walls":
 		_column(cp)
 	_cypress_list()
+	_k = k0
 
 
 func _column(cp: Vector3) -> void:
 	column_parts(func(kind: String, sz: Vector3, at: Vector3, c: Color, solid: bool) -> void:
 		if solid:
-			Props.set_pattern(Props.solid(self, sz, cp + at, Color.WHITE), c, "ashlar")
+			Props.set_pattern(Props.solid(_k, sz, cp + at, Color.WHITE), c, "ashlar")
 		else:
-			Props.cyl(self, sz.x, sz.y, cp + at, c, Vector3.ZERO, 12))
+			Props.cyl(_k, sz.x, sz.y, cp + at, c, Vector3.ZERO, 12))
 
 
 ## Konstantin Sütunu (tek kurucu): kaide, porfir gövde, altın halkalar. emit(tür, boyut, konum, renk, katı); silindirde
@@ -801,7 +1163,12 @@ func _cypress_list() -> void:
 		# İnce sokak servisi (eski taban yarıçapı 0,9 m'lik koni yakından dev külah gibiydi; biri de evin çıkmasının
 		# içinden çıkıyordu). Bütün yapılar kurulunca boşsa dikilir (_plant_cypresses), çarpışması kendi kutusu.
 		if _in_part(p.z):
-			_cypress_spots.append(Vector4(p.x, p.y, p.z, rng.randf_range(0.95, 1.3)))
+			var v := Vector4(p.x, p.y, p.z, rng.randf_range(0.95, 1.3))
+			# G22: bölünmüşte serviler iç mahallede (sur parçasında ağaç yok)
+			if not bolunmus:
+				_cypress_spots.append(v)
+			elif p.x < BOLME_X - 1.0:
+				_cypress_ic.append(v)
 
 
 ## İkon ressamı köşesi: üç ayaklı şövale, üstünde yarım kalmış ikon (altın zemin, hale, figür), boya çanakları,
@@ -810,45 +1177,45 @@ func _build_painter(ep: Vector3) -> void:
 	var e := ep + Vector3(0, 0, -1.0)
 	# Şövale: üç ayak ve tuval rafı
 	for sx in [-0.35, 0.35]:
-		Props.cyl(self, 0.03, 1.9, e + Vector3(sx, 0.92, 0.05), Color("6b4428"), Vector3(-6, 0, -sx * 18.0), 5)
-	Props.cyl(self, 0.03, 1.9, e + Vector3(0, 0.9, 0.45), Color("6b4428"), Vector3(22, 0, 0), 5)
-	Props.box(self, Vector3(0.9, 0.05, 0.12), e + Vector3(0, 0.62, 0.02), Color("5a3a22"))
+		Props.cyl(_k, 0.03, 1.9, e + Vector3(sx, 0.92, 0.05), Color("6b4428"), Vector3(-6, 0, -sx * 18.0), 5)
+	Props.cyl(_k, 0.03, 1.9, e + Vector3(0, 0.9, 0.45), Color("6b4428"), Vector3(22, 0, 0), 5)
+	Props.box(_k, Vector3(0.9, 0.05, 0.12), e + Vector3(0, 0.62, 0.02), Color("5a3a22"))
 	# İkon: ahşap pano, altın zemin, kırmızı çerçeve, mavi cübbeli aziz, hale; alt yarısı henüz boyanmamış (gesso)
 	var ic := e + Vector3(0, 1.15, 0.0)
-	Props.box(self, Vector3(0.8, 1.0, 0.05), ic, Color("6b4428"), Vector3(-6, 0, 0))
-	Props.box(self, Vector3(0.7, 0.9, 0.02), ic + Vector3(0, 0, -0.03), Color("8a2b22"), Vector3(-6, 0, 0))
-	Props.box(self, Vector3(0.62, 0.55, 0.02), ic + Vector3(0, 0.15, -0.04), Color("e0b040"), Vector3(-6, 0, 0))
-	Props.box(self, Vector3(0.62, 0.28, 0.02), ic + Vector3(0, -0.28, -0.045), Color("f2ead8"), Vector3(-6, 0, 0))
-	Props.cyl(self, 0.14, 0.01, ic + Vector3(0, 0.3, -0.06), Color("f4d878"), Vector3(84, 0, 0), 14)
-	Props.ball(self, 0.08, ic + Vector3(0, 0.28, -0.065), Color("d8a878"), Vector3(1, 1.2, 0.3), 8)
-	Props.ball(self, 0.16, ic + Vector3(0, 0.05, -0.06), Color("2a3a7a"), Vector3(1, 1.3, 0.2), 8)
+	Props.box(_k, Vector3(0.8, 1.0, 0.05), ic, Color("6b4428"), Vector3(-6, 0, 0))
+	Props.box(_k, Vector3(0.7, 0.9, 0.02), ic + Vector3(0, 0, -0.03), Color("8a2b22"), Vector3(-6, 0, 0))
+	Props.box(_k, Vector3(0.62, 0.55, 0.02), ic + Vector3(0, 0.15, -0.04), Color("e0b040"), Vector3(-6, 0, 0))
+	Props.box(_k, Vector3(0.62, 0.28, 0.02), ic + Vector3(0, -0.28, -0.045), Color("f2ead8"), Vector3(-6, 0, 0))
+	Props.cyl(_k, 0.14, 0.01, ic + Vector3(0, 0.3, -0.06), Color("f4d878"), Vector3(84, 0, 0), 14)
+	Props.ball(_k, 0.08, ic + Vector3(0, 0.28, -0.065), Color("d8a878"), Vector3(1, 1.2, 0.3), 8)
+	Props.ball(_k, 0.16, ic + Vector3(0, 0.05, -0.06), Color("2a3a7a"), Vector3(1, 1.3, 0.2), 8)
 	# Kalem izi: figürün boyanmamış eteği (çizgi)
-	Props.box(self, Vector3(0.01, 0.2, 0.005), ic + Vector3(-0.08, -0.25, -0.06), Color("5a4a3a"), Vector3(-6, 0, 10))
-	Props.box(self, Vector3(0.01, 0.2, 0.005), ic + Vector3(0.08, -0.25, -0.06), Color("5a4a3a"), Vector3(-6, 0, -10))
+	Props.box(_k, Vector3(0.01, 0.2, 0.005), ic + Vector3(-0.08, -0.25, -0.06), Color("5a4a3a"), Vector3(-6, 0, 10))
+	Props.box(_k, Vector3(0.01, 0.2, 0.005), ic + Vector3(0.08, -0.25, -0.06), Color("5a4a3a"), Vector3(-6, 0, -10))
 	# Boya sandığı: çanaklarda toz boyalar (lapis mavisi, kırmızı, yeşil, altın varak kutusu)
 	var bx := ep + Vector3(0.75, 0, -0.35)
-	Props.solid(self, Vector3(0.6, 0.45, 0.4), bx + Vector3(0, 0.225, 0), Color("7a5232"))
+	Props.solid(_k, Vector3(0.6, 0.45, 0.4), bx + Vector3(0, 0.225, 0), Color("7a5232"))
 	var pig := [Color("1f3f9a"), Color("b8322a"), Color("3a7a4a"), Color("e8c040"), Color("f2ead8")]
 	for k in pig.size():
 		var pp := bx + Vector3(-0.2 + k * 0.1, 0.48, 0.05 * (k % 2))
-		Props.cyl(self, 0.04, 0.05, pp, Color("d8d0c0"), Vector3.ZERO, 8)
-		Props.cyl(self, 0.034, 0.012, pp + Vector3(0, 0.025, 0), pig[k], Vector3.ZERO, 8)
+		Props.cyl(_k, 0.04, 0.05, pp, Color("d8d0c0"), Vector3.ZERO, 8)
+		Props.cyl(_k, 0.034, 0.012, pp + Vector3(0, 0.025, 0), pig[k], Vector3.ZERO, 8)
 	# Fırçalar kavanozda
-	Props.cyl(self, 0.05, 0.12, bx + Vector3(0.2, 0.51, -0.12), Color("a86a3a"), Vector3.ZERO, 8)
+	Props.cyl(_k, 0.05, 0.12, bx + Vector3(0.2, 0.51, -0.12), Color("a86a3a"), Vector3.ZERO, 8)
 	for k in 3:
-		Props.cyl(self, 0.008, 0.3, bx + Vector3(0.19 + k * 0.015, 0.66, -0.12), Color("4a3020"), Vector3(0, 0, -10 + k * 10), 4)
+		Props.cyl(_k, 0.008, 0.3, bx + Vector3(0.19 + k * 0.015, 0.66, -0.12), Color("4a3020"), Vector3(0, 0, -10 + k * 10), 4)
 	# Bitmiş ikonlar (duvara dayalı)
 	for k in 3:
 		var ip := ep + Vector3(-0.9 - k * 0.05, 0.3, -0.2 + k * 0.45)
-		Props.box(self, Vector3(0.04, 0.6, 0.45), ip, Color("6b4428"), Vector3(0, 0, 12))
-		Props.box(self, Vector3(0.045, 0.45, 0.32), ip + Vector3(0.01, 0.05, 0), Color("e0b040"), Vector3(0, 0, 12))
-		Props.ball(self, 0.06, ip + Vector3(0.04, 0.14, 0), Color("d8a878"), Vector3(0.3, 1.2, 1), 8)
-		Props.ball(self, 0.12, ip + Vector3(0.04, -0.04, 0), [Color("8a2b22"), Color("2a3a7a"), Color("3a6a4a")][k], Vector3(0.3, 1.2, 1), 8)
+		Props.box(_k, Vector3(0.04, 0.6, 0.45), ip, Color("6b4428"), Vector3(0, 0, 12))
+		Props.box(_k, Vector3(0.045, 0.45, 0.32), ip + Vector3(0.01, 0.05, 0), Color("e0b040"), Vector3(0, 0, 12))
+		Props.ball(_k, 0.06, ip + Vector3(0.04, 0.14, 0), Color("d8a878"), Vector3(0.3, 1.2, 1), 8)
+		Props.ball(_k, 0.12, ip + Vector3(0.04, -0.04, 0), [Color("8a2b22"), Color("2a3a7a"), Color("3a6a4a")][k], Vector3(0.3, 1.2, 1), 8)
 	# Tabela: "ΕΙΚΟΝΟΓΡΑΦΟΣ" (ikon ressamı)
-	Props.cyl(self, 0.03, 1.6, ep + Vector3(-1.4, 0.8, 0.6), Color("4a3020"), Vector3.ZERO, 5)
-	Props.box(self, Vector3(1.1, 0.3, 0.04), ep + Vector3(-1.4, 1.55, 0.6), Color("e8e0cc"))
-	Props.label(self, "ΕΙΚΟΝΟΓΡΑΦΟΣ", ep + Vector3(-1.4, 1.55, 0.63), 24, Color("5a2a2a"), Vector3.ZERO, 1.0)
-	Props.interactable(self, "npc:painter", Vector3(1.4, 2.0, 1.6), ep + Vector3(0, 1.0, -0.3))
+	Props.cyl(_k, 0.03, 1.6, ep + Vector3(-1.4, 0.8, 0.6), Color("4a3020"), Vector3.ZERO, 5)
+	Props.box(_k, Vector3(1.1, 0.3, 0.04), ep + Vector3(-1.4, 1.55, 0.6), Color("e8e0cc"))
+	Props.label(_k, "ΕΙΚΟΝΟΓΡΑΦΟΣ", ep + Vector3(-1.4, 1.55, 0.63), 24, Color("5a2a2a"), Vector3.ZERO, 1.0)
+	Props.interactable(_k, "npc:painter", Vector3(1.4, 2.0, 1.6), ep + Vector3(0, 1.0, -0.3))
 
 
 ## Dış kubbe: yalnız üst yarı ve kontursuz (Ayasofya'nın içinden bakınca altın kubbeyi örtmesin).
@@ -871,7 +1238,7 @@ func _open_barricade(d: Dressing, size: Vector3, pos: Vector3, piece := 9.0, gap
 		var c := -length * 0.5 + pl * 0.5 + i * (pl + gap)
 		var p := pos + (Vector3(c, 0, 0) if along_x else Vector3(0, 0, c))
 		var sz := Vector3(pl, 2.6, 0.3) if along_x else Vector3(0.3, 2.6, pl)
-		var bw := Props.solid(self, sz, Vector3(p.x, 1.3, p.z), Color.WHITE)
+		var bw := Props.solid(_k, sz, Vector3(p.x, 1.3, p.z), Color.WHITE)
 		bw.get_child(0).visible = false
 		_barricade(d, sz, Vector3(p.x, 1.3, p.z))
 
@@ -922,7 +1289,7 @@ const ROOF_Y := 16.45     # yürünen çatı = görünen kurşun örtü (Ayasofy
 
 func _build_ayasofya_climb() -> void:
 	# Meydan ve yol zemini (oyun alanı zemini z=-50'de biter)
-	Props.set_pattern(Props.solid(self, Vector3(60, 0.2, 61), Vector3(-14, -0.1, -80.5), Color.WHITE), Color("fff8ec"), "cobble")
+	Props.set_pattern(Props.solid(_k, Vector3(60, 0.2, 61), Vector3(-14, -0.1, -80.5), Color.WHITE), Color("fff8ec"), "cobble")
 	# Sınır: meydan ve yol. Çarpışma yüksek ve görünmez; üstüne görünür bir kuşatma barikatı (kalas perde, payanda,
 	# sandık) çizilir ki sokak açık görünüp de yürünemez olmasın (oyuncu: "görünmez engel var")
 	var dr := Dressing.new(1453)
@@ -934,7 +1301,7 @@ func _build_ayasofya_climb() -> void:
 			[Vector3(0.3, 6, 4.5), Vector3(-16.5, 3, -43.25)], [Vector3(12.0, 6, 0.3), Vector3(-22.5, 3, -45.5)],
 			[Vector3(0.3, 6, 13.5), Vector3(-28.5, 3, -52.25)]]:
 		_open_barricade(dr, spec[0], spec[1])
-	dr.build(self)
+	dr.build(_k)
 	# Kubbe kasnağı ve yarım kubbeler: çatıda yürürken içlerine girilmesin
 	var drum := StaticBody3D.new()
 	var dcs := CollisionShape3D.new()
@@ -945,11 +1312,11 @@ func _build_ayasofya_climb() -> void:
 	drum.position = AYA + Vector3(0, 22.0, 0)
 	drum.set_meta("no_climb", true)      # görünmez: tırmanılıp kubbenin üstünde havada yürünmesin
 	drum.add_child(dcs)
-	add_child(drum)
+	_k.add_child(drum)
 	for sgn in [-1, 1]:
 		# Eksedralar dahil; güneyde rampa kulesinin (x < -8) üstüne taşmaz
 		var x0 := -8.0 if sgn > 0 else -10.5
-		var hd := Props.solid(self, Vector3(10.5 - x0, 5.0, 7.6), AYA + Vector3((10.5 + x0) * 0.5, 18.5, sgn * 12.6), Color.WHITE)
+		var hd := Props.solid(_k, Vector3(10.5 - x0, 5.0, 7.6), AYA + Vector3((10.5 + x0) * 0.5, 18.5, sgn * 12.6), Color.WHITE)
 		hd.get_child(0).visible = false
 	# Çatının kenarı: saçak korkuluğu (_build_skyline, katı ve görünür)
 	# Galeriye çıkan iç rampa (gerçekteki gibi): güneybatı köşesindeki kulenin içinde, orta ayağın çevresinde dönen
@@ -963,29 +1330,29 @@ func _build_ayasofya_climb() -> void:
 	var sw := 9.0
 	var side_w := (sw - door_w) * 0.5
 	for sx in [-1, 1]:
-		Props.set_pattern(Props.solid(self, Vector3(side_w, 16, 0.6), c + Vector3(sx * (door_w * 0.5 + side_w * 0.5), 8, 4.2), Color.WHITE), brick, "brick")
-	Props.set_pattern(Props.solid(self, Vector3(door_w, 12.6, 0.6), c + Vector3(0, 3.4 + 6.3, 4.2), Color.WHITE), brick, "brick")
+		Props.set_pattern(Props.solid(_k, Vector3(side_w, 16, 0.6), c + Vector3(sx * (door_w * 0.5 + side_w * 0.5), 8, 4.2), Color.WHITE), brick, "brick")
+	Props.set_pattern(Props.solid(_k, Vector3(door_w, 12.6, 0.6), c + Vector3(0, 3.4 + 6.3, 4.2), Color.WHITE), brick, "brick")
 	# Kapı: mermer söveler, lento, üstünde kemerli alınlık ve eşik; içeride sıcak kandil ışığı (kapı uzaktan seçilsin)
 	var marble := Color("ece2d0")
 	for sx in [-1, 1]:
-		Props.box(self, Vector3(0.4, 3.4, 0.35), c + Vector3(sx * (door_w * 0.5 + 0.15), 1.7, 4.62), marble)
-	Props.box(self, Vector3(door_w + 0.9, 0.55, 0.35), c + Vector3(0, 3.35, 4.62), marble)
-	Props.ball(self, door_w * 0.55, c + Vector3(0, 3.62, 4.55), Color("3a2e34"), Vector3(1, 0.62, 0.1), 12)
-	Props.box(self, Vector3(door_w + 0.9, 0.16, 0.8), c + Vector3(0, 0.08, 4.7), marble)
-	Props.box(self, Vector3(door_w + 1.2, 0.3, 0.4), c + Vector3(0, 3.65 + door_w * 0.34 + 0.2, 4.62), marble)
+		Props.box(_k, Vector3(0.4, 3.4, 0.35), c + Vector3(sx * (door_w * 0.5 + 0.15), 1.7, 4.62), marble)
+	Props.box(_k, Vector3(door_w + 0.9, 0.55, 0.35), c + Vector3(0, 3.35, 4.62), marble)
+	Props.ball(_k, door_w * 0.55, c + Vector3(0, 3.62, 4.55), Color("3a2e34"), Vector3(1, 0.62, 0.1), 12)
+	Props.box(_k, Vector3(door_w + 0.9, 0.16, 0.8), c + Vector3(0, 0.08, 4.7), marble)
+	Props.box(_k, Vector3(door_w + 1.2, 0.3, 0.4), c + Vector3(0, 3.65 + door_w * 0.34 + 0.2, 4.62), marble)
 	var dl := OmniLight3D.new()
 	dl.position = c + Vector3(0, 2.2, 2.6)
 	dl.light_color = Color("ffb870")
 	dl.light_energy = 1.4
 	dl.omni_range = 4.0
-	add_child(dl)
-	Props.set_pattern(Props.solid(self, Vector3(0.6, 16, sw), c + Vector3(-4.2, 8, 0), Color.WHITE), brick, "brick")
+	_k.add_child(dl)
+	Props.set_pattern(Props.solid(_k, Vector3(0.6, 16, sw), c + Vector3(-4.2, 8, 0), Color.WHITE), brick, "brick")
 	# Kulenin çatıdan yükselen üst kısmı (payanda kulesi silüeti): yalnız dış iki yüz
-	Props.set_pattern(Props.solid(self, Vector3(sw, 3, 0.6), c + Vector3(0, 17.5, 4.2), Color.WHITE), brick.darkened(0.06), "brick")
-	Props.set_pattern(Props.solid(self, Vector3(0.6, 3, sw), c + Vector3(-4.2, 17.5, 0), Color.WHITE), brick.darkened(0.06), "brick")
+	Props.set_pattern(Props.solid(_k, Vector3(sw, 3, 0.6), c + Vector3(0, 17.5, 4.2), Color.WHITE), brick.darkened(0.06), "brick")
+	Props.set_pattern(Props.solid(_k, Vector3(0.6, 3, sw), c + Vector3(-4.2, 17.5, 0), Color.WHITE), brick.darkened(0.06), "brick")
 	# Orta ayak ve rampa: 2.5 tur, 16 m
-	Props.set_pattern(Props.solid(self, Vector3(2.4, 16, 2.4), c + Vector3(0, 8, 0), Color.WHITE), inner, "ashlar")
-	Props.set_pattern(Props.solid(self, Vector3(7.8, 0.2, 7.8), c + Vector3(0, -0.05, 0), Color.WHITE), inner, "cobble")
+	Props.set_pattern(Props.solid(_k, Vector3(2.4, 16, 2.4), c + Vector3(0, 8, 0), Color.WHITE), inner, "ashlar")
+	Props.set_pattern(Props.solid(_k, Vector3(7.8, 0.2, 7.8), c + Vector3(0, -0.05, 0), Color.WHITE), inner, "cobble")
 	var n := 60
 	var turns := 2.5
 	var r := 2.6
@@ -994,37 +1361,37 @@ func _build_ayasofya_climb() -> void:
 		var b := TAU * turns * (k + 1) / n
 		var pa := c + Vector3(sin(a) * r, ROOF_Y * k / n, cos(a) * r)
 		var pb := c + Vector3(sin(b) * r, ROOF_Y * (k + 1) / n, cos(b) * r)
-		Props.set_pattern(Props.ramp(self, pa, pb, 1.6, Color.WHITE), inner, "ashlar")
+		Props.set_pattern(Props.ramp(_k, pa, pb, 1.6, Color.WHITE), inner, "ashlar")
 		if k % 10 == 5:
 			var l := OmniLight3D.new()
 			l.position = (pa + pb) * 0.5 + Vector3(0, 2.0, 0)
 			l.light_color = Color("ffc080")
 			l.light_energy = 1.1
 			l.omni_range = 5.0
-			add_child(l)
+			_k.add_child(l)
 			lights.append(l)
 	# Rampanın ağzından çatıya sahanlık (kuzeye, gövdenin üstüne)
 	var top := c + Vector3(0, ROOF_Y, -r)
-	Props.solid(self, Vector3(2.4, 0.2, 2.2), top + Vector3(0, -0.1, -1.9), inner.darkened(0.1))   # rampanın dış kenarından başlar: altından geçilirken baş çarpmaz
+	Props.solid(_k, Vector3(2.4, 0.2, 2.2), top + Vector3(0, -0.1, -1.9), inner.darkened(0.1))   # rampanın dış kenarından başlar: altından geçilirken baş çarpmaz
 	# Tabela: kapının yanında
-	Props.cyl(self, 0.05, 2.0, c + Vector3(3.2, 1.0, 6.0), Color("4a3020"), Vector3.ZERO, 5)
-	Props.box(self, Vector3(2.4, 0.5, 0.06), c + Vector3(3.2, 1.9, 6.0), Color("e8e0cc"))
-	Props.label(self, "ΑΝΑΒΑΘΡΑ ↑", c + Vector3(3.2, 1.9, 6.04), 30, Color("5a2a2a"), Vector3.ZERO, 2.2)
+	Props.cyl(_k, 0.05, 2.0, c + Vector3(3.2, 1.0, 6.0), Color("4a3020"), Vector3.ZERO, 5)
+	Props.box(_k, Vector3(2.4, 0.5, 0.06), c + Vector3(3.2, 1.9, 6.0), Color("e8e0cc"))
+	Props.label(_k, "ΑΝΑΒΑΘΡΑ ↑", c + Vector3(3.2, 1.9, 6.04), 30, Color("5a2a2a"), Vector3.ZERO, 2.2)
 	# Yolun başında yön tabelası (kançılaryanın arkası)
-	Props.cyl(self, 0.05, 2.0, Vector3(-6.0, 1.0, -44.0), Color("4a3020"), Vector3.ZERO, 5)
-	Props.box(self, Vector3(2.4, 0.45, 0.06), Vector3(-6.0, 1.9, -44.0), Color("e8e0cc"))
-	Props.label(self, "ΑΓΙΑ ΣΟΦΙΑ ↑", Vector3(-6.0, 1.9, -43.96), 30, Color("5a2a2a"), Vector3.ZERO, 2.2)
+	Props.cyl(_k, 0.05, 2.0, Vector3(-6.0, 1.0, -44.0), Color("4a3020"), Vector3.ZERO, 5)
+	Props.box(_k, Vector3(2.4, 0.45, 0.06), Vector3(-6.0, 1.9, -44.0), Color("e8e0cc"))
+	Props.label(_k, "ΑΓΙΑ ΣΟΦΙΑ ↑", Vector3(-6.0, 1.9, -43.96), 30, Color("5a2a2a"), Vector3.ZERO, 2.2)
 	# Konstantin Sütunu'nda dilek (yan görev) ve meydanda ikon ressamı (yan karakter)
-	Props.interactable(self, "ev:column", Vector3(4.6, 3.0, 4.6), Vector3(-22.0, 1.5, -52.0))
+	Props.interactable(_k, "ev:column", Vector3(4.6, 3.0, 4.6), Vector3(-22.0, 1.5, -52.0))
 	var ep := Vector3(-32.0, 0, -61.0)   # rampa kapısının ve narteksin önünü kapatmasın
 	_build_painter(ep)
 	var painter := Person.new({"coat": Color("3a5a8a"), "pants": Color("2a2a30"), "hat": "kamelaukion", "beard": true, "hair": Color("3a2a1e")})
 	painter.position = ep
 	painter.rotation.y = PI
-	add_child(painter)
+	_k.add_child(painter)
 	painter.set_activity("paint")
 	# Çatıda tetik: görev, Tolga'nın cümlesi, aşağıdan bir memurun bağırışı
-	Props.trigger(self, AYA + Vector3(0, 17.0, 0), Vector3(33.0, 2.4, 33.0), func():
+	Props.trigger(_k, AYA + Vector3(0, 17.0, 0), Vector3(33.0, 2.4, 33.0), func():
 		# Nihat uçarak konarsa Tolga'nın cümlesi yok (seyir defteri kendi repliğini söyler)
 		var pl := get_tree().get_first_node_in_group("player") as Player
 		if pl and pl.powers:
@@ -1069,6 +1436,15 @@ func _plant_cypresses() -> void:
 	await get_tree().physics_frame
 	if not is_inside_tree():
 		return
+	_plant_in(self, _cypress_spots)
+	# G22: iç mahallenin servileri kendi kökünde (kökün yereli = hub yereli)
+	if saray_kok != null and not _cypress_ic.is_empty():
+		_plant_in(saray_kok, _cypress_ic)
+
+
+func _plant_in(root: Node3D, spots: Array[Vector4]) -> void:
+	if spots.is_empty():
+		return
 	var sp := get_world_3d().direct_space_state
 	var shape := CylinderShape3D.new()
 	shape.radius = 0.6
@@ -1077,8 +1453,8 @@ func _plant_cypresses() -> void:
 	q.shape = shape
 	q.collision_mask = 1
 	var xs: Array = []
-	for v: Vector4 in _cypress_spots:
-		var base := to_global(Vector3(v.x, v.y, v.z))
+	for v: Vector4 in spots:
+		var base := root.to_global(Vector3(v.x, v.y, v.z))
 		# Zemine oturt (eski koniler sokağın 0,8 m üstünde başlıyordu)
 		var g := sp.intersect_ray(PhysicsRayQueryParameters3D.create(base + Vector3(0, 2.0, 0), base + Vector3(0, -3.0, 0)))
 		if not g.is_empty():
@@ -1086,13 +1462,13 @@ func _plant_cypresses() -> void:
 		q.transform = Transform3D(Basis.IDENTITY, base + Vector3(0, 0.25 + shape.height * 0.5, 0))
 		if not sp.intersect_shape(q, 1).is_empty():
 			continue
-		xs.append(Transform3D(Basis.from_scale(Vector3(1.0, v.w, 1.0)), to_local(base)))
+		xs.append(Transform3D(Basis.from_scale(Vector3(1.0, v.w, 1.0)), root.to_local(base)))
 	if xs.is_empty():
 		return
-	var mi := Scenery.scatter(self, Scenery.cypress_slim_mesh(), xs, [], null, 0.5)
+	var mi := Scenery.scatter(root, Scenery.cypress_slim_mesh(), xs, [], null, 0.5)
 	mi.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_ON
 	if GameState.autotest:
-		print("CYPRESS planted=%d skipped=%d" % [xs.size(), _cypress_spots.size() - xs.size()])
+		print("CYPRESS planted=%d skipped=%d" % [xs.size(), spots.size() - xs.size()])
 
 
 func _reserved(x: float, z: float, pad: float) -> bool:
@@ -1115,7 +1491,7 @@ func _fbox(size: Vector3, pos: Vector3, m: Material, rot_y := 0.0, solid := fals
 	mi.position = pos
 	mi.rotation.y = rot_y
 	mi.material_override = m
-	add_child(mi)
+	_k.add_child(mi)
 	if solid:
 		var body := StaticBody3D.new()
 		var cs := CollisionShape3D.new()
@@ -1136,7 +1512,7 @@ func _trunk(p: Vector3, r: float, h: float) -> void:
 	cy.height = h
 	cs.shape = cy
 	body.add_child(cs)
-	add_child(body)
+	_k.add_child(body)
 
 
 func _build_fill() -> void:
@@ -1149,7 +1525,24 @@ func _build_fill() -> void:
 		fr = Rect2(-46.0, -48.0, 82.0, 69.0)
 	elif part == "aya":
 		fr = Rect2(-46.0, -114.0, 64.0, 76.0)
-	_fbox(Vector3(fr.size.x, 0.1, fr.size.y), Vector3(fr.get_center().x, -0.07, fr.get_center().y), _fill_mat(Color("b8ad96"), "concrete"))
+	# G22: bölünmüşte uzak zemin iki parça (iç mahalle saray_kok'ta, sur parçası self'te); evlerin yer/boy/renk kararı
+	# bölünmemiş dikdörtgenle verilir (rng aynı sırayla çekilir), sur parçasına düşen ev çekildikten sonra atılır
+	var k0 := _k
+	var atik: Node3D = null
+	var atik_dress: Dressing = null
+	if bolunmus:
+		_k = saray_kok
+		# levhalar döşemenin kenarlarından 0,3 m içeride biter (aynı yan düzlemde titreşmesin: ZFIGHT)
+		var ir := Rect2(IC_RECT.position + Vector2(0.0, 0.3), Vector2(BOLME_X - 0.3 - IC_RECT.position.x, IC_RECT.size.y - 1.3))
+		_fbox(Vector3(ir.size.x, 0.1, ir.size.y), Vector3(ir.get_center().x, -0.07, ir.get_center().y), _fill_mat(Color("b8ad96"), "concrete"))
+		_k = self
+		var sx1 := (SurHub.HUB_IC_X if sur_yeni else 36.0) - 0.3
+		var sx0 := BOLME_X + 0.3
+		_fbox(Vector3(sx1 - sx0, 0.1, ir.size.y - 0.6), Vector3((sx1 + sx0) * 0.5, -0.07, ir.get_center().y), _fill_mat(Color("b8ad96"), "concrete"))
+		_k = saray_kok
+		atik = Node3D.new()
+	else:
+		_fbox(Vector3(fr.size.x, 0.1, fr.size.y), Vector3(fr.get_center().x, -0.07, fr.get_center().y), _fill_mat(Color("b8ad96"), "concrete"))
 	var rng := RandomNumberGenerator.new()
 	rng.seed = 1204
 	var ek_rng := RandomNumberGenerator.new()
@@ -1159,6 +1552,9 @@ func _build_fill() -> void:
 	var stone_m := _fill_mat(Color("fff4e4"), "ashlar")
 	var cell := 6.6
 	var face_dress := Dressing.new(1204)
+	if bolunmus:
+		atik_dress = Dressing.new(1204)
+		atik_dress.rng = face_dress.rng        # aynı sayı dizisi: atılan evin cephesi de diziyi tüketir
 	var z := 17.0
 	while z > -125.0:
 		var x := -74.0
@@ -1166,6 +1562,9 @@ func _build_fill() -> void:
 			var cx := x + rng.randf_range(-0.8, 0.8)
 			var cz := z + rng.randf_range(-0.8, 0.8)
 			if not _reserved(cx, cz, 2.2) and (part == "all" or fr.grow(-3.0).has_point(Vector2(cx, cz))):
+				var at_ev := bolunmus and cx > BOLME_X - 3.0
+				_k = atik if at_ev else (saray_kok if bolunmus else k0)
+				var fd := atik_dress if at_ev else face_dress
 				var w := rng.randf_range(4.6, 6.2)
 				var d := rng.randf_range(4.6, 6.2)
 				var h := rng.randf_range(5.0, 9.5)
@@ -1183,7 +1582,7 @@ func _build_fill() -> void:
 					var body := StaticBody3D.new()
 					body.position = Vector3(cx, 0, cz)
 					body.rotation.y = rot
-					add_child(body)
+					_k.add_child(body)
 					var cs := CollisionShape3D.new()
 					var bs := BoxShape3D.new()
 					bs.size = Vector3(w, h, d)
@@ -1203,15 +1602,15 @@ func _build_fill() -> void:
 						var fy := rot + side * PI / 2.0
 						var half := (d if side % 2 == 0 else w) / 2.0
 						var fw := w if side % 2 == 0 else d
-						face_dress.at(Vector3(cx, 0, cz) + Vector3(0, 0, half + 0.01).rotated(Vector3.UP, fy), fy)
-						face_dress.house_face(fw, h, side == door_side, shutter, 3.0, 0.25)
+						fd.at(Vector3(cx, 0, cz) + Vector3(0, 0, half + 0.01).rotated(Vector3.UP, fy), fy)
+						fd.house_face(fw, h, side == door_side, shutter, 3.0, 0.25)
 				else:
 					_fbox(Vector3(w, h, d), Vector3(cx, h / 2.0, cz), _fill_mat(pm, "plaster"), rot)
 					# Uzaktakiler de katı olsun: yürüyen halk evlerin içinden geçmesin
 					var fb := StaticBody3D.new()
 					fb.position = Vector3(cx, 0, cz)
 					fb.rotation.y = rot
-					add_child(fb)
+					_k.add_child(fb)
 					var fcs := CollisionShape3D.new()
 					var fbs := BoxShape3D.new()
 					fbs.size = Vector3(w, h, d)
@@ -1225,7 +1624,7 @@ func _build_fill() -> void:
 				var turn := rng.randf() < 0.5
 				if roll < 0.78 and near and Kit.has_village():
 					# Yakındakiler: oluklu kiremit (dönükse boyları takas et ki saçak gövdeyi örtsün)
-					Kit.roof(self, Vector3(cx, h, cz), rot + (PI / 2.0 if turn else 0.0), (d if turn else w) + 0.9, (w if turn else d) + 0.9, rise + 0.4)
+					Kit.roof(_k, Vector3(cx, h, cz), rot + (PI / 2.0 if turn else 0.0), (d if turn else w) + 0.9, (w if turn else d) + 0.9, rise + 0.4)
 				elif roll < 0.78:
 					var roof := MeshInstance3D.new()
 					var prm := PrismMesh.new()
@@ -1234,7 +1633,7 @@ func _build_fill() -> void:
 					roof.position = Vector3(cx, h + prm.size.y / 2.0, cz)
 					roof.rotation.y = rot + (PI / 2.0 if turn else 0.0)
 					roof.material_override = roof_m
-					add_child(roof)
+					_k.add_child(roof)
 				elif roll < 0.9:
 					var dome := MeshInstance3D.new()
 					var sm := SphereMesh.new()
@@ -1245,25 +1644,36 @@ func _build_fill() -> void:
 					dome.mesh = sm
 					dome.position = Vector3(cx, h, cz)
 					dome.material_override = _fill_mat(Color("b5533a"), "")
-					add_child(dome)
+					_k.add_child(dome)
 				if rng.randf() < 0.35:
 					_fbox(Vector3(0.5, 1.3, 0.5), Vector3(cx + w * 0.25, h + 1.0, cz), _fill_mat(Color("a8674a"), ""), rot)
 				# Arada bir servi (yeri şimdilik not edilir; bütün yapılar kurulunca boş olanlara dikilir)
 				if rng.randf() < 0.12:
 					var tp := Vector3(cx + w / 2.0 + 1.2, 0.8, cz)
 					if not _reserved(tp.x, tp.z, 0.5):
-						_cypress_spots.append(Vector4(tp.x, tp.y, tp.z, rng.randf_range(0.85, 1.15)))
+						var cv := Vector4(tp.x, tp.y, tp.z, rng.randf_range(0.85, 1.15))
+						if not bolunmus:
+							_cypress_spots.append(cv)
+						elif not at_ev and tp.x < BOLME_X - 1.0:
+							_cypress_ic.append(cv)
 			x += cell
 		z -= cell
-	face_dress.build(self)
+	if bolunmus:
+		_k = saray_kok
+		atik.free()
+	face_dress.build(_k)
+	_k = k0
 	_plant_cypresses.call_deferred()
 	if part == "aya":
+		return
+	# G22: bölünmüşte Haliç tarafı suru ve dört kulesi kurulmaz (iç mahallenin ortasında 70 m'lik kutu sur olurdu)
+	if bolunmus:
 		return
 	# Çevre surları: güneyde Haliç tarafı, batıda Marmara tarafı (tek haritada sur parçasının güney duvarı kalır)
 	var wall_m := _fill_mat(Color("fff0e0"), "ashlar")
 	if part == "walls":
 		for seg in [[Vector3(-28.5, 5.0, 19.4), Vector3(35, 10, 2)], [Vector3(27.5, 5.0, 19.4), Vector3(33, 10, 2)]]:
-			var wb := Props.solid(self, seg[1], seg[0], Color.WHITE)
+			var wb := Props.solid(_k, seg[1], seg[0], Color.WHITE)
 			(wb.get_child(0) as MeshInstance3D).material_override = wall_m
 		var kk := -45.0
 		while kk < 44.0:
@@ -1275,7 +1685,7 @@ func _build_fill() -> void:
 		return
 	for seg in [[Vector3(-42.5, 5.0, 19.4), Vector3(63, 10, 2)], [Vector3(27.5, 5.0, 19.4), Vector3(33, 10, 2)],
 			[Vector3(-80.0, 5.0, -52.0), Vector3(2, 10, 146)]]:
-		var body := Props.solid(self, seg[1], seg[0], Color.WHITE)
+		var body := Props.solid(_k, seg[1], seg[0], Color.WHITE)
 		(body.get_child(0) as MeshInstance3D).material_override = wall_m
 	var k := -73.0
 	while k < 44.0:
@@ -1334,13 +1744,13 @@ func _build_north() -> void:
 		return Color("9a8c72").darkened(0.05 * (sin(x * 0.13) * cos(z * 0.11) + 0.5))
 	CityPanorama.terrain(self, -384.0, 36.0, -704.0, -132.0, hf, cf)
 	# Oynanan sokakların altında düz zemin (uzaktaki dolgu evler boşlukta durmasın; Nihat aralarına konabilir)
-	var core := Props.solid(self, Vector3(120, 0.2, 154), Vector3(-24.0, -0.22, -56.0), Color("9a8c72"))
+	var core := Props.solid(_k, Vector3(120, 0.2, 154), Vector3(-24.0, -0.22, -56.0), Color("9a8c72"))
 	(core.get_child(0) as MeshInstance3D).material_override = Props.mat(Color("9a8c72"), 0.0, false, "", false)
 	var chora := Vector3(4.0, 0, -560.0)
 	chora.y = hf.call(chora.x, chora.z)
 	var stream := CityStream.new()
 	stream.name = "Stream"
-	add_child(stream)
+	_k.add_child(stream)
 	CityPanorama.region_lots(stream, self, Rect2(-378, -700, 408, 558), 0.04, 17.0, 13.0, hf, [Rect2(chora.x - 24, chora.z - 26, 48, 52)], 330)
 	stream.finish()
 	_chora(chora)
@@ -1348,7 +1758,7 @@ func _build_north() -> void:
 	CityStream.materials()
 	var k := MeshKit.new()
 	var body := StaticBody3D.new()
-	add_child(body)
+	_k.add_child(body)
 	var stone := Color("d8ccb4")
 	var addb := func(pos: Vector3, size: Vector3):
 		k.box(Transform3D(Basis(), pos), size, stone)
@@ -1398,7 +1808,7 @@ func _build_north() -> void:
 	am.add_surface_from_arrays(Mesh.PRIMITIVE_TRIANGLES, k.arrays())
 	am.surface_set_material(0, CityStream._mat)
 	mi.mesh = am
-	add_child(mi)
+	_k.add_child(mi)
 
 
 ## Khora (Kariye) Manastırı: tuğla-taş bantlı kilise, pencereli kasnaklı ana kubbe, dış narteks ve iki küçük
@@ -1407,7 +1817,7 @@ func _chora(p: Vector3) -> void:
 	var brick := Color("b0603f")
 	var n := Node3D.new()
 	n.position = p
-	add_child(n)
+	_k.add_child(n)
 	Props.set_pattern(Props.solid(n, Vector3(14, 12, 18), Vector3(0, 5.0, 0), Color.WHITE), brick, "brick")
 	Props.cyl(n, 4.6, 3.0, Vector3(0, 12.5, 0), Color("c8a890"), Vector3.ZERO, 16)
 	for i in 12:
@@ -1474,13 +1884,13 @@ func _build_life() -> void:
 		var person := Person.new(pp[1])
 		person.position = pp[0]
 		person.rotation.y = randf_range(-PI, PI) if k > 3 else (PI / 2.0 if pp[0].x < 0 else -PI / 2.0)
-		add_child(person)
+		_k.add_child(person)
 	# Kedi (çeşmenin kenarında)
 	var cat := Vector3(1.9, 0.72, -15.2)
-	Props.ball(self, 0.16, cat, Color("d8883a"), Vector3(1.0, 0.7, 1.6), 8)
-	Props.ball(self, 0.1, cat + Vector3(0, 0.1, 0.22), Color("d8883a"), Vector3.ONE, 6)
+	Props.ball(_k, 0.16, cat, Color("d8883a"), Vector3(1.0, 0.7, 1.6), 8)
+	Props.ball(_k, 0.1, cat + Vector3(0, 0.1, 0.22), Color("d8883a"), Vector3.ONE, 6)
 	for s in [-1, 1]:
-		Props.prism(self, Vector3(0.05, 0.07, 0.03), cat + Vector3(s * 0.05, 0.2, 0.22), Color("d8883a"))
+		Props.prism(_k, Vector3(0.05, 0.07, 0.03), cat + Vector3(s * 0.05, 0.2, 0.22), Color("d8883a"))
 
 
 # ---------------------------------------------------------------- kançılarya (labirent)
@@ -1497,13 +1907,13 @@ func _build_chancery() -> void:
 	_wall(Vector3(x1 - x0, 5.0, 0.3), Vector3(0, 2.5, ROOM_Z1), wall_c, false)
 	_wall(Vector3(0.3, 5.0, ROOM_Z1 - HALL_Z0), Vector3(x0, 2.5, (HALL_Z0 + ROOM_Z1) / 2.0), wall_c, false)
 	_wall(Vector3(0.3, 5.0, ROOM_Z1 - HALL_Z0), Vector3(x1, 2.5, (HALL_Z0 + ROOM_Z1) / 2.0), wall_c, false)
-	Props.solid(self, Vector3(x1 - x0, 0.3, HALL_Z0 - ROOM_Z1), Vector3(0, 5.1, (HALL_Z0 + ROOM_Z1) / 2.0), Color("b5533a"))
+	Props.solid(_k, Vector3(x1 - x0, 0.3, HALL_Z0 - ROOM_Z1), Vector3(0, 5.1, (HALL_Z0 + ROOM_Z1) / 2.0), Color("b5533a"))
 	# Kapının üstünde yazı
-	Props.box(self, Vector3(5.0, 0.7, 0.1), Vector3(0, 4.0, HALL_Z0 + 0.2), Color("8a2b22"))
-	Props.label(self, "ΛΟΓΟΘΕΤΗΣ · ΑΔΕΙΑΙ ΞΕΝΩΝ", Vector3(0, 4.0, HALL_Z0 + 0.26), 36, Color("f2e6c9"), Vector3.ZERO, 4.6)
+	Props.box(_k, Vector3(5.0, 0.7, 0.1), Vector3(0, 4.0, HALL_Z0 + 0.2), Color("8a2b22"))
+	Props.label(_k, "ΛΟΓΟΘΕΤΗΣ · ΑΔΕΙΑΙ ΞΕΝΩΝ", Vector3(0, 4.0, HALL_Z0 + 0.26), 36, Color("f2e6c9"), Vector3.ZERO, 4.6)
 	# Cephe: mermer sütunlu revak, alınlık ve kiremit çatı
 	for cx in [-12.0, -9.0, -6.0, -3.0, 3.0, 6.0, 9.0, 12.0]:
-		var c := Props.solid(self, Vector3(0.5, 4.6, 0.5), Vector3(cx, 2.3, HALL_Z0 + 1.0), Color.WHITE)
+		var c := Props.solid(_k, Vector3(0.5, 4.6, 0.5), Vector3(cx, 2.3, HALL_Z0 + 1.0), Color.WHITE)
 		c.get_child(0).queue_free()
 		var shaft := MeshInstance3D.new()
 		var cm := CylinderMesh.new()
@@ -1515,23 +1925,23 @@ func _build_chancery() -> void:
 		shaft.position = Vector3(0, 0, 0)
 		shaft.material_override = Props.mat(Color.WHITE, 0.0, false, "marble")
 		c.add_child(shaft)
-		Props.box(self, Vector3(0.8, 0.3, 0.8), Vector3(cx, 4.65, HALL_Z0 + 1.0), Color("e8e0cc"))
-		Props.box(self, Vector3(0.8, 0.2, 0.8), Vector3(cx, 0.1, HALL_Z0 + 1.0), Color("d8d0bc"))
+		Props.box(_k, Vector3(0.8, 0.3, 0.8), Vector3(cx, 4.65, HALL_Z0 + 1.0), Color("e8e0cc"))
+		Props.box(_k, Vector3(0.8, 0.2, 0.8), Vector3(cx, 0.1, HALL_Z0 + 1.0), Color("d8d0bc"))
 	var arch := MeshInstance3D.new()
 	var am := BoxMesh.new()
 	am.size = Vector3(28.6, 0.5, 2.2)
 	arch.mesh = am
 	arch.position = Vector3(0, 5.05, HALL_Z0 + 0.8)
 	arch.material_override = Props.mat(Color.WHITE, 0.0, false, "marble")
-	add_child(arch)
+	_k.add_child(arch)
 	var ped := MeshInstance3D.new()
 	var pm := PrismMesh.new()
 	pm.size = Vector3(29.4, 2.2, HALL_Z0 - ROOM_Z1 + 3.0)
 	ped.mesh = pm
 	ped.position = Vector3(0, 6.4, (HALL_Z0 + ROOM_Z1) / 2.0 + 1.0)
 	ped.material_override = Props.mat(Color("fff0e8"), 0.0, false, "tiles")
-	add_child(ped)
-	Props.ball(self, 0.5, Vector3(0, 6.4, HALL_Z0 + 2.5), Color("d8b040"), Vector3(1, 1, 0.3), 10)
+	_k.add_child(ped)
+	Props.ball(_k, 0.5, Vector3(0, 6.4, HALL_Z0 + 2.5), Color("d8b040"), Vector3(1, 1, 0.3), 10)
 	_chi_rho(Vector3(0, 6.4, HALL_Z0 + 2.66), 0.0, Color("8a2b22"), 0.7)
 	# Odalar: koridorun kuzeyinde, aralarında bölmeler
 	for i in 7:
@@ -1543,50 +1953,50 @@ func _build_chancery() -> void:
 		_wall_in(Vector3(1.3, 5.0, 0.2), Vector3(cx + 1.35, 2.5, ROOM_Z0))
 		_wall_in(Vector3(1.4, 2.4, 0.2), Vector3(cx, 3.8, ROOM_Z0))
 		# Kapı levhası
-		Props.box(self, Vector3(0.7, 0.7, 0.05), Vector3(cx, 3.1, ROOM_Z0 + 0.12), Color("c49a45"))
-		Props.label(self, GREEK[i], Vector3(cx, 3.1, ROOM_Z0 + 0.16), 64, Color("3a1a10"), Vector3.ZERO, 0.5)
+		Props.box(_k, Vector3(0.7, 0.7, 0.05), Vector3(cx, 3.1, ROOM_Z0 + 0.12), Color("c49a45"))
+		Props.label(_k, GREEK[i], Vector3(cx, 3.1, ROOM_Z0 + 0.16), 64, Color("3a1a10"), Vector3.ZERO, 0.5)
 		# Masa, kâğıt yığınları, mühür
-		Props.solid(self, Vector3(2.0, 0.8, 0.8), Vector3(cx, 0.4, ROOM_Z1 + 2.2), Color("7a5a38"))
+		Props.solid(_k, Vector3(2.0, 0.8, 0.8), Vector3(cx, 0.4, ROOM_Z1 + 2.2), Color("7a5a38"))
 		for k in 3:
-			Props.box(self, Vector3(0.3, 0.2 + k * 0.15, 0.22), Vector3(cx - 0.7 + k * 0.3, 0.9 + k * 0.07, ROOM_Z1 + 2.1), Color("efe6cf"))
-		Props.cyl(self, 0.06, 0.14, Vector3(cx + 0.6, 0.87, ROOM_Z1 + 2.3), Color("8a2b22"), Vector3.ZERO, 8)
+			Props.box(_k, Vector3(0.3, 0.2 + k * 0.15, 0.22), Vector3(cx - 0.7 + k * 0.3, 0.9 + k * 0.07, ROOM_Z1 + 2.1), Color("efe6cf"))
+		Props.cyl(_k, 0.06, 0.14, Vector3(cx + 0.6, 0.87, ROOM_Z1 + 2.3), Color("8a2b22"), Vector3.ZERO, 8)
 		var l := OmniLight3D.new()
 		l.position = Vector3(cx, 3.6, ROOM_Z1 + 2.5)
 		l.light_color = Color("ffd8a0")
 		l.light_energy = 1.0
 		l.omni_range = 5.0
-		add_child(l)
+		_k.add_child(l)
 		var theo := i == 6
 		var robes := [Color("6a3a7a"), Color("2f5fa8"), Color("3a6b3a"), Color("8a6a2a"), Color("7a2a3a"), Color("3a4a6a"), Color("5a2a6a")]
 		var clerk := Person.new({"coat": robes[i], "pants": robes[i].darkened(0.3), "hat": "kamelaukion", "robe": robes[i],
 			"beard": theo or i % 3 == 0, "mustache": true, "hair": Color("8a8a8a") if theo else Color("3a2a1e"), "glasses": theo})
 		clerk.set_meta("spk", "SPK_THEODOROS" if theo else "SPK_CLERK")   # yedinci masa (Η) Theodoros'un
 		clerk.position = Vector3(cx, 0, ROOM_Z1 + 1.2)
-		add_child(clerk)
+		_k.add_child(clerk)
 		clerks.append(clerk)
-		Props.interactable(self, "clerk:%d" % i, Vector3(2.2, 2.0, 1.6), Vector3(cx, 1.0, ROOM_Z1 + 2.6))
+		Props.interactable(_k, "clerk:%d" % i, Vector3(2.2, 2.0, 1.6), Vector3(cx, 1.0, ROOM_Z1 + 2.6))
 	# Koridordaki Nihat (cameo): fötr şapka, bir sütunun yanında, hayranlıkla
 	nihat = Person.new({"face": "nihat", "coat": Color("4a4a52"), "pants": Color("4a4a52"), "hat": "fedora", "mustache": true, "hair": Color("3a2a1e"), "skin": Color("ecb892")})
 	nihat.position = Vector3(x1 - 1.5, 0, HALL_Z0 - 1.2)
 	nihat.rotation.y = -PI / 2.0
 	nihat.set_meta("cameo", true)   # telsizden konuşan Nihat bu değildir (görünürlük denetimi ayırır)
-	add_child(nihat)
-	Props.interactable(self, "nihat", Vector3(1.0, 2.0, 1.0), nihat.position + Vector3(0, 1.0, 0))
+	_k.add_child(nihat)
+	Props.interactable(_k, "nihat", Vector3(1.0, 2.0, 1.0), nihat.position + Vector3(0, 1.0, 0))
 	var hl := OmniLight3D.new()
 	hl.position = Vector3(0, 3.8, HALL_Z0 - 1.2)
 	hl.light_color = Color("ffe0b0")
 	hl.light_energy = 1.2
 	hl.omni_range = 16.0
-	add_child(hl)
+	_k.add_child(hl)
 
 
 ## İç bölme duvarı: sıvalı, hafif sarımsı.
 func _wall_in(size: Vector3, pos: Vector3) -> void:
-	Props.set_pattern(Props.solid(self, size.abs(), pos, Color.WHITE), Color("efe0c4"), "plaster")
+	Props.set_pattern(Props.solid(_k, size.abs(), pos, Color.WHITE), Color("efe0c4"), "plaster")
 
 
 func _wall(size: Vector3, pos: Vector3, _color: Color, _front: bool) -> void:
-	Props.set_pattern(Props.solid(self, size.abs(), pos, Color.WHITE), Color("fff4e4"), "ashlar")
+	Props.set_pattern(Props.solid(_k, size.abs(), pos, Color.WHITE), Color("fff4e4"), "ashlar")
 
 
 # ---------------------------------------------------------------- kara surları
@@ -1610,16 +2020,16 @@ func _build_walls() -> void:
 			if lz > wc - wl * 0.5 + 4.0 and lz < wc + wl * 0.5 - 4.0:
 				gz = lz
 	if gz == INF:
-		Props.set_pattern(Props.solid(self, Vector3(3.0, 12.0, wl), Vector3(x, 6.0, wc), Color.WHITE), Color("fff0e0"), "ashlar")
+		Props.set_pattern(Props.solid(_k, Vector3(3.0, 12.0, wl), Vector3(x, 6.0, wc), Color.WHITE), Color("fff0e0"), "ashlar")
 	else:
 		var z0 := wc - wl * 0.5
 		var z1 := wc + wl * 0.5
 		# Sur parçaları kapı kulelerinin içinde biter, kemer kulelere gömülür (aynı düzlemde yüz kalmaz)
 		for seg: Vector2 in [Vector2(z0, gz - 5.0), Vector2(gz + 5.0, z1)]:
-			Props.set_pattern(Props.solid(self, Vector3(3.0, 12.0, seg.y - seg.x), Vector3(x, 6.0, (seg.x + seg.y) * 0.5), Color.WHITE), Color("fff0e0"), "ashlar")
-		Props.set_pattern(Props.solid(self, Vector3(3.0, 3.4, 7.4), Vector3(x, 10.3, gz), Color.WHITE), Color("f4e4d0"), "ashlar")
+			Props.set_pattern(Props.solid(_k, Vector3(3.0, 12.0, seg.y - seg.x), Vector3(x, 6.0, (seg.x + seg.y) * 0.5), Color.WHITE), Color("fff0e0"), "ashlar")
+		Props.set_pattern(Props.solid(_k, Vector3(3.0, 3.4, 7.4), Vector3(x, 10.3, gz), Color.WHITE), Color("f4e4d0"), "ashlar")
 	for y in [3.0, 6.5, 10.0]:
-		Props.box(self, Vector3(0.05, 0.4, 60.0), Vector3(x - 1.52, y, -10.0), Color("8a4a36"))
+		Props.box(_k, Vector3(0.05, 0.4, 60.0), Vector3(x - 1.52, y, -10.0), Color("8a4a36"))
 	# Kuleler; kapı varsa ona denk gelen kule kalkar, yerine kapının iki yanında birer kule (açıklığa 5 cm taşar)
 	var towers: Array = []
 	for z: float in [-34.0, -18.0, -2.0, 14.0]:
@@ -1628,20 +2038,20 @@ func _build_walls() -> void:
 	if gz != INF:
 		towers.append_array([gz - 6.45, gz + 6.45])
 	for z: float in towers:
-		Props.set_pattern(Props.solid(self, Vector3(6.0, 16.0, 6.0), Vector3(x, 8.0, z), Color.WHITE), Color("f4e4d0"), "ashlar")
+		Props.set_pattern(Props.solid(_k, Vector3(6.0, 16.0, 6.0), Vector3(x, 8.0, z), Color.WHITE), Color("f4e4d0"), "ashlar")
 		# Theodosius surlarının kulesi: iç yüzde kemerli pencereler, tepede mazgallar
 		for wy in [8.5, 12.5]:
 			for dz in [-1.3, 1.3]:
 				var wp := Vector3(x - 3.02, wy, z + dz)
-				Props.box(self, Vector3(0.06, 1.3, 0.8), wp, Color("2e2630"))
-				Props.ball(self, 0.4, wp + Vector3(0, 0.65, 0), Color("2e2630"), Vector3(0.15, 1, 1), 8)
+				Props.box(_k, Vector3(0.06, 1.3, 0.8), wp, Color("2e2630"))
+				Props.ball(_k, 0.4, wp + Vector3(0, 0.65, 0), Color("2e2630"), Vector3(0.15, 1, 1), 8)
 		for m in 4:
 			for side in [-1, 1]:
-				Props.make_solid(Props.box(self, Vector3(0.9, 0.9, 0.7), Vector3(x - 2.6 + m * 1.73, 16.45, z + side * 2.65), Color("dccab0")))
-				Props.make_solid(Props.box(self, Vector3(0.7, 0.9, 0.9), Vector3(x + side * 2.65, 16.45, z - 2.6 + m * 1.73), Color("dccab0")))
+				Props.make_solid(Props.box(_k, Vector3(0.9, 0.9, 0.7), Vector3(x - 2.6 + m * 1.73, 16.45, z + side * 2.65), Color("dccab0")))
+				Props.make_solid(Props.box(_k, Vector3(0.7, 0.9, 0.9), Vector3(x + side * 2.65, 16.45, z - 2.6 + m * 1.73), Color("dccab0")))
 	var zz := -38.0
 	while zz < 18.0:
-		Props.make_solid(Props.box(self, Vector3(0.6, 0.9, 0.8), Vector3(x - 1.2, 12.45, zz), Color("bba98a")))
+		Props.make_solid(Props.box(_k, Vector3(0.6, 0.9, 0.8), Vector3(x - 1.2, 12.45, zz), Color("bba98a")))
 		zz += 1.6
 	# Ahşap iskele ve Giustiniani'nin masası (haritalar, sözleşmeler)
 	_build_giust_yeri(x)
@@ -1651,19 +2061,19 @@ func _build_walls() -> void:
 
 ## Giustiniani'nin iskelesi, masası, sandıkları ve kendisi (eski ve yeni surda aynı yer: iç surun şehir yüzünün önü)
 func _build_giust_yeri(x: float) -> void:
-	Props.solid(self, Vector3(4.0, 0.3, 8.0), Vector3(x - 4.0, 1.2, GIUST_POS.z), Color("7a5a38"))
+	Props.solid(_k, Vector3(4.0, 0.3, 8.0), Vector3(x - 4.0, 1.2, GIUST_POS.z), Color("7a5a38"))
 	for k in 4:
-		Props.cyl(self, 0.1, 1.2, Vector3(x - 5.8 + (k % 2) * 3.6, 0.6, GIUST_POS.z - 3.6 + (k / 2) * 7.2), Color("5a4028"), Vector3.ZERO, 6)
-	Props.solid(self, Vector3(1.6, 0.8, 0.9), GIUST_POS + Vector3(-1.4, 0.4, 1.6), Color("6a4a2c"))
-	Props.box(self, Vector3(1.2, 0.02, 0.8), GIUST_POS + Vector3(-1.4, 0.81, 1.6), Color("efe6cf"), Vector3(0, 8, 0))
-	Props.label(self, "CONTRATTO", GIUST_POS + Vector3(-1.4, 0.83, 1.6), 24, Color("5a2a2a"), Vector3(-90, 8, 0), 0.9)
+		Props.cyl(_k, 0.1, 1.2, Vector3(x - 5.8 + (k % 2) * 3.6, 0.6, GIUST_POS.z - 3.6 + (k / 2) * 7.2), Color("5a4028"), Vector3.ZERO, 6)
+	Props.solid(_k, Vector3(1.6, 0.8, 0.9), GIUST_POS + Vector3(-1.4, 0.4, 1.6), Color("6a4a2c"))
+	Props.box(_k, Vector3(1.2, 0.02, 0.8), GIUST_POS + Vector3(-1.4, 0.81, 1.6), Color("efe6cf"), Vector3(0, 8, 0))
+	Props.label(_k, "CONTRATTO", GIUST_POS + Vector3(-1.4, 0.83, 1.6), 24, Color("5a2a2a"), Vector3(-90, 8, 0), 0.9)
 	for k in 3:
-		Props.solid(self, Vector3(0.6, 1.0, 0.4), Vector3(x - 3.0, 0.5, GIUST_POS.z + 5.0 + k * 0.9), Color("8a6440"))      # sandıklar katı
+		Props.solid(_k, Vector3(0.6, 1.0, 0.4), Vector3(x - 3.0, 0.5, GIUST_POS.z + 5.0 + k * 0.9), Color("8a6440"))      # sandıklar katı
 	giustiniani = Person.new({"coat": Color("a8aeb6"), "pants": Color("6a2a2a"), "hat": "condottiero", "face": "giustiniani", "beard": true, "mustache": true, "hair": Color("5a3a1e"), "skin": Color("e8b894")})
 	giustiniani.position = GIUST_POS
 	giustiniani.rotation.y = -PI / 2.0
-	add_child(giustiniani)
-	Props.interactable(self, "giustiniani", Vector3(1.2, 2.0, 1.2), GIUST_POS + Vector3(0, 1.0, 0))
+	_k.add_child(giustiniani)
+	Props.interactable(_k, "giustiniani", Vector3(1.2, 2.0, 1.2), GIUST_POS + Vector3(0, 1.0, 0))
 
 
 ## TAŞIMA-10: yeni sur — iç sur, kuleler, kapı, peribolos, dış sur, hendek ve köprü yeni surun Romanos kesiminden (SurHub);
@@ -1676,15 +2086,15 @@ func _build_walls_yeni() -> void:
 	var hw := 1.7
 	# Kapının şehir yanı: iki meşale ve iki nöbetçi (kanatlar şehre doğru açık: nöbetçiler kanatların dışında)
 	for sz: float in [-1.0, 1.0]:
-		lights.append(Night.torch(self, Vector3(fx - 2.0, 0, g.z + sz * 3.9), 2.6))
+		lights.append(Night.torch(_k, Vector3(fx - 2.0, 0, g.z + sz * 3.9), 2.6))
 		var guard := Person.new({"coat": Color("8a2b22"), "pants": Color("4a3a2a"), "hat": "helm", "mustache": true, "skin": Color("d9a07a")})
 		guard.position = Vector3(fx - 3.0, 0, g.z + sz * 3.3)
 		guard.rotation.y = -PI / 2.0
-		add_child(guard)
+		_k.add_child(guard)
 		Props.cyl(guard, 0.025, 2.3, Vector3(0.35, 1.15, 0.1), Color("5a4028"), Vector3.ZERO, 5)
 		Props.cyl(guard, 0.05, 0.25, Vector3(0.35, 2.35, 0.1), Color("b8bcc4"), Vector3.ZERO, 5, 0.0)
 		Props.cyl(guard, 0.3, 0.05, Vector3(-0.3, 1.0, 0.15), Color("9a1a22"), Vector3(0, 0, 90), 12)
-	Props.interactable(self, "exit", Vector3(1.4, 3.4, hw * 2.0), Vector3(fx - 0.9, 1.7, g.z))
+	Props.interactable(_k, "exit", Vector3(1.4, 3.4, hw * 2.0), Vector3(fx - 0.9, 1.7, g.z))
 
 
 ## Aziz Romanos Kapısı (kara surlarının iç yüzünde, iki kule arasında): şehre giriş ve beyaz bayrakla çıkış.
@@ -1698,53 +2108,53 @@ func _build_gate() -> void:
 	var spring := 4.0         # kemerin üzengisi
 	var marble := Color("ece4d4")
 	# Karanlık geçit (surun içine gidiyormuş gibi) ve ucunda dışarının ışığı
-	var tunnel := Props.box(self, Vector3(0.05, spring + hw, hw * 2.0), Vector3(fx - 0.02, (spring + hw) / 2.0, g.z), Color("15120f"))
+	var tunnel := Props.box(_k, Vector3(0.05, spring + hw, hw * 2.0), Vector3(fx - 0.02, (spring + hw) / 2.0, g.z), Color("15120f"))
 	tunnel.material_override = Props.mat(Color("15120f"), 0.0, false, "", false)
-	var glow := Props.box(self, Vector3(0.04, 2.6, 1.2), Vector3(fx - 0.03, 1.3, g.z), Color("fff1c8"))
+	var glow := Props.box(_k, Vector3(0.04, 2.6, 1.2), Vector3(fx - 0.03, 1.3, g.z), Color("fff1c8"))
 	glow.material_override = Props.mat(Color("fff1c8"), 1.6, false, "", false)
 	for sz: float in [-1.0, 1.0]:
 		# Geçidin yan duvarları (derinlik hissi): önden bakınca içe doğru kararan taşlar
 		for k in 3:
-			var sh := Props.box(self, Vector3(0.3, spring, 0.06), Vector3(fx - 0.2 - k * 0.3, spring / 2.0, g.z + sz * (hw - 0.03)), Color("6a5a48").darkened(0.2 + k * 0.2))
+			var sh := Props.box(_k, Vector3(0.3, spring, 0.06), Vector3(fx - 0.2 - k * 0.3, spring / 2.0, g.z + sz * (hw - 0.03)), Color("6a5a48").darkened(0.2 + k * 0.2))
 			sh.material_override = Props.mat(Color("6a5a48").darkened(0.2 + k * 0.2), 0.0, false, "", false)
 	# Önden taşan kapı yapısı: iki mermer ayak (çarpışmalı) ve üstte düz bölüm
 	for sz: float in [-1.0, 1.0]:
 		var pz := g.z + sz * (hw + 0.6)
-		Props.set_pattern(Props.solid(self, Vector3(1.0, spring + 3.4, 1.2), Vector3(fx - 0.5, (spring + 3.4) / 2.0, pz), Color.WHITE), marble, "marble")
-		Props.box(self, Vector3(1.2, 0.35, 1.4), Vector3(fx - 0.5, spring, pz), Color("d8cdb8"))      # başlık
-		Props.box(self, Vector3(1.2, 0.4, 1.4), Vector3(fx - 0.5, 0.2, pz), Color("c8bca4"))          # kaide
-	Props.set_pattern(Props.solid(self, Vector3(1.0, 2.2, hw * 2.0), Vector3(fx - 0.5, spring + hw + 1.1 + 0.3, g.z), Color.WHITE), Color("fff0e0"), "brick")
+		Props.set_pattern(Props.solid(_k, Vector3(1.0, spring + 3.4, 1.2), Vector3(fx - 0.5, (spring + 3.4) / 2.0, pz), Color.WHITE), marble, "marble")
+		Props.box(_k, Vector3(1.2, 0.35, 1.4), Vector3(fx - 0.5, spring, pz), Color("d8cdb8"))      # başlık
+		Props.box(_k, Vector3(1.2, 0.4, 1.4), Vector3(fx - 0.5, 0.2, pz), Color("c8bca4"))          # kaide
+	Props.set_pattern(Props.solid(_k, Vector3(1.0, 2.2, hw * 2.0), Vector3(fx - 0.5, spring + hw + 1.1 + 0.3, g.z), Color.WHITE), Color("fff0e0"), "brick")
 	# Kemer: sıra sıra tuğla ve mermer kilit taşları
 	for k in 13:
 		var a := PI * (k + 0.5) / 13.0
 		var pos := Vector3(fx - 0.52, spring + sin(a) * (hw + 0.25), g.z - cos(a) * (hw + 0.25))
 		var c := marble if k % 2 == 0 else Color("b8573a")
-		Props.box(self, Vector3(1.04, 0.5, 0.42), pos, c, Vector3(rad_to_deg(a) - 90.0, 0, 0))
+		Props.box(_k, Vector3(1.04, 0.5, 0.42), pos, c, Vector3(rad_to_deg(a) - 90.0, 0, 0))
 	# Kemer içi (timpan): kemerin altı karanlık geçide açık; üstünde mermer korniş
-	Props.box(self, Vector3(1.3, 0.3, hw * 2.0 + 2.6), Vector3(fx - 0.55, spring + hw + 2.37, g.z), marble)
+	Props.box(_k, Vector3(1.3, 0.3, hw * 2.0 + 2.6), Vector3(fx - 0.55, spring + hw + 2.37, g.z), marble)
 	# Kitabe ve haçlı levha
-	Props.box(self, Vector3(0.08, 0.55, 3.2), Vector3(fx - 1.03, spring + hw + 1.25, g.z), Color("f4efe2"))
-	Props.label(self, "ΠΥΛΗ ΤΟΥ ΑΓΙΟΥ ΡΩΜΑΝΟΥ", Vector3(fx - 1.08, spring + hw + 1.25, g.z), 30, Color("5a2a2a"), Vector3(0, -90, 0), 3.0)
-	Props.box(self, Vector3(0.08, 0.9, 0.9), Vector3(fx - 1.03, spring + hw + 3.0, g.z), marble)
-	Props.box(self, Vector3(0.1, 0.6, 0.12), Vector3(fx - 1.08, spring + hw + 3.0, g.z), Color("c8a040"))
-	Props.box(self, Vector3(0.1, 0.12, 0.42), Vector3(fx - 1.08, spring + hw + 3.1, g.z), Color("c8a040"))
+	Props.box(_k, Vector3(0.08, 0.55, 3.2), Vector3(fx - 1.03, spring + hw + 1.25, g.z), Color("f4efe2"))
+	Props.label(_k, "ΠΥΛΗ ΤΟΥ ΑΓΙΟΥ ΡΩΜΑΝΟΥ", Vector3(fx - 1.08, spring + hw + 1.25, g.z), 30, Color("5a2a2a"), Vector3(0, -90, 0), 3.0)
+	Props.box(_k, Vector3(0.08, 0.9, 0.9), Vector3(fx - 1.03, spring + hw + 3.0, g.z), marble)
+	Props.box(_k, Vector3(0.1, 0.6, 0.12), Vector3(fx - 1.08, spring + hw + 3.0, g.z), Color("c8a040"))
+	Props.box(_k, Vector3(0.1, 0.12, 0.42), Vector3(fx - 1.08, spring + hw + 3.1, g.z), Color("c8a040"))
 	# Palaiologos sancakları: kırmızı zemin, altın çift başlı kartal
 	for sz: float in [-1.0, 1.0]:
 		var bp := Vector3(fx - 1.05, spring + 1.6, g.z + sz * (hw + 0.6))
-		Props.box(self, Vector3(0.04, 3.2, 1.1), bp, Color("9a1a22"))
-		Props.box(self, Vector3(0.05, 0.06, 1.25), bp + Vector3(0, 1.62, 0), Color("c8a040"))
+		Props.box(_k, Vector3(0.04, 3.2, 1.1), bp, Color("9a1a22"))
+		Props.box(_k, Vector3(0.05, 0.06, 1.25), bp + Vector3(0, 1.62, 0), Color("c8a040"))
 		var eg := bp + Vector3(-0.03, 0.35, 0)
-		Props.ball(self, 0.26, eg, Color("e0b040"), Vector3(0.2, 1.1, 1.0), 8)
+		Props.ball(_k, 0.26, eg, Color("e0b040"), Vector3(0.2, 1.1, 1.0), 8)
 		for side: float in [-1.0, 1.0]:
-			Props.ball(self, 0.1, eg + Vector3(0, 0.36, side * 0.15), Color("e0b040"), Vector3(0.2, 1, 1), 6)
-			Props.box(self, Vector3(0.03, 0.2, 0.5), eg + Vector3(0, 0.05, side * 0.36), Color("e0b040"), Vector3(side * 25.0, 0, 0))
-		Props.box(self, Vector3(0.03, 0.12, 0.14), eg + Vector3(0, 0.62, 0), Color("e0b040"))
+			Props.ball(_k, 0.1, eg + Vector3(0, 0.36, side * 0.15), Color("e0b040"), Vector3(0.2, 1, 1), 6)
+			Props.box(_k, Vector3(0.03, 0.2, 0.5), eg + Vector3(0, 0.05, side * 0.36), Color("e0b040"), Vector3(side * 25.0, 0, 0))
+		Props.box(_k, Vector3(0.03, 0.12, 0.14), eg + Vector3(0, 0.62, 0), Color("e0b040"))
 	# İçe açık, demir çivili kanatlar
 	for sz: float in [-1.0, 1.0]:
 		var leaf := Node3D.new()
 		leaf.position = Vector3(fx - 0.9, 0, g.z + sz * hw)
 		leaf.rotation.y = sz * deg_to_rad(-72.0)
-		add_child(leaf)
+		_k.add_child(leaf)
 		Props.box(leaf, Vector3(0.14, spring + 0.9, hw), Vector3(0, (spring + 0.9) / 2.0, -sz * hw / 2.0), Color("5a3a22"))
 		for yy: float in [0.8, 2.2, 3.6]:
 			Props.box(leaf, Vector3(0.17, 0.12, hw), Vector3(0, yy, -sz * hw / 2.0), Color("3a3a3e"))
@@ -1752,74 +2162,74 @@ func _build_gate() -> void:
 			Props.ball(leaf, 0.035, Vector3(-0.09, 0.5 + (k / 3) * 1.1, -sz * (0.3 + (k % 3) * 0.5)), Color("2a2a2e"), Vector3.ONE, 4)
 	# Yarı kalkık demir parmaklık (geçidin tepesinde)
 	for k in 7:
-		Props.cyl(self, 0.03, 1.6, Vector3(fx - 0.12, spring + 0.6, g.z - hw + 0.25 + k * (hw * 2.0 - 0.5) / 6.0), Color("2a2a2e"), Vector3.ZERO, 5)
+		Props.cyl(_k, 0.03, 1.6, Vector3(fx - 0.12, spring + 0.6, g.z - hw + 0.25 + k * (hw * 2.0 - 0.5) / 6.0), Color("2a2a2e"), Vector3.ZERO, 5)
 	for yy: float in [0.1, 0.8]:
-		Props.box(self, Vector3(0.06, 0.06, hw * 2.0 - 0.3), Vector3(fx - 0.12, spring + yy, g.z), Color("2a2a2e"))
+		Props.box(_k, Vector3(0.06, 0.06, hw * 2.0 - 0.3), Vector3(fx - 0.12, spring + yy, g.z), Color("2a2a2e"))
 	# Eşik taşı ve iki basamak
-	Props.box(self, Vector3(2.0, 0.12, hw * 2.0 + 0.6), Vector3(fx - 1.2, 0.06, g.z), Color("b8ae98"))
+	Props.box(_k, Vector3(2.0, 0.12, hw * 2.0 + 0.6), Vector3(fx - 1.2, 0.06, g.z), Color("b8ae98"))
 	# Meşaleler ve nöbetçiler
 	for sz: float in [-1.0, 1.0]:
-		lights.append(Night.torch(self, Vector3(fx - 1.4, 0, g.z + sz * (hw + 1.5)), 2.6))
+		lights.append(Night.torch(_k, Vector3(fx - 1.4, 0, g.z + sz * (hw + 1.5)), 2.6))
 		var guard := Person.new({"coat": Color("8a2b22"), "pants": Color("4a3a2a"), "hat": "helm", "mustache": true, "skin": Color("d9a07a")})
 		guard.position = Vector3(fx - 2.2, 0, g.z + sz * (hw + 1.0))
 		guard.rotation.y = -PI / 2.0
-		add_child(guard)
+		_k.add_child(guard)
 		Props.cyl(guard, 0.025, 2.3, Vector3(0.35, 1.15, 0.1), Color("5a4028"), Vector3.ZERO, 5)
 		Props.cyl(guard, 0.05, 0.25, Vector3(0.35, 2.35, 0.1), Color("b8bcc4"), Vector3.ZERO, 5, 0.0)
 		Props.cyl(guard, 0.3, 0.05, Vector3(-0.3, 1.0, 0.15), Color("9a1a22"), Vector3(0, 0, 90), 12)
-	Props.interactable(self, "exit", Vector3(1.4, 3.4, hw * 2.0), Vector3(fx - 0.9, 1.7, g.z))
+	Props.interactable(_k, "exit", Vector3(1.4, 3.4, hw * 2.0), Vector3(fx - 0.9, 1.7, g.z))
 
 
 # ---------------------------------------------------------------- saray avlusu
 
 func _build_palace() -> void:
 	var c := EMPEROR_POS
-	var body := Props.solid(self, Vector3(1.0, 8.0, 16.0), c + Vector3(-5.0, 4.0, 0), Color.WHITE)
+	var body := Props.solid(_k, Vector3(1.0, 8.0, 16.0), c + Vector3(-5.0, 4.0, 0), Color.WHITE)
 	# Blakherna/Tekfur Sarayı cephesi: tuğla ve mermerden dama-elmas desen, kemerli üst pencereler, mermer saçak
 	Props.set_pattern(body, Color("fff8f0"), "tekfur")
-	Props.box(self, Vector3(1.3, 0.4, 16.4), c + Vector3(-5.0, 8.1, 0), Color("ece4d4"))
+	Props.box(_k, Vector3(1.3, 0.4, 16.4), c + Vector3(-5.0, 8.1, 0), Color("ece4d4"))
 	for k in 5:
 		var wp := c + Vector3(-4.48, 6.2, -6.0 + k * 3.0)
-		Props.box(self, Vector3(0.06, 1.3, 0.9), wp, Color("2e2630"))
-		Props.ball(self, 0.45, wp + Vector3(0, 0.65, 0), Color("2e2630"), Vector3(0.14, 1, 1), 8)
+		Props.box(_k, Vector3(0.06, 1.3, 0.9), wp, Color("2e2630"))
+		Props.ball(_k, 0.45, wp + Vector3(0, 0.65, 0), Color("2e2630"), Vector3(0.14, 1, 1), 8)
 	# Sütunlar, mor sancaklar, taht
 	for k in 6:
 		var z := -6.0 + k * 2.4
-		Props.make_solid(Props.cyl(self, 0.35, 5.0, c + Vector3(-1.5, 2.5, z), Color("e8e0cc"), Vector3.ZERO, 10))      # sütunun içinden yürünmesin
-		Props.cyl(self, 0.36, 0.45, c + Vector3(-1.5, 5.12, z), Color("e0d4bc"), Vector3.ZERO, 10, 0.55)
-		Props.box(self, Vector3(0.9, 0.2, 0.9), c + Vector3(-1.5, 5.45, z), Color("d8c8b0"))
+		Props.make_solid(Props.cyl(_k, 0.35, 5.0, c + Vector3(-1.5, 2.5, z), Color("e8e0cc"), Vector3.ZERO, 10))      # sütunun içinden yürünmesin
+		Props.cyl(_k, 0.36, 0.45, c + Vector3(-1.5, 5.12, z), Color("e0d4bc"), Vector3.ZERO, 10, 0.55)
+		Props.box(_k, Vector3(0.9, 0.2, 0.9), c + Vector3(-1.5, 5.45, z), Color("d8c8b0"))
 	for z in [-3.0, 3.0]:
-		Props.box(self, Vector3(0.05, 3.0, 1.2), c + Vector3(-4.45, 4.0, z), Color("5a2a6a"))
+		Props.box(_k, Vector3(0.05, 3.0, 1.2), c + Vector3(-4.45, 4.0, z), Color("5a2a6a"))
 		_chi_rho(c + Vector3(-4.4, 4.5, z), 90.0, Color("d8b040"), 0.8)
-	Props.solid(self, Vector3(1.4, 0.4, 1.8), c + Vector3(-3.6, 0.2, 0), Color("c9c0a8"))
-	Props.solid(self, Vector3(0.9, 1.8, 1.2), c + Vector3(-4.0, 1.3, 0), Color("5a2a6a"))
+	Props.solid(_k, Vector3(1.4, 0.4, 1.8), c + Vector3(-3.6, 0.2, 0), Color("c9c0a8"))
+	Props.solid(_k, Vector3(0.9, 1.8, 1.2), c + Vector3(-4.0, 1.3, 0), Color("5a2a6a"))
 	emperor = Person.new({"coat": Color("5a2a6a"), "pants": Color("3a1a4a"), "hat": "stemma", "face": "emperor", "beard": true, "mustache": true, "hair": Color("6a6a6a"), "robe": Color("5a2a6a")})
 	emperor.position = c + Vector3(-2.6, 0, 0)
 	emperor.rotation.y = PI / 2.0
-	add_child(emperor)
-	Props.interactable(self, "emperor", Vector3(1.2, 2.0, 1.2), emperor.position + Vector3(0, 1.0, 0))
+	_k.add_child(emperor)
+	Props.interactable(_k, "emperor", Vector3(1.2, 2.0, 1.2), emperor.position + Vector3(0, 1.0, 0))
 	# Mangala masası (mini oyun): tahta, iki sıra çukur, iki hazine
 	var mt := c + Vector3(0.6, 0, 4.2)          # heyetin ve konukların durduğu yerden uzakta (içinden geçen olmasın)
-	Props.solid(self, Vector3(1.1, 0.72, 0.7), mt + Vector3(0, 0.36, 0), Color("6b4428"))
-	Props.box(self, Vector3(0.95, 0.06, 0.4), mt + Vector3(0, 0.75, 0), Color("4a2e1a"))
+	Props.solid(_k, Vector3(1.1, 0.72, 0.7), mt + Vector3(0, 0.36, 0), Color("6b4428"))
+	Props.box(_k, Vector3(0.95, 0.06, 0.4), mt + Vector3(0, 0.75, 0), Color("4a2e1a"))
 	for i in 6:
 		for row in [-0.09, 0.09]:
-			Props.cyl(self, 0.05, 0.02, mt + Vector3(-0.3 + i * 0.12, 0.785, row), Color("2a1a10"), Vector3.ZERO, 8)
+			Props.cyl(_k, 0.05, 0.02, mt + Vector3(-0.3 + i * 0.12, 0.785, row), Color("2a1a10"), Vector3.ZERO, 8)
 	for sx in [-0.42, 0.42]:
-		Props.box(self, Vector3(0.08, 0.02, 0.3), mt + Vector3(sx, 0.785, 0), Color("2a1a10"))
-	Props.cyl(self, 0.22, 0.45, mt + Vector3(0, 0.22, 0.75), Color("7a5232"), Vector3.ZERO, 8)
-	Props.interactable(self, "mg:mangala", Vector3(1.4, 1.2, 1.2), mt + Vector3(0, 0.8, 0))
+		Props.box(_k, Vector3(0.08, 0.02, 0.3), mt + Vector3(sx, 0.785, 0), Color("2a1a10"))
+	Props.cyl(_k, 0.22, 0.45, mt + Vector3(0, 0.22, 0.75), Color("7a5232"), Vector3.ZERO, 8)
+	Props.interactable(_k, "mg:mangala", Vector3(1.4, 1.2, 1.2), mt + Vector3(0, 0.8, 0))
 	for k in 2:
 		var g := Person.new({"coat": Color("8a2b22"), "pants": Color("4a3a2a"), "hat": "helm", "mustache": true})
 		g.position = c + Vector3(-1.0, 0, -2.2 + k * 4.4)
 		g.rotation.y = PI / 2.0
-		add_child(g)
+		_k.add_child(g)
 	var l := OmniLight3D.new()
 	l.position = c + Vector3(0, 4.0, 0)
 	l.light_color = Color("ffd8a0")
 	l.light_energy = 1.2
 	l.omni_range = 10.0
-	add_child(l)
+	_k.add_child(l)
 
 
 func clerk_x(i: int) -> float:
@@ -1833,7 +2243,7 @@ func _chi_rho(pos: Vector3, yaw_deg: float, col: Color, s: float) -> void:
 	var g := Node3D.new()
 	g.position = pos
 	g.rotation_degrees.y = yaw_deg
-	add_child(g)
+	_k.add_child(g)
 	var w := 0.07 * s
 	for a: float in [38.0, -38.0]:
 		Props.box(g, Vector3(w, s * 0.95, 0.02), Vector3(0, -0.05 * s, 0), col, Vector3(0, 0, a))

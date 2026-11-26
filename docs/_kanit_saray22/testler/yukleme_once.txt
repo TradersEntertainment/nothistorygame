@@ -1,0 +1,4 @@
+LOADTIME scene=chapter24 load=213 inst=1 ready=43276 frame1=1064 total=44555
+LOADTIME scene=chapter23 load=165 inst=1 ready=40794 frame1=1184 total=42145
+LOADTIME scene=chapter10h load=176 inst=1 ready=52170 frame1=1027 total=53375
+LOADTIME scene=chapter6 load=337 inst=3 ready=8490 frame1=590 total=9421

@@ -164,7 +164,7 @@ var _skod := PackedByteArray()
 func _zemin() -> void:
 	_izgaralar()
 	# DOKU-4 (yükleme): hücre ağlarının dizileri diskte (sokak verisi + arazi ızgaraları + kod aynıysa)
-	var imza := IstSokak.onbellek_imza(["res://scripts/world/ist/mahalle_doku.gd", sk.occ, sk.rid, sk.streets.size(), sk.zemin_ek,
+	var imza := IstSokak.onbellek_imza(["res://scripts/world/ist/mahalle_doku.gd", sk.occ, sk.rid, sk.streets.size(), sk.zemin_ek, sk.dolgu.get("ek_yok", 0),
 		sk.x0, sk.z0, sk.nx, sk.nz, _yh6, _yh24, _gx0, _gz0])
 	var gruplar := {}                 # Vector2i → [[verts, cols] taş, [verts, cols] toprak]
 	if IstSokak.onbellek_var("zemin", imza):
@@ -229,7 +229,14 @@ func _zemin_hesapla() -> Dictionary:
 	# döşeli meydan diskleri (Augustaion, forumlar, kapı önleri, mahalle meydanları)
 	var ek := PackedByteArray()
 	ek.resize(nx * nz)
+	# G22b: sur ardı dolgusunun hücreleri (IstSokak.dolgu) dolgudan önceki disklerle boyanmaz (hub'ın eser meydanı r 63)
+	var ek_yok := {}
+	for k: int in (sk.dolgu.get("ek_yok", PackedInt32Array()) as PackedInt32Array):
+		ek_yok[k] = true
+	var ek_n0 := int((sk.dolgu.get("taban", {}) as Dictionary).get("zemin_ek", 0))
+	var ek_i := -1
 	for z: Dictionary in sk.zemin_ek:
+		ek_i += 1
 		LoadingScreen.nabiz("doku")
 		var c: Vector2 = z["c"]
 		var r := float(z["r"])
@@ -237,7 +244,7 @@ func _zemin_hesapla() -> Dictionary:
 		for j in range(maxi(0, int((c.y - r - sk.z0) / IstSokak.G)), mini(nz, int((c.y + r - sk.z0) / IstSokak.G) + 1)):
 			for i in range(maxi(0, int((c.x - r - sk.x0) / IstSokak.G)), mini(nx, int((c.x + r - sk.x0) / IstSokak.G) + 1)):
 				var k := j * nx + i
-				if sk.cell_c(i, j).distance_to(c) <= r and sk.occ[k] in [0, 1, 5, 6]:
+				if sk.cell_c(i, j).distance_to(c) <= r and sk.occ[k] in [0, 1, 5, 6] and not (ek_i < ek_n0 and ek_yok.has(k)):
 					ek[k] = t
 	var tur := PackedByteArray()
 	tur.resize(nx * nz)
@@ -256,6 +263,10 @@ func _zemin_hesapla() -> Dictionary:
 		if tur[k] != 0:
 			var cc := sk.cell_c(k % nx, k / nx)
 			ys[k] = _zy(cc.x, cc.y)
+			# G22b: dolgu hücreleri (eski hub dairesi): bölümde arazi hub düzleminin 5 cm altında (IstBaglama yaması), uçuşta
+			# 12 cm (IstGeo.duzle); zemin katmanı ikisinin de üstünde kalsın
+			if ek_yok.has(k):
+				ys[k] += 0.035
 			cs[k] = _renk(tur[k], cc)
 	var gruplar := {}                 # Vector2i → [[verts, cols] taş, [verts, cols] toprak]
 	var n_kare := 0

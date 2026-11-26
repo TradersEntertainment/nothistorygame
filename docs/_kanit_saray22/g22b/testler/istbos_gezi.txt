@@ -1,0 +1,7 @@
+ISTBOS bolge=uzak kare=73 bos=0 oran=0.0% ornek_gercek_en=
+ISTBOS bolge=karsi_kiyi kare=3906 bos=7 oran=0.2% ornek_gercek_en=(3942,2914) (2685,1885)
+ISTBOS bolge=sur_disi_600 kare=803 bos=3 oran=0.4% ornek_gercek_en=(-5771,-2457)
+ISTBOS bolge=sehir_ici kare=1109 bos=10 oran=0.9% ornek_gercek_en=(-2685,1885) (-3600,-514) (-2571,-514) (-2571,-628)
+ISTBOS bolge=galata kare=24 bos=0 oran=0.0% ornek_gercek_en=
+ISTBOS sure_ms=5080 dolu_kare=14219
+GEZI bitti kurulum_ms=1013

@@ -1,0 +1,10 @@
+once chapter24 LOADTIME scene=chapter24 load=272 inst=2 ready=50137 frame1=1378 total=51790 
+once chapter23 LOADTIME scene=chapter23 load=151 inst=1 ready=39030 frame1=1114 total=40298 
+once chapter10h LOADTIME scene=chapter10h load=176 inst=2 ready=36510 frame1=1124 total=37814 
+once chapter6 LOADTIME scene=chapter6 load=262 inst=4 ready=7934 frame1=589 total=8791 
+kopya chapter24 LOADTIME scene=chapter24 load=193 inst=3 ready=37661 frame1=1152 total=39010 
+kopya chapter23 LOADTIME scene=chapter23 load=154 inst=1 ready=36137 frame1=1038 total=37332 
+kopya chapter10h LOADTIME scene=chapter10h load=184 inst=2 ready=37547 frame1=1207 total=38941 
+kopya chapter6 LOADTIME scene=chapter6 load=254 inst=5 ready=8180 frame1=546 total=8986 
+kopya_soguk chapter24 LOADTIME scene=chapter24 load=186 inst=1 ready=56312 frame1=1273 total=57774 
+BITTI

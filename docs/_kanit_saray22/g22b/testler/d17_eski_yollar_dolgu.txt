@@ -1,0 +1,6 @@
+G22BSONDA karma ad=streets n=1068 onek=1068 md5=9c60bb95ef6eabcb25d037907cf28d05 dolgu_taban=-
+G22BSONDA dolgu {  }
+G22BSONDA dolgu_en_dogu x=-inf () esik=14
+G22BSONDA karma ad=streets n=1056 onek=1056 md5=e4283130bee5513b1b399f13d84ccd26 dolgu_taban=-
+G22BSONDA dolgu {  }
+G22BSONDA dolgu_en_dogu x=-inf () esik=14

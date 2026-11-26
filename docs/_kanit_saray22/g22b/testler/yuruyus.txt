@@ -1,0 +1,302 @@
+/root/is/sonda_yuru10h.log:G22BSONDA yuklendi bolum=10h v2=true ms=44226
+/root/is/sonda_yuru10h.log:G22BSONDA karma ad=streets n=1101 onek=1101 md5=24065ecbc92db075cff219adf4729c4c dolgu_taban=1098
+/root/is/sonda_yuru10h.log:G22BSONDA karma ad=houses n=8324 onek=8324 md5=93ae97eeceef57c0f2ffb46438cdbf8b dolgu_taban=8306
+/root/is/sonda_yuru10h.log:G22BSONDA karma ad=doku n=139 onek=139 md5=cd90b7bd54dd125b1f981a8485929fac dolgu_taban=125
+/root/is/sonda_yuru10h.log:G22BSONDA karma ad=oge n=510 onek=510 md5=6380ab85b35e3bf15b04d2c7df0ef35b dolgu_taban=403
+/root/is/sonda_yuru10h.log:G22BSONDA karma ad=avlu n=1024 onek=1024 md5=6362dfbe93cd1a845e8aa1510b6eba81 dolgu_taban=1023
+/root/is/sonda_yuru10h.log:G22BSONDA karma ad=meydan n=87 onek=87 md5=fe16c94bb47599cc18fa31d84a3b7b1e dolgu_taban=86
+/root/is/sonda_yuru10h.log:G22BSONDA dolgu { "taban": { "streets": 1098, "houses": 8306, "doku": 125, "oge": 403, "avlu": 1023, "meydan": 86, "sira": 3390, "zemin_ek": 139 }, "hucre": 1601, "uc": (-1593.421, -292.578), "J": (-1603.421, -292.578), "toprak": 227, "meydan": (-12.0, -1.5), "ev": 6, "harap": ["harabe_kemer", (-28.0, 24.0)], "yama": 6, "kume": 30, "saray_agiz": [(-1293.918, -293.913), (-1269.657, -290.4881), (-1262.527, -288.1599)], "saray_hucre": 1400, "saray_yama": 7, "saray_kume": 55 }
+/root/is/sonda_yuru10h.log:G22BSONDA daire occ={ "rid_yok": 625, "k1": 78, "a1": 696, "a3": 556, "a5": 187, "a6": 25, "a2": 59, "rid_hub_yolu_yol": 146, "rid_hub_meydan_sokak": 3 }
+/root/is/sonda_yuru10h.log:G22BSONDA bos yer=hub kare=38 bos=0 oran=0.000 ornek=[]
+/root/is/sonda_yuru10h.log:G22BSONDA bos yer=saray kare=24 bos=0 oran=0.000 ornek=[]
+/root/is/sonda_yuru10h.log:G22BSONDA cimen bakis=-40 en_uzun=4.5
+/root/is/sonda_yuru10h.log:G22BSONDA cimen bakis=-35 en_uzun=5.0
+/root/is/sonda_yuru10h.log:G22BSONDA cimen bakis=-30 en_uzun=4.0
+/root/is/sonda_yuru10h.log:G22BSONDA cimen bakis=-25 en_uzun=4.0
+/root/is/sonda_yuru10h.log:G22BSONDA cimen bakis=-20 en_uzun=4.0
+/root/is/sonda_yuru10h.log:G22BSONDA cimen bakis=-15 en_uzun=4.0
+/root/is/sonda_yuru10h.log:G22BSONDA cimen bakis=-10 en_uzun=2.5
+/root/is/sonda_yuru10h.log:G22BSONDA cimen bakis=-5 en_uzun=1.0
+/root/is/sonda_yuru10h.log:G22BSONDA cimen bakis=0 en_uzun=1.5
+/root/is/sonda_yuru10h.log:G22BSONDA cimen bakis=5 en_uzun=1.0
+/root/is/sonda_yuru10h.log:G22BSONDA cimen bakis=10 en_uzun=4.0
+/root/is/sonda_yuru10h.log:G22BSONDA cimen bakis=15 en_uzun=5.5
+/root/is/sonda_yuru10h.log:G22BSONDA cimen bakis=20 en_uzun=6.5
+/root/is/sonda_yuru10h.log:G22BSONDA cimen bakis=25 en_uzun=5.0
+/root/is/sonda_yuru10h.log:G22BSONDA cimen bakis=30 en_uzun=3.0
+/root/is/sonda_yuru10h.log:G22BSONDA cimen bakis=35 en_uzun=6.0
+/root/is/sonda_yuru10h.log:G22BSONDA cimen bakis=40 en_uzun=9.5
+/root/is/sonda_yuru10h.log:G22BSONDA cimen OZET en_uzun=9.5 esik=12 durum=PASS
+/root/is/sonda_yuru10h.log:G22BSONDA hat J=(-1603.421, -292.578) uc=(-1593.421, -292.578) nokta=55
+/root/is/sonda_yuru10h.log:G22BSONDA yol nokta=418 kopuk=0 en_dar=3.00 ornek=[]
+/root/is/sonda_yuru10h.log:G22BSONDA yer ad=6b_tunek_0 yerel=ic(0.0,-16.0) en_yakin=23.4 (oge_kuyu) durum=PASS
+/root/is/sonda_yuru10h.log:G22BSONDA yer ad=6b_tunek_1 yerel=ic(-4.8,-15.2) en_yakin=27.6 (oge_kuyu) durum=PASS
+/root/is/sonda_yuru10h.log:G22BSONDA yer ad=6b_tunek_2 yerel=ic(0.9,1.0) en_yakin=20.7 (oge_kuyu) durum=PASS
+/root/is/sonda_yuru10h.log:G22BSONDA yer ad=6b_tunek_3 yerel=ic(8.5,-18.5) en_yakin=14.9 (oge_kulube_bag) durum=PASS
+/root/is/sonda_yuru10h.log:G22BSONDA yer ad=6b_tunek_4_fici yerel=hub(21.5,-10.5) en_yakin=15.4 (oge_set_multeci_cadirlari) durum=PASS
+/root/is/sonda_yuru10h.log:G22BSONDA yer ad=6b_tunek_5_masa yerel=hub(24.6,-12.4) en_yakin=18.6 (oge_set_sur_onarim_santiyesi) durum=PASS
+/root/is/sonda_yuru10h.log:G22BSONDA yer ad=6b_kararma_ficiya_11m yerel=hub(20.0,0.4) en_yakin=6.6 (oge_set_multeci_cadirlari) durum=PASS
+/root/is/sonda_yuru10h.log:G22BSONDA yer ad=6b_10h_sokak_agzi_yerlesme yerel=hub(20.0,-14.0) en_yakin=14.9 (oge_set_sur_onarim_santiyesi) durum=PASS
+/root/is/sonda_yuru10h.log:G22BSONDA yer ad=6b_giust_yani yerel=hub(22.8,-12.4) en_yakin=17.6 (oge_set_sur_onarim_santiyesi) durum=PASS
+/root/is/sonda_yuru10h.log:G22BSONDA yer ad=6b_giust_yani2 yerel=hub(23.4,-12.8) en_yakin=17.6 (oge_set_sur_onarim_santiyesi) durum=PASS
+/root/is/sonda_yuru10h.log:G22BSONDA yer ad=6b_kapi_yani yerel=hub(27.0,5.5) en_yakin=13.2 (oge_set_multeci_cadirlari) durum=PASS
+/root/is/sonda_yuru10h.log:G22BSONDA yer ad=6b_niko_kapi yerel=hub(27.8,4.2) en_yakin=14.0 (oge_set_multeci_cadirlari) durum=PASS
+/root/is/sonda_yuru10h.log:G22BSONDA yer ad=6b_martı_sur yerel=hub(30.0,-14.0) en_yakin=21.0 (oge_set_sur_onarim_santiyesi) durum=PASS
+/root/is/sonda_yuru10h.log:G22BSONDA yer ad=6b_vista_sur yerel=hub(34.0,-14.0) en_yakin=24.2 (oge_set_sur_onarim_santiyesi) durum=PASS
+/root/is/sonda_yuru10h.log:G22BSONDA yer ad=GIUST_POS yerel=hub(26.0,-14.0) en_yakin=18.2 (oge_set_sur_onarim_santiyesi) durum=PASS
+/root/is/sonda_yuru10h.log:G22BSONDA yer ad=EXIT_POS yerel=hub(33.0,5.5) en_yakin=19.2 (oge_set_multeci_cadirlari) durum=PASS
+/root/is/sonda_yuru10h.log:G22BSONDA yer ad=7b_iz_walls yerel=hub(22.5,-11.5) en_yakin=16.7 (oge_set_multeci_cadirlari) durum=PASS
+/root/is/sonda_yuru10h.log:G22BSONDA yer ad=7b_iz_outside yerel=hub(30.6,6.9) en_yakin=16.8 (oge_set_multeci_cadirlari) durum=PASS
+/root/is/sonda_yuru10h.log:G22BSONDA yer ad=10h_kapidan_giris yerel=hub(30.0,5.5) en_yakin=16.2 (oge_set_multeci_cadirlari) durum=PASS
+/root/is/sonda_yuru10h.log:G22BSONDA yer ad=10h_gece_niko yerel=hub(22.9,-8.3) en_yakin=14.4 (oge_set_multeci_cadirlari) durum=PASS
+/root/is/sonda_yuru10h.log:G22BSONDA yer ad=10h_gedik yerel=hub(32.4,-26.0) en_yakin=18.5 (oge_set_sur_onarim_santiyesi) durum=PASS
+/root/is/sonda_yuru10h.log:G22BSONDA yer ad=dress_reserved_24_-24_0 yerel=hub(24.0,-24.0) en_yakin=10.7 (oge_set_sur_onarim_santiyesi) durum=PASS
+/root/is/sonda_yuru10h.log:G22BSONDA yer ad=dress_reserved_24_-24_1 yerel=hub(36.0,-24.0) en_yakin=22.3 (oge_set_sur_onarim_santiyesi) durum=PASS
+/root/is/sonda_yuru10h.log:G22BSONDA yer ad=dress_reserved_24_-24_2 yerel=hub(24.0,-6.0) en_yakin=13.5 (oge_set_multeci_cadirlari) durum=PASS
+/root/is/sonda_yuru10h.log:G22BSONDA yer ad=dress_reserved_24_-24_3 yerel=hub(36.0,-6.0) en_yakin=23.9 (oge_set_multeci_cadirlari) durum=PASS
+/root/is/sonda_yuru10h.log:G22BSONDA yer ad=dress_reserved_21_-12_0 yerel=hub(21.0,-12.0) en_yakin=16.5 (oge_set_multeci_cadirlari) durum=PASS
+/root/is/sonda_yuru10h.log:G22BSONDA yer ad=dress_reserved_21_-12_1 yerel=hub(34.0,-12.0) en_yakin=25.0 (oge_set_multeci_cadirlari) durum=PASS
+/root/is/sonda_yuru10h.log:G22BSONDA yer ad=dress_reserved_21_-12_2 yerel=hub(21.0,7.0) en_yakin=7.2 (oge_set_multeci_cadirlari) durum=PASS
+/root/is/sonda_yuru10h.log:G22BSONDA yer ad=dress_reserved_21_-12_3 yerel=hub(34.0,7.0) en_yakin=20.2 (oge_set_multeci_cadirlari) durum=PASS
+/root/is/sonda_yuru10h.log:G22BSONDA yer ad=dress_reserved_27_-1_0 yerel=hub(27.0,-1.0) en_yakin=13.7 (oge_set_multeci_cadirlari) durum=PASS
+/root/is/sonda_yuru10h.log:G22BSONDA yer ad=dress_reserved_27_-1_1 yerel=hub(36.0,-1.0) en_yakin=22.5 (oge_set_multeci_cadirlari) durum=PASS
+/root/is/sonda_yuru10h.log:G22BSONDA yer ad=dress_reserved_27_-1_2 yerel=hub(27.0,8.0) en_yakin=13.2 (oge_set_multeci_cadirlari) durum=PASS
+/root/is/sonda_yuru10h.log:G22BSONDA yer ad=dress_reserved_27_-1_3 yerel=hub(36.0,8.0) en_yakin=22.2 (oge_set_multeci_cadirlari) durum=PASS
+/root/is/sonda_yuru10h.log:G22BSONDA yer ad=dress_reserved_17_-12_0 yerel=hub(17.5,-12.5) en_yakin=15.5 (oge_set_sur_onarim_santiyesi) durum=PASS
+/root/is/sonda_yuru10h.log:G22BSONDA yer ad=dress_reserved_17_-12_1 yerel=hub(24.5,-12.5) en_yakin=18.4 (oge_set_sur_onarim_santiyesi) durum=PASS
+/root/is/sonda_yuru10h.log:G22BSONDA yer ad=dress_reserved_17_-12_2 yerel=hub(17.5,0.5) en_yakin=4.4 (oge_set_multeci_cadirlari) durum=PASS
+/root/is/sonda_yuru10h.log:G22BSONDA yer ad=dress_reserved_17_-12_3 yerel=hub(24.5,0.5) en_yakin=10.9 (oge_set_multeci_cadirlari) durum=PASS
+/root/is/sonda_yuru10h.log:G22BSONDA yer ad=dress_reserved_18_-18_0 yerel=hub(18.0,-18.5) en_yakin=10.0 (oge_set_sur_onarim_santiyesi) durum=PASS
+/root/is/sonda_yuru10h.log:G22BSONDA yer ad=dress_reserved_18_-18_1 yerel=hub(24.0,-18.5) en_yakin=13.6 (oge_set_sur_onarim_santiyesi) durum=PASS
+/root/is/sonda_yuru10h.log:G22BSONDA yer ad=dress_reserved_18_-18_2 yerel=hub(18.0,-10.0) en_yakin=13.5 (oge_set_multeci_cadirlari) durum=PASS
+/root/is/sonda_yuru10h.log:G22BSONDA yer ad=dress_reserved_18_-18_3 yerel=hub(24.0,-10.0) en_yakin=16.4 (oge_set_multeci_cadirlari) durum=PASS
+/root/is/sonda_yuru10h.log:G22BSONDA yer ad=START yerel=ic(0.0,12.0) en_yakin=14.4 (oge_kuyu) durum=PASS
+/root/is/sonda_yuru10h.log:G22BSONDA yer ad=START_rapor_kapisi yerel=ic(0.0,14.6) en_yakin=11.9 (oge_kuyu) durum=PASS
+/root/is/sonda_yuru10h.log:G22BSONDA yer ad=13_dogus yerel=ic(0.0,8.0) en_yakin=18.3 (oge_kuyu) durum=PASS
+/root/is/sonda_yuru10h.log:G22BSONDA yer ad=EMPEROR_POS yerel=ic(-27.0,-14.0) en_yakin=24.5 (oge_kuyu) durum=PASS
+/root/is/sonda_yuru10h.log:G22BSONDA yer ad=NIKO_POS yerel=ic(1.5,-27.0) en_yakin=20.0 (oge_kulube_bag) durum=PASS
+/root/is/sonda_yuru10h.log:G22BSONDA yer ad=CELL_START yerel=ic(-19.4,-26.0) en_yakin=25.6 (oge_kuyu) durum=PASS
+/root/is/sonda_yuru10h.log:G22BSONDA yer ad=7b_iz_kancilarya yerel=ic(-2.2,-26.5) en_yakin=23.7 (oge_kulube_bag) durum=PASS
+/root/is/sonda_yuru10h.log:G22BSONDA yer ad=24_ROUTE_A yerel=ic(0.0,-24.0) en_yakin=21.6 (oge_kulube_bag) durum=PASS
+/root/is/sonda_yuru10h.log:G22BSONDA yer ad=24_ROUTE_B yerel=ic(0.0,6.0) en_yakin=20.3 (oge_kuyu) durum=PASS
+/root/is/sonda_yuru10h.log:G22BSONDA yer ad=IC_RECT_kose_0 yerel=ic(-46.0,-48.0) en_yakin=6.7 (oge_kuyu) durum=PASS
+/root/is/sonda_yuru10h.log:G22BSONDA yer ad=IC_RECT_kose_1 yerel=ic(18.0,-48.0) en_yakin=3.7 (oge_kuyu) durum=PASS
+/root/is/sonda_yuru10h.log:G22BSONDA yer ad=IC_RECT_kose_2 yerel=ic(-46.0,22.0) en_yakin=3.2 (oge_kuyu) durum=PASS
+/root/is/sonda_yuru10h.log:G22BSONDA yer ad=IC_RECT_kose_3 yerel=ic(18.0,22.0) en_yakin=3.7 (oge_kuyu) durum=PASS
+/root/is/sonda_yuru10h.log:G22BSONDA yer ad=ic_sokak_agzi yerel=ic(18.0,-14.2) en_yakin=8.2 (oge_kuyu) durum=PASS
+/root/is/sonda_yuru10h.log:G22BSONDA dolgu_en_dogu x=14.3 (oge_agil) esik=14
+/root/is/sonda_yuru10h.log:G22BSONDA OZET yer=55 kotu=0 yeni_iz=116 dolgu_en_dogu_x=14.3 kopuk=0 en_dar=3.00 cimen=9.5
+/root/is/sonda_yuru10h.log:G22BSONDA yukseklik bolum=10h yerel=(8.0, -30.0) geo_h=13.968 h_ham=16.862 hub_y=14.088 carp_y=13.968 AraziCarpisma
+/root/is/sonda_yuru10h.log:G22BSONDA yukseklik bolum=10h yerel=(8.0, 10.0) geo_h=13.968 h_ham=15.231 hub_y=14.088 carp_y=13.968 AraziCarpisma
+/root/is/sonda_yuru10h.log:G22BSONDA yukseklik bolum=10h yerel=(-10.0, -14.0) geo_h=13.968 h_ham=16.135 hub_y=14.088 carp_y=13.968 AraziCarpisma
+/root/is/sonda_yuru10h.log:G22BSONDA yukseklik bolum=10h yerel=(-30.0, 10.0) geo_h=13.968 h_ham=14.801 hub_y=14.088 carp_y=14.968 AvluDuvar
+/root/is/sonda_yuru10h.log:G22BSONDA yukseklik bolum=10h yerel=(-40.0, -30.0) geo_h=13.968 h_ham=16.444 hub_y=14.088 carp_y=13.968 AraziCarpisma
+/root/is/sonda_yuru10h.log:G22BSONDA yukseklik bolum=10h yerel=(16.0, -30.0) geo_h=13.968 h_ham=16.907 hub_y=14.088 carp_y=13.968 AraziCarpisma
+/root/is/sonda_yuru10h.log:G22BSONDA yukseklik bolum=10h yerel=(25.0, -14.0) geo_h=13.968 h_ham=16.210 hub_y=14.088 carp_y=14.088 @StaticBody3D@111308
+/root/is/sonda_yuru10h.log:G22BSONDA hat J=(-1603.421, -292.578) uc=(-1593.421, -292.578) nokta=55
+/root/is/sonda_yuru10h.log:G22BSONDA yuru takilma nokta=11 p=(-407.4, -7.5, 109.9) hedef=(-33.0, -0.1, -12.5)
+/root/is/sonda_yuru10h.log:G22BSONDA yuru OZET nokta=82 takilma=1 dusme=0 yol=1275 sure_ms=152933
+/root/is/sonda_yuru.log:G22BSONDA yuklendi bolum=23 v2=true ms=54807
+/root/is/sonda_yuru.log:G22BSONDA karma ad=streets n=1101 onek=1098 md5=7a8b05b3593f550acdc56c2af286133a dolgu_taban=1098
+/root/is/sonda_yuru.log:G22BSONDA karma ad=houses n=8324 onek=8306 md5=5a763cea5fd7f5ae7037fa5d27d5273f dolgu_taban=8306
+/root/is/sonda_yuru.log:G22BSONDA karma ad=doku n=139 onek=125 md5=2b88f63227e76e43cc2ef6437bbf4193 dolgu_taban=125
+/root/is/sonda_yuru.log:G22BSONDA karma ad=oge n=510 onek=403 md5=0e8aca495c7e95a4f00debd44689343e dolgu_taban=403
+/root/is/sonda_yuru.log:G22BSONDA karma ad=avlu n=1024 onek=1023 md5=3084653dc9e189d4e4b3f1d514fcb5cd dolgu_taban=1023
+/root/is/sonda_yuru.log:G22BSONDA karma ad=meydan n=87 onek=86 md5=dbaeab54be16e27514e36e4f320cc264 dolgu_taban=86
+/root/is/sonda_yuru.log:G22BSONDA dolgu { "taban": { "streets": 1098, "houses": 8306, "doku": 125, "oge": 403, "avlu": 1023, "meydan": 86, "sira": 3390, "zemin_ek": 139 }, "hucre": 1601, "uc": (-1593.421, -292.578), "J": (-1603.421, -292.578), "toprak": 227, "meydan": (-12.0, -1.5), "ev": 6, "harap": ["harabe_kemer", (-28.0, 24.0)], "yama": 6, "kume": 30, "saray_agiz": [(-1293.918, -293.913), (-1269.657, -290.4881), (-1262.527, -288.1599)], "saray_hucre": 1400, "saray_yama": 7, "saray_kume": 55 }
+/root/is/sonda_yuru.log:G22BSONDA daire occ={ "rid_yok": 625, "k1": 78, "a1": 696, "a3": 556, "a5": 187, "a6": 25, "a2": 59, "rid_hub_yolu_yol": 146, "rid_hub_meydan_sokak": 3 }
+/root/is/sonda_yuru.log:G22BSONDA bos yer=hub kare=38 bos=0 oran=0.000 ornek=[]
+/root/is/sonda_yuru.log:G22BSONDA bos yer=saray kare=24 bos=0 oran=0.000 ornek=[]
+/root/is/sonda_yuru.log:G22BSONDA cimen bakis=-40 en_uzun=4.5
+/root/is/sonda_yuru.log:G22BSONDA cimen bakis=-35 en_uzun=5.0
+/root/is/sonda_yuru.log:G22BSONDA cimen bakis=-30 en_uzun=4.0
+/root/is/sonda_yuru.log:G22BSONDA cimen bakis=-25 en_uzun=4.0
+/root/is/sonda_yuru.log:G22BSONDA cimen bakis=-20 en_uzun=4.0
+/root/is/sonda_yuru.log:G22BSONDA cimen bakis=-15 en_uzun=4.0
+/root/is/sonda_yuru.log:G22BSONDA cimen bakis=-10 en_uzun=2.5
+/root/is/sonda_yuru.log:G22BSONDA cimen bakis=-5 en_uzun=1.0
+/root/is/sonda_yuru.log:G22BSONDA cimen bakis=0 en_uzun=1.5
+/root/is/sonda_yuru.log:G22BSONDA cimen bakis=5 en_uzun=1.0
+/root/is/sonda_yuru.log:G22BSONDA cimen bakis=10 en_uzun=4.0
+/root/is/sonda_yuru.log:G22BSONDA cimen bakis=15 en_uzun=5.5
+/root/is/sonda_yuru.log:G22BSONDA cimen bakis=20 en_uzun=6.5
+/root/is/sonda_yuru.log:G22BSONDA cimen bakis=25 en_uzun=5.0
+/root/is/sonda_yuru.log:G22BSONDA cimen bakis=30 en_uzun=3.0
+/root/is/sonda_yuru.log:G22BSONDA cimen bakis=35 en_uzun=6.0
+/root/is/sonda_yuru.log:G22BSONDA cimen bakis=40 en_uzun=9.5
+/root/is/sonda_yuru.log:G22BSONDA cimen OZET en_uzun=9.5 esik=12 durum=PASS
+/root/is/sonda_yuru.log:G22BSONDA hat J=(-1603.421, -292.578) uc=(-1593.421, -292.578) nokta=55
+/root/is/sonda_yuru.log:G22BSONDA yol nokta=418 kopuk=0 en_dar=3.00 ornek=[]
+/root/is/sonda_yuru.log:G22BSONDA yer ad=6b_tunek_0 yerel=ic(0.0,-16.0) en_yakin=23.4 (oge_kuyu) durum=PASS
+/root/is/sonda_yuru.log:G22BSONDA yer ad=6b_tunek_1 yerel=ic(-4.8,-15.2) en_yakin=27.6 (oge_kuyu) durum=PASS
+/root/is/sonda_yuru.log:G22BSONDA yer ad=6b_tunek_2 yerel=ic(0.9,1.0) en_yakin=20.7 (oge_kuyu) durum=PASS
+/root/is/sonda_yuru.log:G22BSONDA yer ad=6b_tunek_3 yerel=ic(8.5,-18.5) en_yakin=14.9 (oge_kulube_bag) durum=PASS
+/root/is/sonda_yuru.log:G22BSONDA yer ad=6b_tunek_4_fici yerel=hub(21.5,-10.5) en_yakin=15.4 (oge_set_multeci_cadirlari) durum=PASS
+/root/is/sonda_yuru.log:G22BSONDA yer ad=6b_tunek_5_masa yerel=hub(24.6,-12.4) en_yakin=18.6 (oge_set_sur_onarim_santiyesi) durum=PASS
+/root/is/sonda_yuru.log:G22BSONDA yer ad=6b_kararma_ficiya_11m yerel=hub(20.0,0.4) en_yakin=6.6 (oge_set_multeci_cadirlari) durum=PASS
+/root/is/sonda_yuru.log:G22BSONDA yer ad=6b_10h_sokak_agzi_yerlesme yerel=hub(20.0,-14.0) en_yakin=14.9 (oge_set_sur_onarim_santiyesi) durum=PASS
+/root/is/sonda_yuru.log:G22BSONDA yer ad=6b_giust_yani yerel=hub(22.8,-12.4) en_yakin=17.6 (oge_set_sur_onarim_santiyesi) durum=PASS
+/root/is/sonda_yuru.log:G22BSONDA yer ad=6b_giust_yani2 yerel=hub(23.4,-12.8) en_yakin=17.6 (oge_set_sur_onarim_santiyesi) durum=PASS
+/root/is/sonda_yuru.log:G22BSONDA yer ad=6b_kapi_yani yerel=hub(27.0,5.5) en_yakin=13.2 (oge_set_multeci_cadirlari) durum=PASS
+/root/is/sonda_yuru.log:G22BSONDA yer ad=6b_niko_kapi yerel=hub(27.8,4.2) en_yakin=14.0 (oge_set_multeci_cadirlari) durum=PASS
+/root/is/sonda_yuru.log:G22BSONDA yer ad=6b_martı_sur yerel=hub(30.0,-14.0) en_yakin=21.0 (oge_set_sur_onarim_santiyesi) durum=PASS
+/root/is/sonda_yuru.log:G22BSONDA yer ad=6b_vista_sur yerel=hub(34.0,-14.0) en_yakin=24.2 (oge_set_sur_onarim_santiyesi) durum=PASS
+/root/is/sonda_yuru.log:G22BSONDA yer ad=GIUST_POS yerel=hub(26.0,-14.0) en_yakin=18.2 (oge_set_sur_onarim_santiyesi) durum=PASS
+/root/is/sonda_yuru.log:G22BSONDA yer ad=EXIT_POS yerel=hub(33.0,5.5) en_yakin=19.2 (oge_set_multeci_cadirlari) durum=PASS
+/root/is/sonda_yuru.log:G22BSONDA yer ad=7b_iz_walls yerel=hub(22.5,-11.5) en_yakin=16.7 (oge_set_multeci_cadirlari) durum=PASS
+/root/is/sonda_yuru.log:G22BSONDA yer ad=7b_iz_outside yerel=hub(30.6,6.9) en_yakin=16.8 (oge_set_multeci_cadirlari) durum=PASS
+/root/is/sonda_yuru.log:G22BSONDA yer ad=10h_kapidan_giris yerel=hub(30.0,5.5) en_yakin=16.2 (oge_set_multeci_cadirlari) durum=PASS
+/root/is/sonda_yuru.log:G22BSONDA yer ad=10h_gece_niko yerel=hub(22.9,-8.3) en_yakin=14.4 (oge_set_multeci_cadirlari) durum=PASS
+/root/is/sonda_yuru.log:G22BSONDA yer ad=10h_gedik yerel=hub(32.4,-26.0) en_yakin=18.5 (oge_set_sur_onarim_santiyesi) durum=PASS
+/root/is/sonda_yuru.log:G22BSONDA yer ad=dress_reserved_24_-24_0 yerel=hub(24.0,-24.0) en_yakin=10.7 (oge_set_sur_onarim_santiyesi) durum=PASS
+/root/is/sonda_yuru.log:G22BSONDA yer ad=dress_reserved_24_-24_1 yerel=hub(36.0,-24.0) en_yakin=22.3 (oge_set_sur_onarim_santiyesi) durum=PASS
+/root/is/sonda_yuru.log:G22BSONDA yer ad=dress_reserved_24_-24_2 yerel=hub(24.0,-6.0) en_yakin=13.5 (oge_set_multeci_cadirlari) durum=PASS
+/root/is/sonda_yuru.log:G22BSONDA yer ad=dress_reserved_24_-24_3 yerel=hub(36.0,-6.0) en_yakin=23.9 (oge_set_multeci_cadirlari) durum=PASS
+/root/is/sonda_yuru.log:G22BSONDA yer ad=dress_reserved_21_-12_0 yerel=hub(21.0,-12.0) en_yakin=16.5 (oge_set_multeci_cadirlari) durum=PASS
+/root/is/sonda_yuru.log:G22BSONDA yer ad=dress_reserved_21_-12_1 yerel=hub(34.0,-12.0) en_yakin=25.0 (oge_set_multeci_cadirlari) durum=PASS
+/root/is/sonda_yuru.log:G22BSONDA yer ad=dress_reserved_21_-12_2 yerel=hub(21.0,7.0) en_yakin=7.2 (oge_set_multeci_cadirlari) durum=PASS
+/root/is/sonda_yuru.log:G22BSONDA yer ad=dress_reserved_21_-12_3 yerel=hub(34.0,7.0) en_yakin=20.2 (oge_set_multeci_cadirlari) durum=PASS
+/root/is/sonda_yuru.log:G22BSONDA yer ad=dress_reserved_27_-1_0 yerel=hub(27.0,-1.0) en_yakin=13.7 (oge_set_multeci_cadirlari) durum=PASS
+/root/is/sonda_yuru.log:G22BSONDA yer ad=dress_reserved_27_-1_1 yerel=hub(36.0,-1.0) en_yakin=22.5 (oge_set_multeci_cadirlari) durum=PASS
+/root/is/sonda_yuru.log:G22BSONDA yer ad=dress_reserved_27_-1_2 yerel=hub(27.0,8.0) en_yakin=13.2 (oge_set_multeci_cadirlari) durum=PASS
+/root/is/sonda_yuru.log:G22BSONDA yer ad=dress_reserved_27_-1_3 yerel=hub(36.0,8.0) en_yakin=22.2 (oge_set_multeci_cadirlari) durum=PASS
+/root/is/sonda_yuru.log:G22BSONDA yer ad=dress_reserved_17_-12_0 yerel=hub(17.5,-12.5) en_yakin=15.5 (oge_set_sur_onarim_santiyesi) durum=PASS
+/root/is/sonda_yuru.log:G22BSONDA yer ad=dress_reserved_17_-12_1 yerel=hub(24.5,-12.5) en_yakin=18.4 (oge_set_sur_onarim_santiyesi) durum=PASS
+/root/is/sonda_yuru.log:G22BSONDA yer ad=dress_reserved_17_-12_2 yerel=hub(17.5,0.5) en_yakin=4.4 (oge_set_multeci_cadirlari) durum=PASS
+/root/is/sonda_yuru.log:G22BSONDA yer ad=dress_reserved_17_-12_3 yerel=hub(24.5,0.5) en_yakin=10.9 (oge_set_multeci_cadirlari) durum=PASS
+/root/is/sonda_yuru.log:G22BSONDA yer ad=dress_reserved_18_-18_0 yerel=hub(18.0,-18.5) en_yakin=10.0 (oge_set_sur_onarim_santiyesi) durum=PASS
+/root/is/sonda_yuru.log:G22BSONDA yer ad=dress_reserved_18_-18_1 yerel=hub(24.0,-18.5) en_yakin=13.6 (oge_set_sur_onarim_santiyesi) durum=PASS
+/root/is/sonda_yuru.log:G22BSONDA yer ad=dress_reserved_18_-18_2 yerel=hub(18.0,-10.0) en_yakin=13.5 (oge_set_multeci_cadirlari) durum=PASS
+/root/is/sonda_yuru.log:G22BSONDA yer ad=dress_reserved_18_-18_3 yerel=hub(24.0,-10.0) en_yakin=16.4 (oge_set_multeci_cadirlari) durum=PASS
+/root/is/sonda_yuru.log:G22BSONDA yer ad=START yerel=ic(0.0,12.0) en_yakin=14.4 (oge_kuyu) durum=PASS
+/root/is/sonda_yuru.log:G22BSONDA yer ad=START_rapor_kapisi yerel=ic(0.0,14.6) en_yakin=11.9 (oge_kuyu) durum=PASS
+/root/is/sonda_yuru.log:G22BSONDA yer ad=13_dogus yerel=ic(0.0,8.0) en_yakin=18.3 (oge_kuyu) durum=PASS
+/root/is/sonda_yuru.log:G22BSONDA yer ad=EMPEROR_POS yerel=ic(-27.0,-14.0) en_yakin=24.5 (oge_kuyu) durum=PASS
+/root/is/sonda_yuru.log:G22BSONDA yer ad=NIKO_POS yerel=ic(1.5,-27.0) en_yakin=20.0 (oge_kulube_bag) durum=PASS
+/root/is/sonda_yuru.log:G22BSONDA yer ad=CELL_START yerel=ic(-19.4,-26.0) en_yakin=25.6 (oge_kuyu) durum=PASS
+/root/is/sonda_yuru.log:G22BSONDA yer ad=7b_iz_kancilarya yerel=ic(-2.2,-26.5) en_yakin=23.7 (oge_kulube_bag) durum=PASS
+/root/is/sonda_yuru.log:G22BSONDA yer ad=24_ROUTE_A yerel=ic(0.0,-24.0) en_yakin=21.6 (oge_kulube_bag) durum=PASS
+/root/is/sonda_yuru.log:G22BSONDA yer ad=24_ROUTE_B yerel=ic(0.0,6.0) en_yakin=20.3 (oge_kuyu) durum=PASS
+/root/is/sonda_yuru.log:G22BSONDA yer ad=IC_RECT_kose_0 yerel=ic(-46.0,-48.0) en_yakin=6.7 (oge_kuyu) durum=PASS
+/root/is/sonda_yuru.log:G22BSONDA yer ad=IC_RECT_kose_1 yerel=ic(18.0,-48.0) en_yakin=3.7 (oge_kuyu) durum=PASS
+/root/is/sonda_yuru.log:G22BSONDA yer ad=IC_RECT_kose_2 yerel=ic(-46.0,22.0) en_yakin=3.2 (oge_kuyu) durum=PASS
+/root/is/sonda_yuru.log:G22BSONDA yer ad=IC_RECT_kose_3 yerel=ic(18.0,22.0) en_yakin=3.7 (oge_kuyu) durum=PASS
+/root/is/sonda_yuru.log:G22BSONDA yer ad=ic_sokak_agzi yerel=ic(18.0,-14.2) en_yakin=8.2 (oge_kuyu) durum=PASS
+/root/is/sonda_yuru.log:G22BSONDA dolgu_en_dogu x=14.3 (oge_agil) esik=14
+/root/is/sonda_yuru.log:G22BSONDA OZET yer=55 kotu=0 yeni_iz=116 dolgu_en_dogu_x=14.3 kopuk=0 en_dar=3.00 cimen=9.5
+/root/is/sonda_yuru.log:G22BSONDA yukseklik bolum=23 yerel=(8.0, -30.0) geo_h=13.968 h_ham=16.862 hub_y=14.088 carp_y=13.968 AraziCarpisma
+/root/is/sonda_yuru.log:G22BSONDA yukseklik bolum=23 yerel=(8.0, 10.0) geo_h=13.968 h_ham=15.231 hub_y=14.088 carp_y=13.968 AraziCarpisma
+/root/is/sonda_yuru.log:G22BSONDA yukseklik bolum=23 yerel=(-10.0, -14.0) geo_h=13.968 h_ham=16.135 hub_y=14.088 carp_y=13.968 AraziCarpisma
+/root/is/sonda_yuru.log:G22BSONDA yukseklik bolum=23 yerel=(-30.0, 10.0) geo_h=13.968 h_ham=14.801 hub_y=14.088 carp_y=13.968 AraziCarpisma
+/root/is/sonda_yuru.log:G22BSONDA yukseklik bolum=23 yerel=(-40.0, -30.0) geo_h=13.968 h_ham=16.444 hub_y=14.088 carp_y=13.968 AraziCarpisma
+/root/is/sonda_yuru.log:G22BSONDA yukseklik bolum=23 yerel=(16.0, -30.0) geo_h=13.968 h_ham=16.907 hub_y=14.088 carp_y=13.968 AraziCarpisma
+/root/is/sonda_yuru.log:G22BSONDA yukseklik bolum=23 yerel=(25.0, -14.0) geo_h=13.968 h_ham=16.210 hub_y=14.088 carp_y=14.088 @StaticBody3D@111286
+/root/is/sonda_yuru.log:G22BSONDA hat J=(-1603.421, -292.578) uc=(-1593.421, -292.578) nokta=55
+/root/is/sonda_yuru.log:G22BSONDA yuru dusme nokta=2 p=(417.0, 5.8, -127.0) arazi_y=7.41 yerel=(17.0, 3.0) carp=[(417.0, 7.6, -127.0), "@CharacterBody3D@79"]
+/root/is/sonda_yuru.log:G22BSONDA yuru dusme nokta=3 p=(414.7, 5.8, -144.4) arazi_y=7.41 yerel=(14.7, -14.4) carp=[(414.7, 7.5, -144.4), "@CharacterBody3D@79"]
+/root/is/sonda_yuru.log:G22BSONDA yuru dusme nokta=4 p=(410.9, 5.8, -144.2) arazi_y=7.41 yerel=(10.9, -14.2) carp=[(410.9, 7.6, -144.2), "@CharacterBody3D@79"]
+/root/is/sonda_yuru.log:G22BSONDA yuru dusme nokta=5 p=(405.4, 5.8, -144.2) arazi_y=7.41 yerel=(5.4, -14.3) carp=[(405.4, 7.5, -144.2), "@CharacterBody3D@79"]
+/root/is/sonda_yuru.log:G22BSONDA yuru dusme nokta=6 p=(399.5, 5.7, -144.2) arazi_y=7.41 yerel=(-0.5, -14.2) carp=[(399.5, 7.4, -144.2), "@CharacterBody3D@79"]
+/root/is/sonda_yuru.log:G22BSONDA yuru dusme nokta=7 p=(394.5, 5.7, -144.2) arazi_y=7.41 yerel=(-5.5, -14.2) carp=[(394.5, 7.4, -144.2), "@CharacterBody3D@79"]
+/root/is/sonda_yuru.log:G22BSONDA yuru OZET nokta=82 takilma=0 dusme=6 yol=454 sure_ms=135332
+/root/is/sonda_yuru_once.log:G22BSONDA yuklendi bolum=23 v2=true ms=46364
+/root/is/sonda_yuru_once.log:G22BSONDA karma ad=streets n=1098 onek=1098 md5=7a8b05b3593f550acdc56c2af286133a dolgu_taban=-
+/root/is/sonda_yuru_once.log:G22BSONDA karma ad=houses n=8318 onek=8318 md5=6ca0de8e0f7f1dc289bd18428e2dbca7 dolgu_taban=-
+/root/is/sonda_yuru_once.log:G22BSONDA karma ad=doku n=125 onek=125 md5=2b88f63227e76e43cc2ef6437bbf4193 dolgu_taban=-
+/root/is/sonda_yuru_once.log:G22BSONDA karma ad=oge n=403 onek=403 md5=0e8aca495c7e95a4f00debd44689343e dolgu_taban=-
+/root/is/sonda_yuru_once.log:G22BSONDA karma ad=avlu n=1023 onek=1023 md5=3084653dc9e189d4e4b3f1d514fcb5cd dolgu_taban=-
+/root/is/sonda_yuru_once.log:G22BSONDA karma ad=meydan n=86 onek=86 md5=dbaeab54be16e27514e36e4f320cc264 dolgu_taban=-
+/root/is/sonda_yuru_once.log:G22BSONDA dolgu {  }
+/root/is/sonda_yuru_once.log:G22BSONDA daire occ={ "k3": 78, "a3": 1523 }
+/root/is/sonda_yuru_once.log:G22BSONDA bos yer=hub kare=38 bos=38 oran=1.000 ornek=[(-20.0, -50.0), (-10.0, -50.0), (-30.0, -40.0), (-20.0, -40.0), (-10.0, -40.0), (-40.0, -30.0), (-30.0, -30.0), (-20.0, -30.0), (-10.0, -30.0), (-50.0, -20.0)]
+/root/is/sonda_yuru_once.log:G22BSONDA bos yer=saray kare=24 bos=24 oran=1.000 ornek=[(-60.0, -40.0), (-60.0, -30.0), (30.0, -30.0), (-60.0, -20.0), (30.0, -20.0), (40.0, -20.0), (30.0, -10.0), (40.0, -10.0), (30.0, 0.0), (40.0, 0.0)]
+/root/is/sonda_yuru_once.log:G22BSONDA cimen bakis=-40 en_uzun=50.0
+/root/is/sonda_yuru_once.log:G22BSONDA cimen bakis=-35 en_uzun=46.5
+/root/is/sonda_yuru_once.log:G22BSONDA cimen bakis=-30 en_uzun=44.0
+/root/is/sonda_yuru_once.log:G22BSONDA cimen bakis=-25 en_uzun=42.0
+/root/is/sonda_yuru_once.log:G22BSONDA cimen bakis=-20 en_uzun=40.5
+/root/is/sonda_yuru_once.log:G22BSONDA cimen bakis=-15 en_uzun=39.5
+/root/is/sonda_yuru_once.log:G22BSONDA cimen bakis=-10 en_uzun=39.0
+/root/is/sonda_yuru_once.log:G22BSONDA cimen bakis=-5 en_uzun=38.5
+/root/is/sonda_yuru_once.log:G22BSONDA cimen bakis=0 en_uzun=38.0
+/root/is/sonda_yuru_once.log:G22BSONDA cimen bakis=5 en_uzun=38.5
+/root/is/sonda_yuru_once.log:G22BSONDA cimen bakis=10 en_uzun=39.0
+/root/is/sonda_yuru_once.log:G22BSONDA cimen bakis=15 en_uzun=39.5
+/root/is/sonda_yuru_once.log:G22BSONDA cimen bakis=20 en_uzun=40.5
+/root/is/sonda_yuru_once.log:G22BSONDA cimen bakis=25 en_uzun=42.0
+/root/is/sonda_yuru_once.log:G22BSONDA cimen bakis=30 en_uzun=44.0
+/root/is/sonda_yuru_once.log:G22BSONDA cimen bakis=35 en_uzun=46.5
+/root/is/sonda_yuru_once.log:G22BSONDA cimen bakis=40 en_uzun=50.0
+/root/is/sonda_yuru_once.log:G22BSONDA cimen OZET en_uzun=50.0 esik=12 durum=FAIL
+/root/is/sonda_yuru_once.log:G22BSONDA yol nokta=0 kopuk=0 en_dar=inf ornek=[]
+/root/is/sonda_yuru_once.log:G22BSONDA yer ad=6b_tunek_0 yerel=ic(0.0,-16.0) en_yakin=inf () durum=PASS
+/root/is/sonda_yuru_once.log:G22BSONDA yer ad=6b_tunek_1 yerel=ic(-4.8,-15.2) en_yakin=inf () durum=PASS
+/root/is/sonda_yuru_once.log:G22BSONDA yer ad=6b_tunek_2 yerel=ic(0.9,1.0) en_yakin=inf () durum=PASS
+/root/is/sonda_yuru_once.log:G22BSONDA yer ad=6b_tunek_3 yerel=ic(8.5,-18.5) en_yakin=inf () durum=PASS
+/root/is/sonda_yuru_once.log:G22BSONDA yer ad=6b_tunek_4_fici yerel=hub(21.5,-10.5) en_yakin=inf () durum=PASS
+/root/is/sonda_yuru_once.log:G22BSONDA yer ad=6b_tunek_5_masa yerel=hub(24.6,-12.4) en_yakin=inf () durum=PASS
+/root/is/sonda_yuru_once.log:G22BSONDA yer ad=6b_kararma_ficiya_11m yerel=hub(20.0,0.4) en_yakin=inf () durum=PASS
+/root/is/sonda_yuru_once.log:G22BSONDA yer ad=6b_10h_sokak_agzi_yerlesme yerel=hub(20.0,-14.0) en_yakin=inf () durum=PASS
+/root/is/sonda_yuru_once.log:G22BSONDA yer ad=6b_giust_yani yerel=hub(22.8,-12.4) en_yakin=inf () durum=PASS
+/root/is/sonda_yuru_once.log:G22BSONDA yer ad=6b_giust_yani2 yerel=hub(23.4,-12.8) en_yakin=inf () durum=PASS
+/root/is/sonda_yuru_once.log:G22BSONDA yer ad=6b_kapi_yani yerel=hub(27.0,5.5) en_yakin=inf () durum=PASS
+/root/is/sonda_yuru_once.log:G22BSONDA yer ad=6b_niko_kapi yerel=hub(27.8,4.2) en_yakin=inf () durum=PASS
+/root/is/sonda_yuru_once.log:G22BSONDA yer ad=6b_martı_sur yerel=hub(30.0,-14.0) en_yakin=inf () durum=PASS
+/root/is/sonda_yuru_once.log:G22BSONDA yer ad=6b_vista_sur yerel=hub(34.0,-14.0) en_yakin=inf () durum=PASS
+/root/is/sonda_yuru_once.log:G22BSONDA yer ad=GIUST_POS yerel=hub(26.0,-14.0) en_yakin=inf () durum=PASS
+/root/is/sonda_yuru_once.log:G22BSONDA yer ad=EXIT_POS yerel=hub(33.0,5.5) en_yakin=inf () durum=PASS
+/root/is/sonda_yuru_once.log:G22BSONDA yer ad=7b_iz_walls yerel=hub(22.5,-11.5) en_yakin=inf () durum=PASS
+/root/is/sonda_yuru_once.log:G22BSONDA yer ad=7b_iz_outside yerel=hub(30.6,6.9) en_yakin=inf () durum=PASS
+/root/is/sonda_yuru_once.log:G22BSONDA yer ad=10h_kapidan_giris yerel=hub(30.0,5.5) en_yakin=inf () durum=PASS
+/root/is/sonda_yuru_once.log:G22BSONDA yer ad=10h_gece_niko yerel=hub(22.9,-8.3) en_yakin=inf () durum=PASS
+/root/is/sonda_yuru_once.log:G22BSONDA yer ad=10h_gedik yerel=hub(32.4,-26.0) en_yakin=inf () durum=PASS
+/root/is/sonda_yuru_once.log:G22BSONDA yer ad=dress_reserved_24_-24_0 yerel=hub(24.0,-24.0) en_yakin=inf () durum=PASS
+/root/is/sonda_yuru_once.log:G22BSONDA yer ad=dress_reserved_24_-24_1 yerel=hub(36.0,-24.0) en_yakin=inf () durum=PASS
+/root/is/sonda_yuru_once.log:G22BSONDA yer ad=dress_reserved_24_-24_2 yerel=hub(24.0,-6.0) en_yakin=inf () durum=PASS
+/root/is/sonda_yuru_once.log:G22BSONDA yer ad=dress_reserved_24_-24_3 yerel=hub(36.0,-6.0) en_yakin=inf () durum=PASS
+/root/is/sonda_yuru_once.log:G22BSONDA yer ad=dress_reserved_21_-12_0 yerel=hub(21.0,-12.0) en_yakin=inf () durum=PASS
+/root/is/sonda_yuru_once.log:G22BSONDA yer ad=dress_reserved_21_-12_1 yerel=hub(34.0,-12.0) en_yakin=inf () durum=PASS
+/root/is/sonda_yuru_once.log:G22BSONDA yer ad=dress_reserved_21_-12_2 yerel=hub(21.0,7.0) en_yakin=inf () durum=PASS
+/root/is/sonda_yuru_once.log:G22BSONDA yer ad=dress_reserved_21_-12_3 yerel=hub(34.0,7.0) en_yakin=inf () durum=PASS
+/root/is/sonda_yuru_once.log:G22BSONDA yer ad=dress_reserved_27_-1_0 yerel=hub(27.0,-1.0) en_yakin=inf () durum=PASS
+/root/is/sonda_yuru_once.log:G22BSONDA yer ad=dress_reserved_27_-1_1 yerel=hub(36.0,-1.0) en_yakin=inf () durum=PASS
+/root/is/sonda_yuru_once.log:G22BSONDA yer ad=dress_reserved_27_-1_2 yerel=hub(27.0,8.0) en_yakin=inf () durum=PASS
+/root/is/sonda_yuru_once.log:G22BSONDA yer ad=dress_reserved_27_-1_3 yerel=hub(36.0,8.0) en_yakin=inf () durum=PASS
+/root/is/sonda_yuru_once.log:G22BSONDA yer ad=dress_reserved_17_-12_0 yerel=hub(17.5,-12.5) en_yakin=inf () durum=PASS
+/root/is/sonda_yuru_once.log:G22BSONDA yer ad=dress_reserved_17_-12_1 yerel=hub(24.5,-12.5) en_yakin=inf () durum=PASS
+/root/is/sonda_yuru_once.log:G22BSONDA yer ad=dress_reserved_17_-12_2 yerel=hub(17.5,0.5) en_yakin=inf () durum=PASS
+/root/is/sonda_yuru_once.log:G22BSONDA yer ad=dress_reserved_17_-12_3 yerel=hub(24.5,0.5) en_yakin=inf () durum=PASS
+/root/is/sonda_yuru_once.log:G22BSONDA yer ad=dress_reserved_18_-18_0 yerel=hub(18.0,-18.5) en_yakin=inf () durum=PASS
+/root/is/sonda_yuru_once.log:G22BSONDA yer ad=dress_reserved_18_-18_1 yerel=hub(24.0,-18.5) en_yakin=inf () durum=PASS
+/root/is/sonda_yuru_once.log:G22BSONDA yer ad=dress_reserved_18_-18_2 yerel=hub(18.0,-10.0) en_yakin=inf () durum=PASS
+/root/is/sonda_yuru_once.log:G22BSONDA yer ad=dress_reserved_18_-18_3 yerel=hub(24.0,-10.0) en_yakin=inf () durum=PASS
+/root/is/sonda_yuru_once.log:G22BSONDA yer ad=START yerel=ic(0.0,12.0) en_yakin=inf () durum=PASS
+/root/is/sonda_yuru_once.log:G22BSONDA yer ad=START_rapor_kapisi yerel=ic(0.0,14.6) en_yakin=inf () durum=PASS
+/root/is/sonda_yuru_once.log:G22BSONDA yer ad=13_dogus yerel=ic(0.0,8.0) en_yakin=inf () durum=PASS
+/root/is/sonda_yuru_once.log:G22BSONDA yer ad=EMPEROR_POS yerel=ic(-27.0,-14.0) en_yakin=inf () durum=PASS
+/root/is/sonda_yuru_once.log:G22BSONDA yer ad=NIKO_POS yerel=ic(1.5,-27.0) en_yakin=inf () durum=PASS
+/root/is/sonda_yuru_once.log:G22BSONDA yer ad=CELL_START yerel=ic(-19.4,-26.0) en_yakin=inf () durum=PASS
+/root/is/sonda_yuru_once.log:G22BSONDA yer ad=7b_iz_kancilarya yerel=ic(-2.2,-26.5) en_yakin=inf () durum=PASS
+/root/is/sonda_yuru_once.log:G22BSONDA yer ad=24_ROUTE_A yerel=ic(0.0,-24.0) en_yakin=inf () durum=PASS
+/root/is/sonda_yuru_once.log:G22BSONDA yer ad=24_ROUTE_B yerel=ic(0.0,6.0) en_yakin=inf () durum=PASS
+/root/is/sonda_yuru_once.log:G22BSONDA yer ad=IC_RECT_kose_0 yerel=ic(-46.0,-48.0) en_yakin=inf () durum=PASS
+/root/is/sonda_yuru_once.log:G22BSONDA yer ad=IC_RECT_kose_1 yerel=ic(18.0,-48.0) en_yakin=inf () durum=PASS
+/root/is/sonda_yuru_once.log:G22BSONDA yer ad=IC_RECT_kose_2 yerel=ic(-46.0,22.0) en_yakin=inf () durum=PASS
+/root/is/sonda_yuru_once.log:G22BSONDA yer ad=IC_RECT_kose_3 yerel=ic(18.0,22.0) en_yakin=inf () durum=PASS
+/root/is/sonda_yuru_once.log:G22BSONDA yer ad=ic_sokak_agzi yerel=ic(18.0,-14.2) en_yakin=inf () durum=PASS
+/root/is/sonda_yuru_once.log:G22BSONDA dolgu_en_dogu x=-inf () esik=14
+/root/is/sonda_yuru_once.log:G22BSONDA OZET yer=55 kotu=0 yeni_iz=0 dolgu_en_dogu_x=-inf kopuk=0 en_dar=inf cimen=50.0
+/root/is/sonda_yuru_once.log:G22BSONDA yukseklik bolum=23 yerel=(8.0, -30.0) geo_h=13.968 h_ham=16.862 hub_y=14.088 carp_y=13.968 AraziCarpisma
+/root/is/sonda_yuru_once.log:G22BSONDA yukseklik bolum=23 yerel=(8.0, 10.0) geo_h=13.968 h_ham=15.231 hub_y=14.088 carp_y=13.968 AraziCarpisma
+/root/is/sonda_yuru_once.log:G22BSONDA yukseklik bolum=23 yerel=(-10.0, -14.0) geo_h=13.968 h_ham=16.135 hub_y=14.088 carp_y=13.968 AraziCarpisma
+/root/is/sonda_yuru_once.log:G22BSONDA yukseklik bolum=23 yerel=(-30.0, 10.0) geo_h=13.968 h_ham=14.801 hub_y=14.088 carp_y=13.968 AraziCarpisma
+/root/is/sonda_yuru_once.log:G22BSONDA yukseklik bolum=23 yerel=(-40.0, -30.0) geo_h=13.968 h_ham=16.444 hub_y=14.088 carp_y=13.968 AraziCarpisma
+/root/is/sonda_yuru_once.log:G22BSONDA yukseklik bolum=23 yerel=(16.0, -30.0) geo_h=13.968 h_ham=16.907 hub_y=14.088 carp_y=13.968 AraziCarpisma
+/root/is/sonda_yuru_once.log:G22BSONDA yukseklik bolum=23 yerel=(25.0, -14.0) geo_h=13.968 h_ham=16.210 hub_y=14.088 carp_y=14.088 @StaticBody3D@111092
+/root/is/sonda_yuru_once.log:G22BSONDA yuru hat_yok: cayir hatti
+/root/is/sonda_yuru_once.log:G22BSONDA yuru dusme nokta=2 p=(417.0, 5.8, -127.0) arazi_y=7.41 yerel=(17.0, 3.0) carp=[(417.0, 7.6, -127.0), "@CharacterBody3D@79"]
+/root/is/sonda_yuru_once.log:G22BSONDA yuru dusme nokta=3 p=(414.7, 5.8, -144.4) arazi_y=7.41 yerel=(14.7, -14.4) carp=[(414.7, 7.5, -144.4), "@CharacterBody3D@79"]
+/root/is/sonda_yuru_once.log:G22BSONDA yuru dusme nokta=4 p=(408.8, 5.8, -144.2) arazi_y=7.41 yerel=(8.8, -14.2) carp=[(408.8, 7.6, -144.2), "@CharacterBody3D@79"]
+/root/is/sonda_yuru_once.log:G22BSONDA yuru dusme nokta=5 p=(402.9, 5.8, -144.2) arazi_y=7.41 yerel=(2.9, -14.2) carp=[(402.9, 7.5, -144.2), "@CharacterBody3D@79"]
+/root/is/sonda_yuru_once.log:G22BSONDA yuru dusme nokta=6 p=(397.5, 5.7, -144.2) arazi_y=7.41 yerel=(-2.5, -14.2) carp=[(397.5, 7.4, -144.2), "@CharacterBody3D@79"]
+/root/is/sonda_yuru_once.log:G22BSONDA yuru OZET nokta=13 takilma=0 dusme=5 yol=83 sure_ms=18063

@@ -1,0 +1,17 @@
+### city24
+CITYCHECK 24: kaynak=v2 (IstHayatYakin) gece=false hedef=23 etkin=8
+CITYCHECK 24 v2: açılış yüklemesi 8.4 sn (sakin=30)
+CITYCHECK 24 v2 @(-1248, -271): sivil=12 devriye=0 evde=0 havada=0 suda=0 kopuk=0 roller={ "man": 5, "woman": 1, "child": 2, "porter": 2, "priest": 2 } µs=428 (en uzun kare 1936, 500 kare)
+CITYCHECK 24 v2 @(-1280, -245): sivil=16 devriye=0 evde=0 havada=0 suda=0 kopuk=0 roller={ "man": 4, "woman": 4, "child": 4, "porter": 3, "priest": 1 } µs=638 (en uzun kare 1937, 695 kare)
+CITYCHECK 24 v2 @(-1252, -229): sivil=14 devriye=0 evde=0 havada=0 suda=0 kopuk=0 roller={ "man": 3, "woman": 3, "child": 4, "porter": 3, "priest": 1 } µs=642 (en uzun kare 6027, 659 kare)
+CITYCHECK 24 v2: kare süresi (en kötü nokta ortalaması) 642 µs
+CITYCHECK PASS
+### city31o
+CITYCHECK 31o: kaynak=v2 (IstHayatYakin) gece=false hedef=19 etkin=11
+CITYCHECK 31o v2: açılış yüklemesi 9.8 sn (sakin=30)
+CITYCHECK 31o v2 @(-1684, -309): sivil=15 devriye=1 evde=0 havada=0 suda=0 kopuk=0 roller={ "man": 6, "woman": 3, "child": 1, "porter": 2, "monk": 2, "priest": 1 } µs=573 (en uzun kare 2643, 784 kare)
+CITYCHECK 31o v2 @(-1630, -365): sivil=19 devriye=0 evde=0 havada=0 suda=0 kopuk=0 roller={ "man": 8, "woman": 4, "child": 3, "porter": 4 } µs=668 (en uzun kare 4528, 761 kare)
+CITYCHECK 31o v2 @(-1706, -233): sivil=15 devriye=1 evde=0 havada=0 suda=0 kopuk=0 roller={ "woman": 3, "man": 7, "child": 4, "porter": 1 } µs=476 (en uzun kare 3977, 782 kare)
+CITYCHECK 31o v2: kare süresi (en kötü nokta ortalaması) 668 µs
+CITYCHECK PASS
+### BITTI

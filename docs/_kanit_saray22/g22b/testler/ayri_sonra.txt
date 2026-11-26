@@ -1,0 +1,64 @@
+### world
+WORLDCHECK PASS regions=13 landmarks=35
+### city24
+CITYCHECK 24: kaynak=v2 (IstHayatYakin) gece=false hedef=23 etkin=8
+CITYCHECK 24 v2: açılış yüklemesi 7.5 sn (sakin=30)
+CITYCHECK 24 v2 @(-1248, -271): sivil=13 devriye=0 evde=0 havada=0 suda=0 kopuk=0 roller={ "man": 4, "woman": 2, "child": 2, "porter": 2, "monk": 2, "priest": 1 } µs=367 (en uzun kare 2109, 616 kare)
+CITYCHECK 24 v2 @(-1283, -293): sivil=19 devriye=0 evde=0 havada=0 suda=0 kopuk=0 roller={ "man": 7, "woman": 6, "child": 2, "porter": 4 } µs=612 (en uzun kare 1977, 735 kare)
+CITYCHECK 24 v2 @(-1182, -264): sivil=21 devriye=0 evde=0 havada=0 suda=0 kopuk=0 roller={ "porter": 6, "man": 4, "woman": 6, "child": 3, "monk": 1, "priest": 1 } µs=791 (en uzun kare 6145, 735 kare)
+CITYCHECK 24 v2: kare süresi (en kötü nokta ortalaması) 791 µs
+CITYCHECK PASS
+### city31o
+CITYCHECK 31o: kaynak=v2 (IstHayatYakin) gece=false hedef=19 etkin=11
+CITYCHECK 31o v2: açılış yüklemesi 9.8 sn (sakin=30)
+CITYCHECK 31o v2 @(-1684, -309): sivil=16 devriye=2 evde=0 havada=0 suda=0 kopuk=0 roller={ "man": 6, "woman": 4, "child": 1, "porter": 3, "priest": 1, "monk": 1 } µs=572 (en uzun kare 3565, 792 kare)
+CITYCHECK 31o v2 @(-1629, -366): sivil=18 devriye=1 evde=0 havada=0 suda=0 kopuk=0 roller={ "man": 9, "woman": 3, "child": 2, "porter": 4 } µs=708 (en uzun kare 3665, 764 kare)
+CITYCHECK 31o v2 @(-1654, -239): sivil=20 devriye=0 evde=0 havada=0 suda=0 kopuk=0 roller={ "man": 6, "priest": 1, "woman": 5, "child": 4, "porter": 4 } µs=605 (en uzun kare 3127, 770 kare)
+CITYCHECK 31o v2: kare süresi (en kötü nokta ortalaması) 708 µs
+CITYCHECK PASS
+### BITTI
+### walk
+WALKCHECK landwalls noktalar=384 zeminsiz=0 aşağıda=0 ev ışını=118/199 şekil=9651 kutu=8910 üçgen=284756
+WALKCHECK horn_wall_o noktalar=384 zeminsiz=0 aşağıda=0 ev ışını=117/198 şekil=9622 kutu=8875 üçgen=279566
+WALKCHECK byz_aya noktalar=384 zeminsiz=0 aşağıda=0 ev ışını=117/198 şekil=9593 kutu=8848 üçgen=261142
+WALKCHECK yürüyüş: yol=12.6 m, ayak=-4.0 zemin≈-4.0
+WALKCHECK su: dönüş=(-680, 18.5, -900)
+WALKCHECK galata zemin aşağıda: dünya (-1025, -1275) görünen≈26.5 çarpma 22.3
+WALKCHECK galata noktalar=384 zeminsiz=0 aşağıda=1 ev ışını=117/198 şekil=9620 kutu=8879 üçgen=281021
+WALKCHECK PASS
+### street
+STREETCHECK PASS
+### flight
+FLIGHTCHECK v2_camp konma=["aya", "column", "galata"] ham=["aya", "ist_blakherna", "ist_konstantin", "ist_tauri", "ist_arkadius", "ist_markianos", "ist_anemodoulion", "ist_galata_kulesi", "ist_galata_sur", "ist_san_domenico", "ist_palazzo_comune", "ist_studios", "ist_mokios", "ist_halic_eugenios", "ist_halic_venedik", "ist_halic_petrion", "ist_hipodrom", "ist_augustaion", "ist_milion", "ist_aya_irini", "ist_sergios", "ist_buyuk_saray", "ist_khalke", "ist_zeuksippos", "ist_nea", "ist_havariyun", "ist_pantokrator", "ist_altin_kapi", "ist_pege", "ist_romanos", "ist_kharisios", "ist_kerkoporta", "ist_bozdogan"]
+FLIGHTCHECK v2_camp isaretler=["AYASOFYA(Ayasofya)", "HIPODROM(Hipodrom)", "KONSTANTIN(Konstantin Sütunu)", "HAVARIYUN(Havariyun Kilisesi)", "BOZDOGAN(Bozdoğan Kemeri)", "ZINCIR(Haliç Zinciri)", "GALATA(Galata Kulesi)", "BLAKHERNA(Blakherna Sarayı)", "SURLAR(Theodosius Surları)", "TAURI(Theodosius Forumu)", "ARKADIUS(Arkadius Sütunu)", "MARKIANOS(Kıztaşı)", "ANEMODOULION(Anemodoulion)", "STUDIOS(Studios Manastırı)", "MOKIOS(Mokios Sarnıcı)", "HALIC_VENEDIK(Venedik Mahallesi)", "AUGUSTAION(Augustaion ve Iustinianus Sütunu)", "MILION(Milion)", "AYA_IRINI(Aya İrini)", "SERGIOS(Küçük Ayasofya)", "BUYUK_SARAY(Büyük Saray Harabeleri)", "KHALKE(Khalke Kapısı)", "ZEUKSIPPOS(Zeuksippos Hamamı)", "NEA(Nea Ekklesia)", "PANTOKRATOR(Pantokrator Manastırı)", "KHORA(Kariye (Khora) Manastırı)", "PAMMAKARISTOS(Pammakaristos Manastırı)", "BLAKHERNAI_KILISE(Blakherna Meryem Kilisesi)"]
+FLIGHTCHECK v2_camp landmarks=28 forms=12 perches=3 noktalar_tamam=43/43 halic_su=true
+FLIGHTCHECK v2_walls landmarks=28 forms=12 perches=3 noktalar_tamam=43/43 halic_su=true
+FLIGHTCHECK PASS
+### BITTI
+### menu
+MENURETURN round=0 mode=main scene=res://scenes/chapter1.tscn nodes=8622 orphans=0
+MENURETURN round=1 mode=main scene=res://scenes/chapter1.tscn nodes=8619 orphans=0
+MENURETURN PASS from=res://scenes/chapter26.tscn
+MENURETURN round=0 mode=main scene=res://scenes/chapter1.tscn nodes=8619 orphans=0
+MENURETURN round=1 mode=main scene=res://scenes/chapter1.tscn nodes=8617 orphans=0
+MENURETURN PASS from=res://scenes/chapter20o.tscn
+### zfight
+zf 6: 0
+zf 7: 0
+zf 10h: 0
+zf 12b: 0
+zf 13: 0
+zf 23: 0
+zf 24: 0
+### parse
+PARSECHECK PASS scripts=370
+### BITTI
+### map
+MAPCHECK su uyuşmuyor: piksel (633, 1433) dünya (700, -0) doku=kara dünya=su
+MAPCHECK doku 2267x1600, su/kara uyumu 100.0%
+MAPCHECK 24: alan=byz_walls oyuncu (-1248, -271) piksel (668.0, 652.0) mini=true
+MAPCHECK 20: alan=<null> oyuncu (-1717, -268) piksel (356.0, 654.0) mini=true
+MAPCHECK 27: alan=galata oyuncu (-917, -1300) piksel (1500.0, 355.0) mini=true
+MAPCHECK 14: alan=false mini=false
+MAPCHECK PASS
+### BITTI
