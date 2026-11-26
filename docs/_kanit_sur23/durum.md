@@ -1,1 +1,1 @@
-G23 SÜRÜYOR 13:51 yeni kalem eski dünyada kuruluyor (16 dilim, uçlar, hub, Blakherna eki); testler başlıyor
+G23 SÜRÜYOR 15:10 testler bitti (198/199 PASS + OOM tekrarı PASS), D18 9/9 aynı, kanıt kareleri çekiliyor

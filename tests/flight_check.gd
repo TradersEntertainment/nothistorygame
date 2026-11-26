@@ -91,6 +91,28 @@ func _check(hub: String, h: Node3D, world: SiegeField) -> void:
 	pq.collide_with_bodies = false
 	if space.intersect_point(pq, 4).is_empty():
 		_fail("%s: Haliç'te su yakalayıcı yok" % hub)
+	# G23 (D20): kara surlarının (yeni kalem) içinden geçilmez: hat boyunca 20 m'de bir iç sur (peribolostan şehre, y 6)
+	# ve dış sur (terastan peribolosa, y 5) yatay ışınları bir gövdeye çarpmalı (kapılarda kemer üstü, Lykos'ta barikat)
+	if world.yeni_kalem:
+		var ak := world.find_child("EskiSurAkis", true, false)
+		if ak:
+			ak.call("bitir")
+		for i in 3:
+			await get_tree().physics_frame
+		var sur_n := 0
+		var sur_bos: Array = []
+		var x := World1453.WALL_N_X + 15.0
+		while x < 690.0:
+			for ray: Array in [[10.0, -10.0, 6.0, "ic"], [23.0, 12.0, 5.0, "dis"]]:
+				var a := world.to_global(Vector3(x, float(ray[2]), float(ray[0])))
+				var b := world.to_global(Vector3(x, float(ray[2]), float(ray[1])))
+				sur_n += 1
+				if space.intersect_ray(PhysicsRayQueryParameters3D.create(a, b)).is_empty():
+					sur_bos.append("%s@%.0f" % [ray[3], x])
+			x += 20.0
+		print("FLIGHTCHECK %s sur_isin=%d bos=%d %s" % [hub, sur_n, sur_bos.size(), str(sur_bos)])
+		if not sur_bos.is_empty():
+			_fail("%s: surun içinden geçiliyor: %s" % [hub, str(sur_bos)])
 	print("FLIGHTCHECK %s landmarks=%d forms=%d perches=%d" % [hub, lms.size(), forms.size(), perches.size()])
 
 

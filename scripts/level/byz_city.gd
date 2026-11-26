@@ -180,6 +180,10 @@ func _ready() -> void:
 		world = World1453.build(self, "byz_walls", [Rect2(-46.0, -48.0, 84.0, 70.0)], false)
 	elif part == "aya":
 		world = World1453.build(self, "byz_aya", [Rect2(-46.0, -114.0, 64.0, 76.0)], false)
+	# G23 (K6): `--eski-dunya` ile kendi hub'ını eski dünyada kuran bölüm: surlar yeni kalemle (SiegeField) kurulduysa hub
+	# kutu iç sur ve kuleleri kurmaz (çifte sur olmasın); süslü çıkış kapısı ve etkileşimi iç surun şehir yüzünde kalır
+	if part == "walls" and not sur_yeni and world != null and world != IstBaglama.kok and SiegeField.yeni_kalem_on:
+		eski_yeni = true
 	if bolunmus:
 		_v2 = world != null and world == IstBaglama.kok
 		_saray_kok_kur()
@@ -2012,6 +2016,8 @@ func _build_walls() -> void:
 		return
 	if eski_yeni:
 		_build_giust_yeri(34.0)
+		if world != null:
+			_build_gate()            # kendi hub'ı: çıkış kapısı (etkileşim) aynı yerde; uzak hub'da yok
 		LoadingScreen.nabiz("byzcity")
 		return
 	# İç sur: kuleli, tuğla bantlı, önünde ahşap iskele ve topçular
