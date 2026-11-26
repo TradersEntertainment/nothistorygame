@@ -17,3 +17,10 @@ Dal `wip/saray22` (taban `wip/ist2-birlesik` 618521d7 = 6dec6901 + görev yazıs
 - 10h, 12b, 23 geçişleri yazıldı.
 
 ## Faz C: SÜRÜYOR (6b kodu yazıldı, anahtar kapalı)
+
+## Ara durum (testler sürüyor)
+- Bütün hub bölümleri bölünmüş düzende (`BOLUNEN` = 6, 7, 10h, 12b, 13, 23, 24).
+- Dünya bölümleri ×1 (6, 7, 8y, 9, 10, 10b, 10z, 11, 13, 16, 24o, 25 osm, 31o, 43o): 14/14 AUTOTEST PASS.
+- Sözleşme altılısı aynı: SURSOZLESME PASS 13/8, SUROYUN 519/0/0/0, WALKTHRU 7/7/0/0, ESYATEST PASS,
+  HALICSONDA 661/3854034809, MARMARASONDA 1837/2250736444. WORLDCHECK, FLIGHTCHECK, WALKCHECK PASS.
+- Hub çeşitleri ×2 (38 × 2) sürüyor; CITYCHECK, STREETCHECK, menü dönüşü, ZFIGHT, harita pişirme + MAPCHECK sırada.
