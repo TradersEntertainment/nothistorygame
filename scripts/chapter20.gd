@@ -750,7 +750,7 @@ func _giust_acik_yer() -> Vector3:
 func _gun_spot(x0: float) -> Vector3:
 	var best := Vector3.INF
 	for m: Dictionary in sur.a.mazgallar("dis"):
-		var q: Vector3 = sur.c(m["ayak"])
+		var q: Vector3 = sur.c((m["ayak"] as Dictionary)["yerel"])      # SurOyun noktası {yerel, dunya}
 		if best == Vector3.INF or absf(q.x - x0) < absf(best.x - x0):
 			best = q
 	var x := x0 if best == Vector3.INF else best.x
