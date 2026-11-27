@@ -179,6 +179,107 @@ const STORY2_CLIPS := [
 		]},
 ]
 
+## Zaman Bürosu derlemesi ("-- set=story_buro"): tek pencerede art arda komik anlar (buro_reel). Her an:
+## [kamera [konum, bakış, fov], satırlar [[kimlik, anahtar, sn (ses + pay), karşısındaki, kamera?]]]. Satırda kamera
+## verilirse o satır başında kesilir. Kimlikler bureau.gd _FG; anahtarlar seslendirilmiş replikler (yeni replik yok).
+const BURO_REEL := [
+	# 0 Napolyon: Rusya dersi → Hitler (sırtında kâğıt): "Ben... okumadım." → "Belli."
+	[[Vector3(-7.4, 0.05, -9.4), Vector3(-4.7, 2.15, -6.9), 40.0], [
+		["nap", "BUR_FG_NAP_3", 8.0, "hit"],
+		["hit", "BUR_FG_HIT_R", 1.2, "nap", [Vector3(-6.6, 0.05, -6.9), Vector3(-8.05, 1.3, -7.95), 40.0]],
+		["nap", "BUR_FG_NAP_4", 0.8, "hit"]]],
+	# 1 Robot stajyer ile Hitler: tuğla sayımı
+	[[Vector3(-5.9, 0.05, -3.9), Vector3(-7.9, 1.45, -4.6), 45.0], [
+		["rob", "BUR_AMB_G2_4_1", 4.6, ""],
+		["hit", "BUR_AMB_G2_4_2", 1.95, "rob", [Vector3(-6.6, 0.05, -6.9), Vector3(-8.05, 1.3, -7.95), 40.0]],
+		["rob", "BUR_AMB_G2_4_3", 1.65, "", [Vector3(-5.9, 0.05, -3.9), Vector3(-7.9, 1.45, -4.6), 45.0]]]],
+	# 2 Napolyon ile Cengiz Han: sıra numarası
+	[[Vector3(-2.05, 0.05, -7.85), Vector3(-4.0, 1.85, -6.1), 40.0], [
+		["nap", "BUR_AMB_G1_2_1", 2.0, "gen"],
+		["gen", "BUR_AMB_G1_2_2", 2.95, "nap"],
+		["nap", "BUR_AMB_G1_2_3", 1.7, "gen"],
+		["gen", "BUR_AMB_G1_2_4", 3.4, "nap"]]],
+	# 3 Sezar: "Geldim, gördüm, numara aldım."
+	[[Vector3(1.0, 0.05, -5.6), Vector3(2.55, 1.6, -3.95), 40.0], [
+		["cae", "BUR_FG_CAE_2", 5.8, ""]]],
+	# 4 Shakespeare: "Bütün dünya bir bekleme salonu."
+	[[Vector3(1.0, 0.05, -5.6), Vector3(2.55, 1.55, -5.35), 45.0], [
+		["shk", "BUR_FG_SHK_V3_1", 5.75, ""]]],
+	# 5 Gagarin ile Galileo: "Sen dönüyor dedin, ben döndüm."
+	[[Vector3(-3.0, 0.05, -8.2), Vector3(-4.35, 1.3, -9.75), 45.0], [
+		["gag", "BUR_AMB_G6_3_1", 2.5, "gal"],
+		["gal", "BUR_AMB_G6_3_2", 5.65, "gag"],
+		["gag", "BUR_AMB_G6_3_3", 3.4, "gal"]]],
+	# 6 Sokrates ile Diyojen: "Bir soru sorabilir miyim?" "Hayır."
+	[[Vector3(-3.9, 0.05, -20.4), Vector3(-4.3, 1.5, -22.95), 45.0], [
+		["sok", "BUR_AMB_G14_1_1", 1.85, "dio"],
+		["dio", "BUR_AMB_G14_1_2", 0.8, "sok"],
+		["sok", "BUR_AMB_G14_1_3", 1.8, "dio"],
+		["dio", "BUR_AMB_G14_1_4", 1.3, "sok"]]],
+	# 7 Kolomb: kayıp eşya, bir kıta
+	[[Vector3(3.6, 0.05, -19.4), Vector3(5.6, 1.6, -20.1), 42.0], [
+		["col", "BUR_FG_COL_1", 9.0, ""]]],
+	# 8 Einstein: "Bu görelilik değil, devlet dairesi."
+	[[Vector3(9.3, 0.05, -38.6), Vector3(11.0, 1.6, -40.0), 42.0], [
+		["ein", "BUR_FG_EIN_1", 10.0, ""]]],
+	# 9 Tesla ile Edison: 50.000 dolar
+	[[Vector3(15.4, 0.05, -50.2), Vector3(13.6, 1.6, -52.0), 45.0], [
+		["tes", "BUR_AMB_G13_1_1", 2.35, "edi"],
+		["edi", "BUR_AMB_G13_1_2", 2.35, "tes"],
+		["tes", "BUR_AMB_G13_1_3", 3.9, "edi"]]],
+	# 10 Robot ile Hitler: memnuniyet anketi ("Sıfır!")
+	[[Vector3(-6.2, 0.05, -3.6), Vector3(-7.9, 1.45, -4.4), 42.0], [
+		["rob", "BUR_AMB_G2_9_1", 3.15, ""],
+		["hit", "BUR_AMB_G2_9_2", 1.15, "rob", [Vector3(-6.6, 0.05, -6.9), Vector3(-8.05, 1.3, -7.95), 40.0]],
+		["rob", "BUR_AMB_G2_9_3", 4.05, "", [Vector3(-6.2, 0.05, -3.6), Vector3(-7.9, 1.45, -4.4), 42.0]]]],
+]
+
+## Genel fragman, en heyecanlı anlar ("-- set=story_aksiyon"): öteki kümelerin sınanmış oynanış çekimleri, sırayla.
+## [küme, sıra, üst yazı TR, EN] (üst yazı boşsa çekimin kendi yazısı). Kurgu story_cut.py ile (müzik: savaş).
+const AKSIYON := [
+	["story2", 11, "1453. SURLAR.", "1453. THE WALLS."],       # 0 ok yağmurunda gediğe koşu (0)
+	["feel", 1, "", ""],                                        # 1 merdiveni taşı, oklar yağıyor (30o)
+	["feel", 2, "", ""],                                        # 2 merdiveni surdan it (30)
+	["feel", 3, "", ""],                                        # 3 surda ilk rakip (30o)
+	["feel", 4, "", ""],                                        # 4 tüfek dolu, yana atla (30o)
+	["trailer", 1, "", ""],                                     # 5 top doldur, nişanla (20o)
+	["trailer", 0, "", ""],                                     # 6 kılıç düellosu (20)
+	["trailer", 2, "", ""],                                     # 7 fitilli tüfek (20)
+	["feel", 5, "", ""],                                        # 8 yaralıyı omzuna al (30o)
+	["feel", 6, "", ""],                                        # 9 komutanı taşı (26)
+	["story2", 0, "YAĞLI KIZAKTA KAY", "RIDE THE GREASED SLIPWAY"], # 10 kızak (2)
+	["story2", 4, "ŞAHİ'Yİ ÇEK", "HAUL THE GREAT GUN"],        # 11 (28o)
+	["story2", 5, "İPİ BIRAKMA", "DON'T LET GO OF THE ROPE"],  # 12 yokuşta fren ipi (35o)
+	["story2", 6, "TOPU DÖK", "CAST THE CANNON"],              # 13 bronz döküm (10b)
+	["trailer", 3, "", ""],                                     # 14 Haliç'te kürek (38o)
+	["story2", 2, "FIÇIYI YUVARLA", "ROLL THE BARREL"],        # 15 (18)
+	["story2", 1, "İKİ ORDUNUN ARASINDA", "BETWEEN TWO ARMIES"], # 16 beyaz havlu (8y)
+	["trailer", 4, "", ""],                                     # 17 uçuş (7)
+	["trailer", 6, "", ""],                                     # 18 sonsuz kuşatma (arena)
+]
+
+
+func _aksiyon_clips() -> Array:
+	var out: Array = []
+	for a: Array in AKSIYON:
+		var src: Array = CLIPS if a[0] == "trailer" else (FEEL_CLIPS if a[0] == "feel" else STORY2_CLIPS)
+		var c: Dictionary = (src[a[1]] as Dictionary).duplicate(true)
+		if String(a[2]) != "":
+			c["cap"] = [a[2], a[3]]
+		out.append(c)
+	return out
+
+
+const BURO_CLIPS := [
+	{"id": "buro_komik", "ch": "3", "v": "", "bot": false, "when": "loose() and after(3.0)", "lead": 0.3, "dur": 150.0,
+		"until": "buro_bitti()", "tail": 0.3, "drive": "steps", "nohands": true,
+		"cap": ["Zaman Bürosu", "Time Bureau"], "steps": [
+			{"t": 0.0, "do": "sv('bureau').set('_amb_on', false)"},
+			{"t": 0.0, "do": "sv('bureau').set('_wait_said', true)"},
+			{"t": 0.0, "do": "buro_reel()"},
+		]},
+]
+
 var _en := false
 var _only: Array = []
 var _steps: Array = []
@@ -461,7 +562,8 @@ func _run() -> void:
 ## Önizlemede (only=) kart yalnız "card" verilirse çekilir.
 func _story() -> void:
 	var with_card := _only.is_empty() or "card" in OS.get_cmdline_user_args()
-	var clips: Array = STORY2_CLIPS if _set == "story2" else STORY_CLIPS
+	var clips: Array = STORY2_CLIPS if _set == "story2" else (BURO_CLIPS if _set == "story_buro" else
+		(_aksiyon_clips() if _set == "story_aksiyon" else STORY_CLIPS))
 	for i in clips.size():
 		if not _only.is_empty() and not (i in _only):
 			continue
@@ -853,6 +955,86 @@ func flyable() -> bool:
 func sv(name: String) -> Variant:
 	var s := get_tree().current_scene
 	return s.get(name) if s else null
+
+
+## Büro derlemesi (BURO_REEL): anları sırayla oynatır; her anın ve kesmenin karesi günlüğe (kurgu için)
+var _buro_done := false
+
+
+func buro_bitti() -> bool:
+	return _buro_done
+
+
+func _buro_cam(p: Player, cam: Array) -> void:
+	p.global_position = cam[0]
+	p.velocity = Vector3.ZERO
+	var yp := _yaw_pitch(p, cam[1])
+	p.rotation.y = yp.x
+	p.camera.rotation = Vector3(yp.y, 0.0, 0.0)
+	p.camera.set("fov", float(cam[2]))
+
+
+func buro_reel() -> void:
+	_buro_done = false
+	var b: Node = sv("bureau")
+	var p := _player()
+	if b == null or p == null:
+		push_error("MONTAGE buro_reel: büro ya da oyuncu yok")
+		_buro_done = true
+		return
+	var sel: Array = []
+	for a in OS.get_cmdline_user_args():
+		if a.begins_with("anlar="):
+			sel = Array(a.trim_prefix("anlar=").split(",")).map(func(x): return int(x))
+	# İlk replik pencere açılmadan (kara girişte) başlarsa, pencere açılırken "önceki sahnenin sesi" diye
+	# susturuluyordu (Napolyon'un ilk repliği sessiz kalmıştı): pencere açılana dek beklenir
+	while not _in_window:
+		await get_tree().process_frame
+	var fg: Dictionary = b.get("_fg")
+	_buro_bekci(p, fg.values())
+	for i in BURO_REEL.size():
+		if not sel.is_empty() and not (i in sel):
+			continue
+		var sh: Array = BURO_REEL[i]
+		_buro_cam(p, sh[0])
+		print("MONTAGE buro an=%d frame=%d" % [i, Engine.get_process_frames()])
+		await _wait(0.55)
+		for l: Array in sh[1]:
+			if not is_instance_valid(b):
+				_buro_done = true
+				return
+			if l.size() > 4:
+				_buro_cam(p, l[4])
+				print("MONTAGE buro kesme an=%d frame=%d" % [i, Engine.get_process_frames()])
+			b.set("_fg_busy", true)
+			var id: String = l[0]
+			b.call("_say", l[1], float(l[2]), b.call("_fg_spk", id))
+			b.call("_fg_face", id, float(l[2]) + 0.4)
+			if String(l[3]) != "" and id != "hit" and fg.has(l[3]):
+				b.call("_look", fg[id], fg[l[3]])
+			await _wait(float(l[2]) + 0.2)
+		await _wait(0.5)
+		print("MONTAGE buro an=%d son frame=%d" % [i, Engine.get_process_frames()])
+	b.set("_fg_busy", false)
+	_buro_done = true
+
+
+## Kameranın dibine gelen (ışınlanmadan sonra yanından geçen) figür dışı kişiler kadrajı kapatmasın: 1,3 m içindekiler
+## çekim boyunca gizlenir, günlüğe yazılır
+func _buro_bekci(p: Player, keep: Array) -> void:
+	var people: Array = get_tree().current_scene.find_children("*", "Person", true, false)
+	var hidden := {}
+	while not _buro_done and is_instance_valid(p):
+		for n in people:
+			if not is_instance_valid(n) or n in keep or hidden.has(n):
+				continue
+			var q: Node3D = n
+			var d := Vector2(q.global_position.x - p.global_position.x, q.global_position.z - p.global_position.z).length()
+			if d < 1.3 and q.is_visible_in_tree():
+				q.visible = false
+				hidden[n] = true
+				print("MONTAGE buro gizle %s spk=%s konum=%s frame=%d" % [q.get_path(), str(q.get_meta("spk", "")), str(q.global_position.snapped(Vector3.ONE * 0.1)), Engine.get_process_frames()])
+		await get_tree().process_frame
 
 
 ## Bölüm betiğindeki bir düğüm sahnede ve görünür mü (ör. shown('_pole'))
