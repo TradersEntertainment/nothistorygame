@@ -1300,3 +1300,25 @@ Her bölüm denetiminde ve her düzeltmede bu listeyi baştan uygula. Yeni bir h
   - Kalas köprünün çarpışma kutusu kesintisiz, enine tahtaların arası 3,5 cm boştu ve altında görünen bir şey yoktu.
   - Kalas yalpalamayı bırakıp iki ölçümde aynı açıda durunca, aralığa denk gelen ayak "görünmez zemin" sayıldı (GORUNMEZZEMIN; 37o `=trespass`, yalnız bir tam pakette).
   - Düzeltme: kirişlerin arasına, tahtaların 1 cm altına kesintisiz alt tahta. Çarpışma aynı; sözleşme altılısı aynı.
+- **Açık (explicit) yay tümlemesi büyük adımda patlar (0.99.131, HareketHis).**
+  - Kameranın iniş yayı tek adımla tümleniyordu: `v += (k·(hedef−x) − c·v)·Δ`.
+  - Δ, k ve c'ye göre büyükse (fragman kaydında 4× zaman, 20 FPS) çözüm her karede büyür; birkaç karede NaN olur.
+  - NaN kameranın dönüşüne, oradan bütün dönüşümlere yayıldı (bir kayıtta 200 bin hata).
+  - Düzeltme: 1/120 sn'lik alt adımlar ve `is_finite` bekçisi (bozulursa sıfıra döner).
+  - Ders: her yay ya da sönüm hesabı ya alt adımlı ya da kapalı biçim (`exp(−c·Δ)`) olmalı. Oyunda 60 FPS'de görünmeyen kusur düşük kare hızında ya da hızlandırılmış zamanda çıkar.
+- **Hata önce yanlış yere bağlanabilir; kök için bir değişkeni kapatıp yeniden üret (0.99.131).**
+  - 26 fragman kaydındaki NaN önce düelloda yana atılmaya bağlandı; atılma düelloda kapatıldı, NaN sürdü.
+  - Kök, kare kare `is_finite` sondasıyla iniş yayında bulundu.
+  - Düelloda atılmanın kapanması yine doğru: Duelist oyuncuyu rakibine çekiyor, atılma bununla çekişiyordu.
+- **Elde eşya kuralı sahneye göre, istisna bayrakla (0.99.131).**
+  - Çanta eşyası (koli bandı vb.) savaş anlarında elde saçma duruyordu: merdiven iterken, top doldururken, düelloda.
+  - `Items.EMPTY_HAND` listesindeki bölümlerde el boş başlar; bölüm kendisi bir eşya verdiyse (`held_item_scene` o bölümse) dokunulmaz.
+  - Top başında eşya cebe girer, iş bitince çıkar (`CannonCrew._stow_hands`; `_exit_tree`'de de bırakır).
+  - Elde anlamı olan eşya kalır: 2'de kumanda ("kırmızı düğmeye bas" repliği).
+- **`await` döngüsünden sonra ağaçta mı diye bak (0.99.131).**
+  - `HUD.bark` ve `Duel._wait` `await get_tree().process_frame` ile bekliyordu. Bekleme sırasında sahne değişince düğüm ağaçtan çıkıyor, sonraki `get_tree()` null dönüyordu (SCRIPT ERROR).
+  - Kural: her `await`'ten sonra `if not is_inside_tree(): return`.
+- **Fragman penceresinin koşulu eylemle aynı karede açılırsa eylem kaçar (0.99.131).**
+  - Tüfekçi çekimi nişanla açılıyordu; bot da nişanın ilk karesinde atılıyordu. Kayıtta atılış bitmiş, tüfekçi kadraj dışıydı.
+  - Düzeltme yalnız fragmanda: bot önce namluya döner, tepki süresi (≤0,6 sn) sonra atılır. Testteki davranış aynı.
+  - Ders: her çekimin %15/%50/%85 karesine ek olarak eylemin kendisi 0,1–0,2 sn aralıklarla incelenir.
