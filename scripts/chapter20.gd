@@ -754,7 +754,34 @@ func _gun_spot(x0: float) -> Vector3:
 		if best == Vector3.INF or absf(q.x - x0) < absf(best.x - x0):
 			best = q
 	var x := x0 if best == Vector3.INF else best.x
-	return Vector3(x, sur.dis_yol_y() + 0.05, sur.dis_yol_on_z())
+	if GameState.autotest:
+		print("GUNSPOT x=%.2f (istenen %.2f)" % [x, x0])
+	# z yolun ortası: korkuluğa 0,3 m yaklaşınca doldururken kamera taşın yüzüne bakıyordu
+	return Vector3(x, sur.dis_yol_y() + 0.05, sur.dis_yol_z())
+
+
+## Atış basamağı: mazgalın dibinde tahta sehpa (0,45 m). Sahibi (27 Kasım): "duvara ateş atıyoruz; nişan almak için
+## çıkılacak bir yükselti olabilir". Gedik koşucuları surun dibinde: 1,2 m'lik korkuluğun ardından göz hizasından
+## görünmüyorlardı, tüfek taşa nişan alıyordu. Basamaktan göz mazgal dişlerinin hizasında, açıklıktan aşağı bakılır.
+## Dört tahta, iki kiriş, dört ayak (düz kutu değil); çarpışma tek görünmez gövde. Döner: düğüm ("ust": oyuncunun yeri).
+func _gun_step(at: Vector3) -> Node3D:
+	var h := 0.45
+	var n := Node3D.new()
+	add_child(n)
+	var on_z := sur.dis_yol_on_z()
+	var c := Vector3(at.x, sur.dis_yol_y(), on_z - 0.12)
+	var body := Props.solid(n, Vector3(1.3, h, 0.9), c + Vector3(0, h * 0.5, 0), Color("8a6a44"))
+	body.get_child(0).visible = false
+	var wood := Color("8a6a44")
+	var dark := Color("6a4a2c")
+	for k in 4:
+		Props.box(n, Vector3(1.3, 0.045, 0.2), c + Vector3(0, h - 0.0225, -0.33 + k * 0.22), wood.darkened(0.04 * (k % 2)))
+	for sx: float in [-0.5, 0.5]:
+		Props.box(n, Vector3(0.09, 0.08, 0.86), c + Vector3(sx, h - 0.085, 0), dark)
+		for sz: float in [-0.36, 0.36]:
+			Props.box(n, Vector3(0.08, h - 0.12, 0.08), c + Vector3(sx, (h - 0.12) * 0.5, sz), dark)
+	n.set_meta("ust", Vector3(at.x, sur.dis_yol_y() + h + 0.05, on_z - 0.05))
+	return n
 
 
 ## Hücumun sonu: Giustiniani bir Ceneviz tüfeği verir; Tolga dış surun yürüyüş yolundan, gediğe koşan dört azabı
@@ -775,6 +802,9 @@ func _gun_phase() -> void:
 	await Handover.hand_rifle(self, player, giust)
 	await hud.fade_to(1.0, 0.35)
 	player.global_position = Vector3(-10.0, sur.dis_yol_y() + 0.05, 15.3) if sur.eski_mi else _gun_spot(-10.0)
+	var step: Node3D = null if sur.eski_mi else _gun_step(player.global_position)
+	if step:
+		player.global_position = step.get_meta("ust")
 	var runners: Array = []
 	# Yeni: hendek dolgudan geçilir (karar 7-A); yolun boyu eskisiyle aynı (≈18 m: koşu süresi aynı, karar 1-A): dolgunun
 	# ortasından terasa, oradan gediğin dibine
@@ -799,6 +829,8 @@ func _gun_phase() -> void:
 	GameState.flags["gun_used"] = true
 	await hud.say("SPK_TOLGA", "D20_T_GUN_GOOD" if gun_hits >= 2 else "D20_T_GUN_BAD")
 	await hud.fade_to(1.0, 0.35)
+	if step and is_instance_valid(step):
+		step.queue_free()
 	player.global_position = back
 	player.face(sur.gedik() + Vector3(0, 1.5, 0))
 	await hud.fade_to(0.0, 0.35)

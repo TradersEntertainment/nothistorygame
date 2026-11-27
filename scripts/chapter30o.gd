@@ -319,18 +319,17 @@ func _carry_fwd() -> Vector3:
 	return fwd.normalized()
 
 
-## Merdiven taşıyanların sağ omzunda (oyuncunun da: yakın dikme sağ omuzda), taşıyanlar aynı hizada önde/arkada.
-## Merdiven dışa doğru 25° yatık: göz hizasında düz yatınca yandan tek bir kahverengi levha gibi görünüyordu
-## (sahibi, 27 Kasım); yatık durunca basamaklar seçilir, yakın dikme omuzda kalır.
+## Merdiven taşıyanların sağ omzunda, yan yatık (alt dikme omuzda, üst dikme başın üstünde; basamaklar dik): göz
+## hizasında düz yatınca kendi düzleminden görülüyordu, basamaklar kaynaşıp tek bir kahverengi levha gibi duruyordu
+## (sahibi, 27 Kasım). Yan yatık merdivenin basamakları görüşün sağında dik çubuklar olarak seçilir.
 const CARRY_BACK := 7.4         # merdivenin ayağı oyuncunun bu kadar gerisinde
-const CARRY_TILT := 25.0
 
 
 func _carry_pose() -> void:
 	var fwd := _carry_fwd()
 	var right := fwd.cross(Vector3.UP)
-	var across := (right * cos(deg_to_rad(CARRY_TILT)) - Vector3.UP * sin(deg_to_rad(CARRY_TILT))).normalized()
-	var near := player.global_position + right * 0.25 + Vector3(0, 1.5, 0)     # yakın dikme: sağ omuz
+	var across := Vector3.UP                                                  # alt dikmeden üst dikmeye
+	var near := player.global_position + right * 0.32 + Vector3(0, 1.45, 0)    # alt dikme: sağ omuz
 	var base := near + fwd * -CARRY_BACK + across * (Ladder.WIDTH * 0.5)
 	# Dikmeler fwd boyunca (yerel y), basamaklar yakın dikmeden dışa (yerel x)
 	_carry_lad.global_transform = Transform3D(Basis(across, fwd, across.cross(fwd)), base)

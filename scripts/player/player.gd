@@ -525,6 +525,8 @@ func _exit_tree() -> void:
 
 
 func _fizik_adim(delta: float) -> void:
+	if _dive_t >= 0.0 and (frozen or pinned or move_mode == "script" or ladder != null or (powers and powers.flying)):
+		_dive_t = -1.0          # atılma sürerken düello/merdiven/uçuş başladı: bırakılır (kamera yatık kalmasın)
 	_health_tick(delta)
 	_fall_guard(delta)
 	if _ladder_hands and (ladder == null or frozen or pinned):
@@ -893,7 +895,10 @@ func diving() -> bool:
 
 
 func dive(dir: Vector3) -> bool:
-	if _dive_t >= 0.0 or not is_on_floor() or frozen or pinned or is_down or not is_inside_tree():
+	# Düelloda (hareketi Duel yönetir: move_mode "script", A/D vuruş yönü) ve merdivende atılma yok: atılma serbest
+	# yürüyüşün dalında ilerler, başka dalda başlarsa hiç bitmiyordu
+	if _dive_t >= 0.0 or not is_on_floor() or frozen or pinned or is_down or not is_inside_tree() \
+			or move_mode == "script" or ladder != null or (powers and powers.flying):
 		return false
 	dir.y = 0.0
 	if dir.length() < 0.1:

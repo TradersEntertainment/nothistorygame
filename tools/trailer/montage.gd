@@ -241,10 +241,11 @@ const AKSIYON := [
 	["feel", 1, "", ""],                                        # 1 merdiveni taşı, oklar yağıyor (30o)
 	["feel", 2, "", ""],                                        # 2 merdiveni surdan it (30)
 	["feel", 3, "", ""],                                        # 3 surda ilk rakip (30o)
-	["feel", 4, "", ""],                                        # 4 tüfek dolu, yana atla (30o)
+	["feel", 4, "", "", {"when": "sv('phase') == 'tower' and on('Gunner', 'state', 'aim') and kule_ustu()",
+		"lead": 0.0, "dur": 4.5}],                                 # 4 tüfek dolu, yana atıl (30o; kule tepesinde nişan)
 	["trailer", 1, "", "", {"dur": 17.0}],                      # 5 top doldur, nişanla (20o); ateşe kadar uzun
 	["trailer", 0, "", ""],                                     # 6 kılıç düellosu (20)
-	["trailer", 2, "", ""],                                     # 7 fitilli tüfek (20)
+	["trailer", 2, "", "", {"when": "gun_aimed()", "lead": 0.0, "dur": 4.0}],   # 7 fitilli tüfek (20): nişan + atış
 	["feel", 5, "", ""],                                        # 8 yaralıyı omzuna al (30o)
 	["feel", 6, "", ""],                                        # 9 komutanı taşı (26)
 	["story2", 0, "YAĞLI KIZAKTA KAY", "RIDE THE GREASED SLIPWAY"], # 10 kızak (2)
@@ -956,6 +957,20 @@ func _nodes(cls: String) -> Array:
 func on(cls: String, prop: String, val: Variant = true) -> bool:
 	for n in _nodes(cls):
 		if n.get(prop) == val:
+			return true
+	return false
+
+
+## 30o: oyuncu tüfekçinin kulesinin tepesinde (merdivenden çıkmış)
+func kule_ustu() -> bool:
+	var p := _player()
+	return p != null and p.ladder == null and p.global_position.y > Blachernae.WALL_H + 4.0
+
+
+## Tüfek nişanda (görüş daralmış, tüfek göz hizasında)
+func gun_aimed() -> bool:
+	for n in _nodes("Handgun"):
+		if float(n.get("_aim")) > 0.85:
 			return true
 	return false
 
