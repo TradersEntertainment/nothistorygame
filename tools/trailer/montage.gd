@@ -645,6 +645,13 @@ func _clip(c: Dictionary) -> void:
 			GameState.ensure_defaults_for(mini(ch, GameState.LATEST_CHAPTER))
 	# Fes kenarı birinci şahısta kadrajın üstünü kırmızı bir şeritle kapatıyordu: fragmanda fes yok
 	GameState.flags["fez"] = false
+	# Genel fragmanda elde koli bandı yerine telefon (sahibi): bu sahnenin "oyuncunun seçtiği eşya"sı telefon olur;
+	# bölümün kendi verdiği eşya (hold_now) yine bir an çıkar, sonra telefona döner
+	if _set == "story_aksiyon":
+		if not GameState.bag.has("phone"):
+			GameState.bag.insert(0, "phone")
+		GameState.flags["held_item"] = "phone"
+		GameState.flags["held_item_scene"] = "arena" if c["ch"] == "arena" else path.get_file().get_basename()
 	GameState.changing = false
 	get_tree().paused = false
 	get_tree().change_scene_to_file(path)
