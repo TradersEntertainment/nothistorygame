@@ -242,7 +242,7 @@ const AKSIYON := [
 	["feel", 2, "", ""],                                        # 2 merdiveni surdan it (30)
 	["feel", 3, "", ""],                                        # 3 surda ilk rakip (30o)
 	["feel", 4, "", ""],                                        # 4 tüfek dolu, yana atla (30o)
-	["trailer", 1, "", ""],                                     # 5 top doldur, nişanla (20o)
+	["trailer", 1, "", "", {"dur": 17.0}],                      # 5 top doldur, nişanla (20o); ateşe kadar uzun
 	["trailer", 0, "", ""],                                     # 6 kılıç düellosu (20)
 	["trailer", 2, "", ""],                                     # 7 fitilli tüfek (20)
 	["feel", 5, "", ""],                                        # 8 yaralıyı omzuna al (30o)
@@ -266,6 +266,8 @@ func _aksiyon_clips() -> Array:
 		var c: Dictionary = (src[a[1]] as Dictionary).duplicate(true)
 		if String(a[2]) != "":
 			c["cap"] = [a[2], a[3]]
+		if a.size() > 4:
+			c.merge(a[4], true)
 		out.append(c)
 	return out
 
@@ -482,6 +484,17 @@ func _track_hud() -> void:
 			var c = _hud.get(n)
 			if c != null and is_instance_valid(c) and c is CanvasItem:
 				(c as CanvasItem).modulate.a = 0.0
+		# Genel fragman: başarım rozeti (uçuşta "Fötr Şapkalı Cin") ve fesin birinci şahıs siperi (0, arena) kadraja girmesin
+		if _set == "story_aksiyon":
+			for n in ["fez"]:
+				var c = _hud.get(n)
+				if c != null and is_instance_valid(c) and c is CanvasItem:
+					(c as CanvasItem).modulate.a = 0.0
+			var ts = _hud.get("_toasts")
+			if ts is Array:
+				for t in ts:
+					if is_instance_valid(t) and t is CanvasItem:
+						(t as CanvasItem).modulate.a = 0.0
 
 
 ## Bu anahtarlı replik gösterildi mi / bitti mi (pencereyi bir replikten ötekine açmak için)
