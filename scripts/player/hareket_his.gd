@@ -208,8 +208,18 @@ func adim(delta: float, horiz: float) -> void:
 			_cok_hedef = 0.0
 	var k := 260.0
 	var c := 2.0 * sqrt(k)
-	_cok_v += (k * (_cok_hedef - _cok) - c * _cok_v) * delta
-	_cok += _cok_v * delta
+	# Yarı örtük Euler bu yayda (ω ≈ 16) ancak küçük adımda kararlı: büyük delta (düşük kare hızı, hızlı sarılan fragman
+	# kaydı: 4x hız, 20 FPS → 0,2 sn) _cok'u her karede katlayıp NaN yapıyordu; kamera duvarın binlerce metre içine
+	# kayıyordu (fragman kaydı, 27 Kasım; yana atılmanın inişi yayı tetikledi). 1/120 sn'lik alt adımlarla.
+	var kalan := delta
+	while kalan > 0.0:
+		var h := minf(kalan, 1.0 / 120.0)
+		_cok_v += (k * (_cok_hedef - _cok) - c * _cok_v) * h
+		_cok += _cok_v * h
+		kalan -= h
+	if not is_finite(_cok) or not is_finite(_cok_v):
+		_cok = 0.0
+		_cok_v = 0.0
 	if not kamera:
 		_cok = 0.0
 		_cok_v = 0.0

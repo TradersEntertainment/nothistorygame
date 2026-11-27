@@ -855,7 +855,9 @@ func _process(delta: float) -> void:
 	var mv := position - _last_pos      # yerel: taşıyıcı (gemi) hareketi yürüme sayılmaz
 	_last_pos = position
 	_clear_way(delta)
-	if delta > 0.0 and look_target == null and not _busy and activity in ["", "carry"]:
+	# "geri_yuru": sahne bilerek geri geri yürütüyor (26: komutanın baş ucundaki taşıyıcı). Yoksa gövde her karede gidiş
+	# yönüne dönmeye çalışıyor, sahne geri çeviriyordu: taşıyıcı ileri geri adım atıyor, komutan elinden kayıyordu
+	if delta > 0.0 and look_target == null and not _busy and activity in ["", "carry"] and not has_meta("geri_yuru"):
 		var hv := Vector2(mv.x, mv.z)
 		_walk_face = hv.length() / delta > (0.25 if _walk_face else 0.35) and hv.length() < 2.0
 		if _walk_face:

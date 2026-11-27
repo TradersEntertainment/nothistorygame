@@ -1542,6 +1542,7 @@ func _carry_giust(dir: Vector3) -> void:
 	player.face(giust.global_position + dir * 0.6 + Vector3(0, 0.3, 0))
 	bearers[0].set_activity("carry")
 	bearers[0].set_meta("no_audit", true)      # poternadan içeri girer (kapı surun yüzünde)
+	bearers[0].set_meta("geri_yuru", true)     # baş ucunda geri geri yürür: gövde gidiş yönüne dönmesin (Person)
 	player.duck(0.5, 0.7)
 	await hud.say("SPK_TOLGA", "D26_T_LIFT")
 	# Kaldırırlar: Tolga ayaklardan (iki el bileklerde), savunucu koltuk altlarından

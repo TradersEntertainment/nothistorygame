@@ -38,29 +38,28 @@ const CHAPTER_HOLD := {
 	"chapter16": ["chickpeas"],
 	"chapter17o": ["thermos"],
 	"chapter18": ["tape"],
-	"chapter20": ["tape"],
-	"chapter20o": ["tape"],
 	"chapter21": ["thermos", "powerbank"],
 	"chapter21o": ["chickpeas"],
 	"chapter22": ["cologne"],
 	"chapter24o": ["thermos", "tape"],
-	"chapter26": ["lighter", "book", "tape"],
 	# Kuşatma ve Osmanlı tarafı (v0.99.107): bunlarda tanım yoktu, Tolga savaşta, merdivende, gece baskınında hep Büro
 	# kumandasını tutuyordu. Gece bölümlerinde çakmak, saray/antlaşmada kitap, soğuk yolda termos. 43O'da kumanda
-	# zaten oyunun kendisi (drone), tanımsız kalır.
+	# zaten oyunun kendisi (drone), tanımsız kalır. Savaş bölümleri artık EMPTY_HAND'de (el boş).
 	"chapter17": ["lighter", "tape"], "chapter18b": ["tape", "thermos"], "chapter19": ["lighter", "thermos"],
 	"chapter19o": ["lighter", "chickpeas"], "chapter22o": ["tape", "chickpeas"], "chapter23": ["book", "cologne"],
-	"chapter24": ["book", "lighter"], "chapter25": ["thermos", "book"], "chapter26o": ["chickpeas", "tape"],
-	"chapter27": ["book", "cologne"], "chapter28o": ["lighter", "tape"], "chapter29": ["thermos", "tape"],
-	"chapter29o": ["tape", "thermos"],
-	"chapter30": ["lighter", "tape"], "chapter30o": ["lighter", "chickpeas"], "chapter31o": ["cologne", "chickpeas"],
-	"chapter32o": ["chickpeas", "thermos"], "chapter33o": ["tape", "cube"], "chapter34o": ["thermos", "lighter"],
-	"chapter35o": ["chickpeas", "thermos"], "chapter36b": ["lighter", "tape"], "chapter37o": ["lighter", "chickpeas"],
-	"chapter38o": ["lighter", "thermos"], "chapter39o": ["lighter", "book"], "chapter41o": ["chickpeas", "cube"],
-	"chapter42b": ["thermos", "chickpeas"],
+	"chapter24": ["book", "lighter"], "chapter25": ["thermos", "book"], "chapter27": ["book", "cologne"],
+	"chapter31o": ["cologne", "chickpeas"], "chapter32o": ["chickpeas", "thermos"], "chapter33o": ["tape", "cube"],
+	"chapter34o": ["thermos", "lighter"], "chapter35o": ["chickpeas", "thermos"], "chapter38o": ["lighter", "thermos"],
+	"chapter39o": ["lighter", "book"], "chapter41o": ["chickpeas", "cube"], "chapter42b": ["thermos", "chickpeas"],
 	"chapter44b": ["lighter", "tape"],          # Sarnıç: karanlıkta çakmak (telefon yalnız fener olarak çıkar)
 }
 
+
+## Savaş bölümleri: el boş başlar (oyuncu çarktan seçerse ya da sahne verirse eşya çıkar). Sahibi (27 Kasım, fragman
+## ön kaydı): top doldururken elde bant, tüfekçinin karşısında leblebi, merdiveni iterken bant "çok saçma". Bu
+## bölümlerde Büro kumandası da kendiliğinden çıkmaz.
+const EMPTY_HAND := ["chapter20", "chapter20o", "chapter26", "chapter26o", "chapter28o", "chapter29", "chapter29o",
+	"chapter30", "chapter30o", "chapter36b", "chapter37o", "arena"]
 
 ## Çanta arayüzünde eşyanın rengi.
 const COLORS := {

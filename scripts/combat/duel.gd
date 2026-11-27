@@ -1109,6 +1109,8 @@ func _wait(sec: float) -> void:
 	var t := 0.0
 	while t < sec and active and is_inside_tree():
 		await get_tree().process_frame
+		if not is_inside_tree():
+			return      # beklerken sahne değişti (fragman kesmesi, bölüm sonu): get_tree() boş
 		if get_tree().paused:      # duraklatmada sayaç akmaz
 			continue
 		t += get_process_delta_time()

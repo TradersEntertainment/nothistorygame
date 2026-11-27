@@ -175,7 +175,23 @@ func _tune_speed() -> void:
 	speed = sqrt(G * d * d / den) if den > 0.1 else sqrt(G * d / sin(deg_to_rad(2.0 * maxf(design_elev, 5.0))))
 
 
+## Top başındayken eldeki çanta eşyası cebe girer (sahibi: "topu doldururken elimizde bant çok saçma"); iş bitince çıkar
+var _stowed := false
+
+
+func _stow_hands(on: bool) -> void:
+	if player == null or not is_instance_valid(player) or on == _stowed:
+		return
+	_stowed = on
+	player.stow_hands(on)
+
+
+func _exit_tree() -> void:
+	_stow_hands(false)
+
+
 func begin(p_power := 1.0) -> void:
+	_stow_hands(true)
 	power = p_power
 	state = "powder"
 	carrying = ""
@@ -192,6 +208,7 @@ func begin(p_power := 1.0) -> void:
 
 
 func end() -> void:
+	_stow_hands(false)
 	state = "idle"
 	_aiming = false
 	if _held and is_instance_valid(_held):
@@ -757,6 +774,7 @@ func _impact(hit: bool) -> void:
 	await get_tree().create_timer(0.6 if not GameState.autotest else 0.05, false).timeout
 	if after_fire.is_valid():
 		after_fire.call()
+	_stow_hands(false)
 	finished.emit(acc)
 
 

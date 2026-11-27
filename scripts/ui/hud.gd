@@ -3068,6 +3068,8 @@ func bark(speaker_key: String, text_key: String, seconds := 4.0, interrupt := fa
 		if not (voice_busy or ((_chain_running > 0 or line_open) and waited < 20.0)):
 			break
 		await get_tree().process_frame
+		if not is_inside_tree():
+			return      # beklerken sahne değişti (HUD ağaçtan çıktı): söz bayat, her karede get_tree() hatası verirdi
 		if not get_tree().paused:
 			waited += get_process_delta_time()
 	if gen != _cut_gen:
