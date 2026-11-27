@@ -406,6 +406,17 @@ func _blocked(from: Vector3) -> bool:
 ## yana, sonra ateş hattı boyunca deniyordu: 2 m'lik sur yolunda yanlar dar, yön değiştirirken nişan süresi bitiyordu
 ## (26o "gunner=0/2", yük altında).
 func _bot_dodge() -> void:
+	# Fragman: önce namluya bakar, tepki süresi kadar bekler, sonra atılır (pencere nişanla açılıyor; anında atılınca
+	# tüfekçi kadraja hiç girmiyordu). Testte bekleme yok.
+	if GameState.flags.get("trailer", false) and is_instance_valid(soldier):
+		player.face((soldier as Node3D).global_position + Vector3(0, 1.5, 0))
+		var bekle := minf(0.6, _t * 0.4)
+		var w := 0.0
+		while w < bekle and state == "aim":
+			await get_tree().process_frame
+			if not is_instance_valid(player):
+				return
+			w += get_process_delta_time()
 	var line := player.global_position - global_position
 	line.y = 0.0
 	line = line.normalized()
