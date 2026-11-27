@@ -525,7 +525,7 @@ func _exit_tree() -> void:
 
 
 func _fizik_adim(delta: float) -> void:
-	if _dive_t >= 0.0 and (frozen or pinned or move_mode == "script" or ladder != null or (powers and powers.flying)):
+	if _dive_t >= 0.0 and (frozen or pinned or move_mode == "script" or ladder != null or (powers and powers.flying) or _in_duel()):
 		_dive_t = -1.0          # atılma sürerken düello/merdiven/uçuş başladı: bırakılır (kamera yatık kalmasın)
 	_health_tick(delta)
 	_fall_guard(delta)
@@ -898,7 +898,7 @@ func dive(dir: Vector3) -> bool:
 	# Düelloda (hareketi Duel yönetir: move_mode "script", A/D vuruş yönü) ve merdivende atılma yok: atılma serbest
 	# yürüyüşün dalında ilerler, başka dalda başlarsa hiç bitmiyordu
 	if _dive_t >= 0.0 or not is_on_floor() or frozen or pinned or is_down or not is_inside_tree() \
-			or move_mode == "script" or ladder != null or (powers and powers.flying):
+			or move_mode == "script" or ladder != null or (powers and powers.flying) or _in_duel():
 		return false
 	dir.y = 0.0
 	if dir.length() < 0.1:
@@ -918,6 +918,12 @@ func dive(dir: Vector3) -> bool:
 	velocity.y = 2.4
 	Audio.sfx("whoosh_fly", -14.0, 1.5)
 	return true
+
+
+## Düello sürüyor mu (Duel "active_duel" grubunda): düelloda A/D vuruş yönü, oyuncuyu düello iter ve konumunu düzeltir;
+## atılma onunla çakışıp fragman kaydında sayısal taşma (NaN dönüşüm) üretiyordu
+func _in_duel() -> bool:
+	return is_inside_tree() and get_tree().get_first_node_in_group("active_duel") != null
 
 
 ## Atılınca varılacak yerde ayak hizasının 0,9 m altında zemin var mı (oyuncunun kendisi sayılmaz)

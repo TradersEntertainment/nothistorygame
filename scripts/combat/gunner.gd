@@ -485,8 +485,10 @@ class _Warn extends Control:
 		var w := minf(1100.0, vs.x - 40.0)
 		var fs := 30 if w >= 1000.0 else 24
 		var tp := Vector2(c.x - w * 0.5, vs.y * 0.33)
-		draw_string_outline(font, tp, tr("UI_GUNNER_WARN"), HORIZONTAL_ALIGNMENT_CENTER, w, fs, 8, Color(0, 0, 0, 0.75 * pulse))
-		draw_string(font, tp, tr("UI_GUNNER_WARN"), HORIZONTAL_ALIGNMENT_CENTER, w, fs, Color(1.0, 0.35, 0.2, 1.0))
+		# Düelloda yana atılma yok (A/D vuruş yönü): eski uyarı
+		var key := "UI_GUNNER_WARN_DUEL" if gunner._killcam() or gunner.get_tree().get_first_node_in_group("active_duel") else "UI_GUNNER_WARN"
+		draw_string_outline(font, tp, tr(key), HORIZONTAL_ALIGNMENT_CENTER, w, fs, 8, Color(0, 0, 0, 0.75 * pulse))
+		draw_string(font, tp, tr(key), HORIZONTAL_ALIGNMENT_CENTER, w, fs, Color(1.0, 0.35, 0.2, 1.0))
 		var p := gunner._muzzle()
 		var local := cam.global_transform.basis.inverse() * (p - cam.global_position)
 		if local.z < 0.0:

@@ -42,6 +42,9 @@ const FEEL_CLIPS := [
 		"cap": ["YARALIYI OMZUNA AL", "SHOULDER THE WOUNDED"]},
 	{"id": "giust_carry", "ch": "26", "v": "", "when": "sv('_carrying_giust') == true", "lead": 0.8, "dur": 6.0, "drive": "level", "wait": 2400.0,
 		"cap": ["KOMUTANI SEN TAŞI. SARSMA.", "CARRY THE COMMANDER. DON'T JOLT HIM."]},
+	# 7 Blakherna sur yolu düellosu (30): merdiven itmeden sonra (rakip açıkta doğar; 27 Kasım düzeltmesi)
+	{"id": "duel30", "ch": "30", "v": "", "when": "sv('phase') == 'duel' and on('Duel', 'active')", "lead": 0.6, "dur": 6.0,
+		"wait": 2400.0, "cap": ["SUR YOLUNDA DÜELLO", "DUEL ON THE WALL WALK"]},
 ]
 
 ## Dikey kısalar için konuşmalı kesitler ("-- set=shorts clean"): test botu tempo modunda (seslendirme süresince) oynar,
@@ -257,6 +260,7 @@ const AKSIYON := [
 	["story2", 1, "İKİ ORDUNUN ARASINDA", "BETWEEN TWO ARMIES"], # 16 beyaz havlu (8y)
 	["trailer", 4, "", "", {"telefon": true}],                  # 17 uçuş (7)
 	["trailer", 6, "", ""],                                     # 18 sonsuz kuşatma (arena)
+	["feel", 7, "", ""],                                        # 19 Blakherna sur yolu düellosu (30)
 ]
 
 
