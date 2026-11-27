@@ -745,6 +745,18 @@ func _giust_acik_yer() -> Vector3:
 	return Vector3.INF
 
 
+## Tüfek yeri: dış korkuluğun x0'a en yakın mazgal açıklığının hemen arkası. Sahibi (27 Kasım): "duvara ateş atıyoruz";
+## x = −10 bir dişin tam arkasına düşüyordu, kamera taşa dayanıyor, namlu taşın içinden ateş ediyordu.
+func _gun_spot(x0: float) -> Vector3:
+	var best := Vector3.INF
+	for m: Dictionary in sur.a.mazgallar("dis"):
+		var q: Vector3 = sur.c(m["ayak"])
+		if best == Vector3.INF or absf(q.x - x0) < absf(best.x - x0):
+			best = q
+	var x := x0 if best == Vector3.INF else best.x
+	return Vector3(x, sur.dis_yol_y() + 0.05, sur.dis_yol_on_z())
+
+
 ## Hücumun sonu: Giustiniani bir Ceneviz tüfeği verir; Tolga dış surun yürüyüş yolundan, gediğe koşan dört azabı
 ## vurmaya çalışır (4 atış, 25 sn). Vurulmayanlar gediğe varır ve gedik dövüşünün ikinci dalgasına katılır.
 func _gun_phase() -> void:
@@ -762,7 +774,7 @@ func _gun_phase() -> void:
 	await hud.say("SPK_GIUST", "D20_G_GUN")
 	await Handover.hand_rifle(self, player, giust)
 	await hud.fade_to(1.0, 0.35)
-	player.global_position = Vector3(-10.0, sur.dis_yol_y() + 0.05, 15.3 if sur.eski_mi else sur.dis_yol_z())
+	player.global_position = Vector3(-10.0, sur.dis_yol_y() + 0.05, 15.3) if sur.eski_mi else _gun_spot(-10.0)
 	var runners: Array = []
 	# Yeni: hendek dolgudan geçilir (karar 7-A); yolun boyu eskisiyle aynı (≈18 m: koşu süresi aynı, karar 1-A): dolgunun
 	# ortasından terasa, oradan gediğin dibine

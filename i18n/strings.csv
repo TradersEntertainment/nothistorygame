@@ -5619,7 +5619,7 @@ D26O_H_GUN,"Al şunu, ağabey. Yeniçerinin tüfeği. Mazgaldan kafa çıkaranı
 D26O_T_GUN_GOOD,"Mazgal boşaldı. Hasan, bu tüfeği yanıma alabilir miyim? Pazartesi toplantısına lazım.","The battlements are clear. Hasan, can I keep this gun? I need it for Monday's meeting."
 D26O_T_GUN_BAD,Hepsi kafasını tam ben ateş ederken indiriyor. Bunlar da mı Nihat'tan eğitim aldı?,They all duck exactly when I fire. Did Nihat train them too?
 UI_OBJ26O_GUN,Mazgaldaki savunucuları vur (vurulan her biri bir taş eksik) · %d atış,Shoot the defenders at the battlements (each one hit means one stone fewer) · %d shots
-UI_GUNNER_WARN,TÜFEKÇİ! Yer değiştir ya da siper al!,GUNNER! Move or take cover!
+UI_GUNNER_WARN,TÜFEKÇİ! Yana atıl (Boşluk + A/D) ya da siper al!,GUNNER! Dive aside (Space + A/D) or take cover!
 UI_ARENA_MOD_GUNNER,Değiştirici: Tüfekçi · fitil parlayınca yer değiştir,Modifier: Gunner · move when the match glows
 UI_VISTA_PROMPT,E: Seyret,E: Take in the view
 UI_VISTA_FOUND,Seyir noktası %d/%d,Viewpoint %d/%d

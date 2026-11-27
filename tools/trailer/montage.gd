@@ -252,9 +252,9 @@ const AKSIYON := [
 	["story2", 5, "İPİ BIRAKMA", "DON'T LET GO OF THE ROPE"],  # 12 yokuşta fren ipi (35o)
 	["story2", 6, "TOPU DÖK", "CAST THE CANNON"],              # 13 bronz döküm (10b)
 	["trailer", 3, "", ""],                                     # 14 Haliç'te kürek (38o)
-	["story2", 2, "FIÇIYI YUVARLA", "ROLL THE BARREL"],        # 15 (18)
+	["story2", 2, "FIÇIYI YUVARLA", "ROLL THE BARREL", {"telefon": true}],  # 15 (18)
 	["story2", 1, "İKİ ORDUNUN ARASINDA", "BETWEEN TWO ARMIES"], # 16 beyaz havlu (8y)
-	["trailer", 4, "", ""],                                     # 17 uçuş (7)
+	["trailer", 4, "", "", {"telefon": true}],                  # 17 uçuş (7)
 	["trailer", 6, "", ""],                                     # 18 sonsuz kuşatma (arena)
 ]
 
@@ -658,9 +658,9 @@ func _clip(c: Dictionary) -> void:
 			GameState.ensure_defaults_for(mini(ch, GameState.LATEST_CHAPTER))
 	# Fes kenarı birinci şahısta kadrajın üstünü kırmızı bir şeritle kapatıyordu: fragmanda fes yok
 	GameState.flags["fez"] = false
-	# Genel fragmanda elde koli bandı yerine telefon (sahibi): bu sahnenin "oyuncunun seçtiği eşya"sı telefon olur;
-	# bölümün kendi verdiği eşya (hold_now) yine bir an çıkar, sonra telefona döner
-	if _set == "story_aksiyon":
+	# Genel fragmanda koli bandı yerine telefon (sahibi), ama yalnız yürüyüş/kayış anlarında ("telefon": true):
+	# savaşta el boş (Items.EMPTY_HAND), 2'de kumanda kalır ("kırmızı düğmeye bas" repliği), işte aletin kendisi
+	if _set == "story_aksiyon" and bool(c.get("telefon", false)):
 		if not GameState.bag.has("phone"):
 			GameState.bag.insert(0, "phone")
 		GameState.flags["held_item"] = "phone"
@@ -872,6 +872,10 @@ func _steps_tick(p: Player, delta: float) -> void:
 		var st := minf(float(_glide["left"]), float(_glide["v"]) * delta)
 		p.global_position += (_glide["dir"] as Vector3) * st
 		p.velocity = Vector3.ZERO
+		# Kişilerin içinden geçmesin (sahibi, 27 Kasım: "ok yağmurunda askerlerin içinden geçiyoruz"): oyundaki gibi
+		# yumuşak itilir, düz çizgiden bir kişi genişliği sapabilir
+		if p.has_method("_separate_from_persons"):
+			p.call("_separate_from_persons")
 		_glide["left"] = float(_glide["left"]) - st
 		if float(_glide["left"]) <= 0.001:
 			_glide = {}

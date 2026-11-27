@@ -430,12 +430,22 @@ func _fight() -> void:
 	var specs := []
 	var n := clampi(1 + boarders, 1, 3)
 	var zc := (Blachernae.WALL_Z0 + Blachernae.WALL_Z1) * 0.5
+	var used: Array = []
 	for k in n:
-		var at := Vector3(player.global_position.x + 3.2 + k * 1.2, WALK, zc + (k % 2) * 0.6 - 0.3)
+		var z := zc + (k % 2) * 0.6 - 0.3
+		var at := Vector3(INF, WALK, z)
 		if k < _boarded.size() and is_instance_valid(_boarded[k]):
-			# Sur yoluna çıkmış olan asker: dövüşen onun yerine geçer (aynı yerde, yoktan belirmez)
-			at = Vector3((_boarded[k] as Node3D).global_position.x, WALK, zc + (k % 2) * 0.6 - 0.3)
+			# Sur yoluna çıkmış olan asker: dövüşen onun yerine geçer (aynı yerde, yoktan belirmez) — ama yalnız
+			# oyuncunun gördüğü ve yakın bir yerdeyse. Sahibi (27 Kasım): rakip kule sütununun arkasında kalıyor,
+			# kamera karanlık duvara bakıyor, düello okları duvarın üstüne çiziliyordu.
+			var bx := (_boarded[k] as Node3D).global_position.x
+			var cand := Vector3(bx, WALK, z)
+			if absf(bx - player.global_position.x) < 9.0 and _duel_spot_ok(cand, used):
+				at = cand
 			(_boarded[k] as Node3D).visible = false
+		if at.x == INF:
+			at = _duel_spot(k, z, used)
+		used.append(at)
 		specs.append({"pos": at, "blade": "kilij",
 			"shield": k % 2 == 0, "name": "SPK_SOLDIER", "look": {"coat": [Color("b3262d"), Color("6a5040"), Color("2f5fa8")][k],
 			"pants": Color("e8e0d0"), "hat": ["azap", "bork", "turban"][k], "mustache": true, "beard": k == 1}})
@@ -444,6 +454,34 @@ func _fight() -> void:
 	_duel_won = r["won"]
 	player.frozen = true
 	await hud.say("SPK_TOLGA", "D30_T_DUEL" if _duel_won else "D30_T_LOST")
+
+
+## Düello rakibinin yeri: oyuncunun iki yanında, sur yolunun zemini olan, oyuncunun gözünden göğsüne engelsiz görülen,
+## öteki rakiplerden 1 m uzak ilk nokta (kule, mazgal, kapı sövesi arada kalmasın)
+func _duel_spot(k: int, z: float, used: Array) -> Vector3:
+	var px := player.global_position.x
+	for off: float in [3.2, -3.2, 4.4, -4.4, 2.6, -2.6, 5.6, -5.6]:
+		var cand := Vector3(px + off + signf(off) * k * 1.2, WALK, z)
+		if _duel_spot_ok(cand, used):
+			return cand
+	return Vector3(px + 3.2 + k * 1.2, WALK, z)
+
+
+func _duel_spot_ok(p: Vector3, used: Array) -> bool:
+	for u: Vector3 in used:
+		if Vector2(u.x - p.x, u.z - p.z).length() < 1.0:
+			return false
+	var space := get_world_3d().direct_space_state
+	var down := PhysicsRayQueryParameters3D.create(p + Vector3(0, 0.6, 0), p + Vector3(0, -0.8, 0), 1)
+	down.exclude = [player.get_rid()]
+	var fl := space.intersect_ray(down)
+	if fl.is_empty() or absf((fl["position"] as Vector3).y - p.y) > 0.4:
+		return false
+	var eye := player.global_position + Vector3(0, player.eye_height, 0)
+	var los := PhysicsRayQueryParameters3D.create(eye, p + Vector3(0, 1.3, 0), 1)
+	los.exclude = [player.get_rid()]
+	var hit := space.intersect_ray(los)
+	return hit.is_empty() or (hit["collider"] as Node).is_in_group("persons")
 
 
 ## 4. İmparator sur yoluna çıkar (merdivenden), meşalelerin arasında. Tespit karesi.

@@ -563,10 +563,20 @@ func _fizik_adim(delta: float) -> void:
 			traversal.after_walk(delta)
 		_after_move(delta)
 		return
+	if _dive_t >= 0.0:
+		_dive_step(delta)
+		_after_move(delta)
+		return
 	var dir := Vector3.ZERO
 	if not frozen:
 		var input := Input.get_vector("move_left", "move_right", "move_forward", "move_back")
 		dir = (transform.basis * Vector3(input.x, 0, input.y)).normalized()
+		# Tüfekçi nişan alırken Boşluk + yana: zıplamak yerine yana atılır
+		if dive_ready > 0 and not is_down and absf(input.x) > 0.3 and absf(input.x) >= absf(input.y) \
+				and Input.is_action_just_pressed("jump") and dive(transform.basis.x * signf(input.x)):
+			_zipla_tampon = 0.0
+			_after_move(delta)
+			return
 		if not is_down and _zipla_iste(delta):
 			if hand_style == "nihat" and not can_climb and not _nihat_refused:
 				_nihat_wall()
@@ -866,6 +876,74 @@ func disable_climb() -> void:
 	can_climb = false
 
 
+## Yana atılma: tüfekçi nişan alırken (dive_ready > 0) Boşluk + A/D. Sahibi (27 Kasım): "dodgelamak için sağa kayınca
+## çok kötü, yürüyerek kayıyoruz; atlama gibi bir şey olmalı". 0,42 sn'de ~2 m yana sıçrar (başta hızlı, sonda yavaş),
+## kamera o yana yatıp alçalır, inişte toz ve gümleme. Ayağının altı boşsa (sur kenarı) kısa atılır. Bot da kullanır.
+const DIVE_T := 0.42
+const DIVE_DIST := 2.1
+var dive_ready := 0                 # tehdit sayacı (Gunner nişan alırken +1)
+var _dive_t := -1.0
+var _dive_dir := Vector3.ZERO
+var _dive_dist := 0.0
+var _dive_side := 0.0               # +1 sağa, -1 sola (kamera yatışı)
+
+
+func diving() -> bool:
+	return _dive_t >= 0.0
+
+
+func dive(dir: Vector3) -> bool:
+	if _dive_t >= 0.0 or not is_on_floor() or frozen or pinned or is_down or not is_inside_tree():
+		return false
+	dir.y = 0.0
+	if dir.length() < 0.1:
+		return false
+	dir = dir.normalized()
+	var dist := 0.0
+	for k: float in [1.0, 0.75, 0.5]:
+		if _dive_floor(global_position + dir * DIVE_DIST * k):
+			dist = DIVE_DIST * k
+			break
+	if dist <= 0.0:
+		return false
+	_dive_dir = dir
+	_dive_dist = dist
+	_dive_side = signf(global_transform.basis.x.dot(dir))
+	_dive_t = 0.0
+	velocity.y = 2.4
+	Audio.sfx("whoosh_fly", -14.0, 1.5)
+	return true
+
+
+## Atılınca varılacak yerde ayak hizasının 0,9 m altında zemin var mı (oyuncunun kendisi sayılmaz)
+func _dive_floor(p: Vector3) -> bool:
+	var q := PhysicsRayQueryParameters3D.create(p + Vector3(0, 0.5, 0), p + Vector3(0, -0.9, 0), 1)
+	q.exclude = [get_rid()]
+	return not get_world_3d().direct_space_state.intersect_ray(q).is_empty()
+
+
+func _dive_step(delta: float) -> void:
+	_dive_t += delta
+	var k := clampf(_dive_t / DIVE_T, 0.0, 1.0)
+	var v := _dive_dist / DIVE_T * 2.0 * (1.0 - k)       # ∫ 2(1−k) = 1: toplam yol _dive_dist
+	velocity.x = _dive_dir.x * v
+	velocity.z = _dive_dir.z * v
+	if gravity_on and not is_on_floor():
+		velocity.y -= _gravity * delta
+	move_and_slide()
+	if not frozen and not pinned:
+		_separate_from_persons()
+	if k >= 1.0:
+		_dive_t = -1.0
+		velocity.x = 0.0
+		velocity.z = 0.0
+		_cam_dy -= 0.16
+		shake(0.2)
+		Audio.sfx("land_thud", -6.0, 1.1)
+		if get_parent() is Node3D:
+			Vfx.dust(get_parent() as Node3D, global_position + Vector3(0, 0.05, 0), 0.45)
+
+
 ## Yüksekten düşünce kısa sendeleme: hız düşer, göz hizası bir an iner.
 func stagger(seconds: float) -> void:
 	_stagger = maxf(_stagger, seconds)
@@ -980,6 +1058,10 @@ func _after_move(delta: float) -> void:
 		y += sin(_float_t * 1.7) * 0.07
 		roll = sin(_float_t * 1.1) * 0.035
 	camera.rotation.z = lerpf(camera.rotation.z, roll, clampf(delta * 4.0, 0.0, 1.0))
+	if _dive_t >= 0.0:      # yana atılma: kamera o yana yatar ve alçalır (yumuşatmasız; bitince lerp geri getirir)
+		var ds := sin(PI * clampf(_dive_t / DIVE_T, 0.0, 1.0))
+		camera.rotation.z = roll - _dive_side * 0.28 * ds
+		y -= 0.4 * ds
 	camera.position = Vector3(randf_range(-1, 1) * _shake * 0.05, y + randf_range(-1, 1) * _shake * 0.05, 0) + his.kamera_ofs()
 	_ip_gp = [_ip_gp[1], global_position]
 	_ip_cam = [_ip_cam[1], camera.position]
@@ -1374,6 +1456,12 @@ var _held_log := ""
 func _auto_hold() -> void:
 	if hand_style != "tolga" or _remote_model == null or not _hand_shown or hands_free or held != 0 or remote_out():
 		return
+	var sc := _scene_key()
+	if sc in Items.EMPTY_HAND and str(GameState.flags.get("held_item_scene", "")) != sc:
+		if GameState.autotest and _held_log != sc:
+			_held_log = sc
+			print("HELDDEFAULT scene=%s item=bos" % sc)
+		return      # savaş bölümü: oyuncu bu bölümde bir eşya seçmediyse el boş (kumanda da çıkmaz)
 	var d := default_item()
 	if GameState.autotest and _held_log != _scene_key():
 		_held_log = _scene_key()

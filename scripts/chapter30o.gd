@@ -200,8 +200,10 @@ func _carry_ladder() -> void:
 		if c.rig:
 			c.rig.activity = "carry"
 	player.speed_mult = 0.7
-	# Sol el merdivenin sol dikmesini önden kavrar (merdiven sağ omuzda; el boştu, sağ elde kumanda duruyordu)
-	player.free_hold = Vector3(0.36, -0.14, -0.55)
+	# İki el merdivenin yakın dikmesini kavrar (sahibi, 27 Kasım: el merdivenin yanında havada duruyordu). Noktalar
+	# taşınan merdivenin yerelinde: yakın dikme x = −W/2, oyuncunun hizası y = CARRY_BACK; merdivenle birlikte gider
+	_carry_pose()
+	player.hold_both(Vector3(-Ladder.WIDTH * 0.5, CARRY_BACK + 0.55, 0.0), Vector3(-Ladder.WIDTH * 0.5, CARRY_BACK + 0.22, 0.0), _carry_lad)
 	player.frozen = false
 	hud.set_objective(tr("UI_OBJ30O_CARRY"), PLANT + Vector3(0, 1.0, 0))
 	var arrows := 1.5
@@ -218,6 +220,11 @@ func _carry_ladder() -> void:
 			var bot_v := 2.4 if GameState.flags.get("trailer", false) else 6.0
 			player.global_position += to.normalized() * minf(to.length(), bot_v * dt)
 			player.global_position.y = Blachernae.slope_y(player.global_position.z) + 0.05
+			# Bot gittiği yöne bakar (sahibi: "merdiven taşırken niye terse bakıyoruz"; kamera Zağanos'ta kalıyordu,
+			# merdiven de bakışla birlikte geriye uzanıyordu)
+			if to.length() > 0.5:
+				player.rotation.y = lerp_angle(player.rotation.y, atan2(-to.x, -to.z), clampf(dt * 5.0, 0.0, 1.0))
+				player.camera.rotation.x = lerpf(player.camera.rotation.x, -0.05, clampf(dt * 5.0, 0.0, 1.0))
 		_carry_pose()
 		_slow_t = maxf(0.0, _slow_t - dt)
 		player.speed_mult = 0.42 if _slow_t > 0.0 else 0.7
@@ -232,7 +239,7 @@ func _carry_ladder() -> void:
 			_arrow_volley(at)
 	player.frozen = true
 	hud.set_objective("")
-	player.free_hold = Vector3.INF
+	player.release_both()
 	player.speed_mult = 1.0
 	# Merdiven kaldırılır: ayağı sur dibine, ucu mazgala (taşıyanlar iter); sonra gerçek (tırmanılan) merdiven
 	var fwd := _carry_fwd()
@@ -312,13 +319,21 @@ func _carry_fwd() -> Vector3:
 	return fwd.normalized()
 
 
-## Merdiven taşıyanların sağ omzunda (oyuncunun da: görüşün sağ altında sol dikme), taşıyanlar aynı hizada önde/arkada
+## Merdiven taşıyanların sağ omzunda (oyuncunun da: yakın dikme sağ omuzda), taşıyanlar aynı hizada önde/arkada.
+## Merdiven dışa doğru 25° yatık: göz hizasında düz yatınca yandan tek bir kahverengi levha gibi görünüyordu
+## (sahibi, 27 Kasım); yatık durunca basamaklar seçilir, yakın dikme omuzda kalır.
+const CARRY_BACK := 7.4         # merdivenin ayağı oyuncunun bu kadar gerisinde
+const CARRY_TILT := 25.0
+
+
 func _carry_pose() -> void:
 	var fwd := _carry_fwd()
 	var right := fwd.cross(Vector3.UP)
-	var base := player.global_position + fwd * -7.4 + right * 0.66 + Vector3(0, 1.55, 0)
-	# Dikmeler fwd boyunca, basamaklar yatay (yerel z yukarı)
-	_carry_lad.global_transform = Transform3D(Basis(right, fwd, right.cross(fwd)), base)
+	var across := (right * cos(deg_to_rad(CARRY_TILT)) - Vector3.UP * sin(deg_to_rad(CARRY_TILT))).normalized()
+	var near := player.global_position + right * 0.25 + Vector3(0, 1.5, 0)     # yakın dikme: sağ omuz
+	var base := near + fwd * -CARRY_BACK + across * (Ladder.WIDTH * 0.5)
+	# Dikmeler fwd boyunca (yerel y), basamaklar yakın dikmeden dışa (yerel x)
+	_carry_lad.global_transform = Transform3D(Basis(across, fwd, across.cross(fwd)), base)
 	for k in carriers.size():
 		var along: float = [3.2, -2.6, -5.4][k]
 		var p: Vector3 = player.global_position + fwd * along
@@ -699,8 +714,9 @@ func _tower_fence() -> void:
 		var g := Props.solid(self, b[0], b[1], Color.WHITE)
 		g.get_child(0).visible = false
 		g.set_meta("no_climb", true)
-	# Görünen alçak mazgallar (dış ve doğu kenar)
-	for k in 4:
+	# Görünen alçak mazgallar (dış ve doğu kenar): yalnız eski sette. Yeni kalemin kulesinin kendi korkuluğu var; bu düz
+	# kutular onun önünde dokusuz beyaz küpler gibi duruyordu (sahibi, 27 Kasım: tüfekçi çekimi; KUTU YASAĞI)
+	for k in (4 if walls.eski else 0):
 		Props.box(self, Vector3(1.1, 0.9, 0.5), Vector3(TOWER_X - 3.0 + k * 2.0, top + 0.45, zc + 3.75), Blachernae.C_STONE.darkened(0.1))
 		Props.box(self, Vector3(0.5, 0.9, 1.1), Vector3(TOWER_X + 3.75, top + 0.45, zc - 3.0 + k * 2.0), Blachernae.C_STONE.darkened(0.1))
 

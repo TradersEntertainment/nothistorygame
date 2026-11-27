@@ -75,7 +75,23 @@ static func spawn(scene: Node3D, at: Vector3, p: Player, h: Hud, first_wait := 4
 	return g
 
 
+## Nişan sürerken oyuncu yana atılabilir (Player.dive_ready sayacı; Boşluk + A/D)
+var _dive_on := false
+
+
+func _dive_arm(on: bool) -> void:
+	if on == _dive_on or player == null or not is_instance_valid(player):
+		return
+	_dive_on = on
+	player.dive_ready = maxi(0, player.dive_ready + (1 if on else -1))
+
+
+func _exit_tree() -> void:
+	_dive_arm(false)
+
+
 func stop() -> void:
+	_dive_arm(false)
 	state = "done"
 	if is_instance_valid(_warn):
 		_warn.queue_free()
@@ -268,6 +284,7 @@ func _process(delta: float) -> void:
 		_spark.visible = false
 		_fuse.light_energy = 0.0
 		state = "done"
+		_dive_arm(false)
 		return
 	_fuse.global_position = _muzzle()
 	_spark.global_position = _fuse.global_position
@@ -294,6 +311,7 @@ func _process(delta: float) -> void:
 		"wait":
 			if _t <= 0.0:
 				state = "aim"
+				_dive_arm(true)
 				_t = GameState.diff("gun_aim")
 				_aim_from = player.global_position
 				_spark.visible = true
@@ -304,6 +322,7 @@ func _process(delta: float) -> void:
 		"aim":
 			_fuse.light_energy = 2.0 + 1.5 * sin(Time.get_ticks_msec() * 0.03)
 			if _t <= 0.0:
+				_dive_arm(false)
 				_fire()
 				state = "wait"
 				_t = _rng.randf_range(WAIT_MIN, WAIT_MAX)
@@ -393,6 +412,10 @@ func _bot_dodge() -> void:
 	var origin := player.global_position
 	var dir := _bot_dir(origin, line)
 	var steps := 0
+	# Önce oyuncunun da yaptığı gibi yana atılır (fragmanda ve testte görünür); yetmezse adım adım devam eder
+	if player.dive(dir):
+		while is_instance_valid(player) and player.diving() and state == "aim":
+			await get_tree().process_frame
 	# Ateşe kadar nişan alınan yerden uzak kal: düello botu oyuncuyu rakibine geri çekerse yeniden kaç (eskiden 24
 	# karede bırakıyordu, atış anında eski yere dönmüş oluyordu). Uzaklık hep nişan alınan yerden ölçülür.
 	while is_instance_valid(player) and state == "aim":
@@ -458,9 +481,12 @@ class _Warn extends Control:
 		var col := Color(1.0, 0.25, 0.15, pulse)
 		var font := ThemeDB.fallback_font
 		# Sol üstteki HEDEF kutusunun (üç satıra kadar) altında: 0,24'te kutunun sağ ucuna biniyordu (görsel denetim: 30O)
-		var tp := Vector2(c.x - 400, vs.y * 0.33)
-		draw_string_outline(font, tp, tr("UI_GUNNER_WARN"), HORIZONTAL_ALIGNMENT_CENTER, 800, 30, 8, Color(0, 0, 0, 0.75 * pulse))
-		draw_string(font, tp, tr("UI_GUNNER_WARN"), HORIZONTAL_ALIGNMENT_CENTER, 800, 30, Color(1.0, 0.35, 0.2, 1.0))
+		# Yazı tuş ipucunu da taşıdığı için (Boşluk + A/D) geniş: dar ekranda punto küçülür, satır taşmaz
+		var w := minf(1100.0, vs.x - 40.0)
+		var fs := 30 if w >= 1000.0 else 24
+		var tp := Vector2(c.x - w * 0.5, vs.y * 0.33)
+		draw_string_outline(font, tp, tr("UI_GUNNER_WARN"), HORIZONTAL_ALIGNMENT_CENTER, w, fs, 8, Color(0, 0, 0, 0.75 * pulse))
+		draw_string(font, tp, tr("UI_GUNNER_WARN"), HORIZONTAL_ALIGNMENT_CENTER, w, fs, Color(1.0, 0.35, 0.2, 1.0))
 		var p := gunner._muzzle()
 		var local := cam.global_transform.basis.inverse() * (p - cam.global_position)
 		if local.z < 0.0:
